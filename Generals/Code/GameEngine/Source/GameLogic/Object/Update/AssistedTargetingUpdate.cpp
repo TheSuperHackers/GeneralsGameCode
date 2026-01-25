@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #define DEFINE_WEAPONSLOTTYPE_NAMES
 #include "Common/Player.h"
@@ -52,11 +52,11 @@ void AssistedTargetingUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
   UpdateModuleData::buildFieldParse(p);
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "AssistingClipSize",		INI::parseInt,		NULL, offsetof( AssistedTargetingUpdateModuleData, m_clipSize ) },
+		{ "AssistingClipSize",		INI::parseInt,		nullptr, offsetof( AssistedTargetingUpdateModuleData, m_clipSize ) },
 		{ "AssistingWeaponSlot",	INI::parseLookupList,	TheWeaponSlotTypeNamesLookupList, offsetof( AssistedTargetingUpdateModuleData, m_weaponSlot ) },
-		{ "LaserFromAssisted",		INI::parseThingTemplate,				NULL, offsetof( AssistedTargetingUpdateModuleData, m_laserFromAssisted ) },
-		{ "LaserToTarget",				INI::parseThingTemplate,				NULL, offsetof( AssistedTargetingUpdateModuleData, m_laserToTarget ) },
-		{ 0, 0, 0, 0 }
+		{ "LaserFromAssisted",		INI::parseThingTemplate,				nullptr, offsetof( AssistedTargetingUpdateModuleData, m_laserFromAssisted ) },
+		{ "LaserToTarget",				INI::parseThingTemplate,				nullptr, offsetof( AssistedTargetingUpdateModuleData, m_laserToTarget ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   p.add(dataFieldParse);
 }

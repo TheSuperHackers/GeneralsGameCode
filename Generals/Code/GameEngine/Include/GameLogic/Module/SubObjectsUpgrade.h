@@ -46,9 +46,6 @@
 
 #pragma once
 
-#ifndef __SUB_OBJECTS_UPGRADE_H
-#define __SUB_OBJECTS_UPGRADE_H
-
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
@@ -88,7 +85,3 @@ protected:
 	virtual Bool isSubObjectsUpgrade() { return true; }
 
 };
-
-#endif
-
-

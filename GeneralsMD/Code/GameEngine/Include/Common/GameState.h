@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __GAME_STATE_H_
-#define __GAME_STATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/STLTypedefs.h"
 #include "Common/Snapshot.h"
@@ -168,7 +165,7 @@ public:
 	SaveGameInfo *getSaveGameInfo( void ) { return &m_gameInfo; }
 
 	// snapshot interaction
-	void addPostProcessSnapshot( Snapshot *snapshot );					///< add snapshot to post process laod
+	void addPostProcessSnapshot( Snapshot *snapshot );					///< add snapshot to post process load
 
 	// manipulating files
 	Bool doesSaveGameExist( AsciiString filename );							///< does the save file exist
@@ -238,6 +235,3 @@ extern GameState *TheGameState;
 
 UnicodeString getUnicodeTimeBuffer(SYSTEMTIME timeVal);
 UnicodeString getUnicodeDateBuffer(SYSTEMTIME timeVal);
-
-
-#endif  // end __GAME_STATE_H_

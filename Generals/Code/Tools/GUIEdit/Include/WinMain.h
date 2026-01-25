@@ -45,9 +45,6 @@
 
 #pragma once
 
-#ifndef __WINMAIN_H_
-#define __WINMAIN_H_
-
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 #include <windows.h>
 
@@ -65,6 +62,3 @@
 extern HWND ApplicationHWnd;  ///< application main window handle
 extern HINSTANCE ApplicationHInstance;  ///< application main instance handle
 extern Win32Mouse *TheWin32Mouse;  ///< the mouse for win processing
-
-#endif // __WINMAIN_H_
-

@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __DEMORALIZE_SPECIAL_POWER_H_
-#define __DEMORALIZE_SPECIAL_POWER_H_
-
 #ifdef ALLOW_DEMORALIZE
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
@@ -82,6 +79,3 @@ protected:
 };
 
 #endif // ALLOW_DEMORALIZE
-
-
-#endif  // end __DEMORALIZE_SPECIAL_POWER_H_

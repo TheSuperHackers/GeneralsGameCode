@@ -375,7 +375,7 @@ void LightEnvironmentClass::Add_Fill_Light(void)
 ** LightEnvironmentClass::Calculate_Fill_Light Implementation
 ** The fill light takes up to the top 3 lights in the InputList and averages them into 1 light source.
 ** The averaged light source is then flipped in direction and location as well as in HUE of the color.
-** This final light is used to support the top 3 lights by providing a calulated fill to augment the lights.
+** This final light is used to support the top 3 lights by providing a calculated fill to augment the lights.
 **
 ************************************************************************************************/
 void LightEnvironmentClass::Calculate_Fill_Light(void)

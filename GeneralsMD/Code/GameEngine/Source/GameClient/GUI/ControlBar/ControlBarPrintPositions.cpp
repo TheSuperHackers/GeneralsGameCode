@@ -47,8 +47,7 @@
 //-----------------------------------------------------------------------------
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
-#include <stdio.h>
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
@@ -80,7 +79,7 @@ void PrintInfoRecursive( GameWindow *win, FILE *fp)
 
 void PrintOffsetsFromControlBarParent( void )
 {
-	GameWindow *controlBarParent = TheWindowManager->winGetWindowFromId( NULL,  TheNameKeyGenerator->nameToKey( "ControlBar.wnd:ControlBarParent" ));
+	GameWindow *controlBarParent = TheWindowManager->winGetWindowFromId( nullptr,  TheNameKeyGenerator->nameToKey( "ControlBar.wnd:ControlBarParent" ));
 	if(!controlBarParent)
 		return;
 

@@ -267,7 +267,7 @@ float	TextDrawClass::Print( Font3DInstanceClass *font, char ch, float screen_x, 
 	}
 
 	/*
-	** Get the font texture uv coordinate for teh upper right and lower left corners of the rect
+	** Get the font texture uv coordinate for the upper right and lower left corners of the rect
 	*/
 	RectClass font_uv = font->Char_UV( ch );
 

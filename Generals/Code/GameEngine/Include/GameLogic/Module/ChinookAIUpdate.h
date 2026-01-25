@@ -27,9 +27,6 @@
 
 #pragma once
 
-#ifndef _ChinookAIUpdate_H_
-#define _ChinookAIUpdate_H_
-
 #include "GameLogic/AIStateMachine.h"
 #include "GameLogic/Module/SupplyTruckAIUpdate.h"
 
@@ -122,6 +119,3 @@ private:
 	ObjectID								m_airfieldForHealing;
 	Bool										m_hasPendingCommand;
 };
-
-#endif
-

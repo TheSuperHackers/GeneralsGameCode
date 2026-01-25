@@ -83,8 +83,8 @@
 //			the layout and then you are REQUIRED to notify the shell by calling
 //			the Shell::shutdownComplete() method.
 //
-//			Shutdown() is also required to be able to handle the paramater "immediatePop".
-//			If this paramater is TRUE it means that when control returns from the
+//			Shutdown() is also required to be able to handle the parameter "immediatePop".
+//			If this parameter is TRUE it means that when control returns from the
 //			shutdown function that the layout will immediately be popped off the
 //			stack.  We need to be able to handle this when in code we want to
 //			traverse back down the stack rapidly (like when we lose connection to
@@ -93,9 +93,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __SHELL_H_
-#define __SHELL_H_
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -142,7 +139,7 @@ public:
 	void shutdownComplete( WindowLayout *layout, Bool impendingPush = FALSE );	///< layout has completed shutdown
 
 	WindowLayout *findScreenByFilename( AsciiString filename );		///< find screen
-	inline Bool isShellActive( void ) { return m_isShellActive; }  ///<	Returns true if the shell is active
+	Bool isShellActive( void ) { return m_isShellActive; }  ///<	Returns true if the shell is active
 
 	void registerWithAnimateManager( GameWindow *win, AnimTypes animType, Bool needsToFinish, UnsignedInt delayMS = 0);
 	Bool isAnimFinished( void );
@@ -206,6 +203,3 @@ protected:
 
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
 extern Shell *TheShell;  ///< the shell external interface
-
-#endif // __SHELL_H_
-

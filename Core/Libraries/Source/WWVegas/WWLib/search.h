@@ -22,7 +22,7 @@
  *                                                                                             *
  *                 Project Name : Command & Conquer                                            *
  *                                                                                             *
- *                     $Archive:: /Commando/Library/SEARCH.H                                  $*
+ *                     $Archive:: /Commando/Library/SEARCH.h                                  $*
  *                                                                                             *
  *                      $Author:: Greg_h                                                      $*
  *                                                                                             *
@@ -40,7 +40,7 @@
  *   IndexClass<T>::IndexClass -- Constructor for index handler.                               *
  *   IndexClass<T>::Invalidate_Archive -- Invalidate the archive pointer.                      *
  *   IndexClass<T>::Is_Archive_Same -- Checks to see if archive pointer is same as index.      *
- *   IndexClass<T>::Is_Present -- Checks for presense of index entry.                          *
+ *   IndexClass<T>::Is_Present -- Checks for presence of index entry.                          *
  *   IndexClass<T>::Remove_Index -- Find matching index and remove it from system.             *
  *   IndexClass<T>::Search_For_Node -- Perform a search for the specified node ID              *
  *   IndexClass<T>::Set_Archive -- Records the node pointer into the archive.                  *
@@ -49,8 +49,7 @@
  *   compfunc -- Support function for bsearch and bsort.                                       *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#ifndef SEARCH_H
-#define SEARCH_H
+#pragma once
 
 /*
 **	The "bool" integral type was defined by the C++ comittee in
@@ -292,7 +291,7 @@ bool IndexClass<T>::Increase_Table_Size(int amount)
 	if (amount < 0) return(false);
 
 	NodeElement * table = W3DNEWARRAY NodeElement[IndexSize + amount];
-	if (table != NULL) {
+	if (table != nullptr) {
 
 		/*
 		**	Copy all valid nodes into the new table.
@@ -326,12 +325,12 @@ bool IndexClass<T>::Increase_Table_Size(int amount)
 /***********************************************************************************************
  * IndexClass<T>::Count -- Fetch the number of index entries recorded.                         *
  *                                                                                             *
- *    This will return the quantity of index entries that have been recored by this index      *
+ *    This will return the quantity of index entries that have been recorded by this index     *
  *    handler.                                                                                 *
  *                                                                                             *
  * INPUT:   none                                                                               *
  *                                                                                             *
- * OUTPUT:  Returns with number of recored indecies present.                                   *
+ * OUTPUT:  Returns with number of recorded indices present.                                   *
  *                                                                                             *
  * WARNINGS:   none                                                                            *
  *                                                                                             *
@@ -346,7 +345,7 @@ int IndexClass<T>::Count(void) const
 
 
 /***********************************************************************************************
- * IndexClass<T>::Is_Present -- Checks for presense of index entry.                            *
+ * IndexClass<T>::Is_Present -- Checks for presence of index entry.                            *
  *                                                                                             *
  *    This routine will scan for the specified index entry. If it was found, then 'true' is    *
  *    returned.                                                                                *
@@ -413,7 +412,7 @@ bool IndexClass<T>::Is_Present(int id) const
  *                                                                                             *
  * WARNINGS:   This routine presumes that the index exists. If it doesn't exist, then the      *
  *             default constructed object "T" is returned instead. To avoid this problem,      *
- *             always verfiy the existance of the index by calling Is_Present() first.         *
+ *             always verfiy the existence of the index by calling Is_Present() first.         *
  *                                                                                             *
  * HISTORY:                                                                                    *
  *   11/02/1996 JLB : Created.                                                                 *
@@ -627,7 +626,7 @@ bool IndexClass<T>::Remove_Index(int id)
  *                                                                                             *
  * OUTPUT:  Returns with the comparision value between the two nodes.                          *
  *                                                                                             *
- * WARNINGS:   This is highly dependant upon the layout of the NodeElement structure.          *
+ * WARNINGS:   This is highly dependent upon the layout of the NodeElement structure.          *
  *                                                                                             *
  * HISTORY:                                                                                    *
  *   11/02/1996 JLB : Created.                                                                 *
@@ -654,7 +653,7 @@ int _USERENTRY IndexClass<T>::search_compfunc(void const * ptr1, void const * pt
  * INPUT:   id -- The index ID to search for.                                                  *
  *                                                                                             *
  * OUTPUT:  Returns with a pointer to the NodeElement that matches the index ID specified. If  *
- *          no matching index could be found, then NULL is returned.                           *
+ *          no matching index could be found, then nullptr is returned.                           *
  *                                                                                             *
  * WARNINGS:   none                                                                            *
  *                                                                                             *
@@ -692,8 +691,3 @@ IndexClass<T>::NodeElement const * IndexClass<T>::Search_For_Node(int id) const
 	node.ID = id;
 	return((NodeElement const *)bsearch(&node, &IndexTable[0], IndexCount, sizeof(IndexTable[0]), search_compfunc));
 }
-
-
-#endif
-
-

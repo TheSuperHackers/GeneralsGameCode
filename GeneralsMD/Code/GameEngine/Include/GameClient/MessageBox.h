@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __MESSAGEBOX_H_
-#define __MESSAGEBOX_H_
-
 #include "GameClient/GameWindowManager.h"
 
 GameWindow *MessageBoxYesNo(UnicodeString titleString,UnicodeString bodyString,GameWinMsgBoxFunc yesCallback,GameWinMsgBoxFunc noCallback);  ///< convenience function for displaying a Message box with Yes and No buttons
@@ -47,5 +44,3 @@ GameWindow *MessageBoxOk(UnicodeString titleString,UnicodeString bodyString,Game
 
 
 GameWindow *MessageBoxCancel(UnicodeString titleString,UnicodeString bodyString,GameWinMsgBoxFunc cancelCallback);///< convenience function for displaying a Message box with Cancel button
-
-#endif //__MESSAGEBOX_H_

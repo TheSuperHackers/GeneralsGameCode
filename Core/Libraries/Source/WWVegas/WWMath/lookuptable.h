@@ -36,14 +36,11 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef LOOKUPTABLE_H
-#define LOOKUPTABLE_H
+#pragma once
 
 #include "always.h"
 #include "simplevec.h"
 #include "wwstring.h"
-#include "refcount.h"
 #include "multilist.h"
 #include "wwmath.h"
 
@@ -146,8 +143,8 @@ public:
 
 	static void					Load_Table_Desc(		ChunkLoadClass &	cload,
 																Curve1DClass **	curve_ptr,
-																Vector2 *			set_min = NULL,
-																Vector2 *			set_max = NULL	);
+																Vector2 *			set_min = nullptr,
+																Vector2 *			set_max = nullptr	);
 
 	static void					Reset(void);
 
@@ -156,6 +153,3 @@ protected:
 	static RefMultiListClass<LookupTableClass>	Tables;
 
 };
-
-
-#endif // LOOKUPTABLE_H

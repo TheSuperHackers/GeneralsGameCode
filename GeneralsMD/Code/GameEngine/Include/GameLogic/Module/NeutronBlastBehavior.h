@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __NeutronBlastBehavior_H_
-#define __NeutronBlastBehavior_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/DieModule.h"
 #include "GameLogic/Module/UpdateModule.h"
@@ -57,9 +54,9 @@ public:
 
 		static const FieldParse dataFieldParse[] =
 		{
-			{ "BlastRadius",		INI::parseReal, NULL, offsetof( NeutronBlastBehaviorModuleData, m_blastRadius ) },
-			{ "AffectAirborne", INI::parseBool, NULL, offsetof( NeutronBlastBehaviorModuleData, m_isAffectAirborne ) },
-			{ "AffectAllies",		INI::parseBool, NULL, offsetof( NeutronBlastBehaviorModuleData, m_affectAllies ) },
+			{ "BlastRadius",		INI::parseReal, nullptr, offsetof( NeutronBlastBehaviorModuleData, m_blastRadius ) },
+			{ "AffectAirborne", INI::parseBool, nullptr, offsetof( NeutronBlastBehaviorModuleData, m_isAffectAirborne ) },
+			{ "AffectAllies",		INI::parseBool, nullptr, offsetof( NeutronBlastBehaviorModuleData, m_affectAllies ) },
 			{ 0, 0, 0, 0 }
 		};
 
@@ -94,6 +91,3 @@ private:
 
 	void neutronBlastToObject( Object *obj );
 };
-
-#endif // __NeutronBlastBehavior_H_
-

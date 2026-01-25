@@ -46,7 +46,7 @@
 //-----------------------------------------------------------------------------
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
@@ -68,15 +68,15 @@
 //-----------------------------------------------------------------------------
 static GameDifficulty s_AIDiff = DIFFICULTY_NORMAL;
 static NameKeyType    buttonOkID      = NAMEKEY_INVALID;
-static GameWindow *   buttonOk       = NULL;
+static GameWindow *   buttonOk       = nullptr;
 static NameKeyType    buttonCancelID      = NAMEKEY_INVALID;
-static GameWindow *   buttonCancel       = NULL;
+static GameWindow *   buttonCancel       = nullptr;
 static NameKeyType    radioButtonEasyAIID      = NAMEKEY_INVALID;
 static NameKeyType    radioButtonMediumAIID      = NAMEKEY_INVALID;
 static NameKeyType    radioButtonHardAIID      = NAMEKEY_INVALID;
-static GameWindow *   radioButtonEasyAI       = NULL;
-static GameWindow *   radioButtonMediumAI       = NULL;
-static GameWindow *   radioButtonHardAI       = NULL;
+static GameWindow *   radioButtonEasyAI       = nullptr;
+static GameWindow *   radioButtonMediumAI       = nullptr;
+static GameWindow *   radioButtonHardAI       = nullptr;
 
 void setupGameStart(AsciiString mapName, GameDifficulty diff);
 //-----------------------------------------------------------------------------
@@ -125,19 +125,18 @@ static void SetDifficultyRadioButton( void )
 
 void DifficultySelectInit( WindowLayout *layout, void *userData )
 {
-	AsciiString parentName( "DifficultySelect.wnd:DifficultySelectParent" );
-	NameKeyType parentID = TheNameKeyGenerator->nameToKey( parentName );
-	GameWindow *parent = TheWindowManager->winGetWindowFromId( NULL, parentID );
+	NameKeyType parentID = TheNameKeyGenerator->nameToKey( "DifficultySelect.wnd:DifficultySelectParent" );
+	GameWindow *parent = TheWindowManager->winGetWindowFromId( nullptr, parentID );
 
 	buttonOkID = TheNameKeyGenerator->nameToKey( "DifficultySelect.wnd:ButtonOk" );
 	buttonOk = TheWindowManager->winGetWindowFromId( parent, buttonOkID );
 	buttonCancelID = TheNameKeyGenerator->nameToKey( "DifficultySelect.wnd:ButtonCancel" );
 	buttonCancel = TheWindowManager->winGetWindowFromId( parent, buttonCancelID );
-	radioButtonEasyAIID = TheNameKeyGenerator->nameToKey( AsciiString("DifficultySelect.wnd:RadioButtonEasy") );
+	radioButtonEasyAIID = TheNameKeyGenerator->nameToKey( "DifficultySelect.wnd:RadioButtonEasy" );
 	radioButtonEasyAI = TheWindowManager->winGetWindowFromId( parent, radioButtonEasyAIID );
-	radioButtonMediumAIID = TheNameKeyGenerator->nameToKey( AsciiString("DifficultySelect.wnd:RadioButtonMedium") );
+	radioButtonMediumAIID = TheNameKeyGenerator->nameToKey( "DifficultySelect.wnd:RadioButtonMedium" );
 	radioButtonMediumAI = TheWindowManager->winGetWindowFromId( parent, radioButtonMediumAIID );
-	radioButtonHardAIID = TheNameKeyGenerator->nameToKey( AsciiString("DifficultySelect.wnd:RadioButtonHard") );
+	radioButtonHardAIID = TheNameKeyGenerator->nameToKey( "DifficultySelect.wnd:RadioButtonHard" );
 	radioButtonHardAI = TheWindowManager->winGetWindowFromId( parent, radioButtonHardAIID );
 
 	s_AIDiff = DIFFICULTY_NORMAL;
@@ -145,7 +144,7 @@ void DifficultySelectInit( WindowLayout *layout, void *userData )
 	// set keyboard focus to main parent
 //	AsciiString parentName( "SkirmishMapSelectMenu.wnd:SkrimishMapSelectMenuParent" );
 //	NameKeyType parentID = TheNameKeyGenerator->nameToKey( parentName );
-//	parent = TheWindowManager->winGetWindowFromId( NULL, parentID );
+//	parent = TheWindowManager->winGetWindowFromId( nullptr, parentID );
 //
 //	TheWindowManager->winSetFocus( parent );
 //

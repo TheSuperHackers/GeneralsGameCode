@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __NEUTRONMISSILESlowDeathBehavior_H_
-#define __NEUTRONMISSILESlowDeathBehavior_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/SlowDeathBehavior.h"
 
@@ -112,5 +109,3 @@ protected:
 	Bool m_scorchPlaced;														///< TRUE once we've placed the scorch mark
 
 };
-
-#endif  // end __NEUTRONMISSILESlowDeathBehavior_H_

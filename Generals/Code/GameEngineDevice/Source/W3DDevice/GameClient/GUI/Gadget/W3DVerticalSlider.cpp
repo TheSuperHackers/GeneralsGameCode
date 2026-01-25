@@ -182,8 +182,8 @@ void W3DGadgetVerticalSliderImageDraw( GameWindow *window,
 	}
 
 	// sanity, we need to have these images to make it look right
-	if( topImage == NULL || bottomImage == NULL ||
-			centerImage == NULL || smallCenterImage == NULL )
+	if( topImage == nullptr || bottomImage == nullptr ||
+			centerImage == nullptr || smallCenterImage == nullptr )
 		return;
 
 	// get image sizes for the ends

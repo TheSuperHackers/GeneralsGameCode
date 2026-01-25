@@ -42,7 +42,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 //-----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Player.h"
 #include "Common/ThingTemplate.h"
@@ -64,8 +64,8 @@ void CleanupAreaPowerModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "MaxMoveDistanceFromLocation",			INI::parseReal, NULL, offsetof( CleanupAreaPowerModuleData, m_cleanupMoveRange ) },
-		{ 0, 0, 0, 0 }
+		{ "MaxMoveDistanceFromLocation",			INI::parseReal, nullptr, offsetof( CleanupAreaPowerModuleData, m_cleanupMoveRange ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 	p.add(dataFieldParse);
 

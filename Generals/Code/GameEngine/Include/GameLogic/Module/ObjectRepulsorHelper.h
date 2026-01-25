@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __ObjectRepulsorHelper_H_
-#define __ObjectRepulsorHelper_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/ObjectHelper.h"
 
@@ -58,6 +55,3 @@ public:
 	virtual UpdateSleepTime update();
 
 };
-
-
-#endif  // end __ObjectRepulsorHelper_H_

@@ -46,9 +46,6 @@
 
 #pragma once
 
-#ifndef __PROPERTIES_H_
-#define __PROPERTIES_H_
-
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
@@ -425,6 +422,3 @@ extern Color GetPropsDisabledTextColor( void );
 extern Color GetPropsDisabledTextBorderColor( void );
 extern Color GetPropsHiliteTextColor( void );
 extern Color GetPropsHiliteTextBorderColor( void );
-
-#endif // __PROPERTIES_H_
-

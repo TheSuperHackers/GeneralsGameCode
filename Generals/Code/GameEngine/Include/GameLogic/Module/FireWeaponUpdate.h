@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __FIRE_WEAPON_UPDATE_H_
-#define __FIRE_WEAPON_UPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpdateModule.h"
 #include "GameLogic/Weapon.h"
@@ -71,6 +68,3 @@ protected:
 	Weapon* m_weapon;
 
 };
-
-#endif
-

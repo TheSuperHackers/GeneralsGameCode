@@ -30,7 +30,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
@@ -45,7 +45,7 @@ void SpyVisionUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
   UpdateModuleData::buildFieldParse(p);
 	static const FieldParse dataFieldParse[] =
 	{
-		{ 0, 0, 0, 0 }
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   p.add(dataFieldParse);
 }
@@ -94,7 +94,7 @@ UpdateSleepTime SpyVisionUpdate::update( void )
 void SpyVisionUpdate::doActivationWork( Bool setting )
 {
 	Player *ourPlayer = getObject()->getControllingPlayer();
-	if( ourPlayer == NULL  ||  ThePlayerList == NULL )
+	if( ourPlayer == nullptr  ||  ThePlayerList == nullptr )
 		return;
 
 	for (Int i=0; i < ThePlayerList->getPlayerCount(); ++i)

@@ -31,10 +31,6 @@
 
 #pragma once
 
-#ifndef GETCD_H
-#define GETCD_H
-
-
 extern const char *	_CD_Volume_Label[];
 extern int		_Num_Volumes;
 
@@ -318,6 +314,3 @@ extern GetCDClass		CDList;
 // Functions
 //-----------------------------------------------------------------------------
 bool  CD_Volume_Verification ( int cd_drive, char *volume_label, char *volume_to_find );
-
-
-#endif // PLAYCD_H

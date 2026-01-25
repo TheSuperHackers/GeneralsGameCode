@@ -34,14 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef __ASSET_TYPES_H
-#define __ASSET_TYPES_H
-
 
 typedef enum
 {
@@ -59,6 +52,3 @@ typedef enum
 	TypeSound
 
 } ASSET_TYPE;
-
-
-#endif //__ASSET_TYPES_H

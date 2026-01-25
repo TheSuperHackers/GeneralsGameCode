@@ -22,7 +22,7 @@
  *                                                                                             *
  *                 Project Name : Command & Conquer                                            *
  *                                                                                             *
- *                     $Archive:: /Commando/Library/CSTRAW.CPP                                $*
+ *                     $Archive:: /Commando/Library/CSTRAW.cpp                                $*
  *                                                                                             *
  *                      $Author:: Greg_h                                                      $*
  *                                                                                             *
@@ -37,7 +37,6 @@
 
 #include	"always.h"
 #include	"cstraw.h"
-#include	<string.h>
 
 
 /***********************************************************************************************
@@ -65,7 +64,7 @@ int CacheStraw::Get(void * source, int slen)
 {
 	int total = 0;
 
-	if (Is_Valid() && source != NULL && slen > 0) {
+	if (Is_Valid() && source != nullptr && slen > 0) {
 
 		/*
 		**	Keep processing the data request until there is no more data to supply or the request

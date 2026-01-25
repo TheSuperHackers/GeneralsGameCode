@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/RandomValue.h"
 #include "Common/Xfer.h"
@@ -42,10 +42,7 @@
 LifetimeUpdate::LifetimeUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData )
 {
 	const LifetimeUpdateModuleData* d = getLifetimeUpdateModuleData();
-	// Added By Sadullah Nader
-	// Initializations needed
 	m_dieFrame = 0;
-	//
 	UnsignedInt delay;
 	if( getObject()->isKindOf( KINDOF_HULK ) && TheGameLogic->getHulkMaxLifetimeOverride() != -1 )
 	{

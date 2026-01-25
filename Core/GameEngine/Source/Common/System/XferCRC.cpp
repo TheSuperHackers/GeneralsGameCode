@@ -28,13 +28,13 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/XferCRC.h"
 #include "Common/XferDeepCRC.h"
 #include "Common/crc.h"
 #include "Common/Snapshot.h"
-#include "utility/endian_compat.h"
+#include "Utility/endian_compat.h"
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -42,10 +42,7 @@ XferCRC::XferCRC( void )
 {
 
 	m_xferMode = XFER_CRC;
-	//Added By Sadullah Nader
-	//Initialization(s) inserted
 	m_crc = 0;
-	//
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -108,7 +105,7 @@ void XferCRC::addCRC( UnsignedInt val )
 void XferCRC::xferSnapshot( Snapshot *snapshot )
 {
 
-	if( snapshot == NULL )
+	if( snapshot == nullptr )
 	{
 
 		return;
@@ -126,7 +123,7 @@ void XferCRC::xferSnapshot( Snapshot *snapshot )
 void XferCRC::xferImplementation( void *data, Int dataSize )
 {
 	const UnsignedInt *uintPtr = (const UnsignedInt *) (data);
-	dataSize *= (data != NULL);
+	dataSize *= (data != nullptr);
 
 	int dataBytes = (dataSize / 4);
 
@@ -179,7 +176,7 @@ XferDeepCRC::XferDeepCRC( void )
 {
 
 	m_xferMode = XFER_SAVE;
-	m_fileFP = NULL;
+	m_fileFP = nullptr;
 
 }
 
@@ -189,7 +186,7 @@ XferDeepCRC::~XferDeepCRC( void )
 {
 
 	// warn the user if a file was left open
-	if( m_fileFP != NULL )
+	if( m_fileFP != nullptr )
 	{
 
 		DEBUG_CRASH(( "Warning: Xfer file '%s' was left open", m_identifier.str() ));
@@ -208,7 +205,7 @@ void XferDeepCRC::open( AsciiString identifier )
 	m_xferMode = XFER_SAVE;
 
 	// sanity, check to see if we're already open
-	if( m_fileFP != NULL )
+	if( m_fileFP != nullptr )
 	{
 
 		DEBUG_CRASH(( "Cannot open file '%s' cause we've already got '%s' open",
@@ -222,7 +219,7 @@ void XferDeepCRC::open( AsciiString identifier )
 
 	// open the file
 	m_fileFP = fopen( identifier.str(), "w+b" );
-	if( m_fileFP == NULL )
+	if( m_fileFP == nullptr )
 	{
 
 		DEBUG_CRASH(( "File '%s' not found", identifier.str() ));
@@ -242,7 +239,7 @@ void XferDeepCRC::close( void )
 {
 
 	// sanity, if we don't have an open file we can do nothing
-	if( m_fileFP == NULL )
+	if( m_fileFP == nullptr )
 	{
 
 		DEBUG_CRASH(( "Xfer close called, but no file was open" ));
@@ -252,7 +249,7 @@ void XferDeepCRC::close( void )
 
 	// close the file
 	fclose( m_fileFP );
-	m_fileFP = NULL;
+	m_fileFP = nullptr;
 
 	// erase the filename
 	m_identifier.clear();
@@ -271,7 +268,7 @@ void XferDeepCRC::xferImplementation( void *data, Int dataSize )
 	}
 
 	// sanity
-	DEBUG_ASSERTCRASH( m_fileFP != NULL, ("XferSave - file pointer for '%s' is NULL",
+	DEBUG_ASSERTCRASH( m_fileFP != nullptr, ("XferSave - file pointer for '%s' is null",
 										 m_identifier.str()) );
 
 	// write data to file

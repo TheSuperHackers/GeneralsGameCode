@@ -26,7 +26,10 @@
 //
 // Debug I/O class con (console window)
 //////////////////////////////////////////////////////////////////////////////
-#include "_pch.h"
+
+#include "debug.h"
+#include "internal.h"
+#include "internal_io.h"
 #include <stdlib.h>
 #include <new>      // needed for placement new prototype
 
@@ -57,7 +60,7 @@ DebugIOCon::DebugIOCon(void):
     ci.bVisible=FALSE;
     SetConsoleCursorInfo(h,&ci);
 
-    Write(StringType::Other,NULL,"\n\nEA/Debug console open\n\n");
+    Write(StringType::Other,nullptr,"\n\nEA/Debug console open\n\n");
   }
 }
 
@@ -186,19 +189,19 @@ void DebugIOCon::Write(StringType type, const char *src, const char *str)
     return;
 
   DWORD dwDummy;
-  WriteFile(GetStdHandle(STD_OUTPUT_HANDLE),str,strlen(str),&dwDummy,NULL);
+  WriteFile(GetStdHandle(STD_OUTPUT_HANDLE),str,strlen(str),&dwDummy,nullptr);
 }
 
 void DebugIOCon::Execute(class Debug& dbg, const char *cmd, bool structuredCmd,
                          unsigned argn, const char * const * argv)
 {
-  if (!cmd||!strcmp(cmd,"help"))
+  if (!cmd||strcmp(cmd,"help") == 0)
   {
     dbg << "con I/O help:\n"
            "  add [ <width> [ <height> ] ]\n"
            "    create con I/O (optionally specifying the window size)\n";
   }
-  else if (!strcmp(cmd,"add"))
+  else if (strcmp(cmd,"add") == 0)
   {
     if (argn>0&&m_allocatedConsole)
     {

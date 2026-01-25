@@ -101,7 +101,7 @@ DECLARE_PERF_TIMER(FileSystem)
 	*/
 //===============================
 
-FileSystem	*TheFileSystem = NULL;
+FileSystem	*TheFileSystem = nullptr;
 
 //----------------------------------------------------------------------------
 //         Private Prototypes
@@ -171,26 +171,48 @@ void		FileSystem::reset( void )
 // FileSystem::open
 //============================================================================
 
-File*		FileSystem::openFile( const Char *filename, Int access, size_t bufferSize )
+File*		FileSystem::openFile( const Char *filename, Int access, size_t bufferSize, FileInstance instance )
 {
 	USE_PERF_TIMER(FileSystem)
-	File *file = NULL;
+	File *file = nullptr;
 
-	if ( TheLocalFileSystem != NULL )
+	if ( TheLocalFileSystem != nullptr )
 	{
-		file = TheLocalFileSystem->openFile( filename, access, bufferSize );
+		if (instance != 0)
+		{
+			if (TheLocalFileSystem->doesFileExist(filename))
+			{
+				--instance;
+			}
+		}
+		else
+		{
+			file = TheLocalFileSystem->openFile( filename, access, bufferSize );
 
 #if ENABLE_FILESYSTEM_EXISTENCE_CACHE
-		if (file != NULL && (file->getAccess() & File::CREATE))
-		{
-			m_fileExist[filename]=true;
-		}
+			if (file != nullptr && (file->getAccess() & File::CREATE))
+			{
+				FastCriticalSectionClass::LockClass lock(m_fileExistMutex);
+				FileExistMap::iterator it = m_fileExist.find(FileExistMap::key_type::temporary(filename));
+				if (it != m_fileExist.end())
+				{
+					++it->second.instanceExists;
+					if (it->second.instanceDoesNotExist != ~FileInstance(0))
+						++it->second.instanceDoesNotExist;
+				}
+				else
+				{
+					m_fileExist[filename];
+				}
+			}
 #endif
+		}
 	}
 
-	if ( (TheArchiveFileSystem != NULL) && (file == NULL) )
+	if ( (TheArchiveFileSystem != nullptr) && (file == nullptr) )
 	{
-		file = TheArchiveFileSystem->openFile( filename );
+		// TheSuperHackers @todo Pass 'access' here?
+		file = TheArchiveFileSystem->openFile( filename, 0, instance );
 	}
 
 	return file;
@@ -200,35 +222,59 @@ File*		FileSystem::openFile( const Char *filename, Int access, size_t bufferSize
 // FileSystem::doesFileExist
 //============================================================================
 
-Bool FileSystem::doesFileExist(const Char *filename) const
+Bool FileSystem::doesFileExist(const Char *filename, FileInstance instance) const
 {
 	USE_PERF_TIMER(FileSystem)
 
 #if ENABLE_FILESYSTEM_EXISTENCE_CACHE
 	{
-		FileExistMap::iterator i = m_fileExist.find(FileExistMap::key_type::temporary(filename));
-		if (i!=m_fileExist.end())
-			return i->second;
+		FastCriticalSectionClass::LockClass lock(m_fileExistMutex);
+		FileExistMap::const_iterator it = m_fileExist.find(FileExistMap::key_type::temporary(filename));
+		if (it != m_fileExist.end())
+		{
+			// Must test instanceDoesNotExist first!
+			if (instance >= it->second.instanceDoesNotExist)
+				return FALSE;
+			if (instance <= it->second.instanceExists)
+				return TRUE;
+		}
 	}
 #endif
 
 	if (TheLocalFileSystem->doesFileExist(filename))
 	{
+		if (instance == 0)
+		{
 #if ENABLE_FILESYSTEM_EXISTENCE_CACHE
-		m_fileExist[filename]=true;
+			{
+				FastCriticalSectionClass::LockClass lock(m_fileExistMutex);
+				m_fileExist[filename];
+			}
 #endif
-		return TRUE;
+			return TRUE;
+		}
+
+		--instance;
 	}
-	if (TheArchiveFileSystem->doesFileExist(filename))
+
+	if (TheArchiveFileSystem->doesFileExist(filename, instance))
 	{
 #if ENABLE_FILESYSTEM_EXISTENCE_CACHE
-		m_fileExist[filename]=true;
+		{
+			FastCriticalSectionClass::LockClass lock(m_fileExistMutex);
+			FileExistMap::mapped_type& value = m_fileExist[filename];
+			value.instanceExists = max(value.instanceExists, instance);
+		}
 #endif
 		return TRUE;
 	}
 
 #if ENABLE_FILESYSTEM_EXISTENCE_CACHE
-	m_fileExist[filename]=false;
+	{
+		FastCriticalSectionClass::LockClass lock(m_fileExistMutex);
+		FileExistMap::mapped_type& value = m_fileExist[filename];
+		value.instanceDoesNotExist = min(value.instanceDoesNotExist, instance);
+	}
 #endif
 	return FALSE;
 }
@@ -239,26 +285,33 @@ Bool FileSystem::doesFileExist(const Char *filename) const
 void FileSystem::getFileListInDirectory(const AsciiString& directory, const AsciiString& searchName, FilenameList &filenameList, Bool searchSubdirectories) const
 {
 	USE_PERF_TIMER(FileSystem)
-	TheLocalFileSystem->getFileListInDirectory(AsciiString(""), directory, searchName, filenameList, searchSubdirectories);
-	TheArchiveFileSystem->getFileListInDirectory(AsciiString(""), directory, searchName, filenameList, searchSubdirectories);
+	TheLocalFileSystem->getFileListInDirectory(AsciiString::TheEmptyString, directory, searchName, filenameList, searchSubdirectories);
+	TheArchiveFileSystem->getFileListInDirectory(AsciiString::TheEmptyString, directory, searchName, filenameList, searchSubdirectories);
 }
 
 //============================================================================
 // FileSystem::getFileInfo
 //============================================================================
-Bool FileSystem::getFileInfo(const AsciiString& filename, FileInfo *fileInfo) const
+Bool FileSystem::getFileInfo(const AsciiString& filename, FileInfo *fileInfo, FileInstance instance) const
 {
 	USE_PERF_TIMER(FileSystem)
-	if (fileInfo == NULL) {
+
+	// TheSuperHackers @todo Add file info cache?
+
+	if (fileInfo == nullptr) {
 		return FALSE;
 	}
 	memset(fileInfo, 0, sizeof(*fileInfo));
 
 	if (TheLocalFileSystem->getFileInfo(filename, fileInfo)) {
-		return TRUE;
+		if (instance == 0) {
+			return TRUE;
+		}
+
+		--instance;
 	}
 
-	if (TheArchiveFileSystem->getFileInfo(filename, fileInfo)) {
+	if (TheArchiveFileSystem->getFileInfo(filename, fileInfo, instance)) {
 		return TRUE;
 	}
 
@@ -271,7 +324,7 @@ Bool FileSystem::getFileInfo(const AsciiString& filename, FileInfo *fileInfo) co
 Bool FileSystem::createDirectory(AsciiString directory)
 {
 	USE_PERF_TIMER(FileSystem)
-	if (TheLocalFileSystem != NULL) {
+	if (TheLocalFileSystem != nullptr) {
 		return TheLocalFileSystem->createDirectory(directory);
 	}
 	return FALSE;
@@ -358,7 +411,7 @@ void FileSystem::unloadMusicFilesFromCD()
 //============================================================================
 // FileSystem::normalizePath
 //============================================================================
-AsciiString FileSystem::normalizePath(const AsciiString& path) const
+AsciiString FileSystem::normalizePath(const AsciiString& path)
 {
 	return TheLocalFileSystem->normalizePath(path);
 }

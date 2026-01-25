@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __LocomotorSetUpgrade_H_
-#define __LocomotorSetUpgrade_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpgradeModule.h"
 
@@ -57,7 +54,3 @@ protected:
 	virtual Bool isSubObjectsUpgrade() { return false; }
 
 };
-
-
-#endif // __LocomotorSetUpgrade_H_
-

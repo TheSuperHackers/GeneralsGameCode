@@ -73,7 +73,7 @@ void RCMenuClass::Init(RightClickMenuManager* manager, HWND hWnd, IPoint2 m)
 		/*
 		** Add the menu separator
 		*/
-		manager->AddMenu(this, MF_SEPARATOR, MENU_SEPARATOR, NULL);
+		manager->AddMenu(this, MF_SEPARATOR, MENU_SEPARATOR, nullptr);
 
 		/*
 		** Add the Name of the object

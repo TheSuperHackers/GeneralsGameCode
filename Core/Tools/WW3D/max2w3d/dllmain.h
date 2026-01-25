@@ -23,7 +23,7 @@
  *                                                                                             *
  *                 Project Name : Commando / G                                                 *
  *                                                                                             *
- *                    File Name : DLLMAIN.H                                                    *
+ *                    File Name : DLLMAIN.h                                                    *
  *                                                                                             *
  *                   Programmer : Greg Hjelstrom                                               *
  *                                                                                             *
@@ -35,9 +35,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef DLLMAIN_H
-#define DLLMAIN_H
+#pragma once
 
 #include <windows.h>
 
@@ -47,5 +45,3 @@ extern HINSTANCE AppInstance;
 #define MAX_PATH_LENGTH _MAX_PATH
 
 TCHAR * Get_String(int id);
-
-#endif /*DLLMAIN_H*/

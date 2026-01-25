@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifndef _DELIVER_PAYLOAD_AI_UPDATE_H_
-#define _DELIVER_PAYLOAD_AI_UPDATE_H_
-
 #include "Common/StateMachine.h"
 #include "GameLogic/Module/AIUpdate.h"
 #include "GameClient/RadiusDecal.h"
@@ -205,11 +202,7 @@ public:
 		m_dropOffset.zero();
 		m_dropVariance.zero();
 		m_deliveryDecalRadius = 0;
-		// Added By Sadullah Nader
-		// Initialization missing and needed
-
 		m_putInContainerName.clear();
-		// End Add
 	}
 
 	static void buildFieldParse(MultiIniFieldParse& p)
@@ -223,15 +216,15 @@ public:
 			//DO NOT ADD DATA HERE UNLESS YOU ARE SUPPORTING SCRIPTED TEAM REINFORCEMENT DELIVERY
 			//THESE DATA VALUES ARE SPECIFIED ONLY BY FACTIONUNIT.INI
 			//***********************************************************************************
-			{ "DoorDelay",								INI::parseDurationUnsignedInt,	NULL, offsetof( DeliverPayloadAIUpdateModuleData, m_doorDelay ) },
-			{ "PutInContainer",						INI::parseAsciiString,					NULL, offsetof( DeliverPayloadAIUpdateModuleData, m_putInContainerName ) },
-			{ "DeliveryDistance",					INI::parseReal,									NULL, offsetof( DeliverPayloadAIUpdateModuleData, m_maxDistanceToTarget ) },
-			{ "MaxAttempts",							INI::parseInt,									NULL, offsetof( DeliverPayloadAIUpdateModuleData, m_maxNumberAttempts ) },
-			{ "DropDelay",								INI::parseDurationUnsignedInt,	NULL, offsetof( DeliverPayloadAIUpdateModuleData, m_dropDelay ) },
-			{ "DropOffset",								INI::parseCoord3D,							NULL, offsetof( DeliverPayloadAIUpdateModuleData, m_dropOffset ) },
-			{ "DropVariance",							INI::parseCoord3D,							NULL, offsetof( DeliverPayloadAIUpdateModuleData, m_dropVariance ) },
-			{ "DeliveryDecal",						RadiusDecalTemplate::parseRadiusDecalTemplate,	NULL, offsetof( DeliverPayloadAIUpdateModuleData, m_deliveryDecalTemplate ) },
-			{ "DeliveryDecalRadius",			INI::parseReal,									NULL,	offsetof( DeliverPayloadAIUpdateModuleData, m_deliveryDecalRadius ) },
+			{ "DoorDelay",								INI::parseDurationUnsignedInt,	nullptr, offsetof( DeliverPayloadAIUpdateModuleData, m_doorDelay ) },
+			{ "PutInContainer",						INI::parseAsciiString,					nullptr, offsetof( DeliverPayloadAIUpdateModuleData, m_putInContainerName ) },
+			{ "DeliveryDistance",					INI::parseReal,									nullptr, offsetof( DeliverPayloadAIUpdateModuleData, m_maxDistanceToTarget ) },
+			{ "MaxAttempts",							INI::parseInt,									nullptr, offsetof( DeliverPayloadAIUpdateModuleData, m_maxNumberAttempts ) },
+			{ "DropDelay",								INI::parseDurationUnsignedInt,	nullptr, offsetof( DeliverPayloadAIUpdateModuleData, m_dropDelay ) },
+			{ "DropOffset",								INI::parseCoord3D,							nullptr, offsetof( DeliverPayloadAIUpdateModuleData, m_dropOffset ) },
+			{ "DropVariance",							INI::parseCoord3D,							nullptr, offsetof( DeliverPayloadAIUpdateModuleData, m_dropVariance ) },
+			{ "DeliveryDecal",						RadiusDecalTemplate::parseRadiusDecalTemplate,	nullptr, offsetof( DeliverPayloadAIUpdateModuleData, m_deliveryDecalTemplate ) },
+			{ "DeliveryDecalRadius",			INI::parseReal,									nullptr,	offsetof( DeliverPayloadAIUpdateModuleData, m_deliveryDecalRadius ) },
 			{ 0, 0, 0, 0 }
 		};
     p.add(dataFieldParse);
@@ -291,19 +284,14 @@ public:
 		m_inheritTransportVelocity = false;
 		m_isParachuteDirectly = FALSE;
 		m_exitPitchRate = 0.0f;
-		m_strafeFX = NULL;
+		m_strafeFX = nullptr;
 		m_strafeLength = 0.0f;
-		m_visiblePayloadWeaponTemplate = NULL;
+		m_visiblePayloadWeaponTemplate = nullptr;
 		m_selfDestructObject = FALSE;
 		m_deliveryDecalRadius = 0;
-		// Added By Sadullah Nader
-		// Initialization missing and needed
-
 		m_visibleDropBoneName.clear();
 		m_visiblePayloadTemplateName.clear();
 		m_visibleSubObjectName.clear();
-
-		// End Add
 	}
 
 	static const FieldParse* getFieldParse();
@@ -326,7 +314,7 @@ public:
 	const Coord3D* getTargetPos() const { return &m_targetPos; }
 	const Coord3D* getMoveToPos() const { return &m_moveToPos; }
 	UnsignedInt getDoorDelay() const { return getDeliverPayloadAIUpdateModuleData()->m_doorDelay; }
-	Bool isDeliveringPayload() const { return m_deliverPayloadStateMachine != NULL; }
+	Bool isDeliveringPayload() const { return m_deliverPayloadStateMachine != nullptr; }
 	const ThingTemplate* getPutInContainerTemplateViaModuleData() const;
 
 	Real getAllowedDistanceToTarget() const { return m_data.m_distToTarget; }
@@ -381,6 +369,3 @@ protected:
 
 
 };
-
-#endif
-

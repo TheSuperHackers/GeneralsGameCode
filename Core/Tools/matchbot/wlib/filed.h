@@ -16,8 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef FILED_HEADER
-#define FILED_HEADER
+#pragma once
 
 #include "odevice.h"
 
@@ -27,7 +26,7 @@ class FileD : public OutputDevice
    FileD(IN char *filename, IN char *mode = "w")
    {
      out=fopen(filename,mode);
-     if (out==NULL)
+     if (out==nullptr)
        out=fopen("FileDev.out",mode);
    }
 
@@ -47,5 +46,3 @@ class FileD : public OutputDevice
 
    FILE      *out;
 };
-
-#endif

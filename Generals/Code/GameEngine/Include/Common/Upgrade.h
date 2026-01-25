@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __UPGRADE_H_
-#define __UPGRADE_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "Common/AudioEventRTS.h"
 #include "Common/INI.h"
@@ -54,7 +51,9 @@ enum UpgradeStatusType CPP_11(: Int)
 };
 
 //The maximum number of upgrades.
-#define UPGRADE_MAX_COUNT 64
+// TheSuperHackers @tweak Stubbjax 22/01/2026 Increases max upgrade count from 64 to allow for more upgrades.
+// A value of 512 was chosen to allow room for plenty of upgrades while also conserving memory.
+#define UPGRADE_MAX_COUNT 512
 
 typedef BitFlags<UPGRADE_MAX_COUNT>	UpgradeMaskType;
 
@@ -175,7 +174,7 @@ public:
 	void setUpgradeNameKey( NameKeyType key ) { m_nameKey = key; }
 	NameKeyType getUpgradeNameKey( void ) const { return m_nameKey; }
 	const AsciiString& getDisplayNameLabel( void ) const { return m_displayNameLabel; }
-	UpgradeMaskType getUpgradeMask() const { return m_upgradeMask; }
+	const UpgradeMaskType& getUpgradeMask() const { return m_upgradeMask; }
 	UpgradeType getUpgradeType( void ) const { return m_type; }
 	const AudioEventRTS* getResearchCompleteSound() const { return &m_researchSound; }
 	const AudioEventRTS* getUnitSpecificSound() const { return &m_unitSpecificSound; }
@@ -235,10 +234,11 @@ public:
 	void reset( void );												///< subsystem interface
 	void update( void ) { }										///< subsystem interface
 
-	UpgradeTemplate *firstUpgradeTemplate( void );	///< return the first upgrade template
-	const UpgradeTemplate *findUpgradeByKey( NameKeyType key ) const;		///< find upgrade by name key
-	const UpgradeTemplate *findUpgrade( const AsciiString& name ) const;				///< find and return upgrade by name
-	const UpgradeTemplate *findVeterancyUpgrade(VeterancyLevel level) const;				///< find and return upgrade by name
+	UpgradeTemplate *firstUpgradeTemplate( void ); ///< return the first upgrade template
+	const UpgradeTemplate *findUpgradeByKey( NameKeyType key ) const; ///< find upgrade by name key
+	const UpgradeTemplate *findUpgrade( const AsciiString& name ) const; ///< find and return upgrade by name
+	const UpgradeTemplate *findUpgrade( const char* name ) const; ///< find and return upgrade by name
+	const UpgradeTemplate *findVeterancyUpgrade(VeterancyLevel level) const; ///< find and return upgrade by veterancy level
 
 	UpgradeTemplate *newUpgrade( const AsciiString& name );				///< allocate, link, and return new upgrade
 
@@ -263,5 +263,3 @@ protected:
 
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
 extern UpgradeCenter *TheUpgradeCenter;
-
-#endif  // end __UPGRADE_H_

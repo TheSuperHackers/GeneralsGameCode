@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __THINGFACTORY_H_
-#define __THINGFACTORY_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Lib/BaseType.h"
 
@@ -92,13 +89,13 @@ public:
 	/** request a new drawable using the given template.
 		this will throw an exception on failure; it will never return null.
 	*/
-	Drawable *newDrawable(const ThingTemplate *tmplate, DrawableStatus statusBits = DRAWABLE_STATUS_NONE );
+	Drawable *newDrawable(const ThingTemplate *tmplate, DrawableStatusBits statusBits = DRAWABLE_STATUS_DEFAULT );
 
 	static void parseObjectDefinition( INI* ini, const AsciiString& name, const AsciiString& reskinFrom );
 
 private:
 
-	/// free all template databse data
+	/// free all template database data
 	void freeDatabase( void );
 
 	void addTemplate( ThingTemplate *thing );		///< add the template to the DB
@@ -134,7 +131,3 @@ private:
 
 // EXTERN /////////////////////////////////////////////////////////////////////////////////////////
 extern ThingFactory *TheThingFactory;  ///< the template singleton
-
-
-#endif // __THINGFACTORY_H_
-

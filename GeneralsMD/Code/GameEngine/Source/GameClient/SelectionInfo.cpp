@@ -63,12 +63,8 @@ SelectionInfo::SelectionInfo() :
 { }
 
 //-------------------------------------------------------------------------------------------------
-PickDrawableStruct::PickDrawableStruct() : drawableListToFill(NULL)
+PickDrawableStruct::PickDrawableStruct() : drawableListToFill(nullptr), isPointSelection(FALSE)
 {
-	//Added By Sadullah Nader
-	//Initializations inserted
-	drawableListToFill = FALSE;
-	//
 	forceAttackMode = TheInGameUI->isInForceAttackMode();
 	UnsignedInt pickType = getPickTypesForContext(forceAttackMode);
 	translatePickTypesToKindof(pickType, kindofsToMatch);
@@ -130,10 +126,10 @@ extern Bool contextCommandForNewSelection(const DrawableList *currentlySelectedD
 		}
 	}
 
-	Drawable *newMine = NULL;
-	Drawable *newFriendly = NULL;
-	Drawable *newEnemy = NULL;
-	Drawable *newCivilian = NULL;
+	Drawable *newMine = nullptr;
+	Drawable *newFriendly = nullptr;
+	Drawable *newEnemy = nullptr;
+	Drawable *newCivilian = nullptr;
 
 	for (it = newlySelectedDrawables->begin(); it != newlySelectedDrawables->end(); ++it) {
 		if (!(*it)) {
@@ -257,7 +253,7 @@ UnsignedInt getPickTypesForContext( Bool forceAttackMode )
 	//
 	const CommandButton *command = TheInGameUI->getGUICommand();
 
-	if (command != NULL) {
+	if (command != nullptr) {
 		if (BitIsSet( command->getOptions(), ALLOW_MINE_TARGET)) {
 			types |= PICK_TYPE_MINES;
 		}
@@ -349,7 +345,7 @@ Bool addDrawableToList( Drawable *draw, void *userData )
 	if (!pds->drawableListToFill)
 		return FALSE;
 
-#if !RTS_GENERALS || !RETAIL_COMPATIBLE_BUG
+#if !RTS_GENERALS || !PRESERVE_RETAIL_BEHAVIOR
 	if (draw->getFullyObscuredByShroud())
 		return FALSE;
 
@@ -365,7 +361,7 @@ Bool addDrawableToList( Drawable *draw, void *userData )
     const Object *obj = draw->getObject();
     if ( obj && obj->getContainedBy() )//hmm, interesting... he is not selectable but he is contained
     {// What we are after here is to propagate the selection the selection ti the container
-      // if the cobtainer is non-enclosing... see also selectionxlat, in the left_click case
+      // if the container is non-enclosing... see also SelectionXlat, in the left_click case
 
       ContainModuleInterface *contain = obj->getContainedBy()->getContain();
       Drawable *containDraw = obj->getContainedBy()->getDrawable();
@@ -376,14 +372,20 @@ Bool addDrawableToList( Drawable *draw, void *userData )
       return FALSE;
   }
 
-#if !RTS_GENERALS && RETAIL_COMPATIBLE_BUG
+#if !RTS_GENERALS && PRESERVE_RETAIL_BEHAVIOR
 	// TheSuperHackers @info
 	// In retail, hidden objects such as passengers are included here when drag-selected, which causes
 	// enemy selection logic to exit early (only 1 enemy unit can be selected at a time). Some players
 	// exploit this bug to determine if a transport contains passengers and consider this an important
 	// feature and an advanced skill to pull off, so we must leave the exploit.
-	if (draw->getObject() && draw->getObject()->getContain() && draw->getObject()->getContain()->getContainCount() > 0)
-		pds->drawableListToFill->push_back(draw); // Just add the unit twice to prevent enemy selections
+	if (!pds->isPointSelection)
+	{
+		const Object *obj = draw->getObject();
+		if (obj)
+			if (obj->getControllingPlayer() != ThePlayerList->getLocalPlayer())
+				if (obj->getContain() && draw->getObject()->getContain()->getContainCount() > 0)
+					return FALSE;
+	}
 #endif
 
 	pds->drawableListToFill->push_back(draw);

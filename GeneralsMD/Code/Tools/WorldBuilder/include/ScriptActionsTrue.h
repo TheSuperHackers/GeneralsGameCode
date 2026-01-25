@@ -16,12 +16,8 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#if !defined(AFX_SCRIPTACTIONSTRUE_H__D8CAEC29_8B71_461C_B1B8_DF55624330AA__INCLUDED_)
-#define AFX_SCRIPTACTIONSTRUE_H__D8CAEC29_8B71_461C_B1B8_DF55624330AA__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
+
 // ScriptActionsTrue.h : header file
 //
 class Script;
@@ -88,5 +84,3 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_SCRIPTACTIONSTRUE_H__D8CAEC29_8B71_461C_B1B8_DF55624330AA__INCLUDED_)

@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __GAME_STATE_MAP_H_
-#define __GAME_STATE_MAP_H_
-
 // INLCUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/Snapshot.h"
 #include "Common/SubsystemInterface.h"
@@ -69,5 +66,3 @@ protected:
 
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
 extern GameStateMap *TheGameStateMap;
-
-#endif  // end __GAME_STATE_MAP_H_

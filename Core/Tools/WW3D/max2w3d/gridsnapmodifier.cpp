@@ -87,7 +87,7 @@ public:
 	// Direct paramblock access
 	int	NumParamBlocks()																	{ return 1; }
 	IParamBlock2* GetParamBlock(int i)													{ return pblock2; }
-	IParamBlock2* GetParamBlockByID(BlockID id)										{ return (pblock2->ID() == id) ? pblock2 : NULL; }
+	IParamBlock2* GetParamBlockByID(BlockID id)										{ return (pblock2->ID() == id) ? pblock2 : nullptr; }
 
 	// From simple mod
 	Deformer& GetDeformer(TimeValue t,ModContext &mc,Matrix3& mat,Matrix3& invmat);
@@ -177,7 +177,7 @@ static ParamBlockDesc2 _GridSnapParamBlockDesc
 	GSM_PARAMS,_T("GridSnap Parameters"), 0, &_GridSnapModifierDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, SIMPMOD_PBLOCKREF,
 
 	// dialog box
-	IDD_GRIDSNAP_PARAMS, IDS_GRIDSNAP_TITLE, 0, 0, NULL,
+	IDD_GRIDSNAP_PARAMS, IDS_GRIDSNAP_TITLE, 0, 0, nullptr,
 
 	// parameters
 	GSM_PARAM_GRIDDIMENSION, _T("Grid Dimension"), TYPE_FLOAT, P_RESET_DEFAULT, IDS_GRID_DIMENSION,
@@ -216,7 +216,7 @@ void GridSnapModifierClass::EndEditParams( IObjParam *ip,ULONG flags,Animatable 
 	SimpleMod2::EndEditParams(ip,flags,next);
 	_GridSnapModifierDesc.EndEditParams(ip, this, flags, next);
 
-	this->ip = NULL;
+	this->ip = nullptr;
 }
 
 RefTargetHandle GridSnapModifierClass::Clone(RemapDir& remap)
@@ -258,7 +258,7 @@ RefTargetHandle SimpleMod2::GetReference(int i)
 		case 0: return tmControl;
 		case 1: return posControl;
 		case 2: return pblock2;
-		default: return NULL;
+		default: return nullptr;
 	}
 }
 
@@ -277,6 +277,6 @@ Animatable * SimpleMod2::SubAnim(int i)
 		case 0: return posControl;
 		case 1: return tmControl;
 		case 2: return pblock2;
-		default: return NULL;
+		default: return nullptr;
 	}
 }

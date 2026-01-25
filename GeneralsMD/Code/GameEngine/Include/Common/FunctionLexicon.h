@@ -30,9 +30,6 @@
 
 #pragma once
 
-#ifndef __FUNCTIONLEXICON_H_
-#define __FUNCTIONLEXICON_H_
-
 #include "Common/SubsystemInterface.h"
 #include "Common/NameKeyGenerator.h"
 #include "Common/GameMemory.h"
@@ -87,12 +84,12 @@ public:
 	TableEntry *getTable( TableIndex index );
 
 	//
-	// !NOTE! We do NOT have a functionToName() method becuase we assume
+	// !NOTE! We do NOT have a functionToName() method because we assume
 	// that functions in the tables are unique and that there is a 1 to 1
 	// mapping of a symbol to a function address.  However, when compiling
 	// in release, functions that have the same arguments and the same
 	// body (mainly empty stub functions) get optimized to the
-	// SAME ADDRESS.  That destroyes our 1 to 1 mapping so it is something
+	// SAME ADDRESS.  That destroys our 1 to 1 mapping so it is something
 	// that we must avoid
 	//
 	// translate a function pointer to its symbolic name
@@ -149,6 +146,3 @@ inline WindowLayoutShutdownFunc FunctionLexicon::winLayoutShutdownFunc( NameKeyT
 // EXTERNALS
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 extern FunctionLexicon *TheFunctionLexicon;  ///< function dictionary external
-
-#endif // end __FUNCTIONLEXICON_H_
-

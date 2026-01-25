@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __MinefieldBEHAVIOR_H_
-#define __MinefieldBEHAVIOR_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/BehaviorModule.h"
 #include "GameLogic/Module/CollideModule.h"
@@ -145,5 +142,3 @@ private:
 	UpdateSleepTime calcSleepTime();
 
 };
-
-#endif  // end __MinefieldBEHAVIOR_H_

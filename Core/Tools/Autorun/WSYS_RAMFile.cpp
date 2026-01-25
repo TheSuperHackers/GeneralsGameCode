@@ -95,7 +95,7 @@
 
 RAMFile::RAMFile()
 : m_size(0),
-	m_data(NULL)
+	m_data(nullptr)
 {
 
 }
@@ -132,7 +132,7 @@ Bool RAMFile::open( const Char *filename, Int access )
 {
 	File *file = TheFileSystem->open( filename, access );
 
-	if ( file == NULL )
+	if ( file == nullptr )
 	{
 		return FALSE;
 	}
@@ -152,9 +152,9 @@ Bool RAMFile::open( const Char *filename, Int access )
 
 Bool RAMFile::open( File *file )
 {
-	if ( file == NULL )
+	if ( file == nullptr )
 	{
-		return NULL;
+		return FALSE;
 	}
 
 	Int access = file->getAccess();
@@ -168,7 +168,7 @@ Bool RAMFile::open( File *file )
 	m_size = file->size();
 	m_data = new char [ m_size ];
 
-	if ( m_data == NULL )
+	if ( m_data == nullptr )
 	{
 		return FALSE;
 	}
@@ -178,7 +178,7 @@ Bool RAMFile::open( File *file )
 	if ( m_size < 0 )
 	{
 		delete [] m_data;
-		m_data = NULL;
+		m_data = nullptr;
 		return FALSE;
 	}
 
@@ -199,7 +199,7 @@ Bool RAMFile::open( File *file )
 void RAMFile::close( void )
 {
 	delete [] m_data;
-	m_data = NULL;
+	m_data = nullptr;
 
 	File::close();
 }
@@ -210,7 +210,7 @@ void RAMFile::close( void )
 
 Int RAMFile::read( void *buffer, Int bytes )
 {
-	if( m_data == NULL )
+	if( m_data == nullptr )
 	{
 		return -1;
 	}

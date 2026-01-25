@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __POW_TRUCK_AI_UPDATE_H_
-#define __POW_TRUCK_AI_UPDATE_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/AIUpdate.h"
 
@@ -71,7 +68,7 @@ class POWTruckAIUpdateInterface
 
 public:
 
-	virtual void setTask( POWTruckTask task, Object *taskObject = NULL ) = 0;
+	virtual void setTask( POWTruckTask task, Object *taskObject = nullptr ) = 0;
 	virtual POWTruckTask getCurrentTask( void ) = 0;
 	virtual void loadPrisoner( Object *prisoner ) = 0;
 	virtual void unloadPrisonersToPrison( Object *prison ) = 0;
@@ -112,7 +109,7 @@ public:
 
 protected:
 
-	virtual void setTask( POWTruckTask task, Object *taskObject = NULL );		///< set our current task
+	virtual void setTask( POWTruckTask task, Object *taskObject = nullptr );		///< set our current task
 
 	enum POWTruckAIMode	// Stored in save file, do not renumber.  jba.
 	{
@@ -146,5 +143,3 @@ protected:
 };
 
 #endif
-
-#endif  // end __POW_TRUCK_AI_UPDATE_H_

@@ -26,11 +26,8 @@
 //
 // Internal header
 //////////////////////////////////////////////////////////////////////////////
-#ifdef _MSC_VER
-#  pragma once
-#endif
-#ifndef INTERNAL_H // Include guard
-#define INTERNAL_H
+
+#pragma once
 
 // make sure we're not omitting the frame pointer
 #pragma optimize("y",off)
@@ -69,7 +66,7 @@ void *DebugAllocMemory(unsigned numBytes);
   given size.
   This function performs a controlled crash on failure.
 
-  \param oldPtr pointer to old memory block, may be NULL
+  \param oldPtr pointer to old memory block, may be nullptr
   \param newSize new size of block
   \return pointer to reallocated memory
 */
@@ -97,5 +94,3 @@ public:
     DebugFreeMemory(this);
   }
 };
-
-#endif // INTERNAL_H

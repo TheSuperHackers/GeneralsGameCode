@@ -49,8 +49,8 @@
  *   LightClass::Load_W3D -- Initialize this light from a W3D file                             *
  *   LightClass::Save_W3D -- Save this light's settings into a W3D file                        *
  *   LightClass::Get_Factory -- get the PersistFactory for LightClass                          *
- *   LightClass::Save -- persistant object support                                             *
- *   LightClass::Load -- persistant object support                                             *
+ *   LightClass::Save -- persistent object support                                             *
+ *   LightClass::Load -- persistent object support                                             *
  *   LightImpClass::LightImpClass -- constructor                                               *
  *   LightImpClass::Process_Push -- exposes the "push" process for an srLight                  *
  *   LightImpClass::Process_Pop -- exposes the "pop" process for an srLight                    *
@@ -508,7 +508,7 @@ const PersistFactoryClass & LightClass::Get_Factory (void) const
 
 
 /***********************************************************************************************
- * LightClass::Save -- persistant object support                                               *
+ * LightClass::Save -- persistent object support                                               *
  *                                                                                             *
  * INPUT:                                                                                      *
  *                                                                                             *
@@ -535,7 +535,7 @@ bool LightClass::Save (ChunkSaveClass &csave)
 
 
 /***********************************************************************************************
- * LightClass::Load -- persistant object support                                               *
+ * LightClass::Load -- persistent object support                                               *
  *                                                                                             *
  * INPUT:                                                                                      *
  *                                                                                             *

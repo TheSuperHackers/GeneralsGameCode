@@ -43,12 +43,7 @@
  *   CameraClass::Get_View_Space_Frustum_Corners -- returns the corners of the view space frus *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef CAMERA_H
-#define CAMERA_H
 
 #include "always.h"
 #include "rendobj.h"
@@ -206,7 +201,7 @@ public:
 	bool								Cull_Sphere_On_Frustum_Sides(const SphereClass & sphere) const;
 	bool								Cull_Box(const AABoxClass & box) const;
 
-	// Various properties of the camera's frustum:  These funcitons return a
+	// Various properties of the camera's frustum:  These functions return a
 	// pointer to the internal storage of the descriptions.  there will be
 	// 6 frustum planes, 8 corner points, see the implementations of these
 	// functions for definitions on which points/planes are associated with
@@ -292,10 +287,10 @@ inline void	CameraClass::Set_Depth_Range(float zmin,float zmax)
 
 inline void	CameraClass::Get_Depth_Range(float * set_zmin,float * set_zmax) const
 {
-	if (set_zmin != NULL) {
+	if (set_zmin != nullptr) {
 		*set_zmin = ZBufferMin;
 	}
-	if (set_zmax != NULL) {
+	if (set_zmax != nullptr) {
 		*set_zmax = ZBufferMax;
 	}
 }
@@ -451,6 +446,3 @@ inline const Vector3 * CameraClass::Get_View_Space_Frustum_Corners(void) const
 	const FrustumClass & frustum = Get_View_Space_Frustum();
 	return frustum.Corners;
 }
-
-
-#endif

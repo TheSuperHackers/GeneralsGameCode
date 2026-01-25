@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/PerfTimer.h"
 #include "Common/ThingTemplate.h"
@@ -81,14 +81,14 @@ void CheckpointUpdate::checkForAlliesAndEnemies( void )
 		geom.setMinorRadius( m_maxMinorRadius );
 		obj->setGeometryInfo( geom );
 
-		Object *enemy, *ally = NULL;
+		Object *enemy, *ally = nullptr;
 		Real visionRange = obj->getVisionRange();
 
 		enemy = TheAI->findClosestEnemy( obj, visionRange, 0 );
-		m_enemyNear = (enemy != NULL);
+		m_enemyNear = (enemy != nullptr);
 
 		ally = TheAI->findClosestAlly( obj, visionRange, 0 );
-		m_allyNear = (ally != NULL);
+		m_allyNear = (ally != nullptr);
 
 		// here we restore the radius so that other units can path past the open gate
 		geom.setMinorRadius( restoreSpecialRadius );

@@ -35,9 +35,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef SKINDATA_H
-#define SKINDATA_H
+#pragma once
 
 #include "max.h"
 #include "namedsel.h"
@@ -157,6 +155,3 @@ public:
 	};
 
 };
-
-
-#endif

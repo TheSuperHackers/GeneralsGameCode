@@ -23,8 +23,8 @@ Process::Process()
   directory[0]=0;
   command[0]=0;
   args[0]=0;
-  hProcess=NULL;
-  hThread=NULL;
+  hProcess=nullptr;
+  hThread=nullptr;
 }
 
 // Create a process
@@ -43,7 +43,7 @@ bit8 Create_Process(Process &process)
 
     DBGMSG("PROCESS CMD="<<cmdargs<<"  DIR="<<process.directory);
 
-    retval=CreateProcess(NULL,cmdargs,NULL,NULL,FALSE, 0  ,NULL, NULL/*process.directory*/,&si,&piProcess);
+    retval=CreateProcess(nullptr,cmdargs,nullptr,nullptr,FALSE, 0  ,nullptr, nullptr/*process.directory*/,&si,&piProcess);
 
     DBGMSG("("<<retval<<") New process:  HANDLE " << (void *)piProcess.hProcess << "   ID "
       << (DWORD)piProcess.dwProcessId);
@@ -52,7 +52,7 @@ bit8 Create_Process(Process &process)
     if (retval==0)
     {
       char message_buffer[256];
-	   FormatMessage( FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), &message_buffer[0], 256, NULL );
+	   FormatMessage( FORMAT_MESSAGE_FROM_SYSTEM, nullptr, GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), &message_buffer[0], 256, nullptr );
       DBGMSG("ERR: "<<message_buffer);
     }
     process.hProcess=piProcess.hProcess;
@@ -69,14 +69,14 @@ bit8 Wait_Process(Process &process, DWORD *exit_code)
 {
   DWORD retval;
   retval=WaitForSingleObject(process.hProcess,INFINITE);
-  if (exit_code != NULL)
+  if (exit_code != nullptr)
     *exit_code=-1;
   if (retval==WAIT_OBJECT_0)  // process exited
   {
 		// MDC 1/10/2003 Inserting sleep here to let game exit before applying patch
 		Sleep(3000);
 
-    if (exit_code != NULL)
+    if (exit_code != nullptr)
       GetExitCodeProcess(process.hProcess,exit_code);
     return(TRUE);
   }
@@ -126,7 +126,7 @@ bit8 Read_Process_Info(ConfigFile &config,OUT Process &info, IN const char *key)
   bit8      found_space;
   int       i;
 
-  if ((in=fopen(config,"r"))==NULL)
+  if ((in=fopen(config,"r"))==nullptr)
     return(FALSE);
 
   while(fgets(string,256,in))

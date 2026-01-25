@@ -38,17 +38,11 @@
  *   ObjectPoolClass::Free_Object -- releases obj back into the pool                           *
  *   ObjectPoolClass::Allocate_Object_Memory -- internal function which returns memory for an  *
  *   ObjectPoolClass::Free_Object_Memory -- internal function, returns object's memory to the  *
- *   AutoPoolClass::operator new -- overriden new which calls the internal ObjectPool          *
- *   AutoPoolClass::operator delete -- overriden delete which calls the internal ObjectPool    *
+ *   AutoPoolClass::operator new -- overridden new which calls the internal ObjectPool          *
+ *   AutoPoolClass::operator delete -- overridden delete which calls the internal ObjectPool    *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef MEMPOOL_H
-#define MEMPOOL_H
 
 #include "bittype.h"
 #include "wwdebug.h"
@@ -182,8 +176,8 @@ ObjectPoolClass<T,BLOCKSIZE> AutoPoolClass<T,BLOCKSIZE>::Allocator = {}
  *=============================================================================================*/
 template<class T,int BLOCK_SIZE>
 ObjectPoolClass<T,BLOCK_SIZE>::ObjectPoolClass(void) :
-	FreeListHead(NULL),
-	BlockListHead(NULL),
+	FreeListHead(nullptr),
+	BlockListHead(nullptr),
 	FreeObjectCount(0),
 	TotalObjectCount(0)
 {
@@ -210,7 +204,7 @@ ObjectPoolClass<T,BLOCK_SIZE>::~ObjectPoolClass(void)
 
 	// delete all of the blocks we allocated
 	int block_count = 0;
-	while (BlockListHead != NULL) {
+	while (BlockListHead != nullptr) {
 		uint32 * next_block = *(uint32 **)BlockListHead;
 		::operator delete(BlockListHead);
 		BlockListHead = next_block;
@@ -284,7 +278,7 @@ T * ObjectPoolClass<T,BLOCK_SIZE>::Allocate_Object_Memory(void)
 {
 	FastCriticalSectionClass::LockClass lock(ObjectPoolCS);
 
-	if ( FreeListHead == 0 ) {
+	if ( FreeListHead == nullptr ) {
 
 		// No free objects, allocate another block
 		uint32 * tmp_block_head = BlockListHead;
@@ -297,7 +291,7 @@ T * ObjectPoolClass<T,BLOCK_SIZE>::Allocate_Object_Memory(void)
 		for ( int i = 0; i < BLOCK_SIZE; i++ ) {
 			*(T**)(&(FreeListHead[i])) = &(FreeListHead[i+1]);	// link up the elements
 		}
-		*(T**)(&(FreeListHead[BLOCK_SIZE-1])) = 0;				// Mark the end
+		*(T**)(&(FreeListHead[BLOCK_SIZE-1])) = nullptr;				// Mark the end
 
 		FreeObjectCount += BLOCK_SIZE;
 		TotalObjectCount += BLOCK_SIZE;
@@ -328,7 +322,7 @@ void ObjectPoolClass<T,BLOCK_SIZE>::Free_Object_Memory(T * obj)
 {
 	FastCriticalSectionClass::LockClass lock(ObjectPoolCS);
 
-	WWASSERT(obj != NULL);
+	WWASSERT(obj != nullptr);
 	*(T**)(obj) = FreeListHead;		// Link to the Head
 	FreeListHead = obj;					// Set the Head
 	FreeObjectCount++;
@@ -336,7 +330,7 @@ void ObjectPoolClass<T,BLOCK_SIZE>::Free_Object_Memory(T * obj)
 
 
 /***********************************************************************************************
- * AutoPoolClass::operator new -- overriden new which calls the internal ObjectPool            *
+ * AutoPoolClass::operator new -- overridden new which calls the internal ObjectPool            *
  *                                                                                             *
  * INPUT:                                                                                      *
  *                                                                                             *
@@ -356,7 +350,7 @@ void * AutoPoolClass<T,BLOCK_SIZE>::operator new( size_t size )
 
 
 /***********************************************************************************************
- * AutoPoolClass::operator delete -- overriden delete which calls the internal ObjectPool      *
+ * AutoPoolClass::operator delete -- overridden delete which calls the internal ObjectPool      *
  *                                                                                             *
  * INPUT:                                                                                      *
  *                                                                                             *
@@ -370,10 +364,6 @@ void * AutoPoolClass<T,BLOCK_SIZE>::operator new( size_t size )
 template<class T, int BLOCK_SIZE>
 void AutoPoolClass<T,BLOCK_SIZE>::operator delete( void * memory )
 {
-	if ( memory == 0 ) return;
+	if ( memory == nullptr ) return;
 	Allocator.Free_Object_Memory((T*)memory);
 }
-
-
-
-#endif // MEMPOOL_H

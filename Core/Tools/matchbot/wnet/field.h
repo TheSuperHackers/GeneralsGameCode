@@ -20,7 +20,7 @@
  *                                                                         *
  *                 Project Name : Westwood Auto Registration App           *
  *                                                                         *
- *                    File Name : FIELD.H                                  *
+ *                    File Name : FIELD.h                                  *
  *                                                                         *
  *                   Programmer : Philip W. Gorrow                         *
  *                                                                         *
@@ -34,6 +34,8 @@
  *-------------------------------------------------------------------------*
  * Functions:                                                              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
+#pragma once
 
 #define FIELD_HEADER_SIZE	(sizeof(FieldClass) - (sizeof(void *) * 2))
 

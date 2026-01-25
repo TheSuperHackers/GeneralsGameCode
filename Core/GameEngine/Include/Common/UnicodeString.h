@@ -45,12 +45,7 @@
 
 #pragma once
 
-#ifndef UNICODESTRING_H
-#define UNICODESTRING_H
-
 #include <stdarg.h>
-#include <stdio.h>
-#include <string.h>
 #include "Lib/BaseType.h"
 #include "Common/Debug.h"
 #include "Common/Errors.h"
@@ -96,13 +91,13 @@ private:
 		unsigned short	m_numCharsAllocated;  // length of data allocated
 		// WideChar m_stringdata[];
 
-		inline WideChar* peek() { return (WideChar*)(this+1); }
+		WideChar* peek() { return (WideChar*)(this+1); }
 	};
 
 	#ifdef RTS_DEBUG
 	void validate() const;
 	#else
-	inline void validate() const { }
+	void validate() const { }
 	#endif
 
 protected:
@@ -130,7 +125,7 @@ public:
 		string, so we don't need to construct temporaries
 		for such a common thing.
 	*/
-	static UnicodeString TheEmptyString;
+	static const UnicodeString TheEmptyString;
 
 	/**
 		Default constructor -- construct a new, empty UnicodeString.
@@ -257,7 +252,7 @@ public:
 	void trimEnd(void);
 
 	/**
-	  Remove all consecutive occurances of c from the end of the string.
+	  Remove all consecutive occurrences of c from the end of the string.
 	*/
 	void trimEnd(const WideChar c);
 
@@ -310,6 +305,30 @@ public:
 		Conceptually identical to _wcsicmp().
 	*/
 	int compareNoCase(const WideChar* s) const;
+
+	/**
+		return true iff self starts with the given string.
+	*/
+	Bool startsWith(const WideChar* p) const;
+	Bool startsWith(const UnicodeString& stringSrc) const { return startsWith(stringSrc.str()); }
+
+	/**
+		return true iff self starts with the given string. (case insensitive)
+	*/
+	Bool startsWithNoCase(const WideChar* p) const;
+	Bool startsWithNoCase(const UnicodeString& stringSrc) const { return startsWithNoCase(stringSrc.str()); }
+
+	/**
+		return true iff self ends with the given string.
+	*/
+	Bool endsWith(const WideChar* p) const;
+	Bool endsWith(const UnicodeString& stringSrc) const { return endsWith(stringSrc.str()); }
+
+	/**
+		return true iff self ends with the given string. (case insensitive)
+	*/
+	Bool endsWithNoCase(const WideChar* p) const;
+	Bool endsWithNoCase(const UnicodeString& stringSrc) const { return endsWithNoCase(stringSrc.str()); }
 
 	/**
 		conceptually similar to strtok():
@@ -375,7 +394,7 @@ inline int UnicodeString::getByteCount() const
 inline Bool UnicodeString::isEmpty() const
 {
 	validate();
-	return m_data == NULL || peek()[0] == 0;
+	return m_data == nullptr || peek()[0] == 0;
 }
 
 // -----------------------------------------------------
@@ -501,5 +520,3 @@ inline Bool operator>=(const UnicodeString& s1, const UnicodeString& s2)
 {
 	return wcscmp(s1.str(), s2.str()) >= 0;
 }
-
-#endif // UNICODESTRING_H

@@ -28,16 +28,10 @@
 
 #pragma once
 
-#ifndef _GAME_DISPLAY_H_
-#define _GAME_DISPLAY_H_
-
-#include <stdio.h>
 #include "Common/SubsystemInterface.h"
-#include "View.h"
 #include "GameClient/Color.h"
 #include "GameClient/GameFont.h"
-
-class View;
+#include "GameClient/View.h"
 
 struct ShroudLevel
 {
@@ -90,7 +84,7 @@ public:
 	virtual Int getDisplayModeCount(void) {return 0;}	///<return number of display modes/resolutions supported by video card.
 	virtual void getDisplayModeDescription(Int modeIndex, Int *xres, Int *yres, Int *bitDepth) {}	///<return description of mode
  	virtual void setGamma(Real gamma, Real bright, Real contrast, Bool calibrate) {};
-	virtual Bool testMinSpecRequirements(Bool *videoPassed, Bool *cpuPassed, Bool *memPassed,StaticGameLODLevel *idealVideoLevel=NULL, Real *cpuTime=NULL) {*videoPassed=*cpuPassed=*memPassed=true; return true;}
+	virtual Bool testMinSpecRequirements(Bool *videoPassed, Bool *cpuPassed, Bool *memPassed,StaticGameLODLevel *idealVideoLevel=nullptr, Real *cpuTime=nullptr) {*videoPassed=*cpuPassed=*memPassed=true; return true;}
 	virtual void doSmartAssetPurgeAndPreload(const char* usageFileName) = 0;
 #if defined(RTS_DEBUG)
 	virtual void dumpAssetUsage(const char* mapname) = 0;
@@ -104,7 +98,7 @@ public:
 	{
 		if( view )
 			return view->getNextView();
-		return NULL;
+		return nullptr;
 	}
 
 	virtual void drawViews( void );																///< Render all views of the world
@@ -159,7 +153,7 @@ public:
 	virtual Bool isMoviePlaying(void);
 
 	/// Register debug display callback
-	virtual void setDebugDisplayCallback( DebugDisplayCallback *callback, void *userData = NULL  );
+	virtual void setDebugDisplayCallback( DebugDisplayCallback *callback, void *userData = nullptr  );
 	virtual DebugDisplayCallback *getDebugDisplayCallback();
 
 	virtual void setShroudLevel(Int x, Int y, CellShroudStatus setting ) = 0;	  ///< set shroud
@@ -177,6 +171,7 @@ public:
 	virtual void toggleLetterBox(void) = 0;										///< enabled letter-boxed display
 	virtual void enableLetterBox(Bool enable) = 0;						///< forces letter-boxed display on/off
 	virtual Bool isLetterBoxFading( void ) { return FALSE; }	///< returns true while letterbox fades in/out
+	virtual Bool isLetterBoxed( void ) { return FALSE; }	//WST 10/2/2002. Added query interface
 
 	virtual void setCinematicText( AsciiString string ) { m_cinematicText = string; }
 	virtual void setCinematicFont( GameFont *font ) { m_cinematicFont = font; }
@@ -221,12 +216,10 @@ protected:
 // the singleton
 extern Display *TheDisplay;
 
-extern void StatDebugDisplay( DebugDisplayInterface *dd, void *, FILE *fp = NULL );
+extern void StatDebugDisplay( DebugDisplayInterface *dd, void *, FILE *fp = nullptr );
 
-//Added By Saad
 //Necessary for display resolution confirmation dialog box
 //Holds the previous and current display settings
-
 typedef struct _DisplaySettings
 {
 	Int xRes;  //Resolution width
@@ -234,6 +227,3 @@ typedef struct _DisplaySettings
 	Int bitDepth; //Color Depth
 	Bool windowed; //Window mode TRUE: we're windowed, FALSE: we're not windowed
 } DisplaySettings;
-
-
-#endif // _GAME_DISPLAY_H_

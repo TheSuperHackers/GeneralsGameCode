@@ -77,13 +77,13 @@ static void ConvertShortMapPathToLongMapPath(AsciiString &mapName)
 	AsciiString token;
 	AsciiString actualpath;
 
-	if ((path.find('\\') == NULL) && (path.find('/') == NULL))
+	if ((path.find('\\') == nullptr) && (path.find('/') == nullptr))
 	{
 		DEBUG_CRASH(("Invalid map name %s", mapName.str()));
 		return;
 	}
 	path.nextToken(&token, "\\/");
-	while (!token.endsWithNoCase(".map") && (token.getLength() > 0))
+	while (!token.endsWithNoCase(".map") && (!token.isEmpty()))
 	{
 		actualpath.concat(token);
 		actualpath.concat('\\');
@@ -1335,14 +1335,14 @@ static CommandLineParam paramsForEngineInit[] =
 
 char *nextParam(char *newSource, const char *seps)
 {
-	static char *source = NULL;
+	static char *source = nullptr;
 	if (newSource)
 	{
 		source = newSource;
 	}
 	if (!source)
 	{
-		return NULL;
+		return nullptr;
 	}
 
 	// find first separator
@@ -1372,15 +1372,15 @@ char *nextParam(char *newSource, const char *seps)
 			*end = 0;
 
 			if (!*source)
-				source = NULL;
+				source = nullptr;
 		}
 		else
 		{
-			source = NULL;
+			source = nullptr;
 		}
 
 		if (first && !*first)
-			first = NULL;
+			first = nullptr;
 	}
 
 	return first;
@@ -1392,10 +1392,10 @@ static void parseCommandLine(const CommandLineParam* params, int numParams)
 
 	std::string cmdLine = GetCommandLineA();
 	char *token = nextParam(&cmdLine[0], "\" ");
-	while (token != NULL)
+	while (token != nullptr)
 	{
 		argv.push_back(strtrim(token));
-		token = nextParam(NULL, "\" ");
+		token = nextParam(nullptr, "\" ");
 	}
 	int argc = argv.size();
 
@@ -1418,7 +1418,7 @@ static void parseCommandLine(const CommandLineParam* params, int numParams)
 	// and functions to handle them.  Comparisons can be case-(in)sensitive, and
 	// can check the entire string (for testing the presence of a flag) or check
 	// just the start (for a key=val argument).  The handling function can also
-	// look at the next argument(s), to accomodate multi-arg parameters, e.g. "-p 1234".
+	// look at the next argument(s), to accommodate multi-arg parameters, e.g. "-p 1234".
 	while (arg<argc)
 	{
 		// Look at arg #i
@@ -1445,7 +1445,7 @@ static void parseCommandLine(const CommandLineParam* params, int numParams)
 
 void createGlobalData()
 {
-	if (TheGlobalData == NULL)
+	if (TheGlobalData == nullptr)
 		TheWritableGlobalData = NEW GlobalData;
 }
 

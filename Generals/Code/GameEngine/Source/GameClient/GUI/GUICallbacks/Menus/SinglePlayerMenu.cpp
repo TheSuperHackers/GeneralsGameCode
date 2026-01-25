@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/GameEngine.h"
 #include "GameClient/AnimateWindowManager.h"
@@ -69,21 +69,20 @@ void SinglePlayerMenuInit( WindowLayout *layout, void *userData )
 	layout->hide( FALSE );
 
 	// set keyboard focus to main parent
-	AsciiString parentName( "SinglePlayerMenu.wnd:SinglePlayerMenuParent" );
-	NameKeyType parentID = TheNameKeyGenerator->nameToKey( parentName );
-	GameWindow *parent = TheWindowManager->winGetWindowFromId( NULL, parentID );
+	NameKeyType parentID = TheNameKeyGenerator->nameToKey( "SinglePlayerMenu.wnd:SinglePlayerMenuParent" );
+	GameWindow *parent = TheWindowManager->winGetWindowFromId( nullptr, parentID );
 	TheWindowManager->winSetFocus( parent );
 
-	NameKeyType buttonNewID = TheNameKeyGenerator->nameToKey( AsciiString("SinglePlayerMenu.wnd:ButtonNew") );
-	GameWindow *buttonNew = TheWindowManager->winGetWindowFromId( NULL, buttonNewID );
+	NameKeyType buttonNewID = TheNameKeyGenerator->nameToKey( "SinglePlayerMenu.wnd:ButtonNew" );
+	GameWindow *buttonNew = TheWindowManager->winGetWindowFromId( nullptr, buttonNewID );
 	TheShell->registerWithAnimateManager(buttonNew, WIN_ANIMATION_SLIDE_LEFT, TRUE,1);
 
-	NameKeyType buttonLoadID = TheNameKeyGenerator->nameToKey( AsciiString("SinglePlayerMenu.wnd:ButtonLoad") );
-	GameWindow *buttonLoad = TheWindowManager->winGetWindowFromId( NULL, buttonLoadID );
+	NameKeyType buttonLoadID = TheNameKeyGenerator->nameToKey( "SinglePlayerMenu.wnd:ButtonLoad" );
+	GameWindow *buttonLoad = TheWindowManager->winGetWindowFromId( nullptr, buttonLoadID );
 	TheShell->registerWithAnimateManager(buttonLoad, WIN_ANIMATION_SLIDE_LEFT, TRUE,200);
 
-	NameKeyType buttonBackID = TheNameKeyGenerator->nameToKey( AsciiString("SinglePlayerMenu.wnd:ButtonBack") );
-	GameWindow *buttonBack = TheWindowManager->winGetWindowFromId( NULL, buttonBackID );
+	NameKeyType buttonBackID = TheNameKeyGenerator->nameToKey( "SinglePlayerMenu.wnd:ButtonBack" );
+	GameWindow *buttonBack = TheWindowManager->winGetWindowFromId( nullptr, buttonBackID );
 	TheShell->registerWithAnimateManager(buttonBack, WIN_ANIMATION_SLIDE_RIGHT, TRUE,1);
 
 
@@ -155,8 +154,7 @@ WindowMsgHandledType SinglePlayerMenuInput( GameWindow *window, UnsignedInt msg,
 					//
 					if( BitIsSet( state, KEY_STATE_UP ) )
 					{
-						AsciiString buttonName( "SinglePlayerMenu.wnd:ButtonBack" );
-						NameKeyType buttonID = TheNameKeyGenerator->nameToKey( buttonName );
+						NameKeyType buttonID = TheNameKeyGenerator->nameToKey( "SinglePlayerMenu.wnd:ButtonBack" );
 						GameWindow *button = TheWindowManager->winGetWindowFromId( window, buttonID );
 
 						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,
@@ -197,9 +195,9 @@ WindowMsgHandledType SinglePlayerMenuSystem( GameWindow *window, UnsignedInt msg
 		{
 
 			// get ids for our children controls
-			buttonNew = TheNameKeyGenerator->nameToKey( AsciiString("SinglePlayerMenu.wnd:ButtonNew") );
-			buttonLoad = TheNameKeyGenerator->nameToKey( AsciiString("SinglePlayerMenu.wnd:ButtonLoad") );
-			buttonBack = TheNameKeyGenerator->nameToKey( AsciiString("SinglePlayerMenu.wnd:ButtonBack") );
+			buttonNew = TheNameKeyGenerator->nameToKey( "SinglePlayerMenu.wnd:ButtonNew" );
+			buttonLoad = TheNameKeyGenerator->nameToKey( "SinglePlayerMenu.wnd:ButtonLoad" );
+			buttonBack = TheNameKeyGenerator->nameToKey( "SinglePlayerMenu.wnd:ButtonBack" );
 
 			break;
 
@@ -237,7 +235,7 @@ WindowMsgHandledType SinglePlayerMenuSystem( GameWindow *window, UnsignedInt msg
 			{
 
 				// open up the map select menu
-				TheShell->push( AsciiString( "Menus/MapSelectMenu.wnd" ) );
+				TheShell->push( "Menus/MapSelectMenu.wnd" );
 				buttonPushed = true;
 
 			}

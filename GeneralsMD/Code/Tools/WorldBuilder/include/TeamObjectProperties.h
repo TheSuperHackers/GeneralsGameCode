@@ -21,13 +21,7 @@
 // January, 2003
 // (c) Electronic Arts 2003
 
-
-#ifndef TEAM_OBJECT_PROPERTIES_H
-#define TEAM_OBJECT_PROPERTIES_H
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
 #include "resource.h"
 
@@ -41,7 +35,7 @@ class TeamObjectProperties : public CPropertyPage
 {
 // Construction
 public:
-	TeamObjectProperties(Dict* dictToEdit = NULL);
+	TeamObjectProperties(Dict* dictToEdit = nullptr);
 	~TeamObjectProperties();
 
 // Dialog Data
@@ -110,4 +104,3 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-#endif //TEAM_OBJECT_PROPERTIES_H

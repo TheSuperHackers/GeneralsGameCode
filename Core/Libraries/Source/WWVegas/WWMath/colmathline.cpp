@@ -48,7 +48,7 @@
 
 /*
 ** Structure used in the line->box test.  There was a lot of common code between the axis-
-** aligned and oriented box tests so I package all of the truely relevant information into
+** aligned and oriented box tests so I package all of the truly relevant information into
 ** this struct and pass it into a function local to this module.  In the case of oriented
 ** boxes, the ray must be transformed into the box's coordinate system prior to the call
 ** and the normal is calculated slightly differently.

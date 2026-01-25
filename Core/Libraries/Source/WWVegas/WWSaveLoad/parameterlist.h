@@ -34,19 +34,10 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-
-
-
-#ifndef __PARAMETER_LIST_H
-#define __PARAMETER_LIST_H
 
 #include "always.h"
-#include "Vector.H"
+#include "Vector.h"
 #include "parameter.h"
 #include "wwdebug.h"
 
@@ -110,10 +101,10 @@ ParameterListClass::Add (void *data, const char *param_name, ParameterClass::Typ
 	ParameterClass *new_param = ParameterClass::Construct (type, data, param_name);
 
 	//
-	//	Add the new paramter object to our list
+	//	Add the new parameter object to our list
 	//
-	WWASSERT (new_param != NULL);
-	if (new_param != NULL) {
+	WWASSERT (new_param != nullptr);
+	if (new_param != nullptr) {
 		DynamicVectorClass<ParameterClass *>::Add (new_param);
 	}
 
@@ -127,9 +118,9 @@ inline void
 ParameterListClass::Add (ParameterClass *new_param)
 {
 	//
-	//	Add the new paramter object to our list
+	//	Add the new parameter object to our list
 	//
-	if (new_param != NULL) {
+	if (new_param != nullptr) {
 		DynamicVectorClass<ParameterClass *>::Add (new_param);
 	}
 
@@ -155,7 +146,3 @@ ParameterListClass::Free_Parameters (void)
 //	m_Parameters.Delete_All ();
 	return ;
 }
-
-
-#endif //__PARAMETER_LIST_H
-

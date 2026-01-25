@@ -42,7 +42,7 @@
 //
 //-----------------------------------------------------------------------------
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Energy.h"
 #include "Common/Player.h"
@@ -59,7 +59,7 @@ Energy::Energy()
 {
 	m_energyProduction = 0;
 	m_energyConsumption = 0;
-	m_owner = NULL;
+	m_owner = nullptr;
 	m_powerSabotagedTillFrame = 0;
 }
 
@@ -132,7 +132,7 @@ void Energy::objectEnteringInfluence( Object *obj )
 {
 
 	// sanity
-	if( obj == NULL )
+	if( obj == nullptr )
 		return;
 
 	// get the amount of energy this object produces or consumes
@@ -158,7 +158,7 @@ void Energy::objectLeavingInfluence( Object *obj )
 {
 
 	// sanity
-	if( obj == NULL )
+	if( obj == nullptr )
 		return;
 
 	// get the amount of energy this object produces or consumes
@@ -185,7 +185,7 @@ void Energy::addPowerBonus( Object *obj )
 {
 
 	// sanity
-	if( obj == NULL )
+	if( obj == nullptr )
 		return;
 
 	addProduction(obj->getTemplate()->getEnergyBonus());
@@ -204,8 +204,14 @@ void Energy::removePowerBonus( Object *obj )
 {
 
 	// sanity
-	if( obj == NULL )
+	if( obj == nullptr )
 		return;
+
+	// TheSuperHackers @bugfix Caball009 14/11/2025 Don't remove power bonus for disabled power plants.
+#if !RETAIL_COMPATIBLE_CRC
+	if ( obj->isDisabled() )
+		return;
+#endif
 
 	addProduction( -obj->getTemplate()->getEnergyBonus() );
 
@@ -224,7 +230,7 @@ void Energy::addProduction(Int amt)
 {
 	m_energyProduction += amt;
 
-	if( m_owner == NULL )
+	if( m_owner == nullptr )
 		return;
 
 	// A repeated Brownout signal does nothing bad, and we need to handle more than just edge cases.
@@ -237,7 +243,7 @@ void Energy::addConsumption(Int amt)
 {
 	m_energyConsumption += amt;
 
-	if( m_owner == NULL )
+	if( m_owner == nullptr )
 		return;
 
 	m_owner->onPowerBrownOutChange( !hasSufficientPower() );

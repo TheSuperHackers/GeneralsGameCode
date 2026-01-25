@@ -47,12 +47,13 @@
 //-----------------------------------------------------------------------------
 //         Includes
 //-----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/ActionManager.h"
 #include "Common/DiscreteCircle.h"
 #include "Common/GameEngine.h"
 #include "Common/GameState.h"
+#include "Common/GameUtility.h"
 #include "Common/MessageStream.h"
 #include "Common/NameKeyGenerator.h"
 #include "Common/PerfTimer.h"
@@ -81,7 +82,6 @@
 
 #ifdef RTS_DEBUG
 //#include "GameClient/InGameUI.h"	// for debugHints
-#include "Common/PlayerList.h"
 #endif
 
 #ifdef PM_CACHE_TERRAIN_HEIGHT
@@ -113,7 +113,7 @@ const Real HUGE_DIST_SQR = (HUGE_DIST*HUGE_DIST);
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-static PartitionContactList* TheContactList = NULL;
+static PartitionContactList* TheContactList = nullptr;
 
 //-----------------------------------------------------------------------------
 //         Local Types
@@ -206,7 +206,7 @@ inline Bool filtersAllow(PartitionFilter **filters, Object *objOther)
 		{
 			for (idx = 0; idx < MAXR; ++idx)
 			{
-				names[idx] = NULL;
+				names[idx] = nullptr;
 				rejections[idx] = 0;
 				usefulRejections[idx] = 0;
 			}
@@ -332,14 +332,14 @@ inline Real maxReal(Real a, Real b)
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-static void hLineAddLooker(Int x1, Int x2, Int y, void *playerIndexVoid);
-static void hLineRemoveLooker(Int x1, Int x2, Int y, void *playerIndexVoid);
-static void hLineAddShrouder(Int x1, Int x2, Int y, void *playerIndexVoid);
-static void hLineRemoveShrouder(Int x1, Int x2, Int y, void *playerIndexVoid);
-static void hLineAddThreat(Int x1, Int x2, Int y, void *threatValueParms);
-static void hLineRemoveThreat(Int x1, Int x2, Int y, void *threatValueParms);
-static void hLineAddValue(Int x1, Int x2, Int y, void *threatValueParms);
-static void hLineRemoveValue(Int x1, Int x2, Int y, void *threatValueParms);
+void hLineAddLooker(Int x1, Int x2, Int y, void *playerIndexVoid);
+void hLineRemoveLooker(Int x1, Int x2, Int y, void *playerIndexVoid);
+void hLineAddShrouder(Int x1, Int x2, Int y, void *playerIndexVoid);
+void hLineRemoveShrouder(Int x1, Int x2, Int y, void *playerIndexVoid);
+void hLineAddThreat(Int x1, Int x2, Int y, void *threatValueParms);
+void hLineRemoveThreat(Int x1, Int x2, Int y, void *threatValueParms);
+void hLineAddValue(Int x1, Int x2, Int y, void *threatValueParms);
+void hLineRemoveValue(Int x1, Int x2, Int y, void *threatValueParms);
 
 static void projectCoord3D(Coord3D *coord, const Coord3D *unitDir, Real dist);
 static void flipCoord3D(Coord3D *coord);
@@ -895,8 +895,8 @@ static Bool distCalcProc_BoundaryAndBoundary_3D(
 	Real maxDistSqr
 )
 {
-	const GeometryInfo* geomA = objA ? &objA->getGeometryInfo() : NULL;
-	const GeometryInfo* geomB = objB ? &objB->getGeometryInfo() : NULL;
+	const GeometryInfo* geomA = objA ? &objA->getGeometryInfo() : nullptr;
+	const GeometryInfo* geomB = objB ? &objB->getGeometryInfo() : nullptr;
 
 	// note that object positions are defined as the bottom center of the geometry,
 	// thus we must add the radius to the z coord to get the proper center of the bounding sphere.
@@ -976,7 +976,7 @@ static CollideTestProc theCollideTestProcs[] =
 //-----------------------------------------------------------------------------
 //         Public Data
 //-----------------------------------------------------------------------------
-PartitionManager *ThePartitionManager = NULL;  ///< the object manager singleton
+PartitionManager *ThePartitionManager = nullptr;  ///< the object manager singleton
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
@@ -1021,7 +1021,7 @@ public:
 	PartitionContactList()
 	{
 		memset(m_contactHash, 0, sizeof(m_contactHash));
-		m_contactList = NULL;
+		m_contactList = nullptr;
 	}
 
 	~PartitionContactList()
@@ -1118,7 +1118,7 @@ try_again:
 		goto try_again;
 	}
 
-	return NULL;
+	return nullptr;
 }
 #endif
 
@@ -1129,23 +1129,23 @@ try_again:
 //-----------------------------------------------------------------------------
 CellAndObjectIntersection::CellAndObjectIntersection()
 {
-	m_cell = NULL;
-	m_module = NULL;
-	m_prevCoi = NULL;
-	m_nextCoi = NULL;
+	m_cell = nullptr;
+	m_module = nullptr;
+	m_prevCoi = nullptr;
+	m_nextCoi = nullptr;
 }
 
 //-----------------------------------------------------------------------------
 CellAndObjectIntersection::~CellAndObjectIntersection()
 {
-	DEBUG_ASSERTCRASH(m_prevCoi == NULL && m_nextCoi == NULL, ("destroying a linked COI"));
+	DEBUG_ASSERTCRASH(m_prevCoi == nullptr && m_nextCoi == nullptr, ("destroying a linked COI"));
 	DEBUG_ASSERTCRASH(!getModule(), ("destroying an in-use COI"));
 }
 
 //-----------------------------------------------------------------------------
 void CellAndObjectIntersection::friend_addToCellList(CellAndObjectIntersection **pListHead)
 {
-	DEBUG_ASSERTCRASH(m_prevCoi == NULL && m_nextCoi == NULL && *pListHead != this, ("trying to add a cell to list, but it appears to already be in a list"));
+	DEBUG_ASSERTCRASH(m_prevCoi == nullptr && m_nextCoi == nullptr && *pListHead != this, ("trying to add a cell to list, but it appears to already be in a list"));
 
 	this->m_nextCoi = *pListHead;
 	if (*pListHead)
@@ -1157,7 +1157,7 @@ void CellAndObjectIntersection::friend_addToCellList(CellAndObjectIntersection *
 void CellAndObjectIntersection::friend_removeFromCellList(CellAndObjectIntersection **pListHead)
 {
 #define DEBUG_ASSERTINLIST(c) \
-	DEBUG_ASSERTCRASH((c)->m_prevCoi != NULL || (c)->m_nextCoi != NULL || *pListHead == (c), ("cell is not in list"));
+	DEBUG_ASSERTCRASH((c)->m_prevCoi != nullptr || (c)->m_nextCoi != nullptr || *pListHead == (c), ("cell is not in list"));
 
 	DEBUG_ASSERTINLIST(this);
 
@@ -1179,8 +1179,8 @@ void CellAndObjectIntersection::friend_removeFromCellList(CellAndObjectIntersect
 		this->m_nextCoi->m_prevCoi = this->m_prevCoi;
 	}
 
-	this->m_prevCoi = NULL;
-	this->m_nextCoi = NULL;
+	this->m_prevCoi = nullptr;
+	this->m_nextCoi = nullptr;
 
 #undef DEBUG_ASSERTINLIST
 }
@@ -1188,16 +1188,16 @@ void CellAndObjectIntersection::friend_removeFromCellList(CellAndObjectIntersect
 //-----------------------------------------------------------------------------
 void CellAndObjectIntersection::addCoverage(PartitionCell *cell, PartitionData *module)
 {
-	DEBUG_ASSERTCRASH(m_cell == NULL || m_cell == cell, ("mismatch"));
-	DEBUG_ASSERTCRASH(m_module == NULL || m_module == module, ("mismatch"));
+	DEBUG_ASSERTCRASH(m_cell == nullptr || m_cell == cell, ("mismatch"));
+	DEBUG_ASSERTCRASH(m_module == nullptr || m_module == module, ("mismatch"));
 
-	if (m_module != NULL && m_module != module)
+	if (m_module != nullptr && m_module != module)
 	{
 		DEBUG_CRASH(("COI already in use by another module!"));
 		return;
 	}
 
-	if (m_cell == NULL)
+	if (m_cell == nullptr)
 		cell->friend_addToCellList(this);
 
 	m_cell = cell;
@@ -1207,15 +1207,15 @@ void CellAndObjectIntersection::addCoverage(PartitionCell *cell, PartitionData *
 //-----------------------------------------------------------------------------
 void CellAndObjectIntersection::removeAllCoverage()
 {
-	if (m_module == NULL)
+	if (m_module == nullptr)
 	{
 		DEBUG_CRASH(("COI not in use"));
 		return;
 	}
 
 	m_cell->friend_removeFromCellList(this);
-	m_cell = NULL;
-	m_module = NULL;
+	m_cell = nullptr;
+	m_module = nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -1225,11 +1225,8 @@ void CellAndObjectIntersection::removeAllCoverage()
 //-----------------------------------------------------------------------------
 PartitionCell::PartitionCell()
 {
-	//Added By Sadullah Nader
-	//Initializations inserted
 	m_cellX = m_cellY = 0;
-	//
-	m_firstCoiInCell = NULL;
+	m_firstCoiInCell = nullptr;
 	m_coiCount = 0;
 #ifdef PM_CACHE_TERRAIN_HEIGHT
 	m_loTerrainZ = HUGE_DIST;		// huge positive
@@ -1258,7 +1255,7 @@ PartitionCell::PartitionCell()
 //-----------------------------------------------------------------------------
 PartitionCell::~PartitionCell()
 {
-	DEBUG_ASSERTCRASH(m_firstCoiInCell == NULL && m_coiCount == 0, ("destroying a nonempty PartitionCell"));
+	DEBUG_ASSERTCRASH(m_firstCoiInCell == nullptr && m_coiCount == 0, ("destroying a nonempty PartitionCell"));
 	// but don't destroy the Cois; they don't belong to us
 }
 
@@ -1293,7 +1290,7 @@ void PartitionCell::addLooker(Int playerIndex)
 		// On an edge trigger, tell all objects to think about their shroudedness
 		invalidateShroudedStatusForAllCois( playerIndex );
 
-		if( playerIndex == ThePlayerList->getLocalPlayer()->getPlayerIndex() )
+		if( playerIndex == rts::getObservedOrLocalPlayer()->getPlayerIndex() )
 		{
 			// and if this is the local player, do the Client update.
 			TheDisplay->setShroudLevel(m_cellX, m_cellY, newShroud);
@@ -1329,7 +1326,7 @@ void PartitionCell::removeLooker(Int playerIndex)
 		// On an edge trigger, tell all objects to think about their shroudedness
 		invalidateShroudedStatusForAllCois( playerIndex );
 
-		if( playerIndex == ThePlayerList->getLocalPlayer()->getPlayerIndex() )
+		if( playerIndex == rts::getObservedOrLocalPlayer()->getPlayerIndex() )
 		{
 			// and if this is the local player, do the Client update.
 			TheDisplay->setShroudLevel(m_cellX, m_cellY, newShroud);
@@ -1357,7 +1354,7 @@ void PartitionCell::addShrouder( Int playerIndex )
 		invalidateShroudedStatusForAllCois( playerIndex );
 
 		// and update the client if we are on the local player
-		if( playerIndex == ThePlayerList->getLocalPlayer()->getPlayerIndex() )
+		if( playerIndex == rts::getObservedOrLocalPlayer()->getPlayerIndex() )
 		{
 			TheDisplay->setShroudLevel(m_cellX, m_cellY, newShroud);
 			TheRadar->setShroudLevel(m_cellX, m_cellY, newShroud);
@@ -1495,9 +1492,9 @@ void PartitionCell::validateCoiList()
 	{
 		nextCoi = coi->getNextCoi();
 		DEBUG_ASSERTCRASH(coi->getPrevCoi() == prevCoi, ("coi link mismatch"));
-		DEBUG_ASSERTCRASH(prevCoi == NULL || prevCoi->getNextCoi() == coi, ("coi link mismatch"));
-		DEBUG_ASSERTCRASH((coi == getFirstCoiInCell()) == (prevCoi == NULL) , ("coi link mismatch"));
-		DEBUG_ASSERTCRASH(nextCoi == NULL || nextCoi->getPrevCoi() == coi, ("coi link mismatch"));
+		DEBUG_ASSERTCRASH(prevCoi == nullptr || prevCoi->getNextCoi() == coi, ("coi link mismatch"));
+		DEBUG_ASSERTCRASH((coi == getFirstCoiInCell()) == (prevCoi == nullptr) , ("coi link mismatch"));
+		DEBUG_ASSERTCRASH(nextCoi == nullptr || nextCoi->getPrevCoi() == coi, ("coi link mismatch"));
 	}
 }
 #endif
@@ -1546,18 +1543,18 @@ void PartitionCell::loadPostProcess( void )
 PartitionData::PartitionData()
 {
 	//DEBUG_LOG(("create pd %08lx",this));
-	m_next = NULL;
-	m_prev = NULL;
-	m_nextDirty = NULL;
-	m_prevDirty = NULL;
-	m_object = NULL;
-	m_ghostObject = NULL;
+	m_next = nullptr;
+	m_prev = nullptr;
+	m_nextDirty = nullptr;
+	m_prevDirty = nullptr;
+	m_object = nullptr;
+	m_ghostObject = nullptr;
 	m_coiArrayCount = 0;
-	m_coiArray = NULL;
+	m_coiArray = nullptr;
 	m_coiInUseCount = 0;
 	m_doneFlag = 0;
 	m_dirtyStatus = NOT_DIRTY;
-	m_lastCell = NULL;
+	m_lastCell = nullptr;
 	for (int i = 0; i < MAX_PLAYER_COUNT; ++i)
 	{
 		m_everSeenByPlayer[i] = false;
@@ -1748,7 +1745,7 @@ void PartitionData::addSubPixToCoverage(PartitionCell *cell)
 	{
 		// see if we already have a coi for this cell.
 		CellAndObjectIntersection *coi = m_coiArray;
-		CellAndObjectIntersection *coiToUse = NULL;
+		CellAndObjectIntersection *coiToUse = nullptr;
 		for (Int i = __min(m_coiInUseCount,m_coiArrayCount); i; --i, ++coi)
 		{
 			if (coi->getCell() == cell)
@@ -1757,8 +1754,8 @@ void PartitionData::addSubPixToCoverage(PartitionCell *cell)
 				break;
 			}
 		}
-		DEBUG_ASSERTCRASH(coiToUse != NULL || m_coiInUseCount < m_coiArrayCount, ("not enough cois allocated for this object"));
-		if (coiToUse == NULL && m_coiInUseCount < m_coiArrayCount)
+		DEBUG_ASSERTCRASH(coiToUse != nullptr || m_coiInUseCount < m_coiArrayCount, ("not enough cois allocated for this object"));
+		if (coiToUse == nullptr && m_coiInUseCount < m_coiArrayCount)
 		{
 			// nope, no coi for this cell, allocate a new one
 			coiToUse = &m_coiArray[m_coiInUseCount++];
@@ -2203,7 +2200,7 @@ Int PartitionData::calcMaxCoiForShape(GeometryType geom, Real majorRadius, Real 
 Int PartitionData::calcMaxCoiForObject()
 {
 	Object *obj = getObject();
-	DEBUG_ASSERTCRASH(obj != NULL, ("must be attached to an Object here 2"));
+	DEBUG_ASSERTCRASH(obj != nullptr, ("must be attached to an Object here 2"));
 
 	GeometryType geom = obj->getGeometryInfo().getGeomType();
 	Real majorRadius = obj->getGeometryInfo().getMajorRadius();
@@ -2238,7 +2235,7 @@ void PartitionData::makeDirty(Bool needToUpdateCells)
 //-----------------------------------------------------------------------------
 void PartitionData::allocCoiArray()
 {
-	DEBUG_ASSERTCRASH(m_coiArrayCount == 0 && m_coiArray == NULL, ("hmm, coi should probably be null here"));
+	DEBUG_ASSERTCRASH(m_coiArrayCount == 0 && m_coiArray == nullptr, ("hmm, coi should probably be null here"));
 	DEBUG_ASSERTCRASH(m_coiInUseCount == 0, ("hmm, coi count mismatch"));
 	m_coiArrayCount = calcMaxCoiForObject();
 	m_coiArray = MSGNEW("PartitionManager_COI") CellAndObjectIntersection[m_coiArrayCount];	// may throw!
@@ -2250,7 +2247,7 @@ void PartitionData::allocCoiArray()
 void PartitionData::freeCoiArray()
 {
 	delete [] m_coiArray;	// yes, it's OK to call this on null...
-	m_coiArray = NULL;
+	m_coiArray = nullptr;
 	m_coiArrayCount = 0;
 	m_coiInUseCount = 0;
 	makeDirty(true);
@@ -2283,7 +2280,7 @@ void PartitionData::attachToObject(Object* object)
 	//DEBUG_LOG(("attach pd for pd %08lx obj %08lx",this,m_object));
 
 	// (re)calc maxCoi and (re)alloc cois
-	DEBUG_ASSERTCRASH(m_coiArrayCount == 0 && m_coiArray == NULL, ("hmm, coi should probably be null here"));
+	DEBUG_ASSERTCRASH(m_coiArrayCount == 0 && m_coiArray == nullptr, ("hmm, coi should probably be null here"));
 	DEBUG_ASSERTCRASH(m_coiInUseCount == 0, ("hmm, coi count mismatch"));
 	freeCoiArray();
 	allocCoiArray();	// may throw!
@@ -2307,16 +2304,16 @@ void PartitionData::detachFromObject()
 		TheContactList->removeSpecificPartitionData(this);
 
 	if (m_object)
-		m_object->friend_setPartitionData(NULL);
+		m_object->friend_setPartitionData(nullptr);
 	removeAllTouchedCells();
 	freeCoiArray();
 
 	//DEBUG_LOG(("detach pd for pd %08lx obj %08lx",this,m_object));
 
 	// no longer attached to object
-	m_object = NULL;
+	m_object = nullptr;
 	TheGhostObjectManager->removeGhostObject(m_ghostObject);
-	m_ghostObject = NULL;
+	m_ghostObject = nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -2324,11 +2321,11 @@ void PartitionData::attachToGhostObject(GhostObject* object)
 {
 
 	// remember who contains us
-	m_object = NULL;	//it's only attached to a ghost object, no parent object.
+	m_object = nullptr;	//it's only attached to a ghost object, no parent object.
 	m_ghostObject = object;
 
 	// (re)calc maxCoi and (re)alloc cois
-	DEBUG_ASSERTCRASH(m_coiArrayCount == 0 && m_coiArray == NULL, ("hmm, coi should probably be null here"));
+	DEBUG_ASSERTCRASH(m_coiArrayCount == 0 && m_coiArray == nullptr, ("hmm, coi should probably be null here"));
 	DEBUG_ASSERTCRASH(m_coiInUseCount == 0, ("hmm, coi count mismatch"));
 	freeCoiArray();
 
@@ -2338,7 +2335,7 @@ void PartitionData::attachToGhostObject(GhostObject* object)
 	makeDirty(true);
 
 	if (m_ghostObject)
-		m_ghostObject->updateParentObject(NULL,this);
+		m_ghostObject->updateParentObject(nullptr,this);
 }
 
 //-----------------------------------------------------------------------------
@@ -2360,8 +2357,8 @@ void PartitionData::detachFromGhostObject(void)
 	//DEBUG_LOG(("detach pd for pd %08lx obj %08lx",this,m_object));
 
 	// no longer attached to object
-	m_object = NULL;
-	m_ghostObject = NULL;
+	m_object = nullptr;
+	m_ghostObject = nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -2388,12 +2385,12 @@ inline UnsignedInt hash2ints(Int a, Int b)
 //-----------------------------------------------------------------------------
 void PartitionContactList::addToContactList( PartitionData *obj, PartitionData *other )
 {
-	if (obj == other || obj == NULL || other == NULL)
+	if (obj == other || obj == nullptr || other == nullptr)
 		return;
 
 	Object* obj_obj = obj->getObject();
 	Object* other_obj = other->getObject();
-	if (obj_obj == NULL || other_obj == NULL)
+	if (obj_obj == nullptr || other_obj == nullptr)
 		return;
 
 	// compute hash index based on object's ids.
@@ -2481,8 +2478,8 @@ void PartitionContactList::removeSpecificPartitionData(PartitionData* data)
 	{
 		if (cd->m_obj == data || cd->m_other == data)
 		{
-			cd->m_obj = NULL;
-			cd->m_other = NULL;
+			cd->m_obj = nullptr;
+			cd->m_other = nullptr;
 		}
 	}
 }
@@ -2499,7 +2496,7 @@ void PartitionContactList::resetContactList()
 	}
 
 	memset(m_contactHash, 0, sizeof(m_contactHash));
-	m_contactList = NULL;
+	m_contactList = nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -2507,7 +2504,7 @@ void PartitionContactList::processContactList()
 {
 	for (PartitionContactListNode* cd = m_contactList; cd; cd = cd->m_next)
 	{
-		if (cd->m_obj == NULL || cd->m_other == NULL)
+		if (cd->m_obj == nullptr || cd->m_other == nullptr)
 			continue;
 
 		// we know that their partitions overlap; determine if they REALLY collide
@@ -2529,8 +2526,8 @@ void PartitionContactList::processContactList()
 		// the onCollide() calls can remove the object(s) from the partition mgr,
 		// thus destroying the partitiondata for 'em. go ahead and null these out here
 		// so we won't be tempted to use 'em (since they might be bogus).
-		cd->m_obj = NULL;
-		cd->m_other = NULL;
+		cd->m_obj = nullptr;
+		cd->m_other = nullptr;
 
 		obj->onCollide(other, &cinfo.loc, &cinfo.normal);
 		flipCoord3D(&cinfo.normal);
@@ -2550,12 +2547,12 @@ void PartitionContactList::processContactList()
 		// NOTE also that we re-get partitiondata from the object, since it might have been
 		// removed from the partition system by the onCollide call...
 		//
-		if (!obj->isDestroyed() && obj->friend_getPartitionData() != NULL && !obj->isKindOf(KINDOF_IMMOBILE))
+		if (!obj->isDestroyed() && obj->friend_getPartitionData() != nullptr && !obj->isKindOf(KINDOF_IMMOBILE))
 		{
 //DEBUG_LOG(("%d: re-dirtying collision of %s %08lx with %s %08lx",TheGameLogic->getFrame(),obj->getTemplate()->getName().str(),obj,other->getTemplate()->getName().str(),other));
 			obj->friend_getPartitionData()->makeDirty(false);
 		}
-		if (!other->isDestroyed() && other->friend_getPartitionData() != NULL && !other->isKindOf(KINDOF_IMMOBILE))
+		if (!other->isDestroyed() && other->friend_getPartitionData() != nullptr && !other->isKindOf(KINDOF_IMMOBILE))
 		{
 //DEBUG_LOG(("%d: re-dirtying collision of %s %08lx with %s %08lx [other]",TheGameLogic->getFrame(),other->getTemplate()->getName().str(),other,obj->getTemplate()->getName().str(),obj));
 			other->friend_getPartitionData()->makeDirty(false);
@@ -2570,15 +2567,15 @@ void PartitionContactList::processContactList()
 //-----------------------------------------------------------------------------
 PartitionManager::PartitionManager()
 {
-	m_moduleList = NULL;
+	m_moduleList = nullptr;
 	m_cellSize = m_cellSizeInv = 0.0f;
 	m_cellCountX = 0;
 	m_cellCountY = 0;
 	m_totalCellCount = 0;
-	m_cells = NULL;
+	m_cells = nullptr;
 	m_worldExtents.lo.zero();
 	m_worldExtents.hi.zero();
-	m_dirtyModules = NULL;
+	m_dirtyModules = nullptr;
 	m_updatedSinceLastReset = false;
 #ifdef FASTER_GCO
 	m_maxGcoRadius = 0;
@@ -2626,7 +2623,7 @@ void PartitionManager::init()
 
 	m_cellSizeInv = (Real)(1.0 / m_cellSize);
 
-	DEBUG_ASSERTCRASH(m_cells == NULL, ("double init"));
+	DEBUG_ASSERTCRASH(m_cells == nullptr, ("double init"));
 
 	if (TheTerrainLogic)
 	{
@@ -2668,7 +2665,7 @@ void PartitionManager::init()
 		m_cellCountX = 0;
 		m_cellCountY = 0;
 		m_totalCellCount = 0;
-		m_cells = NULL;
+		m_cells = nullptr;
 		m_worldExtents.lo.zero();
 		m_worldExtents.hi.zero();
 	}
@@ -2709,11 +2706,11 @@ void PartitionManager::reset()
 void PartitionManager::shutdown()
 {
 	m_updatedSinceLastReset = false;
-	ThePartitionManager->removeAllDirtyModules();
+	removeAllDirtyModules();
 
 #ifdef RTS_DEBUG
 	// the above *should* remove all the touched cells (via unRegisterObject), but let's check:
-	DEBUG_ASSERTCRASH( m_moduleList == NULL, ("hmm, modules left over"));
+	DEBUG_ASSERTCRASH( m_moduleList == nullptr, ("hmm, modules left over"));
 	PartitionData *mod, *nextMod;
 	for( mod = m_moduleList; mod; mod = nextMod )
 	{
@@ -2730,7 +2727,7 @@ void PartitionManager::shutdown()
 	resetPendingUndoShroudRevealQueue();
 
 	delete [] m_cells;
-	m_cells = NULL;
+	m_cells = nullptr;
 
 	m_cellSize = m_cellSizeInv = 0.0f;
 	m_cellCountX = 0;
@@ -2764,7 +2761,7 @@ void PartitionManager::update()
 
 			// save it.
 			PartitionData *dirty = m_dirtyModules;
-			DEBUG_ASSERTCRASH(dirty->getObject() != NULL || dirty->getGhostObject() != NULL,
+			DEBUG_ASSERTCRASH(dirty->getObject() != nullptr || dirty->getGhostObject() != nullptr,
 												("must be attached to an Object here %08lx",dirty));
 
 			// get this BEFORE removing from dirty list, since that clears the
@@ -2790,7 +2787,7 @@ void PartitionManager::update()
 #ifdef INTENSE_DEBUG
 		DEBUG_ASSERTLOG(cc==0,("updated partition info for %d objects",cc));
 #endif
-		TheContactList = NULL;
+		TheContactList = nullptr;
 
 		processPendingUndoShroudRevealQueue();
 	}
@@ -2803,7 +2800,7 @@ void PartitionManager::update()
 			Int cellCount = m_cellCountX * m_cellCountY;
 			for (int i = 0; i < cellCount; ++i)
 			{
-				UnsignedInt threat = m_cells[i].getThreatValue(ThePlayerList->getLocalPlayer()->getPlayerIndex());
+				UnsignedInt threat = m_cells[i].getThreatValue(rts::getObservedOrLocalPlayer()->getPlayerIndex());
 				if (threat > 0)
 				{
 					Real threatMul = INT_TO_REAL(threat) / TheGlobalData->m_maxDebugThreat;
@@ -2833,7 +2830,7 @@ void PartitionManager::update()
 			Int cellCount = m_cellCountX * m_cellCountY;
 			for (int i = 0; i < cellCount; ++i)
 			{
-				UnsignedInt value = m_cells[i].getCashValue(ThePlayerList->getLocalPlayer()->getPlayerIndex());
+				UnsignedInt value = m_cells[i].getCashValue(rts::getObservedOrLocalPlayer()->getPlayerIndex());
 				if (value > 0)
 				{
 					Real valueMul = INT_TO_REAL(value) / TheGlobalData->m_maxDebugValue;
@@ -2862,11 +2859,11 @@ void PartitionManager::update()
 void PartitionManager::registerObject( Object* object )
 {
 	// sanity
-	if( object == NULL )
+	if( object == nullptr )
 		return;
 
 	// if object is already part of this system get out of here
-	if( object->friend_getPartitionData() != NULL )
+	if( object->friend_getPartitionData() != nullptr )
 	{
 		DEBUG_LOG(( "Object '%s' already registered with partition manager",
 								object->getTemplate()->getName().str() ));
@@ -2877,7 +2874,7 @@ void PartitionManager::registerObject( Object* object )
 	PartitionData *mod = newInstance( PartitionData );
 
 	// link the module to the list in the partition manager
-	mod->setPrev( NULL );
+	mod->setPrev( nullptr );
 	mod->setNext( m_moduleList );
 	if( m_moduleList )
 		m_moduleList->setPrev( mod );
@@ -2892,26 +2889,26 @@ void PartitionManager::registerObject( Object* object )
 void PartitionManager::unRegisterObject( Object* object )
 {
 	// sanity
-	if( object == NULL )
+	if( object == nullptr )
 		return;
 
 	// get the partition module
 	PartitionData *mod = object->friend_getPartitionData();
-	if( mod == NULL )
+	if( mod == nullptr )
 		return;
 
 	GhostObject *ghost;
 
 	// need to figure out if any players have a fogged memory of this object.
 	// if so, we can't remove it from the shroud system just yet.
-	if ((ghost=mod->getGhostObject()) != NULL && mod->wasSeenByAnyPlayers() < MAX_PLAYER_COUNT)
+	if ((ghost=mod->getGhostObject()) != nullptr && mod->wasSeenByAnyPlayers() < MAX_PLAYER_COUNT)
 	{
 		if (TheContactList)
 			TheContactList->removeSpecificPartitionData(mod);
-		object->friend_setPartitionData(NULL);
-		mod->friend_setObject(NULL);
+		object->friend_setPartitionData(nullptr);
+		mod->friend_setObject(nullptr);
 		//Tell the ghost object that its parent is dead.
-		ghost->updateParentObject(NULL, mod);
+		ghost->updateParentObject(nullptr, mod);
 		return;
 	}
 
@@ -2937,11 +2934,11 @@ void PartitionManager::unRegisterObject( Object* object )
 void PartitionManager::registerGhostObject( GhostObject* object)
 {
 	// sanity
-	if( object == NULL )
+	if( object == nullptr )
 		return;
 
 	// if object is already part of this system get out of here
-	if( object->friend_getPartitionData() != NULL )
+	if( object->friend_getPartitionData() != nullptr )
 	{
 		DEBUG_LOG(( "GhostObject already registered with partition manager"));
 		return;
@@ -2951,7 +2948,7 @@ void PartitionManager::registerGhostObject( GhostObject* object)
 	PartitionData *mod = newInstance( PartitionData );
 
 	// link the module to the list in the partition manager
-	mod->setPrev( NULL );
+	mod->setPrev( nullptr );
 	mod->setNext( m_moduleList );
 	if( m_moduleList )
 		m_moduleList->setPrev( mod );
@@ -2965,12 +2962,12 @@ void PartitionManager::registerGhostObject( GhostObject* object)
 void PartitionManager::unRegisterGhostObject( GhostObject* object )
 {
 	// sanity
-	if( object == NULL )
+	if( object == nullptr )
 		return;
 
 	// get the partition module
 	PartitionData *mod = object->friend_getPartitionData();
-	if( mod == NULL )
+	if( mod == nullptr )
 		return;
 
 	// detach the module from the object
@@ -3057,15 +3054,21 @@ void PartitionManager::refreshShroudForLocalPlayer()
 	TheDisplay->clearShroud();
 	TheRadar->clearShroud();
 
-	Int playerIndex = ThePlayerList->getLocalPlayer()->getPlayerIndex();
-	for (int i = 0; i < m_totalCellCount; ++i)
+	if (m_totalCellCount != 0)
 	{
-		Int x = m_cells[i].getCellX();
-		Int y = m_cells[i].getCellY();
-		CellShroudStatus status = m_cells[i].getShroudStatusForPlayer(playerIndex);
-		TheDisplay->setShroudLevel(x, y, status);
-		TheRadar->setShroudLevel(x, y, status);
-		m_cells[i].invalidateShroudedStatusForAllCois(playerIndex);
+		const Int playerIndex = rts::getObservedOrLocalPlayer()->getPlayerIndex();
+		TheRadar->beginSetShroudLevel();
+
+		for (int i = 0; i < m_totalCellCount; ++i)
+		{
+			const Int x = m_cells[i].getCellX();
+			const Int y = m_cells[i].getCellY();
+			const CellShroudStatus status = m_cells[i].getShroudStatusForPlayer(playerIndex);
+			TheDisplay->setShroudLevel(x, y, status);
+			TheRadar->setShroudLevel(x, y, status);
+			m_cells[i].invalidateShroudedStatusForAllCois(playerIndex);
+		}
+		TheRadar->endSetShroudLevel();
 	}
 }
 
@@ -3084,7 +3087,7 @@ CellShroudStatus PartitionManager::getShroudStatusForPlayer(Int playerIndex, con
 {
 	Int x, y;
 
-	ThePartitionManager->worldToCell( loc->x, loc->y, &x, &y );
+	worldToCell( loc->x, loc->y, &x, &y );
 
 	return getShroudStatusForPlayer( playerIndex, x, y );
 }
@@ -3095,7 +3098,7 @@ ObjectShroudStatus PartitionManager::getPropShroudStatusForPlayer(Int playerInde
 {
 	Int x, y;
 
-	ThePartitionManager->worldToCell( loc->x - m_cellSize*0.5f, loc->y - m_cellSize*0.5f, &x, &y );
+	worldToCell( loc->x - m_cellSize*0.5f, loc->y - m_cellSize*0.5f, &x, &y );
 
 	CellShroudStatus cellStat = getShroudStatusForPlayer( playerIndex, x, y );
 	if (cellStat != getShroudStatusForPlayer( playerIndex, x+1, y )) {
@@ -3258,7 +3261,7 @@ Object *PartitionManager::getClosestObjects(
 	++theEntrancyCount;
 #endif
 
-	DEBUG_ASSERTCRASH((obj==NULL) != (pos == NULL), ("either obj or pos must be null"));
+	DEBUG_ASSERTCRASH((obj==nullptr) != (pos == nullptr), ("either obj or pos must be null"));
 
 	DistCalcProc distProc = theDistCalcProcs[dc];
 
@@ -3267,7 +3270,7 @@ Object *PartitionManager::getClosestObjects(
 	if (pos)
 	{
 		objPos = pos;
-		objToUse = NULL;
+		objToUse = nullptr;
 	}
 	else
 	{
@@ -3277,7 +3280,7 @@ Object *PartitionManager::getClosestObjects(
 	Int cellCenterX, cellCenterY;
 	worldToCell(objPos->x, objPos->y, &cellCenterX, &cellCenterY);
 
-	Object* closestObj = NULL;
+	Object* closestObj = nullptr;
 	Real closestDistSqr = maxDist * maxDist;	// if it's not closer than this, we shouldn't consider it anyway...
 	Coord3D closestVec;
 #if !RETAIL_COMPATIBLE_CRC // TheSuperHackers @info This should be safe to initialize because it is unused, but let us be extra safe for now.
@@ -3322,7 +3325,7 @@ Object *PartitionManager::getClosestObjects(
     for (OffsetVec::const_iterator it = offsets.begin(); it != offsets.end(); ++it)
 		{
 			PartitionCell* thisCell = getCellAt(cellCenterX + it->x, cellCenterY + it->y);
-			if (thisCell == NULL)
+			if (thisCell == nullptr)
 				continue;
 
 			for (CellAndObjectIntersection *thisCoi = thisCell->getFirstCoiInCell(); thisCoi; thisCoi = thisCoi->getNextCoi())
@@ -3331,7 +3334,7 @@ Object *PartitionManager::getClosestObjects(
 				Object *thisObj = thisMod->getObject();
 
 				// never compare against ourself.
-				if (thisObj == obj || thisObj == NULL)
+				if (thisObj == obj || thisObj == nullptr)
 					continue;
 
 				// since an object can exist in multiple COIs, we use this to avoid processing
@@ -3394,7 +3397,7 @@ Object *PartitionManager::getClosestObjects(
 	++theIterFlag;
 
 	PartitionCell *thisCell;
-	while ((thisCell = iter.nextNonEmpty()) != NULL)
+	while ((thisCell = iter.nextNonEmpty()) != nullptr)
 	{
 		CellAndObjectIntersection *nextCoi;
 		for (CellAndObjectIntersection *thisCoi = thisCell->getFirstCoiInCell(); thisCoi; thisCoi = nextCoi)
@@ -3485,7 +3488,7 @@ Object *PartitionManager::getClosestObject(
 	Coord3D *closestDistVec
 )
 {
-	return getClosestObjects(obj, NULL, maxDist, dc, filters, NULL, closestDist, closestDistVec);
+	return getClosestObjects(obj, nullptr, maxDist, dc, filters, nullptr, closestDist, closestDistVec);
 }
 
 //-----------------------------------------------------------------------------
@@ -3498,7 +3501,7 @@ Object *PartitionManager::getClosestObject(
 	Coord3D *closestDistVec
 )
 {
-	return getClosestObjects(NULL, pos, maxDist, dc, filters, NULL, closestDist, closestDistVec);
+	return getClosestObjects(nullptr, pos, maxDist, dc, filters, nullptr, closestDist, closestDistVec);
 }
 
 //-----------------------------------------------------------------------------
@@ -3514,7 +3517,7 @@ void PartitionManager::getVectorTo(const Object *obj, const Coord3D *pos, Distan
 {
 	DistCalcProc distProc = theDistCalcProcs[dc];
 	Real distSqr;
-	(*distProc)(obj->getPosition(), obj, pos, NULL, distSqr, vec, HUGE_DIST_SQR);
+	(*distProc)(obj->getPosition(), obj, pos, nullptr, distSqr, vec, HUGE_DIST_SQR);
 }
 
 //-----------------------------------------------------------------------------
@@ -3535,7 +3538,7 @@ Real PartitionManager::getDistanceSquared(const Object *obj, const Coord3D *pos,
 	DistCalcProc distProc = theDistCalcProcs[dc];
 	Real thisDistSqr;
 	Coord3D thisVec;
-	(*distProc)(obj->getPosition(), obj, pos, NULL, thisDistSqr, thisVec, HUGE_DIST_SQR);
+	(*distProc)(obj->getPosition(), obj, pos, nullptr, thisDistSqr, thisVec, HUGE_DIST_SQR);
 	if (vec)
 		*vec = thisVec;
 	return thisDistSqr;
@@ -3561,7 +3564,7 @@ Real PartitionManager::getGoalDistanceSquared(const Object *obj, const Coord3D *
 	DistCalcProc distProc = theDistCalcProcs[dc];
 	Real thisDistSqr;
 	Coord3D thisVec;
-	(*distProc)(goalPos, obj, otherPos, NULL, thisDistSqr, thisVec, HUGE_DIST_SQR);
+	(*distProc)(goalPos, obj, otherPos, nullptr, thisDistSqr, thisVec, HUGE_DIST_SQR);
 	if (vec)
 		*vec = thisVec;
 	return thisDistSqr;
@@ -3635,7 +3638,7 @@ SimpleObjectIterator *PartitionManager::iterateObjectsInRange(
 	SimpleObjectIterator *iter = newInstance(SimpleObjectIterator);
 	iterHolder.hold(iter);
 
-	getClosestObjects(obj, NULL, maxDist, dc, filters, iter, NULL, NULL);
+	getClosestObjects(obj, nullptr, maxDist, dc, filters, iter, nullptr, nullptr);
 
 	iter->sort(order);
 	iterHolder.release();
@@ -3655,7 +3658,7 @@ SimpleObjectIterator *PartitionManager::iterateObjectsInRange(
 	SimpleObjectIterator *iter = newInstance(SimpleObjectIterator);
 	iterHolder.hold(iter);
 
-	getClosestObjects(NULL, pos, maxDist, dc, filters, iter, NULL, NULL);
+	getClosestObjects(nullptr, pos, maxDist, dc, filters, iter, nullptr, nullptr);
 
 	iter->sort(order);
 	iterHolder.release();
@@ -3678,9 +3681,9 @@ SimpleObjectIterator* PartitionManager::iteratePotentialCollisions(
 	iterHolder.hold(iter);
 
 	PartitionFilterWouldCollide filter(*pos, geom, angle, true);
-	PartitionFilter *filters[] = { &filter, NULL };
+	PartitionFilter *filters[] = { &filter, nullptr };
 
-	getClosestObjects(NULL, pos, maxDist, use2D ? FROM_BOUNDINGSPHERE_2D : FROM_BOUNDINGSPHERE_3D, filters, iter, NULL, NULL);
+	getClosestObjects(nullptr, pos, maxDist, use2D ? FROM_BOUNDINGSPHERE_2D : FROM_BOUNDINGSPHERE_3D, filters, iter, nullptr, nullptr);
 
 	iterHolder.release();
 	return iter;
@@ -3706,7 +3709,7 @@ Bool PartitionManager::isColliding( const Object *a, const Object *b ) const
 	}
 
 	//See if the partition data collides.
-	return ad->friend_collidesWith( bd, NULL );
+	return ad->friend_collidesWith( bd, nullptr );
 }
 
 //-----------------------------------------------------------------------------
@@ -3818,7 +3821,7 @@ Bool PartitionManager::tryPosition( const Coord3D *center,
 		// very small sphere geometry around the point
 		//
 		GeometryInfo geometry( GEOMETRY_SPHERE, TRUE, 5.0f, 5.0f, 5.0f );
-		ObjectIterator *iter = ThePartitionManager->iteratePotentialCollisions( &pos, geometry, angle, true );
+		ObjectIterator *iter = iteratePotentialCollisions( &pos, geometry, angle, true );
 		MemoryPoolObjectHolder hold( iter );
 //	Bool overlap = FALSE;
 
@@ -3906,7 +3909,7 @@ Bool PartitionManager::tryPosition( const Coord3D *center,
 static Real ringSpacing = 5.0f;
 
 //-------------------------------------------------------------------------------------------------
-/** This method will attempt to find a legal postion from the center position specified,
+/** This method will attempt to find a legal position from the center position specified,
 	* at least minRadis away from it, but no more than maxRadius away.
 	*
 	* Return TRUE if position is found and that position is returned in 'result'
@@ -3919,7 +3922,7 @@ Bool PartitionManager::findPositionAround( const Coord3D *center,
 {
 
 	// sanity
-	if( center == NULL || result == NULL || options == NULL )
+	if( center == nullptr || result == nullptr || options == nullptr )
 		return FALSE;
 
 	Region3D extent;
@@ -3998,9 +4001,9 @@ Bool PartitionManager::findPositionAround( const Coord3D *center,
 void PartitionManager::doShroudReveal(Real centerX, Real centerY, Real radius, PlayerMaskType playerMask)
 {
 	Int cellCenterX, cellCenterY;
-	ThePartitionManager->worldToCell(centerX, centerY, &cellCenterX, &cellCenterY);
+	worldToCell(centerX, centerY, &cellCenterX, &cellCenterY);
 
-	Int cellRadius = ThePartitionManager->worldToCellDist(radius);
+	Int cellRadius = worldToCellDist(radius);
 	if (cellRadius < 1)
 		cellRadius = 1;
 
@@ -4065,9 +4068,9 @@ void PartitionManager::resetPendingUndoShroudRevealQueue()
 void PartitionManager::undoShroudReveal(Real centerX, Real centerY, Real radius, PlayerMaskType playerMask)
 {
 	Int cellCenterX, cellCenterY;
-	ThePartitionManager->worldToCell(centerX, centerY, &cellCenterX, &cellCenterY);
+	worldToCell(centerX, centerY, &cellCenterX, &cellCenterY);
 
-	Int cellRadius = ThePartitionManager->worldToCellDist(radius);
+	Int cellRadius = worldToCellDist(radius);
 	if (cellRadius < 1)
 		cellRadius = 1;
 
@@ -4102,9 +4105,9 @@ void PartitionManager::queueUndoShroudReveal(Real centerX, Real centerY, Real ra
 void PartitionManager::doShroudCover(Real centerX, Real centerY, Real radius, PlayerMaskType playerMask)
 {
 	Int cellCenterX, cellCenterY;
-	ThePartitionManager->worldToCell(centerX, centerY, &cellCenterX, &cellCenterY);
+	worldToCell(centerX, centerY, &cellCenterX, &cellCenterY);
 
-	Int cellRadius = ThePartitionManager->worldToCellDist(radius);
+	Int cellRadius = worldToCellDist(radius);
 	if (cellRadius < 1)
 		cellRadius = 1;
 
@@ -4126,9 +4129,9 @@ void PartitionManager::doShroudCover(Real centerX, Real centerY, Real radius, Pl
 void PartitionManager::undoShroudCover(Real centerX, Real centerY, Real radius, PlayerMaskType playerMask)
 {
 	Int cellCenterX, cellCenterY;
-	ThePartitionManager->worldToCell(centerX, centerY, &cellCenterX, &cellCenterY);
+	worldToCell(centerX, centerY, &cellCenterX, &cellCenterY);
 
-	Int cellRadius = ThePartitionManager->worldToCellDist(radius);
+	Int cellRadius = worldToCellDist(radius);
 	if (cellRadius < 1)
 		cellRadius = 1;
 
@@ -4148,11 +4151,11 @@ void PartitionManager::undoShroudCover(Real centerX, Real centerY, Real radius, 
 void PartitionManager::doThreatAffect( Real centerX, Real centerY, Real radius, UnsignedInt threatVal, PlayerMaskType playerMask)
 {
 	Int cellCenterX, cellCenterY;
-	ThePartitionManager->worldToCell(centerX, centerY, &cellCenterX, &cellCenterY);
+	worldToCell(centerX, centerY, &cellCenterX, &cellCenterY);
 	Real fCellCenterX = INT_TO_REAL(cellCenterX);
 	Real fCellCenterY = INT_TO_REAL(cellCenterY);
 
-	Int cellRadius = ThePartitionManager->worldToCellDist(radius);
+	Int cellRadius = worldToCellDist(radius);
 	if (cellRadius < 1)
 		cellRadius = 1;
 
@@ -4181,11 +4184,11 @@ void PartitionManager::doThreatAffect( Real centerX, Real centerY, Real radius, 
 void PartitionManager::undoThreatAffect( Real centerX, Real centerY, Real radius, UnsignedInt threatVal, PlayerMaskType playerMask)
 {
 	Int cellCenterX, cellCenterY;
-	ThePartitionManager->worldToCell(centerX, centerY, &cellCenterX, &cellCenterY);
+	worldToCell(centerX, centerY, &cellCenterX, &cellCenterY);
 	Real fCellCenterX = INT_TO_REAL(cellCenterX);
 	Real fCellCenterY = INT_TO_REAL(cellCenterY);
 
-	Int cellRadius = ThePartitionManager->worldToCellDist(radius);
+	Int cellRadius = worldToCellDist(radius);
 	if (cellRadius < 1)
 		cellRadius = 1;
 
@@ -4214,11 +4217,11 @@ void PartitionManager::undoThreatAffect( Real centerX, Real centerY, Real radius
 void PartitionManager::doValueAffect( Real centerX, Real centerY, Real radius, UnsignedInt valueVal, PlayerMaskType playerMask)
 {
 	Int cellCenterX, cellCenterY;
-	ThePartitionManager->worldToCell(centerX, centerY, &cellCenterX, &cellCenterY);
+	worldToCell(centerX, centerY, &cellCenterX, &cellCenterY);
 	Real fCellCenterX = INT_TO_REAL(cellCenterX);
 	Real fCellCenterY = INT_TO_REAL(cellCenterY);
 
-	Int cellRadius = ThePartitionManager->worldToCellDist(radius);
+	Int cellRadius = worldToCellDist(radius);
 	if (cellRadius < 1)
 		cellRadius = 1;
 
@@ -4247,11 +4250,11 @@ void PartitionManager::doValueAffect( Real centerX, Real centerY, Real radius, U
 void PartitionManager::undoValueAffect( Real centerX, Real centerY, Real radius, UnsignedInt valueVal, PlayerMaskType playerMask)
 {
 	Int cellCenterX, cellCenterY;
-	ThePartitionManager->worldToCell(centerX, centerY, &cellCenterX, &cellCenterY);
+	worldToCell(centerX, centerY, &cellCenterX, &cellCenterY);
 	Real fCellCenterX = INT_TO_REAL(cellCenterX);
 	Real fCellCenterY = INT_TO_REAL(cellCenterY);
 
-	Int cellRadius = ThePartitionManager->worldToCellDist(radius);
+	Int cellRadius = worldToCellDist(radius);
 	if (cellRadius < 1)
 		cellRadius = 1;
 
@@ -4415,8 +4418,8 @@ Int PartitionManager::iterateCellsAlongLine(const Coord3D& pos, const Coord3D& p
 
 	for (Int curpixel = 0; curpixel <= numpixels; curpixel++)
 	{
-		PartitionCell* cell = ThePartitionManager->getCellAt(x, y);	// might be null if off the edge
-		DEBUG_ASSERTCRASH(cell != NULL, ("off the map"));
+		PartitionCell* cell = getCellAt(x, y);	// might be null if off the edge
+		DEBUG_ASSERTCRASH(cell != nullptr, ("off the map"));
 		if (cell)
 		{
 			Int ret = (*proc)(cell, userData);
@@ -4448,7 +4451,7 @@ Int PartitionManager::iterateCellsBreadthFirst(const Coord3D *pos, CellBreadthFi
 	// -1 means error, but we should add a define later for this.
 
 	Int cellX, cellY;
-	ThePartitionManager->worldToCell(pos->x, pos->y, &cellX, &cellY);
+	worldToCell(pos->x, pos->y, &cellX, &cellY);
 
 	// Note, bool. not Bool, cause bool will cause this to be a bitfield.
 	std::vector<bool> bitField;
@@ -4563,7 +4566,7 @@ Bool PartitionManager::isClearLineOfSightTerrain(const Object* obj, const Coord3
 */
 	Real maxZ;
 	Coord2D maxZPos;
-	Bool valid = estimateTerrainExtremesAlongLine(pos, posOther, NULL, &maxZ, NULL, &maxZPos);
+	Bool valid = estimateTerrainExtremesAlongLine(pos, posOther, nullptr, &maxZ, nullptr, &maxZPos);
 	DEBUG_ASSERTCRASH(valid, ("this should never happen unless both positions are off-map"));
 	if (!valid)
 		return true;
@@ -4692,7 +4695,7 @@ void PartitionManager::xfer( Xfer *xfer )
 			// have to remove this assert, because during load there is a setTeam call for each guy on a sub-team, and that results
 			// in a queued unlook, so we actually have stuff in here at the start.  I am fairly certain that setTeam should wait
 			// until loadPostProcess, but I ain't gonna change it now.
-//			DEBUG_ASSERTCRASH(m_pendingUndoShroudReveals.size() == 0, ("At load, we appear to not be in a reset state.") );
+//			DEBUG_ASSERTCRASH(m_pendingUndoShroudReveals.empty(), ("At load, we appear to not be in a reset state.") );
 
 			// I have to split this up though, since on Load I need to make new instances.
 			for( Int infoIndex = 0; infoIndex < queueSize; infoIndex++ )
@@ -4739,7 +4742,7 @@ Real PartitionManager::getGroundOrStructureHeight(Real posx, Real posy)
 
 	// scan all objects in the radius of our extent and find the tallest height among them
 	PartitionFilterAcceptByKindOf filter1( MAKE_KINDOF_MASK( KINDOF_STRUCTURE ), KINDOFMASK_NONE );
-	PartitionFilter *filters[] = { &filter1, NULL };
+	PartitionFilter *filters[] = { &filter1, nullptr };
   Coord3D pos;
   pos.x = posx;
   pos.y = posy;
@@ -4952,7 +4955,7 @@ PartitionFilterRejectBuildings::PartitionFilterRejectBuildings(const Object *o) 
 	m_self(o),
 	m_acquireEnemies(false)
 {
-	// if I am a computer-controlled opponent, auto-aquire enemy buildings
+	// if I am a computer-controlled opponent, auto-acquire enemy buildings
 	if (m_self->getControllingPlayer()->getPlayerType() == PLAYER_COMPUTER)
 	{
 		m_acquireEnemies = true;
@@ -4974,7 +4977,7 @@ Bool PartitionFilterRejectBuildings::allow( Object *other )
 
 	// Get the controlling team of other.
 	ContainModuleInterface* contain = other->getContain();
-	const Player* otherPlayer = contain ? contain->getApparentControllingPlayer(myPlayer) : NULL;
+	const Player* otherPlayer = contain ? contain->getApparentControllingPlayer(myPlayer) : nullptr;
 
 	if (!otherPlayer)
 		otherPlayer = other->getControllingPlayer();
@@ -4986,7 +4989,7 @@ Bool PartitionFilterRejectBuildings::allow( Object *other )
 	if (relationship != ENEMIES)
 		return false;
 
-	// if I am a computer-controlled opponent, auto-aquire enemy buildings (if we can see them!)
+	// if I am a computer-controlled opponent, auto-acquire enemy buildings (if we can see them!)
 	if (m_acquireEnemies)
 		return true;
 
@@ -4996,7 +4999,7 @@ Bool PartitionFilterRejectBuildings::allow( Object *other )
 		return true;
 	}
 
-	if (other->getContain() != NULL && other->isAbleToAttack())
+	if (other->getContain() != nullptr && other->isAbleToAttack())
 	{
 		// Don't reject garrisoned buildings that can attack
 		return true;
@@ -5179,7 +5182,7 @@ Bool PartitionFilterUnmannedObject::allow( Object *other )
 //-----------------------------------------------------------------------------
 Bool PartitionFilterValidCommandButtonTarget::allow( Object *other )
 {
-	return (m_commandButton->isValidToUseOn(m_source, other, NULL, m_commandSource) == m_match);
+	return (m_commandButton->isValidToUseOn(m_source, other, nullptr, m_commandSource) == m_match);
 }
 
 //-----------------------------------------------------------------------------
@@ -5625,7 +5628,7 @@ static int cellValueProc(PartitionCell* cell, void* userData)
 }
 
 // -----------------------------------------------------------------------------
-static void hLineAddLooker(Int x1, Int x2, Int y, void *playerIndexVoid)
+void hLineAddLooker(Int x1, Int x2, Int y, void *playerIndexVoid)
 {
 	if (y < 0 || y >= ThePartitionManager->m_cellCountY || x1 >= ThePartitionManager->m_cellCountX || x2 < 0)
 		return;
@@ -5642,7 +5645,7 @@ static void hLineAddLooker(Int x1, Int x2, Int y, void *playerIndexVoid)
 }
 
 // -----------------------------------------------------------------------------
-static void hLineRemoveLooker(Int x1, Int x2, Int y, void *playerIndexVoid)
+void hLineRemoveLooker(Int x1, Int x2, Int y, void *playerIndexVoid)
 {
 	if (y < 0 || y >= ThePartitionManager->m_cellCountY || x1 >= ThePartitionManager->m_cellCountX || x2 < 0)
 		return;
@@ -5659,7 +5662,7 @@ static void hLineRemoveLooker(Int x1, Int x2, Int y, void *playerIndexVoid)
 }
 
 // -----------------------------------------------------------------------------
-static void hLineAddShrouder(Int x1, Int x2, Int y, void *playerIndexVoid)
+void hLineAddShrouder(Int x1, Int x2, Int y, void *playerIndexVoid)
 {
 	if (y < 0 || y >= ThePartitionManager->m_cellCountY || x1 >= ThePartitionManager->m_cellCountX || x2 < 0)
 		return;
@@ -5676,7 +5679,7 @@ static void hLineAddShrouder(Int x1, Int x2, Int y, void *playerIndexVoid)
 }
 
 // -----------------------------------------------------------------------------
-static void hLineRemoveShrouder(Int x1, Int x2, Int y, void *playerIndexVoid)
+void hLineRemoveShrouder(Int x1, Int x2, Int y, void *playerIndexVoid)
 {
 	if (y < 0 || y >= ThePartitionManager->m_cellCountY || x1 >= ThePartitionManager->m_cellCountX || x2 < 0)
 		return;
@@ -5693,7 +5696,7 @@ static void hLineRemoveShrouder(Int x1, Int x2, Int y, void *playerIndexVoid)
 }
 
 // -----------------------------------------------------------------------------
-static void hLineAddThreat(Int x1, Int x2, Int y, void *threatValueParms)
+void hLineAddThreat(Int x1, Int x2, Int y, void *threatValueParms)
 {
 	if (y < 0 || y >= ThePartitionManager->m_cellCountY || x1 >= ThePartitionManager->m_cellCountX || x2 < 0)
 		return;
@@ -5721,7 +5724,7 @@ static void hLineAddThreat(Int x1, Int x2, Int y, void *threatValueParms)
 }
 
 // -----------------------------------------------------------------------------
-static void hLineRemoveThreat(Int x1, Int x2, Int y, void *threatValueParms)
+void hLineRemoveThreat(Int x1, Int x2, Int y, void *threatValueParms)
 {
 	if (y < 0 || y >= ThePartitionManager->m_cellCountY || x1 >= ThePartitionManager->m_cellCountX || x2 < 0)
 		return;
@@ -5749,7 +5752,7 @@ static void hLineRemoveThreat(Int x1, Int x2, Int y, void *threatValueParms)
 }
 
 // -----------------------------------------------------------------------------
-static void hLineAddValue(Int x1, Int x2, Int y, void *threatValueParms)
+void hLineAddValue(Int x1, Int x2, Int y, void *threatValueParms)
 {
 	if (y < 0 || y >= ThePartitionManager->m_cellCountY || x1 >= ThePartitionManager->m_cellCountX || x2 < 0)
 		return;
@@ -5777,7 +5780,7 @@ static void hLineAddValue(Int x1, Int x2, Int y, void *threatValueParms)
 }
 
 // -----------------------------------------------------------------------------
-static void hLineRemoveValue(Int x1, Int x2, Int y, void *threatValueParms)
+void hLineRemoveValue(Int x1, Int x2, Int y, void *threatValueParms)
 {
 	if (y < 0 || y >= ThePartitionManager->m_cellCountY || x1 >= ThePartitionManager->m_cellCountX || x2 < 0)
 		return;

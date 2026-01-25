@@ -27,11 +27,11 @@
 // Desc:      High level representation of images, this is currently being
 //						written so we have a way to refer to images in the windows
 //						GUI, this system should be replaced with something that can
-//						handle real image management or written to accomodate
+//						handle real image management or written to accommodate
 //						all parts of the engine that need images.
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #define DEFINE_IMAGE_STATUS_NAMES
 #include "Lib/BaseType.h"
@@ -45,13 +45,13 @@
 const FieldParse Image::m_imageFieldParseTable[] =
 {
 
-	{ "Texture",				INI::parseAsciiString,							NULL, 		offsetof( Image, m_filename ) },
-	{ "TextureWidth",		INI::parseInt,											NULL, 		offsetof( Image, m_textureSize.x ) },
-	{ "TextureHeight",	INI::parseInt,											NULL, 		offsetof( Image, m_textureSize.y ) },
-	{ "Coords",					Image::parseImageCoords,						NULL, 		offsetof( Image, m_UVCoords ) },
-	{ "Status",					Image::parseImageStatus,						NULL, 		offsetof( Image, m_status ) },
+	{ "Texture",				INI::parseAsciiString,							nullptr, 		offsetof( Image, m_filename ) },
+	{ "TextureWidth",		INI::parseInt,											nullptr, 		offsetof( Image, m_textureSize.x ) },
+	{ "TextureHeight",	INI::parseInt,											nullptr, 		offsetof( Image, m_textureSize.y ) },
+	{ "Coords",					Image::parseImageCoords,						nullptr, 		offsetof( Image, m_UVCoords ) },
+	{ "Status",					Image::parseImageStatus,						nullptr, 		offsetof( Image, m_status ) },
 
-	{ NULL,							NULL,																NULL, 		0 }
+	{ nullptr,							nullptr,																nullptr, 		0 }
 
 };
 
@@ -134,7 +134,7 @@ void Image::parseImageStatus( INI* ini, void *instance, void *store, const void*
 }
 
 // PUBLIC DATA ////////////////////////////////////////////////////////////////////////////////////
-ImageCollection *TheMappedImageCollection = NULL;  ///< mapped images
+ImageCollection *TheMappedImageCollection = nullptr;  ///< mapped images
 
 // PUBLIC FUNCTIONS////////////////////////////////////////////////////////////////////////////////
 //-------------------------------------------------------------------------------------------------
@@ -152,7 +152,7 @@ Image::Image( void )
 	m_UVCoords.hi.y = 1.0f;
 	m_imageSize.x = 0;
 	m_imageSize.y = 0;
-	m_rawTextureData = NULL;
+	m_rawTextureData = nullptr;
 	m_status = IMAGE_STATUS_NONE;
 
 }
@@ -204,7 +204,7 @@ ImageCollection::ImageCollection( void )
 //-------------------------------------------------------------------------------------------------
 ImageCollection::~ImageCollection( void )
 {
-  for (std::map<unsigned,Image *>::iterator i=m_imageMap.begin();i!=m_imageMap.end();++i)
+  for (ImageMap::iterator i=m_imageMap.begin();i!=m_imageMap.end();++i)
     deleteInstance(i->second);
 }
 
@@ -217,12 +217,26 @@ void ImageCollection::addImage( Image *image )
 }
 
 //-------------------------------------------------------------------------------------------------
+const Image *ImageCollection::findImage( NameKeyType namekey ) const
+{
+	ImageMap::const_iterator i = m_imageMap.find(namekey);
+	return i == m_imageMap.end() ? nullptr : i->second;
+}
+
+//-------------------------------------------------------------------------------------------------
 /** Find an image given the image name */
 //-------------------------------------------------------------------------------------------------
-const Image *ImageCollection::findImageByName( const AsciiString& name )
+const Image *ImageCollection::findImageByName( const AsciiString& name ) const
 {
-  std::map<unsigned,Image *>::iterator i=m_imageMap.find(TheNameKeyGenerator->nameToLowercaseKey(name));
-  return i==m_imageMap.end()?NULL:i->second;
+	return findImage(TheNameKeyGenerator->nameToLowercaseKey(name));
+}
+
+//-------------------------------------------------------------------------------------------------
+/** Find an image given the image name */
+//-------------------------------------------------------------------------------------------------
+const Image *ImageCollection::findImageByName( const char* name ) const
+{
+	return findImage(TheNameKeyGenerator->nameToLowercaseKey(name));
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -242,7 +256,7 @@ void ImageCollection::load( Int textureSize )
 		if(FindFirstFile(userDataPath.str(), &findData) !=INVALID_HANDLE_VALUE)
 		{
 			userDataPath.format("%sINI\\MappedImages",TheGlobalData->getPath_UserData().str());
-			ini.loadDirectory(userDataPath, INI_LOAD_OVERWRITE, NULL );
+			ini.loadDirectory(userDataPath, INI_LOAD_OVERWRITE, nullptr );
 		}
 	}
 
@@ -251,9 +265,9 @@ void ImageCollection::load( Int textureSize )
 
 	// load all the ine files in that directory
 
-	ini.loadDirectory( AsciiString( buffer ), INI_LOAD_OVERWRITE, NULL );
+	ini.loadDirectory( AsciiString( buffer ), INI_LOAD_OVERWRITE, nullptr );
 
-	ini.loadDirectory("Data\\INI\\MappedImages\\HandCreated", INI_LOAD_OVERWRITE, NULL );
+	ini.loadDirectory("Data\\INI\\MappedImages\\HandCreated", INI_LOAD_OVERWRITE, nullptr );
 
 
 }

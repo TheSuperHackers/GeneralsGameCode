@@ -37,15 +37,9 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef AABTREE_H
-#define AABTREE_H
 
 #include "always.h"
-#include "refcount.h"
 #include "simplevec.h"
 #include "vector3.h"
 #include "Vector3i.h"
@@ -230,7 +224,7 @@ inline int AABTreeClass::Compute_Ram_Size(void)
 
 inline bool AABTreeClass::Cast_Ray(RayCollisionTestClass & raytest)
 {
-	WWASSERT(Nodes != NULL);
+	WWASSERT(Nodes != nullptr);
 	return Cast_Ray_Recursive(&(Nodes[0]),raytest);
 }
 
@@ -247,7 +241,7 @@ inline int AABTreeClass::Cast_Semi_Infinite_Axis_Aligned_Ray(const Vector3 & sta
 	static const int axis_1[6] =		{ 1, 1, 2, 2, 0, 0 };
 	static const int axis_2[6] =		{ 2, 2, 0, 0, 1, 1 };
 	static const int direction[6] =	{ 1, 0, 1, 0, 1, 0 };
-	WWASSERT(Nodes != NULL);
+	WWASSERT(Nodes != nullptr);
 	WWASSERT(axis_dir >= 0);
 	WWASSERT(axis_dir < 6);
 
@@ -261,25 +255,25 @@ inline int AABTreeClass::Cast_Semi_Infinite_Axis_Aligned_Ray(const Vector3 & sta
 
 inline bool AABTreeClass::Cast_AABox(AABoxCollisionTestClass & boxtest)
 {
-	WWASSERT(Nodes != NULL);
+	WWASSERT(Nodes != nullptr);
 	return Cast_AABox_Recursive(&(Nodes[0]),boxtest);
 }
 
 inline bool AABTreeClass::Cast_OBBox(OBBoxCollisionTestClass & boxtest)
 {
-	WWASSERT(Nodes != NULL);
+	WWASSERT(Nodes != nullptr);
 	return Cast_OBBox_Recursive(&(Nodes[0]),boxtest);
 }
 
 inline bool AABTreeClass::Intersect_OBBox(OBBoxIntersectionTestClass & boxtest)
 {
-	WWASSERT(Nodes != NULL);
+	WWASSERT(Nodes != nullptr);
 	return Intersect_OBBox_Recursive(&(Nodes[0]),boxtest);
 }
 
 inline void AABTreeClass::Update_Bounding_Boxes(void)
 {
-	WWASSERT(Nodes != NULL);
+	WWASSERT(Nodes != nullptr);
 	Update_Bounding_Boxes_Recursive(&(Nodes[0]));
 }
 
@@ -350,5 +344,3 @@ inline void AABTreeClass::CullNodeStruct::Set_Poly_Count(uint32 count)
 	WWASSERT(count < 0x7FFFFFFF);
 	BackOrPolyCount = count;
 }
-
-#endif

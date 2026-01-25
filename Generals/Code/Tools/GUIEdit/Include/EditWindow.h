@@ -45,9 +45,6 @@
 
 #pragma once
 
-#ifndef __EDITWINDOW_H_
-#define __EDITWINDOW_H_
-
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 #include <stdlib.h>
 #include <windows.h>
@@ -203,6 +200,3 @@ inline ICoord2D EditWindow::getDragMoveOrigin( void ) { return m_dragMoveOrigin;
 // EXTERNALS //////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 extern EditWindow *TheEditWindow;  ///< edit window singleton extern
-
-#endif // __EDITWINDOW_H_
-

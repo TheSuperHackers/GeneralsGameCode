@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifndef _OBJECT_ITER_H_
-#define _OBJECT_ITER_H_
-
 #include "Common/GameType.h"
 #include "Common/GameMemory.h"
 
@@ -124,11 +121,11 @@ private:
 public:
 	SimpleObjectIterator();
 //~SimpleObjectIterator();	// provided by MPO
-	Object *first() { return firstWithNumeric(NULL); }
-	Object *next() { return nextWithNumeric(NULL); }
+	Object *first() { return firstWithNumeric(nullptr); }
+	Object *next() { return nextWithNumeric(nullptr); }
 
-	Object *firstWithNumeric(Real *num = NULL) { reset(); return nextWithNumeric(num); }
-	Object *nextWithNumeric(Real *num = NULL);
+	Object *firstWithNumeric(Real *num = nullptr) { reset(); return nextWithNumeric(num); }
+	Object *nextWithNumeric(Real *num = nullptr);
 
 	// methods that are not inherited from ObjectIterator:
 
@@ -155,7 +152,3 @@ public:
 	*/
 	Int getCount() { return m_clumpCount; }
 };
-
-
-#endif // _OBJECT_ITER_H_
-

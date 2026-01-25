@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Thing.h"
 #include "Common/ThingTemplate.h"
@@ -86,7 +86,7 @@ EMPUpdate::EMPUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModul
 	if ( data )
 	{
 		//SANITY
-		DEBUG_ASSERTCRASH( TheGameLogic, ("EMPUpdate::EMPUpdate - TheGameLogic is NULL" ) );
+		DEBUG_ASSERTCRASH( TheGameLogic, ("EMPUpdate::EMPUpdate - TheGameLogic is null" ) );
 		UnsignedInt now = TheGameLogic->getFrame();
 
 		m_currentScale = data->m_startScale;
@@ -108,7 +108,7 @@ EMPUpdate::EMPUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModul
 	}
 
 	//SANITY
-	DEBUG_ASSERTCRASH( data, ("EMPUpdate::EMPUpdate - getEMPUpdateModuleData is NULL" ) );
+	DEBUG_ASSERTCRASH( data, ("EMPUpdate::EMPUpdate - getEMPUpdateModuleData is null" ) );
 	m_currentScale = 1.0f;
 	m_dieFrame = 0;
 	m_tintEnvFadeFrames = 0;
@@ -149,7 +149,7 @@ UpdateSleepTime EMPUpdate::update( void )
 	{
 		RGBColor end = data->m_endColor;
 		saturateRGB( end, 5 );
-		dr->colorFlash( &end, 9999, m_tintEnvFadeFrames, TRUE );
+		dr->colorFlash( &end, 0, m_tintEnvFadeFrames, ~0u );
 		doDisableAttack();
 	}
 
@@ -181,7 +181,7 @@ void EMPUpdate::doDisableAttack( void )
 	//If the EMP hits an airborne target, then don't allow the EMP
 	//blast to effect anything on the ground.
 	Object *producer = TheGameLogic->findObjectByID( object->getProducerID() );
-	Object *intendedVictim = NULL;
+	Object *intendedVictim = nullptr;
 	Bool onlyEffectAirborne = FALSE;
 	Bool intendedVictimProcessed = FALSE;
 	if( producer && producer->getAI() )
@@ -193,8 +193,8 @@ void EMPUpdate::doDisableAttack( void )
 		}
 	}
 
-	SimpleObjectIterator *iter = NULL;
-	Object *curVictim = NULL;
+	SimpleObjectIterator *iter = nullptr;
+	Object *curVictim = nullptr;
 
 	if (radius > 0.0f)
 	{
@@ -206,7 +206,7 @@ void EMPUpdate::doDisableAttack( void )
 
 	MemoryPoolObjectHolder hold(iter);
 
-	for ( ; curVictim != NULL; curVictim = iter ? iter->nextWithNumeric(&curVictimDistSqr) : NULL)
+	for ( ; curVictim != nullptr; curVictim = iter ? iter->nextWithNumeric(&curVictimDistSqr) : nullptr)
 	{
 		if ( curVictim != object)
 		{
@@ -420,7 +420,7 @@ LeafletDropBehavior::LeafletDropBehavior( Thing *thing, const ModuleData* module
 	if ( data )
 	{
 		//SANITY
-		DEBUG_ASSERTCRASH( TheGameLogic, ("LeafletDropBehavior::LeafletDropBehavior - TheGameLogic is NULL" ) );
+		DEBUG_ASSERTCRASH( TheGameLogic, ("LeafletDropBehavior::LeafletDropBehavior - TheGameLogic is null" ) );
 		UnsignedInt now = TheGameLogic->getFrame();
     m_startFrame = now + data->m_delayFrames;
 
@@ -428,7 +428,7 @@ LeafletDropBehavior::LeafletDropBehavior( Thing *thing, const ModuleData* module
 	}
 
 	//SANITY
-	DEBUG_ASSERTCRASH( data, ("LeafletDropBehavior::LeafletDropBehavior - getLeafletDropBehaviorModuleData is NULL" ) );
+	DEBUG_ASSERTCRASH( data, ("LeafletDropBehavior::LeafletDropBehavior - getLeafletDropBehaviorModuleData is null" ) );
 	m_startFrame = TheGameLogic->getFrame() + 1;
 }
 
@@ -494,8 +494,8 @@ void LeafletDropBehavior::doDisableAttack( void )
 	Real curVictimDistSqr;
 	const Coord3D *pos = object->getPosition();
 
-	SimpleObjectIterator *iter = NULL;
-	Object *curVictim = NULL;
+	SimpleObjectIterator *iter = nullptr;
+	Object *curVictim = nullptr;
 
 	if (radius > 0.0f)
 	{
@@ -507,7 +507,7 @@ void LeafletDropBehavior::doDisableAttack( void )
 
 	MemoryPoolObjectHolder hold(iter);
 
-	for ( ; curVictim != NULL; curVictim = iter ? iter->nextWithNumeric(&curVictimDistSqr) : NULL)
+	for ( ; curVictim != nullptr; curVictim = iter ? iter->nextWithNumeric(&curVictimDistSqr) : nullptr)
 	{
 		if ( curVictim != object)
 		{

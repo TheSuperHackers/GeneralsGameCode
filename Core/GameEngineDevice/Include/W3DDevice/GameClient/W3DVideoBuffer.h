@@ -41,10 +41,6 @@
 
 #pragma once
 
-#ifndef __W3DDEVICE_GAMECLIENT_W3DVIDEOBUFFER_H_
-#define __W3DDEVICE_GAMECLIENT_W3DVIDEOBUFFER_H_
-
-
 //----------------------------------------------------------------------------
 //           Includes
 //----------------------------------------------------------------------------
@@ -101,5 +97,3 @@ class W3DVideoBuffer : public VideoBuffer
 //----------------------------------------------------------------------------
 
 inline TextureClass* W3DVideoBuffer::texture( void ) { return m_texture; }
-
-#endif // __W3DDEVICE_GAMECLIENT_W3DVIDEOBUFFER_H_

@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __DOZERAIUPDATE_H_
-#define __DOZERAIUPDATE_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/AIUpdate.h"
 
@@ -149,7 +146,7 @@ public:
 	virtual void internalCancelTask( DozerTask task ) = 0;						///< cancel this task from the dozer
 	virtual void internalTaskCompleteOrCancelled( DozerTask task ) = 0;	///< this is called when tasks are cancelled or completed
 
-	/** return a dock point for the action and task (if valid) ... note it can return NULL
+	/** return a dock point for the action and task (if valid) ... note it can return nullptr
 	if no point has been set for the combination of task and point */
 	virtual const Coord3D* getDockPoint( DozerTask task, DozerDockPoint point ) = 0;
 
@@ -248,7 +245,7 @@ public:
 	virtual void internalCancelTask( DozerTask task );						///< cancel this task from the dozer
 	virtual void internalTaskCompleteOrCancelled( DozerTask task );	///< this is called when tasks are cancelled or completed
 
-	/** return a dock point for the action and task (if valid) ... note it can return NULL
+	/** return a dock point for the action and task (if valid) ... note it can return nullptr
 	if no point has been set for the combination of task and point */
 	virtual const Coord3D* getDockPoint( DozerTask task, DozerDockPoint point );
 
@@ -305,7 +302,3 @@ private:
 	void createMachines( void );		///< create our behavior machines we need
 
 };
-
-
-#endif // __DOZERAIUPDATE_H_
-

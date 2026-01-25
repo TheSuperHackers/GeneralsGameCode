@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __CLEANUP_HAZARD_UPDATE_H_
-#define __CLEANUP_HAZARD_UPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/KindOf.h"
 #include "GameLogic/Module/UpdateModule.h"
@@ -91,7 +88,3 @@ protected:
 	Coord3D m_pos;
 	Real		m_moveRange;
 };
-
-
-#endif
-

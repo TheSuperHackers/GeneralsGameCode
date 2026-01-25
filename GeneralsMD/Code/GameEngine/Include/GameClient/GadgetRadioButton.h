@@ -64,9 +64,6 @@
 
 #pragma once
 
-#ifndef __GADGETRADIOBUTTON_H_
-#define __GADGETRADIOBUTTON_H_
-
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
@@ -147,6 +144,3 @@ inline const Image *GadgetRadioGetSelectedCheckedBoxImage( GameWindow *g )						
 
 
 // EXTERNALS //////////////////////////////////////////////////////////////////
-
-#endif // __GADGETRADIOBUTTON_H_
-

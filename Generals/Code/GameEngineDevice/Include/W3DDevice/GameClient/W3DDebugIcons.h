@@ -22,11 +22,7 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-
 #pragma once
-
-#ifndef __W3D_DEBUG_ICONS_H_
-#define __W3D_DEBUG_ICONS_H_
 
 #include "always.h"
 #include "rendobj.h"
@@ -77,5 +73,3 @@ public:
 	static void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color);
 };
 #endif // RTS_DEBUG
-
-#endif  // end __W3D_DEBUG_ICONS_H_

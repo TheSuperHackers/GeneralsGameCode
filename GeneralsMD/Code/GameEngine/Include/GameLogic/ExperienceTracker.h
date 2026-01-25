@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef EXPERIENCE_TRACKER_H
-#define EXPERIENCE_TRACKER_H
-
 #include "Common/GameCommon.h"
 #include "Common/GameType.h"
 #include "Common/GameMemory.h"
@@ -49,6 +46,8 @@ public:
 	Int getExperienceValue( const Object* killer ) const;										///< How much do give for being killed
 	Int getCurrentExperience( void ) const { return m_currentExperience; };	///< How much experience do I have at the moment?
 	Bool isTrainable() const;																						///< Can I gain experience?
+	void setTrainable(Bool trainable);																	///< Set whether I can gain experience
+	void resetTrainable();																							///< Set to default trainable state from template
 	Bool isAcceptingExperiencePoints() const;														///< Either I am trainable, or I have a Sink set up
 
 	void setVeterancyLevel( VeterancyLevel newLevel, Bool provideFeedback = TRUE );						///< Set Level to this
@@ -58,6 +57,7 @@ public:
 	Bool canGainExpForLevel(Int levelsToGain) const;															///< return same value as gainExpForLevel, but don't change anything
 	void setExperienceAndLevel(Int experienceIn, Bool provideFeedback = TRUE );
 	void setExperienceSink( ObjectID sink );											///< My experience actually goes to this person (loose couple)
+	ObjectID getExperienceSink() const;
 
 	Real getExperienceScalar() const { return m_experienceScalar; }
 	void setExperienceScalar( Real scalar ) { m_experienceScalar = scalar; }
@@ -73,6 +73,5 @@ private:
 	Int								m_currentExperience;								///< Number of experience points
 	ObjectID					m_experienceSink;										///< ID of object I have pledged my experience point gains to
 	Real							m_experienceScalar;									///< Scales any experience gained by this multiplier.
+	Bool							m_isTrainable;											///< Can I gain experience?
 };
-
-#endif

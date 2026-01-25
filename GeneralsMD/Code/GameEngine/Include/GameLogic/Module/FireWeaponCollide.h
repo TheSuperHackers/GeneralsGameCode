@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __FireWeaponCollide_H_
-#define __FireWeaponCollide_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/CollideModule.h"
 #include "GameLogic/Weapon.h"
@@ -50,7 +47,7 @@ public:
 
 	FireWeaponCollideModuleData()
 	{
-		m_collideWeaponTemplate = NULL;
+		m_collideWeaponTemplate = nullptr;
 		m_fireOnce = FALSE;
 	}
 
@@ -80,7 +77,3 @@ private:
 	Bool m_everFired;
 
 };
-
-
-#endif
-

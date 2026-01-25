@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/ThingTemplate.h"
 #include "Common/Xfer.h"
@@ -63,7 +63,7 @@ Bool PrisonDockUpdate::action( Object *docker, Object *drone )
 {
 
 	// sanity
-	if( docker == NULL )
+	if( docker == nullptr )
 		return FALSE;
 
 	// if docker has no contents, do nothing and stop the dock process

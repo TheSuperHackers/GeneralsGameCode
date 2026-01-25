@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __FXListDie_H_
-#define __FXListDie_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/INI.h"
 #include "GameLogic/Module/DieModule.h"
@@ -54,7 +51,7 @@ public:
 
 	FXListDieModuleData()
 	{
-		m_defaultDeathFX = NULL;
+		m_defaultDeathFX = nullptr;
 		m_orientToObject = TRUE;
 		m_initiallyActive = TRUE; //Patch 1.02 -- Craptacular HACK -- should default to FALSE but only ONE case sets it false out of 847!
 	}
@@ -65,9 +62,9 @@ public:
 
 		static const FieldParse dataFieldParse[] =
 		{
-			{ "StartsActive",					INI::parseBool, NULL, offsetof( FXListDieModuleData, m_initiallyActive ) },
-			{ "DeathFX",							INI::parseFXList,		NULL, offsetof( FXListDieModuleData, m_defaultDeathFX ) },
-			{ "OrientToObject",				INI::parseBool,		NULL, offsetof( FXListDieModuleData, m_orientToObject ) },
+			{ "StartsActive",					INI::parseBool, nullptr, offsetof( FXListDieModuleData, m_initiallyActive ) },
+			{ "DeathFX",							INI::parseFXList,		nullptr, offsetof( FXListDieModuleData, m_defaultDeathFX ) },
+			{ "OrientToObject",				INI::parseBool,		nullptr, offsetof( FXListDieModuleData, m_orientToObject ) },
 			{ 0, 0, 0, 0 }
 		};
     p.add(dataFieldParse);
@@ -115,7 +112,7 @@ protected:
 
 	virtual void processUpgradeRemoval()
 	{
-		// I can't take it any more.  Let the record show that I think the UpgradeMux multiple inheritence is CRAP.
+		// I can't take it any more.  Let the record show that I think the UpgradeMux multiple inheritance is CRAP.
 		getFXListDieModuleData()->m_upgradeMuxData.muxDataProcessUpgradeRemoval(getObject());
 	}
 
@@ -124,13 +121,9 @@ protected:
 		return getFXListDieModuleData()->m_upgradeMuxData.m_requiresAllTriggers;
 	}
 
-	inline Bool isUpgradeActive() const { return isAlreadyUpgraded(); }
+	Bool isUpgradeActive() const { return isAlreadyUpgraded(); }
 
 	virtual Bool isSubObjectsUpgrade() { return false; }
 
 
 };
-
-
-#endif // __FXListDie_H_
-

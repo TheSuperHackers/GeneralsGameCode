@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __ContainModule_H_
-#define __ContainModule_H_
-
 #include "Common/Module.h"
 
 //-------------------------------------------------------------------------------------------------
@@ -86,6 +83,7 @@ public:
 	virtual Bool isGarrisonable() const = 0;
 	virtual Bool isSpecialZeroSlotContainer() const = 0;
 	virtual Bool isHealContain() const = 0;
+	virtual Bool isTunnelContain() const = 0;
 	virtual Bool isImmuneToClearBuildingAttacks() const = 0;
 
 
@@ -157,6 +155,7 @@ public:
 	virtual const Object *friend_getRider() const = 0; ///< Damn.  The draw order dependency bug for riders means that our draw module needs to cheat to get around it.
 	virtual Real getContainedItemsMass() const = 0;
 	virtual UnsignedInt getStealthUnitsContained() const = 0;
+	virtual UnsignedInt getHeroUnitsContained() const = 0;
 
 	virtual Bool calcBestGarrisonPosition( Coord3D *sourcePos, const Coord3D *targetPos ) = 0;
 	virtual Bool attemptBestFirePointPosition( Object *source, Weapon *weapon, Object *victim ) = 0;
@@ -182,5 +181,3 @@ public:
 	}
 };
 //-------------------------------------------------------------------------------------------------
-
-#endif

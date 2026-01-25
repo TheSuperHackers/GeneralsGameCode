@@ -86,7 +86,7 @@ void CWDumpEditView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 	CWdumpDoc *doc= (CWdumpDoc *) GetDocument();
 	ChunkItem *item = doc->m_ChunkItem;
 
-	if(item == 0) {
+	if(item == nullptr) {
 		edit.SetWindowText("Load a chunk file and select the chunk in the tree view to see it's hex data here.");
 		return; // no selected chunk item, leave a clear screen.
 	}
@@ -100,7 +100,7 @@ void CWDumpEditView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 
 char * CWDumpEditView::Build_Hex_Text(unsigned char * Source, int Length)
 {
-	if(Source == 0) {
+	if(Source == nullptr) {
 			char *c = new char[256];
 			sprintf(c, "This chunk is a wrapper chunk for other chunks. It's total length is %d", Length);
 			return c;

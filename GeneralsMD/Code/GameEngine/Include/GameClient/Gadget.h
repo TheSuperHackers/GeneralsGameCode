@@ -45,9 +45,6 @@
 
 #pragma once
 
-#ifndef __GADGET_H_
-#define __GADGET_H_
-
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
@@ -124,7 +121,7 @@ enum
 													GWS_PROGRESS_BAR,
 };
 
-// Gadget paramaters
+// Gadget parameters
 enum
 {
 
@@ -279,8 +276,8 @@ typedef struct _EntryData
 
 	DisplayString *text;						///< the entry text
 	DisplayString *sText;						///< for displaying 'secret' text
-	DisplayString *constructText;		///< for foriegn text construction
-	Bool secretText;								///< If TRUE text appears as astericks
+	DisplayString *constructText;		///< for foreign text construction
+	Bool secretText;								///< If TRUE text appears as asterisks
 	Bool numericalOnly;							///< If TRUE only numbers are allowed as input
 	Bool alphaNumericalOnly;				///< If TRUE only numbers and letters are allowed as input
 	Bool aSCIIOnly;									///< If TRUE ascii allowed as input
@@ -299,7 +296,7 @@ typedef struct _EntryData
 
 	GameWindow *constructList;	// Listbox for construct list.
 	UnsignedShort charPos;			// Position of current character
-	UnsignedShort conCharPos;		// Position of current contruct character
+	UnsignedShort conCharPos;		// Position of current construct character
 
 } EntryData;
 
@@ -378,7 +375,7 @@ typedef struct _ListboxData
 	Int					*selections;			// Pointer to array of selections (for MULTI select)
 
 	Short				displayHeight;		// Height in pixels of listbox display region
-																// this is computed based on the existance
+																// this is computed based on the existence
 																// of a title or not.
 	UnsignedInt doubleClickTime;	//
 	Short				displayPos;				// Position of current display entry in pixels
@@ -433,7 +430,7 @@ typedef struct _PushButtonData
 	Color colorBorder;			///< The color for the border around the button
 	void *userData;					///< random additional data we can set
 	const Image *overlayImage; ///< An overlay image (like a veterancy symbol)
-	AsciiString altSound;		///< use an alternitive sound if one is set
+	AsciiString altSound;		///< use an alternative sound if one is set
 } PushButtonData;
 
 // TabControlData ------------------------------------------------------------
@@ -537,5 +534,3 @@ extern void InformEntry( WideChar c );
 
 // list box stuff
 extern Int GetListboxTopEntry( ListboxData list );
-
-#endif // __GADGET_H_

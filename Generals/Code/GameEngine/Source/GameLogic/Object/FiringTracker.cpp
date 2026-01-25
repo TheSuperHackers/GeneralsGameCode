@@ -27,7 +27,7 @@
 // Desc:   Keeps track of shots fired and people targeted for weapons that want a history of such a thing
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/AudioHandleSpecialValues.h"
 #include "Common/GameType.h"
@@ -66,7 +66,7 @@ FiringTracker::~FiringTracker()
 //-------------------------------------------------------------------------------------------------
 Int FiringTracker::getNumConsecutiveShotsAtVictim( const Object *victim ) const
 {
-	if( victim == NULL )
+	if( victim == nullptr )
 		return 0;// safety, this function is for asking about shots at a victim
 
 	if( victim->getID() != m_victimID )

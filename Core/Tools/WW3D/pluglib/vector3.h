@@ -23,7 +23,7 @@
  *                                                                                             *
  *                 Project Name : Westwood 3D                                                  *
  *                                                                                             *
- *                    File Name : VECTOR3.H                                                    *
+ *                    File Name : VECTOR3.h                                                    *
  *                                                                                             *
  *                   Programmer : Greg Hjelstrom                                               *
  *                                                                                             *
@@ -36,7 +36,7 @@
  *   Scalar Division Operator -- Divide a vector by a scalar                                   *
  *   Scalar Multiply Operator -- Multiply a vector by a scalar                                 *
  *   Vector Addition Operator -- Add two vectors                                               *
- *   Vector Subtraction Operator -- Subract two vectors                                        *
+ *   Vector Subtraction Operator -- Subtract two vectors                                       *
  *   Vector Inner Product Operator -- Compute the inner or dot product                         *
  *   Vector Equality Operator -- Determine if two vectors are identical                        *
  *   Vector Inequality Operator -- Determine if two vectors are identical                      *
@@ -63,12 +63,7 @@
  *   Vector3::Is_Valid -- Verifies that each component of this vector is a valid float         *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef VECTOR3_H
-#define VECTOR3_H
 
 #include "always.h"
 #include "wwmath.h"
@@ -249,7 +244,7 @@ WWINLINE Vector3 operator + (const Vector3 &a,const Vector3 &b)
 }
 
 /**************************************************************************
- * Vector Subtraction Operator -- Subract two vectors                     *
+ * Vector Subtraction Operator -- Subtract two vectors                    *
  *                                                                        *
  * INPUT:                                                                 *
  *                                                                        *
@@ -540,7 +535,7 @@ WWINLINE Vector3 Lerp(const Vector3 & a, const Vector3 & b, float alpha)
  *=============================================================================================*/
 WWINLINE void Lerp(const Vector3 & a, const Vector3 & b, float alpha,Vector3 * set_result)
 {
-	assert(set_result != NULL);
+	assert(set_result != nullptr);
 	set_result->X = (a.X + (b.X - a.X)*alpha);
    set_result->Y = (a.Y + (b.Y - a.Y)*alpha);
    set_result->Z = (a.Z + (b.Z - a.Z)*alpha);
@@ -548,7 +543,7 @@ WWINLINE void Lerp(const Vector3 & a, const Vector3 & b, float alpha,Vector3 * s
 
 WWINLINE void Vector3::Lerp(const Vector3 & a, const Vector3 & b, float alpha,Vector3 * set_result)
 {
-	assert(set_result != NULL);
+	assert(set_result != nullptr);
 	set_result->X = (a.X + (b.X - a.X)*alpha);
    set_result->Y = (a.Y + (b.Y - a.Y)*alpha);
    set_result->Z = (a.Z + (b.Z - a.Z)*alpha);
@@ -568,7 +563,7 @@ WWINLINE void Vector3::Lerp(const Vector3 & a, const Vector3 & b, float alpha,Ve
  *=============================================================================================*/
 WWINLINE void Vector3::Add(const Vector3 &a,const Vector3 &b,Vector3 * set_result)
 {
-	assert(set_result != NULL);
+	assert(set_result != nullptr);
 	set_result->X = a.X + b.X;
 	set_result->Y = a.Y + b.Y;
 	set_result->Z = a.Z + b.Z;
@@ -589,7 +584,7 @@ WWINLINE void Vector3::Add(const Vector3 &a,const Vector3 &b,Vector3 * set_resul
  *=============================================================================================*/
 WWINLINE void Vector3::Subtract(const Vector3 &a,const Vector3 &b,Vector3 * set_result)
 {
-	assert(set_result != NULL);
+	assert(set_result != nullptr);
 	set_result->X = a.X - b.X;
 	set_result->Y = a.Y - b.Y;
 	set_result->Z = a.Z - b.Z;
@@ -925,6 +920,3 @@ WWINLINE unsigned long	Vector3::Convert_To_ARGB( void ) const
 			 (unsigned(Y*255.0f)<<8) |
 			 (unsigned(Z*255.0f));
 }
-
-#endif /* Vector3_H */
-

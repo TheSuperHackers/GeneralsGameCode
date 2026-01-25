@@ -34,8 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#ifndef HASHTAB_H
-#define HASHTAB_H
+#pragma once
 
 #if 0
 
@@ -117,11 +116,7 @@ Object *	HashTableClass<Object,Key>::Find(Key * key) const
 	}
 
 	// couldn't find it
-	return NULL;
+	return nullptr;
 }
 
 #endif
-
-
-#endif
-

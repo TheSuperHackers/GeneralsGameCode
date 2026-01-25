@@ -23,7 +23,7 @@
  *                                                                                             *
  *                 Project Name : Voxel Technology                                             *
  *                                                                                             *
- *                    File Name : PLANE.H                                                      *
+ *                    File Name : PLANE.h                                                      *
  *                                                                                             *
  *                   Programmer : Greg Hjelstrom                                               *
  *                                                                                             *
@@ -35,8 +35,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#ifndef PLANE_H
-#define PLANE_H
+#pragma once
 
 #ifndef VECTOR3_H
 #include "vector3.h"
@@ -93,7 +92,3 @@ inline bool In_Front(const Vector3 & point,const PlaneClass & plane)
 	double dist = point * plane.N;
 	return (dist > plane.D);
 }
-
-
-
-#endif /*PLANE_H*/

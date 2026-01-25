@@ -34,8 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#ifndef SWAP_H
-#define SWAP_H
+#pragma once
 
 /**********************************************************************
 **	Swaps two objects.
@@ -48,5 +47,3 @@ void swap(T & left, T & right)
 	left = right;
 	right = temp;
 }
-
-#endif

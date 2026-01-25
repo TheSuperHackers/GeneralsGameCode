@@ -30,15 +30,10 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef __WWAUDIO_THREADS_H
-#define __WWAUDIO_THREADS_H
 
 #include "windows.h"
-#include "Vector.H"
+#include "Vector.h"
 #include "mutex.h"
 
 // Forward declarations
@@ -70,7 +65,7 @@ class WWAudioThreadsClass
 		//
 		//	Delayed release mechanism
 		//
-		static HANDLE		Create_Delayed_Release_Thread (LPVOID param = NULL);
+		static HANDLE		Create_Delayed_Release_Thread (LPVOID param = nullptr);
 		static void			End_Delayed_Release_Thread (DWORD timeout = 20000);
 		static void			Add_Delayed_Release_Object (RefCountClass *object, DWORD delay = 2000);
 		static void			Flush_Delayed_Release_Objects (void);
@@ -107,6 +102,3 @@ class WWAudioThreadsClass
 		static CriticalSectionClass	m_ListMutex;
 		static bool							m_IsShuttingDown;
 };
-
-#endif //__WWAUDIO_THREADS_H
-

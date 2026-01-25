@@ -47,7 +47,7 @@
  * Exception_Handler -- Exception handler filter function                                      *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#ifdef _MSC_VER
+ #if defined(_WIN32)
 
 #include	"always.h"
 #include <windows.h>
@@ -55,7 +55,7 @@
 #include "cpudetect.h"
 #include	"Except.h"
 //#include "debug.h"
-#include "MPU.H"
+#include "MPU.h"
 //#include "commando\nat.h"
 #include "thread.h"
 #include "wwdebug.h"
@@ -64,7 +64,6 @@
 #include	<conio.h>
 #include	<imagehlp.h>
 #include <crtdbg.h>
-#include	<stdio.h>
 
 #ifdef WWDEBUG
 #define DebugString 	WWDebug_Printf
@@ -86,8 +85,8 @@ static char ExceptionText [65536];
 bool SymbolsAvailable = false;
 HINSTANCE ImageHelp = (HINSTANCE) -1;
 
-void (*AppCallback)(void) = NULL;
-char *(*AppVersionCallback)(void) = NULL;
+void (*AppCallback)(void) = nullptr;
+char *(*AppVersionCallback)(void) = nullptr;
 
 /*
 ** Flag to indicate we should exit when an exception occurs.
@@ -128,15 +127,15 @@ typedef LPVOID (WINAPI *SymFunctionTableAccessType) (HANDLE hProcess, DWORD Addr
 typedef DWORD (WINAPI *SymGetModuleBaseType) (HANDLE hProcess, DWORD dwAddr);
 
 
-static SymCleanupType							_SymCleanup = NULL;
-static SymGetSymFromAddrType				_SymGetSymFromAddr = NULL;
-static SymInitializeType						_SymInitialize = NULL;
-static SymLoadModuleType						_SymLoadModule = NULL;
-static SymSetOptionsType						_SymSetOptions = NULL;
-static SymUnloadModuleType					_SymUnloadModule = NULL;
-static StackWalkType								_StackWalk = NULL;
-static SymFunctionTableAccessType	_SymFunctionTableAccess = NULL;
-static SymGetModuleBaseType				_SymGetModuleBase = NULL;
+static SymCleanupType							_SymCleanup = nullptr;
+static SymGetSymFromAddrType				_SymGetSymFromAddr = nullptr;
+static SymInitializeType						_SymInitialize = nullptr;
+static SymLoadModuleType						_SymLoadModule = nullptr;
+static SymSetOptionsType						_SymSetOptions = nullptr;
+static SymUnloadModuleType					_SymUnloadModule = nullptr;
+static StackWalkType								_StackWalk = nullptr;
+static SymFunctionTableAccessType	_SymFunctionTableAccess = nullptr;
+static SymGetModuleBaseType				_SymGetModuleBase = nullptr;
 
 static char const *const ImagehelpFunctionNames[] =
 {
@@ -149,7 +148,7 @@ static char const *const ImagehelpFunctionNames[] =
 	"StackWalk",
 	"SymFunctionTableAccess",
 	"SymGetModuleBaseType",
-	NULL
+	nullptr
 };
 
 
@@ -202,7 +201,7 @@ int __cdecl _purecall(void)
 char const * Last_Error_Text(void)
 {
 	static char message_buffer[256];
-	FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), &message_buffer[0], 256, NULL);
+	FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, nullptr, GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), &message_buffer[0], 256, nullptr);
 	return (message_buffer);
 }
 
@@ -224,7 +223,7 @@ char const * Last_Error_Text(void)
  *=============================================================================================*/
 static void Add_Txt (char const *txt)
 {
-	if (strlen(ExceptionText) + strlen(txt) < 65535) {
+	if (strlen(ExceptionText) + strlen(txt) < ARRAY_SIZE(ExceptionText) - 1) {
 		strcat(ExceptionText, txt);
 	}
 #if (0)
@@ -353,9 +352,9 @@ void Dump_Exception_Info(EXCEPTION_POINTERS *e_info)
 	*/
 	HINSTANCE imagehelp = LoadLibrary("IMAGEHLP.DLL");
 
-	if (imagehelp != NULL) {
+	if (imagehelp != nullptr) {
 		DebugString ("Exception Handler: Found IMAGEHLP.DLL - linking to required functions\n");
-		char const *function_name = NULL;
+		char const *function_name = nullptr;
 		unsigned long *fptr = (unsigned long*) &_SymCleanup;
 		int count = 0;
 
@@ -375,14 +374,14 @@ void Dump_Exception_Info(EXCEPTION_POINTERS *e_info)
 	/*
 	** Retrieve the programs symbols if they are available
 	*/
-	if (_SymSetOptions != NULL) {
+	if (_SymSetOptions != nullptr) {
 		_SymSetOptions(SYMOPT_DEFERRED_LOADS);
 	}
 
 	int symload = 0;
 	int symbols_available = false;
 
-	if (_SymInitialize != NULL && _SymInitialize (GetCurrentProcess(), NULL, false))	{
+	if (_SymInitialize != nullptr && _SymInitialize (GetCurrentProcess(), nullptr, false))	{
 		DebugString("Exception Handler: Symbols are available\r\n\n");
 		symbols_available = true;
 	}
@@ -390,19 +389,19 @@ void Dump_Exception_Info(EXCEPTION_POINTERS *e_info)
 	if (!symbols_available)	{
 		DebugString ("Exception Handler: SymInitialize failed with code %d - %s\n", GetLastError(), Last_Error_Text());
 	} else {
-		if (_SymSetOptions != NULL) {
+		if (_SymSetOptions != nullptr) {
 			_SymSetOptions(SYMOPT_DEFERRED_LOADS | SYMOPT_UNDNAME);
 		}
 
 		char module_name[_MAX_PATH];
-		GetModuleFileName(NULL, module_name, sizeof(module_name));
+		GetModuleFileName(nullptr, module_name, sizeof(module_name));
 
-		if (_SymLoadModule != NULL) {
-			symload = _SymLoadModule(GetCurrentProcess(), NULL, module_name, NULL, 0, 0);
+		if (_SymLoadModule != nullptr) {
+			symload = _SymLoadModule(GetCurrentProcess(), nullptr, module_name, nullptr, 0, 0);
 		}
 
 		if (!symload) {
-			assert(_SymLoadModule != NULL);
+			assert(_SymLoadModule != nullptr);
 			DebugString ("Exception Handler: SymLoad failed for module %s with code %d - %s\n", module_name, GetLastError(), Last_Error_Text());
 		}
 	}
@@ -469,11 +468,11 @@ void Dump_Exception_Info(EXCEPTION_POINTERS *e_info)
 	symptr->Address = context->Eip;
 
 	if (!IsBadCodePtr((FARPROC)context->Eip)) {
-		if (_SymGetSymFromAddr != NULL && _SymGetSymFromAddr (GetCurrentProcess(), context->Eip, &displacement, symptr)) {
+		if (_SymGetSymFromAddr != nullptr && _SymGetSymFromAddr (GetCurrentProcess(), context->Eip, &displacement, symptr)) {
 			sprintf (scrap, "Exception occurred at %08X - %s + %08X\r\n", context->Eip, symptr->Name, displacement);
 		} else {
 			DebugString ("Exception Handler: Failed to get symbol for EIP\r\n");
-			if (_SymGetSymFromAddr != NULL) {
+			if (_SymGetSymFromAddr != nullptr) {
 				DebugString ("Exception Handler: SymGetSymFromAddr failed with code %d - %s\n", GetLastError(), Last_Error_Text());
 			}
 			sprintf (scrap, "Exception occurred at %08X\r\n", context->Eip);
@@ -508,7 +507,7 @@ void Dump_Exception_Info(EXCEPTION_POINTERS *e_info)
 				symptr->Size = 0;
 				symptr->Address = temp_addr;
 
-				if (_SymGetSymFromAddr != NULL && _SymGetSymFromAddr (GetCurrentProcess(), temp_addr, &displacement, symptr)) {
+				if (_SymGetSymFromAddr != nullptr && _SymGetSymFromAddr (GetCurrentProcess(), temp_addr, &displacement, symptr)) {
 					char symbuf[256];
 					sprintf(symbuf, "%s + %08X\r\n", symptr->Name, displacement);
 					Add_Txt(symbuf);
@@ -626,18 +625,13 @@ void Dump_Exception_Info(EXCEPTION_POINTERS *e_info)
 		}
 
 		void *fp_data_ptr = (void*)(&context->FloatSave.RegisterArea[fp*10]);
-		double fp_value;
 
+		// TheSuperHackers @refactor Replaced MSVC inline assembly with portable C++ cast for MinGW compatibility
 		/*
 		** Convert FP dump from temporary real value (10 bytes) to double (8 bytes).
+		** On x86, long double is the 10-byte x87 format, so we can just cast.
 		*/
-		_asm {
-			push	eax
-			mov	eax,fp_data_ptr
-			fld   tbyte ptr [eax]
-			fstp	qword ptr [fp_value]
-			pop	eax
-		}
+		double fp_value = (double)(*(long double*)fp_data_ptr);
 		sprintf(scrap, "   %+#.17e\r\n", fp_value);
 		Add_Txt(scrap);
 	}
@@ -653,15 +647,15 @@ void Dump_Exception_Info(EXCEPTION_POINTERS *e_info)
 
 	for (int c = 0 ; c < 32 ; c++) {
 		if (IsBadReadPtr(eip_ptr, 1)) {
-			strcat(scrap, "?? ");
+			strlcat(scrap, "?? ", ARRAY_SIZE(scrap));
 		} else {
 			sprintf(bytestr, "%02X ", *eip_ptr);
-			strcat(scrap, bytestr);
+			strlcat(scrap, bytestr, ARRAY_SIZE(scrap));
 		}
 		eip_ptr++;
 	}
 
-	strcat(scrap, "\r\n\r\n");
+	strlcat(scrap, "\r\n\r\n", ARRAY_SIZE(scrap));
 	Add_Txt(scrap);
 
 	/*
@@ -677,14 +671,14 @@ void Dump_Exception_Info(EXCEPTION_POINTERS *e_info)
 			** The stack contents cannot be read so just print up question marks.
 			*/
 			sprintf(scrap, "%p: ", static_cast<void*>(stackptr));
-			strcat(scrap, "????????\r\n");
+			strlcat(scrap, "????????\r\n", ARRAY_SIZE(scrap));
 		} else {
 			/*
 			** If this stack address is in our memory space then try to match it with a code symbol.
 			*/
 			if (IsBadCodePtr((FARPROC)*stackptr)) {
 				sprintf(scrap, "%p: %08lX ", static_cast<void*>(stackptr), *stackptr);
-				strcat(scrap, "DATA_PTR\r\n");
+				strlcat(scrap, "DATA_PTR\r\n", ARRAY_SIZE(scrap));
 			} else {
 				sprintf(scrap, "%p: %08lX", static_cast<void*>(stackptr), *stackptr);
 
@@ -694,15 +688,15 @@ void Dump_Exception_Info(EXCEPTION_POINTERS *e_info)
 					symptr->Size = 0;
 					symptr->Address = *stackptr;
 
-					if (_SymGetSymFromAddr != NULL && _SymGetSymFromAddr (GetCurrentProcess(), *stackptr, &displacement, symptr)) {
+					if (_SymGetSymFromAddr != nullptr && _SymGetSymFromAddr (GetCurrentProcess(), *stackptr, &displacement, symptr)) {
 						char symbuf[256];
 						sprintf(symbuf, " - %s + %08X", symptr->Name, displacement);
-						strcat(scrap, symbuf);
+						strlcat(scrap, symbuf, ARRAY_SIZE(scrap));
 					}
 				} else {
-					strcat (scrap, " *");
+					strlcat(scrap, " *", ARRAY_SIZE(scrap));
 				}
-				strcat (scrap, "\r\n");
+				strlcat(scrap, "\r\n", ARRAY_SIZE(scrap));
 			}
 		}
 		Add_Txt(scrap);
@@ -713,13 +707,13 @@ void Dump_Exception_Info(EXCEPTION_POINTERS *e_info)
 	** Unload the symbols.
 	*/
 	if (symbols_available) {
-		if (_SymCleanup != NULL) {
+		if (_SymCleanup != nullptr) {
 			_SymCleanup (GetCurrentProcess());
 		}
 
 		if (symload) {
-			if (_SymUnloadModule != NULL) {
-				_SymUnloadModule(GetCurrentProcess(), NULL);
+			if (_SymUnloadModule != nullptr) {
+				_SymUnloadModule(GetCurrentProcess(), 0);
 			}
 		}
 
@@ -811,9 +805,9 @@ int Exception_Handler(int exception_code, EXCEPTION_POINTERS *e_info)
 		*/
 		HANDLE debug_file;
 		DWORD	actual;
-		debug_file = CreateFile("_except.txt", GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+		debug_file = CreateFile("_except.txt", GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
 		if (debug_file != INVALID_HANDLE_VALUE){
-			WriteFile(debug_file, ExceptionText, strlen(ExceptionText), &actual, NULL);
+			WriteFile(debug_file, ExceptionText, strlen(ExceptionText), &actual, nullptr);
 			CloseHandle (debug_file);
 
 #if (0)
@@ -904,7 +898,7 @@ void Register_Thread_ID(unsigned long thread_id, char *thread_name, bool main_th
 
 		ThreadInfoType *thread = new ThreadInfoType;
 		thread->ThreadID = thread_id;
-		strcpy(thread->ThreadName, thread_name);
+		strlcpy(thread->ThreadName, thread_name, ARRAY_SIZE(thread->ThreadName));
 		thread->Main = main_thread;
 		thread->ThreadHandle = INVALID_HANDLE_VALUE;
 		ThreadList.Add(thread);
@@ -1065,8 +1059,8 @@ void Load_Image_Helper(void)
 	if (ImageHelp == (HINSTANCE)-1) {
 		ImageHelp = LoadLibrary("IMAGEHLP.DLL");
 
-		if (ImageHelp != NULL) {
-			char const *function_name = NULL;
+		if (ImageHelp != nullptr) {
+			char const *function_name = nullptr;
 			unsigned long *fptr = (unsigned long *) &_SymCleanup;
 			int count = 0;
 
@@ -1084,29 +1078,29 @@ void Load_Image_Helper(void)
 		/*
 		** Retrieve the programs symbols if they are available. This can be a .pdb or a .dbg file.
 		*/
-		if (_SymSetOptions != NULL) {
+		if (_SymSetOptions != nullptr) {
 			_SymSetOptions(SYMOPT_DEFERRED_LOADS);
 		}
 
 		int symload = 0;
 
-		if (_SymInitialize != NULL && _SymInitialize(GetCurrentProcess(), NULL, FALSE)) {
+		if (_SymInitialize != nullptr && _SymInitialize(GetCurrentProcess(), nullptr, FALSE)) {
 
-			if (_SymSetOptions != NULL) {
+			if (_SymSetOptions != nullptr) {
 				_SymSetOptions(SYMOPT_DEFERRED_LOADS | SYMOPT_UNDNAME);
 			}
 
 			char exe_name[_MAX_PATH];
-			GetModuleFileName(NULL, exe_name, sizeof(exe_name));
+			GetModuleFileName(nullptr, exe_name, sizeof(exe_name));
 
-			if (_SymLoadModule != NULL) {
-				symload = _SymLoadModule(GetCurrentProcess(), NULL, exe_name, NULL, 0, 0);
+			if (_SymLoadModule != nullptr) {
+				symload = _SymLoadModule(GetCurrentProcess(), nullptr, exe_name, nullptr, 0, 0);
 			}
 
 			if (symload) {
 				SymbolsAvailable = true;
 			} else {
-				//assert (_SymLoadModule != NULL);
+				//assert (_SymLoadModule != nullptr);
 				//DebugString ("SymLoad failed for module %s with code %d - %s\n", szModuleName, GetLastError(), Last_Error_Text());
 			}
 		}
@@ -1152,7 +1146,7 @@ bool Lookup_Symbol(void *code_ptr, char *symbol, int &displacement)
 	/*
 	** Make sure symbols are available.
 	*/
-	if (!SymbolsAvailable || _SymGetSymFromAddr == NULL) {
+	if (!SymbolsAvailable || _SymGetSymFromAddr == nullptr) {
 		return(false);
 	}
 
@@ -1197,7 +1191,7 @@ bool Lookup_Symbol(void *code_ptr, char *symbol, int &displacement)
  *                                                                                             *
  * INPUT:    Ptr to return address list                                                        *
  *           Number of return addresses to fetch                                               *
- *           Ptr to optional context. NULL means use current                                   *
+ *           Ptr to optional context. null means use current                                   *
  *                                                                                             *
  * OUTPUT:   Number of return addresses found                                                  *
  *                                                                                             *
@@ -1221,7 +1215,7 @@ int Stack_Walk(unsigned long *return_addresses, int num_addresses, CONTEXT *cont
 	/*
 	** If there is no debug support .dll available then we can't walk the stack.
 	*/
-	if (ImageHelp == NULL) {
+	if (ImageHelp == nullptr) {
 		return(0);
 	}
 
@@ -1233,6 +1227,7 @@ int Stack_Walk(unsigned long *return_addresses, int num_addresses, CONTEXT *cont
 
 	unsigned long reg_eip, reg_ebp, reg_esp;
 
+#if defined(_MSC_VER)
 	__asm {
 here:
 		lea	eax,here
@@ -1240,6 +1235,17 @@ here:
 		mov	reg_ebp,ebp
 		mov	reg_esp,esp
 	}
+#elif (defined(__GNUC__) || defined(__clang__)) && (defined(__i386__) || defined(_M_IX86))
+	__asm__ __volatile__ (
+		"call 1f\n\t"
+		"1: pop %0\n\t"
+		"mov %%ebp, %1\n\t"
+		"mov %%esp, %2"
+		: "=r" (reg_eip), "=r" (reg_ebp), "=r" (reg_esp)
+	);
+#else
+#error "Unsupported compiler or architecture for register capture"
+#endif
 
 	stack_frame.AddrPC.Mode = AddrModeFlat;
 	stack_frame.AddrPC.Offset = reg_eip;
@@ -1263,12 +1269,12 @@ here:
 	** Walk the stack by the requested number of return address iterations.
 	*/
 	for (int i = 0; i < num_addresses + 1; i++) {
-		if (_StackWalk(IMAGE_FILE_MACHINE_I386, GetCurrentProcess(), GetCurrentThread(), &stack_frame, NULL, NULL, _SymFunctionTableAccess, _SymGetModuleBase, NULL)) {
+		if (_StackWalk(IMAGE_FILE_MACHINE_I386, GetCurrentProcess(), GetCurrentThread(), &stack_frame, nullptr, nullptr, _SymFunctionTableAccess, _SymGetModuleBase, nullptr)) {
 
 			/*
 			** First result will always be the return address we were called from.
 			*/
-			if (i==0 && context == NULL) {
+			if (i==0 && context == nullptr) {
 				continue;
 			}
 			unsigned long return_address = stack_frame.AddrReturn.Offset;
@@ -1308,7 +1314,7 @@ bool Is_Trying_To_Exit(void)
 
 
 
-#endif	//_MSC_VER
+#endif	//_WIN32
 
 
 

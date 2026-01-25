@@ -27,7 +27,7 @@
 // Desc:   Create an object upon this object's death
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #define DEFINE_OBJECT_STATUS_NAMES
 #include "GameLogic/Module/AIUpdate.h"
@@ -38,16 +38,16 @@
 #include "GameLogic/Object.h"
 #include "GameLogic/ObjectCreationList.h"
 #include "GameLogic/Module/BodyModule.h"
-
+#include "GameClient/InGameUI.h"
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 CreateObjectDieModuleData::CreateObjectDieModuleData()
 {
 
-	m_ocl = NULL;
+	m_ocl = nullptr;
 	m_transferPreviousHealth = FALSE;
-
+	m_transferSelection = FALSE;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -58,9 +58,10 @@ CreateObjectDieModuleData::CreateObjectDieModuleData()
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "CreationList",	INI::parseObjectCreationList,		NULL,											offsetof( CreateObjectDieModuleData, m_ocl ) },
-		{ "TransferPreviousHealth", INI::parseBool, NULL	,offsetof( CreateObjectDieModuleData, m_transferPreviousHealth ) },
-		{ 0, 0, 0, 0 }
+		{ "CreationList",	INI::parseObjectCreationList,		nullptr,											offsetof( CreateObjectDieModuleData, m_ocl ) },
+		{ "TransferPreviousHealth", INI::parseBool, nullptr	,offsetof( CreateObjectDieModuleData, m_transferPreviousHealth ) },
+		{ "TransferSelection", INI::parseBool, nullptr, offsetof( CreateObjectDieModuleData, m_transferSelection ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 	p.add(dataFieldParse);
 
@@ -95,11 +96,13 @@ void CreateObjectDie::onDie( const DamageInfo * damageInfo )
 	Object *damageDealer = TheGameLogic->findObjectByID( damageInfo->in.m_sourceID );
 
 	Object *newObject = ObjectCreationList::create( data->m_ocl, getObject(), damageDealer );
+	if (!newObject)
+		return;
 
 	//If we're transferring previous health, we're transfering the last known
 	//health before we died. In the case of the sneak attack tunnel network, it
 	//is killed after the lifetime update expires.
-	if( newObject && data->m_transferPreviousHealth )
+	if( data->m_transferPreviousHealth )
 	{
 		//Convert old health to new health.
 		Object *oldObject = getObject();
@@ -140,7 +143,22 @@ void CreateObjectDie::onDie( const DamageInfo * damageInfo )
 		}
 	}
 
+	// TheSuperHackers @bugfix Stubbjax 02/10/2025 If the old object was selected, select the new one.
+	// This is important for the Sneak Attack, which is spawned via a CreateObjectDie module.
+	if (data->m_transferSelection)
+	{
+		Object* oldObject = getObject();
+		Drawable* selectedDrawable = TheInGameUI->getFirstSelectedDrawable();
+		Bool oldObjectSelected = selectedDrawable && selectedDrawable->getID() == oldObject->getDrawable()->getID();
 
+		if (oldObjectSelected)
+		{
+			GameMessage* msg = TheMessageStream->appendMessage(GameMessage::MSG_CREATE_SELECTED_GROUP_NO_SOUND);
+			msg->appendBooleanArgument(TRUE);
+			msg->appendObjectIDArgument(newObject->getID());
+			TheInGameUI->selectDrawable(newObject->getDrawable());
+		}
+	}
 }
 
 // ------------------------------------------------------------------------------------------------

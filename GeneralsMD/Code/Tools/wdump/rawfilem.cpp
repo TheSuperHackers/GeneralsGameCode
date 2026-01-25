@@ -22,7 +22,7 @@
  *                                                                                             *
  *                 Project Name : G                                      *
  *                                                                                             *
- *                     $Archive:: /G/wdump/RAWFILEM.CPP                                       $*
+ *                     $Archive:: /G/wdump/RAWFILEM.cpp                                       $*
  *                                                                                             *
  *                      $Author:: Eric_c                                                      $*
  *                                                                                             *
@@ -56,9 +56,7 @@
 #include	<direct.h>
 #include	<share.h>
 #include	<stddef.h>
-#include	<stdio.h>
 #include	<stdlib.h>
-#include	<string.h>
 
 
 /***********************************************************************************************
@@ -67,7 +65,7 @@
  *    Display an error message as indicated. If it is allowed to retry, then pressing a key    *
  *    will return from this function. Otherwise, it will exit the program with "exit()".       *
  *                                                                                             *
- * INPUT:   error    -- The error number (same as the DOSERR.H error numbers).                 *
+ * INPUT:   error    -- The error number (same as the DOSERR.h error numbers).                 *
  *                                                                                             *
  *          canretry -- Can this routine exit normally so that retrying can occur? If this is  *
  *                      false, then the program WILL exit in this routine.                     *
@@ -143,16 +141,16 @@ char const * RawFileMClass::Set_Name(char const * filename)
 {
 	if (Allocated) {
 		free((char *)Filename);
-		Filename = NULL;
+		Filename = nullptr;
 		Allocated = false;
 	}
 
-	if (filename == NULL) return(NULL);
+	if (filename == nullptr) return(nullptr);
 
 	Bias(0);
 
 	Filename = strdup(filename);
-	if (Filename == NULL) {
+	if (Filename == nullptr) {
 		Error(ENOMEM, false, filename);
 	}
 	Allocated = true;
@@ -214,7 +212,7 @@ int RawFileMClass::Open(int rights)
 	**	Verify that there is a filename associated with this file object. If not, then this is a
 	**	big error condition.
 	*/
-	if (Filename == NULL) {
+	if (Filename == nullptr) {
 		Error(ENOENT, false);
 	}
 
@@ -244,17 +242,17 @@ int RawFileMClass::Open(int rights)
 
 			case READ:
 					Handle = CreateFileA(Filename, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE,
-												NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+												nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
 				break;
 
 			case WRITE:
 					Handle = CreateFileA(Filename, GENERIC_WRITE, 0,
-												NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+												nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
 				break;
 
 			case READ|WRITE:
 					Handle = CreateFileA(Filename, GENERIC_READ | GENERIC_WRITE, 0,
-												NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+												nullptr, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
 				break;
 		}
 
@@ -302,7 +300,7 @@ int RawFileMClass::Open(int rights)
  *=============================================================================================*/
 bool RawFileMClass::Is_Available(int forced)
 {
-	if (Filename == NULL) return(false);
+	if (Filename == nullptr) return(false);
 
 	/*
 	**	If the file is already open, then is must have already passed the availability check.
@@ -328,7 +326,7 @@ bool RawFileMClass::Is_Available(int forced)
 	for (;;) {
 
 		Handle = CreateFileA(Filename, GENERIC_READ, FILE_SHARE_READ,
-											NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+											nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
 		if (Handle == NULL_HANDLE) {
 			return(false);
 		}
@@ -393,10 +391,10 @@ void RawFileMClass::Close(void)
  *    the file. This condition can result in fewer bytes being read than requested. Determine  *
  *    this by examining the return value.                                                      *
  *                                                                                             *
- * INPUT:   buffer   -- Pointer to the buffer to read data into. If NULL is passed, no read    *
+ * INPUT:   buffer   -- Pointer to the buffer to read data into. If nullptr is passed, no read    *
  *                      is performed.                                                          *
  *                                                                                             *
- *          size     -- The number of bytes to read. If NULL is passed, then no read is        *
+ *          size     -- The number of bytes to read. If nullptr is passed, then no read is        *
  *                      performed.                                                             *
  *                                                                                             *
  * OUTPUT:  Returns with the number of bytes read into the buffer. If this number is less      *
@@ -439,7 +437,7 @@ int RawFileMClass::Read(void * buffer, int size)
 	long total = 0;
 	while (size > 0) {
 		bytesread = 0;
-		if (!ReadFile(Handle, buffer, size, &(unsigned long&)bytesread, NULL)) {
+		if (!ReadFile(Handle, buffer, size, &(unsigned long&)bytesread, nullptr)) {
 			size -= bytesread;
 			total += bytesread;
 			Error(GetLastError(), true, Filename);
@@ -495,7 +493,7 @@ int RawFileMClass::Write(void const * buffer, int size)
 		opened = true;
 	}
 
-	if (!WriteFile(Handle, buffer, size, &(unsigned long&)bytesread, NULL)) {
+	if (!WriteFile(Handle, buffer, size, &(unsigned long&)bytesread, nullptr)) {
 		Error(GetLastError(), false, Filename);
 	}
 
@@ -550,7 +548,7 @@ int RawFileMClass::Seek(int pos, int dir)
 	/*
 	**	A file that is biased will have a seek operation modified so that the file appears to
 	**	exist only within the bias range. All bytes outside of this range appear to be
-	**	non-existant.
+	**	non-existent.
 	*/
 	if (BiasLength != -1) {
 		switch (dir) {
@@ -629,7 +627,7 @@ int RawFileMClass::Size(void)
 	*/
 	if (Is_Open()) {
 
-		size = GetFileSize(Handle, NULL);
+		size = GetFileSize(Handle, nullptr);
 
 		/*
 		**	If there was in internal error, then call the error function.
@@ -867,10 +865,10 @@ void RawFileMClass::Bias(int start, int length)
 
 
 /***********************************************************************************************
- * RawFileMClass::Raw_Seek -- Performs a seek on the unbiased file                              *
+ * RawFileMClass::Raw_Seek -- Performs a seek on the unbiased file                             *
  *                                                                                             *
  *    This will perform a seek on the file as if it were unbiased. This is in spite of any     *
- *    bias setting the file may have. The ability to perform a raw seek in this fasion is      *
+ *    bias setting the file may have. The ability to perform a raw seek in this fashion is     *
  *    necessary to maintain the bias ability.                                                  *
  *                                                                                             *
  * INPUT:   pos   -- The position to seek the file relative to the "dir" parameter.            *
@@ -907,7 +905,7 @@ int RawFileMClass::Raw_Seek(int pos, int dir)
 			break;
 	}
 
-	pos = SetFilePointer(Handle, pos, NULL, dir);
+	pos = SetFilePointer(Handle, pos, nullptr, dir);
 
 	/*
 	**	If there was an error in the seek, then bail with an error condition.

@@ -128,10 +128,10 @@ void CWDumpTreeView::InsertItem(ChunkItem * item, HTREEITEM Parent)
 
 	CTreeCtrl &tree = GetTreeCtrl();
 	HTREEITEM tree_item = tree.InsertItem(name, Parent);
-	tree.SetItem(tree_item, TVIF_PARAM,0,0,0,0,0, (long) item);
+	tree.SetItem(tree_item, TVIF_PARAM,nullptr,0,0,0,0, (long) item);
 
 	POSITION p = item->Chunks.GetHeadPosition();
-	while(p != 0) {
+	while(p != nullptr) {
 		ChunkItem *subitem = item->Chunks.GetNext(p);
 		InsertItem(subitem, tree_item);
 	}
@@ -178,34 +178,34 @@ void CWDumpTreeView::OnToolsFindNext()
 
 			// Get the currently selected chunk item.
 			selectedtreeitem = GetTreeCtrl().GetSelectedItem();
-			if (selectedtreeitem != NULL) {
+			if (selectedtreeitem != nullptr) {
 				selectedchunkitem = (ChunkItem*) GetTreeCtrl().GetItemData (selectedtreeitem);
 				searchstate = FIND_SELECTED_ITEM;
 			} else {
-				selectedchunkitem = NULL;
+				selectedchunkitem = nullptr;
 				searchstate = FIND_STRING;
 			}
 
-			p = 0;
-			matchedchunkitem = NULL;
+			p = nullptr;
+			matchedchunkitem = nullptr;
 			while (true) {
 
 				ChunkItem *chunkitem;
 
 				// Get the root chunk item.
-				if (p == 0) {
+				if (p == nullptr) {
 					p = data->Chunks.GetHeadPosition();
-					if (p == 0) break;
+					if (p == nullptr) break;
 				}
 
 				chunkitem = data->Chunks.GetNext (p);
 				matchedchunkitem = FindChunkItem (selectedchunkitem, chunkitem, searchstate);
-				if ((matchedchunkitem != NULL) || (searchstate == SEARCH_WRAPPED)) break;
+				if ((matchedchunkitem != nullptr) || (searchstate == SEARCH_WRAPPED)) break;
 			}
 		}
 
 		// Was a match found?
-		if (matchedchunkitem != NULL) {
+		if (matchedchunkitem != nullptr) {
 			SelectTreeItem (GetTreeCtrl().GetRootItem(), matchedchunkitem);
 		} else {
 
@@ -214,7 +214,7 @@ void CWDumpTreeView::OnToolsFindNext()
 			char *message;
 
 			message = new char [strlen (controlstring) + strlen (FindDialog::String())];
-			ASSERT (message != NULL);
+			ASSERT (message != nullptr);
 			sprintf (message, controlstring, FindDialog::String());
 			MessageBox (message, "Find String", MB_OK | MB_ICONEXCLAMATION);
 			delete [] message;
@@ -240,10 +240,10 @@ ChunkItem *CWDumpTreeView::FindChunkItem (ChunkItem *selectedchunkitem, ChunkIte
 			// Searching for a string associated with the chunk item.
 			if (chunkitem == selectedchunkitem) {
 				searchstate = SEARCH_WRAPPED;
-				return (NULL);
+				return (nullptr);
 			} else {
-		  		if ((chunkitem != 0) && (chunkitem->Type != 0) && (chunkitem->Type->Callback != 0)) {
-					(*chunkitem->Type->Callback)(chunkitem, NULL);
+		  		if ((chunkitem != nullptr) && (chunkitem->Type != nullptr) && (chunkitem->Type->Callback != nullptr)) {
+					(*chunkitem->Type->Callback)(chunkitem, nullptr);
 				}
 				if (FindDialog::Found()) return (chunkitem);
 			}
@@ -254,23 +254,23 @@ ChunkItem *CWDumpTreeView::FindChunkItem (ChunkItem *selectedchunkitem, ChunkIte
 			// This case should never occur at this point. As soon as it has been detected
 			// that the search has wrapped the stack should unwind immediately.
 			ASSERT (FALSE);
-			return (NULL);
+			return (nullptr);
 			break;
 	}
 
 	// Iterate over all chunks in the hierarchy. Return immediately if a match is found or if the search has wrapped.
 	POSITION p = chunkitem->Chunks.GetHeadPosition();
-	while (p != 0) {
+	while (p != nullptr) {
 
 		ChunkItem *subchunkitem, *matchedchunkitem;
 
 		subchunkitem = chunkitem->Chunks.GetNext (p);
 		matchedchunkitem = FindChunkItem (selectedchunkitem, subchunkitem, searchstate);
-		if ((matchedchunkitem != NULL) || (searchstate == SEARCH_WRAPPED)) return (matchedchunkitem);
+		if ((matchedchunkitem != nullptr) || (searchstate == SEARCH_WRAPPED)) return (matchedchunkitem);
 	}
 
 	// No match found.
-	return (NULL);
+	return (nullptr);
 }
 
 
@@ -279,7 +279,7 @@ void CWDumpTreeView::SelectTreeItem (HTREEITEM treeitem, ChunkItem *chunkitem)
 	CTreeCtrl &tree = GetTreeCtrl();
 
 	// Select a tree item that matches the given chunk item. Recurse if necessary.
-	while (treeitem != NULL) {
+	while (treeitem != nullptr) {
 
 		HTREEITEM subtreeitem;
 
@@ -287,7 +287,7 @@ void CWDumpTreeView::SelectTreeItem (HTREEITEM treeitem, ChunkItem *chunkitem)
 			tree.SelectItem (treeitem);
 		}
 		subtreeitem = tree.GetChildItem (treeitem);
-		if (subtreeitem != NULL) {
+		if (subtreeitem != nullptr) {
 			SelectTreeItem (subtreeitem, chunkitem);
 		}
 		treeitem = tree.GetNextSiblingItem (treeitem);

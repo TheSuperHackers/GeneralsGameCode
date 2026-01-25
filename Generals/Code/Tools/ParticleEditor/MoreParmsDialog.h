@@ -32,8 +32,6 @@
 /*---------------------------------------------------------------------------*/
 
 #pragma once
-#ifndef _H_MOREPARMSDIALOG_
-#define _H_MOREPARMSDIALOG_
 
 // INCLUDES ///////////////////////////////////////////////////////////////////
 #include "Resource.h"
@@ -47,7 +45,7 @@ class MoreParmsDialog : public CDialog
 {
 	public:
 		enum { IDD = IDD_PSEd_EditMoreParms };
-		MoreParmsDialog(UINT nIDTemplate = MoreParmsDialog::IDD, CWnd* pParentWnd = NULL);
+		MoreParmsDialog(UINT nIDTemplate = MoreParmsDialog::IDD, CWnd* pParentWnd = nullptr);
 		virtual ~MoreParmsDialog();
 
 		void InitPanel( void );
@@ -60,5 +58,3 @@ class MoreParmsDialog : public CDialog
 		afx_msg void OnParticleSystemEdit();
 		DECLARE_MESSAGE_MAP()
 };
-
-#endif /* _H_MOREPARMSDIALOG_ */

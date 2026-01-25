@@ -34,16 +34,10 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef __AUDIO_SAVE_LOAD_H
-#define __AUDIO_SAVE_LOAD_H
 
 #include "saveloadsubsystem.h"
-#include "Vector.H"
+#include "Vector.h"
 #include "bittype.h"
 
 
@@ -121,8 +115,3 @@ protected:
 	//bool							Save_Micro_Chunks (ChunkSaveClass &csave);
 	//bool							Load_Micro_Chunks (ChunkLoadClass &cload);
 };
-
-
-#endif //__AUDIO_SAVE_LOAD_H
-
-

@@ -16,8 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef ODEVICE_HEADER
-#define ODEVICE_HEADER
+#pragma once
 
 // This virtual base class provides an interface for output devices
 //  that can be used for the debugging package.
@@ -28,5 +27,3 @@ class OutputDevice
     virtual     ~OutputDevice() {};
     virtual int print(const char *s,int len)=0;
 };
-
-#endif

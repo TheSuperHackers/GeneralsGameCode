@@ -45,9 +45,6 @@
 
 #pragma once
 
-#ifndef __ACADEMY_STATS_H
-#define __ACADEMY_STATS_H
-
 #include "Lib/BaseType.h"
 #include "Common/Debug.h"
 #include "Common/Snapshot.h"
@@ -94,7 +91,7 @@ public:
 	Bool isFirstUpdate() const { return m_firstUpdate; }
 	void setFirstUpdate( Bool set ) { m_firstUpdate = set; }
 
-	void recordProduction( const Object *obj, const Object *constructer );
+	void recordProduction( const Object *obj, const Object *constructor );
 	void recordUpgrade( const UpgradeTemplate *upgrade, Bool granted );
 	void recordSpecialPowerUsed( const SpecialPowerTemplate *spTemplate );
 	void recordIncome();
@@ -197,7 +194,7 @@ private:
 	//13) Extra gathers built?
 	UnsignedInt m_gatherersBuilt;
 
-	//14) Heros built?
+	//14) Heroes built?
 	UnsignedInt m_heroesBuilt;
 
 	//+------------------------------+
@@ -277,6 +274,3 @@ private:
 	//35) Did the player ever create a "Firestorm" with his MiGs or Inferno Cannons?
 	UnsignedInt m_firestormsCreated;
 };
-
-#endif // __ACADEMY_STATS_H
-

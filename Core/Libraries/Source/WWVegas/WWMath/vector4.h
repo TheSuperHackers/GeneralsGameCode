@@ -23,7 +23,7 @@
  *                                                                         *
  *                 Project Name : Westwood 3D                              *
  *                                                                         *
- *                    File Name : VECTOR4.H                                *
+ *                    File Name : VECTOR4.h                                *
  *                                                                         *
  *                   Programmer : Greg Hjelstrom                           *
  *                                                                         *
@@ -36,7 +36,7 @@
  *   Scalar Division Operator -- Divide a vector by a scalar               *
  *   Scalar Multiply Operator -- Multiply a vector by a scalar             *
  *   Vector Addition Operator -- Add two vectors                           *
- *   Vector Subtraction Operator -- Subract two vectors                    *
+ *   Vector Subtraction Operator -- Subtract two vectors                   *
  *   Vector Inner Product Operator -- Compute the inner or dot product     *
  *   Vector Equality Operator -- Detemine if two vectors are identical     *
  *   Vector Inequality Operator -- Detemine if two vectors are identical   *
@@ -44,12 +44,7 @@
  *   Vector4::Is_Valid -- Vector4::Is_Valid                                *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef VECTOR4_H
-#define VECTOR4_H
 
 #include "always.h"
 #include "wwmath.h"
@@ -184,7 +179,7 @@ WWINLINE Vector4 operator + (const Vector4 &a,const Vector4 &b)
 }
 
 /**************************************************************************
- * Vector Subtraction Operator -- Subract two vectors                     *
+ * Vector Subtraction Operator -- Subtract two vectors                    *
  *                                                                        *
  * INPUT:                                                                 *
  *                                                                        *
@@ -406,7 +401,3 @@ WWINLINE bool Vector4::Is_Valid(void) const
 {
 	return (WWMath::Is_Valid_Float(X) && WWMath::Is_Valid_Float(Y) && WWMath::Is_Valid_Float(Z) && WWMath::Is_Valid_Float(W));
 }
-
-
-#endif /* VECTOR4_H */
-

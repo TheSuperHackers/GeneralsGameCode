@@ -43,10 +43,6 @@
 
 #pragma once
 
-#ifndef __W3DDEVICE_GAMECLIENT_W3DDEBUGDISPLAY_H
-#define __W3DDEVICE_GAMECLIENT_W3DDEBUGDISPLAY_H
-
-
 //----------------------------------------------------------------------------
 //           Includes
 //----------------------------------------------------------------------------
@@ -98,7 +94,3 @@ class W3DDebugDisplay : public DebugDisplay
 //----------------------------------------------------------------------------
 //           Inlining
 //----------------------------------------------------------------------------
-
-
-
-#endif // __W3DDEVICE_GAMECLIENT_W3DDEBUGDISPLAY_H

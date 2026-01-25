@@ -37,19 +37,12 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef DX8_RENDERER_H
-#define DX8_RENDERER_H
 
 #include "always.h"
 #include "wwstring.h"
 #include "simplevec.h"
-#include "refcount.h"
-#include "Vector.H"
+#include "Vector.h"
 #include "dx8list.h"
 #include "shader.h"
 #include "dx8wrapper.h"
@@ -100,7 +93,7 @@ public:
 	void									Add_Render_Task(DX8PolygonRendererClass * p_renderer,MeshClass * p_mesh);
 
 	void									Render(void);
-	bool									Anything_To_Render() { return (render_task_head != NULL); }
+	bool									Anything_To_Render() { return (render_task_head != nullptr); }
 	void									Clear_Render_List();
 
 	TextureClass *						Peek_Texture(int stage)	{ return textures[stage]; }
@@ -118,7 +111,7 @@ public:
 	void Log(bool only_visible);
 
 	void Remove_Polygon_Renderer(DX8PolygonRendererClass* p_renderer);
-	void Add_Polygon_Renderer(DX8PolygonRendererClass* p_renderer,DX8PolygonRendererClass* add_after_this=NULL);
+	void Add_Polygon_Renderer(DX8PolygonRendererClass* p_renderer,DX8PolygonRendererClass* add_after_this=nullptr);
 
 
 	DX8FVFCategoryContainer * Get_Container(void) { return container; }
@@ -166,8 +159,8 @@ protected:
 		int pass,
 		unsigned vertex_offset);
 
-	inline bool Anything_To_Render()					{ return AnythingToRender; }
-	inline bool Any_Delayed_Passes_To_Render()	{ return AnyDelayedPassesToRender; }
+	bool Anything_To_Render()					{ return AnythingToRender; }
+	bool Any_Delayed_Passes_To_Render()	{ return AnyDelayedPassesToRender; }
 
 	void Render_Procedural_Material_Passes(void);
 
@@ -210,12 +203,12 @@ public:
 	virtual void Log(bool only_visible)=0;
 	virtual bool Check_If_Mesh_Fits(MeshModelClass* mmc)=0;
 
-	inline unsigned Get_FVF() const { return FVF; }
+	unsigned Get_FVF() const { return FVF; }
 
-	inline void Add_Visible_Texture_Category(DX8TextureCategoryClass * tex_category,int pass)
+	void Add_Visible_Texture_Category(DX8TextureCategoryClass * tex_category,int pass)
 	{
 		WWASSERT(pass<MAX_PASSES);
-		WWASSERT(tex_category != NULL);
+		WWASSERT(tex_category != nullptr);
 		WWASSERT(texture_category_list[pass].Contains(tex_category));
 		visible_texture_category_list[pass].Add(tex_category);
 		AnythingToRender=true;
@@ -356,5 +349,3 @@ protected:
 };
 
 extern DX8MeshRendererClass TheDX8MeshRenderer;
-
-#endif

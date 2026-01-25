@@ -45,9 +45,6 @@
 
 #pragma once
 
-#ifndef __COLOR_H_
-#define __COLOR_H_
-
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
@@ -58,7 +55,7 @@
 // TYPE DEFINES ///////////////////////////////////////////////////////////////
 enum { GAME_COLOR_UNDEFINED = 0x00FFFFFF }; // this is white with zero alpha... safe to use!
 
-/** @todo we need real color representation, this is just palce holder so we
+/** @todo we need real color representation, this is just placeholder so we
 can more easily identify sections of the code that need it */
 typedef Int Color;
 
@@ -88,6 +85,3 @@ extern void GameGetColorComponents( Color color,
 extern void GameGetColorComponentsReal( Color color, Real *red, Real *green, Real *blue, Real *alpha );
 
 extern Color GameDarkenColor( Color color, Int percent = 10 );
-
-#endif // __COLOR_H_
-

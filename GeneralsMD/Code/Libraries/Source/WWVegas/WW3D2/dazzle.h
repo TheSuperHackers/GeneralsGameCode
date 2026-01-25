@@ -16,12 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef DAZZLE_H
-#define DAZZLE_H
 
 #include "always.h"
 #include "vector3.h"
@@ -303,7 +298,7 @@ public:
 	// internally by the Render() function.
 	void Set_Layer(DazzleLayerClass *layer);
 
-	// Persistant object save-load interface
+	// Persistent object save-load interface
 	// Dazzles save their "dazzle-type" and transform
 	virtual const PersistFactoryClass &	Get_Factory (void) const;
 
@@ -318,11 +313,11 @@ public:
 	static void Init_From_INI(const INIClass* ini);
 	static unsigned Get_Type_ID(const char* name);	// Return the ID of type with given name, or INT_MAX if failed
 	static const char * Get_Type_Name(unsigned int id);	// Return the name of the type with the given ID
-	static DazzleTypeClass* Get_Type_Class(unsigned id);	// Return dazzle type class pointer, or NULL if not found
+	static DazzleTypeClass* Get_Type_Class(unsigned id);	// Return dazzle type class pointer, or null if not found
 																			// The pointer is NOT refcounted - all types are deinitialised
 																			// when exiting the level.
 	static unsigned Get_Lensflare_ID(const char* name);	// Return the ID of lensflare with given name, or INT_MAX if failed
-	static LensflareTypeClass* Get_Lensflare_Class(unsigned id);	// Return lensflare type class pointer, or NULL if not found
+	static LensflareTypeClass* Get_Lensflare_Class(unsigned id);	// Return lensflare type class pointer, or null if not found
 
 	static void Deinit();
 
@@ -394,5 +389,3 @@ public:
 };
 
 extern DazzleLoaderClass		_DazzleLoader;
-
-#endif

@@ -45,9 +45,6 @@
 
 #pragma once
 
-#ifndef __W3DGAMEWINDOW_H_
-#define __W3DGAMEWINDOW_H_
-
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
@@ -100,6 +97,3 @@ protected:
 // EXTERNALS //////////////////////////////////////////////////////////////////
 extern void W3DGameWinDefaultDraw( GameWindow *window,
 																	 WinInstanceData *instData );
-
-#endif // __W3DGAMEWINDOW_H_
-

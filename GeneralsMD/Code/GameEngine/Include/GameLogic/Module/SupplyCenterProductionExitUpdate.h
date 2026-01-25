@@ -30,9 +30,6 @@
 
 #pragma once
 
-#ifndef _SUPPLY_CENTER_PRODUCTION_EXIT_UPDATE_H
-#define _SUPPLY_CENTER_PRODUCTION_EXIT_UPDATE_H
-
 #include "GameLogic/Module/UpdateModule.h"
 
 class Object;
@@ -56,9 +53,9 @@ public:
     UpdateModuleData::buildFieldParse(p);
 		static const FieldParse dataFieldParse[] =
 		{
-			{ "UnitCreatePoint",		INI::parseCoord3D,		NULL, offsetof( SupplyCenterProductionExitUpdateModuleData, m_unitCreatePoint ) },
-			{ "NaturalRallyPoint",  INI::parseCoord3D,		NULL, offsetof( SupplyCenterProductionExitUpdateModuleData, m_naturalRallyPoint ) },
-			{ "GrantTemporaryStealth",INI::parseDurationUnsignedInt,  NULL, offsetof( SupplyCenterProductionExitUpdateModuleData, m_grantTemporaryStealthFrames ) },
+			{ "UnitCreatePoint",		INI::parseCoord3D,		nullptr, offsetof( SupplyCenterProductionExitUpdateModuleData, m_unitCreatePoint ) },
+			{ "NaturalRallyPoint",  INI::parseCoord3D,		nullptr, offsetof( SupplyCenterProductionExitUpdateModuleData, m_naturalRallyPoint ) },
+			{ "GrantTemporaryStealth",INI::parseDurationUnsignedInt,  nullptr, offsetof( SupplyCenterProductionExitUpdateModuleData, m_grantTemporaryStealthFrames ) },
 			{ 0, 0, 0, 0 }
 		};
     p.add(dataFieldParse);
@@ -112,8 +109,5 @@ inline const Coord3D *SupplyCenterProductionExitUpdate::getRallyPoint( void ) co
 	if (m_rallyPointExists)
 		return &m_rallyPoint;
 
-	return NULL;
+	return nullptr;
 }
-
-
-#endif

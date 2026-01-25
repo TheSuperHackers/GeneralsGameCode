@@ -36,13 +36,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef DLLIST_H
-#define DLLIST_H
-
 
 template <class T> class DLNodeClass;
 
@@ -207,5 +201,3 @@ inline void DLListClass<T>::Remove_Tail()
 	else tail->succ=0;
 	n->Remove();
 }
-
-#endif //DLLIST_H

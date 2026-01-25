@@ -45,7 +45,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "Common/Debug.h"
@@ -74,10 +74,10 @@
 DisplayString::DisplayString( void )
 {
 	// m_textString = "";	// not necessary, done by default
-	m_font = NULL;
+	m_font = nullptr;
 
-	m_next = NULL;
-	m_prev = NULL;
+	m_next = nullptr;
+	m_prev = nullptr;
 
 }
 
@@ -117,7 +117,7 @@ void DisplayString::reset( void )
 	m_textString.clear();
 
 	// no font
-	m_font = NULL;
+	m_font = nullptr;
 
 }
 

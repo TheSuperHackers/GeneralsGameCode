@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/INI.h"
 #include "Common/TerrainTypes.h"
@@ -47,7 +47,7 @@ void INI::parseTerrainDefinition( INI* ini )
 
 	// find existing item if present
 	terrainType = TheTerrainTypes->findTerrain( name );
-	if( terrainType == NULL )
+	if( terrainType == nullptr )
 		terrainType = TheTerrainTypes->newTerrain( name );
 
 	// sanity

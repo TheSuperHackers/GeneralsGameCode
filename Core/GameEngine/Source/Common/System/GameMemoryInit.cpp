@@ -41,7 +41,7 @@
 // Desc:      Memory manager
 //
 // ----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 // SYSTEM INCLUDES
 
@@ -77,7 +77,7 @@ void userMemoryAdjustPoolSize(const char *poolName, Int& initialAllocationCount,
 	if (initialAllocationCount > 0)
 		return;
 
-	for (const PoolSizeRec* p = PoolSizes; p->name != NULL; ++p)
+	for (const PoolSizeRec* p = PoolSizes; p->name != nullptr; ++p)
 	{
 		if (strcmp(p->name, poolName) == 0)
 		{
@@ -112,18 +112,12 @@ void userMemoryManagerInitPools()
 	// since we're called prior to main, the cur dir might not be what
 	// we expect. so do it the hard way.
 	char buf[_MAX_PATH];
-	::GetModuleFileName(NULL, buf, sizeof(buf));
-	char* pEnd = buf + strlen(buf);
-	while (pEnd != buf)
+	::GetModuleFileName(nullptr, buf, sizeof(buf));
+	if (char* pEnd = strrchr(buf, '\\'))
 	{
-		if (*pEnd == '\\')
-		{
-			*pEnd = 0;
-			break;
-		}
-		--pEnd;
+		*pEnd = 0;
 	}
-	strcat(buf, "\\Data\\INI\\MemoryPools.ini");
+	strlcat(buf, "\\Data\\INI\\MemoryPools.ini", ARRAY_SIZE(buf));
 
 	FILE* fp = fopen(buf, "r");
 	if (fp)
@@ -136,7 +130,7 @@ void userMemoryManagerInitPools()
 				continue;
 			if (sscanf(buf, "%s %d %d", poolName, &initial, &overflow ) == 3)
 			{
-				for (PoolSizeRec* p = PoolSizes; p->name != NULL; ++p)
+				for (PoolSizeRec* p = PoolSizes; p->name != nullptr; ++p)
 				{
 					if (stricmp(p->name, poolName) == 0)
 					{

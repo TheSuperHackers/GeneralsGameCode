@@ -34,9 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef PS2GAMEMTLSHADERDLG_H
-#define PS2GAMEMTLSHADERDLG_H
+#pragma once
 
 #include <max.h>
 #include "GameMtlForm.h"
@@ -67,5 +65,3 @@ private:
 	bool					CompareShaderToBlendPreset(const PS2ShaderBlendSettingPreset &blend_preset);
 	void					Set_Advanced_Defaults(void);
 };
-
-#endif

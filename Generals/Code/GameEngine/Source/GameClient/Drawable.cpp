@@ -27,7 +27,7 @@
 // Author: Michael S. Booth, March 2001
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/AudioEventInfo.h"
 #include "Common/AudioSettings.h"
@@ -35,10 +35,11 @@
 #include "Common/BuildAssistant.h"
 #include "Common/ClientUpdateModule.h"
 #include "Common/DrawModule.h"
+#include "Common/FramePacer.h"
 #include "Common/GameAudio.h"
-#include "Common/GameEngine.h"
 #include "Common/GameLOD.h"
 #include "Common/GameState.h"
+#include "Common/GameUtility.h"
 #include "Common/GlobalData.h"
 #include "Common/ModuleFactory.h"
 #include "Common/PerfTimer.h"
@@ -102,7 +103,7 @@ static const char *const TheDrawableIconNames[] =
 	"Enthusiastic",//a red cross? // soon to replace?
 	"Subliminal",  //with the gold border! replace?
 	"CarBomb",
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(TheDrawableIconNames) == MAX_ICONS + 1, "Incorrect array size");
 
@@ -115,7 +116,7 @@ DrawableIconInfo::DrawableIconInfo()
 {
 	for (int i = 0; i < MAX_ICONS; ++i)
 	{
-		m_icon[i] = NULL;
+		m_icon[i] = nullptr;
 		m_keepTillFrame[i] = 0;
 	}
 }
@@ -134,7 +135,7 @@ void DrawableIconInfo::clear()
 	for (int i = 0; i < MAX_ICONS; ++i)
 	{
 		deleteInstance(m_icon[i]);
-		m_icon[i] = NULL;
+		m_icon[i] = nullptr;
 		m_keepTillFrame[i] = 0;
 	}
 }
@@ -146,7 +147,7 @@ void DrawableIconInfo::killIcon(DrawableIconType t)
 	if (m_icon[t])
 	{
 		deleteInstance(m_icon[t]);
-		m_icon[t] = NULL;
+		m_icon[t] = nullptr;
 		m_keepTillFrame[t] = 0;
 	}
 }
@@ -200,7 +201,7 @@ static const char *drawableIconIndexToName( DrawableIconType iconIndex )
 static DrawableIconType drawableIconNameToIndex( const char *iconName )
 {
 
-	DEBUG_ASSERTCRASH( iconName != NULL, ("drawableIconNameToIndex - Illegal name") );
+	DEBUG_ASSERTCRASH( iconName != nullptr, ("drawableIconNameToIndex - Illegal name") );
 
 	for( Int i = ICON_FIRST; i < MAX_ICONS; ++i )
 		if( stricmp( TheDrawableIconNames[ i ], iconName ) == 0 )
@@ -224,12 +225,12 @@ const Int MAX_ENABLED_MODULES								= 16;
 // ------------------------------------------------------------------------------------------------
 
 /*static*/ Bool							Drawable::s_staticImagesInited = false;
-/*static*/ const Image*			Drawable::s_veterancyImage[LEVEL_COUNT]	= { NULL };
-/*static*/ const Image*			Drawable::s_fullAmmo = NULL;
-/*static*/ const Image*			Drawable::s_emptyAmmo = NULL;
-/*static*/ const Image*			Drawable::s_fullContainer = NULL;
-/*static*/ const Image*			Drawable::s_emptyContainer = NULL;
-/*static*/ Anim2DTemplate**	Drawable::s_animationTemplates = NULL;
+/*static*/ const Image*			Drawable::s_veterancyImage[LEVEL_COUNT]	= { nullptr };
+/*static*/ const Image*			Drawable::s_fullAmmo = nullptr;
+/*static*/ const Image*			Drawable::s_emptyAmmo = nullptr;
+/*static*/ const Image*			Drawable::s_fullContainer = nullptr;
+/*static*/ const Image*			Drawable::s_emptyContainer = nullptr;
+/*static*/ Anim2DTemplate**	Drawable::s_animationTemplates = nullptr;
 #ifdef DIRTY_CONDITION_FLAGS
 /*static*/ Int							Drawable::s_modelLockCount = 0;
 #endif
@@ -240,7 +241,7 @@ const Int MAX_ENABLED_MODULES								= 16;
 	if (s_staticImagesInited)
 		return;
 
-	s_veterancyImage[0] = NULL;
+	s_veterancyImage[0] = nullptr;
  	s_veterancyImage[1] = TheMappedImageCollection->findImageByName("SCVeter1");
 	s_veterancyImage[2] = TheMappedImageCollection->findImageByName("SCVeter2");
 	s_veterancyImage[3] = TheMappedImageCollection->findImageByName("SCVeter3");
@@ -264,7 +265,7 @@ const Int MAX_ENABLED_MODULES								= 16;
 	s_animationTemplates[ICON_BATTLEPLAN_BOMBARD]						= TheAnim2DCollection->findTemplate(TheDrawableIconNames[ICON_BATTLEPLAN_BOMBARD]);
 	s_animationTemplates[ICON_BATTLEPLAN_HOLDTHELINE]				= TheAnim2DCollection->findTemplate(TheDrawableIconNames[ICON_BATTLEPLAN_HOLDTHELINE]);
 	s_animationTemplates[ICON_BATTLEPLAN_SEARCHANDDESTROY]	= TheAnim2DCollection->findTemplate(TheDrawableIconNames[ICON_BATTLEPLAN_SEARCHANDDESTROY]);
-	s_animationTemplates[ICON_EMOTICON]					= NULL; //Emoticons can be anything, so we'll need to handle it dynamically.
+	s_animationTemplates[ICON_EMOTICON]					= nullptr; //Emoticons can be anything, so we'll need to handle it dynamically.
 	s_animationTemplates[ICON_ENTHUSIASTIC]			= TheAnim2DCollection->findTemplate(TheDrawableIconNames[ICON_ENTHUSIASTIC]);
 	s_animationTemplates[ICON_ENTHUSIASTIC_SUBLIMINAL]			= TheAnim2DCollection->findTemplate(TheDrawableIconNames[ICON_ENTHUSIASTIC_SUBLIMINAL]);
 	s_animationTemplates[ICON_CARBOMB]			= TheAnim2DCollection->findTemplate(TheDrawableIconNames[ICON_CARBOMB]);
@@ -277,7 +278,7 @@ const Int MAX_ENABLED_MODULES								= 16;
 /*static*/ void Drawable::killStaticImages()
 {
 	delete[] s_animationTemplates;
-	s_animationTemplates = NULL;
+	s_animationTemplates = nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -308,18 +309,15 @@ void Drawable::saturateRGB(RGBColor& color, Real factor)
  * graphical side of a logical object, whereas GameLogic objects encapsulate
  * behaviors and physics.  */
 //-------------------------------------------------------------------------------------------------
-Drawable::Drawable( const ThingTemplate *thingTemplate, DrawableStatus statusBits )
+Drawable::Drawable( const ThingTemplate *thingTemplate, DrawableStatusBits statusBits )
 				: Thing( thingTemplate )
 {
 
 	// assign status bits before anything else can be done
 	m_status = statusBits;
 
-	// Added By Sadullah Nader
-	// Initialization missing and needed
-	m_nextDrawable = NULL;
-	m_prevDrawable = NULL;
-	//
+	m_nextDrawable = nullptr;
+	m_prevDrawable = nullptr;
 
 	// register drawable with the GameClient ... do this first before we start doing anything
 	// complex that uses any of the drawable data so that we have and ID!!  It's ok to initialize
@@ -329,24 +327,19 @@ Drawable::Drawable( const ThingTemplate *thingTemplate, DrawableStatus statusBit
 
 	Int i;
 
-	// Added By Sadullah Nader
-	// Initialization missing and needed
 	m_flashColor = 0;
 	m_selected = '\0';
-	//
 
 	m_expirationDate = 0;  // 0 == never expires
 
 	m_lastConstructDisplayed = -1.0f;
-
-	//Added By Sadullah Nader
 	//Fix for the building percent
 	m_constructDisplayString = TheDisplayStringManager->newDisplayString();
 	m_constructDisplayString->setFont(TheFontLibrary->getFont(TheInGameUI->getDrawableCaptionFontName(),
 																TheGlobalLanguageData->adjustFontSize(TheInGameUI->getDrawableCaptionPointSize()),
 																TheInGameUI->isDrawableCaptionBold() ));
 
-	m_ambientSound = NULL;
+	m_ambientSound = nullptr;
 
 	m_decalOpacityFadeTarget = 0;
 	m_decalOpacityFadeRate = 0;
@@ -361,20 +354,20 @@ Drawable::Drawable( const ThingTemplate *thingTemplate, DrawableStatus statusBit
 	m_timeElapsedFade = 0;
 	m_timeToFade = 0;
 
-	m_shroudClearFrame = 0;
+	m_shroudClearFrame = InvalidShroudClearFrame;
 
 	for (i = 0; i < NUM_DRAWABLE_MODULE_TYPES; ++i)
-		m_modules[i] = NULL;
+		m_modules[i] = nullptr;
 
 	m_stealthLook = STEALTHLOOK_NONE;
 
 	m_flashCount = 0;
 
-	m_locoInfo = NULL;
-	m_physicsXform = NULL;
+	m_locoInfo = nullptr;
+	m_physicsXform = nullptr;
 
 	// sanity
-	if( TheGameClient == NULL || thingTemplate == NULL )
+	if( TheGameClient == nullptr || thingTemplate == nullptr )
 	{
 
 		assert( 0 );
@@ -390,8 +383,8 @@ Drawable::Drawable( const ThingTemplate *thingTemplate, DrawableStatus statusBit
 	m_instanceScale = thingTemplate->getAssetScale();// * fuzzyScale;
 
 	// initially not bound to an object
-	m_object = NULL;
-	m_particle = NULL;
+	m_object = nullptr;
+	m_particle = nullptr;
 
 	// tintStatusTracking
 	m_tintStatus = 0;
@@ -429,7 +422,7 @@ Drawable::Drawable( const ThingTemplate *thingTemplate, DrawableStatus statusBit
 			continue;
 		*m++ = TheModuleFactory->newModule(this, drawMI.getNthName(modIdx), newModData, MODULETYPE_DRAW);
 	}
-	*m = NULL;
+	*m = nullptr;
 
 	const ModuleInfo& cuMI = thingTemplate->getClientUpdateModuleInfo();
 	if (cuMI.getCount())
@@ -449,7 +442,7 @@ Drawable::Drawable( const ThingTemplate *thingTemplate, DrawableStatus statusBit
 
 			*m++ = TheModuleFactory->newModule(this, cuMI.getNthName(modIdx), newModData, MODULETYPE_CLIENT_UPDATE);
 		}
-		*m = NULL;
+		*m = nullptr;
 	}
 
 	/// allow for inter-Module resolution
@@ -459,14 +452,22 @@ Drawable::Drawable( const ThingTemplate *thingTemplate, DrawableStatus statusBit
 			(*m)->onObjectCreated();
 	}
 
-	m_groupNumber = NULL;
-	m_captionDisplayString = NULL;
-	m_drawableInfo.m_drawable = this;
-	m_drawableInfo.m_ghostObject = NULL;
+	const Bool shadowsEnabled = getShadowsEnabled();
 
-	m_iconInfo = NULL;								// lazily allocate!
-	m_selectionFlashEnvelope = NULL;	// lazily allocate!
-	m_colorTintEnvelope = NULL;				// lazily allocate!
+	// TheSuperHackers @fix xezon 14/09/2025 Match the shadow states of all draw modules with this drawable.
+	for (DrawModule** dm = (DrawModule**)getModuleList(MODULETYPE_DRAW); *dm; ++dm)
+	{
+		(*dm)->setShadowsEnabled(shadowsEnabled);
+	}
+
+	m_groupNumber = nullptr;
+	m_captionDisplayString = nullptr;
+	m_drawableInfo.m_drawable = this;
+	m_drawableInfo.m_ghostObject = nullptr;
+
+	m_iconInfo = nullptr;								// lazily allocate!
+	m_selectionFlashEnvelope = nullptr;	// lazily allocate!
+	m_colorTintEnvelope = nullptr;				// lazily allocate!
 
 	initStaticImages();
 
@@ -482,13 +483,13 @@ Drawable::~Drawable()
 
 	if( m_constructDisplayString )
 		TheDisplayStringManager->freeDisplayString( m_constructDisplayString );
-	m_constructDisplayString = NULL;
+	m_constructDisplayString = nullptr;
 
 	if ( m_captionDisplayString )
 		TheDisplayStringManager->freeDisplayString( m_captionDisplayString );
-	m_captionDisplayString = NULL;
+	m_captionDisplayString = nullptr;
 
-	m_groupNumber = NULL;
+	m_groupNumber = nullptr;
 
 	// delete any modules callbacks
 	for (i = 0; i < NUM_DRAWABLE_MODULE_TYPES; ++i)
@@ -496,37 +497,37 @@ Drawable::~Drawable()
 		for (Module** m = m_modules[i]; m && *m; ++m)
 		{
 			deleteInstance(*m);
-			*m = NULL;	// in case other modules call findModule from their dtor!
+			*m = nullptr;	// in case other modules call findModule from their dtor!
 		}
 		delete [] m_modules[i];
-		m_modules[i] = NULL;
+		m_modules[i] = nullptr;
 	}
 
 	stopAmbientSound();
 
 	deleteInstance(m_ambientSound);
-	m_ambientSound = NULL;
+	m_ambientSound = nullptr;
 
 	/// @todo this is nasty, we need a real general effects system
 	// remove any entries that might be present from the ray effect system
 	TheGameClient->removeFromRayEffects( this );
 
-	// reset object to NULL so we never mistaken grab "dead" objects
-	m_object = NULL;
-	m_particle = NULL;
+	// reset object to nullptr so we never mistaken grab "dead" objects
+	m_object = nullptr;
+	m_particle = nullptr;
 
 	// delete any icons present
 	deleteInstance(m_iconInfo);
-	m_iconInfo = NULL;
+	m_iconInfo = nullptr;
 
 	deleteInstance(m_selectionFlashEnvelope);
-	m_selectionFlashEnvelope = NULL;
+	m_selectionFlashEnvelope = nullptr;
 
 	deleteInstance(m_colorTintEnvelope);
-	m_colorTintEnvelope = NULL;
+	m_colorTintEnvelope = nullptr;
 
 	deleteInstance(m_locoInfo);
-	m_locoInfo = NULL;
+	m_locoInfo = nullptr;
 
 	delete m_physicsXform;
 }
@@ -603,7 +604,7 @@ Bool Drawable::getShouldAnimate( Bool considerPower ) const
 Bool Drawable::clientOnly_getFirstRenderObjInfo(Coord3D* pos, Real* boundingSphereRadius, Matrix3D* transform)
 {
 	DrawModule** dm = getDrawModules();
-	const ObjectDrawInterface* di = (dm && *dm) ? (*dm)->getObjectDrawInterface() : NULL;
+	const ObjectDrawInterface* di = (dm && *dm) ? (*dm)->getObjectDrawInterface() : nullptr;
 	if (di)
 	{
 		return di->clientOnly_getRenderObjInfo(pos, boundingSphereRadius, transform);
@@ -777,7 +778,7 @@ void Drawable::detachFromParticleSystem( void )
 	if (m_particle)
 	{
 		m_particle->detachDrawable();
-		m_particle = NULL;
+		m_particle = nullptr;
 	}
 }
 
@@ -901,7 +902,7 @@ void Drawable::friend_clearSelected( void )
 // ------------------------------------------------------------------------------------------------
 void Drawable::colorFlash( const RGBColor* color, UnsignedInt decayFrames, UnsignedInt attackFrames, UnsignedInt sustainAtPeak )
 {
-	if (m_colorTintEnvelope == NULL)
+	if (m_colorTintEnvelope == nullptr)
 		m_colorTintEnvelope = newInstance(TintEnvelope);
 
 	if( color )
@@ -914,9 +915,6 @@ void Drawable::colorFlash( const RGBColor* color, UnsignedInt decayFrames, Unsig
 		white.setFromInt(0xffffffff);
 		m_colorTintEnvelope->play( &white );
 	}
-
-	// make sure the tint color is unlocked so we "fade back down" to normal
-	clearDrawableStatus( DRAWABLE_STATUS_TINT_COLOR_LOCKED );
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -927,23 +925,15 @@ void Drawable::colorTint( const RGBColor* color )
 	if( color )
 	{
 		// set the color via color flash
-		colorFlash( color, 0, 0, TRUE );
-
-		// lock the tint color so the flash never "fades back down"
-		setDrawableStatus( DRAWABLE_STATUS_TINT_COLOR_LOCKED );
-
+		colorFlash( color, 0, 0, ~0u );
 	}
 	else
 	{
-		if (m_colorTintEnvelope == NULL)
+		if (m_colorTintEnvelope == nullptr)
 			m_colorTintEnvelope = newInstance(TintEnvelope);
 
 		// remove the tint applied to the object
 		m_colorTintEnvelope->rest();
-
-		// set the tint as unlocked so we can flash and stuff again
-		clearDrawableStatus( DRAWABLE_STATUS_TINT_COLOR_LOCKED );
-
 	}
 
 }
@@ -989,7 +979,7 @@ const Vector3 * Drawable::getTintColor( void ) const
 		}
 	}
 
-	return NULL;
+	return nullptr;
 
 }
 //-------------------------------------------------------------------------------------------------
@@ -1005,7 +995,7 @@ const Vector3 * Drawable::getSelectionColor( void )	const
 		}
 	}
 
-	return NULL;
+	return nullptr;
 
 }
 
@@ -1150,7 +1140,7 @@ void Drawable::updateDrawable( void )
 
 		if (m_expirationDate != 0 && now >= m_expirationDate)
 		{
-			DEBUG_ASSERTCRASH(obj == NULL, ("Drawables with Objects should not have expiration dates!"));
+			DEBUG_ASSERTCRASH(obj == nullptr, ("Drawables with Objects should not have expiration dates!"));
 			TheGameClient->destroyDrawable(this);
 			return;
 		}
@@ -1173,26 +1163,26 @@ void Drawable::updateDrawable( void )
 	{
 		if ( testTintStatus( TINT_STATUS_DISABLED ) )
 		{
-			if (m_colorTintEnvelope == NULL)
+			if (m_colorTintEnvelope == nullptr)
 				m_colorTintEnvelope = newInstance(TintEnvelope);
 			m_colorTintEnvelope->play( &DARK_GRAY_DISABLED_COLOR, 30, 30, SUSTAIN_INDEFINITELY);
 		}
 //		else if ( testTintStatus( TINT_STATUS_POISONED) )
 //		{
-//			if (m_colorTintEnvelope == NULL)
+//			if (m_colorTintEnvelope == nullptr)
 //				m_colorTintEnvelope = newInstance(TintEnvelope);
 //			m_colorTintEnvelope->play( &SICKLY_GREEN_POISONED_COLOR, 30, 30, SUSTAIN_INDEFINITELY);
 //		}
 //		else if ( testTintStatus( TINT_STATUS_IRRADIATED) )
 //		{
-//			if (m_colorTintEnvelope == NULL)
+//			if (m_colorTintEnvelope == nullptr)
 //				m_colorTintEnvelope = newInstance(TintEnvelope);
 //			m_colorTintEnvelope->play( &RED_IRRADIATED_COLOR, 30, 30, SUSTAIN_INDEFINITELY);
 //		}
 		else
 		{
 			// NO TINTING SHOULD BE PRESENT
-			if (m_colorTintEnvelope == NULL)
+			if (m_colorTintEnvelope == nullptr)
 				m_colorTintEnvelope = newInstance(TintEnvelope);
 			m_colorTintEnvelope->release(); // head on back to normal, now
 		}
@@ -1223,7 +1213,7 @@ void Drawable::updateDrawable( void )
 //-------------------------------------------------------------------------------------------------
 void Drawable::flashAsSelected( const RGBColor *color ) ///< drawable takes care of the details if you spec no color
 {
-	if (m_selectionFlashEnvelope == NULL)
+	if (m_selectionFlashEnvelope == nullptr)
 		m_selectionFlashEnvelope = newInstance(TintEnvelope);
 
 	if ( color )
@@ -1252,11 +1242,11 @@ void Drawable::flashAsSelected( const RGBColor *color ) ///< drawable takes care
 //-------------------------------------------------------------------------------------------------
 void Drawable::applyPhysicsXform(Matrix3D* mtx)
 {
-	if (m_physicsXform != NULL)
+	if (m_physicsXform != nullptr)
 	{
 		// TheSuperHackers @tweak Update the physics transform on every WW Sync only.
 		// All calculations are originally catered to a 30 fps logic step.
-		if (WW3D::Get_Frame_Time() != 0)
+		if (WW3D::Get_Sync_Frame_Time() != 0)
 		{
 			calcPhysicsXform(*m_physicsXform);
 		}
@@ -1319,7 +1309,7 @@ Bool Drawable::calcPhysicsXform(PhysicsXformInfo& info)
 // ------------------------------------------------------------------------------------------------
 void Drawable::calcPhysicsXformThrust( const Locomotor *locomotor, PhysicsXformInfo& info )
 {
-	if (m_locoInfo == NULL)
+	if (m_locoInfo == nullptr)
 		m_locoInfo = newInstance(DrawableLocoInfo);
 
 	Real THRUST_ROLL = locomotor->getThrustRoll();
@@ -1398,7 +1388,7 @@ void Drawable::calcPhysicsXformThrust( const Locomotor *locomotor, PhysicsXformI
 //-------------------------------------------------------------------------------------------------
 void Drawable::calcPhysicsXformHoverOrWings( const Locomotor *locomotor, PhysicsXformInfo& info )
 {
-	if (m_locoInfo == NULL)
+	if (m_locoInfo == nullptr)
 		m_locoInfo = newInstance(DrawableLocoInfo);
 
 	const Real ACCEL_PITCH_LIMIT = locomotor->getAccelPitchLimit();
@@ -1415,16 +1405,16 @@ void Drawable::calcPhysicsXformHoverOrWings( const Locomotor *locomotor, Physics
 
 	// get object from logic
 	Object *obj = getObject();
-	if (obj == NULL)
+	if (obj == nullptr)
 		return;
 
 	AIUpdateInterface *ai = obj->getAIUpdateInterface();
-	if (ai == NULL)
+	if (ai == nullptr)
 		return;
 
 	// get object physics state
 	PhysicsBehavior *physics = obj->getPhysics();
-	if (physics == NULL)
+	if (physics == nullptr)
 		return;
 
 	// get our position and direction vector
@@ -1497,7 +1487,7 @@ void Drawable::calcPhysicsXformHoverOrWings( const Locomotor *locomotor, Physics
 //-------------------------------------------------------------------------------------------------
 void Drawable::calcPhysicsXformTreads( const Locomotor *locomotor, PhysicsXformInfo& info )
 {
-	if (m_locoInfo == NULL)
+	if (m_locoInfo == nullptr)
 		m_locoInfo = newInstance(DrawableLocoInfo);
 
 	const Real OVERLAP_SHRINK_FACTOR = 0.8f;
@@ -1516,16 +1506,16 @@ void Drawable::calcPhysicsXformTreads( const Locomotor *locomotor, PhysicsXformI
 
 	// get object from logic
 	Object *obj = getObject();
-	if (obj == NULL)
+	if (obj == nullptr)
 		return;
 
 	AIUpdateInterface *ai = obj->getAIUpdateInterface();
-	if (ai == NULL)
+	if (ai == nullptr)
 		return ;
 
 	// get object physics state
 	PhysicsBehavior *physics = obj->getPhysics();
-	if (physics == NULL)
+	if (physics == nullptr)
 		return;
 
 	// get our position and direction vector
@@ -1550,7 +1540,7 @@ void Drawable::calcPhysicsXformTreads( const Locomotor *locomotor, PhysicsXformI
 	// get object we are currently overlapping, if any
 	Object* overlapped = TheGameLogic->findObjectByID(physics->getCurrentOverlap());
 	if (overlapped && overlapped->isKindOf(KINDOF_SHRUBBERY)) {
-		overlapped = NULL; // We just smash through shrubbery.  jba.
+		overlapped = nullptr; // We just smash through shrubbery.  jba.
 	}
 
 	if (overlapped)
@@ -1754,7 +1744,7 @@ void Drawable::calcPhysicsXformTreads( const Locomotor *locomotor, PhysicsXformI
 //-------------------------------------------------------------------------------------------------
 void Drawable::calcPhysicsXformWheels( const Locomotor *locomotor, PhysicsXformInfo& info )
 {
-	if (m_locoInfo == NULL)
+	if (m_locoInfo == nullptr)
 		m_locoInfo = newInstance(DrawableLocoInfo);
 
 	const Real ACCEL_PITCH_LIMIT = locomotor->getAccelPitchLimit();
@@ -1775,16 +1765,16 @@ void Drawable::calcPhysicsXformWheels( const Locomotor *locomotor, PhysicsXformI
 
 	// get object from logic
 	Object *obj = getObject();
-	if (obj == NULL)
+	if (obj == nullptr)
 		return;
 
 	AIUpdateInterface *ai = obj->getAIUpdateInterface();
-	if (ai == NULL)
+	if (ai == nullptr)
 		return ;
 
 	// get object physics state
 	PhysicsBehavior *physics = obj->getPhysics();
-	if (physics == NULL)
+	if (physics == nullptr)
 		return ;
 
 	// get our position and direction vector
@@ -2107,7 +2097,7 @@ void Drawable::setStealthLook(StealthLookType look)
 				Object *obj = getObject();
 				if( obj )
 				{
-					//Try to get the stealthupdate module and see if the opacity value is overriden.
+					//Try to get the stealthupdate module and see if the opacity value is overridden.
 					StealthUpdate* stealth = obj->getStealth();
 					if( stealth )
 					{
@@ -2173,15 +2163,25 @@ void Drawable::setStealthLook(StealthLookType look)
 //-------------------------------------------------------------------------------------------------
 void Drawable::draw()
 {
-
 	if ( getObject() && getObject()->isEffectivelyDead() )
-		m_heatVisionOpacity = 0.0f;//dead folks don't stealth anyway
-	else if ( m_heatVisionOpacity > VERY_TRANSPARENT_HEATVISION )// keep fading any heatvision unless something has set it to zero
-		m_heatVisionOpacity *= HEATVISION_FADE_SCALAR;
-	else
+	{
+		//dead folks don't stealth anyway
 		m_heatVisionOpacity = 0.0f;
+	}
+	else if ( m_heatVisionOpacity > VERY_TRANSPARENT_HEATVISION )
+	{
+		// keep fading any added material unless something has set it to zero
+		// TheSuperHackers @tweak The stealth opacity fade time step is now decoupled from the render update.
+		static_assert(HEATVISION_FADE_SCALAR > 0.0f && HEATVISION_FADE_SCALAR < 1.0f, "HEATVISION_FADE_SCALAR must be between 0 and 1");
 
-
+		const Real timeScale = TheFramePacer->getActualLogicTimeScaleOverFpsRatio();
+		const Real fadeScalar = 1.0f - (1.0f - HEATVISION_FADE_SCALAR) * timeScale;
+		m_heatVisionOpacity *= fadeScalar;
+	}
+	else
+	{
+		m_heatVisionOpacity = 0.0f;
+	}
 
 	if (m_hidden || m_hiddenByStealth || getFullyObscuredByShroud())
 		return;	// my, that was easy
@@ -2225,11 +2225,11 @@ static Bool computeHealthRegion( const Drawable *draw, IRegion2D& region )
 {
 
 	// sanity
-	if( draw == NULL )
+	if( draw == nullptr )
 		return FALSE;
 
 	const Object *obj = draw->getObject();
-	if( obj == NULL )
+	if( obj == nullptr )
 		return FALSE;
 
 	Coord3D p;
@@ -2275,7 +2275,7 @@ Bool Drawable::drawsAnyUIText( void )
 		return FALSE;
 
 	const Object *obj = getObject();
-	if ( !obj || obj->getControllingPlayer() != TheControlBar->getCurrentlyViewedPlayer())
+	if ( !obj || obj->getControllingPlayer() != rts::getObservedOrLocalPlayer())
 		return FALSE;
 
 	Player *owner = obj->getControllingPlayer();
@@ -2284,7 +2284,7 @@ Bool Drawable::drawsAnyUIText( void )
 	if (groupNum > NO_HOTKEY_SQUAD && groupNum < NUM_HOTKEY_SQUADS )
 		return TRUE;
 	else
-		m_groupNumber = NULL;
+		m_groupNumber = nullptr;
 
 	if ( obj->getFormationID() != NO_FORMATION_ID )
 		return TRUE;
@@ -2303,7 +2303,7 @@ void Drawable::drawIconUI( void )
 	if( TheGameLogic->getDrawIconUI() && (TheScriptEngine->getFade()==ScriptEngine::FADE_NONE) )
 	{
 		IRegion2D healthBarRegionStorage;
-		const IRegion2D* healthBarRegion = NULL;
+		const IRegion2D* healthBarRegion = nullptr;
 		if (computeHealthRegion(this, healthBarRegionStorage))
 			healthBarRegion = &healthBarRegionStorage; //both data and a PointerAsFlag for logic in the methods below
 
@@ -2350,7 +2350,7 @@ void Drawable::drawIconUI( void )
 //------------------------------------------------------------------------------------------------
 DrawableIconInfo* Drawable::getIconInfo()
 {
-	if (m_iconInfo == NULL)
+	if (m_iconInfo == nullptr)
 		m_iconInfo = newInstance(DrawableIconInfo);
 	return m_iconInfo;
 }
@@ -2372,8 +2372,8 @@ void Drawable::setEmoticon( const AsciiString &name, Int duration )
 	Anim2DTemplate *animTemplate = TheAnim2DCollection->findTemplate( name );
 	if( animTemplate )
 	{
-		DEBUG_ASSERTCRASH( getIconInfo()->m_icon[ ICON_EMOTICON ] == NULL, ("Drawable::setEmoticon - Emoticon isn't empty, need to refuse to set or destroy the old one in favor of the new one") );
-		if( getIconInfo()->m_icon[ ICON_EMOTICON ] == NULL )
+		DEBUG_ASSERTCRASH( getIconInfo()->m_icon[ ICON_EMOTICON ] == nullptr, ("Drawable::setEmoticon - Emoticon isn't empty, need to refuse to set or destroy the old one in favor of the new one") );
+		if( getIconInfo()->m_icon[ ICON_EMOTICON ] == nullptr )
 		{
 			getIconInfo()->m_icon[ ICON_EMOTICON ] = newInstance(Anim2D)( animTemplate, TheAnim2DCollection );
 			getIconInfo()->m_keepTillFrame[ ICON_EMOTICON ] = duration >= 0 ? TheGameLogic->getFrame() + duration : FOREVER;
@@ -2424,7 +2424,7 @@ void Drawable::drawAmmo( const IRegion2D *healthBarRegion )
 	if (!(
 				TheGlobalData->m_showObjectHealth &&
 				(isSelected() || (TheInGameUI && (TheInGameUI->getMousedOverDrawableID() == getID()))) &&
-				obj->getControllingPlayer() == TheControlBar->getCurrentlyViewedPlayer()
+				obj->getControllingPlayer() == rts::getObservedOrLocalPlayer()
 			))
 		return;
 
@@ -2482,7 +2482,7 @@ void Drawable::drawContained( const IRegion2D *healthBarRegion )
 	if (!(
 				TheGlobalData->m_showObjectHealth &&
 				(isSelected() || (TheInGameUI && (TheInGameUI->getMousedOverDrawableID() == getID()))) &&
-				obj->getControllingPlayer() == TheControlBar->getCurrentlyViewedPlayer()
+				obj->getControllingPlayer() == rts::getObservedOrLocalPlayer()
 			))
 		return;
 
@@ -2654,7 +2654,7 @@ void Drawable::drawUIText()
 	// GameClient caches a list of us drawables during Drawablepostdraw()
 	// then our group numbers get spit out last, so they draw in front
 
-	const IRegion2D* healthBarRegion = NULL;
+	const IRegion2D* healthBarRegion = nullptr;
 	IRegion2D healthBarRegionStorage;
 	if (computeHealthRegion(this, healthBarRegionStorage))
 		healthBarRegion = &healthBarRegionStorage; //both data and a PointerAsFlag for logic in the methods below
@@ -2744,7 +2744,7 @@ void Drawable::drawHealing(const IRegion2D* healthBarRegion)
 	if( body->getHealth() != body->getMaxHealth() )
 	{
 //		const DamageInfo* lastDamage = body->getLastDamageInfo();
-//		if( lastDamage != NULL && lastDamage->in.m_damageType == DAMAGE_HEALING
+//		if( lastDamage != nullptr && lastDamage->in.m_damageType == DAMAGE_HEALING
 //			&&(TheGameLogic->getFrame() - body->getLastHealingTimestamp()) <= HEALING_ICON_DISPLAY_TIME
 //			)
 		if ( TheGameLogic->getFrame() > HEALING_ICON_DISPLAY_TIME && // because so many things init health early in game
@@ -2778,14 +2778,14 @@ void Drawable::drawHealing(const IRegion2D* healthBarRegion)
 	//
 	if( showHealing ) /// @todo HERE, WE NEED TO LEAVE STUFF ALONE, IF WE ARE ALREADY SHOWING HEALING
 	{
-		if (healthBarRegion != NULL)
+		if (healthBarRegion != nullptr)
 		{
 
-			if( getIconInfo()->m_icon[ typeIndex ] == NULL )
+			if( getIconInfo()->m_icon[ typeIndex ] == nullptr )
 				getIconInfo()->m_icon[ typeIndex ] = newInstance(Anim2D)( s_animationTemplates[ typeIndex ], TheAnim2DCollection );
 
 			// draw the animation if present
-			if( getIconInfo()->m_icon[ typeIndex ] != NULL)
+			if( getIconInfo()->m_icon[ typeIndex ] != nullptr)
 			{
 
 				//
@@ -2833,7 +2833,7 @@ void Drawable::drawEnthusiastic(const IRegion2D* healthBarRegion)
 	// only display if have enthusiasm
 
 	if( obj->testWeaponBonusCondition( WEAPONBONUSCONDITION_ENTHUSIASTIC ) == TRUE &&
-			healthBarRegion != NULL )
+			healthBarRegion != nullptr )
 	{
 
 		DrawableIconType iconIndex = ICON_ENTHUSIASTIC;
@@ -2844,11 +2844,11 @@ void Drawable::drawEnthusiastic(const IRegion2D* healthBarRegion)
 
 
 
-		if( getIconInfo()->m_icon[ iconIndex ] == NULL )
+		if( getIconInfo()->m_icon[ iconIndex ] == nullptr )
 			getIconInfo()->m_icon[ iconIndex ] = newInstance(Anim2D)( s_animationTemplates[ iconIndex ], TheAnim2DCollection );
 
 		// draw the animation if present
-		if( getIconInfo()->m_icon[ iconIndex ] != NULL)
+		if( getIconInfo()->m_icon[ iconIndex ] != nullptr)
 		{
 
 			//
@@ -2913,7 +2913,7 @@ void Drawable::drawDemoralized(const IRegion2D* healthBarRegion)
 		if( healthBarRegion )
 		{
 			// create icon if necessary
-			if( getIconInfo()->m_icon[ ICON_DEMORALIZED ] == NULL )
+			if( getIconInfo()->m_icon[ ICON_DEMORALIZED ] == nullptr )
 				getIconInfo()->m_icon[ ICON_DEMORALIZED ] = newInstance(Anim2D)( s_animationTemplates[ ICON_DEMORALIZED ], TheAnim2DCollection );
 
 			if (getIconInfo()->m_icon[ ICON_DEMORALIZED ])
@@ -2955,7 +2955,7 @@ void Drawable::drawBombed(const IRegion2D* healthBarRegion)
 	UnsignedInt now = TheGameLogic->getFrame();
 
 	if( obj->testWeaponSetFlag( WEAPONSET_CARBOMB ) &&
-				obj->getControllingPlayer() == TheControlBar->getCurrentlyViewedPlayer())
+				obj->getControllingPlayer() == rts::getObservedOrLocalPlayer())
 	{
 		if( !getIconInfo()->m_icon[ ICON_CARBOMB ] )
 			getIconInfo()->m_icon[ ICON_CARBOMB ] = newInstance(Anim2D)( s_animationTemplates[ ICON_CARBOMB ], TheAnim2DCollection );
@@ -3141,7 +3141,7 @@ void Drawable::drawDisabled(const IRegion2D* healthBarRegion)
 		)
 	{
 		// create icon if necessary
-		if( getIconInfo()->m_icon[ ICON_DISABLED ] == NULL )
+		if( getIconInfo()->m_icon[ ICON_DISABLED ] == nullptr )
 		{
 			getIconInfo()->m_icon[ ICON_DISABLED ] = newInstance(Anim2D)
 			( s_animationTemplates[ ICON_DISABLED ], TheAnim2DCollection );
@@ -3188,7 +3188,7 @@ void Drawable::drawConstructPercent( const IRegion2D *healthBarRegion )
 	// this data is in an attached object
 	Object *obj = getObject();
 
-	if( obj == NULL || !obj->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) ||
+	if( obj == nullptr || !obj->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) ||
 			obj->getStatusBits().test( OBJECT_STATUS_SOLD ) )
 	{
 		// no object, or we are now complete get rid of the string if we have one
@@ -3196,7 +3196,7 @@ void Drawable::drawConstructPercent( const IRegion2D *healthBarRegion )
 		{
 
 			TheDisplayStringManager->freeDisplayString( m_constructDisplayString );
-			m_constructDisplayString = NULL;
+			m_constructDisplayString = nullptr;
 		}
 		return;
 	}
@@ -3208,7 +3208,7 @@ void Drawable::drawConstructPercent( const IRegion2D *healthBarRegion )
 	//}
 
 	// construction is partially complete, allocate a display string if we need one
-	if( m_constructDisplayString == NULL )
+	if( m_constructDisplayString == nullptr )
 		m_constructDisplayString = TheDisplayStringManager->newDisplayString();
 
 	// set the string if the value has changed
@@ -3285,7 +3285,7 @@ void Drawable::drawVeterancy( const IRegion2D *healthBarRegion )
 	// get object from drawble
 	Object* obj = getObject();
 
-	if( obj->getExperienceTracker() == NULL )
+	if( obj->getExperienceTracker() == nullptr )
 	{
 		//Only objects with experience trackers can possibly have veterancy.
 		return;
@@ -3338,7 +3338,7 @@ void Drawable::drawHealthBar(const IRegion2D* healthBarRegion)
 		return;
 
 	//
-	// only draw health for selected drawbles and drawables that have been moused over
+	// only draw health for selected drawables and drawables that have been moused over
 	// by the cursor
 	//
 	if( TheGlobalData->m_showObjectHealth &&
@@ -3347,7 +3347,7 @@ void Drawable::drawHealthBar(const IRegion2D* healthBarRegion)
 		Object *obj = getObject();
 
 		// if no object, nothing to do
-		if( obj == NULL )
+		if( obj == nullptr )
 			return;
 
 		if( obj->isKindOf( KINDOF_FORCEATTACKABLE ) )
@@ -3379,7 +3379,10 @@ void Drawable::drawHealthBar(const IRegion2D* healthBarRegion)
 		//
 
 		Color color, outlineColor;
-		if( obj->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) || (obj->isDisabled() && !obj->isDisabledByType(DISABLED_HELD)) )
+		DisabledMaskType mask = obj->getDisabledFlags();
+		mask.clear(MAKE_DISABLED_MASK(DISABLED_HELD));
+
+		if (obj->getStatusBits().test(OBJECT_STATUS_UNDER_CONSTRUCTION) || DISABLEDMASK_ANY_SET(mask))
 		{
 			color = GameMakeColor( 0, healthRatio * 255.0f, 255, 255 );//blue to cyan
 			outlineColor = GameMakeColor( 0, healthRatio * 128.0f, 128, 255 );//dark blue to dark cyan
@@ -3464,6 +3467,7 @@ void Drawable::clearAndSetModelConditionState( ModelConditionFlagType clr, Model
 DrawModule** Drawable::getDrawModules()
 {
 	DrawModule** dm = (DrawModule**)getModuleList(MODULETYPE_DRAW);
+
 #ifdef DIRTY_CONDITION_FLAGS
 	if (m_isModelDirty)
 	{
@@ -3476,16 +3480,12 @@ DrawModule** Drawable::getDrawModules()
 		}
 		else
 		{
-			for (DrawModule** dm2 = dm; *dm2; ++dm2)
-			{
-				ObjectDrawInterface* di = (*dm2)->getObjectDrawInterface();
-				if (di)
-					di->replaceModelConditionState( m_conditionState );
-			}
-			m_isModelDirty = false;
+			replaceModelConditionStateInDrawable();
 		}
 	}
 #endif
+
+	DEBUG_ASSERTCRASH(dm != nullptr, ("Draw Module List is not expected null"));
 	return dm;
 }
 
@@ -3493,6 +3493,7 @@ DrawModule** Drawable::getDrawModules()
 DrawModule const** Drawable::getDrawModules() const
 {
 	DrawModule const** dm = (DrawModule const**)getModuleList(MODULETYPE_DRAW);
+
 #ifdef DIRTY_CONDITION_FLAGS
 	if (m_isModelDirty)
 	{
@@ -3505,17 +3506,12 @@ DrawModule const** Drawable::getDrawModules() const
 		}
 		else
 		{
-			// yeah, yeah, yeah... I know (srj)
-			for (DrawModule** dm2 = (DrawModule**)dm; *dm2; ++dm2)
-			{
-				ObjectDrawInterface* di = (*dm2)->getObjectDrawInterface();
-				if (di)
-					di->replaceModelConditionState( m_conditionState );
-			}
-			m_isModelDirty = false;
+			const_cast<Drawable*>(this)->replaceModelConditionStateInDrawable();
 		}
 	}
 #endif
+
+	DEBUG_ASSERTCRASH(dm != nullptr, ("Draw Module List is not expected null"));
 	return dm;
 }
 
@@ -3533,12 +3529,7 @@ void Drawable::clearAndSetModelConditionFlags(const ModelConditionFlags& clr, co
 #ifdef DIRTY_CONDITION_FLAGS
 	m_isModelDirty = true;
 #else
-	for (DrawModule** dm = getDrawModules(); *dm; ++dm)
-	{
-		ObjectDrawInterface* di = (*dm)->getObjectDrawInterface();
-		if (di)
-			di->replaceModelConditionState( m_conditionState );
-	}
+	replaceModelConditionStateInDrawable();
 #endif
 }
 
@@ -3560,24 +3551,37 @@ void Drawable::replaceModelConditionFlags( const ModelConditionFlags &flags, Boo
 	// when forcing a replace we won't use dirty flags, we will immediately do an update now
 	if( forceReplace == TRUE )
 	{
-		for (DrawModule** dm = getDrawModules(); *dm; ++dm)
-		{
-			ObjectDrawInterface* di = (*dm)->getObjectDrawInterface();
-			if (di)
-				di->replaceModelConditionState( m_conditionState );
-		}
-		m_isModelDirty = false;
+		replaceModelConditionStateInDrawable();
 	}
 	else
+	{
 		m_isModelDirty = true;
+	}
 #else
+	replaceModelConditionStateInDrawable();
+#endif
+}
+
+//-------------------------------------------------------------------------------------------------
+void Drawable::replaceModelConditionStateInDrawable()
+{
+	// TheSuperHackers @info Set not dirty early to avoid recursive calls from within getDrawModules().
+	m_isModelDirty = false;
+
+	// TheSuperHackers @bugfix Remove and re-add the terrain decal before processing the individual draw
+	// modules, because the terrain decal is applied to the first draw module only, and the new first
+	// draw module may be different than before.
+	const TerrainDecalType terrainDecalType = getTerrainDecalType();
+	setTerrainDecal(TERRAIN_DECAL_NONE);
+
 	for (DrawModule** dm = getDrawModules(); *dm; ++dm)
 	{
 		ObjectDrawInterface* di = (*dm)->getObjectDrawInterface();
 		if (di)
 			di->replaceModelConditionState( m_conditionState );
 	}
-#endif
+
+	setTerrainDecal(terrainDecalType);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -3657,7 +3661,7 @@ void Drawable::friend_bindToObject( Object *obj ) ///< bind this drawable to an 
 	PhysicsXformInfo physicsXform;
 	if (calcPhysicsXform(physicsXform))
 	{
-		DEBUG_ASSERTCRASH(m_physicsXform == NULL, ("m_physicsXform is not NULL"));
+		DEBUG_ASSERTCRASH(m_physicsXform == nullptr, ("m_physicsXform is not null"));
 		m_physicsXform = new PhysicsXformInfo;
 		*m_physicsXform = physicsXform;
 	}
@@ -3794,7 +3798,7 @@ void Drawable::setCaptionText( const UnicodeString& captionText )
 	UnicodeString sanitizedString = captionText;
 	TheLanguageFilter->filterLine(sanitizedString);
 
-	if( m_captionDisplayString == NULL )
+	if( m_captionDisplayString == nullptr )
 	{
 		m_captionDisplayString = TheDisplayStringManager->newDisplayString();
 		GameFont *font = TheFontLibrary->getFont(
@@ -3819,7 +3823,7 @@ void Drawable::clearCaptionText( void )
 {
 	if (m_captionDisplayString)
 		TheDisplayStringManager->freeDisplayString(m_captionDisplayString);
-	m_captionDisplayString = NULL;
+	m_captionDisplayString = nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -3859,7 +3863,7 @@ void Drawable::startAmbientSound(BodyDamageType dt, TimeOfDay tod)
 	Bool trySound = FALSE;
 	if( audio.getEventName().isNotEmpty() )
 	{
-		if (m_ambientSound == NULL)
+		if (m_ambientSound == nullptr)
 			m_ambientSound = newInstance(DynamicAudioEventRTS);
 
 		(m_ambientSound->m_event) = audio;
@@ -3873,7 +3877,7 @@ void Drawable::startAmbientSound(BodyDamageType dt, TimeOfDay tod)
 		const AudioEventRTS& pristineAudio = getAmbientSoundByDamage( BODY_PRISTINE );
 		if( pristineAudio.getEventName().isNotEmpty() )
 		{
-			if (m_ambientSound == NULL)
+			if (m_ambientSound == nullptr)
 				m_ambientSound = newInstance(DynamicAudioEventRTS);
 			(m_ambientSound->m_event) = pristineAudio;
 			trySound = TRUE;
@@ -3910,7 +3914,7 @@ void Drawable::startAmbientSound(BodyDamageType dt, TimeOfDay tod)
 		{
 			DEBUG_CRASH( ("Ambient sound %s missing! Skipping...", m_ambientSound->m_event.getEventName().str() ) );
 			deleteInstance(m_ambientSound);
-			m_ambientSound = NULL;
+			m_ambientSound = nullptr;
 		}
 	}
 }
@@ -3964,7 +3968,7 @@ void Drawable::enableAmbientSound( Bool enable )
 void Drawable::prependToList(Drawable **pListHead)
 {
 	// add the object to the global list
-	m_prevDrawable = NULL;
+	m_prevDrawable = nullptr;
 	m_nextDrawable = *pListHead;
 	if (*pListHead)
 		(*pListHead)->m_prevDrawable = this;
@@ -4109,7 +4113,7 @@ ClientUpdateModule* Drawable::findClientUpdateModule( NameKeyType key )
 			}
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -4195,7 +4199,7 @@ void Drawable::xferDrawableModules( Xfer *xfer )
 				NameKeyType moduleIdentifierKey = TheNameKeyGenerator->nameToKey(moduleIdentifier);
 
 				// find module in the drawable module list
-				Module* module = NULL;
+				Module* module = nullptr;
 				for( Module **m = m_modules[curModuleType]; m && *m; ++m )
 				{
 					if (moduleIdentifierKey == (*m)->getModuleTagNameKey())
@@ -4216,7 +4220,7 @@ void Drawable::xferDrawableModules( Xfer *xfer )
 				// it from the object definition in a future patch, if that is so, we need to
 				// skip the module data in the file
 				//
-				if( module == NULL )
+				if( module == nullptr )
 				{
 
 					// for testing purposes, this module better be found
@@ -4254,13 +4258,18 @@ void Drawable::xferDrawableModules( Xfer *xfer )
 	*    during the module xfer (CBD)
 	* 4: Added m_ambientSoundEnabled flag
 	* 5: save full mtx, not pos+orient.
+	* 6: TheSuperHackers @bugfix Removed m_prevTintStatus because loading its value is unnecessary and undesirable
 	*/
 // ------------------------------------------------------------------------------------------------
 void Drawable::xfer( Xfer *xfer )
 {
 
 	// version
+#if RETAIL_COMPATIBLE_XFER_SAVE
 	const XferVersion currentVersion = 5;
+#else
+	const XferVersion currentVersion = 6;
+#endif
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
@@ -4271,7 +4280,7 @@ void Drawable::xfer( Xfer *xfer )
 	{
 		TheAudio->killAudioEventImmediately( m_ambientSound->m_event.getPlayingHandle() );
 		deleteInstance(m_ambientSound);
-		m_ambientSound = NULL;
+		m_ambientSound = nullptr;
 	}
 
 	// drawable id
@@ -4312,13 +4321,13 @@ void Drawable::xfer( Xfer *xfer )
 	}
 
 	// selection flash envelope
-	Bool selFlash = (m_selectionFlashEnvelope != NULL);
+	Bool selFlash = (m_selectionFlashEnvelope != nullptr);
 	xfer->xferBool( &selFlash );
 	if( selFlash )
 	{
 
 		// allocate selection flash envelope if we need to
-		if( m_selectionFlashEnvelope == NULL )
+		if( m_selectionFlashEnvelope == nullptr )
 			m_selectionFlashEnvelope = newInstance( TintEnvelope );
 
 		// xfer
@@ -4327,13 +4336,13 @@ void Drawable::xfer( Xfer *xfer )
 	}
 
 	// color tint envelope
-	Bool colFlash = (m_colorTintEnvelope != NULL);
+	Bool colFlash = (m_colorTintEnvelope != nullptr);
 	xfer->xferBool( &colFlash );
 	if( colFlash )
 	{
 
 		// allocate envelope if we need to
-		if( m_colorTintEnvelope == NULL )
+		if( m_colorTintEnvelope == nullptr )
 			m_colorTintEnvelope = newInstance( TintEnvelope );
 
 		// xfer
@@ -4420,8 +4429,15 @@ void Drawable::xfer( Xfer *xfer )
 	// tint status
 	xfer->xferUnsignedInt( &m_tintStatus );
 
-	// prev tint status
-	xfer->xferUnsignedInt( &m_prevTintStatus );
+	if (version <= 5)
+	{
+		// prev tint status
+		xfer->xferUnsignedInt( &m_prevTintStatus );
+
+		// TheSuperHackers @bugfix Caball009 21/12/2025 Trigger tinting after loading a save game.
+		if (xfer->getXferMode() == XFER_LOAD)
+			m_prevTintStatus = 0;
+	}
 
 	// fading mode
 	xfer->xferUser( &m_fadeMode, sizeof( FadingMode ) );
@@ -4432,11 +4448,11 @@ void Drawable::xfer( Xfer *xfer )
 	// time to fade
 	xfer->xferUnsignedInt( &m_timeToFade );
 
-	Bool hasLocoInfo = (m_locoInfo != NULL);
+	Bool hasLocoInfo = (m_locoInfo != nullptr);
 	xfer->xferBool( &hasLocoInfo );
 	if (hasLocoInfo)
 	{
-		if( xfer->getXferMode() == XFER_LOAD && m_locoInfo == NULL	)
+		if( xfer->getXferMode() == XFER_LOAD && m_locoInfo == nullptr	)
 			m_locoInfo = newInstance(DrawableLocoInfo);
 
 		// pitch
@@ -4561,7 +4577,7 @@ void Drawable::xfer( Xfer *xfer )
 		{
 
 			// skip empty icon slots
-			if( !hasIconInfo() || getIconInfo()->m_icon[ i ] == NULL )
+			if( !hasIconInfo() || getIconInfo()->m_icon[ i ] == nullptr )
 				continue;
 
 			// icon index name
@@ -4607,7 +4623,7 @@ void Drawable::xfer( Xfer *xfer )
 			// icon template name
 			xfer->xferAsciiString( &iconTemplateName );
 			animTemplate = TheAnim2DCollection->findTemplate( iconTemplateName );
-			if( animTemplate == NULL )
+			if( animTemplate == nullptr )
 			{
 
 				DEBUG_CRASH(( "Drawable::xfer - Unknown icon template '%s'", iconTemplateName.str() ));
@@ -4644,7 +4660,7 @@ void Drawable::xfer( Xfer *xfer )
 	//
 #ifdef DIRTY_CONDITION_FLAGS
 	if( xfer->getXferMode() == XFER_SAVE )
-		DEBUG_ASSERTCRASH( m_isModelDirty == FALSE, ("Drawble::xfer - m_isModelDirty is not FALSE!") );
+		DEBUG_ASSERTCRASH( m_isModelDirty == FALSE, ("Drawable::xfer - m_isModelDirty is not FALSE!") );
 	else
 		m_isModelDirty = TRUE;
 #endif
@@ -4663,7 +4679,7 @@ void Drawable::loadPostProcess( void )
 {
 		// if we have an object, we don't need to save/load the pos, just restore it.
 		// if we don't, we'd better save it!
-	if (m_object != NULL)
+	if (m_object != nullptr)
 	{
 		setTransformMatrix(m_object->getTransformMatrix());
 	}
@@ -4689,7 +4705,7 @@ const Locomotor* Drawable::getLocomotor() const
 			return ai->getCurLocomotor();
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 //=================================================================================================
@@ -4701,7 +4717,7 @@ const Locomotor* Drawable::getLocomotor() const
 	{
 		if (TheGameClient)	// WB has no GameClient!
 		{
-			for (Drawable* d = TheGameClient->firstDrawable(); d != NULL; d = d->getNextDrawable())
+			for (Drawable* d = TheGameClient->firstDrawable(); d != nullptr; d = d->getNextDrawable())
 			{
 				// this will force us to update stuff.
 				d->getDrawModules();
@@ -4739,11 +4755,11 @@ TintEnvelope::TintEnvelope(void)
 const Real FADE_RATE_EPSILON = (0.001f);
 
 //-------------------------------------------------------------------------------------------------
-void TintEnvelope::play(const RGBColor *peak, UnsignedInt atackFrames, UnsignedInt decayFrames, UnsignedInt sustainAtPeak )
+void TintEnvelope::play(const RGBColor *peak, UnsignedInt attackFrames, UnsignedInt decayFrames, UnsignedInt sustainAtPeak )
 {
 	setPeakColor( peak );
 
-	setAttackFrames( atackFrames );
+	setAttackFrames( attackFrames );
 	setDecayFrames( decayFrames );
 
 	m_envState = ENVELOPE_STATE_ATTACK;
@@ -4778,6 +4794,9 @@ void TintEnvelope::setDecayFrames( UnsignedInt frames )
 //-------------------------------------------------------------------------------------------------
 void TintEnvelope::update(void)
 {
+	// TheSuperHackers @tweak The tint time step is now decoupled from the render update.
+	const Real timeScale = TheFramePacer->getActualLogicTimeScaleOverFpsRatio();
+
 	switch ( m_envState )
 	{
 		case ( ENVELOPE_STATE_REST ) : //most likely case
@@ -4788,25 +4807,31 @@ void TintEnvelope::update(void)
 		}
 		case ( ENVELOPE_STATE_DECAY ) : // much more likely than attack
 		{
-			if (m_decayRate.Length() > m_currentColor.Length() || m_currentColor.Length() <= FADE_RATE_EPSILON) //we are at rest
+			const Vector3 decayRate = m_decayRate * timeScale;
+
+			if (decayRate.Length() > m_currentColor.Length() || m_currentColor.Length() <= FADE_RATE_EPSILON)
 			{
+				// We are at rest
 				m_envState = ENVELOPE_STATE_REST;
 				m_affect = FALSE;
 			}
 			else
 			{
-				Vector3::Add( m_decayRate, m_currentColor, &m_currentColor );//Add the decayRate to the current color;
+				// Add the decayRate to the current color
+				Vector3::Add( decayRate, m_currentColor, &m_currentColor );
 				m_affect = TRUE;
 			}
 			break;
 		}
 		case ( ENVELOPE_STATE_ATTACK ) :
 		{
+			const Vector3 attackRate = m_attackRate * timeScale;
 			Vector3 delta;
 			Vector3::Subtract(m_currentColor, m_peakColor, &delta);
 
-			if (m_attackRate.Length() > delta.Length() || delta.Length() <= FADE_RATE_EPSILON) //we are at the peak
+			if (attackRate.Length() > delta.Length() || delta.Length() <= FADE_RATE_EPSILON)
 			{
+				// We are at the peak
 				if ( m_sustainCounter )
 				{
 					m_envState = ENVELOPE_STATE_SUSTAIN;
@@ -4815,11 +4840,11 @@ void TintEnvelope::update(void)
 				{
 					m_envState = ENVELOPE_STATE_DECAY;
 				}
-
 			}
 			else
 			{
-				Vector3::Add( m_attackRate, m_currentColor, &m_currentColor );//Add the attackRate to the current color;
+				// Add the attackRate to the current color
+				Vector3::Add( attackRate, m_currentColor, &m_currentColor );
 				m_affect = TRUE;
 			}
 
@@ -4827,8 +4852,8 @@ void TintEnvelope::update(void)
 		}
 		case ( ENVELOPE_STATE_SUSTAIN ) :
 		{
-			if ( m_sustainCounter > 0 )
-				--m_sustainCounter;
+			if ( m_sustainCounter > 0.0f )
+				m_sustainCounter -= timeScale;
 			else
 				release();
 
@@ -4855,13 +4880,19 @@ void TintEnvelope::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method
 	* Version Info;
-	* 1: Initial version */
+	* 1: Initial version
+	* 2: TheSuperHackers @tweak Serialize sustain counter as float instead of integer
+	*/
 // ------------------------------------------------------------------------------------------------
 void TintEnvelope::xfer( Xfer *xfer )
 {
 
 	// version
+#if RETAIL_COMPATIBLE_XFER_SAVE
 	XferVersion currentVersion = 1;
+#else
+	XferVersion currentVersion = 2;
+#endif
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
@@ -4878,7 +4909,16 @@ void TintEnvelope::xfer( Xfer *xfer )
 	xfer->xferUser( &m_currentColor, sizeof( Vector3 ) );
 
 	// sustain counter
-	xfer->xferUnsignedInt( &m_sustainCounter );
+	if (version <= 1)
+	{
+		UnsignedInt sustainCounter = (UnsignedInt)m_sustainCounter;
+		xfer->xferUnsignedInt( &sustainCounter );
+		m_sustainCounter = (Real)sustainCounter;
+	}
+	else
+	{
+		xfer->xferReal( &m_sustainCounter );
+	}
 
 	// affect
 	xfer->xferBool( &m_affect );

@@ -26,15 +26,13 @@
 
 #pragma once
 
-#ifndef _WeaponSet_H_
-#define _WeaponSet_H_
-
 #include "Lib/BaseType.h"
 #include "Common/GameType.h"
 #include "Common/KindOf.h"
 #include "Common/ModelState.h"
 #include "Common/SparseMatchFinder.h"
 #include "Common/Snapshot.h"
+#include "GameLogic/Damage.h"
 
 //-------------------------------------------------------------------------------------------------
 class INI;
@@ -59,7 +57,7 @@ static const char *const TheWeaponSlotTypeNames[] =
 	"SECONDARY",
 	"TERTIARY",
 
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(TheWeaponSlotTypeNames) == WEAPONSLOT_COUNT + 1, "Incorrect array size");
 
@@ -69,7 +67,7 @@ static const LookupListRec TheWeaponSlotTypeNamesLookupList[] =
 	{ "SECONDARY",	SECONDARY_WEAPON },
 	{ "TERTIARY",		TERTIARY_WEAPON },
 
-	{ NULL, 0	}
+	{ nullptr, 0	}
 };
 static_assert(ARRAY_SIZE(TheWeaponSlotTypeNamesLookupList) == WEAPONSLOT_COUNT + 1, "Incorrect array size");
 
@@ -119,7 +117,7 @@ private:
 	static void parsePreferredAgainst(INI* ini, void *instance, void *store, const void* userData);
 
 public:
-	inline WeaponTemplateSet()
+	WeaponTemplateSet()
 	{
 		clear();
 	}
@@ -134,14 +132,14 @@ public:
 	Bool isWeaponLockSharedAcrossSets() const {return m_isWeaponLockSharedAcrossSets; }
 
 	Bool hasAnyWeapons() const;
-	inline const WeaponTemplate* getNth(WeaponSlotType n) const { return m_template[n]; }
-	inline UnsignedInt getNthCommandSourceMask(WeaponSlotType n) const { return m_autoChooseMask[n]; }
-	inline const KindOfMaskType& getNthPreferredAgainstMask(WeaponSlotType n) const { return m_preferredAgainst[n]; }
+	const WeaponTemplate* getNth(WeaponSlotType n) const { return m_template[n]; }
+	UnsignedInt getNthCommandSourceMask(WeaponSlotType n) const { return m_autoChooseMask[n]; }
+	const KindOfMaskType& getNthPreferredAgainstMask(WeaponSlotType n) const { return m_preferredAgainst[n]; }
 
-	inline Int getConditionsYesCount() const { return 1; }
-	inline const WeaponSetFlags& getNthConditionsYes(Int i) const { return m_types; }
+	Int getConditionsYesCount() const { return 1; }
+	const WeaponSetFlags& getNthConditionsYes(Int i) const { return m_types; }
 #if defined(RTS_DEBUG)
-	inline AsciiString getDescription() const { return AsciiString("ArmorTemplateSet"); }
+	inline AsciiString getDescription() const { return "ArmorTemplateSet"; }
 #endif
 };
 
@@ -183,7 +181,7 @@ private:
 	WeaponLockType						m_curWeaponLockedStatus;
 	UnsignedInt								m_filledWeaponSlotMask;
 	Int												m_totalAntiMask;						///< anti mask of all current weapons
-	UnsignedInt								m_totalDamageTypeMask;			///< damagetype mask of all current weapons
+	DamageTypeFlags						m_totalDamageTypeMask;			///< damagetype mask of all current weapons
 	Bool											m_hasPitchLimit;
 	Bool											m_hasDamageWeapon;
 
@@ -205,8 +203,8 @@ public:
 	Bool isOutOfAmmo() const;
 	Bool hasAnyWeapon() const { return m_filledWeaponSlotMask != 0; }
 	Bool hasAnyDamageWeapon() const { return m_hasDamageWeapon; }
-	Bool hasWeaponToDealDamageType(DamageType typeToDeal) const { return (m_totalDamageTypeMask & (1 << typeToDeal)) != 0; }
-	Bool hasSingleDamageType(DamageType typeToDeal) const { return m_totalDamageTypeMask == (1 << typeToDeal); }
+	Bool hasWeaponToDealDamageType(DamageType typeToDeal) const { return m_totalDamageTypeMask.test(typeToDeal); }
+	Bool hasSingleDamageType(DamageType typeToDeal) const { return (m_totalDamageTypeMask.test(typeToDeal) && (m_totalDamageTypeMask.count() == 1) ); }
 	Bool isCurWeaponLocked() const { return m_curWeaponLockedStatus != NOT_LOCKED; }
 	Weapon* getCurWeapon() { return m_weapons[m_curWeapon]; }
 	const Weapon* getCurWeapon() const { return m_weapons[m_curWeapon]; }
@@ -245,5 +243,3 @@ public:
 
 	static ModelConditionFlags getModelConditionForWeaponSlot(WeaponSlotType wslot, WeaponSetConditionType a);
 };
-
-#endif	// _WeaponSet_H_

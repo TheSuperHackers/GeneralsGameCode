@@ -45,9 +45,6 @@
 
 #pragma once
 
-#ifndef _H_WELLKNOWNKEYS
-#define _H_WELLKNOWNKEYS
-
 #include "Common/NameKeyGenerator.h"
 
 #ifdef INSTANTIATE_WELL_KNOWN_KEYS
@@ -846,5 +843,3 @@ DEFINE_KEY(Player_7_Start)
 DEFINE_KEY(Player_8_Start)
 
 // ---------------------------------------------------------------------------------------
-
-#endif	// _H_WELLKNOWNKEYS

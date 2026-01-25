@@ -35,8 +35,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#ifndef W3DDESC_H
-#define W3DDESC_H
+#pragma once
 
 #include "always.h"
 #include <max.h>
@@ -59,6 +58,3 @@ public:
 	Class_ID			ClassID();
 	const TCHAR *	Category();
 };
-
-
-#endif

@@ -34,13 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef __RING_PROPERTY_SHEET_H
-#define __RING_PROPERTY_SHEET_H
 
 #include "RingColorPropPage.h"
 #include "RingGeneralPropPage.h"
@@ -64,8 +58,8 @@ class RingPropertySheetClass : public CPropertySheet
 
 // Construction
 public:
-	RingPropertySheetClass (RingRenderObjClass *ring, UINT nIDCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0);
-	RingPropertySheetClass (RingRenderObjClass *ring, LPCTSTR pszCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0);
+	RingPropertySheetClass (RingRenderObjClass *ring, UINT nIDCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
+	RingPropertySheetClass (RingRenderObjClass *ring, LPCTSTR pszCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
 
 // Attributes
 public:
@@ -120,5 +114,3 @@ private:
 };
 
 /////////////////////////////////////////////////////////////////////////////
-
-#endif //__RING_PROPERTY_SHEET_H

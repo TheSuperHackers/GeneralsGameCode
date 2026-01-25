@@ -37,7 +37,7 @@
 #include <Utility/stdio_adapter.h>
 #include <stdarg.h>
 #include <memory.h>
-#include "WWFILE.H"
+#include "WWFILE.h"
 
 #pragma warning(disable : 4514)
 

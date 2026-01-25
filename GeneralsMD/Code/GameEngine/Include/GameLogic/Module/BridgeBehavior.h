@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __BRIDGE_BEHAVIOR_H_
-#define __BRIDGE_BEHAVIOR_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "Common/AudioEventRTS.h"
 #include "GameClient/TerrainRoads.h"
@@ -154,7 +151,7 @@ public:
 	// our own methods
 	static BridgeBehaviorInterface *getBridgeBehaviorInterfaceFromObject( Object *obj );
 	virtual void setTower( BridgeTowerType towerType, Object *tower );	///< connect tower to us
-	virtual ObjectID getTowerID( BridgeTowerType towerType );						///< retrive one of our towers
+	virtual ObjectID getTowerID( BridgeTowerType towerType );						///< retrieve one of our towers
 	virtual void createScaffolding( void );		///< create scaffolding around bridge
 	virtual void removeScaffolding( void );		///< remove scaffolding around bridge
 	virtual Bool isScaffoldInMotion( void );	///< is scaffold in motion
@@ -197,5 +194,3 @@ protected:
 	UnsignedInt m_deathFrame;								///< frame we died on
 
 };
-
-#endif  // end __BRIDGE_DAMAGE_H_

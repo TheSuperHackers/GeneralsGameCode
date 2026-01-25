@@ -22,7 +22,7 @@
  *                                                                                             *
  *                 Project Name : Command & Conquer                                            *
  *                                                                                             *
- *                     $Archive:: /Commando/Library/B64STRAW.CPP                              $*
+ *                     $Archive:: /Commando/Library/B64STRAW.cpp                              $*
  *                                                                                             *
  *                      $Author:: Greg_h                                                      $*
  *                                                                                             *
@@ -38,7 +38,6 @@
 #include	"always.h"
 #include	"b64straw.h"
 #include	"base64.h"
-#include	<string.h>
 
 
 /***********************************************************************************************

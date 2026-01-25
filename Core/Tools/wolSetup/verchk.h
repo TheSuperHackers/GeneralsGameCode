@@ -16,8 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef __VERCHK_H__
-#define __VERCHK_H__
+#pragma once
 
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
@@ -27,6 +26,3 @@
 // Obtain version information from the specified file.
 bool GetVersionInfo(char* filename, VS_FIXEDFILEINFO* fileInfo);
 bool loadWolapi( char *filename );
-
-#endif // __VERCHK_H__
-

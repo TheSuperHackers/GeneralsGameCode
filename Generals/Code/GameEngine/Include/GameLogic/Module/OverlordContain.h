@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __OVERLORD_CONTAIN_H_
-#define __OVERLORD_CONTAIN_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/TransportContain.h"
 
@@ -98,7 +95,7 @@ public:
 	virtual Bool getContainerPipsToShow(Int& numTotal, Int& numFull);
 
 private:
-	/**< An empty overlord is a conatiner, but a full one redirects calls to its passengers.  If this returns NULL,
+	/**< An empty overlord is a conatiner, but a full one redirects calls to its passengers.  If this returns nullptr,
 	we are either empty or carrying a non container.
 	*/
 	ContainModuleInterface *getRedirectedContain() const; ///< And this gets what are redirecting to.
@@ -108,6 +105,3 @@ private:
 	Bool m_redirectionActivated;
 
 };
-
-#endif
-

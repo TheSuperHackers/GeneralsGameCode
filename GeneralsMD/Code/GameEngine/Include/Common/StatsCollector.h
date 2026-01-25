@@ -38,15 +38,12 @@
 //
 //	author:		Chris Huybregts
 //
-//	purpose:	Convinience class to help with collecting stats.
+//	purpose:	Convenience class to help with collecting stats.
 //
 //-----------------------------------------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __STATSCOLLECTOR_H_
-#define __STATSCOLLECTOR_H_
 
 //-----------------------------------------------------------------------------
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
@@ -119,5 +116,3 @@ private:
 // EXTERNALS //////////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 extern StatsCollector* TheStatsCollector;			///< we need a singleton
-
-#endif // __STATSCOLLECTOR_H_

@@ -44,9 +44,6 @@
 
 #pragma once
 
-#ifndef __FIRE_WEAPON_POWER_H
-#define __FIRE_WEAPON_POWER_H
-
 #include "GameLogic/Module/SpecialPowerModule.h"
 
 class Object;
@@ -85,5 +82,3 @@ public:
 protected:
 
 };
-
-#endif // __FIRE_WEAPON_POWER_H

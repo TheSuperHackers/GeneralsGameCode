@@ -33,15 +33,11 @@
  *-------------------------------------------------------------------------*
  * Functions:                                                              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-#if defined(_MSC_VER)
-#pragma once
-#endif
 
-#ifndef PART_EMT_H
-#define PART_EMT_H
+#pragma once
 
 #include "rendobj.h"
-#include "RANDOM.H"
+#include "RANDOM.h"
 #include "part_buf.h"
 #include "quat.h"
 #include "w3d_file.h"
@@ -81,8 +77,8 @@ void Copy_Emitter_Property_Struct
 	dest.Start			= src.Start;
 	dest.Rand			= src.Rand;
 	dest.NumKeyFrames = src.NumKeyFrames;
-	dest.KeyTimes		= NULL;
-	dest.Values			= NULL;
+	dest.KeyTimes		= nullptr;
+	dest.Values			= nullptr;
 
 	if (dest.NumKeyFrames > 0) {
 		dest.KeyTimes	=  W3DNEWARRAY float[dest.NumKeyFrames];
@@ -121,7 +117,7 @@ class ParticleEmitterClass : public RenderObjClass
 			int max_particles = 0, int max_buffer_size = -1, bool pingpong = false,
 			int render_mode = W3D_EMITTER_RENDER_MODE_TRI_PARTICLES,
 			int frame_mode = W3D_EMITTER_FRAME_MODE_1x1,
-			const W3dEmitterLinePropertiesStruct * line_props = NULL);
+			const W3dEmitterLinePropertiesStruct * line_props = nullptr);
 
 		ParticleEmitterClass(const ParticleEmitterClass & src);
 		ParticleEmitterClass & operator = (const ParticleEmitterClass &);
@@ -155,10 +151,10 @@ class ParticleEmitterClass : public RenderObjClass
 
       virtual void			Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const { sphere.Center.Set(0,0,0); sphere.Radius = 0; }
       virtual void			Get_Obj_Space_Bounding_Box(AABoxClass & box) const { box.Center.Set(0,0,0); box.Extent.Set(0,0,0); }
-		virtual void			Set_Hidden(int onoff)				{ RenderObjClass::Set_Hidden (onoff); Update_On_Visibilty (); }
-		virtual void			Set_Visible(int onoff)				{ RenderObjClass::Set_Visible (onoff); Update_On_Visibilty (); }
-		virtual void			Set_Animation_Hidden(int onoff)	{ RenderObjClass::Set_Animation_Hidden (onoff); Update_On_Visibilty (); }
-		virtual void			Set_Force_Visible(int onoff)		{ RenderObjClass::Set_Force_Visible (onoff); Update_On_Visibilty (); }
+		virtual void			Set_Hidden(int onoff)				{ RenderObjClass::Set_Hidden (onoff); Update_On_Visibility (); }
+		virtual void			Set_Visible(int onoff)				{ RenderObjClass::Set_Visible (onoff); Update_On_Visibility (); }
+		virtual void			Set_Animation_Hidden(int onoff)	{ RenderObjClass::Set_Animation_Hidden (onoff); Update_On_Visibility (); }
+		virtual void			Set_Force_Visible(int onoff)		{ RenderObjClass::Set_Force_Visible (onoff); Update_On_Visibility (); }
 
 		virtual void			Set_LOD_Bias(float bias)			{ if (Buffer) Buffer->Set_LOD_Bias(bias); }
 
@@ -183,7 +179,7 @@ class ParticleEmitterClass : public RenderObjClass
 		void Set_Base_Velocity(const Vector3& base_vel);
 		void Set_Outwards_Velocity(float out_vel);
 		void Set_Velocity_Inheritance_Factor(float inh_factor);
-		void Set_Acceleration (const Vector3 &acceleration)	{ if (Buffer != NULL) Buffer->Set_Acceleration (acceleration/1000000.0f); }
+		void Set_Acceleration (const Vector3 &acceleration)	{ if (Buffer != nullptr) Buffer->Set_Acceleration (acceleration/1000000.0f); }
 
 		// Change visual properties of emitter / buffer:
 		void Reset_Colors(ParticlePropertyStruct<Vector3> &new_props)							{ if (Buffer) Buffer->Reset_Colors(new_props); }
@@ -224,7 +220,7 @@ class ParticleEmitterClass : public RenderObjClass
 		//	Virtual accessors (used for type specific information)
 		//
 		virtual int				Get_User_Type (void) const			{ return EMITTER_TYPEID_DEFAULT; }
-		virtual const char *	Get_User_String (void) const		{ return NULL; }
+		virtual const char *	Get_User_String (void) const		{ return nullptr; }
 
 		//
 		// Inline accessors.
@@ -288,7 +284,7 @@ class ParticleEmitterClass : public RenderObjClass
 		virtual void			Add_Dependencies_To_List (DynamicVectorClass<StringClass> &file_list, bool textures_only = false);
 
 		// This method is called each time the visiblity state of the emitter changes.
-		virtual void			Update_On_Visibilty (void);
+		virtual void			Update_On_Visibility (void);
 
 	private:
 
@@ -306,7 +302,7 @@ class ParticleEmitterClass : public RenderObjClass
 
 		// Initialize one new particle at the given NewParticleStruct
 		// address, with the given age and emitter transform (expressed as a
-		// quaternion and origin vector). (must check if address is NULL).
+		// quaternion and origin vector). (must check if address is nullptr).
 		void Initialize_Particle(NewParticleStruct * newpart, unsigned int age,
 			const Quaternion & quat, const Vector3 & orig);
 
@@ -314,9 +310,9 @@ class ParticleEmitterClass : public RenderObjClass
 		unsigned int				BurstSize;			// Burst size (how many particles in each emission).
 		unsigned int				OneTimeBurstSize;	// Burst size for a one-time burst.
 		bool							OneTimeBurst;		// Do we need to do a one-time burst?
-		Vector3Randomizer *		PosRand;				// Position randomizer pointer (may be NULL).
+		Vector3Randomizer *		PosRand;				// Position randomizer pointer (may be null).
 		Vector3						BaseVel;				// Base initial emission velocity.
-		Vector3Randomizer *		VelRand;				// Velocity randomizer pointer (may be NULL).
+		Vector3Randomizer *		VelRand;				// Velocity randomizer pointer (may be null).
 		float							OutwardVel;			// Size of outwards velocity.
 		float							VelInheritFactor;	// Affects emitter vel. inherited by particles.
 		unsigned int				EmitRemain;			// Millisecond emitter remainder.
@@ -350,7 +346,3 @@ class ParticleEmitterClass : public RenderObjClass
 		// all particle emitters.
 		static bool					DebugDisable;
 };
-
-#endif // PART_EMT_H
-
-

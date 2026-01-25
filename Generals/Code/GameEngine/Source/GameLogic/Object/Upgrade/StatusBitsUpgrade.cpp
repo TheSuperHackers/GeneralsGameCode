@@ -51,7 +51,7 @@
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #define DEFINE_OBJECT_STATUS_NAMES
 #include "Common/Xfer.h"
@@ -79,9 +79,9 @@ void StatusBitsUpgradeModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "StatusToSet",		ObjectStatusMaskType::parseFromINI,	NULL, offsetof( StatusBitsUpgradeModuleData, m_statusToSet ) },
-		{ "StatusToClear",	ObjectStatusMaskType::parseFromINI,	NULL, offsetof( StatusBitsUpgradeModuleData, m_statusToClear ) },
-		{ 0, 0, 0, 0 }
+		{ "StatusToSet",		ObjectStatusMaskType::parseFromINI,	nullptr, offsetof( StatusBitsUpgradeModuleData, m_statusToSet ) },
+		{ "StatusToClear",	ObjectStatusMaskType::parseFromINI,	nullptr, offsetof( StatusBitsUpgradeModuleData, m_statusToClear ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   p.add(dataFieldParse);
 }

@@ -1,7 +1,7 @@
 FetchContent_Declare(
     miles
     GIT_REPOSITORY https://github.com/TheSuperHackers/miles-sdk-stub.git
-    GIT_TAG        44c82ab6211028776facf53b0ce3a88a3e232c45
+    GIT_TAG        6e32700d7ba4b4713a03bf1f5ffc3b0ac8d17264
 )
 
 FetchContent_MakeAvailable(miles)

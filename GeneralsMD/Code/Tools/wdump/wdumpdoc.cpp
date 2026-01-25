@@ -47,7 +47,7 @@ END_MESSAGE_MAP()
 CWdumpDoc::CWdumpDoc()
 {
 	// TODO: add one-time construction code here
-	m_ChunkItem = 0;
+	m_ChunkItem = nullptr;
 }
 
 CWdumpDoc::~CWdumpDoc()
@@ -56,7 +56,7 @@ CWdumpDoc::~CWdumpDoc()
 
 BOOL CWdumpDoc::OnNewDocument()
 {
-	m_ChunkItem = 0;
+	m_ChunkItem = nullptr;
 
 	if (!CDocument::OnNewDocument())
 		return FALSE;
@@ -107,8 +107,8 @@ void CWdumpDoc::OnFileOpen()
 	static char szFilter[] = "W3D Files (*.w3d)|*.w3d|WLT Files (*.wlt)|*.wlt|WHT Files (*.wht)|*.wht|WHA Files (*.wha)|*.wha|WTM Files (*.wtm)|*.wtm|All Files (*.*)|*.*||";
 
 	CFileDialog f(	true,
-						NULL,
-						NULL,
+						nullptr,
+						nullptr,
 						OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
 						szFilter);
 
@@ -121,8 +121,8 @@ void CWdumpDoc::OnFileOpen()
 #if ! defined _W3DSHELLEXT
 	theApp.AddToRecentFileList (f.m_ofn.lpstrFile);
 #endif
-	m_ChunkItem = 0;
-	UpdateAllViews(0);
+	m_ChunkItem = nullptr;
+	UpdateAllViews(nullptr);
 	Read_File(f.m_ofn.lpstrFile);
 }
 
@@ -130,6 +130,6 @@ void CWdumpDoc::OnFileOpen()
 void CWdumpDoc::Read_File(const char *filename)
 {
 	m_ChunkData.Load(filename);
-	m_ChunkItem = 0;
-	UpdateAllViews(0);
+	m_ChunkItem = nullptr;
+	UpdateAllViews(nullptr);
 }

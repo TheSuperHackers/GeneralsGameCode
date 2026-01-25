@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __GAMEFONT_H_
-#define __GAMEFONT_H_
-
 #include "Common/SubsystemInterface.h"
 #include "Lib/BaseType.h"
 #include "Common/AsciiString.h"
@@ -101,11 +98,8 @@ inline GameFont *FontLibrary::nextFont( GameFont *font )
 {
 	if( font )
 		return font->next;
-	return NULL;
+	return nullptr;
 }
 
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
 extern FontLibrary *TheFontLibrary;  ///< font library external
-
-#endif // __GAMEFONT_H_
-

@@ -151,7 +151,7 @@ static LRESULT CALLBACK textEntryPropertiesCallback( HWND hWndDialog,
 						// text entry props
 						EntryData *entryData = (EntryData *)window->winGetUserData();
 
-						entryData->maxTextLen = GetDlgItemInt( hWndDialog, EDIT_MAX_CHARS, NULL, TRUE );
+						entryData->maxTextLen = GetDlgItemInt( hWndDialog, EDIT_MAX_CHARS, nullptr, TRUE );
 						entryData->secretText = IsDlgButtonChecked( hWndDialog, CHECK_SECRET_TEXT );
 						entryData->aSCIIOnly = IsDlgButtonChecked( hWndDialog, CHECK_ASCII_TEXT );
 						if( IsDlgButtonChecked( hWndDialog, RADIO_LETTERS_AND_NUMBERS ) )
@@ -232,8 +232,8 @@ HWND InitTextEntryPropertiesDialog( GameWindow *window )
 												 (LPCTSTR)TEXT_ENTRY_PROPERTIES_DIALOG,
 												 TheEditor->getWindowHandle(),
 												 (DLGPROC)textEntryPropertiesCallback );
-	if( dialog == NULL )
-		return NULL;
+	if( dialog == nullptr )
+		return nullptr;
 
 	// do the common initialization
 	CommonDialogInitialize( window, dialog );

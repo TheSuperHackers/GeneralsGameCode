@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifndef _TURRETAI_H_
-#define _TURRETAI_H_
-
 #include "Common/StateMachine.h"
 #include "Common/GameMemory.h"
 
@@ -312,7 +309,7 @@ public:
 
 	virtual void notifyFired();
 	virtual void notifyNewVictimChosen(Object* victim);
-	virtual const Coord3D* getOriginalVictimPos() const { return NULL; }	// yes, we return NULL here
+	virtual const Coord3D* getOriginalVictimPos() const { return nullptr; }	// yes, we return nullptr here
 	virtual Bool isWeaponSlotOkToFire(WeaponSlotType wslot) const;
 
 	// these are only for use by the state machines... don't call them otherwise, please
@@ -373,6 +370,3 @@ private:
 	mutable Bool						m_targetWasSetByIdleMood : 1;
 
 };
-
-#endif // end _TURRETAI_H_
-

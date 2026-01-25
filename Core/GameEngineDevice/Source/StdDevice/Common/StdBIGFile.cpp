@@ -38,7 +38,9 @@
 // StdBIGFile::StdBIGFile
 //============================================================================
 
-StdBIGFile::StdBIGFile()
+StdBIGFile::StdBIGFile(AsciiString name, AsciiString path)
+	: m_name(name)
+	, m_path(path)
 {
 
 }
@@ -60,11 +62,11 @@ File* StdBIGFile::openFile( const Char *filename, Int access )
 {
 	const ArchivedFileInfo *fileInfo = getArchivedFileInfo(AsciiString(filename));
 
-	if (fileInfo == NULL) {
-		return NULL;
+	if (fileInfo == nullptr) {
+		return nullptr;
 	}
 
-	RAMFile *ramFile = NULL;
+	RAMFile *ramFile = nullptr;
 
 	if (BitIsSet(access, File::STREAMING))
 		ramFile = newInstance( StreamingArchiveFile );
@@ -74,8 +76,8 @@ File* StdBIGFile::openFile( const Char *filename, Int access )
 	ramFile->deleteOnClose();
 	if (ramFile->openFromArchive(m_file, fileInfo->m_filename, fileInfo->m_offset, fileInfo->m_size) == FALSE) {
 		ramFile->close();
-		ramFile = NULL;
-		return NULL;
+		ramFile = nullptr;
+		return nullptr;
 	}
 
 	if ((access & File::WRITE) == 0) {
@@ -88,12 +90,12 @@ File* StdBIGFile::openFile( const Char *filename, Int access )
 
 	constexpr size_t bufferSize = 0;
 	File *localFile = TheLocalFileSystem->openFile(filename, access, bufferSize);
-	if (localFile != NULL) {
+	if (localFile != nullptr) {
 		ramFile->copyDataToFile(localFile);
 	}
 
 	ramFile->close();
-	ramFile = NULL;
+	ramFile = nullptr;
 
 	return localFile;
 }
@@ -151,7 +153,7 @@ Bool StdBIGFile::getFileInfo(const AsciiString& filename, FileInfo *fileInfo) co
 {
 	const ArchivedFileInfo *tempFileInfo = getArchivedFileInfo(filename);
 
-	if (tempFileInfo == NULL) {
+	if (tempFileInfo == nullptr) {
 		return FALSE;
 	}
 

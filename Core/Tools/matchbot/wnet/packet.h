@@ -20,7 +20,7 @@
  *                                                                         *
  *                 Project Name : Westwood Auto Registration App           *
  *                                                                         *
- *                    File Name : PACKET.H                                 *
+ *                    File Name : PACKET.h                                 *
  *                                                                         *
  *                   Programmer : Philip W. Gorrow                         *
  *                                                                         *

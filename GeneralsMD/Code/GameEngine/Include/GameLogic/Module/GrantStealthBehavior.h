@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __GrantStealthBehavior_H_
-#define __GrantStealthBehavior_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameClient/ParticleSys.h"
 #include "GameLogic/Module/BehaviorModule.h"
@@ -61,7 +58,7 @@ public:
 		m_finalRadius = 200.0f;
 		m_startRadius = 0.0f;
     m_radiusGrowRate = 10.0f;
-		m_radiusParticleSystemTmpl = NULL;
+		m_radiusParticleSystemTmpl = nullptr;
 		SET_ALL_KINDOFMASK_BITS( m_kindOf );
 	}
 
@@ -71,11 +68,11 @@ public:
 
 		static const FieldParse dataFieldParse[] =
 		{
-			{ "StartRadius",						         INI::parseReal,									 NULL, offsetof( GrantStealthBehaviorModuleData, m_startRadius ) },
-			{ "FinalRadius",						         INI::parseReal,									 NULL, offsetof( GrantStealthBehaviorModuleData, m_finalRadius ) },
-			{ "RadiusGrowRate",						       INI::parseReal,									 NULL, offsetof( GrantStealthBehaviorModuleData, m_radiusGrowRate ) },
-			{ "KindOf",						    KindOfMaskType::parseFromINI,					       NULL, offsetof( GrantStealthBehaviorModuleData, m_kindOf ) },
-			{ "RadiusParticleSystemName",				 INI::parseParticleSystemTemplate, NULL, offsetof( GrantStealthBehaviorModuleData, m_radiusParticleSystemTmpl ) },
+			{ "StartRadius",						         INI::parseReal,									 nullptr, offsetof( GrantStealthBehaviorModuleData, m_startRadius ) },
+			{ "FinalRadius",						         INI::parseReal,									 nullptr, offsetof( GrantStealthBehaviorModuleData, m_finalRadius ) },
+			{ "RadiusGrowRate",						       INI::parseReal,									 nullptr, offsetof( GrantStealthBehaviorModuleData, m_radiusGrowRate ) },
+			{ "KindOf",						    KindOfMaskType::parseFromINI,					       nullptr, offsetof( GrantStealthBehaviorModuleData, m_kindOf ) },
+			{ "RadiusParticleSystemName",				 INI::parseParticleSystemTemplate, nullptr, offsetof( GrantStealthBehaviorModuleData, m_radiusParticleSystemTmpl ) },
 			{ 0, 0, 0, 0 }
 		};
 
@@ -107,6 +104,3 @@ private:
 	ParticleSystemID m_radiusParticleSystemID;
   Real m_currentScanRadius;
 };
-
-#endif // __GrantStealthBehavior_H_
-

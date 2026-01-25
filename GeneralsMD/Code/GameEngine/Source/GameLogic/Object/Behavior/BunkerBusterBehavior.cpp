@@ -52,16 +52,16 @@ static DomeStyleSeismicFilter bunkerBusterHeavingEarthSeismicFilter;
 BunkerBusterBehaviorModuleData::BunkerBusterBehaviorModuleData( void )
 {
 
-	m_upgradeRequired = NULL;
-	m_detonationFX = NULL;
-  m_crashThroughBunkerFX = NULL;
+	m_upgradeRequired = nullptr;
+	m_detonationFX = nullptr;
+  m_crashThroughBunkerFX = nullptr;
   m_crashThroughBunkerFXFrequency = 4;
 
   m_seismicEffectRadius = 140.0f;
   m_seismicEffectMagnitude = 6.0f;
 
-  m_shockwaveWeaponTemplate = NULL;
-  m_occupantDamageWeaponTemplate = NULL;
+  m_shockwaveWeaponTemplate = nullptr;
+  m_occupantDamageWeaponTemplate = nullptr;
 
 }
 
@@ -73,16 +73,16 @@ BunkerBusterBehaviorModuleData::BunkerBusterBehaviorModuleData( void )
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "UpgradeRequired",	              INI::parseAsciiString,	        NULL, offsetof( BunkerBusterBehaviorModuleData, m_upgradeRequired ) },
-		{ "DetonationFX",			              INI::parseFXList,				        NULL, offsetof( BunkerBusterBehaviorModuleData, m_detonationFX ) },
-		{ "CrashThroughBunkerFX",			      INI::parseFXList,				        NULL, offsetof( BunkerBusterBehaviorModuleData, m_crashThroughBunkerFX ) },
-		{ "CrashThroughBunkerFXFrequency",	INI::parseDurationUnsignedInt,	NULL, offsetof( BunkerBusterBehaviorModuleData, m_crashThroughBunkerFXFrequency ) },
-		{ "SeismicEffectRadius",			      INI::parseReal,				          NULL, offsetof( BunkerBusterBehaviorModuleData, m_seismicEffectRadius ) },
-		{ "SeismicEffectMagnitude",	        INI::parseReal,	                NULL, offsetof( BunkerBusterBehaviorModuleData, m_seismicEffectMagnitude ) },
-    { "ShockwaveWeaponTemplate",        INI::parseWeaponTemplate,       NULL, offsetof( BunkerBusterBehaviorModuleData, m_shockwaveWeaponTemplate ) },
-    { "OccupantDamageWeaponTemplate",   INI::parseWeaponTemplate,       NULL, offsetof( BunkerBusterBehaviorModuleData, m_occupantDamageWeaponTemplate ) },
+		{ "UpgradeRequired",	              INI::parseAsciiString,	        nullptr, offsetof( BunkerBusterBehaviorModuleData, m_upgradeRequired ) },
+		{ "DetonationFX",			              INI::parseFXList,				        nullptr, offsetof( BunkerBusterBehaviorModuleData, m_detonationFX ) },
+		{ "CrashThroughBunkerFX",			      INI::parseFXList,				        nullptr, offsetof( BunkerBusterBehaviorModuleData, m_crashThroughBunkerFX ) },
+		{ "CrashThroughBunkerFXFrequency",	INI::parseDurationUnsignedInt,	nullptr, offsetof( BunkerBusterBehaviorModuleData, m_crashThroughBunkerFXFrequency ) },
+		{ "SeismicEffectRadius",			      INI::parseReal,				          nullptr, offsetof( BunkerBusterBehaviorModuleData, m_seismicEffectRadius ) },
+		{ "SeismicEffectMagnitude",	        INI::parseReal,	                nullptr, offsetof( BunkerBusterBehaviorModuleData, m_seismicEffectMagnitude ) },
+    { "ShockwaveWeaponTemplate",        INI::parseWeaponTemplate,       nullptr, offsetof( BunkerBusterBehaviorModuleData, m_shockwaveWeaponTemplate ) },
+    { "OccupantDamageWeaponTemplate",   INI::parseWeaponTemplate,       nullptr, offsetof( BunkerBusterBehaviorModuleData, m_occupantDamageWeaponTemplate ) },
 
-		{ 0, 0, 0, 0 }
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 
   p.add( dataFieldParse );
@@ -101,7 +101,7 @@ BunkerBusterBehavior::BunkerBusterBehavior( Thing *thing, const ModuleData *modD
 	// THIS HAS AN UPDATE... BECAUSE I FORSEE THE NEED FOR ONE, BUT RIGHT NOW IT DOES NOTHING
 	setWakeFrame( getObject(), UPDATE_SLEEP_NONE );
   m_victimID = INVALID_ID;
-  m_upgradeRequired = NULL;
+  m_upgradeRequired = nullptr;
 
 }
 
@@ -180,7 +180,7 @@ void BunkerBusterBehavior::bustTheBunker( void )
 {
 	const BunkerBusterBehaviorModuleData *modData = getBunkerBusterBehaviorModuleData();
 
-  if ( m_upgradeRequired != NULL )
+  if ( m_upgradeRequired != nullptr )
   {
 	  Bool weaponUpgraded = getObject()->getControllingPlayer()->hasUpgradeComplete( m_upgradeRequired );
     if ( ! weaponUpgraded )

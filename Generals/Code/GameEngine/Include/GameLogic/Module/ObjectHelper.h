@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __OBJECT_HELPER_H_
-#define __OBJECT_HELPER_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpdateModule.h"
 
@@ -64,5 +61,3 @@ public:
 	void sleepUntil(UnsignedInt when);
 
 };
-
-#endif  // end __OBJECT_HELPER_H_

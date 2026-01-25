@@ -34,14 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-
-#ifndef __DEFINITION_MGR_H
-#define __DEFINITION_MGR_H
 
 #include "always.h"
 #include "saveload.h"
@@ -50,7 +43,7 @@
 #include "wwdebug.h"
 #include "wwstring.h"
 #include "hashtemplate.h"
-#include "Vector.H"
+#include "Vector.h"
 
 
 // Forward declarations
@@ -175,13 +168,10 @@ DefinitionMgrClass::Contains_Data (void) const
 inline DefinitionClass *
 DefinitionMgrClass::Get_First (void)
 {
-	DefinitionClass *definition = NULL;
+	DefinitionClass *definition = nullptr;
 	if (_DefinitionCount > 0) {
 		definition = _SortedDefinitionArray[0];
 	}
 
 	return definition;
 }
-
-
-#endif //__DEFINITION_MGR_H

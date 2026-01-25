@@ -47,9 +47,6 @@
 
 #pragma once
 
-#ifndef __ANIMATEWINDOWMANAGER_H_
-#define __ANIMATEWINDOWMANAGER_H_
-
 //-----------------------------------------------------------------------------
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
@@ -142,7 +139,7 @@ public:
 private:
 	UnsignedInt m_delay;													///< Holds the delay time in which the animation will start (in milliseconds)
 	ICoord2D m_startPos;													///< Holds the starting position of the animation
-																								///<(usuall is also the end position of the animation when the animation is reversed)
+																								///<(usually is also the end position of the animation when the animation is reversed)
 	ICoord2D m_endPos;														///< Holds the target End Position (usually is the same as the rest position)
 	ICoord2D m_curPos;														///< It's Current Position
 	ICoord2D m_restPos;														///< When the Manager Resets, It sets the window's position to this position
@@ -192,7 +189,7 @@ private:
 	ProcessAnimateWindowSlideFromBottom *m_slideFromBottom;		///< Holds the process in which the windows slide from the Bottom
 	ProcessAnimateWindowSpiral *m_spiral;											///< Holds the process in which the windows Spiral onto the screen
 	ProcessAnimateWindowSlideFromBottomTimed *m_slideFromBottomTimed;		///< Holds the process in which the windows slide from the Bottom in a time-based fashion
-	ProcessAnimateWindowSlideFromTopFast *m_slideFromTopFast;			///< holds the process in wich the windows slide from the top,fast
+	ProcessAnimateWindowSlideFromTopFast *m_slideFromTopFast;			///< holds the process in which the windows slide from the top,fast
 	ProcessAnimateWindow *getProcessAnimate( AnimTypes animType);		///< returns the process for the kind of animation we need.
 
 };
@@ -232,9 +229,7 @@ namespace wnd
 
 	inline Bool AnimateWindowManager::isFinished( void )					{ return !m_needsUpdate;	};
 	inline Bool AnimateWindowManager::isReversed( void )						{ return m_reverse;	};
-	inline Bool AnimateWindowManager::isEmpty( void ){return (m_winList.size() == 0 && m_winMustFinishList.size() == 0);	}
+	inline Bool AnimateWindowManager::isEmpty( void ){return (m_winList.empty() && m_winMustFinishList.empty());	}
 //-----------------------------------------------------------------------------
 // EXTERNALS //////////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-
-#endif // __ANIMATEWINDOWMANAGER_H_

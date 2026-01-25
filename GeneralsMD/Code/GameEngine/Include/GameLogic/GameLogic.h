@@ -29,16 +29,12 @@
 
 #pragma once
 
-#ifndef _GAME_LOGIC_H_
-#define _GAME_LOGIC_H_
-
 #include "Common/GameCommon.h"	// ensure we get DUMP_PERF_STATS, or not
 #include "Common/GameType.h"
 #include "Common/Snapshot.h"
 #include "Common/STLTypedefs.h"
 #include "Common/ObjectStatusTypes.h"
 #include "GameNetwork/NetworkDefs.h"
-#include "Common/STLTypedefs.h"
 #include "GameLogic/Module/UpdateModule.h"	// needed for DIRECT_UPDATEMODULE_ACCESS
 
 /*
@@ -138,6 +134,7 @@ public:
 	Real getHeight( void );													///< Returns the height of the world
 
 	Bool isInGameLogicUpdate( void ) const { return m_isInUpdate; }
+	Bool hasUpdated() const { return m_hasUpdated; } ///< Returns true if the logic frame has advanced in the current client/render update
 	UnsignedInt getFrame( void );										///< Returns the current simulation frame number
 	UnsignedInt getCRC( Int mode = CRC_CACHED, AsciiString deepCRCFileName = AsciiString::TheEmptyString );		///< Returns the CRC
 
@@ -290,6 +287,8 @@ private:
 	void remakeSleepyUpdate();
 	void validateSleepyUpdate() const;
 
+	static void createOptimizedTree(const ThingTemplate *thingTemplate, Coord3D *pos, Real angle);
+
 private:
 
 	/**
@@ -313,15 +312,13 @@ private:
 	std::map<Int, UnsignedInt> m_cachedCRCs;								///< CRCs we've seen this frame
 	Bool m_shouldValidateCRCs;															///< Should we validate CRCs this frame?
 	//-----------------------------------------------------------------------------------------------
-
-	//Added By Sadullah Nader
-	//Used to for load scene
 	//Bool m_loadingScene;
 	Bool m_loadingMap;
 	Bool m_loadingSave;
 	Bool m_clearingGameData;
 
 	Bool m_isInUpdate;
+	Bool m_hasUpdated;
 
 	Int m_rankPointsToAddAtGameStart;
 
@@ -356,7 +353,6 @@ private:
 
 	ObjectID m_nextObjID;																		///< For allocating object id's
 
-	void setDefaults( Bool loadSaveGame );									///< Set default values of class object
 	void processDestroyList( void );												///< Destroy all pending objects on the destroy list
 
 	void destroyAllObjectsImmediate();											///< destroy, and process destroy list immediately
@@ -432,23 +428,20 @@ inline UnsignedShort GameLogic::getSuperweaponRestriction() const { return m_sup
 inline Object* GameLogic::findObjectByID( ObjectID id )
 {
 	if( id == INVALID_ID )
-		return NULL;
+		return nullptr;
 
 //	ObjectPtrHash::iterator it = m_objHash.find(id);
 //	if (it == m_objHash.end())
-//		return NULL;
+//		return nullptr;
 //
 //	return (*it).second;
 	if( (size_t)id < m_objVector.size() )
 		return m_objVector[(size_t)id];
 
-	return NULL;
+	return nullptr;
 }
 
 
 
 // the singleton
 extern GameLogic *TheGameLogic;
-
-#endif // _GAME_LOGIC_H_
-

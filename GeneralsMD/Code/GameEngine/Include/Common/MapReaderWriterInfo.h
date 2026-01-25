@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifndef _MAP_READER_WRITER_INFO_H_
-#define _MAP_READER_WRITER_INFO_H_
-
 #define K_HEIGHT_MAP_VERSION_1	1	// Height map cell = 5.0
 #define K_HEIGHT_MAP_VERSION_2	2	// Height map cell = 10.0
 #define K_HEIGHT_MAP_VERSION_3	3	// Added m_borderSize
@@ -118,8 +115,6 @@ public:
 	void rewind(void);
 };
 */
-
-#endif // _MAP_READER_WRITER_INFO_H_
 
 /*
 	rev K_HEIGHT_MAP_VERSION_4

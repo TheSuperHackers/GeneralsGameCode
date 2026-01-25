@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifndef _PHYSICSUPDATE_H_
-#define _PHYSICSUPDATE_H_
-
 #include "Common/AudioEventRTS.h"
 #include "Common/GameAudio.h"
 #include "GameLogic/Module/BehaviorModule.h"
@@ -209,7 +206,7 @@ public:
 	void setIgnoreCollisionsWith(const Object* obj);
 	Bool isIgnoringCollisionsWith(ObjectID id) const;
 
-	inline Bool getAllowCollideForce() const { return getFlag(ALLOW_COLLIDE_FORCE); }
+	Bool getAllowCollideForce() const { return getFlag(ALLOW_COLLIDE_FORCE); }
 
 protected:
 
@@ -266,7 +263,7 @@ private:
 	Real												m_yawRate;								///< rate of rotation around up vector
 	Real												m_rollRate;								///< rate of rotation around forward vector
 	Real												m_pitchRate;							///< rate or rotation around side vector
-	DynamicAudioEventRTS*				m_bounceSound;						///< The sound for when this thing bounces, or NULL
+	DynamicAudioEventRTS*				m_bounceSound;						///< The sound for when this thing bounces, or nullptr
 	Coord3D											m_accel;									///< current acceleration
 	Coord3D											m_prevAccel;							///< last frame's acceleration
 	Coord3D											m_vel;										///< current velocity
@@ -283,10 +280,10 @@ private:
 	ProjectileUpdateInterface*	m_pui;
 	mutable Real								m_velMag;									///< magnitude of cur vel (recalced when m_vel changes)
 
-	Bool												m_originalAllowBounce;		///< orignal state of allow bounce
+	Bool												m_originalAllowBounce;		///< original state of allow bounce
 
-	inline void setFlag(PhysicsFlagsType f, Bool set) { if (set) m_flags |= f; else m_flags &= ~f; }
-	inline Bool getFlag(PhysicsFlagsType f) const { return (m_flags & f) != 0; }
+	void setFlag(PhysicsFlagsType f, Bool set) { if (set) m_flags |= f; else m_flags &= ~f; }
+	Bool getFlag(PhysicsFlagsType f) const { return (m_flags & f) != 0; }
 
 
 };
@@ -307,6 +304,3 @@ inline ObjectID PhysicsBehavior::getLastCollidee() const
 {
 	return m_lastCollidee;
 }
-
-#endif // _PHYSICSUPDATE_H_
-

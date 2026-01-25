@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/INI.h"
 #include "GameClient/TerrainRoads.h"
@@ -59,10 +59,10 @@ void INI::parseTerrainBridgeDefinition( INI* ini )
 
 	}
 
-	if( bridge == NULL )
+	if( bridge == nullptr )
 		bridge = TheTerrainRoads->newBridge( name );
 
-	DEBUG_ASSERTCRASH( bridge, ("Unable to allcoate bridge '%s'", name.str()) );
+	DEBUG_ASSERTCRASH( bridge, ("Unable to allocate bridge '%s'", name.str()) );
 
 	// parse the ini definition
 	ini->initFromINI( bridge, bridge->getBridgeFieldParse() );

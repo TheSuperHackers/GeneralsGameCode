@@ -60,7 +60,7 @@
 {
 	ModuleData* data = MSGNEW("Module::friend_newModuleData") ModuleData;	// no need to memorypool these since we never allocate more than one of each
 	if (ini)
-		ini->initFromINI(data, 0);	// this is just so that an "end" token is required
+		ini->initFromINI(data, nullptr);	// this is just so that an "end" token is required
 	return data;
 }
 
@@ -112,7 +112,7 @@ ObjectModule::ObjectModule( Thing *thing, const ModuleData* moduleData ) : Modul
 		throw INI_INVALID_DATA;
 	}
 
-	DEBUG_ASSERTCRASH( thing, ("Thing passed to ObjectModule is NULL!") );
+	DEBUG_ASSERTCRASH( thing, ("Thing passed to ObjectModule is null!") );
 	m_object = AsObject(thing);
 	DEBUG_ASSERTCRASH( m_object, ("Thing passed to ObjectModule is not an Object!") );
 
@@ -175,7 +175,7 @@ DrawableModule::DrawableModule( Thing *thing, const ModuleData* moduleData ) : M
 		throw INI_INVALID_DATA;
 	}
 
-	DEBUG_ASSERTCRASH( thing, ("Thing passed to DrawableModule is NULL!") );
+	DEBUG_ASSERTCRASH( thing, ("Thing passed to DrawableModule is null!") );
 	m_drawable = AsDrawable(thing);
 	DEBUG_ASSERTCRASH( m_drawable, ("Thing passed to DrawableModule is not a Drawable!") );
 

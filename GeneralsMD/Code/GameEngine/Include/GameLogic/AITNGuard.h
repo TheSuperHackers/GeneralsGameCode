@@ -38,8 +38,6 @@
 /*---------------------------------------------------------------------------*/
 
 #pragma once
-#ifndef _H_AITNGUARD_
-#define _H_AITNGUARD_
 
 // INCLUDES ///////////////////////////////////////////////////////////////////
 #include "Common/GameMemory.h"
@@ -122,7 +120,7 @@ class AITNGuardInnerState : public State
 public:
 	AITNGuardInnerState( StateMachine *machine ) : State( machine, "AITNGuardInner" )
 	{
-		m_attackState = NULL;
+		m_attackState = nullptr;
 	}
 	virtual StateReturnType onEnter( void );
 	virtual StateReturnType update( void );
@@ -169,7 +167,7 @@ class AITNGuardOuterState : public State
 public:
 	AITNGuardOuterState( StateMachine *machine ) : State( machine, "AITNGuardOuter" )
 	{
-		m_attackState = NULL;
+		m_attackState = nullptr;
 	}
 	virtual StateReturnType onEnter( void );
 	virtual StateReturnType update( void );
@@ -246,5 +244,3 @@ private:
 };
 
 //--------------------------------------------------------------------------------------
-
-#endif /* _H_AIGUARD_ */

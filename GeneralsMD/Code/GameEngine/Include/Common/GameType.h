@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifndef _GAME_TYPE_H_
-#define _GAME_TYPE_H_
-
 #include "Lib/BaseType.h"
 
 // the default size of the world map
@@ -185,13 +182,10 @@ enum WeaponSlotType CPP_11(: Int)
 // Layer 1 is the ground.
 // Layer 2 is the top layer - bridge if one is present, ground otherwise.
 // Layer 2 - LAYER_LAST -1 are bridges.
-// Layer_WALL is a special "wall" layer for letting units run aroound on top of a wall
+// Layer_WALL is a special "wall" layer for letting units run around on top of a wall
 // made of structures.
 // Note that the bridges just index in the pathfinder, so you don't actually
 // have a LAYER_BRIDGE_1 enum value.
 enum PathfindLayerEnum CPP_11(: Int) {LAYER_INVALID = 0, LAYER_GROUND = 1, LAYER_WALL = 15, LAYER_LAST=15};
 
 //-------------------------------------------------------------------------------------------------
-
-#endif // _GAME_TYPE_H_
-

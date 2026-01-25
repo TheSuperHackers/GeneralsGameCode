@@ -33,10 +33,8 @@
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-#if _MSC_VER >= 1000
-#pragma once
-#endif // _MSC_VER >= 1000
 
+#pragma once
 
 /*
 **	This header defines generally unused member structures used by the INI class.
@@ -44,9 +42,9 @@
 **	to help reduce header dependancies. -ehc
 */
 
-#include	"LISTNODE.H"
-#include	"INDEX.H"
-#include "CRC.H"
+#include "LISTNODE.h"
+#include "INDEX.h"
+#include "CRC.h"
 
 
 /*
@@ -54,9 +52,9 @@
 **	The entry identifier and value string are combined into this object.
 */
 struct INIEntry : public Node<INIEntry *> {
-	INIEntry(char * entry = NULL, char * value = NULL) : Entry(entry), Value(value) {}
+	INIEntry(char * entry = nullptr, char * value = nullptr) : Entry(entry), Value(value) {}
 	~INIEntry(void);
-//	~INIEntry(void) {free(Entry);Entry = NULL;free(Value);Value = NULL;}
+//	~INIEntry(void) {free(Entry);Entry = nullptr;free(Value);Value = nullptr;}
 //	int Index_ID(void) const {return(CRCEngine()(Entry, strlen(Entry)));};
 	int Index_ID(void) const { return CRC::String(Entry);};
 

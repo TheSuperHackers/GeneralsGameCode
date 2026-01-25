@@ -35,9 +35,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef UTIL_H
-#define UTIL_H
+#pragma once
 
 #ifndef ALWAYS_H
 #include "always.h"
@@ -101,17 +99,14 @@ INode *Find_Named_Node (char *nodename, INode *root);
 /*
 ** Macros
 */
-#define SAFE_DELETE(pobject)					\
-			if (pobject) {							\
-				delete pobject;					\
-				pobject = NULL;					\
-			}											\
+#define SAFE_DELETE(pobject) \
+			if (pobject) { \
+				delete pobject; \
+				pobject = nullptr; \
+			}
 
-#define SAFE_DELETE_ARRAY(pobject)			\
-			if (pobject) {							\
-				delete [] pobject;				\
-				pobject = NULL;					\
-			}											\
-
-
-#endif
+#define SAFE_DELETE_ARRAY(pobject) \
+			if (pobject) { \
+				delete [] pobject; \
+				pobject = nullptr; \
+			}

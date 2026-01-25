@@ -157,7 +157,7 @@ VolumeRandomDialogClass::OnInitDialog (void)
 	//
 	//	Initialize from the provided randomizer
 	//
-	if (m_Randomizer != NULL) {
+	if (m_Randomizer != nullptr) {
 
 		// What type of randomizer is this?
 		switch (m_Randomizer->Class_ID ())
@@ -315,7 +315,7 @@ VolumeRandomDialogClass::OnNotify
 	//	Update the spinner control if necessary
 	//
 	NMHDR *pheader = (NMHDR *)lParam;
-	if ((pheader != NULL) && (pheader->code == UDN_DELTAPOS)) {
+	if ((pheader != nullptr) && (pheader->code == UDN_DELTAPOS)) {
 		LPNMUPDOWN pupdown = (LPNMUPDOWN)lParam;
 		::Update_Spinner_Buddy (pheader->hwndFrom, pupdown->iDelta);
 	}

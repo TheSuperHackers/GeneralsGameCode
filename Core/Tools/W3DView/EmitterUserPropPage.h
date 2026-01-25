@@ -16,12 +16,8 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#if !defined(AFX_EMITTERUSERPROPPAGE_H__83A8B840_BA3B_11D2_9FFA_00104B791122__INCLUDED_)
-#define AFX_EMITTERUSERPROPPAGE_H__83A8B840_BA3B_11D2_9FFA_00104B791122__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
+
 // EmitterUserPropPage.h : header file
 //
 
@@ -39,7 +35,7 @@ class EmitterUserPropPageClass : public CPropertyPage
 
 // Construction
 public:
-	EmitterUserPropPageClass (EmitterInstanceListClass *pemitter_list = NULL);
+	EmitterUserPropPageClass (EmitterInstanceListClass *pemitter_list = nullptr);
 	~EmitterUserPropPageClass ();
 
 // Dialog Data
@@ -111,5 +107,3 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_EMITTERUSERPROPPAGE_H__83A8B840_BA3B_11D2_9FFA_00104B791122__INCLUDED_)

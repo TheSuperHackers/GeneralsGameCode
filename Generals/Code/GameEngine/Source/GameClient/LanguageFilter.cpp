@@ -23,7 +23,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "GameClient/LanguageFilter.h"
 #include "Common/FileSystem.h"
@@ -31,13 +31,10 @@
 
 
 
-LanguageFilter *TheLanguageFilter = NULL;
+LanguageFilter *TheLanguageFilter = nullptr;
 
 LanguageFilter::LanguageFilter()
 {
-	//Modified by Saad
-	//Unnecessary
-	//m_wordList.clear();
 }
 
 LanguageFilter::~LanguageFilter() {
@@ -49,7 +46,7 @@ void LanguageFilter::init() {
 
 	// read in the file already.
 	File *file1 = TheFileSystem->openFile(BadWordFileName, File::READ | File::BINARY);
-	if (file1 == NULL) {
+	if (file1 == nullptr) {
 		return;
 	}
 
@@ -69,7 +66,7 @@ void LanguageFilter::init() {
 	}
 
 	file1->close();
-	file1 = NULL;
+	file1 = nullptr;
 }
 
 void LanguageFilter::reset() {
@@ -87,11 +84,11 @@ void LanguageFilter::filterLine(UnicodeString &line)
 	wcscpy(buf, line.str());
 
 	UnicodeString newLine(line);
-	UnicodeString token(L"");
+	UnicodeString token;
 
-	while (newLine.nextToken(&token, UnicodeString(L" ;,.!?:=\\/><`~()&^%#\n\t"))) {
+	while (newLine.nextToken(&token, L" ;,.!?:=\\/><`~()&^%#\n\t")) {
 		wchar_t *pos = wcsstr(buf, token.str());
-		if (pos == NULL) {
+		if (pos == nullptr) {
 			DEBUG_CRASH(("Couldn't find the token in its own string."));
 			continue;
 		}
@@ -115,7 +112,7 @@ void LanguageFilter::filterLine(UnicodeString &line)
 
 void LanguageFilter::unHaxor(UnicodeString &word) {
 	Int len = word.getLength();
-	UnicodeString newWord(L"");
+	UnicodeString newWord;
 	for (Int i = 0; i < len; ++i) {
 		wchar_t c = word.getCharAt(i);
 		if ((c == L'p') || (c == L'P')) {
@@ -146,7 +143,7 @@ void LanguageFilter::unHaxor(UnicodeString &word) {
 			newWord.concat(L's');
 		} else if (c == L'+') {
 			newWord.concat(L't');
-		} else if (wcsrchr(ignoredChars, c) == NULL) {
+		} else if (wcsrchr(ignoredChars, c) == nullptr) {
 			newWord.concat(c);
 		}
 	}

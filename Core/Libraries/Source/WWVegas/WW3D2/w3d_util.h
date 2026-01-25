@@ -34,13 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef W3D_UTIL_H
-#define W3D_UTIL_H
 
 #include "always.h"
 #include "w3d_file.h"
@@ -74,7 +68,3 @@ public:
 	static void Convert_Shader(const ShaderClass & shader,W3dShaderStruct * set);
 
 };
-
-#endif
-
-

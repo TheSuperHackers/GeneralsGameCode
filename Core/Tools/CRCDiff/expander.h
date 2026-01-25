@@ -23,8 +23,7 @@
 // Description: Key/value pair template expansion class
 // ---------------------------------------------------------------------------
 
-#ifndef __EXPANDER_H__
-#define __EXPANDER_H__
+#pragma once
 
 #include <map>
 #include <Utility/hash_map_adapter.h>
@@ -49,6 +48,3 @@ class Expander
 		std::string m_left;
 		std::string m_right;
 };
-
-#endif // __EXPANDER_H__
-

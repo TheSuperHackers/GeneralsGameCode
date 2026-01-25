@@ -44,7 +44,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "Common/Language.h"
@@ -160,7 +160,7 @@ WindowMsgHandledType GadgetStaticTextSystem( GameWindow *window, UnsignedInt msg
 
 			// free text data
 			delete (TextData *)window->winGetUserData();
-			window->winSetUserData( NULL );
+			window->winSetUserData( nullptr );
 
       break;
 

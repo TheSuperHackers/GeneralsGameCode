@@ -50,7 +50,7 @@
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/AudioAffect.h"
 #include "Common/AudioEventRTS.h"
@@ -82,6 +82,7 @@
 #include "GameClient/GameWindowManager.h"
 #include "GameClient/Gadget.h"
 #include "GameClient/GameText.h"
+#include "GameClient/Keyboard.h"
 #include "GameClient/MapUtil.h"
 #include "GameClient/Shell.h"
 #include "GameClient/KeyDefs.h"
@@ -116,31 +117,31 @@ static NameKeyType buttonBuddiesID = NAMEKEY_INVALID;
 static NameKeyType buttonSaveReplayID = NAMEKEY_INVALID;
 static NameKeyType backdropID = NAMEKEY_INVALID;
 
-static GameWindow *parent = NULL;
-static GameWindow *buttonOk = NULL;
-//static GameWindow *buttonRehost = NULL;
-static GameWindow *buttonContinue = NULL;
-static GameWindow *textEntryChat = NULL;
-static GameWindow *buttonEmote = NULL;
-static GameWindow *chatBoxBorder = NULL;
-static GameWindow *buttonBuddies = NULL;
-static GameWindow *staticTextGameSaved = NULL;
-static GameWindow *backdrop = NULL;
-static GameWindow *challengePortrait = NULL;
-static GameWindow *challengeRemarks = NULL;
-static GameWindow *challengeWinLossText = NULL;
-static GameWindow *gadgetParent = NULL;
+static GameWindow *parent = nullptr;
+static GameWindow *buttonOk = nullptr;
+//static GameWindow *buttonRehost = nullptr;
+static GameWindow *buttonContinue = nullptr;
+static GameWindow *textEntryChat = nullptr;
+static GameWindow *buttonEmote = nullptr;
+static GameWindow *chatBoxBorder = nullptr;
+static GameWindow *buttonBuddies = nullptr;
+static GameWindow *staticTextGameSaved = nullptr;
+static GameWindow *backdrop = nullptr;
+static GameWindow *challengePortrait = nullptr;
+static GameWindow *challengeRemarks = nullptr;
+static GameWindow *challengeWinLossText = nullptr;
+static GameWindow *gadgetParent = nullptr;
 
 static Bool overidePlayerDisplayName = FALSE;
 
 //External declarations
 NameKeyType listboxChatWindowScoreScreenID = NAMEKEY_INVALID;
-GameWindow *listboxChatWindowScoreScreen = NULL;
+GameWindow *listboxChatWindowScoreScreen = nullptr;
 
 NameKeyType listboxAcademyWindowScoreScreenID = NAMEKEY_INVALID;
-GameWindow *listboxAcademyWindowScoreScreen = NULL;
+GameWindow *listboxAcademyWindowScoreScreen = nullptr;
 NameKeyType staticTextAcademyTitleID = NAMEKEY_INVALID;
-GameWindow *staticTextAcademyTitle = NULL;
+GameWindow *staticTextAcademyTitle = nullptr;
 
 
 std::string LastReplayFileName;
@@ -151,7 +152,7 @@ void initSinglePlayer( void );
 void finishSinglePlayerInit( void );
 static Bool s_needToFinishSinglePlayerInit = FALSE;
 static Bool buttonIsFinishCampaign = FALSE;
-static WindowLayout *s_blankLayout = NULL;
+static WindowLayout *s_blankLayout = nullptr;
 
 void initSkirmish( void );
 void initLANMultiPlayer(void);
@@ -228,20 +229,20 @@ void startNextCampaignGame(void)
 void ScoreScreenEnableControls(Bool enable)
 {
 	// if we are using the button, do the enable thing.
-	if ((buttonOk != NULL) && (buttonOk->winIsHidden() == FALSE)) {
+	if ((buttonOk != nullptr) && (buttonOk->winIsHidden() == FALSE)) {
 		buttonOk->winEnable(enable);
 	}
 
-	if ((buttonContinue != NULL) && (buttonContinue->winIsHidden() == FALSE)) {
+	if ((buttonContinue != nullptr) && (buttonContinue->winIsHidden() == FALSE)) {
 		buttonContinue->winEnable(enable);
 	}
 
-	if ((buttonBuddies != NULL) && (buttonBuddies->winIsHidden() == FALSE)) {
+	if ((buttonBuddies != nullptr) && (buttonBuddies->winIsHidden() == FALSE)) {
 		buttonBuddies->winEnable(enable);
 	}
 
 	GameWindow *buttonSaveReplay = TheWindowManager->winGetWindowFromId( parent, buttonSaveReplayID );
-	if ((buttonSaveReplay != NULL) && (buttonSaveReplay->winIsHidden() == FALSE)) {
+	if ((buttonSaveReplay != nullptr) && (buttonSaveReplay->winIsHidden() == FALSE)) {
 		if (!canSaveReplay)
 			enable = FALSE;
 		buttonSaveReplay->winEnable(enable);
@@ -267,21 +268,21 @@ void ScoreScreenInit( WindowLayout *layout, void *userData )
 	buttonIsFinishCampaign = FALSE;
 
 	//Store the keys so we have them later
-	parentID = TheNameKeyGenerator->nameToKey( AsciiString( "ScoreScreen.wnd:ParentScoreScreen" ) );
-	buttonOkID = TheNameKeyGenerator->nameToKey( AsciiString( "ScoreScreen.wnd:ButtonOk" ) );
-	textEntryChatID = TheNameKeyGenerator->nameToKey( AsciiString( "ScoreScreen.wnd:TextEntryChat" ) );
-	buttonEmoteID = TheNameKeyGenerator->nameToKey( AsciiString( "ScoreScreen.wnd:ButtonEmote" ) );
-	listboxChatWindowScoreScreenID = TheNameKeyGenerator->nameToKey( AsciiString( "ScoreScreen.wnd:ListboxChatWindowScoreScreen" ) );
-	listboxAcademyWindowScoreScreenID = TheNameKeyGenerator->nameToKey( AsciiString( "ScoreScreen.wnd:ListboxWarschoolAdvice" ) );
-	staticTextAcademyTitleID = TheNameKeyGenerator->nameToKey( AsciiString( "ScoreScreen.wnd:StaticTextWarSchool" ) );
-//	buttonRehostID = TheNameKeyGenerator->nameToKey( AsciiString( "ScoreScreen.wnd:ButtonRehost" ) );
-	chatBoxBorderID = TheNameKeyGenerator->nameToKey( AsciiString( "ScoreScreen.wnd:ChatBoxBorder" ) );
-	buttonBuddiesID = TheNameKeyGenerator->nameToKey( AsciiString( "ScoreScreen.wnd:ButtonBuddy" ) );
-	buttonContinueID = TheNameKeyGenerator->nameToKey( AsciiString( "ScoreScreen.wnd:ButtonContinue" ) );
-	buttonSaveReplayID = TheNameKeyGenerator->nameToKey( AsciiString( "ScoreScreen.wnd:ButtonSaveReplay" ) );
-	backdropID = TheNameKeyGenerator->nameToKey( AsciiString( "ScoreScreen.wnd:MainBackdrop" ) );
+	parentID = TheNameKeyGenerator->nameToKey( "ScoreScreen.wnd:ParentScoreScreen" );
+	buttonOkID = TheNameKeyGenerator->nameToKey( "ScoreScreen.wnd:ButtonOk" );
+	textEntryChatID = TheNameKeyGenerator->nameToKey( "ScoreScreen.wnd:TextEntryChat" );
+	buttonEmoteID = TheNameKeyGenerator->nameToKey( "ScoreScreen.wnd:ButtonEmote" );
+	listboxChatWindowScoreScreenID = TheNameKeyGenerator->nameToKey( "ScoreScreen.wnd:ListboxChatWindowScoreScreen" );
+	listboxAcademyWindowScoreScreenID = TheNameKeyGenerator->nameToKey( "ScoreScreen.wnd:ListboxWarschoolAdvice" );
+	staticTextAcademyTitleID = TheNameKeyGenerator->nameToKey( "ScoreScreen.wnd:StaticTextWarSchool" );
+//	buttonRehostID = TheNameKeyGenerator->nameToKey( "ScoreScreen.wnd:ButtonRehost" );
+	chatBoxBorderID = TheNameKeyGenerator->nameToKey( "ScoreScreen.wnd:ChatBoxBorder" );
+	buttonBuddiesID = TheNameKeyGenerator->nameToKey( "ScoreScreen.wnd:ButtonBuddy" );
+	buttonContinueID = TheNameKeyGenerator->nameToKey( "ScoreScreen.wnd:ButtonContinue" );
+	buttonSaveReplayID = TheNameKeyGenerator->nameToKey( "ScoreScreen.wnd:ButtonSaveReplay" );
+	backdropID = TheNameKeyGenerator->nameToKey( "ScoreScreen.wnd:MainBackdrop" );
 
-	parent = TheWindowManager->winGetWindowFromId( NULL, parentID );
+	parent = TheWindowManager->winGetWindowFromId( nullptr, parentID );
 	buttonOk = TheWindowManager->winGetWindowFromId( parent, buttonOkID );
 	textEntryChat = TheWindowManager->winGetWindowFromId( parent, textEntryChatID );
 	buttonEmote = TheWindowManager->winGetWindowFromId( parent,buttonEmoteID  );
@@ -304,7 +305,7 @@ void ScoreScreenInit( WindowLayout *layout, void *userData )
 	staticTextGameSaved->winHide(TRUE);
 	overidePlayerDisplayName = FALSE;
 	WindowLayout *replayLayout = TheShell->getPopupReplayLayout();
-	if (replayLayout != NULL) {
+	if (replayLayout != nullptr) {
 		replayLayout->hide(TRUE);
 	}
 	canSaveReplay = FALSE;
@@ -410,9 +411,9 @@ void ScoreScreenShutdown( WindowLayout *layout, void *userData )
 void ScoreScreenUpdate( WindowLayout * layout, void *userData)
 {
 	WindowLayout *popupReplayLayout = TheShell->getPopupReplayLayout();
-	if (popupReplayLayout != NULL) {
+	if (popupReplayLayout != nullptr) {
 		if (popupReplayLayout->isHidden() == FALSE) {
-			PopupReplayUpdate(popupReplayLayout, NULL);
+			PopupReplayUpdate(popupReplayLayout, nullptr);
 		}
 	}
 
@@ -613,7 +614,7 @@ WindowMsgHandledType ScoreScreenSystem( GameWindow *window, UnsignedInt msg,
 				if( controlID == TheNameKeyGenerator->nameToKey(name))
 				{
 					Bool notBuddy = TRUE;
-					Int playerID = (Int)GadgetButtonGetData(TheWindowManager->winGetWindowFromId(NULL,controlID));
+					Int playerID = (Int)GadgetButtonGetData(TheWindowManager->winGetWindowFromId(nullptr,controlID));
 											// request to add a buddy
 					BuddyInfoMap *buddies = TheGameSpyInfo->getBuddyMap();
 					BuddyInfoMap::iterator bIt;
@@ -632,8 +633,7 @@ WindowMsgHandledType ScoreScreenSystem( GameWindow *window, UnsignedInt msg,
 						req.arg.addbuddy.id = playerID;
 						UnicodeString buddyAddstr;
 						buddyAddstr = TheGameText->fetch("GUI:BuddyAddReq");
-						wcsncpy(req.arg.addbuddy.text, buddyAddstr.str(), MAX_BUDDY_CHAT_LEN);
-						req.arg.addbuddy.text[MAX_BUDDY_CHAT_LEN-1] = 0;
+						wcslcpy(req.arg.addbuddy.text, buddyAddstr.str(), MAX_BUDDY_CHAT_LEN);
 						TheGameSpyBuddyMessageQueue->addRequest(req);
 					}
 				}
@@ -704,46 +704,54 @@ void initSkirmish( void )
 void PlayMovieAndBlock(AsciiString movieTitle)
 {
 	VideoStreamInterface *videoStream = TheVideoPlayer->open( movieTitle );
-	if ( videoStream == NULL )
+	if ( videoStream == nullptr )
 	{
 		return;
 	}
 
 	// Create the new buffer
 	VideoBuffer *videoBuffer = TheDisplay->createVideoBuffer();
-	if (	videoBuffer == NULL ||
+	if (	videoBuffer == nullptr ||
 				!videoBuffer->allocate(	videoStream->width(),
 													videoStream->height())
 		)
 	{
 		delete videoBuffer;
-		videoBuffer = NULL;
+		videoBuffer = nullptr;
 
 		if ( videoStream )
 		{
 			videoStream->close();
-			videoStream = NULL;
+			videoStream = nullptr;
 		}
 
 		return;
 	}
 
+	// TheSuperHackers @bugfix Originally this movie render loop stopped rendering when the game window was inactive.
+	// This either skipped the movie or caused decompression artifacts. Now the video just keeps playing until it done.
+
 	GameWindow *movieWindow = s_blankLayout->getFirstWindow();
 	TheWritableGlobalData->m_loadScreenRender = TRUE;
 	while (videoStream->frameIndex() < videoStream->frameCount() - 1)
 	{
+		// TheSuperHackers @feature User can now skip video by pressing ESC
+		if (TheKeyboard)
+		{
+			TheKeyboard->UPDATE();
+			KeyboardIO *io = TheKeyboard->findKey(KEY_ESC, KeyboardIO::STATUS_UNUSED);
+			if (io && BitIsSet(io->state, KEY_STATE_DOWN))
+			{
+				io->setUsed();
+				break;
+			}
+		}
+
 		TheGameEngine->serviceWindowsOS();
 
 		if(!videoStream->isFrameReady())
 		{
 			Sleep(1);
-			continue;
-		}
-
-		if (!TheGameEngine->isActive())
-		{	//we are alt-tabbed out, so just increment the frame
-			videoStream->frameNext();
-			videoStream->frameDecompress();
 			continue;
 		}
 
@@ -759,15 +767,15 @@ void PlayMovieAndBlock(AsciiString movieTitle)
 		TheDisplay->draw();
 	}
 	TheWritableGlobalData->m_loadScreenRender = FALSE;
-	movieWindow->winGetInstanceData()->setVideoBuffer(NULL);
+	movieWindow->winGetInstanceData()->setVideoBuffer(nullptr);
 
 	delete videoBuffer;
-	videoBuffer = NULL;
+	videoBuffer = nullptr;
 
 	if (videoStream)
 	{
 		videoStream->close();
-		videoStream = NULL;
+		videoStream = nullptr;
 	}
 
 	setFPMode();
@@ -900,7 +908,7 @@ void finishSinglePlayerInit( void )
 						if (!TheGameLODManager->didMemPass()) {
 							useLowRes = TRUE;
 						}
-						if (TheGameLODManager->findStaticLODLevel()==STATIC_GAME_LOD_LOW) {
+						if (TheGameLODManager->getRecommendedStaticLODLevel()==STATIC_GAME_LOD_LOW) {
 							useLowRes = TRUE;
 						}
 						if (TheGameLODManager->getStaticLODLevel()==STATIC_GAME_LOD_LOW) {
@@ -945,17 +953,13 @@ void finishSinglePlayerInit( void )
 
 	}
 
-	//Added By Sadullah Nader
-	//Fix for the black screen text that appears after loading sequence
-
 	TheInGameUI->freeMessageResources();
 
-	//
 	if (s_blankLayout)
 	{
 		s_blankLayout->destroyWindows();
 		deleteInstance(s_blankLayout);
-		s_blankLayout = NULL;
+		s_blankLayout = nullptr;
 	}
 
 	// set keyboard focus to main parent
@@ -1499,15 +1503,6 @@ void populatePlayerInfo( Player *player, Int pos)
 	win->winSetEnabledTextColors(color, win->winGetEnabledTextBorderColor());
 	win->winHide(FALSE);
 
-	// set the total BuildingsDestroyed
-	winName.format("ScoreScreen.wnd:StaticTextBuildingsDestroyed%d", pos);
-	win =  TheWindowManager->winGetWindowFromId( parent, TheNameKeyGenerator->nameToKey( winName ) );
-	DEBUG_ASSERTCRASH(win,("Could not find window %s on the score screen", winName.str()));
-	winValue.format(L"%d", scoreKpr->getTotalBuildingsDestroyed());
-	GadgetStaticTextSetText(win, winValue);
-	win->winSetEnabledTextColors(color, win->winGetEnabledTextBorderColor());
-	win->winHide(FALSE);
-
 	// set the total Resources
 	winName.format("ScoreScreen.wnd:StaticTextResources%d", pos);
 	win =  TheWindowManager->winGetWindowFromId( parent, TheNameKeyGenerator->nameToKey( winName ) );
@@ -1600,7 +1595,7 @@ winName.format("ScoreScreen.wnd:StaticTextScore%d", pos);
 //		win->winHide(TRUE);
 //
 	const PlayerTemplate *fact = player->getPlayerTemplate();
-	if(fact != NULL)
+	if(fact != nullptr)
 	{
 		win->winSetEnabledImage(0, fact->getSideIconImage());
 	}
@@ -1736,7 +1731,7 @@ winName.format("ScoreScreen.wnd:StaticTextScore%d", pos);
 						{
 							// we pinged on the last frame someone was there - i.e. game ended in a disconnect.
 							// check if we were to blame.
-							if (TheNetwork->getPingsRecieved() < max(1, TheNetwork->getPingsSent()/2)) /// @todo: what's a good percent of pings to have gotten?
+							if (TheNetwork->getPingsReceived() < max(1, TheNetwork->getPingsSent()/2)) /// @todo: what's a good percent of pings to have gotten?
 							{
 								DEBUG_LOG(("We were to blame.  Leaving gameEndedInDisconnect = true"));
 							}
@@ -1980,7 +1975,7 @@ winName.format("ScoreScreen.wnd:StaticTextScore%d", pos);
 					stats.surrenders[ptIdx] += TheGameInfo->haveWeSurrendered()  || !TheVictoryConditions->getEndFrame();
 
 					AsciiString systemSpec;
-					systemSpec.format("LOD%d", TheGameLODManager->findStaticLODLevel());
+					systemSpec.format("LOD%d", TheGameLODManager->getRecommendedStaticLODLevel());
 					stats.systemSpec = systemSpec.str();
 
 					stats.techCaptured[ptIdx] += s->getTotalTechBuildingsCaptured();
@@ -2144,11 +2139,11 @@ void grabSinglePlayerInfo( void )
 					++playerCount;
 					break;
 				}
-				localPlayer = NULL;
+				localPlayer = nullptr;
 			}
 		}
 		PlayerTemplate const *fact = ThePlayerList->getLocalPlayer()->getPlayerTemplate();
-		if(fact != NULL)
+		if(fact != nullptr)
 		{
 			const Image *image = TheMappedImageCollection->findImageByName(ThePlayerList->getLocalPlayer()->getPlayerTemplate()->getScoreScreen());
 			if(image)
@@ -2197,7 +2192,7 @@ void grabSinglePlayerInfo( void )
 		sg.m_totalUnitsBuilt = 0;
 		sg.m_totalUnitsDestroyed = 0;
 		sg.m_totalUnitsLost = 0;
-		sg.m_sideImage = NULL;
+		sg.m_sideImage = nullptr;
 		Bool populate = FALSE;
 		Color color;
 		for(Int i = 0; i < MAX_PLAYER_COUNT; ++i)
@@ -2303,12 +2298,6 @@ void hideWindows( Int pos )
 		DEBUG_ASSERTCRASH(win,("Could not find window %s on the score screen", winName.str()));
 		win->winHide(TRUE);
 
-		// set the total BuildingsDestroyed
-		winName.format("ScoreScreen.wnd:StaticTextBuildingsDestroyed%d", i);
-		win =  TheWindowManager->winGetWindowFromId( parent, TheNameKeyGenerator->nameToKey( winName ) );
-		DEBUG_ASSERTCRASH(win,("Could not find window %s on the score screen", winName.str()));
-		win->winHide(TRUE);
-
 		// set the total Resources
 		winName.format("ScoreScreen.wnd:StaticTextResources%d", i);
 		win =  TheWindowManager->winGetWindowFromId( parent, TheNameKeyGenerator->nameToKey( winName ) );
@@ -2401,12 +2390,6 @@ void setObserverWindows( Player *player, Int i )
 	DEBUG_ASSERTCRASH(win,("Could not find window %s on the score screen", winName.str()));
 	win->winHide(TRUE);
 
-	// set the total BuildingsDestroyed
-	winName.format("ScoreScreen.wnd:StaticTextBuildingsDestroyed%d", i);
-	win =  TheWindowManager->winGetWindowFromId( parent, TheNameKeyGenerator->nameToKey( winName ) );
-	DEBUG_ASSERTCRASH(win,("Could not find window %s on the score screen", winName.str()));
-	win->winHide(TRUE);
-
 	// set the total Resources
 	winName.format("ScoreScreen.wnd:StaticTextResources%d", i);
 	win =  TheWindowManager->winGetWindowFromId( parent, TheNameKeyGenerator->nameToKey( winName ) );
@@ -2427,7 +2410,7 @@ winName.format("ScoreScreen.wnd:StaticTextScore%d", i);
 	DEBUG_ASSERTCRASH(win,("Could not find window %s on the score screen", winName.str()));
 	win->winHide(FALSE);
 	const PlayerTemplate *fact = player->getPlayerTemplate();
-	if(fact != NULL)
+	if(fact != nullptr)
 	{
 		win->winSetEnabledImage(0, fact->getSideIconImage());
 	}

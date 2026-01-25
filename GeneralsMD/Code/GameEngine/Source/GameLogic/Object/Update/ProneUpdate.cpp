@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Xfer.h"
 
@@ -53,8 +53,8 @@ ProneUpdateModuleData::ProneUpdateModuleData() :
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "DamageToFramesRatio", INI::parseReal, NULL, offsetof(ProneUpdateModuleData, m_damageToFramesRatio) },
-		{ 0, 0, 0, 0 }
+		{ "DamageToFramesRatio", INI::parseReal, nullptr, offsetof(ProneUpdateModuleData, m_damageToFramesRatio) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 	p.add(dataFieldParse);
 }

@@ -44,9 +44,6 @@
 
 #pragma once
 
-#ifndef _PLAYERLIST_H_
-#define _PLAYERLIST_H_
-
 #include "Common/SubsystemInterface.h"
 #include "Common/GameCommon.h"
 #include "Common/NameKeyGenerator.h"
@@ -109,7 +106,7 @@ public:
 		all other players (this is so that everything can be associated with a nonnull
 		Player, to simplify the universe). This will never return null.
 	*/
-	Player *getNeutralPlayer() { DEBUG_ASSERTCRASH(m_players[0] != NULL, ("null neutral")); return m_players[0]; }
+	Player *getNeutralPlayer() { DEBUG_ASSERTCRASH(m_players[0] != nullptr, ("null neutral")); return m_players[0]; }
 
 	/**
 		return the Player with the given internal name, or null if none found.
@@ -120,7 +117,7 @@ public:
 		Return the "local" player (ie, the human playing the game).
 		This will never return null.
 	*/
-	inline Player *getLocalPlayer() { DEBUG_ASSERTCRASH(m_local != NULL, ("null m_local")); return m_local; }
+	inline Player *getLocalPlayer() { DEBUG_ASSERTCRASH(m_local != nullptr, ("null m_local")); return m_local; }
 
 	/**
 		Set the local player. You cannot set it to null; if you pass null, you'll
@@ -171,5 +168,3 @@ private:
 
 // ----------------------------------------------------------------------------------------------
 extern PlayerList *ThePlayerList;	///< singleton instance of PlayerList
-
-#endif // _PLAYERLIST_H_

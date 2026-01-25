@@ -30,9 +30,6 @@
 
 #pragma once
 
-#ifndef __SKIRMISHPREFERENCES_H__
-#define __SKIRMISHPREFERENCES_H__
-
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
@@ -57,6 +54,10 @@ public:
 	Int getPreferredColor(void);				// convenience function
 	AsciiString getPreferredMap(void);	// convenience function
 	Bool usesSystemMapDir(void);		// convenience function
-};
 
-#endif // __SKIRMISHPREFERENCES_H__
+  Bool getSuperweaponRestricted(void) const;
+  void setSuperweaponRestricted( Bool superweaponRestricted);
+
+  Money getStartingCash(void) const;
+  void setStartingCash( const Money &startingCash );
+};

@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __W3DTRACERDRAW_H_
-#define __W3DTRACERDRAW_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/DrawModule.h"
 #include "WW3D2/line3d.h"
@@ -73,6 +70,3 @@ protected:
 	Real m_opacity;								///< opacity of the tracer
 
 };
-
-#endif // __W3DTRACERDRAW_H_
-

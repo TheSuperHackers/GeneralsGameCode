@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __OCL_UPDATE_H_
-#define __OCL_UPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpdateModule.h"
 
@@ -96,6 +93,3 @@ protected:
 	void setNextCreationFrame();
 
 };
-
-#endif
-

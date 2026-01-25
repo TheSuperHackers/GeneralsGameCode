@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifndef __VICTORYCONDITIONS_H__
-#define __VICTORYCONDITIONS_H__
-
 #include "Common/SubsystemInterface.h"
 #include "Lib/BaseType.h"
 
@@ -58,8 +55,8 @@ public:
 	virtual void reset( void ) = 0;
 	virtual void update( void ) = 0;
 
-	inline void setVictoryConditions( Int victoryConditions ) { m_victoryConditions = victoryConditions; }
-	inline Int getVictoryConditions( void ) { return m_victoryConditions; }
+	void setVictoryConditions( Int victoryConditions ) { m_victoryConditions = victoryConditions; }
+	Int getVictoryConditions( void ) { return m_victoryConditions; }
 
 	virtual Bool hasAchievedVictory(Player *player) = 0;					///< has a specific player and his allies won?
 	virtual Bool hasBeenDefeated(Player *player) = 0;							///< has a specific player and his allies lost?
@@ -79,5 +76,3 @@ protected:
 VictoryConditionsInterface * createVictoryConditions( void );
 
 extern VictoryConditionsInterface *TheVictoryConditions;
-
-#endif // __VICTORYCONDITIONS_H__

@@ -80,7 +80,7 @@ static ErrorLookup errorLookup[] =
 { (HRESULT)DIERR_REPORTFULL, "DIERR_REPORTFULL" },
 { (HRESULT)DIERR_UNPLUGGED, "DIERR_UNPLUGGED" },
 { (HRESULT)DIERR_UNSUPPORTED, "DIERR_UNSUPPORTED" },
-{ 0, NULL }
+{ 0, nullptr }
 };
 
 
@@ -95,7 +95,7 @@ static void printReturnCode( char *label, HRESULT hr )
 {
 	ErrorLookup *error = errorLookup;
 
-	while( error->string != NULL )
+	while( error->string != nullptr )
 	{
 
 		if( error->error == hr )
@@ -121,7 +121,7 @@ void DirectInputKeyboard::openKeyboard( void )
 													 DIRECTINPUT_VERSION,
 													 IID_IDirectInput8,
 													 (void **)&m_pDirectInput,
-													 NULL );
+													 nullptr );
 	if( FAILED( hr ) )
 	{
 
@@ -135,11 +135,11 @@ void DirectInputKeyboard::openKeyboard( void )
 	// obtain an interface to the system keyboard device
 	hr = m_pDirectInput->CreateDevice( GUID_SysKeyboard,
 																		 &m_pKeyboardDevice,
-																		 NULL );
+																		 nullptr );
 	if( FAILED( hr ) )
 	{
 
-		DEBUG_LOG(( "ERROR - openKeyboard: Unabled to create keyboard device" ));
+		DEBUG_LOG(( "ERROR - openKeyboard: Unable to create keyboard device" ));
 		assert( 0 );
 		closeKeyboard();
 		return;
@@ -151,7 +151,7 @@ void DirectInputKeyboard::openKeyboard( void )
 	if( FAILED( hr ) )
 	{
 
-		DEBUG_LOG(( "ERROR - openKeyboard: Unabled to set data format for keyboard" ));
+		DEBUG_LOG(( "ERROR - openKeyboard: Unable to set data format for keyboard" ));
 		assert( 0 );
 		closeKeyboard();
 		return;
@@ -169,7 +169,7 @@ void DirectInputKeyboard::openKeyboard( void )
 	if( FAILED( hr ) )
 	{
 
-		DEBUG_LOG(( "ERROR - openKeyboard: Unabled to set cooperative level" ));
+		DEBUG_LOG(( "ERROR - openKeyboard: Unable to set cooperative level" ));
 		assert( 0 );
 		closeKeyboard();
 		return;
@@ -222,7 +222,7 @@ void DirectInputKeyboard::closeKeyboard( void )
 
 		m_pKeyboardDevice->Unacquire();
 		m_pKeyboardDevice->Release();
-		m_pKeyboardDevice = NULL;
+		m_pKeyboardDevice = nullptr;
 		DEBUG_LOG(( "OK - Keyboard deviced closed" ));
 
 	}
@@ -230,7 +230,7 @@ void DirectInputKeyboard::closeKeyboard( void )
 	{
 
 		m_pDirectInput->Release();
-		m_pDirectInput = NULL;
+		m_pDirectInput = nullptr;
 		DEBUG_LOG(( "OK - Keyboard direct input interface closed" ));
 
 	}
@@ -251,7 +251,6 @@ void DirectInputKeyboard::getKey( KeyboardIO *key )
 	HRESULT hr;
 
 	assert( key );
-	key->sequence = 0;
 	key->key = KEY_NONE;
 
 	if( m_pKeyboardDevice )
@@ -315,15 +314,20 @@ void DirectInputKeyboard::getKey( KeyboardIO *key )
 		// set the key
 		key->key = (UnsignedByte)(kbdat.dwOfs & 0xFF);
 
-		// sequence
-		key->sequence = kbdat.dwSequence;
-
 		//
 		// state of key, note we are setting the key state here with an assignment
 		// and not a bit set of the up/down state, this is the "start"
 		// of building this "key"
 		//
-		key->state = (( kbdat.dwData & 0x0080 ) ? KEY_STATE_DOWN : KEY_STATE_UP);
+		if( kbdat.dwData & 0x0080 )
+		{
+			key->state = KEY_STATE_DOWN;
+			key->keyDownTimeMsec = kbdat.dwTimeStamp;
+		}
+		else
+		{
+			key->state = KEY_STATE_UP;
+		}
 
 		// set status as unused (unprocessed)
 		key->status = KeyboardIO::STATUS_UNUSED;
@@ -341,8 +345,8 @@ void DirectInputKeyboard::getKey( KeyboardIO *key )
 DirectInputKeyboard::DirectInputKeyboard( void )
 {
 
-	m_pDirectInput = NULL;
-	m_pKeyboardDevice = NULL;
+	m_pDirectInput = nullptr;
+	m_pKeyboardDevice = nullptr;
 
 
 	if( GetKeyState( VK_CAPITAL ) & 0x01 )
@@ -407,7 +411,7 @@ void DirectInputKeyboard::update( void )
 		DWORD items = INFINITE;
 
 		m_pKeyboardDevice->GetDeviceData( sizeof( DIDEVICEOBJECTDATA ),
-																			NULL, &items, 0 );
+																			nullptr, &items, 0 );
 
 	}
 */

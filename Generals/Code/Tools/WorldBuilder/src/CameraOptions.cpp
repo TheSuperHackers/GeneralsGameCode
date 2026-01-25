@@ -30,7 +30,7 @@
 // CameraOptions dialog
 
 
-CameraOptions::CameraOptions(CWnd* pParent /*=NULL*/)
+CameraOptions::CameraOptions(CWnd* pParent /*=nullptr*/)
 	: CDialog(CameraOptions::IDD, pParent)
 {
 	m_updating = false;

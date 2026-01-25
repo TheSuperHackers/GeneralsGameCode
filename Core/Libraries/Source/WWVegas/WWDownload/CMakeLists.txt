@@ -3,7 +3,7 @@ set(WWDOWNLOAD_SRC
     Download.h
     DownloadDebug.h
     downloaddefs.h
-    FTP.CPP
+    FTP.cpp
     ftp.h
     ftpdefs.h
     registry.cpp

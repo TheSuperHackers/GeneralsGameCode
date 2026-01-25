@@ -23,7 +23,7 @@
  *                                                                                             *
  *                 Project Name : Voxel Technology                                             *
  *                                                                                             *
- *                    File Name : QUAT.CPP                                                     *
+ *                    File Name : QUAT.cpp                                                     *
  *                                                                                             *
  *                   Programmer : Greg Hjelstrom                                               *
  *                                                                                             *
@@ -337,7 +337,7 @@ void Slerp_Setup(const Quaternion & p,const Quaternion & q,SlerpInfoStruct * sle
 {
 	float cos_t;
 
-	assert(slerpinfo != NULL);
+	assert(slerpinfo != nullptr);
 
 	// cos theta = dot product of p and q
 	cos_t = p.X * q.X + p.Y * q.Y + p.Z * q.Z + p.W * q.W;

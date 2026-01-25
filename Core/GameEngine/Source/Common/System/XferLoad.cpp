@@ -40,7 +40,7 @@ XferLoad::XferLoad( void )
 {
 
 	m_xferMode = XFER_LOAD;
-	m_fileFP = NULL;
+	m_fileFP = nullptr;
 
 }
 
@@ -50,7 +50,7 @@ XferLoad::~XferLoad( void )
 {
 
 	// warn the user if a file was left open
-	if( m_fileFP != NULL )
+	if( m_fileFP != nullptr )
 	{
 
 		DEBUG_CRASH(( "Warning: Xfer file '%s' was left open", m_identifier.str() ));
@@ -67,7 +67,7 @@ void XferLoad::open( AsciiString identifier )
 {
 
 	// sanity, check to see if we're already open
-	if( m_fileFP != NULL )
+	if( m_fileFP != nullptr )
 	{
 
 		DEBUG_CRASH(( "Cannot open file '%s' cause we've already got '%s' open",
@@ -81,7 +81,7 @@ void XferLoad::open( AsciiString identifier )
 
 	// open the file
 	m_fileFP = fopen( identifier.str(), "rb" );
-	if( m_fileFP == NULL )
+	if( m_fileFP == nullptr )
 	{
 
 		DEBUG_CRASH(( "File '%s' not found", identifier.str() ));
@@ -98,7 +98,7 @@ void XferLoad::close( void )
 {
 
 	// sanity, if we don't have an open file we can do nothing
-	if( m_fileFP == NULL )
+	if( m_fileFP == nullptr )
 	{
 
 		DEBUG_CRASH(( "Xfer close called, but no file was open" ));
@@ -108,7 +108,7 @@ void XferLoad::close( void )
 
 	// close the file
 	fclose( m_fileFP );
-	m_fileFP = NULL;
+	m_fileFP = nullptr;
 
 	// erase the filename
 	m_identifier.clear();
@@ -122,7 +122,7 @@ Int XferLoad::beginBlock( void )
 {
 
 	// sanity
-	DEBUG_ASSERTCRASH( m_fileFP != NULL, ("Xfer begin block - file pointer for '%s' is NULL",
+	DEBUG_ASSERTCRASH( m_fileFP != nullptr, ("Xfer begin block - file pointer for '%s' is null",
 										 m_identifier.str()) );
 
 	// read block size
@@ -155,7 +155,7 @@ void XferLoad::skip( Int dataSize )
 {
 
 	// sanity
-	DEBUG_ASSERTCRASH( m_fileFP != NULL, ("XferLoad::skip - file pointer for '%s' is NULL",
+	DEBUG_ASSERTCRASH( m_fileFP != nullptr, ("XferLoad::skip - file pointer for '%s' is null",
 										 m_identifier.str()) );
 
 	// sanity
@@ -174,7 +174,7 @@ void XferLoad::skip( Int dataSize )
 void XferLoad::xferSnapshot( Snapshot *snapshot )
 {
 
-	if( snapshot == NULL )
+	if( snapshot == nullptr )
 	{
 
 		DEBUG_CRASH(( "XferLoad::xferSnapshot - Invalid parameters" ));
@@ -244,7 +244,7 @@ void XferLoad::xferImplementation( void *data, Int dataSize )
 {
 
 	// sanity
-	DEBUG_ASSERTCRASH( m_fileFP != NULL, ("XferLoad - file pointer for '%s' is NULL",
+	DEBUG_ASSERTCRASH( m_fileFP != nullptr, ("XferLoad - file pointer for '%s' is null",
 										 m_identifier.str()) );
 
 	// read data from file

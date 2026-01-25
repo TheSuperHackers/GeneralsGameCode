@@ -22,7 +22,7 @@
 
 namespace rts
 {
-HANDLE ClientInstance::s_mutexHandle = NULL;
+HANDLE ClientInstance::s_mutexHandle = nullptr;
 UnsignedInt ClientInstance::s_instanceIndex = 0;
 
 #if defined(RTS_MULTI_INSTANCE)
@@ -52,13 +52,13 @@ bool ClientInstance::initialize()
 				guidStr.push_back('-');
 				guidStr.append(idStr);
 			}
-			s_mutexHandle = CreateMutex(NULL, FALSE, guidStr.c_str());
+			s_mutexHandle = CreateMutex(nullptr, FALSE, guidStr.c_str());
 			if (GetLastError() == ERROR_ALREADY_EXISTS)
 			{
-				if (s_mutexHandle != NULL)
+				if (s_mutexHandle != nullptr)
 				{
 					CloseHandle(s_mutexHandle);
-					s_mutexHandle = NULL;
+					s_mutexHandle = nullptr;
 				}
 				// Try again with a new instance.
 				++s_instanceIndex;
@@ -67,13 +67,13 @@ bool ClientInstance::initialize()
 		}
 		else
 		{
-			s_mutexHandle = CreateMutex(NULL, FALSE, getFirstInstanceName());
+			s_mutexHandle = CreateMutex(nullptr, FALSE, getFirstInstanceName());
 			if (GetLastError() == ERROR_ALREADY_EXISTS)
 			{
-				if (s_mutexHandle != NULL)
+				if (s_mutexHandle != nullptr)
 				{
 					CloseHandle(s_mutexHandle);
-					s_mutexHandle = NULL;
+					s_mutexHandle = nullptr;
 				}
 				return false;
 			}
@@ -86,7 +86,7 @@ bool ClientInstance::initialize()
 
 bool ClientInstance::isInitialized()
 {
-	return s_mutexHandle != NULL;
+	return s_mutexHandle != nullptr;
 }
 
 bool ClientInstance::isMultiInstance()

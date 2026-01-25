@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __PROPAGANDA_TOWER_BEHAVIOR_H_
-#define __PROPAGANDA_TOWER_BEHAVIOR_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/BehaviorModule.h"
 #include "GameLogic/Module/PropagandaTowerBehavior.h"
@@ -112,6 +109,3 @@ protected:
 	const UpgradeTemplate *m_upgradeRequired;			///< Upgrade required to use the upgraded pulse FX
 
 };
-
-#endif  // end __PROPAGANDA_TOWER_BEHAVIOR_H_
-

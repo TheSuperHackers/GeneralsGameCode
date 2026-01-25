@@ -45,9 +45,6 @@
 
 #pragma once
 
-#ifndef __CONTROL_BAR_SCHEME_H_
-#define __CONTROL_BAR_SCHEME_H_
-
 //-----------------------------------------------------------------------------
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
@@ -275,7 +272,7 @@ public:
 
 private:
 	ControlBarScheme *m_currentScheme;													///< the current scheme that everythign uses
-	Coord2D m_multiplyer;
+	Coord2D m_multiplier;
 
 	typedef std::list< ControlBarScheme* > ControlBarSchemeList;			///< list of control bar schemes
 	ControlBarSchemeList m_schemeList;
@@ -289,5 +286,3 @@ private:
 //-----------------------------------------------------------------------------
 // EXTERNALS //////////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-
-#endif // __CONTROL_BAR_SCHEME_H_

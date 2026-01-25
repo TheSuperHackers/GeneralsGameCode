@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __UpdateModule_H_
-#define __UpdateModule_H_
-
 #include "Common/Module.h"
 #include "Common/GameType.h"
 #include "Common/DisabledTypes.h"
@@ -281,7 +278,7 @@ public:
 	virtual Bool isClearToApproach( Object const* docker ) const = 0;
 
 	/** Give me a Queue point to drive to, and record that that point is taken.
-			Returning NULL means there are none free
+			Returning null means there are none free
 	*/
 	virtual Bool reserveApproachPosition( Object* docker, Coord3D *position, Int *index ) = 0;
 
@@ -301,7 +298,7 @@ public:
 	virtual Bool isClearToAdvance( Object const* docker, Int dockerIndex ) const = 0;
 
 	/** Give me the point that is the start of your docking path
-			Returning NULL means there is none free
+			Returning null means there is none free
 			All functions take docker as arg so we could have multiple docks on a building.
 			Docker is not assumed, it is recorded and checked.
 	*/
@@ -318,7 +315,7 @@ public:
 	virtual void onDockReached( Object* docker ) = 0;				///< I have reached the Dock point
 	virtual void onExitReached( Object* docker ) = 0;				///< I have reached the exit.  You are no longer busy
 
-	virtual Bool action( Object* docker, Object *drone = NULL ) = 0;			///< Perform your specific action on me.  Returning FALSE means there is nothing for you to do so I should leave
+	virtual Bool action( Object* docker, Object *drone = nullptr ) = 0;			///< Perform your specific action on me.  Returning FALSE means there is nothing for you to do so I should leave
 
 	virtual void cancelDock( Object* docker ) = 0;	///< Clear me from any reserved points, and if I was the reason you were Busy, you aren't anymore.
 
@@ -365,5 +362,3 @@ public:
 	virtual Bool getNaturalRallyPoint( Coord3D& rallyPoint, Bool offset = TRUE ) const {rallyPoint.x=rallyPoint.y=rallyPoint.z=0; return false;}	///< get the natural "rally point" for units to move towards
 	virtual Bool getExitPosition( Coord3D& exitPosition ) const {exitPosition.x=exitPosition.y=exitPosition.z=0; return false;};					///< access to the "Door" position of the production object
 };
-
-#endif

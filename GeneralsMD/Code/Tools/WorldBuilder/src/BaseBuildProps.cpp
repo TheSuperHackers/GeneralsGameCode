@@ -28,7 +28,7 @@
 // BaseBuildProps dialog
 
 
-BaseBuildProps::BaseBuildProps(CWnd* pParent /*=NULL*/)
+BaseBuildProps::BaseBuildProps(CWnd* pParent /*=nullptr*/)
 	: CDialog(BaseBuildProps::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(BaseBuildProps)
@@ -66,7 +66,7 @@ BOOL BaseBuildProps::OnInitDialog()
 	// add health
 	CWnd* pHealth = GetDlgItem(IDC_MAPOBJECT_StartingHealthEdit);
 	static char buff[12];
-	sprintf(buff, "%d", m_health);
+	snprintf(buff, ARRAY_SIZE(buff), "%d", m_health);
 	pHealth->SetWindowText(buff);
 
 	CButton* pItem;

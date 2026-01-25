@@ -100,7 +100,7 @@ MapObject *WaypointTool::pickWaypoint(Coord3D loc){
 			return pObj;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 
@@ -119,18 +119,18 @@ void WaypointTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWor
 		WaypointOptions::update();
 	}	else {
 		pView->snapPoint(&docPt);
-		MapObject *pNew = newInstance( MapObject)(docPt, AsciiString("*Waypoints/Waypoint"), 0, 0, NULL, NULL );
+		MapObject *pNew = newInstance( MapObject)(docPt, "*Waypoints/Waypoint", 0, 0, nullptr, nullptr );
 		Int id = pDoc->getNextWaypointID();
 		AsciiString name = WaypointOptions::GenerateUniqueName(id);
 		pNew->setSelected(true);
 		pNew->setIsWaypoint();
 		pNew->setWaypointID(id);
 		pNew->setWaypointName(name);
-		pNew->getProperties()->setAsciiString(TheKey_originalOwner, AsciiString("team"));
+		pNew->getProperties()->setAsciiString(TheKey_originalOwner, "team");
 		AddObjectUndoable *pUndo = new AddObjectUndoable(pDoc, pNew);
 		pDoc->AddAndDoUndoable(pUndo);
 		REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
-		pNew = NULL; // undoable owns it now.
+		pNew = nullptr; // undoable owns it now.
 		m_downWaypointID = id;
 		WaypointOptions::update();
 	}
@@ -164,9 +164,9 @@ void WaypointTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorld
 	MapObject *pObj;
 	PointerTool::clearSelection();
 	pObj = pickWaypoint(docPt);
-	if (pObj == NULL) {
+	if (pObj == nullptr) {
 		pView->snapPoint(&docPt);
-		MapObject *pNew = newInstance( MapObject)(docPt, AsciiString("*Waypoints/Waypoint"), 0, 0, NULL, NULL );
+		MapObject *pNew = newInstance( MapObject)(docPt, "*Waypoints/Waypoint", 0, 0, nullptr, nullptr );
 		Int id = pDoc->getNextWaypointID();
 		AsciiString name;
 		name.format("Waypoint %d", id);
@@ -174,12 +174,12 @@ void WaypointTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorld
 		pNew->setIsWaypoint();
 		pNew->setWaypointID(id);
 		pNew->setWaypointName(name);
-		pNew->getProperties()->setAsciiString(TheKey_originalOwner, AsciiString("team"));
+		pNew->getProperties()->setAsciiString(TheKey_originalOwner, "team");
 		AddObjectUndoable *pUndo = new AddObjectUndoable(pDoc, pNew);
 		pDoc->AddAndDoUndoable(pUndo);
 		REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
 		pObj = pNew;
-		pNew = NULL; // undoable owns it now.
+		pNew = nullptr; // undoable owns it now.
 	}
 	if (pObj)
 	{

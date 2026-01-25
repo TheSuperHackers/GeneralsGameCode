@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef _MissileLauncherBuildingUpdate_H_
-#define _MissileLauncherBuildingUpdate_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/AudioEventRTS.h"
 #include "Common/INI.h"
@@ -59,12 +56,12 @@ public:
 
 	MissileLauncherBuildingUpdateModuleData()
 	{
-		m_specialPowerTemplate = NULL;
+		m_specialPowerTemplate = nullptr;
 		m_doorOpenTime = 0;
 		m_doorWaitOpenTime = 0;
 		m_doorClosingTime = 0;
 
-		m_openingFX = m_openFX = m_waitingToCloseFX = m_closingFX = m_closedFX = NULL;
+		m_openingFX = m_openFX = m_waitingToCloseFX = m_closingFX = m_closedFX = nullptr;
 	}
 
 	static void buildFieldParse(MultiIniFieldParse& p)
@@ -73,16 +70,16 @@ public:
 
 		static const FieldParse dataFieldParse[] =
 		{
-			{ "SpecialPowerTemplate",	INI::parseSpecialPowerTemplate,					NULL, offsetof( MissileLauncherBuildingUpdateModuleData, m_specialPowerTemplate ) },
-			{ "DoorOpenTime",					INI::parseDurationUnsignedInt,	NULL, offsetof( MissileLauncherBuildingUpdateModuleData, m_doorOpenTime ) },
-			{ "DoorWaitOpenTime",			INI::parseDurationUnsignedInt,	NULL, offsetof( MissileLauncherBuildingUpdateModuleData, m_doorWaitOpenTime ) },
-			{ "DoorCloseTime",				INI::parseDurationUnsignedInt,	NULL, offsetof( MissileLauncherBuildingUpdateModuleData, m_doorClosingTime ) },
-			{ "DoorOpeningFX",				INI::parseFXList,								NULL, offsetof( MissileLauncherBuildingUpdateModuleData, m_openingFX ) },
-			{ "DoorOpenFX",						INI::parseFXList,								NULL, offsetof( MissileLauncherBuildingUpdateModuleData, m_openFX ) },
-			{ "DoorWaitingToCloseFX",	INI::parseFXList,								NULL, offsetof( MissileLauncherBuildingUpdateModuleData, m_waitingToCloseFX ) },
-			{ "DoorClosingFX",				INI::parseFXList,								NULL, offsetof( MissileLauncherBuildingUpdateModuleData, m_closingFX ) },
-			{ "DoorClosedFX",					INI::parseFXList,								NULL, offsetof( MissileLauncherBuildingUpdateModuleData, m_closedFX ) },
-			{ "DoorOpenIdleAudio",		INI::parseAudioEventRTS,				NULL,	offsetof( MissileLauncherBuildingUpdateModuleData, m_openIdleAudio ) },
+			{ "SpecialPowerTemplate",	INI::parseSpecialPowerTemplate,					nullptr, offsetof( MissileLauncherBuildingUpdateModuleData, m_specialPowerTemplate ) },
+			{ "DoorOpenTime",					INI::parseDurationUnsignedInt,	nullptr, offsetof( MissileLauncherBuildingUpdateModuleData, m_doorOpenTime ) },
+			{ "DoorWaitOpenTime",			INI::parseDurationUnsignedInt,	nullptr, offsetof( MissileLauncherBuildingUpdateModuleData, m_doorWaitOpenTime ) },
+			{ "DoorCloseTime",				INI::parseDurationUnsignedInt,	nullptr, offsetof( MissileLauncherBuildingUpdateModuleData, m_doorClosingTime ) },
+			{ "DoorOpeningFX",				INI::parseFXList,								nullptr, offsetof( MissileLauncherBuildingUpdateModuleData, m_openingFX ) },
+			{ "DoorOpenFX",						INI::parseFXList,								nullptr, offsetof( MissileLauncherBuildingUpdateModuleData, m_openFX ) },
+			{ "DoorWaitingToCloseFX",	INI::parseFXList,								nullptr, offsetof( MissileLauncherBuildingUpdateModuleData, m_waitingToCloseFX ) },
+			{ "DoorClosingFX",				INI::parseFXList,								nullptr, offsetof( MissileLauncherBuildingUpdateModuleData, m_closingFX ) },
+			{ "DoorClosedFX",					INI::parseFXList,								nullptr, offsetof( MissileLauncherBuildingUpdateModuleData, m_closedFX ) },
+			{ "DoorOpenIdleAudio",		INI::parseAudioEventRTS,				nullptr,	offsetof( MissileLauncherBuildingUpdateModuleData, m_openIdleAudio ) },
 			{ 0, 0, 0, 0 }
 		};
     p.add(dataFieldParse);
@@ -115,7 +112,7 @@ public:
 	virtual CommandOption getCommandOption() const { return (CommandOption)0; }
 
 	virtual UpdateSleepTime update();	///< Deciding whether or not to make new guys
-	virtual Bool isPowerCurrentlyInUse( const CommandButton *command = NULL ) const;
+	virtual Bool isPowerCurrentlyInUse( const CommandButton *command = nullptr ) const;
 
 private:
 	enum DoorStateType
@@ -135,5 +132,3 @@ private:
 	UnsignedInt													m_timeoutFrame;
 	AudioEventRTS												m_openIdleAudio;
 };
-
-#endif // _MissileLauncherBuildingUpdate_H_

@@ -42,18 +42,18 @@
 
 W3DParticleSystemManager::W3DParticleSystemManager()
 {
-	m_pointGroup = NULL;
-	m_streakLine = NULL;
-	m_posBuffer = NULL;
-	m_RGBABuffer = NULL;
-	m_sizeBuffer = NULL;
-	m_angleBuffer = NULL;
+	m_pointGroup = nullptr;
+	m_streakLine = nullptr;
+	m_posBuffer = nullptr;
+	m_RGBABuffer = nullptr;
+	m_sizeBuffer = nullptr;
+	m_angleBuffer = nullptr;
 	m_readyToRender = false;
 
 	m_onScreenParticleCount = 0;
 
 	m_pointGroup = NEW PointGroupClass();
-	//m_streakLine = NULL;
+	//m_streakLine = nullptr;
 	m_streakLine = NEW StreakLineClass();
 
 	m_posBuffer = NEW_REF( ShareBufferClass<Vector3>, (MAX_POINTS_PER_GROUP, "W3DParticleSystemManager::m_posBuffer") );
@@ -283,7 +283,7 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 
 				/// @todo Use both QUADS and TRIS for particles
 				m_pointGroup->Set_Point_Mode( PointGroupClass::QUADS );
-				m_pointGroup->Set_Arrays( m_posBuffer, m_RGBABuffer, NULL, m_sizeBuffer, m_angleBuffer, NULL, count );
+				m_pointGroup->Set_Arrays( m_posBuffer, m_RGBABuffer, nullptr, m_sizeBuffer, m_angleBuffer, nullptr, count );
 				m_pointGroup->Set_Billboard(sys->shouldBillboard());
 
 				/// @todo Support animated texture particles

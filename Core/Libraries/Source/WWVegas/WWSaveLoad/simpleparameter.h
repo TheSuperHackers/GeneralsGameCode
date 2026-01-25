@@ -34,16 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-
-
-
-#ifndef __SIMPLE_PARAMETER_H
-#define __SIMPLE_PARAMETER_H
 
 #include "always.h"
 #include "parameter.h"
@@ -180,7 +171,7 @@ typedef SimpleParameterClass<int,		ParameterClass::TYPE_STRINGSDB_ID>	StringsDBE
 //
 //	RangedParameterClass
 //
-//		Extends simple paramter types so they can have minimum/maximum values.
+//		Extends simple parameter types so they can have minimum/maximum values.
 //
 //////////////////////////////////////////////////////////////////////////////////
 template <class T, ParameterClass::Type type>
@@ -242,6 +233,3 @@ public:
 		:	RangedParameterClass<float, ParameterClass::TYPE_ANGLE> (data, name)
 			{ Set_Range (0.0F,  6.283185307F); }
 };
-
-#endif //__SIMPLE_PARAMETER_H
-

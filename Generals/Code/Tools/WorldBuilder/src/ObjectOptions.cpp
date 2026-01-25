@@ -41,7 +41,7 @@
 
 #include <list>
 
-ObjectOptions *ObjectOptions::m_staticThis = NULL;
+ObjectOptions *ObjectOptions::m_staticThis = nullptr;
 Bool ObjectOptions::m_updating = false;
 char ObjectOptions::m_currentObjectName[NAME_MAX_LEN];
 Int ObjectOptions::m_currentObjectIndex=-1;
@@ -51,9 +51,9 @@ AsciiString ObjectOptions::m_curOwnerName;
 // ObjectOptions dialog
 
 
-ObjectOptions::ObjectOptions(CWnd* pParent /*=NULL*/)
+ObjectOptions::ObjectOptions(CWnd* pParent /*=nullptr*/)
 {
-	m_objectsList = NULL;
+	m_objectsList = nullptr;
 	strcpy(m_currentObjectName, "No Selection");
 	m_curOwnerName.clear();
 	//{{AFX_DATA_INIT(ObjectOptions)
@@ -65,7 +65,7 @@ ObjectOptions::ObjectOptions(CWnd* pParent /*=NULL*/)
 ObjectOptions::~ObjectOptions(void)
 {
 	deleteInstance(m_objectsList);
-	m_objectsList = NULL;
+	m_objectsList = nullptr;
 }
 
 
@@ -159,7 +159,7 @@ void ObjectOptions::updateLabel()
 	}
 	else
 	{
-		m_objectPreview.SetThingTemplate(NULL);
+		m_objectPreview.SetThingTemplate(nullptr);
 	}
 	m_objectPreview.Invalidate();
 
@@ -205,7 +205,7 @@ void ObjectOptions::updateLabel()
 static const PlayerTemplate* findFirstPlayerTemplateOnSide(AsciiString side)
 {
 	if (side.isEmpty())
-		return NULL;	// neutral, this is ok
+		return nullptr;	// neutral, this is ok
 
 	for (int i = 0; i < ThePlayerTemplateStore->getPlayerTemplateCount(); i++)
 	{
@@ -217,7 +217,7 @@ static const PlayerTemplate* findFirstPlayerTemplateOnSide(AsciiString side)
 	}
 
 	DEBUG_CRASH(("no player found for %s!",side.str()));
-	return NULL;
+	return nullptr;
 }
 #endif
 
@@ -244,7 +244,7 @@ BOOL ObjectOptions::OnInitDialog()
 		MapObject *pMap;
 
 		// create new map object
-		pMap = newInstance( MapObject)( loc, tTemplate->getName(), 0.0f, 0, NULL, tTemplate );
+		pMap = newInstance( MapObject)( loc, tTemplate->getName(), 0.0f, 0, nullptr, tTemplate );
 		pMap->setNextMap( m_objectsList );
 		m_objectsList = pMap;
 
@@ -258,7 +258,7 @@ BOOL ObjectOptions::OnInitDialog()
 	{
 		Coord3D pt = {0,0,0};
 		char base[1024] = "*Lights/Light";
-		MapObject *pMap = newInstance(MapObject)(pt, AsciiString(base), 0.0f, 0, NULL, NULL );
+		MapObject *pMap = newInstance(MapObject)(pt, AsciiString(base), 0.0f, 0, nullptr, nullptr );
 		pMap->setIsLight();
 
 		Dict *props = pMap->getProperties();
@@ -277,29 +277,17 @@ BOOL ObjectOptions::OnInitDialog()
 #endif
 #ifdef LOAD_TEST_ASSETS
 	{
-		char				dirBuf[_MAX_PATH];
-		char				findBuf[_MAX_PATH];
 		char				fileBuf[_MAX_PATH];
 		Int					i;
 
-		strcpy(dirBuf, TEST_W3D_DIR_PATH);
-		int len = strlen(dirBuf);
-
-		if (len > 0 && dirBuf[len - 1] != '\\' && dirBuf[len-1] != '/') {
-			dirBuf[len++] = '\\';
-			dirBuf[len] = 0;
-		}
-		strcpy(findBuf, dirBuf);
-		strcat(findBuf, "*.*");
-
 		FilenameList filenameList;
-		TheFileSystem->getFileListInDirectory(AsciiString(dirBuf), AsciiString("*.w3d"), filenameList, FALSE);
+		TheFileSystem->getFileListInDirectory(TEST_W3D_DIR_PATH, "*.w3d", filenameList, FALSE);
 
-		if (filenameList.size() > 0) {
+		if (!filenameList.empty()) {
 			FilenameList::iterator it = filenameList.begin();
 			do {
 				AsciiString filename = *it;
-				len = filename.getLength();
+				int len = filename.getLength();
 				if (len<5) continue;
 				// only do .w3d files
 
@@ -310,8 +298,8 @@ BOOL ObjectOptions::OnInitDialog()
 				}
 
 				strcpy(fileBuf, TEST_STRING);
-				strcat(fileBuf, "/");
-				strcat(fileBuf, token.str());
+				strlcat(fileBuf, "/", ARRAY_SIZE(fileBuf));
+				strlcat(fileBuf, token.str(), ARRAY_SIZE(fileBuf));
 				for (i=strlen(fileBuf)-1; i>0; i--) {
 					if (fileBuf[i] == '.') {
 						// strip off .w3d file extension.
@@ -320,7 +308,7 @@ BOOL ObjectOptions::OnInitDialog()
 					}
 				}
 				Coord3D pt = {0,0,0};
-				MapObject *pMap = newInstance(MapObject)(pt, AsciiString(fileBuf), 0.0f, 0, NULL, NULL );
+				MapObject *pMap = newInstance(MapObject)(pt, AsciiString(fileBuf), 0.0f, 0, nullptr, nullptr );
 				pMap->setNextMap(m_objectsList);
 				m_objectsList = pMap;
 
@@ -351,7 +339,7 @@ BOOL ObjectOptions::OnInitDialog()
 	pWnd->GetWindowRect(&rect);
 	ScreenToClient(&rect);
 	rect.DeflateRect(2,2,2,2);
-	m_objectPreview.Create(NULL, "", WS_CHILD, rect, this, IDC_TERRAIN_SWATCHES);
+	m_objectPreview.Create(nullptr, "", WS_CHILD, rect, this, IDC_TERRAIN_SWATCHES);
 	m_objectPreview.ShowWindow(SW_SHOW);
 
 	MapObject *pMap =  m_objectsList;
@@ -380,7 +368,7 @@ HTREEITEM ObjectOptions::findOrAdd(HTREEITEM parent, const char *pLabel)
 	char buffer[_MAX_PATH];
 	::memset(&ins, 0, sizeof(ins));
 	HTREEITEM child = m_objectTreeView.GetChildItem(parent);
-	while (child != NULL) {
+	while (child != nullptr) {
 		ins.item.mask = TVIF_HANDLE|TVIF_TEXT;
 		ins.item.hItem = child;
 		ins.item.pszText = buffer;
@@ -444,7 +432,7 @@ HTREEITEM ObjectOptions::_FindOrDont(const char* pLabel, HTREEITEM startPoint)
 			itemsToEx.push_back(m_objectTreeView.GetNextSiblingItem(hItem));
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 
@@ -455,10 +443,10 @@ void ObjectOptions::addObject( MapObject *mapObject, const char *pPath,
 															 Int terrainNdx, HTREEITEM parent )
 {
 	char buffer[ _MAX_PATH ];
-	const char *leafName = NULL;
+	const char *leafName = nullptr;
 
 	// sanity
-	if( mapObject == NULL )
+	if( mapObject == nullptr )
 		return;
 
 	//
@@ -479,9 +467,8 @@ void ObjectOptions::addObject( MapObject *mapObject, const char *pPath,
 
 		// first sort by side, either create or find the tree item with matching side name
 		AsciiString side = thingTemplate->getDefaultOwningSide();
-		DEBUG_ASSERTCRASH( !side.isEmpty(), ("NULL default side in template") );
-		strcpy( buffer, side.str() );
-		parent = findOrAdd( parent, buffer );
+		DEBUG_ASSERTCRASH( !side.isEmpty(), ("null default side in template") );
+		parent = findOrAdd( parent, side.str());
 
 		// next tier uses the editor sorting that design can specify in the INI
 		EditorSortingType i = ES_FIRST;
@@ -561,7 +548,7 @@ Bool ObjectOptions::setObjectTreeViewSelection(HTREEITEM parent, Int selection)
 	char buffer[NAME_MAX_LEN];
 	::memset(&item, 0, sizeof(item));
 	HTREEITEM child = m_objectTreeView.GetChildItem(parent);
-	while (child != NULL) {
+	while (child != nullptr) {
 		item.mask = TVIF_HANDLE|TVIF_PARAM|TVIF_TEXT;
 		item.hItem = child;
 		item.pszText = buffer;
@@ -638,7 +625,7 @@ MapObject *ObjectOptions::getCurMapObject(void)
 			pObj = pObj->getNext();
 		}
 	}
-	return(NULL);
+	return(nullptr);
 }
 
 AsciiString ObjectOptions::getCurGdfName(void)
@@ -720,7 +707,7 @@ MapObject *ObjectOptions::duplicateCurMapObjectForPlace(const Coord3D* loc, Real
 		}
 	}
 	AfxMessageBox("Unable to add object.");
-	return(NULL);
+	return(nullptr);
 }
 
 Real ObjectOptions::getCurObjectHeight(void)
@@ -763,7 +750,7 @@ MapObject *ObjectOptions::getObjectNamed(AsciiString name)
 			pObj = pObj->getNext();
 		}
 	}
-	return(NULL);
+	return(nullptr);
 }
 
 Int ObjectOptions::getObjectNamedIndex(const AsciiString& name)
@@ -789,7 +776,7 @@ Int ObjectOptions::getObjectNamedIndex(const AsciiString& name)
 			pObj = pObj->getNext();
 		}
 	}
-	return(NULL);
+	return(0);
 }
 
 
@@ -815,7 +802,7 @@ void ObjectOptions::selectObject(const MapObject* pObj)
 
 		char buffer[NAME_MAX_LEN];
 		HTREEITEM objToSel = m_staticThis->findOrDont(pObj->getName().str());
-		if (objToSel == NULL) {
+		if (objToSel == nullptr) {
 			return;
 		}
 

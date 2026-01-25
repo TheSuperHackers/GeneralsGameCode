@@ -27,7 +27,7 @@
 // Desc:   Parsing Particle System INI entries
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/INI.h"
 #include "GameClient/ParticleSys.h"
@@ -46,7 +46,7 @@ void INI::parseParticleSystemDefinition( INI* ini )
 
 	// find existing item if present
 	ParticleSystemTemplate *sysTemplate = const_cast<ParticleSystemTemplate*>(TheParticleSystemManager->findTemplate( name ));
-	if (sysTemplate == NULL)
+	if (sysTemplate == nullptr)
 	{
 		// no item is present, create a new one
 		sysTemplate = TheParticleSystemManager->newTemplate( name );

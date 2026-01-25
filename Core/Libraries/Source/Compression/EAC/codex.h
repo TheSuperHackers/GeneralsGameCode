@@ -30,19 +30,14 @@
 /*                                                                  */
 /* Version Date   SE History                                        */
 /* ------- ------ -- -------                                        */
-/*    1.00 990824 FB codex API seperated from huff tool             */
+/*    1.00 990824 FB codex API separated from huff tool             */
 /*    1.01 010427 FB fb6 32 bit size header                         */
 /*    1.02 011011 FB c++ defaults                                   */
 /*    2.00 011015 FB bool, dest/source, new about struct,no QPUBLIC */
 /*                                                                  */
 /*------------------------------------------------------------------*/
 
-#ifndef __CODEX_H
-#define __CODEX_H 1
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -118,6 +113,5 @@ int GCALL CODEX_encode(void *dest, const void *source, int sourcesize, int *opts
 
 #ifdef __cplusplus
 }
-#endif
 #endif
 

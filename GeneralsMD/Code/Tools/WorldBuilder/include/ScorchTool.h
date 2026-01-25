@@ -21,9 +21,6 @@
 
 #pragma once
 
-#ifndef SCORCHTOOL_H
-#define SCORCHTOOL_H
-
 #include "Tool.h"
 class WorldHeightMapEdit;
 class MapObject;
@@ -51,6 +48,3 @@ public:
 	virtual void activate(); ///< Become the current tool.
 	virtual void deactivate(); ///< Become not the current tool.
 };
-
-
-#endif //SCORCHTOOL_H

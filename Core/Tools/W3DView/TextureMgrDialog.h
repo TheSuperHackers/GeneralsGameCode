@@ -34,18 +34,13 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if !defined(AFX_TEXTUREMGRDIALOG_H__3F61844D_CDEA_11D2_9FFC_00104B791122__INCLUDED_)
-#define AFX_TEXTUREMGRDIALOG_H__3F61844D_CDEA_11D2_9FFC_00104B791122__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
-#include "Vector.H"
-#include "RendObj.H"
-#include "Utils.H"
-#include "Resource.H"
-#include "DialogToolbar.H"
+#include "Vector.h"
+#include "RendObj.h"
+#include "Utils.h"
+#include "Resource.h"
+#include "DialogToolbar.h"
 #include "texture.h"
 
 // Forward declarations
@@ -82,23 +77,23 @@ class TextureListNodeClass
 		//
 		//	Public constructors/destructors
 		//
-		TextureListNodeClass (LPCTSTR name = NULL)
-			: m_pTexture (NULL),
+		TextureListNodeClass (LPCTSTR name = nullptr)
+			: m_pTexture (nullptr),
 			  m_Type (TYPE_MESH),
-			  m_pParent (NULL),
+			  m_pParent (nullptr),
 			  m_Name (name),
 			  m_TextureIndex (0),
 			  m_IconIndex (ICON_MESH) {}
 
-		TextureListNodeClass (TextureClass *ptexture, LPCTSTR name = NULL)
-			: m_pTexture (NULL),
+		TextureListNodeClass (TextureClass *ptexture, LPCTSTR name = nullptr)
+			: m_pTexture (nullptr),
 			  m_Type (TYPE_TEXTURE),
-			  m_pParent (NULL),
+			  m_pParent (nullptr),
 			  m_Name (name),
 			  m_TextureIndex (0),
-			  m_IconIndex (ICON_DEF_TEXTURE) { MEMBER_ADD (m_pTexture, ptexture); }
+			  m_IconIndex (ICON_DEF_TEXTURE) { REF_PTR_SET (m_pTexture, ptexture); }
 
-		~TextureListNodeClass (void) { MEMBER_RELEASE (m_pTexture); Free_Subobj_List (); }
+		~TextureListNodeClass (void) { REF_PTR_RELEASE (m_pTexture); Free_Subobj_List (); }
 
 
 		////////////////////////////////////////////////////////////
@@ -112,7 +107,7 @@ class TextureListNodeClass
 		void									Set_Type (NODE_TYPE type)	{ m_Type = type; }
 
 		TextureClass *						Peek_Texture (void) const	{ return m_pTexture; }
-		void									Set_Texture (TextureClass *ptex) { MEMBER_ADD (m_pTexture, ptex); }
+		void									Set_Texture (TextureClass *ptex) { REF_PTR_SET (m_pTexture, ptex); }
 
 		TEXTURE_NODE_LIST	&				Get_Subobj_List (void)		{ return m_SubObjectList; }
 
@@ -158,7 +153,7 @@ class TextureListNodeClass
 __inline void
 TextureListNodeClass::Free_Subobj_List (void)
 {
-	// Loop through all the subobject entries and free thier pointers
+	// Loop through all the subobject entries and free their pointers
 	for (int index = 0; index < m_SubObjectList.Count (); index ++) {
 		SAFE_DELETE (m_SubObjectList[index]);
 	}
@@ -178,7 +173,7 @@ class TextureMgrDialogClass : public CDialog
 
 // Construction
 public:
-	TextureMgrDialogClass (RenderObjClass *pbase_model, CWnd *pParent = NULL);
+	TextureMgrDialogClass (RenderObjClass *pbase_model, CWnd *pParent = nullptr);
 
 // Dialog Data
 	//{{AFX_DATA(TextureMgrDialogClass)
@@ -251,5 +246,3 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_TEXTUREMGRDIALOG_H__3F61844D_CDEA_11D2_9FFC_00104B791122__INCLUDED_)

@@ -29,13 +29,12 @@
 // Desc:  Slaved unit(s) remain close to their master. Used by angry Mob members (various)
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "GameClient/InGameUI.h"// selection logic
 #include "GameClient/Drawable.h"
 #include "Common/RandomValue.h"
 #include "Common/Xfer.h"
-#include "GameClient/Drawable.h"
 #include "GameClient/ParticleSys.h"
 #include "GameLogic/AIPathfind.h"
 #include "GameLogic/Damage.h"
@@ -48,8 +47,6 @@
 #include "GameLogic/Module/BodyModule.h"
 #include "GameLogic/Module/MobMemberSlavedUpdate.h"
 #include "GameLogic/Module/SpawnBehavior.h"
-#include "GameClient/InGameUI.h"// selection logic
-#include "GameClient/Drawable.h"
 #include "Common/ThingFactory.h"
 #include "Common/ThingTemplate.h"
 
@@ -138,7 +135,7 @@ UpdateSleepTime MobMemberSlavedUpdate::update( void )
 	}
 
 	Object *master = TheGameLogic->findObjectByID( m_slaver );
-	if( master == NULL )
+	if( master == nullptr )
 	{
 		stopSlavedEffects();
 
@@ -307,7 +304,7 @@ UpdateSleepTime MobMemberSlavedUpdate::update( void )
 			if ( masterAI->isIdle() ) // if controlling player has pressed stop, we stop! That's it!
 			{
 				myAI->aiIdle(CMD_FROM_AI);
-				primaryVictim = NULL;
+				primaryVictim = nullptr;
 				m_primaryVictimID = INVALID_ID;
 				return UPDATE_SLEEP_NONE;
 			}
@@ -342,7 +339,7 @@ UpdateSleepTime MobMemberSlavedUpdate::update( void )
 		}
 		else
 		{
-			DEBUG_ASSERTCRASH(( spawnerBehavior != NULL ),("Hey!, why for this mob member got no spawner? MLorenzen"));
+			DEBUG_ASSERTCRASH(( spawnerBehavior != nullptr ),("Hey!, why for this mob member got no spawner? MLorenzen"));
 		}
 	}
 
@@ -381,7 +378,7 @@ void MobMemberSlavedUpdate::doCatchUpLogic( Coord3D *pos )
 //-------------------------------------------------------------------------------------------------
 void MobMemberSlavedUpdate::startSlavedEffects( const Object *slaver )
 {
-	if( slaver == NULL )
+	if( slaver == nullptr )
 		return;
 
 	m_slaver = slaver->getID();

@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __HEIGHTDIEUPDATE_H_
-#define __HEIGHTDIEUPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpdateModule.h"
 
@@ -79,5 +76,3 @@ protected:
 	UnsignedInt m_earliestDeathFrame; ///< Earliest we are allowed to think about dying
 
 };
-
-#endif  // end __HEIGHTDIEUPDATE_H_

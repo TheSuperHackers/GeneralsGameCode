@@ -22,7 +22,7 @@
  *                                                                                             *
  *                 Project Name : Command & Conquer                                            *
  *                                                                                             *
- *                     $Archive:: /Commando/Code/wwlib/CRC.CPP                                $*
+ *                     $Archive:: /Commando/Code/wwlib/CRC.cpp                                $*
  *                                                                                             *
  *                      $Author:: Eric_c                                                      $*
  *                                                                                             *
@@ -37,7 +37,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include	"always.h"
-#include	"CRC.H"
+#include "CRC.h"
 
 
 /***********************************************************************************************
@@ -90,7 +90,7 @@ void CRCEngine::operator() (char datum)
  *=============================================================================================*/
 long CRCEngine::operator() (void const * buffer, int length)
 {
-	if (buffer != NULL && length > 0)  {
+	if (buffer != nullptr && length > 0)  {
 		char const * dataptr = (char const *)buffer;
 		int bytes_left = length;
 

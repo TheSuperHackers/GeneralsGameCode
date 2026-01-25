@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/ThingFactory.h"
 #include "Common/ThingTemplate.h"
@@ -52,7 +52,7 @@
 enum { TEMPLATE_HASH_SIZE = 12288 };
 
 // PUBLIC DATA ////////////////////////////////////////////////////////////////////////////////////
-ThingFactory *TheThingFactory = NULL;  ///< Thing manager singleton declaration
+ThingFactory *TheThingFactory = nullptr;  ///< Thing manager singleton declaration
 
 // STATIC FUNCTIONS ///////////////////////////////////////////////////////////////////////////////
 
@@ -77,7 +77,7 @@ void ThingFactory::freeDatabase( void )
 }
 
 //-------------------------------------------------------------------------------------------------
-/** add the thing template passed in, into the databse */
+/** add the thing template passed in, into the database */
 //-------------------------------------------------------------------------------------------------
 void ThingFactory::addTemplate( ThingTemplate *tmplate )
 {
@@ -103,7 +103,7 @@ void ThingFactory::addTemplate( ThingTemplate *tmplate )
 //-------------------------------------------------------------------------------------------------
 ThingFactory::ThingFactory()
 {
-	m_firstTemplate = NULL;
+	m_firstTemplate = nullptr;
 	m_nextTemplateID = 1;	// not zero!
 
 #ifdef USING_STLPORT
@@ -134,7 +134,7 @@ ThingTemplate *ThingFactory::newTemplate( const AsciiString& name )
 	newTemplate = newInstance(ThingTemplate);
 
 	// if the default template is present, get it and copy over any data to the new template
-	const ThingTemplate *defaultT = findTemplate( AsciiString( "DefaultThingTemplate" ), FALSE );
+	const ThingTemplate *defaultT = findTemplate( "DefaultThingTemplate", FALSE );
 	if( defaultT )
 	{
 
@@ -169,10 +169,10 @@ ThingTemplate* ThingFactory::newOverride( ThingTemplate *thingTemplate )
 {
 
 	// sanity
-	DEBUG_ASSERTCRASH( thingTemplate, ("newOverride(): NULL 'parent' thing template") );
+	DEBUG_ASSERTCRASH( thingTemplate, ("newOverride(): null 'parent' thing template") );
 
 	// sanity just for debuging, the weapon must be in the master list to do overrides
-	DEBUG_ASSERTCRASH( findTemplate( thingTemplate->getName() ) != NULL,
+	DEBUG_ASSERTCRASH( findTemplate( thingTemplate->getName() ) != nullptr,
 										 ("newOverride(): Thing template '%s' not in master list",
 										 thingTemplate->getName().str()) );
 
@@ -215,11 +215,13 @@ void ThingFactory::reset( void )
 		// t itself can be deleted if it is something created for this map only. Therefore,
 		// we need to store what the next item is so that we don't orphan a bunch of templates.
 		ThingTemplate *nextT = t->friend_getNextTemplate();
+		DEBUG_ASSERTCRASH(!nextT || t->getTemplateID() == nextT->getTemplateID() + 1, ("Next template ID is unexpected"));
+
 		if (t == m_firstTemplate) {
 			possibleAdjustment = TRUE;
 		}
 
-		// if stillValid is NULL after we delete the overrides, then this template was created for
+		// if stillValid is nullptr after we delete the overrides, then this template was created for
 		// this map only. If it also happens to be m_firstTemplate, then we need to update m_firstTemplate
 		// as well. Finally, if it was only created for this map, we need to remove the name from the
 		// hash map, to prevent any crashes.
@@ -227,17 +229,21 @@ void ThingFactory::reset( void )
 		AsciiString templateName = t->getName();
 
 		Overridable *stillValid = t->deleteOverrides();
-		if (stillValid == NULL && possibleAdjustment) {
+		if (stillValid == nullptr && possibleAdjustment) {
 			m_firstTemplate = nextT;
 		}
 
-		if (stillValid == NULL) {
+		if (stillValid == nullptr) {
 			// Also needs to be removed from the Hash map.
 			m_templateHashMap.erase(templateName);
 		}
 
 		t = nextT;
 	}
+
+	// TheSuperHackers @bugfix Caball009 25/12/2025 Avoid mismatches by making m_nextTemplateID unique for a single match instead of unique since game launch.
+	DEBUG_ASSERTCRASH(m_firstTemplate && m_firstTemplate->getTemplateID() == m_templateHashMap.size(), ("Template ID is unexpected after deleting overrides"));
+	m_nextTemplateID = static_cast<UnsignedShort>(m_firstTemplate->getTemplateID() + 1);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -259,7 +265,7 @@ const ThingTemplate *ThingFactory::findByTemplateID( UnsignedShort id )
 			return tmpl;
 	}
 	DEBUG_CRASH(("template %d not found",(Int)id));
-	return NULL;
+	return nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -276,7 +282,7 @@ ThingTemplate *ThingFactory::findTemplateInternal( const AsciiString& name, Bool
 #ifdef LOAD_TEST_ASSETS
 	if (!strncmp(name.str(), TEST_STRING, strlen(TEST_STRING)))
 	{
-		ThingTemplate *tmplate = newTemplate( AsciiString( "Un-namedTemplate" ) );
+		ThingTemplate *tmplate = newTemplate( "Un-namedTemplate" );
 
 		// load the values
 		tmplate->initForLTA( name );
@@ -296,14 +302,14 @@ ThingTemplate *ThingFactory::findTemplateInternal( const AsciiString& name, Bool
 	{
 		DEBUG_CRASH( ("Failed to find thing template %s (case sensitive) This issue has a chance of crashing after you ignore it!", name.str() ) );
 	}
-	return NULL;
+	return nullptr;
 
 }
 
 //=============================================================================
 Object *ThingFactory::newObject( const ThingTemplate *tmplate, Team *team, ObjectStatusMaskType statusBits )
 {
-	if (tmplate == NULL)
+	if (tmplate == nullptr)
 		throw ERROR_BAD_ARG;
 
 	const std::vector<AsciiString>& asv = tmplate->getBuildVariations();
@@ -311,7 +317,7 @@ Object *ThingFactory::newObject( const ThingTemplate *tmplate, Team *team, Objec
 	{
 		Int which = GameLogicRandomValue(0, asv.size()-1);
 		const ThingTemplate* tmp = findTemplate( asv[which] );
-		if (tmp != NULL)
+		if (tmp != nullptr)
 			tmplate = tmp;
 	}
 
@@ -346,9 +352,9 @@ Object *ThingFactory::newObject( const ThingTemplate *tmplate, Team *team, Objec
 }
 
 //=============================================================================
-Drawable *ThingFactory::newDrawable(const ThingTemplate *tmplate, DrawableStatus statusBits)
+Drawable *ThingFactory::newDrawable(const ThingTemplate *tmplate, DrawableStatusBits statusBits)
 {
-	if (tmplate == NULL)
+	if (tmplate == nullptr)
 		throw ERROR_BAD_ARG;
 
 	Drawable *draw = TheGameClient->friend_createDrawable( tmplate, statusBits );

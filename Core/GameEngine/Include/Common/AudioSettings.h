@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifndef _AUDIOSETTINGS_H_
-#define _AUDIOSETTINGS_H_
-
 #include "Common/AsciiString.h"
 
 enum { MAX_HW_PROVIDERS = 4 };
@@ -103,5 +100,3 @@ struct AudioSettings
 	//between 75% and 100%, not 100% to 125%!
   Real m_zoomSoundVolumePercentageAmount;	//The amount of sound volume dedicated to zooming.
 };
-
-#endif // _AUDIOSETTINGS_H_

@@ -36,13 +36,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef AABTREEBUILDER_H
-#define AABTREEBUILDER_H
 
 #include "always.h"
 #include "vector3.h"
@@ -91,7 +85,7 @@ private:
 	*/
 	struct CullNodeStruct
 	{
-		CullNodeStruct(void) : Index(0),Min(0,0,0),Max(0,0,0),Front(NULL),Back(NULL),PolyCount(0),PolyIndices(NULL) {}
+		CullNodeStruct(void) : Index(0),Min(0,0,0),Max(0,0,0),Front(nullptr),Back(nullptr),PolyCount(0),PolyIndices(nullptr) {}
 		~CullNodeStruct(void)
 		{
 			delete Front;
@@ -140,8 +134,8 @@ private:
 		SplitArraysStruct(void) :
 			FrontCount(0),
 			BackCount(0),
-			FrontPolys(NULL),
-			BackPolys(NULL)
+			FrontPolys(nullptr),
+			BackPolys(nullptr)
 		{
 		}
 
@@ -202,9 +196,3 @@ private:
 
 	friend class AABTreeClass;
 };
-
-
-
-
-#endif //AABTREEBUILDER_H
-

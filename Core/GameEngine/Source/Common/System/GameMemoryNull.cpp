@@ -28,8 +28,8 @@ static Bool theMainInitFlag = false;
 // PUBLIC DATA
 // ----------------------------------------------------------------------------
 
-MemoryPoolFactory *TheMemoryPoolFactory = NULL;
-DynamicMemoryAllocator *TheDynamicMemoryAllocator = NULL;
+MemoryPoolFactory *TheMemoryPoolFactory = nullptr;
+DynamicMemoryAllocator *TheDynamicMemoryAllocator = nullptr;
 
 //-----------------------------------------------------------------------------
 // METHODS for DynamicMemoryAllocator
@@ -45,7 +45,7 @@ DynamicMemoryAllocator *TheDynamicMemoryAllocator = NULL;
 void *DynamicMemoryAllocator::allocateBytesDoNotZeroImplementation(Int numBytes)
 {
 	void *p = malloc(numBytes);
-	if (p == NULL)
+	if (p == nullptr)
 		throw ERROR_OUT_OF_MEMORY;
 	return p;
 }
@@ -107,7 +107,7 @@ void MemoryPoolFactory::debugSetInitFillerIndex(Int index)
 */
 void initMemoryManager()
 {
-	if (TheMemoryPoolFactory == NULL && TheDynamicMemoryAllocator == NULL)
+	if (TheMemoryPoolFactory == nullptr && TheDynamicMemoryAllocator == nullptr)
 	{
 		TheMemoryPoolFactory = new (malloc(sizeof MemoryPoolFactory)) MemoryPoolFactory;
 		TheDynamicMemoryAllocator = new (malloc(sizeof DynamicMemoryAllocator)) DynamicMemoryAllocator;
@@ -136,18 +136,18 @@ Bool isMemoryManagerOfficiallyInited()
 */
 void shutdownMemoryManager()
 {
-	if (TheDynamicMemoryAllocator != NULL)
+	if (TheDynamicMemoryAllocator != nullptr)
 	{
 		TheDynamicMemoryAllocator->~DynamicMemoryAllocator();
 		free((void *)TheDynamicMemoryAllocator);
-		TheDynamicMemoryAllocator = NULL;
+		TheDynamicMemoryAllocator = nullptr;
 	}
 
-	if (TheMemoryPoolFactory != NULL)
+	if (TheMemoryPoolFactory != nullptr)
 	{
 		TheMemoryPoolFactory->~MemoryPoolFactory();
 		free((void *)TheMemoryPoolFactory);
-		TheMemoryPoolFactory = NULL;
+		TheMemoryPoolFactory = nullptr;
 	}
 
 	theMainInitFlag = false;
@@ -161,7 +161,7 @@ void shutdownMemoryManager()
 extern void * __cdecl operator new(size_t size)
 {
 	void *p = malloc(size);
-	if (p == NULL)
+	if (p == nullptr)
 		throw ERROR_OUT_OF_MEMORY;
 	memset(p, 0, size);
 	return p;
@@ -175,7 +175,7 @@ extern void __cdecl operator delete(void *p)
 extern void * __cdecl operator new[](size_t size)
 {
 	void *p = malloc(size);
-	if (p == NULL)
+	if (p == nullptr)
 		throw ERROR_OUT_OF_MEMORY;
 	memset(p, 0, size);
 	return p;
@@ -190,7 +190,7 @@ extern void __cdecl operator delete[](void *p)
 extern void* __cdecl operator new(size_t size, const char *, int)
 {
 	void *p = malloc(size);
-	if (p == NULL)
+	if (p == nullptr)
 		throw ERROR_OUT_OF_MEMORY;
 	memset(p, 0, size);
 	return p;
@@ -204,7 +204,7 @@ extern void __cdecl operator delete(void *p, const char *, int)
 extern void* __cdecl operator new[](size_t size, const char *, int)
 {
 	void *p = malloc(size);
-	if (p == NULL)
+	if (p == nullptr)
 		throw ERROR_OUT_OF_MEMORY;
 	memset(p, 0, size);
 	return p;

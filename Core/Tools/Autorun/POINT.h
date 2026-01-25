@@ -33,10 +33,8 @@
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-#pragma once
 
-#ifndef POINT_H
-#define POINT_H
+#pragma once
 
 #include <math.h>
 //#include "always.h"
@@ -237,6 +235,3 @@ TPoint3D<T> const Cross_Product(TPoint3D<T> const & lvalue, TPoint3D<T> const & 
 {
 	return(lvalue.Cross_Product(rvalue));
 }
-
-
-#endif

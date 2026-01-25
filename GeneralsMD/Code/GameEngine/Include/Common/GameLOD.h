@@ -33,23 +33,26 @@
 
 #pragma once
 
-#ifndef _GAME_LOD_H_
-#define _GAME_LOD_H_
-
 enum ParticlePriorityType CPP_11(: Int);
 
-#define MAX_LOD_PRESETS_PER_LEVEL	32	//number of hardware configs preset for each low,medium,high
+#define MAX_LOD_PRESETS_PER_LEVEL	32	//number of hardware configs preset for each low,medium,high,veryhigh
 #define MAX_BENCH_PROFILES	16
 
 //Make sure this enum stays in sync with GameLODNames[]
 enum StaticGameLODLevel CPP_11(: Int)
 {
 	STATIC_GAME_LOD_UNKNOWN=-1,
+
 	STATIC_GAME_LOD_LOW,
 	STATIC_GAME_LOD_MEDIUM,
 	STATIC_GAME_LOD_HIGH,
+	STATIC_GAME_LOD_VERY_HIGH,
+
 	STATIC_GAME_LOD_CUSTOM,	//make sure this remains last!
-	STATIC_GAME_LOD_COUNT
+
+	STATIC_GAME_LOD_COUNT,
+	STATIC_GAME_LOD_FIRST = 0,
+	STATIC_GAME_LOD_LAST = STATIC_GAME_LOD_CUSTOM - 1,
 };
 
 enum DynamicGameLODLevel CPP_11(: Int)
@@ -164,15 +167,13 @@ public:
 
 	const char *getStaticGameLODLevelName(StaticGameLODLevel level);
 	const char *getDynamicGameLODLevelName(DynamicGameLODLevel level);
-	StaticGameLODLevel findStaticLODLevel(void);	///< calculate the optimal static LOD level for this system.
+	StaticGameLODLevel getRecommendedStaticLODLevel(void);	///< calculate the optimal static LOD level for this system.
 	Bool setStaticLODLevel(StaticGameLODLevel level);	///< set the current static LOD level.
 	StaticGameLODLevel getStaticLODLevel(void) { return m_currentStaticLOD;}
 	DynamicGameLODLevel findDynamicLODLevel(Real averageFPS);	///<given an average fps, return the optimal dynamic LOD.
 	Bool setDynamicLODLevel(DynamicGameLODLevel level);	///< set the current dynamic LOD level.
 	DynamicGameLODLevel getDynamicLODLevel(void) { return m_currentDynamicLOD;}
 	void init(void);	///<initialize tables of preset LOD's.
-	void setCurrentTextureReduction(Int val) {m_currentTextureReduction = val;}
-	Int getCurrentTextureReduction(void) {return m_currentTextureReduction;}
 	Int getStaticGameLODIndex(AsciiString name);
 	Int getDynamicGameLODIndex(AsciiString name);
 	inline Bool isParticleSkipped(void);
@@ -194,9 +195,11 @@ public:
 	BenchProfile m_benchProfiles[MAX_BENCH_PROFILES];
 
 protected:
+	void initStaticLODLevels();
 	void applyStaticLODLevel(StaticGameLODLevel level);
 	void applyDynamicLODLevel(DynamicGameLODLevel level);
 	void refreshCustomStaticLODLevel(void);	///<grabs current globaldata values and makes them the custom detail setting.
+	StaticGameLODLevel getRecommendedTextureLODLevel();
 
 	static const FieldParse m_staticGameLODFieldParseTable[];
 	StaticGameLODLevel m_currentStaticLOD;		///< current value of static LOD.
@@ -222,7 +225,6 @@ protected:
 	Real m_floatBenchIndex;
 	Real m_memBenchIndex;
 	Real m_compositeBenchIndex;
-	Int m_currentTextureReduction;
 	Int m_reallyLowMHz;
 };
 
@@ -252,4 +254,3 @@ ParticlePriorityType GameLODManager::getMinDynamicParticleSkipPriority(void)
 }
 
 extern GameLODManager *TheGameLODManager;
-#endif // _GAME_LOD_H_

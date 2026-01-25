@@ -30,9 +30,6 @@
 
 #pragma once
 
-#ifndef __SHADOW_H_
-#define __SHADOW_H_
-
 //
 // skeleton definition of shadow types
 //
@@ -59,7 +56,7 @@ static const char* const TheShadowNames[] =
 	"SHADOW_DIRECTIONAL_PROJECTION",
 	"SHADOW_ALPHA_DECAL",
 	"SHADOW_ADDITIVE_DECAL",
-	NULL
+	nullptr
 };
 #endif  // end DEFINE_SHADOW_NAMES
 
@@ -213,6 +210,3 @@ public:
 };
 
 extern ProjectedShadowManager *TheProjectedShadowManager;
-
-#endif // __SHADOW_H_
-

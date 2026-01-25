@@ -29,7 +29,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/INI.h"
 #include "Common/SpecialPower.h"
@@ -53,7 +53,7 @@ void ControlBar::parseCommandButtonDefinition( INI *ini )
 
 	// find existing item if present
 	CommandButton *button = TheControlBar->findNonConstCommandButton( name );
-	if( button == NULL )
+	if( button == nullptr )
 	{
 		// allocate a new item
 		button = TheControlBar->newCommandButton( name );

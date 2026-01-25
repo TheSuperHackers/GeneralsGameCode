@@ -91,10 +91,10 @@ void CAnimReportPage::FillListControl()
 	// Get the current render object and it's HTree. If it doesn't have
 	// an HTree, then it's not animating and we're not interested.
 	RenderObjClass *robj = ::GetCurrentDocument()->GetDisplayedObject();
-	if (robj == NULL)
+	if (robj == nullptr)
 		return;
 	const HTreeClass *htree = robj->Get_HTree();
-	if (htree == NULL)
+	if (htree == nullptr)
 		return;
 
 	// Get a sorted array of animations that affect the currently active object.
@@ -187,7 +187,7 @@ int CAnimReportPage::FindItem (const char *item_name)
 	return m_AnimReport.FindItem(&lvfi);
 }
 
-void CAnimReportPage::MakeChannelStr (int bone_idx, HAnimClass *hanim, char *channels)
+void CAnimReportPage::MakeChannelStr (int bone_idx, HAnimClass *hanim, char channels[6])
 {
 	if (hanim->Has_X_Translation(bone_idx))
 		strcat(channels, "X");

@@ -43,10 +43,6 @@
 
 #pragma once
 
-#ifndef _COMMON_CDMANAGER_H_
-#define _COMMON_CDMANAGER_H_
-
-
 //----------------------------------------------------------------------------
 //           Includes
 //----------------------------------------------------------------------------
@@ -187,5 +183,3 @@ class CDManager : public CDManagerInterface
 
 extern CDManagerInterface *TheCDManager;
 CDManagerInterface* CreateCDManager( void );
-
-#endif // _COMMON_CDMANAGER_H_

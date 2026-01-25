@@ -22,7 +22,7 @@
  *                                                                                             *
  *                 Project Name : Commando / G 3D engine                                       *
  *                                                                                             *
- *                    File Name : MeshDeformPanel.H                                            *
+ *                    File Name : MeshDeformPanel.h                                            *
  *                                                                                             *
  *                   Programmer : Patrick Smith                                                *
  *                                                                                             *
@@ -34,9 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef __MESH_DEFORM_PANEL_H
-#define __MESH_DEFORM_PANEL_H
+#pragma once
 
 #include <max.h>
 #include "resource.h"
@@ -58,11 +56,11 @@ class MeshDeformPanelClass
 		//////////////////////////////////////////////////////////////////////
 		MeshDeformPanelClass (HWND hwnd)
 			:	m_hWnd (hwnd),
-				m_pColorSwatch (NULL),
-				m_pMaxSetsSpin (NULL),
-				m_pMeshDeformer (NULL),
-				m_pLockSetsButton (NULL),
-				m_pMaxSetsEdit (NULL)				{ }
+				m_pColorSwatch (nullptr),
+				m_pMaxSetsSpin (nullptr),
+				m_pMeshDeformer (nullptr),
+				m_pLockSetsButton (nullptr),
+				m_pMaxSetsEdit (nullptr)				{ }
 		virtual ~MeshDeformPanelClass (void)	{ }
 
 		//////////////////////////////////////////////////////////////////////
@@ -112,6 +110,3 @@ class MeshDeformPanelClass
 		ICustButton *				m_pLockSetsButton;
 		MeshDeformClass *			m_pMeshDeformer;
 };
-
-
-#endif //__MESH_DEFORM_PANEL_H

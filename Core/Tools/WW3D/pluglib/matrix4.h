@@ -23,7 +23,7 @@
  *                                                                                             *
  *                 Project Name : WW3D                                                         *
  *                                                                                             *
- *                    File Name : MATRIX4.H                                                    *
+ *                    File Name : MATRIX4.h                                                    *
  *                                                                                             *
  *                   Programmer : Greg Hjelstrom                                               *
  *                                                                                             *
@@ -52,13 +52,7 @@
  *   Matrix4::operator /= -- "divide equals" operator                                          *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef MATRIX4_H
-#define MATRIX4_H
 
 #include "always.h"
 #include "vector4.h"
@@ -712,5 +706,3 @@ inline void Matrix4::Transform_Vector(const Matrix4 & A,const Vector3 & in,Vecto
 	out->Y = (A[1][0] * v->X + A[1][1] * v->Y + A[1][2] * v->Z + A[1][3]);
 	out->Z = (A[2][0] * v->X + A[2][1] * v->Y + A[2][2] * v->Z + A[2][3]);
 }
-
-#endif /*MATRIX4_H*/

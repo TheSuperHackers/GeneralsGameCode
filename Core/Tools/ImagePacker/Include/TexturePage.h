@@ -40,16 +40,13 @@
 
 #pragma once
 
-#ifndef __TEXTUREPAGE_H_
-#define __TEXTUREPAGE_H_
-
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 #include <stdlib.h>
 
 ///////////////////////////////////////////////////////////////////////////////
 // USER INCLUDES //////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-#include "WWLib/TARGA.H"
+#include "WWLib/TARGA.h"
 #include "Lib/BaseType.h"
 #include "ImageInfo.h"
 
@@ -100,7 +97,7 @@ public:
 	Int getHeight( void );  ///< get height of texture page
 
 	// get rgb from final generated texture (putting this in for quick preview)
-	void getPixel( Int x, Int y, Byte *r, Byte *g, Byte *b, Byte *a = NULL );
+	void getPixel( Int x, Int y, Byte *r, Byte *g, Byte *b, Byte *a = nullptr );
 
 	TexturePage *m_next;
 	TexturePage *m_prev;
@@ -167,6 +164,3 @@ inline Int TexturePage::getWidth( void ) { return m_size.x; }
 inline Int TexturePage::getHeight( void ) { return m_size.y; }
 
 // EXTERNALS //////////////////////////////////////////////////////////////////
-
-#endif // __TEXTUREPAGE_H_
-

@@ -18,14 +18,12 @@
 
 //////////////////////////////////////////////////////////////////////
 //
-//  Toolbar.H
+//  Toolbar.h
 //
 //  Declaration of a 'fancy' toolbar using hi-color buttons
 //
 
-#ifndef __FANCYTOOLBAR_H
-#define __FANCYTOOLBAR_H
-
+#pragma once
 
 //////////////////////////////////////////////////////////////
 //
@@ -164,5 +162,3 @@ class CFancyToolbar : public CControlBar
         int m_iButtons;
         int m_iCurrentButton;
 };
-
-#endif // __FANCYTOOLBAR_H

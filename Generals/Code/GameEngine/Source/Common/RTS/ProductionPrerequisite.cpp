@@ -42,7 +42,7 @@
 //
 //-----------------------------------------------------------------------------
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/ProductionPrerequisite.h"
 #include "Common/Player.h"
@@ -128,7 +128,7 @@ Int ProductionPrerequisite::getAllPossibleBuildFacilityTemplates(const ThingTemp
 const ThingTemplate *ProductionPrerequisite::getExistingBuildFacilityTemplate( const Player *player ) const
 {
 	DEBUG_ASSERTCRASH(player, ("player may not be null"));
-	if (m_prereqUnits.size())
+	if (!m_prereqUnits.empty())
 	{
 		Int ownCount[MAX_PREREQ];
 		Int cnt = calcNumPrereqUnitsOwned(player, ownCount);
@@ -140,7 +140,7 @@ const ThingTemplate *ProductionPrerequisite::getExistingBuildFacilityTemplate( c
 				return m_prereqUnits[i].unit;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -186,7 +186,7 @@ Bool ProductionPrerequisite::isSatisfied(const Player *player) const
 //-------------------------------------------------------------------------------------------------
 /** Add a unit prerequisite, if 'orWithPrevious' is set then this unit is said
 	* to be an alternate prereq to the previously added unit, otherwise this becomes
-	* a new 'block' and is required in ADDDITION to other entries.
+	* a new 'block' and is required in ADDITION to other entries.
 	* Return FALSE if no space left to add unit */
 //-------------------------------------------------------------------------------------------------
 void ProductionPrerequisite::addUnitPrereq( AsciiString unit, Bool orUnitWithPrevious )
@@ -194,7 +194,7 @@ void ProductionPrerequisite::addUnitPrereq( AsciiString unit, Bool orUnitWithPre
 	PrereqUnitRec info;
 	info.name = unit;
 	info.flags = orUnitWithPrevious ? UNIT_OR_WITH_PREV : 0;
-	info.unit = NULL;
+	info.unit = nullptr;
 	m_prereqUnits.push_back(info);
 
 }
@@ -202,7 +202,7 @@ void ProductionPrerequisite::addUnitPrereq( AsciiString unit, Bool orUnitWithPre
 //-------------------------------------------------------------------------------------------------
 /** Add a unit prerequisite, if 'orWithPrevious' is set then this unit is said
 	* to be an alternate prereq to the previously added unit, otherwise this becomes
-	* a new 'block' and is required in ADDDITION to other entries.
+	* a new 'block' and is required in ADDITION to other entries.
 	* Return FALSE if no space left to add unit */
 //-------------------------------------------------------------------------------------------------
 void ProductionPrerequisite::addUnitPrereq( const std::vector<AsciiString>& units )
@@ -234,14 +234,10 @@ UnicodeString ProductionPrerequisite::getRequiresList(const Player *player) cons
 	Int i;
 
 	Bool orRequirements[MAX_PREREQ];
-	//Added for fix below in getRequiresList
-	//By Sadullah Nader
-	//Initializes the OR_WITH_PREV structures
 	for (i = 0; i < MAX_PREREQ; i++)
 	{
 		orRequirements[i] = FALSE;
 	}
-	//
 	// account for the "or" unit cases, start for loop at 1
 	for (i = 1; i < cnt; i++)
 	{
@@ -267,7 +263,7 @@ UnicodeString ProductionPrerequisite::getRequiresList(const Player *player) cons
 				unit = m_prereqUnits[i-1].unit;
 				unitName = unit->getDisplayName();
 				unitName.concat( L" " );
-				unitName.concat(TheGameText->fetch("CONTROLBAR:OrRequirement", NULL));
+				unitName.concat(TheGameText->fetch("CONTROLBAR:OrRequirement", nullptr));
 				unitName.concat( L" " );
 				requiresList.concat(unitName);
 			}
@@ -306,7 +302,7 @@ UnicodeString ProductionPrerequisite::getRequiresList(const Player *player) cons
 		} else {
 			unitName.concat(L"\n");
 		}
-		requiresList.concat(TheGameText->fetch("CONTROLBAR:GeneralsPromotion", NULL));
+		requiresList.concat(TheGameText->fetch("CONTROLBAR:GeneralsPromotion", nullptr));
 	}
 
 	// return final list

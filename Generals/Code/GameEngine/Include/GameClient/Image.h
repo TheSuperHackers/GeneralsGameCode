@@ -30,12 +30,10 @@
 
 #pragma once
 
-#ifndef __IMAGE_H_
-#define __IMAGE_H_
-
 #include "Common/AsciiString.h"
 #include "Common/GameMemory.h"
 #include "Common/SubsystemInterface.h"
+#include <map>
 
 struct FieldParse;
 class INI;
@@ -55,7 +53,7 @@ static const char *const imageStatusNames[] =
 {
 	"ROTATED_90_CLOCKWISE",
 	"RAW_TEXTURE",
-	NULL
+	nullptr
 };
 #endif  // end DEFINE_IMAGE_STATUS_NAMES
 
@@ -109,8 +107,6 @@ friend class ImageCollection;
 	void *m_rawTextureData;		///< raw texture data
 	UnsignedInt m_status;			///< status bits from ImageStatus
 
-	Image *m_next;						///< for maintaining lists as collections
-
 	static const FieldParse m_imageFieldParseTable[];		///< the parse table for INI definition
 
 };
@@ -120,6 +116,7 @@ friend class ImageCollection;
 //-------------------------------------------------------------------------------------------------
 class ImageCollection : public SubsystemInterface
 {
+	typedef std::map<NameKeyType, Image *> ImageMap;
 
 public:
 
@@ -132,18 +129,24 @@ public:
 
 	void load( Int textureSize );												 ///< load images
 
-	const Image *findImageByName( const AsciiString& name );					 ///< find image based on name
-	const Image *findImageByFilename( const AsciiString& name );  ///< find image based on filename
+	const Image *findImage( NameKeyType namekey ) const; ///< find image based on name key
+	const Image *findImageByName( const AsciiString& name ) const; ///< find image based on name
+	const Image *findImageByName( const char* name ) const; ///< find image based on name
 
-	Image *firstImage( void );						///< return first image in list
-	Image *nextImage( Image *image );			///< return next image
+  /// adds the given image to the collection, transfers ownership to this object
+  void addImage(Image *image);
 
-	Image *newImage( void );							///< return a new, linked image
+  /// enumerates the list of existing images
+  Image *Enum(unsigned index)
+  {
+    for (ImageMap::iterator i=m_imageMap.begin();i!=m_imageMap.end();++i)
+      if (!index--)
+        return i->second;
+    return nullptr;
+  }
 
 protected:
-
-	Image *m_imageList;  ///< the image list
-
+  ImageMap m_imageMap;  ///< maps named keys to images
 };
 
 // INLINING ///////////////////////////////////////////////////////////////////////////////////////
@@ -151,7 +154,6 @@ inline void Image::setName( AsciiString name ) { m_name = name; }
 inline AsciiString Image::getName( void ) const { return m_name; }
 inline void Image::setFilename( AsciiString name ) { m_filename = name; }
 inline AsciiString Image::getFilename( void ) const { return m_filename; }
-inline Image *ImageCollection::firstImage( void ) { return m_imageList; }
 inline void Image::setUV( Region2D *uv ) { if( uv ) m_UVCoords = *uv; }
 inline const Region2D *Image::getUV( void ) const { return &m_UVCoords; }
 inline void Image::setTextureWidth( Int width ) { m_textureSize.x = width; }
@@ -167,6 +169,3 @@ inline UnsignedInt Image::getStatus( void ) const { return m_status; }
 
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
 extern ImageCollection *TheMappedImageCollection;  ///< mapped images
-
-#endif // __IMAGE_H_
-

@@ -34,12 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef __PROXY_H
-#define __PROXY_H
 
 #include "wwstring.h"
 #include "matrix3d.h"
@@ -109,7 +104,3 @@ ProxyClass::operator!= (const ProxyClass &src)
 {
 	return ((Name != src.Name) || (Transform != src.Transform));
 }
-
-
-#endif //__PROXY_H
-

@@ -46,8 +46,8 @@ Int BrushTool::m_brushHeight;
 BrushTool::BrushTool(void) :
 	Tool(ID_BRUSH_TOOL, IDC_BRUSH_CROSS)
 {
-	m_htMapEditCopy = NULL;
-	m_htMapFeatherCopy = NULL;
+	m_htMapEditCopy = nullptr;
+	m_htMapFeatherCopy = nullptr;
 
 	m_brushWidth = 0;
 	m_brushFeather = 0;

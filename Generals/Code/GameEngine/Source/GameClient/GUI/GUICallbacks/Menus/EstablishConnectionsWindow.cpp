@@ -23,7 +23,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 ///// EstablishConnectionsWindow.cpp /////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 
 #include "GameClient/GameWindowManager.h"
@@ -51,22 +51,22 @@ static NameKeyType staticPlayer5StatusID = NAMEKEY_INVALID;
 static NameKeyType staticPlayer6StatusID = NAMEKEY_INVALID;
 static NameKeyType staticPlayer7StatusID = NAMEKEY_INVALID;
 
-static GameWindow *buttonQuitWindow = NULL;
-static GameWindow *staticPlayer1Name = NULL;
-static GameWindow *staticPlayer2Name = NULL;
-static GameWindow *staticPlayer3Name = NULL;
-static GameWindow *staticPlayer4Name = NULL;
-static GameWindow *staticPlayer5Name = NULL;
-static GameWindow *staticPlayer6Name = NULL;
-static GameWindow *staticPlayer7Name = NULL;
+static GameWindow *buttonQuitWindow = nullptr;
+static GameWindow *staticPlayer1Name = nullptr;
+static GameWindow *staticPlayer2Name = nullptr;
+static GameWindow *staticPlayer3Name = nullptr;
+static GameWindow *staticPlayer4Name = nullptr;
+static GameWindow *staticPlayer5Name = nullptr;
+static GameWindow *staticPlayer6Name = nullptr;
+static GameWindow *staticPlayer7Name = nullptr;
 
-static GameWindow *staticPlayer1Status = NULL;
-static GameWindow *staticPlayer2Status = NULL;
-static GameWindow *staticPlayer3Status = NULL;
-static GameWindow *staticPlayer4Status = NULL;
-static GameWindow *staticPlayer5Status = NULL;
-static GameWindow *staticPlayer6Status = NULL;
-static GameWindow *staticPlayer7Status = NULL;
+static GameWindow *staticPlayer1Status = nullptr;
+static GameWindow *staticPlayer2Status = nullptr;
+static GameWindow *staticPlayer3Status = nullptr;
+static GameWindow *staticPlayer4Status = nullptr;
+static GameWindow *staticPlayer5Status = nullptr;
+static GameWindow *staticPlayer6Status = nullptr;
+static GameWindow *staticPlayer7Status = nullptr;
 
 static const char *layoutFilename = "GameSpyGameOptionsMenu.wnd";
 static const char *parentName = "GameSpyGameOptionsMenuParent";
@@ -82,7 +82,7 @@ static const char *gadgetsToHide[] =
 	"ButtonSelectMap",
 	"ButtonStart",
 	"StaticTextMapPreview",
-	NULL
+	nullptr
 };
 static const char *perPlayerGadgetsToHide[] =
 {
@@ -93,7 +93,7 @@ static const char *perPlayerGadgetsToHide[] =
 	"ButtonAccept",
 	"GenericPing",
 	//"ButtonStartPosition",
-	NULL
+	nullptr
 };
 
 static const char *qmlayoutFilename = "WOLQuickMatchMenu.wnd";
@@ -107,12 +107,12 @@ static const char *qmgadgetsToHide[] =
 	"ButtonWiden",
 	"ButtonStop",
 	"ButtonStart",
-	NULL
+	nullptr
 };
 static const char *qmperPlayerGadgetsToHide[] =
 {
 	//"ButtonStartPosition",
-	NULL
+	nullptr
 };
 
 static void showGameSpyGameOptionsUnderlyingGUIElements( Bool show )
@@ -126,12 +126,12 @@ static void showGameSpyQMUnderlyingGUIElements( Bool show )
 }
 
 static void InitEstablishConnectionsDialog( void ) {
-	buttonQuitID = TheNameKeyGenerator->nameToKey( AsciiString("EstablishConnectionsScreen.wnd:ButtonQuit") );
-	buttonQuitWindow = TheWindowManager->winGetWindowFromId(NULL, buttonQuitID);
+	buttonQuitID = TheNameKeyGenerator->nameToKey( "EstablishConnectionsScreen.wnd:ButtonQuit" );
+	buttonQuitWindow = TheWindowManager->winGetWindowFromId(nullptr, buttonQuitID);
 }
 
 void ShowEstablishConnectionsWindow( void ) {
-	if (establishConnectionsLayout == NULL) {
+	if (establishConnectionsLayout == nullptr) {
 		establishConnectionsLayout = TheWindowManager->winCreateLayout( "Menus/EstablishConnectionsScreen.wnd" );
 		InitEstablishConnectionsDialog();
 	}
@@ -148,7 +148,7 @@ void ShowEstablishConnectionsWindow( void ) {
 }
 
 void HideEstablishConnectionsWindow( void ) {
-	if (establishConnectionsLayout == NULL) {
+	if (establishConnectionsLayout == nullptr) {
 //		establishConnectionsLayout = TheWindowManager->winCreateLayout( "Menus/EstablishConnectionsScreen.wnd" );
 //		InitEstablishConnectionsDialog();
 		return;
@@ -158,7 +158,7 @@ void HideEstablishConnectionsWindow( void ) {
 //	TheWindowManager->winDestroy(establishConnectionsLayout);
 	establishConnectionsLayout->destroyWindows();
 	deleteInstance(establishConnectionsLayout);
-	establishConnectionsLayout = NULL;
+	establishConnectionsLayout = nullptr;
 	if (!TheGameSpyGame->isQMGame())
 	{
 		showGameSpyGameOptionsUnderlyingGUIElements(TRUE);

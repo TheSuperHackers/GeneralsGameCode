@@ -536,7 +536,7 @@ struct ObbCollisionStruct
 		B[2].Set(box1.Basis[0][2],box1.Basis[1][2],box1.Basis[2][2]);
 	}
 
-	bool						StartBad;			// Inital configuration is intersecting?
+	bool						StartBad;			// Initial configuration is intersecting?
 	float						MaxFrac;				// Longest move allowed so far
 	int						AxisId;				// Last separating axis
 	int						Side;					// which side of the interval
@@ -1314,7 +1314,7 @@ exit:
 
 	/*
 	** If our fraction is smaller, override the previous
-	** values because our collision occured first.
+	** values because our collision occurred first.
 	*/
 	if (context.MaxFrac < result->Fraction) {
 

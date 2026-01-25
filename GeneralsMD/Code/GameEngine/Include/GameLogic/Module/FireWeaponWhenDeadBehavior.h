@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __FireWeaponWhenDeadBehavior_H_
-#define __FireWeaponWhenDeadBehavior_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 
 #include "GameLogic/Module/BehaviorModule.h"
@@ -51,15 +48,15 @@ public:
 	FireWeaponWhenDeadBehaviorModuleData()
 	{
 		m_initiallyActive = false;
-		m_deathWeapon = NULL;
+		m_deathWeapon = nullptr;
 	}
 
 	static void buildFieldParse(MultiIniFieldParse& p)
 	{
 		static const FieldParse dataFieldParse[] =
 		{
-			{ "StartsActive",	INI::parseBool, NULL, offsetof( FireWeaponWhenDeadBehaviorModuleData, m_initiallyActive ) },
-			{ "DeathWeapon", INI::parseWeaponTemplate,	NULL, offsetof( FireWeaponWhenDeadBehaviorModuleData, m_deathWeapon ) },
+			{ "StartsActive",	INI::parseBool, nullptr, offsetof( FireWeaponWhenDeadBehaviorModuleData, m_initiallyActive ) },
+			{ "DeathWeapon", INI::parseWeaponTemplate,	nullptr, offsetof( FireWeaponWhenDeadBehaviorModuleData, m_deathWeapon ) },
 			{ 0, 0, 0, 0 }
 		};
 
@@ -114,7 +111,7 @@ protected:
 
 	virtual void processUpgradeRemoval()
 	{
-		// I can't take it any more.  Let the record show that I think the UpgradeMux multiple inheritence is CRAP.
+		// I can't take it any more.  Let the record show that I think the UpgradeMux multiple inheritance is CRAP.
 		getFireWeaponWhenDeadBehaviorModuleData()->m_upgradeMuxData.muxDataProcessUpgradeRemoval(getObject());
 	}
 
@@ -123,11 +120,8 @@ protected:
 		return getFireWeaponWhenDeadBehaviorModuleData()->m_upgradeMuxData.m_requiresAllTriggers;
 	}
 
-	inline Bool isUpgradeActive() const { return isAlreadyUpgraded(); }
+	Bool isUpgradeActive() const { return isAlreadyUpgraded(); }
 
 	virtual Bool isSubObjectsUpgrade() { return false; }
 
 };
-
-#endif // __FireWeaponWhenDeadBehavior_H_
-

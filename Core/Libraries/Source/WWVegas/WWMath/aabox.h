@@ -52,12 +52,7 @@
  *   AABoxClass::Init -- Init from a line segment                                              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef AABOX_H
-#define AABOX_H
 
 #include "always.h"
 #include "matrix3d.h"
@@ -523,7 +518,7 @@ WWINLINE bool AABoxClass::Contains(const Vector3 & point) const
 WWINLINE void MinMaxAABoxClass::Init(Vector3 * points,int num)
 {
 	assert(num > 0);
-	assert(points != NULL);
+	assert(points != nullptr);
 	MinCorner = points[0];
 	MaxCorner = points[0];
 	for (int i=0; i<num; i++) {
@@ -674,6 +669,3 @@ WWINLINE void MinMaxAABoxClass::Translate(const Vector3 & pos)
 	MinCorner+=pos;
 	MaxCorner+=pos;
 }
-
-
-#endif

@@ -34,12 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef __SOUNDROBJ_H
-#define __SOUNDROBJ_H
 
 // TheSuperHackers @build xezon 05/04/2025 Compile in WWAUDIO for Renegade's w3dview tool.
 #define noWWAUDIO 1
@@ -141,7 +136,7 @@ protected:
 	///////////////////////////////////////////////////////////
 	//	Protected methods
 	///////////////////////////////////////////////////////////
-	virtual void		Update_On_Visibilty (void);
+	virtual void		Update_On_Visibility (void);
 
 private:
 
@@ -236,7 +231,7 @@ public:
 	//	Public constructors/destructors
 	///////////////////////////////////////////////////////////
 	SoundRenderObjPrototypeClass (SoundRenderObjDefClass *def)
-		: Definition (NULL)													{ Set_Definition (def); }
+		: Definition (nullptr)													{ Set_Definition (def); }
 
 	///////////////////////////////////////////////////////////
 	//	Public methods
@@ -280,6 +275,3 @@ public:
 extern SoundRenderObjLoaderClass		_SoundRenderObjLoader;
 
 #endif //noWWAUDIO (gth) removing dependency on wwaudio
-
-#endif //__SOUNDROBJ_H
-

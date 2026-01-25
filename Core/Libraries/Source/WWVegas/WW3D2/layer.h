@@ -34,16 +34,10 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef LAYER_H
-#define LAYER_H
 
 #include "always.h"
-#include "LISTNODE.H"
+#include "LISTNODE.h"
 #include "vector3.h"
 
 class SceneClass;
@@ -93,8 +87,3 @@ public:
 };
 
 typedef List<LayerClass *> LayerListClass;
-
-
-#endif //LAYER_H
-
-

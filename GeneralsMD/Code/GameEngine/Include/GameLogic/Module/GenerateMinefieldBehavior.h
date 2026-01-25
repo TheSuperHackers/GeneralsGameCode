@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __GenerateMinefieldBehavior_H_
-#define __GenerateMinefieldBehavior_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/BehaviorModule.h"
 #include "GameLogic/Module/DieModule.h"
@@ -109,7 +106,7 @@ protected:
 	}
 	virtual void processUpgradeRemoval()
 	{
-		// I can't take it any more.  Let the record show that I think the UpgradeMux multiple inheritence is CRAP.
+		// I can't take it any more.  Let the record show that I think the UpgradeMux multiple inheritance is CRAP.
 		getGenerateMinefieldBehaviorModuleData()->m_upgradeMuxData.muxDataProcessUpgradeRemoval(getObject());
 	}
 
@@ -134,6 +131,3 @@ private:
 	void placeMinesAroundRect(const Coord3D& pos, Real majorRadius, Real minorRadius, const ThingTemplate* mineTemplate);
 	Object* placeMineAt(const Coord3D& pt, const ThingTemplate* mineTemplate, Team* team, const Object* producer);
 };
-
-#endif // __GenerateMinefieldBehavior_H_
-

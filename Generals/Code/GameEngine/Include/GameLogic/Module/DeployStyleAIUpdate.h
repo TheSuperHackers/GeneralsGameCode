@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __DEPLOY_STYLE_AI_UPDATE_H
-#define __DEPLOY_STYLE_AI_UPDATE_H
-
 #include "Common/StateMachine.h"
 #include "GameLogic/Module/AIUpdate.h"
 
@@ -61,10 +58,7 @@ public:
 		m_packTime = 0;
 		m_resetTurretBeforePacking = false;
 		m_turretsFunctionOnlyWhenDeployed = false;
-		// Added By Sadullah Nader
-		// Initialization necessary
 		m_turretsMustCenterBeforePacking = FALSE;
-		// End Add
 	}
 
 	static void buildFieldParse(MultiIniFieldParse& p)
@@ -73,11 +67,11 @@ public:
 
 		static const FieldParse dataFieldParse[] =
 		{
-			{ "UnpackTime",					INI::parseDurationUnsignedInt,	NULL, offsetof( DeployStyleAIUpdateModuleData, m_unpackTime ) },
-			{ "PackTime",						INI::parseDurationUnsignedInt,	NULL, offsetof( DeployStyleAIUpdateModuleData, m_packTime ) },
-			{ "ResetTurretBeforePacking", INI::parseBool,						NULL, offsetof( DeployStyleAIUpdateModuleData, m_resetTurretBeforePacking ) },
-			{ "TurretsFunctionOnlyWhenDeployed", INI::parseBool,		NULL, offsetof( DeployStyleAIUpdateModuleData, m_turretsFunctionOnlyWhenDeployed ) },
-			{ "TurretsMustCenterBeforePacking", INI::parseBool,			NULL, offsetof( DeployStyleAIUpdateModuleData, m_turretsMustCenterBeforePacking ) },
+			{ "UnpackTime",					INI::parseDurationUnsignedInt,	nullptr, offsetof( DeployStyleAIUpdateModuleData, m_unpackTime ) },
+			{ "PackTime",						INI::parseDurationUnsignedInt,	nullptr, offsetof( DeployStyleAIUpdateModuleData, m_packTime ) },
+			{ "ResetTurretBeforePacking", INI::parseBool,						nullptr, offsetof( DeployStyleAIUpdateModuleData, m_resetTurretBeforePacking ) },
+			{ "TurretsFunctionOnlyWhenDeployed", INI::parseBool,		nullptr, offsetof( DeployStyleAIUpdateModuleData, m_turretsFunctionOnlyWhenDeployed ) },
+			{ "TurretsMustCenterBeforePacking", INI::parseBool,			nullptr, offsetof( DeployStyleAIUpdateModuleData, m_turretsMustCenterBeforePacking ) },
 			{ 0, 0, 0, 0 }
 		};
 		p.add(dataFieldParse);
@@ -125,6 +119,3 @@ protected:
 	Bool										m_isGuardingPosition;
 	Bool										m_overriddenAttack;
 };
-
-#endif
-

@@ -27,9 +27,6 @@
 
 #pragma once
 
-#ifndef _MISCAUDIO_H_
-#define _MISCAUDIO_H_
-
 #include "Common/AudioEventRTS.h"
 
 struct MiscAudio
@@ -73,7 +70,3 @@ struct MiscAudio
 	AudioEventRTS m_sabotageResetTimerBuilding;											///< When Saboteur hits a building
 	AudioEventRTS m_aircraftWheelScreech;									///< When a jet lands on a runway.
 };
-
-
-#endif /* _MISCAUDIO_H_ */
-

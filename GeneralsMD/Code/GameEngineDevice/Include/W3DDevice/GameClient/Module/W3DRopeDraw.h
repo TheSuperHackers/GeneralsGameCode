@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __W3DRopeDraw_H_
-#define __W3DRopeDraw_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/DrawModule.h"
 #include "WW3D2/line3d.h"
@@ -93,6 +90,3 @@ private:
 	void buildSegments();
 
 };
-
-#endif // __W3DRopeDraw_H_
-

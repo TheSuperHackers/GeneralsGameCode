@@ -283,10 +283,10 @@ void W3DGadgetProgressBarImageDraw( GameWindow *window, WinInstanceData *instDat
 	}
 
 	// sanity
-	if( backLeft == NULL || backRight == NULL ||
-			backCenter == NULL ||
-			barRight == NULL)
-			// backSmallCenter == NULL ||barLeft == NULL ||barCenter == NULL || barSmallCenter == NULL )
+	if( backLeft == nullptr || backRight == nullptr ||
+			backCenter == nullptr ||
+			barRight == nullptr)
+			// backSmallCenter == nullptr ||barLeft == nullptr ||barCenter == nullptr || barSmallCenter == nullptr )
 		return;
 
 	// get image sizes for the ends
@@ -401,7 +401,6 @@ void W3DGadgetProgressBarImageDraw( GameWindow *window, WinInstanceData *instDat
 	}
 	start.x = origin.x + 10 + barCenter->getImageWidth() * pieces;
 	//pieces = (size.x - barWindowSize.x -20) / barRight->getImageWidth();
-	//Changed By Saad for flashing grey piece
 	pieces = ((size.x - 20) / barCenter->getImageWidth()) - pieces;
 	for( i = 0; i < pieces; i++ )
 	{

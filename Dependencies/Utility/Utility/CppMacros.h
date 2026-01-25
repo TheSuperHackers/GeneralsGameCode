@@ -17,29 +17,57 @@
 */
 
 // This file contains macros to help upgrade the code for newer cpp standards.
+// Must be C compliant
+
 #pragma once
 
+#if __cplusplus >= 201103L
+#include <utility>
+#endif
+
+#if __cplusplus >= 201103L
+#define CPP_11(code) code
+#else
+#define CPP_11(code)
+#define static_assert(expr, msg)
+#define constexpr
+#define noexcept
+#define nullptr 0
+#endif
+
 #if __cplusplus >= 201703L
-#define NOEXCEPT_17 noexcept
 #define REGISTER
 #define FALLTHROUGH [[fallthrough]]
 #else
-#define NOEXCEPT_17
 #define REGISTER register
 #define FALLTHROUGH
 #endif
 
 // noexcept for methods of IUNKNOWN interface
 #if defined(_MSC_VER)
-#define IUNKNOWN_NOEXCEPT NOEXCEPT_17
+#define IUNKNOWN_NOEXCEPT noexcept
 #else
 #define IUNKNOWN_NOEXCEPT
 #endif
 
+#ifdef __cplusplus
+namespace stl
+{
+
+// Helper to move-assign from reference: uses std::move in C++11, swap in C++98
+template<typename T>
+inline void move_or_swap(T& dest, T& src)
+{
 #if __cplusplus >= 201103L
-  #define CPP_11(code) code
+	dest = std::move(src);
 #else
-  #define CPP_11(code)
-  #define static_assert(expr, msg)
-  #define constexpr
+	// C++03 fallback: mimic move semantics
+	// dest gets src's value, src becomes empty
+	T empty;
+	dest.swap(src);
+	src.swap(empty);
+#endif
+}
+
+} // namespace stl
 #endif

@@ -34,18 +34,9 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
 
-#ifndef REF_PTR_H
-#define REF_PTR_H
-
-#ifndef ALWAYS_H
 #include "always.h"
-#endif
-
 #include "wwdebug.h"
 
 /*
@@ -228,7 +219,7 @@ class RefCountPtr
 		// Is generally used for objects returned by operator new and "Get" functions.
 		static RefCountPtr<T> Create_NoAddRef(T *t)
 		{
-			WWASSERT(t == NULL || t->Num_Refs() >= 1);
+			WWASSERT(t == nullptr || t->Num_Refs() >= 1);
 			return RefCountPtr<T>(t, RefCountPtr<T>::GET);
 		}
 
@@ -452,5 +443,3 @@ RefCountPtr<Derived> Static_Cast(const RefCountPtr<Base> & base)
 {
 	return RefCountPtr<Derived>::Create_AddRef((Derived *)base.Peek());
 }
-
-#endif

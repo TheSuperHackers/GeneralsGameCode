@@ -75,7 +75,7 @@
 //         Public Data
 //----------------------------------------------------------------------------
 
-LocalFileSystem *TheLocalFileSystem = NULL;
+LocalFileSystem *TheLocalFileSystem = nullptr;
 
 //----------------------------------------------------------------------------
 //         Private Prototypes

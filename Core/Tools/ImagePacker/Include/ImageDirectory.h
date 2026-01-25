@@ -40,9 +40,6 @@
 
 #pragma once
 
-#ifndef __IMAGEDIRECTORY_H_
-#define __IMAGEDIRECTORY_H_
-
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
@@ -75,13 +72,10 @@ public:
 inline ImageDirectory::~ImageDirectory( void ) { delete m_path; }
 inline ImageDirectory::ImageDirectory( void )
 {
-	m_path = NULL;
-	m_next = NULL;
-	m_prev = NULL;
+	m_path = nullptr;
+	m_next = nullptr;
+	m_prev = nullptr;
 	m_imageCount = 0;
 }
 
 // EXTERNALS //////////////////////////////////////////////////////////////////
-
-#endif // __IMAGEDIRECTORY_H_
-

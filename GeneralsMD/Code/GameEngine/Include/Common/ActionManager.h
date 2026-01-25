@@ -34,9 +34,6 @@
 
 #pragma once
 
-#ifndef __ACTIONMANAGER_H_
-#define __ACTIONMANAGER_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/SubsystemInterface.h"
 
@@ -111,5 +108,3 @@ protected:
 
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
 extern ActionManager *TheActionManager;
-
-#endif  // end __ACTIONMANAGER_H_

@@ -29,7 +29,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDE FILES //////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
@@ -64,10 +64,10 @@ RebuildHoleExposeDieModuleData::RebuildHoleExposeDieModuleData()
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "HoleName", INI::parseAsciiString, NULL, offsetof( RebuildHoleExposeDieModuleData, m_holeName ) },
-		{ "HoleMaxHealth", INI::parseReal, NULL, offsetof( RebuildHoleExposeDieModuleData, m_holeMaxHealth ) },
-		{ "TransferAttackers", INI::parseBool, NULL, offsetof( RebuildHoleExposeDieModuleData, m_transferAttackers ) },
-		{ 0, 0, 0, 0 }
+		{ "HoleName", INI::parseAsciiString, nullptr, offsetof( RebuildHoleExposeDieModuleData, m_holeName ) },
+		{ "HoleMaxHealth", INI::parseReal, nullptr, offsetof( RebuildHoleExposeDieModuleData, m_holeMaxHealth ) },
+		{ "TransferAttackers", INI::parseBool, nullptr, offsetof( RebuildHoleExposeDieModuleData, m_transferAttackers ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 
 	p.add( dataFieldParse );

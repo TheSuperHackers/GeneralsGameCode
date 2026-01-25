@@ -30,9 +30,6 @@
 
 #pragma once
 
-#ifndef __WINDOWLAYOUT_H_
-#define __WINDOWLAYOUT_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/GameMemory.h"
 #include "GameClient/GameWindow.h"
@@ -75,9 +72,9 @@ public:
 	GameWindow *getFirstWindow( void ) const;				///< get first window in list for screen
 
 	// accessing layout callbacks  ------------------------------------------------------------------
-	void runInit( void *userData = NULL );									///< run the init method if available
-	void runUpdate( void *userData = NULL );								///< run the update method if available
-	void runShutdown( void *userData = NULL );							///< run the shutdown method if available
+	void runInit( void *userData = nullptr );									///< run the init method if available
+	void runUpdate( void *userData = nullptr );								///< run the update method if available
+	void runShutdown( void *userData = nullptr );							///< run the shutdown method if available
 	void setInit( WindowLayoutInitFunc init );							///< set the init callback
 	void setUpdate( WindowLayoutUpdateFunc update );				///< set the update callback
 	void setShutdown( WindowLayoutShutdownFunc shutdown);		///< set the shutdown callback
@@ -121,6 +118,3 @@ inline void WindowLayout::runShutdown( void *userData ) { if( m_shutdown ) m_shu
 inline void WindowLayout::setInit( WindowLayoutInitFunc init ) { m_init = init; }
 inline void WindowLayout::setUpdate( WindowLayoutUpdateFunc update ) { m_update = update; }
 inline void WindowLayout::setShutdown( WindowLayoutShutdownFunc shutdown ) {m_shutdown = shutdown;}
-
-#endif // __WINDOWLAYOUT_H_
-

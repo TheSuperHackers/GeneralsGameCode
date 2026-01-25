@@ -50,8 +50,9 @@
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
+#include "Common/GameUtility.h"
 #include "Common/NameKeyGenerator.h"
 #include "Common/PlayerList.h"
 #include "Common/Player.h"
@@ -76,26 +77,26 @@ static NameKeyType staticTextPlayerID[MAX_BUTTONS] = { NAMEKEY_INVALID,NAMEKEY_I
 																										NAMEKEY_INVALID,NAMEKEY_INVALID,
 																										NAMEKEY_INVALID,NAMEKEY_INVALID,
 																										NAMEKEY_INVALID,NAMEKEY_INVALID };
-static GameWindow *ObserverPlayerInfoWindow = NULL;
-static GameWindow *ObserverPlayerListWindow = NULL;
+static GameWindow *ObserverPlayerInfoWindow = nullptr;
+static GameWindow *ObserverPlayerListWindow = nullptr;
 
-static GameWindow *buttonPlayer[MAX_BUTTONS] = {NULL,NULL,NULL,NULL,
-																							NULL,NULL,NULL,NULL };
-static GameWindow *staticTextPlayer[MAX_BUTTONS] = {NULL,NULL,NULL,NULL,
-																							NULL,NULL,NULL,NULL };
+static GameWindow *buttonPlayer[MAX_BUTTONS] = {0};
+static GameWindow *staticTextPlayer[MAX_BUTTONS] = {0};
 
 
 static NameKeyType buttonCancelID = NAMEKEY_INVALID;
 
-static GameWindow *winFlag = NULL;
-static GameWindow *winGeneralPortrait = NULL;
+static GameWindow *winFlag = nullptr;
+static GameWindow *winGeneralPortrait = nullptr;
 // TheSuperHackers @tweak Allow idle worker selection for observers.
-static GameWindow *buttonIdleWorker = NULL;
-static GameWindow *staticTextNumberOfUnits = NULL;
-static GameWindow *staticTextNumberOfBuildings = NULL;
-static GameWindow *staticTextNumberOfUnitsKilled = NULL;
-static GameWindow *staticTextNumberOfUnitsLost = NULL;
-static GameWindow *staticTextPlayerName = NULL;
+static GameWindow *buttonIdleWorker = nullptr;
+static GameWindow *staticTextNumberOfUnits = nullptr;
+static GameWindow *staticTextNumberOfBuildings = nullptr;
+static GameWindow *staticTextNumberOfUnitsKilled = nullptr;
+static GameWindow *staticTextNumberOfUnitsLost = nullptr;
+static GameWindow *staticTextPlayerName = nullptr;
+
+static NameKeyType s_replayObserverNameKey = NAMEKEY_INVALID;
 
 //-----------------------------------------------------------------------------
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
@@ -104,8 +105,8 @@ static GameWindow *staticTextPlayerName = NULL;
 
 void ControlBar::initObserverControls( void )
 {
-	ObserverPlayerInfoWindow = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey("ControlBar.wnd:ObserverPlayerInfoWindow"));
-	ObserverPlayerListWindow = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey("ControlBar.wnd:ObserverPlayerListWindow"));
+	ObserverPlayerInfoWindow = TheWindowManager->winGetWindowFromId(nullptr, TheNameKeyGenerator->nameToKey("ControlBar.wnd:ObserverPlayerInfoWindow"));
+	ObserverPlayerListWindow = TheWindowManager->winGetWindowFromId(nullptr, TheNameKeyGenerator->nameToKey("ControlBar.wnd:ObserverPlayerListWindow"));
 
 	for (Int i = 0; i < MAX_BUTTONS; i++)
 	{
@@ -118,16 +119,46 @@ void ControlBar::initObserverControls( void )
 		staticTextPlayer[i] = TheWindowManager->winGetWindowFromId( ObserverPlayerListWindow, staticTextPlayerID[i] );
 	}
 
-	staticTextNumberOfUnits = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey("ControlBar.wnd:StaticTextNumberOfUnits"));
-	staticTextNumberOfBuildings = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey("ControlBar.wnd:StaticTextNumberOfBuildings"));
-	staticTextNumberOfUnitsKilled = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey("ControlBar.wnd:StaticTextNumberOfUnitsKilled"));
-	staticTextNumberOfUnitsLost = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey("ControlBar.wnd:StaticTextNumberOfUnitsLost"));
-	staticTextPlayerName = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey("ControlBar.wnd:StaticTextPlayerName"));
-	winFlag = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey("ControlBar.wnd:WinFlag"));
-	winGeneralPortrait = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey("ControlBar.wnd:WinGeneralPortrait"));
-	buttonIdleWorker = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey("ControlBar.wnd:ButtonIdleWorker"));
+	staticTextNumberOfUnits = TheWindowManager->winGetWindowFromId(nullptr, TheNameKeyGenerator->nameToKey("ControlBar.wnd:StaticTextNumberOfUnits"));
+	staticTextNumberOfBuildings = TheWindowManager->winGetWindowFromId(nullptr, TheNameKeyGenerator->nameToKey("ControlBar.wnd:StaticTextNumberOfBuildings"));
+	staticTextNumberOfUnitsKilled = TheWindowManager->winGetWindowFromId(nullptr, TheNameKeyGenerator->nameToKey("ControlBar.wnd:StaticTextNumberOfUnitsKilled"));
+	staticTextNumberOfUnitsLost = TheWindowManager->winGetWindowFromId(nullptr, TheNameKeyGenerator->nameToKey("ControlBar.wnd:StaticTextNumberOfUnitsLost"));
+	staticTextPlayerName = TheWindowManager->winGetWindowFromId(nullptr, TheNameKeyGenerator->nameToKey("ControlBar.wnd:StaticTextPlayerName"));
+	winFlag = TheWindowManager->winGetWindowFromId(nullptr, TheNameKeyGenerator->nameToKey("ControlBar.wnd:WinFlag"));
+	winGeneralPortrait = TheWindowManager->winGetWindowFromId(nullptr, TheNameKeyGenerator->nameToKey("ControlBar.wnd:WinGeneralPortrait"));
+	buttonIdleWorker = TheWindowManager->winGetWindowFromId(nullptr, TheNameKeyGenerator->nameToKey("ControlBar.wnd:ButtonIdleWorker"));
 
 	buttonCancelID = TheNameKeyGenerator->nameToKey("ControlBar.wnd:ButtonCancel");
+
+	s_replayObserverNameKey = TheNameKeyGenerator->nameToKey("ReplayObserver");
+}
+
+//-------------------------------------------------------------------------------------------------
+void ControlBar::setObserverLookAtPlayer(Player *player)
+{
+	if (player != nullptr && player == ThePlayerList->findPlayerWithNameKey(s_replayObserverNameKey))
+	{
+		// Looking at the observer. Treat as not looking at player.
+		m_observerLookAtPlayer = nullptr;
+	}
+	else
+	{
+		m_observerLookAtPlayer = player;
+	}
+}
+
+//-------------------------------------------------------------------------------------------------
+void ControlBar::setObservedPlayer(Player *player)
+{
+	if (player != nullptr && player == ThePlayerList->findPlayerWithNameKey(s_replayObserverNameKey))
+	{
+		// Looking at the observer. Treat as not observing player.
+		m_observedPlayer = nullptr;
+	}
+	else
+	{
+		m_observedPlayer = player;
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -163,22 +194,27 @@ WindowMsgHandledType ControlBarObserverSystem( GameWindow *window, UnsignedInt m
 			Int controlID = control->winGetWindowId();
 			if( controlID == buttonCancelID)
 			{
-				TheControlBar->setObserverLookAtPlayer(NULL);
+				rts::changeObservedPlayer(nullptr);
+
 				ObserverPlayerInfoWindow->winHide(TRUE);
 				ObserverPlayerListWindow->winHide(FALSE);
 				buttonIdleWorker->winHide(TRUE);
 				TheControlBar->populateObserverList();
-
 			}
+
 			for(Int i = 0; i <MAX_BUTTONS; ++i)
 			{
 				if( controlID == buttonPlayerID[i])
 				{
+					Player* player = static_cast<Player*>(GadgetButtonGetData(buttonPlayer[i]));
+					rts::changeObservedPlayer(player);
+
 					ObserverPlayerInfoWindow->winHide(FALSE);
 					ObserverPlayerListWindow->winHide(TRUE);
-					TheControlBar->setObserverLookAtPlayer((Player *) GadgetButtonGetData( buttonPlayer[i]));
+
 					if(TheControlBar->getObserverLookAtPlayer())
 						TheControlBar->populateObserverInfoWindow();
+
 					return MSG_HANDLED;
 				}
 			}
@@ -186,7 +222,7 @@ WindowMsgHandledType ControlBarObserverSystem( GameWindow *window, UnsignedInt m
 		//	if( controlID == buttonCommunicator && TheGameLogic->getGameMode() == GAME_INTERNET )
 	/*
 		{
-				popupCommunicatorLayout = TheWindowManager->winCreateLayout( AsciiString( "Menus/PopupCommunicator.wnd" ) );
+				popupCommunicatorLayout = TheWindowManager->winCreateLayout( "Menus/PopupCommunicator.wnd" );
 				popupCommunicatorLayout->runInit();
 				popupCommunicatorLayout->hide( FALSE );
 				popupCommunicatorLayout->bringForward();
@@ -236,7 +272,7 @@ void ControlBar::populateObserverList( void )
 				buttonPlayer[currentButton]->winHide(FALSE);
 				buttonPlayer[currentButton]->winSetStatus( WIN_STATUS_USE_OVERLAY_STATES );
 
-				const GameSlot *slot = TheGameInfo->getConstSlot(currentButton);
+				const GameSlot *slot = TheGameInfo->getConstSlot(i);
 				Color playerColor = p->getPlayerColor();
 				Color backColor = GameMakeColor(0, 0, 0, 255);
 				staticTextPlayer[currentButton]->winSetEnabledTextColors( playerColor, backColor );

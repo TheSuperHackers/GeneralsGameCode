@@ -45,9 +45,6 @@
 
 #pragma once
 
-#ifndef __W3DPOLY_H_
-#define __W3DPOLY_H_
-
 #include "vector3.h"
 #include "plane.h"
 #include "simplevec.h"
@@ -66,5 +63,3 @@ public:
 
 	SimpleDynVecClass<Vector3> Verts;
 };
-
-#endif //__W3DPOLY_H_

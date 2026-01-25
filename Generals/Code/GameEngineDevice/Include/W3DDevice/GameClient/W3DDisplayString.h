@@ -47,9 +47,6 @@
 
 #pragma once
 
-#ifndef __W3DDISPLAYSTRING_H_
-#define __W3DDISPLAYSTRING_H_
-
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
@@ -119,6 +116,3 @@ protected:
 inline void W3DDisplayString::usingResources( UnsignedInt frame ) { m_lastResourceFrame = frame; }
 
 // EXTERNALS //////////////////////////////////////////////////////////////////
-
-#endif // __W3DDISPLAYSTRING_H_
-

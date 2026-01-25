@@ -34,13 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef LIGHT_H
-#define LIGHT_H
 
 #include "always.h"
 #include "rendobj.h"
@@ -150,7 +144,7 @@ public:
 	WW3DErrorType			Save_W3D(ChunkSaveClass & csave);
 
 	/////////////////////////////////////////////////////////////////////////////
-	// Persistant object save-load interface
+	// Persistent object save-load interface
 	/////////////////////////////////////////////////////////////////////////////
 	virtual const PersistFactoryClass &	Get_Factory (void) const;
 	virtual bool								Save (ChunkSaveClass &csave);
@@ -180,5 +174,3 @@ protected:
 	Vector3					SpotDirection;
 	//bool						Donut; ///does this light only apply at edges
 };
-
-#endif

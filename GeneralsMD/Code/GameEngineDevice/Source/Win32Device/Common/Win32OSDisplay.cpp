@@ -103,7 +103,7 @@ OSDisplayButtonType OSDisplayWarningBox(AsciiString p, AsciiString m, UnsignedIn
 	Int returnResult = 0;
 	if (TheSystemIsUnicode)
 	{
-		returnResult = ::MessageBoxW(NULL, mesgStr.str(), promptStr.str(), windowsOptionsFlags);
+		returnResult = ::MessageBoxW(nullptr, mesgStr.str(), promptStr.str(), windowsOptionsFlags);
 	}
 	else
 	{
@@ -114,7 +114,7 @@ OSDisplayButtonType OSDisplayWarningBox(AsciiString p, AsciiString m, UnsignedIn
 		mesgA.translate(mesgStr);
 		//Make sure main window is not TOP_MOST
 		::SetWindowPos(ApplicationHWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
-		returnResult = ::MessageBoxA(NULL, mesgA.str(), promptA.str(), windowsOptionsFlags);
+		returnResult = ::MessageBoxA(nullptr, mesgA.str(), promptA.str(), windowsOptionsFlags);
 	}
 
 	if (returnResult == IDOK) {

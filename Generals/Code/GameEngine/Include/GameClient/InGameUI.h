@@ -30,9 +30,6 @@
 
 #pragma once
 
-#ifndef _IN_GAME_UI_H_
-#define _IN_GAME_UI_H_
-
 #include "Common/GameCommon.h"
 #include "Common/GameType.h"
 #include "Common/MessageStream.h"		// for GameMessageTranslator
@@ -133,7 +130,7 @@ static const char *const TheRadiusCursorNames[] =
 	"RADAR",
 	"SPYDRONE",
 
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(TheRadiusCursorNames) == RADIUSCURSOR_COUNT + 1, "Incorrect array size");
 #endif
@@ -450,7 +447,7 @@ public:  // ********************************************************************
 	virtual Bool isAllSelectedKindOf( KindOfType kindOf ) const;		///< are all selected objects a kind of
 
 	virtual void setRadiusCursor(RadiusCursorType r, const SpecialPowerTemplate* sp, WeaponSlotType wslot);
-	virtual void setRadiusCursorNone() { setRadiusCursor(RADIUSCURSOR_NONE, NULL, PRIMARY_WEAPON); }
+	virtual void setRadiusCursorNone() { setRadiusCursor(RADIUSCURSOR_NONE, nullptr, PRIMARY_WEAPON); }
 
 	virtual void setInputEnabled( Bool enable );										///< Set the input enabled or disabled
 	virtual Bool getInputEnabled( void ) { return m_inputEnabled; }	///< Get the current input status
@@ -519,7 +516,7 @@ public:  // ********************************************************************
 	Bool				isDrawableCaptionBold( void )				{ return m_drawableCaptionBold; }
 	Color				getDrawableCaptionColor( void )			{ return m_drawableCaptionColor; }
 
-	inline Bool shouldMoveRMBScrollAnchor( void ) { return m_moveRMBScrollAnchor; }
+	Bool shouldMoveRMBScrollAnchor( void ) { return m_moveRMBScrollAnchor; }
 
 	Bool isClientQuiet( void ) const			{ return m_clientQuiet; }
 	Bool isInWaypointMode( void ) const			{ return m_waypointMode; }
@@ -554,6 +551,8 @@ public:  // ********************************************************************
 
 	virtual void recreateControlBar( void );
 	virtual void refreshCustomUiResources( void );
+	virtual void refreshNetworkLatencyResources(void);
+	virtual void refreshRenderFpsResources(void);
 	virtual void refreshSystemTimeResources( void );
 	virtual void refreshGameTimeResources( void );
 
@@ -575,7 +574,10 @@ private:
 	virtual void updateIdleWorker( void );
 	virtual void resetIdleWorker( void );
 
-	void drawSystemTime();
+	void updateRenderFpsString();
+	void drawNetworkLatency(Int &x, Int &y);
+	void drawRenderFps(Int &x, Int &y);
+	void drawSystemTime(Int &x, Int &y);
 	void drawGameTime();
 
 public:
@@ -666,7 +668,7 @@ protected:
 	void incrementSelectCount( void ) { ++m_selectCount; }			///< Increase by one the running total of "selected" drawables
 	void decrementSelectCount( void ) { --m_selectCount; }			///< Decrease by one the running total of "selected" drawables
 	virtual View *createView( void ) = 0;												///< Factory for Views
-	void evaluateSoloNexus( Drawable *newlyAddedDrawable = NULL );
+	void evaluateSoloNexus( Drawable *newlyAddedDrawable = nullptr );
 
 	/// expire a hint from of the specified type at the hint index
 	void expireHint( HintType type, UnsignedInt hintIndex );
@@ -677,7 +679,7 @@ protected:
 	void setMouseCursor(Mouse::MouseCursor c);
 
 
-	void addMessageText( const UnicodeString& formattedMessage, const RGBColor *rgbColor = NULL );  ///< internal workhorse for adding plain text for messages
+	void addMessageText( const UnicodeString& formattedMessage, const RGBColor *rgbColor = nullptr );  ///< internal workhorse for adding plain text for messages
 	void removeMessageAtIndex( Int i );				///< remove the message at index i
 
 	void updateFloatingText( void );						///< Update function to move our floating text
@@ -730,6 +732,31 @@ protected:
 	// Video playback data
 	VideoBuffer*								m_cameoVideoBuffer;///< video playback buffer
 	VideoStreamInterface*				m_cameoVideoStream;///< Video stream;
+
+	// Network Latency Counter
+	DisplayString *							m_networkLatencyString;
+	AsciiString									m_networkLatencyFont;
+	Int													m_networkLatencyPointSize;
+	Bool												m_networkLatencyBold;
+	Coord2D											m_networkLatencyPosition;
+	Color												m_networkLatencyColor;
+	Color												m_networkLatencyDropColor;
+	UnsignedInt									m_lastNetworkLatencyFrames;
+
+	// Render FPS Counter
+	DisplayString *							m_renderFpsString;
+	DisplayString *							m_renderFpsLimitString;
+	AsciiString									m_renderFpsFont;
+	Int													m_renderFpsPointSize;
+	Bool												m_renderFpsBold;
+	Coord2D											m_renderFpsPosition;
+	Color												m_renderFpsColor;
+	Color												m_renderFpsLimitColor;
+	Color												m_renderFpsDropColor;
+	UnsignedInt									m_renderFpsRefreshMs;
+	UnsignedInt									m_lastRenderFps;
+	UnsignedInt									m_lastRenderFpsLimit;
+	UnsignedInt									m_lastRenderFpsUpdateMs;
 
 	// System Time
 	DisplayString *										m_systemTimeString;
@@ -879,5 +906,3 @@ protected:
 
 // the singleton
 extern InGameUI *TheInGameUI;
-
-#endif // _IN_GAME_UI_H_

@@ -32,9 +32,6 @@
 
 #pragma once
 
-#ifndef SABOTAGE_POWER_PLANT_CRATE_COLLIDE_H_
-#define SABOTAGE_POWER_PLANT_CRATE_COLLIDE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/Module.h"
 #include "GameLogic/Module/CrateCollide.h"
@@ -59,7 +56,7 @@ public:
 
 		static const FieldParse dataFieldParse[] =
 		{
-			{ "SabotagePowerDuration", INI::parseDurationUnsignedInt, NULL, offsetof( SabotagePowerPlantCrateCollideModuleData, m_powerSabotageFrames ) },
+			{ "SabotagePowerDuration", INI::parseDurationUnsignedInt, nullptr, offsetof( SabotagePowerPlantCrateCollideModuleData, m_powerSabotageFrames ) },
 			{ 0, 0, 0, 0 }
 		};
 		p.add( dataFieldParse );
@@ -90,5 +87,3 @@ protected:
 	virtual Bool isSabotageBuildingCrateCollide() const { return TRUE; }
 
 };
-
-#endif

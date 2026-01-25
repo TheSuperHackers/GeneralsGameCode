@@ -18,12 +18,11 @@
 
 #pragma once
 
-
 struct CParticleEditorPage : public CDialog
 {
 	UINT m_templateID;
 	public:
-		CParticleEditorPage(UINT nIDTemplate = 0, CWnd* pParentWnd = NULL);
+		CParticleEditorPage(UINT nIDTemplate = 0, CWnd* pParentWnd = nullptr);
 		void InitPanel( int templateID );
 
 

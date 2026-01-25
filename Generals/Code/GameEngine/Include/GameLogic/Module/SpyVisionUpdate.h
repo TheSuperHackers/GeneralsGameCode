@@ -31,9 +31,6 @@
 
 #pragma once
 
-#ifndef _SPY_VISION_UPDATE_H
-#define _SPY_VISION_UPDATE_H
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpdateModule.h"
 
@@ -73,6 +70,3 @@ private:
 
 	UnsignedInt m_deactivateFrame;
 };
-
-#endif
-

@@ -34,15 +34,10 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef RCFILE_H
-#define RCFILE_H
 
 #include "always.h"
-#include "WWFILE.H"
+#include "WWFILE.h"
 #include "win.h"
 
 /*
@@ -65,7 +60,7 @@ class ResourceFileClass : public FileClass
 		virtual int Create(void)											{ return false; }
 		virtual int Delete(void)											{ return false; }
 		virtual bool Is_Available(int /*forced=false*/)				{ return Is_Open (); }
-		virtual bool Is_Open(void) const									{ return (FileBytes != NULL); }
+		virtual bool Is_Open(void) const									{ return (FileBytes != nullptr); }
 
 		virtual int Open(char const * /*fname*/, int /*rights=READ*/)	{ return Is_Open(); }
 		virtual int Open(int /*rights=READ*/)							{ return Is_Open(); }
@@ -75,7 +70,7 @@ class ResourceFileClass : public FileClass
 		virtual int Size(void);
 		virtual int Write(void const * /*buffer*/, int /*size*/)	{ return 0; }
 		virtual void Close(void)											{ }
-		virtual void Error(int error, int canretry = false, char const * filename=NULL);
+		virtual void Error(int error, int canretry = false, char const * filename=nullptr);
 		virtual void Bias(int start, int length=-1) {}
 
 		virtual unsigned char *Peek_Data(void) const					{ return FileBytes; }
@@ -91,6 +86,3 @@ class ResourceFileClass : public FileClass
 		unsigned char *	EndOfFile;
 
 };
-
-
-#endif

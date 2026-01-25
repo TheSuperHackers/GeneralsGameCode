@@ -16,12 +16,8 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#if !defined(AFX_BlendMaterial_H__D3FF66C5_711D_4DAC_8A29_5EAAB5C3A23E__INCLUDED_)
-#define AFX_BlendMaterial_H__D3FF66C5_711D_4DAC_8A29_5EAAB5C3A23E__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
+
 // BlendMaterial.h : header file
 //
 
@@ -36,7 +32,7 @@ class BlendMaterial : public COptionsPanel
 {
 // Construction
 public:
-	BlendMaterial(CWnd* pParent = NULL);   // standard constructor
+	BlendMaterial(CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(BlendMaterial)
@@ -88,5 +84,3 @@ public:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_BlendMaterial_H__D3FF66C5_711D_4DAC_8A29_5EAAB5C3A23E__INCLUDED_)

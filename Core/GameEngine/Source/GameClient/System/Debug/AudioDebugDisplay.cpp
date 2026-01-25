@@ -45,7 +45,7 @@
 //         Includes
 //----------------------------------------------------------------------------
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "GameClient/DebugDisplay.h"
 #include "Common/GameAudio.h"
@@ -106,9 +106,9 @@ static void printFunc( char *text )
 //============================================================================
 
 #if defined(RTS_DEBUG)
-void AudioDebugDisplay ( DebugDisplayInterface *dd, void *, FILE *fp = NULL )
+void AudioDebugDisplay ( DebugDisplayInterface *dd, void *, FILE *fp = nullptr )
 {
-	TheAudio->audioDebugDisplay( dd, NULL, fp );
+	TheAudio->audioDebugDisplay( dd, nullptr, fp );
 }
 #endif
 

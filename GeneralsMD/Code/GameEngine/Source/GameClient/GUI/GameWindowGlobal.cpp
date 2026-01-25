@@ -45,10 +45,9 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
-#include "Common/Language.h"
 #include "GameClient/Image.h"
 #include "GameClient/Display.h"
 #include "GameClient/GameWindowManager.h"
@@ -132,9 +131,9 @@ const Image *GameWindowManager::winFindImage( const char *name )
 
 	assert( TheMappedImageCollection );
 	if( TheMappedImageCollection )
-		return TheMappedImageCollection->findImageByName( AsciiString( name ) );
+		return TheMappedImageCollection->findImageByName( name );
 
-	return NULL;
+	return nullptr;
 
 }
 
@@ -186,6 +185,9 @@ void GameWindowManager::winGetTextSize( GameFont *font, UnicodeString text,
 Int GameWindowManager::winFontHeight( GameFont *font )
 {
 
+	if (font == nullptr)
+		return 0;
+
 	return font->height;
 
 }
@@ -196,7 +198,7 @@ Int GameWindowManager::winFontHeight( GameFont *font )
 Int GameWindowManager::winIsDigit( Int c )
 {
 
-	return GameIsDigit( c );
+	return iswdigit( c );
 
 }
 
@@ -206,7 +208,7 @@ Int GameWindowManager::winIsDigit( Int c )
 Int GameWindowManager::winIsAscii( Int c )
 {
 
-	return GameIsAscii( c );
+	return iswascii( c );
 
 }
 
@@ -216,7 +218,7 @@ Int GameWindowManager::winIsAscii( Int c )
 Int GameWindowManager::winIsAlNum( Int c )
 {
 
-	return GameIsAlNum( c );
+	return iswalnum( c );
 
 }
 
@@ -232,7 +234,7 @@ GameFont *GameWindowManager::winFindFont( AsciiString fontName,
 	if( TheFontLibrary )
 		return TheFontLibrary->getFont( fontName, pointSize, bold );
 
-	return NULL;
+	return nullptr;
 
 }
 

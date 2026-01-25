@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef _ASSISTED_TARGETING_UPDATE_H
-#define _ASSISTED_TARGETING_UPDATE_H
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpdateModule.h"
 
@@ -82,6 +79,3 @@ private:
 
 
 };
-
-#endif
-

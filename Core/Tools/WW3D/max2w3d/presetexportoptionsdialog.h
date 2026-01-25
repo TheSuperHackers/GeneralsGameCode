@@ -36,9 +36,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef __PRESET_EXPORT_OPTIONS_DIALOG_H
-#define __PRESET_EXPORT_OPTIONS_DIALOG_H
+#pragma once
 
 #include <windows.h>
 #include <max.h>
@@ -57,7 +55,7 @@ public:
 	//////////////////////////////////////////////////////////////////
 	//	Public constructors/destructors
 	//////////////////////////////////////////////////////////////////
-	PresetExportOptionsDialogClass (Interface *maxinterface, HWND parent_wnd = NULL);
+	PresetExportOptionsDialogClass (Interface *maxinterface, HWND parent_wnd = nullptr);
 	~PresetExportOptionsDialogClass (void);
 
 
@@ -118,7 +116,3 @@ private:
 	HWND								PaneWnds[PANE_MAX];
 	int								CurrentPane;
 };
-
-
-#endif //__PRESET_EXPORT_OPTIONS_DIALOG_H
-

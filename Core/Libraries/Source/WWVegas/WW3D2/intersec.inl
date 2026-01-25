@@ -17,9 +17,7 @@
 */
 
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
 
 #ifndef INTERSEC_INL
 #define INTERSEC_INL
@@ -152,7 +150,7 @@ inline bool IntersectionClass::_Point_In_Polygon_Z(
 	Vector3 &Corner3
 )
 {
-// these defines could be variables if support for other axis were neccessary
+// these defines could be variables if support for other axis were necessary
 #define AXIS_1 0
 #define AXIS_2 1
 #define AXIS_3 2

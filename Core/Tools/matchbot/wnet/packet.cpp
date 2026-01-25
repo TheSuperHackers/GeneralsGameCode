@@ -20,7 +20,7 @@
  *                                                                         *
  *                 Project Name : Westwood Auto Registration App           *
  *                                                                         *
- *                    File Name : PACKET.CPP                               *
+ *                    File Name : PACKET.cpp                               *
  *                                                                         *
  *                   Programmer : Philip W. Gorrow                         *
  *                                                                         *
@@ -39,7 +39,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <sys/types.h>
-#ifndef _WINDOWS
+#ifndef _WIN32
 #include <netinet/in.h>
 #else
 #define Win32_Winsock
@@ -114,7 +114,7 @@ PacketClass::PacketClass(char *curbuf)
   ID   = *((short *)curbuf);
   curbuf += sizeof(unsigned short);
   ID   = ntohs(ID);
-  Head = NULL;
+  Head = nullptr;
 
   //
   // Calculate the remaining size so that we can loop through the
@@ -268,7 +268,7 @@ FieldClass *PacketClass::Find_Field(char *id)
     if ( strncmp(id, current->ID, 4) == 0)
       return current;
   }
-  return NULL;
+  return nullptr;
 }
 
 // gks 9/25/2000
@@ -280,7 +280,7 @@ FieldClass *PacketClass::Get_Field_At(int position)
 	}
 
 	if (current) return current;
-	else return NULL;
+	else return nullptr;
 }
 
 // gks 9/25/2000

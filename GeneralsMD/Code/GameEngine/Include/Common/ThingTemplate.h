@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __THINGTEMPLATE_H_
-#define __THINGTEMPLATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Lib/BaseType.h"
 
@@ -120,7 +117,7 @@ enum ThingTemplateAudioType CPP_11(: Int)
 	TTAUDIO_soundStealthOff,          ///< Sound when unit destealths
 	TTAUDIO_soundCreated,							///< Sound when unit is created
 	TTAUDIO_soundOnDamaged,           ///< Sound when unit enters damaged state
-	TTAUDIO_soundOnReallyDamaged,     ///< Sound when unit enters reallyd damaged state
+	TTAUDIO_soundOnReallyDamaged,     ///< Sound when unit enters really damaged state
 	TTAUDIO_soundEnter,								///< Sound when another unit enters me.
 	TTAUDIO_soundExit,								///< Sound when another unit exits me.
 	TTAUDIO_soundPromotedVeteran,			///< Sound when unit gets promoted to Veteran level
@@ -148,7 +145,7 @@ public:
 	AudioArray()
 	{
 		for (Int i = 0; i < TTAUDIO_COUNT; ++i)
-			m_audio[i] = NULL;
+			m_audio[i] = nullptr;
 	}
 
 	~AudioArray()
@@ -164,7 +161,7 @@ public:
 			if (that.m_audio[i])
 				m_audio[i] = newInstance(DynamicAudioEventRTS)(*that.m_audio[i]);
 			else
-				m_audio[i] = NULL;
+				m_audio[i] = nullptr;
 		}
 	}
 
@@ -183,7 +180,7 @@ public:
 				}
 				else
 				{
-					m_audio[i] = NULL;
+					m_audio[i] = nullptr;
 				}
 			}
 		}
@@ -209,7 +206,7 @@ static const char *const BuildCompletionNames[] =
 	"APPEARS_AT_RALLY_POINT",
 	"PLACED_BY_PLAYER",
 
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(BuildCompletionNames) == BC_NUM_TYPES + 1, "Incorrect array size");
 #endif  // end DEFINE_BUILD_COMPLETION_NAMES
@@ -232,7 +229,7 @@ static const char *const BuildableStatusNames[] =
 	"Ignore_Prerequisites",
 	"No",
 	"Only_By_AI",
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(BuildableStatusNames) == BSTATUS_NUM_TYPES + 1, "Incorrect array size");
 #endif	// end DEFINE_BUILDABLE_STATUS_NAMES
@@ -291,7 +288,7 @@ public:
 	Bool containsPartialName(const char* n) const
 	{
 		for (size_t i = 0; i < m_info.size(); i++)
-			if (strstr(m_info[i].first.str(), n) != NULL)
+			if (strstr(m_info[i].first.str(), n) != nullptr)
 				return true;
 		return false;
 	}
@@ -321,7 +318,7 @@ public:
 		{
 			return m_info[i].second;
 		}
-		return NULL;
+		return nullptr;
 	}
 
 	// for use only by ThingTemplate::friend_getAIModuleInfo
@@ -401,18 +398,18 @@ public:
 	EditorSortingType getEditorSorting() const { return (EditorSortingType)m_editorSorting; }
 
 	/// return true iff the template has the specified kindOf flag set.
-	inline Bool isKindOf(KindOfType t) const
+	Bool isKindOf(KindOfType t) const
 	{
 		return TEST_KINDOFMASK(m_kindof, t);
 	}
 
 	/// convenience for doing multiple kindof testing at once.
-	inline Bool isKindOfMulti(const KindOfMaskType& mustBeSet, const KindOfMaskType& mustBeClear) const
+	Bool isKindOfMulti(const KindOfMaskType& mustBeSet, const KindOfMaskType& mustBeClear) const
 	{
 		return TEST_KINDOFMASK_MULTI(m_kindof, mustBeSet, mustBeClear);
 	}
 
-	inline Bool isAnyKindOf( const KindOfMaskType& anyKindOf ) const
+	Bool isAnyKindOf( const KindOfMaskType& anyKindOf ) const
 	{
 		return TEST_KINDOFMASK_ANY(m_kindof, anyKindOf);
 	}
@@ -430,6 +427,7 @@ public:
 	Real getFenceXOffset() const { return m_fenceXOffset; }  // return fence offset
 
 	Bool isBridge() const { return m_isBridge; }  // return fence offset
+	Bool isBridgeLike() const { return isBridge() || isKindOf(KINDOF_WALK_ON_TOP_OF_WALL); }
 
 	// Only Object can ask this.  Everyone else should ask the Object.  In fact, you really should ask the Object everything.
 	Real friend_calcVisionRange() const { return m_visionRange; }  ///< get vision range
@@ -547,10 +545,10 @@ public:
 	// these are intended ONLY for the private use of ThingFactory and do not use
 	// the m_override pointer, it deals only with templates at the "top" level
 	//
-	inline void friend_setTemplateName( const AsciiString& name ) { m_nameString = name; }
-	inline ThingTemplate *friend_getNextTemplate() const { return m_nextThingTemplate; }
-	inline void friend_setNextTemplate(ThingTemplate *tmplate) { m_nextThingTemplate = tmplate; }
-	inline void friend_setTemplateID(UnsignedShort id) { m_templateID = id; }
+	void friend_setTemplateName( const AsciiString& name ) { m_nameString = name; }
+	ThingTemplate *friend_getNextTemplate() const { return m_nextThingTemplate; }
+	void friend_setNextTemplate(ThingTemplate *tmplate) { m_nextThingTemplate = tmplate; }
+	void friend_setTemplateID(UnsignedShort id) { m_templateID = id; }
 
 	Int getEnergyProduction() const { return m_energyProduction; }
 	Int getEnergyBonus() const { return m_energyBonus; }
@@ -605,7 +603,7 @@ public:
 
 	void setCopiedFromDefault();
 
-	void setReskinnedFrom(const ThingTemplate* tt) { DEBUG_ASSERTCRASH(m_reskinnedFrom == NULL, ("should be null")); m_reskinnedFrom = tt; }
+	void setReskinnedFrom(const ThingTemplate* tt) { DEBUG_ASSERTCRASH(m_reskinnedFrom == nullptr, ("should be null")); m_reskinnedFrom = tt; }
 
 	Bool isPrerequisite() const { return m_isPrerequisite; }
 
@@ -636,7 +634,7 @@ protected:
 	const PerUnitSoundMap* getAllPerUnitSounds( void ) const { return &m_perUnitSounds; }
 	void validateAudio();
 	const AudioEventRTS* getAudio(ThingTemplateAudioType t) const { return m_audioarray.m_audio[t] ? &m_audioarray.m_audio[t]->m_event : &s_audioEventNoSound; }
-  Bool hasAudio(ThingTemplateAudioType t) const { return m_audioarray.m_audio[t] != NULL; }
+  Bool hasAudio(ThingTemplateAudioType t) const { return m_audioarray.m_audio[t] != nullptr; }
 
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	/** Table for parsing the object fields */
@@ -717,7 +715,7 @@ private:
 
 	// ---- Pointer-sized things
 	ThingTemplate*				m_nextThingTemplate;
-	const ThingTemplate*	m_reskinnedFrom;									///< non NULL if we were generated via a reskin
+	const ThingTemplate*	m_reskinnedFrom;									///< non nullptr if we were generated via a reskin
 	const Image *					m_selectedPortraitImage;		/// portrait image when selected (to display in GUI)
 	const Image	*					m_buttonImage;
 
@@ -786,6 +784,3 @@ private:
 //-----------------------------------------------------------------------------
 //           Externals
 //-----------------------------------------------------------------------------
-
-#endif // __THINGTEMPLATE_H_
-

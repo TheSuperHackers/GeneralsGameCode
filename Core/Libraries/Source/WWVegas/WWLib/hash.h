@@ -35,13 +35,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef HASH_H
-#define HASH_H
 
 #include "always.h"
 
@@ -54,7 +48,7 @@ class HashTableIteratorClass;
 class	HashableClass {
 
 public:
-	HashableClass( void ) : NextHash( NULL ) {}
+	HashableClass( void ) : NextHash( nullptr ) {}
 	virtual	~HashableClass( void ) {}
 
 	virtual	const char * Get_Key( void )				= 0;
@@ -104,7 +98,7 @@ public:
 
 	void					First( void );
 	void					Next( void );
-	bool					Is_Done( void )		{ return CurrentEntry == NULL; }
+	bool					Is_Done( void )		{ return CurrentEntry == nullptr; }
 	HashableClass *	Get_Current( void )	{ return CurrentEntry; }
 
 private:
@@ -115,6 +109,3 @@ private:
 
 	void					Advance_Next( void );
 };
-
-
-#endif	// HASH_H

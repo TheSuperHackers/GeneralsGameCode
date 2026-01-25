@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifndef _MISSILE_AI_UPDATE_H_
-#define _MISSILE_AI_UPDATE_H_
-
 #include "Common/GameType.h"
 #include "Common/GlobalData.h"
 #include "GameLogic/Module/AIUpdate.h"
@@ -147,6 +144,3 @@ private:
 
 
 };
-
-#endif // _MISSILE_AI_UPDATE_H_
-

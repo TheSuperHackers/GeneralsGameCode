@@ -28,7 +28,7 @@
 // Description: General's Challenge Mode Menu
 ///////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/FileSystem.h"
 #include "Common/GameEngine.h"
@@ -56,7 +56,7 @@
 #include "GameLogic/ScriptEngine.h"
 
 
-SkirmishGameInfo *TheChallengeGameInfo = NULL;
+SkirmishGameInfo *TheChallengeGameInfo = nullptr;
 
 // defines
 static const Int DEFAULT_GENERAL = 0;
@@ -76,21 +76,21 @@ static NameKeyType backdropID = NAMEKEY_INVALID;
 static NameKeyType bioParentID = NAMEKEY_INVALID;
 
 // window pointers --------------------------------------------------------------------------------
-static GameWindow *parentMenu = NULL;
-static GameWindow *buttonPlay = NULL;
-static GameWindow *buttonBack = NULL;
-static GameWindow *bioPortrait = NULL;
-static GameWindow *bioLine1Entry = NULL;
-static GameWindow *bioLine2Entry = NULL;
-static GameWindow *bioLine3Entry = NULL;
-static GameWindow *bioLine4Entry = NULL;
-static GameWindow **buttonGeneralPosition = NULL;
-static GameWindow *backdrop = NULL;
-static GameWindow *bioParent = NULL;
+static GameWindow *parentMenu = nullptr;
+static GameWindow *buttonPlay = nullptr;
+static GameWindow *buttonBack = nullptr;
+static GameWindow *bioPortrait = nullptr;
+static GameWindow *bioLine1Entry = nullptr;
+static GameWindow *bioLine2Entry = nullptr;
+static GameWindow *bioLine3Entry = nullptr;
+static GameWindow *bioLine4Entry = nullptr;
+static GameWindow **buttonGeneralPosition = nullptr;
+static GameWindow *backdrop = nullptr;
+static GameWindow *bioParent = nullptr;
 
 //static NameKeyType testWinID = NAMEKEY_INVALID;
-//static GameWindow *testWin = NULL;
-static WindowVideoManager *wndVideoManager = NULL;
+//static GameWindow *testWin = nullptr;
+static WindowVideoManager *wndVideoManager = nullptr;
 
 //
 static Int	initialGadgetDelay = 2;
@@ -120,8 +120,8 @@ Int bioTotalLength = 0;
 static Int buttonSequenceStep = 0;
 
 // audio
-AudioHandle lastSelectionSound = NULL;
-AudioHandle lastPreviewSound = NULL;
+AudioHandle lastSelectionSound = 0;
+AudioHandle lastPreviewSound = 0;
 static Int introAudioMagicNumber = 0;
 static Bool hasPlayedIntroAudio = FALSE;
 
@@ -347,25 +347,25 @@ void ChallengeMenuInit( WindowLayout *layout, void *userData )
 	TheShell->showShellMap(TRUE);
 
 	// init window ids and pointers
-	parentID = TheNameKeyGenerator->nameToKey( AsciiString("ChallengeMenu.wnd:ParentChallengeMenu") );
-	parentMenu = TheWindowManager->winGetWindowFromId( NULL, parentID );
-	buttonPlayID = TheNameKeyGenerator->nameToKey( AsciiString("ChallengeMenu.wnd:ButtonPlay") );
+	parentID = TheNameKeyGenerator->nameToKey( "ChallengeMenu.wnd:ParentChallengeMenu" );
+	parentMenu = TheWindowManager->winGetWindowFromId( nullptr, parentID );
+	buttonPlayID = TheNameKeyGenerator->nameToKey( "ChallengeMenu.wnd:ButtonPlay" );
 	buttonPlay = TheWindowManager->winGetWindowFromId( parentMenu, buttonPlayID );
-	buttonBackID = TheNameKeyGenerator->nameToKey( AsciiString("ChallengeMenu.wnd:ButtonBack") );
+	buttonBackID = TheNameKeyGenerator->nameToKey( "ChallengeMenu.wnd:ButtonBack" );
 	buttonBack = TheWindowManager->winGetWindowFromId( parentMenu, buttonBackID );
-	bioPortraitID = TheNameKeyGenerator->nameToKey( AsciiString("ChallengeMenu.wnd:BioPortrait") );
+	bioPortraitID = TheNameKeyGenerator->nameToKey( "ChallengeMenu.wnd:BioPortrait" );
 	bioPortrait = TheWindowManager->winGetWindowFromId( parentMenu, bioPortraitID );
-	bioNameEntryID = TheNameKeyGenerator->nameToKey( AsciiString("ChallengeMenu.wnd:BioNameEntry") );
+	bioNameEntryID = TheNameKeyGenerator->nameToKey( "ChallengeMenu.wnd:BioNameEntry" );
 	bioLine1Entry = TheWindowManager->winGetWindowFromId( parentMenu, bioNameEntryID ); // this window has been repurposed
-	bioDOBEntryID = TheNameKeyGenerator->nameToKey( AsciiString("ChallengeMenu.wnd:BioDOBEntry") );
+	bioDOBEntryID = TheNameKeyGenerator->nameToKey( "ChallengeMenu.wnd:BioDOBEntry" );
 	bioLine2Entry = TheWindowManager->winGetWindowFromId( parentMenu, bioDOBEntryID ); // this window has been repurposed
-	bioBirthplaceEntryID = TheNameKeyGenerator->nameToKey( AsciiString("ChallengeMenu.wnd:BioBirthplaceEntry") );
+	bioBirthplaceEntryID = TheNameKeyGenerator->nameToKey( "ChallengeMenu.wnd:BioBirthplaceEntry" );
 	bioLine3Entry = TheWindowManager->winGetWindowFromId( parentMenu, bioBirthplaceEntryID ); // this window has been repurposed
-	bioStrategyEntryID = TheNameKeyGenerator->nameToKey( AsciiString("ChallengeMenu.wnd:BioStrategyEntry") );
+	bioStrategyEntryID = TheNameKeyGenerator->nameToKey( "ChallengeMenu.wnd:BioStrategyEntry" );
 	bioLine4Entry = TheWindowManager->winGetWindowFromId( parentMenu, bioStrategyEntryID ); // this window has been repurposed
-	backdropID = TheNameKeyGenerator->nameToKey( AsciiString("ChallengeMenu.wnd:MainBackdrop") );
+	backdropID = TheNameKeyGenerator->nameToKey( "ChallengeMenu.wnd:MainBackdrop" );
 	backdrop = TheWindowManager->winGetWindowFromId( parentMenu, backdropID);
-	bioParentID = TheNameKeyGenerator->nameToKey( AsciiString("ChallengeMenu.wnd:GeneralsBioParent") );
+	bioParentID = TheNameKeyGenerator->nameToKey( "ChallengeMenu.wnd:GeneralsBioParent" );
 	bioParent = TheWindowManager->winGetWindowFromId( parentMenu, bioParentID);
 
     AsciiString strButtonName;
@@ -418,7 +418,7 @@ void ChallengeMenuInit( WindowLayout *layout, void *userData )
 	TheWindowManager->winSetFocus( parentMenu );
 	justEntered = TRUE;
 	initialGadgetDelay = 2;
-	GameWindow *winGadgetParent = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey("ChallengeMenu.wnd:GadgetParent"));
+	GameWindow *winGadgetParent = TheWindowManager->winGetWindowFromId(nullptr, TheNameKeyGenerator->nameToKey("ChallengeMenu.wnd:GadgetParent"));
 	if(winGadgetParent)
 		winGadgetParent->winHide(TRUE);
 	isShuttingDown = FALSE;
@@ -427,8 +427,8 @@ void ChallengeMenuInit( WindowLayout *layout, void *userData )
 		wndVideoManager = NEW WindowVideoManager;
 	wndVideoManager->init();
 
-	lastSelectionSound = NULL;
-	lastPreviewSound = NULL;
+	lastSelectionSound = 0;
+	lastPreviewSound = 0;
 	hasPlayedIntroAudio = FALSE;
 
 }
@@ -488,7 +488,7 @@ void ChallengeMenuUpdate( WindowLayout *layout, void *userData )
 void ChallengeMenuShutdown( WindowLayout *layout, void *userData )
 {
 	delete wndVideoManager;
-	wndVideoManager = NULL;
+	wndVideoManager = nullptr;
 
 	lastButtonIndex = -1;
 
@@ -518,12 +518,12 @@ void ChallengeMenuShutdown( WindowLayout *layout, void *userData )
 	isShuttingDown = TRUE;
 
 	delete TheChallengeGameInfo;
-	TheChallengeGameInfo = NULL;
+	TheChallengeGameInfo = nullptr;
 
 	TheAudio->removeAudioEvent( lastSelectionSound );
 	TheAudio->removeAudioEvent( lastPreviewSound );
-	lastSelectionSound = NULL;
-	lastPreviewSound = NULL;
+	lastSelectionSound = 0;
+	lastPreviewSound = 0;
 	introAudioMagicNumber = 0;
 }
 
@@ -661,7 +661,7 @@ WindowMsgHandledType ChallengeMenuSystem( GameWindow *window, UnsignedInt msg, W
 				if (lastButtonIndex != -1)
 				{
 					isAutoSelecting = TRUE;
-					GameWindow *lastControl = TheWindowManager->winGetWindowFromId( NULL, buttonGeneralPositionID[lastButtonIndex]);
+					GameWindow *lastControl = TheWindowManager->winGetWindowFromId( nullptr, buttonGeneralPositionID[lastButtonIndex]);
 					GadgetCheckBoxToggle(lastControl);
 				}
 
@@ -689,9 +689,9 @@ WindowMsgHandledType ChallengeMenuSystem( GameWindow *window, UnsignedInt msg, W
 			}
 			else if( controlID == buttonPlayID )
  			{
-				if( TheChallengeGameInfo == NULL )
+				if( TheChallengeGameInfo == nullptr )
 				{
-					// If this is NULL, then we must be on the way back out of this menu.
+					// If this is null, then we must be on the way back out of this menu.
 					// Don't crash, just eat the button click message.
 					return MSG_HANDLED;
 				}
@@ -702,7 +702,7 @@ WindowMsgHandledType ChallengeMenuSystem( GameWindow *window, UnsignedInt msg, W
 
 				// turn off the last button so the screen will be pristine when the user returns
 				isAutoSelecting = TRUE;
-				GameWindow *lastControl = TheWindowManager->winGetWindowFromId( NULL, buttonGeneralPositionID[lastButtonIndex]);
+				GameWindow *lastControl = TheWindowManager->winGetWindowFromId( nullptr, buttonGeneralPositionID[lastButtonIndex]);
 				GadgetCheckBoxSetChecked(lastControl, FALSE);
 				lastButtonIndex = -1;
 //				introAudioHasPlayed = FALSE;

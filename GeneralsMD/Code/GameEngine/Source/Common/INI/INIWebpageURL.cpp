@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/INI.h"
 #include "Common/Registry.h"
@@ -84,11 +84,11 @@ void INI::parseWebpageURLDefinition( INI* ini )
 	const char* c = ini->getNextToken();
 	tag.set( c );
 
-	if (TheWebBrowser != NULL)
+	if (TheWebBrowser != nullptr)
 	{
 		url = TheWebBrowser->findURL(tag);
 
-		if (url == NULL)
+		if (url == nullptr)
 		{
 			url = TheWebBrowser->makeNewURL(tag);
 		}
@@ -96,7 +96,7 @@ void INI::parseWebpageURLDefinition( INI* ini )
 
 	// find existing item if present
 //	track = TheAudio->Music->getTrack( name );
-//	if( track == NULL )
+//	if( track == nullptr )
 //	{
 
 		// allocate a new track

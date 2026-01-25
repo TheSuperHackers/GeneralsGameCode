@@ -34,10 +34,10 @@
 ThreadClass::ThreadClass(const char *thread_name, ExceptionHandlerType exception_handler) : handle(0), running(false), thread_priority(0)
 {
 	if (thread_name) {
-		assert(strlen(thread_name) < sizeof(ThreadName) - 1);
-		strcpy(ThreadName, thread_name);
+		size_t nameLen = strlcpy(ThreadName, thread_name, ARRAY_SIZE(ThreadName));
+		(void)nameLen; assert(nameLen < ARRAY_SIZE(ThreadName));
 	} else {
-		strcpy(ThreadName, "No name");;
+		strcpy(ThreadName, "No name");
 	}
 
 	ExceptionHandler = exception_handler;
@@ -57,13 +57,22 @@ void __cdecl ThreadClass::Internal_Thread_Function(void* params)
 #ifdef _WIN32
 	Register_Thread_ID(tc->ThreadID, tc->ThreadName);
 
-	if (tc->ExceptionHandler != NULL) {
+#if defined(_MSC_VER)
+	// MSVC supports structured exception handling (__try/__except)
+	if (tc->ExceptionHandler != nullptr) {
 		__try {
 			tc->Thread_Function();
 		} __except(tc->ExceptionHandler(GetExceptionCode(), GetExceptionInformation())) {};
 	} else {
 		tc->Thread_Function();
 	}
+#elif defined(__GNUC__) && defined(_WIN32)
+	// GCC/MinGW-w64 doesn't support MSVC's __try/__except syntax
+	// Call Thread_Function directly without SEH support
+	tc->Thread_Function();
+#else
+	#error "ThreadClass::Internal_Thread_Function: Unsupported compiler. This code requires MSVC or GCC/MinGW-w64 targeting Windows."
+#endif
 
 #else //_WIN32
 	tc->Thread_Function();
@@ -126,7 +135,7 @@ void ThreadClass::Sleep_Ms(unsigned ms)
 }
 
 #ifndef _UNIX
-HANDLE test_event = ::CreateEvent (NULL, FALSE, FALSE, "");
+HANDLE test_event = ::CreateEvent (nullptr, FALSE, FALSE, "");
 #endif
 
 void ThreadClass::Switch_Thread()

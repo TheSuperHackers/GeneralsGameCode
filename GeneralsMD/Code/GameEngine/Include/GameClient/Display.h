@@ -28,16 +28,10 @@
 
 #pragma once
 
-#ifndef _GAME_DISPLAY_H_
-#define _GAME_DISPLAY_H_
-
-#include <stdio.h>
 #include "Common/SubsystemInterface.h"
-#include "View.h"
 #include "GameClient/Color.h"
 #include "GameClient/GameFont.h"
-
-class View;
+#include "GameClient/View.h"
 
 struct ShroudLevel
 {
@@ -84,13 +78,13 @@ public:
 	virtual UnsignedInt getHeight( void ) { return m_height; }		///< Returns the height of the display
 	virtual void setBitDepth( UnsignedInt bitDepth ) { m_bitDepth = bitDepth; }
 	virtual UnsignedInt getBitDepth( void ) { return m_bitDepth; }
-	virtual void setWindowed( Bool windowed ) { m_windowed = windowed; }  ///< set windowd/fullscreen flag
+	virtual void setWindowed( Bool windowed ) { m_windowed = windowed; }  ///< set windowed/fullscreen flag
 	virtual Bool getWindowed( void ) { return m_windowed; }				///< return widowed/fullscreen flag
 	virtual Bool setDisplayMode( UnsignedInt xres, UnsignedInt yres, UnsignedInt bitdepth, Bool windowed );	///<sets screen resolution/mode
 	virtual Int getDisplayModeCount(void) {return 0;}	///<return number of display modes/resolutions supported by video card.
 	virtual void getDisplayModeDescription(Int modeIndex, Int *xres, Int *yres, Int *bitDepth) {}	///<return description of mode
  	virtual void setGamma(Real gamma, Real bright, Real contrast, Bool calibrate) {};
-	virtual Bool testMinSpecRequirements(Bool *videoPassed, Bool *cpuPassed, Bool *memPassed,StaticGameLODLevel *idealVideoLevel=NULL, Real *cpuTime=NULL) {*videoPassed=*cpuPassed=*memPassed=true; return true;}
+	virtual Bool testMinSpecRequirements(Bool *videoPassed, Bool *cpuPassed, Bool *memPassed,StaticGameLODLevel *idealVideoLevel=nullptr, Real *cpuTime=nullptr) {*videoPassed=*cpuPassed=*memPassed=true; return true;}
 	virtual void doSmartAssetPurgeAndPreload(const char* usageFileName) = 0;
 #if defined(RTS_DEBUG)
 	virtual void dumpAssetUsage(const char* mapname) = 0;
@@ -104,7 +98,7 @@ public:
 	{
 		if( view )
 			return view->getNextView();
-		return NULL;
+		return nullptr;
 	}
 
 	virtual void drawViews( void );																///< Render all views of the world
@@ -139,7 +133,7 @@ public:
 	virtual void drawFillRect( Int startX, Int startY, Int width, Int height,
 														 UnsignedInt color ) = 0;
 
-	/// Draw a percentage of a rectange, much like a clock
+	/// Draw a percentage of a rectangle, much like a clock
 	virtual void drawRectClock(Int startX, Int startY, Int width, Int height, Int percent, UnsignedInt color) = 0;
 	virtual void drawRemainingRectClock(Int startX, Int startY, Int width, Int height, Int percent, UnsignedInt color) = 0;
 
@@ -159,7 +153,7 @@ public:
 	virtual Bool isMoviePlaying(void);
 
 	/// Register debug display callback
-	virtual void setDebugDisplayCallback( DebugDisplayCallback *callback, void *userData = NULL  );
+	virtual void setDebugDisplayCallback( DebugDisplayCallback *callback, void *userData = nullptr  );
 	virtual DebugDisplayCallback *getDebugDisplayCallback();
 
 	virtual void setShroudLevel(Int x, Int y, CellShroudStatus setting ) = 0;	  ///< set shroud
@@ -222,12 +216,10 @@ protected:
 // the singleton
 extern Display *TheDisplay;
 
-extern void StatDebugDisplay( DebugDisplayInterface *dd, void *, FILE *fp = NULL );
+extern void StatDebugDisplay( DebugDisplayInterface *dd, void *, FILE *fp = nullptr );
 
-//Added By Saad
 //Necessary for display resolution confirmation dialog box
 //Holds the previous and current display settings
-
 typedef struct _DisplaySettings
 {
 	Int xRes;  //Resolution width
@@ -235,6 +227,3 @@ typedef struct _DisplaySettings
 	Int bitDepth; //Color Depth
 	Bool windowed; //Window mode TRUE: we're windowed, FALSE: we're not windowed
 } DisplaySettings;
-
-
-#endif // _GAME_DISPLAY_H_

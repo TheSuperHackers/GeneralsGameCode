@@ -35,10 +35,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef MOTION_H
-#define MOTION_H
-
+#pragma once
 
 #ifndef ALWAYS_H
 #include "always.h"
@@ -51,7 +48,7 @@
 #endif
 
 #ifndef PROGRESS_H
-#include "PROGRESS.H"
+#include "PROGRESS.h"
 #endif
 
 #ifndef CHUNKIO_H
@@ -59,7 +56,7 @@
 #endif
 
 #ifndef VECTOR_H
-#include "Vector.H"
+#include "Vector.h"
 #endif
 
 #ifndef LOGDLG_H
@@ -159,6 +156,3 @@ private:
 	void			init(void);
 
 };
-
-
-#endif /*MOTION_H*/

@@ -43,10 +43,6 @@
 
 #pragma once
 
-#ifndef __GAMECLIENT_IMEMANAGER_H
-#define __GAMECLIENT_IMEMANAGER_H
-
-
 //----------------------------------------------------------------------------
 //           Includes
 //----------------------------------------------------------------------------
@@ -79,7 +75,7 @@ class IMEManagerInterface : public SubsystemInterface
 		virtual ~IMEManagerInterface() {};
 
 		virtual void					attach( GameWindow *window ) = 0;		///< attach IME to specified window
-		virtual void					detatch( void ) = 0;								///< detatch IME from current window
+		virtual void					detach( void ) = 0;								///< detach IME from current window
 		virtual void					enable( void ) = 0;									///< Enable IME
 		virtual void					disable( void ) = 0;								///< Disable IME
 		virtual Bool					isEnabled( void ) = 0;							///< Is IME enabled
@@ -92,7 +88,7 @@ class IMEManagerInterface : public SubsystemInterface
 
 
 		virtual Int						getCandidateCount() = 0;						///< Returns the total number of candidates
-		virtual UnicodeString*getCandidate( Int index ) = 0;			///< Returns the candidate string
+		virtual const UnicodeString* getCandidate( Int index ) = 0;	///< Returns the candidate string
 		virtual Int						getSelectedCandidateIndex() = 0;		///< Returns the indexed of the currently selected candidate
 		virtual Int						getCandidatePageSize() = 0;					///< Returns the page size for the candidates list
 		virtual Int						getCandidatePageStart() = 0;				///< Returns the index of the first visibel candidate
@@ -115,7 +111,3 @@ extern IMEManagerInterface *CreateIMEManagerInterface( void );
 //----------------------------------------------------------------------------
 //           Inlining
 //----------------------------------------------------------------------------
-
-
-
-#endif // __GAMECLIENT_IMEMANAGER_H

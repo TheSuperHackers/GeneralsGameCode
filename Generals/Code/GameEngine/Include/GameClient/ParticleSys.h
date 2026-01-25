@@ -29,10 +29,6 @@
 
 #pragma once
 
-#ifndef _PARTICLE_SYS_H_
-#define _PARTICLE_SYS_H_
-
-#include <stdio.h>
 #include "Common/AsciiString.h"
 #include "Common/GameMemory.h"
 #include "Common/GameType.h"
@@ -178,21 +174,21 @@ public:
 	void doWindMotion( void );									///< do wind motion (if present) from particle system
 
 	void applyForce( const Coord3D *force );		///< add the given acceleration
-	void detachDrawable( void ) { m_drawable = NULL; }	///< detach the Drawable pointer from this particle
+	void detachDrawable( void ) { m_drawable = nullptr; }	///< detach the Drawable pointer from this particle
 
-	inline const Coord3D *getPosition( void ) { return &m_pos; }
-	inline Real getSize( void ) { return m_size; }
-	inline Real getAngle( void ) { return m_angleZ; }
-	inline Real getAlpha( void ) { return m_alpha; }
-	inline const RGBColor *getColor( void ) { return &m_color; }
-	inline void setColor( RGBColor *color ) { m_color = *color; }
+	const Coord3D *getPosition( void ) { return &m_pos; }
+	Real getSize( void ) { return m_size; }
+	Real getAngle( void ) { return m_angleZ; }
+	Real getAlpha( void ) { return m_alpha; }
+	const RGBColor *getColor( void ) { return &m_color; }
+	void setColor( RGBColor *color ) { m_color = *color; }
 
 	Bool isInvisible( void );										///< return true if this particle is invisible
-	inline Bool isCulled (void) {return m_isCulled;}				///< return true if the particle falls off the edge of the screen
-	inline void setIsCulled (Bool enable) { m_isCulled = enable;}		///< set particle to not visible because it's outside view frustum
+	Bool isCulled (void) {return m_isCulled;}				///< return true if the particle falls off the edge of the screen
+	void setIsCulled (Bool enable) { m_isCulled = enable;}		///< set particle to not visible because it's outside view frustum
 
 	void controlParticleSystem( ParticleSystem *sys ) { m_systemUnderControl = sys; }
-	void detachControlledParticleSystem( void ) { m_systemUnderControl = NULL; }
+	void detachControlledParticleSystem( void ) { m_systemUnderControl = nullptr; }
 
 	// get priority of this particle ... which is the priority of the system it belongs to
 	ParticlePriorityType getPriority( void );
@@ -459,37 +455,37 @@ public:
 
 static const char *const ParticleShaderTypeNames[] =
 {
-	"NONE", "ADDITIVE", "ALPHA", "ALPHA_TEST", "MULTIPLY", NULL
+	"NONE", "ADDITIVE", "ALPHA", "ALPHA_TEST", "MULTIPLY", nullptr
 };
 static_assert(ARRAY_SIZE(ParticleShaderTypeNames) == ParticleSystemInfo::PARTICLE_SHADER_TYPE_COUNT + 1, "Incorrect array size");
 
 static const char *const ParticleTypeNames[] =
 {
-	"NONE", "PARTICLE", "DRAWABLE", "STREAK", "VOLUME_PARTICLE", NULL
+	"NONE", "PARTICLE", "DRAWABLE", "STREAK", "VOLUME_PARTICLE", nullptr
 };
 static_assert(ARRAY_SIZE(ParticleTypeNames) == ParticleSystemInfo::PARTICLE_TYPE_COUNT + 1, "Incorrect array size");
 
 static const char *const EmissionVelocityTypeNames[] =
 {
-	"NONE", "ORTHO", "SPHERICAL", "HEMISPHERICAL", "CYLINDRICAL", "OUTWARD", NULL
+	"NONE", "ORTHO", "SPHERICAL", "HEMISPHERICAL", "CYLINDRICAL", "OUTWARD", nullptr
 };
 static_assert(ARRAY_SIZE(EmissionVelocityTypeNames) == ParticleSystemInfo::EMISSION_VELOCITY_TYPE_COUNT + 1, "Incorrect array size");
 
 static const char *const EmissionVolumeTypeNames[] =
 {
-	"NONE", "POINT", "LINE", "BOX", "SPHERE", "CYLINDER", NULL
+	"NONE", "POINT", "LINE", "BOX", "SPHERE", "CYLINDER", nullptr
 };
 static_assert(ARRAY_SIZE(EmissionVolumeTypeNames) == ParticleSystemInfo::EMISSION_VOLUME_TYPE_COUNT + 1, "Incorrect array size");
 
 static const char *const ParticlePriorityNames[] =
 {
-	"NONE", "WEAPON_EXPLOSION","SCORCHMARK","DUST_TRAIL","BUILDUP","DEBRIS_TRAIL","UNIT_DAMAGE_FX","DEATH_EXPLOSION","SEMI_CONSTANT","CONSTANT","WEAPON_TRAIL","AREA_EFFECT","CRITICAL", "ALWAYS_RENDER", NULL
+	"NONE", "WEAPON_EXPLOSION","SCORCHMARK","DUST_TRAIL","BUILDUP","DEBRIS_TRAIL","UNIT_DAMAGE_FX","DEATH_EXPLOSION","SEMI_CONSTANT","CONSTANT","WEAPON_TRAIL","AREA_EFFECT","CRITICAL", "ALWAYS_RENDER", nullptr
 };
 static_assert(ARRAY_SIZE(ParticlePriorityNames) == NUM_PARTICLE_PRIORITIES + 1, "Incorrect array size");
 
 static const char *const WindMotionNames[] =
 {
-	"NONE", "Unused", "PingPong", "Circular", NULL
+	"NONE", "Unused", "PingPong", "Circular", nullptr
 };
 static_assert(ARRAY_SIZE(WindMotionNames) == ParticleSystemInfo::WIND_MOTION_COUNT + 1, "Incorrect array size");
 
@@ -508,7 +504,7 @@ public:
 	AsciiString getName( void ) const { return m_name; }
 
 	// This function was made const because of update modules' module data being all const.
-	ParticleSystem *createSlaveSystem( Bool createSlaves = TRUE ) const ;					///< if returns non-NULL, it is a slave system for use
+	ParticleSystem *createSlaveSystem( Bool createSlaves = TRUE ) const ;					///< if returns non-null, it is a slave system for use
 
 	const FieldParse *getFieldParse( void ) const { return m_fieldParseTable; }	///< Parsing from INI access
 	static void parseRGBColorKeyframe( INI* ini, void *instance, void *store, const void* /*userData*/ );
@@ -532,7 +528,7 @@ protected:
 	AsciiString								m_name;													///< the name of this template
 
 	// This has to be mutable because of the delayed initialization thing in createSlaveSystem
-	mutable const ParticleSystemTemplate *m_slaveTemplate;		///< if non-NULL, use this to create a slave system
+	mutable const ParticleSystemTemplate *m_slaveTemplate;		///< if non-null, use this to create a slave system
 
 	// template attribute data inherited from ParticleSystemInfo class
 };
@@ -555,7 +551,7 @@ public:
 									ParticleSystemID id,
 									Bool createSlaves );			///< create a particle system from a template and assign it this ID
 
-	inline ParticleSystemID getSystemID( void ) const { return m_systemID; }	///< get unique system ID
+	ParticleSystemID getSystemID( void ) const { return m_systemID; }	///< get unique system ID
 
 	void setPosition( const Coord3D *pos );			///< set the position of the particle system
 	void getPosition( Coord3D *pos );				///< get the position of the particle system
@@ -621,7 +617,7 @@ public:
 	Bool isSaveable( void ) const { return m_isSaveable; }
 
 	/// called when the particle this system is controlled by dies
-	void detachControlParticle( Particle *p ) { m_controlParticle = NULL; }
+	void detachControlParticle( Particle *p ) { m_controlParticle = nullptr; }
 
 	/// called to merge two systems info. If slaveNeedsFullPromotion is true, then the slave needs to be aware of how many particles
 	/// to generate as well.
@@ -638,8 +634,8 @@ public:
 	void removeParticle( Particle *p );
 	UnsignedInt getParticleCount( void ) const { return m_particleCount; }
 
-	inline ObjectID getAttachedObject( void ) { return m_attachedToObjectID; }
-	inline DrawableID getAttachedDrawable( void ) { return m_attachedToDrawableID; }
+	ObjectID getAttachedObject( void ) { return m_attachedToObjectID; }
+	DrawableID getAttachedDrawable( void ) { return m_attachedToDrawableID; }
 
 	// Access to dynamically changing part of a particle system.
 	void setEmissionVolumeSphereRadius( Real newRadius ) { if (m_emissionVolumeType == SPHERE) m_emissionVolume.sphere.radius = newRadius; }
@@ -699,14 +695,14 @@ protected:
 	Coord3D						m_pos;													///< this is the position to emit at.
 	Coord3D						m_lastPos;											///< this is the previous position we emitted at.
 
-	ParticleSystem *	m_slaveSystem;									///< if non-NULL, another system this one has control of
+	ParticleSystem *	m_slaveSystem;									///< if non-null, another system this one has control of
 	ParticleSystemID	m_slaveSystemID;								///< id of slave system (if present)
 
-	ParticleSystem *	m_masterSystem;									///< if non-NULL, the system that controls this one
+	ParticleSystem *	m_masterSystem;									///< if non-null, the system that controls this one
 	ParticleSystemID	m_masterSystemID;								///< master system id (if present);
 
 	const ParticleSystemTemplate *	m_template;						///< the template this system was constructed from
-	Particle *											m_controlParticle;		///< if non-NULL, this system is controlled by this particle
+	Particle *											m_controlParticle;		///< if non-null, this system is controlled by this particle
 
 	Bool							m_isLocalIdentity;										///< if true, the matrix can be ignored
 	Bool							m_isIdentity;													///< if true, the matrix can be ignored
@@ -828,7 +824,4 @@ private:
 extern ParticleSystemManager *TheParticleSystemManager;
 
 class DebugDisplayInterface;
-extern void ParticleSystemDebugDisplay( DebugDisplayInterface *dd, void *, FILE *fp = NULL );
-
-
-#endif // _PARTICLE_SYS_H_
+extern void ParticleSystemDebugDisplay( DebugDisplayInterface *dd, void *, FILE *fp = nullptr );

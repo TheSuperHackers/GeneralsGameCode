@@ -30,9 +30,6 @@
 
 #pragma once
 
-#ifndef __SNAPSHOT_H_
-#define __SNAPSHOT_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "Common/AsciiString.h"
 
@@ -68,6 +65,3 @@ protected:
 	virtual void loadPostProcess( void ) = 0;
 
 };
-
-#endif // __SNAPSHOT_H_
-

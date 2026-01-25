@@ -22,9 +22,6 @@
 
 #pragma once
 
-#ifndef BUILDLISTTOOL_H
-#define BUILDLISTTOOL_H
-
 #include "Tool.h"
 #include "Common/AsciiString.h"
 #include "PickUnitDialog.h"
@@ -78,6 +75,3 @@ public:
 	virtual void activate(); ///< Become the current tool.
 	virtual void deactivate(); ///< Become not the current tool.
 };
-
-
-#endif //TOOL_H

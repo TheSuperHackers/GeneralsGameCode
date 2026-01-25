@@ -38,15 +38,12 @@
 //
 // Created:    Mark Wilczynski, Jan 2002
 //
-// Desc:       Generic Polgon operations.
+// Desc:       Generic Polygon operations.
 //
 //-----------------------------------------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __W3DPOLY_H_
-#define __W3DPOLY_H_
 
 #include "vector3.h"
 #include "plane.h"
@@ -66,5 +63,3 @@ public:
 
 	SimpleDynVecClass<Vector3> Verts;
 };
-
-#endif //__W3DPOLY_H_

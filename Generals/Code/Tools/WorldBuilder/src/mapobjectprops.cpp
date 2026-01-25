@@ -42,20 +42,20 @@ const char* NEUTRAL_TEAM_INTERNAL_STR = "team";
 /////////////////////////////////////////////////////////////////////////////
 // MapObjectProps dialog
 
-/*static*/ MapObjectProps *MapObjectProps::TheMapObjectProps = NULL;
+/*static*/ MapObjectProps *MapObjectProps::TheMapObjectProps = nullptr;
 
 void MapObjectProps::makeMain()
 {
-	DEBUG_ASSERTCRASH(TheMapObjectProps == NULL, ("already have a main props"));
-	if (TheMapObjectProps == NULL)
+	DEBUG_ASSERTCRASH(TheMapObjectProps == nullptr, ("already have a main props"));
+	if (TheMapObjectProps == nullptr)
 		TheMapObjectProps = this;
 }
 
-MapObjectProps::MapObjectProps(Dict* dictToEdit, const char* title, CWnd* pParent /*=NULL*/) :
+MapObjectProps::MapObjectProps(Dict* dictToEdit, const char* title, CWnd* pParent /*=nullptr*/) :
 	COptionsPanel(MapObjectProps::IDD, pParent),
 	m_dictToEdit(dictToEdit),
 	m_title(title),
-	m_selectedObject(NULL)
+	m_selectedObject(nullptr)
 {
 	//{{AFX_DATA_INIT(MapObjectProps)
 		// NOTE: the ClassWizard will add member initialization here
@@ -65,7 +65,7 @@ MapObjectProps::MapObjectProps(Dict* dictToEdit, const char* title, CWnd* pParen
 MapObjectProps::~MapObjectProps()
 {
 	if (TheMapObjectProps == this)
-		TheMapObjectProps = NULL;
+		TheMapObjectProps = nullptr;
 }
 
 void MapObjectProps::DoDataExchange(CDataExchange* pDX)
@@ -176,7 +176,7 @@ BOOL MapObjectProps::OnInitDialog()
 
 	m_heightSlider.SetupPopSliderButton(this, IDC_HEIGHT_POPUP, this);
 	m_angleSlider.SetupPopSliderButton(this, IDC_ANGLE_POPUP, this);
-	m_posUndoable = NULL;
+	m_posUndoable = nullptr;
 	m_angle = 0;
 	m_height = 0;
 
@@ -205,7 +205,7 @@ void MapObjectProps::updateTheUI(void)
 			continue;
 		}
 
-		m_dictToEdit = pMapObj ? pMapObj->getProperties() : NULL;
+		m_dictToEdit = pMapObj ? pMapObj->getProperties() : nullptr;
 
 		_DictToTeam();
 		_DictToName();
@@ -238,7 +238,7 @@ void MapObjectProps::updateTheUI(void)
 /*static*/ MapObject *MapObjectProps::getSingleSelectedMapObject(void)
 {
 	MapObject *pMapObj;
-	MapObject *theMapObj = NULL;
+	MapObject *theMapObj = nullptr;
 //	Bool found = false;
 	Int selCount=0;
 	for (pMapObj = MapObject::getFirstMapObject(); pMapObj; pMapObj = pMapObj->getNext()) {
@@ -253,7 +253,7 @@ void MapObjectProps::updateTheUI(void)
 	if (selCount==1 && theMapObj) {
 		return theMapObj;
 	}
-	return(NULL);
+	return(nullptr);
 }
 
 void MapObjectProps::OnEditprop()
@@ -376,7 +376,7 @@ void MapObjectProps::_DictToTeam(void)
 
 void MapObjectProps::_DictToName(void)
 {
-	AsciiString name = "";
+	AsciiString name;
 	Bool exists;
 	if (m_dictToEdit) {
 		name = m_dictToEdit->getAsciiString(TheKey_objectName, &exists);
@@ -422,7 +422,7 @@ void MapObjectProps::_DictToHealth(void)
 		} else {
 			pItem->SelectString(-1, "Other");
 			static char buff[12];
-			sprintf(buff, "%d", value);
+			snprintf(buff, ARRAY_SIZE(buff), "%d", value);
 			pItem2->SetWindowText(buff);
 			pItem2->EnableWindow(TRUE);
 		}
@@ -582,7 +582,7 @@ void MapObjectProps::_DictToVisibilityRange(void)
 	CWnd* pItem = GetDlgItem(IDC_MAPOBJECT_VisionDistance);
 	if (pItem) {
 		static char buff[12];
-		sprintf(buff, "%d", distance);
+		snprintf(buff, ARRAY_SIZE(buff), "%d", distance);
 		if (distance == 0) {
 			pItem->SetWindowText("");
 		} else {
@@ -644,7 +644,7 @@ void MapObjectProps::_DictToShroudClearingDistance(void)
 	CWnd* pItem = GetDlgItem(IDC_MAPOBJECT_ShroudClearingDistance);
 	if (pItem) {
 		static char buff[12];
-		sprintf(buff, "%d", distance);
+		snprintf(buff, ARRAY_SIZE(buff), "%d", distance);
 		if (distance == 0) {
 			pItem->SetWindowText("");
 		} else {
@@ -691,8 +691,8 @@ void MapObjectProps::_DictToStoppingDistance(void)
 
 	CWnd* pItem = GetDlgItem(IDC_MAPOBJECT_StoppingDistance);
 	if (pItem) {
-		static char buff[12];
-		sprintf(buff, "%g", stoppingDistance);
+		static char buff[32];
+		snprintf(buff, ARRAY_SIZE(buff), "%g", stoppingDistance);
 		pItem->SetWindowText(buff);
 	}
 }
@@ -717,13 +717,13 @@ void MapObjectProps::_DictToPrebuiltUpgrades(void)
 		return;
 	}
 
-	if (m_selectedObject == NULL) {
+	if (m_selectedObject == nullptr) {
 		return;
 	}
 
 	// Otherwise, fill it with the upgrades available for this unit
 	const ThingTemplate *tt = m_selectedObject->getThingTemplate();
-	if (tt == NULL) {
+	if (tt == nullptr) {
 		// This is valid. For instance, Scorch marks do not have thing templates.
 		return;
 	}
@@ -749,7 +749,7 @@ void MapObjectProps::_DictToPrebuiltUpgrades(void)
 				if (!gmbmd) {
 					continue;
 				}
-				if (gmbmd->m_upgradeMuxData.m_activationUpgradeNames.size() > 0) {
+				if (!gmbmd->m_upgradeMuxData.m_activationUpgradeNames.empty()) {
 					cstr = gmbmd->m_upgradeMuxData.m_activationUpgradeNames[0].str();
 					if (pBox->FindString(-1, cstr) == LB_ERR) {
 						pBox->AddString(cstr);
@@ -1262,9 +1262,9 @@ void MapObjectProps::OnCancel()
 void MapObjectProps::ShowZOffset(MapObject *pMapObj)
 {
 	const Coord3D *loc = pMapObj->getLocation();
-	static char buff[12];
+	static char buff[32];
 	m_height = loc->z;
-	sprintf(buff, "%0.2f", loc->z);
+	snprintf(buff, ARRAY_SIZE(buff), "%0.2f", loc->z);
 	CWnd* edit = GetDlgItem(IDC_MAPOBJECT_ZOffset);
 	edit->SetWindowText(buff);
 }
@@ -1289,8 +1289,8 @@ void MapObjectProps::SetZOffset(void)
 void MapObjectProps::ShowAngle(MapObject *pMapObj)
 {
 	m_angle = pMapObj->getAngle() * 180 / PI;
-	static char buff[12];
-	sprintf(buff, "%0.2f", m_angle);
+	static char buff[32];
+	snprintf(buff, ARRAY_SIZE(buff), "%0.2f", m_angle);
 	CWnd* edit = GetDlgItem(IDC_MAPOBJECT_Angle);
 	edit->SetWindowText(buff);
 
@@ -1345,7 +1345,7 @@ void MapObjectProps::getAllSelectedDicts(void)
 Dict** MapObjectProps::getAllSelectedDictsData()
 {
 #if defined(USING_STLPORT) || __cplusplus < 201103L
-	return !m_allSelectedDicts.empty() ? &m_allSelectedDicts.front() : NULL;
+	return !m_allSelectedDicts.empty() ? &m_allSelectedDicts.front() : nullptr;
 #else
 	return m_allSelectedDicts.data();
 #endif
@@ -1380,7 +1380,7 @@ void MapObjectProps::PopSliderChanged(const long sliderID, long theVal)
 {
 	CWorldBuilderDoc* pDoc = CWorldBuilderDoc::GetActiveDoc();
 	CWnd* edit;
-	static char buff[12];
+	static char buff[32];
 	switch (sliderID) {
 		case IDC_HEIGHT_POPUP:
 			if (!m_posUndoable) {
@@ -1389,7 +1389,7 @@ void MapObjectProps::PopSliderChanged(const long sliderID, long theVal)
 			}
 			m_posUndoable->SetZOffset(theVal);
 			m_height = theVal;
-			sprintf(buff, "%0.2f", m_height);
+			snprintf(buff, ARRAY_SIZE(buff), "%0.2f", m_height);
 			edit = GetDlgItem(IDC_MAPOBJECT_ZOffset);
 			edit->SetWindowText(buff);
 			break;
@@ -1401,7 +1401,7 @@ void MapObjectProps::PopSliderChanged(const long sliderID, long theVal)
 			}
 			m_posUndoable->RotateTo(theVal * PI/180);
 			m_angle = theVal;
-			sprintf(buff, "%0.2f", m_angle);
+			snprintf(buff, ARRAY_SIZE(buff), "%0.2f", m_angle);
 			edit = GetDlgItem(IDC_MAPOBJECT_Angle);
 			edit->SetWindowText(buff);
 			break;
@@ -1419,7 +1419,7 @@ void MapObjectProps::PopSliderFinished(const long sliderID, long theVal)
 		case IDC_HEIGHT_POPUP:
 		case IDC_ANGLE_POPUP:
 			REF_PTR_RELEASE(m_posUndoable); // belongs to pDoc now.
-			m_posUndoable = NULL;
+			m_posUndoable = nullptr;
 			break;
 
 		default:

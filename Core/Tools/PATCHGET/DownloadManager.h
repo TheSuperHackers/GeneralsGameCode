@@ -22,9 +22,6 @@
 
 #pragma once
 
-#ifndef __DOWNLOADMANAGER_H__
-#define __DOWNLOADMANAGER_H__
-
 #include "WWDownload/downloaddefs.h"
 #include "WWDownload/Download.h"
 #include <string>
@@ -96,5 +93,3 @@ protected:
 extern DownloadManager *TheDownloadManager;
 
 } // namespace patchget
-
-#endif // __DOWNLOADMANAGER_H__

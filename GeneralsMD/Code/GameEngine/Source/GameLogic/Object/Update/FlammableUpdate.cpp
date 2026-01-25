@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/AudioEventRTS.h"
 #include "Common/GameAudio.h"
@@ -47,10 +47,7 @@ FlammableUpdateModuleData::FlammableUpdateModuleData()
 	m_aflameDuration = 0;
 	m_aflameDamageDelay = 0;
 	m_aflameDamageAmount = 0;
-	// Enabled By Sadullah Nader
-	// Initialization needed
 	m_burningSoundName.clear();
-	//
 	m_flameDamageLimitData = 20.0f;
 	m_flameDamageExpirationDelay = LOGICFRAMES_PER_SECOND * 2;
 }
@@ -62,14 +59,14 @@ FlammableUpdateModuleData::FlammableUpdateModuleData()
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "BurnedDelay",						INI::parseDurationUnsignedInt,	NULL, offsetof( FlammableUpdateModuleData, m_burnedDelay ) },
-		{ "AflameDuration",					INI::parseDurationUnsignedInt,	NULL, offsetof( FlammableUpdateModuleData, m_aflameDuration ) },
-		{ "AflameDamageDelay",			INI::parseDurationUnsignedInt,	NULL, offsetof( FlammableUpdateModuleData, m_aflameDamageDelay ) },
-		{ "AflameDamageAmount",			INI::parseInt,									NULL, offsetof( FlammableUpdateModuleData, m_aflameDamageAmount ) },
-		{ "BurningSoundName",				INI::parseAsciiString,					NULL,	offsetof( FlammableUpdateModuleData, m_burningSoundName) },
-		{ "FlameDamageLimit",				INI::parseReal,									NULL,	offsetof( FlammableUpdateModuleData, m_flameDamageLimitData ) },
-		{ "FlameDamageExpiration",	INI::parseDurationUnsignedInt,	NULL,	offsetof( FlammableUpdateModuleData, m_flameDamageExpirationDelay ) },
-		{ 0, 0, 0, 0 }
+		{ "BurnedDelay",						INI::parseDurationUnsignedInt,	nullptr, offsetof( FlammableUpdateModuleData, m_burnedDelay ) },
+		{ "AflameDuration",					INI::parseDurationUnsignedInt,	nullptr, offsetof( FlammableUpdateModuleData, m_aflameDuration ) },
+		{ "AflameDamageDelay",			INI::parseDurationUnsignedInt,	nullptr, offsetof( FlammableUpdateModuleData, m_aflameDamageDelay ) },
+		{ "AflameDamageAmount",			INI::parseInt,									nullptr, offsetof( FlammableUpdateModuleData, m_aflameDamageAmount ) },
+		{ "BurningSoundName",				INI::parseAsciiString,					nullptr,	offsetof( FlammableUpdateModuleData, m_burningSoundName) },
+		{ "FlameDamageLimit",				INI::parseReal,									nullptr,	offsetof( FlammableUpdateModuleData, m_flameDamageLimitData ) },
+		{ "FlameDamageExpiration",	INI::parseDurationUnsignedInt,	nullptr,	offsetof( FlammableUpdateModuleData, m_flameDamageExpirationDelay ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   p.add(dataFieldParse);
 }
@@ -82,7 +79,7 @@ FlammableUpdate::FlammableUpdate( Thing *thing, const ModuleData* moduleData ) :
 	m_aflameEndFrame = 0;
 	m_burnedEndFrame = 0;
 	m_damageEndFrame = 0;
-	m_audioHandle = NULL;
+	m_audioHandle = 0;
 	m_flameDamageLimit = getFlammableUpdateModuleData()->m_flameDamageLimitData;
 	m_flameSource = INVALID_ID;
 	m_lastFlameDamageDealt = 0;
@@ -211,7 +208,7 @@ void FlammableUpdate::tryToIgnite()
 		// bleah. this sucks. (srj)
 		static const NameKeyType key_FireSpreadUpdate = NAMEKEY("FireSpreadUpdate");
 		FireSpreadUpdate* fu = (FireSpreadUpdate*)getObject()->findUpdateModule(key_FireSpreadUpdate);
-		if (fu != NULL)
+		if (fu != nullptr)
 		{
 			fu->startFireSpreading();
 		}
@@ -260,7 +257,7 @@ void FlammableUpdate::stopBurningSound()
 	if (m_audioHandle)
 	{
 		TheAudio->removeAudioEvent( m_audioHandle );
-		m_audioHandle = NULL;
+		m_audioHandle = 0;
 	}
 }
 
@@ -288,7 +285,9 @@ void FlammableUpdate::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
 	* Version Info:
-	* 1: Initial version */
+	* 1: Initial version
+	* 2. TheSuperHackers @tweak Serialize flame source
+	*/
 // ------------------------------------------------------------------------------------------------
 void FlammableUpdate::xfer( Xfer *xfer )
 {
@@ -323,12 +322,10 @@ void FlammableUpdate::xfer( Xfer *xfer )
 	// last flame damage dealt
 	xfer->xferUnsignedInt( &m_lastFlameDamageDealt );
 
-#if !RETAIL_COMPATIBLE_XFER_SAVE
 	if (version >= 2)
 	{
 		xfer->xferObjectID(&m_flameSource);
 	}
-#endif
 }
 
 // ------------------------------------------------------------------------------------------------

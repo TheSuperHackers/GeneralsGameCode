@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifndef _AI_PLAYER_H_
-#define _AI_PLAYER_H_
-
 #include "Common/GameMemory.h"
 #include "Common/Snapshot.h"
 
@@ -53,7 +50,7 @@ class WorkOrder : public MemoryPoolObject,
 
 public:
 
-	WorkOrder():m_thing(NULL), m_factoryID(INVALID_ID), m_isResourceGatherer(false), m_numCompleted(0), m_numRequired(1), m_next(NULL) {};
+	WorkOrder():m_thing(nullptr), m_factoryID(INVALID_ID), m_isResourceGatherer(false), m_numCompleted(0), m_numRequired(1), m_next(nullptr) {};
 
 	Bool isWaitingToBuild( void );		///< return true if nothing is yet building this unit
 	void validateFactory( Player *thisPlayer );			///< verify factoryID still refers to an active object
@@ -109,18 +106,15 @@ protected:
 public:
 
 	TeamInQueue() :
-		m_workOrders(NULL),
-		m_team(NULL),
-		m_nextTeamInQueue(NULL),
+		m_workOrders(nullptr),
+		m_team(nullptr),
+		m_nextTeamInQueue(nullptr),
 		m_sentToStartLocation(false),
 		m_reinforcement(false),
 		m_stopQueueing(false),
 		m_reinforcementID(INVALID_ID),
-		//Added By Sadullah Nader
-		//Initialization(s) inserted
 		m_frameStarted(0),
 		m_priorityBuild(FALSE)
-		//
 	{
 	}
 
@@ -185,7 +179,7 @@ public: // AIPlayer interface, may be overridden by AISkirmishPlayer.  jba.
 	virtual void recruitSpecificAITeam(TeamPrototype *teamProto, Real recruitRadius); ///< Builds this team immediately.
 
 	virtual Bool isSkirmishAI(void) {return false;}
-	virtual Player *getAiEnemy(void) {return NULL;}	///< Solo AI attacks based on scripting.  Only skirmish auto-acquires an enemy at this point.  jba.
+	virtual Player *getAiEnemy(void) {return nullptr;}	///< Solo AI attacks based on scripting.  Only skirmish auto-acquires an enemy at this point.  jba.
 	virtual Bool checkBridges(Object *unit, Waypoint *way) {return false;}
 	virtual void repairStructure(ObjectID structure);
 
@@ -297,8 +291,3 @@ protected:
 
 	ObjectID m_curWarehouseID;
 };
-
-#endif // _AI_PLAYER_H_
-
-
-

@@ -21,14 +21,14 @@
 // Author: Matthew D. Campbell, July 2002
 
 #include "debug.h"
-#include "CHATAPI.H"
+#include "CHATAPI.h"
 #include "DownloadManager.h"
-#include "RESOURCE.H"
+#include "RESOURCE.h"
 
 namespace patchget
 {
 
-DownloadManager *TheDownloadManager = NULL;
+DownloadManager *TheDownloadManager = nullptr;
 
 DownloadManager::DownloadManager()
 {

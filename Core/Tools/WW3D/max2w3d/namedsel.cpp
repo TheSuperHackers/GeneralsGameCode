@@ -43,9 +43,9 @@ NamedSelSetList::~NamedSelSetList()
 {
 	for (int i=0; i<Sets.Count(); i++) {
 		delete Sets[i];
-		Sets[i] = NULL;
+		Sets[i] = nullptr;
 		delete Names[i];
-		Names[i] = NULL;
+		Names[i] = nullptr;
 	}
 }
 

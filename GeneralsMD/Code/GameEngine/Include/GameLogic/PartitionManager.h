@@ -46,9 +46,6 @@
 
 #pragma once
 
-#ifndef __PARTITIONMANAGER_H_
-#define __PARTITIONMANAGER_H_
-
 //-----------------------------------------------------------------------------
 //           Includes
 //-----------------------------------------------------------------------------
@@ -132,9 +129,9 @@ struct FindPositionOptions
 		maxRadius							= 0.0f;
 		startAngle						= RANDOM_START_ANGLE;
 		maxZDelta							= 1e10f;	// ie, any z delta.
-		ignoreObject					= NULL;
-		sourceToPathToDest    = NULL;
-		relationshipObject		= NULL;
+		ignoreObject					= nullptr;
+		sourceToPathToDest    = nullptr;
+		relationshipObject		= nullptr;
 	};
 	FindPositionFlags flags;					///< flags for finding the legal position
 	Real minRadius;										///< min radius to search around
@@ -217,22 +214,22 @@ public:
 	/**
 		return the Cell for this COI (null if the COI is not in use)
 	*/
-	inline PartitionCell *getCell() { return m_cell; }
+	PartitionCell *getCell() { return m_cell; }
 
 	/**
 		return the Module for this COI (null if the COI is not in use)
 	*/
-	inline PartitionData *getModule() { return m_module; }
+	PartitionData *getModule() { return m_module; }
 
 	/**
 		return the previous COI in the Cell's list of COIs.
 	*/
-	inline CellAndObjectIntersection *getPrevCoi() { return m_prevCoi; }
+	CellAndObjectIntersection *getPrevCoi() { return m_prevCoi; }
 
 	/**
 		return the next COI in the Cell's list of COIs.
 	*/
-	inline CellAndObjectIntersection *getNextCoi() { return m_nextCoi; }
+	CellAndObjectIntersection *getNextCoi() { return m_nextCoi; }
 
 	// only for use by PartitionCell.
 	void friend_addToCellList(CellAndObjectIntersection **pListHead);
@@ -345,13 +342,13 @@ public:
 	void invalidateShroudedStatusForAllCois(Int playerIndex);
 
 #ifdef PM_CACHE_TERRAIN_HEIGHT
-	inline Real getLoTerrain() const { return m_loTerrainZ; }
-	inline Real getHiTerrain() const { return m_hiTerrainZ; }
+	Real getLoTerrain() const { return m_loTerrainZ; }
+	Real getHiTerrain() const { return m_hiTerrainZ; }
 #endif
 
 	void getCellCenterPos(Real& x, Real& y);
 
-	inline CellAndObjectIntersection *getFirstCoiInCell() { return m_firstCoiInCell; }
+	CellAndObjectIntersection *getFirstCoiInCell() { return m_firstCoiInCell; }
 
 	#ifdef RTS_DEBUG
 	void validateCoiList();
@@ -514,7 +511,7 @@ public:
 
 	ObjectShroudStatus getShroudedStatus(Int playerIndex);
 
-	inline Int wasSeenByAnyPlayers() const	///<check if a player in the game has seen the object but is now looking at fogged version.
+	Int wasSeenByAnyPlayers() const	///<check if a player in the game has seen the object but is now looking at fogged version.
 	{
 		Int i=0;
 		for (; i<MAX_PLAYER_COUNT; i++)
@@ -553,13 +550,13 @@ public:
 	Int friend_getDoneFlag() { return m_doneFlag; }
 	void friend_setDoneFlag(Int i) { m_doneFlag = i; }
 
-	inline Bool isInListDirtyModules(PartitionData* const* pListHead) const
+	Bool isInListDirtyModules(PartitionData* const* pListHead) const
 	{
 		Bool result = (*pListHead == this || m_prevDirty || m_nextDirty);
 		DEBUG_ASSERTCRASH(result == (m_dirtyStatus != NOT_DIRTY), ("dirty flag mismatch"));
 		return result;
 	}
-	inline void prependToDirtyModules(PartitionData** pListHead)
+	void prependToDirtyModules(PartitionData** pListHead)
 	{
 		DEBUG_ASSERTCRASH((m_dirtyStatus != NOT_DIRTY), ("dirty flag mismatch"));
 		m_nextDirty = *pListHead;
@@ -1127,7 +1124,7 @@ private:
 
 public:
 	PartitionFilterThing(const ThingTemplate *thing, Bool match) : m_tThing(thing), m_match(match) {
-		DEBUG_ASSERTCRASH(m_tThing != NULL, ("ThingTemplate for PartitionFilterThing is NULL"));
+		DEBUG_ASSERTCRASH(m_tThing != nullptr, ("ThingTemplate for PartitionFilterThing is null"));
 	}
 protected:
 	virtual Bool allow( Object *other );
@@ -1149,10 +1146,7 @@ private:
 public:
 	PartitionFilterGarrisonable( Bool match ) : m_match(match)
 	{
-		//Added By Sadullah Nader
-		//Initializations
-		m_player = NULL;
-		//
+		m_player = nullptr;
 	}
 protected:
 	virtual Bool allow( Object *other );
@@ -1308,7 +1302,7 @@ protected:
 	friend void hLineAddValue(Int x1, Int x2, Int y, void *threatValueParms);
 	friend void hLineRemoveValue(Int x1, Int x2, Int y, void *threatValueParms);
 
-	void processPendingUndoShroudRevealQueue(Bool considerTimestamp = TRUE);				///< keep popping and processing untill you get to one that is in the future
+	void processPendingUndoShroudRevealQueue(Bool considerTimestamp = TRUE);				///< keep popping and processing until you get to one that is in the future
 	void resetPendingUndoShroudRevealQueue();					///< Just delete everything in the queue without doing anything with them
 
 public:
@@ -1327,7 +1321,7 @@ public:
 	void xfer( Xfer *xfer );
 	void loadPostProcess( void );
 
-	inline Bool getUpdatedSinceLastReset( void ) const { return m_updatedSinceLastReset; }
+	Bool getUpdatedSinceLastReset( void ) const { return m_updatedSinceLastReset; }
 
 	void registerObject( Object *object );				///< add thing to system
 	void unRegisterObject( Object *object );			///< remove thing from system
@@ -1346,7 +1340,7 @@ public:
 	PartitionCell *getCellAt(Int x, Int y);
 	const PartitionCell *getCellAt(Int x, Int y) const;
 
-	/// A convenience funtion to reveal shroud at some location
+	/// A convenience function to reveal shroud at some location
 	// Queueing does not give you control of the timestamp to enforce the queue.  I own the delay, you don't.
 	void doShroudReveal( Real centerX, Real centerY, Real radius, PlayerMaskType playerMask);
 	void undoShroudReveal( Real centerX, Real centerY, Real radius, PlayerMaskType playerMask);
@@ -1364,7 +1358,7 @@ public:
 	void getCellCenterPos(Int x, Int y, Real& xx, Real& yy);
 
 	// find the cell that covers the world coords (wx,wy) and return its coords.
-	void worldToCell(Real wx, Real wy, Int *cx, Int *cy);
+	void worldToCell(Real wx, Real wy, Int *cx, Int *cy) const;
 
 	// given a distance in world coords, return the number of cells needed to cover that distance (rounding up)
 	Int worldToCellDist(Real w);
@@ -1373,17 +1367,17 @@ public:
 		const Object *obj,
 		Real maxDist,
 		DistanceCalculationType dc,
-		PartitionFilter **filters = NULL,
-		Real *closestDist = NULL,
-		Coord3D *closestDistVec = NULL
+		PartitionFilter **filters = nullptr,
+		Real *closestDist = nullptr,
+		Coord3D *closestDistVec = nullptr
 	);
 	Object *getClosestObject(
 		const Coord3D *pos,
 		Real maxDist,
 		DistanceCalculationType dc,
-		PartitionFilter **filters = NULL,
-		Real *closestDist = NULL,
-		Coord3D *closestDistVec = NULL
+		PartitionFilter **filters = nullptr,
+		Real *closestDist = nullptr,
+		Coord3D *closestDistVec = nullptr
 	);
 
 	Real getRelativeAngle2D( const Object *obj, const Object *otherObj );
@@ -1393,12 +1387,12 @@ public:
 	void getVectorTo(const Object *obj, const Coord3D *pos, DistanceCalculationType dc, Coord3D& vec);
 
 	// just like 'getDistance', but return the dist-sqr, meaning we save a sqrt() call if you don't need it.
-	Real getDistanceSquared(const Object *obj, const Object *otherObj, DistanceCalculationType dc, Coord3D *vec = NULL);
-	Real getDistanceSquared(const Object *obj, const Coord3D *pos, DistanceCalculationType dc, Coord3D *vec = NULL);
+	Real getDistanceSquared(const Object *obj, const Object *otherObj, DistanceCalculationType dc, Coord3D *vec = nullptr);
+	Real getDistanceSquared(const Object *obj, const Coord3D *pos, DistanceCalculationType dc, Coord3D *vec = nullptr);
 
 	// just like 'getDistanceSquared', but return the dist-sqr where the obj is at goalPos.
-	Real getGoalDistanceSquared(const Object *obj, const Coord3D *goalPos, const Object *otherObj, DistanceCalculationType dc, Coord3D *vec = NULL);
-	Real getGoalDistanceSquared(const Object *obj, const Coord3D *goalPos, const Coord3D *otherPos, DistanceCalculationType dc, Coord3D *vec = NULL);
+	Real getGoalDistanceSquared(const Object *obj, const Coord3D *goalPos, const Object *otherObj, DistanceCalculationType dc, Coord3D *vec = nullptr);
+	Real getGoalDistanceSquared(const Object *obj, const Coord3D *goalPos, const Coord3D *otherPos, DistanceCalculationType dc, Coord3D *vec = nullptr);
 
 #ifdef PM_CACHE_TERRAIN_HEIGHT
 	// note that the 2d positions aren't guaranteed to be the actual spot within the cell where the terrain
@@ -1415,7 +1409,7 @@ public:
 		const Object *obj,
 		Real maxDist,
 		DistanceCalculationType dc,
-		PartitionFilter **filters = NULL,
+		PartitionFilter **filters = nullptr,
 		IterOrderType order = ITER_FASTEST
 	);
 
@@ -1423,11 +1417,11 @@ public:
 		const Coord3D *pos,
 		Real maxDist,
 		DistanceCalculationType dc,
-		PartitionFilter **filters = NULL,
+		PartitionFilter **filters = nullptr,
 		IterOrderType order = ITER_FASTEST
 	);
 
-	SimpleObjectIterator *iterateAllObjects(PartitionFilter **filters = NULL);
+	SimpleObjectIterator *iterateAllObjects(PartitionFilter **filters = nullptr);
 
 	/**
 		return the Objects that would (or would not) collide with the given
@@ -1469,19 +1463,19 @@ public:
 	*/
 	Bool isClearLineOfSightTerrain(const Object* obj, const Coord3D& objPos, const Object* other, const Coord3D& otherPos);
 
-	inline Bool isInListDirtyModules(PartitionData* o) const
+	Bool isInListDirtyModules(PartitionData* o) const
 	{
 		return o->isInListDirtyModules(&m_dirtyModules);
 	}
-	inline void prependToDirtyModules(PartitionData* o)
+	void prependToDirtyModules(PartitionData* o)
 	{
 		o->prependToDirtyModules(&m_dirtyModules);
 	}
-	inline void removeFromDirtyModules(PartitionData* o)
+	void removeFromDirtyModules(PartitionData* o)
 	{
 		o->removeFromDirtyModules(&m_dirtyModules);
 	}
-	inline void removeAllDirtyModules()
+	void removeAllDirtyModules()
 	{
 		while (m_dirtyModules)
 		{
@@ -1537,7 +1531,7 @@ public:
 };
 
 // -----------------------------------------------------------------------------
-inline void PartitionManager::worldToCell(Real wx, Real wy, Int *cx, Int *cy)
+inline void PartitionManager::worldToCell(Real wx, Real wy, Int *cx, Int *cy) const
 {
 	*cx = REAL_TO_INT_FLOOR((wx - m_worldExtents.lo.x) * m_cellSizeInv);
 	*cy = REAL_TO_INT_FLOOR((wy - m_worldExtents.lo.y) * m_cellSizeInv);
@@ -1552,13 +1546,13 @@ inline Int PartitionManager::worldToCellDist(Real w)
 //-----------------------------------------------------------------------------
 inline PartitionCell *PartitionManager::getCellAt(Int x, Int y)
 {
-	return (x < 0 || y < 0 || x >= m_cellCountX || y >= m_cellCountY) ? NULL : &m_cells[y * m_cellCountX + x];
+	return (x < 0 || y < 0 || x >= m_cellCountX || y >= m_cellCountY) ? nullptr : &m_cells[y * m_cellCountX + x];
 }
 
 //-----------------------------------------------------------------------------
 inline const PartitionCell *PartitionManager::getCellAt(Int x, Int y) const
 {
-	return (x < 0 || y < 0 || x >= m_cellCountX || y >= m_cellCountY) ? NULL : &m_cells[y * m_cellCountX + x];
+	return (x < 0 || y < 0 || x >= m_cellCountX || y >= m_cellCountY) ? nullptr : &m_cells[y * m_cellCountX + x];
 }
 
 //-----------------------------------------------------------------------------
@@ -1598,6 +1592,3 @@ public:
 //           Externals
 //-----------------------------------------------------------------------------
 extern PartitionManager *ThePartitionManager;  ///< object manager singleton
-
-#endif // __PARTITIONMANAGER_H_
-

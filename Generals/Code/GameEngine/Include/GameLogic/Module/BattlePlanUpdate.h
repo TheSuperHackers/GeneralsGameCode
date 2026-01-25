@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __BATTLE_PLAN_UPDATE_H_
-#define __BATTLE_PLAN_UPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/KindOf.h"
 #include "GameLogic/Module/SpecialPowerUpdateModule.h"
@@ -145,7 +142,7 @@ public:
 	virtual Bool doesSpecialPowerHaveOverridableDestinationActive() const { return false; } //Is it active now?
 	virtual Bool doesSpecialPowerHaveOverridableDestination() const { return false; }	//Does it have it, even if it's not active?
 	virtual void setSpecialPowerOverridableDestination( const Coord3D *loc ) {}
-	virtual Bool isPowerCurrentlyInUse( const CommandButton *command = NULL ) const;
+	virtual Bool isPowerCurrentlyInUse( const CommandButton *command = nullptr ) const;
 
 	//Returns the currently active battle plan -- unpacked and ready... returns PLANSTATUS_NONE if in transition!
 	BattlePlanStatus getActiveBattlePlan() const;
@@ -190,7 +187,3 @@ protected:
 	ObjectID m_visionObjectID;
 
 };
-
-
-#endif
-

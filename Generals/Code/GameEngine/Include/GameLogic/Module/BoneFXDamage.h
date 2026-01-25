@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __BONEFXDAMAGE_H_
-#define __BONEFXDAMAGE_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 
 #include "GameLogic/Module/DamageModule.h"
@@ -66,5 +63,3 @@ protected:
 	virtual void onObjectCreated();
 
 };
-
-#endif  // end __BONEFXDAMAGE_H_

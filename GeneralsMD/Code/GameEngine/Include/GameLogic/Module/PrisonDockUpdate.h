@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __PRISON_DOCK_UPDATE_H_
-#define __PRISON_DOCK_UPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/GameMemory.h"
 #include "GameLogic/Module/DockUpdate.h"
@@ -52,12 +49,10 @@ public:
 	// virtual destructor prototype provided by MemoryPoolObject base class
 	virtual DockUpdateInterface* getDockUpdateInterface() { return this; }
 
-	virtual Bool action( Object *docker, Object *drone = NULL );	///< for me this means do some Prison
+	virtual Bool action( Object *docker, Object *drone = nullptr );	///< for me this means do some Prison
 
 protected:
 
 };
 
 #endif
-
-#endif  // end __PRISON_DOCK_UPDATE_H_

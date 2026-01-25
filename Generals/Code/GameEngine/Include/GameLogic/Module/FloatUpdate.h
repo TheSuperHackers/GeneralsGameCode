@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __FLOATUPDATE_H_
-#define __FLOATUPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpdateModule.h"
 
@@ -74,5 +71,3 @@ protected:
 	Bool m_enabled;			///< enabled
 
 };
-
-#endif  // end __FLOATUPDATE_H_

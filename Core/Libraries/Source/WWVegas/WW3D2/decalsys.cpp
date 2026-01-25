@@ -174,12 +174,12 @@ DecalGeneratorClass::DecalGeneratorClass(uint32 id,DecalSystemClass * system) :
 	System(system),
 	BackfaceVal(0.0f),
 	ApplyToTranslucentMeshes(false),
-	Material(NULL)
+	Material(nullptr)
 {
 	Material = NEW_REF(MaterialPassClass,());
 
-	WWASSERT(System != NULL);
-	WWASSERT(Material != NULL);
+	WWASSERT(System != nullptr);
+	WWASSERT(Material != nullptr);
 }
 
 
@@ -277,7 +277,7 @@ void DecalGeneratorClass::Set_Mesh_Transform(const Matrix3D & mesh_transform)
 	if (WW3D::Is_Texturing_Enabled()) {
 		float texsize = 64.0f;
 		TextureClass * tex = Material->Peek_Texture();
-		WWASSERT(tex != NULL);
+		WWASSERT(tex != nullptr);
 		if (tex) {
 //			SurfaceClass::SurfaceDescription surface_desc;
 //			tex->Get_Level_Description(surface_desc);
@@ -295,7 +295,7 @@ void DecalGeneratorClass::Set_Mesh_Transform(const Matrix3D & mesh_transform)
 */
 
 MultiFixedPoolDecalSystemClass::MultiFixedPoolDecalSystemClass(uint32 num_pools, const uint32 *pool_sizes) :
-	Pools(0),
+	Pools(nullptr),
 	PoolCount(num_pools),
 	Generator_PoolID(0),
 	Generator_SlotID(0)
@@ -312,7 +312,7 @@ MultiFixedPoolDecalSystemClass::MultiFixedPoolDecalSystemClass(uint32 num_pools,
 }
 
 MultiFixedPoolDecalSystemClass::MultiFixedPoolDecalSystemClass(const MultiFixedPoolDecalSystemClass & that) :
-	Pools(0),
+	Pools(nullptr),
 	PoolCount(that.PoolCount),
 	Generator_PoolID(that.Generator_PoolID),
 	Generator_SlotID(that.Generator_SlotID)
@@ -330,7 +330,7 @@ MultiFixedPoolDecalSystemClass::MultiFixedPoolDecalSystemClass(const MultiFixedP
 MultiFixedPoolDecalSystemClass::~MultiFixedPoolDecalSystemClass(void)
 {
 	delete [] Pools;
-	Pools = NULL;
+	Pools = nullptr;
 }
 
 // This clears the slot in addition to locking the generator, thus preventing any decal id
@@ -461,7 +461,7 @@ void MultiFixedPoolDecalSystemClass::LogicalDecalClass::Clear(uint32 decal_id)
 */
 
 MultiFixedPoolDecalSystemClass::LogicalDecalPoolClass::LogicalDecalPoolClass(void) :
-	Array(NULL),
+	Array(nullptr),
 	Size(0)
 {
 }
@@ -469,13 +469,13 @@ MultiFixedPoolDecalSystemClass::LogicalDecalPoolClass::LogicalDecalPoolClass(voi
 MultiFixedPoolDecalSystemClass::LogicalDecalPoolClass::~LogicalDecalPoolClass(void)
 {
 	delete [] Array;
-	Array = NULL;
+	Array = nullptr;
 }
 
 void MultiFixedPoolDecalSystemClass::LogicalDecalPoolClass::Initialize(uint32 size)
 {
 	delete [] Array;
-	Array = NULL;
+	Array = nullptr;
 
 	Size = size;
 	assert(Size);

@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __SCRIPTCONDITIONS_H_
-#define __SCRIPTCONDITIONS_H_
-
 class Condition;
 class ObjectTypes;
 class Parameter;
@@ -188,6 +185,3 @@ protected:
 
 
 };
-
-
-#endif  // end __SCRIPTCONDITIONS_H_

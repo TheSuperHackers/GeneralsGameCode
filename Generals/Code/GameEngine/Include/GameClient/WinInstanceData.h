@@ -45,9 +45,6 @@
 
 #pragma once
 
-#ifndef __WININSTANCEDATA_H_
-#define __WININSTANCEDATA_H_
-
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
@@ -119,7 +116,7 @@ public:
 	Int getTextLength( void );						///< get number of chars in instance text
 	Int getTooltipTextLength( void );						///< get number of chars in tooltip text
 	UnsignedInt getStyle( void );				///< return window style
-	UnsignedInt getStatus( void );			///< return widnow status
+	UnsignedInt getStatus( void );			///< return window status
 	UnsignedInt getState( void );				///< return window state
 	GameWindow *getOwner( void );				///< return window owner
 	GameFont	 *getFont( void );				///< return window font
@@ -168,7 +165,7 @@ public:
 	DisplayString *m_text;				 ///< generic text for any window to display
 	DisplayString *m_tooltip;		 ///< tooltip for display
 
-	//NOTE Video Buffer cannot be transfered to another window.
+	//NOTE Video Buffer cannot be transferred to another window.
 	VideoBuffer *m_videoBuffer;			///< Each window can be made to play a video in it.
 
 // NOTE if you add data to this make sure you update winSetInstanceData()
@@ -216,6 +213,3 @@ inline Int WinInstanceData::getTooltipTextLength( void )
 }
 
 // EXTERNALS //////////////////////////////////////////////////////////////////
-
-#endif // __WININSTANCEDATA_H_
-

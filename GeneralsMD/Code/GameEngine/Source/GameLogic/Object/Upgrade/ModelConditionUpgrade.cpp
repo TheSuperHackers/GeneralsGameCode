@@ -26,7 +26,7 @@
 // Author: Graham Smallwood, July 2003
 // Desc:	 UpgradeModule that sets a modelcondition flag
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "GameLogic/Module/ModelConditionUpgrade.h"
 
@@ -48,8 +48,8 @@ void ModelConditionUpgradeModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "ConditionFlag",	ModelConditionFlags::parseSingleBitFromINI,	NULL, offsetof( ModelConditionUpgradeModuleData, m_conditionFlag ) },
-		{ 0, 0, 0, 0 }
+		{ "ConditionFlag",	ModelConditionFlags::parseSingleBitFromINI,	nullptr, offsetof( ModelConditionUpgradeModuleData, m_conditionFlag ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   p.add(dataFieldParse);
 }

@@ -28,16 +28,12 @@
 
 #pragma once
 
-#ifndef _AI_H_
-#define _AI_H_
-
 #include "Common/Snapshot.h"
 #include "Common/SubsystemInterface.h"
 #include "Common/GameMemory.h"
 #include "Common/GameType.h"
 #include "GameLogic/Damage.h"
 #include "Common/STLTypedefs.h"
-#include "refcount.h"
 #include "ref_ptr.h"
 
 class AIGroup;
@@ -104,7 +100,7 @@ class AISideInfo : public MemoryPoolObject
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AISideInfo, "AISideInfo")
 public:
-	AISideInfo( void ) : m_easy(0), m_normal(1), m_hard(2), m_next(NULL)
+	AISideInfo( void ) : m_easy(0), m_normal(1), m_hard(2), m_next(nullptr)
 	{
 		m_side.clear();
 		m_baseDefenseStructure1.clear();
@@ -217,7 +213,7 @@ public:
 	Int	 m_minVehiclesForGroup;		// We need at least this many vehicles to do it.
 	Real m_minDistanceForGroup;		// We need to move at least this far to do it.
 	Real m_distanceRequiresGroup; // If we are moving this far or farther, force group moving.
-	Real m_minClumpDensity;				// What density constitues a clump.  .5 means units occupying 1/2 of their bounding area.
+	Real m_minClumpDensity;				// What density constitutes a clump.  .5 means units occupying 1/2 of their bounding area.
 
 	Int	 m_infantryPathfindDiameter; // Diameter of path in cells for infantry.
 	Int  m_vehiclePathfindDiameter;  // Diameter of path in cells for vehicles.
@@ -257,7 +253,7 @@ public:
 	virtual void reset( void );						///< reset the AI system to prepare for a new map
 	virtual void update( void );					///< do one frame of AI computation
 
-	inline Pathfinder *pathfinder( void ) { return m_pathfinder; }	///< public access to the pathfind system
+	Pathfinder *pathfinder( void ) { return m_pathfinder; }	///< public access to the pathfind system
 	enum
 	{
 		CAN_SEE														=	1 << 0,
@@ -268,7 +264,7 @@ public:
 		UNFOGGED													= 1 << 5
 	};
 	Object *findClosestEnemy( const Object *me, Real range, UnsignedInt qualifiers,
-		const AttackPriorityInfo *info=NULL, PartitionFilter *optionalFilter=NULL);
+		const AttackPriorityInfo *info=nullptr, PartitionFilter *optionalFilter=nullptr);
 
 	Object *findClosestRepulsor( const Object *me, Real range);
 
@@ -299,7 +295,7 @@ public:
 	static void parseSkillSet( INI* ini, void *instance, void *store, const void *userData );					///< Parse the image part of the INI file
 	static void parseScience( INI* ini, void *instance, void *store, const void *userData );					///< Parse the image part of the INI file
 
-	inline UnsignedInt getNextGroupID( void ) { return ++m_nextGroupID; }
+	UnsignedInt getNextGroupID( void ) { return ++m_nextGroupID; }
 
 protected:
 	Pathfinder *m_pathfinder;							///< the pathfinding system
@@ -345,7 +341,7 @@ static const char *const TheCommandSourceMaskNames[] =
 	"FROM_DOZER", //don't use this
 	"DEFAULT_SWITCH_WEAPON", //unit will pick this weapon when normal logic fails.
 
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(TheCommandSourceMaskNames) == COMMAND_SOURCE_TYPE_COUNT + 1, "Incorrect array size");
 #endif
@@ -472,112 +468,112 @@ public:
 
 	virtual void aiDoCommand(const AICommandParms* parms) = 0;
 
-	inline void aiMoveToPosition( const Coord3D *pos, CommandSourceType cmdSource )
+	void aiMoveToPosition( const Coord3D *pos, CommandSourceType cmdSource )
 	{
 		AICommandParms parms(AICMD_MOVE_TO_POSITION, cmdSource);
 		parms.m_pos = *pos;
 		aiDoCommand(&parms);
 	}
 
-	inline void aiMoveToPositionEvenIfSleeping( const Coord3D *pos, CommandSourceType cmdSource )
+	void aiMoveToPositionEvenIfSleeping( const Coord3D *pos, CommandSourceType cmdSource )
 	{
 		AICommandParms parms(AICMD_MOVE_TO_POSITION_EVEN_IF_SLEEPING, cmdSource);
 		parms.m_pos = *pos;
 		aiDoCommand(&parms);
 	}
 
-	inline void aiMoveToObject( Object *obj, CommandSourceType cmdSource )
+	void aiMoveToObject( Object *obj, CommandSourceType cmdSource )
 	{
 		AICommandParms parms(AICMD_MOVE_TO_OBJECT, cmdSource);
 		parms.m_obj = obj;
 		aiDoCommand(&parms);
 	}
 
-	inline void aiTightenToPosition( const Coord3D *pos, CommandSourceType cmdSource )
+	void aiTightenToPosition( const Coord3D *pos, CommandSourceType cmdSource )
 	{
 		AICommandParms parms(AICMD_TIGHTEN_TO_POSITION, cmdSource);
 		parms.m_pos = *pos;
 		aiDoCommand(&parms);
 	}
 
-	inline void aiMoveToAndEvacuate( const Coord3D *pos, CommandSourceType cmdSource )
+	void aiMoveToAndEvacuate( const Coord3D *pos, CommandSourceType cmdSource )
 	{
 		AICommandParms parms(AICMD_MOVE_TO_POSITION_AND_EVACUATE, cmdSource);
 		parms.m_pos = *pos;
 		aiDoCommand(&parms);
 	}
 
-	inline void aiMoveToAndEvacuateAndExit( const Coord3D *pos, CommandSourceType cmdSource )
+	void aiMoveToAndEvacuateAndExit( const Coord3D *pos, CommandSourceType cmdSource )
 	{
 		AICommandParms parms(AICMD_MOVE_TO_POSITION_AND_EVACUATE_AND_EXIT, cmdSource);
 		parms.m_pos = *pos;
 		aiDoCommand(&parms);
 	}
 
-	inline void aiIdle(CommandSourceType cmdSource)
+	void aiIdle(CommandSourceType cmdSource)
 	{
 		AICommandParms parms(AICMD_IDLE, cmdSource);
 		aiDoCommand(&parms);
 	}
 
-	inline void aiBusy(CommandSourceType cmdSource)
+	void aiBusy(CommandSourceType cmdSource)
 	{
 		AICommandParms parms(AICMD_BUSY, cmdSource);
 		aiDoCommand(&parms);
 	}
 
-	inline void aiFollowWaypointPath( const Waypoint *way, CommandSourceType cmdSource )
+	void aiFollowWaypointPath( const Waypoint *way, CommandSourceType cmdSource )
 	{
 		AICommandParms parms(AICMD_FOLLOW_WAYPOINT_PATH, cmdSource);
 		parms.m_waypoint = way;
 		aiDoCommand(&parms);
 	}
 
-	inline void aiFollowWaypointPathExact( const Waypoint *way, CommandSourceType cmdSource )
+	void aiFollowWaypointPathExact( const Waypoint *way, CommandSourceType cmdSource )
 	{
 		AICommandParms parms(AICMD_FOLLOW_WAYPOINT_PATH_EXACT, cmdSource);
 		parms.m_waypoint = way;
 		aiDoCommand(&parms);
 	}
 
-	inline void aiFollowWaypointPathAsTeam( const Waypoint *way, CommandSourceType cmdSource )
+	void aiFollowWaypointPathAsTeam( const Waypoint *way, CommandSourceType cmdSource )
 	{
 		AICommandParms parms(AICMD_FOLLOW_WAYPOINT_PATH_AS_TEAM, cmdSource);
 		parms.m_waypoint = way;
 		aiDoCommand(&parms);
 	}
 
-	inline void aiFollowWaypointPathExactAsTeam( const Waypoint *way, CommandSourceType cmdSource )
+	void aiFollowWaypointPathExactAsTeam( const Waypoint *way, CommandSourceType cmdSource )
 	{
 		AICommandParms parms(AICMD_FOLLOW_WAYPOINT_PATH_AS_TEAM_EXACT, cmdSource);
 		parms.m_waypoint = way;
 		aiDoCommand(&parms);
 	}
 
-	inline void aiFollowExitProductionPath( const std::vector<Coord3D>* path, Object *ignoreObject, CommandSourceType cmdSource )
+	void aiFollowExitProductionPath( std::vector<Coord3D>* path, Object *ignoreObject, CommandSourceType cmdSource )
 	{
 		AICommandParms parms(AICMD_FOLLOW_EXITPRODUCTION_PATH, cmdSource);
-		parms.m_coords = *path;
+		stl::move_or_swap(parms.m_coords, *path);
 		parms.m_obj = ignoreObject;
 		aiDoCommand(&parms);
 	}
 
-	inline void aiFollowPath( const std::vector<Coord3D>* path, Object *ignoreObject, CommandSourceType cmdSource )
+	void aiFollowPath( std::vector<Coord3D>* path, Object *ignoreObject, CommandSourceType cmdSource )
 	{
 		AICommandParms parms(AICMD_FOLLOW_PATH, cmdSource);
-		parms.m_coords = *path;
+		stl::move_or_swap(parms.m_coords, *path);
 		parms.m_obj = ignoreObject;
 		aiDoCommand(&parms);
 	}
 
-	inline void aiFollowPathAppend( const Coord3D* pos, CommandSourceType cmdSource )
+	void aiFollowPathAppend( const Coord3D* pos, CommandSourceType cmdSource )
 	{
 		AICommandParms parms(AICMD_FOLLOW_PATH_APPEND, cmdSource);
 		parms.m_pos = *pos;
 		aiDoCommand(&parms);
 	}
 
-	inline void aiAttackObject( Object *victim, Int maxShotsToFire, CommandSourceType cmdSource )
+	void aiAttackObject( Object *victim, Int maxShotsToFire, CommandSourceType cmdSource )
 	{
 		AICommandParms parms(AICMD_ATTACK_OBJECT, cmdSource);
 		parms.m_obj = victim;
@@ -585,7 +581,7 @@ public:
 		aiDoCommand(&parms);
 	}
 
-	inline void aiForceAttackObject( Object *victim, Int maxShotsToFire, CommandSourceType cmdSource )
+	void aiForceAttackObject( Object *victim, Int maxShotsToFire, CommandSourceType cmdSource )
 	{
 		AICommandParms parms(AICMD_FORCE_ATTACK_OBJECT, cmdSource);
 		parms.m_obj = victim;
@@ -593,7 +589,7 @@ public:
 		aiDoCommand(&parms);
 	}
 
-	inline void aiGuardRetaliate( Object *victim, const Coord3D *pos, Int maxShotsToFire, CommandSourceType cmdSource )
+	void aiGuardRetaliate( Object *victim, const Coord3D *pos, Int maxShotsToFire, CommandSourceType cmdSource )
 	{
 		AICommandParms parms(AICMD_GUARD_RETALIATE, cmdSource);
 		parms.m_obj = victim;
@@ -602,7 +598,7 @@ public:
 		aiDoCommand(&parms);
 	}
 
-	inline void aiAttackTeam( const Team *team, Int maxShotsToFire, CommandSourceType cmdSource )
+	void aiAttackTeam( const Team *team, Int maxShotsToFire, CommandSourceType cmdSource )
 	{
 		AICommandParms parms(AICMD_ATTACK_TEAM, cmdSource);
 		parms.m_team = team;
@@ -610,7 +606,7 @@ public:
 		aiDoCommand(&parms);
 	}
 
-	inline void aiAttackPosition( const Coord3D *pos, Int maxShotsToFire, CommandSourceType cmdSource )
+	void aiAttackPosition( const Coord3D *pos, Int maxShotsToFire, CommandSourceType cmdSource )
 	{
 		AICommandParms parms(AICMD_ATTACK_POSITION, cmdSource);
 		parms.m_pos = *pos;
@@ -618,7 +614,7 @@ public:
 		aiDoCommand(&parms);
 	}
 
-	inline void aiAttackMoveToPosition( const Coord3D *pos, Int maxShotsToFire, CommandSourceType cmdSource )
+	void aiAttackMoveToPosition( const Coord3D *pos, Int maxShotsToFire, CommandSourceType cmdSource )
 	{
 		AICommandParms parms(AICMD_ATTACKMOVE_TO_POSITION, cmdSource);
 		parms.m_pos = *pos;
@@ -626,7 +622,7 @@ public:
 		aiDoCommand(&parms);
 	}
 
-	inline void aiAttackFollowWaypointPath( const Waypoint *way, Int maxShotsToFire, CommandSourceType cmdSource )
+	void aiAttackFollowWaypointPath( const Waypoint *way, Int maxShotsToFire, CommandSourceType cmdSource )
 	{
 		AICommandParms parms(AICMD_ATTACKFOLLOW_WAYPOINT_PATH, cmdSource);
 		parms.m_waypoint = way;
@@ -634,7 +630,7 @@ public:
 		aiDoCommand(&parms);
 	}
 
-	inline void aiAttackFollowWaypointPathAsTeam( const Waypoint *way, Int maxShotsToFire, CommandSourceType cmdSource )
+	void aiAttackFollowWaypointPathAsTeam( const Waypoint *way, Int maxShotsToFire, CommandSourceType cmdSource )
 	{
 		AICommandParms parms(AICMD_ATTACKFOLLOW_WAYPOINT_PATH_AS_TEAM, cmdSource);
 		parms.m_waypoint = way;
@@ -642,20 +638,20 @@ public:
 		aiDoCommand(&parms);
 	}
 
-	inline void aiHunt( CommandSourceType cmdSource )
+	void aiHunt( CommandSourceType cmdSource )
 	{
 		AICommandParms parms(AICMD_HUNT, cmdSource);
 		aiDoCommand(&parms);
 	}
 
-	inline void aiAttackArea( const PolygonTrigger *areaToGuard, CommandSourceType cmdSource )
+	void aiAttackArea( const PolygonTrigger *areaToGuard, CommandSourceType cmdSource )
 	{
 		AICommandParms parms(AICMD_ATTACK_AREA, cmdSource);
 		parms.m_polygon = areaToGuard;
 		aiDoCommand(&parms);
 	}
 
-	inline void aiRepair( Object *obj, CommandSourceType cmdSource )
+	void aiRepair( Object *obj, CommandSourceType cmdSource )
 	{
 		AICommandParms parms(AICMD_REPAIR, cmdSource);
 		parms.m_obj = obj;
@@ -680,56 +676,56 @@ public:
 	}
 #endif
 
-	inline void aiResumeConstruction( Object *obj, CommandSourceType cmdSource )
+	void aiResumeConstruction( Object *obj, CommandSourceType cmdSource )
 	{
 		AICommandParms parms(AICMD_RESUME_CONSTRUCTION, cmdSource);
 		parms.m_obj = obj;
 		aiDoCommand(&parms);
 	}
 
-	inline void aiGetHealed( Object *healDepot, CommandSourceType cmdSource )
+	void aiGetHealed( Object *healDepot, CommandSourceType cmdSource )
 	{
 		AICommandParms parms(AICMD_GET_HEALED, cmdSource);
 		parms.m_obj = healDepot;
 		aiDoCommand(&parms);
 	}
 
-	inline void aiGetRepaired( Object *repairDepot, CommandSourceType cmdSource )
+	void aiGetRepaired( Object *repairDepot, CommandSourceType cmdSource )
 	{
 		AICommandParms parms(AICMD_GET_REPAIRED, cmdSource);
 		parms.m_obj = repairDepot;
 		aiDoCommand(&parms);
 	}
 
-	inline void aiEnter( Object *obj, CommandSourceType cmdSource )
+	void aiEnter( Object *obj, CommandSourceType cmdSource )
 	{
 		AICommandParms parms(AICMD_ENTER, cmdSource);
 		parms.m_obj = obj;
 		aiDoCommand(&parms);
 	}
 
-	inline void aiDock( Object *obj, CommandSourceType cmdSource )
+	void aiDock( Object *obj, CommandSourceType cmdSource )
 	{
 		AICommandParms parms(AICMD_DOCK, cmdSource);
 		parms.m_obj = obj;
 		aiDoCommand(&parms);
 	}
 
-	inline void aiExit( Object *objectToExit, CommandSourceType cmdSource )
+	void aiExit( Object *objectToExit, CommandSourceType cmdSource )
 	{
 		AICommandParms parms(AICMD_EXIT, cmdSource);
 		parms.m_obj = objectToExit;
 		aiDoCommand(&parms);
 	}
 
-	inline void aiExitInstantly( Object *objectToExit, CommandSourceType cmdSource )
+	void aiExitInstantly( Object *objectToExit, CommandSourceType cmdSource )
 	{
 		AICommandParms parms(AICMD_EXIT_INSTANTLY, cmdSource);
 		parms.m_obj = objectToExit;
 		aiDoCommand(&parms);
 	}
 
-	inline void aiEvacuate( Bool exposeStealthUnits, CommandSourceType cmdSource )
+	void aiEvacuate( Bool exposeStealthUnits, CommandSourceType cmdSource )
 	{
 		AICommandParms parms(AICMD_EVACUATE, cmdSource);
 		if( exposeStealthUnits )
@@ -739,7 +735,7 @@ public:
 		aiDoCommand(&parms);
 	}
 
-	inline void aiEvacuateInstantly( Bool exposeStealthUnits, CommandSourceType cmdSource )
+	void aiEvacuateInstantly( Bool exposeStealthUnits, CommandSourceType cmdSource )
 	{
 		AICommandParms parms(AICMD_EVACUATE_INSTANTLY, cmdSource);
 		if( exposeStealthUnits )
@@ -749,20 +745,20 @@ public:
 		aiDoCommand(&parms);
 	}
 
-	inline void aiExecuteRailedTransport( CommandSourceType cmdSource )
+	void aiExecuteRailedTransport( CommandSourceType cmdSource )
 	{
 		AICommandParms parms( AICMD_EXECUTE_RAILED_TRANSPORT, cmdSource );
 		aiDoCommand( &parms );
 	}
 
-	inline void aiGoProne( const DamageInfo *damageInfo, CommandSourceType cmdSource )
+	void aiGoProne( const DamageInfo *damageInfo, CommandSourceType cmdSource )
 	{
 		AICommandParms parms(AICMD_GO_PRONE, cmdSource);
 		parms.m_damage = *damageInfo;
 		aiDoCommand(&parms);
 	}
 
-	inline void aiGuardPosition( const Coord3D *pos, GuardMode guardMode, CommandSourceType cmdSource )
+	void aiGuardPosition( const Coord3D *pos, GuardMode guardMode, CommandSourceType cmdSource )
 	{
 		AICommandParms parms(AICMD_GUARD_POSITION, cmdSource);
 		parms.m_pos = *pos;
@@ -770,7 +766,7 @@ public:
 		aiDoCommand(&parms);
 	}
 
-	inline void aiGuardObject( Object *objToGuard, GuardMode guardMode, CommandSourceType cmdSource )
+	void aiGuardObject( Object *objToGuard, GuardMode guardMode, CommandSourceType cmdSource )
 	{
 		AICommandParms parms(AICMD_GUARD_OBJECT, cmdSource);
 		parms.m_obj = objToGuard;
@@ -778,7 +774,7 @@ public:
 		aiDoCommand(&parms);
 	}
 
-	inline void aiGuardArea( const PolygonTrigger *areaToGuard, GuardMode guardMode, CommandSourceType cmdSource )
+	void aiGuardArea( const PolygonTrigger *areaToGuard, GuardMode guardMode, CommandSourceType cmdSource )
 	{
 		AICommandParms parms(AICMD_GUARD_AREA, cmdSource);
 		parms.m_polygon = areaToGuard;
@@ -786,34 +782,34 @@ public:
 		aiDoCommand(&parms);
 	}
 
-	inline void aiGuardTunnelNetwork( GuardMode guardMode, CommandSourceType cmdSource )
+	void aiGuardTunnelNetwork( GuardMode guardMode, CommandSourceType cmdSource )
 	{
 		AICommandParms parms(AICMD_GUARD_TUNNEL_NETWORK, cmdSource);
 		parms.m_intValue = guardMode;
 		aiDoCommand(&parms);
 	}
 
-	inline void aiHackInternet( CommandSourceType cmdSource )
+	void aiHackInternet( CommandSourceType cmdSource )
 	{
 		AICommandParms parms(AICMD_HACK_INTERNET, cmdSource);
 		aiDoCommand(&parms);
 	}
 
-	inline void aiFaceObject( Object *target, CommandSourceType cmdSource )
+	void aiFaceObject( Object *target, CommandSourceType cmdSource )
 	{
 		AICommandParms parms(AICMD_FACE_OBJECT, cmdSource);
 		parms.m_obj = target;
 		aiDoCommand(&parms);
 	}
 
-	inline void aiFacePosition( const Coord3D *pos, CommandSourceType cmdSource )
+	void aiFacePosition( const Coord3D *pos, CommandSourceType cmdSource )
 	{
 		AICommandParms parms(AICMD_FACE_POSITION, cmdSource);
 		parms.m_pos = *pos;
 		aiDoCommand(&parms);
 	}
 
-	inline void aiRappelInto( Object *target, const Coord3D& pos, CommandSourceType cmdSource )
+	void aiRappelInto( Object *target, const Coord3D& pos, CommandSourceType cmdSource )
 	{
 		AICommandParms parms(AICMD_RAPPEL_INTO, cmdSource);
 		parms.m_obj = target;
@@ -821,7 +817,7 @@ public:
 		aiDoCommand(&parms);
 	}
 
-	inline void aiCombatDrop( Object *target, const Coord3D& pos, CommandSourceType cmdSource )
+	void aiCombatDrop( Object *target, const Coord3D& pos, CommandSourceType cmdSource )
 	{
 		AICommandParms parms(AICMD_COMBATDROP, cmdSource);
 		parms.m_obj = target;
@@ -829,14 +825,14 @@ public:
 		aiDoCommand(&parms);
 	}
 
-	inline void aiDoCommandButton( const CommandButton *commandButton, CommandSourceType cmdSource )
+	void aiDoCommandButton( const CommandButton *commandButton, CommandSourceType cmdSource )
 	{
 		AICommandParms parms(AICMD_COMMANDBUTTON, cmdSource);
 		parms.m_commandButton = commandButton;
 		aiDoCommand(&parms);
 	}
 
-	inline void aiDoCommandButtonAtPosition( const CommandButton *commandButton, const Coord3D *pos, CommandSourceType cmdSource )
+	void aiDoCommandButtonAtPosition( const CommandButton *commandButton, const Coord3D *pos, CommandSourceType cmdSource )
 	{
 		AICommandParms parms(AICMD_COMMANDBUTTON_POS, cmdSource);
 		parms.m_pos = *pos;
@@ -844,7 +840,7 @@ public:
 		aiDoCommand(&parms);
 	}
 
-	inline void aiDoCommandButtonAtObject( const CommandButton *commandButton, Object *obj, CommandSourceType cmdSource )
+	void aiDoCommandButtonAtObject( const CommandButton *commandButton, Object *obj, CommandSourceType cmdSource )
 	{
 		AICommandParms parms(AICMD_COMMANDBUTTON_OBJ, cmdSource);
 		parms.m_obj = obj;
@@ -852,27 +848,27 @@ public:
 		aiDoCommand(&parms);
 	}
 
-	inline void aiMoveAwayFromUnit( Object *obj, CommandSourceType cmdSource )
+	void aiMoveAwayFromUnit( Object *obj, CommandSourceType cmdSource )
 	{
 		AICommandParms parms(AICMD_MOVE_AWAY_FROM_UNIT, cmdSource);
 		parms.m_obj = obj;
 		aiDoCommand(&parms);
 	}
 
-	inline void aiWander( const Waypoint *way, CommandSourceType cmdSource )
+	void aiWander( const Waypoint *way, CommandSourceType cmdSource )
 	{
 		AICommandParms parms(AICMD_WANDER, cmdSource);
 		parms.m_waypoint = way;
 		aiDoCommand(&parms);
 	}
 
-	inline void aiWanderInPlace(CommandSourceType cmdSource)
+	void aiWanderInPlace(CommandSourceType cmdSource)
 	{
 		AICommandParms parms(AICMD_WANDER_IN_PLACE, cmdSource);
 		aiDoCommand(&parms);
 	}
 
-	inline void aiPanic( const Waypoint *way, CommandSourceType cmdSource )
+	void aiPanic( const Waypoint *way, CommandSourceType cmdSource )
 	{
 		AICommandParms parms(AICMD_PANIC, cmdSource);
 		parms.m_waypoint = way;
@@ -1055,6 +1051,3 @@ private:
 
 	mutable VecObjectID	m_lastRequestedIDList;			///< this is used so we can return by reference, saving a copy
 };
-
-
-#endif // _AI_H_

@@ -41,15 +41,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-
-#ifndef __EDITABLE_H
-#define __EDITABLE_H
-
 
 #include "always.h"
 #include "persist.h"
@@ -95,7 +87,7 @@ inline ParameterClass *
 EditableClass::Lock_Parameter (int i)
 {
 	WWASSERT (0);
-	return NULL;
+	return nullptr;
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -331,9 +323,3 @@ EditableClass::Unlock_Parameter (int i)
 	#define GENERIC_DEFID_PARAM(_class, data, root_class_id)
 
 #endif //PARAM_EDITING_ON
-
-
-#endif //__EDITABLE_H
-
-
-

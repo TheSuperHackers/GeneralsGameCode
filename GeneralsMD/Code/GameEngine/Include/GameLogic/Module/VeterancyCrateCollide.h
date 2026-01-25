@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef VETERANCY_CRATE_COLLIDE_H_
-#define VETERANCY_CRATE_COLLIDE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/Module.h"
 #include "GameLogic/Module/CrateCollide.h"
@@ -60,9 +57,9 @@ public:
 
 		static const FieldParse dataFieldParse[] =
 		{
-			{ "EffectRange",	INI::parseUnsignedInt,	NULL, offsetof( VeterancyCrateCollideModuleData, m_rangeOfEffect ) },
-			{ "AddsOwnerVeterancy",	INI::parseBool,	NULL, offsetof( VeterancyCrateCollideModuleData, m_addsOwnerVeterancy ) },
-			{ "IsPilot", INI::parseBool, NULL, offsetof( VeterancyCrateCollideModuleData, m_isPilot ) },
+			{ "EffectRange",	INI::parseUnsignedInt,	nullptr, offsetof( VeterancyCrateCollideModuleData, m_rangeOfEffect ) },
+			{ "AddsOwnerVeterancy",	INI::parseBool,	nullptr, offsetof( VeterancyCrateCollideModuleData, m_addsOwnerVeterancy ) },
+			{ "IsPilot", INI::parseBool, nullptr, offsetof( VeterancyCrateCollideModuleData, m_isPilot ) },
 			{ 0, 0, 0, 0 }
 		};
     p.add(dataFieldParse);
@@ -93,5 +90,3 @@ protected:
 	Int getLevelsToGain() const;
 
 };
-
-#endif

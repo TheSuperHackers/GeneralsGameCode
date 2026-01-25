@@ -30,9 +30,6 @@
 
 #pragma once
 
-#ifndef __INACTIVEBODY_H_
-#define __INACTIVEBODY_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/BodyModule.h"
 
@@ -69,6 +66,3 @@ public:
 private:
 	Bool m_dieCalled;
 };
-
-#endif // __INACTIVEBODY_H_
-

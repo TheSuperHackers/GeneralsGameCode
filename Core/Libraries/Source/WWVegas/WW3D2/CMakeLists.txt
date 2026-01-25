@@ -15,8 +15,8 @@ set(WW3D2_SRC
     assetstatus.h
     bitmaphandler.cpp
     bitmaphandler.h
-    #bmp2d.cpp
-    #bmp2d.h
+    bmp2d.cpp
+    bmp2d.h
     #boxrobj.cpp
     #boxrobj.h
     bwrender.cpp
@@ -56,8 +56,8 @@ set(WW3D2_SRC
     #dx8renderer.h
     #dx8rendererdebugger.cpp
     #dx8rendererdebugger.h
-    #dx8texman.cpp
-    #dx8texman.h
+    dx8texman.cpp
+    dx8texman.h
     #dx8vertexbuffer.cpp
     #dx8vertexbuffer.h
     dx8webbrowser.cpp
@@ -81,7 +81,7 @@ set(WW3D2_SRC
     #hlod.cpp
     #hlod.h
     hmdldef.cpp
-    hmdldef.H
+    hmdldef.h
     #hmorphanim.cpp
     #hmorphanim.h
     #hrawanim.cpp
@@ -108,8 +108,8 @@ set(WW3D2_SRC
     #mapper.h
     matinfo.cpp
     matinfo.h
-    #matpass.cpp
-    #matpass.h
+    matpass.cpp
+    matpass.h
     #matrixmapper.cpp
     #matrixmapper.h
     #mesh.cpp
@@ -200,18 +200,18 @@ set(WW3D2_SRC
     stripoptimizer.h
     surfaceclass.cpp
     surfaceclass.h
-    #texproject.cpp
-    #texproject.h
+    texproject.cpp
+    texproject.h
     #textdraw.cpp # unused
     textdraw.h
-    #texture.cpp
-    #texture.h
-    #texturefilter.cpp
-    #texturefilter.h
-    #textureloader.cpp
-    #textureloader.h
-    #texturethumbnail.cpp
-    #texturethumbnail.h
+    texture.cpp
+    texture.h
+    texturefilter.cpp
+    texturefilter.h
+    textureloader.cpp
+    textureloader.h
+    texturethumbnail.cpp
+    texturethumbnail.h
     #vertmaterial.cpp
     #vertmaterial.h
     visrasterizer.cpp
@@ -237,7 +237,7 @@ add_library(corei_ww3d2 INTERFACE)
 
 target_sources(corei_ww3d2 INTERFACE ${WW3D2_SRC})
 
-if (NOT IS_VS6_BUILD)
+if (MSVC AND NOT IS_VS6_BUILD)
     target_link_libraries(corei_ww3d2 INTERFACE
         comsuppw
     )
@@ -245,4 +245,6 @@ endif()
 
 target_link_libraries(corei_ww3d2 INTERFACE
     core_browserengine
+    core_wwlib
+    core_wwmath
 )

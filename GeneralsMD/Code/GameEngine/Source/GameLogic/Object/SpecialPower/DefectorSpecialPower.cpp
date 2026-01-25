@@ -31,7 +31,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Player.h"
 #include "Common/SpecialPower.h"
@@ -61,8 +61,8 @@ DefectorSpecialPowerModuleData::DefectorSpecialPowerModuleData( void )
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "FatCursorRadius", INI::parseReal, NULL, offsetof( DefectorSpecialPowerModuleData, m_fatCursorRadius ) },
-		{ 0, 0, 0, 0 }
+		{ "FatCursorRadius", INI::parseReal, nullptr, offsetof( DefectorSpecialPowerModuleData, m_fatCursorRadius ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 	p.add(dataFieldParse);
 

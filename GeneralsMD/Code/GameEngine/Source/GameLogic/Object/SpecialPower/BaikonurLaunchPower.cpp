@@ -43,7 +43,7 @@
 //-----------------------------------------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Player.h"
 #include "Common/ThingFactory.h"
@@ -64,8 +64,8 @@ BaikonurLaunchPowerModuleData::BaikonurLaunchPowerModuleData( void )
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "DetonationObject", INI::parseAsciiString, NULL, offsetof( BaikonurLaunchPowerModuleData, m_detonationObject ) },
-		{ 0, 0, 0, 0 }
+		{ "DetonationObject", INI::parseAsciiString, nullptr, offsetof( BaikonurLaunchPowerModuleData, m_detonationObject ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 	p.add(dataFieldParse);
 

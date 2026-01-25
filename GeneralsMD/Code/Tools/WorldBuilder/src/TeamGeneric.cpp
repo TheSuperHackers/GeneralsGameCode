@@ -84,8 +84,8 @@ void TeamGeneric::_fillComboBoxesWithScripts()
 
 void TeamGeneric::_dictToScripts()
 {
-	CWnd *pText = NULL;
-	CComboBox *pCombo = NULL;
+	CWnd *pText = nullptr;
+	CComboBox *pCombo = nullptr;
 
 	if (!m_teamDict) {
 		return;
@@ -163,8 +163,8 @@ void TeamGeneric::_scriptsToDict()
 		return;
 	}
 
-	CWnd *pText = NULL;
-	CComboBox *pCombo = NULL;
+	CWnd *pText = nullptr;
+	CComboBox *pCombo = nullptr;
 
 	int scriptNum = 0;
 

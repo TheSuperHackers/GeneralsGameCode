@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifndef _DATA_CHUNK_H_
-#define _DATA_CHUNK_H_
-
 #include "Common/GameMemory.h"
 #include "Common/Dict.h"
 #include "Common/MapReaderWriterInfo.h"
@@ -190,8 +187,8 @@ public:
 																									// to create an object, and a subsequent chunk to
 																									// parse values into that object.  However, the second
 																									// chunk parser could also create and parse an object
-																									// of its own if this pointer is NULL.
-																									// The parser of the base class should NULL this pointer.
+																									// of its own if this pointer is null.
+																									// The parser of the base class should set this pointer to null.
 	void *m_userData;																	// user data hook
 
 public:
@@ -199,10 +196,10 @@ public:
 	~DataChunkInput();
 
 	// register a parser function for data chunks with labels matching "label", whose parent
-	// chunks labels match "parentLabel" (or NULL for global scope)
-	void registerParser( const AsciiString& label, const AsciiString& parentLabel, DataChunkParserPtr parser, void *userData = NULL );
+	// chunks labels match "parentLabel" (or null for global scope)
+	void registerParser( const AsciiString& label, const AsciiString& parentLabel, DataChunkParserPtr parser, void *userData = nullptr );
 
-	Bool parse( void *userData = NULL );						// parse the chunk stream using registered parsers
+	Bool parse( void *userData = nullptr );						// parse the chunk stream using registered parsers
 																									// assumed to be at the start of chunk when called
 																									// can be called recursively
 
@@ -232,7 +229,3 @@ public:
 
 	NameKeyType readNameKey(void);
 };
-
-
-
-#endif // _DATA_CHUNK_H_

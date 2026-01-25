@@ -29,16 +29,14 @@ Hopefully by then somebody will replace the lame time()
 function :-)
 \****************************************************************************/
 
-#ifndef XTIME_HEADER
-#define XTIME_HEADER
-
+#pragma once
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
 #include <sys/types.h>
 
-#ifndef _WINDOWS
+#ifndef _WIN32
 #include <unistd.h>
 #include <netinet/in.h>
 #include <sys/time.h>
@@ -142,5 +140,3 @@ class Xtime
     sint32    day_;    // days since Jan 1, 0
     sint32    msec_;   // milliseconds  (thousandths of a sec)
 };
-
-#endif

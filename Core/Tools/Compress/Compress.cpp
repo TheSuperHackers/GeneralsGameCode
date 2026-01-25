@@ -52,19 +52,19 @@ void dumpHelp(const char *exe)
 
 int main(int argc, char **argv)
 {
-	std::string inFile = "";
-	std::string outFile = "";
+	std::string inFile;
+	std::string outFile;
 	CompressionType compressType = CompressionManager::getPreferredCompression();
 
 	for (int i=1; i<argc; ++i)
 	{
-		if ( !stricmp(argv[i], "-help") )
+		if ( stricmp(argv[i], "-help") == 0 )
 		{
 			dumpHelp(argv[0]);
 			return EXIT_SUCCESS;
 		}
 
-		if ( !strcmp(argv[i], "-in") )
+		if ( strcmp(argv[i], "-in") == 0 )
 		{
 			++i;
 			if (i<argc)
@@ -73,7 +73,7 @@ int main(int argc, char **argv)
 			}
 		}
 
-		if ( !strcmp(argv[i], "-out") )
+		if ( strcmp(argv[i], "-out") == 0 )
 		{
 			++i;
 			if (i<argc)
@@ -82,14 +82,14 @@ int main(int argc, char **argv)
 			}
 		}
 
-		if ( !strcmp(argv[i], "-type") )
+		if ( strcmp(argv[i], "-type") == 0 )
 		{
 			++i;
 			if (i<argc)
 			{
 				for (int j=COMPRESSION_MIN; j<=COMPRESSION_MAX; ++j)
 				{
-					if ( !stricmp(CompressionManager::getCompressionNameByType((CompressionType)j), argv[i]) )
+					if ( stricmp(CompressionManager::getCompressionNameByType((CompressionType)j), argv[i]) == 0 )
 					{
 						compressType = (CompressionType)j;
 						break;

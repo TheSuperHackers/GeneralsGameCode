@@ -16,12 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef SORTING_RENDERER_H
-#define SORTING_RENDERER_H
 
 #include "always.h"
 
@@ -65,6 +60,3 @@ public:
 	static void _Enable_Triangle_Draw(bool enable) { _EnableTriangleDraw=enable; }
 	static bool _Is_Triangle_Draw_Enabled() { return _EnableTriangleDraw; }
 };
-
-#endif
-

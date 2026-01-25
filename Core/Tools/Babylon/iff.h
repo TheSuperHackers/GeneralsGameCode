@@ -16,9 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
-#ifndef __IFF_H
-#define __IFF_H
+#pragma once
 
 #define	MakeID(a,b,c,d)		( (int) ( ( (int) (a) ) << 24 | ( (int) (b) ) << 16 |	\
 								( (int) (c) ) << 8 | ( (int) (d) ) ) )
@@ -122,6 +120,3 @@ int					IFF_CloseChunk ( IFF_FILE * );
 	#define	LtEn16(L)	(L)
 
 #endif
-
-
-#endif	/* __IFF_H */

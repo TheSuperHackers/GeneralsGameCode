@@ -66,7 +66,7 @@ enum
 // PRIVATE DATA ///////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 static Bool bordersInit = FALSE;
-static const Image *borderPieces[NUM_BORDER_PIECES] = { 0 };
+static const Image *borderPieces[NUM_BORDER_PIECES] = { nullptr };
 
 // PUBLIC DATA ////////////////////////////////////////////////////////////////
 
@@ -82,40 +82,40 @@ static void initBorders( void )
 {
 
 	borderPieces[ BORDER_CORNER_UL ] =
-						TheMappedImageCollection->findImageByName( AsciiString( "BorderCornerUL" ) );
+						TheMappedImageCollection->findImageByName( "BorderCornerUL" );
 
 	borderPieces[ BORDER_CORNER_UR ] =
-						TheMappedImageCollection->findImageByName( AsciiString( "BorderCornerUR" ) );
+						TheMappedImageCollection->findImageByName( "BorderCornerUR" );
 
 	borderPieces[ BORDER_CORNER_LL ] =
-						TheMappedImageCollection->findImageByName( AsciiString( "BorderCornerLL" ) );
+						TheMappedImageCollection->findImageByName( "BorderCornerLL" );
 
 	borderPieces[ BORDER_CORNER_LR ] =
-						TheMappedImageCollection->findImageByName( AsciiString( "BorderCornerLR" ) );
+						TheMappedImageCollection->findImageByName( "BorderCornerLR" );
 
 	borderPieces[ BORDER_VERTICAL_LEFT ] =
-						TheMappedImageCollection->findImageByName( AsciiString( "BorderLeft" ) );
+						TheMappedImageCollection->findImageByName( "BorderLeft" );
 
 	borderPieces[ BORDER_VERTICAL_LEFT_SHORT ] =
-						TheMappedImageCollection->findImageByName( AsciiString( "BorderLeftShort" ) );
+						TheMappedImageCollection->findImageByName( "BorderLeftShort" );
 
 	borderPieces[ BORDER_HORIZONTAL_TOP ] =
-						TheMappedImageCollection->findImageByName( AsciiString( "BorderTop" ) );
+						TheMappedImageCollection->findImageByName( "BorderTop" );
 
 	borderPieces[ BORDER_HORIZONTAL_TOP_SHORT ] =
-						TheMappedImageCollection->findImageByName( AsciiString( "BorderTopShort" ) );
+						TheMappedImageCollection->findImageByName( "BorderTopShort" );
 
 	borderPieces[ BORDER_VERTICAL_RIGHT ] =
-						TheMappedImageCollection->findImageByName( AsciiString( "BorderRight" ) );
+						TheMappedImageCollection->findImageByName( "BorderRight" );
 
 	borderPieces[ BORDER_VERTICAL_RIGHT_SHORT ] =
-						TheMappedImageCollection->findImageByName( AsciiString( "BorderRightShort" ) );
+						TheMappedImageCollection->findImageByName( "BorderRightShort" );
 
 	borderPieces[ BORDER_HORIZONTAL_BOTTOM ] =
-						TheMappedImageCollection->findImageByName( AsciiString( "BorderBottom" ) );
+						TheMappedImageCollection->findImageByName( "BorderBottom" );
 
 	borderPieces[ BORDER_HORIZONTAL_BOTTOM_SHORT ] =
-						TheMappedImageCollection->findImageByName( AsciiString( "BorderBottomShort" ) );
+						TheMappedImageCollection->findImageByName( "BorderBottomShort" );
 
 	bordersInit = TRUE;
 
@@ -438,7 +438,7 @@ void W3DGameWindow::winDrawBorder( void )
 
 						TheWindowManager->winGetTextSize( m_instData.getFont(),
 																							m_instData.getText(),
-																							&textWidth, NULL, 0 );
+																							&textWidth, nullptr, 0 );
 						width -= textWidth + 6;
 						x += textWidth + 6;
 
@@ -520,10 +520,13 @@ void W3DGameWindow::winDrawBorder( void )
 }
 
 // W3DGameWindow::winSetFont ==================================================
-/** Set the font for a widow */
+/** Set the font for a window */
 //=============================================================================
 void W3DGameWindow::winSetFont( GameFont *font )
 {
+
+	if (font == nullptr)
+		return;
 
 	// extending functionality
 	GameWindow::winSetFont( font );
@@ -546,7 +549,7 @@ Int W3DGameWindow::winSetText( UnicodeString newText )
 	GameWindow::winSetText( newText );
 
 	// rebuild the sentence in our text renderer
-	m_textRenderer.Build_Sentence( m_instData.getText().str(),NULL, NULL );
+	m_textRenderer.Build_Sentence( m_instData.getText().str(),nullptr, nullptr );
 
 	// this is a visual change
 	m_needPolyDraw = TRUE;

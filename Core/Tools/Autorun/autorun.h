@@ -34,9 +34,7 @@
 *
 *************************************************************************************************/
 
-
-#ifndef  AUTORUN_H
-#define  AUTORUN_H
+#pragma once
 
 #include <tchar.h>
 #include <string.h>
@@ -167,7 +165,7 @@ typedef enum {
 class LaunchObjectClass
 {
 	public:
-		LaunchObjectClass ( char *path=NULL, char *args=NULL );
+		LaunchObjectClass ( char *path=nullptr, char *args=nullptr );
 
 		void			SetPath				( char *path );
 		void			SetArgs				( char *args );
@@ -230,7 +228,7 @@ class MainWindow : public Window
 		static void		Register		  		( void );
 		static void	  	Reset_Class_Name		( char *string )
 			{
-				if ( string != NULL && string[0] != '\0' ) {
+				if ( string != nullptr && string[0] != '\0' ) {
 					strcpy( szClassName, string );
 				}
 			};
@@ -250,7 +248,3 @@ class MainWindow : public Window
 		unsigned int	Run_OpenFile						(int cd_drive, const char *filename, bool wait = false);
 		LRESULT			Window_Proc		  		( HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam );
 };
-
-
-#endif
-

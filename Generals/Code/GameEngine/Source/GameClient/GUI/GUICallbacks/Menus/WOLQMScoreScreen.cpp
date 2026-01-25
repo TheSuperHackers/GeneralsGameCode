@@ -29,7 +29,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/GameEngine.h"
 #include "GameClient/WindowLayout.h"
@@ -51,21 +51,21 @@ static NameKeyType buttonDisconnectID = NAMEKEY_INVALID;
 static NameKeyType buttonQuickmatchID = NAMEKEY_INVALID;
 
 // Window Pointers ------------------------------------------------------------------------
-static GameWindow *parentWOLQMScore = NULL;
-static GameWindow *buttonDisconnect = NULL;
-static GameWindow *buttonQuickmatch = NULL;
+static GameWindow *parentWOLQMScore = nullptr;
+static GameWindow *buttonDisconnect = nullptr;
+static GameWindow *buttonQuickmatch = nullptr;
 
 //-------------------------------------------------------------------------------------------------
 /** Initialize the WOL Status Menu */
 //-------------------------------------------------------------------------------------------------
 void WOLQMScoreScreenInit( WindowLayout *layout, void *userData )
 {
-	parentWOLQMScoreID = TheNameKeyGenerator->nameToKey( AsciiString( "WOLQMScoreScreen.wnd:WOLQMScoreScreenParent" ) );
-	buttonDisconnectID = TheNameKeyGenerator->nameToKey( AsciiString( "WOLQMScoreScreen.wnd:ButtonDisconnect" ) );
-	buttonQuickmatchID = TheNameKeyGenerator->nameToKey( AsciiString( "WOLQMScoreScreen.wnd:ButtonQuickMatch" ) );
-	parentWOLQMScore = TheWindowManager->winGetWindowFromId( NULL, parentWOLQMScoreID );
-	buttonDisconnect = TheWindowManager->winGetWindowFromId( NULL,  buttonDisconnectID);
-	buttonQuickmatch = TheWindowManager->winGetWindowFromId( NULL,  buttonQuickmatchID);
+	parentWOLQMScoreID = TheNameKeyGenerator->nameToKey( "WOLQMScoreScreen.wnd:WOLQMScoreScreenParent" );
+	buttonDisconnectID = TheNameKeyGenerator->nameToKey( "WOLQMScoreScreen.wnd:ButtonDisconnect" );
+	buttonQuickmatchID = TheNameKeyGenerator->nameToKey( "WOLQMScoreScreen.wnd:ButtonQuickMatch" );
+	parentWOLQMScore = TheWindowManager->winGetWindowFromId( nullptr, parentWOLQMScoreID );
+	buttonDisconnect = TheWindowManager->winGetWindowFromId( nullptr,  buttonDisconnectID);
+	buttonQuickmatch = TheWindowManager->winGetWindowFromId( nullptr,  buttonQuickmatchID);
 
 	/*
 	if (WOL::TheWOL->getState() == WOL::WOLAPI_FATAL_ERROR)
@@ -99,7 +99,7 @@ void WOLQMScoreScreenShutdown( WindowLayout *layout, void *userData )
 	// our shutdown is complete
 	TheShell->shutdownComplete( layout );
 
-	//progressLayout = NULL;
+	//progressLayout = nullptr;
 
 }
 

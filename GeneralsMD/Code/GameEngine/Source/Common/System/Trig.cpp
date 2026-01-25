@@ -72,7 +72,6 @@ Real ASin(Real x)
 }
 
 #ifdef REGENERATE_TRIG_TABLES
-#include <stdio.h>
 void initTrig( void )
 {
 	static Byte inited = FALSE;

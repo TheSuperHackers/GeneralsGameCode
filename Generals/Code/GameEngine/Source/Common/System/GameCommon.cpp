@@ -26,7 +26,7 @@
 // Part of header detangling
 // John McDonald, Aug 2002
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/GameCommon.h"
 
@@ -36,7 +36,7 @@ const char *const TheVeterancyNames[] =
 	"VETERAN",
 	"ELITE",
 	"HEROIC",
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(TheVeterancyNames) == LEVEL_COUNT + 1, "Incorrect array size");
 
@@ -45,7 +45,7 @@ const char *const TheRelationshipNames[] =
 	"ENEMIES",
 	"NEUTRAL",
 	"ALLIES",
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(TheRelationshipNames) == RELATIONSHIP_COUNT + 1, "Incorrect array size");
 

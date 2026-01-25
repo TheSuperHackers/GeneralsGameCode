@@ -33,9 +33,6 @@
 
 #pragma once
 
-#ifndef __W3DGAMELOGIC_H_
-#define __W3DGAMELOGIC_H_
-
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
@@ -65,5 +62,3 @@ protected:
 	virtual GhostObjectManager *createGhostObjectManager(void) { return NEW W3DGhostObjectManager; }
 
 };
-
-#endif  // end __W3DGAMELOGIC_H_

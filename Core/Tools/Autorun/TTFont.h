@@ -35,10 +35,8 @@
  *----------------------------------------------------------------------------------------------*
  * Functions:																					*
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-#pragma once
 
-#ifndef TTFONT_H
-#define TTFONT_H
+#pragma once
 
 #include	<stddef.h>
 #include	"POINT.h"
@@ -206,15 +204,15 @@ class TTFontClass
 
 		virtual ~TTFontClass(void)
 			{
-				if ( Font != NULL ) {
+				if ( Font != nullptr ) {
 					DeleteObject( Font );
-					Font = NULL;
+					Font = nullptr;
 				}
 				RemoveFontResource( szFilename );
 			};
 
 		virtual int		Char_Pixel_Width		( HDC hdc, UINT c ) const;
-		virtual int		Char_Pixel_Width		( HDC hdc, char const * string, int *num_bytes=NULL ) const;
+		virtual int		Char_Pixel_Width		( HDC hdc, char const * string, int *num_bytes=nullptr ) const;
 		virtual int		String_Pixel_Width		( HDC hdc, char const * string ) const;
 		virtual void	String_Pixel_Bounds		( HDC hdc, const char * string, Rect& bounds ) const;
 		virtual int		Get_Width				( void ) const;
@@ -224,7 +222,7 @@ class TTFontClass
 		virtual int		Find_Text_VLength		( HDC hdc, char *str, int width );
 		virtual HFONT	Get_Font_Ptr			( void )		{ return Font; };
 		virtual int		IsFontDBCS				( void ) const	{ return ((CharSet==SHIFTJIS_CHARSET)||(CharSet==HANGEUL_CHARSET)||(CharSet==CHINESEBIG5_CHARSET)); };	// [OYO]
-		virtual UINT	Get_Double_Byte_Char	( const char *string, int *num_bytes=NULL ) const;
+		virtual UINT	Get_Double_Byte_Char	( const char *string, int *num_bytes=nullptr ) const;
 
 		virtual Point2D	Print(
 							HDC hdc,
@@ -274,7 +272,7 @@ bool			Is_True_Type_Font	( TextPrintType flags );	// True Type???
 
 //-------------------------------------------------------------------------
 // This class is a wrapper around all the fonts that we want to be available.
-// The constructer will make them, and the destructor will remove them for us.
+// The constructor will make them, and the destructor will remove them for us.
 //-------------------------------------------------------------------------
 class FontManagerClass
 {
@@ -299,6 +297,3 @@ extern TTFontClass 			*TTTextFontPtr;
 extern TTFontClass 			*TTTextFontPtr640;
 extern TTFontClass 			*TTTextFontPtr800;
 extern TTFontClass 			*TTLicenseFontPtr;
-
-
-#endif

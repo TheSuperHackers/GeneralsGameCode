@@ -45,10 +45,9 @@
 //-----------------------------------------------------------------------------
 //         Includes
 //-----------------------------------------------------------------------------
+
 #include "W3DDevice/GameClient/W3DBibBuffer.h"
 
-#include <stdio.h>
-#include <string.h>
 #include <assetmgr.h>
 #include <texture.h>
 #include "Common/GlobalData.h"
@@ -222,9 +221,9 @@ for the bibs. */
 W3DBibBuffer::W3DBibBuffer(void)
 {
 	m_initialized = false;
-	m_vertexBib = NULL;
-	m_indexBib = NULL;
-	m_bibTexture = NULL;
+	m_vertexBib = nullptr;
+	m_indexBib = nullptr;
+	m_bibTexture = nullptr;
 	m_curNumBibVertices=0;
 	m_curNumBibIndices=0;
 	clearAllBibs();

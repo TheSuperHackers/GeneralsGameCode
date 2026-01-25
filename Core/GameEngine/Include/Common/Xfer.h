@@ -39,9 +39,6 @@
 
 #pragma once
 
-#ifndef __XFER_H_
-#define __XFER_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/Science.h"
 #include "Common/Upgrade.h"
@@ -191,6 +188,3 @@ protected:
 	AsciiString m_identifier;				///< the string identifier
 
 };
-
-#endif // __XFER_H_
-

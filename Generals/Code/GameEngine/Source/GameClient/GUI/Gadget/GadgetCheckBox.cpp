@@ -44,7 +44,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "Common/Language.h"
@@ -316,7 +316,7 @@ void GadgetCheckBoxSetText( GameWindow *g, UnicodeString text )
 {
 
 	// sanity
-	if( g == NULL )
+	if( g == nullptr )
 		return;
 
 	TheWindowManager->winSendSystemMsg( g, GGM_SET_LABEL, (WindowMsgData)&text, 0 );

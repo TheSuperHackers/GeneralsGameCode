@@ -75,7 +75,7 @@ void PCToPS2MaterialClass::BeginEditParams(Interface *ip,IUtil *iu)
 	// Since we don't need any window gadgets, we'll just go through all the materials right away.
 	INode *root = ip->GetRootNode();
 
-	INodeListClass *meshlist = NULL;
+	INodeListClass *meshlist = nullptr;
 
 	// Change all materials associated with the mesh, starting with the root node.
 	if (root) {
@@ -88,7 +88,7 @@ void PCToPS2MaterialClass::BeginEditParams(Interface *ip,IUtil *iu)
 
 				Mtl	*nodemtl = ((*meshlist)[i])->GetMtl();
 
-				if (nodemtl == NULL) {
+				if (nodemtl == nullptr) {
 					// No material on this node, go to the next.
 					continue;
 				}

@@ -27,9 +27,6 @@
 
 #pragma once
 
-#ifndef _H_SelectionXlat
-#define _H_SelectionXlat
-
 #include "GameClient/InGameUI.h"
 
 class ThingTemplate;
@@ -65,8 +62,6 @@ public:
 	SelectionTranslator();
 	~SelectionTranslator();
 	virtual GameMessageDisposition translateGameMessage(const GameMessage *msg);
-
-	//Added By Sadullah Nader
 	//added for fix to the drag selection when entering control bar
 	//changes the mode of drag selecting to it's opposite
 	void setDragSelecting(Bool dragSelect);
@@ -75,5 +70,3 @@ public:
 
 Bool CanSelectDrawable( const Drawable *draw, Bool dragSelecting );
 extern SelectionTranslator *TheSelectionTranslator;
-
-#endif

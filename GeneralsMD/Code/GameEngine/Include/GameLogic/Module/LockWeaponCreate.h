@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __LOCKWEAPONCREATE_H_
-#define __LOCKWEAPONCREATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/CreateModule.h"
 
@@ -71,6 +68,3 @@ public:
 protected:
 
 };
-
-#endif
-

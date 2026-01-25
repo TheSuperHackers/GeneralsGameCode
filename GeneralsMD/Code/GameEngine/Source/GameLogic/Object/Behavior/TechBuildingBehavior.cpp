@@ -42,7 +42,7 @@
 // ------------------------------------------------------------------------------------------------
 TechBuildingBehaviorModuleData::TechBuildingBehaviorModuleData( void )
 {
-	m_pulseFX = NULL;
+	m_pulseFX = nullptr;
 	m_pulseFXRate = 0;
 }
 
@@ -54,9 +54,9 @@ TechBuildingBehaviorModuleData::TechBuildingBehaviorModuleData( void )
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "PulseFX",								INI::parseFXList,								NULL,	offsetof( TechBuildingBehaviorModuleData, m_pulseFX ) },
-		{ "PulseFXRate",						INI::parseDurationUnsignedInt,	NULL,	offsetof( TechBuildingBehaviorModuleData, m_pulseFXRate ) },
-		{ 0, 0, 0, 0 }
+		{ "PulseFX",								INI::parseFXList,								nullptr,	offsetof( TechBuildingBehaviorModuleData, m_pulseFX ) },
+		{ "PulseFXRate",						INI::parseDurationUnsignedInt,	nullptr,	offsetof( TechBuildingBehaviorModuleData, m_pulseFXRate ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 
   p.add( dataFieldParse );
@@ -105,7 +105,7 @@ UpdateSleepTime TechBuildingBehavior::update( void )
 	}
 
 	// if we have a pulse fx, and are owned, sleep only a little while, otherwise sleep forever
-	if (d->m_pulseFX != NULL && d->m_pulseFXRate > 0 && captured)
+	if (d->m_pulseFX != nullptr && d->m_pulseFXRate > 0 && captured)
 	{
 		FXList::doFXObj( d->m_pulseFX, us );
 		return UPDATE_SLEEP(d->m_pulseFXRate);

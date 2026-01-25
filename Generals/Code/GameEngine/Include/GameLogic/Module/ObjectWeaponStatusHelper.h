@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __OBJECT_WEAPON_STATUS_HELPER_H_
-#define __OBJECT_WEAPON_STATUS_HELPER_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/ThingTemplate.h"
 #include "GameLogic/Object.h"
@@ -81,5 +78,3 @@ public:
 		return UPDATE_SLEEP_NONE;
 	}
 };
-
-#endif  // end __OBJECT_DEFECTION_HELPER_H_

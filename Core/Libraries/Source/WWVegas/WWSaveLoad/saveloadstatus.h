@@ -16,12 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WWSAVELOADSTATUS_H
-#define WWSAVELOADSTATUS_H
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
 
 #include "always.h"
 #include "wwstring.h"
@@ -38,5 +33,3 @@ namespace SaveLoadStatus
 
 #define INIT_STATUS(t) SaveLoadStatus::Set_Status_Text(t,0)
 #define INIT_SUB_STATUS(t) SaveLoadStatus::Set_Status_Text(t,1)
-
-#endif

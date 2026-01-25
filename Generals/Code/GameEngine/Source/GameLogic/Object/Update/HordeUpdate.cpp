@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #define DEFINE_HORDEACTION_NAMES
 #include "Common/Player.h"
@@ -57,7 +57,7 @@ static HordeUpdateInterface* getHUI(Object* obj)
 		if( hui )
 			return hui;
 	}
-	return NULL;
+	return nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -113,14 +113,15 @@ public:
 const Int DEFAULT_UPDATE_RATE = LOGICFRAMES_PER_SECOND;
 
 //-------------------------------------------------------------------------------------------------
-HordeUpdateModuleData::HordeUpdateModuleData() :
-	m_updateRate(DEFAULT_UPDATE_RATE),
-  m_minCount(0),
-  m_minDist(0.0f),
-	m_rubOffRadius(20.0f),
-	m_alliesOnly(true),
-	m_exactMatch(false),
-	m_action(HORDEACTION_HORDE)
+HordeUpdateModuleData::HordeUpdateModuleData()
+	: m_updateRate(DEFAULT_UPDATE_RATE)
+	, m_minCount(0)
+	, m_minDist(0.0f)
+	, m_rubOffRadius(20.0f)
+	, m_alliesOnly(true)
+	, m_exactMatch(false)
+	, m_allowedNationalism(TRUE)
+	, m_action(HORDEACTION_DEFAULT)
 {
 }
 
@@ -131,16 +132,17 @@ HordeUpdateModuleData::HordeUpdateModuleData() :
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "UpdateRate", INI::parseDurationUnsignedInt, NULL, offsetof(HordeUpdateModuleData, m_updateRate) },
-		{ "KindOf", KindOfMaskType::parseFromINI, NULL, offsetof(HordeUpdateModuleData, m_kindof) },
-		{ "Count", INI::parseInt, NULL, offsetof(HordeUpdateModuleData, m_minCount) },
-		{ "Radius", INI::parseReal, NULL, offsetof(HordeUpdateModuleData, m_minDist) },
-		{ "RubOffRadius", INI::parseReal, NULL, offsetof(HordeUpdateModuleData, m_rubOffRadius) },
-		{ "AlliesOnly", INI::parseBool, NULL, offsetof(HordeUpdateModuleData, m_alliesOnly) },
-		{ "ExactMatch", INI::parseBool, NULL, offsetof(HordeUpdateModuleData, m_exactMatch) },
+		{ "UpdateRate", INI::parseDurationUnsignedInt, nullptr, offsetof(HordeUpdateModuleData, m_updateRate) },
+		{ "KindOf", KindOfMaskType::parseFromINI, nullptr, offsetof(HordeUpdateModuleData, m_kindof) },
+		{ "Count", INI::parseInt, nullptr, offsetof(HordeUpdateModuleData, m_minCount) },
+		{ "Radius", INI::parseReal, nullptr, offsetof(HordeUpdateModuleData, m_minDist) },
+		{ "RubOffRadius", INI::parseReal, nullptr, offsetof(HordeUpdateModuleData, m_rubOffRadius) },
+		{ "AlliesOnly", INI::parseBool, nullptr, offsetof(HordeUpdateModuleData, m_alliesOnly) },
+		{ "ExactMatch", INI::parseBool, nullptr, offsetof(HordeUpdateModuleData, m_exactMatch) },
 		{ "Action", INI::parseIndexList, TheHordeActionTypeNames, offsetof(HordeUpdateModuleData, m_action) },
-		{ "FlagSubObjectNames", INI::parseAsciiStringVector, NULL, offsetof(HordeUpdateModuleData, m_flagSubObjNames) },
-		{ 0, 0, 0, 0 }
+		{ "FlagSubObjectNames", INI::parseAsciiStringVector, nullptr, offsetof(HordeUpdateModuleData, m_flagSubObjNames) },
+		{ "AllowedNationalism", INI::parseBool, nullptr, offsetof(HordeUpdateModuleData, m_allowedNationalism) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 	p.add(dataFieldParse);
 }
@@ -155,10 +157,7 @@ HordeUpdate::HordeUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateM
 	m_inHorde = FALSE;
 	m_hasFlag = FALSE;
 	m_lastHordeRefreshFrame = TheGameLogic->getFrame();
-	// Added By Sadullah Nader
-	// Initializations missing and needed
 	m_trueHordeMember = FALSE;
-	//
 
 	UnsignedInt delay = getHordeUpdateModuleData()->m_updateRate;
 	setWakeFrame(getObject(), UPDATE_SLEEP(GameLogicRandomValue(1, delay)));
@@ -168,6 +167,13 @@ HordeUpdate::HordeUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateM
 HordeUpdate::~HordeUpdate()
 {
 
+}
+
+//-------------------------------------------------------------------------------------------------
+Bool HordeUpdate::isAllowedNationalism() const
+{
+	const HordeUpdateModuleData *data = getHordeUpdateModuleData();
+	return data->m_allowedNationalism;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -181,36 +187,22 @@ HordeUpdate::~HordeUpdate()
 // ------------------------------------------------------------------------------------------------
 void HordeUpdate::joinOrLeaveHorde(SimpleObjectIterator *iter, Bool join)
 {
-	Bool prevInHorde = m_inHorde;
-
-	m_inHorde = join;
-
-
-
-
-	const HordeUpdateModuleData* d = getHordeUpdateModuleData();
-	switch (d->m_action)
+	// give/remove bonus effects
+	if( m_inHorde != join )
 	{
-		case HORDEACTION_HORDE:
-			{
+		m_inHorde = join;
 
-				// give/remove bonus effects
-				if( prevInHorde != m_inHorde )
-				{
-					AIUpdateInterface *ai = getObject()->getAIUpdateInterface();
-
-					if( ai )
-						ai->evaluateMoraleBonus();
-					else
-						DEBUG_CRASH(( "HordeUpdate::joinOrLeaveHorde - We (%s) must have an AI to benefit from horde",
-													getObject()->getTemplate()->getName().str() ));
-				}
-
-			}
-			break;
+		if( AIUpdateInterface *ai = getObject()->getAIUpdateInterface() )
+		{
+			const HordeUpdateModuleData* md = getHordeUpdateModuleData();
+			ai->evaluateMoraleBonus(m_inHorde, md->m_allowedNationalism, md->m_action);
+		}
+		else
+		{
+			DEBUG_CRASH(( "HordeUpdate::joinOrLeaveHorde - We (%s) must have an AI to benefit from horde",
+										getObject()->getTemplate()->getName().str() ));
+		}
 	}
-
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -257,15 +249,15 @@ UpdateSleepTime HordeUpdate::update( void )
 	Bool wasInHorde = m_inHorde;
 
 	// This is a sticky situation, where refreshing the model state (like from default to damaged, for example)
-	// will rebuild the terraindecal and set its size to the default size.... since Vehicles have a special size,
-	// we want to keep it fresh, here, but not do the horde-ing test every frame...
+	// will rebuild the terrain decal and set its size to the default size.... since Vehicles have a special size,
+	// we want to keep it fresh, here, but not do the hording test every frame...
 	Bool isInfantry = ( obj->isKindOf(KINDOF_INFANTRY) );
 	if ( isInfantry || (TheGameLogic->getFrame() > m_lastHordeRefreshFrame + md->m_updateRate) )
 	{
 		m_lastHordeRefreshFrame = TheGameLogic->getFrame();
 
 		PartitionFilterHordeMember hmFilter(getObject(), md);
-		PartitionFilter *filters[] = { &hmFilter, NULL };
+		PartitionFilter *filters[] = { &hmFilter, nullptr };
 		SimpleObjectIterator *iter = ThePartitionManager->iterateObjectsInRange(getObject(), md->m_minDist, FROM_BOUNDINGSPHERE_3D, filters);
 		MemoryPoolObjectHolder hold(iter);
 
@@ -283,7 +275,7 @@ UpdateSleepTime HordeUpdate::update( void )
 			for (Object* other = iter->first(); other; other = iter->next())
 			{
 				HordeUpdateInterface* hui = getHUI(other);
-				if ( hui != NULL && hui->isTrueHordeMember() )
+				if ( hui != nullptr && hui->isTrueHordeMember() )
 				{
 					Real dist = ThePartitionManager->getDistanceSquared(getObject(), other, FROM_CENTER_2D);
 
@@ -299,7 +291,7 @@ UpdateSleepTime HordeUpdate::update( void )
 
 		AIUpdateInterface *ai = getObject()->getAIUpdateInterface();
 		if( ai )
-			ai->evaluateMoraleBonus();
+			ai->evaluateMoraleBonus(m_inHorde, md->m_allowedNationalism, md->m_action);
 
 	}
 
@@ -309,12 +301,12 @@ UpdateSleepTime HordeUpdate::update( void )
 
 
 	// This is a sticky situation, where refreshing the model state (like from default to damaged, for example)
-	// will rebuild the terraindecal and set its size to the default size.... since Vehicles have a special size,
-	// we want to keep it fresh, here, but not do the horde-ing test every frame...
-	// This is a weak solution, in that It causes this update to fight the defualt behavior of the modelstate methods,
-	// But in the interest of not breaking the modelstate changing logic for five hundred other units a week before golden,
+	// will rebuild the terrain decal and set its size to the default size.... since Vehicles have a special size,
+	// we want to keep it fresh, here, but not do the hording test every frame...
+	// This is a weak solution, in that It causes this update to fight the default behavior of the model state methods,
+	// But in the interest of not breaking the model state changing logic for five hundred other units a week before golden,
 	// this is my solution... If anyone gets this note on the next project... please please please, fix the resetting of the
-	// shadows/terraindecals in W3DModelDraw. THanks, ML
+	// shadows/terrain decals in W3DModelDraw. Thanks, ML
 
 	Drawable* draw = getObject()->getDrawable();
 	if ( draw && ! obj->isEffectivelyDead() )
@@ -397,10 +389,7 @@ void HordeUpdate::xfer( Xfer *xfer )
 	// extend base class
 	UpdateModule::xfer( xfer );
 
-	// in horder
 	xfer->xferBool( &m_inHorde );
-
-	// has flag
 	xfer->xferBool( &m_hasFlag );
 
 }

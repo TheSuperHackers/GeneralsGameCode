@@ -99,7 +99,7 @@ void Expander::expand( const std::string& input,
 			else
 			{
 				std::string toExpand = it->second;
-				std::string expanded = "";
+				std::string expanded;
 				//DEBUG_LOG(("###### expanding '%s'", toExpand.c_str()));
 				expand(toExpand, expanded, stripUnknown);
 				//DEBUG_LOG(("###### expanded '%s'", expanded.c_str()));

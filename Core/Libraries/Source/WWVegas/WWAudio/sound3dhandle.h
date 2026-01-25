@@ -34,12 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef __SOUND3DHANDLE_H
-#define __SOUND3DHANDLE_H
 
 #include "soundhandle.h"
 
@@ -107,6 +102,3 @@ protected:
 	///////////////////////////////////////////////////////////////////
 	H3DSAMPLE	SampleHandle;
 };
-
-
-#endif //__SOUND3DHANDLE_H

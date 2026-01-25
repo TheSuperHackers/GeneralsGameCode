@@ -45,9 +45,6 @@
 
 #pragma once
 
-#ifndef __EDITWINDOW_H_
-#define __EDITWINDOW_H_
-
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 #include <stdlib.h>
 #include <windows.h>
@@ -94,7 +91,7 @@ public:
 
 	void setDragMoveOrigin( ICoord2D *pos );  ///< for drag moving
 	void setDragMoveDest( ICoord2D *pos );  ///< for drag moving
-	ICoord2D getDragMoveOrigin( void );  ///< for keybord moving
+	ICoord2D getDragMoveOrigin( void );  ///< for keyboard moving
 	ICoord2D getDragMoveDest( void );  ///< for keyboard moving
 
 	void notifyWindowDeleted( GameWindow *window );  ///< window has been deleted
@@ -203,6 +200,3 @@ inline ICoord2D EditWindow::getDragMoveOrigin( void ) { return m_dragMoveOrigin;
 // EXTERNALS //////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 extern EditWindow *TheEditWindow;  ///< edit window singleton extern
-
-#endif // __EDITWINDOW_H_
-

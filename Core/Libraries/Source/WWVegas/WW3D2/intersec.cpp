@@ -40,7 +40,6 @@
 #include "camera.h"
 #include "scene.h"
 #include "intersec.inl"
-#include "Utility/CppMacros.h"
 
 
 //////////////////////////////////////////////////////////////////////
@@ -61,7 +60,7 @@ bool IntersectionClass::Intersect_Screen_Point_RenderObject(float screen_x, floa
 
 bool IntersectionClass::Intersect_RenderObject(RenderObjClass *RObj, IntersectionResultClass *FinalResult)
 {
-	if(FinalResult == 0)
+	if(FinalResult == nullptr)
 		FinalResult = &Result;
 
 	return RObj->Intersect(this, FinalResult);
@@ -348,7 +347,7 @@ RenderObjClass *IntersectionClass::Intersect_Sub_Object(float screenx, float scr
 	if (Intersect_Screen_Point_RenderObject(screenx, screeny, layer, robj, result)) {
 		return robj;
 	}
-	return NULL;
+	return nullptr;
 }
 
 // finds the intersection of the nearest object in the array.

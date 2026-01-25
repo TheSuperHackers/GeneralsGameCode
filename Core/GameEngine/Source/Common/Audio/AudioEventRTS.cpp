@@ -36,7 +36,7 @@
 /* Revision History:                                                         */
 /*		3/21/2002 : Initial creation                                           */
 /*---------------------------------------------------------------------------*/
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/AudioEventRTS.h"
 
@@ -68,7 +68,7 @@ AudioEventRTS::AudioEventRTS()
 										m_shouldFade(false),
 										m_isLogicalAudio(false),
 										m_filenameToLoad(AsciiString::TheEmptyString),
-										m_eventInfo(NULL),
+										m_eventInfo(nullptr),
 										m_playingHandle(0),
 										m_killThisHandle(0),
 										m_pitchShift(1.0),
@@ -78,7 +78,7 @@ AudioEventRTS::AudioEventRTS()
 										m_allCount(0),
 										m_playerIndex(-1),
 										m_delay(0.0f),
-										m_uninterruptable(FALSE)
+										m_uninterruptible(FALSE)
 {
 	m_attackName.clear();
 	m_decayName.clear();
@@ -95,7 +95,7 @@ AudioEventRTS::AudioEventRTS( const AsciiString& eventName )
 										m_shouldFade(false),
 										m_isLogicalAudio(false),
 										m_filenameToLoad(AsciiString::TheEmptyString),
-										m_eventInfo(NULL),
+										m_eventInfo(nullptr),
 										m_playingHandle(0),
 										m_killThisHandle(0),
 										m_pitchShift(1.0),
@@ -105,7 +105,7 @@ AudioEventRTS::AudioEventRTS( const AsciiString& eventName )
 										m_allCount(0),
 										m_playerIndex(-1),
 										m_delay(0.0f),
-										m_uninterruptable(FALSE)
+										m_uninterruptible(FALSE)
 {
 	m_attackName.clear();
 	m_decayName.clear();
@@ -123,7 +123,7 @@ AudioEventRTS::AudioEventRTS( const AsciiString& eventName, ObjectID ownerID )
 										m_shouldFade(false),
 										m_isLogicalAudio(false),
 										m_filenameToLoad(AsciiString::TheEmptyString),
-										m_eventInfo(NULL),
+										m_eventInfo(nullptr),
 										m_playingHandle(0),
 										m_killThisHandle(0),
 										m_pitchShift(1.0),
@@ -133,7 +133,7 @@ AudioEventRTS::AudioEventRTS( const AsciiString& eventName, ObjectID ownerID )
 										m_allCount(0),
 										m_playerIndex(-1),
 										m_delay(0.0f),
-										m_uninterruptable(FALSE)
+										m_uninterruptible(FALSE)
 {
 	m_attackName.clear();
 	m_decayName.clear();
@@ -159,7 +159,7 @@ AudioEventRTS::AudioEventRTS( const AsciiString& eventName, DrawableID drawableI
 										m_shouldFade(false),
 										m_isLogicalAudio(false),
 										m_filenameToLoad(AsciiString::TheEmptyString),
-										m_eventInfo(NULL),
+										m_eventInfo(nullptr),
 										m_playingHandle(0),
 										m_killThisHandle(0),
 										m_pitchShift(1.0),
@@ -169,7 +169,7 @@ AudioEventRTS::AudioEventRTS( const AsciiString& eventName, DrawableID drawableI
 										m_allCount(0),
 										m_playerIndex(-1),
 										m_delay(0.0f),
-										m_uninterruptable(FALSE)
+										m_uninterruptible(FALSE)
 {
 	m_attackName.clear();
 	m_decayName.clear();
@@ -194,7 +194,7 @@ AudioEventRTS::AudioEventRTS( const AsciiString& eventName, const Coord3D *posit
 										m_shouldFade(false),
 										m_isLogicalAudio(false),
 										m_filenameToLoad(AsciiString::TheEmptyString),
-										m_eventInfo(NULL),
+										m_eventInfo(nullptr),
 										m_playingHandle(0),
 										m_killThisHandle(0),
 										m_pitchShift(1.0),
@@ -204,7 +204,7 @@ AudioEventRTS::AudioEventRTS( const AsciiString& eventName, const Coord3D *posit
 										m_allCount(0),
 										m_playerIndex(-1),
 										m_delay(0.0f),
-										m_uninterruptable(FALSE)
+										m_uninterruptible(FALSE)
 {
 	m_positionOfAudio.set( positionOfAudio );
 	m_attackName.clear();
@@ -235,7 +235,7 @@ AudioEventRTS::AudioEventRTS( const AudioEventRTS& right )
 	m_attackName					= right.m_attackName;
 	m_decayName						= right.m_decayName;
 	m_portionToPlayNext		= right.m_portionToPlayNext;
-	m_uninterruptable			= right.m_uninterruptable;
+	m_uninterruptible			= right.m_uninterruptible;
 
 	if( m_ownerType == OT_Positional || m_ownerType == OT_Dead )
 	{
@@ -276,7 +276,7 @@ AudioEventRTS& AudioEventRTS::operator=( const AudioEventRTS& right )
 	m_attackName					= right.m_attackName;
 	m_decayName						= right.m_decayName;
 	m_portionToPlayNext		= right.m_portionToPlayNext;
-	m_uninterruptable			= right.m_uninterruptable;
+	m_uninterruptible			= right.m_uninterruptible;
 
 	if( m_ownerType == OT_Positional || m_ownerType == OT_Dead )
 	{
@@ -302,9 +302,9 @@ AudioEventRTS::~AudioEventRTS()
 //-------------------------------------------------------------------------------------------------
 void AudioEventRTS::setEventName( AsciiString name )
 {
-	if ((name != m_eventName) && m_eventInfo != NULL) {
+	if ((name != m_eventName) && m_eventInfo != nullptr) {
 		// Clear out the audio event info, cause its not valid for the new event.
-		m_eventInfo = NULL;
+		m_eventInfo = nullptr;
 	}
 
 	m_eventName = name;
@@ -329,7 +329,7 @@ void AudioEventRTS::generateFilename( void )
 		adjustForLocalization(m_filenameToLoad);
 		return;
 	} else {
-		if (m_eventInfo->m_sounds.size() == 0) {
+		if (m_eventInfo->m_sounds.empty()) {
 			m_filenameToLoad = AsciiString::TheEmptyString;
 			return;
 		}
@@ -340,7 +340,7 @@ void AudioEventRTS::generateFilename( void )
 		{
 			if (m_isLogicalAudio)
 			{
-				which = GameLogicRandomValue(0, m_eventInfo->m_sounds.size() - 1);
+				which = GameLogicRandomValueUnchanged(0, m_eventInfo->m_sounds.size() - 1);
 			}
 			else
 			{
@@ -388,7 +388,7 @@ void AudioEventRTS::generatePlayInfo( void )
 		// needs to be logic because it needs to be the same on all systems.
 		Int attackToPlay;
 		if (m_isLogicalAudio) {
-			attackToPlay = GameLogicRandomValue(0, attackSize - 1);
+			attackToPlay = GameLogicRandomValueUnchanged(0, attackSize - 1);
 		} else {
 			attackToPlay = GameAudioRandomValue(0, attackSize - 1);
 		}
@@ -406,7 +406,7 @@ void AudioEventRTS::generatePlayInfo( void )
 		// needs to be logic because it needs to be the same on all systems.
 		Int decayToPlay;
 		if (m_isLogicalAudio) {
-			decayToPlay = GameLogicRandomValue(0, decaySize - 1);
+			decayToPlay = GameLogicRandomValueUnchanged(0, decaySize - 1);
 		} else {
 			decayToPlay = GameAudioRandomValue(0, decaySize - 1);
 		}
@@ -526,7 +526,7 @@ const AudioEventInfo *AudioEventRTS::getAudioEventInfo( void ) const
 		if (m_eventInfo->m_audioName == m_eventName) {
 			return m_eventInfo;
 		} else {
-			m_eventInfo = NULL;
+			m_eventInfo = nullptr;
 		}
 	}
 
@@ -568,7 +568,7 @@ const Coord3D* AudioEventRTS::getPosition( void )
 		return &m_positionOfAudio;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -724,14 +724,13 @@ void AudioEventRTS::setVolume( Real vol )
 //-------------------------------------------------------------------------------------------------
 const Coord3D *AudioEventRTS::getCurrentPosition( void )
 {
-	if (m_ownerType == OT_Positional)
+	switch (m_ownerType)
 	{
+	case OT_Positional:
 		return &m_positionOfAudio;
-	}
-	else if (m_ownerType == OT_Object)
-	{
-		Object *obj = TheGameLogic->findObjectByID(m_objectID);
-		if (obj)
+
+	case OT_Object:
+		if (Object *obj = TheGameLogic->findObjectByID(m_objectID))
 		{
 			m_positionOfAudio.set( obj->getPosition() );
 		}
@@ -740,11 +739,9 @@ const Coord3D *AudioEventRTS::getCurrentPosition( void )
 			m_ownerType = OT_Dead;
 		}
 		return &m_positionOfAudio;
-	}
-	else if (m_ownerType == OT_Drawable)
-	{
-		Drawable *draw = TheGameClient->findDrawableByID(m_drawableID);
-		if( draw )
+
+	case OT_Drawable:
+		if (Drawable *draw = TheGameClient->findDrawableByID(m_drawableID))
 		{
 			m_positionOfAudio.set( draw->getPosition() );
 		}
@@ -753,13 +750,12 @@ const Coord3D *AudioEventRTS::getCurrentPosition( void )
 			m_ownerType = OT_Dead;
 		}
 		return &m_positionOfAudio;
-	}
-	else if( m_ownerType == OT_Dead )
-	{
+
+	case OT_Dead:
 		return &m_positionOfAudio;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------

@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifndef _OVERRIDABLE_H_
-#define _OVERRIDABLE_H_
-
 #include "Common/GameMemory.h"
 
 /*
@@ -50,9 +47,9 @@ class Overridable : public MemoryPoolObject
 		Bool m_isOverride;
 
 	public:
-		Overridable() : m_nextOverride(NULL), m_isOverride(false) {}
+		Overridable() : m_nextOverride(nullptr), m_isOverride(false) {}
 
-		// return a constant version of m_nextOverride, which can be NULL if there is no
+		// return a constant version of m_nextOverride, which can be null if there is no
 		// override
 		const Overridable *getNextOverride( void ) const
 		{
@@ -102,14 +99,14 @@ class Overridable : public MemoryPoolObject
 			m_isOverride = true;
 		}
 
-		// used in factory reset() calls at the end of a game to clean up overrides.  Can return NULL
+		// used in factory reset() calls at the end of a game to clean up overrides.  Can return nullptr
 		// if the first Overridable is itself an override
 		Overridable *deleteOverrides( void )
 		{
 			if ( m_isOverride )
 			{
 				deleteInstance(this);
-				return NULL;
+				return nullptr;
 			}
 			else if ( m_nextOverride )
 			{
@@ -124,6 +121,3 @@ __inline Overridable::~Overridable()
 {
 	deleteInstance(m_nextOverride);
 }
-
-
-#endif /* _OVERRIDABLE_H_ */

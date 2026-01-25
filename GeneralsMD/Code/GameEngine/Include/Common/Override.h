@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifndef _OVERRIDE_H_
-#define _OVERRIDE_H_
-
 #include "Common/Overridable.h"
 
 /*
@@ -52,8 +49,8 @@
 template <class T> class OVERRIDE
 {
 	public:
-		// Provide useful constructores to go from a T* to an OVERRIDE<T>
-		OVERRIDE(const T *overridable = NULL);
+		// Provide useful constructors to go from a T* to an OVERRIDE<T>
+		OVERRIDE(const T *overridable = nullptr);
 		// Copy constructor
 		OVERRIDE(OVERRIDE<T> &overridable);
 		// Operator= for copying from another OVERRIDE and T*
@@ -110,7 +107,7 @@ template <class T>
 const T *OVERRIDE<T>::operator->() const
 {
 	if (!m_overridable)
-		return NULL;
+		return nullptr;
 	return (T*) m_overridable->getFinalOverride();
 }
 
@@ -119,7 +116,7 @@ template <class T>
 const T *OVERRIDE<T>::operator*() const
 {
 	if (!m_overridable)
-		return NULL;
+		return nullptr;
 	return (T*) m_overridable->getFinalOverride();
 }
 
@@ -136,6 +133,3 @@ OVERRIDE<T>::operator const T*( ) const
 {
 	return operator*();
 }
-
-#endif /* _OVERRIDE_H_ */
-

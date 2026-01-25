@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __ParkingPlaceBehavior_H_
-#define __ParkingPlaceBehavior_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/BehaviorModule.h"
 #include "GameLogic/Module/DieModule.h"
@@ -70,18 +67,18 @@ public:
 
 		static const FieldParse dataFieldParse[] =
 		{
-			{ "NumRows",						     INI::parseInt,	 NULL, offsetof( ParkingPlaceBehaviorModuleData, m_numRows ) },
-			{ "NumCols",						     INI::parseInt,	 NULL, offsetof( ParkingPlaceBehaviorModuleData, m_numCols ) },
-			{ "ApproachHeight",			     INI::parseReal, NULL, offsetof( ParkingPlaceBehaviorModuleData, m_approachHeight ) },
-			{ "LandingDeckHeightOffset", INI::parseReal, NULL, offsetof( ParkingPlaceBehaviorModuleData, m_landingDeckHeightOffset ) },
-			{ "HasRunways",					     INI::parseBool, NULL, offsetof( ParkingPlaceBehaviorModuleData, m_hasRunways ) },
-			{ "ParkInHangars",			     INI::parseBool, NULL, offsetof( ParkingPlaceBehaviorModuleData, m_parkInHangars ) },
-			{ "HealAmountPerSecond",     INI::parseReal, NULL, offsetof( ParkingPlaceBehaviorModuleData, m_healAmount ) },
-//			{ "ExtraHealAmount4Helicopters",  INI::parseReal, NULL, offsetof( ParkingPlaceBehaviorModuleData, m_extraHealAmount4Helicopters ) },
+			{ "NumRows",						     INI::parseInt,	 nullptr, offsetof( ParkingPlaceBehaviorModuleData, m_numRows ) },
+			{ "NumCols",						     INI::parseInt,	 nullptr, offsetof( ParkingPlaceBehaviorModuleData, m_numCols ) },
+			{ "ApproachHeight",			     INI::parseReal, nullptr, offsetof( ParkingPlaceBehaviorModuleData, m_approachHeight ) },
+			{ "LandingDeckHeightOffset", INI::parseReal, nullptr, offsetof( ParkingPlaceBehaviorModuleData, m_landingDeckHeightOffset ) },
+			{ "HasRunways",					     INI::parseBool, nullptr, offsetof( ParkingPlaceBehaviorModuleData, m_hasRunways ) },
+			{ "ParkInHangars",			     INI::parseBool, nullptr, offsetof( ParkingPlaceBehaviorModuleData, m_parkInHangars ) },
+			{ "HealAmountPerSecond",     INI::parseReal, nullptr, offsetof( ParkingPlaceBehaviorModuleData, m_healAmount ) },
+//			{ "ExtraHealAmount4Helicopters",  INI::parseReal, nullptr, offsetof( ParkingPlaceBehaviorModuleData, m_extraHealAmount4Helicopters ) },
 
 
 
-			//{ "TimeForFullHeal",	INI::parseDurationUnsignedInt,	NULL, offsetof( ParkingPlaceBehaviorModuleData, m_framesForFullHeal ) },
+			//{ "TimeForFullHeal",	INI::parseDurationUnsignedInt,	nullptr, offsetof( ParkingPlaceBehaviorModuleData, m_framesForFullHeal ) },
 			{ 0, 0, 0, 0 }
 		};
 		p.add(dataFieldParse);
@@ -140,9 +137,9 @@ public:
 	virtual Bool reserveSpace(ObjectID id, Real parkingOffset, PPInfo* info);
 	virtual void releaseSpace(ObjectID id);
 	virtual Bool reserveRunway(ObjectID id, Bool forLanding);
-	Bool postponeRunwayReservation(UnsignedInt spaceIndex, Bool forLanding);
 	virtual void releaseRunway(ObjectID id);
 	virtual void calcPPInfo( ObjectID id, PPInfo *info );
+	virtual Int getRunwayIndex(ObjectID id);
 	virtual Int getRunwayCount() const { return m_runways.size(); }
 	virtual ObjectID getRunwayReservation( Int r, RunwayReservationType type );
 	virtual void transferRunwayReservationToNextInLineForTakeoff(ObjectID id);
@@ -151,9 +148,9 @@ public:
 	virtual void setHealee(Object* healee, Bool add);
 	virtual void killAllParkedUnits();
 	virtual void defectAllParkedUnits(Team* newTeam, UnsignedInt detectionTime);
-	virtual Bool calcBestParkingAssignment( ObjectID id, Coord3D *pos, Int *oldIndex = NULL, Int *newIndex = NULL ) { return FALSE; }
-	virtual const std::vector<Coord3D>* getTaxiLocations( ObjectID id ) const { return NULL; }
-	virtual const std::vector<Coord3D>* getCreationLocations( ObjectID id ) const { return NULL; }
+	virtual Bool calcBestParkingAssignment( ObjectID id, Coord3D *pos, Int *oldIndex = nullptr, Int *newIndex = nullptr ) { return FALSE; }
+	virtual const std::vector<Coord3D>* getTaxiLocations( ObjectID id ) const { return nullptr; }
+	virtual const std::vector<Coord3D>* getCreationLocations( ObjectID id ) const { return nullptr; }
 
 private:
 
@@ -206,6 +203,7 @@ private:
 	UnsignedInt										m_nextHealFrame;
 	Bool													m_gotInfo;
 
+	Bool postponeRunwayReservation(UnsignedInt spaceIndex, Bool forLanding);
 	void buildInfo();
 	void purgeDead();
 	void resetWakeFrame();
@@ -216,6 +214,3 @@ private:
 	Coord3D m_heliRallyPoint;
 	Bool m_heliRallyPointExists;				///< Only move to the rally point if this is true
 };
-
-#endif // __ParkingPlaceBehavior_H_
-

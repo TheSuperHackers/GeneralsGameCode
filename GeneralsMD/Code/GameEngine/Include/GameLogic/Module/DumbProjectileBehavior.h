@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifndef _DumbProjectileBehavior_H_
-#define _DumbProjectileBehavior_H_
-
 #include "Common/GameType.h"
 #include "Common/GlobalData.h"
 #include "Common/STLTypedefs.h"
@@ -125,6 +122,3 @@ private:
 #endif
 
 };
-
-#endif // _DumbProjectileBehavior_H_
-

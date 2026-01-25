@@ -23,7 +23,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/CRCDebug.h"
 #include "Common/Debug.h"
@@ -80,7 +80,7 @@ CRCVerification::~CRCVerification()
 	{
 		if (TheInGameUI)
 		{
-			TheInGameUI->message(UnicodeString(L"GameLogic changed outside of GameLogic::update() - call Matt (x36804)!"));
+			TheInGameUI->message(L"GameLogic changed outside of GameLogic::update() - call Matt (x36804)!");
 		}
 		CRCDEBUG_LOG(("GameLogic changed outside of GameLogic::update()!!!"));
 	}
@@ -120,7 +120,7 @@ void CRCDebugStartNewGame()
 	if (g_saveDebugCRCPerFrame)
 	{
 		// Create folder for frame data, if it doesn't exist yet.
-		CreateDirectory(g_saveDebugCRCPerFrameDir.str(), NULL);
+		CreateDirectory(g_saveDebugCRCPerFrameDir.str(), nullptr);
 
 		// Delete existing files
 		FilenameList files;
@@ -188,7 +188,7 @@ static AsciiString getFname(AsciiString path)
 
 static void addCRCDebugLineInternal(bool count, const char *fmt, va_list args)
 {
-	if (TheGameLogic == NULL || !(IS_FRAME_OK_TO_LOG))
+	if (TheGameLogic == nullptr || !(IS_FRAME_OK_TO_LOG))
 		return;
 
 	if (lastCRCDebugFrame != TheGameLogic->getFrame())

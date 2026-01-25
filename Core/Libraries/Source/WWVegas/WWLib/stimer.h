@@ -22,7 +22,7 @@
  *                                                                                             *
  *                 Project Name : Command & Conquer                                            *
  *                                                                                             *
- *                     $Archive:: /Commando/Library/STIMER.H                                  $*
+ *                     $Archive:: /Commando/Library/STIMER.h                                  $*
  *                                                                                             *
  *                      $Author:: Greg_h                                                      $*
  *                                                                                             *
@@ -34,8 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#ifndef STIMER_H
-#define STIMER_H
+#pragma once
 
 /****************************************************************************
 **	Timer constants. These are used when setting the countdown timer.
@@ -61,5 +60,3 @@ class SystemTimerClass
 		long operator () (void) const;
 		operator long (void) const;
 };
-
-#endif

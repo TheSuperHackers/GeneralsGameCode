@@ -54,7 +54,7 @@
 #include "wwdebug.h"
 
 
-// Sphere Intersection fucntions.  Does the sphere intersect the passed in object
+// Sphere Intersection functions.  Does the sphere intersect the passed in object
 /***********************************************************************************************
  * CollisionMath::Intersection_Test -- Sphere - AAbox intersection                             *
  *                                                                                             *

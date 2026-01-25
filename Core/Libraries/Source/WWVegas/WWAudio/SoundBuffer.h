@@ -34,19 +34,13 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef __SOUNDBUFFER_H
-#define __SOUNDBUFFER_H
 
 #pragma warning (push, 3)
 #include "mss.h"
 #pragma warning (pop)
 
-#include "refcount.h"
+#include "always.h"
 
 
 // Forward declarations
@@ -175,6 +169,3 @@ class StreamSoundBufferClass : public SoundBufferClass
 		//	Protected member data
 		//////////////////////////////////////////////////////////////////////
 };
-
-
-#endif //__SOUNDBUFFER_H

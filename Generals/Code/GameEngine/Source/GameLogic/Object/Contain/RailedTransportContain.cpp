@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 #include "Common/Xfer.h"
 #include "GameLogic/Object.h"
 #include "GameLogic/Module/RailedTransportContain.h"
@@ -40,13 +40,13 @@ static RailedTransportDockUpdateInterface *getRailedTransportDockUpdateInterface
 {
 
 	// sanity
-	if( obj == NULL )
-		return NULL;
+	if( obj == nullptr )
+		return nullptr;
 
 	// find us our dock interface
-	RailedTransportDockUpdateInterface *rtdui = NULL;
+	RailedTransportDockUpdateInterface *rtdui = nullptr;
 	for( BehaviorModule **u = obj->getBehaviorModules(); *u; ++u )
-		if( (rtdui = (*u)->getRailedTransportDockUpdateInterface()) != NULL )
+		if( (rtdui = (*u)->getRailedTransportDockUpdateInterface()) != nullptr )
 			break;
 
 	return rtdui;
@@ -109,7 +109,7 @@ void RailedTransportContain::exitObjectViaDoor( Object *newObj, ExitDoorType exi
 {
 	RailedTransportDockUpdateInterface *rtdui = getRailedTransportDockUpdateInterface();
 
-	if( rtdui == NULL )
+	if( rtdui == nullptr )
 		return;
 
 	// tell the railed dock to exit ONE object, this one

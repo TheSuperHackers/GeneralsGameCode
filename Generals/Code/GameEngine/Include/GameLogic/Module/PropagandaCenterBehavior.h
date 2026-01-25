@@ -27,8 +27,7 @@
 // Desc:   Propaganda Center Behavior
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __PROPAGANDA_CENTER_BEHAVIOR_H_
-#define __PROPAGANDA_CENTER_BEHAVIOR_H_
+#pragma once
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/PrisonBehavior.h"
@@ -84,5 +83,3 @@ protected:
 };
 
 #endif
-
-#endif  // end __PROPAGANDA_CENTER_BEHAVIOR_H_

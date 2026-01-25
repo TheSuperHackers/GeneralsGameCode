@@ -36,8 +36,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#ifndef STREAKRENDER_H
-#define STREAKRENDER_H
+#pragma once
 
 #include "always.h"
 #include "shader.h"
@@ -222,6 +221,3 @@ inline void StreakRendererClass::Reset_Line(void)
 {
 	// Empty
 }
-
-#endif //STREAKRENDER_H
-

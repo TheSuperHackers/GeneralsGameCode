@@ -29,7 +29,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/GameEngine.h"
 #include "GameClient/WindowLayout.h"
@@ -50,22 +50,22 @@ static NameKeyType parentWOLStatusID = NAMEKEY_INVALID;
 static NameKeyType buttonDisconnectID = NAMEKEY_INVALID;
 
 // Window Pointers ------------------------------------------------------------------------
-static GameWindow *parentWOLStatus = NULL;
-static GameWindow *buttonDisconnect = NULL;
-GameWindow *progressTextWindow = NULL;
+static GameWindow *parentWOLStatus = nullptr;
+static GameWindow *buttonDisconnect = nullptr;
+GameWindow *progressTextWindow = nullptr;
 
 //-------------------------------------------------------------------------------------------------
 /** Initialize the WOL Status Menu */
 //-------------------------------------------------------------------------------------------------
 void WOLStatusMenuInit( WindowLayout *layout, void *userData )
 {
-	parentWOLStatusID = TheNameKeyGenerator->nameToKey( AsciiString( "WOLStatusMenu.wnd:WOLStatusMenuParent" ) );
-	buttonDisconnectID = TheNameKeyGenerator->nameToKey( AsciiString( "WOLStatusMenu.wnd:ButtonDisconnect" ) );
-	parentWOLStatus = TheWindowManager->winGetWindowFromId( NULL, parentWOLStatusID );
-	buttonDisconnect = TheWindowManager->winGetWindowFromId( NULL,  buttonDisconnectID);
+	parentWOLStatusID = TheNameKeyGenerator->nameToKey( "WOLStatusMenu.wnd:WOLStatusMenuParent" );
+	buttonDisconnectID = TheNameKeyGenerator->nameToKey( "WOLStatusMenu.wnd:ButtonDisconnect" );
+	parentWOLStatus = TheWindowManager->winGetWindowFromId( nullptr, parentWOLStatusID );
+	buttonDisconnect = TheWindowManager->winGetWindowFromId( nullptr,  buttonDisconnectID);
 
-	progressTextWindow = TheWindowManager->winGetWindowFromId( NULL,
-		TheNameKeyGenerator->nameToKey( AsciiString( "WOLStatusMenu.wnd:ListboxStatus" ) ) );
+	progressTextWindow = TheWindowManager->winGetWindowFromId( nullptr,
+		TheNameKeyGenerator->nameToKey( "WOLStatusMenu.wnd:ListboxStatus" ) );
 
 	// Show Menu
 	layout->hide( FALSE );
@@ -90,7 +90,7 @@ void WOLStatusMenuShutdown( WindowLayout *layout, void *userData )
 	// our shutdown is complete
 	TheShell->shutdownComplete( layout );
 
-	//progressLayout = NULL;
+	//progressLayout = nullptr;
 
 	//WOL::raiseWOLMessageBox();
 }

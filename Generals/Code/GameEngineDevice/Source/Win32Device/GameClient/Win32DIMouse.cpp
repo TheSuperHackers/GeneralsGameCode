@@ -50,11 +50,11 @@ void DirectInputMouse::openMouse( void )
 													 DIRECTINPUT_VERSION,
 													 IID_IDirectInput8,
 													 (void **)&m_pDirectInput,
-													 NULL );
+													 nullptr );
 	if( FAILED( hr ) )
 	{
 
-		DEBUG_LOG(( "ERROR - openMouse: Unabled to create direct input interface" ));
+		DEBUG_LOG(( "ERROR - openMouse: Unable to create direct input interface" ));
 		assert( 0 );
 		closeMouse();
 		return;
@@ -62,9 +62,9 @@ void DirectInputMouse::openMouse( void )
 	}
 
 	// create a device for the system mouse
-	hr = m_pDirectInput->CreateDevice( GUID_SysMouse,
+	hr = m_pDirectInput->CreateDevice( GUID_SysMouse, &m_pMouseDevice, nullptr );
 																		 &m_pMouseDevice,
-																		 NULL );
+																		 nullptr );
 	if( FAILED( hr ) )
 	{
 
@@ -80,7 +80,7 @@ void DirectInputMouse::openMouse( void )
 	if( FAILED( hr ) )
 	{
 
-		DEBUG_LOG(( "ERROR - openMouse: Unabled to set mouse data format" ));
+		DEBUG_LOG(( "ERROR - openMouse: Unable to set mouse data format" ));
 		assert( 0 );
 		closeMouse();
 		return;
@@ -94,7 +94,7 @@ void DirectInputMouse::openMouse( void )
 	if( FAILED( hr ) )
 	{
 
-		DEBUG_LOG(( "ERROR - openMouse: Unabled to set coop level" ));
+		DEBUG_LOG(( "ERROR - openMouse: Unable to set coop level" ));
 		assert( 0 );
 		closeMouse();
 		return;
@@ -112,7 +112,7 @@ void DirectInputMouse::openMouse( void )
 	if( FAILED( hr ) )
 	{
 
-		DEBUG_LOG(( "ERROR - openMouse: Unabled to set buffer property" ));
+		DEBUG_LOG(( "ERROR - openMouse: Unable to set buffer property" ));
 		assert( 0 );
 		closeMouse();
 		return;
@@ -124,7 +124,7 @@ void DirectInputMouse::openMouse( void )
 	if( FAILED( hr ) )
 	{
 
-		DEBUG_LOG(( "ERROR - openMouse: Unabled to acquire mouse" ));
+		DEBUG_LOG(( "ERROR - openMouse: Unable to acquire mouse" ));
 		assert( 0 );
 		closeMouse();
 		return;
@@ -139,7 +139,7 @@ void DirectInputMouse::openMouse( void )
 	if( FAILED( hr ) )
 	{
 
-		DEBUG_LOG(( "WARNING - openMouse: Cann't get capabilities of mouse for button setup" ));
+		DEBUG_LOG(( "WARNING - openMouse: Can't get capabilities of mouse for button setup" ));
 
 	}
 	else
@@ -171,7 +171,7 @@ void DirectInputMouse::closeMouse( void )
 
 		m_pMouseDevice->Unacquire();
 		m_pMouseDevice->Release();
-		m_pMouseDevice = NULL;
+		m_pMouseDevice = nullptr;
 		DEBUG_LOG(( "OK - Mouse device closed" ));
 
 	}
@@ -181,7 +181,7 @@ void DirectInputMouse::closeMouse( void )
 	{
 
 		m_pDirectInput->Release();
-		m_pDirectInput = NULL;
+		m_pDirectInput = nullptr;
 		DEBUG_LOG(( "OK - Mouse direct input interface closed" ));
 
 	}
@@ -202,7 +202,7 @@ UnsignedByte DirectInputMouse::getMouseEvent( MouseIO *result, Bool flush )
 
 	/* set these to defaults */
 	result->leftState = result->middleState = result->rightState = FALSE;
-	result->leftFrame = result->middleFrame = result->rightFrame = 0;
+	result->leftState = result->middleState = result->rightState = MBS_None;
 	result->pos.x = result->pos.y = result->wheelPos = 0;
 
 	if( m_pMouseDevice )
@@ -282,18 +282,15 @@ void DirectInputMouse::mapDirectInputMouse( MouseIO *mouse,
 	switch( mdat->dwOfs )
 	{
 		case DIMOFS_BUTTON0:
-			mouse->leftState = (( mdat->dwData & 0x0080 ) ? TRUE : FALSE);
-			mouse->leftFrame = mdat->dwSequence;
+			mouse->leftState = (( mdat->dwData & 0x0080 ) ? MBS_Down : MBS_Up);
 			break;
 
 		case DIMOFS_BUTTON1:
-			mouse->rightState = (( mdat->dwData & 0x0080 ) ? TRUE : FALSE);
-			mouse->rightFrame = mdat->dwSequence;
+			mouse->rightState = (( mdat->dwData & 0x0080 ) ? MBS_Down : MBS_Up);
 			break;
 
 		case DIMOFS_BUTTON2:
-			mouse->middleState = (( mdat->dwData & 0x0080 ) ? TRUE : FALSE);
-			mouse->middleFrame = mdat->dwSequence;
+			mouse->middleState = (( mdat->dwData & 0x0080 ) ? MBS_Down : MBS_Up);
 			break;
 
 		case DIMOFS_BUTTON3:
@@ -323,8 +320,8 @@ void DirectInputMouse::mapDirectInputMouse( MouseIO *mouse,
 DirectInputMouse::DirectInputMouse( void )
 {
 
-	m_pDirectInput = NULL;
-	m_pMouseDevice = NULL;
+	m_pDirectInput = nullptr;
+	m_pMouseDevice = nullptr;
 
 }
 
@@ -469,20 +466,20 @@ void DirectInputMouse::setCursor( MouseCursor cursor )
 	{
 
 		case NONE:
-			SetCursor( NULL );
+			SetCursor( nullptr );
 			break;
 
 		case NORMAL:
 		case ARROW:
-			SetCursor( LoadCursor( NULL, IDC_ARROW ) );
+			SetCursor( LoadCursor( nullptr, IDC_ARROW ) );
 			break;
 
 		case SCROLL:
-			SetCursor( LoadCursor( NULL, IDC_SIZEALL ) );
+			SetCursor( LoadCursor( nullptr, IDC_SIZEALL ) );
 			break;
 
 		case CROSS:
-			SetCursor( LoadCursor( NULL, IDC_CROSS ) );
+			SetCursor( LoadCursor( nullptr, IDC_CROSS ) );
 			break;
 
 	}

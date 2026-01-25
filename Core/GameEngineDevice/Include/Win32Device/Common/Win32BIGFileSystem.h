@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifndef __WIN32BIGFILESYSTEM_H
-#define __WIN32BIGFILESYSTEM_H
-
 #include "Common/ArchiveFileSystem.h"
 
 class Win32BIGFileSystem : public ArchiveFileSystem
@@ -56,5 +53,3 @@ public:
 protected:
 
 };
-
-#endif // __WIN32BIGFILESYSTEM_H

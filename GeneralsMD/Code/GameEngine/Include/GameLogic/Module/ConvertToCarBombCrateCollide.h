@@ -30,9 +30,6 @@
 
 #pragma once
 
-#ifndef CONVERT_TO_CAR_BOMB_CRATE_COLLIDE_H_
-#define CONVERT_TO_CAR_BOMB_CRATE_COLLIDE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/Module.h"
 #include "GameLogic/Module/CrateCollide.h"
@@ -51,7 +48,7 @@ public:
 	ConvertToCarBombCrateCollideModuleData()
 	{
 		m_rangeOfEffect = 0;
-		m_fxList = NULL;
+		m_fxList = nullptr;
 	}
 
 	static void buildFieldParse(MultiIniFieldParse& p)
@@ -60,7 +57,7 @@ public:
 
 		static const FieldParse dataFieldParse[] =
 		{
-			{ "FXList",		INI::parseFXList,		NULL, offsetof( ConvertToCarBombCrateCollideModuleData, m_fxList ) },
+			{ "FXList",		INI::parseFXList,		nullptr, offsetof( ConvertToCarBombCrateCollideModuleData, m_fxList ) },
 			{ 0, 0, 0, 0 }
 		};
     p.add(dataFieldParse);
@@ -89,5 +86,3 @@ protected:
 	virtual Bool isRailroad() const { return FALSE;};
 	virtual Bool isCarBombCrateCollide() const { return TRUE; }
 };
-
-#endif

@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __OCLSPECIALPOWER_H_
-#define __OCLSPECIALPOWER_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/SpecialPowerModule.h"
 #include "Common/Science.h"
@@ -63,7 +60,7 @@ public:
 		ScienceType									m_science;
 		const ObjectCreationList*		m_ocl;
 
-		Upgrades() : m_science(SCIENCE_INVALID), m_ocl(NULL)
+		Upgrades() : m_science(SCIENCE_INVALID), m_ocl(nullptr)
 		{
 		}
 	};
@@ -98,5 +95,3 @@ protected:
 
 	const ObjectCreationList* findOCL() const;
 };
-
-#endif  // end __OCLSPECIALPOWER_H_

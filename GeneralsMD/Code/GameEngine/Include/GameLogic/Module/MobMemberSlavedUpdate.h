@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifndef _MOBMEMBER_SLAVED_UPDATE_H_
-#define _MOBMEMBER_SLAVED_UPDATE_H_
-
 #define MM_SLAVED_UPDATE_RATE (LOGICFRAMES_PER_SECOND / 8) ///< This is a low priority module that only needs to be called every this many frames
 #define MIN_SQUIRRELLINESS (0.01f)
 #define MAX_SQUIRRELLINESS (1.0f)
@@ -68,10 +65,10 @@ public:
     UpdateModuleData::buildFieldParse(p);
 		static const FieldParse dataFieldParse[] =
 		{
-			{ "MustCatchUpRadius",			INI::parseInt,	NULL, offsetof( MobMemberSlavedUpdateModuleData, m_mustCatchUpRadius ) },
-			{ "CatchUpCrisisBailTime",			INI::parseUnsignedInt,	NULL, offsetof( MobMemberSlavedUpdateModuleData, m_catchUpCrisisBailTime ) },
-			{ "NoNeedToCatchUpRadius",		INI::parseInt,	NULL, offsetof( MobMemberSlavedUpdateModuleData, m_noNeedToCatchUpRadius ) },
-			{ "Squirrelliness",     INI::parseReal, NULL, offsetof( MobMemberSlavedUpdateModuleData, m_squirrellinessRatio ) },
+			{ "MustCatchUpRadius",			INI::parseInt,	nullptr, offsetof( MobMemberSlavedUpdateModuleData, m_mustCatchUpRadius ) },
+			{ "CatchUpCrisisBailTime",			INI::parseUnsignedInt,	nullptr, offsetof( MobMemberSlavedUpdateModuleData, m_catchUpCrisisBailTime ) },
+			{ "NoNeedToCatchUpRadius",		INI::parseInt,	nullptr, offsetof( MobMemberSlavedUpdateModuleData, m_noNeedToCatchUpRadius ) },
+			{ "Squirrelliness",     INI::parseReal, nullptr, offsetof( MobMemberSlavedUpdateModuleData, m_squirrellinessRatio ) },
 			{ 0, 0, 0, 0 }
 		};
     p.add(dataFieldParse);
@@ -133,5 +130,3 @@ private:
 	// thus causing the mob to become invincible, since they will continue to bud around the nexus
 
 };
-#endif //_MOBMEMBER_AI_UPDATE_H_
-

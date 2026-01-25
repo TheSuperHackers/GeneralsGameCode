@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __POWERPLANTUPGRADE_H_
-#define __POWERPLANTUPGRADE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpgradeModule.h"
 
@@ -62,6 +59,3 @@ protected:
 	virtual Bool isSubObjectsUpgrade() { return false; }
 
 };
-
-#endif // __POWERPLANTUPGRADE_H_
-

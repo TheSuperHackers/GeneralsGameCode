@@ -29,16 +29,13 @@
 
 #pragma once
 
-#ifndef __SUBSYSTEMINTERFACE_H_
-#define __SUBSYSTEMINTERFACE_H_
-
 #include "Common/INI.h"
 #include "Common/STLTypedefs.h"
 
 class Xfer;
 
 //-------------------------------------------------------------------------------------------------
-/** This is the abstract base class from which all game engine subsytems should derive from.
+/** This is the abstract base class from which all game engine subsystems should derive from.
 	* In order to provide consistent behaviors across all these systems, any implementation
 	* must obey the rules defined in here
 	*
@@ -55,7 +52,7 @@ public:
 	/** - Constructors should initialize any data to a valid state.  That DOES NOT mean
 		*		the data has default values (something done in the init() method), only that
 		*		nothing is left pointing to garbage, un-initialized memory.  In most cases
-		*		this probably means just setting members to zero or NULL.
+		*		this probably means just setting members to zero or nullptr.
 		*/
 	SubsystemInterface();
 
@@ -117,6 +114,8 @@ public:
 	void DRAW(void);
 	Real getUpdateTime(void) {return m_curUpdateTime;}
 	Real getDrawTime(void) {return m_curDrawTime;}
+	Bool doDumpUpdate(void) {return m_dumpUpdate;}
+	Bool doDumpDraw(void) {return m_dumpDraw;}
 	static Real getTotalTime(void) {return s_msConsumed;}
 	static void clearTotalTime(void) {s_msConsumed = 0;}
 protected:
@@ -126,9 +125,11 @@ protected:
 
 	Real m_startDrawTimeConsumed;
 	Real m_curDrawTime;
+	Bool m_dumpUpdate;
+	Bool m_dumpDraw;
 #else
-	inline void UPDATE(void) {update();}
-	inline void DRAW(void) {draw();}
+	void UPDATE(void) {update();}
+	void DRAW(void) {draw();}
 #endif
 protected:
 	AsciiString m_name;
@@ -165,6 +166,3 @@ private:
 };
 
 extern SubsystemInterfaceList* TheSubsystemList;
-
-#endif // __SUBSYSTEMINTERFACE_H_
-

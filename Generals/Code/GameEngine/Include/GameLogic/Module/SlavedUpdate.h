@@ -29,10 +29,8 @@
 //        soldiers that are close to a stinger site. It's important to note that any slaved units
 //				can use any or all features, some of which are specialized.
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-#pragma once
 
-#ifndef _SLAVED_UPDATE_H_
-#define _SLAVED_UPDATE_H_
+#pragma once
 
 const Int SLAVED_UPDATE_RATE = LOGICFRAMES_PER_SECOND/4; ///< This is a low priority module that only needs to be called every this many frames
 
@@ -98,25 +96,25 @@ public:
     UpdateModuleData::buildFieldParse(p);
 		static const FieldParse dataFieldParse[] =
 		{
-			{ "GuardMaxRange",			INI::parseInt,	NULL, offsetof( SlavedUpdateModuleData, m_guardMaxRange ) },
-			{ "GuardWanderRange",		INI::parseInt,	NULL, offsetof( SlavedUpdateModuleData, m_guardWanderRange ) },
-			{ "AttackRange",				INI::parseInt,	NULL, offsetof( SlavedUpdateModuleData, m_attackRange ) },
-			{ "AttackWanderRange",	INI::parseInt,	NULL, offsetof( SlavedUpdateModuleData, m_attackWanderRange ) },
-			{ "ScoutRange",					INI::parseInt,	NULL, offsetof( SlavedUpdateModuleData, m_scoutRange ) },
-			{ "ScoutWanderRange",		INI::parseInt,	NULL, offsetof( SlavedUpdateModuleData, m_scoutWanderRange ) },
-			{ "RepairRange",				INI::parseInt,	NULL, offsetof( SlavedUpdateModuleData, m_repairRange ) },
-			{ "RepairMinAltitude",		  INI::parseReal, NULL, offsetof( SlavedUpdateModuleData, m_repairMinAltitude ) },
-			{ "RepairMaxAltitude",		  INI::parseReal, NULL, offsetof( SlavedUpdateModuleData, m_repairMaxAltitude ) },
-			{ "DistToTargetToGrantRangeBonus", INI::parseInt, NULL, offsetof( SlavedUpdateModuleData, m_distToTargetToGrantRangeBonus ) },
-			{ "RepairRatePerSecond", INI::parseReal, NULL, offsetof( SlavedUpdateModuleData, m_repairRatePerSecond ) },
-			{ "RepairWhenBelowHealth%", INI::parseInt, NULL, offsetof( SlavedUpdateModuleData, m_repairWhenHealthBelowPercentage ) },
-			{ "RepairMinReadyTime", INI::parseDurationUnsignedInt, NULL, offsetof( SlavedUpdateModuleData, m_minReadyFrames ) },
-			{ "RepairMaxReadyTime", INI::parseDurationUnsignedInt, NULL, offsetof( SlavedUpdateModuleData, m_maxReadyFrames ) },
-			{ "RepairMinWeldTime",  INI::parseDurationUnsignedInt, NULL, offsetof( SlavedUpdateModuleData, m_minWeldFrames ) },
-			{ "RepairMaxWeldTime",  INI::parseDurationUnsignedInt, NULL, offsetof( SlavedUpdateModuleData, m_maxWeldFrames ) },
-			{ "RepairWeldingSys",		INI::parseAsciiString,	NULL, offsetof( SlavedUpdateModuleData, m_weldingSysName ) },
-			{ "RepairWeldingFXBone", INI::parseAsciiString, NULL, offsetof( SlavedUpdateModuleData, m_weldingFXBone ) },
-			{ "StayOnSameLayerAsMaster", INI::parseBool, NULL, offsetof( SlavedUpdateModuleData, m_stayOnSameLayerAsMaster ) },
+			{ "GuardMaxRange",			INI::parseInt,	nullptr, offsetof( SlavedUpdateModuleData, m_guardMaxRange ) },
+			{ "GuardWanderRange",		INI::parseInt,	nullptr, offsetof( SlavedUpdateModuleData, m_guardWanderRange ) },
+			{ "AttackRange",				INI::parseInt,	nullptr, offsetof( SlavedUpdateModuleData, m_attackRange ) },
+			{ "AttackWanderRange",	INI::parseInt,	nullptr, offsetof( SlavedUpdateModuleData, m_attackWanderRange ) },
+			{ "ScoutRange",					INI::parseInt,	nullptr, offsetof( SlavedUpdateModuleData, m_scoutRange ) },
+			{ "ScoutWanderRange",		INI::parseInt,	nullptr, offsetof( SlavedUpdateModuleData, m_scoutWanderRange ) },
+			{ "RepairRange",				INI::parseInt,	nullptr, offsetof( SlavedUpdateModuleData, m_repairRange ) },
+			{ "RepairMinAltitude",		  INI::parseReal, nullptr, offsetof( SlavedUpdateModuleData, m_repairMinAltitude ) },
+			{ "RepairMaxAltitude",		  INI::parseReal, nullptr, offsetof( SlavedUpdateModuleData, m_repairMaxAltitude ) },
+			{ "DistToTargetToGrantRangeBonus", INI::parseInt, nullptr, offsetof( SlavedUpdateModuleData, m_distToTargetToGrantRangeBonus ) },
+			{ "RepairRatePerSecond", INI::parseReal, nullptr, offsetof( SlavedUpdateModuleData, m_repairRatePerSecond ) },
+			{ "RepairWhenBelowHealth%", INI::parseInt, nullptr, offsetof( SlavedUpdateModuleData, m_repairWhenHealthBelowPercentage ) },
+			{ "RepairMinReadyTime", INI::parseDurationUnsignedInt, nullptr, offsetof( SlavedUpdateModuleData, m_minReadyFrames ) },
+			{ "RepairMaxReadyTime", INI::parseDurationUnsignedInt, nullptr, offsetof( SlavedUpdateModuleData, m_maxReadyFrames ) },
+			{ "RepairMinWeldTime",  INI::parseDurationUnsignedInt, nullptr, offsetof( SlavedUpdateModuleData, m_minWeldFrames ) },
+			{ "RepairMaxWeldTime",  INI::parseDurationUnsignedInt, nullptr, offsetof( SlavedUpdateModuleData, m_maxWeldFrames ) },
+			{ "RepairWeldingSys",		INI::parseAsciiString,	nullptr, offsetof( SlavedUpdateModuleData, m_weldingSysName ) },
+			{ "RepairWeldingFXBone", INI::parseAsciiString, nullptr, offsetof( SlavedUpdateModuleData, m_weldingFXBone ) },
+			{ "StayOnSameLayerAsMaster", INI::parseBool, nullptr, offsetof( SlavedUpdateModuleData, m_stayOnSameLayerAsMaster ) },
 			{ 0, 0, 0, 0 }
 		};
     p.add(dataFieldParse);
@@ -177,5 +175,3 @@ private:
 	RepairStates m_repairState;
 	Bool m_repairing;
 };
-
-#endif

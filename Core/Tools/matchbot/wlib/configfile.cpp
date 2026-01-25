@@ -97,7 +97,7 @@ bit8 ConfigFile::readFile(FILE *in)
       continue;
     }
 
-    if (strchr(cptr,'=')==NULL)   // All config entries must have a '='
+    if (strchr(cptr,'=')==nullptr)   // All config entries must have a '='
       continue;
     key=cptr;
     key.truncate('=');
@@ -152,7 +152,7 @@ bit8 ConfigFile::enumerate(int &index, int &offset, Wstring &key, Wstring &value
     }
     Critsec_.unlock();
 
-    if (section==NULL)  // no specified section, so any will do...
+    if (section==nullptr)  // no specified section, so any will do...
       break;
 
     if (strlen(section)+2 >= strlen(key.get()))  // key should have form: X[section]
@@ -340,7 +340,7 @@ bit8 ConfigFile::setString(IN Wstring &_key, IN Wstring &value, IN char *section
 	for (i=0; i<sectionList.length(); i++)
 	{
 		sectionList.get(test, i);
-		if (!strcmp(test.get(), section))
+		if (strcmp(test.get(), section) == 0)
 			break;
 	}
 	if (i == sectionList.length())
@@ -398,7 +398,7 @@ bit8 ConfigFile::setInt(IN Wstring &_key,IN sint32 &value, IN char *section)
 	{
 		sectionList.get(test, i);
 		//DBGMSG("Looking at " << test.get());
-		if (!strcmp(test.get(), section))
+		if (strcmp(test.get(), section) == 0)
 			break;
 	}
 	if (i == sectionList.length() && section)

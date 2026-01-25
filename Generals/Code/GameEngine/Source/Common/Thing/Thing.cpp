@@ -32,7 +32,7 @@
 //						"Things"
 //
 //-----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/PerfTimer.h"
 #include "Common/Thing.h"
@@ -47,13 +47,16 @@
 #include "GameLogic/TerrainLogic.h"
 
 
+static constexpr const Real InitialThingPosX = 0.0f;
+static constexpr const Real InitialThingPosY = 0.0f;
+
 //=============================================================================
 /** Constructor */
 //=============================================================================
 Thing::Thing( const ThingTemplate *thingTemplate )
 {
 	// sanity
-	if( thingTemplate == NULL )
+	if( thingTemplate == nullptr )
 	{
 
 		// cannot create thing without template
@@ -67,7 +70,9 @@ Thing::Thing( const ThingTemplate *thingTemplate )
 	m_templateName = thingTemplate->getName();
 #endif
 	m_transform.Make_Identity();
-	m_cachedPos.zero();
+	m_cachedPos.x = InitialThingPosX;
+	m_cachedPos.y = InitialThingPosY;
+	m_cachedPos.z = 0.0f;
 	m_cachedAngle = 0.0f;
 	m_cachedDirVector.zero();
 	m_cachedAltitudeAboveTerrain = 0;
@@ -89,6 +94,12 @@ Thing::~Thing()
 const ThingTemplate *Thing::getTemplate() const
 {
 	return m_template;
+}
+
+//=============================================================================
+Bool Thing::isPositioned() const
+{
+	return m_cachedPos.x != InitialThingPosX || m_cachedPos.y != InitialThingPosY;
 }
 
 //=============================================================================
@@ -362,8 +373,8 @@ void Thing::convertBonePosToWorldPos(const Coord3D* bonePos, const Matrix3D* bon
 void Thing::transformPoint( const Coord3D *in, Coord3D *out )
 {
 
-	// santiy
-	if( in == NULL || out == NULL )
+	// sanity
+	if( in == nullptr || out == nullptr )
 		return;
 
 	// for conversion

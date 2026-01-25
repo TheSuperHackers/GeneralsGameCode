@@ -34,10 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-
-#ifndef GAMEMTLVERTEXMATERIALDLG_H
-#define GAMEMTLVERTEXMATERIALDLG_H
+#pragma once
 
 #include <max.h>
 #include "GameMtlForm.h"
@@ -71,6 +68,3 @@ private:
 	ISpinnerControl * ShininessSpin;
 	ISpinnerControl * UVChannelSpin[MAX_STAGES];
 };
-
-
-#endif

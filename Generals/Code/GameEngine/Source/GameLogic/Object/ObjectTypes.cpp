@@ -179,7 +179,7 @@ void ObjectTypes::xfer(Xfer *xfer)
 		if( m_objectTypes.empty() == FALSE )
 		{
 
-			DEBUG_CRASH(( "ObjectTypes::xfer - m_objectTypes vector should be emtpy but is not!" ));
+			DEBUG_CRASH(( "ObjectTypes::xfer - m_objectTypes vector should be empty but is not!" ));
 			throw SC_INVALID_DATA;
 
 		}

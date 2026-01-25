@@ -26,11 +26,10 @@
 //
 // Function level profiling (internal header)
 //////////////////////////////////////////////////////////////////////////////
-#ifdef _MSC_VER
-#  pragma once
-#endif
-#ifndef INTERNAL_FUNCLEVEL_H // Include guard
-#define INTERNAL_FUNCLEVEL_H
+
+#pragma once
+
+#include <windows.h>
 
 class ProfileFuncLevelTracer
 {
@@ -177,7 +176,7 @@ public:
       glob.tracer=tr;
       for (int k=0;k<MAX_FRAME_RECORDS;k++)
         cur[k].tracer=tr;
-      funcSource=funcName=NULL;
+      funcSource=funcName=nullptr;
       funcLine=0;
     }
   };
@@ -237,7 +236,7 @@ public:
   /**
     Retrieves next function level tracer.
 
-    \return next function level tracer, NULL if none
+    \return next function level tracer, nullptr if none
   */
   ProfileFuncLevelTracer *GetNext(void)
   {
@@ -356,7 +355,5 @@ inline ProfileFuncLevelTracer::Function *ProfileFuncLevelTracer::FunctionMap::Fi
   for (Entry *e=hash[(addr/16)%HASH_SIZE];e;e=e->next)
     if (e->funcPtr->addr==addr)
       return e->funcPtr;
-  return NULL;
+  return nullptr;
 }
-
-#endif // INTERNAL_FUNCLEVEL_H

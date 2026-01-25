@@ -31,7 +31,7 @@
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/GameEngine.h"
 #include "Common/NameKeyGenerator.h"
@@ -59,12 +59,12 @@ static GameWindow *gogoExMessageBox(Int x, Int y, Int width, Int height, Unsigne
 	// first check to make sure we have some buttons to display
 	if(buttonFlags == 0 )
 	{
-		return NULL;
+		return nullptr;
 	}
 
-	GameWindow *parent = TheWindowManager->winCreateFromScript( AsciiString("Menus/MessageBox.wnd") );
+	GameWindow *parent = TheWindowManager->winCreateFromScript( "Menus/MessageBox.wnd" );
 	TheWindowManager->winSetModal( parent );
-	TheWindowManager->winSetFocus( NULL ); // make sure we lose focus from other windows even if we refuse focus ourselves
+	TheWindowManager->winSetFocus( nullptr ); // make sure we lose focus from other windows even if we refuse focus ourselves
 	TheWindowManager->winSetFocus( parent	 );
 
 	// If the user wants the size to be different then the default
@@ -104,19 +104,19 @@ static GameWindow *gogoExMessageBox(Int x, Int y, Int width, Int height, Unsigne
 	Int buttonX[3], buttonY[3];
 
 	//In the layout, buttonOk will be in the first button position
-	NameKeyType buttonOkID = TheNameKeyGenerator->nameToKey( AsciiString( "MessageBox.wnd:ButtonOk" ) );
+	NameKeyType buttonOkID = TheNameKeyGenerator->nameToKey( "MessageBox.wnd:ButtonOk" );
 	GameWindow *buttonOk = TheWindowManager->winGetWindowFromId(parent, buttonOkID);
 	buttonOk->winGetPosition(&buttonX[0], &buttonY[0]);
 
-	NameKeyType buttonYesID = TheNameKeyGenerator->nameToKey( AsciiString( "MessageBox.wnd:ButtonYes" ) );
+	NameKeyType buttonYesID = TheNameKeyGenerator->nameToKey( "MessageBox.wnd:ButtonYes" );
 	GameWindow *buttonYes = TheWindowManager->winGetWindowFromId(parent, buttonYesID);
 	//buttonNo in the second position
-	NameKeyType buttonNoID = TheNameKeyGenerator->nameToKey( AsciiString( "MessageBox.wnd:ButtonNo" ) );
+	NameKeyType buttonNoID = TheNameKeyGenerator->nameToKey( "MessageBox.wnd:ButtonNo" );
 	GameWindow *buttonNo = TheWindowManager->winGetWindowFromId(parent, buttonNoID);
 	buttonNo->winGetPosition(&buttonX[1], &buttonY[1]);
 
 	//and buttonCancel in the third
-	NameKeyType buttonCancelID = TheNameKeyGenerator->nameToKey( AsciiString( "MessageBox.wnd:ButtonCancel" ) );
+	NameKeyType buttonCancelID = TheNameKeyGenerator->nameToKey( "MessageBox.wnd:ButtonCancel" );
 	GameWindow *buttonCancel = TheWindowManager->winGetWindowFromId(parent, buttonCancelID);
 	buttonCancel->winGetPosition(&buttonX[2], &buttonY[2]);
 
@@ -161,11 +161,11 @@ static GameWindow *gogoExMessageBox(Int x, Int y, Int width, Int height, Unsigne
 	}
 
 	// Fill the text into the text boxes
-	NameKeyType staticTextTitleID = TheNameKeyGenerator->nameToKey( AsciiString( "MessageBox.wnd:StaticTextTitle" ) );
+	NameKeyType staticTextTitleID = TheNameKeyGenerator->nameToKey( "MessageBox.wnd:StaticTextTitle" );
 	GameWindow *staticTextTitle = TheWindowManager->winGetWindowFromId(parent, staticTextTitleID);
 	GadgetStaticTextSetText(staticTextTitle,titleString);
 
-	NameKeyType staticTextMessageID = TheNameKeyGenerator->nameToKey( AsciiString( "MessageBox.wnd:StaticTextMessage" ) );
+	NameKeyType staticTextMessageID = TheNameKeyGenerator->nameToKey( "MessageBox.wnd:StaticTextMessage" );
 	GameWindow *staticTextMessage = TheWindowManager->winGetWindowFromId(parent, staticTextMessageID);
 	GadgetStaticTextSetText(staticTextMessage,bodyString);
 
@@ -191,31 +191,31 @@ static GameWindow *gogoExMessageBox(Int x, Int y, Int width, Int height, Unsigne
 GameWindow *ExMessageBoxYesNo				(UnicodeString titleString,UnicodeString bodyString, void *userData,
 																		 MessageBoxFunc yesCallback, MessageBoxFunc noCallback)
 {
-	return gogoExMessageBox(-1,-1,-1,-1,MSG_BOX_NO | MSG_BOX_YES , titleString, bodyString, userData, yesCallback, noCallback, NULL, NULL);
+	return gogoExMessageBox(-1,-1,-1,-1,MSG_BOX_NO | MSG_BOX_YES , titleString, bodyString, userData, yesCallback, noCallback, nullptr, nullptr);
 }
 
 GameWindow *ExMessageBoxYesNoCancel	(UnicodeString titleString,UnicodeString bodyString, void *userData,
 																		 MessageBoxFunc yesCallback, MessageBoxFunc noCallback, MessageBoxFunc cancelCallback)
 {
-	return gogoExMessageBox(-1,-1,-1,-1,MSG_BOX_NO | MSG_BOX_YES | MSG_BOX_CANCEL , titleString, bodyString, userData, yesCallback, noCallback, NULL, cancelCallback);
+	return gogoExMessageBox(-1,-1,-1,-1,MSG_BOX_NO | MSG_BOX_YES | MSG_BOX_CANCEL , titleString, bodyString, userData, yesCallback, noCallback, nullptr, cancelCallback);
 }
 
 GameWindow *ExMessageBoxOkCancel		(UnicodeString titleString,UnicodeString bodyString, void *userData,
 																		 MessageBoxFunc okCallback, MessageBoxFunc cancelCallback)
 {
-	return gogoExMessageBox(-1,-1,-1,-1,MSG_BOX_OK | MSG_BOX_CANCEL , titleString, bodyString, userData, NULL, NULL, okCallback, cancelCallback);
+	return gogoExMessageBox(-1,-1,-1,-1,MSG_BOX_OK | MSG_BOX_CANCEL , titleString, bodyString, userData, nullptr, nullptr, okCallback, cancelCallback);
 }
 
 GameWindow *ExMessageBoxOk					(UnicodeString titleString,UnicodeString bodyString, void *userData,
 																		 MessageBoxFunc okCallback)
 {
-	return gogoExMessageBox(-1,-1,-1,-1,MSG_BOX_OK, titleString, bodyString, userData, NULL, NULL, okCallback, NULL);
+	return gogoExMessageBox(-1,-1,-1,-1,MSG_BOX_OK, titleString, bodyString, userData, nullptr, nullptr, okCallback, nullptr);
 }
 
 GameWindow *ExMessageBoxCancel			(UnicodeString titleString,UnicodeString bodyString, void *userData,
 																		 MessageBoxFunc cancelCallback)
 {
-	return gogoExMessageBox(-1,-1,-1,-1, MSG_BOX_CANCEL, titleString, bodyString, userData, NULL, NULL, NULL, cancelCallback);
+	return gogoExMessageBox(-1,-1,-1,-1, MSG_BOX_CANCEL, titleString, bodyString, userData, nullptr, nullptr, nullptr, cancelCallback);
 }
 
 
@@ -239,7 +239,7 @@ WindowMsgHandledType ExtendedMessageBoxSystem( GameWindow *window, UnsignedInt m
 		case GWM_DESTROY:
 		{
 			delete (WindowExMessageBoxData *)window->winGetUserData();
-			window->winSetUserData( NULL );
+			window->winSetUserData( nullptr );
 			break;
 
 		}
@@ -261,10 +261,10 @@ WindowMsgHandledType ExtendedMessageBoxSystem( GameWindow *window, UnsignedInt m
 		{
 			GameWindow *control = (GameWindow *)mData1;
 			Int controlID = control->winGetWindowId();
-			static NameKeyType buttonOkID = TheNameKeyGenerator->nameToKey( AsciiString( "MessageBox.wnd:ButtonOk" ) );
-			static NameKeyType buttonYesID = TheNameKeyGenerator->nameToKey( AsciiString( "MessageBox.wnd:ButtonYes" ) );
-			static NameKeyType buttonNoID = TheNameKeyGenerator->nameToKey( AsciiString( "MessageBox.wnd:ButtonNo" ) );
-			static NameKeyType buttonCancelID = TheNameKeyGenerator->nameToKey( AsciiString( "MessageBox.wnd:ButtonCancel" ) );
+			static NameKeyType buttonOkID = TheNameKeyGenerator->nameToKey( "MessageBox.wnd:ButtonOk" );
+			static NameKeyType buttonYesID = TheNameKeyGenerator->nameToKey( "MessageBox.wnd:ButtonYes" );
+			static NameKeyType buttonNoID = TheNameKeyGenerator->nameToKey( "MessageBox.wnd:ButtonNo" );
+			static NameKeyType buttonCancelID = TheNameKeyGenerator->nameToKey( "MessageBox.wnd:ButtonCancel" );
 			WindowExMessageBoxData *MsgBoxCallbacks = (WindowExMessageBoxData *)window->winGetUserData();
 
 			MessageBoxReturnType ret = MB_RETURN_CLOSE;

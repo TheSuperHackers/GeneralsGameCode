@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
@@ -58,7 +58,7 @@ Bool SpecialPowerUpdateModule::doesSpecialPowerUpdatePassScienceTest() const
 	//Kris: July 24, 2003 -- Added an additional optional check for objects with multiple SpecialPowerModules referencing
 	//the same SpecialPowerTemplate but with special ScienceType checks. An example of this is the three
 	//SpectreGunshipDeploymentUpdate modules inside AirF_AmericaCommandCenter. Each one has a different duration which
-	//is hooked into different objects. This sucked and became necessary because the way the stackable changable icon system
+	//is hooked into different objects. This sucked and became necessary because the way the stackable changeable icon system
 	//for multilevel buttons.
 	ScienceType science = getExtraRequiredScience();
 	if( science != SCIENCE_INVALID )

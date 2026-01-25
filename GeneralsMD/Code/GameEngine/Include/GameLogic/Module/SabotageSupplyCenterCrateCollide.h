@@ -32,9 +32,6 @@
 
 #pragma once
 
-#ifndef SABOTAGE_SUPPLY_CENTER_CRATE_COLLIDE_H_
-#define SABOTAGE_SUPPLY_CENTER_CRATE_COLLIDE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/Module.h"
 #include "GameLogic/Module/CrateCollide.h"
@@ -59,7 +56,7 @@ public:
 
 		static const FieldParse dataFieldParse[] =
 		{
-			{ "StealCashAmount",	INI::parseUnsignedInt, NULL, offsetof( SabotageSupplyCenterCrateCollideModuleData, m_stealCashAmount ) },
+			{ "StealCashAmount",	INI::parseUnsignedInt, nullptr, offsetof( SabotageSupplyCenterCrateCollideModuleData, m_stealCashAmount ) },
 			{ 0, 0, 0, 0 }
 		};
 		p.add( dataFieldParse );
@@ -90,5 +87,3 @@ protected:
 	virtual Bool isSabotageBuildingCrateCollide() const { return TRUE; }
 
 };
-
-#endif

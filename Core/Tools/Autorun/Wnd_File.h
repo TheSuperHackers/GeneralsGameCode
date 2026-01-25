@@ -22,9 +22,9 @@
 //
 //	Project name:		Blade Runner CD-ROM Windows 95
 //
-// File name:			WND_FILE.H
+// File name:			WND_FILE.h
 //
-// Source code: 		WND_FILE.CPP
+// Source code: 		WND_FILE.cpp
 //
 // Compatibility:		Microsoft Visual C++ 4.0
 //							Borland C++ 5.0
@@ -38,10 +38,8 @@
 //							James McNeill
 //
 //****************************************************************************
-#pragma once
 
-#ifndef WND_FILE_H
-#define WND_FILE_H
+#pragma once
 
 //------------------------------------------------------------------------------
 // include files...
@@ -148,7 +146,7 @@ class StandardFileClass
 
 		#if( SUPPORT_STREAMS )
 			//--------------------------------------------------------------------
-			// The _stat structure, defined in SYS\STAT.H, includes these fields.
+			// The _stat structure, defined in SYS\STAT.h, includes these fields.
 			//		st_atime  	Time of last access of file ( time_t ).
 			//		st_ctime  	Time of creation of file ( time_t ).
 			//		st_dev		Drive number of the disk containing the file (same as st_rdev).
@@ -212,5 +210,3 @@ class StandardFileClass
 	bool CD_File_Exists( char const *file_name );
 	// bool Find_File( char const *file_name );
 #endif
-
-#endif // WND_FILE_H

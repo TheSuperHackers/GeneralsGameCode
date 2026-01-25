@@ -16,15 +16,10 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef THREAD_H
-#define THREAD_H
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
 
 #include "always.h"
-#include "Vector.H"
+#include "Vector.h"
 
 struct _EXCEPTION_POINTERS;
 
@@ -48,7 +43,7 @@ class ThreadClass
 public:
 	typedef int (*ExceptionHandlerType)(int exception_code, struct _EXCEPTION_POINTERS *e_info);
 
-	ThreadClass(const char *name = NULL, ExceptionHandlerType exception_handler = NULL);
+	ThreadClass(const char *name = nullptr, ExceptionHandlerType exception_handler = nullptr);
 	virtual ~ThreadClass();
 
 	// Execute Thread_Function(). Note that only one instance can be executed at a time.
@@ -76,7 +71,7 @@ public:
 	const char *Get_Name(void) {return(ThreadName);};
 
 	// Get info about a registered thread by it's index.
-	static int Get_Thread_By_Index(int index, char *name_ptr = NULL);
+	static int Get_Thread_By_Index(int index, char *name_ptr = nullptr);
 
 protected:
 
@@ -99,5 +94,3 @@ private:
 	volatile unsigned long handle;
 	int thread_priority;
 };
-
-#endif

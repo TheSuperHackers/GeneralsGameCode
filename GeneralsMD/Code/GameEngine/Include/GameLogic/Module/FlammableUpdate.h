@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __FLAMMABLE_UPDATE_H_
-#define __FLAMMABLE_UPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/AudioEventRTS.h"
 #include "GameLogic/Module/DamageModule.h"
@@ -114,6 +111,3 @@ protected:
 	ObjectID								m_flameSource;
 	UnsignedInt							m_lastFlameDamageDealt;
 };
-
-#endif
-

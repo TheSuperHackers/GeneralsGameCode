@@ -32,13 +32,7 @@
  *                                                                         *
  *-------------------------------------------------------------------------*/
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef TEXTDRAW_H
-#define TEXTDRAW_H
 
 #include "always.h"
 #include "dynamesh.h"
@@ -116,5 +110,3 @@ private:
 	Vector2					TranslateOffset;
 	Vector2					PixelSize;
 };
-
-#endif	// TEXTDRAW_H

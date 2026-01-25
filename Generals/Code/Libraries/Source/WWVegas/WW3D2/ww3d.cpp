@@ -100,7 +100,7 @@
 #include "statistics.h"
 #include "pointgr.h"
 #include "ffactory.h"
-#include "INI.H"
+#include "INI.h"
 #include "dazzle.h"
 #include "meshmdl.h"
 #include "dx8renderer.h"
@@ -108,9 +108,8 @@
 #include "bound.h"
 #include "rddesc.h"
 #include "Vector3i.h"
-#include <cstdio>
 #include "dx8wrapper.h"
-#include "TARGA.H"
+#include "TARGA.h"
 #include "sortingrenderer.h"
 #include "thread.h"
 #include "cpudetect.h"
@@ -118,11 +117,7 @@
 #include "formconv.h"
 #include "animatedsoundmgr.h"
 #include "static_sort_list.h"
-
-
-#ifndef _UNIX
 #include "framgrab.h"
-#endif
 
 
 const char* DAZZLE_INI_FILENAME="DAZZLE.INI";
@@ -165,6 +160,7 @@ const char* DAZZLE_INI_FILENAME="DAZZLE.INI";
 **
 ***********************************************************************************/
 
+float														WW3D::LogicFrameTimeMs = 1000.0f / WWSyncPerSecond; // initialized to something to avoid division by zero on first use
 float															WW3D::FractionalSyncMs = 0.0f;
 unsigned int											WW3D::SyncTime = 0;
 unsigned int											WW3D::PreviousSyncTime = 0;
@@ -187,7 +183,7 @@ bool														WW3D::MungeSortOnLoad = false;
 
 bool														WW3D::OverbrightModifyOnLoad = false;
 
-FrameGrabClass *										WW3D::Movie = NULL;
+FrameGrabClass *										WW3D::Movie = nullptr;
 bool														WW3D::PauseRecord;
 bool														WW3D::RecordNextFrame;
 
@@ -198,11 +194,11 @@ long														WW3D::UserStat2 = 0;
 
 float														WW3D::DefaultNativeScreenSize = 1.0f;
 
-StaticSortListClass *								WW3D::DefaultStaticSortLists = NULL;
-StaticSortListClass *								WW3D::CurrentStaticSortLists = NULL;
+StaticSortListClass *								WW3D::DefaultStaticSortLists = nullptr;
+StaticSortListClass *								WW3D::CurrentStaticSortLists = nullptr;
 
 
-VertexMaterialClass *								WW3D::DefaultDebugMaterial  = NULL;
+VertexMaterialClass *								WW3D::DefaultDebugMaterial  = nullptr;
 ShaderClass												WW3D::DefaultDebugShader(DEFAULT_DEBUG_SHADER_BITS);
 ShaderClass												WW3D::LightmapDebugShader(LIGHTMAP_DEBUG_SHADER_BITS);
 
@@ -218,7 +214,7 @@ unsigned													WW3D::NPatchesLevel=1;
 bool														WW3D::IsTexturingEnabled=true;
 bool										WW3D::IsColoringEnabled=false;
 
-static HWND												_Hwnd = NULL;		// Not a member to hide windows from WW3D users
+static HWND												_Hwnd = nullptr;		// Not a member to hide windows from WW3D users
 static int												_TextureReduction = 0;
 static int												_TextureMinDim = 1;
 static bool												_LargeTextureExtraReductionEnabled = false;
@@ -250,14 +246,6 @@ void WW3D::Set_NPatches_Level(unsigned level)
 	if (NPatchesLevel==1 && level>1) TheDX8MeshRenderer.Invalidate();
 	if (NPatchesLevel>1 && level==1) TheDX8MeshRenderer.Invalidate();
 	NPatchesLevel = level;
-}
-
-void WW3D::Set_Thumbnail_Enabled (bool b)
-{
-	if (ThumbnailEnabled!=b) {
-		ThumbnailEnabled = b;
-		_Invalidate_Textures();
-	}
 }
 
 /***********************************************************************************************
@@ -499,7 +487,7 @@ void *WW3D::Get_Window( void )
 }
 
 /***********************************************************************************************
- * WW3D::Is_Windowed -- returns wether we are currently in a windowed mode                     *
+ * WW3D::Is_Windowed -- returns whether we are currently in a windowed mode                    *
  *                                                                                             *
  * INPUT:                                                                                      *
  *                                                                                             *
@@ -779,7 +767,7 @@ void WW3D::Set_Texture_Filter(int texture_filter)
 	if (texture_filter<0) texture_filter=0;
 	if (texture_filter>TextureFilterClass::TEXTURE_FILTER_ANISOTROPIC) texture_filter=TextureFilterClass::TEXTURE_FILTER_ANISOTROPIC;
 	TextureFilter=texture_filter;
-	TextureFilterClass::_Init_Filters();
+	TextureFilterClass::_Init_Filters((TextureFilterClass::TextureFilterMode)TextureFilter);
 }
 
 
@@ -830,7 +818,7 @@ WW3DErrorType WW3D::Begin_Render(bool clear,bool clearz,const Vector3 & color, f
 	LastFrameMemoryFrees=WWMemoryLogClass::Get_Free_Count();
 	WWMemoryLogClass::Reset_Counters();
 
-	TextureLoader::Update();
+	TextureLoader::Update(network_callback);
 //	TextureClass::_Reset_Time_Stamp();
 	DynamicVBAccessClass::_Reset(true);
 	DynamicIBAccessClass::_Reset(true);
@@ -855,7 +843,7 @@ WW3DErrorType WW3D::Begin_Render(bool clear,bool clearz,const Vector3 & color, f
 		vp.Y = 0;
 		vp.Width = width;
 		vp.Height = height;
-		vp.MinZ = 0.0f;;
+		vp.MinZ = 0.0f;
 		vp.MaxZ = 1.0f;
 		DX8Wrapper::Set_Viewport(&vp);
 		DX8Wrapper::Clear(clear, clearz, color, dest_alpha);
@@ -976,7 +964,7 @@ WW3DErrorType WW3D::Render(SceneClass * scene,CameraClass * cam,bool clear,bool 
 	}
 
 	// Set the global ambient light value here.  If the scene is using the LightEnvironment system
-	// this setting will get overriden.
+	// this setting will get overridden.
 	DX8Wrapper::Set_Ambient(scene->Get_Ambient_Light());
 
 	// render the scene
@@ -1028,7 +1016,7 @@ WW3DErrorType WW3D::Render(
 	DX8Wrapper::Set_DX8_Render_State(D3DRS_FILLMODE,D3DFILL_SOLID);
 
 	// Install the lighting environment if one is supplied
-	if (rinfo.light_environment != NULL) {
+	if (rinfo.light_environment != nullptr) {
 		DX8Wrapper::Set_Light_Environment(rinfo.light_environment);
 	}
 
@@ -1168,21 +1156,10 @@ unsigned int WW3D::Get_Last_Frame_Vertex_Count(void)
 	return Debug_Statistics::Get_DX8_Vertices();
 }
 
-void WW3D::Add_Frame_Time(float milliseconds)
+void WW3D::Update_Logic_Frame_Time(float milliseconds)
 {
+	LogicFrameTimeMs = milliseconds;
 	FractionalSyncMs += milliseconds;
-	unsigned int integralSyncMs = (unsigned int)FractionalSyncMs;
-
-#if MSEC_PER_WWSYNC_FRAME
-	if (integralSyncMs < MSEC_PER_WWSYNC_FRAME)
-	{
-		Sync(SyncTime);
-		return;
-	}
-#endif
-
-	FractionalSyncMs -= integralSyncMs;
-	Sync(SyncTime + integralSyncMs);
 }
 
 
@@ -1198,12 +1175,17 @@ void WW3D::Add_Frame_Time(float milliseconds)
  * HISTORY:                                                                                    *
  *   3/24/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-void WW3D::Sync(unsigned int sync_time)
+void WW3D::Sync(bool step)
 {
 	PreviousSyncTime = SyncTime;
-   SyncTime = sync_time;
-}
 
+	if (step)
+	{
+		unsigned int integralSyncMs = (unsigned int)FractionalSyncMs;
+		FractionalSyncMs -= integralSyncMs;
+		SyncTime += integralSyncMs;
+	}
+}
 
 /***********************************************************************************************
  * WW3D::Set_Ext_Swap_Interval -- Sets the swap interval the device should aim sync for.       *
@@ -1374,10 +1356,10 @@ void WW3D::Make_Screen_Shot( const char * filename_base , const float gamma, con
 	surface->Get_Description(surfaceDesc);
 
 	SurfaceClass* surfaceCopy = NEW_REF(SurfaceClass, (DX8Wrapper::_Create_DX8_Surface(surfaceDesc.Width, surfaceDesc.Height, surfaceDesc.Format)));
-	DX8Wrapper::_Copy_DX8_Rects(surface->Peek_D3D_Surface(), NULL, 0, surfaceCopy->Peek_D3D_Surface(), NULL);
+	DX8Wrapper::_Copy_DX8_Rects(surface->Peek_D3D_Surface(), nullptr, 0, surfaceCopy->Peek_D3D_Surface(), nullptr);
 
 	surface->Release_Ref();
-	surface = NULL;
+	surface = nullptr;
 
 	struct Rect
 	{
@@ -1386,7 +1368,7 @@ void WW3D::Make_Screen_Shot( const char * filename_base , const float gamma, con
 	} lrect;
 
 	lrect.pBits = surfaceCopy->Lock(&lrect.Pitch);
-	if (lrect.pBits == NULL)
+	if (lrect.pBits == nullptr)
 	{
 		surfaceCopy->Release_Ref();
 		return;
@@ -1416,7 +1398,7 @@ void WW3D::Make_Screen_Shot( const char * filename_base , const float gamma, con
 
 	surfaceCopy->Unlock();
 	surfaceCopy->Release_Ref();
-	surfaceCopy = NULL;
+	surfaceCopy = nullptr;
 
 	switch (format) {
 		case TGA:
@@ -1509,7 +1491,7 @@ void WW3D::Make_Screen_Shot( const char * filename_base , const float gamma, con
  *=============================================================================================*/
 void WW3D::Start_Movie_Capture( const char * filename_base, float frame_rate )
 {
-#ifdef _WINDOWS
+#ifdef _WIN32
 	if (IsCapturing) {
 		Stop_Movie_Capture();
 	}
@@ -1522,7 +1504,7 @@ void WW3D::Start_Movie_Capture( const char * filename_base, float frame_rate )
 	int width=bounds.right-bounds.left;
 	int depth=24;
 
-	WWASSERT( Movie == NULL);
+	WWASSERT( Movie == nullptr);
 
 	if (frame_rate == 0.0f) {
 		frame_rate = 1.0f;
@@ -1552,14 +1534,14 @@ void WW3D::Start_Movie_Capture( const char * filename_base, float frame_rate )
  *=============================================================================================*/
 void WW3D::Stop_Movie_Capture( void )
 {
-#ifdef _WINDOWS
+#ifdef _WIN32
 	if (IsCapturing) {
 		IsCapturing = false;
-		WWDEBUG_SAY(( "Stoping Movie" ));
+		WWDEBUG_SAY(( "Stopping Movie" ));
 
-		WWASSERT( Movie != NULL);
+		WWASSERT( Movie != nullptr);
 		delete Movie;
-		Movie = NULL;
+		Movie = nullptr;
 	}
 #endif
 }
@@ -1673,7 +1655,7 @@ bool WW3D::Is_Movie_Paused()
  *=============================================================================================*/
 bool WW3D::Is_Recording_Next_Frame()
 {
-	return (Movie != 0) && (!PauseRecord || RecordNextFrame);
+	return (Movie != nullptr) && (!PauseRecord || RecordNextFrame);
 }
 
 
@@ -1691,7 +1673,7 @@ bool WW3D::Is_Recording_Next_Frame()
  *=============================================================================================*/
 bool WW3D::Is_Movie_Ready()
 {
-	return Movie != 0;
+	return Movie != nullptr;
 }
 
 
@@ -1710,7 +1692,7 @@ bool WW3D::Is_Movie_Ready()
  *=============================================================================================*/
 void WW3D::Update_Movie_Capture( void )
 {
-#ifdef _WINDOWS
+#ifdef _WIN32
 	WWASSERT( IsCapturing);
 	WWPROFILE("WW3D::Update_Movie_Capture");
 	WWDEBUG_SAY(( "Updating"));
@@ -1724,10 +1706,10 @@ void WW3D::Update_Movie_Capture( void )
 	surface->Get_Description(surfaceDesc);
 
 	SurfaceClass* surfaceCopy = NEW_REF(SurfaceClass, (DX8Wrapper::_Create_DX8_Surface(surfaceDesc.Width, surfaceDesc.Height, surfaceDesc.Format)));
-	DX8Wrapper::_Copy_DX8_Rects(surface->Peek_D3D_Surface(), NULL, 0, surfaceCopy->Peek_D3D_Surface(), NULL);
+	DX8Wrapper::_Copy_DX8_Rects(surface->Peek_D3D_Surface(), nullptr, 0, surfaceCopy->Peek_D3D_Surface(), nullptr);
 
 	surface->Release_Ref();
-	surface = NULL;
+	surface = nullptr;
 
 	struct Rect
 	{
@@ -1736,7 +1718,7 @@ void WW3D::Update_Movie_Capture( void )
 	} lrect;
 
 	lrect.pBits = surfaceCopy->Lock(&lrect.Pitch);
-	if (lrect.pBits == NULL)
+	if (lrect.pBits == nullptr)
 	{
 		surfaceCopy->Release_Ref();
 		return;
@@ -1766,7 +1748,7 @@ void WW3D::Update_Movie_Capture( void )
 
 	surfaceCopy->Unlock();
 	surfaceCopy->Release_Ref();
-	surfaceCopy = NULL;
+	surfaceCopy = nullptr;
 
 	Movie->Grab(image);
 #endif
@@ -1787,7 +1769,7 @@ void WW3D::Update_Movie_Capture( void )
  *=============================================================================================*/
 float	WW3D::Get_Movie_Capture_Frame_Rate( void )
 {
-#ifdef _WINDOWS
+#ifdef _WIN32
 	if (IsCapturing) {
 		return Movie->GetFrameRate();
 	}
@@ -1895,7 +1877,7 @@ VertexMaterialClass * WW3D::Peek_Default_Debug_Material(void)
 	WWASSERT(DefaultDebugMaterial);
 	return DefaultDebugMaterial;
 #else
-	return NULL;
+	return nullptr;
 #endif
 }
 
@@ -1948,7 +1930,7 @@ ShaderClass	WW3D::Peek_Lightmap_Debug_Shader(void)
 void WW3D::Allocate_Debug_Resources(void)
 {
 #ifdef WWDEBUG
-	WWASSERT(DefaultDebugMaterial == NULL);
+	WWASSERT(DefaultDebugMaterial == nullptr);
 	DefaultDebugMaterial = W3DNEW VertexMaterialClass;
 	DefaultDebugMaterial->Set_Shininess(0.0f);
 	DefaultDebugMaterial->Set_Opacity(1.0f);

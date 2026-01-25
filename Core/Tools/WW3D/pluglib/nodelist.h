@@ -23,7 +23,7 @@
  *                                                                                             *
  *                 Project Name : Commando / G                                                 *
  *                                                                                             *
- *                    File Name : NODELIST.H                                                   *
+ *                    File Name : NODELIST.h                                                   *
  *                                                                                             *
  *                   Programmer : Greg Hjelstrom                                               *
  *                                                                                             *
@@ -35,9 +35,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef NODELIST_H
-#define NODELIST_H
+#pragma once
 
 #include "always.h"
 #include <max.h>
@@ -62,10 +60,10 @@ class INodeListClass : public ITreeEnumProc
 {
 public:
 
-	INodeListClass(TimeValue time,INodeFilterClass * nodefilter = NULL);
-	INodeListClass(IScene * scene,TimeValue time,INodeFilterClass * nodefilter = NULL);
-	INodeListClass(INode * root,TimeValue time,INodeFilterClass * nodefilter = NULL);
-	INodeListClass(INodeListClass & copyfrom,TimeValue time,INodeFilterClass * inodefilter = NULL);
+	INodeListClass(TimeValue time,INodeFilterClass * nodefilter = nullptr);
+	INodeListClass(IScene * scene,TimeValue time,INodeFilterClass * nodefilter = nullptr);
+	INodeListClass(INode * root,TimeValue time,INodeFilterClass * nodefilter = nullptr);
+	INodeListClass(INodeListClass & copyfrom,TimeValue time,INodeFilterClass * inodefilter = nullptr);
 	~INodeListClass();
 
 	void			Set_Filter(INodeFilterClass * inodefilter) { INodeFilter = inodefilter; }
@@ -97,6 +95,3 @@ public:
 	// returns >0 if nodea > node b.
 	virtual int operator() (INode * nodea,INode * nodeb) const = 0;
 };
-
-
-#endif /*NODELIST_H*/

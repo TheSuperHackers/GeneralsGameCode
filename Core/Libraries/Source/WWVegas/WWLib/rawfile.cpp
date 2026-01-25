@@ -53,11 +53,9 @@
 
 // TheSuperHackers @build feliwir 11/04/2025 We removed Win32 API here and use plain C
 #include	"always.h"
-#include	"RAWFILE.H"
+#include "RAWFILE.h"
 #include	<stddef.h>
-#include	<stdio.h>
 #include	<stdlib.h>
-#include	<string.h>
 #include	<limits.h>
 #include	<errno.h>
 #include <sys/types.h>
@@ -69,7 +67,7 @@
 	**	This is a duplicate of the error numbers. The error handler for the RawFileClass handles
 	**	these errors. If the error routine is overridden and additional errors are defined, then
 	**	use numbers starting with 100. Note that these errors here are listed in numerical order.
-	**	These errors are defined in the standard header file "ERRNO.H".
+	**	These errors are defined in the standard header file "ERRNO.h".
 	*/
 	EZERO,				// Non-error.
 	EINVFNC,				// Invalid function number.
@@ -179,7 +177,7 @@ bool RawFileClass::Is_Open(void) const
  *    Display an error message as indicated. If it is allowed to retry, then pressing a key    *
  *    will return from this function. Otherwise, it will exit the program with "exit()".       *
  *                                                                                             *
- * INPUT:   error    -- The error number (same as the DOSERR.H error numbers).                 *
+ * INPUT:   error    -- The error number (same as the DOSERR.h error numbers).                 *
  *                                                                                             *
  *          canretry -- Can this routine exit normally so that retrying can occur? If this is  *
  *                      false, then the program WILL exit in this routine.                     *
@@ -292,11 +290,11 @@ void RawFileClass::Reset(void)
  * RawFileClass::File_Name -- Returns with the filename associate with the file object.        *
  *                                                                                             *
  *    Use this routine to determine what filename is associated with this file object. If no   *
- *    filename has yet been assigned, then this routing will return NULL.                      *
+ *    filename has yet been assigned, then this routing will return null.                      *
  *                                                                                             *
  * INPUT:   none                                                                               *
  *                                                                                             *
- * OUTPUT:  Returns with a pointer to the file name associated with this file object or NULL   *
+ * OUTPUT:  Returns with a pointer to the file name associated with this file object or nullptr   *
  *          if one doesn't exist.                                                              *
  *                                                                                             *
  * WARNINGS:   none                                                                            *
@@ -404,7 +402,7 @@ int RawFileClass::Open(int rights)
 	**	Verify that there is a filename associated with this file object. If not, then this is a
 	**	big error condition.
 	*/
-	if (Filename.Get_Length()==0) {
+	if (Filename.Is_Empty()) {
 		Error(ENOENT, false);
 	}
 
@@ -494,7 +492,7 @@ int RawFileClass::Open(int rights)
  *=============================================================================================*/
 bool RawFileClass::Is_Available(int forced)
 {
-	if (Filename.Get_Length()==0) return(false);
+	if (Filename.Is_Empty()) return(false);
 
 	/*
 	**	If the file is already open, then is must have already passed the availability check.
@@ -589,10 +587,10 @@ void RawFileClass::Close(void)
  *    the file. This condition can result in fewer bytes being read than requested. Determine  *
  *    this by examining the return value.                                                      *
  *                                                                                             *
- * INPUT:   buffer   -- Pointer to the buffer to read data into. If NULL is passed, no read    *
+ * INPUT:   buffer   -- Pointer to the buffer to read data into. If nullptr is passed, no read    *
  *                      is performed.                                                          *
  *                                                                                             *
- *          size     -- The number of bytes to read. If NULL is passed, then no read is        *
+ *          size     -- The number of bytes to read. If nullptr is passed, then no read is        *
  *                      performed.                                                             *
  *                                                                                             *
  * OUTPUT:  Returns with the number of bytes read into the buffer. If this number is less      *
@@ -757,7 +755,7 @@ int RawFileClass::Seek(int pos, int dir)
 	/*
 	**	A file that is biased will have a seek operation modified so that the file appears to
 	**	exist only within the bias range. All bytes outside of this range appear to be
-	**	non-existant.
+	**	non-existent.
 	*/
 	if (BiasLength != -1) {
 		switch (dir) {

@@ -26,14 +26,14 @@
 // Generals version number class
 // Author: Matthew D. Campbell, November 2001
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "GameClient/GameText.h"
 #include "Common/version.h"
 
 #include "gitinfo.h"
 
-Version *TheVersion = NULL;	///< The Version singleton
+Version *TheVersion = nullptr;	///< The Version singleton
 
 Version::Version()
 {
@@ -309,7 +309,7 @@ UnicodeString Version::getUnicodeBuildUserOrGitCommitAuthorName() const
 UnicodeString Version::getUnicodeProductTitle() const
 {
 	// @todo Make configurable
-	return UnicodeString(L"Community Patch");
+	return L"Community Patch";
 }
 
 UnicodeString Version::getUnicodeProductVersion() const

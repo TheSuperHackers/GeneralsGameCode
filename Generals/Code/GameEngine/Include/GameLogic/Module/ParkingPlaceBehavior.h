@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __ParkingPlaceBehavior_H_
-#define __ParkingPlaceBehavior_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/BehaviorModule.h"
 #include "GameLogic/Module/DieModule.h"
@@ -66,13 +63,13 @@ public:
 
 		static const FieldParse dataFieldParse[] =
 		{
-			{ "NumRows",						INI::parseInt,									NULL, offsetof( ParkingPlaceBehaviorModuleData, m_numRows ) },
-			{ "NumCols",						INI::parseInt,									NULL, offsetof( ParkingPlaceBehaviorModuleData, m_numCols ) },
-			{ "ApproachHeight",			INI::parseReal,									NULL, offsetof( ParkingPlaceBehaviorModuleData, m_approachHeight ) },
-			{ "HasRunways",					INI::parseBool,									NULL, offsetof( ParkingPlaceBehaviorModuleData, m_hasRunways ) },
-			{ "ParkInHangars",			INI::parseBool,									NULL, offsetof( ParkingPlaceBehaviorModuleData, m_parkInHangars ) },
-			{ "HealAmountPerSecond",INI::parseReal,									NULL, offsetof( ParkingPlaceBehaviorModuleData, m_healAmount ) },
-			//{ "TimeForFullHeal",	INI::parseDurationUnsignedInt,	NULL, offsetof( ParkingPlaceBehaviorModuleData, m_framesForFullHeal ) },
+			{ "NumRows",						INI::parseInt,									nullptr, offsetof( ParkingPlaceBehaviorModuleData, m_numRows ) },
+			{ "NumCols",						INI::parseInt,									nullptr, offsetof( ParkingPlaceBehaviorModuleData, m_numCols ) },
+			{ "ApproachHeight",			INI::parseReal,									nullptr, offsetof( ParkingPlaceBehaviorModuleData, m_approachHeight ) },
+			{ "HasRunways",					INI::parseBool,									nullptr, offsetof( ParkingPlaceBehaviorModuleData, m_hasRunways ) },
+			{ "ParkInHangars",			INI::parseBool,									nullptr, offsetof( ParkingPlaceBehaviorModuleData, m_parkInHangars ) },
+			{ "HealAmountPerSecond",INI::parseReal,									nullptr, offsetof( ParkingPlaceBehaviorModuleData, m_healAmount ) },
+			//{ "TimeForFullHeal",	INI::parseDurationUnsignedInt,	nullptr, offsetof( ParkingPlaceBehaviorModuleData, m_framesForFullHeal ) },
 			{ 0, 0, 0, 0 }
 		};
 		p.add(dataFieldParse);
@@ -130,8 +127,8 @@ public:
 	Bool reserveSpace(ObjectID id, Real parkingOffset, PPInfo* info);
 	void releaseSpace(ObjectID id);
 	Bool reserveRunway(ObjectID id, Bool forLanding);
-	Bool postponeRunwayReservation(UnsignedInt spaceIndex, Bool forLanding);
 	void releaseRunway(ObjectID id);
+	virtual Int getRunwayIndex(ObjectID id);
 	Int getRunwayCount() const { return m_runways.size(); }
 	ObjectID getRunwayReservation(Int r);
 	void transferRunwayReservationToNextInLineForTakeoff(ObjectID id);
@@ -191,6 +188,7 @@ private:
 	UnsignedInt										m_nextHealFrame;
 	Bool													m_gotInfo;
 
+	Bool postponeRunwayReservation(UnsignedInt spaceIndex, Bool forLanding);
 	void buildInfo();
 	void purgeDead();
 	void resetWakeFrame();
@@ -201,6 +199,3 @@ private:
 	Coord3D m_heliRallyPoint;
 	Bool m_heliRallyPointExists;				///< Only move to the rally point if this is true
 };
-
-#endif // __ParkingPlaceBehavior_H_
-

@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifndef _TEAM_H_
-#define _TEAM_H_
-
 #include "Common/GameType.h"
 #include "Common/Snapshot.h"
 #include "Common/Thing.h"
@@ -57,7 +54,7 @@ public:
 	TeamRelationMap( void );
 	// virtual destructor provided by memory pool object
 
-	/** @todo I'm jsut wrappign this up in a nice snapshot object, we really should isolate
+	/** @todo I'm just wrapping this up in a nice snapshot object, we really should isolate
 		* m_map from public access and make access methods for our operations */
 	TeamRelationMapType m_map;
 
@@ -262,7 +259,7 @@ public:
 	Player *getControllingPlayer() const;
 
 	/**
-		set the team's owner. (NULL is not allowed)
+		set the team's owner. (nullptr is not allowed)
 	*/
 	void setControllingPlayer(Player *newController);
 
@@ -528,10 +525,10 @@ public:
 								 TeamPrototypeID id );
 	// virtual destructor prototype provided by memory pool object
 
-	inline TeamPrototypeID getID() const { return m_id; }
-	inline const AsciiString& getName() const { return m_name; }
-	inline Bool getIsSingleton() const { return (m_flags & TEAM_SINGLETON) != 0; }
-	inline const TeamTemplateInfo *getTemplateInfo(void) const {return &m_teamTemplate;}
+	TeamPrototypeID getID() const { return m_id; }
+	const AsciiString& getName() const { return m_name; }
+	Bool getIsSingleton() const { return (m_flags & TEAM_SINGLETON) != 0; }
+	const TeamTemplateInfo *getTemplateInfo(void) const {return &m_teamTemplate;}
 	/**
 		return the team's owner (backtracking up if necessary)
 	*/
@@ -543,7 +540,7 @@ public:
 	Team *findTeamByID( TeamID teamID );
 
 	/**
-		set the team's owner. (NULL is not allowed)
+		set the team's owner. (nullptr is not allowed)
 	*/
 	void setControllingPlayer(Player *newController);
 
@@ -699,10 +696,10 @@ public:
 	/// return the TeamPrototype with the given name. if none exists, return null.
 	TeamPrototype *findTeamPrototype(const AsciiString& name);
 
-	/// return TeamPrototype with matching ID.  if none exists NULL is returned
+	/// return TeamPrototype with matching ID.  if none exists nullptr is returned
 	TeamPrototype *findTeamPrototypeByID( TeamPrototypeID id );
 
-	/// search all prototypes for the team with the matching id, if none found NULL is returned
+	/// search all prototypes for the team with the matching id, if none found nullptr is returned
 	Team *findTeamByID( TeamID teamID );
 
 	// note that there is no way to directly destroy a specific TeamPrototype (or a Team); the only
@@ -713,7 +710,7 @@ public:
 	/// create a team. there must be a TeamPrototype with the given name, or an exception is thrown.
 	Team *createTeam(const AsciiString& name);
 
-	/// create a team given an explicity team prototype rather than a prototype name
+	/// create a team given an explicitly team prototype rather than a prototype name
 	Team *createTeamOnPrototype( TeamPrototype *prototype );
 
 	/// create a team. there must be a TeamPrototype with the given name, or an exception is thrown.
@@ -756,5 +753,3 @@ const AsciiString& Team::getName(void) const
 
 
 // ------------------------------------------------------------------------
-
-#endif // _TEAM_H_

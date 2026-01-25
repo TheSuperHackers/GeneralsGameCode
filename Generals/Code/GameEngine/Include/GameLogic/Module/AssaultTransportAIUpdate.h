@@ -30,9 +30,6 @@
 
 #pragma once
 
-#ifndef __ASSAULT_TRANSPORT_AI_UPDATE_H
-#define __ASSAULT_TRANSPORT_AI_UPDATE_H
-
 #include "Common/StateMachine.h"
 #include "GameLogic/Module/AIUpdate.h"
 
@@ -64,8 +61,8 @@ public:
 
 		static const FieldParse dataFieldParse[] =
 		{
-			{ "MembersGetHealedAtLifeRatio",						INI::parseReal,	NULL, offsetof( AssaultTransportAIUpdateModuleData, m_membersGetHealedAtLifeRatio ) },
-			{ "ClearRangeRequiredToContinueAttackMove", INI::parseReal, NULL, offsetof( AssaultTransportAIUpdateModuleData, m_clearRangeRequiredToContinueAttackMove ) },
+			{ "MembersGetHealedAtLifeRatio",						INI::parseReal,	nullptr, offsetof( AssaultTransportAIUpdateModuleData, m_membersGetHealedAtLifeRatio ) },
+			{ "ClearRangeRequiredToContinueAttackMove", INI::parseReal, nullptr, offsetof( AssaultTransportAIUpdateModuleData, m_clearRangeRequiredToContinueAttackMove ) },
 			{ 0, 0, 0, 0 }
 		};
     p.add(dataFieldParse);
@@ -123,6 +120,3 @@ protected:
 	Bool							m_isAttackObject;
 	Bool							m_newOccupantsAreNewMembers;
 };
-
-#endif
-

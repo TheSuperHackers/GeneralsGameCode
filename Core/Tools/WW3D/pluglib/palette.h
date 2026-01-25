@@ -22,7 +22,7 @@
  *                                                                                             *
  *                 Project Name : Command & Conquer                                            *
  *                                                                                             *
- *                     $Archive:: /G/wwlib/PALETTE.H                                          $*
+ *                     $Archive:: /G/wwlib/PALETTE.h                                          $*
  *                                                                                             *
  *                      $Author:: Eric_c                                                      $*
  *                                                                                             *
@@ -33,12 +33,8 @@
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-#if _MSC_VER >= 1000
-#pragma once
-#endif // _MSC_VER >= 1000
 
-#ifndef PALETTE_H
-#define PALETTE_H
+#pragma once
 
 #include	"rgb.h"
 
@@ -76,6 +72,3 @@ class PaletteClass
 	protected:
 		RGBClass Palette[COLOR_COUNT];
 };
-
-
-#endif

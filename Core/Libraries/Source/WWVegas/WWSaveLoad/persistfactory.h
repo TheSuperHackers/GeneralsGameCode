@@ -34,16 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-
-
-
-#ifndef PERSISTFACTORY_H
-#define PERSISTFACTORY_H
 
 #include "always.h"
 #include "bittype.h"
@@ -109,7 +100,7 @@ template<class T, int CHUNKID> PersistClass *
 SimplePersistFactoryClass<T,CHUNKID>::Load(ChunkLoadClass & cload) const
 {
 	T * new_obj = W3DNEW T;
-	T * old_obj = NULL;
+	T * old_obj = nullptr;
 
 	cload.Open_Chunk();
 	WWASSERT(cload.Cur_Chunk_ID() == SIMPLEFACTORY_CHUNKID_OBJPOINTER);
@@ -138,6 +129,3 @@ SimplePersistFactoryClass<T,CHUNKID>::Save(ChunkSaveClass & csave,PersistClass *
 	obj->Save(csave);
 	csave.End_Chunk();
 }
-
-
-#endif

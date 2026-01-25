@@ -26,11 +26,8 @@
 //
 // Debug command interface
 //////////////////////////////////////////////////////////////////////////////
-#ifdef _MSC_VER
-#  pragma once
-#endif
-#ifndef DEBUG_CMD_H // Include guard
-#define DEBUG_CMD_H
+
+#pragma once
 
 /**
   \interface DebugCmdInterface debug.h <rts/debug.h>
@@ -41,7 +38,7 @@
   command group and the commands implemented for this group.
 
   A Debug command group interface instance must register itself
-  using Debug::AddCommands. Ownership is then transfered to
+  using Debug::AddCommands. Ownership is then transferred to
   the Debug module unless the object is manually removed
   by calling Debug::RemoveCommands.
 
@@ -127,5 +124,3 @@ public:
 #endif
 
 ///@}
-
-#endif // DEBUG_CMD_H

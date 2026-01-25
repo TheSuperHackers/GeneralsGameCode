@@ -112,7 +112,7 @@ FilteredSoundClass::Initialize_Miles_Handle (void)
 {
 	SoundPseudo3DClass::Initialize_Miles_Handle ();
 	m_hFilter = WWAudioClass::Get_Instance ()->Get_Reverb_Filter ();
-	if ((m_SoundHandle != NULL) &&
+	if ((m_SoundHandle != nullptr) &&
 		 (m_hFilter != (HPROVIDER)INVALID_MILES_HANDLE)) {
 
 		//
@@ -152,12 +152,12 @@ FilteredSoundClass::Initialize_Miles_Handle (void)
 void
 FilteredSoundClass::Update_Volume (void)
 {
-	if (m_SoundHandle != NULL) {
+	if (m_SoundHandle != nullptr) {
 
 		// Determine the listener's position and the sound's position
 		SoundSceneClass *scene = WWAudioClass::Get_Instance ()->Get_Sound_Scene ();
 		Listener3DClass *listener = scene->Peek_2nd_Listener ();
-		if (listener != NULL) {
+		if (listener != nullptr) {
 			Vector3 listener_pos = listener->Get_Position ();
 			Vector3 sound_pos = m_Transform.Get_Translation ();
 

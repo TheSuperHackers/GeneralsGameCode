@@ -30,6 +30,7 @@
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "PreRTS.h"
 #include "Common/GameState.h"
+#include "Common/GameUtility.h"
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
 #include "Common/Upgrade.h"
@@ -40,6 +41,7 @@
 #include "GameLogic/Object.h"
 #include "GameLogic/PartitionManager.h"
 #include "GameLogic/Weapon.h"
+#include "GameLogic/Module/ContainModule.h"
 #include "GameLogic/Module/PropagandaTowerBehavior.h"
 #include "GameLogic/Module/BodyModule.h"
 
@@ -59,7 +61,7 @@ class ObjectTracker : public MemoryPoolObject
 
 public:
 
-	ObjectTracker( void ) { objectID = INVALID_ID; next = NULL; }
+	ObjectTracker( void ) { objectID = INVALID_ID; next = nullptr; }
 
 	ObjectID objectID;
 	ObjectTracker *next;
@@ -80,9 +82,9 @@ PropagandaTowerBehaviorModuleData::PropagandaTowerBehaviorModuleData( void )
 	m_scanDelayInFrames = 100;
 	m_autoHealPercentPerSecond = 0.01f;
 	m_upgradedAutoHealPercentPerSecond = 0.02f;
-	m_pulseFX = NULL;
-	m_upgradeRequired = NULL;
-	m_upgradedPulseFX = NULL;
+	m_pulseFX = nullptr;
+	m_upgradeRequired = nullptr;
+	m_upgradedPulseFX = nullptr;
 	m_affectsSelf = FALSE;
 
 }
@@ -95,15 +97,15 @@ PropagandaTowerBehaviorModuleData::PropagandaTowerBehaviorModuleData( void )
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "Radius",									INI::parseReal,									NULL,	offsetof( PropagandaTowerBehaviorModuleData, m_scanRadius ) },
-		{ "DelayBetweenUpdates",		INI::parseDurationUnsignedInt,	NULL,	offsetof( PropagandaTowerBehaviorModuleData, m_scanDelayInFrames ) },
-		{ "HealPercentEachSecond",	INI::parsePercentToReal,				NULL,	offsetof( PropagandaTowerBehaviorModuleData, m_autoHealPercentPerSecond ) },
-		{ "UpgradedHealPercentEachSecond",	INI::parsePercentToReal,NULL,	offsetof( PropagandaTowerBehaviorModuleData, m_upgradedAutoHealPercentPerSecond ) },
-		{ "PulseFX",								INI::parseFXList,								NULL,	offsetof( PropagandaTowerBehaviorModuleData, m_pulseFX ) },
-		{ "UpgradeRequired",				INI::parseAsciiString,					NULL, offsetof( PropagandaTowerBehaviorModuleData, m_upgradeRequired ) },
-		{ "UpgradedPulseFX",				INI::parseFXList,								NULL, offsetof( PropagandaTowerBehaviorModuleData, m_upgradedPulseFX ) },
-		{ "AffectsSelf",						INI::parseBool,									NULL, offsetof( PropagandaTowerBehaviorModuleData, m_affectsSelf ) },
-		{ 0, 0, 0, 0 }
+		{ "Radius",									INI::parseReal,									nullptr,	offsetof( PropagandaTowerBehaviorModuleData, m_scanRadius ) },
+		{ "DelayBetweenUpdates",		INI::parseDurationUnsignedInt,	nullptr,	offsetof( PropagandaTowerBehaviorModuleData, m_scanDelayInFrames ) },
+		{ "HealPercentEachSecond",	INI::parsePercentToReal,				nullptr,	offsetof( PropagandaTowerBehaviorModuleData, m_autoHealPercentPerSecond ) },
+		{ "UpgradedHealPercentEachSecond",	INI::parsePercentToReal,nullptr,	offsetof( PropagandaTowerBehaviorModuleData, m_upgradedAutoHealPercentPerSecond ) },
+		{ "PulseFX",								INI::parseFXList,								nullptr,	offsetof( PropagandaTowerBehaviorModuleData, m_pulseFX ) },
+		{ "UpgradeRequired",				INI::parseAsciiString,					nullptr, offsetof( PropagandaTowerBehaviorModuleData, m_upgradeRequired ) },
+		{ "UpgradedPulseFX",				INI::parseFXList,								nullptr, offsetof( PropagandaTowerBehaviorModuleData, m_upgradedPulseFX ) },
+		{ "AffectsSelf",						INI::parseBool,									nullptr, offsetof( PropagandaTowerBehaviorModuleData, m_affectsSelf ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 
   p.add( dataFieldParse );
@@ -119,11 +121,8 @@ PropagandaTowerBehaviorModuleData::PropagandaTowerBehaviorModuleData( void )
 PropagandaTowerBehavior::PropagandaTowerBehavior( Thing *thing, const ModuleData *modData )
 											 : UpdateModule( thing, modData )
 {
-	//Added By Sadullah Nader
-	//Initializations inserted
 	m_lastScanFrame = 0;
-	//
-	m_insideList = NULL;
+	m_insideList = nullptr;
 	setWakeFrame( getObject(), UPDATE_SLEEP_NONE );
 
 }
@@ -207,11 +206,13 @@ UpdateSleepTime PropagandaTowerBehavior::update( void )
 		}
 	}
 
-	if( self->getContainedBy()  &&  self->getContainedBy()->getContainedBy() )
+#if RETAIL_COMPATIBLE_CRC
+	if (self->getContainedBy() && self->getContainedBy()->getContainedBy())
+#else
+	// TheSuperHackers @bugfix If our container or any parent containers are enclosing, we turn the heck off.
+	if (self->getEnclosingContainedBy())
+#endif
 	{
-		// If our container is contained, we turn the heck off.  Seems like a weird specific check, but all of
-		// attacking is guarded by the same check in isPassengersAllowedToFire.  We similarly work in a container,
-		// but not in a double container.
 		removeAllInfluence();
 		return UPDATE_SLEEP_NONE;
 	}
@@ -229,7 +230,7 @@ UpdateSleepTime PropagandaTowerBehavior::update( void )
 
 	// go through any objects in our area of influence and do the effect logic on them
 	Object *obj;
-	ObjectTracker *curr = NULL, *prev = NULL, *next = NULL;
+	ObjectTracker *curr = nullptr, *prev = nullptr, *next = nullptr;
 	for( curr = m_insideList; curr; curr = next )
 	{
 
@@ -382,7 +383,7 @@ void PropagandaTowerBehavior::doScan( void )
 {
 	const PropagandaTowerBehaviorModuleData *modData = getPropagandaTowerBehaviorModuleData();
 	Object *us = getObject();
-	ObjectTracker *newInsideList = NULL;
+	ObjectTracker *newInsideList = nullptr;
 
 	// The act of scanning is when we play our effect
 	Bool upgradePresent = FALSE;
@@ -432,7 +433,7 @@ void PropagandaTowerBehavior::doScan( void )
   Object *overlord = us->getContainedBy();
   if ( overlord )
   {
-	  if ( us->getControllingPlayer() != ThePlayerList->getLocalPlayer() )// daling with someone else's tower
+	  if ( us->getControllingPlayer() != rts::getObservedOrLocalPlayer() )// dealing with someone else's tower
     {
       if ( overlord->testStatus( OBJECT_STATUS_STEALTHED ) && !overlord->testStatus( OBJECT_STATUS_DETECTED ) )
         doFX = FALSE;// so they don't give up their position
@@ -458,11 +459,11 @@ void PropagandaTowerBehavior::doScan( void )
 
   }
 
-	if ( us->getControllingPlayer() != ThePlayerList->getLocalPlayer() )// daling with someone else's tower
+	if ( us->getControllingPlayer() != rts::getObservedOrLocalPlayer() )// dealing with someone else's tower
 	{
 		if ( us->testStatus( OBJECT_STATUS_STEALTHED ) && !us->testStatus( OBJECT_STATUS_DETECTED ) )
 		{
-			doFX = FALSE;// Certainly don't play if we ourselves are stelthed.
+			doFX = FALSE;// Certainly don't play if we ourselves are stealthed.
 		}
 	}
 
@@ -484,7 +485,7 @@ void PropagandaTowerBehavior::doScan( void )
 																	&filterAlive,
 																	&filterMapStatus,
 																	&filterOutBuildings,
-																	NULL
+																	nullptr
 																};
 
 	// scan objects in our region
@@ -520,13 +521,13 @@ void PropagandaTowerBehavior::doScan( void )
 	{
 
 		// find this entry in the new list
-		ObjectTracker *o = NULL;
+		ObjectTracker *o = nullptr;
 		for( o = newInsideList; o; o = o->next )
 			if( o->objectID == curr->objectID )
 				break;
 
 		// if entry wasn't there, remove the bonus from this object
-		if( o == NULL )
+		if( o == nullptr )
 		{
 
 			obj = TheGameLogic->findObjectByID( curr->objectID );
@@ -537,7 +538,7 @@ void PropagandaTowerBehavior::doScan( void )
 
 	}
 
-	// delete the inside list we have recoreded
+	// delete the inside list we have recorded
 	ObjectTracker *next;
 	while( m_insideList )
 	{
@@ -606,7 +607,7 @@ void PropagandaTowerBehavior::xfer( Xfer *xfer )
 	{
 
 		// sanity
-		if( m_insideList != NULL )
+		if( m_insideList != nullptr )
 		{
 
 			DEBUG_CRASH(( "PropagandaTowerBehavior::xfer - m_insideList should be empty but is not" ));

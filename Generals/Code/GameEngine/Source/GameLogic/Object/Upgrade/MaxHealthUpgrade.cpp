@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #define DEFINE_MAXHEALTHCHANGETYPE_NAMES
 #include "Common/Xfer.h"
@@ -54,9 +54,9 @@ void MaxHealthUpgradeModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "AddMaxHealth",					INI::parseReal,					NULL,										offsetof( MaxHealthUpgradeModuleData, m_addMaxHealth ) },
+		{ "AddMaxHealth",					INI::parseReal,					nullptr,										offsetof( MaxHealthUpgradeModuleData, m_addMaxHealth ) },
 		{ "ChangeType",						INI::parseIndexList,		TheMaxHealthChangeTypeNames, offsetof( MaxHealthUpgradeModuleData, m_maxHealthChangeType ) },
-		{ 0, 0, 0, 0 }
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 
   p.add(dataFieldParse);

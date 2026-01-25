@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __SCRIPTACTIONS_H_
-#define __SCRIPTACTIONS_H_
-
 class ScriptAction;
 class GameWindow;
 class	Team;
@@ -89,7 +86,7 @@ public:
 protected:
 
 	static GameWindow *m_messageWindow;
-	static void clearWindow(void) {m_messageWindow=NULL;};
+	static void clearWindow(void) {m_messageWindow=nullptr;};
 
 	Bool m_suppressNewWindows;
 	AsciiString m_unnamedUnit;
@@ -378,8 +375,3 @@ protected:
 	void deleteAllUnmanned();
 
 };
-
-
-#endif  // end __SCRIPTACTIONS_H_
-
-

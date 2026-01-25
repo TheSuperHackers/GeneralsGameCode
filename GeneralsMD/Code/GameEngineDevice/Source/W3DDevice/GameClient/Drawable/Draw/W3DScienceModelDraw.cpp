@@ -29,6 +29,7 @@
 
 #include "W3DDevice/GameClient/Module/W3DScienceModelDraw.h"
 
+#include "Common/GameUtility.h"
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
 #include "Common/Science.h"
@@ -52,9 +53,9 @@ void W3DScienceModelDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "RequiredScience", INI::parseScience, NULL, offsetof(W3DScienceModelDrawModuleData, m_requiredScience) },
+		{ "RequiredScience", INI::parseScience, nullptr, offsetof(W3DScienceModelDrawModuleData, m_requiredScience) },
 
-		{ 0, 0, 0, 0 }
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   p.add(dataFieldParse);
 }
@@ -82,9 +83,9 @@ void W3DScienceModelDraw::doDrawModule(const Matrix3D* transformMtx)
 		return;
 	}
 
-	if( !ThePlayerList->getLocalPlayer()->hasScience(science)
-			&& ThePlayerList->getLocalPlayer()->isPlayerActive()
-		)
+	Player* player = rts::getObservedOrLocalPlayer();
+
+	if( !player->hasScience(science) && player->isPlayerActive() )
 	{
 		// We just don't draw for people without our science except for Observers
 		setHidden( TRUE );

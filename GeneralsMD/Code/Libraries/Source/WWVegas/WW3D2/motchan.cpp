@@ -47,11 +47,9 @@
 #include "motchan.h"
 #include "w3d_file.h"
 #include "chunkio.h"
-#include "Vector.H"
+#include "Vector.h"
 #include "wwmath.h"
 #include "quat.h"
-#include "wwmath.h"
-//#include <stdio.h>
 //#include <Windows.h>
 // Static Table, for Adaptive Delta Decompressor
 #define FILTER_TABLE_SIZE (256)
@@ -95,10 +93,10 @@ MotionChannelClass::MotionChannelClass(void) :
 	PivotIdx(0),
 	Type(0),
 	VectorLen(0),
-	Data(NULL),
+	Data(nullptr),
 	FirstFrame(-1),
 	LastFrame(-1),
-	CompressedData(NULL),
+	CompressedData(nullptr),
 	ValueScale(0.0f),
 	ValueOffset(0.0f)
 {
@@ -136,10 +134,10 @@ MotionChannelClass::~MotionChannelClass(void)
 void MotionChannelClass::Free(void)
 {
 	delete[] CompressedData;
-	CompressedData=NULL;
+	CompressedData=nullptr;
 
 	delete[] Data;
-	Data = NULL;
+	Data = nullptr;
 }
 
 
@@ -211,7 +209,7 @@ BitChannelClass::BitChannelClass(void) :
 	DefaultVal(0),
 	FirstFrame(-1),
 	LastFrame(-1),
-	Bits(NULL)
+	Bits(nullptr)
 {
 }
 
@@ -249,7 +247,7 @@ BitChannelClass::~BitChannelClass(void)
 void BitChannelClass::Free(void)
 {
 	delete[] Bits;
-	Bits = NULL;
+	Bits = nullptr;
 }
 
 
@@ -321,7 +319,7 @@ TimeCodedMotionChannelClass::TimeCodedMotionChannelClass(void) :
 	Type(0),
 	VectorLen(0),
 	PacketSize(0),
-	Data(NULL),
+	Data(nullptr),
 	NumTimeCodes(0),
 	LastTimeCodeIdx(0),	// absolute index to last time code
 	CachedIdx(0)			// Last Index Used
@@ -360,7 +358,7 @@ TimeCodedMotionChannelClass::~TimeCodedMotionChannelClass(void)
 void TimeCodedMotionChannelClass::Free(void)
 {
 	delete[] Data;
-	Data = NULL;
+	Data = nullptr;
 }
 
 
@@ -687,7 +685,7 @@ TimeCodedBitChannelClass::TimeCodedBitChannelClass(void) :
 	PivotIdx(0),
 	Type(0),
 	DefaultVal(0),
-	Bits(NULL),
+	Bits(nullptr),
 	CachedIdx(0)
 {
 }
@@ -726,7 +724,7 @@ TimeCodedBitChannelClass::~TimeCodedBitChannelClass(void)
 void TimeCodedBitChannelClass::Free(void)
 {
 	delete[] Bits;
-	Bits = NULL;
+	Bits = nullptr;
 }
 
 
@@ -847,9 +845,9 @@ AdaptiveDeltaMotionChannelClass::AdaptiveDeltaMotionChannelClass(void) :
 	PivotIdx(0),
 	Type(0),
 	VectorLen(0),
-	Data(NULL),
+	Data(nullptr),
 	NumFrames(0),
-	CacheData(NULL),
+	CacheData(nullptr),
 	Scale(0.0f)
 {
 
@@ -904,10 +902,10 @@ AdaptiveDeltaMotionChannelClass::~AdaptiveDeltaMotionChannelClass(void)
 void AdaptiveDeltaMotionChannelClass::Free(void)
 {
 	delete[] Data;
-	Data = NULL;
+	Data = nullptr;
 
 	delete CacheData;
-	CacheData = NULL;
+	CacheData = nullptr;
 }
 
 
@@ -1041,7 +1039,7 @@ void AdaptiveDeltaMotionChannelClass::decompress(uint32 frame_idx, float *outdat
 
 void AdaptiveDeltaMotionChannelClass::decompress(uint32 src_idx, float *srcdata, uint32 frame_idx, float *outdata)
 {
-	// Contine decompressing from src_idx, up to frame_idx
+	// Continue decompressing from src_idx, up to frame_idx
 
    assert(src_idx < frame_idx);
    src_idx++;
@@ -1307,7 +1305,7 @@ return;
 	}
 
 	delete[] Data;
-	Data=NULL;
+	Data=nullptr;
 }
 
 

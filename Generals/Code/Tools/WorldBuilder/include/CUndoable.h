@@ -22,14 +22,10 @@
 
 #pragma once
 
-#ifndef CUNDOABLE_H
-#define CUNDOABLE_H
-
 #include "Lib/BaseType.h"
 #include "../../GameEngine/Include/Common/MapObject.h"
 #include "../../GameEngine/Include/Common/GameCommon.h"
 #include "../../GameEngine/Include/GameLogic/SidesList.h"
-#include "refcount.h"
 #include <vector>
 
 class PolygonTrigger;
@@ -78,7 +74,7 @@ protected:
 
 
 public:
-		WBDocUndoable(CWorldBuilderDoc *pDoc, WorldHeightMapEdit *pNewHtMap, Coord3D *pObjOffset = NULL);
+		WBDocUndoable(CWorldBuilderDoc *pDoc, WorldHeightMapEdit *pNewHtMap, Coord3D *pObjOffset = nullptr);
 
 		// destructor.
 		~WBDocUndoable(void);
@@ -233,7 +229,7 @@ public:
 
 	// if you want to just add/modify/remove a single dict item, pass the item's key.
 	// if you want to substitute the entire contents of the new dict, pass NAMEKEY_INVALID.
-	DictItemUndoable(Dict **d, Dict data, NameKeyType key, Int dictsToModify = 1, CWorldBuilderDoc *pDoc = NULL, Bool inval = false);
+	DictItemUndoable(Dict **d, Dict data, NameKeyType key, Int dictsToModify = 1, CWorldBuilderDoc *pDoc = nullptr, Bool inval = false);
 	// destructor.
 	~DictItemUndoable(void);
 
@@ -388,6 +384,3 @@ public:
 		virtual void Do(void);
 		virtual void Undo(void);
 };
-
-
-#endif //CUNDOABLE_H

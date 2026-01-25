@@ -18,9 +18,6 @@
 
 // DownloadDebug.h
 
-#ifndef __DOWNLOADDEBUG_H_
-#define __DOWNLOADDEBUG_H_
+#pragma once
 
 #include "Common/Debug.h"
-
-#endif //__DOWNLOADDEBUG_H_

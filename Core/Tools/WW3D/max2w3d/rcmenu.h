@@ -35,8 +35,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#ifndef RCMENU_H
-#define RCMENU_H
+#pragma once
 
 #include "max.h"
 #include "dllmain.h"
@@ -85,5 +84,3 @@ private:
 };
 
 extern RCMenuClass TheRCMenu;
-
-#endif

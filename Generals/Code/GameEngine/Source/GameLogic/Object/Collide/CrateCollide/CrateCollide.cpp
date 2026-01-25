@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 #include "Common/BitFlagsIO.h"
 #include "Common/Player.h"
 #include "Common/Xfer.h"
@@ -50,15 +50,9 @@ CrateCollideModuleData::CrateCollideModuleData()
 	m_executeAnimationFades = TRUE;
 	m_isBuildingPickup = FALSE;
 	m_isHumanOnlyPickup = FALSE;
-	m_executeFX = NULL;
+	m_executeFX = nullptr;
 	m_pickupScience = SCIENCE_INVALID;
-
-	// Added By Sadullah Nader
-	// Initializations missing and needed
-
 	m_executionAnimationTemplate = AsciiString::TheEmptyString;
-
-	// End Add
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -69,19 +63,19 @@ void CrateCollideModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "RequiredKindOf", KindOfMaskType::parseFromINI, NULL, offsetof( CrateCollideModuleData, m_kindof ) },
-		{ "ForbiddenKindOf", KindOfMaskType::parseFromINI, NULL, offsetof( CrateCollideModuleData, m_kindofnot ) },
-		{ "ForbidOwnerPlayer", INI::parseBool,	NULL,	offsetof( CrateCollideModuleData, m_isForbidOwnerPlayer ) },
-		{ "BuildingPickup", INI::parseBool,	NULL,	offsetof( CrateCollideModuleData, m_isBuildingPickup ) },
-		{ "HumanOnly", INI::parseBool,	NULL,	offsetof( CrateCollideModuleData, m_isHumanOnlyPickup ) },
-		{ "PickupScience", INI::parseScience,	NULL,	offsetof( CrateCollideModuleData, m_pickupScience ) },
-		{ "ExecuteFX", INI::parseFXList, NULL, offsetof( CrateCollideModuleData, m_executeFX ) },
-		{ "ExecuteAnimation", INI::parseAsciiString, NULL, offsetof( CrateCollideModuleData, m_executionAnimationTemplate ) },
-		{ "ExecuteAnimationTime", INI::parseReal, NULL, offsetof( CrateCollideModuleData, m_executeAnimationDisplayTimeInSeconds ) },
-		{ "ExecuteAnimationZRise", INI::parseReal, NULL, offsetof( CrateCollideModuleData, m_executeAnimationZRisePerSecond ) },
-		{ "ExecuteAnimationFades", INI::parseBool, NULL, offsetof( CrateCollideModuleData, m_executeAnimationFades ) },
+		{ "RequiredKindOf", KindOfMaskType::parseFromINI, nullptr, offsetof( CrateCollideModuleData, m_kindof ) },
+		{ "ForbiddenKindOf", KindOfMaskType::parseFromINI, nullptr, offsetof( CrateCollideModuleData, m_kindofnot ) },
+		{ "ForbidOwnerPlayer", INI::parseBool,	nullptr,	offsetof( CrateCollideModuleData, m_isForbidOwnerPlayer ) },
+		{ "BuildingPickup", INI::parseBool,	nullptr,	offsetof( CrateCollideModuleData, m_isBuildingPickup ) },
+		{ "HumanOnly", INI::parseBool,	nullptr,	offsetof( CrateCollideModuleData, m_isHumanOnlyPickup ) },
+		{ "PickupScience", INI::parseScience,	nullptr,	offsetof( CrateCollideModuleData, m_pickupScience ) },
+		{ "ExecuteFX", INI::parseFXList, nullptr, offsetof( CrateCollideModuleData, m_executeFX ) },
+		{ "ExecuteAnimation", INI::parseAsciiString, nullptr, offsetof( CrateCollideModuleData, m_executionAnimationTemplate ) },
+		{ "ExecuteAnimationTime", INI::parseReal, nullptr, offsetof( CrateCollideModuleData, m_executeAnimationDisplayTimeInSeconds ) },
+		{ "ExecuteAnimationZRise", INI::parseReal, nullptr, offsetof( CrateCollideModuleData, m_executeAnimationZRisePerSecond ) },
+		{ "ExecuteAnimationFades", INI::parseBool, nullptr, offsetof( CrateCollideModuleData, m_executeAnimationFades ) },
 
-		{ 0, 0, 0, 0 }
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   p.add(dataFieldParse);
 }
@@ -102,7 +96,7 @@ CrateCollide::~CrateCollide( void )
 
 //-------------------------------------------------------------------------------------------------
 /** The collide event.
-	* Note that when other is NULL it means "collide with ground" */
+	* Note that when other is nullptr it means "collide with ground" */
 //-------------------------------------------------------------------------------------------------
 void CrateCollide::onCollide( Object *other, const Coord3D *, const Coord3D * )
 {
@@ -112,7 +106,7 @@ void CrateCollide::onCollide( Object *other, const Coord3D *, const Coord3D * )
 	{
 		if( executeCrateBehavior( other ) )
 		{
-			if( modData->m_executeFX != NULL )
+			if( modData->m_executeFX != nullptr )
 			{
 				// Note: We pass in other here, because the crate is owned by the neutral player, and
 				// we want to do things that only the other person can see.
@@ -143,7 +137,7 @@ void CrateCollide::onCollide( Object *other, const Coord3D *, const Coord3D * )
 Bool CrateCollide::isValidToExecute( const Object *other ) const
 {
 	//The ground never picks up a crate
-	if( other == NULL )
+	if( other == nullptr )
 		return FALSE;
 
 	//Nothing Neutral can pick up any type of crate
@@ -154,7 +148,7 @@ Bool CrateCollide::isValidToExecute( const Object *other ) const
 	Bool validBuildingAttempt = md->m_isBuildingPickup && other->isKindOf( KINDOF_STRUCTURE );
 
 	// Must be a "Unit" type thing.  Real Game Object, not just Object
-	if( other->getAIUpdateInterface() == NULL  &&  !validBuildingAttempt )// Building exception flag for Drop Zone
+	if( other->getAIUpdateInterface() == nullptr  &&  !validBuildingAttempt )// Building exception flag for Drop Zone
 		return FALSE;
 
 	// must match our kindof flags (if any)

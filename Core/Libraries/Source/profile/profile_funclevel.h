@@ -26,11 +26,8 @@
 //
 // Function level profiling
 //////////////////////////////////////////////////////////////////////////////
-#ifdef _MSC_VER
-#  pragma once
-#endif
-#ifndef PROFILE_FUNCLEVEL_H // Include guard
-#define PROFILE_FUNCLEVEL_H
+
+#pragma once
 
 /**
   \brief The function level profiler.
@@ -96,14 +93,14 @@ public:
     /**
       \brief Returns the source file this Id is in.
 
-      \return source file name, may be NULL
+      \return source file name, may be nullptr
     */
     const char *GetSource(void) const;
 
     /**
       \brief Returns the function name for this Id.
 
-      \return function name, may be NULL
+      \return function name, may be nullptr
     */
     const char *GetFunction(void) const;
 
@@ -208,8 +205,8 @@ private:
 
   /** \internal
 
-    Undocumented default constructor. Initializes function level profiler.
-    We can make this private as well so nobody accidently tries to create
+    Undocumented default constructor. Initializes function-level profiler.
+    We can make this private as well so nobody accidentally tries to create
     another instance.
   */
   ProfileFuncLevel(void);
@@ -219,5 +216,3 @@ private:
   */
   static ProfileFuncLevel Instance;
 };
-
-#endif // PROFILE_FUNCLEVEL_H

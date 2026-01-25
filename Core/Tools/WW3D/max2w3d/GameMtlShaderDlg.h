@@ -34,10 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-
-#ifndef GAMEMTLSHADERDLG_H
-#define GAMEMTLSHADERDLG_H
+#pragma once
 
 #include <max.h>
 #include "GameMtlForm.h"
@@ -66,5 +63,3 @@ private:
 	bool					CompareShaderToBlendPreset(const ShaderBlendSettingPreset &blend_preset);
 	void					Set_Advanced_Defaults(void);
 };
-
-#endif

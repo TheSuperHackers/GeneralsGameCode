@@ -48,7 +48,7 @@ W3DTerrainLogic::W3DTerrainLogic():
 m_mapMinZ(0),
 m_mapMaxZ(1)
 {
-	m_mapData = NULL;
+	m_mapData = nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -117,23 +117,6 @@ Bool W3DTerrainLogic::loadMap( AsciiString filename , Bool query )
 
 	WorldHeightMap *terrainHeightMap;				///< holds raw heightmap data samples
 
-	char	tempBuf[_MAX_PATH];
-	char	filenameBuf[_MAX_PATH];
-	int length = 0;
-
-	strcpy(tempBuf, filename.str());
-
-	length = strlen( tempBuf );
-	if( length >= 4 )
-	{
-		memset( filenameBuf, '\0', _MAX_PATH);
-		strncpy( filenameBuf, tempBuf, length - 4);
-	}
-
-//	const char *fname = filename.reverseFind('\\');
-//	if (fname)
-//		filename = fname+1;
-
 	CachedFileInputStream fileStrm;
 	if ( !fileStrm.open(filename) )
 	{
@@ -152,7 +135,7 @@ Bool W3DTerrainLogic::loadMap( AsciiString filename , Bool query )
 		m_mapDX=terrainHeightMap->getXExtent();
 		m_mapDY=terrainHeightMap->getYExtent();
 
-		// now, get all the boudnaries, and set the current active boundary to boundary 0.
+		// now, get all the boundaries, and set the current active boundary to boundary 0.
 		m_boundaries = terrainHeightMap->getAllBoundaries();
 		m_activeBoundary = 0;
 
@@ -200,7 +183,7 @@ void W3DTerrainLogic::getExtent( Region3D *extent ) const
 
 	// Note - m_boundaries are stored in height map grids wide, so we have to
 	// multiply by the grid width.
-	if (m_boundaries.size() > 0) {
+	if (!m_boundaries.empty()) {
 		extent->hi.x = m_boundaries[m_activeBoundary].x*MAP_XY_FACTOR;
 		extent->hi.y = m_boundaries[m_activeBoundary].y*MAP_XY_FACTOR;
 	} else {
@@ -335,7 +318,7 @@ Real W3DTerrainLogic::getLayerHeight( Real x, Real y, PathfindLayerEnum layer, C
 			}
 		}
 		Bridge* pBridge;
-		if ((pBridge = findBridgeLayerAt(&loc, layer, clip)) != 0)
+		if ((pBridge = findBridgeLayerAt(&loc, layer, clip)) != nullptr)
 		{
 			Real bridgeHeight = pBridge->getBridgeHeight(&loc, normal);
 			if (bridgeHeight > height)

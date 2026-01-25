@@ -21,7 +21,6 @@
 #include "CFixTeamOwnerDialog.h"
 #include "GameLogic/SidesList.h"
 #include "Common/WellKnownKeys.h"
-#include "GameLogic/SidesList.h"
 
 static const char* NEUTRAL_NAME_STR = "(neutral)";
 

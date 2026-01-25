@@ -47,8 +47,9 @@
 
 #pragma once
 
-#ifndef _GAMECOMMON_H_
-#define _GAMECOMMON_H_
+#define DONT_ALLOW_DEBUG_CHEATS_IN_RELEASE ///< Take of the DONT to get cheats back in to release
+
+//#define _CAMPEA_DEMO
 
 // ----------------------------------------------------------------------------------------------
 #include "Lib/BaseType.h"
@@ -57,7 +58,7 @@
 
 // ----------------------------------------------------------------------------------------------
 #if defined(RTS_DEBUG)
-	#define NO_DUMP_PERF_STATS
+	#define DUMP_PERF_STATS
 #else
 	#define NO_DUMP_PERF_STATS
 #endif
@@ -66,7 +67,7 @@
 enum
 {
 	BaseFps = 30, // The historic base frame rate for this game. This value must never change.
-	LOGICFRAMES_PER_SECOND = 30,
+	LOGICFRAMES_PER_SECOND = WWSyncPerSecond,
 	MSEC_PER_SECOND = 1000
 };
 const Real LOGICFRAMES_PER_MSEC_REAL = (((Real)LOGICFRAMES_PER_SECOND) / ((Real)MSEC_PER_SECOND));
@@ -121,6 +122,18 @@ enum
 #else
 	#error "this is the wrong size"
 #endif
+
+// ----------------------------------------------------------------------------------------------
+enum
+{
+	MAX_GLOBAL_GENERAL_TYPES = 9,		///< number of playable General Types, not including the boss)
+
+	/// The start of the playable global generals playertemplates
+	GLOBAL_GENERAL_BEGIN = 5,
+
+	/// The end of the playable global generals
+	GLOBAL_GENERAL_END = (GLOBAL_GENERAL_BEGIN + MAX_GLOBAL_GENERAL_TYPES - 1)
+};
 
 //-------------------------------------------------------------------------------------------------
 enum GameDifficulty CPP_11(: Int)
@@ -210,6 +223,7 @@ enum CommandSourceType CPP_11(: Int)
 	CMD_FROM_SCRIPT,
 	CMD_FROM_AI,
 	CMD_FROM_DOZER,							// Special rare command when the dozer originates a command to attack a mine. Mines are not ai-attackable, and it seems deceitful for the dozer to generate a player or script command. jba.
+	CMD_DEFAULT_SWITCH_WEAPON,	// Special case: A weapon that can be chosen -- this is the default case (machine gun vs flashbang).
 
 	COMMAND_SOURCE_TYPE_COUNT
 };
@@ -324,7 +338,7 @@ public:																																								\
 			o->dlink_removeFrom_##LISTNAME(&m_dlinkhead_##LISTNAME.m_head);									\
 	}																																										\
 	typedef void (*RemoveAllProc_##LISTNAME)(OBJCLASS* o);															\
-	inline void removeAll_##LISTNAME(RemoveAllProc_##LISTNAME p = NULL)									\
+	inline void removeAll_##LISTNAME(RemoveAllProc_##LISTNAME p = nullptr)									\
 	{																																										\
 		while (m_dlinkhead_##LISTNAME.m_head)																							\
 		{																																									\
@@ -337,7 +351,7 @@ public:																																								\
 	inline void reverse_##LISTNAME()																										\
 	{																																										\
 		OBJCLASS* cur = m_dlinkhead_##LISTNAME.m_head;																		\
-		OBJCLASS* prev = NULL;																														\
+		OBJCLASS* prev = nullptr;																														\
 		while (cur)																																				\
 		{																																									\
 			OBJCLASS* originalNext = cur->dlink_next_##LISTNAME();													\
@@ -441,7 +455,7 @@ public:
 
 	Bool done() const
 	{
-		return m_cur == NULL;
+		return m_cur == nullptr;
 	}
 
 	OBJCLASS* cur() const
@@ -489,6 +503,3 @@ enum Relationship CPP_11(: Int)
 
 // TheRelationShipNames is defined in Common/GameCommon.cpp
 extern const char *const TheRelationshipNames[];
-
-#endif // _GAMECOMMON_H_
-

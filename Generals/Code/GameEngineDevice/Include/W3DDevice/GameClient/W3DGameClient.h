@@ -25,7 +25,7 @@
 // FILE: W3DGameClient.h ///////////////////////////////////////////////////
 //
 // W3D implementation of the game interface.  The GameClient is
-// responsible for maintaining our drawbles, handling our GUI, and creating
+// responsible for maintaining our drawables, handling our GUI, and creating
 // the display ... basically the Client if this were a Client/Server game.
 //
 // Author: Colin Day, April 2001
@@ -33,9 +33,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __W3DGAMEINTERFACE_H_
-#define __W3DGAMEINTERFACE_H_
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
@@ -74,7 +71,7 @@ public:
 	virtual ~W3DGameClient();
 
 	/// given a type, create a drawable
-	virtual Drawable *friend_createDrawable( const ThingTemplate *thing, DrawableStatus statusBits = DRAWABLE_STATUS_NONE );
+	virtual Drawable *friend_createDrawable( const ThingTemplate *thing, DrawableStatusBits statusBits = DRAWABLE_STATUS_DEFAULT );
 
 	virtual void init( void );		///< initialize resources
 	virtual void update( void );  ///< per frame update
@@ -88,7 +85,7 @@ public:
 
 	//---------------------------------------------------------------------------
 	virtual void setTeamColor( Int red, Int green, Int blue );  ///< @todo superhack for demo, remove!!!
-	virtual void adjustLOD( Int adj ); ///< @todo hack for evaluation, remove.
+	virtual void setTextureLOD( Int level );
 
 protected:
 
@@ -126,5 +123,3 @@ inline Mouse *W3DGameClient::createMouse( void )
 	TheWin32Mouse = mouse;   ///< global cheat for the WndProc()
 	return mouse;
 }
-
-#endif  // end __W3DGAMEINTERFACE_H_

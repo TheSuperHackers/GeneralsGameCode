@@ -26,7 +26,7 @@
 // Author:
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/PerfTimer.h"
 
@@ -172,7 +172,7 @@ public:
 
 //-------------------------------------------------------------------------------------------------
 static PerfMetricsOutput s_output;
-static FILE* s_perfStatsFile = NULL;
+static FILE* s_perfStatsFile = nullptr;
 static Int s_perfDumpOptions = 0;
 static UnsignedInt s_lastDumpedFrame = 0;
 static char s_buf[256] = "";
@@ -190,7 +190,7 @@ Int64					PerfGather::s_stopStartOverhead = -1;
 /*static*/ PerfGather*& PerfGather::getHeadPtr()
 {
 	// funky technique for order-of-init problem. trust me. (srj)
-	static PerfGather* s_head = NULL;
+	static PerfGather* s_head = nullptr;
 	return s_head;
 }
 
@@ -232,11 +232,8 @@ PerfGather::PerfGather(const char *identifier) :
 	m_next(0),
 	m_prev(0)
 {
-	//Added By Sadullah Nader
-	//Initializations inserted
 	m_ignore = FALSE;
-	//
-	DEBUG_ASSERTCRASH(strchr(m_identifier, ',') == NULL, ("PerfGather names must not contain commas"));
+	DEBUG_ASSERTCRASH(strchr(m_identifier, ',') == nullptr, ("PerfGather names must not contain commas"));
 	addToList();
 }
 
@@ -258,7 +255,7 @@ void PerfGather::reset()
 //-------------------------------------------------------------------------------------------------
 /*static*/ void PerfGather::resetAll()
 {
-	for (PerfGather* head = getHeadPtr(); head != NULL; head = head->m_next)
+	for (PerfGather* head = getHeadPtr(); head != nullptr; head = head->m_next)
 	{
 		head->reset();
 	}
@@ -269,16 +266,17 @@ void PerfGather::reset()
 {
 	PerfGather::termPerfDump();
 
-	strcpy(s_buf, fname);
+	strlcpy(s_buf, fname, ARRAY_SIZE(s_buf);
 
 	char tmp[256];
+	static_assert(ARRAY_SIZE(tmp) >= ARRAY_SIZE(s_buf), "Incorrect array size");
 	strcpy(tmp, s_buf);
-	strcat(tmp, ".csv");
+	strlcat(tmp, ".csv", ARRAY_SIZE(tmp));
 
 	s_perfStatsFile = fopen(tmp, "w");
 	s_perfDumpOptions = options;
 
-	if (s_perfStatsFile == NULL)
+	if (s_perfStatsFile == nullptr)
 	{
 		DEBUG_CRASH(("could not open/create perf file %s -- is it open in another app?",s_buf));
 		return;
@@ -334,21 +332,21 @@ void PerfGather::reset()
 			fprintf(s_perfStatsFile, "Frame");
 			if (s_perfDumpOptions & PERF_GROSSTIME)
 			{
-				for (const PerfGather* head = getHeadPtr(); head != NULL; head = head->m_next)
+				for (const PerfGather* head = getHeadPtr(); head != nullptr; head = head->m_next)
 				{
 					fprintf(s_perfStatsFile, ",Gross:%s", head->m_identifier);
 				}
 			}
 			if (s_perfDumpOptions & PERF_NETTIME)
 			{
-				for (const PerfGather* head = getHeadPtr(); head != NULL; head = head->m_next)
+				for (const PerfGather* head = getHeadPtr(); head != nullptr; head = head->m_next)
 				{
 					fprintf(s_perfStatsFile, ",Net:%s", head->m_identifier);
 				}
 			}
 			if (s_perfDumpOptions & PERF_CALLCOUNT)
 			{
-				for (const PerfGather* head = getHeadPtr(); head != NULL; head = head->m_next)
+				for (const PerfGather* head = getHeadPtr(); head != nullptr; head = head->m_next)
 				{
 					fprintf(s_perfStatsFile, ",Count:%s", head->m_identifier);
 				}
@@ -365,7 +363,7 @@ void PerfGather::reset()
 		fprintf(s_perfStatsFile, "Frame%08d", frame);
 		if (s_perfDumpOptions & PERF_GROSSTIME)
 		{
-			for (const PerfGather* head = getHeadPtr(); head != NULL; head = head->m_next)
+			for (const PerfGather* head = getHeadPtr(); head != nullptr; head = head->m_next)
 			{
 				double t = head->m_runningTimeGross;
 				t /= s_ticksPerUSec;
@@ -376,7 +374,7 @@ void PerfGather::reset()
 		}
 		if (s_perfDumpOptions & PERF_NETTIME)
 		{
-			for (const PerfGather* head = getHeadPtr(); head != NULL; head = head->m_next)
+			for (const PerfGather* head = getHeadPtr(); head != nullptr; head = head->m_next)
 			{
 				double t = head->m_runningTimeNet;
 				t /= s_ticksPerUSec;
@@ -387,7 +385,7 @@ void PerfGather::reset()
 		}
 		if (s_perfDumpOptions & PERF_CALLCOUNT)
 		{
-			for (const PerfGather* head = getHeadPtr(); head != NULL; head = head->m_next)
+			for (const PerfGather* head = getHeadPtr(); head != nullptr; head = head->m_next)
 			{
 				fprintf(s_perfStatsFile, ",%d", head->m_callCount);
 			}
@@ -421,7 +419,7 @@ void PerfGather::reset()
 
 		if (s_perfDumpOptions & PERF_GROSSTIME)
 		{
-			for (const PerfGather* head = getHeadPtr(); head != NULL; head = head->m_next)
+			for (const PerfGather* head = getHeadPtr(); head != nullptr; head = head->m_next)
 			{
 				Real t = head->m_runningTimeGross;
 				t /= s_ticksPerUSec;
@@ -433,7 +431,7 @@ void PerfGather::reset()
 		}
 		if (s_perfDumpOptions & PERF_NETTIME)
 		{
-			for (const PerfGather* head = getHeadPtr(); head != NULL; head = head->m_next)
+			for (const PerfGather* head = getHeadPtr(); head != nullptr; head = head->m_next)
 			{
 				Real t = head->m_runningTimeNet;
 				t /= s_ticksPerUSec;
@@ -445,7 +443,7 @@ void PerfGather::reset()
 		}
 		if (s_perfDumpOptions & PERF_CALLCOUNT)
 		{
-			for (const PerfGather* head = getHeadPtr(); head != NULL; head = head->m_next)
+			for (const PerfGather* head = getHeadPtr(); head != nullptr; head = head->m_next)
 			{
 				Real t = head->m_callCount;
 				TheGraphDraw->addEntry(head->m_identifier, REAL_TO_INT(t));
@@ -462,7 +460,7 @@ void PerfGather::reset()
 	{
 		fflush(s_perfStatsFile);
 		fclose(s_perfStatsFile);
-		s_perfStatsFile = NULL;
+		s_perfStatsFile = nullptr;
 	}
 	s_lastDumpedFrame = 0;
 }
@@ -480,8 +478,6 @@ PerfTimer::PerfTimer( const char *identifier, Bool crashWithInfo, Int startFrame
 	m_callCount(0),
 	m_runningTime(0),
 	m_outputInfo(true),
-	//Added By Sadullah Nader
-	//Intializations inserted
 	m_lastFrame(-1)
 {
 }

@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/GameUtility.h"
 #include "Common/INI.h"
@@ -61,7 +61,7 @@
 #include "GameClient/Keyboard.h"
 #endif
 
-MetaMap *TheMetaMap = NULL;
+MetaMap *TheMetaMap = nullptr;
 
 
 
@@ -158,6 +158,7 @@ static const LookupListRec GameMessageMetaTypeNames[] =
 	{ "DECREASE_LOGIC_TIME_SCALE",								GameMessage::MSG_META_DECREASE_LOGIC_TIME_SCALE },
 	{ "TOGGLE_LOWER_DETAILS",											GameMessage::MSG_META_TOGGLE_LOWER_DETAILS },
 	{ "TOGGLE_CONTROL_BAR",												GameMessage::MSG_META_TOGGLE_CONTROL_BAR },
+	{ "TOGGLE_PLAYER_OBSERVER",										GameMessage::MSG_META_TOGGLE_PLAYER_OBSERVER },
 	{ "BEGIN_PATH_BUILD",													GameMessage::MSG_META_BEGIN_PATH_BUILD },
 	{ "END_PATH_BUILD",														GameMessage::MSG_META_END_PATH_BUILD },
 	{ "BEGIN_FORCEATTACK",												GameMessage::MSG_META_BEGIN_FORCEATTACK },
@@ -349,7 +350,7 @@ static const LookupListRec GameMessageMetaTypeNames[] =
 #endif//DUMP_PERF_STATS
 
 
-	{ NULL, 0	}
+	{ nullptr, 0	}
 };
 
 
@@ -364,10 +365,10 @@ static const FieldParse TheMetaMapFieldParseTable[] =
 	{ "Modifiers",					INI::parseLookupList,						ModifierNames, offsetof( MetaMapRec, m_modState ) },
 	{ "UseableIn",					INI::parseBitString32,					TheCommandUsableInNames, offsetof( MetaMapRec, m_usableIn ) },
 	{ "Category",						INI::parseLookupList,						CategoryListName, offsetof( MetaMapRec, m_category ) },
-	{ "Description",				INI::parseAndTranslateLabel,		0, offsetof( MetaMapRec, m_description ) },
-	{ "DisplayName",				INI::parseAndTranslateLabel,		0, offsetof( MetaMapRec, m_displayName ) },
+	{ "Description",				INI::parseAndTranslateLabel,		nullptr, offsetof( MetaMapRec, m_description ) },
+	{ "DisplayName",				INI::parseAndTranslateLabel,		nullptr, offsetof( MetaMapRec, m_displayName ) },
 
-	{ NULL,									NULL,														0, 0 }
+	{ nullptr,									nullptr,														nullptr, 0 }
 
 };
 
@@ -417,14 +418,16 @@ static Bool isMessageUsable(CommandUsableInType usableIn)
 	const Bool usableInShell = (usableIn & COMMANDUSABLE_SHELL);
 	const Bool usableInGame = (usableIn & COMMANDUSABLE_GAME);
 	const Bool usableAsObserver = (usableIn & COMMANDUSABLE_OBSERVER);
+	const Bool isShellActive = TheShell && TheShell->isShellActive();
+	const Bool isObserving = !ThePlayerList->getLocalPlayer()->isPlayerActive();
 
-	if (usableInShell && TheShell && TheShell->isShellActive())
+	if (usableInShell && isShellActive)
 		return true;
 
-	if (usableInGame && (!TheShell || !TheShell->isShellActive()))
+	if (usableInGame && !isShellActive)
 		return true;
 
-	if (usableAsObserver && rts::localPlayerIsObserving())
+	if (usableAsObserver && isObserving)
 		return true;
 
 	return false;
@@ -653,7 +656,7 @@ GameMessageDisposition MetaEventTranslator::translateGameMessage(const GameMessa
 
 //-------------------------------------------------------------------------------------------------
 MetaMap::MetaMap() :
-	m_metaMaps(NULL)
+	m_metaMaps(nullptr)
 {
 }
 
@@ -715,7 +718,7 @@ MetaMapRec *MetaMap::getMetaMapRec(GameMessage::Type t)
 		throw INI_INVALID_DATA;
 
 	MetaMapRec *map = TheMetaMap->getMetaMapRec(t);
-	if (map == NULL)
+	if (map == nullptr)
 		throw INI_INVALID_DATA;
 
 	ini->initFromINI(map, TheMetaMapFieldParseTable);
@@ -769,6 +772,17 @@ MetaMapRec *MetaMap::getMetaMapRec(GameMessage::Type t)
 			map->m_transition = DOWN;
 			map->m_modState = SHIFT_CTRL;
 			map->m_usableIn = COMMANDUSABLE_EVERYWHERE;
+		}
+	}
+	{
+		// Is useful for Generals and Zero Hour.
+		MetaMapRec *map = TheMetaMap->getMetaMapRec(GameMessage::MSG_META_TOGGLE_PLAYER_OBSERVER);
+		if (map->m_key == MK_NONE)
+		{
+			map->m_key = MK_M;
+			map->m_transition = DOWN;
+			map->m_modState = NONE;
+			map->m_usableIn = COMMANDUSABLE_OBSERVER;
 		}
 	}
 	{
@@ -837,6 +851,24 @@ MetaMapRec *MetaMap::getMetaMapRec(GameMessage::Type t)
 			map->m_category = CATEGORY_SELECTION;
 			map->m_description = TheGameText->FETCH_OR_SUBSTITUTE("GUI:SelectNextIdleWorkerDescription", L"Select the next idle worker");
 			map->m_displayName = TheGameText->FETCH_OR_SUBSTITUTE("GUI:SelectNextIdleWorker", L"Next Idle Worker");
+		}
+	}
+	{
+		MetaMapRec* map = TheMetaMap->getMetaMapRec(GameMessage::MSG_META_ALT_CAMERA_ROTATE_LEFT);
+		if (map->m_key == MK_NONE) {
+			map->m_key = MK_KP4;
+			map->m_transition = DOWN;
+			map->m_modState = CTRL;
+			map->m_usableIn = COMMANDUSABLE_GAME;
+		}
+	}
+	{
+		MetaMapRec* map = TheMetaMap->getMetaMapRec(GameMessage::MSG_META_ALT_CAMERA_ROTATE_RIGHT);
+		if (map->m_key == MK_NONE) {
+			map->m_key = MK_KP6;
+			map->m_transition = DOWN;
+			map->m_modState = CTRL;
+			map->m_usableIn = COMMANDUSABLE_GAME;
 		}
 	}
 

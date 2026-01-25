@@ -29,7 +29,7 @@
 
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 #include "Common/Xfer.h"
 #include "GameLogic/Module/SupplyWarehouseCripplingBehavior.h"
 #include "GameLogic/GameLogic.h"
@@ -50,10 +50,10 @@ SupplyWarehouseCripplingBehaviorModuleData::SupplyWarehouseCripplingBehaviorModu
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "SelfHealSupression",	INI::parseDurationUnsignedInt,	NULL, offsetof(SupplyWarehouseCripplingBehaviorModuleData, m_selfHealSupression) },
-		{ "SelfHealDelay",			INI::parseDurationUnsignedInt,	NULL, offsetof(SupplyWarehouseCripplingBehaviorModuleData, m_selfHealDelay) },
-		{ "SelfHealAmount",			INI::parseReal,									NULL, offsetof(SupplyWarehouseCripplingBehaviorModuleData, m_selfHealAmount) },
-		{ 0, 0, 0, 0 }
+		{ "SelfHealSupression",	INI::parseDurationUnsignedInt,	nullptr, offsetof(SupplyWarehouseCripplingBehaviorModuleData, m_selfHealSupression) },
+		{ "SelfHealDelay",			INI::parseDurationUnsignedInt,	nullptr, offsetof(SupplyWarehouseCripplingBehaviorModuleData, m_selfHealDelay) },
+		{ "SelfHealAmount",			INI::parseReal,									nullptr, offsetof(SupplyWarehouseCripplingBehaviorModuleData, m_selfHealAmount) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 
   UpdateModuleData::buildFieldParse(p);
@@ -98,12 +98,12 @@ void SupplyWarehouseCripplingBehavior::onBodyDamageStateChange(const DamageInfo*
 // ------------------------------------------------------------------------------------------------
 UpdateSleepTime SupplyWarehouseCripplingBehavior::update()
 {
-	// Supression is handled by sleeping the module, so if I am here, I know it is time to heal.
+	// Suppression is handled by sleeping the module, so if I am here, I know it is time to heal.
 	const SupplyWarehouseCripplingBehaviorModuleData* md = getSupplyWarehouseCripplingBehaviorModuleData();
 	UnsignedInt now = TheGameLogic->getFrame();
 	m_nextHealingFrame = now + md->m_selfHealDelay;
 
-	getObject()->attemptHealing(md->m_selfHealAmount, NULL);
+	getObject()->attemptHealing(md->m_selfHealAmount, nullptr);
 
 	if( getObject()->getBodyModule()->getHealth() == getObject()->getBodyModule()->getMaxHealth() )
 		return UPDATE_SLEEP_FOREVER;// this can't be in onHealing, as the healing comes from here
@@ -164,7 +164,7 @@ void SupplyWarehouseCripplingBehavior::xfer( Xfer *xfer )
 	// extend base class
 	UpdateModule::xfer( xfer );
 
-	// healing supressed until frame
+	// healing suppressed until frame
 	xfer->xferUnsignedInt( &m_healingSupressedUntilFrame );
 
 	// next healing frame

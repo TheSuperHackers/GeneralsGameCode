@@ -27,7 +27,7 @@
 // Desc:       Basic keyboard
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Language.h"
 #include "Common/GameEngine.h"
@@ -37,7 +37,7 @@
 
 
 // PUBLIC DATA ////////////////////////////////////////////////////////////////////////////////////
-Keyboard *TheKeyboard = NULL;
+Keyboard *TheKeyboard = nullptr;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PRIVATE PROTOTYPES /////////////////////////////////////////////////////////////////////////////
@@ -50,12 +50,12 @@ Keyboard *TheKeyboard = NULL;
 void Keyboard::createStreamMessages( void )
 {
 
-	// santiy
-	if( TheMessageStream == NULL )
+	// sanity
+	if( TheMessageStream == nullptr )
 		return;
 
 	KeyboardIO *key = getFirstKey();
-	GameMessage *msg = NULL;
+	GameMessage *msg = nullptr;
 	while( key->key != KEY_NONE )
 	{
 
@@ -89,6 +89,7 @@ void Keyboard::createStreamMessages( void )
 		}
 
 		// next key please
+		key->setUsed();
 		key++;
 
 	}
@@ -139,7 +140,12 @@ void Keyboard::updateKeys( void )
 
 		m_keyStatus[ m_keys[ index ].key ].state = m_keys[ index ].state;
 		m_keyStatus[ m_keys[ index ].key ].status = m_keys[ index ].status;
-		m_keyStatus[ m_keys[ index ].key ].sequence = m_inputFrame;
+
+		// Update key down time for new key presses
+		if( BitIsSet( m_keys[ index ].state, KEY_STATE_DOWN ) )
+		{
+			m_keyStatus[ m_keys[ index ].key ].keyDownTimeMsec = m_keys[ index ].keyDownTimeMsec;
+		}
 
 		// prevent ALT-TAB from causing a TAB event
 		if( m_keys[ index ].key == KEY_TAB )
@@ -194,7 +200,7 @@ void Keyboard::updateKeys( void )
 }
 
 //-------------------------------------------------------------------------------------------------
-/** check key repeat sequences, TRUE is returned if repeat is occurring */
+/** check key repeat timing, TRUE is returned if repeat is occurring */
 //-------------------------------------------------------------------------------------------------
 Bool Keyboard::checkKeyRepeat( void )
 {
@@ -213,13 +219,19 @@ Bool Keyboard::checkKeyRepeat( void )
 
 	// Scan Keyboard status array for first key down
 	// long enough to repeat
-	for( key = 0; key < 256; key++ )
+	for( key = 0; key < ARRAY_SIZE(m_keyStatus); key++ )
 	{
 
 		if( BitIsSet( m_keyStatus[ key ].state, KEY_STATE_DOWN ) )
 		{
 
-			if( (m_inputFrame - m_keyStatus[ key ].sequence) > Keyboard::KEY_REPEAT_DELAY )
+			const UnsignedInt now = timeGetTime();
+			const UnsignedInt keyDownTime = m_keyStatus[ key ].keyDownTimeMsec;
+
+			// Unsigned subtraction handles wraparound correctly
+			const UnsignedInt elapsedMsec = now - keyDownTime;
+
+			if( elapsedMsec > Keyboard::KEY_REPEAT_DELAY_MSEC )
 			{
 				// Add key to this frame
 				m_keys[ index ].key = (UnsignedByte)key;
@@ -231,10 +243,10 @@ Bool Keyboard::checkKeyRepeat( void )
 
 				// Set all keys as new to prevent multiple keys repeating
 				for( index = 0; index< NUM_KEYS; index++ )
-					m_keyStatus[ index ].sequence = m_inputFrame;
+					m_keyStatus[ index ].keyDownTimeMsec = now;
 
-				// Set repeated key so it will repeat again in two frames
-				m_keyStatus[ key ].sequence = m_inputFrame - (Keyboard::KEY_REPEAT_DELAY + 2);
+				// Set repeated key so it will repeat again after the interval
+				m_keyStatus[ key ].keyDownTimeMsec = now - (Keyboard::KEY_REPEAT_DELAY_MSEC + Keyboard::KEY_REPEAT_INTERVAL_MSEC);
 
 				retVal = TRUE;
 				break;  // exit for key
@@ -261,7 +273,7 @@ void Keyboard::initKeyNames( void )
 	/*
 	 * Initialize the keyboard key-names array.
 	 */
-	for( i = 0; i < KEY_NAMES_COUNT; i++ )
+	for( i = 0; i < ARRAY_SIZE(m_keyNames); i++ )
 	{
 
 		m_keyNames[ i ].stdKey =		L'\0';
@@ -693,7 +705,6 @@ Keyboard::Keyboard( void )
 	m_shift2Key = KEY_NONE;
 
 	memset( m_keyNames, 0, sizeof( m_keyNames ) );
-	m_inputFrame = 0;
 
 }
 
@@ -713,9 +724,6 @@ void Keyboard::init( void )
 	// initialize the key names
 	initKeyNames();
 
-	// first input frame
-	m_inputFrame = 0;
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -732,9 +740,6 @@ void Keyboard::reset( void )
 void Keyboard::update( void )
 {
 
-	// increment input frame
-	m_inputFrame++;
-
 	// update the key data
 	updateKeys();
 
@@ -747,6 +752,10 @@ void Keyboard::update( void )
 void Keyboard::resetKeys( void )
 {
 
+	// TheSuperHackers @fix Caball009 13/12/2025 Fix bug where game remains in waypoint mode
+	// because the key up state for the alt key is not detected after alt tab.
+	refreshAltKeys();
+
 	memset( m_keys, 0, sizeof( m_keys ) );
 	memset( m_keyStatus, 0, sizeof( m_keyStatus ) );
 	m_modifiers = KEY_STATE_NONE;
@@ -758,6 +767,25 @@ void Keyboard::resetKeys( void )
 }
 
 //-------------------------------------------------------------------------------------------------
+// Refresh the state of the alt keys, necessary after alt tab
+//-------------------------------------------------------------------------------------------------
+void Keyboard::refreshAltKeys() const
+{
+	if (BitIsSet(m_keyStatus[KEY_LALT].state, KEY_STATE_DOWN))
+	{
+		GameMessage* msg = TheMessageStream->appendMessage(GameMessage::MSG_RAW_KEY_UP);
+		msg->appendIntegerArgument(KEY_LALT);
+		msg->appendIntegerArgument(KEY_STATE_UP);
+	}
+	if (BitIsSet(m_keyStatus[KEY_RALT].state, KEY_STATE_DOWN))
+	{
+		GameMessage* msg = TheMessageStream->appendMessage(GameMessage::MSG_RAW_KEY_UP);
+		msg->appendIntegerArgument(KEY_RALT);
+		msg->appendIntegerArgument(KEY_STATE_UP);
+	}
+}
+
+//-------------------------------------------------------------------------------------------------
 /** get the first key in our current state of the keyboard */
 //-------------------------------------------------------------------------------------------------
 KeyboardIO *Keyboard::getFirstKey( void )
@@ -766,9 +794,23 @@ KeyboardIO *Keyboard::getFirstKey( void )
 }
 
 //-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+KeyboardIO *Keyboard::findKey( KeyDefType key, KeyboardIO::StatusType status )
+{
+	for (KeyboardIO *io = getFirstKey(); io->key != KEY_NONE; ++io)
+	{
+		if (io->key == key && io->status == status)
+		{
+			return io;
+		}
+	}
+	return nullptr;
+}
+
+//-------------------------------------------------------------------------------------------------
 /** return the key status for the specified key */
 //-------------------------------------------------------------------------------------------------
-UnsignedByte Keyboard::getKeyStatusData( UnsignedByte key )
+UnsignedByte Keyboard::getKeyStatusData( KeyDefType key )
 {
 	return m_keyStatus[ key ].status;
 }
@@ -776,23 +818,15 @@ UnsignedByte Keyboard::getKeyStatusData( UnsignedByte key )
 //-------------------------------------------------------------------------------------------------
 /** Get the key state data as a Bool for the specified key */
 //-------------------------------------------------------------------------------------------------
-Bool Keyboard::getKeyStateBit( UnsignedByte key, Int bit )
+Bool Keyboard::getKeyStateBit( KeyDefType key, Int bit )
 {
 	return (m_keyStatus[ key ].state & bit) ? 1 : 0;
 }
 
 //-------------------------------------------------------------------------------------------------
-/** return the sequence data for the given key */
-//-------------------------------------------------------------------------------------------------
-UnsignedInt Keyboard::getKeySequenceData( UnsignedByte key )
-{
-	return m_keyStatus[ key ].sequence;
-}
-
-//-------------------------------------------------------------------------------------------------
 /** set the key status data */
 //-------------------------------------------------------------------------------------------------
-void Keyboard::setKeyStatusData( UnsignedByte key, KeyboardIO::StatusType data )
+void Keyboard::setKeyStatusData( KeyDefType key, KeyboardIO::StatusType data )
 {
 	m_keyStatus[ key ].status = data;
 }
@@ -800,7 +834,7 @@ void Keyboard::setKeyStatusData( UnsignedByte key, KeyboardIO::StatusType data )
 //-------------------------------------------------------------------------------------------------
 /** set the key state data */
 //-------------------------------------------------------------------------------------------------
-void Keyboard::setKeyStateData( UnsignedByte key, UnsignedByte data )
+void Keyboard::setKeyStateData( KeyDefType key, UnsignedByte data )
 {
 	m_keyStatus[ key ].state = data;
 }
@@ -927,7 +961,7 @@ WideChar Keyboard::translateKey( WideChar keyCode )
 				return( m_keyNames[ ubKeyCode ].shifted2 );
 			}
 
-			if( isShift() || getCapsState() && GameIsAlpha( m_keyNames[ ubKeyCode ].stdKey ) )
+			if( isShift() || ( getCapsState() && iswalpha( m_keyNames[ ubKeyCode ].stdKey ) ) )
 			{
 				return( m_keyNames[ ubKeyCode ].shifted );
 			}
@@ -973,9 +1007,9 @@ Bool Keyboard::isAlt()
 }
 
 
-WideChar Keyboard::getPrintableKey( UnsignedByte key,  Int state )
+WideChar Keyboard::getPrintableKey( KeyDefType key, Int state )
 {
-	if((key < 0 || key >=KEY_NAMES_COUNT) || ( state < 0 || state >= MAX_KEY_STATES))
+	if((key < 0 || key >= ARRAY_SIZE(m_keyNames)) || ( state < 0 || state >= MAX_KEY_STATES))
 		return L'\0';
 	if(state == 0)
 		return m_keyNames[key].stdKey;
@@ -983,6 +1017,4 @@ WideChar Keyboard::getPrintableKey( UnsignedByte key,  Int state )
 		return m_keyNames[key].shifted;
 	else
 		return m_keyNames[key].shifted2;
-
-
 }

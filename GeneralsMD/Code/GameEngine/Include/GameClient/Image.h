@@ -30,9 +30,6 @@
 
 #pragma once
 
-#ifndef __IMAGE_H_
-#define __IMAGE_H_
-
 #include "Common/AsciiString.h"
 #include "Common/GameMemory.h"
 #include "Common/SubsystemInterface.h"
@@ -56,7 +53,7 @@ static const char *const imageStatusNames[] =
 {
 	"ROTATED_90_CLOCKWISE",
 	"RAW_TEXTURE",
-	NULL
+	nullptr
 };
 #endif  // end DEFINE_IMAGE_STATUS_NAMES
 
@@ -71,7 +68,7 @@ MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( Image, "Image" );
 public:
 
 	Image( void );
-	// virtual desctructor defined by memory pool object
+	// virtual destructor defined by memory pool object
 
 	void setName( AsciiString name );							///< set image name
 	AsciiString getName( void ) const;									///< return name
@@ -119,6 +116,7 @@ friend class ImageCollection;
 //-------------------------------------------------------------------------------------------------
 class ImageCollection : public SubsystemInterface
 {
+	typedef std::map<NameKeyType, Image *> ImageMap;
 
 public:
 
@@ -131,7 +129,9 @@ public:
 
 	void load( Int textureSize );												 ///< load images
 
-	const Image *findImageByName( const AsciiString& name );					 ///< find image based on name
+	const Image *findImage( NameKeyType namekey ) const; ///< find image based on name key
+	const Image *findImageByName( const AsciiString& name ) const; ///< find image based on name
+	const Image *findImageByName( const char* name ) const; ///< find image based on name
 
   /// adds the given image to the collection, transfers ownership to this object
   void addImage(Image *image);
@@ -139,14 +139,14 @@ public:
   /// enumerates the list of existing images
   Image *Enum(unsigned index)
   {
-    for (std::map<unsigned,Image *>::iterator i=m_imageMap.begin();i!=m_imageMap.end();++i)
+    for (ImageMap::iterator i=m_imageMap.begin();i!=m_imageMap.end();++i)
       if (!index--)
         return i->second;
-    return NULL;
+    return nullptr;
   }
 
 protected:
-  std::map<unsigned,Image *> m_imageMap;  ///< maps named keys to images
+  ImageMap m_imageMap;  ///< maps named keys to images
 };
 
 // INLINING ///////////////////////////////////////////////////////////////////////////////////////
@@ -169,6 +169,3 @@ inline UnsignedInt Image::getStatus( void ) const { return m_status; }
 
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
 extern ImageCollection *TheMappedImageCollection;  ///< mapped images
-
-#endif // __IMAGE_H_
-

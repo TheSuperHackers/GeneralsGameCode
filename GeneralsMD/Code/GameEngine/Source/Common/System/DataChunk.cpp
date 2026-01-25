@@ -26,10 +26,9 @@
 // Implementation of Data Chunk save/load system
 // Author: Michael S. Booth, October 2000
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "stdlib.h"
-#include "string.h"
 #include "Compression.h"
 #include "Common/DataChunk.h"
 #include "Common/file.h"
@@ -38,14 +37,14 @@
 // If verbose, lots of debug logging.
 #define not_VERBOSE
 
-CachedFileInputStream::CachedFileInputStream(void):m_buffer(NULL),m_size(0)
+CachedFileInputStream::CachedFileInputStream(void):m_buffer(nullptr),m_size(0)
 {
 }
 
 CachedFileInputStream::~CachedFileInputStream(void)
 {
 	delete[] m_buffer;
-	m_buffer=NULL;
+	m_buffer=nullptr;
 }
 
 Bool CachedFileInputStream::open(AsciiString path)
@@ -57,7 +56,7 @@ Bool CachedFileInputStream::open(AsciiString path)
 		m_size=file->size();
 		if (m_size) {
 			m_buffer = file->readEntireAndClose();
-			file = NULL;
+			file = nullptr;
 		}
 		m_pos=0;
 	}
@@ -103,7 +102,7 @@ Bool CachedFileInputStream::open(AsciiString path)
 void CachedFileInputStream::close(void)
 {
 	delete[] m_buffer;
-	m_buffer=NULL;
+	m_buffer=nullptr;
 
 	m_pos=0;
 	m_size=0;
@@ -155,36 +154,36 @@ void CachedFileInputStream::rewind()
 // FileInputStream - helper class.	Used to read in data using a FILE *
 //
 /*
-FileInputStream::FileInputStream(void):m_file(NULL)
+FileInputStream::FileInputStream(void):m_file(nullptr)
 {
 }
 
 FileInputStream::~FileInputStream(void)
 {
-	if (m_file != NULL) {
+	if (m_file != nullptr) {
 		m_file->close();
-		m_file = NULL;
+		m_file = nullptr;
 	}
 }
 
 Bool FileInputStream::open(AsciiString path)
 {
 	m_file = TheFileSystem->openFile(path.str(), File::READ | File::BINARY);
-	return m_file==NULL?false:true;
+	return m_file == nullptr?false:true;
 }
 
 void FileInputStream::close(void)
 {
-	if (m_file != NULL) {
+	if (m_file != nullptr) {
 		m_file->close();
-		m_file = NULL;
+		m_file = nullptr;
 	}
 }
 
 Int FileInputStream::read(void *pData, Int numBytes)
 {
 	int bytesRead = 0;
-	if (m_file != NULL) {
+	if (m_file != nullptr) {
 		bytesRead = m_file->read(pData, numBytes);
 	}
 	return(bytesRead);
@@ -193,7 +192,7 @@ Int FileInputStream::read(void *pData, Int numBytes)
 UnsignedInt FileInputStream::tell(void)
 {
 	UnsignedInt pos = 0;
-	if (m_file != NULL) {
+	if (m_file != nullptr) {
 		pos = m_file->position();
 	}
 	return(pos);
@@ -201,7 +200,7 @@ UnsignedInt FileInputStream::tell(void)
 
 Bool FileInputStream::absoluteSeek(UnsignedInt pos)
 {
-	if (m_file != NULL) {
+	if (m_file != nullptr) {
 		return (m_file->seek(pos, File::START) != -1);
 	}
 	return(false);
@@ -209,7 +208,7 @@ Bool FileInputStream::absoluteSeek(UnsignedInt pos)
 
 Bool FileInputStream::eof(void)
 {
-	if (m_file != NULL) {
+	if (m_file != nullptr) {
 		return (m_file->size() == m_file->position());
 	}
 	return(true);
@@ -217,7 +216,7 @@ Bool FileInputStream::eof(void)
 
 void FileInputStream::rewind()
 {
-	if (m_file != NULL) {
+	if (m_file != nullptr) {
 		m_file->seek(0, File::START);
 	}
 }
@@ -238,11 +237,7 @@ m_pOut(pOut)
 	AsciiString tmpFileName = TheGlobalData->getPath_UserData();
 	tmpFileName.concat(TEMP_FILENAME);
 	m_tmp_file = ::fopen( tmpFileName.str(), "wb" );
-	// Added Sadullah Nader
-	// Initializations missing and needed
-	m_chunkStack = NULL;
-
-	// End Add
+	m_chunkStack = nullptr;
 }
 
 DataChunkOutput::~DataChunkOutput()
@@ -301,7 +296,7 @@ void DataChunkOutput::openDataChunk( const char *name, DataChunkVersionType ver 
 
 void DataChunkOutput::closeDataChunk( void )
 {
-	if (m_chunkStack == NULL)
+	if (m_chunkStack == nullptr)
 	{
 		// TODO: Throw exception
 		return;
@@ -419,7 +414,7 @@ void DataChunkOutput::writeDict( const Dict& d )
 //----------------------------------------------------------------------
 
 DataChunkTableOfContents::DataChunkTableOfContents( void ) :
-m_list(NULL),
+m_list(nullptr),
 m_nextID(1),
 m_listLength(0),
 m_headerOpened(false)
@@ -447,7 +442,7 @@ Mapping *DataChunkTableOfContents::findMapping( const AsciiString& name )
 		if (name == m->name )
 			return m;
 
-	return NULL;
+	return nullptr;
 }
 
 // convert name to integer identifier
@@ -579,10 +574,10 @@ void DataChunkTableOfContents::read( ChunkInputStream &s)
 // DataChunkInput
 //----------------------------------------------------------------------
 DataChunkInput::DataChunkInput( ChunkInputStream *pStream ) : m_file( pStream ),
-																										m_userData(NULL),
-																										m_currentObject(NULL),
-																										m_chunkStack(NULL),
-																										m_parserList(NULL)
+																										m_userData(nullptr),
+																										m_currentObject(nullptr),
+																										m_chunkStack(nullptr),
+																										m_parserList(nullptr)
 {
 	// read table of m_contents
 	m_contents.read(*m_file);
@@ -699,7 +694,7 @@ void DataChunkInput::clearChunkStack( void )
 		deleteInstance(c);
 	}
 
-	m_chunkStack = NULL;
+	m_chunkStack = nullptr;
 }
 
 // reset the stream to just-opened state - ready to parse the first chunk
@@ -744,7 +739,7 @@ AsciiString DataChunkInput::openDataChunk(DataChunkVersionType *ver )
 	c->next = m_chunkStack;
 	m_chunkStack = c;
 	if (this->atEndOfFile()) {
-		return (AsciiString(""));
+		return AsciiString::TheEmptyString;
 	}
 	return m_contents.getName( c->id );
 }
@@ -752,7 +747,7 @@ AsciiString DataChunkInput::openDataChunk(DataChunkVersionType *ver )
 // close chunk and move to start of next chunk
 void DataChunkInput::closeDataChunk( void )
 {
-	if (m_chunkStack == NULL)
+	if (m_chunkStack == nullptr)
 	{
 		// TODO: Throw exception
 		return;
@@ -776,11 +771,11 @@ void DataChunkInput::closeDataChunk( void )
 // return label of current data chunk
 AsciiString DataChunkInput::getChunkLabel( void )
 {
-	if (m_chunkStack == NULL)
+	if (m_chunkStack == nullptr)
 	{
 		// TODO: Throw exception
 		DEBUG_CRASH(("Bad."));
-		return AsciiString("");
+		return AsciiString::TheEmptyString;
 	}
 
 	return m_contents.getName( m_chunkStack->id );
@@ -789,11 +784,11 @@ AsciiString DataChunkInput::getChunkLabel( void )
 // return version of current data chunk
 DataChunkVersionType DataChunkInput::getChunkVersion( void )
 {
-	if (m_chunkStack == NULL)
+	if (m_chunkStack == nullptr)
 	{
 		// TODO: Throw exception
 		DEBUG_CRASH(("Bad."));
-		return NULL;
+		return 0;
 	}
 
 	return m_chunkStack->version;
@@ -802,11 +797,11 @@ DataChunkVersionType DataChunkInput::getChunkVersion( void )
 // return size of data stored in this chunk
 UnsignedInt DataChunkInput::getChunkDataSize( void )
 {
-	if (m_chunkStack == NULL)
+	if (m_chunkStack == nullptr)
 	{
 		// TODO: Throw exception
 		DEBUG_CRASH(("Bad."));
-		return NULL;
+		return 0;
 	}
 
 	return m_chunkStack->dataSize;
@@ -816,11 +811,11 @@ UnsignedInt DataChunkInput::getChunkDataSize( void )
 // return size of data left to read in this chunk
 UnsignedInt DataChunkInput::getChunkDataSizeLeft( void )
 {
-	if (m_chunkStack == NULL)
+	if (m_chunkStack == nullptr)
 	{
 		// TODO: Throw exception
 		DEBUG_CRASH(("Bad."));
-		return NULL;
+		return 0;
 	}
 
 	return m_chunkStack->dataLeft;

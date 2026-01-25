@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifndef _AI_DOCK_H_
-#define _AI_DOCK_H_
-
 #include "Common/GameMemory.h"
 #include "GameLogic/AIStateMachine.h"
 
@@ -203,6 +200,3 @@ public:
 EMPTY_DTOR(AIDockMoveToExitState)
 
 //-----------------------------------------------------------------------------------------------------------
-
-
-#endif // _AI_DOCK_H_

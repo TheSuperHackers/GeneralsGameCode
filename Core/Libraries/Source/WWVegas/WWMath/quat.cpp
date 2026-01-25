@@ -23,7 +23,7 @@
  *                                                                                             *
  *                 Project Name : Voxel Technology                                             *
  *                                                                                             *
- *                    File Name : QUAT.CPP                                                     *
+ *                    File Name : QUAT.cpp                                                     *
  *                                                                                             *
  *                   Programmer : Greg Hjelstrom                                               *
  *                                                                                             *
@@ -54,7 +54,6 @@
 #include "matrix4.h"
 #include "wwmath.h"
 
-#include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include <assert.h>
@@ -355,7 +354,7 @@ contin:
 
 		fmul		st(0),st(1)				// theta * (sin_table_size/2)
 		fadd		st(0),st(1)				// theta * (sin_table_size/2) + (sin_table_size/2)
-		fistp		beta						// conver to integer
+		fistp		beta						// convert to integer
 		mov		ecx,SIN_TABLE_SIZE_MASK
 		mov		eax,beta
 		and		eax,ecx					// & SIN_TABLE_SIZE_MASK
@@ -546,7 +545,7 @@ void Slerp_Setup(const Quaternion & p,const Quaternion & q,SlerpInfoStruct * sle
 {
 	float cos_t;
 
-	assert(slerpinfo != NULL);
+	assert(slerpinfo != nullptr);
 
 	// cos theta = dot product of p and q
 	cos_t = p.X * q.X + p.Y * q.Y + p.Z * q.Z + p.W * q.W;

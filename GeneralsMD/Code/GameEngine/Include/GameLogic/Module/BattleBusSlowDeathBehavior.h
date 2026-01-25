@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __BUS_SLOW_DEATH_BEHAVIOR_H_
-#define __BUS_SLOW_DEATH_BEHAVIOR_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/BehaviorModule.h"
 #include "GameLogic/Module/SlowDeathBehavior.h"
@@ -88,6 +85,3 @@ protected:
 	UnsignedInt m_penaltyDeathFrame;	///< If non zero, kill us with Penalty damage at this frame
 
 };
-
-
-#endif  // end __BUS_SLOW_DEATH_BEHAVIOR_H_

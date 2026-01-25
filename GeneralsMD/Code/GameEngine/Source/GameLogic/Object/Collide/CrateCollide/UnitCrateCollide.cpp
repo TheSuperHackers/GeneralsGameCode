@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 #include "Common/AudioEventRTS.h"
 #include "Common/MiscAudio.h"
 #include "Common/Player.h"
@@ -58,7 +58,7 @@ Bool UnitCrateCollide::executeCrateBehavior( Object *other )
 	UnsignedInt unitCount = getUnitCrateCollideModuleData()->m_unitCount;
 	ThingTemplate const *unitType = TheThingFactory->findTemplate( getUnitCrateCollideModuleData()->m_unitType );
 
-	if( unitType == NULL )
+	if( unitType == nullptr )
 	{
 		return FALSE;
 	}

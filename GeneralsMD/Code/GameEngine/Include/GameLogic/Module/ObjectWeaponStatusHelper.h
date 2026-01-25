@@ -24,13 +24,10 @@
 
 // FILE: ObjectWeaponStatusHelper.h ///////////////////////////////////////////////////////////////
 // Author: Steven Johnson, Colin Day - September 202
-// Desc:   Object helpder - WeaponStatus
+// Desc:   Object helper - WeaponStatus
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __OBJECT_WEAPON_STATUS_HELPER_H_
-#define __OBJECT_WEAPON_STATUS_HELPER_H_
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/ThingTemplate.h"
@@ -81,5 +78,3 @@ public:
 		return UPDATE_SLEEP_NONE;
 	}
 };
-
-#endif  // end __OBJECT_DEFECTION_HELPER_H_

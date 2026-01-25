@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef _DamageFX_H_
-#define _DamageFX_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/GameCommon.h"
 #include "Common/NameKeyGenerator.h"
@@ -119,8 +116,8 @@ private:
 		void clear()
 		{
 			m_amountForMajorFX = 0.0f;
-			m_majorDamageFXList = NULL;
-			m_minorDamageFXList = NULL;
+			m_majorDamageFXList = nullptr;
+			m_minorDamageFXList = nullptr;
 			m_damageFXThrottleTime = 0;
 		}
 	};
@@ -150,7 +147,9 @@ public:
 	/**
 		Find the DamageFX with the given name. If no such DamageFX exists, return null.
 	*/
-	const DamageFX *findDamageFX( AsciiString name ) const;
+	const DamageFX *findDamageFX( NameKeyType namekey ) const;
+	const DamageFX *findDamageFX( const AsciiString& name ) const;
+	const DamageFX *findDamageFX( const char* name ) const;
 
 	static void parseDamageFXDefinition(INI* ini);
 
@@ -164,6 +163,3 @@ private:
 
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
 extern DamageFXStore *TheDamageFXStore;
-
-#endif // _DamageFX_H_
-

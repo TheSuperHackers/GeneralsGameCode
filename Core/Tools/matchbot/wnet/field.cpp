@@ -20,7 +20,7 @@
  *                                                                         *
  *                 Project Name : Westwood Auto Registration App           *
  *                                                                         *
- *                    File Name : FIELD.CPP                                *
+ *                    File Name : FIELD.cpp                                *
  *                                                                         *
  *                   Programmer : Philip W. Gorrow                         *
  *                                                                         *
@@ -34,7 +34,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 #include <string.h>
 #include <sys/types.h>
-#ifndef _WINDOWS
+#ifndef _WIN32
 #include <netinet/in.h>
 #else
 #define Win32_Winsock
@@ -51,56 +51,56 @@ void FieldClass::Clear(void)
   strcpy(ID,"");
   DataType=0;
   Size=0;
-  Data=NULL;
-  Next=NULL;
+  Data=nullptr;
+  Next=nullptr;
 }
 
 
 FieldClass::FieldClass(char *id, char data)
 {
-  Data=NULL;
+  Data=nullptr;
   Set(id,data);
 }
 
 FieldClass::FieldClass(char *id, unsigned char data)
 {
-  Data=NULL;
+  Data=nullptr;
   Set(id,data);
 }
 
 FieldClass::FieldClass(char *id, short data)
 {
-  Data=NULL;
+  Data=nullptr;
   Set(id,data);
 }
 
 FieldClass::FieldClass(char *id, unsigned short data)
 {
-  Data=NULL;
+  Data=nullptr;
   Set(id,data);
 }
 
 FieldClass::FieldClass(char *id, long data)
 {
-  Data=NULL;
+  Data=nullptr;
   Set(id,data);
 }
 
 FieldClass::FieldClass(char *id, unsigned long data)
 {
-  Data=NULL;
+  Data=nullptr;
   Set(id,data);
 }
 
 FieldClass::FieldClass(char *id, char *data)
 {
-  Data=NULL;
+  Data=nullptr;
   Set(id,data);
 }
 
 FieldClass::FieldClass(char *id, void *data, int length)
 {
-  Data=NULL;
+  Data=nullptr;
   Set(id,data,length);
 }
 

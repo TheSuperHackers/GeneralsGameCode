@@ -34,13 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef HASH_TEMPLATE_H
-#define HASH_TEMPLATE_H
 
 #include "always.h"
 #include "wwstring.h"
@@ -78,7 +72,7 @@ public:
 
 	enum
 	{
-		NIL = -1								// internal enumeration for representing a NULL link
+		NIL = -1								// internal enumeration for representing a null link
 	};
 
 	HashTemplateClass(void);
@@ -425,7 +419,3 @@ template <> inline unsigned int HashTemplateKeyClass<StringClass>::Get_Hash_Valu
 	hval = hval + (hval>>5) + (hval>>10) + (hval >> 20);
 	return hval;
 }
-
-
-
-#endif

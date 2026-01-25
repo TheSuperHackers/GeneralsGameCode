@@ -31,9 +31,6 @@
 
 #pragma once
 
-#ifndef __HIVE_STRUCTURE_BODY_H
-#define __HIVE_STRUCTURE_BODY_H
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/StructureBody.h"
 #include "GameLogic/Damage.h"
@@ -54,8 +51,8 @@ public:
     StructureBodyModuleData::buildFieldParse(p);
 		static const FieldParse dataFieldParse[] =
 		{
-			{ "PropagateDamageTypesToSlavesWhenExisting",   INI::parseDamageTypeFlags, NULL, offsetof( HiveStructureBodyModuleData, m_damageTypesToPropagateToSlaves ) },
-			{ "SwallowDamageTypesIfSlavesNotExisting",			INI::parseDamageTypeFlags, NULL, offsetof( HiveStructureBodyModuleData, m_damageTypesToSwallow ) },
+			{ "PropagateDamageTypesToSlavesWhenExisting",   INI::parseDamageTypeFlags, nullptr, offsetof( HiveStructureBodyModuleData, m_damageTypesToPropagateToSlaves ) },
+			{ "SwallowDamageTypesIfSlavesNotExisting",			INI::parseDamageTypeFlags, nullptr, offsetof( HiveStructureBodyModuleData, m_damageTypesToSwallow ) },
 			{ 0, 0, 0, 0 }
 		};
     p.add(dataFieldParse);
@@ -81,6 +78,3 @@ protected:
 
 	virtual void attemptDamage( DamageInfo *damageInfo );		///< try to damage this object
 };
-
-#endif // __HIVE_STRUCTURE_BODY_H
-

@@ -26,11 +26,8 @@
 //
 // High level profiling
 //////////////////////////////////////////////////////////////////////////////
-#ifdef _MSC_VER
-#  pragma once
-#endif
-#ifndef PROFILE_HIGHLEVEL_H // Include guard
-#define PROFILE_HIGHLEVEL_H
+
+#pragma once
 
 /// \internal internal Id representation
 class ProfileId;
@@ -122,7 +119,7 @@ public:
       any consecutive call to any profile module function.
 
       \param frame number of recorded frame/range
-      \return value at given frame, NULL if frame not found
+      \return value at given frame, nullptr if frame not found
     */
     const char *GetValue(unsigned frame) const;
 
@@ -226,8 +223,8 @@ private:
 
   /** \internal
 
-    Undocumented default constructor. Initializes high level profiler.
-    We can make this private as well so nobody accidently tries to create
+    Undocumented default constructor. Initializes high-level profiler.
+    We can make this private as well so nobody accidentally tries to create
     another instance.
   */
   ProfileHighLevel(void);
@@ -237,5 +234,3 @@ private:
   */
   static ProfileHighLevel Instance;
 };
-
-#endif // PROFILE_HIGHLEVEL_H

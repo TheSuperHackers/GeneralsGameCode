@@ -40,10 +40,8 @@
 #include	"always.h"
 #include	"readline.h"
 #include	"trim.h"
-#include	"WWFILE.H"
-#include	"XSTRAW.H"
-//#include	<ctype.h>
-#include	<string.h>
+#include "WWFILE.h"
+#include "XSTRAW.h"
 
 
 #if !defined(__BORLANDC__) && !defined(_MSC_VER)
@@ -103,7 +101,7 @@ int Read_Line(FileClass & file, char * buffer, int len, bool & eof)
  *=============================================================================================*/
 int Read_Line(Straw & file, char * buffer, int len, bool & eof)
 {
-	if (len == 0 || buffer == NULL) return(0);
+	if (len == 0 || buffer == nullptr) return(0);
 
 	int count = 0;
 	for (;;) {
@@ -127,7 +125,7 @@ int Read_Line(Straw & file, char * buffer, int len, bool & eof)
 
 int Read_Line(Straw & file, wchar_t * buffer, int len, bool & eof)
 {
-	if (len == 0 || buffer == NULL) return(0);
+	if (len == 0 || buffer == nullptr) return(0);
 
 	int count = 0;
 	for (;;) {

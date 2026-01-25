@@ -50,7 +50,7 @@
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/GlobalData.h"
 #include "Common/NameKeyGenerator.h"
@@ -72,8 +72,8 @@ static NameKeyType parentPopupID = NAMEKEY_INVALID;
 static NameKeyType textEntryGamePasswordID = NAMEKEY_INVALID;
 static NameKeyType buttonCancelID = NAMEKEY_INVALID;
 
-static GameWindow *parentPopup = NULL;
-static GameWindow *textEntryGamePassword = NULL;
+static GameWindow *parentPopup = nullptr;
+static GameWindow *textEntryGamePassword = nullptr;
 
 static void joinGame( AsciiString password );
 
@@ -86,14 +86,14 @@ static void joinGame( AsciiString password );
 //-------------------------------------------------------------------------------------------------
 void PopupJoinGameInit( WindowLayout *layout, void *userData )
 {
-	parentPopupID = TheNameKeyGenerator->nameToKey(AsciiString("PopupJoinGame.wnd:ParentJoinPopUp"));
-	parentPopup = TheWindowManager->winGetWindowFromId(NULL, parentPopupID);
+	parentPopupID = TheNameKeyGenerator->nameToKey("PopupJoinGame.wnd:ParentJoinPopUp");
+	parentPopup = TheWindowManager->winGetWindowFromId(nullptr, parentPopupID);
 
-	textEntryGamePasswordID = TheNameKeyGenerator->nameToKey(AsciiString("PopupJoinGame.wnd:TextEntryGamePassword"));
+	textEntryGamePasswordID = TheNameKeyGenerator->nameToKey("PopupJoinGame.wnd:TextEntryGamePassword");
 	textEntryGamePassword = TheWindowManager->winGetWindowFromId(parentPopup, textEntryGamePasswordID);
 	GadgetTextEntrySetText(textEntryGamePassword, UnicodeString::TheEmptyString);
 
-	NameKeyType staticTextGameNameID = TheNameKeyGenerator->nameToKey(AsciiString("PopupJoinGame.wnd:StaticTextGameName"));
+	NameKeyType staticTextGameNameID = TheNameKeyGenerator->nameToKey("PopupJoinGame.wnd:StaticTextGameName");
 	GameWindow *staticTextGameName = TheWindowManager->winGetWindowFromId(parentPopup, staticTextGameNameID);
 	GadgetStaticTextSetText(staticTextGameName, UnicodeString::TheEmptyString);
 
@@ -139,7 +139,7 @@ WindowMsgHandledType PopupJoinGameInput( GameWindow *window, UnsignedInt msg, Wi
 					{
 						GameSpyCloseOverlay(GSOVERLAY_GAMEPASSWORD);
 						SetLobbyAttemptHostJoin( FALSE );
-						parentPopup = NULL;
+						parentPopup = nullptr;
 					}
 
 					// don't let key fall through anywhere else
@@ -189,7 +189,7 @@ WindowMsgHandledType PopupJoinGameSystem( GameWindow *window, UnsignedInt msg, W
 			{
 				GameSpyCloseOverlay(GSOVERLAY_GAMEPASSWORD);
 				SetLobbyAttemptHostJoin( FALSE );
-				parentPopup = NULL;
+				parentPopup = nullptr;
 			}
 			break;
 		}
@@ -248,7 +248,7 @@ static void joinGame( AsciiString password )
 	{
 		GameSpyCloseOverlay(GSOVERLAY_GAMEPASSWORD);
 		SetLobbyAttemptHostJoin( FALSE );
-		parentPopup = NULL;
+		parentPopup = nullptr;
 		return;
 	}
 	PeerRequest req;
@@ -259,5 +259,5 @@ static void joinGame( AsciiString password )
 	TheGameSpyPeerMessageQueue->addRequest(req);
 	DEBUG_LOG(("Attempting to join game %d(%ls) with password [%s]", ourRoom->getID(), ourRoom->getGameName().str(), password.str()));
 	GameSpyCloseOverlay(GSOVERLAY_GAMEPASSWORD);
-	parentPopup = NULL;
+	parentPopup = nullptr;
 }

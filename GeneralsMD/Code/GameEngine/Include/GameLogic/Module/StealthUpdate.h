@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __STEALTH_UPDATE_H_
-#define __STEALTH_UPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpdateModule.h"
 
@@ -68,7 +65,7 @@ static const char *const TheStealthLevelNames[] =
 	"NO_BLACK_MARKET",
 	"TAKING_DAMAGE",
   "RIDERS_ATTACKING",
-	NULL
+	nullptr
 };
 #endif
 
@@ -128,7 +125,7 @@ public:
 	virtual DisabledMaskType getDisabledTypesToProcess() const { return MAKE_DISABLED_MASK( DISABLED_HELD ); }
 
 	// ??? ugh
-	Bool isDisguised() const { return m_disguiseAsTemplate != NULL; }
+	Bool isDisguised() const { return m_disguiseAsTemplate != nullptr; }
 	Int getDisguisedPlayerIndex() const { return m_disguiseAsPlayerIndex; }
 	const ThingTemplate *getDisguisedTemplate() { return m_disguiseAsTemplate; }
 	void markAsDetected( UnsignedInt numFrames = 0 );
@@ -180,7 +177,3 @@ private:
 	WeaponSetType					m_requiresWeaponSetType;
 
 };
-
-
-#endif
-

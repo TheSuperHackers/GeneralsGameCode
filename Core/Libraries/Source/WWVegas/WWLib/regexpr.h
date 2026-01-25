@@ -18,13 +18,7 @@
 
 // regexpr.h
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef REGEXPR_H
-#define REGEXPR_H
-
 
 /*
 ** RegularExpressionClass - This class encapsulates regular expression
@@ -76,7 +70,3 @@ private:
 	struct DataStruct;
 	DataStruct	*Data;
 };
-
-
-#endif
-

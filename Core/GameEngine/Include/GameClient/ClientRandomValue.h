@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef _CLIENT_RANDOM_VALUE_H_
-#define _CLIENT_RANDOM_VALUE_H_
-
 #include "Lib/BaseType.h"
 
 // do NOT use these functions directly, rather use the macros below
@@ -78,9 +75,9 @@ public:
 	void setRange( Real low, Real high, DistributionType type = UNIFORM );
 
 	Real getValue( void ) const;														///< return a value from the random distribution
-	inline Real getMinimumValue( void ) const { return m_low; }
-	inline Real getMaximumValue( void ) const { return m_high; }
-	inline DistributionType getDistributionType( void ) const { return m_type; }
+	Real getMinimumValue( void ) const { return m_low; }
+	Real getMaximumValue( void ) const { return m_high; }
+	DistributionType getDistributionType( void ) const { return m_type; }
 protected:
 	DistributionType m_type;																		///< the kind of random distribution
 	Real m_low, m_high;																					///< the range of random values
@@ -92,5 +89,3 @@ protected:
 };
 
 //--------------------------------------------------------------------------------------------------------------
-
-#endif // _CLIENT_RANDOM_VALUE_H_

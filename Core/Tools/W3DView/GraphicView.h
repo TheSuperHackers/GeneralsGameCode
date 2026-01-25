@@ -16,12 +16,8 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#if !defined(AFX_GRAPHICVIEW_H__2BB39E41_5D3A_11D2_9FC6_00104B791122__INCLUDED_)
-#define AFX_GRAPHICVIEW_H__2BB39E41_5D3A_11D2_9FC6_00104B791122__INCLUDED_
-
-#if _MSC_VER >= 1000
 #pragma once
-#endif // _MSC_VER >= 1000
+
 // GraphicView.h : header file
 //
 
@@ -259,5 +255,3 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Developer Studio will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_GRAPHICVIEW_H__2BB39E41_5D3A_11D2_9FC6_00104B791122__INCLUDED_)

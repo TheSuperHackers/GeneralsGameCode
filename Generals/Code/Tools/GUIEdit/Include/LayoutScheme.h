@@ -45,9 +45,6 @@
 
 #pragma once
 
-#ifndef __LAYOUTSCHEME_H_
-#define __LAYOUTSCHEME_H_
-
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 #include <windows.h>
 
@@ -127,7 +124,7 @@ protected:
 // INLINING ///////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 inline char *LayoutScheme::getSchemeFilename( void ) { return m_schemeFilename; }
-inline void LayoutScheme::setSchemeFilename( char *filename ) { strcpy( m_schemeFilename, filename ); }
+inline void LayoutScheme::setSchemeFilename( char *filename ) { strlcpy(m_schemeFilename, filename, ARRAY_SIZE(m_schemeFilename)); }
 inline Color LayoutScheme::getEnabledTextColor( void ) { return m_enabledText.color; }
 inline Color LayoutScheme::getEnabledTextBorderColor( void ) { return m_enabledText.borderColor; }
 inline Color LayoutScheme::getDisabledTextColor( void ) { return m_disabledText.color; }
@@ -147,6 +144,3 @@ inline GameFont *LayoutScheme::getFont( void ) { return m_font; }
 // EXTERNALS //////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 extern LayoutScheme *TheDefaultScheme;
-
-#endif // end __LAYOUTSCHEME_H_
-

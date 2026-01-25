@@ -38,12 +38,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef MESHBUILD_H
-#define MESHBUILD_H
 
 #include	"always.h"
 #include "vector2.h"
@@ -232,7 +227,7 @@ public:
 	void							Compute_Tangent_Basis();
 
 	/*
-	** World information managment.  Used to give the mesh builder information
+	** World information management.  Used to give the mesh builder information
 	** about the world outside of its mesh.
 	*/
 	WorldInfoClass *			Peek_World_Info(void) const						{ return WorldInfo; }
@@ -382,5 +377,3 @@ inline const MeshBuilderClass::MeshStatsStruct & MeshBuilderClass::Get_Mesh_Stat
 	assert(State == STATE_MESH_PROCESSED);
 	return Stats;
 }
-
-#endif

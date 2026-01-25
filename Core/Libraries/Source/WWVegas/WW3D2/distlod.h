@@ -34,13 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef DISTLOD_H
-#define DISTLOD_H
 
 #include "proto.h"
 #include "rendobj.h"
@@ -179,7 +173,7 @@ public:
 */
 struct DistLODNodeDefStruct
 {
-	DistLODNodeDefStruct(void) : Name(NULL),ResDownDist(0.0f),ResUpDist(0.0f) {}
+	DistLODNodeDefStruct(void) : Name(nullptr),ResDownDist(0.0f),ResUpDist(0.0f) {}
 
 	char *	Name;
 	float		ResDownDist;
@@ -242,5 +236,3 @@ private:
 ** Instance of the loaders which the asset manager install
 */
 extern DistLODLoaderClass			_DistLODLoader;
-
-#endif

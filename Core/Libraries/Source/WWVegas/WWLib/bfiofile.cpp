@@ -22,7 +22,7 @@
  *                                                                                             *
  *                 Project Name : Command & Conquer                                            *
  *                                                                                             *
- *                     $Archive:: /Commando/Library/BFIOFILE.CPP                              $*
+ *                     $Archive:: /Commando/Library/BFIOFILE.cpp                              $*
  *                                                                                             *
  *                      $Author:: Greg_h                                                      $*
  *                                                                                             *

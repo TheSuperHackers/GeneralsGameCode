@@ -29,7 +29,7 @@
 
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 #define DEFINE_SLOWDEATHPHASE_NAMES
 
 #include "Common/Thing.h"
@@ -48,7 +48,6 @@
 #include "GameLogic/Object.h"
 #include "GameLogic/ObjectCreationList.h"
 #include "GameLogic/Weapon.h"
-#include "GameClient/Drawable.h"
 
 //-------------------------------------------------------------------------------------------------
 InstantDeathBehaviorModuleData::InstantDeathBehaviorModuleData()
@@ -63,7 +62,7 @@ InstantDeathBehaviorModuleData::InstantDeathBehaviorModuleData()
 static void parseFX( INI* ini, void *instance, void * /*store*/, const void* /*userData*/ )
 {
 	InstantDeathBehaviorModuleData* self = (InstantDeathBehaviorModuleData*)instance;
-	for (const char* token = ini->getNextToken(); token != NULL; token = ini->getNextTokenOrNull())
+	for (const char* token = ini->getNextToken(); token != nullptr; token = ini->getNextTokenOrNull())
 	{
 		const FXList *fxl = TheFXListStore->findFXList((token));	// could be null! this is OK!
 		self->m_fx.push_back(fxl);
@@ -74,7 +73,7 @@ static void parseFX( INI* ini, void *instance, void * /*store*/, const void* /*u
 static void parseOCL( INI* ini, void *instance, void * /*store*/, const void* /*userData*/ )
 {
 	InstantDeathBehaviorModuleData* self = (InstantDeathBehaviorModuleData*)instance;
-	for (const char* token = ini->getNextToken(); token != NULL; token = ini->getNextTokenOrNull())
+	for (const char* token = ini->getNextToken(); token != nullptr; token = ini->getNextTokenOrNull())
 	{
 		const ObjectCreationList *ocl = TheObjectCreationListStore->findObjectCreationList(token);	// could be null! this is OK!
 		self->m_ocls.push_back(ocl);
@@ -85,7 +84,7 @@ static void parseOCL( INI* ini, void *instance, void * /*store*/, const void* /*
 static void parseWeapon( INI* ini, void *instance, void * /*store*/, const void* /*userData*/ )
 {
 	InstantDeathBehaviorModuleData* self = (InstantDeathBehaviorModuleData*)instance;
-	for (const char* token = ini->getNextToken(); token != NULL; token = ini->getNextTokenOrNull())
+	for (const char* token = ini->getNextToken(); token != nullptr; token = ini->getNextTokenOrNull())
 	{
 		const WeaponTemplate *wt = TheWeaponStore->findWeaponTemplate(token);	// could be null! this is OK!
 		self->m_weapons.push_back(wt);
@@ -99,10 +98,10 @@ static void parseWeapon( INI* ini, void *instance, void * /*store*/, const void*
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "FX",										parseFX,													NULL, 0 },
-		{ "OCL",									parseOCL,													NULL, 0 },
-		{ "Weapon",								parseWeapon,											NULL, 0 },
-		{ 0, 0, 0, 0 }
+		{ "FX",										parseFX,													nullptr, 0 },
+		{ "OCL",									parseOCL,													nullptr, 0 },
+		{ "Weapon",								parseWeapon,											nullptr, 0 },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   p.add(dataFieldParse);
 }
@@ -145,7 +144,7 @@ void InstantDeathBehavior::onDie( const DamageInfo *damageInfo )
 		const FXListVec& v = d->m_fx;
 		DEBUG_ASSERTCRASH(idx>=0&&idx<v.size(),("bad idx"));
 		const FXList* fxl = v[idx];
-		FXList::doFXObj(fxl, getObject(), NULL);
+		FXList::doFXObj(fxl, getObject(), nullptr);
 	}
 
 	listSize = d->m_ocls.size();
@@ -155,7 +154,7 @@ void InstantDeathBehavior::onDie( const DamageInfo *damageInfo )
 		const OCLVec& v = d->m_ocls;
 		DEBUG_ASSERTCRASH(idx>=0&&idx<v.size(),("bad idx"));
 		const ObjectCreationList* ocl = v[idx];
-		ObjectCreationList::create(ocl, getObject(), NULL);
+		ObjectCreationList::create(ocl, getObject(), nullptr);
 	}
 
 	listSize = d->m_weapons.size();

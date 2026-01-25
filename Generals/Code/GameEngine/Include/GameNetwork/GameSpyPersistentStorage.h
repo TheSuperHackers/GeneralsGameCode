@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifndef __GAMESPYPersistentStorage_H__
-#define __GAMESPYPersistentStorage_H__
-
 class GameSpyPlayerInfoInterface : public SubsystemInterface
 {
 public:
@@ -58,5 +55,3 @@ public:
 GameSpyPlayerInfoInterface *createGameSpyPlayerInfo( void );
 
 extern GameSpyPlayerInfoInterface *TheGameSpyPlayerInfo;
-
-#endif // __GAMESPYPersistentStorage_H__

@@ -34,13 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef __SPHERE_PROPERTY_SHEET_H
-#define __SPHERE_PROPERTY_SHEET_H
 
 #include "SphereColorPropPage.h"
 #include "SphereGeneralPropPage.h"
@@ -64,8 +58,8 @@ class SpherePropertySheetClass : public CPropertySheet
 
 // Construction
 public:
-	SpherePropertySheetClass (SphereRenderObjClass *sphere, UINT nIDCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0);
-	SpherePropertySheetClass (SphereRenderObjClass *sphere, LPCTSTR pszCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0);
+	SpherePropertySheetClass (SphereRenderObjClass *sphere, UINT nIDCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
+	SpherePropertySheetClass (SphereRenderObjClass *sphere, LPCTSTR pszCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
 
 // Attributes
 public:
@@ -120,5 +114,3 @@ private:
 };
 
 /////////////////////////////////////////////////////////////////////////////
-
-#endif //__SPHERE_PROPERTY_SHEET_H

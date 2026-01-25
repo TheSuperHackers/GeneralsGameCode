@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Xfer.h"
 #include "GameLogic/Object.h"
@@ -60,8 +60,8 @@ FloatUpdateModuleData::FloatUpdateModuleData( void )
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "Enabled",	INI::parseBool,	NULL, offsetof( FloatUpdateModuleData, m_enabled ) },
-		{ 0, 0, 0, 0 }
+		{ "Enabled",	INI::parseBool,	nullptr, offsetof( FloatUpdateModuleData, m_enabled ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 	p.add(dataFieldParse);
 

@@ -30,9 +30,6 @@
 
 #pragma once
 
-#ifndef __SPECIAL_ABILITY_H_
-#define __SPECIAL_ABILITY_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/SpecialPowerModule.h"
 
@@ -65,5 +62,3 @@ public:
 protected:
 
 };
-
-#endif  // end __SPECIAL_ABILITY_H_

@@ -30,9 +30,6 @@
 
 #pragma once
 
-#ifndef __DELAYED_UPGRADE_H_
-#define __DELAYED_UPGRADE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpgradeModule.h"
 
@@ -53,7 +50,7 @@ public:
 
 		static const FieldParse dataFieldParse[] =
 		{
-			{ "DelayTime",	INI::parseDurationUnsignedInt,	NULL, offsetof( DelayedUpgradeModuleData, m_delayTime ) },
+			{ "DelayTime",	INI::parseDurationUnsignedInt,	nullptr, offsetof( DelayedUpgradeModuleData, m_delayTime ) },
 			{ 0, 0, 0, 0 }
 		};
     p.add(dataFieldParse);
@@ -82,7 +79,3 @@ protected:
 	virtual Bool isSubObjectsUpgrade() { return false; }
 
 };
-
-
-#endif
-

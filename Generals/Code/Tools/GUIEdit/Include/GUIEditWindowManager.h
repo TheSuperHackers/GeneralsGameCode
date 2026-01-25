@@ -34,9 +34,6 @@
 
 #pragma once
 
-#ifndef __GUIEDITWINDOWMANAGER_H_
-#define __GUIEDITWINDOWMANAGER_H_
-
 #include <stdlib.h>
 #include "W3DDevice/GameClient/W3DGameWindowManager.h"
 
@@ -58,7 +55,7 @@ public:
 	virtual GameWindow *winCreate( GameWindow *parent, UnsignedInt status,
 																 Int x, Int y, Int width, Int height,
 																 GameWinSystemFunc system,
-																 WinInstanceData *instData = NULL );
+																 WinInstanceData *instData = nullptr );
 
 	// **************************************************************************
 	// GUIEdit specific methods *************************************************
@@ -93,7 +90,7 @@ protected:
 	also in the select list */
 	void removeSupervisedChildSelections( void );
 	/** selected windows that are children will cut loose their parents
-	and become adults (their parent will be NULL, otherwise the screen) */
+	and become adults (their parent will be null, otherwise the screen) */
 //	void orphanSelectedChildren( void );
 
   /// dupe a window and its children
@@ -114,6 +111,3 @@ inline GameWindow *GUIEditWindowManager::getClipboardDupeList( void ) { return m
 
 // EXTERN /////////////////////////////////////////////////////////////////////////////////////////
 extern GUIEditWindowManager *TheGUIEditWindowManager;  ///< editor use only
-
-#endif // __GUIEDITWINDOWMANAGER_H_
-

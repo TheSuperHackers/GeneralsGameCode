@@ -33,7 +33,7 @@
 
 #include <list>
 
-RoadOptions *RoadOptions::m_staticThis = NULL;
+RoadOptions *RoadOptions::m_staticThis = nullptr;
 Bool RoadOptions::m_updating = false;
 AsciiString RoadOptions::m_currentRoadName;
 Int RoadOptions::m_currentRoadIndex=0;
@@ -48,7 +48,7 @@ Bool RoadOptions::m_doJoin = false;		///< Is a join to different road type.
 // RoadOptions dialog
 
 
-RoadOptions::RoadOptions(CWnd* pParent /*=NULL*/)
+RoadOptions::RoadOptions(CWnd* pParent /*=nullptr*/)
 {
 	m_currentRoadName = "Road";
 	//{{AFX_DATA_INIT(RoadOptions)
@@ -99,7 +99,7 @@ void RoadOptions::updateLabel(void)
 /** Returns true if only one or more roads is selected. */
 Bool RoadOptions::selectionIsRoadsOnly(void)
 {
-//	MapObject *theMapObj = NULL;
+//	MapObject *theMapObj = nullptr;
 	Bool foundRoad = false;
 	Bool foundAnythingElse = false;
 	MapObject *pMapObj;
@@ -118,7 +118,7 @@ Bool RoadOptions::selectionIsRoadsOnly(void)
 /** Returns true if only one or more roads is selected. */
 void RoadOptions::updateSelection(void)
 {
-//	MapObject *theMapObj = NULL;
+//	MapObject *theMapObj = nullptr;
 	Int angled = 0;
 	Int tight = 0;
 	Int broad = 0;
@@ -242,19 +242,12 @@ BOOL RoadOptions::OnInitDialog()
 	// load roads from test assets
 #ifdef LOAD_TEST_ASSETS
 	{
-		char				dirBuf[_MAX_PATH];
-		char				findBuf[_MAX_PATH];
 		char				fileBuf[_MAX_PATH];
 
-		strcpy(dirBuf, ROAD_DIRECTORY);
-		int len = strlen(dirBuf);
-
-		strcpy(findBuf, dirBuf);
-
 		FilenameList filenameList;
-		TheFileSystem->getFileListInDirectory(AsciiString(findBuf), AsciiString("*.tga"), filenameList, FALSE);
+		TheFileSystem->getFileListInDirectory(ROAD_DIRECTORY, "*.tga", filenameList, FALSE);
 
-		if (filenameList.size() > 0) {
+		if (!filenameList.empty()) {
 			FilenameList::iterator it = filenameList.begin();
 			do {
 				AsciiString	filename = *it;
@@ -263,7 +256,7 @@ BOOL RoadOptions::OnInitDialog()
 					++it;
 					continue;
 				}
-				len = filename.getLength();
+				int len = filename.getLength();
 				if (len<5) {
 					++it;
 					continue;
@@ -273,9 +266,10 @@ BOOL RoadOptions::OnInitDialog()
 					++it;
 					continue;
 				}
+				static_assert(ARRAY_SIZE(fileBuf) >= ARRAY_SIZE(TEST_STRING), "Incorrect array size");
 				strcpy(fileBuf, TEST_STRING);
-				strcat(fileBuf, "\\");
-				strcat(fileBuf, filename.str());
+				strlcat(fileBuf, "\\", ARRAY_SIZE(fileBuf));
+				strlcat(fileBuf, filename.str(), ARRAY_SIZE(fileBuf));
 				addRoad(fileBuf, index, TVI_ROOT);
 				index++;
 				m_numberOfRoads++;
@@ -318,7 +312,7 @@ HTREEITEM RoadOptions::findOrAdd(HTREEITEM parent, const char *pLabel)
 	char buffer[_MAX_PATH];
 	::memset(&ins, 0, sizeof(ins));
 	HTREEITEM child = m_roadTreeView.GetChildItem(parent);
-	while (child != NULL) {
+	while (child != nullptr) {
 		ins.item.mask = TVIF_HANDLE|TVIF_TEXT;
 		ins.item.hItem = child;
 		ins.item.pszText = buffer;
@@ -350,7 +344,7 @@ Bool RoadOptions::findAndSelect(HTREEITEM parent, AsciiString label)
 	char buffer[_MAX_PATH];
 	::memset(&ins, 0, sizeof(ins));
 	HTREEITEM child = m_roadTreeView.GetChildItem(parent);
-	while (child != NULL) {
+	while (child != nullptr) {
 		ins.item.mask = TVIF_HANDLE|TVIF_TEXT;
 		ins.item.hItem = child;
 		ins.item.pszText = buffer;
@@ -387,7 +381,7 @@ void RoadOptions::addRoad(char *pPath, Int terrainNdx, HTREEITEM parent)
 			parent = findOrAdd( parent, "Roads" );
 
 		// set the name to place as the name of the road entry in INI
-		strcpy( buffer, road->getName().str() );
+		strlcpy(buffer, road->getName().str(), ARRAY_SIZE(buffer));
 
 		// do the add
 		doAdd = TRUE;
@@ -397,7 +391,7 @@ void RoadOptions::addRoad(char *pPath, Int terrainNdx, HTREEITEM parent)
 #ifdef LOAD_TEST_ASSETS
 	if (!doAdd && !strncmp(TEST_STRING, pPath, strlen(TEST_STRING))) {
 		parent = findOrAdd(parent, TEST_STRING);
-		strcpy(buffer, pPath + strlen(TEST_STRING) + 1);
+		strlcpy(buffer, pPath + strlen(TEST_STRING) + 1, ARRAY_SIZE(buffer));
 		doAdd = true;
 	}
 #endif
@@ -425,7 +419,7 @@ Bool RoadOptions::setRoadTreeViewSelection(HTREEITEM parent, Int selection)
 	char buffer[NAME_MAX_LEN];
 	::memset(&item, 0, sizeof(item));
 	HTREEITEM child = m_roadTreeView.GetChildItem(parent);
-	while (child != NULL) {
+	while (child != nullptr) {
 		item.mask = TVIF_HANDLE|TVIF_PARAM|TVIF_TEXT;
 		item.hItem = child;
 		item.pszText = buffer;
@@ -555,7 +549,7 @@ BOOL RoadOptions::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 				updateLabel();
 			}	else if (!(item.state & TVIS_EXPANDEDONCE) ) {
 				HTREEITEM child = m_roadTreeView.GetChildItem(hItem);
-				while (child != NULL) {
+				while (child != nullptr) {
 					hItem = child;
 					child = m_roadTreeView.GetChildItem(hItem);
 				}

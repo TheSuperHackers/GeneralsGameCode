@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifndef __InstantDeathBehavior_H_
-#define __InstantDeathBehavior_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/DieModule.h"
 
@@ -76,6 +73,3 @@ public:
 	virtual void onDie( const DamageInfo *damageInfo );
 
 };
-
-#endif // __InstantDeathBehavior_H_
-

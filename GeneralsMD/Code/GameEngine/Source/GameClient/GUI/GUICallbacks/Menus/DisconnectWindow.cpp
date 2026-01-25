@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "GameClient/GameWindow.h"
 #include "GameClient/GameText.h"
@@ -46,11 +46,11 @@ static WindowLayout *disconnectMenuLayout;
 static NameKeyType textEntryID = NAMEKEY_INVALID;
 static NameKeyType textDisplayID = NAMEKEY_INVALID;
 
-static GameWindow *textEntryWindow = NULL;
-static GameWindow *textDisplayWindow = NULL;
+static GameWindow *textEntryWindow = nullptr;
+static GameWindow *textDisplayWindow = nullptr;
 
 static NameKeyType buttonQuitID = NAMEKEY_INVALID;
-static GameWindow *buttonQuitWindow = NULL;
+static GameWindow *buttonQuitWindow = nullptr;
 
 static NameKeyType buttonVotePlayer1ID = NAMEKEY_INVALID;
 static NameKeyType buttonVotePlayer2ID = NAMEKEY_INVALID;
@@ -60,44 +60,44 @@ static NameKeyType buttonVotePlayer5ID = NAMEKEY_INVALID;
 static NameKeyType buttonVotePlayer6ID = NAMEKEY_INVALID;
 static NameKeyType buttonVotePlayer7ID = NAMEKEY_INVALID;
 
-static GameWindow *buttonVotePlayer1Window = NULL;
-static GameWindow *buttonVotePlayer2Window = NULL;
-static GameWindow *buttonVotePlayer3Window = NULL;
-static GameWindow *buttonVotePlayer4Window = NULL;
-static GameWindow *buttonVotePlayer5Window = NULL;
-static GameWindow *buttonVotePlayer6Window = NULL;
-static GameWindow *buttonVotePlayer7Window = NULL;
+static GameWindow *buttonVotePlayer1Window = nullptr;
+static GameWindow *buttonVotePlayer2Window = nullptr;
+static GameWindow *buttonVotePlayer3Window = nullptr;
+static GameWindow *buttonVotePlayer4Window = nullptr;
+static GameWindow *buttonVotePlayer5Window = nullptr;
+static GameWindow *buttonVotePlayer6Window = nullptr;
+static GameWindow *buttonVotePlayer7Window = nullptr;
 
 static void InitDisconnectWindow( void ) {
-	textEntryID = TheNameKeyGenerator->nameToKey( AsciiString("DisconnectScreen.wnd:TextEntry"));
-	textDisplayID = TheNameKeyGenerator->nameToKey( AsciiString("DisconnectScreen.wnd:ListboxTextDisplay"));
+	textEntryID = TheNameKeyGenerator->nameToKey( "DisconnectScreen.wnd:TextEntry");
+	textDisplayID = TheNameKeyGenerator->nameToKey( "DisconnectScreen.wnd:ListboxTextDisplay");
 
-	textEntryWindow = TheWindowManager->winGetWindowFromId(NULL, textEntryID);
-	textDisplayWindow = TheWindowManager->winGetWindowFromId(NULL, textDisplayID);
+	textEntryWindow = TheWindowManager->winGetWindowFromId(nullptr, textEntryID);
+	textDisplayWindow = TheWindowManager->winGetWindowFromId(nullptr, textDisplayID);
 
-	if (textEntryWindow != NULL) {
+	if (textEntryWindow != nullptr) {
 		GadgetTextEntrySetText(textEntryWindow, UnicodeString::TheEmptyString);
 		TheWindowManager->winSetFocus(textEntryWindow);
 	}
 
-	buttonQuitID = TheNameKeyGenerator->nameToKey( AsciiString("DisconnectScreen.wnd:ButtonQuitGame"));
-	buttonQuitWindow = TheWindowManager->winGetWindowFromId(NULL, buttonQuitID);
+	buttonQuitID = TheNameKeyGenerator->nameToKey( "DisconnectScreen.wnd:ButtonQuitGame");
+	buttonQuitWindow = TheWindowManager->winGetWindowFromId(nullptr, buttonQuitID);
 
-	buttonVotePlayer1ID = TheNameKeyGenerator->nameToKey( AsciiString("DisconnectScreen.wnd:ButtonKickPlayer1"));
-	buttonVotePlayer2ID = TheNameKeyGenerator->nameToKey( AsciiString("DisconnectScreen.wnd:ButtonKickPlayer2"));
-	buttonVotePlayer3ID = TheNameKeyGenerator->nameToKey( AsciiString("DisconnectScreen.wnd:ButtonKickPlayer3"));
-	buttonVotePlayer4ID = TheNameKeyGenerator->nameToKey( AsciiString("DisconnectScreen.wnd:ButtonKickPlayer4"));
-	buttonVotePlayer5ID = TheNameKeyGenerator->nameToKey( AsciiString("DisconnectScreen.wnd:ButtonKickPlayer5"));
-	buttonVotePlayer6ID = TheNameKeyGenerator->nameToKey( AsciiString("DisconnectScreen.wnd:ButtonKickPlayer6"));
-	buttonVotePlayer7ID = TheNameKeyGenerator->nameToKey( AsciiString("DisconnectScreen.wnd:ButtonKickPlayer7"));
+	buttonVotePlayer1ID = TheNameKeyGenerator->nameToKey( "DisconnectScreen.wnd:ButtonKickPlayer1");
+	buttonVotePlayer2ID = TheNameKeyGenerator->nameToKey( "DisconnectScreen.wnd:ButtonKickPlayer2");
+	buttonVotePlayer3ID = TheNameKeyGenerator->nameToKey( "DisconnectScreen.wnd:ButtonKickPlayer3");
+	buttonVotePlayer4ID = TheNameKeyGenerator->nameToKey( "DisconnectScreen.wnd:ButtonKickPlayer4");
+	buttonVotePlayer5ID = TheNameKeyGenerator->nameToKey( "DisconnectScreen.wnd:ButtonKickPlayer5");
+	buttonVotePlayer6ID = TheNameKeyGenerator->nameToKey( "DisconnectScreen.wnd:ButtonKickPlayer6");
+	buttonVotePlayer7ID = TheNameKeyGenerator->nameToKey( "DisconnectScreen.wnd:ButtonKickPlayer7");
 
-	buttonVotePlayer1Window = TheWindowManager->winGetWindowFromId(NULL, buttonVotePlayer1ID);
-	buttonVotePlayer2Window = TheWindowManager->winGetWindowFromId(NULL, buttonVotePlayer2ID);
-	buttonVotePlayer3Window = TheWindowManager->winGetWindowFromId(NULL, buttonVotePlayer3ID);
-	buttonVotePlayer4Window = TheWindowManager->winGetWindowFromId(NULL, buttonVotePlayer4ID);
-	buttonVotePlayer5Window = TheWindowManager->winGetWindowFromId(NULL, buttonVotePlayer5ID);
-	buttonVotePlayer6Window = TheWindowManager->winGetWindowFromId(NULL, buttonVotePlayer6ID);
-	buttonVotePlayer7Window = TheWindowManager->winGetWindowFromId(NULL, buttonVotePlayer7ID);
+	buttonVotePlayer1Window = TheWindowManager->winGetWindowFromId(nullptr, buttonVotePlayer1ID);
+	buttonVotePlayer2Window = TheWindowManager->winGetWindowFromId(nullptr, buttonVotePlayer2ID);
+	buttonVotePlayer3Window = TheWindowManager->winGetWindowFromId(nullptr, buttonVotePlayer3ID);
+	buttonVotePlayer4Window = TheWindowManager->winGetWindowFromId(nullptr, buttonVotePlayer4ID);
+	buttonVotePlayer5Window = TheWindowManager->winGetWindowFromId(nullptr, buttonVotePlayer5ID);
+	buttonVotePlayer6Window = TheWindowManager->winGetWindowFromId(nullptr, buttonVotePlayer6ID);
+	buttonVotePlayer7Window = TheWindowManager->winGetWindowFromId(nullptr, buttonVotePlayer7ID);
 }
 
 //------------------------------------------------------
@@ -107,7 +107,7 @@ void ShowDisconnectWindow( void )
 {
 
 	// load the quit menu from the layout file if needed
-	if( disconnectMenuLayout == NULL )
+	if( disconnectMenuLayout == nullptr )
 	{
 
 		// load layout from disk
@@ -150,7 +150,7 @@ void HideDisconnectWindow( void )
 {
 
 	// load the quit menu from the layout file if needed
-	if( disconnectMenuLayout == NULL )
+	if( disconnectMenuLayout == nullptr )
 	{
 
 		// load layout from disk

@@ -67,9 +67,9 @@ static PFN_AssignProcessToJobObject AssignProcessToJobObject = (PFN_AssignProces
 
 WorkerProcess::WorkerProcess()
 {
-	m_processHandle = NULL;
-	m_readHandle = NULL;
-	m_jobHandle = NULL;
+	m_processHandle = nullptr;
+	m_readHandle = nullptr;
+	m_jobHandle = nullptr;
 	m_exitcode = 0;
 	m_isDone = false;
 }
@@ -82,7 +82,7 @@ bool WorkerProcess::startProcess(UnicodeString command)
 	// Create pipe for reading console output
 	SECURITY_ATTRIBUTES saAttr = { sizeof(SECURITY_ATTRIBUTES) };
 	saAttr.bInheritHandle = TRUE;
-	HANDLE writeHandle = NULL;
+	HANDLE writeHandle = nullptr;
 	if (!CreatePipe(&m_readHandle, &writeHandle, &saAttr, 0))
 		return false;
 	SetHandleInformation(m_readHandle, HANDLE_FLAG_INHERIT, 0);
@@ -93,15 +93,15 @@ bool WorkerProcess::startProcess(UnicodeString command)
 	si.hStdError = writeHandle;
 	si.hStdOutput = writeHandle;
 
-	PROCESS_INFORMATION pi = { 0 };
+	PROCESS_INFORMATION pi = { nullptr };
 
-	if (!CreateProcessW(NULL, (LPWSTR)command.str(),
-			NULL, NULL, /*bInheritHandles=*/TRUE, 0,
-			NULL, 0, &si, &pi))
+	if (!CreateProcessW(nullptr, (LPWSTR)command.str(),
+			nullptr, nullptr, /*bInheritHandles=*/TRUE, 0,
+			nullptr, nullptr, &si, &pi))
 	{
 		CloseHandle(writeHandle);
 		CloseHandle(m_readHandle);
-		m_readHandle = NULL;
+		m_readHandle = nullptr;
 		return false;
 	}
 
@@ -111,8 +111,8 @@ bool WorkerProcess::startProcess(UnicodeString command)
 
 	// We want to make sure that when our process is killed, our workers automatically terminate as well.
 	// In Windows, the way to do this is to attach the worker to a job we own.
-	m_jobHandle = CreateJobObjectW != NULL ? CreateJobObjectW(NULL, NULL) : NULL;
-	if (m_jobHandle != NULL)
+	m_jobHandle = CreateJobObjectW != nullptr ? CreateJobObjectW(nullptr, nullptr) : nullptr;
+	if (m_jobHandle != nullptr)
 	{
 		JOBOBJECT_EXTENDED_LIMIT_INFORMATION jobInfo = { 0 };
 		jobInfo.BasicLimitInformation.LimitFlags = JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE;
@@ -125,7 +125,7 @@ bool WorkerProcess::startProcess(UnicodeString command)
 
 bool WorkerProcess::isRunning() const
 {
-	return m_processHandle != NULL;
+	return m_processHandle != nullptr;
 }
 
 bool WorkerProcess::isDone() const
@@ -149,8 +149,8 @@ bool WorkerProcess::fetchStdOutput()
 	{
 		// Call PeekNamedPipe to make sure ReadFile won't block
 		DWORD bytesAvailable = 0;
-		DEBUG_ASSERTCRASH(m_readHandle != NULL, ("Is not expected NULL"));
-		BOOL success = PeekNamedPipe(m_readHandle, NULL, 0, NULL, &bytesAvailable, NULL);
+		DEBUG_ASSERTCRASH(m_readHandle != nullptr, ("Is not expected null"));
+		BOOL success = PeekNamedPipe(m_readHandle, nullptr, 0, nullptr, &bytesAvailable, nullptr);
 		if (!success)
 			return true;
 		if (bytesAvailable == 0)
@@ -161,7 +161,7 @@ bool WorkerProcess::fetchStdOutput()
 
 		DWORD readBytes = 0;
 		char buffer[1024];
-		success = ReadFile(m_readHandle, buffer, ARRAY_SIZE(buffer)-1, &readBytes, NULL);
+		success = ReadFile(m_readHandle, buffer, ARRAY_SIZE(buffer)-1, &readBytes, nullptr);
 		if (!success)
 			return true;
 		DEBUG_ASSERTCRASH(readBytes != 0, ("expected readBytes to be non null"));
@@ -190,13 +190,13 @@ void WorkerProcess::update()
 	WaitForSingleObject(m_processHandle, INFINITE);
 	GetExitCodeProcess(m_processHandle, &m_exitcode);
 	CloseHandle(m_processHandle);
-	m_processHandle = NULL;
+	m_processHandle = nullptr;
 
 	CloseHandle(m_readHandle);
-	m_readHandle = NULL;
+	m_readHandle = nullptr;
 
 	CloseHandle(m_jobHandle);
-	m_jobHandle = NULL;
+	m_jobHandle = nullptr;
 
 	m_isDone = true;
 }
@@ -206,23 +206,23 @@ void WorkerProcess::kill()
 	if (!isRunning())
 		return;
 
-	if (m_processHandle != NULL)
+	if (m_processHandle != nullptr)
 	{
 		TerminateProcess(m_processHandle, 1);
 		CloseHandle(m_processHandle);
-		m_processHandle = NULL;
+		m_processHandle = nullptr;
 	}
 
-	if (m_readHandle != NULL)
+	if (m_readHandle != nullptr)
 	{
 		CloseHandle(m_readHandle);
-		m_readHandle = NULL;
+		m_readHandle = nullptr;
 	}
 
-	if (m_jobHandle != NULL)
+	if (m_jobHandle != nullptr)
 	{
 		CloseHandle(m_jobHandle);
-		m_jobHandle = NULL;
+		m_jobHandle = nullptr;
 	}
 
 	m_stdOutput.clear();

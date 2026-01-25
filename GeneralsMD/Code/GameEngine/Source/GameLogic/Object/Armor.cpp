@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 
 #include "Common/INI.h"
@@ -39,7 +39,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PUBLIC DATA ////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-ArmorStore* TheArmorStore = NULL;					///< the ArmorTemplate store definition
+ArmorStore* TheArmorStore = nullptr;					///< the ArmorTemplate store definition
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
@@ -116,13 +116,12 @@ ArmorStore::~ArmorStore()
 }
 
 //-------------------------------------------------------------------------------------------------
-const ArmorTemplate* ArmorStore::findArmorTemplate(AsciiString name) const
+const ArmorTemplate* ArmorStore::findArmorTemplate(NameKeyType namekey) const
 {
-	NameKeyType namekey = TheNameKeyGenerator->nameToKey(name);
-  ArmorTemplateMap::const_iterator it = m_armorTemplates.find(namekey);
-  if (it == m_armorTemplates.end())
+	ArmorTemplateMap::const_iterator it = m_armorTemplates.find(namekey);
+	if (it == m_armorTemplates.end())
 	{
-		return NULL;
+		return nullptr;
 	}
 	else
 	{
@@ -131,11 +130,23 @@ const ArmorTemplate* ArmorStore::findArmorTemplate(AsciiString name) const
 }
 
 //-------------------------------------------------------------------------------------------------
+const ArmorTemplate* ArmorStore::findArmorTemplate(const AsciiString& name) const
+{
+	return findArmorTemplate(TheNameKeyGenerator->nameToKey(name));
+}
+
+//-------------------------------------------------------------------------------------------------
+const ArmorTemplate* ArmorStore::findArmorTemplate(const char* name) const
+{
+	return findArmorTemplate(TheNameKeyGenerator->nameToKey(name));
+}
+
+//-------------------------------------------------------------------------------------------------
 /*static */ void ArmorStore::parseArmorDefinition(INI *ini)
 {
 	static const FieldParse myFieldParse[] =
 	{
-		{ "Armor", ArmorTemplate::parseArmorCoefficients, NULL, 0 }
+		{ "Armor", ArmorTemplate::parseArmorCoefficients, nullptr, 0 }
 	};
 
 	const char *c = ini->getNextToken();

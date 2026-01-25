@@ -47,16 +47,10 @@
  *   SimpleDynVecClass<T>::Delete_All -- delete all items from the array                       *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef SIMPLEVEC_H
-#define SIMPLEVEC_H
 
 #include "always.h"
 #include <assert.h>
-#include <string.h>		// for memmove
 
 
 #if (_MSC_VER >= 1200)
@@ -83,7 +77,7 @@ public:
 	int				Length(void) const		{ return VectorMax; }
 	virtual bool	Resize(int newsize);
 	virtual bool	Uninitialised_Grow(int newsize);
-	void				Zero_Memory(void)			{ if (Vector != NULL) { memset(Vector,0,VectorMax * sizeof(T)); } }
+	void				Zero_Memory(void)			{ if (Vector != nullptr) { memset(Vector,0,VectorMax * sizeof(T)); } }
 
 protected:
 
@@ -107,7 +101,7 @@ protected:
  *=============================================================================================*/
 template<class T>
 inline SimpleVecClass<T>::SimpleVecClass(int size) :
-	Vector(NULL),
+	Vector(nullptr),
 	VectorMax(0)
 {
 	if (size > 0) {
@@ -131,7 +125,7 @@ template<class T>
 inline SimpleVecClass<T>::~SimpleVecClass(void)
 {
 	delete[] Vector;
-	Vector = NULL;
+	Vector = nullptr;
 	VectorMax = 0;
 }
 
@@ -166,7 +160,7 @@ inline bool SimpleVecClass<T>::Resize(int newsize)
 		**	If there is an old vector, then it must be copied (as much as is feasible)
 		**	to the new vector.
 		*/
-		if (Vector != NULL) {
+		if (Vector != nullptr) {
 
 			/*
 			**	Mem copy as much of the old vector into the new vector as possible.
@@ -178,7 +172,7 @@ inline bool SimpleVecClass<T>::Resize(int newsize)
 			**	Delete the old vector.
 			*/
 			delete[] Vector;
-			Vector = NULL;
+			Vector = nullptr;
 		}
 
 		/*
@@ -193,7 +187,7 @@ inline bool SimpleVecClass<T>::Resize(int newsize)
 		** Delete entire vector and reset counts
 		*/
 		delete[] Vector;
-		Vector = NULL;
+		Vector = nullptr;
 		VectorMax = 0;
 	}
 	return true;
@@ -327,7 +321,7 @@ template<class T>
 inline SimpleDynVecClass<T>::~SimpleDynVecClass(void)
 {
 	delete[] Vector;
-	Vector = NULL;
+	Vector = nullptr;
 }
 
 /***********************************************************************************************
@@ -639,6 +633,3 @@ inline int SimpleDynVecClass<T>::Find_Index(T const & object)
 #if (_MSC_VER >= 1200)
 #pragma warning (pop)
 #endif
-
-#endif // SIMPLEVEC_H
-

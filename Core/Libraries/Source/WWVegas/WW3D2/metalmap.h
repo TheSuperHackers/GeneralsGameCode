@@ -34,12 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef METALMAP_H
-#define METALMAP_H
 
 #include <vector3.h>
 
@@ -117,5 +112,3 @@ private:
 	// Use 16-bit metal maps or not
 	bool					Use16Bit;
 };
-
-#endif

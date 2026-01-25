@@ -22,7 +22,7 @@
  *                                                                                             *
  *                 Project Name : Command & Conquer                                            *
  *                                                                                             *
- *                     $Archive:: /Commando/Library/RGB.CPP                                   $*
+ *                     $Archive:: /Commando/Library/RGB.cpp                                   $*
  *                                                                                             *
  *                      $Author:: Greg_h                                                      $*
  *                                                                                             *

@@ -30,9 +30,6 @@
 
 #pragma once
 
-#ifndef __TUNNEL_CONTAIN_H_
-#define __TUNNEL_CONTAIN_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/OpenContain.h"
 #include "GameLogic/Module/HealContain.h"
@@ -68,7 +65,7 @@ public:
 
 		static const FieldParse dataFieldParse[] =
 		{
-			{ "TimeForFullHeal", INI::parseDurationReal, NULL, offsetof( TunnelContainModuleData, m_framesForFullHeal ) },
+			{ "TimeForFullHeal", INI::parseDurationReal, nullptr, offsetof( TunnelContainModuleData, m_framesForFullHeal ) },
 			{ 0, 0, 0, 0 }
 		};
     p.add(dataFieldParse);
@@ -97,6 +94,7 @@ public:
 	virtual void onContaining( Object *obj );		///< object now contains 'obj'
 	virtual void onRemoving( Object *obj );			///< object no longer contains 'obj'
 	virtual void onSelling();///< Container is being sold.  Tunnel responds by kicking people out if this is the last tunnel.
+	virtual void onCapture( Player *oldOwner, Player *newOwner ); // Need to change who we are registered with.
 
 	virtual void orderAllPassengersToExit( CommandSourceType commandSource ); ///< All of the smarts of exiting are in the passenger's AIExit. removeAllFrommContain is a last ditch system call, this is the game Evacuate
 
@@ -110,6 +108,7 @@ public:
 	virtual UnsignedInt getContainCount() const;
 	virtual Int getContainMax( void ) const;
 	virtual const ContainedItemsList* getContainedItemsList() const;
+	virtual UnsignedInt getFullTimeForHeal(void) const; ///< Returns the time in frames until a contained object becomes fully healed
 	virtual Bool isDisplayedOnControlBar() const { return TRUE; } ///< Does this container display its contents on the ControlBar?
 	virtual Bool isKickOutOnCapture(){ return FALSE; }///< Caves and Tunnels don't kick out on capture.
 
@@ -131,5 +130,3 @@ protected:
 	Bool m_isCurrentlyRegistered; ///< Keeps track if this is registered with the player, so we don't double remove and mess up
 
 };
-
-#endif  // end __TUNNEL_CONTAIN_H_

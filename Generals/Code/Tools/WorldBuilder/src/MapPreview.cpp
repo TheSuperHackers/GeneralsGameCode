@@ -55,7 +55,7 @@
 #include "W3DDevice/GameClient/HeightMap.h"
 #include "Common/MapReaderWriterInfo.h"
 #include "Common/FileSystem.h"
-#include "WWLib/TARGA.H"
+#include "WWLib/TARGA.h"
 #include "Common/DataChunk.h"
 //-----------------------------------------------------------------------------
 // DEFINES ////////////////////////////////////////////////////////////////////
@@ -169,7 +169,7 @@ Bool MapPreview::mapPreviewToWorld(const ICoord2D *radar, Coord3D *world)
 	Int x, y;
 
 	// sanity
-	if( radar == NULL || world == NULL )
+	if( radar == nullptr || world == nullptr )
 		return FALSE;
 
 	// get the coords

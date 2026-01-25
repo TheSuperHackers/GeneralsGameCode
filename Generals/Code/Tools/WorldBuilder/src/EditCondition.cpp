@@ -29,7 +29,7 @@
 // EditCondition dialog
 
 
-EditCondition::EditCondition(CWnd* pParent /*=NULL*/)
+EditCondition::EditCondition(CWnd* pParent /*=nullptr*/)
 	: CDialog(EditCondition::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(EditCondition)

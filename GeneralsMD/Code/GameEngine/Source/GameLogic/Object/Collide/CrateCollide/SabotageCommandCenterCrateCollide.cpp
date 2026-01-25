@@ -33,7 +33,7 @@
 
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/GameAudio.h"
 #include "Common/MiscAudio.h"
@@ -136,7 +136,7 @@ Bool SabotageCommandCenterCrateCollide::executeCrateBehavior( Object *other )
 
 	//When the sabotage occurs, play the appropriate EVA
 	//event if the local player is the victim!
-	if( other->isLocallyControlled() )
+	if( other->isLocallyViewed() )
 	{
 		TheEva->setShouldPlay( EVA_BuildingSabotaged );
 	}

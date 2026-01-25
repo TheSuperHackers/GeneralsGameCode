@@ -38,15 +38,12 @@
 //
 // Created:    Colin Day, June 2001
 //
-// Desc:       W3D implemenations for the game windowing system
+// Desc:       W3D implementations for the game windowing system
 //
 //-----------------------------------------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __W3DGAMEWINDOW_H_
-#define __W3DGAMEWINDOW_H_
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
@@ -59,7 +56,7 @@
 // TYPE DEFINES ///////////////////////////////////////////////////////////////
 
 // W3DGameWindow --------------------------------------------------------------
-/** W3D implemenation for a game window */
+/** W3D implementation for a game window */
 // ----------------------------------------------------------------------------
 class W3DGameWindow : public GameWindow
 {
@@ -100,6 +97,3 @@ protected:
 // EXTERNALS //////////////////////////////////////////////////////////////////
 extern void W3DGameWinDefaultDraw( GameWindow *window,
 																	 WinInstanceData *instData );
-
-#endif // __W3DGAMEWINDOW_H_
-

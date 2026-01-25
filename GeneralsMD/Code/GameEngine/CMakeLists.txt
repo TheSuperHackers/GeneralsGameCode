@@ -65,7 +65,7 @@ set(GAMEENGINE_SRC
     Include/Common/List.h
 #    Include/Common/LocalFile.h
 #    Include/Common/LocalFileSystem.h
-    Include/Common/MapObject.h
+#    Include/Common/MapObject.h
     Include/Common/MapReaderWriterInfo.h
     Include/Common/MessageStream.h
     Include/Common/MiniLog.h
@@ -77,7 +77,7 @@ set(GAMEENGINE_SRC
     Include/Common/Money.h
     Include/Common/MultiplayerSettings.h
     Include/Common/NameKeyGenerator.h
-    Include/Common/ObjectStatusTypes.h
+#    Include/Common/ObjectStatusTypes.h
     Include/Common/OSDisplay.h
     Include/Common/Overridable.h
     Include/Common/Override.h
@@ -90,7 +90,7 @@ set(GAMEENGINE_SRC
     Include/Common/ProductionPrerequisite.h
     Include/Common/QuickmatchPreferences.h
     Include/Common/QuotedPrintable.h
-    Include/Common/Radar.h
+#    Include/Common/Radar.h
 #    Include/Common/RAMFile.h
 #    Include/Common/RandomValue.h
     Include/Common/Recorder.h
@@ -127,7 +127,7 @@ set(GAMEENGINE_SRC
     Include/Common/UnitTimings.h
     Include/Common/Upgrade.h
 #    Include/Common/urllaunch.h
-    Include/Common/UserPreferences.h
+#    Include/Common/UserPreferences.h
     Include/Common/version.h
     Include/Common/WellKnownKeys.h
 #    Include/Common/WorkerProcess.h
@@ -199,14 +199,14 @@ set(GAMEENGINE_SRC
     Include/GameClient/Line2D.h
     Include/GameClient/LoadScreen.h
     Include/GameClient/LookAtXlat.h
-    Include/GameClient/MapUtil.h
+#    Include/GameClient/MapUtil.h
     Include/GameClient/MessageBox.h
     Include/GameClient/MetaEvent.h
     Include/GameClient/Module/AnimatedParticleSysBoneClientUpdate.h
     Include/GameClient/Module/BeaconClientUpdate.h
     Include/GameClient/Module/SwayClientUpdate.h
     Include/GameClient/Mouse.h
-    Include/GameClient/ParabolicEase.h
+#    Include/GameClient/ParabolicEase.h
     Include/GameClient/ParticleSys.h
     Include/GameClient/PlaceEventTranslator.h
     Include/GameClient/ProcessAnimateWindow.h
@@ -218,14 +218,14 @@ set(GAMEENGINE_SRC
     Include/GameClient/Shell.h
     Include/GameClient/ShellHooks.h
     Include/GameClient/ShellMenuScheme.h
-    Include/GameClient/Smudge.h
-    Include/GameClient/Snow.h
+#    Include/GameClient/Smudge.h
+#    Include/GameClient/Snow.h
     Include/GameClient/Statistics.h
-    Include/GameClient/TerrainRoads.h
-    Include/GameClient/TerrainVisual.h
+#    Include/GameClient/TerrainRoads.h
+#    Include/GameClient/TerrainVisual.h
 #    Include/GameClient/VideoPlayer.h
-    Include/GameClient/View.h
-    Include/GameClient/Water.h
+#    Include/GameClient/View.h
+#    Include/GameClient/Water.h
     Include/GameClient/WindowLayout.h
 #    Include/GameClient/WindowVideoManager.h
     Include/GameClient/WindowXlat.h
@@ -498,58 +498,58 @@ set(GAMEENGINE_SRC
     Include/GameLogic/WeaponSetFlags.h
     Include/GameLogic/WeaponSetType.h
     Include/GameLogic/WeaponStatus.h
-    Include/GameNetwork/Connection.h
-    Include/GameNetwork/ConnectionManager.h
-    Include/GameNetwork/DisconnectManager.h
-    Include/GameNetwork/DownloadManager.h
-    Include/GameNetwork/FileTransfer.h
-    Include/GameNetwork/FirewallHelper.h
-    Include/GameNetwork/FrameData.h
-    Include/GameNetwork/FrameDataManager.h
-    Include/GameNetwork/FrameMetrics.h
-    Include/GameNetwork/GameInfo.h
-    Include/GameNetwork/GameMessageParser.h
-    Include/GameNetwork/GameSpy/BuddyDefs.h
-    Include/GameNetwork/GameSpy/BuddyThread.h
-    Include/GameNetwork/GameSpy/GameResultsThread.h
-    Include/GameNetwork/GameSpy/GSConfig.h
-    Include/GameNetwork/GameSpy/LadderDefs.h
-    Include/GameNetwork/GameSpy/LobbyUtils.h
-    Include/GameNetwork/GameSpy/MainMenuUtils.h
-    Include/GameNetwork/GameSpy/PeerDefs.h
-    Include/GameNetwork/GameSpy/PeerDefsImplementation.h
-    Include/GameNetwork/GameSpy/PeerThread.h
-    Include/GameNetwork/GameSpy/PersistentStorageDefs.h
-    Include/GameNetwork/GameSpy/PersistentStorageThread.h
-    Include/GameNetwork/GameSpy/PingThread.h
-    Include/GameNetwork/GameSpy/StagingRoomGameInfo.h
-    Include/GameNetwork/GameSpy/ThreadUtils.h
-    Include/GameNetwork/GameSpyChat.h
-    Include/GameNetwork/GameSpyGameInfo.h
-    Include/GameNetwork/GameSpyGP.h
-    Include/GameNetwork/GameSpyOverlay.h
-    Include/GameNetwork/GameSpyThread.h
+#    Include/GameNetwork/Connection.h
+#    Include/GameNetwork/ConnectionManager.h
+#    Include/GameNetwork/DisconnectManager.h
+#    Include/GameNetwork/DownloadManager.h
+#    Include/GameNetwork/FileTransfer.h
+#    Include/GameNetwork/FirewallHelper.h
+#    Include/GameNetwork/FrameData.h
+#    Include/GameNetwork/FrameDataManager.h
+#    Include/GameNetwork/FrameMetrics.h
+#    Include/GameNetwork/GameInfo.h
+#    Include/GameNetwork/GameMessageParser.h
+#    Include/GameNetwork/GameSpy/BuddyDefs.h
+#    Include/GameNetwork/GameSpy/BuddyThread.h
+#    Include/GameNetwork/GameSpy/GameResultsThread.h
+#    Include/GameNetwork/GameSpy/GSConfig.h
+#    Include/GameNetwork/GameSpy/LadderDefs.h
+#    Include/GameNetwork/GameSpy/LobbyUtils.h
+#    Include/GameNetwork/GameSpy/MainMenuUtils.h
+#    Include/GameNetwork/GameSpy/PeerDefs.h
+#    Include/GameNetwork/GameSpy/PeerDefsImplementation.h
+#    Include/GameNetwork/GameSpy/PeerThread.h
+#    Include/GameNetwork/GameSpy/PersistentStorageDefs.h
+#    Include/GameNetwork/GameSpy/PersistentStorageThread.h
+#    Include/GameNetwork/GameSpy/PingThread.h
+#    Include/GameNetwork/GameSpy/StagingRoomGameInfo.h
+#    Include/GameNetwork/GameSpy/ThreadUtils.h
+#    Include/GameNetwork/GameSpyChat.h
+#    Include/GameNetwork/GameSpyGameInfo.h
+#    Include/GameNetwork/GameSpyGP.h
+#    Include/GameNetwork/GameSpyOverlay.h
+#    Include/GameNetwork/GameSpyThread.h
     Include/GameNetwork/GUIUtil.h
-    Include/GameNetwork/IPEnumeration.h
-    Include/GameNetwork/LANAPI.h
-    Include/GameNetwork/LANAPICallbacks.h
-    Include/GameNetwork/LANGameInfo.h
-    Include/GameNetwork/LANPlayer.h
-    Include/GameNetwork/NAT.h
-    Include/GameNetwork/NetCommandList.h
-    Include/GameNetwork/NetCommandMsg.h
-    Include/GameNetwork/NetCommandRef.h
-    Include/GameNetwork/NetCommandWrapperList.h
-    Include/GameNetwork/NetPacket.h
-    Include/GameNetwork/NetworkDefs.h
-    Include/GameNetwork/NetworkInterface.h
-    Include/GameNetwork/networkutil.h
-    Include/GameNetwork/RankPointValue.h
-    Include/GameNetwork/Transport.h
-    Include/GameNetwork/udp.h
-    Include/GameNetwork/User.h
-    Include/GameNetwork/WOLBrowser/FEBDispatch.h
-    Include/GameNetwork/WOLBrowser/WebBrowser.h
+#    Include/GameNetwork/IPEnumeration.h
+#    Include/GameNetwork/LANAPI.h
+#    Include/GameNetwork/LANAPICallbacks.h
+#    Include/GameNetwork/LANGameInfo.h
+#    Include/GameNetwork/LANPlayer.h
+#    Include/GameNetwork/NAT.h
+#    Include/GameNetwork/NetCommandList.h
+#    Include/GameNetwork/NetCommandMsg.h
+#    Include/GameNetwork/NetCommandRef.h
+#    Include/GameNetwork/NetCommandWrapperList.h
+#    Include/GameNetwork/NetPacket.h
+#    Include/GameNetwork/NetworkDefs.h
+#    Include/GameNetwork/NetworkInterface.h
+#    Include/GameNetwork/networkutil.h
+#    Include/GameNetwork/RankPointValue.h
+#    Include/GameNetwork/Transport.h
+#    Include/GameNetwork/udp.h
+#    Include/GameNetwork/User.h
+#    Include/GameNetwork/WOLBrowser/FEBDispatch.h
+#    Include/GameNetwork/WOLBrowser/WebBrowser.h
     Include/Precompiled/PreRTS.h
 #    Source/Common/Audio/AudioEventRTS.cpp
 #    Source/Common/Audio/AudioRequest.cpp
@@ -652,9 +652,9 @@ set(GAMEENGINE_SRC
 #    Source/Common/System/LocalFile.cpp
 #    Source/Common/System/LocalFileSystem.cpp
     #Source/Common/System/MemoryInit.cpp
-    Source/Common/System/ObjectStatusTypes.cpp
+#    Source/Common/System/ObjectStatusTypes.cpp
     Source/Common/System/QuotedPrintable.cpp
-    Source/Common/System/Radar.cpp
+#    Source/Common/System/Radar.cpp
 #    Source/Common/System/RAMFile.cpp
     Source/Common/System/registry.cpp
     Source/Common/System/SaveGame/GameState.cpp
@@ -677,7 +677,7 @@ set(GAMEENGINE_SRC
     Source/Common/Thing/Thing.cpp
     Source/Common/Thing/ThingFactory.cpp
     Source/Common/Thing/ThingTemplate.cpp
-    Source/Common/UserPreferences.cpp
+#    Source/Common/UserPreferences.cpp
     Source/Common/version.cpp
 #    Source/Common/WorkerProcess.cpp
     Source/GameClient/ClientInstance.cpp
@@ -797,7 +797,7 @@ set(GAMEENGINE_SRC
     Source/GameClient/Input/Mouse.cpp
     Source/GameClient/LanguageFilter.cpp
     Source/GameClient/Line2D.cpp
-    Source/GameClient/MapUtil.cpp
+#    Source/GameClient/MapUtil.cpp
     Source/GameClient/MessageStream/CommandXlat.cpp
     Source/GameClient/MessageStream/GUICommandTranslator.cpp
     Source/GameClient/MessageStream/HintSpy.cpp
@@ -807,10 +807,10 @@ set(GAMEENGINE_SRC
     Source/GameClient/MessageStream/PlaceEventTranslator.cpp
     Source/GameClient/MessageStream/SelectionXlat.cpp
     Source/GameClient/MessageStream/WindowXlat.cpp
-    Source/GameClient/ParabolicEase.cpp
+#    Source/GameClient/ParabolicEase.cpp
     Source/GameClient/RadiusDecal.cpp
     Source/GameClient/SelectionInfo.cpp
-    Source/GameClient/Snow.cpp
+#    Source/GameClient/Snow.cpp
     Source/GameClient/Statistics.cpp
     Source/GameClient/System/Anim2D.cpp
     Source/GameClient/System/CampaignManager.cpp
@@ -819,13 +819,13 @@ set(GAMEENGINE_SRC
     Source/GameClient/System/Image.cpp
     Source/GameClient/System/ParticleSys.cpp
     Source/GameClient/System/RayEffect.cpp
-    Source/GameClient/System/Smudge.cpp
-    Source/GameClient/Terrain/TerrainRoads.cpp
-    Source/GameClient/Terrain/TerrainVisual.cpp
+#    Source/GameClient/System/Smudge.cpp
+#    Source/GameClient/Terrain/TerrainRoads.cpp
+#    Source/GameClient/Terrain/TerrainVisual.cpp
 #    Source/GameClient/VideoPlayer.cpp
 #    Source/GameClient/VideoStream.cpp
-    Source/GameClient/View.cpp
-    Source/GameClient/Water.cpp
+#    Source/GameClient/View.cpp
+#    Source/GameClient/Water.cpp
     Source/GameLogic/AI/AI.cpp
     Source/GameLogic/AI/AIDock.cpp
     Source/GameLogic/AI/AIGroup.cpp
@@ -1085,53 +1085,53 @@ set(GAMEENGINE_SRC
     Source/GameLogic/System/GameLogic.cpp
     Source/GameLogic/System/GameLogicDispatch.cpp
     Source/GameLogic/System/RankInfo.cpp
-    Source/GameNetwork/Connection.cpp
-    Source/GameNetwork/ConnectionManager.cpp
-    Source/GameNetwork/DisconnectManager.cpp
-    Source/GameNetwork/DownloadManager.cpp
-    Source/GameNetwork/FileTransfer.cpp
-    Source/GameNetwork/FirewallHelper.cpp
-    Source/GameNetwork/FrameData.cpp
-    Source/GameNetwork/FrameDataManager.cpp
-    Source/GameNetwork/FrameMetrics.cpp
-    Source/GameNetwork/GameInfo.cpp
-    Source/GameNetwork/GameMessageParser.cpp
-    #Source/GameNetwork/GameSpyChat.cpp
-    #Source/GameNetwork/GameSpyGameInfo.cpp
-    #Source/GameNetwork/GameSpyGP.cpp
-    Source/GameNetwork/GameSpy/Chat.cpp
-    Source/GameNetwork/GameSpy/GSConfig.cpp
-    Source/GameNetwork/GameSpy/LadderDefs.cpp
-    Source/GameNetwork/GameSpy/LobbyUtils.cpp
-    Source/GameNetwork/GameSpy/MainMenuUtils.cpp
-    Source/GameNetwork/GameSpy/PeerDefs.cpp
-    Source/GameNetwork/GameSpy/StagingRoomGameInfo.cpp
-    Source/GameNetwork/GameSpy/Thread/BuddyThread.cpp
-    Source/GameNetwork/GameSpy/Thread/GameResultsThread.cpp
-    Source/GameNetwork/GameSpy/Thread/PeerThread.cpp
-    Source/GameNetwork/GameSpy/Thread/PersistentStorageThread.cpp
-    Source/GameNetwork/GameSpy/Thread/PingThread.cpp
-    Source/GameNetwork/GameSpy/Thread/ThreadUtils.cpp
-    Source/GameNetwork/GameSpyOverlay.cpp
+#    Source/GameNetwork/Connection.cpp
+#    Source/GameNetwork/ConnectionManager.cpp
+#    Source/GameNetwork/DisconnectManager.cpp
+#    Source/GameNetwork/DownloadManager.cpp
+#    Source/GameNetwork/FileTransfer.cpp
+#    Source/GameNetwork/FirewallHelper.cpp
+#    Source/GameNetwork/FrameData.cpp
+#    Source/GameNetwork/FrameDataManager.cpp
+#    Source/GameNetwork/FrameMetrics.cpp
+#    Source/GameNetwork/GameInfo.cpp
+#    Source/GameNetwork/GameMessageParser.cpp
+#    #Source/GameNetwork/GameSpyChat.cpp
+#    #Source/GameNetwork/GameSpyGameInfo.cpp
+#    #Source/GameNetwork/GameSpyGP.cpp
+#    Source/GameNetwork/GameSpy/Chat.cpp
+#    Source/GameNetwork/GameSpy/GSConfig.cpp
+#    Source/GameNetwork/GameSpy/LadderDefs.cpp
+#    Source/GameNetwork/GameSpy/LobbyUtils.cpp
+#    Source/GameNetwork/GameSpy/MainMenuUtils.cpp
+#    Source/GameNetwork/GameSpy/PeerDefs.cpp
+#    Source/GameNetwork/GameSpy/StagingRoomGameInfo.cpp
+#    Source/GameNetwork/GameSpy/Thread/BuddyThread.cpp
+#    Source/GameNetwork/GameSpy/Thread/GameResultsThread.cpp
+#    Source/GameNetwork/GameSpy/Thread/PeerThread.cpp
+#    Source/GameNetwork/GameSpy/Thread/PersistentStorageThread.cpp
+#    Source/GameNetwork/GameSpy/Thread/PingThread.cpp
+#    Source/GameNetwork/GameSpy/Thread/ThreadUtils.cpp
+#    Source/GameNetwork/GameSpyOverlay.cpp
     Source/GameNetwork/GUIUtil.cpp
-    Source/GameNetwork/IPEnumeration.cpp
-    Source/GameNetwork/LANAPI.cpp
-    Source/GameNetwork/LANAPICallbacks.cpp
-    Source/GameNetwork/LANAPIhandlers.cpp
-    Source/GameNetwork/LANGameInfo.cpp
-    Source/GameNetwork/NAT.cpp
-    Source/GameNetwork/NetCommandList.cpp
-    Source/GameNetwork/NetCommandMsg.cpp
-    Source/GameNetwork/NetCommandRef.cpp
-    Source/GameNetwork/NetCommandWrapperList.cpp
-    Source/GameNetwork/NetMessageStream.cpp
-    Source/GameNetwork/NetPacket.cpp
-    Source/GameNetwork/Network.cpp
-    Source/GameNetwork/NetworkUtil.cpp
-    Source/GameNetwork/Transport.cpp
-    Source/GameNetwork/udp.cpp
-    Source/GameNetwork/User.cpp
-    Source/GameNetwork/WOLBrowser/WebBrowser.cpp
+#    Source/GameNetwork/IPEnumeration.cpp
+#    Source/GameNetwork/LANAPI.cpp
+#    Source/GameNetwork/LANAPICallbacks.cpp
+#    Source/GameNetwork/LANAPIhandlers.cpp
+#    Source/GameNetwork/LANGameInfo.cpp
+#    Source/GameNetwork/NAT.cpp
+#    Source/GameNetwork/NetCommandList.cpp
+#    Source/GameNetwork/NetCommandMsg.cpp
+#    Source/GameNetwork/NetCommandRef.cpp
+#    Source/GameNetwork/NetCommandWrapperList.cpp
+#    Source/GameNetwork/NetMessageStream.cpp
+#    Source/GameNetwork/NetPacket.cpp
+#    Source/GameNetwork/Network.cpp
+#    Source/GameNetwork/NetworkUtil.cpp
+#    Source/GameNetwork/Transport.cpp
+#    Source/GameNetwork/udp.cpp
+#    Source/GameNetwork/User.cpp
+#    Source/GameNetwork/WOLBrowser/WebBrowser.cpp
     Source/Precompiled/PreRTS.cpp
 )
 
@@ -1174,4 +1174,7 @@ target_link_libraries(z_gameengine PUBLIC
     z_wwvegas
 )
 
-target_precompile_headers(z_gameengine PRIVATE Include/Precompiled/PreRTS.h)
+target_precompile_headers(z_gameengine PRIVATE
+    [["Utility/CppMacros.h"]] # Must be first, to be removed when abandoning VC6
+    Include/Precompiled/PreRTS.h
+)

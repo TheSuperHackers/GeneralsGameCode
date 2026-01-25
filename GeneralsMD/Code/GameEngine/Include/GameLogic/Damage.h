@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __DAMAGE_H_
-#define __DAMAGE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/BitFlags.h"
 #include "Common/GameType.h"
@@ -80,13 +77,16 @@ enum DamageType CPP_11(: Int)
 	DAMAGE_STEALTHJET_MISSILES		= 28,
 	DAMAGE_MOLOTOV_COCKTAIL				= 29,
 	DAMAGE_COMANCHE_VULCAN				= 30,
-	DAMAGE_SUBDUAL_MISSILE				= 31,	///< Damage that does not kill you, but produces some special effect based on your Body Module. Seperate HP from normal damage.
-	DAMAGE_SUBDUAL_VEHICLE				= 32,
-	DAMAGE_SUBDUAL_BUILDING				= 33,
-	DAMAGE_SUBDUAL_UNRESISTABLE		= 34,
-	DAMAGE_MICROWAVE							= 35, ///< Radiation that only affects infantry
-	DAMAGE_KILL_GARRISONED				= 36, ///< Kills Passengers up to the number specified in Damage
-	DAMAGE_STATUS									= 37, ///< Damage that gives a status condition, not that does hitpoint damage
+#if RTS_GENERALS
+	DAMAGE_FLESHY_SNIPER					= 31,		// like DAMAGE_SNIPER, but (generally) does no damage to vehicles.
+#endif
+	DAMAGE_SUBDUAL_MISSILE				/*= 31*/,	///< Damage that does not kill you, but produces some special effect based on your Body Module. Separate HP from normal damage.
+	DAMAGE_SUBDUAL_VEHICLE				/*= 32*/,
+	DAMAGE_SUBDUAL_BUILDING				/*= 33*/,
+	DAMAGE_SUBDUAL_UNRESISTABLE		/*= 34*/,
+	DAMAGE_MICROWAVE							/*= 35*/, ///< Radiation that only affects infantry
+	DAMAGE_KILL_GARRISONED				/*= 36*/, ///< Kills Passengers up to the number specified in Damage
+	DAMAGE_STATUS									/*= 37*/, ///< Damage that gives a status condition, not that does hitpoint damage
 
 	// Please note: There is a string array DamageTypeFlags::s_bitNameList[]
 
@@ -158,7 +158,6 @@ inline void SET_ALL_DAMAGE_TYPE_BITS(DamageTypeFlags& m)
 
 extern DamageTypeFlags DAMAGE_TYPE_FLAGS_NONE;
 extern DamageTypeFlags DAMAGE_TYPE_FLAGS_ALL;
-void initDamageTypeFlags();
 
 
 //-------------------------------------------------------------------------------------------------
@@ -223,7 +222,7 @@ static const char *const TheDeathNames[] =
 	"EXTRA_8",
 	"POISONED_GAMMA",
 
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(TheDeathNames) == DEATH_NUM_TYPES + 1, "Incorrect array size");
 #endif // end DEFINE_DEATH_NAMES
@@ -263,7 +262,7 @@ public:
 	DamageInfoInput( void )
 	{
 		m_sourceID = INVALID_ID;
-		m_sourceTemplate = NULL;
+		m_sourceTemplate = nullptr;
 		m_sourcePlayerMask = 0;
 		m_damageType = DAMAGE_EXPLOSION;
 		m_damageStatusType = OBJECT_STATUS_NONE;
@@ -283,7 +282,7 @@ public:
 	PlayerMaskType m_sourcePlayerMask;			///< Player mask of m_sourceID.
 	DamageType		 m_damageType;						///< type of damage
 	ObjectStatusTypes m_damageStatusType;		///< If status damage, what type
-	DamageType		 m_damageFXOverride;			///< If not marked as the default of Unresistable, the damage type to use in doDamageFX instead of the real damamge type
+	DamageType		 m_damageFXOverride;			///< If not marked as the default of Unresistable, the damage type to use in doDamageFX instead of the real damage type
 	DeathType			 m_deathType;						///< if this kills us, death type to be used
 	Real					 m_amount;								///< # value of how much damage to inflict
 	Bool						m_kill;									///< will always cause object to die regardless of damage.
@@ -372,6 +371,3 @@ protected:
 	virtual void loadPostProcess( void ){ }
 
 };
-
-#endif // __DAMAGE_H_
-

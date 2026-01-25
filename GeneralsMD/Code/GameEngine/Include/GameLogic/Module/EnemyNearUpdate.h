@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __EnemyNearUpdate_H_
-#define __EnemyNearUpdate_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpdateModule.h"
 #include "Common/KindOf.h"
@@ -53,7 +50,7 @@ public:
     UpdateModuleData::buildFieldParse(p);
 		static const FieldParse dataFieldParse[] =
 		{
-			{ "ScanDelayTime",		INI::parseDurationUnsignedInt,		NULL, offsetof( EnemyNearUpdateModuleData, m_enemyScanDelayTime ) },
+			{ "ScanDelayTime",		INI::parseDurationUnsignedInt,		nullptr, offsetof( EnemyNearUpdateModuleData, m_enemyScanDelayTime ) },
 			{ 0, 0, 0, 0 }
 		};
     p.add(dataFieldParse);
@@ -84,6 +81,3 @@ protected:
 	void checkForEnemies( void );
 
 };
-
-#endif // end __EnemyNearUpdate_H_
-

@@ -30,8 +30,7 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-#ifndef __WINMAIN_H_
-#define __WINMAIN_H_
+#pragma once
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 #include <windows.h>
@@ -43,6 +42,3 @@
 extern HINSTANCE ApplicationHInstance;  ///< our application instance
 extern HWND ApplicationHWnd;  ///< our application window handle
 extern Win32Mouse *TheWin32Mouse;  ///< global for win32 mouse only!
-
-#endif  // end __WINMAIN_H_
-

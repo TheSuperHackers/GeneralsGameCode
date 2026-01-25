@@ -27,8 +27,6 @@
 // Author: Michael S. Booth, October 2000
 
 #pragma once
-#ifndef _OBJECT_H_
-#define _OBJECT_H_
 
 #include "Lib/BaseType.h"
 #include "ref_ptr.h"
@@ -117,9 +115,6 @@ enum WeaponStatus CPP_11(: Int);
 enum RadarPriorityType CPP_11(: Int);
 enum CanAttackResult CPP_11(: Int);
 
-// For ObjectStatusTypes
-#include "Common/ObjectStatusTypes.h"
-
 // For ObjectScriptStatusBit
 #include "GameLogic/ObjectScriptStatusBits.h"
 
@@ -135,7 +130,7 @@ struct TTriggerInfo
 	Byte									isInside;	///< True if the object is inside this trigger area this frame.
 	Byte									padding;	///< unused.
 
-	TTriggerInfo() : entered(false), exited(false), isInside(false), padding(false), pTrigger(NULL) { }
+	TTriggerInfo() : entered(false), exited(false), isInside(false), padding(false), pTrigger(nullptr) { }
 
 };
 
@@ -218,6 +213,7 @@ public:
 
 	void scoreTheKill( const Object *victim );						///< I just killed this object.
 	void onVeterancyLevelChanged( VeterancyLevel oldLevel, VeterancyLevel newLevel, Bool provideFeedback = TRUE );	///< I just achieved this level right this moment
+	void createVeterancyLevelFX(VeterancyLevel oldLevel, VeterancyLevel newLevel);
 	ExperienceTracker* getExperienceTracker() {return m_experienceTracker;}
 	const ExperienceTracker* getExperienceTracker() const {return m_experienceTracker;}
 	VeterancyLevel getVeterancyLevel() const;
@@ -242,7 +238,10 @@ public:
 	void setCustomIndicatorColor(Color c);
 	void removeCustomIndicatorColor();
 
+	Bool isLogicallyVisible() const; ///< Returns whether the object is logically visible to the player, irrespective of shroud.
+
 	Bool isLocallyControlled() const;
+	Bool isLocallyViewed() const;
 	Bool isNeutralControlled() const;
 
 	Bool getIsUndetectedDefector(void) const { return BitIsSet(m_privateStatus, UNDETECTED_DEFECTOR); }
@@ -293,7 +292,7 @@ public:
 
 	//
 	// Find us our production update interface if we have one.  This method exists simply
-	// because we do this in a lot of places in the code and I want a convenient way to get thsi (CBD)
+	// because we do this in a lot of places in the code and I want a convenient way to get this (CBD)
 	//
 	ProductionUpdateInterface* getProductionUpdateInterface( void );
 
@@ -316,7 +315,7 @@ public:
 	void setStatus( ObjectStatusMaskType objectStatus, Bool set = true );
 	inline void clearStatus( ObjectStatusMaskType objectStatus ) { setStatus( objectStatus, false ); }
 	void updateUpgradeModules();	///< We need to go through our Upgrade Modules and see which should be activated
-	UpgradeMaskType getObjectCompletedUpgradeMask() const { return m_objectUpgradesCompleted; } ///< Upgrades I complete locally
+	const UpgradeMaskType& getObjectCompletedUpgradeMask() const { return m_objectUpgradesCompleted; } ///< Upgrades I complete locally
 
 	//This function sucks.
 	//It was added for objects that can disguise as other objects and contain upgraded subobject overrides.
@@ -333,7 +332,7 @@ public:
 
 	// Selectable is individually controlled on an object by object basis for design now.
 	// It defaults to the thingTemplate->isKindof(KINDOF_SELECTABLE), however, it can be overridden on an
-	// object by object basis.  Finally, it can be temporarily overriden by the OBJECT_STATUS_UNSELECTABLE.
+	// object by object basis.  Finally, it can be temporarily overridden by the OBJECT_STATUS_UNSELECTABLE.
 	// jba.
 	void setSelectable(Bool selectable);
 	Bool isSelectable() const;
@@ -391,8 +390,9 @@ public:
 	void friend_setPartitionData(PartitionData *pd) { m_partitionData = pd; }
 	PartitionData *friend_getPartitionData() const { return m_partitionData; }
 	const PartitionData *friend_getConstPartitionData() const { return m_partitionData; }
+	Bool hasGhostObject() const; ///< This object has a ghost object. This does not imply that a ghost snapshot is taken or active.
 
-	void onPartitionCellChange();///< We have moved a 'significant' amount, so do maintenence that can be considered 'cell-based'
+	void onPartitionCellChange();///< We have moved a 'significant' amount, so do maintenance that can be considered 'cell-based'
 	void handlePartitionCellMaintenance();					///< Undo and redo all shroud actions.  Call when something has changed, like position or ownership or Death
 
 	Real getVisionRange() const;				///< How far can you see?  This is dynamic so it is in Object.
@@ -416,11 +416,13 @@ public:
 	inline Object *getContainedBy() { return m_containedBy; }
 	inline const Object *getContainedBy() const { return m_containedBy; }
 	inline UnsignedInt getContainedByFrame() const { return m_containedByFrame; }
-	inline Bool isContained() const { return m_containedBy != NULL; }
+	inline Bool isContained() const { return m_containedBy != nullptr; }
 	void onContainedBy( Object *containedBy );
 	void onRemovedFrom( Object *removedFrom );
 	Int getTransportSlotCount() const;
 	void friend_setContainedBy( Object *containedBy ) { m_containedBy = containedBy; }
+	const Object* getEnclosingContainedBy() const; ///< Find the first enclosing container in the containment chain.
+	const Object* getOuterObject() const; ///< Get the top-level object
 
 	// Special Powers -------------------------------------------------------------------------------
 	SpecialPowerModuleInterface *getSpecialPowerModule( const SpecialPowerTemplate *specialPowerTemplate ) const;
@@ -439,7 +441,7 @@ public:
 	const AsciiString& getCommandSetString() const;
 	void setCommandSetStringOverride( AsciiString newCommandSetString ) { m_commandSetStringOverride = newCommandSetString; }
 
- 	/// People are faking their commandsets, and, Suprise!, they are authoritative.  Challenge everything.
+ 	/// People are faking their commandsets, and, Surprise!, they are authoritative.  Challenge everything.
  	Bool canProduceUpgrade( const UpgradeTemplate *upgrade );
 
 	// Weapons & Damage -------------------------------------------------------------------------------------------------
@@ -455,8 +457,8 @@ public:
 	// see if this current weapon set's weapons has shared reload times
 	Bool isReloadTimeShared() const { return m_weaponSet.isSharedReloadTime(); }
 
-	Weapon* getCurrentWeapon(WeaponSlotType* wslot = NULL);
-	const Weapon* getCurrentWeapon(WeaponSlotType* wslot = NULL) const;
+	Weapon* getCurrentWeapon(WeaponSlotType* wslot = nullptr);
+	const Weapon* getCurrentWeapon(WeaponSlotType* wslot = nullptr) const;
 	void setFiringConditionForCurrentWeapon() const;
 	void adjustModelConditionForWeaponStatus();	///< Check to see if I should change my model condition.
 	void fireCurrentWeapon(Object *target);
@@ -665,9 +667,9 @@ private:
 	GeometryInfo	m_geometryInfo;
 
 #if RETAIL_COMPATIBLE_AIGROUP
-	AIGroup*			m_group;								///< if non-NULL, we are part of this group of agents
+	AIGroup*			m_group;								///< if non-null, we are part of this group of agents
 #else
-	RefCountPtr<AIGroup> m_group; ///< if non-NULL, we are part of this group of agents
+	RefCountPtr<AIGroup> m_group; ///< if non-null, we are part of this group of agents
 #endif
 
 	// These will last for my lifetime.  I will reuse them and reset them.  The truly dynamic ones are in PartitionManager
@@ -783,5 +785,3 @@ AsciiString DebugDescribeObject(const Object *obj);
 #ifdef DEBUG_OBJECT_ID_EXISTS
 extern ObjectID TheObjectIDToDebug;
 #endif
-
-#endif // _OBJECT_H_

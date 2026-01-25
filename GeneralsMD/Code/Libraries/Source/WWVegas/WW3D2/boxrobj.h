@@ -34,12 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef BOXROBJ_H
-#define BOXROBJ_H
 
 #include "always.h"
 #include "rendobj.h"
@@ -69,7 +64,7 @@ class VertexMaterialClass;
 ** to the root and be constructed symmetrically...
 **
 ** NOTE3: OBBoxRenderObjClass is an oriented box which is aligned with its transform
-** but can have a center point that is offest from the transform's origin.
+** but can have a center point that is offset from the transform's origin.
 **
 */
 class BoxRenderObjClass : public RenderObjClass
@@ -259,9 +254,3 @@ private:
 ** Instance of the loader which the asset manager installs
 */
 extern BoxLoaderClass			_BoxLoader;
-
-
-
-
-#endif
-

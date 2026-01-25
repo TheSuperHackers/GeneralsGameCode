@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 #include "Common/BitFlagsIO.h"
 #include "Common/CRCDebug.h"
 #include "Common/DamageFX.h"
@@ -141,13 +141,13 @@ void ActiveBodyModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "MaxHealth",						INI::parseReal,						NULL,		offsetof( ActiveBodyModuleData, m_maxHealth ) },
-		{ "InitialHealth",				INI::parseReal,						NULL,		offsetof( ActiveBodyModuleData, m_initialHealth ) },
+		{ "MaxHealth",						INI::parseReal,						nullptr,		offsetof( ActiveBodyModuleData, m_maxHealth ) },
+		{ "InitialHealth",				INI::parseReal,						nullptr,		offsetof( ActiveBodyModuleData, m_initialHealth ) },
 
-		{ "SubdualDamageCap",					INI::parseReal,									NULL,		offsetof( ActiveBodyModuleData, m_subdualDamageCap ) },
-		{ "SubdualDamageHealRate",		INI::parseDurationUnsignedInt,	NULL,		offsetof( ActiveBodyModuleData, m_subdualDamageHealRate ) },
-		{ "SubdualDamageHealAmount",	INI::parseReal,									NULL,		offsetof( ActiveBodyModuleData, m_subdualDamageHealAmount ) },
-		{ 0, 0, 0, 0 }
+		{ "SubdualDamageCap",					INI::parseReal,									nullptr,		offsetof( ActiveBodyModuleData, m_subdualDamageCap ) },
+		{ "SubdualDamageHealRate",		INI::parseDurationUnsignedInt,	nullptr,		offsetof( ActiveBodyModuleData, m_subdualDamageHealRate ) },
+		{ "SubdualDamageHealAmount",	INI::parseReal,									nullptr,		offsetof( ActiveBodyModuleData, m_subdualDamageHealAmount ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   p.add(dataFieldParse);
 }
@@ -156,8 +156,8 @@ void ActiveBodyModuleData::buildFieldParse(MultiIniFieldParse& p)
 //-------------------------------------------------------------------------------------------------
 ActiveBody::ActiveBody( Thing *thing, const ModuleData* moduleData ) :
 	BodyModule(thing, moduleData),
-	m_curDamageFX(NULL),
-	m_curArmorSet(NULL),
+	m_curDamageFX(nullptr),
+	m_curArmorSet(nullptr),
 	m_frontCrushed(false),
 	m_backCrushed(false),
 	m_lastDamageTimestamp(0xffffffff),// So we don't think we just got damaged on the first frame
@@ -166,7 +166,7 @@ ActiveBody::ActiveBody( Thing *thing, const ModuleData* moduleData ) :
 	m_nextDamageFXTime(0),
 	m_lastDamageFXDone((DamageType)-1),
 	m_lastDamageCleared(false),
-	m_particleSystems(NULL),
+	m_particleSystems(nullptr),
 	m_currentSubdualDamage(0),
 	m_indestructible(false)
 {
@@ -342,7 +342,7 @@ void ActiveBody::attemptDamage( DamageInfo *damageInfo )
 	validateArmorAndDamageFX();
 
 	// sanity
-	if( damageInfo == NULL )
+	if( damageInfo == nullptr )
 		return;
 
 	if ( m_indestructible )
@@ -405,14 +405,19 @@ void ActiveBody::attemptDamage( DamageInfo *damageInfo )
 					}
 					else
 					{
-						//Removing the rider will scuttle the bike.
-						Object *rider = *(contain->getContainedItemsList()->begin());
-						ai->aiEvacuateInstantly( TRUE, CMD_FROM_AI );
+						// TheSuperHackers @bugfix Caball009 04/09/2025 Check whether a bike still has a rider.
+						// A rider may dismount or be sniped off a bike when it's disabled, resulting in a bike object with an empty contain list.
+						if ( !contain->getContainedItemsList()->empty() )
+						{
+							//Removing the rider will scuttle the bike.
+							Object* rider = *(contain->getContainedItemsList()->begin());
+							ai->aiEvacuateInstantly(TRUE, CMD_FROM_AI);
 
-						//Kill the rider.
-						if (damager)
-							damager->scoreTheKill( rider );
-						rider->kill();
+							//Kill the rider.
+							if (damager)
+								damager->scoreTheKill(rider);
+							rider->kill();
+						}
 					}
 				}
 				else
@@ -492,9 +497,11 @@ void ActiveBody::attemptDamage( DamageInfo *damageInfo )
 		if( !canBeSubdued() )
 			return;
 
+		// TheSuperHackers @bugfix Stubbjax 20/09/2025 The isSubdued() function now directly checks status instead
+		// of health to prevent indefinite subdue status when internally shifting health across the threshold.
 		Bool wasSubdued = isSubdued();
 		internalAddSubdualDamage(amount);
-		Bool nowSubdued = isSubdued();
+		Bool nowSubdued = m_maxHealth <= m_currentSubdualDamage;
 		alreadyHandled = TRUE;
 		allowModifier = FALSE;
 
@@ -690,7 +697,7 @@ void ActiveBody::attemptDamage( DamageInfo *damageInfo )
 		{
 			PartitionFilterPlayerAffiliation f1( controllingPlayer, ALLOW_ALLIES, true );
 			PartitionFilterOnMap filterMapStatus;
-			PartitionFilter *filters[] = { &f1, &filterMapStatus, 0 };
+			PartitionFilter *filters[] = { &f1, &filterMapStatus, nullptr };
 
 
 			Real distance = TheAI->getAiData()->m_retaliateFriendsRadius + obj->getGeometryInfo().getBoundingCircleRadius();
@@ -702,7 +709,7 @@ void ActiveBody::attemptDamage( DamageInfo *damageInfo )
 					continue;
 				}
 				AIUpdateInterface *ai = them->getAI();
-				if (ai==NULL) {
+				if (ai==nullptr) {
 					continue;
 				}
 				//If we have AI and we're mobile, then assist!
@@ -727,7 +734,7 @@ Bool ActiveBody::shouldRetaliateAgainstAggressor(Object *obj, Object *damager)
 	/* This considers whether obj should invoke his friends to retaliate against damager.
 		 Note that obj could be a structure, so we don't actually check whether obj will
 		 retaliate, as in many cases he wouldn't. */
-	if (damager==NULL) {
+	if (damager==nullptr) {
 		return false;
 	}
 	if (damager->isAirborneTarget()) {
@@ -793,7 +800,7 @@ void ActiveBody::attemptHealing( DamageInfo *damageInfo )
 	validateArmorAndDamageFX();
 
 	// sanity
-	if( damageInfo == NULL )
+	if( damageInfo == nullptr )
 		return;
 
 	if( damageInfo->in.m_damageType != DAMAGE_HEALING )
@@ -835,7 +842,7 @@ void ActiveBody::attemptHealing( DamageInfo *damageInfo )
 		//(object pointer loses scope as soon as atteptdamage's caller ends)
 		m_lastDamageInfo = *damageInfo;
 		m_lastDamageCleared = false;
-#if RETAIL_COMPATIBLE_BUG
+#if PRESERVE_RETAIL_BEHAVIOR
 		m_lastDamageTimestamp = TheGameLogic->getFrame();
 #endif
 		m_lastHealingTimestamp = TheGameLogic->getFrame();
@@ -977,7 +984,7 @@ void ActiveBody::createParticleSystems( const AsciiString &boneBaseName,
 	Object *us = getObject();
 
 	// sanity
-	if( systemTemplate == NULL )
+	if( systemTemplate == nullptr )
 		return;
 
 	// get the bones
@@ -986,7 +993,7 @@ void ActiveBody::createParticleSystems( const AsciiString &boneBaseName,
 	Int numBones = us->getMultiLogicalBonePosition( boneBaseName.str(),
 																									MAX_BONES,
 																									bonePositions,
-																									NULL,
+																									nullptr,
 																									FALSE );
 
 	// if no bones found nothing else to do
@@ -1313,7 +1320,16 @@ void ActiveBody::onSubdualChange( Bool isNowSubdued )
 //-------------------------------------------------------------------------------------------------
 Bool ActiveBody::isSubdued() const
 {
+#if RETAIL_COMPATIBLE_CRC
 	return m_maxHealth <= m_currentSubdualDamage;
+#else
+  // TheSuperHackers @info Projectiles don't receive the DISABLED_SUBDUED flag (or any flag for
+	// that matter) when jammed, so we have to check their subdual damage directly.
+	if (getObject()->isKindOf(KINDOF_PROJECTILE))
+		return m_maxHealth <= m_currentSubdualDamage;
+
+	return getObject()->isDisabledByType(DISABLED_SUBDUED);
+#endif
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1609,7 +1625,7 @@ void ActiveBody::xfer( Xfer *xfer )
 		ParticleSystemID particleSystemID;
 
 		// the list should be empty at this time
-		if( m_particleSystems != NULL )
+		if( m_particleSystems != nullptr )
 		{
 
 			DEBUG_CRASH(( "ActiveBody::xfer - m_particleSystems should be empty, but is not" ));

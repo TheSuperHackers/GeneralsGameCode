@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef _CREATE_CRATE_DIE_H_
-#define _CREATE_CRATE_DIE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/INI.h"
 #include "GameLogic/Module/DieModule.h"
@@ -49,8 +46,6 @@ public:
 
 	CreateCrateDieModuleData()
 	{
-		// Added By Sadullah Nader
-		// Initializations missing and needed
 		m_crateNameList.clear();
 	}
 	~CreateCrateDieModuleData()
@@ -64,7 +59,7 @@ public:
 
 		static const FieldParse dataFieldParse[] =
 		{
-			{ "CrateData",	CreateCrateDieModuleData::parseCrateData,		NULL, NULL },
+			{ "CrateData",	CreateCrateDieModuleData::parseCrateData,		nullptr, 0 },
 			{ 0, 0, 0, 0 }
 		};
     p.add(dataFieldParse);
@@ -96,5 +91,3 @@ private:
 
 	Object *createCrate( CrateTemplate const *currentCrateData );
 };
-
-#endif

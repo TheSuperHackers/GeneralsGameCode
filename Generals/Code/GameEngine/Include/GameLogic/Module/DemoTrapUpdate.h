@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __DEMO_TRAP_UPDATE_H_
-#define __DEMO_TRAP_UPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/KindOf.h"
 #include "GameLogic/Module/UpdateModule.h"
@@ -86,7 +83,3 @@ protected:
 	Int m_nextScanFrames;
 	Bool m_detonated;
 };
-
-
-#endif
-

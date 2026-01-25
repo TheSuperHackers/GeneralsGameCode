@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __OBJECT_SMC_HELPER_H_
-#define __OBJECT_SMC_HELPER_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/ObjectHelper.h"
 
@@ -58,6 +55,3 @@ public:
 	virtual UpdateSleepTime update();
 
 };
-
-
-#endif  // end __OBJECT_SMC_HELPER_H_

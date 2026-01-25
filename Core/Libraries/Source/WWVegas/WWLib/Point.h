@@ -33,12 +33,8 @@
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-#if _MSC_VER >= 1000
-#pragma once
-#endif // _MSC_VER >= 1000
 
-#ifndef POINT_H
-#define POINT_H
+#pragma once
 
 template<class T> class TRect;
 
@@ -201,6 +197,3 @@ TPoint3D<T> const operator * (T lvalue, TPoint3D<T> const & rvalue)
 **	integer 3D points.
 */
 typedef TPoint3D<int> Point3D;
-
-
-#endif

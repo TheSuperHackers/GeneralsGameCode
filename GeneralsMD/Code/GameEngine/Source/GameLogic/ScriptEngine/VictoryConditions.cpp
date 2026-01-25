@@ -26,12 +26,13 @@
 // Generals multiplayer victory condition specifications
 // Author: Matthew D. Campbell, February 2002
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/AudioEventRTS.h"
 #include "Common/GameAudio.h"
 #include "Common/GameCommon.h"
 #include "Common/GameEngine.h"
+#include "Common/GameUtility.h"
 #include "Common/KindOf.h"
 #include "Common/PlayerList.h"
 #include "Common/Player.h"
@@ -57,7 +58,7 @@
 #define ISSET(x) (m_victoryConditions & VICTORY_##x)
 
 //-------------------------------------------------------------------------------------------------
-VictoryConditionsInterface *TheVictoryConditions = NULL;
+VictoryConditionsInterface *TheVictoryConditions = nullptr;
 
 //-------------------------------------------------------------------------------------------------
 inline static Bool areAllies(const Player *p1, const Player *p2)
@@ -125,7 +126,7 @@ void VictoryConditions::reset( void )
 {
 	for (Int i=0; i<MAX_PLAYER_COUNT; ++i)
 	{
-		m_players[i] = NULL;
+		m_players[i] = nullptr;
 		m_isDefeated[i] = false;
 	}
 	m_localSlotNum = -1;
@@ -141,14 +142,14 @@ void VictoryConditions::reset( void )
 //-------------------------------------------------------------------------------------------------
 void VictoryConditions::update( void )
 {
-	if (!TheRecorder->isMultiplayer() || (m_localSlotNum == -1 && !m_isObserver))
+	if (!TheRecorder->isMultiplayer() || (m_localSlotNum < 0 && !m_isObserver))
 		return;
 
 	// Check for a single winning alliance
 	if (!m_singleAllianceRemaining)
 	{
 		Bool multipleAlliances = false;
-		Player *alive = NULL;
+		Player *alive = nullptr;
 		Player *player;
 		for (Int i=0; i<MAX_PLAYER_COUNT; ++i)
 		{
@@ -202,7 +203,7 @@ void VictoryConditions::update( void )
 				pName.format("player%d", idx);
 				if (p->getPlayerNameKey() == NAMEKEY(pName))
 				{
-					GameSlot *slot = (TheGameInfo)?TheGameInfo->getSlot(idx):NULL;
+					GameSlot *slot = (TheGameInfo)?TheGameInfo->getSlot(idx):nullptr;
 					if (slot && slot->isAI())
 					{
 						DEBUG_LOG(("Marking AI player %s as defeated", pName.str()));
@@ -225,10 +226,10 @@ void VictoryConditions::update( void )
 		{
 			if (!m_singleAllianceRemaining)
 			{
-				//MessageBoxOk(TheGameText->fetch("GUI:Defeat"), TheGameText->fetch("GUI:LocalDefeat"), NULL);
+				//MessageBoxOk(TheGameText->fetch("GUI:Defeat"), TheGameText->fetch("GUI:LocalDefeat"), nullptr);
 			}
 			m_localPlayerDefeated = true;	// don't check again
-			TheRadar->forceOn(TRUE);
+			TheRadar->forceOn(localPlayer->getPlayerIndex(), TRUE);
 			SetInGameChatType( INGAME_CHAT_EVERYONE ); // can't chat to allies after death.  Only to other observers.
 		}
 	}
@@ -322,14 +323,12 @@ void VictoryConditions::cachePlayerPtrs( void )
 	}
 	while (playerCount < MAX_PLAYER_COUNT)
 	{
-		m_players[playerCount++] = NULL;
+		m_players[playerCount++] = nullptr;
 	}
 
 	if (m_localSlotNum < 0)
 	{
 		m_localPlayerDefeated = true;	// if we have no local player, don't check for defeat
-		DEBUG_ASSERTCRASH(TheRadar, ("No Radar!"));
-		TheRadar->forceOn(TRUE);
 		m_isObserver = true;
 	}
 }

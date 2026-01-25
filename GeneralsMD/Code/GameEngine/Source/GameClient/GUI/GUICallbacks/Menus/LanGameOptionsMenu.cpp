@@ -27,7 +27,7 @@
 // Author: Chris Huybregts, October 2001
 // Description: Lan Game Options Menu
 ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 
 #include "Common/PlayerTemplate.h"
@@ -116,41 +116,34 @@ static NameKeyType checkboxLimitSuperweaponsID = NAMEKEY_INVALID;
 static NameKeyType comboBoxStartingCashID = NAMEKEY_INVALID;
 static NameKeyType windowMapID = NAMEKEY_INVALID;
 // Window Pointers ------------------------------------------------------------------------
-static GameWindow *parentLanGameOptions = NULL;
-static GameWindow *buttonBack = NULL;
-static GameWindow *buttonStart = NULL;
-static GameWindow *buttonSelectMap = NULL;
-static GameWindow *buttonEmote = NULL;
-static GameWindow *textEntryChat = NULL;
-static GameWindow *textEntryMapDisplay = NULL;
-static GameWindow *checkboxLimitSuperweapons = NULL;
-static GameWindow *comboBoxStartingCash = NULL;
-static GameWindow *windowMap = NULL;
+static GameWindow *parentLanGameOptions = nullptr;
+static GameWindow *buttonBack = nullptr;
+static GameWindow *buttonStart = nullptr;
+static GameWindow *buttonSelectMap = nullptr;
+static GameWindow *buttonEmote = nullptr;
+static GameWindow *textEntryChat = nullptr;
+static GameWindow *textEntryMapDisplay = nullptr;
+static GameWindow *checkboxLimitSuperweapons = nullptr;
+static GameWindow *comboBoxStartingCash = nullptr;
+static GameWindow *windowMap = nullptr;
 
-static GameWindow *comboBoxPlayer[MAX_SLOTS] = {NULL,NULL,NULL,NULL,
-																									 NULL,NULL,NULL,NULL };
-static GameWindow *buttonAccept[MAX_SLOTS] = {NULL,NULL,NULL,NULL,
-																								NULL,NULL,NULL,NULL };
+static GameWindow *comboBoxPlayer[MAX_SLOTS] = {0};
+static GameWindow *buttonAccept[MAX_SLOTS] = {0};
 
-static GameWindow *comboBoxColor[MAX_SLOTS] = {NULL,NULL,NULL,NULL,
-																								NULL,NULL,NULL,NULL };
+static GameWindow *comboBoxColor[MAX_SLOTS] = {0};
 
-static GameWindow *comboBoxPlayerTemplate[MAX_SLOTS] = {NULL,NULL,NULL,NULL,
-																								NULL,NULL,NULL,NULL };
+static GameWindow *comboBoxPlayerTemplate[MAX_SLOTS] = {0};
 
-static GameWindow *comboBoxTeam[MAX_SLOTS] = {NULL,NULL,NULL,NULL,
-																								NULL,NULL,NULL,NULL };
+static GameWindow *comboBoxTeam[MAX_SLOTS] = {0};
 
-//static GameWindow *buttonStartPosition[MAX_SLOTS] = {NULL,NULL,NULL,NULL,
-//																								NULL,NULL,NULL,NULL };
+//static GameWindow *buttonStartPosition[MAX_SLOTS] = {0};
 //
-static GameWindow *buttonMapStartPosition[MAX_SLOTS] = {NULL,NULL,NULL,NULL,
-																								NULL,NULL,NULL,NULL };
+static GameWindow *buttonMapStartPosition[MAX_SLOTS] = {0};
 
 //external declarations of the Gadgets the callbacks can use
-GameWindow *listboxChatWindowLanGame = NULL;
+GameWindow *listboxChatWindowLanGame = nullptr;
 NameKeyType listboxChatWindowLanGameID = NAMEKEY_INVALID;
-WindowLayout *mapSelectLayout = NULL;
+WindowLayout *mapSelectLayout = nullptr;
 
 static Int getNextSelectablePlayer(Int start)
 {
@@ -173,7 +166,7 @@ static Int getNextSelectablePlayer(Int start)
 static Int getFirstSelectablePlayer(const GameInfo *game)
 {
 	const GameSlot *slot = game->getConstSlot(game->getLocalSlotNum());
-	if (!game->amIHost() || slot && slot->getPlayerTemplate() != PLAYERTEMPLATE_OBSERVER)
+	if (!game->amIHost() || (slot && slot->getPlayerTemplate() != PLAYERTEMPLATE_OBSERVER))
 		return game->getLocalSlotNum();
 
 	for (Int i=0; i<MAX_SLOTS; ++i)
@@ -221,15 +214,8 @@ static void playerTooltip(GameWindow *window,
 		TheMouse->setCursorTooltip( UnicodeString::TheEmptyString );
 		return;
 	}
-	UnicodeString tooltip;
-	tooltip.format(TheGameText->fetch("TOOLTIP:LANPlayer"), player->getLogin().str(), player->getHost().str());
-#if defined(RTS_DEBUG)
-	UnicodeString ip;
-	ip.format(L" - %d.%d.%d.%d", PRINTF_IP_AS_4_INTS(player->getIP()));
-	tooltip.concat(ip);
-#endif
 
-	TheMouse->setCursorTooltip( tooltip );
+	setLANPlayerTooltip(player);
 }
 
 void StartPressed(void)
@@ -268,7 +254,7 @@ void StartPressed(void)
 		{
 			UnicodeString text;
 			text.format(TheGameText->fetch("LAN:TooManyPlayers"), (md)?md->m_numPlayers:0);
-			TheLAN->OnChat(UnicodeString(L"SYSTEM"), TheLAN->GetLocalIP(), text, LANAPI::LANCHAT_SYSTEM);
+			TheLAN->OnChat(L"SYSTEM", TheLAN->GetLocalIP(), text, LANAPI::LANCHAT_SYSTEM);
 		}
 		return;
 	}
@@ -279,7 +265,7 @@ void StartPressed(void)
 		if (TheLAN->AmIHost())
 		{
 			UnicodeString text = TheGameText->fetch("GUI:NeedHumanPlayers");
-			TheLAN->OnChat(UnicodeString(L"SYSTEM"), TheLAN->GetLocalIP(), text, LANAPI::LANCHAT_SYSTEM);
+			TheLAN->OnChat(L"SYSTEM", TheLAN->GetLocalIP(), text, LANAPI::LANCHAT_SYSTEM);
 		}
 		return;
 	}
@@ -291,7 +277,7 @@ void StartPressed(void)
 		{
 			UnicodeString text;
 			text.format(TheGameText->fetch("LAN:NeedMorePlayers"),numUsers);
-			TheLAN->OnChat(UnicodeString(L"SYSTEM"), TheLAN->GetLocalIP(), text, LANAPI::LANCHAT_SYSTEM);
+			TheLAN->OnChat(L"SYSTEM", TheLAN->GetLocalIP(), text, LANAPI::LANCHAT_SYSTEM);
 		}
 		return;
 	}
@@ -320,7 +306,7 @@ void StartPressed(void)
 		{
 			UnicodeString text;
 			text.format(TheGameText->fetch("LAN:NeedMoreTeams"));
-			TheLAN->OnChat(UnicodeString(L"SYSTEM"), TheLAN->GetLocalIP(), text, LANAPI::LANCHAT_SYSTEM);
+			TheLAN->OnChat(L"SYSTEM", TheLAN->GetLocalIP(), text, LANAPI::LANCHAT_SYSTEM);
 		}
 		return;
 	}
@@ -329,7 +315,7 @@ void StartPressed(void)
 	{
 		UnicodeString text;
 		text.format(TheGameText->fetch("GUI:SandboxMode"));
-			TheLAN->OnChat(UnicodeString(L"SYSTEM"), TheLAN->GetLocalIP(), text, LANAPI::LANCHAT_SYSTEM);
+			TheLAN->OnChat(L"SYSTEM", TheLAN->GetLocalIP(), text, LANAPI::LANCHAT_SYSTEM);
 	}
 
 	// see if everyone's accepted and count the number of players in the game
@@ -623,7 +609,7 @@ static void handleStartingCashSelection()
     GadgetComboBoxGetSelectedPos(comboBoxStartingCash, &selIndex);
 
     Money startingCash;
-    startingCash.deposit( (UnsignedInt)GadgetComboBoxGetItemData( comboBoxStartingCash, selIndex ), FALSE );
+    startingCash.deposit( (UnsignedInt)GadgetComboBoxGetItemData( comboBoxStartingCash, selIndex ), FALSE, FALSE );
     myGame->setStartingCash( startingCash );
     myGame->resetAccepted();
 
@@ -685,20 +671,20 @@ void lanUpdateSlotList( void )
 void InitLanGameGadgets( void )
 {
 	//Initialize the gadget IDs
-	parentLanGameOptionsID = TheNameKeyGenerator->nameToKey( AsciiString( "LanGameOptionsMenu.wnd:LanGameOptionsMenuParent" ) );
-	buttonBackID = TheNameKeyGenerator->nameToKey( AsciiString( "LanGameOptionsMenu.wnd:ButtonBack" ) );
-	buttonStartID = TheNameKeyGenerator->nameToKey( AsciiString( "LanGameOptionsMenu.wnd:ButtonStart" ) );
-	textEntryChatID = TheNameKeyGenerator->nameToKey( AsciiString( "LanGameOptionsMenu.wnd:TextEntryChat" ) );
-	textEntryMapDisplayID = TheNameKeyGenerator->nameToKey( AsciiString( "LanGameOptionsMenu.wnd:TextEntryMapDisplay" ) );
-	listboxChatWindowLanGameID = TheNameKeyGenerator->nameToKey( AsciiString( "LanGameOptionsMenu.wnd:ListboxChatWindowLanGame" ) );
-	buttonEmoteID = TheNameKeyGenerator->nameToKey( AsciiString( "LanGameOptionsMenu.wnd:ButtonEmote" ) );
-	buttonSelectMapID = TheNameKeyGenerator->nameToKey( AsciiString( "LanGameOptionsMenu.wnd:ButtonSelectMap" ) );
-  checkboxLimitSuperweaponsID = TheNameKeyGenerator->nameToKey( AsciiString( "LanGameOptionsMenu.wnd:CheckboxLimitSuperweapons" ) );
-  comboBoxStartingCashID = TheNameKeyGenerator->nameToKey( AsciiString( "LanGameOptionsMenu.wnd:ComboBoxStartingCash" ) );
-	windowMapID = TheNameKeyGenerator->nameToKey( AsciiString( "LanGameOptionsMenu.wnd:MapWindow" ) );
+	parentLanGameOptionsID = TheNameKeyGenerator->nameToKey( "LanGameOptionsMenu.wnd:LanGameOptionsMenuParent" );
+	buttonBackID = TheNameKeyGenerator->nameToKey( "LanGameOptionsMenu.wnd:ButtonBack" );
+	buttonStartID = TheNameKeyGenerator->nameToKey( "LanGameOptionsMenu.wnd:ButtonStart" );
+	textEntryChatID = TheNameKeyGenerator->nameToKey( "LanGameOptionsMenu.wnd:TextEntryChat" );
+	textEntryMapDisplayID = TheNameKeyGenerator->nameToKey( "LanGameOptionsMenu.wnd:TextEntryMapDisplay" );
+	listboxChatWindowLanGameID = TheNameKeyGenerator->nameToKey( "LanGameOptionsMenu.wnd:ListboxChatWindowLanGame" );
+	buttonEmoteID = TheNameKeyGenerator->nameToKey( "LanGameOptionsMenu.wnd:ButtonEmote" );
+	buttonSelectMapID = TheNameKeyGenerator->nameToKey( "LanGameOptionsMenu.wnd:ButtonSelectMap" );
+  checkboxLimitSuperweaponsID = TheNameKeyGenerator->nameToKey( "LanGameOptionsMenu.wnd:CheckboxLimitSuperweapons" );
+  comboBoxStartingCashID = TheNameKeyGenerator->nameToKey( "LanGameOptionsMenu.wnd:ComboBoxStartingCash" );
+	windowMapID = TheNameKeyGenerator->nameToKey( "LanGameOptionsMenu.wnd:MapWindow" );
 
 	// Initialize the pointers to our gadgets
-	parentLanGameOptions = TheWindowManager->winGetWindowFromId( NULL, parentLanGameOptionsID );
+	parentLanGameOptions = TheWindowManager->winGetWindowFromId( nullptr, parentLanGameOptionsID );
 	DEBUG_ASSERTCRASH(parentLanGameOptions, ("Could not find the parentLanGameOptions"));
 	buttonEmote = TheWindowManager->winGetWindowFromId( parentLanGameOptions,buttonEmoteID  );
 	DEBUG_ASSERTCRASH(buttonEmote, ("Could not find the buttonEmote"));
@@ -726,11 +712,8 @@ void InitLanGameGadgets( void )
 	Int localSlotNum = TheLAN->GetMyGame()->getLocalSlotNum();
 	DEBUG_ASSERTCRASH(localSlotNum >= 0, ("Bad slot number!"));
 
-	//Added By Sadullah Nader
 	//Tooltip function is being set for techBuildings, and supplyDocks
-
 	windowMap->winSetTooltipFunc(MapSelectorTooltip);
-	//End Add
 
 	for (Int i = 0; i < MAX_SLOTS; i++)
 	{
@@ -785,7 +768,6 @@ void InitLanGameGadgets( void )
 		buttonAcceptID[i] = TheNameKeyGenerator->nameToKey( tmpString );
 		buttonAccept[i] = TheWindowManager->winGetWindowFromId( parentLanGameOptions, buttonAcceptID[i] );
 		DEBUG_ASSERTCRASH(buttonAccept[i], ("Could not find the buttonAccept[%d]",i ));
-		//Added by Saad for the tooltips on the MultiPlayer icons
 		buttonAccept[i]->winSetTooltipFunc(gameAcceptTooltip);
 //
 //		tmpString.format("LanGameOptionsMenu.wnd:ButtonStartPosition%d", i);
@@ -808,30 +790,30 @@ void InitLanGameGadgets( void )
 
 void DeinitLanGameGadgets( void )
 {
-	parentLanGameOptions = NULL;
-	buttonEmote = NULL;
-	buttonSelectMap = NULL;
-	buttonStart = NULL;
-	buttonBack = NULL;
-	listboxChatWindowLanGame = NULL;
-	textEntryChat = NULL;
-	textEntryMapDisplay = NULL;
-  checkboxLimitSuperweapons = NULL;
-  comboBoxStartingCash = NULL;
+	parentLanGameOptions = nullptr;
+	buttonEmote = nullptr;
+	buttonSelectMap = nullptr;
+	buttonStart = nullptr;
+	buttonBack = nullptr;
+	listboxChatWindowLanGame = nullptr;
+	textEntryChat = nullptr;
+	textEntryMapDisplay = nullptr;
+  checkboxLimitSuperweapons = nullptr;
+  comboBoxStartingCash = nullptr;
 	if (windowMap)
 	{
-		windowMap->winSetUserData(NULL);
-		windowMap = NULL;
+		windowMap->winSetUserData(nullptr);
+		windowMap = nullptr;
 	}
 	for (Int i = 0; i < MAX_SLOTS; i++)
 	{
-		comboBoxPlayer[i] = NULL;
-		comboBoxColor[i] = NULL;
-		comboBoxPlayerTemplate[i] = NULL;
-		comboBoxTeam[i] = NULL;
-		buttonAccept[i] = NULL;
-//		buttonStartPosition[i] = NULL;
-		buttonMapStartPosition[i] = NULL;
+		comboBoxPlayer[i] = nullptr;
+		comboBoxColor[i] = nullptr;
+		comboBoxPlayerTemplate[i] = nullptr;
+		comboBoxTeam[i] = nullptr;
+		buttonAccept[i] = nullptr;
+//		buttonStartPosition[i] = nullptr;
+		buttonMapStartPosition[i] = nullptr;
 	}
 }
 
@@ -998,6 +980,29 @@ void updateGameOptions( void )
 }
 
 
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+void setLANPlayerTooltip(LANPlayer* player)
+{
+	UnicodeString tooltip;
+
+	if (!player->getLogin().isEmpty() || !player->getHost().isEmpty())
+	{
+		tooltip.format(TheGameText->fetch("TOOLTIP:LANPlayer"), player->getLogin().str(), player->getHost().str());
+	}
+
+#if defined(RTS_DEBUG)
+	UnicodeString ip;
+	ip.format(L" - %d.%d.%d.%d", PRINTF_IP_AS_4_INTS(player->getIP()));
+	tooltip.concat(ip);
+#endif
+
+	if (!tooltip.isEmpty())
+	{
+		TheMouse->setCursorTooltip( tooltip );
+	}
+}
+
 
 //-------------------------------------------------------------------------------------------------
 /** This is called when a shutdown is complete for this menu */
@@ -1005,21 +1010,21 @@ void updateGameOptions( void )
 static void shutdownComplete( WindowLayout *layout )
 {
 	DeinitLanGameGadgets();
-	textEntryMapDisplay = NULL;
+	textEntryMapDisplay = nullptr;
 	LANisShuttingDown = false;
 
 	// hide the layout
 	layout->hide( TRUE );
 
 	// our shutdown is complete
-	TheShell->shutdownComplete( layout, (LANnextScreen != NULL) );
+	TheShell->shutdownComplete( layout, (LANnextScreen != nullptr) );
 
-	if (LANnextScreen != NULL)
+	if (LANnextScreen != nullptr)
 	{
 		TheShell->push(LANnextScreen);
 	}
 
-	LANnextScreen = NULL;
+	LANnextScreen = nullptr;
 
 }
 
@@ -1029,7 +1034,7 @@ static void shutdownComplete( WindowLayout *layout )
 void LanGameOptionsMenuShutdown( WindowLayout *layout, void *userData )
 {
 	TheMouse->setCursor(Mouse::ARROW);
-	TheMouse->setMouseText(UnicodeString::TheEmptyString,NULL,NULL);
+	TheMouse->setMouseText(UnicodeString::TheEmptyString,nullptr,nullptr);
 	EnableSlotListUpdates(FALSE);
 	LANisShuttingDown = true;
 
@@ -1129,7 +1134,7 @@ WindowMsgHandledType LanGameOptionsMenuSystem( GameWindow *window, UnsignedInt m
 		case GWM_DESTROY:
 			{
 				if (windowMap)
-					windowMap->winSetUserData(NULL);
+					windowMap->winSetUserData(nullptr);
 
 				break;
 			}
@@ -1224,7 +1229,7 @@ WindowMsgHandledType LanGameOptionsMenuSystem( GameWindow *window, UnsignedInt m
 						{
 							mapSelectLayout->destroyWindows();
 							deleteInstance(mapSelectLayout);
-							mapSelectLayout = NULL;
+							mapSelectLayout = nullptr;
 						}
 					TheLAN->RequestGameLeave();
 					//TheShell->pop();
@@ -1246,7 +1251,7 @@ WindowMsgHandledType LanGameOptionsMenuSystem( GameWindow *window, UnsignedInt m
 				{
 					//buttonBack->winEnable( false );
 
-					mapSelectLayout = TheWindowManager->winCreateLayout( AsciiString( "Menus/LanMapSelectMenu.wnd" ) );
+					mapSelectLayout = TheWindowManager->winCreateLayout( "Menus/LanMapSelectMenu.wnd" );
 					mapSelectLayout->runInit();
 					mapSelectLayout->hide( FALSE );
 					mapSelectLayout->bringForward();

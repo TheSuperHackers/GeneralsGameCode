@@ -44,9 +44,6 @@
 
 #pragma once
 
-#ifndef __W3DROAD_BUFFER_H_
-#define __W3DROAD_BUFFER_H_
-
 //-----------------------------------------------------------------------------
 //           Includes
 //-----------------------------------------------------------------------------
@@ -281,5 +278,3 @@ protected:
 	Bool visibilityChanged(const IRegion2D &bounds);								///< Returns true if some roads are now visible that weren't, or vice versa.
 	void rotateAbout(Vector2 *ptP, Vector2 center, Real angle);
 };
-
-#endif  // end __W3DROAD_BUFFER_H_

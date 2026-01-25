@@ -28,7 +28,7 @@
 //         troops, order them to attack, then return. Can do extra things like ordering
 //         injured troops to return to the transport for healing purposes.
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Player.h"
 #include "Common/ThingFactory.h"
@@ -159,7 +159,7 @@ UpdateSleepTime AssaultTransportAIUpdate::update( void )
 		for( int i = 0; i < m_currentMembers; i++ )
 		{
 			Object *member = TheGameLogic->findObjectByID( m_memberIDs[ i ] );
-			AIUpdateInterface *ai = member ? member->getAI() : NULL;
+			AIUpdateInterface *ai = member ? member->getAI() : nullptr;
 			if( !member || member->isEffectivelyDead() || ai->getLastCommandSource() != CMD_FROM_AI )
 			{
 				//Member is toast -- so remove him from our list!
@@ -264,7 +264,7 @@ UpdateSleepTime AssaultTransportAIUpdate::update( void )
 	Object *designatedTarget = TheGameLogic->findObjectByID( m_designatedTarget );
 	if( designatedTarget && designatedTarget->isEffectivelyDead() )
 	{
-		designatedTarget = NULL;
+		designatedTarget = nullptr;
 	}
 	if( designatedTarget )
 	{
@@ -272,7 +272,7 @@ UpdateSleepTime AssaultTransportAIUpdate::update( void )
 		for( int i = 0; i < m_currentMembers; i++ )
 		{
 			Object *member = TheGameLogic->findObjectByID( m_memberIDs[ i ] );
-			AIUpdateInterface *ai = member ? member->getAI() : NULL;
+			AIUpdateInterface *ai = member ? member->getAI() : nullptr;
 
 			if( member && ai )
 			{
@@ -439,7 +439,7 @@ void AssaultTransportAIUpdate::retrieveMembers()
 	for( int i = 0; i < m_currentMembers; i++ )
 	{
 		Object *member = TheGameLogic->findObjectByID( m_memberIDs[ i ] );
-		AIUpdateInterface *ai = member ? member->getAI() : NULL;
+		AIUpdateInterface *ai = member ? member->getAI() : nullptr;
 		if( member && ai )
 		{
 			Bool contained = member->isContained();
@@ -459,7 +459,7 @@ void AssaultTransportAIUpdate::giveFinalOrders()
 	for( int i = 0; i < m_currentMembers; i++ )
 	{
 		Object *member = TheGameLogic->findObjectByID( m_memberIDs[ i ] );
-		AIUpdateInterface *ai = member ? member->getAI() : NULL;
+		AIUpdateInterface *ai = member ? member->getAI() : nullptr;
 		if( member && ai )
 		{
 			Object *designatedTarget = TheGameLogic->findObjectByID( m_designatedTarget );

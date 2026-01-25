@@ -34,13 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef RENDER2D_H
-#define RENDER2D_H
 
 #include "always.h"
 #include "simplevec.h"
@@ -100,7 +94,7 @@ class Render2DClass : public W3DMPO
 {
 	W3DMPO_GLUE(Render2DClass)
 public:
-	Render2DClass( TextureClass* tex = NULL );
+	Render2DClass( TextureClass* tex = nullptr );
 	virtual ~Render2DClass(void);
 
 	virtual	void	Reset(void);
@@ -194,7 +188,7 @@ protected:
 */
 class Render2DTextClass : public Render2DClass {
 public:
-	Render2DTextClass(Font3DInstanceClass *font=NULL);
+	Render2DTextClass(Font3DInstanceClass *font=nullptr);
 	~Render2DTextClass();
 
 	virtual	void	Reset(void);
@@ -234,5 +228,3 @@ private:
 
 	void	Draw_Char( WCHAR ch, unsigned long color );
 };
-
-#endif	// RENDER2D_H

@@ -34,17 +34,11 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef __WWSTRING_H
-#define __WWSTRING_H
 
 #include "always.h"
 #include "mutex.h"
 #include "win.h"
-#include <string.h>
 #include <stdarg.h>
 #include "trim.h"
 #include "wwdebug.h"
@@ -120,8 +114,8 @@ public:
 	bool			Is_Empty (void) const;
 
 	void			Erase (int start_index, int char_count);
-	int _cdecl  Format (const TCHAR *format, ...);
-	int _cdecl  Format_Args (const TCHAR *format, va_list arg_list );
+	int __cdecl  Format (const TCHAR *format, ...);
+	int __cdecl  Format_Args (const TCHAR *format, va_list arg_list );
 
 	// Trim leading and trailing whitespace characters (values <= 32)
 	void Trim(void);
@@ -503,7 +497,7 @@ inline void StringClass::Trim(void)
 inline const StringClass &
 StringClass::operator+= (const TCHAR *string)
 {
-	WWASSERT (string != NULL);
+	WWASSERT (string != nullptr);
 
 	int cur_len = Get_Length ();
 	int src_len = _tcslen (string);
@@ -778,6 +772,3 @@ StringClass::Store_Length (int length)
 
 	return ;
 }
-
-#endif //__WWSTRING_H
-

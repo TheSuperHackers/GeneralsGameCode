@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __JET_SLOW_DEATH_BEHAVIOR_H_
-#define __JET_SLOW_DEATH_BEHAVIOR_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "Common/AudioEventRTS.h"
 #include "GameLogic/Module/BehaviorModule.h"
@@ -51,7 +48,7 @@ public:
 
 	static void buildFieldParse( MultiIniFieldParse &p );
 
-	const FXList *m_fxOnGroundDeath;							///< fx list executed on death when destoyed on ground
+	const FXList *m_fxOnGroundDeath;							///< fx list executed on death when destroyed on ground
 	const ObjectCreationList *m_oclOnGroundDeath;	///< ocl list executed on death when destroyed on ground
 
 	const FXList *m_fxInitialDeath;								///< FXList for initial death
@@ -105,6 +102,3 @@ protected:
 	AudioEventRTS m_deathLoopSound;					///< death loop sound
 
 };
-
-
-#endif  // end __JET_SLOW_DEATH_BEHAVIOR_H_

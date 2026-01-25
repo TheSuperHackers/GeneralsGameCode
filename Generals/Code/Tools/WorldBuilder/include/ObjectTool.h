@@ -22,9 +22,6 @@
 
 #pragma once
 
-#ifndef OBJECTTOOL_H
-#define OBJECTTOOL_H
-
 #include "Tool.h"
 class WorldHeightMapEdit;
 /*************************************************************************/
@@ -53,6 +50,3 @@ public:
 	virtual void activate(); ///< Become the current tool.
 	virtual void deactivate(); ///< Become not the current tool.
 };
-
-
-#endif //TOOL_H

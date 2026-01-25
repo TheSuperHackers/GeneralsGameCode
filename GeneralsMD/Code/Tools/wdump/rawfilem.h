@@ -22,7 +22,7 @@
  *                                                                                             *
  *                 Project Name : Command & Conquer                                            *
  *                                                                                             *
- *                     $Archive:: /G/wdump/RAWFILEM.H                                         $*
+ *                     $Archive:: /G/wdump/RAWFILEM.h                                         $*
  *                                                                                             *
  *                      $Author:: Eric_c                                                      $*
  *                                                                                             *
@@ -38,8 +38,7 @@
  *   RawFileMClass::Is_Open -- Checks to see if the file is open or not.                        *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#ifndef RAWFILEM_Hx
-#define RAWFILEM_Hx
+#pragma once
 
 #include	<errno.h>
 #include	<limits.h>
@@ -51,14 +50,14 @@
 #define	NULL_HANDLE		INVALID_HANDLE_VALUE
 #define	HANDLE_TYPE		HANDLE
 
-#include	"WWFILE.H"
+#include "WWFILE.h"
 
 #ifdef NEVER
 	/*
 	**	This is a duplicate of the error numbers. The error handler for the RawFileMClass handles
 	**	these errors. If the error routine is overridden and additional errors are defined, then
 	**	use numbers starting with 100. Note that these errors here are listed in numerical order.
-	**	These errors are defined in the standard header file "ERRNO.H".
+	**	These errors are defined in the standard header file "ERRNO.h".
 	*/
 	EZERO,				// Non-error.
 	EINVFNC,				// Invalid function number.
@@ -161,7 +160,7 @@ class RawFileMClass : public FileClass
 		virtual void Close(void);
 		virtual unsigned long Get_Date_Time(void);
 		virtual bool Set_Date_Time(unsigned long datetime);
-		virtual void Error(int error, int canretry = false, char const * filename=NULL);
+		virtual void Error(int error, int canretry = false, char const * filename=nullptr);
 
 		void Bias(int start, int length=-1);
 
@@ -227,11 +226,11 @@ class RawFileMClass : public FileClass
  * RawFileMClass::File_Name -- Returns with the filename associate with the file object.        *
  *                                                                                             *
  *    Use this routine to determine what filename is associated with this file object. If no   *
- *    filename has yet been assigned, then this routing will return NULL.                      *
+ *    filename has yet been assigned, then this routing will return null.                      *
  *                                                                                             *
  * INPUT:   none                                                                               *
  *                                                                                             *
- * OUTPUT:  Returns with a pointer to the file name associated with this file object or NULL   *
+ * OUTPUT:  Returns with a pointer to the file name associated with this file object or nullptr   *
  *          if one doesn't exist.                                                              *
  *                                                                                             *
  * WARNINGS:   none                                                                            *
@@ -295,7 +294,7 @@ inline RawFileMClass::~RawFileMClass(void)
 	Close();
 	if (Allocated && Filename) {
 		free((char *)Filename);
-		Filename = NULL;
+		Filename = nullptr;
 		Allocated = false;
 	}
 }
@@ -320,5 +319,3 @@ inline bool RawFileMClass::Is_Open(void) const
 {
 	return(Handle != INVALID_HANDLE_VALUE);
 }
-
-#endif

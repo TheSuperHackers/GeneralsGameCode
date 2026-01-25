@@ -28,15 +28,14 @@ Last Update : June 17, 1997
 Standard type definitions for the sake of portability and readability.
 \***************************************************************************/
 
-#ifndef WSTYPES_HEADER
-#define WSTYPES_HEADER
+#pragma once
 
 #ifdef _REENTRANT   // reentrant = threaded
 // Headers with non threadsafe libs need to come before my hacky
 //  threadsafe.h otherwise they won't compile
 
 #include <time.h>
-#ifndef _WINDOWS
+#ifndef _WIN32
 #define _POSIX_C_SOURCE 199506L
 #define _POSIX_PTHREAD_SEMANTICS
 #define __EXTENSIONS__
@@ -44,7 +43,7 @@ Standard type definitions for the sake of portability and readability.
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#ifndef _WINDOWS
+#ifndef _WIN32
 #include <unistd.h>
 #include <sys/time.h>
 #include <dirent.h>
@@ -71,10 +70,6 @@ Standard type definitions for the sake of portability and readability.
 
 #ifndef MAX
 #define MAX(x,y) (((x)>(y))?(x):(y))
-#endif
-
-#ifndef NULL
-#define NULL 0
 #endif
 
 //These are used for readability purposes mostly, when a method takes a
@@ -110,9 +105,7 @@ typedef double             float64;
 #define MAX_SINT16  0x7FFF
 #define MAX_SINT8   0x7F
 
-#ifdef _WINDOWS
+#ifdef _WIN32
 #define strncasecmp _strnicmp
 #define strcasecmp  _stricmp
-#endif
-
 #endif

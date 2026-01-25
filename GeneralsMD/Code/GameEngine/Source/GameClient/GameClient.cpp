@@ -28,13 +28,14 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 #include "GameClient/GameClient.h"
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "Common/ActionManager.h"
 #include "Common/GameEngine.h"
 #include "Common/GameState.h"
+#include "Common/GameUtility.h"
 #include "Common/GlobalData.h"
 #include "Common/PerfTimer.h"
 #include "Common/Player.h"
@@ -87,7 +88,7 @@
 #define DRAWABLE_HASH_SIZE	8192
 
 /// The GameClient singleton instance
-GameClient *TheGameClient = NULL;
+GameClient *TheGameClient = nullptr;
 
 //-------------------------------------------------------------------------------------------------
 GameClient::GameClient()
@@ -97,17 +98,14 @@ GameClient::GameClient()
 	for( Int i = 0; i < MAX_CLIENT_TRANSLATORS; i++ )
 		m_translators[ i ] = TRANSLATOR_ID_INVALID;
 	m_numTranslators = 0;
-	m_commandTranslator = NULL;
+	m_commandTranslator = nullptr;
 
-	// Added By Sadullah Nader
-	// Initializations missing and needed
 	m_drawableTOC.clear();
-	//
 	m_textBearingDrawableList.clear();
 
 	m_frame = 0;
 
-	m_drawableList = NULL;
+	m_drawableList = nullptr;
 
 	m_nextDrawableID = (DrawableID)1;
 	TheDrawGroupInfo = new DrawGroupInfo;
@@ -121,11 +119,11 @@ GameClient::~GameClient()
 {
 #ifdef PERF_TIMERS
 	delete TheGraphDraw;
-	TheGraphDraw = NULL;
+	TheGraphDraw = nullptr;
 #endif
 
 	delete TheDrawGroupInfo;
-	TheDrawGroupInfo = NULL;
+	TheDrawGroupInfo = nullptr;
 
 	// clear any drawable TOC we might have
 	m_drawableTOC.clear();
@@ -143,7 +141,7 @@ GameClient::~GameClient()
 	//DEBUG_LOG(("End Texture files ------------------------------------------------"));
 
 	delete TheCampaignManager;
-	TheCampaignManager = NULL;
+	TheCampaignManager = nullptr;
 
 	// destroy all Drawables
 	Drawable *draw, *nextDraw;
@@ -152,42 +150,42 @@ GameClient::~GameClient()
 		nextDraw = draw->getNextDrawable();
 		destroyDrawable( draw );
 	}
-	m_drawableList = NULL;
+	m_drawableList = nullptr;
 
 	// delete the ray effects
 	delete TheRayEffects;
-	TheRayEffects = NULL;
+	TheRayEffects = nullptr;
 
 	// delete the hot key manager
 	delete TheHotKeyManager;
-	TheHotKeyManager = NULL;
+	TheHotKeyManager = nullptr;
 
 	// destroy the in-game user interface
 	delete TheInGameUI;
-	TheInGameUI = NULL;
+	TheInGameUI = nullptr;
 
 	delete TheChallengeGenerals;
-	TheChallengeGenerals = NULL;
+	TheChallengeGenerals = nullptr;
 
 	// delete the shell
 	delete TheShell;
-	TheShell = NULL;
+	TheShell = nullptr;
 
 	delete TheIMEManager;
-	TheIMEManager = NULL;
+	TheIMEManager = nullptr;
 
 	// delete window manager
 	delete TheWindowManager;
-	TheWindowManager = NULL;
+	TheWindowManager = nullptr;
 
 	// delete the font library
 	TheFontLibrary->reset();
 	delete TheFontLibrary;
-	TheFontLibrary = NULL;
+	TheFontLibrary = nullptr;
 
 	TheMouse->reset();
 	delete TheMouse;
-	TheMouse = NULL;
+	TheMouse = nullptr;
 
 	///@todo :  TheTerrainVisual used to be the first thing destroyed.
 	//I had to put in here so that drawables free their track marks before
@@ -195,44 +193,44 @@ GameClient::~GameClient()
 
 	// destroy the terrain visual representation
 	delete TheTerrainVisual;
-	TheTerrainVisual = NULL;
+	TheTerrainVisual = nullptr;
 
 	// destroy the display
 	delete TheDisplay;
-	TheDisplay = NULL;
+	TheDisplay = nullptr;
 
 	delete TheHeaderTemplateManager;
-	TheHeaderTemplateManager = NULL;
+	TheHeaderTemplateManager = nullptr;
 
 	delete TheLanguageFilter;
-	TheLanguageFilter = NULL;
+	TheLanguageFilter = nullptr;
 
 	delete TheVideoPlayer;
-	TheVideoPlayer = NULL;
+	TheVideoPlayer = nullptr;
 
 	// destroy all translators
 	for( UnsignedInt i = 0; i < m_numTranslators; i++ )
 		TheMessageStream->removeTranslator( m_translators[ i ] );
 	m_numTranslators = 0;
-	m_commandTranslator = NULL;
+	m_commandTranslator = nullptr;
 
 	delete TheAnim2DCollection;
-	TheAnim2DCollection = NULL;
+	TheAnim2DCollection = nullptr;
 
 	delete TheMappedImageCollection;
-	TheMappedImageCollection = NULL;
+	TheMappedImageCollection = nullptr;
 
 	delete TheKeyboard;
-	TheKeyboard = NULL;
+	TheKeyboard = nullptr;
 
 	delete TheDisplayStringManager;
-	TheDisplayStringManager = NULL;
+	TheDisplayStringManager = nullptr;
 
 	delete TheEva;
-	TheEva = NULL;
+	TheEva = nullptr;
 
 	delete TheSnowManager;
-	TheSnowManager = NULL;
+	TheSnowManager = nullptr;
 
 }
 
@@ -246,7 +244,7 @@ void GameClient::init( void )
 
 	INI ini;
 	// Load the DrawGroupInfo here, before the Display Manager is loaded.
-	ini.loadFileDirectory("Data\\INI\\DrawGroupInfo", INI_LOAD_OVERWRITE, NULL);
+	ini.loadFileDirectory("Data\\INI\\DrawGroupInfo", INI_LOAD_OVERWRITE, nullptr);
 
 	// Override the ini values with localized versions:
 	if (TheGlobalLanguageData && TheGlobalLanguageData->m_drawGroupInfoFont.name.isNotEmpty())
@@ -285,7 +283,7 @@ void GameClient::init( void )
 	{
 
 		//
-		// NOTE: Make sure m_translators[] is large enough to accomodate all the translators you
+		// NOTE: Make sure m_translators[] is large enough to accommodate all the translators you
 		// are loading here.  See MAX_CLIENT_TRANSLATORS
 		//
 
@@ -450,7 +448,7 @@ void GameClient::reset( void )
 //	m_drawableHash.resize(DRAWABLE_HASH_SIZE);
 
 	m_drawableVector.clear();
-	m_drawableVector.resize(DRAWABLE_HASH_SIZE, NULL);
+	m_drawableVector.resize(DRAWABLE_HASH_SIZE, nullptr);
 
 	// need to reset the in game UI to clear drawables before they are destroyed
 	TheInGameUI->reset();
@@ -461,7 +459,7 @@ void GameClient::reset( void )
 		nextDraw = draw->getNextDrawable();
 		destroyDrawable( draw );
 	}
-	m_drawableList = NULL;
+	m_drawableList = nullptr;
 
 	TheDisplay->reset();
 	TheTerrainVisual->reset();
@@ -528,7 +526,7 @@ void GameClient::update( void )
 		playSizzle = TRUE;
 	}
 
-	//Initial Game Codition.  We must show the movie first and then we can display the shell
+	//Initial Game Condition.  We must show the movie first and then we can display the shell
 	if(TheGlobalData->m_afterIntro && !TheDisplay->isMoviePlaying())
 	{
 		if( playSizzle && TheGlobalData->m_playSizzle )
@@ -638,33 +636,37 @@ void GameClient::update( void )
 	}
 
 	const Bool freezeTime = TheGameEngine->isTimeFrozen() || TheGameEngine->isGameHalted();
-	Int localPlayerIndex = ThePlayerList ? ThePlayerList->getLocalPlayer()->getPlayerIndex() : 0;
+
+	const Int localPlayerIndex = rts::getObservedOrLocalPlayer()->getPlayerIndex();
 
 	if (!freezeTime)
 	{
+		Int numPlayers = ThePlayerList->getPlayerCount();
+		Int numNonLocalPlayers = 0;
+		Int nonLocalPlayerIndices[MAX_PLAYER_COUNT];
+
 #if ENABLE_CONFIGURABLE_SHROUD
 		if (TheGlobalData->m_shroudOn)
 #else
 		if (true)
 #endif
 		{
-			//localPlayerIndex=TheGhostObjectManager->getLocalPlayerIndex();	//always use the first local player set since normally can't change.  Doesn't work with debug "CTRL_SHIFT_SPACE"
-#ifdef DEBUG_FOG_MEMORY
-			//Find indices of all active players
-			Int numPlayers=ThePlayerList->getPlayerCount();
-			Int numNonLocalPlayers=0;
-			Int nonLocalPlayerIndices[MAX_PLAYER_COUNT];
-			for (Int i=0; i<numPlayers; i++)
-			{	Player *player=ThePlayerList->getNthPlayer(i);
-				//if (player->getPlayerType == PLAYER_HUMAN)
-				if (player->getPlayerIndex() != localPlayerIndex)
-					nonLocalPlayerIndices[numNonLocalPlayers++]=player->getPlayerIndex();
+			if (TheGhostObjectManager->trackAllPlayers())
+			{
+				//Find indices of all active players
+				for (Int i=0; i < numPlayers; i++)
+				{
+					Player *player = ThePlayerList->getNthPlayer(i);
+					if (player->getPlayerTemplate() != nullptr && player->getPlayerIndex() != localPlayerIndex)
+						nonLocalPlayerIndices[numNonLocalPlayers++] = player->getPlayerIndex();
+				}
+				//update ghost objects which don't have drawables or objects.
+				TheGhostObjectManager->updateOrphanedObjects(nonLocalPlayerIndices, numNonLocalPlayers);
 			}
-			//update ghostObjects which don't have drawables or objects.
-			TheGhostObjectManager->updateOrphanedObjects(nonLocalPlayerIndices,numNonLocalPlayers);
-#else
-			TheGhostObjectManager->updateOrphanedObjects(NULL,0);
-#endif
+			else
+			{
+				TheGhostObjectManager->updateOrphanedObjects(nullptr, 0);
+			}
 		}
 
 
@@ -678,20 +680,31 @@ void GameClient::update( void )
 #else
 			if (true)
 #endif
-			{	//immobile objects need to take snapshots whenever they become fogged
+			{
+				//immobile objects need to take snapshots whenever they become fogged
 				//so need to refresh their status.  We can't rely on external calls
 				//to getShroudStatus() because they are only made for visible on-screen
 				//objects.
 				Object *object=draw->getObject();
 				if (object)
 				{
-	#ifdef DEBUG_FOG_MEMORY
-					Int *playerIndex=nonLocalPlayerIndices;
-					for (i=0; i<numNonLocalPlayers; i++, playerIndex++)
-						object->getShroudedStatus(*playerIndex);
-	#endif
+					if (TheGhostObjectManager->trackAllPlayers())
+					{
+						// TheSuperHackers @info Update the shrouded status for all objects
+						// that own a ghost object for all non local players. This is costly.
+						if (object->hasGhostObject())
+						{
+							Int *playerIndex = nonLocalPlayerIndices;
+							Int *const playerIndexEnd = nonLocalPlayerIndices + numNonLocalPlayers;
+							for (; playerIndex < playerIndexEnd; ++playerIndex)
+							{
+								object->getShroudedStatus(*playerIndex);
+							}
+						}
+					}
+
 					ObjectShroudStatus ss=object->getShroudedStatus(localPlayerIndex);
-					if (ss >= OBJECTSHROUD_FOGGED && draw->getShroudClearFrame()!=0) {
+					if (ss >= OBJECTSHROUD_FOGGED && draw->getShroudClearFrame() != InvalidShroudClearFrame) {
 						UnsignedInt limit = 2*LOGICFRAMES_PER_SECOND;
 						if (object->isEffectivelyDead()) {
 							// extend the time, so we can see the dead plane blow up & crash.
@@ -791,7 +804,7 @@ void GameClient::iterateDrawablesInRegion( Region3D *region, GameClientFuncPtr u
 		nextDrawable = draw->getNextDrawable();
 
 		Coord3D pos = *draw->getPosition();
-		if( region == NULL ||
+		if( region == nullptr ||
 			  (pos.x >= region->lo.x && pos.x <= region->hi.x &&
 			   pos.y >= region->lo.y && pos.y <= region->hi.y &&
 				 pos.z >= region->lo.z && pos.z <= region->hi.z) )
@@ -812,7 +825,7 @@ void GameClient::updateFakeDrawables(void)
 
 		if( object && object->isKindOf( KINDOF_FS_FAKE ) )
 		{
-			Relationship rel=ThePlayerList->getLocalPlayer()->getRelationship(object->getTeam());
+			Relationship rel = rts::getObservedOrLocalPlayer()->getRelationship(object->getTeam());
 			if (rel == ALLIES || rel == NEUTRAL)
 				draw->setTerrainDecal(TERRAIN_DECAL_SHADOW_TEXTURE);
 			else
@@ -843,7 +856,7 @@ void GameClient::destroyDrawable( Drawable *draw )
 	{
 
 		DEBUG_ASSERTCRASH( obj->getDrawable() == draw, ("Object/Drawable pointer mismatch!") );
-		obj->friend_bindToDrawable( NULL );
+		obj->friend_bindToDrawable( nullptr );
 
 	}
 
@@ -862,14 +875,14 @@ void GameClient::addDrawableToLookupTable(Drawable *draw )
 {
 
 	// sanity
-	if( draw == NULL )
+	if( draw == nullptr )
 		return;
 
 	// add to lookup
 //	m_drawableHash[ draw->getID() ] = draw;
 	DrawableID newID = draw->getID();
 	while( newID >= m_drawableVector.size() ) // Fail case is hella rare, so faster to double up on size() call
-		m_drawableVector.resize(m_drawableVector.size() * 2, NULL);
+		m_drawableVector.resize(m_drawableVector.size() * 2, nullptr);
 
 	m_drawableVector[ newID ] = draw;
 
@@ -883,12 +896,12 @@ void GameClient::removeDrawableFromLookupTable( Drawable *draw )
 
 	// sanity
 	// TheSuperHackers @fix Mauller/Xezon 24/04/2025 Prevent out of range access to vector lookup table
-	if( draw == NULL || static_cast<size_t>(draw->getID()) >= m_drawableVector.size() )
+	if( draw == nullptr || static_cast<size_t>(draw->getID()) >= m_drawableVector.size() )
 		return;
 
 	// remove from table
 //	m_drawableHash.erase( draw->getID() );
-	m_drawableVector[ draw->getID() ] = NULL;
+	m_drawableVector[ draw->getID() ] = nullptr;
 
 }
 
@@ -993,7 +1006,7 @@ void GameClient::selectDrawablesInGroup( Int group )
 // ------------------------------------------------------------------------------------------------
 void GameClient::addTextBearingDrawable( Drawable *tbd )
 {
-	if ( tbd != NULL )
+	if ( tbd != nullptr )
 		m_textBearingDrawableList.push_back( tbd );
 }
 // ------------------------------------------------------------------------------------------------
@@ -1033,7 +1046,7 @@ void GameClient::getRayEffectData( Drawable *draw, RayEffectData *effectData )
 }
 
 //-------------------------------------------------------------------------------------------------
-/** remove the drawble from the ray effects sytem if present */
+/** remove the drawble from the ray effects system if present */
 void GameClient::removeFromRayEffects( Drawable *draw )
 {
 
@@ -1097,7 +1110,7 @@ void GameClient::preloadAssets( TimeOfDay timeOfDay )
 			draw->preloadAssets( timeOfDay );
 
 			// destroy the drawable
-			TheGameClient->destroyDrawable( draw );
+			destroyDrawable( draw );
 
 		}
 
@@ -1222,7 +1235,7 @@ GameClient::DrawableTOCEntry *GameClient::findTOCEntryByName( AsciiString name )
 		if( (*it).name == name )
 			return &(*it);
 
-	return NULL;
+	return nullptr;
 
 }
 
@@ -1236,7 +1249,7 @@ GameClient::DrawableTOCEntry *GameClient::findTOCEntryById( UnsignedShort id )
 		if( (*it).id == id )
 			return &(*it);
 
-	return NULL;
+	return nullptr;
 
 }
 
@@ -1258,7 +1271,7 @@ static Bool shouldSaveDrawable(const Drawable* draw)
 {
 	if (draw->testDrawableStatus(DRAWABLE_STATUS_NO_SAVE))
 	{
-		if (draw->getObject() == NULL)
+		if (draw->getObject() == nullptr)
 		{
 			return false;
 		}
@@ -1300,7 +1313,7 @@ void GameClient::xferDrawableTOC( Xfer *xfer )
 			templateName = draw->getTemplate()->getName();
 
 			// if is this drawable name already in the TOC, skip it
-			if( findTOCEntryByName( templateName ) != NULL )
+			if( findTOCEntryByName( templateName ) != nullptr )
 				continue;
 
 			// add this entry to the TOC
@@ -1383,7 +1396,7 @@ void GameClient::xfer( Xfer *xfer )
 	// !!!DON'T DO THIS!!! ----> xfer->xferDrawableID( &m_nextDrawableID ); <---- !!!DON'T DO THIS!!!
 
 	//
-	// xfer a table of contents that contain thing template and indentifier pairs.  this
+	// xfer a table of contents that contain thing template and identifier pairs.  this
 	// table of contents is good for this save file only as unique numbers are only
 	// generated and stored for the actual things that are on this map
 	//
@@ -1414,7 +1427,7 @@ void GameClient::xfer( Xfer *xfer )
 
 			// get TOC entry for this drawable
 			tocEntry = findTOCEntryByName( draw->getTemplate()->getName() );
-			if( tocEntry == NULL )
+			if( tocEntry == nullptr )
 			{
 
 				DEBUG_CRASH(( "GameClient::xfer - Drawable TOC entry not found for '%s'", draw->getTemplate()->getName().str() ));
@@ -1456,7 +1469,7 @@ void GameClient::xfer( Xfer *xfer )
 
 			// find TOC entry with this identifier
 			tocEntry = findTOCEntryById( tocID );
-			if( tocEntry == NULL )
+			if( tocEntry == nullptr )
 			{
 
 				DEBUG_CRASH(( "GameClient::xfer - No TOC entry match for id '%d'", tocID ));
@@ -1469,7 +1482,7 @@ void GameClient::xfer( Xfer *xfer )
 
 			// find matching thing template
 			thingTemplate = TheThingFactory->findTemplate( tocEntry->name );
-			if( thingTemplate == NULL )
+			if( thingTemplate == nullptr )
 			{
 
 				DEBUG_CRASH(( "GameClient::xfer - Unrecognized thing template '%s', skipping.  ENGINEERS - Are you *sure* it's OK to be ignoring this object from the save file???  Think hard about it!",
@@ -1491,7 +1504,7 @@ void GameClient::xfer( Xfer *xfer )
 				Object *object = TheGameLogic->findObjectByID( objectID );
 
 				// sanity
-				if( object == NULL )
+				if( object == nullptr )
 				{
 
 					DEBUG_CRASH(( "GameClient::xfer - Cannot find object '%d' that is supposed to be attached to this drawable '%s'",
@@ -1502,7 +1515,7 @@ void GameClient::xfer( Xfer *xfer )
 
 				// get the drawable from the object
 				draw = object->getDrawable();
-				if( draw == NULL )
+				if( draw == nullptr )
 				{
 
 					DEBUG_CRASH(( "GameClient::xfer - There is no drawable attached to the object '%s' (%d) and there should be",
@@ -1521,7 +1534,7 @@ void GameClient::xfer( Xfer *xfer )
 				const ThingTemplate* drawTemplate = draw->getTemplate();
 				if (drawTemplate->getFinalOverride() != thingTemplate->getFinalOverride())
 				{
-					TheGameClient->destroyDrawable( draw );
+					destroyDrawable( draw );
 					draw = TheThingFactory->newDrawable( thingTemplate );
 					TheGameLogic->bindObjectAndDrawable(object, draw);
 				}
@@ -1537,7 +1550,7 @@ void GameClient::xfer( Xfer *xfer )
 				draw = TheThingFactory->newDrawable( thingTemplate );
 
 				// sanity
-				if( draw == NULL )
+				if( draw == nullptr )
 				{
 
 					DEBUG_CRASH(( "GameClient::xfer - Unable to create drawable for '%s'",
@@ -1600,7 +1613,7 @@ void GameClient::loadPostProcess( void )
 
 	//
 	// due to the fact that during the load process we have called newDrawable for drawables
-	// without objects, and then overwrote their ids with data from the save file, our allocater
+	// without objects, and then overwrote their ids with data from the save file, our allocator
 	// id may be far higher than it needs to be.  We'll pull it back down as low as we can
 	//
 	Drawable *draw;

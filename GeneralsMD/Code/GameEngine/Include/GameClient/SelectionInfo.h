@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifndef __SELECTIONINFO_H__
-#define __SELECTIONINFO_H__
-
 #include "GameClient/InGameUI.h"
 
 // This structure gives you a rough idea about the counts of the kinds of guys in the
@@ -67,6 +64,8 @@ struct PickDrawableStruct
 {
 	// List to fill with Drawables. This should be provided by the caller.
 	DrawableList *drawableListToFill;
+
+	Bool isPointSelection;
 	Bool forceAttackMode;
 
 	// Note, this is OR'd with the things we are attempting to select.
@@ -100,6 +99,3 @@ extern void translatePickTypesToKindof(UnsignedInt pickTypes, KindOfMaskType& ou
 // userData should be a pointer to a PickDrawableStruct, which is defined in
 // above.
 extern Bool addDrawableToList( Drawable *draw, void *userData );
-
-
-#endif /* __SELECTIONINFO_H__ */

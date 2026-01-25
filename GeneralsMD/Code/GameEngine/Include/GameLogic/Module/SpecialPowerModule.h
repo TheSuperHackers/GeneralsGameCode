@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __SPECIALPOWERMODULE_H_
-#define __SPECIALPOWERMODULE_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "Common/AudioEventRTS.h"
 #include "Common/Module.h"
@@ -163,7 +160,7 @@ public:
 	virtual Bool isScriptOnly() const;
 
 	//If the special power launches a construction site, we need to know the final product for placement purposes.
-	virtual const ThingTemplate* getReferenceThingTemplate() const { return NULL; }
+	virtual const ThingTemplate* getReferenceThingTemplate() const { return nullptr; }
 
 protected:
 
@@ -179,6 +176,3 @@ protected:
 	Real m_pausedPercent;
 
 };
-
-#endif  // end __SPECIALPOWERMODULE_H_
-

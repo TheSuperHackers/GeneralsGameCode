@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 #include "Common/CRCDebug.h"
 #include "Common/Xfer.h"
 #include "Common/ThingTemplate.h"
@@ -51,14 +51,7 @@
 ParkingPlaceBehavior::ParkingPlaceBehavior( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData )
 {
 	m_gotInfo = false;
-
-	//Added By Sadullah Nader
-	//Initializations
-
 	m_heliRallyPoint.zero();
-
-	//
-
 	m_heliRallyPointExists = FALSE;
 	m_nextHealFrame = FOREVER;
 	setWakeFrame(getObject(), UPDATE_SLEEP_NONE);
@@ -105,7 +98,7 @@ void ParkingPlaceBehavior::buildInfo()
 				info.m_orientation = mtx.Get_Z_Rotation();
 
 				tmp.format("Runway%dPrep%d",col+1,row+1);
-				getObject()->getSingleLogicalBonePosition(tmp.str(), &info.m_prep, NULL);
+				getObject()->getSingleLogicalBonePosition(tmp.str(), &info.m_prep, nullptr);
 
 				info.m_runway = col;
 				info.m_door = (ExitDoorType)door++;
@@ -128,10 +121,10 @@ void ParkingPlaceBehavior::buildInfo()
 			AsciiString tmp;
 
 			tmp.format("RunwayStart%d",col+1);
-			getObject()->getSingleLogicalBonePosition(tmp.str(), &info.m_start, NULL);
+			getObject()->getSingleLogicalBonePosition(tmp.str(), &info.m_start, nullptr);
 
 			tmp.format("RunwayEnd%d",col+1);
-			getObject()->getSingleLogicalBonePosition(tmp.str(), &info.m_end, NULL);
+			getObject()->getSingleLogicalBonePosition(tmp.str(), &info.m_end, nullptr);
 
 			info.m_inUseBy = INVALID_ID;
 			info.m_nextInLineForTakeoff = INVALID_ID;
@@ -155,7 +148,7 @@ void ParkingPlaceBehavior::purgeDead()
 			if (it->m_objectInSpace != INVALID_ID)
 			{
 				Object* obj = TheGameLogic->findObjectByID(it->m_objectInSpace);
-				if (obj == NULL || obj->isEffectivelyDead())
+				if (obj == nullptr || obj->isEffectivelyDead())
 				{
 					it->m_objectInSpace = INVALID_ID;
 					it->m_reservedForExit = false;
@@ -173,7 +166,7 @@ void ParkingPlaceBehavior::purgeDead()
 			if (it->m_inUseBy != INVALID_ID)
 			{
 				Object* obj = TheGameLogic->findObjectByID(it->m_inUseBy);
-				if (obj == NULL || obj->isEffectivelyDead())
+				if (obj == nullptr || obj->isEffectivelyDead())
 				{
 					it->m_inUseBy = INVALID_ID;
 					it->m_wasInLine = false;
@@ -182,7 +175,7 @@ void ParkingPlaceBehavior::purgeDead()
 			if (it->m_nextInLineForTakeoff != INVALID_ID)
 			{
 				Object* obj = TheGameLogic->findObjectByID(it->m_nextInLineForTakeoff);
-				if (obj == NULL || obj->isEffectivelyDead())
+				if (obj == nullptr || obj->isEffectivelyDead())
 				{
 					it->m_nextInLineForTakeoff = INVALID_ID;
 				}
@@ -197,7 +190,7 @@ void ParkingPlaceBehavior::purgeDead()
 			if (it->m_gettingHealedID != INVALID_ID)
 			{
 				Object* objToHeal = TheGameLogic->findObjectByID(it->m_gettingHealedID);
-				if (objToHeal == NULL || objToHeal->isEffectivelyDead())
+				if (objToHeal == nullptr || objToHeal->isEffectivelyDead())
 				{
 					it = m_healing.erase(it);
 					anythingPurged = true;
@@ -237,7 +230,7 @@ ParkingPlaceBehavior::ParkingPlaceInfo* ParkingPlaceBehavior::findPPI(ObjectID i
 	DEBUG_ASSERTCRASH(id != INVALID_ID, ("call findEmptyPPI instead"));
 
 	if (!m_gotInfo || id == INVALID_ID)
-		return NULL;
+		return nullptr;
 
 	for (std::vector<ParkingPlaceInfo>::iterator it = m_spaces.begin(); it != m_spaces.end(); ++it)
 	{
@@ -245,14 +238,14 @@ ParkingPlaceBehavior::ParkingPlaceInfo* ParkingPlaceBehavior::findPPI(ObjectID i
 			return &(*it);
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------
 ParkingPlaceBehavior::ParkingPlaceInfo* ParkingPlaceBehavior::findEmptyPPI()
 {
 	if (!m_gotInfo)
-		return NULL;
+		return nullptr;
 
 	for (std::vector<ParkingPlaceInfo>::iterator it = m_spaces.begin(); it != m_spaces.end(); ++it)
 	{
@@ -260,7 +253,7 @@ ParkingPlaceBehavior::ParkingPlaceInfo* ParkingPlaceBehavior::findEmptyPPI()
 			return &(*it);
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -291,7 +284,7 @@ Bool ParkingPlaceBehavior::hasAvailableSpaceFor(const ThingTemplate* thing) cons
 		if (id != INVALID_ID)
 		{
 			Object* obj = TheGameLogic->findObjectByID(id);
-			if (obj == NULL || obj->isEffectivelyDead())
+			if (obj == nullptr || obj->isEffectivelyDead())
 			{
 				id = INVALID_ID;
 			}
@@ -315,10 +308,10 @@ Bool ParkingPlaceBehavior::reserveSpace(ObjectID id, Real parkingOffset, Parking
 	const ParkingPlaceBehaviorModuleData* d = getParkingPlaceBehaviorModuleData();
 
 	ParkingPlaceInfo* ppi = findPPI(id);
-	if (ppi == NULL)
+	if (ppi == nullptr)
 	{
 		ppi = findEmptyPPI();
-		if (ppi == NULL)
+		if (ppi == nullptr)
 		{
 			DEBUG_CRASH(("No parking places!"));
 			return false;	// nothing available
@@ -352,9 +345,13 @@ Bool ParkingPlaceBehavior::reserveSpace(ObjectID id, Real parkingOffset, Parking
 
 		for (std::vector<RunwayInfo>::iterator it = m_runways.begin(); it != m_runways.end(); ++it)
 		{
-			if (it->m_inUseBy == id && it->m_wasInLine)
+			if (it->m_inUseBy == id)
 			{
-				info->runwayStart = info->runwayPrep;
+				if (it->m_wasInLine)
+				{
+					info->runwayStart = info->runwayPrep;
+				}
+				break;
 			}
 		}
 
@@ -383,8 +380,24 @@ void ParkingPlaceBehavior::releaseSpace(ObjectID id)
 			it->m_postponedRunwayReservationForTakeoff = false;
 			if (pu)
 				pu->setHoldDoorOpen(it->m_door, false);
+			break;
 		}
 	}
+}
+
+//-------------------------------------------------------------------------------------------------
+Int ParkingPlaceBehavior::getRunwayIndex(ObjectID id)
+{
+	purgeDead();
+
+	for (std::vector<ParkingPlaceInfo>::iterator it = m_spaces.begin(); it != m_spaces.end(); ++it)
+	{
+		if (it->m_objectInSpace == id)
+		{
+			return it->m_runway;
+		}
+	}
+	return InvalidRunway;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -402,11 +415,15 @@ void ParkingPlaceBehavior::transferRunwayReservationToNextInLineForTakeoff(Objec
 	purgeDead();
 	for (std::vector<RunwayInfo>::iterator it = m_runways.begin(); it != m_runways.end(); ++it)
 	{
-		if (it->m_inUseBy == id && it->m_nextInLineForTakeoff != INVALID_ID)
+		if (it->m_inUseBy == id)
 		{
-			it->m_inUseBy = it->m_nextInLineForTakeoff;
-			it->m_wasInLine = true;
-			it->m_nextInLineForTakeoff = INVALID_ID;
+			if (it->m_nextInLineForTakeoff != INVALID_ID)
+			{
+				it->m_inUseBy = it->m_nextInLineForTakeoff;
+				it->m_wasInLine = true;
+				it->m_nextInLineForTakeoff = INVALID_ID;
+			}
+			break;
 		}
 	}
 }
@@ -572,7 +589,7 @@ void ParkingPlaceBehavior::defectAllParkedUnits(Team* newTeam, UnsignedInt detec
 		if (it->m_objectInSpace != INVALID_ID)
 		{
 			Object* obj = TheGameLogic->findObjectByID(it->m_objectInSpace);
-			if (obj == NULL || obj->isEffectivelyDead())
+			if (obj == nullptr || obj->isEffectivelyDead())
 				continue;
 
 			// srj sez: evil. fix better someday.
@@ -587,7 +604,7 @@ void ParkingPlaceBehavior::defectAllParkedUnits(Team* newTeam, UnsignedInt detec
 				{
 					releaseSpace(obj->getID());
 					if (obj->getProducerID() == getObject()->getID())
-						obj->setProducer(NULL);
+						obj->setProducer(nullptr);
 				}
 			}
 			else
@@ -611,7 +628,7 @@ void ParkingPlaceBehavior::killAllParkedUnits()
 		if (it->m_objectInSpace != INVALID_ID)
 		{
 			Object* obj = TheGameLogic->findObjectByID(it->m_objectInSpace);
-			if (obj == NULL || obj->isEffectivelyDead())
+			if (obj == nullptr || obj->isEffectivelyDead())
 				continue;
 
 			// srj sez: evil. fix better someday.
@@ -655,7 +672,7 @@ UpdateSleepTime ParkingPlaceBehavior::update()
 			if (it->m_gettingHealedID != INVALID_ID)
 			{
 				Object* objToHeal = TheGameLogic->findObjectByID(it->m_gettingHealedID);
-				if (objToHeal == NULL || objToHeal->isEffectivelyDead())
+				if (objToHeal == nullptr || objToHeal->isEffectivelyDead())
 				{
 					it = m_healing.erase(it);
 				}
@@ -706,7 +723,7 @@ void ParkingPlaceBehavior::exitObjectViaDoor( Object *newObj, ExitDoorType exitD
 {
 	if (exitDoor != DOOR_NONE_NEEDED)
 	{
-		ParkingPlaceInfo* ppi = NULL;
+		ParkingPlaceInfo* ppi = nullptr;
 		for (std::vector<ParkingPlaceInfo>::iterator it = m_spaces.begin(); it != m_spaces.end(); ++it)
 		{
 			if (it->m_objectInSpace == INVALID_ID && it->m_reservedForExit == TRUE && it->m_door == exitDoor)
@@ -754,7 +771,7 @@ void ParkingPlaceBehavior::exitObjectViaDoor( Object *newObj, ExitDoorType exitD
 	{
 		CRCDEBUG_LOG(("Produced at hangar (door = %d)", exitDoor));
 		DEBUG_ASSERTCRASH(exitDoor != DOOR_NONE_NEEDED, ("Hmm, unlikely"));
-		if (!reserveSpace(newObj->getID(), parkingOffset, &ppinfo)) //&loc, &orient, NULL, NULL, NULL, NULL, &hangarInternal, &hangOrient))
+		if (!reserveSpace(newObj->getID(), parkingOffset, &ppinfo)) //&loc, &orient, nullptr, nullptr, nullptr, nullptr, &hangarInternal, &hangOrient))
 		{
 			DEBUG_CRASH(("no spaces available, how did we get here?"));
 			ppinfo.parkingSpace = *getObject()->getPosition();
@@ -827,7 +844,7 @@ const Coord3D* ParkingPlaceBehavior::getRallyPoint( void ) const
 	{
 		return &m_heliRallyPoint;
 	}
-	return NULL;
+	return nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------

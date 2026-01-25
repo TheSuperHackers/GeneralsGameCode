@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __LINE2D_H_
-#define __LINE2D_H_
-
 typedef std::vector<ICoord2D> Coord2DVector;
 typedef std::vector<ICoord3D> Coord3DVector;
 
@@ -42,10 +39,10 @@ extern Bool ClipLine2D( ICoord2D *p1, ICoord2D *p2, ICoord2D *c1, ICoord2D *c2,
 
 ///< IntersectLine2D will take two segments delimited by ab and cd and will return whether
 ///< they intersect within the length of ab. They will also return the intersection point out
-///< intersection if it is non-NULL.
+///< intersection if it is non-null.
 extern Bool IntersectLine2D( const Coord2D *a, const Coord2D *b,
 															const Coord2D *c, const Coord2D *d,
-															Coord2D *intersection = NULL);
+															Coord2D *intersection = nullptr);
 
 ///< PointInsideRect2D will return true iff inputPoint lies iside of the rectangle specified
 ///< by bl, tl, br, tr.
@@ -85,7 +82,3 @@ extern Bool PointInsideArea2D( const Coord3D *ptToTest,
 ///< outU will return the U value determined. This is a shortcut for panning
 extern void ShortestDistancePointToSegment2D( const Coord2D *a, const Coord2D *b, const Coord2D *pt,
 																							Real *outDistance, Coord2D *outPosition, Real *outU );
-
-
-#endif // __LINE2D_H_
-

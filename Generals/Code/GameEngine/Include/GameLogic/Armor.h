@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef _Armor_H_
-#define _Armor_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/NameKeyGenerator.h"
 #include "Common/STLTypedefs.h"
@@ -73,7 +70,7 @@ class Armor
 {
 public:
 
-	inline Armor(const ArmorTemplate* tmpl = NULL) : m_template(tmpl)
+	inline Armor(const ArmorTemplate* tmpl = nullptr) : m_template(tmpl)
 	{
 	}
 
@@ -84,7 +81,7 @@ public:
 
 	inline void clear()
 	{
-		m_template = NULL;
+		m_template = nullptr;
 	}
 
 private:
@@ -108,10 +105,12 @@ public:
 	void reset() { }
 	void update() { }
 
+	const ArmorTemplate* findArmorTemplate(NameKeyType namekey) const;
 	/**
 		Find the Armor with the given name. If no such Armor exists, return null.
 	*/
-	const ArmorTemplate* findArmorTemplate(AsciiString name) const;
+	const ArmorTemplate* findArmorTemplate(const AsciiString& name) const;
+	const ArmorTemplate* findArmorTemplate(const char* name) const;
 
 	inline Armor makeArmor(const ArmorTemplate *tmpl) const
 	{
@@ -129,6 +128,3 @@ private:
 
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
 extern ArmorStore *TheArmorStore;
-
-#endif // _Armor_H_
-

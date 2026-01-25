@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/NameKeyGenerator.h"
 #include "Common/ThingTemplate.h"
@@ -144,7 +144,7 @@ void ControlBar::populateStructureInventory( Object *building )
 		setControlCommand( m_commandWindows[ i ], exitCommand );
 
 		// Clear any veterancy icon incase the unit leaves!
-		GadgetButtonDrawOverlayImage( m_commandWindows[ i ], NULL );
+		GadgetButtonDrawOverlayImage( m_commandWindows[ i ], nullptr );
 		//
 		// if the structure can hold a lesser amount inside it than what the GUI displays
 		// we will completely hide the buttons that can't contain anything
@@ -213,7 +213,7 @@ void ControlBar::updateContextStructureInventory( void )
 	// about we need to repopulate the buttons of the interface
 	//
 	ContainModuleInterface *contain = source->getContain();
-	DEBUG_ASSERTCRASH( contain, ("No contain module defined for object in the iventory bar") );
+	DEBUG_ASSERTCRASH( contain, ("No contain module defined for object in the inventory bar") );
 	if (!contain)
 		return;
 

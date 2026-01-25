@@ -96,7 +96,7 @@ VoxelClass::VoxelClass
 
 	// Allocate visibility flags array
 	VisData = new uint8[XDim * YDim * ZDim];
-	if (VisData == NULL) {
+	if (VisData == nullptr) {
 		throw ErrorClass("out of memory!");
 	}
 
@@ -163,7 +163,7 @@ VoxelClass::VoxelClass
 ************************************************************************/
 VoxelClass::~VoxelClass()
 {
-	if (VisData != NULL) delete[] VisData;
+	if (VisData != nullptr) delete[] VisData;
 }
 
 

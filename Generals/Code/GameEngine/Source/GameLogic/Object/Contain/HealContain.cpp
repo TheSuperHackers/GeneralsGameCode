@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 #include "Common/Xfer.h"
 #include "GameLogic/Damage.h"
 #include "GameLogic/GameLogic.h"
@@ -59,8 +59,8 @@ HealContainModuleData::HealContainModuleData( void )
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "TimeForFullHeal", INI::parseDurationUnsignedInt, NULL, offsetof( HealContainModuleData, m_framesForFullHeal ) },
-		{ 0, 0, 0, 0 }
+		{ "TimeForFullHeal", INI::parseDurationUnsignedInt, nullptr, offsetof( HealContainModuleData, m_framesForFullHeal ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 
   p.add(dataFieldParse);

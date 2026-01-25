@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #define DEFINE_VETERANCY_NAMES				// for TheVeterancyNames[]
 #include "Common/Player.h"
@@ -54,8 +54,8 @@ void VeterancyGainCreateModuleData::buildFieldParse(MultiIniFieldParse& p)
 	static const FieldParse dataFieldParse[] =
 	{
 		{ "StartingLevel",		INI::parseIndexList,	TheVeterancyNames,	offsetof( VeterancyGainCreateModuleData, m_startingLevel ) },
-		{ "ScienceRequired",	INI::parseScience,		NULL,								offsetof( VeterancyGainCreateModuleData, m_scienceRequired ) },
-		{ 0, 0, 0, 0 }
+		{ "ScienceRequired",	INI::parseScience,		nullptr,								offsetof( VeterancyGainCreateModuleData, m_scienceRequired ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 
   p.add(dataFieldParse);

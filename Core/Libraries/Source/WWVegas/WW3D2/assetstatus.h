@@ -16,12 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef WW3D_ASSET_STATUS_H
-#define WW3D_ASSET_STATUS_H
 
 #include "always.h"
 #include "hashtemplate.h"
@@ -64,5 +59,3 @@ private:
 	void Add_To_Report(int index, const char* name);
 
 };
-
-#endif

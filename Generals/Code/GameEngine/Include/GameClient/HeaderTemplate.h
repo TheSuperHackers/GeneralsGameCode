@@ -45,9 +45,6 @@
 
 #pragma once
 
-#ifndef __HEADER_TEMPLATE_H_
-#define __HEADER_TEMPLATE_H_
-
 //-----------------------------------------------------------------------------
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
@@ -97,7 +94,7 @@ public:
 	HeaderTemplate *getFirstHeader( void );
 	HeaderTemplate *getNextHeader( HeaderTemplate *ht );
 
-	void headerNotifyResolutionChange(void);
+	void onResolutionChanged(void);
 
 private:
 	void populateGameFonts( void );
@@ -116,4 +113,3 @@ private:
 // EXTERNALS //////////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 extern HeaderTemplateManager *TheHeaderTemplateManager;
-#endif // __HEADER_TEMPLATE_H_

@@ -51,13 +51,13 @@
 //-----------------------------------------------------------------------------
 //         Includes
 //-----------------------------------------------------------------------------
+
 #include "W3DDevice/GameClient/W3DWaypointBuffer.h"
 
-#include <stdio.h>
-#include <string.h>
 #include <assetmgr.h>
 #include <texture.h>
 
+#include "Common/GameUtility.h"
 #include "Common/GlobalData.h"
 #include "Common/RandomValue.h"
 #include "Common/ThingFactory.h"
@@ -225,7 +225,7 @@ void W3DWaypointBuffer::drawWaypoints(RenderInfoClass &rinfo)
 			Int numPoints = 0;
 			if( obj )
 			{
-				if ( obj->getControllingPlayer() != TheControlBar->getCurrentlyViewedPlayer())
+				if ( obj->getControllingPlayer() != rts::getObservedOrLocalPlayer())
 					continue;
 
 				ExitInterface *exitInterface = obj->getObjectExitInterface();
@@ -324,9 +324,9 @@ void W3DWaypointBuffer::drawWaypoints(RenderInfoClass &rinfo)
 									corners[3].x = ctr->x - exc + eys;
 									corners[3].y = ctr->y - eyc - exs;
 
-									Coord2D *pNearElbow = NULL;//find the closest corner to the rallyPoint same end as door
-									Coord2D *pFarElbow = NULL; //find the closest corner to the rallypoint away from door
-									Coord2D *nearCandidate = NULL;
+									Coord2D *pNearElbow = nullptr;//find the closest corner to the rallyPoint same end as door
+									Coord2D *pFarElbow = nullptr; //find the closest corner to the rallypoint away from door
+									Coord2D *nearCandidate = nullptr;
 									Coord3D cornerToRPDelta, cornerToExitDelta;
 									cornerToRPDelta.z = 0.0f;
 									cornerToExitDelta.z = 0.0f;

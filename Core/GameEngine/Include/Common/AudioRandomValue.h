@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef _AUDIO_RANDOM_VALUE_H_
-#define _AUDIO_RANDOM_VALUE_H_
-
 #include "Lib/BaseType.h"
 
 // do NOT use these functions directly, rather use the macros below
@@ -43,5 +40,3 @@ extern Real GetGameAudioRandomValueReal( Real lo, Real hi, const char *file, int
 #define GameAudioRandomValueReal( lo, hi ) GetGameAudioRandomValueReal( lo, hi, __FILE__, __LINE__ )
 
 //--------------------------------------------------------------------------------------------------------------
-
-#endif // _AUDIO_RANDOM_VALUE_H_

@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __LocomotorSet_H_
-#define __LocomotorSet_H_
-
 // no, please do NOT include this.
 //#include "GameLogic/Locomotor.h"
 #include "Common/GameCommon.h"
@@ -69,7 +66,7 @@ static const char *const TheLocomotorSurfaceTypeNames[] =
 	"AIR",
 	"RUBBLE",
 
-	NULL
+	nullptr
 };
 #endif
 
@@ -106,9 +103,7 @@ public:
 
 	void xferSelfAndCurLocoPtr(Xfer *xfer, Locomotor** loco);
 
-	inline LocomotorSurfaceTypeMask getValidSurfaces() const { return m_validLocomotorSurfaces; }
-	inline Bool isDownhillOnly( void ) const { return m_downhillOnly; };
+	LocomotorSurfaceTypeMask getValidSurfaces() const { return m_validLocomotorSurfaces; }
+	Bool isDownhillOnly( void ) const { return m_downhillOnly; };
 
 };
-
-#endif

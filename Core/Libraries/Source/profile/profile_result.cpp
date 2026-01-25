@@ -26,10 +26,12 @@
 //
 // Result function interface and result functions
 //////////////////////////////////////////////////////////////////////////////
-#include "_pch.h"
+
+#include "profile.h"
+#include "internal.h"
 #include <new>
-#include <stdio.h>
 #include <stdlib.h>
+#include <Utility/stdio_adapter.h>
 
 //////////////////////////////////////////////////////////////////////////////
 // ProfileResultFileCSV
@@ -144,9 +146,9 @@ void ProfileResultFileCSV::Delete(void)
 ProfileResultInterface *ProfileResultFileDOT::Create(int argn, const char * const *argv)
 {
   return new (ProfileAllocMemory(sizeof(ProfileResultFileDOT)))
-    ProfileResultFileDOT(argn>0?argv[0]:NULL,
-                         argn>1?argv[1]:NULL,
-                         argn>2?atoi(argv[2]):NULL);
+    ProfileResultFileDOT(argn>0?argv[0]:nullptr,
+                         argn>1?argv[1]:nullptr,
+                         argn>2?atoi(argv[2]): 0);
 }
 
 ProfileResultFileDOT::ProfileResultFileDOT(const char *fileName, const char *frameName, int foldThreshold)
@@ -161,7 +163,7 @@ ProfileResultFileDOT::ProfileResultFileDOT(const char *fileName, const char *fra
     strcpy(m_frameName,frameName);
   }
   else
-    m_frameName=NULL;
+    m_frameName=nullptr;
   m_foldThreshold=foldThreshold;
 }
 
@@ -195,7 +197,7 @@ void ProfileResultFileDOT::WriteResults(void)
   if (m_frameName)
   {
     for (unsigned k=0;k<Profile::GetFrameCount();k++)
-      if (!strcmp(Profile::GetFrameName(k),m_frameName))
+      if (strcmp(Profile::GetFrameName(k),m_frameName) == 0)
       {
         frame=k;
         break;
@@ -225,13 +227,13 @@ void ProfileResultFileDOT::WriteResults(void)
     // folding version
 
     // build source code clusters first
-    FoldHelper *fold=NULL;
+    FoldHelper *fold=nullptr;
     for (k=0;tMax.EnumProfile(k,id);k++)
     {
       const char *source=id.GetSource();
       FoldHelper *cur=fold;
       for (;cur;cur=cur->next)
-        if (!strcmp(source,cur->source))
+        if (strcmp(source,cur->source) == 0)
         {
           if (cur->numId<MAX_FUNCTIONS_PER_FILE)
             cur->id[cur->numId++]=id;
@@ -263,7 +265,7 @@ void ProfileResultFileDOT::WriteResults(void)
         {
           const char *s=caller.GetSource();
           for (FoldHelper *cur2=fold;cur2;cur2=cur2->next)
-            if (!strcmp(cur2->source,s))
+            if (strcmp(cur2->source,s) == 0)
               break;
           if (!cur2||cur2->mark)
             continue;

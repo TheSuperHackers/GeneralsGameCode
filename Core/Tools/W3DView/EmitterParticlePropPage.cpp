@@ -24,7 +24,7 @@
 #include "EmitterParticlePropPage.h"
 #include "part_emt.h"
 #include "Utils.h"
-#include "Vector3RndCombo.H"
+#include "Vector3RndCombo.h"
 #include "VolumeRandomDialog.h"
 #include "EmitterInstanceList.h"
 
@@ -50,7 +50,7 @@ EmitterParticlePropPageClass::EmitterParticlePropPageClass (EmitterInstanceListC
 	  m_Rate (0),
 	  m_BurstSize (0),
 	  m_MaxParticles (0),
-	  m_Randomizer (NULL),
+	  m_Randomizer (nullptr),
 	  CPropertyPage(EmitterParticlePropPageClass::IDD)
 {
 	//{{AFX_DATA_INIT(EmitterParticlePropPageClass)
@@ -105,7 +105,7 @@ void
 EmitterParticlePropPageClass::Initialize (void)
 {
 	SAFE_DELETE (m_Randomizer);
-	if (m_pEmitterList != NULL) {
+	if (m_pEmitterList != nullptr) {
 
 		//
 		// Read the settings from the emitter
@@ -220,7 +220,7 @@ EmitterParticlePropPageClass::OnNotify
 	//	Update the spinner control if necessary
 	//
 	NMHDR *pheader = (NMHDR *)lParam;
-	if ((pheader != NULL) && (pheader->code == UDN_DELTAPOS)) {
+	if ((pheader != nullptr) && (pheader->code == UDN_DELTAPOS)) {
 		LPNMUPDOWN pupdown = (LPNMUPDOWN)lParam;
 		::Update_Spinner_Buddy (pheader->hwndFrom, pupdown->iDelta);
 		SetModified ();

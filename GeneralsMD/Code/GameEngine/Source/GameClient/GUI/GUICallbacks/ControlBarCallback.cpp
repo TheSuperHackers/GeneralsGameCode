@@ -29,8 +29,9 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
+#include "Common/GameUtility.h"
 #include "Common/NameKeyGenerator.h"
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
@@ -55,7 +56,7 @@
 #include "GameLogic/ScriptEngine.h"
 
 //external declarations of the Gadgets the callbacks can use
-WindowLayout *popupCommunicatorLayout = NULL;
+WindowLayout *popupCommunicatorLayout = nullptr;
 
 
 //-------------------------------------------------------------------------------------------------
@@ -64,15 +65,11 @@ WindowLayout *popupCommunicatorLayout = NULL;
 WindowMsgHandledType LeftHUDInput( GameWindow *window, UnsignedInt msg,
 																	 WindowMsgData mData1, WindowMsgData mData2 )
 {
-
-	// get player
-	Player *player = ThePlayerList->getLocalPlayer();
-
 	//
 	// if the player doesn't have a radar, or the radar is hidden, and the radar is not being
 	// forced to on, we just eat input over the radar window
 	//
-	if( !TheRadar->isRadarForced() && (TheRadar->isRadarHidden() || !player->hasRadar()) )
+	if( !rts::localPlayerHasRadar() )
 		return MSG_HANDLED;
 
 	// If the middle mouse button is depressed, then just let the message fall all the
@@ -152,15 +149,14 @@ WindowMsgHandledType LeftHUDInput( GameWindow *window, UnsignedInt msg,
 
 			// is the mouse in the radar window
 			ICoord2D radar;
-			if( (TheRadar->isRadarHidden() == FALSE || TheRadar->isRadarForced()) &&
-					TheRadar->localPixelToRadar( &mouse, &radar ) )
+			if( TheRadar->localPixelToRadar( &mouse, &radar ) )
 			{
 
 /*
 //
 // this is an example piece of code to find the object under the pixel position
 // of the radar ... should we in the future wish to allow commands to be executed
-// on objects throught he radar.  note tho that this is extremely hard to do because
+// on objects through the radar.  note tho that this is extremely hard to do because
 // the pixels on the radar are very small and it's hard to do accurate targeting
 //
 
@@ -252,9 +248,8 @@ WindowMsgHandledType LeftHUDInput( GameWindow *window, UnsignedInt msg,
 			// completely drawn with the radar ... so it's just a translation from
 			// our window size we're drawing into to the radar cell size
 			//
-			if( (TheRadar->isRadarHidden() == FALSE || TheRadar->isRadarForced()) &&
-					TheRadar->localPixelToRadar( &mouse, &radar ) &&
-					TheRadar->radarToWorld( &radar, &world ) )
+			if( TheRadar->localPixelToRadar( &mouse, &radar ) &&
+			    TheRadar->radarToWorld( &radar, &world ) )
 			{
 
 				// No drawables, or a right click automatically means its a look at.
@@ -281,7 +276,7 @@ WindowMsgHandledType LeftHUDInput( GameWindow *window, UnsignedInt msg,
 				{
 
 					// do the command
-					TheGameClient->evaluateContextCommand( NULL, &world, CommandTranslator::DO_COMMAND );
+					TheGameClient->evaluateContextCommand( nullptr, &world, CommandTranslator::DO_COMMAND );
 
 				}
 				else if( command && command->getCommandType() == GUI_COMMAND_ATTACK_MOVE)
@@ -296,7 +291,7 @@ WindowMsgHandledType LeftHUDInput( GameWindow *window, UnsignedInt msg,
 				}
 				else
 				{
-					GameMessage *newMsg = NULL;
+					GameMessage *newMsg = nullptr;
 
 					// Do the superweapon stuff here, before issuing these other messages
 
@@ -362,7 +357,7 @@ WindowMsgHandledType ControlBarSystem( GameWindow *window, UnsignedInt msg,
 		{
 
 			// get ids for our children controls
-			buttonCommunicator = TheNameKeyGenerator->nameToKey( AsciiString("ControlBar.wnd:PopupCommunicator") );
+			buttonCommunicator = TheNameKeyGenerator->nameToKey( "ControlBar.wnd:PopupCommunicator" );
 
 			break;
 
@@ -411,7 +406,7 @@ WindowMsgHandledType ControlBarSystem( GameWindow *window, UnsignedInt msg,
 			else if( controlID == beaconClearTextButtonID && TheGameLogic->isInMultiplayerGame() )
 			{
 				static NameKeyType textID = NAMEKEY("ControlBar.wnd:EditBeaconText");
-				GameWindow *win = TheWindowManager->winGetWindowFromId(NULL, textID);
+				GameWindow *win = TheWindowManager->winGetWindowFromId(nullptr, textID);
 				if (win)
 				{
 					GadgetTextEntrySetText( win, UnicodeString::TheEmptyString );
@@ -475,7 +470,7 @@ WindowMsgHandledType ControlBarSystem( GameWindow *window, UnsignedInt msg,
 					{
 						msg->appendWideCharArgument( *c++ );
 					}
-					msg->appendWideCharArgument( L'\0' ); // trailing NULL
+					msg->appendWideCharArgument( L'\0' ); // trailing null terminator
 				}
 			}
 			break;
@@ -507,8 +502,8 @@ void ShowControlBar( Bool immediate )
 
 	TheControlBar->showSpecialPowerShortcut();
 
-	Int id = (Int)TheNameKeyGenerator->nameToKey(AsciiString("ControlBar.wnd:ControlBarParent"));
-	GameWindow *window = TheWindowManager->winGetWindowFromId(NULL, id);
+	Int id = (Int)TheNameKeyGenerator->nameToKey("ControlBar.wnd:ControlBarParent");
+	GameWindow *window = TheWindowManager->winGetWindowFromId(nullptr, id);
 
 	if (window)
 	{
@@ -542,8 +537,8 @@ void HideControlBar( Bool immediate )
 
 	TheControlBar->hideSpecialPowerShortcut();
 
-	Int id = (Int)TheNameKeyGenerator->nameToKey(AsciiString("ControlBar.wnd:ControlBarParent"));
-	GameWindow *window = TheWindowManager->winGetWindowFromId(NULL, id);
+	Int id = (Int)TheNameKeyGenerator->nameToKey("ControlBar.wnd:ControlBarParent");
+	GameWindow *window = TheWindowManager->winGetWindowFromId(nullptr, id);
 
 	if (window)
 	{
@@ -578,8 +573,8 @@ void ToggleControlBar( Bool immediate )
 
 	toggleReplayControls();
 
-	Int id = (Int)TheNameKeyGenerator->nameToKey(AsciiString("ControlBar.wnd:ControlBarParent"));
-	GameWindow *window = TheWindowManager->winGetWindowFromId(NULL, id);
+	Int id = (Int)TheNameKeyGenerator->nameToKey("ControlBar.wnd:ControlBarParent");
+	GameWindow *window = TheWindowManager->winGetWindowFromId(nullptr, id);
 
 	if (window)
 	{

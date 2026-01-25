@@ -38,16 +38,13 @@
 //
 // Created:    Colin Day, June 2001
 //
-// Desc:       Implemtation details for various gadgets as they pertain to
+// Desc:       Implementation details for various gadgets as they pertain to
 //						 W3D will go here
 //
 //-----------------------------------------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __W3DGADGET_H_
-#define __W3DGADGET_H_
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
@@ -89,6 +86,3 @@ extern void W3DGadgetStaticTextDraw( GameWindow *window, WinInstanceData *instDa
 extern void W3DGadgetStaticTextImageDraw( GameWindow *window, WinInstanceData *instData );
 extern void W3DGadgetTextEntryDraw( GameWindow *window, WinInstanceData *instData );
 extern void W3DGadgetTextEntryImageDraw( GameWindow *window, WinInstanceData *instData );
-
-#endif // __W3DGADGET_H_
-

@@ -38,12 +38,7 @@
  *   CollisionMath::Overlap_Test -- Tests overlap between two AABoxes                          *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef COLMATHAABOX_H
-#define COLMATHAABOX_H
 
 #include "always.h"
 #include "aabox.h"
@@ -105,6 +100,3 @@ WWINLINE CollisionMath::OverlapType CollisionMath::Overlap_Test(const AABoxClass
 
 	return BOTH;
 }
-
-#endif
-

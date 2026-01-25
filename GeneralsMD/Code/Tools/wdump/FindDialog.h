@@ -16,12 +16,8 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#if !defined(AFX_FINDDIALOG_H__C38C0FF8_E89B_11D3_A398_009027447394__INCLUDED_)
-#define AFX_FINDDIALOG_H__C38C0FF8_E89B_11D3_A398_009027447394__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
+
 // FindDialog.h : header file
 //
 
@@ -35,7 +31,7 @@ class FindDialog : public CDialog
 {
 // Construction
 public:
-	FindDialog(CWnd* pParent = NULL);   // standard constructor
+	FindDialog(CWnd* pParent = nullptr);   // standard constructor
 
 	static const char *String()
 	{
@@ -44,7 +40,7 @@ public:
 
 	static void Compare (const char *string)
 	{
-		_Found |= (strstr (string, _FindString) != NULL);
+		_Found |= (strstr (string, _FindString) != nullptr);
 	}
 
 	static bool Found()
@@ -90,5 +86,3 @@ private:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_FINDDIALOG_H__C38C0FF8_E89B_11D3_A398_009027447394__INCLUDED_)

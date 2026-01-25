@@ -51,8 +51,8 @@ StdBIGFileSystem::~StdBIGFileSystem() {
 }
 
 void StdBIGFileSystem::init() {
-	DEBUG_ASSERTCRASH(TheLocalFileSystem != NULL, ("TheLocalFileSystem must be initialized before TheArchiveFileSystem."));
-	if (TheLocalFileSystem == NULL) {
+	DEBUG_ASSERTCRASH(TheLocalFileSystem != nullptr, ("TheLocalFileSystem must be initialized before TheArchiveFileSystem."));
+	if (TheLocalFileSystem == nullptr) {
 		return;
 	}
 
@@ -63,8 +63,8 @@ void StdBIGFileSystem::init() {
     AsciiString installPath;
     GetStringFromGeneralsRegistry("", "InstallPath", installPath );
     //@todo this will need to be ramped up to a crash for release
-    DEBUG_ASSERTCRASH(installPath != "", ("Be 1337! Go install Generals!"));
-    if (installPath!="")
+    DEBUG_ASSERTCRASH(!installPath.isEmpty(), ("Be 1337! Go install Generals!"));
+    if (!installPath.isEmpty())
       loadBigFilesFromDirectory(installPath, "*.big");
 #endif
 }
@@ -86,13 +86,13 @@ ArchiveFile * StdBIGFileSystem::openArchiveFile(const Char *filename) {
 	Int archiveFileSize = 0;
 	Int numLittleFiles = 0;
 
-	ArchiveFile *archiveFile = NEW StdBIGFile;
+	ArchiveFile *archiveFile = NEW StdBIGFile(filename, AsciiString::TheEmptyString);
 
 	DEBUG_LOG(("StdBIGFileSystem::openArchiveFile - opening BIG file %s", filename));
 
-	if (fp == NULL) {
+	if (fp == nullptr) {
 		DEBUG_CRASH(("Could not open archive file %s for parsing", filename));
-		return NULL;
+		return nullptr;
 	}
 
 	AsciiString asciibuf;
@@ -102,8 +102,8 @@ ArchiveFile * StdBIGFileSystem::openArchiveFile(const Char *filename) {
 	if (strcmp(buffer, BIGFileIdentifier) != 0) {
 		DEBUG_CRASH(("Error reading BIG file identifier in file %s", filename));
 		fp->close();
-		fp = NULL;
-		return NULL;
+		fp = nullptr;
+		return nullptr;
 	}
 
 	// read in the file size.
@@ -173,7 +173,7 @@ ArchiveFile * StdBIGFileSystem::openArchiveFile(const Char *filename) {
 	archiveFile->attachFile(fp);
 
 	delete fileInfo;
-	fileInfo = NULL;
+	fileInfo = nullptr;
 
 	// leave fp open as the archive file will be using it.
 
@@ -210,16 +210,26 @@ void StdBIGFileSystem::closeAllFiles() {
 Bool StdBIGFileSystem::loadBigFilesFromDirectory(AsciiString dir, AsciiString fileMask, Bool overwrite) {
 
 	FilenameList filenameList;
-	TheLocalFileSystem->getFileListInDirectory(dir, AsciiString(""), fileMask, filenameList, TRUE);
+	TheLocalFileSystem->getFileListInDirectory(dir, "", fileMask, filenameList, TRUE);
 
 	Bool actuallyAdded = FALSE;
 	FilenameListIter it = filenameList.begin();
 	while (it != filenameList.end()) {
+#if RTS_ZEROHOUR
+		// TheSuperHackers @bugfix bobtista 18/11/2025 Skip duplicate INIZH.big in Data\INI to prevent CRC mismatches.
+		// English, Chinese, and Korean SKUs shipped with two INIZH.big files (one in Run directory, one in Run\Data\INI).
+		// The DeleteFile cleanup doesn't work on EA App/Origin installs because the folder is not writable, so we skip loading it instead.
+		if (it->endsWithNoCase("Data\\INI\\INIZH.big") || it->endsWithNoCase("Data/INI/INIZH.big")) {
+			it++;
+			continue;
+		}
+#endif
+
 		ArchiveFile *archiveFile = openArchiveFile((*it).str());
 
-		if (archiveFile != NULL) {
+		if (archiveFile != nullptr) {
 			DEBUG_LOG(("StdBIGFileSystem::loadBigFilesFromDirectory - loading %s into the directory tree.", (*it).str()));
-			loadIntoDirectoryTree(archiveFile, *it, overwrite);
+			loadIntoDirectoryTree(archiveFile, overwrite);
 			m_archiveFileMap[(*it)] = archiveFile;
 			DEBUG_LOG(("StdBIGFileSystem::loadBigFilesFromDirectory - %s inserted into the archive file map.", (*it).str()));
 			actuallyAdded = TRUE;

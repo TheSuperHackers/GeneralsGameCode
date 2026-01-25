@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __ACTIVE_SHROUD_UPGRADE_H_
-#define __ACTIVE_SHROUD_UPGRADE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpgradeModule.h"
 
@@ -75,6 +72,3 @@ protected:
 	virtual Bool isSubObjectsUpgrade() { return false; }
 
 };
-
-#endif // __ACTIVE_SHROUD_UPGRADE_H_
-

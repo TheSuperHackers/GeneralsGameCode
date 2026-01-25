@@ -28,7 +28,7 @@
 //				 be considered during game saves, loads, and CRC checks.
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 #include "Common/GameState.h"
 #include "Common/Snapshot.h"
 

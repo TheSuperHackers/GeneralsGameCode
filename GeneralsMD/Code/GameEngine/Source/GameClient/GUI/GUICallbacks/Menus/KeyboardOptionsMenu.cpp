@@ -44,7 +44,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/GameAudio.h"
 #include "Common/GameEngine.h"
@@ -73,31 +73,31 @@ WindowMsgHandledType KeyboardTextEntryInput( GameWindow *window, UnsignedInt msg
 													 WindowMsgData mData1, WindowMsgData mData2 );
 
 static NameKeyType buttonBackID = NAMEKEY_INVALID;
-static GameWindow *buttonBack = NULL;
+static GameWindow *buttonBack = nullptr;
 
 static NameKeyType parentKeyboardOptionsMenuID = NAMEKEY_INVALID;
-static GameWindow *parentKeyboardOptionsMenu = NULL;
+static GameWindow *parentKeyboardOptionsMenu = nullptr;
 
 static NameKeyType comboBoxCategoryListID = NAMEKEY_INVALID;
-static GameWindow *comboBoxCategoryList = NULL;
+static GameWindow *comboBoxCategoryList = nullptr;
 
 static NameKeyType listBoxCommandListID = NAMEKEY_INVALID;
-static GameWindow *listBoxCommandList   = NULL;
+static GameWindow *listBoxCommandList   = nullptr;
 
 static NameKeyType staticTextDescriptionID = NAMEKEY_INVALID;
-static GameWindow *staticTextDescription   = NULL;
+static GameWindow *staticTextDescription   = nullptr;
 
 static NameKeyType staticTextCurrentHotkeyID = NAMEKEY_INVALID;
-static GameWindow *staticTextCurrentHotkey     = NULL;
+static GameWindow *staticTextCurrentHotkey     = nullptr;
 
 static NameKeyType buttonResetAllID = NAMEKEY_INVALID;
-static GameWindow *buttonResetAll   = NULL;
+static GameWindow *buttonResetAll   = nullptr;
 
 static NameKeyType textEntryAssignHotkeyID = NAMEKEY_INVALID;
-static GameWindow *textEntryAssignHotkey   = NULL;
+static GameWindow *textEntryAssignHotkey   = nullptr;
 
 static NameKeyType buttonAssignID = NAMEKEY_INVALID;
-static GameWindow *buttonAssign = NULL;
+static GameWindow *buttonAssign = nullptr;
 
 //use Bools to test if modifiers are used
 
@@ -281,7 +281,7 @@ void doKeyDown(EntryData *e, UnicodeString mod )
 				e->text->setText( mod );
 				e->sText->setText( mod );
 				e->charPos = e->text->getTextLength();
-				// try reseting all mods first
+				// try resetting all mods first
 				setKeyDown( shift, false );
 				setKeyDown( alt, false );
 				setKeyDown( ctrl, false );
@@ -392,32 +392,32 @@ void KeyboardOptionsMenuInit( WindowLayout *layout, void *userData )
 
 	//set keyboard focus to main parent
 	parentKeyboardOptionsMenuID = TheNameKeyGenerator->nameToKey("KeyboardOptionsMenu.wnd:ParentKeyboardOptionsMenu");
-	parentKeyboardOptionsMenu = TheWindowManager->winGetWindowFromId( NULL, parentKeyboardOptionsMenuID );
+	parentKeyboardOptionsMenu = TheWindowManager->winGetWindowFromId( nullptr, parentKeyboardOptionsMenuID );
 
 	// get ids for our children controls
-	buttonBackID = TheNameKeyGenerator->nameToKey( AsciiString("KeyboardOptionsMenu.wnd:ButtonBack") );
+	buttonBackID = TheNameKeyGenerator->nameToKey( "KeyboardOptionsMenu.wnd:ButtonBack" );
 	buttonBack = TheWindowManager->winGetWindowFromId( parentKeyboardOptionsMenu, buttonBackID );
 
 	comboBoxCategoryListID = TheNameKeyGenerator->nameToKey( "KeyboardOptionsMenu.wnd:ComboBoxCategoryList" );
-	comboBoxCategoryList   = TheWindowManager->winGetWindowFromId( /*parentKeyboardOptionsMenu*/NULL, comboBoxCategoryListID );
+	comboBoxCategoryList   = TheWindowManager->winGetWindowFromId( /*parentKeyboardOptionsMenu*/nullptr, comboBoxCategoryListID );
 
 	listBoxCommandListID   = TheNameKeyGenerator->nameToKey( "KeyboardOptionsMenu.wnd:ListBoxCommandList" );
-	listBoxCommandList     = TheWindowManager->winGetWindowFromId( NULL, listBoxCommandListID );
+	listBoxCommandList     = TheWindowManager->winGetWindowFromId( nullptr, listBoxCommandListID );
 
 	staticTextDescriptionID = TheNameKeyGenerator->nameToKey( "KeyboardOptionsMenu.wnd:StaticTextDescription" );
-	staticTextDescription   = TheWindowManager->winGetWindowFromId( NULL, staticTextDescriptionID );
+	staticTextDescription   = TheWindowManager->winGetWindowFromId( nullptr, staticTextDescriptionID );
 
 	staticTextCurrentHotkeyID = TheNameKeyGenerator->nameToKey( "KeyboardOptionsMenu.wnd:StaticTextCurrentHotkey" );
-	staticTextCurrentHotkey   = TheWindowManager->winGetWindowFromId( NULL, staticTextCurrentHotkeyID );
+	staticTextCurrentHotkey   = TheWindowManager->winGetWindowFromId( nullptr, staticTextCurrentHotkeyID );
 
 	buttonResetAllID        = TheNameKeyGenerator->nameToKey( "KeyboardOptionsMenu.wnd:ButtonResetAll" );
-	buttonResetAll          = TheWindowManager->winGetWindowFromId( NULL, buttonResetAllID );
+	buttonResetAll          = TheWindowManager->winGetWindowFromId( nullptr, buttonResetAllID );
 
 	textEntryAssignHotkeyID = TheNameKeyGenerator->nameToKey( "KeyboardOptionsMenu.wnd:TextEntryAssignHotkey" );
-	textEntryAssignHotkey   = TheWindowManager->winGetWindowFromId( NULL, textEntryAssignHotkeyID );
+	textEntryAssignHotkey   = TheWindowManager->winGetWindowFromId( nullptr, textEntryAssignHotkeyID );
 
 	buttonAssignID          = TheNameKeyGenerator->nameToKey( "KeyboardOptionsMenu.wnd:ButtonAssign" );
-	buttonAssign            = TheWindowManager->winGetWindowFromId( NULL, buttonAssignID );
+	buttonAssign            = TheWindowManager->winGetWindowFromId( nullptr, buttonAssignID );
 
 
 
@@ -499,8 +499,7 @@ WindowMsgHandledType KeyboardOptionsMenuInput( GameWindow *window, UnsignedInt m
 					//
 					if( BitIsSet( state, KEY_STATE_UP ) )
 					{
-						AsciiString buttonName( "KeyboardOptionsMenu.wnd:ButtonBack" );
-						NameKeyType buttonID = TheNameKeyGenerator->nameToKey( buttonName );
+						NameKeyType buttonID = TheNameKeyGenerator->nameToKey( "KeyboardOptionsMenu.wnd:ButtonBack" );
 						GameWindow *button = TheWindowManager->winGetWindowFromId( window, buttonID );
 
 						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,

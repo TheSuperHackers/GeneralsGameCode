@@ -26,9 +26,11 @@
 //
 // High level profiling
 //////////////////////////////////////////////////////////////////////////////
-#include "_pch.h"
+
+#include "profile.h"
+#include "internal.h"
 #include <new>
-#include <Utility/stdio_adapter.h>
+#include <WWCommon.h>
 
 // our own fast critical section
 static ProfileFastCS cs;
@@ -50,35 +52,35 @@ void ProfileHighLevel::Id::SetMax(double max)
 
 const char *ProfileHighLevel::Id::GetName(void) const
 {
-  return m_idPtr?m_idPtr->GetName():NULL;
+  return m_idPtr?m_idPtr->GetName():nullptr;
 }
 
 const char *ProfileHighLevel::Id::GetDescr(void) const
 {
-  return m_idPtr?m_idPtr->GetDescr():NULL;
+  return m_idPtr?m_idPtr->GetDescr():nullptr;
 }
 
 const char *ProfileHighLevel::Id::GetUnit(void) const
 {
-  return m_idPtr?m_idPtr->GetUnit():NULL;
+  return m_idPtr?m_idPtr->GetUnit():nullptr;
 }
 
 const char *ProfileHighLevel::Id::GetCurrentValue(void) const
 {
-  return m_idPtr?m_idPtr->AsString(m_idPtr->GetCurrentValue()):NULL;
+  return m_idPtr?m_idPtr->AsString(m_idPtr->GetCurrentValue()):nullptr;
 }
 
 const char *ProfileHighLevel::Id::GetValue(unsigned frame) const
 {
   double v;
   if (!m_idPtr||!m_idPtr->GetFrameValue(frame,v))
-    return NULL;
+    return nullptr;
   return m_idPtr->AsString(v);
 }
 
 const char *ProfileHighLevel::Id::GetTotalValue(void) const
 {
-  return m_idPtr?m_idPtr->AsString(m_idPtr->GetTotalValue()):NULL;
+  return m_idPtr?m_idPtr->AsString(m_idPtr->GetTotalValue()):nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -88,13 +90,12 @@ ProfileHighLevel::Block::Block(const char *name)
 {
   DFAIL_IF(!name) return;
 
-  m_idTime=AddProfile(name,NULL,"msec",6,-4);
+  m_idTime=AddProfile(name,nullptr,"msec",6,-4);
 
   char help[256];
-  strncpy(help,name,sizeof(help));
-  help[sizeof(help)-1-2]=0;
-  strcat(help,".c");
-  AddProfile(help,NULL,"calls",6,0).Increment();
+  strlcpy(help, name, sizeof(help) - 2);
+  strlcat(help, ".c", sizeof(help));
+  AddProfile(help,nullptr,"calls",6,0).Increment();
 
   ProfileGetTime(m_start);
 }
@@ -129,18 +130,18 @@ ProfileId::ProfileId(const char *name, const char *descr, const char *unit, int 
     strcpy(m_descr,descr);
   }
   else
-    m_descr=NULL;
+    m_descr=nullptr;
   if (unit)
   {
     m_unit=(char *)ProfileAllocMemory(strlen(unit)+1);
     strcpy(m_unit,unit);
   }
   else
-    m_unit=NULL;
+    m_unit=nullptr;
   m_precision=precision;
   m_exp10=exp10;
   m_curVal=m_totalVal=0.;
-  m_recFrameVal=NULL;
+  m_recFrameVal=nullptr;
   m_firstFrame=curFrame;
   m_valueMode=Unknown;
 }
@@ -315,7 +316,7 @@ bool ProfileHighLevel::EnumProfile(unsigned index, Id &id)
   ProfileId *cur=ProfileId::GetFirst();
   for (;cur&&index--;cur=cur->GetNext());
   id.m_idPtr=cur;
-  return cur!=NULL;
+  return cur!=nullptr;
 }
 
 bool ProfileHighLevel::FindProfile(const char *name, Id &id)
@@ -324,13 +325,13 @@ bool ProfileHighLevel::FindProfile(const char *name, Id &id)
 
   ProfileFastCS::Lock lock(cs);
   for (ProfileId *cur=ProfileId::GetFirst();cur;cur=cur->GetNext())
-    if (!strcmp(name,cur->GetName()))
+    if (strcmp(name,cur->GetName()) == 0)
     {
       id.m_idPtr=cur;
       return true;
     }
 
-  id.m_idPtr=NULL;
+  id.m_idPtr=nullptr;
   return false;
 }
 

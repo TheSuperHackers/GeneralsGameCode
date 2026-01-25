@@ -34,9 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef SKIN_H
-#define SKIN_H
+#pragma once
 
 #include <max.h>
 #include "simpmod.h"
@@ -239,7 +237,7 @@ public:
 	RefResult						NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, PartID& partID, RefMessage message);
 	void								BeginEditParams(IObjParam  *ip, ULONG flags,Animatable *prev);
 	void								EndEditParams(IObjParam *ip, ULONG flags,Animatable *next);
-	CreateMouseCallBack *		GetCreateMouseCallBack() { return NULL; }
+	CreateMouseCallBack *		GetCreateMouseCallBack() { return nullptr; }
 
 	/*
 	** From Reference Maker.  These three functions give access to the "virtual array" of references.
@@ -397,9 +395,3 @@ public:
 	*/
 	friend BOOL CALLBACK _bone_influence_dialog_thunk(HWND hWnd,UINT message,WPARAM wParam,LPARAM lParam);
 };
-
-
-
-
-#endif
-

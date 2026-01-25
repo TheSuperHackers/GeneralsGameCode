@@ -27,8 +27,6 @@
 // JKMCD Aug 2002
 
 #pragma once
-#ifndef __SPECIALPOWERTYPE_H__
-#define __SPECIALPOWERTYPE_H__
 
 // ------------------------------------------------------------------------------------------------
 // don't forget to add new strings to SpecialPowerMaskType::s_bitNameList[]
@@ -134,5 +132,3 @@ enum SpecialPowerType CPP_11(: Int)
 };
 
 	// Definition of these names is located in SpecialPower.cpp
-
-#endif /* __SPECIALPOWERTYPE_H__ */

@@ -32,13 +32,7 @@
  *                                                                         *
  *-------------------------------------------------------------------------*/
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef DYNAMESH_H
-#define DYNAMESH_H
 
 #include "meshgeometry.h"
 #include "meshmatdesc.h"
@@ -96,8 +90,8 @@ public:
 	int			Get_Pass_Count(void) const	{ return MatDesc->Get_Pass_Count(); }
 
 	// Create the array (if it doesn't exist), fill it with the supplied value.
-	void			Initialize_Texture_Array(int pass, int stage, TextureClass *texture = NULL);
-	void			Initialize_Material_Array(int pass, VertexMaterialClass *vmat = NULL);
+	void			Initialize_Texture_Array(int pass, int stage, TextureClass *texture = nullptr);
+	void			Initialize_Material_Array(int pass, VertexMaterialClass *vmat = nullptr);
 
 	// Accessors to material info:
 	MaterialInfoClass		*Peek_Material_Info(void)			{ return MatInfo; }
@@ -462,7 +456,7 @@ inline TriIndex * DynamicMeshModel::Get_Non_Const_Polygon_Array(void)
 inline void DynamicMeshClass::Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const
 {
 	if (!Bounding_Volumes_Valid()) {
-		Model->Compute_Bounds(NULL);
+		Model->Compute_Bounds(nullptr);
 	}
 	Model->Get_Bounding_Sphere(&sphere);
 }
@@ -470,7 +464,7 @@ inline void DynamicMeshClass::Get_Obj_Space_Bounding_Sphere(SphereClass & sphere
 inline void DynamicMeshClass::Get_Obj_Space_Bounding_Box(AABoxClass & box) const
 {
 	if (!Bounding_Volumes_Valid()) {
-		Model->Compute_Bounds(NULL);
+		Model->Compute_Bounds(nullptr);
 	}
 	Model->Get_Bounding_Box(&box);
 }
@@ -578,5 +572,3 @@ protected:
 	// tells when the triangle needs to be back flipped
 	virtual	bool	Flip_Face( void) { return !DynamicMeshClass::Flip_Face(); }
 };
-
-#endif	// DYNAMESH

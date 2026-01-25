@@ -22,9 +22,6 @@
 
 #pragma once
 
-#ifndef WHeightMapEdit_H
-#define WHeightMapEdit_H
-
 #include "W3DDevice/GameClient/WorldHeightMap.h"
 
 class DataChunkOutput;
@@ -38,7 +35,7 @@ public:
 	Real m_len; ///< Length of texture coord on this node.
 	CProcessNode *m_next;
 public:
-	CProcessNode(Int x, Int y):m_x(x),m_y(y),m_next(NULL),m_len(0) {};
+	CProcessNode(Int x, Int y):m_x(x),m_y(y),m_next(nullptr),m_len(0) {};
 	~CProcessNode(void) { };
 };
 
@@ -95,7 +92,7 @@ protected:
 								UnsignedByte *pProcessed, TCliffInfo &cliffInfo);
 	Bool adjustForTiling(TCliffInfo &cliffInfo, Real textureWidth);
 	void updateFlatCellForAdjacentCliffs(Int xIndex, Int yIndex,
-								Int curTileClass, UnsignedByte *pProcessed=NULL);
+								Int curTileClass, UnsignedByte *pProcessed=nullptr);
 
 public: // construction
 	WorldHeightMapEdit(Int xExtent, Int yExtent, UnsignedByte initialHeight, Int border); ///< create.
@@ -164,9 +161,7 @@ public: // Editing methods.
 	void changeBoundary(Int ndx, ICoord2D *border);
 	void removeLastBoundary(void);
 
-	// outNdx must not be NULL, but outHandle can be.
+	// outNdx must not be null, but outHandle can be.
 	// outHandle: 0 means BL, 1 means TL, 2 means TR, 3 means BR
 	void findBoundaryNear(Coord3D *pt, float okDistance, Int *outNdx, Int *outHandle);
 };
-
-#endif

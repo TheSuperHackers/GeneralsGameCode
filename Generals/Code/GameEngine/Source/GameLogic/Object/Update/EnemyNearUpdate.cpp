@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/PerfTimer.h"
 #include "Common/ThingTemplate.h"
@@ -71,7 +71,7 @@ void EnemyNearUpdate::checkForEnemies( void )
 
 		Real visionRange = getObject()->getVisionRange();
 		Object* enemy = TheAI->findClosestEnemy( getObject(), visionRange, AI::CAN_SEE );
-		m_enemyNear = (enemy != NULL);
+		m_enemyNear = (enemy != nullptr);
 	}
 	else
 	{

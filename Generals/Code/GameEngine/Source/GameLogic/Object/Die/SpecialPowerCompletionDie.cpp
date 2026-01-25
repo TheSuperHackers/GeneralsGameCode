@@ -27,7 +27,7 @@
 // Desc:   Die method responsible for telling TheScriptEngine that a special power has been completed
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Player.h"
 #include "Common/SpecialPower.h"

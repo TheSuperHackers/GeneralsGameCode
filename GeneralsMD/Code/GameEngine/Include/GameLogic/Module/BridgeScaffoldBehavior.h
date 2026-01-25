@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __BRIDGE_SCAFFOLD_BEHAVIOR_H_
-#define __BRIDGE_SCAFFOLD_BEHAVIOR_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/BehaviorModule.h"
 #include "GameLogic/Module/UpdateModule.h"
@@ -112,6 +109,3 @@ protected:
 	Coord3D m_targetPos;									///< current target position for our motion type
 
 };
-
-
-#endif  // end __BRIDGE_SCAFFOLD_BEHAVIOR_H_

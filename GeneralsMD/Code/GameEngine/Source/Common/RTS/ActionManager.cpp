@@ -33,7 +33,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/ActionManager.h"
 #include "Common/GlobalData.h"
@@ -66,7 +66,7 @@
 
 
 // GLOBAL /////////////////////////////////////////////////////////////////////////////////////////
-ActionManager *TheActionManager = NULL;
+ActionManager *TheActionManager = nullptr;
 
 // LOCAL //////////////////////////////////////////////////////////////////////////////////////////
 
@@ -142,7 +142,7 @@ Bool ActionManager::canGetRepairedAt( const Object *obj, const Object *repairDes
 {
 
 	// sanity
-	if( obj == NULL || repairDest == NULL )
+	if( obj == nullptr || repairDest == nullptr )
 		return FALSE;
 
 	Relationship r = obj->getRelationship(repairDest);
@@ -207,7 +207,7 @@ Bool ActionManager::canTransferSuppliesAt( const Object *obj, const Object *tran
 {
 
 	// sanity
-	if( obj == NULL || transferDest == NULL )
+	if( obj == nullptr || transferDest == nullptr )
 		return FALSE;
 
 	if( transferDest->isEffectivelyDead() )
@@ -226,11 +226,11 @@ Bool ActionManager::canTransferSuppliesAt( const Object *obj, const Object *tran
 
 	// I must be something with a Supply Transfering AI interface
 	const AIUpdateInterface *ai= obj->getAI();
-	if( ai == NULL )
+	if( ai == nullptr )
 		return FALSE;
 
 	const SupplyTruckAIInterface* supplyTruck = ai->getSupplyTruckAIInterface();
-	if( supplyTruck == NULL )
+	if( supplyTruck == nullptr )
 		return FALSE;
 
 	// If it is a warehouse, it must have boxes left and not be an enemy
@@ -249,7 +249,7 @@ Bool ActionManager::canTransferSuppliesAt( const Object *obj, const Object *tran
 			return FALSE;
 
 	// if he is not a warehouse or a center, then shut the hell up
-	if( (warehouseModule == NULL)  &&  (centerModule == NULL) )
+	if( (warehouseModule == nullptr)  &&  (centerModule == nullptr) )
 		return FALSE;
 
 	// We do not check ClearToApproach, as it is a temporary failure that is handled
@@ -286,13 +286,13 @@ Bool ActionManager::canDockAt( const Object *obj, const Object *dockDest, Comman
 {
 
 	// look for a dock interface
-	DockUpdateInterface *di = NULL;
+	DockUpdateInterface *di = nullptr;
 	for (BehaviorModule **u = dockDest->getBehaviorModules(); *u; ++u)
 	{
-		if ((di = (*u)->getDockUpdateInterface()) != NULL)
+		if ((di = (*u)->getDockUpdateInterface()) != nullptr)
 			break;
 	}
-	if( di == NULL )
+	if( di == nullptr )
 		return FALSE;  // no dock update interface, can't possibly dock
 
 /*
@@ -327,7 +327,7 @@ Bool ActionManager::canGetHealedAt( const Object *obj, const Object *healDest, C
 {
 
 	// sanity
-	if( obj == NULL || healDest == NULL )
+	if( obj == nullptr || healDest == nullptr )
 		return FALSE;
 
 	Relationship r = obj->getRelationship(healDest);
@@ -379,7 +379,7 @@ Bool ActionManager::canRepairObject( const Object *obj, const Object *objectToRe
 {
 
 	// sanity
-	if( obj == NULL || objectToRepair == NULL )
+	if( obj == nullptr || objectToRepair == nullptr )
 		return FALSE;
 
 	Relationship r = obj->getRelationship(objectToRepair);
@@ -451,18 +451,24 @@ Bool ActionManager::canResumeConstructionOf( const Object *obj,
 {
 
 	// sanity
-	if( obj == NULL || objectBeingConstructed == NULL )
+	if( obj == nullptr || objectBeingConstructed == nullptr )
 		return FALSE;
 
 	// only dozers or workers can resume construction of things
 	if( obj->isKindOf( KINDOF_DOZER ) == FALSE )
 		return FALSE;
 
+	// TheSuperHackers @bugfix Stubbjax 06/01/2025 Ensure only the owner of the construction can resume it.
+#if RETAIL_COMPATIBLE_CRC
 	Relationship r = obj->getRelationship(objectBeingConstructed);
 
 	// only available to our allies
 	if( r != ALLIES )
 		return FALSE;
+#else
+	if (obj->getControllingPlayer() != objectBeingConstructed->getControllingPlayer())
+		return FALSE;
+#endif
 
 	// if the objectBeingConstructed is not actually under construction we can't resume that!
 	if( !objectBeingConstructed->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
@@ -522,7 +528,7 @@ Bool ActionManager::canEnterObject( const Object *obj, const Object *objectToEnt
 {
 
 	// sanity
-	if( obj == NULL || objectToEnter == NULL )
+	if( obj == nullptr || objectToEnter == nullptr )
 		return FALSE;
 
 	if( obj == objectToEnter )
@@ -597,7 +603,7 @@ Bool ActionManager::canEnterObject( const Object *obj, const Object *objectToEnt
 			for (BehaviorModule** i = objectToEnter->getBehaviorModules(); *i; ++i)
 			{
 				ParkingPlaceBehaviorInterface* pp = (*i)->getParkingPlaceBehaviorInterface();
-				if (pp == NULL)
+				if (pp == nullptr)
 					continue;
 
 				if (pp->hasReservedSpace(obj->getID()))
@@ -789,7 +795,7 @@ CanAttackResult ActionManager::getCanAttackObject( const Object *obj, const Obje
 				}
 			}
 		}
-    else if( result == ATTACKRESULT_NOT_POSSIBLE )// oh dear me. The wierd case of a garrisoncontainer being a KINDOF_SPAWNS_ARE_THE_WEAPONS... the AmericaBuildingFirebase
+    else if( result == ATTACKRESULT_NOT_POSSIBLE )// oh dear me. The weird case of a garrisoncontainer being a KINDOF_SPAWNS_ARE_THE_WEAPONS... the AmericaBuildingFirebase
     {
       ContainModuleInterface *contain = obj->getContain();
       if ( contain )
@@ -814,7 +820,7 @@ Bool ActionManager::canConvertObjectToCarBomb( const Object *obj, const Object *
 {
 
 	// sanity
-	if( obj == NULL || objectToConvert == NULL )
+	if( obj == nullptr || objectToConvert == nullptr )
 	{
 		return FALSE;
 	}
@@ -848,7 +854,7 @@ Bool ActionManager::canConvertObjectToCarBomb( const Object *obj, const Object *
 Bool ActionManager::canHijackVehicle( const Object *obj, const Object *objectToHijack, CommandSourceType commandSource ) //LORENZEN
 {
 	// sanity
-	if( obj == NULL || objectToHijack == NULL )
+	if( obj == nullptr || objectToHijack == nullptr )
 	{
 		return FALSE;
 	}
@@ -910,7 +916,7 @@ Bool ActionManager::canHijackVehicle( const Object *obj, const Object *objectToH
 Bool ActionManager::canSabotageBuilding( const Object *obj, const Object *objectToSabotage, CommandSourceType commandSource )
 {
 	// sanity
-	if( obj == NULL || objectToSabotage == NULL )
+	if( obj == nullptr || objectToSabotage == nullptr )
 	{
 		return FALSE;
 	}
@@ -955,7 +961,7 @@ Bool ActionManager::canSabotageBuilding( const Object *obj, const Object *object
 Bool ActionManager::canMakeObjectDefector( const Object *obj, const Object *objectToMakeDefector, CommandSourceType commandSource ) //LORENZEN
 {
 	// sanity
-	if( obj == NULL || objectToMakeDefector == NULL )
+	if( obj == nullptr || objectToMakeDefector == nullptr )
 	{
 		return FALSE;
 	}
@@ -991,7 +997,7 @@ Bool ActionManager::canCaptureBuilding( const Object *obj, const Object *objectT
 {
 
 	// sanity
-	if( obj == NULL || objectToCapture == NULL )
+	if( obj == nullptr || objectToCapture == nullptr )
 		return FALSE;
 
 	//Make sure our object has the capability of performing this special ability.
@@ -1073,7 +1079,7 @@ Bool ActionManager::canCaptureBuilding( const Object *obj, const Object *objectT
 	// if it's garrisoned already, we cannot capture it.
 	// (unless it's just stealth-garrisoned.)
 	ContainModuleInterface *contain = objectToCapture->getContain();
-	if (contain != NULL && contain->isGarrisonable())
+	if (contain != nullptr && contain->isGarrisonable())
 	{
 		Int containCount = contain->getContainCount();
 		Int stealthContainCount = contain->getStealthUnitsContained();
@@ -1095,7 +1101,7 @@ Bool ActionManager::canCaptureBuilding( const Object *obj, const Object *objectT
 Bool ActionManager::canDisableVehicleViaHacking( const Object *obj, const Object *objectToHack, CommandSourceType commandSource, Bool checkSourceRequirements)
 {
 	// sanity
-	if( obj == NULL || objectToHack == NULL )
+	if( obj == nullptr || objectToHack == nullptr )
 		return FALSE;
 
 	if (checkSourceRequirements)
@@ -1178,7 +1184,7 @@ Bool ActionManager::canPickUpPrisoner( const Object *obj, const Object *prisoner
 {
 
 	// sanity
-	if( obj == NULL || prisoner == NULL )
+	if( obj == nullptr || prisoner == nullptr )
 		return FALSE;
 
 	// only pow trucks can pick up anything
@@ -1195,14 +1201,14 @@ Bool ActionManager::canPickUpPrisoner( const Object *obj, const Object *prisoner
 
 	// prisoner must be in a surrendered state
 	const AIUpdateInterface *ai = prisoner->getAI();
-	if( ai == NULL || ai->isSurrendered() == FALSE )
+	if( ai == nullptr || ai->isSurrendered() == FALSE )
 		return FALSE;
 
 	// prisoner must have been put in a surrendered state by our own player
 	// (or be surrendered to "everyone")
 	Int idx = ai->getSurrenderedPlayerIndex();
-	Player* surrenderedToPlayer = (idx >= 0) ? ThePlayerList->getNthPlayer(idx) : NULL;
-	if (surrenderedToPlayer != NULL && surrenderedToPlayer != obj->getControllingPlayer())
+	Player* surrenderedToPlayer = (idx >= 0) ? ThePlayerList->getNthPlayer(idx) : nullptr;
+	if (surrenderedToPlayer != nullptr && surrenderedToPlayer != obj->getControllingPlayer())
 		return FALSE;
 
 	// we must be enemies
@@ -1219,7 +1225,7 @@ Bool ActionManager::canPickUpPrisoner( const Object *obj, const Object *prisoner
 Bool ActionManager::canStealCashViaHacking( const Object *obj, const Object *objectToHack, CommandSourceType commandSource )
 {
 	// sanity
-	if( obj == NULL || objectToHack == NULL )
+	if( obj == nullptr || objectToHack == nullptr )
 		return FALSE;
 
 	//Make sure our object has the capability of performing this special ability.
@@ -1305,7 +1311,7 @@ Bool ActionManager::canStealCashViaHacking( const Object *obj, const Object *obj
 Bool ActionManager::canDisableBuildingViaHacking( const Object *obj, const Object *objectToHack, CommandSourceType commandSource )
 {
 	// sanity
-	if( obj == NULL || objectToHack == NULL )
+	if( obj == nullptr || objectToHack == nullptr )
 		return FALSE;
 
 	//Make sure our object has the capability of performing this special ability.
@@ -1388,7 +1394,7 @@ Bool ActionManager::canCutBuildingPower( const Object *obj, const Object *buildi
 Bool ActionManager::canSnipeVehicle( const Object *obj, const Object *objectToSnipe, CommandSourceType commandSource )
 {
 	//Sanity check
-	if( obj == NULL || objectToSnipe == NULL )
+	if( obj == nullptr || objectToSnipe == nullptr )
 	{
 		return FALSE;
 	}
@@ -1427,6 +1433,13 @@ Bool ActionManager::canSnipeVehicle( const Object *obj, const Object *objectToSn
 
 		//Make sure the vehicle is manned!
 		if( objectToSnipe->isDisabledByType( DISABLED_UNMANNED ) )
+		{
+			return FALSE;
+		}
+
+		// TheSuperHackers @bugfix Caball009 04/09/2025 Disabled bikes may not have a rider to snipe.
+		ContainModuleInterface* contain = objectToSnipe->getContain();
+		if ( contain && contain->isRiderChangeContain() && contain->getContainedItemsList()->empty() )
 		{
 			return FALSE;
 		}
@@ -1929,7 +1942,7 @@ Bool ActionManager::canDoSpecialPower( const Object *obj, const SpecialPowerTemp
 Bool ActionManager::canFireWeaponAtLocation( const Object *obj, const Coord3D *loc, CommandSourceType commandSource, const WeaponSlotType slot, const Object *objectInWay )
 {
 	//Sanity check
-	if( obj == NULL || loc == NULL )
+	if( obj == nullptr || loc == nullptr )
 	{
 		return false;
 	}
@@ -1948,7 +1961,7 @@ Bool ActionManager::canFireWeaponAtLocation( const Object *obj, const Coord3D *l
 Bool ActionManager::canFireWeaponAtObject( const Object *obj, const Object *target, CommandSourceType commandSource, const WeaponSlotType slot )
 {
 	//Sanity check
-	if( obj == NULL || target == NULL )
+	if( obj == nullptr || target == nullptr )
 	{
 		return FALSE;
 	}
@@ -1987,7 +2000,7 @@ Bool ActionManager::canFireWeaponAtObject( const Object *obj, const Object *targ
 Bool ActionManager::canFireWeapon( const Object *obj, const WeaponSlotType slot, CommandSourceType commandSource )
 {
 	//Sanity check
-	if( obj == NULL )
+	if( obj == nullptr )
 	{
 		return false;
 	}
@@ -2021,7 +2034,7 @@ Bool ActionManager::canGarrison( const Object *obj, const Object *target, Comman
 		return false;
 
 	ContainModuleInterface *cmi = target->getContain();
-	if (cmi == NULL)
+	if (cmi == nullptr)
 		return false;
 
 	if (cmi->isGarrisonable() == false)
@@ -2055,7 +2068,7 @@ Bool ActionManager::canPlayerGarrison( const Player *player, const Object *targe
 		return false;
 
 	ContainModuleInterface *cmi = target->getContain();
-	if (cmi == NULL)
+	if (cmi == nullptr)
 		return false;
 
 	if (cmi->isGarrisonable() == false)

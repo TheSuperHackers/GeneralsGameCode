@@ -24,13 +24,10 @@
 
 // FILE: ObjectDefectionHelper.h //////////////////////////////////////////////////////////////////
 // Author: Steven Johnson, Colin Day - September 202
-// Desc:   Object helpder - defection
+// Desc:   Object helper - defection
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __OBJECT_DEFECTION_HELPER_H_
-#define __OBJECT_DEFECTION_HELPER_H_
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/ObjectHelper.h"
@@ -64,13 +61,10 @@ public:
 
 	ObjectDefectionHelper( Thing *thing, const ModuleData *modData ) : ObjectHelper( thing, modData )
 	{
-		//Added By Sadullah Nader
-		//Initializations inserted
 		m_defectionDetectionEnd = 0;
 		m_defectionDetectionFlashPhase = FALSE;
 		m_defectionDetectionStart = 0;
 		m_doDefectorFX = FALSE;
-		//
 	}
 	// virtual destructor prototype provided by memory pool object
 
@@ -83,6 +77,3 @@ public:
 	void startDefectionTimer(UnsignedInt numFrames, Bool withDefectorFX = TRUE);
 
 };
-
-
-#endif  // end __OBJECT_DEFECTION_HELPER_H_

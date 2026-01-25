@@ -16,12 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef MUTEX_H
-#define MUTEX_H
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
 
 #include "always.h"
 #include "thread.h"
@@ -45,13 +40,13 @@ class MutexClass
 	unsigned locked;
 
 	// Lock and unlock are private so that you can't use them directly. Use LockClass as a sentry instead!
-	// Lock returns true if lock was succesful, false otherwise
+	// Lock returns true if lock was successful, false otherwise
 	bool Lock(int time);
 	void Unlock();
 
 public:
-	// Name can (and usually should) be NULL. Use name only if you wish to create a globally unique mutex
-	MutexClass(const char* name = NULL);
+	// Name can (and usually should) be nullptr. Use name only if you wish to create a globally unique mutex
+	MutexClass(const char* name = nullptr);
 	~MutexClass();
 
 	enum {
@@ -94,7 +89,7 @@ class CriticalSectionClass
 	void Unlock();
 
 public:
-	// Name can (and usually should) be NULL. Use name only if you wish to create a globally unique mutex
+	// Name can (and usually should) be nullptr. Use name only if you wish to create a globally unique mutex
 	CriticalSectionClass();
 	~CriticalSectionClass();
 
@@ -128,7 +123,7 @@ class FastCriticalSectionClass
 #endif
 
 public:
-	// Name can (and usually should) be NULL. Use name only if you wish to create a globally unique mutex
+	// Name can (and usually should) be nullptr. Use name only if you wish to create a globally unique mutex
 	FastCriticalSectionClass()
 #if defined(_MSC_VER) && _MSC_VER < 1300
 		: Flag(0)
@@ -205,5 +200,3 @@ public:
 
   friend class LockClass;
 };
-
-#endif

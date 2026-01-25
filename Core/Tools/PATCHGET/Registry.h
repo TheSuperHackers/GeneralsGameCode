@@ -17,13 +17,10 @@
 */
 
 // Registry.h
-// Simple interface for storing/retreiving registry values
+// Simple interface for storing/retrieving registry values
 // Author: Matthew D. Campbell, December 2001
 
 #pragma once
-
-#ifndef __REGISTRY_H__
-#define __REGISTRY_H__
 
 #include <string>
 
@@ -51,5 +48,3 @@ bool SetStringInRegistry(std::string path, std::string key, std::string val);
 bool SetUnsignedIntInRegistry(std::string path, std::string key, unsigned int val);
 
 } // namespace patchget
-
-#endif // __REGISTRY_H__

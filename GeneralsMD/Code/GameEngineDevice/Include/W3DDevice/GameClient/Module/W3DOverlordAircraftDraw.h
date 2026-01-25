@@ -26,7 +26,7 @@
 //
 //  FILE: W3DOverlordAircraftDraw.h
 //  Author: Mark Lorenzen, April 2003
-//  Desc: Units that recieve portable structure upgrades (like the Overlord Tank) have a super specific special need.
+//  Desc: Units that receive portable structure upgrades (like the Overlord Tank) have a super specific special need.
 //  He needs his rider to draw explicitly after him,
 //  and he needs direct access to get that rider when everyone else can't see it because of the OverlordContain.
 //  In the case of aircraft (Helix, SpectreGunship, etc.) we need this draw module which mimics the OverlordTankDraw
@@ -35,9 +35,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef _W3D_OVERLORD_AIRCRAFT_DRAW_H_
-#define _W3D_OVERLORD_AIRCRAFT_DRAW_H_
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "W3DDevice/GameClient/Module/W3DModelDraw.h"
@@ -70,6 +67,3 @@ public:
 protected:
 
 };
-
-#endif
-

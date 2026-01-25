@@ -26,7 +26,7 @@
 // Author: Kris Morness, June 2002
 // Desc:   State machine that handles internet hacking (free cash)
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Player.h"
 #include "Common/ThingFactory.h"
@@ -164,7 +164,7 @@ void HackInternetAIUpdate::hackInternet()
 {
 	//if (m_hackInternetStateMachine)
 	//	deleteInstance(m_hackInternetStateMachine);
-	//m_hackInternetStateMachine = NULL;
+	//m_hackInternetStateMachine = nullptr;
 
 	// must make the state machine AFTER initing the other stuff, since it may inquire of its values...
 	//m_hackInternetStateMachine = newInstance(HackInternetStateMachine)( getObject() );

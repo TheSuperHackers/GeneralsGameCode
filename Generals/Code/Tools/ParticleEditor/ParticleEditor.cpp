@@ -73,7 +73,7 @@ CDebugWindowApp::CDebugWindowApp()
 {
 	AfxInitialize(true);
 	AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
-	m_DialogWindow = NULL;
+	m_DialogWindow = nullptr;
 
 }
 
@@ -104,9 +104,9 @@ void __declspec(dllexport) CreateParticleSystemDialog(void)
 
 		DebugWindowDialog* tmpWnd;
 		tmpWnd = new DebugWindowDialog;
-		tmpWnd->Create(DebugWindowDialog::IDD, NULL);
+		tmpWnd->Create(DebugWindowDialog::IDD, nullptr);
 
-		tmpWnd->SetWindowPos(NULL, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+		tmpWnd->SetWindowPos(nullptr, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
 		tmpWnd->InitPanel();
 		tmpWnd->ShowWindow(SW_SHOW);
 		if (tmpWnd->GetMainWndHWND()) {
@@ -126,7 +126,7 @@ void __declspec(dllexport) DestroyParticleSystemDialog(void)
 		if (tmpWnd) {
 			tmpWnd->DestroyWindow();
 			delete tmpWnd;
-			theApp.SetDialogWindow(NULL);
+			theApp.SetDialogWindow(nullptr);
 		}
 	} catch (...) { }
 }

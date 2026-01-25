@@ -34,12 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef RINGOBJ_H
-#define RINGOBJ_H
 
 #include "always.h"
 #include "rendobj.h"
@@ -92,7 +87,7 @@ struct W3dRingStruct
 	// variable set of keyframes for each channel
 };
 
-// Note: RING_NUM_LOD does not include the NULL LOD.
+// Note: RING_NUM_LOD does not include the null LOD.
 #define RING_NUM_LOD	(20)
 #define RING_LOWEST_LOD (10)
 #define RING_HIGHEST_LOD (50)
@@ -145,10 +140,10 @@ public:
 	virtual void					Scale(float scale);
 	virtual void					Scale(float scalex, float scaley, float scalez);
 
-	virtual void					Set_Hidden(int onoff)				{ RenderObjClass::Set_Hidden (onoff); Update_On_Visibilty (); }
-	virtual void					Set_Visible(int onoff)				{ RenderObjClass::Set_Visible (onoff); Update_On_Visibilty (); }
-	virtual void					Set_Animation_Hidden(int onoff)	{ RenderObjClass::Set_Animation_Hidden (onoff); Update_On_Visibilty (); }
-	virtual void					Set_Force_Visible(int onoff)		{ RenderObjClass::Set_Force_Visible (onoff); Update_On_Visibilty (); }
+	virtual void					Set_Hidden(int onoff)				{ RenderObjClass::Set_Hidden (onoff); Update_On_Visibility (); }
+	virtual void					Set_Visible(int onoff)				{ RenderObjClass::Set_Visible (onoff); Update_On_Visibility (); }
+	virtual void					Set_Animation_Hidden(int onoff)	{ RenderObjClass::Set_Animation_Hidden (onoff); Update_On_Visibility (); }
+	virtual void					Set_Force_Visible(int onoff)		{ RenderObjClass::Set_Force_Visible (onoff); Update_On_Visibility (); }
 
 	const	AABoxClass	&			Get_Box(void);
 
@@ -225,7 +220,7 @@ public:
 protected:
 
 	virtual void					update_cached_box(void);
-	void								Update_On_Visibilty(void);
+	void								Update_On_Visibility(void);
 
 	// Initialization stuff
 	void								Init_Material (void);
@@ -363,8 +358,4 @@ private:
 extern RingLoaderClass			_RingLoader;
 
 
-#endif // RINGOBJ_H
-
 // EOF - ringobj,h
-
-

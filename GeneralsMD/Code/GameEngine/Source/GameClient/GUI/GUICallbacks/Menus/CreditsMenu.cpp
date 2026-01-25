@@ -46,7 +46,7 @@
 //-----------------------------------------------------------------------------
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 
 //-----------------------------------------------------------------------------
@@ -69,7 +69,7 @@
 static NameKeyType parentMainMenuID = NAMEKEY_INVALID;
 
 // window pointers --------------------------------------------------------------------------------
-static GameWindow *parentMainMenu = NULL;
+static GameWindow *parentMainMenu = nullptr;
 
 //-----------------------------------------------------------------------------
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
@@ -86,8 +86,8 @@ void CreditsMenuInit( WindowLayout *layout, void *userData )
 	TheCredits->load();
 	TheCredits->init();
 
-	parentMainMenuID = TheNameKeyGenerator->nameToKey( AsciiString("CreditsMenu.wnd:ParentCreditsWindow") );
-	parentMainMenu = TheWindowManager->winGetWindowFromId( NULL, parentMainMenuID );
+	parentMainMenuID = TheNameKeyGenerator->nameToKey( "CreditsMenu.wnd:ParentCreditsWindow" );
+	parentMainMenu = TheWindowManager->winGetWindowFromId( nullptr, parentMainMenuID );
 
 
 	// show menu
@@ -99,7 +99,7 @@ void CreditsMenuInit( WindowLayout *layout, void *userData )
 
 
 	TheAudio->removeAudioEvent( AHSV_StopTheMusicFade );
-	AudioEventRTS event( AsciiString( "Credits" ) );
+	AudioEventRTS event( "Credits" );
 	event.setShouldFade( TRUE );
 	TheAudio->addAudioEvent( &event );
 
@@ -113,7 +113,7 @@ void CreditsMenuShutdown( WindowLayout *layout, void *userData )
 {
 	TheCredits->reset();
 	delete TheCredits;
-	TheCredits = NULL;
+	TheCredits = nullptr;
 	TheShell->showShellMap(TRUE);
 
 	// hide menu

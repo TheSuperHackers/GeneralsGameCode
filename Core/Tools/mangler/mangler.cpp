@@ -20,7 +20,7 @@
 #include <Utility/iostream_adapter.h>
 
 #include <signal.h>
-#ifdef _WINDOWS
+#ifdef _WIN32
 #include <process.h> // *MUST* be included before ANY Wnet/Wlib headers if _REENTRANT is defined
 #endif
 
@@ -51,7 +51,7 @@ int main(int argc, char **argv)
 	if( argc <= 1 )
 	{
 		// No args - use a default config file
-		if ((conf = fopen("mangler.cfg", "r")) == NULL) {
+		if ((conf = fopen("mangler.cfg", "r")) == nullptr) {
 			cout << "Cannot open mangler.cfg for reading." << endl;
 			DisplayHelp(argv[0]);
 		}
@@ -64,7 +64,7 @@ int main(int argc, char **argv)
 	else if( argc == 2 )
 	{
 		// Use a user-supplied config file
-		if ((conf = fopen(argv[1], "r")) == NULL) {
+		if ((conf = fopen(argv[1], "r")) == nullptr) {
 			cout << "Cannot open " << argv[1] << " for reading." << endl;
 			DisplayHelp(argv[0]);
 		}
@@ -97,7 +97,7 @@ int main(int argc, char **argv)
 
 
 	// ----- Initialize Winsock -----
-#ifdef _WINDOWS
+#ifdef _WIN32
 	WORD verReq = MAKEWORD(2, 2);
 	WSADATA wsadata;
 

@@ -30,9 +30,6 @@
 
 #pragma once
 
-#ifndef __LADDERPREFERENCES_H__
-#define __LADDERPREFERENCES_H__
-
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
@@ -76,5 +73,3 @@ public:
 private:
 	LadderPrefMap m_ladders;
 };
-
-#endif // __LADDERPREFERENCES_H__

@@ -35,13 +35,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef MOTCHAN_H
-#define MOTCHAN_H
 
 #include "always.h"
 #include "bittype.h"
@@ -325,6 +319,3 @@ private:
 
 	friend class HCompressedAnimClass;
 };
-
-
-#endif

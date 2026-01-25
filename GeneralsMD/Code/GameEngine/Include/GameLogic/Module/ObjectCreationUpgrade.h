@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __OBJECTCREATIONUPGRADE_H_
-#define __OBJECTCREATIONUPGRADE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpgradeModule.h"
 
@@ -77,6 +74,3 @@ protected:
 	virtual Bool isSubObjectsUpgrade() { return false; }
 
 };
-
-#endif // __OBJECTCREATIONUPGRADE_H_
-

@@ -27,8 +27,7 @@
 // Desc:   Railed transport dock update
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __RAILED_TRANSPORT_DOCK_UPDATE_H_
-#define __RAILED_TRANSPORT_DOCK_UPDATE_H_
+#pragma once
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/DockUpdate.h"
@@ -87,7 +86,7 @@ public:
 
 	// dock methods
 	virtual DockUpdateInterface* getDockUpdateInterface() { return this; }
-	virtual Bool action( Object* docker, Object *drone = NULL );
+	virtual Bool action( Object* docker, Object *drone = nullptr );
 	virtual Bool isClearToEnter( Object const* docker ) const;
 
 	// our own methods
@@ -110,5 +109,3 @@ protected:
 	Int m_unloadCount;												///< count used to govern unloading 1 or all objects
 
 };
-
-#endif  // end __RAILED_TRANSPORT_DOCK_UPDATE_H_

@@ -22,7 +22,7 @@
  *                                                                                             *
  *                 Project Name : Command & Conquer                                            *
  *                                                                                             *
- *                     $Archive:: /G/wwlib/PIPE.CPP                                           $*
+ *                     $Archive:: /G/wwlib/PIPE.cpp                                           $*
  *                                                                                             *
  *                      $Author:: Eric_c                                                      $*
  *                                                                                             *
@@ -40,9 +40,8 @@
 
 
 #include	"always.h"
-#include	"PIPE.H"
+#include "PIPE.h"
 #include	<stddef.h>
-//#include	<string.h>
 
 
 /***********************************************************************************************
@@ -62,15 +61,15 @@
  *=============================================================================================*/
 Pipe::~Pipe(void)
 {
-	if (ChainTo != NULL) {
+	if (ChainTo != nullptr) {
 		ChainTo->ChainFrom = ChainFrom;
 	}
-	if (ChainFrom != NULL) {
+	if (ChainFrom != nullptr) {
 		ChainFrom->Put_To(ChainTo);
 	}
 
-	ChainFrom = NULL;
-	ChainTo = NULL;
+	ChainFrom = nullptr;
+	ChainTo = nullptr;
 }
 
 
@@ -92,18 +91,18 @@ Pipe::~Pipe(void)
 void Pipe::Put_To(Pipe * pipe)
 {
 	if (ChainTo != pipe) {
-		if (pipe != NULL && pipe->ChainFrom != NULL) {
-			pipe->ChainFrom->Put_To(NULL);
-			pipe->ChainFrom = NULL;
+		if (pipe != nullptr && pipe->ChainFrom != nullptr) {
+			pipe->ChainFrom->Put_To(nullptr);
+			pipe->ChainFrom = nullptr;
 		}
 
-		if (ChainTo != NULL) {
-			ChainTo->ChainFrom = NULL;
+		if (ChainTo != nullptr) {
+			ChainTo->ChainFrom = nullptr;
 			ChainTo->Flush();
 		}
 
 		ChainTo = pipe;
-		if (ChainTo != NULL) {
+		if (ChainTo != nullptr) {
 			ChainTo->ChainFrom = this;
 		}
 	}
@@ -130,7 +129,7 @@ void Pipe::Put_To(Pipe * pipe)
  *=============================================================================================*/
 int Pipe::Put(void const * source, int length)
 {
-	if (ChainTo != NULL) {
+	if (ChainTo != nullptr) {
 		return(ChainTo->Put(source, length));
 	}
 	return(length);
@@ -157,7 +156,7 @@ int Pipe::Put(void const * source, int length)
  *=============================================================================================*/
 int Pipe::Flush(void)
 {
-	if (ChainTo != NULL) {
+	if (ChainTo != nullptr) {
 		return(ChainTo->Flush());
 	}
 	return(0);

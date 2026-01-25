@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __BEACONCLIENTUPDATE_H_
-#define __BEACONCLIENTUPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/ClientUpdateModule.h"
 
@@ -75,6 +72,3 @@ protected:
 	UnsignedInt m_lastRadarPulse;
 
 };
-
-#endif // __BEACONCLIENTUPDATE_H_
-

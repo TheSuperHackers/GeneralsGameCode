@@ -33,7 +33,7 @@
 #include "W3DDevice/GameClient/TerrainTex.h"
 #include "W3DDevice/GameClient/HeightMap.h"
 
-TerrainMaterial *TerrainMaterial::m_staticThis = NULL;
+TerrainMaterial *TerrainMaterial::m_staticThis = nullptr;
 
 static Int defaultMaterialIndex = 0;
 
@@ -46,7 +46,7 @@ Int TerrainMaterial::m_currentBgTexture(6);
 Bool TerrainMaterial::m_paintingPathingInfo;
 Bool TerrainMaterial::m_paintingPassable;
 
-TerrainMaterial::TerrainMaterial(CWnd* pParent /*=NULL*/) :
+TerrainMaterial::TerrainMaterial(CWnd* pParent /*=nullptr*/) :
 	m_updating(false),
 	m_currentWidth(3)
 {
@@ -141,10 +141,10 @@ void TerrainMaterial::updateLabel(void)
 
 	AsciiString name = pDoc->GetHeightMap()->getTexClassUiName(m_currentFgTexture);
 	const char *tName = name.str();
-	if (tName == NULL || tName[0] == 0) {
+	if (tName == nullptr || tName[0] == 0) {
 		tName = pDoc->GetHeightMap()->getTexClassUiName(m_currentFgTexture).str();
 	}
-	if (tName == NULL) {
+	if (tName == nullptr) {
 		return;
 	}
 	const char *leaf = tName;
@@ -175,7 +175,7 @@ Bool TerrainMaterial::setTerrainTreeViewSelection(HTREEITEM parent, Int selectio
 	char buffer[_MAX_PATH];
 	::memset(&item, 0, sizeof(item));
 	HTREEITEM child = m_terrainTreeView.GetChildItem(parent);
-	while (child != NULL) {
+	while (child != nullptr) {
 		item.mask = TVIF_HANDLE|TVIF_PARAM;
 		item.hItem = child;
 		item.pszText = buffer;
@@ -217,7 +217,7 @@ BOOL TerrainMaterial::OnInitDialog()
 	pWnd->GetWindowRect(&rect);
 	ScreenToClient(&rect);
 	rect.DeflateRect(2,2,2,2);
-	m_terrainSwatches.Create(NULL, "", WS_CHILD, rect, this, IDC_TERRAIN_SWATCHES);
+	m_terrainSwatches.Create(nullptr, "", WS_CHILD, rect, this, IDC_TERRAIN_SWATCHES);
 	m_terrainSwatches.ShowWindow(SW_SHOW);
 
 	m_paintingPathingInfo = false;
@@ -247,7 +247,7 @@ HTREEITEM TerrainMaterial::findOrAdd(HTREEITEM parent, const char *pLabel)
 	char buffer[_MAX_PATH];
 	::memset(&ins, 0, sizeof(ins));
 	HTREEITEM child = m_terrainTreeView.GetChildItem(parent);
-	while (child != NULL) {
+	while (child != nullptr) {
 		ins.item.mask = TVIF_HANDLE|TVIF_TEXT;
 		ins.item.hItem = child;
 		ins.item.pszText = buffer;
@@ -302,7 +302,7 @@ void TerrainMaterial::addTerrain(char *pPath, Int terrainNdx, HTREEITEM parent)
 		}
 
 		// set the name in the tree view to that of the entry
-		strcpy( buffer, terrain->getName().str() );
+		strlcpy(buffer, terrain->getName().str(), ARRAY_SIZE(buffer));
 
 		doAdd = TRUE;
 	}
@@ -336,7 +336,7 @@ void TerrainMaterial::addTerrain(char *pPath, Int terrainNdx, HTREEITEM parent)
 	Int percent = (WorldHeightMapEdit::getTexClassNumTiles(terrainNdx)*100 + availableTiles/2) / availableTiles;
 
 	char label[_MAX_PATH];
-	sprintf(label, "%d%% %s", percent, buffer);
+	snprintf(label, ARRAY_SIZE(label), "%d%% %s", percent, buffer);
 
 
 	if( doAdd )
@@ -369,7 +369,7 @@ void TerrainMaterial::updateTextures(WorldHeightMapEdit *pMap)
 		for (i=0; i<pMap->getNumTexClasses(); i++) {
 			char path[_MAX_PATH];
 			AsciiString uiName = pMap->getTexClassUiName(i);
-			strncpy(path, uiName.str(), _MAX_PATH-2);
+			strlcpy(path, uiName.str(), _MAX_PATH);
 			m_staticThis->addTerrain(path, i, TVI_ROOT);
 		}
 		m_staticThis->m_updating = false;
@@ -405,7 +405,7 @@ void TerrainMaterial::OnChangeSizeEdit()
 			if (1==sscanf(buffer, "%d", &width)) {
 				m_currentWidth = width;
 				BigTileTool::setWidth(m_currentWidth);
-				sprintf(buffer, "%.1f FEET.", m_currentWidth*MAP_XY_FACTOR);
+				snprintf(buffer, ARRAY_SIZE(buffer), "%.1f FEET.", m_currentWidth*MAP_XY_FACTOR);
 				pEdit = m_staticThis->GetDlgItem(IDC_WIDTH_LABEL);
 				if (pEdit) pEdit->SetWindowText(buffer);
 			}
@@ -496,7 +496,7 @@ BOOL TerrainMaterial::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 				}
 			}	else if (!(item.state & TVIS_EXPANDEDONCE) ) {
 				HTREEITEM child = m_terrainTreeView.GetChildItem(hItem);
-				while (child != NULL) {
+				while (child != nullptr) {
 					hItem = child;
 					child = m_terrainTreeView.GetChildItem(hItem);
 				}

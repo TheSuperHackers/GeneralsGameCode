@@ -29,7 +29,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Player.h"
 #include "Common/RandomValue.h"
@@ -81,7 +81,7 @@ void TunnelContain::removeFromContain( Object *obj, Bool exposeStealthUnits )
 {
 
 	// sanity
-	if( obj == NULL )
+	if( obj == nullptr )
 		return;
 
 	// trigger an onRemoving event for 'm_object' no longer containing 'itemToRemove->m_object'
@@ -98,14 +98,13 @@ void TunnelContain::removeFromContain( Object *obj, Bool exposeStealthUnits )
 	// it is actually contained by this module
 	//
 	Player *owningPlayer = getObject()->getControllingPlayer();
-	if( owningPlayer == NULL )
+	if( owningPlayer == nullptr )
 		return; //game tear down.  We do the onRemove* stuff first because this is allowed to fail but that still needs to be done
 
 	if(!owningPlayer->getTunnelSystem())
 		return;
 
 	owningPlayer->getTunnelSystem()->removeFromContain( obj, exposeStealthUnits );
-
 }
 
 
@@ -170,7 +169,7 @@ void TunnelContain::killAllContained( void )
 	while ( it != list.end() )
 	{
 		Object *obj = *it++;
-		DEBUG_ASSERTCRASH( obj, ("Contain list must not contain NULL element"));
+		DEBUG_ASSERTCRASH( obj, ("Contain list must not contain null element"));
 
 		removeFromContain( obj, true );
 
@@ -195,7 +194,7 @@ void TunnelContain::removeAllContained( Bool exposeStealthUnits )
 	while ( it != list.end() )
 	{
 		Object *obj = *it++;
-		DEBUG_ASSERTCRASH( obj, ("Contain list must not contain NULL element"));
+		DEBUG_ASSERTCRASH( obj, ("Contain list must not contain null element"));
 
 		removeFromContain( obj, exposeStealthUnits );
 	}
@@ -241,6 +240,7 @@ void TunnelContain::onRemoving( Object *obj )
 	obj->clearDisabled( DISABLED_HELD );
 
 	/// place the object in the world at position of the container m_object
+#if RETAIL_COMPATIBLE_CRC
 	ThePartitionManager->registerObject( obj );
 	obj->setPosition( getObject()->getPosition() );
 	if( obj->getDrawable() )
@@ -248,10 +248,14 @@ void TunnelContain::onRemoving( Object *obj )
 		obj->setSafeOcclusionFrame(TheGameLogic->getFrame()+obj->getTemplate()->getOcclusionDelay());
 		obj->getDrawable()->setDrawableHidden( false );
 	}
+#else
+	// TheSuperHackers @bugfix Now correctly adds the objects to the world without issues with shrouded portable structures.
+	obj->setPosition(getObject()->getPosition());
+	obj->setSafeOcclusionFrame(TheGameLogic->getFrame() + obj->getTemplate()->getOcclusionDelay());
+	addOrRemoveObjFromWorld(obj, TRUE);
+#endif
 
 	doUnloadSound();
-
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -259,10 +263,10 @@ void TunnelContain::onSelling()
 {
 	// A TunnelContain tells everyone to leave if this is the last tunnel
 	Player *owningPlayer = getObject()->getControllingPlayer();
-	if( owningPlayer == NULL )
+	if( owningPlayer == nullptr )
 		return;
 	TunnelTracker *tunnelTracker = owningPlayer->getTunnelSystem();
-	if( tunnelTracker == NULL )
+	if( tunnelTracker == nullptr )
 		return;
 
 	// We are the last tunnel, so kick everyone out.  This makes tunnels act like Palace and Bunker
@@ -318,10 +322,14 @@ const ContainedItemsList* TunnelContain::getContainedItemsList() const
 	{
 		return owningPlayer->getTunnelSystem()->getContainedItemsList();
 	}
-	return NULL;
+	return nullptr;
 }
 
-
+UnsignedInt TunnelContain::getFullTimeForHeal(void) const
+{
+	const TunnelContainModuleData* modData = getTunnelContainModuleData();
+	return modData->m_framesForFullHeal;
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////////////////////////
@@ -392,10 +400,10 @@ void TunnelContain::onDie( const DamageInfo * damageInfo )
 		return;//it isn't registered as a tunnel
 
 	Player *owningPlayer = getObject()->getControllingPlayer();
-	if( owningPlayer == NULL )
+	if( owningPlayer == nullptr )
 		return;
 	TunnelTracker *tunnelTracker = owningPlayer->getTunnelSystem();
-	if( tunnelTracker == NULL )
+	if( tunnelTracker == nullptr )
 		return;
 
 	tunnelTracker->onTunnelDestroyed( getObject() );
@@ -411,10 +419,10 @@ void TunnelContain::onDelete( void )
 		return;//it isn't registered as a tunnel
 
 	Player *owningPlayer = getObject()->getControllingPlayer();
-	if( owningPlayer == NULL )
+	if( owningPlayer == nullptr )
 		return;
 	TunnelTracker *tunnelTracker = owningPlayer->getTunnelSystem();
-	if( tunnelTracker == NULL )
+	if( tunnelTracker == nullptr )
 		return;
 
 	tunnelTracker->onTunnelDestroyed( getObject() );
@@ -437,10 +445,10 @@ void TunnelContain::onObjectCreated()
 	m_needToRunOnBuildComplete = false;
 
 	Player *owningPlayer = getObject()->getControllingPlayer();
-	if( owningPlayer == NULL )
+	if( owningPlayer == nullptr )
 		return;
 	TunnelTracker *tunnelTracker = owningPlayer->getTunnelSystem();
-	if( tunnelTracker == NULL )
+	if( tunnelTracker == nullptr )
 		return;
 
 	tunnelTracker->onTunnelCreated( getObject() );
@@ -459,10 +467,10 @@ void TunnelContain::onBuildComplete( void )
 	m_needToRunOnBuildComplete = false;
 
 	Player *owningPlayer = getObject()->getControllingPlayer();
-	if( owningPlayer == NULL )
+	if( owningPlayer == nullptr )
 		return;
 	TunnelTracker *tunnelTracker = owningPlayer->getTunnelSystem();
-	if( tunnelTracker == NULL )
+	if( tunnelTracker == nullptr )
 		return;
 
 	tunnelTracker->onTunnelCreated( getObject() );
@@ -521,10 +529,9 @@ UpdateSleepTime TunnelContain::update( void )
 {
 	// extending functionality to heal the units within the tunnel system
 	OpenContain::update();
-	const TunnelContainModuleData *modData = getTunnelContainModuleData();
 
 	Object *obj = getObject();
-	Player *controllingPlayer = NULL;
+	Player *controllingPlayer = nullptr;
 	if (obj)
 	{
 		controllingPlayer = obj->getControllingPlayer();
@@ -532,10 +539,13 @@ UpdateSleepTime TunnelContain::update( void )
 	if (controllingPlayer)
 	{
 		TunnelTracker *tunnelSystem = controllingPlayer->getTunnelSystem();
+#if PRESERVE_RETAIL_BEHAVIOR || RETAIL_COMPATIBLE_CRC
 		if (tunnelSystem)
 		{
+			const TunnelContainModuleData* modData = getTunnelContainModuleData();
 			tunnelSystem->healObjects(modData->m_framesForFullHeal);
 		}
+#endif
 
 		// check for attacked.
 		BodyModuleInterface *body = obj->getBodyModule();

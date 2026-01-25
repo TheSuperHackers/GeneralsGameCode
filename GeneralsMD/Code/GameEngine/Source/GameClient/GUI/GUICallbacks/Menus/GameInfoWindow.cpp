@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "GameClient/WindowLayout.h"
 #include "GameClient/MapUtil.h"
@@ -45,13 +45,13 @@
 #include "GameNetwork/LANAPI.h"
 
 
-static GameWindow *parent = NULL;
-static GameWindow *staticTextGameName = NULL;
-static GameWindow *staticTextMapName = NULL;
-static GameWindow *listBoxPlayers = NULL;
-static GameWindow *winCrates = NULL;
-static GameWindow *winSuperWeapons = NULL;
-static GameWindow *winFreeForAll = NULL;
+static GameWindow *parent = nullptr;
+static GameWindow *staticTextGameName = nullptr;
+static GameWindow *staticTextMapName = nullptr;
+static GameWindow *listBoxPlayers = nullptr;
+static GameWindow *winCrates = nullptr;
+static GameWindow *winSuperWeapons = nullptr;
+static GameWindow *winFreeForAll = nullptr;
 
 static NameKeyType parentID = NAMEKEY_INVALID;
 static NameKeyType staticTextGameNameID = NAMEKEY_INVALID;
@@ -61,13 +61,13 @@ static NameKeyType winCratesID = NAMEKEY_INVALID;
 static NameKeyType winSuperWeaponsID = NAMEKEY_INVALID;
 static NameKeyType winFreeForAllID = NAMEKEY_INVALID;
 
-static WindowLayout *gameInfoWindowLayout = NULL;
+static WindowLayout *gameInfoWindowLayout = nullptr;
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////////////////////////
 
 void CreateLANGameInfoWindow( GameWindow *sizeAndPosWin )
 {
 	if( !gameInfoWindowLayout )
-		gameInfoWindowLayout = TheWindowManager->winCreateLayout( AsciiString( "Menus/GameInfoWindow.wnd" ) );
+		gameInfoWindowLayout = TheWindowManager->winCreateLayout( "Menus/GameInfoWindow.wnd" );
 
 	gameInfoWindowLayout->runInit();
 	gameInfoWindowLayout->bringForward();
@@ -90,7 +90,7 @@ void DestroyGameInfoWindow(void)
 	{
 		gameInfoWindowLayout->destroyWindows();
 		deleteInstance(gameInfoWindowLayout);
-		gameInfoWindowLayout = NULL;
+		gameInfoWindowLayout = nullptr;
 	}
 }
 
@@ -222,7 +222,7 @@ void GameInfoWindowInit( WindowLayout *layout, void *userData )
 	winSuperWeaponsID = TheNameKeyGenerator->nameToKey( "GameInfoWindow.wnd:WinSuperWeapons" );
 	winFreeForAllID = TheNameKeyGenerator->nameToKey( "GameInfoWindow.wnd:WinFreeForAll" );
 
-	parent = TheWindowManager->winGetWindowFromId( NULL, parentID );
+	parent = TheWindowManager->winGetWindowFromId( nullptr, parentID );
 	staticTextGameName = TheWindowManager->winGetWindowFromId( parent, staticTextGameNameID );
 	staticTextMapName = TheWindowManager->winGetWindowFromId( parent, staticTextMapNameID );
 	listBoxPlayers = TheWindowManager->winGetWindowFromId( parent, listBoxPlayersID );

@@ -33,7 +33,7 @@ static char THIS_FILE[] = __FILE__;
 // RetranslateDlg dialog
 
 
-RetranslateDlg::RetranslateDlg(CWnd* pParent /*=NULL*/)
+RetranslateDlg::RetranslateDlg(CWnd* pParent /*=nullptr*/)
 	: CDialog(RetranslateDlg::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(RetranslateDlg)

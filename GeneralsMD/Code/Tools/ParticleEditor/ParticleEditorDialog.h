@@ -16,7 +16,6 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 #pragma once
 
 #include <map>			// for std::pair
@@ -55,7 +54,7 @@ class DebugWindowDialog : public CDialog
 {
 	public:
 		enum {IDD = IDD_PSEd};
-		DebugWindowDialog(UINT nIDTemplate = DebugWindowDialog::IDD, CWnd* pParentWnd = NULL);
+		DebugWindowDialog(UINT nIDTemplate = DebugWindowDialog::IDD, CWnd* pParentWnd = nullptr);
 		virtual ~DebugWindowDialog();
 
 		void InitPanel( void );

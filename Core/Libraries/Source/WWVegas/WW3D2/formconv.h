@@ -37,12 +37,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef FORMCONV_H
-#define FORMCONV_H
 
 #include "ww3dformat.h"
 #include <d3d8.h>
@@ -58,5 +53,3 @@ D3DFORMAT WW3DZFormat_To_D3DFormat(WW3DZFormat ww3d_zformat);
 WW3DZFormat D3DFormat_To_WW3DZFormat(D3DFORMAT d3d_format);
 
 void Init_D3D_To_WW3_Conversion();
-
-#endif

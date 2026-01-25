@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/GlobalData.h"
 #include "Common/Xfer.h"
@@ -56,7 +56,7 @@ void BaseRegenerateUpdateModuleData::buildFieldParse( MultiIniFieldParse &p )
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ 0, 0, 0, 0 }
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 
   p.add( dataFieldParse );

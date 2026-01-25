@@ -59,7 +59,7 @@ W3DTracerDraw::W3DTracerDraw( Thing *thing, const ModuleData* moduleData ) : Dra
 	m_color.green = 0.8f;
 	m_color.blue = 0.7f;
 	m_speedInDistPerFrame = 1.0f;
-	m_theTracer = NULL;
+	m_theTracer = nullptr;
 
 }
 
@@ -111,7 +111,7 @@ void W3DTracerDraw::doDrawModule(const Matrix3D* transformMtx)
 {
 
 	// create tracer
-	if( m_theTracer == NULL )
+	if( m_theTracer == nullptr )
 	{
 
 		Vector3 start( 0.0f, 0.0f, 0.0f );

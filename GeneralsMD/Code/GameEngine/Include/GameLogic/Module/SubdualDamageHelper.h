@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __SubdualDamageHelper_H_
-#define __SubdualDamageHelper_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/ObjectHelper.h"
 
@@ -63,6 +60,3 @@ public:
 protected:
 	UnsignedInt m_healingStepCountdown;
 };
-
-
-#endif  // end __SubdualDamageHelper_H_

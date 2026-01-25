@@ -46,7 +46,7 @@
 //-----------------------------------------------------------------------------
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
@@ -56,7 +56,6 @@
 #include "GameClient/GameWindow.h"
 #include "GameClient/Gadget.h"
 #include "GameClient/KeyDefs.h"
-#include "GameClient/ControlBar.h"
 #include "GameClient/InGameUI.h"
 //-----------------------------------------------------------------------------
 // DEFINES ////////////////////////////////////////////////////////////////////
@@ -75,7 +74,7 @@ WindowMsgHandledType GeneralsExpPointsInput( GameWindow *window, UnsignedInt msg
 			//Get rid of any building placement mode!
 			if( TheInGameUI )
 			{
-				TheInGameUI->placeBuildAvailable( NULL, NULL );
+				TheInGameUI->placeBuildAvailable( nullptr, nullptr );
 			}
 			break;
 

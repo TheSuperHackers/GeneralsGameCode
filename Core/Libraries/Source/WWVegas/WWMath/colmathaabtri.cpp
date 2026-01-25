@@ -146,7 +146,7 @@ struct BTCollisionStruct
 		Vector3::Cross_Product(E[0],E[1],&N);
 	}
 
-	bool						StartBad;			// Inital configuration is intersecting?
+	bool						StartBad;			// Initial configuration is intersecting?
 	float						MaxFrac;				// Longest move allowed so far
 
 	int						AxisId;				// Last separating axis
@@ -860,8 +860,8 @@ exit:
 struct AABTIntersectStruct
 {
 	AABTIntersectStruct(void) :
-		Box(NULL),
-		Tri(NULL)
+		Box(nullptr),
+		Tri(nullptr)
 	{
 	}
 

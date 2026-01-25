@@ -39,7 +39,7 @@
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 #include <windows.h>
-#include <stdio.h>
+#include <WWCommon.h>
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "ImagePacker.h"
@@ -127,7 +127,7 @@ BOOL CALLBACK DirectorySelectProc( HWND hWndDialog, UINT message,
 			// set the current directory in the top label
 			GetCurrentDirectory( _MAX_PATH, buffer );
 			if( buffer[ strlen( buffer ) - 1 ] != '\\' )
-				strcat( buffer, "\\" );
+				strlcat(buffer, "\\", ARRAY_SIZE(buffer));
 			SetDlgItemText( hWndDialog, STATIC_CURRENT_DIR, buffer );
 
 			// load the drive box
@@ -199,7 +199,7 @@ BOOL CALLBACK DirectorySelectProc( HWND hWndDialog, UINT message,
 								char message[ _MAX_PATH + 32 ];
 
 								sprintf( message, "Ignoring folder '%s', already in list.", toAdd );
-								MessageBox( NULL, message, "Folder Already In List",
+								MessageBox( nullptr, message, "Folder Already In List",
 														MB_OK | MB_ICONINFORMATION );
 								continue;
 
@@ -262,7 +262,7 @@ BOOL CALLBACK DirectorySelectProc( HWND hWndDialog, UINT message,
 							// construct new direcotry name and update status text
 							GetCurrentDirectory( _MAX_PATH, buffer );
 							if( buffer[ strlen( buffer ) - 1 ] != '\\' )
-								strcat( buffer, "\\" );
+								strlcat(buffer, "\\", ARRAY_SIZE(buffer));
 							SetDlgItemText( hWndDialog, STATIC_CURRENT_DIR, buffer );
 							EnableWindow( GetDlgItem( hWndDialog, BUTTON_ADD ), FALSE );
 
@@ -353,7 +353,7 @@ BOOL CALLBACK DirectorySelectProc( HWND hWndDialog, UINT message,
 						// construct new direcotry name and update status text
 						GetCurrentDirectory( _MAX_PATH, buffer );
 						if( buffer[ strlen( buffer ) - 1 ] != '\\' )
-							strcat( buffer, "\\" );
+							strlcat(buffer, "\\", ARRAY_SIZE(buffer));
 						SetDlgItemText( hWndDialog, STATIC_CURRENT_DIR, buffer );
 						EnableWindow( GetDlgItem( hWndDialog, BUTTON_ADD ), FALSE );
 

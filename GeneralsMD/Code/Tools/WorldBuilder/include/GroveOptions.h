@@ -16,9 +16,6 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef GROVEOPTIONS_H
-#define GROVEOPTIONS_H
-
 #pragma once
 
 #include <map>
@@ -48,7 +45,7 @@ class GroveOptions : public COptionsPanel
 		Int	mNumTrees;
 
 	public:
-		GroveOptions(CWnd* pParent = NULL);
+		GroveOptions(CWnd* pParent = nullptr);
 		~GroveOptions();
 		void makeMain(void);
 
@@ -78,5 +75,3 @@ class GroveOptions : public COptionsPanel
 };
 
 extern GroveOptions *TheGroveOptions;
-
-#endif

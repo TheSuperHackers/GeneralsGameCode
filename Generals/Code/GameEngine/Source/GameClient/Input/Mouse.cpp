@@ -27,7 +27,7 @@
 // Desc:      Basic mouse interactions
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Debug.h"
 #include "Common/MessageStream.h"
@@ -51,15 +51,7 @@
 
 
 // PUBLIC DATA ////////////////////////////////////////////////////////////////////////////////////
-Mouse *TheMouse = NULL;
-
-const char* const TheCursorCaptureModeNames[] = {
-	"None",
-	"InGame",
-	"Always",
-	"Auto",
-};
-static_assert(ARRAY_SIZE(TheCursorCaptureModeNames) == CursorCaptureMode_Count, "Incorrect array size");
+Mouse *TheMouse = nullptr;
 
 const char *const Mouse::RedrawModeName[] = {
 	"Mouse:Windows",
@@ -70,9 +62,9 @@ const char *const Mouse::RedrawModeName[] = {
 
 const char *const Mouse::CursorCaptureBlockReasonNames[] = {
 	"CursorCaptureBlockReason_NoInit",
-	"CursorCaptureBlockReason_NoGame",
 	"CursorCaptureBlockReason_Paused",
 	"CursorCaptureBlockReason_Unfocused",
+	"CursorCaptureBlockReason_CursorIsOutside",
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -80,44 +72,44 @@ const char *const Mouse::CursorCaptureBlockReasonNames[] = {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 static const FieldParse TheMouseCursorFieldParseTable[] =
 {
-	{ "CursorText",						INI::parseAsciiString,	NULL, offsetof( CursorInfo, cursorText ) },
-	{ "CursorTextColor",			INI::parseRGBAColorInt,	NULL, offsetof( CursorInfo, cursorTextColor ) },
-	{ "CursorTextDropColor",	INI::parseRGBAColorInt,	NULL, offsetof( CursorInfo, cursorTextDropColor ) },
-	{ "W3DModel",							INI::parseAsciiString,	NULL,	offsetof( CursorInfo, W3DModelName ) },
-	{ "W3DAnim",							INI::parseAsciiString,	NULL,	offsetof( CursorInfo, W3DAnimName ) },
-	{ "W3DScale",							INI::parseReal,					NULL,	offsetof( CursorInfo, W3DScale ) },
-	{ "Loop",									INI::parseBool,					NULL,	offsetof( CursorInfo, loop ) },
-	{ "Image",							INI::parseAsciiString,	NULL,	offsetof( CursorInfo, imageName ) },
-	{ "Texture",							INI::parseAsciiString,	NULL,	offsetof( CursorInfo, textureName ) },
-	{ "HotSpot",							INI::parseICoord2D,	NULL,	offsetof( CursorInfo, hotSpotPosition ) },
-	{ "Frames",							INI::parseInt,	NULL,	offsetof( CursorInfo, numFrames ) },
-	{ "FPS",							INI::parseReal, NULL, offsetof( CursorInfo, fps)},
-	{ "Directions",							INI::parseInt,	NULL,	offsetof( CursorInfo, numDirections ) },
+	{ "CursorText",						INI::parseAsciiString,	nullptr, offsetof( CursorInfo, cursorText ) },
+	{ "CursorTextColor",			INI::parseRGBAColorInt,	nullptr, offsetof( CursorInfo, cursorTextColor ) },
+	{ "CursorTextDropColor",	INI::parseRGBAColorInt,	nullptr, offsetof( CursorInfo, cursorTextDropColor ) },
+	{ "W3DModel",							INI::parseAsciiString,	nullptr,	offsetof( CursorInfo, W3DModelName ) },
+	{ "W3DAnim",							INI::parseAsciiString,	nullptr,	offsetof( CursorInfo, W3DAnimName ) },
+	{ "W3DScale",							INI::parseReal,					nullptr,	offsetof( CursorInfo, W3DScale ) },
+	{ "Loop",									INI::parseBool,					nullptr,	offsetof( CursorInfo, loop ) },
+	{ "Image",							INI::parseAsciiString,	nullptr,	offsetof( CursorInfo, imageName ) },
+	{ "Texture",							INI::parseAsciiString,	nullptr,	offsetof( CursorInfo, textureName ) },
+	{ "HotSpot",							INI::parseICoord2D,	nullptr,	offsetof( CursorInfo, hotSpotPosition ) },
+	{ "Frames",							INI::parseInt,	nullptr,	offsetof( CursorInfo, numFrames ) },
+	{ "FPS",							INI::parseReal, nullptr, offsetof( CursorInfo, fps)},
+	{ "Directions",							INI::parseInt,	nullptr,	offsetof( CursorInfo, numDirections ) },
 };
 
 static const FieldParse TheMouseFieldParseTable[] =
 {
-	{ "TooltipFontName",						INI::parseAsciiString,NULL,			offsetof( Mouse, m_tooltipFontName ) },
-	{ "TooltipFontSize",						INI::parseInt,				NULL,			offsetof( Mouse, m_tooltipFontSize ) },
-	{ "TooltipFontIsBold",					INI::parseBool,				NULL,			offsetof( Mouse, m_tooltipFontIsBold ) },
-	{ "TooltipAnimateBackground",		INI::parseBool,				NULL,			offsetof( Mouse, m_tooltipAnimateBackground ) },
-	{ "TooltipFillTime",						INI::parseInt,				NULL,			offsetof( Mouse, m_tooltipFillTime ) },
-	{ "TooltipDelayTime",						INI::parseInt,				NULL,			offsetof( Mouse, m_tooltipDelayTime ) },
-	{ "TooltipTextColor",						INI::parseRGBAColorInt,	NULL,		offsetof( Mouse, m_tooltipColorText ) },
-	{ "TooltipHighlightColor",			INI::parseRGBAColorInt,	NULL,		offsetof( Mouse, m_tooltipColorHighlight ) },
-	{ "TooltipShadowColor",					INI::parseRGBAColorInt,	NULL,		offsetof( Mouse, m_tooltipColorShadow ) },
-	{ "TooltipBackgroundColor",			INI::parseRGBAColorInt,	NULL,		offsetof( Mouse, m_tooltipColorBackground ) },
-	{ "TooltipBorderColor",					INI::parseRGBAColorInt,	NULL,		offsetof( Mouse, m_tooltipColorBorder ) },
-	{ "TooltipWidth",								INI::parsePercentToReal,NULL,		offsetof( Mouse, m_tooltipWidth ) },
-	{ "CursorMode",									INI::parseInt,					NULL,		offsetof( Mouse, m_currentRedrawMode ) },
-	{ "UseTooltipAltTextColor",			INI::parseBool,					NULL,		offsetof( Mouse, m_useTooltipAltTextColor ) },
-	{ "UseTooltipAltBackColor",			INI::parseBool,					NULL,		offsetof( Mouse, m_useTooltipAltBackColor ) },
-	{ "AdjustTooltipAltColor",			INI::parseBool,					NULL,		offsetof( Mouse, m_adjustTooltipAltColor ) },
-	{ "OrthoCamera",								INI::parseBool,					NULL,		offsetof( Mouse, m_orthoCamera ) },
-	{ "OrthoZoom",									INI::parseReal,					NULL,		offsetof( Mouse, m_orthoZoom ) },
-	{ "DragTolerance",							INI::parseUnsignedInt,	NULL,		offsetof( Mouse, m_dragTolerance) },
-	{ "DragTolerance3D",						INI::parseUnsignedInt,	NULL,		offsetof( Mouse, m_dragTolerance3D) },
-	{ "DragToleranceMS",						INI::parseUnsignedInt,	NULL,		offsetof( Mouse, m_dragToleranceMS) },
+	{ "TooltipFontName",						INI::parseAsciiString,nullptr,			offsetof( Mouse, m_tooltipFontName ) },
+	{ "TooltipFontSize",						INI::parseInt,				nullptr,			offsetof( Mouse, m_tooltipFontSize ) },
+	{ "TooltipFontIsBold",					INI::parseBool,				nullptr,			offsetof( Mouse, m_tooltipFontIsBold ) },
+	{ "TooltipAnimateBackground",		INI::parseBool,				nullptr,			offsetof( Mouse, m_tooltipAnimateBackground ) },
+	{ "TooltipFillTime",						INI::parseInt,				nullptr,			offsetof( Mouse, m_tooltipFillTime ) },
+	{ "TooltipDelayTime",						INI::parseInt,				nullptr,			offsetof( Mouse, m_tooltipDelayTime ) },
+	{ "TooltipTextColor",						INI::parseRGBAColorInt,	nullptr,		offsetof( Mouse, m_tooltipColorText ) },
+	{ "TooltipHighlightColor",			INI::parseRGBAColorInt,	nullptr,		offsetof( Mouse, m_tooltipColorHighlight ) },
+	{ "TooltipShadowColor",					INI::parseRGBAColorInt,	nullptr,		offsetof( Mouse, m_tooltipColorShadow ) },
+	{ "TooltipBackgroundColor",			INI::parseRGBAColorInt,	nullptr,		offsetof( Mouse, m_tooltipColorBackground ) },
+	{ "TooltipBorderColor",					INI::parseRGBAColorInt,	nullptr,		offsetof( Mouse, m_tooltipColorBorder ) },
+	{ "TooltipWidth",								INI::parsePercentToReal,nullptr,		offsetof( Mouse, m_tooltipWidth ) },
+	{ "CursorMode",									INI::parseInt,					nullptr,		offsetof( Mouse, m_currentRedrawMode ) },
+	{ "UseTooltipAltTextColor",			INI::parseBool,					nullptr,		offsetof( Mouse, m_useTooltipAltTextColor ) },
+	{ "UseTooltipAltBackColor",			INI::parseBool,					nullptr,		offsetof( Mouse, m_useTooltipAltBackColor ) },
+	{ "AdjustTooltipAltColor",			INI::parseBool,					nullptr,		offsetof( Mouse, m_adjustTooltipAltColor ) },
+	{ "OrthoCamera",								INI::parseBool,					nullptr,		offsetof( Mouse, m_orthoCamera ) },
+	{ "OrthoZoom",									INI::parseReal,					nullptr,		offsetof( Mouse, m_orthoZoom ) },
+	{ "DragTolerance",							INI::parseUnsignedInt,	nullptr,		offsetof( Mouse, m_dragTolerance) },
+	{ "DragTolerance3D",						INI::parseUnsignedInt,	nullptr,		offsetof( Mouse, m_dragTolerance3D) },
+	{ "DragToleranceMS",						INI::parseUnsignedInt,	nullptr,		offsetof( Mouse, m_dragToleranceMS) },
 
 };
 
@@ -191,9 +183,6 @@ void Mouse::updateMouseData( )
 	else
 		m_eventsThisFrame = 0;
 
-	if( index != 0 )
-		m_deadInputFrame = m_inputFrame;
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -229,7 +218,7 @@ void Mouse::processMouseEvent( Int index )
 	m_currMouse.wheelPos += m_mouseEvents[ index ].wheelPos;
 
 	// Check Left Mouse State
-	if( m_mouseEvents[ index ].leftFrame )
+	if( m_mouseEvents[ index ].leftState != MBS_None )
 	{
 		if( m_currMouse.leftState != m_mouseEvents[ index ].leftState )
 		{
@@ -239,21 +228,18 @@ void Mouse::processMouseEvent( Int index )
 				// Mouse Down
 				m_currMouse.leftEvent = GWM_LEFT_DOWN;
 				m_currMouse.leftState = MBS_Down;
-				m_currMouse.leftFrame = m_inputFrame;
 			}
 			else if ( m_mouseEvents[ index ].leftState == MBS_DoubleClick )
 			{
 				// Mouse Double Click
 				m_currMouse.leftEvent = GWM_LEFT_DOUBLE_CLICK;
 				m_currMouse.leftState = MBS_DoubleClick;
-				m_currMouse.leftFrame = m_inputFrame;
 			}
 			else
 			{
 				// Mouse Up
 				m_currMouse.leftEvent = GWM_LEFT_UP;
 				m_currMouse.leftState = MBS_Up;
-				m_currMouse.leftFrame = m_inputFrame;
 			}
 		}
 	}
@@ -265,7 +251,7 @@ void Mouse::processMouseEvent( Int index )
 	}
 
 	// Check Right Mouse State
-	if( m_mouseEvents[ index ].rightFrame )
+	if( m_mouseEvents[ index ].rightState != MBS_None )
 	{
 		if( m_currMouse.rightState != m_mouseEvents[ index ].rightState )
 		{
@@ -275,21 +261,18 @@ void Mouse::processMouseEvent( Int index )
 				// Mouse Down
 				m_currMouse.rightEvent = GWM_RIGHT_DOWN;
 				m_currMouse.rightState = MBS_Down;
-				m_currMouse.rightFrame = m_inputFrame;
 			}
 			else if( m_mouseEvents[ index ].rightState == MBS_DoubleClick )
 			{
 				// Mouse Double Click
 				m_currMouse.rightEvent = GWM_RIGHT_DOUBLE_CLICK;
 				m_currMouse.rightState = MBS_DoubleClick;
-				m_currMouse.rightFrame = m_inputFrame;
 			}
 			else
 			{
 				// Mouse Up
 				m_currMouse.rightEvent = GWM_RIGHT_UP;
 				m_currMouse.rightState = MBS_Up;
-				m_currMouse.rightFrame = m_inputFrame;
 			}
 		}
 	}
@@ -301,7 +284,7 @@ void Mouse::processMouseEvent( Int index )
 	}
 
 	// Check Middle Mouse State
-	if( m_mouseEvents[ index ].middleFrame )
+	if( m_mouseEvents[ index ].middleState != MBS_None )
 	{
 		if( m_currMouse.middleState != m_mouseEvents[index].middleState )
 		{
@@ -310,20 +293,17 @@ void Mouse::processMouseEvent( Int index )
 			{
 				m_currMouse.middleEvent = GWM_MIDDLE_DOWN;
 				m_currMouse.middleState = MBS_Down;
-				m_currMouse.middleFrame = m_inputFrame;
 			}
 			else if( m_mouseEvents[index].middleState == MBS_DoubleClick )
 			{
 				m_currMouse.middleEvent = GWM_MIDDLE_DOUBLE_CLICK;
 				m_currMouse.middleState = MBS_DoubleClick;
-				m_currMouse.middleFrame = m_inputFrame;
 			}
 			else
 			{
 				// Mouse Up
 				m_currMouse.middleEvent = GWM_MIDDLE_UP;
 				m_currMouse.middleState = MBS_Up;
-				m_currMouse.middleFrame = m_inputFrame;
 			}
 		}
 	}
@@ -336,7 +316,7 @@ void Mouse::processMouseEvent( Int index )
 
 	m_currMouse.deltaPos.x = m_currMouse.pos.x - m_prevMouse.pos.x;
 	m_currMouse.deltaPos.y = m_currMouse.pos.y - m_prevMouse.pos.y;
-//	DEBUG_LOG(("Mouse dx %d, dy %d, index %d, frame %d", m_currMouse.deltaPos.x, m_currMouse.deltaPos.y, index, m_inputFrame));
+//	DEBUG_LOG(("Mouse dx %d, dy %d, index %d", m_currMouse.deltaPos.x, m_currMouse.deltaPos.y, index));
 //	// check if mouse is still and flag tooltip
 //	if( ((dx*dx) + (dy*dy)) < CURSOR_MOVE_TOL_SQ )
 //	{
@@ -432,15 +412,12 @@ Bool Mouse::isClick(const ICoord2D *anchor, const ICoord2D *dest, UnsignedInt pr
 //-------------------------------------------------------------------------------------------------
 CursorInfo::CursorInfo( void )
 {
-	// Added Sadullah Nader
-	// Initializations missing and needed
 
 	cursorName.clear();
 	cursorText.clear();
 	cursorTextColor.red = cursorTextColor.green = cursorTextColor.blue = 0;
 	cursorTextDropColor.red = cursorTextDropColor.blue = cursorTextDropColor.green = 0;
 
-	//
 	textureName.clear();
 	imageName.clear();
 	W3DModelName.clear();
@@ -467,16 +444,12 @@ Mouse::Mouse( void )
 	m_numAxes = 0;
 	m_forceFeedback = FALSE;
 
-	//Added By Sadullah Nader
-	//Initializations missing and needed
 	m_dragTolerance = 0;
 	m_dragTolerance3D = 0;
 	m_dragToleranceMS = 0;
-	//
-
 	//m_tooltipString.clear();	// redundant
 	m_displayTooltip = FALSE;
-	m_tooltipDisplayString = NULL;
+	m_tooltipDisplayString = nullptr;
   m_tooltipDelay = -1;  // default value
 	// initialize all the mouse io data
 	memset( m_mouseEvents, 0, sizeof( m_mouseEvents ) );
@@ -488,9 +461,6 @@ Mouse::Mouse( void )
 	m_minY = 0;
 	m_maxY = 0;
 	m_eventsThisFrame = 0;
-
-	m_inputFrame = 0;
-	m_deadInputFrame =0;
 
 	m_inputMovesAbsolute = FALSE;
 
@@ -528,7 +498,7 @@ Mouse::Mouse( void )
 
 	m_isTooltipEmpty = TRUE;
 
-	m_cursorTextDisplayString = NULL;
+	m_cursorTextDisplayString = nullptr;
 	m_cursorTextColor.red   = 255;
 	m_cursorTextColor.green = 255;
 	m_cursorTextColor.blue  = 255;
@@ -552,8 +522,8 @@ Mouse::Mouse( void )
 
 	m_cursorCaptureMode = CursorCaptureMode_Default;
 
-	m_captureBlockReasonBits = (1 << CursorCaptureBlockReason_NoInit) | (1 << CursorCaptureBlockReason_NoGame);
-	DEBUG_LOG(("Mouse::Mouse: m_blockCaptureReason=CursorCaptureBlockReason_NoInit|CursorCaptureBlockReason_NoGame"));
+	m_captureBlockReasonBits = (1 << CursorCaptureBlockReason_NoInit);
+	DEBUG_LOG(("Mouse::Mouse: m_blockCaptureReason=CursorCaptureBlockReason_NoInit"));
 
 }
 
@@ -563,11 +533,11 @@ Mouse::~Mouse( void )
 {
 	if(m_tooltipDisplayString)
 		TheDisplayStringManager->freeDisplayString(m_tooltipDisplayString);
-	m_tooltipDisplayString = NULL;
+	m_tooltipDisplayString = nullptr;
 
 	if( m_cursorTextDisplayString )
 		TheDisplayStringManager->freeDisplayString( m_cursorTextDisplayString );
-	m_cursorTextDisplayString = NULL;
+	m_cursorTextDisplayString = nullptr;
 
 }
 
@@ -576,7 +546,7 @@ the Win32 version of the mouse (by preloading resources before D3D device is cre
 void Mouse::parseIni(void)
 {
 	INI ini;
-	ini.loadFileDirectory( AsciiString( "Data\\INI\\Mouse" ), INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( "Data\\INI\\Mouse", INI_LOAD_OVERWRITE, nullptr );
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -591,7 +561,7 @@ void Mouse::init( void )
 	m_numButtons = 2;  // by default just have 2 buttons
 	m_numAxes = 2;  // by default a normal mouse moves in a 2d plane
 	m_forceFeedback = FALSE;
-	mouseNotifyResolutionChange();
+	onResolutionChanged();
 	m_tooltipString.clear();	// redundant
 	m_displayTooltip = FALSE;
 
@@ -604,9 +574,6 @@ void Mouse::init( void )
 	m_maxX = 799;
 	m_minY = 0;
 	m_maxY = 599;
-
-	m_inputFrame = 0;
-	m_deadInputFrame =0;
 
 	m_inputMovesAbsolute = FALSE;
 	m_eventsThisFrame = 0;
@@ -623,11 +590,11 @@ void Mouse::init( void )
 //-------------------------------------------------------------------------------------------------
 /** Tell mouse system display resolution changed. */
 //-------------------------------------------------------------------------------------------------
-void Mouse::mouseNotifyResolutionChange( void )
+void Mouse::onResolutionChanged( void )
 {
 	if(m_tooltipDisplayString)
 		TheDisplayStringManager->freeDisplayString(m_tooltipDisplayString);
-	m_tooltipDisplayString = NULL;
+	m_tooltipDisplayString = nullptr;
 
 	m_tooltipDisplayString = TheDisplayStringManager->newDisplayString();
 
@@ -653,17 +620,7 @@ void Mouse::mouseNotifyResolutionChange( void )
 //-------------------------------------------------------------------------------------------------
 void Mouse::onGameModeChanged(GameMode prev, GameMode next)
 {
-	const Bool wasInteractiveGame = GameLogic::isInInteractiveGame(prev);
-	const Bool isInteractiveGame = GameLogic::isInInteractiveGame(next);
-
-	if (wasInteractiveGame && !isInteractiveGame)
-	{
-		blockCapture(CursorCaptureBlockReason_NoGame);
-	}
-	else if (!wasInteractiveGame && isInteractiveGame)
-	{
-		unblockCapture(CursorCaptureBlockReason_NoGame);
-	}
+	refreshCursorCapture();
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -701,9 +658,6 @@ void Mouse::reset( void )
 void Mouse::update( void )
 {
 
-	// increment input frame
-	m_inputFrame++;
-
 	// update the mouse data
 	updateMouseData( );
 
@@ -718,11 +672,11 @@ void Mouse::update( void )
 void Mouse::createStreamMessages( void )
 {
 
-	// santiy
-	if( TheMessageStream == NULL )
+	// sanity
+	if( TheMessageStream == nullptr )
 		return;  // no place to put messages
 
-	GameMessage *msg = NULL;
+	GameMessage *msg = nullptr;
 	UnsignedInt now = timeGetTime();
 
 	// basic position messages are always created
@@ -763,7 +717,7 @@ void Mouse::createStreamMessages( void )
 			m_stillTime = now;
 
 		// button messages
-		msg = NULL;
+		msg = nullptr;
 		switch( m_currMouse.leftEvent )
 		{
 
@@ -797,7 +751,7 @@ void Mouse::createStreamMessages( void )
 
 		}
 
-		msg = NULL;
+		msg = nullptr;
 		switch( m_currMouse.middleEvent )
 		{
 
@@ -832,7 +786,7 @@ void Mouse::createStreamMessages( void )
 
 		}
 
-		msg = NULL;
+		msg = nullptr;
 		switch( m_currMouse.rightEvent )
 		{
 
@@ -868,7 +822,7 @@ void Mouse::createStreamMessages( void )
 		}
 
 		// wheel pos
-		msg = NULL;
+		msg = nullptr;
 		if( m_currMouse.wheelPos != 0 )
 		{
 			msg = TheMessageStream->appendMessage( GameMessage::MSG_RAW_MOUSE_WHEEL );
@@ -909,7 +863,7 @@ void Mouse::setCursorTooltip( UnicodeString tooltip, Int delay, const RGBColor *
 		m_lastTooltipWidth = width;
 	}
 
-	if (forceRecalc || !m_isTooltipEmpty && tooltip.compare(m_tooltipDisplayString->getText()))
+	if (forceRecalc || (!m_isTooltipEmpty && tooltip.compare(m_tooltipDisplayString->getText())))
 	{
 		m_tooltipDisplayString->setText(tooltip);
 		//DEBUG_LOG(("Tooltip: %ls", tooltip.str()));
@@ -967,7 +921,7 @@ void Mouse::setMouseText( UnicodeString text,
 {
 
 	// sanity, if no display string has been created, get out of here
-	if( m_cursorTextDisplayString == NULL )
+	if( m_cursorTextDisplayString == nullptr )
 		return;
 
 	// set the text into the cursor display string
@@ -1061,6 +1015,24 @@ void Mouse::regainFocus()
 }
 
 // ------------------------------------------------------------------------------------------------
+void Mouse::onCursorMovedOutside()
+{
+	blockCapture(CursorCaptureBlockReadon_CursorIsOutside);
+}
+
+// ------------------------------------------------------------------------------------------------
+void Mouse::onCursorMovedInside()
+{
+	unblockCapture(CursorCaptureBlockReadon_CursorIsOutside);
+}
+
+// ------------------------------------------------------------------------------------------------
+Bool Mouse::isCursorInside() const
+{
+	return (m_captureBlockReasonBits & (1 << CursorCaptureBlockReadon_CursorIsOutside)) == 0;
+}
+
+// ------------------------------------------------------------------------------------------------
 void Mouse::initCapture()
 {
 	OptionPreferences prefs;
@@ -1072,23 +1044,40 @@ void Mouse::initCapture()
 // ------------------------------------------------------------------------------------------------
 Bool Mouse::canCapture() const
 {
-	constexpr const CursorCaptureBlockReasonInt noGameBits = CursorCaptureBlockReason_NoGame | CursorCaptureBlockReason_Paused;
-
-	switch (m_cursorCaptureMode)
-	{
-	case CursorCaptureMode_None:
+	if (m_captureBlockReasonBits != 0)
 		return false;
-	case CursorCaptureMode_InGame:
-		return (m_captureBlockReasonBits == 0);
-	case CursorCaptureMode_Always:
-		return (m_captureBlockReasonBits & ~noGameBits) == 0;
-	case CursorCaptureMode_Auto:
-	default:
-		if (TheDisplay == NULL || TheDisplay->getWindowed())
-			return (m_captureBlockReasonBits == 0);
+
+	DEBUG_ASSERTCRASH(TheDisplay != nullptr, ("The Display is null"));
+	const Bool inInteractiveGame = TheGameLogic && TheGameLogic->isInInteractiveGame();
+
+	if (TheDisplay->getWindowed())
+	{
+		if (inInteractiveGame)
+		{
+			if ((m_cursorCaptureMode & CursorCaptureMode_EnabledInWindowedGame) == 0)
+				return false;
+		}
 		else
-			return (m_captureBlockReasonBits & ~noGameBits) == 0;
+		{
+			if ((m_cursorCaptureMode & CursorCaptureMode_EnabledInWindowedMenu) == 0)
+				return false;
+		}
 	}
+	else
+	{
+		if (inInteractiveGame)
+		{
+			if ((m_cursorCaptureMode & CursorCaptureMode_EnabledInFullscreenGame) == 0)
+				return false;
+		}
+		else
+		{
+			if ((m_cursorCaptureMode & CursorCaptureMode_EnabledInFullscreenMenu) == 0)
+				return false;
+		}
+	}
+
+	return true;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1156,7 +1145,7 @@ void Mouse::drawTooltip( void )
 		return;
 	}
 
-	/// @todo: Still need to put in display logic so it puts the tool tips in a visable position on the edge of the screen
+	/// @todo: Still need to put in display logic so it puts the tool tips in a visible position on the edge of the screen
 	if( m_displayTooltip && TheDisplay && m_tooltipDisplayString && (m_tooltipDisplayString->getTextLength() > 0) && !m_isTooltipEmpty)
 	{
 		Int width, xPos;
@@ -1219,7 +1208,7 @@ void Mouse::drawCursorText( void )
 {
 
 	// sanity
-	if( m_cursorTextDisplayString == NULL )
+	if( m_cursorTextDisplayString == nullptr )
 		return;
 
 	// get the colors to draw the text in an acceptable format
@@ -1333,7 +1322,7 @@ void Mouse::setCursor( MouseCursor cursor )
 		return;
 
 	// only if we have a display cursor do we do anything with mouse text
-	if( m_cursorTextDisplayString != NULL )
+	if( m_cursorTextDisplayString != nullptr )
 	{
 		CursorInfo *cursorInfo = &m_cursorInfo[ cursor ];
 
@@ -1346,7 +1335,7 @@ void Mouse::setCursor( MouseCursor cursor )
 										 &(cursorInfo->cursorTextColor),
 										 &(cursorInfo->cursorTextDropColor) );
 		else
-			setMouseText( UnicodeString( L"" ), NULL, NULL );
+			setMouseText( L"", nullptr, nullptr );
 
 	}
 

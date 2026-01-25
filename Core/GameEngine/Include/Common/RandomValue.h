@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifndef _RANDOM_VALUE_H_
-#define _RANDOM_VALUE_H_
-
 #include "Lib/BaseType.h"
 
 extern void InitRandom( void );
@@ -40,5 +37,3 @@ extern UnsignedInt GetGameLogicRandomSeed( void );   ///< Get the seed (used for
 extern UnsignedInt GetGameLogicRandomSeedCRC( void );///< Get the seed (used for CRCs)
 
 //--------------------------------------------------------------------------------------------------------------
-
-#endif // _RANDOM_VALUE_H_

@@ -26,15 +26,15 @@
 #include "WorldBuilderView.h"
 #include "MoundTool.h"
 
-MoundOptions *MoundOptions::m_staticThis = NULL;
+MoundOptions *MoundOptions::m_staticThis = nullptr;
 Int MoundOptions::m_currentWidth = 0;
 Int MoundOptions::m_currentHeight = 0;
 Int MoundOptions::m_currentFeather = 0;
 /////////////////////////////////////////////////////////////////////////////
-/// MoundOptions dialog trivial construstor - Create does the real work.
+/// MoundOptions dialog trivial constructor - Create does the real work.
 
 
-MoundOptions::MoundOptions(CWnd* pParent /*=NULL*/)
+MoundOptions::MoundOptions(CWnd* pParent /*=nullptr*/)
 {
 	//{{AFX_DATA_INIT(MoundOptions)
 		// NOTE: the ClassWizard will add member initialization here
@@ -78,8 +78,8 @@ void MoundOptions::setWidth(Int width)
 
 void MoundOptions::setHeight(Int height)
 {
-	char buffer[50];
-	sprintf(buffer, "%d", height);
+	char buffer[12];
+	snprintf(buffer, ARRAY_SIZE(buffer), "%d", height);
 	m_currentHeight = height;
 	if (m_staticThis && !m_staticThis->m_updating) {
 		CWnd *pEdit = m_staticThis->GetDlgItem(IDC_HEIGHT_EDIT);
@@ -129,7 +129,7 @@ void MoundOptions::OnChangeFeatherEdit()
 			if (1==sscanf(buffer, "%d", &feather)) {
 				m_currentFeather = feather;
 				MoundTool::setFeather(m_currentFeather);
-				sprintf(buffer, "%.1f FEET.", m_currentFeather*MAP_XY_FACTOR);
+				snprintf(buffer, ARRAY_SIZE(buffer), "%.1f FEET.", m_currentFeather*MAP_XY_FACTOR);
 				pEdit = m_staticThis->GetDlgItem(IDC_FEATHER_LABEL);
 				if (pEdit) pEdit->SetWindowText(buffer);
 			}
@@ -152,7 +152,7 @@ void MoundOptions::OnChangeSizeEdit()
 			if (1==sscanf(buffer, "%d", &width)) {
 				m_currentWidth = width;
 				MoundTool::setWidth(m_currentWidth);
-				sprintf(buffer, "%.1f FEET.", m_currentWidth*MAP_XY_FACTOR);
+				snprintf(buffer, ARRAY_SIZE(buffer), "%.1f FEET.", m_currentWidth*MAP_XY_FACTOR);
 				pEdit = m_staticThis->GetDlgItem(IDC_WIDTH_LABEL);
 				if (pEdit) pEdit->SetWindowText(buffer);
 			}
@@ -175,7 +175,7 @@ void MoundOptions::OnChangeHeightEdit()
 			if (1==sscanf(buffer, "%d", &height)) {
 				m_currentHeight = height;
 				MoundTool::setMoundHeight(m_currentHeight);
-				sprintf(buffer, "%.1f FEET.", m_currentHeight*MAP_HEIGHT_SCALE);
+				snprintf(buffer, ARRAY_SIZE(buffer), "%.1f FEET.", m_currentHeight*MAP_HEIGHT_SCALE);
 				pEdit = m_staticThis->GetDlgItem(IDC_HEIGHT_LABEL);
 				if (pEdit) pEdit->SetWindowText(buffer);
 			}

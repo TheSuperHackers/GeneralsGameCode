@@ -40,8 +40,6 @@
 //----------------------------------------------------------------------------
 
 #pragma once
-#ifndef __COMMON_GAMESOUNDS_H_
-#define __COMMON_GAMESOUNDS_H_
 
 #include "Common/SubsystemInterface.h"
 #include "Common/GameAudio.h"
@@ -98,6 +96,3 @@ class SoundManager : public SubsystemInterface
 		UnsignedInt m_numPlaying2DSamples;
 		UnsignedInt m_numPlaying3DSamples;
 };
-
-#endif // __COMMON_GAMESOUNDS_H_
-

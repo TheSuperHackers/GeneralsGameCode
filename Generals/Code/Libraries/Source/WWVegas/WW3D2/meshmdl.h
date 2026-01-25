@@ -34,13 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef MESHMDL_H
-#define MESHMDL_H
 
 #include "vector2.h"
 #include "vector3.h"
@@ -248,7 +242,7 @@ public:
 	// Process texture reductions
 //	void							Process_Texture_Reduction(void);
 
-	// FVF category container will be NULL if the mesh hasn't been registered to the rendering system
+	// FVF category container will be null if the mesh hasn't been registered to the rendering system
 	DX8FVFCategoryContainer* Peek_FVF_Category_Container();
 
 	// Determine whether any rendering feature used by this mesh requires vertex normals
@@ -386,8 +380,3 @@ inline void	MeshModelClass::Apply_Deformation (const SphereClass &sphere, float 
 	MeshDeformer.Apply (*this, sphere, percent, additive);
 }
 #endif
-
-
-
-#endif
-

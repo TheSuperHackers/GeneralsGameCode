@@ -34,9 +34,6 @@
 
 #pragma once
 
-#ifndef __HIJACKER_UPDATE_H
-#define __HIJACKER_UPDATE_H
-
 #include "GameLogic/Module/UpdateModule.h"
 
 //-------------------------------------------------------------------------------------------------
@@ -53,8 +50,8 @@ public:
     UpdateModuleData::buildFieldParse(p);
 		static const FieldParse dataFieldParse[] =
 		{
-			{ "AttachToTargetBone",	INI::parseAsciiString,		NULL, offsetof( HijackerUpdateModuleData, m_attachToBone ) },
-			{ "ParachuteName",	INI::parseAsciiString,		NULL, offsetof( HijackerUpdateModuleData, m_parachuteName ) },
+			{ "AttachToTargetBone",	INI::parseAsciiString,		nullptr, offsetof( HijackerUpdateModuleData, m_attachToBone ) },
+			{ "ParachuteName",	INI::parseAsciiString,		nullptr, offsetof( HijackerUpdateModuleData, m_parachuteName ) },
 			{ 0, 0, 0, 0 }
 		};
     p.add(dataFieldParse);
@@ -92,6 +89,3 @@ private:
 																			 // of target vehicle if it has one
 
 };
-
-#endif // __HIJACKER_UPDATE_H
-

@@ -37,9 +37,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef MATRIXMAPPER_H
-#define MATRIXMAPPER_H
+#pragma once
 
 #include "always.h"
 #include "bittype.h"
@@ -96,7 +94,7 @@ public:
 
 	void						Compute_Texture_Coordinate(const Vector3 & point,Vector3 * set_stq);
 
-	TextureMapperClass*	Clone(void) const { 	WWASSERT(0);	return NULL; }
+	TextureMapperClass*	Clone(void) const { 	WWASSERT(0);	return nullptr; }
 
 	virtual void			Apply(int uv_array_index);
 
@@ -140,5 +138,3 @@ inline const Matrix4x4 & MatrixMapperClass::Get_Texture_Transform(void) const
 {
 	return ViewToTexture;
 }
-
-#endif

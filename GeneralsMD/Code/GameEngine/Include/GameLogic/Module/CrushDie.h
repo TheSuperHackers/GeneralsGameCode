@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __CrushDie_H_
-#define __CrushDie_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/AudioEventRTS.h"
 #include "Common/INI.h"
@@ -73,12 +70,12 @@ public:
 
 		static const FieldParse dataFieldParse[] =
 		{
-			{ "TotalCrushSound",					INI::parseAudioEventRTS,			NULL, offsetof( CrushDieModuleData, m_crushSounds[TOTAL_CRUSH] ) },
-			{ "BackEndCrushSound",				INI::parseAudioEventRTS,			NULL, offsetof( CrushDieModuleData, m_crushSounds[BACK_END_CRUSH] ) },
-			{ "FrontEndCrushSound",				INI::parseAudioEventRTS,			NULL, offsetof( CrushDieModuleData, m_crushSounds[FRONT_END_CRUSH] ) },
-			{ "TotalCrushSoundPercent",		INI::parseInt,						NULL, offsetof( CrushDieModuleData, m_crushSoundPercent[TOTAL_CRUSH] ) },
-			{ "BackEndCrushSoundPercent",	INI::parseInt,						NULL, offsetof( CrushDieModuleData, m_crushSoundPercent[BACK_END_CRUSH] ) },
-			{ "FrontEndCrushSoundPercent",INI::parseInt,						NULL, offsetof( CrushDieModuleData, m_crushSoundPercent[FRONT_END_CRUSH] ) },
+			{ "TotalCrushSound",					INI::parseAudioEventRTS,			nullptr, offsetof( CrushDieModuleData, m_crushSounds[TOTAL_CRUSH] ) },
+			{ "BackEndCrushSound",				INI::parseAudioEventRTS,			nullptr, offsetof( CrushDieModuleData, m_crushSounds[BACK_END_CRUSH] ) },
+			{ "FrontEndCrushSound",				INI::parseAudioEventRTS,			nullptr, offsetof( CrushDieModuleData, m_crushSounds[FRONT_END_CRUSH] ) },
+			{ "TotalCrushSoundPercent",		INI::parseInt,						nullptr, offsetof( CrushDieModuleData, m_crushSoundPercent[TOTAL_CRUSH] ) },
+			{ "BackEndCrushSoundPercent",	INI::parseInt,						nullptr, offsetof( CrushDieModuleData, m_crushSoundPercent[BACK_END_CRUSH] ) },
+			{ "FrontEndCrushSoundPercent",INI::parseInt,						nullptr, offsetof( CrushDieModuleData, m_crushSoundPercent[FRONT_END_CRUSH] ) },
 			{ 0, 0, 0, 0 }
 		};
     p.add(dataFieldParse);
@@ -101,6 +98,3 @@ public:
 	virtual void onDie( const DamageInfo *damageInfo );
 
 };
-
-#endif // __CrushDie_H_
-

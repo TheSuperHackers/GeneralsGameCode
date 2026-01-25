@@ -23,7 +23,7 @@
  *                                                                         *
  *                 Project Name : Voxel Technology                         *
  *                                                                         *
- *                    File Name : QUAT.H                                   *
+ *                    File Name : QUAT.h                                   *
  *                                                                         *
  *                   Programmer : Greg Hjelstrom                           *
  *                                                                         *
@@ -35,12 +35,7 @@
  * Functions:                                                              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef QUAT_H
-#define QUAT_H
 
 #include "always.h"
 #include "wwmath.h"
@@ -130,7 +125,7 @@ inline Quaternion operator + (const Quaternion & a,const Quaternion & b)
 	return Quaternion(a[0] + b[0], a[1] + b[1], a[2] + b[2], a[3] + b[3]);
 }
 
-// Subract two quaternions
+// Subtract two quaternions
 inline Quaternion operator - (const Quaternion & a,const Quaternion & b)
 {
 	return Quaternion(a[0] - b[0], a[1] - b[1], a[2] - b[2], a[3] - b[3]);
@@ -236,7 +231,7 @@ inline Vector3 Quaternion::Rotate_Vector(const Vector3 & v) const
 
 inline void Quaternion::Rotate_Vector(const Vector3 & v,Vector3 * result) const
 {
-	assert(result != NULL);
+	assert(result != nullptr);
 
 	float x = W*v.X + (Y*v.Z - v.Y*Z);
 	float y = W*v.Y - (X*v.Z - v.X*Z);
@@ -255,8 +250,3 @@ inline bool Quaternion::Is_Valid(void) const
 				WWMath::Is_Valid_Float(Z) &&
 				WWMath::Is_Valid_Float(W) );
 }
-
-#endif /* QUAT_H */
-
-
-

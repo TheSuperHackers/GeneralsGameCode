@@ -30,12 +30,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef __LOGICAL_LISTENER_H
-#define __LOGICAL_LISTENER_H
 
 #include "SoundSceneObj.h"
 #include "bittype.h"
@@ -147,7 +142,3 @@ class LogicalListenerClass : public SoundSceneObjClass
 		static uint32			m_OldestTimestamp;
 		static uint32			m_NewestTimestamp;
 };
-
-
-#endif //__LOGICAL_LISTENER_H
-

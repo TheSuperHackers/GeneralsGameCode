@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef CHECKPOINT_UPDATE_H
-#define CHECKPOINT_UPDATE_H
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpdateModule.h"
 #include "Common/KindOf.h"
@@ -57,7 +54,7 @@ public:
     UpdateModuleData::buildFieldParse(p);
 		static const FieldParse dataFieldParse[] =
 		{
-			{ "ScanDelayTime",		INI::parseDurationUnsignedInt,		NULL, offsetof( CheckpointUpdateModuleData, m_enemyScanDelayTime ) },
+			{ "ScanDelayTime",		INI::parseDurationUnsignedInt,		nullptr, offsetof( CheckpointUpdateModuleData, m_enemyScanDelayTime ) },
 			{ 0, 0, 0, 0 }
 		};
     p.add(dataFieldParse);
@@ -88,6 +85,3 @@ protected:
 	void checkForAlliesAndEnemies( void );
 
 };
-
-#endif // end CHECKPOINT_UPDATE_H
-

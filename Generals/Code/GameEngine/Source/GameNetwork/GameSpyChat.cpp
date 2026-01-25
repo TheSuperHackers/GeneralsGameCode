@@ -26,7 +26,7 @@
 // GameSpy chat handlers
 // Author: Matthew D. Campbell, February 2002
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "GameClient/GameText.h"
 #include "GameClient/GadgetListBox.h"
@@ -439,7 +439,7 @@ static handleUnicodeMessage( const char *nick, UnicodeString msg, Bool isPublic,
 
 void GameSpyAddText( UnicodeString message, GameSpyColors color )
 {
-	GameWindow *textWindow = NULL;
+	GameWindow *textWindow = nullptr;
 
 	if (!textWindow)
 		textWindow = listboxLobbyChat;

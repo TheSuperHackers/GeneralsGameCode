@@ -26,11 +26,8 @@
 //
 // Debug I/O interface
 //////////////////////////////////////////////////////////////////////////////
-#ifdef _MSC_VER
-#  pragma once
-#endif
-#ifndef DEBUG_IO_H // Include guard
-#define DEBUG_IO_H
+
+#pragma once
 
 /**
   \interface DebugIOInterface debug.h <rts/debug.h>
@@ -109,19 +106,19 @@ public:
     \brief Write out some characters differentiated by the log string type.
 
     \param type possible string type
-    \param src string source, may be NULL, content depends on type:
+    \param src string source, may be nullptr, content depends on type:
                 <table><tr>
                   <td><b>type</b></td><td><b>src</b></td></tr><tr>
                   <td>Assert</td><td>file(line)</td></tr><tr>
                   <td>Check</td><td>file(line)</td></tr><tr>
                   <td>Log</td><td>log group</td></tr><tr>
                   <td>Crash</td><td>file(line)</td></tr><tr>
-                  <td>Exception</td><td>NULL</td></tr><tr>
+                  <td>Exception</td><td>nullptr</td></tr><tr>
                   <td>CmdReply</td><td>group.command</td></tr><tr>
                   <td>StructuredCmdReply</td><td>group.command</td></tr><tr>
-                  <td>Other</td><td>NULL</td>
+                  <td>Other</td><td>nullptr</td>
                 </tr></table>
-    \param str string to output, NUL delimited, if NULL then simply flush
+    \param str string to output, NUL delimited, if nullptr then simply flush
                output (if applicable)
   */
   virtual void Write(StringType type, const char *src, const char *str)=0;
@@ -198,5 +195,3 @@ public:
 #endif
 
 ///@}
-
-#endif // DEBUG_IO_H

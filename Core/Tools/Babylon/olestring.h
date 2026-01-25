@@ -20,8 +20,7 @@
 // OLEString
 //
 
-#ifndef __OLESTRING_H
-#define __OLESTRING_H
+#pragma once
 
 const unsigned int OLESTRING_DEFAULT_SIZE = 256;
 
@@ -55,7 +54,3 @@ template <typename text> int SameFormat ( text *string1, text *string2 );
 template <typename text> void EncodeFormat ( text *string );
 template <typename text> void DecodeFormat ( text *string );
 template <typename text> int IsFormatTypeChar(  text string1 );
-
-
-
-#endif // __OLESTRING_H

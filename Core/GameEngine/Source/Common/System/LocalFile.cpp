@@ -49,7 +49,6 @@
 
 #include <fcntl.h>
 #include <io.h>
-#include <string.h>
 #include <sys/stat.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -107,7 +106,7 @@ static Int s_totalOpen = 0;
 
 LocalFile::LocalFile()
 #if USE_BUFFERED_IO
-	: m_file(NULL)
+	: m_file(nullptr)
 #else
 	: m_handle(-1)
 #endif
@@ -166,7 +165,7 @@ Bool LocalFile::open( const Char *filename, Int access, size_t bufferSize )
 	const Bool truncate  = (m_access & TRUNCATE) != 0;
 	const Bool binary    = (m_access & BINARY) != 0;
 
-	const Char *mode = NULL;
+	const Char *mode = nullptr;
 
 	// Mode string selection (mimics _open flag combinations)
 	// TEXT is implicit for fopen if 'b' is not present
@@ -192,7 +191,7 @@ Bool LocalFile::open( const Char *filename, Int access, size_t bufferSize )
 	}
 
 	m_file = fopen(filename, mode);
-	if (m_file == NULL)
+	if (m_file == nullptr)
 	{
 		goto error;
 	}
@@ -202,7 +201,7 @@ Bool LocalFile::open( const Char *filename, Int access, size_t bufferSize )
 
 		if (bufferSize == 0)
 		{
-			result = setvbuf(m_file, NULL, _IONBF, 0); // Uses no buffering
+			result = setvbuf(m_file, nullptr, _IONBF, 0); // Uses no buffering
 		}
 		else
 		{
@@ -211,7 +210,7 @@ Bool LocalFile::open( const Char *filename, Int access, size_t bufferSize )
 				: _IOFBF; // Uses full buffering
 
 			// Buffer is expected to lazy allocate on first read or write later
-			result = setvbuf(m_file, NULL, bufferMode, bufferSize);
+			result = setvbuf(m_file, nullptr, bufferMode, bufferSize);
 		}
 
 		DEBUG_ASSERTCRASH(result == 0, ("LocalFile::open - setvbuf failed"));
@@ -316,7 +315,7 @@ void LocalFile::closeFile()
 	if (m_file)
 	{
 		fclose(m_file);
-		m_file = NULL;
+		m_file = nullptr;
 		--s_totalOpen;
 	}
 #else
@@ -341,7 +340,7 @@ Int LocalFile::read( void *buffer, Int bytes )
 		return -1;
 	}
 
-	if (buffer == NULL)
+	if (buffer == nullptr)
 	{
 #if USE_BUFFERED_IO
 		fseek(m_file, bytes, SEEK_CUR);
@@ -670,7 +669,7 @@ void LocalFile::nextLine(Char *buf, Int bufSize)
 
 	// seek to the next new-line.
 	do {
-		if ((buf == NULL) || (i >= (bufSize-1))) {
+		if ((buf == nullptr) || (i >= (bufSize-1))) {
 #if USE_BUFFERED_IO
 			val = fread(&c, 1, 1, m_file);
 #else
@@ -687,7 +686,7 @@ void LocalFile::nextLine(Char *buf, Int bufSize)
 		++i;
 	} while ((val != 0) && (c != '\n'));
 
-	if (buf != NULL) {
+	if (buf != nullptr) {
 		if (i < bufSize) {
 			buf[i] = 0;
 		} else {

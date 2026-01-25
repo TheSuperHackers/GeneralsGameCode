@@ -34,16 +34,14 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef BCHANNEL_H
-#define BCHANNEL_H
+#pragma once
 
 #ifndef ALWAYS_H
 #include "always.h"
 #endif
 
 #ifndef BITTYPE_H
-#include "BITTYPE.H"
+#include "BITTYPE.h"
 #endif
 
 #ifndef CHUNKIO_H
@@ -51,7 +49,7 @@
 #endif
 
 #ifndef VECTOR_H
-#include "Vector.H"
+#include "Vector.h"
 #endif
 
 #ifndef W3D_FILE_H
@@ -98,6 +96,3 @@ private:
 
 
 };
-
-
-#endif

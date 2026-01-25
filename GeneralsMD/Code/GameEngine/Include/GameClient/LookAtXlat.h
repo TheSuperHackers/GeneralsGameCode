@@ -27,9 +27,6 @@
 
 #pragma once
 
-#ifndef _H_LookAtXlat
-#define _H_LookAtXlat
-
 #include "GameClient/InGameUI.h"
 
 //-----------------------------------------------------------------------------
@@ -74,16 +71,17 @@ private:
 	ICoord2D m_anchor;
 	ICoord2D m_originalAnchor;
 	ICoord2D m_currentPos;
+	Real m_anchorAngle;
 	Bool m_isScrolling;				// set to true if we are in the act of RMB scrolling
 	Bool m_isRotating;					// set to true if we are in the act of MMB rotating
 	Bool m_isPitching;					// set to true if we are in the act of ALT pitch rotation
 	Bool m_isChangingFOV;			// set to true if we are in the act of changing the field of view
-	UnsignedInt m_timestamp;				// set when button goes down
+	UnsignedInt m_middleButtonDownTimeMsec;				// real-time in milliseconds when middle button goes down
 	DrawableID m_lastPlaneID;
 	ViewLocation m_viewLocation[ MAX_VIEW_LOCS ];
 	ScrollType m_scrollType;
 	ScreenEdgeScrollMode m_screenEdgeScrollMode;
-	UnsignedInt m_lastMouseMoveFrame;
+	UnsignedInt m_lastMouseMoveTimeMsec;				// real-time in milliseconds when mouse last moved
 
 	void setScrolling( ScrollType scrollType );
 	void stopScrolling( void );
@@ -91,5 +89,3 @@ private:
 };
 
 extern LookAtTranslator *TheLookAtTranslator;
-
-#endif

@@ -26,7 +26,7 @@
 // Author: Kris Morness, August 2002
 // Desc:   A standard ai update that also handles units that must deploy to attack and pack before moving.
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Player.h"
 #include "Common/ThingFactory.h"

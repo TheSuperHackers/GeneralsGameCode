@@ -47,11 +47,6 @@
 
 #pragma once
 
-#ifndef _GAMECOMMON_H_
-#define _GAMECOMMON_H_
-
-
-
 #define DONT_ALLOW_DEBUG_CHEATS_IN_RELEASE ///< Take of the DONT to get cheats back in to release
 
 //#define _CAMPEA_DEMO
@@ -72,7 +67,7 @@
 enum
 {
 	BaseFps = 30, // The historic base frame rate for this game. This value must never change.
-	LOGICFRAMES_PER_SECOND = 30,
+	LOGICFRAMES_PER_SECOND = WWSyncPerSecond,
 	MSEC_PER_SECOND = 1000
 };
 const Real LOGICFRAMES_PER_MSEC_REAL = (((Real)LOGICFRAMES_PER_SECOND) / ((Real)MSEC_PER_SECOND));
@@ -343,7 +338,7 @@ public:																																								\
 			o->dlink_removeFrom_##LISTNAME(&m_dlinkhead_##LISTNAME.m_head);									\
 	}																																										\
 	typedef void (*RemoveAllProc_##LISTNAME)(OBJCLASS* o);															\
-	inline void removeAll_##LISTNAME(RemoveAllProc_##LISTNAME p = NULL)									\
+	inline void removeAll_##LISTNAME(RemoveAllProc_##LISTNAME p = nullptr)									\
 	{																																										\
 		while (m_dlinkhead_##LISTNAME.m_head)																							\
 		{																																									\
@@ -356,7 +351,7 @@ public:																																								\
 	inline void reverse_##LISTNAME()																										\
 	{																																										\
 		OBJCLASS* cur = m_dlinkhead_##LISTNAME.m_head;																		\
-		OBJCLASS* prev = NULL;																														\
+		OBJCLASS* prev = nullptr;																														\
 		while (cur)																																				\
 		{																																									\
 			OBJCLASS* originalNext = cur->dlink_next_##LISTNAME();													\
@@ -460,7 +455,7 @@ public:
 
 	Bool done() const
 	{
-		return m_cur == NULL;
+		return m_cur == nullptr;
 	}
 
 	OBJCLASS* cur() const
@@ -508,6 +503,3 @@ enum Relationship CPP_11(: Int)
 
 // TheRelationShipNames is defined in Common/GameCommon.cpp
 extern const char *const TheRelationshipNames[];
-
-#endif // _GAMECOMMON_H_
-

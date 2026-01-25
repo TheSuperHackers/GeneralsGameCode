@@ -46,9 +46,6 @@
 
 #pragma once
 
-#ifndef __DIALOGPROC_H_
-#define __DIALOGPROC_H_
-
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 #include <windows.h>
 
@@ -69,6 +66,3 @@ extern BOOL CALLBACK GridSettingsDialogProc( HWND hWndDialog, UINT message,
 																						 WPARAM wParam, LPARAM lParam );
 extern BOOL CALLBACK CallbackEditorDialogProc( HWND hWndDialog, UINT message,
 																							 WPARAM wParam, LPARAM lParam );
-
-#endif // __DIALOGPROC_H_
-

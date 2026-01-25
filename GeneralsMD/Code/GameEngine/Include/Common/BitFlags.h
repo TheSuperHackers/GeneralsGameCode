@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __BitFlags_H_
-#define __BitFlags_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/STLTypedefs.h"
 
@@ -46,7 +43,7 @@ class AsciiString;
 	us initialize stuff in useful ways, and (2) provide a default constructor that implicitly
 	converts ints into bitsets in a "wrong" way (ie, it treats the int as a mask, not an index).
 	So we wrap to correct this, but leave the bitset "exposed" so that we can use all the non-ctor
-	functions on it directly (since it doesn't overload operator= to do the "wrong" thing, strangley enough)
+	functions on it directly (since it doesn't overload operator= to do the "wrong" thing, strangely enough)
 */
 template <size_t NUMBITS>
 class BitFlags
@@ -61,34 +58,45 @@ public:
 	/*
 		just a little syntactic sugar so that there is no "foo = 0" compatible constructor
 	*/
-	enum BogusInitType
-	{
-		kInit = 0
-	};
+	enum BogusInitType { kInit };
+	enum InitSetAllType { kInitSetAll };
 
-	inline BitFlags()
+	BitFlags()
 	{
 	}
 
-	inline BitFlags(BogusInitType k, Int idx1)
+	// This constructor sets all bits to 1
+	BitFlags(InitSetAllType)
+	{
+		m_bits.set();
+	}
+
+	BitFlags(UnsignedInt value)
+		: m_bits(static_cast<unsigned long>(value))
+	{
+	}
+
+	// TheSuperHackers @todo Replace with variadic template
+
+	BitFlags(BogusInitType k, Int idx1)
 	{
 		m_bits.set(idx1);
 	}
 
-	inline BitFlags(BogusInitType k, Int idx1, Int idx2)
+	BitFlags(BogusInitType k, Int idx1, Int idx2)
 	{
 		m_bits.set(idx1);
 		m_bits.set(idx2);
 	}
 
-	inline BitFlags(BogusInitType k, Int idx1, Int idx2, Int idx3)
+	BitFlags(BogusInitType k, Int idx1, Int idx2, Int idx3)
 	{
 		m_bits.set(idx1);
 		m_bits.set(idx2);
 		m_bits.set(idx3);
 	}
 
-	inline BitFlags(BogusInitType k, Int idx1, Int idx2, Int idx3, Int idx4)
+	BitFlags(BogusInitType k, Int idx1, Int idx2, Int idx3, Int idx4)
 	{
 		m_bits.set(idx1);
 		m_bits.set(idx2);
@@ -96,66 +104,48 @@ public:
 		m_bits.set(idx4);
 	}
 
-	inline BitFlags(BogusInitType k, Int idx1, Int idx2, Int idx3, Int idx4, Int idx5)
-	{
-		m_bits.set(idx1);
-		m_bits.set(idx2);
-		m_bits.set(idx3);
-		m_bits.set(idx4);
-		m_bits.set(idx5);
-	}
-
-	inline BitFlags(BogusInitType k,
-										Int idx1,
-										Int idx2,
-										Int idx3,
-										Int idx4,
-										Int idx5,
-										Int idx6,
-										Int idx7,
-										Int idx8,
-										Int idx9,
-										Int idx10,
-										Int idx11,
-										Int idx12
-									)
+	BitFlags(BogusInitType k, Int idx1, Int idx2, Int idx3, Int idx4, Int idx5)
 	{
 		m_bits.set(idx1);
 		m_bits.set(idx2);
 		m_bits.set(idx3);
 		m_bits.set(idx4);
 		m_bits.set(idx5);
-		m_bits.set(idx6);
-		m_bits.set(idx7);
-		m_bits.set(idx8);
-		m_bits.set(idx9);
-		m_bits.set(idx10);
-		m_bits.set(idx11);
-		m_bits.set(idx12);
 	}
 
-	inline Bool operator==(const BitFlags& that) const
+	// Set all given indices in the array.
+	BitFlags(BogusInitType, const Int* idxs, Int count)
+	{
+		const Int* idx = idxs;
+		const Int* end = idxs + count;
+		for (; idx < end; ++idx)
+		{
+			m_bits.set(*idx);
+		}
+	}
+
+	Bool operator==(const BitFlags& that) const
 	{
 		return this->m_bits == that.m_bits;
 	}
 
-	inline Bool operator!=(const BitFlags& that) const
+	Bool operator!=(const BitFlags& that) const
 	{
 		return this->m_bits != that.m_bits;
 	}
 
-	inline void set(Int i, Int val = 1)
+	void set(Int i, Int val = 1)
 	{
 		m_bits.set(i, val);
 	}
 
-	inline Bool test(Int i) const
+	Bool test(Int i) const
 	{
 		return m_bits.test(i);
 	}
 
 	//Tests for any bits that are set in both.
-	inline Bool testForAny( const BitFlags& that ) const
+	Bool testForAny( const BitFlags& that ) const
 	{
 		BitFlags tmp = *this;
 		tmp.m_bits &= that.m_bits;
@@ -163,7 +153,7 @@ public:
 	}
 
 	//All argument bits must be set in our bits too in order to return TRUE
-	inline Bool testForAll( const BitFlags& that ) const
+	Bool testForAll( const BitFlags& that ) const
 	{
 		DEBUG_ASSERTCRASH( that.any(), ("BitFlags::testForAll is always true if you ask about zero flags.  Did you mean that?") );
 
@@ -174,46 +164,46 @@ public:
 	}
 
 	//None of the argument bits must be set in our bits in order to return TRUE
-	inline Bool testForNone( const BitFlags& that ) const
+	Bool testForNone( const BitFlags& that ) const
 	{
 		BitFlags tmp = *this;
 		tmp.m_bits &= that.m_bits;
 		return !tmp.m_bits.any();
 	}
 
-	inline Int size() const
+	Int size() const
 	{
 		return m_bits.size();
 	}
 
-	inline Int count() const
+	Int count() const
 	{
 		return m_bits.count();
 	}
 
-	inline Bool any() const
+	Bool any() const
 	{
 		return m_bits.any();
 	}
 
-	inline void flip()
+	void flip()
 	{
 		m_bits.flip();
 	}
 
-	inline void clear()
+	void clear()
 	{
 		m_bits.reset();
 	}
 
-	inline Int countIntersection(const BitFlags& that) const
+	Int countIntersection(const BitFlags& that) const
 	{
 		BitFlags tmp = *this;
 		tmp.m_bits &= that.m_bits;
 		return tmp.m_bits.count();
 	}
 
-	inline Int countInverseIntersection(const BitFlags& that) const
+	Int countInverseIntersection(const BitFlags& that) const
 	{
 		BitFlags tmp = *this;
 		tmp.m_bits.flip();
@@ -221,7 +211,7 @@ public:
 		return tmp.m_bits.count();
 	}
 
-	inline Bool anyIntersectionWith(const BitFlags& that) const
+	Bool anyIntersectionWith(const BitFlags& that) const
 	{
 		/// @todo srj -- improve me.
 		BitFlags tmp = that;
@@ -229,23 +219,23 @@ public:
 		return tmp.m_bits.any();
 	}
 
-	inline void clear(const BitFlags& clr)
+	void clear(const BitFlags& clr)
 	{
 		m_bits &= ~clr.m_bits;
 	}
 
-	inline void set(const BitFlags& set)
+	void set(const BitFlags& set)
 	{
 		m_bits |= set.m_bits;
 	}
 
-	inline void clearAndSet(const BitFlags& clr, const BitFlags& set)
+	void clearAndSet(const BitFlags& clr, const BitFlags& set)
 	{
 		m_bits &= ~clr.m_bits;
 		m_bits |= set.m_bits;
 	}
 
-	inline Bool testSetAndClear(const BitFlags& mustBeSet, const BitFlags& mustBeClear) const
+	Bool testSetAndClear(const BitFlags& mustBeSet, const BitFlags& mustBeClear) const
 	{
 		/// @todo srj -- improve me.
 		BitFlags tmp = *this;
@@ -262,6 +252,17 @@ public:
 		return true;
 	}
 
+	// TheSuperHackers @info Function for rare use cases where we must access the flags as an integer.
+	// Not using to_ulong because that can throw. Truncates all bits above 32.
+	UnsignedInt toUnsignedInt() const noexcept
+	{
+		UnsignedInt val = 0;
+		const UnsignedInt count = min(m_bits.size(), sizeof(val) * 8);
+		for (UnsignedInt i = 0; i < count; ++i)
+			val |= m_bits.test(i) * (1u << i);
+		return val;
+	}
+
   static const char* const* getBitNames()
   {
     return s_bitNameList;
@@ -269,7 +270,7 @@ public:
 
   static const char* getNameFromSingleBit(Int i)
   {
-    return (i >= 0 && i < NUMBITS) ? s_bitNameList[i] : NULL;
+    return (i >= 0 && i < NUMBITS) ? s_bitNameList[i] : nullptr;
   }
 
   static Int getSingleBitFromName(const char* token)
@@ -287,7 +288,7 @@ public:
 
   const char* getBitNameIfSet(Int i) const
   {
-    return test(i) ? s_bitNameList[i] : NULL;
+    return test(i) ? s_bitNameList[i] : nullptr;
   }
 
   Bool setBitByName(const char* token)
@@ -312,14 +313,14 @@ public:
 
 	void buildDescription( AsciiString* str ) const
 	{
-		if ( str == NULL )
+		if ( str == nullptr )
 			return;//sanity
 
 		for( Int i = 0; i < size(); ++i )
 		{
 			const char* bitName = getBitNameIfSet(i);
 
-			if (bitName != NULL)
+			if (bitName != nullptr)
 			{
 				str->concat( bitName );
 				str->concat( ",\n");
@@ -327,8 +328,38 @@ public:
 		}
 	}
 
+	// TheSuperHackers @feature Stubbjax 23/01/2026 Add function for outputting debug data.
+	AsciiString toHexString() const
+	{
+		constexpr const int numChunks = (NUMBITS + 63) / 64;
+		char chunkBuf[32]; // Enough for 16 hex digits + null terminator
+		AsciiString result;
+		bool printedAny = false;
 
+		for (int chunk = numChunks - 1; chunk >= 0; --chunk)
+		{
+			unsigned long long val = 0;
+			for (int bit = 0; bit < 64 && (chunk * 64 + bit) < NUMBITS; ++bit)
+			{
+				if (m_bits.test(chunk * 64 + bit))
+					val |= (unsigned long long)(1) << bit;
+			}
+
+			if (val != 0 || chunk == 0 || printedAny)
+			{
+				if (printedAny)
+					snprintf(chunkBuf, sizeof(chunkBuf), "%016llX", val);
+				else
+					snprintf(chunkBuf, sizeof(chunkBuf), "%llX", val);
+
+				result.concat(chunkBuf);
+				printedAny = true;
+			}
+		}
+
+		if (!printedAny)
+			result = "0";
+
+		return result;
+	}
 };
-
-#endif // __BitFlags_H_
-

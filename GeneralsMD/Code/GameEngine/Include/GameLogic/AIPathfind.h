@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifndef _PATHFIND_H_
-#define _PATHFIND_H_
-
 #include "Common/GameType.h"
 #include "Common/GameMemory.h"
 #include "Common/Snapshot.h"
@@ -42,6 +39,7 @@ class Bridge;
 class Object;
 class Weapon;
 class PathfindZoneManager;
+class PathfindCell;
 
 // How close is close enough when moving.
 
@@ -50,6 +48,9 @@ class PathfindZoneManager;
 
 #define INFANTRY_MOVES_THROUGH_INFANTRY
 
+#if !RETAIL_COMPATIBLE_PATHFINDING
+#undef RETAIL_COMPATIBLE_PATHFINDING_ALLOCATION
+#endif
 
   typedef UnsignedShort zoneStorageType;
 
@@ -81,7 +82,7 @@ public:
 
 	void setNextOptimized( PathNode *node );
 
-	PathNode *getNextOptimized(Coord2D* dir = NULL, Real* dist = NULL)  	///< return next node in optimized path
+	PathNode *getNextOptimized(Coord2D* dir = nullptr, Real* dist = nullptr)  	///< return next node in optimized path
 	{
 		if (dir)
 			*dir = m_nextOptiDirNorm2D;
@@ -90,7 +91,7 @@ public:
 		return m_nextOpti;
 	}
 
-	const PathNode *getNextOptimized(Coord2D* dir = NULL, Real* dist = NULL) const  	///< return next node in optimized path
+	const PathNode *getNextOptimized(Coord2D* dir = nullptr, Real* dist = nullptr) const  	///< return next node in optimized path
 	{
 		if (dir)
 			*dir = m_nextOptiDirNorm2D;
@@ -291,10 +292,14 @@ public:
 	Bool isAircraftGoal( void) const {return m_aircraftGoal != 0;}
 
 	Bool isObstaclePresent( ObjectID objID ) const;					///< return true if the given object ID is registered as an obstacle in this cell
+#if RETAIL_COMPATIBLE_PATHFINDING_ALLOCATION
+	// TheSuperHackers @info isObstructionInvalid() and clearObstruction() only used during retail compatible pathfinding failover cleanup
+	Bool isObstructionInvalid() const { return m_obstacleID != INVALID_ID && m_info == nullptr && (m_type == CELL_OBSTACLE || m_type == CELL_IMPASSABLE); }
+	void clearObstruction() { m_type = CELL_CLEAR; m_obstacleID = INVALID_ID; m_obstacleIsFence = false; m_obstacleIsTransparent = false; }
+#endif
 
-	Bool isObstacleTransparent( ) const{return m_info?m_info->m_obstacleIsTransparent:false; }					///< return true if the obstacle in the cell is KINDOF_CAN_SEE_THROUGHT_STRUCTURE
-
-	Bool isObstacleFence( void ) const {return m_info?m_info->m_obstacleIsFence:false; }///< return true if the given obstacle in the cell is a fence.
+	inline Bool isObstacleTransparent() const;
+	inline Bool isObstacleFence(void) const;
 
 	/// Return estimated cost from given cell to reach goal cell
 	UnsignedInt costToGoal( PathfindCell *goal );
@@ -321,13 +326,13 @@ public:
 	/// remove all cells from closed list.
 	static Int releaseOpenList( PathfindCell *list );
 
-	inline PathfindCell *getNextOpen(void) {return m_info->m_nextOpen?m_info->m_nextOpen->m_cell:NULL;}
+	inline PathfindCell *getNextOpen(void) {return m_info->m_nextOpen?m_info->m_nextOpen->m_cell: nullptr;}
 
 	inline UnsignedShort getXIndex(void) const {return m_info->m_pos.x;}
 	inline UnsignedShort getYIndex(void) const {return m_info->m_pos.y;}
 
-	inline Bool isBlockedByAlly(void) const {return m_info->m_blockedByAlly;}
-	inline void setBlockedByAlly(Bool blocked)  {m_info->m_blockedByAlly = (blocked!=0);}
+	inline Bool isBlockedByAlly(void) const;
+	inline void setBlockedByAlly(Bool blocked);
 
 	inline Bool getOpen(void) const {return m_info->m_open;}
 	inline Bool getClosed(void) const {return m_info->m_closed;}
@@ -340,7 +345,7 @@ public:
 	void setParentCell(PathfindCell* parent);
 	void clearParentCell(void);
 	void setParentCellHierarchical(PathfindCell* parent);
-	inline PathfindCell* getParentCell(void) const {return m_info ? m_info->m_pathParent ? m_info->m_pathParent->m_cell : NULL : NULL;}
+	inline PathfindCell* getParentCell(void) const {return m_info ? m_info->m_pathParent ? m_info->m_pathParent->m_cell : nullptr : nullptr;}
 
 	Bool startPathfind( PathfindCell *goalCell );
 	Bool getPinched(void) const {return m_pinched;}
@@ -348,7 +353,7 @@ public:
 
 	Bool allocateInfo(const ICoord2D &pos);
 	void releaseInfo(void);
-	Bool hasInfo(void) const {return m_info!=NULL;}
+	Bool hasInfo(void) const {return m_info!=nullptr;}
 	zoneStorageType getZone(void) const {return m_zone;}
 	void setZone(zoneStorageType zone) {m_zone = zone;}
 	void setGoalUnit(ObjectID unit, const ICoord2D &pos );
@@ -358,7 +363,7 @@ public:
 	inline ObjectID getGoalAircraft(void) const {ObjectID id = m_info?m_info->m_goalAircraftID:INVALID_ID; return id;}
 	inline ObjectID getPosUnit(void) const {ObjectID id = m_info?m_info->m_posUnitID:INVALID_ID; return id;}
 
-	inline ObjectID getObstacleID(void) const {ObjectID id = m_info?m_info->m_obstacleID:INVALID_ID; return id;}
+	inline ObjectID getObstacleID(void) const;
 
 	void setLayer( PathfindLayerEnum layer ) { m_layer = layer; }	///< set the cell layer
 	PathfindLayerEnum getLayer( void ) const { return (PathfindLayerEnum)m_layer; }				///< get the cell layer
@@ -368,14 +373,19 @@ public:
 
 private:
 	PathfindCellInfo *m_info;
-	zoneStorageType m_zone:14;			///< Zone. Each zone is a set of adjacent terrain type.  If from & to in the same zone, you can successfully pathfind.  If not,
-														// you still may be able to if you can cross multiple terrain types.
-	UnsignedShort m_aircraftGoal:1; //< This is an aircraft goal cell.
-	UnsignedShort m_pinched:1; //< This cell is surrounded by obstacle cells.
-	UnsignedByte m_type:4;			///< what type of cell terrain this is.
-	UnsignedByte m_flags:4;			///< what type of units are in or moving through this cell.
-	UnsignedByte m_connectsToLayer:4;	///< This cell can pathfind onto this layer, if > LAYER_TOP.
-  UnsignedByte m_layer:4;					 ///< Layer of this cell.
+	ObjectID m_obstacleID;	                  ///< the object ID who overlaps this cell
+	UnsignedInt m_blockedByAlly : 1;          ///< True if this cell is blocked by an allied unit.
+	UnsignedInt m_obstacleIsFence : 1;        ///< True if occupied by a fence.
+	UnsignedInt m_obstacleIsTransparent : 1;  ///< True if obstacle is transparent (undefined if obstacleid is invalid)
+
+	zoneStorageType m_zone : 14;              ///< Zone. Each zone is a set of adjacent terrain type.  If from & to in the same zone, you can successfully pathfind.  If not,
+	                                          /// you still may be able to if you can cross multiple terrain types.
+	UnsignedShort m_aircraftGoal : 1;         ///< This is an aircraft goal cell.
+	UnsignedShort m_pinched : 1;              ///< This cell is surrounded by obstacle cells.
+	UnsignedByte m_type : 4;                  ///< what type of cell terrain this is.
+	UnsignedByte m_flags : 4;                 ///< what type of units are in or moving through this cell.
+	UnsignedByte m_connectsToLayer : 4;       ///< This cell can pathfind onto this layer, if > LAYER_TOP.
+	UnsignedByte m_layer : 4;                 ///< Layer of this cell.
 };
 
 typedef PathfindCell *PathfindCellP;
@@ -569,7 +579,7 @@ public:
 	virtual Path *findPath( Object *obj, const LocomotorSet& locomotorSet, const Coord3D *from,
 		const Coord3D *to )=0;	///< Find a short, valid path between given locations
 	/** Find a short, valid path to a location NEAR the to location.
-		This succeds when the destination is unreachable (like inside a building).
+		This succeeds when the destination is unreachable (like inside a building).
 		If the destination is unreachable, it will adjust the to point.  */
 	virtual Path *findClosestPath( Object *obj, const LocomotorSet& locomotorSet, const Coord3D *from,
 		Coord3D *to, Bool blocked, Real pathCostMultiplier, Bool moveAllies )=0;
@@ -598,7 +608,7 @@ class Pathfinder : PathfindServicesInterface, public Snapshot
 private:
 	virtual Path *findPath( Object *obj, const LocomotorSet& locomotorSet, const Coord3D *from, const Coord3D *to);	///< Find a short, valid path between given locations
 	/** Find a short, valid path to a location NEAR the to location.
-		This succeds when the destination is unreachable (like inside a building).
+		This succeeds when the destination is unreachable (like inside a building).
 		If the destination is unreachable, it will adjust the to point.  */
 	virtual Path *findClosestPath( Object *obj, const LocomotorSet& locomotorSet, const Coord3D *from,
 		Coord3D *to, Bool blocked, Real pathCostMultiplier, Bool moveAllies );
@@ -676,7 +686,7 @@ public:
 
 	void setIgnoreObstacleID( ObjectID objID );					///< if non-zero, the pathfinder will ignore the given obstacle
 
-	Bool validMovementPosition( Bool isCrusher, LocomotorSurfaceTypeMask acceptableSurfaces, PathfindCell *toCell, PathfindCell *fromCell = NULL );		///< Return true if given position is a valid movement location
+	Bool validMovementPosition( Bool isCrusher, LocomotorSurfaceTypeMask acceptableSurfaces, PathfindCell *toCell, PathfindCell *fromCell = nullptr );		///< Return true if given position is a valid movement location
 	Bool validMovementPosition( Bool isCrusher, PathfindLayerEnum layer, const LocomotorSet& locomotorSet, Int x, Int y );					///< Return true if given position is a valid movement location
 	Bool validMovementPosition( Bool isCrusher, PathfindLayerEnum layer, const LocomotorSet& locomotorSet, const Coord3D *pos );		///< Return true if given position is a valid movement location
 	Bool validMovementTerrain( PathfindLayerEnum layer, const Locomotor* locomotor, const Coord3D *pos );		///< Return true if given position is a valid movement location
@@ -709,7 +719,7 @@ public:
 
 	// Adjusts the destination to a spot near dest that is not occupied by other units.
 	Bool adjustDestination(Object *obj, const LocomotorSet& locomotorSet,
-		Coord3D *dest, const Coord3D *groupDest=NULL);
+		Coord3D *dest, const Coord3D *groupDest=nullptr);
 
 	// Adjusts the destination to a spot near dest for landing that is not occupied by other units.
 	Bool adjustToLandingDestination(Object *obj, Coord3D *dest);
@@ -823,7 +833,7 @@ protected:
 		const Coord3D *fromPos, PathfindCell *goalCell, Bool center, Bool blocked );	///< Work backwards from goal cell to construct final path
 	Path *buildGroundPath( Bool isCrusher,const Coord3D *fromPos, PathfindCell *goalCell,
 		Bool center, Int pathDiameter );	///< Work backwards from goal cell to construct final path
-	Path *buildHierachicalPath( const Coord3D *fromPos, PathfindCell *goalCell);	///< Work backwards from goal cell to construct final path
+	Path *buildHierarchicalPath( const Coord3D *fromPos, PathfindCell *goalCell);	///< Work backwards from goal cell to construct final path
 
 	void  prependCells( Path *path, const Coord3D *fromPos,
 																	PathfindCell *goalCell, Bool center ); ///< Add pathfind cells to a path.
@@ -832,6 +842,8 @@ protected:
 	static LocomotorSurfaceTypeMask validLocomotorSurfacesForCellType(PathfindCell::CellType t);
 
 	void checkChangeLayers(PathfindCell *parentCell);
+
+	bool checkCellOutsideExtents(ICoord2D& cell);
 
 #if defined(RTS_DEBUG)
 	void doDebugIcons(void) ;
@@ -931,7 +943,7 @@ inline PathfindCell *Pathfinder::getCell( PathfindLayerEnum layer, Int x, Int y 
 	if (x >= m_extent.lo.x && x <= m_extent.hi.x &&
 		y >= m_extent.lo.y && y <= m_extent.hi.y)
 	{
-		PathfindCell *cell = NULL;
+		PathfindCell *cell = nullptr;
 		if (layer > LAYER_GROUND && layer <= LAYER_LAST)
 		{
 			cell = m_layers[layer].getCell(x, y);
@@ -942,7 +954,7 @@ inline PathfindCell *Pathfinder::getCell( PathfindLayerEnum layer, Int x, Int y 
 	}
 	else
 	{
-		return NULL;
+		return nullptr;
 	}
 }
 
@@ -950,7 +962,7 @@ inline PathfindCell *Pathfinder::getCell( PathfindLayerEnum layer, const Coord3D
 {
 	ICoord2D cell;
 	Bool overflow = worldToCell( pos, &cell );
-	if (overflow) return NULL;
+	if (overflow) return nullptr;
 	return getCell( layer, cell.x, cell.y );
 }
 
@@ -973,19 +985,3 @@ inline Bool Pathfinder::worldToCell( const Coord3D *pos, ICoord2D *cell )
 	return overflow;
 }
 
-/**
- * Return true if the given object ID is registered as an obstacle in this cell
- */
-inline Bool PathfindCell::isObstaclePresent( ObjectID objID ) const
-{
-	if (objID != INVALID_ID && (getType() == PathfindCell::CELL_OBSTACLE))
-	{
-		DEBUG_ASSERTCRASH(m_info, ("Should have info to be obstacle."));
-		return (m_info && m_info->m_obstacleID == objID);
-	}
-
-	return false;
-}
-
-
-#endif // _PATHFIND_H_

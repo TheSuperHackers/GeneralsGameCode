@@ -36,8 +36,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#ifndef GENLODEXTENSIONDIALOG_H
-#define GENLODEXTENSIONDIALOG_H
+#pragma once
 
 #include <windows.h>
 
@@ -87,8 +86,3 @@ private:
 	friend BOOL CALLBACK			_gen_lod_ext_dialog_proc(HWND Hwnd,UINT message,WPARAM wParam,LPARAM lParam);
 
 };
-
-
-
-
-#endif //GENLODEXTENSIONDIALOG_H

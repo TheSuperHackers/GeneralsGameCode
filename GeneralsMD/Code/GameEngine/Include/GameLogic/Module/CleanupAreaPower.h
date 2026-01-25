@@ -43,9 +43,6 @@
 
 #pragma once
 
-#ifndef __CLEANUP_AREA_POWER_H_
-#define __CLEANUP_AREA_POWER_H_
-
 //-----------------------------------------------------------------------------
 #include "GameLogic/Module/SpecialPowerModule.h"
 
@@ -75,5 +72,3 @@ public:
 
 	virtual void doSpecialPowerAtLocation( const Coord3D *loc, Real angle, UnsignedInt commandOptions );
 };
-
-#endif

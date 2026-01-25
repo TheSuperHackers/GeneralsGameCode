@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __SquishCollide_H_
-#define __SquishCollide_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/CollideModule.h"
 
@@ -58,6 +55,3 @@ public:
 protected:
 
 };
-
-#endif // __SquishCollide_H_
-

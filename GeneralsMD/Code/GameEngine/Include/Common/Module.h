@@ -31,9 +31,6 @@
 
 #pragma once
 
-#ifndef __MODULE_H_
-#define __MODULE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/INI.h"
 #include "Common/GameMemory.h"
@@ -112,9 +109,9 @@ public:
 	virtual Bool isAiModuleData() const { return false; }
 
 	// ugh, hack
-	virtual const W3DModelDrawModuleData* getAsW3DModelDrawModuleData() const { return NULL; }
+	virtual const W3DModelDrawModuleData* getAsW3DModelDrawModuleData() const { return nullptr; }
 	// ugh, hack
-	virtual const W3DTreeDrawModuleData* getAsW3DTreeDrawModuleData() const { return NULL; }
+	virtual const W3DTreeDrawModuleData* getAsW3DTreeDrawModuleData() const { return nullptr; }
 	virtual StaticGameLODLevel getMinimumRequiredGameLOD() const { return (StaticGameLODLevel)0;}
 
 	static void buildFieldParse(MultiIniFieldParse& p)
@@ -195,7 +192,7 @@ public:
 
 	virtual NameKeyType getModuleNameKey() const = 0;
 
-	inline NameKeyType getModuleTagNameKey() const { return getModuleData()->getModuleTagNameKey(); }
+	NameKeyType getModuleTagNameKey() const { return getModuleData()->getModuleTagNameKey(); }
 
 	/** this is called after all the Modules for a given Thing are created; it
 		allows Modules to resolve any inter-Module dependencies.
@@ -217,7 +214,7 @@ public:
 
 protected:
 
-	inline const ModuleData* getModuleData() const { return m_moduleData; }
+	const ModuleData* getModuleData() const { return m_moduleData; }
 
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
@@ -255,8 +252,8 @@ public:
 
 protected:
 
-	inline Object *getObject() { return m_object; }
-	inline const Object *getObject() const { return m_object; }
+	Object *getObject() { return m_object; }
+	const Object *getObject() const { return m_object; }
 
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
@@ -282,7 +279,7 @@ private:
 //=================================================================================================
 
 //-------------------------------------------------------------------------------------------------
-/** Module interface specific for Drawbles, this is really just to make a clear distinction
+/** Module interface specific for Drawables, this is really just to make a clear distinction
 	* between modules intended for use in objects and modules intended for use
 	* in drawables */
 //-------------------------------------------------------------------------------------------------
@@ -298,8 +295,8 @@ public:
 
 protected:
 
-	inline Drawable *getDrawable() { return m_drawable; }
-	inline const Drawable *getDrawable() const { return m_drawable; }
+	Drawable *getDrawable() { return m_drawable; }
+	const Drawable *getDrawable() const { return m_drawable; }
 
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
@@ -318,7 +315,3 @@ private:
 //-------------------------------------------------------------------------------------------------
 /** VARIOUS MODULE INTERFACES */
 //-------------------------------------------------------------------------------------------------
-
-
-#endif // __MODULE_H_
-

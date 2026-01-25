@@ -36,8 +36,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#ifndef GENMTLNAMESDIALOG_H
-#define GENMTLNAMESDIALOG_H
+#pragma once
 
 #include <windows.h>
 
@@ -95,8 +94,3 @@ private:
 	friend BOOL CALLBACK _gen_mtl_names_dialog_proc(HWND hwnd,UINT message,WPARAM wparam,LPARAM lparam);
 
 };
-
-
-#endif //GENMTLNAMESDIALOG_H
-
-

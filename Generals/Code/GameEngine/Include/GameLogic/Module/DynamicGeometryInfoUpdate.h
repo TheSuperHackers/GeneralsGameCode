@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __DYNAMIC_GEOMETRY_INFO_UPDATE_H_
-#define __DYNAMIC_GEOMETRY_INFO_UPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/Geometry.h"
 #include "GameLogic/Module/UpdateModule.h"
@@ -102,7 +99,3 @@ protected:
 	Real m_finalMinorRadius;
 
 };
-
-
-#endif
-

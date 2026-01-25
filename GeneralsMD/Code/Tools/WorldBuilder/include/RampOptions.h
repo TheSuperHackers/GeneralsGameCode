@@ -32,8 +32,6 @@
 /*---------------------------------------------------------------------------*/
 
 #pragma once
-#ifndef _H_RAMPOPTIONS_
-#define _H_RAMPOPTIONS_
 
 // INCLUDES ///////////////////////////////////////////////////////////////////
 #include "OptionsPanel.h"
@@ -49,7 +47,7 @@ class RampOptions : public COptionsPanel
 	Real m_rampWidth;
 	public:
 		enum { IDD = IDD_RAMP_OPTIONS };
-		RampOptions(CWnd* pParent = NULL);
+		RampOptions(CWnd* pParent = nullptr);
 		virtual ~RampOptions();
 
 		Bool shouldApplyTheRamp();
@@ -62,5 +60,3 @@ class RampOptions : public COptionsPanel
 };
 
 extern RampOptions* TheRampOptions;
-
-#endif /* _H_RAMPOPTIONS_ */

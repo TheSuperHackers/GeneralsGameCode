@@ -16,21 +16,20 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef SEM4_HEADER
-#define SEM4_HEADER
+#pragma once
 
 #include <limits.h>
-#ifndef _WINDOWS
+#ifndef _WIN32
 #include <unistd.h>
 #endif
 #include "wstypes.h"
 
 #ifdef _REENTRANT
-#ifndef _WINDOWS
+#ifndef _WIN32
 #include <semaphore.h>
 #else
 #include <windows.h>
-#endif // _WINDOWS
+#endif // _WIN32
 #endif // _REENTRANT
 
 // Windows headers have a tendency to redefine IN
@@ -43,7 +42,7 @@ class Sem4
 {
  private:
   #ifdef _REENTRANT
-#ifndef _WINDOWS
+#ifndef _WIN32
   sem_t sem;
 #else
   HANDLE sem;
@@ -60,5 +59,3 @@ class Sem4
   sint32       GetValue(int *sval) const;
   sint32       Destroy(void);
 };
-
-#endif

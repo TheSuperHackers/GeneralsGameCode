@@ -29,12 +29,9 @@
 
 #pragma once
 
-#ifndef __CHALLENGEGENERALS_H_
-#define __CHALLENGEGENERALS_H_
-
-
 // INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "Common/GameType.h"
+#include "Common/INI.h"
 #include "Common/Overridable.h"
 
 // DEFINES ////////////////////////////////////////////////////////////////////////////////////////
@@ -42,7 +39,7 @@
 #define NUM_GENERALS (32) // TheSuperHackers @tweak DayV 21/09/2025 Increase number of challenge generals.
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
-
+class Image;
 
 // CLASS DEFINITIONS //////////////////////////////////////////////////////////////////////////////
 class GeneralPersona
@@ -80,8 +77,8 @@ private:
 
 public:
 	GeneralPersona( void ) :
-		m_imageBioPortraitSmall(NULL),
-		m_imageBioPortraitLarge(NULL)
+		m_imageBioPortraitSmall(nullptr),
+		m_imageBioPortraitLarge(nullptr)
 	{
 	}
 //	~GeneralPersona( void );
@@ -156,5 +153,3 @@ protected:
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
 extern ChallengeGenerals *TheChallengeGenerals;
 extern ChallengeGenerals *createChallengeGenerals( void );
-
-#endif  // end __CHALLENGEGENERALS_H_

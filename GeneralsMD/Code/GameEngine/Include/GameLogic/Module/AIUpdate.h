@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifndef _AI_UPDATE_H_
-#define _AI_UPDATE_H_
-
 #include "GameLogic/Module/UpdateModule.h"
 #include "GameLogic/AI.h"
 #include "GameLogic/AIStateMachine.h"
@@ -60,6 +57,7 @@ class AssaultTransportAIInterface;
 class JetAIUpdate;
 
 enum AIStateType CPP_11(: Int);
+enum HordeActionType CPP_11(: Int);
 enum ObjectID CPP_11(: Int);
 
 
@@ -108,7 +106,7 @@ static const char *const TheLocomotorSetNames[] =
 	"SET_SUPERSONIC",
 	"SET_SLUGGISH",
 
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(TheLocomotorSetNames) == LOCOMOTORSET_COUNT + 1, "Incorrect array size");
 #endif
@@ -131,7 +129,7 @@ static const char *const TheAutoAcquireEnemiesNames[] =
 	"NOTWHILEATTACKING",
 	"ATTACK_BUILDINGS",
 
-	NULL
+	nullptr
 };
 #endif
 
@@ -251,7 +249,7 @@ protected:
 	virtual void privateFollowWaypointPathAsTeam( const Waypoint *way, CommandSourceType cmdSource );///< start following the path from the given point
 	virtual void privateFollowWaypointPathExact( const Waypoint *way, CommandSourceType cmdSource );///< start following the path from the given point
 	virtual void privateFollowWaypointPathAsTeamExact( const Waypoint *way, CommandSourceType cmdSource );///< start following the path from the given point
-	virtual void privateFollowPath( const std::vector<Coord3D>* path, Object *ignoreObject, CommandSourceType cmdSource, Bool exitProduction );///< follow the path defined by the given array of points
+	virtual void privateFollowPath( std::vector<Coord3D>* path, Object *ignoreObject, CommandSourceType cmdSource, Bool exitProduction );///< follow the path defined by the given array of points
 	virtual void privateFollowPathAppend( const Coord3D *pos, CommandSourceType cmdSource );
 	virtual void privateAttackObject( Object *victim, Int maxShotsToFire, CommandSourceType cmdSource );					///< attack given object
 	virtual void privateForceAttackObject( Object *victim, Int maxShotsToFire, CommandSourceType cmdSource );					///< attack given object
@@ -307,21 +305,21 @@ public:
 	virtual DisabledMaskType getDisabledTypesToProcess() const { return MAKE_DISABLED_MASK( DISABLED_HELD ); }
 
 	// Some very specific, complex behaviors are used by more than one AIUpdate.  Here are their interfaces.
-	virtual DozerAIInterface* getDozerAIInterface() {return NULL;}
-	virtual SupplyTruckAIInterface* getSupplyTruckAIInterface() {return NULL;}
-	virtual const DozerAIInterface* getDozerAIInterface() const {return NULL;}
-	virtual const SupplyTruckAIInterface* getSupplyTruckAIInterface() const {return NULL;}
+	virtual DozerAIInterface* getDozerAIInterface() {return nullptr;}
+	virtual SupplyTruckAIInterface* getSupplyTruckAIInterface() {return nullptr;}
+	virtual const DozerAIInterface* getDozerAIInterface() const {return nullptr;}
+	virtual const SupplyTruckAIInterface* getSupplyTruckAIInterface() const {return nullptr;}
 #ifdef ALLOW_SURRENDER
-	virtual POWTruckAIUpdateInterface *getPOWTruckAIUpdateInterface( void ) { return NULL; }
+	virtual POWTruckAIUpdateInterface *getPOWTruckAIUpdateInterface( void ) { return nullptr; }
 #endif
-	virtual WorkerAIInterface* getWorkerAIInterface( void ) { return NULL; }
-	virtual const WorkerAIInterface* getWorkerAIInterface( void ) const { return NULL; }
-	virtual HackInternetAIInterface* getHackInternetAIInterface() { return NULL; }
-	virtual const HackInternetAIInterface* getHackInternetAIInterface() const { return NULL; }
-	virtual AssaultTransportAIInterface* getAssaultTransportAIInterface() { return NULL; }
-	virtual const AssaultTransportAIInterface* getAssaultTransportAIInterface() const { return NULL; }
-	virtual JetAIUpdate* getJetAIUpdate() { return NULL; }
-	virtual const JetAIUpdate* getJetAIUpdate() const { return NULL; }
+	virtual WorkerAIInterface* getWorkerAIInterface( void ) { return nullptr; }
+	virtual const WorkerAIInterface* getWorkerAIInterface( void ) const { return nullptr; }
+	virtual HackInternetAIInterface* getHackInternetAIInterface() { return nullptr; }
+	virtual const HackInternetAIInterface* getHackInternetAIInterface() const { return nullptr; }
+	virtual AssaultTransportAIInterface* getAssaultTransportAIInterface() { return nullptr; }
+	virtual const AssaultTransportAIInterface* getAssaultTransportAIInterface() const { return nullptr; }
+	virtual JetAIUpdate* getJetAIUpdate() { return nullptr; }
+	virtual const JetAIUpdate* getJetAIUpdate() const { return nullptr; }
 
 #ifdef ALLOW_SURRENDER
 	void setSurrendered( const Object *objWeSurrenderedTo, Bool surrendered );
@@ -353,7 +351,7 @@ public:
 	virtual Bool isBusy() const;
 
 	virtual void onObjectCreated();
-	virtual void doQuickExit( const std::vector<Coord3D>* path );			///< get out of this Object
+	virtual void doQuickExit( std::vector<Coord3D>* path );			///< get out of this Object
 
 	virtual void aiDoCommand(const AICommandParms* parms);
 
@@ -367,7 +365,7 @@ public:
 	virtual Object* construct( const ThingTemplate *what,
 														 const Coord3D *pos, Real angle,
 														 Player *owningPlayer,
-														 Bool isRebuild ) { return NULL; }///< construct a building
+														 Bool isRebuild ) { return nullptr; }///< construct a building
 
 
 	void ignoreObstacle( const Object *obj );			///< tell the pathfinder to ignore the given object as an obstacle
@@ -430,7 +428,7 @@ public:
 	Bool hasLocomotorForSurface(LocomotorSurfaceType surfaceType);
 
 	// turret stuff.
-	WhichTurretType getWhichTurretForWeaponSlot(WeaponSlotType wslot, Real* turretAngle, Real* turretPitch = NULL) const;
+	WhichTurretType getWhichTurretForWeaponSlot(WeaponSlotType wslot, Real* turretAngle, Real* turretPitch = nullptr) const;
 	WhichTurretType getWhichTurretForCurWeapon() const;
 	/**
 		return true iff the weapon is on a turret, that turret is trying to aim at the victim,
@@ -472,7 +470,7 @@ public:
 	void cancelPath(void); ///< Called if we no longer need the path.
 	Path* getPath( void ) { return m_path; }				///< return the agent's current path
 	const Path* getPath( void ) const { return m_path; }				///< return the agent's current path
-	void destroyPath( void );												///< destroy the current path, setting it to NULL
+	void destroyPath( void );												///< destroy the current path, setting it to null
 	UnsignedInt getPathAge( void ) const { return TheGameLogic->getFrame() - m_pathTimestamp; }	///< return the "age" of the path
 	Bool isPathAvailable( const Coord3D *destination ) const; ///< does a path exist between us and the destination
 	Bool isQuickPathAvailable( const Coord3D *destination ) const;  ///< does a path (using quick pathfind) exist between us and the destination
@@ -505,7 +503,7 @@ public:
 
 	const LocomotorSet& getLocomotorSet(void) const {return m_locomotorSet;}
 	void setPathExtraDistance(Real dist) {m_pathExtraDistance = dist;}
-	inline Real getPathExtraDistance() const { return m_pathExtraDistance; }
+	Real getPathExtraDistance() const { return m_pathExtraDistance; }
 
 	virtual Bool chooseLocomotorSet(LocomotorSetType wst);
 
@@ -563,7 +561,11 @@ public:
 	void setAttitude( AttitudeType tude );	///< set the behavior modifier for this agent
 
 	// Common AI "status" effects -------------------------------------------------------------------
-	void evaluateMoraleBonus( void );
+	Bool hasNationalism() const;
+	Bool hasFanaticism() const;
+	void evaluateMoraleBonus( Bool inHorde, Bool allowNationalism, HordeActionType type );
+	void evaluateNationalismBonusClassic( Bool inHorde, Bool allowNationalism );
+	void evaluateNationalismBonus( Bool inHorde, Bool allowNationalism );
 
 #ifdef ALLOW_DEMORALIZE
 	// demoralization ... what a nifty word to write.
@@ -626,51 +628,51 @@ protected:
 	virtual Bool getTreatAsAircraftForLocoDistToGoal() const;
 
 	// yes, protected, NOT public... try to avoid exposing the state machine directly, please
-	inline AIStateMachine* getStateMachine() { return m_stateMachine; }
-	inline const AIStateMachine* getStateMachine() const { return m_stateMachine; }
+	AIStateMachine* getStateMachine() { return m_stateMachine; }
+	const AIStateMachine* getStateMachine() const { return m_stateMachine; }
 
 	void wakeUpNow();
 
 public:
 
-	inline StateID getCurrentStateID() const { return getStateMachine()->getCurrentStateID(); }	///< return the id of the current state of the machine
+	StateID getCurrentStateID() const { return getStateMachine()->getCurrentStateID(); }	///< return the id of the current state of the machine
 /// @ todo -- srj sez: JBA NUKE THIS CODE, IT IS EVIL
-	inline void friend_addToWaypointGoalPath( const Coord3D *pathPoint ) { getStateMachine()->addToGoalPath(pathPoint); }
+	void friend_addToWaypointGoalPath( const Coord3D *pathPoint ) { getStateMachine()->addToGoalPath(pathPoint); }
 
 	// this is intended for use ONLY by W3dWaypointBuffer and AIFollowPathState.
-	inline const Coord3D* friend_getGoalPathPosition( Int index ) const { return getStateMachine()->getGoalPathPosition( index ); }
+	const Coord3D* friend_getGoalPathPosition( Int index ) const { return getStateMachine()->getGoalPathPosition( index ); }
 
 	// this is intended for use ONLY by W3dWaypointBuffer.
 	Int friend_getWaypointGoalPathSize() const;
 
 	// this is intended for use ONLY by W3dWaypointBuffer.
-	inline Int friend_getCurrentGoalPathIndex() const { return m_nextGoalPathIndex; }
+	Int friend_getCurrentGoalPathIndex() const { return m_nextGoalPathIndex; }
 
 	// this is intended for use ONLY by AIFollowPathState.
-	inline void friend_setCurrentGoalPathIndex( Int index ) { m_nextGoalPathIndex = index; }
+	void friend_setCurrentGoalPathIndex( Int index ) { m_nextGoalPathIndex = index; }
 #ifdef DEBUG_LOGGING
 	inline const Coord3D *friend_getRequestedDestination() const { return &m_requestedDestination; }
 	inline const Coord3D *friend_getRequestedDestination2() const { return &m_requestedDestination2; }
 #endif
 
-	inline Object* getGoalObject() { return getStateMachine()->getGoalObject(); }	///< return the id of the current state of the machine
-	inline const Coord3D* getGoalPosition() const { return getStateMachine()->getGoalPosition(); }	///< return the id of the current state of the machine
+	Object* getGoalObject() { return getStateMachine()->getGoalObject(); }	///< return the id of the current state of the machine
+	const Coord3D* getGoalPosition() const { return getStateMachine()->getGoalPosition(); }	///< return the id of the current state of the machine
 
-	inline WhichTurretType friend_getTurretSync() const { return m_turretSyncFlag; }
-	inline void friend_setTurretSync(WhichTurretType t) { m_turretSyncFlag = t; }
+	WhichTurretType friend_getTurretSync() const { return m_turretSyncFlag; }
+	void friend_setTurretSync(WhichTurretType t) { m_turretSyncFlag = t; }
 
-	inline UnsignedInt getPriorWaypointID ( void ) { return m_priorWaypointID; };
-	inline UnsignedInt getCurrentWaypointID ( void ) { return m_currentWaypointID; };
+	UnsignedInt getPriorWaypointID ( void ) { return m_priorWaypointID; };
+	UnsignedInt getCurrentWaypointID ( void ) { return m_currentWaypointID; };
 
-	inline void clearMoveOutOfWay(void) {m_moveOutOfWay1 = INVALID_ID; m_moveOutOfWay2 = INVALID_ID;}
+	void clearMoveOutOfWay(void) {m_moveOutOfWay1 = INVALID_ID; m_moveOutOfWay2 = INVALID_ID;}
 
-	inline void setTmpValue(Int val) {m_tmpInt = val;}
-	inline Int getTmpValue(void) {return m_tmpInt;}
+	void setTmpValue(Int val) {m_tmpInt = val;}
+	Int getTmpValue(void) {return m_tmpInt;}
 
-	inline Bool getRetryPath(void) {return m_retryPath;}
+	Bool getRetryPath(void) {return m_retryPath;}
 
-	inline void setAllowedToChase( Bool allow ) { m_allowedToChase = allow; }
-	inline Bool isAllowedToChase() const { return m_allowedToChase; }
+	void setAllowedToChase( Bool allow ) { m_allowedToChase = allow; }
+	Bool isAllowedToChase() const { return m_allowedToChase; }
 
 	// only for AIStateMachine.
 	virtual void friend_notifyStateMachineChanged();
@@ -681,7 +683,7 @@ private:
 	Bool chooseLocomotorSetExplicit(LocomotorSetType wst);
 
 private:
-	UnsignedInt					m_priorWaypointID;						///< ID of the path we follwed to before the most recent one
+	UnsignedInt					m_priorWaypointID;						///< ID of the path we followed to before the most recent one
 	UnsignedInt					m_currentWaypointID;					///< ID of the most recent one...
 
 	AIStateMachine*			m_stateMachine;							///< the state machine
@@ -802,6 +804,3 @@ private:
 //------------------------------------------------------------------------------------------------------------
 // Inlines
 //
-
-#endif // _AI_UPDATE_H_
-

@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __DELETION_UPDATE_H_
-#define __DELETION_UPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpdateModule.h"
 
@@ -53,8 +50,8 @@ public:
     UpdateModuleData::buildFieldParse(p);
 		static const FieldParse dataFieldParse[] =
 		{
-			{ "MinLifetime",					INI::parseDurationUnsignedInt,		NULL, offsetof( DeletionUpdateModuleData, m_minFrames ) },
-			{ "MaxLifetime",					INI::parseDurationUnsignedInt,		NULL, offsetof( DeletionUpdateModuleData, m_maxFrames ) },
+			{ "MinLifetime",					INI::parseDurationUnsignedInt,		nullptr, offsetof( DeletionUpdateModuleData, m_minFrames ) },
+			{ "MaxLifetime",					INI::parseDurationUnsignedInt,		nullptr, offsetof( DeletionUpdateModuleData, m_maxFrames ) },
 			{ 0, 0, 0, 0 }
 		};
     p.add(dataFieldParse);
@@ -86,6 +83,3 @@ protected:
 	UnsignedInt m_dieFrame;			///< frame we die on
 
 };
-
-#endif
-

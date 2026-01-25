@@ -26,7 +26,7 @@
 // The part of a Player's brain that holds the communal Passenger list of all tunnels.
 // Author: Graham Smallwood, March, 2002
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/GameState.h"
 #include "Common/GlobalData.h"
@@ -54,6 +54,8 @@ TunnelTracker::TunnelTracker()
 	m_containListSize = 0;
 	m_curNemesisID = INVALID_ID;
 	m_nemesisTimestamp = 0;
+	m_framesForFullHeal = 0;
+	m_needsFullHealTimeUpdate = false;
 }
 
 // ------------------------------------------------------------------------
@@ -117,7 +119,7 @@ void TunnelTracker::swapContainedItemsList(ContainedItemsList& newList)
 // ------------------------------------------------------------------------
 void TunnelTracker::updateNemesis(const Object *target)
 {
-	if (getCurNemesis()==NULL) {
+	if (getCurNemesis()==nullptr) {
 		if (target) {
 			if (target->isKindOf(KINDOF_VEHICLE) || target->isKindOf(KINDOF_STRUCTURE) ||
 				target->isKindOf(KINDOF_INFANTRY) || target->isKindOf(KINDOF_AIRCRAFT)) {
@@ -134,11 +136,11 @@ void TunnelTracker::updateNemesis(const Object *target)
 Object *TunnelTracker::getCurNemesis(void)
 {
 	if (m_curNemesisID == INVALID_ID) {
-		return NULL;
+		return nullptr;
 	}
 	if (m_nemesisTimestamp + 4*LOGICFRAMES_PER_SECOND < TheGameLogic->getFrame()) {
 		m_curNemesisID = INVALID_ID;
-		return NULL;
+		return nullptr;
 	}
 	Object *target = TheGameLogic->findObjectByID(m_curNemesisID);
 	if (target) {
@@ -147,13 +149,13 @@ Object *TunnelTracker::getCurNemesis(void)
 			!target->testStatus( OBJECT_STATUS_DETECTED ) &&
 			!target->testStatus( OBJECT_STATUS_DISGUISED ) )
 		{
-			target = NULL;
+			target = nullptr;
 		}
 	}
 	if (target && target->isEffectivelyDead()) {
-		target = NULL;
+		target = nullptr;
 	}
-	if (target == NULL) {
+	if (target == nullptr) {
 		m_curNemesisID = INVALID_ID;
 	}
 	return target;
@@ -212,18 +214,29 @@ void TunnelTracker::onTunnelCreated( const Object *newTunnel )
 {
 	m_tunnelCount++;
 	m_tunnelIDs.push_back( newTunnel->getID() );
+	m_needsFullHealTimeUpdate = true;
 }
 
 // ------------------------------------------------------------------------
 void TunnelTracker::onTunnelDestroyed( const Object *deadTunnel )
 {
-	m_tunnelCount--;
-	m_tunnelIDs.remove( deadTunnel->getID() );
+	{
+		std::list<ObjectID>::iterator it = std::find(m_tunnelIDs.begin(), m_tunnelIDs.end(), deadTunnel->getID());
+		if (it == m_tunnelIDs.end())
+		{
+			DEBUG_CRASH(("TunnelTracker::onTunnelDestroyed - Attempting to remove object '%s' that has never been tracked as a tunnel", deadTunnel->getName().str()));
+			return;
+		}
+
+		m_tunnelCount--;
+		m_tunnelIDs.erase(it);
+		m_needsFullHealTimeUpdate = true;
+	}
 
 	if( m_tunnelCount == 0 )
 	{
 		// Kill everyone in our contain list.  Cave in!
-		iterateContained( destroyObject, NULL, FALSE );
+		iterateContained( destroyObject, nullptr, FALSE );
 		m_containList.clear();
 		m_containListSize = 0;
 	}
@@ -246,17 +259,30 @@ void TunnelTracker::onTunnelDestroyed( const Object *deadTunnel )
 void TunnelTracker::destroyObject( Object *obj, void * )
 {
 	// Now that tunnels consider ContainedBy to be "the tunnel you entered", I need to say goodbye
-	// llike other contain types so they don't look us up on their deletion and crash
+	// like other contain types so they don't look us up on their deletion and crash
 	obj->onRemovedFrom( obj->getContainedBy() );
 	TheGameLogic->destroyObject( obj );
 }
 
 // ------------------------------------------------------------------------
 	// heal all the objects within the tunnel system using the iterateContained function
+#if PRESERVE_RETAIL_BEHAVIOR || RETAIL_COMPATIBLE_CRC
 void TunnelTracker::healObjects(Real frames)
 {
 	iterateContained(healObject, &frames, FALSE);
 }
+#else
+void TunnelTracker::healObjects()
+{
+	if (m_needsFullHealTimeUpdate)
+	{
+		updateFullHealTime();
+		m_needsFullHealTimeUpdate = false;
+	}
+
+	iterateContained(healObject, &m_framesForFullHeal, FALSE);
+}
+#endif
 
 // ------------------------------------------------------------------------
 	// heal one object within the tunnel network system
@@ -264,7 +290,11 @@ void TunnelTracker::healObject( Object *obj, void *frames)
 {
 
 	//get the number of frames to heal
+#if PRESERVE_RETAIL_BEHAVIOR || RETAIL_COMPATIBLE_CRC
 	Real *framesForFullHeal = (Real*)frames;
+#else
+	UnsignedInt* framesForFullHeal = (UnsignedInt*)frames;
+#endif
 
 	// setup the healing damageInfo structure with all but the amount
 	DamageInfo healInfo;
@@ -299,6 +329,31 @@ void TunnelTracker::healObject( Object *obj, void *frames)
 		body->attemptHealing( &healInfo );
 
 	}
+}
+
+void TunnelTracker::updateFullHealTime()
+{
+	UnsignedInt minFrames = ~0u;
+
+	for (std::list<ObjectID>::const_iterator it = m_tunnelIDs.begin(); it != m_tunnelIDs.end(); ++it)
+	{
+		const Object* tunnelObj = TheGameLogic->findObjectByID(*it);
+		if (!tunnelObj)
+			continue;
+
+		const ContainModuleInterface* contain = tunnelObj->getContain();
+		DEBUG_ASSERTCRASH(contain != nullptr, ("Contain module is null"));
+
+		if (!contain->isTunnelContain())
+			continue;
+
+		const TunnelContain* tunnelContain = static_cast<const TunnelContain*>(contain);
+		const UnsignedInt framesForFullHeal = tunnelContain->getFullTimeForHeal();
+		if (framesForFullHeal < minFrames)
+			minFrames = framesForFullHeal;
+	}
+
+	m_framesForFullHeal = minFrames;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -354,6 +409,7 @@ void TunnelTracker::xfer( Xfer *xfer )
 
 		}
 
+		m_needsFullHealTimeUpdate = true;
 	}
 
 	// tunnel count
@@ -368,7 +424,7 @@ void TunnelTracker::loadPostProcess( void )
 {
 
 	// sanity, the contain list should be empty until we post process the id list
-	if( m_containList.size() != 0 )
+	if( !m_containList.empty() )
 	{
 
 		DEBUG_CRASH(( "TunnelTracker::loadPostProcess - m_containList should be empty but is not" ));
@@ -383,7 +439,7 @@ void TunnelTracker::loadPostProcess( void )
 	{
 
 		obj = TheGameLogic->findObjectByID( *it );
-		if( obj == NULL )
+		if( obj == nullptr )
 		{
 
 			DEBUG_CRASH(( "TunnelTracker::loadPostProcess - Unable to find object ID '%d'", *it ));

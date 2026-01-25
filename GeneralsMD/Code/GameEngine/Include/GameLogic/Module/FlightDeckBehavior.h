@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __FLIGHT_DECK_BEHAVIOR_H
-#define __FLIGHT_DECK_BEHAVIOR_H
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/BehaviorModule.h"
 #include "GameLogic/Module/DieModule.h"
@@ -52,7 +49,7 @@ struct RunwayDefinition
 {
 	RunwayDefinition()
 	{
-		m_catapultParticleSystem = NULL;
+		m_catapultParticleSystem = nullptr;
 	}
 
 	std::vector<AsciiString> m_spacesBoneNames;
@@ -121,7 +118,7 @@ public:
 	virtual Bool getExitPosition( Coord3D& rallyPoint ) const { return FALSE; }
 	virtual Bool getNaturalRallyPoint( Coord3D& rallyPoint, Bool offset = TRUE ) { return FALSE; }
 	virtual void setRallyPoint( const Coord3D *pos ) {}
-	virtual const Coord3D *getRallyPoint( void ) const { return NULL;}
+	virtual const Coord3D *getRallyPoint( void ) const { return nullptr;}
 
 	// UpdateModule
 	virtual UpdateSleepTime update();
@@ -139,6 +136,7 @@ public:
 	virtual Bool reserveRunway(ObjectID id, Bool forLanding);
 	virtual void releaseRunway(ObjectID id);
 	virtual void calcPPInfo( ObjectID id, PPInfo *info );
+	virtual Int getRunwayIndex(ObjectID id);
 	virtual Int getRunwayCount() const { return m_runways.size(); }
 	virtual ObjectID getRunwayReservation( Int r, RunwayReservationType type );
 	virtual void transferRunwayReservationToNextInLineForTakeoff(ObjectID id);
@@ -147,7 +145,7 @@ public:
 	virtual void setHealee(Object* healee, Bool add);
 	virtual void killAllParkedUnits();
 	virtual void defectAllParkedUnits(Team* newTeam, UnsignedInt detectionTime);
-	virtual Bool calcBestParkingAssignment( ObjectID id, Coord3D *pos, Int *oldIndex = NULL, Int *newIndex = NULL );
+	virtual Bool calcBestParkingAssignment( ObjectID id, Coord3D *pos, Int *oldIndex = nullptr, Int *newIndex = nullptr );
 
 	// AIUpdateInterface
 	virtual void aiDoCommand(const AICommandParms* parms);
@@ -228,6 +226,3 @@ private:
 	Bool													m_rampUp[ MAX_RUNWAYS ];
 
 };
-
-#endif // __FLIGHT_DECK_BEHAVIOR_H
-

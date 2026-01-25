@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 #include "Common/Xfer.h"
 #include "GameLogic/Module/UndeadBody.h"
 
@@ -43,8 +43,8 @@ void UndeadBodyModuleData::buildFieldParse(MultiIniFieldParse& p)
   ActiveBodyModuleData::buildFieldParse(p);
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "SecondLifeMaxHealth",			INI::parseReal,	NULL,		offsetof( UndeadBodyModuleData, m_secondLifeMaxHealth ) },
-		{ 0, 0, 0, 0 }
+		{ "SecondLifeMaxHealth",			INI::parseReal,	nullptr,		offsetof( UndeadBodyModuleData, m_secondLifeMaxHealth ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   p.add(dataFieldParse);
 }
@@ -81,7 +81,12 @@ void UndeadBody::attemptDamage( DamageInfo *damageInfo )
 
 	if( damageInfo->in.m_damageType != DAMAGE_UNRESISTABLE
 			&& !m_isSecondLife
+#if RETAIL_COMPATIBLE_CRC
 			&& damageInfo->in.m_amount >= getHealth()
+#else
+			// TheSuperHackers @bugfix Stubbjax 20/09/2025 Battle Buses now correctly apply damage modifiers when calculating lethal damage
+			&& estimateDamage(damageInfo->in) >= getHealth()
+#endif
 			&& IsHealthDamagingDamage(damageInfo->in.m_damageType)
 			)
 	{
@@ -117,7 +122,7 @@ void UndeadBody::startSecondLife(DamageInfo *damageInfo)
 	for( ; *update; ++update )
 	{
 		SlowDeathBehaviorInterface* sdu = (*update)->getSlowDeathBehaviorInterface();
-		if (sdu != NULL  && sdu->isDieApplicable(damageInfo) )
+		if (sdu != nullptr  && sdu->isDieApplicable(damageInfo) )
 		{
 			total += sdu->getProbabilityModifier( damageInfo );
 		}
@@ -131,7 +136,7 @@ void UndeadBody::startSecondLife(DamageInfo *damageInfo)
 	for( update = getObject()->getBehaviorModules(); *update; ++update)
 	{
 		SlowDeathBehaviorInterface* sdu = (*update)->getSlowDeathBehaviorInterface();
-		if (sdu != NULL && sdu->isDieApplicable(damageInfo))
+		if (sdu != nullptr && sdu->isDieApplicable(damageInfo))
 		{
 			roll -= sdu->getProbabilityModifier( damageInfo );
 			if (roll <= 0)

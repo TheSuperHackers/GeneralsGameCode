@@ -37,11 +37,6 @@
 
 #pragma once
 
-#ifndef __WSYS_FILESYSTEM_H
-#define __WSYS_FILESYSTEM_H
-
-
-
 //----------------------------------------------------------------------------
 //           Includes
 //----------------------------------------------------------------------------
@@ -78,7 +73,7 @@ class FileSystem
 	public:
 
 		virtual					~FileSystem() {};
-		virtual	File*		open( const Char *filename, Int access = 0 ) = NULL ;		///< opens a File interface to the specified file
+		virtual	File*		open( const Char *filename, Int access = 0 ) = 0 ;		///< opens a File interface to the specified file
 
 
 };
@@ -90,7 +85,3 @@ extern FileSystem*	TheFileSystem;
 //----------------------------------------------------------------------------
 //           Inlining
 //----------------------------------------------------------------------------
-
-
-
-#endif // __WSYS_FILESYSTEM_H

@@ -19,12 +19,7 @@
 // BabylonDlg.h : header file
 //
 
-#if !defined(AFX_BABYLONDLG_H__2BF3124D_3BA1_11D3_B9DA_006097B90D93__INCLUDED_)
-#define AFX_BABYLONDLG_H__2BF3124D_3BA1_11D3_B9DA_006097B90D93__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
 #include "resource.h"
 #include "TransDB.h"
@@ -95,9 +90,9 @@ public:
 	int SaveLog ( void );
 	void Status ( const char *string, int log = TRUE);
 	void Log ( const char *string, LogFormat format = NEW_LINE );
-	CBabylonDlg(CWnd* pParent = NULL);	// standard constructor
+	CBabylonDlg(CWnd* pParent = nullptr);	// standard constructor
 	virtual ~CBabylonDlg();
-	int LoadStrFile ( TransDB *db, const char *fileaname, void (*cb ) (void ) = NULL );
+	int LoadStrFile ( TransDB *db, const char *fileaname, void (*cb ) (void ) = nullptr );
 	void Ready ( void ) { Status ( "Ready", FALSE ); ProgressComplete(); };
 
 // Dialog Data
@@ -152,5 +147,3 @@ extern CBabylonDlg *MainDLG;
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_BABYLONDLG_H__2BF3124D_3BA1_11D3_B9DA_006097B90D93__INCLUDED_)

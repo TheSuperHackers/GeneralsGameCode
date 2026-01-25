@@ -30,7 +30,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
 #include "Common/Radar.h"
@@ -63,9 +63,9 @@ OverchargeBehaviorModuleData::OverchargeBehaviorModuleData( void )
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "HealthPercentToDrainPerSecond", INI::parsePercentToReal,	NULL, offsetof( OverchargeBehaviorModuleData, m_healthPercentToDrainPerSecond ) },
-		{ "NotAllowedWhenHealthBelowPercent", INI::parsePercentToReal, NULL, offsetof( OverchargeBehaviorModuleData, m_notAllowedWhenHealthBelowPercent ) },
-		{ 0, 0, 0, 0 }
+		{ "HealthPercentToDrainPerSecond", INI::parsePercentToReal,	nullptr, offsetof( OverchargeBehaviorModuleData, m_healthPercentToDrainPerSecond ) },
+		{ "NotAllowedWhenHealthBelowPercent", INI::parsePercentToReal, nullptr, offsetof( OverchargeBehaviorModuleData, m_notAllowedWhenHealthBelowPercent ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 
   p.add( dataFieldParse );

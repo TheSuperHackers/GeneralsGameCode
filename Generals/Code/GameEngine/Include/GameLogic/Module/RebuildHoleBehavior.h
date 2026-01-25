@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __REBUILD_HOLE_BEHAVIOR_H_
-#define __REBUILD_HOLE_BEHAVIOR_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/BehaviorModule.h"
 #include "GameLogic/Module/DieModule.h"
@@ -110,7 +107,7 @@ public:
 
 protected:
 
-	void newWorkerRespawnProcess( Object *existingWorker );		///< start the worker respawn process (again if existingWorker is non NULL)
+	void newWorkerRespawnProcess( Object *existingWorker );		///< start the worker respawn process (again if existingWorker is non nullptr)
 
 	ObjectID m_workerID;										///< id of the worker that will rebuild us
 	ObjectID m_reconstructingID;						///< ID of the object we're reconstructing
@@ -120,5 +117,3 @@ protected:
 	const ThingTemplate *m_rebuildTemplate;	///< what we are rebuilding
 
 };
-
-#endif  // end __REBUILD_HOLE_BEHAVIOR_H_

@@ -26,7 +26,9 @@
 //
 // Profile module main code
 //////////////////////////////////////////////////////////////////////////////
-#include "_pch.h"
+
+#include "profile.h"
+#include "internal.h"
 #include <new>
 #include "mmsystem.h"
 
@@ -49,15 +51,15 @@ void *ProfileAllocMemory(unsigned numBytes)
 
 void *ProfileReAllocMemory(void *oldPtr, unsigned newSize)
 {
-  // Windows doesn't like ReAlloc with NULL handle/ptr...
+  // Windows doesn't like ReAlloc with null handle/ptr...
   if (!oldPtr)
-    return newSize?ProfileAllocMemory(newSize):0;
+    return newSize?ProfileAllocMemory(newSize):nullptr;
 
   // Shrinking to 0 size is basically freeing memory
   if (!newSize)
   {
     GlobalFree((HGLOBAL)oldPtr);
-    return 0;
+    return nullptr;
   }
 
   // now try GlobalReAlloc first
@@ -165,7 +167,7 @@ void Profile::StartRange(const char *range)
   // known name?
   unsigned k=0;
   for (;k<m_names;++k)
-    if (!strcmp(range,m_frameNames[k].name))
+    if (strcmp(range,m_frameNames[k].name) == 0)
       break;
   if (k==m_names)
   {
@@ -220,7 +222,7 @@ void Profile::AppendRange(const char *range)
   // known name?
   unsigned k=0;
   for (;k<m_names;++k)
-    if (!strcmp(range,m_frameNames[k].name))
+    if (strcmp(range,m_frameNames[k].name) == 0)
       break;
   if (k==m_names)
   {
@@ -271,7 +273,7 @@ void Profile::StopRange(const char *range)
   // known name?
   unsigned k=0;
   for (;k<m_names;++k)
-    if (!strcmp(range,m_frameNames[k].name))
+    if (strcmp(range,m_frameNames[k].name) == 0)
       break;
   DFAIL_IF(k==m_names) return;
   DFAIL_IF(!m_frameNames[k].isRecording) return;
@@ -322,7 +324,7 @@ unsigned Profile::GetFrameCount(void)
 
 const char *Profile::GetFrameName(unsigned frame)
 {
-  return frame>=m_rec?NULL:m_recNames[frame];
+  return frame>=m_rec?nullptr:m_recNames[frame];
 }
 
 void Profile::ClearTotals(void)

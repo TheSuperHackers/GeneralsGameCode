@@ -54,6 +54,14 @@
             }
         },
         {
+            "name": "vc6-weekly",
+            "displayName": "Windows 32bit VC6 Weekly Release",
+            "inherits": "vc6",
+            "cacheVariables": {
+                "RTS_BUILD_OPTION_VC6_FULL_DEBUG": "ON"
+            }
+        },
+        {
             "name": "default",
             "displayName": "Default Config (don't use directly!)",
             "generator": "Ninja Multi-Config",
@@ -151,6 +159,37 @@
             "inherits": "default-vcpkg",
             "hidden": false,
             "displayName": "Unix 32bit VCPKG Release"
+        },
+        {
+            "name": "mingw-w64-i686",
+            "displayName": "MinGW-w64 32-bit (i686) Release",
+            "generator": "Unix Makefiles",
+            "hidden": false,
+            "binaryDir": "${sourceDir}/build/${presetName}",
+            "toolchainFile": "${sourceDir}/cmake/toolchains/mingw-w64-i686.cmake",
+            "cacheVariables": {
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "mingw-w64-i686-debug",
+            "displayName": "MinGW-w64 32-bit (i686) Debug",
+            "hidden": false,
+            "inherits": "mingw-w64-i686",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "RTS_BUILD_OPTION_DEBUG": "ON"
+            }
+        },
+        {
+            "name": "mingw-w64-i686-profile",
+            "displayName": "MinGW-w64 32-bit (i686) Profile",
+            "hidden": false,
+            "inherits": "mingw-w64-i686",
+            "cacheVariables": {
+                "RTS_BUILD_OPTION_PROFILE": "ON"
+            }
         }
     ],
     "buildPresets": [
@@ -177,6 +216,12 @@
             "configurePreset": "vc6-releaselog",
             "displayName": "Build Windows 32bit VC6 Release Logging",
             "description": "Build Windows 32bit VC6 Release Logging"
+        },
+        {
+            "name": "vc6-weekly",
+            "configurePreset": "vc6-weekly",
+            "displayName": "Build Windows 32bit VC6 Weekly Release",
+            "description": "Build Windows 32bit VC6 Weekly Release"
         },
         {
             "name": "win32",
@@ -226,6 +271,24 @@
             "displayName": "Build Unix 32bit VCPKG Release",
             "description": "Build Unix 32bit VCPKG Release",
             "configuration": "Release"
+        },
+        {
+            "name": "mingw-w64-i686",
+            "configurePreset": "mingw-w64-i686",
+            "displayName": "Build MinGW-w64 32-bit (i686) Release",
+            "description": "Build MinGW-w64 32-bit (i686) Release"
+        },
+        {
+            "name": "mingw-w64-i686-debug",
+            "configurePreset": "mingw-w64-i686-debug",
+            "displayName": "Build MinGW-w64 32-bit (i686) Debug",
+            "description": "Build MinGW-w64 32-bit (i686) Debug"
+        },
+        {
+            "name": "mingw-w64-i686-profile",
+            "configurePreset": "mingw-w64-i686-profile",
+            "displayName": "Build MinGW-w64 32-bit (i686) Profile",
+            "description": "Build MinGW-w64 32-bit (i686) Profile"
         }
     ],
     "workflowPresets": [
@@ -282,6 +345,19 @@
             ]
         },
         {
+            "name": "vc6-weekly",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "vc6-weekly"
+                },
+                {
+                    "type": "build",
+                    "name": "vc6-weekly"
+                }
+            ]
+        },
+        {
             "name": "win32",
             "steps": [
                 {
@@ -369,6 +445,45 @@
                 {
                     "type": "build",
                     "name": "unix"
+                }
+            ]
+        },
+        {
+            "name": "mingw-w64-i686",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "mingw-w64-i686"
+                },
+                {
+                    "type": "build",
+                    "name": "mingw-w64-i686"
+                }
+            ]
+        },
+        {
+            "name": "mingw-w64-i686-debug",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "mingw-w64-i686-debug"
+                },
+                {
+                    "type": "build",
+                    "name": "mingw-w64-i686-debug"
+                }
+            ]
+        },
+        {
+            "name": "mingw-w64-i686-profile",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "mingw-w64-i686-profile"
+                },
+                {
+                    "type": "build",
+                    "name": "mingw-w64-i686-profile"
                 }
             ]
         }

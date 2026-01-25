@@ -34,13 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef VECTOR3I_H
-#define VECTOR3I_H
 
 #include "always.h"
 
@@ -139,5 +133,3 @@ WWINLINE unsigned short & Vector3i16::operator[] (int n)
 {
 	return ((unsigned short *)this)[n];
 }
-
-#endif

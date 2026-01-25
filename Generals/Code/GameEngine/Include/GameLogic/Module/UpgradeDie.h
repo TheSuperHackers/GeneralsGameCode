@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __UPGRADEDIE_H
-#define __UPGRADEDIE_H
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/INI.h"
 #include "GameLogic/Module/DieModule.h"
@@ -55,7 +52,7 @@ public:
 
 		static const FieldParse dataFieldParse[] =
 		{
-			{ "UpgradeToRemove",					INI::parseAsciiString,		NULL, offsetof( UpgradeDieModuleData, m_upgradeName ) },
+			{ "UpgradeToRemove",					INI::parseAsciiString,		nullptr, offsetof( UpgradeDieModuleData, m_upgradeName ) },
 			{ 0, 0, 0, 0 }
 		};
 
@@ -78,6 +75,3 @@ public:
 	virtual void onDie( const DamageInfo *damageInfo );
 
 };
-
-#endif // __UPGRADEDIE_H
-

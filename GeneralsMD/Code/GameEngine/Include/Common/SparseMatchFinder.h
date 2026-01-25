@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __SparseMatchFinder_H_
-#define __SparseMatchFinder_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/BitFlags.h"
 #include "Common/STLTypedefs.h"
@@ -114,13 +111,13 @@ private:
 	//-------------------------------------------------------------------------------------------------
 
 	//-------------------------------------------------------------------------------------------------
-	inline static Int countConditionIntersection(const BITSET& a, const BITSET& b)
+	static Int countConditionIntersection(const BITSET& a, const BITSET& b)
 	{
 		return a.countIntersection(b);
 	}
 
 	//-------------------------------------------------------------------------------------------------
-	inline static Int countConditionInverseIntersection(const BITSET& a, const BITSET& b)
+	static Int countConditionInverseIntersection(const BITSET& a, const BITSET& b)
 	{
 		return a.countInverseIntersection(b);
 	}
@@ -128,7 +125,7 @@ private:
 	//-------------------------------------------------------------------------------------------------
 	const MATCHABLE* findBestInfoSlow(const std::vector<MATCHABLE>& v, const BITSET& bits) const
 	{
-		const MATCHABLE* result = NULL;
+		const MATCHABLE* result = nullptr;
 		Int bestYesMatch = 0;							// want to maximize this
 		Int bestYesExtraneousBits = 999;	// want to minimize this
 
@@ -225,19 +222,19 @@ public:
 	{
 		typename MatchMap::const_iterator it = m_bestMatches.find(bits);
 
-		const MATCHABLE *first = NULL;
+		const MATCHABLE *first = nullptr;
 		if (it != m_bestMatches.end())
 		{
 			first = (*it).second;
 		}
-		if (first != NULL) {
+		if (first != nullptr) {
 			return first;
 		}
 
 		const MATCHABLE* info = findBestInfoSlow(v, bits);
 
-		DEBUG_ASSERTCRASH(info != NULL, ("no suitable match for criteria was found!"));
-		if (info != NULL) {
+		DEBUG_ASSERTCRASH(info != nullptr, ("no suitable match for criteria was found!"));
+		if (info != nullptr) {
 			m_bestMatches[bits] = info;
 		}
 
@@ -245,6 +242,3 @@ public:
 	}
 
 };
-
-#endif // __SparseMatchFinder_H_
-

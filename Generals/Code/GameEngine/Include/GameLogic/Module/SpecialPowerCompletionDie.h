@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef _SPECIAL_POWER_COMPLETION_DIE_H_
-#define _SPECIAL_POWER_COMPLETION_DIE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/INI.h"
 #include "GameLogic/Module/DieModule.h"
@@ -46,7 +43,7 @@ public:
 
 	SpecialPowerCompletionDieModuleData()
 	{
-		m_specialPowerTemplate = NULL;
+		m_specialPowerTemplate = nullptr;
 	}
 
 	static void buildFieldParse(MultiIniFieldParse& p)
@@ -55,7 +52,7 @@ public:
 
 		static const FieldParse dataFieldParse[] =
 		{
-			{ "SpecialPowerTemplate", INI::parseSpecialPowerTemplate,	NULL, offsetof( SpecialPowerCompletionDieModuleData, m_specialPowerTemplate ) },
+			{ "SpecialPowerTemplate", INI::parseSpecialPowerTemplate,	nullptr, offsetof( SpecialPowerCompletionDieModuleData, m_specialPowerTemplate ) },
 			{ 0, 0, 0, 0 }
 		};
     p.add(dataFieldParse);
@@ -88,7 +85,5 @@ protected:
 	Bool m_creatorSet;
 
 };
-
-#endif // _SPECIAL_POWER_COMPLETION_DIE_H_
 
 // Creator is stored as ID, so a failed lookup just means that he died first and noone cares that we are going.

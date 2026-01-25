@@ -48,10 +48,10 @@ RingPropertySheetClass::RingPropertySheetClass
 	CWnd *					pParentWnd,
 	UINT						iSelectPage
 )
-	:	m_RenderObj (NULL),
+	:	m_RenderObj (nullptr),
 		CPropertySheet(nIDCaption, pParentWnd, iSelectPage)
 {
-	MEMBER_ADD (m_RenderObj, ring);
+	REF_PTR_SET (m_RenderObj, ring);
 	Initialize ();
 	return ;
 }
@@ -69,10 +69,10 @@ RingPropertySheetClass::RingPropertySheetClass
 	CWnd *						pParentWnd,
 	UINT							iSelectPage
 )
-	:	m_RenderObj (NULL),
+	:	m_RenderObj (nullptr),
 		CPropertySheet(pszCaption, pParentWnd, iSelectPage)
 {
-	MEMBER_ADD (m_RenderObj, ring);
+	REF_PTR_SET (m_RenderObj, ring);
 	Initialize ();
 	return ;
 }
@@ -85,7 +85,7 @@ RingPropertySheetClass::RingPropertySheetClass
 /////////////////////////////////////////////////////////////////////////////
 RingPropertySheetClass::~RingPropertySheetClass (void)
 {
-	MEMBER_RELEASE (m_RenderObj);
+	REF_PTR_RELEASE (m_RenderObj);
 	return ;
 }
 
@@ -178,7 +178,7 @@ void
 RingPropertySheetClass::Add_Object_To_Viewer (void)
 {
 	CW3DViewDoc *doc = ::GetCurrentDocument ();
-	if ((doc != NULL) && (m_RenderObj != NULL)) {
+	if ((doc != nullptr) && (m_RenderObj != nullptr)) {
 
 		//
 		// Create a new prototype for this object
@@ -204,7 +204,7 @@ RingPropertySheetClass::Add_Object_To_Viewer (void)
 		//
 		doc->Reload_Displayed_Object ();
 		m_LastSavedName = m_RenderObj->Get_Name ();
-		MEMBER_ADD (m_RenderObj, (RingRenderObjClass *)doc->GetDisplayedObject ());
+		REF_PTR_SET (m_RenderObj, (RingRenderObjClass *)doc->GetDisplayedObject ());
 
 		//
 		// Pass the object along to the pages
@@ -239,7 +239,7 @@ RingPropertySheetClass::Update_Object (void)
 void
 RingPropertySheetClass::Initialize (void)
 {
-	if (m_RenderObj == NULL) {
+	if (m_RenderObj == nullptr) {
 		Create_New_Object ();
 	} else {
 		m_LastSavedName = m_RenderObj->Get_Name ();

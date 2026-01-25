@@ -16,7 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/* GLOBAL.H - RSAREF types and constants
+/* GLOBAL.h - RSAREF types and constants
  */
 
 /* PROTOTYPES should be set to one if and only if the compiler supports

@@ -43,17 +43,11 @@
 
 #pragma once
 
-
-#ifndef	__WSYS_LIST_H
-#define	__WSYS_LIST_H
-
 //----------------------------------------------------------------------------
 //           Includes
 //----------------------------------------------------------------------------
 
-#ifndef _BASE_TYPE_H_
 #include <Lib/BaseType.h>
-#endif
 
 //----------------------------------------------------------------------------
 //           Forward References
@@ -92,8 +86,8 @@ class	LListNode
 		void					append( LListNode *new_node );		///< Appends new node after itself
 		LListNode*		next( void );											///< Returns next node in list
 		LListNode*		prev( void );											///< Returns previous node in list
-		LListNode*		loopNext( void );									///< Returns next node in list, warpping round to start of list if nessecary
-		LListNode*		loopPrev( void );									///< Returns previous node in list, wrapping round to end of list if nessecary
+		LListNode*		loopNext( void );									///< Returns next node in list, wrapping round to start of list if necessary
+		LListNode*		loopPrev( void );									///< Returns previous node in list, wrapping round to end of list if necessary
 		Bool					inList( void );										///< Returns whether or not node in list
 		Bool					isHead( void );										///< Returns whether or not this node is the head/tail node
 		Int						priority( void );									///< Returns node's priority
@@ -177,5 +171,3 @@ inline		LListNode*		LList::lastNode( void ) { return m_head.prev();} ;
 inline		void					LList::setSortMode( SortMode new_mode ) { m_sortMode = new_mode; };
 inline		Bool					LList::isEmpty( void ) { return !m_head.inList(); };
 inline		void					LList::destroy( void ) { clear();};
-
-#endif	//	__GDF_LIST_H_

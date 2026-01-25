@@ -21,9 +21,6 @@
 
 #pragma once
 
-#ifndef GroveTool_H
-#define GroveTool_H
-
 #include "Lib/BaseType.h"
 #include "Tool.h"
 #include "Common/MapObject.h"
@@ -61,6 +58,3 @@ public:
 	virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);
 	virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);
 };
-
-
-#endif //TOOL_H

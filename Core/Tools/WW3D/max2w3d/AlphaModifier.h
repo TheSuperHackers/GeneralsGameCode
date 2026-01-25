@@ -34,10 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef ALPHA_MODIFIER_H
-#define ALPHA_MODIFIER_H
-
+#pragma once
 
 #include <max.h>
 #include "iparamm2.h"
@@ -110,11 +107,11 @@ class AlphaModifierClass : public Modifier
 		// Direct paramblock access
 		int	NumParamBlocks() {return 1;}
 		IParamBlock2* GetParamBlock(int i) { return pblock;}
-		IParamBlock2* GetParamBlockByID(BlockID id) {return (pblock->ID() == id) ? pblock : NULL;}
+		IParamBlock2* GetParamBlockByID(BlockID id) {return (pblock->ID() == id) ? pblock : nullptr;}
 		int GetParamBlockIndex(int id) {return id;}
 
 		// Does not use createmouse callbacks
-		CreateMouseCallBack* GetCreateMouseCallBack() {return NULL;}
+		CreateMouseCallBack* GetCreateMouseCallBack() {return nullptr;}
 
 		// Load and unload our UI
 		void BeginEditParams(IObjParam *ip, ULONG flags,Animatable *prev);
@@ -146,9 +143,3 @@ class AlphaModDlgProc : public ParamMap2UserDlgProc
 
 		void SetThing(ReferenceTarget *m) {AlphaModifier = (AlphaModifierClass*)m;}
 };
-
-
-#endif //ALPHA_MODIFIER_H
-
-
-

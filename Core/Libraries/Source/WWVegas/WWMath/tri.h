@@ -34,13 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef TRI_H
-#define TRI_H
 
 #include "always.h"
 #include "vector4.h"
@@ -55,7 +49,7 @@
 ** The initial reason for this class is for Commando's collision detection code.  Initially
 ** I wrote custom code inside the render object for the terrain to perform collision
 ** detection. Moving the low-level geometrical collision code into the math library makes it
-** more re-useable and independent from changes in the rendering code.
+** more re-usable and independent from changes in the rendering code.
 */
 class TriClass
 {
@@ -302,5 +296,3 @@ inline bool Cast_Semi_Infinite_Axis_Aligned_Ray_To_Triangle(const Vector3 &tri_p
 
 	return retval;
 }
-
-#endif

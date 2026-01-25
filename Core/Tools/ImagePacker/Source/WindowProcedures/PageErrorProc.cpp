@@ -41,7 +41,7 @@
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 #include <windows.h>
-#include <stdio.h>
+#include <Utility/stdio_adapter.h>
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "ImagePacker.h"
@@ -83,7 +83,7 @@ BOOL CALLBACK PageErrorProc( HWND hWndDialog, UINT message,
 			//
 
 			// sanity
-			if( TheImagePacker == NULL )
+			if( TheImagePacker == nullptr )
 				return TRUE;
 
 			// go through all pages

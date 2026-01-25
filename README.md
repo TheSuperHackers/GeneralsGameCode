@@ -61,9 +61,32 @@ report bugs, and contribute to the project!
 
 ## Building the Game Yourself
 
-We provide support for building the project using Visual Studio 6 (VS6) and Visual Studio 2022. For detailed build
-instructions, check the [Wiki](https://github.com/TheSuperHackers/GeneralsGameCode/wiki/build_guides), which also
-includes guides for building with Docker, CLion, and links to forks supporting additional versions.
+We provide support for building the project on Windows and Linux. For detailed build instructions, check the
+[Wiki](https://github.com/TheSuperHackers/GeneralsGameCode/wiki/build_guides), which includes guides for VS6, VS2022,
+Docker, CLion, and links to forks supporting additional versions.
+
+### Quick Start
+
+**Windows (Visual Studio 2022)**
+```bash
+cmake --preset win32
+cmake --build build/win32 --config Release
+```
+
+**Linux (via Docker)**
+```bash
+./scripts/docker-build.sh              # Build using Docker
+./scripts/docker-install.sh --detect # Install to your game
+```
+
+### Dependency management
+
+The repository uses a vcpkg manifest (`vcpkg.json`) paired with a lockfile (`vcpkg-lock.json`). When you add or upgrade
+dependencies, run `vcpkg install --x-manifest-root . --triplet <triplet>` with `VCPKG_FEATURE_FLAGS=versions` so the
+lockfile picks up the new versions and include the updated lockfile in your change. GitHub Actions consumes these ports
+through `VCPKG_BINARY_SOURCES=clear;files,<workspace>/vcpkg-bincache,readwrite` (paired with an `actions/cache` entry for
+that folder), so the first CI build warms the cache and subsequent builds pull prebuilt binaries instead of
+re-compiling everything.
 
 ## Contributing
 

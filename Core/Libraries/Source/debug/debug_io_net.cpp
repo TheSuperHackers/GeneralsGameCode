@@ -26,7 +26,11 @@
 //
 // Debug I/O class net (Network destination via named pipe)
 //////////////////////////////////////////////////////////////////////////////
-#include "_pch.h"
+
+#include "debug.h"
+#include "internal.h"
+#include "internal_io.h"
+#include <windows.h>
 #include <new>      // needed for placement new prototype
 
 DebugIONet::DebugIONet(void)
@@ -45,13 +49,13 @@ int DebugIONet::Read(char *buf, int maxchar)
     return 0;
 
   DWORD mode=PIPE_READMODE_MESSAGE|PIPE_NOWAIT;
-  SetNamedPipeHandleState(m_pipe,&mode,NULL,NULL);
+  SetNamedPipeHandleState(m_pipe,&mode,nullptr,nullptr);
 
   DWORD read;
-  if (!ReadFile(m_pipe,buf,maxchar-1,&read,NULL))
+  if (!ReadFile(m_pipe,buf,maxchar-1,&read,nullptr))
     read=0;
   mode=PIPE_READMODE_MESSAGE|PIPE_WAIT;
-  SetNamedPipeHandleState(m_pipe,&mode,NULL,NULL);
+  SetNamedPipeHandleState(m_pipe,&mode,nullptr,nullptr);
 
   return read;
 }
@@ -62,18 +66,18 @@ void DebugIONet::Write(StringType type, const char *src, const char *str)
     return;
 
   DWORD dummy;
-  WriteFile(m_pipe,&type,1,&dummy,NULL);
+  WriteFile(m_pipe,&type,1,&dummy,nullptr);
 
   unsigned len;
   len=src?strlen(src):0;
-  WriteFile(m_pipe,&len,4,&dummy,NULL);
+  WriteFile(m_pipe,&len,4,&dummy,nullptr);
   if (len)
-    WriteFile(m_pipe,src,len,&dummy,NULL);
+    WriteFile(m_pipe,src,len,&dummy,nullptr);
 
   len=strlen(str);
-  WriteFile(m_pipe,&len,4,&dummy,NULL);
+  WriteFile(m_pipe,&len,4,&dummy,nullptr);
   if (len)
-    WriteFile(m_pipe,str,len,&dummy,NULL);
+    WriteFile(m_pipe,str,len,&dummy,nullptr);
 }
 
 void DebugIONet::EmergencyFlush(void)
@@ -83,20 +87,20 @@ void DebugIONet::EmergencyFlush(void)
 void DebugIONet::Execute(class Debug& dbg, const char *cmd, bool structuredCmd,
                          unsigned argn, const char * const * argv)
 {
-  if (!cmd||!strcmp(cmd,"help"))
+  if (!cmd||strcmp(cmd,"help") == 0)
   {
     dbg << "net I/O help:\n"
            "  add [ <machine> ]\n"
            "    create net I/O (optionally specifying the machine to connect to)\n";
   }
-  else if (!strcmp(cmd,"add"))
+  else if (strcmp(cmd,"add") == 0)
   {
     const char *machine=argn?argv[0]:".";
 
     char buf[256];
     wsprintf(buf,"\\\\%s\\pipe\\ea_debug_v1",machine);
     m_pipe=CreateFile(buf,GENERIC_READ|GENERIC_WRITE,
-                      0,NULL,OPEN_EXISTING,0,NULL);
+                      0,nullptr,OPEN_EXISTING,0,nullptr);
     if (m_pipe==INVALID_HANDLE_VALUE)
     {
       dbg << "Could not connect to given machine.\n";
@@ -105,14 +109,14 @@ void DebugIONet::Execute(class Debug& dbg, const char *cmd, bool structuredCmd,
 
     // we're reading messages
     DWORD mode=PIPE_READMODE_MESSAGE;
-    SetNamedPipeHandleState(m_pipe,&mode,NULL,NULL);
+    SetNamedPipeHandleState(m_pipe,&mode,nullptr,nullptr);
 
     // write welcome message
     char comp[128];
     mode=sizeof(comp);
     GetComputerName(comp,&mode);
     wsprintf(buf,"Client at %s\n",comp);
-    Write(Other,NULL,buf);
+    Write(Other,nullptr,buf);
   }
 }
 

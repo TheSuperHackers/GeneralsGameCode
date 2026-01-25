@@ -22,5 +22,5 @@
 
 #include "StdAfx.h"
 
-// TODO: reference any additional headers you need in STDAFX.H
+// TODO: reference any additional headers you need in STDAFX.h
 // and not in this file

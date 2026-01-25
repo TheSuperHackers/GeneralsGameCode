@@ -33,13 +33,10 @@
  *-------------------------------------------------------------------------*
  * Functions:                                                              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-#if _MSC_VER >= 1000
-#pragma once
-#endif // _MSC_VER >= 1000
 
-#ifndef SHAREBUF_H
-#define SHAREBUF_H
-#include "refcount.h"
+#pragma once
+
+#include "always.h"
 
 
 /*
@@ -116,7 +113,7 @@ template <class T>
 ShareBufferClass<T>::~ShareBufferClass(void)
 {
 	delete[] Array;
-	Array = NULL;
+	Array = nullptr;
 }
 
 template<class T>
@@ -144,6 +141,3 @@ void ShareBufferClass<T>::Clear(void)
 {
 	memset(Array,0,Count * sizeof(T));
 }
-
-
-#endif // SHAREBUF_H

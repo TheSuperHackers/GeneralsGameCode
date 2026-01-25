@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __SPECTRE_GUNSHIP_UPDATE_H_
-#define __SPECTRE_GUNSHIP_UPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/KindOf.h"
 #include "GameLogic/Module/SpecialPowerUpdateModule.h"
@@ -108,7 +105,7 @@ public:
 	virtual Bool isActive() const {return m_status < GUNSHIP_STATUS_DEPARTING;}
 	virtual SpecialPowerUpdateInterface* getSpecialPowerUpdateInterface() { return this; }
 	virtual CommandOption getCommandOption() const { return (CommandOption)0; }
-	virtual Bool isPowerCurrentlyInUse( const CommandButton *command = NULL ) const;
+	virtual Bool isPowerCurrentlyInUse( const CommandButton *command = nullptr ) const;
 
 	virtual void onObjectCreated();
 	virtual UpdateSleepTime update();
@@ -170,7 +167,3 @@ protected:
   AudioEventRTS m_howitzerFireSound;
 
 };
-
-
-#endif // __SPECTRE_GUNSHIP_UPDATE_H_
-

@@ -26,7 +26,7 @@
 // Author: Kris Morness, June 2002
 // Desc:   State machine that handles internet hacking (free cash)
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Player.h"
 #include "Common/ThingFactory.h"
@@ -164,7 +164,7 @@ void HackInternetAIUpdate::hackInternet()
 {
 	//if (m_hackInternetStateMachine)
 	//	deleteInstance(m_hackInternetStateMachine);
-	//m_hackInternetStateMachine = NULL;
+	//m_hackInternetStateMachine = nullptr;
 
 	// must make the state machine AFTER initing the other stuff, since it may inquire of its values...
 	//m_hackInternetStateMachine = newInstance(HackInternetStateMachine)( getObject() );
@@ -185,7 +185,7 @@ UnsignedInt HackInternetAIUpdate::getUnpackTime() const
 // ------------------------------------------------------------------------------------------------
 UnsignedInt HackInternetAIUpdate::getPackTime() const
 {
-	if( getObject()->getContainedBy() != NULL )
+	if( getObject()->getContainedBy() != nullptr )
 		return 0; //We don't need to pack if exiting a building
 
 	return getHackInternetAIUpdateModuleData()->m_packTime;
@@ -194,7 +194,7 @@ UnsignedInt HackInternetAIUpdate::getPackTime() const
 // ------------------------------------------------------------------------------------------------
 UnsignedInt HackInternetAIUpdate::getCashUpdateDelay() const
 {
-	if( getObject()->getContainedBy() != NULL )
+	if( getObject()->getContainedBy() != nullptr )
 		return getHackInternetAIUpdateModuleData()->m_cashUpdateDelayFast;
 	else
 		return getHackInternetAIUpdateModuleData()->m_cashUpdateDelay;
@@ -543,25 +543,7 @@ StateReturnType HackInternetState::update()
 				//Grant the unit some experience for a successful hack.
 				xp->addExperiencePoints( ai->getXpPerCashUpdate() );
 
-				Bool displayMoney = TRUE;
-				if( owner->testStatus(OBJECT_STATUS_STEALTHED) )
-				{
-					// OY LOOK!  I AM USING LOCAL PLAYER.  Do not put anything other than TheInGameUI->addFloatingText in the block this controls!!!
-					if( !owner->isLocallyControlled() && !owner->testStatus(OBJECT_STATUS_DETECTED) )
-					{
-						displayMoney = FALSE;
-					}
-				}
-				if( owner->getContainedBy() && owner->getContainedBy()->testStatus(OBJECT_STATUS_STEALTHED) )
-				{
-					// OY LOOK!  I AM USING LOCAL PLAYER.  Do not put anything other than TheInGameUI->addFloatingText in the block this controls!!!
-					if( !owner->getContainedBy()->isLocallyControlled() && !owner->getContainedBy()->testStatus(OBJECT_STATUS_DETECTED) )
-					{
-						displayMoney = FALSE;
-					}
-				}
-
-				if( displayMoney )
+				if (owner->isLogicallyVisible())
 				{
 					// OY LOOK!  I AM USING LOCAL PLAYER.  Do not put anything other than TheInGameUI->addFloatingText in the block this controls!!!
 					//Display cash income floating over the hacker.

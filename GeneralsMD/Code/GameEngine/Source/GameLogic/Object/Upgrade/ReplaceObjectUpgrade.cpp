@@ -26,7 +26,7 @@
 // Author: Graham Smallwood, July 2003
 // Desc:	 UpgradeModule that creates a new Object in our exact location and then deletes our object
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "GameLogic/Module/ReplaceObjectUpgrade.h"
 
@@ -48,8 +48,8 @@ void ReplaceObjectUpgradeModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "ReplaceObject",	INI::parseAsciiString,	NULL, offsetof( ReplaceObjectUpgradeModuleData, m_replaceObjectName ) },
-		{ 0, 0, 0, 0 }
+		{ "ReplaceObject",	INI::parseAsciiString,	nullptr, offsetof( ReplaceObjectUpgradeModuleData, m_replaceObjectName ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   p.add(dataFieldParse);
 }
@@ -84,9 +84,9 @@ void ReplaceObjectUpgrade::upgradeImplementation( )
 		myMatrix = *me->getTransformMatrix();
 		myTeam = me->getTeam();// Team implies player.  It is a subset.
 
-		if (replacementTemplate == NULL)
+		if (replacementTemplate == nullptr)
 		{
-			DEBUG_ASSERTCRASH(replacementTemplate != NULL, ("No such object '%s' in ReplaceObjectUpgrade.", data->m_replaceObjectName.str()));
+			DEBUG_ASSERTCRASH(replacementTemplate != nullptr, ("No such object '%s' in ReplaceObjectUpgrade.", data->m_replaceObjectName.str()));
 			return;
 		}
 
@@ -116,7 +116,7 @@ void ReplaceObjectUpgrade::upgradeImplementation( )
 
 	if( replacementObject->getControllingPlayer() )
 	{
-		replacementObject->getControllingPlayer()->onStructureConstructionComplete(NULL, replacementObject, FALSE);
+		replacementObject->getControllingPlayer()->onStructureConstructionComplete(nullptr, replacementObject, FALSE);
 
 		// TheSuperHackers @bugfix Stubbjax 26/05/2025 If the old object was selected, select the new one.
 		if (oldObjectSelected)

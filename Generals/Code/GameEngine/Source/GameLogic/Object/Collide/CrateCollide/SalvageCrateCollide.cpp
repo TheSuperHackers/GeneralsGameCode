@@ -29,7 +29,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 #include "GameLogic/Module/SalvageCrateCollide.h"
 
 #include "Common/AudioEventRTS.h"
@@ -112,7 +112,7 @@ Bool SalvageCrateCollide::executeCrateBehavior( Object *other )
 // ------------------------------------------------------------------------------------------------
 Bool SalvageCrateCollide::eligibleForWeaponSet( Object *other )
 {
-	if( other == NULL )
+	if( other == nullptr )
 		return FALSE;
 
 	// A kindof marks eligibility, and you must not be fully upgraded
@@ -127,7 +127,7 @@ Bool SalvageCrateCollide::eligibleForWeaponSet( Object *other )
 // ------------------------------------------------------------------------------------------------
 Bool SalvageCrateCollide::eligibleForLevel( Object *other )
 {
-	if( other == NULL )
+	if( other == nullptr )
 		return FALSE;
 
 	// Sorry, you are max level

@@ -18,12 +18,7 @@
 
 // 08/06/02 KM Added cube map and volume texture support
 
-#ifndef DDSFILE_H
-#define DDSFILE_H
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
 
 #include "always.h"
 #include "ww3dformat.h"
@@ -279,5 +274,3 @@ public:
 };
 
 // ----------------------------------------------------------------------------
-
-#endif

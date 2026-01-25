@@ -22,7 +22,7 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 #if (0)
 
 #include "Common/Directory.h"
@@ -97,7 +97,7 @@ Directory::Directory( const AsciiString& dirPath ) : m_dirPath(dirPath)
 		// if this is a subdirectory keep the name around till the end
 		if( BitIsSet( item.dwFileAttributes, FILE_ATTRIBUTE_DIRECTORY ) )
 		{
-			if ( strcmp( item.cFileName, "." ) && strcmp( item.cFileName, ".." ) )
+			if ( strcmp( item.cFileName, "." ) != 0 && strcmp( item.cFileName, ".." ) != 0 )
 			{
 				info.set(item);
 				m_subdirs.insert( info );

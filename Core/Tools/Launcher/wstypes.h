@@ -28,8 +28,7 @@ Last Update : June 17, 1997
 Standard type definitions for the sake of portability and readability.
 \***************************************************************************/
 
-#ifndef WTYPES_HEADER
-#define WTYPES_HEADER
+#pragma once
 
 #ifndef TRUE
 #define TRUE               1
@@ -45,10 +44,6 @@ Standard type definitions for the sake of portability and readability.
 
 #ifndef MAX
 #define MAX(x,y) (((x)>(y))?(x):(y))
-#endif
-
-#ifndef NULL
-#define NULL 0
 #endif
 
 //These are used for readability purposes mostly, when a method takes a
@@ -77,6 +72,4 @@ typedef unsigned int       uint32;
 #ifdef _WIN32
 #define strncasecmp _strnicmp
 #define strcasecmp  _stricmp
-#endif
-
 #endif

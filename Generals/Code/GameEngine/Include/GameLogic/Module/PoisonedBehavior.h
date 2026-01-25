@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __Poisoned_Behavior_H_
-#define __Poisoned_Behavior_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/BehaviorModule.h"
 #include "GameLogic/Module/DamageModule.h"
@@ -96,6 +93,3 @@ private:
 	DeathType			m_deathType;
 
 };
-
-#endif // __Poisoned_Behavior_H_
-

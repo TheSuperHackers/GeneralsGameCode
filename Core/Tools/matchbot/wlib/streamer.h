@@ -16,8 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef STREAMER_HEADER
-#define STREAMER_HEADER
+#pragma once
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -63,5 +62,3 @@ class Streamer : public streambuf
     OutputDevice  *Output_Device;
     char* Buf;
 };
-
-#endif

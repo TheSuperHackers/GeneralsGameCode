@@ -39,13 +39,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef DX8_FVF_H
-#define DX8_FVF_H
 
 #include "always.h"
 #include <d3d8.h>
@@ -266,25 +260,22 @@ class FVFInfoClass : public W3DMPO
 public:
 	FVFInfoClass(unsigned FVF, unsigned vertex_size=0);
 
-	inline unsigned Get_Location_Offset() const { return location_offset; }
-	inline unsigned Get_Normal_Offset() const { return normal_offset; }
+	unsigned Get_Location_Offset() const { return location_offset; }
+	unsigned Get_Normal_Offset() const { return normal_offset; }
 #ifdef WWDEBUG
 	inline unsigned Get_Tex_Offset(unsigned int n) const { WWASSERT(n<D3DDP_MAXTEXCOORD); return texcoord_offset[n]; }
 #else
-	inline unsigned Get_Tex_Offset(unsigned int n) const { return texcoord_offset[n]; }
+	unsigned Get_Tex_Offset(unsigned int n) const { return texcoord_offset[n]; }
 #endif
 
-	inline unsigned Get_Diffuse_Offset() const { return diffuse_offset; }
-	inline unsigned Get_Specular_Offset() const { return specular_offset; }
-	inline unsigned Get_FVF() const { return FVF; }
-	inline unsigned Get_FVF_Size() const { return fvf_size; }
+	unsigned Get_Diffuse_Offset() const { return diffuse_offset; }
+	unsigned Get_Specular_Offset() const { return specular_offset; }
+	unsigned Get_FVF() const { return FVF; }
+	unsigned Get_FVF_Size() const { return fvf_size; }
 
 	void Get_FVF_Name(StringClass& fvfname) const;	// For debug purposes
 
 	// for enabling vertex shaders
-	inline void Set_FVF(unsigned fvf) const { FVF=fvf; }
-	inline void Set_FVF_Size(unsigned size) const { fvf_size=size; }
+	void Set_FVF(unsigned fvf) const { FVF=fvf; }
+	void Set_FVF_Size(unsigned size) const { fvf_size=size; }
 };
-
-
-#endif

@@ -22,11 +22,7 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-
 #pragma once
-
-#ifndef __DISCONNECTDIALOG_H
-#define __DISCONNECTDIALOG_H
 
 #include "GameNetwork/DisconnectManager.h"
 
@@ -79,5 +75,3 @@ protected:
 };
 
 extern DisconnectMenu *TheDisconnectMenu;
-
-#endif // #ifndef __DISCONNECTDIALOG_H

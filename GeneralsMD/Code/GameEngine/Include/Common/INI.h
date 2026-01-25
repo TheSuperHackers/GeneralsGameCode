@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __INI_H_
-#define __INI_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include <stddef.h>	// for offsetof, which we don't use but everyone who includes us does
 #include "Common/STLTypedefs.h"
@@ -119,7 +116,7 @@ struct FieldParse
 	const void*					userData;					///< field-specific data
 	Int									offset;						///< offset to data field
 
-	inline void set(const char* t, INIFieldParseProc p, const void* u, Int o)
+	void set(const char* t, INIFieldParseProc p, const void* u, Int o)
 	{
 		token = t;
 		parse = p;
@@ -141,19 +138,15 @@ private:
 public:
 	MultiIniFieldParse() : m_count(0)
 	{
-		//Added By Sadullah Nader
-		//Initializations missing and needed
 		for(Int i = 0; i < MAX_MULTI_FIELDS; i++)
 			m_extraOffset[i] = 0;
-		//
-
 	}
 
 	void add(const FieldParse* f, UnsignedInt e = 0);
 
-	inline Int getCount() const { return m_count; }
-	inline const FieldParse* getNthFieldParse(Int i) const { return m_fieldParse[i]; }
-	inline UnsignedInt getNthExtraOffset(Int i) const { return m_extraOffset[i]; }
+	Int getCount() const { return m_count; }
+	const FieldParse* getNthFieldParse(Int i) const { return m_fieldParse[i]; }
+	UnsignedInt getNthExtraOffset(Int i) const { return m_extraOffset[i]; }
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -255,14 +248,14 @@ public:
 	static void parseWindowTransitions( INI* ini );
 	static void parseChallengeModeDefinition( INI* ini );
 
-	inline AsciiString getFilename( void ) const { return m_filename; }
-	inline INILoadType getLoadType( void ) const { return m_loadType; }
-	inline UnsignedInt getLineNum( void ) const { return m_lineNum; }
-	inline const char *getSeps( void ) const { return m_seps; }
-	inline const char *getSepsPercent( void ) const { return m_sepsPercent; }
-	inline const char *getSepsColon( void ) const { return m_sepsColon; }
-	inline const char *getSepsQuote( void ) { return m_sepsQuote; }
-	inline Bool isEOF( void ) const { return m_endOfFile; }
+	AsciiString getFilename( void ) const { return m_filename; }
+	INILoadType getLoadType( void ) const { return m_loadType; }
+	UnsignedInt getLineNum( void ) const { return m_lineNum; }
+	const char *getSeps( void ) const { return m_seps; }
+	const char *getSepsPercent( void ) const { return m_sepsPercent; }
+	const char *getSepsColon( void ) const { return m_sepsColon; }
+	const char *getSepsQuote( void ) { return m_sepsQuote; }
+	Bool isEOF( void ) const { return m_endOfFile; }
 
 	void initFromINI( void *what, const FieldParse* parseTable );
 	void initFromINIMulti( void *what, const MultiIniFieldParse& parseTableList );
@@ -334,14 +327,14 @@ public:
 
 		this will *never* return null; if there are no more tokens, an exception will be thrown.
 	*/
-	const char* getNextToken(const char* seps = NULL);
+	const char* getNextToken(const char* seps = nullptr);
 
 	/**
 		just like getNextToken(), except that null is returned if no more tokens are present
 		(rather than throwing an exception). usually you should call getNextToken(),
 		but for some cases this is handier (ie, parsing a variable-length number of tokens).
 	*/
-	const char* getNextTokenOrNull(const char* seps = NULL);
+	const char* getNextTokenOrNull(const char* seps = nullptr);
 
 	/**
 		This is called when the next thing you expect is something like:
@@ -402,15 +395,9 @@ protected:
 
 	void readLine( void );
 
-	File *m_file;															///< file pointer of file currently loading
-
-  enum
-  {
-    INI_READ_BUFFER = 8192                  ///< size of internal read buffer
-  };
-  char m_readBuffer[INI_READ_BUFFER];       ///< internal read buffer
-  unsigned m_readBufferNext;                ///< next char in read buffer
-  unsigned m_readBufferUsed;                ///< number of bytes in read buffer
+	char* m_readBuffer;                       ///< internal read buffer
+	unsigned m_readBufferNext;                ///< next char in read buffer
+	unsigned m_readBufferUsed;                ///< number of bytes in read buffer
 
 	AsciiString m_filename;										///< filename of file currently loading
 	INILoadType m_loadType;										///< load time for current file
@@ -423,9 +410,6 @@ protected:
 	const char *m_blockEndToken;							///< token to represent end of data block
 	Bool m_endOfFile;													///< TRUE when we've hit EOF
 #ifdef DEBUG_CRASHING
-	char m_curBlockStart[ INI_MAX_CHARS_PER_LINE ];	///< first line of cur block
+	char m_curBlockStart[ INI_MAX_CHARS_PER_LINE+1 ];	///< first line of cur block
 #endif
 };
-
-#endif // __INI_H_
-

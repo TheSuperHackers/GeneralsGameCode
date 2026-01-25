@@ -86,7 +86,7 @@ static void drawButtonText( GameWindow *window, WinInstanceData *instData )
 	DisplayString *text = instData->getTextDisplayString();
 
 	// sanity
-	if( text == NULL || text->getTextLength() == 0 )
+	if( text == nullptr || text->getTextLength() == 0 )
 		return;
 
 	// get window position and size
@@ -273,7 +273,7 @@ void W3DGadgetPushButtonDraw( GameWindow *window, WinInstanceData *instData )
 void W3DGadgetPushButtonImageDraw( GameWindow *window,
 																	 WinInstanceData *instData )
 {
-	// if we return NULL then we'll call the one picture drawing code, if we return a value
+	// if we return nullptr then we'll call the one picture drawing code, if we return a value
 	// then we'll call the 3 picture drawing code
 	if( GadgetButtonGetMiddleEnabledImage( window ) )
 	{
@@ -304,7 +304,7 @@ void W3DGadgetPushButtonImageDraw( GameWindow *window,
 void W3DGadgetPushButtonImageDrawOne( GameWindow *window,
 																	 WinInstanceData *instData )
 {
-	const Image *image = NULL;
+	const Image *image = nullptr;
 	ICoord2D size, start, end;
 
 	//
@@ -444,7 +444,7 @@ void W3DGadgetPushButtonImageDrawOne( GameWindow *window,
 
 	if( BitIsSet( window->winGetStatus(), WIN_STATUS_USE_OVERLAY_STATES ) )
 	{
-		image = NULL;
+		image = nullptr;
 		static const Image *pushedOverlayIcon	= TheMappedImageCollection->findImageByName( "Cameo_push" );
 		static const Image *hilitedOverlayIcon = TheMappedImageCollection->findImageByName( "Cameo_hilited" );
 		if( pushedOverlayIcon && hilitedOverlayIcon )
@@ -555,8 +555,8 @@ void W3DGadgetPushButtonImageDrawThree(GameWindow *window, WinInstanceData *inst
 	}
 
 	// sanity, we need to have these images to make it look right
-	if( leftImage == NULL || rightImage == NULL ||
-			centerImage == NULL )
+	if( leftImage == nullptr || rightImage == nullptr ||
+			centerImage == nullptr )
 		return;
 
 	// get image sizes for the ends

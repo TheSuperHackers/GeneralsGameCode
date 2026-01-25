@@ -46,7 +46,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "projector.h"
-#include "refcount.h"
 #include "matrixmapper.h"
 
 

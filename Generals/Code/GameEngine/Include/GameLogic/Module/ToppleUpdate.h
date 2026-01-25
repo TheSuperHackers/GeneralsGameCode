@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __TOPPLEUPDATE_H_
-#define __TOPPLEUPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/BehaviorModule.h"
 #include "GameLogic/Module/CollideModule.h"
@@ -127,6 +124,3 @@ protected:
 	ObjectID			m_stumpID;								///< stump generated, if any
 
 };
-
-#endif // end __TOPPLEUPDATE_H_
-

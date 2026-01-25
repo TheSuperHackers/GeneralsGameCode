@@ -34,12 +34,7 @@
  * Functions:                                                                    *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef STREAK_H
-#define STREAK_H
 
 #include "rendobj.h"
 #include "shader.h"
@@ -168,9 +163,9 @@ class StreakLineClass : public RenderObjClass
 
 		void	Set_LocsWidthsColors( unsigned int num_points,
 																Vector3 *locs,
-																float *widths = NULL,
-																Vector4 *colors = NULL,
-																unsigned int *personalities = NULL);
+																float *widths = nullptr,
+																Vector4 *colors = nullptr,
+																unsigned int *personalities = nullptr);
 
 
 	protected:
@@ -208,13 +203,3 @@ class StreakLineClass : public RenderObjClass
 	SegLineRendererClass		LineRenderer;
 	StreakRendererClass		StreakRenderer;//special, per-point alpha/color/size
 };
-
-
-
-
-
-
-
-
-
-#endif // SEGLINE_H

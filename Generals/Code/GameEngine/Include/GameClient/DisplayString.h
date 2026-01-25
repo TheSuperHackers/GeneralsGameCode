@@ -46,9 +46,6 @@
 
 #pragma once
 
-#ifndef __DISPLAYSTRING_H_
-#define __DISPLAYSTRING_H_
-
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
@@ -129,6 +126,3 @@ inline void DisplayString::notifyTextChanged( void ) {}
 inline DisplayString *DisplayString::next( void ) { return m_next; }
 
 // EXTERNALS //////////////////////////////////////////////////////////////////
-
-#endif // __DISPLAYSTRING_H_
-

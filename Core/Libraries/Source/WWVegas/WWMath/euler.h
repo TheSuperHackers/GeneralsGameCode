@@ -35,13 +35,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef EULER_H
-#define EULER_H
 
 #include "always.h"
 #include "matrix3d.h"
@@ -122,6 +116,3 @@ private:
 	int		Order;
 
 };
-
-
-#endif /*EULER_H*/

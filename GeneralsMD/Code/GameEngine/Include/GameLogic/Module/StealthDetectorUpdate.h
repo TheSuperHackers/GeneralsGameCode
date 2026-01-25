@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __STEALTHDETECTOR_UPDATE_H_
-#define __STEALTHDETECTOR_UPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpdateModule.h"
 
@@ -62,10 +59,10 @@ public:
 		m_updateRate = 1;
 		m_detectionRange = 0.0f;
 		m_initiallyDisabled = false;
-		m_IRBeaconParticleSysTmpl = NULL;
-		m_IRParticleSysTmpl = NULL;
-		m_IRBrightParticleSysTmpl = NULL;
-		m_IRGridParticleSysTmpl = NULL;
+		m_IRBeaconParticleSysTmpl = nullptr;
+		m_IRParticleSysTmpl = nullptr;
+		m_IRBrightParticleSysTmpl = nullptr;
+		m_IRGridParticleSysTmpl = nullptr;
 		m_extraDetectKindof.clear();
 		m_extraDetectKindofNot.clear();
 		m_canDetectWhileGarrisoned = false;
@@ -97,7 +94,3 @@ private:
 	Bool m_enabled;
 
 };
-
-
-#endif	// __STEALTHDETECTOR_UPDATE_H_
-

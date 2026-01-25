@@ -22,7 +22,7 @@
  *                                                                                             *
  *                 Project Name : Command & Conquer                                            *
  *                                                                                             *
- *                     $Archive:: /Commando/Library/LZO1X_D.CPP                               $*
+ *                     $Archive:: /Commando/Library/LZO1X_D.cpp                               $*
  *                                                                                             *
  *                      $Author:: Greg_h                                                      $*
  *                                                                                             *
@@ -34,7 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-/* $Header: /Commando/Library/LZO1X_D.CPP 1     7/22/97 12:00p Greg_h $ */
+/* $Header: /Commando/Library/LZO1X_D.cpp 1     7/22/97 12:00p Greg_h $ */
 /* lzo1x_d.c -- standalone LZO1X decompressor
 
    This file is part of the LZO real-time data compression library.

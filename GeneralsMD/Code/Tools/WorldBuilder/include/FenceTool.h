@@ -22,9 +22,6 @@
 
 #pragma once
 
-#ifndef FenceTool_H
-#define FenceTool_H
-
 #include "Tool.h"
 class WorldHeightMapEdit;
 class MapObject;
@@ -57,6 +54,3 @@ public:
 	virtual void activate(); ///< Become the current tool.
 	virtual void deactivate(); ///< Become not the current tool.
 };
-
-
-#endif //FenceTool_H

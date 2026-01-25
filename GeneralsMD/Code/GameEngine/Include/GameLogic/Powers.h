@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __POWERS_H_
-#define __POWERS_H_
-
 //
 // skeleton definition of unit powers
 //
@@ -54,10 +51,7 @@ static const char *const PowerNames[] =
 	"FASTER",
 	"DOUBLE_SHOT",
 	"SELF_HEALING",
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(PowerNames) == POWERS_NUM_POWERS + 1, "Incorrect array size");
 #endif  // end DEFINE_POWER_NAMES
-
-#endif // __POWERS_H_
-

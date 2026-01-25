@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifndef __PERFTIMER_H__
-#define __PERFTIMER_H__
-
 #include "Utility/intrin_compat.h"
 
 #if defined(RTS_DEBUG)
@@ -141,7 +138,7 @@ void PerfGather::startTimer()
 //-------------------------------------------------------------------------------------------------
 void PerfGather::stopTimer()
 {
-	DEBUG_ASSERTCRASH(this != NULL, ("I am null, uh oh"));
+	DEBUG_ASSERTCRASH(this != nullptr, ("I am null, uh oh"));
 
 	Int64 runTime;
 	GetPrecisionTimer(&runTime);
@@ -154,7 +151,7 @@ void PerfGather::stopTimer()
 	++m_callCount;
 
 #ifdef RTS_DEBUG
-	DEBUG_ASSERTCRASH(*m_activeHead != NULL, ("m_activeHead is null, uh oh"));
+	DEBUG_ASSERTCRASH(*m_activeHead != nullptr, ("m_activeHead is null, uh oh"));
 	DEBUG_ASSERTCRASH(*m_activeHead == this, ("I am not the active timer, uh oh"));
 	DEBUG_ASSERTCRASH(m_activeHead >= &m_active[0] && m_activeHead <= &m_active[MAX_ACTIVE_STACK-1], ("active under/over flow"));
 #endif
@@ -315,5 +312,3 @@ extern void StatMetricsDisplay( DebugDisplayInterface *dd, void *, FILE *fp );
 	#define IGNORE_PERF_TIMER(id)
 
 #endif	// PERF_TIMERS
-
-#endif /* __PERFTIMER_H__ */

@@ -32,8 +32,6 @@
 /*---------------------------------------------------------------------------*/
 
 #pragma once
-#ifndef _H_RAMPTOOL_
-#define _H_RAMPTOOL_
 
 // INCLUDES ///////////////////////////////////////////////////////////////////
 #include "Tool.h"
@@ -64,6 +62,3 @@ class RampTool : public Tool
 		void drawFeedback(Coord3D* endPoint);
 		void applyRamp(CWorldBuilderDoc* pDoc);
 };
-
-
-#endif /* _H_RAMPTOOL_ */

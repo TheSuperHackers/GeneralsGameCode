@@ -29,18 +29,19 @@
 
 #pragma once
 
-#ifndef _LOGIC_RANDOM_VALUE_H_
-#define _LOGIC_RANDOM_VALUE_H_
-
 #include "Lib/BaseType.h"
 
 // do NOT use these functions directly, rather use the macros below
 extern Int GetGameLogicRandomValue( int lo, int hi, const char *file, int line );
+extern Int GetGameLogicRandomValueUnchanged(int lo, int hi, const char* file, int line);
 extern Real GetGameLogicRandomValueReal( Real lo, Real hi, const char *file, int line );
+extern Real GetGameLogicRandomValueRealUnchanged(Real lo, Real hi, const char* file, int line);
 
 // use these macros to access the random value functions
 #define GameLogicRandomValue( lo, hi ) GetGameLogicRandomValue( lo, hi, __FILE__, __LINE__ )
+#define GameLogicRandomValueUnchanged( lo, hi ) GetGameLogicRandomValueUnchanged( lo, hi, __FILE__, __LINE__ )
 #define GameLogicRandomValueReal( lo, hi ) GetGameLogicRandomValueReal( lo, hi, __FILE__, __LINE__ )
+#define GameLogicRandomValueRealUnchanged( lo, hi ) GetGameLogicRandomValueRealUnchanged( lo, hi, __FILE__, __LINE__ )
 
 //--------------------------------------------------------------------------------------------------------------
 class CColorAlphaDialog;
@@ -78,9 +79,9 @@ public:
 	void setRange( Real low, Real high, DistributionType type = UNIFORM );
 
 	Real getValue( void ) const;														///< return a value from the random distribution
-	inline Real getMinimumValue( void ) const { return m_low; }
-	inline Real getMaximumValue( void ) const { return m_high; }
-	inline DistributionType getDistributionType( void ) const { return m_type; }
+	Real getMinimumValue( void ) const { return m_low; }
+	Real getMaximumValue( void ) const { return m_high; }
+	DistributionType getDistributionType( void ) const { return m_type; }
 protected:
 	DistributionType m_type;																		///< the kind of random distribution
 	Real m_low, m_high;																					///< the range of random values
@@ -92,5 +93,3 @@ protected:
 };
 
 //--------------------------------------------------------------------------------------------------------------
-
-#endif // _LOGIC_RANDOM_VALUE_H_

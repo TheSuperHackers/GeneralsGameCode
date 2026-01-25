@@ -16,12 +16,8 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#if !defined(AFX_EDITPARAMETER_H__465E4002_6405_47E3_97BA_D46A8C108600__INCLUDED_)
-#define AFX_EDITPARAMETER_H__465E4002_6405_47E3_97BA_D46A8C108600__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
+
 // EditParameter.h : header file
 //
 #include "GameLogic/Scripts.h"
@@ -35,7 +31,7 @@ class EditParameter : public CDialog
 {
 // Construction
 public:
-	EditParameter(CWnd* pParent = NULL);   // standard constructor
+	EditParameter(CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(EditParameter)
@@ -61,7 +57,7 @@ public:
 	static Bool loadScripts(CComboBox *pCombo, Bool subr, AsciiString match = AsciiString::TheEmptyString);
 	static Bool loadWaypoints(CComboBox *pCombo, AsciiString match = AsciiString::TheEmptyString);
 	static Bool loadTransports(CComboBox *pCombo, AsciiString match = AsciiString::TheEmptyString);
-	static Bool loadObjectTypeList(CComboBox *pCombo, std::vector<AsciiString> *strings = NULL, AsciiString match = AsciiString::TheEmptyString);
+	static Bool loadObjectTypeList(CComboBox *pCombo, std::vector<AsciiString> *strings = nullptr, AsciiString match = AsciiString::TheEmptyString);
 
 protected:
 	static Bool loadSides(CComboBox *pCombo, AsciiString match = AsciiString::TheEmptyString);
@@ -129,5 +125,3 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_EDITPARAMETER_H__465E4002_6405_47E3_97BA_D46A8C108600__INCLUDED_)

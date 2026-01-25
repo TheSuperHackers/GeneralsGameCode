@@ -32,9 +32,6 @@
 
 #pragma once
 
-#ifndef __OPENCONTAIN_H_
-#define __OPENCONTAIN_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/BehaviorModule.h"
 #include "GameLogic/Module/CollideModule.h"
@@ -140,7 +137,7 @@ public:
 	///< this gets called from
 	virtual void clientVisibleContainedFlashAsSelected() {};
 
-	virtual const Player* getApparentControllingPlayer(const Player* observingPlayer) const { return NULL; }
+	virtual const Player* getApparentControllingPlayer(const Player* observingPlayer) const { return nullptr; }
 	virtual void recalcApparentControllingPlayer() { }
 
 	virtual void onContaining( Object *obj, Bool wasSelected );		///< object now contains 'obj'
@@ -159,7 +156,7 @@ public:
 	virtual void removeFromContain( Object *obj, Bool exposeStealthUnits = FALSE );	///< remove 'obj' from contain list
 	virtual void removeAllContained( Bool exposeStealthUnits = FALSE );				///< remove all objects on contain list
 	virtual void killAllContained( void );				///< kill all objects on contain list
-  virtual void harmAndForceExitAllContained( DamageInfo *info ); // apply canned damage against those containes
+  virtual void harmAndForceExitAllContained( DamageInfo *info ); // apply canned damage against those contains
 	virtual Bool isEnclosingContainerFor( const Object *obj ) const;	///< Does this type of Contain Visibly enclose its contents?
 	virtual Bool isPassengerAllowedToFire( ObjectID id = INVALID_ID ) const;	///< Hey, can I shoot out of this container?
 
@@ -174,9 +171,10 @@ public:
 	virtual void iterateContained( ContainIterateFunc func, void *userData, Bool reverse );
 	virtual UnsignedInt getContainCount() const { return m_containListSize; }
 	virtual const ContainedItemsList* getContainedItemsList() const { return &m_containList; }
-	virtual const Object *friend_getRider() const{return NULL;} ///< Damn.  The draw order dependency bug for riders means that our draw module needs to cheat to get around it.
+	virtual const Object *friend_getRider() const{return nullptr;} ///< Damn.  The draw order dependency bug for riders means that our draw module needs to cheat to get around it.
 	virtual Real getContainedItemsMass() const;
 	virtual UnsignedInt getStealthUnitsContained() const { return m_stealthUnitsContained; }
+	virtual UnsignedInt getHeroUnitsContained() const { return m_heroUnitsContained; }
 
 	virtual PlayerMaskType getPlayerWhoEntered(void) const { return m_playerEnteredMask; }
 
@@ -233,7 +231,7 @@ public:
   virtual void setEvacDisposition( EvacDisposition disp ) {};
 protected:
 
-	virtual void monitorConditionChanges( void );				///< check to see if we need to update our occupant postions from a model change or anything else
+	virtual void monitorConditionChanges( void );				///< check to see if we need to update our occupant positions from a model change or anything else
 	virtual void putObjAtNextFirePoint( Object *obj );	///< place object at position of the next fire point to use
 	virtual void redeployOccupants( void );							///< redeploy any objects at firepoints due to a model condition change
 
@@ -262,6 +260,8 @@ private:
 
 	ObjectEnterExitMap	m_objectEnterExitInfo;
 	UnsignedInt					m_stealthUnitsContained;				///< number of stealth units that can't be seen by enemy players.
+	UnsignedInt					m_heroUnitsContained;						///< cached hero count
+	XferVersion					m_xferVersion;									///< version of loaded save file for loadPostProcess
 	Int									m_whichExitPath; ///< Cycles from 1 to n and is used only in modules whose data has numberOfExitPaths > 1.
 	UnsignedInt					m_doorCloseCountdown;						///< When should I shut my door.
 
@@ -284,5 +284,3 @@ private:
 	Bool								m_loadSoundsEnabled;								///< Don't serialize -- used for disabling sounds during payload creation.
   Bool                m_passengerAllowedToFire;      ///< Newly promoted from the template data to the module for upgrade overriding access
 };
-
-#endif  // end __OPENCONTAIN_H_

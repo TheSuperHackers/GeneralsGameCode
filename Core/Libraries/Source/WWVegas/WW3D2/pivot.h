@@ -35,12 +35,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef PIVOT_H
-#define PIVOT_H
 
 #include "always.h"
 #include "vector3.h"
@@ -79,7 +74,7 @@ public:
 	bool Is_Captured() const
 	{
 #ifdef LAZY_CAP_MTX_ALLOC
-		return CapTransformPtr != NULL;
+		return CapTransformPtr != nullptr;
 #else
 		return IsCaptured;
 #endif
@@ -107,7 +102,3 @@ public:
 #endif
 
 };
-
-
-
-#endif

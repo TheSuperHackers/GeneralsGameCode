@@ -30,10 +30,10 @@ Int ContourOptions::m_contourStep = 5;
 Int ContourOptions::m_contourOffset = 0;
 Int ContourOptions::m_contourWidth = 1;
 /////////////////////////////////////////////////////////////////////////////
-/// ContourOptions dialog trivial construstor - Create does the real work.
+/// ContourOptions dialog trivial constructor - Create does the real work.
 
 
-ContourOptions::ContourOptions(CWnd* pParent /*=NULL*/)
+ContourOptions::ContourOptions(CWnd* pParent /*=nullptr*/)
 	: CDialog(ContourOptions::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(ContourOptions)
@@ -108,7 +108,7 @@ BOOL ContourOptions::OnInitDialog()
 
 /// Handles slider ui messages.
 /** Gets the info, determines if it is the feather or width slider,
-		gets the new value, and updates the correspondig edit control
+		gets the new value, and updates the corresponding edit control
 		and the brush tool. */
 void ContourOptions::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {

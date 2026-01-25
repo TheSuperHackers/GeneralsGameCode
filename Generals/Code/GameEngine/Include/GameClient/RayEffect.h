@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __RAYEFFECT_H_
-#define __RAYEFFECT_H_
-
 // INCLUDE ////////////////////////////////////////////////////////////////////////////////////////
 #include "Lib/BaseType.h"
 #include "Common/SubsystemInterface.h"
@@ -91,6 +88,3 @@ protected:
 
 // EXTERN /////////////////////////////////////////////////////////////////////////////////////////
 extern RayEffectSystem *TheRayEffects;  ///< the ray effects singleton external
-
-#endif // $label
-

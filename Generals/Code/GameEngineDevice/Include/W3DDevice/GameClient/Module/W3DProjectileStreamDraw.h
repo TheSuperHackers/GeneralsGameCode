@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef _W3D_PROJECTILE_STREAM_DRAW_H_
-#define _W3D_PROJECTILE_STREAM_DRAW_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/DrawModule.h"
 #include "GameLogic/Module/ProjectileStreamUpdate.h" // I am the draw module for this update.  Very tight.
@@ -83,6 +80,3 @@ protected:
 	SegmentedLineClass *m_allLines[MAX_PROJECTILE_STREAM];	///< Persist, so I can ensure they live a full cycle, and minimize re-creates by holding on
 	Int m_linesValid;
 };
-
-#endif
-

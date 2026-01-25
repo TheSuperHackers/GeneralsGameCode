@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __CONTROLBAR_H_
-#define __CONTROLBAR_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "Common/AudioEventRTS.h"
 #include "Common/GameType.h"
@@ -131,7 +128,7 @@ static const char *const TheCommandOptionNames[] =
 	"IGNORES_UNDERPOWERED",
 	"USES_MINE_CLEARING_WEAPONSET",
 
-	NULL
+	nullptr
 };
 #endif  // end DEFINE_COMMAND_OPTION_NAMES
 
@@ -209,7 +206,7 @@ enum GUICommandType CPP_11(: Int)
 	GUI_COMMAND_NUM_COMMANDS
 };
 
-#ifdef DEFINE_GUI_COMMMAND_NAMES
+#ifdef DEFINE_GUI_COMMAND_NAMES
 static const char *const TheGuiCommandNames[] =
 {
 	"NONE",
@@ -250,7 +247,7 @@ static const char *const TheGuiCommandNames[] =
 	"PLACE_BEACON",
 	"SPECIAL_POWER_FROM_COMMAND_CENTER",
 
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(TheGuiCommandNames) == GUI_COMMAND_NUM_COMMANDS + 1, "Incorrect array size");
 #endif  // end DEFINE_GUI_COMMAND_NAMES
@@ -274,7 +271,7 @@ static const LookupListRec CommandButtonMappedBorderTypeNames[] =
 	{ "ACTION",				COMMAND_BUTTON_BORDER_ACTION },
 	{ "SYSTEM",				COMMAND_BUTTON_BORDER_SYSTEM },
 
-	{ NULL, 0	}
+	{ nullptr, 0	}
 };
 static_assert(ARRAY_SIZE(CommandButtonMappedBorderTypeNames) == COMMAND_BUTTON_BORDER_COUNT + 1, "Incorrect array size");
 //-------------------------------------------------------------------------------------------------
@@ -303,7 +300,7 @@ public:
 	Bool isValidObjectTarget(const Object* sourceObj, const Object* targetObj) const;
 	Bool isValidObjectTarget(const Drawable* source, const Drawable* target) const;
 
-	// Note: It is perfectly valid for either (or both!) of targetObj and targetLocation to be NULL.
+	// Note: It is perfectly valid for either (or both!) of targetObj and targetLocation to be nullptr.
 	// This is a convenience function to make several calls to other functions.
 	Bool isValidToUseOn(const Object *sourceObj, const Object *targetObj, const Coord3D *targetLocation, CommandSourceType commandSource) const;
 	Bool isReady(const Object *sourceObj) const;
@@ -437,32 +434,29 @@ class SideSelectWindowData
 public:
 	SideSelectWindowData(void)
 	{
-		//Added By Sadullah Nader
-		//Initializations
-		generalSpeak = NULL;
+		generalSpeak = nullptr;
 		m_currColor = 0;
-		m_gereralsNameWin = NULL;
+		m_gereralsNameWin = nullptr;
 		m_lastTime = 0;
-		m_pTemplate = NULL;
-		m_sideNameWin = NULL;
+		m_pTemplate = nullptr;
+		m_sideNameWin = nullptr;
 		m_startTime = 0;
 		m_state = 0;
-		m_upgradeImage1 = NULL;
-		m_upgradeImage1Win = NULL;
-		m_upgradeImage2 = NULL;
-		m_upgradeImage2Win = NULL;
-		m_upgradeImage3 = NULL;
-		m_upgradeImage3Win = NULL;
-		m_upgradeImage4 = NULL;
-		m_upgradeImage4Win = NULL;
+		m_upgradeImage1 = nullptr;
+		m_upgradeImage1Win = nullptr;
+		m_upgradeImage2 = nullptr;
+		m_upgradeImage2Win = nullptr;
+		m_upgradeImage3 = nullptr;
+		m_upgradeImage3Win = nullptr;
+		m_upgradeImage4 = nullptr;
+		m_upgradeImage4Win = nullptr;
 		m_upgradeImageSize.x = m_upgradeImageSize.y = 0;
 
-		m_upgradeLabel1Win = NULL;
-		m_upgradeLabel2Win = NULL;
-		m_upgradeLabel3Win = NULL;
-		m_upgradeLabel4Win = NULL;
-		sideWindow = NULL;
-		//
+		m_upgradeLabel1Win = nullptr;
+		m_upgradeLabel2Win = nullptr;
+		m_upgradeLabel3Win = nullptr;
+		m_upgradeLabel4Win = nullptr;
+		sideWindow = nullptr;
 	}
 	~SideSelectWindowData(void);
 
@@ -723,18 +717,20 @@ public:
 
 	// Initialize the Observer controls Must be called after we've already loaded the window
 	void initObserverControls( void );
-	void setObserverLookAtPlayer (Player *p) { m_observerLookAtPlayer = p;}
-	Player *getObserverLookAtPlayer (void ) { return m_observerLookAtPlayer;}
 	void populateObserverInfoWindow ( void );
 	void populateObserverList( void );
 	Bool isObserverControlBarOn( void ) { return m_isObserverCommandBar;}
 
-	/// Returns the currently viewed player. May return NULL if no player is selected while observing.
+	void setObserverLookAtPlayer (Player *player); ///< Sets the looked at player. Used to present information about the player.
+	Player *getObserverLookAtPlayer (void ) const { return m_observerLookAtPlayer; } ///< Returns the looked at player. Can return null.
+
+	void setObservedPlayer(Player *player); ///< Sets the observed player. Used to present the game world as if that player was the local player.
+	Player *getObservedPlayer() const { return m_observedPlayer; } ///< Return the observed player. Can return null.
+
+	/// Returns the currently viewed player. May return nullptr if no player is selected while observing.
 	Player* getCurrentlyViewedPlayer();
 	/// Returns the relationship with the currently viewed player. May return NEUTRAL if no player is selected while observing.
 	Relationship getCurrentlyViewedPlayerRelationship(const Team* team);
-	/// Returns the currently viewed player. Returns "Observer" if no player is selected while observing.
-	AsciiString getCurrentlyViewedPlayerSide();
 
 //	ControlBarResizer *getControlBarResizer( void ) {return m_controlBarResizer;}
 
@@ -803,7 +799,7 @@ protected:
 	/// show/hide the portrait window image using the image from the object
 	void setPortraitByObject( Object *obj );
 
-	/// show rally point at world location, a NULL location will hide any visible rally point marker
+	/// show rally point at world location, a nullptr location will hide any visible rally point marker
 	void showRallyPoint( const Coord3D *loc );
 
 	/// post process step, after all commands and command sets are loaded
@@ -951,17 +947,18 @@ protected:
 
 	Color m_buildUpClockColor;
 
-	Bool m_isObserverCommandBar;												///< If this is true, the command bar behaves greatly differnt
+	Bool m_isObserverCommandBar;												///< If this is true, the command bar behaves greatly different
 	Player *m_observerLookAtPlayer;											///< The current player we're looking at, Null if we're not looking at anyone.
+	Player *m_observedPlayer;														///< The current player we're observing, Null if we're not observing anyone.
 
 	WindowLayout *m_buildToolTipLayout;										///< The window that will slide on/display tooltips
-	Bool m_showBuildToolTipLayout;											///< every frame we test to see if we aregoing to continue showing this or not.
+	Bool m_showBuildToolTipLayout;											///< every frame we test to see if we are going to continue showing this or not.
 public:
 	void showBuildTooltipLayout( GameWindow *cmdButton );
 	void hideBuildTooltipLayout( void );
 	void deleteBuildTooltipLayout( void );
 	Bool getShowBuildTooltipLayout( void ){return m_showBuildToolTipLayout;	}
-	void populateBuildTooltipLayout( const CommandButton *commandButton, GameWindow *tooltipWin = NULL );
+	void populateBuildTooltipLayout( const CommandButton *commandButton, GameWindow *tooltipWin = nullptr );
 	void repopulateBuildTooltipLayout( void );
 private:
 
@@ -976,7 +973,7 @@ private:
 
 	void setCommandBarBorder( GameWindow *button, CommandButtonMappedBorderType type);
 public:
-	void updateCommanBarBorderColors(Color build, Color action, Color upgrade, Color system );
+	void updateCommandBarBorderColors(Color build, Color action, Color upgrade, Color system );
 
 private:
 
@@ -1024,6 +1021,3 @@ private:
 
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
 extern ControlBar *TheControlBar;
-
-#endif  // end __CONTROLBAR_H_
-

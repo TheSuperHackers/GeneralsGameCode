@@ -85,21 +85,9 @@ void Win32Mouse::translateEvent( UnsignedInt eventIndex, MouseIO *result )
 	UINT msg = m_eventBuffer[ eventIndex ].msg;
 	WPARAM wParam = m_eventBuffer[ eventIndex ].wParam;
 	LPARAM lParam = m_eventBuffer[ eventIndex ].lParam;
-	UnsignedInt frame;
-
-	//
-	// get the current input frame from the client, if we don't have
-	// a client (like in the GUI editor) we just use frame 1 so it
-	// registers with the system
-	//
-	if( TheGameClient )
-		frame = TheGameClient->getFrame();
-	else
-		frame = 1;
 
 	// set these to defaults
-	result->leftState = result->middleState = result->rightState = MBS_Up;
-	result->leftFrame = result->middleFrame = result->rightFrame = 0;
+	result->leftState = result->middleState = result->rightState = MBS_None;
 	result->pos.x = result->pos.y = result->wheelPos = 0;
 
 	// Time is the same for all events
@@ -113,7 +101,6 @@ void Win32Mouse::translateEvent( UnsignedInt eventIndex, MouseIO *result )
 		{
 
 			result->leftState = MBS_Down;
-			result->leftFrame = frame;
 			result->pos.x = LOWORD( lParam );
 			result->pos.y = HIWORD( lParam );
 			break;
@@ -125,7 +112,6 @@ void Win32Mouse::translateEvent( UnsignedInt eventIndex, MouseIO *result )
 		{
 
 			result->leftState = MBS_Up;
-			result->leftFrame = frame;
 			result->pos.x = LOWORD( lParam );
 			result->pos.y = HIWORD( lParam );
 			break;
@@ -137,7 +123,6 @@ void Win32Mouse::translateEvent( UnsignedInt eventIndex, MouseIO *result )
 		{
 
 			result->leftState = MBS_DoubleClick;
-			result->leftFrame = frame;
 			result->pos.x = LOWORD( lParam );
 			result->pos.y = HIWORD( lParam );
 			break;
@@ -149,7 +134,6 @@ void Win32Mouse::translateEvent( UnsignedInt eventIndex, MouseIO *result )
 		{
 
 			result->middleState = MBS_Down;
-			result->middleFrame = frame;
 			result->pos.x = LOWORD( lParam );
 			result->pos.y = HIWORD( lParam );
 			break;
@@ -161,7 +145,6 @@ void Win32Mouse::translateEvent( UnsignedInt eventIndex, MouseIO *result )
 		{
 
 			result->middleState = MBS_Up;
-			result->middleFrame = frame;
 			result->pos.x = LOWORD( lParam );
 			result->pos.y = HIWORD( lParam );
 			break;
@@ -173,7 +156,6 @@ void Win32Mouse::translateEvent( UnsignedInt eventIndex, MouseIO *result )
 		{
 
 			result->middleState = MBS_DoubleClick;
-			result->middleFrame = frame;
 			result->pos.x = LOWORD( lParam );
 			result->pos.y = HIWORD( lParam );
 			break;
@@ -185,7 +167,6 @@ void Win32Mouse::translateEvent( UnsignedInt eventIndex, MouseIO *result )
 		{
 
 			result->rightState = MBS_Down;
-			result->rightFrame = frame;
 			result->pos.x = LOWORD( lParam );
 			result->pos.y = HIWORD( lParam );
 			break;
@@ -197,7 +178,6 @@ void Win32Mouse::translateEvent( UnsignedInt eventIndex, MouseIO *result )
 		{
 
 			result->rightState = MBS_Up;
-			result->rightFrame = frame;
 			result->pos.x = LOWORD( lParam );
 			result->pos.y = HIWORD( lParam );
 			break;
@@ -209,7 +189,6 @@ void Win32Mouse::translateEvent( UnsignedInt eventIndex, MouseIO *result )
 		{
 
 			result->rightState = MBS_DoubleClick;
-			result->rightFrame = frame;
 			result->pos.x = LOWORD( lParam );
 			result->pos.y = HIWORD( lParam );
 			break;
@@ -275,7 +254,7 @@ Win32Mouse::Win32Mouse( void )
 	m_currentWin32Cursor = NONE;
 	for (Int i=0; i<NUM_MOUSE_CURSORS; i++)
 		for (Int j=0; j<MAX_2D_CURSOR_DIRECTIONS; j++)
-			cursorResources[i][j]=NULL;
+			cursorResources[i][j]=nullptr;
 	m_directionFrame=0; //points up.
 	m_lostFocus = FALSE;
 }
@@ -286,7 +265,7 @@ Win32Mouse::~Win32Mouse( void )
 {
 
 	// remove our global reference that was for the WndProc() only
-	TheWin32Mouse = NULL;
+	TheWin32Mouse = nullptr;
 
 }
 
@@ -436,7 +415,7 @@ void Win32Mouse::setCursor( MouseCursor cursor )
 		return;	//stop messing with mouse cursor if we don't have focus.
 
 	if (cursor == NONE || !m_visible)
-		SetCursor( NULL );
+		SetCursor( nullptr );
 	else
 	{
 		SetCursor(cursorResources[cursor][m_directionFrame]);
@@ -485,7 +464,7 @@ void Win32Mouse::capture( void )
 void Win32Mouse::releaseCapture( void )
 {
 
-	if (::ClipCursor(NULL))
+	if (::ClipCursor(nullptr))
 	{
 		onCursorCaptured(false);
 	}

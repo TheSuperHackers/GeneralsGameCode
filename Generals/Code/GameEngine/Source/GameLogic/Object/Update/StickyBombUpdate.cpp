@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/ThingTemplate.h"
 #include "Common/Xfer.h"
@@ -50,10 +50,7 @@ StickyBombUpdate::StickyBombUpdate( Thing *thing, const ModuleData *moduleData )
 {
 	m_targetID		= INVALID_ID;
 	m_dieFrame		= 0;
-	//Added By Sadullah Nader
-	//Initialization(s) inserted
 	m_nextPingFrame = 0;
-	//
 	setWakeFrame(getObject(), UPDATE_SLEEP_FOREVER);
 }
 
@@ -81,7 +78,7 @@ void StickyBombUpdate::onObjectCreated()
 			Object *target = ai->getGoalObject();
 			if( target )
 			{
-				init( target, NULL);
+				init( target, nullptr);
 			}
 		}
 	}

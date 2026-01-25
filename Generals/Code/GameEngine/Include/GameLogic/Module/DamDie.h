@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __DAMDIE_H_
-#define __DAMDIE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/DieModule.h"
 
@@ -64,5 +61,3 @@ public:
 	virtual void onDie( const DamageInfo *damageInfo );
 
 };
-
-#endif  // end __DAMDIE_H_

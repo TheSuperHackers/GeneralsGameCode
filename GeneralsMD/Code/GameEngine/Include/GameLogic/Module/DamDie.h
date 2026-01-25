@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __DAMDIE_H_
-#define __DAMDIE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/DieModule.h"
 
@@ -59,10 +56,8 @@ class DamDie : public DieModule
 public:
 
 	DamDie( Thing *thing, const ModuleData* moduleData );
-	// virtual destructor prorotype provided by MemoryPoolObject
+	// virtual destructor prototype provided by MemoryPoolObject
 
 	virtual void onDie( const DamageInfo *damageInfo );
 
 };
-
-#endif  // end __DAMDIE_H_

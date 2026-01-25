@@ -283,12 +283,12 @@ UpdateSleepTime BridgeScaffoldBehavior::update( void )
 BridgeScaffoldBehaviorInterface *BridgeScaffoldBehavior::getBridgeScaffoldBehaviorInterfaceFromObject( Object *obj )
 {
 
-	// santiy
-	if( obj == NULL )
-		return NULL;
+	// sanity
+	if( obj == nullptr )
+		return nullptr;
 
 	// get the bridge tower behavior interface
-	BridgeScaffoldBehaviorInterface *bridgeScaffoldInterface = NULL;
+	BridgeScaffoldBehaviorInterface *bridgeScaffoldInterface = nullptr;
 	BehaviorModule **bmi;
 	for( bmi = obj->getBehaviorModules(); *bmi; ++bmi )
 	{
@@ -300,7 +300,7 @@ BridgeScaffoldBehaviorInterface *BridgeScaffoldBehavior::getBridgeScaffoldBehavi
 	}
 
 	// interface not found
-	return NULL;
+	return nullptr;
 
 }
 

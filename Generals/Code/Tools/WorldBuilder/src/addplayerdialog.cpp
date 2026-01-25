@@ -32,7 +32,7 @@
 // AddPlayerDialog dialog
 
 
-AddPlayerDialog::AddPlayerDialog(AsciiString side, CWnd* pParent /*=NULL*/)
+AddPlayerDialog::AddPlayerDialog(AsciiString side, CWnd* pParent /*=nullptr*/)
 	: CDialog(AddPlayerDialog::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(AddPlayerDialog)
@@ -76,9 +76,8 @@ void AddPlayerDialog::OnOK()
 		} else {
 			faction->GetWindowText(theText);
 		}
-		AsciiString name((LPCTSTR)theText);
 
-		const PlayerTemplate* pt = ThePlayerTemplateStore->findPlayerTemplate(NAMEKEY(name));
+		const PlayerTemplate* pt = ThePlayerTemplateStore->findPlayerTemplate(NAMEKEY((LPCTSTR)theText));
 		if (pt)
 		{
 			m_addedSide = pt ? pt->getName() : AsciiString::TheEmptyString;

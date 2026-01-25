@@ -46,9 +46,6 @@
 
 #pragma once
 
-#ifndef __MOUSE_H_
-#define __MOUSE_H_
-
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
@@ -65,6 +62,7 @@ enum GameMode CPP_11(: Int);
 
 enum MouseButtonState CPP_11(: Int)
 {
+	MBS_None = -1,
 	MBS_Up = 0,
 	MBS_Down,
 	MBS_DoubleClick,
@@ -108,17 +106,14 @@ struct MouseIO
 								 user while - is down/toward user */
 	ICoord2D deltaPos;  ///< overall change in mouse pointer this frame
 
-	MouseButtonState leftState;					// button state: Up, Down, DoubleClick (Which is also down)
+	MouseButtonState leftState;					// button state: None (no event), Up, Down, DoubleClick
 	Int leftEvent;											// Most important event this frame
-	Int leftFrame;											// last frame button state changed
 
 	MouseButtonState rightState;
 	Int rightEvent;
-	Int rightFrame;
 
 	MouseButtonState middleState;
 	Int middleEvent;
-	Int middleFrame;
 };
 
 class CursorInfo
@@ -141,18 +136,19 @@ public:
 	Int						numDirections;	//number of directions for cursors like scrolling/panning.
 };
 
-enum CursorCaptureMode CPP_11(: Int)
+typedef UnsignedInt CursorCaptureMode;
+enum CursorCaptureMode_ CPP_11(: CursorCaptureMode)
 {
-	CursorCaptureMode_None, // Does not capture the cursor
-	CursorCaptureMode_InGame, // Captures the cursor when playing and observing
-	CursorCaptureMode_Always, // Captures the cursor always in menus and game
-	CursorCaptureMode_Auto, // Applies mode "InGame" when Windowed, "Always" when Fullscreen
+	CursorCaptureMode_EnabledInWindowedGame = 1<<0, // Captures the cursor when in game while the app is windowed
+	CursorCaptureMode_EnabledInWindowedMenu = 1<<1, // Captures the cursor when in menu while the app is windowed
+	CursorCaptureMode_EnabledInFullscreenGame = 1<<2, // Captures the cursor when in game while the app is fullscreen
+	CursorCaptureMode_EnabledInFullscreenMenu = 1<<3, // Captures the cursor when in menu while the app is fullscreen
 
-	CursorCaptureMode_Count,
-	CursorCaptureMode_Default = CursorCaptureMode_Auto,
+	CursorCaptureMode_Default =
+		CursorCaptureMode_EnabledInWindowedGame |
+		CursorCaptureMode_EnabledInFullscreenGame |
+		CursorCaptureMode_EnabledInFullscreenMenu,
 };
-
-extern const char* const TheCursorCaptureModeNames[];
 
 // Mouse ----------------------------------------------------------------------
 // Class interface for working with a mouse pointing device
@@ -170,9 +166,9 @@ class Mouse : public SubsystemInterface
 	enum CursorCaptureBlockReason
 	{
 		CursorCaptureBlockReason_NoInit,
-		CursorCaptureBlockReason_NoGame,
 		CursorCaptureBlockReason_Paused,
 		CursorCaptureBlockReason_Unfocused,
+		CursorCaptureBlockReadon_CursorIsOutside,
 
 		CursorCaptureBlockReason_Count
 	};
@@ -299,24 +295,28 @@ public:
   Int  getCursorTooltipDelay() { return m_tooltipDelay; }
   void setCursorTooltipDelay(Int delay) { m_tooltipDelay = delay; }
 
-	void setCursorTooltip( UnicodeString tooltip, Int tooltipDelay = -1, const RGBColor *color = NULL, Real width = 1.0f );		///< set tooltip string at cursor
+	void setCursorTooltip( UnicodeString tooltip, Int tooltipDelay = -1, const RGBColor *color = nullptr, Real width = 1.0f );		///< set tooltip string at cursor
 	void setMouseText( UnicodeString text, const RGBAColorInt *color, const RGBAColorInt *dropColor );					///< set the cursor text, *NOT* the tooltip text
 	virtual void setMouseLimits( void );					///< update the limit extents the mouse can move in
 	MouseCursor getMouseCursor(void) { return m_currentCursor; }	///< get the current mouse cursor image type
 	virtual void setRedrawMode(RedrawMode mode)	{m_currentRedrawMode=mode;} ///<set cursor drawing method.
 	virtual RedrawMode getRedrawMode(void) { return m_currentRedrawMode; } //get cursor drawing method
 	virtual void setVisibility(Bool visible) { m_visible = visible; } // set visibility for load screens, etc
-	inline Bool getVisibility(void) { return m_visible; } // get visibility state
+	Bool getVisibility(void) { return m_visible; } // get visibility state
 
 	void drawTooltip( void );					///< draw the tooltip text
 	void drawCursorText( void );			///< draw the mouse cursor text
 	Int getCursorIndex( const AsciiString& name );
 	void resetTooltipDelay( void );
 
-	virtual void loseFocus();
-	virtual void regainFocus();
+	virtual void loseFocus(); ///< called when window has lost focus
+	virtual void regainFocus(); ///< called when window has regained focus
 
-	void mouseNotifyResolutionChange(void);
+	void onCursorMovedOutside(); ///< called when cursor has left game window
+	void onCursorMovedInside(); ///< called when cursor has entered game window
+	Bool isCursorInside() const; ///< true if the mouse is located inside the game window
+
+	void onResolutionChanged(void);
 	void onGameModeChanged(GameMode prev, GameMode next);
 	void onGamePaused(Bool paused);
 
@@ -392,9 +392,6 @@ protected:
 	Int m_minY;							///< mouse is locked to this region
 	Int m_maxY;							///< mouse is locked to this region
 
-	UnsignedInt m_inputFrame;				///< frame input was gathered on
-	UnsignedInt m_deadInputFrame;		///< Frame which last input occured
-
 	Bool m_inputMovesAbsolute;			/**< if TRUE, when processing mouse position
 																	chanages the movement will be done treating
 																	the	coords as ABSOLUTE positions and NOT
@@ -441,5 +438,3 @@ class MouseDummy : public Mouse
 
 // EXTERNALS //////////////////////////////////////////////////////////////////
 extern Mouse *TheMouse;  ///< extern mouse singleton definition
-
-#endif // _MOUSE_H_

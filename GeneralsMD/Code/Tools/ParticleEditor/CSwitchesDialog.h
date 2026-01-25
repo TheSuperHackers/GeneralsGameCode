@@ -16,7 +16,6 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 #pragma once
 
 #include "Lib/BaseType.h"
@@ -27,7 +26,7 @@ class CSwitchesDialog : public CDialog
 {
 	public:
 		enum {IDD = IDD_PSEd_EditSwitchesDialog};
-		CSwitchesDialog(UINT nIDTemplate = CSwitchesDialog::IDD, CWnd* pParentWnd = NULL);
+		CSwitchesDialog(UINT nIDTemplate = CSwitchesDialog::IDD, CWnd* pParentWnd = nullptr);
 
 		void InitPanel( void );
 

@@ -33,8 +33,8 @@
  *---------------------------------------------------------------------------------------------
  * Functions:
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-#ifndef SOUNDLIBRARYBRIDGE_H
-#define SOUNDLIBRARYBRIDGE_H
+
+#pragma once
 
 // Forward declarations.
 class		Matrix3D;
@@ -45,5 +45,3 @@ class SoundLibraryBridgeClass {
 		virtual	void			Play_2D_Audio(const char * name) = 0;
 		virtual	void			Stop_Playing_Audio(const char * name) = 0;
 };
-
-#endif //SOUNDLIBRARYBRIDGE_H

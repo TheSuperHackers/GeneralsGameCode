@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __OBJECT_TYPES_H__
-#define __OBJECT_TYPES_H__
-
 #include "Common/AsciiString.h"
 #include "Common/Snapshot.h"
 
@@ -87,5 +84,3 @@ public:
 	Bool canBuildAny(Player *player);
 };
 EMPTY_DTOR(ObjectTypes)
-
-#endif /* __OBJECT_TYPES_H__ */

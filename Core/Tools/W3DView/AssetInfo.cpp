@@ -37,7 +37,7 @@
 
 #include "StdAfx.h"
 #include "AssetInfo.h"
-//#include "HModel.H"
+//#include "HModel.h"
 #include "assetmgr.h"
 #include "htree.h"
 
@@ -53,14 +53,15 @@ AssetInfoClass::Initialize (void)
 
 		// Assume we are wrapping an instance as apposed to an asset 'name'.
 		RenderObjClass *prender_obj = m_pRenderObj;
-		SAFE_ADD_REF (prender_obj);
+		if (prender_obj)
+			prender_obj->Add_Ref();
 
 		// If we are wrapping an asset name, then create an instance of it.
-		if (prender_obj == NULL) {
+		if (prender_obj == nullptr) {
 			prender_obj = WW3DAssetManager::Get_Instance()->Create_Render_Obj (m_Name);
 		}
 
-		if (prender_obj != NULL) {
+		if (prender_obj != nullptr) {
 
 			// Get the hierarchy tree for this object (if one exists)
 			const HTreeClass *phtree = prender_obj->Get_HTree ();
@@ -72,7 +73,7 @@ AssetInfoClass::Initialize (void)
 		}
 
 		// Release our hold on the temporary object
-		MEMBER_RELEASE (prender_obj);
+		REF_PTR_RELEASE (prender_obj);
 	}
 
 	return ;

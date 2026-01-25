@@ -20,8 +20,7 @@
 // Minimal debug info
 // Author: Matthew D. Campbell, Sept 2002
 
-#ifndef __DEBUG_H__
-#define __DEBUG_H__
+#pragma once
 
 namespace patchget
 {
@@ -56,7 +55,7 @@ void DebugLog( const char *fmt, ... );
 				if (!ignoreCrash) { \
 					TheCurrentIgnoreCrashPtr = &ignoreCrash; \
 					DebugCrash m ; \
-					TheCurrentIgnoreCrashPtr = NULL; \
+					TheCurrentIgnoreCrashPtr = nullptr; \
 				} \
 			} \
 		} while (0)
@@ -71,6 +70,3 @@ void DebugLog( const char *fmt, ... );
 #endif
 
 } // namespace patchget
-
-#endif // __DEBUG_H__
-

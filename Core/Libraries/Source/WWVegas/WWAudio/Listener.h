@@ -34,14 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef __LISTENER_H
-#define __LISTENER_H
-
 
 #include "Sound3D.h"
 
@@ -142,6 +135,3 @@ class Listener3DClass : public Sound3DClass
 		//	Private member data
 		//////////////////////////////////////////////////////////////////////
 };
-
-
-#endif //__LISTENER_H

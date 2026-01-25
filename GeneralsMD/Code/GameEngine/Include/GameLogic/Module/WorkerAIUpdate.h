@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __WORKER_AI_UPDATE_H_
-#define __WORKER_AI_UPDATE_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "Common/StateMachine.h"
 #include "GameLogic/Module/AIUpdate.h"
@@ -97,15 +94,15 @@ public:
 
 		static const FieldParse dataFieldParse[] =
 		{
-			{ "MaxBoxes",					INI::parseInt,		NULL, offsetof( WorkerAIUpdateModuleData, m_maxBoxesData ) },
-			{ "RepairHealthPercentPerSecond",	INI::parsePercentToReal,	NULL, offsetof( WorkerAIUpdateModuleData, m_repairHealthPercentPerSecond ) },
-			{ "BoredTime",										INI::parseDurationReal,		NULL, offsetof( WorkerAIUpdateModuleData, m_boredTime ) },
-			{ "BoredRange",										INI::parseReal,						NULL, offsetof( WorkerAIUpdateModuleData, m_boredRange ) },
-			{ "SupplyCenterActionDelay", INI::parseDurationUnsignedInt, NULL, offsetof( WorkerAIUpdateModuleData, m_centerDelay ) },
-			{ "SupplyWarehouseActionDelay", INI::parseDurationUnsignedInt, NULL, offsetof( WorkerAIUpdateModuleData, m_warehouseDelay ) },
-			{ "SupplyWarehouseScanDistance", INI::parseReal, NULL, offsetof( WorkerAIUpdateModuleData, m_warehouseScanDistance ) },
- 			{ "SuppliesDepletedVoice", INI::parseAudioEventRTS, NULL, offsetof( WorkerAIUpdateModuleData, m_suppliesDepletedVoice) },
- 			{ "UpgradedSupplyBoost", INI::parseInt, NULL, offsetof( WorkerAIUpdateModuleData, m_upgradedSupplyBoost) },
+			{ "MaxBoxes",					INI::parseInt,		nullptr, offsetof( WorkerAIUpdateModuleData, m_maxBoxesData ) },
+			{ "RepairHealthPercentPerSecond",	INI::parsePercentToReal,	nullptr, offsetof( WorkerAIUpdateModuleData, m_repairHealthPercentPerSecond ) },
+			{ "BoredTime",										INI::parseDurationReal,		nullptr, offsetof( WorkerAIUpdateModuleData, m_boredTime ) },
+			{ "BoredRange",										INI::parseReal,						nullptr, offsetof( WorkerAIUpdateModuleData, m_boredRange ) },
+			{ "SupplyCenterActionDelay", INI::parseDurationUnsignedInt, nullptr, offsetof( WorkerAIUpdateModuleData, m_centerDelay ) },
+			{ "SupplyWarehouseActionDelay", INI::parseDurationUnsignedInt, nullptr, offsetof( WorkerAIUpdateModuleData, m_warehouseDelay ) },
+			{ "SupplyWarehouseScanDistance", INI::parseReal, nullptr, offsetof( WorkerAIUpdateModuleData, m_warehouseScanDistance ) },
+ 			{ "SuppliesDepletedVoice", INI::parseAudioEventRTS, nullptr, offsetof( WorkerAIUpdateModuleData, m_suppliesDepletedVoice) },
+ 			{ "UpgradedSupplyBoost", INI::parseInt, nullptr, offsetof( WorkerAIUpdateModuleData, m_upgradedSupplyBoost) },
 			{ 0, 0, 0, 0 }
 		};
     p.add(dataFieldParse);
@@ -159,7 +156,7 @@ public:
 	virtual Bool getIsRebuild( void ) { return m_isRebuild; } ///< get whether or not our task is a rebuild.
 
 	// task actions
-	virtual void newTask( DozerTask task, Object* target );	///< set a desire to do the requrested task
+	virtual void newTask( DozerTask task, Object* target );	///< set a desire to do the requested task
 	virtual void cancelTask( DozerTask task );						///< cancel this task from the queue, if it's the current task the dozer will stop working on it
 
 	// internal methods to manage behavior from within the dozer state machine
@@ -167,7 +164,7 @@ public:
 	virtual void internalCancelTask( DozerTask task );						///< cancel this task from the dozer
 	virtual void internalTaskCompleteOrCancelled( DozerTask task );	///< this is called when tasks are cancelled or completed
 
-	/** return a dock point for the action and task (if valid) ... note it can return NULL
+	/** return a dock point for the action and task (if valid) ... note it can return nullptr
 	if no point has been set for the combination of task and point */
 	virtual const Coord3D* getDockPoint( DozerTask task, DozerDockPoint point );
 
@@ -268,7 +265,3 @@ private:
  	AudioEventRTS m_suppliesDepletedVoice;						///< Sound played when I take the last box.
 
 };
-
-
-#endif // __WORKER_AI_UPDATE_H_
-

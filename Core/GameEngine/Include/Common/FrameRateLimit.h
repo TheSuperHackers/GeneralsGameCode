@@ -29,8 +29,8 @@ public:
 	Real wait(UnsignedInt maxFps);
 
 private:
-	LARGE_INTEGER m_freq;
-	LARGE_INTEGER m_start;
+	Int64 m_freq;
+	Int64 m_start;
 };
 
 

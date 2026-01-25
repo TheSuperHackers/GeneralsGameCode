@@ -48,13 +48,7 @@
  *   operator * -- Transform a sphere                                                          *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef SPHERE_H
-#define SPHERE_H
 
 #include "always.h"
 #include "vector3.h"
@@ -71,9 +65,9 @@
 class SphereClass
 {
 public:
-	inline SphereClass(void) { };
-	inline SphereClass(const Vector3 & center,float radius) { Init(center,radius); }
-	inline SphereClass(const Matrix3D& mtx,const Vector3 & center,float radius) { Init(mtx,center,radius); }
+	SphereClass(void) { };
+	SphereClass(const Vector3 & center,float radius) { Init(center,radius); }
+	SphereClass(const Matrix3D& mtx,const Vector3 & center,float radius) { Init(mtx,center,radius); }
 	inline SphereClass(const Vector3 & center,const SphereClass & s0);
 	inline SphereClass(const Vector3 *Position, const int VertCount);
 
@@ -545,8 +539,3 @@ inline SphereClass operator * (const Matrix3D & m, const SphereClass & s)
 {
 	return Transform_Sphere(m,s);
 }
-
-
-
-#endif
-

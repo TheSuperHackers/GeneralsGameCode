@@ -43,7 +43,7 @@
 #include "GameNetwork/GameInfo.h"
 
 // GLOBALS ////////////////////////////////////////////////////////////////////////////////////////
-GameStateMap *TheGameStateMap = NULL;
+GameStateMap *TheGameStateMap = nullptr;
 
 
 // METHODS ////////////////////////////////////////////////////////////////////////////////////////
@@ -76,7 +76,7 @@ static void embedPristineMap( AsciiString map, Xfer *xfer )
 
 	// open the map file
 	File *file = TheFileSystem->openFile( map.str(), File::READ | File::BINARY );
-	if( file == NULL )
+	if( file == nullptr )
 	{
 
 		DEBUG_CRASH(( "embedPristineMap - Error opening source file '%s'", map.str() ));
@@ -92,7 +92,7 @@ static void embedPristineMap( AsciiString map, Xfer *xfer )
 
 	// allocate buffer big enough to hold the entire map file
 	char *buffer = new char[ fileSize ];
-	if( buffer == NULL )
+	if( buffer == nullptr )
 	{
 
 		DEBUG_CRASH(( "embedPristineMap - Unable to allocate buffer for file '%s'", map.str() ));
@@ -104,7 +104,7 @@ static void embedPristineMap( AsciiString map, Xfer *xfer )
 	if( file->read( buffer, fileSize ) != fileSize )
 	{
 
-		DEBUG_CRASH(( "embeddPristineMap - Error reading from file '%s'", map.str() ));
+		DEBUG_CRASH(( "embedPristineMap - Error reading from file '%s'", map.str() ));
 		throw SC_INVALID_DATA;
 
 	}
@@ -113,7 +113,7 @@ static void embedPristineMap( AsciiString map, Xfer *xfer )
 	file->close();
 
 	// write the contents to the save file
-	DEBUG_ASSERTCRASH( xfer->getXferMode() == XFER_SAVE, ("embedPristineMap - Unsupposed xfer mode") );
+	DEBUG_ASSERTCRASH( xfer->getXferMode() == XFER_SAVE, ("embedPristineMap - Unsupported xfer mode") );
 	xfer->beginBlock();
 	xfer->xferUser( buffer, fileSize );
 	xfer->endBlock();
@@ -132,7 +132,7 @@ static void embedInUseMap( AsciiString map, Xfer *xfer )
 	FILE *fp = fopen( map.str(), "rb" );
 
 	// sanity
-	if( fp == NULL )
+	if( fp == nullptr )
 	{
 
 		DEBUG_CRASH(( "embedInUseMap - Unable to open file '%s'", map.str() ));
@@ -149,7 +149,7 @@ static void embedInUseMap( AsciiString map, Xfer *xfer )
 
 	// allocate a buffer big enough for the entire file
 	char *buffer = new char[ fileSize ];
-	if( buffer == NULL )
+	if( buffer == nullptr )
 	{
 
 		DEBUG_CRASH(( "embedInUseMap - Unable to allocate buffer for file '%s'", map.str() ));
@@ -188,7 +188,7 @@ static void extractAndSaveMap( AsciiString mapToSave, Xfer *xfer )
 
 	// open handle to output file
 	FILE *fp = fopen( mapToSave.str(), "w+b" );
-	if( fp == NULL )
+	if( fp == nullptr )
 	{
 
 		DEBUG_CRASH(( "extractAndSaveMap - Unable to open file '%s'", mapToSave.str() ));
@@ -201,7 +201,7 @@ static void extractAndSaveMap( AsciiString mapToSave, Xfer *xfer )
 
 	// allocate buffer big enough for the entire map file
 	char *buffer = new char[ dataSize ];
-	if( buffer == NULL )
+	if( buffer == nullptr )
 	{
 
 		DEBUG_CRASH(( "extractAndSaveMap - Unable to allocate buffer for file '%s'", mapToSave.str() ));
@@ -415,7 +415,7 @@ void GameStateMap::xfer( Xfer *xfer )
 	// Save the Game Info so the game can be started with the correct players on load
 	if( TheGameLogic->getGameMode()==GAME_SKIRMISH )
 	{
-		if( TheSkirmishGameInfo==NULL )
+		if( TheSkirmishGameInfo==nullptr )
 		{
 			TheSkirmishGameInfo = NEW SkirmishGameInfo;
 			TheSkirmishGameInfo->init();
@@ -427,7 +427,7 @@ void GameStateMap::xfer( Xfer *xfer )
 	else
 	{
 		delete TheSkirmishGameInfo;
-		TheSkirmishGameInfo = NULL;
+		TheSkirmishGameInfo = nullptr;
 	}
 
 	//

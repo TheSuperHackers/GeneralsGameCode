@@ -22,11 +22,7 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-
 #pragma once
-
-#ifndef __W3DSHROUD_H_
-#define __W3DSHROUD_H_
 
 #include "WW3D2/matpass.h"
 #include "WW3D2/dx8wrapper.h"
@@ -63,7 +59,7 @@ protected:
 class W3DMaskMaterialPassClass : public MaterialPassClass
 {
 public:
-	W3DMaskMaterialPassClass(void) : m_texture(NULL), m_allowUninstall(TRUE) {}
+	W3DMaskMaterialPassClass(void) : m_texture(nullptr), m_allowUninstall(TRUE) {}
 	virtual void	Install_Materials(void) const;
 	virtual void	UnInstall_Materials(void) const;
 	void	setTexture(TextureClass *texture)	{m_texture=texture;}
@@ -127,5 +123,3 @@ protected:
 	void interpolateFogLevels(RECT *rect);		///<fade current fog levels to actual logic side levels.
 	void fillBorderShroudData(W3DShroudLevel level, SurfaceClass* pDestSurface);	///<fill the destination texture with a known value
 };
-
-#endif	//__W3DSHROUD_H_

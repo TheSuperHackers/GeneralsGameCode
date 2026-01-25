@@ -27,9 +27,6 @@
 
 #pragma once
 
-#ifndef _JET_AI_UPDATE_H_
-#define _JET_AI_UPDATE_H_
-
 #include "Common/STLTypedefs.h"
 #include "Common/GameMemory.h"
 #include "GameLogic/AIStateMachine.h"
@@ -113,7 +110,7 @@ public:
 	Real friend_getMinHeight() const { return getJetAIUpdateModuleData()->m_minHeight; }
 	Real friend_getParkingOffset() const { return getJetAIUpdateModuleData()->m_parkingOffset; }
 	UnsignedInt friend_getTakeoffPause() const { return getJetAIUpdateModuleData()->m_takeoffPause; }
-	void friend_setGoalPath( const std::vector<Coord3D>* path ) { getStateMachine()->setGoalPath(path); }
+	void friend_setGoalPath( std::vector<Coord3D>* path ) { getStateMachine()->setGoalPath(path); }
 	void friend_setTakeoffInProgress(Bool v) { setFlag(TAKEOFF_IN_PROGRESS, v); }
 	void friend_setLandingInProgress(Bool v) { setFlag(LANDING_IN_PROGRESS, v); }
 	void friend_setTaxiInProgress(Bool v) { setFlag(TAXI_IN_PROGRESS, v); }
@@ -134,7 +131,7 @@ protected:
 
 	virtual AIStateMachine* makeStateMachine();
 
-	virtual void privateFollowPath( const std::vector<Coord3D>* path, Object *ignoreObject, CommandSourceType cmdSource, Bool exitProduction );///< follow the path defined by the given array of points
+	virtual void privateFollowPath( std::vector<Coord3D>* path, Object *ignoreObject, CommandSourceType cmdSource, Bool exitProduction );///< follow the path defined by the given array of points
 	virtual void privateFollowPathAppend( const Coord3D *pos, CommandSourceType cmdSource );
 	virtual void privateEnter( Object *obj, CommandSourceType cmdSource );							///< enter the given object
 	virtual void privateGetRepaired( Object *repairDepot, CommandSourceType cmdSource );///< get repaired at repair depot
@@ -179,6 +176,3 @@ private:
 	Bool getFlag(FlagType f) const;
 	void setFlag(FlagType f, Bool v);
 };
-
-#endif
-

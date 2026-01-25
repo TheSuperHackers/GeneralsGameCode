@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __RAILROADGUIDE_AI_UPDATE_H_
-#define __RAILROADGUIDE_AI_UPDATE_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/AIUpdate.h"
 #include "GameLogic/Module/PhysicsUpdate.h"
@@ -55,23 +52,23 @@ public:
 
 		static const FieldParse dataFieldParse[] =
 		{
-			{ "PathPrefixName",		INI::parseAsciiString, NULL,	offsetof( RailroadBehaviorModuleData, m_pathPrefixName ) },
-			{ "CrashFXTemplateName",		INI::parseAsciiString, NULL,	offsetof( RailroadBehaviorModuleData, m_CrashFXTemplateName ) },
-			{ "IsLocomotive",		INI::parseBool, NULL,	offsetof( RailroadBehaviorModuleData, m_isLocomotive ) },
-			{ "CarriageTemplateName",  INI::parseAsciiStringVectorAppend, NULL, offsetof(RailroadBehaviorModuleData, m_carriageTemplateNameData) },
-			{ "BigMetalBounceSound",			INI::parseAudioEventRTS,	NULL,	offsetof( RailroadBehaviorModuleData, m_bigMetalImpactDefaultSound) },
-			{ "SmallMetalBounceSound",			INI::parseAudioEventRTS,	NULL,	offsetof( RailroadBehaviorModuleData, m_smallMetalImpactDefaultSound) },
-			{ "MeatyBounceSound",			INI::parseAudioEventRTS,	NULL,	offsetof( RailroadBehaviorModuleData, m_meatyImpactDefaultSound) },
-			{ "RunningGarrisonSpeedMax",			INI::parseReal,	NULL,	offsetof( RailroadBehaviorModuleData, m_runningGarrisonSpeedMax) },
-			{ "KillSpeedMin",			INI::parseReal,	NULL,	offsetof( RailroadBehaviorModuleData, m_killSpeedMin) },
-			{ "SpeedMax",			INI::parseReal,	NULL,	offsetof( RailroadBehaviorModuleData, m_speedMax) },
-			{ "Acceleration",			INI::parseReal,	NULL,	offsetof( RailroadBehaviorModuleData, m_acceleration) },
-			{ "Braking",			INI::parseReal,	NULL,	offsetof( RailroadBehaviorModuleData, m_braking) },
-			{ "WaitAtStationTime",			INI::parseDurationUnsignedInt,	NULL,	offsetof( RailroadBehaviorModuleData, m_waitAtStationTime) },
-			{ "RunningSound",			INI::parseAudioEventRTS,	NULL,	offsetof( RailroadBehaviorModuleData, m_runningSound) },
-			{ "ClicketyClackSound",			INI::parseAudioEventRTS,	NULL,	offsetof( RailroadBehaviorModuleData, m_clicketyClackSound) },
-			{ "WhistleSound",			INI::parseAudioEventRTS,	NULL,	offsetof( RailroadBehaviorModuleData, m_whistleSound) },
-			{ "Friction",			INI::parseReal,	NULL,	offsetof( RailroadBehaviorModuleData, m_friction) },
+			{ "PathPrefixName",		INI::parseAsciiString, nullptr,	offsetof( RailroadBehaviorModuleData, m_pathPrefixName ) },
+			{ "CrashFXTemplateName",		INI::parseAsciiString, nullptr,	offsetof( RailroadBehaviorModuleData, m_CrashFXTemplateName ) },
+			{ "IsLocomotive",		INI::parseBool, nullptr,	offsetof( RailroadBehaviorModuleData, m_isLocomotive ) },
+			{ "CarriageTemplateName",  INI::parseAsciiStringVectorAppend, nullptr, offsetof(RailroadBehaviorModuleData, m_carriageTemplateNameData) },
+			{ "BigMetalBounceSound",			INI::parseAudioEventRTS,	nullptr,	offsetof( RailroadBehaviorModuleData, m_bigMetalImpactDefaultSound) },
+			{ "SmallMetalBounceSound",			INI::parseAudioEventRTS,	nullptr,	offsetof( RailroadBehaviorModuleData, m_smallMetalImpactDefaultSound) },
+			{ "MeatyBounceSound",			INI::parseAudioEventRTS,	nullptr,	offsetof( RailroadBehaviorModuleData, m_meatyImpactDefaultSound) },
+			{ "RunningGarrisonSpeedMax",			INI::parseReal,	nullptr,	offsetof( RailroadBehaviorModuleData, m_runningGarrisonSpeedMax) },
+			{ "KillSpeedMin",			INI::parseReal,	nullptr,	offsetof( RailroadBehaviorModuleData, m_killSpeedMin) },
+			{ "SpeedMax",			INI::parseReal,	nullptr,	offsetof( RailroadBehaviorModuleData, m_speedMax) },
+			{ "Acceleration",			INI::parseReal,	nullptr,	offsetof( RailroadBehaviorModuleData, m_acceleration) },
+			{ "Braking",			INI::parseReal,	nullptr,	offsetof( RailroadBehaviorModuleData, m_braking) },
+			{ "WaitAtStationTime",			INI::parseDurationUnsignedInt,	nullptr,	offsetof( RailroadBehaviorModuleData, m_waitAtStationTime) },
+			{ "RunningSound",			INI::parseAudioEventRTS,	nullptr,	offsetof( RailroadBehaviorModuleData, m_runningSound) },
+			{ "ClicketyClackSound",			INI::parseAudioEventRTS,	nullptr,	offsetof( RailroadBehaviorModuleData, m_clicketyClackSound) },
+			{ "WhistleSound",			INI::parseAudioEventRTS,	nullptr,	offsetof( RailroadBehaviorModuleData, m_whistleSound) },
+			{ "Friction",			INI::parseReal,	nullptr,	offsetof( RailroadBehaviorModuleData, m_friction) },
 			{ 0, 0, 0, 0 }
 		};
 
@@ -176,7 +173,7 @@ struct TrainTrack
 
 	// To protect the track form ever going out of sync between cars on the same train...
 	// I restrict write access to the first referencer, before a second one is added (the locomotive)
-	TrackPointList* getWritablePointList( void ) { return m_refCount == 1 ? &m_pointList : NULL; };
+	TrackPointList* getWritablePointList( void ) { return m_refCount == 1 ? &m_pointList : nullptr; };
 	const TrackPointList* getPointList( void ) { return &m_pointList; };
 
 private:
@@ -214,7 +211,7 @@ public:
 	};
 
 	typedef std::vector<AsciiString> TemplateNameVector;
-	typedef TemplateNameVector::const_iterator TemplateNameIterator;;
+	typedef TemplateNameVector::const_iterator TemplateNameIterator;
 
 
 
@@ -284,8 +281,8 @@ protected:
 	Bool m_waitingInWings; /// I have not entered the real track yet, so leave me alone
 	Bool m_endOfLine;				/// I have reached the end of a non looping track
 	Bool m_isLocomotive; ///< Am I a locomotive,
-	Bool m_isLeadCarraige; ///< Am the carraige in front,
-	Int m_wantsToBeLeadCarraige; ///< Am the carraige in front,
+	Bool m_isLeadCarriage; ///< Am the carraige in front,
+	Int m_wantsToBeLeadCarriage; ///< Am the carraige in front,
 	Bool m_disembark; ///< If I wait at a station, I should also evacuate everybody when I get theres
 	Bool m_inTunnel; ///< Am I in a tunnel, so I wil not snap to ground height, until the next waypoint,
 												//  i.e. do I provide the movement and scheduling AI for m_trailerID
@@ -297,7 +294,3 @@ protected:
 
 
 };
-
-
-#endif  // end __RAILROAD_GUIDE_AI_UPDATE_H_
-

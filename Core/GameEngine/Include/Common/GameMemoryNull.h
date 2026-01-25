@@ -64,11 +64,11 @@ class MemoryPoolFactory
 {
 public:
 
-	void memoryPoolUsageReport( const char* filename, FILE *appendToFileInstead = NULL );
+	void memoryPoolUsageReport( const char* filename, FILE *appendToFileInstead = nullptr );
 
 #ifdef MEMORYPOOL_DEBUG
 
-	void debugMemoryReport(Int flags, Int startCheckpoint, Int endCheckpoint, FILE *fp = NULL );
+	void debugMemoryReport(Int flags, Int startCheckpoint, Int endCheckpoint, FILE *fp = nullptr );
 	void debugSetInitFillerIndex(Int index);
 
 #endif
@@ -162,4 +162,10 @@ extern void __cdecl operator delete(void *p, const char *, int);
 extern void* __cdecl operator new[](size_t size, const char *, int);
 extern void __cdecl operator delete[](void *p, const char *, int);
 
+#endif
+
+#if defined(_MSC_VER) && _MSC_VER < 1300
+// additional overloads for 'placement new'
+inline void* __cdecl operator new[](size_t s, void* p) { return p; }
+inline void __cdecl operator delete[](void*, void* p) {}
 #endif

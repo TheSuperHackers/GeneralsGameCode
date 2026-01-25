@@ -18,9 +18,6 @@
 
 #pragma once
 
-#ifndef __TEAMGENERIC_H__
-#define __TEAMGENERIC_H__
-
 class Dict;
 
 class TeamGeneric : public CPropertyPage
@@ -48,5 +45,3 @@ class TeamGeneric : public CPropertyPage
 		afx_msg void OnScriptAdjust();
 		DECLARE_MESSAGE_MAP()
 };
-
-#endif

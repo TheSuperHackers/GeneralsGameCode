@@ -33,7 +33,7 @@ static char THIS_FILE[] = __FILE__;
 // EulaDialog dialog
 
 
-EulaDialog::EulaDialog(CWnd* pParent /*=NULL*/)
+EulaDialog::EulaDialog(CWnd* pParent /*=nullptr*/)
 	: CDialog(EulaDialog::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(EulaDialog)

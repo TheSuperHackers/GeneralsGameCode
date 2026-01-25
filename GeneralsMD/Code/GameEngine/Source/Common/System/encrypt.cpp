@@ -26,10 +26,8 @@
 // Ancient Westwood Online password encryption (obfuscation?) code
 // Author: Anonymous
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
-#include <stdio.h>
-#include <string.h>
 #include "Common/encrypt.h"
 
 #define MAX_CHARS 65
@@ -80,7 +78,7 @@ const char *EncryptString(const char *String)
 	for (Cnt = 0; Cnt < MAX_ENCRYPTED_STRING; Cnt++)
 		Return_Buffer[Cnt] = Base_String[Temp_Buffer[Cnt] & 0x3F];
 
-	Return_Buffer[Cnt] = NULL;
+	Return_Buffer[Cnt] = '\0';
 	return (Return_Buffer);
 
 }

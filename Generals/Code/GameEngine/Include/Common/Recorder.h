@@ -22,7 +22,6 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-
 #pragma once
 
 #include "Common/MessageStream.h"
@@ -118,9 +117,10 @@ public:
 	Bool isPlaybackMode() const { return m_mode == RECORDERMODETYPE_PLAYBACK || m_mode == RECORDERMODETYPE_SIMULATION_PLAYBACK; }
 	void initControls();															///< Show or Hide the Replay controls
 
-	AsciiString getReplayDir();												///< Returns the directory that holds the replay files.
-	static AsciiString getReplayExtention();									///< Returns the file extention for replay files.
-	AsciiString getLastReplayFileName();							///< Returns the filename used for the default replay.
+	static AsciiString getReplayDir();								///< Returns the directory that holds the replay files.
+	static AsciiString getReplayArchiveDir();					///< Returns the directory that holds the archived replay files.
+	static AsciiString getReplayExtention();					///< Returns the file extention for replay files.
+	static AsciiString getLastReplayFileName();				///< Returns the filename used for the default replay.
 
 	GameInfo *getGameInfo( void ) { return &m_gameInfo; }	///< Returns the slot list for playback game start
 
@@ -133,10 +133,12 @@ public:
 	Bool sawCRCMismatch() const;
 	void cleanUpReplayFile( void );										///< after a crash, send replay/debug info to a central repository
 
+	void setArchiveEnabled(Bool enable) { m_archiveReplays = enable; } ///< Enable or disable replay archiving.
 	void stopRecording();															///< Stop recording and close m_file.
 protected:
 	void startRecording(GameDifficulty diff, Int originalGameMode, Int rankPoints, Int maxFPS);					///< Start recording to m_file.
 	void writeToFile(GameMessage *msg);								///< Write this GameMessage to m_file.
+	void archiveReplay(AsciiString fileName);					///< Move the specified replay file to the archive directory.
 
 	void logGameStart(AsciiString options);
 	void logGameEnd( void );
@@ -167,6 +169,7 @@ protected:
 	Bool m_wasDesync;
 
 	Bool m_doingAnalysis;
+	Bool m_archiveReplays;														///< if true, each replay is archived to the replay archive folder after recording
 
 	Int m_originalGameMode; // valid in replays
 

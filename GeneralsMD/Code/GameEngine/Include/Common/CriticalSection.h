@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifndef __CRITICALSECTION_H__
-#define __CRITICALSECTION_H__
-
 #include "Common/PerfTimer.h"
 
 #ifdef PERF_TIMERS
@@ -97,12 +94,10 @@ class ScopedCriticalSection
 
 #include "mutex.h"
 
-// These should be NULL on creation then non-NULL in WinMain or equivalent.
+// These should be null on creation then non-null in WinMain or equivalent.
 // This allows us to be silently non-threadsafe for WB and other single-threaded apps.
 extern CriticalSection *TheAsciiStringCriticalSection;
 extern CriticalSection *TheUnicodeStringCriticalSection;
 extern CriticalSection *TheDmaCriticalSection;
 extern CriticalSection *TheMemoryPoolCriticalSection;
 extern CriticalSection *TheDebugLogCriticalSection;
-
-#endif /* __CRITICALSECTION_H__ */

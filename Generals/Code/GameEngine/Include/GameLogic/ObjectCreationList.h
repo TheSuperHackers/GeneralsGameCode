@@ -28,12 +28,9 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Kris: August 23, 2003
-// All OCLs return the first object that is created (or NULL if not applicable).
+	// All OCLs return the first object that is created (or null if not applicable).
 
 #pragma once
-
-#ifndef _ObjectCreationList_H_
-#define _ObjectCreationList_H_
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/GameMemory.h"
@@ -136,32 +133,32 @@ public:
 	void addObjectCreationNugget(ObjectCreationNugget* nugget);
 
 	// Kris: August 23, 2003
-	// All OCLs return the first object that is created (or NULL if not applicable).
-	inline static Object* create( const ObjectCreationList* ocl, const Object* primaryObj, const Coord3D *primary, const Coord3D *secondary, Bool createOwner, UnsignedInt lifetimeFrames = 0 )
+	// All OCLs return the first object that is created (or null if not applicable).
+	static Object* create( const ObjectCreationList* ocl, const Object* primaryObj, const Coord3D *primary, const Coord3D *secondary, Bool createOwner, UnsignedInt lifetimeFrames = 0 )
 	{
 		if( ocl )
 			return ocl->createInternal( primaryObj, primary, secondary, createOwner, lifetimeFrames );
-		return NULL;
+		return nullptr;
 	}
 
 	// Kris: August 23, 2003
-	// All OCLs return the first object that is created (or NULL if not applicable).
+	// All OCLs return the first object that is created (or null if not applicable).
 	/// inline convenience method to avoid having to check for null.
-	inline static Object* create(const ObjectCreationList* ocl, const Object* primaryObj, const Coord3D *primary, const Coord3D *secondary, UnsignedInt lifetimeFrames = 0 )
+	static Object* create(const ObjectCreationList* ocl, const Object* primaryObj, const Coord3D *primary, const Coord3D *secondary, UnsignedInt lifetimeFrames = 0 )
 	{
 		if (ocl)
 			return ocl->createInternal( primaryObj, primary, secondary, lifetimeFrames );
-		return NULL;
+		return nullptr;
 	}
 
 	// Kris: August 23, 2003
-	// All OCLs return the first object that is created (or NULL if not applicable).
+	// All OCLs return the first object that is created (or null if not applicable).
 	/// inline convenience method to avoid having to check for null.
-	inline static Object* create( const ObjectCreationList* ocl, const Object* primary, const Object* secondary, UnsignedInt lifetimeFrames = 0 )
+	static Object* create( const ObjectCreationList* ocl, const Object* primary, const Object* secondary, UnsignedInt lifetimeFrames = 0 )
 	{
 		if (ocl)
 			return ocl->createInternal( primary, secondary, lifetimeFrames );
-		return NULL;
+		return nullptr;
 	}
 
 protected:
@@ -169,7 +166,7 @@ protected:
 private:
 
 	// Kris: August 23, 2003
-	// All OCLs return the first object that is created (or NULL if not applicable).
+	// All OCLs return the first object that is created (or null if not applicable).
 	Object* createInternal(const Object* primaryObj, const Coord3D *primary, const Coord3D *secondary, Bool createOwner, UnsignedInt lifetimeFrames = 0 ) const;
 	Object* createInternal(const Object* primaryObj, const Coord3D *primary, const Coord3D* secondary, UnsignedInt lifetimeFrames = 0 ) const;
 	Object* createInternal(const Object* primary, const Object* secondary, UnsignedInt lifetimeFrames = 0 ) const;
@@ -198,7 +195,7 @@ public:
 
 	/**
 		return the ObjectCreationList with the given namekey.
-		return NULL if no such ObjectCreationList exists.
+		return nullptr if no such ObjectCreationList exists.
 	*/
 	const ObjectCreationList *findObjectCreationList(const char* name) const;
 
@@ -219,6 +216,3 @@ private:
 
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
 extern ObjectCreationListStore *TheObjectCreationListStore;
-
-#endif // _ObjectCreationList_H_
-

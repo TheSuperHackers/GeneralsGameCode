@@ -30,9 +30,6 @@
 
 #pragma once
 
-#ifndef _PREORDER_CREATE_H_
-#define _PREORDER_CREATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/CreateModule.h"
 
@@ -58,5 +55,3 @@ public:
 protected:
 
 };
-
-#endif // _PREORDER_CREATE_H_

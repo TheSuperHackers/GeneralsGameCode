@@ -31,9 +31,6 @@
 
 #pragma once
 
-#ifndef __CAVE_CONTAIN_H_
-#define __CAVE_CONTAIN_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/CreateModule.h"
 #include "GameLogic/Module/OpenContain.h"
@@ -58,7 +55,7 @@ public:
 
 		static const FieldParse dataFieldParse[] =
 		{
-			{ "CaveIndex", INI::parseInt, NULL, offsetof( CaveContainModuleData, m_caveIndexData ) },
+			{ "CaveIndex", INI::parseInt, nullptr, offsetof( CaveContainModuleData, m_caveIndexData ) },
 			{ 0, 0, 0, 0 }
 		};
     p.add(dataFieldParse);
@@ -127,5 +124,3 @@ protected:
 	Team *m_originalTeam;												///< our original team before we were garrisoned
 
 };
-
-#endif  // end __CAVE_CONTAIN_H_

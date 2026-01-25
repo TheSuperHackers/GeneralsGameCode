@@ -18,7 +18,7 @@
 
 /////////////////////////////////////////////////////////////////////
 //
-//	Globals.CPP
+//	Globals.cpp
 //
 //	Module containing global variable initialization.
 //
@@ -31,7 +31,7 @@
 #include "ViewerAssetMgr.h"
 
 // Main asset manager for the application.
-ViewerAssetMgrClass *_TheAssetMgr = NULL;
+ViewerAssetMgrClass *_TheAssetMgr = nullptr;
 
 
 int g_iDeviceIndex      = -1;//DEFAULT_DEVICEINDEX;

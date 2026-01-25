@@ -18,9 +18,6 @@
 
 #pragma once
 
-#ifndef _H_CBUTTONSHOWCOLOR_
-#define _H_CBUTTONSHOWCOLOR_
-
 class CButtonShowColor : public CButton
 {
 	protected:
@@ -42,5 +39,3 @@ class CButtonShowColor : public CButton
 
 	DECLARE_MESSAGE_MAP();
 };
-
-#endif /* _H_CBUTTONSHOWCOLOR_ */

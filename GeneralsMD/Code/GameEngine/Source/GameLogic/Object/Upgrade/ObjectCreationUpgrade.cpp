@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/ModelState.h"
 #include "Common/Player.h"
@@ -43,7 +43,7 @@
 ObjectCreationUpgradeModuleData::ObjectCreationUpgradeModuleData( void )
 {
 
-	m_ocl = NULL;
+	m_ocl = nullptr;
 
 }
 
@@ -55,8 +55,8 @@ ObjectCreationUpgradeModuleData::ObjectCreationUpgradeModuleData( void )
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "UpgradeObject", INI::parseObjectCreationList, NULL, offsetof( ObjectCreationUpgradeModuleData, m_ocl ) },
-		{ 0, 0, 0, 0 }
+		{ "UpgradeObject", INI::parseObjectCreationList, nullptr, offsetof( ObjectCreationUpgradeModuleData, m_ocl ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 	p.add(dataFieldParse);
 
@@ -94,7 +94,7 @@ void ObjectCreationUpgrade::upgradeImplementation( void )
 	// spawn everything in the OCL
 	if (getObjectCreationUpgradeModuleData() && getObjectCreationUpgradeModuleData()->m_ocl)
 	{
-		ObjectCreationList::create((getObjectCreationUpgradeModuleData()->m_ocl), getObject(), NULL);
+		ObjectCreationList::create((getObjectCreationUpgradeModuleData()->m_ocl), getObject(), nullptr);
 	}
 }
 

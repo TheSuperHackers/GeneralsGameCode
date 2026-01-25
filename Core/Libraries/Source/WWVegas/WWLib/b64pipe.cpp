@@ -22,7 +22,7 @@
  *                                                                                             *
  *                 Project Name : Command & Conquer                                            *
  *                                                                                             *
- *                     $Archive:: /Commando/Library/B64PIPE.CPP                               $*
+ *                     $Archive:: /Commando/Library/B64PIPE.cpp                               $*
  *                                                                                             *
  *                      $Author:: Greg_h                                                      $*
  *                                                                                             *
@@ -39,7 +39,6 @@
 #include	"always.h"
 #include	"b64pipe.h"
 #include	"base64.h"
-#include	<string.h>
 
 
 /***********************************************************************************************
@@ -63,7 +62,7 @@
  *=============================================================================================*/
 int Base64Pipe::Put(void const * source, int slen)
 {
-	if (source == NULL || slen < 1) {
+	if (source == nullptr || slen < 1) {
 		return(Pipe::Put(source, slen));
 	}
 

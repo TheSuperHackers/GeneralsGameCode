@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __PARTICLE_UPLINK_CANNON_UPDATE_H_
-#define __PARTICLE_UPLINK_CANNON_UPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/KindOf.h"
 #include "Common/Science.h"
@@ -164,7 +161,7 @@ public:
 	virtual Bool isActive() const {return m_status != STATUS_IDLE;}
 	virtual SpecialPowerUpdateInterface* getSpecialPowerUpdateInterface() { return this; }
 	virtual CommandOption getCommandOption() const { return (CommandOption)0; }
-	virtual Bool isPowerCurrentlyInUse( const CommandButton *command = NULL ) const;
+	virtual Bool isPowerCurrentlyInUse( const CommandButton *command = nullptr ) const;
 	virtual ScienceType getExtraRequiredScience() const { return SCIENCE_INVALID; } //Does this object have more than one special power module with the same spTemplate?
 
 	virtual void onObjectCreated();
@@ -234,6 +231,8 @@ protected:
 	UnsignedInt			m_2ndLastDrivingClickFrame;
 	UnsignedInt			m_nextDestWaypointID;
 
+	XferVersion			m_xferVersion;
+
 	Bool						m_upBonesCached;
 	Bool						m_defaultInfoCached;
 	Bool						m_invalidSettings;
@@ -241,7 +240,3 @@ protected:
 	Bool						m_scriptedWaypointMode;
 	Bool						m_clientShroudedLastFrame;
 };
-
-
-#endif
-

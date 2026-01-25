@@ -90,7 +90,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - preset: "vc6"
+          - preset: "vc6-weekly"
             tools: true
             extras: false
             release: true
@@ -110,7 +110,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - preset: "vc6"
+          - preset: "vc6-weekly"
             tools: true
             extras: false
             release: true
@@ -156,7 +156,7 @@ jobs:
       - name: Download Generals VC6 Artifacts
         uses: actions/download-artifact@v4
         with:
-          name: Generals-vc6+t
+          name: Generals-vc6-weekly+t
           path: generals-vc6-artifacts
 
       - name: Prepare and Zip Generals VC6
@@ -167,7 +167,7 @@ jobs:
       - name: Download GeneralsMD VC6 Artifacts
         uses: actions/download-artifact@v4
         with:
-          name: GeneralsMD-vc6+t
+          name: GeneralsMD-vc6-weekly+t
           path: generalsmd-vc6-artifacts
 
       - name: Prepare and Zip GeneralsMD VC6

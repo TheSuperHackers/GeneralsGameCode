@@ -19,13 +19,13 @@
 // CameraOptions.cpp : implementation file
 //
 
+
 #include "StdAfx.h"
 #include "resource.h"
 #include "WorldBuilder.h"
 #include "CameraOptions.h"
 #include "wbview3d.h"
 #include "WorldBuilderDoc.h"
-#include "wbview3d.h"
 
 
 #include "WaypointOptions.h" //WST 10/7/2002
@@ -35,7 +35,7 @@
 // CameraOptions dialog
 
 
-CameraOptions::CameraOptions(CWnd* pParent /*=NULL*/)
+CameraOptions::CameraOptions(CWnd* pParent /*=nullptr*/)
 	: CDialog(CameraOptions::IDD, pParent)
 {
 	m_updating = false;
@@ -95,8 +95,8 @@ void CameraOptions::OnDropWaypointButton()
 	//
 	// MBL CNC3 INCURSION 10.29.2002 - Fix compile error w/ 10-15-2002 Drop
 	//
-	// MapObject *pNew = new MapObject(docPt, AsciiString("*Waypoints/Waypoint"), 0, 0, NULL, NULL );
-	MapObject *pNew = newInstance(MapObject)(docPt, AsciiString("*Waypoints/Waypoint"), 0, 0, NULL, NULL );
+	// MapObject *pNew = new MapObject(docPt, "*Waypoints/Waypoint", 0, 0, nullptr, nullptr );
+	MapObject *pNew = newInstance(MapObject)(docPt, "*Waypoints/Waypoint", 0, 0, nullptr, nullptr );
 
 	Int id = pDoc->getNextWaypointID();
 	AsciiString name = WaypointOptions::GenerateUniqueName(id);
@@ -104,11 +104,11 @@ void CameraOptions::OnDropWaypointButton()
 	pNew->setIsWaypoint();
 	pNew->setWaypointID(id);
 	pNew->setWaypointName(name);
-	pNew->getProperties()->setAsciiString(TheKey_originalOwner, AsciiString("team"));
+	pNew->getProperties()->setAsciiString(TheKey_originalOwner, "team");
 	AddObjectUndoable *pUndo = new AddObjectUndoable(pDoc, pNew);
 	pDoc->AddAndDoUndoable(pUndo);
 	REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
-	pNew = NULL; // undoable owns it now.
+	pNew = nullptr; // undoable owns it now.
 }
 
 //WST 11/25/2002 - New Center Camera button for Designers -----------

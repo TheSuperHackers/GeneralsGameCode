@@ -30,7 +30,13 @@ jobs:
   build:
     name: ${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }}
     runs-on: windows-2022
-    timeout-minutes: 20
+    timeout-minutes: 30
+
+    env:
+      VCPKG_FILE_CACHE: ${{ github.workspace }}\vcpkg-bincache
+      VCPKG_BINARY_SOURCES: clear;files,${{ github.workspace }}\vcpkg-bincache,readwrite
+      VCPKG_FEATURE_FLAGS: manifests,versions,binarycaching
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -99,15 +105,65 @@ jobs:
         with:
           arch: x86
 
+      - name: Compute vcpkg cache key parts
+        if: startsWith(inputs.preset, 'win32')
+        id: vcpkg_key
+        shell: pwsh
+        run: |
+          $baseline = (Get-Content vcpkg.json | ConvertFrom-Json)."builtin-baseline"
+
+          $msvc = $env:VCToolsVersion
+          if (-not $msvc) { $msvc = "unknown" }
+
+          # Reduce churn: keep major.minor (e.g. 14.44)
+          $msvcMajorMinor = ($msvc -split '\.')[0..1] -join '.'
+
+          $triplet = "x86-windows"
+          if ("${{ inputs.preset }}" -like "x64*") { $triplet = "x64-windows" }
+
+          "baseline=$baseline" >> $env:GITHUB_OUTPUT
+          "msvc=$msvcMajorMinor" >> $env:GITHUB_OUTPUT
+          "triplet=$triplet" >> $env:GITHUB_OUTPUT
+
+          Write-Host "vcpkg cache key parts: baseline=$baseline, msvc=$msvcMajorMinor, triplet=$triplet"
+
+      - name: Restore vcpkg binary cache
+        if: startsWith(inputs.preset, 'win32')
+        id: vcpkg_cache
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ github.workspace }}\vcpkg-bincache
+          key: vcpkg-bincache-v2-${{ runner.os }}-msvc${{ steps.vcpkg_key.outputs.msvc }}-baseline${{ steps.vcpkg_key.outputs.baseline }}-${{ steps.vcpkg_key.outputs.triplet }}
+          restore-keys: |
+            vcpkg-bincache-v2-${{ runner.os }}-msvc${{ steps.vcpkg_key.outputs.msvc }}-baseline${{ steps.vcpkg_key.outputs.baseline }}-
+            vcpkg-bincache-v2-${{ runner.os }}-
+
       - name: Setup vcpkg
         uses: lukka/run-vcpkg@v11
+        with:
+          runVcpkgInstall: false
+          doNotCache: true
+
+      - name: Configure vcpkg to use cached directory
+        if: startsWith(inputs.preset, 'win32')
+        shell: pwsh
+        run: |
+          $cacheDir = "${{ github.workspace }}\vcpkg-bincache"
+          New-Item -ItemType Directory -Force -Path $cacheDir | Out-Null
+
+          # lukka/run-vcpkg sets its own temp cache dir; override to force our cached dir
+          $env:VCPKG_DEFAULT_BINARY_CACHE = $cacheDir
+          $env:VCPKG_BINARY_SOURCES = "clear;files,$cacheDir,readwrite"
+
+          "VCPKG_DEFAULT_BINARY_CACHE=$cacheDir" >> $env:GITHUB_ENV
+          "VCPKG_BINARY_SOURCES=$env:VCPKG_BINARY_SOURCES" >> $env:GITHUB_ENV
 
       - name: Configure ${{ inputs.game }} with CMake Using ${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }} Preset
         shell: pwsh
         run: |
           $buildFlags = @(
-          "-DRTS_BUILD_ZEROHOUR=${{ inputs.game == 'GeneralsMD' && 'ON' || 'OFF' }}",
-          "-DRTS_BUILD_GENERALS=${{ inputs.game == 'Generals' && 'ON' || 'OFF' }}"
+            "-DRTS_BUILD_ZEROHOUR=${{ inputs.game == 'GeneralsMD' && 'ON' || 'OFF' }}",
+            "-DRTS_BUILD_GENERALS=${{ inputs.game == 'Generals' && 'ON' || 'OFF' }}"
           )
 
           $gamePrefix = "${{ inputs.game == 'Generals' && 'GENERALS' || 'ZEROHOUR' }}"
@@ -117,7 +173,6 @@ jobs:
           $buildFlags += "-DRTS_BUILD_${gamePrefix}_EXTRAS=${{ inputs.extras && 'ON' || 'OFF' }}"
 
           Write-Host "Build flags: $($buildFlags -join ' | ')"
-
           cmake --preset ${{ inputs.preset }} $buildFlags
 
       - name: Build ${{ inputs.game }} with CMake Using ${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }} Preset
@@ -125,19 +180,29 @@ jobs:
         run: |
           cmake --build --preset ${{ inputs.preset }}
 
+      - name: Save vcpkg binary cache
+        # Only one job should save to avoid "Unable to reserve cache" conflicts.
+        if: ${{ startsWith(inputs.preset, 'win32') && steps.vcpkg_cache.outputs.cache-hit != 'true' && inputs.game == 'Generals' && inputs.preset == 'win32-vcpkg-debug' }}
+        uses: actions/cache/save@v4
+        with:
+          path: ${{ github.workspace }}\vcpkg-bincache
+          key: vcpkg-bincache-v2-${{ runner.os }}-msvc${{ steps.vcpkg_key.outputs.msvc }}-baseline${{ steps.vcpkg_key.outputs.baseline }}-${{ steps.vcpkg_key.outputs.triplet }}
+
       - name: Collect ${{ inputs.game }} ${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }} Artifact
         shell: pwsh
         run: |
           $buildDir = "build\${{ inputs.preset }}"
           $artifactsDir = New-Item -ItemType Directory -Force -Path "$buildDir\${{ inputs.game }}\artifacts" -Verbose
 
-            if ("${{ inputs.preset }}" -like "win32*") {
-            # For win32 preset, look in config-specific subdirectories
+          if ("${{ inputs.preset }}" -like "win32*") {
             $configToUse = if ("${{ inputs.preset }}" -match "debug") { "Debug" } else { "Release" }
-            $files = Get-ChildItem -Path "$buildDir\Core\$configToUse","$buildDir\${{ inputs.game }}\$configToUse" -File | Where-Object { $_.Extension -in @(".exe", ".dll", ".pdb") } -Verbose
-            } else {
-            $files = Get-ChildItem -Path "$buildDir\Core","$buildDir\${{ inputs.game }}" -File | Where-Object { $_.Extension -in @(".exe", ".dll", ".pdb") } -Verbose
+            $files = Get-ChildItem -Path "$buildDir\Core\$configToUse","$buildDir\${{ inputs.game }}\$configToUse" -File |
+              Where-Object { $_.Extension -in @(".exe", ".dll", ".pdb") } -Verbose
+          } else {
+            $files = Get-ChildItem -Path "$buildDir\Core","$buildDir\${{ inputs.game }}" -File |
+              Where-Object { $_.Extension -in @(".exe", ".dll", ".pdb") } -Verbose
           }
+
           $files | Move-Item -Destination $artifactsDir -Verbose -Force
 
       - name: Upload ${{ inputs.game }} ${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }} Artifact

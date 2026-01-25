@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifndef _GAME_INTERFACE_H_
-#define _GAME_INTERFACE_H_
-
 #include "Common/GameType.h"
 #include "Common/MessageStream.h"		// for GameMessageTranslator
 #include "Common/Snapshot.h"
@@ -131,7 +128,7 @@ public:
 
 	virtual void iterateDrawablesInRegion( Region3D *region, GameClientFuncPtr userFunc, void *userData );		///< Calls userFunc for each drawable contained within the region
 
-	virtual Drawable *friend_createDrawable( const ThingTemplate *thing, DrawableStatus statusBits = DRAWABLE_STATUS_NONE ) = 0;
+	virtual Drawable *friend_createDrawable( const ThingTemplate *thing, DrawableStatusBits statusBits = DRAWABLE_STATUS_DEFAULT ) = 0;
 	virtual void destroyDrawable( Drawable *draw );											///< Destroy the given drawable
 
 	virtual void setTimeOfDay( TimeOfDay tod );													///< Tell all the drawables what time of day it is now
@@ -143,7 +140,8 @@ public:
 
 	//---------------------------------------------------------------------------
 	virtual void setTeamColor( Int red, Int green, Int blue ) = 0;  ///< @todo superhack for demo, remove!!!
-	virtual void adjustLOD( Int adj ) = 0; ///< @todo hack for evaluation, remove.
+
+	virtual void setTextureLOD( Int level ) = 0;
 
 	virtual void releaseShadows(void);	///< frees all shadow resources used by this module - used by Options screen.
 	virtual void allocateShadows(void); ///< create shadow resources if not already present. Used by Options screen.
@@ -224,7 +222,7 @@ private:
 	do \
 	{ \
 		Drawable* _xq_nextDrawable; \
-		for (Drawable* DRAW = TheGameClient->firstDrawable(); DRAW != NULL; DRAW = _xq_nextDrawable ) \
+		for (Drawable* DRAW = TheGameClient->firstDrawable(); DRAW != nullptr; DRAW = _xq_nextDrawable ) \
 		{ \
 			_xq_nextDrawable = DRAW->getNextDrawable(); \
 			if (DRAW->getStatusFlags() & (STATUS)) \
@@ -243,12 +241,12 @@ private:
 inline Drawable* GameClient::findDrawableByID( const DrawableID id )
 {
 	if( id == INVALID_DRAWABLE_ID )
-		return NULL;
+		return nullptr;
 
 //	DrawablePtrHashIt it = m_drawableHash.find(id);
 //	if (it == m_drawableHash.end()) {
 //		// no such drawable
-//		return NULL;
+//		return nullptr;
 //	}
 //
 //	return (*it).second;
@@ -256,7 +254,7 @@ inline Drawable* GameClient::findDrawableByID( const DrawableID id )
 	if( (size_t)id < m_drawableVector.size() )
 		return m_drawableVector[(size_t)id];
 
-	return NULL;
+	return nullptr;
 }
 
 
@@ -279,31 +277,29 @@ extern GameClient *TheGameClient;
 //
 //	GameEngine:
 //		TheGameClient is partially disabled:
-//			TheKeyboard = NULL
-//			TheMouse = NULL
+//			TheKeyboard = nullptr
+//			TheMouse = nullptr
 //			TheDisplay is partially disabled:
-//				m_3DInterfaceScene = NULL
-//				m_2DScene = NULL
-//				m_3DScene = NULL
+//				m_3DInterfaceScene = nullptr
+//				m_2DScene = nullptr
+//				m_3DScene = nullptr
 //				(m_assetManager remains!)
 //			TheWindowManager = GameWindowManagerDummy
-//			TheIMEManager = NULL
+//			TheIMEManager = nullptr
 //			TheTerrainVisual is partially disabled:
-//				TheTerrainTracksRenderObjClassSystem = NULL
-//				TheW3DShadowManager = NULL
-//				TheWaterRenderObj = NULL
-//				TheSmudgeManager = NULL
+//				TheTerrainTracksRenderObjClassSystem = nullptr
+//				TheW3DShadowManager = nullptr
+//				TheWaterRenderObj = nullptr
+//				TheSmudgeManager = nullptr
 //				TheTerrainRenderObject is partially disabled:
-//					m_treeBuffer = NULL
-//					m_propBuffer = NULL
-//					m_bibBuffer = NULL
+//					m_treeBuffer = nullptr
+//					m_propBuffer = nullptr
+//					m_bibBuffer = nullptr
 //					m_bridgeBuffer is partially disabled:
-//						m_vertexBridge = NULL
-//						m_indexBridge = NULL
-//						m_vertexMaterial = NULL
-//					m_waypointBuffer = NULL
-//					m_roadBuffer = NULL
-//					m_shroud = NULL
+//						m_vertexBridge = nullptr
+//						m_indexBridge = nullptr
+//						m_vertexMaterial = nullptr
+//					m_waypointBuffer = nullptr
+//					m_roadBuffer = nullptr
+//					m_shroud = nullptr
 //		TheRadar = RadarDummy
-
-#endif // _GAME_INTERFACE_H_

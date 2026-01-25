@@ -30,7 +30,7 @@
 // EditAction dialog
 
 
-EditAction::EditAction(CWnd* pParent /*=NULL*/)
+EditAction::EditAction(CWnd* pParent /*=nullptr*/)
 	: CDialog(EditAction::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(EditAction)

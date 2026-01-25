@@ -33,9 +33,6 @@
 
 #pragma once
 
-#ifndef __AutoHealBehavior_H_
-#define __AutoHealBehavior_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameClient/ParticleSys.h"
 #include "GameLogic/Module/BehaviorModule.h"
@@ -73,8 +70,8 @@ public:
 		m_healingDelay = UINT_MAX;
 		m_startHealingDelay = 0;
 		m_radius = 0.0f;
-		m_radiusParticleSystemTmpl = NULL;
-		m_unitHealPulseParticleSystemTmpl = NULL;
+		m_radiusParticleSystemTmpl = nullptr;
+		m_unitHealPulseParticleSystemTmpl = nullptr;
 		m_affectsWholePlayer = FALSE;
 		m_skipSelfForHealing = FALSE;
 		SET_ALL_KINDOFMASK_BITS( m_kindOf );
@@ -85,18 +82,18 @@ public:
 	{
 		static const FieldParse dataFieldParse[] =
 		{
-			{ "StartsActive",	INI::parseBool, NULL, offsetof( AutoHealBehaviorModuleData, m_initiallyActive ) },
-			{ "SingleBurst",	INI::parseBool, NULL, offsetof( AutoHealBehaviorModuleData, m_singleBurst ) },
-			{ "HealingAmount",		INI::parseInt,												NULL, offsetof( AutoHealBehaviorModuleData, m_healingAmount ) },
-			{ "HealingDelay",			INI::parseDurationUnsignedInt,				NULL, offsetof( AutoHealBehaviorModuleData, m_healingDelay ) },
-			{ "Radius",						INI::parseReal,												NULL, offsetof( AutoHealBehaviorModuleData, m_radius ) },
-			{ "KindOf",						KindOfMaskType::parseFromINI,											NULL, offsetof( AutoHealBehaviorModuleData, m_kindOf ) },
-			{ "ForbiddenKindOf",	KindOfMaskType::parseFromINI,											NULL, offsetof( AutoHealBehaviorModuleData, m_forbiddenKindOf ) },
-			{ "RadiusParticleSystemName",					INI::parseParticleSystemTemplate,	NULL, offsetof( AutoHealBehaviorModuleData, m_radiusParticleSystemTmpl ) },
-			{ "UnitHealPulseParticleSystemName",	INI::parseParticleSystemTemplate,	NULL, offsetof( AutoHealBehaviorModuleData, m_unitHealPulseParticleSystemTmpl ) },
-			{ "StartHealingDelay",			INI::parseDurationUnsignedInt,				NULL, offsetof( AutoHealBehaviorModuleData, m_startHealingDelay ) },
-			{ "AffectsWholePlayer",			INI::parseBool,												NULL, offsetof( AutoHealBehaviorModuleData, m_affectsWholePlayer ) },
-			{ "SkipSelfForHealing",			INI::parseBool,												NULL, offsetof( AutoHealBehaviorModuleData, m_skipSelfForHealing ) },
+			{ "StartsActive",	INI::parseBool, nullptr, offsetof( AutoHealBehaviorModuleData, m_initiallyActive ) },
+			{ "SingleBurst",	INI::parseBool, nullptr, offsetof( AutoHealBehaviorModuleData, m_singleBurst ) },
+			{ "HealingAmount",		INI::parseInt,												nullptr, offsetof( AutoHealBehaviorModuleData, m_healingAmount ) },
+			{ "HealingDelay",			INI::parseDurationUnsignedInt,				nullptr, offsetof( AutoHealBehaviorModuleData, m_healingDelay ) },
+			{ "Radius",						INI::parseReal,												nullptr, offsetof( AutoHealBehaviorModuleData, m_radius ) },
+			{ "KindOf",						KindOfMaskType::parseFromINI,											nullptr, offsetof( AutoHealBehaviorModuleData, m_kindOf ) },
+			{ "ForbiddenKindOf",	KindOfMaskType::parseFromINI,											nullptr, offsetof( AutoHealBehaviorModuleData, m_forbiddenKindOf ) },
+			{ "RadiusParticleSystemName",					INI::parseParticleSystemTemplate,	nullptr, offsetof( AutoHealBehaviorModuleData, m_radiusParticleSystemTmpl ) },
+			{ "UnitHealPulseParticleSystemName",	INI::parseParticleSystemTemplate,	nullptr, offsetof( AutoHealBehaviorModuleData, m_unitHealPulseParticleSystemTmpl ) },
+			{ "StartHealingDelay",			INI::parseDurationUnsignedInt,				nullptr, offsetof( AutoHealBehaviorModuleData, m_startHealingDelay ) },
+			{ "AffectsWholePlayer",			INI::parseBool,												nullptr, offsetof( AutoHealBehaviorModuleData, m_affectsWholePlayer ) },
+			{ "SkipSelfForHealing",			INI::parseBool,												nullptr, offsetof( AutoHealBehaviorModuleData, m_skipSelfForHealing ) },
 			{ 0, 0, 0, 0 }
 		};
 
@@ -160,7 +157,7 @@ protected:
 
 	virtual void processUpgradeRemoval()
 	{
-		// I can't take it any more.  Let the record show that I think the UpgradeMux multiple inheritence is CRAP.
+		// I can't take it any more.  Let the record show that I think the UpgradeMux multiple inheritance is CRAP.
 		getAutoHealBehaviorModuleData()->m_upgradeMuxData.muxDataProcessUpgradeRemoval(getObject());
 	}
 
@@ -169,7 +166,7 @@ protected:
 		return getAutoHealBehaviorModuleData()->m_upgradeMuxData.m_requiresAllTriggers;
 	}
 
-	inline Bool isUpgradeActive() const { return isAlreadyUpgraded(); }
+	Bool isUpgradeActive() const { return isAlreadyUpgraded(); }
 
 	virtual Bool isSubObjectsUpgrade() { return false; }
 
@@ -189,6 +186,3 @@ private:
 	Bool m_stopped;
 
 };
-
-#endif // __AutoHealBehavior_H_
-

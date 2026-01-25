@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef _W3D_SUPPLY_DRAW_H_
-#define _W3D_SUPPLY_DRAW_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "W3DDevice/GameClient/Module/W3DModelDraw.h"
 
@@ -65,6 +62,3 @@ protected:
 	Int m_totalBones;
 	Int m_lastNumberShown;
 };
-
-#endif // _W3D_TRUCK_DRAW_H_
-

@@ -27,8 +27,6 @@
 // DO NOT DISTRIBUTE
 
 #pragma once
-#ifndef __EVA_H__
-#define __EVA_H__
 
 #include "Common/SubsystemInterface.h"
 #include "Common/AudioEventRTS.h"
@@ -175,5 +173,3 @@ class Eva : public SubsystemInterface
 };
 
 extern Eva *TheEva;
-
-#endif /* __EVA_H__ */

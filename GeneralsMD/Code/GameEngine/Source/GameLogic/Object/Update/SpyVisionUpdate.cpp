@@ -30,7 +30,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
@@ -189,7 +189,7 @@ UpdateSleepTime SpyVisionUpdate::update( void )
 void SpyVisionUpdate::doActivationWork( Player *playerToSetFor, Bool setting )
 {
 	const SpyVisionUpdateModuleData *data = getSpyVisionUpdateModuleData();
-	if( playerToSetFor == NULL  ||  ThePlayerList == NULL )
+	if( playerToSetFor == nullptr  ||  ThePlayerList == nullptr )
 		return;
 
 	for (Int i=0; i < ThePlayerList->getPlayerCount(); ++i)

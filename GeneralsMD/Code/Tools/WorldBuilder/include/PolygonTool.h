@@ -22,9 +22,6 @@
 
 #pragma once
 
-#ifndef POLYGONTOOL_H
-#define POLYGONTOOL_H
-
 #include "Tool.h"
 class WorldHeightMapEdit;
 class MapObject;
@@ -84,7 +81,3 @@ public:
 	virtual void activate(); ///< Become the current tool.
 	virtual void deactivate(); ///< Become not the current tool.
 };
-
-
-#endif //POLYGONTOOL_H
-

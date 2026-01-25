@@ -30,7 +30,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 #include "Common/ThingTemplate.h"
 #include "Common/Xfer.h"
 #include "GameLogic/Module/InactiveBody.h"
@@ -76,7 +76,7 @@ Real InactiveBody::estimateDamage( DamageInfoInput& damageInfo ) const
 //-------------------------------------------------------------------------------------------------
 void InactiveBody::attemptDamage( DamageInfo *damageInfo )
 {
-	if( damageInfo == NULL )
+	if( damageInfo == nullptr )
 		return;
 
 	if( damageInfo->in.m_damageType == DAMAGE_HEALING )
@@ -113,7 +113,7 @@ void InactiveBody::attemptDamage( DamageInfo *damageInfo )
 //-------------------------------------------------------------------------------------------------
 void InactiveBody::attemptHealing( DamageInfo *damageInfo )
 {
-	if( damageInfo == NULL )
+	if( damageInfo == nullptr )
 		return;
 
 	if( damageInfo->in.m_damageType != DAMAGE_HEALING )

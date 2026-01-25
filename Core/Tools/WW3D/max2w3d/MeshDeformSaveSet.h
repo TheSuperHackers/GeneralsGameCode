@@ -23,7 +23,7 @@
  *                                                                                             *
  *                 Project Name : Commando / G 3D engine                                       *
  *                                                                                             *
- *                    File Name : MeshDeformSaveSet.H
+ *                    File Name : MeshDeformSaveSet.h
  *                                                                                             *
  *                   Programmer : Patrick Smith                                                *
  *                                                                                             *
@@ -35,11 +35,10 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#ifndef __MESH_DEFORM_SAVE_SET_H
-#define __MESH_DEFORM_SAVE_SET_H
+#pragma once
 
 #include <max.h>
-#include "Vector.H"
+#include "Vector.h"
 
 // Forward declarations
 class ChunkSaveClass;
@@ -95,18 +94,18 @@ public:
 		//////////////////////////////////////////////////////////////////////
 		MeshDeformSaveSetClass (void)
 			:	m_Flags (0),
-				m_CurrentKeyFrame (NULL)	{ }
+				m_CurrentKeyFrame (nullptr)	{ }
 		~MeshDeformSaveSetClass (void)	{ Reset (); }
 
 		//////////////////////////////////////////////////////////////////////
 		//	Public methods
 		//////////////////////////////////////////////////////////////////////
 
-		// Keyframe managment
+		// Keyframe management
 		void					Begin_Keyframe (float state);
 		void					End_Keyframe (void);
 
-		// Vertex managment
+		// Vertex management
 		void					Add_Vert (UINT vert_index, const Point3 &position, const VertColor &color);
 
 		// Misc
@@ -134,5 +133,3 @@ public:
 		KEYFRAME *									m_CurrentKeyFrame;
 		unsigned int								m_Flags;
 };
-
-#endif //__MESH_DEFORM_SAVE_SET_H

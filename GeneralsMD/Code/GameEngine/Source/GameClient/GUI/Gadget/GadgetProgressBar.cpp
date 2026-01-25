@@ -44,7 +44,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "Common/Language.h"
@@ -78,7 +78,7 @@ WindowMsgHandledType GadgetProgressBarSystem( GameWindow *window, UnsignedInt ms
 		// ------------------------------------------------------------------------
 		case GWM_DESTROY:
 		{
-			window->winSetUserData( NULL );
+			window->winSetUserData( nullptr );
 			break;
 		}
 

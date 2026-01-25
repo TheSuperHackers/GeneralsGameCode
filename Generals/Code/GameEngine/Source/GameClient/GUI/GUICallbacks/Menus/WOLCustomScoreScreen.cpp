@@ -29,7 +29,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Lib/BaseType.h"
 #include "Common/GameEngine.h"
@@ -54,21 +54,21 @@ static NameKeyType buttonDisconnectID = NAMEKEY_INVALID;
 static NameKeyType buttonLobbyID = NAMEKEY_INVALID;
 
 // Window Pointers ------------------------------------------------------------------------
-static GameWindow *parentWOLCustomScore = NULL;
-static GameWindow *buttonDisconnect = NULL;
-static GameWindow *buttonLobby = NULL;
+static GameWindow *parentWOLCustomScore = nullptr;
+static GameWindow *buttonDisconnect = nullptr;
+static GameWindow *buttonLobby = nullptr;
 
 //-------------------------------------------------------------------------------------------------
 /** Initialize the WOL Status Menu */
 //-------------------------------------------------------------------------------------------------
 void WOLCustomScoreScreenInit( WindowLayout *layout, void *userData )
 {
-	parentWOLCustomScoreID = TheNameKeyGenerator->nameToKey( AsciiString( "WOLCustomScoreScreen.wnd:WOLCustomScoreScreenParent" ) );
-	buttonDisconnectID = TheNameKeyGenerator->nameToKey( AsciiString( "WOLCustomScoreScreen.wnd:ButtonDisconnect" ) );
-	buttonLobbyID = TheNameKeyGenerator->nameToKey( AsciiString( "WOLCustomScoreScreen.wnd:ButtonLobby" ) );
-	parentWOLCustomScore = TheWindowManager->winGetWindowFromId( NULL, parentWOLCustomScoreID );
-	buttonDisconnect = TheWindowManager->winGetWindowFromId( NULL,  buttonDisconnectID);
-	buttonLobby = TheWindowManager->winGetWindowFromId( NULL,  buttonLobbyID);
+	parentWOLCustomScoreID = TheNameKeyGenerator->nameToKey( "WOLCustomScoreScreen.wnd:WOLCustomScoreScreenParent" );
+	buttonDisconnectID = TheNameKeyGenerator->nameToKey( "WOLCustomScoreScreen.wnd:ButtonDisconnect" );
+	buttonLobbyID = TheNameKeyGenerator->nameToKey( "WOLCustomScoreScreen.wnd:ButtonLobby" );
+	parentWOLCustomScore = TheWindowManager->winGetWindowFromId( nullptr, parentWOLCustomScoreID );
+	buttonDisconnect = TheWindowManager->winGetWindowFromId( nullptr,  buttonDisconnectID);
+	buttonLobby = TheWindowManager->winGetWindowFromId( nullptr,  buttonLobbyID);
 
 	/*
 	if (WOL::TheWOL->getState() == WOL::WOLAPI_FATAL_ERROR)

@@ -36,11 +36,9 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#ifndef MESHGEOMETRY_H
-#define MESHGEOMETRY_H
+#pragma once
 
 #include "always.h"
-#include "refcount.h"
 #include "bittype.h"
 #include "simplevec.h"
 #include "sharebuf.h"
@@ -151,7 +149,7 @@ public:
 	void							Get_Bounding_Sphere(SphereClass * set_sphere);
 
 	// exposed culling support
-	bool							Has_Cull_Tree(void)											{ return CullTree != NULL; }
+	bool							Has_Cull_Tree(void)											{ return CullTree != nullptr; }
 
 	void							Generate_Rigid_APT(const Vector3 & view_dir, SimpleDynVecClass<uint32> & apt);
 	void							Generate_Rigid_APT(const OBBoxClass & local_box, SimpleDynVecClass<uint32> & apt);
@@ -265,7 +263,7 @@ inline uint32 * MeshGeometryClass::get_shade_indices(bool create)
 	if (VertexShadeIdx) {
 		return VertexShadeIdx->Get_Array();
 	}
-	return NULL;
+	return nullptr;
 }
 
 inline uint16 * MeshGeometryClass::get_bone_links(bool create)
@@ -276,7 +274,7 @@ inline uint16 * MeshGeometryClass::get_bone_links(bool create)
 	if (VertexBoneLink) {
 		return VertexBoneLink->Get_Array();
 	}
-	return NULL;
+	return nullptr;
 }
 
 inline uint8 MeshGeometryClass::Get_Poly_Surface_Type(int poly_index) const
@@ -286,6 +284,3 @@ inline uint8 MeshGeometryClass::Get_Poly_Surface_Type(int poly_index) const
 	uint8 *type = PolySurfaceType->Get_Array();
 	return type[poly_index];
 }
-
-#endif //MESHGEOMETRY_H
-

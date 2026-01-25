@@ -34,13 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef WW3D_H
-#define WW3D_H
 
 #include "always.h"
 #include "vector3.h"
@@ -106,7 +100,7 @@ public:
 	};
 
 
-	static WW3DErrorType		Init(void * hwnd, char *defaultpal = NULL, bool lite = false);
+	static WW3DErrorType		Init(void * hwnd, char *defaultpal = nullptr, bool lite = false);
 	static WW3DErrorType		Shutdown(void);
 	static bool					Is_Initted(void)								{ return IsInitted; }
 
@@ -149,7 +143,7 @@ public:
 	** special cases like generating a shadow texture for an object.  Basically this function will have the
 	** entire scene rendering overhead.
 	*/
-	static WW3DErrorType		Begin_Render(bool clear = false,bool clearz = true,const Vector3 & color = Vector3(0,0,0), float dest_alpha=0.0f, void(*network_callback)(void) = NULL);
+	static WW3DErrorType		Begin_Render(bool clear = false,bool clearz = true,const Vector3 & color = Vector3(0,0,0), float dest_alpha=0.0f, void(*network_callback)(void) = nullptr);
 	static WW3DErrorType		Render(const LayerListClass & layerlist);
 	static WW3DErrorType		Render(const LayerClass & layer);
 	static WW3DErrorType		Render(SceneClass * scene,CameraClass * cam,bool clear = false,bool clearz = false,const Vector3 & color = Vector3(0,0,0));
@@ -162,18 +156,37 @@ public:
 
 	static void Flip_To_Primary(void);
 
-	// TheSuperHackers @info Call this function to accumulate fractional render time.
-	// It will then call Sync with a new time on its own once an appropriate amount of time has passed.
-	static void Add_Frame_Time(float milliseconds);
+	// TheSuperHackers @info Add amount of milliseconds that the simulation has advanced in this render frame.
+	// This can be a fraction of a logic step.
+	static void Update_Logic_Frame_Time(float milliseconds);
 	/*
 	** Timing
 	** By calling the Sync function, the application can move the ww3d library time forward.  This
 	** will control things like animated uv-offset mappers and render object animations.
 	*/
-	static void					Sync( unsigned int sync_time );
+	static void						Sync(bool step);
+
+	// Total sync time in milliseconds. Advances in full logic time steps only.
 	static unsigned int		Get_Sync_Time(void) { return SyncTime; }
-   static unsigned int     Get_Frame_Time(void) { return SyncTime - PreviousSyncTime; }
-   static unsigned int     Get_Frame_Count(void) { return FrameCount; }
+
+	// Current sync frame time in milliseconds. Can be zero when the logic has not stepped forward in the current render update.
+	static unsigned int		Get_Sync_Frame_Time(void) { return SyncTime - PreviousSyncTime; }
+
+	// Fractional sync frame time. Accumulates for as long as the sync frame is not stepped forward.
+	static unsigned int		Get_Fractional_Sync_Milliseconds() { return (unsigned int)FractionalSyncMs; }
+
+	// Total logic time in milliseconds. Can include fractions of a logic step. Is rounded to integer.
+	static unsigned int		Get_Logic_Time_Milliseconds() { return SyncTime + (unsigned int)FractionalSyncMs; }
+
+	// Logic time step in milliseconds. Can be a fraction of a logic step.
+	static float					Get_Logic_Frame_Time_Milliseconds() { return LogicFrameTimeMs; }
+
+	// Logic time step in seconds. Can be a fraction of a logic step.
+	static float					Get_Logic_Frame_Time_Seconds() { return LogicFrameTimeMs * 0.001f; }
+
+	// Returns the render frame count.
+	static unsigned int		Get_Frame_Count(void) { return FrameCount; }
+
 	static unsigned int		Get_Last_Frame_Poly_Count(void);
 	static unsigned int		Get_Last_Frame_Vertex_Count(void);
 
@@ -215,7 +228,7 @@ public:
 	static void					_Invalidate_Mesh_Cache();
 	static void					_Invalidate_Textures();
 
-	static void					Set_Thumbnail_Enabled(bool b);// { ThumbnailEnabled=b; }
+	static void					Set_Thumbnail_Enabled(bool b) { ThumbnailEnabled=b; }
 	static bool					Get_Thumbnail_Enabled() { return ThumbnailEnabled; }
 
 	static void					Enable_Sorting(bool onoff);
@@ -323,19 +336,23 @@ private:
 	static void					Allocate_Debug_Resources(void);
 	static void					Release_Debug_Resources(void);
 
+	// Logic frame time, in milliseconds
+	static float LogicFrameTimeMs;
+
+	// Accumulated synchronized frame time in milliseconds
 	static float FractionalSyncMs;
 
 	// Timing info:
-   // The absolute synchronized frame time (in milliseconds) supplied by the
-   // application at the start of every frame. Note that wraparound cases
-   // etc. need to be considered.
-	static unsigned int				SyncTime;
+	// The absolute synchronized frame time (in milliseconds) supplied by the
+	// application at the start of every frame. Note that wraparound cases
+	// etc. need to be considered.
+	static unsigned int SyncTime;
 
-   // The previously set absolute sync time - this is used to get the interval between
-   // the most recently set sync time and the previous one. Assuming the
-   // application sets sync time at the start of every frame, this represents
-   // the frame interval.
-   static unsigned int           PreviousSyncTime;
+	// The previously set absolute sync time - this is used to get the interval between
+	// the most recently set sync time and the previous one. Assuming the
+	// application sets sync time at the start of every frame, this represents
+	// the frame interval.
+	static unsigned int PreviousSyncTime;
 
 	static float						PixelCenterX;
 	static float						PixelCenterY;
@@ -385,7 +402,7 @@ private:
 	// RenderObject on construction. The native screen size is the screen size
 	// at which the object was designed to be viewed, and it is used in the
 	// texture resizing algorithm (may be used in future for other things).
-	// If the default is overriden, it will usually be in the asset manager
+	// If the default is overridden, it will usually be in the asset manager
 	// post-load callback.
 	static float						DefaultNativeScreenSize;
 
@@ -451,7 +468,3 @@ struct RenderStatistics
       long     UserStat1;
       long     UserStat2;
 };
-
-
-
-#endif

@@ -35,9 +35,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef W3DUTIL_H
-#define W3DUTIL_H
+#pragma once
 
 #include <max.h>
 #include "utilapi.h"
@@ -126,5 +124,3 @@ W3DAppData0Struct *			GetW3DAppData0 (INode *node);
 W3DAppData1Struct *			GetW3DAppData1 (INode *node);
 W3DAppData2Struct *			GetW3DAppData2 (INode *node);
 W3DDazzleAppDataStruct *	GetW3DDazzleAppData(INode *node);
-
-#endif

@@ -41,15 +41,9 @@ target_link_libraries(z_particleeditor PRIVATE
     core_profile
     corei_libraries_source_wwvegas
     corei_libraries_source_wwvegas_wwlib
-    d3d8lib
-    dbghelplib
-    imm32
-    core_config
     stlport
-    vfw32
-    winmm
+    zi_always_no_pch
     zi_gameengine_include
-    zi_always
     zi_libraries_source_wwvegas
 )
 

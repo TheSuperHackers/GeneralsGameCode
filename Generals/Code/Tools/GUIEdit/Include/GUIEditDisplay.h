@@ -45,9 +45,6 @@
 
 #pragma once
 
-#ifndef __GUIEDITDISPLAY_H_
-#define __GUIEDITDISPLAY_H_
-
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
@@ -98,7 +95,7 @@ public:
 	// These are stub functions to allow compilation:
 
 	/// Create a video buffer that can be used for this display
-	virtual VideoBuffer*	createVideoBuffer( void ) { return NULL; }
+	virtual VideoBuffer*	createVideoBuffer( void ) { return nullptr; }
 
 	/// draw a video buffer fit within the screen coordinates
 	virtual void drawScaledVideoBuffer( VideoBuffer *buffer, VideoStreamInterface *stream ) { }
@@ -137,6 +134,3 @@ protected:
 // INLINING ///////////////////////////////////////////////////////////////////
 
 // EXTERNALS //////////////////////////////////////////////////////////////////
-
-#endif // __GUIEDITDISPLAY_H_
-

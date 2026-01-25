@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef CRATE_SYSTEM_H
-#define CRATE_SYSTEM_H
-
 #include "Common/INI.h"
 #include "Common/Overridable.h"
 #include "Common/Override.h"
@@ -63,7 +60,7 @@ public:
 	void setName( AsciiString name ) { m_name = name; }
 	AsciiString getName(){ return m_name; }
 
-	inline const FieldParse *getFieldParse() const { return TheCrateTemplateFieldParseTable; }
+	const FieldParse *getFieldParse() const { return TheCrateTemplateFieldParseTable; }
 	static const FieldParse TheCrateTemplateFieldParseTable[];		///< the parse table for INI definition
 
 	static void parseCrateCreationEntry( INI* ini, void *instance, void *store, const void* /*userData*/ );
@@ -71,9 +68,9 @@ public:
 	AsciiString m_name;													///< name for this CrateTemplate
 
 	Real m_creationChance;											///< Condition for random percentage chance of creating
-	VeterancyLevel m_veterancyLevel;						///< Condition specifing level of killed unit
+	VeterancyLevel m_veterancyLevel;						///< Condition specifying level of killed unit
 	KindOfMaskType m_killedByTypeKindof;				///< Must be killed by something with all these bits set
-	ScienceType m_killerScience;								///< Must be killed by something posessing this science
+	ScienceType m_killerScience;								///< Must be killed by something possessing this science
 	crateCreationEntryList m_possibleCrates;		///< CreationChance is for this CrateData to succeed, this list controls one-of-n crates created on success
 	Bool m_isOwnedByMaker;											///< Design needs crates to be owned sometimes.
 
@@ -113,4 +110,3 @@ private:
 };
 
 extern CrateSystem *TheCrateSystem;
-#endif

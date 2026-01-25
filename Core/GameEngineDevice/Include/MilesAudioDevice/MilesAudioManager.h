@@ -70,10 +70,10 @@ struct PlayingAudio
 
 	PlayingAudio() :
 		m_type(PAT_INVALID),
-		m_audioEventRTS(NULL),
+		m_audioEventRTS(nullptr),
 		m_requestStop(false),
 		m_cleanupAudioEventRTS(true),
-		m_sample(NULL),
+		m_sample(nullptr),
 		m_framesFaded(0)
 	{ }
 };
@@ -137,7 +137,7 @@ class MilesAudioManager : public AudioManager
 
 	public:
 #if defined(RTS_DEBUG)
-		virtual void audioDebugDisplay(DebugDisplayInterface *dd, void *, FILE *fp = NULL );
+		virtual void audioDebugDisplay(DebugDisplayInterface *dd, void *, FILE *fp = nullptr );
 		virtual AudioHandle addAudioEvent( const AudioEventRTS *eventToAdd );	///< Add an audio event (event must be declared in an INI file)
 #endif
 
@@ -273,8 +273,8 @@ class MilesAudioManager : public AudioManager
 		void stopAllSpeech( void );
 
 	protected:
-		void initFilters( HSAMPLE sample, const AudioEventRTS *eventInfo );
-		void initFilters3D( H3DSAMPLE sample, const AudioEventRTS *eventInfo, const Coord3D *pos );
+		void initFilters( HSAMPLE sample, AudioEventRTS *eventInfo );
+		void initFilters3D( H3DSAMPLE sample, AudioEventRTS *eventInfo, const Coord3D *pos );
 
 	protected:
 		ProviderInfo m_provider3D[MAXPROVIDERS];

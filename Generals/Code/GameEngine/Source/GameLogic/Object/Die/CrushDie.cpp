@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
@@ -48,7 +48,7 @@
 // Figure out which crush point was hit so the correct crushed object can be swapped in
 static CrushEnum crushLocationCheck( Object* crusherObject, Object* victimObject )
 {
-	if( (crusherObject == NULL)  ||  (victimObject == NULL) )
+	if( (crusherObject == nullptr)  ||  (victimObject == nullptr) )
 		return NO_CRUSH;
 
 	Bool frontCrushed = victimObject->getBodyModule()->getFrontCrushed();

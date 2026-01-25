@@ -23,7 +23,7 @@
  *                                                                                             *
  *                 Project Name : Commando / G                                                 *
  *                                                                                             *
- *                    File Name : VXLLAYER.CPP                                                 *
+ *                    File Name : VXLLAYER.cpp                                                 *
  *                                                                                             *
  *                   Programmer : Greg Hjelstrom                                               *
  *                                                                                             *

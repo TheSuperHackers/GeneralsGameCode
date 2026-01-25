@@ -37,7 +37,7 @@
 
 #include	"always.h"
 #include	"win.h"
-#include	"MPU.H"
+#include "MPU.h"
 #include "math.h"
 #include <assert.h>
 #include <Utility/intrin_compat.h>

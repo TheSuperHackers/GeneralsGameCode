@@ -50,7 +50,7 @@
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/BuildAssistant.h"
 #include "Common/Thing.h"
@@ -71,7 +71,6 @@
 void parseUpgradePair( INI *ini, void *instance, void *store, const void *userData )
 {
 	upgradePair info;
-	info.type = "";
 	info.amount = 0;
 
 	const char *token = ini->getNextToken( ini->getSepsColon() );

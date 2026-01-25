@@ -19,6 +19,7 @@
 // RulerTool.cpp
 // Author: Mike Lytle, January 2003
 
+
 #include "StdAfx.h"
 #include "resource.h"
 
@@ -31,7 +32,7 @@
 
 
 // Saved off so that static functions can access its members.
-RulerTool*	RulerTool::m_staticThis = NULL;
+RulerTool*	RulerTool::m_staticThis = nullptr;
 
 /// Constructor
 RulerTool::RulerTool(void) :
@@ -39,7 +40,7 @@ Tool(ID_RULER_TOOL, IDC_POINTER)
 {
 	m_downPt3d.set(0.0f, 0.0f, 0.0f);
 	m_rulerType = RULER_LINE;
-	m_View = NULL;
+	m_View = nullptr;
 	m_staticThis = this;
 }
 
@@ -53,7 +54,7 @@ void RulerTool::activate()
 {
 	Tool::activate();
 	CMainFrame::GetMainFrame()->showOptionsDialog(IDD_RULER_OPTIONS);
-	if (m_View != NULL) {
+	if (m_View != nullptr) {
 		// Is it dangerous to assume that the pointer is still good?
 		m_View->doRulerFeedback(m_rulerType);
 	}
@@ -64,7 +65,7 @@ void RulerTool::deactivate()
 {
 	Tool::deactivate();
 
-	if (m_View != NULL) {
+	if (m_View != nullptr) {
 		m_View->doRulerFeedback(RULER_NONE);
 	}
 
@@ -82,7 +83,7 @@ void RulerTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldB
 {
 	if (m != TRACK_L) return;
 
-	if (m_View == NULL) {
+	if (m_View == nullptr) {
 		// Save so that when we are done the view can stop drawing the rulers.
 		m_View = pView;
 	}
@@ -99,7 +100,7 @@ void RulerTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorld
 {
 	if (m != TRACK_L) return;
 
-	if (m_View == NULL) {
+	if (m_View == nullptr) {
 		// Save so that when we are done the view can stop drawing the rulers.
 		m_View = pView;
 	}
@@ -160,7 +161,7 @@ Bool RulerTool::switchType()
 	} else {
 		m_staticThis->m_rulerType = RULER_LINE;
 	}
-	if (m_staticThis->m_View != NULL) {
+	if (m_staticThis->m_View != nullptr) {
 		m_staticThis->m_View->doRulerFeedback(m_staticThis->m_rulerType);
 	}
 

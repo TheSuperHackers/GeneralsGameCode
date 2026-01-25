@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef _ASSISTED_TARGETING_UPDATE_H
-#define _ASSISTED_TARGETING_UPDATE_H
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpdateModule.h"
 
@@ -48,8 +45,8 @@ public:
 	{
 		m_clipSize = 1;
 		m_weaponSlot = PRIMARY_WEAPON;
-		m_laserFromAssisted = NULL;
-		m_laserToTarget = NULL;
+		m_laserFromAssisted = nullptr;
+		m_laserToTarget = nullptr;
 	}
 
 	static void buildFieldParse(MultiIniFieldParse& p);
@@ -76,6 +73,3 @@ public:
 private:
 	void makeFeedbackLaser( const ThingTemplate *laserTemplate, const Object *from, const Object *to );
 };
-
-#endif
-

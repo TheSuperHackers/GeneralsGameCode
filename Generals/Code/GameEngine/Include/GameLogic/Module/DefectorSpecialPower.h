@@ -32,9 +32,6 @@
 
 #pragma once
 
-#ifndef __DEFECTORSPECIALPOWER_H_
-#define __DEFECTORSPECIALPOWER_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/SpecialPowerModule.h"
 
@@ -81,5 +78,3 @@ public:
 protected:
 
 };
-#endif  // end DefectorSpecialPower
-

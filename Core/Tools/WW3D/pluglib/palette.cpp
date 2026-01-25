@@ -22,7 +22,7 @@
  *                                                                                             *
  *                 Project Name : Command & Conquer                                            *
  *                                                                                             *
- *                     $Archive:: /Commando/Library/PALETTE.CPP                               $*
+ *                     $Archive:: /Commando/Library/PALETTE.cpp                               $*
  *                                                                                             *
  *                      $Author:: Greg_h                                                      $*
  *                                                                                             *

@@ -16,12 +16,8 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#if !defined(AFX_COLORPICKERDIALOGCLASS_H__C943A7F1_CAA3_11D2_8DDF_00104B6FD9E3__INCLUDED_)
-#define AFX_COLORPICKERDIALOGCLASS_H__C943A7F1_CAA3_11D2_8DDF_00104B6FD9E3__INCLUDED_
-
-#if _MSC_VER >= 1000
 #pragma once
-#endif // _MSC_VER >= 1000
+
 // ColorPickerDialogClass.h : header file
 //
 
@@ -43,7 +39,7 @@ class ColorPickerDialogClass : public CDialog
 {
 // Construction
 public:
-	ColorPickerDialogClass (int red, int green, int blue, CWnd* pParent = NULL, UINT res_id = ColorPickerDialogClass::IDD);
+	ColorPickerDialogClass (int red, int green, int blue, CWnd* pParent = nullptr, UINT res_id = ColorPickerDialogClass::IDD);
 
 // Dialog Data
 	//{{AFX_DATA(ColorPickerDialogClass)
@@ -132,5 +128,3 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Developer Studio will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_COLORPICKERDIALOGCLASS_H__C943A7F1_CAA3_11D2_8DDF_00104B6FD9E3__INCLUDED_)

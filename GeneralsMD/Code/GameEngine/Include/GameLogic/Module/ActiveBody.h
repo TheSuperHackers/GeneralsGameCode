@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __ACTIVEBODY_H_
-#define __ACTIVEBODY_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/DamageFX.h"
 #include "GameLogic/Module/BodyModule.h"
@@ -101,8 +98,8 @@ public:
 	virtual void clearArmorSetFlag(ArmorSetType ast) { m_curArmorSetFlags.set(ast, 0); }
 	virtual Bool testArmorSetFlag(ArmorSetType ast) { return m_curArmorSetFlags.test(ast); }
 
-	virtual void setInitialHealth(Int initialPercent); ///< Sets the inital load health %.
-	virtual void setMaxHealth( Real maxHealth, MaxHealthChangeType healthChangeType = SAME_CURRENTHEALTH ); ///< Sets the inital max health
+	virtual void setInitialHealth(Int initialPercent); ///< Sets the initial load health %.
+	virtual void setMaxHealth( Real maxHealth, MaxHealthChangeType healthChangeType = SAME_CURRENTHEALTH ); ///< Sets the initial max health
 
 	virtual Bool getFrontCrushed() const { return m_frontCrushed; }
 	virtual Bool getBackCrushed() const { return m_backCrushed; }
@@ -174,6 +171,3 @@ private:
 	mutable const DamageFX*						m_curDamageFX;
 
 };
-
-#endif // __ACTIVEBODY_H_
-

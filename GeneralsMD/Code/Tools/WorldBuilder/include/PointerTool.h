@@ -22,9 +22,6 @@
 
 #pragma once
 
-#ifndef POINTER_TOOL_H
-#define POINTER_TOOL_H
-
 #include "PolygonTool.h"
 class WorldHeightMapEdit;
 #include "../../GameEngine/Include/Common/MapObject.h"
@@ -77,6 +74,3 @@ public:
 	static void clearSelection(void); ///< Clears the selected objects selected flags.
 	static Bool allowPick(MapObject* pMapObj, WbView* pView);
 };
-
-
-#endif //POINTER_TOOL_H
