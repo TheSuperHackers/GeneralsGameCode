@@ -29,7 +29,7 @@
 
 #pragma once
 
-#include "GameCommon.h"
+#include "Common/GameCommon.h"
 
 //-------------------------------------------------------------------------------------------------
 enum EditorSortingType CPP_11(: Int)
