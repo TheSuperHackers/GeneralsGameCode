@@ -1264,6 +1264,13 @@ void ActiveBody::internalAddSubdualDamage( Real delta )
 
 	m_currentSubdualDamage += delta;
 	m_currentSubdualDamage = min(m_currentSubdualDamage, data->m_subdualDamageCap);
+
+	// TheSuperHackers @bugfix Stubbjax 25/01/2026 Subdual damage can no longer go negative. This
+	// stops weak subdual damage + rapid healing from building up a subdual damage buffer over time.
+#if !RETAIL_COMPATIBLE_CRC
+	if (m_currentSubdualDamage < 0)
+		m_currentSubdualDamage = 0;
+#endif
 }
 
 //-------------------------------------------------------------------------------------------------
