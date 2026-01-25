@@ -71,7 +71,7 @@ static NameKeyType bioNameEntryID = NAMEKEY_INVALID;
 static NameKeyType bioDOBEntryID = NAMEKEY_INVALID;
 static NameKeyType bioBirthplaceEntryID = NAMEKEY_INVALID;
 static NameKeyType bioStrategyEntryID = NAMEKEY_INVALID;
-static NameKeyType *buttonGeneralPositionID = NULL;
+static NameKeyType *buttonGeneralPositionID = nullptr;
 static NameKeyType backdropID = NAMEKEY_INVALID;
 static NameKeyType bioParentID = NAMEKEY_INVALID;
 
@@ -388,9 +388,9 @@ void ChallengeMenuInit( WindowLayout *layout, void *userData )
     }
     else
     {
-        buttonGeneralPositionID = NULL;
-        buttonGeneralPosition = NULL;
-    }
+        buttonGeneralPositionID = nullptr;
+		buttonGeneralPosition = nullptr;
+	}
 
     for (Int i = 0; i < g_numGenerals; i++)
     {
@@ -497,13 +497,13 @@ void ChallengeMenuShutdown( WindowLayout *layout, void *userData )
     if (buttonGeneralPosition)
     {
         delete [] buttonGeneralPosition;
-        buttonGeneralPosition = NULL;
-    }
+		buttonGeneralPosition = nullptr;
+	}
     if (buttonGeneralPositionID)
     {
         delete [] buttonGeneralPositionID;
-        buttonGeneralPositionID = NULL;
-    }
+		buttonGeneralPositionID = nullptr;
+	}
     g_numGenerals = 0;
 
 	Bool popImmediate = *(Bool *)userData;
