@@ -71,7 +71,7 @@ static NameKeyType bioNameEntryID = NAMEKEY_INVALID;
 static NameKeyType bioDOBEntryID = NAMEKEY_INVALID;
 static NameKeyType bioBirthplaceEntryID = NAMEKEY_INVALID;
 static NameKeyType bioStrategyEntryID = NAMEKEY_INVALID;
-static NameKeyType buttonGeneralPositionID[NUM_GENERALS] = {NAMEKEY_INVALID};
+static NameKeyType *buttonGeneralPositionID = NULL;
 static NameKeyType backdropID = NAMEKEY_INVALID;
 static NameKeyType bioParentID = NAMEKEY_INVALID;
 
@@ -84,7 +84,7 @@ static GameWindow *bioLine1Entry = NULL;
 static GameWindow *bioLine2Entry = NULL;
 static GameWindow *bioLine3Entry = NULL;
 static GameWindow *bioLine4Entry = NULL;
-static GameWindow *buttonGeneralPosition[NUM_GENERALS] = {NULL};
+static GameWindow **buttonGeneralPosition = NULL;
 static GameWindow *backdrop = NULL;
 static GameWindow *bioParent = NULL;
 
@@ -100,6 +100,9 @@ static Bool isShuttingDown = FALSE;
 static Int lastButtonIndex = -1;
 Int lastHilitedIndex = -1;
 Bool isAutoSelecting = FALSE;
+
+// TheSuperHackers @tweak DayV 15/11/2025 Dynamically find number of challenge generals.
+static Int g_numGenerals = 0; 
 
 // for use by the teletype style bio text display
 UnicodeString bioLine1;
@@ -128,12 +131,12 @@ static Bool hasPlayedIntroAudio = FALSE;
 //-------------------------------------------------------------------------------------------------
 Int findPositionButton( Int controlID )
 {
-	for (Int i = 0; i < NUM_GENERALS; i++)
-	{
-		if (controlID == buttonGeneralPositionID[i])
-			return i;
-	}
-	return -1;
+    for (Int i = 0; i < g_numGenerals; i++)
+    {
+        if (buttonGeneralPositionID && controlID == buttonGeneralPositionID[i])
+            return i;
+    }
+    return -1;
 }
 
 
@@ -142,14 +145,17 @@ Int findPositionButton( Int controlID )
 //-------------------------------------------------------------------------------------------------
 void setEnabledButtons()
 {
-	for (Int i = 0; i < NUM_GENERALS; i++)
-	{
-		if (!buttonGeneralPosition[i])
-			continue;
-	
-		const GeneralPersona* generals = TheChallengeGenerals->getChallengeGenerals();
-		buttonGeneralPosition[i]->winEnable(generals[i].isStartingEnabled());
-		buttonGeneralPosition[i]->winHide(! generals[i].isStartingEnabled());
+    if (!buttonGeneralPosition || g_numGenerals <= 0)
+        return;
+
+    for (Int i = 0; i < g_numGenerals; i++)
+    {
+        if (!buttonGeneralPosition[i])
+            continue;
+
+        const GeneralPersona* generals = TheChallengeGenerals->getChallengeGenerals();
+        buttonGeneralPosition[i]->winEnable(generals[i].isStartingEnabled());
+        buttonGeneralPosition[i]->winHide(! generals[i].isStartingEnabled());
 
 		Int templateNum = ThePlayerTemplateStore->getTemplateNumByName(generals[i].getPlayerTemplateName());
 		const PlayerTemplate *playerTemplate = ThePlayerTemplateStore->getNthPlayerTemplate(templateNum);
@@ -177,8 +183,8 @@ void setEnabledButtons()
 //-------------------------------------------------------------------------------------------------
 void setGeneralCampaign( Int buttonIndex )
 {
-	if (buttonIndex < 0 || buttonIndex >= NUM_GENERALS)
-		return;
+    if (buttonIndex < 0 || buttonIndex >= g_numGenerals)
+        return;
 
 	// determine which general and player template is selected and store it
 	const GeneralPersona* generals = TheChallengeGenerals->getChallengeGenerals();
@@ -200,8 +206,8 @@ void setGeneralCampaign( Int buttonIndex )
 //-------------------------------------------------------------------------------------------------
 void setGeneralBio( Int buttonIndex )
 {
-	if (buttonIndex < 0 || buttonIndex >= NUM_GENERALS)
-		return;
+    if (buttonIndex < 0 || buttonIndex >= g_numGenerals)
+        return;
 
 	// this is hidden until the a bio is set
 	// @todo: use a fancy transition
@@ -231,41 +237,41 @@ void setGeneralBio( Int buttonIndex )
 //-------------------------------------------------------------------------------------------------
 void updateButtonSequence(Int stepsPerUpdate)
 {
-	const static Int cleanupStates = 2;
-	if (buttonSequenceStep > NUM_GENERALS + cleanupStates)
-		return;
+    const static Int cleanupStates = 2;
+    if (buttonSequenceStep > g_numGenerals + cleanupStates)
+        return;
 
 	const GeneralPersona* generals = TheChallengeGenerals->getChallengeGenerals();
 
-	for (Int i = 0; i < stepsPerUpdate; i++)
-	{
-		// selected look
-		Int pos = buttonSequenceStep;
-		if (pos < NUM_GENERALS && buttonGeneralPosition[pos] && !buttonGeneralPosition[pos]->winIsHidden())
-		{
-			Int templateNum = ThePlayerTemplateStore->getTemplateNumByName(generals[pos].getPlayerTemplateName());
-			const PlayerTemplate *playerTemplate = ThePlayerTemplateStore->getNthPlayerTemplate(templateNum);
-			if (playerTemplate)
-				GadgetCheckBoxSetEnabledImage( buttonGeneralPosition[pos], TheMappedImageCollection->findImageByName( playerTemplate->getMedallionSelected() ) );
-		}
+    for (Int i = 0; i < stepsPerUpdate; i++)
+    {
+        // selected look
+        Int pos = buttonSequenceStep;
+        if (pos < g_numGenerals && buttonGeneralPosition[pos] && !buttonGeneralPosition[pos]->winIsHidden())
+        {
+            Int templateNum = ThePlayerTemplateStore->getTemplateNumByName(generals[pos].getPlayerTemplateName());
+            const PlayerTemplate *playerTemplate = ThePlayerTemplateStore->getNthPlayerTemplate(templateNum);
+            if (playerTemplate)
+                GadgetCheckBoxSetEnabledImage( buttonGeneralPosition[pos], TheMappedImageCollection->findImageByName( playerTemplate->getMedallionSelected() ) );
+        }
 
-		// mouseover look
-		if (--pos > 0 && pos < NUM_GENERALS && buttonGeneralPosition[pos] && !buttonGeneralPosition[pos]->winIsHidden())
-		{
-			Int templateNum = ThePlayerTemplateStore->getTemplateNumByName(generals[pos].getPlayerTemplateName());
-			const PlayerTemplate *playerTemplate = ThePlayerTemplateStore->getNthPlayerTemplate(templateNum);
-			if (playerTemplate)
-				GadgetCheckBoxSetEnabledImage( buttonGeneralPosition[pos], TheMappedImageCollection->findImageByName( playerTemplate->getMedallionHilite() ) );
-		}
+        // mouseover look
+        if (--pos > 0 && pos < g_numGenerals && buttonGeneralPosition[pos] && !buttonGeneralPosition[pos]->winIsHidden())
+        {
+            Int templateNum = ThePlayerTemplateStore->getTemplateNumByName(generals[pos].getPlayerTemplateName());
+            const PlayerTemplate *playerTemplate = ThePlayerTemplateStore->getNthPlayerTemplate(templateNum);
+            if (playerTemplate)
+                GadgetCheckBoxSetEnabledImage( buttonGeneralPosition[pos], TheMappedImageCollection->findImageByName( playerTemplate->getMedallionHilite() ) );
+        }
 
-		// regular look
-		if (--pos > 0 && pos < NUM_GENERALS && buttonGeneralPosition[pos] && !buttonGeneralPosition[pos]->winIsHidden())
-		{
-			Int templateNum = ThePlayerTemplateStore->getTemplateNumByName(generals[pos].getPlayerTemplateName());
-			const PlayerTemplate *playerTemplate = ThePlayerTemplateStore->getNthPlayerTemplate(templateNum);
-			if (playerTemplate)
-				GadgetCheckBoxSetEnabledImage( buttonGeneralPosition[pos], TheMappedImageCollection->findImageByName( playerTemplate->getMedallionNormal() ) );
-		}
+        // regular look
+        if (--pos > 0 && pos < g_numGenerals && buttonGeneralPosition[pos] && !buttonGeneralPosition[pos]->winIsHidden())
+        {
+            Int templateNum = ThePlayerTemplateStore->getTemplateNumByName(generals[pos].getPlayerTemplateName());
+            const PlayerTemplate *playerTemplate = ThePlayerTemplateStore->getNthPlayerTemplate(templateNum);
+            if (playerTemplate)
+                GadgetCheckBoxSetEnabledImage( buttonGeneralPosition[pos], TheMappedImageCollection->findImageByName( playerTemplate->getMedallionNormal() ) );
+        }
 
 		buttonSequenceStep++;
 	}
@@ -362,18 +368,41 @@ void ChallengeMenuInit( WindowLayout *layout, void *userData )
 	bioParentID = TheNameKeyGenerator->nameToKey( AsciiString("ChallengeMenu.wnd:GeneralsBioParent") );
 	bioParent = TheWindowManager->winGetWindowFromId( parentMenu, bioParentID);
 
-	AsciiString strButtonName;
-	for (Int i = 0; i < NUM_GENERALS; i++)
-	{
-		strButtonName.format("ChallengeMenu.wnd:GeneralPosition%d", i);
-		buttonGeneralPositionID[i] = TheNameKeyGenerator->nameToKey( strButtonName );
-		buttonGeneralPosition[i] = TheWindowManager->winGetWindowFromId( parentMenu, buttonGeneralPositionID[i] );
-		if (buttonGeneralPosition[i])
-		{
-			// start all buttons hidden, then expose them later if there is a general for this spot
-			buttonGeneralPosition[i]->winHide( TRUE );
-		}
-	}
+    AsciiString strButtonName;
+    g_numGenerals = 0;
+    while (true)
+    {
+        strButtonName.format("ChallengeMenu.wnd:GeneralPosition%d", g_numGenerals);
+        NameKeyType key = TheNameKeyGenerator->nameToKey(strButtonName);
+        GameWindow *win = TheWindowManager->winGetWindowFromId(parentMenu, key);
+
+        if (!win)
+            break;
+        ++g_numGenerals;
+    }
+
+    if (g_numGenerals > 0)
+    {
+        buttonGeneralPositionID = new NameKeyType[g_numGenerals];
+        buttonGeneralPosition = new GameWindow*[g_numGenerals];
+    }
+    else
+    {
+        buttonGeneralPositionID = NULL;
+        buttonGeneralPosition = NULL;
+    }
+
+    for (Int i = 0; i < g_numGenerals; i++)
+    {
+        strButtonName.format("ChallengeMenu.wnd:GeneralPosition%d", i);
+        buttonGeneralPositionID[i] = TheNameKeyGenerator->nameToKey( strButtonName );
+        buttonGeneralPosition[i] = TheWindowManager->winGetWindowFromId( parentMenu, buttonGeneralPositionID[i] );
+        DEBUG_ASSERTCRASH(buttonGeneralPosition[i], ("Could not find the ButtonGeneralPosition[%d]",i ));
+
+        // start all buttons hidden, then expose them later if there is a general for this spot
+        if (buttonGeneralPosition[i])
+            buttonGeneralPosition[i]->winHide( TRUE );
+    }
 
 	// set defaults
 	bioParent->winHide(TRUE);
@@ -464,6 +493,18 @@ void ChallengeMenuShutdown( WindowLayout *layout, void *userData )
 	lastButtonIndex = -1;
 
 	buttonSequenceStep = 0;
+
+    if (buttonGeneralPosition)
+    {
+        delete [] buttonGeneralPosition;
+        buttonGeneralPosition = NULL;
+    }
+    if (buttonGeneralPositionID)
+    {
+        delete [] buttonGeneralPositionID;
+        buttonGeneralPositionID = NULL;
+    }
+    g_numGenerals = 0;
 
 	Bool popImmediate = *(Bool *)userData;
 	if( popImmediate )
