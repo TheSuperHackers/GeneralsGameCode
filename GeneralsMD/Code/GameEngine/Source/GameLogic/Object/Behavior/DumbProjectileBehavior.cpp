@@ -665,7 +665,10 @@ UpdateSleepTime DumbProjectileBehavior::update()
 			}
 			else
 			{
-				DEBUG_CRASH(("Vector is expected to contain two or more elements; check the weapon speed value"));
+#if RETAIL_COMPATIBLE_CRC
+				DEBUG_CRASH(("A mismatch is likely to happen if this code path is used in a match with unpatched clients."
+					" Vector is expected to contain two or more elements; check the weapon speed value."));
+#endif
 
 				prevPos = m_flightPathStart;
 				curPos = m_flightPathEnd;
