@@ -260,6 +260,9 @@ def main():
     #unify_file(Game.ZEROHOUR, "GameEngine/Include/Common/UserPreferences.h", Game.CORE, "GameEngine/Include/Common/UserPreferences.h")
     #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/UserPreferences.cpp", Game.CORE, "GameEngine/Source/Common/UserPreferences.cpp")
 
+    #unify_file(Game.ZEROHOUR, "Libraries/Include/Lib/BaseType.h", Game.CORE, "Libraries/Include/Lib/BaseType.h")
+    #unify_file(Game.ZEROHOUR, "Libraries/Include/Lib/trig.h", Game.CORE, "Libraries/Include/Lib/trig.h")
+
     return
 
 
