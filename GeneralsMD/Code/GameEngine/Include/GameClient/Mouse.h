@@ -285,6 +285,7 @@ public:
 	virtual void setPosition( Int x, Int y );						///< set the mouse position
 	virtual void setCursor( MouseCursor cursor ) = 0;		///< set mouse cursor
 
+	void initCapture(); ///< called once to unlock the mouse capture functionality
 	void setCursorCaptureMode(CursorCaptureMode mode); ///< set the rules for the mouse capture
 	void refreshCursorCapture(); ///< refresh the mouse capture
 	Bool isCursorCaptured(); ///< true if the mouse is captured in the game window
@@ -349,7 +350,6 @@ public:
 
 protected:
 
-	void initCapture();
 	Bool canCapture() const; ///< true if the mouse can be captured
 	void unblockCapture(CursorCaptureBlockReason reason); // unset a reason to block mouse capture
 	void blockCapture(CursorCaptureBlockReason reason); // set a reason to block mouse capture
