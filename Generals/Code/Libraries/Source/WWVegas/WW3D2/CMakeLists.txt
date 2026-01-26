@@ -237,6 +237,10 @@ target_compile_definitions(g_ww3d2 PRIVATE
     $<$<BOOL:${IS_VS6_BUILD}>:WINVER=0x0500>
 )
 
+if (RTS_BUILD_OPTION_IMGUI)
+    target_link_libraries(g_ww3d2 PRIVATE lib_imgui)
+endif ()
+
 target_precompile_headers(g_ww3d2 PRIVATE
     [["Utility/CppMacros.h"]] # Must be first, to be removed when abandoning VC6
     dx8wrapper.h
