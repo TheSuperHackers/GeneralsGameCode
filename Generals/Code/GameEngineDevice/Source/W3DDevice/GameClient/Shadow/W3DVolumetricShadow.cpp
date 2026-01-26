@@ -793,7 +793,7 @@ PolyNeighbor *W3DShadowGeometryMesh::GetPolyNeighbor( Int polyIndex )
 
 // buildPolygonNeighbors ======================================================
 // Whenever we set a new geometry we want to build some information about
-// the faces in the new geometry so that we can efficienty traverse across
+// the faces in the new geometry so that we can efficiently traverse across
 // the surface to neighboring polygons
 // ============================================================================
 void W3DShadowGeometryMesh::buildPolygonNeighbors( void )
@@ -2321,7 +2321,7 @@ void W3DVolumetricShadow::buildSilhouette(Int meshIndex, Vector3 *lightPosObject
 
 				//
 				// ignore neighbors that are marked as processed as those
-				// onces have already detected edges if present
+				// ones have already detected edges if present
 				//
 				if( BitIsSet( otherNeighbor->status, POLY_PROCESSED ) )
 					continue;  // for j
@@ -3380,7 +3380,7 @@ void W3DVolumetricShadowManager::renderShadows( Bool forceStencilFill )
 				shadowDynamicTask=m_dynamicShadowVolumesToRender;
 				while (shadowDynamicTask != shadowDynamicTasksStart)
 				{	//update() added a dynamic shadow
-					//dynamic shadow columes don't need to wait in queue since they
+					//dynamic shadow columns don't need to wait in queue since they
 					//all use the same vertex buffer.  Flush them ASAP.
 					shadow->RenderVolume(shadowDynamicTask->m_meshIndex,shadowDynamicTask->m_lightIndex);
 					//move to next dynamic task

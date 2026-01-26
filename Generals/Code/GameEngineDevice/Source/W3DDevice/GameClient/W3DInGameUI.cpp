@@ -383,7 +383,7 @@ void W3DInGameUI::reset( void )
 }
 
 //-------------------------------------------------------------------------------------------------
-/** Draw member for the W3D implemenation of the game user interface */
+/** Draw member for the W3D implementation of the game user interface */
 //-------------------------------------------------------------------------------------------------
 void W3DInGameUI::draw( void )
 {
@@ -503,7 +503,7 @@ void W3DInGameUI::drawMoveHints( View *view )
 
 				}
 
-				// asign render objects to GUI data
+				// assign render objects to GUI data
 				m_moveHintRenderObj[ i ] = hint;
 
 				// note that 'anim' is returned from Get_HAnim with an AddRef, so we don't need to addref it again.

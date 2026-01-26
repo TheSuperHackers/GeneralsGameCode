@@ -203,7 +203,7 @@ Int APIENTRY WinMain(HINSTANCE hInstance,
 	if( !initInstance( hInstance, nCmdShow ) )
 		return FALSE;
 
-	// load accellerator table
+	// load accelerator table
 	hAccelTable = LoadAccelerators( hInstance, (LPCTSTR)GUIEDIT_ACCELERATORS );
 
 	// initialize the common controls

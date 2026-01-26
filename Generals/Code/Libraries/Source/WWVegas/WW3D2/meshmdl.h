@@ -163,7 +163,7 @@ public:
 
 	/////////////////////////////////////////////////////////////////////////////////////
 	// Material interface, All of these functions call through to the current
-	// material decription.
+	// material description.
 	/////////////////////////////////////////////////////////////////////////////////////
 	void							Set_Pass_Count(int passes)														{ CurMatDesc->Set_Pass_Count(passes); }
 	int							Get_Pass_Count(void) const														{ return CurMatDesc->Get_Pass_Count(); }

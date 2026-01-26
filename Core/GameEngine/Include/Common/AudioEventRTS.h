@@ -152,7 +152,7 @@ public:
 	const Coord3D *getCurrentPosition( void );
 
 	// This will return the directory leading up to the appropriate type, including the trailing '\\'
-	// If localized is true, we'll append a language specifc directory to the end of the path.
+	// If localized is true, we'll append a language specific directory to the end of the path.
 	AsciiString generateFilenamePrefix( AudioType audioTypeToPlay, Bool localized );
 	AsciiString generateFilenameExtension( AudioType audioTypeToPlay );
 protected:
@@ -170,8 +170,8 @@ protected:
 	AsciiString m_attackName;				///< This is the filename that should be used during the attack.
 	AsciiString m_decayName;				///< This is the filename that should be used during the decay.
 
-	AudioPriority m_priority;				///< This should be the priority as given by the event info, or the overrided priority.
-	Real m_volume;									///< This is the override for the volume. It will either be the normal
+	AudioPriority m_priority;				///< This should be the priority as given by the event info, or the overridden priority.
+	Real m_volume;									///< This is the override for the volume. It will either be the normal volume or an overridden value.
 	TimeOfDay m_timeOfDay;					///< This should be the current Time Of Day.
 
 	Coord3D m_positionOfAudio;			///< Position of the sound if no further positional updates are necessary

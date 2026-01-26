@@ -643,7 +643,7 @@ public:
 	EmissionVolumeType getEmisionVolumeType() const { return m_emissionVolumeType; }
 	ParticlePriorityType getPriority() const { return m_priority; }
 
-	// Access to wind motoin
+	// Access to wind motion
 	Real getWindAngle( void ) { return m_windAngle; }
 	WindMotion getWindMotion( void ) { return m_windMotion; }
 
@@ -791,7 +791,7 @@ public:
 
 	virtual void preloadAssets( TimeOfDay timeOfDay );
 
-	// these are only for use by partcle systems to link and unlink themselves
+	// these are only for use by particle systems to link and unlink themselves
 	void friend_addParticleSystem( ParticleSystem *particleSystemToAdd );
 	void friend_removeParticleSystem( ParticleSystem *particleSystemToRemove );
 

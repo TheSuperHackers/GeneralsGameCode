@@ -536,7 +536,7 @@ LRESULT CALLBACK HierarchyView::dialogProc( HWND hWndDialog, UINT message,
 					TheEditor->selectWindow( target );
 					TheEditor->setMode( MODE_DRAG_MOVE );
 
-					// set the locatoin of the move to the window position for now
+					// set the location of the move to the window position for now
 					ICoord2D pos;
 					target->winGetScreenPosition( &pos.x, &pos.y );
 					TheEditWindow->setDragMoveDest( &pos );

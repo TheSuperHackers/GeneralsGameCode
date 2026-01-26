@@ -76,7 +76,7 @@ public:
 	DefaultProductionExitUpdate( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	// Required funcs to fufill interface requirements
+	// Required funcs to fulfill interface requirements
 	virtual Bool isExitBusy() const {return FALSE;}	///< Contain style exiters are getting the ability to space out exits, so ask this before reserveDoor as a kind of no-commitment check.
 	virtual ExitDoorType reserveDoorForExit( const ThingTemplate* objType, Object *specificObject ) { return DOOR_1; }
 	virtual void exitObjectViaDoor( Object *newObj, ExitDoorType exitDoor );

@@ -1231,7 +1231,7 @@ bool MeshClass::Cast_AABox(AABoxCollisionTestClass & boxtest)
 
 	WWASSERT(Model);
 
-	// This function analyses the tranform to call optimized functions in certain cases
+	// This function analyses the transform to call optimized functions in certain cases
 	bool hit = Model->Cast_World_Space_AABox(boxtest, Get_Transform());
 
 	if (hit) {

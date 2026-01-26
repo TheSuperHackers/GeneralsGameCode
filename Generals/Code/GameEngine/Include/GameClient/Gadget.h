@@ -121,7 +121,7 @@ enum
 													GWS_PROGRESS_BAR,
 };
 
-// Gadget paramaters
+// Gadget parameters
 enum
 {
 

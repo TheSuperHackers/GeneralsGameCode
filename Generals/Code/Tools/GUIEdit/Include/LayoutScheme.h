@@ -100,7 +100,7 @@ public:
 	void setHiliteTextColor( Color c );
 	void setHiliteTextBorderColor( Color c );
 
-	/** apply the image and color info stored in the state identifer tables
+	/** apply the image and color info stored in the state identifier tables
 	used for "property editing" to all appropriate windows currently
 	loaded in the editor */
 	void applyPropertyTablesToWindow( GameWindow *root );
