@@ -401,6 +401,19 @@ void AIUpdateInterface::doPathfind( PathfindServicesInterface *pathfinder )
 	}
 	//CRCDEBUG_LOG(("AIUpdateInterface::doPathfind() for object %d", getObject()->getID()));
 	m_waitingForPath = FALSE;
+	// TheSuperHackers @debug bobtista 23/01/2026 Log pathfind parameters for checkpoint debugging
+	{
+		Int frame = TheGameLogic->getFrame();
+		if (frame >= 1 && frame <= 6)
+		{
+			const Coord3D *pos = getObject()->getPosition();
+			DEBUG_LOG(("Pathfind[%d] doPathfind obj %u: pos=(%.2f,%.2f,%.2f) dest=(%.2f,%.2f,%.2f) isSafe=%d isApproach=%d isAttack=%d",
+				frame, getObject()->getID(),
+				pos->x, pos->y, pos->z,
+				m_requestedDestination.x, m_requestedDestination.y, m_requestedDestination.z,
+				m_isSafePath, m_isApproachPath, m_isAttackPath));
+		}
+	}
 	if (m_isSafePath) {
 		destroyPath();
 		Coord3D pos1, pos2;
@@ -479,7 +492,6 @@ will be processed when we get to the front of the pathfind queue. jba */
 //-------------------------------------------------------------------------------------------------
 void AIUpdateInterface::requestPath( Coord3D *destination, Bool isFinalGoal )
 {
-
 	if (m_locomotorSet.getValidSurfaces() == 0) {
 		DEBUG_CRASH(("Attempting to path immobile unit."));
 	}
@@ -5315,7 +5327,10 @@ void AIUpdateInterface::loadPostProcess()
 
 	// TheSuperHackers @bugfix bobtista 21/01/2026 Set checkpoint load frame to suppress path recomputation.
 	// This prevents path destruction from timestamp checks and onEnter() calls after checkpoint load.
-	if (m_path != nullptr && TheGameLogic != nullptr)
+	// TheSuperHackers @bugfix bobtista 23/01/2026 Set the flag for ALL units, not just units with paths.
+	// Units without paths at checkpoint time may still receive move commands shortly after load,
+	// and the protection logic needs to know we just loaded from checkpoint.
+	if (TheGameLogic != nullptr)
 	{
 		m_checkpointLoadFrame = TheGameLogic->getFrame();
 	}
