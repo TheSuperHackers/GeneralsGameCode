@@ -67,7 +67,8 @@ struct ImGui_ImplDX8_Data
     IDirect3DSurface8*          DepthBuffer;
     IDirect3DSurface8*          realDepthStencilBuffer;
 
-    ImGui_ImplDX8_Data() {
+    ImGui_ImplDX8_Data()
+    {
         memset((void*)this, 0, sizeof(*this));
         VertexBufferSize = 5000;
         IndexBufferSize = 10000;
