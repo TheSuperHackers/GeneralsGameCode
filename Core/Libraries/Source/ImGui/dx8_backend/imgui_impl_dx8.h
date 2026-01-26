@@ -1,25 +1,5 @@
-/**
- * @file imgui_impl_dx8.h
- * @brief DirectX8 renderer backend for Dear ImGui, reverse-engineered from the official DX9 backend
- */
-
-// dear imgui: Renderer Backend for DirectX8
-// This needs to be used along with a Platform Backend (e.g. Win32)
-
-// Implemented features:
-//  [X] Renderer: User texture binding. Use 'LPDIRECT3DTEXTURE8' as ImTextureID. Read the FAQ about ImTextureID!
-//  [X] Renderer: Large meshes support (64k+ vertices) with 16-bit indices.
-
-// You can use unmodified imgui_impl_* files in your project. See examples/ folder for examples of using this.
-// Prefer including the entire imgui/ repository into your project (either as a copy or as a submodule), and only build the backends you need.
-// Learn about Dear ImGui:
-// - FAQ                  https://dearimgui.com/faq
-// - Getting Started      https://dearimgui.com/getting-started
-// - Documentation        https://dearimgui.com/docs (same as your local docs/ folder).
-// - Introduction, links and more at the top of imgui.cpp
-
 /*
- * The MIT License (MIT)
+* The MIT License (MIT)
  *
  * Copyright (c) 2014 - 2025 Omar Cornut (Based on dx9 ImGui Backend)
  * Copyright (c) 2025 Meigyoku-Thmn and others
@@ -42,6 +22,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+
+/**
+ * @file imgui_impl_dx8.h
+ * @brief DirectX8 renderer backend for Dear ImGui, reverse-engineered from the official DX9 backend
+ */
+
+// dear imgui: Renderer Backend for DirectX8
+// This needs to be used along with a Platform Backend (e.g. Win32)
+
+// Implemented features:
+//  [X] Renderer: User texture binding. Use 'LPDIRECT3DTEXTURE8' as ImTextureID. Read the FAQ about ImTextureID!
+//  [X] Renderer: Large meshes support (64k+ vertices) with 16-bit indices.
+
+// You can use unmodified imgui_impl_* files in your project. See examples/ folder for examples of using this.
+// Prefer including the entire imgui/ repository into your project (either as a copy or as a submodule), and only build the backends you need.
+// Learn about Dear ImGui:
+// - FAQ                  https://dearimgui.com/faq
+// - Getting Started      https://dearimgui.com/getting-started
+// - Documentation        https://dearimgui.com/docs (same as your local docs/ folder).
+// - Introduction, links and more at the top of imgui.cpp
+
+
 
 #pragma once
 #include <imgui.h>      // IMGUI_IMPL_API
