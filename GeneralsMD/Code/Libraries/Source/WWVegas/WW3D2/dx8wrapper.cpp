@@ -659,7 +659,6 @@ bool DX8Wrapper::Create_Device(void)
 
 	ImGui_ImplWin32_Init(_Hwnd);
 	ImGui_ImplDX8_Init(DX8Wrapper::_Get_D3D_Device8());
-	// Font setup
 	io.Fonts->AddFontDefault();
 	io.DisplaySize = ImVec2(ResolutionWidth,ResolutionHeight);
 #endif
