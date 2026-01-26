@@ -51,5 +51,3 @@ void ImGui::FrameManager::EndFrame()
 
     s_frameOpen = false;
 }
-
-
