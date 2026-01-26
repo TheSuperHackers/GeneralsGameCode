@@ -66,6 +66,8 @@
 
 #include "WW3D2/shdlib.h"
 
+#include <rts/profile.h>
+
 ///////////////////////////////////////////////////////////////////////////////
 // DEFINITIONS ////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
@@ -981,6 +983,7 @@ void RTS3DScene::Render(RenderInfoClass & rinfo)
 	{
 		if (m_customPassMode == SCENE_PASS_DEFAULT)
 		{
+			ZoneScopedN("Render::W3DScene::PassDefault");
 			//Regular rendering pass with no effects
 			updatePlayerColorPasses();///@todo: this probably doesn't need to be done each frame.
 			updateFixedLightEnvironments(rinfo);
@@ -989,6 +992,7 @@ void RTS3DScene::Render(RenderInfoClass & rinfo)
 		}
 		else if (m_customPassMode == SCENE_PASS_ALPHA_MASK)
 		{
+			ZoneScopedN("Render::W3DScene::PassAlphaMask");
 			//a projected alpha texture which will later be used to determine where
 			//wireframe should be visible.
 			///@todo: Clearing to black may not be needed if the scene already did the clear.
@@ -1012,6 +1016,7 @@ void RTS3DScene::Render(RenderInfoClass & rinfo)
 		Bool old_enable=WW3D::Is_Texturing_Enabled();
 		if (Get_Extra_Pass_Polygon_Mode() == EXTRA_PASS_CLEAR_LINE)
 		{
+			ZoneScopedN("Render::W3DScene::PassClearLine");
 			//render scene with solid black color but have destination alpha store
 			//a projected alpha texture which will later be used to determine where
 			//wireframe should be visible.
@@ -1058,6 +1063,7 @@ void RTS3DScene::Render(RenderInfoClass & rinfo)
 		}
 		else
 		{
+			ZoneScopedN("Render::W3DScene::PassLegacy");
 			//old W3D custom rendering code.
 
 			//Disable writes to color buffer to save memory bandwidth - we only need Z.
@@ -1102,6 +1108,7 @@ void RTS3DScene::Render(RenderInfoClass & rinfo)
 //=============================================================================
 void RTS3DScene::Customized_Render( RenderInfoClass &rinfo )
 {
+	ZoneScopedN("Render::W3DScene::Customized");
 #ifdef DIRTY_CONDITION_FLAGS
 	StDrawableDirtyStuffLocker lockDirtyStuff;
 #endif
@@ -1126,21 +1133,25 @@ void RTS3DScene::Customized_Render( RenderInfoClass &rinfo )
 
 	RefRenderObjListIterator it(&UpdateList);
 	// allow all objects in the update list to do their "every frame" processing
-	for (it.First(); !it.Is_Done(); it.Next()) {
-		RenderObjClass * robj = it.Peek_Obj();
-		if (robj->Class_ID() == RenderObjClass::CLASSID_TILEMAP)
-			terrainObject=robj;	//found terrain object, store for later.
-		if (!ShaderClass::Is_Backface_Culling_Inverted()) {
-			// If we are doing water mirror, we draw with backface culling inverted.  In this case,
-			// we only want to call On_Frame_Update if we aren't drawing water, as otherwise
-			// we get 2 frame updates per frame, and it screws up the particle emitters.
-			it.Peek_Obj()->On_Frame_Update();
+	{
+		ZoneScopedN("Render::W3DScene::UpdateList");
+		for (it.First(); !it.Is_Done(); it.Next()) {
+			RenderObjClass * robj = it.Peek_Obj();
+			if (robj->Class_ID() == RenderObjClass::CLASSID_TILEMAP)
+				terrainObject=robj;	//found terrain object, store for later.
+			if (!ShaderClass::Is_Backface_Culling_Inverted()) {
+				// If we are doing water mirror, we draw with backface culling inverted.  In this case,
+				// we only want to call On_Frame_Update if we aren't drawing water, as otherwise
+				// we get 2 frame updates per frame, and it screws up the particle emitters.
+				it.Peek_Obj()->On_Frame_Update();
+			}
 		}
 	}
 
 	//terrain needs to be rendered first
 	if (terrainObject)	// Don't check visibility - terrain is always visible. jba.
 	{
+		ZoneScopedN("Render::W3DScene::Terrain");
 		robj=terrainObject;
 		rinfo.light_environment = nullptr;		// Terrain is self lit.
 		rinfo.Camera.Set_User_Data(this);	//pass the scene to terrain via user data.
@@ -1170,26 +1181,29 @@ void RTS3DScene::Customized_Render( RenderInfoClass &rinfo )
 #endif
 
 	// loop through all render objects in the list:
-	for (it.First(&RenderList); !it.Is_Done();)
 	{
-		// get the render object
-		robj = it.Peek_Obj();
- 		it.Next();	//advance to next object in case this one gets deleted during renderOneObject().
+		ZoneScopedN("Render::W3DScene::RenderList");
+		for (it.First(&RenderList); !it.Is_Done();)
+		{
+			// get the render object
+			robj = it.Peek_Obj();
+			it.Next();	//advance to next object in case this one gets deleted during renderOneObject().
 
-		if (robj->Class_ID() == RenderObjClass::CLASSID_TILEMAP)
-			continue;	//we already rendered terrain
+			if (robj->Class_ID() == RenderObjClass::CLASSID_TILEMAP)
+				continue;	//we already rendered terrain
 
-		if (robj->Is_Really_Visible()) {
-			DrawableInfo *drawInfo = (DrawableInfo *)robj->Get_User_Data();
-			Drawable *draw=nullptr;
-			if (drawInfo)
-				draw = drawInfo->m_drawable;
-#ifdef USE_NON_STENCIL_OCCLUSION
-			if (!(draw && drawInfo->m_flags & DrawableInfo::ERF_DELAYED_RENDER))	//model rendering is delayed for some reason until end of normal scene
-#else
-			if (!(draw && drawInfo->m_flags & (DrawableInfo::ERF_DELAYED_RENDER|DrawableInfo::ERF_POTENTIAL_OCCLUDER|DrawableInfo::ERF_IS_NON_OCCLUDER_OR_OCCLUDEE)))	//in this mode we delay almost all objects in order to do correct sorting with stencil.
-#endif
-				renderOneObject(rinfo, robj, localPlayerIndex);
+			if (robj->Is_Really_Visible()) {
+				DrawableInfo *drawInfo = (DrawableInfo *)robj->Get_User_Data();
+				Drawable *draw=nullptr;
+				if (drawInfo)
+					draw = drawInfo->m_drawable;
+	#ifdef USE_NON_STENCIL_OCCLUSION
+				if (!(draw && drawInfo->m_flags & DrawableInfo::ERF_DELAYED_RENDER))	//model rendering is delayed for some reason until end of normal scene
+	#else
+				if (!(draw && drawInfo->m_flags & (DrawableInfo::ERF_DELAYED_RENDER|DrawableInfo::ERF_POTENTIAL_OCCLUDER|DrawableInfo::ERF_IS_NON_OCCLUDER_OR_OCCLUDEE)))	//in this mode we delay almost all objects in order to do correct sorting with stencil.
+	#endif
+					renderOneObject(rinfo, robj, localPlayerIndex);
+			}
 		}
 	}
 
@@ -1198,6 +1212,7 @@ void RTS3DScene::Customized_Render( RenderInfoClass &rinfo )
 	if (TheW3DShadowManager && terrainObject && !ShaderClass::Is_Backface_Culling_Inverted() &&
 		Get_Extra_Pass_Polygon_Mode() == EXTRA_PASS_DISABLE)
 	{
+		ZoneScopedN("Render::W3DScene::Shadows");
 		TheW3DShadowManager->queueShadows(TRUE);
 	}
 
@@ -1205,6 +1220,7 @@ void RTS3DScene::Customized_Render( RenderInfoClass &rinfo )
 	if (terrainObject != nullptr && TheParticleSystemManager != nullptr &&
 		Get_Extra_Pass_Polygon_Mode() == EXTRA_PASS_DISABLE)
 	{
+		ZoneScopedN("Render::W3DScene::Particles");
 		TheParticleSystemManager->queueParticleRender();
 	}
 }

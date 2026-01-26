@@ -85,6 +85,8 @@
 #include "GameLogic/Object.h"
 #include "GameLogic/ScriptEngine.h"		// For TheScriptEngine - jkmcd
 
+#include <rts/profile.h>
+
 #define DRAWABLE_HASH_SIZE	8192
 
 /// The GameClient singleton instance
@@ -510,6 +512,7 @@ DECLARE_PERF_TIMER(GameClient_draw)
 void GameClient::update( void )
 {
 	USE_PERF_TIMER(GameClient_update)
+	FrameMark;
 	// create the FRAME_TICK message
 	GameMessage *frameMsg = TheMessageStream->appendMessage( GameMessage::MSG_FRAME_TICK );
 	frameMsg->appendTimestampArgument( getFrame() );
@@ -617,9 +620,12 @@ void GameClient::update( void )
       TheInGameUI->setCameraTrackingDrawable( FALSE );
   }
 
+	ZoneScopedNC("Render", 0x2196F3);
+
 	if(TheGlobalData->m_playIntro || TheGlobalData->m_afterIntro)
 	{
 		// redraw all views, update the GUI
+		ZoneScopedN("Render::IntroDisplay");
 		TheDisplay->DRAW();
 		TheDisplay->UPDATE();
 		return;
@@ -627,11 +633,13 @@ void GameClient::update( void )
 
 	// update the window system itself
 	{
+		ZoneScopedN("Render::WindowManager");
 		TheWindowManager->UPDATE();
 	}
 
 	// update the video player
 	{
+		ZoneScopedN("Render::VideoPlayer");
 		TheVideoPlayer->UPDATE();
 	}
 
@@ -742,11 +750,13 @@ void GameClient::update( void )
 
 	// update the terrain visuals
 	{
+		ZoneScopedN("Render::TerrainVisual");
 		TheTerrainVisual->UPDATE();
 	}
 
 	// update display
 	{
+		ZoneScopedN("Render::DisplayUpdate");
 		TheDisplay->UPDATE();
 	}
 
@@ -761,16 +771,19 @@ void GameClient::update( void )
 
 	{
 		// let display string factory handle its update
+		ZoneScopedN("Render::DisplayStrings");
 		TheDisplayStringManager->update();
 	}
 
 	{
 		// update the shell
+		ZoneScopedN("Render::Shell");
 		TheShell->UPDATE();
 	}
 
 	{
 		// update the in game UI
+		ZoneScopedN("Render::InGameUI");
 		TheInGameUI->UPDATE();
 	}
 }

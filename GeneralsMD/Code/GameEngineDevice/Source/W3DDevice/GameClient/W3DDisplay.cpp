@@ -1517,6 +1517,7 @@ void W3DDisplay::drawDebugStats( void )
 //=============================================================================
 void W3DDisplay::drawFPSStats( void )
 {
+	ZoneScopedN("Render::W3DDisplay::FPSStats");
 	Int	x = 3;
 	Int	y = 20;
 	Color textColor = GameMakeColor( 255, 255, 255, 255 );
@@ -1561,6 +1562,7 @@ void W3DDisplay::drawCurrentDebugDisplay( void )
 //=============================================================================
 void W3DDisplay::calculateTerrainLOD( void )
 {
+	ZoneScopedN("Render::W3DDisplay::TerrainLOD");
 	const Int NUM_SAMPLES=20;
 	const Int NUM_TO_DISCARD=5;
 
@@ -1741,6 +1743,8 @@ void W3DDisplay::TracyCaptureImage()
 		InitTracyCaptureImage();
 	}
 
+	ZoneScopedN("Render::W3DDisplay::TracyFrameImage");
+
 	// copy the backbuffer to an intermediate texture on the GPU
 	// TheSuperHackers @todo In DX9 it should be possible to sample the backbuffer directly and simplify this
 	SurfaceClass *backBuffer = DX8Wrapper::_Get_DX8_Back_Buffer();
@@ -1898,6 +1902,7 @@ AGAIN:
 #endif
 			)
 	{
+		ZoneScopedN("Render::W3DDisplay::DebugStats");
 		gatherDebugStats();
 	}
 #ifdef EXTENDED_STATS
@@ -1947,6 +1952,7 @@ AGAIN:
 
 	if(TheGlobalData->m_loadScreenRender != TRUE)
 	{
+		ZoneScopedN("Render::W3DDisplay::PreRenderUpdates");
 
 		if (TheTerrainTracksRenderObjClassSystem)
 			TheTerrainTracksRenderObjClassSystem->update();
@@ -1991,7 +1997,9 @@ AGAIN:
 			//trying to refresh the visible terrain geometry.
 //			if(TheGlobalData->m_loadScreenRender != TRUE)
 				updateViews();
-     		TheParticleSystemManager->update();//LORENZEN AND WILCZYNSKI MOVED THIS FROM ITS NATIVE POSITION, ABOVE
+     		{
+				ZoneScopedN("Render::W3DDisplay::ParticleUpdate");
+				TheParticleSystemManager->update();//LORENZEN AND WILCZYNSKI MOVED THIS FROM ITS NATIVE POSITION, ABOVE
                                            //FOR THE PURPOSE OF LETTING THE PARTICLE SYSTEM LOOK UP THE RENDER OBJECT"S
                                            //TRANSFORM MATRIX, WHILE IT IS STILL VALID (HAVING DONE ITS CLIENT TRANSFORMS
                                            //BUT NOT YET RESETTING TOT HE LOGICAL TRANSFORM)
@@ -1999,15 +2007,22 @@ AGAIN:
                                            //MOVE WITH THE CLIENT TRANSFORMS, NOW.
                                            //REVOLUTIONARY!
                                            //-LORENZEN
+			}
 
 
 			if (TheWaterRenderObj && TheGlobalData->m_waterType == 2)
+			{
+				ZoneScopedN("Render::W3DDisplay::WaterRTT");
 				TheWaterRenderObj->updateRenderTargetTextures(primaryW3DView->get3DCamera());	//do a render into each texture
+			}
 
 			//Can't render into textures while rendering to screen so these textures need to be updated
 			//before we enter main rendering loop.
 			if (TheW3DProjectedShadowManager)
+			{
+				ZoneScopedN("Render::W3DDisplay::ShadowRTT");
 				TheW3DProjectedShadowManager->updateRenderTargetTextures();
+			}
 		}
 
 		Debug_Statistics::End_Statistics();	//record number of polygons rendered in RenderTargetTextures.
@@ -2030,6 +2045,7 @@ AGAIN:
 
 				if(TheGlobalData->m_loadScreenRender == TRUE)
 				{
+					ZoneScopedN("Render::W3DDisplay::LoadScreen");
 					TheInGameUI->draw();
 					if( TheMouse )
 						TheMouse->draw();	//keep applying the current cursor style so it remains hidden if needed.
@@ -2045,7 +2061,10 @@ AGAIN:
 				drawViews();
 
 				// draw the user interface
-				TheInGameUI->DRAW();
+				{
+					ZoneScopedN("Render::W3DDisplay::InGameUI");
+					TheInGameUI->DRAW();
+				}
 
 				// end of video example code
 
