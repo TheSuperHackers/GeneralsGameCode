@@ -1171,6 +1171,14 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 
 	m_rankLevelLimit = 1000;	// this is reset every game.
 
+#ifdef TRACY_ENABLE
+	{
+		char msg[512];
+		snprintf(msg, sizeof(msg), "GameStart: %s", TheGlobalData->m_mapName.str());
+		TracyMessage(msg, strlen(msg));
+	}
+#endif
+
 	//
 	// only reset the next object ID allocater counter when we're not loading a save game.
 	// for save games, we read this value out of the save game file and it is important
