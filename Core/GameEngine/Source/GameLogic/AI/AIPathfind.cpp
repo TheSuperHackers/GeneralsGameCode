@@ -6003,14 +6003,33 @@ void Pathfinder::processPathfindQueue()
 #ifdef DEBUG_QPF
 	Int pathsFound = 0;
 #endif
+
+	// TheSuperHackers @debug bobtista 23/01/2026 Log pathfind queue processing for checkpoint debugging
+	Int frame = TheGameLogic->getFrame();
+	Bool logPathfindDetail = (frame >= 1 && frame <= 6);
+	if (logPathfindDetail)
+	{
+		DEBUG_LOG(("Pathfind[%d] START: head=%d tail=%d queueSize=%d",
+			frame, m_queuePRHead, m_queuePRTail,
+			(m_queuePRTail >= m_queuePRHead) ? (m_queuePRTail - m_queuePRHead) : (PATHFIND_QUEUE_LEN - m_queuePRHead + m_queuePRTail)));
+	}
+
 	while (m_cumulativeCellsAllocated < PATHFIND_CELLS_PER_FRAME &&
 		m_queuePRTail!=m_queuePRHead) {
-		Object *obj = TheGameLogic->findObjectByID(m_queuedPathfindRequests[m_queuePRHead]);
+		ObjectID processedId = m_queuedPathfindRequests[m_queuePRHead];
+		Object *obj = TheGameLogic->findObjectByID(processedId);
 		m_queuedPathfindRequests[m_queuePRHead] = INVALID_ID;
 		if (obj) {
 			AIUpdateInterface *ai = obj->getAIUpdateInterface();
 			if (ai) {
+				Int cellsBefore = m_cumulativeCellsAllocated;
 				ai->doPathfind(this);
+				if (logPathfindDetail)
+				{
+					DEBUG_LOG(("Pathfind[%d] Processed obj %u (%s): cells %d -> %d (delta=%d)",
+						frame, processedId, obj->getTemplate()->getName().str(),
+						cellsBefore, m_cumulativeCellsAllocated, m_cumulativeCellsAllocated - cellsBefore));
+				}
 #ifdef DEBUG_QPF
 				pathsFound++;
 #endif
@@ -11260,22 +11279,32 @@ Path *Pathfinder::findSafePath( const Object *obj, const LocomotorSet& locomotor
 //-----------------------------------------------------------------------------
 void Pathfinder::crc( Xfer *xfer )
 {
+	// TheSuperHackers @debug bobtista 23/01/2026 Log pathfinder state for debugging divergence
+	Int frame = TheGameLogic->getFrame();
+	Bool logDetail = (frame >= 4 && frame <= 6);
+
 	CRCDEBUG_LOG(("Pathfinder::crc() on frame %d", TheGameLogic->getFrame()));
 	CRCDEBUG_LOG(("beginning CRC: %8.8X", ((XferCRC *)xfer)->getCRC()));
 
 	xfer->xferUser( &m_extent, sizeof(IRegion2D) );
 	CRCDEBUG_LOG(("m_extent: %8.8X", ((XferCRC *)xfer)->getCRC()));
+	if (logDetail)
+		DEBUG_LOG(("Pathfinder[%d] m_extent=(%d,%d,%d,%d)", frame, m_extent.lo.x, m_extent.lo.y, m_extent.hi.x, m_extent.hi.y));
 
 	xfer->xferBool( &m_isMapReady );
 	CRCDEBUG_LOG(("m_isMapReady: %8.8X", ((XferCRC *)xfer)->getCRC()));
 	xfer->xferBool( &m_isTunneling );
 	CRCDEBUG_LOG(("m_isTunneling: %8.8X", ((XferCRC *)xfer)->getCRC()));
+	if (logDetail)
+		DEBUG_LOG(("Pathfinder[%d] m_isMapReady=%d m_isTunneling=%d", frame, m_isMapReady, m_isTunneling));
 
 	Int obsolete1 = 0;
 	xfer->xferInt( &obsolete1 );
 
 	xfer->xferUser(&m_ignoreObstacleID, sizeof(ObjectID));
 	CRCDEBUG_LOG(("m_ignoreObstacleID: %8.8X", ((XferCRC *)xfer)->getCRC()));
+	if (logDetail)
+		DEBUG_LOG(("Pathfinder[%d] m_ignoreObstacleID=%u", frame, m_ignoreObstacleID));
 
 	xfer->xferUser(m_queuedPathfindRequests, sizeof(ObjectID)*PATHFIND_QUEUE_LEN);
 	CRCDEBUG_LOG(("m_queuedPathfindRequests: %8.8X", ((XferCRC *)xfer)->getCRC()));
@@ -11283,6 +11312,8 @@ void Pathfinder::crc( Xfer *xfer )
 	CRCDEBUG_LOG(("m_queuePRHead: %8.8X", ((XferCRC *)xfer)->getCRC()));
 	xfer->xferInt(&m_queuePRTail);
 	CRCDEBUG_LOG(("m_queuePRTail: %8.8X", ((XferCRC *)xfer)->getCRC()));
+	if (logDetail)
+		DEBUG_LOG(("Pathfinder[%d] m_queuePRHead=%d m_queuePRTail=%d", frame, m_queuePRHead, m_queuePRTail));
 
 	xfer->xferInt(&m_numWallPieces);
 	CRCDEBUG_LOG(("m_numWallPieces: %8.8X", ((XferCRC *)xfer)->getCRC()));
@@ -11292,11 +11323,15 @@ void Pathfinder::crc( Xfer *xfer )
 		xfer->xferObjectID(&m_wallPieces[i]);
 	}
 	CRCDEBUG_LOG(("m_wallPieces: %8.8X", ((XferCRC *)xfer)->getCRC()));
+	if (logDetail)
+		DEBUG_LOG(("Pathfinder[%d] m_numWallPieces=%d", frame, m_numWallPieces));
 
 	xfer->xferReal(&m_wallHeight);
 	CRCDEBUG_LOG(("m_wallHeight: %8.8X", ((XferCRC *)xfer)->getCRC()));
 	xfer->xferInt(&m_cumulativeCellsAllocated);
 	CRCDEBUG_LOG(("m_cumulativeCellsAllocated: %8.8X", ((XferCRC *)xfer)->getCRC()));
+	if (logDetail)
+		DEBUG_LOG(("Pathfinder[%d] m_wallHeight=%f m_cumulativeCellsAllocated=%d", frame, m_wallHeight, m_cumulativeCellsAllocated));
 
 }
 
@@ -11423,16 +11458,20 @@ void Pathfinder::loadPostProcess()
 
 	Int i, j;
 
-	// Step 1: Reset cell types (but preserve zones which were serialized).
-	// We need to clear cell types so terrain classification works correctly.
+	// Step 1: Reset cell types for terrain reclassification, but preserve:
+	// - m_zone: serialized and needs to be kept
+	// - m_flags: unit tracking set by AIUpdateInterface::loadPostProcess() which ran before us
+	// We DO NOT call reset() because that clears m_flags which breaks unit tracking.
 	for( j=m_extent.lo.y; j<=m_extent.hi.y; j++ )
 	{
 		for( i=m_extent.lo.x; i<=m_extent.hi.x; i++ )
 		{
-			// Only reset type and flags, preserve zone
-			zoneStorageType savedZone = m_map[i][j].getZone();
-			m_map[i][j].reset();
-			m_map[i][j].setZone(savedZone);
+			// Selectively reset only what needs resetting, preserve zone and flags
+			m_map[i][j].setType(PathfindCell::CELL_CLEAR);
+			m_map[i][j].setPinched(false);
+			// Note: m_flags is NOT reset - unit tracking was set up by AIUpdateInterface::loadPostProcess()
+			// Note: m_zone is NOT reset - it was serialized and loaded
+			// Note: m_info (obstacle tracking) will be rebuilt when classifyObjectFootprint is called
 		}
 	}
 
@@ -11537,4 +11576,6 @@ void Pathfinder::loadPostProcess()
 	{
 		classifyObjectFootprint(obj, true);
 	}
+	// Note: m_flags (unit tracking) was preserved in Step 1 and set up by AIUpdateInterface::loadPostProcess()
+	// which ran before this function. No need to restore it here.
 }
