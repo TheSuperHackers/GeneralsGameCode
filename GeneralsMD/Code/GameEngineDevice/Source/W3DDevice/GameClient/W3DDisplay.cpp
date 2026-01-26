@@ -39,6 +39,7 @@ static void drawFramerateBar(void);
 #include <windows.h>
 #include <io.h>
 #include <time.h>
+#include <d3dx8core.h>
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "Common/FramePacer.h"
@@ -108,6 +109,8 @@ static void drawFramerateBar(void);
 #endif
 
 #include "WinMain.h"
+
+#include <rts/profile.h>
 
 
 // DEFINE AND ENUMS ///////////////////////////////////////////////////////////
@@ -411,6 +414,7 @@ W3DDisplay::W3DDisplay()
 //=============================================================================
 W3DDisplay::~W3DDisplay()
 {
+	ResetTracyCaptureImage();
 
 	// get rid of the debug display
 	delete m_debugDisplay;
@@ -541,6 +545,8 @@ void W3DDisplay::setGamma(Real gamma, Real bright, Real contrast, Bool calibrate
 //=============================================================================
 Bool W3DDisplay::setDisplayMode( UnsignedInt xres, UnsignedInt yres, UnsignedInt bitdepth, Bool windowed )
 {
+	ResetTracyCaptureImage();
+
 	if (WW3D_ERROR_OK == WW3D::Set_Device_Resolution(xres,yres,bitdepth,windowed,true))
 	{
 		Render2DClass::Set_Screen_Resolution(RectClass(0, 0, xres, yres));
@@ -1650,6 +1656,202 @@ void W3DDisplay::step()
 
 //DECLARE_PERF_TIMER(BigAssRenderLoop)
 
+#ifdef TRACY_ENABLE
+bool W3DDisplay::InitTracyCaptureImage()
+{
+	// allocate render target
+	m_tracyRenderTarget = DX8Wrapper::Create_Render_Target(TRACY_FRAMEIMAGE_SIZE, TRACY_FRAMEIMAGE_SIZE, WW3D_FORMAT_A8R8G8B8);
+	if (!m_tracyRenderTarget)
+		return false;
+
+	// allocate surface class
+	const Real aspectRatio = static_cast<float>(getHeight()) / static_cast<float>(getWidth());
+	unsigned int tracyImageHeight = MIN(
+		static_cast<unsigned int>(WWMath::Round(static_cast<float>(TRACY_FRAMEIMAGE_SIZE) * aspectRatio)),
+		TRACY_FRAMEIMAGE_SIZE);
+	m_tracySurfaceClass = NEW_REF(SurfaceClass, (TRACY_FRAMEIMAGE_SIZE, tracyImageHeight, WW3D_FORMAT_A8R8G8B8));
+	if (!m_tracySurfaceClass)
+		return false;
+
+	// allocate intermediate texture
+	SurfaceClass *backBuffer = DX8Wrapper::_Get_DX8_Back_Buffer();
+	if (!backBuffer)
+		return false;
+
+	IDirect3DSurface8 *backBufferSurface = backBuffer->Peek_D3D_Surface();
+	D3DSURFACE_DESC backBufferSurfaceDesc;
+	HRESULT hr = backBufferSurface->GetDesc(&backBufferSurfaceDesc);
+	if (FAILED(hr))
+		return false;
+
+	IDirect3DDevice8 *device = DX8Wrapper::_Get_D3D_Device8();
+	hr = device->CreateTexture(
+		backBufferSurfaceDesc.Width,
+		backBufferSurfaceDesc.Height,
+		1,
+		D3DUSAGE_RENDERTARGET,
+		backBufferSurfaceDesc.Format,
+		D3DPOOL_DEFAULT,
+		&m_tracyIntermediateTexture);
+	if (FAILED(hr))
+		return false;
+
+	// swizzle shader
+	// TheSuperHackers @todo In DX9 with ps2.0 this shader will be much simpler
+	ID3DXBuffer *compiledShader = nullptr;
+	static const char *shader =
+		"ps.1.4\n"
+		"texld r0, t0\n"
+		"mov r1.a, r0.r\n"
+		"mov r2.a, r0.g\n"
+		"mov r3.a, r0.b\n"
+		"mul r0.rgb, r3.a, c0\n"
+		"mad r0.rgb, r2.a, c1, r0\n"
+		"mad r0.rgb, r1.a, c2, r0\n";
+	hr = D3DXAssembleShader(shader, strlen(shader), 0, nullptr, &compiledShader, nullptr);
+	if (FAILED(hr))
+		return false;
+
+	hr = DX8Wrapper::_Get_D3D_Device8()->CreatePixelShader((DWORD*)compiledShader->GetBufferPointer(), &m_tracySwizzleShader);
+	compiledShader->Release();
+	if (FAILED(hr))
+		return false;
+
+	return true;
+}
+
+void W3DDisplay::ResetTracyCaptureImage()
+{
+	if (m_tracySurfaceClass)
+	{
+		REF_PTR_RELEASE(m_tracySurfaceClass);
+	}
+	if (m_tracyIntermediateTexture)
+	{
+		m_tracyIntermediateTexture->Release();
+		m_tracyIntermediateTexture = nullptr;
+	}
+	if (m_tracyRenderTarget)
+	{
+		REF_PTR_RELEASE(m_tracyRenderTarget);
+	}
+	if (m_tracySwizzleShader)
+	{
+		DX8Wrapper::_Get_D3D_Device8()->DeletePixelShader(m_tracySwizzleShader);
+		m_tracySwizzleShader = 0;
+	}
+}
+
+void W3DDisplay::TracyCaptureImage()
+{
+	if (!TracyIsConnected || !m_tracyFrameCapturing)
+		return;
+
+	if (!m_tracyRenderTarget)
+	{
+		if (!InitTracyCaptureImage()) {
+			DEBUG_LOG("Tracy frame capturing failed to initialize and will be disabled.");
+			m_tracyFrameCapturing = false;
+			ResetTracyCaptureImage();
+			return;
+		}
+	}
+
+	// copy the backbuffer to an intermediate texture on the GPU
+	// TheSuperHackers @todo In DX9 it should be possible to sample the backbuffer directly and simplify this
+	SurfaceClass *backBuffer = DX8Wrapper::_Get_DX8_Back_Buffer();
+	IDirect3DSurface8 *backBufferSurface = backBuffer->Peek_D3D_Surface();
+	D3DSURFACE_DESC backBufferSurfaceDesc;
+	backBufferSurface->GetDesc(&backBufferSurfaceDesc);
+
+	IDirect3DSurface8 *tracyBackbufferTextureSurface;
+	m_tracyIntermediateTexture->GetSurfaceLevel(0, &tracyBackbufferTextureSurface);
+	DX8Wrapper::_Copy_DX8_Rects(backBufferSurface, nullptr, 0,
+	                            tracyBackbufferTextureSurface, nullptr);
+	tracyBackbufferTextureSurface->Release();
+	tracyBackbufferTextureSurface = nullptr;
+
+	backBufferSurface->Release();
+	backBufferSurface = nullptr;
+	REF_PTR_RELEASE(backBuffer);
+
+	// set render target to a small surface
+	IDirect3DSurface8 *smallRenderTargetSurface = m_tracyRenderTarget->Get_D3D_Surface_Level();
+	DX8Wrapper::Set_Render_Target(smallRenderTargetSurface, false);
+
+	// set viewport
+	IDirect3DDevice8 *device = DX8Wrapper::_Get_D3D_Device8();
+	D3DVIEWPORT8 restoreViewport;
+	device->GetViewport(&restoreViewport);
+
+	SurfaceClass::SurfaceDescription smallRenderDesc;
+	m_tracySurfaceClass->Get_Description(smallRenderDesc);
+
+	D3DVIEWPORT8 viewport;
+	viewport.X = 0;
+	viewport.Y = 0;
+	viewport.Width = TRACY_FRAMEIMAGE_SIZE;
+	viewport.Height = smallRenderDesc.Height;
+	viewport.MinZ = 0.0f;
+	viewport.MaxZ = 1.0f;
+	DX8Wrapper::Set_Viewport(&viewport);
+
+	// bind shader to convert BGRA to RGBA to match the format that Tracy expects
+	DX8Wrapper::Set_Pixel_Shader(m_tracySwizzleShader);
+	// TheSuperHackers @todo In DX9 with ps2.0 we wont need these pixel shader constants
+	static const float kMaskR[4] = {1.0f, 0.0f, 0.0f, 0.0f};
+	static const float kMaskG[4] = {0.0f, 1.0f, 0.0f, 0.0f};
+	static const float kMaskB[4] = {0.0f, 0.0f, 1.0f, 0.0f};
+	device->SetPixelShaderConstant(0, kMaskR, 1);
+	device->SetPixelShaderConstant(1, kMaskG, 1);
+	device->SetPixelShaderConstant(2, kMaskB, 1);
+
+	// draw texture scaled-down onto a small surface
+	struct QuadVertex
+	{
+		float x, y, z, rhw;
+		DWORD color;
+		float u;
+		float v;
+	} vtx[4];
+	const float left = -0.5f;
+	const float top = -0.5f;
+	const float right = static_cast<float>(TRACY_FRAMEIMAGE_SIZE) - 0.5f;
+	const float bottom = static_cast<float>(smallRenderDesc.Height) - 0.5f;
+	vtx[0] = {right, bottom, 0.0f, 1.0f, 0xffffffff, 1.0f, 1.0f};
+	vtx[1] = {right, top, 0.0f, 1.0f, 0xffffffff, 1.0f, 0.0f};
+	vtx[2] = {left, bottom, 0.0f, 1.0f, 0xffffffff, 0.0f, 1.0f};
+	vtx[3] = {left, top, 0.0f, 1.0f, 0xffffffff, 0.0f, 0.0f};
+	DX8Wrapper::Set_DX8_Texture(0, m_tracyIntermediateTexture);
+	DX8Wrapper::Set_Vertex_Shader(D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1);
+	device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, vtx, sizeof(QuadVertex));
+	DX8Wrapper::Set_Pixel_Shader(0);
+	DX8Wrapper::Set_DX8_Texture(0, nullptr);
+	DX8Wrapper::Set_Viewport(&restoreViewport);
+	DX8Wrapper::Set_Render_Target((IDirect3DSurface8 *) nullptr);
+
+	// copy the small surface pixels from GPU to CPU
+	RECT srcRect = { 0, 0, TRACY_FRAMEIMAGE_SIZE, smallRenderDesc.Height };
+	POINT dstPoint = { 0, 0 };
+	DX8Wrapper::_Copy_DX8_Rects(
+		smallRenderTargetSurface,
+		&srcRect,
+		1,
+		m_tracySurfaceClass->Peek_D3D_Surface(),
+		&dstPoint);
+	smallRenderTargetSurface->Release();
+
+	// send pixels to tracy
+	int pitch = 0;
+	void *bits = m_tracySurfaceClass->Lock(&pitch);
+	if (bits)
+	{
+		FrameImage(bits, TRACY_FRAMEIMAGE_SIZE, smallRenderDesc.Height, 0, false);
+		m_tracySurfaceClass->Unlock();
+	}
+}
+#endif
+
 // W3DDisplay::draw ===========================================================
 /** Draw the entire W3D Display */
 //=============================================================================
@@ -1935,6 +2137,7 @@ AGAIN:
 				TheGraphDraw->render();
 				TheGraphDraw->clear();
 #endif
+				TracyCaptureImage();
 				// render is all done!
 				WW3D::End_Render();
 			}
