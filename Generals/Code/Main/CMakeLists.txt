@@ -7,6 +7,10 @@ else()
     set_target_properties(g_generals PROPERTIES OUTPUT_NAME generalsv)
 endif()
 
+if (RTS_BUILD_OPTION_IMGUI)
+    target_link_libraries(g_generals PRIVATE lib_imgui)
+endif ()
+
 target_link_libraries(g_generals PRIVATE
     binkstub
     comctl32
