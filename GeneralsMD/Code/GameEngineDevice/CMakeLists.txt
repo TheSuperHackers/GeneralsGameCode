@@ -216,6 +216,11 @@ target_link_libraries(z_gameenginedevice PRIVATE
     zi_always
     zi_main
 )
+if(RTS_BUILD_OPTION_PROFILE AND RTS_BUILD_OPTION_PROFILE_TRACY)
+    target_link_libraries(z_gameenginedevice PRIVATE
+        Tracy::TracyClient
+    )
+endif()
 
 target_link_libraries(z_gameenginedevice PUBLIC
     corei_gameenginedevice_public

@@ -33,6 +33,10 @@ target_link_libraries(corei_always_no_pch INTERFACE
     resources
 )
 
+if(RTS_BUILD_OPTION_PROFILE AND RTS_BUILD_OPTION_PROFILE_TRACY)
+    target_link_libraries(corei_libraries_include INTERFACE Tracy::TracyClient)
+endif()
+
 # Set where the build results will end up
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
