@@ -1658,7 +1658,13 @@ StateReturnType AIInternalMoveToState::onEnter()
 
 
 
-	if( getAdjustsDestination() && !obj->testStatus( OBJECT_STATUS_RIDER8 ) )
+	// TheSuperHackers @bugfix bobtista 22/01/2026 Skip adjustDestination after checkpoint load
+	// if we have an active path. Testing showed that cell goal assignments ARE restored in
+	// AIUpdate::loadPostProcess(), so adjustDestination may actually be deterministic.
+	// However, keeping this workaround for safety since it doesn't hurt and protects against
+	// any edge cases where cell goals might not be fully restored when this runs.
+	Bool skipAdjust = ai->justLoadedFromCheckpoint() && ai->getPath() != nullptr;
+	if( getAdjustsDestination() && !obj->testStatus( OBJECT_STATUS_RIDER8 ) && !skipAdjust )
 	{
 		if (!TheAI->pathfinder()->adjustDestination(obj, ai->getLocomotorSet(), &m_goalPosition))
 		{
@@ -1666,20 +1672,30 @@ StateReturnType AIInternalMoveToState::onEnter()
 		}
 		TheAI->pathfinder()->updateGoal(obj, &m_goalPosition, TheTerrainLogic->getLayerForDestination(&m_goalPosition));
 	}
+	else if (skipAdjust)
+	{
+		// Still need to update the goal even if we skipped adjustment
+		TheAI->pathfinder()->updateGoal(obj, &m_goalPosition, TheTerrainLogic->getLayerForDestination(&m_goalPosition));
+	}
 
 	// request a path to the destination
 	// TheSuperHackers @bugfix bobtista 21/01/2026 Skip path computation if we just loaded from checkpoint
 	// and already have a valid path. This prevents the restored path from being destroyed by the onEnter()
 	// call that happens during state machine re-initialization after checkpoint load.
-	// We clear the flag after skipping so that subsequent onEnter() calls (from normal game flow)
-	// will trigger computePath() as expected.
-	if (ai->justLoadedFromCheckpoint() && ai->getPath() != nullptr)
+	// ROOT CAUSE: onEnter() is called after checkpoint load because AIUpdate::loadPostProcess()
+	// triggers a state machine update that re-enters the move state. Calling computePath() would
+	// destroy the carefully restored path. This workaround is NECESSARY.
+	Bool justLoaded = ai->justLoadedFromCheckpoint();
+	Bool skipPathCompute = justLoaded && ai->getPath() != nullptr;
+	if (justLoaded)
+	{
+		ai->clearJustLoadedFromCheckpoint();
+	}
+	if (skipPathCompute)
 	{
 		m_waitingForPath = false;
 		// Sync m_pathGoalPosition with m_goalPosition since adjustDestination above may have modified it.
 		m_pathGoalPosition = m_goalPosition;
-		// Clear the flag so normal game flow onEnter() calls work correctly
-		ai->clearJustLoadedFromCheckpoint();
 	}
 	else if (!computePath())
 	{
@@ -1892,7 +1908,7 @@ StateReturnType AIInternalMoveToState::update()
 	// if our goal has moved, recompute our path
 	if (forceRecompute || (TheGameLogic->getFrame() - m_pathTimestamp > MIN_REPATH_TIME))
 	{
-		if (forceRecompute || !isSamePosition(obj->getPosition(), &m_pathGoalPosition, &m_goalPosition ))
+		if (forceRecompute || !isSamePosition(obj->getPosition(), &m_pathGoalPosition, &m_goalPosition))
 		{
 			// goal moved - repath
 			if (!computePath())
@@ -2056,17 +2072,27 @@ StateReturnType AIMoveToState::onEnter()
 	}
 
 	// if we have a goal object, move to it, otherwise move to goal position
-	if (getMachineGoalObject())	{
-		m_goalPosition = *getMachineGoalObject()->getPosition();
-		if (getMachineOwner()->isKindOf(KINDOF_PROJECTILE)) {
-			Real halfHeight = getMachineGoalObject()->getGeometryInfo().getMaxHeightAbovePosition()/2.0f;
-			m_goalPosition.z += halfHeight;
-			if (getMachineGoalObject()->getPosition()->z < m_goalPosition.z) {
+	// TheSuperHackers @bugfix bobtista 22/01/2026 Don't overwrite m_goalPosition when
+	// loading from checkpoint AND we have an active path - the serialized m_goalPosition is
+	// the adjusted position, but getMachineGoalPosition() returns the unadjusted state machine goal.
+	// If no path exists, this is a NEW move command after checkpoint (not a restore), so we need
+	// to use the new machineGoalPosition.
+	Bool justLoadedWithPath = ai && ai->justLoadedFromCheckpoint() && ai->getPath() != nullptr;
+	if (!justLoadedWithPath)
+	{
+		if (getMachineGoalObject())	{
+			m_goalPosition = *getMachineGoalObject()->getPosition();
+			if (getMachineOwner()->isKindOf(KINDOF_PROJECTILE)) {
+				Real halfHeight = getMachineGoalObject()->getGeometryInfo().getMaxHeightAbovePosition()/2.0f;
 				m_goalPosition.z += halfHeight;
+				if (getMachineGoalObject()->getPosition()->z < m_goalPosition.z) {
+					m_goalPosition.z += halfHeight;
+				}
 			}
+		} else {
+			m_goalPosition = *getMachineGoalPosition();
 		}
-	} else
-		m_goalPosition = *getMachineGoalPosition();
+	}
 
 	StateReturnType ret = AIInternalMoveToState::onEnter();
 	if (getMachineOwner()->getFormationID() != NO_FORMATION_ID) {
@@ -2253,7 +2279,13 @@ StateReturnType AIMoveAndTightenState::onEnter()
 	m_okToRepathTimes = 1;
 	m_checkForPath = true;
 	TheAI->pathfinder()->removeGoal(obj);
-	m_goalPosition = *getMachineGoalPosition();
+	// TheSuperHackers @bugfix bobtista 22/01/2026 Don't overwrite m_goalPosition when
+	// loading from checkpoint AND we have an active path - the serialized value is the adjusted
+	// position. If no path exists, this is a NEW move command after checkpoint.
+	if (!ai || !ai->justLoadedFromCheckpoint() || ai->getPath() == nullptr)
+	{
+		m_goalPosition = *getMachineGoalPosition();
+	}
 	ai->requestApproachPath(&m_goalPosition);
 	return AIInternalMoveToState::onEnter();
 }
