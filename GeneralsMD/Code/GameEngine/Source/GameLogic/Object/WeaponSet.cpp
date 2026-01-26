@@ -278,6 +278,16 @@ void WeaponSet::xfer( Xfer *xfer )
 			}
 			xfer->xferSnapshot(m_weapons[i]);
 		}
+		else if (xfer->getXferMode() == XFER_LOAD && m_weapons[i] != nullptr)
+		{
+			// TheSuperHackers @bugfix bobtista 25/01/2026 Delete weapon that was pre-created by Object::init()
+			// but should not exist according to the saved state. This can happen when Object::init()
+			// creates a weapon based on template defaults, but the checkpoint was saved when the
+			// weapon flag was cleared.
+			deleteInstance(m_weapons[i]);
+			m_weapons[i] = nullptr;
+			m_filledWeaponSlotMask &= ~(1 << i);
+		}
 	}
 	xfer->xferUser(&m_curWeapon, sizeof(m_curWeapon));
 	xfer->xferUser(&m_curWeaponLockedStatus, sizeof(m_curWeaponLockedStatus));
