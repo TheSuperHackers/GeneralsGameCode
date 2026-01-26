@@ -191,6 +191,7 @@ protected:
 	UnsignedInt m_nextFrame;												///< The Frame that the next message is to be executed on.  This can be -1.
 
 	Bool m_checkpointLoadInProgress;									///< Set to TRUE during replay checkpoint loading to preserve mode across reset.
+	UnsignedInt m_preloadedCRCValue;									///< CRC value preloaded after checkpoint load, 0 if none pending
 };
 
 extern RecorderClass *TheRecorder;
