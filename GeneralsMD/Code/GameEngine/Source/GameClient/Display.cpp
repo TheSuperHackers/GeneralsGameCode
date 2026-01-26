@@ -37,6 +37,8 @@
 //#include "GameLogic/ScriptEngine.h"
 //#include "GameLogic/GameLogic.h"
 
+#include <rts/profile.h>
+
 /// The Display singleton instance.
 Display *TheDisplay = nullptr;
 
@@ -110,6 +112,7 @@ void Display::attachView( View *view )
  */
 void Display::drawViews( void )
 {
+	ZoneScopedN("Render::W3DDisplay::DrawViews");
 
 	for( View *v = m_viewList; v; v = v->getNextView() )
 		v->drawView();
@@ -122,6 +125,7 @@ void Display::drawViews( void )
  */
 void Display::updateViews( void )
 {
+	ZoneScopedN("Render::W3DDisplay::UpdateViews");
 
 	for( View *v = m_viewList; v; v = v->getNextView() )
 		v->updateView();

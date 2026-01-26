@@ -52,6 +52,8 @@
 
 #include "Common/UnitTimings.h" //Contains the DO_UNIT_TIMINGS define jba.
 
+#include <rts/profile.h>
+
 #define no_INTENSE_DEBUG
 
 #define DEBUG_QPF
@@ -5756,6 +5758,7 @@ Path *Pathfinder::getAircraftPath( const Object *obj, const Coord3D *to )
 void Pathfinder::processPathfindQueue(void)
 {
 	//USE_PERF_TIMER(processPathfindQueue)
+	ZoneScopedN("Pathfinder::processPathfindQueue");
 	if (!m_isMapReady) {
 		return;
 	}
@@ -5777,6 +5780,7 @@ void Pathfinder::processPathfindQueue(void)
 #endif
     m_zoneManager.needToCalculateZones())
   {
+		ZoneScopedN("Pathfinder::calculateZones");
 		m_zoneManager.calculateZones(m_map, m_layers, m_extent);
 		return;
 	}
