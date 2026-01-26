@@ -56,8 +56,6 @@ typedef enum
 	TERRAIN_SNOW_3,
 
 	// remove all the terrain types below when Todd says he's redone them all
-	//TERRAIN_ASPHALT,
-	//TERRAIN_CONCRETE,
 	TERRAIN_DIRT,
 	TERRAIN_GRASS,
 	TERRAIN_TRANSITION,
@@ -107,8 +105,6 @@ static const char *const terrainTypeNames[] =
 	"SNOW_3",
 
 	// remove all the terrain types below when Todd says he's redone them all
-	//"ASPHALT",
-	//"CONCRETE",
 	"DIRT",
 	"GRASS",
 	"TRANSITION",

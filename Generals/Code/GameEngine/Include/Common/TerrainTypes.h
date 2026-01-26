@@ -56,8 +56,6 @@ typedef enum
 	TERRAIN_SNOW_3,
 
 	// remove all the terrain types below when Todd says he's redone them all
-	TERRAIN_ASPHALT,
-	TERRAIN_CONCRETE,
 	TERRAIN_DIRT,
 	TERRAIN_GRASS,
 	TERRAIN_TRANSITION,
@@ -66,6 +64,25 @@ typedef enum
 	TERRAIN_CLIFF,
 	TERRAIN_WOOD,
 	TERRAIN_BLEND_EDGES,
+
+	// New terrain types (for Samm Ivri)
+	TERRAIN_LIVE_DESERT,
+	TERRAIN_DRY_DESERT,
+	TERRAIN_ACCENT_SAND,
+	TERRAIN_TROPICAL_BEACH,
+	TERRAIN_BEACH_PARK,
+	TERRAIN_RUGGED_MOUNTAIN,
+	TERRAIN_COBBLESTONE_GRASS,
+	TERRAIN_ACCENT_GRASS,
+	TERRAIN_RESIDENTIAL,
+	TERRAIN_RUGGED_SNOW,
+	TERRAIN_FLAT_SNOW,
+	TERRAIN_FIELD,
+	TERRAIN_ASPHALT,
+	TERRAIN_CONCRETE,
+	TERRAIN_CHINA,
+	TERRAIN_ACCENT_ROCK,
+	TERRAIN_URBAN,
 
 	TERRAIN_NUM_CLASSES
 
@@ -88,8 +105,6 @@ static const char *const terrainTypeNames[] =
 	"SNOW_3",
 
 	// remove all the terrain types below when Todd says he's redone them all
-	"ASPHALT",
-	"CONCRETE",
 	"DIRT",
 	"GRASS",
 	"TRANSITION",
@@ -98,6 +113,25 @@ static const char *const terrainTypeNames[] =
 	"CLIFF",
 	"WOOD",
 	"BLEND_EDGE",
+
+		// New terrain types (for Samm Ivri)
+	"DESERT_LIVE",
+	"DESERT_DRY",
+	"SAND_ACCENT",
+	"BEACH_TROPICAL",
+	"BEACH_PARK",
+	"MOUNTAIN_RUGGED",
+	"GRASS_COBBLESTONE",
+	"GRASS_ACCENT",
+	"RESIDENTIAL",
+	"SNOW_RUGGED",
+	"SNOW_FLAT",
+	"FIELD",
+	"ASPHALT",
+	"CONCRETE",
+	"CHINA",
+	"ROCK_ACCENT",
+	"URBAN",
 
 	nullptr
 };
