@@ -3658,6 +3658,8 @@ void GameLogic::update( void )
 	UnsignedInt now = getFrame();
 	TheGameClient->setFrame(now);
 
+	TracyPlot("LogicFrame", static_cast<int64_t>(now));
+
 	// update (execute) scripts
 	{
 		ZoneScopedN("GameLogic::ScriptEngine");
