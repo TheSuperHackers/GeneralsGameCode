@@ -3719,10 +3719,11 @@ void GameLogic::update()
 			msg->appendBooleanArgument(isPlayback);
 
 			// TheSuperHackers @info helmutbuhler 13/04/2025
-			// During replay simulation, we bypass TheMessageStream and instead put the CRC message
-			// directly into TheCommandList because we don't update TheMessageStream during simulation.
+			// During replay playback, we bypass TheMessageStream and instead put the CRC message
+			// directly into TheCommandList because TheMessageStream may not be processed during playback.
+			// TheSuperHackers @fix bobtista 23/01/2026 Extended to all playback modes, not just simulation.
 			GameMessageList *messageList = TheMessageStream;
-			if (TheRecorder && TheRecorder->getMode() == RECORDERMODETYPE_SIMULATION_PLAYBACK)
+			if (TheRecorder && TheRecorder->isPlaybackMode())
 				messageList = TheCommandList;
 			messageList->appendMessage(msg);
 
@@ -4151,21 +4152,41 @@ UnsignedInt GameLogic::getCRC( Int mode, AsciiString deepCRCFileName )
 	Object *obj;
 	DEBUG_ASSERTCRASH(this == TheGameLogic, ("Not in GameLogic"));
 
+	// TheSuperHackers @debug bobtista 23/01/2026 Log intermediate CRC values around divergence frame
+	// Log around divergence points to identify which subsystem diverges after checkpoint load
+	Bool logIntermediateCRC = (m_frame >= 2384 && m_frame <= 2388) ||
+	                          (m_frame >= 2444 && m_frame <= 2448) ||
+	                          (m_frame >= 2979 && m_frame <= 2983);
+
 	marker = "MARKER:Objects";
 	xferCRC->xferAsciiString(&marker);
 	for( obj = m_objList; obj; obj=obj->getNextObject() )
 	{
 		xferCRC->xferSnapshot( obj );
 	}
+	if (logIntermediateCRC)
+	{
+		DEBUG_LOG(("CRC[%d] after Objects: 0x%08X", m_frame, xferCRC->getCRC()));
+	}
+
 	UnsignedInt seed = GetGameLogicRandomSeedCRC();
 
 	if (xferCRC->getXferMode() == XFER_CRC)
 	{
 		xferCRC->xferUnsignedInt( &seed );
 	}
+	if (logIntermediateCRC)
+	{
+		DEBUG_LOG(("CRC[%d] after RNG seed (0x%08X): 0x%08X", m_frame, seed, xferCRC->getCRC()));
+	}
+
 	marker = "MARKER:ThePartitionManager";
 	xferCRC->xferAsciiString(&marker);
 	xferCRC->xferSnapshot( ThePartitionManager );
+	if (logIntermediateCRC)
+	{
+		DEBUG_LOG(("CRC[%d] after PartitionManager: 0x%08X", m_frame, xferCRC->getCRC()));
+	}
 
 #ifdef DEBUG_CRC
 	if ((g_crcModuleDataFromClient && !isInGameLogicUpdate()) ||
@@ -4184,10 +4205,18 @@ UnsignedInt GameLogic::getCRC( Int mode, AsciiString deepCRCFileName )
 	marker = "MARKER:ThePlayerList";
 	xferCRC->xferAsciiString(&marker);
 	xferCRC->xferSnapshot( ThePlayerList );
+	if (logIntermediateCRC)
+	{
+		DEBUG_LOG(("CRC[%d] after PlayerList: 0x%08X", m_frame, xferCRC->getCRC()));
+	}
 
 	marker = "MARKER:TheAI";
 	xferCRC->xferAsciiString(&marker);
 	xferCRC->xferSnapshot( TheAI );
+	if (logIntermediateCRC)
+	{
+		DEBUG_LOG(("CRC[%d] after AI: 0x%08X", m_frame, xferCRC->getCRC()));
+	}
 
 	if (xferCRC->getXferMode() == XFER_SAVE)
 	{
