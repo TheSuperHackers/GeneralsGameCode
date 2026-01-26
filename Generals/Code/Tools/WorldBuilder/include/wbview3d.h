@@ -78,8 +78,8 @@ public:
 	virtual void OnDraw(CDC* pDC);      // overridden to draw this view
 	//}}AFX_VIRTUAL
 
-// Function overrides needed for ImGui Mouse capture
 #ifdef RTS_HAS_IMGUI
+// Function overrides needed for ImGui Mouse capture
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);
 #endif
