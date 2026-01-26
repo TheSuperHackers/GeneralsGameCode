@@ -25,6 +25,12 @@ target_link_libraries(z_generals PRIVATE
     zi_always
 )
 
+if(RTS_BUILD_OPTION_PROFILE AND RTS_BUILD_OPTION_PROFILE_TRACY)
+    target_link_libraries(z_generals PRIVATE
+        Tracy::TracyClient
+    )
+endif()
+
 # TODO Originally referred to build host and user, replace with git info perhaps?
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/GeneratedVersion.h
 "#pragma once
