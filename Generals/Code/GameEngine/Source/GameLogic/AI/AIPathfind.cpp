@@ -4093,6 +4093,7 @@ void Pathfinder::internal_classifyObjectFootprint( Object *obj, Bool insert )
 		}
 	}
 
+#if RETAIL_COMPATIBLE_PATHFINDING
 	for( j=cellBounds.lo.y; j<=cellBounds.hi.y; j++ )
 	{
 		for( i=cellBounds.lo.x; i<=cellBounds.hi.x; i++ )
@@ -4103,6 +4104,7 @@ void Pathfinder::internal_classifyObjectFootprint( Object *obj, Bool insert )
 			}
 		}
 	}
+#endif
 
 	// Expand building bounds 1 cell.
 	for( j=cellBounds.lo.y; j<=cellBounds.hi.y; j++ )
