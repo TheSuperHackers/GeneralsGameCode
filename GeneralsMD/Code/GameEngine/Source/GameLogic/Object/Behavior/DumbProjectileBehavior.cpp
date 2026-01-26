@@ -670,9 +670,9 @@ UpdateSleepTime DumbProjectileBehavior::update()
 					" Vector is expected to contain two or more elements; check the weapon speed value."));
 #endif
 
-				flightStep = m_flightPathStart;
 				prevPos = m_flightPathStart;
 				curPos = m_flightPathEnd;
+				flightStep = m_flightPathEnd;
 			}
 
 		  Vector3 curDir(curPos.x - prevPos.x, curPos.y - prevPos.y, curPos.z - prevPos.z);
