@@ -131,7 +131,11 @@ Bool GetStringFromGeneralsRegistry(AsciiString path, AsciiString key, AsciiStrin
 
 Bool GetStringFromRegistry(AsciiString path, AsciiString key, AsciiString& val)
 {
+#if RTS_GENERALS
+	AsciiString fullPath = "SOFTWARE\\Electronic Arts\\EA Games\\Generals";
+#elif RTS_ZEROHOUR
 	AsciiString fullPath = "SOFTWARE\\Electronic Arts\\EA Games\\Command and Conquer Generals Zero Hour";
+#endif
 
 	fullPath.concat(path);
 	DEBUG_LOG(("GetStringFromRegistry - looking in %s for key %s", fullPath.str(), key.str()));
@@ -145,7 +149,11 @@ Bool GetStringFromRegistry(AsciiString path, AsciiString key, AsciiString& val)
 
 Bool GetUnsignedIntFromRegistry(AsciiString path, AsciiString key, UnsignedInt& val)
 {
+#if RTS_GENERALS
+	AsciiString fullPath = "SOFTWARE\\Electronic Arts\\EA Games\\Generals";
+#elif RTS_ZEROHOUR
 	AsciiString fullPath = "SOFTWARE\\Electronic Arts\\EA Games\\Command and Conquer Generals Zero Hour";
+#endif
 
 	fullPath.concat(path);
 	DEBUG_LOG(("GetUnsignedIntFromRegistry - looking in %s for key %s", fullPath.str(), key.str()));

@@ -31,6 +31,10 @@
 #include <Common/AsciiString.h>
 
 /**
+ * Get a string from the original Generals Registry
+ */
+Bool GetStringFromGeneralsRegistry(AsciiString path, AsciiString key, AsciiString& val);
+/**
 	* Get a string from the registry
 	*/
 Bool GetStringFromRegistry(AsciiString path, AsciiString key, AsciiString& val);
