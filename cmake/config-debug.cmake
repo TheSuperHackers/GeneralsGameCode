@@ -10,6 +10,9 @@ set_property(CACHE RTS_DEBUG_STACKTRACE PROPERTY STRINGS DEFAULT ON OFF)
 set(RTS_DEBUG_PROFILE "DEFAULT" CACHE STRING "Enables debug profiling. When DEFAULT, this option is enabled with DEBUG or INTERNAL")
 set_property(CACHE RTS_DEBUG_PROFILE PROPERTY STRINGS DEFAULT ON OFF)
 
+set(RTS_DEBUG_CHEATS "DEFAULT" CACHE STRING "Enables debug cheats in release builds. When DEFAULT, this option is enabled with DEBUG or INTERNAL")
+set_property(CACHE RTS_DEBUG_CHEATS PROPERTY STRINGS DEFAULT ON OFF)
+
 option(RTS_DEBUG_INCLUDE_DEBUG_LOG_IN_CRC_LOG "Includes normal debug log in crc log" OFF)
 option(RTS_DEBUG_MULTI_INSTANCE "Enables multi client instance support" OFF)
 
@@ -34,6 +37,7 @@ define_debug_option(RTS_DEBUG_LOGGING    DEBUG_LOGGING    DISABLE_DEBUG_LOGGING 
 define_debug_option(RTS_DEBUG_CRASHING   DEBUG_CRASHING   DISABLE_DEBUG_CRASHING   DebugCrashing   "Build with Debug Crashing")
 define_debug_option(RTS_DEBUG_STACKTRACE DEBUG_STACKTRACE DISABLE_DEBUG_STACKTRACE DebugStacktrace "Build with Debug Stacktracing")
 define_debug_option(RTS_DEBUG_PROFILE    DEBUG_PROFILE    DISABLE_DEBUG_PROFILE    DebugProfile    "Build with Debug Profiling")
+define_debug_option(RTS_DEBUG_CHEATS     _ALLOW_DEBUG_CHEATS_IN_RELEASE DISABLE_DEBUG_CHEATS_IN_RELEASE DebugCheats "Build with Debug Cheats")
 
 add_feature_info(DebugIncludeDebugLogInCrcLog RTS_DEBUG_INCLUDE_DEBUG_LOG_IN_CRC_LOG "Build with Debug Logging in CRC log")
 add_feature_info(DebugMultiInstance RTS_DEBUG_MULTI_INSTANCE "Build with Multi Client Instance support")
