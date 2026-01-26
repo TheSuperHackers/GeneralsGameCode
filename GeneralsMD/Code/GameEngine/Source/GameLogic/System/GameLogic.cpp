@@ -3864,30 +3864,24 @@ void GameLogic::update()
 	// increment world time
 	if (!m_startNewGame)
 	{
-		DEBUG_LOG(("GameLogic::update - Before increment: m_frame = %u", m_frame));
 		m_frame++;
-		DEBUG_LOG(("GameLogic::update - After increment: m_frame = %u", m_frame));
 		m_hasUpdated = TRUE;
 	}
 
-	// TheSuperHackers @feature bobtista 20/01/2026 Auto-save checkpoint at specified frame during replay playback
-	// Save AFTER m_frame is incremented so the checkpoint correctly represents
-	// "ready to play frame N+1" when saved after frame N completes.
-	// We check for m_frame == saveAtFrame + 1 since m_frame was just incremented.
-	DEBUG_LOG(("GameLogic::update - Checkpoint check: m_frame=%u, saveAtFrame=%u, match=%d",
-		m_frame, TheGlobalData->m_replaySaveAtFrame,
-		(TheGlobalData->m_replaySaveAtFrame > 0 && m_frame == TheGlobalData->m_replaySaveAtFrame + 1) ? 1 : 0));
-	if (TheGlobalData->m_replaySaveAtFrame > 0 && m_frame == TheGlobalData->m_replaySaveAtFrame + 1)
+	// TheSuperHackers @fix bobtista 25/01/2026 Save checkpoint right after frame increment.
+	// This captures the state at the START of the new frame (before any object updates for the new frame).
+	// The checkpoint will contain m_frame = N, state ready to compute CRC for frame N.
+	// This runs BEFORE ReplaySimulation.cpp's checkpoint save, so it takes precedence.
+	if (TheGlobalData->m_replaySaveAtFrame > 0 && m_frame == TheGlobalData->m_replaySaveAtFrame)
 	{
 		AsciiString saveName = TheGlobalData->m_replaySaveTo;
 		if (saveName.isEmpty())
 		{
-			saveName.format("checkpoint_%u.sav", TheGlobalData->m_replaySaveAtFrame);
+			saveName.format("checkpoint_%u.sav", m_frame);
 		}
 		UnicodeString desc;
-		desc.format(L"Replay checkpoint after frame %u", TheGlobalData->m_replaySaveAtFrame);
-		DEBUG_LOG(("Auto-saving checkpoint after frame %u (current frame %u) to %s",
-			TheGlobalData->m_replaySaveAtFrame, m_frame, saveName.str()));
+		desc.format(L"Replay checkpoint at frame %u", m_frame);
+		DEBUG_LOG(("Auto-saving checkpoint at frame %u (after frame increment) to %s", m_frame, saveName.str()));
 		SaveCode result = TheGameState->saveGame(saveName, desc, SAVE_FILE_TYPE_NORMAL, SNAPSHOT_SAVELOAD);
 		if (result != SC_OK)
 		{
@@ -3895,11 +3889,9 @@ void GameLogic::update()
 		}
 		else
 		{
-			DEBUG_LOG(("Checkpoint saved successfully, exiting replay simulation"));
-			// Exit the game after saving the checkpoint
+			DEBUG_LOG(("Checkpoint saved successfully, exiting"));
 			TheGameEngine->setQuitting(TRUE);
 		}
-		// Clear the save frame so we don't try to save again
 		TheWritableGlobalData->m_replaySaveAtFrame = 0;
 	}
 }
@@ -4152,21 +4144,11 @@ UnsignedInt GameLogic::getCRC( Int mode, AsciiString deepCRCFileName )
 	Object *obj;
 	DEBUG_ASSERTCRASH(this == TheGameLogic, ("Not in GameLogic"));
 
-	// TheSuperHackers @debug bobtista 23/01/2026 Log intermediate CRC values around divergence frame
-	// Log around divergence points to identify which subsystem diverges after checkpoint load
-	Bool logIntermediateCRC = (m_frame >= 2384 && m_frame <= 2388) ||
-	                          (m_frame >= 2444 && m_frame <= 2448) ||
-	                          (m_frame >= 2979 && m_frame <= 2983);
-
 	marker = "MARKER:Objects";
 	xferCRC->xferAsciiString(&marker);
 	for( obj = m_objList; obj; obj=obj->getNextObject() )
 	{
 		xferCRC->xferSnapshot( obj );
-	}
-	if (logIntermediateCRC)
-	{
-		DEBUG_LOG(("CRC[%d] after Objects: 0x%08X", m_frame, xferCRC->getCRC()));
 	}
 
 	UnsignedInt seed = GetGameLogicRandomSeedCRC();
@@ -4175,18 +4157,10 @@ UnsignedInt GameLogic::getCRC( Int mode, AsciiString deepCRCFileName )
 	{
 		xferCRC->xferUnsignedInt( &seed );
 	}
-	if (logIntermediateCRC)
-	{
-		DEBUG_LOG(("CRC[%d] after RNG seed (0x%08X): 0x%08X", m_frame, seed, xferCRC->getCRC()));
-	}
 
 	marker = "MARKER:ThePartitionManager";
 	xferCRC->xferAsciiString(&marker);
 	xferCRC->xferSnapshot( ThePartitionManager );
-	if (logIntermediateCRC)
-	{
-		DEBUG_LOG(("CRC[%d] after PartitionManager: 0x%08X", m_frame, xferCRC->getCRC()));
-	}
 
 #ifdef DEBUG_CRC
 	if ((g_crcModuleDataFromClient && !isInGameLogicUpdate()) ||
@@ -4205,18 +4179,10 @@ UnsignedInt GameLogic::getCRC( Int mode, AsciiString deepCRCFileName )
 	marker = "MARKER:ThePlayerList";
 	xferCRC->xferAsciiString(&marker);
 	xferCRC->xferSnapshot( ThePlayerList );
-	if (logIntermediateCRC)
-	{
-		DEBUG_LOG(("CRC[%d] after PlayerList: 0x%08X", m_frame, xferCRC->getCRC()));
-	}
 
 	marker = "MARKER:TheAI";
 	xferCRC->xferAsciiString(&marker);
 	xferCRC->xferSnapshot( TheAI );
-	if (logIntermediateCRC)
-	{
-		DEBUG_LOG(("CRC[%d] after AI: 0x%08X", m_frame, xferCRC->getCRC()));
-	}
 
 	if (xferCRC->getXferMode() == XFER_SAVE)
 	{
