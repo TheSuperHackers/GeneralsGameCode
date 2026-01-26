@@ -92,8 +92,6 @@ class ScopedCriticalSection
 		}
 };
 
-#include "mutex.h"
-
 // These should be null on creation then non-null in WinMain or equivalent.
 // This allows us to be silently non-threadsafe for WB and other single-threaded apps.
 extern CriticalSection *TheAsciiStringCriticalSection;
