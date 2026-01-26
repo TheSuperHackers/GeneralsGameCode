@@ -2150,7 +2150,6 @@ void WbView3d::OnDraw(CDC* pDC)
 	// Not used.  See OnPaint.
 }
 
-// TheSuperHackers
 #ifdef RTS_HAS_IMGUI
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND, UINT, WPARAM, LPARAM);
 BOOL WbView3d::PreTranslateMessage(MSG *pMsg)
