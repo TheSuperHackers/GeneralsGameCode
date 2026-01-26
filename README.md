@@ -88,6 +88,12 @@ through `VCPKG_BINARY_SOURCES=clear;files,<workspace>/vcpkg-bincache,readwrite` 
 that folder), so the first CI build warms the cache and subsequent builds pull prebuilt binaries instead of
 re-compiling everything.
 
+### Profiling
+
+Tracy profiling is supported in the CMake presets `win32-profile` and `win32-vcpkg-profile`.
+Use `tracy-profiler.exe` from [Tracy v0.13.1](https://github.com/wolfpld/tracy/releases/tag/v0.13.1). For `win32-vcpkg-profile`, use [Tracy v0.11.1](https://github.com/wolfpld/tracy/releases/tag/v0.11.1).
+If you get an error when using Tracy, try removing `dbghelp.dll` from the game binary directory.
+
 ## Contributing
 
 We welcome contributions to the project! If you’re interested in contributing, you need to have knowledge of C++. Join
