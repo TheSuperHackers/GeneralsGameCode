@@ -1362,15 +1362,25 @@ void ConnectionManager::updateRunAhead(Int oldRunAhead, Int frameRate, Bool didS
 }
 
 Real ConnectionManager::getMaximumLatency() {
-	Real maxLatency = 0.0f;
+
+	Real lat1 = 0.0f;
+	Real lat2 = 0.0f;
 
 	for (Int i = 0; i < MAX_SLOTS; ++i) {
-		if (isPlayerConnected(i) && m_latencyAverages[i] > maxLatency) {
-				maxLatency = m_latencyAverages[i];
+		if (isPlayerConnected(i)) {
+			if (m_latencyAverages[i] != 0.0f) {
+				if (m_latencyAverages[i] > lat1) {
+					lat2 = lat1;
+					lat1 = m_latencyAverages[i];
+				}
+				else if (m_latencyAverages[i] > lat2) {
+					lat2 = m_latencyAverages[i];
+				}
+			}
 		}
 	}
 
-	return maxLatency;
+	return (lat1 + lat2) / 2.0f;
 }
 
 void ConnectionManager::getMinimumFps(Int &minFps, Int &minFpsPlayer) {

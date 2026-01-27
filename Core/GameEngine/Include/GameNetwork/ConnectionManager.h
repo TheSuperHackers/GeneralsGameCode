@@ -171,7 +171,7 @@ private:
 
 	//	void doPerFrameMetrics(UnsignedInt frame);
 	void getMinimumFps(Int &minFps, Int &minFpsPlayer);			///< Returns the smallest FPS in the m_fpsAverages list.
-	Real getMaximumLatency(); ///< Returns the highest average latency between players.
+	Real getMaximumLatency(); ///< Returns the average of the two highest average latencies between players.
 
 	void requestFrameDataResend(Int playerID, UnsignedInt frame); ///< request of this player that he send the specified frame's data.
 
