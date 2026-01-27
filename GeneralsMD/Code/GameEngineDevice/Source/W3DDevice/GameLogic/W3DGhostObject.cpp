@@ -796,10 +796,12 @@ void W3DGhostObject::loadPostProcess( void )
 
 	const Int playerIndex = TheGhostObjectManager->getLocalPlayerIndex();
 
-	// TheSuperHackers @bugfix Only add the local player snapshot to the world and then remove the
-	// regular object.
+	// add snapshot to the scene
+	// TheSuperHackers @bugfix But only for the local player
 	if (addToScene(playerIndex))
 	{
+		// since there is a snapshot for this object, there cannot be a regular object/drawable
+		// in the world, we need to remove it
 		removeParentObject();
 	}
 }
