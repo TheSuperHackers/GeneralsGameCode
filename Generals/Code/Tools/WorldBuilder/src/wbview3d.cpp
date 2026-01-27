@@ -2006,18 +2006,14 @@ void WbView3d::redraw(void)
 }
 
 // ----------------------------------------------------------------------------
-// TheSuperHackers @feature jurassiclizard 16/01/2026 imgui integration (PR#2127)
-// see details under WinMain.cpp (WndProc())
 void WbView3d::render()
 {
 	++m_updateCount;
 
 #ifdef RTS_HAS_IMGUI
-	{
-		ImGui::FrameManager::BeginFrame();
-		ImGui::ShowDemoWindow();
-		ImGui::FrameManager::EndFrame();
-	}
+    rts::ImGui::FrameManager::BeginFrame();
+	ImGui::ShowDemoWindow();
+	rts::ImGui::FrameManager::EndFrame();
 #endif
 
 	if (WW3D::Begin_Render(true,true,Vector3(0.5f,0.5f,0.5f), TheWaterTransparency->m_minWaterOpacity) == WW3D_ERROR_OK)

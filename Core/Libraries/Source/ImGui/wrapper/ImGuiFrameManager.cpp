@@ -1,7 +1,3 @@
-/**
- * @file ImGuiFrameManager.cpp
- * @brief Simple Frame manager for ImGui widgets
- */
 /*
 **	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2026 TheSuperHackers
@@ -24,9 +20,9 @@
 #include "imgui_impl_dx8.h"
 #include "imgui_impl_win32.h"
 
-bool ImGui::FrameManager::s_frameOpen = false;
+bool rts::ImGui::FrameManager::s_frameOpen = false;
 
-void ImGui::FrameManager::BeginFrame()
+void rts::ImGui::FrameManager::BeginFrame()
 {
     if (s_frameOpen)
     {
@@ -35,19 +31,19 @@ void ImGui::FrameManager::BeginFrame()
 
     ImGui_ImplDX8_NewFrame();
     ImGui_ImplWin32_NewFrame();
-    NewFrame();
+    ::ImGui::NewFrame();
 
     s_frameOpen = true;
 }
 
-void ImGui::FrameManager::EndFrame()
+void rts::ImGui::FrameManager::EndFrame()
 {
     if (!s_frameOpen)
     {
         return;
     }
 
-    Render();
+    ::ImGui::Render();
 
     s_frameOpen = false;
 }
