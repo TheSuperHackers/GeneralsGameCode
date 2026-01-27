@@ -725,21 +725,9 @@ void W3DGhostObject::xfer( Xfer *xfer )
 
 				// xfer data
 				xfer->xferSnapshot( objectSnapshot );
-
-				// add snapshot to the scene
-				objectSnapshot->addToScene();
 			}
 		}
 	}
-
-	//
-	// since there is a snapshot for this object, there cannot be a regular object/drawable
-	// in the world, we need to remove it
-	//
-	if( m_parentObject &&
-			m_parentSnapshots[TheGhostObjectManager->getLocalPlayerIndex()] != nullptr &&
-			xfer->getXferMode() == XFER_LOAD )
-		removeParentObject();
 
 	// count of partition shroudedness info to follow
 	UnsignedByte shroudednessCount = 0;
@@ -801,6 +789,17 @@ void W3DGhostObject::loadPostProcess( void )
 {
 	// extend base class
 	GhostObject::loadPostProcess();
+
+	const Int playerIndex = TheGhostObjectManager->getLocalPlayerIndex();
+
+	// add snapshot to the scene
+	// TheSuperHackers @bugfix But only for the local player
+	if (addToScene(playerIndex))
+	{
+		// since there is a snapshot for this object, there cannot be a regular object/drawable
+		// in the world, we need to remove it
+		removeParentObject();
+	}
 }
 
 // ------------------------------------------------------------------------------------------------
