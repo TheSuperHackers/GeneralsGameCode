@@ -1,7 +1,3 @@
-/**
- * @file ImGuiFrameManager.h
- * @brief Simple Frame manager for ImGui widgets
- */
 /*
 **	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2026 TheSuperHackers
@@ -22,6 +18,8 @@
 
 #pragma once
 
+namespace rts
+{
 namespace ImGui
 {
 
@@ -29,10 +27,16 @@ class FrameManager
 {
   public:
     static void BeginFrame();
-    static void EndFrame(); // Includes Render()
+    // TheSuperHackers @info jurassicLizard 27/01/2026 The following static function
+    // calls ImGui::EndFrame() and ImGui::Render() but does NOT call
+    // ImGui::RenderDrawData(draw_data). The latter is not part of this wrapper
+    // by design (separation of concerns) and must be called explicitly. This is to be done
+    // when sending draw data off to the GPU to be drawn on screen, which in our case happens in DX8Wrapper::End_Scene()
+    static void EndFrame();
 
   private:
     static bool s_frameOpen;
 };
 
 } // namespace ImGui
+} // namespace rts

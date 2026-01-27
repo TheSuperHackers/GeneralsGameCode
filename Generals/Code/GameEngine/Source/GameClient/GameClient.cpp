@@ -489,19 +489,14 @@ void GameClient::registerDrawable( Drawable *draw )
 /** -----------------------------------------------------------------------------------------------
  * Redraw all views, update the GUI, play sound effects, etc.
  */
-// TheSuperHackers @feature jurassiclizard 16/01/2026 imgui integration (PR#2127)
-// see details under WinMain.cpp (WndProc())
 DECLARE_PERF_TIMER(GameClient_update)
 DECLARE_PERF_TIMER(GameClient_draw)
 void GameClient::update( void )
 {
 	USE_PERF_TIMER(GameClient_update)
 #ifdef RTS_HAS_IMGUI
-	ImGui::FrameManager::BeginFrame();
-	// Draw ImGui Demo Window
-	{
-		ImGui::ShowDemoWindow();
-	}
+	rts::ImGui::FrameManager::BeginFrame();
+	ImGui::ShowDemoWindow();
 #endif
 	// create the FRAME_TICK message
 	GameMessage *frameMsg = TheMessageStream->appendMessage( GameMessage::MSG_FRAME_TICK );
@@ -596,7 +591,7 @@ void GameClient::update( void )
 	if(TheGlobalData->m_playIntro || TheGlobalData->m_afterIntro)
 	{
 #ifdef RTS_HAS_IMGUI
-		ImGui::FrameManager::EndFrame();
+		rts::ImGui::FrameManager::EndFrame();
 #endif
 		// redraw all views, update the GUI
 		TheDisplay->DRAW();
@@ -707,7 +702,7 @@ void GameClient::update( void )
 	if (TheGlobalData->m_noDraw > TheGameLogic->getFrame() && TheGameLogic->getFrame() > 0)
 	{
 #ifdef RTS_HAS_IMGUI
-		ImGui::FrameManager::EndFrame();
+		rts::ImGui::FrameManager::EndFrame();
 #endif
 		return;
 	}
@@ -733,7 +728,7 @@ void GameClient::update( void )
 	}
 
 #ifdef RTS_HAS_IMGUI
-	ImGui::FrameManager::EndFrame();
+	rts::ImGui::FrameManager::EndFrame();
 #endif
 	{
 		USE_PERF_TIMER(GameClient_draw)
