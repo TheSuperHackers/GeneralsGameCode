@@ -729,6 +729,7 @@ LegalBuildCode BuildAssistant::isLocationClearOfObjects( const Coord3D *worldPos
 #if RETAIL_COMPATIBLE_CRC
 		if( them->isKindOf( KINDOF_IMMOBILE ) )
 #else
+		// TheSuperHackers @bugfix Stubbjax 03/08/2025 Prevent building on immobile objects like undead Battle Buses.
 		if (them->isKindOf(KINDOF_IMMOBILE) || them->getStatusBits().test(OBJECT_STATUS_IMMOBILE))
 #endif
 		{

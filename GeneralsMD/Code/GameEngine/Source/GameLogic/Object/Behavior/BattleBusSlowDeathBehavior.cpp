@@ -218,6 +218,8 @@ UpdateSleepTime BattleBusSlowDeathBehavior::update( void )
 #if RETAIL_COMPATIBLE_CRC
 			me->setDisabled(DISABLED_HELD);
 #else
+			// TheSuperHackers @bugfix Stubbjax 03/08/2025 Set the bus to IMMOBILE instead of HELD,
+			// which allows passengers to now respond to attack commands.
 			me->setStatus(MAKE_OBJECT_STATUS_MASK(OBJECT_STATUS_IMMOBILE));
 #endif
 
