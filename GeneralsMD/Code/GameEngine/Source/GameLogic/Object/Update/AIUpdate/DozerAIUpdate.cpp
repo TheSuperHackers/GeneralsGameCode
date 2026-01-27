@@ -1458,7 +1458,6 @@ DozerAIUpdate::DozerAIUpdate( Thing *thing, const ModuleData* moduleData ) :
 	}
 	m_currentTask = DOZER_TASK_INVALID;
 	m_previousTask = DOZER_TASK_INVALID;
-	m_previousTaskInfo = DozerTaskInfo();
 
 	m_buildSubTask = DOZER_SELECT_BUILD_DOCK_LOCATION;  // irrelevant, but I want non-garbage value
 
