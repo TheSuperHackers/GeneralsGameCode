@@ -205,6 +205,17 @@ jobs:
 
           $files | Move-Item -Destination $artifactsDir -Verbose -Force
 
+          # Copy vcpkg DLL dependencies for vcpkg builds (includes zlib, ffmpeg, wxWidgets)
+          if ("${{ inputs.preset }}" -like "*vcpkg*") {
+            Write-Host "Collecting vcpkg DLL dependencies" -ForegroundColor Cyan
+            $vcpkgBinDir = "$env:VCPKG_ROOT\installed\x86-windows\bin"
+            if (Test-Path $vcpkgBinDir) {
+              $vcpkgDlls = Get-ChildItem -Path $vcpkgBinDir -Filter "*.dll" -File -Verbose
+              $vcpkgDlls | Copy-Item -Destination $artifactsDir -Verbose -Force
+              Write-Host "Copied $($vcpkgDlls.Count) vcpkg DLLs (including wxWidgets)" -ForegroundColor Green
+            }
+          }
+
       - name: Upload ${{ inputs.game }} ${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }} Artifact
         uses: actions/upload-artifact@v4
         with:
