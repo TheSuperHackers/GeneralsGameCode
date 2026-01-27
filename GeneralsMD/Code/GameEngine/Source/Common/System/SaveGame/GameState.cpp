@@ -1397,9 +1397,11 @@ void GameState::xferSaveData( Xfer *xfer, SnapshotType which )
 			}
 
 			// Skip visual-only blocks when saving in headless mode
+			// Note: CHUNK_TerrainVisual must NOT be skipped because it contains the height map data
+			// which is used by game logic for getGroundHeight() calculations. Building construction
+			// modifies the height map to flatten terrain, and this data must be preserved in saves.
 			if( TheGlobalData->m_headless &&
-				(blockName.compareNoCase( "CHUNK_TerrainVisual" ) == 0 ||
-				 blockName.compareNoCase( "CHUNK_TacticalView" ) == 0 ||
+				(blockName.compareNoCase( "CHUNK_TacticalView" ) == 0 ||
 				 blockName.compareNoCase( "CHUNK_ParticleSystem" ) == 0 ||
 				 blockName.compareNoCase( "CHUNK_GhostObject" ) == 0) )
 			{
