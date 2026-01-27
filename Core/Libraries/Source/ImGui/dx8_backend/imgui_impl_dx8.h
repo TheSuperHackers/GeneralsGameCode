@@ -1,5 +1,5 @@
 /*
-* The MIT License (MIT)
+ * The MIT License (MIT)
  *
  * Copyright (c) 2014 - 2025 Omar Cornut (Based on dx9 ImGui Backend)
  * Copyright (c) 2025 Meigyoku-Thmn and others
@@ -36,25 +36,23 @@
 //  [X] Renderer: Large meshes support (64k+ vertices) with 16-bit indices.
 
 // You can use unmodified imgui_impl_* files in your project. See examples/ folder for examples of using this.
-// Prefer including the entire imgui/ repository into your project (either as a copy or as a submodule), and only build the backends you need.
-// Learn about Dear ImGui:
+// Prefer including the entire imgui/ repository into your project (either as a copy or as a submodule), and only build
+// the backends you need. Learn about Dear ImGui:
 // - FAQ                  https://dearimgui.com/faq
 // - Getting Started      https://dearimgui.com/getting-started
 // - Documentation        https://dearimgui.com/docs (same as your local docs/ folder).
 // - Introduction, links and more at the top of imgui.cpp
 
-
-
 #pragma once
-#include <imgui.h>      // IMGUI_IMPL_API
+#include <imgui.h> // IMGUI_IMPL_API
 
 struct IDirect3DDevice8;
 
-IMGUI_IMPL_API bool     ImGui_ImplDX8_Init(IDirect3DDevice8* device);
-IMGUI_IMPL_API void     ImGui_ImplDX8_Shutdown();
-IMGUI_IMPL_API void     ImGui_ImplDX8_NewFrame();
-IMGUI_IMPL_API void     ImGui_ImplDX8_RenderDrawData(ImDrawData* draw_data);
+IMGUI_IMPL_API bool ImGui_ImplDX8_Init(IDirect3DDevice8 *device);
+IMGUI_IMPL_API void ImGui_ImplDX8_Shutdown();
+IMGUI_IMPL_API void ImGui_ImplDX8_NewFrame();
+IMGUI_IMPL_API void ImGui_ImplDX8_RenderDrawData(ImDrawData *draw_data);
 
 // Use if you want to reset your rendering device without losing Dear ImGui state.
-IMGUI_IMPL_API bool     ImGui_ImplDX8_CreateDeviceObjects();
-IMGUI_IMPL_API void     ImGui_ImplDX8_InvalidateDeviceObjects();
+IMGUI_IMPL_API bool ImGui_ImplDX8_CreateDeviceObjects();
+IMGUI_IMPL_API void ImGui_ImplDX8_InvalidateDeviceObjects();
