@@ -22,20 +22,17 @@
 
 #pragma once
 
-
-namespace ImGui {
+namespace ImGui
+{
 
 class FrameManager
 {
-public:
+  public:
     static void BeginFrame();
     static void EndFrame(); // Includes Render()
 
-private:
+  private:
     static bool s_frameOpen;
 };
 
-}  // namespace ImGui
-
-
-
+} // namespace ImGui
