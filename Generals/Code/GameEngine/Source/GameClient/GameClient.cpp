@@ -378,14 +378,15 @@ void GameClient::init( void )
  		TheRayEffects->setName("TheRayEffects");
 	}
 
-	TheMouse->init();	//finish initializing the mouse.
-
 	// set the limits of the mouse now that we've created the display and such
 	if( TheMouse )
 	{
+		// finish initializing the mouse.
+		TheMouse->init();
+		TheMouse->initCapture();
 		TheMouse->setPosition( 0, 0 );
 		TheMouse->setMouseLimits();
- 		TheMouse->setName("TheMouse");
+		TheMouse->setName("TheMouse");
 	}
 
 	// create the video player

@@ -520,7 +520,7 @@ Mouse::Mouse( void )
 	m_tooltipBackColor.blue = 0;
 	m_tooltipBackColor.alpha = 255;
 
-	m_cursorCaptureMode = CursorCaptureMode_Default;
+	m_cursorCaptureMode = 0;
 
 	m_captureBlockReasonBits = (1 << CursorCaptureBlockReason_NoInit);
 	DEBUG_LOG(("Mouse::Mouse: m_blockCaptureReason=CursorCaptureBlockReason_NoInit"));
@@ -582,9 +582,6 @@ void Mouse::init( void )
 
  	// allocate a new display string
 	m_cursorTextDisplayString = TheDisplayStringManager->newDisplayString();
-
-	initCapture();
-
 }
 
 //-------------------------------------------------------------------------------------------------
