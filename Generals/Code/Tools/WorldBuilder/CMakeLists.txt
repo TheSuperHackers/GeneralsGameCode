@@ -212,6 +212,10 @@ target_precompile_headers(g_worldbuilder PRIVATE
     [["WWCommon.h"]]
 )
 
+if (RTS_BUILD_OPTION_IMGUI)
+    target_link_libraries(g_worldbuilder PRIVATE lib_imgui)
+endif ()
+
 target_link_libraries(g_worldbuilder PRIVATE
     d3d8lib
     core_browserdispatch
