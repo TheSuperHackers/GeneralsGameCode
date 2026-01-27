@@ -178,7 +178,7 @@ public:
 	virtual void screenToTerrain( const ICoord2D *screen, Coord3D *world ) {};  ///< transform screen coord to a point on the 3D terrain
 	virtual void screenToWorldAtZ( const ICoord2D *s, Coord3D *w, Real z ) {};  ///< transform screen point to world point at the specified world Z value
 	virtual void getScreenCornerWorldPointsAtZ( Coord3D *topLeft, Coord3D *topRight,
-																							Coord3D *bottomLeft, Coord3D *bottomRight,
+																							Coord3D *bottomRight, Coord3D *bottomLeft,
 																							Real z ){};
 
 	virtual void drawView( void ) {};															///< Render the world visible in this view.
