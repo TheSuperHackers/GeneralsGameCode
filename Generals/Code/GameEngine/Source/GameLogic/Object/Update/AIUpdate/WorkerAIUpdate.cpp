@@ -1422,7 +1422,8 @@ void WorkerAIUpdate::crc( Xfer *xfer )
 /** Xfer method
 	* Version Info:
 	* 1: Initial version
-	* 2: TheSuperHackers @tweak Stubbjax 17/11/2025 Save the worker's previous task */
+	* 2: TheSuperHackers @tweak Stubbjax 17/11/2025 Save the worker's previous task
+	*/
 // ------------------------------------------------------------------------------------------------
 void WorkerAIUpdate::xfer( Xfer *xfer )
 {
