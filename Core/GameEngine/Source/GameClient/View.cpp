@@ -226,35 +226,38 @@ void View::setLocation( const ViewLocation *location )
 		the world points are at the requested Z */
 //-------------------------------------------------------------------------------------------------
 void View::getScreenCornerWorldPointsAtZ( Coord3D *topLeft, Coord3D *topRight,
-																					Coord3D *bottomLeft, Coord3D *bottomRight,
+																					Coord3D *bottomRight, Coord3D *bottomLeft,
 																					Real z )
 {
-	ICoord2D screenTopLeft, screenTopRight, screenBottomLeft, screenBottomRight;
-	ICoord2D origin;
-	Int viewWidth = getWidth();
-	Int viewHeight = getHeight();
-
 	// sanity
-	if( topLeft == nullptr || topRight == nullptr || bottomLeft == nullptr || bottomRight == nullptr )
+	if( topLeft == nullptr || topRight == nullptr || bottomRight == nullptr || bottomLeft == nullptr)
 		return;
+
+	ICoord2D screenTopLeft;
+	ICoord2D screenTopRight;
+	ICoord2D screenBottomRight;
+	ICoord2D screenBottomLeft;
+	ICoord2D origin;
+	const Int viewWidth = getWidth();
+	const Int viewHeight = getHeight();
 
 	// setup the screen coords for the 4 corners of the viewable display
 	getOrigin( &origin.x, &origin.y );
-	screenTopLeft.x     = origin.x;								// upper left
-	screenTopLeft.y     = origin.y;								// upper left
-	screenTopRight.x    = origin.x + viewWidth;		// upper right
-	screenTopRight.y    = origin.y;								// upper right
-	screenBottomLeft.x  = origin.x + viewWidth;		// lower right
-	screenBottomLeft.y  = origin.y + viewHeight;  // lower right
-	screenBottomRight.x = origin.x;								// lower left
-	screenBottomRight.y = origin.y + viewHeight;	// lower left
+
+	screenTopLeft.x = origin.x;
+	screenTopLeft.y = origin.y;
+	screenTopRight.x = origin.x + viewWidth;
+	screenTopRight.y = origin.y;
+	screenBottomRight.x = origin.x + viewWidth;
+	screenBottomRight.y = origin.y + viewHeight;
+	screenBottomLeft.x = origin.x;
+	screenBottomLeft.y = origin.y + viewHeight;
 
 	// project
 	screenToWorldAtZ( &screenTopLeft, topLeft, z );
 	screenToWorldAtZ( &screenTopRight, topRight, z );
-	screenToWorldAtZ( &screenBottomLeft, bottomLeft, z );
 	screenToWorldAtZ( &screenBottomRight, bottomRight, z );
-
+	screenToWorldAtZ( &screenBottomLeft, bottomLeft, z );
 }
 
 // ------------------------------------------------------------------------------------------------

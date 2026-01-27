@@ -1418,6 +1418,9 @@ void W3DView::getAxisAlignedViewRegion(Region3D &axisAlignedRegion)
 	// get the 4 points in 3D space of the 4 corners of the view, we will use a z = 0.0f
 	// value so that we can get everything ... even stuff below the terrain
 	//
+	//  1-------2
+	//   \     /
+	//    4---3
 	Coord3D box[ 4 ];
 	getScreenCornerWorldPointsAtZ( &box[ 0 ], &box[ 1 ], &box[ 2 ], &box[ 3 ], 0.0f );
 

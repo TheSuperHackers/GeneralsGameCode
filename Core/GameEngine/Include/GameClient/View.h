@@ -118,7 +118,7 @@ public:
 	/** project the 4 corners of this view into the world and return each point as a parameter,
 			the world points are at the requested Z */
 	virtual void getScreenCornerWorldPointsAtZ( Coord3D *topLeft, Coord3D *topRight,
-																							Coord3D *bottomLeft, Coord3D *bottomRight,
+																							Coord3D *bottomRight, Coord3D *bottomLeft,
 																							Real z );
 
 	virtual void setWidth( Int width ) { m_width = width; }

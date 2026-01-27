@@ -183,6 +183,9 @@ void W3DRadar::reconstructViewBox( void )
 	Int i;
 
 	// get the 4 points of the view corners in the 3D world at the average Z height in the map
+	//  1-------2
+	//   \     /
+	//    4---3
 	TheTacticalView->getScreenCornerWorldPointsAtZ( &world[ 0 ],
 																									&world[ 1 ],
 																									&world[ 2 ],
