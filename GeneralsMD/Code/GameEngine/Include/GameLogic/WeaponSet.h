@@ -218,6 +218,7 @@ public:
 	~WeaponSet();
 
 	void updateWeaponSet(const Object* obj);
+	void syncTemplatePointerAfterLoad(const Object* obj);
 	void reloadAllAmmo(const Object *obj, Bool now);
 	Bool isOutOfAmmo() const;
 	Bool hasAnyWeapon() const { return m_filledWeaponSlotMask != 0; }

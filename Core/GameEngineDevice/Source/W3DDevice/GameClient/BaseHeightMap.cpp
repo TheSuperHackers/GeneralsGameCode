@@ -2983,18 +2983,53 @@ void BaseHeightMapRenderObjClass::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Xfer
 	* Version Info:
-	* 1: Initial version */
+	* 1: Initial version
+	* 2: Added support for headless mode where tree/prop buffers may be null */
 // ------------------------------------------------------------------------------------------------
 void BaseHeightMapRenderObjClass::xfer( Xfer *xfer )
 {
 
 	// version
-	XferVersion currentVersion = 1;
+	XferVersion currentVersion = 2;
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
-	xfer->xferSnapshot( m_treeBuffer );
-	xfer->xferSnapshot( m_propBuffer );
+	if (version >= 2)
+	{
+		// TheSuperHackers @info bobtista 26/01/2026
+		// In headless mode, m_treeBuffer and m_propBuffer are not allocated.
+		// We need to track whether they were present when saved so we can properly
+		// skip the data when loading in headless mode (or vice versa).
+		Bool hasTreeBuffer = (m_treeBuffer != nullptr);
+		xfer->xferBool(&hasTreeBuffer);
+		if (hasTreeBuffer)
+		{
+			if (xfer->getXferMode() == XFER_LOAD && m_treeBuffer == nullptr)
+			{
+				DEBUG_CRASH(("BaseHeightMapRenderObjClass::xfer - Cannot load tree buffer in headless mode"));
+				throw XFER_INVALID_PARAMETERS;
+			}
+			xfer->xferSnapshot(m_treeBuffer);
+		}
+
+		Bool hasPropBuffer = (m_propBuffer != nullptr);
+		xfer->xferBool(&hasPropBuffer);
+		if (hasPropBuffer)
+		{
+			if (xfer->getXferMode() == XFER_LOAD && m_propBuffer == nullptr)
+			{
+				DEBUG_CRASH(("BaseHeightMapRenderObjClass::xfer - Cannot load prop buffer in headless mode"));
+				throw XFER_INVALID_PARAMETERS;
+			}
+			xfer->xferSnapshot(m_propBuffer);
+		}
+	}
+	else
+	{
+		// Version 1: unconditional serialization (legacy - requires both buffers)
+		xfer->xferSnapshot( m_treeBuffer );
+		xfer->xferSnapshot( m_propBuffer );
+	}
 
 
 }

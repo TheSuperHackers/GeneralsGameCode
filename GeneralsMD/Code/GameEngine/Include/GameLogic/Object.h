@@ -158,6 +158,7 @@ enum CrushSquishTestType CPP_11(: Int)
  */
 class Object : public Thing, public Snapshot
 {
+	friend class GameLogic;  // TheSuperHackers @bugfix bobtista 22/01/2026 Allow GameLogic to call loadPostProcess on objects
 
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(Object, "ObjectPool" )
 
@@ -305,6 +306,7 @@ public:
 
 	UpdateModule* findUpdateModule(NameKeyType key) const { return (UpdateModule*)findModule(key); }
 	DamageModule* findDamageModule(NameKeyType key) const { return (DamageModule*)findModule(key); }
+	UpdateModule* findUpdateModuleByTag(NameKeyType tagKey) const;  // TheSuperHackers @feature bobtista 21/01/2026
 
 	Bool isSalvageCrate() const;
 
@@ -410,6 +412,10 @@ public:
 
 	// this is intended for use ONLY by GameLogic.
 	static void friend_deleteInstance(Object* object) { deleteInstance(object); }
+
+	// TheSuperHackers @info bobtista 19/01/2026 For reversing object list after checkpoint load.
+	void friend_setNextObject( Object *next ) { m_next = next; }
+	void friend_setPrevObject( Object *prev ) { m_prev = prev; }
 
 	/// cache the partition module (should be called only by PartitionData)
 	void friend_setPartitionData(PartitionData *pd) { m_partitionData = pd; }
@@ -654,6 +660,7 @@ protected:
 	// If you think you need to make it public, you are wrong. Don't do it.
 	// It will go away someday. Yeah, right. Just like GlobalData.
 	Module* findModule(NameKeyType key) const;
+	Module* findModuleByTagKey(NameKeyType tagKey) const;  // TheSuperHackers @feature bobtista 21/01/2026
 
 	Bool didEnterOrExit() const;
 

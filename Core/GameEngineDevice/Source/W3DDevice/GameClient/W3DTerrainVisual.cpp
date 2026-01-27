@@ -1150,6 +1150,9 @@ void W3DTerrainVisual::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void W3DTerrainVisual::xfer( Xfer *xfer )
 {
+	// In headless mode, terrain may not be fully initialized
+	// Only proceed if we have the height map data (which is the critical logic data)
+	Bool hasHeightMap = (m_logicHeightMap != nullptr);
 
 	// version
 #if RTS_GENERALS && RETAIL_COMPATIBLE_XFER_SAVE
@@ -1164,9 +1167,9 @@ void W3DTerrainVisual::xfer( Xfer *xfer )
 	TerrainVisual::xfer( xfer );
 
 	// flag for whether or not the water grid is enabled
-	Bool gridEnabled = m_isWaterGridRenderingEnabled;
+	Bool gridEnabled = hasHeightMap ? m_isWaterGridRenderingEnabled : FALSE;
 	xfer->xferBool( &gridEnabled );
-	if( gridEnabled != m_isWaterGridRenderingEnabled )
+	if( hasHeightMap && gridEnabled != m_isWaterGridRenderingEnabled )
 	{
 
 		DEBUG_CRASH(( "W3DTerrainVisual::xfer - m_isWaterGridRenderingEnabled mismatch" ));
@@ -1175,7 +1178,7 @@ void W3DTerrainVisual::xfer( Xfer *xfer )
 	}
 
 	// xfer grid data if enabled
-	if( gridEnabled )
+	if( gridEnabled && m_waterRenderObject != nullptr )
 		xfer->xferSnapshot( m_waterRenderObject );
 
 /*
@@ -1210,25 +1213,31 @@ void W3DTerrainVisual::xfer( Xfer *xfer )
 
 	// Write out the terrain height data.
 	if (version >= 2) {
-		UnsignedByte *data = m_logicHeightMap->getDataPtr();
-		Int len = m_logicHeightMap->getXExtent()*m_logicHeightMap->getYExtent();
-		Int xferLen = len;
-		xfer->xferInt(&xferLen);
-		if (len!=xferLen) {
-			DEBUG_CRASH(("Bad height map length."));
-			if (len>xferLen) {
-				len = xferLen;
+		// In headless mode, m_logicHeightMap may be nullptr if terrain wasn't loaded
+		if (m_logicHeightMap == nullptr) {
+			Int xferLen = 0;
+			xfer->xferInt(&xferLen);
+		} else {
+			UnsignedByte *data = m_logicHeightMap->getDataPtr();
+			Int len = m_logicHeightMap->getXExtent()*m_logicHeightMap->getYExtent();
+			Int xferLen = len;
+			xfer->xferInt(&xferLen);
+			if (len!=xferLen) {
+				DEBUG_CRASH(("Bad height map length."));
+				if (len>xferLen) {
+					len = xferLen;
+				}
 			}
-		}
-		xfer->xferUser(data, len);
-		if (xfer->getXferMode() == XFER_LOAD)
-    {
-			// Update the display height map.
-			m_terrainRenderObject->staticLightingChanged();
+			xfer->xferUser(data, len);
+			if (xfer->getXferMode() == XFER_LOAD && m_terrainRenderObject != nullptr)
+			{
+				// Update the display height map.
+				m_terrainRenderObject->staticLightingChanged();
+			}
 		}
 	}
 
-	if (version >= 3) {
+	if (version >= 3 && m_terrainRenderObject != nullptr) {
 		xfer->xferSnapshot(m_terrainRenderObject);
 	}
 

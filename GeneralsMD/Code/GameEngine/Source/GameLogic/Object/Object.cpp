@@ -2927,6 +2927,44 @@ Module* Object::findModule(NameKeyType key) const
 }
 
 //-------------------------------------------------------------------------------------------------
+// TheSuperHackers @feature bobtista 21/01/2026
+// Find a module by its tag key (instance-specific identifier) rather than class name key.
+Module* Object::findModuleByTagKey(NameKeyType tagKey) const
+{
+	for (BehaviorModule** b = m_behaviors; *b; ++b)
+	{
+		if ((*b)->getModuleTagNameKey() == tagKey)
+		{
+			return *b;
+		}
+	}
+	return nullptr;
+}
+
+//-------------------------------------------------------------------------------------------------
+// TheSuperHackers @feature bobtista 21/01/2026
+// Find an update module by its tag key.
+UpdateModule* Object::findUpdateModuleByTag(NameKeyType tagKey) const
+{
+	for (BehaviorModule** b = m_behaviors; *b; ++b)
+	{
+		if ((*b)->getModuleTagNameKey() == tagKey)
+		{
+			UpdateModuleInterface* ui = (*b)->getUpdate();
+			if (ui)
+			{
+#ifdef DIRECT_UPDATEMODULE_ACCESS
+				return static_cast<UpdateModule*>(ui);
+#else
+				return ui;
+#endif
+			}
+		}
+	}
+	return nullptr;
+}
+
+//-------------------------------------------------------------------------------------------------
 /**
  * Returns true if object is currently able to move.
  */
@@ -4475,6 +4513,18 @@ void Object::loadPostProcess()
 		m_containedBy = TheGameLogic->findObjectByID(m_xferContainedByID);
 	else
 		m_containedBy = nullptr;
+
+	// TheSuperHackers @bugfix bobtista 22/01/2026 Sync weapon set template pointer after load.
+	// This ensures the pointer matches what updateWeaponSet() would use, preventing
+	// unnecessary weapon reallocation that corrupts timing state.
+	m_weaponSet.syncTemplatePointerAfterLoad(this);
+
+	// TheSuperHackers @bugfix bobtista 22/01/2026 Call loadPostProcess on all modules.
+	// This is needed to properly initialize module state after checkpoint load.
+	for (BehaviorModule** b = m_behaviors; *b; ++b)
+	{
+		(*b)->loadPostProcess();
+	}
 
 }
 

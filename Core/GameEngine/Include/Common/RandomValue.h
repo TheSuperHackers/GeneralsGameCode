@@ -36,4 +36,10 @@ extern void InitGameLogicRandom( UnsignedInt seed ); ///< Set the GameLogic seed
 extern UnsignedInt GetGameLogicRandomSeed( void );   ///< Get the seed (used for replays)
 extern UnsignedInt GetGameLogicRandomSeedCRC( void );///< Get the seed (used for CRCs)
 
+// TheSuperHackers @info bobtista 19/01/2026
+// Functions to save/restore the full RNG state for checkpoints.
+// The state array must have room for 6 UnsignedInts.
+extern void GetGameLogicRandomState( UnsignedInt* state, UnsignedInt* baseSeed );
+extern void SetGameLogicRandomState( const UnsignedInt* state, UnsignedInt baseSeed );
+
 //--------------------------------------------------------------------------------------------------------------

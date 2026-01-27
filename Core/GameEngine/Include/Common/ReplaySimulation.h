@@ -28,6 +28,9 @@ public:
 	// Returns exit code 0 if all replays were successfully simulated without mismatches
 	static int simulateReplays(const std::vector<AsciiString> &filenames, int maxProcesses);
 
+	// Continue a replay from a checkpoint file in headless mode
+	static int continueReplayFromCheckpoint(const AsciiString &checkpointFile);
+
 	static void stop() { s_isRunning = false; }
 
 	static Bool isRunning() { return s_isRunning; }

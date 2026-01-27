@@ -148,6 +148,28 @@ UnsignedInt GetGameLogicRandomSeedCRC( void )
 	return c.get();
 }
 
+// TheSuperHackers @info bobtista 19/01/2026
+// Get the full RNG state for serialization in checkpoints.
+void GetGameLogicRandomState( UnsignedInt* state, UnsignedInt* baseSeed )
+{
+	for (int i = 0; i < 6; ++i)
+	{
+		state[i] = theGameLogicSeed[i];
+	}
+	*baseSeed = theGameLogicBaseSeed;
+}
+
+// TheSuperHackers @info bobtista 19/01/2026
+// Restore the full RNG state after loading a checkpoint.
+void SetGameLogicRandomState( const UnsignedInt* state, UnsignedInt baseSeed )
+{
+	for (int i = 0; i < 6; ++i)
+	{
+		theGameLogicSeed[i] = state[i];
+	}
+	theGameLogicBaseSeed = baseSeed;
+}
+
 void InitRandom( void )
 {
 #ifdef DETERMINISTIC

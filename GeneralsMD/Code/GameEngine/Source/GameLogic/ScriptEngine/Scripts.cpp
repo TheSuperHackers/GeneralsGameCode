@@ -955,7 +955,8 @@ void Script::xfer( Xfer *xfer )
 {
 
 	// version
-	XferVersion currentVersion = 1;
+	// TheSuperHackers @fix bobtista 25/01/2026 Bumped version to 2 to add m_frameToEvaluateAt serialization.
+	XferVersion currentVersion = 2;
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
@@ -963,6 +964,15 @@ void Script::xfer( Xfer *xfer )
 	Bool active = isActive();
 	xfer->xferBool( &active );
 	setActive( active );
+
+	// TheSuperHackers @fix bobtista 25/01/2026 Serialize frameToEvaluateAt to fix checkpoint RNG divergence.
+	// Scripts with delayed evaluation have an absolute frame number stored in m_frameToEvaluateAt.
+	// Without serialization, this field resets to 0 after checkpoint load, causing scripts to
+	// evaluate at different times than in the original run.
+	if ( version >= 2 )
+	{
+		xfer->xferUnsignedInt( &m_frameToEvaluateAt );
+	}
 
 }
 

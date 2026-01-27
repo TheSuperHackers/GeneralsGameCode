@@ -21,6 +21,7 @@
 #include "Common/ReplaySimulation.h"
 
 #include "Common/GameEngine.h"
+#include "Common/GameState.h"
 #include "Common/LocalFileSystem.h"
 #include "Common/Recorder.h"
 #include "Common/WorkerProcess.h"
@@ -99,8 +100,27 @@ int ReplaySimulation::simulateReplaysInThisProcess(const std::vector<AsciiString
 					fflush(stdout);
 				}
 				TheGameLogic->UPDATE();
+
+				// Check for checkpoint save BEFORE checking for CRC mismatch
+				// so we can save checkpoints even if the replay will eventually fail
+				if (TheGlobalData->m_replaySaveAtFrame != 0 &&
+					TheGameLogic->getFrame() == TheGlobalData->m_replaySaveAtFrame &&
+					!TheGlobalData->m_replaySaveTo.isEmpty())
+				{
+					// TheSuperHackers @info bobtista 19/01/2026
+					// Pass just the filename to saveGame() - it will be saved to the Save directory.
+					SaveCode result = TheGameState->saveGame(TheGlobalData->m_replaySaveTo, UnicodeString::TheEmptyString, SAVE_FILE_TYPE_NORMAL);
+					if (result != SC_OK)
+					{
+						numErrors++;
+					}
+					TheRecorder->stopPlayback();
+					break;
+				}
+
 				if (TheRecorder->sawCRCMismatch())
 				{
+					DEBUG_LOG(("CRC mismatch at frame %d", TheGameLogic->getFrame()));
 					numErrors++;
 					break;
 				}
@@ -252,4 +272,96 @@ int ReplaySimulation::simulateReplays(const std::vector<AsciiString> &filenames,
 		return simulateReplaysInThisProcess(filenamesResolved);
 	else
 		return simulateReplaysInWorkerProcesses(filenamesResolved, maxProcesses);
+}
+
+int ReplaySimulation::continueReplayFromCheckpoint(const AsciiString &checkpointFile)
+{
+	int numErrors = 0;
+
+	// TheSuperHackers @info bobtista 19/01/2026
+	// We need to initialize the replay BEFORE loading the checkpoint because:
+	// 1. loadGame() calls startNewGame() which creates team prototypes based on the map
+	// 2. During replay playback, startNewGame() uses TheRecorder->getGameInfo() to get the correct team setup
+	// 3. But CHUNK_Recorder is loaded AFTER startNewGame() runs
+	// So we must initialize the replay first to provide the correct game info.
+	if (TheGlobalData->m_simulateReplays.empty())
+	{
+		DEBUG_LOG(("No replay file specified for checkpoint loading"));
+		return 1;
+	}
+
+	AsciiString replayFile = TheGlobalData->m_simulateReplays[0];
+	DEBUG_LOG(("Initializing replay from %s before loading checkpoint", replayFile.str()));
+
+	// Initialize the recorder from the replay file so that when loadGame() calls
+	// startNewGame(), it will have the correct game info from the replay header.
+	if (!TheRecorder->initializeReplayForCheckpointLoad(replayFile))
+	{
+		DEBUG_LOG(("Failed to initialize replay from %s", replayFile.str()));
+		return 1;
+	}
+
+	DEBUG_LOG(("Loading checkpoint from %s", checkpointFile.str()));
+
+	AvailableGameInfo gameInfo;
+	gameInfo.filename = checkpointFile;
+	TheGameState->getSaveGameInfoFromFile(checkpointFile, &gameInfo.saveGameInfo);
+
+	SaveCode result = TheGameState->loadGame(gameInfo);
+	if (result != SC_OK)
+	{
+		DEBUG_LOG(("Failed to load checkpoint (error %d)", result));
+		return 1;
+	}
+
+	if (!TheRecorder->isPlaybackMode())
+	{
+		DEBUG_LOG(("Checkpoint was not saved during replay playback"));
+		return 1;
+	}
+
+	DEBUG_LOG(("Resuming replay from frame %d", TheGameLogic->getFrame()));
+
+#ifdef _DEBUG
+	DWORD startTimeMillis = GetTickCount();
+	UnsignedInt totalTimeSec = TheRecorder->getPlaybackFrameCount() / LOGICFRAMES_PER_SECOND;
+#endif
+
+	while (TheRecorder->isPlaybackInProgress())
+	{
+		TheGameClient->updateHeadless();
+
+#ifdef _DEBUG
+		const int progressFrameInterval = 10*60*LOGICFRAMES_PER_SECOND;
+		if (TheGameLogic->getFrame() != 0 && TheGameLogic->getFrame() % progressFrameInterval == 0)
+		{
+			UnsignedInt gameTimeSec = TheGameLogic->getFrame() / LOGICFRAMES_PER_SECOND;
+			UnsignedInt realTimeSec = (GetTickCount()-startTimeMillis) / 1000;
+			DEBUG_LOG(("Elapsed Time: %02d:%02d Game Time: %02d:%02d/%02d:%02d",
+					realTimeSec/60, realTimeSec%60, gameTimeSec/60, gameTimeSec%60, totalTimeSec/60, totalTimeSec%60));
+		}
+#endif
+		TheGameLogic->UPDATE();
+		if (TheRecorder->sawCRCMismatch())
+		{
+			numErrors++;
+			break;
+		}
+	}
+
+#ifdef _DEBUG
+	{
+		UnsignedInt gameTimeSec = TheGameLogic->getFrame() / LOGICFRAMES_PER_SECOND;
+		UnsignedInt realTimeSec = (GetTickCount()-startTimeMillis) / 1000;
+		DEBUG_LOG(("Elapsed Time: %02d:%02d Game Time: %02d:%02d/%02d:%02d",
+				realTimeSec/60, realTimeSec%60, gameTimeSec/60, gameTimeSec%60, totalTimeSec/60, totalTimeSec%60));
+
+		if (TheRecorder->sawCRCMismatch())
+			DEBUG_LOG(("CRC Mismatch detected!"));
+		else
+			DEBUG_LOG(("Replay completed successfully"));
+	}
+#endif
+
+	return numErrors != 0 ? 1 : 0;
 }

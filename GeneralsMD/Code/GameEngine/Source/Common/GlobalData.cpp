@@ -983,6 +983,9 @@ GlobalData::GlobalData()
 
 	m_simulateReplays.clear();
 	m_simulateReplayJobs = SIMULATE_REPLAYS_SEQUENTIAL;
+	m_replaySaveAtFrame = 0;
+	m_replaySaveTo.clear();
+	m_loadReplayCheckpoint.clear();
 
 	for (i = LEVEL_FIRST; i <= LEVEL_LAST; ++i)
 		m_healthBonus[i] = 1.0f;

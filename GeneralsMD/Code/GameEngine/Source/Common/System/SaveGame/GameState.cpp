@@ -34,11 +34,13 @@
 #include "Common/GameEngine.h"
 #include "Common/GameState.h"
 #include "Common/GameStateMap.h"
+#include "Common/GlobalData.h"
 #include "Common/LatchRestore.h"
 #include "Common/MapObject.h"
 #include "Common/PlayerList.h"
 #include "Common/RandomValue.h"
 #include "Common/Radar.h"
+#include "Common/Recorder.h"
 #include "Common/Team.h"
 #include "Common/WellKnownKeys.h"
 #include "Common/XferLoad.h"
@@ -52,6 +54,7 @@
 #include "GameClient/InGameUI.h"
 #include "GameClient/ParticleSys.h"
 #include "GameClient/TerrainVisual.h"
+#include "GameLogic/AI.h"
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/GhostObject.h"
 #include "GameLogic/PartitionManager.h"
@@ -322,6 +325,9 @@ void GameState::init( void )
 	addSnapshotBlock( "CHUNK_ParticleSystem",					TheParticleSystemManager,	SNAPSHOT_SAVELOAD );
 	addSnapshotBlock( "CHUNK_TerrainVisual",					TheTerrainVisual,					SNAPSHOT_SAVELOAD );
 	addSnapshotBlock( "CHUNK_GhostObject",						TheGhostObjectManager,		SNAPSHOT_SAVELOAD );
+	addSnapshotBlock( "CHUNK_Recorder",							TheRecorder,							SNAPSHOT_SAVELOAD );
+	// TheSuperHackers @info bobtista 19/01/2026 TheAI state is included in CRC but was not saved
+	addSnapshotBlock( "CHUNK_AI",									TheAI,									SNAPSHOT_SAVELOAD );
 
 	// add all the snapshot objects to our list of data blocks for deep CRCs of logic
 	addSnapshotBlock( "CHUNK_TeamFactory",						TheTeamFactory,						SNAPSHOT_DEEPCRC_LOGICONLY );
@@ -330,6 +336,8 @@ void GameState::init( void )
 	addSnapshotBlock( "CHUNK_ScriptEngine",						TheScriptEngine,					SNAPSHOT_DEEPCRC_LOGICONLY );
 	addSnapshotBlock( "CHUNK_SidesList",							TheSidesList,							SNAPSHOT_DEEPCRC_LOGICONLY );
 	addSnapshotBlock( "CHUNK_Partition",							ThePartitionManager,			SNAPSHOT_DEEPCRC_LOGICONLY );
+	// TheSuperHackers @info bobtista 19/01/2026 TheAI state is included in CRC but was not in deep CRC list
+	addSnapshotBlock( "CHUNK_AI",									TheAI,									SNAPSHOT_DEEPCRC_LOGICONLY );
 
 	m_isInLoadGame = FALSE;
 
@@ -563,7 +571,8 @@ SaveCode GameState::saveGame( AsciiString filename, UnicodeString desc,
 		xferSave.open( filepath );
 	} catch(...) {
 		// print error message to the user
-		TheInGameUI->message( "GUI:Error" );
+		if (!TheGlobalData->m_headless)
+			TheInGameUI->message( "GUI:Error" );
 		DEBUG_LOG(( "Error opening file '%s'", filepath.str() ));
 		return SC_ERROR;
 	}
@@ -593,13 +602,16 @@ SaveCode GameState::saveGame( AsciiString filename, UnicodeString desc,
 	catch( ... )
 	{
 
-		UnicodeString ufilepath;
-		ufilepath.translate(filepath);
+		if (!TheGlobalData->m_headless)
+		{
+			UnicodeString ufilepath;
+			ufilepath.translate(filepath);
 
-		UnicodeString msg;
-		msg.format( TheGameText->fetch("GUI:ErrorSavingGame"), ufilepath.str() );
+			UnicodeString msg;
+			msg.format( TheGameText->fetch("GUI:ErrorSavingGame"), ufilepath.str() );
 
-		MessageBoxOk(TheGameText->fetch("GUI:Error"), msg, nullptr);
+			MessageBoxOk(TheGameText->fetch("GUI:Error"), msg, nullptr);
+		}
 
 		// close the file and get out of here
 		xferSave.close();
@@ -611,8 +623,11 @@ SaveCode GameState::saveGame( AsciiString filename, UnicodeString desc,
 	xferSave.close();
 
 	// print message to the user for game successfully saved
-	UnicodeString msg = TheGameText->fetch( "GUI:GameSaveComplete" );
-	TheInGameUI->message( msg );
+	if (!TheGlobalData->m_headless)
+	{
+		UnicodeString msg = TheGameText->fetch( "GUI:GameSaveComplete" );
+		TheInGameUI->message( msg );
+	}
 
 	return SC_OK;
 
@@ -719,13 +734,16 @@ SaveCode GameState::loadGame( AvailableGameInfo gameInfo )
 		TheGameEngine->reset();
 
 		// print error message to the user
-		UnicodeString ufilepath;
-		ufilepath.translate(filepath);
+		if (!TheGlobalData->m_headless)
+		{
+			UnicodeString ufilepath;
+			ufilepath.translate(filepath);
 
-		UnicodeString msg;
-		msg.format( TheGameText->fetch("GUI:ErrorLoadingGame"), ufilepath.str() );
+			UnicodeString msg;
+			msg.format( TheGameText->fetch("GUI:ErrorLoadingGame"), ufilepath.str() );
 
-		MessageBoxOk(TheGameText->fetch("GUI:Error"), msg, nullptr);
+			MessageBoxOk(TheGameText->fetch("GUI:Error"), msg, nullptr);
+		}
 
 		return SC_INVALID_DATA;	// you can't use a naked "throw" outside of a catch statement!
 
@@ -769,6 +787,12 @@ AsciiString GameState::getSaveDirectory() const
 //-------------------------------------------------------------------------------------------------
 AsciiString GameState::getFilePathInSaveDirectory(const AsciiString& leaf) const
 {
+	// TheSuperHackers @bugfix bobtista 22/01/2026 Check if path is already absolute (starts with drive letter or UNC path)
+	if (leaf.getLength() >= 2 && leaf.getCharAt(1) == ':')
+		return leaf;  // Already an absolute path like "C:\..."
+	if (leaf.getLength() >= 2 && (leaf.getCharAt(0) == '\\' && leaf.getCharAt(1) == '\\'))
+		return leaf;  // UNC path like "\\server\..."
+
 	AsciiString tmp = getSaveDirectory();
 	tmp.concat(leaf);
 	return tmp;
@@ -990,8 +1014,9 @@ void GameState::getSaveGameInfoFromFile( AsciiString filename, SaveGameInfo *sav
 	}
 
 	// open file for partial loading
+	AsciiString filepath = getFilePathInSaveDirectory(filename);
 	XferLoad xferLoad;
-	xferLoad.open( filename );
+	xferLoad.open( filepath );
 
 	//
 	// disable post processing cause we're not really doing a load of game data that
@@ -1365,6 +1390,26 @@ void GameState::xferSaveData( Xfer *xfer, SnapshotType which )
 
 			DEBUG_LOG(("Looking at block '%s'", blockName.str()));
 
+			// Skip blocks with nullptr snapshot (can happen in headless mode)
+			if( blockInfo->snapshot == nullptr )
+			{
+				DEBUG_LOG(("Skipping block '%s' because snapshot is nullptr", blockName.str()));
+				continue;
+			}
+
+			// Skip visual-only blocks when saving in headless mode
+			// Note: CHUNK_TerrainVisual must NOT be skipped because it contains the height map data
+			// which is used by game logic for getGroundHeight() calculations. Building construction
+			// modifies the height map to flatten terrain, and this data must be preserved in saves.
+			if( TheGlobalData->m_headless &&
+				(blockName.compareNoCase( "CHUNK_TacticalView" ) == 0 ||
+				 blockName.compareNoCase( "CHUNK_ParticleSystem" ) == 0 ||
+				 blockName.compareNoCase( "CHUNK_GhostObject" ) == 0) )
+			{
+				DEBUG_LOG(("Skipping block '%s' in headless mode", blockName.str()));
+				continue;
+			}
+
 			//
 			// for mission save files, we only save the game state block and campaign manager
 			// because anything else is not needed.
@@ -1552,6 +1597,16 @@ void GameState::gameStatePostProcessLoad( void )
 
 	// clear the snapshot post process list as we are now done with it
 	m_snapshotPostProcessList.clear();
+
+	// TheSuperHackers @bugfix bobtista 20/01/2026 Initialize m_lastCell for all dirty modules before
+	// running the partition update when loading a replay checkpoint. Without this, the partition update
+	// triggers handleShroud() on objects whose m_lastCell (not serialized) differs from their actual
+	// cell position, which causes unlook()+look() to run and corrupts the shroud state.
+	Bool isReplayCheckpoint = (TheRecorder && TheRecorder->isPlaybackMode());
+	if ( isReplayCheckpoint )
+	{
+		ThePartitionManager->initLastCellsForDirtyModules();
+	}
 
 	// evil... must ensure this is updated prior to the script engine running the first time.
 	ThePartitionManager->update();

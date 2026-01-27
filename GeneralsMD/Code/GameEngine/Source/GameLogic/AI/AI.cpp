@@ -43,6 +43,7 @@
 #include "GameLogic/ScriptEngine.h"
 #include "GameLogic/SidesList.h"
 #include "GameLogic/AIPathfind.h"
+#include "GameLogic/GameLogic.h"
 #include "GameLogic/Weapon.h"
 
 extern void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color);
@@ -988,9 +989,38 @@ void TAiData::xfer( Xfer *xfer )
 {
 
 	// version
-	XferVersion currentVersion = 1;
+	XferVersion currentVersion = 2;
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
+
+	// TheSuperHackers @info bobtista 20/01/2026 Serialize all TAiData state that is included in CRC.
+	if ( version >= 2 )
+	{
+		xfer->xferReal( &m_structureSeconds );
+		xfer->xferReal( &m_teamSeconds );
+		xfer->xferInt( &m_resourcesWealthy );
+		xfer->xferInt( &m_resourcesPoor );
+		xfer->xferUnsignedInt( &m_forceIdleFramesCount );
+		xfer->xferReal( &m_structuresWealthyMod );
+		xfer->xferReal( &m_teamWealthyMod );
+		xfer->xferReal( &m_structuresPoorMod );
+		xfer->xferReal( &m_teamPoorMod );
+		xfer->xferReal( &m_teamResourcesToBuild );
+		xfer->xferReal( &m_guardInnerModifierAI );
+		xfer->xferReal( &m_guardOuterModifierAI );
+		xfer->xferReal( &m_guardInnerModifierHuman );
+		xfer->xferReal( &m_guardOuterModifierHuman );
+		xfer->xferUnsignedInt( &m_guardChaseUnitFrames );
+		xfer->xferUnsignedInt( &m_guardEnemyScanRate );
+		xfer->xferUnsignedInt( &m_guardEnemyReturnScanRate );
+		xfer->xferReal( &m_alertRangeModifier );
+		xfer->xferReal( &m_aggressiveRangeModifier );
+		xfer->xferReal( &m_attackPriorityDistanceModifier );
+		xfer->xferReal( &m_maxRecruitDistance );
+		xfer->xferReal( &m_skirmishBaseDefenseExtraDistance );
+		xfer->xferReal( &m_repulsedDistance );
+		xfer->xferBool( &m_enableRepulsors );
+	}
 
 }
 
@@ -1003,9 +1033,16 @@ void TAiData::loadPostProcess( void )
 //-----------------------------------------------------------------------------
 void AI::crc( Xfer *xfer )
 {
+	// TheSuperHackers @debug bobtista 23/01/2026 Add detailed CRC logging to find divergence
+	Int frame = TheGameLogic->getFrame();
+	Bool logDetail = (frame >= 4 && frame <= 6);
 
 	xfer->xferSnapshot( m_pathfinder );
 	CRCGEN_LOG(("CRC after AI pathfinder for frame %d is 0x%8.8X", TheGameLogic->getFrame(), ((XferCRC *)xfer)->getCRC()));
+	if (logDetail)
+	{
+		DEBUG_LOG(("AI::crc[%d] after pathfinder: 0x%08X", frame, ((XferCRC *)xfer)->getCRC()));
+	}
 
 	AsciiString marker;
 	TAiData *aiData = m_aiData;
@@ -1016,7 +1053,12 @@ void AI::crc( Xfer *xfer )
 		xfer->xferSnapshot( aiData );
 		aiData = aiData->m_next;
 	}
+	if (logDetail)
+	{
+		DEBUG_LOG(("AI::crc[%d] after TAiData: 0x%08X", frame, ((XferCRC *)xfer)->getCRC()));
+	}
 
+	Int groupCount = 0;
 	for (std::list<AIGroup *>::iterator groupIt = m_groupList.begin(); groupIt != m_groupList.end(); ++groupIt)
 	{
 		if (*groupIt)
@@ -1024,7 +1066,17 @@ void AI::crc( Xfer *xfer )
 			marker = "MARKER:AIGroup";
 			xfer->xferAsciiString(&marker);
 			xfer->xferSnapshot( (*groupIt) );
+			groupCount++;
+			if (logDetail)
+			{
+				DEBUG_LOG(("AI::crc[%d] after AIGroup %d (id=%u): 0x%08X",
+					frame, groupCount, (*groupIt)->getID(), ((XferCRC *)xfer)->getCRC()));
+			}
 		}
+	}
+	if (logDetail)
+	{
+		DEBUG_LOG(("AI::crc[%d] total groups: %d, final: 0x%08X", frame, groupCount, ((XferCRC *)xfer)->getCRC()));
 	}
 
 }
@@ -1034,16 +1086,78 @@ void AI::xfer( Xfer *xfer )
 {
 
 	// version
-	XferVersion currentVersion = 1;
+	XferVersion currentVersion = 3;
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
+
+	// TheSuperHackers @debug bobtista 23/01/2026 Log partial CRCs during AI xfer
+	Bool logPartialCRC = (xfer->getXferMode() == XFER_CRC && TheGameLogic && TheGameLogic->getFrame() >= 4 && TheGameLogic->getFrame() <= 6);
+	XferCRC *xferCRC = logPartialCRC ? static_cast<XferCRC *>(xfer) : nullptr;
+
+	// TheSuperHackers @info bobtista 20/01/2026 Serialize AI state that is included in CRC.
+	if ( version >= 2 )
+	{
+		xfer->xferSnapshot( m_pathfinder );
+		if (logPartialCRC)
+			DEBUG_LOG(("AI::xfer[%d] after pathfinder: 0x%08X", TheGameLogic->getFrame(), xferCRC->getCRC()));
+
+		// TheSuperHackers @info bobtista 20/01/2026 Serialize the next group ID counter
+		if ( version >= 3 )
+		{
+			xfer->xferUnsignedInt( &m_nextGroupID );
+			if (logPartialCRC)
+				DEBUG_LOG(("AI::xfer[%d] after m_nextGroupID (%u): 0x%08X", TheGameLogic->getFrame(), m_nextGroupID, xferCRC->getCRC()));
+		}
+
+		// Serialize TAiData chain (same as crc())
+		TAiData *aiData = m_aiData;
+		while ( aiData )
+		{
+			xfer->xferSnapshot( aiData );
+			aiData = aiData->m_next;
+		}
+		if (logPartialCRC)
+			DEBUG_LOG(("AI::xfer[%d] after TAiData chain: 0x%08X", TheGameLogic->getFrame(), xferCRC->getCRC()));
+
+		// Serialize AIGroup count and each group
+		Int groupCount = (Int)m_groupList.size();
+		xfer->xferInt( &groupCount );
+		if (logPartialCRC)
+			DEBUG_LOG(("AI::xfer[%d] after groupCount (%d): 0x%08X", TheGameLogic->getFrame(), groupCount, xferCRC->getCRC()));
+
+		if ( xfer->getXferMode() == XFER_SAVE )
+		{
+			for ( std::list<AIGroup *>::iterator groupIt = m_groupList.begin(); groupIt != m_groupList.end(); ++groupIt )
+			{
+				if ( *groupIt )
+				{
+					xfer->xferSnapshot( *groupIt );
+				}
+			}
+		}
+		else
+		{
+			// On load, iterate through existing groups and xfer them
+			// Groups should already exist from normal save/load process
+			std::list<AIGroup *>::iterator groupIt = m_groupList.begin();
+			for ( Int i = 0; i < groupCount && groupIt != m_groupList.end(); ++i, ++groupIt )
+			{
+				if ( *groupIt )
+				{
+					xfer->xferSnapshot( *groupIt );
+				}
+			}
+		}
+	}
 
 }
 
 //-----------------------------------------------------------------------------
 void AI::loadPostProcess( void )
 {
-
+	// Note: Pathfinder::loadPostProcess is already called by the snapshot post-processing system
+	// because AI::xfer calls xferSnapshot(m_pathfinder) which adds the pathfinder to the
+	// post-process list. No need to call it explicitly here.
 }
 
 

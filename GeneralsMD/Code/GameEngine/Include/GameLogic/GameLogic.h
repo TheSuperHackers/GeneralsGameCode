@@ -317,6 +317,14 @@ private:
 	Bool m_loadingSave;
 	Bool m_clearingGameData;
 
+	// TheSuperHackers @info bobtista 19/01/2026 Store RNG state during xfer LOAD to restore in getCRC
+	Bool m_pendingRngRestore;
+	UnsignedInt m_pendingRngState[6];
+	UnsignedInt m_pendingRngBaseSeed;
+
+	// TheSuperHackers @info bobtista 21/01/2026 Store sleepy update heap order during xfer LOAD
+	std::vector<std::pair<ObjectID, NameKeyType>> m_pendingSleepyUpdateOrder;
+
 	Bool m_isInUpdate;
 	Bool m_hasUpdated;
 

@@ -278,6 +278,16 @@ void WeaponSet::xfer( Xfer *xfer )
 			}
 			xfer->xferSnapshot(m_weapons[i]);
 		}
+		else if (xfer->getXferMode() == XFER_LOAD && m_weapons[i] != nullptr)
+		{
+			// TheSuperHackers @bugfix bobtista 25/01/2026 Delete weapon that was pre-created by Object::init()
+			// but should not exist according to the saved state. This can happen when Object::init()
+			// creates a weapon based on template defaults, but the checkpoint was saved when the
+			// weapon flag was cleared.
+			deleteInstance(m_weapons[i]);
+			m_weapons[i] = nullptr;
+			m_filledWeaponSlotMask &= ~(1 << i);
+		}
 	}
 	xfer->xferUser(&m_curWeapon, sizeof(m_curWeapon));
 	xfer->xferUser(&m_curWeaponLockedStatus, sizeof(m_curWeaponLockedStatus));
@@ -313,10 +323,34 @@ void WeaponSet::loadPostProcess( void )
 }
 
 //-------------------------------------------------------------------------------------------------
+// TheSuperHackers @bugfix bobtista 22/01/2026 Properly sync the template pointer after checkpoint load.
+// After load, m_curWeaponTemplateSet might point to a different address than what
+// obj->getTemplate()->findWeaponTemplateSet() returns due to template lookup differences.
+// This method updates the pointer without reallocating weapons, fixing the root cause
+// of weapon timing corruption after checkpoint load.
+//-------------------------------------------------------------------------------------------------
+void WeaponSet::syncTemplatePointerAfterLoad(const Object* obj)
+{
+	if (m_curWeaponTemplateSet == nullptr)
+		return;
+
+	const WeaponTemplateSet* set = obj->getTemplate()->findWeaponTemplateSet(obj->getWeaponSetFlags());
+	if (set != nullptr && set != m_curWeaponTemplateSet)
+	{
+		// Update the pointer to match what updateWeaponSet would use, without reallocating weapons.
+		// The weapons are already correct from xfer load, we just need the pointer to be consistent.
+		m_curWeaponTemplateSet = set;
+	}
+}
+
+//-------------------------------------------------------------------------------------------------
 void WeaponSet::updateWeaponSet(const Object* obj)
 {
 	const WeaponTemplateSet* set = obj->getTemplate()->findWeaponTemplateSet(obj->getWeaponSetFlags());
 	DEBUG_ASSERTCRASH(set, ("findWeaponSet should never return null"));
+	// Note: After checkpoint load, syncTemplatePointerAfterLoad() is called from Object::loadPostProcess()
+	// to ensure m_curWeaponTemplateSet matches what this function would look up. This avoids the
+	// unnecessary weapon reallocation that would corrupt timing state.
 	if (set && set != m_curWeaponTemplateSet)
 	{
 		if( ! set->isWeaponLockSharedAcrossSets() )

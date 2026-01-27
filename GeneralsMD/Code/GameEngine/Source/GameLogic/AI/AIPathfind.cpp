@@ -279,7 +279,7 @@ void Path::crc( Xfer *xfer )
 void Path::xfer( Xfer *xfer )
 {
   // version
-  XferVersion currentVersion = 1;
+  XferVersion currentVersion = 2;
   XferVersion version = currentVersion;
   xfer->xferVersion( &version, currentVersion );
 
@@ -312,7 +312,11 @@ void Path::xfer( Xfer *xfer )
 		}
 		DEBUG_ASSERTCRASH(count==0, ("Wrong data count"));
 	} else {
-		m_cpopValid = FALSE;
+		// TheSuperHackers @info bobtista 20/01/2026 Cache invalidation moved to version < 2
+		if ( version < 2 )
+		{
+			m_cpopValid = FALSE;
+		}
 		while (count) {
 			Int nodeId;
 			xfer->xferInt(&nodeId);
@@ -354,6 +358,43 @@ void Path::xfer( Xfer *xfer )
 	UnsignedInt obsolete2;
 	xfer->xferUnsignedInt(&obsolete2);
 	xfer->xferBool(&m_blockedByAlly);
+
+	// TheSuperHackers @fix bobtista 20/01/2026
+	// Serialize path cache state to ensure consistent behavior after checkpoint load.
+	// Without this, path computation may iterate differently causing CRC divergence.
+	if ( version >= 2 )
+	{
+		xfer->xferBool(&m_cpopValid);
+		xfer->xferInt(&m_cpopCountdown);
+		xfer->xferCoord3D(&m_cpopIn);
+		xfer->xferReal(&m_cpopOut.distAlongPath);
+		xfer->xferCoord3D(&m_cpopOut.posOnPath);
+		xfer->xferUser(&m_cpopOut.layer, sizeof(m_cpopOut.layer));
+
+		// Save/restore m_cpopRecentStart as node ID
+		Int recentStartId = -1;
+		if ( xfer->getXferMode() == XFER_SAVE )
+		{
+			if ( m_cpopRecentStart )
+			{
+				recentStartId = m_cpopRecentStart->m_id;
+			}
+		}
+		xfer->xferInt(&recentStartId);
+		if ( xfer->getXferMode() == XFER_LOAD )
+		{
+			m_cpopRecentStart = nullptr;
+			if ( recentStartId > 0 )
+			{
+				PathNode *searchNode = m_path;
+				while ( searchNode && searchNode->m_id != recentStartId )
+				{
+					searchNode = searchNode->getNext();
+				}
+				m_cpopRecentStart = searchNode;
+			}
+		}
+	}
 
 
 #if defined(RTS_DEBUG)
@@ -776,7 +817,6 @@ void Path::computePointOnPath(
 	{
 		out = m_cpopOut;
 		m_cpopCountdown--;
-		CRCDEBUG_LOG(("Path::computePointOnPath() end because we're really close"));
 		return;
 	}
 	m_cpopCountdown = MAX_CPOP;
@@ -2250,16 +2290,37 @@ void ZoneBlock::blockCalculateZones(PathfindCell **map, PathfindLayer layers[], 
 {
 	Int i, j;
 	m_cellOrigin = bounds.lo;
-	UnsignedInt minZone = map[bounds.lo.x][bounds.lo.y].getZone();
-	UnsignedInt maxZone = minZone;
+
+	// TheSuperHackers @fix bobtista 21/01/2026
+	// During checkpoint load, some cells may have zone 0 (UNINITIALIZED_ZONE) which is
+	// valid for cells under objects. We skip zone-0 cells when calculating min/max zones
+	// to avoid including them in the zone range. This allows blockCalculateZones() to work
+	// correctly after checkpoint loading where serialized zones include zone-0 cells.
+	UnsignedInt minZone = 0;
+	UnsignedInt maxZone = 0;
+	Bool foundValidZone = FALSE;
 
 	for( j=bounds.lo.y; j<=bounds.hi.y; j++ )	{
 		for( i=bounds.lo.x; i<=bounds.hi.x; i++ )	{
 			PathfindCell *cell = &map[i][j];
 			zoneStorageType zone = cell->getZone();
-			if (minZone>zone) minZone=zone;
-			if (maxZone<zone) maxZone=zone;
+			// Skip zone 0 (cells under objects or uninitialized cells)
+			if (zone == 0) continue;
+			if (!foundValidZone) {
+				minZone = zone;
+				maxZone = zone;
+				foundValidZone = TRUE;
+			} else {
+				if (minZone>zone) minZone=zone;
+				if (maxZone<zone) maxZone=zone;
+			}
 		}
+	}
+
+	// If no valid zones found, treat block as single zone
+	if (!foundValidZone) {
+		minZone = 1;
+		maxZone = 1;
 	}
 	m_firstZone = minZone;
 	m_numZones = 1 + maxZone - minZone;
@@ -2278,36 +2339,46 @@ void ZoneBlock::blockCalculateZones(PathfindCell **map, PathfindLayer layers[], 
 
 	for( j=bounds.lo.y; j<=bounds.hi.y; j++ )	{
 		for( i=bounds.lo.x; i<=bounds.hi.x; i++ )	{
-			if (i>bounds.lo.x && map[i][j].getZone()!=map[i-1][j].getZone()) {
+			// TheSuperHackers @fix bobtista 21/01/2026
+			// Skip zone-0 cells (cells under objects or uninitialized) when building zone equivalencies.
+			// These cells are not pathable anyway, so they don't need to be included in zone connectivity.
+			zoneStorageType thisZone = map[i][j].getZone();
+			if (thisZone == 0) continue;
 
-				if (waterGround(map[i][j], map[i-1][j])) {
-					applyBlockZone(map[i][j], map[i-1][j], m_groundWaterZones, m_firstZone, m_numZones);
-				}
-				if (groundRubble(map[i][j], map[i-1][j])) {
-					applyBlockZone(map[i][j], map[i-1][j], m_groundRubbleZones, m_firstZone, m_numZones);
-				}
-				if (groundCliff(map[i][j], map[i-1][j])) {
-					applyBlockZone(map[i][j], map[i-1][j], m_groundCliffZones, m_firstZone, m_numZones);
-				}
-				if (crusherGround(map[i][j], map[i-1][j])) {
-					applyBlockZone(map[i][j], map[i-1][j], m_crusherZones, m_firstZone, m_numZones);
-				}
-			}
-			if (j>bounds.lo.y && map[i][j].getZone()!=map[i][j-1].getZone()) {
-				if (waterGround(map[i][j],map[i][j-1])) {
-					applyBlockZone(map[i][j], map[i][j-1], m_groundWaterZones, m_firstZone, m_numZones);
-				}
-				if (groundRubble(map[i][j], map[i][j-1])) {
-					applyBlockZone(map[i][j], map[i][j-1], m_groundRubbleZones, m_firstZone, m_numZones);
-				}
-				if (groundCliff(map[i][j],map[i][j-1])) {
-					applyBlockZone(map[i][j], map[i][j-1], m_groundCliffZones, m_firstZone, m_numZones);
-				}
-				if (crusherGround(map[i][j], map[i][j-1])) {
-					applyBlockZone(map[i][j], map[i][j-1], m_crusherZones, m_firstZone, m_numZones);
+			if (i>bounds.lo.x) {
+				zoneStorageType leftZone = map[i-1][j].getZone();
+				if (leftZone != 0 && thisZone != leftZone) {
+					if (waterGround(map[i][j], map[i-1][j])) {
+						applyBlockZone(map[i][j], map[i-1][j], m_groundWaterZones, m_firstZone, m_numZones);
+					}
+					if (groundRubble(map[i][j], map[i-1][j])) {
+						applyBlockZone(map[i][j], map[i-1][j], m_groundRubbleZones, m_firstZone, m_numZones);
+					}
+					if (groundCliff(map[i][j], map[i-1][j])) {
+						applyBlockZone(map[i][j], map[i-1][j], m_groundCliffZones, m_firstZone, m_numZones);
+					}
+					if (crusherGround(map[i][j], map[i-1][j])) {
+						applyBlockZone(map[i][j], map[i-1][j], m_crusherZones, m_firstZone, m_numZones);
+					}
 				}
 			}
-			DEBUG_ASSERTCRASH(map[i][j].getZone() != 0, ("Cleared the zone."));
+			if (j>bounds.lo.y) {
+				zoneStorageType topZone = map[i][j-1].getZone();
+				if (topZone != 0 && thisZone != topZone) {
+					if (waterGround(map[i][j],map[i][j-1])) {
+						applyBlockZone(map[i][j], map[i][j-1], m_groundWaterZones, m_firstZone, m_numZones);
+					}
+					if (groundRubble(map[i][j], map[i][j-1])) {
+						applyBlockZone(map[i][j], map[i][j-1], m_groundRubbleZones, m_firstZone, m_numZones);
+					}
+					if (groundCliff(map[i][j],map[i][j-1])) {
+						applyBlockZone(map[i][j], map[i][j-1], m_groundCliffZones, m_firstZone, m_numZones);
+					}
+					if (crusherGround(map[i][j], map[i][j-1])) {
+						applyBlockZone(map[i][j], map[i][j-1], m_crusherZones, m_firstZone, m_numZones);
+					}
+				}
+			}
 		}
 	}
 
@@ -5795,14 +5866,33 @@ void Pathfinder::processPathfindQueue(void)
 #ifdef DEBUG_QPF
 	Int pathsFound = 0;
 #endif
+
+	// TheSuperHackers @debug bobtista 23/01/2026 Log pathfind queue processing for checkpoint debugging
+	Int frame = TheGameLogic->getFrame();
+	Bool logPathfindDetail = (frame >= 1 && frame <= 6);
+	if (logPathfindDetail)
+	{
+		DEBUG_LOG(("Pathfind[%d] START: head=%d tail=%d queueSize=%d",
+			frame, m_queuePRHead, m_queuePRTail,
+			(m_queuePRTail >= m_queuePRHead) ? (m_queuePRTail - m_queuePRHead) : (PATHFIND_QUEUE_LEN - m_queuePRHead + m_queuePRTail)));
+	}
+
 	while (m_cumulativeCellsAllocated < PATHFIND_CELLS_PER_FRAME &&
 		m_queuePRTail!=m_queuePRHead) {
-		Object *obj = TheGameLogic->findObjectByID(m_queuedPathfindRequests[m_queuePRHead]);
+		ObjectID processedId = m_queuedPathfindRequests[m_queuePRHead];
+		Object *obj = TheGameLogic->findObjectByID(processedId);
 		m_queuedPathfindRequests[m_queuePRHead] = INVALID_ID;
 		if (obj) {
 			AIUpdateInterface *ai = obj->getAIUpdateInterface();
 			if (ai) {
+				Int cellsBefore = m_cumulativeCellsAllocated;
 				ai->doPathfind(this);
+				if (logPathfindDetail)
+				{
+					DEBUG_LOG(("Pathfind[%d] Processed obj %u (%s): cells %d -> %d (delta=%d)",
+						frame, processedId, obj->getTemplate()->getName().str(),
+						cellsBefore, m_cumulativeCellsAllocated, m_cumulativeCellsAllocated - cellsBefore));
+				}
 #ifdef DEBUG_QPF
 				pathsFound++;
 #endif
@@ -5812,6 +5902,12 @@ void Pathfinder::processPathfindQueue(void)
 		if (m_queuePRHead >= PATHFIND_QUEUE_LEN) {
 			m_queuePRHead = 0;
 		}
+	}
+
+	if (logPathfindDetail)
+	{
+		DEBUG_LOG(("Pathfind[%d] END: head=%d tail=%d totalCells=%d",
+			frame, m_queuePRHead, m_queuePRTail, m_cumulativeCellsAllocated));
 	}
 	if (pathsFound>0) {
 #ifdef DEBUG_QPF
@@ -6225,6 +6321,7 @@ Path *Pathfinder::findPath( Object *obj, const LocomotorSet& locomotorSet, const
 
 	m_zoneManager.clearPassableFlags();
 	Path *hPat = findHierarchicalPath(isHuman, locomotorSet, from, rawTo, false);
+	CRCDEBUG_LOG(("Pathfinder::findPath() for obj %d, hPat=%s", obj ? obj->getID() : 0, hPat ? "found" : "null"));
 	if (hPat) {
 		deleteInstance(hPat);
 	}	else {
@@ -6233,6 +6330,15 @@ Path *Pathfinder::findPath( Object *obj, const LocomotorSet& locomotorSet, const
 
 	Path *pat = internalFindPath(obj, locomotorSet, from, rawTo);
 	if (pat!=nullptr) {
+		Int nodeCount = 0;
+		Bool hasElevatedNodes = FALSE;
+		PathNode *node = pat->getFirstNode();
+		while (node) {
+			nodeCount++;
+			if (node->getPosition()->z > 10.0f) hasElevatedNodes = TRUE;
+			node = node->getNext();
+		}
+		CRCDEBUG_LOG(("Pathfinder::findPath() result for obj %d: %d nodes, elevated=%d", obj ? obj->getID() : 0, nodeCount, hasElevatedNodes));
 		return pat;
 	}
 
@@ -7371,8 +7477,12 @@ Path *Pathfinder::internal_findHierarchicalPath( Bool isHuman, const LocomotorSu
 
 	Int zone1, zone2;
 	// m_isCrusher = false;
-	zone1 = m_zoneManager.getEffectiveZone(locomotorSurface, false, parentCell->getZone());
-	zone2 =  m_zoneManager.getEffectiveZone(locomotorSurface, false, goalCell->getZone());
+	zoneStorageType parentRawZone = parentCell->getZone();
+	zoneStorageType goalRawZone = goalCell->getZone();
+	zone1 = m_zoneManager.getEffectiveZone(locomotorSurface, false, parentRawZone);
+	zone2 =  m_zoneManager.getEffectiveZone(locomotorSurface, false, goalRawZone);
+
+	CRCDEBUG_LOG(("internal_findHierarchicalPath: parentZone=%d->%d, goalZone=%d->%d", parentRawZone, zone1, goalRawZone, zone2));
 
 	if ( zone1 != zone2) {
 		goalCell->releaseInfo();
@@ -7400,6 +7510,13 @@ Path *Pathfinder::internal_findHierarchicalPath( Bool isHuman, const LocomotorSu
 		goalBlockNdx.x = -1;
 		goalBlockNdx.y = -1;
 	}
+
+	zoneStorageType startBlockZone = m_zoneManager.getBlockZone(locomotorSurface,
+		crusher, parentCell->getXIndex(), parentCell->getYIndex(), m_map);
+	CRCDEBUG_LOG(("internal_findHierarchicalPath: startCell(%d,%d) type=%d zone=%d, goalCell(%d,%d) type=%d zone=%d",
+		parentCell->getXIndex(), parentCell->getYIndex(), parentCell->getType(), parentRawZone,
+		goalCell->getXIndex(), goalCell->getYIndex(), goalCell->getType(), goalRawZone));
+	CRCDEBUG_LOG(("internal_findHierarchicalPath: startBlockZone=%d, goalBlockZone=%d", startBlockZone, goalBlockZone));
 
 	// initialize "open" list to contain start cell
 	m_openList = parentCell;
@@ -11154,22 +11271,32 @@ Path *Pathfinder::findSafePath( const Object *obj, const LocomotorSet& locomotor
 //-----------------------------------------------------------------------------
 void Pathfinder::crc( Xfer *xfer )
 {
+	// TheSuperHackers @debug bobtista 23/01/2026 Log pathfinder state for debugging divergence
+	Int frame = TheGameLogic->getFrame();
+	Bool logDetail = (frame >= 4 && frame <= 6);
+
 	CRCDEBUG_LOG(("Pathfinder::crc() on frame %d", TheGameLogic->getFrame()));
 	CRCDEBUG_LOG(("beginning CRC: %8.8X", ((XferCRC *)xfer)->getCRC()));
 
 	xfer->xferUser( &m_extent, sizeof(IRegion2D) );
 	CRCDEBUG_LOG(("m_extent: %8.8X", ((XferCRC *)xfer)->getCRC()));
+	if (logDetail)
+		DEBUG_LOG(("Pathfinder[%d] m_extent=(%d,%d,%d,%d)", frame, m_extent.lo.x, m_extent.lo.y, m_extent.hi.x, m_extent.hi.y));
 
 	xfer->xferBool( &m_isMapReady );
 	CRCDEBUG_LOG(("m_isMapReady: %8.8X", ((XferCRC *)xfer)->getCRC()));
 	xfer->xferBool( &m_isTunneling );
 	CRCDEBUG_LOG(("m_isTunneling: %8.8X", ((XferCRC *)xfer)->getCRC()));
+	if (logDetail)
+		DEBUG_LOG(("Pathfinder[%d] m_isMapReady=%d m_isTunneling=%d", frame, m_isMapReady, m_isTunneling));
 
 	Int obsolete1 = 0;
 	xfer->xferInt( &obsolete1 );
 
 	xfer->xferUser(&m_ignoreObstacleID, sizeof(ObjectID));
 	CRCDEBUG_LOG(("m_ignoreObstacleID: %8.8X", ((XferCRC *)xfer)->getCRC()));
+	if (logDetail)
+		DEBUG_LOG(("Pathfinder[%d] m_ignoreObstacleID=%u", frame, m_ignoreObstacleID));
 
 	xfer->xferUser(m_queuedPathfindRequests, sizeof(ObjectID)*PATHFIND_QUEUE_LEN);
 	CRCDEBUG_LOG(("m_queuedPathfindRequests: %8.8X", ((XferCRC *)xfer)->getCRC()));
@@ -11177,35 +11304,270 @@ void Pathfinder::crc( Xfer *xfer )
 	CRCDEBUG_LOG(("m_queuePRHead: %8.8X", ((XferCRC *)xfer)->getCRC()));
 	xfer->xferInt(&m_queuePRTail);
 	CRCDEBUG_LOG(("m_queuePRTail: %8.8X", ((XferCRC *)xfer)->getCRC()));
+	if (logDetail)
+		DEBUG_LOG(("Pathfinder[%d] m_queuePRHead=%d m_queuePRTail=%d", frame, m_queuePRHead, m_queuePRTail));
 
 	xfer->xferInt(&m_numWallPieces);
 	CRCDEBUG_LOG(("m_numWallPieces: %8.8X", ((XferCRC *)xfer)->getCRC()));
+	// TheSuperHackers @bugfix bobtista 22/01/2026 Fix out-of-bounds array access - was using MAX_WALL_PIECES instead of i
 	for (Int i=0; i<MAX_WALL_PIECES; ++i)
 	{
-		xfer->xferObjectID(&m_wallPieces[MAX_WALL_PIECES]);
+		xfer->xferObjectID(&m_wallPieces[i]);
 	}
 	CRCDEBUG_LOG(("m_wallPieces: %8.8X", ((XferCRC *)xfer)->getCRC()));
+	if (logDetail)
+		DEBUG_LOG(("Pathfinder[%d] m_numWallPieces=%d", frame, m_numWallPieces));
 
 	xfer->xferReal(&m_wallHeight);
 	CRCDEBUG_LOG(("m_wallHeight: %8.8X", ((XferCRC *)xfer)->getCRC()));
 	xfer->xferInt(&m_cumulativeCellsAllocated);
 	CRCDEBUG_LOG(("m_cumulativeCellsAllocated: %8.8X", ((XferCRC *)xfer)->getCRC()));
+	if (logDetail)
+		DEBUG_LOG(("Pathfinder[%d] m_wallHeight=%f m_cumulativeCellsAllocated=%d", frame, m_wallHeight, m_cumulativeCellsAllocated));
 
 }
 
 //-----------------------------------------------------------------------------
 void Pathfinder::xfer( Xfer *xfer )
 {
-
-	// version
-	XferVersion currentVersion = 1;
+	// TheSuperHackers @info bobtista 21/01/2026
+	// Version 2 serializes all pathfinder state needed for checkpoint CRC matching:
+	// - Queue state (used in CRC calculation)
+	// - Extent, map ready state, tunneling, obstacle ID, wall pieces
+	// - Zone manager arrays (for hierarchical pathfinding)
+	// - Layer destroyed state (bridges)
+	// - Per-cell zones (for exact zone lookup restoration)
+	XferVersion currentVersion = 2;
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
+
+	// Serialize pathfinder queue state (included in CRC calculation)
+	xfer->xferInt( &m_queuePRHead );
+	xfer->xferInt( &m_queuePRTail );
+	for ( Int i = 0; i < PATHFIND_QUEUE_LEN; ++i )
+	{
+		xfer->xferObjectID( &m_queuedPathfindRequests[i] );
+	}
+
+	// Serialize pathfinder state
+	xfer->xferUser( &m_extent, sizeof(IRegion2D) );
+	xfer->xferBool( &m_isMapReady );
+	xfer->xferBool( &m_isTunneling );
+	xfer->xferUser( &m_ignoreObstacleID, sizeof(ObjectID) );
+	xfer->xferInt( &m_numWallPieces );
+	for ( Int i = 0; i < MAX_WALL_PIECES; ++i )
+	{
+		xfer->xferObjectID( &m_wallPieces[i] );
+	}
+	xfer->xferReal( &m_wallHeight );
+	xfer->xferInt( &m_cumulativeCellsAllocated );
+
+	// Serialize zone manager state for deterministic pathfinding
+	xfer->xferUnsignedShort( &m_zoneManager.m_maxZone );
+	xfer->xferUnsignedInt( &m_zoneManager.m_nextFrameToCalculateZones );
+
+	// Track whether zone arrays are present (they may not be calculated yet)
+	Bool hasZoneArrays = ( m_zoneManager.m_zonesAllocated > 0 && m_zoneManager.m_groundCliffZones != nullptr );
+	xfer->xferBool( &hasZoneArrays );
+
+	if ( hasZoneArrays )
+	{
+		UnsignedShort zonesAllocated = m_zoneManager.m_zonesAllocated;
+		xfer->xferUnsignedShort( &zonesAllocated );
+
+		// Allocate zone arrays on load
+		if ( xfer->getXferMode() == XFER_LOAD )
+		{
+			m_zoneManager.freeZones();
+			m_zoneManager.m_zonesAllocated = zonesAllocated;
+			m_zoneManager.m_groundCliffZones = MSGNEW("PathfindZoneInfo") zoneStorageType[zonesAllocated];
+			m_zoneManager.m_groundWaterZones = MSGNEW("PathfindZoneInfo") zoneStorageType[zonesAllocated];
+			m_zoneManager.m_groundRubbleZones = MSGNEW("PathfindZoneInfo") zoneStorageType[zonesAllocated];
+			m_zoneManager.m_terrainZones = MSGNEW("PathfindZoneInfo") zoneStorageType[zonesAllocated];
+			m_zoneManager.m_crusherZones = MSGNEW("PathfindZoneInfo") zoneStorageType[zonesAllocated];
+			m_zoneManager.m_hierarchicalZones = MSGNEW("PathfindZoneInfo") zoneStorageType[zonesAllocated];
+		}
+
+		// Serialize zone arrays
+		for ( UnsignedShort i = 0; i < m_zoneManager.m_zonesAllocated; ++i )
+		{
+			xfer->xferUnsignedShort( &m_zoneManager.m_groundCliffZones[i] );
+			xfer->xferUnsignedShort( &m_zoneManager.m_groundWaterZones[i] );
+			xfer->xferUnsignedShort( &m_zoneManager.m_groundRubbleZones[i] );
+			xfer->xferUnsignedShort( &m_zoneManager.m_terrainZones[i] );
+			xfer->xferUnsignedShort( &m_zoneManager.m_crusherZones[i] );
+			xfer->xferUnsignedShort( &m_zoneManager.m_hierarchicalZones[i] );
+		}
+	}
+
+	// Serialize layer destroyed state (bridges can be destroyed during gameplay)
+	for ( Int i = 0; i <= LAYER_LAST; ++i )
+	{
+		xfer->xferBool( &m_layers[i].m_destroyed );
+	}
+
+	// Serialize per-cell zone values for exact zone lookup restoration
+	Bool hasPerCellZones = ( m_map != nullptr && m_isMapReady );
+	xfer->xferBool( &hasPerCellZones );
+
+	if ( hasPerCellZones )
+	{
+		for ( Int j = m_extent.lo.y; j <= m_extent.hi.y; ++j )
+		{
+			for ( Int i = m_extent.lo.x; i <= m_extent.hi.x; ++i )
+			{
+				zoneStorageType zone = m_map[i][j].getZone();
+				xfer->xferUnsignedShort( &zone );
+				if ( xfer->getXferMode() == XFER_LOAD && m_map != nullptr )
+				{
+					m_map[i][j].setZone( zone );
+				}
+			}
+		}
+	}
 
 }
 
 //-----------------------------------------------------------------------------
 void Pathfinder::loadPostProcess( void )
 {
+	// TheSuperHackers @fix bobtista 21/01/2026
+	// After checkpoint load, we need to ensure the pathfind cell state is consistent.
+	// Layer destroyed states and per-cell zones are restored from xfer().
+	//
+	// We need to:
+	// 1. Classify terrain cells (set types based on terrain, cliff expansion)
+	// 2. Rebuild zone blocks from serialized per-cell zones
+	// 3. Add object footprints
+	//
+	// IMPORTANT: We must NOT call calculateZones() because that would overwrite
+	// the serialized per-cell zone values with newly computed ones.
 
+	if ( m_map == nullptr || !m_isMapReady )
+	{
+		return;
+	}
+
+	Int i, j;
+
+	// Step 1: Reset cell types for terrain reclassification, but preserve:
+	// - m_zone: serialized and needs to be kept
+	// - m_flags: unit tracking set by AIUpdateInterface::loadPostProcess() which ran before us
+	// We DO NOT call reset() because that clears m_flags which breaks unit tracking.
+	for( j=m_extent.lo.y; j<=m_extent.hi.y; j++ )
+	{
+		for( i=m_extent.lo.x; i<=m_extent.hi.x; i++ )
+		{
+			// Selectively reset only what needs resetting, preserve zone and flags
+			m_map[i][j].setType(PathfindCell::CELL_CLEAR);
+			m_map[i][j].setPinched(false);
+			// Note: m_flags is NOT reset - unit tracking was set up by AIUpdateInterface::loadPostProcess()
+			// Note: m_zone is NOT reset - it was serialized and loaded
+			// Note: m_info (obstacle tracking) will be rebuilt when classifyObjectFootprint is called
+		}
+	}
+
+	// Step 2: Classify terrain cells (same as classifyMap but WITHOUT calculateZones)
+	for( j=m_extent.lo.y; j<=m_extent.hi.y; j++ )
+	{
+		for( i=m_extent.lo.x; i<=m_extent.hi.x; i++ )
+		{
+			classifyMapCell( i, j, &m_map[i][j]);
+		}
+	}
+
+	// Step 3: Cliff expansion - mark cells near cliffs as pinched
+	for( j=m_extent.lo.y; j<=m_extent.hi.y; j++ )
+	{
+		for( i=m_extent.lo.x; i<=m_extent.hi.x; i++ )
+		{
+			if (m_map[i][j].getType() & PathfindCell::CELL_CLIFF) {
+				Int k, l;
+				for (k=i-1; k<i+2; k++) {
+					if (k<m_extent.lo.x || k> m_extent.hi.x) continue;
+					for (l=j-1; l<j+2; l++) {
+						if (l<m_extent.lo.y || l> m_extent.hi.y) continue;
+						if (m_map[k][l].getType() == PathfindCell::CELL_CLEAR) {
+							m_map[k][l].setPinched(true);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// Step 4: Convert pinched cells to cliff
+	for( j=m_extent.lo.y; j<=m_extent.hi.y; j++ )
+	{
+		for( i=m_extent.lo.x; i<=m_extent.hi.x; i++ )
+		{
+			if (m_map[i][j].getPinched()) {
+				if (m_map[i][j].getType()==PathfindCell::CELL_CLEAR) {
+					m_map[i][j].setType(PathfindCell::CELL_CLIFF);
+				}
+			}
+		}
+	}
+
+	// Step 5: Add second border of pinched cells to cliffs
+	for( j=m_extent.lo.y; j<=m_extent.hi.y; j++ )
+	{
+		for( i=m_extent.lo.x; i<=m_extent.hi.x; i++ )
+		{
+			if (m_map[i][j].getType() & PathfindCell::CELL_CLIFF) {
+				Int k, l;
+				for (k=i-1; k<i+2; k++) {
+					if (k<m_extent.lo.x || k> m_extent.hi.x) continue;
+					for (l=j-1; l<j+2; l++) {
+						if (l<m_extent.lo.y || l> m_extent.hi.y) continue;
+						if (m_map[k][l].getType() == PathfindCell::CELL_CLEAR) {
+							m_map[k][l].setPinched(true);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// Step 6: Classify layer cells (bridges, etc.)
+	for (i=0; i<LAYER_LAST; i++) {
+		if (!m_layers[i].isUnused()) {
+			m_layers[i].classifyCells();
+		}
+	}
+	if (!m_layers[LAYER_WALL].isUnused()) {
+		m_layers[LAYER_WALL].classifyWallCells(m_wallPieces, m_numWallPieces);
+	}
+
+	// Step 7: Build ZoneBlock equivalencies from the restored per-cell zones.
+	// We can NOT call calculateZones() because it clears all zone values before recomputing.
+	// Instead, call blockCalculateZones() directly for each zone block to build the equivalency
+	// arrays from the existing serialized per-cell zones.
+	// TheSuperHackers @bugfix bobtista 22/01/2026 Build zone equivalencies without reassigning zones.
+	{
+		const Int zoneBlockSize = PathfindZoneManager::ZONE_BLOCK_SIZE;
+		Int xCount = (m_extent.hi.x-m_extent.lo.x+1+zoneBlockSize-1)/zoneBlockSize;
+		Int yCount = (m_extent.hi.y-m_extent.lo.y+1+zoneBlockSize-1)/zoneBlockSize;
+		for (Int xBlock = 0; xBlock<xCount; xBlock++) {
+			for (Int yBlock=0; yBlock<yCount; yBlock++) {
+				IRegion2D bounds;
+				bounds.lo.x = m_extent.lo.x + xBlock*zoneBlockSize;
+				bounds.lo.y = m_extent.lo.y + yBlock*zoneBlockSize;
+				bounds.hi.x = bounds.lo.x + zoneBlockSize - 1;
+				bounds.hi.y = bounds.lo.y + zoneBlockSize - 1;
+				if (bounds.hi.x > m_extent.hi.x) bounds.hi.x = m_extent.hi.x;
+				if (bounds.hi.y > m_extent.hi.y) bounds.hi.y = m_extent.hi.y;
+				m_zoneManager.m_zoneBlocks[xBlock][yBlock].blockCalculateZones(m_map, m_layers, bounds);
+			}
+		}
+	}
+
+	// Step 8: Add footprints for all loaded objects
+	Object *obj;
+	for( obj = TheGameLogic->getFirstObject(); obj; obj = obj->getNextObject() )
+	{
+		classifyObjectFootprint(obj, true);
+	}
+	// Note: m_flags (unit tracking) was preserved in Step 1 and set up by AIUpdateInterface::loadPostProcess()
+	// which ran before this function. No need to restore it here.
 }

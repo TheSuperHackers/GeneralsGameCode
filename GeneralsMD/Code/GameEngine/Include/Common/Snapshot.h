@@ -42,6 +42,7 @@ class Snapshot
 {
 
 friend class GameState;
+friend class GameLogic;  // TheSuperHackers @bugfix bobtista 22/01/2026 Allow GameLogic to call loadPostProcess on objects
 friend class XferLoad;
 friend class XferSave;
 friend class XferCRC;

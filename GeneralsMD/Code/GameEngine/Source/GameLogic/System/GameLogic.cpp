@@ -29,6 +29,8 @@
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
+#include <algorithm>
+
 #include "Common/AudioAffect.h"
 #include "Common/AudioHandleSpecialValues.h"
 #include "Common/BuildAssistant.h"
@@ -91,6 +93,7 @@
 #include "GameLogic/Module/CreateModule.h"
 #include "GameLogic/Module/DestroyModule.h"
 #include "GameLogic/Module/OpenContain.h"
+#include "GameLogic/Module/PhysicsUpdate.h"
 #include "GameLogic/PartitionManager.h"
 #include "GameLogic/PolygonTrigger.h"
 #include "GameLogic/ScriptActions.h"
@@ -218,13 +221,14 @@ void setFPMode( void )
 // ------------------------------------------------------------------------------------------------
 GameLogic::GameLogic( void )
 {
+	Int i;
 	m_background = nullptr;
 	m_CRC = 0;
 	m_isInUpdate = FALSE;
 
 	m_rankPointsToAddAtGameStart = 0;
 
-	for(Int i = 0; i < MAX_SLOTS; i++)
+	for(i = 0; i < MAX_SLOTS; i++)
 	{
 		m_progressComplete[i] = FALSE;
 		m_progressCompleteTimeout[i] = 0;
@@ -262,6 +266,12 @@ GameLogic::GameLogic( void )
 	m_loadingMap = FALSE;
 	m_loadingSave = FALSE;
 	m_clearingGameData = FALSE;
+
+	// TheSuperHackers @info bobtista 19/01/2026 Initialize RNG restore state
+	m_pendingRngRestore = FALSE;
+	m_pendingRngBaseSeed = 0;
+	for (i = 0; i < 6; ++i)
+		m_pendingRngState[i] = 0;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -392,6 +402,7 @@ void GameLogic::reset( void )
 {
 	m_thingTemplateBuildableOverrides.clear();
 	m_controlBarOverrides.clear();
+	m_pendingSleepyUpdateOrder.clear();
 
 	// set the hash to be rather large. We need to optimize this value later.
 //	m_objHash.clear();
@@ -1315,7 +1326,12 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 	if (TheGameInfo)
 	{
 
-		if (TheGameEngine->isMultiplayerSession() || isSkirmishOrSkirmishReplay)
+		// TheSuperHackers @info bobtista 19/01/2026
+		// When loading a replay checkpoint, we need to call prepareForMP_or_Skirmish() to ensure
+		// the team setup matches what was saved in the checkpoint. The checkpoint was created
+		// during replay playback which may have had a different team configuration than the map.
+		Bool isReplayCheckpointLoad = loadingSaveGame && TheRecorder && TheRecorder->isPlaybackMode();
+		if (TheGameEngine->isMultiplayerSession() || isSkirmishOrSkirmishReplay || isReplayCheckpointLoad)
 		{
 			// Saves off any player, and resets the sides to 0 players so we can add the skirmish players.
 			TheSidesList->prepareForMP_or_Skirmish();
@@ -2818,9 +2834,7 @@ inline Bool isLowerPriority(const UpdateModulePtr a, const UpdateModulePtr b)
 	// remember: lower ordinal value means higher priority.
 	// therefore, higher ordinal value means lower priority.
 	DEBUG_ASSERTCRASH(a && b, ("these may no longer be null"));
-	UnsignedInt f1 = a->friend_getPriority();
-	UnsignedInt f2 = b->friend_getPriority();
-	return f1 > f2;
+	return a->friend_getPriority() > b->friend_getPriority();
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -3648,6 +3662,19 @@ void GameLogic::update( void )
 	UnsignedInt now = getFrame();
 	TheGameClient->setFrame(now);
 
+	// TheSuperHackers @info bobtista 20/01/2026
+	// Restore RNG state immediately at start of first logic update after checkpoint load.
+	// This must happen before any scripts, terrain, or object updates run, since they may call random.
+	if ( m_pendingRngRestore )
+	{
+		DEBUG_LOG(("Restoring RNG state at frame %d: baseSeed=%u, state=[%u,%u,%u,%u,%u,%u]",
+			m_frame, m_pendingRngBaseSeed,
+			m_pendingRngState[0], m_pendingRngState[1], m_pendingRngState[2],
+			m_pendingRngState[3], m_pendingRngState[4], m_pendingRngState[5]));
+		SetGameLogicRandomState( m_pendingRngState, m_pendingRngBaseSeed );
+		m_pendingRngRestore = FALSE;
+	}
+
 	// update (execute) scripts
 	{
 		TheScriptEngine->UPDATE();
@@ -3673,22 +3700,32 @@ void GameLogic::update( void )
 
 	if (generateForSolo || generateForMP)
 	{
-		m_CRC = getCRC( CRC_RECALC );
-		bool isPlayback = (TheRecorder && TheRecorder->isPlaybackMode());
+		// TheSuperHackers @info bobtista 19/01/2026
+		// Skip CRC generation for several frames after loading a checkpoint. The checkpoint state
+		// doesn't perfectly match what CRC calculation expects due to timing differences in the
+		// frame lifecycle. Skip multiple checks to allow state to stabilize.
+		// NOTE: RNG state is now restored at start of update(), so no need to check here.
+		// We always generate and send CRCs. The skip mechanism in RecorderClass::handleCRCMessage()
+		// handles skipping the comparison and consuming recorded CRCs to keep queues in sync.
+		{
+			m_CRC = getCRC( CRC_RECALC );
+			bool isPlayback = (TheRecorder && TheRecorder->isPlaybackMode());
 
-		GameMessage *msg = newInstance(GameMessage)(GameMessage::MSG_LOGIC_CRC);
-		msg->appendIntegerArgument(m_CRC);
-		msg->appendBooleanArgument(isPlayback);
+			GameMessage *msg = newInstance(GameMessage)(GameMessage::MSG_LOGIC_CRC);
+			msg->appendIntegerArgument(m_CRC);
+			msg->appendBooleanArgument(isPlayback);
 
-		// TheSuperHackers @info helmutbuhler 13/04/2025
-		// During replay simulation, we bypass TheMessageStream and instead put the CRC message
-		// directly into TheCommandList because we don't update TheMessageStream during simulation.
-		GameMessageList *messageList = TheMessageStream;
-		if (TheRecorder && TheRecorder->getMode() == RECORDERMODETYPE_SIMULATION_PLAYBACK)
-			messageList = TheCommandList;
-		messageList->appendMessage(msg);
+			// TheSuperHackers @info helmutbuhler 13/04/2025
+			// During replay playback, we bypass TheMessageStream and instead put the CRC message
+			// directly into TheCommandList because TheMessageStream may not be processed during playback.
+			// TheSuperHackers @fix bobtista 23/01/2026 Extended to all playback modes, not just simulation.
+			GameMessageList *messageList = TheMessageStream;
+			if (TheRecorder && TheRecorder->isPlaybackMode())
+				messageList = TheCommandList;
+			messageList->appendMessage(msg);
 
-		DEBUG_LOG(("Appended %sCRC on frame %d: %8.8X", isPlayback ? "Playback " : "", m_frame, m_CRC));
+			DEBUG_LOG(("Appended %sCRC on frame %d: %8.8X", isPlayback ? "Playback " : "", m_frame, m_CRC));
+		}
 	}
 
 	// collect stats
@@ -3826,6 +3863,33 @@ void GameLogic::update( void )
 	{
 		m_frame++;
 		m_hasUpdated = TRUE;
+	}
+
+	// TheSuperHackers @fix bobtista 25/01/2026 Save checkpoint right after frame increment.
+	// This captures the state at the START of the new frame (before any object updates for the new frame).
+	// The checkpoint will contain m_frame = N, state ready to compute CRC for frame N.
+	// This runs BEFORE ReplaySimulation.cpp's checkpoint save, so it takes precedence.
+	if (TheGlobalData->m_replaySaveAtFrame > 0 && m_frame == TheGlobalData->m_replaySaveAtFrame)
+	{
+		AsciiString saveName = TheGlobalData->m_replaySaveTo;
+		if (saveName.isEmpty())
+		{
+			saveName.format("checkpoint_%u.sav", m_frame);
+		}
+		UnicodeString desc;
+		desc.format(L"Replay checkpoint at frame %u", m_frame);
+		DEBUG_LOG(("Auto-saving checkpoint at frame %u (after frame increment) to %s", m_frame, saveName.str()));
+		SaveCode result = TheGameState->saveGame(saveName, desc, SAVE_FILE_TYPE_NORMAL, SNAPSHOT_SAVELOAD);
+		if (result != SC_OK)
+		{
+			DEBUG_LOG(("WARNING: Failed to save checkpoint, error code %d", result));
+		}
+		else
+		{
+			DEBUG_LOG(("Checkpoint saved successfully, exiting"));
+			TheGameEngine->setQuitting(TRUE);
+		}
+		TheWritableGlobalData->m_replaySaveAtFrame = 0;
 	}
 }
 
@@ -4036,6 +4100,10 @@ UnsignedInt GameLogic::getCRC( Int mode, AsciiString deepCRCFileName )
 
 	setFPMode();
 
+	// TheSuperHackers @info bobtista 20/01/2026
+	// RNG state is now restored at start of update() instead of here.
+	// This ensures it happens before any game logic runs, not just before CRC check.
+
 	LatchRestore<Bool> latch(inCRCGen, !isInGameLogicUpdate());
 
 	XferCRC *xferCRC;
@@ -4072,10 +4140,6 @@ UnsignedInt GameLogic::getCRC( Int mode, AsciiString deepCRCFileName )
 	// calculate CRCs
 	Object *obj;
 	DEBUG_ASSERTCRASH(this == TheGameLogic, ("Not in GameLogic"));
-	if (isInGameLogicUpdate())
-	{
-		CRCGEN_LOG(("CRC at start of frame %d is 0x%8.8X", m_frame, xferCRC->getCRC()));
-	}
 
 	marker = "MARKER:Objects";
 	xferCRC->xferAsciiString(&marker);
@@ -4083,27 +4147,17 @@ UnsignedInt GameLogic::getCRC( Int mode, AsciiString deepCRCFileName )
 	{
 		xferCRC->xferSnapshot( obj );
 	}
-	UnsignedInt seed = GetGameLogicRandomSeedCRC();
-	if (isInGameLogicUpdate())
-	{
-		CRCGEN_LOG(("CRC after objects for frame %d is 0x%8.8X", m_frame, xferCRC->getCRC()));
-	}
 
-	if (isInGameLogicUpdate())
-	{
-		CRCGEN_LOG(("RandomSeed: %d", seed));
-	}
+	UnsignedInt seed = GetGameLogicRandomSeedCRC();
+
 	if (xferCRC->getXferMode() == XFER_CRC)
 	{
 		xferCRC->xferUnsignedInt( &seed );
 	}
+
 	marker = "MARKER:ThePartitionManager";
 	xferCRC->xferAsciiString(&marker);
 	xferCRC->xferSnapshot( ThePartitionManager );
-	if (isInGameLogicUpdate())
-	{
-		CRCGEN_LOG(("CRC after partition manager for frame %d is 0x%8.8X", m_frame, xferCRC->getCRC()));
-	}
 
 #ifdef DEBUG_CRC
 	if ((g_crcModuleDataFromClient && !isInGameLogicUpdate()) ||
@@ -4122,18 +4176,10 @@ UnsignedInt GameLogic::getCRC( Int mode, AsciiString deepCRCFileName )
 	marker = "MARKER:ThePlayerList";
 	xferCRC->xferAsciiString(&marker);
 	xferCRC->xferSnapshot( ThePlayerList );
-	if (isInGameLogicUpdate())
-	{
-		CRCGEN_LOG(("CRC after PlayerList for frame %d is 0x%8.8X", m_frame, xferCRC->getCRC()));
-	}
 
 	marker = "MARKER:TheAI";
 	xferCRC->xferAsciiString(&marker);
 	xferCRC->xferSnapshot( TheAI );
-	if (isInGameLogicUpdate())
-	{
-		CRCGEN_LOG(("CRC after AI for frame %d is 0x%8.8X", m_frame, xferCRC->getCRC()));
-	}
 
 	if (xferCRC->getXferMode() == XFER_SAVE)
 	{
@@ -4801,18 +4847,64 @@ void GameLogic::prepareLogicForObjectLoad( void )
 	* 5: Added xfering the BuildAssistant's sell list.
 	* 9: Added m_rankPointsToAddAtGameStart, or else on a load game, your RestartGame button will forget your exp
   * 10: xfer m_superweaponRestriction
+  * 11: Added RNG state serialization for replay checkpoint CRC fix (bobtista)
 	*/
 // ------------------------------------------------------------------------------------------------
 void GameLogic::xfer( Xfer *xfer )
 {
 
 	// version
-	const XferVersion currentVersion = 10;
+	// TheSuperHackers @info bobtista 21/01/2026 Version 11: Added RNG state and sleepy update heap order serialization for replay checkpoints
+	const XferVersion currentVersion = 11;
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
 	// logic frame number
+	if ( xfer->getXferMode() == XFER_SAVE )
+	{
+		DEBUG_LOG(("GameLogic::xfer - Saving m_frame = %u", m_frame));
+	}
 	xfer->xferUnsignedInt( &m_frame );
+	if ( xfer->getXferMode() == XFER_LOAD )
+	{
+		DEBUG_LOG(("GameLogic::xfer - Loaded m_frame = %u", m_frame));
+	}
+
+	// TheSuperHackers @info bobtista 19/01/2026
+	// Serialize the RNG state to fix CRC mismatch when loading replay checkpoints.
+	// The RNG state is included in the CRC calculation but was not being saved.
+	if ( version >= 11 )
+	{
+		Int i;
+		UnsignedInt rngState[6];
+		UnsignedInt rngBaseSeed;
+		if ( xfer->getXferMode() == XFER_SAVE )
+		{
+			GetGameLogicRandomState( rngState, &rngBaseSeed );
+			DEBUG_LOG(("Saving RNG state at frame %d: baseSeed=%u, state=[%u,%u,%u,%u,%u,%u]",
+				m_frame, rngBaseSeed,
+				rngState[0], rngState[1], rngState[2], rngState[3], rngState[4], rngState[5]));
+		}
+		xfer->xferUnsignedInt( &rngBaseSeed );
+		for ( i = 0; i < 6; ++i )
+		{
+			xfer->xferUnsignedInt( &rngState[i] );
+		}
+		if ( xfer->getXferMode() == XFER_LOAD )
+		{
+			// TheSuperHackers @info bobtista 19/01/2026
+			// Store RNG state for restoration in getCRC() instead of restoring here.
+			// This is because other snapshot blocks loaded after GameLogic may call random functions,
+			// which would corrupt the RNG state before the CRC check runs.
+			DEBUG_LOG(("Loaded RNG state at frame %d: baseSeed=%u, state=[%u,%u,%u,%u,%u,%u]",
+				m_frame, rngBaseSeed,
+				rngState[0], rngState[1], rngState[2], rngState[3], rngState[4], rngState[5]));
+			m_pendingRngRestore = TRUE;
+			m_pendingRngBaseSeed = rngBaseSeed;
+			for ( i = 0; i < 6; ++i )
+				m_pendingRngState[i] = rngState[i];
+		}
+	}
 
 	//
 	// note that we do not do the id counter here, we did it in the game state block because
@@ -4923,6 +5015,25 @@ void GameLogic::xfer( Xfer *xfer )
 				TheAI->pathfinder()->addWallPiece( obj );
 
 		}
+
+		// TheSuperHackers @fix bobtista 19/01/2026
+		// Reverse the object list to restore the original order.
+		// Objects are prepended during registration, so loading them in save order
+		// (oldest first in original list) results in a reversed list.
+		// This is important for CRC calculation which iterates the list in order.
+		Object *prev = nullptr;
+		Object *current = m_objList;
+		Object *next = nullptr;
+		while ( current != nullptr )
+		{
+			next = current->getNextObject();
+			current->friend_setNextObject( prev );
+			current->friend_setPrevObject( next );
+			prev = current;
+			current = next;
+		}
+		m_objList = prev;
+		DEBUG_LOG(("Reversed object list after load. First object ID: %d", m_objList ? m_objList->getID() : -1));
 
 	}
 
@@ -5128,6 +5239,45 @@ void GameLogic::xfer( Xfer *xfer )
   {
     m_superweaponRestriction = 0;
   }
+
+	// TheSuperHackers @info bobtista 21/01/2026
+	// Serialize the sleepy update heap order to fix CRC mismatch when loading replay checkpoints.
+	// The heap ordering is non-deterministic for modules with equal priority, so we need to
+	// save and restore the exact order to ensure deterministic behavior after checkpoint load.
+	// We save the module tag name as a string (not as NameKeyType) because the key values
+	// are not stable across save/load - they depend on the order strings are registered.
+	if ( version >= 11 )
+	{
+		UnsignedInt heapCount;
+		if ( xfer->getXferMode() == XFER_SAVE )
+		{
+			heapCount = static_cast<UnsignedInt>(m_sleepyUpdates.size());
+			xfer->xferUnsignedInt( &heapCount );
+			for ( UnsignedInt i = 0; i < heapCount; ++i )
+			{
+				UpdateModulePtr u = m_sleepyUpdates[i];
+				ObjectID objId = u->friend_getObject()->getID();
+				AsciiString tagName = TheNameKeyGenerator->keyToName( u->getModuleTagNameKey() );
+				xfer->xferObjectID( &objId );
+				xfer->xferAsciiString( &tagName );
+			}
+		}
+		else
+		{
+			xfer->xferUnsignedInt( &heapCount );
+			m_pendingSleepyUpdateOrder.clear();
+			m_pendingSleepyUpdateOrder.reserve( heapCount );
+			for ( UnsignedInt i = 0; i < heapCount; ++i )
+			{
+				ObjectID objId;
+				AsciiString tagName;
+				xfer->xferObjectID( &objId );
+				xfer->xferAsciiString( &tagName );
+				NameKeyType tagKey = TheNameKeyGenerator->nameToKey( tagName.str() );
+				m_pendingSleepyUpdateOrder.push_back( std::make_pair( objId, tagKey ) );
+			}
+		}
+	}
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -5147,8 +5297,14 @@ void GameLogic::loadPostProcess( void )
 	m_nextObjID = INVALID_ID;
 	Object *obj;
 	for( obj = getFirstObject(); obj; obj = obj->getNextObject() )
+	{
 		if( obj->getID() >= m_nextObjID )
 			m_nextObjID = (ObjectID)((UnsignedInt)obj->getID() + 1);
+
+		// TheSuperHackers @bugfix bobtista 22/01/2026 Call loadPostProcess on each object.
+		// This ensures module state is properly initialized after checkpoint load.
+		obj->loadPostProcess();
+	}
 
 	// blow away the sleepy update and normal update module lists
 	for (std::vector<UpdateModulePtr>::iterator it = m_sleepyUpdates.begin(); it != m_sleepyUpdates.end(); ++it)
@@ -5164,48 +5320,96 @@ void GameLogic::loadPostProcess( void )
 		now = 1;
 #endif
 
-	// go through all objects, examine each update module and put it on the appropriate update list
-	for( obj = getFirstObject(); obj; obj = obj->getNextObject() )
+	// TheSuperHackers @info bobtista 21/01/2026
+	// If we have a saved heap order from the checkpoint, use it to restore the exact ordering.
+	// Otherwise, fall back to the default object iteration order.
+	if ( !m_pendingSleepyUpdateOrder.empty() )
 	{
-
-		// get the update list of modules for this object
-		for( BehaviorModule** b = obj->getBehaviorModules(); *b; ++b )
+		DEBUG_LOG(("loadPostProcess: Restoring sleepy update heap from saved order (%d modules)", m_pendingSleepyUpdateOrder.size()));
+		// TheSuperHackers @fix bobtista 21/01/2026
+		// Restore the heap by directly adding modules in the saved order WITHOUT using pushSleepyUpdate().
+		// pushSleepyUpdate() would rebalance the heap and change the order.
+		// The saved order IS already a valid heap structure, so we just restore it directly.
+		m_sleepyUpdates.reserve( m_pendingSleepyUpdateOrder.size() );
+		for ( std::vector<std::pair<ObjectID, NameKeyType>>::const_iterator it = m_pendingSleepyUpdateOrder.begin();
+				it != m_pendingSleepyUpdateOrder.end(); ++it )
 		{
-#ifdef DIRECT_UPDATEMODULE_ACCESS
-			// evil, but necessary at this point. (srj)
-			UpdateModulePtr u = (UpdateModulePtr)((*b)->getUpdate());
-#else
-			UpdateModulePtr u = (*b)->getUpdate();
-#endif
-			if (!u)
+			ObjectID objId = it->first;
+			NameKeyType tagKey = it->second;
+			Object* obj = findObjectByID( objId );
+			if ( obj == nullptr )
 				continue;
-
-			DEBUG_ASSERTCRASH(u->friend_getIndexInLogic() == -1, ("Hmm, expected index to be -1 here"));
-
-			// check each update module
-			UnsignedInt when = u->friend_getNextCallFrame();
-#ifdef ALLOW_NONSLEEPY_UPDATES
-			if( when == 0 )
-			{
-				// zero if the magic value for "never sleeps"
-				m_normalUpdates.push_back(u);
-			}
-			else
-#else
+			// TheSuperHackers @fix bobtista 21/01/2026
+			// Use findUpdateModuleByTag instead of findUpdateModule because we need to match
+			// by the module's tag key (instance-specific), not class name key.
+			UpdateModule* u = obj->findUpdateModuleByTag( tagKey );
+			if ( u == nullptr )
+				continue;
+			if ( u->friend_getIndexInLogic() != -1 )
+				continue;
+#ifndef ALLOW_NONSLEEPY_UPDATES
 			// note that 'when' will only be zero for legacy save files.
-			if (when == 0)
+			if (u->friend_getNextCallFrame() == 0)
 				u->friend_setNextCallFrame(now);
 #endif
+			// Directly add to vector without rebalancing - the saved order is already a valid heap
+			m_sleepyUpdates.push_back(u);
+			u->friend_setIndexInLogic(m_sleepyUpdates.size() - 1);
+		}
+		m_pendingSleepyUpdateOrder.clear();
+		DEBUG_LOG(("loadPostProcess: Restored %d modules to sleepy update heap", m_sleepyUpdates.size()));
+		validateSleepyUpdate();
+	}
+	else
+	{
+		// go through all objects, examine each update module and put it on the appropriate update list
+		for( obj = getFirstObject(); obj; obj = obj->getNextObject() )
+		{
+
+			// get the update list of modules for this object
+			for( BehaviorModule** b = obj->getBehaviorModules(); *b; ++b )
 			{
-				m_sleepyUpdates.push_back(u);
-				u->friend_setIndexInLogic(m_sleepyUpdates.size() - 1);
+#ifdef DIRECT_UPDATEMODULE_ACCESS
+				// evil, but necessary at this point. (srj)
+				UpdateModulePtr u = (UpdateModulePtr)((*b)->getUpdate());
+#else
+				UpdateModulePtr u = (*b)->getUpdate();
+#endif
+				if (!u)
+					continue;
+
+				DEBUG_ASSERTCRASH(u->friend_getIndexInLogic() == -1, ("Hmm, expected index to be -1 here"));
+
+				// check each update module
+				UnsignedInt when = u->friend_getNextCallFrame();
+#ifdef ALLOW_NONSLEEPY_UPDATES
+				if( when == 0 )
+				{
+					// zero if the magic value for "never sleeps"
+					m_normalUpdates.push_back(u);
+				}
+				else
+#else
+				// note that 'when' will only be zero for legacy save files.
+				if (when == 0)
+					u->friend_setNextCallFrame(now);
+#endif
+				{
+					// TheSuperHackers @fix bobtista 21/01/2026
+					// Use pushSleepyUpdate() instead of push_back + remakeSleepyUpdate() to match
+					// how modules are added during normal gameplay. This ensures the heap ordering
+					// is consistent with the original game.
+					pushSleepyUpdate(u);
+				}
+
 			}
 
 		}
-
 	}
 
-	// re-sort the priority queue all at once now that all modules are on it
-	remakeSleepyUpdate();
+	// TheSuperHackers @info bobtista 20/01/2026
+	// Note: RNG state restoration is handled in update() at the start of the first logic update
+	// after checkpoint load. This ensures the RNG is restored before any scripts or game logic
+	// that might call random functions. The m_pendingRngRestore flag signals when restoration is needed.
 
 }

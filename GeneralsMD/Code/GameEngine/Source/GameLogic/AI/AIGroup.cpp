@@ -3347,9 +3347,60 @@ void AIGroup::xfer( Xfer *xfer )
 {
 
 	// version
-	XferVersion currentVersion = 1;
+	XferVersion currentVersion = 3;
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
+
+	// TheSuperHackers @info bobtista 20/01/2026 Serialize dirty flag for checkpoint CRC matching.
+	// The dirty flag is included in CRC calculation and must be restored exactly.
+	if ( version >= 2 )
+	{
+		xfer->xferBool( &m_dirty );
+	}
+
+	// TheSuperHackers @info bobtista 20/01/2026 Serialize all AIGroup state that is included in CRC.
+	if ( version >= 3 )
+	{
+		// Serialize member list as ObjectIDs (same as crc())
+		Int memberCount = (Int)m_memberList.size();
+		xfer->xferInt( &memberCount );
+
+		if ( xfer->getXferMode() == XFER_SAVE )
+		{
+			ObjectID id = INVALID_ID;
+			for ( std::list<Object *>::iterator it = m_memberList.begin(); it != m_memberList.end(); ++it )
+			{
+				if ( *it )
+					id = (*it)->getID();
+				else
+					id = INVALID_ID;
+				xfer->xferObjectID( &id );
+			}
+		}
+		else
+		{
+			// On load, reconstruct member list from ObjectIDs
+			m_memberList.clear();
+			for ( Int i = 0; i < memberCount; ++i )
+			{
+				ObjectID id = INVALID_ID;
+				xfer->xferObjectID( &id );
+				Object *obj = TheGameLogic->findObjectByID( id );
+				if ( obj )
+				{
+					m_memberList.push_back( obj );
+				}
+			}
+		}
+
+		xfer->xferUnsignedInt( &m_memberListSize );
+
+		ObjectID leaderId = INVALID_ID;  // Unused, always INVALID_ID (same as crc())
+		xfer->xferObjectID( &leaderId );
+
+		xfer->xferReal( &m_speed );
+		xfer->xferUnsignedInt( &m_id );
+	}
 
 }
 
