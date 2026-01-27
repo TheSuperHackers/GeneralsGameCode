@@ -218,14 +218,14 @@ protected:
 // Dozer data
 	struct DozerTaskInfo
 	{
-		ObjectID m_targetObjectID;				///< target object ID of task
-		UnsignedInt m_taskOrderFrame;			///< logic frame we decided we wanted to do this task
-
 		DozerTaskInfo()
 		{
 			m_targetObjectID = INVALID_ID;
 			m_taskOrderFrame = 0;
 		}
+
+		ObjectID m_targetObjectID;				///< target object ID of task
+		UnsignedInt m_taskOrderFrame;			///< logic frame we decided we wanted to do this task
 	} m_task[ DOZER_NUM_TASKS ];				///< tasks we want to do indexed by DozerTask
 
 
