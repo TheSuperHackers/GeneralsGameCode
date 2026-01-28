@@ -743,23 +743,23 @@ void W3DRadar::renderObjectList( const RadarObject *listHead, TextureClass *text
 
 		}
 
-		color = ARGB_Color_To_WW3D_Color(surfaceDesc.Format, color);
+		const unsigned int pixelColor = ARGB_Color_To_WW3D_Color(surfaceDesc.Format, color);
 
 		// draw the blip, but make sure the points are legal
 		if( legalRadarPoint( radarPoint.x, radarPoint.y ) )
-			surface->Draw_Pixel( radarPoint.x, radarPoint.y, color, bytesPerPixel, pBits, pitch );
+			surface->Draw_Pixel( radarPoint.x, radarPoint.y, pixelColor, bytesPerPixel, pBits, pitch );
 
 		radarPoint.y++;
 		if( legalRadarPoint( radarPoint.x, radarPoint.y ) )
-			surface->Draw_Pixel( radarPoint.x, radarPoint.y, color, bytesPerPixel, pBits, pitch );
+			surface->Draw_Pixel( radarPoint.x, radarPoint.y, pixelColor, bytesPerPixel, pBits, pitch );
 
 		radarPoint.x++;
 		if( legalRadarPoint( radarPoint.x, radarPoint.y ) )
-			surface->Draw_Pixel( radarPoint.x, radarPoint.y, color, bytesPerPixel, pBits, pitch );
+			surface->Draw_Pixel( radarPoint.x, radarPoint.y, pixelColor, bytesPerPixel, pBits, pitch );
 
 		radarPoint.y--;
 		if( legalRadarPoint( radarPoint.x, radarPoint.y ) )
-			surface->Draw_Pixel( radarPoint.x, radarPoint.y, color, bytesPerPixel, pBits, pitch );
+			surface->Draw_Pixel( radarPoint.x, radarPoint.y, pixelColor, bytesPerPixel, pBits, pitch );
 
 	}
 
@@ -1276,8 +1276,8 @@ void W3DRadar::buildTerrainTexture( TerrainLogic *terrain )
 
 			// draw the pixel for the terrain at this point, note that because of the orientation
 			// of our world we draw it with positive y in the "up" direction
-			Color pixelColor = GameMakeColor( color.red * 255, color.green * 255, color.blue * 255, 255 );
-			pixelColor = ARGB_Color_To_WW3D_Color(surfaceDesc.Format, pixelColor);
+			const Color argbColor = GameMakeColor( color.red * 255, color.green * 255, color.blue * 255, 255 );
+			const unsigned int pixelColor = ARGB_Color_To_WW3D_Color(surfaceDesc.Format, argbColor);
 			surface->Draw_Pixel( x, y, pixelColor, bytesPerPixel, pBits, pitch );
 
 		}
@@ -1377,14 +1377,14 @@ void W3DRadar::setShroudLevel(Int shroudX, Int shroudY, CellShroudStatus setting
 		int pitch;
 		void *pBits = surface->Lock(&pitch);
 		const unsigned int bytesPerPixel = Get_Bytes_Per_Pixel(surfaceDesc.Format);
-		Color color = GameMakeColor( 0, 0, 0, alpha );
-		color = ARGB_Color_To_WW3D_Color(surfaceDesc.Format, color);
+		const Color argbColor = GameMakeColor( 0, 0, 0, alpha );
+		const unsigned int pixelColor = ARGB_Color_To_WW3D_Color(surfaceDesc.Format, argbColor);
 
 		for( Int y = radarMinY; y <= radarMaxY; ++y )
 		{
 			for( Int x = radarMinX; x <= radarMaxX; ++x )
 			{
-				surface->Draw_Pixel( x, y, color, bytesPerPixel, pBits, pitch );
+				surface->Draw_Pixel( x, y, pixelColor, bytesPerPixel, pBits, pitch );
 			}
 		}
 
@@ -1397,14 +1397,14 @@ void W3DRadar::setShroudLevel(Int shroudX, Int shroudY, CellShroudStatus setting
 		DEBUG_ASSERTCRASH(m_shroudSurfaceBits != nullptr, ("W3DRadar::setShroudLevel: m_shroudSurfaceBits is not expected null"));
 		DEBUG_ASSERTCRASH(m_shroudSurfaceFormat != WW3D_FORMAT_UNKNOWN, ("W3DRadar::setShroudLevel: m_shroudSurfaceFormat is not expected UNKNOWN"));
 		DEBUG_ASSERTCRASH(m_shroudSurfacePixelSize != 0, ("W3DRadar::setShroudLevel: m_shroudSurfacePixelSize is not expected 0"));
-		Color color = GameMakeColor( 0, 0, 0, alpha );
-		color = ARGB_Color_To_WW3D_Color(m_shroudSurfaceFormat, color);
+		const Color argbColor = GameMakeColor( 0, 0, 0, alpha );
+		const unsigned int pixelColor = ARGB_Color_To_WW3D_Color(m_shroudSurfaceFormat, argbColor);
 
 		for( Int y = radarMinY; y <= radarMaxY; ++y )
 		{
 			for( Int x = radarMinX; x <= radarMaxX; ++x )
 			{
-				m_shroudSurface->Draw_Pixel( x, y, color, m_shroudSurfacePixelSize, m_shroudSurfaceBits, m_shroudSurfacePitch );
+				m_shroudSurface->Draw_Pixel( x, y, pixelColor, m_shroudSurfacePixelSize, m_shroudSurfaceBits, m_shroudSurfacePitch );
 			}
 		}
 	}
