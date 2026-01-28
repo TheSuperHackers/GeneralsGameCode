@@ -26,32 +26,31 @@ set(PARTICLEED_SRC
     "VelocityTypePanels.h"
 )
 
-add_library(z_particleeditor SHARED)
-set_target_properties(z_particleeditor PROPERTIES OUTPUT_NAME particleeditor PREFIX "")
+add_library(core_particleeditor SHARED)
+set_target_properties(core_particleeditor PROPERTIES OUTPUT_NAME particleeditor PREFIX "")
 
-target_sources(z_particleeditor PRIVATE ${PARTICLEED_SRC})
+target_sources(core_particleeditor PRIVATE ${PARTICLEED_SRC})
 
-target_include_directories(z_particleeditor PRIVATE
+target_include_directories(core_particleeditor PRIVATE
     include
     res
 )
 
-target_link_libraries(z_particleeditor PRIVATE
+target_link_libraries(core_particleeditor PRIVATE
     core_debug
     core_profile
+    corei_always_no_pch
+    corei_gameengine_include
     corei_libraries_source_wwvegas
     corei_libraries_source_wwvegas_wwlib
     stlport
-    zi_always_no_pch
-    zi_gameengine_include
-    zi_libraries_source_wwvegas
 )
 
 if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")
-    target_link_options(z_particleeditor PRIVATE /NODEFAULTLIB:libci.lib /NODEFAULTLIB:libc.lib)
-    target_compile_definitions(z_particleeditor PRIVATE _AFXDLL)
-    target_sources(z_particleeditor PRIVATE ParticleEditor.rc)
-    set_target_properties(z_particleeditor PROPERTIES OUTPUT_NAME ParticleEditor)
+    target_link_options(core_particleeditor PRIVATE /NODEFAULTLIB:libci.lib /NODEFAULTLIB:libc.lib)
+    target_compile_definitions(core_particleeditor PRIVATE _AFXDLL)
+    target_sources(core_particleeditor PRIVATE ParticleEditor.rc)
+    set_target_properties(core_particleeditor PROPERTIES OUTPUT_NAME ParticleEditor)
 else()
-    set_target_properties(z_particleeditor PROPERTIES OUTPUT_NAME particleeditor)
+    set_target_properties(core_particleeditor PROPERTIES OUTPUT_NAME particleeditor)
 endif()

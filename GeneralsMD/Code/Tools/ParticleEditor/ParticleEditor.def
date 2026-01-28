@@ -1,6 +1,0 @@
-; ParticleEditor.def : Declares the module parameters for the DLL.
-
-LIBRARY      "ParticleEditor"
-DESCRIPTION  'ParticleEditor Windows Dynamic Link Library'
-
-EXPORTS
