@@ -212,7 +212,7 @@ set(GAMEENGINE_SRC
 #    Include/GameClient/Module/SwayClientUpdate.h
 #    Include/GameClient/Mouse.h
     Include/GameClient/ParabolicEase.h
-#    Include/GameClient/ParticleSys.h
+    Include/GameClient/ParticleSys.h
 #    Include/GameClient/PlaceEventTranslator.h
 #    Include/GameClient/ProcessAnimateWindow.h
 #    Include/GameClient/RadiusDecal.h
@@ -828,7 +828,7 @@ set(GAMEENGINE_SRC
     Source/GameClient/System/Debug/AudioDebugDisplay.cpp
 #    Source/GameClient/System/DebugDisplay.cpp
 #    Source/GameClient/System/Image.cpp
-#    Source/GameClient/System/ParticleSys.cpp
+    Source/GameClient/System/ParticleSys.cpp
 #    Source/GameClient/System/RayEffect.cpp
     Source/GameClient/System/Smudge.cpp
     Source/GameClient/Terrain/TerrainRoads.cpp
