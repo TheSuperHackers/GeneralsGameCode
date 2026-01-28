@@ -49,6 +49,12 @@
 #include "Common/file.h"
 #include "Common/FileSystem.h"
 
+#ifdef _WIN32
+#define STRICMP(s1, s2) _stricmp(s1, s2)
+#else
+#define STRICMP(s1, s2) strcasecmp(s1, s2)
+#endif
+
 #include "Common/ArchiveFileSystem.h"
 #include "Common/CDManager.h"
 #include "Common/GameAudio.h"
@@ -456,4 +462,126 @@ Bool FileSystem::isPathInDirectory(const AsciiString& testPath, const AsciiStrin
 	}
 
 	return true;
+}
+
+//============================================================================
+// FileSystem::hasValidTransferFileContent
+//============================================================================
+// TheSuperHackers @security bobtista 06/11/2025
+// Validates file content format during map transfer operations.
+// Checks file headers, magic bytes, size limits, and basic structure to prevent
+// malformed or malicious files from being processed.
+//============================================================================
+static Bool validateFileContent(File* file, const AsciiString& filePath, const char* extension)
+{
+	const Int fileSize = file->size();
+
+	const Int MAX_MAP_SIZE = 512 * 1024;
+	const Int MAX_INI_SIZE = 512 * 1024;
+	const Int MAX_STR_SIZE = 512 * 1024;
+	const Int MAX_TGA_SIZE = 2 * 1024 * 1024;
+	const Int MAX_TXT_SIZE = 512 * 1024;
+	const Int MAX_WAK_SIZE = 512 * 1024;
+
+	if (STRICMP(extension, ".map") == 0)
+	{
+		if (fileSize > MAX_MAP_SIZE)
+		{
+			DEBUG_LOG(("Map file '%s' exceeds maximum size (%d bytes).", filePath.str(), fileSize));
+			return false;
+		}
+
+		UnsignedByte header[4];
+		file->read(header, 4);
+		if (header[0] != 'C' || header[1] != 'k' || header[2] != 'M' || header[3] != 'p')
+		{
+			DEBUG_LOG(("Map file '%s' has invalid magic bytes.", filePath.str()));
+			return false;
+		}
+		return true;
+	}
+
+	if (STRICMP(extension, ".ini") == 0)
+	{
+		if (fileSize > MAX_INI_SIZE)
+		{
+			DEBUG_LOG(("INI file '%s' exceeds maximum size (%d bytes).", filePath.str(), fileSize));
+			return false;
+		}
+
+		UnsignedByte sample[512];
+		Int bytesToRead = fileSize < 512 ? fileSize : 512;
+		file->read(sample, bytesToRead);
+
+		for (Int i = 0; i < bytesToRead; ++i)
+		{
+			if (sample[i] == 0)
+			{
+				DEBUG_LOG(("INI file '%s' contains null bytes (likely binary).", filePath.str()));
+				return false;
+			}
+		}
+		return true;
+	}
+
+	Bool isStr = (STRICMP(extension, ".str") == 0);
+	Bool isTxt = (STRICMP(extension, ".txt") == 0);
+	if (isStr || isTxt)
+	{
+		Int maxSize = isTxt ? MAX_TXT_SIZE : MAX_STR_SIZE;
+		if (fileSize > maxSize)
+		{
+			DEBUG_LOG(("Text file '%s' exceeds maximum size (%d bytes).", filePath.str(), fileSize));
+			return false;
+		}
+		return true;
+	}
+
+	if (STRICMP(extension, ".tga") == 0)
+	{
+		if (fileSize > MAX_TGA_SIZE)
+		{
+			DEBUG_LOG(("TGA file '%s' exceeds maximum size (%d bytes).", filePath.str(), fileSize));
+			return false;
+		}
+		if (fileSize < 18)
+		{
+			DEBUG_LOG(("TGA file '%s' is too small to be valid (minimum 18 bytes).", filePath.str()));
+			return false;
+		}
+		return true;
+	}
+
+	if (STRICMP(extension, ".wak") == 0)
+	{
+		if (fileSize > MAX_WAK_SIZE)
+		{
+			DEBUG_LOG(("WAK file '%s' exceeds maximum size (%d bytes).", filePath.str(), fileSize));
+			return false;
+		}
+		return true;
+	}
+
+	DEBUG_LOG(("File '%s' has unrecognized extension for content validation.", filePath.str()));
+	return false;
+}
+
+Bool FileSystem::hasValidTransferFileContent(const AsciiString& filePath)
+{
+	const char* lastDot = strrchr(filePath.str(), '.');
+	if (lastDot == NULL)
+	{
+		return false;
+	}
+
+	File* file = TheLocalFileSystem->openFile(filePath.str(), File::READ | File::BINARY);
+	if (file == NULL)
+	{
+		DEBUG_LOG(("Cannot open file '%s' for content validation.", filePath.str()));
+		return false;
+	}
+
+	Bool isValid = validateFileContent(file, filePath, lastDot);
+	file->close();
+	return isValid;
 }
