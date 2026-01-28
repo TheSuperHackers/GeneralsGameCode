@@ -853,7 +853,7 @@ void Anim2DCollection::unRegisterAnimation( Anim2D *anim )
 	if( anim->m_collectionSystem != this )
 		return;
 
-	// unlink from our instnace list
+	// unlink from our instance list
 	if( anim->m_collectionSystemNext )
 		anim->m_collectionSystemNext->m_collectionSystemPrev = anim->m_collectionSystemPrev;
 	if( anim->m_collectionSystemPrev )

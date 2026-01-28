@@ -231,7 +231,7 @@ UpdateSleepTime BridgeScaffoldBehavior::update( void )
 	//
 	// will this new position push us beyond our target destination, we will take the vector
 	// from the new position to the destination and the vector from our current present position
-	// tot he destination and dot them togehter ... if the result is < 0 then we have will
+	// tot he destination and dot them together ... if the result is < 0 then we have will
 	// overshoot the distance if we use the new position
 	//
 	Coord3D tooFarVector;

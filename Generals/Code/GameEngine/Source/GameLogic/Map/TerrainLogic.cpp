@@ -1096,7 +1096,7 @@ void TerrainLogic::update( void )
 				//
 				// because some water implementation store the height as integers, some changes
 				// are too small to keep track of in the actual water data structures so we have to
-				// keep track of it outselves
+				// keep track of it ourselves
 				//
 				currentHeight += changePerFrame;
 				m_waterToUpdate[ i ].currentHeight = currentHeight;
@@ -2633,7 +2633,7 @@ void TerrainLogic::setActiveBoundary(Int newActiveBoundary)
 }
 
 // ------------------------------------------------------------------------------------------------
-/** Flatten the terrain beneath a struture. */
+/** Flatten the terrain beneath a structure. */
 // ------------------------------------------------------------------------------------------------
 void TerrainLogic::flattenTerrain(Object *obj)
 {

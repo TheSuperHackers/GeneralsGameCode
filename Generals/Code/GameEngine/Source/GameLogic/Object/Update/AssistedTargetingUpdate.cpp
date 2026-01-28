@@ -78,7 +78,7 @@ AssistedTargetingUpdate::~AssistedTargetingUpdate( void )
 //-------------------------------------------------------------------------------------------------
 Bool AssistedTargetingUpdate::isFreeToAssist() const
 {
-	// The reload times of my two weapons are tied together, so Ready is indicitive of either.
+	// The reload times of my two weapons are tied together, so Ready is indicative of either.
 	const Object *me = getObject();
 	if( !me->isAbleToAttack() )
 		return FALSE;// This will cover under construction among other things

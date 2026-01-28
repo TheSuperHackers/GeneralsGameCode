@@ -171,7 +171,7 @@ ThingTemplate* ThingFactory::newOverride( ThingTemplate *thingTemplate )
 	// sanity
 	DEBUG_ASSERTCRASH( thingTemplate, ("newOverride(): null 'parent' thing template") );
 
-	// sanity just for debuging, the weapon must be in the master list to do overrides
+	// sanity just for debugging, the weapon must be in the master list to do overrides
 	DEBUG_ASSERTCRASH( findTemplate( thingTemplate->getName() ) != nullptr,
 										 ("newOverride(): Thing template '%s' not in master list",
 										 thingTemplate->getName().str()) );

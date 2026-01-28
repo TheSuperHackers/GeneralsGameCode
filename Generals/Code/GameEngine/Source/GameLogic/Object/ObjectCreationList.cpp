@@ -179,7 +179,7 @@ public:
     }
 
 		// Star trekkin, across the universe.
-		// Boldly goin forward now, cause we can't find reverse!
+		// Boldly going forward now, cause we can't find reverse!
 
 		// 1:30 left on the clock, Demo looming, should I de-const all of OCL since this one effect needs the
 		// Primary to help make the objects?  Should I rewrite superweapons to completely subsume them

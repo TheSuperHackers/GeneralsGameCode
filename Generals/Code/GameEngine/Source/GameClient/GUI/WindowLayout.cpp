@@ -59,7 +59,7 @@ WindowLayout::~WindowLayout( void )
 {
 
 	//
-	// it is the users responsability to remove windows from the layout beforing destroying the
+	// it is the users responsibility to remove windows from the layout before destroying the
 	// layout itself.  This allows for maximum flexibility of the window layouts and you can
 	// use them in any you see fit, as long as they are clean when they go away
 	//

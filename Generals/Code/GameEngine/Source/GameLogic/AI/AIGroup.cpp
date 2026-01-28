@@ -831,7 +831,7 @@ Bool AIGroup::friend_moveInfantryToPos( const Coord3D *pos, CommandSourceType cm
 
 	Object *theUnit;
 	if (useEndVector) {
-		// resort unsing the end vector.
+		// resort using the end vector.
 		startVector = endVector;
 		startVectorNormal =	endVectorNormal;
 		for (theUnit = iter->first(); theUnit; theUnit = iter->next()) iter2->insert(theUnit);
@@ -1299,7 +1299,7 @@ Bool AIGroup::friend_moveVehicleToPos( const Coord3D *pos, CommandSourceType cmd
 
 	Object *theUnit;
 	if (useEndVector) {
-		// resort unsing the end vector.
+		// resort using the end vector.
 		startVector = endVector;
 		startVectorNormal =	endVectorNormal;
 		for (theUnit = iter->first(); theUnit; theUnit = iter->next()) iter2->insert(theUnit);

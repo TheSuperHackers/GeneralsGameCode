@@ -537,7 +537,7 @@ void ScriptActions::doCreateReinforcements(const AsciiString& team, const AsciiS
 		dp = (DeliverPayloadAIUpdate*)transport->findUpdateModule(key_DeliverPayloadAIUpdate);
 	}
 
-	//Our tranport has a deliverPayload update module. This means it'll do airborned drops.
+	//Our transport has a deliverPayload update module. This means it'll do airborned drops.
 
 	const ThingTemplate* putInContainerTemplate  = nullptr;
 	if( dp )

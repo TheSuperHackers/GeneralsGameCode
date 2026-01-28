@@ -107,7 +107,7 @@ void PowerPlantUpdate::extendRods( Bool extend )
 //-------------------------------------------------------------------------------------------------
 UpdateSleepTime PowerPlantUpdate::update( void )
 {
-	// remove the extending condition and set the extened condition
+	// remove the extending condition and set the extended condition
 	Drawable *draw = getObject()->getDrawable();
 	if( draw )
 		draw->clearAndSetModelConditionState( MODELCONDITION_POWER_PLANT_UPGRADING,

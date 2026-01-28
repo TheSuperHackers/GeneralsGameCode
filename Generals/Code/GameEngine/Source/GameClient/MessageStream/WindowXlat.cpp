@@ -163,7 +163,7 @@ WindowTranslator::~WindowTranslator()
 
 // WindowTranslator ===========================================================
 /** Window translator that monitors raw input messages on the stream and
-	* acts on anything relavant to the windowing system */
+	* acts on anything relevant to the windowing system */
 //=============================================================================
 GameMessageDisposition WindowTranslator::translateGameMessage(const GameMessage *msg)
 {

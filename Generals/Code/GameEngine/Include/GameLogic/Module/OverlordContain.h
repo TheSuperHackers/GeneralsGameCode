@@ -95,7 +95,7 @@ public:
 	virtual Bool getContainerPipsToShow(Int& numTotal, Int& numFull);
 
 private:
-	/**< An empty overlord is a conatiner, but a full one redirects calls to its passengers.  If this returns nullptr,
+	/**< An empty overlord is a container, but a full one redirects calls to its passengers.  If this returns null,
 	we are either empty or carrying a non container.
 	*/
 	ContainModuleInterface *getRedirectedContain() const; ///< And this gets what are redirecting to.

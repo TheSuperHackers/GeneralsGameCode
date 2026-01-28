@@ -948,7 +948,7 @@ void ParkingPlaceBehavior::xfer( Xfer *xfer )
 
 	}
 
-	// runways cound and info
+	// runways could and info
 	UnsignedByte runwaysCount = m_runways.size();
 	xfer->xferUnsignedByte( &runwaysCount );
 	if( xfer->getXferMode() == XFER_SAVE )

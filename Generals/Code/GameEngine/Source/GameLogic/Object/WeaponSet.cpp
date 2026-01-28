@@ -581,7 +581,7 @@ CanAttackResult WeaponSet::getAbleToAttackSpecificObject( AbleToAttackType attac
 				//care about relationships (and fixes broken scripts).
 				if( commandSource == CMD_FROM_PLAYER && (!victim->testScriptStatusBit( OBJECT_STATUS_SCRIPT_TARGETABLE ) || r == ALLIES) )
 				{
-					//Unless the object has a map propertly that sets it to be targetable (and not allied), then give up.
+					//Unless the object has a map property that sets it to be targetable (and not allied), then give up.
 					return ATTACKRESULT_NOT_POSSIBLE;
 				}
 			}
@@ -1013,7 +1013,7 @@ Bool WeaponSet::setWeaponLock( WeaponSlotType weaponSlot, WeaponLockType lockTyp
 		return false;
 	}
 
-	// Verify the asked for weapon exists , choose it, and then lock it as choosen until unlocked
+	// Verify the asked for weapon exists , choose it, and then lock it as chosen until unlocked
 	// the old code was just plain wrong. (look at it in perforce and you'll see...)
 	if (m_weapons[weaponSlot] != nullptr)
 	{

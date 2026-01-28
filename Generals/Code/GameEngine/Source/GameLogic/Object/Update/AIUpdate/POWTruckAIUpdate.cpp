@@ -593,7 +593,7 @@ void POWTruckAIUpdate::doReturnPrisoners( void )
 }
 
 // ------------------------------------------------------------------------------------------------
-/** Initate a return of our empty truck back near the closest prison */
+/** Initiate a return of our empty truck back near the closest prison */
 // ------------------------------------------------------------------------------------------------
 void POWTruckAIUpdate::doReturnToPrison( Object *prison )
 {
@@ -704,7 +704,7 @@ Object *POWTruckAIUpdate::findBestTarget( void )
 }
 
 // ------------------------------------------------------------------------------------------------
-/** We are chosing to pass a structure through the iterate function to unload the
+/** We are choosing to pass a structure through the iterate function to unload the
 	* prisoners because it's more flexible in that, perhaps someday in the future, we
 	* could fail to add an object to the prison (maybe it's full or something), and in
 	* that case it's better to manually do actions each time a successful

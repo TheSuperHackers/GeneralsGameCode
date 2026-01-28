@@ -2716,7 +2716,7 @@ void AIAttackApproachTargetState::onExit( StateExitType status )
 		ai->ignoreObstacle(nullptr);
 
 		// Per JohnA, this state should not be calling ai->destroyPath, because we can have spastic users
-		// that click the target repeadedly. This will prevent the unit from stuttering for said spastic
+		// that click the target repeatedly. This will prevent the unit from stuttering for said spastic
 		// users.
 		// ai->destroyPath();
 		// urg. hacky. if we are a projectile, reset precise z-pos.
@@ -6270,7 +6270,7 @@ StateReturnType AIExitState::update()
 		DEBUG_ASSERTCRASH(obj, ("obj must not be null here"));
 
 		//GS.  The goal of unified ExitInterfaces dies a horrible death.  I can't ask Object for the exit,
-		// as removeFromContain is only in the Contain type.  I'm spliting the names in shame.
+		// as removeFromContain is only in the Contain type.  I'm splitting the names in shame.
 		ExitInterface* goalExitInterface = goal->getContain() ? goal->getContain()->getContainExitInterface() : nullptr;
 		if( goalExitInterface == nullptr )
 			return STATE_FAILURE;

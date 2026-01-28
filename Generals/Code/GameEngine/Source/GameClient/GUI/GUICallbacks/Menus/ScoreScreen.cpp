@@ -124,7 +124,7 @@ static GameWindow *staticTextGameSaved = nullptr;
 
 static Bool overidePlayerDisplayName = FALSE;
 
-//Extrenal declarations
+//External declarations
 NameKeyType listboxChatWindowScoreScreenID = NAMEKEY_INVALID;
 GameWindow *listboxChatWindowScoreScreen = nullptr;
 std::string LastReplayFileName;

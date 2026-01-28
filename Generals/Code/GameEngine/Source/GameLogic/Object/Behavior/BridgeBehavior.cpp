@@ -917,7 +917,7 @@ void BridgeBehavior::handleObjectsOnBridgeOnDie( void )
 		for( other = iter->first(); other; other = iter->next() )
 		{
 
-			// ingnore some kind of objects
+			// ignore some kind of objects
 			if( other->isKindOf( KINDOF_BRIDGE ) || other->isKindOf( KINDOF_BRIDGE_TOWER ) )
 				continue;
 

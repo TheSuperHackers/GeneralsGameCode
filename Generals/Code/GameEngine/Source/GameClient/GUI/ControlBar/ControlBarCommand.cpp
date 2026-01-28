@@ -189,7 +189,7 @@ void ControlBar::doTransportInventoryUI( Object *transport, const CommandSet *co
 
 			//
 			// since we're assuming all inventory exit commands appear in a continuous order,
-			// we need to also need to keep track of what is the last valid inventory commadn index
+			// we need to also need to keep track of what is the last valid inventory command index
 			//
 			lastInventoryIndex = i;
 
@@ -453,7 +453,7 @@ void ControlBar::resetContainData( void )
 }
 
 //-------------------------------------------------------------------------------------------------
-/** reset the build queue data we use to die queue entires to control */
+/** reset the build queue data we use to die queue entries to control */
 //-------------------------------------------------------------------------------------------------
 void ControlBar::resetBuildQueueData( void )
 {
@@ -630,7 +630,7 @@ void ControlBar::updateContextCommand( void )
 		obj = m_currentSelectedDrawable->getObject();
 
 	//
-	// the contents of objects are ususally showed on the UI, when those contents change
+	// the contents of objects are usually showed on the UI, when those contents change
 	// we always to update the UI
 	//
 	ContainModuleInterface *contain = obj ? obj->getContain() : nullptr;
