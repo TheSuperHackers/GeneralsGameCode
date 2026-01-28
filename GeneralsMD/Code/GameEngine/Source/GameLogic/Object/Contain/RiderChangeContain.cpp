@@ -301,7 +301,7 @@ void RiderChangeContain::onRemoving( Object *rider )
 			if( rider->getControllingPlayer() != nullptr )
 			{
 				//Wow, completely unforseeable game teardown order crash.  SetVeterancyLevel results in a call to player
-				//about upgrade masks.  So if we have a null player, it is game teardown, so don't worry about transfering exp.
+				//about upgrade masks.  So if we have a null player, it is game teardown, so don't worry about transferring exp.
 
 				//Transfer experience from the bike to the rider.
 				ExperienceTracker *riderTracker = rider->getExperienceTracker();

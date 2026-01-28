@@ -135,7 +135,7 @@ static void parseFXLocInfo( INI *ini, void *instance, BoneLocInfo *locInfo )
 }
 
 //-------------------------------------------------------------------------------------------------
-/** Parse a random delay.  This is a number pair, where the numbers are a min and max time in miliseconds. */
+/** Parse a random delay.  This is a number pair, where the numbers are a min and max time in milliseconds. */
 //-------------------------------------------------------------------------------------------------
 static void parseGameClientRandomDelay( INI *ini, void *instance, GameClientRandomVariable *delay)
 {
@@ -593,7 +593,7 @@ void BoneFXUpdate::xfer( Xfer *xfer )
 	else
 	{
 
-		// the list should be emtpy right now
+		// the list should be empty right now
 		if( m_particleSystemIDs.empty() == FALSE )
 		{
 

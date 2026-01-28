@@ -98,7 +98,7 @@ BunkerBusterBehaviorModuleData::BunkerBusterBehaviorModuleData( void )
 BunkerBusterBehavior::BunkerBusterBehavior( Thing *thing, const ModuleData *modData )
 											 : UpdateModule( thing, modData )
 {
-	// THIS HAS AN UPDATE... BECAUSE I FORSEE THE NEED FOR ONE, BUT RIGHT NOW IT DOES NOTHING
+	// THIS HAS AN UPDATE... BECAUSE I FORESEE THE NEED FOR ONE, BUT RIGHT NOW IT DOES NOTHING
 	setWakeFrame( getObject(), UPDATE_SLEEP_NONE );
   m_victimID = INVALID_ID;
   m_upgradeRequired = nullptr;

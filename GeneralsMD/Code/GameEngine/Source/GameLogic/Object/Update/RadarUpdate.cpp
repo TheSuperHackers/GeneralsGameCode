@@ -110,7 +110,7 @@ UpdateSleepTime RadarUpdate::update( void )
 		m_extendComplete = TRUE;
 		m_extendDoneFrame = 0;  // just to be clean
 
-		// remove the extending condition and set the extened condition
+		// remove the extending condition and set the extended condition
 		Drawable *draw = getObject()->getDrawable();
 		if( draw )
 			draw->clearAndSetModelConditionState( MODELCONDITION_RADAR_EXTENDING,

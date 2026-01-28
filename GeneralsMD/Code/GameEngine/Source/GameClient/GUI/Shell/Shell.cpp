@@ -606,7 +606,7 @@ void Shell::hideShell( void )
 WindowLayout *Shell::top( void )
 {
 
-	// emtpy stack
+	// empty stack
 	if( m_screenCount == 0 )
 		return nullptr;
 

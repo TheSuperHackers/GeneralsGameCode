@@ -1701,7 +1701,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 					aSound.setPosition(&pos);
 					TheAudio->addAudioEvent(&aSound);
 
-					// beacons are a rare event; play a nifty radar event thingie
+					// beacons are a rare event; play a nifty radar event thingy
 					TheRadar->createEvent( object->getPosition(), RADAR_EVENT_INFORMATION );
 
 					if (ThePlayerList->getLocalPlayer()->getRelationship(thisPlayer->getDefaultTeam()) == ALLIES)

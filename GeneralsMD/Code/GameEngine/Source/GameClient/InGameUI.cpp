@@ -2148,7 +2148,7 @@ void InGameUI::freeMessageResources( void )
 	for( i = 0; i < MAX_UI_MESSAGES; i++ )
 	{
 
-		// emtpy text
+		// empty text
 		m_uiMessages[ i ].fullText.clear();
 
 		// free display string

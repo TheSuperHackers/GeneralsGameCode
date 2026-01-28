@@ -28,7 +28,7 @@
 // All of this redirection stuff makes it so that while I am normally a transport
 // for Overlord subObjects, once I have a passenger, _I_ become a transport of their type.
 // So, the answer to this question depends on if it is my passenger asking, or theirs.
-// As always, I can't use convience functions that get redirected on a ? like this.
+// As always, I can't use convenience functions that get redirected on a ? like this.
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -491,7 +491,7 @@ Bool OverlordContain::isEnclosingContainerFor( const Object *obj ) const
 	// All of this redirection stuff makes it so that while I am normally a transport
 	// for Overlord subObjects, once I have a passenger, _I_ become a transport of their type.
 	// So, the answer to this question depends on if it is my passenger asking, or theirs.
-	// As always, I can't use convience functions that get redirected on a ? like this.
+	// As always, I can't use convenience functions that get redirected on a ? like this.
 	if( m_containListSize > 0  &&  obj ==  m_containList.front() )
 		return FALSE;
 

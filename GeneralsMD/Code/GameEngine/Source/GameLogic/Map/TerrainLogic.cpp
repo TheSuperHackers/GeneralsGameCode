@@ -2633,7 +2633,7 @@ void TerrainLogic::setActiveBoundary(Int newActiveBoundary)
 }
 
 // ------------------------------------------------------------------------------------------------
-/** Flatten the terrain beneath a struture. */
+/** Flatten the terrain beneath a structure. */
 // ------------------------------------------------------------------------------------------------
 void TerrainLogic::flattenTerrain(Object *obj)
 {

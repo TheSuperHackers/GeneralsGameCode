@@ -6482,7 +6482,7 @@ StateReturnType AIExitState::update()
 		DEBUG_ASSERTCRASH(obj, ("obj must not be null here"));
 
 		//GS.  The goal of unified ExitInterfaces dies a horrible death.  I can't ask Object for the exit,
-		// as removeFromContain is only in the Contain type.  I'm spliting the names in shame.
+		// as removeFromContain is only in the Contain type.  I'm splitting the names in shame.
 		ExitInterface* goalExitInterface = goal->getContain() ? goal->getContain()->getContainExitInterface() : nullptr;
 		if( goalExitInterface == nullptr )
 			return STATE_FAILURE;
@@ -6577,7 +6577,7 @@ StateReturnType AIExitInstantlyState::onEnter()
 		DEBUG_ASSERTCRASH(obj, ("obj must not be null here"));
 
 		//GS.  The goal of unified ExitInterfaces dies a horrible death.  I can't ask Object for the exit,
-		// as removeFromContain is only in the Contain type.  I'm spliting the names in shame.
+		// as removeFromContain is only in the Contain type.  I'm splitting the names in shame.
 		ExitInterface* goalExitInterface = goal->getContain() ? goal->getContain()->getContainExitInterface() : nullptr;
 		if( goalExitInterface == nullptr )
 			return STATE_FAILURE;

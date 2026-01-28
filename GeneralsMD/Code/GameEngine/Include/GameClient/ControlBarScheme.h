@@ -81,7 +81,7 @@ public:
 	ICoord2D m_size;							///< the size of the image needed when we draw it
 	Image *m_image;								///< the actual pointer to the mapped image
 
-	// m_layer is where the image will get drawn,  everything in layer 0-2 gets drawn during the forground draw
+	// m_layer is where the image will get drawn,  everything in layer 0-2 gets drawn during the foreground draw
 	// the layers 3-5 gets drawn during the background draw
 	Int m_layer; //layer means how deep the image will be drawn, it's a number between 0-5 with 0 being on top
 };

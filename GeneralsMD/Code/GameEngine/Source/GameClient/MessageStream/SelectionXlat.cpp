@@ -239,7 +239,7 @@ static Bool selectSingleDrawableWithoutSound( Drawable *draw )
 	// since we are single selecting a drawable, unselect everything else
 	deselectAll();
 
-	// do the drawble selection
+	// do the drawable selection
 	TheInGameUI->selectDrawable( draw );
 
 	Object *obj = draw->getObject();
