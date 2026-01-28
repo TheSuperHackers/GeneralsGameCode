@@ -1178,3 +1178,8 @@ target_precompile_headers(z_gameengine PRIVATE
     [["Utility/CppMacros.h"]] # Must be first, to be removed when abandoning VC6
     Include/Precompiled/PreRTS.h
 )
+
+# Apply D3DXWrapper forced include for NO_D3DX builds
+if(MINGW AND DEFINED MINGW_D3DX_WRAPPER_INCLUDE)
+    target_compile_options(z_gameengine PRIVATE ${MINGW_D3DX_WRAPPER_INCLUDE})
+endif()
