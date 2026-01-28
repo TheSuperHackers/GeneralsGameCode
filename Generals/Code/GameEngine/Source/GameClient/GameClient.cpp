@@ -82,6 +82,10 @@
 #include "GameLogic/GhostObject.h"
 #include "GameLogic/Object.h"
 #include "GameLogic/ScriptEngine.h"		// For TheScriptEngine - jkmcd
+#ifdef RTS_HAS_IMGUI
+#include "imgui.h"
+#include "ImGuiFrameManager.h"
+#endif
 
 #define DRAWABLE_HASH_SIZE	8192
 
@@ -490,6 +494,10 @@ DECLARE_PERF_TIMER(GameClient_draw)
 void GameClient::update( void )
 {
 	USE_PERF_TIMER(GameClient_update)
+#ifdef RTS_HAS_IMGUI
+	rts::ImGui::FrameManager::BeginFrame();
+	ImGui::ShowDemoWindow();
+#endif
 	// create the FRAME_TICK message
 	GameMessage *frameMsg = TheMessageStream->appendMessage( GameMessage::MSG_FRAME_TICK );
 	frameMsg->appendTimestampArgument( getFrame() );
@@ -582,6 +590,9 @@ void GameClient::update( void )
 
 	if(TheGlobalData->m_playIntro || TheGlobalData->m_afterIntro)
 	{
+#ifdef RTS_HAS_IMGUI
+		rts::ImGui::FrameManager::EndFrame();
+#endif
 		// redraw all views, update the GUI
 		TheDisplay->DRAW();
 		TheDisplay->UPDATE();
@@ -690,6 +701,9 @@ void GameClient::update( void )
 	// need to draw the first frame, then don't draw again until TheGlobalData->m_noDraw
 	if (TheGlobalData->m_noDraw > TheGameLogic->getFrame() && TheGameLogic->getFrame() > 0)
 	{
+#ifdef RTS_HAS_IMGUI
+		rts::ImGui::FrameManager::EndFrame();
+#endif
 		return;
 	}
 #endif
@@ -713,6 +727,9 @@ void GameClient::update( void )
 		TheDisplay->UPDATE();
 	}
 
+#ifdef RTS_HAS_IMGUI
+	rts::ImGui::FrameManager::EndFrame();
+#endif
 	{
 		USE_PERF_TIMER(GameClient_draw)
 

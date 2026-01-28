@@ -1174,6 +1174,10 @@ target_link_libraries(z_gameengine PUBLIC
     z_wwvegas
 )
 
+if (RTS_BUILD_OPTION_IMGUI)
+    target_link_libraries(z_gameengine PRIVATE lib_imgui)
+endif ()
+
 target_precompile_headers(z_gameengine PRIVATE
     [["Utility/CppMacros.h"]] # Must be first, to be removed when abandoning VC6
     Include/Precompiled/PreRTS.h

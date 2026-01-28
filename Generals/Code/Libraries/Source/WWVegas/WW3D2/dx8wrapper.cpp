@@ -82,6 +82,12 @@
 #include "bound.h"
 #include "DbgHelpGuard.h"
 
+#ifdef RTS_HAS_IMGUI
+#include "imgui.h"
+#include "imgui_impl_dx8.h"
+#include "imgui_impl_win32.h"
+#endif
+
 
 const int DEFAULT_RESOLUTION_WIDTH = 640;
 const int DEFAULT_RESOLUTION_HEIGHT = 480;
@@ -262,7 +268,8 @@ void MoveRectIntoOtherRect(const RECT& inner, const RECT& outer, int* x, int* y)
 	*y += dy;
 }
 
-
+// TheSuperHackers @feature jurassiclizard 16/01/2026 imgui integration (PR#2127)
+// see details under WinMain.cpp (WndProc())
 bool DX8Wrapper::Init(void * hwnd, bool lite)
 {
 	WWASSERT(!IsInitted);
@@ -349,6 +356,11 @@ bool DX8Wrapper::Init(void * hwnd, bool lite)
 
 void DX8Wrapper::Shutdown(void)
 {
+#ifdef RTS_HAS_IMGUI
+	ImGui_ImplDX8_Shutdown();
+	ImGui_ImplWin32_Shutdown();
+	ImGui::DestroyContext();
+#endif
 	if (D3DDevice) {
 
 		Set_Render_Target ((IDirect3DSurface8 *)nullptr);
@@ -510,7 +522,6 @@ void DX8Wrapper::Do_Onetime_Device_Dependent_Shutdowns(void)
 
 }
 
-
 bool DX8Wrapper::Create_Device(void)
 {
 	WWASSERT(D3DDevice==nullptr);	// for now, once you've created a device, you're stuck with it!
@@ -588,7 +599,21 @@ bool DX8Wrapper::Create_Device(void)
 	{
 		return false;
 	}
+#ifdef RTS_HAS_IMGUI
+	// Initialize ImGui
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO();
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
+	// Dark Style
+	ImGui::StyleColorsDark();
 
+	ImGui_ImplWin32_Init(_Hwnd);
+	ImGui_ImplDX8_Init(DX8Wrapper::_Get_D3D_Device8());
+	io.Fonts->AddFontDefault();
+	io.DisplaySize = ImVec2(ResolutionWidth,ResolutionHeight);
+#endif
 	dbgHelpGuard.deactivate();
 
 	/*
@@ -603,6 +628,9 @@ bool DX8Wrapper::Reset_Device(bool reload_assets)
 	WWDEBUG_SAY(("Resetting device."));
 	DX8_THREAD_ASSERT();
 	if ((IsInitted) && (D3DDevice != nullptr)) {
+#ifdef RTS_HAS_IMGUI
+		ImGui_ImplDX8_InvalidateDeviceObjects();
+#endif
 		// Release all non-MANAGED stuff
 		WW3D::_Invalidate_Textures();
 		
@@ -636,6 +664,9 @@ bool DX8Wrapper::Reset_Device(bool reload_assets)
 		}
 		Invalidate_Cached_Render_States();
 		Set_Default_Global_Render_States();
+#ifdef RTS_HAS_IMGUI
+		ImGui_ImplDX8_CreateDeviceObjects();
+#endif
 		WWDEBUG_SAY(("Device reset completed"));
 		return true;
 	}
@@ -1596,6 +1627,14 @@ void DX8Wrapper::Begin_Scene(void)
 void DX8Wrapper::End_Scene(bool flip_frames)
 {
 	DX8_THREAD_ASSERT();
+#ifdef RTS_HAS_IMGUI
+	{
+		ImDrawData* data = ImGui::GetDrawData();
+		if (data && data->CmdListsCount > 0) {
+			ImGui_ImplDX8_RenderDrawData(ImGui::GetDrawData());
+		}
+	}
+#endif
 	DX8CALL(EndScene());
 
 	DX8WebBrowser::Render(0);
