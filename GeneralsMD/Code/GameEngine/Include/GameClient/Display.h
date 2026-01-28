@@ -90,6 +90,9 @@ public:
 	virtual void dumpAssetUsage(const char* mapname) = 0;
 #endif
 
+	virtual UnsignedInt scaleHorizontalConstant(UnsignedInt x) { return (static_cast<Real>(x) / DEFAULT_DISPLAY_WIDTH) * getWidth(); }
+	virtual UnsignedInt scaleVerticalConstant(UnsignedInt y) { return (static_cast<Real>(y) / DEFAULT_DISPLAY_HEIGHT) * getHeight(); }
+
 	//---------------------------------------------------------------------------------------
 	// View management
 	virtual void attachView( View *view );												///< Attach the given view to the world
