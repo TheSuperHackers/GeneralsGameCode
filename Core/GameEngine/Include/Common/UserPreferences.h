@@ -146,6 +146,7 @@ public:
 	Int getRenderFpsFontSize(void);
 	Int getSystemTimeFontSize(void);
 	Int getGameTimeFontSize(void);
+	Int getObserverListFontSize(void);
 
 	Real getResolutionFontAdjustment(void);
 

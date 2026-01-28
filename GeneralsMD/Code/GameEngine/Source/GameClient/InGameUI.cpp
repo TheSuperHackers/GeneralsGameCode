@@ -37,6 +37,7 @@
 #include "Common/GameType.h"
 #include "Common/GameUtility.h"
 #include "Common/MessageStream.h"
+#include "Common/NameKeyGenerator.h"
 #include "Common/PerfTimer.h"
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
@@ -87,6 +88,7 @@
 #include "GameLogic/Module/SupplyWarehouseDockUpdate.h"
 #include "GameLogic/Module/MobMemberSlavedUpdate.h"//ML
 
+#include "GameNetwork/GameInfo.h"
 #include "GameNetwork/NetworkInterface.h"
 
 #include "Common/UnitTimings.h" //Contains the DO_UNIT_TIMINGS define jba.
@@ -931,6 +933,14 @@ const FieldParse InGameUI::s_fieldParseTable[] =
 	{ "GameTimeColor",          INI::parseColorInt,     nullptr, offsetof( InGameUI, m_gameTimeColor ) },
 	{ "GameTimeDropColor",      INI::parseColorInt,     nullptr, offsetof( InGameUI, m_gameTimeDropColor ) },
 
+	{ "ObserverListFont",               INI::parseAsciiString,   nullptr, offsetof( InGameUI, m_observerListFont ) },
+	{ "ObserverListBold",               INI::parseBool,          nullptr, offsetof( InGameUI, m_observerListBold ) },
+	{ "ObserverListPosition",           INI::parseCoord2D,       nullptr, offsetof( InGameUI, m_observerListPosition ) },
+	{ "ObserverListLabelColor",         INI::parseColorInt,      nullptr, offsetof( InGameUI, m_observerListLabelColor ) },
+	{ "ObserverListValueColor",         INI::parseColorInt,      nullptr, offsetof( InGameUI, m_observerListValueColor ) },
+	{ "ObserverListDropColor",          INI::parseColorInt,      nullptr, offsetof( InGameUI, m_observerListDropColor ) },
+	{ "ObserverListBackgroundAlpha",    INI::parseUnsignedInt  , nullptr, offsetof( InGameUI, m_observerListBackgroundAlpha ) },
+
 	{ nullptr,													nullptr,										nullptr,		0 }
 };
 
@@ -961,6 +971,7 @@ namespace
 InGameUI::InGameUI()
 {
 	Int i;
+	Int j;
 
 
   m_inputEnabled = true;
@@ -1108,6 +1119,34 @@ InGameUI::InGameUI()
 	m_gameTimePosition.y = kHudAnchorY;
 	m_gameTimeColor = GameMakeColor( 255, 255, 255, 255 );
 	m_gameTimeDropColor = GameMakeColor( 0, 0, 0, 255 );
+
+	for (i = 0; i < ARRAY_SIZE(m_observerList.labels); ++i)
+	{
+		m_observerList.labels[i] = nullptr;
+	}
+	for (i = 0; i < ObserverList::ValueType_Count; ++i)
+	{
+		for (j = 0; j < MAX_PLAYER_COUNT; ++j)
+		{
+			m_observerList.values[i][j] = nullptr;
+		}
+	}
+	for (i = 0; i < MAX_PLAYER_COUNT; ++i)
+	{
+		m_observerList.lastValues.team[i] = -1;
+		m_observerList.lastValues.money[i] = ~0u;
+		m_observerList.lastValues.rank[i] = -1;
+		m_observerList.lastValues.xp[i] = -1;
+	}
+	m_observerListFont = "Tahoma";
+	m_observerListPointSize = TheGlobalData->m_observerListFontSize;
+	m_observerListBold = TRUE;
+	m_observerListPosition.x = 0.0f;
+	m_observerListPosition.y = 0.44f;
+	m_observerListLabelColor = GameMakeColor(125, 124, 122, 255);
+	m_observerListValueColor = GameMakeColor(253, 251, 251, 255);
+	m_observerListDropColor = GameMakeColor(0, 0, 0, 255);
+	m_observerListBackgroundAlpha = 170;
 
 	m_superweaponPosition.x = 0.7f;
 	m_superweaponPosition.y = 0.7f;
@@ -2165,6 +2204,9 @@ void InGameUI::freeMessageResources( void )
 
 void InGameUI::freeCustomUiResources( void )
 {
+	Int i;
+	Int j;
+
 	TheDisplayStringManager->freeDisplayString(m_networkLatencyString);
 	m_networkLatencyString = nullptr;
 	TheDisplayStringManager->freeDisplayString(m_renderFpsString);
@@ -2177,6 +2219,19 @@ void InGameUI::freeCustomUiResources( void )
 	m_gameTimeString = nullptr;
 	TheDisplayStringManager->freeDisplayString(m_gameTimeFrameString);
 	m_gameTimeFrameString = nullptr;
+	for (i = 0; i < ARRAY_SIZE(m_observerList.labels); ++i)
+	{
+		TheDisplayStringManager->freeDisplayString(m_observerList.labels[i]);
+		m_observerList.labels[i] = nullptr;
+	}
+	for (i = 0; i < ObserverList::ValueType_Count; ++i)
+	{
+		for (j = 0; j < MAX_PLAYER_COUNT; ++j)
+		{
+			TheDisplayStringManager->freeDisplayString(m_observerList.values[i][j]);
+			m_observerList.values[i][j] = nullptr;
+		}
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -3676,6 +3731,11 @@ void InGameUI::postWindowDraw( void )
 	if ( (m_gameTimePointSize > 0) && !TheGameLogic->isInShellGame() && TheGameLogic->isInGame() )
 	{
 		drawGameTime();
+	}
+
+	if (m_observerListPointSize > 0 && TheGameLogic->isInGame() && TheControlBar->isObserverControlBarOn())
+	{
+		drawObserverList();
 	}
 }
 
@@ -5905,6 +5965,7 @@ void InGameUI::refreshCustomUiResources(void)
 	refreshRenderFpsResources();
 	refreshSystemTimeResources();
 	refreshGameTimeResources();
+	refreshObserverListResources();
 }
 
 void InGameUI::refreshNetworkLatencyResources(void)
@@ -5978,6 +6039,72 @@ void InGameUI::refreshGameTimeResources(void)
 	GameFont* gameTimeFont = TheWindowManager->winFindFont(m_gameTimeFont, adjustedGameTimeFontSize, m_gameTimeBold);
 	m_gameTimeString->setFont(gameTimeFont);
 	m_gameTimeFrameString->setFont(gameTimeFont);
+}
+
+void InGameUI::refreshObserverListResources(void)
+{
+	Int i;
+	Int j;
+
+	for (i = 0; i < ObserverList::LabelType_Count; ++i)
+	{
+		if (!m_observerList.labels[i])
+		{
+			m_observerList.labels[i] = TheDisplayStringManager->newDisplayString();
+		}
+	}
+
+	for (i = 0; i < ObserverList::ValueType_Count; ++i)
+	{
+		for (j = 0; j < MAX_PLAYER_COUNT; ++j)
+		{
+			if (!m_observerList.values[i][j])
+			{
+				m_observerList.values[i][j] = TheDisplayStringManager->newDisplayString();
+				switch (i)
+				{
+					case ObserverList::ValueType_Team:
+						m_observerList.lastValues.team[j] = -1;
+						break;
+					case ObserverList::ValueType_Money:
+						m_observerList.lastValues.money[j] = ~0u;
+						break;
+					case ObserverList::ValueType_Rank:
+						m_observerList.lastValues.rank[j] = -1;
+						break;
+					case ObserverList::ValueType_Xp:
+						m_observerList.lastValues.xp[j] = -1;
+						break;
+					case ObserverList::ValueType_Name:
+						m_observerList.lastValues.name[j] = UnicodeString::TheEmptyString;
+						break;
+					default:
+						break;
+				}
+			}
+		}
+	}
+
+	m_observerListPointSize = TheGlobalData->m_observerListFontSize;
+	Int adjustedObserverListPointSize = TheGlobalLanguageData->adjustFontSize(m_observerListPointSize);
+	GameFont *listFont = TheWindowManager->winFindFont(m_observerListFont, adjustedObserverListPointSize, m_observerListBold);
+
+	for (i = 0; i < ObserverList::LabelType_Count; ++i)
+	{
+		m_observerList.labels[i]->setFont(listFont);
+	}
+	for (i = 0; i < ObserverList::ValueType_Count; ++i)
+	{
+		for (j = 0; j < MAX_PLAYER_COUNT; ++j)
+		{
+			m_observerList.values[i][j]->setFont(listFont);
+		}
+	}
+
+	m_observerList.labels[ObserverList::LabelType_Team]->setText(TheGameText->FETCH_OR_SUBSTITUTE_FORMAT("GUI:ObserverListLabelTeam", L"T"));
+	m_observerList.labels[ObserverList::LabelType_Money]->setText(TheGameText->FETCH_OR_SUBSTITUTE_FORMAT("GUI:ObserverListLabelMoney", L"$"));
+	m_observerList.labels[ObserverList::LabelType_Rank]->setText(TheGameText->FETCH_OR_SUBSTITUTE_FORMAT("GUI:ObserverListLabelRank", L"*"));
+	m_observerList.labels[ObserverList::LabelType_Xp]->setText(TheGameText->FETCH_OR_SUBSTITUTE_FORMAT("GUI:ObserverListLabelXp", L"XP"));
 }
 
 void InGameUI::disableTooltipsUntil(UnsignedInt frameNum)
@@ -6167,4 +6294,93 @@ void InGameUI::drawGameTime()
 
 	m_gameTimeString->draw(horizontalTimerOffset, m_gameTimePosition.y, m_gameTimeColor, m_gameTimeDropColor);
 	m_gameTimeFrameString->draw(horizontalFrameOffset, m_gameTimePosition.y, GameMakeColor(180,180,180,255), m_gameTimeDropColor);
+}
+
+void InGameUI::drawObserverList()
+{
+	Int baseX = (Int)(m_observerListPosition.x * TheDisplay->getWidth());
+	Int baseY = (Int)(m_observerListPosition.y * TheDisplay->getHeight());
+
+	Int drawY = baseY;
+	Int lineH = m_observerList.labels[ObserverList::LabelType_Team]->getFont()->height;
+
+	Int observerRow = 0;
+	for (Int slotIndex = 0; slotIndex < MAX_SLOTS && observerRow < MAX_PLAYER_COUNT; ++slotIndex)
+	{
+		AsciiString name;
+		name.format("player%d", slotIndex);
+		const NameKeyType key = TheNameKeyGenerator->nameToKey(name);
+		Player *observerPlayer = ThePlayerList->findPlayerWithNameKey(key);
+		if (!observerPlayer || observerPlayer->isPlayerObserver())
+			continue;
+
+		const GameSlot *slot = TheGameInfo->getConstSlot(slotIndex);
+
+		const Int row = observerRow++;
+		const Int observerTeam = (slot && slot->getTeamNumber() >= 0) ? (slot->getTeamNumber() + 1) : 0;
+		UnsignedInt observerMoney = observerPlayer->getMoney()->countMoney();
+		Int observerRank = observerPlayer->getRankLevel();
+		Int observerXp = observerPlayer->getSkillPoints();
+		const UnicodeString observerName = observerPlayer->getPlayerDisplayName();
+
+		UnicodeString observerListValue;
+		if (m_observerList.lastValues.team[row] != observerTeam)
+		{
+			observerListValue.format(L"%d", observerTeam);
+			m_observerList.values[ObserverList::ValueType_Team][row]->setText(observerListValue);
+			m_observerList.lastValues.team[row] = observerTeam;
+		}
+		if (m_observerList.lastValues.money[row] != observerMoney)
+		{
+			observerListValue = formatMoneyValue(observerMoney);
+			m_observerList.values[ObserverList::ValueType_Money][row]->setText(observerListValue);
+			m_observerList.lastValues.money[row] = observerMoney;
+		}
+		if (m_observerList.lastValues.rank[row] != observerRank)
+		{
+			observerListValue.format(L"%d", observerRank);
+			m_observerList.values[ObserverList::ValueType_Rank][row]->setText(observerListValue);
+			m_observerList.lastValues.rank[row] = observerRank;
+		}
+		if (m_observerList.lastValues.xp[row] != observerXp)
+		{
+			observerListValue.format(L"%d", observerXp);
+			m_observerList.values[ObserverList::ValueType_Xp][row]->setText(observerListValue);
+			m_observerList.lastValues.xp[row] = observerXp;
+		}
+		if (m_observerList.lastValues.name[row] != observerName)
+		{
+			m_observerList.values[ObserverList::ValueType_Name][row]->setText(observerName);
+			m_observerList.lastValues.name[row] = observerName;
+		}
+
+		Int drawX = baseX;
+		Int observerMoneyDrawX = m_observerList.labels[ObserverList::LabelType_Team]->getWidth() + static_cast<Int>(lineH * (15.0f / 12.0f) + 0.5f);
+		Int observerRankDrawX = m_observerList.labels[ObserverList::LabelType_Money]->getWidth() + static_cast<Int>(lineH * (40.0f / 12.0f) + 0.5f);
+		Int observerXpDrawX = m_observerList.labels[ObserverList::LabelType_Rank]->getWidth() + static_cast<Int>(lineH * (15.0f / 12.0f) + 0.5f);
+		Int observerNameDrawX = m_observerList.labels[ObserverList::LabelType_Xp]->getWidth() + static_cast<Int>(lineH * (35.0f / 12.0f) + 0.5f);
+		const Int RowBackgroundWidth = observerMoneyDrawX + observerRankDrawX + observerXpDrawX + observerNameDrawX + m_observerList.values[ObserverList::ValueType_Name][row]->getWidth();
+
+		TheDisplay->drawFillRect(baseX, drawY, RowBackgroundWidth, lineH, GameMakeColor(0, 0, 0, m_observerListBackgroundAlpha));
+
+		m_observerList.labels[ObserverList::LabelType_Team]->draw(drawX, drawY, m_observerListLabelColor, m_observerListDropColor);
+		m_observerList.values[ObserverList::ValueType_Team][row]->draw(drawX + m_observerList.labels[ObserverList::LabelType_Team]->getWidth(), drawY, m_observerListValueColor, m_observerListDropColor);
+		observerMoneyDrawX += drawX;
+
+		m_observerList.labels[ObserverList::LabelType_Money]->draw(observerMoneyDrawX, drawY, m_observerListLabelColor, m_observerListDropColor);
+		m_observerList.values[ObserverList::ValueType_Money][row]->draw(observerMoneyDrawX + m_observerList.labels[ObserverList::LabelType_Money]->getWidth(), drawY, m_observerListValueColor, m_observerListDropColor);
+		observerRankDrawX += observerMoneyDrawX;
+
+		m_observerList.labels[ObserverList::LabelType_Rank]->draw(observerRankDrawX, drawY, m_observerListLabelColor, m_observerListDropColor);
+		m_observerList.values[ObserverList::ValueType_Rank][row]->draw(observerRankDrawX + m_observerList.labels[ObserverList::LabelType_Rank]->getWidth(), drawY, m_observerListValueColor, m_observerListDropColor);
+		observerXpDrawX += observerRankDrawX;
+
+		m_observerList.labels[ObserverList::LabelType_Xp]->draw(observerXpDrawX, drawY, m_observerListLabelColor, m_observerListDropColor);
+		m_observerList.values[ObserverList::ValueType_Xp][row]->draw(observerXpDrawX + m_observerList.labels[ObserverList::LabelType_Xp]->getWidth(), drawY, m_observerListValueColor, m_observerListDropColor);
+		observerNameDrawX += observerXpDrawX;
+
+		m_observerList.values[ObserverList::ValueType_Name][row]->draw(observerNameDrawX, drawY, observerPlayer->getPlayerColor(), m_observerListDropColor);
+
+		drawY += lineH;
+	}
 }
