@@ -8,6 +8,7 @@ option(RTS_BUILD_OPTION_DEBUG "Build code with the \"Debug\" configuration." OFF
 option(RTS_BUILD_OPTION_ASAN "Build code with Address Sanitizer." OFF)
 option(RTS_BUILD_OPTION_VC6_FULL_DEBUG "Build VC6 with full debug info." OFF)
 option(RTS_BUILD_OPTION_FFMPEG "Enable FFmpeg support" OFF)
+option(RTS_BUILD_OPTION_PROFILE_TRACY "Enable Tracy profiling for profile builds." OFF)
 
 if(NOT RTS_BUILD_ZEROHOUR AND NOT RTS_BUILD_GENERALS)
     set(RTS_BUILD_ZEROHOUR TRUE)
@@ -71,5 +72,18 @@ else()
 endif()
 
 if(RTS_BUILD_OPTION_PROFILE)
-    target_compile_definitions(core_config INTERFACE RTS_PROFILE)
+    if(RTS_BUILD_OPTION_PROFILE_TRACY)
+        find_package(Tracy CONFIG QUIET)
+        if(NOT Tracy_FOUND)
+            include(${CMAKE_CURRENT_LIST_DIR}/tracy.cmake)
+        endif()
+        if(NOT TARGET Tracy::TracyClient)
+            message(FATAL_ERROR "Tracy is enabled but Tracy::TracyClient was not found.")
+        endif()
+        target_compile_definitions(core_config INTERFACE
+                TRACY_ENABLE
+        )
+    else ()
+        target_compile_definitions(core_config INTERFACE RTS_PROFILE)
+    endif()
 endif()
