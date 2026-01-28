@@ -110,6 +110,7 @@ protected:
 	SurfaceClass *m_shroudSurface;								///< surface to shroud texture
 	void *m_shroudSurfaceBits;										///< shroud surface bits
 	int m_shroudSurfacePitch;											///< shroud surface pitch
+	WW3DFormat m_shroudSurfaceFormat;							///< shroud surface format
 	UnsignedInt m_shroudSurfacePixelSize;					///< shroud surface pixel size
 
 	Int m_textureWidth;														///< width for all radar textures
