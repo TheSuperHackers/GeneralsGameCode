@@ -139,8 +139,8 @@ void ProcessAnimateWindowSlideFromRight::initAnimateWindow( wnd::AnimateWindow *
 
 	// TheSuperHackers @bugfix toph 29/01/2026 Use scaled pixel constants
 	// for slowdown threshold and velocity.
-	m_maxVel.x = -static_cast<Real>(TheDisplay->scaleVerticalConstant(40));
-	m_slowDownThreshold = TheDisplay->scaleVerticalConstant(80);
+	m_maxVel.x = -static_cast<Real>(TheDisplay->scaleHorizontalConstant(40));
+	m_slowDownThreshold = TheDisplay->scaleHorizontalConstant(80);
 
 	//Now initialize the velocities
 	vel.x = m_maxVel.x;
@@ -321,8 +321,8 @@ void ProcessAnimateWindowSlideFromLeft::initAnimateWindow( wnd::AnimateWindow *a
 
 	// TheSuperHackers @bugfix toph 29/01/2026 Use scaled pixel constants
 	// for slowdown threshold and velocity.
-	m_maxVel.x = static_cast<Real>(TheDisplay->scaleVerticalConstant(40));
-	m_slowDownThreshold = TheDisplay->scaleVerticalConstant(80);
+	m_maxVel.x = static_cast<Real>(TheDisplay->scaleHorizontalConstant(40));
+	m_slowDownThreshold = TheDisplay->scaleHorizontalConstant(80);
 
 	//Now initialize the velocities
 	vel = m_maxVel;
