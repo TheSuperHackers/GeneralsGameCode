@@ -2313,69 +2313,100 @@ void JetAIUpdate::aiDoCommand(const AICommandParms* parms)
 	// note that we always store this, even if nothing will be "pending".
 	m_mostRecentCommand.store(*parms);
 
-	if (getFlag(TAKEOFF_IN_PROGRESS) || getFlag(LANDING_IN_PROGRESS))
+	if (shouldDeferCommand(parms->m_cmd))
 	{
-		// have to wait for takeoff or landing to complete, just store the sucker
 		setFlag(HAS_PENDING_COMMAND, true);
 		return;
 	}
-	else if (parms->m_cmd == AICMD_IDLE && getStateMachine()->getCurrentStateID() == RELOAD_AMMO)
+
+	if (!getFlag(ALLOW_AIR_LOCO) && commandRequiresTakeoff(parms))
 	{
-		// uber-special-case... if we are told to idle, but are reloading ammo, ignore it for now,
-		// since we're already doing "nothing" and responding to this will cease our reload...
-		// don't just return, tho, in case we were (say) reloading during a guard stint.
+		// nuke any existing pending cmd
+		m_mostRecentCommand.store(*parms);
 		setFlag(HAS_PENDING_COMMAND, true);
+
+		getStateMachine()->clear();
+		setLastCommandSource(CMD_FROM_AI);
+		getStateMachine()->setState(TAKING_OFF_AWAIT_CLEARANCE);
 		return;
 	}
-	else if (!getFlag(ALLOW_AIR_LOCO))
-	{
-		switch (parms->m_cmd)
-		{
-			case AICMD_IDLE:
-			case AICMD_BUSY:
-			case AICMD_FOLLOW_EXITPRODUCTION_PATH:
-				// don't need (or want) to take off for these
-				break;
 
-			case AICMD_ENTER:
-			case AICMD_GET_REPAIRED:
-
-				// if we're already parked at the airfield in question, just ignore.
-				if (isParkedAt(parms->m_obj))
-					return;
-
-				FALLTHROUGH; // else fall thru to the default case!
-
-			default:
-			{
-				// nuke any existing pending cmd
-				m_mostRecentCommand.store(*parms);
-				setFlag(HAS_PENDING_COMMAND, true);
-
-				getStateMachine()->clear();
-				setLastCommandSource( CMD_FROM_AI );
-				getStateMachine()->setState( TAKING_OFF_AWAIT_CLEARANCE );
-
-				return;
-			}
-		}
-	}
-
-	switch (parms->m_cmd)
-	{
-		case AICMD_GUARD_POSITION:
-		case AICMD_GUARD_OBJECT:
-		case AICMD_GUARD_AREA:
-		case AICMD_HUNT:
-			setFlag(ALLOW_INTERRUPT_AND_RESUME_OF_CUR_STATE_FOR_RELOAD, true);
-			break;
-		default:
-			setFlag(ALLOW_INTERRUPT_AND_RESUME_OF_CUR_STATE_FOR_RELOAD, false);
-			break;
-	}
-
+	setFlag(ALLOW_INTERRUPT_AND_RESUME_OF_CUR_STATE_FOR_RELOAD, isGuardCommand(parms->m_cmd));
 	setFlag(HAS_PENDING_COMMAND, false);
 	AIUpdateInterface::aiDoCommand(parms);
+}
+
+//-------------------------------------------------------------------------------------------------
+Bool JetAIUpdate::shouldDeferCommand(const AICommandType commandType) const
+{
+	// Always defer commands received during takeoff or landing
+	if (getFlag(TAKEOFF_IN_PROGRESS) || getFlag(LANDING_IN_PROGRESS))
+		return true;
+
+	const StateID currentState = getStateMachine()->getCurrentStateID();
+
+	// uber-special-case... if we are told to idle, but are reloading ammo, ignore it for now,
+	// since we're already doing "nothing" and responding to this will cease our reload...
+	// don't just return, tho, in case we were (say) reloading during a guard stint.
+	if (commandType == AICMD_IDLE && currentState == RELOAD_AMMO)
+		return true;
+
+#if !RETAIL_COMPATIBLE_CRC
+	if (commandRequiresAmmo(commandType) && currentState == RELOAD_AMMO)
+		return true;
+#endif
+
+	return false;
+}
+
+//-------------------------------------------------------------------------------------------------
+Bool JetAIUpdate::commandRequiresTakeoff(const AICommandParms* parms) const
+{
+	switch (parms->m_cmd)
+	{
+		case AICMD_IDLE:
+		case AICMD_BUSY:
+		case AICMD_FOLLOW_EXITPRODUCTION_PATH:
+			return false;
+
+		case AICMD_ENTER:
+		case AICMD_GET_REPAIRED:
+			// if we're already parked at the airfield in question, just ignore.
+			return !isParkedAt(parms->m_obj);
+
+		default:
+			return true;
+	}
+}
+
+Bool JetAIUpdate::commandRequiresAmmo(const AICommandType commandType) const
+{
+	switch (commandType)
+	{
+		case AICMD_ATTACKMOVE_TO_POSITION:
+		case AICMD_ATTACK_AREA:
+		case AICMD_ATTACK_OBJECT:
+		case AICMD_ATTACK_POSITION:
+		case AICMD_ATTACK_TEAM:
+		case AICMD_FORCE_ATTACK_OBJECT:
+			return true;
+		default:
+			return isGuardCommand(commandType);
+	}
+}
+
+Bool JetAIUpdate::isGuardCommand(const AICommandType commandType) const
+{
+	switch (commandType)
+	{
+		case AICMD_GUARD_AREA:
+		case AICMD_GUARD_OBJECT:
+		case AICMD_GUARD_POSITION:
+		case AICMD_HUNT:
+			return true;
+		default:
+			return false;
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
