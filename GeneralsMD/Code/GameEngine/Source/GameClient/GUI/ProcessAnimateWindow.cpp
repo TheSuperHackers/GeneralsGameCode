@@ -75,13 +75,9 @@
 
 ProcessAnimateWindowSlideFromRight::ProcessAnimateWindowSlideFromRight( void )
 {
-	m_maxVel.x =  -40.0f;  // top speed windows travel in x and y
 	m_maxVel.y = 0.0f;
-	m_slowDownThreshold = 80;  // when windows get this close to their resting
-																			// positions they start to slow down
 	m_slowDownRatio = 0.67f;  // how fast the windows slow down (smaller slows quicker)
 	m_speedUpRatio = 2.0f - m_slowDownRatio;  // how fast the windows speed up
-
 }
 
 //-----------------------------------------------------------------------------
@@ -140,6 +136,11 @@ void ProcessAnimateWindowSlideFromRight::initAnimateWindow( wnd::AnimateWindow *
 
 	//set the window's position to the new start positions.
 	win->winSetPosition(startPos.x, startPos.y);
+
+	// TheSuperHackers @bugfix toph 29/01/2026 Use scaled pixel constants
+	// for slowdown threshold and velocity.
+	m_maxVel.x = -static_cast<Real>(TheDisplay->scaleVerticalConstant(40));
+	m_slowDownThreshold = TheDisplay->scaleVerticalConstant(80);
 
 	//Now initialize the velocities
 	vel.x = m_maxVel.x;
@@ -261,13 +262,9 @@ Bool ProcessAnimateWindowSlideFromRight::reverseAnimateWindow( wnd::AnimateWindo
 
 ProcessAnimateWindowSlideFromLeft::ProcessAnimateWindowSlideFromLeft( void )
 {
-	m_maxVel.x =  40.0f;  // top speed windows travel in x and y
 	m_maxVel.y = 0.0f;
-	m_slowDownThreshold = 80;  // when windows get this close to their resting
-																			// positions they start to slow down
 	m_slowDownRatio = 0.67f;  // how fast the windows slow down (smaller slows quicker)
 	m_speedUpRatio = 2.0f - m_slowDownRatio;  // how fast the windows speed up
-
 }
 
 ProcessAnimateWindowSlideFromLeft::~ProcessAnimateWindowSlideFromLeft( void ) { }
@@ -321,6 +318,11 @@ void ProcessAnimateWindowSlideFromLeft::initAnimateWindow( wnd::AnimateWindow *a
 
 	//set the window's position to the new start positions.
 	win->winSetPosition(startPos.x, startPos.y);
+
+	// TheSuperHackers @bugfix toph 29/01/2026 Use scaled pixel constants
+	// for slowdown threshold and velocity.
+	m_maxVel.x = static_cast<Real>(TheDisplay->scaleVerticalConstant(40));
+	m_slowDownThreshold = TheDisplay->scaleVerticalConstant(80);
 
 	//Now initialize the velocities
 	vel = m_maxVel;
@@ -439,13 +441,9 @@ Bool ProcessAnimateWindowSlideFromLeft::reverseAnimateWindow( wnd::AnimateWindow
 
 ProcessAnimateWindowSlideFromTop::ProcessAnimateWindowSlideFromTop( void )
 {
-	m_maxVel.y =  40.0f;  // top speed windows travel in x and y
 	m_maxVel.x = 0.0f;
-	m_slowDownThreshold = 80;  // when windows get this close to their resting
-																			// positions they start to slow down
 	m_slowDownRatio = 0.67f;  // how fast the windows slow down (smaller slows quicker)
 	m_speedUpRatio = 2.0f - m_slowDownRatio;  // how fast the windows speed up
-
 }
 
 ProcessAnimateWindowSlideFromTop::~ProcessAnimateWindowSlideFromTop( void ) { }
@@ -499,6 +497,11 @@ void ProcessAnimateWindowSlideFromTop::initAnimateWindow( wnd::AnimateWindow *an
 
 	//set the window's position to the new start positions.
 	win->winSetPosition(startPos.x, startPos.y);
+
+	// TheSuperHackers @bugfix toph 29/01/2026 Use scaled pixel constants
+	// for slowdown threshold and velocity.
+	m_maxVel.y = static_cast<Real>(TheDisplay->scaleVerticalConstant(40));
+	m_slowDownThreshold = TheDisplay->scaleVerticalConstant(80);
 
 	//Now initialize the velocities
 	vel = m_maxVel;
@@ -618,13 +621,9 @@ Bool ProcessAnimateWindowSlideFromTop::reverseAnimateWindow( wnd::AnimateWindow 
 
 ProcessAnimateWindowSlideFromBottom::ProcessAnimateWindowSlideFromBottom( void )
 {
-	m_maxVel.y =  -40.0f;  // top speed windows travel in x and y
 	m_maxVel.x = 0.0f;
-	m_slowDownThreshold = 80;  // when windows get this close to their resting
-																			// positions they start to slow down
 	m_slowDownRatio = 0.67f;  // how fast the windows slow down (smaller slows quicker)
 	m_speedUpRatio = 2.0f - m_slowDownRatio;  // how fast the windows speed up
-
 }
 
 ProcessAnimateWindowSlideFromBottom::~ProcessAnimateWindowSlideFromBottom( void ) { }
@@ -679,6 +678,11 @@ void ProcessAnimateWindowSlideFromBottom::initAnimateWindow( wnd::AnimateWindow 
 
 	//set the window's position to the new start positions.
 	win->winSetPosition(startPos.x, startPos.y);
+
+	// TheSuperHackers @bugfix toph 29/01/2026 Use scaled pixel constants
+	// for slowdown threshold and velocity.
+	m_maxVel.y = -static_cast<Real>(TheDisplay->scaleVerticalConstant(40));
+	m_slowDownThreshold = TheDisplay->scaleVerticalConstant(80);
 
 	//Now initialize the velocities
 	vel = m_maxVel;
