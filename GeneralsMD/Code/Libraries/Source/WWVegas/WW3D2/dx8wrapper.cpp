@@ -429,7 +429,6 @@ void DX8Wrapper::Do_Onetime_Device_Dependent_Inits(void)
 	ShatterSystem::Init();
 	TextureLoader::Init();
 
-
 	Set_Default_Global_Render_States();
 }
 
@@ -531,6 +530,7 @@ void DX8Wrapper::Do_Onetime_Device_Dependent_Shutdowns(void)
 	CurrentCaps=nullptr;
 
 }
+
 
 bool DX8Wrapper::Create_Device(void)
 {
@@ -654,7 +654,6 @@ bool DX8Wrapper::Create_Device(void)
 	ImGuiIO& io = ImGui::GetIO();
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
-	// Dark Style
 	ImGui::StyleColorsDark();
 
 	ImGui_ImplWin32_Init(_Hwnd);

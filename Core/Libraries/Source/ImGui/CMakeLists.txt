@@ -39,6 +39,7 @@ if (WIN32)
     add_library(lib_imgui STATIC ${IMGUI_WIN32_DX8_ALL_SRCS}
         "${CMAKE_CURRENT_LIST_DIR}/wrapper/ImGuiFrameManager.cpp"
     )
+
     target_include_directories(lib_imgui
         PUBLIC ${IMGUI_INCLUDE_DIRS}
         PUBLIC "${CMAKE_CURRENT_LIST_DIR}/wrapper")
@@ -54,4 +55,3 @@ else ()
     # currently only WIN32 DX is supported
     MESSAGE(FATAL_ERROR "Non-Windows platforms currently not supported for ImGui")
 endif ()
-# end target build section

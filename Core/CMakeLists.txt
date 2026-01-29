@@ -26,7 +26,6 @@ target_link_libraries(corei_always INTERFACE
     corei_libraries_include
     resources
 )
-
 target_link_libraries(corei_always_no_pch INTERFACE
     core_config
     core_utility_no_pch

@@ -24,11 +24,6 @@
  * SOFTWARE.
  */
 
-/**
- * @file imgui_impl_dx8.cpp
- * @brief DirectX8 renderer backend for Dear ImGui, reverse-engineered from the official DX9 backend
- */
-
 // dear imgui: Renderer Backend for DirectX8
 // This needs to be used along with a Platform Backend (e.g. Win32)
 
@@ -332,8 +327,7 @@ void ImGui_ImplDX8_RenderDrawData(ImDrawData *draw_data)
     // Allocate buffers
     CUSTOMVERTEX *vtx_dst{};
     ImDrawIdx *idx_dst{};
-    if (bd->pVB->Lock(0, (UINT)(draw_data->TotalVtxCount * sizeof(CUSTOMVERTEX)), (BYTE **)&vtx_dst, D3DLOCK_DISCARD) <
-        0)
+    if (bd->pVB->Lock(0, (UINT)(draw_data->TotalVtxCount * sizeof(CUSTOMVERTEX)), (BYTE **)&vtx_dst, D3DLOCK_DISCARD) < 0)
     {
         bd->pd3dDevice->DeleteStateBlock(d3d8_state_block);
         return;
