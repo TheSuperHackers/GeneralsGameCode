@@ -2112,10 +2112,14 @@ void AIGroup::groupAttackObjectPrivate( Bool forced, Object *victim, Int maxShot
 	for( i = m_memberList.begin(); i != m_memberList.end(); ++i )	{
 		Real dx, dy;
 		Coord3D unitPos = *((*i)->getPosition());
+#if RETAIL_COMPATIBLE_CRC
+		// TheSuperHackers @bugfix Stubbjax 03/08/2025 This logic block erroneously prevents the
+		// occupants of DISABLED_HELD units (e.g. undead Battle Buses) from responding to attack commands.
 		if ((*i)->isDisabledByType( DISABLED_HELD ) )
 		{
 			continue; // don't bother telling the occupants to move.
 		}
+#endif
 		dx = unitPos.x - victimPos.x;
 		dy = unitPos.y - victimPos.y;
 		iter->insert((*i), dx*dx+dy*dy);
