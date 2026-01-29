@@ -743,7 +743,7 @@ public:
 
 	typedef std::list<ParticleSystem*> ParticleSystemList;
 	typedef ParticleSystemList::iterator ParticleSystemListIt;
-	typedef std::hash_map<ParticleSystemID, ParticleSystem *> ParticleSystemIDMap;
+	typedef std::hash_map<ParticleSystemID, ParticleSystem *, rts::hash<ParticleSystemID>, rts::equal_to<ParticleSystemID> > ParticleSystemIDMap;
 	typedef std::hash_map<AsciiString, ParticleSystemTemplate *, rts::hash<AsciiString>, rts::equal_to<AsciiString> > TemplateMap;
 
 	ParticleSystemManager( void );

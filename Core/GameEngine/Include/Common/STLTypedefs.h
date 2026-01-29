@@ -64,6 +64,7 @@ class Object;
 enum NameKeyType CPP_11(: Int);
 enum ObjectID CPP_11(: Int);
 enum DrawableID CPP_11(: Int);
+enum ParticleSystemID CPP_11(: Int);
 
 #include <algorithm>
 #include <bitset>
@@ -147,6 +148,7 @@ namespace rts
 		}
 	};
 
+#ifdef USING_STLPORT
 	template<> struct hash<NameKeyType>
 	{
 		size_t operator()(NameKeyType nkt) const
@@ -173,6 +175,16 @@ namespace rts
 			return tmp((UnsignedInt)nkt);
 		}
 	};
+
+	template<> struct hash<ParticleSystemID>
+	{
+		size_t operator()(ParticleSystemID nkt) const
+		{
+			std::hash<UnsignedInt> tmp;
+			return tmp((UnsignedInt)nkt);
+		}
+	};
+#endif // USING_STLPORT
 
 	template<> struct hash<const Char*>
 	{
