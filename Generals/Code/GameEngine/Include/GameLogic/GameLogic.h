@@ -103,7 +103,7 @@ public:
 	GameLogic( void );
 	virtual ~GameLogic();
 
-	// subsystem methods
+	// subsytem methods
 	virtual void init( void );															///< Initialize or re-initialize the instance
 	virtual void reset( void );															///< Reset the logic system
 	virtual void update( void );														///< update the world
