@@ -283,7 +283,7 @@ class ParticleEmitterClass : public RenderObjClass
 		// Used to build a list of filenames this emitter is dependent on
 		virtual void			Add_Dependencies_To_List (DynamicVectorClass<StringClass> &file_list, bool textures_only = false);
 
-		// This method is called each time the visiblity state of the emitter changes.
+		// This method is called each time the visibility state of the emitter changes.
 		virtual void			Update_On_Visibility (void);
 
 	private:

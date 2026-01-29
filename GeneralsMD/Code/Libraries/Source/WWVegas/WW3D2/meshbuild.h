@@ -71,7 +71,7 @@ class WorldInfoClass
 ** material, and put them into strip order.
 **
 ** To "build" a mesh:
-** 1. Reset the builder with the number of polys you're going to sumbit
+** 1. Reset the builder with the number of polys you're going to submit
 ** 2. Enable the vertex channels that you want
 ** 3. Submit each face in the form of a FaceClass
 ** 4. Call Build_Mesh
@@ -177,7 +177,7 @@ public:
 
 	/*
 	** To "build" a mesh:
-	** 1. Reset the builder with the approximate number of polys you're going to sumbit, etc.
+	** 1. Reset the builder with the approximate number of polys you're going to submit, etc.
 	** 3. Submit each face in the form of a FaceClass, set only the fields you need (leave others at default)
 	** 4. Call Build_Mesh
 	*/
