@@ -478,6 +478,15 @@ void RecorderClass::stopPlayback() {
 
 	if (!m_doingAnalysis)
 	{
+		// TheSuperHackers @bugfix bobtista 29/01/2026 In headless mode, exit directly to avoid
+		// use-after-free crash during normal game cleanup. The crash occurs because objects are
+		// accessed after being freed during TheGameEngine->reset(). Since headless mode has no UI
+		// and is about to exit anyway, we can safely skip the cleanup and let the OS reclaim resources.
+		if (TheGlobalData->m_headless)
+		{
+			exit(0);
+		}
+
 		TheGameLogic->exitGame();
 	}
 }
