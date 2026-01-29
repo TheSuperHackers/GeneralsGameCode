@@ -290,7 +290,7 @@ class ParticleEmitterClass : public RenderObjClass
 
 		// Collision sphere is a point - emitter emits also when not visible,
       // so this is only important to avoid affecting the collision spheres
-      // of heirarchy objects into which the emitter is inserted.
+      // of hierarchy objects into which the emitter is inserted.
 		virtual void Update_Cached_Bounding_Volumes(void) const;
 
       // Create new particles and pass them to the particle buffer. Receives

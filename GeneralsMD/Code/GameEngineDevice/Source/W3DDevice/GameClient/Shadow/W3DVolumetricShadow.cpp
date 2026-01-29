@@ -2465,7 +2465,7 @@ void W3DVolumetricShadow::buildSilhouette(Int meshIndex, Vector3 *lightPosObject
 
 				//
 				// ignore neighbors that are marked as processed as those
-				// onces have already detected edges if present
+				// ones have already detected edges if present
 				//
 				if( BitIsSet( otherNeighbor->status, POLY_PROCESSED ) )
 					continue;  // for j
@@ -3524,7 +3524,7 @@ void W3DVolumetricShadowManager::renderShadows( Bool forceStencilFill )
 				shadowDynamicTask=m_dynamicShadowVolumesToRender;
 				while (shadowDynamicTask != shadowDynamicTasksStart)
 				{	//update() added a dynamic shadow
-					//dynamic shadow columes don't need to wait in queue since they
+					//dynamic shadow columns don't need to wait in queue since they
 					//all use the same vertex buffer.  Flush them ASAP.
 					shadow->RenderVolume(shadowDynamicTask->m_meshIndex,shadowDynamicTask->m_lightIndex);
 					//move to next dynamic task
@@ -3575,7 +3575,7 @@ void W3DVolumetricShadowManager::renderShadows( Bool forceStencilFill )
 		//flush any dynamic shadow volumes
 		shadowDynamicTask=m_dynamicShadowVolumesToRender;
 		while (shadowDynamicTask)
-		{	//dynamic shadow columes don't need to wait in queue since they
+		{	//dynamic shadow columns don't need to wait in queue since they
 			//all use the same vertex buffer.  Flush them ASAP.
 			shadowDynamicTask->m_parentShadow->RenderVolume(shadowDynamicTask->m_meshIndex,shadowDynamicTask->m_lightIndex);
 			shadowDynamicTask=(W3DVolumetricShadowRenderTask *)shadowDynamicTask->m_nextTask;
