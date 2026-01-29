@@ -82,9 +82,9 @@ static UnsignedInt scaleVerticalConstant(UnsignedInt y) {
 
 ProcessAnimateWindowSlideFromRight::ProcessAnimateWindowSlideFromRight( void )
 {
-	m_maxVel.x = 0.0f;
+	m_maxVel.x = 0.0f; // top speed windows travel in x and y
 	m_maxVel.y = 0.0f;
-	m_slowDownThreshold = 0;
+	m_slowDownThreshold = 0; // when windows get this close to their resting positions they start to slow down
 
 	m_slowDownRatio = 0.67f;  // how fast the windows slow down (smaller slows quicker)
 	m_speedUpRatio = 2.0f - m_slowDownRatio;  // how fast the windows speed up
@@ -272,9 +272,9 @@ Bool ProcessAnimateWindowSlideFromRight::reverseAnimateWindow( wnd::AnimateWindo
 
 ProcessAnimateWindowSlideFromLeft::ProcessAnimateWindowSlideFromLeft( void )
 {
-	m_maxVel.x = 0.0f;
+	m_maxVel.x = 0.0f; // top speed windows travel in x and y
 	m_maxVel.y = 0.0f;
-	m_slowDownThreshold = 0;
+	m_slowDownThreshold = 0; // when windows get this close to their resting positions they start to slow down
 
 	m_slowDownRatio = 0.67f;  // how fast the windows slow down (smaller slows quicker)
 	m_speedUpRatio = 2.0f - m_slowDownRatio;  // how fast the windows speed up
@@ -454,9 +454,9 @@ Bool ProcessAnimateWindowSlideFromLeft::reverseAnimateWindow( wnd::AnimateWindow
 
 ProcessAnimateWindowSlideFromTop::ProcessAnimateWindowSlideFromTop( void )
 {
-	m_maxVel.x = 0.0f;
+	m_maxVel.x = 0.0f; // top speed windows travel in x and y
 	m_maxVel.y = 0.0f;
-	m_slowDownThreshold = 0;
+	m_slowDownThreshold = 0; // when windows get this close to their resting positions they start to slow down
 
 	m_slowDownRatio = 0.67f;  // how fast the windows slow down (smaller slows quicker)
 	m_speedUpRatio = 2.0f - m_slowDownRatio;  // how fast the windows speed up
@@ -637,9 +637,9 @@ Bool ProcessAnimateWindowSlideFromTop::reverseAnimateWindow( wnd::AnimateWindow 
 
 ProcessAnimateWindowSlideFromBottom::ProcessAnimateWindowSlideFromBottom( void )
 {
-	m_maxVel.x = 0.0f;
+	m_maxVel.x = 0.0f; // top speed windows travel in x and y
 	m_maxVel.y = 0.0f;
-	m_slowDownThreshold = 0;
+	m_slowDownThreshold = 0; // when windows get this close to their resting positions they start to slow down
 
 	m_slowDownRatio = 0.67f;  // how fast the windows slow down (smaller slows quicker)
 	m_speedUpRatio = 2.0f - m_slowDownRatio;  // how fast the windows speed up
