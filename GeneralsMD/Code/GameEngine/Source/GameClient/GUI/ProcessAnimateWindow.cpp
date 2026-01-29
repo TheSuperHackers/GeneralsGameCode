@@ -68,11 +68,11 @@
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 
-inline static UnsignedInt scaleHorizontalConstant(UnsignedInt x) {
+static UnsignedInt scaleHorizontalConstant(UnsignedInt x) {
 	return (static_cast<Real>(x) / DEFAULT_DISPLAY_WIDTH) * TheDisplay->getWidth();
 }
 
-inline static UnsignedInt scaleVerticalConstant(UnsignedInt y) {
+static UnsignedInt scaleVerticalConstant(UnsignedInt y) {
 	return (static_cast<Real>(y) / DEFAULT_DISPLAY_HEIGHT) * TheDisplay->getHeight();
 }
 
