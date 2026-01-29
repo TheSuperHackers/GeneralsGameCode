@@ -23,28 +23,22 @@ namespace rts
 namespace ImGui
 {
 
-class FrameManager
+class ContextManager
 {
   public:
-    static void BeginFrame();
-    static void EndFrame();
+    ContextManager();
+    ~ContextManager();
+
+    void Init(void *hwnd, void *device);
 
   private:
-    static bool s_frameOpen;
-};
-
-class FrameGuard
-{
-  public:
-    FrameGuard() { FrameManager::BeginFrame(); }
-
-    ~FrameGuard() { FrameManager::EndFrame(); }
+    bool m_initialized;
 
     // TODO change this to rule of 5 and use delete instead of declaring without
     // definition once we are using a C++11 or higher C++ Standard
-  private:
-    FrameGuard(const FrameGuard &);
-    FrameGuard &operator=(const FrameGuard &);
+    ContextManager(const ContextManager &);
+    ContextManager &operator=(const ContextManager &);
 };
+
 } // namespace ImGui
 } // namespace rts

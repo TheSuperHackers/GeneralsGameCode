@@ -15,41 +15,44 @@
 **	You should have received a copy of the GNU General Public License
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "ImGuiFrameManager.h"
+#include "ImGuiContextManager.h"
 #include "imgui.h"
 #include "imgui_impl_dx8.h"
 #include "imgui_impl_win32.h"
+#include <d3d8.h>
+#include <windows.h>
 
-bool rts::ImGui::FrameManager::s_frameOpen = false;
+rts::ImGui::ContextManager::ContextManager() : m_initialized(false) {}
 
-void rts::ImGui::FrameManager::BeginFrame()
+rts::ImGui::ContextManager::~ContextManager()
 {
-    if (s_frameOpen)
+    if (m_initialized)
     {
-        return;
+        ImGui_ImplDX8_Shutdown();
+        ImGui_ImplWin32_Shutdown();
+        ::ImGui::DestroyContext();
     }
-
-    ImGui_ImplDX8_NewFrame();
-    ImGui_ImplWin32_NewFrame();
-    ::ImGui::NewFrame();
-
-    s_frameOpen = true;
 }
 
-void rts::ImGui::FrameManager::EndFrame()
+void rts::ImGui::ContextManager::Init(void *hwnd, void *device)
 {
-    if (!s_frameOpen)
+    if (m_initialized)
     {
         return;
     }
 
-    ::ImGui::Render();
+    ::IMGUI_CHECKVERSION();
+    ::ImGui::CreateContext();
+    ImGuiIO &io = ::ImGui::GetIO();
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
 
-    ImDrawData *data = ::ImGui::GetDrawData();
-    if (data && data->CmdListsCount > 0)
-    {
-        ImGui_ImplDX8_RenderDrawData(data);
-    }
+    ::ImGui::StyleColorsDark();
 
-    s_frameOpen = false;
+    ImGui_ImplWin32_Init(static_cast<HWND>(hwnd));
+    ImGui_ImplDX8_Init(static_cast<IDirect3DDevice8 *>(device));
+
+    io.Fonts->AddFontDefault();
+
+    m_initialized = true;
 }

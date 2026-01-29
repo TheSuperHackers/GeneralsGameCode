@@ -38,6 +38,7 @@ if (WIN32)
 
     add_library(lib_imgui STATIC ${IMGUI_WIN32_DX8_ALL_SRCS}
         "${CMAKE_CURRENT_LIST_DIR}/wrapper/ImGuiFrameManager.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/wrapper/ImGuiContextManager.cpp"
     )
 
     target_include_directories(lib_imgui

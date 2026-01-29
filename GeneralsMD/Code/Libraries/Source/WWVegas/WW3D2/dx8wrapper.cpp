@@ -92,6 +92,7 @@
 #include <imgui_impl_win32.h>
 #include "imgui_impl_dx8.h"
 #include <ImGuiFrameManager.h>
+#include <ImGuiContextManager.h>
 #endif
 
 const int DEFAULT_RESOLUTION_WIDTH = 640;
@@ -109,6 +110,9 @@ int DX8Wrapper_PreserveFPU = 0;
 ** DX8Wrapper Static Variables
 **
 ***********************************************************************************/
+#ifdef RTS_HAS_IMGUI
+static rts::ImGui::ContextManager g_imguiContextManager;
+#endif
 
 static HWND						_Hwnd															= nullptr;
 bool								DX8Wrapper::IsInitted									= false;
@@ -362,11 +366,6 @@ bool DX8Wrapper::Init(void * hwnd, bool lite)
 
 void DX8Wrapper::Shutdown(void)
 {
-#ifdef RTS_HAS_IMGUI
-	ImGui_ImplDX8_Shutdown();
-	ImGui_ImplWin32_Shutdown();
-	ImGui::DestroyContext();
-#endif
 	if (D3DDevice) {
 
 		Set_Render_Target ((IDirect3DSurface8 *)nullptr);
@@ -649,17 +648,8 @@ bool DX8Wrapper::Create_Device(void)
 		}
 	}
 #ifdef RTS_HAS_IMGUI
-	// Initialize ImGui
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
+	g_imguiContextManager.Init(_Hwnd, DX8Wrapper::_Get_D3D_Device8());
 	ImGuiIO& io = ImGui::GetIO();
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
-	ImGui::StyleColorsDark();
-
-	ImGui_ImplWin32_Init(_Hwnd);
-	ImGui_ImplDX8_Init(DX8Wrapper::_Get_D3D_Device8());
-	io.Fonts->AddFontDefault();
 	io.DisplaySize = ImVec2(ResolutionWidth,ResolutionHeight);
 #endif
 	dbgHelpGuard.deactivate();
