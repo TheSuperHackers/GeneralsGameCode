@@ -38,5 +38,6 @@ class FrameManager
     static bool s_frameOpen;
 };
 
+
 } // namespace ImGui
 } // namespace rts
