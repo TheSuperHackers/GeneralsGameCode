@@ -287,7 +287,6 @@ class AudioManager : public SubsystemInterface
 		virtual void closeAnySamplesUsingFile( const void *fileToClose ) = 0;
 
 		virtual Bool isMusicAlreadyLoaded(void) const;
-		virtual Bool isMusicPlayingFromCD(void) const { return m_musicPlayingFromCD; }
 
 		Bool getDisallowSpeech( void ) const { return m_disallowSpeech; }
 		void setDisallowSpeech( Bool disallowSpeech ) { m_disallowSpeech = disallowSpeech; }
@@ -370,7 +369,6 @@ class AudioManager : public SubsystemInterface
 		Bool m_volumeHasChanged		: 1;
 		Bool m_hardwareAccel			: 1;
 		Bool m_surroundSpeakers		: 1;
-		Bool m_musicPlayingFromCD : 1;
 
 		// Next 8
 		Bool m_disallowSpeech			: 1;

@@ -70,7 +70,6 @@
 #include "GameNetwork/DownloadManager.h"
 #include "GameNetwork/GameSpy/MainMenuUtils.h"
 
-#include "GameClient/CDCheck.h"
 #include "GameClient/InGameUI.h"
 
 
@@ -264,24 +263,6 @@ void prepareCampaignGame(GameDifficulty diff)
 	setupGameStart(TheCampaignManager->getCurrentMap(), diff );
 }
 
-static MessageBoxReturnType cancelStartBecauseOfNoCD( void *userData )
-{
-	return MB_RETURN_CLOSE;
-}
-
-static MessageBoxReturnType checkCDCallback( void *userData )
-{
-	if (!IsFirstCDPresent())
-	{
-		return MB_RETURN_KEEPOPEN;
-	}
-	else
-	{
-		prepareCampaignGame((GameDifficulty)(Int)(Int *)userData);
-		return MB_RETURN_CLOSE;
-	}
-}
-
 static void doGameStart( void )
 {
 	startGame = FALSE;
@@ -297,20 +278,6 @@ static void doGameStart( void )
 	InitRandom(0);
 
 	isShuttingDown = TRUE;
-}
-
-static void checkCDBeforeCampaign(GameDifficulty diff)
-{
-	if (!IsFirstCDPresent())
-	{
-		// popup a dialog asking for a CD
-		ExMessageBoxOkCancel(TheGameText->fetch("GUI:InsertCDPrompt"), TheGameText->fetch("GUI:InsertCDMessage"),
-			(void *)diff, checkCDCallback, cancelStartBecauseOfNoCD);
-	}
-	else
-	{
-		prepareCampaignGame(diff);
-	}
 }
 
 static void shutdownComplete( WindowLayout *layout )
@@ -1534,21 +1501,21 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 				if(dontAllowTransitions)
 					break;
 
-				checkCDBeforeCampaign(DIFFICULTY_EASY);
+				prepareCampaignGame(DIFFICULTY_EASY);
 			}
 			else if(controlID == buttonMediumID)
 			{
 				if(dontAllowTransitions)
 					break;
 
-				checkCDBeforeCampaign(DIFFICULTY_NORMAL);
+				prepareCampaignGame(DIFFICULTY_NORMAL);
 			}
 			else if(controlID == buttonHardID)
 			{
 				if(dontAllowTransitions)
 					break;
 
-				checkCDBeforeCampaign(DIFFICULTY_HARD);
+				prepareCampaignGame(DIFFICULTY_HARD);
 			}
 			else if(controlID == buttonDiffBackID)
 			{
