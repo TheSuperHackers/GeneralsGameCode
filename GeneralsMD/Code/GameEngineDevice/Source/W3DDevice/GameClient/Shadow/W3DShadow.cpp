@@ -54,7 +54,7 @@
 #define SUN_DISTANCE_FROM_GROUND	10000.0f	//distance of sun (our only light source).
 
 // Global Variables and Functions /////////////////////////////////////////////
-W3DShadowManager *TheW3DShadowManager=NULL;
+W3DShadowManager *TheW3DShadowManager=nullptr;
 const FrustumClass *shadowCameraFrustum;
 
 Vector3 LightPosWorld[ MAX_SHADOW_LIGHTS ] =
@@ -101,7 +101,7 @@ void DoShadows(RenderInfoClass & rinfo, Bool stencilPass)
 
 W3DShadowManager::W3DShadowManager( void )
 {
-	DEBUG_ASSERTCRASH(TheW3DVolumetricShadowManager == NULL && TheW3DProjectedShadowManager == NULL,
+	DEBUG_ASSERTCRASH(TheW3DVolumetricShadowManager == nullptr && TheW3DProjectedShadowManager == nullptr,
 		("Creating new shadow managers without deleting old ones"));
 
 	m_shadowColor = 0x7fa0a0a0;
@@ -121,9 +121,9 @@ W3DShadowManager::W3DShadowManager( void )
 W3DShadowManager::~W3DShadowManager( void )
 {
 	delete TheW3DVolumetricShadowManager;
-	TheW3DVolumetricShadowManager = NULL;
+	TheW3DVolumetricShadowManager = nullptr;
 	delete TheW3DProjectedShadowManager;
-	TheProjectedShadowManager = TheW3DProjectedShadowManager = NULL;
+	TheProjectedShadowManager = TheW3DProjectedShadowManager = nullptr;
 }
 
 /** Do one-time initilalization of shadow systems that need to be
@@ -196,10 +196,10 @@ Shadow *W3DShadowManager::addShadow( RenderObjClass *robj, Shadow::ShadowTypeInf
 				return (Shadow *)TheW3DProjectedShadowManager->addShadow(robj, shadowInfo, draw);
 			break;
 		default:
-			return NULL;
+			return nullptr;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 void W3DShadowManager::removeShadow(Shadow *shadow)

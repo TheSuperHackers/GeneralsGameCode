@@ -36,18 +36,18 @@
 #include "Common/TerrainTypes.h"
 
 // PUBLIC DATA ////////////////////////////////////////////////////////////////////////////////////
-TerrainTypeCollection *TheTerrainTypes = NULL;
+TerrainTypeCollection *TheTerrainTypes = nullptr;
 
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
 const FieldParse TerrainType::m_terrainTypeFieldParseTable[] =
 {
 
-	{ "Texture",		INI::parseAsciiString,			NULL,		offsetof( TerrainType, m_texture ) },
-	{ "BlendEdges", INI::parseBool,							NULL,		offsetof( TerrainType, m_blendEdgeTexture ) },
+	{ "Texture",		INI::parseAsciiString,			nullptr,		offsetof( TerrainType, m_texture ) },
+	{ "BlendEdges", INI::parseBool,							nullptr,		offsetof( TerrainType, m_blendEdgeTexture ) },
 	{ "Class",			INI::parseIndexList,				terrainTypeNames, offsetof( TerrainType, m_class ) },
-	{ "RestrictConstruction", INI::parseBool,		NULL,		offsetof( TerrainType, m_restrictConstruction ) },
+	{ "RestrictConstruction", INI::parseBool,		nullptr,		offsetof( TerrainType, m_restrictConstruction ) },
 
-	{ NULL,					NULL,												NULL,		0 },
+	{ nullptr,					nullptr,												nullptr,		0 },
 
 };
 
@@ -61,7 +61,7 @@ TerrainType::TerrainType( void )
 	m_blendEdgeTexture = FALSE;
 	m_class = TERRAIN_NONE;
 	m_restrictConstruction = FALSE;
-	m_next = NULL;
+	m_next = nullptr;
 
 }
 
@@ -81,7 +81,7 @@ TerrainType::~TerrainType( void )
 TerrainTypeCollection::TerrainTypeCollection( void )
 {
 
-	m_terrainList = NULL;
+	m_terrainList = nullptr;
 
 }
 
@@ -124,7 +124,7 @@ TerrainType *TerrainTypeCollection::findTerrain( AsciiString name )
 	}
 
 	// not found
-	return NULL;
+	return nullptr;
 
 }
 
@@ -133,7 +133,7 @@ TerrainType *TerrainTypeCollection::findTerrain( AsciiString name )
 //-------------------------------------------------------------------------------------------------
 TerrainType *TerrainTypeCollection::newTerrain( AsciiString name )
 {
-	TerrainType *terrain = NULL;
+	TerrainType *terrain = nullptr;
 
 	// allocate a new type
 	terrain = newInstance(TerrainType);

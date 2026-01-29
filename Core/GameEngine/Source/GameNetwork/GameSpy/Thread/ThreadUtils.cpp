@@ -36,7 +36,7 @@ std::wstring MultiByteToWideCharSingleLine( const char *orig )
 	WideChar *dest = NEW WideChar[len+1];
 
 	MultiByteToWideChar(CP_UTF8, 0, orig, -1, dest, len);
-	WideChar *c = NULL;
+	WideChar *c = nullptr;
 	do
 	{
 		c = wcschr(dest, L'\n');
@@ -45,7 +45,7 @@ std::wstring MultiByteToWideCharSingleLine( const char *orig )
 			*c = L' ';
 		}
 	}
-	while ( c != NULL );
+	while ( c != nullptr );
 	do
 	{
 		c = wcschr(dest, L'\r');
@@ -54,7 +54,7 @@ std::wstring MultiByteToWideCharSingleLine( const char *orig )
 			*c = L' ';
 		}
 	}
-	while ( c != NULL );
+	while ( c != nullptr );
 
 	dest[len] = 0;
 	std::wstring ret = dest;
@@ -65,11 +65,11 @@ std::wstring MultiByteToWideCharSingleLine( const char *orig )
 std::string WideCharStringToMultiByte( const WideChar *orig )
 {
 	std::string ret;
-	Int len = WideCharToMultiByte( CP_UTF8, 0, orig, wcslen(orig), NULL, 0, NULL, NULL ) + 1;
+	Int len = WideCharToMultiByte( CP_UTF8, 0, orig, wcslen(orig), nullptr, 0, nullptr, nullptr ) + 1;
 	if (len > 0)
 	{
 		char *dest = NEW char[len];
-		WideCharToMultiByte( CP_UTF8, 0, orig, -1, dest, len, NULL, NULL );
+		WideCharToMultiByte( CP_UTF8, 0, orig, -1, dest, len, nullptr, nullptr );
 		dest[len-1] = 0;
 		ret = dest;
 		delete[] dest;

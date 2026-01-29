@@ -55,22 +55,22 @@ class FileClass;
 /*
 ** A node in the WWProfile Hierarchy Tree
 */
-class	WWProfileHierachyNodeClass {
+class	WWProfileHierarchyNodeClass {
 
 public:
-	WWProfileHierachyNodeClass( const char * name, WWProfileHierachyNodeClass * parent );
-	WWProfileHierachyNodeClass( unsigned id, WWProfileHierachyNodeClass * parent );
-	~WWProfileHierachyNodeClass( void );
+	WWProfileHierarchyNodeClass( const char * name, WWProfileHierarchyNodeClass * parent );
+	WWProfileHierarchyNodeClass( unsigned id, WWProfileHierarchyNodeClass * parent );
+	~WWProfileHierarchyNodeClass( void );
 
-	WWProfileHierachyNodeClass * Get_Sub_Node( const char * name );
+	WWProfileHierarchyNodeClass * Get_Sub_Node( const char * name );
 
-	WWProfileHierachyNodeClass * Get_Parent( void )			{ return Parent; }
-	WWProfileHierachyNodeClass * Get_Sibling( void )		{ return Sibling; }
-	WWProfileHierachyNodeClass * Get_Child( void )			{ return Child; }
+	WWProfileHierarchyNodeClass * Get_Parent( void )			{ return Parent; }
+	WWProfileHierarchyNodeClass * Get_Sibling( void )		{ return Sibling; }
+	WWProfileHierarchyNodeClass * Get_Child( void )			{ return Child; }
 
-	void Set_Parent( WWProfileHierachyNodeClass *node )			{ Parent=node; }
-	void Set_Sibling( WWProfileHierachyNodeClass *node )			{ Sibling=node; }
-	void Set_Child( WWProfileHierachyNodeClass *node )			{ Child=node; }
+	void Set_Parent( WWProfileHierarchyNodeClass *node )			{ Parent=node; }
+	void Set_Sibling( WWProfileHierarchyNodeClass *node )			{ Sibling=node; }
+	void Set_Child( WWProfileHierarchyNodeClass *node )			{ Child=node; }
 
 	void								Reset( void );
 	void								Call( void );
@@ -82,7 +82,7 @@ public:
 	void								Set_Total_Calls(int calls) { TotalCalls=calls; }
 	void								Set_Total_Time(float time) { TotalTime=time; }
 
-	WWProfileHierachyNodeClass* Clone_Hierarchy(WWProfileHierachyNodeClass* parent);
+	WWProfileHierarchyNodeClass* Clone_Hierarchy(WWProfileHierarchyNodeClass* parent);
 	void								Write_To_File(FileClass* file,int recursion);
 	void								Add_To_String_Compact(StringClass& string,int recursion);
 
@@ -96,23 +96,23 @@ protected:
 	int								RecursionCounter;
 	unsigned						ProfileStringID;
 
-	WWProfileHierachyNodeClass *	Parent;
-	WWProfileHierachyNodeClass *	Child;
-	WWProfileHierachyNodeClass *	Sibling;
+	WWProfileHierarchyNodeClass *	Parent;
+	WWProfileHierarchyNodeClass *	Child;
+	WWProfileHierarchyNodeClass *	Sibling;
 };
 
-class	WWProfileHierachyInfoClass {
+class	WWProfileHierarchyInfoClass {
 public:
-	WWProfileHierachyInfoClass( const char * name, WWProfileHierachyInfoClass * parent );
-	~WWProfileHierachyInfoClass( void );
+	WWProfileHierarchyInfoClass( const char * name, WWProfileHierarchyInfoClass * parent );
+	~WWProfileHierarchyInfoClass( void );
 
-	WWProfileHierachyInfoClass * Get_Parent( void )			{ return Parent; }
-	WWProfileHierachyInfoClass * Get_Sibling( void )		{ return Sibling; }
-	WWProfileHierachyInfoClass * Get_Child( void )			{ return Child; }
+	WWProfileHierarchyInfoClass * Get_Parent( void )			{ return Parent; }
+	WWProfileHierarchyInfoClass * Get_Sibling( void )		{ return Sibling; }
+	WWProfileHierarchyInfoClass * Get_Child( void )			{ return Child; }
 
-	void Set_Parent( WWProfileHierachyInfoClass *node )			{ Parent=node; }
-	void Set_Sibling( WWProfileHierachyInfoClass *node )			{ Sibling=node; }
-	void Set_Child( WWProfileHierachyInfoClass *node )			{ Child=node; }
+	void Set_Parent( WWProfileHierarchyInfoClass *node )			{ Parent=node; }
+	void Set_Sibling( WWProfileHierarchyInfoClass *node )			{ Sibling=node; }
+	void Set_Child( WWProfileHierarchyInfoClass *node )			{ Child=node; }
 
 	const char *						Get_Name( void )				{ return Name; }
 	void								Set_Name( const char* name )	{ Name=name; }
@@ -127,9 +127,9 @@ protected:
 	int								TotalCalls;
 	float								TotalTime;
 
-	WWProfileHierachyInfoClass *	Parent;
-	WWProfileHierachyInfoClass *	Child;
-	WWProfileHierachyInfoClass *	Sibling;
+	WWProfileHierarchyInfoClass *	Parent;
+	WWProfileHierarchyInfoClass *	Child;
+	WWProfileHierarchyInfoClass *	Sibling;
 };
 
 /*
@@ -158,10 +158,10 @@ public:
 	float				Get_Current_Parent_Total_Time( void )	{ return CurrentParent->Get_Total_Time(); }
 
 protected:
-	WWProfileHierachyNodeClass *	CurrentParent;
-	WWProfileHierachyNodeClass *	CurrentChild;
+	WWProfileHierarchyNodeClass *	CurrentParent;
+	WWProfileHierarchyNodeClass *	CurrentChild;
 
-	WWProfileIterator( WWProfileHierachyNodeClass * start );
+	WWProfileIterator( WWProfileHierarchyNodeClass * start );
 	friend	class		WWProfileManager;
 };
 
@@ -182,7 +182,7 @@ public:
 	float				Get_Current_Total_Time( void )	{ return CurrentNode->Get_Total_Time(); }
 
 protected:
-	WWProfileHierachyNodeClass *	CurrentNode;
+	WWProfileHierarchyNodeClass *	CurrentNode;
 
 	WWProfileInOrderIterator( void );
 	friend	class		WWProfileManager;
@@ -213,17 +213,17 @@ public:
 	static	WWProfileInOrderIterator *	Get_In_Order_Iterator( void );
 	static	void								Release_In_Order_Iterator( WWProfileInOrderIterator * iterator );
 
-	static	WWProfileHierachyNodeClass *	Get_Root( void ) { return &Root; }
+	static	WWProfileHierarchyNodeClass *	Get_Root( void ) { return &Root; }
 
 	static	void								Begin_Collecting();
 	static	void								End_Collecting(const char* filename);
 
-	static	void								Load_Profile_Log(const char* filename, WWProfileHierachyInfoClass**& array, unsigned& count);
+	static	void								Load_Profile_Log(const char* filename, WWProfileHierarchyInfoClass**& array, unsigned& count);
 
 private:
-	static	WWProfileHierachyNodeClass		Root;
-	static	WWProfileHierachyNodeClass *	CurrentNode;
-	static	WWProfileHierachyNodeClass *	CurrentRootNode;
+	static	WWProfileHierarchyNodeClass		Root;
+	static	WWProfileHierarchyNodeClass *	CurrentNode;
+	static	WWProfileHierarchyNodeClass *	CurrentRootNode;
 	static	int									FrameCounter;
 	static	__int64								ResetTime;
 	static	bool									IsProfileEnabled;

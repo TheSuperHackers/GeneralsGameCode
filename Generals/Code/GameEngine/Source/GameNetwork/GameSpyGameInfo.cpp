@@ -46,7 +46,7 @@
 
 // Singleton ------------------------------------------
 
-GameSpyGameInfo *TheGameSpyGame = NULL;
+GameSpyGameInfo *TheGameSpyGame = nullptr;
 
 // Helper Functions ----------------------------------------
 
@@ -187,7 +187,7 @@ Bool GetLocalChatConnectionAddress(AsciiString serverName, UnsignedShort serverP
 	DEBUG_LOG(("About to load INETMIB1.DLL"));
 
 	HINSTANCE mib_ii_dll = LoadLibrary("inetmib1.dll");
-	if (mib_ii_dll == NULL) {
+	if (mib_ii_dll == nullptr) {
 		DEBUG_LOG(("Failed to load INETMIB1.DLL"));
 		return(false);
 	}
@@ -195,7 +195,7 @@ Bool GetLocalChatConnectionAddress(AsciiString serverName, UnsignedShort serverP
 	DEBUG_LOG(("About to load SNMPAPI.DLL"));
 
 	HINSTANCE snmpapi_dll = LoadLibrary("snmpapi.dll");
-	if (snmpapi_dll == NULL) {
+	if (snmpapi_dll == nullptr) {
 		DEBUG_LOG(("Failed to load SNMPAPI.DLL"));
 		FreeLibrary(mib_ii_dll);
 		return(false);
@@ -208,7 +208,7 @@ Bool GetLocalChatConnectionAddress(AsciiString serverName, UnsignedShort serverP
 	SnmpExtensionQueryPtr = (int (__stdcall *)(unsigned char,SnmpVarBindList *,long *,long *)) GetProcAddress(mib_ii_dll, "SnmpExtensionQuery");
 	SnmpUtilMemAllocPtr = (void *(__stdcall *)(unsigned long)) GetProcAddress(snmpapi_dll, "SnmpUtilMemAlloc");
 	SnmpUtilMemFreePtr = (void (__stdcall *)(void *)) GetProcAddress(snmpapi_dll, "SnmpUtilMemFree");
-	if (SnmpExtensionInitPtr == NULL || SnmpExtensionQueryPtr == NULL || SnmpUtilMemAllocPtr == NULL || SnmpUtilMemFreePtr == NULL) {
+	if (SnmpExtensionInitPtr == nullptr || SnmpExtensionQueryPtr == nullptr || SnmpUtilMemAllocPtr == nullptr || SnmpUtilMemFreePtr == nullptr) {
 		DEBUG_LOG(("Failed to get proc addresses for linked functions"));
 		FreeLibrary(snmpapi_dll);
 		FreeLibrary(mib_ii_dll);
@@ -449,8 +449,8 @@ GameSpyGameInfo::GameSpyGameInfo()
 	{
 		setLocalIP(0);
 	}
-	m_server = NULL;
-	m_transport = NULL;
+	m_server = nullptr;
+	m_transport = nullptr;
 }
 
 // Misc game-related functionality --------------------
@@ -475,7 +475,7 @@ void GameSpyStartGame( void )
 			{
 				UnicodeString text;
 				text.format(TheGameText->fetch("LAN:NeedMorePlayers"),numUsers);
-				TheGameSpyInfo->addText(text, GSCOLOR_DEFAULT, NULL);
+				TheGameSpyInfo->addText(text, GSCOLOR_DEFAULT, nullptr);
 			}
 			return;
 		}
@@ -492,11 +492,11 @@ void GameSpyLaunchGame( void )
 		// Set up the game network
 		AsciiString user;
 		AsciiString userList;
-		DEBUG_ASSERTCRASH(TheNetwork == NULL, ("For some reason TheNetwork isn't NULL at the start of this game.  Better look into that."));
+		DEBUG_ASSERTCRASH(TheNetwork == nullptr, ("For some reason TheNetwork isn't null at the start of this game.  Better look into that."));
 
-		if (TheNetwork != NULL) {
+		if (TheNetwork != nullptr) {
 			delete TheNetwork;
-			TheNetwork = NULL;
+			TheNetwork = nullptr;
 		}
 
 		// Time to initialize TheNetwork for this game.
@@ -518,7 +518,7 @@ void GameSpyLaunchGame( void )
 			{
 				DEBUG_CRASH(("No GameSlot[%d]!", i));
 				delete TheNetwork;
-				TheNetwork = NULL;
+				TheNetwork = nullptr;
 				return;
 			}
 
@@ -566,9 +566,9 @@ void GameSpyLaunchGame( void )
 		InitGameLogicRandom( TheGameSpyGame->getSeed() );
 		DEBUG_LOG(("InitGameLogicRandom( %d )", TheGameSpyGame->getSeed()));
 
-		if (TheNAT != NULL) {
+		if (TheNAT != nullptr) {
 			delete TheNAT;
-			TheNAT = NULL;
+			TheNAT = nullptr;
 		}
 	}
 }
@@ -603,7 +603,7 @@ Int GameSpyGameInfo::getLocalSlotNum( void ) const
 	for (Int i=0; i<MAX_SLOTS; ++i)
 	{
 		const GameSlot *slot = getConstSlot(i);
-		if (slot == NULL) {
+		if (slot == nullptr) {
 			continue;
 		}
 		if (slot->isPlayer(localName))
@@ -621,8 +621,8 @@ void GameSpyGameInfo::gotGOACall( void )
 void GameSpyGameInfo::startGame(Int gameID)
 {
 	DEBUG_LOG(("GameSpyGameInfo::startGame - game id = %d", gameID));
-	DEBUG_ASSERTCRASH(m_transport == NULL, ("m_transport is not NULL when it should be"));
-	DEBUG_ASSERTCRASH(TheNAT == NULL, ("TheNAT is not NULL when it should be"));
+	DEBUG_ASSERTCRASH(m_transport == nullptr, ("m_transport is not null when it should be"));
+	DEBUG_ASSERTCRASH(TheNAT == nullptr, ("TheNAT is not null when it should be"));
 
 	// fill in GS-specific info
 	for (Int i=0; i<MAX_SLOTS; ++i)
@@ -647,9 +647,9 @@ void GameSpyGameInfo::startGame(Int gameID)
 		}
 	}
 
-	if (TheNAT != NULL) {
+	if (TheNAT != nullptr) {
 		delete TheNAT;
-		TheNAT = NULL;
+		TheNAT = nullptr;
 	}
 	TheNAT = NEW NAT();
 	TheNAT->attachSlotList(m_slot, getLocalSlotNum(), m_localIP);

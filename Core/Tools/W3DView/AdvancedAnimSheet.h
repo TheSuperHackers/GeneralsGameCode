@@ -37,7 +37,7 @@ class CAdvancedAnimSheet : public CPropertySheet
 
 // Construction
 public:
-	CAdvancedAnimSheet(CWnd *pParentWnd = NULL, UINT iSelectPage = 0);
+	CAdvancedAnimSheet(CWnd *pParentWnd = nullptr, UINT iSelectPage = 0);
 
 // Attributes
 public:
@@ -46,7 +46,7 @@ public:
 	CAnimMixingPage	m_MixingPage;
 	CAnimReportPage	m_ReportPage;
 
-	// Indeces of animations selected in the mixing page.
+	// Indices of animations selected in the mixing page.
 	DynamicVectorClass<int>	m_SelectedAnims;
 
 // Operations

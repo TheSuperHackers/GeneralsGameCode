@@ -115,7 +115,7 @@ class W3DVolumetricShadow	: public Shadow
 		void setOptimalExtrusionPadding(Real value)	{m_extraExtrusionPadding=value;}
 		const W3DShadowGeometry *getGeometry(void) {return m_geometry;}
 
-		void setRenderObject( RenderObjClass	*robj) {assert(m_robj==NULL); m_robj=robj;}
+		void setRenderObject( RenderObjClass	*robj) {assert(m_robj==nullptr); m_robj=robj;}
  		void setRenderObjExtent ( Real extent) { m_robjExtent = extent; }
 
 		// called once per frame, updates shadow volume when necessary
@@ -124,7 +124,7 @@ class W3DVolumetricShadow	: public Shadow
 		void updateMeshVolume(Int meshIndex, Int lightIndex, const Matrix3D *meshXform, const AABoxClass &meshBox, float floorZ);///<update shadow volume of this mesh.
 
 		// rendering interface
-		void RenderVolume(Int meshIndex, Int lightIndex);	///<renders a specifc volume from the model hierarchy
+		void RenderVolume(Int meshIndex, Int lightIndex);	///<renders a specific volume from the model hierarchy
 		///render single mesh which could belong to a larger hierarchy (optimized for static meshes).
 		void RenderMeshVolume(Int meshIndex, Int lightIndex, const Matrix3D *meshXform);
 		///render single mesh which could belong to a larger hierarchy (optimized for animated meshes).
@@ -176,8 +176,8 @@ class W3DVolumetricShadow	: public Shadow
 
 		// silhouette building space
 		Short *m_silhouetteIndex[MAX_SHADOW_CASTER_MESHES];  // silhouette vertex index list, edges occur
-									 // as disjoint pairs.  The acutal size of this
-									 // piece of memory must accomodate #vertices*2
+									 // as disjoint pairs.  The actual size of this
+									 // piece of memory must accommodate #vertices*2
 		Short m_numSilhouetteIndices[MAX_SHADOW_CASTER_MESHES];  // total number of edge indices in the index
 									   // array, these are pairs and therefore
 									   // always a multiple of two

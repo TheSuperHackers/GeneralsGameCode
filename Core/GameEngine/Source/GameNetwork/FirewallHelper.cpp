@@ -57,7 +57,7 @@
 #include "GameNetwork/GameSpy/GSConfig.h"
 
 
-FirewallHelperClass *TheFirewallHelper = NULL;
+FirewallHelperClass *TheFirewallHelper = nullptr;
 
 FirewallHelperClass * createFirewallHelper()
 {
@@ -360,8 +360,8 @@ Bool FirewallHelperClass::sendToManglerFromPort(UnsignedInt address, UnsignedSho
 //	DEBUG_LOG(("PacketID = %u", packetID));
 //	DEBUG_LOG(("OriginalPortNumber = %u", port));
 
-	if (spareSocket == NULL) {
-		DEBUG_ASSERTCRASH(spareSocket != NULL, ("Could not find spare socket for send."));
+	if (spareSocket == nullptr) {
+		DEBUG_ASSERTCRASH(spareSocket != nullptr, ("Could not find spare socket for send."));
 		DEBUG_LOG(("FirewallHelperClass::sendToManglerFromPort - failed to find the spare socket for port %d", port));
 		return FALSE;
 	}
@@ -382,7 +382,7 @@ SpareSocketStruct * FirewallHelperClass::findSpareSocketByPort(UnsignedShort por
 	}
 
 	DEBUG_LOG(("FirewallHelperClass::findSpareSocketByPort - didn't find it"));
-	return NULL;
+	return nullptr;
 }
 
 ManglerMessage * FirewallHelperClass::findEmptyMessage() {
@@ -391,7 +391,7 @@ ManglerMessage * FirewallHelperClass::findEmptyMessage() {
 			return &(m_messages[i]);
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 void FirewallHelperClass::byteAdjust(ManglerData *data) {
@@ -422,17 +422,17 @@ void FirewallHelperClass::byteAdjust(ManglerData *data) {
  *=============================================================================================*/
 UnsignedShort FirewallHelperClass::getManglerResponse(UnsignedShort packetID, Int time)
 {
-	ManglerMessage *msg = NULL;
+	ManglerMessage *msg = nullptr;
 
-//	SpareSocketStruct *spareSocket = NULL;
+//	SpareSocketStruct *spareSocket = nullptr;
 
 	sockaddr_in addr;
 
 	Int i = 0;
 	for (; i < MAX_SPARE_SOCKETS; ++i) {
-		if (m_spareSockets[i].udp != NULL) {
+		if (m_spareSockets[i].udp != nullptr) {
 			ManglerMessage *message = findEmptyMessage();
-			if (message == NULL) {
+			if (message == nullptr) {
 				break;
 			}
 			Int retval = m_spareSockets[i].udp->Read((unsigned char *)message, sizeof(ManglerData), &addr);
@@ -462,7 +462,7 @@ UnsignedShort FirewallHelperClass::getManglerResponse(UnsignedShort packetID, In
 	}
 
 	// See if we have already received it and saved it.
-	if (msg == NULL) {
+	if (msg == nullptr) {
 		for (i = 0; i < MAX_SPARE_SOCKETS; ++i) {
 			if ((m_messages[i].length != 0) && (m_messages[i].data.PacketID == packetID)) {
 				msg = &(m_messages[i]);
@@ -471,7 +471,7 @@ UnsignedShort FirewallHelperClass::getManglerResponse(UnsignedShort packetID, In
 		}
 	}
 
-	if (msg == NULL) {
+	if (msg == nullptr) {
 		return 0;
 	}
 
@@ -1027,7 +1027,7 @@ Bool FirewallHelperClass::detectionTest3WaitForResponsesUpdate() {
 		return FALSE;
 	}
 
-	DEBUG_LOG(("FirewallHelperClass::detectionTest3WaitForRepsonsesUpdate - starting 4th test"));
+	DEBUG_LOG(("FirewallHelperClass::detectionTest3WaitForResponsesUpdate - starting 4th test"));
 	/*
 	** Fourth test.
 	**
@@ -1037,7 +1037,7 @@ Bool FirewallHelperClass::detectionTest3WaitForResponsesUpdate() {
 
 		if ((m_behavior & FIREWALL_TYPE_SIMPLE_PORT_ALLOCATION) != 0) {
 
-			DEBUG_LOG(("FirewallHelperClass::detectionTest3WaitForRepsonsesUpdate - simple port allocation, Testing to see if the NAT mangles differently per destination port at the same IP"));
+			DEBUG_LOG(("FirewallHelperClass::detectionTest3WaitForResponsesUpdate - simple port allocation, Testing to see if the NAT mangles differently per destination port at the same IP"));
 
 			/*
 			** We need 2 source ports for this.
@@ -1045,7 +1045,7 @@ Bool FirewallHelperClass::detectionTest3WaitForResponsesUpdate() {
 			m_sparePorts[0] = getNextTemporarySourcePort(0);
 			if (!openSpareSocket(m_sparePorts[0])) {
 				m_currentState = DETECTIONSTATE_DONE;
-				DEBUG_LOG(("FirewallHelperClass::detectionTest3WaitForRepsonsesUpdate - Failed to open first spare port, bailing"));
+				DEBUG_LOG(("FirewallHelperClass::detectionTest3WaitForResponsesUpdate - Failed to open first spare port, bailing"));
 				return TRUE;
 			}
 
@@ -1053,7 +1053,7 @@ Bool FirewallHelperClass::detectionTest3WaitForResponsesUpdate() {
 			if (!openSpareSocket(m_sparePorts[1])) {
 				closeSpareSocket(m_sparePorts[0]);
 				m_currentState = DETECTIONSTATE_DONE;
-				DEBUG_LOG(("FirewallHelperClass::detectionTest3WaitForRepsonsesUpdate - Failed to open second spare port, bailing"));
+				DEBUG_LOG(("FirewallHelperClass::detectionTest3WaitForResponsesUpdate - Failed to open second spare port, bailing"));
 				return TRUE;
 			}
 
@@ -1076,10 +1076,10 @@ Bool FirewallHelperClass::detectionTest3WaitForResponsesUpdate() {
 			/*
 			** NAT32 uses different mangled source ports for different destination ports.
 			*/
-			DEBUG_LOG(("FirewallHelperClass::detectionTest3WaitForRepsonsesUpdate - relative port allocation, NAT32 right?"));
+			DEBUG_LOG(("FirewallHelperClass::detectionTest3WaitForResponsesUpdate - relative port allocation, NAT32 right?"));
 			UnsignedInt addbehavior = 0;
 			addbehavior = (UnsignedInt)FIREWALL_TYPE_DESTINATION_PORT_DELTA;
-			DEBUG_LOG(("FirewallHelperClass::detectionTest3WaitForRepsonsesUpdate - adding DESTINATION PORT DELTA to behavior"));
+			DEBUG_LOG(("FirewallHelperClass::detectionTest3WaitForResponsesUpdate - adding DESTINATION PORT DELTA to behavior"));
 			addbehavior |= (UnsignedInt)m_behavior;
 			m_behavior = (FirewallBehaviorType) addbehavior;
 		}
@@ -1087,7 +1087,7 @@ Bool FirewallHelperClass::detectionTest3WaitForResponsesUpdate() {
 		DEBUG_LOG(("FirewallHelperClass::detectionTest3WaitForResponsesUpdate - We don't have smart mangling, skipping test 4, entering test 5"));
 	}
 
-	DEBUG_LOG(("FirewallHelperClass::detectionTest3WaitForRepsonsesUpdate - entering test 5"));
+	DEBUG_LOG(("FirewallHelperClass::detectionTest3WaitForResponsesUpdate - entering test 5"));
 
 	m_currentState = DETECTIONSTATE_TEST5;
 	return FALSE;
@@ -1522,7 +1522,7 @@ Bool FirewallHelperClass::openSpareSocket(UnsignedShort port) {
 	}
 
 	m_spareSockets[i].udp = NEW UDP();
-	if (m_spareSockets[i].udp == NULL) {
+	if (m_spareSockets[i].udp == nullptr) {
 		DEBUG_LOG(("FirewallHelperClass::openSpareSocket - failed to create UDP object"));
 		return FALSE;
 	}
@@ -1544,7 +1544,7 @@ void FirewallHelperClass::closeSpareSocket(UnsignedShort port) {
 	for (Int i = 0; i < MAX_SPARE_SOCKETS; ++i) {
 		if (m_spareSockets[i].port == port) {
 			delete m_spareSockets[i].udp;
-			m_spareSockets[i].udp = NULL;
+			m_spareSockets[i].udp = nullptr;
 			m_spareSockets[i].port = 0;
 			break;
 		}
@@ -1557,7 +1557,7 @@ void FirewallHelperClass::closeSpareSocket(UnsignedShort port) {
 void FirewallHelperClass::closeAllSpareSockets() {
 	for (Int i = 0; i < MAX_SPARE_SOCKETS; ++i) {
 		delete (m_spareSockets[i].udp);
-		m_spareSockets[i].udp = NULL;
+		m_spareSockets[i].udp = nullptr;
 		m_spareSockets[i].port = 0;
 	}
 }

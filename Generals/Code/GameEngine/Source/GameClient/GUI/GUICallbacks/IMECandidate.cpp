@@ -40,7 +40,7 @@
 
 Int	IMECandidateWindowLineSpacing = 2;
 
-static DisplayString *Dstring = NULL;
+static DisplayString *Dstring = nullptr;
 
 //-------------------------------------------------------------------------------------------------
 /** Input procedure for the candidate window */
@@ -54,7 +54,7 @@ WindowMsgHandledType IMECandidateWindowInput( GameWindow *window, UnsignedInt ms
 }
 
 //-------------------------------------------------------------------------------------------------
-/** System callback for the IME Candidate widnow */
+/** System callback for the IME Candidate window */
 //-------------------------------------------------------------------------------------------------
 WindowMsgHandledType IMECandidateWindowSystem( GameWindow *window, UnsignedInt msg,
 																			 WindowMsgData mData1, WindowMsgData mData2 )
@@ -62,7 +62,7 @@ WindowMsgHandledType IMECandidateWindowSystem( GameWindow *window, UnsignedInt m
 	switch( msg )
 	{
 		case GWM_CREATE:
-			if ( Dstring == NULL )
+			if ( Dstring == nullptr )
 			{
 				Dstring = TheDisplayStringManager->newDisplayString();
 			}
@@ -70,10 +70,10 @@ WindowMsgHandledType IMECandidateWindowSystem( GameWindow *window, UnsignedInt m
 
 		case GWM_DESTROY:
 
-			if ( Dstring != NULL )
+			if ( Dstring != nullptr )
 			{
 				TheDisplayStringManager->freeDisplayString( Dstring );
-				Dstring = NULL;
+				Dstring = nullptr;
 			}
 
 		break;
@@ -152,14 +152,14 @@ void IMECandidateTextAreaDraw( GameWindow *window, WinInstanceData *instData )
 																	 start.x, start.y, end.x, end.y );
 	}
 
-	if ( Dstring == NULL )
+	if ( Dstring == nullptr )
 	{
 		return;
 	}
 
 	IMEManagerInterface *ime = (IMEManagerInterface*)window->winGetUserData();
 
-	if ( ime == NULL )
+	if ( ime == nullptr )
 	{
 		return;
 	}
@@ -191,7 +191,7 @@ void IMECandidateTextAreaDraw( GameWindow *window, WinInstanceData *instData )
 	selected = selected - first;
 	UnicodeString number;
 
-	// calulate the widest number text
+	// calculate the widest number text
 	Int width;
 	Dstring->setText(L"00:");
 	width = Dstring->getWidth();

@@ -220,7 +220,7 @@ public:
 	void							Compute_Bounding_Sphere(Vector3 * set_center,float * set_radius);
 
 	/*
-	** World information managment.  Used to give the mesh builder information
+	** World information management.  Used to give the mesh builder information
 	** about the world outside of its mesh.
 	*/
 	WorldInfoClass *			Peek_World_Info(void) const						{ return WorldInfo; }

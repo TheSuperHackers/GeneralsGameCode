@@ -62,7 +62,7 @@ PropagandaCenterBehaviorModuleData::PropagandaCenterBehaviorModuleData( void )
 	static const FieldParse dataFieldParse[] =
 	{
 
-		{	"BrainwashDuration", INI::parseDurationUnsignedInt, NULL, offsetof( PropagandaCenterBehaviorModuleData, m_brainwashDuration ) },
+		{	"BrainwashDuration", INI::parseDurationUnsignedInt, nullptr, offsetof( PropagandaCenterBehaviorModuleData, m_brainwashDuration ) },
 		{ 0, 0, 0, 0 }
 
 	};
@@ -164,7 +164,7 @@ UpdateSleepTime PropagandaCenterBehavior::update( void )
 					// remove any surrender status from this object
 					AIUpdateInterface *ai = brainwashingSubject->getAIUpdateInterface();
 					if( ai )
-						ai->setSurrendered( NULL, FALSE );
+						ai->setSurrendered( nullptr, FALSE );
 
 					// add this object to our brainwashed list if we're not already in it
 					for( BrainwashedIDListIterator it = m_brainwashedList.begin();
@@ -216,7 +216,7 @@ UpdateSleepTime PropagandaCenterBehavior::update( void )
 void PropagandaCenterBehavior::onRemoving( Object *obj )
 {
 
-	// if we're removing the brainwashing subject, NULL the pointer
+	// if we're removing the brainwashing subject, nullptr the pointer
 	if( m_brainwashingSubjectID == obj->getID() )
 	{
 

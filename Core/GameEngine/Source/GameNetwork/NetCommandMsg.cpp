@@ -92,8 +92,8 @@ NetGameCommandMsg::NetGameCommandMsg() : NetCommandMsg() {
 	m_numArgs = 0;
 	m_type = (GameMessage::Type)0;
 	m_commandType = NETCOMMANDTYPE_GAMECOMMAND;
-	m_argList = NULL;
-	m_argTail = NULL;
+	m_argList = nullptr;
+	m_argTail = nullptr;
 }
 
 /**
@@ -115,7 +115,7 @@ NetGameCommandMsg::NetGameCommandMsg(GameMessage *msg) : NetCommandMsg() {
  */
 NetGameCommandMsg::~NetGameCommandMsg() {
 	GameMessageArgument *arg = m_argList;
-	while (arg != NULL) {
+	while (arg != nullptr) {
 		m_argList = m_argList->m_next;
 		deleteInstance(arg);
 		arg = m_argList;
@@ -127,19 +127,19 @@ NetGameCommandMsg::~NetGameCommandMsg() {
  */
 void NetGameCommandMsg::addArgument(const GameMessageArgumentDataType type, GameMessageArgumentType arg)
 {
-	if (m_argTail == NULL) {
+	if (m_argTail == nullptr) {
 		m_argList = newInstance(GameMessageArgument);
 		m_argTail = m_argList;
 		m_argList->m_data = arg;
 		m_argList->m_type = type;
-		m_argList->m_next = NULL;
+		m_argList->m_next = nullptr;
 		return;
 	}
 
 	GameMessageArgument *newArg = newInstance(GameMessageArgument);
 	newArg->m_data = arg;
 	newArg->m_type = type;
-	newArg->m_next = NULL;
+	newArg->m_next = nullptr;
 	m_argTail->m_next = newArg;
 	m_argTail = newArg;
 }
@@ -147,7 +147,7 @@ void NetGameCommandMsg::addArgument(const GameMessageArgumentDataType type, Game
 // here's where we figure out which slot corresponds to which player
 static Int indexFromMask(UnsignedInt mask)
 {
-	Player *player = NULL;
+	Player *player = nullptr;
 	Int i;
 
 	for( i = 0; i < MAX_PLAYER_COUNT; i++ )
@@ -172,7 +172,7 @@ GameMessage *NetGameCommandMsg::constructGameMessage() const
 	retval->friend_setPlayerIndex( ThePlayerList->findPlayerWithNameKey(TheNameKeyGenerator->nameToKey(name))->getPlayerIndex());
 
 	GameMessageArgument *arg = m_argList;
-	while (arg != NULL) {
+	while (arg != nullptr) {
 
 		switch (arg->m_type) {
 
@@ -235,7 +235,7 @@ size_t NetGameCommandMsg::getPackedByteCount() const {
 	msglen += sizeof(UnsignedByte);
 
 	GameMessageParserArgumentType *arg = parser->getFirstArgumentType();
-	while (arg != NULL) {
+	while (arg != nullptr) {
 		msglen += sizeof(UnsignedByte); // argument type
 		msglen += sizeof(UnsignedByte); // argument count
 		GameMessageArgumentDataType type = arg->getType();
@@ -282,10 +282,10 @@ size_t NetGameCommandMsg::getPackedByteCount() const {
 	}
 
 	deleteInstance(parser);
-	parser = NULL;
+	parser = nullptr;
 
 	deleteInstance(gmsg);
-	gmsg = NULL;
+	gmsg = nullptr;
 
 	return msglen;
 }
@@ -966,7 +966,7 @@ size_t NetProgressCommandMsg::getPackedByteCount() const {
 NetWrapperCommandMsg::NetWrapperCommandMsg() : NetCommandMsg() {
 	m_commandType = NETCOMMANDTYPE_WRAPPER;
 	m_numChunks = 0;
-	m_data = NULL;
+	m_data = nullptr;
 	m_totalDataLength = 0;
 	m_chunkNumber = 0;
 	m_dataLength = 0;
@@ -976,7 +976,7 @@ NetWrapperCommandMsg::NetWrapperCommandMsg() : NetCommandMsg() {
 
 NetWrapperCommandMsg::~NetWrapperCommandMsg() {
 	delete m_data;
-	m_data = NULL;
+	m_data = nullptr;
 }
 
 UnsignedByte * NetWrapperCommandMsg::getData() {
@@ -1044,14 +1044,14 @@ size_t NetWrapperCommandMsg::getPackedByteCount() const {
 //-------------------------
 NetFileCommandMsg::NetFileCommandMsg() : NetCommandMsg() {
 	m_commandType = NETCOMMANDTYPE_FILE;
-	m_data = NULL;
+	m_data = nullptr;
 	m_portableFilename.clear();
 	m_dataLength = 0;
 }
 
 NetFileCommandMsg::~NetFileCommandMsg() {
 	delete[] m_data;
-	m_data = NULL;
+	m_data = nullptr;
 }
 
 AsciiString NetFileCommandMsg::getRealFilename()

@@ -28,7 +28,7 @@ class EulaDialog : public CDialog
 {
 // Construction
 public:
-	EulaDialog(CWnd* pParent = NULL);   // standard constructor
+	EulaDialog(CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(EulaDialog)

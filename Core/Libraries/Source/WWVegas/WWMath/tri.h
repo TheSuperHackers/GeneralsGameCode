@@ -49,7 +49,7 @@
 ** The initial reason for this class is for Commando's collision detection code.  Initially
 ** I wrote custom code inside the render object for the terrain to perform collision
 ** detection. Moving the low-level geometrical collision code into the math library makes it
-** more re-useable and independent from changes in the rendering code.
+** more re-usable and independent from changes in the rendering code.
 */
 class TriClass
 {

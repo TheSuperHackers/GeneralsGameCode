@@ -25,7 +25,7 @@
 // FILE: W3DGameClient.h ///////////////////////////////////////////////////
 //
 // W3D implementation of the game interface.  The GameClient is
-// responsible for maintaining our drawbles, handling our GUI, and creating
+// responsible for maintaining our drawables, handling our GUI, and creating
 // the display ... basically the Client if this were a Client/Server game.
 //
 // Author: Colin Day, April 2001

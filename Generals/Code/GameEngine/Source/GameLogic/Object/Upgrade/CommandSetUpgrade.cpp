@@ -41,8 +41,8 @@ void CommandSetUpgradeModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "CommandSet",	INI::parseAsciiString,	NULL, offsetof( CommandSetUpgradeModuleData, m_newCommandSet ) },
-		{ 0, 0, 0, 0 }
+		{ "CommandSet",	INI::parseAsciiString,	nullptr, offsetof( CommandSetUpgradeModuleData, m_newCommandSet ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   p.add(dataFieldParse);
 }

@@ -257,10 +257,10 @@ TRect<T> const Intersect(TRect<T> const & bounding_rect, TRect<T> const & draw_r
 	**	Adjust Height relative draw position according to Height new draw_rect
 	**	union.
 	*/
-	if (x != NULL) {
+	if (x != nullptr) {
 		*x -= T(new_draw_rect.X - draw_rect.X);
 	}
-	if (y != NULL) {
+	if (y != nullptr) {
 		*y -= T(new_draw_rect.Y - draw_rect.Y);
 	}
 
@@ -290,7 +290,7 @@ TRect<T> const Intersect(TRect<T> const & bounding_rect, TRect<T> const & draw_r
 template<class T>
 TRect<T> const Intersect(TRect<T> const & rect1, TRect<T> const & rect2)
 {
-	return(Intersect(rect1, rect2, (T*)NULL, (T*)NULL));
+	return(Intersect(rect1, rect2, (T*)nullptr, (T*)nullptr));
 }
 
 

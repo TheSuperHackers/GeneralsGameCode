@@ -43,12 +43,12 @@ const char *const TheUpgradeTypeNames[] =
 {
 	"PLAYER",
 	"OBJECT",
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(TheUpgradeTypeNames) == NUM_UPGRADE_TYPES + 1, "Incorrect array size");
 
 // PUBLIC /////////////////////////////////////////////////////////////////////////////////////////
-class UpgradeCenter *TheUpgradeCenter = NULL;
+class UpgradeCenter *TheUpgradeCenter = nullptr;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // UPGRADE ////////////////////////////////////////////////////////////////////////////////////////
@@ -61,8 +61,8 @@ Upgrade::Upgrade( const UpgradeTemplate *upgradeTemplate )
 
 	m_template = upgradeTemplate;
 	m_status = UPGRADE_STATUS_INVALID;
-	m_next = NULL;
-	m_prev = NULL;
+	m_next = nullptr;
+	m_prev = nullptr;
 
 }
 
@@ -116,14 +116,14 @@ void Upgrade::loadPostProcess( void )
 const FieldParse UpgradeTemplate::m_upgradeFieldParseTable[] =
 {
 
-	{ "DisplayName",				INI::parseAsciiString,		NULL, offsetof( UpgradeTemplate, m_displayNameLabel ) },
+	{ "DisplayName",				INI::parseAsciiString,		nullptr, offsetof( UpgradeTemplate, m_displayNameLabel ) },
 	{ "Type",								INI::parseIndexList,			TheUpgradeTypeNames, offsetof( UpgradeTemplate, m_type ) },
-	{ "BuildTime",					INI::parseReal,						NULL, offsetof( UpgradeTemplate, m_buildTime ) },
-	{ "BuildCost",					INI::parseInt,						NULL, offsetof( UpgradeTemplate, m_cost ) },
-	{ "ButtonImage",				INI::parseAsciiString,		NULL, offsetof( UpgradeTemplate, m_buttonImageName ) },
-	{ "ResearchSound",			INI::parseAudioEventRTS,	NULL, offsetof( UpgradeTemplate, m_researchSound ) },
-	{ "UnitSpecificSound",	INI::parseAudioEventRTS,	NULL, offsetof( UpgradeTemplate, m_unitSpecificSound ) },
-	{ NULL,						NULL,												 NULL, 0 }
+	{ "BuildTime",					INI::parseReal,						nullptr, offsetof( UpgradeTemplate, m_buildTime ) },
+	{ "BuildCost",					INI::parseInt,						nullptr, offsetof( UpgradeTemplate, m_cost ) },
+	{ "ButtonImage",				INI::parseAsciiString,		nullptr, offsetof( UpgradeTemplate, m_buttonImageName ) },
+	{ "ResearchSound",			INI::parseAudioEventRTS,	nullptr, offsetof( UpgradeTemplate, m_researchSound ) },
+	{ "UnitSpecificSound",	INI::parseAudioEventRTS,	nullptr, offsetof( UpgradeTemplate, m_unitSpecificSound ) },
+	{ nullptr,						nullptr,												 nullptr, 0 }
 
 };
 
@@ -135,9 +135,9 @@ UpgradeTemplate::UpgradeTemplate( void )
 	m_type = UPGRADE_TYPE_PLAYER;
 	m_nameKey = NAMEKEY_INVALID;
 	m_buildTime = 0.0f;
-	m_next = NULL;
-	m_prev = NULL;
-	m_buttonImage = NULL;
+	m_next = nullptr;
+	m_prev = nullptr;
+	m_buttonImage = nullptr;
 
 }
 
@@ -222,7 +222,7 @@ void UpgradeTemplate::cacheButtonImage()
 UpgradeCenter::UpgradeCenter( void )
 {
 
-	m_upgradeList = NULL;
+	m_upgradeList = nullptr;
 	m_nextTemplateMaskBit = 0;
 	buttonImagesCached = FALSE;
 
@@ -313,7 +313,7 @@ UpgradeTemplate *UpgradeCenter::findNonConstUpgradeByKey( NameKeyType key )
 			return upgrade;
 
 	// item not found
-	return NULL;
+	return nullptr;
 
 }
 
@@ -340,7 +340,7 @@ const UpgradeTemplate *UpgradeCenter::findUpgradeByKey( NameKeyType key ) const
 			return upgrade;
 
 	// item not found
-	return NULL;
+	return nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -399,11 +399,11 @@ void UpgradeCenter::linkUpgrade( UpgradeTemplate *upgrade )
 {
 
 	// sanity
-	if( upgrade == NULL )
+	if( upgrade == nullptr )
 		return;
 
 	// link
-	upgrade->friend_setPrev( NULL );
+	upgrade->friend_setPrev( nullptr );
 	upgrade->friend_setNext( m_upgradeList );
 	if( m_upgradeList )
 		m_upgradeList->friend_setPrev( upgrade );
@@ -418,7 +418,7 @@ void UpgradeCenter::unlinkUpgrade( UpgradeTemplate *upgrade )
 {
 
 	// sanity
-	if( upgrade == NULL )
+	if( upgrade == nullptr )
 		return;
 
 	if( upgrade->friend_getNext() )
@@ -437,7 +437,7 @@ Bool UpgradeCenter::canAffordUpgrade( Player *player, const UpgradeTemplate *upg
 {
 
 	// sanity
-	if( player == NULL || upgradeTemplate == NULL )
+	if( player == nullptr || upgradeTemplate == nullptr )
 		return FALSE;
 
 	// money check
@@ -482,7 +482,7 @@ void UpgradeCenter::parseUpgradeDefinition( INI *ini )
 
 	// find existing item if present
 	UpgradeTemplate* upgrade = TheUpgradeCenter->findNonConstUpgradeByKey( NAMEKEY(name) );
-	if( upgrade == NULL )
+	if( upgrade == nullptr )
 	{
 
 		// allocate a new item

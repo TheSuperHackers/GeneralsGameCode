@@ -46,10 +46,6 @@ Standard type definitions for the sake of portability and readability.
 #define MAX(x,y) (((x)>(y))?(x):(y))
 #endif
 
-#ifndef NULL
-#define NULL 0
-#endif
-
 //These are used for readability purposes mostly, when a method takes a
 //  pointer or reference these help specify what will happen to the data
 //  that is sent in.

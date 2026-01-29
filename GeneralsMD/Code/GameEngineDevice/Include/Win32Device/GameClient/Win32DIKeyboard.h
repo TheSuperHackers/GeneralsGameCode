@@ -74,7 +74,7 @@ public:
 
 	// extend methods from the base class
 	virtual void init( void );		///< initialize the keyboard, extending init functionality
-	virtual void reset( void );		///< Reset the keybaord system
+	virtual void reset( void );		///< Reset the keyboard system
 	virtual void update( void );  ///< update call, extending update functionality
 	virtual Bool getCapsState( void );		///< get state of caps lock key, return TRUE if down
 

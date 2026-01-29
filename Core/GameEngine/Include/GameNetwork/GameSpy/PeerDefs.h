@@ -291,7 +291,7 @@ void GetAdditionalDisconnectsFromUserFile(PSPlayerStats *stats);
 extern Int GetAdditionalDisconnectsFromUserFile(Int playerID);
 
 //-------------------------------------------------------------------------
-// These functions set up the globals and threads neccessary for our GameSpy impl.
+// These functions set up the globals and threads necessary for our GameSpy impl.
 
 void SetUpGameSpy( const char *motdBuffer, const char *configBuffer );
 void TearDownGameSpy( void );

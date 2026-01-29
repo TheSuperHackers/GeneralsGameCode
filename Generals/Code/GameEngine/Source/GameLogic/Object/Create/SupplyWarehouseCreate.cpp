@@ -54,16 +54,16 @@ SupplyWarehouseCreate::~SupplyWarehouseCreate( void )
 void SupplyWarehouseCreate::onCreate( void )
 {
 	// Warehouses are never Built.
-	if( ThePlayerList == NULL )
+	if( ThePlayerList == nullptr )
 		return;
 
 	for( Int playerIndex = ThePlayerList->getPlayerCount() - 1; playerIndex >= 0; playerIndex-- )
 	{
 		Player *currentPlayer = ThePlayerList->getNthPlayer( playerIndex );
-		if( currentPlayer == NULL )
+		if( currentPlayer == nullptr )
 			continue;
 		ResourceGatheringManager *manager = currentPlayer->getResourceGatheringManager();
-		if( manager == NULL )
+		if( manager == nullptr )
 			continue;
 		manager->addSupplyWarehouse( getObject() );
 	}

@@ -74,11 +74,11 @@ class UString
 		Int CompareNoCase(const WChar* ws) const;
 		Int CompareNoCase(const UString& s) const;
 
-		//! Find the first occurance of character
+		//! Find the first occurrence of character
 		Int Find(Char c) const;
 		Int Find(WChar wc) const;
 
-		//! Find the last occurance of a character
+		//! Find the last occurrence of a character
 		Int FindLast(Char c) const;
 		Int FindLast(WChar c) const;
 
@@ -136,7 +136,7 @@ class UString
 		bool Resize(UInt size);
 
 		const WChar* Get(void) const
-			{return (mData != NULL) ? mData : L"";}
+			{return (mData != nullptr) ? mData : L"";}
 
 		//! Assignment operator
 		UString operator=(const Char* s)

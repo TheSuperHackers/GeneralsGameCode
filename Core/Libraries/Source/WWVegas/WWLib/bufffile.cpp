@@ -45,7 +45,7 @@ int		BufferedFileClass::_DesiredBufferSize	=	1024*16;
  *=============================================================================================*/
 BufferedFileClass::BufferedFileClass(void) :
 	RawFileClass(),
-	Buffer( NULL ),
+	Buffer( nullptr ),
 	BufferSize( 0 ),
 	BufferAvailable( 0 ),
 	BufferOffset( 0 )
@@ -57,7 +57,7 @@ BufferedFileClass::BufferedFileClass(void) :
  *=============================================================================================*/
 BufferedFileClass::BufferedFileClass(char const * filename) :
 	RawFileClass( filename ),
-	Buffer( NULL ),
+	Buffer( nullptr ),
 	BufferSize( 0 ),
 	BufferAvailable( 0 ),
 	BufferOffset( 0 )
@@ -91,10 +91,10 @@ void BufferedFileClass::Close(void)
  *    the file. This condition can result in fewer bytes being read than requested. Determine  *
  *    this by examining the return value.                                                      *
  *                                                                                             *
- * INPUT:   buffer   -- Pointer to the buffer to read data into. If NULL is passed, no read    *
+ * INPUT:   buffer   -- Pointer to the buffer to read data into. If nullptr is passed, no read    *
  *                      is performed.                                                          *
  *                                                                                             *
- *          size     -- The number of bytes to read. If NULL is passed, then no read is        *
+ *          size     -- The number of bytes to read. If nullptr is passed, then no read is        *
  *                      performed.                                                             *
  *                                                                                             *
  * OUTPUT:  Returns with the number of bytes read into the buffer. If this number is less      *
@@ -242,7 +242,7 @@ int BufferedFileClass::Seek(int pos, int dir)
 void	BufferedFileClass::Reset_Buffer( void )
 {
 	delete [] Buffer;
-	Buffer = NULL;
+	Buffer = nullptr;
 	BufferSize = 0;
 	BufferAvailable = 0;
 	BufferOffset = 0;

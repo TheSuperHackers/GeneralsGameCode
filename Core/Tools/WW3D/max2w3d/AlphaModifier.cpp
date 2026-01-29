@@ -67,7 +67,7 @@ void AlphaModifierClass::ModifyObject(TimeValue t, ModContext &mc, ObjectState *
 
 	int numVert = mesh->getNumVerts();
 	int i = 0;
-	float *vdata = NULL;
+	float *vdata = nullptr;
 
 	// Get parameters from pblock
 	float		sparam = 0.0f;
@@ -248,7 +248,7 @@ static ParamBlockDesc2 alpha_param_blk
 (
 	//rollout
 		0, _T("AlphaModifierParams"),  0, &AlphaCD, P_AUTO_CONSTRUCT + P_AUTO_UI, 0,
-		IDD_ALPHA_MODIFIER, IDS_PARAMETERS, 0, 0, NULL,
+		IDD_ALPHA_MODIFIER, IDS_PARAMETERS, 0, 0, nullptr,
 
 	// params
 
@@ -398,7 +398,7 @@ Animatable* AlphaModifierClass::SubAnim(int i)
 	switch (i)
 	{
 		case 0: return pblock;
-		default: return NULL;
+		default: return nullptr;
 	}
 }
 
@@ -418,7 +418,7 @@ RefTargetHandle AlphaModifierClass::GetReference(int i)
 		case 0: return pblock;
 		default:
 			assert(TRUE);
-			return NULL;
+			return nullptr;
 	}
 }
 

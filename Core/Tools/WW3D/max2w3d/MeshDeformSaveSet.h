@@ -94,18 +94,18 @@ public:
 		//////////////////////////////////////////////////////////////////////
 		MeshDeformSaveSetClass (void)
 			:	m_Flags (0),
-				m_CurrentKeyFrame (NULL)	{ }
+				m_CurrentKeyFrame (nullptr)	{ }
 		~MeshDeformSaveSetClass (void)	{ Reset (); }
 
 		//////////////////////////////////////////////////////////////////////
 		//	Public methods
 		//////////////////////////////////////////////////////////////////////
 
-		// Keyframe managment
+		// Keyframe management
 		void					Begin_Keyframe (float state);
 		void					End_Keyframe (void);
 
-		// Vertex managment
+		// Vertex management
 		void					Add_Vert (UINT vert_index, const Point3 &position, const VertColor &color);
 
 		// Misc

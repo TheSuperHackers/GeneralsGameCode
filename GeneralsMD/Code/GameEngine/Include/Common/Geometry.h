@@ -59,7 +59,7 @@ static const char *const GeometryNames[] =
 	"SPHERE",
 	"CYLINDER",
 	"BOX",
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(GeometryNames) == GEOMETRY_NUM_TYPES + 1, "Incorrect array size");
 #endif  // end DEFINE_GEOMETRY_NAMES

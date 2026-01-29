@@ -49,7 +49,7 @@
 void INI::parseWaterSettingDefinition( INI* ini )
 {
 	AsciiString name;
-	WaterSetting *waterSetting = NULL;
+	WaterSetting *waterSetting = nullptr;
 
 	// read the name
 	const char* token = ini->getNextToken();
@@ -77,7 +77,7 @@ void INI::parseWaterSettingDefinition( INI* ini )
 	}
 
 	// check for no time of day match
-	if( waterSetting == NULL )
+	if( waterSetting == nullptr )
 		throw INI_INVALID_DATA;
 
 	// parse the data
@@ -88,7 +88,7 @@ void INI::parseWaterSettingDefinition( INI* ini )
 //-------------------------------------------------------------------------------------------------
 void INI::parseWaterTransparencyDefinition( INI *ini )
 {
-	if (TheWaterTransparency == NULL) {
+	if (TheWaterTransparency == nullptr) {
 		TheWaterTransparency = newInstance(WaterTransparencySetting);
 	} else if (ini->getLoadType() == INI_LOAD_CREATE_OVERRIDES) {
 		WaterTransparencySetting* wt = (WaterTransparencySetting*) (TheWaterTransparency.getNonOverloadedPointer());

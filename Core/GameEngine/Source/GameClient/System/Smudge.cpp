@@ -46,14 +46,14 @@ SmudgeManager::~SmudgeManager()
 	SmudgeSet* head;
 
 	//free memory used by smudge sets
-	while ((head = m_freeSmudgeSetList.Head ()) != NULL) {
+	while ((head = m_freeSmudgeSetList.Head ()) != nullptr) {
 		m_freeSmudgeSetList.Remove_Head ();
 		delete head;
 	}
 
 	Smudge* head2;
 	//free memory used by smudges
-	while ((head2 = SmudgeSet::m_freeSmudgeList.Head ()) != NULL) {
+	while ((head2 = SmudgeSet::m_freeSmudgeList.Head ()) != nullptr) {
 		m_freeSmudgeSetList.Remove_Head ();
 		delete head2;
 	}
@@ -69,7 +69,7 @@ void SmudgeManager::reset(void)
 	SmudgeSet* head;
 
 	//Return all smudgeSets back to free pool.
-	while ((head = m_usedSmudgeSetList.Head ()) != NULL) {
+	while ((head = m_usedSmudgeSetList.Head ()) != nullptr) {
 		m_usedSmudgeSetList.Remove_Head ();
 		head->reset();	//free all smudges.
 		m_freeSmudgeSetList.Add_Tail(head);
@@ -109,7 +109,7 @@ void SmudgeSet::reset(void)
 {
 	Smudge* head;
 
-	while ((head = m_usedSmudgeList.Head ()) != NULL) {
+	while ((head = m_usedSmudgeList.Head ()) != nullptr) {
 		m_usedSmudgeList.Remove_Head ();
 		m_freeSmudgeList.Add_Head(head);	//add to free list
 	}

@@ -95,7 +95,7 @@ public:
 
 private:
 
-	/// free all template databse data
+	/// free all template database data
 	void freeDatabase( void );
 
 	void addTemplate( ThingTemplate *thing );		///< add the template to the DB

@@ -151,6 +151,6 @@ protected:
 	InputLightStruct	InputLights[MAX_LIGHTS];	// input lights
 
 	Vector3				OutputAmbient;					// scene ambient + lights' ambients
-	OutputLightStruct	OutputLights[MAX_LIGHTS];	// ouput lights
+	OutputLightStruct	OutputLights[MAX_LIGHTS];	// output lights
 
 };

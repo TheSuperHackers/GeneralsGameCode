@@ -72,11 +72,11 @@ public:
 	void						Set_Arrays(
 									ShareBufferClass<Vector3> *startlocs,
 									ShareBufferClass<Vector3> *endlocs,
-									ShareBufferClass<Vector4> *diffuse = NULL,
-									ShareBufferClass<Vector4> *taildiffuse = NULL,
-									ShareBufferClass<unsigned int> *alt = NULL,
-									ShareBufferClass<float> *sizes = NULL,
-									ShareBufferClass<float> *ucoords = NULL,
+									ShareBufferClass<Vector4> *diffuse = nullptr,
+									ShareBufferClass<Vector4> *taildiffuse = nullptr,
+									ShareBufferClass<unsigned int> *alt = nullptr,
+									ShareBufferClass<float> *sizes = nullptr,
+									ShareBufferClass<float> *ucoords = nullptr,
 									int active_line_count = -1
 									);
 	void						Set_Line_Size(float size);
@@ -106,11 +106,11 @@ protected:
 
 	ShareBufferClass<Vector3> *			StartLineLoc;	// World/cameraspace point locs
 	ShareBufferClass<Vector3> *			EndLineLoc;	// World/cameraspace point locs
-	ShareBufferClass<Vector4> *			LineDiffuse; // (NULL if not used) RGBA values
-	ShareBufferClass<Vector4> *			TailDiffuse; // (NULL if not used) RGBA values
-	ShareBufferClass<unsigned int> *		ALT;			// (NULL if not used) active line table
-	ShareBufferClass<float> *				LineSize;	// (NULL if not used) size override table
-	ShareBufferClass<float> *				LineUCoord; // (NULL if not used) U coordinates
+	ShareBufferClass<Vector4> *			LineDiffuse; // (null if not used) RGBA values
+	ShareBufferClass<Vector4> *			TailDiffuse; // (null if not used) RGBA values
+	ShareBufferClass<unsigned int> *		ALT;			// (null if not used) active line table
+	ShareBufferClass<float> *				LineSize;	// (null if not used) size override table
+	ShareBufferClass<float> *				LineUCoord; // (null if not used) U coordinates
 	int											LineCount;	// Active (if ALT) or total point count
 
 	TextureClass*			Texture;

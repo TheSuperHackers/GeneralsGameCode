@@ -254,7 +254,7 @@ Win32Mouse::Win32Mouse( void )
 	m_currentWin32Cursor = NONE;
 	for (Int i=0; i<NUM_MOUSE_CURSORS; i++)
 		for (Int j=0; j<MAX_2D_CURSOR_DIRECTIONS; j++)
-			cursorResources[i][j]=NULL;
+			cursorResources[i][j]=nullptr;
 	m_directionFrame=0; //points up.
 	m_lostFocus = FALSE;
 }
@@ -265,7 +265,7 @@ Win32Mouse::~Win32Mouse( void )
 {
 
 	// remove our global reference that was for the WndProc() only
-	TheWin32Mouse = NULL;
+	TheWin32Mouse = nullptr;
 
 }
 
@@ -415,7 +415,7 @@ void Win32Mouse::setCursor( MouseCursor cursor )
 		return;	//stop messing with mouse cursor if we don't have focus.
 
 	if (cursor == NONE || !m_visible)
-		SetCursor( NULL );
+		SetCursor( nullptr );
 	else
 	{
 		SetCursor(cursorResources[cursor][m_directionFrame]);
@@ -464,7 +464,7 @@ void Win32Mouse::capture( void )
 void Win32Mouse::releaseCapture( void )
 {
 
-	if (::ClipCursor(NULL))
+	if (::ClipCursor(nullptr))
 	{
 		onCursorCaptured(false);
 	}

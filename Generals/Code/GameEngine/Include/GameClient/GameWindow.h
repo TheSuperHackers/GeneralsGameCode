@@ -157,7 +157,7 @@ enum
 	WIN_STATUS_NONE								= 0x00000000,		// No status bits set at all
 	WIN_STATUS_ACTIVE							= 0x00000001,		// At the top of the window list
 	WIN_STATUS_TOGGLE							= 0x00000002,		// If set, click to toggle
-	WIN_STATUS_DRAGABLE						= 0x00000004,		// Window can be dragged
+	WIN_STATUS_DRAGGABLE						= 0x00000004,		// Window can be dragged
 	WIN_STATUS_ENABLED						= 0x00000008,		// Window can receive input
 	WIN_STATUS_HIDDEN 						= 0x00000010,		// Window is hidden, no input
 	WIN_STATUS_ABOVE    					= 0x00000020,		// Window is always above others
@@ -437,7 +437,7 @@ class GameWindowDummy : public GameWindow
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(GameWindowDummy, "GameWindowDummy")
 public:
 	virtual void winDrawBorder() {}
-	virtual void* winGetUserData(void) { return NULL; }
+	virtual void* winGetUserData(void) { return nullptr; }
 };
 
 // ModalWindow ----------------------------------------------------------------

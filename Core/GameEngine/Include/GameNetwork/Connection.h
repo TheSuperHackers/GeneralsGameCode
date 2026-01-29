@@ -18,7 +18,7 @@
 
 /**
  * The Connection class handles queues for individual players, one connection per player.
- * Connections are identified by their names (m_name).  This should accomodate changing IPs
+ * Connections are identified by their names (m_name).  This should accommodate changing IPs
  * in the face of modem disconnects, NAT irregularities, etc.
  * Messages can be guaranteed or non-guaranteed, sequenced or not.
  *

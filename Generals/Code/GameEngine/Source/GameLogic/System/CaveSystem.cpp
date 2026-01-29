@@ -34,7 +34,7 @@
 #include "Common/Xfer.h"
 #include "GameLogic/CaveSystem.h"
 
-CaveSystem *TheCaveSystem = NULL;
+CaveSystem *TheCaveSystem = nullptr;
 
 CaveSystem::CaveSystem()
 {
@@ -52,7 +52,7 @@ void CaveSystem::reset()
 {
 	for( std::vector<TunnelTracker*>::iterator iter = m_tunnelTrackerVector.begin(); iter != m_tunnelTrackerVector.end(); iter++ )
 	{
-		TunnelTracker *currentTracker = *iter; // could be NULL, since we don't slide back to fill deleted entries so offsets don't shift
+		TunnelTracker *currentTracker = *iter; // could be null, since we don't slide back to fill deleted entries so offsets don't shift
 		deleteInstance(currentTracker);
 	}
 	m_tunnelTrackerVector.clear();
@@ -65,8 +65,8 @@ void CaveSystem::update()
 Bool CaveSystem::canSwitchIndexToIndex( Int oldIndex, Int newIndex )
 {
 	// When I grant permission, you need to do it.  ie call Unregister and then re-register with the new number
-	TunnelTracker *oldTracker = NULL;
-	TunnelTracker *newTracker = NULL;
+	TunnelTracker *oldTracker = nullptr;
+	TunnelTracker *newTracker = nullptr;
 	if( m_tunnelTrackerVector.size() > oldIndex )
 	{
 		oldTracker = m_tunnelTrackerVector[oldIndex];
@@ -93,18 +93,18 @@ void CaveSystem::registerNewCave( Int theIndex )
 	{
 		// You are new and off the edge, so I will fill NULLs up to you and then make a newTracker at that spot
 		while( theIndex >= m_tunnelTrackerVector.size() )
-			m_tunnelTrackerVector.push_back( NULL );
+			m_tunnelTrackerVector.push_back( nullptr );
 
 		needToCreate = TRUE;
 	}
 	else
 	{
 		// else you either exist or have existed, so I will either let things be or re-create that slot
-		if( m_tunnelTrackerVector[theIndex] == NULL )
+		if( m_tunnelTrackerVector[theIndex] == nullptr )
 			needToCreate = TRUE;
 	}
 
-	if( needToCreate )// if true, we new theIndex is the index of a NULL to be filled
+	if( needToCreate )// if true, we new theIndex is the index of a nullptr to be filled
 		m_tunnelTrackerVector[theIndex] = newInstance(TunnelTracker);
 }
 
@@ -117,13 +117,13 @@ void CaveSystem::unregisterCave( Int theIndex )
 
 TunnelTracker *CaveSystem::getTunnelTrackerForCaveIndex( Int theIndex )
 {
-	TunnelTracker *theTracker = NULL;
+	TunnelTracker *theTracker = nullptr;
 	if( theIndex < m_tunnelTrackerVector.size() )
 	{
 		theTracker = m_tunnelTrackerVector[theIndex];
 	}
 
-	DEBUG_ASSERTCRASH( theTracker != NULL, ("No one should be interested in a sub-cave that doesn't exist.") );
+	DEBUG_ASSERTCRASH( theTracker != nullptr, ("No one should be interested in a sub-cave that doesn't exist.") );
 
 	return theTracker;
 }

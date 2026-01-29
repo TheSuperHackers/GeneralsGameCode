@@ -38,7 +38,7 @@ class EmitterParticlePropPageClass : public CPropertyPage
 
 // Construction
 public:
-	EmitterParticlePropPageClass (EmitterInstanceListClass *pemitter_list = NULL);
+	EmitterParticlePropPageClass (EmitterInstanceListClass *pemitter_list = nullptr);
 	~EmitterParticlePropPageClass ();
 
 // Dialog Data

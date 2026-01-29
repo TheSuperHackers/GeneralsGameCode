@@ -86,7 +86,7 @@ public:
 protected:
 
 	static GameWindow *m_messageWindow;
-	static void clearWindow(void) {m_messageWindow=NULL;};
+	static void clearWindow(void) {m_messageWindow=nullptr;};
 
 	Bool m_suppressNewWindows;
 	AsciiString m_unnamedUnit;

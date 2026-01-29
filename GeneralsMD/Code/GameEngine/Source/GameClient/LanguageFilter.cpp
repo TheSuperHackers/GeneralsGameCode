@@ -31,7 +31,7 @@
 
 
 
-LanguageFilter *TheLanguageFilter = NULL;
+LanguageFilter *TheLanguageFilter = nullptr;
 
 LanguageFilter::LanguageFilter()
 {
@@ -46,7 +46,7 @@ void LanguageFilter::init() {
 
 	// read in the file already.
 	File *file1 = TheFileSystem->openFile(BadWordFileName, File::READ | File::BINARY);
-	if (file1 == NULL) {
+	if (file1 == nullptr) {
 		return;
 	}
 
@@ -66,7 +66,7 @@ void LanguageFilter::init() {
 	}
 
 	file1->close();
-	file1 = NULL;
+	file1 = nullptr;
 }
 
 void LanguageFilter::reset() {
@@ -88,7 +88,7 @@ void LanguageFilter::filterLine(UnicodeString &line)
 
 	while (newLine.nextToken(&token, L" ;,.!?:=\\/><`~()&^%#\n\t")) {
 		wchar_t *pos = wcsstr(buf, token.str());
-		if (pos == NULL) {
+		if (pos == nullptr) {
 			DEBUG_CRASH(("Couldn't find the token in its own string."));
 			continue;
 		}
@@ -143,7 +143,7 @@ void LanguageFilter::unHaxor(UnicodeString &word) {
 			newWord.concat(L's');
 		} else if (c == L'+') {
 			newWord.concat(L't');
-		} else if (wcsrchr(ignoredChars, c) == NULL) {
+		} else if (wcsrchr(ignoredChars, c) == nullptr) {
 			newWord.concat(c);
 		}
 	}

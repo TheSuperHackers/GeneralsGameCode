@@ -136,7 +136,7 @@ enum NetCommandType CPP_11(: Int) {
 	NETCOMMANDTYPE_PROGRESS,
 	NETCOMMANDTYPE_LOADCOMPLETE,
 	NETCOMMANDTYPE_TIMEOUTSTART,
-	NETCOMMANDTYPE_WRAPPER,							// A wrapper command that holds a command thats too big to fit in a single packet.
+	NETCOMMANDTYPE_WRAPPER,							// A wrapper command that holds a command that's too big to fit in a single packet.
 	NETCOMMANDTYPE_FILE,
 	NETCOMMANDTYPE_FILEANNOUNCE,
 	NETCOMMANDTYPE_FILEPROGRESS,
@@ -196,7 +196,7 @@ static const UnsignedShort GENERALS_MAGIC_NUMBER = 0xF00D;
 //static const Int NETWORK_DISCONNECT_TIME = 5000;
 
 // The number of miliseconds between when a player's last disconnect keep alive command
-// was recieved and when they are considered disconnected from the game.
+// was received and when they are considered disconnected from the game.
 //static const Int NETWORK_PLAYER_TIMEOUT_TIME = 60000;
 
 // The base port number used for the transport socket.  A players slot number is added to this

@@ -144,7 +144,7 @@ public:
 	WW3DErrorType			Save_W3D(ChunkSaveClass & csave);
 
 	/////////////////////////////////////////////////////////////////////////////
-	// Persistant object save-load interface
+	// Persistent object save-load interface
 	/////////////////////////////////////////////////////////////////////////////
 	virtual const PersistFactoryClass &	Get_Factory (void) const;
 	virtual bool								Save (ChunkSaveClass &csave);

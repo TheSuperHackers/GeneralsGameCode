@@ -43,7 +43,7 @@ public:
 
 	SpecialPowerCompletionDieModuleData()
 	{
-		m_specialPowerTemplate = NULL;
+		m_specialPowerTemplate = nullptr;
 	}
 
 	static void buildFieldParse(MultiIniFieldParse& p)
@@ -52,7 +52,7 @@ public:
 
 		static const FieldParse dataFieldParse[] =
 		{
-			{ "SpecialPowerTemplate", INI::parseSpecialPowerTemplate,	NULL, offsetof( SpecialPowerCompletionDieModuleData, m_specialPowerTemplate ) },
+			{ "SpecialPowerTemplate", INI::parseSpecialPowerTemplate,	nullptr, offsetof( SpecialPowerCompletionDieModuleData, m_specialPowerTemplate ) },
 			{ 0, 0, 0, 0 }
 		};
     p.add(dataFieldParse);

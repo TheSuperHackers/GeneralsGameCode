@@ -162,7 +162,7 @@ public:
 
 	/////////////////////////////////////////////////////////////////////////////////////
 	// Material interface, All of these functions call through to the current
-	// material decription.
+	// material description.
 	/////////////////////////////////////////////////////////////////////////////////////
 	void							Set_Pass_Count(int passes)														{ CurMatDesc->Set_Pass_Count(passes); }
 	int							Get_Pass_Count(void) const														{ return CurMatDesc->Get_Pass_Count(); }
@@ -241,7 +241,7 @@ public:
 	// Process texture reductions
 //	void							Process_Texture_Reduction(void);
 
-	// FVF category container will be NULL if the mesh hasn't been registered to the rendering system
+	// FVF category container will be null if the mesh hasn't been registered to the rendering system
 	DX8FVFCategoryContainer* Peek_FVF_Category_Container();
 
 	// Determine whether any rendering feature used by this mesh requires vertex normals

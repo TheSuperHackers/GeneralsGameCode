@@ -37,6 +37,7 @@
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
 class TextureClass;
+class SurfaceClass;
 class TerrainLogic;
 
 // PROTOTYPES /////////////////////////////////////////////////////////////////////////////////////
@@ -63,7 +64,9 @@ public:
 	virtual void draw( Int pixelX, Int pixelY, Int width, Int height );		///< draw the radar
 
 	virtual void clearShroud();
-	virtual void setShroudLevel(Int x, Int y, CellShroudStatus setting);
+	virtual void setShroudLevel(Int x, Int y, CellShroudStatus setting); ///< set the shroud level at shroud cell x,y
+	virtual void beginSetShroudLevel(); ///< call this once before multiple calls to setShroudLevel for better performance
+	virtual void endSetShroudLevel(); ///< call this once after beginSetShroudLevel and setShroudLevel
 
 	virtual void refreshTerrain( TerrainLogic *terrain );
 	virtual void refreshObjects();
@@ -104,6 +107,10 @@ protected:
 	WW3DFormat m_shroudTextureFormat;							///< format to use for shroud texture
 	Image *m_shroudImage;													///< shroud image abstraction for drawing
 	TextureClass *m_shroudTexture;								///< shroud texture
+	SurfaceClass *m_shroudSurface;								///< surface to shroud texture
+	void *m_shroudSurfaceBits;										///< shroud surface bits
+	int m_shroudSurfacePitch;											///< shroud surface pitch
+	UnsignedInt m_shroudSurfacePixelSize;					///< shroud surface pixel size
 
 	Int m_textureWidth;														///< width for all radar textures
 	Int m_textureHeight;													///< height for all radar textures

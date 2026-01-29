@@ -86,7 +86,7 @@ class W3DDebugDisplay : public DebugDisplay
 		Int m_fontHeight;
 		DisplayString *m_displayString;
 
-		virtual void drawText( Int x, Int y, Char *text );			///< Render null ternimated string at current cursor position
+		virtual void drawText( Int x, Int y, Char *text );			///< Render null terminated string at current cursor position
 
 };
 

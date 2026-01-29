@@ -59,8 +59,8 @@ HealContainModuleData::HealContainModuleData( void )
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "TimeForFullHeal", INI::parseDurationUnsignedInt, NULL, offsetof( HealContainModuleData, m_framesForFullHeal ) },
-		{ 0, 0, 0, 0 }
+		{ "TimeForFullHeal", INI::parseDurationUnsignedInt, nullptr, offsetof( HealContainModuleData, m_framesForFullHeal ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 
   p.add(dataFieldParse);

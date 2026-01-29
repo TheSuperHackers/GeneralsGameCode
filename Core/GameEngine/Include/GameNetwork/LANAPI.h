@@ -238,7 +238,7 @@ protected:
 
 	Bool								m_isInLANMenu;		///< true while we are in a LAN menu (lobby, game options, direct connect)
 	Bool								m_inLobby;											///< Are we in the lobby (not in a game)?
-	LANGameInfo *				m_currentGame;							///< Pointer to game (setup screen) we are currently in (NULL for lobby)
+	LANGameInfo *				m_currentGame;							///< Pointer to game (setup screen) we are currently in (null for lobby)
 	//LANGameInfo *m_currentGameInfo;			///< Pointer to game setup info we are currently in.
 
 	UnsignedInt					m_localIP;

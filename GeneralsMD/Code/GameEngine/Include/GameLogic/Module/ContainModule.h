@@ -159,7 +159,7 @@ public:
 	virtual void removeFromContain( Object *obj, Bool exposeStealthUnits = FALSE ) = 0;			///< remove 'obj' from contain list
 	virtual void removeAllContained( Bool exposeStealthUnits = FALSE ) = 0;									///< remove all objects on contain list
 	virtual void killAllContained( void ) = 0;									///< kill all objects on contain list
-  virtual void harmAndForceExitAllContained( DamageInfo *info ) = 0; // apply canned damage against those containes
+  virtual void harmAndForceExitAllContained( DamageInfo *info ) = 0; // apply canned damage against those contains
 	virtual Bool isEnclosingContainerFor( const Object *obj ) const = 0;	///< Does this type of Contain Visibly enclose its contents?
 	virtual Bool isPassengerAllowedToFire( ObjectID id = INVALID_ID ) const = 0;	///< Hey, can I shoot out of this container?
 	virtual void setPassengerAllowedToFire( Bool permission = TRUE ) = 0;	///< Hey, can I shoot out of this container?

@@ -59,22 +59,22 @@ void StealthDetectorUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "DetectionRate",							INI::parseDurationUnsignedInt,			NULL, offsetof( StealthDetectorUpdateModuleData, m_updateRate ) },
-		{ "DetectionRange",							INI::parseReal,											NULL, offsetof( StealthDetectorUpdateModuleData, m_detectionRange ) },
-		{ "InitiallyDisabled",					INI::parseBool,											NULL, offsetof( StealthDetectorUpdateModuleData, m_initiallyDisabled ) },
-		{ "PingSound",									INI::parseAudioEventRTS,						NULL, offsetof( StealthDetectorUpdateModuleData, m_pingSound ) },
-		{ "LoudPingSound",							INI::parseAudioEventRTS,						NULL, offsetof( StealthDetectorUpdateModuleData, m_loudPingSound ) },
-		{ "IRBeaconParticleSysName",		INI::parseParticleSystemTemplate,		NULL, offsetof( StealthDetectorUpdateModuleData, m_IRBeaconParticleSysTmpl ) },
-		{ "IRParticleSysName",					INI::parseParticleSystemTemplate,		NULL, offsetof( StealthDetectorUpdateModuleData, m_IRParticleSysTmpl ) },
-		{ "IRBrightParticleSysName",		INI::parseParticleSystemTemplate,		NULL, offsetof( StealthDetectorUpdateModuleData, m_IRBrightParticleSysTmpl ) },
-		{ "IRGridParticleSysName",			INI::parseParticleSystemTemplate,		NULL, offsetof( StealthDetectorUpdateModuleData, m_IRGridParticleSysTmpl ) },
-		{ "IRParticleSysBone",					INI::parseAsciiString,							NULL, offsetof( StealthDetectorUpdateModuleData, m_IRParticleSysBone ) },
-		{ "ExtraRequiredKindOf",				KindOfMaskType::parseFromINI,				NULL, offsetof( StealthDetectorUpdateModuleData, m_extraDetectKindof ) },
-		{ "ExtraForbiddenKindOf",				KindOfMaskType::parseFromINI,				NULL, offsetof( StealthDetectorUpdateModuleData, m_extraDetectKindofNot ) },
-		{ "CanDetectWhileGarrisoned",		INI::parseBool,											NULL, offsetof( StealthDetectorUpdateModuleData, m_canDetectWhileGarrisoned ) },
-		{ "CanDetectWhileContained",		INI::parseBool,											NULL, offsetof( StealthDetectorUpdateModuleData, m_canDetectWhileTransported ) },
+		{ "DetectionRate",							INI::parseDurationUnsignedInt,			nullptr, offsetof( StealthDetectorUpdateModuleData, m_updateRate ) },
+		{ "DetectionRange",							INI::parseReal,											nullptr, offsetof( StealthDetectorUpdateModuleData, m_detectionRange ) },
+		{ "InitiallyDisabled",					INI::parseBool,											nullptr, offsetof( StealthDetectorUpdateModuleData, m_initiallyDisabled ) },
+		{ "PingSound",									INI::parseAudioEventRTS,						nullptr, offsetof( StealthDetectorUpdateModuleData, m_pingSound ) },
+		{ "LoudPingSound",							INI::parseAudioEventRTS,						nullptr, offsetof( StealthDetectorUpdateModuleData, m_loudPingSound ) },
+		{ "IRBeaconParticleSysName",		INI::parseParticleSystemTemplate,		nullptr, offsetof( StealthDetectorUpdateModuleData, m_IRBeaconParticleSysTmpl ) },
+		{ "IRParticleSysName",					INI::parseParticleSystemTemplate,		nullptr, offsetof( StealthDetectorUpdateModuleData, m_IRParticleSysTmpl ) },
+		{ "IRBrightParticleSysName",		INI::parseParticleSystemTemplate,		nullptr, offsetof( StealthDetectorUpdateModuleData, m_IRBrightParticleSysTmpl ) },
+		{ "IRGridParticleSysName",			INI::parseParticleSystemTemplate,		nullptr, offsetof( StealthDetectorUpdateModuleData, m_IRGridParticleSysTmpl ) },
+		{ "IRParticleSysBone",					INI::parseAsciiString,							nullptr, offsetof( StealthDetectorUpdateModuleData, m_IRParticleSysBone ) },
+		{ "ExtraRequiredKindOf",				KindOfMaskType::parseFromINI,				nullptr, offsetof( StealthDetectorUpdateModuleData, m_extraDetectKindof ) },
+		{ "ExtraForbiddenKindOf",				KindOfMaskType::parseFromINI,				nullptr, offsetof( StealthDetectorUpdateModuleData, m_extraDetectKindofNot ) },
+		{ "CanDetectWhileGarrisoned",		INI::parseBool,											nullptr, offsetof( StealthDetectorUpdateModuleData, m_canDetectWhileGarrisoned ) },
+		{ "CanDetectWhileContained",		INI::parseBool,											nullptr, offsetof( StealthDetectorUpdateModuleData, m_canDetectWhileTransported ) },
 
-		{ 0, 0, 0, 0 }
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   p.add(dataFieldParse);
 }
@@ -186,7 +186,7 @@ UpdateSleepTime StealthDetectorUpdate::update( void )
 	PartitionFilterRelationship						filterTeam(self, PartitionFilterRelationship::ALLOW_ENEMIES | PartitionFilterRelationship::ALLOW_NEUTRAL );
 	PartitionFilterAcceptByKindOf					filterKindof(data->m_extraDetectKindof, data->m_extraDetectKindofNot);
 	PartitionFilterSameMapStatus					filterMapStatus(getObject());
-	PartitionFilter*											filters[] = { &filterStealthOrStealthGarrisoned, &filterTeam, &filterKindof, &filterMapStatus, NULL };
+	PartitionFilter*											filters[] = { &filterStealthOrStealthGarrisoned, &filterTeam, &filterKindof, &filterMapStatus, nullptr };
 
 	Real visionRange = self->getVisionRange();
 	if( data->m_detectionRange > 0.0f )
@@ -314,7 +314,7 @@ UpdateSleepTime StealthDetectorUpdate::update( void )
 			ContainModuleInterface *contain = them->getContain();
 			if( contain && contain->isGarrisonable() && contain->getStealthUnitsContained() )
 			{
-				Object* rider = NULL;
+				Object* rider = nullptr;
 				for(ContainedItemsList::const_iterator it = contain->getContainedItemsList()->begin(); it != contain->getContainedItemsList()->end(); ++it)
 				{
 					rider = *it;
@@ -344,7 +344,7 @@ UpdateSleepTime StealthDetectorUpdate::update( void )
 		Drawable *myDraw = self->getDrawable();
 		Coord3D bonePosition = {-1.66f,5.5f,15};//@todo use bone position
 		if (myDraw)
-			myDraw->getPristineBonePositions( data->m_IRParticleSysBone.str(), 0, &bonePosition, NULL, 1);
+			myDraw->getPristineBonePositions( data->m_IRParticleSysBone.str(), 0, &bonePosition, nullptr, 1);
 
 		const ParticleSystemTemplate *pingTemplate;
 		if ( foundSomeone )

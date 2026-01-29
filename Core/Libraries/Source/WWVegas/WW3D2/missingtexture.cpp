@@ -29,7 +29,7 @@ static unsigned missing_image_depth=24;
 extern unsigned int missing_image_palette[];
 extern unsigned int missing_image_pixels[];
 
-static IDirect3DTexture8 * _MissingTexture = NULL;
+static IDirect3DTexture8 * _MissingTexture = nullptr;
 
 IDirect3DTexture8* MissingTexture::_Get_Missing_Texture()
 {
@@ -40,19 +40,19 @@ IDirect3DTexture8* MissingTexture::_Get_Missing_Texture()
 
 IDirect3DSurface8* MissingTexture::_Create_Missing_Surface()
 {
-	IDirect3DSurface8 *texture_surface = NULL;
+	IDirect3DSurface8 *texture_surface = nullptr;
 	DX8_ErrorCode(_MissingTexture->GetSurfaceLevel(0, &texture_surface));
 	D3DSURFACE_DESC texture_surface_desc;
 	::ZeroMemory(&texture_surface_desc, sizeof(D3DSURFACE_DESC));
 	DX8_ErrorCode(texture_surface->GetDesc(&texture_surface_desc));
 
-	IDirect3DSurface8 *surface = NULL;
+	IDirect3DSurface8 *surface = nullptr;
 	DX8CALL(CreateImageSurface(
 		texture_surface_desc.Width,
 		texture_surface_desc.Height,
 		texture_surface_desc.Format,
 		&surface));
-	DX8CALL(CopyRects(texture_surface, NULL, 0, surface, NULL));
+	DX8CALL(CopyRects(texture_surface, nullptr, 0, surface, nullptr));
 	texture_surface->Release();
 	return surface;
 }
@@ -104,11 +104,11 @@ void MissingTexture::_Init()
 
 		DX8_ErrorCode(D3DXLoadSurfaceFromSurface(
 			dst,
-			NULL,	// palette
-			NULL,	// rect
+			nullptr,	// palette
+			nullptr,	// rect
 			src,
-			NULL,	// palette
-			NULL,	// rect
+			nullptr,	// palette
+			nullptr,	// rect
 			D3DX_FILTER_BOX,	// box is good for 2:1 filtering
 			0));
 
@@ -159,10 +159,10 @@ void MissingTexture::_Init()
 void MissingTexture::_Deinit()
 {
 	_MissingTexture->Release();
-	_MissingTexture=0;
+	_MissingTexture=nullptr;
 }
 
-static unsigned int missing_image_palette[]={
+unsigned int missing_image_palette[]={
 0x7F040204,0x7F048AC4,0x7F84829C,0x7FFC0204,0x7F0442AB,0x7FFCFE04,0x7F444244,0x7F0462FC,
 0x7F84CEE4,0x7FC4C6CF,0x7F9CA6B2,0x7FC4E6F4,0x7F04FE04,0x7F4C82D4,0x7F2452A1,0x7F0442D4,
 0x7F446AB0,0x7FA4A6B6,0x7F2C62C2,0x7FE4E6E9,0x7F646264,0x7F0402FC,0x7FC4D6E1,0x7F44B6DC,
@@ -196,7 +196,7 @@ static unsigned int missing_image_palette[]={
 0x7FACDEEC,0x7F2CA6D4,0x7F0452E4,0x7FD4D6E4,0x7F849ED4,0x7FB4B6CC,0x7F4C7ACC,0x7FACC6FC,
 0x7F9496B4,0x7F042AA4,0x7F1C62E4,0x7F74A6EC,0x7FE4EEFC,0x7F1C72FC,0x7FD4DEEC,0x7F2C5ABC};
 
-static unsigned int missing_image_pixels[]={
+unsigned int missing_image_pixels[]={
 0x03030303,0x03030303,0xA7A7A7A7,0xA7A7A7A7,0xA7A7A7A7,0xA7A7A7A7,0xA7A7A7A7,0xA7A7A7A7,
 0xA7A7A7A7,0xA7A7A7A7,0xA7A7A7A7,0xA7A7A7A7,0xA7A7A7A7,0xA7A7A7A7,0xA7A7A7A7,0xA7A7A7A7,
 0xA7A7A7A7,0xA7A7A7A7,0xA7A7A7A7,0xA7A7A7A7,0xA7A7A7A7,0xA7A7A7A7,0xA7A7A7A7,0xA7A7A7A7,

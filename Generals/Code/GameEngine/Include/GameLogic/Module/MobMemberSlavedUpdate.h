@@ -65,10 +65,10 @@ public:
     UpdateModuleData::buildFieldParse(p);
 		static const FieldParse dataFieldParse[] =
 		{
-			{ "MustCatchUpRadius",			INI::parseInt,	NULL, offsetof( MobMemberSlavedUpdateModuleData, m_mustCatchUpRadius ) },
-			{ "CatchUpCrisisBailTime",			INI::parseUnsignedInt,	NULL, offsetof( MobMemberSlavedUpdateModuleData, m_catchUpCrisisBailTime ) },
-			{ "NoNeedToCatchUpRadius",		INI::parseInt,	NULL, offsetof( MobMemberSlavedUpdateModuleData, m_noNeedToCatchUpRadius ) },
-			{ "Squirrelliness",     INI::parseReal, NULL, offsetof( MobMemberSlavedUpdateModuleData, m_squirrellinessRatio ) },
+			{ "MustCatchUpRadius",			INI::parseInt,	nullptr, offsetof( MobMemberSlavedUpdateModuleData, m_mustCatchUpRadius ) },
+			{ "CatchUpCrisisBailTime",			INI::parseUnsignedInt,	nullptr, offsetof( MobMemberSlavedUpdateModuleData, m_catchUpCrisisBailTime ) },
+			{ "NoNeedToCatchUpRadius",		INI::parseInt,	nullptr, offsetof( MobMemberSlavedUpdateModuleData, m_noNeedToCatchUpRadius ) },
+			{ "Squirrelliness",     INI::parseReal, nullptr, offsetof( MobMemberSlavedUpdateModuleData, m_squirrellinessRatio ) },
 			{ 0, 0, 0, 0 }
 		};
     p.add(dataFieldParse);

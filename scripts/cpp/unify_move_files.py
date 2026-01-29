@@ -257,6 +257,26 @@ def main():
     #unify_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/GameClient/W3DTreeBuffer.cpp", Game.CORE, "GameEngineDevice/Source/W3DDevice/GameClient/W3DTreeBuffer.cpp")
     #unify_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/GameClient/WorldHeightMap.cpp", Game.CORE, "GameEngineDevice/Source/W3DDevice/GameClient/WorldHeightMap.cpp")
 
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/Common/UserPreferences.h", Game.CORE, "GameEngine/Include/Common/UserPreferences.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/UserPreferences.cpp", Game.CORE, "GameEngine/Source/Common/UserPreferences.cpp")
+
+    #unify_file(Game.ZEROHOUR, "Libraries/Include/Lib/BaseType.h", Game.CORE, "Libraries/Include/Lib/BaseType.h")
+    #unify_file(Game.ZEROHOUR, "Libraries/Include/Lib/trig.h", Game.CORE, "Libraries/Include/Lib/trig.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/Common/Errors.h", Game.CORE, "GameEngine/Include/Common/Errors.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/Common/GameCommon.h", Game.CORE, "GameEngine/Include/Common/GameCommon.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/Common/GameType.h", Game.CORE, "GameEngine/Include/Common/GameType.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/Common/INI.h", Game.CORE, "GameEngine/Include/Common/INI.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/Common/Snapshot.h", Game.CORE, "GameEngine/Include/Common/Snapshot.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/Common/STLTypedefs.h", Game.CORE, "GameEngine/Include/Common/STLTypedefs.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/Common/SubsystemInterface.h", Game.CORE, "GameEngine/Include/Common/SubsystemInterface.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameClient/ChallengeGenerals.h", Game.CORE, "GameEngine/Include/GameClient/ChallengeGenerals.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/INI/INI.cpp", Game.CORE, "GameEngine/Source/Common/INI/INI.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/System/GameCommon.cpp", Game.CORE, "GameEngine/Source/Common/System/GameCommon.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/System/GameType.cpp", Game.CORE, "GameEngine/Source/Common/System/GameType.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/System/Snapshot.cpp", Game.CORE, "GameEngine/Source/Common/System/Snapshot.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/System/SubsystemInterface.cpp", Game.CORE, "GameEngine/Source/Common/System/SubsystemInterface.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/GUI/ChallengeGenerals.cpp", Game.CORE, "GameEngine/Source/GameClient/GUI/ChallengeGenerals.cpp")
+
     return
 
 

@@ -86,8 +86,8 @@ class	LListNode
 		void					append( LListNode *new_node );		///< Appends new node after itself
 		LListNode*		next( void );											///< Returns next node in list
 		LListNode*		prev( void );											///< Returns previous node in list
-		LListNode*		loopNext( void );									///< Returns next node in list, warpping round to start of list if nessecary
-		LListNode*		loopPrev( void );									///< Returns previous node in list, wrapping round to end of list if nessecary
+		LListNode*		loopNext( void );									///< Returns next node in list, wrapping round to start of list if necessary
+		LListNode*		loopPrev( void );									///< Returns previous node in list, wrapping round to end of list if necessary
 		Bool					inList( void );										///< Returns whether or not node in list
 		Bool					isHead( void );										///< Returns whether or not this node is the head/tail node
 		Int						priority( void );									///< Returns node's priority

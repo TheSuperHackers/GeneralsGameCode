@@ -246,7 +246,7 @@ private:
 
 /*
 ** SineLinearOffsetTextureMapperClass
-** Modifies the UV coodinates by a sine linear offset
+** Modifies the UV coordinates by a sine linear offset
 */
 class SineLinearOffsetTextureMapperClass : public ScaleTextureMapperClass
 {
@@ -273,7 +273,7 @@ private:
 
 /*
 ** StepLinearOffsetTextureMapperClass
-** Modifies the UV coodinates by a Step linear offset
+** Modifies the UV coordinates by a Step linear offset
 */
 class StepLinearOffsetTextureMapperClass : public ScaleTextureMapperClass
 {
@@ -303,7 +303,7 @@ private:
 
 /*
 ** ZigZagLinearOffsetTextureMapperClass
-** Modifies the UV coodinates by a ZigZag linear offset
+** Modifies the UV coordinates by a ZigZag linear offset
 */
 class ZigZagLinearOffsetTextureMapperClass : public ScaleTextureMapperClass
 {

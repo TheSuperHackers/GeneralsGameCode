@@ -37,7 +37,6 @@ target_include_directories(z_particleeditor PRIVATE
 )
 
 target_link_libraries(z_particleeditor PRIVATE
-    core_config
     core_debug
     core_profile
     corei_libraries_source_wwvegas

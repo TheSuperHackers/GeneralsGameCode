@@ -137,7 +137,7 @@ RailroadBehavior::RailroadBehavior( Thing *thing, const ModuleData *moduleData )
 	m_whistleSound.setObjectID( getObject()->getID() ) ;
 	m_clicketyClackSound.setObjectID( getObject()->getID() ) ;
 
-	m_track = NULL;
+	m_track = nullptr;
 
 	m_currentPointHandle = 0xfacade;
 	m_waitAtStationTimer = 0;
@@ -152,8 +152,8 @@ RailroadBehavior::RailroadBehavior( Thing *thing, const ModuleData *moduleData )
 	m_waitingInWings = TRUE;
 	m_endOfLine = FALSE;
 	m_isLocomotive = modData->m_isLocomotive;
-	m_isLeadCarraige = m_isLocomotive;  // for now, I am the lead, only if I am the locomotive
-	m_wantsToBeLeadCarraige = FALSE;
+	m_isLeadCarriage = m_isLocomotive;  // for now, I am the lead, only if I am the locomotive
+	m_wantsToBeLeadCarriage = FALSE;
 	m_disembark = FALSE;
 	m_inTunnel = FALSE;
   m_held = FALSE;
@@ -171,12 +171,12 @@ RailroadBehavior::~RailroadBehavior( void )
 
 	TheAudio->removeAudioEvent( m_runningSound.getPlayingHandle() );// no more chugchug when I'm dead
 
-	if( m_track != NULL )
+	if( m_track != nullptr )
 	{
 		if (m_track->releaseReference())
 			delete m_track;
 
-		m_track = NULL;
+		m_track = nullptr;
 	}
 
 
@@ -194,7 +194,7 @@ Bool RailroadBehavior::isRailroad() const
 		return FALSE;
 	if (m_endOfLine)
 		return FALSE;
-	if (m_isLeadCarraige)
+	if (m_isLeadCarriage)
 		return TRUE;
 	if (m_trailerID==INVALID_ID)
 		return TRUE;
@@ -237,7 +237,7 @@ void RailroadBehavior::onCollide( Object *other, const Coord3D *loc, const Coord
 			{
 				other->kill();
 			}
-			else if ( m_isLeadCarraige ) //yikes! I just coasted into some other carriage
+			else if ( m_isLeadCarriage ) //yikes! I just coasted into some other carriage
 			{
 				other->kill();
 				obj->kill();//and I am dead, too
@@ -497,7 +497,7 @@ void RailroadBehavior::playImpactSound(Object *victim, const Coord3D *impactPosi
 void RailroadBehavior::loadTrackData( void )
 {
 
-	if ( m_track != NULL )
+	if ( m_track != nullptr )
 		return;// lets do this only once!
 
 
@@ -511,7 +511,7 @@ void RailroadBehavior::loadTrackData( void )
 
 	// m_anchorWaypointID COULD HAVE BEEN RECORDED IN XFER, WHICH MEANS I LOADED MY TRACK DATA IN A PRIOR LIFE,
 	// SO LETS JUST RE_INIT THE TRACK BASED ON THAT POINT, AUTOMAGICALLY
-	Waypoint *anchorWaypoint = NULL;
+	Waypoint *anchorWaypoint = nullptr;
 	if ( m_anchorWaypointID == INVALID_WAYPOINT_ID )
 	{
 		Waypoint *anyWaypoint = TheTerrainLogic->getFirstWaypoint();
@@ -551,7 +551,7 @@ void RailroadBehavior::loadTrackData( void )
 	m_track = NEW( TrainTrack );// this constructor inc's the refcount to 1
 
 	// From now until the next carriage is added, this track is writable using getWritablePointList();
-	// This method will return NULL when refcount is 2 or more
+	// This method will return nullptr when refcount is 2 or more
 	// getPointList returns the list as const to any caller
 	// each carriage must increment the reference when this pointer is passed to it,
 	// any subsequent carriage (destructor) will delete this memory here if it releases refcount to zero
@@ -590,7 +590,7 @@ void RailroadBehavior::loadTrackData( void )
 			Waypoint *anotherWaypoint = scanner->getLink( 0 );
 
 			// if scanner's link is valid, we'll add it to the track. now
-			if ( anotherWaypoint != NULL )
+			if ( anotherWaypoint != nullptr )
 			{
 
 				//measure the track while we are at it
@@ -605,7 +605,7 @@ void RailroadBehavior::loadTrackData( void )
 				trackPoint.m_distanceFromPrev = distFromTo;
 				trackPoint.m_distanceFromFirst = m_track->m_length;
 				trackPoint.m_isFirstPoint = FALSE;
-				trackPoint.m_isLastPoint = anotherWaypoint->getLink( 0 ) == NULL;
+				trackPoint.m_isLastPoint = anotherWaypoint->getLink( 0 ) == nullptr;
 				trackPoint.m_isTunnelOrBridge = anotherWaypoint->getName().endsWith("Tunnel");
 				trackPoint.m_isStation = anotherWaypoint->getName().endsWith("Station");
 				trackPoint.m_isPingPong = scanner->getName().endsWith("PingPong");
@@ -769,12 +769,12 @@ UpdateSleepTime RailroadBehavior::update( void )
 
 
 
-	if ( m_wantsToBeLeadCarraige > FRAMES_UNPULLED_LONG_ENOUGH_TO_UNHITCH )//if this flag survived until now, I have lost my puller
+	if ( m_wantsToBeLeadCarriage > FRAMES_UNPULLED_LONG_ENOUGH_TO_UNHITCH )//if this flag survived until now, I have lost my puller
 	{
-		m_isLeadCarraige = TRUE;
+		m_isLeadCarriage = TRUE;
 	}
 
-	if ( m_isLeadCarraige )
+	if ( m_isLeadCarriage )
 	{
 
 		if ( m_conductorState == COAST )
@@ -819,9 +819,9 @@ UpdateSleepTime RailroadBehavior::update( void )
 				TheGameLogic->destroyObject( getObject() );
 		}
 	}
-	else if ( m_wantsToBeLeadCarraige <= FRAMES_UNPULLED_LONG_ENOUGH_TO_UNHITCH )// if I am not the lead carriage
+	else if ( m_wantsToBeLeadCarriage <= FRAMES_UNPULLED_LONG_ENOUGH_TO_UNHITCH )// if I am not the lead carriage
 	{
-		m_wantsToBeLeadCarraige ++; // like every young carriage, I aspire to be the lead carriage some day
+		m_wantsToBeLeadCarriage ++; // like every young carriage, I aspire to be the lead carriage some day
 															// unless getpulled() set this false, I will be on the next update! Joy!
 	}
 
@@ -910,7 +910,7 @@ public:
 	{
 
 		// must exist!
-		if ( m_obj == NULL || objOther == NULL)
+		if ( m_obj == nullptr || objOther == nullptr)
 			return FALSE;
 
 		//must not be me!
@@ -959,19 +959,19 @@ void RailroadBehavior::createCarriages( void )
 
 
 	PartitionFilterIsValidCarriage pfivc(self, md);
-	PartitionFilter *filters[] = { &pfivc, 0 };
+	PartitionFilter *filters[] = { &pfivc, nullptr };
 
 
-	Object* xferCarriage = NULL;
-	Object *closeCarriage = NULL;
-	Object *firstCarriage = NULL;
+	Object* xferCarriage = nullptr;
+	Object *closeCarriage = nullptr;
+	Object *firstCarriage = nullptr;
 
 	if ( m_trailerID != INVALID_ID )
 	{
 		xferCarriage = TheGameLogic->findObjectByID( m_trailerID );
 	}
 
-	if (xferCarriage != NULL)
+	if (xferCarriage != nullptr)
 		closeCarriage = xferCarriage;
 	else
 		closeCarriage = ThePartitionManager->getClosestObject( &myHitchLoc, maxRadius, FROM_CENTER_2D, filters);
@@ -1050,7 +1050,7 @@ void RailroadBehavior::hitchNewCarriagebyTemplate( ObjectID locoID, const Templa
 
 	//Okay that's me, now for the next guy
 	//---------------------------------------
-	Object *newCarriage = NULL;
+	Object *newCarriage = nullptr;
 
 	if ( iter != list.end() )// this test is bogus
 	{
@@ -1119,16 +1119,16 @@ void RailroadBehavior::hitchNewCarriagebyProximity( ObjectID locoID, TrainTrack 
 	myHitchLoc.add( & hitchOffset );
 
 	PartitionFilterIsValidCarriage pfivc(self, md);
-	PartitionFilter *filters[] = { &pfivc, 0 };
+	PartitionFilter *filters[] = { &pfivc, nullptr };
 
-	Object* xferCarriage = NULL;
-	Object *closeCarriage = NULL;
+	Object* xferCarriage = nullptr;
+	Object *closeCarriage = nullptr;
 
 	if ( m_trailerID != INVALID_ID )
 	{
 		xferCarriage = TheGameLogic->findObjectByID( m_trailerID );
 	}
-	if (xferCarriage != NULL)
+	if (xferCarriage != nullptr)
 		closeCarriage = xferCarriage;
 	else
 		closeCarriage = ThePartitionManager->getClosestObject( &myHitchLoc, maxRadius, FROM_CENTER_2D, filters);
@@ -1165,7 +1165,7 @@ void RailroadBehavior::hitchNewCarriagebyProximity( ObjectID locoID, TrainTrack 
 void RailroadBehavior::getPulled( PullInfo *info )
 {
 	//ENFORCE MY STATUS AS A PULLEE, NOT A PULLER, and update my position, speed etc.
-	m_wantsToBeLeadCarraige = 0;
+	m_wantsToBeLeadCarriage = 0;
 
 	if ( ! m_track )
 	{
@@ -1425,7 +1425,7 @@ void RailroadBehavior::FindPosByPathDistance( Coord3D *pos, const Real dist, con
 		if (thisPoint && thisPoint->m_distanceFromFirst < actualDistance)// I am after this point, and
 		{
 			Coord3D thisPointPos = thisPoint->m_position;
-			const TrackPoint *nextPoint = NULL;
+			const TrackPoint *nextPoint = nullptr;
 
 			// TheSuperHackers Mauller 02/04/2025 Prevent dereferencing of endpoint pointer which throws asserts during Debug
 			if (pointIter != pointList->end()) {
@@ -1567,11 +1567,11 @@ void RailroadBehavior::xfer( Xfer *xfer )
 		//Bool m_isLocomotive; ///< Am I a locomotive,
 		xfer->xferBool( &m_isLocomotive );
 
-		//Bool m_isLeadCarraige; ///< Am the carraige in front,
-		xfer->xferBool( &m_isLeadCarraige );
+		//Bool m_isLeadCarriage; ///< Am the carraige in front,
+		xfer->xferBool( &m_isLeadCarriage );
 
-		//Int m_wantsToBeLeadCarraige; ///< Am the carraige in front,
-		xfer->xferInt( &m_wantsToBeLeadCarraige );
+		//Int m_wantsToBeLeadCarriage; ///< Am the carraige in front,
+		xfer->xferInt( &m_wantsToBeLeadCarriage );
 
 		//Bool m_disembark; ///< If I wait at a station, I should also evacuate everybody when I get theres
 		xfer->xferBool( &m_disembark );

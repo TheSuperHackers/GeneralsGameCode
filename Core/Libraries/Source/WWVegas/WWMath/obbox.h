@@ -211,7 +211,7 @@ inline void OBBoxClass::Compute_Point(float params[3],Vector3 * set_point) const
  *=============================================================================================*/
 inline void OBBoxClass::Compute_Axis_Aligned_Extent(Vector3 * set_extent) const
 {
-	WWASSERT(set_extent != NULL);
+	WWASSERT(set_extent != nullptr);
 
 	// x extent is the box projected onto the x axis
 	set_extent->X =	WWMath::Fabs(Extent[0] * Basis[0][0]) +

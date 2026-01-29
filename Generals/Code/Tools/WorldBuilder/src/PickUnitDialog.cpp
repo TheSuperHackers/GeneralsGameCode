@@ -35,10 +35,10 @@
 // PickUnitDialog dialog
 
 
-ReplaceUnitDialog::ReplaceUnitDialog(CWnd* pParent /*=NULL*/)
+ReplaceUnitDialog::ReplaceUnitDialog(CWnd* pParent /*=nullptr*/)
 	: PickUnitDialog(IDD, pParent)
 {
-	m_objectsList = NULL;
+	m_objectsList = nullptr;
 	m_currentObjectIndex = -1;
 	m_currentObjectName[0] = 0;
 	for (int i = ES_FIRST; i<ES_NUM_SORTING_TYPES; i++)	{
@@ -64,10 +64,10 @@ BEGIN_MESSAGE_MAP(ReplaceUnitDialog, CDialog)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-PickUnitDialog::PickUnitDialog(CWnd* pParent /*=NULL*/)
+PickUnitDialog::PickUnitDialog(CWnd* pParent /*=nullptr*/)
 	: CDialog(IDD, pParent)
 {
-	m_objectsList = NULL;
+	m_objectsList = nullptr;
 	m_currentObjectIndex = -1;
 	m_currentObjectName[0] = 0;
 	for (int i = ES_FIRST; i<ES_NUM_SORTING_TYPES; i++)	{
@@ -78,10 +78,10 @@ PickUnitDialog::PickUnitDialog(CWnd* pParent /*=NULL*/)
 	//}}AFX_DATA_INIT
 }
 
-PickUnitDialog::PickUnitDialog(UINT id, CWnd* pParent /*=NULL*/)
+PickUnitDialog::PickUnitDialog(UINT id, CWnd* pParent /*=nullptr*/)
 	: CDialog(id, pParent)
 {
-	m_objectsList = NULL;
+	m_objectsList = nullptr;
 	m_currentObjectIndex = -1;
 	m_currentObjectName[0] = 0;
 	for (int i = ES_FIRST; i<ES_NUM_SORTING_TYPES; i++)	{
@@ -95,7 +95,7 @@ PickUnitDialog::PickUnitDialog(UINT id, CWnd* pParent /*=NULL*/)
 PickUnitDialog::~PickUnitDialog()
 {
 	deleteInstance(m_objectsList);
-	m_objectsList = NULL;
+	m_objectsList = nullptr;
 }
 
 void PickUnitDialog::DoDataExchange(CDataExchange* pDX)
@@ -170,7 +170,7 @@ BOOL PickUnitDialog::OnInitDialog()
 		if (!IsAllowableType(sort, tTemplate->isBuildableItem())) continue;
 
 		// create new map object
-		pMap = newInstance(MapObject)( loc, tTemplate->getName(), 0.0f, 0, NULL, tTemplate );
+		pMap = newInstance(MapObject)( loc, tTemplate->getName(), 0.0f, 0, nullptr, tTemplate );
 		pMap->setNextMap( m_objectsList );
 		m_objectsList = pMap;
 	}
@@ -212,7 +212,7 @@ HTREEITEM PickUnitDialog::findOrAdd(HTREEITEM parent, const char *pLabel)
 	char buffer[_MAX_PATH];
 	::memset(&ins, 0, sizeof(ins));
 	HTREEITEM child = m_objectTreeView.GetChildItem(parent);
-	while (child != NULL) {
+	while (child != nullptr) {
 		ins.item.mask = TVIF_HANDLE|TVIF_TEXT;
 		ins.item.hItem = child;
 		ins.item.pszText = buffer;
@@ -283,10 +283,10 @@ BOOL PickUnitDialog::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 void PickUnitDialog::addObject( MapObject *mapObject, const char *pPath, Int index, HTREEITEM parent )
 {
 	char buffer[ _MAX_PATH ];
-	const char *leafName = NULL;
+	const char *leafName = nullptr;
 
 	// sanity
-	if( mapObject == NULL )
+	if( mapObject == nullptr )
 		return;
 
 	//
@@ -307,7 +307,7 @@ void PickUnitDialog::addObject( MapObject *mapObject, const char *pPath, Int ind
 
 		// first sort by side, either create or find the tree item with matching side name
 		AsciiString side = thingTemplate->getDefaultOwningSide();
-		DEBUG_ASSERTCRASH( !side.isEmpty(), ("NULL default side in template") );
+		DEBUG_ASSERTCRASH( !side.isEmpty(), ("null default side in template") );
 		parent = findOrAdd( parent, side.str());
 
 		// next tier uses the editor sorting that design can specify in the INI
@@ -402,5 +402,5 @@ const ThingTemplate* PickUnitDialog::getPickedThing(void)
 				return tTemplate;
 		}
 	}
-	return NULL;
+	return nullptr;
 }

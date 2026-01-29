@@ -47,7 +47,7 @@ class RampOptions : public COptionsPanel
 	Real m_rampWidth;
 	public:
 		enum { IDD = IDD_RAMP_OPTIONS };
-		RampOptions(CWnd* pParent = NULL);
+		RampOptions(CWnd* pParent = nullptr);
 		virtual ~RampOptions();
 
 		Bool shouldApplyTheRamp();

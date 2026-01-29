@@ -45,6 +45,7 @@
 //-----------------------------------------------------------------------------
 //         Includes
 //-----------------------------------------------------------------------------
+
 #include "W3DDevice/GameClient/FlatHeightMap.h"
 
 #include <stdlib.h>
@@ -90,7 +91,7 @@
 #include "Common/UnitTimings.h" //Contains the DO_UNIT_TIMINGS define jba.
 
 
-FlatHeightMapRenderObjClass *TheFlatHeightMap = NULL;
+FlatHeightMapRenderObjClass *TheFlatHeightMap = nullptr;
 
 //-----------------------------------------------------------------------------
 //         Private Data
@@ -142,7 +143,7 @@ Int FlatHeightMapRenderObjClass::freeMapResources(void)
 FlatHeightMapRenderObjClass::~FlatHeightMapRenderObjClass(void)
 {
 	releaseTiles();
-	TheFlatHeightMap = NULL;
+	TheFlatHeightMap = nullptr;
 }
 
 //=============================================================================
@@ -151,7 +152,7 @@ FlatHeightMapRenderObjClass::~FlatHeightMapRenderObjClass(void)
 /** Constructor. Mostly nulls out the member variables. */
 //=============================================================================
 FlatHeightMapRenderObjClass::FlatHeightMapRenderObjClass(void):
-m_tiles(NULL),
+m_tiles(nullptr),
 m_tilesWidth(0),
 m_tilesHeight(0),
 m_numTiles(0),
@@ -273,7 +274,7 @@ void FlatHeightMapRenderObjClass::doPartialUpdate(const IRegion2D &partialRange,
 void FlatHeightMapRenderObjClass::releaseTiles(void)
 {
 	delete [] m_tiles;
-	m_tiles = NULL;
+	m_tiles = nullptr;
 
 	m_tilesWidth = 0;
 	m_tilesHeight = 0;
@@ -377,7 +378,7 @@ void FlatHeightMapRenderObjClass::On_Frame_Update(void)
 void FlatHeightMapRenderObjClass::staticLightingChanged( void )
 {
 	BaseHeightMapRenderObjClass::staticLightingChanged();
-	if (m_map==NULL) {
+	if (m_map==nullptr) {
 		return;
 	}
 	Int i, j;
@@ -487,8 +488,8 @@ void FlatHeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 
 	// Force shaders to update.
 	m_stageTwoTexture->restore();
-	DX8Wrapper::Set_Texture(0,NULL);
-	DX8Wrapper::Set_Texture(1,NULL);
+	DX8Wrapper::Set_Texture(0,nullptr);
+	DX8Wrapper::Set_Texture(1,nullptr);
 	ShaderClass::Invalidate();
 
 	//	tm.Scale(ObjSpaceExtent);
@@ -530,7 +531,7 @@ void FlatHeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 		W3DShaderManager::setTexture(0,TheTerrainRenderObject->getShroud()->getShroudTexture());
 	}
 
- 	W3DShaderManager::setTexture(1,NULL);	// Set by the tile later. [3/31/2003]
+ 	W3DShaderManager::setTexture(1,nullptr);	// Set by the tile later. [3/31/2003]
  	W3DShaderManager::setTexture(2,m_stageTwoTexture);	//cloud
  	W3DShaderManager::setTexture(3,m_stageThreeTexture);//noise
 	//Disable writes to destination alpha channel (if there is one)
@@ -547,7 +548,7 @@ void FlatHeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 		Bool disableTex = m_disableTextures;
 		if (m_disableTextures ) {
 			DX8Wrapper::Set_Shader(ShaderClass::_PresetOpaque2DShader);
-			DX8Wrapper::Set_Texture(0,NULL);
+			DX8Wrapper::Set_Texture(0,nullptr);
 		} else {
 			W3DShaderManager::setShader(st, pass);
 		}
@@ -586,8 +587,8 @@ void FlatHeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 	renderShoreLines(&rinfo.Camera);
 
 #ifdef DO_ROADS
-	DX8Wrapper::Set_Texture(0,NULL);
-	DX8Wrapper::Set_Texture(1,NULL);
+	DX8Wrapper::Set_Texture(0,nullptr);
+	DX8Wrapper::Set_Texture(1,nullptr);
 	m_stageTwoTexture->restore();
 
 	ShaderClass::Invalidate();
@@ -596,15 +597,15 @@ void FlatHeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 		if (Scene) {
 			RTS3DScene *pMyScene = (RTS3DScene *)Scene;
 			RefRenderObjListIterator pDynamicLightsIterator(pMyScene->getDynamicLights());
-			m_roadBuffer->drawRoads(&rinfo.Camera, doCloud?m_stageTwoTexture:NULL, TheGlobalData->m_useLightMap?m_stageThreeTexture:NULL,
+			m_roadBuffer->drawRoads(&rinfo.Camera, doCloud?m_stageTwoTexture:nullptr, TheGlobalData->m_useLightMap?m_stageThreeTexture:nullptr,
 				m_disableTextures,xCoordMin-m_map->getBorderSizeInline(), xCoordMax-m_map->getBorderSizeInline(), yCoordMin-m_map->getBorderSizeInline(), yCoordMax-m_map->getBorderSizeInline(), &pDynamicLightsIterator);
 		}
 	}
 #endif
 
 #ifdef DO_SCORCH
-	DX8Wrapper::Set_Texture(0,NULL);
-	DX8Wrapper::Set_Texture(1,NULL);
+	DX8Wrapper::Set_Texture(0,nullptr);
+	DX8Wrapper::Set_Texture(1,nullptr);
 	m_stageTwoTexture->restore();
 
 	ShaderClass::Invalidate();
@@ -612,8 +613,8 @@ void FlatHeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 		drawScorches();
 	}
 #endif
-	DX8Wrapper::Set_Texture(0,NULL);
-	DX8Wrapper::Set_Texture(1,NULL);
+	DX8Wrapper::Set_Texture(0,nullptr);
+	DX8Wrapper::Set_Texture(1,nullptr);
 	m_stageTwoTexture->restore();
 	ShaderClass::Invalidate();
 	DX8Wrapper::Apply_Render_State_Changes();
@@ -631,11 +632,11 @@ void FlatHeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 	m_bibBuffer->renderBibs();
 #endif
 	// We do some custom blending, so tell the shader class to reset everything.
-	DX8Wrapper::Set_Texture(0,NULL);
-	DX8Wrapper::Set_Texture(1,NULL);
+	DX8Wrapper::Set_Texture(0,nullptr);
+	DX8Wrapper::Set_Texture(1,nullptr);
 	m_stageTwoTexture->restore();
 	ShaderClass::Invalidate();
-	DX8Wrapper::Set_Material(NULL);
+	DX8Wrapper::Set_Material(nullptr);
 
 }
 

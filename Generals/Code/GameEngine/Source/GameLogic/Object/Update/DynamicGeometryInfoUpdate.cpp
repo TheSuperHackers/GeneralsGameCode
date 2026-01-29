@@ -62,20 +62,20 @@ DynamicGeometryInfoUpdateModuleData::DynamicGeometryInfoUpdateModuleData()
 	static const FieldParse dataFieldParse[] =
 	{
 
-		{ "InitialDelay",					INI::parseDurationUnsignedInt,		NULL, offsetof(DynamicGeometryInfoUpdateModuleData, m_initialDelay) },
+		{ "InitialDelay",					INI::parseDurationUnsignedInt,		nullptr, offsetof(DynamicGeometryInfoUpdateModuleData, m_initialDelay) },
 
-		{ "InitialHeight",				INI::parseReal,										NULL, offsetof(DynamicGeometryInfoUpdateModuleData, m_initialHeight) },
-		{ "InitialMajorRadius",		INI::parseReal,										NULL, offsetof(DynamicGeometryInfoUpdateModuleData, m_initialMajorRadius) },
-		{ "InitialMinorRadius",		INI::parseReal,										NULL, offsetof(DynamicGeometryInfoUpdateModuleData, m_initialMinorRadius) },
+		{ "InitialHeight",				INI::parseReal,										nullptr, offsetof(DynamicGeometryInfoUpdateModuleData, m_initialHeight) },
+		{ "InitialMajorRadius",		INI::parseReal,										nullptr, offsetof(DynamicGeometryInfoUpdateModuleData, m_initialMajorRadius) },
+		{ "InitialMinorRadius",		INI::parseReal,										nullptr, offsetof(DynamicGeometryInfoUpdateModuleData, m_initialMinorRadius) },
 
-		{ "FinalHeight",					INI::parseReal, NULL, offsetof(DynamicGeometryInfoUpdateModuleData, m_finalHeight) },
-		{ "FinalMajorRadius",			INI::parseReal, NULL, offsetof(DynamicGeometryInfoUpdateModuleData, m_finalMajorRadius) },
-		{ "FinalMinorRadius",			INI::parseReal, NULL, offsetof(DynamicGeometryInfoUpdateModuleData, m_finalMinorRadius) },
+		{ "FinalHeight",					INI::parseReal, nullptr, offsetof(DynamicGeometryInfoUpdateModuleData, m_finalHeight) },
+		{ "FinalMajorRadius",			INI::parseReal, nullptr, offsetof(DynamicGeometryInfoUpdateModuleData, m_finalMajorRadius) },
+		{ "FinalMinorRadius",			INI::parseReal, nullptr, offsetof(DynamicGeometryInfoUpdateModuleData, m_finalMinorRadius) },
 
-		{ "TransitionTime",				INI::parseDurationUnsignedInt,		NULL, offsetof(DynamicGeometryInfoUpdateModuleData, m_transitionTime) },
-		{ "ReverseAtTransitionTime", INI::parseBool,	 NULL, offsetof( DynamicGeometryInfoUpdateModuleData, m_reverseAtTransitionTime ) },
+		{ "TransitionTime",				INI::parseDurationUnsignedInt,		nullptr, offsetof(DynamicGeometryInfoUpdateModuleData, m_transitionTime) },
+		{ "ReverseAtTransitionTime", INI::parseBool,	 nullptr, offsetof( DynamicGeometryInfoUpdateModuleData, m_reverseAtTransitionTime ) },
 
-		{ 0, 0, 0, 0 }
+		{ nullptr, nullptr, nullptr, 0 }
 
 	};
 	p.add(dataFieldParse);

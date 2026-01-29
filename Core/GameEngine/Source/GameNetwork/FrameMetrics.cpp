@@ -26,6 +26,8 @@
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
+#include <numeric>
+
 #include "GameNetwork/FrameMetrics.h"
 #include "GameClient/Display.h"
 #include "GameNetwork/networkutil.h"
@@ -48,13 +50,13 @@ FrameMetrics::FrameMetrics()
 
 FrameMetrics::~FrameMetrics() {
 	delete m_fpsList;
-	m_fpsList = NULL;
+	m_fpsList = nullptr;
 
 	delete m_latencyList;
-	m_latencyList = NULL;
+	m_latencyList = nullptr;
 
 	delete[] m_pendingLatencies;
-	m_pendingLatencies = NULL;
+	m_pendingLatencies = nullptr;
 }
 
 void FrameMetrics::init() {
@@ -105,9 +107,9 @@ void FrameMetrics::processLatencyResponse(UnsignedInt frame) {
 	time_t timeDiff = curTime - m_pendingLatencies[pendingIndex];
 
 	Int latencyListIndex = frame % TheGlobalData->m_networkLatencyHistoryLength;
-	m_averageLatency -= m_latencyList[latencyListIndex] / TheGlobalData->m_networkLatencyHistoryLength;
 	m_latencyList[latencyListIndex] = (Real)timeDiff / (Real)1000; // convert to seconds from milliseconds.
-	m_averageLatency += m_latencyList[latencyListIndex] / TheGlobalData->m_networkLatencyHistoryLength;
+	const Real latencySum = std::accumulate(m_latencyList, m_latencyList + TheGlobalData->m_networkLatencyHistoryLength, 0.0f);
+	m_averageLatency = latencySum / (Real)TheGlobalData->m_networkLatencyHistoryLength;
 
 	if (frame % 16 == 0) {
 //		DEBUG_LOG(("ConnectionManager::processFrameInfoAck - average latency = %f", m_averageLatency));

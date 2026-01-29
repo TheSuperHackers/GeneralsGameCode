@@ -240,7 +240,7 @@ public:
 
 	virtual void updateHeightMapInView(WorldHeightMap *htMap, Bool partial, const IRegion2D &partialRange);
 
-	/// Invalidates an object. Pass NULL to inval all objects.
+	/// Invalidates an object. Pass null to inval all objects.
 	virtual void invalObjectInView(MapObject *pObj);
 
 	// find the best model for an object

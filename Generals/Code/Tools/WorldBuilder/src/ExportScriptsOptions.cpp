@@ -30,7 +30,7 @@ Bool ExportScriptsOptions::m_waypoints = true;
 Bool ExportScriptsOptions::m_triggers = true;
 Bool ExportScriptsOptions::m_allScripts = false;
 
-ExportScriptsOptions::ExportScriptsOptions(CWnd* pParent /*=NULL*/)
+ExportScriptsOptions::ExportScriptsOptions(CWnd* pParent /*=nullptr*/)
 	: CDialog(ExportScriptsOptions::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(ExportScriptsOptions)

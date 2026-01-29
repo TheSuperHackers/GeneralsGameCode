@@ -285,6 +285,7 @@ public:
 	virtual void setPosition( Int x, Int y );						///< set the mouse position
 	virtual void setCursor( MouseCursor cursor ) = 0;		///< set mouse cursor
 
+	void initCapture(); ///< called once to unlock the mouse capture functionality
 	void setCursorCaptureMode(CursorCaptureMode mode); ///< set the rules for the mouse capture
 	void refreshCursorCapture(); ///< refresh the mouse capture
 	Bool isCursorCaptured(); ///< true if the mouse is captured in the game window
@@ -295,7 +296,7 @@ public:
   Int  getCursorTooltipDelay() { return m_tooltipDelay; }
   void setCursorTooltipDelay(Int delay) { m_tooltipDelay = delay; }
 
-	void setCursorTooltip( UnicodeString tooltip, Int tooltipDelay = -1, const RGBColor *color = NULL, Real width = 1.0f );		///< set tooltip string at cursor
+	void setCursorTooltip( UnicodeString tooltip, Int tooltipDelay = -1, const RGBColor *color = nullptr, Real width = 1.0f );		///< set tooltip string at cursor
 	void setMouseText( UnicodeString text, const RGBAColorInt *color, const RGBAColorInt *dropColor );					///< set the cursor text, *NOT* the tooltip text
 	virtual void setMouseLimits( void );					///< update the limit extents the mouse can move in
 	MouseCursor getMouseCursor(void) { return m_currentCursor; }	///< get the current mouse cursor image type
@@ -348,7 +349,6 @@ public:
 
 protected:
 
-	void initCapture();
 	Bool canCapture() const; ///< true if the mouse can be captured
 	void unblockCapture(CursorCaptureBlockReason reason); // unset a reason to block mouse capture
 	void blockCapture(CursorCaptureBlockReason reason); // set a reason to block mouse capture

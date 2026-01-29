@@ -46,10 +46,10 @@
 
 NAMING CONVENTIONS:
 
-	Typical render object name is 15 characters + NULL
-	Meshes have 31 + NULL character name formed from the concatenation of the "container"
+	Typical render object name is 15 characters + null terminator
+	Meshes have 31 + null terminator character name formed from the concatenation of the "container"
 		model name and the mesh's name:  "ContainerName.MeshName"
-	Animations have 31 + NULL character names formed from the concatenation of the Hierarchy tree
+	Animations have 31 + null terminator character names formed from the concatenation of the Hierarchy tree
 		name with the animation name: "AnimationName.HierarchyName"
 	Textures have unlimited name length.
 	Typically you can determine which 'W3D' file a render object came from by looking
@@ -352,14 +352,14 @@ enum {
 
 			W3D_CHUNK_VERTEX_MATERIALS					=0x0000002A,	// wraps the vertex materials
 				W3D_CHUNK_VERTEX_MATERIAL				=0x0000002B,
-					W3D_CHUNK_VERTEX_MATERIAL_NAME	=0x0000002C,	// vertex material name (NULL-terminated string)
+					W3D_CHUNK_VERTEX_MATERIAL_NAME	=0x0000002C,	// vertex material name (null-terminated string)
 					W3D_CHUNK_VERTEX_MATERIAL_INFO	=0x0000002D,	// W3dVertexMaterialStruct
 					W3D_CHUNK_VERTEX_MAPPER_ARGS0		=0x0000002E,	// Null-terminated string
 					W3D_CHUNK_VERTEX_MAPPER_ARGS1		=0x0000002F,	// Null-terminated string
 
 			W3D_CHUNK_TEXTURES							=0x00000030,	// wraps all of the texture info
 				W3D_CHUNK_TEXTURE							=0x00000031,	// wraps a texture definition
-					W3D_CHUNK_TEXTURE_NAME				=0x00000032,	// texture filename (NULL-terminated string)
+					W3D_CHUNK_TEXTURE_NAME				=0x00000032,	// texture filename (null-terminated string)
 					W3D_CHUNK_TEXTURE_INFO				=0x00000033,	// optional W3dTextureInfoStruct
 
 			W3D_CHUNK_MATERIAL_PASS						=0x00000038,	// wraps the information for a single material pass
@@ -466,7 +466,7 @@ enum {
 	W3D_CHUNK_SPHERE,
 	W3D_CHUNK_RING,
 
-	W3D_CHUNK_NULL_OBJECT							=0x00000750,		// defines a NULL object (W3dNullObjectStruct)
+	W3D_CHUNK_NULL_OBJECT							=0x00000750,		// defines a null object (W3dNullObjectStruct)
 
 	W3D_CHUNK_LIGHTSCAPE								=0x00000800,		// wrapper for lights created with Lightscape.
 		W3D_CHUNK_LIGHTSCAPE_LIGHT,										// definition of a light created with Lightscape.
@@ -593,7 +593,7 @@ struct W3dRGBAStruct
 // MATERIALS
 //
 // Surrender 1.40 significantly changed the way that materials are described.  To
-// accomodate this, the w3d file format has changed since there are new features and
+// accommodate this, the w3d file format has changed since there are new features and
 // optimizations that we want to take advangage of.
 //
 // The VertexMaterial defines parameters which control the calculation of the primary
@@ -1985,11 +1985,11 @@ struct W3dHLodSubObjectStruct
 #define W3D_BOX_ATTRIBUTE_ALIGNED							0x00000002
 #define W3D_BOX_ATTRIBUTE_COLLISION_TYPE_MASK			0x00000FF0		// mask for the collision type bits
 #define W3D_BOX_ATTRIBUTE_COLLISION_TYPE_SHIFT						4		// shifting to get to the collision type bits
-#define W3D_BOX_ATTRIBTUE_COLLISION_TYPE_PHYSICAL		0x00000010		// physical collisions
-#define W3D_BOX_ATTRIBTUE_COLLISION_TYPE_PROJECTILE	0x00000020		// projectiles (rays) collide with this
-#define W3D_BOX_ATTRIBTUE_COLLISION_TYPE_VIS				0x00000040		// vis rays collide with this mesh
-#define W3D_BOX_ATTRIBTUE_COLLISION_TYPE_CAMERA			0x00000080		// cameras collide with this mesh
-#define W3D_BOX_ATTRIBTUE_COLLISION_TYPE_VEHICLE		0x00000100		// vehicles collide with this mesh
+#define W3D_BOX_ATTRIBUTE_COLLISION_TYPE_PHYSICAL		0x00000010		// physical collisions
+#define W3D_BOX_ATTRIBUTE_COLLISION_TYPE_PROJECTILE	0x00000020		// projectiles (rays) collide with this
+#define W3D_BOX_ATTRIBUTE_COLLISION_TYPE_VIS				0x00000040		// vis rays collide with this mesh
+#define W3D_BOX_ATTRIBUTE_COLLISION_TYPE_CAMERA			0x00000080		// cameras collide with this mesh
+#define W3D_BOX_ATTRIBUTE_COLLISION_TYPE_VEHICLE		0x00000100		// vehicles collide with this mesh
 
 struct W3dBoxStruct
 {
@@ -2006,7 +2006,7 @@ struct W3dBoxStruct
 
 /********************************************************************************
 
-	NULL Objects
+	Null Objects
 
 	Null objects are used by the LOD system to make meshes dissappear at lower
 	levels of detail.

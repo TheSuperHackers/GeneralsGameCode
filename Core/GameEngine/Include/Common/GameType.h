@@ -1,5 +1,5 @@
 /*
-**	Command & Conquer Generals(tm)
+**	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
 **
 **	This program is free software: you can redistribute it and/or modify
@@ -182,7 +182,7 @@ enum WeaponSlotType CPP_11(: Int)
 // Layer 1 is the ground.
 // Layer 2 is the top layer - bridge if one is present, ground otherwise.
 // Layer 2 - LAYER_LAST -1 are bridges.
-// Layer_WALL is a special "wall" layer for letting units run aroound on top of a wall
+// Layer_WALL is a special "wall" layer for letting units run around on top of a wall
 // made of structures.
 // Note that the bridges just index in the pathfinder, so you don't actually
 // have a LAYER_BRIDGE_1 enum value.

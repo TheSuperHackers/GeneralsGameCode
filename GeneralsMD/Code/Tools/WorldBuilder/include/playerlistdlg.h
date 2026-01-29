@@ -31,7 +31,7 @@ class PlayerListDlg : public CDialog
 {
 // Construction
 public:
-	PlayerListDlg(CWnd* pParent = NULL);   // standard constructor
+	PlayerListDlg(CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(PlayerListDlg)

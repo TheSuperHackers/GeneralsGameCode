@@ -62,7 +62,7 @@
  *=============================================================================================*/
 int CRCStraw::Get(void * source, int slen)
 {
-	if (source == NULL || slen < 1) {
+	if (source == nullptr || slen < 1) {
 		return(0);
 	}
 

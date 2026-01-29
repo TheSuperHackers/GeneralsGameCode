@@ -139,7 +139,7 @@ public:
 private:
 	UnsignedInt m_delay;													///< Holds the delay time in which the animation will start (in milliseconds)
 	ICoord2D m_startPos;													///< Holds the starting position of the animation
-																								///<(usuall is also the end position of the animation when the animation is reversed)
+																								///<(usually is also the end position of the animation when the animation is reversed)
 	ICoord2D m_endPos;														///< Holds the target End Position (usually is the same as the rest position)
 	ICoord2D m_curPos;														///< It's Current Position
 	ICoord2D m_restPos;														///< When the Manager Resets, It sets the window's position to this position

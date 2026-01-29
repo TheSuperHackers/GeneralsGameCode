@@ -29,7 +29,7 @@
 #include "IGR.h"
 
 
-IGROptionsClass *OnlineOptions = NULL;
+IGROptionsClass *OnlineOptions = nullptr;
 
 
 /*********************************************************************************************
@@ -66,7 +66,7 @@ bool IGROptionsClass::Init( void )
 		// If successful, get the options
 		IGROptionsType ReadOptions = 0;
 
-		returnValue = RegQueryValueEx(handle, WOLAPI_REG_KEY_OPTIONS, NULL,
+		returnValue = RegQueryValueEx(handle, WOLAPI_REG_KEY_OPTIONS, nullptr,
 			 (unsigned long *) &type, (unsigned char *) &ReadOptions, (unsigned long *)&size);
 
 		if (returnValue == ERROR_SUCCESS) {
@@ -161,8 +161,8 @@ bool IGROptionsClass::Set_Options( IGROptionsType options )
 	if( RegOpenKeyEx( HKEY_LOCAL_MACHINE, key, 0, KEY_ALL_ACCESS, &handle ) != ERROR_SUCCESS ) {
 
 		// If not, make the WOLAPI key
-		if( RegCreateKeyEx( HKEY_LOCAL_MACHINE, key, 0, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS,
-			NULL, &handle, (unsigned long *)&disp ) != ERROR_SUCCESS )
+		if( RegCreateKeyEx( HKEY_LOCAL_MACHINE, key, 0, nullptr, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS,
+			nullptr, &handle, (unsigned long *)&disp ) != ERROR_SUCCESS )
 			return false;
 	}
 

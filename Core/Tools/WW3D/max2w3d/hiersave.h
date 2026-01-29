@@ -94,7 +94,7 @@ public:
 					Progress_Meter_Class &	treemeter,
 					char *						hname,
 					int							fixup_type = MATRIX_FIXUP_NONE,
-					HierarchySaveClass *		fixuptree = NULL);
+					HierarchySaveClass *		fixuptree = nullptr);
 
 	HierarchySaveClass(
 					INodeListClass *			rootlist,
@@ -102,7 +102,7 @@ public:
 					Progress_Meter_Class &	treemeter,
 					char *						hname,
 					int							fixup_type = MATRIX_FIXUP_NONE,
-					HierarchySaveClass *		fixuptree = NULL,
+					HierarchySaveClass *		fixuptree = nullptr,
 					const Matrix3 &			origin_offset = Matrix3(1));
 
 	~HierarchySaveClass();

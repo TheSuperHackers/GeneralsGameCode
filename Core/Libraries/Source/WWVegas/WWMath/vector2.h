@@ -36,7 +36,7 @@
  *   Scalar Division Operator -- Divide a vector by a scalar                                   *
  *   Scalar Multiply Operator -- Multiply a vector by a scalar                                 *
  *   Vector Addition Operator -- Add two vectors                                               *
- *   Vector Subtraction Operator -- Subract two vectors                                        *
+ *   Vector Subtraction Operator -- Subtract two vectors                                       *
  *   Vector Inner Product Operator -- Compute the inner or dot product                         *
  *   Vector Equality Operator -- Detemine if two vectors are identical                         *
  *   Equal_Within_Epsilon -- Determine if two vectors are identical within                     *
@@ -45,7 +45,7 @@
  *   Vector2::Is_Valid -- Verifies that all components are valid floats                        *
  *	  Vector2::Update_Min -- sets each component of the vector to the min of this and a.        *
  *	  Vector2::Update_Max -- sets each component of the vector to the max of this and a.        *
- *   Vector2::Scale -- multiply components of a vector by independant scaling factors.			  *
+ *   Vector2::Scale -- multiply components of a vector by independent scaling factors.			  *
  *   Vector2::Lerp -- linearly interpolates two Vector2's                                      *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
@@ -215,7 +215,7 @@ WWINLINE Vector2 operator + (const Vector2 &a,const Vector2 &b)
 }
 
 /**************************************************************************
- * Vector Subtraction Operator -- Subract two vectors                     *
+ * Vector Subtraction Operator -- Subtract two vectors                    *
  *                                                                        *
  * INPUT:                                                                 *
  *                                                                        *
@@ -545,7 +545,7 @@ WWINLINE void Vector2::Update_Max (const Vector2 & a)
 
 
 /***********************************************************************************************
- * Vector2::Scale -- multiply components of a vector by independant scaling factors.			  *
+ * Vector2::Scale -- multiply components of a vector by independent scaling factors.			  *
  *                                                                                             *
  * INPUT:                                                                                      *
  *                                                                                             *
@@ -564,7 +564,7 @@ WWINLINE void Vector2::Scale (float a, float b)
 
 
 /***********************************************************************************************
- * Vector2::Scale -- multiply components of a vector by independant scaling factors.			  *
+ * Vector2::Scale -- multiply components of a vector by independent scaling factors.			  *
  *                                                                                             *
  * INPUT:                                                                                      *
  *                                                                                             *
@@ -656,7 +656,7 @@ WWINLINE float Distance(float x1, float y1, float x2, float y2)
  *=============================================================================================*/
 WWINLINE void Vector2::Lerp(const Vector2 & a,const Vector2 & b,float t,Vector2 * set_result)
 {
-	assert(set_result != NULL);
+	assert(set_result != nullptr);
 	set_result->X = (a.X + (b.X - a.X)*t);
    set_result->Y = (a.Y + (b.Y - a.Y)*t);
 }

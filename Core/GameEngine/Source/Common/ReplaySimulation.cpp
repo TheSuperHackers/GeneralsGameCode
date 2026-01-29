@@ -134,7 +134,7 @@ int ReplaySimulation::simulateReplaysInWorkerProcesses(const std::vector<AsciiSt
 	DWORD totalStartTimeMillis = GetTickCount();
 
 	WideChar exePath[1024];
-	GetModuleFileNameW(NULL, exePath, ARRAY_SIZE(exePath));
+	GetModuleFileNameW(nullptr, exePath, ARRAY_SIZE(exePath));
 
 	std::vector<WorkerProcess> processes;
 	int filenamePositionStarted = 0;

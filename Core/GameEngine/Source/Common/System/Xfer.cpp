@@ -496,7 +496,7 @@ void Xfer::xferSTLIntList( std::list< Int > *intListData )
 {
 
 	// sanity
-	if( intListData == NULL )
+	if( intListData == nullptr )
 		return;
 
 	// version
@@ -562,7 +562,7 @@ void Xfer::xferScienceType( ScienceType *science )
 {
 
 	// sanity
-	DEBUG_ASSERTCRASH( science != NULL, ("xferScienceType - Invalid parameters") );
+	DEBUG_ASSERTCRASH( science != nullptr, ("xferScienceType - Invalid parameters") );
 
 	AsciiString scienceName;
 
@@ -611,7 +611,7 @@ void Xfer::xferScienceVec( ScienceVec *scienceVec )
 {
 
 	// sanity
-	DEBUG_ASSERTCRASH( scienceVec != NULL, ("xferScienceVec - Invalid parameters") );
+	DEBUG_ASSERTCRASH( scienceVec != nullptr, ("xferScienceVec - Invalid parameters") );
 
 	// this deserves a version number
 	const XferVersion currentVersion = 1;
@@ -792,7 +792,7 @@ void Xfer::xferUpgradeMask( UpgradeMaskType *upgradeMaskData )
 
 			// find this upgrade template
 			upgradeTemplate = TheUpgradeCenter->findUpgrade( upgradeName );
-			if( upgradeTemplate == NULL )
+			if( upgradeTemplate == nullptr )
 			{
 
 				DEBUG_CRASH(( "Xfer::xferUpgradeMask - Unknown upgrade '%s'", upgradeName.str() ));
@@ -810,7 +810,15 @@ void Xfer::xferUpgradeMask( UpgradeMaskType *upgradeMaskData )
 	{
 
 		// just xfer implementation the data itself
-		xferImplementation( upgradeMaskData, sizeof( UpgradeMaskType ) );
+#if RETAIL_COMPATIBLE_CRC
+#if RTS_GENERALS
+		xferImplementation(upgradeMaskData, 8); // The original upgrade mask was 8 bytes in Generals.
+#else
+		xferImplementation(upgradeMaskData, 16); // The original upgrade mask was 16 bytes in Zero Hour.
+#endif
+#else
+		xferImplementation(upgradeMaskData, sizeof(UpgradeMaskType));
+#endif
 
 	}
 	else

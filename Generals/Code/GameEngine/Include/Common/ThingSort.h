@@ -29,7 +29,7 @@
 
 #pragma once
 
-#include "GameCommon.h"
+#include "Common/GameCommon.h"
 
 //-------------------------------------------------------------------------------------------------
 enum EditorSortingType CPP_11(: Int)
@@ -71,7 +71,7 @@ static const char *const EditorSortingNames[] =
 	"ROAD",
 	"WAYPOINT",
 
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(EditorSortingNames) == ES_NUM_SORTING_TYPES + 1, "Incorrect array size");
 #endif

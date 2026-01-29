@@ -40,7 +40,7 @@
 #include "GameClient/MapUtil.h"
 
 
-LadderList *TheLadderList = NULL;
+LadderList *TheLadderList = nullptr;
 
 LadderInfo::LadderInfo()
 {
@@ -59,7 +59,7 @@ LadderInfo::LadderInfo()
 static LadderInfo *parseLadder(AsciiString raw)
 {
 	DEBUG_LOG(("Looking at ladder:\n%s", raw.str()));
-	LadderInfo *lad = NULL;
+	LadderInfo *lad = nullptr;
 	AsciiString line;
 	while (raw.nextToken(&line, "\n"))
 	{
@@ -212,8 +212,8 @@ static LadderInfo *parseLadder(AsciiString raw)
 			{
 				// no maps?  don't play on it!
 				delete lad;
-				lad = NULL;
-				return NULL;
+				lad = nullptr;
+				return nullptr;
 			}
 		}
 		else if ( lad && line.startsWith("Map ") )
@@ -240,12 +240,12 @@ static LadderInfo *parseLadder(AsciiString raw)
 		{
 			// bad ladder - kill it
 			delete lad;
-			lad = NULL;
+			lad = nullptr;
 		}
 	}
 
 	delete lad;
-	return NULL;
+	return nullptr;
 }
 
 LadderList::LadderList()
@@ -257,7 +257,7 @@ LadderList::LadderList()
 	Bool inLadders = FALSE;
 	Bool inSpecialLadders = FALSE;
 	Bool inLadder = FALSE;
-	LadderInfo *lad = NULL;
+	LadderInfo *lad = nullptr;
 	Int index = 1;
 	AsciiString rawLadder;
 
@@ -303,7 +303,7 @@ LadderList::LadderList()
 				inLadder = FALSE;
 				rawLadder.concat(line);
 				rawLadder.concat('\n');
-				if ((lad = parseLadder(rawLadder)) != NULL)
+				if ((lad = parseLadder(rawLadder)) != nullptr)
 				{
 					lad->index = index++;
 					if (inLadders)
@@ -384,13 +384,13 @@ const LadderInfo* LadderList::findLadder( const AsciiString& addr, UnsignedShort
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 const LadderInfo* LadderList::findLadderByIndex( Int index )
 {
 	if (index == 0)
-		return NULL;
+		return nullptr;
 
 	LadderInfoList::const_iterator cit;
 
@@ -421,7 +421,7 @@ const LadderInfo* LadderList::findLadderByIndex( Int index )
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 const LadderInfoList* LadderList::getSpecialLadders( void )
@@ -475,7 +475,7 @@ void LadderList::checkLadder( AsciiString fname, Int index )
 			rawData.concat(buf);
 		}
 		fp->close();
-		fp = NULL;
+		fp = nullptr;
 	}
 
 	DEBUG_LOG(("Read %d bytes from '%s'", rawData.getLength(), fname.str()));

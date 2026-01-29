@@ -82,9 +82,9 @@ WindowVideo::WindowVideo( void )
 {
 
 	m_playType = WINDOW_PLAY_MOVIE_ONCE;
-	m_win = NULL;
-	m_videoBuffer = NULL;
-	m_videoStream = NULL;
+	m_win = nullptr;
+	m_videoBuffer = nullptr;
+	m_videoStream = nullptr;
 	m_movieName.clear();
 	m_state = WINDOW_VIDEO_STATE_STOP;
 
@@ -92,18 +92,18 @@ WindowVideo::WindowVideo( void )
 
 WindowVideo::~WindowVideo( void )
 {
-	// Don't Delete the window, only set it's video buffer to NULL
+	// Don't Delete the window, only set it's video buffer to null
 	if(m_win)
-		m_win->winGetInstanceData()->setVideoBuffer( NULL );
-	m_win = NULL;
+		m_win->winGetInstanceData()->setVideoBuffer( nullptr );
+	m_win = nullptr;
 
 	delete m_videoBuffer;
-	m_videoBuffer = NULL;
+	m_videoBuffer = nullptr;
 
 	if ( m_videoStream )
 	{
 		m_videoStream->close();
-		m_videoStream = NULL;
+		m_videoStream = nullptr;
 	}
 }
 
@@ -126,7 +126,7 @@ void WindowVideo::setWindowState( WindowVideoStates state )
 	m_state = state;
 
 	if(m_state == WINDOW_VIDEO_STATE_STOP && m_win)
-		m_win->winGetInstanceData()->setVideoBuffer( NULL );
+		m_win->winGetInstanceData()->setVideoBuffer( nullptr );
 
 	if((m_state == WINDOW_VIDEO_STATE_PLAY || m_state == WINDOW_VIDEO_STATE_PAUSE )&& m_win)
 		m_win->winGetInstanceData()->setVideoBuffer( m_videoBuffer );
@@ -258,26 +258,26 @@ void WindowVideoManager::playMovie( GameWindow *win, AsciiString movieName, Wind
 
 	// create the new stream
 	VideoStreamInterface *videoStream = TheVideoPlayer->open( movieName );
-	if ( videoStream == NULL )
+	if ( videoStream == nullptr )
 	{
 		return;
 	}
 
 	// Create the new buffer
 	VideoBuffer *videoBuffer = TheDisplay->createVideoBuffer();
-	if (	videoBuffer == NULL ||
+	if (	videoBuffer == nullptr ||
 				!videoBuffer->allocate(	videoStream->width(),
 													videoStream->height())
 		)
 	{
 		// If we failed to create the buffer...
 		delete videoBuffer;
-		videoBuffer = NULL;
+		videoBuffer = nullptr;
 
 		if ( videoStream )
 		{
 			videoStream->close();
-			videoStream = NULL;
+			videoStream = nullptr;
 		}
 
 		return;

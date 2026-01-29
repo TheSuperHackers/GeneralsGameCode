@@ -137,7 +137,7 @@ public:
 	///< this gets called from
 	virtual void clientVisibleContainedFlashAsSelected() {};
 
-	virtual const Player* getApparentControllingPlayer(const Player* observingPlayer) const { return NULL; }
+	virtual const Player* getApparentControllingPlayer(const Player* observingPlayer) const { return nullptr; }
 	virtual void recalcApparentControllingPlayer() { }
 
 	virtual void onContaining( Object *obj, Bool wasSelected );		///< object now contains 'obj'
@@ -156,7 +156,7 @@ public:
 	virtual void removeFromContain( Object *obj, Bool exposeStealthUnits = FALSE );	///< remove 'obj' from contain list
 	virtual void removeAllContained( Bool exposeStealthUnits = FALSE );				///< remove all objects on contain list
 	virtual void killAllContained( void );				///< kill all objects on contain list
-  virtual void harmAndForceExitAllContained( DamageInfo *info ); // apply canned damage against those containes
+  virtual void harmAndForceExitAllContained( DamageInfo *info ); // apply canned damage against those contains
 	virtual Bool isEnclosingContainerFor( const Object *obj ) const;	///< Does this type of Contain Visibly enclose its contents?
 	virtual Bool isPassengerAllowedToFire( ObjectID id = INVALID_ID ) const;	///< Hey, can I shoot out of this container?
 
@@ -171,7 +171,7 @@ public:
 	virtual void iterateContained( ContainIterateFunc func, void *userData, Bool reverse );
 	virtual UnsignedInt getContainCount() const { return m_containListSize; }
 	virtual const ContainedItemsList* getContainedItemsList() const { return &m_containList; }
-	virtual const Object *friend_getRider() const{return NULL;} ///< Damn.  The draw order dependency bug for riders means that our draw module needs to cheat to get around it.
+	virtual const Object *friend_getRider() const{return nullptr;} ///< Damn.  The draw order dependency bug for riders means that our draw module needs to cheat to get around it.
 	virtual Real getContainedItemsMass() const;
 	virtual UnsignedInt getStealthUnitsContained() const { return m_stealthUnitsContained; }
 	virtual UnsignedInt getHeroUnitsContained() const { return m_heroUnitsContained; }
@@ -231,7 +231,7 @@ public:
   virtual void setEvacDisposition( EvacDisposition disp ) {};
 protected:
 
-	virtual void monitorConditionChanges( void );				///< check to see if we need to update our occupant postions from a model change or anything else
+	virtual void monitorConditionChanges( void );				///< check to see if we need to update our occupant positions from a model change or anything else
 	virtual void putObjAtNextFirePoint( Object *obj );	///< place object at position of the next fire point to use
 	virtual void redeployOccupants( void );							///< redeploy any objects at firepoints due to a model condition change
 

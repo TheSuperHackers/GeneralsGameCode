@@ -58,7 +58,7 @@ const Real CLOSE_ENOUGH = (25.0f);
 static Bool hasAttackedMeAndICanReturnFire( State *thisState, void* /*userData*/ )
 {
 	Object *obj = thisState->getMachineOwner();
-	BodyModuleInterface *bmi = obj ? obj->getBodyModule() : NULL;
+	BodyModuleInterface *bmi = obj ? obj->getBodyModule() : nullptr;
 
 	if (!(obj && bmi)) {
 		return FALSE;
@@ -160,7 +160,7 @@ Bool ExitConditions::shouldExit(const StateMachine* machine) const
 AIGuardMachine::AIGuardMachine( Object *owner ) :
 	StateMachine(owner, "AIGuardMachine"),
 	m_targetToGuard(INVALID_ID),
-	m_areaToGuard(NULL),
+	m_areaToGuard(nullptr),
 	m_nemesisToAttack(INVALID_ID),
 	m_guardMode(GUARDMODE_NORMAL)
 {
@@ -168,8 +168,8 @@ AIGuardMachine::AIGuardMachine( Object *owner ) :
 
 	static const StateConditionInfo attackAggressors[] =
 	{
-		StateConditionInfo(hasAttackedMeAndICanReturnFire, AI_GUARD_ATTACK_AGGRESSOR, NULL),
-		StateConditionInfo(NULL, NULL, NULL)
+		StateConditionInfo(hasAttackedMeAndICanReturnFire, AI_GUARD_ATTACK_AGGRESSOR, nullptr),
+		StateConditionInfo(nullptr, INVALID_STATE_ID, nullptr)
 	};
 
 	// order matters: first state is the default state.
@@ -207,7 +207,7 @@ Bool AIGuardMachine::lookForInnerTarget(void)
 	}
 
 	// Check if team auto targets same victim.
-	Object *teamVictim = NULL;
+	Object *teamVictim = nullptr;
 	if (owner->getTeam()->getPrototype()->getTemplateInfo()->m_attackCommonTarget)
 	{
 		teamVictim = owner->getTeam()->getTeamTargetObject();
@@ -254,7 +254,7 @@ Bool AIGuardMachine::lookForInnerTarget(void)
 		filters[count++] = &f4;
 	}
 
-	filters[count++] = NULL;
+	filters[count++] = nullptr;
 
 //	SimpleObjectIterator* iter = ThePartitionManager->iterateObjectsInRange(
 //					&pos, visionRange, FROM_CENTER_2D, filters, ITER_SORTED_NEAR_TO_FAR);
@@ -361,9 +361,9 @@ StateReturnType AIGuardInnerState::onEnter( void )
 	Object* targetToGuard = getGuardMachine()->findTargetToGuardByID();
 	Coord3D pos = targetToGuard ? *targetToGuard->getPosition() : *getGuardMachine()->getPositionToGuard();
 	Object* nemesis = TheGameLogic->findObjectByID(getGuardMachine()->getNemesisID()) ;
-	if (nemesis == NULL)
+	if (nemesis == nullptr)
 	{
-		DEBUG_LOG(("Unexpected NULL nemesis in AIGuardInnerState."));
+		DEBUG_LOG(("Unexpected null nemesis in AIGuardInnerState."));
 		return STATE_SUCCESS;
 	}
 	m_exitConditions.m_center = pos;
@@ -387,7 +387,7 @@ StateReturnType AIGuardInnerState::onEnter( void )
 //--------------------------------------------------------------------------------------
 StateReturnType AIGuardInnerState::update( void )
 {
-	if (m_attackState==NULL) return STATE_SUCCESS;
+	if (m_attackState==nullptr) return STATE_SUCCESS;
 	// if the position has moved (IE we're guarding an object), move with it.
 	Object* targetToGuard = getGuardMachine()->findTargetToGuardByID();
 	if (targetToGuard)
@@ -406,11 +406,11 @@ void AIGuardInnerState::onExit( StateExitType status )
 	{
 		m_attackState->onExit(status);
 		deleteInstance(m_attackState);
-		m_attackState = NULL;
+		m_attackState = nullptr;
 	}
 	if (obj->getTeam())
 	{
-		obj->getTeam()->setTeamTargetObject(NULL); // clear the target.
+		obj->getTeam()->setTeamTargetObject(nullptr); // clear the target.
 	}
 }
 
@@ -461,9 +461,9 @@ StateReturnType AIGuardOuterState::onEnter( void )
 	Coord3D pos = targetToGuard ? *targetToGuard->getPosition() : *getGuardMachine()->getPositionToGuard();
 
 	Object* nemesis = TheGameLogic->findObjectByID(getGuardMachine()->getNemesisID()) ;
-	if (nemesis == NULL)
+	if (nemesis == nullptr)
 	{
-		DEBUG_LOG(("Unexpected NULL nemesis in AIGuardInnerState."));
+		DEBUG_LOG(("Unexpected null nemesis in AIGuardInnerState."));
 		return STATE_SUCCESS;
 	}
 	Object *obj = getMachineOwner();
@@ -499,7 +499,7 @@ StateReturnType AIGuardOuterState::onEnter( void )
 //--------------------------------------------------------------------------------------
 StateReturnType AIGuardOuterState::update( void )
 {
-	if (m_attackState==NULL) return STATE_SUCCESS;
+	if (m_attackState==nullptr) return STATE_SUCCESS;
 
 	// if the position has moved (IE we're guarding an object), move with it.
 	Object* targetToGuard = getGuardMachine()->findTargetToGuardByID();
@@ -533,7 +533,7 @@ void AIGuardOuterState::onExit( StateExitType status )
 	{
 		m_attackState->onExit(status);
 		deleteInstance(m_attackState);
-		m_attackState = NULL;
+		m_attackState = nullptr;
 	}
 }
 
@@ -748,7 +748,7 @@ void AIGuardPickUpCrateState::onExit( StateExitType status )
 AIGuardAttackAggressorState::AIGuardAttackAggressorState( StateMachine *machine ) :
 	State( machine, "AIGuardAttackAggressorState" )
 {
-	m_attackState = NULL;
+	m_attackState = nullptr;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -769,9 +769,9 @@ StateReturnType AIGuardAttackAggressorState::onEnter( void )
 	}
 
 	Object *nemesis = TheGameLogic->findObjectByID(getGuardMachine()->getNemesisID());
-	if (nemesis == NULL)
+	if (nemesis == nullptr)
 	{
-		DEBUG_LOG(("Unexpected NULL nemesis in AIGuardAttackAggressorState."));
+		DEBUG_LOG(("Unexpected null nemesis in AIGuardAttackAggressorState."));
 		return STATE_SUCCESS;
 	}
 
@@ -794,7 +794,7 @@ StateReturnType AIGuardAttackAggressorState::onEnter( void )
 //-------------------------------------------------------------------------------------------------
 StateReturnType AIGuardAttackAggressorState::update( void )
 {
-	if (m_attackState==NULL) return STATE_SUCCESS;
+	if (m_attackState==nullptr) return STATE_SUCCESS;
 	// if the position has moved (IE we're guarding an object), move with it.
 	Object* targetToGuard = getGuardMachine()->findTargetToGuardByID();
 	if (targetToGuard)
@@ -813,12 +813,12 @@ void AIGuardAttackAggressorState::onExit( StateExitType status )
 	{
 		m_attackState->onExit(status);
 		deleteInstance(m_attackState);
-		m_attackState = NULL;
+		m_attackState = nullptr;
 	}
 
 	if (obj->getTeam())
 	{
-		obj->getTeam()->setTeamTargetObject(NULL); // clear the target.
+		obj->getTeam()->setTeamTargetObject(nullptr); // clear the target.
 	}
 }
 

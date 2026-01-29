@@ -45,8 +45,8 @@ public:
 	{
 		m_clipSize = 1;
 		m_weaponSlot = PRIMARY_WEAPON;
-		m_laserFromAssisted = NULL;
-		m_laserToTarget = NULL;
+		m_laserFromAssisted = nullptr;
+		m_laserToTarget = nullptr;
 	}
 
 	static void buildFieldParse(MultiIniFieldParse& p);

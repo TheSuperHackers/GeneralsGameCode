@@ -372,7 +372,7 @@ typedef struct _ListboxData
 	Int					*selections;			// Pointer to array of selections (for MULTI select)
 
 	Short				displayHeight;		// Height in pixels of listbox display region
-																// this is computed based on the existance
+																// this is computed based on the existence
 																// of a title or not.
 	UnsignedInt doubleClickTime;	//
 	Short				displayPos;				// Position of current display entry in pixels

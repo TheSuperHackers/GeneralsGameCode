@@ -144,7 +144,7 @@ public:
 	// For disconnect blame assignment
 	UnsignedInt getPingFrame();
 	Int getPingsSent();
-	Int getPingsRecieved();
+	Int getPingsReceived();
 
 private:
 	void doRelay();
@@ -171,13 +171,13 @@ private:
 
 	//	void doPerFrameMetrics(UnsignedInt frame);
 	void getMinimumFps(Int &minFps, Int &minFpsPlayer);			///< Returns the smallest FPS in the m_fpsAverages list.
-	Real getMaximumLatency(); ///< Returns the highest average latency between players.
+	Real getMaximumLatency(); ///< Returns the average of the two highest average latencies between players.
 
 	void requestFrameDataResend(Int playerID, UnsignedInt frame); ///< request of this player that he send the specified frame's data.
 
 	// The connections are set up like the slot list. The connection corresponding to the local
-	// player's position in the slot list will be NULL.  Connections corresponding to slots that
-	// do not have a player will also be NULL.
+	// player's position in the slot list will be null.  Connections corresponding to slots that
+	// do not have a player will also be null.
 	Connection *m_connections[MAX_SLOTS];
 
 	Transport *m_transport;

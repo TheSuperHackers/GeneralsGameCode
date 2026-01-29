@@ -1,5 +1,5 @@
 /*
-**	Command & Conquer Generals(tm)
+**	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
 **
 **	This program is free software: you can redistribute it and/or modify
@@ -34,7 +34,7 @@ const char *const TimeOfDayNames[] =
 	"EVENING",
 	"NIGHT",
 
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(TimeOfDayNames) == TIME_OF_DAY_COUNT + 1, "Incorrect array size");
 
@@ -43,6 +43,6 @@ const char *const WeatherNames[] =
 	"NORMAL",
 	"SNOWY",
 
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(WeatherNames) == WEATHER_COUNT + 1, "Incorrect array size");

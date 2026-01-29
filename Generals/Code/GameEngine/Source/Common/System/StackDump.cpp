@@ -59,7 +59,7 @@ void StackDumpDefaultHandler(const char*line)
 //*****************************************************************************
 void StackDump(void (*callback)(const char*))
 {
-	if (callback == NULL)
+	if (callback == nullptr)
 	{
 		callback = StackDumpDefaultHandler;
 	}
@@ -69,6 +69,7 @@ void StackDump(void (*callback)(const char*))
 
 	DWORD myeip,myesp,myebp;
 
+#if defined(_MSC_VER)
 _asm
 {
 MYEIP1:
@@ -79,6 +80,20 @@ MYEIP1:
  mov eax, ebp
  mov dword ptr [myebp] , eax
 }
+#elif (defined(__GNUC__) || defined(__clang__)) && (defined(__i386__) || defined(_M_IX86))
+	// GCC/Clang inline assembly for x86-32
+	__asm__ __volatile__(
+		"call 1f\n\t"
+		"1: pop %0\n\t"
+		"mov %%esp, %1\n\t"
+		"mov %%ebp, %2"
+		: "=r"(myeip), "=r"(myesp), "=r"(myebp)
+		:
+		: "memory"
+	);
+#else
+	#error "Unsupported compiler or architecture for register capture"
+#endif
 
 
 	MakeStackTrace(myeip,myesp,myebp, 2, callback);
@@ -89,7 +104,7 @@ MYEIP1:
 //*****************************************************************************
 void StackDumpFromContext(DWORD eip,DWORD esp,DWORD ebp, void (*callback)(const char*))
 {
-	if (callback == NULL)
+	if (callback == nullptr)
 	{
 		callback = StackDumpDefaultHandler;
 	}
@@ -127,10 +142,10 @@ BOOL InitSymbolInfo()
 	process = GetCurrentProcess();
 
 	//Get the apps name
-	::GetModuleFileName(NULL, pathname, _MAX_PATH);
+	::GetModuleFileName(nullptr, pathname, _MAX_PATH);
 
 	// turn it into a search path
-	_splitpath(pathname, drive, directory, NULL, NULL);
+	_splitpath(pathname, drive, directory, nullptr, nullptr);
 	sprintf(pathname, "%s:\\%s", drive, directory);
 
 	// append the current directory to build a search path for SymInit
@@ -139,8 +154,8 @@ BOOL InitSymbolInfo()
 	if(DbgHelpLoader::symInitialize(process, pathname, FALSE))
 	{
 		// regenerate the name of the app
-		::GetModuleFileName(NULL, pathname, _MAX_PATH);
-		if(DbgHelpLoader::symLoadModule(process, NULL, pathname, NULL, 0, 0))
+		::GetModuleFileName(nullptr, pathname, _MAX_PATH);
+		if(DbgHelpLoader::symLoadModule(process, nullptr, pathname, nullptr, 0, 0))
 		{
 				//Load any other relevant modules (ie dlls) here
 				atexit(DbgHelpLoader::unload);
@@ -197,11 +212,11 @@ stack_frame.AddrFrame.Offset = myebp;
 											process,
 											thread,
 											&stack_frame,
-											NULL, //&gsContext,
-											NULL,
+											nullptr, //&gsContext,
+											nullptr,
 											DbgHelpLoader::symFunctionTableAccess,
 											DbgHelpLoader::symGetModuleBase,
-											NULL);
+											nullptr);
 					skip--;
 			}
 
@@ -213,11 +228,11 @@ stack_frame.AddrFrame.Offset = myebp;
 											process,
 											thread,
 											&stack_frame,
-											NULL, //&gsContext,
-											NULL,
+											nullptr, //&gsContext,
+											nullptr,
 											DbgHelpLoader::symFunctionTableAccess,
 											DbgHelpLoader::symGetModuleBase,
-											NULL);
+											nullptr);
 
 
 
@@ -314,6 +329,7 @@ void FillStackAddresses(void**addresses, unsigned int count, unsigned int skip)
     gsContext.ContextFlags = CONTEXT_FULL;
 
 	DWORD myeip,myesp,myebp;
+#if defined(_MSC_VER)
 _asm
 {
 MYEIP2:
@@ -325,6 +341,21 @@ MYEIP2:
  mov dword ptr [myebp] , eax
  xor eax,eax
 }
+#elif (defined(__GNUC__) || defined(__clang__)) && (defined(__i386__) || defined(_M_IX86))
+	// GCC/Clang inline assembly for x86-32
+	__asm__ __volatile__(
+		"call 1f\n\t"
+		"1: pop %0\n\t"
+		"mov %%esp, %1\n\t"
+		"mov %%ebp, %2\n\t"
+		"xor %%eax, %%eax"
+		: "=r"(myeip), "=r"(myesp), "=r"(myebp)
+		:
+		: "eax", "memory"
+	);
+#else
+	#error "Unsupported compiler or architecture for register capture"
+#endif
 memset(&stack_frame, 0, sizeof(STACKFRAME));
 stack_frame.AddrPC.Mode = AddrModeFlat;
 stack_frame.AddrPC.Offset = myeip;
@@ -356,11 +387,11 @@ stack_frame.AddrFrame.Offset = myebp;
 								process,
 								thread,
 								&stack_frame,
-								NULL,	//&gsContext,
-								NULL,
+								nullptr,	//&gsContext,
+								nullptr,
 								DbgHelpLoader::symFunctionTableAccess,
 								DbgHelpLoader::symGetModuleBase,
-								NULL) != 0;
+								nullptr) != 0;
 			skip--;
 		}
 
@@ -370,11 +401,11 @@ stack_frame.AddrFrame.Offset = myebp;
 								process,
 								thread,
 								&stack_frame,
-								NULL, //&gsContext,
-								NULL,
+								nullptr, //&gsContext,
+								nullptr,
 								DbgHelpLoader::symFunctionTableAccess,
 								DbgHelpLoader::symGetModuleBase,
-								NULL) != 0;
+								nullptr) != 0;
 			if (stillgoing)
 			{
 				*addresses  = (void*)stack_frame.AddrPC.Offset;
@@ -386,7 +417,7 @@ stack_frame.AddrFrame.Offset = myebp;
 		// Fill remainder
 		while (count)
 		{
-			*addresses = NULL;
+			*addresses = nullptr;
 			addresses++;
 			count--;
 		}
@@ -395,7 +426,7 @@ stack_frame.AddrFrame.Offset = myebp;
 /*
 	else
 	{
-		memset(addresses,NULL,count*sizeof(void*));
+		memset(addresses,nullptr,count*sizeof(void*));
 	}
 */
 }
@@ -407,7 +438,7 @@ stack_frame.AddrFrame.Offset = myebp;
 //*****************************************************************************
 void StackDumpFromAddresses(void**addresses, unsigned int count, void (*callback)(const char *))
 {
-	if (callback == NULL)
+	if (callback == nullptr)
 	{
 		callback = StackDumpDefaultHandler;
 	}
@@ -415,7 +446,7 @@ void StackDumpFromAddresses(void**addresses, unsigned int count, void (*callback
 	if (!InitSymbolInfo())
 		return;
 
-	while ((count--) && (*addresses!=NULL))
+	while ((count--) && (*addresses!=nullptr))
 	{
 		WriteStackLine(*addresses,callback);
 		addresses++;
@@ -442,6 +473,7 @@ void WriteStackLine(void*address, void (*callback)(const char*))
 		}
 	callback(line);
 }
+
 
 //*****************************************************************************
 //*****************************************************************************
@@ -557,7 +589,7 @@ void DumpExceptionInfo( unsigned int u, EXCEPTION_POINTERS* e_info )
 	}
 
 	DOUBLE_DEBUG (("\nStack Dump:"));
-	StackDumpFromContext(context->Eip, context->Esp, context->Ebp, NULL);
+	StackDumpFromContext(context->Eip, context->Esp, context->Ebp, nullptr);
 
 	DOUBLE_DEBUG (("\nDetails:"));
 

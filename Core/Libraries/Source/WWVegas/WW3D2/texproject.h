@@ -86,7 +86,7 @@ class ZTextureClass;
 **   bounding volume first, then defer computing the actual texture until it is
 **   determined that the volume falls into the frustum and is applied to at least one
 **   object.
-**   solution: Code the bounding volume/projection paramter generation separate from
+**   solution: Code the bounding volume/projection parameter generation separate from
 **   the texture generation code.  A derived texture projection object. Let texture
 **   projectors know about the object they are projecting so that they can have that
 **   object rendered from the desired viewpoint.  Need a 'Dirty' flag and a pointer to
@@ -158,8 +158,8 @@ public:
 	bool						Compute_Ortho_Projection(const AABoxClass & obj_box,const Matrix3D & tm,const Vector3 & lightdir,float znear=-1.0f,float zfar=-1.0f);
 
 	bool						Needs_Render_Target(void);
-	void						Set_Render_Target(TextureClass* render_target, ZTextureClass* ztarget=NULL);
-	TextureClass*			Peek_Render_Target(TextureClass** rtarget=NULL, ZTextureClass** ztarget=NULL);
+	void						Set_Render_Target(TextureClass* render_target, ZTextureClass* ztarget=nullptr);
+	TextureClass*			Peek_Render_Target(TextureClass** rtarget=nullptr, ZTextureClass** ztarget=nullptr);
 
 	bool						Compute_Texture(RenderObjClass * model,SpecialRenderInfoClass * context);
 
@@ -170,12 +170,12 @@ public:
 
 	/*
 	** virtual interface for getting the pointer of the object that generated this shadow.
-	** defaults to returning NULL.  This is implemented by some derived classes and used by
+	** defaults to returning nullptr.  This is implemented by some derived classes and used by
 	** the system to prevent a projection from being applied to the object that generated
 	** the projection...
 	** (gth) feels kludgy, this got a little messy when I moved this code into WW3D from WWPhys
 	*/
-	virtual void *			Get_Projection_Object_ID(void) const { return NULL; }
+	virtual void *			Get_Projection_Object_ID(void) const { return nullptr; }
 
 protected:
 

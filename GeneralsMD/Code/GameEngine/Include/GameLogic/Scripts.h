@@ -161,7 +161,7 @@ protected:
 	Condition *m_firstAnd;	 // These are Anded.
 
 public:
-	OrCondition():m_nextOr(NULL),m_firstAnd(NULL){};
+	OrCondition():m_nextOr(nullptr),m_firstAnd(nullptr){};
 	//~OrCondition();
 	/// Duplicate creates a "deep" copy.  If it is head of a linked list, duplicates the entire list.
 	OrCondition *duplicate(void) const;
@@ -229,7 +229,7 @@ public:
 		CAMERA_MOD_SET_FINAL_PITCH,				///< Sets the final pitch for a camera movement
 		CAMERA_MOD_FREEZE_ANGLE,					///< Freeze camera angle during a camera movement.
 		CAMERA_MOD_SET_FINAL_SPEED_MULTIPLIER,///< Sets the final time multiplier for a camera movement.
-		CAMERA_MOD_SET_ROLLING_AVERAGE,		///< Sets the number of frames to average changes (angle, positoin) to smooth out a camera movement.
+		CAMERA_MOD_SET_ROLLING_AVERAGE,		///< Sets the number of frames to average changes (angle, position) to smooth out a camera movement.
 		CAMERA_MOD_FINAL_LOOK_TOWARD,			///< Sets the look toward point for the end of a camera movement.
 		CAMERA_MOD_LOOK_TOWARD,						///< Sets the look toward point during a camera movement.
 		TEAM_ATTACK_TEAM,									///< Tell team to attack other team
@@ -509,7 +509,7 @@ public:
 		COMMANDBAR_REMOVE_BUTTON_OBJECTTYPE,			///< Remove a button from a command bar for an objecttype
 		COMMANDBAR_ADD_BUTTON_OBJECTTYPE_SLOT,		///< Add a button to the command bar for an objecttype, in a specific slot
 		UNIT_SPAWN_NAMED_LOCATION_ORIENTATION,		///< Create a named unit at the specified location, altitude, and orientation
-		PLAYER_AFFECT_RECEIVING_EXPERIENCE,				///< Adjust whether or not a player is receieving experience for kills
+		PLAYER_AFFECT_RECEIVING_EXPERIENCE,				///< Adjust whether or not a player is receiving experience for kills
 		PLAYER_EXCLUDE_FROM_SCORE_SCREEN,					///< This player should be listed in the score screen.  Should only be used in campaign games.
 		TEAM_GUARD_SUPPLY_CENTER,									///< Have an ai team guard the nearest available supply center..
 		ENABLE_SCORING,														///< Turn on scoring of kills, units destroyed, etc.
@@ -577,7 +577,7 @@ public:
 		if (ndx>=0 && ndx<m_numParms)
 			return m_parms[ndx];
 
-		return NULL;
+		return nullptr;
 	}
 	Bool hasWarnings(void) const { return m_hasWarnings;}
 	Int getNumParameters(void) {return m_numParms;}
@@ -848,7 +848,7 @@ extern const char* const TheObjectFlagsNames[];
 ConditionTemplates created in ScriptEngine::init.
 
 // SPECIAL NOTE ABOUT Skirmish Scripts: Please note that ALL Skirmish conditions should first pass a pSkirmishPlayerParm to
-// prevet the necessity of having to write additional scripts for other players / skirmish types later.
+// prevent the necessity of having to write additional scripts for other players / skirmish types later.
 */
 
 class Condition : public MemoryPoolObject  // This is the conditional class.
@@ -1008,7 +1008,7 @@ public:
 		if (ndx>=0 && ndx<m_numParms)
 			return m_parms[ndx];
 
-		return NULL;
+		return nullptr;
 	}
 
 	Int getNumParameters(void) {return m_numParms;}

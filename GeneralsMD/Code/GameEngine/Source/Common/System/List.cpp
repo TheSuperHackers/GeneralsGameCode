@@ -206,7 +206,7 @@ void LList::clear( void )
 {
 	LListNode *node;
 
-	while ( (node = firstNode()) != NULL )
+	while ( (node = firstNode()) != nullptr )
 	{
 		node->remove();
 		node->destroy();
@@ -252,7 +252,7 @@ LListNode*	LList::getNode( Int index )
 		node = node->next();
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 //============================================================================
@@ -262,7 +262,7 @@ LListNode*	LList::getNode( Int index )
 void LList::merge( LList *list )
 {
 
-	if ( list == NULL || list->isEmpty() )
+	if ( list == nullptr || list->isEmpty() )
 	{
 			return;
 	}
@@ -282,7 +282,7 @@ void LList::merge( LList *list )
 
 Bool LList::hasItem( void *item )
 {
-	return findItem( item ) != NULL;
+	return findItem( item ) != nullptr;
 }
 
 //============================================================================
@@ -304,7 +304,7 @@ LListNode* LList::findItem( void *item )
 		node = node->next();
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 //============================================================================
@@ -313,7 +313,7 @@ LListNode* LList::findItem( void *item )
 
 LListNode::LListNode()
 : m_pri(0),
-	m_item(NULL),
+	m_item(nullptr),
 	m_autoDelete(FALSE)
 {
 	m_next = m_prev = this;
@@ -363,7 +363,7 @@ LListNode*		LListNode::next( void )
 
 	if( m_next->isHead( ))
 	{
-		return NULL;
+		return nullptr;
 	}
 
 	return m_next;
@@ -377,7 +377,7 @@ LListNode*		LListNode::prev( void )
 {
 	if( m_prev->isHead())
 	{
-		return NULL;
+		return nullptr;
 	}
 
 	return m_prev;
@@ -399,7 +399,7 @@ LListNode*		LListNode::loopNext( void )
 		next = next->m_next;
 		if( next->isHead( ))
 		{
-			return NULL;	// it is an empty list
+			return nullptr;	// it is an empty list
 		}
 	}
 
@@ -422,7 +422,7 @@ LListNode*		LListNode::loopPrev( void )
 		prev = prev->m_prev;
 		if( prev->isHead())
 		{
-			return NULL;	// it is an empty list
+			return nullptr;	// it is an empty list
 		}
 	}
 

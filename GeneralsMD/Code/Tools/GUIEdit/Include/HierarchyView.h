@@ -38,7 +38,7 @@
 //
 // Created:    Colin Day, July 2001
 //
-// Desc:			 Manipulation the widows heirarchy through the tree
+// Desc:			 Manipulates the window's hierarchy through the tree
 //
 //-----------------------------------------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////

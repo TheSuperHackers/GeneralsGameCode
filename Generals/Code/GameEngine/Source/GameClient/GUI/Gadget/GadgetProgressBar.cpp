@@ -78,7 +78,7 @@ WindowMsgHandledType GadgetProgressBarSystem( GameWindow *window, UnsignedInt ms
 		// ------------------------------------------------------------------------
 		case GWM_DESTROY:
 		{
-			window->winSetUserData( NULL );
+			window->winSetUserData( nullptr );
 			break;
 		}
 

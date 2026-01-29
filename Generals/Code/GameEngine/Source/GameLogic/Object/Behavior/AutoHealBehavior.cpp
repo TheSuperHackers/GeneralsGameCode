@@ -235,7 +235,7 @@ UpdateSleepTime AutoHealBehavior::update( void )
 		PartitionFilterRelationship relationship( obj, PartitionFilterRelationship::ALLOW_ALLIES );
 		PartitionFilterSameMapStatus filterMapStatus(obj);
 		PartitionFilterAlive filterAlive;
-		PartitionFilter *filters[] = { &relationship, &filterAlive, &filterMapStatus, NULL };
+		PartitionFilter *filters[] = { &relationship, &filterAlive, &filterMapStatus, nullptr };
 
 		// scan objects in our region
 		ObjectIterator *iter = ThePartitionManager->iterateObjectsInRange( obj->getPosition(), d->m_radius, FROM_CENTER_2D, filters );

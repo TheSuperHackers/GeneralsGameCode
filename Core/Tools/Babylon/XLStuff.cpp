@@ -32,11 +32,11 @@ static const int xlWorkbookNormal = -4143;
 static const int xlNoChange = 1;
 static const int xlLocalSessionChanges = 2;
 static const int xlWBATWorksheet = -4167;
-static _Workbook *workbook = NULL;
-static _Application *xl = NULL;
-static Workbooks *wbs = NULL;
-static Range *range = NULL;
-static _Worksheet *ws = NULL;
+static _Workbook *workbook = nullptr;
+static _Application *xl = nullptr;
+static Workbooks *wbs = nullptr;
+static Range *range = nullptr;
+static _Worksheet *ws = nullptr;
 static OLECHAR buffer[100*1024];
 
 static VARIANT no, yes, dummy, dummy0, nullstring, empty;
@@ -165,8 +165,8 @@ int PutSeparator ( int row )
 //        .ColorIndex = xlAutomatic
 //    End With
 	int ok = FALSE;
-	Border *border = NULL;
-	Borders *borders = NULL;
+	Border *border = nullptr;
+	Borders *borders = nullptr;
 	LPDISPATCH dispatch;
 	OLECHAR cellname1[20];
 	OLECHAR cellname2[20];
@@ -237,15 +237,15 @@ int PutSection ( int row, OLECHAR *title )
 {
 
 	int ok = FALSE;
-	Range *range = NULL;
-	Border *border = NULL;
-	Borders *borders = NULL;
-	Interior *interior = NULL;
+	Range *range = nullptr;
+	Border *border = nullptr;
+	Borders *borders = nullptr;
+	Interior *interior = nullptr;
 	LPDISPATCH dispatch;
 	OLECHAR cellname1[20];
 	OLECHAR cellname2[20];
 	VARIANT cell1,cell2;
-	_Worksheet *ws = NULL;
+	_Worksheet *ws = nullptr;
 
   if ( !ws )
   {
@@ -293,7 +293,7 @@ int PutSection ( int row, OLECHAR *title )
 	border->SetWeight ( thin );
 
 	delete border;
-	border = NULL;
+	border = nullptr;
 
 	dispatch = borders->GetItem ( xlEdgeTop );
 
@@ -309,7 +309,7 @@ int PutSection ( int row, OLECHAR *title )
 	border->SetWeight ( medium );
 
 	delete border;
-	border = NULL;
+	border = nullptr;
 
 	dispatch = borders->GetItem ( xlEdgeRight );
 
@@ -323,7 +323,7 @@ int PutSection ( int row, OLECHAR *title )
 	border->SetLineStyle ( none );
 
 	delete border;
-	border = NULL;
+	border = nullptr;
 
 	dispatch = borders->GetItem ( xlEdgeLeft );
 
@@ -462,16 +462,16 @@ void CloseExcel ( void )
 	CloseWorkBook ();
 
 	delete range;
-	range = NULL;
+	range = nullptr;
 
 	delete ws;
-	ws = NULL;
+	ws = nullptr;
 
 	if ( wbs )
 	{
 		wbs->Close();
 		delete wbs;
-		wbs = NULL;
+		wbs = nullptr;
 	}
 
 	if ( xl )
@@ -479,7 +479,7 @@ void CloseExcel ( void )
 		xl->Quit();
 		xl->ReleaseDispatch ();
 		delete xl;
-		xl = NULL;
+		xl = nullptr;
 	}
 
 	VariantClear ( &nullstring );
@@ -599,7 +599,7 @@ void CloseWorkBook ( void )
 		workbook->SetSaved ( TRUE );
 		workbook->Close ( no, nullstring, no );
 		delete workbook;
-		workbook = NULL;
+		workbook = nullptr;
 	}
 
 }

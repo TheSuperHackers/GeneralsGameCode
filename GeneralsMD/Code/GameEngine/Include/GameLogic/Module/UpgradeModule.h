@@ -51,12 +51,12 @@ class UpgradeModuleInterface
 public:
 
  	virtual Bool isAlreadyUpgraded() const = 0;
-	virtual Bool attemptUpgrade( UpgradeMaskType keyMask ) = 0;
-	virtual Bool wouldUpgrade( UpgradeMaskType keyMask ) const = 0;
-	virtual Bool resetUpgrade( UpgradeMaskType keyMask ) = 0;
+	virtual Bool attemptUpgrade( const UpgradeMaskType& keyMask ) = 0;
+	virtual Bool wouldUpgrade( const UpgradeMaskType& keyMask ) const = 0;
+	virtual Bool resetUpgrade( const UpgradeMaskType& keyMask ) = 0;
 	virtual Bool isSubObjectsUpgrade() = 0;
 	virtual void forceRefreshUpgrade() = 0;
-	virtual Bool testUpgradeConditions( UpgradeMaskType keyMask ) const = 0;
+	virtual Bool testUpgradeConditions( const UpgradeMaskType& keyMask ) const = 0;
 
 };
 
@@ -81,7 +81,7 @@ public:
 		m_conflictingUpgradeNames.clear();
 		m_removalUpgradeNames.clear();
 
-		m_fxListUpgrade = NULL;
+		m_fxListUpgrade = nullptr;
 		m_activationMask.clear();
 		m_conflictingMask.clear();
 		m_requiresAllTriggers = false;
@@ -91,11 +91,11 @@ public:
 	{
 		static const FieldParse dataFieldParse[] =
 		{
-			{ "TriggeredBy",		INI::parseAsciiStringVector, NULL, offsetof( UpgradeMuxData, m_activationUpgradeNames ) },
-			{ "ConflictsWith",	INI::parseAsciiStringVector, NULL, offsetof( UpgradeMuxData, m_conflictingUpgradeNames ) },
-			{ "RemovesUpgrades",INI::parseAsciiStringVector, NULL, offsetof( UpgradeMuxData, m_removalUpgradeNames ) },
-			{ "FXListUpgrade",	INI::parseFXList, NULL, offsetof( UpgradeMuxData, m_fxListUpgrade ) },
-			{ "RequiresAllTriggers", INI::parseBool, NULL, offsetof( UpgradeMuxData, m_requiresAllTriggers ) },
+			{ "TriggeredBy",		INI::parseAsciiStringVector, nullptr, offsetof( UpgradeMuxData, m_activationUpgradeNames ) },
+			{ "ConflictsWith",	INI::parseAsciiStringVector, nullptr, offsetof( UpgradeMuxData, m_conflictingUpgradeNames ) },
+			{ "RemovesUpgrades",INI::parseAsciiStringVector, nullptr, offsetof( UpgradeMuxData, m_removalUpgradeNames ) },
+			{ "FXListUpgrade",	INI::parseFXList, nullptr, offsetof( UpgradeMuxData, m_fxListUpgrade ) },
+			{ "RequiresAllTriggers", INI::parseBool, nullptr, offsetof( UpgradeMuxData, m_requiresAllTriggers ) },
 			{ 0, 0, 0, 0 }
 		};
 		return dataFieldParse;
@@ -119,10 +119,10 @@ public:
 	virtual Bool isAlreadyUpgraded() const ;
 	// ***DANGER! DANGER! Don't use this, unless you are forcing an already made upgrade to refresh!!
 	virtual void forceRefreshUpgrade();
-	virtual Bool attemptUpgrade( UpgradeMaskType keyMask );
-	virtual Bool wouldUpgrade( UpgradeMaskType keyMask ) const;
-	virtual Bool resetUpgrade( UpgradeMaskType keyMask );
-	virtual Bool testUpgradeConditions( UpgradeMaskType keyMask ) const;
+	virtual Bool attemptUpgrade( const UpgradeMaskType& keyMask );
+	virtual Bool wouldUpgrade( const UpgradeMaskType& keyMask ) const;
+	virtual Bool resetUpgrade( const UpgradeMaskType& keyMask );
+	virtual Bool testUpgradeConditions( const UpgradeMaskType& keyMask ) const;
 
 protected:
 
@@ -188,7 +188,7 @@ protected:
 
 	virtual void processUpgradeRemoval()
 	{
-		// I can't take it any more.  Let the record show that I think the UpgradeMux multiple inheritence is CRAP.
+		// I can't take it any more.  Let the record show that I think the UpgradeMux multiple inheritance is CRAP.
 		getUpgradeModuleData()->m_upgradeMuxData.muxDataProcessUpgradeRemoval(getObject());
 	}
 

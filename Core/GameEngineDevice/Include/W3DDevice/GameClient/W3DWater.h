@@ -205,7 +205,7 @@ protected:
 
 	Real m_riverVOrigin;
 	TextureClass *m_riverTexture;
-	TextureClass *m_whiteTexture;		///< a texture containing only white used for NULL pixel shader stages.
+	TextureClass *m_whiteTexture;		///< a texture containing only white used for null pixel shader stages.
 	TextureClass *m_waterNoiseTexture;
 	DWORD	m_waterPixelShader;		///<D3D handle to pixel shader.
 	DWORD	m_riverWaterPixelShader;		///<D3D handle to pixel shader.

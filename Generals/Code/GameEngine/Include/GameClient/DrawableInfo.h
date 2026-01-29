@@ -46,7 +46,7 @@ struct DrawableInfo
 		ERF_DELAYED_RENDER = ERF_IS_TRANSLUCENT|ERF_POTENTIAL_OCCLUDEE,
 	};
 
-	DrawableInfo(void) : m_shroudStatusObjectID(INVALID_ID), m_drawable(NULL), m_ghostObject(NULL), m_flags(ERF_IS_NORMAL) {}
+	DrawableInfo(void) : m_shroudStatusObjectID(INVALID_ID), m_drawable(nullptr), m_ghostObject(nullptr), m_flags(ERF_IS_NORMAL) {}
 
 	ObjectID m_shroudStatusObjectID;	///<since we sometimes have drawables without objects, this points to a parent object from which we pull shroud status.
 	Drawable *m_drawable;	///<pointer back to drawable containing this DrawableInfo

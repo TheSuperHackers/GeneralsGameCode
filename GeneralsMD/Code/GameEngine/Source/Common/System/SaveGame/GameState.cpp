@@ -61,7 +61,7 @@
 
 
 // PUBLIC DATA ////////////////////////////////////////////////////////////////////////////////////
-GameState *TheGameState = NULL;
+GameState *TheGameState = nullptr;
 
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
 static const Char *SAVE_FILE_EOF       = "SG_EOF";
@@ -180,7 +180,7 @@ GameState::SnapshotBlock *GameState::findBlockInfoByToken( AsciiString token, Sn
 
 	// sanity
 	if( token.isEmpty() )
-		return NULL;
+		return nullptr;
 
 	// search for match our list
 	SnapshotBlock *blockInfo;
@@ -198,7 +198,7 @@ GameState::SnapshotBlock *GameState::findBlockInfoByToken( AsciiString token, Sn
 	}
 
 	// not found
-	return NULL;
+	return nullptr;
 
 }
 
@@ -220,7 +220,7 @@ UnicodeString getUnicodeDateBuffer(SYSTEMTIME timeVal)
 			GetDateFormat( LOCALE_SYSTEM_DEFAULT,
 										 DATE_SHORTDATE,
 										 &timeVal,
-										 NULL,
+										 nullptr,
 										 dateBuffer, sizeof(dateBuffer) );
 			displayDateBuffer.translate(dateBuffer);
 			return displayDateBuffer;
@@ -230,7 +230,7 @@ UnicodeString getUnicodeDateBuffer(SYSTEMTIME timeVal)
 	GetDateFormatW( LOCALE_SYSTEM_DEFAULT,
 								 DATE_SHORTDATE,
 								 &timeVal,
-								 NULL,
+								 nullptr,
 								 dateBuffer, ARRAY_SIZE(dateBuffer) );
 	displayDateBuffer.set(dateBuffer);
 	return displayDateBuffer;
@@ -251,7 +251,7 @@ UnicodeString getUnicodeTimeBuffer(SYSTEMTIME timeVal)
 			GetTimeFormat( LOCALE_SYSTEM_DEFAULT,
 										 TIME_NOSECONDS|TIME_FORCE24HOURFORMAT|TIME_NOTIMEMARKER,
 										 &timeVal,
-										 NULL,
+										 nullptr,
 										 timeBuffer, sizeof(timeBuffer) );
 			displayTimeBuffer.translate(timeBuffer);
 			return displayTimeBuffer;
@@ -263,7 +263,7 @@ UnicodeString getUnicodeTimeBuffer(SYSTEMTIME timeVal)
 	GetTimeFormatW( LOCALE_SYSTEM_DEFAULT,
 								 TIME_NOSECONDS,
 								 &timeVal,
-								 NULL,
+								 nullptr,
 								 timeBuffer,
 								 ARRAY_SIZE(timeBuffer) );
 	displayTimeBuffer.set(timeBuffer);
@@ -276,7 +276,7 @@ UnicodeString getUnicodeTimeBuffer(SYSTEMTIME timeVal)
 GameState::GameState( void )
 {
 
-	m_availableGames = NULL;
+	m_availableGames = nullptr;
 	m_isInLoadGame = FALSE;
 
 }
@@ -376,7 +376,7 @@ void GameState::addSnapshotBlock( AsciiString blockName, Snapshot *snapshot, Sna
 {
 
 	// sanity
-	if( blockName.isEmpty() || snapshot == NULL )
+	if( blockName.isEmpty() || snapshot == nullptr )
 	{
 
 		DEBUG_CRASH(( "addSnapshotBlock: Invalid parameters" ));
@@ -549,7 +549,7 @@ SaveCode GameState::saveGame( AsciiString filename, UnicodeString desc,
 	}
 
 	// make absolutely sure the save directory exists
-	CreateDirectory( getSaveDirectory().str(), NULL );
+	CreateDirectory( getSaveDirectory().str(), nullptr );
 
 	// construct path to file
 	AsciiString filepath = getFilePathInSaveDirectory(filename);
@@ -599,7 +599,7 @@ SaveCode GameState::saveGame( AsciiString filename, UnicodeString desc,
 		UnicodeString msg;
 		msg.format( TheGameText->fetch("GUI:ErrorSavingGame"), ufilepath.str() );
 
-		MessageBoxOk(TheGameText->fetch("GUI:Error"), msg, NULL);
+		MessageBoxOk(TheGameText->fetch("GUI:Error"), msg, nullptr);
 
 		// close the file and get out of here
 		xferSave.close();
@@ -725,7 +725,7 @@ SaveCode GameState::loadGame( AvailableGameInfo gameInfo )
 		UnicodeString msg;
 		msg.format( TheGameText->fetch("GUI:ErrorLoadingGame"), ufilepath.str() );
 
-		MessageBoxOk(TheGameText->fetch("GUI:Error"), msg, NULL);
+		MessageBoxOk(TheGameText->fetch("GUI:Error"), msg, nullptr);
 
 		return SC_INVALID_DATA;	// you can't use a naked "throw" outside of a catch statement!
 
@@ -793,7 +793,7 @@ AsciiString GameState::getMapLeafName(const AsciiString& in) const
 		// at the name only
 		//
 		++p;
-		DEBUG_ASSERTCRASH( p != NULL && *p != 0, ("GameState::xfer - Illegal map name encountered") );
+		DEBUG_ASSERTCRASH( p != nullptr && *p != 0, ("GameState::xfer - Illegal map name encountered") );
 		return p;
 	}
 	else
@@ -811,7 +811,7 @@ static const char* findLastBackslashInRangeInclusive(const char* start, const ch
 			return end;
 		--end;
 	}
-	return NULL;
+	return nullptr;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -981,7 +981,7 @@ void GameState::getSaveGameInfoFromFile( AsciiString filename, SaveGameInfo *sav
 	SnapshotBlock *blockInfo;
 
 	// sanity
-	if( filename.isEmpty() == TRUE || saveGameInfo == NULL )
+	if( filename.isEmpty() == TRUE || saveGameInfo == nullptr )
 	{
 
 		DEBUG_CRASH(( "GameState::getSaveGameInfoFromFile - Illegal parameters" ));
@@ -1020,7 +1020,7 @@ void GameState::getSaveGameInfoFromFile( AsciiString filename, SaveGameInfo *sav
 
 			// find matching token in the save file lexicon
 			blockInfo = findBlockInfoByToken( token, SNAPSHOT_SAVELOAD );
-			if( blockInfo == NULL )
+			if( blockInfo == nullptr )
 				throw SC_UNKNOWN_BLOCK;
 
 			// read the data size of this block
@@ -1083,7 +1083,7 @@ static void addGameToAvailableList( AsciiString filename, void *userData )
 	AvailableGameInfo **listHead = (AvailableGameInfo **)userData;
 
 	// sanity
-	DEBUG_ASSERTCRASH( listHead != NULL, ("addGameToAvailableList - Illegal parameters") );
+	DEBUG_ASSERTCRASH( listHead != nullptr, ("addGameToAvailableList - Illegal parameters") );
 	DEBUG_ASSERTCRASH( filename.isEmpty() == FALSE, ("addGameToAvailableList - Illegal filename") );
 
 	try {
@@ -1095,20 +1095,20 @@ static void addGameToAvailableList( AsciiString filename, void *userData )
 	AvailableGameInfo *newInfo = new AvailableGameInfo;
 
 	// assign data
-	newInfo->prev = NULL;
-	newInfo->next = NULL;
+	newInfo->prev = nullptr;
+	newInfo->next = nullptr;
 	newInfo->saveGameInfo = saveGameInfo;
 	newInfo->filename = filename;
 
 	// attach to list
-	if( *listHead == NULL )
+	if( *listHead == nullptr )
 		*listHead = newInfo;
 	else
 	{
 		AvailableGameInfo *curr, *prev;
 
 		// insert this info so that the most recent games are always at the top of this list
-		for( curr = *listHead; curr != NULL; curr = curr->next )
+		for( curr = *listHead; curr != nullptr; curr = curr->next )
 		{
 
 			// save current as previous
@@ -1133,7 +1133,7 @@ static void addGameToAvailableList( AsciiString filename, void *userData )
 		}
 
 		// if not inserted, put at end
-		if( curr == NULL )
+		if( curr == nullptr )
 		{
 
 			prev->next = newInfo;
@@ -1157,7 +1157,7 @@ void GameState::populateSaveGameListbox( GameWindow *listbox, SaveLoadLayoutType
 	Int index;
 
 	// sanity
-	if( listbox == NULL )
+	if( listbox == nullptr )
 		return;
 
 	// first clear all entries in the listbox
@@ -1170,7 +1170,7 @@ void GameState::populateSaveGameListbox( GameWindow *listbox, SaveLoadLayoutType
 		Color newGameColor = GameMakeColor( 200, 200, 255, 255 );
 
 		index = GadgetListBoxAddEntryText( listbox, newGameText, newGameColor, -1 );
-		GadgetListBoxSetItemData( listbox, NULL, index );
+		GadgetListBoxSetItemData( listbox, nullptr, index );
 
 	}
 
@@ -1254,7 +1254,7 @@ void GameState::iterateSaveFiles( IterateSaveFileCallback callback, void *userDa
 {
 
 	// sanity
-	if( callback == NULL )
+	if( callback == nullptr )
 		return;
 
 	// save the current directory
@@ -1342,7 +1342,7 @@ void GameState::xferSaveData( Xfer *xfer, SnapshotType which )
 {
 
 	// sanity
-	if( xfer == NULL )
+	if( xfer == nullptr )
 		throw SC_INVALID_XFER;
 
 	// save or load all blocks
@@ -1437,7 +1437,7 @@ void GameState::xferSaveData( Xfer *xfer, SnapshotType which )
 
 				// find matching token in the save file lexicon
 				blockInfo = findBlockInfoByToken( token, which );
-				if( blockInfo == NULL )
+				if( blockInfo == nullptr )
 				{
 
 					// log the block not found
@@ -1492,7 +1492,7 @@ void GameState::addPostProcessSnapshot( Snapshot *snapshot )
 {
 
 	// sanity
-	if( snapshot == NULL )
+	if( snapshot == nullptr )
 	{
 
 		DEBUG_CRASH(( "GameState::addPostProcessSnapshot - invalid parameters" ));
@@ -1621,7 +1621,7 @@ void GameState::xfer( Xfer *xfer )
 	if (exists == FALSE || saveGameInfo->mapLabel == AsciiString::TheEmptyString)
 	{
 		const char* p = TheGlobalData->m_mapName.reverseFind('\\');
-		if (p == NULL)
+		if (p == nullptr)
 			saveGameInfo->mapLabel = TheGlobalData->m_mapName;
 		else
 		{

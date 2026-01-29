@@ -66,7 +66,7 @@ void *DebugAllocMemory(unsigned numBytes);
   given size.
   This function performs a controlled crash on failure.
 
-  \param oldPtr pointer to old memory block, may be NULL
+  \param oldPtr pointer to old memory block, may be nullptr
   \param newSize new size of block
   \return pointer to reallocated memory
 */

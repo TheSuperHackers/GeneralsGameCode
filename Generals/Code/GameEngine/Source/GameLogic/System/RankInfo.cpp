@@ -33,7 +33,7 @@
 #include "Common/Player.h"
 #include "GameLogic/RankInfo.h"
 
-RankInfoStore* TheRankInfoStore = NULL;
+RankInfoStore* TheRankInfoStore = nullptr;
 
 
 //-----------------------------------------------------------------------------
@@ -105,7 +105,7 @@ const RankInfo* RankInfoStore::getRankInfo(Int level) const
 			return (const RankInfo*)ri->getFinalOverride();
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -117,11 +117,11 @@ void RankInfoStore::friend_parseRankDefinition( INI* ini )
 
 		static const FieldParse myFieldParse[] =
 		{
-			{ "RankName", INI::parseAndTranslateLabel, NULL, offsetof( RankInfo, m_rankName ) },
-			{ "SkillPointsNeeded", INI::parseInt, NULL, offsetof( RankInfo, m_skillPointsNeeded ) },
-			{ "SciencesGranted", INI::parseScienceVector, NULL, offsetof( RankInfo, m_sciencesGranted ) },
-			{ "SciencePurchasePointsGranted", INI::parseUnsignedInt, NULL, offsetof( RankInfo, m_sciencePurchasePointsGranted ) },
-			{ 0, 0, 0, 0 }
+			{ "RankName", INI::parseAndTranslateLabel, nullptr, offsetof( RankInfo, m_rankName ) },
+			{ "SkillPointsNeeded", INI::parseInt, nullptr, offsetof( RankInfo, m_skillPointsNeeded ) },
+			{ "SciencesGranted", INI::parseScienceVector, nullptr, offsetof( RankInfo, m_sciencesGranted ) },
+			{ "SciencePurchasePointsGranted", INI::parseUnsignedInt, nullptr, offsetof( RankInfo, m_sciencePurchasePointsGranted ) },
+			{ nullptr, nullptr, nullptr, 0 }
 		};
 
 		if (ini->getLoadType() == INI_LOAD_CREATE_OVERRIDES)

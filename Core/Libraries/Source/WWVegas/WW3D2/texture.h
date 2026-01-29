@@ -58,6 +58,7 @@ class DX8Wrapper;
 class TextureLoader;
 class LoaderThreadClass;
 class TextureLoadTaskClass;
+class TextureClass;
 class CubeTextureClass;
 class VolumeTextureClass;
 
@@ -191,9 +192,9 @@ public:
 	// Apply a Null texture's settings into D3D
 	static void Apply_Null(unsigned int stage);
 
-	virtual TextureClass* As_TextureClass() { return NULL; }
-	virtual CubeTextureClass* As_CubeTextureClass() { return NULL; }
-	virtual VolumeTextureClass* As_VolumeTextureClass() { return NULL; }
+	virtual TextureClass* As_TextureClass() { return nullptr; }
+	virtual CubeTextureClass* As_CubeTextureClass() { return nullptr; }
+	virtual VolumeTextureClass* As_VolumeTextureClass() { return nullptr; }
 
 	IDirect3DTexture8* Peek_D3D_Texture() const { return (IDirect3DTexture8*)Peek_D3D_Base_Texture(); }
 	IDirect3DVolumeTexture8* Peek_D3D_VolumeTexture() const { return (IDirect3DVolumeTexture8*)Peek_D3D_Base_Texture(); }
@@ -285,7 +286,7 @@ public:
 	TextureClass
 	(
 		const char *name,
-		const char *full_path=NULL,
+		const char *full_path=nullptr,
 		MipCountType mip_level_count=MIP_LEVELS_ALL,
 		WW3DFormat texture_format=WW3D_FORMAT_UNKNOWN,
 		bool allow_compression=true,
@@ -301,7 +302,7 @@ public:
 
 	TextureClass(IDirect3DBaseTexture8* d3d_texture);
 
-	// defualt constructors for derived classes (cube & vol)
+	// default constructors for derived classes (cube & vol)
 	TextureClass
 	(
 		unsigned width,
@@ -397,7 +398,7 @@ public:
 	CubeTextureClass
 	(
 		const char *name,
-		const char *full_path=NULL,
+		const char *full_path=nullptr,
 		MipCountType mip_level_count=MIP_LEVELS_ALL,
 		WW3DFormat texture_format=WW3D_FORMAT_UNKNOWN,
 		bool allow_compression=true,
@@ -443,7 +444,7 @@ public:
 	VolumeTextureClass
 	(
 		const char *name,
-		const char *full_path=NULL,
+		const char *full_path=nullptr,
 		MipCountType mip_level_count=MIP_LEVELS_ALL,
 		WW3DFormat texture_format=WW3D_FORMAT_UNKNOWN,
 		bool allow_compression=true,

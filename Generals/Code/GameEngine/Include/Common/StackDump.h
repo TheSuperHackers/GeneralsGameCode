@@ -24,18 +24,17 @@
 
 #pragma once
 
-#ifndef IG_DEGBUG_STACKTRACE
+#ifndef IG_DEBUG_STACKTRACE
 #define IG_DEBUG_STACKTRACE	1
-#endif
-
+#endif // Unsure about this one -ML 3/25/03
 #if defined(RTS_DEBUG) || defined(IG_DEBUG_STACKTRACE)
 
 // Writes a stackdump (provide a callback : gets called per line)
-// If callback is NULL then will write using OuputDebugString
+// If callback is nullptr then will write using OuputDebugString
 void StackDump(void (*callback)(const char*));
 
 // Writes a stackdump (provide a callback : gets called per line)
-// If callback is NULL then will write using OuputDebugString
+// If callback is nullptr then will write using OuputDebugString
 void StackDumpFromContext(DWORD eip,DWORD esp,DWORD ebp, void (*callback)(const char*));
 
 // Gets count* addresses from the current stack

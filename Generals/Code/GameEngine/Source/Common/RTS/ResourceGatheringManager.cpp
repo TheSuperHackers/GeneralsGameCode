@@ -53,7 +53,7 @@ ResourceGatheringManager::~ResourceGatheringManager()
 
 void ResourceGatheringManager::addSupplyCenter( Object *newCenter )
 {
-	if( newCenter == NULL )
+	if( newCenter == nullptr )
 		return;
 
 	m_supplyCenters.push_back( newCenter->getID() );
@@ -61,7 +61,7 @@ void ResourceGatheringManager::addSupplyCenter( Object *newCenter )
 
 void ResourceGatheringManager::removeSupplyCenter( Object *oldCenter )
 {
-	if( oldCenter == NULL )
+	if( oldCenter == nullptr )
 		return;
 
 	ObjectID targetID = oldCenter->getID();
@@ -80,7 +80,7 @@ void ResourceGatheringManager::removeSupplyCenter( Object *oldCenter )
 
 void ResourceGatheringManager::addSupplyWarehouse( Object *newWarehouse )
 {
-	if( newWarehouse == NULL )
+	if( newWarehouse == nullptr )
 		return;
 
 	m_supplyWarehouses.push_back( newWarehouse->getID() );
@@ -88,7 +88,7 @@ void ResourceGatheringManager::addSupplyWarehouse( Object *newWarehouse )
 
 void ResourceGatheringManager::removeSupplyWarehouse( Object *oldWarehouse )
 {
-	if( oldWarehouse == NULL )
+	if( oldWarehouse == nullptr )
 		return;
 
 	ObjectID targetID = oldWarehouse->getID();
@@ -113,7 +113,7 @@ static Real computeRelativeCost( Object *queryObject, Object *destObject, Real *
 
 	//A good score is a very small number.
 
-	if( queryObject == NULL  ||  destObject == NULL )
+	if( queryObject == nullptr  ||  destObject == nullptr )
 		return FLT_MAX;
 
 	if( !TheActionManager->canTransferSuppliesAt(queryObject, destObject) )
@@ -138,11 +138,11 @@ static Real computeRelativeCost( Object *queryObject, Object *destObject, Real *
 
 Object *ResourceGatheringManager::findBestSupplyWarehouse( Object *queryObject )
 {
-	Object *bestWarehouse = NULL;
+	Object *bestWarehouse = nullptr;
 	Real maxDistanceSquared = 100000;
 
-	if( ( queryObject == NULL ) || ( queryObject->getAI() == NULL ) )
-		return NULL;
+	if( ( queryObject == nullptr ) || ( queryObject->getAI() == nullptr ) )
+		return nullptr;
 
 	SupplyTruckAIInterface *supplyTruckAI = queryObject->getAI()->getSupplyTruckAIInterface();
 	if( supplyTruckAI )
@@ -155,7 +155,7 @@ Object *ResourceGatheringManager::findBestSupplyWarehouse( Object *queryObject )
 			static const NameKeyType key_warehouseUpdate = NAMEKEY("SupplyWarehouseDockUpdate");
 			SupplyWarehouseDockUpdate *warehouseModule = (SupplyWarehouseDockUpdate*)dock->findUpdateModule( key_warehouseUpdate );
 			//If remotely okay, let User win.
-			if( warehouseModule && computeRelativeCost( queryObject, dock, NULL ) != FLT_MAX )
+			if( warehouseModule && computeRelativeCost( queryObject, dock, nullptr ) != FLT_MAX )
 				return dock;
 		}
 		// Please note, there is not a separate Warehouse and Center memory by Design.  Because
@@ -176,7 +176,7 @@ Object *ResourceGatheringManager::findBestSupplyWarehouse( Object *queryObject )
 		ObjectID currentID = *iterator;
 		Object *currentWarehouse =TheGameLogic->findObjectByID(currentID);
 
-		if( currentWarehouse == NULL )
+		if( currentWarehouse == nullptr )
 		{
 			iterator = m_supplyWarehouses.erase( iterator );
 		}
@@ -199,10 +199,10 @@ Object *ResourceGatheringManager::findBestSupplyWarehouse( Object *queryObject )
 
 Object *ResourceGatheringManager::findBestSupplyCenter( Object *queryObject )
 {
-	Object *bestCenter = NULL;
+	Object *bestCenter = nullptr;
 
-	if( ( queryObject == NULL ) || ( queryObject->getAI() == NULL ) )
-		return NULL;
+	if( ( queryObject == nullptr ) || ( queryObject->getAI() == nullptr ) )
+		return nullptr;
 
 	SupplyTruckAIInterface *supplyTruckAI = queryObject->getAI()->getSupplyTruckAIInterface();
 	if( supplyTruckAI )
@@ -215,7 +215,7 @@ Object *ResourceGatheringManager::findBestSupplyCenter( Object *queryObject )
 			static const NameKeyType key_centerUpdate = NAMEKEY("SupplyCenterDockUpdate");
 			SupplyCenterDockUpdate *centerModule = (SupplyCenterDockUpdate*)dock->findUpdateModule( key_centerUpdate );
 			//If remotely okay, let User win.
-			if( centerModule && computeRelativeCost( queryObject, dock, NULL ) != FLT_MAX )
+			if( centerModule && computeRelativeCost( queryObject, dock, nullptr ) != FLT_MAX )
 				return dock;
 		}
 		// Please note, there is not a separate Warehouse and Center memory by Design.  Because
@@ -232,13 +232,13 @@ Object *ResourceGatheringManager::findBestSupplyCenter( Object *queryObject )
 		ObjectID currentID = *iterator;
 		Object *currentCenter =TheGameLogic->findObjectByID(currentID);
 
-		if( currentCenter == NULL )
+		if( currentCenter == nullptr )
 		{
 			iterator = m_supplyCenters.erase( iterator );
 		}
 		else
 		{
-			Real currentCost = computeRelativeCost( queryObject, currentCenter, NULL );
+			Real currentCost = computeRelativeCost( queryObject, currentCenter, nullptr );
 			if( currentCost < bestCost )
 			{
 				bestCenter = currentCenter;

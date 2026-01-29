@@ -64,10 +64,10 @@ class MeshDeformSetClass
 		//	Public constructors/destructors
 		//////////////////////////////////////////////////////////////////////
 		MeshDeformSetClass (void)
-			:	m_pMesh (NULL),
-				m_pVertexArray (NULL),
-				m_pVertexOPStartArray (NULL),
-				m_pVertexColors (NULL),
+			:	m_pMesh (nullptr),
+				m_pVertexArray (nullptr),
+				m_pVertexOPStartArray (nullptr),
+				m_pVertexColors (nullptr),
 				m_VertexColorCount (0),
 				m_State (0),
 				m_CurrentKeyFrame (0),
@@ -114,16 +114,16 @@ class MeshDeformSetClass
 
 		// Information
 		bool					Is_Empty (void) const;
-		int					Get_Vertex_Count (int keyframe) const				{ return m_KeyFrames[keyframe]->verticies.Count (); }
+		int					Get_Vertex_Count (int keyframe) const				{ return m_KeyFrames[keyframe]->vertices.Count (); }
 		int					Get_Color_Count (int keyframe) const				{ return m_KeyFrames[keyframe]->colors.Count (); }
-		const VERT_INFO &	Get_Vertex_Data (int keyframe, int index) const	{ return m_KeyFrames[keyframe]->verticies[index]; }
+		const VERT_INFO &	Get_Vertex_Data (int keyframe, int index) const	{ return m_KeyFrames[keyframe]->vertices[index]; }
 		const VERT_INFO &	Get_Color_Data (int keyframe, int index) const	{ return m_KeyFrames[keyframe]->colors[index]; }
 
 		// Persistent storage
 		IOResult				Save (ISave *save_obj);
 		IOResult				Load (ILoad *load_obj);
 
-		void					Save (MeshBuilderClass &builder, Mesh &mesh, MeshDeformSaveSetClass &save_set, Matrix3 *transform = NULL);
+		void					Save (MeshBuilderClass &builder, Mesh &mesh, MeshDeformSaveSetClass &save_set, Matrix3 *transform = nullptr);
 
 	protected:
 
@@ -139,7 +139,7 @@ class MeshDeformSetClass
 		void					Determine_Interpolation_Indicies (int key_frame, bool position, int &from, int &to, float &state);
 
 		// Deformation application methods
-		void					Apply_Position_Changes (UINT vert, int frame_to_check, Point3 &position, Matrix3 *transform = NULL);
+		void					Apply_Position_Changes (UINT vert, int frame_to_check, Point3 &position, Matrix3 *transform = nullptr);
 		void					Apply_Color_Changes (UINT vert, int frame_to_check, Mesh &mesh);
 		void					Apply_Color_Changes (UINT vert_index, UINT vert_color_index, int frame_to_check, VertColor &color);
 
@@ -150,7 +150,7 @@ class MeshDeformSetClass
 		//////////////////////////////////////////////////////////////////////
 		typedef struct
 		{
-			DEFORM_LIST	verticies;
+			DEFORM_LIST	vertices;
 			DEFORM_LIST	colors;
 			BitArray		affected_verts;
 			BitArray		affected_colors;
@@ -171,7 +171,7 @@ class MeshDeformSetClass
 		float					m_State;
 		bool					m_bAutoApply;
 
-		// Array representing which verticies are part of the set
+		// Array representing which vertices are part of the set
 		BitArray				m_SetMembers;
 
 		// List of key frames

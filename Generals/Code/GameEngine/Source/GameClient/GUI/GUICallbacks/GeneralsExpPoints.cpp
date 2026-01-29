@@ -74,7 +74,7 @@ WindowMsgHandledType GeneralsExpPointsInput( GameWindow *window, UnsignedInt msg
 			//Get rid of any building placement mode!
 			if( TheInGameUI )
 			{
-				TheInGameUI->placeBuildAvailable( NULL, NULL );
+				TheInGameUI->placeBuildAvailable( nullptr, nullptr );
 			}
 			break;
 

@@ -73,9 +73,9 @@ static NameKeyType staticTextMessageID = NAMEKEY_INVALID;
 static NameKeyType buttonOkID = NAMEKEY_INVALID;
 
 
-static GameWindow *parent = NULL;
-static GameWindow *staticTextMessage = NULL;
-static GameWindow *buttonOk = NULL;
+static GameWindow *parent = nullptr;
+static GameWindow *staticTextMessage = nullptr;
+static GameWindow *buttonOk = nullptr;
 
 
 static Bool pause = FALSE;
@@ -90,7 +90,7 @@ void InGamePopupMessageInit( WindowLayout *layout, void *userData )
 {
 
 	parentID = TheNameKeyGenerator->nameToKey("InGamePopupMessage.wnd:InGamePopupMessageParent");
-	parent = TheWindowManager->winGetWindowFromId(NULL, parentID);
+	parent = TheWindowManager->winGetWindowFromId(nullptr, parentID);
 
 	staticTextMessageID = TheNameKeyGenerator->nameToKey("InGamePopupMessage.wnd:StaticTextMessage");
 	staticTextMessage = TheWindowManager->winGetWindowFromId(parent, staticTextMessageID);

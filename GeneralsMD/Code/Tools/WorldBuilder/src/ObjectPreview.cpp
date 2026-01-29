@@ -54,7 +54,7 @@
 
 ObjectPreview::ObjectPreview()
 {
-	m_tTempl = NULL;
+	m_tTempl = nullptr;
 }
 
 ObjectPreview::~ObjectPreview()
@@ -89,11 +89,11 @@ static UnsignedByte * saveSurface(IDirect3DSurface8 *surface)
 
 	HRESULT hr=m_pDev->CreateImageSurface(  desc.Width,desc.Height,desc.Format, &tempSurface);
 
-	hr=m_pDev->CopyRects(surface,NULL,0,tempSurface,NULL);
+	hr=m_pDev->CopyRects(surface,nullptr,0,tempSurface,nullptr);
 
 	D3DLOCKED_RECT lrect;
 
-	DX8_ErrorCode(tempSurface->LockRect(&lrect,NULL,D3DLOCK_READONLY));
+	DX8_ErrorCode(tempSurface->LockRect(&lrect,nullptr,D3DLOCK_READONLY));
 
 	unsigned int x,y,index,index2,width,height;
 
@@ -129,7 +129,7 @@ static UnsignedByte * saveSurface(IDirect3DSurface8 *surface)
 
 	targ.Save("ObjectPreview.tga",TGAF_IMAGE,false);
 
-	return NULL;
+	return nullptr;
 
 #else
 
@@ -184,7 +184,7 @@ static UnsignedByte * saveSurface(IDirect3DSurface8 *surface)
 static UnsignedByte * generatePreview( const ThingTemplate *tt )
 {
 	// find the default model to preview
-	RenderObjClass *model = NULL;
+	RenderObjClass *model = nullptr;
 	Real scale = 1.0f;
 	AsciiString modelName = "No Model Name";
 	if (tt)
@@ -214,7 +214,7 @@ static UnsignedByte * generatePreview( const ThingTemplate *tt )
 			if (!objectTexture)
 			{
 				model->Release_Ref();
-				return NULL;
+				return nullptr;
 			}
 
 			// Set the render target
@@ -248,7 +248,7 @@ static UnsignedByte * generatePreview( const ThingTemplate *tt )
 			WW3D::End_Render(false);
 
 			// Change the rendertarget back to the main backbuffer
-			DX8Wrapper::Set_Render_Target((IDirect3DSurface8 *)NULL);
+			DX8Wrapper::Set_Render_Target((IDirect3DSurface8 *)nullptr);
 
 			SurfaceClass *surface = objectTexture->Get_Surface_Level();
 			UnsignedByte *data = saveSurface(surface->Peek_D3D_Surface());
@@ -261,7 +261,7 @@ static UnsignedByte * generatePreview( const ThingTemplate *tt )
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 /////////////////////////////////////////////////////////////////////////////

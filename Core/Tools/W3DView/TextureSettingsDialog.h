@@ -47,7 +47,7 @@ class TextureSettingsDialogClass : public CDialog
 {
 // Construction
 public:
-	TextureSettingsDialogClass (IndirectTextureClass *ptexture, IndirectTextureClass *poriginal_texture, CWnd *pParent = NULL);
+	TextureSettingsDialogClass (IndirectTextureClass *ptexture, IndirectTextureClass *poriginal_texture, CWnd *pParent = nullptr);
 	virtual ~TextureSettingsDialogClass (void);
 
 // Dialog Data

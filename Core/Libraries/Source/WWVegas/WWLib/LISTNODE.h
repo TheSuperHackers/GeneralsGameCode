@@ -55,7 +55,7 @@
 class GenericList;
 class GenericNode {
 	public:
-		GenericNode(void) : NextNode(0), PrevNode(0) {}
+		GenericNode(void) : NextNode(nullptr), PrevNode(nullptr) {}
 		virtual ~GenericNode(void) {Unlink();}
 		GenericNode(GenericNode & node) {node.Link(this);}
 		GenericNode & operator = (GenericNode & node) {
@@ -73,8 +73,8 @@ class GenericNode {
 			if (Is_Valid()) {
 				PrevNode->NextNode = NextNode;
 				NextNode->PrevNode = PrevNode;
-				PrevNode = 0;
-				NextNode = 0;
+				PrevNode = nullptr;
+				NextNode = nullptr;
 			}
 		}
 
@@ -96,13 +96,13 @@ class GenericNode {
 
 		GenericNode * Next(void) const {return(NextNode);}
 		GenericNode * Next_Valid(void) const {
-			return ((NextNode && NextNode->NextNode) ? NextNode : (GenericNode *)0);
+			return ((NextNode && NextNode->NextNode) ? NextNode : (GenericNode *)nullptr);
 		}
 		GenericNode * Prev(void) const {return(PrevNode);}
 		GenericNode * Prev_Valid(void) const {
-			return ((PrevNode && PrevNode->PrevNode) ? PrevNode : (GenericNode *)0);
+			return ((PrevNode && PrevNode->PrevNode) ? PrevNode : (GenericNode *)nullptr);
 		}
-		bool Is_Valid(void) const {return(this != (GenericNode *)0 && NextNode != (GenericNode *)0 && PrevNode != (GenericNode *)0);}
+		bool Is_Valid(void) const {return(this != (GenericNode *)nullptr && NextNode != (GenericNode *)nullptr && PrevNode != (GenericNode *)nullptr);}
 
 	protected:
 		GenericNode * NextNode;
@@ -131,14 +131,14 @@ class GenericList {
 		GenericNode * First_Valid(void) const
 		{
 			GenericNode *node = FirstNode.Next();
-			return (node->Next() ? node : (GenericNode *)0);
+			return (node->Next() ? node : (GenericNode *)nullptr);
 		}
 
 		GenericNode * Last(void) const {return(LastNode.Prev());}
 		GenericNode * Last_Valid(void) const
 		{
 			GenericNode *node = LastNode.Prev();
-			return (node->Prev() ? node : (GenericNode *)0);
+			return (node->Prev() ? node : (GenericNode *)nullptr);
 		}
 
 		bool Is_Empty(void) const {return(!FirstNode.Next()->Is_Valid());}

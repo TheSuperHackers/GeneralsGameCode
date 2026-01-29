@@ -67,20 +67,20 @@ class MeshDeformClass : public OSModifier
 		//	Public constructors/destructors
 		//////////////////////////////////////////////////////////////////////
 		MeshDeformClass (void)
-			:	m_MaxInterface (NULL),
-				m_ModeMove (NULL),
-				m_ModeSelect (NULL),
-				m_ModeRotate (NULL),
-				m_ModeUScale (NULL),
-				m_ModeNUScale (NULL),
-				m_ModeSquash (NULL),
+			:	m_MaxInterface (nullptr),
+				m_ModeMove (nullptr),
+				m_ModeSelect (nullptr),
+				m_ModeRotate (nullptr),
+				m_ModeUScale (nullptr),
+				m_ModeNUScale (nullptr),
+				m_ModeSquash (nullptr),
 				m_DeformState (1.0F),
-				m_pPanel (NULL),
+				m_pPanel (nullptr),
 				m_CurrentSet (0),
 				m_bSetDirty (true),
 				m_VertColorChanging (false),
 				m_MaxSets (0),
-				m_hRollupWnd (NULL)			{ SetName ("WW Mesh Deformer"); Set_Max_Deform_Sets (1); }
+				m_hRollupWnd (nullptr)			{ SetName ("WW Mesh Deformer"); Set_Max_Deform_Sets (1); }
 
 		virtual ~MeshDeformClass (void)	{ }
 #if defined W3D_MAX4		//defined as in the project (.dsp)
@@ -147,7 +147,7 @@ class MeshDeformClass : public OSModifier
 		int							SubObjectIndex (HitRecord *hitRec) { return hitRec->hitInfo; }
 		void							ClearSelection (int selLevel);
 
-		// Transformation managment
+		// Transformation management
 		void							Move (TimeValue time_val, Matrix3 &parent_tm, Matrix3 &tm_axis, Point3 &point, BOOL local_origin);
 		void							Rotate (TimeValue time_val, Matrix3 &parent_tm, Matrix3 &tm_axis, Quat &rotation, BOOL local_origin);
 		void							Scale (TimeValue time_val, Matrix3 &parent_tm, Matrix3 &tm_axis, Point3 &value, BOOL local_origin);
@@ -186,7 +186,7 @@ class MeshDeformClass : public OSModifier
 		NUScaleModBoxCMode *		m_ModeNUScale;
 		SquashModBoxCMode *		m_ModeSquash;
 
-		// Set managment
+		// Set management
 		bool							m_bSetDirty;
 		int							m_CurrentSet;
 		int							m_MaxSets;

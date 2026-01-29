@@ -518,7 +518,7 @@ WWINLINE bool AABoxClass::Contains(const Vector3 & point) const
 WWINLINE void MinMaxAABoxClass::Init(Vector3 * points,int num)
 {
 	assert(num > 0);
-	assert(points != NULL);
+	assert(points != nullptr);
 	MinCorner = points[0];
 	MaxCorner = points[0];
 	for (int i=0; i<num; i++) {

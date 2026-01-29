@@ -60,10 +60,10 @@ class StringClass;
 // Callback declarations.  These functions are called when a registered event occurs
 // in the sound library/
 //
-typedef void (_stdcall  *LPFNSOSCALLBACK)		(SoundSceneObjClass *sound_obj, uint32 user_param);
-typedef void (_stdcall  *LPFNEOSCALLBACK)		(SoundSceneObjClass *sound_obj, uint32 user_param);
-typedef void (_stdcall  *LPFNHEARDCALLBACK)	(LogicalListenerClass *listener, LogicalSoundClass *sound_obj, uint32 user_param);
-typedef void (_stdcall  *LPFNTEXTCALLBACK)	(AudibleSoundClass *sound_obj, const StringClass &text, uint32 user_param);
+typedef void (__stdcall  *LPFNSOSCALLBACK)		(SoundSceneObjClass *sound_obj, uint32 user_param);
+typedef void (__stdcall  *LPFNEOSCALLBACK)		(SoundSceneObjClass *sound_obj, uint32 user_param);
+typedef void (__stdcall  *LPFNHEARDCALLBACK)	(LogicalListenerClass *listener, LogicalSoundClass *sound_obj, uint32 user_param);
+typedef void (__stdcall  *LPFNTEXTCALLBACK)	(AudibleSoundClass *sound_obj, const StringClass &text, uint32 user_param);
 
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -129,7 +129,7 @@ struct AUDIO_CALLBACK_STRUCT
 	uint32			user_data;
 
 	AUDIO_CALLBACK_STRUCT (void)
-		:	callback_ptr (NULL), user_data (0)	{}
+		:	callback_ptr (nullptr), user_data (0)	{}
 
 	AUDIO_CALLBACK_STRUCT (T _ptr, uint32 _data)
 		:	callback_ptr (_ptr), user_data (_data) {}
@@ -182,7 +182,7 @@ AudioCallbackListClass<T>::Add_Callback (T pointer, uint32 user_data)
 template <class T> T
 AudioCallbackListClass<T>::Get_Callback (int index, uint32 *user_data)
 {
-	if (user_data != NULL) {
+	if (user_data != nullptr) {
 		(*user_data) = Vector[index].user_data;
 	}
 

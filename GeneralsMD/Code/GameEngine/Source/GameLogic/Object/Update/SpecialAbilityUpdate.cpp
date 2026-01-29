@@ -105,7 +105,7 @@ that has every option will do the following in order:
   2 -- UNPACK: If I need to unpack before I can prepare, then do so now (this uses the model
        condition unpack).
   3 -- PREPARE: If I need to perform a task for a period of time before I can trigger my special
-       ability, then do so now. A good example is aiming with a targetting laser for a few
+       ability, then do so now. A good example is aiming with a targeting laser for a few
        seconds before firing your special weapon.
   4 -- TRIGGER: Once preparation is complete, fire your special ability now.
   5 -- PACK: If I need to pack after finishing my attack, do so now.
@@ -257,7 +257,7 @@ UpdateSleepTime SpecialAbilityUpdate::update( void )
   {
     Object* target = TheGameLogic->findObjectByID(m_targetID);
 
-    if (target != NULL)
+    if (target != nullptr)
     {
       if (target->isEffectivelyDead())
         shouldAbort = TRUE;
@@ -321,7 +321,7 @@ UpdateSleepTime SpecialAbilityUpdate::update( void )
 
   SpecialPowerModuleInterface *spm = getMySPM();
 
-  if ( shouldAbort || spm == NULL )
+  if ( shouldAbort || spm == nullptr )
   {
     // doh, a colleague has already captured it. just stop.
     ai->aiIdle( CMD_FROM_AI );
@@ -520,7 +520,7 @@ Bool SpecialAbilityUpdate::initiateIntentToDoSpecialPower( const SpecialPowerTem
   //Determine whether we are triggering a command (rather than executing special at location or target)
   m_noTargetCommand = !targetObj && !targetPos;
 
-  if( data->m_unpackTime == 0 || m_noTargetCommand && data->m_skipPackingWithNoTarget )
+  if( data->m_unpackTime == 0 || (m_noTargetCommand && data->m_skipPackingWithNoTarget) )
   {
     //Only unpack if we need to -- setting it to unpacked will skip step 2 in the update
     m_packingState = STATE_UNPACKED;
@@ -603,7 +603,7 @@ void SpecialAbilityUpdate::onExit( Bool cleanup )
   TheAudio->removeAudioEvent( m_prepSoundLoop.getPlayingHandle() );
   endPreparation();
 
-  if( !data->m_specialObjectsPersistent || cleanup && !data->m_specialObjectsPersistWhenOwnerDies )
+  if( !data->m_specialObjectsPersistent || (cleanup && !data->m_specialObjectsPersistWhenOwnerDies) )
   {
     //Delete special objects that aren't considered persistent whenever we turn off
     //leave the special ability update.
@@ -815,7 +815,7 @@ Bool SpecialAbilityUpdate::isWithinStartAbilityRange() const
   const SpecialAbilityUpdateModuleData* data = getSpecialAbilityUpdateModuleData();
   const Object *self = getObject();
 
-  //Quickly convert very short range approachs to "contact" class requiring collision before
+  //Quickly convert very short range approaches to "contact" class requiring collision before
   //stopping.
   Real range = data->m_startAbilityRange;
   const Real UNDERSIZE = PATHFIND_CELL_SIZE_F * 0.25f;
@@ -828,7 +828,7 @@ Bool SpecialAbilityUpdate::isWithinStartAbilityRange() const
   }
 
   Real fDistSquared = 0.0f;
-  Object *target = NULL;
+  Object *target = nullptr;
   if( m_targetID != INVALID_ID )
   {
     target = TheGameLogic->findObjectByID( m_targetID );
@@ -870,7 +870,7 @@ Bool SpecialAbilityUpdate::isWithinStartAbilityRange() const
     {
       //Make sure we can see the target!
       PartitionFilterLineOfSight  filterLOS( self );
-      PartitionFilter *filters[] = { &filterLOS, NULL };
+      PartitionFilter *filters[] = { &filterLOS, nullptr };
       ObjectIterator *iter = ThePartitionManager->iterateObjectsInRange( self, range, FROM_BOUNDINGSPHERE_2D, filters, ITER_SORTED_NEAR_TO_FAR );
       MemoryPoolObjectHolder hold(iter);
       for( Object *theTarget = iter->first(); theTarget; theTarget = iter->next() )
@@ -896,14 +896,14 @@ Bool SpecialAbilityUpdate::isWithinAbilityAbortRange() const
   const SpecialAbilityUpdateModuleData* data = getSpecialAbilityUpdateModuleData();
   const Object *self = getObject();
 
-  //Quickly convert very short range approachs to "contact" class requiring collision before
+  //Quickly convert very short range approaches to "contact" class requiring collision before
   //stopping.
   Real range = data->m_startAbilityRange;
   const Real UNDERSIZE = PATHFIND_CELL_SIZE_F * 0.25f;
   range = __max( 0.0f, range - UNDERSIZE );
 
   Real fDistSquared = 0.0f;
-  Object *target = NULL;
+  Object *target = nullptr;
   if( m_targetID != INVALID_ID )
   {
     target = TheGameLogic->findObjectByID( m_targetID );
@@ -1080,7 +1080,7 @@ void SpecialAbilityUpdate::startPreparation()
   SpecialPowerModuleInterface *spmInterface = getMySPM();
   if( spmInterface )
   {
-    spmInterface->markSpecialPowerTriggered(NULL);// Null for not creating a view object
+    spmInterface->markSpecialPowerTriggered(nullptr);// Null for not creating a view object
   }
 
   if (getObject()->getAI()) {
@@ -1120,7 +1120,7 @@ Bool SpecialAbilityUpdate::initLaser(Object* specialObject, Object* target )
   }
 
   Coord3D startPos;
-  if( !getObject()->getSingleLogicalBonePosition( data->m_specialObjectAttachToBoneName.str(), &startPos, NULL ) )
+  if( !getObject()->getSingleLogicalBonePosition( data->m_specialObjectAttachToBoneName.str(), &startPos, nullptr ) )
   {
     //If we can't find the bone, then set it to our current position.
     startPos.set( getObject()->getPosition() );
@@ -1261,7 +1261,7 @@ void SpecialAbilityUpdate::triggerAbilityEffect()
   Object *object = getObject();
 
   //Award experience to units for triggering the ability (optional and ini specified).
-  //NOTE: Be award of persistant abilities that call trigger over and over again!
+  //NOTE: Be aware of persistent abilities that call trigger over and over again!
   if( data->m_awardXPForTriggering )
   {
     ExperienceTracker *xpTracker = object->getExperienceTracker();
@@ -1554,7 +1554,7 @@ void SpecialAbilityUpdate::triggerAbilityEffect()
               update->detonate();
               okToLoseStealth = FALSE;
               //Note: while the objects are detonating, they will still exist in the game.
-              //Our update will be responsible for validating their existance and removing them..
+              //Our update will be responsible for validating their existence and removing them..
               //in case either the enemy player cleans one up, or after it's gone.
             }
           }
@@ -1621,7 +1621,7 @@ void SpecialAbilityUpdate::triggerAbilityEffect()
 Object* SpecialAbilityUpdate::createSpecialObject()
 {
   const SpecialAbilityUpdateModuleData* data = getSpecialAbilityUpdateModuleData();
-  Object *specialObject = NULL;
+  Object *specialObject = nullptr;
 
   if( m_specialObjectEntries == data->m_maxSpecialObjects )
   {
@@ -1631,7 +1631,7 @@ Object* SpecialAbilityUpdate::createSpecialObject()
       //limit we can have, then don't allow any more to be created....
       //We could add recycling code if need be.. but the logic that handles
       //canDoSpecialPowerXXX should prevent this triggering.
-      return NULL;
+      return nullptr;
     }
     else
     {
@@ -1792,7 +1792,7 @@ void SpecialAbilityUpdate::finishAbility()
 				if (contPlayer) {
 					PartitionFilterSamePlayer filterPlayer( contPlayer );	// Look for our own mines.
 					PartitionFilterAcceptByKindOf filterKind(MAKE_KINDOF_MASK(KINDOF_MINE), KINDOFMASK_NONE);
-					PartitionFilter *filters[] = { &filterKind, &filterPlayer, NULL };
+					PartitionFilter *filters[] = { &filterKind, &filterPlayer, nullptr };
 					Object *mine = ThePartitionManager->getClosestObject( &pos, data->m_fleeRangeAfterCompletion, FROM_CENTER_2D, filters );// could be null. this is ok.
 					if (mine) {
 						dir.set(pos.x-mine->getPosition()->x, pos.y-mine->getPosition()->y, 0);
@@ -1948,7 +1948,7 @@ Object* SpecialAbilityUpdate::findSpecialObjectWithProducerID( const Object *tar
 			}
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1959,7 +1959,7 @@ void SpecialAbilityUpdate::endPreparation()
 
 	// Based on the special that we just finished preparing (either by failure or success),
 	// do we want to keep the "special objects" created? Some specials will -- others won't.
-	// Note that persistant specials will not call this until preparation is complete (not
+	// Note that persistent specials will not call this until preparation is complete (not
 	// recycling).
 	const SpecialAbilityUpdateModuleData* data = getSpecialAbilityUpdateModuleData();
 	const SpecialPowerTemplate *spTemplate = data->m_specialPowerTemplate;

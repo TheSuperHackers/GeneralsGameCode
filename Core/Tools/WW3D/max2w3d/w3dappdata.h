@@ -58,7 +58,7 @@
 ** structure!
 **
 **  - There are bits stored in AppData for each node
-**  - These bits indicate wether something should be exported as hierarchy,
+**  - These bits indicate whether something should be exported as hierarchy,
 **    geometry (and if so, what type of geometry: mesh, collision box, bitmap, etc)
 **
 ** When we say something is "Hierarchy" that means its transform should be put
@@ -118,7 +118,7 @@ bool	Is_NPatchable(INode * node);
 */
 inline bool Is_Proxy(INode &node)
 {
-	return (::strchr (node.GetName (), '~') != NULL);
+	return (::strchr (node.GetName (), '~') != nullptr);
 }
 
 

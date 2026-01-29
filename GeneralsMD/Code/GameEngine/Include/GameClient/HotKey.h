@@ -93,7 +93,7 @@ public:
 	//-----------------------------------------------------------------------------------------------
 
 	void addHotKey( GameWindow *win, const AsciiString& key);
-	Bool executeHotKey( const AsciiString& key); // called fromt eh HotKeyTranslator
+	Bool executeHotKey( const AsciiString& key); // called front eh HotKeyTranslator
 
 	AsciiString searchHotKey( const AsciiString& label);
 	AsciiString searchHotKey( const UnicodeString& uStr );

@@ -83,22 +83,22 @@ WaveGuideUpdateModuleData::WaveGuideUpdateModuleData( void )
 	static const FieldParse dataFieldParse[] =
 	{
 
-		{ "WaveDelay", INI::parseDurationReal, NULL, offsetof( WaveGuideUpdateModuleData, m_waveDelay ) },
-		{ "YSize", INI::parseReal, NULL, offsetof( WaveGuideUpdateModuleData, m_ySize ) },
-		{ "LinearWaveSpacing", INI::parseReal, NULL, offsetof( WaveGuideUpdateModuleData, m_linearWaveSpacing ) },
-		{ "WaveBendMagnitude", INI::parseReal, NULL, offsetof( WaveGuideUpdateModuleData, m_waveBendMagnitude ) },
-		{ "WaterVelocity", INI::parseVelocityReal, NULL, offsetof( WaveGuideUpdateModuleData, m_waterVelocity ) },
-		{ "PreferredHeight", INI::parseReal, NULL, offsetof( WaveGuideUpdateModuleData, m_preferredHeight ) },
-		{ "ShorelineEffectDistance", INI::parseReal, NULL, offsetof( WaveGuideUpdateModuleData, m_shorelineEffectDistance ) },
-		{ "DamageRadius", INI::parseReal, NULL, offsetof( WaveGuideUpdateModuleData, m_damageRadius ) },
-		{ "DamageAmount", INI::parseReal, NULL, offsetof( WaveGuideUpdateModuleData, m_damageAmount ) },
-		{ "ToppleForce", INI::parseReal, NULL, offsetof( WaveGuideUpdateModuleData, m_toppleForce ) },
-		{ "RandomSplashSound", INI::parseAudioEventRTS, NULL, offsetof( WaveGuideUpdateModuleData, m_randomSplashSound ) },
-		{ "RandomSplashSoundFrequency", INI::parseInt, NULL, offsetof( WaveGuideUpdateModuleData, m_randomSplashSoundFrequency ) },
-		{ "BridgeParticle",	INI::parseParticleSystemTemplate, NULL, offsetof( WaveGuideUpdateModuleData, m_bridgeParticle ) },
-		{ "BridgeParticleAngleFudge", INI::parseAngleReal, NULL, offsetof( WaveGuideUpdateModuleData, m_bridgeParticleAngleFudge ) },
-		{ "LoopingSound", INI::parseAudioEventRTS, NULL, offsetof( WaveGuideUpdateModuleData, m_loopingSound ) },
-		{ 0, 0, 0, 0 }
+		{ "WaveDelay", INI::parseDurationReal, nullptr, offsetof( WaveGuideUpdateModuleData, m_waveDelay ) },
+		{ "YSize", INI::parseReal, nullptr, offsetof( WaveGuideUpdateModuleData, m_ySize ) },
+		{ "LinearWaveSpacing", INI::parseReal, nullptr, offsetof( WaveGuideUpdateModuleData, m_linearWaveSpacing ) },
+		{ "WaveBendMagnitude", INI::parseReal, nullptr, offsetof( WaveGuideUpdateModuleData, m_waveBendMagnitude ) },
+		{ "WaterVelocity", INI::parseVelocityReal, nullptr, offsetof( WaveGuideUpdateModuleData, m_waterVelocity ) },
+		{ "PreferredHeight", INI::parseReal, nullptr, offsetof( WaveGuideUpdateModuleData, m_preferredHeight ) },
+		{ "ShorelineEffectDistance", INI::parseReal, nullptr, offsetof( WaveGuideUpdateModuleData, m_shorelineEffectDistance ) },
+		{ "DamageRadius", INI::parseReal, nullptr, offsetof( WaveGuideUpdateModuleData, m_damageRadius ) },
+		{ "DamageAmount", INI::parseReal, nullptr, offsetof( WaveGuideUpdateModuleData, m_damageAmount ) },
+		{ "ToppleForce", INI::parseReal, nullptr, offsetof( WaveGuideUpdateModuleData, m_toppleForce ) },
+		{ "RandomSplashSound", INI::parseAudioEventRTS, nullptr, offsetof( WaveGuideUpdateModuleData, m_randomSplashSound ) },
+		{ "RandomSplashSoundFrequency", INI::parseInt, nullptr, offsetof( WaveGuideUpdateModuleData, m_randomSplashSoundFrequency ) },
+		{ "BridgeParticle",	INI::parseParticleSystemTemplate, nullptr, offsetof( WaveGuideUpdateModuleData, m_bridgeParticle ) },
+		{ "BridgeParticleAngleFudge", INI::parseAngleReal, nullptr, offsetof( WaveGuideUpdateModuleData, m_bridgeParticleAngleFudge ) },
+		{ "LoopingSound", INI::parseAudioEventRTS, nullptr, offsetof( WaveGuideUpdateModuleData, m_loopingSound ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 
   p.add(dataFieldParse);
@@ -191,7 +191,7 @@ Bool WaveGuideUpdate::startMoving( void )
 
 		// there must be at least one link
 		Waypoint *next = waypoint->getLink( 0 );
-		if( next == NULL )
+		if( next == nullptr )
 		{
 
 			DEBUG_CRASH(( "WaveGuideUpdate:startMoving - There must be a linked waypoint path to follow" ));
@@ -345,7 +345,7 @@ void WaveGuideUpdate::computeWaveShapePoints( void )
 
 // ------------------------------------------------------------------------------------------------
 /** Given the current position and orientation of the wave guide, transform all the wave
-	* shape points so we can quickly access them for mutliple reasons */
+	* shape points so we can quickly access them for multiple reasons */
 // ------------------------------------------------------------------------------------------------
 void WaveGuideUpdate::transformWaveShape( void )
 {
@@ -504,7 +504,7 @@ void WaveGuideUpdate::doShoreEffects( void )
 			//
 			if( underWater == TRUE && i != 0 )
 			{
-				Coord3D *prevPoint = &effectPoints[ i - 1 ];  // the prev point is actuall on the water so we'll use it
+				Coord3D *prevPoint = &effectPoints[ i - 1 ];  // the prev point is actually on the water so we'll use it
 
 				particleSystem = TheParticleSystemManager->createParticleSystem( right );
 				if( particleSystem )
@@ -542,7 +542,7 @@ void WaveGuideUpdate::doShoreEffects( void )
 }
 
 // ------------------------------------------------------------------------------------------------
-/** Do damage to things that have fallen victim in the path of this enourmous wave */
+/** Do damage to things that have fallen victim in the path of this enormous wave */
 // ------------------------------------------------------------------------------------------------
 void WaveGuideUpdate::doDamage( void )
 {
@@ -560,7 +560,7 @@ void WaveGuideUpdate::doDamage( void )
 		ObjectIterator *iter = ThePartitionManager->iterateObjectsInRange( &m_transformedShapePoints[ i ],
 																																			 modData->m_damageRadius,
 																																			 FROM_CENTER_2D,
-																																			 NULL );
+																																			 nullptr );
 		MemoryPoolObjectHolder hold( iter );
 		Object *obj;
 		const Coord3D *objPos;
@@ -676,7 +676,7 @@ void WaveGuideUpdate::doDamage( void )
 					if( obj->isKindOf( KINDOF_BRIDGE ) )
 					{
 						const ThingTemplate* ttn = TheThingFactory->findTemplate("WaterWaveBridge");
-						Object *newBridge = TheThingFactory->newObject( ttn, NULL );
+						Object *newBridge = TheThingFactory->newObject( ttn, nullptr );
 
 						if( newBridge )
 						{
@@ -715,7 +715,7 @@ void WaveGuideUpdate::doDamage( void )
 								z.z = 1.0f;
 
 								//
-								// angle is rotated, becuase we computed from 'from' and 'to' points of
+								// angle is rotated, because we computed from 'from' and 'to' points of
 								// the bridge going *across* the valley, not pointing *down* it
 								//
 								u.x = Cos( angle + modData->m_bridgeParticleAngleFudge );
@@ -801,7 +801,7 @@ UpdateSleepTime WaveGuideUpdate::update( void )
 
 	}
 
-	// every half second we try to play a random spash sound
+	// every half second we try to play a random splash sound
 	if( TheGameLogic->getFrame() - m_splashSoundFrame > LOGICFRAMES_PER_SECOND / 2.0f )
 	{
 
@@ -834,7 +834,7 @@ UpdateSleepTime WaveGuideUpdate::update( void )
 		static const ParticleSystemTemplate *waveSplash = TheParticleSystemManager->findTemplate( "WaveSplash01" );
 		ParticleSystem *particleSys;
 
-		// create spash effect
+		// create splash effect
 		particleSys = TheParticleSystemManager->createParticleSystem( waveSplash );
 		if( particleSys )
 			particleSys->setLocalTransform( waveGuide->getTransformMatrix() );

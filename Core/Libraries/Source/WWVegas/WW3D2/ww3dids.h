@@ -39,12 +39,12 @@
 #include "saveloadids.h"
 
 /*
-** These are the chunk-id's used by all persistant objects in WW3D.  The persistant object
+** These are the chunk-id's used by all persistent objects in WW3D.  The persistent object
 ** framework is defined in the WWSaveLoad library.
 **
 ** Sept 23, 1999
-** - Initial implementation of making the Commando engine persistant included making some
-**   of WW3D persistant.  For this initial implementation, we're going to assume that we
+** - Initial implementation of making the Commando engine persistent included making some
+**   of WW3D persistent.  For this initial implementation, we're going to assume that we
 **   can re-create all of our game objects from the asset manager and patch up any state
 **   changes with custom game object code.  Therefore, the base class RenderObjClass has
 **   a persist manager which simply saves the name of the render object and its transform

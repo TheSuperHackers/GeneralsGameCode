@@ -41,7 +41,7 @@ class MapObjectProps : public COptionsPanel, public PopupSliderOwner
 {
 // Construction
 public:
-	MapObjectProps(Dict* dictToEdit = NULL, const char* title = NULL, CWnd* pParent = NULL);   // standard constructor
+	MapObjectProps(Dict* dictToEdit = nullptr, const char* title = nullptr, CWnd* pParent = nullptr);   // standard constructor
 	~MapObjectProps();
 	void makeMain();
 

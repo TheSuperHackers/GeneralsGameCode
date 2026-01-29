@@ -72,7 +72,7 @@ extern void *GadgetComboBoxGetItemData( GameWindow *comboBox, Int index );
 extern Int  GadgetComboBoxGetLength( GameWindow *comboBox );
 
 extern void GadgetComboBoxHideList( GameWindow *comboBox );
-// Functions that set the ComboBoxData Paramaters
+// Functions that set the ComboBoxData Parameters
 extern void GadgetComboBoxSetAsciiOnly(GameWindow *comboBox, Bool isAsciiOnly  );
 extern void GadgetComboBoxSetLettersAndNumbersOnly(GameWindow *comboBox, Bool isLettersAndNumbersOnly  );
 extern void GadgetComboBoxSetMaxChars( GameWindow *comboBox, Int maxChars );
@@ -167,7 +167,7 @@ inline GameWindow *GadgetComboBoxGetDropDownButton( GameWindow *g )
 
 	if( comboBoxData && comboBoxData->dropDownButton )
 		return comboBoxData->dropDownButton;
-	return NULL;
+	return nullptr;
 }
 inline GameWindow *GadgetComboBoxGetListBox( GameWindow *g )
 {
@@ -175,7 +175,7 @@ inline GameWindow *GadgetComboBoxGetListBox( GameWindow *g )
 
 	if( comboBoxData && comboBoxData->listBox)
 		return comboBoxData->listBox;
-	return NULL;
+	return nullptr;
 
 }
 
@@ -185,7 +185,7 @@ inline GameWindow *GadgetComboBoxGetEditBox( GameWindow *g )
 
 	if( comboBoxData && comboBoxData->editBox)
 		return comboBoxData->editBox;
-	return NULL;
+	return nullptr;
 
 }
 

@@ -65,7 +65,7 @@ AggregateLoaderClass	_AggregateLoader;
 //	AggregateDefClass
 //
 AggregateDefClass::AggregateDefClass (void)
-	: m_pName (NULL)
+	: m_pName (nullptr)
 {
 	// Set our member data to default settings
 	::memset (&m_Info, 0, sizeof (m_Info));
@@ -80,7 +80,7 @@ AggregateDefClass::AggregateDefClass (void)
 //	AggregateDefClass
 //
 AggregateDefClass::AggregateDefClass (const AggregateDefClass &src)
-	: m_pName (NULL)
+	: m_pName (nullptr)
 {
 	// Set our member data to default settings
 	::memset (&m_Info, 0, sizeof (m_Info));
@@ -98,7 +98,7 @@ AggregateDefClass::AggregateDefClass (const AggregateDefClass &src)
 //	AggregateDefClass
 //
 AggregateDefClass::AggregateDefClass (RenderObjClass &base_model)
-	: m_pName (NULL)
+	: m_pName (nullptr)
 {
 	// Set our member data to default settings
 	::memset (&m_Info, 0, sizeof (m_Info));
@@ -117,11 +117,11 @@ AggregateDefClass::AggregateDefClass (RenderObjClass &base_model)
 AggregateDefClass::~AggregateDefClass (void)
 {
 	// Free the name buffer if necessary
-	if (m_pName != NULL) {
+	if (m_pName != nullptr) {
 
 		// free() is used because the buffer was allocated with ::_strdup().
 		::free (m_pName);
-		m_pName = NULL;
+		m_pName = nullptr;
 	}
 
 	Free_Subobject_List ();
@@ -139,9 +139,9 @@ AggregateDefClass::operator= (const AggregateDefClass &src)
 	int index;
 
 	// Free the name buffer if necessary
-	if (m_pName != NULL) {
+	if (m_pName != nullptr) {
 		::free (m_pName);
-		m_pName = NULL;
+		m_pName = nullptr;
 	}
 
 	// Start with a fresh set of data
@@ -156,7 +156,7 @@ AggregateDefClass::operator= (const AggregateDefClass &src)
 	// Loop through all the entries in the src object's subobj list
 	for (index = 0; index < src.m_SubobjectList.Count (); index ++) {
 		W3dAggregateSubobjectStruct *pinfo = src.m_SubobjectList[index];
-		if (pinfo != NULL) {
+		if (pinfo != nullptr) {
 
 			// Copy the src object's info for this subobj
 			W3dAggregateSubobjectStruct *new_info = W3DNEW W3dAggregateSubobjectStruct;
@@ -200,7 +200,7 @@ AggregateDefClass::Create (void)
 {
 	// Attempt to create an instance of the hierarchy
 	RenderObjClass *pmodel = Create_Render_Object (m_Info.BaseModelName);
-	if (pmodel != NULL) {
+	if (pmodel != nullptr) {
 
 		// Perform the aggregation
 		Attach_Subobjects (*pmodel);
@@ -237,11 +237,11 @@ AggregateDefClass::Find_Subobject
 	// Loop through all the models in our "path" until we've either failed
 	// or found the exact mesh we were looking for...
 	for (int index = 1;
-		  (mesh_path[index][0] != 0) && (parent_model != NULL);
+		  (mesh_path[index][0] != 0) && (parent_model != nullptr);
 		  index ++) {
 
 		// Look one level deeper into the subobject chain...
-		RenderObjClass *sub_obj = NULL;
+		RenderObjClass *sub_obj = nullptr;
 		if (bone_path[index][0] == 0) {
 			sub_obj = parent_model->Get_Sub_Object_By_Name (mesh_path[index]);
 		} else {
@@ -250,11 +250,11 @@ AggregateDefClass::Find_Subobject
 			int subobj_count = parent_model->Get_Num_Sub_Objects_On_Bone (bone_index);
 
 			// Loop through all the subobjects on this bone
-			for (int subobj_index = 0; (subobj_index < subobj_count) && (sub_obj == NULL); subobj_index ++) {
+			for (int subobj_index = 0; (subobj_index < subobj_count) && (sub_obj == nullptr); subobj_index ++) {
 
 				// Is this the subobject we were looking for?
 				RenderObjClass *ptemp_obj = parent_model->Get_Sub_Object_On_Bone (subobj_index, bone_index);
-				if (ptemp_obj == NULL)
+				if (ptemp_obj == nullptr)
 					continue;
 
 				if (::lstrcmpi (ptemp_obj->Get_Name (), mesh_path[index]) == 0) {
@@ -286,11 +286,11 @@ AggregateDefClass::Attach_Subobjects (RenderObjClass &base_model)
 	// Now loop through all the subobjects and attach them to the appropriate bone
 	for (int index = 0; index < m_SubobjectList.Count (); index ++) {
 		W3dAggregateSubobjectStruct *psubobj_info = m_SubobjectList[index];
-		if (psubobj_info != NULL) {
+		if (psubobj_info != nullptr) {
 
 			// Now create this subobject and attach it to its bone.
 			RenderObjClass *prender_obj = Create_Render_Object (psubobj_info->SubobjectName);
-			if (prender_obj != NULL) {
+			if (prender_obj != nullptr) {
 
 				// Attach this object to the requested bone
 				if (base_model.Add_Sub_Object_To_Bone (prender_obj, psubobj_info->BoneName) == false) {
@@ -317,14 +317,14 @@ RenderObjClass *
 AggregateDefClass::Create_Render_Object (const char *passet_name)
 {
 	// Assume failure
-	RenderObjClass *prender_obj = NULL;
+	RenderObjClass *prender_obj = nullptr;
 
 	// Attempt to get an instance of the render object from the asset manager
 	prender_obj = WW3DAssetManager::Get_Instance()->Create_Render_Obj (passet_name);
 
 	// If we couldn't find the render object in the asset manager, then attempt to
 	// load it from file
-	if ((prender_obj == NULL) &&
+	if ((prender_obj == nullptr) &&
 	    Load_Assets (passet_name)) {
 
 		// It should be in the asset manager now, so attempt to get it again.
@@ -347,7 +347,7 @@ AggregateDefClass::Load_Assets (const char *passet_name)
 	bool retval = false;
 
 	// Param OK?
-	if (passet_name != NULL) {
+	if (passet_name != nullptr) {
 
 		// Determine what the current working directory is
 		char path[MAX_PATH];
@@ -385,7 +385,7 @@ AggregateDefClass::Initialize (RenderObjClass &base_model)
 
 	// Determine what the render objects original name was.
 	const char *orig_model_name = base_model.Get_Base_Model_Name ();
-	orig_model_name = (orig_model_name == NULL) ? base_model.Get_Name () : orig_model_name;
+	orig_model_name = (orig_model_name == nullptr) ? base_model.Get_Name () : orig_model_name;
 
 	// Record information about this base model
 	::lstrcpy (m_Info.BaseModelName, orig_model_name);
@@ -437,7 +437,7 @@ AggregateDefClass::Build_Subobject_List
 			  index < original_model.Get_Num_Sub_Objects_On_Bone (bone_index);
 			  index ++) {
 			RenderObjClass *psubobj = original_model.Get_Sub_Object_On_Bone (index, bone_index);
-			if (psubobj != NULL) {
+			if (psubobj != nullptr) {
 				orig_node_list.Add (psubobj);
 			}
 		}
@@ -448,7 +448,7 @@ AggregateDefClass::Build_Subobject_List
 			  index < model.Get_Num_Sub_Objects_On_Bone (bone_index);
 			  index ++) {
 			RenderObjClass *psubobj = model.Get_Sub_Object_On_Bone (index, bone_index);
-			if (psubobj != NULL) {
+			if (psubobj != nullptr) {
 				node_list.Add (psubobj);
 			}
 		}
@@ -460,11 +460,11 @@ AggregateDefClass::Build_Subobject_List
 			W3dAggregateSubobjectStruct subobj_info = { 0 };
 			for (int node_index = 0; node_index < node_count; node_index ++) {
 				RenderObjClass *psubobject = node_list[node_index];
-				WWASSERT (psubobject != NULL);
+				WWASSERT (psubobject != nullptr);
 
 				// Is this subobject new?  (i.e. not in a 'vanilla' instance?)
 				const char *prototype_name = psubobject->Get_Name ();
-				if (psubobject != NULL &&
+				if (psubobject != nullptr &&
 					 (Is_Object_In_List (prototype_name, orig_node_list) == false)) {
 
 					// Add this subobject to our list
@@ -519,7 +519,7 @@ AggregateDefClass::Is_Object_In_List
 		RenderObjClass *prender_obj = node_list[node_index];
 
 		// Is this the render object we were looking for?
-		if (prender_obj != NULL &&
+		if (prender_obj != nullptr &&
 		    ::lstrcmpi (prender_obj->Get_Name (), passet_name) == 0) {
 			retval = true;
 		}
@@ -870,11 +870,11 @@ PrototypeClass *
 AggregateLoaderClass::Load_W3D (ChunkLoadClass &chunk_load)
 {
 	// Assume failure
-	AggregatePrototypeClass *pprototype = NULL;
+	AggregatePrototypeClass *pprototype = nullptr;
 
 	// Create a definition object
 	AggregateDefClass *pdefinition = W3DNEW AggregateDefClass;
-	if (pdefinition != NULL) {
+	if (pdefinition != nullptr) {
 
 		// Ask the definition object to load the aggregate data
 		if (pdefinition->Load_W3D (chunk_load) != WW3D_ERROR_OK) {

@@ -29,6 +29,7 @@
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include <stdlib.h>
+
 #include "Common/STLTypedefs.h"
 #include "Common/Thing.h"
 #include "Common/Xfer.h"
@@ -46,7 +47,7 @@
 //-------------------------------------------------------------------------------------------------
 W3DDynamicLight *W3DPoliceCarDraw::createDynamicLight( void )
 {
-	W3DDynamicLight *light = NULL;
+	W3DDynamicLight *light = nullptr;
 
 	// get me a dynamic light from the scene
 	light = W3DDisplay::m_3DScene->getADynamicLight();
@@ -74,7 +75,7 @@ W3DDynamicLight *W3DPoliceCarDraw::createDynamicLight( void )
 //-------------------------------------------------------------------------------------------------
 W3DPoliceCarDraw::W3DPoliceCarDraw( Thing *thing, const ModuleData* moduleData ) : W3DTruckDraw( thing, moduleData )
 {
-	m_light = NULL;
+	m_light = nullptr;
 	m_curFrame = GameClientRandomValueReal(0, 10 );
 
 }
@@ -91,7 +92,7 @@ W3DPoliceCarDraw::~W3DPoliceCarDraw( void )
 		m_light->setFrameFade(0, 5);
 		m_light->setDecayRange();
 		m_light->setDecayColor();
-		m_light = NULL;
+		m_light = nullptr;
 	}
 
 }
@@ -105,7 +106,7 @@ void W3DPoliceCarDraw::doDrawModule(const Matrix3D* transformMtx)
 
 	// get pointers to our render objects that we'll need
 	RenderObjClass* policeCarRenderObj = getRenderObject();
-	if( policeCarRenderObj == NULL )
+	if( policeCarRenderObj == nullptr )
 		return;
 
 	HAnimClass *anim = policeCarRenderObj->Peek_Animation();
@@ -139,7 +140,7 @@ void W3DPoliceCarDraw::doDrawModule(const Matrix3D* transformMtx)
 	}
 
 	// make us a light if we don't already have one
-	if( m_light == NULL )
+	if( m_light == nullptr )
 		m_light = createDynamicLight();
 
 

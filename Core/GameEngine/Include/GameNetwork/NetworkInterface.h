@@ -125,7 +125,7 @@ public:
 	// For disconnect blame assignment
 	virtual UnsignedInt getPingFrame() = 0;
 	virtual Int getPingsSent() = 0;
-	virtual Int getPingsRecieved() = 0;
+	virtual Int getPingsReceived() = 0;
 };
 
 

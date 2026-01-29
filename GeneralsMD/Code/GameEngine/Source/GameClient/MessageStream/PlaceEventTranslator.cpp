@@ -89,10 +89,10 @@ GameMessageDisposition PlaceEventTranslator::translateGameMessage(const GameMess
 				Object *builderObject = TheGameLogic->findObjectByID( TheInGameUI->getPendingPlaceSourceObjectID() );
 
 				// if our source object is gone cancel this whole placement process
-				if( builderObject == NULL )
+				if( builderObject == nullptr )
 				{
 
-					TheInGameUI->placeBuildAvailable( NULL, NULL );
+					TheInGameUI->placeBuildAvailable( nullptr, nullptr );
 					break;
 
 				}
@@ -209,11 +209,11 @@ GameMessageDisposition PlaceEventTranslator::translateGameMessage(const GameMess
 						break;
 					}
 					// get out of pending placement mode, this will also clear the arrow anchor status
-					TheInGameUI->placeBuildAvailable( NULL, NULL );
+					TheInGameUI->placeBuildAvailable( nullptr, nullptr );
 					break;
 				}
 
-				DEBUG_ASSERTCRASH(builderObj != NULL, ("builderObj is NULL"));
+				DEBUG_ASSERTCRASH(builderObj != nullptr, ("builderObj is null"));
 
 				// check to see if this is a legal location to build something at
 				LegalBuildCode lbc;
@@ -227,7 +227,7 @@ GameMessageDisposition PlaceEventTranslator::translateGameMessage(const GameMess
 																												 BuildAssistant::SHROUD_REVEALED |
 																												 BuildAssistant::IGNORE_STEALTHED |
 																												 BuildAssistant::FAIL_STEALTHED_WITHOUT_FEEDBACK,
-																												 builderObj, NULL );
+																												 builderObj, nullptr );
 				if( lbc == LBC_OK )
 				{
 					//Are we building this structure via the special power system? (special case for sneak attack)
@@ -251,7 +251,7 @@ GameMessageDisposition PlaceEventTranslator::translateGameMessage(const GameMess
 								placeMsg->appendObjectIDArgument( builderObj->getID() ); //The source object responsible for firing the special.
 
 								// get out of pending placement mode, this will also clear the arrow anchor status
-								TheInGameUI->placeBuildAvailable( NULL, NULL );
+								TheInGameUI->placeBuildAvailable( nullptr, nullptr );
 
 								// used the input
 								disp = DESTROY_MESSAGE;
@@ -282,7 +282,7 @@ GameMessageDisposition PlaceEventTranslator::translateGameMessage(const GameMess
 					pickAndPlayUnitVoiceResponse( TheInGameUI->getAllSelectedDrawables(), placeMsg->getType() );
 
 					// get out of pending placement mode, this will also clear the arrow anchor status
-					TheInGameUI->placeBuildAvailable( NULL, NULL );
+					TheInGameUI->placeBuildAvailable( nullptr, nullptr );
 
 				}
 				else
@@ -300,7 +300,7 @@ GameMessageDisposition PlaceEventTranslator::translateGameMessage(const GameMess
 					TheAudio->addAudioEvent( &noCanDoSound );
 
 					// unhook the anchor so they can try again
-					TheInGameUI->setPlacementStart( NULL );
+					TheInGameUI->setPlacementStart( nullptr );
 
 				}
 
@@ -331,7 +331,7 @@ GameMessageDisposition PlaceEventTranslator::translateGameMessage(const GameMess
 				// if we have moved far enough away from the start point
 				//
 				ICoord2D start;
-				TheInGameUI->getPlacementPoints( &start, NULL );
+				TheInGameUI->getPlacementPoints( &start, nullptr );
 
 				Int x, y;
 				x = mouse.x - start.x;

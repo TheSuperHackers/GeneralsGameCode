@@ -42,7 +42,7 @@
 #include "WW3D2/sortingrenderer.h"
 
 
-SmudgeManager *TheSmudgeManager=NULL;
+SmudgeManager *TheSmudgeManager=nullptr;
 
 W3DSmudgeManager::W3DSmudgeManager(void)
 {
@@ -133,8 +133,8 @@ void W3DSmudgeManager::ReAcquireResources(void)
 /*Copies a portion of the current render target into a specified buffer*/
 Int copyRect(unsigned char *buf, Int bufSize, int oX, int oY, int width, int height)
 {
- 	IDirect3DSurface8 *surface=NULL;	///<previous render target
- 	IDirect3DSurface8 *tempSurface=NULL;
+ 	IDirect3DSurface8 *surface=nullptr;	///<previous render target
+ 	IDirect3DSurface8 *tempSurface=nullptr;
 	Int result = 0;
 	HRESULT hr = S_OK;
 
@@ -174,7 +174,7 @@ Int copyRect(unsigned char *buf, Int bufSize, int oX, int oY, int width, int hei
 
  	D3DLOCKED_RECT lrect;
 
- 	hr=tempSurface->LockRect(&lrect,NULL,D3DLOCK_READONLY);
+ 	hr=tempSurface->LockRect(&lrect,nullptr,D3DLOCK_READONLY);
 
 	if (hr != S_OK)
 		goto error;
@@ -224,7 +224,7 @@ Bool W3DSmudgeManager::testHardwareSupport(void)
 		shader.Set_Depth_Compare(ShaderClass::PASS_ALWAYS);
 		shader.Set_Depth_Mask(ShaderClass::DEPTH_WRITE_DISABLE);
 		DX8Wrapper::Set_Shader(shader);
-		DX8Wrapper::Set_Texture(0,NULL);
+		DX8Wrapper::Set_Texture(0,nullptr);
 		DX8Wrapper::Apply_Render_State_Changes();	//force update of view and projection matrices
 
 		struct _TRANS_LIT_TEX_VERTEX {

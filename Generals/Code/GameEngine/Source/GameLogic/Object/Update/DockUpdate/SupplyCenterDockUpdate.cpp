@@ -52,7 +52,7 @@ SupplyCenterDockUpdateModuleData::SupplyCenterDockUpdateModuleData( void )
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ 0, 0, 0, 0 }
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 
   p.add(dataFieldParse);
@@ -79,14 +79,14 @@ SupplyCenterDockUpdate::~SupplyCenterDockUpdate()
 // ------------------------------------------------------------------------------------------------
 Bool SupplyCenterDockUpdate::action( Object* docker, Object *drone )
 {
-	SupplyTruckAIInterface* supplyTruckAI = NULL;
-	if( docker->getAIUpdateInterface() == NULL )
+	SupplyTruckAIInterface* supplyTruckAI = nullptr;
+	if( docker->getAIUpdateInterface() == nullptr )
 		return FALSE;
 
 	supplyTruckAI = docker->getAIUpdateInterface()->getSupplyTruckAIInterface();
 
-	DEBUG_ASSERTCRASH( supplyTruckAI != NULL, ("Something Docking with a Supply Center must have a Supply-truck like AIUpdate") );
-	if( supplyTruckAI == NULL )
+	DEBUG_ASSERTCRASH( supplyTruckAI != nullptr, ("Something Docking with a Supply Center must have a Supply-truck like AIUpdate") );
+	if( supplyTruckAI == nullptr )
 		return FALSE;
 
 	UnsignedInt value = 0;

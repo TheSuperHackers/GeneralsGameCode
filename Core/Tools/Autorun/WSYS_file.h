@@ -111,17 +111,17 @@ class File
 		virtual Bool	open( const Char *filename, Int access = 0 );				///< Open a file for access
 		virtual void	close( void );																			///< Close the file !!! File object no longer valid after this call !!!
 
-		virtual Int		read( void *buffer, Int bytes ) = NULL ;						/**< Read the specified number of bytes from the file in to the
+		virtual Int		read( void *buffer, Int bytes ) = 0 ;						/**< Read the specified number of bytes from the file in to the
 																																			  *  memory pointed at by buffer. Returns the number of bytes read.
-																																			  *  Returns -1 if an error occured.
+																																			  *  Returns -1 if an error occurred.
 																																			  */
-		virtual Int		write( void *buffer, Int bytes ) = NULL ;						/**< Write the specified number of bytes from the
+		virtual Int		write( void *buffer, Int bytes ) = 0 ;						/**< Write the specified number of bytes from the
 																																			  *	 memory pointed at by buffer to the file. Returns the number of bytes written.
-																																			  *	 Returns -1 if an error occured.
+																																			  *	 Returns -1 if an error occurred.
 																																			  */
-		virtual Int		seek( Int bytes, seekMode mode = CURRENT ) = NULL;	/**< Sets the file position of the next read/write operation. Returns the new file
+		virtual Int		seek( Int bytes, seekMode mode = CURRENT ) = 0;	/**< Sets the file position of the next read/write operation. Returns the new file
 																																				*  position as the number of bytes from the start of the file.
-																																				*  Returns -1 if an error occured.
+																																				*  Returns -1 if an error occurred.
 																																				*
 																																				*  seekMode determines how the seek is done:
 																																				*
@@ -129,7 +129,7 @@ class File
 																																				*  CURRENT: means seek the specified the number of bytes from the current file position
 																																				*  END: means seek the specified number of bytes back from the end of the file
 																																				*/
-		virtual Bool	printf ( const Char *format, ...);									///< Prints formated string to text file
+		virtual Bool	printf ( const Char *format, ...);									///< Prints formatted string to text file
 		virtual Int		size( void );																				///< Returns the size of the file
 		virtual Int		position( void );																		///< Returns the current read/write position
 

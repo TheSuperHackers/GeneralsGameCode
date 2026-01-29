@@ -32,7 +32,6 @@ target_precompile_headers(core_profile PRIVATE
 )
 
 target_link_libraries(core_profile PRIVATE
-    core_config
     core_wwcommon
     corei_always
 )

@@ -103,7 +103,7 @@
 
 RAMFile::RAMFile()
 : m_size(0),
-	m_data(NULL),
+	m_data(nullptr),
 	m_pos(0)
 {
 
@@ -143,7 +143,7 @@ Bool RAMFile::open( const Char *filename, Int access, size_t bufferSize )
 
 	File *file = TheFileSystem->openFile( filename, access, bufferSize );
 
-	if ( file == NULL )
+	if ( file == nullptr )
 	{
 		return FALSE;
 	}
@@ -162,9 +162,9 @@ Bool RAMFile::open( const Char *filename, Int access, size_t bufferSize )
 Bool RAMFile::open( File *file )
 {
 	//USE_PERF_TIMER(RAMFile)
-	if ( file == NULL )
+	if ( file == nullptr )
 	{
-		return NULL;
+		return FALSE;
 	}
 
 	const Int access = file->getAccess();
@@ -178,7 +178,7 @@ Bool RAMFile::open( File *file )
 	m_size = file->size();
 	m_data = MSGNEW("RAMFILE") char [ m_size ];	// pool[]ify
 
-	if ( m_data == NULL )
+	if ( m_data == nullptr )
 	{
 		return FALSE;
 	}
@@ -188,7 +188,7 @@ Bool RAMFile::open( File *file )
 	if ( m_size < 0 )
 	{
 		delete [] m_data;
-		m_data = NULL;
+		m_data = nullptr;
 		return FALSE;
 	}
 
@@ -203,7 +203,7 @@ Bool RAMFile::open( File *file )
 Bool RAMFile::openFromArchive(File *archiveFile, const AsciiString& filename, Int offset, Int size)
 {
 	//USE_PERF_TIMER(RAMFile)
-	if (archiveFile == NULL) {
+	if (archiveFile == nullptr) {
 		return FALSE;
 	}
 
@@ -246,7 +246,7 @@ void RAMFile::close( void )
 void RAMFile::closeFile()
 {
 	delete [] m_data;
-	m_data = NULL;
+	m_data = nullptr;
 }
 
 //=================================================================
@@ -255,7 +255,7 @@ void RAMFile::closeFile()
 // if buffer is null, just advance the current position by 'bytes'
 Int RAMFile::read( void *buffer, Int bytes )
 {
-	if( m_data == NULL )
+	if( m_data == nullptr )
 	{
 		return -1;
 	}
@@ -267,7 +267,7 @@ Int RAMFile::read( void *buffer, Int bytes )
 		bytes = bytesLeft;
 	}
 
-	if (( bytes > 0 ) && ( buffer != NULL ))
+	if (( bytes > 0 ) && ( buffer != nullptr ))
 	{
 		memcpy ( buffer, &m_data[m_pos], bytes );
 	}
@@ -485,7 +485,7 @@ void RAMFile::nextLine(Char *buf, Int bufSize)
 	Int i = 0;
 	// seek to the next new-line character
 	while ((m_pos < m_size) && (m_data[m_pos] != '\n')) {
-		if ((buf != NULL) && (i < (bufSize-1))) {
+		if ((buf != nullptr) && (i < (bufSize-1))) {
 			buf[i] = m_data[m_pos];
 			++i;
 		}
@@ -494,13 +494,13 @@ void RAMFile::nextLine(Char *buf, Int bufSize)
 
 	// we got to the new-line character, now go one past it.
 	if (m_pos < m_size) {
-		if ((buf != NULL) && (i < bufSize)) {
+		if ((buf != nullptr) && (i < bufSize)) {
 			buf[i] = m_data[m_pos];
 			++i;
 		}
 		++m_pos;
 	}
-	if (buf != NULL) {
+	if (buf != nullptr) {
 		if (i < bufSize) {
 			buf[i] = 0;
 		} else {
@@ -517,7 +517,7 @@ void RAMFile::nextLine(Char *buf, Int bufSize)
 //=================================================================
 Bool RAMFile::copyDataToFile(File *localFile)
 {
-	if (localFile == NULL) {
+	if (localFile == nullptr) {
 		return FALSE;
 	}
 
@@ -549,14 +549,14 @@ File* RAMFile::convertToRAMFile()
 char* RAMFile::readEntireAndClose()
 {
 
-	if (m_data == NULL)
+	if (m_data == nullptr)
 	{
-		DEBUG_CRASH(("m_data is NULL in RAMFile::readEntireAndClose -- should not happen!"));
+		DEBUG_CRASH(("m_data is null in RAMFile::readEntireAndClose -- should not happen!"));
 		return NEW char[1];	// just to avoid crashing...
 	}
 
 	char* tmp = m_data;
-	m_data = NULL;	// will belong to our caller!
+	m_data = nullptr;	// will belong to our caller!
 
 	close();
 

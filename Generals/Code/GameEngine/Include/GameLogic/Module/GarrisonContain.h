@@ -61,11 +61,11 @@ public:
 
 		static const FieldParse dataFieldParse[] =
 		{
-			{ "MobileGarrison", INI::parseBool, NULL, offsetof( GarrisonContainModuleData, m_mobileGarrison ) },
-			{ "HealObjects", INI::parseBool, NULL, offsetof( GarrisonContainModuleData, m_doIHealObjects ) },
-			{ "TimeForFullHeal", INI::parseDurationReal, NULL, offsetof( GarrisonContainModuleData, m_framesForFullHeal ) },
-			{ "InitialRoster", parseInitialRoster, NULL, 0 },
-			{ "ImmuneToClearBuildingAttacks", INI::parseBool, NULL, offsetof( GarrisonContainModuleData, m_immuneToClearBuildingAttacks ) },
+			{ "MobileGarrison", INI::parseBool, nullptr, offsetof( GarrisonContainModuleData, m_mobileGarrison ) },
+			{ "HealObjects", INI::parseBool, nullptr, offsetof( GarrisonContainModuleData, m_doIHealObjects ) },
+			{ "TimeForFullHeal", INI::parseDurationReal, nullptr, offsetof( GarrisonContainModuleData, m_framesForFullHeal ) },
+			{ "InitialRoster", parseInitialRoster, nullptr, 0 },
+			{ "ImmuneToClearBuildingAttacks", INI::parseBool, nullptr, offsetof( GarrisonContainModuleData, m_immuneToClearBuildingAttacks ) },
 
 			{ 0, 0, 0, 0 }
 		};
@@ -167,7 +167,7 @@ private:
 	//
 	// The max units inside any garrisoned structure is 10.  Since the units will "move around"
 	// the inside of the structure to be close to their targets, we need a max of 10 garrison points
-	// on each side of the building to accomodate everybody inside
+	// on each side of the building to accommodate everybody inside
 	//
 	// ----------------------------------------------------------------------------------------------
 	struct GarrisonPointData

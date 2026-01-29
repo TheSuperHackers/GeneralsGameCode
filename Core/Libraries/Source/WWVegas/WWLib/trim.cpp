@@ -44,7 +44,7 @@
 /***********************************************************************************************
  * strtrim -- Trim leading and trailing white space off of string.                             *
  *                                                                                             *
- *    This routine will remove the leading and trailing whitespace from the string specifed.   *
+ *    This routine will remove the leading and trailing whitespace from the string specified.  *
  *    The string is modified in place.                                                         *
  *                                                                                             *
  * INPUT:   buffer   -- Pointer to the string to be trimmed.                                   *

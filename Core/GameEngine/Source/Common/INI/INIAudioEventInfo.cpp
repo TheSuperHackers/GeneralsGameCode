@@ -129,26 +129,26 @@ static void parsePitchShift( INI* ini, void *instance, void *store, const void* 
 //-------------------------------------------------------------------------------------------------
 const FieldParse AudioEventInfo::m_audioEventInfo[] =
 {
-	{ "Filename",							INI::parseAsciiString,		NULL,								offsetof( AudioEventInfo, m_filename) },
-	{ "Volume",								INI::parsePercentToReal,	NULL,								offsetof( AudioEventInfo, m_volume ) },
-	{ "VolumeShift",					INI::parsePercentToReal,	NULL,								offsetof( AudioEventInfo, m_volumeShift ) },
-	{ "MinVolume",						INI::parsePercentToReal,	NULL,								offsetof( AudioEventInfo, m_minVolume ) },
-	{ "PitchShift",						parsePitchShift,					NULL,								0 },
-	{ "Delay",								parseDelay,								NULL,								0 },
-	{ "Limit",								INI::parseInt,						NULL,								offsetof( AudioEventInfo, m_limit ) },
-	{ "LoopCount",						INI::parseInt,						NULL,								offsetof( AudioEventInfo, m_loopCount ) },
+	{ "Filename",							INI::parseAsciiString,		nullptr,								offsetof( AudioEventInfo, m_filename) },
+	{ "Volume",								INI::parsePercentToReal,	nullptr,								offsetof( AudioEventInfo, m_volume ) },
+	{ "VolumeShift",					INI::parsePercentToReal,	nullptr,								offsetof( AudioEventInfo, m_volumeShift ) },
+	{ "MinVolume",						INI::parsePercentToReal,	nullptr,								offsetof( AudioEventInfo, m_minVolume ) },
+	{ "PitchShift",						parsePitchShift,					nullptr,								0 },
+	{ "Delay",								parseDelay,								nullptr,								0 },
+	{ "Limit",								INI::parseInt,						nullptr,								offsetof( AudioEventInfo, m_limit ) },
+	{ "LoopCount",						INI::parseInt,						nullptr,								offsetof( AudioEventInfo, m_loopCount ) },
 	{ "Priority",							INI::parseIndexList,			theAudioPriorityNames,	offsetof( AudioEventInfo, m_priority ) },
 	{ "Type",									INI::parseBitString32,		theSoundTypeNames,			offsetof( AudioEventInfo, m_type ) },
 	{ "Control",							INI::parseBitString32,		theAudioControlNames,	offsetof( AudioEventInfo, m_control ) },
-	{ "Sounds",								INI::parseSoundsList,			NULL,								offsetof( AudioEventInfo, m_sounds ) },
-	{ "SoundsNight",					INI::parseSoundsList,			NULL,								offsetof( AudioEventInfo, m_soundsNight ) },
-	{ "SoundsEvening",				INI::parseSoundsList,			NULL,								offsetof( AudioEventInfo, m_soundsEvening ) },
-	{ "SoundsMorning",				INI::parseSoundsList,			NULL,								offsetof( AudioEventInfo, m_soundsMorning ) },
-	{ "Attack",								INI::parseSoundsList,			NULL,								offsetof( AudioEventInfo, m_attackSounds ) },
-	{ "Decay",								INI::parseSoundsList,			NULL,								offsetof( AudioEventInfo, m_decaySounds ) },
-	{ "MinRange",							INI::parseReal,						NULL,								offsetof( AudioEventInfo, m_minDistance) },
-	{ "MaxRange",							INI::parseReal,						NULL,								offsetof( AudioEventInfo, m_maxDistance) },
-	{ "LowPassCutoff",				INI::parsePercentToReal,	NULL,								offsetof( AudioEventInfo, m_lowPassFreq) },
+	{ "Sounds",								INI::parseSoundsList,			nullptr,								offsetof( AudioEventInfo, m_sounds ) },
+	{ "SoundsNight",					INI::parseSoundsList,			nullptr,								offsetof( AudioEventInfo, m_soundsNight ) },
+	{ "SoundsEvening",				INI::parseSoundsList,			nullptr,								offsetof( AudioEventInfo, m_soundsEvening ) },
+	{ "SoundsMorning",				INI::parseSoundsList,			nullptr,								offsetof( AudioEventInfo, m_soundsMorning ) },
+	{ "Attack",								INI::parseSoundsList,			nullptr,								offsetof( AudioEventInfo, m_attackSounds ) },
+	{ "Decay",								INI::parseSoundsList,			nullptr,								offsetof( AudioEventInfo, m_decaySounds ) },
+	{ "MinRange",							INI::parseReal,						nullptr,								offsetof( AudioEventInfo, m_minDistance) },
+	{ "MaxRange",							INI::parseReal,						nullptr,								offsetof( AudioEventInfo, m_maxDistance) },
+	{ "LowPassCutoff",				INI::parsePercentToReal,	nullptr,								offsetof( AudioEventInfo, m_lowPassFreq) },
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -186,7 +186,7 @@ const char *const theAudioPriorityNames[] =
 	"NORMAL",
 	"HIGH",
 	"CRITICAL",
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(theAudioPriorityNames) == AP_COUNT + 1, "Incorrect array size");
 
@@ -201,7 +201,7 @@ const char *const theSoundTypeNames[] =
 	"ALLIES",
 	"ENEMIES",
 	"EVERYONE",
-	NULL
+	nullptr
 };
 
 const char *const theAudioControlNames[] =
@@ -211,6 +211,6 @@ const char *const theAudioControlNames[] =
 	"ALL",
 	"POSTDELAY",
 	"INTERRUPT",
-	NULL
+	nullptr
 };
 

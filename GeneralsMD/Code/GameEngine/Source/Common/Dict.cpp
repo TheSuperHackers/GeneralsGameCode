@@ -84,7 +84,7 @@ void Dict::DictPair::clear()
 		case DICT_BOOL:
 		case DICT_INT:
 		case DICT_REAL:
-			m_value = 0;
+			m_value = nullptr;
 			break;
 		case DICT_ASCIISTRING:
 			asAsciiString()->clear();
@@ -126,7 +126,7 @@ Dict::DictPair* Dict::findPairByKey(NameKeyType key) const
 	DEBUG_ASSERTCRASH(key != NAMEKEY_INVALID, ("invalid namekey!"));
 	DEBUG_ASSERTCRASH((UnsignedInt)key < (1L<<23), ("namekey too large!"));
 	if (!m_data)
-		return NULL;
+		return nullptr;
 	DictPair* base = m_data->peek();
 	Int minIdx = 0;
 	Int maxIdx = m_data->m_numPairsUsed;
@@ -143,7 +143,7 @@ Dict::DictPair* Dict::findPairByKey(NameKeyType key) const
 			return mid;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 // -----------------------------------------------------
@@ -157,10 +157,10 @@ Dict::DictPair *Dict::ensureUnique(int numPairsNeeded, Bool preserveData, DictPa
 		return pairToTranslate;
 	}
 
-	Dict::DictPairData* newData = NULL;
+	Dict::DictPairData* newData = nullptr;
 	if (numPairsNeeded > 0)
 	{
-		DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != NULL, ("Cannot use dynamic memory allocator before its initialization. Check static initialization order."));
+		DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != nullptr, ("Cannot use dynamic memory allocator before its initialization. Check static initialization order."));
 		DEBUG_ASSERTCRASH(numPairsNeeded <= MAX_LEN, ("Dict::ensureUnique exceeds max pairs length %d with requested length %d", MAX_LEN, numPairsNeeded));
 		int minBytes = sizeof(Dict::DictPairData) + numPairsNeeded*sizeof(Dict::DictPair);
 		int actualBytes = TheDynamicMemoryAllocator->getActualAllocationSize(minBytes);
@@ -200,7 +200,7 @@ Dict::DictPair *Dict::ensureUnique(int numPairsNeeded, Bool preserveData, DictPa
 void Dict::clear()
 {
 	releaseData();
-	m_data = NULL;
+	m_data = nullptr;
 }
 
 // -----------------------------------------------------
@@ -215,12 +215,12 @@ void Dict::releaseData()
 				src->clear();
 			TheDynamicMemoryAllocator->freeBytes(m_data);
 		}
-		m_data = 0;
+		m_data = nullptr;
 	}
 }
 
 // -----------------------------------------------------
-Dict::Dict(Int numPairsToPreAllocate) : m_data(0)
+Dict::Dict(Int numPairsToPreAllocate) : m_data(nullptr)
 {
 
 	/*
@@ -236,7 +236,7 @@ Dict::Dict(Int numPairsToPreAllocate) : m_data(0)
 										sizeof(UnicodeString) <= sizeof(void*), ("oops, this code needs attention"));
 
 	if (numPairsToPreAllocate)
-		ensureUnique(numPairsToPreAllocate, false, NULL);	// will throw on error
+		ensureUnique(numPairsToPreAllocate, false, nullptr);	// will throw on error
 }
 
 // -----------------------------------------------------
@@ -265,7 +265,7 @@ Dict::DataType Dict::getType(NameKeyType key) const
 }
 
 // -----------------------------------------------------
-Bool Dict::getBool(NameKeyType key, Bool *exists/*=NULL*/) const
+Bool Dict::getBool(NameKeyType key, Bool *exists/*=nullptr*/) const
 {
 	validate();
 	DictPair* pair = findPairByKey(key);
@@ -274,13 +274,13 @@ Bool Dict::getBool(NameKeyType key, Bool *exists/*=NULL*/) const
 		if (exists) *exists = true;
 		return *pair->asBool();
 	}
-	DEBUG_ASSERTCRASH(exists != NULL, ("dict key missing, or of wrong type"));	// only assert if they didn't check result
+	DEBUG_ASSERTCRASH(exists != nullptr, ("dict key missing, or of wrong type"));	// only assert if they didn't check result
 	if (exists) *exists = false;
 	return false;
 }
 
 // -----------------------------------------------------
-Int Dict::getInt(NameKeyType key, Bool *exists/*=NULL*/) const
+Int Dict::getInt(NameKeyType key, Bool *exists/*=nullptr*/) const
 {
 	validate();
 	DictPair* pair = findPairByKey(key);
@@ -289,13 +289,13 @@ Int Dict::getInt(NameKeyType key, Bool *exists/*=NULL*/) const
 		if (exists) *exists = true;
 		return *pair->asInt();
 	}
-	DEBUG_ASSERTCRASH(exists != NULL,("dict key missing, or of wrong type"));	// only assert if they didn't check result
+	DEBUG_ASSERTCRASH(exists != nullptr,("dict key missing, or of wrong type"));	// only assert if they didn't check result
 	if (exists) *exists = false;
 	return 0;
 }
 
 // -----------------------------------------------------
-Real Dict::getReal(NameKeyType key, Bool *exists/*=NULL*/) const
+Real Dict::getReal(NameKeyType key, Bool *exists/*=nullptr*/) const
 {
 	validate();
 	DictPair* pair = findPairByKey(key);
@@ -304,13 +304,13 @@ Real Dict::getReal(NameKeyType key, Bool *exists/*=NULL*/) const
 		if (exists) *exists = true;
 		return *pair->asReal();
 	}
-	DEBUG_ASSERTCRASH(exists != NULL,("dict key missing, or of wrong type"));	// only assert if they didn't check result
+	DEBUG_ASSERTCRASH(exists != nullptr,("dict key missing, or of wrong type"));	// only assert if they didn't check result
 	if (exists) *exists = false;
 	return 0.0f;
 }
 
 // -----------------------------------------------------
-AsciiString Dict::getAsciiString(NameKeyType key, Bool *exists/*=NULL*/) const
+AsciiString Dict::getAsciiString(NameKeyType key, Bool *exists/*=nullptr*/) const
 {
 	validate();
 	DictPair* pair = findPairByKey(key);
@@ -319,13 +319,13 @@ AsciiString Dict::getAsciiString(NameKeyType key, Bool *exists/*=NULL*/) const
 		if (exists) *exists = true;
 		return *pair->asAsciiString();
 	}
-	DEBUG_ASSERTCRASH(exists != NULL,("dict key missing, or of wrong type"));	// only assert if they didn't check result
+	DEBUG_ASSERTCRASH(exists != nullptr,("dict key missing, or of wrong type"));	// only assert if they didn't check result
 	if (exists) *exists = false;
 	return AsciiString::TheEmptyString;
 }
 
 // -----------------------------------------------------
-UnicodeString Dict::getUnicodeString(NameKeyType key, Bool *exists/*=NULL*/) const
+UnicodeString Dict::getUnicodeString(NameKeyType key, Bool *exists/*=nullptr*/) const
 {
 	validate();
 	DictPair* pair = findPairByKey(key);
@@ -334,7 +334,7 @@ UnicodeString Dict::getUnicodeString(NameKeyType key, Bool *exists/*=NULL*/) con
 		if (exists) *exists = true;
 		return *pair->asUnicodeString();
 	}
-	DEBUG_ASSERTCRASH(exists != NULL,("dict key missing, or of wrong type"));	// only assert if they didn't check result
+	DEBUG_ASSERTCRASH(exists != nullptr,("dict key missing, or of wrong type"));	// only assert if they didn't check result
 	if (exists) *exists = false;
 	return UnicodeString::TheEmptyString;
 }

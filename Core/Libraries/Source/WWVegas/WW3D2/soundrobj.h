@@ -136,7 +136,7 @@ protected:
 	///////////////////////////////////////////////////////////
 	//	Protected methods
 	///////////////////////////////////////////////////////////
-	virtual void		Update_On_Visibilty (void);
+	virtual void		Update_On_Visibility (void);
 
 private:
 
@@ -231,7 +231,7 @@ public:
 	//	Public constructors/destructors
 	///////////////////////////////////////////////////////////
 	SoundRenderObjPrototypeClass (SoundRenderObjDefClass *def)
-		: Definition (NULL)													{ Set_Definition (def); }
+		: Definition (nullptr)													{ Set_Definition (def); }
 
 	///////////////////////////////////////////////////////////
 	//	Public methods

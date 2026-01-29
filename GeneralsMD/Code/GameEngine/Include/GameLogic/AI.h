@@ -100,7 +100,7 @@ class AISideInfo : public MemoryPoolObject
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AISideInfo, "AISideInfo")
 public:
-	AISideInfo( void ) : m_easy(0), m_normal(1), m_hard(2), m_next(NULL)
+	AISideInfo( void ) : m_easy(0), m_normal(1), m_hard(2), m_next(nullptr)
 	{
 		m_side.clear();
 		m_baseDefenseStructure1.clear();
@@ -213,7 +213,7 @@ public:
 	Int	 m_minVehiclesForGroup;		// We need at least this many vehicles to do it.
 	Real m_minDistanceForGroup;		// We need to move at least this far to do it.
 	Real m_distanceRequiresGroup; // If we are moving this far or farther, force group moving.
-	Real m_minClumpDensity;				// What density constitues a clump.  .5 means units occupying 1/2 of their bounding area.
+	Real m_minClumpDensity;				// What density constitutes a clump.  .5 means units occupying 1/2 of their bounding area.
 
 	Int	 m_infantryPathfindDiameter; // Diameter of path in cells for infantry.
 	Int  m_vehiclePathfindDiameter;  // Diameter of path in cells for vehicles.
@@ -264,7 +264,7 @@ public:
 		UNFOGGED													= 1 << 5
 	};
 	Object *findClosestEnemy( const Object *me, Real range, UnsignedInt qualifiers,
-		const AttackPriorityInfo *info=NULL, PartitionFilter *optionalFilter=NULL);
+		const AttackPriorityInfo *info=nullptr, PartitionFilter *optionalFilter=nullptr);
 
 	Object *findClosestRepulsor( const Object *me, Real range);
 
@@ -341,7 +341,7 @@ static const char *const TheCommandSourceMaskNames[] =
 	"FROM_DOZER", //don't use this
 	"DEFAULT_SWITCH_WEAPON", //unit will pick this weapon when normal logic fails.
 
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(TheCommandSourceMaskNames) == COMMAND_SOURCE_TYPE_COUNT + 1, "Incorrect array size");
 #endif

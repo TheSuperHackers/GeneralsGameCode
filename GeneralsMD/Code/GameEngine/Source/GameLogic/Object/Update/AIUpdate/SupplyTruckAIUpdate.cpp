@@ -74,7 +74,7 @@ AIStateMachine* SupplyTruckAIUpdate::makeStateMachine()
 //-------------------------------------------------------------------------------------------------
 SupplyTruckAIUpdate::SupplyTruckAIUpdate( Thing *thing, const ModuleData* moduleData ) : AIUpdateInterface( thing, moduleData )
 {
-	m_supplyTruckStateMachine = NULL;
+	m_supplyTruckStateMachine = nullptr;
 	m_preferredDock = INVALID_ID;
 	m_numberBoxes = 0;
 	m_forcePending = FALSE;
@@ -365,9 +365,9 @@ TheInGameUI->DEBUG_addFloatingText("entering idle state", getMachineOwner()->get
 #endif
 
  	Object *owner = getMachineOwner();
- 	if (owner != NULL) {
+ 	if (owner != nullptr) {
  		AIUpdateInterface * ownerAI = owner->getAIUpdateInterface();
- 		if (ownerAI != NULL) {
+ 		if (ownerAI != nullptr) {
  			// This is to get idle workers to always show up on the
  			// "idle worker button."
  			// Basically if you have a worker interface, and we are entering
@@ -375,7 +375,7 @@ TheInGameUI->DEBUG_addFloatingText("entering idle state", getMachineOwner()->get
  			// know so it can decide which idle state it wants us to actually
  			// be in from its perspective.
  			WorkerAIInterface *workerAI = ownerAI->getWorkerAIInterface();
- 			if (workerAI != NULL) {
+ 			if (workerAI != nullptr) {
  				workerAI->exitingSupplyTruckState();
  			}
  		}
@@ -394,39 +394,39 @@ SupplyTruckStateMachine::SupplyTruckStateMachine( Object *owner ) : StateMachine
 {
 	static const StateConditionInfo busyConditions[] =
 	{
-		StateConditionInfo(ownerIdle, ST_IDLE, NULL),
-		StateConditionInfo(ownerDocking, ST_DOCKING, NULL),
-		StateConditionInfo(NULL, NULL, NULL)
+		StateConditionInfo(ownerIdle, ST_IDLE, nullptr),
+		StateConditionInfo(ownerDocking, ST_DOCKING, nullptr),
+		StateConditionInfo(nullptr, INVALID_STATE_ID, nullptr)
 	};
 
 	static const StateConditionInfo idleConditions[] =
 	{
-		StateConditionInfo(isForcedIntoBusyState, ST_BUSY, NULL),
-		StateConditionInfo(isForcedIntoWantingState, ST_WANTING, NULL),
-		StateConditionInfo(ownerDocking, ST_DOCKING, NULL),
-		StateConditionInfo(ownerNotDockingOrIdle, ST_BUSY, NULL),
-		StateConditionInfo(NULL, NULL, NULL)
+		StateConditionInfo(isForcedIntoBusyState, ST_BUSY, nullptr),
+		StateConditionInfo(isForcedIntoWantingState, ST_WANTING, nullptr),
+		StateConditionInfo(ownerDocking, ST_DOCKING, nullptr),
+		StateConditionInfo(ownerNotDockingOrIdle, ST_BUSY, nullptr),
+		StateConditionInfo(nullptr, INVALID_STATE_ID, nullptr)
 	};
 
 	static const StateConditionInfo wantingConditions[] =
 	{
-		StateConditionInfo(ownerDocking, ST_DOCKING, NULL),
-		StateConditionInfo(ownerNotDockingOrIdle, ST_BUSY, NULL),
-		StateConditionInfo(NULL, NULL, NULL)
+		StateConditionInfo(ownerDocking, ST_DOCKING, nullptr),
+		StateConditionInfo(ownerNotDockingOrIdle, ST_BUSY, nullptr),
+		StateConditionInfo(nullptr, INVALID_STATE_ID, nullptr)
 	};
 
 	static const StateConditionInfo regroupingConditions[] =
 	{
-		StateConditionInfo(ownerPlayerCommanded, ST_BUSY, NULL),
-		StateConditionInfo(NULL, NULL, NULL)
+		StateConditionInfo(ownerPlayerCommanded, ST_BUSY, nullptr),
+		StateConditionInfo(nullptr, INVALID_STATE_ID, nullptr)
 	};
 
 	static const StateConditionInfo dockingConditions[] =
 	{
-		StateConditionInfo(isForcedIntoBusyState, ST_BUSY, NULL),
-		StateConditionInfo(ownerAvailableForSupplying, ST_WANTING, NULL),
-		StateConditionInfo(ownerNotDockingOrIdle, ST_BUSY, NULL),
-		StateConditionInfo(NULL, NULL, NULL)
+		StateConditionInfo(isForcedIntoBusyState, ST_BUSY, nullptr),
+		StateConditionInfo(ownerAvailableForSupplying, ST_WANTING, nullptr),
+		StateConditionInfo(ownerNotDockingOrIdle, ST_BUSY, nullptr),
+		StateConditionInfo(nullptr, INVALID_STATE_ID, nullptr)
 	};
 
 	// order matters: first state is the default state.
@@ -564,14 +564,14 @@ TheInGameUI->DEBUG_addFloatingText("entering regrouping state", getMachineOwner(
 	if( !ownerPlayer || !ownerAI )
 		return STATE_FAILURE;
 
-	ownerAI->ignoreObstacle( NULL );
+	ownerAI->ignoreObstacle( nullptr );
 	SupplyTruckAIInterface *update = owner->getAIUpdateInterface()->getSupplyTruckAIInterface();
 	if( !update )
 	{
 		return STATE_FAILURE;
 	}
 
-	Object *destinationObject = NULL;
+	Object *destinationObject = nullptr;
 
 	KindOfMaskType kindof;
 	KindOfMaskType kindofnot;

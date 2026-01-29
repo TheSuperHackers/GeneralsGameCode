@@ -26,15 +26,15 @@
 #include "WorldBuilderView.h"
 #include "BrushTool.h"
 
-BrushOptions *BrushOptions::m_staticThis = NULL;
+BrushOptions *BrushOptions::m_staticThis = nullptr;
 Int BrushOptions::m_currentWidth = 0;
 Int BrushOptions::m_currentHeight = 0;
 Int BrushOptions::m_currentFeather = 0;
 /////////////////////////////////////////////////////////////////////////////
-/// BrushOptions dialog trivial construstor - Create does the real work.
+/// BrushOptions dialog trivial constructor - Create does the real work.
 
 
-BrushOptions::BrushOptions(CWnd* pParent /*=NULL*/)
+BrushOptions::BrushOptions(CWnd* pParent /*=nullptr*/)
 {
 	//{{AFX_DATA_INIT(BrushOptions)
 		// NOTE: the ClassWizard will add member initialization here

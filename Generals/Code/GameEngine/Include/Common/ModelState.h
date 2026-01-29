@@ -54,7 +54,7 @@
 	YUCK, WHAT NOW
 	--------------
 
-	Let's represent the Model State with two dictinct pieces:
+	Let's represent the Model State with two distinct pieces:
 
 	-- an "ActionState" piece, representing the mutually-exclusive states, which are almost
 		always an action of some sort
@@ -222,7 +222,6 @@ typedef BitFlags<MODELCONDITION_COUNT> ModelConditionFlags;
 #define MAKE_MODELCONDITION_MASK3(k,a,b) ModelConditionFlags(ModelConditionFlags::kInit, (k), (a), (b))
 #define MAKE_MODELCONDITION_MASK4(k,a,b,c) ModelConditionFlags(ModelConditionFlags::kInit, (k), (a), (b), (c))
 #define MAKE_MODELCONDITION_MASK5(k,a,b,c,d) ModelConditionFlags(ModelConditionFlags::kInit, (k), (a), (b), (c), (d))
-#define MAKE_MODELCONDITION_MASK12(a,b,c,d,e,f,g,h,i,j,k,l) ModelConditionFlags(ModelConditionFlags::kInit, (a), (b), (c), (d), (e), (f), (g), (h), (i), (j), (k), (l))
 
 //-------------------------------------------------------------------------------------------------
 

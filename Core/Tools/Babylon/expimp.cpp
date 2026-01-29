@@ -102,7 +102,7 @@ static void translateCopy( OLECHAR *outbuf, OLECHAR *inbuf )
 
 	{
 		static OLECHAR buffer[100*1024];
-		OLECHAR *firstLetter = NULL, *lastLetter;
+		OLECHAR *firstLetter = nullptr, *lastLetter;
 		OLECHAR *b = buffer;
 		int formatWord = FALSE;
 		OLECHAR ch;
@@ -118,7 +118,7 @@ static void translateCopy( OLECHAR *outbuf, OLECHAR *inbuf )
 						lastLetter = b-1;
 						reverseWord ( firstLetter, lastLetter );
 					}
-					firstLetter = NULL;
+					firstLetter = nullptr;
 					formatWord = FALSE;
 				}
 				*b++ = ch;
@@ -200,7 +200,7 @@ static void writeText ( BabylonText *text, int row )
 	wcscpy ( olebuf, text->Get());
 	EncodeFormat ( olebuf );
 	PutCell ( row, CELL_ENGLISH, olebuf , 0);
-	PutCell ( row, CELL_MAXLEN, NULL , maxlen );
+	PutCell ( row, CELL_MAXLEN, nullptr , maxlen );
 
 	swprintf ( buffer, L"=LEN(%c%d)",'A' + CELL_LOCALIZED -1,  row );
 	PutCell ( row, CELL_STRLEN, buffer , 0);
@@ -394,8 +394,8 @@ static int export_trans ( TransDB *db, LangID langid, TROPTIONS *options, void (
 
 	if ( write )
 	{
-		PutCell ( row, CELL_STRINGID, NULL, -1 );
-		PutCell ( ROW_COUNT, COLUMN_COUNT, NULL, count );
+		PutCell ( row, CELL_STRINGID, nullptr, -1 );
+		PutCell ( ROW_COUNT, COLUMN_COUNT, nullptr, count );
 	}
 
 	return count;
@@ -405,7 +405,7 @@ static int export_trans ( TransDB *db, LangID langid, TROPTIONS *options, void (
 int ExportTranslations ( TransDB *db, const char *filename, LangID langid, TROPTIONS *options, CBabylonDlg *dlg )
 {
 	int exports ;
-	exports = export_trans ( db, langid, options, NULL, FALSE );
+	exports = export_trans ( db, langid, options, nullptr, FALSE );
 
 	if ( !exports )
 	{
@@ -563,7 +563,7 @@ static int import_trans ( TransDB *db, LangID langid, void (*cb) ( void ), CBaby
 
 		BabylonText *text;
 
-		if ( (text = db->FindText ( id )) == NULL )
+		if ( (text = db->FindText ( id )) == nullptr )
 		{
 			// string is no longer in database
 			stale_count++;
@@ -757,7 +757,7 @@ static int update_sent_trans ( TransDB *db, LangID langid, void (*cb) ( void ), 
 
 		BabylonText *text;
 
-		if ( (text = db->FindText ( id )) == NULL )
+		if ( (text = db->FindText ( id )) == nullptr )
 		{
 			// string is no longer in database
 			unmatched++;
@@ -1408,7 +1408,7 @@ void ProcessWaves ( TransDB *db, const char *filename, CBabylonDlg *dlg )
 		int last_row = 1;
 		int matches = 0;
 		int unmatched = 0;
-		FILE *file = NULL;
+		FILE *file = nullptr;
 		char *ptr;
 
 		strcpy ( buffer, filename );
@@ -1483,7 +1483,7 @@ int GenerateReport ( TransDB *db, const char *filename, RPOPTIONS *options, Lang
 	LangID langid;
 	int count= 0 ;
 	int num;
-	FILE *file = NULL;
+	FILE *file = nullptr;
 
 	if ( dlg )
 	{

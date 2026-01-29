@@ -141,31 +141,31 @@ public:
 		if there is no pair with the given key, or the value is
 		not of the correct type, 0 is returned.
 	*/
-	Bool getBool(NameKeyType key, Bool* exists = NULL) const;
+	Bool getBool(NameKeyType key, Bool* exists = nullptr) const;
 	/**
 		return the value for the pair with the given key.
 		if there is no pair with the given key, or the value is
 		not of the correct type, 0 is returned.
 	*/
-	Int getInt(NameKeyType key, Bool* exists = NULL) const;
+	Int getInt(NameKeyType key, Bool* exists = nullptr) const;
 	/**
 		return the value for the pair with the given key.
 		if there is no pair with the given key, or the value is
 		not of the correct type, 0 is returned.
 	*/
-	Real getReal(NameKeyType key, Bool* exists = NULL) const;
+	Real getReal(NameKeyType key, Bool* exists = nullptr) const;
 	/**
 		return the value for the pair with the given key.
 		if there is no pair with the given key, or the value is
 		not of the correct type, "" is returned.
 	*/
-	AsciiString getAsciiString(NameKeyType key, Bool* exists = NULL) const;
+	AsciiString getAsciiString(NameKeyType key, Bool* exists = nullptr) const;
 	/**
 		return the value for the pair with the given key.
 		if there is no pair with the given key, or the value is
 		not of the correct type, "" is returned.
 	*/
-	UnicodeString getUnicodeString(NameKeyType key, Bool* exists = NULL) const;
+	UnicodeString getUnicodeString(NameKeyType key, Bool* exists = nullptr) const;
 
 	/**
 		return the value for the pair with the given index.

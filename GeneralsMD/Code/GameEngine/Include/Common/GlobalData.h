@@ -341,10 +341,10 @@ public:
 	Int m_maxLineBuildObjects;				///< line style builds can be no longer than this
 	Int m_maxTunnelCapacity;					///< Max people in Player's tunnel network
 	Real m_horizontalScrollSpeedFactor;	///< Factor applied to the game screen scrolling speed.
-	Real m_verticalScrollSpeedFactor;		///< Seperated because of our aspect ratio
+	Real m_verticalScrollSpeedFactor;		///< Separated because of our aspect ratio
 	Real m_scrollAmountCutoff;				///< Scroll speed to not adjust camera height
 	Real m_cameraAdjustSpeed;					///< Rate at which we adjust camera height
-	Bool m_enforceMaxCameraHeight;		///< Enfoce max camera height while scrolling?
+	Bool m_enforceMaxCameraHeight;		///< Enforce max camera height while scrolling?
 	Bool m_buildMapCache;
 	AsciiString m_initialFile;				///< If this is specified, load a specific map from the command-line
 	AsciiString m_pendingFile;				///< If this is specified, use this map at the next game start
@@ -458,8 +458,8 @@ public:
 
 	Bool m_debugShowGraphicalFramerate;		///< Whether or not to show the graphical framerate bar.
 
-	Int m_powerBarBase;										///< Logrithmic base for the power bar scale
-	Real m_powerBarIntervals;							///< how many logrithmic intervals the width will be divided into
+	Int m_powerBarBase;										///< Logarithmic base for the power bar scale
+	Real m_powerBarIntervals;							///< how many logarithmic intervals the width will be divided into
 	Int m_powerBarYellowRange;						///< Red if consumption exceeds production, yellow if consumption this close but under, green if further under
 	Real m_displayGamma;									///<display gamma that's adjusted with "brightness" control on options screen.
 
@@ -467,7 +467,7 @@ public:
 
 	Bool m_shouldUpdateTGAToDDS;					///< Should we attempt to update old TGAs to DDS stuff on loadup?
 
-	UnsignedInt m_doubleClickTimeMS;	///< What is the maximum amount of time that can seperate two clicks in order
+	UnsignedInt m_doubleClickTimeMS;	///< What is the maximum amount of time that can separate two clicks in order
 																		///< for us to generate a double click message?
 
 	RGBColor m_shroudColor;						///< What color should the shroud be?  Remember, this is a lighting multiply, not an add
@@ -483,7 +483,7 @@ public:
 	UnsignedInt m_networkKeepAliveDelay;			      	///< The number of seconds between when the connections to each player send a keep-alive packet.
 	UnsignedInt m_networkRunAheadSlack;				      	///< The amount of slack in the run ahead value. This is the percentage of the calculated run ahead that is added.
 	UnsignedInt m_networkDisconnectTime;			      	///< The number of milliseconds between when the game gets stuck on a frame for a network stall and when the disconnect dialog comes up.
-	UnsignedInt m_networkPlayerTimeoutTime;		      	///< The number of milliseconds between when a player's last keep alive command was recieved and when they are considered disconnected from the game.
+	UnsignedInt m_networkPlayerTimeoutTime;		      	///< The number of milliseconds between when a player's last keep alive command was received and when they are considered disconnected from the game.
 	UnsignedInt	m_networkDisconnectScreenNotifyTime;  ///< The number of milliseconds between when the disconnect screen comes up and when the other players are notified that we are on the disconnect screen.
 
 	Real				m_keyboardCameraRotateSpeed;    ///< How fast the camera rotates when rotated via keyboard controls.

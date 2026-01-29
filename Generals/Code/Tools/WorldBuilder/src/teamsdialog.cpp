@@ -42,7 +42,7 @@ static const char* NEUTRAL_NAME_STR = "(neutral)";
 // CTeamsDialog dialog
 
 
-CTeamsDialog::CTeamsDialog(CWnd* pParent /*=NULL*/)
+CTeamsDialog::CTeamsDialog(CWnd* pParent /*=nullptr*/)
 	: CDialog(CTeamsDialog::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(CTeamsDialog)
@@ -502,7 +502,7 @@ void CTeamsDialog::OnMoveUpTeam()
 
 	// rebuild user interface to reflect changes
 /*
-	LVITEM *pItem = NULL;
+	LVITEM *pItem = nullptr;
 	CListCtrl* pList = (CListCtrl*) GetDlgItem(IDC_TEAMS_LIST);
 	Bool result = pList->GetItem(pItem);
 	pList->DeleteItem(m_curTeam);
@@ -560,7 +560,7 @@ void CTeamsDialog::OnMoveDownTeam()
 	m_curTeam++;
 
 	// rebuild user interface to reflect changes
-/*	LVITEM *pItem = NULL;
+/*	LVITEM *pItem = nullptr;
 	CListCtrl* pList = (CListCtrl*) GetDlgItem(IDC_TEAMS_LIST);
 	Bool result = pList->GetItem(pItem);
 	pList->DeleteItem(m_curTeam);

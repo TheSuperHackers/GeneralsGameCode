@@ -36,7 +36,7 @@
 
 #pragma once
 
-#ifdef _MSC_VER
+#if defined(_WIN32)
 
 #include "win.h"
 /*
@@ -46,7 +46,7 @@ typedef struct _EXCEPTION_POINTERS EXCEPTION_POINTERS;
 typedef struct _CONTEXT CONTEXT;
 
 int Exception_Handler(int exception_code, EXCEPTION_POINTERS *e_info);
-int Stack_Walk(unsigned long *return_addresses, int num_addresses, CONTEXT *context = NULL);
+int Stack_Walk(unsigned long *return_addresses, int num_addresses, CONTEXT *context = nullptr);
 bool Lookup_Symbol(void *code_ptr, char *symbol, int &displacement);
 void Load_Image_Helper(void);
 void Register_Thread_ID(unsigned long thread_id, char *thread_name, bool main = false);
@@ -80,4 +80,4 @@ typedef struct tThreadInfoType {
 
 
 
-#endif	//_MSC_VER
+#endif	//_WIN32

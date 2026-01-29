@@ -149,7 +149,7 @@ private:
 
 	// This info is packaged into a struct to minimize DynamicVectorClass overhead
 	struct WeightInfoStruct {
-		WeightInfoStruct() : Name(NULL) {}
+		WeightInfoStruct() : Name(nullptr) {}
 		~WeightInfoStruct() { delete [] Name; }
 
 		char *Name;

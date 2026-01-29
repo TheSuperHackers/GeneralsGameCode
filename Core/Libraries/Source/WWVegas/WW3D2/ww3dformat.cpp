@@ -393,19 +393,29 @@ WW3DFormat Get_Valid_Texture_Format(WW3DFormat format, bool is_compression_allow
 unsigned Get_Bytes_Per_Pixel(WW3DFormat format)
 {
 	switch (format) {
+	case WW3D_FORMAT_A8R8G8B8:
 	case WW3D_FORMAT_X8R8G8B8:
 	case WW3D_FORMAT_X8L8V8U8:
-	case WW3D_FORMAT_A8R8G8B8: return 4;
-	case WW3D_FORMAT_R8G8B8: return 3;
+		return 4;
+	case WW3D_FORMAT_R8G8B8:
+		return 3;
+	case WW3D_FORMAT_R5G6B5:
+	case WW3D_FORMAT_X1R5G5B5:
 	case WW3D_FORMAT_A1R5G5B5:
 	case WW3D_FORMAT_A4R4G4B4:
+	case WW3D_FORMAT_A8R3G3B2:
+	case WW3D_FORMAT_X4R4G4B4:
+	case WW3D_FORMAT_A8P8:
+	case WW3D_FORMAT_A8L8:
 	case WW3D_FORMAT_U8V8:
 	case WW3D_FORMAT_L6V5U5:
-	case WW3D_FORMAT_R5G6B5: return 2;
+		return 2;
 	case WW3D_FORMAT_R3G3B2:
-	case WW3D_FORMAT_L8:
 	case WW3D_FORMAT_A8:
-	case WW3D_FORMAT_P8: return 1;
+	case WW3D_FORMAT_P8:
+	case WW3D_FORMAT_L8:
+	case WW3D_FORMAT_A4L4:
+		return 1;
 
 	default:	WWASSERT(0); break;
 	}

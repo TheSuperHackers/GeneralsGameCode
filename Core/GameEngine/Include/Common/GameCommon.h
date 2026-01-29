@@ -338,7 +338,7 @@ public:																																								\
 			o->dlink_removeFrom_##LISTNAME(&m_dlinkhead_##LISTNAME.m_head);									\
 	}																																										\
 	typedef void (*RemoveAllProc_##LISTNAME)(OBJCLASS* o);															\
-	inline void removeAll_##LISTNAME(RemoveAllProc_##LISTNAME p = NULL)									\
+	inline void removeAll_##LISTNAME(RemoveAllProc_##LISTNAME p = nullptr)									\
 	{																																										\
 		while (m_dlinkhead_##LISTNAME.m_head)																							\
 		{																																									\
@@ -351,7 +351,7 @@ public:																																								\
 	inline void reverse_##LISTNAME()																										\
 	{																																										\
 		OBJCLASS* cur = m_dlinkhead_##LISTNAME.m_head;																		\
-		OBJCLASS* prev = NULL;																														\
+		OBJCLASS* prev = nullptr;																														\
 		while (cur)																																				\
 		{																																									\
 			OBJCLASS* originalNext = cur->dlink_next_##LISTNAME();													\
@@ -455,7 +455,7 @@ public:
 
 	Bool done() const
 	{
-		return m_cur == NULL;
+		return m_cur == nullptr;
 	}
 
 	OBJCLASS* cur() const

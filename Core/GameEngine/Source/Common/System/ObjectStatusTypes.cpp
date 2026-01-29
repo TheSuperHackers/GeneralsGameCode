@@ -81,7 +81,7 @@ const char* const ObjectStatusMaskType::s_bitNameList[] =
 	"IMMOBILE",
 	"DISGUISED",
 	"DEPLOYED",
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(ObjectStatusMaskType::s_bitNameList) == ObjectStatusMaskType::NumBits + 1, "Incorrect array size");
 

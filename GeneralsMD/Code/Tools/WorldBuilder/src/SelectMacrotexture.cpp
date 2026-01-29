@@ -30,7 +30,7 @@
 // SelectMacrotexture dialog
 
 
-SelectMacrotexture::SelectMacrotexture(CWnd* pParent /*=NULL*/)
+SelectMacrotexture::SelectMacrotexture(CWnd* pParent /*=nullptr*/)
 	: CDialog(SelectMacrotexture::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(SelectMacrotexture)
@@ -80,7 +80,7 @@ BOOL SelectMacrotexture::OnInitDialog()
 
 		if (!filenameList.empty()) {
 			TVINSERTSTRUCT ins;
-			HTREEITEM child = NULL;
+			HTREEITEM child = nullptr;
 			FilenameList::iterator it = filenameList.begin();
 			do {
 				AsciiString filename = *it;

@@ -35,7 +35,7 @@
  * adding commands in order more efficiently since that is whats going to be
  * done most of the time.  If the new message doesn't go after the last message
  * inserted, then the list will be traversed linearly until the proper spot is
- * found.  We can get away with this inefficient method since these occurances
+ * found.  We can get away with this inefficient method since these occurrences
  * will be rare.  Also, the list is not expected to ever have more than 30 or so
  * commands on it at a time.  Five commands would probably be a normal amount.
  */

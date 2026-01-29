@@ -48,7 +48,7 @@ public:
 
 	static void buildFieldParse( MultiIniFieldParse &p );
 
-	const FXList *m_fxOnGroundDeath;							///< fx list executed on death when destoyed on ground
+	const FXList *m_fxOnGroundDeath;							///< fx list executed on death when destroyed on ground
 	const ObjectCreationList *m_oclOnGroundDeath;	///< ocl list executed on death when destroyed on ground
 
 	const FXList *m_fxInitialDeath;								///< FXList for initial death

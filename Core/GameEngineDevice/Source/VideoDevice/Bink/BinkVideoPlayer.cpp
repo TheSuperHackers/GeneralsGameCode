@@ -187,9 +187,9 @@ void	BinkVideoPlayer::regainFocus( void )
 VideoStreamInterface* BinkVideoPlayer::createStream( HBINK handle )
 {
 
-	if ( handle == NULL )
+	if ( handle == nullptr )
 	{
-		return NULL;
+		return nullptr;
 	}
 
 	BinkVideoStream *stream = NEW BinkVideoStream;
@@ -220,7 +220,7 @@ VideoStreamInterface* BinkVideoPlayer::createStream( HBINK handle )
 
 VideoStreamInterface*	BinkVideoPlayer::open( AsciiString movieTitle )
 {
-	VideoStreamInterface*	stream = NULL;
+	VideoStreamInterface*	stream = nullptr;
 
 	const Video* pVideo = getVideo(movieTitle);
 	if (pVideo) {
@@ -272,7 +272,7 @@ void BinkVideoPlayer::notifyVideoPlayerOfNewProvider( Bool nowHasValid )
 {
 	if (!nowHasValid) {
 		TheAudio->releaseHandleForBink();
-		BinkSetSoundTrack(0, 0);
+		BinkSetSoundTrack(0, nullptr);
 	} else {
 		initializeBinkWithMiles();
 	}
@@ -291,7 +291,7 @@ void BinkVideoPlayer::initializeBinkWithMiles()
 	}
 	if( !driver || retVal == 0)
 	{
-		BinkSetSoundTrack ( 0,0 );
+		BinkSetSoundTrack ( 0,nullptr );
 	}
 }
 
@@ -300,7 +300,7 @@ void BinkVideoPlayer::initializeBinkWithMiles()
 //============================================================================
 
 BinkVideoStream::BinkVideoStream()
-: m_handle(NULL)
+: m_handle(nullptr)
 {
 
 }
@@ -311,10 +311,10 @@ BinkVideoStream::BinkVideoStream()
 
 BinkVideoStream::~BinkVideoStream()
 {
-	if ( m_handle != NULL )
+	if ( m_handle != nullptr )
 	{
 		BinkClose( m_handle );
-		m_handle = NULL;
+		m_handle = nullptr;
 	}
 }
 
@@ -379,7 +379,7 @@ void BinkVideoStream::frameRender( VideoBuffer *buffer )
 				return;
 		}
 
-		if ( mem != NULL )
+		if ( mem != nullptr )
 		{
 
 			BinkCopyToBuffer ( m_handle, mem, buffer->pitch(), buffer->height(),
@@ -423,7 +423,7 @@ Int	BinkVideoStream::frameCount( void )
 
 void BinkVideoStream::frameGoto( Int index )
 {
-	BinkGoto(m_handle, index, NULL );
+	BinkGoto(m_handle, index, 0 );
 }
 
 //============================================================================

@@ -68,7 +68,7 @@ const char *const TheAcademyClassificationTypeNames[] =
 	"ACT_NONE",
 	"ACT_UPGRADE_RADAR",
 	"ACT_SUPERPOWER",
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(TheAcademyClassificationTypeNames) == ACT_COUNT + 1, "Incorrect array size");
 
@@ -122,11 +122,11 @@ void AcademyStats::init( const Player *player )
 
 	//Find the command set for our dozer... so we can extract information about things
 	//we can build.
-	m_dozerCommandSet = NULL;
+	m_dozerCommandSet = nullptr;
 	player->iterateObjects( findDozerCommandSet, (void*)m_dozerCommandSet );
 
-	m_commandCenterTemplate = NULL;
-	m_supplyCenterTemplate = NULL;
+	m_commandCenterTemplate = nullptr;
+	m_supplyCenterTemplate = nullptr;
 
 	if( m_dozerCommandSet )
 	{
@@ -205,7 +205,7 @@ void AcademyStats::init( const Player *player )
 	//13) Extra gatherers built?
 	m_gatherersBuilt = 0;
 
-	//14) Heros built?
+	//14) Heroes built?
 	m_heroesBuilt = 0;
 
 	//+------------------------------+
@@ -291,7 +291,7 @@ static void updateAcademyStats( Object *obj, void *userData )
 
 	if( academy->isFirstUpdate() )
 	{
-		academy->recordProduction( obj, NULL );
+		academy->recordProduction( obj, nullptr );
 	}
 }
 
@@ -359,7 +359,7 @@ void AcademyStats::update()
 }
 
 //------------------------------------------------------------------------------------------------
-void AcademyStats::recordProduction( const Object *obj, const Object *constructer )
+void AcademyStats::recordProduction( const Object *obj, const Object *constructor )
 {
 	UnsignedInt now = TheGameLogic->getFrame();
 
@@ -401,7 +401,7 @@ void AcademyStats::recordProduction( const Object *obj, const Object *constructe
 		m_gatherersBuilt++;
 	}
 
-	//14) Heros built?
+	//14) Heroes built?
 	if( obj->isKindOf( KINDOF_HERO ) )
 	{
 		m_heroesBuilt++;
@@ -702,7 +702,7 @@ void AcademyStats::evaluateTier1Advice( AcademyAdviceInfo *info, Int numAvailabl
 		numAvailableTips--;
 	}
 
-	//14) Heros built?
+	//14) Heroes built?
 	if( !m_heroesBuilt )
 	{
 		availableTips++;
@@ -1069,7 +1069,7 @@ Bool AcademyStats::calculateAcademyAdvice( AcademyAdviceInfo *info )
 	//Sanity
 	if( !info )
 	{
-		DEBUG_CRASH( ("AcademyStats::calculateAcademyAdvice() was passed in NULL AcademyAdviceInfo.") );
+		DEBUG_CRASH( ("AcademyStats::calculateAcademyAdvice() was passed in null AcademyAdviceInfo.") );
 		return FALSE;
 	}
 
@@ -1174,7 +1174,7 @@ void AcademyStats::xfer( Xfer *xfer )
 	//13) Extra gathers built?
 	xfer->xferUnsignedInt( &m_gatherersBuilt );
 
-	//14) Heros built?
+	//14) Heroes built?
 	xfer->xferUnsignedInt( &m_heroesBuilt );
 
 	//+------------------------------+

@@ -92,14 +92,14 @@ public:
 
 		static const FieldParse dataFieldParse[] =
 		{
-			{ "MaxBoxes",					INI::parseInt,		NULL, offsetof( WorkerAIUpdateModuleData, m_maxBoxesData ) },
-			{ "RepairHealthPercentPerSecond",	INI::parsePercentToReal,	NULL, offsetof( WorkerAIUpdateModuleData, m_repairHealthPercentPerSecond ) },
-			{ "BoredTime",										INI::parseDurationReal,		NULL, offsetof( WorkerAIUpdateModuleData, m_boredTime ) },
-			{ "BoredRange",										INI::parseReal,						NULL, offsetof( WorkerAIUpdateModuleData, m_boredRange ) },
-			{ "SupplyCenterActionDelay", INI::parseDurationUnsignedInt, NULL, offsetof( WorkerAIUpdateModuleData, m_centerDelay ) },
-			{ "SupplyWarehouseActionDelay", INI::parseDurationUnsignedInt, NULL, offsetof( WorkerAIUpdateModuleData, m_warehouseDelay ) },
-			{ "SupplyWarehouseScanDistance", INI::parseReal, NULL, offsetof( WorkerAIUpdateModuleData, m_warehouseScanDistance ) },
- 			{ "SuppliesDepletedVoice", INI::parseAudioEventRTS, NULL, offsetof( WorkerAIUpdateModuleData, m_suppliesDepletedVoice) },
+			{ "MaxBoxes",					INI::parseInt,		nullptr, offsetof( WorkerAIUpdateModuleData, m_maxBoxesData ) },
+			{ "RepairHealthPercentPerSecond",	INI::parsePercentToReal,	nullptr, offsetof( WorkerAIUpdateModuleData, m_repairHealthPercentPerSecond ) },
+			{ "BoredTime",										INI::parseDurationReal,		nullptr, offsetof( WorkerAIUpdateModuleData, m_boredTime ) },
+			{ "BoredRange",										INI::parseReal,						nullptr, offsetof( WorkerAIUpdateModuleData, m_boredRange ) },
+			{ "SupplyCenterActionDelay", INI::parseDurationUnsignedInt, nullptr, offsetof( WorkerAIUpdateModuleData, m_centerDelay ) },
+			{ "SupplyWarehouseActionDelay", INI::parseDurationUnsignedInt, nullptr, offsetof( WorkerAIUpdateModuleData, m_warehouseDelay ) },
+			{ "SupplyWarehouseScanDistance", INI::parseReal, nullptr, offsetof( WorkerAIUpdateModuleData, m_warehouseScanDistance ) },
+ 			{ "SuppliesDepletedVoice", INI::parseAudioEventRTS, nullptr, offsetof( WorkerAIUpdateModuleData, m_suppliesDepletedVoice) },
 			{ 0, 0, 0, 0 }
 		};
     p.add(dataFieldParse);
@@ -155,13 +155,14 @@ public:
 	// task actions
 	virtual void newTask( DozerTask task, Object* target );	///< set a desire to do the requrested task
 	virtual void cancelTask( DozerTask task );						///< cancel this task from the queue, if it's the current task the dozer will stop working on it
+	virtual void resumePreviousTask(void);									///< resume the previous task if there was one
 
 	// internal methods to manage behavior from within the dozer state machine
 	virtual void internalTaskComplete( DozerTask task );					///< set a dozer task as successfully completed
 	virtual void internalCancelTask( DozerTask task );						///< cancel this task from the dozer
 	virtual void internalTaskCompleteOrCancelled( DozerTask task );	///< this is called when tasks are cancelled or completed
 
-	/** return a dock point for the action and task (if valid) ... note it can return NULL
+	/** return a dock point for the action and task (if valid) ... note it can return nullptr
 	if no point has been set for the combination of task and point */
 	virtual const Coord3D* getDockPoint( DozerTask task, DozerDockPoint point );
 
@@ -212,12 +213,20 @@ protected:
 // Dozer data
 	struct DozerTaskInfo
 	{
+		DozerTaskInfo()
+		{
+			m_targetObjectID = INVALID_ID;
+			m_taskOrderFrame = 0;
+		}
+
 		ObjectID m_targetObjectID;				///< target object ID of task
 		UnsignedInt m_taskOrderFrame;			///< logic frame we decided we wanted to do this task
 	} m_task[ DOZER_NUM_TASKS ];				///< tasks we want to do indexed by DozerTask
 
 
 	DozerTask m_currentTask;						///< current task the dozer is attending to (if any)
+	DozerTask m_previousTask;						///< previous task the dozer was attending to (if any)
+	DozerTaskInfo m_previousTaskInfo;		///< info on the previous task the dozer was attending to (if any)
 
 	//
 	// the following info array can be used if we want to have more complicated approaches

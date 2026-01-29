@@ -37,14 +37,14 @@ set(GAMEENGINE_SRC
     Include/Common/DynamicAudioEventInfo.h
 #    Include/Common/encrypt.h
 #    Include/Common/Energy.h
-#    Include/Common/Errors.h
+    Include/Common/Errors.h
     Include/Common/file.h
     Include/Common/FileSystem.h
     Include/Common/FramePacer.h
     Include/Common/FrameRateLimit.h
 #    Include/Common/FunctionLexicon.h
     Include/Common/GameAudio.h
-#    Include/Common/GameCommon.h
+    Include/Common/GameCommon.h
     Include/Common/GameDefines.h
 #    Include/Common/GameEngine.h
 #    Include/Common/GameLOD.h
@@ -54,13 +54,13 @@ set(GAMEENGINE_SRC
 #    Include/Common/GameSpyMiscPreferences.h
 #    Include/Common/GameState.h
 #    Include/Common/GameStateMap.h
-#    Include/Common/GameType.h
+    Include/Common/GameType.h
     Include/Common/GameUtility.h
 #    Include/Common/Geometry.h
 #    Include/Common/GlobalData.h
 #    Include/Common/Handicap.h
 #    Include/Common/IgnorePreferences.h
-#    Include/Common/INI.h
+    Include/Common/INI.h
 #    Include/Common/INIException.h
 #    Include/Common/KindOf.h
 #    Include/Common/LadderPreferences.h
@@ -108,7 +108,7 @@ set(GAMEENGINE_SRC
     #Include/Common/simpleplayer.h # unused
 #    Include/Common/SkirmishBattleHonors.h
 #    Include/Common/SkirmishPreferences.h
-#    Include/Common/Snapshot.h
+    Include/Common/Snapshot.h
 #    Include/Common/SparseMatchFinder.h
 #    Include/Common/SpecialPower.h
 #    Include/Common/SpecialPowerMaskType.h
@@ -116,10 +116,10 @@ set(GAMEENGINE_SRC
 #    Include/Common/StackDump.h
 #    Include/Common/StateMachine.h
 #    Include/Common/StatsCollector.h
-#    Include/Common/STLTypedefs.h
+    Include/Common/STLTypedefs.h
     Include/Common/StreamingArchiveFile.h
     Include/Common/SimulationMathCrc.h
-#    Include/Common/SubsystemInterface.h
+    Include/Common/SubsystemInterface.h
 #    Include/Common/SystemInfo.h
 #    Include/Common/Team.h
 #    Include/Common/Terrain.h
@@ -133,7 +133,7 @@ set(GAMEENGINE_SRC
 #    Include/Common/UnitTimings.h
 #    Include/Common/Upgrade.h
     #Include/Common/urllaunch.h # unused
-#    Include/Common/UserPreferences.h
+    Include/Common/UserPreferences.h
 #    Include/Common/version.h
 #    Include/Common/WellKnownKeys.h
     Include/Common/WorkerProcess.h
@@ -146,7 +146,7 @@ set(GAMEENGINE_SRC
 #    Include/GameClient/AnimateWindowManager.h
 #    Include/GameClient/CampaignManager.h
 #    Include/GameClient/CDCheck.h
-#    Include/GameClient/ChallengeGenerals.h
+    Include/GameClient/ChallengeGenerals.h
 #    Include/GameClient/ClientInstance.h
     Include/GameClient/ClientRandomValue.h
 #    Include/GameClient/Color.h
@@ -584,7 +584,7 @@ set(GAMEENGINE_SRC
     Source/Common/GameUtility.cpp
 #    Source/Common/GlobalData.cpp
     Source/Common/SimulationMathCrc.cpp
-#    Source/Common/INI/INI.cpp
+    Source/Common/INI/INI.cpp
 #    Source/Common/INI/INIAiData.cpp
 #    Source/Common/INI/INIAnimation.cpp
     Source/Common/INI/INIAudioEventInfo.cpp
@@ -655,10 +655,10 @@ set(GAMEENGINE_SRC
     Source/Common/System/File.cpp
     Source/Common/System/FileSystem.cpp
 #    Source/Common/System/FunctionLexicon.cpp
-#    Source/Common/System/GameCommon.cpp
+    Source/Common/System/GameCommon.cpp
     #Source/Common/System/GameMemory.cpp # is conditionally appended
     #Source/Common/System/GameMemoryInit.cpp # is conditionally appended
-#    Source/Common/System/GameType.cpp
+    Source/Common/System/GameType.cpp
 #    Source/Common/System/Geometry.cpp
 #    Source/Common/System/KindOf.cpp
 #    Source/Common/System/List.cpp
@@ -672,10 +672,10 @@ set(GAMEENGINE_SRC
 #    Source/Common/System/registry.cpp
 #    Source/Common/System/SaveGame/GameState.cpp
 #    Source/Common/System/SaveGame/GameStateMap.cpp
-#    Source/Common/System/Snapshot.cpp
+    Source/Common/System/Snapshot.cpp
 #    Source/Common/System/StackDump.cpp
     Source/Common/System/StreamingArchiveFile.cpp
-#    Source/Common/System/SubsystemInterface.cpp
+    Source/Common/System/SubsystemInterface.cpp
 #    Source/Common/System/Trig.cpp
     Source/Common/System/UnicodeString.cpp
 #    Source/Common/System/Upgrade.cpp
@@ -690,7 +690,7 @@ set(GAMEENGINE_SRC
 #    Source/Common/Thing/Thing.cpp
 #    Source/Common/Thing/ThingFactory.cpp
 #    Source/Common/Thing/ThingTemplate.cpp
-#    Source/Common/UserPreferences.cpp
+    Source/Common/UserPreferences.cpp
 #    Source/Common/version.cpp
     Source/Common/WorkerProcess.cpp
 #    Source/GameClient/ClientInstance.cpp
@@ -712,7 +712,7 @@ set(GAMEENGINE_SRC
 #    Source/GameClient/GlobalLanguage.cpp
 #    Source/GameClient/GraphDraw.cpp
 #    Source/GameClient/GUI/AnimateWindowManager.cpp
-#    Source/GameClient/GUI/ChallengeGenerals.cpp
+    Source/GameClient/GUI/ChallengeGenerals.cpp
 #    Source/GameClient/GUI/ControlBar/ControlBar.cpp
 #    Source/GameClient/GUI/ControlBar/ControlBarBeacon.cpp
 #    Source/GameClient/GUI/ControlBar/ControlBarCommand.cpp
@@ -1194,11 +1194,14 @@ target_include_directories(corei_gameengine_public INTERFACE
 
 target_link_libraries(corei_gameengine_public INTERFACE
     core_compression
-    core_config
     core_browserdispatch
-    core_utility
     #core_wwvegas
     d3d8lib
     gamespy::gamespy
     stlport
 )
+
+# ReactOS ATL for MinGW-w64 only (MSVC uses native ATL)
+if(MINGW)
+    target_link_libraries(corei_gameengine_public INTERFACE reactos_atl)
+endif()

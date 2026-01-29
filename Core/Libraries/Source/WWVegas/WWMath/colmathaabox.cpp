@@ -449,7 +449,7 @@ struct AABCollisionStruct
 		Vector3::Subtract(move1,move0,&M);							// move vector relative to stationary box0
 	}
 
-	bool						StartBad;			// Inital configuration is intersecting?
+	bool						StartBad;			// Initial configuration is intersecting?
 	float						MaxFrac;				// Longest move allowed so far
 	int						AxisId;				// Last separating axis
 	int						Side;					// which side of the interval

@@ -435,7 +435,7 @@ void DoCompressTest( void )
 				}
 
 				delete compressedBuf;
-				compressedBuf = NULL;
+				compressedBuf = nullptr;
 			}
 
 			DEBUG_LOG(("d = %d -> %d", d.origSize, d.compressedSize[i]));
@@ -443,10 +443,10 @@ void DoCompressTest( void )
 			DEBUG_LOG(("s_sizes[%s] = %d -> %d", it->first.str(), s_sizes[it->first].origSize, s_sizes[it->first].compressedSize[i]));
 
 			delete[] buf;
-			buf = NULL;
+			buf = nullptr;
 
 			delete[] uncompressedBuf;
-			uncompressedBuf = NULL;
+			uncompressedBuf = nullptr;
 		}
 
 		++it;
@@ -486,10 +486,10 @@ void DoCompressTest( void )
 	for (i = 0; i < COMPRESSION_MAX+1; ++i)
 	{
 		delete s_compressGathers[i];
-		s_compressGathers[i] = NULL;
+		s_compressGathers[i] = nullptr;
 
 		delete s_decompressGathers[i];
-		s_decompressGathers[i] = NULL;
+		s_decompressGathers[i] = nullptr;
 	}
 
 }

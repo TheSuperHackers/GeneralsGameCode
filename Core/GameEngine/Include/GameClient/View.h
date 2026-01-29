@@ -118,7 +118,7 @@ public:
 	/** project the 4 corners of this view into the world and return each point as a parameter,
 			the world points are at the requested Z */
 	virtual void getScreenCornerWorldPointsAtZ( Coord3D *topLeft, Coord3D *topRight,
-																							Coord3D *bottomLeft, Coord3D *bottomRight,
+																							Coord3D *bottomRight, Coord3D *bottomLeft,
 																							Real z );
 
 	virtual void setWidth( Int width ) { m_width = width; }
@@ -148,7 +148,7 @@ public:
 	virtual void cameraModFinalLookToward(Coord3D *pLoc){}			///< Sets a look at point during camera movement.
 	virtual void cameraModFinalMoveTo(Coord3D *pLoc){ };			///< Sets a final move to.
 
-	// (gth) C&C3 animation controled camera feature
+	// (gth) C&C3 animation controlled camera feature
 	virtual void cameraEnableSlaveMode(const AsciiString & thingtemplateName, const AsciiString & boneName) {}
 	virtual void cameraDisableSlaveMode(void) {}
 	virtual	void Add_Camera_Shake(const Coord3D & position,float radius, float duration, float power) {}

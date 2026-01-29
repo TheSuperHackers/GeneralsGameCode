@@ -128,9 +128,9 @@ struct FindPositionOptions
 		maxRadius							= 0.0f;
 		startAngle						= RANDOM_START_ANGLE;
 		maxZDelta							= 1e10f;	// ie, any z delta.
-		ignoreObject					= NULL;
-		sourceToPathToDest    = NULL;
-		relationshipObject		= NULL;
+		ignoreObject					= nullptr;
+		sourceToPathToDest    = nullptr;
+		relationshipObject		= nullptr;
 	};
 	FindPositionFlags flags;					///< flags for finding the legal position
 	Real minRadius;										///< min radius to search around
@@ -1087,7 +1087,7 @@ private:
 
 public:
 	PartitionFilterThing(const ThingTemplate *thing, Bool match) : m_tThing(thing), m_match(match) {
-		DEBUG_ASSERTCRASH(m_tThing != NULL, ("ThingTemplate for PartitionFilterThing is NULL"));
+		DEBUG_ASSERTCRASH(m_tThing != nullptr, ("ThingTemplate for PartitionFilterThing is null"));
 	}
 protected:
 	virtual Bool allow( Object *other );
@@ -1109,7 +1109,7 @@ private:
 public:
 	PartitionFilterGarrisonable( Bool match ) : m_match(match)
 	{
-		m_player = NULL;
+		m_player = nullptr;
 	}
 protected:
 	virtual Bool allow( Object *other );
@@ -1265,7 +1265,7 @@ protected:
 	friend void hLineAddValue(Int x1, Int x2, Int y, void *threatValueParms);
 	friend void hLineRemoveValue(Int x1, Int x2, Int y, void *threatValueParms);
 
-	void processPendingUndoShroudRevealQueue(Bool considerTimestamp = TRUE);				///< keep popping and processing untill you get to one that is in the future
+	void processPendingUndoShroudRevealQueue(Bool considerTimestamp = TRUE);				///< keep popping and processing until you get to one that is in the future
 	void resetPendingUndoShroudRevealQueue();					///< Just delete everything in the queue without doing anything with them
 
 public:
@@ -1303,7 +1303,7 @@ public:
 	PartitionCell *getCellAt(Int x, Int y);
 	const PartitionCell *getCellAt(Int x, Int y) const;
 
-	/// A convenience funtion to reveal shroud at some location
+	/// A convenience function to reveal shroud at some location
 	// Queueing does not give you control of the timestamp to enforce the queue.  I own the delay, you don't.
 	void doShroudReveal( Real centerX, Real centerY, Real radius, PlayerMaskType playerMask);
 	void undoShroudReveal( Real centerX, Real centerY, Real radius, PlayerMaskType playerMask);
@@ -1330,17 +1330,17 @@ public:
 		const Object *obj,
 		Real maxDist,
 		DistanceCalculationType dc,
-		PartitionFilter **filters = NULL,
-		Real *closestDist = NULL,
-		Coord3D *closestDistVec = NULL
+		PartitionFilter **filters = nullptr,
+		Real *closestDist = nullptr,
+		Coord3D *closestDistVec = nullptr
 	);
 	Object *getClosestObject(
 		const Coord3D *pos,
 		Real maxDist,
 		DistanceCalculationType dc,
-		PartitionFilter **filters = NULL,
-		Real *closestDist = NULL,
-		Coord3D *closestDistVec = NULL
+		PartitionFilter **filters = nullptr,
+		Real *closestDist = nullptr,
+		Coord3D *closestDistVec = nullptr
 	);
 
 	Real getRelativeAngle2D( const Object *obj, const Object *otherObj );
@@ -1350,12 +1350,12 @@ public:
 	void getVectorTo(const Object *obj, const Coord3D *pos, DistanceCalculationType dc, Coord3D& vec);
 
 	// just like 'getDistance', but return the dist-sqr, meaning we save a sqrt() call if you don't need it.
-	Real getDistanceSquared(const Object *obj, const Object *otherObj, DistanceCalculationType dc, Coord3D *vec = NULL);
-	Real getDistanceSquared(const Object *obj, const Coord3D *pos, DistanceCalculationType dc, Coord3D *vec = NULL);
+	Real getDistanceSquared(const Object *obj, const Object *otherObj, DistanceCalculationType dc, Coord3D *vec = nullptr);
+	Real getDistanceSquared(const Object *obj, const Coord3D *pos, DistanceCalculationType dc, Coord3D *vec = nullptr);
 
 	// just like 'getDistanceSquared', but return the dist-sqr where the obj is at goalPos.
-	Real getGoalDistanceSquared(const Object *obj, const Coord3D *goalPos, const Object *otherObj, DistanceCalculationType dc, Coord3D *vec = NULL);
-	Real getGoalDistanceSquared(const Object *obj, const Coord3D *goalPos, const Coord3D *otherPos, DistanceCalculationType dc, Coord3D *vec = NULL);
+	Real getGoalDistanceSquared(const Object *obj, const Coord3D *goalPos, const Object *otherObj, DistanceCalculationType dc, Coord3D *vec = nullptr);
+	Real getGoalDistanceSquared(const Object *obj, const Coord3D *goalPos, const Coord3D *otherPos, DistanceCalculationType dc, Coord3D *vec = nullptr);
 
 #ifdef PM_CACHE_TERRAIN_HEIGHT
 	// note that the 2d positions aren't guaranteed to be the actual spot within the cell where the terrain
@@ -1372,7 +1372,7 @@ public:
 		const Object *obj,
 		Real maxDist,
 		DistanceCalculationType dc,
-		PartitionFilter **filters = NULL,
+		PartitionFilter **filters = nullptr,
 		IterOrderType order = ITER_FASTEST
 	);
 
@@ -1380,11 +1380,11 @@ public:
 		const Coord3D *pos,
 		Real maxDist,
 		DistanceCalculationType dc,
-		PartitionFilter **filters = NULL,
+		PartitionFilter **filters = nullptr,
 		IterOrderType order = ITER_FASTEST
 	);
 
-	SimpleObjectIterator *iterateAllObjects(PartitionFilter **filters = NULL);
+	SimpleObjectIterator *iterateAllObjects(PartitionFilter **filters = nullptr);
 
 	/**
 		return the Objects that would (or would not) collide with the given
@@ -1509,13 +1509,13 @@ inline Int PartitionManager::worldToCellDist(Real w)
 //-----------------------------------------------------------------------------
 inline PartitionCell *PartitionManager::getCellAt(Int x, Int y)
 {
-	return (x < 0 || y < 0 || x >= m_cellCountX || y >= m_cellCountY) ? NULL : &m_cells[y * m_cellCountX + x];
+	return (x < 0 || y < 0 || x >= m_cellCountX || y >= m_cellCountY) ? nullptr : &m_cells[y * m_cellCountX + x];
 }
 
 //-----------------------------------------------------------------------------
 inline const PartitionCell *PartitionManager::getCellAt(Int x, Int y) const
 {
-	return (x < 0 || y < 0 || x >= m_cellCountX || y >= m_cellCountY) ? NULL : &m_cells[y * m_cellCountX + x];
+	return (x < 0 || y < 0 || x >= m_cellCountX || y >= m_cellCountY) ? nullptr : &m_cells[y * m_cellCountX + x];
 }
 
 //-----------------------------------------------------------------------------

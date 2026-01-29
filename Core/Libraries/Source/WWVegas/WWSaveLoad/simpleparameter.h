@@ -171,7 +171,7 @@ typedef SimpleParameterClass<int,		ParameterClass::TYPE_STRINGSDB_ID>	StringsDBE
 //
 //	RangedParameterClass
 //
-//		Extends simple paramter types so they can have minimum/maximum values.
+//		Extends simple parameter types so they can have minimum/maximum values.
 //
 //////////////////////////////////////////////////////////////////////////////////
 template <class T, ParameterClass::Type type>

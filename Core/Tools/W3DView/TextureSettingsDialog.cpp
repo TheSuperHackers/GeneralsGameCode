@@ -70,10 +70,10 @@ TextureSettingsDialogClass::TextureSettingsDialogClass
 	IndirectTextureClass *poriginal_texture,
 	CWnd *pParent
 )
-	: m_pTexture (NULL),
-	  m_pOriginalTexture (NULL),
-	  m_pStartingTexture (NULL),
-	  m_hThumbnail (NULL),
+	: m_pTexture (nullptr),
+	  m_pOriginalTexture (nullptr),
+	  m_pStartingTexture (nullptr),
+	  m_hThumbnail (nullptr),
 	  m_bWereSettingsModified (false),
 	  CDialog(TextureSettingsDialogClass::IDD, pParent)
 {
@@ -135,7 +135,7 @@ TextureSettingsDialogClass::OnInitDialog (void)
 {
 	// Allow the base class to process this message
 	CDialog::OnInitDialog ();
-	ASSERT (m_pTexture != NULL);
+	ASSERT (m_pTexture != nullptr);
 	ASSERT (m_pTexture->getClassID () == ID_INDIRECT_TEXTURE_CLASS);
 
 	// Determine what the starting texture was so we can restore on cancel (if necessary)
@@ -153,7 +153,7 @@ TextureSettingsDialogClass::OnInitDialog (void)
 
 	// Enable or disable the 'restore' button based on whether or not we
 	// have an original texture to switch to...
-	::EnableWindow (::GetDlgItem (m_hWnd, IDC_RESTORE), (m_pOriginalTexture != NULL));
+	::EnableWindow (::GetDlgItem (m_hWnd, IDC_RESTORE), (m_pOriginalTexture != nullptr));
 	::EnableWindow (::GetDlgItem (m_hWnd, IDC_APPLY), FALSE);
 
 	// Fill the dialog controls with data from the texture
@@ -170,9 +170,9 @@ void
 TextureSettingsDialogClass::Load_Texture_Settings (void)
 {
 	// Free the old thumbnail (if there was one)
-	if (m_hThumbnail != NULL) {
+	if (m_hThumbnail != nullptr) {
 		DeleteObject (m_hThumbnail);
-		m_hThumbnail = NULL;
+		m_hThumbnail = nullptr;
 	}
 
 	// Get the actual texture...
@@ -200,7 +200,7 @@ TextureSettingsDialogClass::Load_Texture_Settings (void)
 void
 TextureSettingsDialogClass::Fill_Controls (TextureClass *ptexture)
 {
-	srTexture *psource = NULL;
+	srTexture *psource = nullptr;
 
 	// What type of texture is this?
 	switch (ptexture->getClassID ())
@@ -217,7 +217,7 @@ TextureSettingsDialogClass::Fill_Controls (TextureClass *ptexture)
 			psource = ((ResizeableTextureInstanceClass *)ptexture)->Peek_Source();
 
 			// Fill the 'filename' edit control
-			if (psource != NULL && (psource->getClassID () == ID_FILE_LIST_TEXTURE_CLASS)) {
+			if (psource != nullptr && (psource->getClassID () == ID_FILE_LIST_TEXTURE_CLASS)) {
 				FileListTextureClass *pfile_list = static_cast<FileListTextureClass *>(psource);
 				SetDlgItemText (IDC_FILENAME_EDIT, pfile_list->Get_Filename (0));
 			}
@@ -230,8 +230,8 @@ TextureSettingsDialogClass::Fill_Controls (TextureClass *ptexture)
 	}
 
 	// Set the checkboxes
-	ASSERT (psource != NULL);
-	if (psource != NULL) {
+	ASSERT (psource != nullptr);
+	if (psource != nullptr) {
 		SendDlgItemMessage (IDC_MIPMAP_OFF_CHECK, BM_SETCHECK, (WPARAM)(psource->getMipmap () == srTextureIFace::MIPMAP_NONE));
 		SendDlgItemMessage (IDC_ALPHA_CHECK, BM_SETCHECK, (WPARAM)(psource->isHintEnabled(srTextureIFace::HINT_ALPHA_BITMASK)));
 		SendDlgItemMessage (IDC_CLAMPU_CHECK, BM_SETCHECK, (WPARAM)(psource->Get_U_Addr_Mode() == TextureClass::TEXTURE_ADDRESS_CLAMP));
@@ -430,9 +430,9 @@ TextureSettingsDialogClass::WindowProc
 void
 TextureSettingsDialogClass::OnDestroy (void)
 {
-	if (m_hThumbnail != NULL) {
+	if (m_hThumbnail != nullptr) {
 		::DeleteObject (m_hThumbnail);
-		m_hThumbnail = NULL;
+		m_hThumbnail = nullptr;
 	}
 
 	// Allow the base class to process this message
@@ -483,13 +483,13 @@ void
 TextureSettingsDialogClass::Paint_Thumbnail (void)
 {
 	// Paint the thumbnail
-	if (m_hThumbnail != NULL) {
+	if (m_hThumbnail != nullptr) {
 
 		// Get the misc crap windows requries before we can
 		// paint to the screen
 		HWND hchild_wnd = ::GetDlgItem (m_hWnd, IDC_TEXTURE_THUMBNAIL);
 		HDC hdc = ::GetDC (hchild_wnd);
-		HDC hmem_dc = ::CreateCompatibleDC (NULL);
+		HDC hmem_dc = ::CreateCompatibleDC (nullptr);
 		HBITMAP hold_bmp = (HBITMAP)::SelectObject (hmem_dc, m_hThumbnail);
 
 		// Paint the thumbnail onto the dialog
@@ -509,7 +509,7 @@ TextureSettingsDialogClass::Paint_Thumbnail (void)
 		::SelectObject (hmem_dc, hold_bmp);
 		::ReleaseDC (hchild_wnd, hmem_dc);
 		::DeleteDC (hmem_dc);
-		::ValidateRect (hchild_wnd, NULL);
+		::ValidateRect (hchild_wnd, nullptr);
 	}
 
 	return ;
@@ -523,7 +523,7 @@ TextureSettingsDialogClass::Paint_Thumbnail (void)
 void
 TextureSettingsDialogClass::OnRestore (void)
 {
-	if (m_pOriginalTexture != NULL) {
+	if (m_pOriginalTexture != nullptr) {
 
 		// Get the original texture
 		TextureClass *pnew_texture = m_pOriginalTexture->Get_Texture ();
@@ -609,8 +609,8 @@ TextureSettingsDialogClass::OnApply (void)
 		//}
 	}
 
-	ASSERT (pnew_texture != NULL);
-	if (pnew_texture != NULL) {
+	ASSERT (pnew_texture != nullptr);
+	if (pnew_texture != nullptr) {
 
 		// Turn mipmapping off if necessary
 		if (SendDlgItemMessage (IDC_MIPMAP_OFF_CHECK, BM_GETCHECK) == 1) {

@@ -90,7 +90,7 @@ void DisconnectManager::init() {
 
 	m_pingFrame = 0;
 	m_pingsSent = 0;
-	m_pingsRecieved = 0;
+	m_pingsReceived = 0;
 }
 
 void DisconnectManager::update(ConnectionManager *conMgr) {
@@ -124,7 +124,7 @@ void DisconnectManager::update(ConnectionManager *conMgr) {
 			{
 				m_pingFrame = TheGameLogic->getFrame();
 				m_pingsSent = 0;
-				m_pingsRecieved = 0;
+				m_pingsReceived = 0;
 
 				// Send the pings
 				if (ThePinger)
@@ -173,7 +173,7 @@ void DisconnectManager::update(ConnectionManager *conMgr) {
 						resp.avgPing, resp.hostname.c_str(), resp.repetitions));
 					if (resp.avgPing < 2000)
 					{
-						m_pingsRecieved += resp.repetitions;
+						m_pingsReceived += resp.repetitions;
 					}
 				}
 			}
@@ -191,9 +191,9 @@ Int DisconnectManager::getPingsSent()
 	return m_pingsSent;
 }
 
-Int DisconnectManager::getPingsRecieved()
+Int DisconnectManager::getPingsReceived()
 {
-	return m_pingsRecieved;
+	return m_pingsReceived;
 }
 
 

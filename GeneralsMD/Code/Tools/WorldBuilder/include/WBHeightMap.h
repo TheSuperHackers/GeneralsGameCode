@@ -20,7 +20,7 @@
 
 #include "W3DDevice/GameClient/FlatHeightMap.h"
 #include "W3DDevice/GameClient/HeightMap.h"
-#define dont_USE_FLAT_HEIGHT_MAP // Use the origina height map for mission disk. jba. [4/15/2003]
+#define dont_USE_FLAT_HEIGHT_MAP // Use the original height map for mission disk. jba. [4/15/2003]
 #ifdef USE_FLAT_HEIGHT_MAP
 class WBHeightMap : public FlatHeightMapRenderObjClass
 #else

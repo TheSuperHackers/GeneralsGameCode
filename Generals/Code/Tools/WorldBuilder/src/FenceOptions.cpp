@@ -45,7 +45,7 @@ so forth is all handled in the object options panel.  jba. */
 
 #include <list>
 
-FenceOptions *FenceOptions::m_staticThis = NULL;
+FenceOptions *FenceOptions::m_staticThis = nullptr;
 Bool FenceOptions::m_updating = false;
 Int FenceOptions::m_currentObjectIndex=-1;
 Real FenceOptions::m_fenceSpacing=1;
@@ -56,9 +56,9 @@ Real FenceOptions::m_fenceOffset=0;
 // FenceOptions dialog
 
 
-FenceOptions::FenceOptions(CWnd* pParent /*=NULL*/)
+FenceOptions::FenceOptions(CWnd* pParent /*=nullptr*/)
 {
-	m_objectsList = NULL;
+	m_objectsList = nullptr;
 	m_customSpacing = false;
 	//{{AFX_DATA_INIT(FenceOptions)
 		// NOTE: the ClassWizard will add member initialization here
@@ -69,7 +69,7 @@ FenceOptions::FenceOptions(CWnd* pParent /*=NULL*/)
 FenceOptions::~FenceOptions(void)
 {
 	deleteInstance(m_objectsList);
-	m_objectsList = NULL;
+	m_objectsList = nullptr;
 }
 
 
@@ -153,7 +153,7 @@ BOOL FenceOptions::OnInitDialog()
 		if (tTemplate->getFenceWidth() == 0) continue;
 
 		// create new map object
-		pMap = newInstance( MapObject)( loc, tTemplate->getName(), 0.0f, 0, NULL, tTemplate );
+		pMap = newInstance( MapObject)( loc, tTemplate->getName(), 0.0f, 0, nullptr, tTemplate );
 		pMap->setNextMap( m_objectsList );
 		m_objectsList = pMap;
 
@@ -206,7 +206,7 @@ HTREEITEM FenceOptions::findOrAdd(HTREEITEM parent, const char *pLabel)
 	char buffer[_MAX_PATH];
 	::memset(&ins, 0, sizeof(ins));
 	HTREEITEM child = m_objectTreeView.GetChildItem(parent);
-	while (child != NULL) {
+	while (child != nullptr) {
 		ins.item.mask = TVIF_HANDLE|TVIF_TEXT;
 		ins.item.hItem = child;
 		ins.item.pszText = buffer;
@@ -236,10 +236,10 @@ HTREEITEM FenceOptions::findOrAdd(HTREEITEM parent, const char *pLabel)
 void FenceOptions::addObject( MapObject *mapObject, const char *pPath, const char *name,
 															 Int terrainNdx, HTREEITEM parent )
 {
-	const char *leafName = NULL;
+	const char *leafName = nullptr;
 
 	// sanity
-	if( mapObject == NULL )
+	if( mapObject == nullptr )
 		return;
 
 	//
@@ -260,7 +260,7 @@ void FenceOptions::addObject( MapObject *mapObject, const char *pPath, const cha
 
 		// first sort by side, either create or find the tree item with matching side name
 		AsciiString side = thingTemplate->getDefaultOwningSide();
-		DEBUG_ASSERTCRASH( !side.isEmpty(), ("NULL default side in template") );
+		DEBUG_ASSERTCRASH( !side.isEmpty(), ("null default side in template") );
 		parent = findOrAdd( parent, side.str());
 
 		// next tier uses the editor sorting that design can specify in the INI
@@ -334,7 +334,7 @@ Bool FenceOptions::setObjectTreeViewSelection(HTREEITEM parent, Int selection)
 	char buffer[NAME_MAX_LEN];
 	::memset(&item, 0, sizeof(item));
 	HTREEITEM child = m_objectTreeView.GetChildItem(parent);
-	while (child != NULL) {
+	while (child != nullptr) {
 		item.mask = TVIF_HANDLE|TVIF_PARAM|TVIF_TEXT;
 		item.hItem = child;
 		item.pszText = buffer;

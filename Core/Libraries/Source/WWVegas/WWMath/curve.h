@@ -66,7 +66,7 @@ public:
 	float					Get_Start_Time(void);
 	float					Get_End_Time(void);
 
-	// persistant object support
+	// persistent object support
 	virtual bool		Save (ChunkSaveClass &csave);
 	virtual bool		Load (ChunkLoadClass &cload);
 
@@ -93,7 +93,7 @@ class LinearCurve3DClass : public Curve3DClass
 public:
 	virtual void		Evaluate(float time,Vector3 * set_val);
 
-	// persistant object support
+	// persistent object support
 	virtual const PersistFactoryClass &	Get_Factory(void) const;
 	virtual bool								Save(ChunkSaveClass &csave);
 	virtual bool								Load(ChunkLoadClass &cload);
@@ -116,7 +116,7 @@ public:
 	virtual bool		Is_Looping(void);
 	virtual void		Set_Looping(bool onoff);
 	virtual int			Key_Count(void);
-	virtual void		Get_Key(int i,float * set_point,float * set_t,unsigned int * extra=NULL);
+	virtual void		Get_Key(int i,float * set_point,float * set_t,unsigned int * extra=nullptr);
 	virtual void		Set_Key(int i,float point,unsigned int extra=0);
 	virtual int			Add_Key(float point,float t,unsigned int extra=0);
 	virtual void		Remove_Key(int i);
@@ -124,7 +124,7 @@ public:
 	float					Get_Start_Time(void);
 	float					Get_End_Time(void);
 
-	// persistant object support
+	// persistent object support
 	virtual bool		Save (ChunkSaveClass &csave);
 	virtual bool		Load (ChunkLoadClass &cload);
 
@@ -152,7 +152,7 @@ class LinearCurve1DClass : public Curve1DClass
 public:
 	virtual void		Evaluate(float time,float * set_val);
 
-	// persistant object support
+	// persistent object support
 	virtual const PersistFactoryClass &	Get_Factory(void) const;
 	virtual bool								Save(ChunkSaveClass &csave);
 	virtual bool								Load(ChunkLoadClass &cload);

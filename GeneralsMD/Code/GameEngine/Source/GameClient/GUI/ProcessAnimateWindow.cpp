@@ -77,7 +77,7 @@ ProcessAnimateWindowSlideFromRight::ProcessAnimateWindowSlideFromRight( void )
 {
 	m_maxVel.x =  -40.0f;  // top speed windows travel in x and y
 	m_maxVel.y = 0.0f;
-	m_slowDownThreshold = 80;  // when widnows get this close to their resting
+	m_slowDownThreshold = 80;  // when windows get this close to their resting
 																			// positions they start to slow down
 	m_slowDownRatio = 0.67f;  // how fast the windows slow down (smaller slows quicker)
 	m_speedUpRatio = 2.0f - m_slowDownRatio;  // how fast the windows speed up
@@ -92,7 +92,7 @@ void ProcessAnimateWindowSlideFromRight::initReverseAnimateWindow( wnd::AnimateW
 {
 	if(!animWin)
 	{
-		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into initAnimateWindow as a NULL Pointer... bad bad bad!"));
+		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into initAnimateWindow as a null... bad bad bad!"));
 		return;
 	}
 	if(animWin->getDelay() > 0)
@@ -116,7 +116,7 @@ void ProcessAnimateWindowSlideFromRight::initAnimateWindow( wnd::AnimateWindow *
 
 	if(!animWin)
 	{
-		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into initAnimateWindow as a NULL Pointer... bad bad bad!"));
+		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into initAnimateWindow as a null... bad bad bad!"));
 		return;
 	}
 	animWin->setFinished( FALSE );
@@ -126,7 +126,7 @@ void ProcessAnimateWindowSlideFromRight::initAnimateWindow( wnd::AnimateWindow *
 	GameWindow *win = animWin->getGameWindow();
 	if(!win)
 	{
-		DEBUG_ASSERTCRASH( win, ("animWin contains a NULL Pointer for it's GameWindow... Whatup wit dat?"));
+		DEBUG_ASSERTCRASH( win, ("animWin contains a null for it's GameWindow... Whatup wit dat?"));
 		return;
 	}
 	win->winGetPosition(&restPos.x, &restPos.y);
@@ -156,7 +156,7 @@ Bool ProcessAnimateWindowSlideFromRight::updateAnimateWindow( wnd::AnimateWindow
 
 	if(!animWin)
 	{
-		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into updateAnimateWindow as a NULL Pointer... bad bad bad!"));
+		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into updateAnimateWindow as a null... bad bad bad!"));
 		return TRUE;
 	}
 
@@ -172,7 +172,7 @@ Bool ProcessAnimateWindowSlideFromRight::updateAnimateWindow( wnd::AnimateWindow
 	GameWindow *win = animWin->getGameWindow();
 	if(!win)
 	{
-		DEBUG_ASSERTCRASH( win, ("animWin contains a NULL Pointer for it's GameWindow... Whatup wit dat?"));
+		DEBUG_ASSERTCRASH( win, ("animWin contains a null for it's GameWindow... Whatup wit dat?"));
 		return TRUE;
 	}
 
@@ -204,7 +204,7 @@ Bool ProcessAnimateWindowSlideFromRight::reverseAnimateWindow( wnd::AnimateWindo
 
 	if(!animWin)
 	{
-		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into updateAnimateWindow as a NULL Pointer... bad bad bad!"));
+		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into updateAnimateWindow as a null... bad bad bad!"));
 		return TRUE;
 	}
 
@@ -221,7 +221,7 @@ Bool ProcessAnimateWindowSlideFromRight::reverseAnimateWindow( wnd::AnimateWindo
 	GameWindow *win = animWin->getGameWindow();
 	if(!win)
 	{
-		DEBUG_ASSERTCRASH( win, ("animWin contains a NULL Pointer for it's GameWindow... Whatup wit dat?"));
+		DEBUG_ASSERTCRASH( win, ("animWin contains a null for it's GameWindow... Whatup wit dat?"));
 		return TRUE;
 	}
 
@@ -263,7 +263,7 @@ ProcessAnimateWindowSlideFromLeft::ProcessAnimateWindowSlideFromLeft( void )
 {
 	m_maxVel.x =  40.0f;  // top speed windows travel in x and y
 	m_maxVel.y = 0.0f;
-	m_slowDownThreshold = 80;  // when widnows get this close to their resting
+	m_slowDownThreshold = 80;  // when windows get this close to their resting
 																			// positions they start to slow down
 	m_slowDownRatio = 0.67f;  // how fast the windows slow down (smaller slows quicker)
 	m_speedUpRatio = 2.0f - m_slowDownRatio;  // how fast the windows speed up
@@ -276,7 +276,7 @@ void ProcessAnimateWindowSlideFromLeft::initReverseAnimateWindow( wnd::AnimateWi
 {
 	if(!animWin)
 	{
-		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into initAnimateWindow as a NULL Pointer... bad bad bad!"));
+		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into initAnimateWindow as a null... bad bad bad!"));
 		return;
 	}
 	if(animWin->getDelay() > 0)
@@ -298,7 +298,7 @@ void ProcessAnimateWindowSlideFromLeft::initAnimateWindow( wnd::AnimateWindow *a
 
 	if(!animWin)
 	{
-		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into initAnimateWindow as a NULL Pointer... bad bad bad!"));
+		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into initAnimateWindow as a null... bad bad bad!"));
 		return;
 	}
 
@@ -307,7 +307,7 @@ void ProcessAnimateWindowSlideFromLeft::initAnimateWindow( wnd::AnimateWindow *a
 	GameWindow *win = animWin->getGameWindow();
 	if(!win)
 	{
-		DEBUG_ASSERTCRASH( win, ("animWin contains a NULL Pointer for it's GameWindow... Whatup wit dat?"));
+		DEBUG_ASSERTCRASH( win, ("animWin contains a null for it's GameWindow... Whatup wit dat?"));
 		return;
 	}
 	win->winGetPosition(&restPos.x, &restPos.y);
@@ -333,7 +333,7 @@ Bool ProcessAnimateWindowSlideFromLeft::updateAnimateWindow( wnd::AnimateWindow 
 
 	if(!animWin)
 	{
-		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into updateAnimateWindow as a NULL Pointer... bad bad bad!"));
+		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into updateAnimateWindow as a null... bad bad bad!"));
 		return TRUE;
 	}
 
@@ -350,7 +350,7 @@ Bool ProcessAnimateWindowSlideFromLeft::updateAnimateWindow( wnd::AnimateWindow 
 	GameWindow *win = animWin->getGameWindow();
 	if(!win)
 	{
-		DEBUG_ASSERTCRASH( win, ("animWin contains a NULL Pointer for it's GameWindow... Whatup wit dat?"));
+		DEBUG_ASSERTCRASH( win, ("animWin contains a null for it's GameWindow... Whatup wit dat?"));
 		return TRUE;
 	}
 
@@ -382,7 +382,7 @@ Bool ProcessAnimateWindowSlideFromLeft::reverseAnimateWindow( wnd::AnimateWindow
 
 	if(!animWin)
 	{
-		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into updateAnimateWindow as a NULL Pointer... bad bad bad!"));
+		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into updateAnimateWindow as a null... bad bad bad!"));
 		return TRUE;
 	}
 
@@ -399,7 +399,7 @@ Bool ProcessAnimateWindowSlideFromLeft::reverseAnimateWindow( wnd::AnimateWindow
 	GameWindow *win = animWin->getGameWindow();
 	if(!win)
 	{
-		DEBUG_ASSERTCRASH( win, ("animWin contains a NULL Pointer for it's GameWindow... Whatup wit dat?"));
+		DEBUG_ASSERTCRASH( win, ("animWin contains a null for it's GameWindow... Whatup wit dat?"));
 		return TRUE;
 	}
 
@@ -441,7 +441,7 @@ ProcessAnimateWindowSlideFromTop::ProcessAnimateWindowSlideFromTop( void )
 {
 	m_maxVel.y =  40.0f;  // top speed windows travel in x and y
 	m_maxVel.x = 0.0f;
-	m_slowDownThreshold = 80;  // when widnows get this close to their resting
+	m_slowDownThreshold = 80;  // when windows get this close to their resting
 																			// positions they start to slow down
 	m_slowDownRatio = 0.67f;  // how fast the windows slow down (smaller slows quicker)
 	m_speedUpRatio = 2.0f - m_slowDownRatio;  // how fast the windows speed up
@@ -454,7 +454,7 @@ void ProcessAnimateWindowSlideFromTop::initReverseAnimateWindow( wnd::AnimateWin
 {
 	if(!animWin)
 	{
-		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into initAnimateWindow as a NULL Pointer... bad bad bad!"));
+		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into initAnimateWindow as a null... bad bad bad!"));
 		return;
 	}
 	if(animWin->getDelay() > 0)
@@ -476,7 +476,7 @@ void ProcessAnimateWindowSlideFromTop::initAnimateWindow( wnd::AnimateWindow *an
 
 	if(!animWin)
 	{
-		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into initAnimateWindow as a NULL Pointer... bad bad bad!"));
+		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into initAnimateWindow as a null... bad bad bad!"));
 		return;
 	}
 
@@ -485,7 +485,7 @@ void ProcessAnimateWindowSlideFromTop::initAnimateWindow( wnd::AnimateWindow *an
 	GameWindow *win = animWin->getGameWindow();
 	if(!win)
 	{
-		DEBUG_ASSERTCRASH( win, ("animWin contains a NULL Pointer for it's GameWindow... Whatup wit dat?"));
+		DEBUG_ASSERTCRASH( win, ("animWin contains a null for it's GameWindow... Whatup wit dat?"));
 		return;
 	}
 	win->winGetPosition(&restPos.x, &restPos.y);
@@ -511,7 +511,7 @@ Bool ProcessAnimateWindowSlideFromTop::updateAnimateWindow( wnd::AnimateWindow *
 
 	if(!animWin)
 	{
-		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into updateAnimateWindow as a NULL Pointer... bad bad bad!"));
+		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into updateAnimateWindow as a null... bad bad bad!"));
 		return TRUE;
 	}
 
@@ -528,7 +528,7 @@ Bool ProcessAnimateWindowSlideFromTop::updateAnimateWindow( wnd::AnimateWindow *
 	GameWindow *win = animWin->getGameWindow();
 	if(!win)
 	{
-		DEBUG_ASSERTCRASH( win, ("animWin contains a NULL Pointer for it's GameWindow... Whatup wit dat?"));
+		DEBUG_ASSERTCRASH( win, ("animWin contains a null for it's GameWindow... Whatup wit dat?"));
 		return TRUE;
 	}
 
@@ -561,7 +561,7 @@ Bool ProcessAnimateWindowSlideFromTop::reverseAnimateWindow( wnd::AnimateWindow 
 
 	if(!animWin)
 	{
-		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into updateAnimateWindow as a NULL Pointer... bad bad bad!"));
+		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into updateAnimateWindow as a null... bad bad bad!"));
 		return TRUE;
 	}
 
@@ -578,7 +578,7 @@ Bool ProcessAnimateWindowSlideFromTop::reverseAnimateWindow( wnd::AnimateWindow 
 	GameWindow *win = animWin->getGameWindow();
 	if(!win)
 	{
-		DEBUG_ASSERTCRASH( win, ("animWin contains a NULL Pointer for it's GameWindow... Whatup wit dat?"));
+		DEBUG_ASSERTCRASH( win, ("animWin contains a null for it's GameWindow... Whatup wit dat?"));
 		return TRUE;
 	}
 
@@ -620,7 +620,7 @@ ProcessAnimateWindowSlideFromBottom::ProcessAnimateWindowSlideFromBottom( void )
 {
 	m_maxVel.y =  -40.0f;  // top speed windows travel in x and y
 	m_maxVel.x = 0.0f;
-	m_slowDownThreshold = 80;  // when widnows get this close to their resting
+	m_slowDownThreshold = 80;  // when windows get this close to their resting
 																			// positions they start to slow down
 	m_slowDownRatio = 0.67f;  // how fast the windows slow down (smaller slows quicker)
 	m_speedUpRatio = 2.0f - m_slowDownRatio;  // how fast the windows speed up
@@ -633,7 +633,7 @@ void ProcessAnimateWindowSlideFromBottom::initReverseAnimateWindow( wnd::Animate
 {
 	if(!animWin)
 	{
-		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into initAnimateWindow as a NULL Pointer... bad bad bad!"));
+		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into initAnimateWindow as a null... bad bad bad!"));
 		return;
 	}
 	if(animWin->getDelay() > 0)
@@ -656,7 +656,7 @@ void ProcessAnimateWindowSlideFromBottom::initAnimateWindow( wnd::AnimateWindow 
 
 	if(!animWin)
 	{
-		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into initAnimateWindow as a NULL Pointer... bad bad bad!"));
+		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into initAnimateWindow as a null... bad bad bad!"));
 		return;
 	}
 
@@ -665,7 +665,7 @@ void ProcessAnimateWindowSlideFromBottom::initAnimateWindow( wnd::AnimateWindow 
 	GameWindow *win = animWin->getGameWindow();
 	if(!win)
 	{
-		DEBUG_ASSERTCRASH( win, ("animWin contains a NULL Pointer for it's GameWindow... Whatup wit dat?"));
+		DEBUG_ASSERTCRASH( win, ("animWin contains a null for it's GameWindow... Whatup wit dat?"));
 		return;
 	}
 	win->winGetPosition(&restPos.x, &restPos.y);
@@ -691,7 +691,7 @@ Bool ProcessAnimateWindowSlideFromBottom::updateAnimateWindow( wnd::AnimateWindo
 
 	if(!animWin)
 	{
-		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into updateAnimateWindow as a NULL Pointer... bad bad bad!"));
+		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into updateAnimateWindow as a null... bad bad bad!"));
 		return TRUE;
 	}
 
@@ -708,7 +708,7 @@ Bool ProcessAnimateWindowSlideFromBottom::updateAnimateWindow( wnd::AnimateWindo
 	GameWindow *win = animWin->getGameWindow();
 	if(!win)
 	{
-		DEBUG_ASSERTCRASH( win, ("animWin contains a NULL Pointer for it's GameWindow... Whatup wit dat?"));
+		DEBUG_ASSERTCRASH( win, ("animWin contains a null for it's GameWindow... Whatup wit dat?"));
 		return TRUE;
 	}
 
@@ -741,7 +741,7 @@ Bool ProcessAnimateWindowSlideFromBottom::reverseAnimateWindow( wnd::AnimateWind
 
 	if(!animWin)
 	{
-		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into updateAnimateWindow as a NULL Pointer... bad bad bad!"));
+		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into updateAnimateWindow as a null... bad bad bad!"));
 		return TRUE;
 	}
 
@@ -758,7 +758,7 @@ Bool ProcessAnimateWindowSlideFromBottom::reverseAnimateWindow( wnd::AnimateWind
 	GameWindow *win = animWin->getGameWindow();
 	if(!win)
 	{
-		DEBUG_ASSERTCRASH( win, ("animWin contains a NULL Pointer for it's GameWindow... Whatup wit dat?"));
+		DEBUG_ASSERTCRASH( win, ("animWin contains a null for it's GameWindow... Whatup wit dat?"));
 		return TRUE;
 	}
 
@@ -814,7 +814,7 @@ void ProcessAnimateWindowSlideFromBottomTimed::initReverseAnimateWindow( wnd::An
 
 	if(!animWin)
 	{
-		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into initAnimateWindow as a NULL Pointer... bad bad bad!"));
+		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into initAnimateWindow as a null... bad bad bad!"));
 		return;
 	}
 
@@ -823,7 +823,7 @@ void ProcessAnimateWindowSlideFromBottomTimed::initReverseAnimateWindow( wnd::An
 	GameWindow *win = animWin->getGameWindow();
 	if(!win)
 	{
-		DEBUG_ASSERTCRASH( win, ("animWin contains a NULL Pointer for it's GameWindow... Whatup wit dat?"));
+		DEBUG_ASSERTCRASH( win, ("animWin contains a null for it's GameWindow... Whatup wit dat?"));
 		return;
 	}
 	restPos = animWin->getRestPos();
@@ -855,7 +855,7 @@ void ProcessAnimateWindowSlideFromBottomTimed::initAnimateWindow( wnd::AnimateWi
 
 	if(!animWin)
 	{
-		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into initAnimateWindow as a NULL Pointer... bad bad bad!"));
+		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into initAnimateWindow as a null... bad bad bad!"));
 		return;
 	}
 
@@ -864,7 +864,7 @@ void ProcessAnimateWindowSlideFromBottomTimed::initAnimateWindow( wnd::AnimateWi
 	GameWindow *win = animWin->getGameWindow();
 	if(!win)
 	{
-		DEBUG_ASSERTCRASH( win, ("animWin contains a NULL Pointer for it's GameWindow... Whatup wit dat?"));
+		DEBUG_ASSERTCRASH( win, ("animWin contains a null for it's GameWindow... Whatup wit dat?"));
 		return;
 	}
 	win->winGetPosition(&restPos.x, &restPos.y);
@@ -891,7 +891,7 @@ Bool ProcessAnimateWindowSlideFromBottomTimed::updateAnimateWindow( wnd::Animate
 
 	if(!animWin)
 	{
-		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into updateAnimateWindow as a NULL Pointer... bad bad bad!"));
+		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into updateAnimateWindow as a null... bad bad bad!"));
 		return TRUE;
 	}
 
@@ -908,7 +908,7 @@ Bool ProcessAnimateWindowSlideFromBottomTimed::updateAnimateWindow( wnd::Animate
 	GameWindow *win = animWin->getGameWindow();
 	if(!win)
 	{
-		DEBUG_ASSERTCRASH( win, ("animWin contains a NULL Pointer for it's GameWindow... Whatup wit dat?"));
+		DEBUG_ASSERTCRASH( win, ("animWin contains a null for it's GameWindow... Whatup wit dat?"));
 		return TRUE;
 	}
 
@@ -966,7 +966,7 @@ void ProcessAnimateWindowSpiral::initReverseAnimateWindow( wnd::AnimateWindow *a
 {
 	if(!animWin)
 	{
-		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into initAnimateWindow as a NULL Pointer... bad bad bad!"));
+		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into initAnimateWindow as a null... bad bad bad!"));
 		return;
 	}
 	if(animWin->getDelay() > 0)
@@ -990,7 +990,7 @@ void ProcessAnimateWindowSpiral::initAnimateWindow( wnd::AnimateWindow *animWin 
 
 	if(!animWin)
 	{
-		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into initAnimateWindow as a NULL Pointer... bad bad bad!"));
+		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into initAnimateWindow as a null... bad bad bad!"));
 		return;
 	}
 
@@ -999,7 +999,7 @@ void ProcessAnimateWindowSpiral::initAnimateWindow( wnd::AnimateWindow *animWin 
 	GameWindow *win = animWin->getGameWindow();
 	if(!win)
 	{
-		DEBUG_ASSERTCRASH( win, ("animWin contains a NULL Pointer for it's GameWindow... Whatup wit dat?"));
+		DEBUG_ASSERTCRASH( win, ("animWin contains a null for it's GameWindow... Whatup wit dat?"));
 		return;
 	}
 	win->winGetPosition(&restPos.x, &restPos.y);
@@ -1025,7 +1025,7 @@ Bool ProcessAnimateWindowSpiral::updateAnimateWindow( wnd::AnimateWindow *animWi
 
 	if(!animWin)
 	{
-		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into updateAnimateWindow as a NULL Pointer... bad bad bad!"));
+		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into updateAnimateWindow as a null... bad bad bad!"));
 		return TRUE;
 	}
 
@@ -1042,7 +1042,7 @@ Bool ProcessAnimateWindowSpiral::updateAnimateWindow( wnd::AnimateWindow *animWi
 	GameWindow *win = animWin->getGameWindow();
 	if(!win)
 	{
-		DEBUG_ASSERTCRASH( win, ("animWin contains a NULL Pointer for it's GameWindow... Whatup wit dat?"));
+		DEBUG_ASSERTCRASH( win, ("animWin contains a null for it's GameWindow... Whatup wit dat?"));
 		return TRUE;
 	}
 
@@ -1079,7 +1079,7 @@ Bool ProcessAnimateWindowSpiral::reverseAnimateWindow( wnd::AnimateWindow *animW
 
 	if(!animWin)
 	{
-		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into updateAnimateWindow as a NULL Pointer... bad bad bad!"));
+		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into updateAnimateWindow as a null... bad bad bad!"));
 		return TRUE;
 	}
 
@@ -1094,7 +1094,7 @@ Bool ProcessAnimateWindowSpiral::reverseAnimateWindow( wnd::AnimateWindow *animW
 	GameWindow *win = animWin->getGameWindow();
 	if(!win)
 	{
-		DEBUG_ASSERTCRASH( win, ("animWin contains a NULL Pointer for it's GameWindow... Whatup wit dat?"));
+		DEBUG_ASSERTCRASH( win, ("animWin contains a null for it's GameWindow... Whatup wit dat?"));
 		return TRUE;
 	}
 
@@ -1134,7 +1134,7 @@ ProcessAnimateWindowSlideFromTopFast::ProcessAnimateWindowSlideFromTopFast( void
 {
 	m_maxVel.y =  60.0f;  // top speed windows travel in x and y
 	m_maxVel.x = 0.0f;
-	m_slowDownThreshold = 40;  // when widnows get this close to their resting
+	m_slowDownThreshold = 40;  // when windows get this close to their resting
 																			// positions they start to slow down
 	m_slowDownRatio = 0.67f;  // how fast the windows slow down (smaller slows quicker)
 	m_speedUpRatio = 4.0f - m_slowDownRatio;  // how fast the windows speed up
@@ -1147,7 +1147,7 @@ void ProcessAnimateWindowSlideFromTopFast::initReverseAnimateWindow( wnd::Animat
 {
 	if(!animWin)
 	{
-		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into initAnimateWindow as a NULL Pointer... bad bad bad!"));
+		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into initAnimateWindow as a null... bad bad bad!"));
 		return;
 	}
 	if(animWin->getDelay() > 0)
@@ -1170,7 +1170,7 @@ void ProcessAnimateWindowSlideFromTopFast::initAnimateWindow( wnd::AnimateWindow
 
 	if(!animWin)
 	{
-		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into initAnimateWindow as a NULL Pointer... bad bad bad!"));
+		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into initAnimateWindow as a null... bad bad bad!"));
 		return;
 	}
 
@@ -1179,7 +1179,7 @@ void ProcessAnimateWindowSlideFromTopFast::initAnimateWindow( wnd::AnimateWindow
 	GameWindow *win = animWin->getGameWindow();
 	if(!win)
 	{
-		DEBUG_ASSERTCRASH( win, ("animWin contains a NULL Pointer for it's GameWindow... Whatup wit dat?"));
+		DEBUG_ASSERTCRASH( win, ("animWin contains a null for it's GameWindow... Whatup wit dat?"));
 		return;
 	}
 	win->winGetPosition(&restPos.x, &restPos.y);
@@ -1207,7 +1207,7 @@ Bool ProcessAnimateWindowSlideFromTopFast::updateAnimateWindow( wnd::AnimateWind
 
 	if(!animWin)
 	{
-		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into updateAnimateWindow as a NULL Pointer... bad bad bad!"));
+		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into updateAnimateWindow as a null... bad bad bad!"));
 		return TRUE;
 	}
 
@@ -1224,7 +1224,7 @@ Bool ProcessAnimateWindowSlideFromTopFast::updateAnimateWindow( wnd::AnimateWind
 	GameWindow *win = animWin->getGameWindow();
 	if(!win)
 	{
-		DEBUG_ASSERTCRASH( win, ("animWin contains a NULL Pointer for it's GameWindow... Whatup wit dat?"));
+		DEBUG_ASSERTCRASH( win, ("animWin contains a null for it's GameWindow... Whatup wit dat?"));
 		return TRUE;
 	}
 
@@ -1257,7 +1257,7 @@ Bool ProcessAnimateWindowSlideFromTopFast::reverseAnimateWindow( wnd::AnimateWin
 
 	if(!animWin)
 	{
-		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into updateAnimateWindow as a NULL Pointer... bad bad bad!"));
+		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into updateAnimateWindow as a null... bad bad bad!"));
 		return TRUE;
 	}
 
@@ -1274,7 +1274,7 @@ Bool ProcessAnimateWindowSlideFromTopFast::reverseAnimateWindow( wnd::AnimateWin
 	GameWindow *win = animWin->getGameWindow();
 	if(!win)
 	{
-		DEBUG_ASSERTCRASH( win, ("animWin contains a NULL Pointer for it's GameWindow... Whatup wit dat?"));
+		DEBUG_ASSERTCRASH( win, ("animWin contains a null for it's GameWindow... Whatup wit dat?"));
 		return TRUE;
 	}
 
@@ -1317,7 +1317,7 @@ ProcessAnimateWindowSlideFromRightFast::ProcessAnimateWindowSlideFromRightFast( 
 {
 	m_maxVel.x =  -80.0f;  // top speed windows travel in x and y
 	m_maxVel.y = 0.0f;
-	m_slowDownThreshold = 60;  // when widnows get this close to their resting
+	m_slowDownThreshold = 60;  // when windows get this close to their resting
 																			// positions they start to slow down
 	m_slowDownRatio = 0.77f;  // how fast the windows slow down (smaller slows quicker)
 	m_speedUpRatio = 3.0f - m_slowDownRatio;  // how fast the windows speed up
@@ -1332,7 +1332,7 @@ void ProcessAnimateWindowSlideFromRightFast::initReverseAnimateWindow( wnd::Anim
 {
 	if(!animWin)
 	{
-		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into initAnimateWindow as a NULL Pointer... bad bad bad!"));
+		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into initAnimateWindow as a null... bad bad bad!"));
 		return;
 	}
 	if(animWin->getDelay() > 0)
@@ -1374,7 +1374,7 @@ void ProcessAnimateWindowSlideFromRightFast::initAnimateWindow( wnd::AnimateWind
 
 	if(!animWin)
 	{
-		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into initAnimateWindow as a NULL Pointer... bad bad bad!"));
+		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into initAnimateWindow as a null... bad bad bad!"));
 		return;
 	}
 	animWin->setFinished( FALSE );
@@ -1384,7 +1384,7 @@ void ProcessAnimateWindowSlideFromRightFast::initAnimateWindow( wnd::AnimateWind
 	GameWindow *win = animWin->getGameWindow();
 	if(!win)
 	{
-		DEBUG_ASSERTCRASH( win, ("animWin contains a NULL Pointer for it's GameWindow... Whatup wit dat?"));
+		DEBUG_ASSERTCRASH( win, ("animWin contains a null for it's GameWindow... Whatup wit dat?"));
 		return;
 	}
 	win->winGetPosition(&restPos.x, &restPos.y);
@@ -1415,7 +1415,7 @@ Bool ProcessAnimateWindowSlideFromRightFast::updateAnimateWindow( wnd::AnimateWi
 
 	if(!animWin)
 	{
-		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into updateAnimateWindow as a NULL Pointer... bad bad bad!"));
+		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into updateAnimateWindow as a null... bad bad bad!"));
 		return TRUE;
 	}
 
@@ -1431,7 +1431,7 @@ Bool ProcessAnimateWindowSlideFromRightFast::updateAnimateWindow( wnd::AnimateWi
 	GameWindow *win = animWin->getGameWindow();
 	if(!win)
 	{
-		DEBUG_ASSERTCRASH( win, ("animWin contains a NULL Pointer for it's GameWindow... Whatup wit dat?"));
+		DEBUG_ASSERTCRASH( win, ("animWin contains a null for it's GameWindow... Whatup wit dat?"));
 		return TRUE;
 	}
 
@@ -1463,7 +1463,7 @@ Bool ProcessAnimateWindowSlideFromRightFast::reverseAnimateWindow( wnd::AnimateW
 
 	if(!animWin)
 	{
-		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into updateAnimateWindow as a NULL Pointer... bad bad bad!"));
+		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into updateAnimateWindow as a null... bad bad bad!"));
 		return TRUE;
 	}
 
@@ -1480,7 +1480,7 @@ Bool ProcessAnimateWindowSlideFromRightFast::reverseAnimateWindow( wnd::AnimateW
 	GameWindow *win = animWin->getGameWindow();
 	if(!win)
 	{
-		DEBUG_ASSERTCRASH( win, ("animWin contains a NULL Pointer for it's GameWindow... Whatup wit dat?"));
+		DEBUG_ASSERTCRASH( win, ("animWin contains a null for it's GameWindow... Whatup wit dat?"));
 		return TRUE;
 	}
 

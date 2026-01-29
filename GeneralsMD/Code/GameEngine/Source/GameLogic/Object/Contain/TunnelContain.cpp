@@ -81,7 +81,7 @@ void TunnelContain::removeFromContain( Object *obj, Bool exposeStealthUnits )
 {
 
 	// sanity
-	if( obj == NULL )
+	if( obj == nullptr )
 		return;
 
 	// trigger an onRemoving event for 'm_object' no longer containing 'itemToRemove->m_object'
@@ -98,7 +98,7 @@ void TunnelContain::removeFromContain( Object *obj, Bool exposeStealthUnits )
 	// it is actually contained by this module
 	//
 	Player *owningPlayer = getObject()->getControllingPlayer();
-	if( owningPlayer == NULL )
+	if( owningPlayer == nullptr )
 		return; //game tear down.  We do the onRemove* stuff first because this is allowed to fail but that still needs to be done
 
 	if(!owningPlayer->getTunnelSystem())
@@ -169,7 +169,7 @@ void TunnelContain::killAllContained( void )
 	while ( it != list.end() )
 	{
 		Object *obj = *it++;
-		DEBUG_ASSERTCRASH( obj, ("Contain list must not contain NULL element"));
+		DEBUG_ASSERTCRASH( obj, ("Contain list must not contain null element"));
 
 		removeFromContain( obj, true );
 
@@ -194,7 +194,7 @@ void TunnelContain::removeAllContained( Bool exposeStealthUnits )
 	while ( it != list.end() )
 	{
 		Object *obj = *it++;
-		DEBUG_ASSERTCRASH( obj, ("Contain list must not contain NULL element"));
+		DEBUG_ASSERTCRASH( obj, ("Contain list must not contain null element"));
 
 		removeFromContain( obj, exposeStealthUnits );
 	}
@@ -263,10 +263,10 @@ void TunnelContain::onSelling()
 {
 	// A TunnelContain tells everyone to leave if this is the last tunnel
 	Player *owningPlayer = getObject()->getControllingPlayer();
-	if( owningPlayer == NULL )
+	if( owningPlayer == nullptr )
 		return;
 	TunnelTracker *tunnelTracker = owningPlayer->getTunnelSystem();
-	if( tunnelTracker == NULL )
+	if( tunnelTracker == nullptr )
 		return;
 
 	// We are the last tunnel, so kick everyone out.  This makes tunnels act like Palace and Bunker
@@ -322,7 +322,7 @@ const ContainedItemsList* TunnelContain::getContainedItemsList() const
 	{
 		return owningPlayer->getTunnelSystem()->getContainedItemsList();
 	}
-	return NULL;
+	return nullptr;
 }
 
 UnsignedInt TunnelContain::getFullTimeForHeal(void) const
@@ -400,10 +400,10 @@ void TunnelContain::onDie( const DamageInfo * damageInfo )
 		return;//it isn't registered as a tunnel
 
 	Player *owningPlayer = getObject()->getControllingPlayer();
-	if( owningPlayer == NULL )
+	if( owningPlayer == nullptr )
 		return;
 	TunnelTracker *tunnelTracker = owningPlayer->getTunnelSystem();
-	if( tunnelTracker == NULL )
+	if( tunnelTracker == nullptr )
 		return;
 
 	tunnelTracker->onTunnelDestroyed( getObject() );
@@ -419,10 +419,10 @@ void TunnelContain::onDelete( void )
 		return;//it isn't registered as a tunnel
 
 	Player *owningPlayer = getObject()->getControllingPlayer();
-	if( owningPlayer == NULL )
+	if( owningPlayer == nullptr )
 		return;
 	TunnelTracker *tunnelTracker = owningPlayer->getTunnelSystem();
-	if( tunnelTracker == NULL )
+	if( tunnelTracker == nullptr )
 		return;
 
 	tunnelTracker->onTunnelDestroyed( getObject() );
@@ -445,10 +445,10 @@ void TunnelContain::onObjectCreated()
 	m_needToRunOnBuildComplete = false;
 
 	Player *owningPlayer = getObject()->getControllingPlayer();
-	if( owningPlayer == NULL )
+	if( owningPlayer == nullptr )
 		return;
 	TunnelTracker *tunnelTracker = owningPlayer->getTunnelSystem();
-	if( tunnelTracker == NULL )
+	if( tunnelTracker == nullptr )
 		return;
 
 	tunnelTracker->onTunnelCreated( getObject() );
@@ -467,10 +467,10 @@ void TunnelContain::onBuildComplete( void )
 	m_needToRunOnBuildComplete = false;
 
 	Player *owningPlayer = getObject()->getControllingPlayer();
-	if( owningPlayer == NULL )
+	if( owningPlayer == nullptr )
 		return;
 	TunnelTracker *tunnelTracker = owningPlayer->getTunnelSystem();
-	if( tunnelTracker == NULL )
+	if( tunnelTracker == nullptr )
 		return;
 
 	tunnelTracker->onTunnelCreated( getObject() );
@@ -531,7 +531,7 @@ UpdateSleepTime TunnelContain::update( void )
 	OpenContain::update();
 
 	Object *obj = getObject();
-	Player *controllingPlayer = NULL;
+	Player *controllingPlayer = nullptr;
 	if (obj)
 	{
 		controllingPlayer = obj->getControllingPlayer();

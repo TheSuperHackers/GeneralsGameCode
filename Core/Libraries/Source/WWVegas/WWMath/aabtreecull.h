@@ -72,9 +72,9 @@ public:
 	/*
 	** Update_Bounding_Boxes.  This function causes all bounding boxes in the tree to update themselves.
 	** If any box is found to not bound the objects it is supposed to contain, the box is updated
-	** Note that this is normally not necessary, the reason this function existsis due to the fact
+	** Note that this is normally not necessary, the reason this function exists is due to the fact
 	** that the renegade level editor tries to do everything possible to not discard the precalculated
-	** visibilty data for a level.  In some cases, we want to load geometry that has been edited back
+	** visibility data for a level.  In some cases, we want to load geometry that has been edited back
 	** into the same AABTree without re-partitioning.
 	*/
 	void					Update_Bounding_Boxes(void);
@@ -326,7 +326,7 @@ public:
 class AABTreeLinkClass : public CullLinkClass, public AutoPoolClass<AABTreeLinkClass,256>
 {
 public:
-	AABTreeLinkClass(AABTreeCullSystemClass * system) : CullLinkClass(system),Node(NULL), NextObject(NULL) { }
+	AABTreeLinkClass(AABTreeCullSystemClass * system) : CullLinkClass(system),Node(nullptr), NextObject(nullptr) { }
 
 	AABTreeNodeClass *				Node;					// partition node containing this object
 	CullableClass *					NextObject;			// next object in the node

@@ -102,11 +102,11 @@ INode *Find_Named_Node (char *nodename, INode *root);
 #define SAFE_DELETE(pobject) \
 			if (pobject) { \
 				delete pobject; \
-				pobject = NULL; \
+				pobject = nullptr; \
 			}
 
 #define SAFE_DELETE_ARRAY(pobject) \
 			if (pobject) { \
 				delete [] pobject; \
-				pobject = NULL; \
+				pobject = nullptr; \
 			}

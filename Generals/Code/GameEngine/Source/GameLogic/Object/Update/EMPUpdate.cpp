@@ -84,7 +84,7 @@ EMPUpdate::EMPUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModul
 	if ( data )
 	{
 		//SANITY
-		DEBUG_ASSERTCRASH( TheGameLogic, ("EMPUpdate::EMPUpdate - TheGameLogic is NULL" ) );
+		DEBUG_ASSERTCRASH( TheGameLogic, ("EMPUpdate::EMPUpdate - TheGameLogic is null" ) );
 		UnsignedInt now = TheGameLogic->getFrame();
 
 		m_currentScale = data->m_startScale;
@@ -106,7 +106,7 @@ EMPUpdate::EMPUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModul
 	}
 
 	//SANITY
-	DEBUG_ASSERTCRASH( data, ("EMPUpdate::EMPUpdate - getEMPUpdateModuleData is NULL" ) );
+	DEBUG_ASSERTCRASH( data, ("EMPUpdate::EMPUpdate - getEMPUpdateModuleData is null" ) );
 	m_currentScale = 1.0f;
 	m_dieFrame = 0;
 	m_tintEnvFadeFrames = 0;
@@ -175,8 +175,8 @@ void EMPUpdate::doDisableAttack( void )
 	Real curVictimDistSqr;
 	const Coord3D *pos = object->getPosition();
 
-	SimpleObjectIterator *iter = NULL;
-	Object *curVictim = NULL;
+	SimpleObjectIterator *iter = nullptr;
+	Object *curVictim = nullptr;
 
 	if (radius > 0.0f)
 	{
@@ -188,7 +188,7 @@ void EMPUpdate::doDisableAttack( void )
 
 	MemoryPoolObjectHolder hold(iter);
 
-	for ( ; curVictim != NULL; curVictim = iter ? iter->nextWithNumeric(&curVictimDistSqr) : NULL)
+	for ( ; curVictim != nullptr; curVictim = iter ? iter->nextWithNumeric(&curVictimDistSqr) : nullptr)
 	{
 		if ( curVictim != object)
 		{

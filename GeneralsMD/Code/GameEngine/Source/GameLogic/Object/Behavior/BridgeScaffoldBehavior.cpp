@@ -231,7 +231,7 @@ UpdateSleepTime BridgeScaffoldBehavior::update( void )
 	//
 	// will this new position push us beyond our target destination, we will take the vector
 	// from the new position to the destination and the vector from our current present position
-	// tot he destination and dot them togehter ... if the result is < 0 then we have will
+	// tot he destination and dot them together ... if the result is < 0 then we have will
 	// overshoot the distance if we use the new position
 	//
 	Coord3D tooFarVector;
@@ -283,12 +283,12 @@ UpdateSleepTime BridgeScaffoldBehavior::update( void )
 BridgeScaffoldBehaviorInterface *BridgeScaffoldBehavior::getBridgeScaffoldBehaviorInterfaceFromObject( Object *obj )
 {
 
-	// santiy
-	if( obj == NULL )
-		return NULL;
+	// sanity
+	if( obj == nullptr )
+		return nullptr;
 
 	// get the bridge tower behavior interface
-	BridgeScaffoldBehaviorInterface *bridgeScaffoldInterface = NULL;
+	BridgeScaffoldBehaviorInterface *bridgeScaffoldInterface = nullptr;
 	BehaviorModule **bmi;
 	for( bmi = obj->getBehaviorModules(); *bmi; ++bmi )
 	{
@@ -300,7 +300,7 @@ BridgeScaffoldBehaviorInterface *BridgeScaffoldBehavior::getBridgeScaffoldBehavi
 	}
 
 	// interface not found
-	return NULL;
+	return nullptr;
 
 }
 

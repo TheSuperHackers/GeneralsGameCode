@@ -37,7 +37,7 @@ bool FindDialog::_Found;
 // FindDialog dialog
 
 
-FindDialog::FindDialog(CWnd* pParent /*=NULL*/)
+FindDialog::FindDialog(CWnd* pParent /*=nullptr*/)
 	: CDialog(FindDialog::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(FindDialog)

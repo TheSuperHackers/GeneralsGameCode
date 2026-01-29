@@ -56,8 +56,6 @@ typedef enum
 	TERRAIN_SNOW_3,
 
 	// remove all the terrain types below when Todd says he's redone them all
-	//TERRAIN_ASPHALT,
-	//TERRAIN_CONCRETE,
 	TERRAIN_DIRT,
 	TERRAIN_GRASS,
 	TERRAIN_TRANSITION,
@@ -107,8 +105,6 @@ static const char *const terrainTypeNames[] =
 	"SNOW_3",
 
 	// remove all the terrain types below when Todd says he's redone them all
-	//"ASPHALT",
-	//"CONCRETE",
 	"DIRT",
 	"GRASS",
 	"TRANSITION",
@@ -137,7 +133,7 @@ static const char *const terrainTypeNames[] =
 	"ROCK_ACCENT",
 	"URBAN",
 
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(terrainTypeNames) == TERRAIN_NUM_CLASSES + 1, "Incorrect array size");
 #endif  // end DEFINE_TERRAIN_TYPE_NAMES

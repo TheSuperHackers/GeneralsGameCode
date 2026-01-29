@@ -37,10 +37,6 @@
 #include "always.h"
 #include "mempool.h"
 
-#ifndef NULL
-#define NULL 0
-#endif
-
 //	Forward references for friend	classes
 template	<class T> class SList;
 
@@ -64,7 +60,7 @@ class	GenericSLNode : public AutoPoolClass<GenericSLNode, 256>
 		// created from anything but a friend or parent class.
 		//
 		GenericSLNode(void *obj)
-			{NodeData = obj; NodeNext = 0; };
+			{NodeData = obj; NodeNext = nullptr; };
 
 		//
 		//	You cannot declare a node class without giving it a data object.

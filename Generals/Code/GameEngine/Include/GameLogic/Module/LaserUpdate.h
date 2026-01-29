@@ -45,7 +45,7 @@ class LaserUpdateModuleData : public ClientUpdateModuleData
 public:
 	AsciiString m_particleSystemName;  ///< Used for the muzzle flare while laser active.
 	AsciiString m_parentFireBoneName;  ///< Used to fire laser at specified parent bone position.
-	Bool m_parentFireBoneOnTurret;			///< And used to specifiy where to look for the bone.
+	Bool m_parentFireBoneOnTurret;			///< And used to specify where to look for the bone.
 
 	AsciiString m_targetParticleSystemName;  ///< Used for the target effect while laser active.
 

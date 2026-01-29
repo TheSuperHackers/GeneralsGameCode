@@ -37,7 +37,7 @@
 /*		4/12/2002 : Initial creation                                           */
 /*---------------------------------------------------------------------------*/
 /**************************************************************************************************
-Some info about partioning problems:
+Some info about partitioning problems:
 
 	This problem is contained in a very interesting class of problems known as NP complete. The
 	basic problem is that there is no way to tell whether you have an optimal solution or not.

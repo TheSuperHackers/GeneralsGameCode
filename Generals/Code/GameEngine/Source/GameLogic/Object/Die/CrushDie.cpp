@@ -48,7 +48,7 @@
 // Figure out which crush point was hit so the correct crushed object can be swapped in
 static CrushEnum crushLocationCheck( Object* crusherObject, Object* victimObject )
 {
-	if( (crusherObject == NULL)  ||  (victimObject == NULL) )
+	if( (crusherObject == nullptr)  ||  (victimObject == nullptr) )
 		return NO_CRUSH;
 
 	Bool frontCrushed = victimObject->getBodyModule()->getFrontCrushed();

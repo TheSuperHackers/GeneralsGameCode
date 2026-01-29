@@ -198,8 +198,8 @@ DecalMeshClass::DecalMeshClass(MeshClass * parent,DecalSystemClass * system) :
 	Parent(parent),
 	DecalSystem(system)
 {
-	WWASSERT(Parent != NULL);
-	WWASSERT(DecalSystem != NULL);
+	WWASSERT(Parent != nullptr);
+	WWASSERT(DecalSystem != nullptr);
 }
 
 

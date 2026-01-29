@@ -83,7 +83,7 @@ BOOL CALLBACK PageErrorProc( HWND hWndDialog, UINT message,
 			//
 
 			// sanity
-			if( TheImagePacker == NULL )
+			if( TheImagePacker == nullptr )
 				return TRUE;
 
 			// go through all pages

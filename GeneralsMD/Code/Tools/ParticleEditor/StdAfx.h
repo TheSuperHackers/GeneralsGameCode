@@ -54,7 +54,7 @@
 // I don't care that debug symbols are longer than 255, I won't read them anyways.
 #pragma warning (disable : 4786)
 
-// Define IN and OUT. Use them for sementic emphasis.
+// Define IN and OUT. Use them for semantic emphasis.
 #ifndef IN
 #  define IN
 #endif

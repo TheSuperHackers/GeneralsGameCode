@@ -28,7 +28,7 @@ class ShadowOptions : public CDialog
 {
 // Construction
 public:
-	ShadowOptions(CWnd* pParent = NULL);   // standard constructor
+	ShadowOptions(CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(ShadowOptions)

@@ -68,9 +68,9 @@ public:
 	AsciiString m_name;													///< name for this CrateTemplate
 
 	Real m_creationChance;											///< Condition for random percentage chance of creating
-	VeterancyLevel m_veterancyLevel;						///< Condition specifing level of killed unit
+	VeterancyLevel m_veterancyLevel;						///< Condition specifying level of killed unit
 	KindOfMaskType m_killedByTypeKindof;				///< Must be killed by something with all these bits set
-	ScienceType m_killerScience;								///< Must be killed by something posessing this science
+	ScienceType m_killerScience;								///< Must be killed by something possessing this science
 	crateCreationEntryList m_possibleCrates;		///< CreationChance is for this CrateData to succeed, this list controls one-of-n crates created on success
 	Bool m_isOwnedByMaker;											///< Design needs crates to be owned sometimes.
 

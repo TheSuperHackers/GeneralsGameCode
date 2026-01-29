@@ -81,17 +81,17 @@ public:
     BehaviorModuleData::buildFieldParse(p);
 		static const FieldParse dataFieldParse[] =
 		{
-			{ "SpawnNumber",							INI::parseInt,										NULL, offsetof( SpawnBehaviorModuleData, m_spawnNumberData ) },
-			{ "SpawnReplaceDelay",				INI::parseDurationUnsignedInt,		NULL, offsetof( SpawnBehaviorModuleData, m_spawnReplaceDelayData ) },
-			{ "OneShot",									INI::parseBool,										NULL, offsetof( SpawnBehaviorModuleData, m_isOneShotData ) },
-			{ "CanReclaimOrphans",				INI::parseBool,										NULL,	offsetof( SpawnBehaviorModuleData, m_canReclaimOrphans ) },
-			{ "AggregateHealth",  				INI::parseBool,										NULL, offsetof( SpawnBehaviorModuleData, m_aggregateHealth ) },
-			{ "ExitByBudding",    				INI::parseBool,										NULL, offsetof( SpawnBehaviorModuleData, m_exitByBudding ) },
-			{ "SpawnTemplateName",				INI::parseAsciiStringVectorAppend,NULL, offsetof( SpawnBehaviorModuleData, m_spawnTemplateNameData ) },
-			{ "SpawnedRequireSpawner",		INI::parseBool,										NULL,	offsetof( SpawnBehaviorModuleData, m_spawnedRequireSpawner ) },
-			{ "PropagateDamageTypesToSlavesWhenExisting",   INI::parseDamageTypeFlags, NULL, offsetof( SpawnBehaviorModuleData, m_damageTypesToPropagateToSlaves ) },
-			{ "InitialBurst",				      INI::parseInt,						        NULL, offsetof( SpawnBehaviorModuleData, m_initialBurst ) },
-			{ "SlavesHaveFreeWill",				INI::parseBool,										NULL, offsetof( SpawnBehaviorModuleData, m_slavesHaveFreeWill ) },
+			{ "SpawnNumber",							INI::parseInt,										nullptr, offsetof( SpawnBehaviorModuleData, m_spawnNumberData ) },
+			{ "SpawnReplaceDelay",				INI::parseDurationUnsignedInt,		nullptr, offsetof( SpawnBehaviorModuleData, m_spawnReplaceDelayData ) },
+			{ "OneShot",									INI::parseBool,										nullptr, offsetof( SpawnBehaviorModuleData, m_isOneShotData ) },
+			{ "CanReclaimOrphans",				INI::parseBool,										nullptr,	offsetof( SpawnBehaviorModuleData, m_canReclaimOrphans ) },
+			{ "AggregateHealth",  				INI::parseBool,										nullptr, offsetof( SpawnBehaviorModuleData, m_aggregateHealth ) },
+			{ "ExitByBudding",    				INI::parseBool,										nullptr, offsetof( SpawnBehaviorModuleData, m_exitByBudding ) },
+			{ "SpawnTemplateName",				INI::parseAsciiStringVectorAppend,nullptr, offsetof( SpawnBehaviorModuleData, m_spawnTemplateNameData ) },
+			{ "SpawnedRequireSpawner",		INI::parseBool,										nullptr,	offsetof( SpawnBehaviorModuleData, m_spawnedRequireSpawner ) },
+			{ "PropagateDamageTypesToSlavesWhenExisting",   INI::parseDamageTypeFlags, nullptr, offsetof( SpawnBehaviorModuleData, m_damageTypesToPropagateToSlaves ) },
+			{ "InitialBurst",				      INI::parseInt,						        nullptr, offsetof( SpawnBehaviorModuleData, m_initialBurst ) },
+			{ "SlavesHaveFreeWill",				INI::parseBool,										nullptr, offsetof( SpawnBehaviorModuleData, m_slavesHaveFreeWill ) },
 			{ 0, 0, 0, 0 }
 
 		};

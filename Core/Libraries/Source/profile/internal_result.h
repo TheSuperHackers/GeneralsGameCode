@@ -66,7 +66,7 @@ public:
     \brief Creates a class instance.
 
     \param fileName name of DOT file to generate (defaults to profile.dot)
-    \param frameName name of frame to use (NULL for global)
+    \param frameName name of frame to use (null for global)
     \param foldThreshold if the number of functions exceeds the given threshold
                          then all functions belonging to the same source file
                          will be folded into a single entry

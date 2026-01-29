@@ -61,9 +61,9 @@ void SubObjectsUpgradeModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "ShowSubObjects", INI::parseAsciiStringVectorAppend, NULL, offsetof( SubObjectsUpgradeModuleData, m_showSubObjectNames ) },
-		{ "HideSubObjects", INI::parseAsciiStringVectorAppend, NULL, offsetof( SubObjectsUpgradeModuleData, m_hideSubObjectNames ) },
-		{ 0, 0, 0, 0 }
+		{ "ShowSubObjects", INI::parseAsciiStringVectorAppend, nullptr, offsetof( SubObjectsUpgradeModuleData, m_showSubObjectNames ) },
+		{ "HideSubObjects", INI::parseAsciiStringVectorAppend, nullptr, offsetof( SubObjectsUpgradeModuleData, m_hideSubObjectNames ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   p.add(dataFieldParse);
 }

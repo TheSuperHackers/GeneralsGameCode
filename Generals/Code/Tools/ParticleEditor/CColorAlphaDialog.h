@@ -30,7 +30,7 @@ class CColorAlphaDialog : public CDialog
 		void onColorPress( Int colorPressed );
 	public:
 		enum {IDD = IDD_PSEd_EditColorAndAlpha};
-		CColorAlphaDialog(UINT nIDTemplate = CColorAlphaDialog::IDD, CWnd* pParentWnd = NULL);
+		CColorAlphaDialog(UINT nIDTemplate = CColorAlphaDialog::IDD, CWnd* pParentWnd = nullptr);
 
 		void InitPanel( void );
 

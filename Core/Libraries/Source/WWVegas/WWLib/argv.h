@@ -46,7 +46,7 @@
 // If there is a arguement <fileprefix><fname> (for example @file.arg) then the fname is loaded up,
 // parsed, and put into the command line.  The format of the parameter file is as follows:
 // 	1. a semicolon (;) at the start of the line is a comment and will be ignored.
-//		2. Each line is a seperate parameter.  This enables white space to be embeded.
+//		2. Each line is a separate parameter.  This enables white space to be embeded.
 //	In typical Argv implementation, the first argument is the name of the application.  This
 // is not the case with this.
 class ArgvClass
@@ -68,7 +68,7 @@ class ArgvClass
 			CurrentPos = -1;
 			return(Find_Again(arg));
 		}
-		// If NULL passed, original string will be used.
+		// If null passed, original string will be used.
 		const char *Find_Again(const char *arg = 0L);
 
 		// Return pointer to data after 'arg'.
@@ -87,7 +87,7 @@ class ArgvClass
 		void Update_Value(const char *attrib, const char *value);
 
 		// Add a new attrib value pair (or just an option)
-		void Add_Value(const char *attrib, const char *value=NULL);
+		void Add_Value(const char *attrib, const char *value=nullptr);
 
 		// Remove an option (and its value)
 		bool Remove_Value(const char *attrib);

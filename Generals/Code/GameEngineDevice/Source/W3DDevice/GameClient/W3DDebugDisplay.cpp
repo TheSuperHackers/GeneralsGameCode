@@ -35,7 +35,7 @@
 //
 // Module:    Debug
 //
-// File name: W3DGameDevice/GameClisnt/W3DDebugDisplay.cpp
+// File name: W3DGameDevice/GameClient/W3DDebugDisplay.cpp
 //
 // Created:   11/13/01 TR
 //
@@ -101,7 +101,7 @@
 //============================================================================
 
 W3DDebugDisplay::W3DDebugDisplay()
-: m_displayString(NULL)
+: m_displayString(nullptr)
 {
 
 }
@@ -133,7 +133,7 @@ void W3DDebugDisplay::init( void )
 
 void W3DDebugDisplay::drawText( Int x, Int y, Char *text )
 {
-	if ( m_font == NULL || m_displayString == NULL )
+	if ( m_font == nullptr || m_displayString == nullptr )
 	{
 		return ;
 	}

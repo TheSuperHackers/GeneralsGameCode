@@ -142,10 +142,10 @@ void Curve3DClass::Get_Key(int i,Vector3 * set_point,float * set_t)
 {
 	assert(i >= 0);
 	assert(i < Keys.Count());
-	if (set_point != NULL) {
+	if (set_point != nullptr) {
 		*set_point = Keys[i].Point;
 	}
-	if (set_t != NULL) {
+	if (set_t != nullptr) {
 		*set_t = Keys[i].Time;
 	}
 }
@@ -385,13 +385,13 @@ void Curve1DClass::Get_Key(int i,float * set_point,float * set_t,unsigned int * 
 {
 	assert(i >= 0);
 	assert(i < Keys.Count());
-	if (set_point != NULL) {
+	if (set_point != nullptr) {
 		*set_point = Keys[i].Point;
 	}
-	if (set_t != NULL) {
+	if (set_t != nullptr) {
 		*set_t = Keys[i].Time;
 	}
-	if (extra != NULL) {
+	if (extra != nullptr) {
 		*extra = Keys[i].Extra;
 	}
 }

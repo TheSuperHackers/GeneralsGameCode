@@ -70,6 +70,7 @@ void ParticlePanelParticle::InitPanel( void )
 		bWorkin = finder.FindNextFile();
 		pWnd->AddString(finder.GetFileName());
 	}
+	pWnd->AddString("SMUDGE RESERVED");	//smudges don't use textures so we're hardcoding one to tell them apart.
 }
 
 void ParticlePanelParticle::performUpdate( IN Bool toUI )

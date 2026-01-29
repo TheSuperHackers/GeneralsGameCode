@@ -37,7 +37,7 @@ static char THIS_FILE[] = __FILE__;
 // CBackgroundColorDialog dialog
 
 
-CBackgroundColorDialog::CBackgroundColorDialog(CWnd* pParent /*=NULL*/)
+CBackgroundColorDialog::CBackgroundColorDialog(CWnd* pParent /*=nullptr*/)
 	: CDialog(CBackgroundColorDialog::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(CBackgroundColorDialog)

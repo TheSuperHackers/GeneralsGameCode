@@ -29,6 +29,11 @@
 
 #pragma once
 
+#if defined __MINGW32__
+#include "Utility/atl_compat.h"
+#include "Utility/comsupp_compat.h" 
+#endif
+
 #include <atlbase.h>
 extern CComModule _Module;
 #include <atlcom.h>
@@ -51,15 +56,15 @@ public:
 
 		FEBDispatch()
 	{
-		m_ptinfo = NULL;
-		m_dispatch = NULL;
+		m_ptinfo = nullptr;
+		m_dispatch = nullptr;
 
 		ITypeLib *ptlib;
 		HRESULT hr;
 		HRESULT TypeLibraryLoadResult;
 		char filename[256];
 
-		GetModuleFileName(NULL, filename, sizeof(filename));
+		GetModuleFileName(nullptr, filename, sizeof(filename));
 		_bstr_t bstr(filename);
 
 		TypeLibraryLoadResult = LoadTypeLib(bstr, &ptlib);
@@ -81,7 +86,7 @@ public:
 			}
 		}
 
-		if ( m_dispatch == NULL )
+		if ( m_dispatch == nullptr )
 		{
 			DEBUG_LOG(("Error creating Dispatch for Web interface"));
 		}

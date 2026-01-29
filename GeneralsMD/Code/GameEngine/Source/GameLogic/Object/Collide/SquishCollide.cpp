@@ -62,7 +62,7 @@ SquishCollide::~SquishCollide( void )
 void SquishCollide::onCollide( Object *other, const Coord3D *loc, const Coord3D *normal )
 {
 	// Note that other == null means "collide with ground"
-	if (other == NULL)
+	if (other == nullptr)
 		return;
 
 	Object *self = getObject();
@@ -92,7 +92,7 @@ void SquishCollide::onCollide( Object *other, const Coord3D *loc, const Coord3D 
 	if( other->getCrusherLevel() > 0 && other->getRelationship(getObject()) != ALLIES)
 	{
 		PhysicsBehavior *otherPhysics = other->getPhysics();
-		if (otherPhysics == NULL)
+		if (otherPhysics == nullptr)
 			return;
 
 		// use a 1.0 crush radius so the tank has to actually hit the infantry.

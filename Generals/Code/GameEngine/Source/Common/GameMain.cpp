@@ -57,9 +57,9 @@ Int GameMain()
 
 	// since execute() returned, we are exiting the game
 	delete TheFramePacer;
-	TheFramePacer = NULL;
+	TheFramePacer = nullptr;
 	delete TheGameEngine;
-	TheGameEngine = NULL;
+	TheGameEngine = nullptr;
 
 	return exitcode;
 }

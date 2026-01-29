@@ -33,6 +33,7 @@
 #include "Common/Snapshot.h"
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
+class Anim2DCollection;
 class Image;
 
 // ------------------------------------------------------------------------------------------------
@@ -62,7 +63,7 @@ static const char *const Anim2DModeNames[] =
 	"LOOP_BACKWARDS",
 	"PING_PONG",
 	"PING_PONG_BACKWARDS",
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(Anim2DModeNames) == ANIM_2D_NUM_MODES + 1, "Incorrect array size");
 #endif
@@ -160,7 +161,7 @@ public:
 	UnsignedInt getCurrentFrameHeight( void ) const;		///< return natural height of image in the current frame
 	const Anim2DTemplate *getAnimTemplate( void ) const { return m_template; }	///< return our template
 
-	void draw( Int x, Int y );													///< draw iamge at location using natural width/height
+	void draw( Int x, Int y );													///< draw image at location using natural width/height
 	void draw( Int x, Int y, Int width, Int height );		///< draw image at location using forced width/height
 
 protected:

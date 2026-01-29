@@ -68,27 +68,27 @@ static NameKeyType buttonMuteID[MAX_SLOTS];
 static NameKeyType buttonUnMuteID[MAX_SLOTS];
 static NameKeyType radioButtonInGameID = NAMEKEY_INVALID;
 static NameKeyType radioButtonBuddiesID = NAMEKEY_INVALID;
-static GameWindow *radioButtonInGame = NULL;
-static GameWindow *radioButtonBuddies = NULL;
+static GameWindow *radioButtonInGame = nullptr;
+static GameWindow *radioButtonBuddies = nullptr;
 static NameKeyType winInGameID = NAMEKEY_INVALID;
 static NameKeyType winBuddiesID = NAMEKEY_INVALID;
 static NameKeyType winSoloID = NAMEKEY_INVALID;
-static GameWindow *winInGame = NULL;
-static GameWindow *winBuddies = NULL;
-static GameWindow *winSolo = NULL;
-static GameWindow *staticTextPlayer[MAX_SLOTS] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
-static GameWindow *staticTextSide[MAX_SLOTS] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
-static GameWindow *staticTextTeam[MAX_SLOTS] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
-static GameWindow *staticTextStatus[MAX_SLOTS] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
-static GameWindow *buttonMute[MAX_SLOTS] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
-static GameWindow *buttonUnMute[MAX_SLOTS] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
+static GameWindow *winInGame = nullptr;
+static GameWindow *winBuddies = nullptr;
+static GameWindow *winSolo = nullptr;
+static GameWindow *staticTextPlayer[MAX_SLOTS] = {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr};
+static GameWindow *staticTextSide[MAX_SLOTS] = {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr};
+static GameWindow *staticTextTeam[MAX_SLOTS] = {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr};
+static GameWindow *staticTextStatus[MAX_SLOTS] = {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr};
+static GameWindow *buttonMute[MAX_SLOTS] = {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr};
+static GameWindow *buttonUnMute[MAX_SLOTS] = {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr};
 static Int slotNumInRow[MAX_SLOTS];
 
 //-------------------------------------------------------------------------------------------------
 
-static WindowLayout *theLayout = NULL;
-static GameWindow *theWindow = NULL;
-static AnimateWindowManager *theAnimateWindowManager = NULL;
+static WindowLayout *theLayout = nullptr;
+static GameWindow *theWindow = nullptr;
+static AnimateWindowManager *theAnimateWindowManager = nullptr;
 WindowMsgHandledType BuddyControlSystem( GameWindow *window, UnsignedInt msg,
 														 WindowMsgData mData1, WindowMsgData mData2);
 void InitBuddyControls(Int type);
@@ -126,12 +126,12 @@ static void releaseWindowPointers( void )
 {
 	for (Int i=0; i<MAX_SLOTS; ++i)
 	{
-		staticTextPlayer[i] = NULL;
-		staticTextSide[i] = NULL;
-		staticTextTeam[i] = NULL;
-		staticTextStatus[i] = NULL;
-		buttonMute[i] = NULL;
-		buttonUnMute[i] = NULL;
+		staticTextPlayer[i] = nullptr;
+		staticTextSide[i] = nullptr;
+		staticTextTeam[i] = nullptr;
+		staticTextStatus[i] = nullptr;
+		buttonMute[i] = nullptr;
+		buttonUnMute[i] = nullptr;
 
 		slotNumInRow[i] = -1;
 	}
@@ -217,14 +217,14 @@ void ShowDiplomacy( Bool immediate )
 		theAnimateWindowManager = NEW AnimateWindowManager;
 		radioButtonInGameID = TheNameKeyGenerator->nameToKey("Diplomacy.wnd:RadioButtonInGame");
 		radioButtonBuddiesID = TheNameKeyGenerator->nameToKey("Diplomacy.wnd:RadioButtonBuddies");
-		radioButtonInGame = TheWindowManager->winGetWindowFromId(NULL, radioButtonInGameID);
-		radioButtonBuddies = TheWindowManager->winGetWindowFromId(NULL, radioButtonBuddiesID);
+		radioButtonInGame = TheWindowManager->winGetWindowFromId(nullptr, radioButtonInGameID);
+		radioButtonBuddies = TheWindowManager->winGetWindowFromId(nullptr, radioButtonBuddiesID);
 		winInGameID = TheNameKeyGenerator->nameToKey("Diplomacy.wnd:InGameParent");
 		winBuddiesID = TheNameKeyGenerator->nameToKey("Diplomacy.wnd:BuddiesParent");
 		winSoloID = TheNameKeyGenerator->nameToKey("Diplomacy.wnd:SoloParent");
-		winInGame = TheWindowManager->winGetWindowFromId(NULL, winInGameID);
-		winBuddies = TheWindowManager->winGetWindowFromId(NULL, winBuddiesID);
-		winSolo = TheWindowManager->winGetWindowFromId(NULL, winSoloID);
+		winInGame = TheWindowManager->winGetWindowFromId(nullptr, winInGameID);
+		winBuddies = TheWindowManager->winGetWindowFromId(nullptr, winBuddiesID);
+		winSolo = TheWindowManager->winGetWindowFromId(nullptr, winSoloID);
 
 		if (!TheRecorder->isMultiplayer())
 		{
@@ -287,12 +287,12 @@ void ResetDiplomacy( void )
 		theLayout->destroyWindows();
 		deleteInstance(theLayout);
 		InitBuddyControls(-1);
-		theLayout = NULL;
+		theLayout = nullptr;
 	}
-	theWindow = NULL;
+	theWindow = nullptr;
 
 	delete theAnimateWindowManager;
-	theAnimateWindowManager = NULL;
+	theAnimateWindowManager = nullptr;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -466,10 +466,10 @@ void PopulateInGameDiplomacyPopup( void )
 		if (slot && slot->isOccupied())
 		{
 			Bool isInGame = false;
-			// Note - for skirmish, TheNetwork == NULL.  jba.
+			// Note - for skirmish, TheNetwork == nullptr.  jba.
 			if (TheNetwork &&	TheNetwork->isPlayerConnected(slotNum)) {
 				isInGame = true;
-			} else if ((TheNetwork == NULL) && slot->isHuman()) {
+			} else if ((TheNetwork == nullptr) && slot->isHuman()) {
 				// this is a skirmish game and it is the human player.
 				isInGame = true;
 			}

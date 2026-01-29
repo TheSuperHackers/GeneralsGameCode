@@ -31,7 +31,7 @@ class OpacitySettingsDialogClass : public CDialog
 {
 // Construction
 public:
-	OpacitySettingsDialogClass(float opacity, CWnd* pParent = NULL);   // standard constructor
+	OpacitySettingsDialogClass(float opacity, CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(OpacitySettingsDialogClass)

@@ -89,7 +89,7 @@ public:
 	void changeBoundary(Int ndx, ICoord2D *border);
 	void removeLastBoundary(void);
 
-	// outNdx must not be NULL, but outHandle can be.
+	// outNdx must not be null, but outHandle can be.
 	// outHandle: 0 means BL, 1 means TL, 2 means TR, 3 means BR
 	void findBoundaryNear(Coord3D *pt, float okDistance, Int *outNdx, Int *outHandle);
 

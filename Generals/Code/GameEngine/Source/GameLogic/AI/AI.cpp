@@ -65,8 +65,8 @@ void TAiData::addFactionBuildList(AISideBuildList *buildList)
 		if (buildList->m_side == info->m_side) {
 			deleteInstance(info->m_buildList);
 			info->m_buildList = buildList->m_buildList;
-			buildList->m_buildList = NULL;
-			buildList->m_next = NULL;
+			buildList->m_buildList = nullptr;
+			buildList->m_next = nullptr;
 			deleteInstance(buildList);
 			return;
 		}
@@ -79,7 +79,7 @@ void TAiData::addFactionBuildList(AISideBuildList *buildList)
 TAiData::~TAiData()
 {
 	AISideInfo *info = m_sideInfo;
-	m_sideInfo = NULL;
+	m_sideInfo = nullptr;
 	while (info) {
 		AISideInfo *cur = info;
 		info = info->m_next;
@@ -87,7 +87,7 @@ TAiData::~TAiData()
 	}
 
 	AISideBuildList *build = m_sideBuildLists;
-	m_sideBuildLists = NULL;
+	m_sideBuildLists = nullptr;
 	while (build) {
 		AISideBuildList *cur = build;
 		build = build->m_next;
@@ -101,31 +101,31 @@ TAiData::~TAiData()
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 AISideBuildList::AISideBuildList( AsciiString side ) :
 	m_side(side),
-	m_buildList(NULL),
-	m_next(NULL)
+	m_buildList(nullptr),
+	m_next(nullptr)
 {
 }
 
 AISideBuildList::~AISideBuildList()
 {
 	deleteInstance(m_buildList); // note - deletes all in the list.
-	m_buildList = NULL;
+	m_buildList = nullptr;
 }
 
 void AISideBuildList::addInfo(BuildListInfo *info)
 {
 	// Add to the end of the list.
-	if (m_buildList == NULL) {
+	if (m_buildList == nullptr) {
 		m_buildList = info;
 	} else {
 		BuildListInfo *cur = m_buildList;
 		while (cur && cur->getNext()) {
 			cur = cur->getNext();
 		}
-		DEBUG_ASSERTCRASH(cur && cur->getNext()==NULL, ("Logic error."));
+		DEBUG_ASSERTCRASH(cur && cur->getNext()==nullptr, ("Logic error."));
 		cur->setNextBuildList(info);
 	}
-	info->setNextBuildList(NULL); // should be at the end of the list.
+	info->setNextBuildList(nullptr); // should be at the end of the list.
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -134,67 +134,67 @@ void AISideBuildList::addInfo(BuildListInfo *info)
 static const FieldParse TheAIFieldParseTable[] =
 {
 
-	{ "StructureSeconds",				INI::parseReal,NULL,		offsetof( TAiData, m_structureSeconds ) },
-	{ "TeamSeconds",						INI::parseReal,NULL,		offsetof( TAiData, m_teamSeconds ) },
-	{ "Wealthy",								INI::parseInt,NULL,			offsetof( TAiData, m_resourcesWealthy ) },
-	{ "Poor",										INI::parseInt,NULL,		  offsetof( TAiData, m_resourcesPoor ) },
-	{ "ForceIdleMSEC",					INI::parseDurationUnsignedInt,NULL,offsetof( TAiData, m_forceIdleFramesCount )	},
-	{ "StructuresWealthyRate",	INI::parseReal,NULL,		offsetof( TAiData, m_structuresWealthyMod ) },
-	{ "TeamsWealthyRate",				INI::parseReal,NULL,		offsetof( TAiData, m_teamWealthyMod ) },
-	{ "StructuresPoorRate",			INI::parseReal,NULL,		offsetof( TAiData, m_structuresPoorMod ) },
-	{ "TeamsPoorRate",					INI::parseReal,NULL,		offsetof( TAiData, m_teamPoorMod ) },
-	{ "TeamResourcesToStart",		INI::parseReal,NULL,		offsetof( TAiData, m_teamResourcesToBuild ) },
-	{ "GuardInnerModifierAI",		INI::parseReal,NULL,		offsetof( TAiData, m_guardInnerModifierAI ) },
-	{ "GuardOuterModifierAI",		INI::parseReal,NULL,		offsetof( TAiData, m_guardOuterModifierAI ) },
-	{ "GuardInnerModifierHuman",INI::parseReal,NULL,		offsetof( TAiData, m_guardInnerModifierHuman ) },
-	{ "GuardOuterModifierHuman",INI::parseReal,NULL,		offsetof( TAiData, m_guardOuterModifierHuman ) },
-	{ "GuardChaseUnitsDuration",				INI::parseDurationUnsignedInt,NULL,		offsetof( TAiData, m_guardChaseUnitFrames ) },
-	{ "GuardEnemyScanRate",				INI::parseDurationUnsignedInt,NULL,		offsetof( TAiData, m_guardEnemyScanRate ) },
-	{ "GuardEnemyReturnScanRate",				INI::parseDurationUnsignedInt,NULL,		offsetof( TAiData, m_guardEnemyReturnScanRate ) },
-	{ "SkirmishGroupFudgeDistance",	INI::parseReal,NULL,		offsetof( TAiData, m_skirmishGroupFudgeValue ) },
+	{ "StructureSeconds",				INI::parseReal,nullptr,		offsetof( TAiData, m_structureSeconds ) },
+	{ "TeamSeconds",						INI::parseReal,nullptr,		offsetof( TAiData, m_teamSeconds ) },
+	{ "Wealthy",								INI::parseInt,nullptr,			offsetof( TAiData, m_resourcesWealthy ) },
+	{ "Poor",										INI::parseInt,nullptr,		  offsetof( TAiData, m_resourcesPoor ) },
+	{ "ForceIdleMSEC",					INI::parseDurationUnsignedInt,nullptr,offsetof( TAiData, m_forceIdleFramesCount )	},
+	{ "StructuresWealthyRate",	INI::parseReal,nullptr,		offsetof( TAiData, m_structuresWealthyMod ) },
+	{ "TeamsWealthyRate",				INI::parseReal,nullptr,		offsetof( TAiData, m_teamWealthyMod ) },
+	{ "StructuresPoorRate",			INI::parseReal,nullptr,		offsetof( TAiData, m_structuresPoorMod ) },
+	{ "TeamsPoorRate",					INI::parseReal,nullptr,		offsetof( TAiData, m_teamPoorMod ) },
+	{ "TeamResourcesToStart",		INI::parseReal,nullptr,		offsetof( TAiData, m_teamResourcesToBuild ) },
+	{ "GuardInnerModifierAI",		INI::parseReal,nullptr,		offsetof( TAiData, m_guardInnerModifierAI ) },
+	{ "GuardOuterModifierAI",		INI::parseReal,nullptr,		offsetof( TAiData, m_guardOuterModifierAI ) },
+	{ "GuardInnerModifierHuman",INI::parseReal,nullptr,		offsetof( TAiData, m_guardInnerModifierHuman ) },
+	{ "GuardOuterModifierHuman",INI::parseReal,nullptr,		offsetof( TAiData, m_guardOuterModifierHuman ) },
+	{ "GuardChaseUnitsDuration",				INI::parseDurationUnsignedInt,nullptr,		offsetof( TAiData, m_guardChaseUnitFrames ) },
+	{ "GuardEnemyScanRate",				INI::parseDurationUnsignedInt,nullptr,		offsetof( TAiData, m_guardEnemyScanRate ) },
+	{ "GuardEnemyReturnScanRate",				INI::parseDurationUnsignedInt,nullptr,		offsetof( TAiData, m_guardEnemyReturnScanRate ) },
+	{ "SkirmishGroupFudgeDistance",	INI::parseReal,nullptr,		offsetof( TAiData, m_skirmishGroupFudgeValue ) },
 
-	{ "RepulsedDistance",				INI::parseReal,NULL,		offsetof( TAiData, m_repulsedDistance ) },
-	{ "EnableRepulsors",				INI::parseBool,NULL,		offsetof( TAiData, m_enableRepulsors ) },
+	{ "RepulsedDistance",				INI::parseReal,nullptr,		offsetof( TAiData, m_repulsedDistance ) },
+	{ "EnableRepulsors",				INI::parseBool,nullptr,		offsetof( TAiData, m_enableRepulsors ) },
 
-	{	"AlertRangeModifier",			INI::parseReal,NULL,		offsetof( TAiData, m_alertRangeModifier)	},
-	{	"AggressiveRangeModifier",INI::parseReal,NULL,		offsetof( TAiData, m_aggressiveRangeModifier)	},
+	{	"AlertRangeModifier",			INI::parseReal,nullptr,		offsetof( TAiData, m_alertRangeModifier)	},
+	{	"AggressiveRangeModifier",INI::parseReal,nullptr,		offsetof( TAiData, m_aggressiveRangeModifier)	},
 
-	{ "ForceSkirmishAI",				INI::parseBool,NULL,		offsetof( TAiData, m_forceSkirmishAI ) },
-	{ "RotateSkirmishBases",		INI::parseBool,NULL,		offsetof( TAiData, m_rotateSkirmishBases ) },
+	{ "ForceSkirmishAI",				INI::parseBool,nullptr,		offsetof( TAiData, m_forceSkirmishAI ) },
+	{ "RotateSkirmishBases",		INI::parseBool,nullptr,		offsetof( TAiData, m_rotateSkirmishBases ) },
 
-	{ "AttackUsesLineOfSight",	INI::parseBool,NULL,		offsetof( TAiData, m_attackUsesLineOfSight ) },
-	{ "AttackIgnoreInsignificantBuildings",	INI::parseBool,NULL,		offsetof( TAiData, m_attackIgnoreInsignificantBuildings ) },
-
-
-	{ "AttackPriorityDistanceModifier", INI::parseReal,NULL, offsetof( TAiData, m_attackPriorityDistanceModifier) },
- 	{ "MaxRecruitRadius",				INI::parseReal,NULL,		offsetof( TAiData, m_maxRecruitDistance ) },
-
- 	{ "WallHeight",							INI::parseReal,NULL,		offsetof( TAiData, m_wallHeight ) },
-
-	{ "SideInfo",			AI::parseSideInfo,			NULL, NULL },
+	{ "AttackUsesLineOfSight",	INI::parseBool,nullptr,		offsetof( TAiData, m_attackUsesLineOfSight ) },
+	{ "AttackIgnoreInsignificantBuildings",	INI::parseBool,nullptr,		offsetof( TAiData, m_attackIgnoreInsignificantBuildings ) },
 
 
-	{ "SkirmishBuildList",			AI::parseSkirmishBuildList,			NULL, NULL },
+	{ "AttackPriorityDistanceModifier", INI::parseReal,nullptr, offsetof( TAiData, m_attackPriorityDistanceModifier) },
+ 	{ "MaxRecruitRadius",				INI::parseReal,nullptr,		offsetof( TAiData, m_maxRecruitDistance ) },
+
+ 	{ "WallHeight",							INI::parseReal,nullptr,		offsetof( TAiData, m_wallHeight ) },
+
+	{ "SideInfo",			AI::parseSideInfo,			nullptr, 0 },
 
 
- 	{ "MinInfantryForGroup",		INI::parseInt,NULL,			offsetof( TAiData, m_minInfantryForGroup ) },
- 	{ "MinVehiclesForGroup",		INI::parseInt,NULL,			offsetof( TAiData, m_minVehiclesForGroup ) },
-
- 	{ "MinDistanceForGroup",		INI::parseReal,NULL,			offsetof( TAiData, m_minDistanceForGroup ) },
- 	{ "DistanceRequiresGroup",	INI::parseReal,NULL,			offsetof( TAiData, m_distanceRequiresGroup ) },
- 	{ "MinClumpDensity",				INI::parseReal,NULL,			offsetof( TAiData, m_minClumpDensity ) },
-
- 	{ "InfantryPathfindDiameter",		INI::parseInt,NULL,			offsetof( TAiData, m_infantryPathfindDiameter ) },
- 	{ "VehiclePathfindDiameter",		INI::parseInt,NULL,			offsetof( TAiData, m_vehiclePathfindDiameter ) },
- 	{ "RebuildDelayTimeSeconds",		INI::parseInt,NULL,			offsetof( TAiData, m_rebuildDelaySeconds ) },
- 	{ "SupplyCenterSafeRadius",			INI::parseReal,NULL,			offsetof( TAiData, m_supplyCenterSafeRadius ) },
-
- 	{ "AIDozerBoredRadiusModifier",	INI::parseReal,NULL,			offsetof( TAiData, m_aiDozerBoredRadiusModifier ) },
- 	{ "AICrushesInfantry",	INI::parseBool,NULL,			offsetof( TAiData, m_aiCrushesInfantry ) },
+	{ "SkirmishBuildList",			AI::parseSkirmishBuildList,			nullptr, 0 },
 
 
+ 	{ "MinInfantryForGroup",		INI::parseInt,nullptr,			offsetof( TAiData, m_minInfantryForGroup ) },
+ 	{ "MinVehiclesForGroup",		INI::parseInt,nullptr,			offsetof( TAiData, m_minVehiclesForGroup ) },
 
-	{ NULL,					NULL,						NULL,						0 }
+ 	{ "MinDistanceForGroup",		INI::parseReal,nullptr,			offsetof( TAiData, m_minDistanceForGroup ) },
+ 	{ "DistanceRequiresGroup",	INI::parseReal,nullptr,			offsetof( TAiData, m_distanceRequiresGroup ) },
+ 	{ "MinClumpDensity",				INI::parseReal,nullptr,			offsetof( TAiData, m_minClumpDensity ) },
+
+ 	{ "InfantryPathfindDiameter",		INI::parseInt,nullptr,			offsetof( TAiData, m_infantryPathfindDiameter ) },
+ 	{ "VehiclePathfindDiameter",		INI::parseInt,nullptr,			offsetof( TAiData, m_vehiclePathfindDiameter ) },
+ 	{ "RebuildDelayTimeSeconds",		INI::parseInt,nullptr,			offsetof( TAiData, m_rebuildDelaySeconds ) },
+ 	{ "SupplyCenterSafeRadius",			INI::parseReal,nullptr,			offsetof( TAiData, m_supplyCenterSafeRadius ) },
+
+ 	{ "AIDozerBoredRadiusModifier",	INI::parseReal,nullptr,			offsetof( TAiData, m_aiDozerBoredRadiusModifier ) },
+ 	{ "AICrushesInfantry",	INI::parseBool,nullptr,			offsetof( TAiData, m_aiCrushesInfantry ) },
+
+
+
+	{ nullptr,					nullptr,						nullptr,						0 }
 
 };
 
@@ -205,16 +205,16 @@ void AI::parseSideInfo(INI *ini, void *instance, void* /*store*/, const void* /*
 
 	static const FieldParse myFieldParse[] =
 		{
-			{ "ResourceGatherersEasy",				INI::parseInt,						NULL, offsetof( AISideInfo, m_easy ) },
-			{ "ResourceGatherersNormal",			INI::parseInt,						NULL, offsetof( AISideInfo, m_normal ) },
-      { "ResourceGatherersHard",				INI::parseInt,						NULL, offsetof( AISideInfo, m_hard ) },
-      { "BaseDefenseStructure1",				INI::parseAsciiString,		NULL, offsetof( AISideInfo, m_baseDefenseStructure1 ) },
-			{ "SkillSet1",										AI::parseSkillSet,				NULL, offsetof( AISideInfo, m_skillSet1 ) },
-			{ "SkillSet2",										AI::parseSkillSet,				NULL, offsetof( AISideInfo, m_skillSet2 ) },
-			{ "SkillSet3",										AI::parseSkillSet,				NULL, offsetof( AISideInfo, m_skillSet3 ) },
-			{ "SkillSet4",										AI::parseSkillSet,				NULL, offsetof( AISideInfo, m_skillSet4 ) },
-			{ "SkillSet5",										AI::parseSkillSet,				NULL, offsetof( AISideInfo, m_skillSet5 ) },
-			{ NULL,							NULL,											NULL, 0 }
+			{ "ResourceGatherersEasy",				INI::parseInt,						nullptr, offsetof( AISideInfo, m_easy ) },
+			{ "ResourceGatherersNormal",			INI::parseInt,						nullptr, offsetof( AISideInfo, m_normal ) },
+      { "ResourceGatherersHard",				INI::parseInt,						nullptr, offsetof( AISideInfo, m_hard ) },
+      { "BaseDefenseStructure1",				INI::parseAsciiString,		nullptr, offsetof( AISideInfo, m_baseDefenseStructure1 ) },
+			{ "SkillSet1",										AI::parseSkillSet,				nullptr, offsetof( AISideInfo, m_skillSet1 ) },
+			{ "SkillSet2",										AI::parseSkillSet,				nullptr, offsetof( AISideInfo, m_skillSet2 ) },
+			{ "SkillSet3",										AI::parseSkillSet,				nullptr, offsetof( AISideInfo, m_skillSet3 ) },
+			{ "SkillSet4",										AI::parseSkillSet,				nullptr, offsetof( AISideInfo, m_skillSet4 ) },
+			{ "SkillSet5",										AI::parseSkillSet,				nullptr, offsetof( AISideInfo, m_skillSet5 ) },
+			{ nullptr,							nullptr,											nullptr, 0 }
 		};
 
 	AISideInfo *resourceInfo = ((TAiData*)instance)->m_sideInfo;
@@ -224,7 +224,7 @@ void AI::parseSideInfo(INI *ini, void *instance, void* /*store*/, const void* /*
 		}
 		resourceInfo = resourceInfo->m_next;
 	}
-	if (resourceInfo==NULL)
+	if (resourceInfo==nullptr)
 	{
 		resourceInfo = newInstance(AISideInfo);
 		((TAiData*)instance)->addSideInfo(resourceInfo);
@@ -238,8 +238,8 @@ void AI::parseSkillSet(INI *ini, void *instance, void* store, const void* /*user
 {
 	static const FieldParse myFieldParse[] =
 		{
-			{ "Science",											AI::parseScience,					NULL, NULL },
-			{ NULL,							NULL,											NULL, 0 }
+			{ "Science",											AI::parseScience,					nullptr, 0 },
+			{ nullptr,							nullptr,											nullptr, 0 }
 		};
 
 	TSkillSet *skillset = ((TSkillSet*)store);
@@ -258,7 +258,7 @@ void AI::parseScience(INI *ini, void *instance, void* /*store*/, const void* /*u
 		return;
 	}
 	skillset->m_skills[skillset->m_numSkills] = SCIENCE_INVALID;
-	INI::parseScience(ini, instance, skillset->m_skills+skillset->m_numSkills, NULL);
+	INI::parseScience(ini, instance, skillset->m_skills+skillset->m_numSkills, nullptr);
 	ScienceType science = skillset->m_skills[skillset->m_numSkills];
 	if (science != SCIENCE_INVALID) {
 		if (TheScienceStore->getSciencePurchaseCost(science)==0) {
@@ -277,8 +277,8 @@ void AI::parseSkirmishBuildList(INI *ini, void *instance, void* /*store*/, const
 
 	static const FieldParse myFieldParse[] =
 		{
-			{ "Structure",			BuildListInfo::parseStructure,			NULL, NULL },
-			{ NULL,							NULL,											NULL, 0 }
+			{ "Structure",			BuildListInfo::parseStructure,			nullptr, 0 },
+			{ nullptr,							nullptr,											nullptr, 0 }
 		};
 
 	AISideBuildList *build = newInstance(AISideBuildList)(faction);
@@ -290,7 +290,7 @@ void AI::parseSkirmishBuildList(INI *ini, void *instance, void* /*store*/, const
 //--------------------------------------------------------------------------------------------------------
 
 /// The AI system singleton
-AI *TheAI = NULL;
+AI *TheAI = nullptr;
 
 
 /**
@@ -333,7 +333,7 @@ void AI::reset( void )
 		}
 		else
 		{
-			m_groupList.pop_front(); // NULL group, just kill from list.  Shouldn't really happen, but just in case.
+			m_groupList.pop_front(); // nullptr group, just kill from list.  Shouldn't really happen, but just in case.
 		}
 	}
 #else
@@ -368,7 +368,7 @@ void AI::update( void )
 AI::~AI()
 {
 	delete m_pathfinder;
-	m_pathfinder = NULL;
+	m_pathfinder = nullptr;
 
 	while (m_aiData)
 	{
@@ -384,20 +384,20 @@ void AI::newOverride(void)
 	TAiData *cur = m_aiData;
 	m_aiData = NEW TAiData;
 	*m_aiData = *cur;
-	m_aiData->m_sideInfo = NULL;
+	m_aiData->m_sideInfo = nullptr;
 	AISideInfo *info = cur->m_sideInfo;
 	while (info) {
 		AISideInfo *newInfo = newInstance(AISideInfo);
 		*newInfo = *info;
-		newInfo->m_next = NULL;
+		newInfo->m_next = nullptr;
 		addSideInfo(newInfo);
 		info = info->m_next;
 	}
-	m_aiData->m_sideBuildLists = NULL;
+	m_aiData->m_sideBuildLists = nullptr;
 	AISideBuildList *build = cur->m_sideBuildLists;
 	while (build) {
 		AISideBuildList *newbuild = newInstance(AISideBuildList)(build->m_side);
-		newbuild->m_next = NULL;
+		newbuild->m_next = nullptr;
 		newbuild->m_buildList = build->m_buildList->duplicate();
 		m_aiData->addFactionBuildList(newbuild);
 		build = build->m_next;
@@ -470,7 +470,7 @@ void AI::destroyGroup( AIGroup *group )
 	if (i == m_groupList.end())
 		return;
 
-	DEBUG_ASSERTCRASH(group != NULL, ("A NULL group made its way into the AIGroup list.. jkmcd"));
+	DEBUG_ASSERTCRASH(group != nullptr, ("A null group made its way into the AIGroup list.. jkmcd"));
 
 	// remove it
 //	DEBUG_LOG(("***AIGROUP %x is being removed from m_groupList.", group ));
@@ -491,7 +491,7 @@ AIGroup *AI::findGroup( UnsignedInt id )
 		if ((*i)->getID() == id)
 			return (*i);
 
-	return NULL;
+	return nullptr;
 }
 
 //--------------------------------------------------------------------------------------------------------
@@ -549,7 +549,7 @@ public:
 		{
 			// ignore empty slots.
 			const Weapon* w = m_obj->getWeaponInWeaponSlot((WeaponSlotType)i);
-			if (w == NULL)
+			if (w == nullptr)
 				continue;
 
 			if (w->isWithinAttackRange(m_obj, objOther))
@@ -597,7 +597,7 @@ Object *AI::findClosestEnemy( const Object *me, Real range, UnsignedInt qualifie
 			PartitionFilterPossibleToAttack would filter out everything anyway,
 			so just punt here.
 		*/
-		return NULL;
+		return nullptr;
 	}
 
 	// only consider live, on-map enemies.
@@ -673,16 +673,16 @@ Object *AI::findClosestEnemy( const Object *me, Real range, UnsignedInt qualifie
 		filters[numFilters++] = optionalFilter;
 	}
 
-	filters[numFilters] = NULL;
+	filters[numFilters] = nullptr;
 
-	if (info == NULL || info == TheScriptEngine->getDefaultAttackInfo())
+	if (info == nullptr || info == TheScriptEngine->getDefaultAttackInfo())
 	{
 		// No additional attack info, so just return the closest one.
 		Object* o = ThePartitionManager->getClosestObject( me, range, FROM_BOUNDINGSPHERE_2D, filters );
 		return o;
 	}
 
-	Object *bestEnemy = NULL;
+	Object *bestEnemy = nullptr;
 	Int			effectivePriority=0;
 	Int			actualPriority=0;
 	ObjectIterator *iter = ThePartitionManager->iterateObjectsInRange(me, range, FROM_BOUNDINGSPHERE_2D, filters, ITER_SORTED_NEAR_TO_FAR);
@@ -766,7 +766,7 @@ Object *AI::findClosestAlly( const Object *me, Real range, UnsignedInt qualifier
 	if (qualifiers & CAN_SEE)
 		filters[numFilters++] = &filterLOS;
 
-	filters[numFilters] = NULL;
+	filters[numFilters] = nullptr;
 
 	return ThePartitionManager->getClosestObject( me, range, FROM_BOUNDINGSPHERE_2D, filters );
 }
@@ -782,7 +782,7 @@ Object *AI::findClosestRepulsor( const Object *me, Real range)
 {
 
 	if (!getAiData()->m_enableRepulsors) {
-		return NULL;
+		return nullptr;
 	}
 
 	// never target buildings (unless they can attack)
@@ -798,7 +798,7 @@ Object *AI::findClosestRepulsor( const Object *me, Real range)
 
 	filters[numFilters++] = &filter;
 	filters[numFilters++] = &filterStealth;
-	filters[numFilters] = NULL;
+	filters[numFilters] = nullptr;
 
 	return ThePartitionManager->getClosestObject( me, range, FROM_BOUNDINGSPHERE_2D, filters );
 }
@@ -838,7 +838,7 @@ Real AI::getAdjustedVisionRangeForObject(const Object *object, Int factorsToCons
 		}
 	}
 
-	if (object->getContainedBy() != NULL)
+	if (object->getContainedBy() != nullptr)
 	{
 		originalRange = object->getLargestWeaponRange();
 	}
@@ -900,8 +900,8 @@ Real AI::getAdjustedVisionRangeForObject(const Object *object, Int factorsToCons
 
 //-------------------------------------------------------------------------------------------------
 TAiData::TAiData() :
-m_next(NULL),
-m_sideInfo(NULL),
+m_next(nullptr),
+m_sideInfo(nullptr),
 m_attackIgnoreInsignificantBuildings(false),
 m_skirmishGroupFudgeValue(0.0f),
 m_structureSeconds(0),
@@ -938,7 +938,7 @@ m_vehiclePathfindDiameter(6),
 m_supplyCenterSafeRadius(250),
 m_rebuildDelaySeconds(10),
 m_distanceRequiresGroup(0.0f),
-m_sideBuildLists(NULL),
+m_sideBuildLists(nullptr),
 m_structuresPoorMod(0.0f),
 m_teamWealthyMod(0.0f),
 m_aiDozerBoredRadiusModifier(2.0),

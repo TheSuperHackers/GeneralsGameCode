@@ -84,7 +84,7 @@ void Squad::clearSquad() {
 // getAllObjects //////////////////////////////////////////////////////////////////////////////////
 const VecObjectPtr& Squad::getAllObjects(void) // Not a const function cause we clear away dead object here too
 {
-	// prunes all NULL objects
+	// prunes all null objects
 	m_objectsCached.clear();
 	for (VecObjectIDIt it = m_objectIDs.begin(); it != m_objectIDs.end(); ) {
 		Object *obj = TheGameLogic->findObjectByID(*it);
@@ -236,7 +236,7 @@ void Squad::xfer( Xfer *xfer )
 		if( !m_objectsCached.empty() )
 		{
 
-			DEBUG_CRASH(( "Squad::xfer - m_objectsCached should be emtpy, but is not" ));
+			DEBUG_CRASH(( "Squad::xfer - m_objectsCached should be empty, but is not" ));
 			throw SC_INVALID_DATA;
 
 		}

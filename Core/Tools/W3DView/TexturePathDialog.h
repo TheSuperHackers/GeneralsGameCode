@@ -28,7 +28,7 @@ class TexturePathDialogClass : public CDialog
 {
 // Construction
 public:
-	TexturePathDialogClass(CWnd* pParent = NULL);   // standard constructor
+	TexturePathDialogClass(CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(TexturePathDialogClass)

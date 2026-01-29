@@ -91,7 +91,7 @@ void CLLTreeCtrl::OnRButtonDown(UINT nFlags, CPoint point)
 	SelectItem(item);
 
 	if (item) {
-		if (GetParentItem(item) == NULL) {
+		if (GetParentItem(item) == nullptr) {
 			mLastClickedLayer = GetItemText(item);
 			mLastClickedObject = AsciiString::TheEmptyString;
 			contextIsLayer = true;
@@ -120,7 +120,7 @@ void CLLTreeCtrl::OnRButtonDown(UINT nFlags, CPoint point)
 		if (contextIsLayer) {
 			CString itemText = GetItemText(item);
 			if ((itemText.CompareNoCase(LayersList::TheActiveLayerName.c_str()) == 0) ||
-				((LayersList::TheActiveLayerName.c_str() == NULL) &&
+				((LayersList::TheActiveLayerName.c_str() == nullptr) &&
 				(LayersList::TheUnmutableDefaultLayerName.compare(LayersList::TheDefaultLayerName) == 0))) {
 				// Don't allow the current layer to be hidden.
 				// Because the objects will immediately disappear when placed.
@@ -169,7 +169,7 @@ END_MESSAGE_MAP()
 
 LayersList::LayersList(UINT nIDTemplate, CWnd *parentWnd) : CDialog(nIDTemplate, parentWnd)
 {
-	mTree = NULL;
+	mTree = nullptr;
 	m_activatedLayer = false;
 	resetLayers();
 }
@@ -203,7 +203,7 @@ void LayersList::resetLayers(void)
 void LayersList::addMapObjectToLayersList(MapObject *objToAdd, AsciiString layerToAddTo)
 {
 	if (!objToAdd || findMapObjectAndList(objToAdd)) {
-		DEBUG_CRASH(("MapObject added was NULL or object already in Layers List. jkmcd"));
+		DEBUG_CRASH(("MapObject added was null or object already in Layers List. jkmcd"));
 		return;
 	}
 	ListLayerIt layerIt;
@@ -228,7 +228,7 @@ void LayersList::addMapObjectToLayersList(MapObject *objToAdd, AsciiString layer
 void LayersList::addPolygonTriggerToLayersList(PolygonTrigger *triggerToAdd, AsciiString layerToAddTo)
 {
 	if (!triggerToAdd || findPolygonTriggerAndList(triggerToAdd)) {
-		DEBUG_CRASH(("PolygonTrigger added was NULL or object already in Layers List. jkmcd"));
+		DEBUG_CRASH(("PolygonTrigger added was null or object already in Layers List. jkmcd"));
 		return;
 	}
 	ListLayerIt layerIt;
@@ -281,7 +281,7 @@ AsciiString LayersList::removePolygonTriggerFromLayersList(PolygonTrigger *trigg
 void LayersList::changeMapObjectLayer(MapObject *objToChange, AsciiString layerToPlaceOn)
 {
 	if (!objToChange) {
-		DEBUG_CRASH(("Attempted to change location of NULL object. jkmcd"));
+		DEBUG_CRASH(("Attempted to change location of null object. jkmcd"));
 		return;
 	}
 
@@ -292,7 +292,7 @@ void LayersList::changeMapObjectLayer(MapObject *objToChange, AsciiString layerT
 void LayersList::changePolygonTriggerLayer(PolygonTrigger *triggerToChange, AsciiString layerToPlaceOn)
 {
 	if (!triggerToChange) {
-		DEBUG_CRASH(("Attempted to change location of NULL object. jkmcd"));
+		DEBUG_CRASH(("Attempted to change location of null object. jkmcd"));
 		return;
 	}
 
@@ -631,7 +631,7 @@ void LayersList::addPolygonTriggerToLayer(IN PolygonTrigger *triggerToAdd, IN Li
 void LayersList::removeMapObjectFromLayer(IN MapObject *objectToRemove, IN ListLayerIt *layerIt, IN ListMapObjectPtrIt *objectIt)
 {
 	if (!objectToRemove) {
-		DEBUG_CRASH(("Attempted to remove NULL object from layers list. jkmcd"));
+		DEBUG_CRASH(("Attempted to remove null object from layers list. jkmcd"));
 		return;
 	}
 
@@ -671,7 +671,7 @@ void LayersList::removeMapObjectFromLayer(IN MapObject *objectToRemove, IN ListL
 void LayersList::removePolygonTriggerFromLayer(IN PolygonTrigger *triggerToRemove, IN ListLayerIt *layerIt, IN ListPolygonTriggerPtrIt *triggerIt)
 {
 	if (!triggerToRemove) {
-		DEBUG_CRASH(("Attempted to remove NULL trigger from layers list. jkmcd"));
+		DEBUG_CRASH(("Attempted to remove null trigger from layers list. jkmcd"));
 		return;
 	}
 
@@ -758,7 +758,7 @@ void LayersList::OnBeginEditLabel(NMHDR *pNotifyStruct, LRESULT* pResult)
 	}
 
 	TV_DISPINFO *ptvdi = (TV_DISPINFO*) pNotifyStruct;
-	if (ptvdi == NULL) {
+	if (ptvdi == nullptr) {
 		(*pResult) = 1;
 		return;
 	}
@@ -895,7 +895,7 @@ void LayersList::OnDeleteLayer()
 HTREEITEM LayersList::findTreeLayerNamed(const AsciiString& nameToFind)
 {
 	if (!mTree) {
-		return NULL;
+		return nullptr;
 	}
 
 	HTREEITEM hItem = mTree->GetRootItem();
@@ -907,13 +907,13 @@ HTREEITEM LayersList::findTreeLayerNamed(const AsciiString& nameToFind)
 		hItem = mTree->GetNextSiblingItem(hItem);
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 HTREEITEM LayersList::findTreeObjectNamed(const AsciiString& objectToFind, HTREEITEM layerItem)
 {
 	if (!(layerItem && mTree)) {
-		return NULL;
+		return nullptr;
 	}
 
 	HTREEITEM hItem = mTree->GetChildItem(layerItem);
@@ -925,7 +925,7 @@ HTREEITEM LayersList::findTreeObjectNamed(const AsciiString& objectToFind, HTREE
 		hItem = mTree->GetNextSiblingItem(hItem);
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 void LayersList::OnHideShowLayer()
@@ -1302,7 +1302,7 @@ MapObject *LayersList::findObjectByUID(AsciiString objectIDToFind)
 		obj = obj->getNext();
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 PolygonTrigger* LayersList::findPolygonTriggerByUID(AsciiString triggerIDToFind)
@@ -1318,7 +1318,7 @@ PolygonTrigger* LayersList::findPolygonTriggerByUID(AsciiString triggerIDToFind)
 		trigger = trigger->getNext();
 	}
 
-	return (NULL);
+	return (nullptr);
 }
 
 BEGIN_MESSAGE_MAP(LayersList, CDialog)
@@ -1343,4 +1343,4 @@ std::string LayersList::TheDefaultNewLayerName = "New Layer";
 std::string LayersList::ThePolygonTriggerLayerName = "Default Trigger Layer";
 std::string LayersList::TheActiveLayerName;
 const std::string LayersList::TheUnmutableDefaultLayerName = "Default Object Layer";
-extern LayersList *TheLayersList = NULL;
+extern LayersList *TheLayersList = nullptr;

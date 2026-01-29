@@ -44,7 +44,7 @@ static LANGINFO langinfo[] =
 		{ LANGID_KOREAN, "Korean", "ko", "k" },
 		{ LANGID_CHINESE, "Chinese", "ch", "c" },
 		{ LANGID_JABBER, "Jabberwockie", "jb", "e" },
-		{ LANGID_UNKNOWN, "Unknown", NULL, NULL }
+		{ LANGID_UNKNOWN, "Unknown", nullptr, nullptr }
 	};
 
 LANGINFO *GetLangInfo ( int index )
@@ -55,7 +55,7 @@ LANGINFO *GetLangInfo ( int index )
 		return &langinfo[index];
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 LANGINFO *GetLangInfo ( LangID langid )
@@ -73,7 +73,7 @@ LANGINFO *GetLangInfo ( LangID langid )
 		item++;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 const char *GetLangName ( LangID langid )
@@ -103,7 +103,7 @@ LANGINFO *GetLangInfo ( char *language )
 		item++;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 TransDB* FirstTransDB ( void )
@@ -115,7 +115,7 @@ TransDB* FirstTransDB ( void )
 	{
 		return (TransDB *) first->Item ();
 	}
-	return NULL;
+	return nullptr;
 }
 
 TransDB::TransDB ( const char *cname )
@@ -199,7 +199,7 @@ void					TransDB::RemoveLabel ( BabylonLabel *label )
 	if ( (node = labels.Find ( label )) )
 	{
 		node->Remove ();
-		label->SetDB ( NULL );
+		label->SetDB ( nullptr );
 		label_bin->Remove ( label );
 		delete node;
 		Changed ();
@@ -263,7 +263,7 @@ BabylonLabel*			TransDB::FirstLabel	( ListSearch& sh )
 		return (BabylonLabel *) node->Item ();
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 BabylonLabel*			TransDB::NextLabel		( ListSearch& sh)
@@ -275,7 +275,7 @@ BabylonLabel*			TransDB::NextLabel		( ListSearch& sh)
 		return (BabylonLabel *) node->Item ();
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 BabylonText*			TransDB::FirstObsolete	( ListSearch& sh )
@@ -287,7 +287,7 @@ BabylonText*			TransDB::FirstObsolete	( ListSearch& sh )
 		return (BabylonText *) node->Item ();
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 BabylonText*			TransDB::NextObsolete		( ListSearch& sh)
@@ -299,7 +299,7 @@ BabylonText*			TransDB::NextObsolete		( ListSearch& sh)
 		return (BabylonText *) node->Item ();
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 BabylonLabel*			TransDB::FindLabel		( OLECHAR *name )
@@ -346,7 +346,7 @@ BabylonText*			TransDB::FindSubText		( OLECHAR *pattern, int item )
 		label = NextLabel ( sh );
 	}
 
-	return NULL;
+	return nullptr;
 
 }
 
@@ -537,17 +537,17 @@ TransDB*			TransDB::Next				( void )
 		return (TransDB *) next->Item ();
 	}
 
-	return NULL;
+	return nullptr;
 
 }
 
 void BabylonLabel::init ( void )
 {
-	db = NULL;
-	comment = NULL;
+	db = nullptr;
+	comment = nullptr;
 	line_number = -1;
 	max_len = 0;
-	name = NULL;
+	name = nullptr;
 }
 
 BabylonLabel::BabylonLabel ( void )
@@ -587,9 +587,9 @@ void					BabylonLabel::RemoveText ( BabylonText *txt )
 	if ( (node = text.Find ( txt )) )
 	{
 		node->Remove ();
-		txt->SetDB ( NULL );
-		txt->SetLabel ( NULL );
-		txt->SetParent ( NULL );
+		txt->SetDB ( nullptr );
+		txt->SetLabel ( nullptr );
+		txt->SetParent ( nullptr );
 		delete node;
 		Changed ();
 	}
@@ -667,7 +667,7 @@ BabylonText*			BabylonLabel::FirstText		( ListSearch& sh )
 		return (BabylonText *) node->Item ();
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 BabylonText*			BabylonLabel::NextText		( ListSearch& sh)
@@ -679,7 +679,7 @@ BabylonText*			BabylonLabel::NextText		( ListSearch& sh)
 		return (BabylonText *) node->Item ();
 	}
 
-	return NULL;
+	return nullptr;
 
 }
 
@@ -699,7 +699,7 @@ BabylonText*			BabylonLabel::FindText ( OLECHAR *find_text )
 		txt = NextText ( sh );
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 
@@ -876,12 +876,12 @@ void					BabylonLabel::AddToTree		( CTreeCtrl *tc, HTREEITEM parent, int changes
 
 void BabylonText::init ( void )
 {
-	db = NULL;
-	label = NULL;
+	db = nullptr;
+	label = nullptr;
 	line_number = -1;
 	revision = 1;
-	text = NULL;
-	wavefile = NULL;
+	text = nullptr;
+	wavefile = nullptr;
 	id = -1;
 	retranslate = FALSE;
 	sent = FALSE;
@@ -1087,7 +1087,7 @@ Translation*			BabylonText::FirstTranslation		( ListSearch& sh )
 		return (Translation *) node->Item ();
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 Translation*			BabylonText::NextTranslation		( ListSearch& sh)
@@ -1099,7 +1099,7 @@ Translation*			BabylonText::NextTranslation		( ListSearch& sh)
 		return (Translation *) node->Item ();
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 Translation*			BabylonText::GetTranslation		( LangID langid )
@@ -1471,7 +1471,7 @@ int TransDB::Warnings ( CBabylonDlg *dlg )
 			{
 				if ( dlg )
 				{
-					sprintf ( buffer, "Warning:: text at line %5d is NULL",
+					sprintf ( buffer, "Warning:: text at line %5d is null",
 								text->LineNumber());
 					dlg->Log ( buffer );
 				}

@@ -157,7 +157,7 @@ public:
 	//Added for 'Generals' - MW
  	enum	{USER_DATA_MATERIAL_OVERRIDE = 0x01234567};
 
- 	//This strucutre is used to pass custom rendering parameters into the W3D
+	//This structure is used to pass custom rendering parameters into the W3D
  	//mesh renderer so it can override settings which are usually shared across
  	//all instances of a model - typically material settings like alpha, texture
  	//animation, texture uv scrolling, etc.  Added for 'Generals' -MW
@@ -228,7 +228,7 @@ public:
 	virtual int						Class_ID(void)	const															{ return CLASSID_UNKNOWN; }
 	virtual const char *			Get_Name(void) const															{ return "UNNAMED"; }
 	virtual void					Set_Name(const char * name)												{ }
-	virtual const char *			Get_Base_Model_Name (void) const											{ return NULL; }
+	virtual const char *			Get_Base_Model_Name (void) const											{ return nullptr; }
 	virtual void					Set_Base_Model_Name (const char *name)									{ }
 	virtual int						Get_Num_Polys(void) const													{ return 0; }
 
@@ -253,7 +253,7 @@ public:
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface - "Scene Graph"
 	// Some of the functions in this group are non-virtual as they are meant
-	// to be never overriden or are supposed to be implemented in terms of
+	// to be never overridden or are supposed to be implemented in terms of
 	// the other virtual functions.  We want to keep the virtual interface
 	// as small as possible
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -286,13 +286,13 @@ public:
 	virtual void					Notify_Removed(SceneClass * scene);
 
 	virtual int						Get_Num_Sub_Objects(void) const											{ return 0; }
-	virtual RenderObjClass *	Get_Sub_Object(int index) const											{ return NULL; }
+	virtual RenderObjClass *	Get_Sub_Object(int index) const											{ return nullptr; }
 	virtual int						Add_Sub_Object(RenderObjClass * subobj)								{ return 0; }
 	virtual int						Remove_Sub_Object(RenderObjClass * robj)								{ return 0; }
-	virtual RenderObjClass *	Get_Sub_Object_By_Name(const char * name, int *index=NULL) const;
+	virtual RenderObjClass *	Get_Sub_Object_By_Name(const char * name, int *index=nullptr) const;
 
 	virtual int						Get_Num_Sub_Objects_On_Bone(int boneindex) const					{ return 0; }
-	virtual RenderObjClass *	Get_Sub_Object_On_Bone(int index,int boneindex)	const				{ return NULL; }
+	virtual RenderObjClass *	Get_Sub_Object_On_Bone(int index,int boneindex)	const				{ return nullptr; }
 	virtual int						Get_Sub_Object_Bone_Index(RenderObjClass * subobj)	const 		{ return 0; }
 	virtual int						Get_Sub_Object_Bone_Index(int LodIndex, int ModelIndex)	const 		{ return 0; }
 	virtual int						Add_Sub_Object_To_Bone(RenderObjClass * subobj,int bone_index)	{ return 0; }
@@ -329,9 +329,9 @@ public:
 															float percentage)											{ }
 	virtual void					Set_Animation( HAnimComboClass * anim_combo)							{ }
 
-	virtual HAnimClass *			Peek_Animation( void )														{ return NULL; }
+	virtual HAnimClass *			Peek_Animation( void )														{ return nullptr; }
 	virtual int						Get_Num_Bones(void)															{ return 0; }
-	virtual const char *			Get_Bone_Name(int bone_index)												{ return NULL; }
+	virtual const char *			Get_Bone_Name(int bone_index)												{ return nullptr; }
 	virtual int						Get_Bone_Index(const char * bonename)									{ return 0; }
 	virtual const Matrix3D &	Get_Bone_Transform(const char * bonename)    						{ return Get_Transform(); }
 	virtual const Matrix3D &	Get_Bone_Transform(int boneindex)      								{ return Get_Transform(); }
@@ -341,7 +341,7 @@ public:
 	virtual void					Release_Bone(int bindex)													{ }
 	virtual bool					Is_Bone_Captured(int bindex) const										{ return false; }
 	virtual void					Control_Bone(int bindex,const Matrix3D & objtm,bool world_space_translation = false)						{ }
-	virtual const HTreeClass *	Get_HTree(void) const														{ return NULL; }
+	virtual const HTreeClass *	Get_HTree(void) const														{ return nullptr; }
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface - Collision Detection
@@ -422,7 +422,7 @@ public:
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface - Attributes, Options, Properties, etc
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	virtual MaterialInfoClass * Get_Material_Info(void) 													{ return NULL; }
+	virtual MaterialInfoClass * Get_Material_Info(void) 													{ return nullptr; }
 	virtual void					Set_User_Data(void *value, bool recursive = false)					{ User_Data = value; };
 	virtual void *					Get_User_Data()																{ return User_Data; };
 	virtual int						Get_Num_Snap_Points(void)													{ return 0; }
@@ -465,7 +465,7 @@ public:
 	virtual int						Get_Collision_Type(void) const											{ return (Bits & COLL_TYPE_MASK); }
 	virtual void					Set_Collision_Type(int type)												{ Bits &= ~COLL_TYPE_MASK; Bits |= (type & COLL_TYPE_MASK) | COLL_TYPE_ALL; }
    virtual bool					Is_Complete(void)																{ return false; }
-	virtual bool					Is_In_Scene(void)																{ return Scene != NULL; }
+	virtual bool					Is_In_Scene(void)																{ return Scene != nullptr; }
 	virtual float					Get_Native_Screen_Size(void) const										{ return NativeScreenSize; }
 	virtual void					Set_Native_Screen_Size(float screensize)								{ NativeScreenSize = screensize; }
 
@@ -483,7 +483,7 @@ public:
 	int								Is_Self_Shadowed() const													{ return (Bits&IS_SELF_SHADOWED); }
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// Persistant object save-load interface
+	// Persistent object save-load interface
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	virtual const PersistFactoryClass &	Get_Factory (void) const;
 	virtual bool					Save (ChunkSaveClass &csave);
@@ -643,7 +643,7 @@ static const char* const TheAnimModeNames[] =
 	"LOOP_PINGPONG",
 	"LOOP_BACKWARDS",
 	"ONCE_BACKWARDS",
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(TheAnimModeNames) == RenderObjClass::ANIM_MODE_COUNT + 1, "Incorrect array size");
 #endif

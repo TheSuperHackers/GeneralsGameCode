@@ -23,7 +23,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // Registry.cpp
-// Simple interface for storing/retreiving registry values
+// Simple interface for storing/retrieving registry values
 // Author: Matthew D. Campbell, December 2001
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
@@ -41,7 +41,7 @@ Bool  getStringFromRegistry(HKEY root, AsciiString path, AsciiString key, AsciiS
 
 	if ((returnValue = RegOpenKeyEx( root, path.str(), 0, KEY_READ, &handle )) == ERROR_SUCCESS)
 	{
-		returnValue = RegQueryValueEx(handle, key.str(), NULL, &type, (unsigned char *) &buffer, &size);
+		returnValue = RegQueryValueEx(handle, key.str(), nullptr, &type, (unsigned char *) &buffer, &size);
 		RegCloseKey( handle );
 	}
 
@@ -64,7 +64,7 @@ Bool getUnsignedIntFromRegistry(HKEY root, AsciiString path, AsciiString key, Un
 
 	if ((returnValue = RegOpenKeyEx( root, path.str(), 0, KEY_READ, &handle )) == ERROR_SUCCESS)
 	{
-		returnValue = RegQueryValueEx(handle, key.str(), NULL, &type, (unsigned char *) &buffer, &size);
+		returnValue = RegQueryValueEx(handle, key.str(), nullptr, &type, (unsigned char *) &buffer, &size);
 		RegCloseKey( handle );
 	}
 
@@ -85,7 +85,7 @@ Bool setStringInRegistry( HKEY root, AsciiString path, AsciiString key, AsciiStr
 	int size;
 	char lpClass[] = "REG_NONE";
 
-	if ((returnValue = RegCreateKeyEx( root, path.str(), 0, lpClass, REG_OPTION_NON_VOLATILE, KEY_WRITE, NULL, &handle, NULL )) == ERROR_SUCCESS)
+	if ((returnValue = RegCreateKeyEx( root, path.str(), 0, lpClass, REG_OPTION_NON_VOLATILE, KEY_WRITE, nullptr, &handle, nullptr )) == ERROR_SUCCESS)
 	{
 		type = REG_SZ;
 		size = val.getLength()+1;
@@ -104,7 +104,7 @@ Bool setUnsignedIntInRegistry( HKEY root, AsciiString path, AsciiString key, Uns
 	int size;
 	char lpClass[] = "REG_NONE";
 
-	if ((returnValue = RegCreateKeyEx( root, path.str(), 0, lpClass, REG_OPTION_NON_VOLATILE, KEY_WRITE, NULL, &handle, NULL )) == ERROR_SUCCESS)
+	if ((returnValue = RegCreateKeyEx( root, path.str(), 0, lpClass, REG_OPTION_NON_VOLATILE, KEY_WRITE, nullptr, &handle, nullptr )) == ERROR_SUCCESS)
 	{
 		type = REG_DWORD;
 		size = 4;
@@ -115,7 +115,7 @@ Bool setUnsignedIntInRegistry( HKEY root, AsciiString path, AsciiString key, Uns
 	return (returnValue == ERROR_SUCCESS);
 }
 
-Bool GetStringFromRegistry(AsciiString path, AsciiString key, AsciiString& val)
+Bool GetStringFromGeneralsRegistry(AsciiString path, AsciiString key, AsciiString& val)
 {
 	AsciiString fullPath = "SOFTWARE\\Electronic Arts\\EA Games\\Generals";
 
@@ -129,9 +129,31 @@ Bool GetStringFromRegistry(AsciiString path, AsciiString key, AsciiString& val)
 	return getStringFromRegistry(HKEY_CURRENT_USER, fullPath.str(), key.str(), val);
 }
 
+Bool GetStringFromRegistry(AsciiString path, AsciiString key, AsciiString& val)
+{
+#if RTS_GENERALS
+	AsciiString fullPath = "SOFTWARE\\Electronic Arts\\EA Games\\Generals";
+#elif RTS_ZEROHOUR
+	AsciiString fullPath = "SOFTWARE\\Electronic Arts\\EA Games\\Command and Conquer Generals Zero Hour";
+#endif
+
+	fullPath.concat(path);
+	DEBUG_LOG(("GetStringFromRegistry - looking in %s for key %s", fullPath.str(), key.str()));
+	if (getStringFromRegistry(HKEY_LOCAL_MACHINE, fullPath.str(), key.str(), val))
+	{
+		return TRUE;
+	}
+
+	return getStringFromRegistry(HKEY_CURRENT_USER, fullPath.str(), key.str(), val);
+}
+
 Bool GetUnsignedIntFromRegistry(AsciiString path, AsciiString key, UnsignedInt& val)
 {
+#if RTS_GENERALS
 	AsciiString fullPath = "SOFTWARE\\Electronic Arts\\EA Games\\Generals";
+#elif RTS_ZEROHOUR
+	AsciiString fullPath = "SOFTWARE\\Electronic Arts\\EA Games\\Command and Conquer Generals Zero Hour";
+#endif
 
 	fullPath.concat(path);
 	DEBUG_LOG(("GetUnsignedIntFromRegistry - looking in %s for key %s", fullPath.str(), key.str()));
@@ -146,6 +168,7 @@ Bool GetUnsignedIntFromRegistry(AsciiString path, AsciiString key, UnsignedInt& 
 AsciiString GetRegistryLanguage(void)
 {
 	static Bool cached = FALSE;
+	// NOTE: static causes a memory leak, but we have to keep it because the value is cached.
 	static AsciiString val = "english";
 	if (cached) {
 		return val;

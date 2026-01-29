@@ -37,7 +37,7 @@
  * Functions:                                                                                  *
  *   OBBoxClass::OBBoxClass -- Constructor that computes the box for a set of point            *
  *   OBBoxClass::Init_From_Box_Points -- Create an OBBox from 8 corners of  a box              *
- *   OBBoxClass::Init_Random -- initalize a random oriented box                                *
+ *   OBBoxClass::Init_Random -- initialize a random oriented box                               *
  *   Oriented_Boxes_Intersect_On_Axis -- test if two boxes intersect on given axis             *
  *   Oriented_Boxes_Intersect -- test if two oriented boxes intersect                          *
  *   Oriented_Boxes_Collide_On_Axis -- test if two boxes collide on the given axis             *
@@ -277,7 +277,7 @@ void OBBoxClass::Init_From_Box_Points(Vector3 * points,int num)
 
 
 /***********************************************************************************************
- * OBBoxClass::Init_Random -- initalize a random oriented box                                  *
+ * OBBoxClass::Init_Random -- initialize a random oriented box                                 *
  *                                                                                             *
  * INPUT:                                                                                      *
  *                                                                                             *

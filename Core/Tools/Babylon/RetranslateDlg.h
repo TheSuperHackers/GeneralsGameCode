@@ -34,7 +34,7 @@ public:
 	BabylonText *newtext;
 	BabylonText *oldtext;
 
-	RetranslateDlg(CWnd* pParent = NULL);   // standard constructor
+	RetranslateDlg(CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(RetranslateDlg)

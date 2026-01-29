@@ -84,7 +84,7 @@ void CWDumpListView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 	list.DeleteAllItems();
 
 
-	if((item != 0) && (item->Type != 0) && (item->Type->Callback != 0)) {
+	if((item != nullptr) && (item->Type != nullptr) && (item->Type->Callback != nullptr)) {
 		(*item->Type->Callback)(item, &list);
 	}
 }

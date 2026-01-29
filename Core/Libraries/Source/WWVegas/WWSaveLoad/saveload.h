@@ -70,7 +70,7 @@ class ChunkLoadClass;
 //
 // To achive this, we developed several core concepts:
 //
-// - Persistant Objects: Most of the state of the game is contained in the objects
+// - Persistent Objects: Most of the state of the game is contained in the objects
 //   active at any given time.  PersistClass is an abstract interface which will allow
 //   objects to be used with the save-load system.  It was also important to keep the
 //   overhead caused by inheriting this class to an absolute minimum.
@@ -90,7 +90,7 @@ class ChunkLoadClass;
 //   (derived from SaveLoadSubSystemClass).  The application in-effect creates file formats
 //   by simply having the sub-systems that it wants write into a file.  In this way you can
 //   achieve things like saving only static data into one file and dynamic into another, etc.
-//   All persistant objects that get saved will be told to save by some sub-system.  For
+//   All persistent objects that get saved will be told to save by some sub-system.  For
 //   example: in Commando, I have a PhysicsDynamicDataSubSystem which saves all of the
 //   dynamic physics objects.  In saving those objects I use the built-in PersistFactories
 //   and am therefore completely safe from new object types being added to the system, it will just
@@ -160,8 +160,8 @@ public:
 	static void		Register_Pointer (void *old_pointer, void *new_pointer);
 
 #ifdef WWDEBUG
-	static void		Request_Pointer_Remap (void **pointer_to_convert,const char * file = NULL,int line = 0);
-	static void		Request_Ref_Counted_Pointer_Remap (RefCountClass **pointer_to_convert,const char * file = NULL,int line = 0);
+	static void		Request_Pointer_Remap (void **pointer_to_convert,const char * file = nullptr,int line = 0);
+	static void		Request_Ref_Counted_Pointer_Remap (RefCountClass **pointer_to_convert,const char * file = nullptr,int line = 0);
 #else
 	static void		Request_Pointer_Remap (void **pointer_to_convert);
 	static void		Request_Ref_Counted_Pointer_Remap (RefCountClass **pointer_to_convert);

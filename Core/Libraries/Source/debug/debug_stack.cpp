@@ -26,6 +26,7 @@
 //
 // Stack walker
 //////////////////////////////////////////////////////////////////////////////
+
 #include "debug.h"
 #include "debug_stack.h"
 #include <windows.h>
@@ -53,7 +54,7 @@ static union
 static char const *const DebughelpFunctionNames[] =
 {
 #include "debug_stack.inl"
-	NULL
+	nullptr
 };
 #undef DBGHELP
 
@@ -71,7 +72,7 @@ static void InitDbghelp(void)
 
 	// firstly check for dbghelp.dll in the EXE directory
 	char dbgHelpPath[256];
-	if (GetModuleFileName(NULL,dbgHelpPath,sizeof(dbgHelpPath)))
+	if (GetModuleFileName(nullptr,dbgHelpPath,sizeof(dbgHelpPath)))
 	{
 		char *slash=strrchr(dbgHelpPath,'\\');
 		if (slash)
@@ -100,7 +101,7 @@ static void InitDbghelp(void)
   {
     // not all functions found -> clear them all
     while (funcptr!=gDbg.funcPtr)
-      *--funcptr=NULL;
+      *--funcptr=0;
   }
   else
   {
@@ -108,7 +109,7 @@ static void InitDbghelp(void)
     gDbg._SymSetOptions(gDbg._SymGetOptions()|SYMOPT_DEFERRED_LOADS|SYMOPT_LOAD_LINES);
 
     // Init module
-    gDbg._SymInitialize((HANDLE)GetCurrentProcessId(),NULL,TRUE);
+    gDbg._SymInitialize((HANDLE)GetCurrentProcessId(),nullptr,TRUE);
 
     // Check: are we using a newer version of dbghelp.dll?
     // (older versions have some serious issues.. err... bugs)
@@ -363,6 +364,7 @@ int DebugStackwalk::StackWalk(Signature &sig, struct _CONTEXT *ctx)
   {
     // walk stack back using current call chain
 	  unsigned long reg_eip, reg_ebp, reg_esp;
+#if defined(_MSC_VER)
 	  __asm
     {
     here:
@@ -371,6 +373,17 @@ int DebugStackwalk::StackWalk(Signature &sig, struct _CONTEXT *ctx)
 		  mov	reg_ebp,ebp
 		  mov	reg_esp,esp
 	  };
+#elif (defined(__GNUC__) || defined(__clang__)) && (defined(__i386__) || defined(_M_IX86))
+	  __asm__ __volatile__ (
+		  "call 1f\n\t"
+		  "1: pop %0\n\t"
+		  "mov %%ebp, %1\n\t"
+		  "mov %%esp, %2"
+		  : "=r" (reg_eip), "=r" (reg_ebp), "=r" (reg_esp)
+	  );
+#else
+#error "Unsupported compiler or architecture for register capture"
+#endif
 	  stackFrame.AddrPC.Offset = reg_eip;
 	  stackFrame.AddrStack.Offset = reg_esp;
 	  stackFrame.AddrFrame.Offset = reg_ebp;
@@ -380,7 +393,7 @@ int DebugStackwalk::StackWalk(Signature &sig, struct _CONTEXT *ctx)
   bool skipFirst=!ctx;
   while (sig.m_numAddr<Signature::MAX_ADDR&&
 		     gDbg._StackWalk(IMAGE_FILE_MACHINE_I386,GetCurrentProcess(),GetCurrentThread(),
-                         &stackFrame,NULL,NULL,gDbg._SymFunctionTableAccess,gDbg._SymGetModuleBase,NULL))
+                         &stackFrame,nullptr,nullptr,gDbg._SymFunctionTableAccess,gDbg._SymGetModuleBase,nullptr))
   {
     if (skipFirst)
       skipFirst=false;

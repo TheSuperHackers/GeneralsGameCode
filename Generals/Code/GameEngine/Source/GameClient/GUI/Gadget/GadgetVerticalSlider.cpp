@@ -67,7 +67,7 @@
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
-// GadgetVerticlaSliderInput ==================================================
+// GadgetVerticalSliderInput ==================================================
 /** Handle input for vertical slider */
 //=============================================================================
 WindowMsgHandledType GadgetVerticalSliderInput( GameWindow *window, UnsignedInt msg,
@@ -421,8 +421,8 @@ WindowMsgHandledType GadgetVerticalSliderSystem( GameWindow *window, UnsignedInt
 		// ------------------------------------------------------------------------
 		case GWM_DESTROY:
 			delete( (SliderData *)window->winGetUserData() );
-			window->winSetUserData(NULL);
-			s = NULL;
+			window->winSetUserData(nullptr);
+			s = nullptr;
 			break;
 
 		// ------------------------------------------------------------------------

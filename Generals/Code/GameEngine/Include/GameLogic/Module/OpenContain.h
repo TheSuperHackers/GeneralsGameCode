@@ -134,7 +134,7 @@ public:
 	///< this gets called from
 	virtual void clientVisibleContainedFlashAsSelected() {};
 
-	virtual const Player* getApparentControllingPlayer(const Player* observingPlayer) const { return NULL; }
+	virtual const Player* getApparentControllingPlayer(const Player* observingPlayer) const { return nullptr; }
 	virtual void recalcApparentControllingPlayer() { }
 
 	virtual void onContaining( Object *obj );		///< object now contains 'obj'
@@ -161,7 +161,7 @@ public:
 	virtual void iterateContained( ContainIterateFunc func, void *userData, Bool reverse );
 	virtual UnsignedInt getContainCount() const { return m_containListSize; }
 	virtual const ContainedItemsList* getContainedItemsList() const { return &m_containList; }
-	virtual const Object *friend_getRider() const{return NULL;} ///< Damn.  The draw order dependency bug for riders means that our draw module needs to cheat to get around it.
+	virtual const Object *friend_getRider() const{return nullptr;} ///< Damn.  The draw order dependency bug for riders means that our draw module needs to cheat to get around it.
 	virtual Real getContainedItemsMass() const;
 	virtual UnsignedInt getStealthUnitsContained() const { return m_stealthUnitsContained; }
 	virtual UnsignedInt getHeroUnitsContained() const { return m_heroUnitsContained; }

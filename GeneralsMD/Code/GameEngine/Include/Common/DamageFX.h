@@ -116,8 +116,8 @@ private:
 		void clear()
 		{
 			m_amountForMajorFX = 0.0f;
-			m_majorDamageFXList = NULL;
-			m_minorDamageFXList = NULL;
+			m_majorDamageFXList = nullptr;
+			m_minorDamageFXList = nullptr;
 			m_damageFXThrottleTime = 0;
 		}
 	};

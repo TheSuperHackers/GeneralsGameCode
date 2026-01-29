@@ -130,7 +130,7 @@ static const char *const TheRadiusCursorNames[] =
 	"RADAR",
 	"SPYDRONE",
 
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(TheRadiusCursorNames) == RADIUSCURSOR_COUNT + 1, "Incorrect array size");
 #endif
@@ -447,7 +447,7 @@ public:  // ********************************************************************
 	virtual Bool isAllSelectedKindOf( KindOfType kindOf ) const;		///< are all selected objects a kind of
 
 	virtual void setRadiusCursor(RadiusCursorType r, const SpecialPowerTemplate* sp, WeaponSlotType wslot);
-	virtual void setRadiusCursorNone() { setRadiusCursor(RADIUSCURSOR_NONE, NULL, PRIMARY_WEAPON); }
+	virtual void setRadiusCursorNone() { setRadiusCursor(RADIUSCURSOR_NONE, nullptr, PRIMARY_WEAPON); }
 
 	virtual void setInputEnabled( Bool enable );										///< Set the input enabled or disabled
 	virtual Bool getInputEnabled( void ) { return m_inputEnabled; }	///< Get the current input status
@@ -668,7 +668,7 @@ protected:
 	void incrementSelectCount( void ) { ++m_selectCount; }			///< Increase by one the running total of "selected" drawables
 	void decrementSelectCount( void ) { --m_selectCount; }			///< Decrease by one the running total of "selected" drawables
 	virtual View *createView( void ) = 0;												///< Factory for Views
-	void evaluateSoloNexus( Drawable *newlyAddedDrawable = NULL );
+	void evaluateSoloNexus( Drawable *newlyAddedDrawable = nullptr );
 
 	/// expire a hint from of the specified type at the hint index
 	void expireHint( HintType type, UnsignedInt hintIndex );
@@ -679,7 +679,7 @@ protected:
 	void setMouseCursor(Mouse::MouseCursor c);
 
 
-	void addMessageText( const UnicodeString& formattedMessage, const RGBColor *rgbColor = NULL );  ///< internal workhorse for adding plain text for messages
+	void addMessageText( const UnicodeString& formattedMessage, const RGBColor *rgbColor = nullptr );  ///< internal workhorse for adding plain text for messages
 	void removeMessageAtIndex( Int i );				///< remove the message at index i
 
 	void updateFloatingText( void );						///< Update function to move our floating text

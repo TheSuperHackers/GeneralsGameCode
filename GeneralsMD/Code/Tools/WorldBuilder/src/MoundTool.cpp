@@ -20,6 +20,7 @@
 // Texture tiling tool for worldbuilder.
 // Author: John Ahlquist, April 2001
 
+
 #include "StdAfx.h"
 #include "resource.h"
 
@@ -45,8 +46,8 @@ Int MoundTool::m_brushFeather;
 MoundTool::MoundTool(void) :
 	Tool(ID_BRUSH_ADD_TOOL, IDC_BRUSH_CROSS)
 {
-	m_htMapEditCopy = NULL;
-	m_htMapSaveCopy = NULL;
+	m_htMapEditCopy = nullptr;
+	m_htMapSaveCopy = nullptr;
 	m_raising = true;
 }
 

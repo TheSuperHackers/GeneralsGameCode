@@ -41,7 +41,7 @@
 
 Bool MeshMoldTool::m_tracking = false;
 Coord3D MeshMoldTool::m_toolPos;
-WorldHeightMapEdit *MeshMoldTool::m_htMapEditCopy = NULL;
+WorldHeightMapEdit *MeshMoldTool::m_htMapEditCopy = nullptr;
 
 /// Constructor
 MeshMoldTool::MeshMoldTool(void) :
@@ -95,7 +95,7 @@ void MeshMoldTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWor
 	if (!m_tracking) {
 		m_tracking = true;
 		m_toolPos = cpt;
-		Real height = TheTerrainRenderObject->getHeightMapHeight(cpt.x, cpt.y, NULL);
+		Real height = TheTerrainRenderObject->getHeightMapHeight(cpt.x, cpt.y, nullptr);
 		MeshMoldOptions::setHeight(height);
 	}
 	DrawObject::setDoMeshFeedback(true);
@@ -186,8 +186,8 @@ void MeshMoldTool::applyMesh(CWorldBuilderDoc *pDoc)
 {
 	WorldHeightMapEdit *pMap = pDoc->GetHeightMap();
 
-	HCURSOR old = SetCursor(::LoadCursor(0, IDC_WAIT));
-	if (m_htMapEditCopy == NULL) {
+	HCURSOR old = SetCursor(::LoadCursor(nullptr, IDC_WAIT));
+	if (m_htMapEditCopy == nullptr) {
 		m_htMapEditCopy = pDoc->GetHeightMap()->duplicate();
 	}	else {
 		// Restore original heights to edit copy.

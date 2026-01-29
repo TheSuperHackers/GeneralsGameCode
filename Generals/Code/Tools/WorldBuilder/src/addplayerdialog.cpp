@@ -32,7 +32,7 @@
 // AddPlayerDialog dialog
 
 
-AddPlayerDialog::AddPlayerDialog(AsciiString side, CWnd* pParent /*=NULL*/)
+AddPlayerDialog::AddPlayerDialog(AsciiString side, CWnd* pParent /*=nullptr*/)
 	: CDialog(AddPlayerDialog::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(AddPlayerDialog)

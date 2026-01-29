@@ -37,7 +37,7 @@
 
 
 // PUBLIC DATA ////////////////////////////////////////////////////////////////////////////////////
-Keyboard *TheKeyboard = NULL;
+Keyboard *TheKeyboard = nullptr;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PRIVATE PROTOTYPES /////////////////////////////////////////////////////////////////////////////
@@ -51,11 +51,11 @@ void Keyboard::createStreamMessages( void )
 {
 
 	// sanity
-	if( TheMessageStream == NULL )
+	if( TheMessageStream == nullptr )
 		return;
 
 	KeyboardIO *key = getFirstKey();
-	GameMessage *msg = NULL;
+	GameMessage *msg = nullptr;
 	while( key->key != KEY_NONE )
 	{
 
@@ -714,7 +714,7 @@ Keyboard::~Keyboard( void )
 }
 
 //-------------------------------------------------------------------------------------------------
-/** Initialzie the keyboard */
+/** Initialize the keyboard */
 //-------------------------------------------------------------------------------------------------
 void Keyboard::init( void )
 {
@@ -802,7 +802,7 @@ KeyboardIO *Keyboard::findKey( KeyDefType key, KeyboardIO::StatusType status )
 			return io;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -959,7 +959,7 @@ WideChar Keyboard::translateKey( WideChar keyCode )
 				return( m_keyNames[ ubKeyCode ].shifted2 );
 			}
 
-			if( isShift() || getCapsState() && iswalpha( m_keyNames[ ubKeyCode ].stdKey ) )
+			if( isShift() || ( getCapsState() && iswalpha( m_keyNames[ ubKeyCode ].stdKey ) ) )
 			{
 				return( m_keyNames[ ubKeyCode ].shifted );
 			}

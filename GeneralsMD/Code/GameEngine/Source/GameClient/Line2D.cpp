@@ -263,7 +263,7 @@ Bool IntersectLine2D( const Coord2D *a, const Coord2D *b,
 	return false;
 }
 
-// determines whether a point lies within a rectangle. Doesnt' determine whether the shape is
+// determines whether a point lies within a rectangle. Doesn't determine whether the shape is
 // actually a rectangle or not.
 Bool PointInsideRect2D(const Coord2D *bl, const Coord2D *tl, const Coord2D *br, const Coord2D *tr,
 											 const Coord2D *inputPoint)
@@ -274,12 +274,12 @@ Bool PointInsideRect2D(const Coord2D *bl, const Coord2D *tl, const Coord2D *br, 
 
 	Real uVal;
 	// we're actually only interested in if the U value is (0,1)
-	ShortestDistancePointToSegment2D(bl, tl, inputPoint, NULL, NULL, &uVal);
+	ShortestDistancePointToSegment2D(bl, tl, inputPoint, nullptr, nullptr, &uVal);
 	if (uVal <= 0.0f || uVal >= 1.0f) {
 		return false;
 	}
 
-	ShortestDistancePointToSegment2D(bl, br, inputPoint, NULL, NULL, &uVal);
+	ShortestDistancePointToSegment2D(bl, br, inputPoint, nullptr, nullptr, &uVal);
 
 	return (uVal > 0.0f && uVal < 1.0f);
 }

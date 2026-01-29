@@ -45,7 +45,7 @@ class ErrorClass
 public:
 	ErrorClass(char * format,...);
 	ErrorClass(const ErrorClass & that);
-	~ErrorClass(void) { if (error_message != NULL) free(error_message); }
+	~ErrorClass(void) { if (error_message != nullptr) free(error_message); }
 
 	ErrorClass & operator = (const ErrorClass & that);
 
@@ -64,19 +64,19 @@ inline ErrorClass::ErrorClass(char * format,...)
 }
 
 inline ErrorClass::ErrorClass(const ErrorClass & that)	:
-	error_message(NULL)
+	error_message(nullptr)
 {
 	*this = that;
 }
 
 inline ErrorClass & ErrorClass::operator = (const ErrorClass & that)
 {
-	if (error_message != NULL) {
+	if (error_message != nullptr) {
 		free(error_message);
-		error_message = NULL;
+		error_message = nullptr;
 	}
 
-	if (that.error_message != NULL) {
+	if (that.error_message != nullptr) {
 		error_message = strdup(that.error_message);
 	}
 

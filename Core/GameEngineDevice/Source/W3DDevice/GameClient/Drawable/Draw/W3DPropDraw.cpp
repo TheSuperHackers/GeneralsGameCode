@@ -55,9 +55,9 @@ void W3DPropDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
   ModuleData::buildFieldParse(p);
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "ModelName", INI::parseAsciiString, NULL, offsetof(W3DPropDrawModuleData, m_modelName) },
+		{ "ModelName", INI::parseAsciiString, nullptr, offsetof(W3DPropDrawModuleData, m_modelName) },
 
-		{ 0, 0, 0, 0 }
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   p.add(dataFieldParse);
 }

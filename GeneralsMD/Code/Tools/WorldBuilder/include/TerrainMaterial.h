@@ -32,7 +32,7 @@ class TerrainMaterial : public COptionsPanel, public PopupSliderOwner
 {
 // Construction
 public:
-	TerrainMaterial(CWnd* pParent = NULL);   // standard constructor
+	TerrainMaterial(CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(TerrainMaterial)

@@ -31,6 +31,7 @@
 
 // INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "Common/GameType.h"
+#include "Common/INI.h"
 #include "Common/Overridable.h"
 
 // DEFINES ////////////////////////////////////////////////////////////////////////////////////////
@@ -38,7 +39,7 @@
 #define NUM_GENERALS (12)
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
-
+class Image;
 
 // CLASS DEFINITIONS //////////////////////////////////////////////////////////////////////////////
 class GeneralPersona
@@ -76,8 +77,8 @@ private:
 
 public:
 	GeneralPersona( void ) :
-		m_imageBioPortraitSmall(NULL),
-		m_imageBioPortraitLarge(NULL)
+		m_imageBioPortraitSmall(nullptr),
+		m_imageBioPortraitLarge(nullptr)
 	{
 	}
 //	~GeneralPersona( void );

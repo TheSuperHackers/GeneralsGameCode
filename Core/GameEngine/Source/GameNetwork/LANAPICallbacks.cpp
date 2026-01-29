@@ -47,7 +47,7 @@
 #include "GameNetwork/LANAPICallbacks.h"
 #include "GameNetwork/networkutil.h"
 
-LANAPI *TheLAN = NULL;
+LANAPI *TheLAN = nullptr;
 extern Bool LANbuttonPushed;
 
 
@@ -208,10 +208,10 @@ void LANAPI::OnGameStart( void )
 		//m_currentGame->startGame(0);
 
 		// Set up the game network
-		DEBUG_ASSERTCRASH(TheNetwork == NULL, ("For some reason TheNetwork isn't NULL at the start of this game.  Better look into that."));
+		DEBUG_ASSERTCRASH(TheNetwork == nullptr, ("For some reason TheNetwork isn't null at the start of this game.  Better look into that."));
 
 		delete TheNetwork;
-		TheNetwork = NULL;
+		TheNetwork = nullptr;
 
 		// Time to initialize TheNetwork for this game.
 		TheNetwork = NetworkInterface::createNetwork();
@@ -228,16 +228,16 @@ void LANAPI::OnGameStart( void )
 
 		// see if we really have the map.  if not, back out.
 		TheMapCache->updateCache();
-		if (!filesOk || TheMapCache->findMap(m_currentGame->getMap()) == NULL)
+		if (!filesOk || TheMapCache->findMap(m_currentGame->getMap()) == nullptr)
 		{
 			DEBUG_LOG(("After transfer, we didn't really have the map.  Bailing..."));
 			OnPlayerLeave(m_name);
 			removeGame(m_currentGame);
-			m_currentGame = NULL;
+			m_currentGame = nullptr;
 			m_inLobby = TRUE;
 
 			delete TheNetwork;
-			TheNetwork = NULL;
+			TheNetwork = nullptr;
 
 			OnChat(UnicodeString::TheEmptyString, 0, TheGameText->fetch("GUI:CouldNotTransferMap"), LANCHAT_SYSTEM);
 			return;
@@ -528,7 +528,7 @@ void LANAPI::OnGameJoin( ReturnType ret, LANGameInfo *theGame )
 		UnicodeString title, body;
 		title = TheGameText->fetch("LAN:JoinFailed");
 		body = getErrorStringFromReturnType(ret);
-		MessageBoxOk(title, body, NULL);
+		MessageBoxOk(title, body, nullptr);
 	}
 }
 
@@ -665,7 +665,7 @@ void LANAPI::OnInActive(UnsignedInt IP) {
 
 void LANAPI::OnChat( UnicodeString player, UnsignedInt ip, UnicodeString message, ChatType format )
 {
-	GameWindow *chatWindow = NULL;
+	GameWindow *chatWindow = nullptr;
 
 	if (m_inLobby)
 	{
@@ -679,7 +679,7 @@ void LANAPI::OnChat( UnicodeString player, UnsignedInt ip, UnicodeString message
 	{
 		chatWindow = listboxChatWindowLanGame;
 	}
-	if (chatWindow == NULL)
+	if (chatWindow == nullptr)
 		return;
 	Int index = -1;
 	UnicodeString unicodeChat;

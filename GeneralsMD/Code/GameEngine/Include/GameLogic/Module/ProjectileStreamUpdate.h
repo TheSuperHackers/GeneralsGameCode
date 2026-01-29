@@ -55,7 +55,7 @@ public:
 	// virtual destructor prototype provided by memory pool declaration
 
 	void addProjectile( ObjectID sourceID, ObjectID newID, ObjectID victimID, const Coord3D *victimPos );	///< This projectile was just shot, so keep track of it.
-	void getAllPoints( Vector3 *points, Int *count );					///< unroll circlular array and write down all projectile positions
+	void getAllPoints( Vector3 *points, Int *count );					///< unroll circular array and write down all projectile positions
 	void setPosition( const Coord3D *newPosition );						///< I need to exist at the place I want to draw since only (near) on screen Drawables get updated
 
 	virtual UpdateSleepTime update();

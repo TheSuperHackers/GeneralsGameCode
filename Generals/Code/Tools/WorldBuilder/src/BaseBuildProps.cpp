@@ -28,7 +28,7 @@
 // BaseBuildProps dialog
 
 
-BaseBuildProps::BaseBuildProps(CWnd* pParent /*=NULL*/)
+BaseBuildProps::BaseBuildProps(CWnd* pParent /*=nullptr*/)
 	: CDialog(BaseBuildProps::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(BaseBuildProps)

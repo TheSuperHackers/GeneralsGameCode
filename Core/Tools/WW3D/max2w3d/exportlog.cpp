@@ -49,7 +49,7 @@
 /*
 ** Static variables
 */
-LogDataDialogClass * _LogDialog = NULL;
+LogDataDialogClass * _LogDialog = nullptr;
 
 
 /*
@@ -73,7 +73,7 @@ LogDataDialogClass * _LogDialog = NULL;
  *=============================================================================================*/
 void ExportLog::Init(HWND parent)
 {
-	assert(_LogDialog == NULL);
+	assert(_LogDialog == nullptr);
 	_LogDialog = new LogDataDialogClass(parent);
 }
 
@@ -93,14 +93,14 @@ void ExportLog::Init(HWND parent)
  *=============================================================================================*/
 void ExportLog::Shutdown(bool wait_for_ok)
 {
-	if (_LogDialog != NULL) {
+	if (_LogDialog != nullptr) {
 
 		if (wait_for_ok) {
 			_LogDialog->Wait_OK();
 		}
 
 		delete _LogDialog;
-		_LogDialog = NULL;
+		_LogDialog = nullptr;
 	}
 }
 
@@ -119,7 +119,7 @@ void ExportLog::Shutdown(bool wait_for_ok)
  *=============================================================================================*/
 void ExportLog::printf(const char * format, ...)
 {
-	if (_LogDialog != NULL) {
+	if (_LogDialog != nullptr) {
 		va_list arguments;
 		va_start(arguments, format);
 		_LogDialog->printf(format,arguments);
@@ -141,7 +141,7 @@ void ExportLog::printf(const char * format, ...)
  *=============================================================================================*/
 void ExportLog::rprintf(const char * format, ...)
 {
-	if (_LogDialog != NULL) {
+	if (_LogDialog != nullptr) {
 		va_list arguments;
 		va_start(arguments, format);
 		_LogDialog->rprintf(format,arguments);
@@ -163,7 +163,7 @@ void ExportLog::rprintf(const char * format, ...)
  *=============================================================================================*/
 void ExportLog::updatebar(float position, float total)
 {
-	if (_LogDialog != NULL) {
+	if (_LogDialog != nullptr) {
 		_LogDialog->updatebar(position,total);
 	}
 }

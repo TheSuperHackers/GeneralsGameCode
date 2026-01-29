@@ -47,7 +47,7 @@ public:
 	virtual Bool doesSpecialPowerHaveOverridableDestinationActive() const = 0; //Is it active now?
 	virtual Bool doesSpecialPowerHaveOverridableDestination() const = 0;	//Does it have it, even if it's not active?
 	virtual void setSpecialPowerOverridableDestination( const Coord3D *loc ) = 0;
-	virtual Bool isPowerCurrentlyInUse( const CommandButton *command = NULL ) const = 0;
+	virtual Bool isPowerCurrentlyInUse( const CommandButton *command = nullptr ) const = 0;
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -75,6 +75,6 @@ public:
 	virtual Bool doesSpecialPowerHaveOverridableDestinationActive() const = 0; //Is it active now?
 	virtual Bool doesSpecialPowerHaveOverridableDestination() const = 0;	//Does it have it, even if it's not active?
 	virtual void setSpecialPowerOverridableDestination( const Coord3D *loc ) = 0;
-	virtual Bool isPowerCurrentlyInUse( const CommandButton *command = NULL ) const = 0;
+	virtual Bool isPowerCurrentlyInUse( const CommandButton *command = nullptr ) const = 0;
 
 };

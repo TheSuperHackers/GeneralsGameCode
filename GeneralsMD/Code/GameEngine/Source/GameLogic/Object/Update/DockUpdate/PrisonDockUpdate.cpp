@@ -63,7 +63,7 @@ Bool PrisonDockUpdate::action( Object *docker, Object *drone )
 {
 
 	// sanity
-	if( docker == NULL )
+	if( docker == nullptr )
 		return FALSE;
 
 	// if docker has no contents, do nothing and stop the dock process

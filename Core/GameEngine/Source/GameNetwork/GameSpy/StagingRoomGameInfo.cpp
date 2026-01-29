@@ -191,7 +191,7 @@ Bool GetLocalChatConnectionAddress(AsciiString serverName, UnsignedShort serverP
 	DEBUG_LOG(("About to load INETMIB1.DLL"));
 
 	HINSTANCE mib_ii_dll = LoadLibrary("inetmib1.dll");
-	if (mib_ii_dll == NULL) {
+	if (mib_ii_dll == nullptr) {
 		DEBUG_LOG(("Failed to load INETMIB1.DLL"));
 		return(false);
 	}
@@ -199,7 +199,7 @@ Bool GetLocalChatConnectionAddress(AsciiString serverName, UnsignedShort serverP
 	DEBUG_LOG(("About to load SNMPAPI.DLL"));
 
 	HINSTANCE snmpapi_dll = LoadLibrary("snmpapi.dll");
-	if (snmpapi_dll == NULL) {
+	if (snmpapi_dll == nullptr) {
 		DEBUG_LOG(("Failed to load SNMPAPI.DLL"));
 		FreeLibrary(mib_ii_dll);
 		return(false);
@@ -212,7 +212,7 @@ Bool GetLocalChatConnectionAddress(AsciiString serverName, UnsignedShort serverP
 	SnmpExtensionQueryPtr = (int (__stdcall *)(unsigned char,SnmpVarBindList *,long *,long *)) GetProcAddress(mib_ii_dll, "SnmpExtensionQuery");
 	SnmpUtilMemAllocPtr = (void *(__stdcall *)(unsigned long)) GetProcAddress(snmpapi_dll, "SnmpUtilMemAlloc");
 	SnmpUtilMemFreePtr = (void (__stdcall *)(void *)) GetProcAddress(snmpapi_dll, "SnmpUtilMemFree");
-	if (SnmpExtensionInitPtr == NULL || SnmpExtensionQueryPtr == NULL || SnmpUtilMemAllocPtr == NULL || SnmpUtilMemFreePtr == NULL) {
+	if (SnmpExtensionInitPtr == nullptr || SnmpExtensionQueryPtr == nullptr || SnmpUtilMemAllocPtr == nullptr || SnmpUtilMemFreePtr == nullptr) {
 		DEBUG_LOG(("Failed to get proc addresses for linked functions"));
 		FreeLibrary(snmpapi_dll);
 		FreeLibrary(mib_ii_dll);
@@ -448,7 +448,7 @@ GameSpyStagingRoom::GameSpyStagingRoom()
 	cleanUpSlotPointers();
 
 	setLocalIP(0);
-	m_transport = NULL;
+	m_transport = nullptr;
 
 	m_localName = "localhost";
 
@@ -514,7 +514,7 @@ Int GameSpyStagingRoom::getLocalSlotNum( void ) const
 	for (Int i=0; i<MAX_SLOTS; ++i)
 	{
 		const GameSlot *slot = getConstSlot(i);
-		if (slot == NULL) {
+		if (slot == nullptr) {
 			continue;
 		}
 		if (slot->isPlayer(localName))
@@ -527,14 +527,14 @@ void GameSpyStagingRoom::startGame(Int gameID)
 {
 	DEBUG_ASSERTCRASH(m_inGame, ("Starting a game while not in game"));
 	DEBUG_LOG(("GameSpyStagingRoom::startGame - game id = %d", gameID));
-	DEBUG_ASSERTCRASH(m_transport == NULL, ("m_transport is not NULL when it should be"));
-	DEBUG_ASSERTCRASH(TheNAT == NULL, ("TheNAT is not NULL when it should be"));
+	DEBUG_ASSERTCRASH(m_transport == nullptr, ("m_transport is not null when it should be"));
+	DEBUG_ASSERTCRASH(TheNAT == nullptr, ("TheNAT is not null when it should be"));
 
 	UnsignedInt localIP = TheGameSpyInfo->getInternalIP();
 	setLocalIP(localIP);
 
 	delete TheNAT;
-	TheNAT = NULL;
+	TheNAT = nullptr;
 
 	// fill in GS-specific info
 	Int numHumans = 0;
@@ -800,10 +800,10 @@ void GameSpyStagingRoom::launchGame( void )
 	// Set up the game network
 	AsciiString user;
 	AsciiString userList;
-	DEBUG_ASSERTCRASH(TheNetwork == NULL, ("For some reason TheNetwork isn't NULL at the start of this game.  Better look into that."));
+	DEBUG_ASSERTCRASH(TheNetwork == nullptr, ("For some reason TheNetwork isn't null at the start of this game.  Better look into that."));
 
 	delete TheNetwork;
-	TheNetwork = NULL;
+	TheNetwork = nullptr;
 
 	// Time to initialize TheNetwork for this game.
 	TheNetwork = NetworkInterface::createNetwork();
@@ -826,12 +826,12 @@ void GameSpyStagingRoom::launchGame( void )
 
 	// see if we really have the map.  if not, back out.
 	TheMapCache->updateCache();
-	if (!filesOk || TheMapCache->findMap(getMap()) == NULL)
+	if (!filesOk || TheMapCache->findMap(getMap()) == nullptr)
 	{
 		DEBUG_LOG(("After transfer, we didn't really have the map.  Bailing..."));
 
 		delete TheNetwork;
-		TheNetwork = NULL;
+		TheNetwork = nullptr;
 
 		GSMessageBoxOk(TheGameText->fetch("GUI:Error"), TheGameText->fetch("GUI:CouldNotTransferMap"));
 
@@ -865,7 +865,7 @@ void GameSpyStagingRoom::launchGame( void )
 	TheGameSpyBuddyMessageQueue->addRequest(req);
 
 	delete TheNAT;
-	TheNAT = NULL;
+	TheNAT = nullptr;
 }
 
 void GameSpyStagingRoom::reset(void)

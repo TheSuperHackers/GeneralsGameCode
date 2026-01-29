@@ -71,14 +71,14 @@ void ParachuteContainModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "PitchRateMax",	INI::parseAngularVelocityReal,		NULL, offsetof( ParachuteContainModuleData, m_pitchRateMax ) },
-		{ "RollRateMax",	INI::parseAngularVelocityReal,		NULL, offsetof( ParachuteContainModuleData, m_rollRateMax ) },
-		{ "LowAltitudeDamping",	INI::parseReal,		NULL, offsetof( ParachuteContainModuleData, m_lowAltitudeDamping ) },
-		{ "ParachuteOpenDist",	INI::parseReal,		NULL, offsetof( ParachuteContainModuleData, m_paraOpenDist ) },
-		{ "KillWhenLandingInWaterSlop",	INI::parseReal,		NULL, offsetof( ParachuteContainModuleData, m_killWhenLandingInWaterSlop ) },
-		{ "FreeFallDamagePercent",	INI::parsePercentToReal,		NULL, offsetof( ParachuteContainModuleData, m_freeFallDamagePercent ) },
-		{ "ParachuteOpenSound", INI::parseAudioEventRTS, NULL, offsetof( ParachuteContainModuleData, m_parachuteOpenSound ) },
-		{ 0, 0, 0, 0 }
+		{ "PitchRateMax",	INI::parseAngularVelocityReal,		nullptr, offsetof( ParachuteContainModuleData, m_pitchRateMax ) },
+		{ "RollRateMax",	INI::parseAngularVelocityReal,		nullptr, offsetof( ParachuteContainModuleData, m_rollRateMax ) },
+		{ "LowAltitudeDamping",	INI::parseReal,		nullptr, offsetof( ParachuteContainModuleData, m_lowAltitudeDamping ) },
+		{ "ParachuteOpenDist",	INI::parseReal,		nullptr, offsetof( ParachuteContainModuleData, m_paraOpenDist ) },
+		{ "KillWhenLandingInWaterSlop",	INI::parseReal,		nullptr, offsetof( ParachuteContainModuleData, m_killWhenLandingInWaterSlop ) },
+		{ "FreeFallDamagePercent",	INI::parsePercentToReal,		nullptr, offsetof( ParachuteContainModuleData, m_freeFallDamagePercent ) },
+		{ "ParachuteOpenSound", INI::parseAudioEventRTS, nullptr, offsetof( ParachuteContainModuleData, m_parachuteOpenSound ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   p.add(dataFieldParse);
 }
@@ -157,13 +157,13 @@ void ParachuteContain::updateBonePositions()
 		Drawable* parachuteDraw = getObject()->getDrawable();
 		if (parachuteDraw)
 		{
-			if (parachuteDraw->getPristineBonePositions( "PARA_COG", 0, &m_paraSwayBone, NULL, 1) != 1)
+			if (parachuteDraw->getPristineBonePositions( "PARA_COG", 0, &m_paraSwayBone, nullptr, 1) != 1)
 			{
 				DEBUG_CRASH(("PARA_COG not found"));
 				m_paraSwayBone.zero();
 			}
 
-			if (parachuteDraw->getPristineBonePositions( "PARA_ATTCH", 0, &m_paraAttachBone, NULL, 1 ) != 1)
+			if (parachuteDraw->getPristineBonePositions( "PARA_ATTCH", 0, &m_paraAttachBone, nullptr, 1 ) != 1)
 			{
 				DEBUG_CRASH(("PARA_ATTCH not found"));
 				m_paraAttachBone.zero();
@@ -177,11 +177,11 @@ void ParachuteContain::updateBonePositions()
 
 		m_needToUpdateRiderBones = false;	// yeah, even if not found.
 
-		Object* rider = (getContainCount() > 0) ? getContainList().front() : NULL;
-		Drawable* riderDraw = rider ? rider->getDrawable() : NULL;
+		Object* rider = (getContainCount() > 0) ? getContainList().front() : nullptr;
+		Drawable* riderDraw = rider ? rider->getDrawable() : nullptr;
 		if (riderDraw)
 		{
-			if (riderDraw->getPristineBonePositions( "PARA_MAN", 0, &m_riderAttachBone, NULL, 1) != 1)
+			if (riderDraw->getPristineBonePositions( "PARA_MAN", 0, &m_riderAttachBone, nullptr, 1) != 1)
 			{
 				//DEBUG_LOG(("*** No parachute-attach bone... using object height!"));
 				m_riderAttachBone.zero();
@@ -198,22 +198,22 @@ void ParachuteContain::updateOffsetsFromBones()
 {
 	const Coord3D* objPos = getObject()->getPosition();
 
-	getObject()->convertBonePosToWorldPos(&m_paraSwayBone, NULL, &m_paraSwayOffset, NULL);
+	getObject()->convertBonePosToWorldPos(&m_paraSwayBone, nullptr, &m_paraSwayOffset, nullptr);
 	m_paraSwayOffset.x -= objPos->x;
 	m_paraSwayOffset.y -= objPos->y;
 	m_paraSwayOffset.z -= objPos->z;
 
-	getObject()->convertBonePosToWorldPos(&m_paraAttachBone, NULL, &m_paraAttachOffset, NULL);
+	getObject()->convertBonePosToWorldPos(&m_paraAttachBone, nullptr, &m_paraAttachOffset, nullptr);
 	m_paraAttachOffset.x -= objPos->x;
 	m_paraAttachOffset.y -= objPos->y;
 	m_paraAttachOffset.z -= objPos->z;
 
-	Object* rider = (getContainCount() > 0) ? getContainList().front() : NULL;
+	Object* rider = (getContainCount() > 0) ? getContainList().front() : nullptr;
 	if (rider)
 	{
 		const Coord3D* riderPos = rider->getPosition();
 
-		rider->convertBonePosToWorldPos(&m_riderAttachBone, NULL, &m_riderAttachOffset, NULL);
+		rider->convertBonePosToWorldPos(&m_riderAttachBone, nullptr, &m_riderAttachOffset, nullptr);
 		m_riderAttachOffset.x -= riderPos->x;
 		m_riderAttachOffset.y -= riderPos->y;
 		m_riderAttachOffset.z -= riderPos->z;
@@ -287,7 +287,7 @@ UpdateSleepTime ParachuteContain::update( void )
 
 	Drawable* draw = parachute->getDrawable();
 	const ParachuteContainModuleData* d = getParachuteContainModuleData();
-	Object* rider = (getContainCount() > 0) ? getContainList().front() : NULL;
+	Object* rider = (getContainCount() > 0) ? getContainList().front() : nullptr;
 
 	if (m_startZ == NO_START_Z)	{
 		m_startZ = parachute->getPosition()->z;
@@ -335,7 +335,7 @@ UpdateSleepTime ParachuteContain::update( void )
 					FindPositionOptions fpOptions;
 					fpOptions.minRadius = 0.0f;
 					fpOptions.maxRadius = 100.0f;
-					fpOptions.relationshipObject = NULL;
+					fpOptions.relationshipObject = nullptr;
 					fpOptions.flags = FPF_NONE;
 					ThePartitionManager->findPositionAround( &target, &fpOptions, &target );
 				}
@@ -554,7 +554,7 @@ void ParachuteContain::positionRider(Object* rider)
 		}
 		else
 		{
-			draw->setInstanceMatrix(NULL);
+			draw->setInstanceMatrix(nullptr);
 		}
 	}
 }
@@ -582,7 +582,7 @@ void ParachuteContain::onDie( const DamageInfo * damageInfo )
 	// if we are airborne when killed, the guy falls screaming to his death...
 	if (getObject()->isSignificantlyAboveTerrain())
 	{
-		Object* rider = (getContainCount() > 0) ? getContainList().front() : NULL;
+		Object* rider = (getContainCount() > 0) ? getContainList().front() : nullptr;
 		if (rider)
 		{
 			removeAllContained();
@@ -620,10 +620,10 @@ void ParachuteContain::onDie( const DamageInfo * damageInfo )
 void ParachuteContain::onCollide( Object *other, const Coord3D *loc, const Coord3D *normal )
 {
 	// Note that other == null means "collide with ground"
-	if( other == NULL )
+	if( other == nullptr )
 	{
 		// if we're in a container (eg, a transport plane), just ignore this...
-		if( getObject()->getContainedBy() != NULL )
+		if( getObject()->getContainedBy() != nullptr )
 			return;
 
 		removeAllContained();

@@ -28,7 +28,7 @@
 // OpenMap dialog
 
 
-OpenMap::OpenMap(TOpenMapInfo *pInfo, CWnd* pParent /*=NULL*/)
+OpenMap::OpenMap(TOpenMapInfo *pInfo, CWnd* pParent /*=nullptr*/)
 	: CDialog(OpenMap::IDD, pParent),
 	m_pInfo(pInfo)
 {
@@ -81,7 +81,7 @@ void OpenMap::OnBrowse()
 void OpenMap::OnOK()
 {
 	CListBox *pList = (CListBox *)this->GetDlgItem(IDC_OPEN_LIST);
-	if (pList == NULL) {
+	if (pList == nullptr) {
 		OnCancel();
 		return;
 	}
@@ -108,7 +108,7 @@ void OpenMap::populateMapListbox( Bool systemMaps )
 	m_usingSystemDir = systemMaps;
 	::AfxGetApp()->WriteProfileInt(MAP_OPENSAVE_PANEL_SECTION, "UseSystemDir", m_usingSystemDir);
 
-	HANDLE			hFindFile = 0;
+	HANDLE			hFindFile = nullptr;
 	WIN32_FIND_DATA			findData;
 	char				dirBuf[_MAX_PATH];
 	char				findBuf[_MAX_PATH];
@@ -121,7 +121,7 @@ void OpenMap::populateMapListbox( Bool systemMaps )
 		snprintf(dirBuf, ARRAY_SIZE(dirBuf), "%sMaps\\", TheGlobalData->getPath_UserData().str());
 	}
 	CListBox *pList = (CListBox *)this->GetDlgItem(IDC_OPEN_LIST);
-	if (pList == NULL) return;
+	if (pList == nullptr) return;
 	pList->ResetContent();
 	snprintf(findBuf, ARRAY_SIZE(findBuf), "%s*.*", dirBuf);
 
@@ -164,11 +164,11 @@ BOOL OpenMap::OnInitDialog()
 	CDialog::OnInitDialog();
 
 	CButton *pSystemMaps = (CButton *)this->GetDlgItem(IDC_SYSTEMMAPS);
-	if (pSystemMaps != NULL)
+	if (pSystemMaps != nullptr)
 		pSystemMaps->SetCheck( m_usingSystemDir );
 
 	CButton *pUserMaps = (CButton *)this->GetDlgItem(IDC_USERMAPS);
-	if (pUserMaps != NULL)
+	if (pUserMaps != nullptr)
 		pUserMaps->SetCheck( !m_usingSystemDir );
 
 	// TheSuperHackers @tweak Originally World Builder has hidden the System Maps tab button in Release builds,

@@ -62,8 +62,6 @@ target_compile_definitions(corei_launcher INTERFACE
 
 target_link_libraries(corei_launcher INTERFACE
     comctl32
-    core_config
-    core_utility
 )
 
 if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")

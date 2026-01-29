@@ -26,7 +26,7 @@
 //
 // FILE: HijackerUpdate.cpp
 // Author: Mark Lorenzen, July 2002
-// Desc:   Allows hijacker to kepp with his hijacked vehicle (though hidden) until it dies, then
+// Desc:   Allows hijacker to keep with his hijacked vehicle (though hidden) until it dies, then
 // to become a hijacker once more
 //
 /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -57,7 +57,7 @@ HijackerUpdate::HijackerUpdate( Thing *thing, const ModuleData *moduleData ) : U
 	setIsInVehicle( FALSE );
 	m_wasTargetAirborne = false;
 	m_ejectPos.zero();
-//	m_ejectPilotDMI = NULL;
+//	m_ejectPilotDMI = nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -148,7 +148,7 @@ UpdateSleepTime HijackerUpdate::update( void )
 
 			}
 
-			setTargetObject( NULL );
+			setTargetObject( nullptr );
 			setIsInVehicle( FALSE );
 			setUpdate( FALSE );
 			m_wasTargetAirborne = false;
@@ -174,9 +174,9 @@ void HijackerUpdate::setTargetObject( const Object *object )
 
 		// here we also test the target to see whether it ejects pilots
 		// when it dies... if so, stores a pointer to that diemoduleinterface
-		// NULL if not...
+		// nullptr if not...
 
-//		BehaviorModule **dmi = NULL;
+//		BehaviorModule **dmi = nullptr;
 //		for( dmi = object->getBehaviorModules(); *dmi; ++dmi )
 //		{
 //			m_ejectPilotDMI = (*dmi)->getEjectPilotDieInterface();
@@ -187,7 +187,7 @@ void HijackerUpdate::setTargetObject( const Object *object )
 	else
 	{
 		m_targetID = INVALID_ID;
-//		m_ejectPilotDMI = NULL;
+//		m_ejectPilotDMI = nullptr;
 	}
 
 }
@@ -198,7 +198,7 @@ Object* HijackerUpdate::getTargetObject() const
   {
     return TheGameLogic->findObjectByID( m_targetID );
   }
-  return NULL;
+  return nullptr;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -234,7 +234,7 @@ void HijackerUpdate::xfer( Xfer *xfer )
 	// eject pos
 	xfer->xferCoord3D( &m_ejectPos );
 
-	// udpate
+	// update
 	xfer->xferBool( &m_update );
 
 	// is in vehicle
@@ -254,7 +254,7 @@ void HijackerUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-	// set the target object, this will also tie up teh m_ejectPilotDMI pointer
+	// set the target object, this will also tie up the m_ejectPilotDMI pointer
 	Object *obj = TheGameLogic->findObjectByID( m_targetID );
 	setTargetObject( obj );
 

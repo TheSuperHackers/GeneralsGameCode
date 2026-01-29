@@ -53,7 +53,7 @@ static const char *const imageStatusNames[] =
 {
 	"ROTATED_90_CLOCKWISE",
 	"RAW_TEXTURE",
-	NULL
+	nullptr
 };
 #endif  // end DEFINE_IMAGE_STATUS_NAMES
 
@@ -68,7 +68,7 @@ MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( Image, "Image" );
 public:
 
 	Image( void );
-	// virtual desctructor defined by memory pool object
+	// virtual destructor defined by memory pool object
 
 	void setName( AsciiString name );							///< set image name
 	AsciiString getName( void ) const;									///< return name
@@ -142,7 +142,7 @@ public:
     for (ImageMap::iterator i=m_imageMap.begin();i!=m_imageMap.end();++i)
       if (!index--)
         return i->second;
-    return NULL;
+    return nullptr;
   }
 
 protected:

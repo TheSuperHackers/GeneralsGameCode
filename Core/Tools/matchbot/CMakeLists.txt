@@ -71,9 +71,8 @@ target_include_directories(core_matchbot PRIVATE
 )
 
 target_link_libraries(core_matchbot PRIVATE
-    gamespy::gamespy
-    core_config
     corei_always
+    gamespy::gamespy
     stlport
 )
 

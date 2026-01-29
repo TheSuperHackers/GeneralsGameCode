@@ -89,7 +89,7 @@ public:
 	** The various ODE solvers will use this interface to ask the ODESystemClass to
 	** compute the derivatives of their state.  In some cases, the integrator will
 	** pass in a new state vector (test_state) to be used when computing the derivatives.
-	** NULL will be passed if they want the derivatives for the initial state.
+	** nullptr will be passed if they want the derivatives for the initial state.
 	** This function works similarly to the Set_State function in that it passes you
 	** the index to start reading from and you pass it back the index to continue from.
 	*/

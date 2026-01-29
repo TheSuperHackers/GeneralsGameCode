@@ -119,7 +119,7 @@ void TunnelTracker::swapContainedItemsList(ContainedItemsList& newList)
 // ------------------------------------------------------------------------
 void TunnelTracker::updateNemesis(const Object *target)
 {
-	if (getCurNemesis()==NULL) {
+	if (getCurNemesis()==nullptr) {
 		if (target) {
 			if (target->isKindOf(KINDOF_VEHICLE) || target->isKindOf(KINDOF_STRUCTURE) ||
 				target->isKindOf(KINDOF_INFANTRY) || target->isKindOf(KINDOF_AIRCRAFT)) {
@@ -136,11 +136,11 @@ void TunnelTracker::updateNemesis(const Object *target)
 Object *TunnelTracker::getCurNemesis(void)
 {
 	if (m_curNemesisID == INVALID_ID) {
-		return NULL;
+		return nullptr;
 	}
 	if (m_nemesisTimestamp + 4*LOGICFRAMES_PER_SECOND < TheGameLogic->getFrame()) {
 		m_curNemesisID = INVALID_ID;
-		return NULL;
+		return nullptr;
 	}
 	Object *target = TheGameLogic->findObjectByID(m_curNemesisID);
 	if (target) {
@@ -149,13 +149,13 @@ Object *TunnelTracker::getCurNemesis(void)
 			!target->testStatus( OBJECT_STATUS_DETECTED ) &&
 			!target->testStatus( OBJECT_STATUS_DISGUISED ) )
 		{
-			target = NULL;
+			target = nullptr;
 		}
 	}
 	if (target && target->isEffectivelyDead()) {
-		target = NULL;
+		target = nullptr;
 	}
-	if (target == NULL) {
+	if (target == nullptr) {
 		m_curNemesisID = INVALID_ID;
 	}
 	return target;
@@ -220,14 +220,23 @@ void TunnelTracker::onTunnelCreated( const Object *newTunnel )
 // ------------------------------------------------------------------------
 void TunnelTracker::onTunnelDestroyed( const Object *deadTunnel )
 {
-	m_tunnelCount--;
-	m_tunnelIDs.remove( deadTunnel->getID() );
-	m_needsFullHealTimeUpdate = true;
+	{
+		std::list<ObjectID>::iterator it = std::find(m_tunnelIDs.begin(), m_tunnelIDs.end(), deadTunnel->getID());
+		if (it == m_tunnelIDs.end())
+		{
+			DEBUG_CRASH(("TunnelTracker::onTunnelDestroyed - Attempting to remove object '%s' that has never been tracked as a tunnel", deadTunnel->getName().str()));
+			return;
+		}
+
+		m_tunnelCount--;
+		m_tunnelIDs.erase(it);
+		m_needsFullHealTimeUpdate = true;
+	}
 
 	if( m_tunnelCount == 0 )
 	{
 		// Kill everyone in our contain list.  Cave in!
-		iterateContained( destroyObject, NULL, FALSE );
+		iterateContained( destroyObject, nullptr, FALSE );
 		m_containList.clear();
 		m_containListSize = 0;
 	}
@@ -250,7 +259,7 @@ void TunnelTracker::onTunnelDestroyed( const Object *deadTunnel )
 void TunnelTracker::destroyObject( Object *obj, void * )
 {
 	// Now that tunnels consider ContainedBy to be "the tunnel you entered", I need to say goodbye
-	// llike other contain types so they don't look us up on their deletion and crash
+	// like other contain types so they don't look us up on their deletion and crash
 	obj->onRemovedFrom( obj->getContainedBy() );
 	TheGameLogic->destroyObject( obj );
 }
@@ -333,7 +342,7 @@ void TunnelTracker::updateFullHealTime()
 			continue;
 
 		const ContainModuleInterface* contain = tunnelObj->getContain();
-		DEBUG_ASSERTCRASH(contain != NULL, ("Contain module is NULL"));
+		DEBUG_ASSERTCRASH(contain != nullptr, ("Contain module is null"));
 
 		if (!contain->isTunnelContain())
 			continue;
@@ -430,7 +439,7 @@ void TunnelTracker::loadPostProcess( void )
 	{
 
 		obj = TheGameLogic->findObjectByID( *it );
-		if( obj == NULL )
+		if( obj == nullptr )
 		{
 
 			DEBUG_CRASH(( "TunnelTracker::loadPostProcess - Unable to find object ID '%d'", *it ));

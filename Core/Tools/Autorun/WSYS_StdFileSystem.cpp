@@ -115,7 +115,7 @@ File* StdFileSystem::open( const Char *filename, Int access )
 	else
 	{
 		delete file;
-		file = NULL;
+		file = nullptr;
 	}
 
 	return (File*) file;

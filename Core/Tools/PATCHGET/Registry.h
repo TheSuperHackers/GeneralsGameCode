@@ -17,7 +17,7 @@
 */
 
 // Registry.h
-// Simple interface for storing/retreiving registry values
+// Simple interface for storing/retrieving registry values
 // Author: Matthew D. Campbell, December 2001
 
 #pragma once

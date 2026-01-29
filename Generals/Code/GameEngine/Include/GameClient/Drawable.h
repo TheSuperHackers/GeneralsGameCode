@@ -383,7 +383,7 @@ public:
 	void colorFlash( const RGBColor *color, UnsignedInt decayFrames = DEF_DECAY_FRAMES, UnsignedInt attackFrames = 0, UnsignedInt sustainAtPeak = 0 );  ///< flash a drawable in the color specified for a short time
 	void colorTint( const RGBColor *color );	 ///< tint this drawable the color specified
 	void setTintEnvelope( const RGBColor *color, Real attack, Real decay );	 ///< how to transition color
-	void flashAsSelected( const RGBColor *color = NULL ); ///< drawable takes care of the details if you spec no color
+	void flashAsSelected( const RGBColor *color = nullptr ); ///< drawable takes care of the details if you spec no color
 
 	/// Return true if drawable has been marked as "selected"
 	Bool isSelected( void ) const {	return m_selected; }
@@ -432,9 +432,6 @@ public:
 	void clearAndSetModelConditionFlags( const ModelConditionFlags& clr, const ModelConditionFlags& set );
 	void replaceModelConditionFlags( const ModelConditionFlags &flags, Bool forceReplace = FALSE );
 
-	void attachToParticleSystem( Particle *p );								///< attach this Drawable to a particle system
-	void detachFromParticleSystem( void );										///< detach this from any particle system
-
 	Bool handleWeaponFireFX(
 							WeaponSlotType wslot,
 							Int specificBarrelToUse,
@@ -454,7 +451,7 @@ public:
 	// that the team is nonnull.
 	void changedTeam();
 
-	const TWheelInfo *getWheelInfo(void) const { return m_locoInfo ? &m_locoInfo->m_wheelInfo : NULL; }
+	const TWheelInfo *getWheelInfo(void) const { return m_locoInfo ? &m_locoInfo->m_wheelInfo : nullptr; }
 
 	// this method must ONLY be called from the client, NEVER From the logic, not even indirectly.
 	Bool clientOnly_getFirstRenderObjInfo(Coord3D* pos, Real* boundingSphereRadius, Matrix3D* transform);
@@ -478,7 +475,7 @@ public:
 	// this is a special-purpose call for W3DModelDraw. (srj)
 	Bool getCurrentWorldspaceClientBonePositions(const char* boneName, Matrix3D& transform) const;
 
-	Bool getProjectileLaunchOffset(WeaponSlotType wslot, Int specificBarrelToUse, Matrix3D* launchPos, WhichTurretType tur, Coord3D* turretRotPos, Coord3D* turretPitchPos = NULL) const;
+	Bool getProjectileLaunchOffset(WeaponSlotType wslot, Int specificBarrelToUse, Matrix3D* launchPos, WhichTurretType tur, Coord3D* turretRotPos, Coord3D* turretPitchPos = nullptr) const;
 
 	/**
 		This call says, "I want the current animation (if any) to take n frames to complete a single cycle".
@@ -490,7 +487,7 @@ public:
 	/**
 		similar to the above, but assumes that the current state is a "ONCE",
 		and is smart about transition states... if there is a transition state
-		"inbetween", it is included in the completion time.
+		"in between", it is included in the completion time.
 	*/
 	void setAnimationCompletionTime(UnsignedInt numFrames);
 	void updateSubObjects();
@@ -538,8 +535,6 @@ public:
 
 	Bool getShouldAnimate( Bool considerPower ) const;
 
-	void friend_setParticle( Particle *particle ) { m_particle = particle; }
-
 	// flash drawable methods ---------------------------------------------------------
   Int getFlashCount( void ) { return m_flashCount; }
 	void setFlashCount( Int count ) { m_flashCount = count; }
@@ -555,9 +550,9 @@ public:
 
 	DrawableIconInfo* getIconInfo();															///< lazily allocates, if necessary
 	void killIcon(DrawableIconType t) { if (m_iconInfo) m_iconInfo->killIcon(t); }
-	Bool hasIconInfo() const { return m_iconInfo != NULL; }
+	Bool hasIconInfo() const { return m_iconInfo != nullptr; }
 
-  const AudioEventRTS * getAmbientSound() const { return m_ambientSound == NULL ? NULL : &m_ambientSound->m_event; }
+  const AudioEventRTS * getAmbientSound() const { return m_ambientSound == nullptr ? nullptr : &m_ambientSound->m_event; }
 protected:
 
 	// snapshot methods
@@ -636,7 +631,6 @@ private:
 	Real m_decalOpacity;
 
 	Object *m_object;						///< object (if any) that this drawable represents
-	Particle *m_particle;				///< particle (if any) that this Drawable is associated with
 
 	DrawableID m_id;						///< this drawable's unique ID
 	Drawable *m_nextDrawable;

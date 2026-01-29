@@ -442,11 +442,11 @@ SBServer PeerThreadClass::findServerByID( Int id )
 		if (server && !server->keyvals)
 		{
 			DEBUG_CRASH(("Referencing a missing server!"));
-			return 0;
+			return nullptr;
 		}
 		return it->second;
 	}
-	return 0;
+	return nullptr;
 }
 
 Int PeerThreadClass::findServer( SBServer server )
@@ -457,7 +457,7 @@ Int PeerThreadClass::findServer( SBServer server )
 	UnsignedShort newPrivatePort = SBServerGetPrivateQueryPort(server);
 	UnsignedInt newPublicIP = SBServerGetPublicInetAddress(server);
 
-	SBServer serverToRemove = NULL;
+	SBServer serverToRemove = nullptr;
 
 	for (std::map<Int, SBServer>::iterator it = m_stagingServers.begin(); it != m_stagingServers.end(); ++it)
 	{
@@ -511,7 +511,7 @@ void connectCallbackWrapper( PEER peer, PEERBool success, int failureReason, voi
 	DEBUG_LOG(("In connectCallbackWrapper()"));
 	CheckServers(peer);
 #endif // SERVER_DEBUGGING
-	if (param != NULL)
+	if (param != nullptr)
 	{
 		((PeerThreadClass *)param)->connectCallback( peer, success );
 	}
@@ -519,7 +519,7 @@ void connectCallbackWrapper( PEER peer, PEERBool success, int failureReason, voi
 
 void nickErrorCallbackWrapper( PEER peer, Int type, const char *nick, int numSuggestedNicks, const gsi_char** suggestedNicks, void *param )
 {
-	if (param != NULL)
+	if (param != nullptr)
 	{
 		((PeerThreadClass *)param)->nickErrorCallback( peer, type, nick );
 	}
@@ -531,7 +531,7 @@ static void joinRoomCallback(PEER peer, PEERBool success, PEERJoinResult result,
 
 GameSpyPeerMessageQueue::GameSpyPeerMessageQueue()
 {
-	m_thread = NULL;
+	m_thread = nullptr;
 	m_serialAuth = SERIAL_OK;
 }
 
@@ -559,7 +559,7 @@ void GameSpyPeerMessageQueue::startThread( void )
 void GameSpyPeerMessageQueue::endThread( void )
 {
 	delete m_thread;
-	m_thread = NULL;
+	m_thread = nullptr;
 }
 
 Bool GameSpyPeerMessageQueue::isThreadRunning( void )
@@ -1135,7 +1135,7 @@ void checkQR2Queries( PEER peer, SOCKET sock )
 
 	while (1)
 	{
-		error = select(FD_SETSIZE, &set, NULL, NULL, &timeout);
+		error = select(FD_SETSIZE, &set, nullptr, nullptr, &timeout);
 		if (SOCKET_ERROR == error || 0 == error)
 			return;
 		//else we have data
@@ -1191,7 +1191,7 @@ void PeerThreadClass::Thread_Function()
 	m_qmGroupRoom = 0;
 
 	peer = peerInitialize( &callbacks );
-	DEBUG_ASSERTCRASH( peer != NULL, ("NULL peer!") );
+	DEBUG_ASSERTCRASH( peer != nullptr, ("null peer!") );
 	m_isConnected = m_isConnecting = false;
 
 	qr2_register_key(EXECRC_KEY, EXECRC_STR);
@@ -1322,7 +1322,7 @@ void PeerThreadClass::Thread_Function()
 	{
 		DEBUG_CRASH(("Error setting title"));
 		peerShutdown( peer );
-		peer = NULL;
+		peer = nullptr;
 		return;
 	}
 
@@ -1406,8 +1406,8 @@ void PeerThreadClass::Thread_Function()
 				s_lastStateChangedHeartbeat = 0;
 				s_wantStateChangedHeartbeat = FALSE;
 				peerStopGame( peer );
-				peerLeaveRoom( peer, GroupRoom, NULL );
-				peerLeaveRoom( peer, StagingRoom, NULL );
+				peerLeaveRoom( peer, GroupRoom, nullptr );
+				peerLeaveRoom( peer, StagingRoom, nullptr );
 				if (qr2Sock != INVALID_SOCKET)
 				{
 					closesocket(qr2Sock);
@@ -1422,16 +1422,16 @@ void PeerThreadClass::Thread_Function()
 			case PeerRequest::PEERREQUEST_LEAVEGROUPROOM:
 				m_groupRoomID = 0;
 				updateBuddyStatus( BUDDY_ONLINE );
-				peerLeaveRoom( peer, GroupRoom, NULL );
-				peerLeaveRoom( peer, StagingRoom, NULL ); m_isHosting = false;
+				peerLeaveRoom( peer, GroupRoom, nullptr );
+				peerLeaveRoom( peer, StagingRoom, nullptr ); m_isHosting = false;
 				break;
 
 			case PeerRequest::PEERREQUEST_JOINSTAGINGROOM:
 				{
 					m_groupRoomID = 0;
 					updateBuddyStatus( BUDDY_ONLINE );
-					peerLeaveRoom( peer, GroupRoom, NULL );
-					peerLeaveRoom( peer, StagingRoom, NULL ); m_isHosting = false;
+					peerLeaveRoom( peer, GroupRoom, nullptr );
+					peerLeaveRoom( peer, StagingRoom, nullptr ); m_isHosting = false;
 					SBServer server = findServerByID(incomingRequest.stagingRoom.id);
 					m_localStagingServerName = incomingRequest.text;
 					DEBUG_LOG(("Setting m_localStagingServerName to [%ls]", m_localStagingServerName.c_str()));
@@ -1456,8 +1456,8 @@ void PeerThreadClass::Thread_Function()
 			case PeerRequest::PEERREQUEST_LEAVESTAGINGROOM:
 				m_groupRoomID = 0;
 				updateBuddyStatus( BUDDY_ONLINE );
-				peerLeaveRoom( peer, GroupRoom, NULL );
-				peerLeaveRoom( peer, StagingRoom, NULL );
+				peerLeaveRoom( peer, GroupRoom, nullptr );
+				peerLeaveRoom( peer, StagingRoom, nullptr );
 				isThreadHosting = 0; // debugging
 				s_lastStateChangedHeartbeat = 0;
 				s_wantStateChangedHeartbeat = FALSE;
@@ -1513,8 +1513,8 @@ void PeerThreadClass::Thread_Function()
 					snprintf(values[4], 20, "%d", incomingRequest.statsToPush.side);
 					snprintf(values[5], 20, "%d", incomingRequest.statsToPush.preorder);
 					peerSetGlobalKeys(peer, 6, (const char **)keys, (const char **)values);
-					peerSetGlobalWatchKeys(peer, GroupRoom,   0, NULL, PEERFalse);
-					peerSetGlobalWatchKeys(peer, StagingRoom, 0, NULL, PEERFalse);
+					peerSetGlobalWatchKeys(peer, GroupRoom,   0, nullptr, PEERFalse);
+					peerSetGlobalWatchKeys(peer, StagingRoom, 0, nullptr, PEERFalse);
 					peerSetGlobalWatchKeys(peer, GroupRoom,   6, keys, PEERTrue);
 					peerSetGlobalWatchKeys(peer, StagingRoom, 6, keys, PEERTrue);
 #endif
@@ -1578,8 +1578,8 @@ void PeerThreadClass::Thread_Function()
 					updateBuddyStatus( BUDDY_ONLINE );
 					if (!incomingRequest.stagingRoomCreation.restrictGameList)
 					{
-						peerLeaveRoom( peer, GroupRoom, NULL );
-						peerLeaveRoom( peer, StagingRoom, NULL );
+						peerLeaveRoom( peer, GroupRoom, nullptr );
+						peerLeaveRoom( peer, StagingRoom, nullptr );
 					}
 					m_isHosting = TRUE;
 
@@ -1631,7 +1631,7 @@ void PeerThreadClass::Thread_Function()
 						DEBUG_LOG(("Requesting to join room %d", m_localRoomID));
 						if (incomingRequest.stagingRoomCreation.restrictGameList)
 						{
-							peerLeaveRoom( peer, StagingRoom, NULL );
+							peerLeaveRoom( peer, StagingRoom, nullptr );
 						}
 						else
 						{
@@ -1645,7 +1645,7 @@ void PeerThreadClass::Thread_Function()
 					{
 						if (incomingRequest.stagingRoomCreation.restrictGameList)
 						{
-							peerLeaveRoom( peer, GroupRoom, NULL );
+							peerLeaveRoom( peer, GroupRoom, nullptr );
 						}
 						isThreadHosting = 1; // debugging
 						s_lastStateChangedHeartbeat = timeGetTime(); // wait the full interval before updating state
@@ -1696,7 +1696,7 @@ void PeerThreadClass::Thread_Function()
 					resp.stagingRoom.percentComplete = 0;
 					clearServers();
 					TheGameSpyPeerMessageQueue->addResponse(resp);
-					peerStartListingGames( peer, allKeysArray, NumKeys, (incomingRequest.gameList.restrictGameList?"~":NULL), listingGamesCallback, this );
+					peerStartListingGames( peer, allKeysArray, NumKeys, (incomingRequest.gameList.restrictGameList?"~":nullptr), listingGamesCallback, this );
 				}
 				break;
 
@@ -1708,7 +1708,7 @@ void PeerThreadClass::Thread_Function()
 
 			case PeerRequest::PEERREQUEST_STARTGAME:
 				{
-					peerStartGame( peer, NULL, PEER_STOP_REPORTING);
+					peerStartGame( peer, nullptr, PEER_STOP_REPORTING);
 				}
 				break;
 
@@ -1804,7 +1804,7 @@ static Int matchbotProfileID = 0;
 void quickmatchEnumPlayersCallback( PEER peer, PEERBool success, RoomType roomType, int index, const char * nick, int flags, void * param )
 {
 	PeerThreadClass *t = (PeerThreadClass *)param;
-	if (!t || !success || nick == NULL || nick[0] == '\0')
+	if (!t || !success || nick == nullptr || nick[0] == '\0')
 	{
 		t->sawEndOfEnumPlayers();
 		return;
@@ -1958,8 +1958,8 @@ void PeerThreadClass::doQuickMatch( PEER peer )
 						TheGameSpyPeerMessageQueue->addResponse(resp);
 
 						m_groupRoomID = m_qmGroupRoom;
-						peerLeaveRoom( peer, GroupRoom, NULL );
-						peerLeaveRoom( peer, StagingRoom, NULL ); m_isHosting = false;
+						peerLeaveRoom( peer, GroupRoom, nullptr );
+						peerLeaveRoom( peer, StagingRoom, nullptr ); m_isHosting = false;
 						m_localRoomID = m_groupRoomID;
 						m_roomJoined = false;
 						DEBUG_LOG(("Requesting to join room %d in thread %X", m_localRoomID, this));
@@ -2064,8 +2064,8 @@ void PeerThreadClass::doQuickMatch( PEER peer )
 				case QM_MATCHED:
 					{
 						// leave QM channel, and clean up.  Our work here is done.
-						peerLeaveRoom( peer, GroupRoom, NULL );
-						peerLeaveRoom( peer, StagingRoom, NULL ); m_isHosting = false;
+						peerLeaveRoom( peer, GroupRoom, nullptr );
+						peerLeaveRoom( peer, StagingRoom, nullptr ); m_isHosting = false;
 
 						m_qmStatus = QM_STOPPED;
 						peerLeaveRoom(peer, GroupRoom, "");
@@ -2101,7 +2101,7 @@ void PeerThreadClass::doQuickMatch( PEER peer )
 
 static void getPlayerProfileIDCallback(PEER peer,  PEERBool success,  const char * nick,  int profileID,  void * param)
 {
-	if (success && param != NULL)
+	if (success && param != nullptr)
 	{
 		*((Int *)param) = profileID;
 	}
@@ -2204,7 +2204,7 @@ static void joinRoomCallback(PEER peer, PEERBool success, PEERJoinResult result,
 
 // Gets called once for each group room when listing group rooms.
 // After this has been called for each group room, it will be
-// called one more time with groupID==0 and name==NULL.
+// called one more time with groupID==0 and name==nullptr.
 /////////////////////////////////////////////////////////////////
 static void listGroupRoomsCallback(PEER peer, PEERBool success,
 														int groupID, SBServer server,
@@ -2287,7 +2287,7 @@ void PeerThreadClass::connectCallback( PEER peer, PEERBool success )
 	DEBUG_LOG(("Before peerListGroupRooms()"));
 	CheckServers(peer);
 #endif // SERVER_DEBUGGING
-	peerListGroupRooms( peer, NULL, listGroupRoomsCallback, this, PEERTrue );
+	peerListGroupRooms( peer, nullptr, listGroupRoomsCallback, this, PEERTrue );
 #ifdef SERVER_DEBUGGING
 	DEBUG_LOG(("After peerListGroupRooms()"));
 	CheckServers(peer);
@@ -2329,7 +2329,7 @@ void PeerThreadClass::nickErrorCallback( PEER peer, Int type, const char *nick )
 			TheGameSpyPeerMessageQueue->addResponse(resp);
 
 			// Cancel the connect.
-			peerRetryWithNick(peer, NULL);
+			peerRetryWithNick(peer, nullptr);
 		}
 	}
 	else
@@ -2340,7 +2340,7 @@ void PeerThreadClass::nickErrorCallback( PEER peer, Int type, const char *nick )
 		TheGameSpyPeerMessageQueue->addResponse(resp);
 
 		// Cancel the connect.
-		peerRetryWithNick(peer, NULL);
+		peerRetryWithNick(peer, nullptr);
 	}
 }
 
@@ -2391,7 +2391,7 @@ void roomMessageCallback(PEER peer, RoomType roomType, const char * nick, const 
 	{
 		if (resp.message.profileID == matchbotProfileID)
 		{
-			char *lastStr = NULL;
+			char *lastStr = nullptr;
 			char *cmd = strtok_r((char *)message, " ", &lastStr);
 			if ( cmd && strcmp(cmd, "MBOT:POOLSIZE") == 0 )
 			{
@@ -2399,8 +2399,8 @@ void roomMessageCallback(PEER peer, RoomType roomType, const char * nick, const 
 
 				while (1)
 				{
-					char *poolStr = strtok_r(NULL, " ", &lastStr);
-					char *sizeStr = strtok_r(NULL, " ", &lastStr);
+					char *poolStr = strtok_r(nullptr, " ", &lastStr);
+					char *sizeStr = strtok_r(nullptr, " ", &lastStr);
 					if (poolStr && sizeStr)
 					{
 						Int pool = atoi(poolStr);
@@ -2451,12 +2451,12 @@ void playerMessageCallback(PEER peer, const char * nick, const char * message, M
 	{
 		if (resp.message.isPrivate && resp.message.profileID == matchbotProfileID)
 		{
-			char *lastStr = NULL;
+			char *lastStr = nullptr;
 			char *cmd = strtok_r((char *)message, " ", &lastStr);
 			if ( cmd && strcmp(cmd, "MBOT:MATCHED") == 0 )
 			{
-				char *mapNumStr = strtok_r(NULL, " ", &lastStr);
-				char *seedStr = strtok_r(NULL, " ", &lastStr);
+				char *mapNumStr = strtok_r(nullptr, " ", &lastStr);
+				char *seedStr = strtok_r(nullptr, " ", &lastStr);
 				char *playerStr[MAX_SLOTS];
 				char *playerIPStr[MAX_SLOTS];
 				char *playerSideStr[MAX_SLOTS];
@@ -2465,22 +2465,22 @@ void playerMessageCallback(PEER peer, const char * nick, const char * message, M
 				Int numPlayers = 0;
 				for (Int i=0; i<MAX_SLOTS; ++i)
 				{
-					playerStr[i] = strtok_r(NULL, " ", &lastStr);
-					playerIPStr[i] = strtok_r(NULL, " ", &lastStr);
-					playerSideStr[i] = strtok_r(NULL, " ", &lastStr);
-					playerColorStr[i] = strtok_r(NULL, " ", &lastStr);
-					playerNATStr[i] = strtok_r(NULL, " ", &lastStr);
+					playerStr[i] = strtok_r(nullptr, " ", &lastStr);
+					playerIPStr[i] = strtok_r(nullptr, " ", &lastStr);
+					playerSideStr[i] = strtok_r(nullptr, " ", &lastStr);
+					playerColorStr[i] = strtok_r(nullptr, " ", &lastStr);
+					playerNATStr[i] = strtok_r(nullptr, " ", &lastStr);
 					if (playerNATStr[i])
 					{
 						++numPlayers;
 					}
 					else
 					{
-						playerStr[i] = NULL;
-						playerIPStr[i] = NULL;
-						playerSideStr[i] = NULL;
-						playerColorStr[i] = NULL;
-						playerNATStr[i] = NULL;
+						playerStr[i] = nullptr;
+						playerIPStr[i] = nullptr;
+						playerSideStr[i] = nullptr;
+						playerColorStr[i] = nullptr;
+						playerNATStr[i] = nullptr;
 					}
 				}
 
@@ -2494,7 +2494,7 @@ void playerMessageCallback(PEER peer, const char * nick, const char * message, M
 			else if ( cmd && strcmp(cmd, "MBOT:WORKING") == 0 )
 			{
 				Int poolSize = 0;
-				char *poolStr = strtok_r(NULL, " ", &lastStr);
+				char *poolStr = strtok_r(nullptr, " ", &lastStr);
 				if (poolStr)
 					poolSize = atoi(poolStr);
 				PeerResponse resp;
@@ -2893,9 +2893,9 @@ static void listingGamesCallback(PEER peer, PEERBool success, const char * name,
 		const char *ladIPStr = SBServerGetStringValue(server, LADIP_STR, "000000");
 		const char *pingStr = SBServerGetStringValue(server, PINGSTR_STR, "FFFFFFFFFFFFFFFF");
 		UnsignedShort ladPort = (UnsignedShort)SBServerGetIntValue(server, LADPORT_STR, 0);
-		UnsignedInt verVal = strtoul(verStr, NULL, 10);
-		UnsignedInt exeVal = strtoul(exeStr, NULL, 10);
-		UnsignedInt iniVal = strtoul(iniStr, NULL, 10);
+		UnsignedInt verVal = strtoul(verStr, nullptr, 10);
+		UnsignedInt exeVal = strtoul(exeStr, nullptr, 10);
+		UnsignedInt iniVal = strtoul(iniStr, nullptr, 10);
 		resp.stagingRoom.requiresPassword = hasPassword;
 		resp.stagingRoom.allowObservers = allowObservers;
     resp.stagingRoom.useStats = usesStats;
@@ -2975,7 +2975,7 @@ static void listingGamesCallback(PEER peer, PEERBool success, const char * name,
 			resp.stagingServerName = MultiByteToWideCharSingleLine( gameName.str() );
 			DEBUG_LOG(("Server had basic=%d, full=%d", SBServerHasBasicKeys(server), SBServerHasFullKeys(server)));
 #ifdef DEBUG_LOGGING
-			//SBServerEnumKeys(server, enumFunc, NULL);
+			//SBServerEnumKeys(server, enumFunc, nullptr);
 #endif
 			break;
 		case PEER_REMOVE:

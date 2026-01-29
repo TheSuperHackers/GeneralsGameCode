@@ -68,7 +68,7 @@ void ChunkTableClass::NewType(int ID, const char *name, void (*callback)(ChunkIt
 }
 void ChunkTableClass::AddItem(CListCtrl *list, int &Counter, const char *Name, const char *Value, const char *Type) {
 
-	if (list != NULL) {
+	if (list != nullptr) {
 		int list_item = list->InsertItem(Counter++, Name);
 		list->SetItemText(list_item, 1, Type);
 		list->SetItemText(list_item, 2, Value);
@@ -2027,20 +2027,20 @@ void ChunkTableClass::List_W3D_CHUNK_BOX(ChunkItem * Item,CListCtrl * list)
 	if (box->Attributes & W3D_BOX_ATTRIBUTE_ALIGNED) {
 		AddItem(list,counter,"Attributes","W3D_BOX_ATTRIBUTE_ALIGNED","flag");
 	}
-	if (box->Attributes & W3D_BOX_ATTRIBTUE_COLLISION_TYPE_PHYSICAL) {
-		AddItem(list,counter,"Attributes","W3D_BOX_ATTRIBTUE_COLLISION_TYPE_PHYSICAL","flag");
+	if (box->Attributes & W3D_BOX_ATTRIBUTE_COLLISION_TYPE_PHYSICAL) {
+		AddItem(list,counter,"Attributes","W3D_BOX_ATTRIBUTE_COLLISION_TYPE_PHYSICAL","flag");
 	}
-	if (box->Attributes & W3D_BOX_ATTRIBTUE_COLLISION_TYPE_PROJECTILE) {
-		AddItem(list,counter,"Attributes","W3D_BOX_ATTRIBTUE_COLLISION_TYPE_PROJECTILE","flag");
+	if (box->Attributes & W3D_BOX_ATTRIBUTE_COLLISION_TYPE_PROJECTILE) {
+		AddItem(list,counter,"Attributes","W3D_BOX_ATTRIBUTE_COLLISION_TYPE_PROJECTILE","flag");
 	}
-	if (box->Attributes & W3D_BOX_ATTRIBTUE_COLLISION_TYPE_VIS) {
-		AddItem(list,counter,"Attributes","W3D_BOX_ATTRIBTUE_COLLISION_TYPE_VIS","flag");
+	if (box->Attributes & W3D_BOX_ATTRIBUTE_COLLISION_TYPE_VIS) {
+		AddItem(list,counter,"Attributes","W3D_BOX_ATTRIBUTE_COLLISION_TYPE_VIS","flag");
 	}
-	if (box->Attributes & W3D_BOX_ATTRIBTUE_COLLISION_TYPE_CAMERA) {
-		AddItem(list,counter,"Attributes","W3D_BOX_ATTRIBTUE_COLLISION_TYPE_CAMERA","flag");
+	if (box->Attributes & W3D_BOX_ATTRIBUTE_COLLISION_TYPE_CAMERA) {
+		AddItem(list,counter,"Attributes","W3D_BOX_ATTRIBUTE_COLLISION_TYPE_CAMERA","flag");
 	}
-	if (box->Attributes & W3D_BOX_ATTRIBTUE_COLLISION_TYPE_VEHICLE) {
-		AddItem(list,counter,"Attributes","W3D_BOX_ATTRIBTUE_COLLISION_TYPE_VEHICLE","flag");
+	if (box->Attributes & W3D_BOX_ATTRIBUTE_COLLISION_TYPE_VEHICLE) {
+		AddItem(list,counter,"Attributes","W3D_BOX_ATTRIBUTE_COLLISION_TYPE_VEHICLE","flag");
 	}
 
 	AddItem(list,counter,"Name",box->Name);
@@ -2279,7 +2279,7 @@ ChunkType *ChunkTableClass::Lookup(int ID) {
 	ChunkType *chunktype;
 	if(Types.Lookup((void *) ID, (void *&) chunktype))
 		return chunktype;
-	return 0;
+	return nullptr;
 }
 
 ChunkItem::ChunkItem(ChunkLoadClass &cload) {
@@ -2288,16 +2288,16 @@ ChunkItem::ChunkItem(ChunkLoadClass &cload) {
 	Type = ChunkTable.Lookup(ID);
 
 	// if the chunktype indicates that it has member chunks then do not load this chunk's data. Have the external caller do that.
-	if(Type != 0 && Type->Wrapper) {
-		Data = 0;
+	if(Type != nullptr && Type->Wrapper) {
+		Data = nullptr;
 		return;
 	}
-	if(Type != 0) {
+	if(Type != nullptr) {
 		TRACE("%s %d\n", Type->Name, Length);
 	}
 
 	if(Length == 0) {
-		Data = 0;
+		Data = nullptr;
 	} else {
 		Data = new char[Length];
 		cload.Read(Data, Length);
@@ -2394,14 +2394,14 @@ void ChunkData::Add_Chunk(ChunkLoadClass & cload, ChunkItem *Parent)
 
 				existing.SetAt(data, data);
 
-				if(theApp.TextureDumpFile != 0)
+				if(theApp.TextureDumpFile != nullptr)
 					fprintf(theApp.TextureDumpFile, "%s,%s\n", (LPCTSTR)theApp.Filename, data);
 				TRACE("%s,%s\n", static_cast<const char*>(theApp.Filename), data);
 			}
 		}
 	}
 #endif
-	if((item->Type != 0) && item->Type->Wrapper) {
+	if((item->Type != nullptr) && item->Type->Wrapper) {
 		while(cload.Open_Chunk()) {
 			Add_Chunk(cload, item);
 			cload.Close_Chunk();

@@ -59,10 +59,10 @@ void INI::parseTerrainBridgeDefinition( INI* ini )
 
 	}
 
-	if( bridge == NULL )
+	if( bridge == nullptr )
 		bridge = TheTerrainRoads->newBridge( name );
 
-	DEBUG_ASSERTCRASH( bridge, ("Unable to allcoate bridge '%s'", name.str()) );
+	DEBUG_ASSERTCRASH( bridge, ("Unable to allocate bridge '%s'", name.str()) );
 
 	// parse the ini definition
 	ini->initFromINI( bridge, bridge->getBridgeFieldParse() );

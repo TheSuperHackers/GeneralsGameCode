@@ -1,5 +1,15 @@
-#!/bin/bash
 #!/usr/bin/env bash
+#
+# Legacy Docker build script - consider using docker-build.sh instead
+#
+# docker-build.sh provides a more user-friendly interface with:
+#   - Game selection (--game zh/generals/all)
+#   - Colored output and progress messages
+#   - Target selection (--target)
+#   - Clean build option (--clean)
+#
+# This script is kept for backwards compatibility.
+#
 
 set -euo pipefail
 

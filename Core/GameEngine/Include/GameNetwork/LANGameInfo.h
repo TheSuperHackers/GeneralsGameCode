@@ -42,7 +42,7 @@ class LANGameSlot : public GameSlot
 public:
 	LANGameSlot();
 
-	LANPlayer *getUser( void );																	///< Get the User structure associated with the slot (NULL for non-humans)
+	LANPlayer *getUser( void );																	///< Get the User structure associated with the slot (null for non-humans)
 
 	// Various tests
 	Bool isUser( LANPlayer *user );															///< Does this slot contain the given user?  Based off user->name

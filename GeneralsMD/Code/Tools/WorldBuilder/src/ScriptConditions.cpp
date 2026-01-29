@@ -32,8 +32,8 @@
 IMPLEMENT_DYNCREATE(ScriptConditionsDlg, CPropertyPage)
 
 ScriptConditionsDlg::ScriptConditionsDlg() : CPropertyPage(ScriptConditionsDlg::IDD),
-m_condition(NULL),
-m_orCondition(NULL),
+m_condition(nullptr),
+m_orCondition(nullptr),
 m_index(0)
 {
 	//{{AFX_DATA_INIT(ScriptConditionsDlg)
@@ -121,7 +121,7 @@ void ScriptConditionsDlg::loadList(void)
 void ScriptConditionsDlg::OnEditCondition()
 {
 	CListBox *pList = (CListBox *)GetDlgItem(IDC_CONDITION_LIST);
-	if (m_condition == NULL) {
+	if (m_condition == nullptr) {
 		return;
 	}
 	EditCondition cDlg;
@@ -145,10 +145,10 @@ void ScriptConditionsDlg::OnEditCondition()
 void ScriptConditionsDlg::enableUI()
 {
 	CWnd *pWnd = GetDlgItem(IDC_EDIT_CONDITION);
-	pWnd->EnableWindow(m_condition!=NULL);
+	pWnd->EnableWindow(m_condition!=nullptr);
 
 	pWnd = GetDlgItem(IDC_COPY);
-	pWnd->EnableWindow(m_condition!=NULL);
+	pWnd->EnableWindow(m_condition!=nullptr);
 
 	pWnd = GetDlgItem(IDC_DELETE);
 	pWnd->EnableWindow(m_condition || m_orCondition);
@@ -156,15 +156,15 @@ void ScriptConditionsDlg::enableUI()
 
 void ScriptConditionsDlg::setSel(OrCondition *pOr, Condition *pCond)
 {
-	m_orCondition = NULL;
-	m_condition = NULL;
+	m_orCondition = nullptr;
+	m_condition = nullptr;
 	CListBox *pList = (CListBox *)GetDlgItem(IDC_CONDITION_LIST);
 	if (pList) {
 		pList->SetCurSel(-1);
 		Int count = 0;
 		m_orCondition = m_script->getOrCondition();
 		while (m_orCondition) {
-			if (m_orCondition==pOr && pCond==NULL) {
+			if (m_orCondition==pOr && pCond==nullptr) {
 				pList->SetCurSel(count);
 				enableUI();
 				return;
@@ -188,8 +188,8 @@ void ScriptConditionsDlg::setSel(OrCondition *pOr, Condition *pCond)
 
 void ScriptConditionsDlg::OnSelchangeConditionList()
 {
-	m_orCondition = NULL;
-	m_condition = NULL;
+	m_orCondition = nullptr;
+	m_condition = nullptr;
 	CListBox *pList = (CListBox *)GetDlgItem(IDC_CONDITION_LIST);
 	if (pList) {
 		Int count = pList->GetCurSel();
@@ -234,7 +234,7 @@ void ScriptConditionsDlg::OnOr()
 		m_script->setOrCondition(pOr);
 	}
 	loadList();
-	setSel(pOr, NULL);
+	setSel(pOr, nullptr);
 }
 
 void ScriptConditionsDlg::OnNew()
@@ -248,7 +248,7 @@ void ScriptConditionsDlg::OnNew()
 			pCond->setNextCondition(m_condition->getNext());
 			m_condition->setNextCondition(pCond);
 		} else {
-			if (m_orCondition == NULL) {
+			if (m_orCondition == nullptr) {
 				OrCondition *pOr = newInstance( OrCondition);
 				pOr->setNextOrCondition(m_script->getOrCondition());
 				m_script->setOrCondition(pOr);
@@ -292,7 +292,7 @@ Int ScriptConditionsDlg::doMoveDown( OrCondition **outWhichNow )
 	(*outWhichNow) = m_orCondition;
 	if (m_condition && m_orCondition) {
 		Condition *pNext = m_condition->getNext();
-		if (pNext==NULL) {
+		if (pNext==nullptr) {
 			OrCondition *pNOr = m_orCondition->getNextOrCondition();
 			if (!pNOr) {
 				pNOr = newInstance( OrCondition);
@@ -308,7 +308,7 @@ Int ScriptConditionsDlg::doMoveDown( OrCondition **outWhichNow )
 		}
 
 		Condition *pCur = m_orCondition->getFirstAndCondition();
-		Condition *pPrev = NULL;
+		Condition *pPrev = nullptr;
 		while (pCur != m_condition) {
 			pPrev = pCur;
 			pCur = pCur->getNext();
@@ -328,9 +328,9 @@ Int ScriptConditionsDlg::doMoveDown( OrCondition **outWhichNow )
 		return 1;
 	} else if (m_orCondition) {
 		OrCondition *pNext = m_orCondition->getNextOrCondition();
-		if (pNext==NULL) return 0;
+		if (pNext==nullptr) return 0;
 		OrCondition *pCur = m_script->getOrCondition();
-		OrCondition *pPrev = NULL;
+		OrCondition *pPrev = nullptr;
 		while (pCur != m_orCondition) {
 			pPrev = pCur;
 			pCur = pCur->getNextOrCondition();
@@ -358,14 +358,14 @@ Int ScriptConditionsDlg::doMoveUp( OrCondition **outWhichNow )
 	if (m_condition && m_orCondition) {
 		(*outWhichNow) = m_orCondition;
 		Condition *pPrev = m_orCondition->findPreviousCondition(m_condition);
-		if (pPrev == NULL) {
+		if (pPrev == nullptr) {
 			OrCondition *pNOr = m_script->findPreviousOrCondition(m_orCondition);
 			if (!pNOr) {
 				pNOr = newInstance( OrCondition);
 				pNOr->setNextOrCondition(m_orCondition);
 				m_script->setOrCondition(pNOr);
 			}
-			Condition *previous = pNOr->findPreviousCondition(NULL);
+			Condition *previous = pNOr->findPreviousCondition(nullptr);
 			if (previous) {
 				m_orCondition->removeCondition(m_condition);
 				previous->setNextCondition(m_condition);

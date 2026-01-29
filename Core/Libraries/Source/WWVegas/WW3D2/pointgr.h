@@ -78,11 +78,11 @@ public:
 
 	// PointGroupClass interface:
 	void						Set_Arrays(ShareBufferClass<Vector3> *locs,
-									ShareBufferClass<Vector4> *diffuse = NULL,
-									ShareBufferClass<unsigned int> *apt = NULL,
-									ShareBufferClass<float> *sizes = NULL,
-									ShareBufferClass<unsigned char> *orientations = NULL,
-									ShareBufferClass<unsigned char> *frames = NULL,
+									ShareBufferClass<Vector4> *diffuse = nullptr,
+									ShareBufferClass<unsigned int> *apt = nullptr,
+									ShareBufferClass<float> *sizes = nullptr,
+									ShareBufferClass<unsigned char> *orientations = nullptr,
+									ShareBufferClass<unsigned char> *frames = nullptr,
 									int active_point_count = -1,
 									float vpxmin = 0.0f, float vpymin = 0.0f,
 									float vpxmax = 0.0f, float vpymax = 0.0f);
@@ -151,11 +151,11 @@ protected:
 	// number of possible frames must be a power of two - for this reason the number of frame rows
 	// and columns, orientations, etc. are represented as the log base 2 of the actual number.
 	ShareBufferClass<Vector3> *			PointLoc;	// World/cameraspace point locs
-	ShareBufferClass<Vector4> *			PointDiffuse; // (NULL if not used) RGBA values
-	ShareBufferClass<unsigned int> *		APT;			// (NULL if not used) active point table
-	ShareBufferClass<float> *				PointSize;	// (NULL if not used) size override table
-	ShareBufferClass<unsigned char> *	PointOrientation; // (NULL if not used) orientation indices
-	ShareBufferClass<unsigned char> *	PointFrame; // (NULL if not used) frame indices
+	ShareBufferClass<Vector4> *			PointDiffuse; // (null if not used) RGBA values
+	ShareBufferClass<unsigned int> *		APT;			// (null if not used) active point table
+	ShareBufferClass<float> *				PointSize;	// (null if not used) size override table
+	ShareBufferClass<unsigned char> *	PointOrientation; // (null if not used) orientation indices
+	ShareBufferClass<unsigned char> *	PointFrame; // (null if not used) frame indices
 	int											PointCount;	// Active (if APT) or total point count
 
 	// See comments for Get/Set_Frame_Row_Column_Count_Log2 above

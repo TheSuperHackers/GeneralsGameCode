@@ -97,7 +97,7 @@ void DamDie::onDie( const DamageInfo *damageInfo )
 	for( obj = TheGameLogic->getFirstObject(); obj; obj = obj->getNextObject() )
 	{
 
-		// only care aboue water waves
+		// only care about water waves
 		if( obj->isKindOf( KINDOF_WAVEGUIDE ) == FALSE )
 			continue;
 

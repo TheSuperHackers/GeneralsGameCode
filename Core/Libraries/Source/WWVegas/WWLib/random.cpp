@@ -56,7 +56,7 @@ Time for Random3=1.281000
 Time for Random4=0.375000
 Time for Built in Rand()=0.813000
 Results from DIEHARD battery of tests
-A p-value of 0.0 or 1.0 means it fails. Anything inbetween is ok.
+A p-value of 0.0 or 1.0 means it fails. Anything in between is ok.
 R0 - FAILED almost all tests, didn't complete squeeze test
 R2 - Passed all tests, p-value 0.6
 R3 - Failed 11 of 253 tests, p-value 1.0
@@ -211,7 +211,7 @@ int Random2Class::operator() (void)
  *    This routine will generate a random number between the two values specified. It uses     *
  *    a method that will not bias the values in any way.                                       *
  *                                                                                             *
- * INPUT:   minval   -- The minium return value (inclusive).                                   *
+ * INPUT:   minval   -- The minimum return value (inclusive).                                  *
  *                                                                                             *
  *          maxval   -- The maximum return value (inclusive).                                  *
  *                                                                                             *
@@ -320,7 +320,7 @@ int Random3Class::operator() (void)
  *    This routine will generate a random number between the two values specified. It uses     *
  *    a method that will not bias the values in any way.                                       *
  *                                                                                             *
- * INPUT:   minval   -- The minium return value (inclusive).                                   *
+ * INPUT:   minval   -- The minimum return value (inclusive).                                  *
  *                                                                                             *
  *          maxval   -- The maximum return value (inclusive).                                  *
  *                                                                                             *

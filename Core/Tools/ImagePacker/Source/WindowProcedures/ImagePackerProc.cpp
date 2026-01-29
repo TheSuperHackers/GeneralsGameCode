@@ -78,10 +78,10 @@ BOOL CALLBACK ImagePackerProc( HWND hWndDialog, UINT message,
 		{
 
 			// we must have our program interface to continue
-			if( TheImagePacker == NULL )
+			if( TheImagePacker == nullptr )
 			{
 
-				MessageBox( NULL, "Internal Error, 'TheImagePacker' not initialized",
+				MessageBox( nullptr, "Internal Error, 'TheImagePacker' not initialized",
 										"Internal Error", MB_OK );
 				EndDialog( hWndDialog, FALSE );
 
@@ -245,7 +245,7 @@ BOOL CALLBACK ImagePackerProc( HWND hWndDialog, UINT message,
 
 						// delete test display window
 						DestroyWindow( preview );
-						TheImagePacker->setPreviewWindow( NULL );
+						TheImagePacker->setPreviewWindow( nullptr );
 						SetDlgItemText( hWndDialog, BUTTON_PREVIEW, "Open Preview" );
 
 					}
@@ -288,7 +288,7 @@ BOOL CALLBACK ImagePackerProc( HWND hWndDialog, UINT message,
 
 					// get the directory listbox
 					folderList = GetDlgItem( hWndDialog, LIST_FOLDERS );
-					if( folderList == NULL )
+					if( folderList == nullptr )
 						break;
 
 					// get the selected item in the folder listbox
@@ -297,7 +297,7 @@ BOOL CALLBACK ImagePackerProc( HWND hWndDialog, UINT message,
 					if( selCount == 0 )
 					{
 
-						MessageBox( NULL, "You must first select a folder to remove it",
+						MessageBox( nullptr, "You must first select a folder to remove it",
 												"Select Folder First", MB_OK | MB_ICONINFORMATION );
 						break;
 

@@ -61,9 +61,23 @@ report bugs, and contribute to the project!
 
 ## Building the Game Yourself
 
-We provide support for building the project using Visual Studio 6 (VS6) and Visual Studio 2022. For detailed build
-instructions, check the [Wiki](https://github.com/TheSuperHackers/GeneralsGameCode/wiki/build_guides), which also
-includes guides for building with Docker, CLion, and links to forks supporting additional versions.
+We provide support for building the project on Windows and Linux. For detailed build instructions, check the
+[Wiki](https://github.com/TheSuperHackers/GeneralsGameCode/wiki/build_guides), which includes guides for VS6, VS2022,
+Docker, CLion, and links to forks supporting additional versions.
+
+### Quick Start
+
+**Windows (Visual Studio 2022)**
+```bash
+cmake --preset win32
+cmake --build build/win32 --config Release
+```
+
+**Linux (via Docker)**
+```bash
+./scripts/docker-build.sh              # Build using Docker
+./scripts/docker-install.sh --detect # Install to your game
+```
 
 ### Dependency management
 

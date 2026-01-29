@@ -73,7 +73,7 @@ class FileSystem
 	public:
 
 		virtual					~FileSystem() {};
-		virtual	File*		open( const Char *filename, Int access = 0 ) = NULL ;		///< opens a File interface to the specified file
+		virtual	File*		open( const Char *filename, Int access = 0 ) = 0 ;		///< opens a File interface to the specified file
 
 
 };

@@ -46,7 +46,7 @@
 void parseFactionObjectCreationList( INI *ini, void *instance, void *store, const void *userData )
 {
 	OCLUpdateModuleData::FactionOCLInfo info;
-	info.m_ocl = NULL;
+	info.m_ocl = nullptr;
 
 	const char *token = ini->getNextToken( ini->getSepsColon() );
 
@@ -63,7 +63,7 @@ void parseFactionObjectCreationList( INI *ini, void *instance, void *store, cons
 
 	token = ini->getNextTokenOrNull( ini->getSepsColon() );
 	if ( stricmp(token, "OCL") == 0 )
-		ini->parseObjectCreationList( ini, instance, &info.m_ocl, NULL );
+		ini->parseObjectCreationList( ini, instance, &info.m_ocl, nullptr );
 	else
 		throw INI_INVALID_DATA;
 
@@ -78,7 +78,7 @@ OCLUpdateModuleData::OCLUpdateModuleData()
 {
 	m_minDelay = 0;
 	m_maxDelay = 0;
-	m_ocl = NULL;
+	m_ocl = nullptr;
 	m_factionOCL.clear();
 	m_isCreateAtEdge = FALSE;
 	m_isFactionTriggered = FALSE;
@@ -91,13 +91,13 @@ OCLUpdateModuleData::OCLUpdateModuleData()
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "OCL",					INI::parseObjectCreationList,		NULL, offsetof( OCLUpdateModuleData, m_ocl ) },
-		{ "FactionOCL",		parseFactionObjectCreationList,	NULL, offsetof( OCLUpdateModuleData, m_factionOCL ) },
-		{ "MinDelay",			INI::parseDurationUnsignedInt,	NULL, offsetof( OCLUpdateModuleData, m_minDelay ) },
-		{ "MaxDelay",			INI::parseDurationUnsignedInt,	NULL, offsetof( OCLUpdateModuleData, m_maxDelay ) },
-		{ "CreateAtEdge",	INI::parseBool,									NULL, offsetof( OCLUpdateModuleData, m_isCreateAtEdge ) },
-		{ "FactionTriggered",	INI::parseBool,							NULL, offsetof( OCLUpdateModuleData, m_isFactionTriggered ) },
-		{ 0, 0, 0, 0 }
+		{ "OCL",					INI::parseObjectCreationList,		nullptr, offsetof( OCLUpdateModuleData, m_ocl ) },
+		{ "FactionOCL",		parseFactionObjectCreationList,	nullptr, offsetof( OCLUpdateModuleData, m_factionOCL ) },
+		{ "MinDelay",			INI::parseDurationUnsignedInt,	nullptr, offsetof( OCLUpdateModuleData, m_minDelay ) },
+		{ "MaxDelay",			INI::parseDurationUnsignedInt,	nullptr, offsetof( OCLUpdateModuleData, m_maxDelay ) },
+		{ "CreateAtEdge",	INI::parseBool,									nullptr, offsetof( OCLUpdateModuleData, m_isCreateAtEdge ) },
+		{ "FactionTriggered",	INI::parseBool,							nullptr, offsetof( OCLUpdateModuleData, m_isFactionTriggered ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   p.add(dataFieldParse);
 }
@@ -141,7 +141,7 @@ UpdateSleepTime OCLUpdate::update( void )
 
 	const OCLUpdateModuleData *data = getOCLUpdateModuleData();
 
-	// Test if the OCL update is faction dependant. If so, check for faction changes
+	// Test if the OCL update is faction dependent. If so, check for faction changes
 	if (data->m_isFactionTriggered)
 	{
 		Player *player = getObject()->getControllingPlayer();
@@ -172,7 +172,7 @@ UpdateSleepTime OCLUpdate::update( void )
 			}
 		}
 
-		// If the building is neutal, skip futher update
+		// If the building is neutal, skip further update
 		if (m_isFactionNeutral)
 			return UPDATE_SLEEP_NONE;
 	}
@@ -209,7 +209,7 @@ UpdateSleepTime OCLUpdate::update( void )
 			// Get and store the faction side to compare with the faction ocl list
 			if (playerT->getSide().str()) playerFactionName = playerT->getSide().str();
 
-			// Loop through the list of faction ocls to find the matching faction that triggeres the specific ocls
+			// Loop through the list of faction ocls to find the matching faction that triggers the specific ocls
 			for (OCLUpdateModuleData::FactionOCLList::const_iterator it = data->m_factionOCL.begin(); it != data->m_factionOCL.end(); ++it)
 			{
 				OCLUpdateModuleData::FactionOCLInfo info = *it;

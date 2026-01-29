@@ -28,7 +28,7 @@ class VIEWDBSII : public CDialog
 {
 // Construction
 public:
-	VIEWDBSII(CWnd* pParent = NULL);   // standard constructor
+	VIEWDBSII(CWnd* pParent = nullptr);   // standard constructor
 
 	void OnClose();
 	BOOL OnInitDialog();

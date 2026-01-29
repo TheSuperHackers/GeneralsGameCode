@@ -36,7 +36,7 @@ class RingColorPropPageClass : public CPropertyPage
 
 // Construction
 public:
-	RingColorPropPageClass (RingRenderObjClass *ring = NULL);
+	RingColorPropPageClass (RingRenderObjClass *ring = nullptr);
 	~RingColorPropPageClass ();
 
 // Dialog Data

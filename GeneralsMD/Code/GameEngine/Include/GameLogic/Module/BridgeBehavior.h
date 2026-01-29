@@ -151,7 +151,7 @@ public:
 	// our own methods
 	static BridgeBehaviorInterface *getBridgeBehaviorInterfaceFromObject( Object *obj );
 	virtual void setTower( BridgeTowerType towerType, Object *tower );	///< connect tower to us
-	virtual ObjectID getTowerID( BridgeTowerType towerType );						///< retrive one of our towers
+	virtual ObjectID getTowerID( BridgeTowerType towerType );						///< retrieve one of our towers
 	virtual void createScaffolding( void );		///< create scaffolding around bridge
 	virtual void removeScaffolding( void );		///< remove scaffolding around bridge
 	virtual Bool isScaffoldInMotion( void );	///< is scaffold in motion

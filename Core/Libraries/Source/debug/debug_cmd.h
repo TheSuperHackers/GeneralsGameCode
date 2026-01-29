@@ -38,7 +38,7 @@
   command group and the commands implemented for this group.
 
   A Debug command group interface instance must register itself
-  using Debug::AddCommands. Ownership is then transfered to
+  using Debug::AddCommands. Ownership is then transferred to
   the Debug module unless the object is manually removed
   by calling Debug::RemoveCommands.
 

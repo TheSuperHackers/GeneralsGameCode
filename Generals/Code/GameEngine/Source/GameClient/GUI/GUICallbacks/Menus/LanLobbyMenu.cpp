@@ -65,7 +65,7 @@
 Bool LANisShuttingDown = false;
 Bool LANbuttonPushed = false;
 Bool LANSocketErrorDetected = FALSE;
-char *LANnextScreen = NULL;
+char *LANnextScreen = nullptr;
 
 static Int	initialGadgetDelay = 2;
 static Bool justEntered = FALSE;
@@ -271,7 +271,7 @@ Money LANPreferences::getStartingCash(void) const
   }
 
   Money money;
-  money.deposit( strtoul( it->second.str(), NULL, 10 ), FALSE, FALSE );
+  money.deposit( strtoul( it->second.str(), nullptr, 10 ), FALSE, FALSE );
 
   return money;
 }
@@ -304,24 +304,24 @@ static NameKeyType staticTextGameInfoID = NAMEKEY_INVALID;
 
 
 // Window Pointers ------------------------------------------------------------------------
-static GameWindow *parentLanLobby = NULL;
-static GameWindow *buttonBack = NULL;
-static GameWindow *buttonClear = NULL;
-static GameWindow *buttonHost = NULL;
-static GameWindow *buttonJoin = NULL;
-static GameWindow *buttonDirectConnect = NULL;
-static GameWindow *buttonEmote = NULL;
-static GameWindow *staticToolTip = NULL;
-static GameWindow *textEntryPlayerName = NULL;
-static GameWindow *textEntryChat = NULL;
-static GameWindow *staticTextGameInfo = NULL;
+static GameWindow *parentLanLobby = nullptr;
+static GameWindow *buttonBack = nullptr;
+static GameWindow *buttonClear = nullptr;
+static GameWindow *buttonHost = nullptr;
+static GameWindow *buttonJoin = nullptr;
+static GameWindow *buttonDirectConnect = nullptr;
+static GameWindow *buttonEmote = nullptr;
+static GameWindow *staticToolTip = nullptr;
+static GameWindow *textEntryPlayerName = nullptr;
+static GameWindow *textEntryChat = nullptr;
+static GameWindow *staticTextGameInfo = nullptr;
 
 //external declarations of the Gadgets the callbacks can use
 NameKeyType listboxChatWindowID = NAMEKEY_INVALID;
-GameWindow *listboxChatWindow = NULL;
-GameWindow *listboxPlayers = NULL;
+GameWindow *listboxChatWindow = nullptr;
+GameWindow *listboxPlayers = nullptr;
 NameKeyType listboxGamesID = NAMEKEY_INVALID;
-GameWindow *listboxGames = NULL;
+GameWindow *listboxGames = nullptr;
 
 // hack to disable framerate limiter in LAN games
 //static Bool shellmapOn;
@@ -362,7 +362,7 @@ static void playerTooltip(GameWindow *window,
 //-------------------------------------------------------------------------------------------------
 void LanLobbyMenuInit( WindowLayout *layout, void *userData )
 {
-	LANnextScreen = NULL;
+	LANnextScreen = nullptr;
 	LANbuttonPushed = false;
 	LANisShuttingDown = false;
 
@@ -384,20 +384,20 @@ void LanLobbyMenuInit( WindowLayout *layout, void *userData )
 
 
 	// Get pointers to the window buttons
-	parentLanLobby = TheWindowManager->winGetWindowFromId( NULL, parentLanLobbyID );
-	buttonBack = TheWindowManager->winGetWindowFromId( NULL,  buttonBackID);
-	buttonClear = TheWindowManager->winGetWindowFromId( NULL,  buttonClearID);
-	buttonHost = TheWindowManager->winGetWindowFromId( NULL, buttonHostID );
-	buttonJoin = TheWindowManager->winGetWindowFromId( NULL, buttonJoinID );
-	buttonDirectConnect = TheWindowManager->winGetWindowFromId( NULL, buttonDirectConnectID );
-	buttonEmote = TheWindowManager->winGetWindowFromId( NULL,buttonEmoteID  );
-	staticToolTip = TheWindowManager->winGetWindowFromId( NULL, staticToolTipID );
-	textEntryPlayerName = TheWindowManager->winGetWindowFromId( NULL, textEntryPlayerNameID );
-	textEntryChat = TheWindowManager->winGetWindowFromId( NULL, textEntryChatID );
-	listboxPlayers = TheWindowManager->winGetWindowFromId( NULL, listboxPlayersID );
-	listboxChatWindow = TheWindowManager->winGetWindowFromId( NULL, listboxChatWindowID );
-	listboxGames = TheWindowManager->winGetWindowFromId( NULL, listboxGamesID );
-	staticTextGameInfo = TheWindowManager->winGetWindowFromId( NULL, staticTextGameInfoID );
+	parentLanLobby = TheWindowManager->winGetWindowFromId( nullptr, parentLanLobbyID );
+	buttonBack = TheWindowManager->winGetWindowFromId( nullptr,  buttonBackID);
+	buttonClear = TheWindowManager->winGetWindowFromId( nullptr,  buttonClearID);
+	buttonHost = TheWindowManager->winGetWindowFromId( nullptr, buttonHostID );
+	buttonJoin = TheWindowManager->winGetWindowFromId( nullptr, buttonJoinID );
+	buttonDirectConnect = TheWindowManager->winGetWindowFromId( nullptr, buttonDirectConnectID );
+	buttonEmote = TheWindowManager->winGetWindowFromId( nullptr,buttonEmoteID  );
+	staticToolTip = TheWindowManager->winGetWindowFromId( nullptr, staticToolTipID );
+	textEntryPlayerName = TheWindowManager->winGetWindowFromId( nullptr, textEntryPlayerNameID );
+	textEntryChat = TheWindowManager->winGetWindowFromId( nullptr, textEntryChatID );
+	listboxPlayers = TheWindowManager->winGetWindowFromId( nullptr, listboxPlayersID );
+	listboxChatWindow = TheWindowManager->winGetWindowFromId( nullptr, listboxChatWindowID );
+	listboxGames = TheWindowManager->winGetWindowFromId( nullptr, listboxGamesID );
+	staticTextGameInfo = TheWindowManager->winGetWindowFromId( nullptr, staticTextGameInfoID );
 	listboxPlayers->winSetTooltipFunc(playerTooltip);
 
 	// Show Menu
@@ -503,7 +503,7 @@ void LanLobbyMenuInit( WindowLayout *layout, void *userData )
 
 	justEntered = TRUE;
 	initialGadgetDelay = 2;
-	GameWindow *win = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey("LanLobbyMenu.wnd:GadgetParent"));
+	GameWindow *win = TheWindowManager->winGetWindowFromId(nullptr, TheNameKeyGenerator->nameToKey("LanLobbyMenu.wnd:GadgetParent"));
 	if(win)
 		win->winHide(TRUE);
 
@@ -530,14 +530,14 @@ static void shutdownComplete( WindowLayout *layout )
 	layout->hide( TRUE );
 
 	// our shutdown is complete
-	TheShell->shutdownComplete( layout, (LANnextScreen != NULL) );
+	TheShell->shutdownComplete( layout, (LANnextScreen != nullptr) );
 
-	if (LANnextScreen != NULL)
+	if (LANnextScreen != nullptr)
 	{
 		TheShell->push(LANnextScreen);
 	}
 
-	LANnextScreen = NULL;
+	LANnextScreen = nullptr;
 
 }
 
@@ -616,7 +616,7 @@ void LanLobbyMenuUpdate( WindowLayout * layout, void *userData)
 	if (LANSocketErrorDetected == TRUE) {
 		LANSocketErrorDetected = FALSE;
 		DEBUG_LOG(("SOCKET ERROR!  BAILING!"));
-		MessageBoxOk(TheGameText->fetch("GUI:NetworkError"), TheGameText->fetch("GUI:SocketError"), NULL);
+		MessageBoxOk(TheGameText->fetch("GUI:NetworkError"), TheGameText->fetch("GUI:SocketError"), nullptr);
 
 		// we have a socket problem, back out to the main menu.
 		TheWindowManager->winSendSystemMsg(buttonBack->winGetParent(), GBM_SELECTED,
@@ -765,7 +765,7 @@ WindowMsgHandledType LanLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 					DEBUG_LOG(("Back was hit - popping to main menu"));
 					TheShell->pop();
 					delete TheLAN;
-					TheLAN = NULL;
+					TheLAN = nullptr;
 					//TheTransitionHandler->reverse("LanLobbyFade");
 
 				}

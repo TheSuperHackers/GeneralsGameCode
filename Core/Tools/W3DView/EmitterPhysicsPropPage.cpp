@@ -44,13 +44,13 @@ IMPLEMENT_DYNCREATE(EmitterPhysicsPropPageClass, CPropertyPage)
 //
 /////////////////////////////////////////////////////////////
 EmitterPhysicsPropPageClass::EmitterPhysicsPropPageClass (EmitterInstanceListClass *pemitter)
-	: m_pEmitterList (NULL),
+	: m_pEmitterList (nullptr),
 	  m_bValid (true),
 	  m_Velocity (0, 0, 1),
 	  m_Acceleration (0, 0, 0),
 	  m_OutFactor (0),
 	  m_InheritanceFactor (0),
-	  m_Randomizer (NULL),
+	  m_Randomizer (nullptr),
 	  CPropertyPage(EmitterPhysicsPropPageClass::IDD)
 {
 	//{{AFX_DATA_INIT(EmitterPhysicsPropPageClass)
@@ -112,7 +112,7 @@ void
 EmitterPhysicsPropPageClass::Initialize (void)
 {
 	SAFE_DELETE (m_Randomizer);
-	if (m_pEmitterList != NULL) {
+	if (m_pEmitterList != nullptr) {
 
 		//
 		// Get the emitter's settings
@@ -204,7 +204,7 @@ EmitterPhysicsPropPageClass::OnNotify
 	//	Update the spinner control if necessary
 	//
 	NMHDR *pheader = (NMHDR *)lParam;
-	if ((pheader != NULL) && (pheader->code == UDN_DELTAPOS)) {
+	if ((pheader != nullptr) && (pheader->code == UDN_DELTAPOS)) {
 		LPNMUPDOWN pupdown = (LPNMUPDOWN)lParam;
 		::Update_Spinner_Buddy (pheader->hwndFrom, pupdown->iDelta);
 		On_Setting_Changed (wParam);
@@ -231,7 +231,7 @@ EmitterPhysicsPropPageClass::OnSpecifyVelocityRandom (void)
 		//
 		SAFE_DELETE (m_Randomizer);
 		m_Randomizer = dialog.Get_Randomizer ();
-		if (m_Randomizer != NULL) {
+		if (m_Randomizer != nullptr) {
 			m_pEmitterList->Set_Velocity_Random (m_Randomizer->Clone ());
 			SetModified ();
 		}

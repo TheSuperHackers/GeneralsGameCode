@@ -51,8 +51,8 @@ FirestormDynamicGeometryInfoUpdateModuleData::FirestormDynamicGeometryInfoUpdate
 {
 
 	for( Int i = 0; i < MAX_FIRESTORM_SYSTEMS; i++ )
-		m_particleSystem[ i ] = NULL;
-	m_fxList = NULL;
+		m_particleSystem[ i ] = nullptr;
+	m_fxList = nullptr;
 	m_particleOffsetZ = 0.0f;
 	m_scorchSize = 0.0f;
 	m_delayBetweenDamageFrames = 0.0f;
@@ -68,29 +68,29 @@ FirestormDynamicGeometryInfoUpdateModuleData::FirestormDynamicGeometryInfoUpdate
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "DelayBetweenDamageFrames", INI::parseDurationReal, NULL, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_delayBetweenDamageFrames ) },
-		{ "DamageAmount", INI::parseReal, NULL, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_damageAmount ) },
-		{ "MaxHeightForDamage", INI::parseReal, NULL, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_maxHeightForDamage ) },
-		{ "ParticleSystem1", INI::parseParticleSystemTemplate, NULL, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleSystem[ 0 ] ) },
-		{ "ParticleSystem2", INI::parseParticleSystemTemplate, NULL, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleSystem[ 1 ] ) },
-		{ "ParticleSystem3", INI::parseParticleSystemTemplate, NULL, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleSystem[ 2 ] ) },
-		{ "ParticleSystem4", INI::parseParticleSystemTemplate, NULL, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleSystem[ 3 ] ) },
-		{ "ParticleSystem5", INI::parseParticleSystemTemplate, NULL, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleSystem[ 4 ] ) },
-		{ "ParticleSystem6", INI::parseParticleSystemTemplate, NULL, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleSystem[ 5 ] ) },
-		{ "ParticleSystem7", INI::parseParticleSystemTemplate, NULL, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleSystem[ 6 ] ) },
-		{ "ParticleSystem8", INI::parseParticleSystemTemplate, NULL, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleSystem[ 7 ] ) },
-		{ "ParticleSystem9", INI::parseParticleSystemTemplate, NULL, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleSystem[ 8 ] ) },
-		{ "ParticleSystem10", INI::parseParticleSystemTemplate, NULL, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleSystem[ 9 ] ) },
-		{ "ParticleSystem11", INI::parseParticleSystemTemplate, NULL, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleSystem[ 10 ] ) },
-		{ "ParticleSystem12", INI::parseParticleSystemTemplate, NULL, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleSystem[ 11 ] ) },
-		{ "ParticleSystem13", INI::parseParticleSystemTemplate, NULL, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleSystem[ 12 ] ) },
-		{ "ParticleSystem14", INI::parseParticleSystemTemplate, NULL, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleSystem[ 13 ] ) },
-		{ "ParticleSystem15", INI::parseParticleSystemTemplate, NULL, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleSystem[ 14 ] ) },
-		{ "ParticleSystem16", INI::parseParticleSystemTemplate, NULL, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleSystem[ 15 ] ) },
-		{ "FXList",		INI::parseFXList, NULL, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_fxList ) },
-		{ "ParticleOffsetZ", INI::parseReal, NULL, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleOffsetZ ) },
-		{ "ScorchSize", INI::parseReal, NULL, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_scorchSize ) },
-		{ 0, 0, 0, 0 }
+		{ "DelayBetweenDamageFrames", INI::parseDurationReal, nullptr, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_delayBetweenDamageFrames ) },
+		{ "DamageAmount", INI::parseReal, nullptr, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_damageAmount ) },
+		{ "MaxHeightForDamage", INI::parseReal, nullptr, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_maxHeightForDamage ) },
+		{ "ParticleSystem1", INI::parseParticleSystemTemplate, nullptr, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleSystem[ 0 ] ) },
+		{ "ParticleSystem2", INI::parseParticleSystemTemplate, nullptr, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleSystem[ 1 ] ) },
+		{ "ParticleSystem3", INI::parseParticleSystemTemplate, nullptr, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleSystem[ 2 ] ) },
+		{ "ParticleSystem4", INI::parseParticleSystemTemplate, nullptr, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleSystem[ 3 ] ) },
+		{ "ParticleSystem5", INI::parseParticleSystemTemplate, nullptr, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleSystem[ 4 ] ) },
+		{ "ParticleSystem6", INI::parseParticleSystemTemplate, nullptr, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleSystem[ 5 ] ) },
+		{ "ParticleSystem7", INI::parseParticleSystemTemplate, nullptr, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleSystem[ 6 ] ) },
+		{ "ParticleSystem8", INI::parseParticleSystemTemplate, nullptr, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleSystem[ 7 ] ) },
+		{ "ParticleSystem9", INI::parseParticleSystemTemplate, nullptr, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleSystem[ 8 ] ) },
+		{ "ParticleSystem10", INI::parseParticleSystemTemplate, nullptr, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleSystem[ 9 ] ) },
+		{ "ParticleSystem11", INI::parseParticleSystemTemplate, nullptr, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleSystem[ 10 ] ) },
+		{ "ParticleSystem12", INI::parseParticleSystemTemplate, nullptr, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleSystem[ 11 ] ) },
+		{ "ParticleSystem13", INI::parseParticleSystemTemplate, nullptr, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleSystem[ 12 ] ) },
+		{ "ParticleSystem14", INI::parseParticleSystemTemplate, nullptr, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleSystem[ 13 ] ) },
+		{ "ParticleSystem15", INI::parseParticleSystemTemplate, nullptr, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleSystem[ 14 ] ) },
+		{ "ParticleSystem16", INI::parseParticleSystemTemplate, nullptr, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleSystem[ 15 ] ) },
+		{ "FXList",		INI::parseFXList, nullptr, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_fxList ) },
+		{ "ParticleOffsetZ", INI::parseReal, nullptr, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleOffsetZ ) },
+		{ "ScorchSize", INI::parseReal, nullptr, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_scorchSize ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 	p.add(dataFieldParse);
 }
@@ -251,7 +251,7 @@ void FirestormDynamicGeometryInfoUpdate::doDamageScan( void )
 		ObjectIterator *iter = ThePartitionManager->iterateObjectsInRange( firestormPos,
 																																			 boundingCircle,
 																																			 FROM_BOUNDINGSPHERE_2D,
-																																			 NULL );
+																																			 nullptr );
 		MemoryPoolObjectHolder hold( iter );
 		Object *other;
 		for( other = iter->first(); other; other = iter->next() )

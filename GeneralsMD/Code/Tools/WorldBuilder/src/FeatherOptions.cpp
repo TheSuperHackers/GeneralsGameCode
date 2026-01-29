@@ -26,15 +26,15 @@
 #include "WorldBuilderView.h"
 #include "FeatherTool.h"
 
-FeatherOptions *FeatherOptions::m_staticThis = NULL;
+FeatherOptions *FeatherOptions::m_staticThis = nullptr;
 Int FeatherOptions::m_currentFeather = 0;
 Int FeatherOptions::m_currentRate = 3;
 Int FeatherOptions::m_currentRadius = 1;
 /////////////////////////////////////////////////////////////////////////////
-/// FeatherOptions dialog trivial construstor - Create does the real work.
+/// FeatherOptions dialog trivial constructor - Create does the real work.
 
 
-FeatherOptions::FeatherOptions(CWnd* pParent /*=NULL*/)
+FeatherOptions::FeatherOptions(CWnd* pParent /*=nullptr*/)
 {
 	//{{AFX_DATA_INIT(FeatherOptions)
 		// NOTE: the ClassWizard will add member initialization here

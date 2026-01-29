@@ -64,7 +64,7 @@ Bool localIsUnderwater( Real x, Real y)
 		if (pTrig->pointInTrigger(iLoc)) {
 			Real wZ = pTrig->getPoint(0)->z;
 			// See if the ground height is less than the water level.
-			Real curHeight = TheTerrainRenderObject->getHeightMapHeight(x, y, NULL);
+			Real curHeight = TheTerrainRenderObject->getHeightMapHeight(x, y, nullptr);
 			return (curHeight<wZ);
 		}
 	}
@@ -238,7 +238,7 @@ void GroveTool::plantGrove( Coord3D pos, Coord3D prevDir, Real baseHeight, Int l
 GroveTool::GroveTool(void) :
 	Tool(ID_GROVE_TOOL, IDC_GROVE)
 {
-		m_headMapObj = NULL;
+		m_headMapObj = nullptr;
 }
 
 /// Destructor
@@ -271,11 +271,11 @@ void GroveTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBui
 		pView->Invalidate();
 
 		_plantGroveInBox(m_downPt, viewPt, pView);
-		if (m_headMapObj != NULL) {
+		if (m_headMapObj != nullptr) {
 			AddObjectUndoable *pUndo = new AddObjectUndoable(pDoc, m_headMapObj);
 			pDoc->AddAndDoUndoable(pUndo);
 			REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
-			m_headMapObj = NULL; // undoable owns it now.
+			m_headMapObj = nullptr; // undoable owns it now.
 		}
 		return;
 	}
@@ -295,15 +295,15 @@ void GroveTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBui
 	zeroDir.x = 0.0f;
 	zeroDir.y = 0.0f;
 	zeroDir.z = 0.0f;
-	loc.z = TheTerrainRenderObject ? TheTerrainRenderObject->getHeightMapHeight( loc.x, loc.y, NULL ) : 0;
+	loc.z = TheTerrainRenderObject ? TheTerrainRenderObject->getHeightMapHeight( loc.x, loc.y, nullptr ) : 0;
 
 	// grow tree grove out from here
 	plantGrove( loc, zeroDir, loc.z, depth, bounds );
-	if (m_headMapObj != NULL) {
+	if (m_headMapObj != nullptr) {
 		AddObjectUndoable *pUndo = new AddObjectUndoable(pDoc, m_headMapObj);
 		pDoc->AddAndDoUndoable(pUndo);
 		REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
-		m_headMapObj = NULL; // undoable owns it now.
+		m_headMapObj = nullptr; // undoable owns it now.
 	}
 }
 
@@ -334,12 +334,12 @@ void GroveTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorld
 void GroveTool::addObj(Coord3D *pos, AsciiString name)
 {
 	MapObject *pCur = ObjectOptions::getObjectNamed(name);
-	DEBUG_ASSERTCRASH(pCur!=NULL, ("oops"));
+	DEBUG_ASSERTCRASH(pCur!=nullptr, ("oops"));
 	if (!pCur) return;
 	Coord3D theLoc = *pos;
 	theLoc.z = 0;
 	Real angle = GameLogicRandomValueReal( 0.0f, 2.0f * PI );
-	MapObject *pNew = newInstance( MapObject)(theLoc, pCur->getName(), angle, 0, NULL, pCur->getThingTemplate() );
+	MapObject *pNew = newInstance( MapObject)(theLoc, pCur->getName(), angle, 0, nullptr, pCur->getThingTemplate() );
 	pNew->getProperties()->setAsciiString(TheKey_originalOwner, NEUTRAL_TEAM_INTERNAL_STR);
 	pNew->setNextMap(m_headMapObj);
 	m_headMapObj = pNew;
@@ -353,7 +353,7 @@ static Bool _positionIsTooCliffyForTrees(Coord3D pos)
 
 	otherPos = pos;
 	otherPos.x += MAP_XY_FACTOR;
-	otherPos.z = TheTerrainRenderObject->getHeightMapHeight(otherPos.x, otherPos.y, NULL);
+	otherPos.z = TheTerrainRenderObject->getHeightMapHeight(otherPos.x, otherPos.y, nullptr);
 
 	if (((pos.z / otherPos.z / 1) > MAX_TREE_RISE_OVER_RUN) ||
 		  ((otherPos.z / pos.z / 1) > MAX_TREE_RISE_OVER_RUN)) {
@@ -362,7 +362,7 @@ static Bool _positionIsTooCliffyForTrees(Coord3D pos)
 
 	otherPos = pos;
 	otherPos.y += MAP_XY_FACTOR;
-	otherPos.z = TheTerrainRenderObject->getHeightMapHeight(otherPos.x, otherPos.y, NULL);
+	otherPos.z = TheTerrainRenderObject->getHeightMapHeight(otherPos.x, otherPos.y, nullptr);
 
 	if (((pos.z / otherPos.z / 1) > MAX_TREE_RISE_OVER_RUN) ||
 			((otherPos.z / pos.z / 1) > MAX_TREE_RISE_OVER_RUN)) {
@@ -371,7 +371,7 @@ static Bool _positionIsTooCliffyForTrees(Coord3D pos)
 
 	otherPos = pos;
 	otherPos.y -= MAP_XY_FACTOR;
-	otherPos.z = TheTerrainRenderObject->getHeightMapHeight(otherPos.x, otherPos.y, NULL);
+	otherPos.z = TheTerrainRenderObject->getHeightMapHeight(otherPos.x, otherPos.y, nullptr);
 
 	if (((pos.z / otherPos.z / 1) > MAX_TREE_RISE_OVER_RUN) ||
 			((otherPos.z / pos.z / 1) > MAX_TREE_RISE_OVER_RUN)) {
@@ -380,7 +380,7 @@ static Bool _positionIsTooCliffyForTrees(Coord3D pos)
 
 	otherPos = pos;
 	otherPos.x -= MAP_XY_FACTOR;
-	otherPos.z = TheTerrainRenderObject->getHeightMapHeight(otherPos.x, otherPos.y, NULL);
+	otherPos.z = TheTerrainRenderObject->getHeightMapHeight(otherPos.x, otherPos.y, nullptr);
 
 	if (((pos.z / otherPos.z / 1) > MAX_TREE_RISE_OVER_RUN) ||
 			((otherPos.z / pos.z / 1) > MAX_TREE_RISE_OVER_RUN)) {
@@ -390,7 +390,7 @@ static Bool _positionIsTooCliffyForTrees(Coord3D pos)
 	otherPos = pos;
 	otherPos.x += MAP_XY_FACTOR;
 	otherPos.y += MAP_XY_FACTOR;
-	otherPos.z = TheTerrainRenderObject->getHeightMapHeight(otherPos.x, otherPos.y, NULL);
+	otherPos.z = TheTerrainRenderObject->getHeightMapHeight(otherPos.x, otherPos.y, nullptr);
 
 	if (((pos.z / otherPos.z / SQRT_2) > MAX_TREE_RISE_OVER_RUN) ||
 			((otherPos.z / pos.z / SQRT_2) > MAX_TREE_RISE_OVER_RUN)) {
@@ -400,7 +400,7 @@ static Bool _positionIsTooCliffyForTrees(Coord3D pos)
 	otherPos = pos;
 	otherPos.x += MAP_XY_FACTOR;
 	otherPos.y -= MAP_XY_FACTOR;
-	otherPos.z = TheTerrainRenderObject->getHeightMapHeight(otherPos.x, otherPos.y, NULL);
+	otherPos.z = TheTerrainRenderObject->getHeightMapHeight(otherPos.x, otherPos.y, nullptr);
 
 	if (((pos.z / otherPos.z / SQRT_2) > MAX_TREE_RISE_OVER_RUN) ||
 			((otherPos.z / pos.z / SQRT_2) > MAX_TREE_RISE_OVER_RUN)) {
@@ -410,7 +410,7 @@ static Bool _positionIsTooCliffyForTrees(Coord3D pos)
 	otherPos = pos;
 	otherPos.x -= MAP_XY_FACTOR;
 	otherPos.y -= MAP_XY_FACTOR;
-	otherPos.z = TheTerrainRenderObject->getHeightMapHeight(otherPos.x, otherPos.y, NULL);
+	otherPos.z = TheTerrainRenderObject->getHeightMapHeight(otherPos.x, otherPos.y, nullptr);
 
 	if (((pos.z / otherPos.z / SQRT_2) > MAX_TREE_RISE_OVER_RUN) ||
 			((otherPos.z / pos.z / SQRT_2) > MAX_TREE_RISE_OVER_RUN)) {
@@ -420,7 +420,7 @@ static Bool _positionIsTooCliffyForTrees(Coord3D pos)
 	otherPos = pos;
 	otherPos.x -= MAP_XY_FACTOR;
 	otherPos.y += MAP_XY_FACTOR;
-	otherPos.z = TheTerrainRenderObject->getHeightMapHeight(otherPos.x, otherPos.y, NULL);
+	otherPos.z = TheTerrainRenderObject->getHeightMapHeight(otherPos.x, otherPos.y, nullptr);
 
 	if (((pos.z / otherPos.z / SQRT_2) > MAX_TREE_RISE_OVER_RUN) ||
 			((otherPos.z / pos.z / SQRT_2) > MAX_TREE_RISE_OVER_RUN)) {

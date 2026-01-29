@@ -31,7 +31,7 @@
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 // Public Data ////////////////////////////////////////////////////////////////////////////////////
-NameKeyGenerator *TheNameKeyGenerator = NULL;  ///< name key gen. singleton
+NameKeyGenerator *TheNameKeyGenerator = nullptr;  ///< name key gen. singleton
 
 //-------------------------------------------------------------------------------------------------
 NameKeyGenerator::NameKeyGenerator()
@@ -40,7 +40,7 @@ NameKeyGenerator::NameKeyGenerator()
 	m_nextID = (UnsignedInt)NAMEKEY_INVALID;  // uninitialized system
 
 	for (Int i = 0; i < SOCKET_COUNT; ++i)
-		m_sockets[i] = NULL;
+		m_sockets[i] = nullptr;
 
 }
 
@@ -83,7 +83,7 @@ void NameKeyGenerator::freeSockets()
 			next = b->m_nextInSocket;
 			deleteInstance(b);
 		}
-		m_sockets[i] = NULL;
+		m_sockets[i] = nullptr;
 	}
 
 }

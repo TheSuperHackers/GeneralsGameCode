@@ -32,7 +32,7 @@
 #include "GameClient/View.h"
 
 
-SnowManager *TheSnowManager=NULL;
+SnowManager *TheSnowManager=nullptr;
 
 SnowManager::SnowManager()
 {
@@ -93,38 +93,38 @@ void SnowManager::reset(void)
 SnowManager::~SnowManager()
 {
 	delete [] m_startingHeights;
-	m_startingHeights=NULL;
+	m_startingHeights=nullptr;
 
 	// TheSuperHackers @fix Mauller 13/04/2025 Delete the instance of the weather settings
 	deleteInstance((WeatherSetting*)TheWeatherSetting.getNonOverloadedPointer());
-	TheWeatherSetting=NULL;
+	TheWeatherSetting=nullptr;
 }
 
-OVERRIDE<WeatherSetting> TheWeatherSetting = NULL;
+OVERRIDE<WeatherSetting> TheWeatherSetting = nullptr;
 
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
 const FieldParse WeatherSetting::m_weatherSettingFieldParseTable[] =
 {
-	{ "SnowTexture",							INI::parseAsciiString,NULL,			offsetof( WeatherSetting, m_snowTexture ) },
-	{ "SnowFrequencyScaleX",					INI::parseReal,NULL,			offsetof( WeatherSetting, m_snowFrequencyScaleX ) },
-	{ "SnowFrequencyScaleY",					INI::parseReal,NULL,			offsetof( WeatherSetting, m_snowFrequencyScaleY ) },
-	{ "SnowAmplitude",							INI::parseReal,NULL,			offsetof( WeatherSetting, m_snowAmplitude ) },
-	{ "SnowPointSize",							INI::parseReal,NULL,			offsetof( WeatherSetting, m_snowPointSize ) },
-	{ "SnowMaxPointSize",						INI::parseReal,NULL,			offsetof( WeatherSetting, m_snowMaxPointSize ) },
-	{ "SnowMinPointSize",						INI::parseReal,NULL,			offsetof( WeatherSetting, m_snowMinPointSize ) },
-	{ "SnowQuadSize",							INI::parseReal,NULL,			offsetof( WeatherSetting, m_snowQuadSize ) },
-	{ "SnowBoxDimensions",						INI::parseReal,NULL,			offsetof( WeatherSetting, m_snowBoxDimensions ) },
-	{ "SnowBoxDensity",							INI::parseReal,NULL,			offsetof( WeatherSetting, m_snowBoxDensity ) },
-	{ "SnowVelocity",							INI::parseReal,NULL,			offsetof( WeatherSetting, m_snowVelocity ) },
-	{ "SnowPointSprites",						INI::parseBool,NULL,			offsetof( WeatherSetting, m_usePointSprites ) },
-	{ "SnowEnabled",							INI::parseBool,NULL,			offsetof( WeatherSetting, m_snowEnabled ) },
-	{ 0, 0, 0, 0 },
+	{ "SnowTexture",							INI::parseAsciiString,nullptr,			offsetof( WeatherSetting, m_snowTexture ) },
+	{ "SnowFrequencyScaleX",					INI::parseReal,nullptr,			offsetof( WeatherSetting, m_snowFrequencyScaleX ) },
+	{ "SnowFrequencyScaleY",					INI::parseReal,nullptr,			offsetof( WeatherSetting, m_snowFrequencyScaleY ) },
+	{ "SnowAmplitude",							INI::parseReal,nullptr,			offsetof( WeatherSetting, m_snowAmplitude ) },
+	{ "SnowPointSize",							INI::parseReal,nullptr,			offsetof( WeatherSetting, m_snowPointSize ) },
+	{ "SnowMaxPointSize",						INI::parseReal,nullptr,			offsetof( WeatherSetting, m_snowMaxPointSize ) },
+	{ "SnowMinPointSize",						INI::parseReal,nullptr,			offsetof( WeatherSetting, m_snowMinPointSize ) },
+	{ "SnowQuadSize",							INI::parseReal,nullptr,			offsetof( WeatherSetting, m_snowQuadSize ) },
+	{ "SnowBoxDimensions",						INI::parseReal,nullptr,			offsetof( WeatherSetting, m_snowBoxDimensions ) },
+	{ "SnowBoxDensity",							INI::parseReal,nullptr,			offsetof( WeatherSetting, m_snowBoxDensity ) },
+	{ "SnowVelocity",							INI::parseReal,nullptr,			offsetof( WeatherSetting, m_snowVelocity ) },
+	{ "SnowPointSprites",						INI::parseBool,nullptr,			offsetof( WeatherSetting, m_usePointSprites ) },
+	{ "SnowEnabled",							INI::parseBool,nullptr,			offsetof( WeatherSetting, m_snowEnabled ) },
+	{ nullptr, nullptr, nullptr, 0 },
 };
 
 //-------------------------------------------------------------------------------------------------
 void INI::parseWeatherDefinition( INI *ini )
 {
-	if (TheWeatherSetting == NULL) {
+	if (TheWeatherSetting == nullptr) {
 		TheWeatherSetting = newInstance(WeatherSetting);
 	} else if (ini->getLoadType() == INI_LOAD_CREATE_OVERRIDES) {
 		WeatherSetting* ws = (WeatherSetting*) (TheWeatherSetting.getNonOverloadedPointer());

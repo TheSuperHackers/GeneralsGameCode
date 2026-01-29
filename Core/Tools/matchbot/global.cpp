@@ -27,7 +27,7 @@ GlobalClass::GlobalClass(void)
 bool GlobalClass::ReadFile(const char *fname)
 {
 	FILE *fp;
-	if ((fp = fopen(fname, "r")) == NULL)
+	if ((fp = fopen(fname, "r")) == nullptr)
 		return false;
 	config.readFile(fp);
 	fclose(fp);

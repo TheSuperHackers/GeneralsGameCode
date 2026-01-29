@@ -25,8 +25,8 @@ MT-LEVEL
 The debugging module is pretty good for debugging and it has some message
 printing stuff as well.  The basic idea is that you write a class that
 inherits from OutputDevice (several are provided) and assign that output
-device to a stream.  There are seperate streams for debugging, information,
-warning, and error messages.  Each one can have a seperate output device,
+device to a stream.  There are separate streams for debugging, information,
+warning, and error messages.  Each one can have a separate output device,
 or they can all have the same one.  Debugging messages only get compiled
 in if your module defines 'DEBUG'. If you don't define debug, then not even
 the text of the debugging message gets into the binary.   All the other

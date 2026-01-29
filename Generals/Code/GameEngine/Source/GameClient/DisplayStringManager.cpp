@@ -32,7 +32,7 @@
 #include "GameClient/DisplayStringManager.h"
 
 // PUBLIC DATA ////////////////////////////////////////////////////////////////////////////////////
-DisplayStringManager *TheDisplayStringManager = NULL;
+DisplayStringManager *TheDisplayStringManager = nullptr;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PUBLIC FUNCTIONS
@@ -43,8 +43,8 @@ DisplayStringManager *TheDisplayStringManager = NULL;
 DisplayStringManager::DisplayStringManager( void )
 {
 
-	m_stringList = NULL;
-	m_currentCheckpoint = NULL;
+	m_stringList = nullptr;
+	m_currentCheckpoint = nullptr;
 
 }
 
@@ -57,7 +57,7 @@ DisplayStringManager::~DisplayStringManager( void )
 	// we only keep track of the strings, we do NOT de-allocate them, our
 	// list better be cleaned out before we destroy ourselves
 	//
-	assert( m_stringList == NULL );
+	assert( m_stringList == nullptr );
 
 }
 
@@ -68,8 +68,8 @@ void DisplayStringManager::link( DisplayString *string )
 {
 
 	assert( string );
-	assert( string->m_next == NULL );
-	assert( string->m_prev == NULL );
+	assert( string->m_next == nullptr );
+	assert( string->m_prev == nullptr );
 
 	string->m_next = m_stringList;
 	if( m_stringList )

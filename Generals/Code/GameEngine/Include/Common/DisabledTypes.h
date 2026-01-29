@@ -45,10 +45,10 @@ enum DisabledType CPP_11(: Int)
 	DISABLED_HELD,	      //Special case -- held means it can fire and isHeld checks to make sure ONLY held is set!
 	DISABLED_PARALYZED,   //Battle plans have changed, and unit is confused/paralyzed
 	DISABLED_UNMANNED,		//Vehicle is unmanned
-	DISABLED_UNDERPOWERED,//Seperate from ScriptUnderpowered, the owning player has insufficient power.  Energy status controls this
+	DISABLED_UNDERPOWERED,//Separate from ScriptUnderpowered, the owning player has insufficient power.  Energy status controls this
 	DISABLED_FREEFALL,    //This unit has been disabled via being in free fall
 
-	//These ones are specificially for scripts to enable/reenable!
+	//These ones are specifically for scripts to enable/reenable!
 	DISABLED_SCRIPT_DISABLED,
 	DISABLED_SCRIPT_UNDERPOWERED,
 
@@ -105,4 +105,3 @@ inline void FLIP_DISABLEDMASK(DisabledMaskType& m)
 extern const char *TheDisabledNames[];
 extern DisabledMaskType DISABLEDMASK_NONE;	// inits to all zeroes
 extern DisabledMaskType DISABLEDMASK_ALL;		// inits to all bits set.
-void initDisabledMasks();

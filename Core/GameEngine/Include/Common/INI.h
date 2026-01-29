@@ -1,5 +1,5 @@
 /*
-**	Command & Conquer Generals(tm)
+**	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
 **
 **	This program is free software: you can redistribute it and/or modify
@@ -160,6 +160,8 @@ typedef void (*BuildMultiIniFieldProc)(MultiIniFieldParse& p);
 //-------------------------------------------------------------------------------------------------
 class INI
 {
+  INI(const INI&);
+  INI& operator=(const INI&);
 
 public:
 
@@ -217,6 +219,7 @@ public:
 	static void parseObjectCreationListDefinition( INI* ini );
 	static void parseMultiplayerSettingsDefinition( INI* ini );
 	static void parseMultiplayerColorDefinition( INI* ini );
+  static void parseMultiplayerStartingMoneyChoiceDefinition( INI* ini );
 	static void parseOnlineChatColorDefinition( INI* ini );
 	static void parseMapCacheDefinition( INI* ini );
 	static void parseVideoDefinition( INI* ini );
@@ -243,7 +246,7 @@ public:
 	static void parseEvaEvent( INI* ini );
 	static void parseCredits( INI* ini );
 	static void parseWindowTransitions( INI* ini );
-
+	static void parseChallengeModeDefinition( INI* ini );
 
 	AsciiString getFilename( void ) const { return m_filename; }
 	INILoadType getLoadType( void ) const { return m_loadType; }
@@ -324,14 +327,14 @@ public:
 
 		this will *never* return null; if there are no more tokens, an exception will be thrown.
 	*/
-	const char* getNextToken(const char* seps = NULL);
+	const char* getNextToken(const char* seps = nullptr);
 
 	/**
 		just like getNextToken(), except that null is returned if no more tokens are present
 		(rather than throwing an exception). usually you should call getNextToken(),
 		but for some cases this is handier (ie, parsing a variable-length number of tokens).
 	*/
-	const char* getNextTokenOrNull(const char* seps = NULL);
+	const char* getNextTokenOrNull(const char* seps = nullptr);
 
 	/**
 		This is called when the next thing you expect is something like:
@@ -392,12 +395,14 @@ protected:
 
 	void readLine( void );
 
-//	FILE *m_file;															///< file pointer of file currently loading
-	File *m_file;															///< file pointer of file currently loading
+	char* m_readBuffer;                       ///< internal read buffer
+	unsigned m_readBufferNext;                ///< next char in read buffer
+	unsigned m_readBufferUsed;                ///< number of bytes in read buffer
+
 	AsciiString m_filename;										///< filename of file currently loading
 	INILoadType m_loadType;										///< load time for current file
 	UnsignedInt m_lineNum;										///< current line number that's been read
-	char m_buffer[ INI_MAX_CHARS_PER_LINE ];	///< buffer to read file contents into
+	char m_buffer[ INI_MAX_CHARS_PER_LINE+1 ];///< buffer to read file contents into
 	const char *m_seps;												///< for strtok parsing
 	const char *m_sepsPercent;								///< m_seps with percent delimiter as well
 	const char *m_sepsColon;									///< m_seps with colon delimiter as well
@@ -405,6 +410,6 @@ protected:
 	const char *m_blockEndToken;							///< token to represent end of data block
 	Bool m_endOfFile;													///< TRUE when we've hit EOF
 #ifdef DEBUG_CRASHING
-	char m_curBlockStart[ INI_MAX_CHARS_PER_LINE ];	///< first line of cur block
+	char m_curBlockStart[ INI_MAX_CHARS_PER_LINE+1 ];	///< first line of cur block
 #endif
 };

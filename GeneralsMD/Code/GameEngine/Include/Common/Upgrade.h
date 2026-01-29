@@ -52,7 +52,9 @@ enum UpgradeStatusType CPP_11(: Int)
 };
 
 //The maximum number of upgrades.
-#define UPGRADE_MAX_COUNT 128
+// TheSuperHackers @tweak Stubbjax 22/01/2026 Increases max upgrade count from 128 to allow for more upgrades.
+// A value of 512 was chosen to allow room for plenty of upgrades while also conserving memory.
+#define UPGRADE_MAX_COUNT 512
 
 typedef BitFlags<UPGRADE_MAX_COUNT>	UpgradeMaskType;
 
@@ -173,7 +175,7 @@ public:
 	void setUpgradeNameKey( NameKeyType key ) { m_nameKey = key; }
 	NameKeyType getUpgradeNameKey( void ) const { return m_nameKey; }
 	const AsciiString& getDisplayNameLabel( void ) const { return m_displayNameLabel; }
-	UpgradeMaskType getUpgradeMask() const { return m_upgradeMask; }
+	const UpgradeMaskType& getUpgradeMask() const { return m_upgradeMask; }
 	UpgradeType getUpgradeType( void ) const { return m_type; }
 	const AudioEventRTS* getResearchCompleteSound() const { return &m_researchSound; }
 	const AudioEventRTS* getUnitSpecificSound() const { return &m_unitSpecificSound; }

@@ -35,10 +35,10 @@
 //-------------------------------------------------------------------------------------------------
 /** OBJECT COLLIDE MODULE
 	- Called when two objects collide (or when object collides with ground)
-	- Note in the 'collide' method that 'other' can be NULL, this indicates a
+	- Note in the 'collide' method that 'other' can be null, this indicates a
 		collision with the ground
 	- Also note the 'collide' method is the response for the object that THIS module
-		belongs to, we do not need to worry about the collision moudle of 'other',
+		belongs to, we do not need to worry about the collision module of 'other',
 		it will have its own collide action called separately */
 //-------------------------------------------------------------------------------------------------
 class CollideModuleInterface

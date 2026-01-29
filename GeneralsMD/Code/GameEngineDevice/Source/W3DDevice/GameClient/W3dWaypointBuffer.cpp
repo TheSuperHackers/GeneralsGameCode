@@ -51,6 +51,7 @@
 //-----------------------------------------------------------------------------
 //         Includes
 //-----------------------------------------------------------------------------
+
 #include "W3DDevice/GameClient/W3DWaypointBuffer.h"
 
 #include <assetmgr.h>
@@ -161,7 +162,7 @@ void W3DWaypointBuffer::drawWaypoints(RenderInfoClass &rinfo)
 	if( TheInGameUI->isInWaypointMode() )
 	{
 		//Create a default light environment with no lights and only full ambient.
-		//@todo: Fix later by copying default scene light environement from W3DScene.cpp.
+		//@todo: Fix later by copying default scene light environment from W3DScene.cpp.
 		LightEnvironmentClass lightEnv;
 		lightEnv.Reset(Vector3(0,0,0), Vector3(1.0f,1.0f,1.0f));
 		lightEnv.Pre_Render_Update(rinfo.Camera.Get_Transform());
@@ -213,7 +214,7 @@ void W3DWaypointBuffer::drawWaypoints(RenderInfoClass &rinfo)
 	else // maybe we want to draw rally points, then?
 	{
 		//Create a default light environment with no lights and only full ambient.
-		//@todo: Fix later by copying default scene light environement from W3DScene.cpp.
+		//@todo: Fix later by copying default scene light environment from W3DScene.cpp.
 		LightEnvironmentClass lightEnv;
 		lightEnv.Reset(Vector3(0,0,0), Vector3(1.0f,1.0f,1.0f));
 		lightEnv.Pre_Render_Update(rinfo.Camera.Get_Transform());
@@ -424,9 +425,9 @@ void W3DWaypointBuffer::drawWaypoints(RenderInfoClass &rinfo)
 									corners[3].x = ctr->x - exc + eys;
 									corners[3].y = ctr->y - eyc - exs;
 
-									Coord2D *pNearElbow = NULL;//find the closest corner to the rallyPoint same end as door
-									Coord2D *pFarElbow = NULL; //find the closest corner to the rallypoint away from door
-									Coord2D *nearCandidate = NULL;
+									Coord2D *pNearElbow = nullptr;//find the closest corner to the rallyPoint same end as door
+									Coord2D *pFarElbow = nullptr; //find the closest corner to the rallypoint away from door
+									Coord2D *nearCandidate = nullptr;
 									Coord3D cornerToRPDelta, cornerToExitDelta;
 									cornerToRPDelta.z = 0.0f;
 									cornerToExitDelta.z = 0.0f;
@@ -474,7 +475,7 @@ void W3DWaypointBuffer::drawWaypoints(RenderInfoClass &rinfo)
 										numPoints++;
 
 
-										//and for that matter did we find a far side coner?
+										//and for that matter did we find a far side corner?
 										if (pFarElbow)//did we find a nearest corner?
 										{
 											// but let's test the dot of the first elbow against the rally point to find out

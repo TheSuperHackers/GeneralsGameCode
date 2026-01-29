@@ -81,7 +81,7 @@ Sound2DHandleClass::Initialize (SoundBufferClass *buffer)
 		//
 		// Pass the actual sound data onto the sample
 		//
-		if (Buffer != NULL) {
+		if (Buffer != nullptr) {
 			::AIL_set_named_sample_file (SampleHandle, (char *)Buffer->Get_Filename (),
 					Buffer->Get_Raw_Buffer (), Buffer->Get_Raw_Length (), 0);
 		}
@@ -167,7 +167,7 @@ Sound2DHandleClass::Set_Sample_Pan (S32 pan)
 		// TheSuperHackers @fix xezon 05/04/2025 Upgrades miles call from legacy AIL_set_sample_pan.
 		// TheSuperHackers @todo Perhaps use float natively.
 		float fVolume = 0.0F;
-		::AIL_sample_volume_pan (SampleHandle, &fVolume, NULL);
+		::AIL_sample_volume_pan (SampleHandle, &fVolume, nullptr);
 		float fPan = pan / 127.0F;
 		::AIL_set_sample_volume_pan (SampleHandle, fVolume, fPan);
 	}
@@ -189,7 +189,7 @@ Sound2DHandleClass::Get_Sample_Pan (void)
 	if (SampleHandle != (HSAMPLE)INVALID_MILES_HANDLE) {
 		// TheSuperHackers @fix xezon 05/04/2025 Upgrades miles call from legacy AIL_sample_pan.
 		float fPan = 0.5F;
-		::AIL_sample_volume_pan (SampleHandle, NULL, &fPan);
+		::AIL_sample_volume_pan (SampleHandle, nullptr, &fPan);
 		retval = fPan * 127;
 	}
 
@@ -209,7 +209,7 @@ Sound2DHandleClass::Set_Sample_Volume (S32 volume)
 		// TheSuperHackers @fix xezon 05/04/2025 Upgrades miles call from legacy AIL_set_sample_volume.
 		// TheSuperHackers @todo Perhaps use float natively.
 		float fPan = 0.5F;
-		::AIL_sample_volume_pan (SampleHandle, NULL, &fPan);
+		::AIL_sample_volume_pan (SampleHandle, nullptr, &fPan);
 		float fVolume = volume / 127.0F;
 		::AIL_set_sample_volume_pan (SampleHandle, fVolume, fPan);
 	}
@@ -230,7 +230,7 @@ Sound2DHandleClass::Get_Sample_Volume (void)
 	if (SampleHandle != (HSAMPLE)INVALID_MILES_HANDLE) {
 		// TheSuperHackers @fix xezon 05/04/2025 Upgrades miles call from legacy AIL_sample_volume.
 		float fVolume = 0.0F;
-		::AIL_sample_volume_pan (SampleHandle, &fVolume, NULL);
+		::AIL_sample_volume_pan (SampleHandle, &fVolume, nullptr);
 		retval = fVolume * 127;
 	}
 
@@ -328,7 +328,7 @@ Sound2DHandleClass::Set_Sample_User_Data (S32 i, void *val)
 void *
 Sound2DHandleClass::Get_Sample_User_Data (S32 i)
 {
-	void *retval = NULL;
+	void *retval = nullptr;
 
 	if (SampleHandle != (HSAMPLE)INVALID_MILES_HANDLE) {
 		retval = ::AIL_sample_user_data (SampleHandle, i);

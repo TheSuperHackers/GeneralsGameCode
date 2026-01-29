@@ -39,9 +39,9 @@ struct POINTVERTEX
 
 W3DSnowManager::W3DSnowManager(void)
 {
-	m_indexBuffer=NULL;
-	m_snowTexture=NULL;
-	m_VertexBufferD3D=NULL;
+	m_indexBuffer=nullptr;
+	m_snowTexture=nullptr;
+	m_VertexBufferD3D=nullptr;
 }
 
 W3DSnowManager::~W3DSnowManager()
@@ -63,7 +63,7 @@ void W3DSnowManager::ReleaseResources(void)
 	if (m_VertexBufferD3D)
 		m_VertexBufferD3D->Release();
 
-	m_VertexBufferD3D=NULL;
+	m_VertexBufferD3D=nullptr;
 
 	REF_PTR_RELEASE(m_indexBuffer);
 }
@@ -80,9 +80,9 @@ Bool W3DSnowManager::ReAcquireResources(void)
 	{
 		LPDIRECT3DDEVICE8 m_pDev=DX8Wrapper::_Get_D3D_Device8();
 
-		DEBUG_ASSERTCRASH(m_pDev, ("Trying to ReAquireResources on W3DSnowManager without device"));
+		DEBUG_ASSERTCRASH(m_pDev, ("Trying to ReAcquireResources on W3DSnowManager without device"));
 
-		if (m_VertexBufferD3D == NULL)
+		if (m_VertexBufferD3D == nullptr)
 		{	// Create vertex buffer
 
 			if (FAILED(m_pDev->CreateVertexBuffer

@@ -86,7 +86,7 @@ UnsignedInt ResolveIP(AsciiString host)
 
   if (host.isEmpty())
   {
-	  DEBUG_LOG(("ResolveIP(): Can't resolve NULL"));
+	  DEBUG_LOG(("ResolveIP(): Can't resolve null"));
 	  return 0;
   }
 
@@ -98,7 +98,7 @@ UnsignedInt ResolveIP(AsciiString host)
 
   // String such as "localhost"
   hostStruct = gethostbyname(host.str());
-  if (hostStruct == NULL)
+  if (hostStruct == nullptr)
   {
 	  DEBUG_LOG(("ResolveIP(): Can't resolve %s", host.str()));
 	  return 0;

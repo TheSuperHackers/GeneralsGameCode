@@ -66,10 +66,10 @@ void HelixContainModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 	static const FieldParse dataFieldParse[] =
 	{
-    { "PayloadTemplateName",  INI::parseAsciiStringVectorAppend, NULL, offsetof(HelixContainModuleData, m_payloadTemplateNameData) },
-    {"ShouldDrawPips",  INI::parseBool, NULL, offsetof(HelixContainModuleData, m_drawPips) },
+    { "PayloadTemplateName",  INI::parseAsciiStringVectorAppend, nullptr, offsetof(HelixContainModuleData, m_payloadTemplateNameData) },
+    {"ShouldDrawPips",  INI::parseBool, nullptr, offsetof(HelixContainModuleData, m_drawPips) },
 
-		{ 0, 0, 0, 0 }
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   p.add(dataFieldParse);
 }
@@ -317,7 +317,7 @@ const Object *HelixContain::friend_getRider() const
     return portableAsRider;
   }
 
-	return NULL;
+	return nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------

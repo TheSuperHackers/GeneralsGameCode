@@ -31,10 +31,7 @@ class ScopedMutex
 	public:
 		ScopedMutex(HANDLE mutex) : m_mutex(mutex)
 		{
-			DWORD status = WaitForSingleObject(m_mutex, 500);
-			if (status != WAIT_OBJECT_0) {
-				DEBUG_LOG(("ScopedMutex WaitForSingleObject timed out - status %d", status));
-			}
+			WaitForSingleObject(m_mutex, INFINITE);
 		}
 
 		~ScopedMutex()

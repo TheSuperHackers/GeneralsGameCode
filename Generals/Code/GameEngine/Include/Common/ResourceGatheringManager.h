@@ -50,8 +50,8 @@ public:
 	void addSupplyCenter( Object *newCenter );					///< I captured or built a Supply Center, so record it
 	void removeSupplyCenter( Object *oldCenter );				///< Lost a supply center
 
-	void addSupplyWarehouse( Object *newWarehouse );		///< Warehouse created, or this is starrt of game recording
-	void removeSupplyWarehouse( Object *oldWarehouse );	///< Warehouse that doesn't replinish has run out of Supply
+	void addSupplyWarehouse( Object *newWarehouse );		///< Warehouse created, or this is start of game recording
+	void removeSupplyWarehouse( Object *oldWarehouse );	///< Warehouse that doesn't replenish has run out of Supply
 
 protected:
 

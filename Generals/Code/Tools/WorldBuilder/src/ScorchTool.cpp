@@ -94,7 +94,7 @@ MapObject *ScorchTool::pickScorch(Coord3D loc){
 			return pObj;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 
@@ -111,7 +111,7 @@ void ScorchTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorld
 		ScorchOptions::update();
 	} else {
 		pView->snapPoint(&docPt);
-		MapObject *pNew = newInstance(MapObject)(docPt, "Scorch", 0, 0, NULL, NULL );
+		MapObject *pNew = newInstance(MapObject)(docPt, "Scorch", 0, 0, nullptr, nullptr );
 		pNew->getProperties()->setAsciiString(TheKey_originalOwner, NEUTRAL_TEAM_INTERNAL_STR);
 		pNew->setSelected(true);
 		pNew->setIsScorch();
@@ -120,7 +120,7 @@ void ScorchTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorld
 		AddObjectUndoable *pUndo = new AddObjectUndoable(pDoc, pNew);
 		pDoc->AddAndDoUndoable(pUndo);
 		REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
-		pNew = NULL; // undoable owns it now.
+		pNew = nullptr; // undoable owns it now.
 		ScorchOptions::update();
 	}
 	m_mouseDownPt = docPt;

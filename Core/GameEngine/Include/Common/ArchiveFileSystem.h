@@ -156,8 +156,8 @@ public:
 protected:
 	struct ArchivedDirectoryInfoResult
 	{
-		ArchivedDirectoryInfoResult() : dirInfo(NULL) {}
-		Bool valid() const { return dirInfo != NULL; }
+		ArchivedDirectoryInfoResult() : dirInfo(nullptr) {}
+		Bool valid() const { return dirInfo != nullptr; }
 
 		ArchivedDirectoryInfo* dirInfo;
 		AsciiString lastToken; ///< Synonymous for file name if the search directory was a file path

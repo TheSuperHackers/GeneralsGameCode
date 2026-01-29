@@ -32,7 +32,7 @@ class CSceneLightDialog : public CDialog
 {
 // Construction
 public:
-	CSceneLightDialog(CWnd* pParent = NULL);   // standard constructor
+	CSceneLightDialog(CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(CSceneLightDialog)

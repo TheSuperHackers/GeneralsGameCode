@@ -103,10 +103,10 @@ public:
 	PolyRenderTaskClass(DX8PolygonRendererClass * p_renderer,MeshClass * p_mesh) :
 		Renderer(p_renderer),
 		Mesh(p_mesh),
-		NextVisible(NULL)
+		NextVisible(nullptr)
 	{
-		WWASSERT(Renderer != NULL);
-		WWASSERT(Mesh != NULL);
+		WWASSERT(Renderer != nullptr);
+		WWASSERT(Mesh != nullptr);
 		Mesh->Add_Ref();
 	}
 
@@ -144,10 +144,10 @@ public:
 	MatPassTaskClass(MaterialPassClass * pass,MeshClass * mesh) :
 		MaterialPass(pass),
 		Mesh(mesh),
-		NextVisible(NULL)
+		NextVisible(nullptr)
 	{
-		WWASSERT(MaterialPass != NULL);
-		WWASSERT(Mesh != NULL);
+		WWASSERT(MaterialPass != nullptr);
+		WWASSERT(Mesh != nullptr);
 		MaterialPass->Add_Ref();
 		Mesh->Add_Ref();
 	}
@@ -194,7 +194,7 @@ DX8TextureCategoryClass::DX8TextureCategoryClass(
 	:
 	pass(pass_),
 	shader(shd),
-	render_task_head(NULL),
+	render_task_head(nullptr),
 	material(mat),
 	container(container_)
 {
@@ -203,7 +203,7 @@ DX8TextureCategoryClass::DX8TextureCategoryClass(
 
 	for (int a=0;a<MeshMatDescClass::MAX_TEX_STAGES;++a)
 	{
-		textures[a]=NULL;
+		textures[a]=nullptr;
 		REF_PTR_SET(textures[a],texs[a]);
 	}
 
@@ -223,7 +223,7 @@ DX8TextureCategoryClass::~DX8TextureCategoryClass()
 
 	REF_PTR_RELEASE(material);
 
-	DEBUG_ASSERTCRASH(render_task_head == NULL, ("~DX8TextureCategoryClass: Leaking render tasks"));
+	DEBUG_ASSERTCRASH(render_task_head == nullptr, ("~DX8TextureCategoryClass: Leaking render tasks"));
 }
 
 void DX8TextureCategoryClass::Add_Render_Task(DX8PolygonRendererClass * p_renderer,MeshClass * p_mesh)
@@ -237,12 +237,12 @@ void DX8TextureCategoryClass::Add_Render_Task(DX8PolygonRendererClass * p_render
 
 void DX8TextureCategoryClass::Add_Polygon_Renderer(DX8PolygonRendererClass* p_renderer,DX8PolygonRendererClass* add_after_this)
 {
-	WWASSERT(p_renderer!=NULL);
+	WWASSERT(p_renderer!=nullptr);
 	WWASSERT(!PolygonRendererList.Contains(p_renderer));
 
-	if (add_after_this != NULL) {
+	if (add_after_this != nullptr) {
 		bool res = PolygonRendererList.Add_After(p_renderer,add_after_this,false);
-		WWASSERT(res != NULL);
+		WWASSERT(res);
 	} else {
 		PolygonRendererList.Add(p_renderer);
 	}
@@ -253,8 +253,8 @@ void DX8TextureCategoryClass::Add_Polygon_Renderer(DX8PolygonRendererClass* p_re
 void DX8TextureCategoryClass::Remove_Polygon_Renderer(DX8PolygonRendererClass* p_renderer)
 {
 	PolygonRendererList.Remove(p_renderer);
-	p_renderer->Set_Texture_Category(NULL);
-	if (PolygonRendererList.Peek_Head() == NULL) {
+	p_renderer->Set_Texture_Category(nullptr);
+	if (PolygonRendererList.Peek_Head() == nullptr) {
 		container->Remove_Texture_Category(this);
 		texture_category_delete_list.Add_Tail(this);
 	}
@@ -269,7 +269,7 @@ void DX8FVFCategoryContainer::Remove_Texture_Category(DX8TextureCategoryClass* t
 	}
 	for (pass=0; pass<passes; pass++) {
 		// If any of the texture category lists has anything in it, no need to delete this container
-		if (texture_category_list[pass].Peek_Head() != NULL) return;
+		if (texture_category_list[pass].Peek_Head() != nullptr) return;
 	}
 	fvf_category_container_delete_list.Add_Tail(this);
 }
@@ -278,11 +278,11 @@ void DX8FVFCategoryContainer::Add_Visible_Material_Pass(MaterialPassClass * pass
 {
 	MatPassTaskClass * new_mpr = new MatPassTaskClass(pass,mesh);
 
-	if (visible_matpass_head == NULL) {
-		WWASSERT(visible_matpass_tail == NULL);
+	if (visible_matpass_head == nullptr) {
+		WWASSERT(visible_matpass_tail == nullptr);
 		visible_matpass_head = new_mpr;
 	} else {
-		WWASSERT(visible_matpass_tail != NULL);
+		WWASSERT(visible_matpass_tail != nullptr);
 		visible_matpass_tail->Set_Next_Visible(new_mpr);
 	}
 
@@ -294,10 +294,10 @@ void DX8FVFCategoryContainer::Render_Procedural_Material_Passes(void)
 {
 	// additional passes
 	MatPassTaskClass * mpr = visible_matpass_head;
-	MatPassTaskClass * last_mpr = NULL;
+	MatPassTaskClass * last_mpr = nullptr;
    	bool renderTasksRemaining=false;
 
-	while (mpr != NULL) {
+	while (mpr != nullptr) {
 		SNAPSHOT_SAY(("Render_Procedural_Material_Pass"));
 
    		MeshClass * mesh = mpr->Peek_Mesh();
@@ -314,7 +314,7 @@ void DX8FVFCategoryContainer::Render_Procedural_Material_Passes(void)
 		MatPassTaskClass * next_mpr = mpr->Get_Next_Visible();
 
 		// remove from list, then delete
-		if (last_mpr == NULL) {
+		if (last_mpr == nullptr) {
 			visible_matpass_head = next_mpr;
 		} else {
 	       last_mpr->Set_Next_Visible(next_mpr);
@@ -324,18 +324,18 @@ void DX8FVFCategoryContainer::Render_Procedural_Material_Passes(void)
 		mpr = next_mpr;
 	}
 
-	visible_matpass_tail = renderTasksRemaining ? last_mpr : NULL;
+	visible_matpass_tail = renderTasksRemaining ? last_mpr : nullptr;
 }
 
 void DX8RigidFVFCategoryContainer::Add_Delayed_Visible_Material_Pass(MaterialPassClass * pass, MeshClass * mesh)
 {
 	MatPassTaskClass * new_mpr = new MatPassTaskClass(pass,mesh);
 
-	if (delayed_matpass_head == NULL) {
-		WWASSERT(delayed_matpass_tail == NULL);
+	if (delayed_matpass_head == nullptr) {
+		WWASSERT(delayed_matpass_tail == nullptr);
 		delayed_matpass_head = new_mpr;
 	} else {
-		WWASSERT(delayed_matpass_tail != NULL);
+		WWASSERT(delayed_matpass_tail != nullptr);
 		delayed_matpass_tail->Set_Next_Visible(new_mpr);
 	}
 
@@ -355,7 +355,7 @@ void DX8RigidFVFCategoryContainer::Render_Delayed_Procedural_Material_Passes(voi
 
 	// additional passes
 	MatPassTaskClass * mpr = delayed_matpass_head;
-	while (mpr != NULL) {
+	while (mpr != nullptr) {
 
 		mpr->Peek_Mesh()->Render_Material_Pass(mpr->Peek_Material_Pass(),index_buffer);
 		MatPassTaskClass * next_mpr = mpr->Get_Next_Visible();
@@ -364,7 +364,7 @@ void DX8RigidFVFCategoryContainer::Render_Delayed_Procedural_Material_Passes(voi
 		mpr = next_mpr;
 	}
 
-	delayed_matpass_head = delayed_matpass_tail = NULL;
+	delayed_matpass_head = delayed_matpass_tail = nullptr;
 }
 
 
@@ -404,7 +404,7 @@ void DX8TextureCategoryClass::Log(bool only_visible)
 			prtc = prtc->Get_Next_Visible();
 		}
 
-		if (prtc != NULL) {
+		if (prtc != nullptr) {
 			WWDEBUG_SAY(("+"));
 			p_renderer->Log();
 		} else {
@@ -424,9 +424,9 @@ DX8FVFCategoryContainer::DX8FVFCategoryContainer(unsigned FVF_,bool sorting_)
 	:
 	FVF(FVF_),
 	sorting(sorting_),
-	visible_matpass_head(NULL),
-	visible_matpass_tail(NULL),
-	index_buffer(0),
+	visible_matpass_head(nullptr),
+	visible_matpass_tail(nullptr),
+	index_buffer(nullptr),
 	used_indices(0),
 	passes(MAX_PASSES),
 	uv_coordinate_channels(0),
@@ -465,7 +465,7 @@ DX8TextureCategoryClass* DX8FVFCategoryContainer::Find_Matching_Texture_Category
 	DX8TextureCategoryClass* ref_category)
 {
 	// Find texture category which matches ref_category's properties but has 'texture' on given pass and stage.
-	DX8TextureCategoryClass* dest_tex_category=NULL;
+	DX8TextureCategoryClass* dest_tex_category=nullptr;
 	TextureCategoryListIterator dest_it(&texture_category_list[pass]);
 	while (!dest_it.Is_Done()) {
 		if (dest_it.Peek_Obj()->Peek_Texture(stage)==texture) {
@@ -485,7 +485,7 @@ DX8TextureCategoryClass* DX8FVFCategoryContainer::Find_Matching_Texture_Category
 		}
 		dest_it.Next();
 	}
-	return NULL;
+	return nullptr;
 }
 
 DX8TextureCategoryClass* DX8FVFCategoryContainer::Find_Matching_Texture_Category(
@@ -494,7 +494,7 @@ DX8TextureCategoryClass* DX8FVFCategoryContainer::Find_Matching_Texture_Category
 		DX8TextureCategoryClass* ref_category)
 {
 	// Find texture category which matches ref_category's properties but has 'vmat' on given pass
-	DX8TextureCategoryClass* dest_tex_category=NULL;
+	DX8TextureCategoryClass* dest_tex_category=nullptr;
 	TextureCategoryListIterator dest_it(&texture_category_list[pass]);
 	while (!dest_it.Is_Done()) {
 		if (Equal_Material(dest_it.Peek_Obj()->Peek_Material(),vmat)) {
@@ -510,7 +510,7 @@ DX8TextureCategoryClass* DX8FVFCategoryContainer::Find_Matching_Texture_Category
 		}
 		dest_it.Next();
 	}
-	return NULL;
+	return nullptr;
 }
 
 void DX8FVFCategoryContainer::Change_Polygon_Renderer_Texture(
@@ -743,10 +743,10 @@ unsigned DX8FVFCategoryContainer::Define_FVF(MeshModelClass* mmc,bool enable_lig
 DX8RigidFVFCategoryContainer::DX8RigidFVFCategoryContainer(unsigned FVF,bool sorting_)
 	:
 	DX8FVFCategoryContainer(FVF,sorting_),
-	vertex_buffer(0),
+	vertex_buffer(nullptr),
 	used_vertices(0),
-	delayed_matpass_head(NULL),
-	delayed_matpass_tail(NULL)
+	delayed_matpass_head(nullptr),
+	delayed_matpass_tail(nullptr)
 {
 }
 
@@ -1255,8 +1255,8 @@ DX8SkinFVFCategoryContainer::DX8SkinFVFCategoryContainer(bool sorting)
 	:
 	DX8FVFCategoryContainer(DX8_FVF_XYZNUV1,sorting),
 	VisibleVertexCount(0),
-	VisibleSkinHead(NULL),
-	VisibleSkinTail(NULL)
+	VisibleSkinHead(nullptr),
+	VisibleSkinTail(nullptr)
 {
 }
 
@@ -1304,7 +1304,7 @@ void DX8SkinFVFCategoryContainer::Render(void)
 	}
 	AnythingToRender=false;
 
-	DX8Wrapper::Set_Vertex_Buffer(NULL);	// Free up the reference to the current vertex buffer
+	DX8Wrapper::Set_Vertex_Buffer(nullptr);	// Free up the reference to the current vertex buffer
 														// (in case it is the dynamic, which may have to be resized)
 
 	//'Generals' customization to allow more than 65535 vertices
@@ -1329,9 +1329,9 @@ void DX8SkinFVFCategoryContainer::Render(void)
 		{	DynamicVBAccessClass::WriteLockClass l(&vb);
 			VertexFormatXYZNDUV2 * dest_verts = l.Get_Formatted_Vertex_Array();
 			unsigned vertex_offset=0;
-			remainingMesh = NULL;
+			remainingMesh = nullptr;
 
-			while (mesh != NULL) {
+			while (mesh != nullptr) {
 
 				MeshModelClass * mmc = mesh->Peek_Model();
 				int mesh_vertex_count=mmc->Get_Vertex_Count();
@@ -1339,7 +1339,7 @@ void DX8SkinFVFCategoryContainer::Render(void)
 				if (vertex_offset+mesh_vertex_count > maxVertexCount || remainingMesh)
 				{	//flag mesh so we know it didn't fit in the vertex buffer
 					mesh->Set_Base_Vertex_Offset(VERTEX_BUFFER_OVERFLOW);
-					if (remainingMesh == NULL)
+					if (remainingMesh == nullptr)
 						remainingMesh = mesh;	//start of meshes that didn't fit in buffer
 					mesh = mesh->Peek_Next_Visible_Skin();	//skip rendering this mesh
 					continue;
@@ -1455,24 +1455,24 @@ bool DX8SkinFVFCategoryContainer::Check_If_Mesh_Fits(MeshModelClass* mmc)
 
 void DX8SkinFVFCategoryContainer::clearVisibleSkinList()
 {
-	while (VisibleSkinHead != NULL)
+	while (VisibleSkinHead != nullptr)
 	{
 		MeshClass* next = VisibleSkinHead->Peek_Next_Visible_Skin();
-		VisibleSkinHead->Set_Next_Visible_Skin(NULL);
+		VisibleSkinHead->Set_Next_Visible_Skin(nullptr);
 		VisibleSkinHead = next;
 	}
-	VisibleSkinHead = NULL;
-	VisibleSkinTail = NULL;
+	VisibleSkinHead = nullptr;
+	VisibleSkinTail = nullptr;
 	VisibleVertexCount = 0;
 }
 void DX8SkinFVFCategoryContainer::Add_Visible_Skin(MeshClass * mesh)
 {
-	if (mesh->Peek_Next_Visible_Skin() != NULL || mesh == VisibleSkinTail)
+	if (mesh->Peek_Next_Visible_Skin() != nullptr || mesh == VisibleSkinTail)
 	{
 		DEBUG_CRASH(("Mesh %s is already a visible skin, and we tried to add it again... please notify Mark W or Steven J immediately!",mesh->Get_Name()));
 		return;
 	}
-	if (VisibleSkinHead == NULL)
+	if (VisibleSkinHead == nullptr)
 		VisibleSkinTail = mesh;
 	mesh->Set_Next_Visible_Skin(VisibleSkinHead);
 	VisibleSkinHead = mesh;
@@ -1694,7 +1694,7 @@ void DX8TextureCategoryClass::Render(void)
 
 		for (unsigned i=0;i<MeshMatDescClass::MAX_TEX_STAGES;++i)
 		{
-			SNAPSHOT_SAY(("Set_Texture(%d,%s)",i,Peek_Texture(i) ? Peek_Texture(i)->Get_Texture_Name().str() : "NULL"));
+			SNAPSHOT_SAY(("Set_Texture(%d,%s)",i,Peek_Texture(i) ? Peek_Texture(i)->Get_Texture_Name().str() : "null"));
 			DX8Wrapper::Set_Texture(i,Peek_Texture(i));
 		}
 
@@ -1702,7 +1702,7 @@ void DX8TextureCategoryClass::Render(void)
 	}
 	#endif
 
-	SNAPSHOT_SAY(("Set_Material(%s)",Peek_Material() ? Peek_Material()->Get_Name() : "NULL"));
+	SNAPSHOT_SAY(("Set_Material(%s)",Peek_Material() ? Peek_Material()->Get_Name() : "null"));
 	VertexMaterialClass *vmaterial=(VertexMaterialClass *)Peek_Material();	//ugly cast from const but we'll restore it after changes so okay. -MW
 	DX8Wrapper::Set_Material(vmaterial);
 
@@ -1734,7 +1734,7 @@ void DX8TextureCategoryClass::Render(void)
 	bool renderTasksRemaining=false;
 
 	PolyRenderTaskClass * prt = render_task_head;
-	PolyRenderTaskClass * last_prt = NULL;
+	PolyRenderTaskClass * last_prt = nullptr;
 
 	while (prt) {
 
@@ -1766,7 +1766,7 @@ void DX8TextureCategoryClass::Render(void)
 					// Disable texturing on all stages and passes.
 					for (i = 0; i < MeshMatDescClass::MAX_TEX_STAGES; i++)
 					{
-						DX8Wrapper::Set_Texture (i, NULL);
+						DX8Wrapper::Set_Texture (i, nullptr);
 					}
 					break;
 
@@ -1780,7 +1780,7 @@ void DX8TextureCategoryClass::Render(void)
 						}
 					} else {
 						for (i = 0; i < MAX_TEXTURE_STAGES; i++) {
-							DX8Wrapper::Set_Texture (i, NULL);
+							DX8Wrapper::Set_Texture (i, nullptr);
 						}
 					}
 					break;
@@ -1791,7 +1791,7 @@ void DX8TextureCategoryClass::Render(void)
 					DX8Wrapper::Set_Texture (0, Peek_Texture (0));
 					for (i = 1; i < MeshMatDescClass::MAX_TEX_STAGES; i++)
 					{
-						DX8Wrapper::Set_Texture (i, NULL);
+						DX8Wrapper::Set_Texture (i, nullptr);
 					}
 					break;
 
@@ -1810,7 +1810,7 @@ void DX8TextureCategoryClass::Render(void)
 		** states untouched.  This way they can set a couple global lights that affect the entire scene.
 		*/
 		LightEnvironmentClass * lenv = mesh->Get_Lighting_Environment();
-		if (lenv != NULL) {
+		if (lenv != nullptr) {
 			SNAPSHOT_SAY(("LightEnvironment, lights: %d",lenv->Get_Light_Count()));
 			DX8Wrapper::Set_Light_Environment(lenv);
 		}
@@ -1900,7 +1900,7 @@ void DX8TextureCategoryClass::Render(void)
 					oldMapper->Set_Current_UV_Offset(matOverride->customUVOffset);
 				}
 				else
-					oldMapper=NULL;
+					oldMapper=nullptr;
 				if (mesh->Get_Alpha_Override() != 1.0)
 				{
 					if (mesh->Is_Additive())
@@ -1926,7 +1926,7 @@ void DX8TextureCategoryClass::Render(void)
 				{	oldMapper->Set_LastUsedSyncTime(oldUVOffsetSyncTime);
 					oldMapper->Set_Current_UV_Offset(oldUVOffset);
 				}
-				DX8Wrapper::Set_Material(NULL);	//force a reset of vertex material since we secretly changed opacity
+				DX8Wrapper::Set_Material(nullptr);	//force a reset of vertex material since we secretly changed opacity
 				DX8Wrapper::Set_Material(vmaterial);	//restore previous material.
 			}
 			else
@@ -1948,7 +1948,7 @@ void DX8TextureCategoryClass::Render(void)
 		PolyRenderTaskClass * next_prt = prt->Get_Next_Visible();
 
 		// remove from list, then delete
-		if (last_prt == NULL) {
+		if (last_prt == nullptr) {
 		   render_task_head = next_prt;
 		} else {
 		  last_prt->Set_Next_Visible(next_prt);
@@ -1967,7 +1967,7 @@ void DX8TextureCategoryClass::Render(void)
 
 void DX8TextureCategoryClass::Clear_Render_List()
 {
-	while (render_task_head != NULL)
+	while (render_task_head != nullptr)
 	{
 		PolyRenderTaskClass* next = render_task_head->Get_Next_Visible();
 		delete render_task_head;
@@ -1978,10 +1978,10 @@ void DX8TextureCategoryClass::Clear_Render_List()
 
 DX8MeshRendererClass::DX8MeshRendererClass()
 	:
-	camera(NULL),
+	camera(nullptr),
 	enable_lighting(true),
-	texture_category_container_list_skin(NULL),
-	visible_decal_meshes(NULL)
+	texture_category_container_list_skin(nullptr),
+	visible_decal_meshes(nullptr)
 {
 }
 
@@ -1999,8 +1999,8 @@ void DX8MeshRendererClass::Init(void)
 
 void DX8MeshRendererClass::Shutdown(void)
 {
-	camera = NULL;
-	visible_decal_meshes = NULL;
+	camera = nullptr;
+	visible_decal_meshes = nullptr;
 	Invalidate(true);
 	Clear_Pending_Delete_Lists();
 	_TempVertexBuffer.Clear();	//free memory
@@ -2024,7 +2024,7 @@ void DX8MeshRendererClass::Clear_Pending_Delete_Lists()
 static void Add_Rigid_Mesh_To_Container(FVFCategoryList* container_list,unsigned fvf,MeshModelClass* mmc)
 {
 	WWASSERT(container_list);
-	DX8FVFCategoryContainer * container = NULL;
+	DX8FVFCategoryContainer * container = nullptr;
 	bool sorting=((!!mmc->Get_Flag(MeshModelClass::SORT)) && WW3D::Is_Sorting_Enabled() && (mmc->Get_Sort_Level() == SORT_LEVEL_NONE));
 
 	FVFCategoryListIterator it(container_list);
@@ -2054,7 +2054,7 @@ void DX8MeshRendererClass::Unregister_Mesh_Type(MeshModelClass* mmc)
 	// Also remove the gap filler!
 	if (mmc->GapFiller) {
 		GapFillerClass* gf=mmc->GapFiller;
-		mmc->GapFiller=NULL;
+		mmc->GapFiller=nullptr;
 		delete gf;
 	}
 
@@ -2210,14 +2210,14 @@ void DX8MeshRendererClass::Flush(void)
 		Render_FVF_Category_Container_List_Delayed_Passes(*texture_category_container_lists_rigid[i]);
 	}
 
-	DX8Wrapper::Set_Vertex_Buffer(NULL);
-	DX8Wrapper::Set_Index_Buffer(NULL,0);
+	DX8Wrapper::Set_Vertex_Buffer(nullptr);
+	DX8Wrapper::Set_Index_Buffer(nullptr,0);
 }
 
 
 void DX8MeshRendererClass::Add_To_Render_List(DecalMeshClass * decalmesh)
 {
-	WWASSERT(decalmesh != NULL);
+	WWASSERT(decalmesh != nullptr);
 	decalmesh->Set_Next_Visible(visible_decal_meshes);
 	visible_decal_meshes = decalmesh;
 }
@@ -2229,11 +2229,11 @@ void DX8MeshRendererClass::Render_Decal_Meshes(void)
 
 	DX8Wrapper::Set_DX8_Render_State(D3DRS_ZBIAS,8);
 
-	while (decal_mesh != NULL) {
+	while (decal_mesh != nullptr) {
 		decal_mesh->Render();
 		decal_mesh = decal_mesh->Peek_Next_Visible();
 	}
-	visible_decal_meshes = NULL;
+	visible_decal_meshes = nullptr;
 
 	DX8Wrapper::Set_DX8_Render_State(D3DRS_ZBIAS,0);
 }
@@ -2279,7 +2279,7 @@ void DX8MeshRendererClass::Invalidate( bool shutdown)
 	if (texture_category_container_list_skin) {
 		Invalidate_FVF_Category_Container_List(*texture_category_container_list_skin);
 		delete texture_category_container_list_skin;
-		texture_category_container_list_skin=NULL;
+		texture_category_container_list_skin=nullptr;
 	}
 
 	if (!shutdown)

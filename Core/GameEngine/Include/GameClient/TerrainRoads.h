@@ -206,7 +206,7 @@ public:
 	void update() { }
 
 	TerrainRoadType *findRoad( AsciiString name );		///< find road with matching name
-	TerrainRoadType *newRoad( AsciiString name );			///< allocate new road, assing name, and link to list
+	TerrainRoadType *newRoad( AsciiString name );			///< allocate new road, assign name, and link to list
 	TerrainRoadType *firstRoad( void ) { return m_roadList; }			///< return first road
 	TerrainRoadType *nextRoad( TerrainRoadType *road );						///< get next road
 

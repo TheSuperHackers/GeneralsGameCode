@@ -55,7 +55,7 @@ static const LookupListRec CategoryListName[] =
 	{"TEAM",							CATEGORY_TEAM},
 	{"MISC",							CATEGORY_MISC},
 	{"DEBUG",							CATEGORY_DEBUG},
-	{NULL, 0}
+	{ nullptr, 0}
 };
 
 
@@ -258,7 +258,7 @@ static const LookupListRec KeyNames[] =
 	{ "KEY_INS", MK_INS },
 	{ "KEY_DEL", MK_DEL },
 	{ "KEY_NONE", MK_NONE },
-	{ NULL, 0	}
+	{ nullptr, 0	}
 };
 
 // -------------------------------------------------------------------------------
@@ -276,7 +276,7 @@ static const LookupListRec TransitionNames[] =
 	{ "DOWN",				DOWN },
 	{ "UP",					UP },
 	{ "DOUBLEDOWN",	DOUBLEDOWN },
-	{ NULL, 0	}
+	{ nullptr, 0	}
 };
 static_assert(ARRAY_SIZE(TransitionNames) == MAPPABLE_KEY_TRANSITION_COUNT + 1, "Incorrect array size");
 
@@ -304,7 +304,7 @@ static const LookupListRec ModifierNames[] =
 	{ "SHIFT_CTRL",				SHIFT_CTRL },
 	{ "SHIFT_ALT",				SHIFT_ALT },
 	{ "SHIFT_ALT_CTRL" ,	SHIFT_ALT_CTRL },
-	{ NULL, 0	}
+	{ nullptr, 0	}
 };
 
 
@@ -328,7 +328,7 @@ static const char* const TheCommandUsableInNames[] =
 	"GAME",
 	"OBSERVER",
 
-	NULL
+	nullptr
 };
 
 // -------------------------------------------------------------------------------
@@ -343,7 +343,7 @@ public:
 	MappableKeyModState			m_modState;				///< the required state of the ctrl-alt-shift keys
 	CommandUsableInType			m_usableIn;				///< the allowed place the command can be used in
 	// Next fields are added for Key mapping Dialog
-	MappableKeyCategories		m_category;				///< This is the catagory the key falls under
+	MappableKeyCategories		m_category;				///< This is the category the key falls under
 	UnicodeString						m_description;		///< The description string for the keys
 	UnicodeString						m_displayName;		///< The display name of our command
 };

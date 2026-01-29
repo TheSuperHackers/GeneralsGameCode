@@ -98,7 +98,7 @@ inline GameFont *FontLibrary::nextFont( GameFont *font )
 {
 	if( font )
 		return font->next;
-	return NULL;
+	return nullptr;
 }
 
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////

@@ -31,22 +31,21 @@
 #define CPP_11(code)
 #define static_assert(expr, msg)
 #define constexpr
+#define noexcept
 #define nullptr 0
 #endif
 
 #if __cplusplus >= 201703L
-#define NOEXCEPT noexcept
 #define REGISTER
 #define FALLTHROUGH [[fallthrough]]
 #else
-#define NOEXCEPT
 #define REGISTER register
 #define FALLTHROUGH
 #endif
 
 // noexcept for methods of IUNKNOWN interface
 #if defined(_MSC_VER)
-#define IUNKNOWN_NOEXCEPT NOEXCEPT
+#define IUNKNOWN_NOEXCEPT noexcept
 #else
 #define IUNKNOWN_NOEXCEPT
 #endif

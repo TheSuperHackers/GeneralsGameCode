@@ -103,7 +103,7 @@ static const char *const ScienceAvailabilityNames[] =
 	"Available",
 	"Disabled",
 	"Hidden",
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(ScienceAvailabilityNames) == SCIENCE_AVAILABILITY_COUNT + 1, "Incorrect array size");
 #endif	// end DEFINE_SCIENCE_AVAILABILITY_NAMES
@@ -159,7 +159,7 @@ public:
 	PlayerRelationMap( void );
 	// virtual destructor provided by memory pool object
 
-	/** @todo I'm jsut wrappign this up in a nice snapshot object, we really should isolate
+	/** @todo I'm just wrapping this up in a nice snapshot object, we really should isolate
 		* m_map from public access and make access methods for our operations */
 	PlayerRelationMapType m_map;
 
@@ -235,7 +235,7 @@ public:
 	Money *getMoney() { return &m_money; }
 	const Money *getMoney() const { return &m_money; }
 
-	UnsignedInt getSupplyBoxValue();///< Many things can affect the alue of a crate, but at heart it is a GlobalData ratio.
+	UnsignedInt getSupplyBoxValue();///< Many things can affect the value of a crate, but at heart it is a GlobalData ratio.
 
 	Energy *getEnergy() { return &m_energy; }
 	const Energy *getEnergy() const { return &m_energy; }
@@ -310,15 +310,15 @@ public:
 	Bool hasPrereqsForScience(ScienceType t) const;
 
 	Bool hasUpgradeComplete( const UpgradeTemplate *upgradeTemplate ) const;		///< does player have totally done and produced upgrade
-	Bool hasUpgradeComplete( UpgradeMaskType testMask ) const;		///< does player have totally done and produced upgrade
-	UpgradeMaskType getCompletedUpgradeMask() const { return m_upgradesCompleted; }	///< get list of upgrades that are completed
+	Bool hasUpgradeComplete( const UpgradeMaskType& testMask ) const;		///< does player have totally done and produced upgrade
+	const UpgradeMaskType& getCompletedUpgradeMask() const { return m_upgradesCompleted; }	///< get list of upgrades that are completed
 	Bool hasUpgradeInProduction( const UpgradeTemplate *upgradeTemplate );		///< does player have this upgrade in progress right now
 	Upgrade *addUpgrade( const UpgradeTemplate *upgradeTemplate,
 											 UpgradeStatusType status );		///< add upgrade, or update existing upgrade status
-	void removeUpgrade( const UpgradeTemplate *upgradeTemplate );	///< remove thsi upgrade from us
+	void removeUpgrade( const UpgradeTemplate *upgradeTemplate );	///< remove this upgrade from us
 
 	/** find upgrade, NOTE, the upgrade may *NOT* be "complete" and therefore "active", it could be in production
-	  This function is for actually retrieving the Upgrade.  To test existance, use the fast bit testers hasUpgradeX()
+	  This function is for actually retrieving the Upgrade.  To test existence, use the fast bit testers hasUpgradeX()
 	*/
 	Upgrade *findUpgrade( const UpgradeTemplate *upgradeTemplate );
 
@@ -443,7 +443,7 @@ public:
 
 	virtual Bool computeSuperweaponTarget(const SpecialPowerTemplate *power, Coord3D *pos, Int playerNdx, Real weaponRadius); ///< Calculates best pos for weapon given radius.
 
-	/// Get the enemy an ai player is currently focused on.  NOTE - Can be NULL.
+	/// Get the enemy an ai player is currently focused on.  NOTE - Can be nullptr.
 	Player  *getCurrentEnemy( void );
 
 	/// Is this player a skirmish ai player?
@@ -458,7 +458,7 @@ public:
 	/// Have the ai check for bridges.
 	virtual void repairStructure(ObjectID structureID);
 
-	/// a structuer was just created, but is under construction
+	/// a structure was just created, but is under construction
 	void onStructureCreated( Object *builder, Object *structure );
 
 	/// a structure that was under construction has become completed
@@ -531,8 +531,8 @@ public:
 	/**
 		return this player's "default" team.
 	*/
-	Team *getDefaultTeam() { DEBUG_ASSERTCRASH(m_defaultTeam!=NULL,("default team is null")); return m_defaultTeam; }
-	const Team *getDefaultTeam() const { DEBUG_ASSERTCRASH(m_defaultTeam!=NULL,("default team is null")); return m_defaultTeam; }
+	Team *getDefaultTeam() { DEBUG_ASSERTCRASH(m_defaultTeam!=nullptr,("default team is null")); return m_defaultTeam; }
+	const Team *getDefaultTeam() const { DEBUG_ASSERTCRASH(m_defaultTeam!=nullptr,("default team is null")); return m_defaultTeam; }
 
 	void setBuildList(BuildListInfo *pBuildList);			///< sets the build list.
 	BuildListInfo *getBuildList( void ) { return m_pBuildList; }		///< returns the build list. (build list might be modified by the solo AI)
@@ -741,7 +741,7 @@ private:
 
 	UnicodeString								m_playerDisplayName;					///< This player's persistent name.
 	Handicap										m_handicap;										///< adjustment to varied capabilities (@todo: is this persistent or recalced each time?)
-	AsciiString									m_playerName;									///< player's itnernal name 9for matching map objects)
+	AsciiString									m_playerName;									///< player's internal name (for matching map objects)
 	NameKeyType									m_playerNameKey;							///< This player's internal name (for matching map objects)
 	PlayerIndex									m_playerIndex;								///< player unique index.
 	AsciiString									m_side;												///< the "side" this player is on
@@ -769,7 +769,7 @@ private:
 	AIPlayer*										m_ai;													///< if PLAYER_COMPUTER, the entity that does the thinking
 	Int													m_mpStartIndex;								///< The player's starting index for multiplayer.
 	ResourceGatheringManager*		m_resourceGatheringManager;		///< Keeps track of all Supply Centers and Warehouses
-	TunnelTracker*							m_tunnelSystem;								///< All TunnelContain buildings use this part of me for actual conatinment
+	TunnelTracker*							m_tunnelSystem;								///< All TunnelContain buildings use this part of me for actual containment
 	Team*												m_defaultTeam;								///< our "default" team.
 
 	ScienceVec						m_sciences;					///< (SAVE) sciences that we know (either intrinsically or via later purchases)

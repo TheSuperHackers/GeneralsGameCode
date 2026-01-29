@@ -58,7 +58,7 @@
 //-------------------------------------------------------------------------------------------------
 
 // the singleton
-ParticleSystemManager *TheParticleSystemManager = NULL;
+ParticleSystemManager *TheParticleSystemManager = nullptr;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -68,9 +68,17 @@ ParticleSystemManager *TheParticleSystemManager = NULL;
 // ------------------------------------------------------------------------------------------------
 ParticleInfo::ParticleInfo( void )
 {
-	m_angleX = m_angleY = m_angleZ = 0.0f;
+#if PARTICLE_USE_XY_ROTATION
+	m_angleX = 0.0f;
+	m_angleY = 0.0f;
+#endif
+	m_angleZ = 0.0f;
+#if PARTICLE_USE_XY_ROTATION
+	m_angularRateX = 0.0f;
+	m_angularRateY = 0.0f;
+#endif
+	m_angularRateZ = 0.0f;
 	m_angularDamping = 0.0f;
-	m_angularRateX = m_angularRateY = m_angularRateZ = 0.0f;
 	m_colorScale =0.0f;
   m_size = 0.0f;
 	m_sizeRate = 0.0f;
@@ -122,13 +130,24 @@ void ParticleInfo::xfer( Xfer *xfer )
 	xfer->xferReal( &m_velDamping );
 
 	// angle
+#if PARTICLE_USE_XY_ROTATION
 	xfer->xferReal( &m_angleX );
 	xfer->xferReal( &m_angleY );
+#else
+	Real tempAngle=0;	//temporary value to save out for backwards compatibility when we supported x,y
+	xfer->xferReal( &tempAngle );
+	xfer->xferReal( &tempAngle );
+#endif
 	xfer->xferReal( &m_angleZ );
 
 	// angular rate
+#if PARTICLE_USE_XY_ROTATION
 	xfer->xferReal( &m_angularRateX );
 	xfer->xferReal( &m_angularRateY );
+#else
+	xfer->xferReal( &tempAngle );
+	xfer->xferReal( &tempAngle );
+#endif
 	xfer->xferReal( &m_angularRateZ );
 
 	// lifetime
@@ -194,32 +213,7 @@ enum
 
 
 //todo move this somewhere more useful.
-// ------------------------------------------------------------------------------------------------
-#if 0
-static Real angleBetween(const Coord2D &vecA, const Coord2D &vecB)
-{
-	Real lengthA = vecA->length();
-	if (lengthA < FLT_EPSILON) {
-		return 0.0f;
-	}
-
-	Real lengthB = vecB->length();
-	if (lengthB < FLT_EPSILON) {
-		return 0.0f;
-	}
-
-	Real dotProduct = (vecA->x * vecB->x + vecA->y * vecB->y);
-
-	// If the dotproduct is 0.0, then they are orthogonal
-	if (dotProduct < FLT_EPSILON && dotProduct > -FLT_EPSILON) {
-		return vecB->x > 0.0f ? PI : 0.0f;
-	}
-
-	Real cosTheta = dotProduct / (lengthA * lengthB);
-	Real theta = ACos(cosTheta);
-	return vecB->x > 0.0f ? theta : -theta;
-}
-#endif
+static Real angleBetween(const Coord2D *vecA, const Coord2D *vecB);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Particle ///////////////////////////////////////////////////////////////////////////////////////
@@ -281,8 +275,10 @@ Particle::Particle( ParticleSystem *system, const ParticleInfo *info )
 	m_vel = info->m_vel;
 	m_pos = info->m_pos;
 
+#if PARTICLE_USE_XY_ROTATION
 	m_angleX = info->m_angleX;
 	m_angleY = info->m_angleY;
+#endif
 	m_angleZ = info->m_angleZ;
 
 	m_lastPos.zero();
@@ -290,9 +286,10 @@ Particle::Particle( ParticleSystem *system, const ParticleInfo *info )
 	m_particleUpTowardsEmitter = info->m_particleUpTowardsEmitter;
 	m_emitterPos = info->m_emitterPos;
 
-
+#if PARTICLE_USE_XY_ROTATION
 	m_angularRateX = info->m_angularRateX;
 	m_angularRateY = info->m_angularRateY;
+#endif
 	m_angularRateZ = info->m_angularRateZ;
 	m_angularDamping = info->m_angularDamping;
 
@@ -326,20 +323,8 @@ Particle::Particle( ParticleSystem *system, const ParticleInfo *info )
 
 	m_colorScale = info->m_colorScale;
 
-	if (system->isUsingDrawables())
-	{
-		const ThingTemplate *tmpl = TheThingFactory->findTemplate(system->getParticleTypeName());
-		DEBUG_ASSERTCRASH(tmpl, ("Drawable %s not found",system->getParticleTypeName().str()));
-		if (tmpl)
-		{
-			m_drawable = TheThingFactory->newDrawable(tmpl);
-			if (m_drawable)
-				m_drawable->attachToParticleSystem( this );
-		}
-	}
-
 	m_inSystemList = m_inOverallList = FALSE;
-	m_systemPrev = m_systemNext = m_overallPrev = m_overallNext = NULL;
+	m_systemPrev = m_systemNext = m_overallPrev = m_overallNext = nullptr;
 
 	// add this particle to the global list, retaining particle creation order
 	TheParticleSystemManager->addParticle(this, system->getPriority() );
@@ -358,17 +343,13 @@ Particle::~Particle()
 	// tell the particle system that this particle is gone
 	m_system->removeParticle( this );
 
-	if (m_drawable)
-		TheGameClient->destroyDrawable( m_drawable );
-	m_drawable = NULL;
-
 	// if this particle was controlling another particle system, destroy that system
 	if (m_systemUnderControl)
 	{
 		m_systemUnderControl->detachControlParticle( this );
 		m_systemUnderControl->destroy();
 	}
-	m_systemUnderControl = NULL;
+	m_systemUnderControl = nullptr;
 
 	// remove from the global list
 	TheParticleSystemManager->removeParticle(this);
@@ -407,37 +388,31 @@ Bool Particle::update( void )
 	m_pos.z += m_vel.z + driftVel->z;
 
 	// integrate the wind (if specified) into position
-	doWindMotion();
+	ParticleSystemInfo::WindMotion windMotion = m_system->getWindMotion();
+
+	// see if we should even do anything
+	if( windMotion != ParticleSystemInfo::WIND_MOTION_NOT_USED )
+		doWindMotion();
 
 	// update orientation
+#if PARTICLE_USE_XY_ROTATION
 	m_angleX += m_angularRateX;
 	m_angleY += m_angularRateY;
+#endif
 	m_angleZ += m_angularRateZ;
+#if PARTICLE_USE_XY_ROTATION
 	m_angularRateX *= m_angularDamping;
 	m_angularRateY *= m_angularDamping;
+#endif
 	m_angularRateZ *= m_angularDamping;
 
 	if (m_particleUpTowardsEmitter) {
 		// adjust the up position back towards the particle
+		static const Coord2D upVec = { 0.0f, 1.0f };
 		Coord2D emitterDir;
 		emitterDir.x = m_pos.x - m_emitterPos.x;
 		emitterDir.y = m_pos.y - m_emitterPos.y;
-#if 0
-		static const Coord2D upVec = { 0.0f, 1.0f };
-		m_angleZ = angleBetween(upVec, emitterDir) + PI;
-#else
-		if (emitterDir.y < FLT_EPSILON && emitterDir.y > -FLT_EPSILON) {
-			m_angleZ = emitterDir.x > 0.0f ? PI + PI : PI;
-		} else {
-			Real emitterDirLength = emitterDir.length();
-			if (emitterDirLength < FLT_EPSILON) {
-				m_angleZ = PI;
-			} else {
-				Real theta = ACos(emitterDir.y/emitterDirLength);
-				m_angleZ = emitterDir.x > 0.0f ? PI + theta : PI - theta;
-			}
-		}
-#endif
+		m_angleZ = (angleBetween(&upVec, &emitterDir) + PI);
 	}
 
 	// update size
@@ -445,26 +420,30 @@ Bool Particle::update( void )
 	m_sizeRate *= m_sizeRateDamping;
 
 	//
-	// Update alpha
+	// Update alpha (if used)
 	//
-	m_alpha += m_alphaRate;
 
-	if (m_alphaTargetKey < MAX_KEYFRAMES && m_alphaKey[ m_alphaTargetKey ].frame)
+	if (m_system->getShaderType() != ParticleSystemInfo::ADDITIVE)
 	{
-		if (TheGameClient->getFrame() - m_createTimestamp >= m_alphaKey[ m_alphaTargetKey ].frame)
-		{
-			m_alpha = m_alphaKey[ m_alphaTargetKey ].value;
-			m_alphaTargetKey++;
-			computeAlphaRate();
-		}
-	}
-	else
-		m_alphaRate = 0.0f;
+		m_alpha += m_alphaRate;
 
-	if (m_alpha < 0.0f)
-		m_alpha = 0.0f;
-	else if (m_alpha > 1.0f)
-		m_alpha = 1.0f;
+		if (m_alphaTargetKey < MAX_KEYFRAMES && m_alphaKey[ m_alphaTargetKey ].frame)
+		{
+			if (TheGameClient->getFrame() - m_createTimestamp >= m_alphaKey[ m_alphaTargetKey ].frame)
+			{
+				m_alpha = m_alphaKey[ m_alphaTargetKey ].value;
+				m_alphaTargetKey++;
+				computeAlphaRate();
+			}
+		}
+		else
+			m_alphaRate = 0.0f;
+
+		if (m_alpha < 0.0f)
+			m_alpha = 0.0f;
+		else if (m_alpha > 1.0f)
+			m_alpha = 1.0f;
+	}
 
 
 	//
@@ -517,17 +496,6 @@ Bool Particle::update( void )
 	m_accel.y = 0.0f;
 	m_accel.z = 0.0f;
 
-	if (m_drawable)
-	{
-		Matrix3D rot;
-		rot.Make_Identity();
-		rot.Rotate_X( m_angleX );
-		rot.Rotate_Y( m_angleY );
-		rot.Rotate_Z( m_angleZ );
-		m_drawable->setInstanceMatrix( &rot );
-		m_drawable->setPosition( &m_pos );
-	}
-
 	// monitor lifetime
 	if (m_lifetimeLeft && --m_lifetimeLeft == 0)
 		return false;
@@ -545,11 +513,6 @@ Bool Particle::update( void )
 // ------------------------------------------------------------------------------------------------
 void Particle::doWindMotion( void )
 {
-	ParticleSystemInfo::WindMotion windMotion = m_system->getWindMotion();
-
-	// see if we should even do anything
-	if( windMotion == ParticleSystemInfo::WIND_MOTION_NOT_USED )
-		return;
 
 	// get the angle of the wind
 	Real windAngle = m_system->getWindAngle();
@@ -619,7 +582,7 @@ void Particle::doWindMotion( void )
 			windForceStrength *= (1.0f - ((distFromWind - fullForceDistance) /
 																		(noForceDistance - fullForceDistance)));
 
-		// integate the wind motion into the position
+		// integrate the wind motion into the position
 		m_pos.x += (Cos( windAngle ) * windForceStrength);
 		m_pos.y += (Sin( windAngle ) * windForceStrength);
 
@@ -640,11 +603,6 @@ ParticlePriorityType Particle::getPriority( void )
 // ------------------------------------------------------------------------------------------------
 Bool Particle::isInvisible( void )
 {
-	// Drawables are never invisible (yet)
-	/// @todo Allow Drawables to fade via alpha (MSB)
-	if (m_drawable)
-		return false;
-
 	switch (m_system->getShaderType())
 	{
 		case ParticleSystemInfo::ADDITIVE:
@@ -742,31 +700,8 @@ void Particle::xfer( Xfer *xfer )
 	xfer->xferInt( &m_colorTargetKey );
 
 	// drawable
-	DrawableID drawableID = m_drawable ? m_drawable->getID() : INVALID_DRAWABLE_ID;
-	xfer->xferDrawableID( &drawableID );
-	if( xfer->getXferMode() == XFER_LOAD && drawableID != INVALID_DRAWABLE_ID )
-	{
-
-		//
-		// save drawable pointer, note that this xfer block is after all the drawable stuff
-		// so we don't need to post process anything all the correct drawables are loaded
-		// and available to us
-		//
-		m_drawable = TheGameClient->findDrawableByID( drawableID );
-
-		// sanity
-		if( m_drawable == NULL )
-		{
-
-			DEBUG_CRASH(( "Particle::xfer - Unable to find matching drawable id for particle" ));
-			throw SC_INVALID_DATA;
-
-		}
-
-		// set the particle pointer in the drawable
-		m_drawable->friend_setParticle( this );
-
-	}
+	DrawableID drawableID = INVALID_DRAWABLE_ID;
+	xfer->xferDrawableID( &drawableID );	//saving for backwards compatibility when we supported drawables.
 
 	// system under control as an id
 	ParticleSystemID systemUnderControlID = m_systemUnderControl ? m_systemUnderControl->getSystemID() : INVALID_PARTICLE_SYSTEM_ID;
@@ -796,7 +731,7 @@ void Particle::loadPostProcess( void )
 		controlParticleSystem( system );
 
 		// sanity
-		if( m_systemUnderControlID == NULL )
+		if( m_systemUnderControlID == INVALID_PARTICLE_SYSTEM_ID )
 		{
 
 			DEBUG_CRASH(( "Particle::loadPostProcess - Unable to find system under control pointer" ));
@@ -896,13 +831,24 @@ void ParticleSystemInfo::xfer( Xfer *xfer )
 	xfer->xferAsciiString( &m_particleTypeName );
 
 	// angles
+#if PARTICLE_USE_XY_ROTATION
 	xfer->xferUser( &m_angleX, sizeof( GameClientRandomVariable ) );
 	xfer->xferUser( &m_angleY, sizeof( GameClientRandomVariable ) );
+#else
+	GameClientRandomVariable	tempRandom;	//for backwards compatibility when we supported x,y
+	xfer->xferUser( &tempRandom, sizeof( GameClientRandomVariable ) );
+	xfer->xferUser( &tempRandom, sizeof( GameClientRandomVariable ) );
+#endif
 	xfer->xferUser( &m_angleZ, sizeof( GameClientRandomVariable ) );
 
 	// angular rate
+#if PARTICLE_USE_XY_ROTATION
 	xfer->xferUser( &m_angularRateX, sizeof( GameClientRandomVariable ) );
 	xfer->xferUser( &m_angularRateY, sizeof( GameClientRandomVariable ) );
+#else
+	xfer->xferUser( &tempRandom, sizeof( GameClientRandomVariable ) );
+	xfer->xferUser( &tempRandom, sizeof( GameClientRandomVariable ) );
+#endif
 	xfer->xferUser( &m_angularRateZ, sizeof( GameClientRandomVariable ) );
 
 	// angular damping
@@ -1120,7 +1066,7 @@ ParticleSystem::ParticleSystem( const ParticleSystemTemplate *sysTemplate,
 																ParticleSystemID id,
 																Bool createSlaves )
 {
-	m_systemParticlesHead = m_systemParticlesTail = NULL;
+	m_systemParticlesHead = m_systemParticlesTail = nullptr;
 
 	m_isFirstPos = true;
 	m_template = sysTemplate;
@@ -1138,6 +1084,7 @@ ParticleSystem::ParticleSystem( const ParticleSystemTemplate *sysTemplate,
 
 	m_isIdentity = true;
 	m_transform.Make_Identity();
+	m_skipParentXfrm = false;
 
 	m_isStopped = false;
 	m_isDestroyed = false;
@@ -1199,11 +1146,15 @@ ParticleSystem::ParticleSystem( const ParticleSystemTemplate *sysTemplate,
 
 	m_velDamping = sysTemplate->m_velDamping;
 
+#if PARTICLE_USE_XY_ROTATION
 	m_angleX = sysTemplate->m_angleX;
 	m_angleY = sysTemplate->m_angleY;
+#endif
 	m_angleZ = sysTemplate->m_angleZ;
+#if PARTICLE_USE_XY_ROTATION
 	m_angularRateX = sysTemplate->m_angularRateX;
 	m_angularRateY = sysTemplate->m_angularRateY;
+#endif
 	m_angularRateZ = sysTemplate->m_angularRateZ;
 	m_angularDamping = sysTemplate->m_angularDamping;
 
@@ -1243,8 +1194,8 @@ ParticleSystem::ParticleSystem( const ParticleSystemTemplate *sysTemplate,
 	// set up slave particle system, if any
 	m_masterSystemID = INVALID_PARTICLE_SYSTEM_ID;
 	m_slaveSystemID = INVALID_PARTICLE_SYSTEM_ID;
-	m_masterSystem = NULL;
-	m_slaveSystem = NULL;
+	m_masterSystem = nullptr;
+	m_slaveSystem = nullptr;
 	if( createSlaves )
 	{
 		ParticleSystem *slaveSystem = sysTemplate->createSlaveSystem();
@@ -1262,7 +1213,7 @@ ParticleSystem::ParticleSystem( const ParticleSystemTemplate *sysTemplate,
 	m_attachedSystemName = sysTemplate->m_attachedSystemName;
 	m_particleCount = 0;
 	m_personalityStore = 0;
-	m_controlParticle = NULL;
+	m_controlParticle = nullptr;
 
 	TheParticleSystemManager->friend_addParticleSystem(this);
 
@@ -1280,8 +1231,8 @@ ParticleSystem::~ParticleSystem()
 	{
 
 		DEBUG_ASSERTCRASH( m_slaveSystem->getMaster() == this, ("~ParticleSystem: Our slave doesn't have us as a master!") );
-		m_slaveSystem->setMaster( NULL );
-		setSlave( NULL );
+		m_slaveSystem->setMaster( nullptr );
+		setSlave( nullptr );
 
 	}
 
@@ -1290,8 +1241,8 @@ ParticleSystem::~ParticleSystem()
 	{
 
 		DEBUG_ASSERTCRASH( m_masterSystem->getSlave() == this, ("~ParticleSystem: Our master doesn't have us as a slave!") );
-		m_masterSystem->setSlave( NULL );
-		setMaster( NULL );
+		m_masterSystem->setSlave( nullptr );
+		setMaster( nullptr );
 
 	}
 
@@ -1307,7 +1258,7 @@ ParticleSystem::~ParticleSystem()
 	if (m_controlParticle)
 		m_controlParticle->detachControlledParticleSystem();
 
-	m_controlParticle = NULL;
+	m_controlParticle = nullptr;
 
 	TheParticleSystemManager->friend_removeParticleSystem(this);
 	//DEBUG_ASSERTLOG(!(m_totalParticleSystemCount % 10 == 0), ( "TotalParticleSystemCount = %d", m_totalParticleSystemCount ));
@@ -1773,7 +1724,7 @@ Particle *ParticleSystem::createParticle( const ParticleInfo *info,
 	{
 
 		if (TheGlobalData->m_useFX == FALSE)
-			return NULL;
+			return nullptr;
 
 		//
 		// Enforce particle limit.
@@ -1789,10 +1740,10 @@ Particle *ParticleSystem::createParticle( const ParticleInfo *info,
 		if( priority < TheGameLODManager->getMinDynamicParticlePriority() ||
 				(priority < TheGameLODManager->getMinDynamicParticleSkipPriority() &&
 				 TheGameLODManager->isParticleSkipped()) )
-			return NULL;
+			return nullptr;
 
 		if ( getParticleCount() > 0 && priority == AREA_EFFECT && m_isGroundAligned && TheParticleSystemManager->getFieldParticleCount() > (UnsignedInt)TheGlobalData->m_maxFieldParticleCount )
-			return NULL;
+			return nullptr;
 
 		// ALWAYS_RENDER particles are exempt from all count limits, and are always created, regardless of LOD issues.
 		if (priority != ALWAYS_RENDER)
@@ -1801,11 +1752,11 @@ Particle *ParticleSystem::createParticle( const ParticleInfo *info,
 			if ( numInExcess > 0)
 			{
 				if( TheParticleSystemManager->removeOldestParticles((UnsignedInt) numInExcess, priority) != numInExcess )
-					return NULL;  // could not remove enough particles, don't create new stuff
+					return nullptr;  // could not remove enough particles, don't create new stuff
 			}
 
 			if (TheGlobalData->m_maxParticleCount == 0)
-				return NULL;
+				return nullptr;
 		}
 
 	}
@@ -1883,11 +1834,15 @@ const ParticleInfo *ParticleSystem::generateParticleInfo( Int particleNum, Int p
 	info.m_velDamping = m_velDamping.getValue();
 	info.m_angularDamping = m_angularDamping.getValue();
 
+#if PARTICLE_USE_XY_ROTATION
 	info.m_angleX = m_angleX.getValue();
 	info.m_angleY = m_angleY.getValue();
+#endif
 	info.m_angleZ = m_angleZ.getValue();
+#if PARTICLE_USE_XY_ROTATION
 	info.m_angularRateX = m_angularRateX.getValue();
 	info.m_angularRateY = m_angularRateY.getValue();
+#endif
 	info.m_angularRateZ = m_angularRateZ.getValue();
 
 	info.m_lifetime = (UnsignedInt)m_lifetime.getValue();
@@ -1902,11 +1857,11 @@ const ParticleInfo *ParticleSystem::generateParticleInfo( Int particleNum, Int p
 	if( m_accumulatedSizeBonus )
 		m_accumulatedSizeBonus = min( m_accumulatedSizeBonus, (float)MAX_SIZE_BONUS );
 
-	int i=0;
-	for( ; i<MAX_KEYFRAMES; i++ )
+	for( int i=0; i<MAX_KEYFRAMES; i++ )
 	{
 		info.m_alphaKey[i].value = m_alphaKey[i].var.getValue();
 		info.m_alphaKey[i].frame = m_alphaKey[i].frame;
+		info.m_colorKey[i] = m_colorKey[i];
 	}
 
 /*
@@ -1914,11 +1869,6 @@ const ParticleInfo *ParticleSystem::generateParticleInfo( Int particleNum, Int p
 	info.m_color.green = m_color.green.getValue();
 	info.m_color.blue = m_color.blue.getValue();
 */
-
-	for( i=0; i<MAX_KEYFRAMES; i++ )
-	{
-		info.m_colorKey[i] = m_colorKey[i];
-	}
 
 	info.m_colorScale = m_colorScale.getValue();
 #ifdef ALLOW_TEMPORARIES
@@ -1959,13 +1909,14 @@ Bool ParticleSystem::update( Int localPlayerIndex  )
 	}
 
 	// update the wind motion
-	updateWindMotion();
+	if (m_windMotion != ParticleSystemInfo::WIND_MOTION_NOT_USED )
+		updateWindMotion();
 
 	// if this system is attached to a Drawable/Object, update the current transform
 	// matrix so generated particles' are relative to the parent Drawable's
 	// position and orientation
 	Bool transformSet = false;
-	const Matrix3D *parentXfrm = NULL;
+	const Matrix3D *parentXfrm = nullptr;
 	Bool isShrouded = false;
 
 	if (m_attachedToDrawableID)
@@ -1990,19 +1941,23 @@ Bool ParticleSystem::update( Int localPlayerIndex  )
 			destroy();
 		}
 	}
-
-	if (m_attachedToObjectID)
+	else if (m_attachedToObjectID)
 	{
-		Object *attachedTo = TheGameLogic->findObjectByID( m_attachedToObjectID );
+		Object *objectAttachedTo = TheGameLogic->findObjectByID( m_attachedToObjectID );
 
-		if (attachedTo)
+		if (objectAttachedTo)
 		{
 			if (!isShrouded)
-				isShrouded = (attachedTo->getShroudedStatus(localPlayerIndex) >= OBJECTSHROUD_FOGGED);
+				isShrouded = (objectAttachedTo->getShroudedStatus(localPlayerIndex) >= OBJECTSHROUD_FOGGED);
 
-			parentXfrm = attachedTo->getTransformMatrix();
+			const Drawable * draw = objectAttachedTo->getDrawable();
+			if ( draw )
+				parentXfrm = draw->getTransformMatrix();
+			else
+				parentXfrm = objectAttachedTo->getTransformMatrix();
+
 			m_lastPos = m_pos;
-			m_pos = *attachedTo->getPosition();
+			m_pos = *objectAttachedTo->getPosition();
 		}
 		else
 		{
@@ -2016,15 +1971,23 @@ Bool ParticleSystem::update( Int localPlayerIndex  )
 
 	if (parentXfrm)
 	{
-		// if system has its own local transform, concatenate them
-		if (m_isLocalIdentity == false)
-#ifdef ALLOW_TEMPORARIES
-			m_transform = (*parentXfrm) * m_localTransform;
-#else
-			m_transform.mul(*parentXfrm, m_localTransform);
-#endif
+		if (m_skipParentXfrm)
+		{
+			//this particle system is already in world space so no need to apply parent xform.
+			m_transform = m_localTransform;
+		}
 		else
-			m_transform = *parentXfrm;
+		{
+			// if system has its own local transform, concatenate them
+			if (m_isLocalIdentity == false)
+	#ifdef ALLOW_TEMPORARIES
+				m_transform = (*parentXfrm) * m_localTransform;
+	#else
+				m_transform.mul(*parentXfrm, m_localTransform);
+	#endif
+			else
+				m_transform = *parentXfrm;
+		}
 
 		m_isIdentity = false;
 		transformSet = true;
@@ -2066,7 +2029,7 @@ Bool ParticleSystem::update( Int localPlayerIndex  )
 	{
 		if (m_isForever || (m_isForever == false && m_systemLifetimeLeft > 0))
 		{
-			if (!isShrouded && m_isStopped == false && m_masterSystem == NULL)
+			if (!isShrouded && m_isStopped == false && m_masterSystem == nullptr)
 			{
 				if (m_burstDelayLeft == 0)
 				{
@@ -2085,7 +2048,7 @@ Bool ParticleSystem::update( Int localPlayerIndex  )
 						{
 							// actually create a particle
 							Particle *p = createParticle( info, priority );
-							if (p == NULL)
+							if (p == nullptr)
 								continue;
 
 							if (m_attachedSystemName.isEmpty() == false)
@@ -2284,7 +2247,7 @@ void ParticleSystem::updateWindMotion( void )
 		case ParticleSystemInfo::WIND_MOTION_CIRCULAR:
 		{
 
-			// give us a wind angle change if one hasn't been specifed (this plays nice with the particle editor)
+			// give us a wind angle change if one hasn't been specified (this plays nice with the particle editor)
 			if( m_windAngleChange == 0.0f )
 				m_windAngleChange = GameClientRandomValueReal( m_windAngleChangeMin, m_windAngleChangeMax );
 
@@ -2332,11 +2295,11 @@ void ParticleSystem::addParticle( Particle *particleToAdd )
 	}
 	else
 	{
-		particleToAdd->m_systemPrev = NULL;
+		particleToAdd->m_systemPrev = nullptr;
 	}
 
 	m_systemParticlesTail = particleToAdd;
-	particleToAdd->m_systemNext = NULL;
+	particleToAdd->m_systemNext = nullptr;
 	particleToAdd->m_inSystemList = TRUE;
 
 	++m_particleCount;
@@ -2359,13 +2322,13 @@ void ParticleSystem::removeParticle( Particle *particleToRemove )
 	if (particleToRemove->m_systemPrev)
 		particleToRemove->m_systemPrev->m_systemNext = particleToRemove->m_systemNext;
 
-	// update head & tail if neccessary
+	// update head & tail if necessary
 	if (particleToRemove == m_systemParticlesHead)
 		m_systemParticlesHead = particleToRemove->m_systemNext;
 	if (particleToRemove == m_systemParticlesTail)
 		m_systemParticlesTail = particleToRemove->m_systemPrev;
 
-	particleToRemove->m_systemNext = particleToRemove->m_systemPrev = NULL;
+	particleToRemove->m_systemNext = particleToRemove->m_systemPrev = nullptr;
 	particleToRemove->m_inSystemList = FALSE;
 	--m_particleCount;
 }
@@ -2375,7 +2338,7 @@ void ParticleSystem::removeParticle( Particle *particleToRemove )
 ParticleInfo ParticleSystem::mergeRelatedParticleSystems( ParticleSystem *masterParticleSystem, ParticleSystem *slaveParticleSystem, Bool slaveNeedsFullPromotion)
 {
 	if (!masterParticleSystem || !slaveParticleSystem) {
-		DEBUG_CRASH(("masterParticleSystem or slaveParticleSystem was NULL. Should not happen. JKMCD"));
+		DEBUG_CRASH(("masterParticleSystem or slaveParticleSystem was null. Should not happen. JKMCD"));
 		ParticleInfo bogus;
 		return bogus;
 	}
@@ -2394,11 +2357,15 @@ ParticleInfo ParticleSystem::mergeRelatedParticleSystems( ParticleSystem *master
 	mergeInfo.m_sizeRate *= info->m_sizeRate;
 	mergeInfo.m_sizeRateDamping *= info->m_sizeRateDamping;
 
+#if PARTICLE_USE_XY_ROTATION
 	mergeInfo.m_angleX = info->m_angleX;
 	mergeInfo.m_angleY = info->m_angleY;
+#endif
 	mergeInfo.m_angleZ = info->m_angleZ;
+#if PARTICLE_USE_XY_ROTATION
 	mergeInfo.m_angularRateX = info->m_angularRateX;
 	mergeInfo.m_angularRateY = info->m_angularRateY;
+#endif
 	mergeInfo.m_angularRateZ = info->m_angularRateZ;
 	mergeInfo.m_angularDamping = info->m_angularDamping;
 
@@ -2599,7 +2566,7 @@ void ParticleSystem::xfer( Xfer *xfer )
 			particle = createParticle( info, priority, TRUE );
 
 			// sanity
-			DEBUG_ASSERTCRASH( particle, ("ParticleSyste::xfer - Unable to create particle for loading") );
+			DEBUG_ASSERTCRASH( particle, ("ParticleSystem::xfer - Unable to create particle for loading") );
 
 			// read in the particle data
 			xfer->xferSnapshot( particle );
@@ -2624,10 +2591,10 @@ void ParticleSystem::loadPostProcess( void )
 	{
 
 		// sanity
-		if( m_slaveSystem != NULL )
+		if( m_slaveSystem != nullptr )
 		{
 
-			DEBUG_CRASH(( "ParticleSystem::loadPostProcess - m_slaveSystem is not NULL but should be" ));
+			DEBUG_CRASH(( "ParticleSystem::loadPostProcess - m_slaveSystem is not null but should be" ));
 			throw SC_INVALID_DATA;
 
 		}
@@ -2636,10 +2603,10 @@ void ParticleSystem::loadPostProcess( void )
 		m_slaveSystem = TheParticleSystemManager->findParticleSystem( m_slaveSystemID );
 
 		// sanity
-		if( m_slaveSystem == NULL || m_slaveSystem->isDestroyed() == TRUE )
+		if( m_slaveSystem == nullptr || m_slaveSystem->isDestroyed() == TRUE )
 		{
 
-			DEBUG_CRASH(( "ParticleSystem::loadPostProcess - m_slaveSystem is NULL or destroyed" ));
+			DEBUG_CRASH(( "ParticleSystem::loadPostProcess - m_slaveSystem is null or destroyed" ));
 			throw SC_INVALID_DATA;
 
 		}
@@ -2651,10 +2618,10 @@ void ParticleSystem::loadPostProcess( void )
 	{
 
 		// sanity
-		if( m_masterSystem != NULL )
+		if( m_masterSystem != nullptr )
 		{
 
-			DEBUG_CRASH(( "ParticleSystem::loadPostProcess - m_masterSystem is not NULL but should be" ));
+			DEBUG_CRASH(( "ParticleSystem::loadPostProcess - m_masterSystem is not null but should be" ));
 			throw SC_INVALID_DATA;
 
 		}
@@ -2663,10 +2630,10 @@ void ParticleSystem::loadPostProcess( void )
 		m_masterSystem = TheParticleSystemManager->findParticleSystem( m_masterSystemID );
 
 		// sanity
-		if( m_masterSystem == NULL || m_masterSystem->isDestroyed() == TRUE )
+		if( m_masterSystem == nullptr || m_masterSystem->isDestroyed() == TRUE )
 		{
 
-			DEBUG_CRASH(( "ParticleSystem::loadPostProcess - m_masterSystem is NULL or destroyed" ));
+			DEBUG_CRASH(( "ParticleSystem::loadPostProcess - m_masterSystem is null or destroyed" ));
 			throw SC_INVALID_DATA;
 
 		}
@@ -2685,102 +2652,106 @@ void ParticleSystem::loadPostProcess( void )
 const FieldParse ParticleSystemTemplate::m_fieldParseTable[] =
 {
 	{ "Priority",								INI::parseIndexList, ParticlePriorityNames, offsetof( ParticleSystemTemplate, m_priority ) },
-	{ "IsOneShot",							INI::parseBool,						NULL,		offsetof( ParticleSystemTemplate, m_isOneShot ) },
+	{ "IsOneShot",							INI::parseBool,						nullptr,		offsetof( ParticleSystemTemplate, m_isOneShot ) },
 	{ "Shader",									INI::parseIndexList,			ParticleShaderTypeNames,		offsetof( ParticleSystemTemplate, m_shaderType ) },
 	{ "Type",										INI::parseIndexList,			ParticleTypeNames,		offsetof( ParticleSystemTemplate, m_particleType ) },
-	{ "ParticleName",						INI::parseAsciiString,		NULL,		offsetof( ParticleSystemTemplate, m_particleTypeName ) },
-	{ "AngleX",									INI::parseGameClientRandomVariable,	NULL,		offsetof( ParticleSystemTemplate, m_angleX ) },
-	{ "AngleY",									INI::parseGameClientRandomVariable,	NULL,		offsetof( ParticleSystemTemplate, m_angleY ) },
-	{ "AngleZ",									INI::parseGameClientRandomVariable,	NULL,		offsetof( ParticleSystemTemplate, m_angleZ ) },
-	{ "AngularRateX",						INI::parseGameClientRandomVariable,	NULL,		offsetof( ParticleSystemTemplate, m_angularRateX ) },
-	{ "AngularRateY",						INI::parseGameClientRandomVariable,	NULL,		offsetof( ParticleSystemTemplate, m_angularRateY ) },
-	{ "AngularRateZ",						INI::parseGameClientRandomVariable,	NULL,		offsetof( ParticleSystemTemplate, m_angularRateZ ) },
-	{ "AngularDamping",					INI::parseGameClientRandomVariable,	NULL,		offsetof( ParticleSystemTemplate, m_angularDamping ) },
+	{ "ParticleName",						INI::parseAsciiString,		nullptr,		offsetof( ParticleSystemTemplate, m_particleTypeName ) },
+#if PARTICLE_USE_XY_ROTATION
+	{ "AngleX",									INI::parseGameClientRandomVariable,	nullptr,		offsetof( ParticleSystemTemplate, m_angleX ) },
+	{ "AngleY",									INI::parseGameClientRandomVariable,	nullptr,		offsetof( ParticleSystemTemplate, m_angleY ) },
+#endif
+	{ "AngleZ",									INI::parseGameClientRandomVariable,	nullptr,		offsetof( ParticleSystemTemplate, m_angleZ ) },
+#if PARTICLE_USE_XY_ROTATION
+	{ "AngularRateX",						INI::parseGameClientRandomVariable,	nullptr,		offsetof( ParticleSystemTemplate, m_angularRateX ) },
+	{ "AngularRateY",						INI::parseGameClientRandomVariable,	nullptr,		offsetof( ParticleSystemTemplate, m_angularRateY ) },
+#endif
+	{ "AngularRateZ",						INI::parseGameClientRandomVariable,	nullptr,		offsetof( ParticleSystemTemplate, m_angularRateZ ) },
+	{ "AngularDamping",					INI::parseGameClientRandomVariable,	nullptr,		offsetof( ParticleSystemTemplate, m_angularDamping ) },
 
-	{ "VelocityDamping",				INI::parseGameClientRandomVariable,	NULL,		offsetof( ParticleSystemTemplate, m_velDamping ) },
-	{ "Gravity",								INI::parseReal,																NULL,		offsetof( ParticleSystemTemplate, m_gravity ) },
-	{ "SlaveSystem",						INI::parseAsciiString,												NULL,		offsetof( ParticleSystemTemplate, m_slaveSystemName ) },
-	{ "SlavePosOffset",					INI::parseCoord3D,														NULL,		offsetof( ParticleSystemTemplate, m_slavePosOffset ) },
-	{ "PerParticleAttachedSystem",		INI::parseAsciiString,								NULL,		offsetof( ParticleSystemTemplate, m_attachedSystemName ) },
+	{ "VelocityDamping",				INI::parseGameClientRandomVariable,	nullptr,		offsetof( ParticleSystemTemplate, m_velDamping ) },
+	{ "Gravity",								INI::parseReal,																nullptr,		offsetof( ParticleSystemTemplate, m_gravity ) },
+	{ "SlaveSystem",						INI::parseAsciiString,												nullptr,		offsetof( ParticleSystemTemplate, m_slaveSystemName ) },
+	{ "SlavePosOffset",					INI::parseCoord3D,														nullptr,		offsetof( ParticleSystemTemplate, m_slavePosOffset ) },
+	{ "PerParticleAttachedSystem",		INI::parseAsciiString,								nullptr,		offsetof( ParticleSystemTemplate, m_attachedSystemName ) },
 
-	{ "Lifetime",								INI::parseGameClientRandomVariable,	NULL,		offsetof( ParticleSystemTemplate, m_lifetime ) },
-	{ "SystemLifetime",					INI::parseUnsignedInt,												NULL,		offsetof( ParticleSystemTemplate, m_systemLifetime ) },
+	{ "Lifetime",								INI::parseGameClientRandomVariable,	nullptr,		offsetof( ParticleSystemTemplate, m_lifetime ) },
+	{ "SystemLifetime",					INI::parseUnsignedInt,												nullptr,		offsetof( ParticleSystemTemplate, m_systemLifetime ) },
 
-	{ "Size",										INI::parseGameClientRandomVariable,	NULL,		offsetof( ParticleSystemTemplate, m_startSize ) },
-	{ "StartSizeRate",					INI::parseGameClientRandomVariable,	NULL,		offsetof( ParticleSystemTemplate, m_startSizeRate ) },
-	{ "SizeRate",								INI::parseGameClientRandomVariable,	NULL,		offsetof( ParticleSystemTemplate, m_sizeRate ) },
-	{ "SizeRateDamping",				INI::parseGameClientRandomVariable,	NULL,		offsetof( ParticleSystemTemplate, m_sizeRateDamping ) },
+	{ "Size",										INI::parseGameClientRandomVariable,	nullptr,		offsetof( ParticleSystemTemplate, m_startSize ) },
+	{ "StartSizeRate",					INI::parseGameClientRandomVariable,	nullptr,		offsetof( ParticleSystemTemplate, m_startSizeRate ) },
+	{ "SizeRate",								INI::parseGameClientRandomVariable,	nullptr,		offsetof( ParticleSystemTemplate, m_sizeRate ) },
+	{ "SizeRateDamping",				INI::parseGameClientRandomVariable,	nullptr,		offsetof( ParticleSystemTemplate, m_sizeRateDamping ) },
 
-	{ "Alpha1",									ParticleSystemTemplate::parseRandomKeyframe,	NULL,		offsetof( ParticleSystemTemplate, m_alphaKey[0] ) },
-	{ "Alpha2",									ParticleSystemTemplate::parseRandomKeyframe,	NULL,		offsetof( ParticleSystemTemplate, m_alphaKey[1] ) },
-	{ "Alpha3",									ParticleSystemTemplate::parseRandomKeyframe,	NULL,		offsetof( ParticleSystemTemplate, m_alphaKey[2] ) },
-	{ "Alpha4",									ParticleSystemTemplate::parseRandomKeyframe,	NULL,		offsetof( ParticleSystemTemplate, m_alphaKey[3] ) },
-	{ "Alpha5",									ParticleSystemTemplate::parseRandomKeyframe,	NULL,		offsetof( ParticleSystemTemplate, m_alphaKey[4] ) },
-	{ "Alpha6",									ParticleSystemTemplate::parseRandomKeyframe,	NULL,		offsetof( ParticleSystemTemplate, m_alphaKey[5] ) },
-	{ "Alpha7",									ParticleSystemTemplate::parseRandomKeyframe,	NULL,		offsetof( ParticleSystemTemplate, m_alphaKey[6] ) },
-	{ "Alpha8",									ParticleSystemTemplate::parseRandomKeyframe,	NULL,		offsetof( ParticleSystemTemplate, m_alphaKey[7] ) },
+	{ "Alpha1",									ParticleSystemTemplate::parseRandomKeyframe,	nullptr,		offsetof( ParticleSystemTemplate, m_alphaKey[0] ) },
+	{ "Alpha2",									ParticleSystemTemplate::parseRandomKeyframe,	nullptr,		offsetof( ParticleSystemTemplate, m_alphaKey[1] ) },
+	{ "Alpha3",									ParticleSystemTemplate::parseRandomKeyframe,	nullptr,		offsetof( ParticleSystemTemplate, m_alphaKey[2] ) },
+	{ "Alpha4",									ParticleSystemTemplate::parseRandomKeyframe,	nullptr,		offsetof( ParticleSystemTemplate, m_alphaKey[3] ) },
+	{ "Alpha5",									ParticleSystemTemplate::parseRandomKeyframe,	nullptr,		offsetof( ParticleSystemTemplate, m_alphaKey[4] ) },
+	{ "Alpha6",									ParticleSystemTemplate::parseRandomKeyframe,	nullptr,		offsetof( ParticleSystemTemplate, m_alphaKey[5] ) },
+	{ "Alpha7",									ParticleSystemTemplate::parseRandomKeyframe,	nullptr,		offsetof( ParticleSystemTemplate, m_alphaKey[6] ) },
+	{ "Alpha8",									ParticleSystemTemplate::parseRandomKeyframe,	nullptr,		offsetof( ParticleSystemTemplate, m_alphaKey[7] ) },
 
-	{ "Color1",									ParticleSystemTemplate::parseRGBColorKeyframe,NULL,		offsetof( ParticleSystemTemplate, m_colorKey[0] ) },
-	{ "Color2",									ParticleSystemTemplate::parseRGBColorKeyframe,NULL,		offsetof( ParticleSystemTemplate, m_colorKey[1] ) },
-	{ "Color3",									ParticleSystemTemplate::parseRGBColorKeyframe,NULL,		offsetof( ParticleSystemTemplate, m_colorKey[2] ) },
-	{ "Color4",									ParticleSystemTemplate::parseRGBColorKeyframe,NULL,		offsetof( ParticleSystemTemplate, m_colorKey[3] ) },
-	{ "Color5",									ParticleSystemTemplate::parseRGBColorKeyframe,NULL,		offsetof( ParticleSystemTemplate, m_colorKey[4] ) },
-	{ "Color6",									ParticleSystemTemplate::parseRGBColorKeyframe,NULL,		offsetof( ParticleSystemTemplate, m_colorKey[5] ) },
-	{ "Color7",									ParticleSystemTemplate::parseRGBColorKeyframe,NULL,		offsetof( ParticleSystemTemplate, m_colorKey[6] ) },
-	{ "Color8",									ParticleSystemTemplate::parseRGBColorKeyframe,NULL,		offsetof( ParticleSystemTemplate, m_colorKey[7] ) },
+	{ "Color1",									ParticleSystemTemplate::parseRGBColorKeyframe,nullptr,		offsetof( ParticleSystemTemplate, m_colorKey[0] ) },
+	{ "Color2",									ParticleSystemTemplate::parseRGBColorKeyframe,nullptr,		offsetof( ParticleSystemTemplate, m_colorKey[1] ) },
+	{ "Color3",									ParticleSystemTemplate::parseRGBColorKeyframe,nullptr,		offsetof( ParticleSystemTemplate, m_colorKey[2] ) },
+	{ "Color4",									ParticleSystemTemplate::parseRGBColorKeyframe,nullptr,		offsetof( ParticleSystemTemplate, m_colorKey[3] ) },
+	{ "Color5",									ParticleSystemTemplate::parseRGBColorKeyframe,nullptr,		offsetof( ParticleSystemTemplate, m_colorKey[4] ) },
+	{ "Color6",									ParticleSystemTemplate::parseRGBColorKeyframe,nullptr,		offsetof( ParticleSystemTemplate, m_colorKey[5] ) },
+	{ "Color7",									ParticleSystemTemplate::parseRGBColorKeyframe,nullptr,		offsetof( ParticleSystemTemplate, m_colorKey[6] ) },
+	{ "Color8",									ParticleSystemTemplate::parseRGBColorKeyframe,nullptr,		offsetof( ParticleSystemTemplate, m_colorKey[7] ) },
 
-//	{ "COLOR",									ParticleSystemTemplate::parseRandomRGBColor,	NULL,		offsetof( ParticleSystemTemplate, m_color ) },
-	{ "ColorScale",							INI::parseGameClientRandomVariable,	NULL,		offsetof( ParticleSystemTemplate, m_colorScale ) },
+//	{ "COLOR",									ParticleSystemTemplate::parseRandomRGBColor,	nullptr,		offsetof( ParticleSystemTemplate, m_color ) },
+	{ "ColorScale",							INI::parseGameClientRandomVariable,	nullptr,		offsetof( ParticleSystemTemplate, m_colorScale ) },
 
-	{ "BurstDelay",							INI::parseGameClientRandomVariable,	NULL,		offsetof( ParticleSystemTemplate, m_burstDelay ) },
-	{ "BurstCount",							INI::parseGameClientRandomVariable,	NULL,		offsetof( ParticleSystemTemplate, m_burstCount ) },
+	{ "BurstDelay",							INI::parseGameClientRandomVariable,	nullptr,		offsetof( ParticleSystemTemplate, m_burstDelay ) },
+	{ "BurstCount",							INI::parseGameClientRandomVariable,	nullptr,		offsetof( ParticleSystemTemplate, m_burstCount ) },
 
-	{ "InitialDelay",						INI::parseGameClientRandomVariable,	NULL,		offsetof( ParticleSystemTemplate, m_initialDelay ) },
+	{ "InitialDelay",						INI::parseGameClientRandomVariable,	nullptr,		offsetof( ParticleSystemTemplate, m_initialDelay ) },
 
-	{ "DriftVelocity",					INI::parseCoord3D,														NULL,		offsetof( ParticleSystemTemplate, m_driftVelocity ) },
+	{ "DriftVelocity",					INI::parseCoord3D,														nullptr,		offsetof( ParticleSystemTemplate, m_driftVelocity ) },
 	{ "VelocityType",						INI::parseIndexList,													EmissionVelocityTypeNames,		offsetof( ParticleSystemTemplate, m_emissionVelocityType ) },
-	{ "VelOrthoX",							INI::parseGameClientRandomVariable,	NULL,		offsetof( ParticleSystemTemplate, m_emissionVelocity.ortho.x ) },
-	{ "VelOrthoY",							INI::parseGameClientRandomVariable,	NULL,		offsetof( ParticleSystemTemplate, m_emissionVelocity.ortho.y ) },
-	{ "VelOrthoZ",							INI::parseGameClientRandomVariable,	NULL,		offsetof( ParticleSystemTemplate, m_emissionVelocity.ortho.z ) },
+	{ "VelOrthoX",							INI::parseGameClientRandomVariable,	nullptr,		offsetof( ParticleSystemTemplate, m_emissionVelocity.ortho.x ) },
+	{ "VelOrthoY",							INI::parseGameClientRandomVariable,	nullptr,		offsetof( ParticleSystemTemplate, m_emissionVelocity.ortho.y ) },
+	{ "VelOrthoZ",							INI::parseGameClientRandomVariable,	nullptr,		offsetof( ParticleSystemTemplate, m_emissionVelocity.ortho.z ) },
 
-	{ "VelSpherical",						INI::parseGameClientRandomVariable,	NULL,		offsetof( ParticleSystemTemplate, m_emissionVelocity.spherical.speed ) },
-	{ "VelHemispherical",				INI::parseGameClientRandomVariable,	NULL,		offsetof( ParticleSystemTemplate, m_emissionVelocity.hemispherical.speed ) },
+	{ "VelSpherical",						INI::parseGameClientRandomVariable,	nullptr,		offsetof( ParticleSystemTemplate, m_emissionVelocity.spherical.speed ) },
+	{ "VelHemispherical",				INI::parseGameClientRandomVariable,	nullptr,		offsetof( ParticleSystemTemplate, m_emissionVelocity.hemispherical.speed ) },
 
-	{ "VelCylindricalRadial",		INI::parseGameClientRandomVariable,	NULL,		offsetof( ParticleSystemTemplate, m_emissionVelocity.cylindrical.radial ) },
-	{ "VelCylindricalNormal",		INI::parseGameClientRandomVariable,	NULL,		offsetof( ParticleSystemTemplate, m_emissionVelocity.cylindrical.normal ) },
+	{ "VelCylindricalRadial",		INI::parseGameClientRandomVariable,	nullptr,		offsetof( ParticleSystemTemplate, m_emissionVelocity.cylindrical.radial ) },
+	{ "VelCylindricalNormal",		INI::parseGameClientRandomVariable,	nullptr,		offsetof( ParticleSystemTemplate, m_emissionVelocity.cylindrical.normal ) },
 
-	{ "VelOutward",							INI::parseGameClientRandomVariable,	NULL,		offsetof( ParticleSystemTemplate, m_emissionVelocity.outward.speed ) },
-	{ "VelOutwardOther",				INI::parseGameClientRandomVariable,	NULL,		offsetof( ParticleSystemTemplate, m_emissionVelocity.outward.otherSpeed ) },
+	{ "VelOutward",							INI::parseGameClientRandomVariable,	nullptr,		offsetof( ParticleSystemTemplate, m_emissionVelocity.outward.speed ) },
+	{ "VelOutwardOther",				INI::parseGameClientRandomVariable,	nullptr,		offsetof( ParticleSystemTemplate, m_emissionVelocity.outward.otherSpeed ) },
 
 	{ "VolumeType",							INI::parseIndexList,													EmissionVolumeTypeNames,		offsetof( ParticleSystemTemplate, m_emissionVolumeType ) },
-	{ "VolLineStart",						INI::parseCoord3D,														NULL,		offsetof( ParticleSystemTemplate, m_emissionVolume.line.start ) },
-	{ "VolLineEnd",							INI::parseCoord3D,														NULL,		offsetof( ParticleSystemTemplate, m_emissionVolume.line.end ) },
+	{ "VolLineStart",						INI::parseCoord3D,														nullptr,		offsetof( ParticleSystemTemplate, m_emissionVolume.line.start ) },
+	{ "VolLineEnd",							INI::parseCoord3D,														nullptr,		offsetof( ParticleSystemTemplate, m_emissionVolume.line.end ) },
 
-	{ "VolBoxHalfSize",					INI::parseCoord3D,														NULL,		offsetof( ParticleSystemTemplate, m_emissionVolume.box.halfSize ) },
+	{ "VolBoxHalfSize",					INI::parseCoord3D,														nullptr,		offsetof( ParticleSystemTemplate, m_emissionVolume.box.halfSize ) },
 
-	{ "VolSphereRadius",				INI::parseReal,																NULL,		offsetof( ParticleSystemTemplate, m_emissionVolume.sphere.radius ) },
+	{ "VolSphereRadius",				INI::parseReal,																nullptr,		offsetof( ParticleSystemTemplate, m_emissionVolume.sphere.radius ) },
 
-	{ "VolCylinderRadius",			INI::parseReal,																NULL,		offsetof( ParticleSystemTemplate, m_emissionVolume.cylinder.radius ) },
-	{ "VolCylinderLength",			INI::parseReal,																NULL,		offsetof( ParticleSystemTemplate, m_emissionVolume.cylinder.length ) },
+	{ "VolCylinderRadius",			INI::parseReal,																nullptr,		offsetof( ParticleSystemTemplate, m_emissionVolume.cylinder.radius ) },
+	{ "VolCylinderLength",			INI::parseReal,																nullptr,		offsetof( ParticleSystemTemplate, m_emissionVolume.cylinder.length ) },
 
-	{ "IsHollow",								INI::parseBool,																NULL,		offsetof( ParticleSystemTemplate, m_isEmissionVolumeHollow ) },
-	{ "IsGroundAligned",				INI::parseBool,																NULL,		offsetof( ParticleSystemTemplate, m_isGroundAligned ) },
-	{ "IsEmitAboveGroundOnly",	INI::parseBool,																NULL,		offsetof( ParticleSystemTemplate, m_isEmitAboveGroundOnly) },
-	{ "IsParticleUpTowardsEmitter",	INI::parseBool,																NULL,		offsetof( ParticleSystemTemplate, m_isParticleUpTowardsEmitter) },
+	{ "IsHollow",								INI::parseBool,																nullptr,		offsetof( ParticleSystemTemplate, m_isEmissionVolumeHollow ) },
+	{ "IsGroundAligned",				INI::parseBool,																nullptr,		offsetof( ParticleSystemTemplate, m_isGroundAligned ) },
+	{ "IsEmitAboveGroundOnly",	INI::parseBool,																nullptr,		offsetof( ParticleSystemTemplate, m_isEmitAboveGroundOnly) },
+	{ "IsParticleUpTowardsEmitter",	INI::parseBool,																nullptr,		offsetof( ParticleSystemTemplate, m_isParticleUpTowardsEmitter) },
 
 	{ "WindMotion",					INI::parseIndexList, WindMotionNames, offsetof( ParticleSystemTemplate, m_windMotion ) },
 
-	{ "WindAngleChangeMin", INI::parseReal, NULL, offsetof( ParticleSystemTemplate, m_windAngleChangeMin ) },
-	{ "WindAngleChangeMax", INI::parseReal, NULL, offsetof( ParticleSystemTemplate, m_windAngleChangeMax ) },
+	{ "WindAngleChangeMin", INI::parseReal, nullptr, offsetof( ParticleSystemTemplate, m_windAngleChangeMin ) },
+	{ "WindAngleChangeMax", INI::parseReal, nullptr, offsetof( ParticleSystemTemplate, m_windAngleChangeMax ) },
 
-	{ "WindPingPongStartAngleMin",			INI::parseReal, NULL, offsetof( ParticleSystemTemplate, m_windMotionStartAngleMin ) },
-	{ "WindPingPongStartAngleMax",			INI::parseReal, NULL, offsetof( ParticleSystemTemplate, m_windMotionStartAngleMax ) },
+	{ "WindPingPongStartAngleMin",			INI::parseReal, nullptr, offsetof( ParticleSystemTemplate, m_windMotionStartAngleMin ) },
+	{ "WindPingPongStartAngleMax",			INI::parseReal, nullptr, offsetof( ParticleSystemTemplate, m_windMotionStartAngleMax ) },
 
-	{ "WindPingPongEndAngleMin",				INI::parseReal, NULL, offsetof( ParticleSystemTemplate, m_windMotionEndAngleMin ) },
-	{ "WindPingPongEndAngleMax",				INI::parseReal, NULL, offsetof( ParticleSystemTemplate, m_windMotionEndAngleMax ) },
+	{ "WindPingPongEndAngleMin",				INI::parseReal, nullptr, offsetof( ParticleSystemTemplate, m_windMotionEndAngleMin ) },
+	{ "WindPingPongEndAngleMax",				INI::parseReal, nullptr, offsetof( ParticleSystemTemplate, m_windMotionEndAngleMax ) },
 
 
-	{ NULL,											NULL,																					NULL,		0 },
+	{ nullptr,											nullptr,																					nullptr,		0 },
 };
 
 // ------------------------------------------------------------------------------------------------
@@ -2809,8 +2780,8 @@ void ParticleSystemTemplate::parseRGBColorKeyframe( INI* ini, void *instance,
 {
 	RGBColorKeyframe *key = static_cast<RGBColorKeyframe *>(store);
 
-	INI::parseRGBColor( ini, instance, &key->color, NULL );
-	INI::parseUnsignedInt( ini, instance, &key->frame, NULL );
+	INI::parseRGBColor( ini, instance, &key->color, nullptr );
+	INI::parseUnsignedInt( ini, instance, &key->frame, nullptr );
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -2869,7 +2840,7 @@ void ParticleSystemTemplate::parseRandomRGBColor( INI* ini, void *instance,
 ParticleSystemTemplate::ParticleSystemTemplate( const AsciiString &name ) :
 	m_name(name)
 {
-	m_slaveTemplate = NULL;
+	m_slaveTemplate = nullptr;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -2880,16 +2851,16 @@ ParticleSystemTemplate::~ParticleSystemTemplate()
 }
 
 // ------------------------------------------------------------------------------------------------
-/** If returns non-NULL, it is a slave system for use ... the create slaves parameter
+/** If returns non-null, it is a slave system for use ... the create slaves parameter
  * tells *this* slave system whether or not it should create any slaves itself
  * automatically during its own constructor */
 // ------------------------------------------------------------------------------------------------
 ParticleSystem *ParticleSystemTemplate::createSlaveSystem( Bool createSlaves ) const
 {
-	if (m_slaveTemplate == NULL && m_slaveSystemName.isEmpty() == false)
+	if (m_slaveTemplate == nullptr && m_slaveSystemName.isEmpty() == false)
 		m_slaveTemplate = TheParticleSystemManager->findTemplate( m_slaveSystemName );
 
-	ParticleSystem *slave = NULL;
+	ParticleSystem *slave = nullptr;
 	if (m_slaveTemplate)
 		slave = TheParticleSystemManager->createParticleSystem( m_slaveTemplate, createSlaves );
 
@@ -2918,8 +2889,8 @@ ParticleSystemManager::ParticleSystemManager( void )
 	for( Int i = 0; i < NUM_PARTICLE_PRIORITIES; ++i )
 	{
 
-		m_allParticlesHead[ i ] = NULL;
-		m_allParticlesTail[ i ] = NULL;
+		m_allParticlesHead[ i ] = nullptr;
+		m_allParticlesTail[ i ] = nullptr;
 
 	}
 
@@ -2945,19 +2916,19 @@ void ParticleSystemManager::init( void )
 {
 	/// Read INI data and build templates
 	INI ini;
-	ini.loadFileDirectory( "Data\\INI\\ParticleSystem", INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( "Data\\INI\\ParticleSystem", INI_LOAD_OVERWRITE, nullptr );
 
 	// sanity, our lists must be empty!!
 	for( Int i = 0; i < NUM_PARTICLE_PRIORITIES; ++i )
 	{
 
 		// sanity
-		DEBUG_ASSERTCRASH( m_allParticlesHead[ i ] == NULL, ("INIT: ParticleSystem all particles head[%d] is not NULL!", i) );
-		DEBUG_ASSERTCRASH( m_allParticlesTail[ i ] == NULL, ("INIT: ParticleSystem all particles tail[%d] is not NULL!", i) );
+		DEBUG_ASSERTCRASH( m_allParticlesHead[ i ] == nullptr, ("INIT: ParticleSystem all particles head[%d] is not null!", i) );
+		DEBUG_ASSERTCRASH( m_allParticlesTail[ i ] == nullptr, ("INIT: ParticleSystem all particles tail[%d] is not null!", i) );
 
-		// just to be clean set them to NULL
-		m_allParticlesHead[ i ] = NULL;
-		m_allParticlesTail[ i ] = NULL;
+		// just to be clean set them to nullptr
+		m_allParticlesHead[ i ] = nullptr;
+		m_allParticlesTail[ i ] = nullptr;
 
 	}
 
@@ -2970,7 +2941,7 @@ void ParticleSystemManager::reset( void )
 {
 	while (!m_allParticleSystemList.empty())
 	{
-		DEBUG_ASSERTCRASH(m_allParticleSystemList.front() != NULL, ("ParticleSystemManager::reset: ParticleSystem is null"));
+		DEBUG_ASSERTCRASH(m_allParticleSystemList.front() != nullptr, ("ParticleSystemManager::reset: ParticleSystem is null"));
 		deleteInstance(m_allParticleSystemList.front());
 	}
 	DEBUG_ASSERTCRASH(m_particleSystemCount == 0, ("ParticleSystemManager::reset: m_particleSystemCount is %u, not 0", m_particleSystemCount));
@@ -2980,12 +2951,12 @@ void ParticleSystemManager::reset( void )
 	{
 
 		// sanity
-		DEBUG_ASSERTCRASH( m_allParticlesHead[ i ] == NULL, ("RESET: ParticleSystem all particles head[%d] is not NULL!", i) );
-		DEBUG_ASSERTCRASH( m_allParticlesTail[ i ] == NULL, ("RESET: ParticleSystem all particles tail[%d] is not NULL!", i) );
+		DEBUG_ASSERTCRASH( m_allParticlesHead[ i ] == nullptr, ("RESET: ParticleSystem all particles head[%d] is not null!", i) );
+		DEBUG_ASSERTCRASH( m_allParticlesTail[ i ] == nullptr, ("RESET: ParticleSystem all particles tail[%d] is not null!", i) );
 
-		// just to be clean set them to NULL
-		m_allParticlesHead[ i ] = NULL;
-		m_allParticlesTail[ i ] = NULL;
+		// just to be clean set them to nullptr
+		m_allParticlesHead[ i ] = nullptr;
+		m_allParticlesTail[ i ] = nullptr;
 
 	}
 
@@ -3018,7 +2989,7 @@ void ParticleSystemManager::update( void )
 	{
 		// TheSuperHackers @info Must increment the list iterator before potential element erasure from the list.
 		ParticleSystem* sys = *it++;
-		DEBUG_ASSERTCRASH(sys != NULL, ("ParticleSystemManager::update: ParticleSystem is null"));
+		DEBUG_ASSERTCRASH(sys != nullptr, ("ParticleSystemManager::update: ParticleSystem is null"));
 
 		if (sys->update(m_localPlayerIndex) == false)
 		{
@@ -3041,8 +3012,8 @@ void ParticleSystemManager::setOnScreenParticleCount(int count)
 ParticleSystem *ParticleSystemManager::createParticleSystem( const ParticleSystemTemplate *sysTemplate, Bool createSlaves )
 {
 	// sanity
-	if (sysTemplate == NULL)
-		return NULL;
+	if (sysTemplate == nullptr)
+		return nullptr;
 
 	m_uniqueSystemID = (ParticleSystemID)((UnsignedInt)m_uniqueSystemID + 1);
 	ParticleSystem *sys = newInstance(ParticleSystem)( sysTemplate, m_uniqueSystemID, createSlaves );
@@ -3069,20 +3040,20 @@ ParticleSystemID ParticleSystemManager::createAttachedParticleSystemID(
 ParticleSystem *ParticleSystemManager::findParticleSystem( ParticleSystemID id )
 {
 	if (id == INVALID_PARTICLE_SYSTEM_ID)
-		return NULL;	// my, that was easy
+		return nullptr;	// my, that was easy
 
-	ParticleSystem *system = NULL;
+	ParticleSystem *system = nullptr;
 
 	for( ParticleSystemListIt it = m_allParticleSystemList.begin(); it != m_allParticleSystemList.end(); ++it ) {
 		system = *it;
-		DEBUG_ASSERTCRASH(system != NULL, ("ParticleSystemManager::findParticleSystem: ParticleSystem is null"));
+		DEBUG_ASSERTCRASH(system != nullptr, ("ParticleSystemManager::findParticleSystem: ParticleSystem is null"));
 
 		if( system->getSystemID() == id ) {
 			return system;
 		}
 	}
 
-	return NULL;
+	return nullptr;
 
 }
 
@@ -3101,7 +3072,7 @@ void ParticleSystemManager::destroyParticleSystemByID(ParticleSystemID id)
 // ------------------------------------------------------------------------------------------------
 ParticleSystemTemplate *ParticleSystemManager::findTemplate( const AsciiString &name ) const
 {
-	ParticleSystemTemplate *sysTemplate = NULL;
+	ParticleSystemTemplate *sysTemplate = nullptr;
 
 	TemplateMap::const_iterator find(m_templateMap.find(name));
 	if (find != m_templateMap.end()) {
@@ -3117,12 +3088,12 @@ ParticleSystemTemplate *ParticleSystemManager::findTemplate( const AsciiString &
 ParticleSystemTemplate *ParticleSystemManager::newTemplate( const AsciiString &name )
 {
 	ParticleSystemTemplate *sysTemplate = findTemplate(name);
-	if (sysTemplate == NULL) {
+	if (sysTemplate == nullptr) {
 		sysTemplate = newInstance(ParticleSystemTemplate)( name );
 
 		if (! m_templateMap.insert(std::make_pair(name, sysTemplate)).second) {
 			deleteInstance(sysTemplate);
-			sysTemplate = NULL;
+			sysTemplate = nullptr;
 		}
 	}
 
@@ -3135,7 +3106,7 @@ ParticleSystemTemplate *ParticleSystemManager::newTemplate( const AsciiString &n
 ParticleSystemTemplate *ParticleSystemManager::findParentTemplate( const AsciiString &name, Int parentNum ) const
 {
 	if (name.isEmpty()) {
-		return NULL;
+		return nullptr;
 	}
 
 	TemplateMap::const_iterator begin(m_templateMap.begin());
@@ -3149,7 +3120,7 @@ ParticleSystemTemplate *ParticleSystemManager::findParentTemplate( const AsciiSt
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -3159,7 +3130,7 @@ void ParticleSystemManager::destroyAttachedSystems( Object *obj )
 {
 
 	// sanity
-	if( obj == NULL )
+	if( obj == nullptr )
 		return;
 
 	// iterate through all systems
@@ -3169,7 +3140,7 @@ void ParticleSystemManager::destroyAttachedSystems( Object *obj )
 	{
 
 		ParticleSystem *system = *it;
-		DEBUG_ASSERTCRASH(system != NULL, ("ParticleSystemManager::destroyAttachedSystems: ParticleSystem is null"));
+		DEBUG_ASSERTCRASH(system != nullptr, ("ParticleSystemManager::destroyAttachedSystems: ParticleSystem is null"));
 
 		if( system->getAttachedObject() == obj->getID() )
 			system->destroy();
@@ -3198,11 +3169,11 @@ void ParticleSystemManager::addParticle( Particle *particleToAdd, ParticlePriori
 	}
 	else
 	{
-		particleToAdd->m_overallPrev = NULL;
+		particleToAdd->m_overallPrev = nullptr;
 	}
 
 	m_allParticlesTail[ priority ] = particleToAdd;
-	particleToAdd->m_overallNext = NULL;
+	particleToAdd->m_overallNext = nullptr;
 	particleToAdd->m_inOverallList = TRUE;
 
 	++m_particleCount;
@@ -3227,13 +3198,13 @@ void ParticleSystemManager::removeParticle( Particle *particleToRemove)
 	if (particleToRemove->m_overallPrev)
 		particleToRemove->m_overallPrev->m_overallNext = particleToRemove->m_overallNext;
 
-	// update head & tail if neccessary
+	// update head & tail if necessary
 	if (particleToRemove == m_allParticlesHead[ priority ])
 		m_allParticlesHead[ priority ] = particleToRemove->m_overallNext;
 	if (particleToRemove == m_allParticlesTail[ priority ])
 		m_allParticlesTail[ priority ] = particleToRemove->m_overallPrev;
 
-	particleToRemove->m_overallNext = particleToRemove->m_overallPrev = NULL;
+	particleToRemove->m_overallNext = particleToRemove->m_overallPrev = nullptr;
 	particleToRemove->m_inOverallList = FALSE;
 	--m_particleCount;
 
@@ -3245,7 +3216,7 @@ void ParticleSystemManager::removeParticle( Particle *particleToRemove)
 // ------------------------------------------------------------------------------------------------
 void ParticleSystemManager::friend_addParticleSystem( ParticleSystem *particleSystemToAdd )
 {
-	DEBUG_ASSERTCRASH(particleSystemToAdd != NULL, ("ParticleSystemManager::friend_addParticleSystem: ParticleSystem is null"));
+	DEBUG_ASSERTCRASH(particleSystemToAdd != nullptr, ("ParticleSystemManager::friend_addParticleSystem: ParticleSystem is null"));
 	m_allParticleSystemList.push_back(particleSystemToAdd);
 	++m_particleSystemCount;
 }
@@ -3386,7 +3357,7 @@ void ParticleSystemManager::xfer( Xfer *xfer )
 			systemTemplate = findTemplate( systemName );
 
 			// sanity
-			if( systemTemplate == NULL )
+			if( systemTemplate == nullptr )
 			{
 
 				DEBUG_CRASH(( "ParticleSystemManager::xfer - Unknown particle system template '%s'",
@@ -3398,7 +3369,7 @@ void ParticleSystemManager::xfer( Xfer *xfer )
 			// create system
 			system = createParticleSystem( systemTemplate, FALSE );
 
-			if( system == NULL )
+			if( system == nullptr )
 			{
 
 				DEBUG_CRASH(( "ParticleSystemManager::xfer - Unable to allocate particle system '%s'",
@@ -3480,3 +3451,33 @@ void ParticleSystemDebugDisplay( DebugDisplayInterface *dd, void *, FILE *fp )
 }
 
 // ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
+static Real angleBetween(const Coord2D *vecA, const Coord2D *vecB)
+{
+	if (!(vecA && vecA->length() && vecB && vecB->length())) {
+		return 0.0;
+	}
+
+	Real lengthA = vecA->length();
+	Real lengthB = vecB->length();
+	Real dotProduct = (vecA->x * vecB->x + vecA->y * vecB->y);
+	Real cosTheta = dotProduct / (lengthA * lengthB);
+
+	// If the dotproduct is 0.0, then they are orthogonal
+	if (dotProduct == 0.0f) {
+		if (vecB->x > 0) {
+			return PI;
+		}
+
+		return 0.0f;
+	}
+
+	Real theta = ACos( cosTheta );
+
+	if (vecB->x > 0) {
+		return theta;
+	}
+
+	return -theta;
+}
+

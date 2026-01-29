@@ -116,16 +116,16 @@ public:
       \brief Determines symbol for given address.
 
       \param addr function address
-      \param bufMod module buffer, may be NULL
+      \param bufMod module buffer, may be nullptr
       \param sizeMod size of buffer, including NUL, minimum 16 if given
-      \param relMod relative address within module, may be NULL
-      \param bufSym symbol buffer, may be NULL
+      \param relMod relative address within module, may be nullptr
+      \param bufSym symbol buffer, may be nullptr
       \param sizeSym size of buffer, including NUL
-      \param relSym relative address within symbol, may be NULL
-      \param bufFile file name buffer, may be NULL
+      \param relSym relative address within symbol, may be nullptr
+      \param bufFile file name buffer, may be nullptr
       \param sizeFile size of buffer, including NUL
-      \param line line number, may be NULL
-      \param relLine relative address within line, may be NULL
+      \param line line number, may be nullptr
+      \param relLine relative address within line, may be nullptr
     */
     static void GetSymbol(unsigned addr,
                           char *bufMod, unsigned sizeMod, unsigned *relMod,
@@ -151,7 +151,7 @@ public:
     \brief Walks the stack from the given address.
 
     \param sig stack signature to return
-    \param ctx processor context, if NULL then use current address
+    \param ctx processor context, if nullptr then use current address
     \return number of addresses found
   */
   static int StackWalk(Signature &sig, struct _CONTEXT *ctx=0);

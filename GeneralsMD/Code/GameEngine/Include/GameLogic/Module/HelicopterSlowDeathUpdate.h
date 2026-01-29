@@ -24,7 +24,7 @@
 
 // FILE: HelicopterSlowDeathUpdate.h //////////////////////////////////////////////////////////////
 // Author: Colin Day, March 2002
-// Desc:   Helicoptor slow deaths
+// Desc:   Helicopter slow deaths
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
@@ -52,7 +52,7 @@ public:
 	Real m_spiralOrbitForwardSpeedDamping;///< every frame our forward speed in the orbit is adjusted by this amount
 	Real m_minSelfSpin;										///< (rads per frame) min turning rate at which we spin around our center of gravity
 	Real m_maxSelfSpin;										///< (rads per frame) max turning rate at which we spin around our center of gravity
-	Real m_selfSpinUpdateDelay;						///< (frames) every this many frames we will update the self spin angle, but we'll keep it inbetween the min and max self spin
+	Real m_selfSpinUpdateDelay;						///< (frames) every this many frames we will update the self spin angle, but we'll keep it in between the min and max self spin
 	Real m_selfSpinUpdateAmount;					///< (radian) when we update the self spin every SelfSpinUpdateDelay frames, we change it this much, but keep it between min and max self spin
 	Real m_fallHowFast;										///< a fraction of gravity we use to modify the helicopert locmotor lift
 	Real m_minBladeFlyOffDelay;						///< (frames) min frame that the blade will fly off at

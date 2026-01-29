@@ -58,29 +58,29 @@ LANGame::LANGame( void )
 	}
 	m_lastHeard = 0;
 	m_inProgress = false;
-	m_next = NULL;
+	m_next = nullptr;
 }
 */
 
 
 
 
-LANAPI::LANAPI( void ) : m_transport(NULL)
+LANAPI::LANAPI( void ) : m_transport(nullptr)
 {
 	DEBUG_LOG(("LANAPI::LANAPI() - max game option size is %d, sizeof(LANMessage)=%d, MAX_PACKET_SIZE=%d",
 		m_lanMaxOptionsLength, sizeof(LANMessage), MAX_PACKET_SIZE));
 
 	m_lastResendTime = 0;
 	//
-	m_lobbyPlayers = NULL;
-	m_games = NULL;
+	m_lobbyPlayers = nullptr;
+	m_games = nullptr;
 	m_name = L""; // safe default?
 	m_pendingAction = ACT_NONE;
 	m_expiration = 0;
 	m_localIP = 0;
 	m_inLobby = true;
 	m_isInLANMenu = TRUE;
-	m_currentGame = NULL;
+	m_currentGame = nullptr;
 	m_broadcastAddr = INADDR_BROADCAST;
 	m_directConnectRemoteIP = 0;
 	m_actionTimeout = 5000; // ms
@@ -107,7 +107,7 @@ void LANAPI::init( void )
 	m_expiration = 0;
 	m_inLobby = true;
 	m_isInLANMenu = TRUE;
-	m_currentGame = NULL;
+	m_currentGame = nullptr;
 	m_directConnectRemoteIP = 0;
 
 	m_lastGameopt = "";
@@ -149,7 +149,7 @@ void LANAPI::reset( void )
 	m_transport->update();
 
 	LANGameInfo *theGame = m_games;
-	LANGameInfo *deletableGame = NULL;
+	LANGameInfo *deletableGame = nullptr;
 
 	while (theGame)
 	{
@@ -159,7 +159,7 @@ void LANAPI::reset( void )
 	}
 
 	LANPlayer *thePlayer = m_lobbyPlayers;
-	LANPlayer *deletablePlayer = NULL;
+	LANPlayer *deletablePlayer = nullptr;
 
 	while (thePlayer)
 	{
@@ -168,14 +168,14 @@ void LANAPI::reset( void )
 		delete deletablePlayer;
 	}
 
-	m_games = NULL;
-	m_lobbyPlayers = NULL;
+	m_games = nullptr;
+	m_lobbyPlayers = nullptr;
 	m_directConnectRemoteIP = 0;
 	m_pendingAction = ACT_NONE;
 	m_expiration = 0;
 	m_inLobby = true;
 	m_isInLANMenu = TRUE;
-	m_currentGame = NULL;
+	m_currentGame = nullptr;
 
 }
 
@@ -185,14 +185,14 @@ void LANAPI::sendMessage(LANMessage *msg, UnsignedInt ip /* = 0 */)
 	{
 		m_transport->queueSend(ip, lobbyPort, (unsigned char *)msg, sizeof(LANMessage) /*, 0, 0 */);
 	}
-	else if ((m_currentGame != NULL) && (m_currentGame->getIsDirectConnect()))
+	else if ((m_currentGame != nullptr) && (m_currentGame->getIsDirectConnect()))
 	{
 		Int localSlot = m_currentGame->getLocalSlotNum();
 		for (Int i = 0; i < MAX_SLOTS; ++i)
 		{
 			if (i != localSlot) {
 				GameSlot *slot = m_currentGame->getSlot(i);
-				if ((slot != NULL) && (slot->isHuman())) {
+				if ((slot != nullptr) && (slot->isHuman())) {
 					m_transport->queueSend(slot->getIP(), lobbyPort, (unsigned char *)msg, sizeof(LANMessage) /*, 0, 0 */);
 				}
 			}
@@ -561,21 +561,21 @@ void LANAPI::update( void )
 		switch (m_pendingAction)
 		{
 		case ACT_JOIN:
-			OnGameJoin(RET_TIMEOUT, NULL);
+			OnGameJoin(RET_TIMEOUT, nullptr);
 			m_pendingAction = ACT_NONE;
-			m_currentGame = NULL;
+			m_currentGame = nullptr;
 			m_inLobby = true;
 			break;
 		case ACT_LEAVE:
 			OnPlayerLeave(m_name);
 			m_pendingAction = ACT_NONE;
-			m_currentGame = NULL;
+			m_currentGame = nullptr;
 			m_inLobby = true;
 			break;
 		case ACT_JOINDIRECTCONNECT:
-			OnGameJoin(RET_TIMEOUT, NULL);
+			OnGameJoin(RET_TIMEOUT, nullptr);
 			m_pendingAction = ACT_NONE;
-			m_currentGame = NULL;
+			m_currentGame = nullptr;
 			m_inLobby = true;
 			break;
 		default:
@@ -621,13 +621,13 @@ void LANAPI::RequestGameJoin( LANGameInfo *game, UnsignedInt ip /* = 0 */ )
 {
 	if ((m_pendingAction != ACT_NONE) && (m_pendingAction != ACT_JOINDIRECTCONNECT))
 	{
-		OnGameJoin( RET_BUSY, NULL );
+		OnGameJoin( RET_BUSY, nullptr );
 		return;
 	}
 
 	if (!game)
 	{
-		OnGameJoin( RET_GAME_GONE, NULL );
+		OnGameJoin( RET_GAME_GONE, nullptr );
 		return;
 	}
 
@@ -652,13 +652,13 @@ void LANAPI::RequestGameJoinDirectConnect(UnsignedInt ipaddress)
 {
 	if (m_pendingAction != ACT_NONE)
 	{
-		OnGameJoin( RET_BUSY, NULL );
+		OnGameJoin( RET_BUSY, nullptr );
 		return;
 	}
 
 	if (ipaddress == 0)
 	{
-		OnGameJoin( RET_GAME_GONE, NULL );
+		OnGameJoin( RET_GAME_GONE, nullptr );
 		return;
 	}
 
@@ -690,7 +690,7 @@ void LANAPI::RequestGameLeave( void )
 		// Exit out immediately if we're hosting
 		OnPlayerLeave(m_name);
 		removeGame(m_currentGame);
-		m_currentGame = NULL;
+		m_currentGame = nullptr;
 		m_inLobby = true;
 	}
 	else
@@ -907,7 +907,7 @@ void LANAPI::RequestGameCreate( UnicodeString gameName, Bool isDirectConnect )
 	newSlot.setHost(m_hostName);
 
 	myGame->setSlot(0,newSlot);
-	myGame->setNext(NULL);
+	myGame->setNext(nullptr);
 	LANPreferences pref;
 
 	AsciiString mapName = pref.getPreferredMap();
@@ -1094,7 +1094,7 @@ LANGameInfo * LANAPI::LookupGame( UnicodeString gameName )
 		theGame = theGame->getNext();
 	}
 
-	return theGame; // NULL means we didn't find anything.
+	return theGame; // null means we didn't find anything.
 }
 
 LANGameInfo * LANAPI::LookupGameByListOffset( Int offset )
@@ -1102,14 +1102,14 @@ LANGameInfo * LANAPI::LookupGameByListOffset( Int offset )
 	LANGameInfo *theGame = m_games;
 
 	if (offset < 0)
-		return NULL;
+		return nullptr;
 
 	while (offset-- && theGame)
 	{
 		theGame = theGame->getNext();
 	}
 
-	return theGame; // NULL means we didn't find anything.
+	return theGame; // null means we didn't find anything.
 }
 
 void LANAPI::removeGame( LANGameInfo *game )
@@ -1150,7 +1150,7 @@ LANPlayer * LANAPI::LookupPlayer( UnsignedInt playerIP )
 		thePlayer = thePlayer->getNext();
 	}
 
-	return thePlayer; // NULL means we didn't find anything.
+	return thePlayer; // null means we didn't find anything.
 }
 
 void LANAPI::removePlayer( LANPlayer *player )
@@ -1187,7 +1187,7 @@ void LANAPI::addGame( LANGameInfo *game )
 	if (!m_games)
 	{
 		m_games = game;
-		game->setNext(NULL);
+		game->setNext(nullptr);
 		return;
 	}
 	else
@@ -1217,7 +1217,7 @@ void LANAPI::addPlayer( LANPlayer *player )
 	if (!m_lobbyPlayers)
 	{
 		m_lobbyPlayers = player;
-		player->setNext(NULL);
+		player->setNext(nullptr);
 		return;
 	}
 	else
@@ -1270,7 +1270,7 @@ void LANAPI::setIsActive(Bool isActive) {
 	if (isActive != m_isActive) {
 		DEBUG_LOG(("LANAPI::setIsActive - m_isActive changed to %s", isActive ? "TRUE" : "FALSE"));
 		if (isActive == FALSE) {
-			if ((m_inLobby == FALSE) && (m_currentGame != NULL)) {
+			if ((m_inLobby == FALSE) && (m_currentGame != nullptr)) {
 				LANMessage msg;
 				fillInLANMessage( &msg );
 				msg.messageType = LANMessage::MSG_INACTIVE;

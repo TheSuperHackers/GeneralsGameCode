@@ -432,8 +432,8 @@ WindowMsgHandledType GadgetHorizontalSliderSystem( GameWindow *window, UnsignedI
 		// ------------------------------------------------------------------------
 		case GWM_DESTROY:
 			delete ( (SliderData *)window->winGetUserData() );
-			window->winSetUserData(NULL);
-			s = NULL;
+			window->winSetUserData(nullptr);
+			s = nullptr;
 			break;
 
 		// ------------------------------------------------------------------------

@@ -123,7 +123,7 @@ class DBAttribs
 
 	public:
 
-	DBAttribs( void )													{ parent = NULL; changed = FALSE; processed = FALSE; match = NULL; };
+	DBAttribs( void )													{ parent = nullptr; changed = FALSE; processed = FALSE; match = nullptr; };
 
 	void	SetParent ( DBAttribs *new_parent )	{ parent = new_parent; };
 	int		IsChanged ( void )									{ return changed; };
@@ -135,7 +135,7 @@ class DBAttribs
 	void	NotProcessed ( void )								{ processed = FALSE; };
 	void*	Matched ( void )										{ return match; };
 	void	Match ( void* new_match )						{ match = new_match; };
-	void	NotMatched ( void )									{ match = NULL; };
+	void	NotMatched ( void )									{ match = nullptr; };
 
 
 };
@@ -360,19 +360,19 @@ class TransDB : public DBAttribs
 	~TransDB ( );
 
 	void					InvalidateDialog( LangID langid );
-	void					VerifyDialog( LangID langid, void (*cb) ( void ) = NULL  );
-	int						ReportDialog( DLGREPORT *report, LangID langid, void (*print) ( const char *)= NULL, PMASK pmask= PMASK_ALL );
-	int						ReportTranslations( TRNREPORT *report, LangID langid, void (*print) ( const char *) = NULL, PMASK pmask = PMASK_ALL );
-	void					ReportDuplicates ( CBabylonDlg *dlg = NULL );
+	void					VerifyDialog( LangID langid, void (*cb) ( void ) = nullptr  );
+	int						ReportDialog( DLGREPORT *report, LangID langid, void (*print) ( const char *)= nullptr, PMASK pmask= PMASK_ALL );
+	int						ReportTranslations( TRNREPORT *report, LangID langid, void (*print) ( const char *) = nullptr, PMASK pmask = PMASK_ALL );
+	void					ReportDuplicates ( CBabylonDlg *dlg = nullptr );
 	void					AddLabel		( BabylonLabel *label );
 	void					AddText			( BabylonText *text );
 	void					AddObsolete ( BabylonText *text );
 	void					RemoveLabel ( BabylonLabel *label );
 	void					RemoveText	( BabylonText *text );
 	void					RemoveObsolete	( BabylonText *text );
-	int						Errors		( CBabylonDlg *dlg = NULL );
+	int						Errors		( CBabylonDlg *dlg = nullptr );
 	int						HasErrors ( void ) { return checked_for_errors ? last_error_count != 0 : FALSE; };
-	int						Warnings		( CBabylonDlg *dlg = NULL );
+	int						Warnings		( CBabylonDlg *dlg = nullptr );
 	int						NumLabelsChanged	( void );
 	int						NumLabels		( void );
 	int						NumObsolete		( void ) { return num_obsolete; };
@@ -392,7 +392,7 @@ class TransDB : public DBAttribs
 	void					ClearProcessed ( void );
 	void					ClearMatched ( void );
 	TransDB*			Next				( void );
-	void					AddToTree		( CTreeCtrl *tc, HTREEITEM parent, int changes = FALSE, void (*cb) ( void ) = NULL );
+	void					AddToTree		( CTreeCtrl *tc, HTREEITEM parent, int changes = FALSE, void (*cb) ( void ) = nullptr );
 	char*					Name				( void )							{ return name;};
 	void					EnableIDs		( void )							{ next_string_id = START_STRING_ID; };
 	int						NewID				( void )							{ if ( next_string_id != -1)  return next_string_id++; else return -1; };

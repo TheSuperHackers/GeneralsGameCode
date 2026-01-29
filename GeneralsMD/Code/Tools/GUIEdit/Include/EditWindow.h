@@ -91,7 +91,7 @@ public:
 
 	void setDragMoveOrigin( ICoord2D *pos );  ///< for drag moving
 	void setDragMoveDest( ICoord2D *pos );  ///< for drag moving
-	ICoord2D getDragMoveOrigin( void );  ///< for keybord moving
+	ICoord2D getDragMoveOrigin( void );  ///< for keyboard moving
 	ICoord2D getDragMoveDest( void );  ///< for keyboard moving
 
 	void notifyWindowDeleted( GameWindow *window );  ///< window has been deleted

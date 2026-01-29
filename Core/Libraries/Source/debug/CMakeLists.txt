@@ -39,7 +39,6 @@ target_precompile_headers(core_debug PRIVATE
 )
 
 target_link_libraries(core_debug PRIVATE
-    core_config
     core_wwcommon
     corei_always
 )

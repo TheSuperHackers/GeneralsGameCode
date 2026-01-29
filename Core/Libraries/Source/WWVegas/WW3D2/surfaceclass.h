@@ -57,6 +57,7 @@ class SurfaceClass : public W3DMPO, public RefCountClass
 {
 	W3DMPO_GLUE(SurfaceClass)
 	public:
+		typedef void *LockedSurfacePtr;
 
 		struct SurfaceDescription {
 			WW3DFormat		Format;	// Surface format
@@ -76,10 +77,14 @@ class SurfaceClass : public W3DMPO, public RefCountClass
 		~SurfaceClass(void);
 
 		// Get surface description
-		 void Get_Description(SurfaceDescription &surface_desc);
+		void Get_Description(SurfaceDescription &surface_desc);
+
+		// Get the bytes per pixel count
+		unsigned int Get_Bytes_Per_Pixel();
 
 		// Lock / unlock the surface
-		void * Lock(int * pitch);
+		LockedSurfacePtr Lock(int *pitch);
+		LockedSurfacePtr Lock(int *pitch, const Vector2i &min, const Vector2i &max);
 		void Unlock(void);
 
 		// HY -- The following functions are support functions for font3d
@@ -97,11 +102,11 @@ class SurfaceClass : public W3DMPO, public RefCountClass
 		void Copy(const unsigned char *other);
 
 		// support for copying from a byte array
-		void Copy(Vector2i &min,Vector2i &max, const unsigned char *other);
+		void Copy(const Vector2i &min, const Vector2i &max, const unsigned char *other);
 
 		// copies the contents of one surface to another, stretches
 		void Stretch_Copy(
-			unsigned int dstx, unsigned int dsty,unsigned int dstwidth, unsigned int dstheight,
+			unsigned int dstx, unsigned int dsty, unsigned int dstwidth, unsigned int dstheight,
 			unsigned int srcx, unsigned int srcy, unsigned int srcwidth, unsigned int srcheight,
 			const SurfaceClass *source);
 
@@ -122,12 +127,15 @@ class SurfaceClass : public W3DMPO, public RefCountClass
 		void	Detach (void);
 
 		// draws a horizontal line
-		void DrawHLine(const unsigned int y,const unsigned int x1, const unsigned int x2, unsigned int color);
+		void Draw_H_Line(const unsigned int y, const unsigned int x1, const unsigned int x2,
+			unsigned int color, unsigned int bytesPerPixel, LockedSurfacePtr pBits, int pitch);
 
-		void DrawPixel(const unsigned int x,const unsigned int y, unsigned int color);
+		// draws a pixel
+		void Draw_Pixel(const unsigned int x, const unsigned int y, unsigned int color,
+			unsigned int bytesPerPixel, LockedSurfacePtr pBits, int pitch);
 
-		// get pixel function .. to be used infrequently
-		void Get_Pixel(Vector3 &rgb, int x,int y);
+		// get pixel function
+		void Get_Pixel(Vector3 &rgb, int x, int y, LockedSurfacePtr pBits, int pitch);
 
 		void Hue_Shift(const Vector3 &hsv_shift);
 

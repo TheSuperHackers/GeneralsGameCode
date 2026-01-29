@@ -37,7 +37,6 @@ target_include_directories(g_particleeditor PRIVATE
 )
 
 target_link_libraries(g_particleeditor PRIVATE
-    core_config
     corei_libraries_source_wwvegas
     corei_libraries_source_wwvegas_wwlib
     gi_always_no_pch

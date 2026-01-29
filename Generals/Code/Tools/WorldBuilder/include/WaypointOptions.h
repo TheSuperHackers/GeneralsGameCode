@@ -34,7 +34,7 @@ class WaypointOptions : public COptionsPanel
 
 // Construction
 public:
-	WaypointOptions(CWnd* pParent = NULL);   // standard constructor
+	WaypointOptions(CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(WaypointOptions)
@@ -82,7 +82,7 @@ public:
 	static void update(void);
 	static MapObject *getSingleSelectedWaypoint(void);
 	static PolygonTrigger *getSingleSelectedPolygon(void);
-	static Bool isUnique(AsciiString name, MapObject* theMapObj = NULL);
+	static Bool isUnique(AsciiString name, MapObject* theMapObj = nullptr);
 	static AsciiString GenerateUniqueName(Int id);
 
 

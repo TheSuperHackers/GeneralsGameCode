@@ -163,7 +163,7 @@ public:
 
 	virtual void lookAt( const Coord3D *o );											///< Center the view on the given coordinate
 	virtual void initHeightForMap( void );												///<  Init the camera height for the map at the current position.
-	virtual void moveCameraTo(const Coord3D *o, Int miliseconds,  Int shutter, Bool orient, Real easeIn, Real easeOut);
+	virtual void moveCameraTo(const Coord3D *o, Int milliseconds,  Int shutter, Bool orient, Real easeIn, Real easeOut);
 	virtual void moveCameraAlongWaypointPath(Waypoint *pWay, Int frames, Int shutter, Bool orient, Real easeIn, Real easeOut);
 	virtual Bool isCameraMovementFinished(void);
 	virtual Bool isCameraMovementAtWaypointAlongPath(void);

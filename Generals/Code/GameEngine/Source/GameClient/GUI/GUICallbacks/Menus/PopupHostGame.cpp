@@ -86,15 +86,15 @@ static NameKeyType textEntryLadderPasswordID = NAMEKEY_INVALID;
 static NameKeyType comboBoxLadderNameID = NAMEKEY_INVALID;
 static NameKeyType textEntryGamePasswordID = NAMEKEY_INVALID;
 
-static GameWindow *parentPopup = NULL;
-static GameWindow *textEntryGameName = NULL;
-static GameWindow *buttonCreateGame = NULL;
-static GameWindow *checkBoxAllowObservers = NULL;
-static GameWindow *textEntryGameDescription = NULL;
-static GameWindow *buttonCancel = NULL;
-static GameWindow *comboBoxLadderName = NULL;
-static GameWindow *textEntryLadderPassword = NULL;
-static GameWindow *textEntryGamePassword = NULL;
+static GameWindow *parentPopup = nullptr;
+static GameWindow *textEntryGameName = nullptr;
+static GameWindow *buttonCreateGame = nullptr;
+static GameWindow *checkBoxAllowObservers = nullptr;
+static GameWindow *textEntryGameDescription = nullptr;
+static GameWindow *buttonCancel = nullptr;
+static GameWindow *comboBoxLadderName = nullptr;
+static GameWindow *textEntryLadderPassword = nullptr;
+static GameWindow *textEntryGamePassword = nullptr;
 
 
 void createGame( void );
@@ -162,7 +162,7 @@ void PopulateCustomLadderListBox( GameWindow *win )
 
 	// start with "No Ladder"
 	index = GadgetListBoxAddEntryText( win, TheGameText->fetch("GUI:NoLadder"), normalColor, -1 );
-	GadgetListBoxSetItemData( win, 0, index );
+	GadgetListBoxSetItemData( win, nullptr, index );
 
 	// add the last ladder
 	Int selectedPos = 0;
@@ -260,7 +260,7 @@ void PopulateCustomLadderComboBox( void )
 	Int index;
 	GadgetComboBoxReset( comboBoxLadderName );
 	index = GadgetComboBoxAddEntry( comboBoxLadderName, TheGameText->fetch("GUI:NoLadder"), normalColor );
-	GadgetComboBoxSetItemData( comboBoxLadderName, index, 0 );
+	GadgetComboBoxSetItemData( comboBoxLadderName, index, nullptr );
 
 	Int selectedPos = 0;
 	AsciiString lastLadderAddr = pref.getLastLadderAddr();
@@ -307,7 +307,7 @@ void PopulateCustomLadderComboBox( void )
 void PopupHostGameInit( WindowLayout *layout, void *userData )
 {
 	parentPopupID = TheNameKeyGenerator->nameToKey("PopupHostGame.wnd:ParentHostPopUp");
-	parentPopup = TheWindowManager->winGetWindowFromId(NULL, parentPopupID);
+	parentPopup = TheWindowManager->winGetWindowFromId(nullptr, parentPopupID);
 
 	textEntryGameNameID = TheNameKeyGenerator->nameToKey("PopupHostGame.wnd:TextEntryGameName");
 	textEntryGameName = TheWindowManager->winGetWindowFromId(parentPopup, textEntryGameNameID);
@@ -416,7 +416,7 @@ WindowMsgHandledType PopupHostGameSystem( GameWindow *window, UnsignedInt msg, W
     //---------------------------------------------------------------------------------------------
 		case GWM_DESTROY:
 		{
-			parentPopup = NULL;
+			parentPopup = nullptr;
 
 			break;
 
@@ -495,7 +495,7 @@ WindowMsgHandledType PopupHostGameSystem( GameWindow *window, UnsignedInt msg, W
 
       if( controlID == buttonCancelID )
 			{
-				parentPopup = NULL;
+				parentPopup = nullptr;
 				GameSpyCloseOverlay(GSOVERLAY_GAMEOPTIONS);
 				SetLobbyAttemptHostJoin( FALSE );
 			}
@@ -510,7 +510,7 @@ WindowMsgHandledType PopupHostGameSystem( GameWindow *window, UnsignedInt msg, W
 					GadgetTextEntrySetText(textEntryGameName, name);
 				}
 				createGame();
-				parentPopup = NULL;
+				parentPopup = nullptr;
 				GameSpyCloseOverlay(GSOVERLAY_GAMEOPTIONS);
 			}
 			break;

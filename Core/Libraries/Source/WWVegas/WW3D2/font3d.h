@@ -53,7 +53,7 @@ class SurfaceClass;
 ** 16-bit Targa files, then converted to proportional fonts by
 ** finding the minimum bounding box for each chacter.  The font
 ** texture is then minimized to a 256x256 or 128x128 texture
-** material by re-stacking chars by thier minimum bounding box.
+** material by re-stacking chars by their minimum bounding box.
 **
 ** During use, this class is really no more than a data table accessor
 ** Only during creation is any real code run.

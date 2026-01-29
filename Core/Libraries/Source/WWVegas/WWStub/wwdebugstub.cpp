@@ -17,12 +17,13 @@
 */
 
 // TheSuperHackers @build feliwir 15/04/2025 Simple debug implementation useful for tools
+
 #include "wwdebug.h"
 #include <stdarg.h>
 #include <stdlib.h>
 #include <Utility/stdio_adapter.h>
 
-char* TheCurrentIgnoreCrashPtr = NULL;
+char* TheCurrentIgnoreCrashPtr = nullptr;
 
 
 #ifdef DEBUG_LOGGING

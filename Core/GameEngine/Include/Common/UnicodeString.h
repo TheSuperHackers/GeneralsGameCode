@@ -252,7 +252,7 @@ public:
 	void trimEnd(void);
 
 	/**
-	  Remove all consecutive occurances of c from the end of the string.
+	  Remove all consecutive occurrences of c from the end of the string.
 	*/
 	void trimEnd(const WideChar c);
 
@@ -394,7 +394,7 @@ inline int UnicodeString::getByteCount() const
 inline Bool UnicodeString::isEmpty() const
 {
 	validate();
-	return m_data == NULL || peek()[0] == 0;
+	return m_data == nullptr || peek()[0] == 0;
 }
 
 // -----------------------------------------------------

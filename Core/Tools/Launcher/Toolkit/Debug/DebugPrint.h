@@ -43,7 +43,7 @@ extern "C"
 {
 #endif
 
-//! Ouput debug print messages to the debugger and log file.
+//! Output debug print messages to the debugger and log file.
 void __cdecl DebugPrint(const char* string, ...);
 void __cdecl PrintWin32Error(const char* string, ...);
 

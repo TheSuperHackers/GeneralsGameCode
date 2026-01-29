@@ -81,7 +81,7 @@ static const LookupListRec CreditStyleNames[] =
 	{ "NORMAL",			CREDIT_STYLE_NORMAL },
 	{ "COLUMN",				CREDIT_STYLE_COLUMN },
 	// CREDIT_STYLE_BLANK
-	{ NULL, 0	}
+	{ nullptr, 0	}
 };
 static_assert(ARRAY_SIZE(CreditStyleNames) == MAX_CREDIT_STYLES, "Incorrect array size");
 

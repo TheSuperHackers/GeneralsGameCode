@@ -66,7 +66,7 @@ static const char *const TheLocomotorSurfaceTypeNames[] =
 	"AIR",
 	"RUBBLE",
 
-	NULL
+	nullptr
 };
 #endif
 

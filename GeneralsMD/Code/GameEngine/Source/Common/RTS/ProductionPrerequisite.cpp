@@ -143,7 +143,7 @@ const ThingTemplate *ProductionPrerequisite::getExistingBuildFacilityTemplate( c
 				return m_prereqUnits[i].unit;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -189,7 +189,7 @@ Bool ProductionPrerequisite::isSatisfied(const Player *player) const
 //-------------------------------------------------------------------------------------------------
 /** Add a unit prerequisite, if 'orWithPrevious' is set then this unit is said
 	* to be an alternate prereq to the previously added unit, otherwise this becomes
-	* a new 'block' and is required in ADDDITION to other entries.
+	* a new 'block' and is required in ADDITION to other entries.
 	* Return FALSE if no space left to add unit */
 //-------------------------------------------------------------------------------------------------
 void ProductionPrerequisite::addUnitPrereq( AsciiString unit, Bool orUnitWithPrevious )
@@ -197,7 +197,7 @@ void ProductionPrerequisite::addUnitPrereq( AsciiString unit, Bool orUnitWithPre
 	PrereqUnitRec info;
 	info.name = unit;
 	info.flags = orUnitWithPrevious ? UNIT_OR_WITH_PREV : 0;
-	info.unit = NULL;
+	info.unit = nullptr;
 	m_prereqUnits.push_back(info);
 
 }
@@ -205,7 +205,7 @@ void ProductionPrerequisite::addUnitPrereq( AsciiString unit, Bool orUnitWithPre
 //-------------------------------------------------------------------------------------------------
 /** Add a unit prerequisite, if 'orWithPrevious' is set then this unit is said
 	* to be an alternate prereq to the previously added unit, otherwise this becomes
-	* a new 'block' and is required in ADDDITION to other entries.
+	* a new 'block' and is required in ADDITION to other entries.
 	* Return FALSE if no space left to add unit */
 //-------------------------------------------------------------------------------------------------
 void ProductionPrerequisite::addUnitPrereq( const std::vector<AsciiString>& units )
@@ -266,7 +266,7 @@ UnicodeString ProductionPrerequisite::getRequiresList(const Player *player) cons
 				unit = m_prereqUnits[i-1].unit;
 				unitName = unit->getDisplayName();
 				unitName.concat( L" " );
-				unitName.concat(TheGameText->fetch("CONTROLBAR:OrRequirement", NULL));
+				unitName.concat(TheGameText->fetch("CONTROLBAR:OrRequirement", nullptr));
 				unitName.concat( L" " );
 				requiresList.concat(unitName);
 			}
@@ -305,7 +305,7 @@ UnicodeString ProductionPrerequisite::getRequiresList(const Player *player) cons
 		} else {
 			unitName.concat(L"\n");
 		}
-		requiresList.concat(TheGameText->fetch("CONTROLBAR:GeneralsPromotion", NULL));
+		requiresList.concat(TheGameText->fetch("CONTROLBAR:GeneralsPromotion", nullptr));
 	}
 
 	// return final list

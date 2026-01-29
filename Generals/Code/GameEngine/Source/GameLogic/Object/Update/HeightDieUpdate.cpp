@@ -66,13 +66,13 @@ void HeightDieUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "TargetHeight", INI::parseReal, NULL, offsetof( HeightDieUpdateModuleData, m_targetHeightAboveTerrain ) },
-		{ "TargetHeightIncludesStructures", INI::parseBool, NULL, offsetof( HeightDieUpdateModuleData, m_targetHeightIncludesStructures ) },
-		{ "OnlyWhenMovingDown", INI::parseBool, NULL, offsetof( HeightDieUpdateModuleData, m_onlyWhenMovingDown ) },
-		{ "DestroyAttachedParticlesAtHeight", INI::parseReal, NULL, offsetof( HeightDieUpdateModuleData, m_destroyAttachedParticlesAtHeight ) },
-		{ "SnapToGroundOnDeath", INI::parseBool, NULL, offsetof( HeightDieUpdateModuleData, m_snapToGroundOnDeath ) },
-		{ "InitialDelay", INI::parseDurationUnsignedInt, NULL, offsetof( HeightDieUpdateModuleData, m_initialDelay ) },
-		{ 0, 0, 0, 0 }
+		{ "TargetHeight", INI::parseReal, nullptr, offsetof( HeightDieUpdateModuleData, m_targetHeightAboveTerrain ) },
+		{ "TargetHeightIncludesStructures", INI::parseBool, nullptr, offsetof( HeightDieUpdateModuleData, m_targetHeightIncludesStructures ) },
+		{ "OnlyWhenMovingDown", INI::parseBool, nullptr, offsetof( HeightDieUpdateModuleData, m_onlyWhenMovingDown ) },
+		{ "DestroyAttachedParticlesAtHeight", INI::parseReal, nullptr, offsetof( HeightDieUpdateModuleData, m_destroyAttachedParticlesAtHeight ) },
+		{ "SnapToGroundOnDeath", INI::parseBool, nullptr, offsetof( HeightDieUpdateModuleData, m_snapToGroundOnDeath ) },
+		{ "InitialDelay", INI::parseDurationUnsignedInt, nullptr, offsetof( HeightDieUpdateModuleData, m_initialDelay ) },
+		{ nullptr, nullptr, nullptr, 0 }
 
 	};
 
@@ -119,7 +119,7 @@ UpdateSleepTime HeightDieUpdate::update( void )
 		return UPDATE_SLEEP_NONE;
 
 	// do nothing if we're contained within other objects ... like a transport
-	if( getObject()->getContainedBy() != NULL )
+	if( getObject()->getContainedBy() != nullptr )
 	{
 
 		// keep track of our last position even though we're not doing anything yet
@@ -179,7 +179,7 @@ UpdateSleepTime HeightDieUpdate::update( void )
 
 			// scan all objects in the radius of our extent and find the tallest height among them
 			PartitionFilterAcceptByKindOf filter1( MAKE_KINDOF_MASK( KINDOF_STRUCTURE ),KINDOFMASK_NONE );
-			PartitionFilter *filters[] = { &filter1, NULL };
+			PartitionFilter *filters[] = { &filter1, nullptr };
 			Real range = getObject()->getGeometryInfo().getBoundingCircleRadius();
 			ObjectIterator *iter = ThePartitionManager->iterateObjectsInRange( getObject(),
 																																				 range,

@@ -61,7 +61,8 @@ static const char* const VendorNames[]={
 	"3Dfx",
 	"3DLabs",
 	"CirrusLogic",
-	"Rendition"
+	"Rendition",
+	"VMware",
 };
 static_assert(ARRAY_SIZE(VendorNames) == DX8Caps::VENDOR_COUNT, "Incorrect array size");
 
@@ -81,6 +82,7 @@ DX8Caps::VendorIdType DX8Caps::Define_Vendor(unsigned vendor_id)
 	case 0x1142: // Alliance based reference cards
 	case 0x109D: // Macronix based reference cards
 	case 0x121A: return VENDOR_3DFX;
+	case 0x15AD: return VENDOR_VMWARE;
 	default:
 		return VENDOR_UNKNOWN;
 	}
@@ -1157,6 +1159,13 @@ void DX8Caps::Vendor_Specific_Hacks(const D3DADAPTER_IDENTIFIER8& adapter_id)
 		}
 
 
+	}
+
+	if (VendorId==VENDOR_VMWARE) {
+		// TheSuperHackers @bugfix Stubbjax 15/01/2025 Disable DOT3 support for VMWare's virtual GPU.
+		// The D3DTA_ALPHAREPLICATE modifier fails when passed to a D3DTOP_MULTIPLYADD operation.
+		DXLOG(("Disabling DOT3 on VMWare\r\n"));
+		SupportDot3 = false;
 	}
 }
 

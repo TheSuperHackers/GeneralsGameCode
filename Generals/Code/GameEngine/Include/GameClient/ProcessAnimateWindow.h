@@ -99,7 +99,7 @@ public:
 	virtual Bool reverseAnimateWindow( wnd::AnimateWindow *animWin );
 private:
 Coord2D m_maxVel;  // top speed windows travel in x and y
-Int m_slowDownThreshold;  // when widnows get this close to their resting
+Int m_slowDownThreshold;  // when windows get this close to their resting
 																		// positions they start to slow down
 Real m_slowDownRatio;  // how fast the windows slow down (smaller slows quicker)
 Real m_speedUpRatio;  // how fast the windows speed up
@@ -122,7 +122,7 @@ public:
 	virtual Bool reverseAnimateWindow( wnd::AnimateWindow *animWin );
 private:
 Coord2D m_maxVel;  // top speed windows travel in x and y
-Int m_slowDownThreshold;  // when widnows get this close to their resting
+Int m_slowDownThreshold;  // when windows get this close to their resting
 																		// positions they start to slow down
 Real m_slowDownRatio;  // how fast the windows slow down (smaller slows quicker)
 Real m_speedUpRatio;  // how fast the windows speed up
@@ -145,7 +145,7 @@ public:
 	virtual Bool reverseAnimateWindow( wnd::AnimateWindow *animWin );
 private:
 Coord2D m_maxVel;  // top speed windows travel in x and y
-Int m_slowDownThreshold;  // when widnows get this close to their resting
+Int m_slowDownThreshold;  // when windows get this close to their resting
 																		// positions they start to slow down
 Real m_slowDownRatio;  // how fast the windows slow down (smaller slows quicker)
 Real m_speedUpRatio;  // how fast the windows speed up
@@ -166,7 +166,7 @@ public:
 	virtual Bool reverseAnimateWindow( wnd::AnimateWindow *animWin );
 private:
 Coord2D m_maxVel;  // top speed windows travel in x and y
-Int m_slowDownThreshold;  // when widnows get this close to their resting
+Int m_slowDownThreshold;  // when windows get this close to their resting
 																		// positions they start to slow down
 Real m_slowDownRatio;  // how fast the windows slow down (smaller slows quicker)
 Real m_speedUpRatio;  // how fast the windows speed up
@@ -189,7 +189,7 @@ public:
 	virtual Bool reverseAnimateWindow( wnd::AnimateWindow *animWin );
 private:
 Coord2D m_maxVel;  // top speed windows travel in x and y
-Int m_slowDownThreshold;  // when widnows get this close to their resting
+Int m_slowDownThreshold;  // when windows get this close to their resting
 																		// positions they start to slow down
 Real m_slowDownRatio;  // how fast the windows slow down (smaller slows quicker)
 Real m_speedUpRatio;  // how fast the windows speed up
@@ -247,7 +247,7 @@ public:
 	virtual Bool reverseAnimateWindow( wnd::AnimateWindow *animWin );
 private:
 Coord2D m_maxVel;  // top speed windows travel in x and y
-Int m_slowDownThreshold;  // when widnows get this close to their resting
+Int m_slowDownThreshold;  // when windows get this close to their resting
 																		// positions they start to slow down
 Real m_slowDownRatio;  // how fast the windows slow down (smaller slows quicker)
 Real m_speedUpRatio;  // how fast the windows speed up

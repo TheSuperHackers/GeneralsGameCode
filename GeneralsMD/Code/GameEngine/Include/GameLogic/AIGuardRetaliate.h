@@ -175,7 +175,7 @@ class AIGuardRetaliateOuterState : public State
 public:
 	AIGuardRetaliateOuterState( StateMachine *machine ) : State( machine, "AIGuardRetaliateOuter" )
 	{
-		m_attackState = NULL;
+		m_attackState = nullptr;
 	}
 	virtual StateReturnType onEnter( void );
 	virtual StateReturnType update( void );

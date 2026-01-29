@@ -42,7 +42,10 @@ typedef std::vector<ICoord2D> VecICoord2D;
 /** MapObject class
 Not ref counted.  Do not store pointers to this class.  */
 
-#define VERTEX_BUFFER_TILE_LENGTH	32		//tiles of side length 32 (grid of 33x33 vertices).
+#define VERTEX_BUFFER_TILE_LENGTH 32 //tiles of side length 32 (grid of 33x33 vertices).
+#define VERTS_IN_BLOCK_ROW (VERTEX_BUFFER_TILE_LENGTH + 1)
+#define HEIGHTMAP_VERTEX_NUM (VERTEX_BUFFER_TILE_LENGTH * 2 * VERTEX_BUFFER_TILE_LENGTH * 2)
+#define HEIGHTMAP_POLYGON_NUM (VERTEX_BUFFER_TILE_LENGTH * VERTEX_BUFFER_TILE_LENGTH * 2)
 
 #define K_MIN_HEIGHT  0
 #define K_MAX_HEIGHT  255
@@ -88,6 +91,8 @@ class InputStream;
 class OutputStream;
 class DataChunkInput;
 struct DataChunkInfo;
+class TerrainTextureClass;
+class AlphaTerrainTextureClass;
 class AlphaEdgeTextureClass;
 
 #define NUM_ALPHA_TILES 12
@@ -187,8 +192,8 @@ protected:
 
 
 protected:
-	TileData *getSourceTile(UnsignedInt ndx) { if (ndx<NUM_SOURCE_TILES) return(m_sourceTiles[ndx]); return(NULL); };
-	TileData *getEdgeTile(UnsignedInt ndx) { if (ndx<NUM_SOURCE_TILES) return(m_edgeTiles[ndx]); return(NULL); };
+	TileData *getSourceTile(UnsignedInt ndx) { if (ndx<NUM_SOURCE_TILES) return(m_sourceTiles[ndx]); return(nullptr); };
+	TileData *getEdgeTile(UnsignedInt ndx) { if (ndx<NUM_SOURCE_TILES) return(m_edgeTiles[ndx]); return(nullptr); };
 	/// UV mapping data for a cell to map into the terrain texture.
 	void getUVForNdx(Int ndx, float *minU, float *minV, float *maxU, float*maxV);
 	Bool getUVForTileIndex(Int ndx, Short tileNdx, float U[4], float V[4]);
@@ -313,7 +318,7 @@ public:  // modify height value
 	};
 public: // Read tile utilities. jba [7/9/2003]
 	static Bool readTiles(InputStream *pStrm, TileData **tiles, Int numRows);
-	static Int countTiles(InputStream *pStrm, Bool *halfTile=NULL);
+	static Int countTiles(InputStream *pStrm, Bool *halfTile=nullptr);
 
 protected:
 	void setCliffState(Int xIndex, Int yIndex, Bool state);

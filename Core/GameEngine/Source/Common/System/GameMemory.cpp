@@ -397,7 +397,7 @@ class MemoryPoolSingleBlock
 {
 private:
 
-	MemoryPoolBlob				*m_owningBlob;			///< will be NULL if the single block was allocated via sysAllocate()
+	MemoryPoolBlob				*m_owningBlob;			///< will be null if the single block was allocated via sysAllocate()
 	MemoryPoolSingleBlock	*m_nextBlock;				///< if m_owningBlob is nonnull, this points to next free (unallocated) block in the blob; if m_owningBlob is null, this points to the next used (allocated) raw block in the pool.
 #ifdef MPSB_DLINK
 	MemoryPoolSingleBlock	*m_prevBlock;				///< if m_owningBlob is nonnull, this points to prev free (unallocated) block in the blob; if m_owningBlob is null, this points to the prev used (allocated) raw block in the pool.
@@ -508,8 +508,8 @@ public:
 // PUBLIC DATA
 // ----------------------------------------------------------------------------
 
-MemoryPoolFactory *TheMemoryPoolFactory = NULL;
-DynamicMemoryAllocator *TheDynamicMemoryAllocator = NULL;
+MemoryPoolFactory *TheMemoryPoolFactory = nullptr;
+DynamicMemoryAllocator *TheDynamicMemoryAllocator = nullptr;
 
 // ----------------------------------------------------------------------------
 // INLINES
@@ -578,7 +578,7 @@ inline MemoryPoolBlob *MemoryPoolSingleBlock::getOwningBlob()
 */
 inline MemoryPoolSingleBlock *MemoryPoolSingleBlock::getNextFreeBlock()
 {
-	DEBUG_ASSERTCRASH(m_owningBlob != NULL, ("must be called on blob block"));
+	DEBUG_ASSERTCRASH(m_owningBlob != nullptr, ("must be called on blob block"));
 	return m_nextBlock;
 }
 
@@ -589,9 +589,9 @@ inline MemoryPoolSingleBlock *MemoryPoolSingleBlock::getNextFreeBlock()
 */
 inline void MemoryPoolSingleBlock::setNextFreeBlock(MemoryPoolSingleBlock *b)
 {
-	//DEBUG_ASSERTCRASH(m_owningBlob != NULL && b->m_owningBlob != NULL, ("must be called on blob block"));
+	//DEBUG_ASSERTCRASH(m_owningBlob != nullptr && b->m_owningBlob != nullptr, ("must be called on blob block"));
 	// don't check the 'b' block -- we need to call this before 'b' is fully initialized.
-	DEBUG_ASSERTCRASH(m_owningBlob != NULL, ("must be called on blob block"));
+	DEBUG_ASSERTCRASH(m_owningBlob != nullptr, ("must be called on blob block"));
 	this->m_nextBlock = b;
 #ifdef MPSB_DLINK
 	if (b) {
@@ -606,7 +606,7 @@ inline void MemoryPoolSingleBlock::setNextFreeBlock(MemoryPoolSingleBlock *b)
 */
 inline MemoryPoolSingleBlock *MemoryPoolSingleBlock::getNextRawBlock()
 {
-	DEBUG_ASSERTCRASH(m_owningBlob == NULL, ("must be called on raw block"));
+	DEBUG_ASSERTCRASH(m_owningBlob == nullptr, ("must be called on raw block"));
 	return m_nextBlock;
 }
 
@@ -616,7 +616,7 @@ inline MemoryPoolSingleBlock *MemoryPoolSingleBlock::getNextRawBlock()
 */
 inline void MemoryPoolSingleBlock::setNextRawBlock(MemoryPoolSingleBlock *b)
 {
-	DEBUG_ASSERTCRASH(m_owningBlob == NULL && (!b || b->m_owningBlob == NULL), ("must be called on raw block"));
+	DEBUG_ASSERTCRASH(m_owningBlob == nullptr && (!b || b->m_owningBlob == nullptr), ("must be called on raw block"));
 	m_nextBlock = b;
 #ifdef MPSB_DLINK
 	if (b)
@@ -686,7 +686,7 @@ inline BlockCheckpointInfo *MemoryPoolSingleBlock::debugGetCheckpointInfo()
 */
 inline void MemoryPoolSingleBlock::debugSetCheckpointInfo(BlockCheckpointInfo *bi)
 {
-	DEBUG_ASSERTCRASH(m_checkpointInfo == NULL, ("should be null"));
+	DEBUG_ASSERTCRASH(m_checkpointInfo == nullptr, ("should be null"));
 	m_checkpointInfo = bi;
 }
 #endif
@@ -698,7 +698,7 @@ inline void MemoryPoolSingleBlock::debugSetCheckpointInfo(BlockCheckpointInfo *b
 */
 inline void MemoryPoolSingleBlock::debugResetCheckpoint()
 {
-	m_checkpointInfo = NULL;
+	m_checkpointInfo = nullptr;
 }
 #endif
 
@@ -706,7 +706,7 @@ inline void MemoryPoolSingleBlock::debugResetCheckpoint()
 /// accessor
 inline MemoryPoolBlob *MemoryPoolBlob::getNextInList() { return m_nextBlob; }
 /// accessor
-inline Bool MemoryPoolBlob::hasAnyFreeBlocks() { return m_firstFreeBlock != NULL; }
+inline Bool MemoryPoolBlob::hasAnyFreeBlocks() { return m_firstFreeBlock != nullptr; }
 /// accessor
 inline MemoryPool *MemoryPoolBlob::getOwningPool() { return m_owningPool; }
 /// accessor
@@ -795,7 +795,7 @@ Bool BlockCheckpointInfo::shouldBeInReport(Int flags, Int startCheckpoint, Int e
 		::sysFree((void *)p);
 		p = n;
 	}
-	*pHead = NULL;
+	*pHead = nullptr;
 }
 #endif
 
@@ -815,15 +815,15 @@ Bool BlockCheckpointInfo::shouldBeInReport(Int flags, Int startCheckpoint, Int e
 {
 	DEBUG_ASSERTCRASH(debugLiteralTagString != FREE_SINGLEBLOCK_TAG_STRING, ("bad tag string"));
 
-	BlockCheckpointInfo *freed = NULL;
+	BlockCheckpointInfo *freed = nullptr;
 	try {
 		freed = (BlockCheckpointInfo *)::sysAllocateDoNotZero(sizeof(BlockCheckpointInfo));
 	} catch (...) {
-		freed = NULL;
+		freed = nullptr;
 	}
 	if (freed)
 	{
-		DEBUG_ASSERTCRASH(debugLiteralTagString != NULL, ("null tagstrings are not allowed"));
+		DEBUG_ASSERTCRASH(debugLiteralTagString != nullptr, ("null tagstrings are not allowed"));
 		freed->m_debugLiteralTagString = debugLiteralTagString;
 		freed->m_allocCheckpoint = allocCheckpoint;
 		freed->m_freeCheckpoint = -1;
@@ -858,7 +858,7 @@ void MemoryPoolSingleBlock::initBlock(Int logicalSize, MemoryPoolBlob *owningBlo
 	m_debugFlags = 0;
 	if (!theMainInitFlag)
 		debugIgnoreLeaksForThisBlock();
-	DEBUG_ASSERTCRASH(debugLiteralTagString != NULL, ("null tagstrings are not allowed"));
+	DEBUG_ASSERTCRASH(debugLiteralTagString != nullptr, ("null tagstrings are not allowed"));
 	m_debugLiteralTagString = debugLiteralTagString;
 	m_logicalSize = logicalSize;
 	m_wastedSize = 0;
@@ -871,21 +871,21 @@ void MemoryPoolSingleBlock::initBlock(Int logicalSize, MemoryPoolBlob *owningBlo
 	}
 	else
 	{
-		m_stacktrace[0] = NULL;
+		m_stacktrace[0] = nullptr;
 	}
 #endif
 }
 #endif // MEMORYPOOL_DEBUG
 
 #ifdef MEMORYPOOL_CHECKPOINTING
-	m_checkpointInfo = NULL;
+	m_checkpointInfo = nullptr;
 #endif
 
-	m_nextBlock = NULL;
+	m_nextBlock = nullptr;
 #ifdef MPSB_DLINK
-	m_prevBlock = NULL;
+	m_prevBlock = nullptr;
 #endif
-	m_owningBlob = owningBlob;	// could be NULL
+	m_owningBlob = owningBlob;	// could be null
 
 #ifdef MEMORYPOOL_BOUNDINGWALL
 	m_wallPattern = theBoundingWallPattern++;
@@ -902,7 +902,7 @@ void MemoryPoolSingleBlock::initBlock(Int logicalSize, MemoryPoolBlob *owningBlo
 {
 	DEBUG_ASSERTCRASH(pUserData, ("null pUserData"));
 	if (!pUserData)
-		return NULL;
+		return nullptr;
 	char* p = ((char*)pUserData) - sizeof(MemoryPoolSingleBlock);
 	#ifdef MEMORYPOOL_BOUNDINGWALL
 	p -= WALLSIZE;
@@ -927,7 +927,7 @@ void MemoryPoolSingleBlock::initBlock(Int logicalSize, MemoryPoolBlob *owningBlo
 	DECLARE_LITERALSTRING_ARG2)
 {
 	MemoryPoolSingleBlock *block = (MemoryPoolSingleBlock *)::sysAllocateDoNotZero(calcRawBlockSize(logicalSize));
-	block->initBlock(logicalSize, NULL, owningFactory PASS_LITERALSTRING_ARG2);
+	block->initBlock(logicalSize, nullptr, owningFactory PASS_LITERALSTRING_ARG2);
 	block->setNextRawBlock(*pRawListHead);
 	*pRawListHead = block;
 	return block;
@@ -940,12 +940,12 @@ void MemoryPoolSingleBlock::initBlock(Int logicalSize, MemoryPoolBlob *owningBlo
 */
 void MemoryPoolSingleBlock::removeBlockFromList(MemoryPoolSingleBlock **pHead)
 {
-	DEBUG_ASSERTCRASH(this->m_owningBlob == NULL, ("this function should only be used on raw blocks"));
+	DEBUG_ASSERTCRASH(this->m_owningBlob == nullptr, ("this function should only be used on raw blocks"));
 #ifdef MPSB_DLINK
-	DEBUG_ASSERTCRASH(this->m_nextBlock == NULL || this->m_nextBlock->m_owningBlob == NULL, ("this function should only be used on raw blocks"));
+	DEBUG_ASSERTCRASH(this->m_nextBlock == nullptr || this->m_nextBlock->m_owningBlob == nullptr, ("this function should only be used on raw blocks"));
 	if (this->m_prevBlock)
 	{
-		DEBUG_ASSERTCRASH(this->m_prevBlock->m_owningBlob == NULL, ("this function should only be used on raw blocks"));
+		DEBUG_ASSERTCRASH(this->m_prevBlock->m_owningBlob == nullptr, ("this function should only be used on raw blocks"));
 		DEBUG_ASSERTCRASH(*pHead != this, ("bad linkage"));
 		this->m_prevBlock->m_nextBlock = this->m_nextBlock;
 	}
@@ -957,7 +957,7 @@ void MemoryPoolSingleBlock::removeBlockFromList(MemoryPoolSingleBlock **pHead)
 
 	if (this->m_nextBlock)
 	{
-		DEBUG_ASSERTCRASH(this->m_nextBlock->m_owningBlob == NULL, ("this function should only be used on raw blocks"));
+		DEBUG_ASSERTCRASH(this->m_nextBlock->m_owningBlob == nullptr, ("this function should only be used on raw blocks"));
 		this->m_nextBlock->m_prevBlock = this->m_prevBlock;
 	}
 #else
@@ -965,10 +965,10 @@ void MemoryPoolSingleBlock::removeBlockFromList(MemoryPoolSingleBlock **pHead)
 	// would require adding a back link, so I'd rather do some testing
 	// first to see if it's really a speed issue in practice. (the only place
 	// this is used is when freeing 'raw' blocks allocated via the DMA).
-	MemoryPoolSingleBlock *prev = NULL;
+	MemoryPoolSingleBlock *prev = nullptr;
 	for (MemoryPoolSingleBlock *cur = *pHead; cur; cur = cur->m_nextBlock)
 	{
-		DEBUG_ASSERTCRASH(cur->m_owningBlob == NULL, ("this function should only be used on raw blocks"));
+		DEBUG_ASSERTCRASH(cur->m_owningBlob == nullptr, ("this function should only be used on raw blocks"));
 		if (cur == this)
 		{
 			if (prev)
@@ -1005,7 +1005,7 @@ Int MemoryPoolSingleBlock::debugSingleBlockReportLeak(const char* owner)
 		/** @todo srj -- we leak a bunch of these for some reason (probably due to leaking Win32LocalFile)
 			so just ignore 'em for now... figure out later. */
 	}
-	else if (strstr(m_debugLiteralTagString, "Win32LocalFileSystem.cpp") != NULL)
+	else if (strstr(m_debugLiteralTagString, "Win32LocalFileSystem.cpp") != nullptr)
 	{
 		/** @todo srj -- we leak a bunch of these for some reason
 			so just ignore 'em for now... figure out later. */
@@ -1035,14 +1035,14 @@ void MemoryPoolSingleBlock::debugVerifyBlock()
 
 	DEBUG_ASSERTCRASH(this, ("null this"));
 	DEBUG_ASSERTCRASH(m_magicCookie == SINGLEBLOCK_MAGIC_COOKIE, ("wrong cookie"));
-	DEBUG_ASSERTCRASH(m_debugLiteralTagString != NULL, ("bad tagstring"));
+	DEBUG_ASSERTCRASH(m_debugLiteralTagString != nullptr, ("bad tagstring"));
 	/// @todo Put this check back in after the AI memory usage is under control (MSB)
 	//DEBUG_ASSERTCRASH(m_logicalSize>0 && m_logicalSize < 0x00ffffff, ("unlikely value for m_logicalSize"));
-	DEBUG_ASSERTCRASH(m_nextBlock == NULL
+	DEBUG_ASSERTCRASH(m_nextBlock == nullptr
 		|| memcmp(&m_nextBlock->m_owningBlob, &s_initFillerValue, sizeof(s_initFillerValue)) == 0
 		|| m_nextBlock->m_owningBlob == m_owningBlob, ("owning blob mismatch..."));
 #ifdef MPSB_DLINK
-	DEBUG_ASSERTCRASH(m_prevBlock == NULL
+	DEBUG_ASSERTCRASH(m_prevBlock == nullptr
 		|| memcmp(&m_prevBlock->m_owningBlob, &s_initFillerValue, sizeof(s_initFillerValue)) == 0
 		|| m_prevBlock->m_owningBlob == m_owningBlob, ("owning blob mismatch..."));
 #endif
@@ -1152,13 +1152,13 @@ void MemoryPoolSingleBlock::debugFillInWalls()
 	fill in safe default values.
 */
 MemoryPoolBlob::MemoryPoolBlob() :
-	m_owningPool(NULL),
-	m_nextBlob(NULL),
-	m_prevBlob(NULL),
-	m_firstFreeBlock(NULL),
+	m_owningPool(nullptr),
+	m_nextBlob(nullptr),
+	m_prevBlob(nullptr),
+	m_firstFreeBlock(nullptr),
 	m_usedBlocksInBlob(0),
 	m_totalBlocksInBlob(0),
-	m_blockData(NULL)
+	m_blockData(nullptr)
 {
 }
 
@@ -1178,7 +1178,7 @@ MemoryPoolBlob::~MemoryPoolBlob()
 */
 void MemoryPoolBlob::initBlob(MemoryPool *owningPool, Int allocationCount)
 {
-	DEBUG_ASSERTCRASH(m_blockData == NULL, ("unlikely init call"));
+	DEBUG_ASSERTCRASH(m_blockData == nullptr, ("unlikely init call"));
 
 	m_owningPool = owningPool;
 	m_totalBlocksInBlob = allocationCount;
@@ -1198,7 +1198,7 @@ void MemoryPoolBlob::initBlob(MemoryPool *owningPool, Int allocationCount)
 #else
 		block->initBlock(m_owningPool->getAllocationSize(), this, owningPool->getOwningFactory());
 #endif
-		block->setNextFreeBlock((i > 0) ? next : NULL);
+		block->setNextFreeBlock((i > 0) ? next : nullptr);
 #ifdef MEMORYPOOL_DEBUG
 		block->debugMarkBlockAsFree();
 #endif
@@ -1218,12 +1218,12 @@ void MemoryPoolBlob::initBlob(MemoryPool *owningPool, Int allocationCount)
 void MemoryPoolBlob::addBlobToList(MemoryPoolBlob **ppHead, MemoryPoolBlob **ppTail)
 {
 	m_prevBlob = *ppTail;
-	m_nextBlob =  NULL;
+	m_nextBlob =  nullptr;
 
-	if (*ppTail != NULL)
+	if (*ppTail != nullptr)
 		(*ppTail)->m_nextBlob = this;
 
-	if (*ppHead == NULL)
+	if (*ppHead == nullptr)
 		*ppHead = this;
 
 	*ppTail = this;
@@ -1310,7 +1310,7 @@ void MemoryPoolBlob::debugMemoryVerifyBlob()
 {
 	USE_PERF_TIMER(MemoryPoolDebugging)
 
-	DEBUG_ASSERTCRASH(m_owningPool != NULL, ("bad owner"));
+	DEBUG_ASSERTCRASH(m_owningPool != nullptr, ("bad owner"));
 	DEBUG_ASSERTCRASH(m_usedBlocksInBlob >= 0 && m_usedBlocksInBlob <= m_totalBlocksInBlob, ("unlikely m_usedBlocksInBlob"));
 	DEBUG_ASSERTCRASH(m_totalBlocksInBlob > 0, ("unlikely m_totalBlocksInBlob"));
 
@@ -1392,7 +1392,7 @@ void MemoryPoolBlob::debugResetCheckpoints()
 	init fields of Checkpointable to safe values.
 */
 Checkpointable::Checkpointable() :
-	m_firstCheckpointInfo(NULL),
+	m_firstCheckpointInfo(nullptr),
 	m_cpiEverFailed(false)
 {
 }
@@ -1406,7 +1406,7 @@ Checkpointable::Checkpointable() :
 Checkpointable::~Checkpointable()
 {
 	BlockCheckpointInfo::freeList(&m_firstCheckpointInfo);
-	m_firstCheckpointInfo = NULL;
+	m_firstCheckpointInfo = nullptr;
 	m_cpiEverFailed = false;
 }
 #endif
@@ -1439,7 +1439,7 @@ BlockCheckpointInfo *Checkpointable::debugAddCheckpointInfo(
 		}
 		else
 		{
-			stacktrace[0] = NULL;
+			stacktrace[0] = nullptr;
 		}
 #endif
 	}
@@ -1496,8 +1496,8 @@ void Checkpointable::debugResetCheckpoints()
 	init to safe values.
 */
 MemoryPool::MemoryPool() :
-	m_factory(NULL),
-	m_nextPoolInFactory(NULL),
+	m_factory(nullptr),
+	m_nextPoolInFactory(nullptr),
 	m_poolName(""),
 	m_allocationSize(0),
 	m_initialAllocationCount(0),
@@ -1505,9 +1505,9 @@ MemoryPool::MemoryPool() :
 	m_usedBlocksInPool(0),
 	m_totalBlocksInPool(0),
 	m_peakUsedBlocksInPool(0),
-	m_firstBlob(NULL),
-	m_lastBlob(NULL),
-	m_firstBlobWithFreeBlocks(NULL)
+	m_firstBlob(nullptr),
+	m_lastBlob(nullptr),
+	m_firstBlobWithFreeBlocks(nullptr)
 {
 }
 
@@ -1526,9 +1526,9 @@ void MemoryPool::init(MemoryPoolFactory *factory, const char *poolName, Int allo
 	m_usedBlocksInPool = 0;
 	m_totalBlocksInPool = 0;
 	m_peakUsedBlocksInPool = 0;
-	m_firstBlob = NULL;
-	m_lastBlob = NULL;
-	m_firstBlobWithFreeBlocks = NULL;
+	m_firstBlob = nullptr;
+	m_lastBlob = nullptr;
+	m_firstBlobWithFreeBlocks = nullptr;
 
 	// go ahead and init the initial block here (will throw on failure)
 	createBlob(m_initialAllocationCount);
@@ -1564,7 +1564,7 @@ MemoryPoolBlob* MemoryPool::createBlob(Int allocationCount)
 
 	blob->addBlobToList(&m_firstBlob, &m_lastBlob);
 
-	DEBUG_ASSERTCRASH(m_firstBlobWithFreeBlocks == NULL, ("DO NOT IGNORE. Please call John McD - x36872 (m_firstBlobWithFreeBlocks != NULL)"));
+	DEBUG_ASSERTCRASH(m_firstBlobWithFreeBlocks == nullptr, ("DO NOT IGNORE. Please call John McD - x36872 (m_firstBlobWithFreeBlocks != nullptr)"));
 	m_firstBlobWithFreeBlocks = blob;
 
 	// bookkeeping
@@ -1630,12 +1630,12 @@ void* MemoryPool::allocateBlockDoNotZeroImplementation(DECLARE_LITERALSTRING_ARG
 {
 	ScopedCriticalSection scopedCriticalSection(TheMemoryPoolCriticalSection);
 
-	if (m_firstBlobWithFreeBlocks != NULL && !m_firstBlobWithFreeBlocks->hasAnyFreeBlocks())
+	if (m_firstBlobWithFreeBlocks != nullptr && !m_firstBlobWithFreeBlocks->hasAnyFreeBlocks())
 	{
 		// hmm... the current 'free' blob has nothing available. look and see if there
 		// are any other existing blobs with freespace.
 		MemoryPoolBlob *blob = m_firstBlob;
-		for (; blob != NULL; blob = blob->getNextInList())
+		for (; blob != nullptr; blob = blob->getNextInList())
 		{
 			if (blob->hasAnyFreeBlocks())
 			 	break;
@@ -1648,7 +1648,7 @@ void* MemoryPool::allocateBlockDoNotZeroImplementation(DECLARE_LITERALSTRING_ARG
 
 	// OK, if we are here then we have no blobs with freespace... darn.
 	// allocate an overflow block.
-	if (m_firstBlobWithFreeBlocks == NULL)
+	if (m_firstBlobWithFreeBlocks == nullptr)
 	{
 		if (m_overflowAllocationCount == 0)
 		{
@@ -1801,9 +1801,9 @@ void MemoryPool::reset()
 	{
 		freeBlob(m_firstBlob);
 	}
-	m_firstBlob = NULL;
-	m_lastBlob = NULL;
-	m_firstBlobWithFreeBlocks = NULL;
+	m_firstBlob = nullptr;
+	m_lastBlob = nullptr;
+	m_firstBlobWithFreeBlocks = nullptr;
 
 	init(m_factory, m_poolName, m_allocationSize, m_initialAllocationCount, m_overflowAllocationCount);	// will throw on failure
 
@@ -1827,7 +1827,7 @@ void MemoryPool::removeFromList(MemoryPool **pHead)
 {
 	// this isn't very efficient, but then, we rarely remove pools...
 	// usually only at shutdown. so don't bother optimizing.
-	MemoryPool *prev = NULL;
+	MemoryPool *prev = nullptr;
 	for (MemoryPool *cur = *pHead; cur; cur = cur->m_nextPoolInFactory)
 	{
 		if (cur == this)
@@ -2002,14 +2002,14 @@ void MemoryPool::debugResetCheckpoints()
 	init the DMA to safe values.
 */
 DynamicMemoryAllocator::DynamicMemoryAllocator() :
-	m_factory(NULL),
-	m_nextDmaInFactory(NULL),
+	m_factory(nullptr),
+	m_nextDmaInFactory(nullptr),
 	m_numPools(0),
 	m_usedBlocksInDma(0),
-	m_rawBlocks(NULL)
+	m_rawBlocks(nullptr)
 {
 	for (Int i = 0; i < MAX_DYNAMICMEMORYALLOCATOR_SUBPOOLS; i++)
-		m_pools[i] = 0;
+		m_pools[i] = nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -2029,7 +2029,7 @@ void DynamicMemoryAllocator::init(MemoryPoolFactory *factory, Int numSubPools, c
 		{ "dmaPool_1024", 1024, 64, 64 }
 	};
 
-	if (numSubPools == 0 || pParms == NULL)
+	if (numSubPools == 0 || pParms == nullptr)
 	{
 		// use the defaults...
 		numSubPools = 7;
@@ -2061,7 +2061,7 @@ DynamicMemoryAllocator::~DynamicMemoryAllocator()
 	for (Int i = 0; i < m_numPools; i++)
 	{
 		m_factory->destroyMemoryPool(m_pools[i]);
-		m_pools[i] = NULL;
+		m_pools[i] = nullptr;
 	}
 
 	while (m_rawBlocks)
@@ -2083,7 +2083,7 @@ MemoryPool *DynamicMemoryAllocator::findPoolForSize(Int allocSize)
 		if (allocSize <= m_pools[i]->getAllocationSize())
 			return m_pools[i];
 	}
-	return NULL;
+	return nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -2104,7 +2104,7 @@ void DynamicMemoryAllocator::removeFromList(DynamicMemoryAllocator **pHead)
 {
 	// this isn't very efficient, but then, we rarely remove these...
 	// usually only at shutdown. so don't bother optimizing.
-	DynamicMemoryAllocator *prev = NULL;
+	DynamicMemoryAllocator *prev = nullptr;
 	for (DynamicMemoryAllocator *cur = *pHead; cur; cur = cur->m_nextDmaInFactory)
 	{
 		if (cur == this)
@@ -2163,15 +2163,15 @@ void *DynamicMemoryAllocator::allocateBytesDoNotZeroImplementation(Int numBytes 
 {
 	ScopedCriticalSection scopedCriticalSection(TheDmaCriticalSection);
 
-	void *result = NULL;
+	void *result = nullptr;
 
 #ifdef MEMORYPOOL_DEBUG
-	DEBUG_ASSERTCRASH(debugLiteralTagString != NULL, ("bad tagstring"));
+	DEBUG_ASSERTCRASH(debugLiteralTagString != nullptr, ("bad tagstring"));
 	Int waste = 0;
 #endif
 
 	MemoryPool *pool = findPoolForSize(numBytes);
-	if (pool != NULL)
+	if (pool != nullptr)
 	{
 		result = pool->allocateBlockDoNotZeroImplementation(PASS_LITERALSTRING_ARG1);
 #ifdef MEMORYPOOL_DEBUG
@@ -2582,8 +2582,8 @@ void DynamicMemoryAllocator::debugDmaInfoReport( FILE *fp )
 	init the factory to safe values.
 */
 MemoryPoolFactory::MemoryPoolFactory() :
-	m_firstPoolInFactory(NULL),
-	m_firstDmaInFactory(NULL)
+	m_firstPoolInFactory(nullptr),
+	m_firstDmaInFactory(nullptr)
 #ifdef MEMORYPOOL_CHECKPOINTING
 	, m_curCheckpoint(0)
 #endif
@@ -2687,7 +2687,7 @@ MemoryPool *MemoryPoolFactory::findMemoryPool(const char *poolName)
 			return pool;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -2791,7 +2791,7 @@ static const char* s_specialPrefixes[MAX_SPECIAL_USED] =
 	"W3A_",
 	"STL_",
 	"STR_",
-	NULL
+	nullptr
 };
 
 #endif
@@ -2815,7 +2815,7 @@ void MemoryPoolFactory::adjustTotals(const char* tagString, Int usedDelta, Int p
 	int found = 0;	// if no matches found, goes into slot zero
 	for (int i = 1; i < MAX_SPECIAL_USED; ++i)	// start at 1, not zero
 	{
-		if (s_specialPrefixes[i] == NULL)
+		if (s_specialPrefixes[i] == nullptr)
 			break;
 
 		if (strncmp(tagString, s_specialPrefixes[i], strlen(s_specialPrefixes[i])) == 0)
@@ -2867,7 +2867,7 @@ void MemoryPoolFactory::debugMemoryVerify()
 	for (DynamicMemoryAllocator *dma = m_firstDmaInFactory; dma; dma = dma->getNextDmaInList())
 	{
 		dma->debugMemoryVerifyDma();
-		Int tmp = dma->debugCalcRawBlockBytes(NULL);
+		Int tmp = dma->debugCalcRawBlockBytes(nullptr);
 		used += tmp;
 		phys += tmp;
 	}
@@ -2969,7 +2969,7 @@ void MemoryPoolFactory::memoryPoolUsageReport( const char* filename, FILE *appen
 #ifdef MEMORYPOOL_DEBUG
 	//USE_PERF_TIMER(MemoryPoolDebugging) skip end-of-run reporting stuff
 
-	FILE* perfStatsFile = NULL;
+	FILE* perfStatsFile = nullptr;
 	Int totalNamedPoolPeak = 0;
 
 	if( !appendToFileInstead )
@@ -2984,7 +2984,7 @@ void MemoryPoolFactory::memoryPoolUsageReport( const char* filename, FILE *appen
 		perfStatsFile = appendToFileInstead;
 	}
 
-	if (perfStatsFile == NULL)
+	if (perfStatsFile == nullptr)
 	{
 		DEBUG_CRASH(("could not open/create perf file %s -- is it open in another app?",filename));
 		return;
@@ -3036,7 +3036,7 @@ void MemoryPoolFactory::memoryPoolUsageReport( const char* filename, FILE *appen
 		}
 #endif
 
-		if (lineIdx < MAX_SPECIAL_USED && s_specialPrefixes[lineIdx] != NULL)
+		if (lineIdx < MAX_SPECIAL_USED && s_specialPrefixes[lineIdx] != nullptr)
 		{
 			fprintf(perfStatsFile, ",,,%s,%d",s_specialPrefixes[lineIdx],m_usedBytesSpecialPeak[lineIdx]/1024);
 			keepGoing = true;
@@ -3118,7 +3118,7 @@ void MemoryPoolFactory::debugMemoryReport(Int flags, Int startCheckpoint, Int en
 			fprintf( fp, "Begin Pool Info Report\n" );
 			fprintf( fp, "------------------------------------------\n" );
 		}
-		MemoryPool::debugPoolInfoReport( NULL, fp );
+		MemoryPool::debugPoolInfoReport( nullptr, fp );
 		for (MemoryPool *pool = m_firstPoolInFactory; pool; pool = pool->getNextPoolInList())
 		{
 			MemoryPool::debugPoolInfoReport( pool, fp );
@@ -3210,7 +3210,7 @@ void MemoryPoolFactory::debugMemoryReport(Int flags, Int startCheckpoint, Int en
 		DEBUG_LOG(("Options: Between checkpoints %d and %d, report on (%s)",startCheckpoint,endCheckpoint,buf));
 		DEBUG_LOG(("------------------------------------------"));
 
-		BlockCheckpointInfo::doBlockCheckpointReport( NULL, "", 0, 0, 0 );
+		BlockCheckpointInfo::doBlockCheckpointReport( nullptr, "", 0, 0, 0 );
 		for (MemoryPool *pool = m_firstPoolInFactory; pool; pool = pool->getNextPoolInList())
 		{
 			pool->debugCheckpointReport(flags, startCheckpoint, endCheckpoint, pool->getPoolName());
@@ -3243,7 +3243,7 @@ void* STLSpecialAlloc::allocate(size_t __n)
 {
 	++theLinkTester;
 	preMainInitMemoryManager();
-	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != NULL, ("must init memory manager before calling global operator new"));
+	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != nullptr, ("must init memory manager before calling global operator new"));
 	return TheDynamicMemoryAllocator->allocateBytes(__n, "STL_");
 }
 
@@ -3252,7 +3252,7 @@ void STLSpecialAlloc::deallocate(void* __p, size_t)
 {
 	++theLinkTester;
 	preMainInitMemoryManager();
-	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != NULL, ("must init memory manager before calling global operator new"));
+	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != nullptr, ("must init memory manager before calling global operator new"));
 	TheDynamicMemoryAllocator->freeBytes(__p);
 }
 
@@ -3264,7 +3264,7 @@ void *operator new(size_t size)
 {
 	++theLinkTester;
 	preMainInitMemoryManager();
-	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != NULL, ("must init memory manager before calling global operator new"));
+	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != nullptr, ("must init memory manager before calling global operator new"));
 	return TheDynamicMemoryAllocator->allocateBytes(size, "global operator new");
 }
 
@@ -3276,7 +3276,7 @@ void *operator new[](size_t size)
 {
 	++theLinkTester;
 	preMainInitMemoryManager();
-	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != NULL, ("must init memory manager before calling global operator new"));
+	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != nullptr, ("must init memory manager before calling global operator new"));
 	return TheDynamicMemoryAllocator->allocateBytes(size, "global operator new[]");
 }
 
@@ -3288,7 +3288,7 @@ void operator delete(void *p)
 {
 	++theLinkTester;
 	preMainInitMemoryManager();
-	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != NULL, ("must init memory manager before calling global operator delete"));
+	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != nullptr, ("must init memory manager before calling global operator delete"));
 	TheDynamicMemoryAllocator->freeBytes(p);
 }
 
@@ -3300,7 +3300,7 @@ void operator delete[](void *p)
 {
 	++theLinkTester;
 	preMainInitMemoryManager();
-	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != NULL, ("must init memory manager before calling global operator delete"));
+	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != nullptr, ("must init memory manager before calling global operator delete"));
 	TheDynamicMemoryAllocator->freeBytes(p);
 }
 
@@ -3312,7 +3312,7 @@ void* operator new(size_t size, const char * fname, int)
 {
 	++theLinkTester;
 	preMainInitMemoryManager();
-	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != NULL, ("must init memory manager before calling global operator new"));
+	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != nullptr, ("must init memory manager before calling global operator new"));
 #ifdef MEMORYPOOL_DEBUG
 	return TheDynamicMemoryAllocator->allocateBytesImplementation(size, fname);
 #else
@@ -3328,7 +3328,7 @@ void operator delete(void * p, const char *, int)
 {
 	++theLinkTester;
 	preMainInitMemoryManager();
-	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != NULL, ("must init memory manager before calling global operator delete"));
+	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != nullptr, ("must init memory manager before calling global operator delete"));
 	TheDynamicMemoryAllocator->freeBytes(p);
 }
 
@@ -3340,7 +3340,7 @@ void* operator new[](size_t size, const char * fname, int)
 {
 	++theLinkTester;
 	preMainInitMemoryManager();
-	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != NULL, ("must init memory manager before calling global operator new"));
+	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != nullptr, ("must init memory manager before calling global operator new"));
 #ifdef MEMORYPOOL_DEBUG
 	return TheDynamicMemoryAllocator->allocateBytesImplementation(size, fname);
 #else
@@ -3356,7 +3356,7 @@ void operator delete[](void * p, const char *, int)
 {
 	++theLinkTester;
 	preMainInitMemoryManager();
-	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != NULL, ("must init memory manager before calling global operator delete"));
+	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != nullptr, ("must init memory manager before calling global operator delete"));
 	TheDynamicMemoryAllocator->freeBytes(p);
 }
 
@@ -3366,7 +3366,7 @@ void *calloc(size_t a, size_t b)
 {
 	++theLinkTester;
 	preMainInitMemoryManager();
-	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != NULL, ("must init memory manager"));
+	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != nullptr, ("must init memory manager"));
 	return TheDynamicMemoryAllocator->allocateBytes(a * b, "calloc");
 }
 #endif
@@ -3377,7 +3377,7 @@ void  free(void * p)
 {
 	++theLinkTester;
 	preMainInitMemoryManager();
-	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != NULL, ("must init memory manager"));
+	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != nullptr, ("must init memory manager"));
 	TheDynamicMemoryAllocator->freeBytes(p);
 }
 #endif
@@ -3388,7 +3388,7 @@ void *malloc(size_t a)
 {
 	++theLinkTester;
 	preMainInitMemoryManager();
-	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != NULL, ("must init memory manager"));
+	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != nullptr, ("must init memory manager"));
 	return TheDynamicMemoryAllocator->allocateBytesDoNotZero(a, "malloc");
 }
 #endif
@@ -3408,7 +3408,7 @@ void *realloc(void *p, size_t s)
 */
 void initMemoryManager()
 {
-	if (TheMemoryPoolFactory == NULL)
+	if (TheMemoryPoolFactory == nullptr)
 	{
 		Int numSubPools;
 		const PoolInitRec *pParms;
@@ -3482,7 +3482,7 @@ Bool isMemoryManagerOfficiallyInited()
 */
 static void preMainInitMemoryManager()
 {
-	if (TheMemoryPoolFactory == NULL)
+	if (TheMemoryPoolFactory == nullptr)
 	{
 
 		Int numSubPools;
@@ -3520,7 +3520,7 @@ void shutdownMemoryManager()
 			DEBUG_ASSERTCRASH(TheMemoryPoolFactory, ("hmm, no factory"));
 			if (TheMemoryPoolFactory)
 				TheMemoryPoolFactory->destroyDynamicMemoryAllocator(TheDynamicMemoryAllocator);
-			TheDynamicMemoryAllocator = NULL;
+			TheDynamicMemoryAllocator = nullptr;
 		}
 
 		if (TheMemoryPoolFactory)
@@ -3530,7 +3530,7 @@ void shutdownMemoryManager()
 			// make an exception.
 			TheMemoryPoolFactory->~MemoryPoolFactory();
 			::sysFree((void *)TheMemoryPoolFactory);
-			TheMemoryPoolFactory = NULL;
+			TheMemoryPoolFactory = nullptr;
 		}
 
 	#ifdef MEMORYPOOL_DEBUG

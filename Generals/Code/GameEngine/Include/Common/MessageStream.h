@@ -103,7 +103,7 @@ public:
 
 	/// The various messages which can be sent in a MessageStream
 	/// @todo Replace this hardcoded enum with a generalized system that can be easily changed and updated
-	/** @todo Because the Client will run faster than Logic, we'll need "superceding" messages for events
+	/** @todo Because the Client will run faster than Logic, we'll need "superseding" messages for events
 						such as mouse movements so we only send the latest one over the net */
 	/**	@todo Create two classes of message: raw input messages, and command messages. Raw input messages
 						will be destroyed when they reach the end of the stream, whereas command messages will be
@@ -213,7 +213,7 @@ public:
 		MSG_META_VIEW_TEAM8,												///< center view on given user-defined team (but do not affect selection)
 		MSG_META_VIEW_TEAM9,												///< center view on given user-defined team (but do not affect selection)
 
-		MSG_META_SELECT_MATCHING_UNITS,              ///< selects mathcing units, used for both on screen and across map
+		MSG_META_SELECT_MATCHING_UNITS,              ///< selects matching units, used for both on screen and across map
 		MSG_META_SELECT_NEXT_UNIT,									///< select 'next' unit
 		MSG_META_SELECT_PREV_UNIT,									///< select 'prev' unit
 		MSG_META_SELECT_NEXT_WORKER,                ///< select 'next' worker
@@ -522,7 +522,7 @@ public:
 																										 selecting what to build, selecting where to
 																										 build it ... this construct message will
 																										 start the actual build process */
-		MSG_DOZER_CONSTRUCT_LINE,										///< Like MSG_CONSTRUCT, but for build procesess that occur in a line (like walls)
+		MSG_DOZER_CONSTRUCT_LINE,										///< Like MSG_CONSTRUCT, but for build processes that occur in a line (like walls)
 		MSG_DOZER_CANCEL_CONSTRUCT,									///< cancel construction of a building
 		MSG_SELL,																		///< sell a structure
 		MSG_EXIT,																		///< WE want to exit from whatever WE are inside of
@@ -741,7 +741,7 @@ protected:
 	{
 		TranslatorData *m_next, *m_prev;						///< List links for list of translators
 		TranslatorID m_id;													///< The unique ID of this translator
-		GameMessageTranslator *m_translator;					///< The translor's interface function
+		GameMessageTranslator *m_translator;					///< The translator's interface function
 		UnsignedInt m_priority;											///< The priority level of this translator
 
 		TranslatorData() : m_next(0), m_prev(0), m_id(0), m_translator(0), m_priority(0)

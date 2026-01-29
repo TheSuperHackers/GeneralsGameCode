@@ -15,8 +15,6 @@ set_target_properties(core_crcdiff PROPERTIES OUTPUT_NAME crcdiff)
 target_sources(core_crcdiff PRIVATE ${CRCDIFF_SRC})
 
 target_link_libraries(core_crcdiff PRIVATE
-    core_config
-    core_utility
     corei_always
     stlport
 )

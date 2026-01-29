@@ -103,7 +103,7 @@ void SpawnPointProductionExitUpdate::exitObjectViaDoor( Object *newObj, ExitDoor
 		newObj->setOrientation( createAngle );
 		newObj->setLayer(creationObject->getLayer());
 
-		/** @todo This really should be automatically wrapped up in an actication sequence
+		/** @todo This really should be automatically wrapped up in an activation sequence
 		for objects in general */
 		// tell the AI about it
 		TheAI->pathfinder()->addObjectToPathfindMap( newObj );
@@ -146,7 +146,7 @@ void SpawnPointProductionExitUpdate::initializeBonePositions()
 	Drawable *myDrawable = me->getDrawable();
 
 	// This fundamental failure will result in this never ever thinking it is free
-	if( myDrawable == NULL )
+	if( myDrawable == nullptr )
 		return;
 
 	Matrix3D boneTransforms[MAX_SPAWN_POINTS];
@@ -156,13 +156,13 @@ void SpawnPointProductionExitUpdate::initializeBonePositions()
 
 	// Get all the bones of the right name
 	const SpawnPointProductionExitUpdateModuleData* md = getSpawnPointProductionExitUpdateModuleData();
-	m_spawnPointCount = myDrawable->getPristineBonePositions( md->m_spawnPointBoneNameData.str(), 1, NULL, boneTransforms, MAX_SPAWN_POINTS );
+	m_spawnPointCount = myDrawable->getPristineBonePositions( md->m_spawnPointBoneNameData.str(), 1, nullptr, boneTransforms, MAX_SPAWN_POINTS );
 
 	for( matrixIndex = 0; matrixIndex < m_spawnPointCount; matrixIndex++ )
 	{
 		Matrix3D *currentTransform = &(boneTransforms[matrixIndex]);
 		// Convert their matrix one by one
-		me->convertBonePosToWorldPos( NULL, currentTransform, NULL, currentTransform );
+		me->convertBonePosToWorldPos( nullptr, currentTransform, nullptr, currentTransform );
 
 		// Then save the world coord and angle
 		m_worldCoordSpawnPoints[matrixIndex].x = currentTransform->Get_X_Translation();
@@ -183,7 +183,7 @@ void SpawnPointProductionExitUpdate::revalidateOccupiers()
 		if( m_spawnPointOccupier[positionIndex] == INVALID_ID )
 			continue;
 
-		if( TheGameLogic->findObjectByID( m_spawnPointOccupier[positionIndex] ) == NULL )
+		if( TheGameLogic->findObjectByID( m_spawnPointOccupier[positionIndex] ) == nullptr )
 			m_spawnPointOccupier[positionIndex] = INVALID_ID;
 	}
 }

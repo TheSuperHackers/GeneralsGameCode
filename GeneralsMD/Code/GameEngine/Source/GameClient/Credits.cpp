@@ -61,22 +61,22 @@
 //-----------------------------------------------------------------------------
 // DEFINES ////////////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-CreditsManager *TheCredits = NULL;
+CreditsManager *TheCredits = nullptr;
 
 const FieldParse CreditsManager::m_creditsFieldParseTable[] =
 {
 
-	{ "ScrollRate",					INI::parseInt,											NULL, offsetof( CreditsManager, m_scrollRate )	},
-	{ "ScrollRateEveryFrames",	INI::parseInt,											NULL, offsetof( CreditsManager, m_scrollRatePerFrames )	},
-	{ "ScrollDown",					INI::parseBool,											NULL,	offsetof( CreditsManager, m_scrollDown )  },
-	{ "TitleColor",					INI::parseColorInt,									NULL,	offsetof( CreditsManager, m_titleColor )  },
-	{ "MinorTitleColor",		INI::parseColorInt,									NULL,	offsetof( CreditsManager, m_positionColor )  },
-	{ "NormalColor",				INI::parseColorInt,									NULL,	offsetof( CreditsManager, m_normalColor )  },
+	{ "ScrollRate",					INI::parseInt,											nullptr, offsetof( CreditsManager, m_scrollRate )	},
+	{ "ScrollRateEveryFrames",	INI::parseInt,											nullptr, offsetof( CreditsManager, m_scrollRatePerFrames )	},
+	{ "ScrollDown",					INI::parseBool,											nullptr,	offsetof( CreditsManager, m_scrollDown )  },
+	{ "TitleColor",					INI::parseColorInt,									nullptr,	offsetof( CreditsManager, m_titleColor )  },
+	{ "MinorTitleColor",		INI::parseColorInt,									nullptr,	offsetof( CreditsManager, m_positionColor )  },
+	{ "NormalColor",				INI::parseColorInt,									nullptr,	offsetof( CreditsManager, m_normalColor )  },
 	{ "Style",							INI::parseLookupList,								CreditStyleNames,	offsetof( CreditsManager, m_currentStyle )  },
-	{ "Blank",							CreditsManager::parseBlank,					NULL,	NULL  },
-	{ "Text",								CreditsManager::parseText,					NULL,	NULL  },
+	{ "Blank",							CreditsManager::parseBlank,					nullptr, 0  },
+	{ "Text",								CreditsManager::parseText,					nullptr, 0  },
 
-	{ NULL,										NULL,													NULL, 0 }
+	{ nullptr,										nullptr,													nullptr, 0 }
 
 };
 
@@ -102,8 +102,8 @@ CreditsLine::CreditsLine()
 	m_useSecond = FALSE;
 	m_done = FALSE;
 	m_style = CREDIT_STYLE_BLANK;
-	m_displayString = NULL;
-	m_secondDisplayString = NULL;
+	m_displayString = nullptr;
+	m_secondDisplayString = nullptr;
 }
 
 CreditsLine::~CreditsLine()
@@ -113,8 +113,8 @@ CreditsLine::~CreditsLine()
 	if(m_secondDisplayString)
 		TheDisplayStringManager->freeDisplayString(m_secondDisplayString);
 
-	m_displayString = NULL;
-	m_secondDisplayString = NULL;
+	m_displayString = nullptr;
+	m_secondDisplayString = nullptr;
 }
 
 
@@ -155,7 +155,7 @@ void CreditsManager::load(void )
 {
 	INI ini;
 	// Read from INI all the ControlBarSchemes
-	ini.loadFileDirectory( "Data\\INI\\Credits", INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( "Data\\INI\\Credits", INI_LOAD_OVERWRITE, nullptr );
 
 	if(m_scrollRatePerFrames <=0)
 		m_scrollRatePerFrames = 1;
@@ -193,29 +193,29 @@ void CreditsManager::update( void )
 	Int lastHeight = 0;
 	Int start = m_scrollDown? 0:TheDisplay->getHeight();
 	Int end =m_scrollDown? TheDisplay->getHeight():0;
-	Int offsetStartMultiplyer = m_scrollDown? -1:0;  // if we're scrolling from the top, we need to subtract the height
-	Int offsetEndMultiplyer = m_scrollDown? 0:1;
-	Int directionMultiplyer = m_scrollDown? 1:-1;
+	Int offsetStartMultiplier = m_scrollDown? -1:0;  // if we're scrolling from the top, we need to subtract the height
+	Int offsetEndMultiplier = m_scrollDown? 0:1;
+	Int directionMultiplier = m_scrollDown? 1:-1;
 	CreditsLineList::iterator drawIt = m_displayedCreditLineList.begin();
 	while (drawIt != m_displayedCreditLineList.end())
 	{
 		CreditsLine *cLine = *drawIt;
-		y = cLine->m_pos.y = cLine->m_pos.y + (m_scrollRate * directionMultiplyer);
+		y = cLine->m_pos.y = cLine->m_pos.y + (m_scrollRate * directionMultiplier);
 		lastHeight = cLine->m_height;
-		yTest = y + ((lastHeight + CREDIT_SPACE_OFFSET) * offsetEndMultiplyer);
+		yTest = y + ((lastHeight + CREDIT_SPACE_OFFSET) * offsetEndMultiplier);
 		if(((m_scrollDown && (yTest > end)) || (!m_scrollDown && (yTest < end))))
 		{
 			TheDisplayStringManager->freeDisplayString(cLine->m_displayString);
 			TheDisplayStringManager->freeDisplayString(cLine->m_secondDisplayString);
-			cLine->m_displayString = NULL;
-			cLine->m_secondDisplayString = NULL;
+			cLine->m_displayString = nullptr;
+			cLine->m_secondDisplayString = nullptr;
 			drawIt = m_displayedCreditLineList.erase(drawIt);
 		}
 		else
 			drawIt++;
 	}
 
-	y= y + ((lastHeight + CREDIT_SPACE_OFFSET) * offsetStartMultiplyer);
+	y= y + ((lastHeight + CREDIT_SPACE_OFFSET) * offsetStartMultiplier);
 
 	// is it time to add a new string?
 	if(!((m_scrollDown && (yTest >= start)) || (!m_scrollDown && (yTest  <= start))))
@@ -247,7 +247,7 @@ void CreditsManager::update( void )
 				ds->getSize(&pos.x,&pos.y);
 				cLine->m_height = pos.y;
 				cLine->m_pos.x = TheDisplay->getWidth()/2 - pos.x/2 ;
-				cLine->m_pos.y = start + (cLine->m_height * offsetStartMultiplyer);
+				cLine->m_pos.y = start + (cLine->m_height * offsetStartMultiplier);
 				cLine->m_displayString = ds;
 			}
 		}
@@ -268,7 +268,7 @@ void CreditsManager::update( void )
 				ds->getSize(&pos.x,&pos.y);
 				cLine->m_height = pos.y;
 				cLine->m_pos.x = TheDisplay->getWidth()/2 - pos.x/2 ;
-				cLine->m_pos.y = start + (cLine->m_height * offsetStartMultiplyer);
+				cLine->m_pos.y = start + (cLine->m_height * offsetStartMultiplier);
 				cLine->m_displayString = ds;
 			}
 		}
@@ -289,7 +289,7 @@ void CreditsManager::update( void )
 				ds->getSize(&pos.x,&pos.y);
 				cLine->m_height = pos.y;
 				cLine->m_pos.x = TheDisplay->getWidth()/2 - pos.x/2 ;
-				cLine->m_pos.y = start + (cLine->m_height * offsetStartMultiplyer);
+				cLine->m_pos.y = start + (cLine->m_height * offsetStartMultiplier);
 				cLine->m_displayString = ds;
 			}
 		}
@@ -310,7 +310,7 @@ void CreditsManager::update( void )
 				ds->getSize(&pos.x,&pos.y);
 				cLine->m_height = pos.y;
 				cLine->m_pos.x = TheDisplay->getWidth()/2 - pos.x/2 ;
-				cLine->m_pos.y = start + (cLine->m_height * offsetStartMultiplyer);
+				cLine->m_pos.y = start + (cLine->m_height * offsetStartMultiplier);
 				cLine->m_displayString = ds;
 			}
 			if(TheGlobalLanguageData && !cLine->m_secondText.isEmpty())
@@ -325,7 +325,7 @@ void CreditsManager::update( void )
 				ds->getSize(&pos.x,&pos.y);
 				cLine->m_height = pos.y;
 				cLine->m_pos.x = TheDisplay->getWidth()/2 - pos.x/2 ;
-				cLine->m_pos.y = start + (cLine->m_height * offsetStartMultiplyer);
+				cLine->m_pos.y = start + (cLine->m_height * offsetStartMultiplier);
 				cLine->m_secondDisplayString = ds;
 
 			}
@@ -334,7 +334,7 @@ void CreditsManager::update( void )
 	case CREDIT_STYLE_BLANK:
 		{
 			cLine->m_height = m_normalFontHeight;
-			cLine->m_pos.y = start + (cLine->m_height * offsetStartMultiplyer);
+			cLine->m_pos.y = start + (cLine->m_height * offsetStartMultiplier);
 		}
 		break;
 	}

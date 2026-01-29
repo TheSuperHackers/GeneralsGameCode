@@ -74,7 +74,7 @@ class ThreadFactory
 {
  public:
   static bit8    startThread(void (*start_func)(void *), void *data);
-  static bit8    startThread(Runnable &runable, void *data, bit8 destroy=FALSE);
+  static bit8    startThread(Runnable &runnable, void *data, bit8 destroy=FALSE);
 };
 
 

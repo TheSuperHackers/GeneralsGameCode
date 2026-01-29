@@ -79,9 +79,9 @@ void StatusBitsUpgradeModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "StatusToSet",		ObjectStatusMaskType::parseFromINI,	NULL, offsetof( StatusBitsUpgradeModuleData, m_statusToSet ) },
-		{ "StatusToClear",	ObjectStatusMaskType::parseFromINI,	NULL, offsetof( StatusBitsUpgradeModuleData, m_statusToClear ) },
-		{ 0, 0, 0, 0 }
+		{ "StatusToSet",		ObjectStatusMaskType::parseFromINI,	nullptr, offsetof( StatusBitsUpgradeModuleData, m_statusToSet ) },
+		{ "StatusToClear",	ObjectStatusMaskType::parseFromINI,	nullptr, offsetof( StatusBitsUpgradeModuleData, m_statusToClear ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   p.add(dataFieldParse);
 }

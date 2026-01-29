@@ -109,7 +109,7 @@ void LANAPI::handleGameAnnounce( LANMessage *msg, UnsignedInt senderIP )
 	else if (senderIP == m_directConnectRemoteIP)
 	{
 
-		if (m_currentGame == NULL)
+		if (m_currentGame == nullptr)
 		{
 			LANGameInfo *game = LookupGame(UnicodeString(msg->GameInfo.gameName));
 			if (!game)
@@ -150,7 +150,7 @@ void LANAPI::handleGameAnnounce( LANMessage *msg, UnsignedInt senderIP )
 			// remove from list
 			removeGame(game);
 			delete game;
-			game = NULL;
+			game = nullptr;
 		}
 
 		OnGameList( m_games );
@@ -226,7 +226,7 @@ static Bool IsSpaceCharacter(const WideChar c)
 
 static Bool ContainsInvalidChars(const WideChar* playerName)
 {
-	DEBUG_ASSERTCRASH(playerName != NULL, ("playerName is NULL"));
+	DEBUG_ASSERTCRASH(playerName != nullptr, ("playerName is null"));
 	while (*playerName)
 	{
 		if (IsInvalidCharForPlayerName(*playerName++))
@@ -238,7 +238,7 @@ static Bool ContainsInvalidChars(const WideChar* playerName)
 
 static Bool ContainsAnyReadableChars(const WideChar* playerName)
 {
-	DEBUG_ASSERTCRASH(playerName != NULL, ("playerName is NULL"));
+	DEBUG_ASSERTCRASH(playerName != nullptr, ("playerName is null"));
 	while (*playerName)
 	{
 		if (!IsSpaceCharacter(*playerName++))
@@ -433,7 +433,7 @@ void LANAPI::handleJoinAccept( LANMessage *msg, UnsignedInt senderIP )
 			if (!m_currentGame)
 			{
 				DEBUG_ASSERTCRASH(false, ("Could not find game to join!"));
-				OnGameJoin(RET_UNKNOWN, NULL);
+				OnGameJoin(RET_UNKNOWN, nullptr);
 			}
 			else
 			{
@@ -499,7 +499,7 @@ void LANAPI::handleRequestGameLeave( LANMessage *msg, UnsignedInt senderIP )
 					OnHostLeave();
 					removeGame(m_currentGame);
 					delete m_currentGame;
-					m_currentGame = NULL;
+					m_currentGame = nullptr;
 
 					/// @todo re-add myself to lobby?  Or just keep me there all the time?  If we send a LOBBY_ANNOUNCE things'll work out...
 					LANPlayer *lanPlayer = LookupPlayer(m_localIP);
@@ -621,7 +621,7 @@ void LANAPI::handleChat( LANMessage *msg, UnsignedInt senderIP )
 	if (m_inLobby)
 	{
 		LANPlayer *player;
-		if((player=LookupPlayer(senderIP)) != 0)
+		if((player=LookupPlayer(senderIP)) != nullptr)
 		{
 			OnChat(UnicodeString(player->getName()), player->getIP(), UnicodeString(msg->Chat.message), msg->Chat.chatType);
 			player->setLastHeard(timeGetTime());
@@ -684,7 +684,7 @@ void LANAPI::handleGameOptions( LANMessage *msg, UnsignedInt senderIP )
 }
 
 void LANAPI::handleInActive(LANMessage *msg, UnsignedInt senderIP) {
-	if (m_inLobby || (m_currentGame == NULL) || (m_currentGame->isGameInProgress())) {
+	if (m_inLobby || (m_currentGame == nullptr) || (m_currentGame->isGameInProgress())) {
 		return;
 	}
 
@@ -700,7 +700,7 @@ void LANAPI::handleInActive(LANMessage *msg, UnsignedInt senderIP) {
 	if (slotNum < 0)
 		return;
 	GameSlot *slot = m_currentGame->getSlot(slotNum);
-	if (slot == NULL) {
+	if (slot == nullptr) {
 		return;
 	}
 

@@ -110,6 +110,7 @@ public:
 	** Transpose and Inverse
 	*/
 	WWINLINE Matrix4x4 Transpose(void) const;
+	static WWINLINE Matrix4x4* Inverse(Matrix4x4* out, float* detOut, const Matrix4x4* m);
 	WWINLINE Matrix4x4 Inverse(void) const;
 
 	/*
@@ -520,7 +521,7 @@ WWINLINE Matrix4x4 Matrix4x4::Transpose() const
 }
 
 /***********************************************************************************************
- * Matrix4x4::Inverse -- returns the inverse of the matrix                                       *
+ * Matrix4x4::Inverse -- returns the inverse of the matrix                                     *
  *                                                                                             *
  * INPUT:                                                                                      *
  *                                                                                             *
@@ -530,46 +531,87 @@ WWINLINE Matrix4x4 Matrix4x4::Transpose() const
  *                                                                                             *
  * HISTORY:                                                                                    *
  *   06/02/1997 GH  : Created.                                                                 *
+ *   01/03/2026 TheSuperHackers : Implemented.                                                 *
  *=============================================================================================*/
-WWINLINE Matrix4x4 Matrix4x4::Inverse() const    // Gauss-Jordan elimination with partial pivoting
+WWINLINE Matrix4x4* Matrix4x4::Inverse(Matrix4x4* out, float* detOut, const Matrix4x4* m)
 {
-	WWASSERT_PRINT(0,"Matrix4x4::Inverse does not work, re-implement!");
+	// Read matrix elements
+	// Uses a column-major, column-vector convention (matches D3DXMatrixInverse)
+	// Row[i][j] stores the element at row i, column j.
 
-	Matrix4x4 a(*this);				// As a evolves from original mat into identity
-	Matrix4x4 b(true);				// b evolves from identity into inverse(a)
-	int i, j, i1;
+	const float m00 = m->Row[0][0], m01 = m->Row[1][0], m02 = m->Row[2][0], m03 = m->Row[3][0];
+	const float m10 = m->Row[0][1], m11 = m->Row[1][1], m12 = m->Row[2][1], m13 = m->Row[3][1];
+	const float m20 = m->Row[0][2], m21 = m->Row[1][2], m22 = m->Row[2][2], m23 = m->Row[3][2];
+	const float m30 = m->Row[0][3], m31 = m->Row[1][3], m32 = m->Row[2][3], m33 = m->Row[3][3];
 
-	// Loop over cols of a from left to right, eliminating above and below diagonal
-	for (j=0; j<4; j++) {
+	// Compute 2x2 determinants (minors) used for cofactors
+	// s0..s5: sub-determinants of the upper-left 2x2 blocks, used in cofactor expansion
 
-		// Find largest pivot in column j among rows j..3
-		i1 = j;
-		for (i=j+1; i<4; i++) {
-			if (WWMath::Fabs(a[i][j]) > WWMath::Fabs(a[i1][j])) {
-				i1 = i;
-			}
-		}
+	const float s0 = m00 * m11 - m10 * m01;
+	const float s1 = m00 * m12 - m10 * m02;
+	const float s2 = m00 * m13 - m10 * m03;
+	const float s3 = m01 * m12 - m11 * m02;
+	const float s4 = m01 * m13 - m11 * m03;
+	const float s5 = m02 * m13 - m12 * m03;
 
-		// Swap rows i1 and j in a and b to put pivot on diagonal
-		Swap(a.Row[i1], a.Row[j]);
-		Swap(b.Row[i1], b.Row[j]);
+	// c0..c5: sub-determinants of the lower-right 2x2 blocks, used in cofactor expansion
 
-		// Scale row j to have a unit diagonal
-		if (a[j][j]==0.) {
-			//ALGEBRA_ERROR("Matrix4x4::inverse: singular matrix; can't invert\n");
-		}
-		b.Row[j] /= a.Row[j][j];
-		a.Row[j] /= a.Row[j][j];
+	const float c5 = m22 * m33 - m32 * m23;
+	const float c4 = m21 * m33 - m31 * m23;
+	const float c3 = m21 * m32 - m31 * m22;
+	const float c2 = m20 * m33 - m30 * m23;
+	const float c1 = m20 * m32 - m30 * m22;
+	const float c0 = m20 * m31 - m30 * m21;
 
-		// Eliminate off-diagonal elems in col j of a, doing identical ops to b
-		for (i=0; i<4; i++) {
-			if (i != j) {
-				b.Row[i] -= a[i][j] * b.Row[j];
-				a.Row[i] -= a[i][j] * a.Row[j];
-			}
-		}
-	}
-	return b;
+	// Compute determinant of 4x4 matrix
+	// Using cofactor expansion along the first row
+	// If det is near zero, the matrix is singular and cannot be inverted
+
+	const float det =
+				s0 * c5 - s1 * c4 + s2 * c3
+			+ s3 * c2 - s4 * c1 + s5 * c0;
+
+	if (detOut)
+			*detOut = det;
+
+	if (fabsf(det) < 1e-8f)
+			return NULL;
+
+	const float invDet = 1.0f / det;
+
+	// Compute inverse matrix using adjugate / determinant
+	// The adjugate matrix is the transpose of the cofactor matrix
+	// Multiplies each cofactor by 1/det to get the inverse
+	// Writes in column-major order to match engine conventions
+
+	out->Row[0][0] = ( m11 * c5 - m12 * c4 + m13 * c3) * invDet;
+	out->Row[1][0] = (-m01 * c5 + m02 * c4 - m03 * c3) * invDet;
+	out->Row[2][0] = ( m31 * s5 - m32 * s4 + m33 * s3) * invDet;
+	out->Row[3][0] = (-m21 * s5 + m22 * s4 - m23 * s3) * invDet;
+
+	out->Row[0][1] = (-m10 * c5 + m12 * c2 - m13 * c1) * invDet;
+	out->Row[1][1] = ( m00 * c5 - m02 * c2 + m03 * c1) * invDet;
+	out->Row[2][1] = (-m30 * s5 + m32 * s2 - m33 * s1) * invDet;
+	out->Row[3][1] = ( m20 * s5 - m22 * s2 + m23 * s1) * invDet;
+
+	out->Row[0][2] = ( m10 * c4 - m11 * c2 + m13 * c0) * invDet;
+	out->Row[1][2] = (-m00 * c4 + m01 * c2 - m03 * c0) * invDet;
+	out->Row[2][2] = ( m30 * s4 - m31 * s2 + m33 * s0) * invDet;
+	out->Row[3][2] = (-m20 * s4 + m21 * s2 - m23 * s0) * invDet;
+
+	out->Row[0][3] = (-m10 * c3 + m11 * c1 - m12 * c0) * invDet;
+	out->Row[1][3] = ( m00 * c3 - m01 * c1 + m02 * c0) * invDet;
+	out->Row[2][3] = (-m30 * s3 + m31 * s1 - m32 * s0) * invDet;
+	out->Row[3][3] = ( m20 * s3 - m21 * s1 + m22 * s0) * invDet;
+
+	return out;
+}
+
+WWINLINE Matrix4x4 Matrix4x4::Inverse() const
+{
+	Matrix4x4 inv;
+	Inverse(&inv, NULL, this);
+	return inv;
 }
 
 /***********************************************************************************************
@@ -836,3 +878,18 @@ WWINLINE void	Matrix4x4::Transform_Vector(const Matrix4x4 & A,const Vector4 & in
 	out->Z = (A[2][0] * v->X + A[2][1] * v->Y + A[2][2] * v->Z + A[2][3] * v->W);
 	out->W = (A[3][0] * v->X + A[3][1] * v->Y + A[3][2] * v->Z + A[3][3] * v->W);
 }
+
+
+// TheSuperHackers @info Always convert Matrix4x4 to D3DMATRIX or vice versa with the conversion functions below.
+// Reason being, D3DMATRIX is row-major, and Matrix4x4 is column-major and therefore copying one matrix to the
+// other will always require a transpose.
+
+struct _D3DMATRIX;
+struct D3DXMATRIX;
+
+extern void To_D3DMATRIX(_D3DMATRIX& dxm, const Matrix4x4& m);
+extern _D3DMATRIX To_D3DMATRIX(const Matrix4x4& m);
+extern D3DXMATRIX To_D3DXMATRIX(const Matrix4x4& m);
+
+extern void To_Matrix4x4(Matrix4x4& m, const _D3DMATRIX& dxm);
+extern Matrix4x4 To_Matrix4x4(const _D3DMATRIX& dxm);

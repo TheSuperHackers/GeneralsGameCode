@@ -87,7 +87,7 @@ class MeshDeformModData : public LocalModData
 		void						Set_Vertex_Position (int index, const Point3 &value) { m_SetsList[m_CurrentSet]->Set_Vertex_Position (index, value); }
 		void						Set_Vertex_Color (int index, int color_index, const VertColor &value) { m_SetsList[m_CurrentSet]->Set_Vertex_Color (index, color_index, value); }
 
-		// Set managment
+		// Set management
 		void						Set_Max_Deform_Sets (int max);
 		void						Set_Current_Set (int set_index)			{ m_CurrentSet = set_index; }
 		int						Get_Current_Set (void) const				{ return m_CurrentSet; }
@@ -117,7 +117,7 @@ class MeshDeformModData : public LocalModData
 		//	Private member data
 		//////////////////////////////////////////////////////////////////////
 
-		// Set managment
+		// Set management
 		int						m_CurrentSet;
 		SETS_LIST				m_SetsList;
 };

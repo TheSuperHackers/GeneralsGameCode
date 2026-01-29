@@ -41,7 +41,7 @@
 // Obtain version information from the specified file.
 bool GetVersionInfo(char* filename, VS_FIXEDFILEINFO* fileInfo);
 
-// Retreive creation time of specified file.
+// Retrieve creation time of specified file.
 bool GetFileCreationTime(char* filename, FILETIME* createTime);
 
 ////////////////////////////////////////////////////////////////////////

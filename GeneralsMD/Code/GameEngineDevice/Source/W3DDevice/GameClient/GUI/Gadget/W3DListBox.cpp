@@ -88,7 +88,7 @@ static void drawHiliteBar( const Image *left, const Image *right,
 	barWindowSize.y = endY - startY;
 
 	//
-	// the bar window size will always be at least big enough to accomodate
+	// the bar window size will always be at least big enough to accommodate
 	// the left and right ends
 	//
 	if( barWindowSize.x < left->getImageWidth() + right->getImageWidth() )

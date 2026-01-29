@@ -39,14 +39,14 @@
 template <size_t NUMBITS>
 void BitFlags<NUMBITS>::buildDescription( AsciiString* str ) const
 {
-	if ( str == NULL )
+	if ( str == nullptr )
 		return;//sanity
 
 	for( Int i = 0; i < size(); ++i )
 	{
 		const char* bitName = getBitNameIfSet(i);
 
-		if (bitName != NULL)
+		if (bitName != nullptr)
 		{
 			str->concat( bitName );
 			str->concat( ",\n");
@@ -67,7 +67,7 @@ void BitFlags<NUMBITS>::parse(INI* ini, AsciiString* str)
 	Bool foundAddOrSub = false;
 
 	// loop through all tokens
-	for (const char *token = ini->getNextTokenOrNull(); token != NULL; token = ini->getNextTokenOrNull())
+	for (const char *token = ini->getNextTokenOrNull(); token != nullptr; token = ini->getNextTokenOrNull())
 	{
 		if (str)
 		{
@@ -132,7 +132,7 @@ void BitFlags<NUMBITS>::parse(INI* ini, AsciiString* str)
 template <size_t NUMBITS>
 /*static*/ void BitFlags<NUMBITS>::parseFromINI(INI* ini, void* /*instance*/, void *store, const void* /*userData*/)
 {
-	((BitFlags*)store)->parse(ini, NULL);
+	((BitFlags*)store)->parse(ini, nullptr);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -172,7 +172,7 @@ void BitFlags<NUMBITS>::xfer(Xfer* xfer)
 			const char* bitName = getBitNameIfSet(i);
 
 			// ignore if this kindof is not set in our mask data
-			if (bitName == NULL)
+			if (bitName == nullptr)
 				continue;
 
 			// this bit is set, write the string value

@@ -90,7 +90,7 @@ void SupplyCenterProductionExitUpdate::exitObjectViaDoor( Object *newObj, ExitDo
 		newObj->setPosition( &createPoint );
 		newObj->setOrientation( exitAngle );
 
-		/** @todo This really should be automatically wrapped up in an actication sequence
+		/** @todo This really should be automatically wrapped up in an activation sequence
 		for objects in general */
 		// tell the AI about it
 		TheAI->pathfinder()->addObjectToPathfindMap( newObj );
@@ -135,7 +135,7 @@ void SupplyCenterProductionExitUpdate::exitObjectViaDoor( Object *newObj, ExitDo
 			StealthUpdate *stealth = newObj->getStealth();
 			//Only grant temporary stealth to the default stealth update. It's
 			//possible that another type of stealth was granted... like the
-			//GPS scrambler. We want that to take precendence.
+			//GPS scrambler. We want that to take precedence.
 			if( getObject()->testStatus( OBJECT_STATUS_STEALTHED ) )
 			{
 				if( stealth->isTemporaryGrant() || !newObj->testStatus( OBJECT_STATUS_CAN_STEALTH ) )

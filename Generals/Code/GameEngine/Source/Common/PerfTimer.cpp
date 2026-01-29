@@ -35,6 +35,10 @@
 #include "GameClient/Display.h"
 #include "GameClient/GraphDraw.h"
 
+__forceinline void ProfileGetTime(__int64 &t)
+{
+	t = _rdtsc();
+}
 
 
 //-------------------------------------------------------------------------------------------------
@@ -54,63 +58,139 @@ void GetPrecisionTimerTicksPerSec(Int64* t)
 	*t = s_ticksPerSec;
 }
 
+//Kris: Plugged in Martin's code to optimize timer setup.
+#define HOFFESOMMER_REPLACEMENT_CODE
+
 //-------------------------------------------------------------------------------------------------
 void InitPrecisionTimer()
 {
-#ifdef USE_QPF
-	QueryPerformanceFrequency((LARGE_INTEGER*)&s_ticksPerSec);
-#else
-	// Init the precision timers
-	Int64 totalTime = 0;
-	Int64	TotalTicks = 0;
-	static int TESTS = 5;
+#ifdef HOFFESOMMER_REPLACEMENT_CODE
 
-	for (int i = 0; i < TESTS; ++i)
+  // measure clock cycles 3 times for 20 msec each
+  // then take the 2 counts that are closest, average
+  _int64 n[ 3 ];
+  for( int k = 0; k < 3; k++ )
+  {
+    // wait for end of current tick
+    unsigned timeEnd = timeGetTime() + 2;
+    while( timeGetTime() < timeEnd ); //do nothing
+
+    // get cycles
+    _int64 start, startQPC, endQPC;
+    QueryPerformanceCounter( (LARGE_INTEGER *)&startQPC );
+    ProfileGetTime( start );
+    timeEnd += 20;
+    while( timeGetTime() < timeEnd ); //do nothing
+    ProfileGetTime( n[ k ] );
+    n[ k ] -= start;
+
+    // convert to 1 second
+    if( QueryPerformanceCounter( (LARGE_INTEGER*)&endQPC ) )
+    {
+      QueryPerformanceFrequency( (LARGE_INTEGER*)&s_ticksPerSec );
+      n[ k ] = ( n[ k ] * s_ticksPerSec ) / ( endQPC - startQPC );
+    }
+    else
+    {
+      n[ k ] = ( n[ k ] * 1000 ) / 20;
+    }
+  }
+
+  // find two closest values
+  _int64 d01 = n[ 1 ] - n[ 0 ];
+	_int64 d02 = n[ 2 ] - n[ 0 ];
+	_int64 d12 = n[ 2 ] - n[ 1 ];
+
+  if( d01 < 0 )
 	{
-		int        TimeStart;
-		int        TimeStop;
-		Int64		   StartTicks;
-		Int64		   EndTicks;
-
-		TimeStart = timeGetTime();
-		GetPrecisionTimer(&StartTicks);
-		for(;;)
-		{
-			TimeStop = timeGetTime();
-			if ((TimeStop - TimeStart) > 1000)
-			{
-				GetPrecisionTimer(&EndTicks);
-				break;
-			}
-		}
-
-		TotalTicks += (EndTicks - StartTicks);
-
-		totalTime += (TimeStop - TimeStart);
+		d01 = -d01;
+	}
+  if( d02 < 0 )
+	{
+		d02 = -d02;
+	}
+  if( d12 < 0 )
+	{
+		d12 = -d12;
 	}
 
-	s_ticksPerMSec = 1.0 * TotalTicks / totalTime;
+  _int64 avg;
+  if( d01 < d02 )
+  {
+    avg = d01 < d12 ? n[ 0 ] + n[ 1 ] : n[ 1 ] + n[ 2 ];
+  }
+  else
+  {
+    avg = d02 < d12 ? n[ 0 ] + n[ 2 ] : n[ 1 ] + n[ 2 ];
+  }
+
+	//s_ticksPerMSec = 1.0 * TotalTicks / totalTime;
+	s_ticksPerMSec = avg / 2000.0f;
 	s_ticksPerSec = s_ticksPerMSec * 1000.0f;
-#endif
-	s_ticksPerMSec = s_ticksPerSec / 1000.0f;
 	s_ticksPerUSec = s_ticksPerSec / 1000000.0f;
 
-#ifdef NOT_IN_USE
-	Int64 bogus[8];
-	GetPrecisionTimer(&start);
-	for (Int ii = 0; ii < ITERS; ++ii)
-	{
-		GetPrecisionTimer(&bogus[0]);
-		GetPrecisionTimer(&bogus[1]);
-		GetPrecisionTimer(&bogus[2]);
-		GetPrecisionTimer(&bogus[3]);
-		GetPrecisionTimer(&bogus[4]);
-		GetPrecisionTimer(&bogus[5]);
-		GetPrecisionTimer(&bogus[6]);
-		GetPrecisionTimer(&bogus[7]);
-	}
-	TheTicksToGetTicks = (bogus[7] - start) / (ITERS*8);
-	DEBUG_LOG(("TheTicksToGetTicks is %d (%f usec)",(int)TheTicksToGetTicks,TheTicksToGetTicks/s_ticksPerUSec));
+
+#else
+
+	//Kris: With total disrespect, this code costs 5 real seconds of init time
+	//whenever we fire up the game.
+
+	#ifdef USE_QPF
+		QueryPerformanceFrequency((LARGE_INTEGER*)&s_ticksPerSec);
+	#else
+		// Init the precision timers
+		Int64 totalTime = 0;
+		Int64	TotalTicks = 0;
+		static int TESTS = 5;
+
+		for (int i = 0; i < TESTS; ++i)
+		{
+			int        TimeStart;
+			int        TimeStop;
+			Int64		   StartTicks;
+			Int64		   EndTicks;
+
+			TimeStart = timeGetTime();
+			GetPrecisionTimer(&StartTicks);
+			for(;;)
+			{
+				TimeStop = timeGetTime();
+				if ((TimeStop - TimeStart) > 1000)
+				{
+					GetPrecisionTimer(&EndTicks);
+					break;
+				}
+			}
+
+			TotalTicks += (EndTicks - StartTicks);
+
+			totalTime += (TimeStop - TimeStart);
+		}
+
+		s_ticksPerMSec = 1.0 * TotalTicks / totalTime;
+		s_ticksPerSec = s_ticksPerMSec * 1000.0f;
+	#endif
+		s_ticksPerMSec = s_ticksPerSec / 1000.0f;
+		s_ticksPerUSec = s_ticksPerSec / 1000000.0f;
+
+	#ifdef NOT_IN_USE
+		Int64 bogus[8];
+		GetPrecisionTimer(&start);
+		for (Int ii = 0; ii < ITERS; ++ii)
+		{
+			GetPrecisionTimer(&bogus[0]);
+			GetPrecisionTimer(&bogus[1]);
+			GetPrecisionTimer(&bogus[2]);
+			GetPrecisionTimer(&bogus[3]);
+			GetPrecisionTimer(&bogus[4]);
+			GetPrecisionTimer(&bogus[5]);
+			GetPrecisionTimer(&bogus[6]);
+			GetPrecisionTimer(&bogus[7]);
+		}
+		TheTicksToGetTicks = (bogus[7] - start) / (ITERS*8);
+		DEBUG_LOG(("TheTicksToGetTicks is %d (%f usec)",(int)TheTicksToGetTicks,TheTicksToGetTicks/s_ticksPerUSec));
+	#endif
+
 #endif
 
 }
@@ -172,7 +252,7 @@ public:
 
 //-------------------------------------------------------------------------------------------------
 static PerfMetricsOutput s_output;
-static FILE* s_perfStatsFile = NULL;
+static FILE* s_perfStatsFile = nullptr;
 static Int s_perfDumpOptions = 0;
 static UnsignedInt s_lastDumpedFrame = 0;
 static char s_buf[256] = "";
@@ -190,7 +270,7 @@ Int64					PerfGather::s_stopStartOverhead = -1;
 /*static*/ PerfGather*& PerfGather::getHeadPtr()
 {
 	// funky technique for order-of-init problem. trust me. (srj)
-	static PerfGather* s_head = NULL;
+	static PerfGather* s_head = nullptr;
 	return s_head;
 }
 
@@ -233,7 +313,7 @@ PerfGather::PerfGather(const char *identifier) :
 	m_prev(0)
 {
 	m_ignore = FALSE;
-	DEBUG_ASSERTCRASH(strchr(m_identifier, ',') == NULL, ("PerfGather names must not contain commas"));
+	DEBUG_ASSERTCRASH(strchr(m_identifier, ',') == nullptr, ("PerfGather names must not contain commas"));
 	addToList();
 }
 
@@ -255,7 +335,7 @@ void PerfGather::reset()
 //-------------------------------------------------------------------------------------------------
 /*static*/ void PerfGather::resetAll()
 {
-	for (PerfGather* head = getHeadPtr(); head != NULL; head = head->m_next)
+	for (PerfGather* head = getHeadPtr(); head != nullptr; head = head->m_next)
 	{
 		head->reset();
 	}
@@ -276,7 +356,7 @@ void PerfGather::reset()
 	s_perfStatsFile = fopen(tmp, "w");
 	s_perfDumpOptions = options;
 
-	if (s_perfStatsFile == NULL)
+	if (s_perfStatsFile == nullptr)
 	{
 		DEBUG_CRASH(("could not open/create perf file %s -- is it open in another app?",s_buf));
 		return;
@@ -332,21 +412,21 @@ void PerfGather::reset()
 			fprintf(s_perfStatsFile, "Frame");
 			if (s_perfDumpOptions & PERF_GROSSTIME)
 			{
-				for (const PerfGather* head = getHeadPtr(); head != NULL; head = head->m_next)
+				for (const PerfGather* head = getHeadPtr(); head != nullptr; head = head->m_next)
 				{
 					fprintf(s_perfStatsFile, ",Gross:%s", head->m_identifier);
 				}
 			}
 			if (s_perfDumpOptions & PERF_NETTIME)
 			{
-				for (const PerfGather* head = getHeadPtr(); head != NULL; head = head->m_next)
+				for (const PerfGather* head = getHeadPtr(); head != nullptr; head = head->m_next)
 				{
 					fprintf(s_perfStatsFile, ",Net:%s", head->m_identifier);
 				}
 			}
 			if (s_perfDumpOptions & PERF_CALLCOUNT)
 			{
-				for (const PerfGather* head = getHeadPtr(); head != NULL; head = head->m_next)
+				for (const PerfGather* head = getHeadPtr(); head != nullptr; head = head->m_next)
 				{
 					fprintf(s_perfStatsFile, ",Count:%s", head->m_identifier);
 				}
@@ -363,7 +443,7 @@ void PerfGather::reset()
 		fprintf(s_perfStatsFile, "Frame%08d", frame);
 		if (s_perfDumpOptions & PERF_GROSSTIME)
 		{
-			for (const PerfGather* head = getHeadPtr(); head != NULL; head = head->m_next)
+			for (const PerfGather* head = getHeadPtr(); head != nullptr; head = head->m_next)
 			{
 				double t = head->m_runningTimeGross;
 				t /= s_ticksPerUSec;
@@ -374,7 +454,7 @@ void PerfGather::reset()
 		}
 		if (s_perfDumpOptions & PERF_NETTIME)
 		{
-			for (const PerfGather* head = getHeadPtr(); head != NULL; head = head->m_next)
+			for (const PerfGather* head = getHeadPtr(); head != nullptr; head = head->m_next)
 			{
 				double t = head->m_runningTimeNet;
 				t /= s_ticksPerUSec;
@@ -385,7 +465,7 @@ void PerfGather::reset()
 		}
 		if (s_perfDumpOptions & PERF_CALLCOUNT)
 		{
-			for (const PerfGather* head = getHeadPtr(); head != NULL; head = head->m_next)
+			for (const PerfGather* head = getHeadPtr(); head != nullptr; head = head->m_next)
 			{
 				fprintf(s_perfStatsFile, ",%d", head->m_callCount);
 			}
@@ -419,7 +499,7 @@ void PerfGather::reset()
 
 		if (s_perfDumpOptions & PERF_GROSSTIME)
 		{
-			for (const PerfGather* head = getHeadPtr(); head != NULL; head = head->m_next)
+			for (const PerfGather* head = getHeadPtr(); head != nullptr; head = head->m_next)
 			{
 				Real t = head->m_runningTimeGross;
 				t /= s_ticksPerUSec;
@@ -431,7 +511,7 @@ void PerfGather::reset()
 		}
 		if (s_perfDumpOptions & PERF_NETTIME)
 		{
-			for (const PerfGather* head = getHeadPtr(); head != NULL; head = head->m_next)
+			for (const PerfGather* head = getHeadPtr(); head != nullptr; head = head->m_next)
 			{
 				Real t = head->m_runningTimeNet;
 				t /= s_ticksPerUSec;
@@ -443,7 +523,7 @@ void PerfGather::reset()
 		}
 		if (s_perfDumpOptions & PERF_CALLCOUNT)
 		{
-			for (const PerfGather* head = getHeadPtr(); head != NULL; head = head->m_next)
+			for (const PerfGather* head = getHeadPtr(); head != nullptr; head = head->m_next)
 			{
 				Real t = head->m_callCount;
 				TheGraphDraw->addEntry(head->m_identifier, REAL_TO_INT(t));
@@ -460,7 +540,7 @@ void PerfGather::reset()
 	{
 		fflush(s_perfStatsFile);
 		fclose(s_perfStatsFile);
-		s_perfStatsFile = NULL;
+		s_perfStatsFile = nullptr;
 	}
 	s_lastDumpedFrame = 0;
 }

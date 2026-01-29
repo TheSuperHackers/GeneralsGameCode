@@ -56,7 +56,7 @@ MutexClass TheGameSpyMutex;
 static UnsignedInt mainThreadID = 0;
 static Bool inThread = false;
 #define ISMAINTHREAD	( ThreadClass::_Get_Current_Thread_ID() == mainThreadID )
-GameSpyThreadClass *TheGameSpyThread = NULL;
+GameSpyThreadClass *TheGameSpyThread = nullptr;
 
 /// polling/update thread function
 
@@ -194,7 +194,7 @@ void GameSpyChatInterface::clearGroupRoomList(void)
 
 GameSpyChat::GameSpyChat()
 {
-	m_peer = NULL;
+	m_peer = nullptr;
 }
 
 GameSpyChat::~GameSpyChat()
@@ -202,7 +202,7 @@ GameSpyChat::~GameSpyChat()
 	reset();
 	if (thread.Is_Running())
 		thread.Stop();
-	TheGameSpyThread = NULL;
+	TheGameSpyThread = nullptr;
 }
 
 void GameSpyChat::init( void )
@@ -226,7 +226,7 @@ void GameSpyChat::reset( void )
 	m_profileID = 0;
 	if (m_peer)
 		peerShutdown(m_peer);
-	m_peer = NULL;
+	m_peer = nullptr;
 	m_groupRooms.clear();
 	m_currentGroupRoomID = 0;
 
@@ -255,7 +255,7 @@ void GameSpyChat::update( void )
 		if (TheGameSpyThread->showLocaleSelect())
 		{
 			TheGameSpyThread->setShowLocaleSelect(false);
-			WindowLayout *layout = NULL;
+			WindowLayout *layout = nullptr;
 			layout = TheWindowManager->winCreateLayout( "Menus/PopupLocaleSelect.wnd" );
 			layout->runInit();
 			layout->hide( FALSE );
@@ -270,7 +270,7 @@ void GameSpyChat::update( void )
 
 		gpProcess(TheGPConnection);
 
-		if (TheNAT != NULL) {
+		if (TheNAT != nullptr) {
 			NATStateType NATState = TheNAT->update();
 			if (NATState == NATSTATE_DONE)
 			{
@@ -282,7 +282,7 @@ void GameSpyChat::update( void )
 			}
 		}
 
-		if (TheFirewallHelper != NULL) {
+		if (TheFirewallHelper != nullptr) {
 			if (TheFirewallHelper->behaviorDetectionUpdate()) {
 				TheGlobalData->m_firewallBehavior = TheFirewallHelper->getFirewallBehavior();
 				OptionPreferences *pref = NEW OptionPreferences;
@@ -296,7 +296,7 @@ void GameSpyChat::update( void )
 
 				// we are now done with the firewall helper
 				delete TheFirewallHelper;
-				TheFirewallHelper = NULL;
+				TheFirewallHelper = nullptr;
 			}
 		}
 
@@ -305,18 +305,18 @@ void GameSpyChat::update( void )
 		{
 			// login timed out
 			m_loginTimeout = 0;
-			GSMessageBoxOk(L"Error connecting", L"Timed out connecting", NULL);
+			GSMessageBoxOk(L"Error connecting", L"Timed out connecting", nullptr);
 
 			// Enable controls again
 			//EnableLoginControls(TRUE);
 
 			if (TheGameSpyGame)
 				delete TheGameSpyGame;
-			TheGameSpyGame = NULL;
+			TheGameSpyGame = nullptr;
 
 			if (m_peer)
 				peerShutdown(m_peer);
-			m_peer = NULL;
+			m_peer = nullptr;
 
 			gpDisconnect(TheGPConnection);
 			gpDestroy(TheGPConnection);
@@ -341,12 +341,12 @@ void GameSpyChat::UTMPlayer( const char *name, const char *key, const char *val,
 
 void GameSpyChat::startGame( void )
 {
-	peerStartGame( m_peer, NULL, PEER_STOP_REPORTING );
+	peerStartGame( m_peer, nullptr, PEER_STOP_REPORTING );
 }
 
 void GameSpyChat::leaveRoom( RoomType roomType )
 {
-	peerLeaveRoom( m_peer, roomType, NULL );
+	peerLeaveRoom( m_peer, roomType, nullptr );
 }
 
 void GameSpyChat::setReady( Bool ready )
@@ -362,7 +362,7 @@ void GameSpyChat::enumPlayers( RoomType roomType, peerEnumPlayersCallback callba
 void GameSpyChat::startListingGames( peerListingGamesCallback callback )
 {
 	peerSetUpdatesRoomChannel( m_peer, "#gmtest_updates" );
-	peerStartListingGames( m_peer, NULL, callback, NULL );
+	peerStartListingGames( m_peer, nullptr, callback, nullptr );
 }
 
 void GameSpyChat::stopListingGames( void )
@@ -440,12 +440,12 @@ void GameSpyChat::joinBestGroupRoom( void )
 		}
 		else
 		{
-			GSMessageBoxOk(L"Oops", L"No empty group rooms", NULL);
+			GSMessageBoxOk(L"Oops", L"No empty group rooms", nullptr);
 		}
 	}
 	else
 	{
-		GSMessageBoxOk(L"Oops", L"No group rooms", NULL);
+		GSMessageBoxOk(L"Oops", L"No group rooms", nullptr);
 	}
 }
 
@@ -456,11 +456,11 @@ void GameSpyChat::disconnectFromChat( void )
 	if (m_peer)
 	{
 		peerShutdown(m_peer);
-		m_peer = NULL;
+		m_peer = nullptr;
 	}
 	if (TheGameSpyGame)
 		delete TheGameSpyGame;
-	TheGameSpyGame = NULL;
+	TheGameSpyGame = nullptr;
 }
 
 
@@ -477,9 +477,9 @@ void DisconnectedCallback(PEER peer, const char * reason,
 
 	if (TheGameSpyGame)
 		delete TheGameSpyGame;
-	TheGameSpyGame = NULL;
+	TheGameSpyGame = nullptr;
 
-	GSMessageBoxOk(TheGameText->fetch("GUI:GSErrorTitle"), TheGameText->fetch("GUI:GSDisconnected"), NULL);
+	GSMessageBoxOk(TheGameText->fetch("GUI:GSErrorTitle"), TheGameText->fetch("GUI:GSDisconnected"), nullptr);
 
 	WindowLayout * mainMenu = TheShell->findScreenByFilename("Menus/MainMenu.wnd");
 	if (mainMenu)
@@ -920,7 +920,7 @@ void JoinRoomCallback(PEER peer, PEERBool success, PEERJoinResult result, RoomTy
 						TheShell->pop();
 						TheShell->push("Menus/WOLWelcomeMenu.wnd");
 					}
-					GSMessageBoxOk(L"Oops", L"Unable to join group room", NULL);
+					GSMessageBoxOk(L"Oops", L"Unable to join group room", nullptr);
 				}
 
 				// Update buddy location
@@ -978,7 +978,7 @@ void JoinRoomCallback(PEER peer, PEERBool success, PEERJoinResult result, RoomTy
 				else
 				{
 					// let the user know
-					GSMessageBoxOk(L"Oops", L"Unable to join game", NULL);
+					GSMessageBoxOk(L"Oops", L"Unable to join game", nullptr);
 					DEBUG_LOG(("JoinRoomCallback - Failed to join staging room."));
 				}
 
@@ -1065,7 +1065,7 @@ void createRoomCallback(PEER peer, PEERBool success, PEERJoinResult result, Room
 	{
 		// join the lobby again
 		TheGameSpyChat->joinGroupRoom(oldGroupID);
-		GSMessageBoxOk(L"Oops", L"Unable to create game", NULL);
+		GSMessageBoxOk(L"Oops", L"Unable to create game", nullptr);
 	}
 
 	// Update buddy location
@@ -1086,7 +1086,7 @@ void createRoomCallback(PEER peer, PEERBool success, PEERJoinResult result, Room
 
 // Gets called once for each group room when listing group rooms.
 // After this has been called for each group room, it will be
-// called one more time with groupID==0 and name==NULL.
+// called one more time with groupID==0 and name==nullptr.
 /////////////////////////////////////////////////////////////////
 void ListGroupRoomsCallback(PEER peer, PEERBool success,
 														int groupID, GServer server,
@@ -1141,14 +1141,14 @@ void GameSpyChat::_connectCallback(PEER peer, PEERBool success, void * param)
 	m_loginTimeout = 0;
 
 	if (!success) {
-		GSMessageBoxOk(L"Error connecting", L"Failed to connect", NULL);
+		GSMessageBoxOk(L"Error connecting", L"Failed to connect", nullptr);
 		DEBUG_LOG(("GameSpyChat::_connectCallback - failed to connect."));
 	}
 
 	if(!success)
 	{
 		peerShutdown(m_peer);
-		m_peer = NULL;
+		m_peer = nullptr;
 		gpDisconnect(TheGPConnection);
 		gpDestroy(TheGPConnection);
 
@@ -1176,7 +1176,7 @@ void GameSpyChat::_connectCallback(PEER peer, PEERBool success, void * param)
 	TheShell->push("Menus/WOLWelcomeMenu.wnd");
 
 	clearGroupRoomList();
-	peerListGroupRooms(m_peer, ListGroupRoomsCallback, NULL, PEERFalse);
+	peerListGroupRooms(m_peer, ListGroupRoomsCallback, nullptr, PEERFalse);
 }
 
 // Called if there's an error with the nick.
@@ -1207,9 +1207,9 @@ void GameSpyChat::_nickErrorCallback(PEER peer, int type, const char * nick, voi
 		}
 		else
 		{
-			GSMessageBoxOk(L"Error connecting", L"That nickname is already taken; please choose another one.", NULL);
+			GSMessageBoxOk(L"Error connecting", L"That nickname is already taken; please choose another one.", nullptr);
 			// Cancel the connect.
-			peerRetryWithNick(peer, NULL);
+			peerRetryWithNick(peer, nullptr);
 
 			// Enable controls again
 			//EnableLoginControls(TRUE);
@@ -1218,9 +1218,9 @@ void GameSpyChat::_nickErrorCallback(PEER peer, int type, const char * nick, voi
 	}
 	else
 	{
-		GSMessageBoxOk(L"Error connecting", L"That nickname contains at least 1 invalid character, please choose another one.", NULL);
+		GSMessageBoxOk(L"Error connecting", L"That nickname contains at least 1 invalid character, please choose another one.", nullptr);
 		// Cancel the connect.
-		peerRetryWithNick(peer, NULL);
+		peerRetryWithNick(peer, nullptr);
 
 		// Enable controls again
 		//EnableLoginControls(TRUE);
@@ -1239,7 +1239,7 @@ void GameSpyChat::_GPConnectCallback(GPConnection * pconnection, GPConnectRespon
 	if (*res != GP_NO_ERROR)
 	{
 		// couldn't connect.  bummer.
-		GSMessageBoxOk(L"Error connecting", L"Error connecting to buddy server", NULL);
+		GSMessageBoxOk(L"Error connecting", L"Error connecting to buddy server", nullptr);
 		gpDisconnect(TheGPConnection);
 		gpDestroy(TheGPConnection);
 		m_loginTimeout = 0;
@@ -1248,7 +1248,7 @@ void GameSpyChat::_GPConnectCallback(GPConnection * pconnection, GPConnectRespon
 
 	// Connect to chat.
 	///////////////////
-	peerConnect(m_peer, m_loginName.str(), m_profileID, nickErrorCallback, connectCallback, NULL, PEERFalse);
+	peerConnect(m_peer, m_loginName.str(), m_profileID, nickErrorCallback, connectCallback, nullptr, PEERFalse);
 }
 
 static Bool inGPReconnect = false;
@@ -1262,7 +1262,7 @@ void GameSpyChat::_GPReconnectCallback(GPConnection * pconnection, GPConnectResp
 	if (arg->result != GP_NO_ERROR)
 	{
 		// couldn't connect.  bummer.
-		GSMessageBoxOk(L"Error connecting", L"Error connecting to buddy server", NULL);
+		GSMessageBoxOk(L"Error connecting", L"Error connecting to buddy server", nullptr);
 		gpDisconnect(TheGPConnection);
 		gpDestroy(TheGPConnection);
 		return;
@@ -1270,7 +1270,7 @@ void GameSpyChat::_GPReconnectCallback(GPConnection * pconnection, GPConnectResp
 	else
 	{
 		// yay!  we're back in!
-		GSMessageBoxOk(L"Connected!", L"Reonnected to buddy server", NULL);
+		GSMessageBoxOk(L"Connected!", L"Reonnected to buddy server", nullptr);
 	}
 }
 
@@ -1280,10 +1280,10 @@ void GameSpyChat::loginProfile(AsciiString loginName, AsciiString password, Asci
 	///////////////////
 	m_profileID = 0;
 	gpInitialize(TheGPConnection, 0);
-	gpSetCallback(TheGPConnection, GP_ERROR,							(GPCallback)GPErrorCallback,						NULL);
-	gpSetCallback(TheGPConnection, GP_RECV_BUDDY_REQUEST,	(GPCallback)GPRecvBuddyRequestCallback,	NULL);
-	gpSetCallback(TheGPConnection, GP_RECV_BUDDY_MESSAGE,	(GPCallback)GPRecvBuddyMessageCallback,	NULL);
-	gpSetCallback(TheGPConnection, GP_RECV_BUDDY_STATUS,	(GPCallback)GPRecvBuddyStatusCallback,	NULL);
+	gpSetCallback(TheGPConnection, GP_ERROR,							(GPCallback)GPErrorCallback,						nullptr);
+	gpSetCallback(TheGPConnection, GP_RECV_BUDDY_REQUEST,	(GPCallback)GPRecvBuddyRequestCallback,	nullptr);
+	gpSetCallback(TheGPConnection, GP_RECV_BUDDY_MESSAGE,	(GPCallback)GPRecvBuddyMessageCallback,	nullptr);
+	gpSetCallback(TheGPConnection, GP_RECV_BUDDY_STATUS,	(GPCallback)GPRecvBuddyStatusCallback,	nullptr);
 
 	GPResult res = GP_PARAMETER_ERROR;
 	m_loginName = loginName;
@@ -1295,7 +1295,7 @@ void GameSpyChat::loginProfile(AsciiString loginName, AsciiString password, Asci
 	if (res != GP_NO_ERROR)
 	{
 		// couldn't connect.  bummer.
-		GSMessageBoxOk(L"Error connecting", L"Error connecting to buddy server", NULL);
+		GSMessageBoxOk(L"Error connecting", L"Error connecting to buddy server", nullptr);
 		gpDisconnect(TheGPConnection);
 		gpDestroy(TheGPConnection);
 		loginTimeout = 0;
@@ -1305,7 +1305,7 @@ void GameSpyChat::loginProfile(AsciiString loginName, AsciiString password, Asci
 	// Connect to chat.
 	///////////////////
 	GameSpyLocalNickname = loginName;
-	peerConnect(TheGameSpyChat->getPeer(), loginName.str(), GameSpyLocalProfile, nickErrorCallback, connectCallback, NULL, PEERFalse);
+	peerConnect(TheGameSpyChat->getPeer(), loginName.str(), GameSpyLocalProfile, nickErrorCallback, connectCallback, nullptr, PEERFalse);
 	*/
 }
 
@@ -1317,12 +1317,12 @@ void GameSpyChat::reconnectProfile( void )
 	inGPReconnect = true;
 
 	gpInitialize(TheGPConnection, 0);
-	gpSetCallback(TheGPConnection, GP_ERROR,							(GPCallback)GPErrorCallback,						NULL);
-	gpSetCallback(TheGPConnection, GP_RECV_BUDDY_REQUEST,	(GPCallback)GPRecvBuddyRequestCallback,	NULL);
-	gpSetCallback(TheGPConnection, GP_RECV_BUDDY_MESSAGE,	(GPCallback)GPRecvBuddyMessageCallback,	NULL);
-	gpSetCallback(TheGPConnection, GP_RECV_BUDDY_STATUS,	(GPCallback)GPRecvBuddyStatusCallback,	NULL);
+	gpSetCallback(TheGPConnection, GP_ERROR,							(GPCallback)GPErrorCallback,						nullptr);
+	gpSetCallback(TheGPConnection, GP_RECV_BUDDY_REQUEST,	(GPCallback)GPRecvBuddyRequestCallback,	nullptr);
+	gpSetCallback(TheGPConnection, GP_RECV_BUDDY_MESSAGE,	(GPCallback)GPRecvBuddyMessageCallback,	nullptr);
+	gpSetCallback(TheGPConnection, GP_RECV_BUDDY_STATUS,	(GPCallback)GPRecvBuddyStatusCallback,	nullptr);
 
-	gpConnect(TheGPConnection, m_loginName.str(), m_email.str(), m_password.str(), GP_FIREWALL, GP_NON_BLOCKING, (GPCallback)GPReconnectCallback, NULL);
+	gpConnect(TheGPConnection, m_loginName.str(), m_email.str(), m_password.str(), GP_FIREWALL, GP_NON_BLOCKING, (GPCallback)GPReconnectCallback, nullptr);
 }
 
 void GameSpyChat::loginQuick(AsciiString login)
@@ -1333,7 +1333,7 @@ void GameSpyChat::loginQuick(AsciiString login)
 	///////////////////
 	m_loginName = login;
 	DEBUG_LOG(("GameSpyChat::loginQuick - setting login to %s", m_loginName));
-	peerConnect(m_peer, login.str(), 0, nickErrorCallback, connectCallback, NULL, PEERFalse);
+	peerConnect(m_peer, login.str(), 0, nickErrorCallback, connectCallback, nullptr, PEERFalse);
 }
 
 void GameSpyChat::login(AsciiString loginName, AsciiString password, AsciiString email)
@@ -1366,14 +1366,14 @@ void GameSpyChat::login(AsciiString loginName, AsciiString password, AsciiString
 	callbacks.GOARules = GOARulesCallback;
 	callbacks.GOAPlayers = GOAPlayersCallback;
 	//callbacks.globalKeyChanged = GlobalKeyChanged;
-	callbacks.param = NULL;
+	callbacks.param = nullptr;
 
 	// Init peer.
 	/////////////
 	m_peer = peerInitialize(&callbacks);
 	if(!m_peer)
 	{
-		GSMessageBoxOk(L"No Peer", L"No Peer", NULL);
+		GSMessageBoxOk(L"No Peer", L"No Peer", nullptr);
 		return;
 	}
 
@@ -1392,9 +1392,9 @@ void GameSpyChat::login(AsciiString loginName, AsciiString password, AsciiString
 	/////////////////
 	if(!peerSetTitle(m_peer, "gmtest", "HA6zkS", "gmtest", "HA6zkS", 15, pingRooms, crossPingRooms))
 	{
-		GSMessageBoxOk(L"Error setting title", L"Error setting title", NULL);
+		GSMessageBoxOk(L"Error setting title", L"Error setting title", nullptr);
 		peerShutdown(m_peer);
-		m_peer = NULL;
+		m_peer = nullptr;
 		return;
 	}
 

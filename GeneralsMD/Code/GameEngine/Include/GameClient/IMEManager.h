@@ -75,7 +75,7 @@ class IMEManagerInterface : public SubsystemInterface
 		virtual ~IMEManagerInterface() {};
 
 		virtual void					attach( GameWindow *window ) = 0;		///< attach IME to specified window
-		virtual void					detatch( void ) = 0;								///< detatch IME from current window
+		virtual void					detach( void ) = 0;								///< detach IME from current window
 		virtual void					enable( void ) = 0;									///< Enable IME
 		virtual void					disable( void ) = 0;								///< Disable IME
 		virtual Bool					isEnabled( void ) = 0;							///< Is IME enabled

@@ -79,10 +79,10 @@ TextureMgrDialogClass::TextureMgrDialogClass
 )
 	: m_pBaseModel (pbase_model),
 	  m_bContainsMeshes (true),
-	  m_pImageList (NULL),
-	  m_pImageListSmall (NULL),
-	  m_pTextureImageList (NULL),
-	  m_pTextureImageListSmall (NULL),
+	  m_pImageList (nullptr),
+	  m_pImageListSmall (nullptr),
+	  m_pTextureImageList (nullptr),
+	  m_pTextureImageListSmall (nullptr),
 	  CDialog (TextureMgrDialogClass::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(TextureMgrDialogClass)
@@ -225,9 +225,9 @@ TextureMgrDialogClass::OnInitDialog (void)
 	CRect rect;
 	::GetWindowRect (::GetDlgItem (m_hWnd, IDC_TOOLBAR_SLOT), &rect);
 	ScreenToClient (&rect);
-	m_Toolbar.SetWindowPos (NULL, rect.left, rect.top, rect.Width (), rect.Height (), SWP_NOZORDER);
+	m_Toolbar.SetWindowPos (nullptr, rect.left, rect.top, rect.Width (), rect.Height (), SWP_NOZORDER);
 
-	ASSERT (m_pBaseModel != NULL);
+	ASSERT (m_pBaseModel != nullptr);
 
 	// Create an icon imagelist for the tree control
 	m_pImageList = new CImageList;
@@ -279,7 +279,7 @@ TextureMgrDialogClass::Add_Subobjs_To_List (RenderObjClass *prender_obj)
 
 		// Get a pointer to this subobject
 		RenderObjClass *psubobj = prender_obj->Get_Sub_Object (index);
-		if (psubobj != NULL) {
+		if (psubobj != nullptr) {
 
 			// Recursively add subobjs to the list
 			Add_Subobjs_To_List (psubobj);
@@ -314,12 +314,12 @@ TextureMgrDialogClass::Add_Textures_To_Node
 )
 {
 	MaterialInfoClass *pmat_info = pmesh->Get_Material_Info ();
-	if (pmat_info != NULL) {
+	if (pmat_info != nullptr) {
 
 		// Loop through all the textures and add them as subobjs
 		for (int index = 0; index < pmat_info->Texture_Count (); index ++) {
 			TextureClass *ptexture = pmat_info->Get_Texture (index);
-			if (ptexture != NULL) {
+			if (ptexture != nullptr) {
 
 				// Create a node from this texture and add it to the mesh
 				TextureListNodeClass *pnode = new TextureListNodeClass (ptexture, ::Get_Texture_Name (*ptexture));
@@ -408,7 +408,7 @@ TextureMgrDialogClass::OnDblclkMeshTextureListCtrl
 
 		// Get the node associated with this entry
 		TextureListNodeClass *pnode = (TextureListNodeClass *)m_ListCtrl.GetItemData (index);
-		if (pnode != NULL) {
+		if (pnode != nullptr) {
 
 			// Is this a mesh or a texture?
 			if (pnode->Get_Type () == TextureListNodeClass::TYPE_MESH) {
@@ -425,12 +425,12 @@ TextureMgrDialogClass::OnDblclkMeshTextureListCtrl
 					// try and find an original texture...
 					TextureListNodeClass *pmesh_node = pnode->Get_Parent ();
 					RenderObjClass *prender_obj = WW3DAssetManager::Get_Instance ()->Create_Render_Obj (pmesh_node->Get_Name ());
-					TextureClass *poriginal_texture = NULL;
-					if (prender_obj != NULL) {
+					TextureClass *poriginal_texture = nullptr;
+					if (prender_obj != nullptr) {
 
 						// Get the material information for this render object
 						MaterialInfoClass *pmat_info = prender_obj->Get_Material_Info ();
-						if (pmat_info != NULL) {
+						if (pmat_info != nullptr) {
 
 							// Attempt to find the original texture
 							poriginal_texture = pmat_info->Get_Texture (pnode->Get_Texture_Index ());
@@ -506,8 +506,8 @@ void
 TextureMgrDialogClass::OnDestroy (void)
 {
 	// Free the state image list we associated with the control
-	m_ListCtrl.SetImageList (NULL, LVSIL_NORMAL);
-	m_ListCtrl.SetImageList (NULL, LVSIL_SMALL);
+	m_ListCtrl.SetImageList (nullptr, LVSIL_NORMAL);
+	m_ListCtrl.SetImageList (nullptr, LVSIL_SMALL);
 	SAFE_DELETE (m_pImageList);
 	SAFE_DELETE (m_pImageListSmall);
 	SAFE_DELETE (m_pTextureImageList);
@@ -612,18 +612,18 @@ TextureMgrDialogClass::Get_Thumbnail (srTextureIFace *ptexture)
 
 		// Create a windows bitmap from this texture
 		HBITMAP hbmp = ::Make_Bitmap_From_Texture (*ptexture, TEXTURE_THUMB_X, TEXTURE_THUMB_Y);
-		if (hbmp != NULL) {
+		if (hbmp != nullptr) {
 
 			// Insert this bitmap into our imagelist
 			CBitmap temp_obj;
 			temp_obj.Attach (hbmp);
-			icon_index = m_pTextureImageList->Add (&temp_obj, (CBitmap *)NULL);
+			icon_index = m_pTextureImageList->Add (&temp_obj, (CBitmap *)nullptr);
 
 			// Create a smaller bitmap and insert it into the other imagelist
 			HBITMAP hsmall_bitmap = (HBITMAP)::CopyImage (hbmp, IMAGE_BITMAP, TEXTURE_THUMBSMALL_X, TEXTURE_THUMBSMALL_Y, 0);
 			CBitmap small_obj;
 			small_obj.Attach (hsmall_bitmap);
-			m_pTextureImageListSmall->Add (&small_obj, (CBitmap *)NULL);
+			m_pTextureImageListSmall->Add (&small_obj, (CBitmap *)nullptr);
 
 			// Add a name to our list to represent this texture
 			m_TextureNames.Add (::Get_Texture_Name (*ptexture));
@@ -647,7 +647,7 @@ TextureMgrDialogClass::Insert_Texture_Details
 )
 {
 	TextureClass *ptexture = pnode->Peek_Texture ();
-	if ((index != -1) && (ptexture != NULL)) {
+	if ((index != -1) && (ptexture != nullptr)) {
 
 		// Get the name of the texture (mark it differently if its an editable texture)
 		CString texture_name = ::Get_Texture_Name (*ptexture);
@@ -741,7 +741,7 @@ TextureMgrDialogClass::OnPropagate (void)
 		//	Does this node have the same number of replaceable textures as the src node?
 		//
 		TextureListNodeClass *curr_node = (TextureListNodeClass *)m_ListCtrl.GetItemData (counter);
-		if (	(curr_node != NULL) &&
+		if (	(curr_node != nullptr) &&
 				(curr_node->Get_Subobj_List ().Count () == src_texture_count))
 		{
 			TEXTURE_NODE_LIST &curr_texture_list = curr_node->Get_Subobj_List ();
@@ -754,7 +754,7 @@ TextureMgrDialogClass::OnPropagate (void)
 
 				TextureListNodeClass *curr_texture_node	= curr_texture_list[texture_counter];
 				TextureListNodeClass *src_texture_node		= src_texture_list[texture_counter];
-				if (curr_texture_node != NULL && src_texture_node != NULL) {
+				if (curr_texture_node != nullptr && src_texture_node != nullptr) {
 
 					TextureClass *curr_texture	= curr_texture_node->Peek_Texture ();
 					TextureClass *src_texture	= src_texture_node->Peek_Texture ();
@@ -762,7 +762,7 @@ TextureMgrDialogClass::OnPropagate (void)
 					//
 					//	Are the textures both indirect textures?
 					//
-					if (	curr_texture != NULL && src_texture != NULL &&
+					if (	curr_texture != nullptr && src_texture != nullptr &&
 							curr_texture->getClassID () == ID_INDIRECT_TEXTURE_CLASS &&
 							src_texture->getClassID () == ID_INDIRECT_TEXTURE_CLASS)
 					{

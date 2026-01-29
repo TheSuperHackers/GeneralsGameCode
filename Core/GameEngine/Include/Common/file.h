@@ -183,13 +183,13 @@ class File : public MemoryPoolObject
 																																				*  END: means seek the specified number of bytes back from the end of the file
 																																				*/
 		virtual Bool	flush() = 0;											///< flush data to disk
-		virtual void	nextLine(Char *buf = NULL, Int bufSize = 0) = 0;		///< reads until it reaches a new-line character
+		virtual void	nextLine(Char *buf = nullptr, Int bufSize = 0) = 0;		///< reads until it reaches a new-line character
 
 		virtual Bool	scanInt(Int &newInt) = 0;														///< read an integer from the current file position.
 		virtual Bool	scanReal(Real &newReal) = 0;												///< read a real number from the current file position.
 		virtual Bool	scanString(AsciiString &newString) = 0;							///< read a string from the current file position.
 
-		virtual Bool	print ( const Char *format, ...);										///< Prints formated string to text file
+		virtual Bool	print ( const Char *format, ...);										///< Prints formatted string to text file
 		virtual Int		size( void );																				///< Returns the size of the file
 		virtual Int		position( void );																		///< Returns the current read/write position
 

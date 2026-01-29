@@ -115,7 +115,7 @@ class Quaternion;
 	I use column-vectors so normally transformations are post-multiplied
 	and camera transformations should be pre-multiplied.  The methods of
 	this class called Translate, Rotate_X, etc. all perform post-multiplication
-	with the current matix.  These methods (Translate, Rotate_X, etc) also
+	with the current matrix.  These methods (Translate, Rotate_X, etc) also
 	have been hand-coded to only perform the necessary arithmetic.  The
 	* operator can be used for general purpose matrix multiplication or to
 	transform a vector by a matrix.
@@ -231,7 +231,7 @@ public:
 
 	// These functions will give you the approximate amount that the
 	// matrix has been rotated about a given axis.  These functions
-	// cannot be used to re-build a matrx.  Use the EulerAnglesClass
+	// cannot be used to re-build a matrix.  Use the EulerAnglesClass
 	// to convert a matrix into a set of three Euler angles.
 	float Get_X_Rotation(void) const;
 	float Get_Y_Rotation(void) const;
@@ -306,12 +306,9 @@ public:
 	WWINLINE void Get_Z_Vector(Vector3 * set_z) const { set_z->Set(Row[0][2], Row[1][2], Row[2][2]); }
 
 	// Get the inverse of the matrix.
-	// TODO: currently the "intended-to-be" general inverse function just calls
-	// the special case Orthogonal inverse functions.  Also, when we implement
-	// general case, check where we were using Get_Inverse since usually it should
-	// be changed to Get_Orthogonal_Inverse...
-	void Get_Inverse(Matrix3D & set_inverse) const;
-	void Get_Orthogonal_Inverse(Matrix3D & set_inverse) const;
+	static Matrix3D * Get_Inverse(Matrix3D * out, float * detOut, const Matrix3D * m);
+	void Get_Inverse(Matrix3D & inv) const;
+	void Get_Orthogonal_Inverse(Matrix3D & inv) const;
 
 	// used for importing SurRender matrices
 	void Copy_3x3_Matrix(float matrix[3][3]);
@@ -1810,3 +1807,15 @@ class DynamicMatrix3D : public W3DMPO
 public:
 	Matrix3D Mat;
 };
+
+
+// TheSuperHackers @info Always convert Matrix3D to D3DMATRIX or vice versa with the conversion functions below.
+// Reason being, D3DMATRIX is row-major, and Matrix3D is column-major and therefore copying one matrix to the
+// other will always require a transpose.
+
+struct _D3DMATRIX;
+struct D3DXMATRIX;
+
+extern void To_D3DMATRIX(_D3DMATRIX& dxm, const Matrix3D& m);
+extern _D3DMATRIX To_D3DMATRIX(const Matrix3D& m);
+extern D3DXMATRIX To_D3DXMATRIX(const Matrix3D& m);

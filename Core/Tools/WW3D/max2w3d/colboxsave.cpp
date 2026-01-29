@@ -70,7 +70,7 @@ CollisionBoxSaveClass::CollisionBoxSaveClass
 	memset(&BoxData,0,sizeof(BoxData));
 
 	BoxData.Version = W3D_BOX_CURRENT_VERSION;
-	if ((container_name != NULL) && (strlen(container_name) > 0)) {
+	if ((container_name != nullptr) && (strlen(container_name) > 0)) {
 		strcpy(BoxData.Name,container_name);
 		strcat(BoxData.Name,".");
 	}
@@ -83,19 +83,19 @@ CollisionBoxSaveClass::CollisionBoxSaveClass
 		BoxData.Attributes |= W3D_BOX_ATTRIBUTE_ORIENTED;
 	}
 	if (Is_Physical_Collision(inode)) {
-		BoxData.Attributes |= W3D_BOX_ATTRIBTUE_COLLISION_TYPE_PHYSICAL;
+		BoxData.Attributes |= W3D_BOX_ATTRIBUTE_COLLISION_TYPE_PHYSICAL;
 	}
 	if (Is_Projectile_Collision(inode)) {
-		BoxData.Attributes |= W3D_BOX_ATTRIBTUE_COLLISION_TYPE_PROJECTILE;
+		BoxData.Attributes |= W3D_BOX_ATTRIBUTE_COLLISION_TYPE_PROJECTILE;
 	}
 	if (Is_Vis_Collision(inode)) {
-		BoxData.Attributes |= W3D_BOX_ATTRIBTUE_COLLISION_TYPE_VIS;
+		BoxData.Attributes |= W3D_BOX_ATTRIBUTE_COLLISION_TYPE_VIS;
 	}
 	if (Is_Camera_Collision(inode)) {
-		BoxData.Attributes |= W3D_BOX_ATTRIBTUE_COLLISION_TYPE_CAMERA;
+		BoxData.Attributes |= W3D_BOX_ATTRIBUTE_COLLISION_TYPE_CAMERA;
 	}
 	if (Is_Vehicle_Collision(inode)) {
-		BoxData.Attributes |= W3D_BOX_ATTRIBTUE_COLLISION_TYPE_VEHICLE;
+		BoxData.Attributes |= W3D_BOX_ATTRIBUTE_COLLISION_TYPE_VEHICLE;
 	}
 
 	BoxData.Color.R = GetRValue(wirecolor);

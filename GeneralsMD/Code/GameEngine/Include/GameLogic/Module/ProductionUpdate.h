@@ -34,7 +34,7 @@
 #include "GameLogic/Module/DieModule.h"
 #include "GameLogic/Module/UpdateModule.h"
 
-// FORWARD REFERNCES //////////////////////////////////////////////////////////////////////////////
+// FORWARD REFERENCES //////////////////////////////////////////////////////////////////////////////
 class ProductionEntry;
 class ThingTemplate;
 class UpgradeTemplate;
@@ -205,7 +205,7 @@ public:
 
 	/** this method is used to request a unique ID to assign to the production of a single
 	unit.  It is unique to all units that can be created from this source object, but is
-	not unique amoung multiple source objects */
+	not unique among multiple source objects */
 	virtual ProductionID requestUniqueUnitID( void ) { ProductionID tmp = m_uniqueID; m_uniqueID = (ProductionID)(m_uniqueID+1); return tmp; }
 
 	virtual Bool queueUpgrade( const UpgradeTemplate *upgrade );				///< queue upgrade "research"
@@ -223,7 +223,7 @@ public:
 
 	// walking the production list from outside
 	virtual const ProductionEntry *firstProduction( void ) const { return m_productionQueue; }
-	virtual const ProductionEntry *nextProduction( const ProductionEntry *p ) const { return p ? p->m_next : NULL; }
+	virtual const ProductionEntry *nextProduction( const ProductionEntry *p ) const { return p ? p->m_next : nullptr; }
 
 	virtual void setHoldDoorOpen(ExitDoorType exitDoor, Bool holdIt);
 

@@ -428,17 +428,17 @@ inline UnsignedShort GameLogic::getSuperweaponRestriction() const { return m_sup
 inline Object* GameLogic::findObjectByID( ObjectID id )
 {
 	if( id == INVALID_ID )
-		return NULL;
+		return nullptr;
 
 //	ObjectPtrHash::iterator it = m_objHash.find(id);
 //	if (it == m_objHash.end())
-//		return NULL;
+//		return nullptr;
 //
 //	return (*it).second;
 	if( (size_t)id < m_objVector.size() )
 		return m_objVector[(size_t)id];
 
-	return NULL;
+	return nullptr;
 }
 
 

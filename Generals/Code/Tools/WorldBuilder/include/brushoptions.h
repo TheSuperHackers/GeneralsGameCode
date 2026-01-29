@@ -37,7 +37,7 @@ public:
 				FREQ_FEATHER_TICKS=4,
 				MAX_FEATHER=20};
 
-	BrushOptions(CWnd* pParent = NULL);   // standard constructor
+	BrushOptions(CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(BrushOptions)

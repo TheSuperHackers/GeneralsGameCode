@@ -103,7 +103,7 @@ static const LookupListRec TransitionStyleNames[] =
 	{ "CONTROLBARARROW",			CONTROL_BAR_ARROW_TRANSITION },
 	{ "SCORESCALEUP",			SCORE_SCALE_UP_TRANSITION },
 	{ "REVERSESOUND",			REVERSE_SOUND_TRANSITION },
-	{ NULL, 0	}
+	{ nullptr, 0	}
 };
 static_assert(ARRAY_SIZE(TransitionStyleNames) == MAX_TRANSITION_WINDOW_STYLES + 1, "Incorrect array size");
 
@@ -122,7 +122,7 @@ public:
 
 	virtual void skip( void ) = 0;
 
-	void unlinkGameWindow(GameWindow* win) { if ( m_win == win ) m_win = NULL; }
+	void unlinkGameWindow(GameWindow* win) { if ( m_win == win ) m_win = nullptr; }
 	Bool isFinished( void ) { return m_isFinished;	}
 	Int getFrameLength( void ){ return m_frameLength;	}
 protected:
@@ -668,7 +668,7 @@ public:
 	static const FieldParse m_gameWindowTransitionsFieldParseTable[];																				///< the parse table
 	static void parseWindow( INI* ini, void *instance, void *store, const void *userData );
 
-	void setGroup(AsciiString groupName, Bool immidiate = FALSE);		// THis will be the next group to fire off.
+	void setGroup(AsciiString groupName, Bool immediate = FALSE);		// THis will be the next group to fire off.
 	void reverse( AsciiString groupName );// reverse the animations for the current group.
 	void remove( AsciiString groupName, Bool skipPending = FALSE );// remove the animation from the current or pending groups.
 	TransitionGroup *getNewGroup( AsciiString name );

@@ -278,11 +278,11 @@ static LRESULT CALLBACK tabControlPropertiesCallback( HWND hWndDialog,
 
 						TabControlData *tabData = (TabControlData *)tabControl->winGetUserData();
 
-						tabData->tabWidth = GetDlgItemInt( hWndDialog, TAB_WIDTH, NULL, FALSE );
-						tabData->tabHeight = GetDlgItemInt(hWndDialog, TAB_HEIGHT, NULL, FALSE );
-						tabData->tabCount = GetDlgItemInt(hWndDialog, TAB_COUNT, NULL, FALSE );
-						tabData->paneBorder = GetDlgItemInt(hWndDialog, BORDER_WIDTH, NULL, FALSE );
-						tabData->activeTab = GetDlgItemInt(hWndDialog, ACTIVE_TAB, NULL, FALSE );
+						tabData->tabWidth = GetDlgItemInt( hWndDialog, TAB_WIDTH, nullptr, FALSE );
+						tabData->tabHeight = GetDlgItemInt(hWndDialog, TAB_HEIGHT, nullptr, FALSE );
+						tabData->tabCount = GetDlgItemInt(hWndDialog, TAB_COUNT, nullptr, FALSE );
+						tabData->paneBorder = GetDlgItemInt(hWndDialog, BORDER_WIDTH, nullptr, FALSE );
+						tabData->activeTab = GetDlgItemInt(hWndDialog, ACTIVE_TAB, nullptr, FALSE );
 
 						if( IsDlgButtonChecked( hWndDialog, DISABLE_TAB_0 ) )
 							tabData->subPaneDisabled[0] = TRUE;
@@ -398,8 +398,8 @@ HWND InitTabControlPropertiesDialog( GameWindow *tabControl )
 												 (LPCTSTR)TAB_CONTROL_PROPERTIES_DIALOG,
 												 TheEditor->getWindowHandle(),
 												 (DLGPROC)tabControlPropertiesCallback );
-	if( dialog == NULL )
-		return NULL;
+	if( dialog == nullptr )
+		return nullptr;
 
 	// do the common initialization
 	CommonDialogInitialize( tabControl, dialog );

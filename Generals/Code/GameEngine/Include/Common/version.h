@@ -47,8 +47,8 @@ public:
 	AsciiString getAsciiVersion() const;            ///< Return a human-readable game version number
 	UnicodeString getUnicodeVersion() const;        ///< Return a human-readable game version number. Is decorated with localized string
 
-	AsciiString getAsciiBuildTime() const;          ///< Return a formated date/time string for build time
-	UnicodeString getUnicodeBuildTime() const;      ///< Return a formated date/time string for build time. Is decorated with localized string
+	AsciiString getAsciiBuildTime() const;          ///< Return a formatted date/time string for build time
+	UnicodeString getUnicodeBuildTime() const;      ///< Return a formatted date/time string for build time. Is decorated with localized string
 
 	AsciiString getAsciiBuildLocation() const;      ///< Return a string with the build location
 	UnicodeString getUnicodeBuildLocation() const;  ///< Return a string with the build location. Is decorated with localized string

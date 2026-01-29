@@ -38,7 +38,7 @@
 //
 // Created:    Colin Day, June 2001
 //
-// Desc:       Implemtation details for various gadgets as they pertain to
+// Desc:       Implementation details for various gadgets as they pertain to
 //						 W3D will go here
 //
 //-----------------------------------------------------------------------------

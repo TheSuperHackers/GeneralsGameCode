@@ -47,9 +47,9 @@ unsigned long ResolveIP(const char *Server)
   struct hostent *serverStruct;
   struct in_addr *serverNode;
 
-  if (Server == NULL)
+  if (Server == nullptr)
   {
-	  ERRMSG("Can't resolve NULL");
+	  ERRMSG("Can't resolve null");
 	  return 0;
   }
 
@@ -59,7 +59,7 @@ unsigned long ResolveIP(const char *Server)
   strcpy(serverName, Server);
 
   serverStruct = gethostbyname(Server);
-  if (serverStruct == NULL)
+  if (serverStruct == nullptr)
   {
 	  ERRMSG("Can't resolve " << Server);
 	  return 0;
@@ -82,7 +82,7 @@ int main(int argc, char **argv)
 	if( argc <= 1 )
 	{
 		// No args - use a default config file
-		if ((conf = fopen("manglertest.cfg", "r")) == NULL) {
+		if ((conf = fopen("manglertest.cfg", "r")) == nullptr) {
 			cout << "Cannot open mangler.cfg for reading." << endl;
 			DisplayHelp(argv[0]);
 		}
@@ -95,7 +95,7 @@ int main(int argc, char **argv)
 	else if( argc == 2 )
 	{
 		// Use a user-supplied config file
-		if ((conf = fopen(argv[1], "r")) == NULL) {
+		if ((conf = fopen(argv[1], "r")) == nullptr) {
 			cout << "Cannot open " << argv[1] << " for reading." << endl;
 			DisplayHelp(argv[0]);
 		}

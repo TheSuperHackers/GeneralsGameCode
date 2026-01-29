@@ -63,16 +63,16 @@ void SupplyCenterCreate::onBuildComplete( void )
 
 	CreateModule::onBuildComplete(); // extend
 
-	if( ThePlayerList == NULL )
+	if( ThePlayerList == nullptr )
 		return;
 
 	for( Int playerIndex = ThePlayerList->getPlayerCount() - 1; playerIndex >= 0; playerIndex-- )
 	{
 		Player *currentPlayer = ThePlayerList->getNthPlayer( playerIndex );
-		if( currentPlayer == NULL )
+		if( currentPlayer == nullptr )
 			continue;
 		ResourceGatheringManager *manager = currentPlayer->getResourceGatheringManager();
-		if( manager == NULL )
+		if( manager == nullptr )
 			continue;
 		manager->addSupplyCenter( getObject() );
 	}

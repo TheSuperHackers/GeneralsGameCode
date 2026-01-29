@@ -234,7 +234,7 @@ protected:
 	ModelArrayClass *				Lod;
 
 	//
-	//	An animating heirarchy can use a hidden CLASSID_OBBOX mesh to represent its bounding
+	//	An animating hierarchy can use a hidden CLASSID_OBBOX mesh to represent its bounding
 	// box as it animates.  This is the sub object index of that mesh (if it exists).
 	//
 	int								BoundingBoxIndex;

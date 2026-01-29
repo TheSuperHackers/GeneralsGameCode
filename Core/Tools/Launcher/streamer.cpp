@@ -28,7 +28,7 @@
 #define STREAMER_UNBUFFERED 0
 #endif
 
-Streamer::Streamer() : streambuf(), Output_Device(NULL), Buf(NULL)
+Streamer::Streamer() : streambuf(), Output_Device(nullptr), Buf(nullptr)
 {
 #if defined(USING_STLPORT) || (defined(_MSC_VER) && _MSC_VER < 1300)
   int state=unbuffered();
@@ -101,7 +101,7 @@ int Streamer::underflow(void)
 
 int Streamer::doallocate()
 {
-  if (Buf==NULL)
+  if (Buf==nullptr)
   {
     Buf=new char[(2*STREAMER_BUFSIZ)];   // deleted by destructor
     memset(Buf,0,2*STREAMER_BUFSIZ);

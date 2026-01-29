@@ -63,13 +63,13 @@ public:
 
 		static const FieldParse dataFieldParse[] =
 		{
-			{ "NumRows",						INI::parseInt,									NULL, offsetof( ParkingPlaceBehaviorModuleData, m_numRows ) },
-			{ "NumCols",						INI::parseInt,									NULL, offsetof( ParkingPlaceBehaviorModuleData, m_numCols ) },
-			{ "ApproachHeight",			INI::parseReal,									NULL, offsetof( ParkingPlaceBehaviorModuleData, m_approachHeight ) },
-			{ "HasRunways",					INI::parseBool,									NULL, offsetof( ParkingPlaceBehaviorModuleData, m_hasRunways ) },
-			{ "ParkInHangars",			INI::parseBool,									NULL, offsetof( ParkingPlaceBehaviorModuleData, m_parkInHangars ) },
-			{ "HealAmountPerSecond",INI::parseReal,									NULL, offsetof( ParkingPlaceBehaviorModuleData, m_healAmount ) },
-			//{ "TimeForFullHeal",	INI::parseDurationUnsignedInt,	NULL, offsetof( ParkingPlaceBehaviorModuleData, m_framesForFullHeal ) },
+			{ "NumRows",						INI::parseInt,									nullptr, offsetof( ParkingPlaceBehaviorModuleData, m_numRows ) },
+			{ "NumCols",						INI::parseInt,									nullptr, offsetof( ParkingPlaceBehaviorModuleData, m_numCols ) },
+			{ "ApproachHeight",			INI::parseReal,									nullptr, offsetof( ParkingPlaceBehaviorModuleData, m_approachHeight ) },
+			{ "HasRunways",					INI::parseBool,									nullptr, offsetof( ParkingPlaceBehaviorModuleData, m_hasRunways ) },
+			{ "ParkInHangars",			INI::parseBool,									nullptr, offsetof( ParkingPlaceBehaviorModuleData, m_parkInHangars ) },
+			{ "HealAmountPerSecond",INI::parseReal,									nullptr, offsetof( ParkingPlaceBehaviorModuleData, m_healAmount ) },
+			//{ "TimeForFullHeal",	INI::parseDurationUnsignedInt,	nullptr, offsetof( ParkingPlaceBehaviorModuleData, m_framesForFullHeal ) },
 			{ 0, 0, 0, 0 }
 		};
 		p.add(dataFieldParse);

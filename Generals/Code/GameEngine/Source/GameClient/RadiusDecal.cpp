@@ -54,9 +54,9 @@ void RadiusDecalTemplate::createRadiusDecal(const Coord3D& pos, Real radius, con
 {
 	result.clear();
 
-	if (owningPlayer == NULL)
+	if (owningPlayer == nullptr)
 	{
-		DEBUG_CRASH(("You MUST specify a non-NULL owningPlayer to createRadiusDecal. (srj)"));
+		DEBUG_CRASH(("You MUST specify a non-null owningPlayer to createRadiusDecal. (srj)"));
 		return;
 	}
 
@@ -114,14 +114,14 @@ void RadiusDecalTemplate::xferRadiusDecalTemplate( Xfer *xfer )
 {
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "Texture",										INI::parseAsciiString,				NULL,							offsetof( RadiusDecalTemplate, m_name ) },
+		{ "Texture",										INI::parseAsciiString,				nullptr,							offsetof( RadiusDecalTemplate, m_name ) },
 		{ "Style",											INI::parseBitString32,				TheShadowNames,		offsetof( RadiusDecalTemplate, m_shadowType ) },
-		{ "OpacityMin",									INI::parsePercentToReal,			NULL,							offsetof( RadiusDecalTemplate, m_minOpacity ) },
-		{ "OpacityMax",									INI::parsePercentToReal,			NULL,							offsetof( RadiusDecalTemplate, m_maxOpacity) },
-		{ "OpacityThrobTime",						INI::parseDurationUnsignedInt,NULL,							offsetof( RadiusDecalTemplate, m_opacityThrobTime ) },
-		{ "Color",											INI::parseColorInt,						NULL,							offsetof( RadiusDecalTemplate, m_color ) },
-		{ "OnlyVisibleToOwningPlayer",	INI::parseBool,								NULL,							offsetof( RadiusDecalTemplate, m_onlyVisibleToOwningPlayer ) },
-		{ 0, 0, 0, 0 }
+		{ "OpacityMin",									INI::parsePercentToReal,			nullptr,							offsetof( RadiusDecalTemplate, m_minOpacity ) },
+		{ "OpacityMax",									INI::parsePercentToReal,			nullptr,							offsetof( RadiusDecalTemplate, m_maxOpacity) },
+		{ "OpacityThrobTime",						INI::parseDurationUnsignedInt,nullptr,							offsetof( RadiusDecalTemplate, m_opacityThrobTime ) },
+		{ "Color",											INI::parseColorInt,						nullptr,							offsetof( RadiusDecalTemplate, m_color ) },
+		{ "OnlyVisibleToOwningPlayer",	INI::parseBool,								nullptr,							offsetof( RadiusDecalTemplate, m_onlyVisibleToOwningPlayer ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 
 	ini->initFromINI(store, dataFieldParse);
@@ -129,16 +129,16 @@ void RadiusDecalTemplate::xferRadiusDecalTemplate( Xfer *xfer )
 
 // ------------------------------------------------------------------------------------------------
 RadiusDecal::RadiusDecal() :
-	m_template(NULL),
-	m_decal(NULL),
+	m_template(nullptr),
+	m_decal(nullptr),
 	m_empty(true)
 {
 }
 
 // ------------------------------------------------------------------------------------------------
 RadiusDecal::RadiusDecal(const RadiusDecal& that) :
-	m_template(NULL),
-	m_decal(NULL),
+	m_template(nullptr),
+	m_decal(nullptr),
 	m_empty(true)
 {
 	DEBUG_CRASH(("not fully implemented"));
@@ -149,10 +149,10 @@ RadiusDecal& RadiusDecal::operator=(const RadiusDecal& that)
 {
 	if (this != &that)
 	{
-		m_template = NULL;
+		m_template = nullptr;
 		if (m_decal)
 			m_decal->release();
-		m_decal = NULL;
+		m_decal = nullptr;
 		m_empty = true;
 		DEBUG_CRASH(("not fully implemented"));
 	}
@@ -172,12 +172,12 @@ void RadiusDecal::xferRadiusDecal( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void RadiusDecal::clear()
 {
-	m_template = NULL;
+	m_template = nullptr;
 	if (m_decal)
 	{
 		m_decal->release();
 	}
-	m_decal = NULL;
+	m_decal = nullptr;
 	m_empty = true;
 }
 

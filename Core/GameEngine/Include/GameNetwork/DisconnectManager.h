@@ -61,7 +61,7 @@ public:
 	// For disconnect blame assignment
 	UnsignedInt getPingFrame();
 	Int getPingsSent();
-	Int getPingsRecieved();
+	Int getPingsReceived();
 
 protected:
 	void sendKeepAlive(ConnectionManager *conMgr);
@@ -120,6 +120,6 @@ protected:
 
 	time_t m_timeOfDisconnectScreenOn;
 	Int m_pingsSent;
-	Int m_pingsRecieved;
+	Int m_pingsReceived;
 	UnsignedInt m_pingFrame;
 };

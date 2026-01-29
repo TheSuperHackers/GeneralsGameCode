@@ -168,7 +168,7 @@ protected:
 	InputLightStruct	InputLights[MAX_LIGHTS];	// Sorted list of input lights from the greatest contributor to the least
 
 	Vector3				OutputAmbient;					// scene ambient + lights' ambients
-	OutputLightStruct	OutputLights[MAX_LIGHTS];	// ouput lights
+	OutputLightStruct	OutputLights[MAX_LIGHTS];	// output lights
 
 	InputLightStruct 	FillLight;						// Used to store the calculated fill light
 	float					FillIntensity;					// Used to determine how strong the fill light should be

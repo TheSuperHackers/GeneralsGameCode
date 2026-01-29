@@ -86,15 +86,15 @@ void MobNexusContainModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "Slots",	INI::parseInt,		NULL, offsetof( MobNexusContainModuleData, m_slotCapacity ) },
-		{ "ScatterNearbyOnExit",	INI::parseBool,		NULL, offsetof( MobNexusContainModuleData, m_scatterNearbyOnExit ) },
-		{ "OrientLikeContainerOnExit",	INI::parseBool,		NULL, offsetof( MobNexusContainModuleData, m_orientLikeContainerOnExit ) },
-		{ "KeepContainerVelocityOnExit",	INI::parseBool,		NULL, offsetof( MobNexusContainModuleData, m_keepContainerVelocityOnExit ) },
-		{ "ExitBone",	INI::parseAsciiString,		NULL, offsetof( MobNexusContainModuleData, m_exitBone ) },
-		{ "ExitPitchRate",	INI::parseAngularVelocityReal,		NULL, offsetof( MobNexusContainModuleData, m_exitPitchRate ) },
-		{ "InitialPayload", parseInitialPayload, NULL, 0 },
-		{ "HealthRegen%PerSec", INI::parseReal, NULL, offsetof( MobNexusContainModuleData, m_healthRegen ) },
-		{ 0, 0, 0, 0 }
+		{ "Slots",	INI::parseInt,		nullptr, offsetof( MobNexusContainModuleData, m_slotCapacity ) },
+		{ "ScatterNearbyOnExit",	INI::parseBool,		nullptr, offsetof( MobNexusContainModuleData, m_scatterNearbyOnExit ) },
+		{ "OrientLikeContainerOnExit",	INI::parseBool,		nullptr, offsetof( MobNexusContainModuleData, m_orientLikeContainerOnExit ) },
+		{ "KeepContainerVelocityOnExit",	INI::parseBool,		nullptr, offsetof( MobNexusContainModuleData, m_keepContainerVelocityOnExit ) },
+		{ "ExitBone",	INI::parseAsciiString,		nullptr, offsetof( MobNexusContainModuleData, m_exitBone ) },
+		{ "ExitPitchRate",	INI::parseAngularVelocityReal,		nullptr, offsetof( MobNexusContainModuleData, m_exitPitchRate ) },
+		{ "InitialPayload", parseInitialPayload, nullptr, 0 },
+		{ "HealthRegen%PerSec", INI::parseReal, nullptr, offsetof( MobNexusContainModuleData, m_healthRegen ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   p.add(dataFieldParse);
 }
@@ -242,9 +242,9 @@ void MobNexusContain::onRemoving( Object *rider )
 		if (draw)
 		{
 			Coord3D bonePos, worldPos;
-			if (draw->getPristineBonePositions(d->m_exitBone.str(), 0, &bonePos, NULL, 1) == 1)
+			if (draw->getPristineBonePositions(d->m_exitBone.str(), 0, &bonePos, nullptr, 1) == 1)
 			{
-				getObject()->convertBonePosToWorldPos(&bonePos, NULL, &worldPos, NULL);
+				getObject()->convertBonePosToWorldPos(&bonePos, nullptr, &worldPos, nullptr);
 				rider->setPosition(&worldPos);
 			}
 		}
@@ -383,7 +383,7 @@ UpdateSleepTime MobNexusContain::update()
 // ------------------------------------------------------------------------------------------------
 ExitDoorType MobNexusContain::reserveDoorForExit( const ThingTemplate* objType, Object *specificObject )
 {
-	if( specificObject == NULL )
+	if( specificObject == nullptr )
 		return DOOR_1;// I can, in general, exit people.
 
 	// This is an override, not an extend.  I will check for game legality for

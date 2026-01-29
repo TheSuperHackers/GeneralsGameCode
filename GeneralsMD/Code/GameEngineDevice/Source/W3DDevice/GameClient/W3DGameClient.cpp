@@ -85,7 +85,7 @@ void W3DGameClient::init( void )
 }
 
 //-------------------------------------------------------------------------------------------------
-/** Per frame udpate, note we are extending functionality */
+/** Per frame update, note we are extending functionality */
 //-------------------------------------------------------------------------------------------------
 void W3DGameClient::update( void )
 {
@@ -117,11 +117,11 @@ void W3DGameClient::reset( void )
 Drawable *W3DGameClient::friend_createDrawable( const ThingTemplate *tmplate,
 																								DrawableStatusBits statusBits )
 {
-	Drawable *draw = NULL;
+	Drawable *draw = nullptr;
 
 	// sanity
-	if( tmplate == NULL )
-		return NULL;
+	if( tmplate == nullptr )
+		return nullptr;
 
 	draw = newInstance(Drawable)( tmplate, statusBits );
 
