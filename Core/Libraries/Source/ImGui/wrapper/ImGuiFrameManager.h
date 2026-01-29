@@ -38,6 +38,21 @@ class FrameManager
     static bool s_frameOpen;
 };
 
+class FrameGuard {
+public:
+  FrameGuard() {
+    FrameManager::BeginFrame();
+  }
 
+  ~FrameGuard() {
+    FrameManager::EndFrame();
+  }
+
+// TODO change this to rule of 5 and use delete instead of declaring without definition once
+// we are using a C++11 or higher C++ Standard
+private:
+  FrameGuard(const FrameGuard&);
+  FrameGuard& operator=(const FrameGuard&);
+};
 } // namespace ImGui
 } // namespace rts
