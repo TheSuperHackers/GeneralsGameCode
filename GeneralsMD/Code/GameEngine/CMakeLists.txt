@@ -18,7 +18,6 @@ set(GAMEENGINE_SRC
     Include/Common/BitFlagsIO.h
     Include/Common/BorderColors.h
     Include/Common/BuildAssistant.h
-    Include/Common/CDManager.h
     Include/Common/ClientUpdateModule.h
     Include/Common/CommandLine.h
 #    Include/Common/crc.h
@@ -139,7 +138,6 @@ set(GAMEENGINE_SRC
     Include/GameClient/Anim2D.h
     Include/GameClient/AnimateWindowManager.h
     Include/GameClient/CampaignManager.h
-    Include/GameClient/CDCheck.h
 #    Include/GameClient/ChallengeGenerals.h
     Include/GameClient/ClientInstance.h
 #    Include/GameClient/ClientRandomValue.h
@@ -633,7 +631,6 @@ set(GAMEENGINE_SRC
 #    Source/Common/System/ArchiveFileSystem.cpp
 #    Source/Common/System/AsciiString.cpp
     Source/Common/System/BuildAssistant.cpp
-    Source/Common/System/CDManager.cpp
     Source/Common/System/CriticalSection.cpp
     Source/Common/System/DataChunk.cpp
 #    Source/Common/System/Debug.cpp
