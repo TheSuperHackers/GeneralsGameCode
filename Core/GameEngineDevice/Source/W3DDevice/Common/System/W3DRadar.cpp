@@ -720,7 +720,7 @@ void W3DRadar::renderObjectList( const RadarObject *listHead, TextureClass *text
 		radarPoint.y = pos->y / (m_mapExtent.height() / RADAR_CELL_HEIGHT);
 
 		// get the color we're going to draw in
-		Color color = rObj->getColor();
+		Color argbColor = rObj->getColor();
 
 		// adjust the alpha for stealth units so they "fade/blink" on the radar for the controller
 		// if( obj->getRadarPriority() == RADAR_PRIORITY_LOCAL_UNIT_ONLY )
@@ -729,7 +729,7 @@ void W3DRadar::renderObjectList( const RadarObject *listHead, TextureClass *text
 		if( obj->testStatus( OBJECT_STATUS_STEALTHED ) )
 		{
 			UnsignedByte r, g, b, a;
-			GameGetColorComponents( color, &r, &g, &b, &a );
+			GameGetColorComponents( argbColor, &r, &g, &b, &a );
 
 			const UnsignedInt framesForTransition = LOGICFRAMES_PER_SECOND;
 			const UnsignedByte minAlpha = 32;
@@ -739,11 +739,11 @@ void W3DRadar::renderObjectList( const RadarObject *listHead, TextureClass *text
 				a = REAL_TO_UNSIGNEDBYTE( ((alphaScale - 1.0f) * (255.0f - minAlpha)) + minAlpha );
 			else
 				a = REAL_TO_UNSIGNEDBYTE( (alphaScale * (255.0f - minAlpha)) + minAlpha );
-			color = GameMakeColor( r, g, b, a );
+			argbColor = GameMakeColor( r, g, b, a );
 
 		}
 
-		const unsigned int pixelColor = ARGB_Color_To_WW3D_Color(surfaceDesc.Format, color);
+		const unsigned int pixelColor = ARGB_Color_To_WW3D_Color(surfaceDesc.Format, argbColor);
 
 		// draw the blip, but make sure the points are legal
 		if( legalRadarPoint( radarPoint.x, radarPoint.y ) )
