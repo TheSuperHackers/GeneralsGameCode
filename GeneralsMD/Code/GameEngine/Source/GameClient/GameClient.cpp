@@ -33,9 +33,8 @@
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #ifdef RTS_HAS_IMGUI
-#include <imgui.h>
+#include "imgui.h"
 #include "ImGuiFrameManager.h"
-#include "dx8wrapper.h"
 #endif
 
 #include "Common/ActionManager.h"
@@ -637,7 +636,6 @@ void GameClient::update( void )
 		// redraw all views, update the GUI
 		TheDisplay->DRAW();
 		TheDisplay->UPDATE();
-
 		return;
 	}
 
@@ -765,8 +763,6 @@ void GameClient::update( void )
 	{
 		TheDisplay->UPDATE();
 	}
-
-
 
 	{
 		USE_PERF_TIMER(GameClient_draw)

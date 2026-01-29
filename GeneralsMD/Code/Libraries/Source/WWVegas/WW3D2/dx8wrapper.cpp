@@ -89,10 +89,9 @@
 
 #ifdef RTS_HAS_IMGUI
 #include "imgui.h"
-#include <imgui_impl_win32.h>
 #include "imgui_impl_dx8.h"
-#include <ImGuiFrameManager.h>
-#include <ImGuiContextManager.h>
+#include "ImGuiFrameManager.h"
+#include "ImGuiContextManager.h"
 #endif
 
 const int DEFAULT_RESOLUTION_WIDTH = 640;
