@@ -7,10 +7,6 @@ else()
     set_target_properties(z_generals PROPERTIES OUTPUT_NAME generalszh)
 endif()
 
-if (RTS_BUILD_OPTION_IMGUI)
-    target_link_libraries(z_generals PRIVATE lib_imgui)
-endif ()
-
 target_link_libraries(z_generals PRIVATE
     binkstub
     comctl32
@@ -27,6 +23,7 @@ target_link_libraries(z_generals PRIVATE
     z_gameengine
     z_gameenginedevice
     zi_always
+    lib_imgui
 )
 
 # TODO Originally referred to build host and user, replace with git info perhaps?

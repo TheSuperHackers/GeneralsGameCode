@@ -7,10 +7,6 @@ else()
     set_target_properties(g_generals PROPERTIES OUTPUT_NAME generalsv)
 endif()
 
-if (RTS_BUILD_OPTION_IMGUI)
-    target_link_libraries(g_generals PRIVATE lib_imgui)
-endif ()
-
 target_link_libraries(g_generals PRIVATE
     binkstub
     comctl32
@@ -25,6 +21,7 @@ target_link_libraries(g_generals PRIVATE
     milesstub
     vfw32
     winmm
+    lib_imgui
 )
 
 # TODO Originally referred to build host and user, replace with git info perhaps?
