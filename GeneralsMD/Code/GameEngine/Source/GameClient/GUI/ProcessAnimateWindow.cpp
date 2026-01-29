@@ -147,7 +147,7 @@ void ProcessAnimateWindowSlideFromRight::initAnimateWindow( wnd::AnimateWindow *
 	//set the window's position to the new start positions.
 	win->winSetPosition(startPos.x, startPos.y);
 
-	// TheSuperHackers @bugfix tophroxx 29/01/2026 Use scaled pixel constants
+	// TheSuperHackers @bugfix tophroxx 30/01/2026 Use scaled pixel constants
 	// for slowdown threshold and velocity.
 	m_maxVel.x = -static_cast<Real>(scaleHorizontalConstant(40));
 	m_slowDownThreshold = scaleHorizontalConstant(80);
@@ -332,7 +332,7 @@ void ProcessAnimateWindowSlideFromLeft::initAnimateWindow( wnd::AnimateWindow *a
 	//set the window's position to the new start positions.
 	win->winSetPosition(startPos.x, startPos.y);
 
-	// TheSuperHackers @bugfix tophroxx 29/01/2026 Use scaled pixel constants
+	// TheSuperHackers @bugfix tophroxx 30/01/2026 Use scaled pixel constants
 	// for slowdown threshold and velocity.
 	m_maxVel.x = static_cast<Real>(scaleHorizontalConstant(40));
 	m_slowDownThreshold = scaleHorizontalConstant(80);
@@ -514,7 +514,7 @@ void ProcessAnimateWindowSlideFromTop::initAnimateWindow( wnd::AnimateWindow *an
 	//set the window's position to the new start positions.
 	win->winSetPosition(startPos.x, startPos.y);
 
-	// TheSuperHackers @bugfix tophroxx 29/01/2026 Use scaled pixel constants
+	// TheSuperHackers @bugfix tophroxx 30/01/2026 Use scaled pixel constants
 	// for slowdown threshold and velocity.
 	m_maxVel.y = static_cast<Real>(scaleVerticalConstant(40));
 	m_slowDownThreshold = scaleVerticalConstant(80);
@@ -698,7 +698,7 @@ void ProcessAnimateWindowSlideFromBottom::initAnimateWindow( wnd::AnimateWindow 
 	//set the window's position to the new start positions.
 	win->winSetPosition(startPos.x, startPos.y);
 
-	// TheSuperHackers @bugfix tophroxx 29/01/2026 Use scaled pixel constants
+	// TheSuperHackers @bugfix tophroxx 30/01/2026 Use scaled pixel constants
 	// for slowdown threshold and velocity.
 	m_maxVel.y = -static_cast<Real>(scaleVerticalConstant(40));
 	m_slowDownThreshold = scaleVerticalConstant(80);
