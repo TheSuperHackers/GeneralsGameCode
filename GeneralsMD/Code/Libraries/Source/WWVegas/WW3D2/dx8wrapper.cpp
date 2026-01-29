@@ -1761,7 +1761,10 @@ void DX8Wrapper::End_Scene(bool flip_frames)
 {
 	DX8_THREAD_ASSERT();
 
+#ifdef RTS_HAS_IMGUI
 	rts::ImGui::FrameManager::EndFrame();
+#endif
+
 	DX8CALL(EndScene());
 
 	DX8WebBrowser::Render(0);

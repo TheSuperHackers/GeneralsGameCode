@@ -2088,9 +2088,11 @@ void WbView3d::render()
 	++m_updateCount;
 
 #ifdef RTS_HAS_IMGUI
-	rts::ImGui::FrameManager::BeginFrame();
-	ImGui::ShowDemoWindow();
-	rts::ImGui::FrameManager::EndFrame();
+	rts::ImGui::FrameGuard frame_guard;
+	static bool show_demo = true;
+	if (show_demo) {
+		  ImGui::ShowDemoWindow(&show_demo);
+	}
 #endif
 
 	if (WW3D::Begin_Render(true,true,Vector3(0.5f,0.5f,0.5f), TheWaterTransparency->m_minWaterOpacity) == WW3D_ERROR_OK)
