@@ -80,7 +80,7 @@ public:
 	//}}AFX_VIRTUAL
 
 #ifdef RTS_HAS_IMGUI
-// Function overrides needed for ImGui Mouse capture
+	// Function overrides needed for ImGui Mouse capture
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);
 #endif

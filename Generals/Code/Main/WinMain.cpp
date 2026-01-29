@@ -309,7 +309,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 {
 #ifdef RTS_HAS_IMGUI
 	if (ImGui_ImplWin32_WndProcHandler(hWnd, message, wParam, lParam)) {
-		return true;
+		return 1;
 	}
 #endif
 	try

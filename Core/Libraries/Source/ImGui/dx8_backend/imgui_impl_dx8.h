@@ -23,11 +23,6 @@
  * SOFTWARE.
  */
 
-/**
- * @file imgui_impl_dx8.h
- * @brief DirectX8 renderer backend for Dear ImGui, reverse-engineered from the official DX9 backend
- */
-
 // dear imgui: Renderer Backend for DirectX8
 // This needs to be used along with a Platform Backend (e.g. Win32)
 

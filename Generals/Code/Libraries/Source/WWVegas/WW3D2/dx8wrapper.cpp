@@ -268,8 +268,6 @@ void MoveRectIntoOtherRect(const RECT& inner, const RECT& outer, int* x, int* y)
 	*y += dy;
 }
 
-// TheSuperHackers @feature jurassiclizard 16/01/2026 imgui integration (PR#2127)
-// see details under WinMain.cpp (WndProc())
 bool DX8Wrapper::Init(void * hwnd, bool lite)
 {
 	WWASSERT(!IsInitted);
@@ -606,7 +604,6 @@ bool DX8Wrapper::Create_Device(void)
 	ImGuiIO& io = ImGui::GetIO();
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
-	// Dark Style
 	ImGui::StyleColorsDark();
 
 	ImGui_ImplWin32_Init(_Hwnd);
