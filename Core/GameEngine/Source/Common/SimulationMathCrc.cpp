@@ -61,7 +61,7 @@ UnsignedInt SimulationMathCrc::calculate()
     xfer.open("SimulationMathCrc");
 
     _fpreset();
-    // TheSuperHackers @info stm Use the same rounding mode as used in the game. This affects vc6 only.
+    // TheSuperHackers @info stephanmeesters 29/01/2026 Use the same rounding mode as used in the game. This affects vc6 only.
     _controlfp(0x000A001F, _MCW_RC | _MCW_PC | _MCW_EM);
 
     appendMatrixCrc(xfer);
