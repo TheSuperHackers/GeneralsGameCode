@@ -696,7 +696,7 @@ void W3DTreeBuffer::loadTreesInVertexAndIndexBuffers(RefRenderObjListIterator *p
 	}
 
 	if (m_shadow == nullptr && TheW3DProjectedShadowManager) {
-		Shadow::ShadowTypeInfo shadowInfo;
+		Shadow::ShadowTypeInfo shadowInfo = Shadow::ShadowTypeInfo();
 		shadowInfo.m_ShadowName[0] = 0;
 		shadowInfo.allowUpdates=FALSE;	//shadow image will never update
 		shadowInfo.allowWorldAlign=TRUE;	//shadow image will wrap around world objects

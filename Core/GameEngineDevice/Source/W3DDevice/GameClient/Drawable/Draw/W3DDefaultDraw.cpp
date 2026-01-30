@@ -60,7 +60,7 @@ W3DDefaultDraw::W3DDefaultDraw(Thing *thing, const ModuleData* moduleData) : Dra
 	{
 		m_renderObject = W3DDisplay::m_assetManager->Create_Render_Obj(getDrawable()->getTemplate()->getLTAName().str(), getDrawable()->getScale(), 0);
 
-		Shadow::ShadowTypeInfo shadowInfo;
+		Shadow::ShadowTypeInfo shadowInfo = Shadow::ShadowTypeInfo();
 		shadowInfo.m_type=(ShadowType)SHADOW_VOLUME;
 		shadowInfo.m_sizeX=0;	//use defaults
 		shadowInfo.m_sizeY=0;
