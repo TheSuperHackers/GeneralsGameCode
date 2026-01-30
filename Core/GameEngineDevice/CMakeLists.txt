@@ -10,25 +10,25 @@ set(GAMEENGINEDEVICE_SRC
 #    Include/W3DDevice/GameClient/camerashakesystem.h
     Include/W3DDevice/GameClient/FlatHeightMap.h
     Include/W3DDevice/GameClient/HeightMap.h
-#    Include/W3DDevice/GameClient/Module/W3DDebrisDraw.h
-#    Include/W3DDevice/GameClient/Module/W3DDefaultDraw.h
-#    Include/W3DDevice/GameClient/Module/W3DDependencyModelDraw.h
+    Include/W3DDevice/GameClient/Module/W3DDebrisDraw.h
+    Include/W3DDevice/GameClient/Module/W3DDefaultDraw.h
+    Include/W3DDevice/GameClient/Module/W3DDependencyModelDraw.h
     Include/W3DDevice/GameClient/Module/W3DLaserDraw.h
-#    Include/W3DDevice/GameClient/Module/W3DModelDraw.h
-#    Include/W3DDevice/GameClient/Module/W3DOverlordAircraftDraw.h
-#    Include/W3DDevice/GameClient/Module/W3DOverlordTankDraw.h
-#    Include/W3DDevice/GameClient/Module/W3DOverlordTruckDraw.h
-#    Include/W3DDevice/GameClient/Module/W3DPoliceCarDraw.h
-#    Include/W3DDevice/GameClient/Module/W3DProjectileStreamDraw.h
+    Include/W3DDevice/GameClient/Module/W3DModelDraw.h
+    Include/W3DDevice/GameClient/Module/W3DOverlordAircraftDraw.h
+    Include/W3DDevice/GameClient/Module/W3DOverlordTankDraw.h
+    Include/W3DDevice/GameClient/Module/W3DOverlordTruckDraw.h
+    Include/W3DDevice/GameClient/Module/W3DPoliceCarDraw.h
+    Include/W3DDevice/GameClient/Module/W3DProjectileStreamDraw.h
     Include/W3DDevice/GameClient/Module/W3DPropDraw.h
-#    Include/W3DDevice/GameClient/Module/W3DRopeDraw.h
-#    Include/W3DDevice/GameClient/Module/W3DScienceModelDraw.h
-#    Include/W3DDevice/GameClient/Module/W3DSupplyDraw.h
-#    Include/W3DDevice/GameClient/Module/W3DTankDraw.h
-#    Include/W3DDevice/GameClient/Module/W3DTankTruckDraw.h
-#    Include/W3DDevice/GameClient/Module/W3DTracerDraw.h
+    Include/W3DDevice/GameClient/Module/W3DRopeDraw.h
+    Include/W3DDevice/GameClient/Module/W3DScienceModelDraw.h
+    Include/W3DDevice/GameClient/Module/W3DSupplyDraw.h
+    Include/W3DDevice/GameClient/Module/W3DTankDraw.h
+    Include/W3DDevice/GameClient/Module/W3DTankTruckDraw.h
+    Include/W3DDevice/GameClient/Module/W3DTracerDraw.h
     Include/W3DDevice/GameClient/Module/W3DTreeDraw.h
-#    Include/W3DDevice/GameClient/Module/W3DTruckDraw.h
+    Include/W3DDevice/GameClient/Module/W3DTruckDraw.h
     Include/W3DDevice/GameClient/TerrainTex.h
     Include/W3DDevice/GameClient/TileData.h
 #    Include/W3DDevice/GameClient/W3DAssetManager.h
@@ -99,25 +99,25 @@ set(GAMEENGINEDEVICE_SRC
 #    Source/W3DDevice/Common/W3DConvert.cpp
     Source/W3DDevice/GameClient/BaseHeightMap.cpp
     Source/W3DDevice/GameClient/CameraShakeSystem.cpp
-#    Source/W3DDevice/GameClient/Drawable/Draw/W3DDebrisDraw.cpp
-#    Source/W3DDevice/GameClient/Drawable/Draw/W3DDefaultDraw.cpp
-#    Source/W3DDevice/GameClient/Drawable/Draw/W3DDependencyModelDraw.cpp
+    Source/W3DDevice/GameClient/Drawable/Draw/W3DDebrisDraw.cpp
+    Source/W3DDevice/GameClient/Drawable/Draw/W3DDefaultDraw.cpp
+    Source/W3DDevice/GameClient/Drawable/Draw/W3DDependencyModelDraw.cpp
     Source/W3DDevice/GameClient/Drawable/Draw/W3DLaserDraw.cpp
-#    Source/W3DDevice/GameClient/Drawable/Draw/W3DModelDraw.cpp
-#    Source/W3DDevice/GameClient/Drawable/Draw/W3DOverlordAircraftDraw.cpp
-#    Source/W3DDevice/GameClient/Drawable/Draw/W3DOverlordTankDraw.cpp
-#    Source/W3DDevice/GameClient/Drawable/Draw/W3DOverlordTruckDraw.cpp
-#    Source/W3DDevice/GameClient/Drawable/Draw/W3DPoliceCarDraw.cpp
-#    Source/W3DDevice/GameClient/Drawable/Draw/W3DProjectileStreamDraw.cpp
+    Source/W3DDevice/GameClient/Drawable/Draw/W3DModelDraw.cpp
+    Source/W3DDevice/GameClient/Drawable/Draw/W3DOverlordAircraftDraw.cpp
+    Source/W3DDevice/GameClient/Drawable/Draw/W3DOverlordTankDraw.cpp
+    Source/W3DDevice/GameClient/Drawable/Draw/W3DOverlordTruckDraw.cpp
+    Source/W3DDevice/GameClient/Drawable/Draw/W3DPoliceCarDraw.cpp
+    Source/W3DDevice/GameClient/Drawable/Draw/W3DProjectileStreamDraw.cpp
     Source/W3DDevice/GameClient/Drawable/Draw/W3DPropDraw.cpp
-#    Source/W3DDevice/GameClient/Drawable/Draw/W3DRopeDraw.cpp
-#    Source/W3DDevice/GameClient/Drawable/Draw/W3DScienceModelDraw.cpp
-#    Source/W3DDevice/GameClient/Drawable/Draw/W3DSupplyDraw.cpp
-#    Source/W3DDevice/GameClient/Drawable/Draw/W3DTankDraw.cpp
-#    Source/W3DDevice/GameClient/Drawable/Draw/W3DTankTruckDraw.cpp
-#    Source/W3DDevice/GameClient/Drawable/Draw/W3DTracerDraw.cpp
+    Source/W3DDevice/GameClient/Drawable/Draw/W3DRopeDraw.cpp
+    Source/W3DDevice/GameClient/Drawable/Draw/W3DScienceModelDraw.cpp
+    Source/W3DDevice/GameClient/Drawable/Draw/W3DSupplyDraw.cpp
+    Source/W3DDevice/GameClient/Drawable/Draw/W3DTankDraw.cpp
+    Source/W3DDevice/GameClient/Drawable/Draw/W3DTankTruckDraw.cpp
+    Source/W3DDevice/GameClient/Drawable/Draw/W3DTracerDraw.cpp
     Source/W3DDevice/GameClient/Drawable/Draw/W3DTreeDraw.cpp
-#    Source/W3DDevice/GameClient/Drawable/Draw/W3DTruckDraw.cpp
+    Source/W3DDevice/GameClient/Drawable/Draw/W3DTruckDraw.cpp
     Source/W3DDevice/GameClient/FlatHeightMap.cpp
 #    Source/W3DDevice/GameClient/GUI/Gadget/W3DCheckBox.cpp
 #    Source/W3DDevice/GameClient/GUI/Gadget/W3DComboBox.cpp
