@@ -210,7 +210,7 @@ Bool Keyboard::checkKeyRepeat( void )
 	size_t index = 0;
 
 	// Find end of real keys for this frame
-	for (size_t i = 0; i < ARRAY_SIZE(m_keys) - 1 && m_keys[i].key != KEY_NONE; ++i)
+	for (size_t i = 0; i < ARRAY_SIZE(m_keys) && m_keys[i].key != KEY_NONE; ++i)
 	{
 		++index;
 	}
@@ -225,7 +225,7 @@ Bool Keyboard::checkKeyRepeat( void )
 			if( m_keyStatus[ key ].keyDownTimeMsec > 0 && now - m_keyStatus[ key ].keyDownTimeMsec > Keyboard::KEY_REPEAT_DELAY_MSEC )
 			{
 				// Add key to this frame
-				if (index < ARRAY_SIZE(m_keys) - 2)
+				if (index < ARRAY_SIZE(m_keys) - 1)
 				{
 					// Add key to this frame
 					m_keys[index].key = (UnsignedByte)key;
