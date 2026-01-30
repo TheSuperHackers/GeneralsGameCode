@@ -134,7 +134,8 @@ struct PristineBoneInfo
 	Matrix3D mtx;
 	Int boneIndex;
 };
-typedef std::hash_map< NameKeyType, PristineBoneInfo, rts::hash<NameKeyType>, rts::equal_to<NameKeyType> > PristineBoneInfoMap;
+//typedef std::hash_map< NameKeyType, PristineBoneInfo, rts::hash<NameKeyType>, rts::equal_to<NameKeyType> > PristineBoneInfoMap;
+typedef std::map< NameKeyType, PristineBoneInfo, std::less<NameKeyType> > PristineBoneInfoMap;
 
 //-------------------------------------------------------------------------------------------------
 
@@ -266,7 +267,8 @@ private:
 typedef std::vector<ModelConditionInfo> ModelConditionVector;
 
 //-------------------------------------------------------------------------------------------------
-typedef std::hash_map< TransitionSig, ModelConditionInfo, std::hash<TransitionSig>, std::equal_to<TransitionSig> > TransitionMap;
+//typedef std::hash_map< TransitionSig, ModelConditionInfo, std::hash<TransitionSig>, std::equal_to<TransitionSig> > TransitionMap;
+typedef std::map< TransitionSig, ModelConditionInfo, std::less<TransitionSig> > TransitionMap;
 
 //-------------------------------------------------------------------------------------------------
 // this is more efficient and also helps solve a projectile-launch-offset problem for double-upgraded
@@ -303,6 +305,11 @@ public:
 	mutable Bool											m_attachToDrawableBoneOffsetValid;
 #endif
 	mutable Byte											m_validated;
+
+  Bool                              m_particlesAttachedToAnimatedBones;
+
+  Bool                              m_receivesDynamicLights; ///< just like it sounds... it sets a property of Drawable, actually
+
 
 	W3DModelDrawModuleData();
 	~W3DModelDrawModuleData();
@@ -399,6 +406,9 @@ public:
 	  This call is used to pause or resume an animation.
 	*/
 	virtual void setPauseAnimation(Bool pauseAnim);
+
+	//Kris: Manually set a drawable's current animation to specific frame.
+	virtual void setAnimationFrame( int frame );
 
 	virtual void updateSubObjects();
 	virtual void showSubObject( const AsciiString& name, Bool show );

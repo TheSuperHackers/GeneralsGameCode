@@ -1217,7 +1217,7 @@ void W3DModelDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 		{ "AttachToBoneInAnotherModule", parseAsciiStringLC, nullptr, offsetof(W3DModelDrawModuleData, m_attachToDrawableBone) },
 		{ "IgnoreConditionStates", ModelConditionFlags::parseFromINI, nullptr, offsetof(W3DModelDrawModuleData, m_ignoreConditionStates) },
 		{ "ReceivesDynamicLights", INI::parseBool, nullptr, offsetof(W3DModelDrawModuleData, m_receivesDynamicLights) },
-    { nullptr, nullptr, nullptr, 0 }
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   p.add(dataFieldParse);
 
@@ -2682,16 +2682,6 @@ Bool W3DModelDraw::updateBonesForClientParticleSystems()
 	const Drawable* drawable = getDrawable();
 	if (drawable != nullptr && m_curState != nullptr && m_renderObject != nullptr )
 	{
-
-//		Matrix3D originalTransform = m_renderObject->Get_Transform();
-//		Matrix3D tmp = originalTransform;
- //   Vector3 zeroTranslation(0,0,0);
-  //  tmp.Set_Translation( zeroTranslation );
-	//	tmp.Scale(drawable->getScale());
-//		m_renderObject->Set_Transform(tmp);
-
-
-
 		for (std::vector<ParticleSysTrackerType>::const_iterator it = m_particleSystemIDs.begin(); it != m_particleSystemIDs.end(); ++it)
 		{
 			ParticleSystem *sys = TheParticleSystemManager->findParticleSystem((*it).id);
@@ -2717,9 +2707,6 @@ Bool W3DModelDraw::updateBonesForClientParticleSystems()
 
 			}
 		}
-
-
-//  	m_renderObject->Set_Transform(originalTransform);
 
 	}
 
@@ -3082,7 +3069,7 @@ void W3DModelDraw::setModelState(const ModelConditionInfo* newState)
 			shadowInfo.m_offsetY				= tmplate->getShadowOffsetY();
 
 			DEBUG_ASSERTCRASH(m_shadow == nullptr, ("m_shadow is not null"));
- 			m_shadow = TheW3DShadowManager->addShadow(m_renderObject, &shadowInfo, draw);
+			m_shadow = TheW3DShadowManager->addShadow(m_renderObject, &shadowInfo, draw);
 			if (m_shadow)
 			{	m_shadow->enableShadowInvisible(m_fullyObscuredByShroud);
 				m_shadow->enableShadowRender(m_shadowEnabled);
@@ -3966,7 +3953,7 @@ void W3DModelDraw::doHideShowProjectileObjects( UnsignedInt showCount, UnsignedI
 		for( UnsignedInt projectileIndex = 0; projectileIndex < maxCount; projectileIndex++ )
 		{
 			oneEntry.subObjName.format("%s%02d", m_curState->m_weaponProjectileLaunchBoneName[slot].str(), (projectileIndex + 1));
-			oneEntry.hide = ((projectileIndex + 1) <= hideCount);
+			oneEntry.hide = (projectileIndex < hideCount);
 			showHideVector.push_back( oneEntry );
 		}
 	}

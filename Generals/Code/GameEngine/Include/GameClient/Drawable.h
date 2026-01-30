@@ -311,6 +311,8 @@ public:
 	TintEnvelope *getColorTintEnvelope( void ) { return m_colorTintEnvelope; }
 	void setColorTintEnvelope( TintEnvelope &source ) { if (m_colorTintEnvelope) *m_colorTintEnvelope = source; }
 
+  void imitateStealthLook( Drawable& otherDraw );
+
 	void setTerrainDecal(TerrainDecalType type);	///<decal that is to appear under the drawable
 	void setTerrainDecalSize(Real x, Real y);
 	void setTerrainDecalFadeTarget(Real target, Real rate = 0.1f);
@@ -553,6 +555,10 @@ public:
 	Bool hasIconInfo() const { return m_iconInfo != nullptr; }
 
   const AudioEventRTS * getAmbientSound() const { return m_ambientSound == nullptr ? nullptr : &m_ambientSound->m_event; }
+
+  Bool getReceivesDynamicLights( void ) { return m_receivesDynamicLights; };
+  void setReceivesDynamicLights( Bool set ) { m_receivesDynamicLights = set; };
+
 protected:
 
 	// snapshot methods
@@ -688,6 +694,9 @@ private:
 	Bool m_hiddenByStealth;			///< drawable is hidden due to stealth
 	Bool m_instanceIsIdentity;	///< If true, instance matrix can be skipped
 	Bool m_drawableFullyObscuredByShroud;	///<drawable is hidden by shroud/fog
+
+  Bool m_receivesDynamicLights;
+
 #ifdef DIRTY_CONDITION_FLAGS
 	Bool m_isModelDirty;				///< if true, must call replaceModelConditionState() before drawing or accessing drawmodule info
 #endif
