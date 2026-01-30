@@ -224,7 +224,6 @@ Bool Keyboard::checkKeyRepeat( void )
 
 			if( m_keyStatus[ key ].keyDownTimeMsec > 0 && now - m_keyStatus[ key ].keyDownTimeMsec > Keyboard::KEY_REPEAT_DELAY_MSEC )
 			{
-				// Add key to this frame
 				if (index < ARRAY_SIZE(m_keys) - 1)
 				{
 					// Add key to this frame
