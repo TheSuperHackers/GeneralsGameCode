@@ -228,7 +228,7 @@ Bool Keyboard::checkKeyRepeat( void )
 				{
 					// Add key to this frame
 					m_keys[index].key = (UnsignedByte)key;
-					m_keys[index].state = KEY_STATE_DOWN | KEY_STATE_AUTOREPEAT; // note: not a bitset; this is an assignment
+					m_keys[index].state = KEY_STATE_DOWN | KEY_STATE_AUTOREPEAT;
 					m_keys[index].status = KeyboardIO::STATUS_UNUSED;
 					++index;
 
