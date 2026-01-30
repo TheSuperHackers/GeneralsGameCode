@@ -209,6 +209,7 @@ Bool Keyboard::checkKeyRepeat( void )
 	Bool retVal = FALSE;
 	size_t index = 0;
 
+	// Find end of real keys for this frame
 	for (size_t i = 0; i < ARRAY_SIZE(m_keys) - 1 && m_keys[i].key != KEY_NONE; ++i)
 	{
 		++index;
@@ -226,6 +227,7 @@ Bool Keyboard::checkKeyRepeat( void )
 				// Add key to this frame
 				if (index < ARRAY_SIZE(m_keys) - 2)
 				{
+					// Add key to this frame
 					m_keys[index].key = (UnsignedByte)key;
 					m_keys[index].state = KEY_STATE_DOWN | KEY_STATE_AUTOREPEAT; // note: not a bitset; this is an assignment
 					m_keys[index].status = KeyboardIO::STATUS_UNUSED;
