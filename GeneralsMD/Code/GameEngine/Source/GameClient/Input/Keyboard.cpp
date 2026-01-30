@@ -231,9 +231,9 @@ Bool Keyboard::checkKeyRepeat( void )
 					m_keys[index].key = (UnsignedByte)key;
 					m_keys[index].state = KEY_STATE_DOWN | KEY_STATE_AUTOREPEAT; // note: not a bitset; this is an assignment
 					m_keys[index].status = KeyboardIO::STATUS_UNUSED;
+					++index;
 
 					// Set end flag
-					++index;
 					m_keys[index].key = KEY_NONE;
 				}
 
