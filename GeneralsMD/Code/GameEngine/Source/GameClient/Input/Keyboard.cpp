@@ -204,59 +204,58 @@ void Keyboard::updateKeys( void )
 //-------------------------------------------------------------------------------------------------
 Bool Keyboard::checkKeyRepeat( void )
 {
+	// @todo we shouldn't think about repeating any keys while we don't have the focus
+
 	Bool retVal = FALSE;
-	Int index = 0;
-	Int key;
+	size_t index = 0;
 
-	/** @todo we shouldn't think about repeating any keys while we
-	don't have the focus */
-//	if( currentFocus == FOCUS_OUT )
-//		return FALSE;
-
-	// Find end of real keys for this frame
-	while( m_keys[ index ].key != KEY_NONE )
-		index++;
-
-	// Scan Keyboard status array for first key down
-	// long enough to repeat
-	for( key = 0; key < ARRAY_SIZE(m_keyStatus); key++ )
+	for (size_t i = 0; i < ARRAY_SIZE(m_keys) - 1 && m_keys[i].key != KEY_NONE; ++i)
 	{
+		++index;
+	}
 
+	// Scan keyboard status array for first key down long enough to repeat
+	for( size_t key = 0; key < ARRAY_SIZE(m_keyStatus); ++key )
+	{
 		if( BitIsSet( m_keyStatus[ key ].state, KEY_STATE_DOWN ) )
 		{
-
 			const UnsignedInt now = timeGetTime();
-			const UnsignedInt keyDownTime = m_keyStatus[ key ].keyDownTimeMsec;
-			const UnsignedInt elapsedMsec = now - keyDownTime;
 
-			if( elapsedMsec > Keyboard::KEY_REPEAT_DELAY_MSEC )
+			if( m_keyStatus[ key ].keyDownTimeMsec > 0 && now - m_keyStatus[ key ].keyDownTimeMsec > Keyboard::KEY_REPEAT_DELAY_MSEC )
 			{
 				// Add key to this frame
-				m_keys[ index ].key = (UnsignedByte)key;
-				m_keys[ index ].state = KEY_STATE_DOWN | KEY_STATE_AUTOREPEAT;  // note: not a bitset; this is an assignment
-				m_keys[ index ].status = KeyboardIO::STATUS_UNUSED;
+				if (index < ARRAY_SIZE(m_keys) - 2)
+				{
+					m_keys[index].key = (UnsignedByte)key;
+					m_keys[index].state = KEY_STATE_DOWN | KEY_STATE_AUTOREPEAT; // note: not a bitset; this is an assignment
+					m_keys[index].status = KeyboardIO::STATUS_UNUSED;
 
-				// Set End Flag
-				m_keys[ ++index ].key = KEY_NONE;
+					// Set end flag
+					++index;
+					m_keys[index].key = KEY_NONE;
+				}
 
-				// Set all keys as new to prevent multiple keys repeating
-				for( index = 0; index< NUM_KEYS; index++ )
-					m_keyStatus[ index ].keyDownTimeMsec = now;
+				// Decrease the delay between registered key strokes the longer a key is held down
+				const UnsignedInt keyRepeatTimeMsecOffset = clamp(
+					static_cast<UnsignedInt>(KEY_REPEAT_OFFSET_DELAY_STEP_MSEC) + m_keyStatus[ key ].keyRepeatTimeMsecOffset,
+					static_cast<UnsignedInt>(KEY_REPEAT_OFFSET_DELAY_MIN_MSEC),
+					static_cast<UnsignedInt>(KEY_REPEAT_OFFSET_DELAY_MAX_MSEC));
 
 				// Set repeated key so it will repeat again after the interval
-				m_keyStatus[ key ].keyDownTimeMsec = now - (Keyboard::KEY_REPEAT_DELAY_MSEC + Keyboard::KEY_REPEAT_INTERVAL_MSEC);
+				m_keyStatus[ key ].keyRepeatTimeMsecOffset = keyRepeatTimeMsecOffset;
+				m_keyStatus[ key ].keyDownTimeMsec = now - m_keyStatus[ key ].keyRepeatTimeMsecOffset;
 
 				retVal = TRUE;
-				break;  // exit for key
-
 			}
-
 		}
-
+		else
+		{
+			m_keyStatus[ key ].keyDownTimeMsec = 0;
+			m_keyStatus[ key ].keyRepeatTimeMsecOffset = 0;
+		}
 	}
 
 	return retVal;
-
 }
 
 //-------------------------------------------------------------------------------------------------
