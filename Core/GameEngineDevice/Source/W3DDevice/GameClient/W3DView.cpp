@@ -600,13 +600,7 @@ void W3DView::setCameraTransform( void )
 
 	if (TheTerrainRenderObject)
 	{
-		RefRenderObjListIterator *it = W3DDisplay::m_3DScene->createLightsIterator();
-		TheTerrainRenderObject->updateCenter(m_3DCamera, it);
-		if (it)
-		{
-		 W3DDisplay::m_3DScene->destroyLightsIterator(it);
-		 it = nullptr;
-		}
+		updateTerrain();
 	}
 
 	// TheSuperHackers @fix Notify the Radar about the changed view always.
@@ -1120,14 +1114,9 @@ void W3DView::update(void)
 
 //	Int elapsedTimeMs = TheW3DFrameLengthInMsec; // Assume a constant time flow.  It just works out better.  jba.
 
-	if (TheTerrainRenderObject->doesNeedFullUpdate()) {
-		RefRenderObjListIterator *it = W3DDisplay::m_3DScene->createLightsIterator();
-		TheTerrainRenderObject->updateCenter(m_3DCamera, it);
-		if (it)
-		{
-		 W3DDisplay::m_3DScene->destroyLightsIterator(it);
-		 it = nullptr;
-		}
+	if (TheTerrainRenderObject && TheTerrainRenderObject->doesNeedFullUpdate())
+	{
+		updateTerrain();
 	}
 
 	static Real followFactor = -1;
@@ -3335,3 +3324,15 @@ void W3DView::Add_Camera_Shake (const Coord3D & position,float radius,float dura
 	CameraShakerSystem.Add_Camera_Shake(vpos,radius,duration,power);
 }
 
+void W3DView::updateTerrain()
+{
+	DEBUG_ASSERTCRASH(TheTerrainRenderObject != nullptr, ("TheTerrainRenderObject is null"));
+
+	RefRenderObjListIterator *it = W3DDisplay::m_3DScene->createLightsIterator();
+	TheTerrainRenderObject->updateCenter(m_3DCamera, it);
+	if (it)
+	{
+		W3DDisplay::m_3DScene->destroyLightsIterator(it);
+		it = nullptr;
+	}
+}
