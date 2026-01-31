@@ -76,7 +76,7 @@ class WeatherSetting : public Overridable
 
 EMPTY_DTOR(WeatherSetting)
 
-extern OVERRIDE<WeatherSetting> TheWeatherSetting;
+extern OverridePtr<WeatherSetting> TheWeatherSetting;
 
 class SnowManager : public SubsystemInterface
 {
