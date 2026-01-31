@@ -149,8 +149,8 @@ void ProcessAnimateWindowSlideFromRight::initAnimateWindow( wnd::AnimateWindow *
 	//set the window's position to the new start positions.
 	win->winSetPosition(startPos.x, startPos.y);
 
-	// TheSuperHackers @bugfix tophroxx 31/01/2026 Use scaled pixel constants
-	// for slowdown threshold and velocity.
+	// TheSuperHackers @bugfix tophroxx 31/01/2026 Scale movement by display size so that it looks
+	// consistent regardless of the display resolution.
 	const Real widthScaler = getDisplayWidthScaler();
 	m_maxVel.x = -40 * widthScaler;
 	m_slowDownThreshold = 80 * widthScaler;
@@ -335,8 +335,8 @@ void ProcessAnimateWindowSlideFromLeft::initAnimateWindow( wnd::AnimateWindow *a
 	//set the window's position to the new start positions.
 	win->winSetPosition(startPos.x, startPos.y);
 
-	// TheSuperHackers @bugfix tophroxx 31/01/2026 Use scaled pixel constants
-	// for slowdown threshold and velocity.
+	// TheSuperHackers @bugfix tophroxx 31/01/2026 Scale movement by display size so that it looks
+	// consistent regardless of the display resolution.
 	const Real widthScaler = getDisplayWidthScaler();
 	m_maxVel.x = 40 * widthScaler;
 	m_slowDownThreshold = 80 * widthScaler;
@@ -518,8 +518,8 @@ void ProcessAnimateWindowSlideFromTop::initAnimateWindow( wnd::AnimateWindow *an
 	//set the window's position to the new start positions.
 	win->winSetPosition(startPos.x, startPos.y);
 
-	// TheSuperHackers @bugfix tophroxx 31/01/2026 Use scaled pixel constants
-	// for slowdown threshold and velocity.
+	// TheSuperHackers @bugfix tophroxx 31/01/2026 Scale movement by display size so that it looks
+	// consistent regardless of the display resolution.
 	const Real heightScaler = getDisplayHeightScaler();
 	m_maxVel.y = 40 * heightScaler;
 	m_slowDownThreshold = 80 * heightScaler;
@@ -703,8 +703,8 @@ void ProcessAnimateWindowSlideFromBottom::initAnimateWindow( wnd::AnimateWindow 
 	//set the window's position to the new start positions.
 	win->winSetPosition(startPos.x, startPos.y);
 
-	// TheSuperHackers @bugfix tophroxx 31/01/2026 Use scaled pixel constants
-	// for slowdown threshold and velocity.
+	// TheSuperHackers @bugfix tophroxx 31/01/2026 Scale movement by display size so that it looks
+	// consistent regardless of the display resolution.
 	const Real heightScaler = getDisplayHeightScaler();
 	m_maxVel.y = -40 * heightScaler;
 	m_slowDownThreshold = 80 * heightScaler;
