@@ -257,7 +257,7 @@ private:
 	*/
 	void					Apply(void) const;
 	/*
-	** Apply the render states corresponding to a nullptr vetex material to D3D
+	** Apply the render states corresponding to a null vertex material to D3D
 	*/
 	static void			Apply_Null(void);
 	unsigned long		Compute_CRC(void) const;

@@ -39,7 +39,7 @@ class BaseHeightMapRenderObjClass;
 class WorldHeightMap;
 
 //-------------------------------------------------------------------------------------------------
-/** W3D impelmentation of visual terrain details singleton */
+/** W3D implementation of visual terrain details singleton */
 //-------------------------------------------------------------------------------------------------
 class W3DTerrainVisual : public TerrainVisual
 {

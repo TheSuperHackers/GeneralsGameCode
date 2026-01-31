@@ -1209,7 +1209,7 @@ void W3DGhostObjectManager::xfer( Xfer *xfer )
 				DEBUG_ASSERTCRASH( ghostObject != nullptr,
 					("W3DGhostObjectManager::xfer - Could not create ghost object for object '%s'", object->getTemplate()->getName().str()) );
 
-				// link the ghost object and logical object togehter through partition/ghostObject dat
+				// link the ghost object and logical object together through partition/ghostObject dat
 				DEBUG_ASSERTCRASH( object->friend_getPartitionData()->getGhostObject() == nullptr,
 					("W3DGhostObjectManager::xfer - Ghost object already on object '%s'", object->getTemplate()->getName().str()) );
 

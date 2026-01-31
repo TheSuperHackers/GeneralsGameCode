@@ -250,7 +250,7 @@ class ParticleBufferClass : public RenderObjClass
 
 		// Get new particles from the emitter and write them into the circular
 		// particle buffer, possibly overwriting older particles. Perform
-		// partial-interval upddate on them as well.
+		// partial-interval update on them as well.
 		void Get_New_Particles(void);
 
 		// Kill all remaining particles which will be above their maxage at the

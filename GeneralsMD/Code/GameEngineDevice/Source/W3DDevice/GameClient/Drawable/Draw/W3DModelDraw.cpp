@@ -4129,7 +4129,7 @@ void W3DModelDraw::xfer( Xfer *xfer )
 	else
 	{
 
-		// the vector must be emtpy
+		// the vector must be empty
 		m_subObjectVec.clear();
 
 		// read each data item

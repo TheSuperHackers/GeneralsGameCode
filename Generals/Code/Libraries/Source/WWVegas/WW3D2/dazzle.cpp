@@ -878,7 +878,7 @@ RenderObjClass* DazzleRenderObjClass::Clone(void) const
 // ----------------------------------------------------------------------------
 //
 // DazzleRenderObjClass's Render() function doesn't actually render the dazzle
-// immediatelly but just sets the dazzle visible. This is due to the way the
+// immediately but just sets the dazzle visible. This is due to the way the
 // dazzle system works (the dazzles need to be rendered after everything else).
 // Having the Render() function flag the visibility offers us the visibility
 // functionality of the scene graph.

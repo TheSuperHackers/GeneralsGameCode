@@ -180,7 +180,7 @@ public:
 
 protected:
 
-	// this is the actual xfer impelmentation that each derived class should implement
+	// this is the actual xfer implementation that each derived class should implement
 	virtual void xferImplementation( void *data, Int dataSize ) = 0;
 
 	UnsignedInt m_options;					///< xfer options

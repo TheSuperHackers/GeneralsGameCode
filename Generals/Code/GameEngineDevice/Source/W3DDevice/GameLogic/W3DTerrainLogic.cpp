@@ -135,7 +135,7 @@ Bool W3DTerrainLogic::loadMap( AsciiString filename , Bool query )
 		m_mapDX=terrainHeightMap->getXExtent();
 		m_mapDY=terrainHeightMap->getYExtent();
 
-		// now, get all the boudnaries, and set the current active boundary to boundary 0.
+		// now, get all the boundaries, and set the current active boundary to boundary 0.
 		m_boundaries = terrainHeightMap->getAllBoundaries();
 		m_activeBoundary = 0;
 
