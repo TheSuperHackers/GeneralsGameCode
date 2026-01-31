@@ -304,9 +304,11 @@ public:
 
 	Bool setTypeAsObstacle( Object *obstacle, Bool isFence, const ICoord2D &pos );				///< flag this cell as an obstacle, from the given one
 	Bool removeObstacle( Object *obstacle );				///< unflag this cell as an obstacle, from the given one
+	void resetForCheckpointLoad( void );				///< reset cell type and obstacle info, but preserve flags and zone
 	void setType( CellType type );	///< set the cell type
 	CellType getType() const { return (CellType)m_type; }				///< get the cell type
 	CellFlags getFlags() const { return (CellFlags)m_flags; }				///< get the cell type
+	void setFlags( CellFlags flags ) { m_flags = flags; }				///< set the cell flags (TheSuperHackers @bobtista 29/01/2026)
 	Bool isAircraftGoal() const {return m_aircraftGoal != 0;}
 
 	Bool isObstaclePresent( ObjectID objID ) const;					///< return true if the given object ID is registered as an obstacle in this cell

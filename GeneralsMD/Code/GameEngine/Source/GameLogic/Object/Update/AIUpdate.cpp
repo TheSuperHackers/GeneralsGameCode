@@ -402,18 +402,20 @@ void AIUpdateInterface::doPathfind( PathfindServicesInterface *pathfinder )
 	//CRCDEBUG_LOG(("AIUpdateInterface::doPathfind() for object %d", getObject()->getID()));
 	m_waitingForPath = FALSE;
 	// TheSuperHackers @debug bobtista 23/01/2026 Log pathfind parameters for checkpoint debugging
+#ifdef DEBUG_LOGGING
 	{
 		Int frame = TheGameLogic->getFrame();
-		if (frame >= 1 && frame <= 6)
+		if (false && frame >= 2444 && frame <= 2448) // TheSuperHackers @debug disabled
 		{
 			const Coord3D *pos = getObject()->getPosition();
-			DEBUG_LOG(("Pathfind[%d] doPathfind obj %u: pos=(%.2f,%.2f,%.2f) dest=(%.2f,%.2f,%.2f) isSafe=%d isApproach=%d isAttack=%d",
+			DEBUG_LOG(("Pathfind[%d] doPathfind obj %u: pos=(%.6f,%.6f,%.6f) dest=(%.6f,%.6f,%.6f) isSafe=%d isApproach=%d isAttack=%d",
 				frame, getObject()->getID(),
 				pos->x, pos->y, pos->z,
 				m_requestedDestination.x, m_requestedDestination.y, m_requestedDestination.z,
 				m_isSafePath, m_isApproachPath, m_isAttackPath));
 		}
 	}
+#endif
 	if (m_isSafePath) {
 		destroyPath();
 		Coord3D pos1, pos2;
@@ -5345,23 +5347,10 @@ void AIUpdateInterface::loadPostProcess()
 		chooseLocomotorSet(lst);
 	}
 
-	if (!isMoving()) {
-		m_pathfindGoalCell.x = -1;
-		m_pathfindGoalCell.y = -1;
-		TheAI->pathfinder()->updateGoal(getObject(), getObject()->getPosition(), getObject()->getLayer());
-		m_pathfindCurCell.x = -1;
-		m_pathfindCurCell.y = -1;
-		TheAI->pathfinder()->updatePos(getObject(), getObject()->getPosition());
-	}	else {
-		if (m_pathfindGoalCell.x >= 0 && m_pathfindGoalCell.y >= 0) {
-			Coord3D goalPos;
-			goalPos.x = m_pathfindGoalCell.x * PATHFIND_CELL_SIZE_F + PATHFIND_CELL_SIZE_F*0.5f;
-			goalPos.y = m_pathfindGoalCell.y * PATHFIND_CELL_SIZE_F + PATHFIND_CELL_SIZE_F*0.5f;
-			m_pathfindGoalCell.x = -1;
-			m_pathfindGoalCell.y = -1;
-			TheAI->pathfinder()->updateGoal(getObject(), &goalPos, getObject()->getLayer());
-		}
-	}
+	// TheSuperHackers @info bobtista 29/01/2026 PathfindCell flags and unit IDs are now serialized
+	// directly in Pathfinder::xfer(). We no longer need to call updateGoal/updatePos here because
+	// the cell state is restored from the checkpoint. Calling them here would overwrite the
+	// serialized state and could produce different flags due to order differences.
 
 }
 
