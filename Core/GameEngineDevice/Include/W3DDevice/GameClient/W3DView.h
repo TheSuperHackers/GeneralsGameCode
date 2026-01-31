@@ -281,6 +281,7 @@ private:
 	void setCameraTransform(void); ///< set the transform matrix of m_3DCamera, based on m_pos & m_angle
 	void buildCameraTransform(Matrix3D *transform); ///< calculate (but do not set) the transform matrix of m_3DCamera, based on m_pos & m_angle
 	void calcCameraAreaConstraints(); ///< Recalculates the camera area constraints
+	Bool isWithinCameraHeightConstraints() const;
 	void moveAlongWaypointPath(Real milliseconds); ///< Move camera along path.
 	void getPickRay(const ICoord2D *screen, Vector3 *rayStart, Vector3 *rayEnd);	///<returns a line segment (ray) originating at the given screen position
 	void setupWaypointPath(Bool orient);					///< Calculates distances & angles for moving along a waypoint path.

@@ -501,6 +501,14 @@ void W3DView::calcCameraAreaConstraints()
 }
 
 //-------------------------------------------------------------------------------------------------
+Bool W3DView::isWithinCameraHeightConstraints() const
+{
+	const Bool isAboveMinHeight = m_currentHeightAboveGround >= m_minHeightAboveGround;
+	const Bool isBelowMaxHeight = m_currentHeightAboveGround <= m_maxHeightAboveGround;
+	return isAboveMinHeight && (isBelowMaxHeight || !TheGlobalData->m_enforceMaxCameraHeight);
+}
+
+//-------------------------------------------------------------------------------------------------
 /** Returns a world-space ray originating at a given screen pixel position
 	and ending at the far clip plane for current camera.  Screen coordinates
 	assumed in absolute values relative to full display resolution.*/
@@ -1330,7 +1338,7 @@ void W3DView::update(void)
 	m_terrainHeightAtPivot = getHeightAroundPos(m_pos.x, m_pos.y);
 	m_currentHeightAboveGround = m_cameraOffset.z * m_zoom - m_terrainHeightAtPivot;
 
-	if (TheTerrainLogic && TheGlobalData && TheInGameUI && m_okToAdjustHeight)
+	if (m_okToAdjustHeight)
 	{
 		Real desiredHeight = (m_terrainHeightAtPivot + m_heightAboveGround);
 		Real desiredZoom = desiredHeight / m_cameraOffset.z;
@@ -1343,28 +1351,23 @@ void W3DView::update(void)
 			//	m_cameraOffset.z, m_zoom, m_terrainHeightUnderCamera));
   	}
 
-		if (TheInGameUI->isScrolling())
+		const Bool isScrolling = TheInGameUI && TheInGameUI->isScrolling();
+		const Bool isScrollingTooFast = m_scrollAmount.length() >= m_scrollAmountCutoff;
+		const Bool isWithinHeightConstraints = isWithinCameraHeightConstraints();
+
+		// if scrolling, only adjust if we're too close or too far
+		const Bool adjustZoomWhenScrolling = isScrolling && (!isScrollingTooFast || !isWithinHeightConstraints);
+
+		// if not scrolling, settle toward desired height above ground
+		const Bool adjustZoomWhenNotScrolling = !isScrolling && !didScriptedMovement;
+
+		if (adjustZoomWhenScrolling || adjustZoomWhenNotScrolling)
 		{
-			// if scrolling, only adjust if we're too close or too far
-			if (m_scrollAmount.length() < m_scrollAmountCutoff || (m_currentHeightAboveGround < m_minHeightAboveGround) || (TheGlobalData->m_enforceMaxCameraHeight && m_currentHeightAboveGround > m_maxHeightAboveGround))
-			{
-				const Real fpsRatio = TheFramePacer->getBaseOverUpdateFpsRatio();
-				const Real zoomAdj = (desiredZoom - m_zoom) * TheGlobalData->m_cameraAdjustSpeed * fpsRatio;
-				if (fabs(zoomAdj) >= 0.0001f)	// only do positive
-				{
-					m_zoom += zoomAdj;
-					recalcCamera = true;
-				}
-			}
-		}
-		else if (!didScriptedMovement)
-		{
-			// we're not scrolling; settle toward desired height above ground
 			const Real fpsRatio = TheFramePacer->getBaseOverUpdateFpsRatio();
-			const Real zoomAdj = (m_zoom - desiredZoom) * TheGlobalData->m_cameraAdjustSpeed * fpsRatio;
+			const Real zoomAdj = (desiredZoom - m_zoom) * TheGlobalData->m_cameraAdjustSpeed * fpsRatio;
 			if (fabs(zoomAdj) >= 0.0001f)
 			{
-				m_zoom -= zoomAdj;
+				m_zoom += zoomAdj;
 				recalcCamera = true;
 			}
 		}
