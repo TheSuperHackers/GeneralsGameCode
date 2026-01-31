@@ -73,7 +73,6 @@ public:
 
 		struct	ShadowTypeInfo
 		{
-				// TheSuperHackers @fix Stubbjax 30/01/2026 Initialize all members in the constructor to avoid garbage data and potential crashes.
 				ShadowTypeInfo()
 				{
 						m_ShadowName[0] = '\0';
