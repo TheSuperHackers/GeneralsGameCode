@@ -175,6 +175,11 @@ public:
 	/// Given a location, return closest location on path, and along-path dist to end as function result
 	void markOptimized() {m_isOptimized = true;}
 
+	/// TheSuperHackers @bugfix bobtista 31/01/2026 Invalidate CPOP cache after checkpoint load.
+	/// This forces computePointOnPath() to search from the beginning of the path and find the
+	/// segment closest to the unit's current position, rather than using a stale cached segment.
+	void invalidateCpopCache(void) {m_cpopValid = false; m_cpopRecentStart = nullptr;}
+
 protected:
 	// snapshot interface
 	virtual void crc( Xfer *xfer );

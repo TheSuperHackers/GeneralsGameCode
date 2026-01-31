@@ -1694,8 +1694,13 @@ StateReturnType AIInternalMoveToState::onEnter()
 	if (skipPathCompute)
 	{
 		m_waitingForPath = false;
-		// Sync m_pathGoalPosition with m_goalPosition since adjustDestination above may have modified it.
-		m_pathGoalPosition = m_goalPosition;
+		// TheSuperHackers @bugfix bobtista 31/01/2026 Force path recomputation on next update.
+		// The restored path may have waypoints that the unit has already passed (from the
+		// checkpoint time). By setting m_pathTimestamp to 0 and invalidating m_pathGoalPosition,
+		// we ensure the path will be recomputed on the next updateInternal() call, which will
+		// create a new path starting at the unit's current position.
+		m_pathTimestamp = 0;
+		m_pathGoalPosition.zero();
 	}
 	else if (!computePath())
 	{
