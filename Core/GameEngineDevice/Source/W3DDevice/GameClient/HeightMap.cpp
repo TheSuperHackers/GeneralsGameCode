@@ -2134,7 +2134,7 @@ void HeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 ///Performs additional terrain rendering pass, blending in the black shroud texture.
 void HeightMapRenderObjClass::renderTerrainPass(CameraClass *pCamera)
 {
-	DX8Wrapper::Set_Transform(D3DTS_WORLD,Matrix3D(1));
+	DX8Wrapper::Set_Transform(D3DTS_WORLD,Matrix3D(true));
 
 	//Apply the shader and material
 

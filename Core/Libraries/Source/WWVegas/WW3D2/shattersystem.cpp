@@ -819,7 +819,7 @@ void ShatterSystem::Init(void)
 	while (htree != nullptr) {
 		if ((htree->Num_Pivots() > 1) && (htree->Num_Pivots() < MAX_MESH_FRAGMENTS)) {
 			int leaf_counter = 0;
-			htree->Base_Update(Matrix3D(1));
+			htree->Base_Update(Matrix3D(true));
 			ShatterPatterns.Add(W3DNEW BSPClass(htree,1,leaf_counter));
 		}
 

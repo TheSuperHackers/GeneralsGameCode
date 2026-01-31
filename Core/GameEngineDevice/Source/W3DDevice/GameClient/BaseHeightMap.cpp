@@ -2479,7 +2479,7 @@ void BaseHeightMapRenderObjClass::renderShoreLines(CameraClass *pCamera)
 	DX8Wrapper::Set_Material(vmat);
 	REF_PTR_RELEASE(vmat);
 	DX8Wrapper::Set_Texture(0,m_destAlphaTexture);
-	DX8Wrapper::Set_Transform(D3DTS_WORLD,Matrix3D(1));
+	DX8Wrapper::Set_Transform(D3DTS_WORLD,Matrix3D(true));
 	//Enabled writes to destination alpha only
 	DX8Wrapper::Set_DX8_Render_State(D3DRS_COLORWRITEENABLE,D3DCOLORWRITEENABLE_ALPHA);
 	DX8Wrapper::Set_DX8_Texture_Stage_State(0,  D3DTSS_TEXCOORDINDEX, 0);
@@ -2663,7 +2663,7 @@ void BaseHeightMapRenderObjClass::renderShoreLinesSorted(CameraClass *pCamera)
 	DX8Wrapper::Set_Material(vmat);
 	REF_PTR_RELEASE(vmat);
 	DX8Wrapper::Set_Texture(0,m_destAlphaTexture);
-	DX8Wrapper::Set_Transform(D3DTS_WORLD,Matrix3D(1));
+	DX8Wrapper::Set_Transform(D3DTS_WORLD,Matrix3D(true));
 	//Enabled writes to destination alpha only
 	DX8Wrapper::Set_DX8_Render_State(D3DRS_COLORWRITEENABLE,D3DCOLORWRITEENABLE_ALPHA);
 	DX8Wrapper::Set_DX8_Texture_Stage_State(0,  D3DTSS_TEXCOORDINDEX, 0);

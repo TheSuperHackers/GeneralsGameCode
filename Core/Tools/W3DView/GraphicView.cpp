@@ -1603,7 +1603,7 @@ CGraphicView::ResetObject (void)
         if (pCRenderObj)
         {
             // Reset the rotation of the object
-            pCRenderObj->Set_Transform (Matrix3D(1));
+            pCRenderObj->Set_Transform (Matrix3D(true));
         }
     }
 

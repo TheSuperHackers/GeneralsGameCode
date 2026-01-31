@@ -816,7 +816,7 @@ void CollectionClass::Update_Obj_Space_Bounding_Volumes(void)
 	}
 
 	Matrix3D tm = Get_Transform();
-	Set_Transform(Matrix3D(1));
+	Set_Transform(Matrix3D(true));
 
 	// loop through all sub-objects, combining their bounding spheres.
 	BoundSphere = SubObjects[0]->Get_Bounding_Sphere();

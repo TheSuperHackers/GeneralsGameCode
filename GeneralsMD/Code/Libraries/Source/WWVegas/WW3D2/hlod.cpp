@@ -3449,7 +3449,7 @@ void HLodClass::Update_Obj_Space_Bounding_Volumes(void)
 	AABoxClass obj_aabox;
 	MinMaxAABoxClass box;
 
-	HTree->Base_Update(Matrix3D(1));
+	HTree->Base_Update(Matrix3D(true));
 
 	robj = Get_Sub_Object(0);
 	WWASSERT(robj);

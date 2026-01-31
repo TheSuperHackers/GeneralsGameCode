@@ -99,7 +99,7 @@ CameraClass::CameraClass(void) :
 	ZBufferMax(1.0f),									// largest value we'll write into the z-buffer
 	FrustumValid(false)
 {
-	Set_Transform(Matrix3D(1));
+	Set_Transform(Matrix3D(true));
 	Set_View_Plane(DEG_TO_RADF(50.0f));
 }
 
@@ -326,14 +326,13 @@ void CameraClass::Set_View_Plane(const Vector2 & vmin,const Vector2 & vmax)
  *=============================================================================================*/
 void CameraClass::Set_View_Plane(float hfov,float vfov)
 {
-
-	float width_half = tan(hfov/2.0);
+	float width_half = tan(hfov/2.0f);
 	float height_half = 0.0f;
 
 	if (vfov == -1) {
 		height_half = (1.0f / AspectRatio) * width_half;		// use the aspect ratio
 	} else {
-		height_half = tan(vfov/2.0);
+		height_half = tan(vfov/2.0f);
 		AspectRatio = width_half / height_half;					// or, initialize the aspect ratio
 	}
 
@@ -493,7 +492,7 @@ void CameraClass::Un_Project(Vector3 & dest,const Vector2 & view_point) const
 {
 	/*
 	** map view_point.X from -1..1 to ViewPlaneMin.X..ViewPlaneMax.X
-	** map view_point.Y from -1..1 to ViewPlaneMin.X..ViewPlaneMax.X
+	** map view_point.Y from -1..1 to ViewPlaneMin.Y..ViewPlaneMax.Y
 	*/
 	float vpdx = ViewPlane.Max.X - ViewPlane.Min.X;
 	float vpdy = ViewPlane.Max.Y - ViewPlane.Min.Y;
@@ -615,7 +614,7 @@ void CameraClass::Update_Frustum(void) const
 	// Update the frustum
 	FrustumValid = true;
 	Frustum.Init(cam_mat,vpmin,vpmax,znear,zfar);
-	ViewSpaceFrustum.Init(Matrix3D(1),vpmin,vpmax,znear,zfar);
+	ViewSpaceFrustum.Init(Matrix3D(true),vpmin,vpmax,znear,zfar);
 
 	// Update the OBB around the near clip rectangle
 #ifdef ALLOW_TEMPORARIES
