@@ -764,10 +764,6 @@ void GameClient::update( void )
 		TheDisplay->UPDATE();
 	}
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 8b33e41c (Update GeneralsMD/Code/GameEngine/Source/GameClient/GameClient.cpp)
 	{
 		USE_PERF_TIMER(GameClient_draw)
 
