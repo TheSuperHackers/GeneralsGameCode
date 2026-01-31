@@ -1860,7 +1860,7 @@ void W3DModelDraw::allocateShadows(void)
 	//Check if we don't already have a shadow but need one for this type of model.
 	if (m_shadow == nullptr && m_renderObject && TheW3DShadowManager && tmplate->getShadowType() != SHADOW_NONE)
 	{
-		Shadow::ShadowTypeInfo shadowInfo = Shadow::ShadowTypeInfo();
+		Shadow::ShadowTypeInfo shadowInfo;
 		strlcpy(shadowInfo.m_ShadowName, tmplate->getShadowTextureName().str(), ARRAY_SIZE(shadowInfo.m_ShadowName));
 		DEBUG_ASSERTCRASH(shadowInfo.m_ShadowName[0] != '\0', ("this should be validated in ThingTemplate now"));
 		shadowInfo.allowUpdates			= FALSE;		//shadow image will never update
@@ -2732,7 +2732,7 @@ void W3DModelDraw::setTerrainDecal(TerrainDecalType type)
 	const ThingTemplate *tmplate=getDrawable()->getTemplate();
 
 	//create a new terrain decal
-	Shadow::ShadowTypeInfo decalInfo = Shadow::ShadowTypeInfo();
+	Shadow::ShadowTypeInfo decalInfo;
 	decalInfo.allowUpdates = FALSE;	//shadow image will never update
 	decalInfo.allowWorldAlign = TRUE;	//shadow image will wrap around world objects
 	decalInfo.m_type = SHADOW_ALPHA_DECAL;
@@ -3057,7 +3057,7 @@ void W3DModelDraw::setModelState(const ModelConditionInfo* newState)
 		// set up shadows
 		if (m_renderObject && TheW3DShadowManager && tmplate->getShadowType() != SHADOW_NONE)
 		{
-			Shadow::ShadowTypeInfo shadowInfo = Shadow::ShadowTypeInfo();
+			Shadow::ShadowTypeInfo shadowInfo;
 			strlcpy(shadowInfo.m_ShadowName, tmplate->getShadowTextureName().str(), ARRAY_SIZE(shadowInfo.m_ShadowName));
 			DEBUG_ASSERTCRASH(shadowInfo.m_ShadowName[0] != '\0', ("this should be validated in ThingTemplate now"));
 			shadowInfo.allowUpdates			= FALSE;		//shadow image will never update

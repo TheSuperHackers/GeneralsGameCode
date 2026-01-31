@@ -1193,7 +1193,7 @@ void WbView3d::invalBuildListItemInView(BuildListInfo *pBuildToInval)
 					if( m_showShadows  && tTemplate->getShadowType() != SHADOW_NONE)
 					{
 						//add correct type of shadow
-						Shadow::ShadowTypeInfo shadowInfo = Shadow::ShadowTypeInfo();
+						Shadow::ShadowTypeInfo shadowInfo;
 						shadowInfo.allowUpdates=FALSE;	//shadow image will never update
 						shadowInfo.allowWorldAlign=TRUE;	//shadow image will wrap around world objects
 						strlcpy(shadowInfo.m_ShadowName, tTemplate->getShadowTextureName().str(), ARRAY_SIZE(shadowInfo.m_ShadowName));
@@ -1469,7 +1469,7 @@ void WbView3d::invalObjectInView(MapObject *pMapObjIn)
 				renderObj = m_assetManager->Create_Render_Obj( modelName.str(), scale, playerColor);
 				if( m_showShadows )
 				{
-					Shadow::ShadowTypeInfo shadowInfo = Shadow::ShadowTypeInfo();
+					Shadow::ShadowTypeInfo shadowInfo;
 					shadowInfo.allowUpdates=FALSE;	//shadow image will never update
 					shadowInfo.allowWorldAlign=TRUE;	//shadow image will wrap around world objects
 					if (tTemplate && tTemplate->getShadowType() != SHADOW_NONE && !(pMapObj->getFlags() & FLAG_DONT_RENDER))
