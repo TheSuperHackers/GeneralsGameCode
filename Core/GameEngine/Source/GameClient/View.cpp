@@ -44,7 +44,7 @@ View::View( void )
 	m_viewLockedUntilFrame = 0u;
 	m_currentHeightAboveGround = 0.0f;
 	m_defaultAngle = 0.0f;
-	m_defaultPitchAngle = 0.0f;
+	m_defaultPitch = 0.0f;
 	m_heightAboveGround = 0.0f;
 	m_lockDist = 0.0f;
 	m_maxHeightAboveGround = 0.0f;
@@ -54,14 +54,14 @@ View::View( void )
 	m_originX = 0;
 	m_originY = 0;
 	m_snapImmediate = FALSE;
-	m_terrainHeightUnderCamera = 0.0f;
+	m_terrainHeightAtPivot = 0.0f;
 	m_zoom = 0.0f;
 	m_pos.x = 0;
 	m_pos.y = 0;
 	m_width = 0;
 	m_height = 0;
 	m_angle = 0.0f;
-	m_pitchAngle = 0.0f;
+	m_pitch = 0.0f;
 	m_cameraLock = INVALID_ID;
 	m_cameraLockDrawable = nullptr;
 	m_zoomLimited = TRUE;
@@ -70,7 +70,7 @@ View::View( void )
 	m_id = m_idNext++;
 
 	// default field of view
-	m_FOV = 50.0f * PI/180.0f;
+	m_FOV = DEG_TO_RADF(50.0f);
 
 	m_mouseLocked = FALSE;
 
@@ -101,7 +101,7 @@ void View::init( void )
 	m_okToAdjustHeight = FALSE;
 
 	m_defaultAngle = 0.0f;
-	m_defaultPitchAngle = 0.0f;
+	m_defaultPitch = 0.0f;
 }
 
 void View::reset( void )
@@ -155,20 +155,20 @@ void View::scrollBy( Coord2D *delta )
 }
 
 /**
- * Rotate the view around the up axis by the given angle.
+ * Rotate the view around the vertical axis to the given angle.
  */
-void View::setAngle( Real angle )
+void View::setAngle( Real radians )
 {
-	m_angle = angle;
+	m_angle = radians;
 }
 
 /**
  * Rotate the view around the horizontal (X) axis to the given angle.
  */
-void View::setPitch( Real angle )
+void View::setPitch( Real radians )
 {
 	constexpr Real limit = PI/5.0f;
-	m_pitchAngle = clamp(-limit, angle, limit);
+	m_pitch = clamp(-limit, radians, limit);
 }
 
 /**
@@ -177,7 +177,7 @@ void View::setPitch( Real angle )
 void View::setAngleAndPitchToDefault( void )
 {
 	m_angle = m_defaultAngle;
-	m_pitchAngle = m_defaultPitchAngle;
+	m_pitch = m_defaultPitch;
 }
 
 void View::setHeightAboveGround(Real z)

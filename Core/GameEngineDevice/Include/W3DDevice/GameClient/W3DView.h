@@ -157,8 +157,8 @@ public:
 
 	virtual void forceRedraw();
 
-	virtual void setAngle( Real angle );										///< Rotate the view around the up axis by the given angle
-	virtual void setPitch( Real angle );											///< Rotate the view around the horizontal axis to the given angle
+	virtual void setAngle( Real radians );									///< Rotate the view around the vertical axis to the given angle (yaw)
+	virtual void setPitch( Real radians );									///< Rotate the view around the horizontal axis to the given angle (pitch)
 	virtual void setAngleAndPitchToDefault( void );							///< Set the view angle back to default
 
 	virtual void lookAt( const Coord3D *o );											///< Center the view on the given coordinate
@@ -225,10 +225,9 @@ public:
 	virtual void set3DWireFrameMode(Bool enable);	///<enables custom wireframe rendering of 3D viewport
 
 	Bool updateCameraMovements(void);
-	virtual void forceCameraConstraintRecalc(void) { calcCameraConstraints(); }
+	virtual void forceCameraAreaConstraintRecalc(void) { calcCameraAreaConstraints(); }
 
 	virtual void setGuardBandBias( const Coord2D *gb ) { m_guardBandBias.x = gb->x; m_guardBandBias.y = gb->y; }
-
 
 private:
 
@@ -275,12 +274,12 @@ private:
 
 	Real m_groundLevel;															///< height of ground.
 
-	Region2D m_cameraConstraint;										///< m_pos should be constrained to be within this area
-	Bool m_cameraConstraintValid;										///< if f, recalc cam constraints
+	Region2D m_cameraAreaConstraints; ///< Camera should be constrained to be within this area
+	Bool m_cameraAreaConstraintsValid; ///< If false, recalculates the camera area constraints in the next render update
 
-	void setCameraTransform( void );								///< set the transform matrix of m_3DCamera, based on m_pos & m_angle
-	void buildCameraTransform( Matrix3D *transform ) ;			///< calculate (but do not set) the transform matrix of m_3DCamera, based on m_pos & m_angle
-	void calcCameraConstraints() ;			///< recalc m_cameraConstraint
+	void setCameraTransform(void); ///< set the transform matrix of m_3DCamera, based on m_pos & m_angle
+	void buildCameraTransform(Matrix3D *transform); ///< calculate (but do not set) the transform matrix of m_3DCamera, based on m_pos & m_angle
+	void calcCameraAreaConstraints(); ///< Recalculates the camera area constraints
 	void moveAlongWaypointPath(Real milliseconds); ///< Move camera along path.
 	void getPickRay(const ICoord2D *screen, Vector3 *rayStart, Vector3 *rayEnd);	///<returns a line segment (ray) originating at the given screen position
 	void setupWaypointPath(Bool orient);					///< Calculates distances & angles for moving along a waypoint path.

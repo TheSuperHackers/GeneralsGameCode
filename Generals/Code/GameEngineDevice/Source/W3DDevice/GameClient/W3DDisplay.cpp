@@ -1175,7 +1175,7 @@ void W3DDisplay::gatherDebugStats( void )
 		Real FXPitch = TheTacticalView->getFXPitch();
 		Real angle = TheTacticalView->getAngle();
 		Real FOV = TheTacticalView->getFieldOfView();
-		Real terrainHeight = TheTacticalView->getTerrainHeightUnderCamera();
+		Real terrainHeight = TheTacticalView->getTerrainHeightAtPivot();
 		Real actualHeightAboveGround = TheTacticalView->getCurrentHeightAboveGround();
 
 		unibuffer.format(

@@ -240,7 +240,7 @@ public:
 	virtual Real getMaxZoom( void ) { return 0.0f; }
 	virtual void setOkToAdjustHeight( Bool val ) { }						///< Set this to adjust camera height
 
-	virtual Real getTerrainHeightUnderCamera() { return 0.0f; }
+	virtual Real getTerrainHeightAtPivot() { return 0.0f; }
 	virtual Real getCurrentHeightAboveGround() { return 0.0f; }
 
 	virtual void getLocation ( ViewLocation *location ) {};								///< write the view's current location in to the view location object
@@ -271,7 +271,7 @@ public:
 	virtual void shake( const Coord3D *epicenter, CameraShakeType shakeType ) {};
 
 	virtual Real getFXPitch( void ) const { return 1.0f; }
-	virtual void forceCameraConstraintRecalc(void) { }
+	virtual void forceCameraAreaConstraintRecalc(void) { }
 	virtual void rotateCameraTowardPosition(const Coord3D *pLoc, Int milliseconds) {};	///< Rotate camera to face an object, and hold on it
 
 	virtual const Coord3D& get3DCameraPosition() const { static Coord3D dummy; return dummy; }							///< Returns the actual camera position

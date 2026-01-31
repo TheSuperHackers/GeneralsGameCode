@@ -168,14 +168,14 @@ public:
 	virtual Bool isTimeFrozen(void){ return false;}					///< Freezes time during the next camera movement.
 	virtual Int	 getTimeMultiplier(void) {return 1;};				///< Get the time multiplier.
 	virtual void setTimeMultiplier(Int multiple) {}; ///< Set the time multiplier.
-	virtual void setDefaultView(Real pitch, Real angle, Real maxHeight) {};
+	virtual void setDefaultView(Real pitch, Real angle, Real maxHeight) {}; // TheSuperHackers @todo Replace with setDefaultPitch(), setMaxHeightScale()
 	virtual void zoomCamera( Real finalZoom, Int milliseconds, Real easeIn=0.0f, Real easeOut=0.0f ) {};
 	virtual void pitchCamera( Real finalPitch, Int milliseconds, Real easeIn=0.0f, Real easeOut=0.0f ) {};
 
-	virtual void setAngle( Real angle );																///< Rotate the view around the up axis to the given angle
-	virtual Real getAngle( void ) { return m_angle; }
-	virtual void setPitch( Real angle );																///< Rotate the view around the horizontal axis to the given angle
-	virtual Real getPitch( void ) { return m_pitchAngle; }							///< Return current camera pitch
+	virtual void setAngle( Real radians );															///< Rotate the view around the vertical axis to the given angle (yaw)
+	virtual Real getAngle( void ) { return m_angle; }										///< Return current camera angle
+	virtual void setPitch( Real radians );															///< Rotate the view around the horizontal axis to the given angle (pitch)
+	virtual Real getPitch( void ) { return m_pitch; }										///< Return current camera pitch
 	virtual void setAngleAndPitchToDefault( void );											///< Set the view angle back to default
 	virtual void getPosition(Coord3D *pos)	{ *pos=m_pos;}							///< Returns position camera is looking at (z will be zero)
 
@@ -190,7 +190,7 @@ public:
 	virtual void setOkToAdjustHeight( Bool val ) { m_okToAdjustHeight = val; }	///< Set this to adjust camera height
 
 	// for debugging
-	virtual Real getTerrainHeightUnderCamera() { return m_terrainHeightUnderCamera; }
+	virtual Real getTerrainHeightAtPivot() { return m_terrainHeightAtPivot; }
 	virtual Real getCurrentHeightAboveGround() { return m_currentHeightAboveGround; }
 
 	virtual void setFieldOfView( Real angle ) { m_FOV = angle; }				///< Set the horizontal field of view angle
@@ -228,7 +228,7 @@ public:
 	virtual void shake( const Coord3D *epicenter, CameraShakeType shakeType ) { };
 
 	virtual Real getFXPitch( void ) const { return 1.0f; }					///< returns the FX pitch angle
-	virtual void forceCameraConstraintRecalc(void) {}
+	virtual void forceCameraAreaConstraintRecalc(void) {}
 	virtual void setGuardBandBias( const Coord2D *gb ) = 0;
 
 protected:
@@ -251,27 +251,27 @@ protected:
 
 	View *m_next;																								///< List links used by the Display class
 
-	UnsignedInt m_id;																						///< Rhe ID of this view
+	UnsignedInt m_id;																						///< The ID of this view
 	static UnsignedInt m_idNext;																///< Used for allocating view ID's for all views
 
 	UnsignedInt m_viewLockedUntilFrame;
 
-	Coord3D m_pos;																							///< Position of this view, in world coordinates
+	Coord3D m_pos;																							///< Pivot of the camera, in world coordinates // TheSuperHackers @todo Make this Coord2D or use the Z component
 	Int m_width, m_height;																			///< Dimensions of the view
 	Int m_originX, m_originY;																		///< Location of top/left view corner
 
 	Real m_angle;																								///< Angle at which view has been rotated about the Z axis
-	Real m_pitchAngle;																					///< Rotation of view direction around horizontal (X) axis
+	Real m_pitch;																								///< Rotation of view direction around horizontal (X) axis
 
 	Real m_maxHeightAboveGround;																///< Highest camera above ground value
 	Real m_minHeightAboveGround;																///< Lowest camera above ground value
 	Real m_zoom;																								///< Current zoom value
-	Real m_heightAboveGround;																		///< User's desired height above ground
+	Real m_heightAboveGround;																		///< User's desired camera height above ground
 	Bool m_zoomLimited;																					///< Camera restricted in zoom height
 	Real m_defaultAngle;
-	Real m_defaultPitchAngle;
-	Real m_currentHeightAboveGround;														///< Cached value for debugging
-	Real m_terrainHeightUnderCamera;														///< Cached value for debugging
+	Real m_defaultPitch;
+	Real m_currentHeightAboveGround;														///< Actual camera height above ground, or rather height above ground at default pitch
+	Real m_terrainHeightAtPivot;																///< Actual terrain height at camera pivot
 
 	ObjectID m_cameraLock;																			///< if nonzero, id of object that the camera should follow
 	Drawable *m_cameraLockDrawable;															///< if nonzero, drawable of object that camera should follow.

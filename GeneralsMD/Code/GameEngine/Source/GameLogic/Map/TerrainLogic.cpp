@@ -2629,7 +2629,7 @@ void TerrainLogic::setActiveBoundary(Int newActiveBoundary)
 	// Don't do a newMap on the pathfinder - It uses the largest active boundary to start.  jba.
 	//TheAI->pathfinder()->newMap();
 
-	TheTacticalView->forceCameraConstraintRecalc();
+	TheTacticalView->forceCameraAreaConstraintRecalc();
 }
 
 // ------------------------------------------------------------------------------------------------
