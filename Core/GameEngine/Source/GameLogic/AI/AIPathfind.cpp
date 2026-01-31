@@ -1324,19 +1324,20 @@ void PathfindCell::reset()
 
 /**
  * Reset cell type and obstacle info for checkpoint load.
- * Preserves m_flags (unit tracking) and m_zone (serialized) since those were set up earlier.
+ * Preserves m_flags (unit tracking), m_zone (serialized), and m_aircraftGoal (serialized).
  * TheSuperHackers @bobtista 28/01/2026
  */
 void PathfindCell::resetForCheckpointLoad( void )
 {
-	// Clear obstacle info, but preserve unit position/goal info which was set by
-	// AIUpdateInterface::loadPostProcess() before this function runs.
+	// Clear obstacle info, but preserve unit position/goal info and aircraft goals
+	// which were serialized and loaded in Pathfinder::xfer().
 	if (m_info) {
 		m_info->m_obstacleID = INVALID_ID;
 		m_info->m_obstacleIsFence = false;
 		m_info->m_obstacleIsTransparent = false;
-		// Only release m_info if there's no unit data to preserve
-		if (m_info->m_posUnitID == INVALID_ID && m_info->m_goalUnitID == INVALID_ID) {
+		// Only release m_info if there's no unit data or aircraft goal to preserve
+		if (m_info->m_posUnitID == INVALID_ID && m_info->m_goalUnitID == INVALID_ID &&
+			m_info->m_goalAircraftID == INVALID_ID) {
 			PathfindCellInfo::releaseACellInfo(m_info);
 			m_info = nullptr;
 		}
@@ -1344,8 +1345,8 @@ void PathfindCell::resetForCheckpointLoad( void )
 	// Now safe to set type to CELL_CLEAR
 	m_type = PathfindCell::CELL_CLEAR;
 	m_pinched = false;
-	m_aircraftGoal = false;
-	// Note: m_flags and m_zone are intentionally NOT cleared
+	// Note: m_flags, m_zone, and m_aircraftGoal are intentionally NOT cleared
+	// as they were serialized and loaded in Pathfinder::xfer()
 }
 
 /**
@@ -5053,6 +5054,7 @@ Bool Pathfinder::checkDestination(const Object *obj, Int cellX, Int cellY, Pathf
 				if (cell->getGoalAircraft() == objID) {
 					continue;
 				}
+				// Another aircraft has a goal on this cell - blocked
 				return false;
 			}
 
@@ -5959,6 +5961,7 @@ Path *Pathfinder::getAircraftPath( const Object *obj, const Coord3D *to )
 	Coord3D pos = *obj->getPosition();
 	pos.z = to->z;
 	thePath->prependNode( &pos, LAYER_GROUND );
+
 	Int limit = 20;
 	PathNode *curNode = thePath->getFirstNode();
 	while (curNode && curNode->getNext()) {
@@ -5981,6 +5984,17 @@ Path *Pathfinder::getAircraftPath( const Object *obj, const Coord3D *to )
 		curNode = curNode->getNext();
 		limit--;
 		if (limit<0) break;
+	}
+
+	// TheSuperHackers @fix bobtista 30/01/2026 Assign positive m_id values to all path nodes.
+	// This ensures optimized links can be properly serialized and restored on checkpoint load.
+	// Without this, aircraft path nodes have m_id=-1 and the optimized link restoration fails
+	// because Path::xfer only restores links for optID > 0.
+	Int nodeId = 1;
+	curNode = thePath->getFirstNode();
+	while (curNode) {
+		curNode->m_id = nodeId++;
+		curNode = curNode->getNext();
 	}
 
 	curNode = thePath->getFirstNode();
@@ -11511,14 +11525,26 @@ void Pathfinder::xfer( Xfer *xfer )
 				xfer->xferObjectID( &posUnitID );
 				xfer->xferObjectID( &goalUnitID );
 
+				// TheSuperHackers @bugfix bobtista 30/01/2026
+				// Serialize aircraft goal state for checkpoint determinism.
+				// Aircraft (like Chinooks) set goal cells which are checked by adjustDestination().
+				// Without this, the spiral search finds different cells after checkpoint load.
+				Bool aircraftGoal = m_map[i][j].isAircraftGoal();
+				ObjectID goalAircraftID = m_map[i][j].getGoalAircraft();
+
+
+				xfer->xferBool( &aircraftGoal );
+				xfer->xferObjectID( &goalAircraftID );
+
 				if ( xfer->getXferMode() == XFER_LOAD && m_map != nullptr )
 				{
-					// If there are any unit IDs, allocate info and set them
-					if ( posUnitID != INVALID_ID || goalUnitID != INVALID_ID )
+					ICoord2D pos;
+					pos.x = i;
+					pos.y = j;
+
+					// If there are any unit IDs or aircraft goals, allocate info and set them
+					if ( posUnitID != INVALID_ID || goalUnitID != INVALID_ID || goalAircraftID != INVALID_ID )
 					{
-						ICoord2D pos;
-						pos.x = i;
-						pos.y = j;
 						m_map[i][j].allocateInfo( pos );
 						if ( m_map[i][j].hasInfo() )
 						{
@@ -11531,12 +11557,17 @@ void Pathfinder::xfer( Xfer *xfer )
 							{
 								m_map[i][j].setGoalUnit( goalUnitID, pos );
 							}
+							if ( goalAircraftID != INVALID_ID )
+							{
+								m_map[i][j].setGoalAircraft( goalAircraftID, pos );
+							}
 						}
 					}
 					// Set flags after setting unit IDs (setters modify flags)
 					m_map[i][j].setFlags( (PathfindCell::CellFlags)flags );
+
 				}
-				}
+			}
 		}
 	}
 
