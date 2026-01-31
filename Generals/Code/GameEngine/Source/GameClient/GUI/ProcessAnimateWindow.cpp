@@ -68,12 +68,14 @@
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 
-static UnsignedInt scaleHorizontalConstant(UnsignedInt x) {
-	return (static_cast<Real>(x) / DEFAULT_DISPLAY_WIDTH) * TheDisplay->getWidth();
+static Real getDisplayWidthScaler()
+{
+	return static_cast<Real>(TheDisplay->getWidth()) / DEFAULT_DISPLAY_WIDTH;
 }
 
-static UnsignedInt scaleVerticalConstant(UnsignedInt y) {
-	return (static_cast<Real>(y) / DEFAULT_DISPLAY_HEIGHT) * TheDisplay->getHeight();
+static Real getDisplayHeightScaler()
+{
+	return static_cast<Real>(TheDisplay->getHeight()) / DEFAULT_DISPLAY_HEIGHT;
 }
 
 //-----------------------------------------------------------------------------
@@ -147,10 +149,11 @@ void ProcessAnimateWindowSlideFromRight::initAnimateWindow( wnd::AnimateWindow *
 	//set the window's position to the new start positions.
 	win->winSetPosition(startPos.x, startPos.y);
 
-	// TheSuperHackers @bugfix tophroxx 30/01/2026 Use scaled pixel constants
+	// TheSuperHackers @bugfix tophroxx 31/01/2026 Use scaled pixel constants
 	// for slowdown threshold and velocity.
-	m_maxVel.x = -static_cast<Real>(scaleHorizontalConstant(40));
-	m_slowDownThreshold = scaleHorizontalConstant(80);
+	const Real widthScaler = getDisplayWidthScaler();
+	m_maxVel.x = -40 * widthScaler;
+	m_slowDownThreshold = 80 * widthScaler;
 
 	//Now initialize the velocities
 	vel.x = m_maxVel.x;
@@ -332,10 +335,11 @@ void ProcessAnimateWindowSlideFromLeft::initAnimateWindow( wnd::AnimateWindow *a
 	//set the window's position to the new start positions.
 	win->winSetPosition(startPos.x, startPos.y);
 
-	// TheSuperHackers @bugfix tophroxx 30/01/2026 Use scaled pixel constants
+	// TheSuperHackers @bugfix tophroxx 31/01/2026 Use scaled pixel constants
 	// for slowdown threshold and velocity.
-	m_maxVel.x = static_cast<Real>(scaleHorizontalConstant(40));
-	m_slowDownThreshold = scaleHorizontalConstant(80);
+	const Real widthScaler = getDisplayWidthScaler();
+	m_maxVel.x = 40 * widthScaler;
+	m_slowDownThreshold = 80 * widthScaler;
 
 	//Now initialize the velocities
 	vel = m_maxVel;
@@ -514,10 +518,11 @@ void ProcessAnimateWindowSlideFromTop::initAnimateWindow( wnd::AnimateWindow *an
 	//set the window's position to the new start positions.
 	win->winSetPosition(startPos.x, startPos.y);
 
-	// TheSuperHackers @bugfix tophroxx 30/01/2026 Use scaled pixel constants
+	// TheSuperHackers @bugfix tophroxx 31/01/2026 Use scaled pixel constants
 	// for slowdown threshold and velocity.
-	m_maxVel.y = static_cast<Real>(scaleVerticalConstant(40));
-	m_slowDownThreshold = scaleVerticalConstant(80);
+	const Real heightScaler = getDisplayHeightScaler();
+	m_maxVel.y = 40 * heightScaler;
+	m_slowDownThreshold = 80 * heightScaler;
 
 	//Now initialize the velocities
 	vel = m_maxVel;
@@ -698,10 +703,11 @@ void ProcessAnimateWindowSlideFromBottom::initAnimateWindow( wnd::AnimateWindow 
 	//set the window's position to the new start positions.
 	win->winSetPosition(startPos.x, startPos.y);
 
-	// TheSuperHackers @bugfix tophroxx 30/01/2026 Use scaled pixel constants
+	// TheSuperHackers @bugfix tophroxx 31/01/2026 Use scaled pixel constants
 	// for slowdown threshold and velocity.
-	m_maxVel.y = -static_cast<Real>(scaleVerticalConstant(40));
-	m_slowDownThreshold = scaleVerticalConstant(80);
+	const Real heightScaler = getDisplayHeightScaler();
+	m_maxVel.y = -40 * heightScaler;
+	m_slowDownThreshold = 80 * heightScaler;
 
 	//Now initialize the velocities
 	vel = m_maxVel;
