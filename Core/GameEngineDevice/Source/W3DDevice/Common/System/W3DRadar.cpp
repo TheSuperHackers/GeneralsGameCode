@@ -221,14 +221,6 @@ void W3DRadar::reconstructViewBox( void )
 
 	}
 
-	//
-	// save the camera settings for this view box, we will need to make it again only
-	// if some of these change
-	//
-	m_viewAngle = TheTacticalView->getAngle();
-	Coord3D pos;
-	TheTacticalView->getPosition( &pos );
-	m_viewZoom = TheTacticalView->getZoom();
 	m_reconstructViewBox = FALSE;
 
 }
@@ -871,8 +863,7 @@ W3DRadar::W3DRadar( void )
 	m_textureHeight = RADAR_CELL_HEIGHT;
 
 	m_reconstructViewBox = TRUE;
-	m_viewAngle = 0.0f;
-	m_viewZoom = 0.0f;
+
 	for( Int i = 0; i < 4; i++ )
 	{
 
@@ -1516,14 +1507,10 @@ void W3DRadar::draw( Int pixelX, Int pixelY, Int width, Int height )
 	// draw any radar events
 	drawEvents( ul.x, ul.y, scaledWidth, scaledHeight );
 
-	// see if we need to reconstruct the view box
-	if( TheTacticalView->getZoom() != m_viewZoom )
-		m_reconstructViewBox = TRUE;
-	if( TheTacticalView->getAngle() != m_viewAngle )
-		m_reconstructViewBox = TRUE;
-
-	if( m_reconstructViewBox == TRUE )
+	if( m_reconstructViewBox )
+	{
 		reconstructViewBox();
+	}
 
 	// draw the view region on top of the radar reconstructing if necessary
 	drawViewBox( ul.x, ul.y, scaledWidth, scaledHeight );
@@ -1556,6 +1543,12 @@ void W3DRadar::refreshObjects()
 	}
 }
 
+// ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
+void W3DRadar::notifyViewChanged()
+{
+	m_reconstructViewBox = TRUE;
+}
 
 
 ///The following is an "archive" of an attempt to foil the mapshroud hack... saved for later, since it is too close to release to try it

@@ -224,6 +224,8 @@ public:
 	virtual void beginSetShroudLevel() {} ///< call this once before multiple calls to setShroudLevel for better performance
 	virtual void endSetShroudLevel() {} ///< call this once after beginSetShroudLevel and setShroudLevel
 
+	virtual void notifyViewChanged() {} ///< signals that the camera view has changed
+
 protected:
 
 	// snapshot methods

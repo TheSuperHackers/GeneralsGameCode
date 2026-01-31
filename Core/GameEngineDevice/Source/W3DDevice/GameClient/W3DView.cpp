@@ -42,6 +42,7 @@
 #include "Common/GameUtility.h"
 #include "Common/GlobalData.h"
 #include "Common/Module.h"
+#include "Common/Radar.h"
 #include "Common/RandomValue.h"
 #include "Common/ThingTemplate.h"
 #include "Common/ThingSort.h"
@@ -623,6 +624,13 @@ void W3DView::setCameraTransform( void )
 		 W3DDisplay::m_3DScene->destroyLightsIterator(it);
 		 it = nullptr;
 		}
+	}
+
+	// TheSuperHackers @fix Notify the Radar about the changed view always.
+	// This way the radar view box should always be in sync with the camera view.
+	if (TheRadar)
+	{
+		TheRadar->notifyViewChanged();
 	}
 }
 
