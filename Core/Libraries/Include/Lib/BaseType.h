@@ -416,6 +416,47 @@ struct Region3D
 	Real depth( void ) const { return hi.z - lo.z; }
 
 	void zero() { lo.zero(); hi.zero(); }
+
+	void setFromPointsNoZ(Coord3D* points, Int count)
+	{
+		lo.x = points[0].x;
+		lo.y = points[0].y;
+		hi.x = points[0].x;
+		hi.y = points[0].y;
+		for (Int i = 1; i < count; ++i)
+		{
+			if (points[i].x < lo.x)
+				lo.x = points[i].x;
+			if (points[i].y < lo.y)
+				lo.y = points[i].y;
+			if (points[i].x > hi.x)
+				hi.x = points[i].x;
+			if (points[i].y > hi.y)
+				hi.y = points[i].y;
+		}
+	}
+
+	void setFromPoints(Coord3D* points, Int count)
+	{
+		lo = points[0];
+		hi = points[0];
+		for (Int i = 1; i < count; ++i)
+		{
+			if (points[i].x < lo.x)
+				lo.x = points[i].x;
+			if (points[i].y < lo.y)
+				lo.y = points[i].y;
+			if (points[i].z < lo.z)
+				lo.z = points[i].z;
+			if (points[i].x > hi.x)
+				hi.x = points[i].x;
+			if (points[i].y > hi.y)
+				hi.y = points[i].y;
+			if (points[i].z > hi.z)
+				hi.z = points[i].z;
+		}
+	}
+
 	Bool isInRegionNoZ( const Coord3D *query ) const
 	{
 		return (lo.x < query->x) && (query->x < hi.x)

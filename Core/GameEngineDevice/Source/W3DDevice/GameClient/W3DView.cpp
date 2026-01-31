@@ -1428,21 +1428,7 @@ void W3DView::getAxisAlignedViewRegion(Region3D &axisAlignedRegion)
 	// take those 4 corners projected into the world and create an axis aligned bounding
 	// box, we will use this box to iterate the drawables in 3D space
 	//
-	axisAlignedRegion.lo = box[ 0 ];
-	axisAlignedRegion.hi = box[ 0 ];
-	for( Int i = 0; i < 4; i++ )
-	{
-
-		if( box[ i ].x < axisAlignedRegion.lo.x )
-			axisAlignedRegion.lo.x = box[ i ].x;
-		if( box[ i ].y < axisAlignedRegion.lo.y )
-			axisAlignedRegion.lo.y = box[ i ].y;
-		if( box[ i ].x > axisAlignedRegion.hi.x )
-		  axisAlignedRegion.hi.x = box[ i ].x;
-		if( box[ i ].y > axisAlignedRegion.hi.y )
-		  axisAlignedRegion.hi.y = box[ i ].y;
-
-	}
+	axisAlignedRegion.setFromPointsNoZ(box, ARRAY_SIZE(box));
 
 	// low and high regions will be based of the extent of the map
 	Region3D mapExtent;
