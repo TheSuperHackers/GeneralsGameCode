@@ -563,8 +563,7 @@ SaveCode GameState::saveGame( AsciiString filename, UnicodeString desc,
 		xferSave.open( filepath );
 	} catch(...) {
 		// print error message to the user
-		if (TheGlobalData && !TheGlobalData->m_headless)
-			TheInGameUI->message( "GUI:Error" );
+		TheInGameUI->message( "GUI:Error" );
 		DEBUG_LOG(( "Error opening file '%s'", filepath.str() ));
 		return SC_ERROR;
 	}
@@ -594,16 +593,13 @@ SaveCode GameState::saveGame( AsciiString filename, UnicodeString desc,
 	catch( ... )
 	{
 
-		if (TheGlobalData && !TheGlobalData->m_headless)
-		{
-			UnicodeString ufilepath;
-			ufilepath.translate(filepath);
+		UnicodeString ufilepath;
+		ufilepath.translate(filepath);
 
-			UnicodeString msg;
-			msg.format( TheGameText->fetch("GUI:ErrorSavingGame"), ufilepath.str() );
+		UnicodeString msg;
+		msg.format( TheGameText->fetch("GUI:ErrorSavingGame"), ufilepath.str() );
 
-			MessageBoxOk(TheGameText->fetch("GUI:Error"), msg, nullptr);
-		}
+		MessageBoxOk(TheGameText->fetch("GUI:Error"), msg, nullptr);
 
 		// close the file and get out of here
 		xferSave.close();
@@ -615,11 +611,8 @@ SaveCode GameState::saveGame( AsciiString filename, UnicodeString desc,
 	xferSave.close();
 
 	// print message to the user for game successfully saved
-	if (TheGlobalData && !TheGlobalData->m_headless)
-	{
-		UnicodeString msg = TheGameText->fetch( "GUI:GameSaveComplete" );
-		TheInGameUI->message( msg );
-	}
+	UnicodeString msg = TheGameText->fetch( "GUI:GameSaveComplete" );
+	TheInGameUI->message( msg );
 
 	return SC_OK;
 
@@ -726,16 +719,13 @@ SaveCode GameState::loadGame( AvailableGameInfo gameInfo )
 		TheGameEngine->reset();
 
 		// print error message to the user
-		if (TheGlobalData && !TheGlobalData->m_headless)
-		{
-			UnicodeString ufilepath;
-			ufilepath.translate(filepath);
+		UnicodeString ufilepath;
+		ufilepath.translate(filepath);
 
-			UnicodeString msg;
-			msg.format( TheGameText->fetch("GUI:ErrorLoadingGame"), ufilepath.str() );
+		UnicodeString msg;
+		msg.format( TheGameText->fetch("GUI:ErrorLoadingGame"), ufilepath.str() );
 
-			MessageBoxOk(TheGameText->fetch("GUI:Error"), msg, nullptr);
-		}
+		MessageBoxOk(TheGameText->fetch("GUI:Error"), msg, nullptr);
 
 		return SC_INVALID_DATA;	// you can't use a naked "throw" outside of a catch statement!
 
@@ -1379,17 +1369,6 @@ void GameState::xferSaveData( Xfer *xfer, SnapshotType which )
 			if( blockInfo->snapshot == nullptr )
 			{
 				DEBUG_LOG(("Skipping block '%s' because snapshot is nullptr", blockName.str()));
-				continue;
-			}
-
-			// Skip visual-only blocks when saving in headless mode
-			if( TheGlobalData && TheGlobalData->m_headless &&
-				(blockName.compareNoCase( "CHUNK_TerrainVisual" ) == 0 ||
-				 blockName.compareNoCase( "CHUNK_TacticalView" ) == 0 ||
-				 blockName.compareNoCase( "CHUNK_ParticleSystem" ) == 0 ||
-				 blockName.compareNoCase( "CHUNK_GhostObject" ) == 0) )
-			{
-				DEBUG_LOG(("Skipping block '%s' in headless mode", blockName.str()));
 				continue;
 			}
 
