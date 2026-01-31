@@ -98,6 +98,7 @@
 
 #include "W3DDevice/GameClient/CameraShakeSystem.h"
 
+constexpr const Real NearZ = MAP_XY_FACTOR; ///< Set the near to MAP_XY_FACTOR. Improves z buffer resolution.
 
 // 30 fps
 Real TheW3DFrameLengthInMsec = MSEC_PER_LOGICFRAME_REAL; // default is 33msec/frame == 30fps. but we may change it depending on sys config.
@@ -519,13 +520,9 @@ void W3DView::setCameraTransform( void )
 		return;
 
 	m_cameraHasMovedSinceRequest = true;
-	Matrix3D cameraTransform( 1 );
+	Matrix3D cameraTransform;
 
-	Real nearZ, farZ;
-	// m_3DCamera->Get_Clip_Planes(nearZ, farZ);
-	// Set the near to MAP_XY_FACTOR.  Improves zbuffer resolution.
-	nearZ = MAP_XY_FACTOR;
-	farZ = 1200.0f;
+	Real farZ = 1200.0f;
 
 	if (m_useRealZoomCam)	//WST 10.19.2002
 	{
@@ -536,13 +533,12 @@ void W3DView::setCameraTransform( void )
 	}
 	else
 	{
-		if ((TheGlobalData && TheGlobalData->m_drawEntireTerrain) || (m_FXPitch<0.95f || m_zoom>1.05))
+		if ((TheGlobalData->m_drawEntireTerrain) || (m_FXPitch<0.95f || m_zoom>1.05))
 		{	//need to extend far clip plane so entire terrain can be visible
 			farZ *= MAP_XY_FACTOR;
 		}
 	}
 
-	m_3DCamera->Set_Clip_Planes(nearZ, farZ);
 #if defined(RTS_DEBUG)
 	if (TheGlobalData->m_useCameraConstraints)
 #endif
@@ -565,6 +561,8 @@ void W3DView::setCameraTransform( void )
 			setPosition(&pos);
 		}
 	}
+
+	m_3DCamera->Set_Clip_Planes(NearZ, farZ);
 
 #if defined(RTS_DEBUG)
 	m_3DCamera->Set_View_Plane( m_FOV, -1 );
