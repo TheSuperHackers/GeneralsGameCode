@@ -466,16 +466,6 @@ public:
 	void requestSafePath( ObjectID repulsor1 );	///< computes path to attack the current target, returns false if no path
 
 	Bool isWaitingForPath() const {return m_waitingForPath;}
-	// TheSuperHackers @bugfix bobtista 23/01/2026 Check if we're within 3 frames of checkpoint load.
-	// The state machine can trigger onEnter multiple times over a few frames after checkpoint load
-	// (typically 2 frames delay). We need to skip path recomputation for all of these calls.
-	Bool justLoadedFromCheckpoint() const {
-		return m_checkpointLoadFrame > 0 &&
-		       TheGameLogic != nullptr &&
-		       TheGameLogic->getFrame() <= m_checkpointLoadFrame + 3;
-	}
-	void clearJustLoadedFromCheckpoint() {m_checkpointLoadFrame = 0;}
-	UnsignedInt getCheckpointLoadFrame() const {return m_checkpointLoadFrame;}
 	Bool isAttackPath() const {return m_isAttackPath;} ///< True if we have a path to an attack location.
 	void cancelPath(); ///< Called if we no longer need the path.
 	Path* getPath() { return m_path; }				///< return the agent's current path
@@ -809,7 +799,6 @@ private:
 	Bool				m_allowedToChase;						///< Allowed to pursue targets.
 	Bool				m_isInUpdate;								///< If true, we are inside our update method.
 	Bool				m_fixLocoInPostProcess;
-	UnsignedInt	m_checkpointLoadFrame;	///< Frame when checkpoint was loaded (0 if not loaded). Used to suppress repathing after checkpoint load.
 };
 
 //------------------------------------------------------------------------------------------------------------

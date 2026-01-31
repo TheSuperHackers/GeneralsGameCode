@@ -282,7 +282,6 @@ AIUpdateInterface::AIUpdateInterface( Thing *thing, const ModuleData* moduleData
 	m_retryPath = FALSE;
 	m_isInUpdate = FALSE;
 	m_fixLocoInPostProcess = FALSE;
-	m_checkpointLoadFrame = 0;
 
 	// ---------------------------------------------
 
@@ -5319,27 +5318,18 @@ void AIUpdateInterface::loadPostProcess()
 {
 	UpdateModule::loadPostProcess();
 
-	// TheSuperHackers @bugfix bobtista 31/01/2026 Reset CPOP cache to recalculate from current position.
+	// TheSuperHackers @bugfix bobtista 21/01/2026 Clear waiting for path flag if path already exists.
+	// After checkpoint load, the path is restored but m_waitingForPath may still be TRUE from when
+	// the checkpoint was saved. This would cause doPathfind() to recompute and destroy the restored path.
+	// TheSuperHackers @bugfix bobtista 31/01/2026 Also reset CPOP cache to recalculate from current position.
 	// The restored path may have a stale m_cpopRecentStart pointing to a waypoint the unit has passed.
-	// By invalidating the cache, computePointOnPath() will search from the beginning of the path
-	// and find the segment closest to the unit's current position.
-	// Note: We preserve m_waitingForPath so that any pending path request in the queue will be
-	// processed by doPathfind(), which creates a new path with the current position prepended.
-	// This matches the behavior of a fresh run where path requests queued before the checkpoint
-	// are processed later with the current position.
 	if (m_path != nullptr)
 	{
+		if (m_waitingForPath)
+		{
+			m_waitingForPath = FALSE;
+		}
 		m_path->invalidateCpopCache();
-	}
-
-	// TheSuperHackers @bugfix bobtista 21/01/2026 Set checkpoint load frame to suppress path recomputation.
-	// This prevents path destruction from timestamp checks and onEnter() calls after checkpoint load.
-	// TheSuperHackers @bugfix bobtista 23/01/2026 Set the flag for ALL units, not just units with paths.
-	// Units without paths at checkpoint time may still receive move commands shortly after load,
-	// and the protection logic needs to know we just loaded from checkpoint.
-	if (TheGameLogic != nullptr)
-	{
-		m_checkpointLoadFrame = TheGameLogic->getFrame();
 	}
 
 	if (m_fixLocoInPostProcess && m_curLocomotorSet!=LOCOMOTORSET_INVALID)
