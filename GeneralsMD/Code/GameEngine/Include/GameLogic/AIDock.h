@@ -171,14 +171,15 @@ public:
 	virtual StateReturnType update();
 
 	void setNextDockActionFrame();//This puts a delay between callings of Action to tweak the speed of docking.
-	UnsignedInt m_nextDockActionFrame;// In the unlikely event of saving a game in the middle of docking, you may
-	// complete a Action a few frames sooner than you would have: It does not need to be saved.
+	// TheSuperHackers @bugfix bobtista 31/01/2026 m_nextDockActionFrame must be serialized for deterministic
+	// checkpoint replays. Without this, units may complete dock actions at different frames after load.
+	UnsignedInt m_nextDockActionFrame;
 	Object* findMyDrone();
 
 protected:
-	// snapshot interface STUBBED.
+	// snapshot interface
 	virtual void crc( Xfer *xfer ){};
-	virtual void xfer( Xfer *xfer ){XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
+	virtual void xfer( Xfer *xfer );
 	virtual void loadPostProcess(){};
 
 private:
