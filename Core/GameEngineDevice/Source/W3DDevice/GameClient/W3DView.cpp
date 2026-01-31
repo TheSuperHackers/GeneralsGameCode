@@ -264,16 +264,8 @@ void W3DView::buildCameraTransform( Matrix3D *transform )
 		sourcePos.X = m_cameraOffset.x;
 		sourcePos.Y = m_cameraOffset.y;
 		sourcePos.Z = m_cameraOffset.z;
-		Real capped_zoom = zoom;
-		if (capped_zoom > 1.0f)
-		{
-			capped_zoom= 1.0f;
-		}
-		if (capped_zoom < MIN_CAPPED_ZOOM)
-		{
-			capped_zoom = MIN_CAPPED_ZOOM;
-		}
-		m_FOV = 50.0f * PI/180.0f * capped_zoom * capped_zoom;
+		Real cappedZoom = clamp(MIN_CAPPED_ZOOM, zoom, 1.0f);
+		m_FOV = DEG_TO_RADF(50.0f) * cappedZoom * cappedZoom;
 	}
 	else
 	{
@@ -324,29 +316,15 @@ void W3DView::buildCameraTransform( Matrix3D *transform )
 	// Use scripts to switch to useRealZoomCam
 	if (m_useRealZoomCam)
 	{
-		Real pitch_adjust = 1.0f;
+		Real pitchAdjust = 1.0f;
 
 		if (!TheDisplay->isLetterBoxed())
 		{
-			Real capped_zoom = zoom;
-			if (capped_zoom > 1.0f)
-			{
-				 capped_zoom= 1.0f;
-			}
-			if (capped_zoom < MIN_CAPPED_ZOOM)
-			{
-				capped_zoom = MIN_CAPPED_ZOOM;
-			}
-			sourcePos.Z = sourcePos.Z * ( 0.5f + capped_zoom * 0.5f); // move camera down physically
-			pitch_adjust = capped_zoom;	// adjust camera to pitch up
+			Real cappedZoom = clamp(MIN_CAPPED_ZOOM, zoom, 1.0f);
+			sourcePos.Z = sourcePos.Z * (0.5f + cappedZoom * 0.5f); // move camera down physically
+			pitchAdjust = cappedZoom; // adjust camera to pitch up
 		}
-		m_FXPitch = 1.0f * (0.25f + pitch_adjust*0.75f);
-	}
-
-
-	// do fxPitch adjustment
-	if (m_useRealZoomCam)
-	{
+		m_FXPitch = 1.0f * (0.25f + pitchAdjust*0.75f);
 		sourcePos.X = targetPos.X + ((sourcePos.X - targetPos.X) / m_FXPitch);
 		sourcePos.Y = targetPos.Y + ((sourcePos.Y - targetPos.Y) / m_FXPitch);
 	}
@@ -362,9 +340,7 @@ void W3DView::buildCameraTransform( Matrix3D *transform )
 #else
 		if (m_FXPitch <= 1.0f)
 		{
-			Real height = sourcePos.Z - targetPos.Z;
-			height *= m_FXPitch;
-			targetPos.Z = sourcePos.Z - height;
+			targetPos.Z = sourcePos.Z - ((sourcePos.Z - targetPos.Z) * m_FXPitch);
 		}
 		else
 		{
