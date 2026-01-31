@@ -417,7 +417,7 @@ struct Region3D
 
 	void zero() { lo.zero(); hi.zero(); }
 
-	void setFromPointsNoZ(Coord3D* points, Int count)
+	void setFromPointsNoZ(const Coord3D* points, Int count)
 	{
 		lo.x = points[0].x;
 		lo.y = points[0].y;
@@ -436,7 +436,7 @@ struct Region3D
 		}
 	}
 
-	void setFromPoints(Coord3D* points, Int count)
+	void setFromPoints(const Coord3D* points, Int count)
 	{
 		lo = points[0];
 		hi = points[0];
