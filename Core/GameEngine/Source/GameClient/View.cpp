@@ -174,9 +174,16 @@ void View::setPitch( Real radians )
 /**
  * Set the view angle back to default
  */
-void View::setAngleAndPitchToDefault( void )
+void View::setAngleToDefault()
 {
 	m_angle = m_defaultAngle;
+}
+
+/**
+ * Set the view pitch back to default
+ */
+void View::setPitchToDefault( void )
+{
 	m_pitch = m_defaultPitch;
 }
 

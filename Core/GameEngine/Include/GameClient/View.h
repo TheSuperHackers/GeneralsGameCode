@@ -176,7 +176,8 @@ public:
 	virtual Real getAngle( void ) { return m_angle; }										///< Return current camera angle
 	virtual void setPitch( Real radians );															///< Rotate the view around the horizontal axis to the given angle (pitch)
 	virtual Real getPitch( void ) { return m_pitch; }										///< Return current camera pitch
-	virtual void setAngleAndPitchToDefault( void );											///< Set the view angle back to default
+	virtual void setAngleToDefault( void );															///< Set the view angle back to default
+	virtual void setPitchToDefault( void );															///< Set the view pitch back to default
 	virtual void getPosition(Coord3D *pos)	{ *pos=m_pos;}							///< Returns position camera is looking at (z will be zero)
 
 	virtual const Coord3D& get3DCameraPosition() const = 0;							///< Returns the actual camera position

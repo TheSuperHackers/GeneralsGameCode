@@ -159,7 +159,8 @@ public:
 
 	virtual void setAngle( Real radians );									///< Rotate the view around the vertical axis to the given angle (yaw)
 	virtual void setPitch( Real radians );									///< Rotate the view around the horizontal axis to the given angle (pitch)
-	virtual void setAngleAndPitchToDefault( void );							///< Set the view angle back to default
+	virtual void setAngleToDefault( void );									///< Set the view angle back to default
+	virtual void setPitchToDefault( void );									///< Set the view pitch back to default
 
 	virtual void lookAt( const Coord3D *o );											///< Center the view on the given coordinate
 	virtual void initHeightForMap( void );												///<  Init the camera height for the map at the current position.

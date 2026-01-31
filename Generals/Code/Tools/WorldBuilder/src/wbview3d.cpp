@@ -227,8 +227,9 @@ public:
 	virtual Real getAngle( void ) { return 0; }
 	virtual void setPitch( Real angle ){};																	///< Rotate the view around the horizontal axis to the given angle
 	virtual Real getPitch( void ) { return 0; }							///< Return current camera pitch
-	virtual void setAngleAndPitchToDefault( void ){};													///< Set the view angle back to default
-	virtual void getPosition(Coord3D *pos)	{ ;}											///< Return camera position
+	virtual void setAngleToDefault( void ) {}											///< Set the view angle back to default
+	virtual void setPitchToDefault( void ) {}											///< Set the view pitch back to default
+	virtual void getPosition(Coord3D *pos) {}											///< Return camera position
 
 	virtual Real getHeightAboveGround() { return 1; }
 	virtual void setHeightAboveGround(Real z) { }

@@ -1886,16 +1886,24 @@ void W3DView::setPitch( Real angle )
 }
 
 //-------------------------------------------------------------------------------------------------
-/** Set the view angle & pitch back to default */
+/** Set the view angle back to default */
 //-------------------------------------------------------------------------------------------------
-void W3DView::setAngleAndPitchToDefault( void )
+void W3DView::setAngleToDefault( void )
 {
-	// call our base class, we are adding functionality
-	View::setAngleAndPitchToDefault();
+	View::setAngleToDefault();
 
-	m_FXPitch = 1.0;
+	setCameraTransform();
+}
 
-	// set the camera
+//-------------------------------------------------------------------------------------------------
+/** Set the view pitch back to default */
+//-------------------------------------------------------------------------------------------------
+void W3DView::setPitchToDefault( void )
+{
+	View::setPitchToDefault();
+
+	m_FXPitch = 1.0f;
+
 	setCameraTransform();
 }
 
