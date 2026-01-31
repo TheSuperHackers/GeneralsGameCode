@@ -1602,7 +1602,7 @@ void DX8Wrapper::Begin_Scene(void)
 {
 	DX8_THREAD_ASSERT();
 
-#if RTS_HAS_IMGUI
+#ifdef RTS_HAS_IMGUI
 	rts::ImGui::FrameManager::BeginFrame();
 #endif
 #if ENABLE_EMBEDDED_BROWSER
