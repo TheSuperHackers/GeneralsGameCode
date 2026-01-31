@@ -129,8 +129,6 @@ void W3DDebrisDraw::setModelName(AsciiString name, Color color, ShadowType t)
 		{
 			Shadow::ShadowTypeInfo shadowInfo;
 			shadowInfo.m_type = t;
-			shadowInfo.m_sizeX=0;
-			shadowInfo.m_sizeY=0;
   		m_shadow = TheW3DShadowManager->addShadow(m_renderObject, &shadowInfo);
 		}
 		else

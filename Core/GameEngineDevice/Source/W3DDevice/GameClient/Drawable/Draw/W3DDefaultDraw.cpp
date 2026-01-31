@@ -62,10 +62,6 @@ W3DDefaultDraw::W3DDefaultDraw(Thing *thing, const ModuleData* moduleData) : Dra
 
 		Shadow::ShadowTypeInfo shadowInfo;
 		shadowInfo.m_type=(ShadowType)SHADOW_VOLUME;
-		shadowInfo.m_sizeX=0;	//use defaults
-		shadowInfo.m_sizeY=0;
-		shadowInfo.m_offsetX=0;
-		shadowInfo.m_offsetY=0;
   		m_shadow = TheW3DShadowManager->addShadow(m_renderObject, &shadowInfo);
 
 

@@ -697,14 +697,11 @@ void W3DTreeBuffer::loadTreesInVertexAndIndexBuffers(RefRenderObjListIterator *p
 
 	if (m_shadow == nullptr && TheW3DProjectedShadowManager) {
 		Shadow::ShadowTypeInfo shadowInfo;
-		shadowInfo.m_ShadowName[0] = 0;
 		shadowInfo.allowUpdates=FALSE;	//shadow image will never update
 		shadowInfo.allowWorldAlign=TRUE;	//shadow image will wrap around world objects
 		shadowInfo.m_type = (ShadowType)SHADOW_DECAL;
 		shadowInfo.m_sizeX=20;
 		shadowInfo.m_sizeY=20;
-		shadowInfo.m_offsetX=0;
-		shadowInfo.m_offsetY=0;
 		m_shadow = TheW3DProjectedShadowManager->createDecalShadow(&shadowInfo);
 	}
 
