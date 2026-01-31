@@ -258,20 +258,21 @@ void W3DView::buildCameraTransform( Matrix3D *transform )
 		pos.y = minf(m_cameraAreaConstraints.hi.y, pos.y);
 	}
 
+	sourcePos.X = m_cameraOffset.x;
+	sourcePos.Y = m_cameraOffset.y;
+	sourcePos.Z = m_cameraOffset.z;
+
 	// set position of camera itself
 	if (m_useRealZoomCam) //WST 10/10/2002 Real Zoom using FOV
 	{
-		sourcePos.X = m_cameraOffset.x;
-		sourcePos.Y = m_cameraOffset.y;
-		sourcePos.Z = m_cameraOffset.z;
 		Real cappedZoom = clamp(MIN_CAPPED_ZOOM, zoom, 1.0f);
 		m_FOV = DEG_TO_RADF(50.0f) * cappedZoom * cappedZoom;
 	}
 	else
 	{
-		sourcePos.X = m_cameraOffset.x*zoom;
-		sourcePos.Y = m_cameraOffset.y*zoom;
-		sourcePos.Z = m_cameraOffset.z*zoom;
+		sourcePos.X *= zoom;
+		sourcePos.Y *= zoom;
+		sourcePos.Z *= zoom;
 	}
 
 	// camera looking at origin
@@ -279,14 +280,13 @@ void W3DView::buildCameraTransform( Matrix3D *transform )
 	targetPos.Y = 0;
 	targetPos.Z = 0;
 
-
-	Real factor = 1.0 - (groundLevel/sourcePos.Z );
+	const Real heightScale = 1.0f - (groundLevel / sourcePos.Z);
 
 	// construct a matrix to rotate around the up vector by the given angle
-	Matrix3D angleTransform( Vector3( 0.0f, 0.0f, 1.0f ), angle );
+	const Matrix3D angleTransform( Vector3( 0.0f, 0.0f, 1.0f ), angle );
 
 	// construct a matrix to rotate around the horizontal vector by the given angle
-	Matrix3D pitchTransform( Vector3( 1.0f, 0.0f, 0.0f ), pitch );
+	const Matrix3D pitchTransform( Vector3( 1.0f, 0.0f, 0.0f ), pitch );
 
 	// rotate camera position (pitch, then angle)
 #ifdef ALLOW_TEMPORARIES
@@ -296,16 +296,16 @@ void W3DView::buildCameraTransform( Matrix3D *transform )
 	pitchTransform.mulVector3(sourcePos);
 	angleTransform.mulVector3(sourcePos);
 #endif
-	sourcePos *= factor;
 
-	// translate to current XY position
-	sourcePos.X += pos.x;
-	sourcePos.Y += pos.y;
-	sourcePos.Z += groundLevel;
+	sourcePos *= heightScale;
 
+	// set look at position
 	targetPos.X += pos.x;
 	targetPos.Y += pos.y;
 	targetPos.Z += groundLevel;
+
+	// translate to world space
+	sourcePos += targetPos;
 
 	// do m_FXPitch adjustment.
 	//WST Real height = sourcePos.Z - targetPos.Z;
