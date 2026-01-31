@@ -40,7 +40,7 @@ class W3DDebugIcons : public RenderObjClass
 
 public:
 
-	W3DDebugIcons(void);
+	W3DDebugIcons(Int mapWidth, Int mapHeight);
 	W3DDebugIcons(const W3DDebugIcons & src);
 	W3DDebugIcons & operator = (const W3DDebugIcons &);
 	~W3DDebugIcons(void);
@@ -61,11 +61,11 @@ protected:
 	VertexMaterialClass	  	*m_vertexMaterialClass;
 
 protected:
-	static DebugIcon				*m_debugIcons;
-	static Int							m_numDebugIcons;
+	static DebugIcon        *m_debugIcons;
+	static Int              m_numDebugIcons;
+	static Int              m_maxDebugIcons;
 
 protected:
-	enum {MAX_ICONS = 100000};
 	void allocateIconsArray(void);
 	void compressIconsArray(void);
 
