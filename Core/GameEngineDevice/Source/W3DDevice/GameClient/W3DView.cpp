@@ -2070,23 +2070,6 @@ View::WorldToScreenReturn W3DView::worldToScreenTriReturn( const Coord3D *w, ICo
 }
 
 //-------------------------------------------------------------------------------------------------
-/** Using the W3D camera translate the screen coord to world coord */
-//-------------------------------------------------------------------------------------------------
-void W3DView::screenToWorld( const ICoord2D *s, Coord3D *w )
-{
-
-	// sanity
-	if( s == nullptr || w == nullptr )
-		return;
-
-	if( m_3DCamera )
-	{
-		DEBUG_CRASH(("implement me"));
-	}
-
-}
-
-//-------------------------------------------------------------------------------------------------
 /** all the drawables in the view, that fall within the 2D screen region
 	* will call the callback function.  The number of drawables that passed
 	* the test are returned.

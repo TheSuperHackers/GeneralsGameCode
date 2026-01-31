@@ -174,7 +174,6 @@ public:
 																				Bool (*callback)( Drawable *draw, void *userData ),
 																				void *userData ) {return 0;};
   virtual WorldToScreenReturn worldToScreenTriReturn( const Coord3D *w, ICoord2D *s ) { return WTS_INVALID; };	///< Transform world coordinate "w" into screen coordinate "s"
-	virtual void screenToWorld( const ICoord2D *s, Coord3D *w ) {};	///< Transform screen coordinate "s" into world coordinate "w"
 	virtual void screenToTerrain( const ICoord2D *screen, Coord3D *world ) {};  ///< transform screen coord to a point on the 3D terrain
 	virtual void screenToWorldAtZ( const ICoord2D *s, Coord3D *w, Real z ) {};  ///< transform screen point to world point at the specified world Z value
 	virtual void getScreenCornerWorldPointsAtZ( Coord3D *topLeft, Coord3D *topRight,
@@ -242,9 +241,7 @@ public:
 	virtual void setOkToAdjustHeight( Bool val ) { }						///< Set this to adjust camera height
 
 	virtual Real getTerrainHeightUnderCamera() { return 0.0f; }
-	virtual void setTerrainHeightUnderCamera(Real z) { }
 	virtual Real getCurrentHeightAboveGround() { return 0.0f; }
-	virtual void setCurrentHeightAboveGround(Real z) { }
 
 	virtual void getLocation ( ViewLocation *location ) {};								///< write the view's current location in to the view location object
 	virtual void setLocation ( const ViewLocation *location ){};								///< set the view's current location from to the view location object

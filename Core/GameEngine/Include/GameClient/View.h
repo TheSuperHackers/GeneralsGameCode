@@ -191,16 +191,13 @@ public:
 
 	// for debugging
 	virtual Real getTerrainHeightUnderCamera() { return m_terrainHeightUnderCamera; }
-	virtual void setTerrainHeightUnderCamera(Real z) { m_terrainHeightUnderCamera = z; }
 	virtual Real getCurrentHeightAboveGround() { return m_currentHeightAboveGround; }
-	virtual void setCurrentHeightAboveGround(Real z) { m_currentHeightAboveGround = z; }
 
 	virtual void setFieldOfView( Real angle ) { m_FOV = angle; }				///< Set the horizontal field of view angle
 	virtual Real getFieldOfView( void ) { return m_FOV; }								///< Get the horizontal field of view angle
 
   Bool worldToScreen( const Coord3D *w, ICoord2D *s ) { return worldToScreenTriReturn( w, s ) == WTS_INSIDE_FRUSTUM; }	///< Transform world coordinate "w" into screen coordinate "s"
   virtual WorldToScreenReturn worldToScreenTriReturn(const Coord3D *w, ICoord2D *s ) = 0; ///< Like worldToScreen(), but with a more informative return value
-	virtual void screenToWorld( const ICoord2D *s, Coord3D *w ) = 0;										///< Transform screen coordinate "s" into world coordinate "w"
 	virtual void screenToTerrain( const ICoord2D *screen, Coord3D *world ) = 0;  ///< transform screen coord to a point on the 3D terrain
 	virtual void screenToWorldAtZ( const ICoord2D *s, Coord3D *w, Real z ) = 0;  ///< transform screen point to world point at the specified world Z value
 
