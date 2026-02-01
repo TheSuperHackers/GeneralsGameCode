@@ -39,7 +39,6 @@ static char THIS_FILE[] = __FILE__;
 /////////////////////////////////////////////////////////////////////////////
 PlaySoundDialogClass::PlaySoundDialogClass(LPCTSTR filename, CWnd* pParent /*=nullptr*/)
 	:	Filename (filename),
-		SoundObj (nullptr),
 		CDialog(PlaySoundDialogClass::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(PlaySoundDialogClass)
@@ -100,7 +99,7 @@ void
 PlaySoundDialogClass::OnCancel (void)
 {
 	SoundObj->Stop ();
-	REF_PTR_RELEASE (SoundObj);
+	SoundObj.Clear();
 
 	CDialog::OnCancel ();
 	return ;
@@ -125,7 +124,7 @@ PlaySoundDialogClass::OnInitDialog (void)
 	//
 	//	Create the sound effect so we can play it
 	//
-	SoundObj = WWAudioClass::Get_Instance ()->Create_Sound_Effect (Filename);
+	SoundObj = RefCountPtr<AudibleSoundClass>::Create_NoAddRef(WWAudioClass::Get_Instance ()->Create_Sound_Effect (Filename));
 	if (SoundObj == nullptr) {
 		CString message;
 		message.Format ("Cannot find sound file: %s!", (LPCTSTR)Filename, MB_OK);
