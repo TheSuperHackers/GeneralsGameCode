@@ -120,6 +120,16 @@ UpdateSleepTime HealContain::update( void )
 		// if we're done healing, we need to remove us from the healing container
 		if( doneHealing == TRUE )
 		{
+			// TheSuperHackers @bugfix arcticdolphin 07/11/2025 Copy building rally so healed infantry follow it
+			#if !RETAIL_COMPATIBLE_CRC
+				ExitInterface* buildingExit = getObject()->getObjectExitInterface();
+				if (buildingExit && buildingExit != static_cast<ExitInterface*>(this))
+				{
+					const Coord3D* rp = buildingExit->getRallyPoint();
+					if (rp) { setRallyPoint(rp); }
+				}
+			#endif
+
 			ExitDoorType exitDoor = reserveDoorForExit(obj->getTemplate(), obj);
 			if (exitDoor != DOOR_NONE_AVAILABLE)
 				exitObjectViaDoor( obj, exitDoor );
