@@ -742,7 +742,8 @@ class ParticleSystemManager : public SubsystemInterface,
 public:
 
 	typedef std::list<ParticleSystem*> ParticleSystemList;
-	typedef std::list<ParticleSystem*>::iterator ParticleSystemListIt;
+	typedef ParticleSystemList::iterator ParticleSystemListIt;
+	typedef std::hash_map<ParticleSystemID, ParticleSystem *, rts::hash<ParticleSystemID>, rts::equal_to<ParticleSystemID> > ParticleSystemIDMap;
 	typedef std::hash_map<AsciiString, ParticleSystemTemplate *, rts::hash<AsciiString>, rts::equal_to<AsciiString> > TemplateMap;
 
 	ParticleSystemManager( void );
@@ -831,6 +832,7 @@ protected:
 
 private:
 	TemplateMap m_templateMap;		///< a hash map of all particle system templates
+	ParticleSystemIDMap m_systemMap; ///< a hash map of all particle systems
 };
 
 /// The particle system manager singleton

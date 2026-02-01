@@ -2945,6 +2945,7 @@ void ParticleSystemManager::reset( void )
 		deleteInstance(m_allParticleSystemList.front());
 	}
 	DEBUG_ASSERTCRASH(m_particleSystemCount == 0, ("ParticleSystemManager::reset: m_particleSystemCount is %u, not 0", m_particleSystemCount));
+	DEBUG_ASSERTCRASH(m_systemMap.size() == 0, ("ParticleSystemManager::reset: m_systemMap size is %zu, not 0", m_systemMap.size()));
 
 	// sanity, our lists must be empty!!
 	for( Int i = 0; i < NUM_PARTICLE_PRIORITIES; ++i )
@@ -3040,21 +3041,15 @@ ParticleSystemID ParticleSystemManager::createAttachedParticleSystemID(
 ParticleSystem *ParticleSystemManager::findParticleSystem( ParticleSystemID id )
 {
 	if (id == INVALID_PARTICLE_SYSTEM_ID)
-		return nullptr;	// my, that was easy
+		return nullptr;
 
-	ParticleSystem *system = nullptr;
-
-	for( ParticleSystemListIt it = m_allParticleSystemList.begin(); it != m_allParticleSystemList.end(); ++it ) {
-		system = *it;
-		DEBUG_ASSERTCRASH(system != nullptr, ("ParticleSystemManager::findParticleSystem: ParticleSystem is null"));
-
-		if( system->getSystemID() == id ) {
-			return system;
-		}
+	ParticleSystemIDMap::const_iterator it = m_systemMap.find(id);
+	if (it != m_systemMap.end())
+	{
+		return it->second;
 	}
 
 	return nullptr;
-
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -3218,6 +3213,7 @@ void ParticleSystemManager::friend_addParticleSystem( ParticleSystem *particleSy
 {
 	DEBUG_ASSERTCRASH(particleSystemToAdd != nullptr, ("ParticleSystemManager::friend_addParticleSystem: ParticleSystem is null"));
 	m_allParticleSystemList.push_back(particleSystemToAdd);
+	m_systemMap[particleSystemToAdd->getSystemID()] = particleSystemToAdd;
 	++m_particleSystemCount;
 }
 
@@ -3228,6 +3224,7 @@ void ParticleSystemManager::friend_removeParticleSystem( ParticleSystem *particl
 {
 	ParticleSystemListIt it = std::find(m_allParticleSystemList.begin(), m_allParticleSystemList.end(), particleSystemToRemove);
 	if (it != m_allParticleSystemList.end()) {
+		m_systemMap.erase((*it)->getSystemID());
 		m_allParticleSystemList.erase(it);
 		--m_particleSystemCount;
 	} else {
