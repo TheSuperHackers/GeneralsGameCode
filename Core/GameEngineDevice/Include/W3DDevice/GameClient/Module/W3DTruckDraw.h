@@ -102,7 +102,7 @@ protected:
 
 	/// debris emitters for when tank is moving
 	enum { DustEffect, DirtEffect, PowerslideEffect };
-	ParticleSystem* m_truckEffects[3];
+	ParticleSystemID m_truckEffectIDs[3];
 
 	Real						m_frontWheelRotation;
 	Real						m_rearWheelRotation;

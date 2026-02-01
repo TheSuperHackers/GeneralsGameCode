@@ -89,7 +89,7 @@ W3DTankDraw::W3DTankDraw( Thing *thing, const ModuleData* moduleData )
 : W3DModelDraw( thing, moduleData )
 , m_prevRenderObj(nullptr)
 {
-	std::fill(m_treadDebris, m_treadDebris + ARRAY_SIZE(m_treadDebris), nullptr);
+	std::fill(m_treadDebrisIDs, m_treadDebrisIDs + ARRAY_SIZE(m_treadDebrisIDs), INVALID_PARTICLE_SYSTEM_ID);
 
 	for (Int i=0; i<MAX_TREADS_PER_TANK; i++)
 		m_treads[i].m_robj = nullptr;
@@ -107,14 +107,14 @@ W3DTankDraw::W3DTankDraw( Thing *thing, const ModuleData* moduleData )
 //-------------------------------------------------------------------------------------------------
 void W3DTankDraw::tossEmitters( void )
 {
-	for (size_t i = 0; i < ARRAY_SIZE(m_treadDebris); ++i)
+	for (size_t i = 0; i < ARRAY_SIZE(m_treadDebrisIDs); ++i)
 	{
-		if (m_treadDebris[i] != nullptr)
+		if (ParticleSystem *particleSys = TheParticleSystemManager->findParticleSystem(m_treadDebrisIDs[i]))
 		{
-			m_treadDebris[i]->attachToObject(nullptr);
-			m_treadDebris[i]->destroy();
-			m_treadDebris[i] = nullptr;
+			particleSys->attachToObject(nullptr);
+			particleSys->destroy();
 		}
+		m_treadDebrisIDs[i] = INVALID_PARTICLE_SYSTEM_ID;
 	}
 }
 
@@ -123,22 +123,23 @@ void W3DTankDraw::tossEmitters( void )
 void W3DTankDraw::createEmitters( void )
 {
 	const AsciiString *treadDebrisNames[2];
-	static_assert(ARRAY_SIZE(treadDebrisNames) == ARRAY_SIZE(m_treadDebris), "Array size must match");
+	static_assert(ARRAY_SIZE(treadDebrisNames) == ARRAY_SIZE(m_treadDebrisIDs), "Array size must match");
 	treadDebrisNames[0] = &getW3DTankDrawModuleData()->m_treadDebrisNameLeft;
 	treadDebrisNames[1] = &getW3DTankDrawModuleData()->m_treadDebrisNameRight;
 
-	for (size_t i = 0; i < ARRAY_SIZE(m_treadDebris); ++i)
+	for (size_t i = 0; i < ARRAY_SIZE(m_treadDebrisIDs); ++i)
 	{
-		if (m_treadDebris[i] == nullptr)
+		if (m_treadDebrisIDs[i] == INVALID_PARTICLE_SYSTEM_ID)
 		{
 			if (const ParticleSystemTemplate *sysTemplate = TheParticleSystemManager->findTemplate(*treadDebrisNames[i]))
 			{
-				m_treadDebris[i] = TheParticleSystemManager->createParticleSystem( sysTemplate );
-				m_treadDebris[i]->attachToDrawable(getDrawable());
+				ParticleSystem *particleSys = TheParticleSystemManager->createParticleSystem( sysTemplate );
+				particleSys->attachToDrawable(getDrawable());
 				// important: mark it as do-not-save, since we'll just re-create it when we reload.
-				m_treadDebris[i]->setSaveable(FALSE);
+				particleSys->setSaveable(FALSE);
 				// they come into being stopped.
-				m_treadDebris[i]->stop();
+				particleSys->stop();
+				m_treadDebrisIDs[i] = particleSys->getSystemID();
 			}
 		}
 	}
@@ -159,30 +160,16 @@ W3DTankDraw::~W3DTankDraw()
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 /**
- * Start creating debris from the tank treads
- */
-void W3DTankDraw::startMoveDebris( void )
-{
-	if (getDrawable()->isDrawableEffectivelyHidden())
-		return;
-	for (size_t i = 0; i < ARRAY_SIZE(m_treadDebris); ++i)
-	{
-		if (m_treadDebris[i] != nullptr)
-			m_treadDebris[i]->start();
-	}
-}
-
-//-------------------------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------------------------
-/**
  * Stop creating debris from the tank treads
  */
 void W3DTankDraw::stopMoveDebris( void )
 {
-	for (size_t i = 0; i < ARRAY_SIZE(m_treadDebris); ++i)
+	for (size_t i = 0; i < ARRAY_SIZE(m_treadDebrisIDs); ++i)
 	{
-		if (m_treadDebris[i] != nullptr)
-			m_treadDebris[i]->stop();
+		if (ParticleSystem *particleSys = TheParticleSystemManager->findParticleSystem(m_treadDebrisIDs[i]))
+		{
+			particleSys->stop();
+		}
 	}
 }
 
@@ -330,10 +317,7 @@ void W3DTankDraw::doDrawModule(const Matrix3D* transformMtx)
 	// if tank is moving, kick up dust and debris
 	Real velMag = vel->x*vel->x + vel->y*vel->y;		// only care about moving on the ground
 
-	if (velMag > DEBRIS_THRESHOLD && !getDrawable()->isDrawableEffectivelyHidden() && !getFullyObscuredByShroud())
-		startMoveDebris();
-	else
-		stopMoveDebris();
+	const Bool doStartMoveDebris = velMag > DEBRIS_THRESHOLD && !getDrawable()->isDrawableEffectivelyHidden() && !getFullyObscuredByShroud();
 
 	// kick debris higher the faster we move
 	Coord3D velMult;
@@ -349,10 +333,18 @@ void W3DTankDraw::doDrawModule(const Matrix3D* transformMtx)
 	if (velMult.z > 1.0f)
 		velMult.z = 1.0f;
 
-	for (size_t i = 0; i < ARRAY_SIZE(m_treadDebris); ++i)
+	for (size_t i = 0; i < ARRAY_SIZE(m_treadDebrisIDs); ++i)
 	{
-		m_treadDebris[i]->setVelocityMultiplier( &velMult );
-		m_treadDebris[i]->setBurstCountMultiplier( velMult.z );
+		if (ParticleSystem *particleSys = TheParticleSystemManager->findParticleSystem(m_treadDebrisIDs[i]))
+		{
+			if (doStartMoveDebris)
+				particleSys->start();
+			else
+				particleSys->stop();
+
+			particleSys->setVelocityMultiplier( &velMult );
+			particleSys->setBurstCountMultiplier( velMult.z );
+		}
 	}
 
 	//Update movement of treads
