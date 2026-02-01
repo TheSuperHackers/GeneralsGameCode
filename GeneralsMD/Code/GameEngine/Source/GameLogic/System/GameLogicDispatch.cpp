@@ -78,6 +78,7 @@
 #include "GameClient/GUICallbacks.h"
 #include "GameClient/InGameUI.h"
 #include "GameClient/KeyDefs.h"
+
 #include "GameClient/Mouse.h"
 #include "GameClient/ParticleSys.h"
 #include "GameClient/Shell.h"
@@ -86,6 +87,7 @@
 
 #include "GameNetwork/NetworkInterface.h"
 
+#include <rts/profile.h>
 
 
 
@@ -250,6 +252,19 @@ void GameLogic::clearGameData( Bool showScoreScreen )
 	}
 
 	setClearingGameData( TRUE );
+
+#ifdef TRACY_ENABLE
+	{
+		char msg[512];
+		int len = snprintf(msg, sizeof(msg), "GameEnd: %s", TheGlobalData->m_mapName.str());
+		if (len > 0)
+		{
+			if (len > (int)sizeof(msg) - 1)
+				len = (int)sizeof(msg) - 1;
+			TracyMessage(msg, (size_t)len);
+		}
+	}
+#endif
 
 //	m_background = TheWindowManager->winCreateLayout("Menus/BlankWindow.wnd");
 //	DEBUG_ASSERTCRASH(m_background,("We Couldn't Load Menus/BlankWindow.wnd"));

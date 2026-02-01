@@ -109,7 +109,8 @@
             "inherits": "win32",
             "displayName": "Windows 32bit Profile",
             "cacheVariables": {
-                "RTS_BUILD_OPTION_PROFILE": "ON"
+                "RTS_BUILD_OPTION_PROFILE": "ON",
+                "RTS_BUILD_OPTION_PROFILE_TRACY": "ON"
             }
         },
         {
@@ -143,7 +144,8 @@
             "inherits": "win32-vcpkg",
             "displayName": "Windows 32bit VCPKG Profile",
             "cacheVariables": {
-                "RTS_BUILD_OPTION_PROFILE": "ON"
+                "RTS_BUILD_OPTION_PROFILE": "ON",
+                "RTS_BUILD_OPTION_PROFILE_TRACY": "ON"
             }
         },
         {
