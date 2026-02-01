@@ -69,44 +69,33 @@
 //-----------------------------------------------------------------------------
 GameMessageDisposition HotKeyTranslator::translateGameMessage(const GameMessage *msg)
 {
-	GameMessageDisposition disp = KEEP_MESSAGE;
-	GameMessage::Type t = msg->getType();
-
-	if ( t == GameMessage::MSG_RAW_KEY_UP)
+	switch (msg->getType())
 	{
+	case GameMessage::MSG_RAW_KEY_DOWN:
+		if ((msg->getArgument(1)->integer & KEY_STATE_AUTOREPEAT) == 0)
+			return KEEP_MESSAGE;
 
-		//char key = msg->getArgument(0)->integer;
-		Int keyState = msg->getArgument(1)->integer;
+		FALLTHROUGH;
+	case GameMessage::MSG_RAW_KEY_UP:
+		if (msg->getArgument(1)->integer & (KEY_STATE_CONTROL | KEY_STATE_SHIFT | KEY_STATE_ALT))
+			return KEEP_MESSAGE;
 
-		// for our purposes here, we don't care to distinguish between right and left keys,
-		// so just fudge a little to simplify things.
-		Int newModState = 0;
-
-		if( keyState & KEY_STATE_CONTROL )
+		if (TheHotKeyManager)
 		{
-			newModState |= CTRL;
+			WideChar key = TheKeyboard->getPrintableKey((KeyDefType)msg->getArgument(0)->integer, 0);
+			UnicodeString uKey;
+			uKey.concat(key);
+			AsciiString aKey;
+			aKey.translate(uKey);
+
+			if (TheHotKeyManager->executeHotKey(aKey))
+				return DESTROY_MESSAGE;
 		}
 
-		if( keyState & KEY_STATE_SHIFT )
-		{
-			newModState |= SHIFT;
-		}
-
-		if( keyState & KEY_STATE_ALT )
-		{
-			newModState |= ALT;
-		}
-		if(newModState != 0)
-			return disp;
-		WideChar key = TheKeyboard->getPrintableKey((KeyDefType)msg->getArgument(0)->integer, 0);
-		UnicodeString uKey;
-		uKey.concat(key);
-		AsciiString aKey;
-		aKey.translate(uKey);
-		if(TheHotKeyManager && TheHotKeyManager->executeHotKey(aKey))
-			disp = DESTROY_MESSAGE;
+		return KEEP_MESSAGE;
+	default:
+		return KEEP_MESSAGE;
 	}
-	return disp;
 }
 
 //-----------------------------------------------------------------------------
