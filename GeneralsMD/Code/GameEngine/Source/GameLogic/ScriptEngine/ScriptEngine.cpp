@@ -7941,7 +7941,7 @@ void ScriptEngine::evaluateAndProgressAllSequentialScripts( void )
 			if (seqScript->m_framesToWait == 0 ||
 				(seqScript->m_framesToWait < 0 && ((ai && ai->isIdle()) || (aigroup && aigroup->isIdle())))) {
 
-				// We want to supress messages if we're repeatedly waiting for an event to occur, cause
+				// We want to suppress messages if we're repeatedly waiting for an event to occur, cause
 				// it KILLS our debug framerate.
 				Bool displayMessage = TRUE;
 

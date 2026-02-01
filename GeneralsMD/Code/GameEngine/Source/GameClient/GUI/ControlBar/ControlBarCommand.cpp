@@ -523,7 +523,7 @@ void ControlBar::resetContainData( void )
 }
 
 //-------------------------------------------------------------------------------------------------
-/** reset the build queue data we use to die queue entires to control */
+/** reset the build queue data we use to die queue entries to control */
 //-------------------------------------------------------------------------------------------------
 void ControlBar::resetBuildQueueData( void )
 {

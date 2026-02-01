@@ -145,7 +145,7 @@ public:
 
 protected:
 
-	// Virtual method since objects can be on bridges and need to calculate heigh above terrain differently.
+	// Virtual method since objects can be on bridges and need to calculate height above terrain differently.
 	virtual Real calculateHeightAboveTerrain(void) const;		// Calculates the actual height above terrain.  Doesn't use cache.
 
 	virtual Object *asObjectMeth() { return nullptr; }

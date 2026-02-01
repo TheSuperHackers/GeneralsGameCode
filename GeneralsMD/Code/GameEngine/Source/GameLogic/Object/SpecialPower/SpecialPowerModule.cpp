@@ -261,7 +261,7 @@ AsciiString SpecialPowerModule::getPowerName( void ) const
 }
 
 //-------------------------------------------------------------------------------------------------
-/** Is this module designed for the power identier template passed in? */
+/** Is this module designed for the power identifier template passed in? */
 //-------------------------------------------------------------------------------------------------
 Bool SpecialPowerModule::isModuleForPower( const SpecialPowerTemplate *specialPowerTemplate ) const
 {

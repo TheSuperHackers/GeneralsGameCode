@@ -39,7 +39,7 @@
 //	author:		Chris Huybregts
 //
 //	purpose:	Contains all the Command bar goodness in terms of how it looks
-//						For instrucitons on how to use, please see it's .h file
+//						For instructions on how to use, please see its .h file
 //
 //-----------------------------------------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////
@@ -740,7 +740,7 @@ void ControlBarScheme::update( void )
 }
 
 //
-// Loop through the propper lists and draw everything for the forground
+// Loop through the proper lists and draw everything for the foreground
 //-----------------------------------------------------------------------------
 void ControlBarScheme::drawForeground( Coord2D multi, ICoord2D offset )
 {

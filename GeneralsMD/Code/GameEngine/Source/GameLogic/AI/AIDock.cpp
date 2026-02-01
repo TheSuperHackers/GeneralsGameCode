@@ -198,7 +198,7 @@ StateReturnType AIDockApproachState::onEnter( void )
 	if (ai) {
 		ai->ignoreObstacle( nullptr );
 	}
-	// this behavior is an extention of basic MoveTo
+	// this behavior is an extension of basic MoveTo
 	return AIInternalMoveToState::onEnter();
 }
 
@@ -211,7 +211,7 @@ StateReturnType AIDockApproachState::update( void )
 	if (goalObject == nullptr)
 		return STATE_FAILURE;
 
-	// this behavior is an extention of basic MoveTo
+	// this behavior is an extension of basic MoveTo
 	return AIInternalMoveToState::update();
 }
 
@@ -234,7 +234,7 @@ void AIDockApproachState::onExit( StateExitType status )
 			dock->onApproachReached( getMachineOwner() );
 	}
 
-	// this behavior is an extention of basic MoveTo
+	// this behavior is an extension of basic MoveTo
 	AIInternalMoveToState::onExit( status );
 }
 
@@ -354,7 +354,7 @@ StateReturnType AIDockAdvancePositionState::onEnter( void )
 	if (ai) {
 		ai->ignoreObstacle( nullptr );
 	}
-	// this behavior is an extention of basic MoveTo
+	// this behavior is an extension of basic MoveTo
 	return AIInternalMoveToState::onEnter();
 }
 
@@ -367,7 +367,7 @@ StateReturnType AIDockAdvancePositionState::update( void )
 	if (goalObject == nullptr)
 		return STATE_FAILURE;
 
-	// this behavior is an extention of basic MoveTo
+	// this behavior is an extension of basic MoveTo
 	return AIInternalMoveToState::update();
 }
 
@@ -390,7 +390,7 @@ void AIDockAdvancePositionState::onExit( StateExitType status )
 			dock->onApproachReached( getMachineOwner() );
 	}
 
-	// this behavior is an extention of basic MoveTo
+	// this behavior is an extension of basic MoveTo
 	AIInternalMoveToState::onExit( status );
 }
 
@@ -432,7 +432,7 @@ StateReturnType AIDockMoveToEntryState::onEnter( void )
 
 	( (AIDockMachine*)getMachine() )->m_approachPosition = -1;
 
-	// this behavior is an extention of basic MoveTo
+	// this behavior is an extension of basic MoveTo
 	return AIInternalMoveToState::onEnter();
 }
 
@@ -443,7 +443,7 @@ StateReturnType AIDockMoveToEntryState::update( void )
 	if (getMachineGoalObject() == nullptr)
 		return STATE_FAILURE;
 
-	// this behavior is an extention of basic MoveTo
+	// this behavior is an extension of basic MoveTo
 	return AIInternalMoveToState::update();
 }
 
@@ -470,7 +470,7 @@ void AIDockMoveToEntryState::onExit( StateExitType status )
 		}
 	}
 
-	// this behavior is an extention of basic MoveTo
+	// this behavior is an extension of basic MoveTo
 	AIInternalMoveToState::onExit( status );
 }
 
@@ -514,7 +514,7 @@ StateReturnType AIDockMoveToDockState::onEnter( void )
 	// since we are moving inside the dock, disallow interruptions
 	getMachine()->lock("AIDockMoveToDockState::onEnter");
 
-	// this behavior is an extention of basic MoveTo
+	// this behavior is an extension of basic MoveTo
 	return AIInternalMoveToState::onEnter();
 }
 
@@ -531,7 +531,7 @@ StateReturnType AIDockMoveToDockState::update( void )
 	if( dock->isDockOpen() == FALSE )
 		return STATE_FAILURE;
 
-	// this behavior is an extention of basic MoveTo
+	// this behavior is an extension of basic MoveTo
 	return AIInternalMoveToState::update();
 }
 
@@ -559,7 +559,7 @@ void AIDockMoveToDockState::onExit( StateExitType status )
 	// unlock the machine
 	getMachine()->unlock();
 
-	// this behavior is an extention of basic MoveTo
+	// this behavior is an extension of basic MoveTo
 	AIInternalMoveToState::onExit( status );
 }
 
@@ -727,7 +727,7 @@ StateReturnType AIDockMoveToExitState::onEnter( void )
 		setAdjustsDestination(false);
 	}
 
-	// this behavior is an extention of basic MoveTo
+	// this behavior is an extension of basic MoveTo
 	return AIInternalMoveToState::onEnter();
 }
 
@@ -738,7 +738,7 @@ StateReturnType AIDockMoveToExitState::update( void )
 	if (getMachineGoalObject() == nullptr)
 		return STATE_FAILURE;
 
-	// this behavior is an extention of basic MoveTo
+	// this behavior is an extension of basic MoveTo
 	return AIInternalMoveToState::update();
 }
 
@@ -758,7 +758,7 @@ void AIDockMoveToExitState::onExit( StateExitType status )
 	// unlock the machine
 	getMachine()->unlock();
 
-	// this behavior is an extention of basic MoveTo
+	// this behavior is an extension of basic MoveTo
 	AIInternalMoveToState::onExit( status );
 }
 
@@ -794,7 +794,7 @@ StateReturnType AIDockMoveToRallyState::onEnter( void )
 	// get the rally point and set as our goal position
 	m_goalPosition = *goalObject->getObjectExitInterface()->getRallyPoint();
 
-	// this behavior is an extention of basic MoveTo
+	// this behavior is an extension of basic MoveTo
 	return AIInternalMoveToState::onEnter();
 }
 
@@ -803,7 +803,7 @@ StateReturnType AIDockMoveToRallyState::update( void )
 {
 	// This state is fine with the loss of the goal object after the move starts
 
-	// this behavior is an extention of basic MoveTo
+	// this behavior is an extension of basic MoveTo
 	return AIInternalMoveToState::update();
 }
 
@@ -812,7 +812,7 @@ void AIDockMoveToRallyState::onExit( StateExitType status )
 {
 	// This state is fine with the loss of the goal object after the move starts
 
-	// this behavior is an extention of basic MoveTo
+	// this behavior is an extension of basic MoveTo
 	AIInternalMoveToState::onExit( status );
 }
 

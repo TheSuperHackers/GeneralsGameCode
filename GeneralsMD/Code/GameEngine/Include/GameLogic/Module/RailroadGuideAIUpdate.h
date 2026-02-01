@@ -286,7 +286,7 @@ protected:
 	Bool m_isLocomotive; ///< Am I a locomotive,
 	Bool m_isLeadCarriage; ///< Am the carraige in front,
 	Int m_wantsToBeLeadCarriage; ///< Am the carraige in front,
-	Bool m_disembark; ///< If I wait at a station, I should also evacuate everybody when I get theres
+	Bool m_disembark; ///< If I wait at a station, I should also evacuate everybody when I get there
 	Bool m_inTunnel; ///< Am I in a tunnel, so I wil not snap to ground height, until the next waypoint,
 												//  i.e. do I provide the movement and scheduling AI for m_trailerID
 												//  And therefore for his and his and his..........

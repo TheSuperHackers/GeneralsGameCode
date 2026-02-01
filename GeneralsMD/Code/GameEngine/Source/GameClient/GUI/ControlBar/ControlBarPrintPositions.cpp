@@ -38,7 +38,7 @@
 //
 //	author:		Chris Huybregts
 //
-//	purpose:	Convience function for degayifying the whole squished control bar
+//	purpose:	Convenience function for degayifying the whole squished control bar
 //						process
 //
 //-----------------------------------------------------------------------------

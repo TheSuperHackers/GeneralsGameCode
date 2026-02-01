@@ -63,9 +63,9 @@ UnsignedInt WindowLayoutCurrentVersion = 2;
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 //
-// with this statis set to true, the window system will propogate mouse position
+// with this status set to true, the window system will propagate mouse position
 // messages to windows.  You may want to disable this if you feel the mouse position
-// messages are "spamming" your window and making a particular debuggin situation
+// messages are "spamming" your window and making a particular debugging situation
 // difficult.  Make sure you do enable this before you check in again tho because
 // it is necessary for any code that needs to look at objects or anything under
 // the radar cursor
@@ -234,7 +234,7 @@ void GameWindowManager::reset( void )
 }
 
 //-------------------------------------------------------------------------------------------------
-/** Update cycle for game widnow manager */
+/** Update cycle for game window manager */
 //-------------------------------------------------------------------------------------------------
 void GameWindowManager::update( void )
 {
@@ -1644,7 +1644,7 @@ GameWindow *GameWindowManager::gogoMessageBox(Int x, Int y, Int width, Int heigh
 	if( width > 0 && height > 0 )
 	{
 		ICoord2D temp;
-		//First grab the percent increase/decrease compaired to the default size
+		//First grab the percent increase/decrease compared to the default size
 		parent->winGetSize( &temp.x, &temp.y);
 		ratioX = (float)width / (float)temp.x;
 		ratioY = (float)height / (float)temp.y;
@@ -2399,7 +2399,7 @@ GameWindow *GameWindowManager::gogoGadgetComboBox( GameWindow *parent,
 	top = title ? (fontHeight + 1):0;
 	bottom = title ? (height - (fontHeight + 1)):height;
 
-	// intialize instData
+	// initialize instData
 	winInstData.init();
 
 	// size of button
@@ -2698,7 +2698,7 @@ GameWindow *GameWindowManager::gogoGadgetTextEntry( GameWindow *parent,
 //	memset( entryData->text, 0, ENTRY_TEXT_LEN );
 //	memset( entryData->constructText, 0, ENTRY_TEXT_LEN );
 
-	// initialize character positions, legths etc
+	// initialize character positions, lengths etc
 	if( entryData->text )
 		entryData->charPos = entryData->text->getTextLength();
 	else
@@ -2741,7 +2741,7 @@ GameWindow *GameWindowManager::gogoGadgetTextEntry( GameWindow *parent,
 		WinInstanceData boxInstData;
 		ListboxData lData;
 
-			// intialize instData
+			// initialize instData
 		boxInstData.init();
 
 		// define display region

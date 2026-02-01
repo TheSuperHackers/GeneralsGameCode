@@ -3782,7 +3782,7 @@ void Drawable::drawCaption( const IRegion2D *healthBarRegion )
 // ------------------------------------------------------------------------------------------------
 void Drawable::drawVeterancy( const IRegion2D *healthBarRegion )
 {
-	// get object from drawble
+	// get object from drawable
 	Object* obj = getObject();
 
 	if( obj->getExperienceTracker() == nullptr )

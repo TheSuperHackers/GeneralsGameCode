@@ -44,7 +44,7 @@ enum VictoryType CPP_11(: Int)
 
 /**
   * VictoryConditionsInterface class - maintains information about the game setup and
-	* the contents of its slot list hroughout the game.
+	* the contents of its slot list throughout the game.
 	*/
 class VictoryConditionsInterface : public SubsystemInterface
 {

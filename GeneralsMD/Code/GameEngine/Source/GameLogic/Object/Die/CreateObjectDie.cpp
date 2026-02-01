@@ -99,7 +99,7 @@ void CreateObjectDie::onDie( const DamageInfo * damageInfo )
 	if (!newObject)
 		return;
 
-	//If we're transferring previous health, we're transfering the last known
+	//If we're transferring previous health, we're transferring the last known
 	//health before we died. In the case of the sneak attack tunnel network, it
 	//is killed after the lifetime update expires.
 	if( data->m_transferPreviousHealth )
