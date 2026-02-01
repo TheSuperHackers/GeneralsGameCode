@@ -58,7 +58,8 @@
 #include "GameLogic/Module/PhysicsUpdate.h"
 #include "GameLogic/Module/ActiveBody.h"
 
-
+// TheSuperHackers @fix Mirelle 30/01/2026 Raised from 500.0f
+constexpr const Real ORBITAL_BEAM_Z_OFFSET = 3500.0f;
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -550,7 +551,7 @@ UpdateSleepTime ParticleUplinkCannonUpdate::update()
 
 			Coord3D orbitPosition;
 			orbitPosition.set( &m_currentTargetPosition );
-			orbitPosition.z += 500.0f;
+			orbitPosition.z += ORBITAL_BEAM_Z_OFFSET;
 
 			Real scorchRadius = 0.0f;
 			Real damageRadius = 0.0f;
@@ -918,7 +919,7 @@ void ParticleUplinkCannonUpdate::createGroundToOrbitLaser( UnsignedInt growthFra
 				{
 					Coord3D orbitPosition;
 					orbitPosition.set( &m_laserOriginPosition );
-					orbitPosition.z += 500.0f;
+					orbitPosition.z += ORBITAL_BEAM_Z_OFFSET;
 					update->initLaser( nullptr, &m_laserOriginPosition, &orbitPosition, growthFrames );
 				}
 			}
@@ -957,7 +958,7 @@ void ParticleUplinkCannonUpdate::createOrbitToTargetLaser( UnsignedInt growthFra
 				{
 					Coord3D orbitPosition;
 					orbitPosition.set( &m_initialTargetPosition );
-					orbitPosition.z += 500.0f;
+					orbitPosition.z += ORBITAL_BEAM_Z_OFFSET;
 					update->initLaser( nullptr, &orbitPosition, &m_initialTargetPosition, growthFrames );
 				}
 			}
