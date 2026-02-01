@@ -139,6 +139,10 @@ static const FieldParse audioSettingsFieldParseTable[] =
 // Singleton TheAudio /////////////////////////////////////////////////////////////////////////////
 AudioManager *TheAudio = nullptr;
 
+const char *const AudioManager::MuteAudioReasonNames[] =
+{
+	"MuteAudioReason_WindowFocus",
+};
 
 // AudioManager Device Independent functions //////////////////////////////////////////////////////
 AudioManager::AudioManager() :
@@ -152,6 +156,8 @@ AudioManager::AudioManager() :
 	m_hardwareAccel(FALSE),
 	m_musicPlayingFromCD(FALSE)
 {
+	static_assert(ARRAY_SIZE(AudioManager::MuteAudioReasonNames) == MuteAudioReason_Count, "Incorrect array size");
+
 	m_adjustedVolumes.clear();
 	m_audioRequests.clear();
 	m_listenerPosition.zero();
@@ -171,6 +177,7 @@ AudioManager::AudioManager() :
 	m_miscAudio = NEW MiscAudio;
 	m_silentAudioEvent = NEW AudioEventRTS;
 	m_savedValues = nullptr;
+	m_muteReasonBits = 0;
 	m_disallowSpeech = FALSE;
 }
 
@@ -1103,12 +1110,14 @@ void AudioManager::releaseAudioEventRTS( AudioEventRTS *&eventToRelease )
 }
 
 //-------------------------------------------------------------------------------------------------
-void AudioManager::loseFocus( void )
+void AudioManager::muteAudio( MuteAudioReason reason )
 {
+	m_muteReasonBits |= 1u << reason;
+
 	if (m_savedValues)
 		return;
 
-	// In this case, make all the audio go silent.
+	// Make all the audio go silent.
 	m_savedValues = NEW Real[NUM_VOLUME_TYPES];
 	m_savedValues[VOLUME_TYPE_MUSIC] = m_systemMusicVolume;
 	m_savedValues[VOLUME_TYPE_SOUND] = m_systemSoundVolume;
@@ -1120,12 +1129,14 @@ void AudioManager::loseFocus( void )
 }
 
 //-------------------------------------------------------------------------------------------------
-void AudioManager::regainFocus( void )
+void AudioManager::unmuteAudio( MuteAudioReason reason )
 {
-	if (!m_savedValues)
+	m_muteReasonBits &= ~(1u << reason);
+
+	if (m_muteReasonBits != 0 || !m_savedValues)
 		return;
 
-	// We got focus back. Restore the previous audio values.
+	// Restore the previous audio values.
 	setVolume(m_savedValues[VOLUME_TYPE_MUSIC], (AudioAffect) (AudioAffect_Music | AudioAffect_SystemSetting));
 	setVolume(m_savedValues[VOLUME_TYPE_SOUND], (AudioAffect) (AudioAffect_Sound | AudioAffect_SystemSetting));
 	setVolume(m_savedValues[VOLUME_TYPE_SOUND3D], (AudioAffect) (AudioAffect_Sound3D | AudioAffect_SystemSetting));

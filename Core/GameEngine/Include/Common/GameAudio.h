@@ -131,6 +131,17 @@ enum
 class AudioManager : public SubsystemInterface
 {
 	public:
+		typedef UnsignedInt MuteAudioReasonInt;
+
+		enum MuteAudioReason
+		{
+			MuteAudioReason_WindowFocus,
+
+			MuteAudioReason_Count
+		};
+
+		static const char *const MuteAudioReasonNames[];
+
 		AudioManager();
 		virtual ~AudioManager();
 #if defined(RTS_DEBUG)
@@ -149,9 +160,8 @@ class AudioManager : public SubsystemInterface
 		virtual void resumeAudio( AudioAffect which ) = 0;
 		virtual void pauseAmbient( Bool shouldPause ) = 0;
 
-		// for focus issues
-		virtual void loseFocus( void );
-		virtual void regainFocus( void );
+		void muteAudio( MuteAudioReason reason );
+		void unmuteAudio( MuteAudioReason reason );
 
 		// control for AudioEventsRTS
 		virtual AudioHandle addAudioEvent( const AudioEventRTS *eventToAdd );	///< Add an audio event (event must be declared in an INI file)
@@ -361,6 +371,7 @@ class AudioManager : public SubsystemInterface
 			NUM_VOLUME_TYPES
 		};
 		Real *m_savedValues;
+		MuteAudioReasonInt m_muteReasonBits;
 
 		// Group of 8
 		Bool m_speechOn						: 1;
