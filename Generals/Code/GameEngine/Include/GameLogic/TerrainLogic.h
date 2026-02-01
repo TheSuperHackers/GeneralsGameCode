@@ -265,7 +265,7 @@ public:
 	/// Return the closest waypoint on the labeled path
 	virtual Waypoint *getClosestWaypointOnPath( const Coord3D *pos, AsciiString label );
 
-	/// Return true if the waypoint path containint pWay is labeled with the label.
+	/// Return true if the waypoint path containing pWay is labeled with the label.
 	virtual Bool isPurposeOfPath( Waypoint *pWay, AsciiString label );
 
 	/// Return the trigger area with the given name
@@ -355,7 +355,7 @@ protected:
 	static WaterHandle m_gridWaterHandle;		///< water handle for the grid water (we only presently have one)
 
 	//
-	// we will force a limit of MAX_DYNAMIC_WATER as the max dynamically changable water
+	// we will force a limit of MAX_DYNAMIC_WATER as the max dynamically changeable water
 	// tables for a map.  We could use a list, but eh, this is fine and small anyway
 	//
 	enum { MAX_DYNAMIC_WATER = 64 };

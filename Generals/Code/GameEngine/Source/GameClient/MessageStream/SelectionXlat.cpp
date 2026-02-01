@@ -234,7 +234,7 @@ static Bool selectSingleDrawableWithoutSound( Drawable *draw )
 	// since we are single selecting a drawable, unselect everything else
 	deselectAll();
 
-	// do the drawble selection
+	// do the drawable selection
 	TheInGameUI->selectDrawable( draw );
 
 	Object *obj = draw->getObject();
@@ -363,7 +363,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 
 	if(	!TheInGameUI->getInputEnabled() )
 	{
-		//Keep the message so the other translaters (WindowXlat) can handle.
+		//Keep the message so the other translators (WindowXlat) can handle.
 		if( m_dragSelecting )
 		{
 			//Turn off drag select
@@ -1025,7 +1025,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 							Int numObjs = objlist.size();
 							if (numObjs > 0)
 							{
-								// if theres someone in the group, center the camera on them.
+								// if there's someone in the group, center the camera on them.
 								Drawable* drawable = objlist[numObjs - 1]->getDrawable();
 								TheTacticalView->lookAt( drawable->getPosition() );
 								performSelection = !TheInGameUI->areAllObjectsSelected( objlist );
@@ -1102,7 +1102,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 							Int numObjs = objlist.size();
 							if (numObjs > 0)
 							{
-								// if theres someone in the group, center the camera on them.
+								// if there's someone in the group, center the camera on them.
 								TheTacticalView->lookAt( objlist[numObjs-1]->getDrawable()->getPosition() );
 							}
 						}
@@ -1178,7 +1178,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 						Int numObjs = objlist.size();
 						if (numObjs > 0)
 						{
-							// if theres someone in the group, center the camera on them.
+							// if there's someone in the group, center the camera on them.
 							TheTacticalView->lookAt( objlist[ numObjs-1 ]->getDrawable()->getPosition() );
 						}
 					}

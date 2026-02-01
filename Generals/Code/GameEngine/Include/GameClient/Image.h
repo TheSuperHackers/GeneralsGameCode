@@ -68,7 +68,7 @@ MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( Image, "Image" );
 public:
 
 	Image( void );
-	// virtual desctructor defined by memory pool object
+	// virtual destructor defined by memory pool object
 
 	void setName( AsciiString name );							///< set image name
 	AsciiString getName( void ) const;									///< return name

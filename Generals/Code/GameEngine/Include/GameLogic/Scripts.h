@@ -838,7 +838,7 @@ extern const char* const TheObjectFlagsNames[];
 ConditionTemplates created in ScriptEngine::init.
 
 // SPECIAL NOTE ABOUT Skirmish Scripts: Please note that ALL Skirmish conditions should first pass a pSkirmishPlayerParm to
-// prevet the necessity of having to write additional scripts for other players / skirmish types later.
+// prevent the necessity of having to write additional scripts for other players / skirmish types later.
 */
 
 class Condition : public MemoryPoolObject  // This is the conditional class.

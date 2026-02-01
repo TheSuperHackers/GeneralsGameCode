@@ -294,7 +294,7 @@ UpdateSleepTime RebuildHoleBehavior::update( void )
 
 	}
 
-	// holes get auto-healed when they're sittin around
+	// holes get auto-healed when they're sitting around
 	BodyModuleInterface *body = hole->getBodyModule();
 	if( body->getHealth() < body->getMaxHealth() )
 	{

@@ -283,7 +283,7 @@ public:
 
 #ifdef DUMP_PERF_STATS
 	Bool m_dumpPerformanceStatistics;
-  Bool  m_dumpStatsAtInterval;///< should I automatically dum stats every in N frames
+  Bool  m_dumpStatsAtInterval;///< should I automatically dump stats every N frames
   Int   m_statsInterval;       ///< if so, how many is N?
 #endif
 

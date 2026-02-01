@@ -393,13 +393,13 @@ void TransitionDamageFX::onBodyDamageStateChange( const DamageInfo* damageInfo,
 					if( pSystem )
 					{
 
-						// get the what is the position we're going to playe the effect at
+						// get the what is the position we're going to played the effect at
 						pos = getLocalEffectPos( &modData->m_particleSystem[ newState ][ i ].locInfo, draw );
 
 						//
 						// set position on system given any bone position provided, the bone position is
 						// local to the object and that's what we want for the particle system ... the
-						// transormation into world space using the object position is taken care of in
+						// transformation into world space using the object position is taken care of in
 						// the particle system attachToObject method
 						//
 						pSystem->setPosition( &pos );

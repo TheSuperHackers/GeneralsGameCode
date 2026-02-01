@@ -529,7 +529,7 @@ TransitionGroup *GameWindowTransitionsHandler::getNewGroup( AsciiString name )
 	if(name.isEmpty())
 		return nullptr;
 
-	// test to see if we're trying to add an already exisitng group.
+	// test to see if we're trying to add an already existing group.
 	if(findGroup(name))
 	{
 		DEBUG_ASSERTCRASH(FALSE, ("GameWindowTransitionsHandler::getNewGroup - We already have a group %s", name.str()));

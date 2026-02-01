@@ -1094,7 +1094,7 @@ void GarrisonContain::loadGarrisonPoints( void )
 		Int conditionIndex;
 		Int count = 0;
 
-		// save the original paramters for the model condition
+		// save the original parameters for the model condition
 		Drawable* draw = structure->getDrawable();
 		const ModelConditionFlags originalFlags = draw->getModelConditionFlags();
 		ModelConditionFlags clearFlags;

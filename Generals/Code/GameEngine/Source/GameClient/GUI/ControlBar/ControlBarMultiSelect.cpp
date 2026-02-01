@@ -24,7 +24,7 @@
 
 // FILE: ControlBarMultiSelect.cpp ////////////////////////////////////////////////////////////////
 // Author: Colin Day, March 2002
-// Desc:   Context sensitive GUI for when you select mutiple objects.  What we do is show
+// Desc:   Context sensitive GUI for when you select multiple objects.  What we do is show
 //				 the commands that you can use between them all
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -262,7 +262,7 @@ void ControlBar::populateMultiSelect( void )
 			// add the common commands of this drawable to the common command set
 			addCommonCommands( draw, firstDrawable );
 
-			// not adding the first drawble anymore
+			// not adding the first drawable anymore
 			firstDrawable = FALSE;
 
 			//

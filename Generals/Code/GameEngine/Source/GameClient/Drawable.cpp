@@ -3266,7 +3266,7 @@ void Drawable::drawCaption( const IRegion2D *healthBarRegion )
 // ------------------------------------------------------------------------------------------------
 void Drawable::drawVeterancy( const IRegion2D *healthBarRegion )
 {
-	// get object from drawble
+	// get object from drawable
 	Object* obj = getObject();
 
 	if( obj->getExperienceTracker() == nullptr )
@@ -4040,7 +4040,7 @@ void Drawable::notifyDrawableDependencyCleared()
 //-------------------------------------------------------------------------------------------------
 void Drawable::setSelectable( Bool selectable )
 {
-	// unselct drawable if it is no longer selectable.
+	// unselect drawable if it is no longer selectable.
 	if( !selectable )
 		TheInGameUI->deselectDrawable( this );
 

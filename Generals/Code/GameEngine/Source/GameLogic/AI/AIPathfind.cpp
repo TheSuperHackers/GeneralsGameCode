@@ -717,7 +717,7 @@ inline Bool isReallyClose(const Coord3D& a, const Coord3D& b)
  * If 'allowBacktrack' is true, the entire path is considered.
  * If it is false, the point computed cannot be prior to previously returned non-backtracking points on this path.
  * Because the path "knows" the direction of travel, it will "lead" the given position a bit
- * to ensure the path is followed in the inteded direction.
+ * to ensure the path is followed in the intended direction.
  *
  * Note: The path cleanup does not take into account rolling terrain, so we can end up with
  * these situations:
@@ -1669,7 +1669,7 @@ PathfindCell *PathfindCell::putOnSortedOpenList( PathfindCell *list )
 		// insertion sort
 		PathfindCell *c, *lastCell = nullptr;
 #if RETAIL_COMPATIBLE_PATHFINDING
-		// TheSuperHackers @bugfix In the retail compatible pathfinding, on rare ocassions, we get stuck in an infinite loop
+		// TheSuperHackers @bugfix In the retail compatible pathfinding, on rare occasions, we get stuck in an infinite loop
 		// External code should pickup on the bad behaviour and cleanup properly, but we need to explicitly break out here
 		// The fixed pathfinding does not have this issue due to the proper cleanup of pathfindCells and their pathfindCellInfos
 		UnsignedInt cellCount = 0;
@@ -2493,7 +2493,7 @@ void PathfindZoneManager::reset(void)  ///< Called when the map is reset.
 
 /**
  * Calculate zones.  A zone is an area of the same terrain - clear, water or cliff.
- * The utility of zones is that if current location and destiontion are in the same zone,
+ * The utility of zones is that if current location and destination are in the same zone,
  * you can successfully pathfind.
  * If you are a multiple terrain vehicle, like amphibious transport, the lookup is a little more
  * complicated.

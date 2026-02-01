@@ -582,7 +582,7 @@ StateReturnType DozerActionDoActionState::update( void )
 					if( player )
 					{
 
-						// notification for build completeion
+						// notification for build completion
 						player->onStructureConstructionComplete( dozer, goalObject, dozerAI->getIsRebuild() );
 
 						//
@@ -602,10 +602,10 @@ StateReturnType DozerActionDoActionState::update( void )
 					// Creation is another valid and essential time to call this.  This building now Looks.
 					goalObject->handlePartitionCellMaintenance();
 
-					// this object how has influence in the controlling players' tech tree
+					// this object now has influence in the controlling players' tech tree
 					/// @todo need to write this
 
-					// do some UI stuff for the constrolling player
+					// do some UI stuff for the controlling player
 					if( dozer->isLocallyViewed() )
 					{
 
@@ -1068,7 +1068,7 @@ StateReturnType DozerPrimaryIdleState::update( void )
 	//
 	// These are to add into the IngameUI idle worker button thingy
 	// we don't want to add in if we're already in the list or if
-	// we're "Effectivly dead"
+	// we're "Effectively dead"
 	//
 	if( ai->isIdle() && !m_isMarkedAsIdle && !dozer->isEffectivelyDead())
 	{
@@ -2020,7 +2020,7 @@ void DozerAIUpdate::newTask( DozerTask task, Object *target )
 	m_task[ task ].m_targetObjectID = target->getID();
 	m_task[ task ].m_taskOrderFrame = TheGameLogic->getFrame();
 
-	// reset the dozer behavior so that it can re-evluate which task to continue working on
+	// reset the dozer behavior so that it can re-evaluate which task to continue working on
 	m_dozerMachine->resetToDefaultState();
 
 }

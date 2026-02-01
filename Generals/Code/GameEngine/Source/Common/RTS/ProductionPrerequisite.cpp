@@ -80,7 +80,7 @@ void ProductionPrerequisite::resolveNames()
 
 		//
 		// note that this will find the template at the "top most" level (not override
-		// sub-temlates), which is what we want ... we conceptually only have one
+		// sub-templates), which is what we want ... we conceptually only have one
 		// template for any given thing, it's only the *data* that is overridden
 		//
 		m_prereqUnits[i].unit = TheThingFactory->findTemplate(m_prereqUnits[i].name);	// might be null

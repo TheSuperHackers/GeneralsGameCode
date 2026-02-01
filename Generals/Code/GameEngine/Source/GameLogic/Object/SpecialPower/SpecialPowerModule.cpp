@@ -109,7 +109,7 @@ SpecialPowerModule::SpecialPowerModule( Thing *thing, const ModuleData *moduleDa
 	if( !getObject()->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
 	{
 		//A sharedNSync special only startPowerRecharges when first scienced or when executed,
-		//Since a new modue with same SPTemplates may construct at any time.
+		//Since a new module with same SPTemplates may construct at any time.
 		if ( getSpecialPowerTemplate()->isSharedNSync() == FALSE )
 			startPowerRecharge();
 	}
@@ -248,7 +248,7 @@ AsciiString SpecialPowerModule::getPowerName( void ) const
 }
 
 //-------------------------------------------------------------------------------------------------
-/** Is this module designed for the power identier template passed in? */
+/** Is this module designed for the power identifier template passed in? */
 //-------------------------------------------------------------------------------------------------
 Bool SpecialPowerModule::isModuleForPower( const SpecialPowerTemplate *specialPowerTemplate ) const
 {

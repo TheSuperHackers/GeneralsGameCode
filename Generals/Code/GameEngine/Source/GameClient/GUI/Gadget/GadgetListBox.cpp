@@ -178,7 +178,7 @@ static Int getListboxTopEntry( ListboxData *list )
 {
 	Int entry;
 
-	// determin which entry is at the top of the display area
+	// determine which entry is at the top of the display area
 	for( entry=0; ; entry++ )
 	{
 		if( list->listData[entry].listHeight > list->displayPos )
@@ -227,7 +227,7 @@ static void removeSelection( ListboxData *list, Int i )
 }
 
 // adjustDisplay ==============================================================
-/** Update Display List information inlcuding scrollbar */
+/** Update Display List information including scrollbar */
 //=============================================================================
 static void adjustDisplay( GameWindow *window, Int adjustment,
 													 Bool updateSlider )
@@ -236,7 +236,7 @@ static void adjustDisplay( GameWindow *window, Int adjustment,
 	SliderData *sData;
 	ListboxData *list = (ListboxData *)window->winGetUserData();
 
-	// determin which entry is at the top of the display area
+	// determine which entry is at the top of the display area
 	entry = getListboxTopEntry( list ) + adjustment;
 
 	if( entry < 0 )
@@ -466,7 +466,7 @@ static Int addEntry( UnicodeString *string, Int color, Int row, Int column, Game
 	Int rowsAdded = 0;
 
 	ListEntryRow *listRow = &list->listData[row];
-	// Here I've decided to just overright what's in the row, if that's not what we want, change it here
+	// Here I've decided to just overwrite what's in the row, if that's not what we want, change it here
 	// Check and see if we have allocated cells for that row yet, if not, allocate them
 	if(!listRow->cell)
 	{
@@ -1951,7 +1951,7 @@ WindowMsgHandledType GadgetListBoxSystem( GameWindow *window, UnsignedInt msg,
 						break;
 					if( cells[j].cellType == LISTBOX_TEXT )
 					{
-						// If we can delete the stuff that won't be showing up in the new listData struture
+						// If we can delete the stuff that won't be showing up in the new listData structure
 						if ( cells[j].data )
 						{
 							TheDisplayStringManager->freeDisplayString((DisplayString *) cells[j].data );
@@ -2532,7 +2532,7 @@ void GadgetListBoxSetListLength( GameWindow *listbox, Int newLength )
 			{
 				if( cells[j].cellType == LISTBOX_TEXT  && i >= newLength)
 				{
-					// If we can delete the stuff that won't be showing up in the new listData struture
+					// If we can delete the stuff that won't be showing up in the new listData structure
 					if ( cells[j].data )
 					{
 						TheDisplayStringManager->freeDisplayString((DisplayString *) cells[j].data );

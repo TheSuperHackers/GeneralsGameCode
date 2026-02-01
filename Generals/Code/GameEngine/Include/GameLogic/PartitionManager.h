@@ -1304,7 +1304,7 @@ public:
 	const PartitionCell *getCellAt(Int x, Int y) const;
 
 	/// A convenience function to reveal shroud at some location
-	// Queueing does not give you control of the timestamp to enforce the queue.  I own the delay, you don't.
+	// Queuing does not give you control of the timestamp to enforce the queue.  I own the delay, you don't.
 	void doShroudReveal( Real centerX, Real centerY, Real radius, PlayerMaskType playerMask);
 	void undoShroudReveal( Real centerX, Real centerY, Real radius, PlayerMaskType playerMask);
 	void queueUndoShroudReveal( Real centerX, Real centerY, Real radius, PlayerMaskType playerMask );

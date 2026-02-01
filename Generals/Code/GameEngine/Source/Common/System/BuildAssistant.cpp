@@ -204,7 +204,7 @@ void BuildAssistant::update( void )
 		{
 			Real previousConstructionPercent = obj->getConstructionPercent();
 
-			// do the constructoin
+			// do the construction
 			obj->setConstructionPercent( previousConstructionPercent - (100.0f / TOTAL_FRAMES_TO_SELL_OBJECT) );
 
 			//
@@ -925,7 +925,7 @@ LegalBuildCode BuildAssistant::isLocationLegalToBuild( const Coord3D *worldPos,
 		}
 	}
 
-	// if clear path is requestsed check to see if the builder object can get there
+	// if clear path is requested check to see if the builder object can get there
 	if( BitIsSet( options, CLEAR_PATH ) && builderObject )
 	{
 		AIUpdateInterface *ai = builderObject->getAIUpdateInterface();
@@ -1055,7 +1055,7 @@ void BuildAssistant::addBibs(const Coord3D *worldPos,
 	* actually used for the tiling is returned along with a pointer to the array
 	* of positions in the tile build info.
 	*
-	* REQUIRES: Note that the array at 'postions' must be large enough to hold 'maxTiles'
+	* REQUIRES: Note that the array at 'positions' must be large enough to hold 'maxTiles'
 	* entries of positions
 	*/
 //-------------------------------------------------------------------------------------------------
@@ -1573,8 +1573,8 @@ void BuildAssistant::sellObject( Object *obj )
 	}
 
 	// destroy any mines that are owned by this structure, right now.
-	// unfortunately, structures don't keep list of mines they own, so we must do
-	// this the hard way :-( [fortunately, this doens't happen very often, so this
+	// unfortunately, structures don't keep a list of mines they own, so we must do
+	// this the hard way :-( [fortunately, this doesn't happen very often, so this
 	// is probably an acceptable, if icky, solution.] (srj)
 	for (Object* mine = TheGameLogic->getFirstObject(); mine; mine = mine->getNextObject())
 	{

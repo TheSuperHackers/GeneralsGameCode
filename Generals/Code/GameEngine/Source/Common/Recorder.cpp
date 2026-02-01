@@ -483,7 +483,7 @@ void RecorderClass::stopPlayback() {
 }
 
 /**
- * Update function for recording a game. Basically all the pertinant logic commands for this frame are written out
+ * Update function for recording a game. Basically all the pertinent logic commands for this frame are written out
  * to a file.
  */
 void RecorderClass::updateRecord()
@@ -1667,7 +1667,7 @@ AsciiString RecorderClass::getReplayArchiveDir()
 }
 
 /**
- * returns the file extention for the replay files.
+ * returns the file extension for the replay files.
  */
 AsciiString RecorderClass::getReplayExtention() {
 	return AsciiString(replayExtention);

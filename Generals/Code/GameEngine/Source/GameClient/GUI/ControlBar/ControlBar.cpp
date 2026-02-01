@@ -1020,7 +1020,7 @@ ControlBar::~ControlBar( void )
 void ControlBarPopupDescriptionUpdateFunc( WindowLayout *layout, void *param );
 
 //-------------------------------------------------------------------------------------------------
-/** Initialzie the control bar, this is our interface to the context sinsitive GUI */
+/** Initialize the control bar, this is our interface to the context sensitive GUI */
 //-------------------------------------------------------------------------------------------------
 void ControlBar::init( void )
 {
@@ -1269,7 +1269,7 @@ void ControlBar::init( void )
 void ControlBar::reset( void )
 {
 	hideSpecialPowerShortcut();
-	// do not destroy the rally drawable, it will get destroyed with everythign else during a reset
+	// do not destroy the rally drawable, it will get destroyed with everything else during a reset
 	m_rallyPointDrawableID = INVALID_DRAWABLE_ID;
 	if(m_radarAttackGlowWindow)
 		m_radarAttackGlowWindow->winEnable(TRUE);
@@ -1617,7 +1617,7 @@ void ControlBar::onDrawableDeselected( Drawable *draw )
 
 	//
 	// always when becoming unselected should we remove any build placement icons because if
-	// we have some and are in the middle of a build process, it must obiously be over now
+	// we have some and are in the middle of a build process, it must obviously be over now
 	// because we are no longer selecting the dozer or worker
 	//
 	TheInGameUI->placeBuildAvailable( nullptr, nullptr );
@@ -1819,7 +1819,7 @@ void ControlBar::evaluateContextUI( void )
 	else if ( drawToEvaluateFor )// either we have exactly one drawable, or we have isolated one to evaluate for...
 	{
 
-		// get the first and only drawble in the selection list
+		// get the first and only drawable in the selection list
 		//Drawable *draw = selectedDrawables->front();
 
 		// sanity
@@ -2676,7 +2676,7 @@ void ControlBar::setPortraitByObject( Object *obj )
 // ------------------------------------------------------------------------------------------------
 void ControlBar::showRallyPoint(const Coord3D* loc)
 {
-	// if loc is null, destroy any rally point drawble we have shown
+	// if loc is null, destroy any rally point drawable we have shown
 	if (loc == nullptr)
 	{
 		// destroy rally point drawable if present
@@ -2689,7 +2689,7 @@ void ControlBar::showRallyPoint(const Coord3D* loc)
 
 	Drawable* marker = nullptr;
 
-	// create a rally point drawble if necessary
+	// create a rally point drawable if necessary
 	if (m_rallyPointDrawableID == INVALID_DRAWABLE_ID)
 	{
 		const ThingTemplate* ttn = TheThingFactory->findTemplate("RallyPointMarker");
@@ -2707,7 +2707,7 @@ void ControlBar::showRallyPoint(const Coord3D* loc)
 	// sanity
 	DEBUG_ASSERTCRASH(marker, ("showRallyPoint: No rally point marker found"));
 
-	// set the position of the rally point drawble to the position passed in
+	// set the position of the rally point drawable to the position passed in
 	marker->setPosition(loc);
 	marker->setOrientation(TheGlobalData->m_downwindAngle); // To blow down wind -- ML
 

@@ -659,7 +659,7 @@ void WorkerAIUpdate::newTask( DozerTask task, Object* target )
 	m_task[ task ].m_targetObjectID = target->getID();
 	m_task[ task ].m_taskOrderFrame = TheGameLogic->getFrame();
 
-	// reset the dozer behavior so that it can re-evluate which task to continue working on
+	// reset the dozer behavior so that it can re-evaluate which task to continue working on
 	m_dozerMachine->resetToDefaultState();
 
 	// reset the workermachine, if we've been acting like a supply truck

@@ -397,7 +397,7 @@ void RailroadBehavior::onCollide( Object *other, const Coord3D *loc, const Coord
 	delta.scale(dot);
 
 
-	// This is a special check so that it wont hurl infantry clear across the map!
+	// This is a special check so that it won't hurl infantry clear across the map!
 	if( ! ( victimIsInfantry && theirPhys->getVelocityMagnitude() > 5.0f ) )
 		theirPhys->addVelocityTo( &delta );
 
@@ -567,7 +567,7 @@ void RailroadBehavior::loadTrackData( void )
 	Real distFromTo = 0.0f;
 
 
-	//Let's start buliding our own track data from the waypoint data we find
+	//Let's start building our own track data from the waypoint data we find
 	TrackPointList* track = m_track->getWritablePointList();
 	TrackPoint trackPoint; // local workspace
 
@@ -754,7 +754,7 @@ UpdateSleepTime RailroadBehavior::update( void )
 														conductorPullInfo.trackDistance,
 														m_track->m_length);
 
-		//let the conductor pull "me" while reseting my info, then...
+		//let the conductor pull "me" while resetting my info, then...
 		updatePositionTrackDistance( &conductorPullInfo, &m_pullInfo);
 
 
@@ -1521,13 +1521,13 @@ void RailroadBehavior::xfer( Xfer *xfer )
 		//Bool m_isLocomotive; ///< Am I a locomotive,
 		xfer->xferBool( &m_isLocomotive );
 
-		//Bool m_isLeadCarriage; ///< Am the carraige in front,
+		//Bool m_isLeadCarriage; ///< Am the carriage in front,
 		xfer->xferBool( &m_isLeadCarriage );
 
-		//Int m_wantsToBeLeadCarriage; ///< Am the carraige in front,
+		//Int m_wantsToBeLeadCarriage; ///< Am the carriage in front,
 		xfer->xferInt( &m_wantsToBeLeadCarriage );
 
-		//Bool m_disembark; ///< If I wait at a station, I should also evacuate everybody when I get theres
+		//Bool m_disembark; ///< If I wait at a station, I should also evacuate everybody when I get there
 		xfer->xferBool( &m_disembark );
 
 		//Bool m_inTunnel; ///< Am I in a tunnel, so I wil not snap to ground height, until the next waypoint,

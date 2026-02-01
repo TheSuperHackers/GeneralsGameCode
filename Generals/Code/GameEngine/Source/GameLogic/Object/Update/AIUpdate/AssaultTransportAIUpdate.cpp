@@ -231,7 +231,7 @@ UpdateSleepTime AssaultTransportAIUpdate::update( void )
 					passenger->getAI()->setAllowedToChase( TRUE );
 				}
 
-				//Check if the passenger is wounded below threshhold (if so make sure we heal him before ordering him to fight!)
+				//Check if the passenger is wounded below threshold (if so make sure we heal him before ordering him to fight!)
 				if( isMemberWounded( passenger ) )
 				{
 					m_memberHealing[ m_currentMembers ] = TRUE;
@@ -334,7 +334,7 @@ UpdateSleepTime AssaultTransportAIUpdate::update( void )
 		{
 			m_framesRemaining = 45;
 
-			//Get centriod pos now that we know the number of fighting members.
+			//Get centroid pos now that we know the number of fighting members.
 			Real scale = 1.0f / (Real)fightingMembers;
 			fighterCentroidPos.scale( scale );
 

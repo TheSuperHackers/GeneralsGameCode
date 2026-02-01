@@ -568,7 +568,7 @@ const ModuleFactory::ModuleTemplate* ModuleFactory::findModuleTemplate(const Asc
 }
 
 //-------------------------------------------------------------------------------------------------
-/** Allocate a new acton class istance given the name */
+/** Allocate a new acton class instance given the name */
 //-------------------------------------------------------------------------------------------------
 Module *ModuleFactory::newModule( Thing *thing, const AsciiString& name, const ModuleData* moduleData, ModuleType type )
 {
