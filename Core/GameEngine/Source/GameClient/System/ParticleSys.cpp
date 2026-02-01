@@ -3454,16 +3454,17 @@ void ParticleSystemDebugDisplay( DebugDisplayInterface *dd, void *, FILE *fp )
 // ------------------------------------------------------------------------------------------------
 static Real angleBetween(const Coord2D *vecA, const Coord2D *vecB)
 {
-	if (!(vecA && vecA->length() && vecB && vecB->length())) {
-		return 0.0;
+	const Real lengthA = vecA->length();
+	const Real lengthB = vecB->length();
+
+	if (!(lengthA && lengthB)) {
+		return 0.0f;
 	}
 
-	Real lengthA = vecA->length();
-	Real lengthB = vecB->length();
 	Real dotProduct = (vecA->x * vecB->x + vecA->y * vecB->y);
 	Real cosTheta = dotProduct / (lengthA * lengthB);
 
-	// If the dotproduct is 0.0, then they are orthogonal
+	// If the dot product is 0.0, then they are orthogonal
 	if (dotProduct == 0.0f) {
 		if (vecB->x > 0) {
 			return PI;
