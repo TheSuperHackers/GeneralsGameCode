@@ -248,3 +248,8 @@ target_link_libraries(corei_ww3d2 INTERFACE
     core_wwlib
     core_wwmath
 )
+
+# Apply D3DXWrapper forced include for NO_D3DX builds
+if(MINGW AND DEFINED MINGW_D3DX_WRAPPER_INCLUDE)
+    target_compile_options(corei_ww3d2 INTERFACE ${MINGW_D3DX_WRAPPER_INCLUDE})
+endif()
