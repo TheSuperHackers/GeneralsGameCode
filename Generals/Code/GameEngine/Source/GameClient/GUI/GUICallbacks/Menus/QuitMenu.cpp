@@ -279,7 +279,7 @@ void HideQuitMenu( void )
 //-------------------------------------------------------------------------------------------------
 void ToggleQuitMenu()
 {
-	if (TheGameLogic->isIntroMoviePlaying() || TheGameLogic->isLoadingGame() ||TheScriptEngine->isGameEnding())
+	if (TheGameLogic->isIntroMoviePlaying() || TheGameLogic->isLoadingGame())
 		return;
 
 	// BGC- If we are currently in the disconnect screen, don't let the quit menu come up.
@@ -346,6 +346,7 @@ void ToggleQuitMenu()
 	{
 
 		TheMouse->setCursor( Mouse::ARROW );
+		TheMouse->setVisibility(true);
 
 		TheControlBar->hidePurchaseScience();
 		if ( TheGameLogic->isInMultiplayerGame()  || TheGameLogic->isInReplayGame() )
@@ -431,6 +432,7 @@ void ToggleQuitMenu()
 		HideDiplomacy();
 		HideInGameChat();
 		TheControlBar->hidePurchaseScience();
+		quitMenuLayout->bringForward();
 		isVisible = TRUE;
 	}
 
