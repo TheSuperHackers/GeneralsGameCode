@@ -1314,10 +1314,16 @@ void ParticleSystem::stop( void )
 // ------------------------------------------------------------------------------------------------
 void ParticleSystem::destroy( void )
 {
+	if (m_isDestroyed)
+	{
+		return;
+	}
+
 	m_isDestroyed = true;
 	if( m_slaveSystem )
 	{
 		m_slaveSystem->destroy();  // If we don't it will leak forever.  We are solely responsible for it.
+		m_slaveSystem = nullptr;
 	}
 }
 
