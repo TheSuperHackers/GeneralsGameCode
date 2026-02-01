@@ -390,7 +390,7 @@ void GameLogic::reset( void )
 	m_logicTimeScaleEnabledMemory = FALSE;
 	m_inputEnabledMemory = TRUE;
 	m_mouseVisibleMemory = TRUE;
-	setGamePaused(FALSE, FALSE, FALSE, FALSE);
+	setGamePaused(FALSE);
 	m_pauseFrame = 0;
 
 	setFPMode();
@@ -3609,7 +3609,7 @@ UnsignedInt GameLogic::getCRC( Int mode, AsciiString deepCRCFileName )
 void GameLogic::exitGame()
 {
 	// TheSuperHackers @fix The logic update must not be halted to process the game exit message.
-	setGamePaused(FALSE, TRUE, TRUE, FALSE);
+	setGamePaused(FALSE);
 	TheScriptEngine->forceUnfreezeTime();
 	TheScriptEngine->doUnfreezeTime();
 
@@ -3687,7 +3687,7 @@ void GameLogic::setGamePausedInFrame( UnsignedInt frame, Bool disableLogicTimeSc
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void GameLogic::setGamePaused( Bool paused, Bool pauseMusic, Bool pauseInput, Bool allowResumeAudio )
+void GameLogic::setGamePaused( Bool paused, Bool pauseMusic, Bool pauseInput )
 {
 	// We need to ignore an unpause called when we are unpaused or else:
 	// Mouse is hidden for some reason (script or something)
@@ -3703,8 +3703,8 @@ void GameLogic::setGamePaused( Bool paused, Bool pauseMusic, Bool pauseInput, Bo
 	// Set mouse the way it "was" <--- Was counting on right answer being set in Pause.
 
 	pauseGameLogic(paused);
-	pauseGameSound(paused, allowResumeAudio);
-	pauseGameMusic(paused && pauseMusic, allowResumeAudio);
+	pauseGameSound(paused);
+	pauseGameMusic(paused && pauseMusic);
 	pauseGameInput(paused && pauseInput);
 
 	updateDisplayBusyState();
@@ -3725,7 +3725,7 @@ void GameLogic::pauseGameLogic(Bool paused)
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void GameLogic::pauseGameSound(Bool paused, Bool allowResumeAudio)
+void GameLogic::pauseGameSound(Bool paused)
 {
 	if(m_pauseSound == paused)
 		return;
@@ -3744,7 +3744,7 @@ void GameLogic::pauseGameSound(Bool paused, Bool allowResumeAudio)
 			drawable = drawable->getNextDrawable();
 		}
 	}
-	else if (allowResumeAudio)
+	else
 	{
 		TheAudio->resumeAudio((AudioAffect)(AudioAffect_All & ~AudioAffect_Music));
 
@@ -3760,7 +3760,7 @@ void GameLogic::pauseGameSound(Bool paused, Bool allowResumeAudio)
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void GameLogic::pauseGameMusic(Bool paused, Bool allowResumeAudio)
+void GameLogic::pauseGameMusic(Bool paused)
 {
 	if(m_pauseMusic == paused)
 		return;
@@ -3771,7 +3771,7 @@ void GameLogic::pauseGameMusic(Bool paused, Bool allowResumeAudio)
 	{
 		TheAudio->pauseAudio(AudioAffect_Music);
 	}
-	else if (allowResumeAudio)
+	else
 	{
 		TheAudio->resumeAudio(AudioAffect_Music);
 	}

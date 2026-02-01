@@ -221,7 +221,7 @@ public:
 
 	void setGamePausedInFrame( UnsignedInt frame, Bool disableLogicTimeScale );
 	UnsignedInt getGamePauseFrame() const { return m_pauseFrame; }
-	void setGamePaused( Bool paused, Bool pauseMusic = TRUE, Bool pauseInput = TRUE, Bool allowResumeAudio = TRUE);
+	void setGamePaused( Bool paused, Bool pauseMusic = TRUE, Bool pauseInput = TRUE );
 	Bool isGamePaused( void );
 	Bool getInputEnabledMemory( void ) const { return m_inputEnabledMemory; }
 
@@ -273,8 +273,8 @@ private:
 	void updateDisplayBusyState();
 
 	void pauseGameLogic(Bool paused);
-	void pauseGameSound(Bool paused, Bool allowResumeAudio);
-	void pauseGameMusic(Bool paused, Bool allowResumeAudio);
+	void pauseGameSound(Bool paused);
+	void pauseGameMusic(Bool paused);
 	void pauseGameInput(Bool paused);
 
 	void pushSleepyUpdate(UpdateModulePtr u);
