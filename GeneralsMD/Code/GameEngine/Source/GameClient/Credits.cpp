@@ -50,6 +50,7 @@
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
+#include "Common/FramePacer.h"
 #include "Common/INI.h"
 #include "GameClient/Credits.h"
 #include "GameClient/DisplayStringManager.h"
@@ -123,7 +124,7 @@ CreditsManager::CreditsManager(void)
 	m_scrollRate = 1; // in pixels
 	m_scrollRatePerFrames = 1;
 	m_scrollDown = TRUE;	// if TRUE text will come from the top to the bottom if False, it will go from the bottom up
-	m_framesSinceStarted = 0;
+	m_scrollAccumulator = 0.0f;
 	m_titleColor = m_positionColor = m_normalColor = GameMakeColor(255,255,255,255);
 
 	m_currentStyle = CREDIT_STYLE_NORMAL;
@@ -148,7 +149,7 @@ void CreditsManager::init(void )
 {
 	m_isFinished = FALSE;
 	m_creditLineListIt = m_creditLineList.begin();
-	m_framesSinceStarted = 0;
+	m_scrollAccumulator = 0.0f;
 }
 
 void CreditsManager::load(void )
@@ -174,19 +175,22 @@ void CreditsManager::reset( void )
 	m_displayedCreditLineList.clear();
 	m_isFinished = FALSE;
 	m_creditLineListIt = m_creditLineList.begin();
-	m_framesSinceStarted = 0;
-
+	m_scrollAccumulator = 0.0f;
 }
 
 void CreditsManager::update( void )
 {
 	if(m_isFinished)
 		return;
-	m_framesSinceStarted++;
 
-	if(m_framesSinceStarted%m_scrollRatePerFrames != 0)
+	// TheSuperHackers @tweak bobtista Scroll timing uses frame delta time for frame-rate independence.
+	// Accumulate fractional pixels and move when we have at least 1 whole pixel.
+	const Real scrollSpeedPixelsPerSec = static_cast<Real>(m_scrollRate) / (m_scrollRatePerFrames * SECONDS_PER_LOGICFRAME_REAL);
+	m_scrollAccumulator += TheFramePacer->getUpdateTime() * scrollSpeedPixelsPerSec;
+	const Int pixelsToMove = static_cast<Int>(m_scrollAccumulator);
+	if (pixelsToMove < 1)
 		return;
-
+	m_scrollAccumulator -= static_cast<Real>(pixelsToMove);
 
 	Int y = 0;
 	Int yTest = 0;
@@ -200,7 +204,7 @@ void CreditsManager::update( void )
 	while (drawIt != m_displayedCreditLineList.end())
 	{
 		CreditsLine *cLine = *drawIt;
-		y = cLine->m_pos.y = cLine->m_pos.y + (m_scrollRate * directionMultiplier);
+		y = cLine->m_pos.y = cLine->m_pos.y + (pixelsToMove * directionMultiplier);
 		lastHeight = cLine->m_height;
 		yTest = y + ((lastHeight + CREDIT_SPACE_OFFSET) * offsetEndMultiplier);
 		if(((m_scrollDown && (yTest > end)) || (!m_scrollDown && (yTest < end))))
