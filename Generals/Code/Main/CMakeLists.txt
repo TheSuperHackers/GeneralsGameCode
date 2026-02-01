@@ -21,6 +21,7 @@ target_link_libraries(g_generals PRIVATE
     milesstub
     vfw32
     winmm
+    lib_imgui
 )
 
 # TODO Originally referred to build host and user, replace with git info perhaps?

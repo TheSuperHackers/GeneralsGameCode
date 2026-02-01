@@ -228,6 +228,7 @@ target_link_libraries(z_worldbuilder PRIVATE
     z_gameengine
     z_gameenginedevice
     zi_always
+    lib_imgui
 )
 
 if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")
