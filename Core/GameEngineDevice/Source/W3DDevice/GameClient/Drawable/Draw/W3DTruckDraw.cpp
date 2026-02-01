@@ -588,9 +588,6 @@ void W3DTruckDraw::doDrawModule(const Matrix3D* transformMtx)
 			if (speed>SIZE_CAP) {
 				speed = SIZE_CAP;
 			}
-			m_dustEffect->setSizeMultiplier(speed);
-		}
-		if (m_dirtEffect) {
 			if (wheelInfo && wheelInfo->m_framesAirborne>3) {
 				Real factor = 1 + wheelInfo->m_framesAirborne/16;
 				if (factor>2.0) factor = 2.0;
@@ -599,9 +596,7 @@ void W3DTruckDraw::doDrawModule(const Matrix3D* transformMtx)
 				m_landingSound.setObjectID(obj->getID());
 				TheAudio->addAudioEvent(&m_landingSound);
 			} else {
-				if (!accelerating || speed>2.0f) {
-					m_dirtEffect->stop();
-				}
+				m_dustEffect->setSizeMultiplier(speed);
 			}
 		}
 		if (m_powerslideEffect) {
@@ -613,7 +608,7 @@ void W3DTruckDraw::doDrawModule(const Matrix3D* transformMtx)
 			}
 		}
 		if (m_dirtEffect) {
-			if (!accelerating || speed>2.0f) {
+			if (!accelerating) {
 				m_dirtEffect->stop();
 			}
 		}
