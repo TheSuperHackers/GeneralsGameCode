@@ -106,7 +106,6 @@ public:
 	const RadarObject *friend_getNext( void ) const { return m_next; }
 
 	Bool isTemporarilyHidden() const;
-	static Bool isTemporarilyHidden(const Object* obj);
 
 protected:
 
@@ -259,12 +258,6 @@ protected:
 	RadarObject *m_localObjectList;				/** list of objects for the local player, sorted
 																					* in exactly the same priority as the regular
 																					* object list for all other objects */
-
-	// TheSuperHackers @bugfix xezon 22/11/2025 Now stores local heroes in a separate list,
-	// because they are treated with special icons but should otherwise work like all other
-	// radar objects. In retail version, the cached hero object data was able to dangle
-	// for a few frames and cause undefined behavior.
-	RadarObject *m_localHeroObjectList; ///< list of hero objects for the local player
 
 	Real m_terrainAverageZ;								///< average Z for terrain samples
 	Real m_waterAverageZ;									///< average Z for water samples

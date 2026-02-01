@@ -81,7 +81,6 @@ void Radar::deleteListResources( void )
 {
 	deleteList(&m_objectList);
 	deleteList(&m_localObjectList);
-	deleteList(&m_localHeroObjectList);
 
 #ifdef DEBUG_CRASHING
 	for( Object *obj = TheGameLogic->getFirstObject(); obj; obj = obj->getNextObject() )
@@ -115,14 +114,8 @@ RadarObject::~RadarObject( void )
 //-------------------------------------------------------------------------------------------------
 Bool RadarObject::isTemporarilyHidden() const
 {
-	return isTemporarilyHidden(m_object);
-}
+	Drawable* draw = m_object->getDrawable();
 
-//-------------------------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------------------------
-Bool RadarObject::isTemporarilyHidden(const Object* obj)
-{
-	Drawable* draw = obj->getDrawable();
 	if (draw == nullptr || draw->getStealthLook() == STEALTHLOOK_INVISIBLE || draw->isDrawableEffectivelyHidden())
 		return true;
 
@@ -192,7 +185,6 @@ Radar::Radar( void )
 	m_radarWindow = nullptr;
 	m_objectList = nullptr;
 	m_localObjectList = nullptr;
-	m_localHeroObjectList = nullptr;
 	std::fill(m_radarHidden, m_radarHidden + ARRAY_SIZE(m_radarHidden), false);
 	std::fill(m_radarForceOn, m_radarForceOn + ARRAY_SIZE(m_radarForceOn), false);
 	m_terrainAverageZ = 0.0f;
@@ -416,10 +408,7 @@ Bool Radar::addObject( Object *obj )
 	//
 	if( obj->isLocallyControlled() )
 	{
-		if ( obj->isHero() )
-			list = &m_localHeroObjectList;
-		else
-			list = &m_localObjectList;
+		list = &m_localObjectList;
 	}
 	else
 	{
@@ -483,8 +472,6 @@ Bool Radar::removeObject( Object *obj )
 	if( obj->friend_getRadarData() == nullptr )
 		return FALSE;
 
-	if( deleteFromList( obj, &m_localHeroObjectList ) == TRUE )
-		return TRUE;
 	if( deleteFromList( obj, &m_localObjectList ) == TRUE )
 		return TRUE;
 	else if( deleteFromList( obj, &m_objectList ) == TRUE )
@@ -718,14 +705,10 @@ Object *Radar::objectUnderRadarPixel( const ICoord2D *pixel )
 	// to the radar location
 	//
 
-	// search the local hero object list
-	obj = searchListForRadarLocationMatch( m_localHeroObjectList, &radar );
+	// search the local object list
+	obj = searchListForRadarLocationMatch( m_localObjectList, &radar );
 
-	// search the local object list if not found
-	if( obj == nullptr )
-		obj = searchListForRadarLocationMatch( m_localObjectList, &radar );
-
-	// search all other objects if still not found
+	// search all other objects if not found
 	if( obj == nullptr )
 		obj = searchListForRadarLocationMatch( m_objectList, &radar );
 
@@ -1365,7 +1348,6 @@ static void xferRadarObjectList( Xfer *xfer, RadarObject **head )
 	* Version Info:
 	* 1: Initial version
 	* 2: TheSuperHackers @tweak Serialize m_radarHidden, m_radarForceOn for each player
-	* 3: TheSuperHackers @tweak Serialize m_localHeroObjectList
 	*/
 // ------------------------------------------------------------------------------------------------
 void Radar::xfer( Xfer *xfer )
@@ -1375,7 +1357,7 @@ void Radar::xfer( Xfer *xfer )
 #if RETAIL_COMPATIBLE_XFER_SAVE
 	XferVersion currentVersion = 1;
 #else
-	XferVersion currentVersion = 3;
+	XferVersion currentVersion = 2;
 #endif
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
@@ -1405,65 +1387,11 @@ void Radar::xfer( Xfer *xfer )
 		xfer->xferUser(&m_radarForceOn, sizeof(m_radarForceOn));
 	}
 
-	if (version <= 2)
-	{
-		if (xfer->getXferMode() == XFER_SAVE)
-		{
-			// TheSuperHackers @info For legacy xfer compatibility.
-			// Transfer all local hero objects to local object list.
-			RadarObject **fromList = &m_localHeroObjectList;
-			RadarObject **toList = &m_localObjectList;
-			while (*fromList != nullptr)
-			{
-				RadarObject* nextObject = (*fromList)->friend_getNext();
-				(*fromList)->friend_setNext(nullptr);
-				linkRadarObject(*fromList, toList);
-				*fromList = nextObject;
-			}
-		}
-	}
-	else
-	{
-		xferRadarObjectList( xfer, &m_localHeroObjectList );
-	}
-
 	// save our local object list
 	xferRadarObjectList( xfer, &m_localObjectList );
 
 	// save the regular object list
 	xferRadarObjectList( xfer, &m_objectList );
-
-	if (version <= 2)
-	{
-		// TheSuperHackers @info For legacy xfer compatibility.
-		// Transfer hero local object(s) back to local hero object list.
-		// This needs to be done on both load and save.
-		RadarObject **fromList = &m_localObjectList;
-		RadarObject **toList = &m_localHeroObjectList;
-		RadarObject *currObject;
-		RadarObject *prevObject;
-		RadarObject *nextObject;
-		prevObject = nullptr;
-		for (currObject = *fromList; currObject != nullptr; currObject = nextObject)
-		{
-			nextObject = currObject->friend_getNext();
-			if (currObject->friend_getObject()->isHero())
-			{
-				if (prevObject != nullptr)
-				{
-					prevObject->friend_setNext(nextObject);
-				}
-				else
-				{
-					*fromList = nextObject;
-				}
-				currObject->friend_setNext(nullptr);
-				linkRadarObject(currObject, toList);
-				continue;
-			}
-			prevObject = currObject;
-		}
-	}
 
 	// save the radar event count and data
 	UnsignedShort eventCountVerify = MAX_RADAR_EVENTS;
