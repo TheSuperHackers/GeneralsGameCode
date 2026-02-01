@@ -98,13 +98,14 @@ void W3DTruckDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 W3DTruckDraw::W3DTruckDraw( Thing *thing, const ModuleData* moduleData ) : W3DModelDraw( thing, moduleData ),
-m_dirtEffect(nullptr), m_dustEffect(nullptr), m_powerslideEffect(nullptr), m_effectsInitialized(false),
-m_wasAirborne(false), m_isPowersliding(false),
+m_effectsInitialized(false), m_wasAirborne(false), m_isPowersliding(false),
 m_frontWheelRotation(0), m_rearWheelRotation(0), m_midFrontWheelRotation(0), m_midRearWheelRotation(0),
 m_frontRightTireBone(0), m_frontLeftTireBone(0), m_rearLeftTireBone(0),m_rearRightTireBone(0),
 m_midFrontRightTireBone(0), m_midFrontLeftTireBone(0), m_midRearLeftTireBone(0),m_midRearRightTireBone(0),
 m_midMidRightTireBone(0), m_midMidLeftTireBone(0), m_prevRenderObj(nullptr)
 {
+	std::fill(m_truckEffects, m_truckEffects + ARRAY_SIZE(m_truckEffects), nullptr);
+
 	const AudioEventRTS * event;
 	event = thing->getTemplate()->getPerUnitSound("TruckLandingSound");
 	if (event) {
@@ -127,23 +128,14 @@ W3DTruckDraw::~W3DTruckDraw()
 //-------------------------------------------------------------------------------------------------
 void W3DTruckDraw::tossEmitters()
 {
-	if (m_dustEffect)
+	for (size_t i = 0; i < ARRAY_SIZE(m_truckEffects); ++i)
 	{
-		m_dustEffect->attachToObject(nullptr);
-		m_dustEffect->destroy();
-		m_dustEffect = nullptr;
-	}
-	if (m_dirtEffect)
-	{
-		m_dirtEffect->attachToObject(nullptr);
-		m_dirtEffect->destroy();
-		m_dirtEffect = nullptr;
-	}
-	if (m_powerslideEffect)
-	{
-		m_powerslideEffect->attachToObject(nullptr);
-		m_powerslideEffect->destroy();
-		m_powerslideEffect = nullptr;
+		if (m_truckEffects[i] != nullptr)
+		{
+			m_truckEffects[i]->attachToObject(nullptr);
+			m_truckEffects[i]->destroy();
+			m_truckEffects[i] = nullptr;
+		}
 	}
 }
 
@@ -163,7 +155,6 @@ void W3DTruckDraw::setFullyObscuredByShroud(Bool fullyObscured)
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 /**
-
  * Start creating debris from the tank treads
  */
 void W3DTruckDraw::createEmitters( void )
@@ -172,57 +163,33 @@ void W3DTruckDraw::createEmitters( void )
 		return;
 	if (getW3DTruckDrawModuleData())
 	{
-		const ParticleSystemTemplate *sysTemplate;
+		const AsciiString *effectNames[3];
+		static_assert(ARRAY_SIZE(effectNames) == ARRAY_SIZE(m_truckEffects), "Array size must match");
+		effectNames[0] = &getW3DTruckDrawModuleData()->m_dustEffectName;
+		effectNames[1] = &getW3DTruckDrawModuleData()->m_dirtEffectName;
+		effectNames[2] = &getW3DTruckDrawModuleData()->m_powerslideEffectName;
 
-		if (!m_dustEffect) {
-
-			sysTemplate = TheParticleSystemManager->findTemplate(getW3DTruckDrawModuleData()->m_dustEffectName);
-			if (sysTemplate)
+		for (size_t i = 0; i < ARRAY_SIZE(m_truckEffects); ++i)
+		{
+			if (m_truckEffects[i] == nullptr)
 			{
-				m_dustEffect = TheParticleSystemManager->createParticleSystem( sysTemplate );
-				m_dustEffect->attachToObject(getDrawable()->getObject());
-				// important: mark it as do-not-save, since we'll just re-create it when we reload.
-				m_dustEffect->setSaveable(FALSE);
-			}	else {
-				if (!getW3DTruckDrawModuleData()->m_dustEffectName.isEmpty()) {
-					DEBUG_LOG(("*** ERROR - Missing particle system '%s' in thing '%s'",
-						getW3DTruckDrawModuleData()->m_dustEffectName.str(), getDrawable()->getObject()->getTemplate()->getName().str()));
+				if (const ParticleSystemTemplate *sysTemplate = TheParticleSystemManager->findTemplate(*effectNames[i]))
+				{
+					m_truckEffects[i] = TheParticleSystemManager->createParticleSystem( sysTemplate );
+					m_truckEffects[i]->attachToObject(getDrawable()->getObject());
+					// important: mark it as do-not-save, since we'll just re-create it when we reload.
+					m_truckEffects[i]->setSaveable(FALSE);
 				}
-			}
-
-		}
-		if (!m_dirtEffect) {
-			sysTemplate = TheParticleSystemManager->findTemplate(getW3DTruckDrawModuleData()->m_dirtEffectName);
-			if (sysTemplate)
-			{
-				m_dirtEffect = TheParticleSystemManager->createParticleSystem( sysTemplate );
-				m_dirtEffect->attachToObject(getDrawable()->getObject());
-				// important: mark it as do-not-save, since we'll just re-create it when we reload.
-				m_dirtEffect->setSaveable(FALSE);
-			}	else {
-				if (!getW3DTruckDrawModuleData()->m_dirtEffectName.isEmpty()) {
-					DEBUG_LOG(("*** ERROR - Missing particle system '%s' in thing '%s'",
-						getW3DTruckDrawModuleData()->m_dirtEffectName.str(), getDrawable()->getObject()->getTemplate()->getName().str()));
-				}
-			}
-		}
-		if (!m_powerslideEffect) {
-			sysTemplate = TheParticleSystemManager->findTemplate(getW3DTruckDrawModuleData()->m_powerslideEffectName);
-			if (sysTemplate)
-			{
-				m_powerslideEffect = TheParticleSystemManager->createParticleSystem( sysTemplate );
-				m_powerslideEffect->attachToObject(getDrawable()->getObject());
-				// important: mark it as do-not-save, since we'll just re-create it when we reload.
-				m_powerslideEffect->setSaveable(FALSE);
-			}	else {
-				if (!getW3DTruckDrawModuleData()->m_powerslideEffectName.isEmpty()) {
-					DEBUG_LOG(("*** ERROR - Missing particle system '%s' in thing '%s'",
-						getW3DTruckDrawModuleData()->m_powerslideEffectName.str(), getDrawable()->getObject()->getTemplate()->getName().str()));
+				else
+				{
+					if (!effectNames[i]->isEmpty()) {
+						DEBUG_LOG(("*** ERROR - Missing particle system '%s' in thing '%s'",
+							effectNames[i]->str(), getDrawable()->getObject()->getTemplate()->getName().str()));
+					}
 				}
 			}
 		}
 	}
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -239,24 +206,27 @@ void W3DTruckDraw::enableEmitters( Bool enable  )
 		createEmitters();
 		m_effectsInitialized=true;
 	}
-	if (m_dustEffect)
+
+	if (m_truckEffects[DustEffect])
 	{
 		if (enable)
-			m_dustEffect->start();
+			m_truckEffects[DustEffect]->start();
 		else
-			m_dustEffect->stop();
+			m_truckEffects[DustEffect]->stop();
 	}
-	if (m_dirtEffect)
+
+	if (m_truckEffects[DirtEffect])
 	{
 		if (enable)
-			m_dirtEffect->start();
+			m_truckEffects[DirtEffect]->start();
 		else
-			m_dirtEffect->stop();
+			m_truckEffects[DirtEffect]->stop();
 	}
-	if (m_powerslideEffect)
+
+	if (m_truckEffects[PowerslideEffect])
 	{
 		if (!enable)
-			m_powerslideEffect->stop();
+			m_truckEffects[PowerslideEffect]->stop();
 	}
 }
 //-------------------------------------------------------------------------------------------------
@@ -583,7 +553,7 @@ void W3DTruckDraw::doDrawModule(const Matrix3D* transformMtx)
 				accelerating = false;  // decelerating, actually.
 			}
 		}
-		if (m_dustEffect) {
+		if (m_truckEffects[DustEffect]) {
 			// Need more dust the faster we go.
 			if (speed>SIZE_CAP) {
 				speed = SIZE_CAP;
@@ -591,25 +561,25 @@ void W3DTruckDraw::doDrawModule(const Matrix3D* transformMtx)
 			if (wheelInfo && wheelInfo->m_framesAirborne>3) {
 				Real factor = 1 + wheelInfo->m_framesAirborne/16;
 				if (factor>2.0) factor = 2.0;
-				m_dustEffect->setSizeMultiplier(factor*SIZE_CAP);
-				m_dustEffect->trigger();
+				m_truckEffects[DustEffect]->setSizeMultiplier(factor*SIZE_CAP);
+				m_truckEffects[DustEffect]->trigger();
 				m_landingSound.setObjectID(obj->getID());
 				TheAudio->addAudioEvent(&m_landingSound);
 			} else {
-				m_dustEffect->setSizeMultiplier(speed);
+				m_truckEffects[DustEffect]->setSizeMultiplier(speed);
 			}
 		}
-		if (m_powerslideEffect) {
+		if (m_truckEffects[PowerslideEffect]) {
 			if (physics->getTurning() == TURN_NONE) {
-				m_powerslideEffect->stop();
+				m_truckEffects[PowerslideEffect]->stop();
 			}	else {
 				m_isPowersliding = true;
-				m_powerslideEffect->start();
+				m_truckEffects[PowerslideEffect]->start();
 			}
 		}
-		if (m_dirtEffect) {
+		if (m_truckEffects[DirtEffect]) {
 			if (!accelerating) {
-				m_dirtEffect->stop();
+				m_truckEffects[DirtEffect]->stop();
 			}
 		}
 	}

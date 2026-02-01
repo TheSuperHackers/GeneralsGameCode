@@ -74,9 +74,8 @@ protected:
 
 protected:
 
-	/// debris emitters for when tank is moving
-	ParticleSystem* m_treadDebrisLeft;
-	ParticleSystem* m_treadDebrisRight;
+	/// left and right debris emitters for when tank is moving
+	ParticleSystem* m_treadDebris[2];
 
 	RenderObjClass *m_prevRenderObj;
 

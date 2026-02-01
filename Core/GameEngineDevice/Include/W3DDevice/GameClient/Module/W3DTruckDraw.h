@@ -99,10 +99,10 @@ protected:
 	Bool						m_effectsInitialized;
 	Bool						m_wasAirborne;
 	Bool						m_isPowersliding;
+
 	/// debris emitters for when tank is moving
-	ParticleSystem* m_dustEffect;
-	ParticleSystem* m_dirtEffect;
-	ParticleSystem* m_powerslideEffect;
+	enum { DustEffect, DirtEffect, PowerslideEffect };
+	ParticleSystem* m_truckEffects[3];
 
 	Real						m_frontWheelRotation;
 	Real						m_rearWheelRotation;
