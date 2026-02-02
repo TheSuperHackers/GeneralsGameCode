@@ -1462,6 +1462,7 @@ void OpenContain::orderAllPassengersToHackInternet( CommandSourceType commandSou
 void OpenContain::processDamageToContained(Real percentDamage)
 {
 	const OpenContainModuleData *data = getOpenContainModuleData();
+	const bool killContained = percentDamage == 1.0f;
 
 #if RETAIL_COMPATIBLE_CRC
 
@@ -1485,7 +1486,7 @@ void OpenContain::processDamageToContained(Real percentDamage)
 			damageInfo.in.m_amount = damage;
 			object->attemptDamage( &damageInfo );
 
-			if( !object->isEffectivelyDead() && percentDamage == 1.0f )
+			if( !object->isEffectivelyDead() && killContained )
 				object->kill(); // in case we are carrying flame proof troops we have been asked to kill
 
 			// TheSuperHackers @info Calls to Object::attemptDamage and Object::kill will not remove
@@ -1532,6 +1533,14 @@ void OpenContain::processDamageToContained(Real percentDamage)
 
 		DEBUG_ASSERTCRASH( object, ("Contain list must not contain null element") );
 
+		// TheSuperHackers @bugfix Stubbjax 02/02/2026 If the parent container kills its occupants
+		// on death, then those occupants also kill their occupants, and so on.
+		if (killContained)
+		{
+			if (object->getContain())
+				object->getContain()->processDamageToContained(percentDamage);
+		}
+
 		// Calculate the damage to be inflicted on each unit.
 		Real damage = object->getBodyModule()->getMaxHealth() * percentDamage;
 
@@ -1542,7 +1551,7 @@ void OpenContain::processDamageToContained(Real percentDamage)
 		damageInfo.in.m_amount = damage;
 		object->attemptDamage( &damageInfo );
 
-		if( !object->isEffectivelyDead() && percentDamage == 1.0f )
+		if( !object->isEffectivelyDead() && killContained )
 			object->kill(); // in case we are carrying flame proof troops we have been asked to kill
 
 		if ( object->isEffectivelyDead() )
