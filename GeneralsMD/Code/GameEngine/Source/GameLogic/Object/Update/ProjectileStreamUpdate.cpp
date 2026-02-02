@@ -41,10 +41,7 @@
 //-------------------------------------------------------------------------------------------------
 ProjectileStreamUpdate::ProjectileStreamUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData )
 {
-	for( Int index = 0; index < MAX_PROJECTILE_STREAM; index++ )
-	{
-		m_projectileIDs[index] = INVALID_ID;
-	}
+	std::fill(m_projectileIDs, m_projectileIDs + ARRAY_SIZE(m_projectileIDs), INVALID_ID);
 
 	m_owningObject = INVALID_ID;
 	m_nextFreeIndex = 0;
