@@ -1114,7 +1114,10 @@ void AudioManager::muteAudio( MuteAudioReason reason )
 {
 	m_muteReasonBits |= 1u << reason;
 
-	if (m_savedValues)
+	DEBUG_LOG(("AudioManager::muteAudio(%s): m_muteReason=%u muted=%d",
+		MuteAudioReasonNames[reason], m_muteReasonBits, (int)(m_muteReasonBits != 0)));
+
+	if (m_muteReasonBits == 0 || m_savedValues)
 		return;
 
 	// Make all the audio go silent.
@@ -1132,6 +1135,9 @@ void AudioManager::muteAudio( MuteAudioReason reason )
 void AudioManager::unmuteAudio( MuteAudioReason reason )
 {
 	m_muteReasonBits &= ~(1u << reason);
+
+	DEBUG_LOG(("AudioManager::unmuteAudio(%s): m_muteReason=%u muted=%d",
+		MuteAudioReasonNames[reason], m_muteReasonBits, (int)(m_muteReasonBits != 0)));
 
 	if (m_muteReasonBits != 0 || !m_savedValues)
 		return;

@@ -133,7 +133,7 @@ class AudioManager : public SubsystemInterface
 	public:
 		typedef UnsignedInt MuteAudioReasonInt;
 
-		enum MuteAudioReason
+		enum MuteAudioReason CPP_11(: UnsignedInt)
 		{
 			MuteAudioReason_WindowFocus,
 
