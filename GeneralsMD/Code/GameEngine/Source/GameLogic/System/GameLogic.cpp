@@ -1754,32 +1754,39 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 
 	// reveal the map for the permanent observer
 	Player *observerPlayer = ThePlayerList->findPlayerWithNameKey(TheNameKeyGenerator->nameToKey("ReplayObserver"));
-	ThePartitionManager->revealMapForPlayerPermanently( observerPlayer->getPlayerIndex() );
-	DEBUG_LOG(("Reveal shroud for %ls whose index is %d", observerPlayer->getPlayerDisplayName().str(), observerPlayer->getPlayerIndex()));
 
-	if (TheGameInfo)
+	// TheSuperHackers @bugfix bobtista 01/02/2026 Skip shroud reveal when loading a save game
+	// because the shroud state is restored from the save file. Calling revealMapForPlayerPermanently
+	// again would add duplicate lookers and corrupt the shroud state.
+	if (!loadingSaveGame)
 	{
-		for (int i=0; i<MAX_SLOTS; ++i)
+		ThePartitionManager->revealMapForPlayerPermanently( observerPlayer->getPlayerIndex() );
+		DEBUG_LOG(("Reveal shroud for %ls whose index is %d", observerPlayer->getPlayerDisplayName().str(), observerPlayer->getPlayerIndex()));
+
+		if (TheGameInfo)
 		{
-			GameSlot *slot = TheGameInfo->getSlot(i);
-
-			if (!slot || !slot->isOccupied())
-				continue;
-
-			AsciiString playerName;
-			playerName.format("player%d", i);
-			Player *player = ThePlayerList->findPlayerWithNameKey(TheNameKeyGenerator->nameToKey(playerName));
-
-			if (slot->getPlayerTemplate() == PLAYERTEMPLATE_OBSERVER)
+			for (int i=0; i<MAX_SLOTS; ++i)
 			{
-				DEBUG_LOG(("Clearing shroud for observer %s in playerList slot %d", playerName.str(), player->getPlayerIndex()));
-				ThePartitionManager->revealMapForPlayerPermanently( player->getPlayerIndex() );
-			}
-			else
-			{
-				// remove shroud for the player in MP games
-				if (!TheMultiplayerSettings->isShroudInMultiplayer())
-					ThePartitionManager->revealMapForPlayer( player->getPlayerIndex() );
+				GameSlot *slot = TheGameInfo->getSlot(i);
+
+				if (!slot || !slot->isOccupied())
+					continue;
+
+				AsciiString playerName;
+				playerName.format("player%d", i);
+				Player *player = ThePlayerList->findPlayerWithNameKey(TheNameKeyGenerator->nameToKey(playerName));
+
+				if (slot->getPlayerTemplate() == PLAYERTEMPLATE_OBSERVER)
+				{
+					DEBUG_LOG(("Clearing shroud for observer %s in playerList slot %d", playerName.str(), player->getPlayerIndex()));
+					ThePartitionManager->revealMapForPlayerPermanently( player->getPlayerIndex() );
+				}
+				else
+				{
+					// remove shroud for the player in MP games
+					if (!TheMultiplayerSettings->isShroudInMultiplayer())
+						ThePartitionManager->revealMapForPlayer( player->getPlayerIndex() );
+				}
 			}
 		}
 	}
