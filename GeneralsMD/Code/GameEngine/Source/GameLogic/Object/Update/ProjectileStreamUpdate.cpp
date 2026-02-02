@@ -41,7 +41,6 @@
 //-------------------------------------------------------------------------------------------------
 ProjectileStreamUpdate::ProjectileStreamUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData )
 {
-	ObjectID m_projectileIDs[MAX_PROJECTILE_STREAM];
 	for( Int index = 0; index < MAX_PROJECTILE_STREAM; index++ )
 	{
 		m_projectileIDs[index] = INVALID_ID;
