@@ -141,6 +141,137 @@ public:
 
 
 /**
+ * LAN message class
+ */
+#pragma pack(push, 1)
+struct LANMessage
+{
+	enum Type				          ///< What kind of message are we?
+	{
+		// Locating everybody
+		MSG_REQUEST_LOCATIONS,	///< Hey, where is everybody?
+		MSG_GAME_ANNOUNCE,			///< Here I am, and here's my game info!
+		MSG_LOBBY_ANNOUNCE,			///< Hey, I'm in the lobby!
+
+		// Joining games
+		MSG_REQUEST_JOIN,				///< Let me in!  Let me in!
+		MSG_JOIN_ACCEPT,				///< Okay, you can join.
+		MSG_JOIN_DENY,					///< Go away!  We don't want any!
+
+		// Leaving games
+		MSG_REQUEST_GAME_LEAVE,	///< I want to leave the game
+		MSG_REQUEST_LOBBY_LEAVE,///< I'm leaving the lobby
+
+		// Game options, chat, etc
+		MSG_SET_ACCEPT,					///< I'm cool with everything as is.
+		MSG_MAP_AVAILABILITY,		///< I do (not) have the map.
+		MSG_CHAT,								///< Just spouting my mouth off.
+		MSG_GAME_START,					///< Hold on; we're starting!
+		MSG_GAME_START_TIMER,		///< The game will start in N seconds
+		MSG_GAME_OPTIONS,				///< Here's some info about the game.
+		MSG_INACTIVE,						///< I've alt-tabbed out.  Unaccept me cause I'm a poo-flinging monkey.
+
+		MSG_REQUEST_GAME_INFO,	///< For direct connect, get the game info from a specific IP Address
+	} messageType;
+
+	WideChar name[g_lanPlayerNameLength+1]; ///< My name, for convenience
+	char userName[g_lanLoginNameLength+1];	///< login name, for convenience
+	char hostName[g_lanHostNameLength+1];		///< machine name, for convenience
+
+	// No additional data is required for REQUEST_LOCATIONS, LOBBY_ANNOUNCE,
+	// REQUEST_LOBBY_LEAVE, GAME_START.
+	union
+	{
+		// StartTimer is sent with GAME_START_TIMER
+		struct
+		{
+			Int seconds;
+		} StartTimer;
+
+		// GameJoined is sent with REQUEST_GAME_LEAVE
+		struct
+		{
+			WideChar gameName[g_lanGameNameLength+1];
+		} GameToLeave;
+
+		// GameInfo if sent with GAME_ANNOUNCE
+		struct
+		{
+			WideChar gameName[g_lanGameNameLength+1];
+			Bool inProgress;
+			char options[m_lanMaxOptionsLength+1];
+			Bool isDirectConnect;
+		} GameInfo;
+
+		// PlayerInfo is sent with REQUEST_GAME_INFO for direct connect games.
+		struct
+		{
+			UnsignedInt ip;
+			WideChar playerName[g_lanPlayerNameLength+1];
+		} PlayerInfo;
+
+		// GameToJoin is sent with REQUEST_JOIN
+		struct
+		{
+			UnsignedInt gameIP;
+			UnsignedInt exeCRC;
+			UnsignedInt iniCRC;
+			char serial[g_maxSerialLength];
+		} GameToJoin;
+
+		// GameJoined is sent with JOIN_ACCEPT
+		struct
+		{
+			WideChar gameName[g_lanGameNameLength+1];
+			UnsignedInt gameIP;
+			UnsignedInt playerIP;
+			Int slotPosition;
+		} GameJoined;
+
+		// GameNotJoined is sent with JOIN_DENY
+		struct
+		{
+			WideChar gameName[g_lanGameNameLength+1];
+			UnsignedInt gameIP;
+			UnsignedInt playerIP;
+			LANAPIInterface::ReturnType reason;
+		} GameNotJoined;
+
+		// Accept is sent with SET_ACCEPT
+		struct
+		{
+			WideChar gameName[g_lanGameNameLength+1];
+			Bool isAccepted;
+		} Accept;
+
+		// Accept is sent with MAP_AVAILABILITY
+		struct
+		{
+			WideChar gameName[g_lanGameNameLength+1];
+			UnsignedInt mapCRC;	// to make sure we're talking about the same map
+			Bool hasMap;
+		} MapStatus;
+
+		// Chat is sent with CHAT
+		struct
+		{
+			WideChar gameName[g_lanGameNameLength+1];
+			LANAPIInterface::ChatType chatType;
+			WideChar message[g_lanMaxChatLength+1];
+		} Chat;
+
+		// GameOptions is sent with GAME_OPTIONS
+		struct
+		{
+			char options[m_lanMaxOptionsLength+1];
+		} GameOptions;
+
+	};
+};
+#pragma pack(pop)
+
+
+/**
  * The LANAPI class is used to instantiate a singleton which
  * implements the interface to all LAN broadcast communications.
  */
@@ -278,135 +409,3 @@ protected:
 	void handleInActive( LANMessage *msg, UnsignedInt senderIP );
 
 };
-
-
-
-/**
- * LAN message class
- */
-#pragma pack(push, 1)
-struct LANMessage
-{
-	enum Type				          ///< What kind of message are we?
-	{
-		// Locating everybody
-		MSG_REQUEST_LOCATIONS,	///< Hey, where is everybody?
-		MSG_GAME_ANNOUNCE,			///< Here I am, and here's my game info!
-		MSG_LOBBY_ANNOUNCE,			///< Hey, I'm in the lobby!
-
-		// Joining games
-		MSG_REQUEST_JOIN,				///< Let me in!  Let me in!
-		MSG_JOIN_ACCEPT,				///< Okay, you can join.
-		MSG_JOIN_DENY,					///< Go away!  We don't want any!
-
-		// Leaving games
-		MSG_REQUEST_GAME_LEAVE,	///< I want to leave the game
-		MSG_REQUEST_LOBBY_LEAVE,///< I'm leaving the lobby
-
-		// Game options, chat, etc
-		MSG_SET_ACCEPT,					///< I'm cool with everything as is.
-		MSG_MAP_AVAILABILITY,		///< I do (not) have the map.
-		MSG_CHAT,								///< Just spouting my mouth off.
-		MSG_GAME_START,					///< Hold on; we're starting!
-		MSG_GAME_START_TIMER,		///< The game will start in N seconds
-		MSG_GAME_OPTIONS,				///< Here's some info about the game.
-		MSG_INACTIVE,						///< I've alt-tabbed out.  Unaccept me cause I'm a poo-flinging monkey.
-
-		MSG_REQUEST_GAME_INFO,	///< For direct connect, get the game info from a specific IP Address
-	} messageType;
-
-	WideChar name[g_lanPlayerNameLength+1]; ///< My name, for convenience
-	char userName[g_lanLoginNameLength+1];	///< login name, for convenience
-	char hostName[g_lanHostNameLength+1];		///< machine name, for convenience
-
-	// No additional data is required for REQUEST_LOCATIONS, LOBBY_ANNOUNCE,
-	// REQUEST_LOBBY_LEAVE, GAME_START.
-	union
-	{
-		// StartTimer is sent with GAME_START_TIMER
-		struct
-		{
-			Int seconds;
-		} StartTimer;
-
-		// GameJoined is sent with REQUEST_GAME_LEAVE
-		struct
-		{
-			WideChar gameName[g_lanGameNameLength+1];
-		} GameToLeave;
-
-		// GameInfo if sent with GAME_ANNOUNCE
-		struct
-		{
-			WideChar gameName[g_lanGameNameLength+1];
-			Bool inProgress;
-			char options[m_lanMaxOptionsLength+1];
-			Bool isDirectConnect;
-		} GameInfo;
-
-		// PlayerInfo is sent with REQUEST_GAME_INFO for direct connect games.
-		struct
-		{
-			UnsignedInt ip;
-			WideChar playerName[g_lanPlayerNameLength+1];
-		} PlayerInfo;
-
-		// GameToJoin is sent with REQUEST_JOIN
-		struct
-		{
-			UnsignedInt gameIP;
-			UnsignedInt exeCRC;
-			UnsignedInt iniCRC;
-			char serial[g_maxSerialLength];
-		} GameToJoin;
-
-		// GameJoined is sent with JOIN_ACCEPT
-		struct
-		{
-			WideChar gameName[g_lanGameNameLength+1];
-			UnsignedInt gameIP;
-			UnsignedInt playerIP;
-			Int slotPosition;
-		} GameJoined;
-
-		// GameNotJoined is sent with JOIN_DENY
-		struct
-		{
-			WideChar gameName[g_lanGameNameLength+1];
-			UnsignedInt gameIP;
-			UnsignedInt playerIP;
-			LANAPIInterface::ReturnType reason;
-		} GameNotJoined;
-
-		// Accept is sent with SET_ACCEPT
-		struct
-		{
-			WideChar gameName[g_lanGameNameLength+1];
-			Bool isAccepted;
-		} Accept;
-
-		// Accept is sent with MAP_AVAILABILITY
-		struct
-		{
-			WideChar gameName[g_lanGameNameLength+1];
-			UnsignedInt mapCRC;	// to make sure we're talking about the same map
-			Bool hasMap;
-		} MapStatus;
-
-		// Chat is sent with CHAT
-		struct
-		{
-			WideChar gameName[g_lanGameNameLength+1];
-			LANAPIInterface::ChatType chatType;
-			WideChar message[g_lanMaxChatLength+1];
-		} Chat;
-
-		// GameOptions is sent with GAME_OPTIONS
-		struct
-		{
-			char options[m_lanMaxOptionsLength+1];
-		} GameOptions;
-
-	};
-};
-#pragma pack(pop)
