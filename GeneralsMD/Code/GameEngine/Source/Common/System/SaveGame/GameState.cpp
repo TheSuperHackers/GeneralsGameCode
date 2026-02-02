@@ -61,6 +61,7 @@
 #include "GameLogic/ScriptEngine.h"
 #include "GameLogic/SidesList.h"
 #include "GameLogic/TerrainLogic.h"
+#include "GameLogic/VictoryConditions.h"
 
 
 // PUBLIC DATA ////////////////////////////////////////////////////////////////////////////////////
@@ -327,6 +328,9 @@ void GameState::init()
 	addSnapshotBlock( "CHUNK_Recorder",							TheRecorder,							SNAPSHOT_SAVELOAD );
 	// TheSuperHackers @info bobtista 19/01/2026 TheAI state is included in CRC but was not saved
 	addSnapshotBlock( "CHUNK_AI",									TheAI,									SNAPSHOT_SAVELOAD );
+	// TheSuperHackers @bugfix bobtista 02/02/2026 VictoryConditions state needs to be saved to prevent
+	// re-triggering defeat events after checkpoint load
+	addSnapshotBlock( "CHUNK_VictoryConditions",				TheVictoryConditions,				SNAPSHOT_SAVELOAD );
 
 	// add all the snapshot objects to our list of data blocks for deep CRCs of logic
 	addSnapshotBlock( "CHUNK_TeamFactory",						TheTeamFactory,						SNAPSHOT_DEEPCRC_LOGICONLY );
