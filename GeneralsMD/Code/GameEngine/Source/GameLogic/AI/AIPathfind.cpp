@@ -49,6 +49,12 @@
 #include "GameLogic/PartitionManager.h"
 #include "GameLogic/TerrainLogic.h"
 #include "GameLogic/Weapon.h"
+#if RETAIL_COMPATIBLE_PATHFINDING
+#include "GameClient/InGameUI.h"
+#include "GameClient/GameText.h"
+#include "Common/GameAudio.h"
+#include "Common/MiscAudio.h"
+#endif
 
 #include "Common/UnitTimings.h" //Contains the DO_UNIT_TIMINGS define jba.
 
@@ -1120,6 +1126,11 @@ void PathfindCellInfo::forceCleanPathFindCellInfos()
 
 void Pathfinder::forceCleanCells()
 {
+	UnicodeString pathfinderFailoverMessage = TheGameText->FETCH_OR_SUBSTITUTE("GUI:PathfindingCrashPrevented", L"A pathfinding crash was prevented, now switching to the crash fixed pathfinding.");
+	TheInGameUI->message(pathfinderFailoverMessage);
+
+	TheAudio->addAudioEvent(&TheAudio->getMiscAudio()->m_allCheerSound);
+
 	PathfindCellInfo::forceCleanPathFindCellInfos();
 	m_openList = nullptr;
 	m_closedList = nullptr;
