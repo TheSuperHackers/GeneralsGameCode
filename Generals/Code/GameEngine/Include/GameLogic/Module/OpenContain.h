@@ -204,7 +204,7 @@ public:
 	// returns true iff there are objects currently waiting to enter.
 	virtual Bool hasObjectsWantingToEnterOrExit() const override;
 
-	virtual void processDamageToContained() override; ///< Do our % damage to units now.
+	virtual void processDamageToContained(Real percentDamage) override; ///< Do our % damage to units now.
 
 	virtual void enableLoadSounds( Bool enable ) override { m_loadSoundsEnabled = enable; }
 
