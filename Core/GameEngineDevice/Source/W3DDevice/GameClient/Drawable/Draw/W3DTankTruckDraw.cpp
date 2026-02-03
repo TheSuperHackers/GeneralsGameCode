@@ -147,7 +147,7 @@ m_prevRenderObj(nullptr)
 //-------------------------------------------------------------------------------------------------
 W3DTankTruckDraw::~W3DTankTruckDraw()
 {
-	tossEmitters();
+	tossWheelEmitters();
 
 	for (Int i=0; i<MAX_TREADS_PER_TANK; i++)
 		if (m_treads[i].m_robj)
@@ -156,9 +156,6 @@ W3DTankTruckDraw::~W3DTankTruckDraw()
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-/**
- * Stop creating debris from the tank treads
- */
 void W3DTankTruckDraw::stopMoveDebris( void )
 {
 	for (size_t i = 0; i < ARRAY_SIZE(m_treadDebrisIDs); ++i)
@@ -172,7 +169,7 @@ void W3DTankTruckDraw::stopMoveDebris( void )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void W3DTankTruckDraw::tossEmitters()
+void W3DTankTruckDraw::tossWheelEmitters()
 {
 	for (size_t i = 0; i < ARRAY_SIZE(m_truckEffectIDs); ++i)
 	{
@@ -191,19 +188,16 @@ void W3DTankTruckDraw::setFullyObscuredByShroud(Bool fullyObscured)
 	if (fullyObscured != getFullyObscuredByShroud())
 	{
 		if (fullyObscured)
-			tossEmitters();
+			tossWheelEmitters();
 		else
-			createEmitters();
+			createWheelEmitters();
 	}
 	W3DModelDraw::setFullyObscuredByShroud(fullyObscured);
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-/**
- * Start creating debris from the tank treads
- */
-void W3DTankTruckDraw::createEmitters( void )
+void W3DTankTruckDraw::createWheelEmitters( void )
 {
 	if (getDrawable()->isDrawableEffectivelyHidden())
 		return;
@@ -241,16 +235,13 @@ void W3DTankTruckDraw::createEmitters( void )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-/**
- * Stop creating debris from the tank treads
- */
-void W3DTankTruckDraw::enableEmitters( Bool enable  )
+void W3DTankTruckDraw::enableWheelEmitters( Bool enable )
 {
 	// don't check... if we are hidden the first time thru, then we'll never create the emitters.
 	// eg, if we are loading a game and the unit is in a tunnel, he'll never get emitteres even when he exits.
 	//if (!m_effectsInitialized)
 	{
-		createEmitters();
+		createWheelEmitters();
 		m_effectsInitialized=true;
 	}
 
@@ -349,7 +340,7 @@ void W3DTankTruckDraw::setHidden(Bool h)
 	W3DModelDraw::setHidden(h);
 	if (h)
 	{
-		enableEmitters(false);
+		enableWheelEmitters(false);
 #ifdef SHOW_TANK_DEBRIS
 		stopMoveDebris();
 #endif
@@ -573,7 +564,7 @@ void W3DTankTruckDraw::doDrawModule(const Matrix3D* transformMtx)
 	Bool wasPowersliding = m_isPowersliding;
 	m_isPowersliding = false;
 	if (physics->isMotive() && !obj->isSignificantlyAboveTerrain()) {
-		enableEmitters(true);
+		enableWheelEmitters(true);
 		Coord3D accel = *physics->getAcceleration();
 		accel.z = 0; // ignore gravitational force.
 		Bool accelerating = accel.length()>ACCEL_THRESHOLD;
@@ -615,7 +606,7 @@ void W3DTankTruckDraw::doDrawModule(const Matrix3D* transformMtx)
 		}
 	}
 	else
-		enableEmitters(false);
+		enableWheelEmitters(false);
 
 	m_wasAirborne = obj->isSignificantlyAboveTerrain();
 
@@ -740,7 +731,7 @@ void W3DTankTruckDraw::loadPostProcess( void )
 	// extend base class
 	W3DModelDraw::loadPostProcess();
 
-	// toss any existing ones (no need to re-create; we'll do that on demand)
-	tossEmitters();
+	// toss any existing wheel emitters (no need to re-create; we'll do that on demand)
+	tossWheelEmitters();
 
 }

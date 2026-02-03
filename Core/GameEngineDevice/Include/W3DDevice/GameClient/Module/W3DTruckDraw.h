@@ -133,8 +133,8 @@ protected:
 
 	RenderObjClass *m_prevRenderObj;
 
-	void createEmitters( void );					///< Create particle effects.
-	void tossEmitters( void );					///< Create particle effects.
-	void enableEmitters( Bool enable );						///< stop creating debris from the tank treads
+	void createWheelEmitters( void ); ///< Create particle effects for wheels.
+	void tossWheelEmitters( void ); ///< Destroy particle effects for wheels.
+	void enableWheelEmitters( Bool enable ); ///< Start or stop creating effects from the wheels.
 	void updateBones( void );
 };
