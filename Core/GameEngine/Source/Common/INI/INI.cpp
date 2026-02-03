@@ -470,14 +470,14 @@ void INI::readLine( void )
 	// sanity
 	DEBUG_ASSERTCRASH( m_readBuffer, ("readLine(), read buffer is null") );
 
+	char* p = m_buffer;
 	if (m_endOfFile)
 	{
-		*m_buffer = 0;
+		*p = 0;
 	}
 	else
 	{
 		// read up till the newline or semicolon character, or until out of space
-		char *p = m_buffer;
 		while (p != m_buffer+INI_MAX_CHARS_PER_LINE)
 		{
 			// test end of read buffer
@@ -529,7 +529,10 @@ void INI::readLine( void )
 
 	if (s_xfer)
 	{
-		s_xfer->xferUser( m_buffer, sizeof( char ) * strlen( m_buffer ) );
+		const size_t size = static_cast<size_t>(p - m_buffer);
+		DEBUG_ASSERTCRASH(size == strlen(m_buffer), ("Line size was expected to be %u, but is %u", size, strlen(m_buffer)));
+
+		s_xfer->xferUser( m_buffer, sizeof( char ) * size );
 		//DEBUG_LOG(("Xfer val is now 0x%8.8X in %s, line %s", ((XferCRC *)s_xfer)->getCRC(), m_filename.str(), m_buffer));
 	}
 }
