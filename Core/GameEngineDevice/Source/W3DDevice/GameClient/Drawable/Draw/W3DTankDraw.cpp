@@ -51,14 +51,20 @@
 
 class Matrix3D;
 
+// TheSuperHackers @info Is enabled by default and therefore compatible with the Retail INI setups.
+#define SHOW_DEFAULT_TANK_DEBRIS (1)
+
 //-------------------------------------------------------------------------------------------------
-W3DTankDrawModuleData::W3DTankDrawModuleData() :
-	m_treadDebrisNameLeft("TrackDebrisDirtLeft"),
-	m_treadDebrisNameRight("TrackDebrisDirtRight"),
-	m_treadAnimationRate(0.0f),
-	m_treadPivotSpeedFraction(0.6f),
-	m_treadDriveSpeedFraction(0.3f)
+W3DTankDrawModuleData::W3DTankDrawModuleData()
+	: m_treadAnimationRate(0.0f)
+	, m_treadPivotSpeedFraction(0.6f)
+	, m_treadDriveSpeedFraction(0.3f)
 {
+	if constexpr (SHOW_DEFAULT_TANK_DEBRIS)
+	{
+		m_treadDebrisNameLeft = "TrackDebrisDirtLeft"; // TheSuperHackers @todo Remove data particle names from code
+		m_treadDebrisNameRight = "TrackDebrisDirtRight";
+	}
 }
 
 //-------------------------------------------------------------------------------------------------

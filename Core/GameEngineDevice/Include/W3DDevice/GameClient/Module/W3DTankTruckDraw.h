@@ -39,6 +39,8 @@
 #include "WW3D2/part_emt.h"
 
 //-------------------------------------------------------------------------------------------------
+// TheSuperHackers @fix xezon 01/02/2026 The Tread Effects are now usable in W3DTankTruckDraw.
+//-------------------------------------------------------------------------------------------------
 class W3DTankTruckDrawModuleData : public W3DModelDrawModuleData
 {
 public:
@@ -138,6 +140,9 @@ protected:
 	Int m_treadCount;
 
 	RenderObjClass *m_prevRenderObj;
+
+	void createTreadEmitters( void ); ///< Create particle effects for treads.
+	void tossTreadEmitters( void ); ///< Destroy particle effects for treads.
 
 	void createWheelEmitters( void ); ///< Create particle effects for wheels.
 	void tossWheelEmitters( void ); ///< Destroy particle effects for wheels.
