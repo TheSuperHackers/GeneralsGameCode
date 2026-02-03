@@ -349,8 +349,8 @@ public:
 	virtual void stepView() {}
 	virtual void setGuardBandBias( const Coord2D *gb ) {}
 
-protected:
-	virtual void xfer( Xfer *xfer ) {}
+	// TheSuperHackers @bugfix bobtista 03/02/2026 Do not override View::xfer(). The base
+	// implementation must run to serialize valid view state for save file compatibility.
 };
 
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
