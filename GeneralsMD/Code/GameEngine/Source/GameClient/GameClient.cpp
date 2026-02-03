@@ -786,11 +786,16 @@ void GameClient::updateHeadless()
 	// TheSuperHackers @info helmutbuhler 03/05/2025
 	// When we play a replay back in headless mode, we want to skip the update of GameClient
 	// because it's not necessary for CRC checking.
-	// But we do reset the particles. The problem is that particles can be generated during
+	// But we do update the particles. The problem is that particles can be generated during
 	// GameLogic and are only cleaned up during rendering. If we don't clean this up here,
 	// the particles accumulate and slow things down a lot and can even cause a crash on
 	// longer replays.
-	TheParticleSystemManager->reset();
+	// TheSuperHackers @fix bobtista 02/02/2026 Use update() instead of reset() to avoid
+	// use-after-free crash. reset() deletes all particle systems immediately, but DrawModules
+	// (W3DTruckDraw, W3DTankDraw, etc.) hold raw pointers to particle systems. When those
+	// DrawModules are later destroyed during game shutdown, they crash accessing freed memory.
+	// update() only cleans up finished particle systems, leaving active ones intact.
+	TheParticleSystemManager->update();
 }
 
 /** -----------------------------------------------------------------------------------------------
