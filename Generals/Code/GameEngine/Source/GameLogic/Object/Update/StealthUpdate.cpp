@@ -202,6 +202,12 @@ Bool StealthUpdate::allowedToStealth() const
 		return false;
 	}
 
+	// TheSuperHackers @bugfix copilot 03/02/2026 Stealthed units lose stealth when driver is killed
+	if( self->isDisabledByType( DISABLED_UNMANNED ) )
+	{
+		return false;
+	}
+
 	return true;
 }
 
