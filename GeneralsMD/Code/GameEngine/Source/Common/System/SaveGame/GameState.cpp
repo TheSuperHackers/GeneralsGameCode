@@ -202,9 +202,8 @@ GameState::SnapshotBlock *GameState::findBlockInfoByToken( AsciiString token, Sn
 
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////
+// TheSuperHackers @tweak Use the user's default locale instead of the system default to match Windows regional settings.
+// This allows regional formats such as Europe (English) to use 24-hour and DD/MM/YYYY formats in-game.
 UnicodeString getUnicodeDateBuffer(SYSTEMTIME timeVal)
 {
 	// setup date buffer for local region date format
