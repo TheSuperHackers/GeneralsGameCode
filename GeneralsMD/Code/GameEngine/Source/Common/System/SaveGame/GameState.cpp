@@ -217,7 +217,7 @@ UnicodeString getUnicodeDateBuffer(SYSTEMTIME timeVal)
 		if (osvi.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS)
 		{
 			char dateBuffer[ DATE_BUFFER_SIZE ];
-			GetDateFormat( LOCALE_SYSTEM_DEFAULT,
+			GetDateFormat( LOCALE_USER_DEFAULT,
 										 DATE_SHORTDATE,
 										 &timeVal,
 										 nullptr,
@@ -227,7 +227,7 @@ UnicodeString getUnicodeDateBuffer(SYSTEMTIME timeVal)
 		}
 	}
 	wchar_t dateBuffer[ DATE_BUFFER_SIZE ];
-	GetDateFormatW( LOCALE_SYSTEM_DEFAULT,
+	GetDateFormatW( LOCALE_USER_DEFAULT,
 								 DATE_SHORTDATE,
 								 &timeVal,
 								 nullptr,
