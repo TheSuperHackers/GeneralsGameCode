@@ -290,9 +290,7 @@ void PopulateReplayFileListbox(GameWindow *listbox)
 			// name
 			UnicodeString replayNameToShow = createReplayName(asciistr);
 
-			UnicodeString displayTimeBuffer = getUnicodeTimeBuffer(header.timeVal);
-
-			//displayTimeBuffer.format( L"%ls", timeBuffer);
+			UnicodeString displayDateBuffer = getUnicodeDateBuffer(header.timeVal);
 
 			// version (no-op)
 
@@ -353,7 +351,7 @@ void PopulateReplayFileListbox(GameWindow *listbox)
 
 			const Int insertionIndex = GadgetListBoxAddEntryText(listbox, replayNameToShow, color, -1, 0);
 			DEBUG_ASSERTCRASH(insertionIndex >= 0, ("Expects valid index"));
-			GadgetListBoxAddEntryText(listbox, displayTimeBuffer, color, insertionIndex, 1);
+			GadgetListBoxAddEntryText(listbox, displayDateBuffer, color, insertionIndex, 1);
 			GadgetListBoxAddEntryText(listbox, header.versionString, color, insertionIndex, 2);
 			GadgetListBoxAddEntryText(listbox, mapStr, mapColor, insertionIndex, 3);
 
