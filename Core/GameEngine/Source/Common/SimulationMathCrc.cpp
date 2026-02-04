@@ -22,6 +22,7 @@
 #include "Common/XferCRC.h"
 #include "WWMath/matrix3d.h"
 #include "WWMath/wwmath.h"
+#include "GameLogic/FPUControl.h"
 
 #include <math.h>
 
@@ -60,9 +61,7 @@ UnsignedInt SimulationMathCrc::calculate()
     XferCRC xfer;
     xfer.open("SimulationMathCrc");
 
-    _fpreset();
-    // TheSuperHackers @info stephanmeesters 29/01/2026 Use the same rounding mode as used in the game. This affects vc6 only.
-    _controlfp(0x000A001F, _MCW_RC | _MCW_PC | _MCW_EM);
+	setFPMode();
 
     appendMatrixCrc(xfer);
 
