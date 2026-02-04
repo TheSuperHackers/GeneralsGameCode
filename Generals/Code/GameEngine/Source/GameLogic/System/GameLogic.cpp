@@ -392,6 +392,7 @@ void GameLogic::reset( void )
 	m_mouseVisibleMemory = TRUE;
 	setGamePaused(FALSE);
 	m_pauseFrame = 0;
+	TheAudio->stopAudio(AudioAffect_All);
 
 	setFPMode();
 
