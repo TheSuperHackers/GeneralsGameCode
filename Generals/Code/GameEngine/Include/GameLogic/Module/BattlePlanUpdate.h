@@ -150,6 +150,7 @@ public:
 	virtual void onObjectCreated();
 	virtual void onDelete();
 	virtual UpdateSleepTime update();
+	virtual void onCapture(Player* oldOwner, Player* newOwner);
 
 	virtual CommandOption getCommandOption() const;
 protected:
