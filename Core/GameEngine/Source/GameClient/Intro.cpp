@@ -24,8 +24,6 @@
 #include "GameClient/Display.h"
 #include "GameClient/GameWindowManager.h"
 
-#include "GameLogic/FPUControl.h"
-
 
 Intro::Intro()
 	: m_currentState(IntroState_Start)
@@ -42,11 +40,6 @@ Intro::Intro()
 		if (TheGlobalData->m_playIntro)
 			m_allowedStateFlags |= 1u << IntroState_SizzleMovieWait;
 		m_allowedStateFlags |= 1u << IntroState_SizzleMovie;
-	}
-
-	if (TheGameLODManager && !TheGameLODManager->didMemPass())
-	{
-		m_allowedStateFlags |= 1u << IntroState_LegalPage;
 	}
 }
 
@@ -73,7 +66,6 @@ void Intro::update()
 		case IntroState_EALogoMovie: doEALogoMovie(); break;
 		case IntroState_SizzleMovieWait: doAsyncWait(1000); break;
 		case IntroState_SizzleMovie: doSizzleMovie(); break;
-		case IntroState_LegalPage: doLegalPage(); break;
 		case IntroState_Done: doPostIntro(); break;
 		}
 	}
@@ -95,30 +87,6 @@ void Intro::doSizzleMovie()
 		TheDisplay->playMovie("Sizzle");
 	else
 		TheDisplay->playMovie("Sizzle640");
-}
-
-
-void Intro::doLegalPage()
-{
-	TheWritableGlobalData->m_breakTheMovie = FALSE;
-	WindowLayout *legal = TheWindowManager->winCreateLayout("Menus/LegalPage.wnd");
-	if (legal)
-	{
-		legal->hide(FALSE);
-		legal->bringForward();
-		Int beginTime = timeGetTime();
-		while (beginTime + 4000 > timeGetTime() )
-		{
-			TheWindowManager->update();
-			// redraw all views, update the GUI
-			TheDisplay->draw();
-			Sleep(100);
-		}
-		setFPMode();
-		legal->destroyWindows();
-		deleteInstance(legal);
-	}
-	TheWritableGlobalData->m_breakTheMovie = TRUE;
 }
 
 void Intro::doPostIntro()
