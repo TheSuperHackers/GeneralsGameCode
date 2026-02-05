@@ -2689,22 +2689,19 @@ static Bool computeHealthRegion( const Drawable *draw, IRegion2D& region )
 	if (!obj->getHealthBoxDimensions(healthBoxHeight, healthBoxWidth))
 		return FALSE;
 
-	// scale the health bars according to the zoom
-	Real zoom = TheTacticalView->getZoom();
-	//Real widthScale = 1.3f / zoom;
-	Real widthScale = 1.0f / zoom;
-	//Real heightScale = 0.8f / zoom;
-	Real heightScale = 1.0f;
+	// scale the health bars according to the zoom and resolution
+	Real zoomScale = 1.0f / TheTacticalView->getZoom();
 
-	healthBoxWidth *= widthScale;
-	healthBoxHeight *= heightScale;
+	healthBoxWidth *= zoomScale * TheInGameUI->getUnitInfoScaleFactor();
+	// TheSuperHackers @info For now we are integer scaling the health box height
+	healthBoxHeight *= floorf(TheDisplay->getHeightScale());
 
-	// do this so health bar doesn't get too skinny or fat after scaling
-	//healthBoxHeight = max(3.0f, healthBoxHeight);
-	healthBoxHeight = 3.0f;
+
+	// do this so health bar doesn't get too skinny after scaling
+	healthBoxHeight = max(defaultHealthBoxHeight, healthBoxHeight);
 
 	// figure out the final region for the health box
-	region.lo.x = screenCenter.x - healthBoxWidth * 0.45f;
+	region.lo.x = screenCenter.x - healthBoxWidth * 0.5f;
 	region.lo.y = screenCenter.y - healthBoxHeight * 0.5f;
 	region.hi.x = region.lo.x + healthBoxWidth;
 	region.hi.y = region.lo.y + healthBoxHeight;
@@ -2841,10 +2838,10 @@ void Drawable::drawEmoticon( const IRegion2D *healthBarRegion )
 		if( healthBarRegion && getIconInfo()->m_keepTillFrame[ ICON_EMOTICON ] >= now )
 		{
 			//Draw the emoticon.
-			Int barWidth = healthBarRegion->hi.x - healthBarRegion->lo.x;
+			Int barWidth = healthBarRegion->width();
 			//Int barHeight = healthBarRegion.hi.y - healthBarRegion.lo.y;
-			Int frameWidth = getIconInfo()->m_icon[ ICON_EMOTICON ]->getCurrentFrameWidth();
-			Int frameHeight = getIconInfo()->m_icon[ ICON_EMOTICON ]->getCurrentFrameHeight();
+			Int frameWidth = getIconInfo()->m_icon[ ICON_EMOTICON ]->getCurrentFrameWidth() * TheInGameUI->getUnitInfoScaleFactor();
+			Int frameHeight = getIconInfo()->m_icon[ ICON_EMOTICON ]->getCurrentFrameHeight() * TheInGameUI->getUnitInfoScaleFactor();
 
 #ifdef SCALE_ICONS_WITH_ZOOM_ML
 			// adjust the width to be a % of the health bar region size
@@ -2895,9 +2892,9 @@ void Drawable::drawAmmo( const IRegion2D *healthBarRegion )
 	Real scale = 1.0f;
 #endif
 
-	Int boxWidth  = REAL_TO_INT(s_emptyAmmo->getImageWidth() * scale);
-	Int boxHeight = REAL_TO_INT(s_emptyAmmo->getImageHeight() * scale);
-	const Int SPACING = 1;
+	Int boxWidth  = s_emptyAmmo->getImageWidth() * scale * TheInGameUI->getUnitInfoScaleFactor();
+	Int boxHeight = s_emptyAmmo->getImageHeight() * scale * TheInGameUI->getUnitInfoScaleFactor();
+	const Real SPACING = 1.0f * TheInGameUI->getUnitInfoScaleFactor();
 	//Int totalWidth = (boxWidth+SPACING)*numTotal;
 
 	ICoord2D screenCenter;
@@ -2962,9 +2959,9 @@ void Drawable::drawContained( const IRegion2D *healthBarRegion )
 #else
 	Real scale = 1.0f;
 #endif
-	Int boxWidth  = REAL_TO_INT(s_emptyContainer->getImageWidth() * scale);
-	Int boxHeight = REAL_TO_INT(s_emptyContainer->getImageHeight() * scale);
-	const Int SPACING = 1;
+	Int boxWidth  = s_emptyContainer->getImageWidth() * scale * TheInGameUI->getUnitInfoScaleFactor();
+	Int boxHeight = s_emptyContainer->getImageHeight() * scale * TheInGameUI->getUnitInfoScaleFactor();
+	const Real SPACING = 1.0f * TheInGameUI->getUnitInfoScaleFactor();
 	//Int totalWidth = (boxWidth+SPACING)*numTotal;
 
 	ICoord2D screenCenter;
@@ -3015,8 +3012,8 @@ void Drawable::drawBattlePlans( const IRegion2D *healthBarRegion )
 				getIconInfo()->m_icon[ ICON_BATTLEPLAN_BOMBARD ] = newInstance(Anim2D)( s_animationTemplates[ ICON_BATTLEPLAN_BOMBARD ], TheAnim2DCollection );
 			}
 			//Int barHeight = healthBarRegion.hi.y - healthBarRegion.lo.y;
-			Int frameWidth = getIconInfo()->m_icon[ ICON_BATTLEPLAN_BOMBARD ]->getCurrentFrameWidth();
-			Int frameHeight = getIconInfo()->m_icon[ ICON_BATTLEPLAN_BOMBARD ]->getCurrentFrameHeight();
+			Int frameWidth = getIconInfo()->m_icon[ ICON_BATTLEPLAN_BOMBARD ]->getCurrentFrameWidth() * TheInGameUI->getUnitInfoScaleFactor();
+			Int frameHeight = getIconInfo()->m_icon[ ICON_BATTLEPLAN_BOMBARD ]->getCurrentFrameHeight() * TheInGameUI->getUnitInfoScaleFactor();
 
 #ifdef SCALE_ICONS_WITH_ZOOM_ML
 			// adjust the width to be a % of the health bar region size
@@ -3043,8 +3040,8 @@ void Drawable::drawBattlePlans( const IRegion2D *healthBarRegion )
 				getIconInfo()->m_icon[ ICON_BATTLEPLAN_HOLDTHELINE ] = newInstance(Anim2D)( s_animationTemplates[ ICON_BATTLEPLAN_HOLDTHELINE ], TheAnim2DCollection );
 			}
 			// draw the icon
-			Int frameWidth = getIconInfo()->m_icon[ ICON_BATTLEPLAN_HOLDTHELINE ]->getCurrentFrameWidth();
-			Int frameHeight = getIconInfo()->m_icon[ ICON_BATTLEPLAN_HOLDTHELINE ]->getCurrentFrameHeight();
+			Int frameWidth = getIconInfo()->m_icon[ ICON_BATTLEPLAN_HOLDTHELINE ]->getCurrentFrameWidth() * TheInGameUI->getUnitInfoScaleFactor();
+			Int frameHeight = getIconInfo()->m_icon[ ICON_BATTLEPLAN_HOLDTHELINE ]->getCurrentFrameHeight() * TheInGameUI->getUnitInfoScaleFactor();
 
 #ifdef SCALE_ICONS_WITH_ZOOM_ML
 			// adjust the width to be a % of the health bar region size
@@ -3071,8 +3068,8 @@ void Drawable::drawBattlePlans( const IRegion2D *healthBarRegion )
 				getIconInfo()->m_icon[ ICON_BATTLEPLAN_SEARCHANDDESTROY ] = newInstance(Anim2D)( s_animationTemplates[ ICON_BATTLEPLAN_SEARCHANDDESTROY ], TheAnim2DCollection );
 			}
 			// draw the icon
-			Int frameWidth = getIconInfo()->m_icon[ ICON_BATTLEPLAN_SEARCHANDDESTROY ]->getCurrentFrameWidth();
-			Int frameHeight = getIconInfo()->m_icon[ ICON_BATTLEPLAN_SEARCHANDDESTROY ]->getCurrentFrameHeight();
+			Int frameWidth = getIconInfo()->m_icon[ ICON_BATTLEPLAN_SEARCHANDDESTROY ]->getCurrentFrameWidth() * TheInGameUI->getUnitInfoScaleFactor();
+			Int frameHeight = getIconInfo()->m_icon[ ICON_BATTLEPLAN_SEARCHANDDESTROY ]->getCurrentFrameHeight() * TheInGameUI->getUnitInfoScaleFactor();
 
 #ifdef SCALE_ICONS_WITH_ZOOM_ML
 			// adjust the width to be a % of the health bar region size
@@ -3283,10 +3280,10 @@ void Drawable::drawHealing(const IRegion2D* healthBarRegion)
 				// we are going to draw the healing icon relative to the size of the health bar region
 				// since that region takes into account hit point size and zoom factor of the camera too
 				//
-				Int barWidth = healthBarRegion->hi.x - healthBarRegion->lo.x;
+				Int barWidth = healthBarRegion->width();
 
-				Int frameWidth = getIconInfo()->m_icon[ typeIndex ]->getCurrentFrameWidth();
-				Int frameHeight = getIconInfo()->m_icon[ typeIndex ]->getCurrentFrameHeight();
+				Int frameWidth = getIconInfo()->m_icon[ typeIndex ]->getCurrentFrameWidth() * TheInGameUI->getUnitInfoScaleFactor();
+				Int frameHeight = getIconInfo()->m_icon[ typeIndex ]->getCurrentFrameHeight() * TheInGameUI->getUnitInfoScaleFactor();
 
 #ifdef SCALE_ICONS_WITH_ZOOM_ML
 				// adjust the width to be a % of the health bar region size
@@ -3346,7 +3343,7 @@ void Drawable::drawEnthusiastic(const IRegion2D* healthBarRegion)
 			// we are going to draw the healing icon relative to the size of the health bar region
 			// since that region takes into account hit point size and zoom factor of the camera too
 			//
-			Int barWidth = healthBarRegion->hi.x - healthBarRegion->lo.x;// used for position
+			Int barWidth = healthBarRegion->width();// used for position
 
 			// based on our own kind of we have certain icons to display at a size scale
 			Real scale;
@@ -3357,8 +3354,8 @@ void Drawable::drawEnthusiastic(const IRegion2D* healthBarRegion)
 			else
 				scale = 0.5f;
 
-			Int frameWidth = getIconInfo()->m_icon[ iconIndex ]->getCurrentFrameWidth() * scale;
-			Int frameHeight = getIconInfo()->m_icon[ iconIndex ]->getCurrentFrameHeight() * scale;
+			Int frameWidth = getIconInfo()->m_icon[ iconIndex ]->getCurrentFrameWidth() * scale * TheInGameUI->getUnitInfoScaleFactor();
+			Int frameHeight = getIconInfo()->m_icon[ iconIndex ]->getCurrentFrameHeight() * scale * TheInGameUI->getUnitInfoScaleFactor();
 
 #ifdef SCALE_ICONS_WITH_ZOOM_ML
 			// adjust the width to be a % of the health bar region size
@@ -3647,10 +3644,10 @@ void Drawable::drawDisabled(const IRegion2D* healthBarRegion)
 		// draw the icon
 		if( healthBarRegion )
 		{
-			Int barHeight = healthBarRegion->hi.y - healthBarRegion->lo.y;
+			Int barHeight = healthBarRegion->height();
 
-			Int frameWidth = getIconInfo()->m_icon[ ICON_DISABLED ]->getCurrentFrameWidth();
-			Int frameHeight = getIconInfo()->m_icon[ ICON_DISABLED ]->getCurrentFrameHeight();
+			Int frameWidth = getIconInfo()->m_icon[ ICON_DISABLED ]->getCurrentFrameWidth() * TheInGameUI->getUnitInfoScaleFactor();
+			Int frameHeight = getIconInfo()->m_icon[ ICON_DISABLED ]->getCurrentFrameHeight() * TheInGameUI->getUnitInfoScaleFactor();
 
 #ifdef SCALE_ICONS_WITH_ZOOM_ML
 			// adjust the width to be a % of the health bar region size
@@ -3796,19 +3793,19 @@ void Drawable::drawVeterancy( const IRegion2D *healthBarRegion )
 	if (!image)
 		return;
 
-	Real scale = 1.3f/CLAMP_ICON_ZOOM_FACTOR( TheTacticalView->getZoom() );
 #ifdef SCALE_ICONS_WITH_ZOOM_ML
+	Real scale = 1.3f/CLAMP_ICON_ZOOM_FACTOR( TheTacticalView->getZoom() );
 	Real objScale = scale * 1.55f;
 #else
 	Real objScale = 1.0f;
 #endif
 
 
-	Real vetBoxWidth  = image->getImageWidth()*objScale;
-	Real vetBoxHeight = image->getImageHeight()*objScale;
+	Real vetBoxWidth  = image->getImageWidth() * objScale * TheInGameUI->getUnitInfoScaleFactor();
+	Real vetBoxHeight = image->getImageHeight() * objScale * TheInGameUI->getUnitInfoScaleFactor();
 
 	//
-	// take the center position of the object, go down to it's bottom extent, and project
+	// take the center position of the health region, go down to it's bottom extent, and project
 	// that point to the screen, that will be the "center" of our veterancy box
 	//
 
@@ -3818,11 +3815,7 @@ void Drawable::drawVeterancy( const IRegion2D *healthBarRegion )
 	if( !TheTacticalView->worldToScreen( &p, &screenCenter ) )
 		return;
 
-	Real healthBoxWidth, healthBoxHeight;
-	if (!obj->getHealthBoxDimensions(healthBoxHeight, healthBoxWidth))
-		return;
-
-	screenCenter.x += healthBoxWidth * scale * 0.5f;
+	screenCenter.x += healthBarRegion->width() * 0.65f;
 
 	// draw the image
 	TheDisplay->drawImage(image, screenCenter.x + 1, screenCenter.y + 1, screenCenter.x + 1 + vetBoxWidth, screenCenter.y + 1 + vetBoxHeight);
@@ -3930,23 +3923,24 @@ void Drawable::drawHealthBar(const IRegion2D* healthBarRegion)
 
 		}
 
-
-
-
-///		Real scale = 1.3f / TheTacticalView->getZoom();
-		Real healthBoxWidth = healthBarRegion->hi.x - healthBarRegion->lo.x;
-
-		Real healthBoxHeight = max(3, healthBarRegion->hi.y - healthBarRegion->lo.y);
-		Real healthBoxOutlineSize = 1.0f;
-
-		// draw the health box outline
-		TheDisplay->drawOpenRect( healthBarRegion->lo.x, healthBarRegion->lo.y, healthBoxWidth, healthBoxHeight,
-															healthBoxOutlineSize, outlineColor );
+		Real healthBoxWidth = healthBarRegion->width();
+		Real healthBoxHeight = max((Int)defaultHealthBoxHeight, healthBarRegion->height());
+		// TheSuperHackers @info For now we are integer scaling the health box height so we do the same for the health box outline
+		Real healthBoxOutlineSize = floorf( (healthBarRegion->height() / (Int)defaultHealthBoxHeight) );
 
 		// draw a filled bar for the health
-		TheDisplay->drawFillRect( healthBarRegion->lo.x + 1, healthBarRegion->lo.y + 1,
-															(healthBoxWidth - 2) * healthRatio, healthBoxHeight - 2,
+		// TheSuperHackers @info this takes up the whole size of the health rect area, the border is drawn over the top
+		// This simplifies the handling of the health bar
+		TheDisplay->drawFillRect( healthBarRegion->lo.x, healthBarRegion->lo.y,
+															healthBoxWidth * healthRatio, healthBoxHeight,
 															color );
+
+		// draw the health box outline
+		// TheSuperHackers @info when drawing the outline, the underlying function grows the outline towards the center of the region
+		TheDisplay->drawOpenRect( healthBarRegion->lo.x, healthBarRegion->lo.y,
+															healthBoxWidth, healthBoxHeight,
+															healthBoxOutlineSize, outlineColor );
+
 	}
 
 }

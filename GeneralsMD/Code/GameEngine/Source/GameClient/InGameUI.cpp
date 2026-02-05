@@ -1168,6 +1168,9 @@ InGameUI::InGameUI()
 
 	m_soloNexusSelectedDrawableID = INVALID_DRAWABLE_ID;
 
+	m_unitInfoResolutionScaleFactor = 1.0f;
+	m_healthResolutionScaleFactor = 1.0f;
+
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1300,6 +1303,9 @@ void InGameUI::init( void )
 
 	setDrawRMBScrollAnchor(TheGlobalData->m_drawScrollAnchor);
 	setMoveRMBScrollAnchor(TheGlobalData->m_moveScrollAnchor);
+
+	// TheSuperHackers @todo implement option to retrieve user based scaling options
+	calcUnitInfoScaleFactor();
 
 }
 
@@ -6167,4 +6173,20 @@ void InGameUI::drawGameTime()
 
 	m_gameTimeString->draw(horizontalTimerOffset, m_gameTimePosition.y, m_gameTimeColor, m_gameTimeDropColor);
 	m_gameTimeFrameString->draw(horizontalFrameOffset, m_gameTimePosition.y, GameMakeColor(180,180,180,255), m_gameTimeDropColor);
+}
+
+void InGameUI::calcUnitInfoScaleFactor()
+{
+	m_unitInfoResolutionScaleFactor = max(TheDisplay->getWidthScale(), TheDisplay->getHeightScale());
+	m_healthResolutionScaleFactor = max(TheDisplay->getWidthScale(), TheDisplay->getHeightScale());
+}
+
+Real InGameUI::getUnitInfoScaleFactor()
+{
+	return m_unitInfoResolutionScaleFactor;
+}
+
+Real InGameUI::getUnitHealthbarScaleFactor()
+{
+	return m_healthResolutionScaleFactor;
 }
