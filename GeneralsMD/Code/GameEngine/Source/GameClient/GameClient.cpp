@@ -573,7 +573,7 @@ void GameClient::update()
       TheInGameUI->setCameraTrackingDrawable( FALSE );
   }
 
-	if(TheGlobalData->m_playIntro || TheGlobalData->m_afterIntro)
+	if (m_intro != nullptr)
 	{
 		// redraw all views, update the GUI
 		TheDisplay->UPDATE();
