@@ -44,6 +44,7 @@ public:
 	// contain list access
 	void iterateContained( ContainIterateFunc func, void *userData, Bool reverse );
 	UnsignedInt getContainCount() const { return m_containListSize; }
+	UnsignedInt getHeroUnitsContained() const { return m_heroUnitsContained; }
 	Int getContainMax() const;
 	const ContainedItemsList* getContainedItemsList() const { return &m_containList; }
 	void swapContainedItemsList(ContainedItemsList& newList);
@@ -85,6 +86,7 @@ private:
 	ContainedItemsList m_containList;				///< the contained object pointers list
 	std::list< ObjectID > m_xferContainList;///< for loading of m_containList during post processing
 	Int m_containListSize;									///< size of the contain list
+	UnsignedInt m_heroUnitsContained;				///< cached hero count
 	UnsignedInt m_tunnelCount;							///< How many tunnels have registered so we know when we should kill our contain list
 	UnsignedInt m_framesForFullHeal;				///< How many frames it takes to fully heal a unit
 	Bool m_needsFullHealTimeUpdate;					///< Set to true when needing to recalc full heal time to batch the operation
