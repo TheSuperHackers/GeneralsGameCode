@@ -30,6 +30,7 @@
 Intro::Intro()
 	: m_currentState(IntroState_Start)
 	, m_allowedStateFlags(0)
+	, m_waitUntilMs(0)
 {
 	if (TheGlobalData->m_playIntro)
 	{
@@ -38,6 +39,8 @@ Intro::Intro()
 
 	if (TheGlobalData->m_playSizzle)
 	{
+		if (TheGlobalData->m_playIntro)
+			m_allowedStateFlags |= 1u << IntroState_SizzleMovieWait;
 		m_allowedStateFlags |= 1u << IntroState_SizzleMovie;
 	}
 
@@ -61,13 +64,14 @@ void Intro::enterNextState()
 
 void Intro::update()
 {
-	if (!TheDisplay->isMoviePlaying())
+	if (!TheDisplay->isMoviePlaying() && m_waitUntilMs < timeGetTime())
 	{
 		enterNextState();
 
 		switch (m_currentState)
 		{
 		case IntroState_EALogoMovie: doEALogoMovie(); break;
+		case IntroState_SizzleMovieWait: doAsyncWait(1000); break;
 		case IntroState_SizzleMovie: doSizzleMovie(); break;
 		case IntroState_LegalPage: doLegalPage(); break;
 		case IntroState_Done: doPostIntro(); break;
@@ -79,9 +83,9 @@ void Intro::doEALogoMovie()
 {
 	TheWritableGlobalData->m_allowExitOutOfMovies = FALSE;
 	if (TheGameLODManager && TheGameLODManager->didMemPass())
-		TheDisplay->playLogoMovie("EALogoMovie", 5000, 3000);
+		TheDisplay->playMovie("EALogoMovie");
 	else
-		TheDisplay->playLogoMovie("EALogoMovie640", 5000, 3000);
+		TheDisplay->playMovie("EALogoMovie640");
 }
 
 void Intro::doSizzleMovie()
@@ -121,4 +125,9 @@ void Intro::doPostIntro()
 {
 	TheWritableGlobalData->m_breakTheMovie = TRUE;
 	TheWritableGlobalData->m_allowExitOutOfMovies = TRUE;
+}
+
+void Intro::doAsyncWait(UnsignedInt milliseconds)
+{
+	m_waitUntilMs = timeGetTime() + milliseconds;
 }
