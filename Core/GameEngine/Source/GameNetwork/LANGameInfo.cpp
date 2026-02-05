@@ -224,7 +224,12 @@ void LANDisplayGameList( GameWindow *gameListbox, LANGameInfo *gameList )
 			{
 				txtGName.concat(L"]");
 			}
-			Int addedIndex = GadgetListBoxAddEntryText(gameListbox, txtGName, (gameList->isGameInProgress())?gameInProgressColor:gameColor, -1, -1);
+
+			// TheSuperHackers @feature Caball009 06/11/2025 Set special color for games that are using the community patch.
+			const Color color = (BitIsSet(gameList->getSlot(0)->getProductInfo().flags, GameSlot::ProductInfo::NO_RETAIL))
+				? ((gameList->isGameInProgress()) ? gameInProgressColorCommunityPatch : gameColorCommunityPatch)
+				: ((gameList->isGameInProgress()) ? gameInProgressColor : gameColor);
+			const Int addedIndex = GadgetListBoxAddEntryText(gameListbox, txtGName, color, -1, -1);
 			GadgetListBoxSetItemData(gameListbox, (void *)gameList, addedIndex, 0 );
 
 			if (selectedPtr == gameList)

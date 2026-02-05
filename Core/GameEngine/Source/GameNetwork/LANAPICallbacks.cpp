@@ -52,16 +52,22 @@ extern Bool LANbuttonPushed;
 
 
 //Colors used for the chat dialogs
-const Color playerColor =  GameMakeColor(255,255,255,255);
-const Color gameColor =  GameMakeColor(255,255,255,255);
-const Color gameInProgressColor =  GameMakeColor(128,128,128,255);
-const Color chatNormalColor =  GameMakeColor(50,215,230,255);
-const Color chatActionColor =  GameMakeColor(255,0,255,255);
-const Color chatLocalNormalColor =  GameMakeColor(255,128,0,255);
-const Color chatLocalActionColor =  GameMakeColor(128,255,255,255);
-const Color chatSystemColor =  GameMakeColor(255,255,255,255);
-const Color acceptTrueColor =  GameMakeColor(0,255,0,255);
-const Color acceptFalseColor =  GameMakeColor(255,0,0,255);
+const Color playerColor                          = GameMakeColor(255,255,255,255);
+const Color gameColor                            = GameMakeColor(255,255,255,255);
+const Color gameInProgressColor                  = GameMakeColor(128,128,0,255);
+const Color chatNormalColor                      = GameMakeColor(50,215,230,255);
+const Color chatActionColor                      = GameMakeColor(255,0,255,255);
+const Color chatLocalNormalColor                 = GameMakeColor(255,128,0,255);
+const Color chatLocalActionColor                 = GameMakeColor(128,255,255,255);
+const Color chatSystemColor                      = GameMakeColor(255,255,255,255);
+const Color acceptTrueColor                      = GameMakeColor(0,255,0,255);
+const Color acceptFalseColor                     = GameMakeColor(255,0,0,255);
+const Color gameColorCommunityPatch              = GameMakeColor(255,255,0,255);
+const Color gameInProgressColorCommunityPatch    = GameMakeColor(192,192,0,255);
+const Color playerColorCommunityPatch            = gameColorCommunityPatch;
+const Color playerGrayedColorCommunityPatch      = gameInProgressColorCommunityPatch;
+const Color playerColorCommunityPatchIssue       = GameMakeColor(255,0,0,255);
+const Color playerGrayedColorCommunityPatchIssue = GameMakeColor(192,0,0,255);
 
 
 UnicodeString LANAPIInterface::getErrorStringFromReturnType( ReturnType ret )
@@ -640,7 +646,10 @@ void LANAPI::OnPlayerList( LANPlayer *playerList )
 		LANPlayer *player = m_lobbyPlayers;
 		while (player)
 		{
-			Int addedIndex = GadgetListBoxAddEntryText(listboxPlayers, player->getName(), playerColor, -1, -1);
+			// TheSuperHackers @feature Caball009 06/11/2025 Set special color for players that are using the community patch.
+			const Color color = (m_localIP == player->getIP() || BitIsSet(player->getProductInfoFlags(), GameSlot::ProductInfo::NO_RETAIL))
+				? playerColorCommunityPatch : playerColor;
+			const Int addedIndex = GadgetListBoxAddEntryText(listboxPlayers, player->getName(), color, -1, -1);
 			GadgetListBoxSetItemData(listboxPlayers, (void *)player->getIP(),addedIndex, 0 );
 
 			if (selectedIP == player->getIP())
