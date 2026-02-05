@@ -1870,14 +1870,7 @@ AGAIN:
 					// TheSuperHackers @bugfix Mauller 20/07/2025 scale videos based on screen size so they are shown in their original aspect
 					drawScaledVideoBuffer( m_videoBuffer, m_videoStream );
 				}
-				if( m_copyrightDisplayString )
-				{
-					Int x, y, dX, dY;
-					m_copyrightDisplayString->getSize(&dX, &dY);
-					x = (getWidth() / 2) - (dX /2);
-					y = getHeight()  - dY - 20 ;
-					m_copyrightDisplayString->draw(x, y, GameMakeColor(0,0,0,255), GameMakeColor(0,0,0,0),0,0);
-				}
+
 				// render letter box before debug display so debug info isn't hidden
 				renderLetterBox(now);
 

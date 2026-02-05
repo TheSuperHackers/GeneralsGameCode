@@ -58,11 +58,6 @@ Display::Display()
 	m_cinematicText = AsciiString::TheEmptyString;
 	m_cinematicFont = nullptr;
 	m_cinematicTextFrames = 0;
-	m_movieHoldTime	= -1;
-	m_copyrightHoldTime = -1;
-	m_elapsedMovieTime = 0;
-	m_elapsedCopywriteTime = 0;
-	m_copyrightDisplayString = nullptr;
 
 	m_currentlyPlayingMovie.clear();
 	m_letterBoxFadeStartTime = 0;
@@ -200,41 +195,6 @@ void Display::setHeight( UnsignedInt height )
 }
 
 //============================================================================
-// Display::playLogoMovie
-// minMovieLength is in milliseconds
-// minCopyrightLength
-//============================================================================
-
-void Display::playLogoMovie( AsciiString movieName, Int minMovieLength, Int minCopyrightLength )
-{
-
-	stopMovie();
-
-	m_videoStream = TheVideoPlayer->open( movieName );
-
-	if ( m_videoStream == nullptr )
-	{
-		return;
-	}
-
-	m_currentlyPlayingMovie = movieName;
-	m_movieHoldTime = minMovieLength;
-	m_copyrightHoldTime = minCopyrightLength;
-	m_elapsedMovieTime = timeGetTime();  // we're using time get time because legal wants actual "Seconds"
-
-	m_videoBuffer = createVideoBuffer();
-	if (	m_videoBuffer == nullptr ||
-				!m_videoBuffer->allocate(	m_videoStream->width(),
-													m_videoStream->height())
-		)
-	{
-		stopMovie();
-		return;
-	}
-
-}
-
-//============================================================================
 // Display::playMovie
 //============================================================================
 
@@ -285,13 +245,6 @@ void Display::stopMovie( void )
 		//TheScriptEngine->notifyOfCompletedVideo(m_currentlyPlayingMovie); // Removing this sync-error cause MDC
 		m_currentlyPlayingMovie = AsciiString::TheEmptyString;
 	}
-	if(m_copyrightDisplayString)
-	{
-		TheDisplayStringManager->freeDisplayString(m_copyrightDisplayString);
-		m_copyrightDisplayString = nullptr;
-	}
-	m_copyrightHoldTime = -1;
-	m_movieHoldTime = -1;
 }
 
 //============================================================================
@@ -307,34 +260,8 @@ void Display::update( void )
 			m_videoStream->frameDecompress();
 			m_videoStream->frameRender( m_videoBuffer );
 			if( m_videoStream->frameIndex() != m_videoStream->frameCount() - 1)
-				m_videoStream->frameNext();
-			else if( m_copyrightHoldTime >= 0 ||m_movieHoldTime >= 0 )
 			{
-				if( m_elapsedCopywriteTime == 0 && m_elapsedCopywriteTime >= 0)
-				{
-					//display the copyrighttext;
-					deleteInstance(m_copyrightDisplayString);
-					m_copyrightDisplayString = TheDisplayStringManager->newDisplayString();
-					m_copyrightDisplayString->setText(TheGameText->fetch("GUI:EACopyright"));
-					if (TheGlobalLanguageData && TheGlobalLanguageData->m_copyrightFont.name.isNotEmpty())
-					{	FontDesc	*fontdesc=&TheGlobalLanguageData->m_copyrightFont;
-						m_copyrightDisplayString->setFont(TheFontLibrary->getFont(fontdesc->name,
-							TheGlobalLanguageData->adjustFontSize(fontdesc->size),
-							fontdesc->bold));
-					}
-					else
-						m_copyrightDisplayString->setFont(TheFontLibrary->getFont("Courier",
-						TheGlobalLanguageData->adjustFontSize(12), TRUE));
-					m_elapsedCopywriteTime = timeGetTime();
-				}
-				if(m_movieHoldTime + m_elapsedMovieTime < timeGetTime() &&
-						m_copyrightHoldTime + m_elapsedCopywriteTime < timeGetTime())
-				{
-					m_movieHoldTime = -1;
-					m_elapsedMovieTime = 0;
-					m_elapsedCopywriteTime = 0;
-					m_copyrightHoldTime = -1;
-				}
+				m_videoStream->frameNext();
 			}
 			else
 			{
