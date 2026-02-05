@@ -181,9 +181,6 @@ void LANAPI::handleGameProductInfoResponse(LANMessage *msg, UnsignedInt senderIP
 
 	// a game host has acknowledged our request for product information
 	setProductInfoFromMessage(msg, game->getSlot(0));
-
-	// update game list with colored names
-	OnGameList(m_games);
 }
 
 void LANAPI::handleLobbyProductInfoRequest(LANMessage *msg, UnsignedInt senderIP)
@@ -206,9 +203,6 @@ void LANAPI::handleLobbyProductInfoResponse(LANMessage *msg, UnsignedInt senderI
 
 	// a fellow player in the lobby has acknowledged our request for product information
 	player->setProductInfoFlags(msg->ProductInfo.flags);
-
-	// update player list with colored names
-	OnPlayerList(m_lobbyPlayers);
 }
 
 void LANAPI::handleMatchProductInfoRequest(LANMessage *msg, UnsignedInt senderIP)
@@ -235,9 +229,6 @@ void LANAPI::handleMatchProductInfoResponse(LANMessage *msg, UnsignedInt senderI
 
 		// a fellow player in the game has acknowledged our request for product information
 		setProductInfoFromMessage(msg, m_currentGame->getSlot(i));
-
-		// update player list with colored names
-		lanUpdateSlotList();
 
 		break;
 	}
