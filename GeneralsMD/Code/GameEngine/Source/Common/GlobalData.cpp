@@ -1003,7 +1003,6 @@ GlobalData::GlobalData()
 	m_shellMapOn =TRUE;
 	m_playIntro = TRUE;
 	m_playSizzle = TRUE;
-	m_afterIntro = FALSE;
 	m_allowExitOutOfMovies = FALSE;
 	m_loadScreenRender = FALSE;
 

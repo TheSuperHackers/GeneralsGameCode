@@ -20,16 +20,32 @@
 
 class Intro
 {
+	enum IntroState
+	{
+		IntroState_Start,
+		IntroState_EALogoMovie,
+		IntroState_SizzleMovie,
+		IntroState_LegalPage,
+		IntroState_Done,
+	};
+
 public:
 
 	Intro();
 
 	void update();
 
-	Bool isDone() const { return m_done; }
+	void enterNextState();
+
+	Bool isDone() const { return m_currentState == IntroState_Done; }
 
 private:
 
-	Bool m_playSizzle;
-	Bool m_done;
+	void doEALogoMovie();
+	void doSizzleMovie();
+	void doLegalPage();
+	void doPostIntro();
+
+	IntroState m_currentState;
+	UnsignedInt m_allowedStateFlags;
 };
