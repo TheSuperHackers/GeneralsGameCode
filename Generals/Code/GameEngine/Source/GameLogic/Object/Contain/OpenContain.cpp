@@ -273,10 +273,16 @@ void OpenContain::addOrRemoveObjFromWorld(Object* obj, Bool add)
 //-------------------------------------------------------------------------------------------------
 void OpenContain::addToContain( Object *rider )
 {
-
+#if RETAIL_COMPATIBLE_CRC
 	// sanity
 	if( rider == nullptr )
 		return;
+#else
+	// TheSuperHackers @bugfix Stubbjax 06/02/2026 Always ensure interacting objects are alive.
+	// This prevents undefined behaviour if a unit dies and enters a container on the same frame.
+	if (rider == nullptr || rider->isEffectivelyDead() || getObject()->isEffectivelyDead())
+		return;
+#endif
 
 #if defined(RTS_DEBUG)
 	if( !isValidContainerFor( rider, false ) )
