@@ -28,68 +28,97 @@
 
 
 Intro::Intro()
-	: m_playSizzle(false)
-	, m_done(false)
+	: m_currentState(IntroState_Start)
+	, m_allowedStateFlags(0)
 {
+	if (TheGlobalData->m_playIntro)
+	{
+		m_allowedStateFlags |= 1u << IntroState_EALogoMovie;
+	}
+
+	if (TheGlobalData->m_playSizzle)
+	{
+		m_allowedStateFlags |= 1u << IntroState_SizzleMovie;
+	}
+
+	if (TheGameLODManager && !TheGameLODManager->didMemPass())
+	{
+		m_allowedStateFlags |= 1u << IntroState_LegalPage;
+	}
+}
+
+void Intro::enterNextState()
+{
+	Int currentState = m_currentState;
+	while (currentState < IntroState_Done)
+	{
+		++currentState;
+		if (m_allowedStateFlags & (1u << currentState))
+			break;
+	}
+	m_currentState = static_cast<IntroState>(currentState);
 }
 
 void Intro::update()
 {
-	// We need to show the movie first.
-	if(TheGlobalData->m_playIntro && !TheDisplay->isMoviePlaying())
+	if (!TheDisplay->isMoviePlaying())
 	{
-		if(TheGameLODManager && TheGameLODManager->didMemPass())
-			TheDisplay->playLogoMovie("EALogoMovie", 5000, 3000);
-		else
-			TheDisplay->playLogoMovie("EALogoMovie640", 5000, 3000);
-		TheWritableGlobalData->m_playIntro = FALSE;
-		TheWritableGlobalData->m_afterIntro = TRUE;
-		m_playSizzle = TRUE;
-	}
+		enterNextState();
 
-	// We must show the movie first and then we can display the shell.
-	if(TheGlobalData->m_afterIntro && !TheDisplay->isMoviePlaying())
-	{
-		if( m_playSizzle && TheGlobalData->m_playSizzle )
+		switch (m_currentState)
 		{
-			TheWritableGlobalData->m_allowExitOutOfMovies = TRUE;
-			if(TheGameLODManager && TheGameLODManager->didMemPass())
-				TheDisplay->playMovie("Sizzle");
-			else
-				TheDisplay->playMovie("Sizzle640");
-			m_playSizzle = FALSE;
-		}
-		else
-		{
-			TheWritableGlobalData->m_breakTheMovie = TRUE;
-			TheWritableGlobalData->m_allowExitOutOfMovies = TRUE;
-
-			if(TheGameLODManager && !TheGameLODManager->didMemPass())
-			{
-				TheWritableGlobalData->m_breakTheMovie = FALSE;
-
-				WindowLayout *legal = TheWindowManager->winCreateLayout("Menus/LegalPage.wnd");
-				if(legal)
-				{
-					legal->hide(FALSE);
-					legal->bringForward();
-					Int beginTime = timeGetTime();
-					while(beginTime + 4000 > timeGetTime() )
-					{
-						TheWindowManager->update();
-						// redraw all views, update the GUI
-						TheDisplay->draw();
-						Sleep(100);
-					}
-					setFPMode();
-					legal->destroyWindows();
-					deleteInstance(legal);
-				}
-				TheWritableGlobalData->m_breakTheMovie = TRUE;
-			}
-
-			TheWritableGlobalData->m_afterIntro = FALSE;
-			m_done = TRUE;
+		case IntroState_EALogoMovie: doEALogoMovie(); break;
+		case IntroState_SizzleMovie: doSizzleMovie(); break;
+		case IntroState_LegalPage: doLegalPage(); break;
+		case IntroState_Done: doPostIntro(); break;
 		}
 	}
+}
+
+void Intro::doEALogoMovie()
+{
+	TheWritableGlobalData->m_allowExitOutOfMovies = FALSE;
+	if (TheGameLODManager && TheGameLODManager->didMemPass())
+		TheDisplay->playLogoMovie("EALogoMovie", 5000, 3000);
+	else
+		TheDisplay->playLogoMovie("EALogoMovie640", 5000, 3000);
+}
+
+void Intro::doSizzleMovie()
+{
+	TheWritableGlobalData->m_allowExitOutOfMovies = TRUE;
+	if (TheGameLODManager && TheGameLODManager->didMemPass())
+		TheDisplay->playMovie("Sizzle");
+	else
+		TheDisplay->playMovie("Sizzle640");
+}
+
+
+void Intro::doLegalPage()
+{
+	TheWritableGlobalData->m_breakTheMovie = FALSE;
+	WindowLayout *legal = TheWindowManager->winCreateLayout("Menus/LegalPage.wnd");
+	if (legal)
+	{
+		legal->hide(FALSE);
+		legal->bringForward();
+		Int beginTime = timeGetTime();
+		while (beginTime + 4000 > timeGetTime() )
+		{
+			TheWindowManager->update();
+			// redraw all views, update the GUI
+			TheDisplay->draw();
+			Sleep(100);
+		}
+		setFPMode();
+		legal->destroyWindows();
+		deleteInstance(legal);
+	}
+	TheWritableGlobalData->m_breakTheMovie = TRUE;
+}
+
+void Intro::doPostIntro()
+{
+	TheWritableGlobalData->m_breakTheMovie = TRUE;
+	TheWritableGlobalData->m_allowExitOutOfMovies = TRUE;
 }
