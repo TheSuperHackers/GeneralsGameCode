@@ -494,7 +494,7 @@ HRESULT  Cftp::LoginToServer( LPCSTR szUserName, LPCSTR szPassword )
 
 	if( m_iStatus == FTPSTAT_CONNECTED )
 	{
-		sprintf( command, "USER %s\r\n", m_szUserName );
+		snprintf( command, sizeof(command), "USER %s\r\n", m_szUserName );
 
 		if( SendCommand( command, 7 + strlen( m_szUserName ) ) < 0 )
 		{
@@ -517,7 +517,7 @@ HRESULT  Cftp::LoginToServer( LPCSTR szUserName, LPCSTR szPassword )
 
 	if( m_iStatus == FTPSTAT_SENTUSER )
 	{
-		sprintf( command, "PASS %s\r\n", m_szPassword );
+		snprintf( command, sizeof(command), "PASS %s\r\n", m_szPassword );
 
 		if( SendCommand( command, 7 + strlen( m_szPassword ) ) < 0 )
 		{
@@ -694,7 +694,7 @@ HRESULT  Cftp::FindFile( LPCSTR szRemoteFileName, int * piSize )
 
 	if( ( m_iStatus == FTPSTAT_LOGGEDIN ) || ( m_iStatus == FTPSTAT_FILEFOUND ) )
 	{
-		sprintf( command, "CWD %s\r\n", m_szRemoteFilePath );
+		snprintf( command, sizeof(command), "CWD %s\r\n", m_szRemoteFilePath );
 
 		if( SendCommand( command, 6 + strlen( m_szRemoteFilePath ) ) < 0 )
 		{
@@ -747,7 +747,7 @@ HRESULT  Cftp::FindFile( LPCSTR szRemoteFileName, int * piSize )
 
 	if( m_iStatus == FTPSTAT_SENTPORT )
 	{
-		sprintf( command, "LIST %s\r\n", m_szRemoteFileName );
+		snprintf( command, sizeof(command), "LIST %s\r\n", m_szRemoteFileName );
 
 		if( SendCommand( command, 7 + strlen( m_szRemoteFileName ) ) < 0 )
 		{
@@ -1507,7 +1507,7 @@ HRESULT  Cftp::GetNextFileBlock( LPCSTR szLocalFileName, int * piTotalRead )
 
 	if( m_iStatus == FTPSTAT_SENTREST )
 	{
-		sprintf( command, "RETR %s\r\n", m_szRemoteFileName );
+		snprintf( command, sizeof(command), "RETR %s\r\n", m_szRemoteFileName );
 
 		if( SendCommand( command, strlen( command ) ) < 0 )
 		{
@@ -1803,7 +1803,7 @@ void Cftp::GetDownloadFilename(const char *localname, char *downloadname)
 			*s = '_';
 		++s;
 	}
-	sprintf(downloadname,"download\\%s_%d.tmp",name,m_iFileSize);
+	snprintf(downloadname, 256, "download\\%s_%d.tmp", name, m_iFileSize);
 	free(name);
 	/*
 	Wstring name;
@@ -1831,7 +1831,7 @@ bool Prepare_Directories(const char *rootdir, const char *filename)
 	while(cptr=strchr(cptr,'\\'))
 	{
 		strlcpy(tempstr,filename,cptr-filename + 1);
-		sprintf(newdir,"%s\\%s",rootdir, tempstr);
+		snprintf(newdir, sizeof(newdir), "%s\\%s", rootdir, tempstr);
 		if (!CreateDirectory(newdir, nullptr))
 			return false;
 		//if ((_mkdir(newdir) == -1) && ((errno == ENOENT || errno==EACCES)))

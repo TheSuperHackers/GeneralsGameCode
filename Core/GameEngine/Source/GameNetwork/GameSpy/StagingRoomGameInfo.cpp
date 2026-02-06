@@ -861,7 +861,8 @@ void GameSpyStagingRoom::launchGame( void )
 	req.buddyRequestType = BuddyRequest::BUDDYREQUEST_SETSTATUS;
 	req.arg.status.status = GP_PLAYING;
 	strcpy(req.arg.status.statusString, "Loading");
-	sprintf(req.arg.status.locationString, "%s", WideCharStringToMultiByte(getGameName().str()).c_str());
+	snprintf(req.arg.status.locationString, sizeof(req.arg.status.locationString), "%s",
+		WideCharStringToMultiByte(getGameName().str()).c_str());
 	TheGameSpyBuddyMessageQueue->addRequest(req);
 
 	delete TheNAT;

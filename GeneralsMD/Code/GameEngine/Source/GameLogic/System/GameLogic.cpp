@@ -2331,7 +2331,8 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 		req.buddyRequestType = BuddyRequest::BUDDYREQUEST_SETSTATUS;
 		req.arg.status.status = GP_PLAYING;
 		strcpy(req.arg.status.statusString, "Playing");
-		sprintf(req.arg.status.locationString, "%s", WideCharStringToMultiByte(TheGameSpyGame->getGameName().str()).c_str());
+		snprintf(req.arg.status.locationString, sizeof(req.arg.status.locationString), "%s",
+			WideCharStringToMultiByte(TheGameSpyGame->getGameName().str()).c_str());
 		TheGameSpyBuddyMessageQueue->addRequest(req);
 	}
 
@@ -2440,7 +2441,7 @@ void GameLogic::loadMapINI( AsciiString mapName )
 
 
 	char fullFledgeFilename[_MAX_PATH];
-	sprintf(fullFledgeFilename, "%s\\map.ini", filename);
+	snprintf(fullFledgeFilename, sizeof(fullFledgeFilename), "%s\\map.ini", filename);
 	if (TheFileSystem->doesFileExist(fullFledgeFilename)) {
 		DEBUG_LOG(("Loading map.ini"));
 		INI ini;
@@ -2450,7 +2451,7 @@ void GameLogic::loadMapINI( AsciiString mapName )
 	// TheSuperHackers @todo Implement ini load directory for map folder.
 	// Requires adjustments in map transfer.
 
-	sprintf(fullFledgeFilename, "%s\\solo.ini", filename);
+	snprintf(fullFledgeFilename, sizeof(fullFledgeFilename), "%s\\solo.ini", filename);
 	if (TheFileSystem->doesFileExist(fullFledgeFilename)) {
 		DEBUG_LOG(("Loading solo.ini"));
 		INI ini;
@@ -2460,7 +2461,7 @@ void GameLogic::loadMapINI( AsciiString mapName )
 	// No error here. There could've just *not* been a map.ini file.
 
 	// now look for a string file
-	sprintf(fullFledgeFilename, "%s\\map.str", filename);
+	snprintf(fullFledgeFilename, sizeof(fullFledgeFilename), "%s\\map.str", filename);
 
 	if (TheFileSystem->doesFileExist(fullFledgeFilename)) {
 		TheGameText->initMapStringFile(fullFledgeFilename);
@@ -2470,7 +2471,7 @@ void GameLogic::loadMapINI( AsciiString mapName )
 	if (TheDisplay)
 	{
 		const char* ASSET_USAGE_FILE_NAME = "AssetUsage.txt";
-		sprintf(fullFledgeFilename, "%s\\%s", filename, ASSET_USAGE_FILE_NAME);
+		snprintf(fullFledgeFilename, sizeof(fullFledgeFilename), "%s\\%s", filename, ASSET_USAGE_FILE_NAME);
 		// note: call this EVEN IF THE FILE IN QUESTION DOES NOT EXIST.
 		TheDisplay->doSmartAssetPurgeAndPreload(fullFledgeFilename);
 	}
