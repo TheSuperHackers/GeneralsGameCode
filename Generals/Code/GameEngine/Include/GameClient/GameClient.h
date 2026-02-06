@@ -88,6 +88,7 @@ public:
 	// subsystem methods
 	virtual void init() override;																					///< Initialize resources
 	virtual void update() override;																				///< Updates the GUI, display, audio, etc
+	virtual void draw() override;
 	virtual void reset() override;																					///< reset system
 
 	virtual void setFrame( UnsignedInt frame ) { m_frame = frame; }			///< Set the GameClient's internal frame number

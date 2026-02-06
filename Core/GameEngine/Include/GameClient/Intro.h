@@ -18,15 +18,40 @@
 
 #pragma once
 
+#include <vector>
+
+class DisplayString;
+class Image;
+
 class Intro
 {
 	enum IntroState
 	{
 		IntroState_Start,
 		IntroState_EALogoMovie,
+		IntroState_TheSuperHackersWait,
+		IntroState_TheSuperHackers,
 		IntroState_SizzleMovieWait,
 		IntroState_SizzleMovie,
 		IntroState_Done,
+	};
+
+	struct DisplayEntity
+	{
+		DisplayEntity()
+			: displayString(nullptr)
+			, image(nullptr)
+			, sizeX(10)
+			, sizeY(10)
+			, centerOffsetY(0)
+		{}
+		~DisplayEntity();
+
+		DisplayString* displayString; // is owner
+		const Image* image;
+		Int sizeX;
+		Int sizeY;
+		Int centerOffsetY;
 	};
 
 public:
@@ -34,6 +59,7 @@ public:
 	Intro();
 
 	void update();
+	void draw();
 
 	Bool isDone() const { return m_currentState == IntroState_Done; }
 
@@ -42,11 +68,19 @@ private:
 	void enterNextState();
 
 	void doEALogoMovie();
+	void doTheSuperHackers();
 	void doSizzleMovie();
 	void doPostIntro();
 	void doAsyncWait(UnsignedInt milliseconds);
 
+	void drawDisplayEntities();
+
+private:
+
 	IntroState m_currentState;
 	UnsignedInt m_allowedStateFlags;
 	UnsignedInt m_waitUntilMs;
+	UnicodeString m_unicodeStrings[1];
+	std::vector<DisplayEntity> m_displayEntities;
+	Real m_fadeValue;
 };
