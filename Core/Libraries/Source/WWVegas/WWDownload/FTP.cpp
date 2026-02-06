@@ -496,7 +496,7 @@ HRESULT  Cftp::LoginToServer( LPCSTR szUserName, LPCSTR szPassword )
 	{
 		snprintf( command, sizeof(command), "USER %s\r\n", m_szUserName );
 
-		if( SendCommand( command, 7 + strlen( m_szUserName ) ) < 0 )
+		if( SendCommand( command, (int)strlen( command ) ) < 0 )
 		{
 			return( FTP_TRYING );
 		}
@@ -519,7 +519,7 @@ HRESULT  Cftp::LoginToServer( LPCSTR szUserName, LPCSTR szPassword )
 	{
 		snprintf( command, sizeof(command), "PASS %s\r\n", m_szPassword );
 
-		if( SendCommand( command, 7 + strlen( m_szPassword ) ) < 0 )
+		if( SendCommand( command, (int)strlen( command ) ) < 0 )
 		{
 			return( FTP_TRYING );
 		}
@@ -696,7 +696,7 @@ HRESULT  Cftp::FindFile( LPCSTR szRemoteFileName, int * piSize )
 	{
 		snprintf( command, sizeof(command), "CWD %s\r\n", m_szRemoteFilePath );
 
-		if( SendCommand( command, 6 + strlen( m_szRemoteFilePath ) ) < 0 )
+		if( SendCommand( command, (int)strlen( command ) ) < 0 )
 		{
 			return( FTP_TRYING );
 		}
@@ -749,7 +749,7 @@ HRESULT  Cftp::FindFile( LPCSTR szRemoteFileName, int * piSize )
 	{
 		snprintf( command, sizeof(command), "LIST %s\r\n", m_szRemoteFileName );
 
-		if( SendCommand( command, 7 + strlen( m_szRemoteFileName ) ) < 0 )
+		if( SendCommand( command, (int)strlen( command ) ) < 0 )
 		{
 			return( FTP_TRYING );
 		}
@@ -1391,7 +1391,7 @@ HRESULT  Cftp::GetNextFileBlock( LPCSTR szLocalFileName, int * piTotalRead )
 	int res, iReply;
 
 	char downloadfilename[256];
-	GetDownloadFilename(szLocalFileName, downloadfilename);
+	GetDownloadFilename(szLocalFileName, downloadfilename, sizeof(downloadfilename));
 
 
 	//char str[ 256 ];
@@ -1607,7 +1607,7 @@ HRESULT  Cftp::GetNextFileBlock( LPCSTR szLocalFileName, int * piTotalRead )
 		 */
 
 		char downloadfilename[256];
-		GetDownloadFilename(m_szLocalFileName, downloadfilename);
+		GetDownloadFilename(m_szLocalFileName, downloadfilename, sizeof(downloadfilename));
 
 		// Make sure the path exists for the new file
 		char curdir[256];
@@ -1688,7 +1688,7 @@ HRESULT  Cftp::GetNextFileBlock( LPCSTR szLocalFileName, int * piTotalRead )
 HRESULT  Cftp::FileRecoveryPosition( LPCSTR szLocalFileName, LPCSTR szRegistryRoot )
 {
 	char downloadfilename[256];
-	GetDownloadFilename(szLocalFileName, downloadfilename);
+	GetDownloadFilename(szLocalFileName, downloadfilename, sizeof(downloadfilename));
 
 	FILE *testfp = fopen( downloadfilename, "rb" );
 	if( testfp == nullptr )
@@ -1793,7 +1793,7 @@ HRESULT  Cftp::FileRecoveryPosition( LPCSTR szLocalFileName, LPCSTR szRegistryRo
 //
 // convert a local name to a temp filename to use for downloading
 //
-void Cftp::GetDownloadFilename(const char *localname, char *downloadname)
+void Cftp::GetDownloadFilename(const char *localname, char *downloadname, size_t downloadname_size)
 {
 	char *name = strdup(localname);
 	char *s = name;
@@ -1803,7 +1803,7 @@ void Cftp::GetDownloadFilename(const char *localname, char *downloadname)
 			*s = '_';
 		++s;
 	}
-	snprintf(downloadname, 256, "download\\%s_%d.tmp", name, m_iFileSize);
+	snprintf(downloadname, downloadname_size, "download\\%s_%d.tmp", name, m_iFileSize);
 	free(name);
 	/*
 	Wstring name;

@@ -22,6 +22,7 @@
 
 //#include "../resource.h"       // main symbols
 
+#include <cstddef>
 #include <winsock.h>
 #include <Utility/stdio_adapter.h>
 
@@ -83,7 +84,7 @@ private:
 	int		AsyncGetHostByName( char * szName, struct sockaddr_in &address );
 
 				// Convert a local filename into a temp filename to download into
-	void		GetDownloadFilename( const char* localname, char* downloadname);
+	void		GetDownloadFilename( const char* localname, char* downloadname, size_t downloadname_size);
 
 	void		CloseSockets(void);
 	void		ZeroStuff(void);
