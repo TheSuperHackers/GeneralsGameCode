@@ -196,6 +196,7 @@ set(GAMEENGINE_SRC
 #    Include/GameClient/Image.h
     Include/GameClient/IMEManager.h
 #    Include/GameClient/InGameUI.h
+    Include/GameClient/Intro.h
     Include/GameClient/Keyboard.h
 #    Include/GameClient/KeyDefs.h
     Include/GameClient/LanguageFilter.h
@@ -803,6 +804,7 @@ set(GAMEENGINE_SRC
 #    Source/GameClient/InGameUI.cpp
     Source/GameClient/Input/Keyboard.cpp
     Source/GameClient/Input/Mouse.cpp
+    Source/GameClient/Intro.cpp
     Source/GameClient/LanguageFilter.cpp
     Source/GameClient/Line2D.cpp
     Source/GameClient/MapUtil.cpp
