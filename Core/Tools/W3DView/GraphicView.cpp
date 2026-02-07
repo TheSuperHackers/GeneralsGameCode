@@ -71,7 +71,6 @@ IMPLEMENT_DYNCREATE(CGraphicView, CView)
 ////////////////////////////////////////////////////////////////////////////
 CGraphicView::CGraphicView (void)
     : m_bInitialized (FALSE),
-      m_pCamera (nullptr),
       m_TimerID (0),
       m_bMouseDown (FALSE),
       m_bRMouseDown (FALSE),
@@ -83,7 +82,6 @@ CGraphicView::CGraphicView (void)
       m_objectRotation (NoRotation),
 		m_LightRotation (NoRotation),
 		m_bLightMeshInScene (false),
-		m_pLightMesh (nullptr),
 		m_ParticleCountUpdate (0),
 		m_CameraBonePosX (false),
 		m_UpdateCounter (0),
@@ -216,7 +214,7 @@ CGraphicView::InitializeGraphicView (void)
     if (bReturn && (m_pCamera == nullptr))
     {
         // Instantiate a new camera class
-	    m_pCamera = new CameraClass ();
+	    m_pCamera = RefCountPtr<CameraClass>::Create_NoAddRef(new CameraClass ());
         bReturn = (m_pCamera != nullptr);
 
         // Were we successful in creating a camera?
@@ -234,7 +232,7 @@ CGraphicView::InitializeGraphicView (void)
 		  //
 		  //	Attach the 'listener' to the camera
 		  //
-		  WWAudioClass::Get_Instance ()->Get_Sound_Scene ()->Attach_Listener_To_Obj (m_pCamera);
+		  WWAudioClass::Get_Instance ()->Get_Sound_Scene ()->Attach_Listener_To_Obj (m_pCamera.Peek());
     }
 
 	Reset_FOV ();
@@ -244,7 +242,7 @@ CGraphicView::InitializeGraphicView (void)
 		ResourceFileClass light_mesh_file (nullptr, "Light.w3d");
 		WW3DAssetManager::Get_Instance()->Load_3D_Assets (light_mesh_file);
 
-		m_pLightMesh = WW3DAssetManager::Get_Instance()->Create_Render_Obj ("LIGHT");
+		m_pLightMesh = RefCountPtr<RenderObjClass>::Create_NoAddRef(WW3DAssetManager::Get_Instance()->Create_Render_Obj ("LIGHT"));
 		ASSERT (m_pLightMesh != nullptr);
 		m_bLightMeshInScene = false;
 	 }
@@ -329,8 +327,6 @@ CGraphicView::OnDestroy (void)
 	//
 	// Free the camera object
 	//
-	REF_PTR_RELEASE (m_pCamera);
-	REF_PTR_RELEASE (m_pLightMesh);
 
 	// Is there an update thread running?
 	if (m_TimerID == 0) {
@@ -533,7 +529,7 @@ CGraphicView::RepaintView
 		// Wait for all previous rendering to complete before starting benchmark.
 		DWORD profile_time = ::Get_CPU_Clock (pt_high);
 
-		WW3D::Render (doc->GetScene (), m_pCamera, FALSE, FALSE);
+		WW3D::Render (doc->GetScene (), m_pCamera.Peek(), FALSE, FALSE);
 
 		// Wait for all rendering to complete before stopping benchmark.
 		DWORD milliseconds = (::Get_CPU_Clock (pt_high) - profile_time) / 1000;
@@ -544,7 +540,7 @@ CGraphicView::RepaintView
 		WW3D::Render (doc->GetCursorScene (), doc->Get2DCamera (), FALSE, FALSE);
 
 		// Render the dazzles
-		doc->Render_Dazzles(m_pCamera);
+		doc->Render_Dazzles(m_pCamera.Peek());
 
 		// Finish out the rendering process
 		WW3D::End_Render ();
@@ -603,7 +599,7 @@ CGraphicView::UpdateDisplay (void)
 
 		// Render the current view inside the frame
         WW3D::Begin_Render (TRUE, TRUE, Vector3 (0.2,0.4,0.6));
-		WW3D::Render (doc->GetScene (), m_pCamera, FALSE, FALSE);
+		WW3D::Render (doc->GetScene (), m_pCamera.Peek(), FALSE, FALSE);
 		WW3D::End_Render ();
     } */
 
