@@ -368,7 +368,7 @@ int W3DAssetManager::replacePrototypeTexture(RenderObjClass *robj, const char * 
 TextureClass * W3DAssetManager::Find_Texture(const char * name, const int color)
 {
 	char newname[512];
-	Munge_Texture_Name(newname, sizeof(newname), name, color);
+	Munge_Texture_Name(newname, ARRAY_SIZE(newname), name, color);
 
 	// see if we have a cached copy
 	TextureClass *newtex = TextureHash.Get(newname);
@@ -686,7 +686,7 @@ TextureClass * W3DAssetManager::Recolor_Texture_One_Time(TextureClass *texture, 
 	newtex->Get_Filter().Set_V_Addr_Mode(texture->Get_Filter().Get_V_Addr_Mode());
 
 	char newname[512];
-	Munge_Texture_Name(newname, sizeof(newname), name, color);
+	Munge_Texture_Name(newname, ARRAY_SIZE(newname), name, color);
 	newtex->Set_Texture_Name(newname);
 
 	TextureHash.Insert(newtex->Get_Texture_Name(), newtex);
@@ -734,7 +734,7 @@ RenderObjClass * W3DAssetManager::Create_Render_Obj(
 	}
 
 	char newname[512];
-	Munge_Render_Obj_Name(newname, sizeof(newname), name, scale, color, newTexture);
+	Munge_Render_Obj_Name(newname, ARRAY_SIZE(newname), name, scale, color, newTexture);
 
 	// see if we got a cached version
 	RenderObjClass *rendobj = nullptr;
@@ -774,7 +774,7 @@ RenderObjClass * W3DAssetManager::Create_Render_Obj(
 			lstrcpyn(filename, name, ((int)mesh_name) - ((int)name) + 1);
 			lstrcat(filename, ".w3d");
 		} else {
-			snprintf( filename, sizeof(filename), "%s.w3d", name);
+			snprintf( filename, ARRAY_SIZE(filename), "%s.w3d", name);
 		}
 
 		// If we can't find it, try the parent directory

@@ -425,7 +425,7 @@ UnsignedInt INI::load( AsciiString filename, INILoadType loadType, Xfer *pXfer )
 					} catch (...) {
 						DEBUG_CRASH(("Error parsing block '%s' in INI file '%s'", token, m_filename.str()) );
 						char buff[1024];
-						snprintf(buff, sizeof(buff), "Error parsing INI file '%s' (Line: '%s')\n",
+						snprintf(buff, ARRAY_SIZE(buff), "Error parsing INI file '%s' (Line: '%s')\n",
 							m_filename.str(), currentLine.str());
 
 						throw INIException(buff);
@@ -1565,7 +1565,7 @@ void INI::initFromINIMulti( void *what, const MultiIniFieldParse& parseTableList
 
 
 							char buff[1024];
-							snprintf(buff, sizeof(buff), "[LINE: %d - FILE: '%s'] Error reading field '%s'\n",
+							snprintf(buff, ARRAY_SIZE(buff), "[LINE: %d - FILE: '%s'] Error reading field '%s'\n",
 								INI::getLineNum(), INI::getFilename().str(), field);
 							throw INIException(buff);
 						}

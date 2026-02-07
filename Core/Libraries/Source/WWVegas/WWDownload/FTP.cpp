@@ -494,7 +494,7 @@ HRESULT  Cftp::LoginToServer( LPCSTR szUserName, LPCSTR szPassword )
 
 	if( m_iStatus == FTPSTAT_CONNECTED )
 	{
-		snprintf( command, sizeof(command), "USER %s\r\n", m_szUserName );
+		snprintf( command, ARRAY_SIZE(command), "USER %s\r\n", m_szUserName );
 
 		if( SendCommand( command, (int)strlen( command ) ) < 0 )
 		{
@@ -517,7 +517,7 @@ HRESULT  Cftp::LoginToServer( LPCSTR szUserName, LPCSTR szPassword )
 
 	if( m_iStatus == FTPSTAT_SENTUSER )
 	{
-		snprintf( command, sizeof(command), "PASS %s\r\n", m_szPassword );
+		snprintf( command, ARRAY_SIZE(command), "PASS %s\r\n", m_szPassword );
 
 		if( SendCommand( command, (int)strlen( command ) ) < 0 )
 		{
@@ -694,7 +694,7 @@ HRESULT  Cftp::FindFile( LPCSTR szRemoteFileName, int * piSize )
 
 	if( ( m_iStatus == FTPSTAT_LOGGEDIN ) || ( m_iStatus == FTPSTAT_FILEFOUND ) )
 	{
-		snprintf( command, sizeof(command), "CWD %s\r\n", m_szRemoteFilePath );
+		snprintf( command, ARRAY_SIZE(command), "CWD %s\r\n", m_szRemoteFilePath );
 
 		if( SendCommand( command, (int)strlen( command ) ) < 0 )
 		{
@@ -747,7 +747,7 @@ HRESULT  Cftp::FindFile( LPCSTR szRemoteFileName, int * piSize )
 
 	if( m_iStatus == FTPSTAT_SENTPORT )
 	{
-		snprintf( command, sizeof(command), "LIST %s\r\n", m_szRemoteFileName );
+		snprintf( command, ARRAY_SIZE(command), "LIST %s\r\n", m_szRemoteFileName );
 
 		if( SendCommand( command, (int)strlen( command ) ) < 0 )
 		{
@@ -1391,7 +1391,7 @@ HRESULT  Cftp::GetNextFileBlock( LPCSTR szLocalFileName, int * piTotalRead )
 	int res, iReply;
 
 	char downloadfilename[256];
-	GetDownloadFilename(szLocalFileName, downloadfilename, sizeof(downloadfilename));
+	GetDownloadFilename(szLocalFileName, downloadfilename, ARRAY_SIZE(downloadfilename));
 
 
 	//char str[ 256 ];
@@ -1507,7 +1507,7 @@ HRESULT  Cftp::GetNextFileBlock( LPCSTR szLocalFileName, int * piTotalRead )
 
 	if( m_iStatus == FTPSTAT_SENTREST )
 	{
-		snprintf( command, sizeof(command), "RETR %s\r\n", m_szRemoteFileName );
+		snprintf( command, ARRAY_SIZE(command), "RETR %s\r\n", m_szRemoteFileName );
 
 		if( SendCommand( command, strlen( command ) ) < 0 )
 		{
@@ -1607,7 +1607,7 @@ HRESULT  Cftp::GetNextFileBlock( LPCSTR szLocalFileName, int * piTotalRead )
 		 */
 
 		char downloadfilename[256];
-		GetDownloadFilename(m_szLocalFileName, downloadfilename, sizeof(downloadfilename));
+		GetDownloadFilename(m_szLocalFileName, downloadfilename, ARRAY_SIZE(downloadfilename));
 
 		// Make sure the path exists for the new file
 		char curdir[256];
@@ -1688,7 +1688,7 @@ HRESULT  Cftp::GetNextFileBlock( LPCSTR szLocalFileName, int * piTotalRead )
 HRESULT  Cftp::FileRecoveryPosition( LPCSTR szLocalFileName, LPCSTR szRegistryRoot )
 {
 	char downloadfilename[256];
-	GetDownloadFilename(szLocalFileName, downloadfilename, sizeof(downloadfilename));
+	GetDownloadFilename(szLocalFileName, downloadfilename, ARRAY_SIZE(downloadfilename));
 
 	FILE *testfp = fopen( downloadfilename, "rb" );
 	if( testfp == nullptr )
@@ -1831,7 +1831,7 @@ bool Prepare_Directories(const char *rootdir, const char *filename)
 	while(cptr=strchr(cptr,'\\'))
 	{
 		strlcpy(tempstr,filename,cptr-filename + 1);
-		snprintf(newdir, sizeof(newdir), "%s\\%s", rootdir, tempstr);
+		snprintf(newdir, ARRAY_SIZE(newdir), "%s\\%s", rootdir, tempstr);
 		if (!CreateDirectory(newdir, nullptr))
 			return false;
 		//if ((_mkdir(newdir) == -1) && ((errno == ENOENT || errno==EACCES)))

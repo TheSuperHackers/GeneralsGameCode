@@ -1004,7 +1004,7 @@ void WorldHeightMap::readTexClass(TXTextureClass *texClass, TileData **tileData)
 	}
 	else
 	{
-		snprintf( texturePath, sizeof(texturePath), "%s%s", TERRAIN_TGA_DIR_PATH, terrain->getTexture().str() );
+		snprintf( texturePath, ARRAY_SIZE(texturePath), "%s%s", TERRAIN_TGA_DIR_PATH, terrain->getTexture().str() );
 		theFile = TheFileSystem->openFile( texturePath, File::READ|File::BINARY);
 	}
 
