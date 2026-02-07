@@ -23,6 +23,7 @@ target_link_libraries(z_generals PRIVATE
     z_gameengine
     z_gameenginedevice
     zi_always
+    lib_imgui
 )
 
 # TODO Originally referred to build host and user, replace with git info perhaps?
