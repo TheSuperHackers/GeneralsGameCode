@@ -2331,8 +2331,8 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 		req.buddyRequestType = BuddyRequest::BUDDYREQUEST_SETSTATUS;
 		req.arg.status.status = GP_PLAYING;
 		strcpy(req.arg.status.statusString, "Playing");
-		snprintf(req.arg.status.locationString, ARRAY_SIZE(req.arg.status.locationString), "%s",
-			WideCharStringToMultiByte(TheGameSpyGame->getGameName().str()).c_str());
+		strlcpy(req.arg.status.locationString, WideCharStringToMultiByte(TheGameSpyGame->getGameName().str()).c_str(),
+			ARRAY_SIZE(req.arg.status.locationString));
 		TheGameSpyBuddyMessageQueue->addRequest(req);
 	}
 

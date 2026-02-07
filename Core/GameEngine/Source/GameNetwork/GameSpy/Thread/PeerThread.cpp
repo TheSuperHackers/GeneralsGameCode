@@ -675,17 +675,17 @@ static void updateBuddyStatus( GameSpyBuddyStatus status, Int groupRoom = 0, std
 		case BUDDY_STAGING:
 			req.arg.status.status = GP_STAGING;
 			strcpy(req.arg.status.statusString, "Staging");
-			snprintf(req.arg.status.locationString, ARRAY_SIZE(req.arg.status.locationString), "%s", gameName.c_str());
+			strlcpy(req.arg.status.locationString, gameName.c_str(), ARRAY_SIZE(req.arg.status.locationString));
 			break;
 		case BUDDY_LOADING:
 			req.arg.status.status = GP_PLAYING;
 			strcpy(req.arg.status.statusString, "Loading");
-			snprintf(req.arg.status.locationString, ARRAY_SIZE(req.arg.status.locationString), "%s", gameName.c_str());
+			strlcpy(req.arg.status.locationString, gameName.c_str(), ARRAY_SIZE(req.arg.status.locationString));
 			break;
 		case BUDDY_PLAYING:
 			req.arg.status.status = GP_PLAYING;
 			strcpy(req.arg.status.statusString, "Playing");
-			snprintf(req.arg.status.locationString, ARRAY_SIZE(req.arg.status.locationString), "%s", gameName.c_str());
+			strlcpy(req.arg.status.locationString, gameName.c_str(), ARRAY_SIZE(req.arg.status.locationString));
 			break;
 		case BUDDY_MATCHING:
 			req.arg.status.status = GP_ONLINE;
