@@ -298,7 +298,7 @@ void PopulateReplayFileListbox(GameWindow *listbox)
 			UnicodeString displayDateTimeBuffer;
 			if (columns == 4)
 			{
-				// TheSuperHackers @info Caball009 09/02/2025 The original replay window menu has only 4 columns.
+				// TheSuperHackers @info Caball009 09/02/2025 The original replay window menu has only four columns.
 				// Concatenate time and date for a single column if there aren't two dedicated columns for time and date.
 				displayDateTimeBuffer.format(L"%s %s", displayTimeBuffer.str(), displayDateBuffer.str());
 			}
