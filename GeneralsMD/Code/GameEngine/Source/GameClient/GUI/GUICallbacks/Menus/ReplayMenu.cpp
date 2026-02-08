@@ -241,6 +241,7 @@ void PopulateReplayFileListbox(GameWindow *listbox)
 
 	GadgetListBoxReset(listbox);
 	const Int listboxLength = GadgetListBoxGetListLength(listbox);
+	const Int columns = GadgetListBoxGetNumColumns(listbox);
 
 	// TheSuperHackers @tweak xezon 08/06/2025 Now shows missing maps in red color.
 	enum {
@@ -291,8 +292,16 @@ void PopulateReplayFileListbox(GameWindow *listbox)
 			UnicodeString replayNameToShow = createReplayName(asciistr);
 
 			// TheSuperHackers @tweak Caball009 07/02/2025 Display both time and date instead of only time.
+			const UnicodeString displayTimeBuffer = getUnicodeTimeBuffer(header.timeVal);
+			const UnicodeString displayDateBuffer = getUnicodeDateBuffer(header.timeVal);
+
 			UnicodeString displayDateTimeBuffer;
-			displayDateTimeBuffer.format(L"%s %s", getUnicodeTimeBuffer(header.timeVal).str(), getUnicodeDateBuffer(header.timeVal).str());
+			if (columns == 4)
+			{
+				// TheSuperHackers @info Caball009 09/02/2025 The original replay window menu has only 4 columns.
+				// Concatenate time and date for a single column if there aren't two dedicated columns for time and date.
+				displayDateTimeBuffer.format(L"%s %s", displayTimeBuffer.str(), displayDateBuffer.str());
+			}
 
 			// version (no-op)
 
@@ -353,9 +362,19 @@ void PopulateReplayFileListbox(GameWindow *listbox)
 
 			const Int insertionIndex = GadgetListBoxAddEntryText(listbox, replayNameToShow, color, -1, 0);
 			DEBUG_ASSERTCRASH(insertionIndex >= 0, ("Expects valid index"));
-			GadgetListBoxAddEntryText(listbox, displayDateTimeBuffer, color, insertionIndex, 1);
-			GadgetListBoxAddEntryText(listbox, header.versionString, color, insertionIndex, 2);
-			GadgetListBoxAddEntryText(listbox, mapStr, mapColor, insertionIndex, 3);
+			if (columns == 4)
+			{
+				GadgetListBoxAddEntryText(listbox, displayDateTimeBuffer, color, insertionIndex, 1);
+				GadgetListBoxAddEntryText(listbox, header.versionString, color, insertionIndex, 2);
+				GadgetListBoxAddEntryText(listbox, mapStr, mapColor, insertionIndex, 3);
+			}
+			else if (columns == 5)
+			{
+				GadgetListBoxAddEntryText(listbox, displayTimeBuffer, color, insertionIndex, 1);
+				GadgetListBoxAddEntryText(listbox, displayDateBuffer, color, insertionIndex, 2);
+				GadgetListBoxAddEntryText(listbox, header.versionString, color, insertionIndex, 3);
+				GadgetListBoxAddEntryText(listbox, mapStr, mapColor, insertionIndex, 4);
+			}
 
 			// TheSuperHackers @performance Now stops processing when the list is full.
 			if (insertionIndex == listboxLength - 1)
