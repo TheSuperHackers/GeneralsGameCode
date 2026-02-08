@@ -290,6 +290,7 @@ void PopulateReplayFileListbox(GameWindow *listbox)
 			// name
 			UnicodeString replayNameToShow = createReplayName(asciistr);
 
+			// TheSuperHackers @tweak Caball009 07/02/2025 Display both time and date instead only time.
 			UnicodeString displayDateTimeBuffer;
 			displayDateTimeBuffer.format(L"%s %s", getUnicodeTimeBuffer(header.timeVal).str(), getUnicodeDateBuffer(header.timeVal).str());
 
