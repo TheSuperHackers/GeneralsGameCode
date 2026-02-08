@@ -261,16 +261,16 @@ protected:
 	Int m_width, m_height;																			///< Dimensions of the view
 	Int m_originX, m_originY;																		///< Location of top/left view corner
 
-	Real m_angle;																								///< Angle at which view has been rotated about the Z axis
-	Real m_pitch;																								///< Rotation of view direction around horizontal (X) axis
+	Real m_angle;																								///< Angle at which view has been rotated about the Z axis. Expected normalized
+	Real m_pitch;																								///< Rotation of view direction around horizontal (X) axis. Expected normalized
 
 	Real m_maxHeightAboveGround;																///< Highest camera above ground value
 	Real m_minHeightAboveGround;																///< Lowest camera above ground value
 	Real m_zoom;																								///< Current zoom value
 	Real m_heightAboveGround;																		///< User's desired camera height above ground
 	Bool m_zoomLimited;																					///< Camera restricted in zoom height
-	Real m_defaultAngle;
-	Real m_defaultPitch;
+	Real m_defaultAngle;																				///< Expected normalized
+	Real m_defaultPitch;																				///< Expected normalized
 	Real m_currentHeightAboveGround;														///< Actual camera height above ground, or rather height above ground at default pitch
 	Real m_terrainHeightAtPivot;																///< Actual terrain height at camera pivot
 
