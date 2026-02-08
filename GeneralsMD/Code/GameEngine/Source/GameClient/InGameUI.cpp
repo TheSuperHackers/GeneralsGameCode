@@ -5707,8 +5707,12 @@ void InGameUI::updateAndDrawWorldAnimations( void )
 			}
 
 			// update the Z value
+			// TheSuperHackers @tweak bobtista World animation Z-rise is now decoupled from the render update.
 			if( wad->m_zRisePerSecond )
-				wad->m_worldPos.z += wad->m_zRisePerSecond / LOGICFRAMES_PER_SECOND;
+			{
+				const Real timeScale = TheFramePacer->getBaseOverUpdateFpsRatio();
+				wad->m_worldPos.z += wad->m_zRisePerSecond / LOGICFRAMES_PER_SECOND * timeScale;
+			}
 
 		}
 
