@@ -143,8 +143,9 @@ public:
 
 	/// draw a video buffer fit within the screen coordinates
 	virtual void drawScaledVideoBuffer( VideoBuffer *buffer, VideoStreamInterface *stream ) = 0;
-	virtual void drawVideoBuffer( VideoBuffer *buffer, Int startX, Int startY,
-													Int endX, Int endY ) = 0;
+	virtual void drawScaledVideoBuffer() = 0;
+	virtual void drawVideoBuffer( VideoBuffer *buffer, Int startX, Int startY, Int endX, Int endY ) = 0;
+	virtual void drawVideoBuffer(Int startX, Int startY, Int endX, Int endY) = 0;
 
 	/// FullScreen video playback
 	virtual void playLogoMovie( AsciiString movieName, Int minMovieLength, Int minCopyrightLength );
