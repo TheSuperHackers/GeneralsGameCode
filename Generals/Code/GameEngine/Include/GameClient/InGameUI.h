@@ -555,6 +555,7 @@ public:  // ********************************************************************
 	virtual void refreshRenderFpsResources(void);
 	virtual void refreshSystemTimeResources( void );
 	virtual void refreshGameTimeResources( void );
+	virtual void refreshPlayerInfoListResources( void );
 
 	virtual void disableTooltipsUntil(UnsignedInt frameNum);
 	virtual void clearTooltipsDisabled();
@@ -579,6 +580,7 @@ private:
 	void drawRenderFps(Int &x, Int &y);
 	void drawSystemTime(Int &x, Int &y);
 	void drawGameTime();
+	void drawPlayerInfoList();
 
 public:
 	void registerWindowLayout(WindowLayout *layout); // register a layout for updates
@@ -776,6 +778,55 @@ protected:
 	Coord2D												m_gameTimePosition;
 	Color												m_gameTimeColor;
 	Color												m_gameTimeDropColor;
+
+	struct PlayerInfoList
+	{
+		PlayerInfoList();
+		void init(const AsciiString &fontName, Int pointSize, Bool bold);
+		void clear();
+
+		enum LabelType
+		{
+			LabelType_Team,
+			LabelType_Money,
+			LabelType_Rank,
+			LabelType_Xp,
+
+			LabelType_Count
+		};
+
+		enum ValueType
+		{
+			ValueType_Team,
+			ValueType_Money,
+			ValueType_Rank,
+			ValueType_Xp,
+			ValueType_Name,
+
+			ValueType_Count
+		};
+
+		struct LastValues
+		{
+			LastValues();
+			UnsignedInt values[LabelType_Count][MAX_PLAYER_COUNT];
+			UnicodeString name[MAX_PLAYER_COUNT];
+		};
+
+		DisplayString *labels[LabelType_Count];
+		DisplayString *values[ValueType_Count][MAX_PLAYER_COUNT];
+		LastValues lastValues;
+	};
+
+	PlayerInfoList								m_playerInfoList;
+	AsciiString										m_playerInfoListFont;
+	Int														m_playerInfoListPointSize;
+	Bool													m_playerInfoListBold;
+	Coord2D												m_playerInfoListPosition;
+	Color													m_playerInfoListLabelColor;
+	Color													m_playerInfoListValueColor;
+	Color													m_playerInfoListDropColor;
+	UnsignedInt										m_playerInfoListBackgroundAlpha;
 
 	// message data
 	UIMessage										m_uiMessages[ MAX_UI_MESSAGES ];/**< messages to display to the user, the
