@@ -4578,7 +4578,18 @@ void Object::onCapture( Player *oldOwner, Player *newOwner )
 		getAIUpdateInterface()->aiIdle(CMD_FROM_AI);
 #else
 		if (oldOwner->getRelationship(newOwner->getDefaultTeam()) != ALLIES)
+		{
 			getAIUpdateInterface()->aiIdle(CMD_FROM_AI);
+
+			DozerAIInterface* dozerAI = getAIUpdateInterface()->getDozerAIInterface();
+			if (dozerAI)
+			{
+				for (UnsignedInt task = DOZER_TASK_FIRST; task < DOZER_NUM_TASKS; ++task)
+				{
+					dozerAI->cancelTask((DozerTask)task);
+				}
+			}
+		}
 #endif
 	}
 
