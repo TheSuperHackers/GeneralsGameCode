@@ -388,7 +388,8 @@ void ReplayMenuInit( WindowLayout *layout, void *userData )
 	buttonCopy = TheWindowManager->winGetWindowFromId( parentReplayMenu, buttonCopyID );
 
 #if ENABLE_GUI_HACKS
-	// TheSuperHackers @tweak Caball009 07/02/2025 Switch the column width for the time / date with the column width for the version.
+	// TheSuperHackers @tweak Caball009 07/02/2025 The version column is wider than the time / date column.
+	// Switch them so that there's enough space to show both time and date without a line break.
 	ListboxData* list = static_cast<ListboxData*>(listboxReplayFiles->winGetUserData());
 
 	if (list->columns == 4 && list->columnWidth[1] < list->columnWidth[2])
