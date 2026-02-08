@@ -35,9 +35,9 @@ typedef UnsignedByte NetPacketFieldType;
 namespace NetPacketFieldTypes {
 	constexpr const NetPacketFieldType CommandType = 'T';
 	constexpr const NetPacketFieldType Relay = 'R';
+	constexpr const NetPacketFieldType Frame = 'F';
 	constexpr const NetPacketFieldType PlayerId = 'P';
 	constexpr const NetPacketFieldType CommandId = 'C';
-	constexpr const NetPacketFieldType Frame = 'F';
 	constexpr const NetPacketFieldType Data = 'D';
 }
 
@@ -55,14 +55,14 @@ struct NetPacketRelayField {
 	UnsignedByte relay;
 };
 
-struct NetPacketPlayerIdField {
-	char header;
-	UnsignedByte playerId;
-};
-
 struct NetPacketFrameField {
 	char header;
 	UnsignedInt frame;
+};
+
+struct NetPacketPlayerIdField {
+	char header;
+	UnsignedByte playerId;
 };
 
 struct NetPacketCommandIdField {
