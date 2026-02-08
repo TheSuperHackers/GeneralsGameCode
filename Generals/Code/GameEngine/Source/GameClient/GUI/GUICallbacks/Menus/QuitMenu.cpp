@@ -240,7 +240,8 @@ static void restartMissionMenu()
 							);
 		//if (TheGlobalData->m_fixedSeed >= 0)
 			//InitRandom(TheGlobalData->m_fixedSeed);
-			InitRandom(TheGameInfo->getSeed());
+			const UnsignedInt seed = (gameMode != GAME_SKIRMISH) ? 0 : TheGameInfo->getSeed();
+			InitRandom(seed);
 		//else
 		//	InitGameLogicRandom(GameClientRandomValue(0, INT_MAX - 1));
 	}
