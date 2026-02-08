@@ -35,7 +35,7 @@
 
 // GLOBALS ////////////////////////////////////////////////////////////////////////////////////////
 WaterSetting WaterSettings[ TIME_OF_DAY_COUNT ];
-OVERRIDE<WaterTransparencySetting> TheWaterTransparency = nullptr;
+OverridePtr<WaterTransparencySetting> TheWaterTransparency = nullptr;
 
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
 const FieldParse WaterSetting::m_waterSettingFieldParseTable[] =

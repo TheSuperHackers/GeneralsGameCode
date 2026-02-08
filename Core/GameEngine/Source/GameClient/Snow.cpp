@@ -100,7 +100,7 @@ SnowManager::~SnowManager()
 	TheWeatherSetting=nullptr;
 }
 
-OVERRIDE<WeatherSetting> TheWeatherSetting = nullptr;
+OverridePtr<WeatherSetting> TheWeatherSetting = nullptr;
 
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
 const FieldParse WeatherSetting::m_weatherSettingFieldParseTable[] =

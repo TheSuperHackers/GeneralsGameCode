@@ -330,7 +330,7 @@ public:
 
 	GUICommandType getCommandType() const { return m_command; }
 	UnsignedInt getOptions() const { return m_options; }
-	OVERRIDE<ThingTemplate> getThingTemplate() const { return m_thingTemplate; }
+	OverridePtr<ThingTemplate> getThingTemplate() const { return m_thingTemplate; }
 	const UpgradeTemplate* getUpgradeTemplate() const { return m_upgradeTemplate; }
 	const SpecialPowerTemplate* getSpecialPowerTemplate() const { return m_specialPower; }
 	RadiusCursorType getRadiusCursorType() const { return m_radiusCursor; }

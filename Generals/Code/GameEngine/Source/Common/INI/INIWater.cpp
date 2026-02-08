@@ -118,7 +118,7 @@ void INI::parseWaterTransparencyDefinition( INI *ini )
 		// texture.
 
 		const WaterTransparencySetting* wtOriginal = TheWaterTransparency.getNonOverloadedPointer();
-		OVERRIDE<WaterTransparencySetting> wtOverride = TheWaterTransparency;
+		OverridePtr<WaterTransparencySetting> wtOverride = TheWaterTransparency;
 
 		if (wtOriginal == wtOverride)
 			return;
