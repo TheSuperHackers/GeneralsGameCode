@@ -1244,6 +1244,7 @@ void W3DView::update(void)
 						{
 							normAngle(idealZRot);
 							Real oldZRot = m_angle;
+							normAngle(oldZRot);
 							Real diffRot = idealZRot - oldZRot;
 							normAngle(diffRot);
 							View::setAngle(m_angle + diffRot * 0.1f);
