@@ -1538,11 +1538,11 @@ void NetPacket::setAddress(Int addr, Int port) {
 Bool NetPacket::addCommand(NetCommandRef *msg) {
 	// This is where the fun begins...
 
-	NetCommandMsg *cmdMsg = msg->getCommand();
-
 	if (msg == nullptr) {
 		return TRUE; // There was nothing to add, so it was successful.
 	}
+
+	NetCommandMsg *cmdMsg = msg->getCommand();
 
 	switch(cmdMsg->getNetCommandType())
 	{
