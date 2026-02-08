@@ -225,7 +225,7 @@ void NetGameCommandMsg::setGameMessageType(GameMessage::Type type) {
 }
 
 size_t NetGameCommandMsg::getPackedByteCount() const {
-	UnsignedShort msglen = sizeof(NetPacketGameCommandHeader);
+	UnsignedShort msglen = sizeof(NetPacketGameCommand);
 
 	// Variable data portion
 	GameMessage *gmsg = constructGameMessage();
@@ -870,7 +870,7 @@ void NetChatCommandMsg::setPlayerMask( Int playerMask )
 
 size_t NetChatCommandMsg::getPackedByteCount() const
 {
-	return sizeof(NetPacketChatCommandHeader)
+	return sizeof(NetPacketChatCommand)
 		+ m_text.getByteCount()
 		+ sizeof(m_playerMask);
 }
@@ -880,7 +880,7 @@ size_t NetChatCommandMsg::getPackedByteCount() const
 //-------------------------
 size_t NetDisconnectChatCommandMsg::getPackedByteCount() const
 {
-	return sizeof(NetPacketDisconnectChatCommandHeader)
+	return sizeof(NetPacketDisconnectChatCommand)
 		+ m_text.getByteCount();
 }
 
@@ -955,7 +955,7 @@ void NetProgressCommandMsg::setPercentage( UnsignedByte percent )
 }
 
 size_t NetProgressCommandMsg::getPackedByteCount() const {
-	return sizeof(NetPacketProgressMessage);
+	return sizeof(NetPacketProgressCommand);
 }
 
 //-------------------------
@@ -1244,7 +1244,7 @@ NetLoadCompleteCommandMsg::~NetLoadCompleteCommandMsg() {
 }
 
 size_t NetLoadCompleteCommandMsg::getPackedByteCount() const {
-	return sizeof(NetPacketLoadCompleteMessage);
+	return sizeof(NetPacketLoadCompleteCommand);
 }
 
 //-------------------------
@@ -1258,5 +1258,5 @@ NetTimeOutGameStartCommandMsg::~NetTimeOutGameStartCommandMsg() {
 }
 
 size_t NetTimeOutGameStartCommandMsg::getPackedByteCount() const {
-	return sizeof(NetPacketTimeOutGameStartMessage);
+	return sizeof(NetPacketTimeOutGameStartCommand);
 }

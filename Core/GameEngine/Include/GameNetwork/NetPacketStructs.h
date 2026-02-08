@@ -70,7 +70,7 @@ struct NetPacketCommandIdField {
 	UnsignedShort commandId;
 };
 
-struct NetPacketDataFieldHeader {
+struct NetPacketDataField {
 	char header;
 };
 
@@ -81,7 +81,7 @@ struct NetPacketDataFieldHeader {
 struct NetPacketAckCommand {
 	NetPacketCommandTypeField commandType;
 	NetPacketPlayerIdField playerId;
-	NetPacketDataFieldHeader dataHeader;
+	NetPacketDataField dataHeader;
 	UnsignedShort commandId;           // Command ID being acknowledged
 	UnsignedByte originalPlayerId;     // Original player who sent the command
 };
@@ -92,7 +92,7 @@ struct NetPacketFrameCommand {
 	NetPacketRelayField relay;
 	NetPacketPlayerIdField playerId;
 	NetPacketCommandIdField commandId;
-	NetPacketDataFieldHeader dataHeader;
+	NetPacketDataField dataHeader;
 	UnsignedShort commandCount;
 };
 
@@ -102,7 +102,7 @@ struct NetPacketPlayerLeaveCommand {
 	NetPacketFrameField frame;
 	NetPacketPlayerIdField playerId;
 	NetPacketCommandIdField commandId;
-	NetPacketDataFieldHeader dataHeader;
+	NetPacketDataField dataHeader;
 	UnsignedByte leavingPlayerId;
 };
 
@@ -111,7 +111,7 @@ struct NetPacketRunAheadMetricsCommand {
 	NetPacketRelayField relay;
 	NetPacketPlayerIdField playerId;
 	NetPacketCommandIdField commandId;
-	NetPacketDataFieldHeader dataHeader;
+	NetPacketDataField dataHeader;
 	Real averageLatency;
 	UnsignedShort averageFps;
 };
@@ -122,7 +122,7 @@ struct NetPacketRunAheadCommand {
 	NetPacketFrameField frame;
 	NetPacketPlayerIdField playerId;
 	NetPacketCommandIdField commandId;
-	NetPacketDataFieldHeader dataHeader;
+	NetPacketDataField dataHeader;
 	UnsignedShort runAhead;
 	UnsignedByte frameRate;
 };
@@ -133,7 +133,7 @@ struct NetPacketDestroyPlayerCommand {
 	NetPacketFrameField frame;
 	NetPacketPlayerIdField playerId;
 	NetPacketCommandIdField commandId;
-	NetPacketDataFieldHeader dataHeader;
+	NetPacketDataField dataHeader;
 	UnsignedInt playerIndex;
 };
 
@@ -141,14 +141,14 @@ struct NetPacketKeepAliveCommand {
 	NetPacketCommandTypeField commandType;
 	NetPacketRelayField relay;
 	NetPacketPlayerIdField playerId;
-	NetPacketDataFieldHeader dataHeader;
+	NetPacketDataField dataHeader;
 };
 
 struct NetPacketDisconnectKeepAliveCommand {
 	NetPacketCommandTypeField commandType;
 	NetPacketRelayField relay;
 	NetPacketPlayerIdField playerId;
-	NetPacketDataFieldHeader dataHeader;
+	NetPacketDataField dataHeader;
 };
 
 struct NetPacketDisconnectPlayerCommand {
@@ -156,7 +156,7 @@ struct NetPacketDisconnectPlayerCommand {
 	NetPacketRelayField relay;
 	NetPacketPlayerIdField playerId;
 	NetPacketCommandIdField commandId;
-	NetPacketDataFieldHeader dataHeader;
+	NetPacketDataField dataHeader;
 	UnsignedByte slot;
 	UnsignedInt disconnectFrame;
 };
@@ -165,14 +165,14 @@ struct NetPacketRouterQueryCommand {
 	NetPacketCommandTypeField commandType;
 	NetPacketRelayField relay;
 	NetPacketPlayerIdField playerId;
-	NetPacketDataFieldHeader dataHeader;
+	NetPacketDataField dataHeader;
 };
 
 struct NetPacketRouterAckCommand {
 	NetPacketCommandTypeField commandType;
 	NetPacketRelayField relay;
 	NetPacketPlayerIdField playerId;
-	NetPacketDataFieldHeader dataHeader;
+	NetPacketDataField dataHeader;
 };
 
 struct NetPacketDisconnectVoteCommand {
@@ -180,38 +180,38 @@ struct NetPacketDisconnectVoteCommand {
 	NetPacketRelayField relay;
 	NetPacketPlayerIdField playerId;
 	NetPacketCommandIdField commandId;
-	NetPacketDataFieldHeader dataHeader;
+	NetPacketDataField dataHeader;
 	UnsignedByte slot;
 	UnsignedInt voteFrame;
 };
 
-struct NetPacketChatCommandHeader {
+struct NetPacketChatCommand {
 	NetPacketCommandTypeField commandType;
 	NetPacketFrameField frame;
 	NetPacketRelayField relay;
 	NetPacketPlayerIdField playerId;
 	NetPacketCommandIdField commandId;
-	NetPacketDataFieldHeader dataHeader;
+	NetPacketDataField dataHeader;
 	UnsignedByte textLength;
 	// Variable fields: WideChar text[textLength] + Int playerMask
 };
 
-struct NetPacketDisconnectChatCommandHeader {
+struct NetPacketDisconnectChatCommand {
 	NetPacketCommandTypeField commandType;
 	NetPacketRelayField relay;
 	NetPacketPlayerIdField playerId;
-	NetPacketDataFieldHeader dataHeader;
+	NetPacketDataField dataHeader;
 	UnsignedByte textLength;
 	// Variable fields: WideChar text[textLength]
 };
 
-struct NetPacketGameCommandHeader {
+struct NetPacketGameCommand {
 	NetPacketCommandTypeField commandType;
 	NetPacketFrameField frame;
 	NetPacketRelayField relay;
 	NetPacketPlayerIdField playerId;
 	NetPacketCommandIdField commandId;
-	NetPacketDataFieldHeader dataHeader;
+	NetPacketDataField dataHeader;
 	// Variable fields: GameMessage type + argument types + argument data
 };
 
@@ -220,7 +220,7 @@ struct NetPacketWrapperCommand {
 	NetPacketRelayField relay;
 	NetPacketPlayerIdField playerId;
 	NetPacketCommandIdField commandId;
-	NetPacketDataFieldHeader dataHeader;
+	NetPacketDataField dataHeader;
 	UnsignedShort wrappedCommandId;
 	UnsignedInt chunkNumber;
 	UnsignedInt numChunks;
@@ -234,7 +234,7 @@ struct NetPacketFileCommand {
 	NetPacketRelayField relay;
 	NetPacketPlayerIdField playerId;
 	NetPacketCommandIdField commandId;
-	NetPacketDataFieldHeader dataHeader;
+	NetPacketDataField dataHeader;
 	// Variable fields: null-terminated filename + UnsignedInt fileDataLength + file data
 };
 
@@ -243,7 +243,7 @@ struct NetPacketFileAnnounceCommand {
 	NetPacketRelayField relay;
 	NetPacketPlayerIdField playerId;
 	NetPacketCommandIdField commandId;
-	NetPacketDataFieldHeader dataHeader;
+	NetPacketDataField dataHeader;
 	// Variable fields: null-terminated filename + UnsignedShort fileID + UnsignedByte playerMask
 };
 
@@ -252,33 +252,33 @@ struct NetPacketFileProgressCommand {
 	NetPacketRelayField relay;
 	NetPacketPlayerIdField playerId;
 	NetPacketCommandIdField commandId;
-	NetPacketDataFieldHeader dataHeader;
+	NetPacketDataField dataHeader;
 	UnsignedShort fileId;
 	Int progress;
 };
 
-struct NetPacketProgressMessage {
+struct NetPacketProgressCommand {
 	NetPacketCommandTypeField commandType;
 	NetPacketRelayField relay;
 	NetPacketPlayerIdField playerId;
-	NetPacketDataFieldHeader dataHeader;
+	NetPacketDataField dataHeader;
 	UnsignedByte percentage;
 };
 
-struct NetPacketLoadCompleteMessage {
+struct NetPacketLoadCompleteCommand {
 	NetPacketCommandTypeField commandType;
 	NetPacketRelayField relay;
 	NetPacketPlayerIdField playerId;
 	NetPacketCommandIdField commandId;
-	NetPacketDataFieldHeader dataHeader;
+	NetPacketDataField dataHeader;
 };
 
-struct NetPacketTimeOutGameStartMessage {
+struct NetPacketTimeOutGameStartCommand {
 	NetPacketCommandTypeField commandType;
 	NetPacketRelayField relay;
 	NetPacketPlayerIdField playerId;
 	NetPacketCommandIdField commandId;
-	NetPacketDataFieldHeader dataHeader;
+	NetPacketDataField dataHeader;
 };
 
 struct NetPacketDisconnectFrameCommand {
@@ -286,7 +286,7 @@ struct NetPacketDisconnectFrameCommand {
 	NetPacketRelayField relay;
 	NetPacketPlayerIdField playerId;
 	NetPacketCommandIdField commandId;
-	NetPacketDataFieldHeader dataHeader;
+	NetPacketDataField dataHeader;
 	UnsignedInt disconnectFrame;
 };
 
@@ -295,7 +295,7 @@ struct NetPacketDisconnectScreenOffCommand {
 	NetPacketRelayField relay;
 	NetPacketPlayerIdField playerId;
 	NetPacketCommandIdField commandId;
-	NetPacketDataFieldHeader dataHeader;
+	NetPacketDataField dataHeader;
 	UnsignedInt newFrame;
 };
 
@@ -304,7 +304,7 @@ struct NetPacketFrameResendRequestCommand {
 	NetPacketRelayField relay;
 	NetPacketPlayerIdField playerId;
 	NetPacketCommandIdField commandId;
-	NetPacketDataFieldHeader dataHeader;
+	NetPacketDataField dataHeader;
 	UnsignedInt frameToResend;
 };
 
