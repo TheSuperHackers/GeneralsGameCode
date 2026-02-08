@@ -50,15 +50,30 @@ enum ConnectionNumbers CPP_11(: Int)
 
 static const Int MAX_SLOTS = MAX_PLAYER+1;
 
-// UDP (8 bytes) + IP header (28 bytes) = 36 bytes total.  We want a total packet size of 512, so 512 - 36 = 476
-static const Int MAX_PACKET_SIZE = 476;
+// As we are not detecting for network fragmentation and adjusting max payload, we set 1200 bytes MSS as a safe upper limit for various networks
+static const Int MAX_UDP_PAYLOAD = 1200;
+// Legacy value of 476 is used for retail compatibility
+static const Int RESTRICTED_UDP_PAYLOAD = 476;
+
+// TheSuperHackers @info The legacy lanapi cannot use a larger packet size without breaking
+static const Int MAX_LANAPI_PACKET_SIZE = RESTRICTED_UDP_PAYLOAD;
+
+// TheSuperHackers @bugfix Mauller 08/02/2026 Allow larger ethernet UDP payload to be used for game messages, this fixes connection issues and eliminates DC bugs
+// Also double send and receive buffer sizes to alleviate the occurance of disconnection issues in retail and non retail code.
+#if RETAIL_COMPATIBLE_NETWORKING
+static const Int MAX_PACKET_SIZE = RESTRICTED_UDP_PAYLOAD;
+static const Int MAX_MESSAGE_LEN = 1024;
+#else
+static const Int MAX_PACKET_SIZE = MAX_UDP_PAYLOAD;
+static const Int MAX_MESSAGE_LEN = MAX_UDP_PAYLOAD;
+#endif
+
+static const Int MAX_MESSAGES = 256;
 
 /**
  * Command packet - contains frame #, total # of commands, and each command.  This is what gets sent
  * to each player every frame
  */
-#define MAX_MESSAGE_LEN 1024
-#define MAX_MESSAGES 128
 static const Int numCommandsPerCommandPacket = (MAX_MESSAGE_LEN - sizeof(UnsignedInt) - sizeof(UnsignedShort))/sizeof(GameMessage);
 #pragma pack(push, 1)
 struct CommandPacket

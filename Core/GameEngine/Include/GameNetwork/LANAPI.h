@@ -44,7 +44,7 @@ static const Int g_lanHostNameLength = 1;
 static const Int g_lanGameNameLength = 16; // reduced length because of game option length
 static const Int g_lanGameNameReservedLength = 16; // save N wchars for ID info
 static const Int g_lanMaxChatLength = 100;
-static const Int m_lanMaxOptionsLength = MAX_PACKET_SIZE - ( 8 + (g_lanGameNameLength+1)*2 + 4 + (g_lanPlayerNameLength+1)*2
+static const Int m_lanMaxOptionsLength = MAX_LANAPI_PACKET_SIZE - ( 8 + (g_lanGameNameLength+1)*2 + 4 + (g_lanPlayerNameLength+1)*2
 																														+ (g_lanLoginNameLength+1) + (g_lanHostNameLength+1) );
 static const Int g_maxSerialLength = 23; // including the trailing '\0'
 
@@ -271,7 +271,7 @@ struct LANMessage
 };
 #pragma pack(pop)
 
-static_assert(sizeof(LANMessage) <= MAX_PACKET_SIZE, "LANMessage struct cannot be larger than the max packet size");
+static_assert(sizeof(LANMessage) <= MAX_LANAPI_PACKET_SIZE, "LANMessage struct cannot be larger than the max packet size");
 
 
 /**
