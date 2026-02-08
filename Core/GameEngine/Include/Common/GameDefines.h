@@ -45,6 +45,11 @@
 #define RETAIL_COMPATIBLE_PATHFINDING_ALLOCATION (1)
 #endif
 
+// Disable non retail fixes in the networking, such as putting more data per UDP packet
+#ifndef RETAIL_COMPATIBLE_NETWORKING
+#define RETAIL_COMPATIBLE_NETWORKING (1)
+#endif
+
 // This is essentially synonymous for RETAIL_COMPATIBLE_CRC. There is a lot wrong with AIGroup, such as use-after-free, double-free, leaks,
 // but we cannot touch it much without breaking retail compatibility. Do not shy away from using massive hacks when fixing issues with AIGroup,
 // but put them behind this macro.

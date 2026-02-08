@@ -74,7 +74,7 @@ struct ConnectionMessage
 {
 	Int id;
 	NetMessageFlags flags;
-	UnsignedByte data[MAX_MESSAGE_LEN];
+	UnsignedByte data[MAX_NETWORK_MESSAGE_LEN];
 	time_t lastSendTime;
 	Int retries;
 	Int length;
