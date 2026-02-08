@@ -236,7 +236,8 @@ RenderObjClass * W3DAssetManager::Create_Render_Obj(const char* name)
 
 //---------------------------------------------------------------------
 /** 'Generals' specific munging to encode team color and scale in model name */
-static inline void Munge_Render_Obj_Name(char *newname, const char *oldname, float scale, const int color, const char *textureName)
+static inline void Munge_Render_Obj_Name(char *newname, size_t newname_size, const char *oldname, float scale,
+	const int color, const char *textureName)
 {
 	char lower_case_name[255];
 	strlcpy(lower_case_name, oldname, ARRAY_SIZE(lower_case_name));
@@ -245,16 +246,16 @@ static inline void Munge_Render_Obj_Name(char *newname, const char *oldname, flo
 	if (!textureName)
 		textureName = "";
 
-	sprintf(newname,"#%d!%g!%s#%s",color,scale,textureName,lower_case_name);
+	snprintf(newname, newname_size, "#%d!%g!%s#%s", color, scale, textureName, lower_case_name);
 }
 
 //---------------------------------------------------------------------
-static inline void Munge_Texture_Name(char *newname, const char *oldname, const int color)
+static inline void Munge_Texture_Name(char *newname, size_t newname_size, const char *oldname, const int color)
 {
 	char lower_case_name[255];
 	strlcpy(lower_case_name, oldname, ARRAY_SIZE(lower_case_name));
 	_strlwr(lower_case_name);
-	sprintf(newname,"#%d#%s", color, lower_case_name);
+	snprintf(newname, newname_size, "#%d#%s", color, lower_case_name);
 }
 
 //---------------------------------------------------------------------
@@ -337,7 +338,7 @@ int W3DAssetManager::replacePrototypeTexture(RenderObjClass *robj, const char * 
 TextureClass * W3DAssetManager::Find_Texture(const char * name, const int color)
 {
 	char newname[512];
-	Munge_Texture_Name(newname, name, color);
+	Munge_Texture_Name(newname, ARRAY_SIZE(newname), name, color);
 
 	// see if we have a cached copy
 	TextureClass *newtex = TextureHash.Get(newname);
@@ -655,7 +656,7 @@ TextureClass * W3DAssetManager::Recolor_Texture_One_Time(TextureClass *texture, 
 	newtex->Get_Filter().Set_V_Addr_Mode(texture->Get_Filter().Get_V_Addr_Mode());
 
 	char newname[512];
-	Munge_Texture_Name(newname, name, color);
+	Munge_Texture_Name(newname, ARRAY_SIZE(newname), name, color);
 	newtex->Set_Texture_Name(newname);
 
 	TextureHash.Insert(newtex->Get_Texture_Name(), newtex);
@@ -703,7 +704,7 @@ RenderObjClass * W3DAssetManager::Create_Render_Obj(
 	}
 
 	char newname[512];
-	Munge_Render_Obj_Name(newname, name, scale, color, newTexture);
+	Munge_Render_Obj_Name(newname, ARRAY_SIZE(newname), name, scale, color, newTexture);
 
 	// see if we got a cached version
 	RenderObjClass *rendobj = nullptr;
@@ -743,7 +744,7 @@ RenderObjClass * W3DAssetManager::Create_Render_Obj(
 			lstrcpyn(filename, name, ((int)mesh_name) - ((int)name) + 1);
 			lstrcat(filename, ".w3d");
 		} else {
-			sprintf( filename, "%s.w3d", name);
+			snprintf( filename, ARRAY_SIZE(filename), "%s.w3d", name);
 		}
 
 		// If we can't find it, try the parent directory

@@ -373,9 +373,11 @@ void Win32Mouse::initCursorResources(void)
 				char resourcePath[256];
 				//Check if this is a directional cursor
 				if (m_cursorInfo[cursor].numDirections > 1)
-					sprintf(resourcePath,"data\\cursors\\%s%d.ANI",m_cursorInfo[cursor].textureName.str(),direction);
+					snprintf(resourcePath, ARRAY_SIZE(resourcePath), "data\\cursors\\%s%d.ANI",
+						m_cursorInfo[cursor].textureName.str(), direction);
 				else
-					sprintf(resourcePath,"data\\cursors\\%s.ANI",m_cursorInfo[cursor].textureName.str());
+					snprintf(resourcePath, ARRAY_SIZE(resourcePath), "data\\cursors\\%s.ANI",
+						m_cursorInfo[cursor].textureName.str());
 
 				// check for a MOD cursor.
 				Bool loaded = FALSE;
