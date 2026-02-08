@@ -240,10 +240,13 @@ static void restartMissionMenu()
 							);
 		//if (TheGlobalData->m_fixedSeed >= 0)
 			//InitRandom(TheGlobalData->m_fixedSeed);
-			const UnsignedInt seed = (gameMode != GAME_SKIRMISH) ? 0 : TheGameInfo->getSeed();
-			InitRandom(seed);
+			//InitRandom(0);
 		//else
 		//	InitGameLogicRandom(GameClientRandomValue(0, INT_MAX - 1));
+
+		// TheSuperHackers @bugfix Caball009 07/02/2026 Re-use the previous seed value instead of 0 for the new skirmish match to avoid mismatches.
+		const UnsignedInt seed = (gameMode == GAME_SKIRMISH) ? TheGameInfo->getSeed() : 0;
+		InitRandom(seed);
 	}
 	//TheTransitionHandler->remove("QuitFull"); //KRISMORNESS ADD
 	//quitMenuLayout = nullptr; //KRISMORNESS ADD
