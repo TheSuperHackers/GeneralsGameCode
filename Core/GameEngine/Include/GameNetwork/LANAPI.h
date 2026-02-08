@@ -173,6 +173,25 @@ struct LANMessage
 		MSG_INACTIVE,						///< I've alt-tabbed out.  Unaccept me cause I'm a poo-flinging monkey.
 
 		MSG_REQUEST_GAME_INFO,	///< For direct connect, get the game info from a specific IP Address
+
+		// TheSuperHackers @feature Caball009 05/02/2026 Product information is exchanged on demand and never broadcast.
+		// A client is considered 'patched' if it responds to a product info request (or, in pre-match, if it sends one).
+		// The implementation consists of three parts.
+		// 1. player - player in lobby:
+		// - When a player detects a new player in the lobby, it sends a product info request.
+		// - If the other player responds with an acknowledgement, they are considered patched.
+		// 2. player - host in lobby:
+		// - When a player detects a new game host in the lobby, it sends a product info request.
+		// - If the host responds with an acknowledgement, it is considered patched.
+		// 3. players in pre-match:
+		// - When a player joins a match, it sends a product info request to all existing players.
+		// - Existing players treat this request as confirmation that the joining player is patched (no explicit acknowledgement required).
+		MSG_GAME_REQUEST_PRODUCT_INFO = 1000,
+		MSG_GAME_RESPONSE_PRODUCT_INFO,
+		MSG_LOBBY_REQUEST_PRODUCT_INFO,
+		MSG_LOBBY_RESPONSE_PRODUCT_INFO,
+		MSG_MATCH_REQUEST_PRODUCT_INFO,
+		MSG_MATCH_RESPONSE_PRODUCT_INFO,
 	} messageType;
 
 	WideChar name[g_lanPlayerNameLength+1]; ///< My name, for convenience
@@ -267,6 +286,17 @@ struct LANMessage
 			char options[m_lanMaxOptionsLength+1];
 		} GameOptions;
 
+		// ProductInfo is sent with REQUEST_PRODUCT_INFO and RESPONSE_PRODUCT_INFO
+		struct
+		{
+			UnsignedInt flags;
+			UnsignedInt uptime;
+			UnsignedInt exeCRC;
+			UnsignedInt iniCRC;
+			UnsignedInt fpMathCRC;
+			WideChar data[201];
+			Byte padding[20];
+		} ProductInfo;
 	};
 };
 #pragma pack(pop)
@@ -394,6 +424,12 @@ protected:
 	void addGame(LANGameInfo *game);
 	AsciiString createSlotString( void );
 
+	static UnsignedInt getProductInfoFlags();
+	static void setProductInfoFromLocalData(GameSlot *slot);
+	static void setProductInfoFromMessage(LANMessage *msg, GameSlot *slot);
+	static Bool setProductInfoStrings(const UnicodeString(&input)[4], WideChar(&output)[201]);
+	static Bool getProductInfoStrings(WideChar(&input)[201], UnicodeString*(&output)[4]);
+
 	// Functions to handle incoming messages -----------------------------------
 	void handleRequestLocations( LANMessage *msg, UnsignedInt senderIP );
 	void handleGameAnnounce( LANMessage *msg, UnsignedInt senderIP );
@@ -412,4 +448,11 @@ protected:
 	void handleGameOptions( LANMessage *msg, UnsignedInt senderIP );
 	void handleInActive( LANMessage *msg, UnsignedInt senderIP );
 
+	void sendProductInfoMessage(LANMessage::Type messageType, UnsignedInt senderIP);
+	void handleGameProductInfoRequest(LANMessage *msg, UnsignedInt senderIP);
+	void handleGameProductInfoResponse(LANMessage *msg, UnsignedInt senderIP);
+	void handleLobbyProductInfoRequest(LANMessage *msg, UnsignedInt senderIP);
+	void handleLobbyProductInfoResponse(LANMessage *msg, UnsignedInt senderIP);
+	void handleMatchProductInfoRequest(LANMessage *msg, UnsignedInt senderIP);
+	void handleMatchProductInfoResponse(LANMessage *msg, UnsignedInt senderIP);
 };

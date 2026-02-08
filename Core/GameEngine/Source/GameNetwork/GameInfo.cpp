@@ -73,6 +73,7 @@ void GameSlot::reset()
 	m_origPlayerTemplate = -1;
 	m_origStartPos = -1;
 	m_origColor = -1;
+	m_productInfo = ProductInfo();
 }
 
 void GameSlot::saveOffOriginalInfo( void )
@@ -1493,7 +1494,13 @@ Bool ParseAsciiStringToGameInfo(GameInfo *game, AsciiString options)
 		//DEBUG_LOG(("ParseAsciiStringToGameInfo - game options all good, setting info"));
 
 		for(Int i = 0; i<MAX_SLOTS; i++)
+		{
+			// retain the product information if a slot is still occupied by the same player
+			if (game->getConstSlot(i)->getState() == SLOT_PLAYER && newSlot[i].getState() == SLOT_PLAYER)
+				newSlot[i].setProductInfo(game->getConstSlot(i)->getProductInfo());
+
 			game->setSlot(i,newSlot[i]);
+		}
 
 		game->setMap(mapName);
 		game->setMapCRC(mapCRC);
