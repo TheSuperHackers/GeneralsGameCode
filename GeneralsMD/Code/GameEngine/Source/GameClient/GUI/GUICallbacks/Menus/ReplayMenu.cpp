@@ -534,6 +534,22 @@ void reallyLoadReplay(void)
 	AsciiString asciiFilename;
 	asciiFilename.translate(filename);
 
+	// TheSuperHackers @bugfix bobtista Re-validate replay file before playback to handle file deletion
+	// during version mismatch prompt, using the same validation pattern as loadReplay
+	RecorderClass::ReplayHeader header;
+	ReplayGameInfo info;
+	const MapMetaData *mapData;
+
+	if(!readReplayMapInfo(asciiFilename, header, info, mapData))
+	{
+		UnicodeString title = TheGameText->FETCH_OR_SUBSTITUTE("GUI:ReplayFileNotFoundTitle", L"REPLAY NOT FOUND");
+		UnicodeString body = TheGameText->FETCH_OR_SUBSTITUTE("GUI:ReplayFileNotFound", L"This replay cannot be loaded because the file no longer exists on this device.");
+		MessageBoxOk(title, body, nullptr);
+		GadgetListBoxReset(listboxReplayFiles);
+		PopulateReplayFileListbox(listboxReplayFiles);
+		return;
+	}
+
 	TheRecorder->playbackFile(asciiFilename);
 
 	if(parentReplayMenu != nullptr)
