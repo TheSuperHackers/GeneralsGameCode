@@ -254,6 +254,16 @@ void BattlePlanUpdate::onObjectCreated()
 }
 
 //-------------------------------------------------------------------------------------------------
+void BattlePlanUpdate::onCapture(Player* oldOwner, Player* newOwner)
+{
+#if !RETAIL_COMPATIBLE_CRC
+	// TheSuperHackers @bugfix Stubbjax 04/11/2025 Transfer battle plan bonuses on capture.
+	oldOwner->changeBattlePlan(m_planAffectingArmy, -1, m_bonuses);
+	newOwner->changeBattlePlan(m_planAffectingArmy, 1, m_bonuses);
+#endif
+}
+
+//-------------------------------------------------------------------------------------------------
 Bool BattlePlanUpdate::initiateIntentToDoSpecialPower(const SpecialPowerTemplate *specialPowerTemplate, const Object *targetObj, const Coord3D *targetPos, const Waypoint *way, UnsignedInt commandOptions )
 {
 	if( m_specialPowerModule->getSpecialPowerTemplate() != specialPowerTemplate )
