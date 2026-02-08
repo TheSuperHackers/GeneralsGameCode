@@ -46,32 +46,38 @@ namespace NetPacketFieldTypes {
 ////////////////////////////////////////////////////////////////////////////////
 
 struct NetPacketCommandTypeField {
-	char header;
+	NetPacketCommandTypeField() : fieldType(NetPacketFieldTypes::CommandType) {}
+	char fieldType;
 	UnsignedByte commandType;
 };
 
 struct NetPacketRelayField {
-	char header;
+	NetPacketRelayField() : fieldType(NetPacketFieldTypes::Relay) {}
+	char fieldType;
 	UnsignedByte relay;
 };
 
 struct NetPacketFrameField {
-	char header;
+	NetPacketFrameField() : fieldType(NetPacketFieldTypes::Frame) {}
+	char fieldType;
 	UnsignedInt frame;
 };
 
 struct NetPacketPlayerIdField {
-	char header;
+	NetPacketPlayerIdField() : fieldType(NetPacketFieldTypes::PlayerId) {}
+	char fieldType;
 	UnsignedByte playerId;
 };
 
 struct NetPacketCommandIdField {
-	char header;
+	NetPacketCommandIdField() : fieldType(NetPacketFieldTypes::CommandId) {}
+	char fieldType;
 	UnsignedShort commandId;
 };
 
 struct NetPacketDataField {
-	char header;
+	NetPacketDataField() : fieldType(NetPacketFieldTypes::Data) {}
+	char fieldType;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
