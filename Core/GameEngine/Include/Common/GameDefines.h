@@ -103,6 +103,11 @@
 #endif
 #endif
 
+// Allow the use of non retail fixes in the networking, such as putting more data per UDP packet
+#ifndef RETAIL_COMPATIBLE_NETWORKING
+#define RETAIL_COMPATIBLE_NETWORKING (1)
+#endif
+
 #define MIN_DISPLAY_BIT_DEPTH       16
 #define DEFAULT_DISPLAY_BIT_DEPTH   32
 #define DEFAULT_DISPLAY_WIDTH      800 // The standard resolution this game was designed for
