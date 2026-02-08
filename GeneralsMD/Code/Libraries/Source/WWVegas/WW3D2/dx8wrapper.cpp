@@ -84,6 +84,7 @@
 #include "dx8texman.h"
 #include "bound.h"
 #include "DbgHelpGuard.h"
+#include <rts/profile.h>
 
 #include "shdlib.h"
 
@@ -1735,6 +1736,7 @@ void DX8Wrapper::End_Scene(bool flip_frames)
 		HRESULT hr;
 		{
 			WWPROFILE("DX8Device::Present()");
+			ZoneScopedN("Render::VSync");
 			hr=_Get_D3D_Device8()->Present(nullptr, nullptr, nullptr, nullptr);
 		}
 

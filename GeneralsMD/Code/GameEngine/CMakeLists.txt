@@ -1169,6 +1169,12 @@ target_link_libraries(z_gameengine PRIVATE
     zi_always
 )
 
+if(RTS_BUILD_OPTION_PROFILE AND RTS_BUILD_OPTION_PROFILE_TRACY)
+    target_link_libraries(z_gameengine PRIVATE
+        Tracy::TracyClient
+    )
+endif()
+
 target_link_libraries(z_gameengine PUBLIC
     corei_gameengine_public
     z_wwvegas

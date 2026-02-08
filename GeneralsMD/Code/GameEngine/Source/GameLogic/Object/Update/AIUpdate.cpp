@@ -71,6 +71,8 @@
 #include "GameLogic/Weapon.h"
 #include "Common/Radar.h"									// For TheRadar
 
+#include <rts/profile.h>
+
 #define SLEEPY_AI
 
 
@@ -395,6 +397,7 @@ except by the pathfinder during pathfind queue processing.  jba */
 //-------------------------------------------------------------------------------------------------
 void AIUpdateInterface::doPathfind( PathfindServicesInterface *pathfinder )
 {
+	ZoneScopedN("AIUpdateInterface::doPathfind");
 	if (!m_waitingForPath) {
 		return;
 	}
@@ -1667,6 +1670,7 @@ Bool AIUpdateInterface::computeQuickPath( const Coord3D *destination )
  */
 Bool AIUpdateInterface::computePath( PathfindServicesInterface *pathServices, Coord3D *destination )
 {
+	ZoneScopedN("AIUpdateInterface::computePath");
 
 	if (!m_isBlockedAndStuck)	{
 		destroyPath();
@@ -1781,6 +1785,7 @@ Bool AIUpdateInterface::computePath( PathfindServicesInterface *pathServices, Co
  */
 Bool AIUpdateInterface::computeAttackPath( PathfindServicesInterface *pathServices, const Object *victim, const Coord3D* victimPos )
 {
+	ZoneScopedN("AIUpdateInterface::computeAttackPath");
 	//CRCDEBUG_LOG(("AIUpdateInterface::computeAttackPath() for object %d", getObject()->getID()));
 	// See if it has been too soon.
 	if (m_pathTimestamp >= TheGameLogic->getFrame()-2)

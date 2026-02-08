@@ -98,6 +98,8 @@
 
 #include "W3DDevice/GameClient/CameraShakeSystem.h"
 
+#include <rts/profile.h>
+
 constexpr const Real NearZ = MAP_XY_FACTOR; ///< Set the near to MAP_XY_FACTOR. Improves z buffer resolution.
 
 // 30 fps
@@ -1488,6 +1490,7 @@ void W3DView::drawView( void )
 void W3DView::draw( void )
 {
 	//USE_PERF_TIMER(W3DView_drawView)
+	ZoneScopedN("Render::DisplayDraw::W3DView");
 	Bool skipRender = false;
 	Bool doExtraRender = false;
 	CustomScenePassModes customScenePassMode  = SCENE_PASS_DEFAULT;
@@ -1497,6 +1500,7 @@ void W3DView::draw( void )
 			m_viewFilter > FT_NULL_FILTER &&
 			m_viewFilter < FT_MAX)
 	{
+		ZoneScopedN("Render::DisplayDraw::FilterPre");
 		// Most likely will redirect rendering to a texture.
 		preRenderResult=W3DShaderManager::filterPreRender(m_viewFilter, skipRender, customScenePassMode);
 		if (!skipRender && getCameraLock())
@@ -1512,6 +1516,7 @@ void W3DView::draw( void )
 
 	if (!skipRender)
 	{
+		ZoneScopedN("Render::DisplayDraw::SceneRender");
 		// Render 3D scene from our camera
 		W3DDisplay::m_3DScene->setCustomPassMode(customScenePassMode);
 		if (m_isWireFrameEnabled)
@@ -1525,6 +1530,7 @@ void W3DView::draw( void )
 			m_viewFilter > FT_NULL_FILTER &&
 			m_viewFilter < FT_MAX)
 	{
+		ZoneScopedN("Render::DisplayDraw::FilterPost");
 		Coord2D deltaScroll;
 		calcDeltaScroll(deltaScroll);
 		Bool continueTheEffect = false;
@@ -1558,6 +1564,7 @@ void W3DView::draw( void )
 	//was turned off by filterPostRender().
 	if (doExtraRender)
 	{
+		ZoneScopedN("Render::DisplayDraw::ExtraRender");
 		//Reset to normal scene rendering.
 		//The pass that rendered into a texture may have left the z-buffer in a weird state
 		//so clear it before rendering normal scene.
@@ -1571,6 +1578,7 @@ void W3DView::draw( void )
 
 	if( TheGlobalData->m_debugAI )
 	{
+		ZoneScopedN("Render::DisplayDraw::DebugAI");
 		if (TheAI->pathfinder()->getDebugPath())
 		{
 			// setup screen clipping region

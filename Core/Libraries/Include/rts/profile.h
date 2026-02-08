@@ -27,6 +27,19 @@
 // Proxy header for profile module
 //////////////////////////////////////////////////////////////////////////////
 
-#  pragma once
+#pragma once
 
+#ifdef TRACY_ENABLE
+#include <tracy/Tracy.hpp>
+#define TRACY_FRAMEIMAGE_SIZE 256
+#else
 #include "../../Source/profile/profile.h"
+#define ZoneScopedN(name) ((void)0)
+#define ZoneScopedNC(name, color) ((void)0)
+#define TracyPlot(name, value) ((void)0)
+#define FrameMark ((void)0)
+#define FrameMarkNamed(name) ((void)0)
+#define FrameImage(image, width, height, offset, flip) ((void)0)
+#define TracyMessage(txt, size) ((void)0)
+#define TracyIsConnected false
+#endif

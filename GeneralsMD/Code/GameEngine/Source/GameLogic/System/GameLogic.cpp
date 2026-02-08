@@ -1102,6 +1102,7 @@ void GameLogic::setGameMode( GameMode mode )
 // ------------------------------------------------------------------------------------------------
 void GameLogic::startNewGame( Bool loadingSaveGame )
 {
+	ZoneScopedN("GameLogic::startNewGame");
 
 	#ifdef DUMP_PERF_STATS
 	__int64 startTime64;
@@ -2369,7 +2370,11 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 		TheInGameUI->messageNoFormat( TheGameText->FETCH_OR_SUBSTITUTE( "GUI:FastForwardInstructions", L"Press F to toggle Fast Forward" ) );
   }
 
-
+#ifdef TRACY_ENABLE
+	char msg[512];
+	int n = snprintf(msg, sizeof(msg), "GameStart: %s", TheGlobalData->m_mapName.str());
+	if (n >= 0) TracyMessage(msg, MIN(n, 511));
+#endif
 }
 
 //-----------------------------------------------------------------------------------------
@@ -3605,6 +3610,7 @@ extern __int64 Total_Load_3D_Assets;
 void GameLogic::update( void )
 {
 	USE_PERF_TIMER(GameLogic_update)
+	ZoneScopedNC("GameLogic::update", 0x4CAF50);
 
 	LatchRestore<Bool> inUpdateLatch(m_isInUpdate, TRUE);
 #ifdef DO_UNIT_TIMINGS
@@ -3651,14 +3657,18 @@ void GameLogic::update( void )
 	UnsignedInt now = getFrame();
 	TheGameClient->setFrame(now);
 
+	TracyPlot("LogicFrame", static_cast<int64_t>(now));
+
 	// update (execute) scripts
 	{
+		ZoneScopedN("GameLogic::ScriptEngine");
 		TheScriptEngine->UPDATE();
 	}
 
 	// Note - TerrainLogic update needs to happen after ScriptEngine update, but before object updates.  jba.
 	// This way changes in bridges are noted in the script engine before being cleared in TerrainLogic->update
 	{
+		ZoneScopedN("GameLogic::TerrainLogic");
 		TheTerrainLogic->UPDATE();
 	}
 
@@ -3676,6 +3686,7 @@ void GameLogic::update( void )
 
 	if (generateForSolo || generateForMP)
 	{
+		ZoneScopedN("GameLogic::CRC");
 		m_CRC = getCRC( CRC_RECALC );
 		bool isPlayback = (TheRecorder && TheRecorder->isPlaybackMode());
 
@@ -3697,21 +3708,25 @@ void GameLogic::update( void )
 	// collect stats
 	if(TheStatsCollector)
 	{
+		ZoneScopedN("GameLogic::StatsCollector");
 		TheStatsCollector->update();
 	}
 
 	// Update the Recorder
 	{
+		ZoneScopedN("GameLogic::Recorder");
 		TheRecorder->UPDATE();
 	}
 
 	// process client commands
 	{
+		ZoneScopedN("GameLogic::CommandList");
 		processCommandList( TheCommandList );
 	}
 
 #ifdef ALLOW_NONSLEEPY_UPDATES
 	{
+		ZoneScopedN("GameLogic::NormalUpdates");
 		for (std::list<UpdateModulePtr>::const_iterator it = m_normalUpdates.begin(); it != m_normalUpdates.end(); ++it)
 		{
 			UpdateModulePtr u = *it;
@@ -3736,6 +3751,7 @@ void GameLogic::update( void )
 #endif
 
 	{
+		ZoneScopedN("GameLogic::SleepyUpdates");
 		while (!m_sleepyUpdates.empty())
 		{
 			UpdateModulePtr u = peekSleepyUpdate();
@@ -3782,16 +3798,19 @@ void GameLogic::update( void )
 
 	// update the Artificial Intelligence system
 	{
+		ZoneScopedN("GameLogic::AI");
 		TheAI->UPDATE();
 	}
 
 	// production updates
 	{
+		ZoneScopedN("GameLogic::BuildAssistant");
 		TheBuildAssistant->UPDATE();
 	}
 
 	// update partition info
 	{
+		ZoneScopedN("GameLogic::Partition");
 		ThePartitionManager->UPDATE();
 	}
 
@@ -3800,7 +3819,10 @@ void GameLogic::update( void )
 	//
 
 	// destroy all pending objects
-	processDestroyList();
+	{
+		ZoneScopedN("GameLogic::DestroyList");
+		processDestroyList();
+	}
 
 	// reset the command list, destroying all messages
 	TheCommandList->reset();
@@ -3811,6 +3833,7 @@ void GameLogic::update( void )
 
 	{
 		//Handle disabled statii (and re-enable objects once frame matches)
+		ZoneScopedN("GameLogic::DisabledStatus");
 		for( Object *obj = m_objList; obj; obj = obj->getNextObject() )
 		{
 			if( obj->isDisabled() )
@@ -4168,6 +4191,12 @@ void GameLogic::exitGame()
 	TheScriptEngine->doUnfreezeTime();
 
 	TheMessageStream->appendMessage(GameMessage::MSG_CLEAR_GAME_DATA);
+
+#ifdef TRACY_ENABLE
+	char msg[512];
+	int n = snprintf(msg, sizeof(msg), "GameEnd: %s", TheGlobalData->m_mapName.str());
+	if (n >= 0) TracyMessage(msg, MIN(n, 511));
+#endif
 }
 
 // ------------------------------------------------------------------------------------------------

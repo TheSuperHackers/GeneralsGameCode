@@ -19,6 +19,7 @@
 #include "PreRTS.h"
 #include "Common/FrameRateLimit.h"
 
+#include "rts/profile.h"
 
 FrameRateLimit::FrameRateLimit()
 {
@@ -32,6 +33,7 @@ FrameRateLimit::FrameRateLimit()
 
 Real FrameRateLimit::wait(UnsignedInt maxFps)
 {
+	ZoneScopedN("FrameRateLimit::wait");
 	LARGE_INTEGER tick;
 	QueryPerformanceCounter(&tick);
 	double elapsedSeconds = static_cast<double>(tick.QuadPart - m_start) / m_freq;

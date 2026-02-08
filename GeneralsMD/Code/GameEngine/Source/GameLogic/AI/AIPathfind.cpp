@@ -58,6 +58,8 @@
 
 #include "Common/UnitTimings.h" //Contains the DO_UNIT_TIMINGS define jba.
 
+#include <rts/profile.h>
+
 #define no_INTENSE_DEBUG
 
 #define DEBUG_QPF
@@ -5767,6 +5769,7 @@ Path *Pathfinder::getAircraftPath( const Object *obj, const Coord3D *to )
 void Pathfinder::processPathfindQueue(void)
 {
 	//USE_PERF_TIMER(processPathfindQueue)
+	ZoneScopedN("Pathfinder::processPathfindQueue");
 	if (!m_isMapReady) {
 		return;
 	}
@@ -5788,6 +5791,7 @@ void Pathfinder::processPathfindQueue(void)
 #endif
     m_zoneManager.needToCalculateZones())
   {
+		ZoneScopedN("Pathfinder::calculateZones");
 		m_zoneManager.calculateZones(m_map, m_layers, m_extent);
 		return;
 	}
@@ -5805,9 +5809,7 @@ void Pathfinder::processPathfindQueue(void)
 	m_logicalExtent = bounds;
 
 	m_cumulativeCellsAllocated = 0;	// Number of pathfind cells examined.
-#ifdef DEBUG_QPF
 	Int pathsFound = 0;
-#endif
 	while (m_cumulativeCellsAllocated < PATHFIND_CELLS_PER_FRAME &&
 		m_queuePRTail!=m_queuePRHead) {
 		Object *obj = TheGameLogic->findObjectByID(m_queuedPathfindRequests[m_queuePRHead]);
@@ -5816,9 +5818,7 @@ void Pathfinder::processPathfindQueue(void)
 			AIUpdateInterface *ai = obj->getAIUpdateInterface();
 			if (ai) {
 				ai->doPathfind(this);
-#ifdef DEBUG_QPF
 				pathsFound++;
-#endif
 			}
 		}
 		m_queuePRHead = m_queuePRHead+1;
@@ -5826,8 +5826,12 @@ void Pathfinder::processPathfindQueue(void)
 			m_queuePRHead = 0;
 		}
 	}
-	if (pathsFound>0) {
+	if (pathsFound > 0) {
+		TracyPlot("PathfindCells", (double)m_cumulativeCellsAllocated);
+		TracyPlot("PathfindPaths", (double)pathsFound);
+	}
 #ifdef DEBUG_QPF
+	if (pathsFound>0) {
 #ifdef DEBUG_LOGGING
 		QueryPerformanceCounter((LARGE_INTEGER *)&endTime64);
 		timeToUpdate = ((double)(endTime64-startTime64) / (double)(freq64));

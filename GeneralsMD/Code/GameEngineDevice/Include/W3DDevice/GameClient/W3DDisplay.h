@@ -45,7 +45,10 @@ class Render2DClass;
 class RTS3DScene;
 class RTS2DScene;
 class RTS3DInterfaceScene;
-
+class TextureClass;
+class SurfaceClass;
+struct IDirect3DTexture8;
+struct IDirect3DSurface8;
 
 //=============================================================================
 /** W3D implementation of the game display which is responsible for creating
@@ -79,6 +82,7 @@ public:
 	virtual void	enableClipping( Bool onoff )		{ m_isClippedEnabled = onoff; }
 
 	virtual void step(); ///< Do one fixed time step
+
 	virtual void draw( void );  ///< redraw the entire display
 
 	/// @todo Replace these light management routines with a LightManager singleton
@@ -170,6 +174,21 @@ protected:
 	Real m_currentFPS;		///<current fps value.
 #if defined(RTS_DEBUG)
 	Int64 m_timerAtCumuFPSStart;
+#endif
+
+#ifdef TRACY_ENABLE
+	bool InitTracyCaptureImage();
+	void ResetTracyCaptureImage();
+	void TracyCaptureImage();
+	TextureClass *m_tracyRenderTarget = nullptr;
+	SurfaceClass *m_tracySurfaceClass = nullptr;
+	IDirect3DTexture8 *m_tracyIntermediateTexture = nullptr;
+	DWORD m_tracySwizzleShader = 0;
+	bool m_tracyFrameCapturing = true;
+#else
+	inline void InitTracyCaptureImage() {};
+	inline void TracyCaptureImage() {};
+	inline void ResetTracyCaptureImage() {};
 #endif
 
 	enum
