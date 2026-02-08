@@ -151,6 +151,7 @@ public:
 	virtual void playLogoMovie( AsciiString movieName, Int minMovieLength, Int minCopyrightLength );
 	virtual void playMovie( AsciiString movieName );
 	virtual void stopMovie( void );
+	virtual Real getMovieProgress(); ///< returns the playback progress in the range 0.0 to 1.0
 	virtual Bool isMoviePlaying(void);
 
 	/// Register debug display callback
