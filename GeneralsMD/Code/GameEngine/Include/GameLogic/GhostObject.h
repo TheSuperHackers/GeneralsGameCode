@@ -108,5 +108,19 @@ inline Bool GhostObjectManager::trackAllPlayers() const
 #endif
 }
 
+// TheSuperHackers @feature bobtista 19/01/2026
+// GhostObjectManager that does nothing for headless mode.
+// Note: Does NOT override crc/xfer/loadPostProcess to maintain save compatibility.
+class GhostObjectManagerDummy : public GhostObjectManager
+{
+public:
+	virtual void reset(void) {}
+	virtual GhostObject *addGhostObject(Object *object, PartitionData *pd) { return nullptr; }
+	virtual void removeGhostObject(GhostObject *mod) {}
+	virtual void updateOrphanedObjects(int *playerIndexList, int playerIndexCount) {}
+	virtual void releasePartitionData(void) {}
+	virtual void restorePartitionData(void) {}
+};
+
 // the singleton
 extern GhostObjectManager *TheGhostObjectManager;
