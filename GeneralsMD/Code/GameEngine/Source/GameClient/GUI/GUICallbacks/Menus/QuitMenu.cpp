@@ -200,6 +200,9 @@ static void restartMissionMenu()
 	Int gameMode = TheGameLogic->getGameMode();
 	AsciiString mapName = TheGlobalData->m_mapName;
 
+	// TheSuperHackers @bugfix Caball009 07/02/2026 Re-use the previous seed value instead of 0 for the new skirmish match to avoid mismatches.
+	const UnsignedInt seed = (gameMode == GAME_SKIRMISH) ? TheGameInfo->getSeed() : 0;
+
 	//
 	// if the map name was from a save game it will have "Save/" at the front of it,
 	// we want to go back to the original pristine map string for the map name when restarting
@@ -238,14 +241,7 @@ static void restartMissionMenu()
 																																		TheScriptEngine->getGlobalDifficulty(),
 																																		rankPointsStartedWith)
 							);
-		//if (TheGlobalData->m_fixedSeed >= 0)
-			//InitRandom(TheGlobalData->m_fixedSeed);
-			//InitRandom(0);
-		//else
-		//	InitGameLogicRandom(GameClientRandomValue(0, INT_MAX - 1));
 
-		// TheSuperHackers @bugfix Caball009 07/02/2026 Re-use the previous seed value instead of 0 for the new skirmish match to avoid mismatches.
-		const UnsignedInt seed = (gameMode == GAME_SKIRMISH) ? TheGameInfo->getSeed() : 0;
 		InitRandom(seed);
 	}
 	//TheTransitionHandler->remove("QuitFull"); //KRISMORNESS ADD
