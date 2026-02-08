@@ -164,7 +164,7 @@ public:
 	// Player Occupancy.
 	virtual PlayerMaskType getPlayerWhoEntered(void) const = 0;
 
-	virtual void processDamageToContained() = 0; ///< Do our % damage to units now.
+	virtual void processDamageToContained(Real percentDamage) = 0; ///< Do our % damage to units now.
 
 	virtual void enableLoadSounds( Bool enable ) = 0;
 
