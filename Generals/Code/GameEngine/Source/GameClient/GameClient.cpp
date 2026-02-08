@@ -583,8 +583,8 @@ void GameClient::update( void )
 	if(TheGlobalData->m_playIntro || TheGlobalData->m_afterIntro)
 	{
 		// redraw all views, update the GUI
-		TheDisplay->DRAW();
 		TheDisplay->UPDATE();
+		TheDisplay->DRAW();
 		return;
 	}
 
