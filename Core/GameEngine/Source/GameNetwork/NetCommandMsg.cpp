@@ -225,7 +225,7 @@ void NetGameCommandMsg::setGameMessageType(GameMessage::Type type) {
 }
 
 size_t NetGameCommandMsg::getPackedByteCount() const {
-	UnsignedShort msglen = sizeof(NetPacketGameCommand);
+	UnsignedShort msglen = sizeof(NetPacketGameCommandHeader);
 
 	// Variable data portion
 	GameMessage *gmsg = constructGameMessage();
@@ -870,8 +870,7 @@ void NetChatCommandMsg::setPlayerMask( Int playerMask )
 
 size_t NetChatCommandMsg::getPackedByteCount() const
 {
-	return sizeof(NetPacketChatCommand)
-		+ sizeof(UnsignedByte) // text length byte
+	return sizeof(NetPacketChatCommandHeader)
 		+ m_text.getByteCount()
 		+ sizeof(m_playerMask);
 }
@@ -881,8 +880,7 @@ size_t NetChatCommandMsg::getPackedByteCount() const
 //-------------------------
 size_t NetDisconnectChatCommandMsg::getPackedByteCount() const
 {
-	return sizeof(NetPacketDisconnectChatCommand)
-		+ sizeof(UnsignedByte) // text length byte
+	return sizeof(NetPacketDisconnectChatCommandHeader)
 		+ m_text.getByteCount();
 }
 
