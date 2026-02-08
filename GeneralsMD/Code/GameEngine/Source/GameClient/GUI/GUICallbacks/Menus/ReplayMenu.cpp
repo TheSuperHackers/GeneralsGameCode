@@ -387,6 +387,15 @@ void ReplayMenuInit( WindowLayout *layout, void *userData )
 	buttonDelete = TheWindowManager->winGetWindowFromId( parentReplayMenu, buttonDeleteID );
 	buttonCopy = TheWindowManager->winGetWindowFromId( parentReplayMenu, buttonCopyID );
 
+#if ENABLE_GUI_HACKS
+	// TheSuperHackers @tweak Caball009 07/02/2025 Switch the column width for the time / date with the column width for the version.
+	ListboxData* list = static_cast<ListboxData*>(listboxReplayFiles->winGetUserData());
+	DEBUG_ASSERTCRASH(list && list->columns >= 3 && list->columnWidth[1] < list->columnWidth[2],
+		("Original replay window is expected to have at least 3 columns, and the second column width smaller than the third"));
+
+	std::swap(list->columnWidth[1], list->columnWidth[2]);
+#endif
+
 	//Load the listbox shiznit
 	GadgetListBoxReset(listboxReplayFiles);
 	PopulateReplayFileListbox(listboxReplayFiles);
