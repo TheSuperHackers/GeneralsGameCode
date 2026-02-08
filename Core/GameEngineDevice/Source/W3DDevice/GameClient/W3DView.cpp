@@ -2823,14 +2823,14 @@ void W3DView::setupWaypointPath(Bool orient)
 	Real angle = getAngle();
 	for (i=1; i<m_mcwpInfo.numWaypoints; i++) {
 		Vector2 dir(m_mcwpInfo.waypoints[i+1].x-m_mcwpInfo.waypoints[i].x, m_mcwpInfo.waypoints[i+1].y-m_mcwpInfo.waypoints[i].y);
-		m_mcwpInfo.waySegLength[i] = dir.Length();
+		const Real dirLength = dir.Length();
+		m_mcwpInfo.waySegLength[i] = dirLength;
 		m_mcwpInfo.totalDistance += m_mcwpInfo.waySegLength[i];
-		if (orient) {
-			angle = WWMath::Acos(dir.X/m_mcwpInfo.waySegLength[i]);
+		if (orient && dirLength >= 0.1f) {
+			angle = WWMath::Acos(dir.X/dirLength);
 			if (dir.Y<0.0f) {
 				angle = -angle;
 			}
-
 			// Default camera is rotated 90 degrees, so match.
 			angle -= PI/2;
 			normAngle(angle);
