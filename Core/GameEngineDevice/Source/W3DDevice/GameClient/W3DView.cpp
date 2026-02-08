@@ -98,12 +98,12 @@
 
 #include "W3DDevice/GameClient/CameraShakeSystem.h"
 
-constexpr const Real NearZ = MAP_XY_FACTOR; ///< Set the near to MAP_XY_FACTOR. Improves z buffer resolution.
-
 // 30 fps
 Real TheW3DFrameLengthInMsec = MSEC_PER_LOGICFRAME_REAL; // default is 33msec/frame == 30fps. but we may change it depending on sys config.
 static const Int MAX_REQUEST_CACHE_SIZE = 40;	// Any size larger than 10, or examine code below for changes. jkmcd.
 static const Real DRAWABLE_OVERSCAN = 75.0f;  ///< 3D world coords of how much to overscan in the 3D screen region
+
+constexpr const Real NearZ = MAP_XY_FACTOR; ///< Set the near to MAP_XY_FACTOR. Improves z buffer resolution.
 
 //=================================================================================================
 inline Real minf(Real a, Real b) { if (a < b) return a; else return b; }
@@ -1234,22 +1234,20 @@ void W3DView::update(void)
 					if (cameraLockObj->isUsingAirborneLocomotor() && cameraLockObj->isAboveTerrainOrWater())
 					{
 						Matrix3D camXForm;
-						Real oldZRot = m_angle;
 						Real idealZRot = cameraLockObj->getOrientation() - M_PI_2;
-						normAngle(oldZRot);
-						normAngle(idealZRot);
-						Real diff = idealZRot - oldZRot;
-						normAngle(diff);
 
 						if (m_snapImmediate)
 						{
-							m_angle = idealZRot;
+							View::setAngle(idealZRot);
 						}
 						else
 						{
-							m_angle += diff * 0.1f;
+							normAngle(idealZRot);
+							Real oldZRot = m_angle;
+							Real diffRot = idealZRot - oldZRot;
+							normAngle(diffRot);
+							View::setAngle(m_angle + diffRot * 0.1f);
 						}
-						normAngle(m_angle);
 					}
 				}
 				if (m_snapImmediate)
@@ -1816,12 +1814,9 @@ void W3DView::forceRedraw()
 //-------------------------------------------------------------------------------------------------
 /** Rotate the view around the up axis to the given angle. */
 //-------------------------------------------------------------------------------------------------
-void W3DView::setAngle( Real angle )
+void W3DView::setAngle( Real radians )
 {
-	// Normalize to +-PI.
-	normAngle(angle);
-	// call our base class, we are adding functionality
-	View::setAngle( angle );
+	View::setAngle( radians );
 
 	m_doingMoveCameraOnWaypointPath = false;
 	m_CameraArrivedAtWaypointOnPathFlag = false;
@@ -1837,10 +1832,9 @@ void W3DView::setAngle( Real angle )
 //-------------------------------------------------------------------------------------------------
 /** Rotate the view around the horizontal (X) axis to the given angle. */
 //-------------------------------------------------------------------------------------------------
-void W3DView::setPitch( Real angle )
+void W3DView::setPitch( Real radians )
 {
-	// call our base class, we are extending functionality
-	View::setPitch( angle );
+	View::setPitch( radians );
 
 	m_doingMoveCameraOnWaypointPath = false;
 	m_doingRotateCamera = false;
@@ -2730,7 +2724,7 @@ void W3DView::resetCamera(const Coord3D *location, Int milliseconds, Real easeIn
 	moveCameraTo(location, milliseconds, 0, false, easeIn, easeOut);
 	m_mcwpInfo.cameraAngle[2] = 0.0f; // default angle.
 	// m_mcwpInfo.cameraAngle[2] = m_defaultAngle;
-	m_angle = m_mcwpInfo.cameraAngle[0];
+	View::setAngle(m_mcwpInfo.cameraAngle[0]);
 
 	// terrain height + desired height offset == cameraOffset * actual zoom
 	// find best approximation of max terrain height we can see
@@ -2944,13 +2938,12 @@ void W3DView::rotateCameraOneFrame(void)
 					Real angleDiff = angle - m_angle;
 					normAngle(angleDiff);
 					angleDiff *= factor;
-					m_angle += angleDiff;
-					normAngle(m_angle);
+					View::setAngle(m_angle + angleDiff);
 					m_timeMultiplier = m_rcInfo.startTimeMultiplier + REAL_TO_INT_FLOOR(0.5 + (m_rcInfo.endTimeMultiplier-m_rcInfo.startTimeMultiplier)*factor);
 				}
 				else
 				{
-					m_angle = angle;
+					View::setAngle(angle);
 				}
 			}
 		}
@@ -2958,8 +2951,8 @@ void W3DView::rotateCameraOneFrame(void)
 	else if (m_rcInfo.curFrame <= m_rcInfo.numFrames)
 	{
 		Real factor = m_rcInfo.ease(((Real)m_rcInfo.curFrame)/m_rcInfo.numFrames);
-		m_angle = WWMath::Lerp(m_rcInfo.angle.startAngle, m_rcInfo.angle.endAngle, factor);
-		normAngle(m_angle);
+		Real angle = WWMath::Lerp(m_rcInfo.angle.startAngle, m_rcInfo.angle.endAngle, factor);
+		View::setAngle(angle);
 		m_timeMultiplier = m_rcInfo.startTimeMultiplier + REAL_TO_INT_FLOOR(0.5 + (m_rcInfo.endTimeMultiplier-m_rcInfo.startTimeMultiplier)*factor);
 	}
 
@@ -2969,7 +2962,7 @@ void W3DView::rotateCameraOneFrame(void)
 		m_freezeTimeForCameraMovement = false;
 		if (! m_rcInfo.trackObject)
 		{
-			m_angle = m_rcInfo.angle.endAngle;
+			View::setAngle(m_rcInfo.angle.endAngle);
 		}
 	}
 }
@@ -3041,7 +3034,7 @@ void W3DView::moveAlongWaypointPath(Real milliseconds)
 		m_CameraArrivedAtWaypointOnPathFlag = false;
 
 		m_freezeTimeForCameraMovement = false;
-		m_angle = m_mcwpInfo.cameraAngle[m_mcwpInfo.numWaypoints];
+		View::setAngle(m_mcwpInfo.cameraAngle[m_mcwpInfo.numWaypoints]);
 
 		m_groundLevel = m_mcwpInfo.groundHeight[m_mcwpInfo.numWaypoints];
 		/////////////////////m_cameraOffset.z = m_groundLevel+TheGlobalData->m_cameraHeight;
@@ -3112,8 +3105,7 @@ void W3DView::moveAlongWaypointPath(Real milliseconds)
 	if (fabs(deltaAngle) > PI/10) {
 		DEBUG_LOG(("Huh."));
 	}
-	m_angle += avgFactor*(deltaAngle);
-	normAngle(m_angle);
+	View::setAngle(m_angle + avgFactor*(deltaAngle));
 
 	Real timeMultiplier = m_mcwpInfo.timeMultiplier[m_mcwpInfo.curSegment]*factor1 +
 			m_mcwpInfo.timeMultiplier[m_mcwpInfo.curSegment+1]*factor2;
