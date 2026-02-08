@@ -240,7 +240,7 @@ static void restartMissionMenu()
 							);
 		//if (TheGlobalData->m_fixedSeed >= 0)
 			//InitRandom(TheGlobalData->m_fixedSeed);
-			InitRandom(0);
+			InitRandom(TheGameInfo->getSeed());
 		//else
 		//	InitGameLogicRandom(GameClientRandomValue(0, INT_MAX - 1));
 	}
