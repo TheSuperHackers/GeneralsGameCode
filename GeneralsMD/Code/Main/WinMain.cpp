@@ -650,9 +650,6 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 					// its done. I hate Windows. - jkmcd
 					DEV_BROADCAST_VOLUME *vol = (DEV_BROADCAST_VOLUME*) (hdr);
 
-					// @todo - Yikes. This could cause us all kinds of pain. I don't really want
-					// to even think about the stink this could cause us.
-					TheFileSystem->unloadMusicFilesFromCD(vol->dbcv_unitmask);
 					return TRUE;
 				}
 				break;
