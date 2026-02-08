@@ -280,7 +280,7 @@ void OpenContain::addToContain( Object *rider )
 #else
 	// TheSuperHackers @bugfix Stubbjax 06/02/2026 Always ensure interacting objects are alive.
 	// This prevents undefined behaviour if a unit dies and enters a container on the same frame.
-	if (rider == nullptr || rider->isEffectivelyDead() || getObject()->isEffectivelyDead())
+	if (rider == nullptr || (rider->isEffectivelyDead() && !rider->getBodyModule()->isIndestructible()) || getObject()->isEffectivelyDead())
 		return;
 #endif
 
