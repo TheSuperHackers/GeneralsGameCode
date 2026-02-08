@@ -2844,6 +2844,11 @@ void W3DDisplay::drawScaledVideoBuffer( VideoBuffer *buffer, VideoStreamInterfac
 	drawVideoBuffer( buffer, startX, startY, endX, endY );
 }
 
+void W3DDisplay::drawScaledVideoBuffer()
+{
+	drawScaledVideoBuffer(m_videoBuffer, m_videoStream);
+}
+
 //============================================================================
 // W3DDisplay::drawVideoBuffer
 //============================================================================
@@ -2859,6 +2864,11 @@ void W3DDisplay::drawVideoBuffer( VideoBuffer *buffer, Int startX, Int startY, I
 												vbuffer->Rect( 0, 0, 1, 1) );
 	m_2DRender->Render();
 
+}
+
+void W3DDisplay::drawVideoBuffer( Int startX, Int startY, Int endX, Int endY )
+{
+	drawVideoBuffer(m_videoBuffer, startX, startY, endX, endY);
 }
 
 // W3DDisplay::setClipRegion ============================================
