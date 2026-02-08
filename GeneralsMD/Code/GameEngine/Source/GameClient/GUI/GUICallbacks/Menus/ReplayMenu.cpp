@@ -393,7 +393,8 @@ void ReplayMenuInit( WindowLayout *layout, void *userData )
 	DEBUG_ASSERTCRASH(list && list->columns >= 3 && list->columnWidth[1] < list->columnWidth[2],
 		("Original replay window is expected to have at least 3 columns, and the second column width smaller than the third"));
 
-	std::swap(list->columnWidth[1], list->columnWidth[2]);
+	if (list->columnWidth[1] < list->columnWidth[2])
+		std::swap(list->columnWidth[1], list->columnWidth[2]);
 #endif
 
 	//Load the listbox shiznit
