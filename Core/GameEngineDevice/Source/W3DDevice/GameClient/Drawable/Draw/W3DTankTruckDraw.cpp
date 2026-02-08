@@ -47,15 +47,20 @@
 #include "W3DDevice/GameClient/Module/W3DTankTruckDraw.h"
 #include "WW3D2/matinfo.h"
 
-//#define SHOW_TANK_DEBRIS
+// TheSuperHackers @info Is disabled by default and therefore compatible with the Retail INI setups.
+#define SHOW_DEFAULT_TANK_DEBRIS (0)
+
 //-------------------------------------------------------------------------------------------------
-W3DTankTruckDrawModuleData::W3DTankTruckDrawModuleData():
-	m_treadDebrisNameLeft("TrackDebrisDirtLeft"),
-	m_treadDebrisNameRight("TrackDebrisDirtRight"),
-	m_treadAnimationRate(0.0f),
-	m_treadPivotSpeedFraction(0.6f),
-	m_treadDriveSpeedFraction(0.3f)
+W3DTankTruckDrawModuleData::W3DTankTruckDrawModuleData()
+	: m_treadAnimationRate(0.0f)
+	, m_treadPivotSpeedFraction(0.6f)
+	, m_treadDriveSpeedFraction(0.3f)
 {
+	if constexpr (SHOW_DEFAULT_TANK_DEBRIS)
+	{
+		m_treadDebrisNameLeft = "TrackDebrisDirtLeft"; // TheSuperHackers @todo Remove data particle names from code
+		m_treadDebrisNameRight = "TrackDebrisDirtRight";
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -114,40 +119,15 @@ m_prevRenderObj(nullptr)
 
 	m_treadCount=0;
 
-#ifdef SHOW_TANK_DEBRIS
-	if (getW3DTankTruckDrawModuleData())
-	{
-		const AsciiString *treadDebrisNames[2];
-		static_assert(ARRAY_SIZE(treadDebrisNames) == ARRAY_SIZE(m_treadDebrisIDs), "Array size must match");
-		treadDebrisNames[0] = &getW3DTankTruckDrawModuleData()->m_treadDebrisNameLeft;
-		treadDebrisNames[1] = &getW3DTankTruckDrawModuleData()->m_treadDebrisNameRight;
-
-		for (size_t i = 0; i < ARRAY_SIZE(m_treadDebrisIDs); ++i)
-		{
-			if (m_treadDebrisIDs[i] == INVALID_PARTICLE_SYSTEM_ID)
-			{
-				if (const ParticleSystemTemplate *sysTemplate = TheParticleSystemManager->findTemplate(*treadDebrisNames[i]))
-				{
-					ParticleSystem *particleSys = TheParticleSystemManager->createParticleSystem( sysTemplate );
-					particleSys->attachToDrawable(getDrawable());
-					DEBUG_CRASH(("test me, may not work (srj)"));
-					// important: mark it as do-not-save, since we'll just re-create it when we reload.
-					particleSys->setSaveable(FALSE);
-					// they come into being stopped.
-					//particleSys->stop();
-					m_treadDebrisIDs[i] = particleSys->getSystemID();
-				}
-			}
-		}
-	}
-#endif
+	createTreadEmitters();
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 W3DTankTruckDraw::~W3DTankTruckDraw()
 {
-	tossEmitters();
+	tossWheelEmitters();
+	tossTreadEmitters();
 
 	for (Int i=0; i<MAX_TREADS_PER_TANK; i++)
 		if (m_treads[i].m_robj)
@@ -156,9 +136,6 @@ W3DTankTruckDraw::~W3DTankTruckDraw()
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-/**
- * Stop creating debris from the tank treads
- */
 void W3DTankTruckDraw::stopMoveDebris( void )
 {
 	for (size_t i = 0; i < ARRAY_SIZE(m_treadDebrisIDs); ++i)
@@ -172,7 +149,7 @@ void W3DTankTruckDraw::stopMoveDebris( void )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void W3DTankTruckDraw::tossEmitters()
+void W3DTankTruckDraw::tossWheelEmitters()
 {
 	for (size_t i = 0; i < ARRAY_SIZE(m_truckEffectIDs); ++i)
 	{
@@ -191,19 +168,66 @@ void W3DTankTruckDraw::setFullyObscuredByShroud(Bool fullyObscured)
 	if (fullyObscured != getFullyObscuredByShroud())
 	{
 		if (fullyObscured)
-			tossEmitters();
+		{
+			tossWheelEmitters();
+			stopMoveDebris();
+		}
 		else
-			createEmitters();
+		{
+			createWheelEmitters();
+		}
 	}
 	W3DModelDraw::setFullyObscuredByShroud(fullyObscured);
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-/**
- * Start creating debris from the tank treads
- */
-void W3DTankTruckDraw::createEmitters( void )
+void W3DTankTruckDraw::createTreadEmitters( void )
+{
+	if (getW3DTankTruckDrawModuleData())
+	{
+		const AsciiString *treadDebrisNames[2];
+		static_assert(ARRAY_SIZE(treadDebrisNames) == ARRAY_SIZE(m_treadDebrisIDs), "Array size must match");
+		treadDebrisNames[0] = &getW3DTankTruckDrawModuleData()->m_treadDebrisNameLeft;
+		treadDebrisNames[1] = &getW3DTankTruckDrawModuleData()->m_treadDebrisNameRight;
+
+		for (size_t i = 0; i < ARRAY_SIZE(m_treadDebrisIDs); ++i)
+		{
+			if (m_treadDebrisIDs[i] == INVALID_PARTICLE_SYSTEM_ID)
+			{
+				if (const ParticleSystemTemplate *sysTemplate = TheParticleSystemManager->findTemplate(*treadDebrisNames[i]))
+				{
+					ParticleSystem *particleSys = TheParticleSystemManager->createParticleSystem( sysTemplate );
+					particleSys->attachToDrawable(getDrawable());
+					// important: mark it as do-not-save, since we'll just re-create it when we reload.
+					particleSys->setSaveable(FALSE);
+					// they come into being stopped.
+					particleSys->stop();
+					m_treadDebrisIDs[i] = particleSys->getSystemID();
+				}
+			}
+		}
+	}
+}
+
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+void W3DTankTruckDraw::tossTreadEmitters( void )
+{
+	for (size_t i = 0; i < ARRAY_SIZE(m_treadDebrisIDs); ++i)
+	{
+		if (ParticleSystem *particleSys = TheParticleSystemManager->findParticleSystem(m_treadDebrisIDs[i]))
+		{
+			particleSys->attachToObject(nullptr);
+			particleSys->destroy();
+		}
+		m_treadDebrisIDs[i] = INVALID_PARTICLE_SYSTEM_ID;
+	}
+}
+
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+void W3DTankTruckDraw::createWheelEmitters( void )
 {
 	if (getDrawable()->isDrawableEffectivelyHidden())
 		return;
@@ -241,16 +265,13 @@ void W3DTankTruckDraw::createEmitters( void )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-/**
- * Stop creating debris from the tank treads
- */
-void W3DTankTruckDraw::enableEmitters( Bool enable  )
+void W3DTankTruckDraw::enableWheelEmitters( Bool enable )
 {
 	// don't check... if we are hidden the first time thru, then we'll never create the emitters.
 	// eg, if we are loading a game and the unit is in a tunnel, he'll never get emitteres even when he exits.
 	//if (!m_effectsInitialized)
 	{
-		createEmitters();
+		createWheelEmitters();
 		m_effectsInitialized=true;
 	}
 
@@ -349,10 +370,8 @@ void W3DTankTruckDraw::setHidden(Bool h)
 	W3DModelDraw::setHidden(h);
 	if (h)
 	{
-		enableEmitters(false);
-#ifdef SHOW_TANK_DEBRIS
+		enableWheelEmitters(false);
 		stopMoveDebris();
-#endif
 	}
 }
 
@@ -573,7 +592,7 @@ void W3DTankTruckDraw::doDrawModule(const Matrix3D* transformMtx)
 	Bool wasPowersliding = m_isPowersliding;
 	m_isPowersliding = false;
 	if (physics->isMotive() && !obj->isSignificantlyAboveTerrain()) {
-		enableEmitters(true);
+		enableWheelEmitters(true);
 		Coord3D accel = *physics->getAcceleration();
 		accel.z = 0; // ignore gravitational force.
 		Bool accelerating = accel.length()>ACCEL_THRESHOLD;
@@ -615,7 +634,7 @@ void W3DTankTruckDraw::doDrawModule(const Matrix3D* transformMtx)
 		}
 	}
 	else
-		enableEmitters(false);
+		enableWheelEmitters(false);
 
 	m_wasAirborne = obj->isSignificantlyAboveTerrain();
 
@@ -628,7 +647,6 @@ void W3DTankTruckDraw::doDrawModule(const Matrix3D* transformMtx)
 	}
 
 	//Tank update
-#ifdef SHOW_TANK_DEBRIS
 	const Real DEBRIS_THRESHOLD = 0.00001f;
 
 		// if tank is moving, kick up dust and debris
@@ -663,7 +681,7 @@ void W3DTankTruckDraw::doDrawModule(const Matrix3D* transformMtx)
 			particleSys->setBurstCountMultiplier( velMult.z );
 		}
 	}
-#endif
+
 	//Update movement of treads
 	if (m_treadCount)
 	{
@@ -740,7 +758,11 @@ void W3DTankTruckDraw::loadPostProcess( void )
 	// extend base class
 	W3DModelDraw::loadPostProcess();
 
-	// toss any existing ones (no need to re-create; we'll do that on demand)
-	tossEmitters();
+	// toss any existing wheel emitters (no need to re-create; we'll do that on demand)
+	tossWheelEmitters();
+
+	// toss any existing tread emitters and re-create 'em (since this module expects 'em to always be around)
+	tossTreadEmitters();
+	createTreadEmitters();
 
 }

@@ -51,14 +51,20 @@
 
 class Matrix3D;
 
+// TheSuperHackers @info Is enabled by default and therefore compatible with the Retail INI setups.
+#define SHOW_DEFAULT_TANK_DEBRIS (1)
+
 //-------------------------------------------------------------------------------------------------
-W3DTankDrawModuleData::W3DTankDrawModuleData() :
-	m_treadDebrisNameLeft("TrackDebrisDirtLeft"),
-	m_treadDebrisNameRight("TrackDebrisDirtRight"),
-	m_treadAnimationRate(0.0f),
-	m_treadPivotSpeedFraction(0.6f),
-	m_treadDriveSpeedFraction(0.3f)
+W3DTankDrawModuleData::W3DTankDrawModuleData()
+	: m_treadAnimationRate(0.0f)
+	, m_treadPivotSpeedFraction(0.6f)
+	, m_treadDriveSpeedFraction(0.3f)
 {
+	if constexpr (SHOW_DEFAULT_TANK_DEBRIS)
+	{
+		m_treadDebrisNameLeft = "TrackDebrisDirtLeft"; // TheSuperHackers @todo Remove data particle names from code
+		m_treadDebrisNameRight = "TrackDebrisDirtRight";
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -100,12 +106,12 @@ W3DTankDraw::W3DTankDraw( Thing *thing, const ModuleData* moduleData )
 	m_lastDirection.y=0.0f;
 	m_lastDirection.z=0.0f;
 
-	createEmitters();
+	createTreadEmitters();
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void W3DTankDraw::tossEmitters( void )
+void W3DTankDraw::tossTreadEmitters( void )
 {
 	for (size_t i = 0; i < ARRAY_SIZE(m_treadDebrisIDs); ++i)
 	{
@@ -120,7 +126,7 @@ void W3DTankDraw::tossEmitters( void )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void W3DTankDraw::createEmitters( void )
+void W3DTankDraw::createTreadEmitters( void )
 {
 	const AsciiString *treadDebrisNames[2];
 	static_assert(ARRAY_SIZE(treadDebrisNames) == ARRAY_SIZE(m_treadDebrisIDs), "Array size must match");
@@ -150,7 +156,7 @@ void W3DTankDraw::createEmitters( void )
 W3DTankDraw::~W3DTankDraw()
 {
 	// TheSuperHackers @fix Mauller 16/04/2025 Delete particle systems
-	tossEmitters();
+	tossTreadEmitters();
 
 	for (Int i=0; i<MAX_TREADS_PER_TANK; i++)
 		if (m_treads[i].m_robj)
@@ -159,9 +165,6 @@ W3DTankDraw::~W3DTankDraw()
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-/**
- * Stop creating debris from the tank treads
- */
 void W3DTankDraw::stopMoveDebris( void )
 {
 	for (size_t i = 0; i < ARRAY_SIZE(m_treadDebrisIDs); ++i)
@@ -432,8 +435,8 @@ void W3DTankDraw::loadPostProcess( void )
 	// extend base class
 	W3DModelDraw::loadPostProcess();
 
-	// toss any existing ones and re-create 'em (since this module expects 'em to always be around)
-	tossEmitters();
-	createEmitters();
+	// toss any existing tread emitters and re-create 'em (since this module expects 'em to always be around)
+	tossTreadEmitters();
+	createTreadEmitters();
 
 }
