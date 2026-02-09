@@ -742,6 +742,7 @@ protected:
 	Bool												m_placeAnchorInProgress;								///< is place angle interface for placement active
 	ICoord2D										m_placeAnchorStart;											///< place angle anchor start
 	ICoord2D										m_placeAnchorEnd;												///< place angle anchor end
+	Real												m_placeAnchorOrientation;								///< latest building orientation from placement anchoring
 	Int													m_selectCount;													///< Number of objects currently "selected"
 	Int													m_maxSelectCount;												///< Max number of objects to select
 	UnsignedInt									m_frameSelectionChanged;								///< Frame when the selection last changed.

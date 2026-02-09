@@ -1131,6 +1131,7 @@ InGameUI::InGameUI()
 	m_placeAnchorStart.x = m_placeAnchorStart.y = 0;
 	m_placeAnchorEnd.x = m_placeAnchorEnd.y = 0;
 	m_placeAnchorInProgress = FALSE;
+	m_placeAnchorOrientation = 0.0f;
 
 	m_videoStream = nullptr;
 	m_videoBuffer = nullptr;
@@ -1615,7 +1616,9 @@ void InGameUI::handleBuildPlacements( void )
 	{
 		ICoord2D loc;
 		Coord3D world;
-		Real angle = m_placeIcon[ 0 ]->getOrientation();
+
+		// TheSuperHackers @tweak Caball009 09/02/2026 Use force fire to get the latest building orientation from placement anchoring for convenience.
+		Real angle = (isInForceAttackMode()) ? m_placeAnchorOrientation : m_placeIcon[ 0 ]->getOrientation();
 
 		// update the angle of the icon to match any placement angle and pick the
 		// location the icon will be at (anchored is the start, otherwise it's the mouse)
@@ -1650,6 +1653,8 @@ void InGameUI::handleBuildPlacements( void )
 					const Real snapRadians = DEG_TO_RADF(45);
 					angle = WWMath::Round(angle / snapRadians) * snapRadians;
 				}
+
+				m_placeAnchorOrientation = angle;
 			}
 
 		}
