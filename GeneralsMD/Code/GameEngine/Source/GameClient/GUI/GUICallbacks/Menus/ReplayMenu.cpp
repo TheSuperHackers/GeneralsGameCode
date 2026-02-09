@@ -354,10 +354,11 @@ void PopulateReplayFileListbox(GameWindow *listbox)
 
 			const Int insertionIndex = GadgetListBoxAddEntryText(listbox, replayNameToShow, color, -1, 0);
 			DEBUG_ASSERTCRASH(insertionIndex >= 0, ("Expects valid index"));
+
+			// TheSuperHackers @info Caball009 09/02/2026 Original replay menu has 4 columns; the code now supports a future 5-column layout.
+			// If there aren't two columns for time and date, concatenate them for a single column.
 			if (columns == 4)
 			{
-				// TheSuperHackers @info Caball009 09/02/2025 The original replay window menu has only four columns.
-				// Concatenate time and date for a single column if there aren't two dedicated columns for time and date.
 				UnicodeString displayDateTimeBuffer;
 				displayDateTimeBuffer.format(L"%s %s", displayTimeBuffer.str(), displayDateBuffer.str());
 
