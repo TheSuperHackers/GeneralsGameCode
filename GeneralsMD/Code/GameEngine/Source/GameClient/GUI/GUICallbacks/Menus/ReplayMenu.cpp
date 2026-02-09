@@ -375,6 +375,10 @@ void PopulateReplayFileListbox(GameWindow *listbox)
 				GadgetListBoxAddEntryText(listbox, header.versionString, color, insertionIndex, 3);
 				GadgetListBoxAddEntryText(listbox, mapStr, mapColor, insertionIndex, 4);
 			}
+			else
+			{
+				DEBUG_CRASH(("Replay menu uses %d columns; expected either 4 or 5", columns));
+			}
 
 			// TheSuperHackers @performance Now stops processing when the list is full.
 			if (insertionIndex == listboxLength - 1)
