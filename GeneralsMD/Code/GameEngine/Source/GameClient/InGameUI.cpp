@@ -1617,7 +1617,7 @@ void InGameUI::handleBuildPlacements( void )
 		ICoord2D loc;
 		Coord3D world;
 
-		// TheSuperHackers @tweak Caball009 09/02/2026 Use force fire to get the latest building orientation from placement anchoring for convenience.
+		// TheSuperHackers @tweak Caball009 09/02/2026 Use force attack to get the latest building orientation from placement anchoring for convenience.
 		Real angle = (isInForceAttackMode()) ? m_placeAnchorOrientation : m_placeIcon[ 0 ]->getOrientation();
 
 		// update the angle of the icon to match any placement angle and pick the
