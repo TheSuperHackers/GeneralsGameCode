@@ -1363,12 +1363,12 @@ void GameState::xferSaveData( Xfer *xfer, SnapshotType which )
 			// get block name
 			blockName = blockInfo->blockName;
 
-			DEBUG_LOG(("Looking at block '%s'", blockName.str()));
+			DEBUG_LOG(("GameState::xferSaveData - Looking at block '%s'", blockName.str()));
 
 			// Skip blocks with nullptr snapshot (can happen in headless mode)
 			if( blockInfo->snapshot == nullptr )
 			{
-				DEBUG_LOG(("Skipping block '%s' because snapshot is nullptr", blockName.str()));
+				DEBUG_LOG(("GameState::xferSaveData - Skipping block '%s' because snapshot is nullptr", blockName.str()));
 				continue;
 			}
 
@@ -1465,7 +1465,7 @@ void GameState::xferSaveData( Xfer *xfer, SnapshotType which )
 				// Skip blocks with nullptr snapshot (can happen in headless mode)
 				if( blockInfo->snapshot == nullptr )
 				{
-					DEBUG_LOG(("Skipping block '%s' because snapshot is nullptr", blockInfo->blockName.str()));
+					DEBUG_LOG(("GameState::xferSaveData - Skipping block '%s' because snapshot is nullptr", blockInfo->blockName.str()));
 					Int dataSize = xfer->beginBlock();
 					xfer->skip( dataSize );
 					continue;
