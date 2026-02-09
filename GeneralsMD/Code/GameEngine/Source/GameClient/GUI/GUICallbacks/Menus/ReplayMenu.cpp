@@ -295,14 +295,6 @@ void PopulateReplayFileListbox(GameWindow *listbox)
 			const UnicodeString displayTimeBuffer = getUnicodeTimeBuffer(header.timeVal);
 			const UnicodeString displayDateBuffer = getUnicodeDateBuffer(header.timeVal);
 
-			UnicodeString displayDateTimeBuffer;
-			if (columns == 4)
-			{
-				// TheSuperHackers @info Caball009 09/02/2025 The original replay window menu has only four columns.
-				// Concatenate time and date for a single column if there aren't two dedicated columns for time and date.
-				displayDateTimeBuffer.format(L"%s %s", displayTimeBuffer.str(), displayDateBuffer.str());
-			}
-
 			// version (no-op)
 
 			// map
@@ -364,6 +356,11 @@ void PopulateReplayFileListbox(GameWindow *listbox)
 			DEBUG_ASSERTCRASH(insertionIndex >= 0, ("Expects valid index"));
 			if (columns == 4)
 			{
+				// TheSuperHackers @info Caball009 09/02/2025 The original replay window menu has only four columns.
+				// Concatenate time and date for a single column if there aren't two dedicated columns for time and date.
+				UnicodeString displayDateTimeBuffer;
+				displayDateTimeBuffer.format(L"%s %s", displayTimeBuffer.str(), displayDateBuffer.str());
+
 				GadgetListBoxAddEntryText(listbox, displayDateTimeBuffer, color, insertionIndex, 1);
 				GadgetListBoxAddEntryText(listbox, header.versionString, color, insertionIndex, 2);
 				GadgetListBoxAddEntryText(listbox, mapStr, mapColor, insertionIndex, 3);
