@@ -3106,7 +3106,7 @@ void W3DView::moveAlongWaypointPath(Real milliseconds)
 	if (fabs(deltaAngle) > PI/10) {
 		DEBUG_LOG(("Huh."));
 	}
-	View::setAngle(m_angle + avgFactor*(deltaAngle));
+	View::setAngle(m_angle + (avgFactor*deltaAngle));
 
 	Real timeMultiplier = m_mcwpInfo.timeMultiplier[m_mcwpInfo.curSegment]*factor1 +
 			m_mcwpInfo.timeMultiplier[m_mcwpInfo.curSegment+1]*factor2;
