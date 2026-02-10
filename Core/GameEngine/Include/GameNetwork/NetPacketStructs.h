@@ -195,8 +195,8 @@ struct NetPacketChatCommand {
 	UnsignedByte textLength;
 	// Variable fields: WideChar text[textLength] + Int playerMask
 
-	static Int getMaxTextLength() { return 255; }
-	static Int getUsableTextLength(const UnicodeString& text) { return min(text.getLength(), getMaxTextLength()); }
+	enum { MaxTextLen = 255 };
+	static Int getUsableTextLength(const UnicodeString& text) { return min(text.getLength(), (Int)MaxTextLen); }
 };
 
 struct NetPacketDisconnectChatCommand {
@@ -207,8 +207,8 @@ struct NetPacketDisconnectChatCommand {
 	UnsignedByte textLength;
 	// Variable fields: WideChar text[textLength]
 
-	static Int getMaxTextLength() { return 255; }
-	static Int getUsableTextLength(const UnicodeString& text) { return min(text.getLength(), getMaxTextLength()); }
+	enum { MaxTextLen = 255 };
+	static Int getUsableTextLength(const UnicodeString& text) { return min(text.getLength(), (Int)MaxTextLen); }
 };
 
 struct NetPacketGameCommand {
