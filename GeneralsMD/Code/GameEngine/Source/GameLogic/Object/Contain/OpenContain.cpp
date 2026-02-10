@@ -280,7 +280,6 @@ void OpenContain::addOrRemoveObjFromWorld(Object* obj, Bool add)
 //-------------------------------------------------------------------------------------------------
 void OpenContain::addToContain( Object *rider )
 {
-#if RETAIL_COMPATIBLE_CRC
 	if( getObject()->checkAndDetonateBoobyTrap(rider) )
 	{
 		// Whoops, I was mined.  Cancel if I (or they) am now dead.
@@ -293,14 +292,11 @@ void OpenContain::addToContain( Object *rider )
 	// sanity
 	if( rider == nullptr )
 		return;
-#else
-	getObject()->checkAndDetonateBoobyTrap(rider);
 
 	// TheSuperHackers @bugfix Stubbjax 06/02/2026 Always ensure interacting objects are alive.
 	// This prevents undefined behaviour if a unit dies and enters a container on the same frame.
-	if (rider == nullptr || rider->isDestroyed() || getObject()->isDestroyed())
+	if (rider->isDestroyed() || getObject()->isDestroyed())
 		return;
-#endif
 
 	Drawable *riderDraw = rider->getDrawable();
 	Bool wasSelected = FALSE;
