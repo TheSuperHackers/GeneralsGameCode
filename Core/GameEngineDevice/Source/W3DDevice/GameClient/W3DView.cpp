@@ -166,7 +166,7 @@ W3DView::W3DView()
 	m_shakerAngles.Y =0.0f;
 	m_shakerAngles.Z =0.0f;
 
-	m_recalcCamera = true;
+	m_recalcCamera = false;
 
 }
 
