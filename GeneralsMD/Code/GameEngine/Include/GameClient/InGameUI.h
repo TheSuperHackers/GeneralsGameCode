@@ -444,6 +444,8 @@ public:  // ********************************************************************
 	virtual Bool isPlacementAnchored( void );													///< is placement arrow anchor set
 	virtual void getPlacementPoints( ICoord2D *start, ICoord2D *end );///< get the placemnt arrow points
 	virtual Real getPlacementAngle( void );														///< placement angle of drawable at cursor when placing down structures
+	virtual Real getLatestBuildingOrientation() const { return m_latestBuildingOrientation; } ///< TBD
+	virtual void setLatestBuildingOrientation(Real angle) { m_latestBuildingOrientation = angle; } ///< TBD
 
 	// Drawable selection mechanisms
 	virtual void selectDrawable( Drawable *draw );					///< Mark given Drawable as "selected"
@@ -742,7 +744,7 @@ protected:
 	Bool												m_placeAnchorInProgress;								///< is place angle interface for placement active
 	ICoord2D										m_placeAnchorStart;											///< place angle anchor start
 	ICoord2D										m_placeAnchorEnd;												///< place angle anchor end
-	Real												m_placeAnchorOrientation;								///< latest building orientation from placement anchoring
+	Real												m_latestBuildingOrientation;						///< latest building orientation
 	Int													m_selectCount;													///< Number of objects currently "selected"
 	Int													m_maxSelectCount;												///< Max number of objects to select
 	UnsignedInt									m_frameSelectionChanged;								///< Frame when the selection last changed.
