@@ -278,8 +278,9 @@ void OpenContain::addToContain( Object *rider )
 	if( rider == nullptr )
 		return;
 
-	// TheSuperHackers @bugfix Stubbjax 06/02/2026 Always ensure interacting objects are alive.
-	// This prevents undefined behaviour if a unit dies and enters a container on the same frame.
+	// TheSuperHackers @bugfix Stubbjax 06/02/2026 Ensure the rider is not destroyed to prevent a
+	// likely crash if it enters the container on the same frame. If this occurs with an unpatched
+	// client present in a match, the game has a small chance to mismatch.
 	if (rider->isDestroyed())
 		return;
 
