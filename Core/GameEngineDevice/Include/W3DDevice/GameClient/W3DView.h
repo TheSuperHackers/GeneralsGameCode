@@ -277,6 +277,7 @@ private:
 
 	Region2D m_cameraAreaConstraints; ///< Camera should be constrained to be within this area
 	Bool m_cameraAreaConstraintsValid; ///< If false, recalculates the camera area constraints in the next render update
+	Bool m_recalcCamera; ///< Recalculates the camera transform in the next render update
 
 	void setCameraTransform(void); ///< set the transform matrix of m_3DCamera, based on m_pos & m_angle
 	void buildCameraTransform(Matrix3D *transform); ///< calculate (but do not set) the transform matrix of m_3DCamera, based on m_pos & m_angle

@@ -377,7 +377,7 @@ void NetPacket::FillBufferWithGameCommand(UnsignedByte *buffer, NetCommandRef *m
 
 	//DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::FillBufferWithGameCommand for command ID %d", cmdMsg->getID()));
 
-	NetPacketGameCommandHeader* packet = reinterpret_cast<NetPacketGameCommandHeader*>(buffer);
+	NetPacketGameCommand* packet = reinterpret_cast<NetPacketGameCommand*>(buffer);
 	packet->commandType.header = NetPacketFieldTypes::CommandType;
 	packet->commandType.commandType = cmdMsg->getNetCommandType();
 	packet->frame.header = NetPacketFieldTypes::Frame;
@@ -391,7 +391,7 @@ void NetPacket::FillBufferWithGameCommand(UnsignedByte *buffer, NetCommandRef *m
 	packet->dataHeader.header = NetPacketFieldTypes::Data;
 
 	// Variable data portion
-	UnsignedShort offset = sizeof(NetPacketGameCommandHeader);
+	UnsignedShort offset = sizeof(NetPacketGameCommand);
 
 	// Now copy the GameMessage type into the packet.
 	GameMessage::Type newType = gmsg->getType();
@@ -704,7 +704,7 @@ void NetPacket::FillBufferWithDisconnectChatCommand(UnsignedByte *buffer, NetCom
 	NetDisconnectChatCommandMsg *cmdMsg = (NetDisconnectChatCommandMsg *)(msg->getCommand());
 //		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addDisconnectChatCommand - adding run ahead command"));
 
-	NetPacketDisconnectChatCommandHeader* packet = reinterpret_cast<NetPacketDisconnectChatCommandHeader*>(buffer);
+	NetPacketDisconnectChatCommand* packet = reinterpret_cast<NetPacketDisconnectChatCommand*>(buffer);
 	packet->commandType.header = NetPacketFieldTypes::CommandType;
 	packet->commandType.commandType = cmdMsg->getNetCommandType();
 	packet->relay.header = NetPacketFieldTypes::Relay;
@@ -717,7 +717,7 @@ void NetPacket::FillBufferWithDisconnectChatCommand(UnsignedByte *buffer, NetCom
 	packet->textLength = unitext.getLength();
 
 	// Variable data portion
-	UnsignedShort offset = sizeof(NetPacketDisconnectChatCommandHeader);
+	UnsignedShort offset = sizeof(NetPacketDisconnectChatCommand);
 	memcpy(buffer + offset, unitext.str(), packet->textLength * sizeof(UnsignedShort));
 	offset += packet->textLength * sizeof(UnsignedShort);
 }
@@ -744,7 +744,7 @@ void NetPacket::FillBufferWithChatCommand(UnsignedByte *buffer, NetCommandRef *m
 	NetChatCommandMsg *cmdMsg = static_cast<NetChatCommandMsg *>(msg->getCommand());
 //		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addDisconnectChatCommand - adding run ahead command"));
 
-	NetPacketChatCommandHeader* packet = reinterpret_cast<NetPacketChatCommandHeader*>(buffer);
+	NetPacketChatCommand* packet = reinterpret_cast<NetPacketChatCommand*>(buffer);
 	packet->commandType.header = NetPacketFieldTypes::CommandType;
 	packet->commandType.commandType = cmdMsg->getNetCommandType();
 	packet->frame.header = NetPacketFieldTypes::Frame;
@@ -761,7 +761,7 @@ void NetPacket::FillBufferWithChatCommand(UnsignedByte *buffer, NetCommandRef *m
 	packet->textLength = unitext.getLength();
 
 	// Variable data portion
-	UnsignedShort offset = sizeof(NetPacketChatCommandHeader);
+	UnsignedShort offset = sizeof(NetPacketChatCommand);
 	memcpy(buffer + offset, unitext.str(), packet->textLength * sizeof(UnsignedShort));
 	offset += packet->textLength * sizeof(UnsignedShort);
 
@@ -773,7 +773,7 @@ void NetPacket::FillBufferWithChatCommand(UnsignedByte *buffer, NetCommandRef *m
 void NetPacket::FillBufferWithProgressMessage(UnsignedByte *buffer, NetCommandRef *msg) {
 	NetProgressCommandMsg *cmdMsg = (NetProgressCommandMsg *)(msg->getCommand());
 
-	NetPacketProgressMessage* packet = reinterpret_cast<NetPacketProgressMessage*>(buffer);
+	NetPacketProgressCommand* packet = reinterpret_cast<NetPacketProgressCommand*>(buffer);
 	packet->commandType.header = NetPacketFieldTypes::CommandType;
 	packet->commandType.commandType = cmdMsg->getNetCommandType();
 	packet->relay.header = NetPacketFieldTypes::Relay;
@@ -787,7 +787,7 @@ void NetPacket::FillBufferWithProgressMessage(UnsignedByte *buffer, NetCommandRe
 void NetPacket::FillBufferWithLoadCompleteMessage(UnsignedByte *buffer, NetCommandRef *msg) {
 	NetCommandMsg *cmdMsg = static_cast<NetCommandMsg *>(msg->getCommand());
 
-	NetPacketLoadCompleteMessage* packet = reinterpret_cast<NetPacketLoadCompleteMessage*>(buffer);
+	NetPacketLoadCompleteCommand* packet = reinterpret_cast<NetPacketLoadCompleteCommand*>(buffer);
 	packet->commandType.header = NetPacketFieldTypes::CommandType;
 	packet->commandType.commandType = cmdMsg->getNetCommandType();
 	packet->relay.header = NetPacketFieldTypes::Relay;
@@ -802,7 +802,7 @@ void NetPacket::FillBufferWithLoadCompleteMessage(UnsignedByte *buffer, NetComma
 void NetPacket::FillBufferWithTimeOutGameStartMessage(UnsignedByte *buffer, NetCommandRef *msg) {
 	NetCommandMsg *cmdMsg = static_cast<NetCommandMsg *>(msg->getCommand());
 
-	NetPacketTimeOutGameStartMessage* packet = reinterpret_cast<NetPacketTimeOutGameStartMessage*>(buffer);
+	NetPacketTimeOutGameStartCommand* packet = reinterpret_cast<NetPacketTimeOutGameStartCommand*>(buffer);
 	packet->commandType.header = NetPacketFieldTypes::CommandType;
 	packet->commandType.commandType = cmdMsg->getNetCommandType();
 	packet->relay.header = NetPacketFieldTypes::Relay;

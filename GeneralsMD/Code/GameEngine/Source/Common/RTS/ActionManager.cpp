@@ -458,7 +458,7 @@ Bool ActionManager::canResumeConstructionOf( const Object *obj,
 	if( obj->isKindOf( KINDOF_DOZER ) == FALSE )
 		return FALSE;
 
-	// TheSuperHackers @bugfix Stubbjax 06/01/2025 Ensure only the owner of the construction can resume it.
+	// TheSuperHackers @bugfix Stubbjax 06/01/2026 Ensure only the owner of the construction can resume it.
 #if RETAIL_COMPATIBLE_CRC
 	Relationship r = obj->getRelationship(objectBeingConstructed);
 

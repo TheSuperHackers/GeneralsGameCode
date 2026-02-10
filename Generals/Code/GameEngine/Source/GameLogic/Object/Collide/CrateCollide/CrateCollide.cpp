@@ -162,6 +162,12 @@ Bool CrateCollide::isValidToExecute( const Object *other ) const
 	if( getObject()->isAboveTerrain() && !validBuildingAttempt )
 		return FALSE;
 
+	// TheSuperHackers @bugfix Stubbjax 09/02/2026 Prevent the crate from being collected multiple times in a single frame.
+#if !RETAIL_COMPATIBLE_CRC
+	if (getObject()->isDestroyed())
+		return FALSE;
+#endif
+
 	if( md->m_isForbidOwnerPlayer  &&  (getObject()->getControllingPlayer() == other->getControllingPlayer()) )
 		return FALSE; // Design has decreed this to not be picked up by the dead guy's team.
 

@@ -159,7 +159,7 @@ void View::scrollBy( Coord2D *delta )
  */
 void View::setAngle( Real radians )
 {
-	m_angle = radians;
+	m_angle = WWMath::Normalize_Angle(radians);
 }
 
 /**
@@ -174,7 +174,7 @@ void View::setPitch( Real radians )
 /**
  * Set the view angle back to default
  */
-void View::setAngleToDefault()
+void View::setAngleToDefault( void )
 {
 	m_angle = m_defaultAngle;
 }
