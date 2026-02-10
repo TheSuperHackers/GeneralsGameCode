@@ -341,12 +341,14 @@ void ToggleQuitMenu()
 			//}
 			//end KRISMORNESS
 		}
+
+		if (TheScriptEngine->isGameEnding())
+			TheMouse->setVisibility(false);
 	}
 	else
 	{
 
 		TheMouse->setCursor( Mouse::ARROW );
-		TheMouse->setVisibility(true);
 
 		TheControlBar->hidePurchaseScience();
 		if ( TheGameLogic->isInMultiplayerGame()  || TheGameLogic->isInReplayGame() )
@@ -433,6 +435,7 @@ void ToggleQuitMenu()
 		HideInGameChat();
 		TheControlBar->hidePurchaseScience();
 		quitMenuLayout->bringForward();
+		TheMouse->setVisibility(true);
 		isVisible = TRUE;
 	}
 
