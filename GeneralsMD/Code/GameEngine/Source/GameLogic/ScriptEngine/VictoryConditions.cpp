@@ -93,6 +93,8 @@ public:
 	Bool amIObserver( void ) { return m_isObserver;} 	///< Am I an observer?( need this for scripts )
 	virtual UnsignedInt getEndFrame( void ) { return m_endFrame; }	///< on which frame was the game effectively over?
 private:
+  Bool multipleAlliancesExist(void); ///< Are there multiple alliances still alive?
+
 	Player*				m_players[MAX_PLAYER_COUNT];
 	Int						m_localSlotNum;
 	UnsignedInt		m_endFrame;
@@ -140,6 +142,35 @@ void VictoryConditions::reset( void )
 }
 
 //-------------------------------------------------------------------------------------------------
+Bool VictoryConditions::multipleAlliancesExist()
+{
+	Player* alive = nullptr;
+
+	for (Int i = 0; i < MAX_PLAYER_COUNT; ++i)
+	{
+		Player* player = m_players[i];
+
+		if (player && !hasSinglePlayerBeenDefeated(player))
+		{
+			if (alive)
+			{
+				// check to verify they are on the same team
+				if (!areAllies(alive, player))
+				{
+					return true;
+				}
+			}
+			else
+			{
+				alive = player; // save this pointer to check against
+			}
+		}
+	}
+
+	return false;
+}
+
+//-------------------------------------------------------------------------------------------------
 void VictoryConditions::update( void )
 {
 	if (!TheRecorder->isMultiplayer() || (m_localSlotNum < 0 && !m_isObserver))
@@ -148,31 +179,7 @@ void VictoryConditions::update( void )
 	// Check for a single winning alliance
 	if (!m_singleAllianceRemaining)
 	{
-		Bool multipleAlliances = false;
-		Player *alive = nullptr;
-		Player *player;
-		for (Int i=0; i<MAX_PLAYER_COUNT; ++i)
-		{
-			player = m_players[i];
-			if (player && !hasSinglePlayerBeenDefeated(player))
-			{
-				if (alive)
-				{
-					// check to verify they are on the same team
-					if (!areAllies(alive, player))
-					{
-						multipleAlliances = true;
-						break;
-					}
-				}
-				else
-				{
-					alive = player; // save this pointer to check against
-				}
-			}
-		}
-
-		if (!multipleAlliances)
+		if (!multipleAlliancesExist())
 		{
 			m_singleAllianceRemaining = true; // don't check again
 			m_endFrame = TheGameLogic->getFrame();
