@@ -975,7 +975,7 @@ NetWrapperCommandMsg::NetWrapperCommandMsg() : NetCommandMsg() {
 }
 
 NetWrapperCommandMsg::~NetWrapperCommandMsg() {
-	delete m_data;
+	delete[] m_data;
 	m_data = nullptr;
 }
 
@@ -985,7 +985,7 @@ UnsignedByte * NetWrapperCommandMsg::getData() {
 
 void NetWrapperCommandMsg::setData(UnsignedByte *data, UnsignedInt dataLength)
 {
-	delete m_data;
+	delete[] m_data;
 	m_data = NEW UnsignedByte[dataLength];	// pool[]ify
 	memcpy(m_data, data, dataLength);
 	m_dataLength = dataLength;
