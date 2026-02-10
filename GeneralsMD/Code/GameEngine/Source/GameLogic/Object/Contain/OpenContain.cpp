@@ -295,7 +295,7 @@ void OpenContain::addToContain( Object *rider )
 
 	// TheSuperHackers @bugfix Stubbjax 06/02/2026 Always ensure interacting objects are alive.
 	// This prevents undefined behaviour if a unit dies and enters a container on the same frame.
-	if (rider->isDestroyed() || getObject()->isDestroyed())
+	if (rider->isDestroyed())
 		return;
 
 	Drawable *riderDraw = rider->getDrawable();
