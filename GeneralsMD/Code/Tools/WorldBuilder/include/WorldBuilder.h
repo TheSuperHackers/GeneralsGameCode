@@ -133,6 +133,8 @@ protected:
 
 	MapObject					*m_pasteMapObjList;	///< List of copied/cut map objects.
 
+	Bool							m_acceptEULA;
+
 protected:
 	void deletePasteObjList(void)
 	{
