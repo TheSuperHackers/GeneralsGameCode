@@ -586,10 +586,10 @@ UnicodeString GadgetTextEntryGetText( GameWindow *textentry )
 //=============================================================================
 void GadgetTextEntrySetMaxLen( GameWindow *g, Short length )
 {
-	if(g == nullptr)
+	if( g == nullptr )
 		return;
 
-	EntryData *data = static_cast<EntryData *>(g->winGetUserData());
+	EntryData *data = static_cast<EntryData *>( g->winGetUserData() );
 
 	if( length > ENTRY_TEXT_LEN )
 		length = ENTRY_TEXT_LEN;
