@@ -5283,11 +5283,13 @@ Bool Pathfinder::adjustDestination(Object *obj, const LocomotorSet& locomotorSet
 		return true;
 	}
 #else
-	// TheSuperHackers @bugfix stephanmeesters 11/02/2026
-	// Keep the original destination when dealing with a single unit and there is no obstruction.
 	const Coord3D originalDest = *dest;
 	if (checkForAdjust(obj, locomotorSet, isHuman, i,j, layer, iRadius, center, dest, groupDest)) {
-		if (isHuman && obj && obj->getGroup() && obj->getGroup()->getCount() == 1) {
+		// --> affect single unit only
+		// if (isHuman && obj && obj->getGroup() && obj->getGroup()->getCount() == 1) {
+
+		// ---> affect groups
+		if (isHuman) {
 			*dest = originalDest;
 		}
 		return true;
