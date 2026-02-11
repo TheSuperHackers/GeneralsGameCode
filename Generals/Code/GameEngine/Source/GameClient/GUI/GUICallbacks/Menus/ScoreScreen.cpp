@@ -1597,13 +1597,13 @@ winName.format("ScoreScreen.wnd:StaticTextScore%d", pos);
 					{
 						++stats.discons[ptIdx];
 					}
-					else if (TheVictoryConditions->isLocalAlliedDefeat() || !TheVictoryConditions->getEndFrame())
+					else if (TheVictoryConditions->isLocalAlliedVictory())
 					{
-						++stats.losses[ptIdx];
+						++stats.wins[ptIdx];
 					}
 					else
 					{
-						++stats.wins[ptIdx];
+						++stats.losses[ptIdx];
 					}
 
 					ScoreKeeper *s = player->getScoreKeeper();
