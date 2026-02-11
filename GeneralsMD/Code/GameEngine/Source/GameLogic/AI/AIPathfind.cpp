@@ -5278,9 +5278,21 @@ Bool Pathfinder::adjustDestination(Object *obj, const LocomotorSet& locomotorSet
 	Int i, j;
 	i = cell.x;
 	j = cell.y;
+#if RETAIL_COMPATIBLE_CRC
 	if (checkForAdjust(obj, locomotorSet, isHuman, i,j, layer, iRadius, center, dest, groupDest)) {
 		return true;
 	}
+#else
+	// TheSuperHackers @bugfix stephanmeesters 11/02/2026
+	// Keep the original destination when dealing with a single unit and there is no obstruction.
+	const Coord3D originalDest = *dest;
+	if (checkForAdjust(obj, locomotorSet, isHuman, i,j, layer, iRadius, center, dest, groupDest)) {
+		if (isHuman && obj && obj->getGroup() && obj->getGroup()->getCount() == 1) {
+			*dest = originalDest;
+		}
+		return true;
+	}
+#endif
 
 	Int delta=1;
 	Int count;
