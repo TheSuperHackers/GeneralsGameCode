@@ -233,6 +233,8 @@ GameClient::~GameClient()
 	delete TheSnowManager;
 	TheSnowManager = nullptr;
 
+	delete m_intro;
+
 }
 
 //-------------------------------------------------------------------------------------------------
