@@ -220,7 +220,7 @@ void Intro::doTheSuperHackers()
 		e.screenHeightFactor = s.screenHeightFactor;
 	}
 
-	doAsyncWait(3000 * 50);
+	doAsyncWait(3000);
 	m_fadeValue = 0.0f;
 }
 
