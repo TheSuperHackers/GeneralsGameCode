@@ -80,6 +80,7 @@ private:
 	IntroState m_currentState;
 	UnsignedInt m_allowedStateFlags;
 	UnsignedInt m_waitUntilMs;
+	UnicodeString m_unicodeStrings[1];
 	std::vector<DisplayEntity> m_displayEntities;
 	Real m_fadeValue;
 };

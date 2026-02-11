@@ -24,6 +24,7 @@
 
 #include "GameClient/Display.h"
 #include "GameClient/DisplayStringManager.h"
+#include "GameClient/GameText.h"
 #include "GameClient/GameWindowManager.h"
 #include "GameClient/GlobalLanguage.h"
 #include "GameClient/Image.h"
@@ -129,20 +130,24 @@ void Intro::doTheSuperHackers()
 {
 	std::vector<DisplaySetting> settings;
 
+	constexpr const Real startY = 0.35f;
+
 	{
-		// China Hacker image
+		// Pretext
+		m_unicodeStrings[0] = TheGameText->FETCH_OR_SUBSTITUTE("CREDITS:CustomIntroPretext", L"Game improved by");
 		DisplaySetting setting;
-		setting.imageName = "SNHacker2_L";
-		setting.screenHeightFactor = 0.15f;
-		setting.sizeX = (Int)(122 * 0.70f);
-		setting.sizeY = (Int)(98 * 0.70f);
+		setting.text = m_unicodeStrings[0].str();
+		setting.screenHeightFactor = startY;
+		setting.sizeY = 15;
+		setting.bold = false;
+		setting.centered = true;
 		settings.push_back(setting);
 	}
 	{
 		// Team name
 		DisplaySetting setting;
 		setting.text = L"The Super Hackers";
-		setting.screenHeightFactor = 0.35f;
+		setting.screenHeightFactor = startY + 0.05f;
 		setting.sizeY = 30;
 		setting.bold = true;
 		setting.centered = true;
@@ -151,13 +156,23 @@ void Intro::doTheSuperHackers()
 	{
 		// Website
 		DisplaySetting setting;
-		setting.text = L"www.github.com/TheSuperHackers";
-		setting.screenHeightFactor = 0.45f;
+		setting.text = L"www.thesuperhackers.org";
+		setting.screenHeightFactor = startY + 0.15f;
 		setting.sizeY = 15;
 		setting.bold = false;
 		setting.centered = true;
 		settings.push_back(setting);
 	}
+	{
+		// China Hacker image
+		DisplaySetting setting;
+		setting.imageName = "SNHacker2_L";
+		setting.screenHeightFactor = startY + 0.25f;
+		setting.sizeX = (Int)(122 * 0.70f);
+		setting.sizeY = (Int)(98 * 0.70f);
+		settings.push_back(setting);
+	}
+	if constexpr (false)
 	{
 		// Code contributors with 10 or more commits to main branch.
 		// Sort by alphabet or commit count.
@@ -205,7 +220,7 @@ void Intro::doTheSuperHackers()
 		e.screenHeightFactor = s.screenHeightFactor;
 	}
 
-	doAsyncWait(3000);
+	doAsyncWait(3000 * 50);
 	m_fadeValue = 0.0f;
 }
 
