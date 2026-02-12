@@ -2705,7 +2705,7 @@ GameWindow *GameWindowManager::gogoGadgetTextEntry( GameWindow *parent,
 		entryData->charPos = 0;
 	entryData->conCharPos = 0;
 	entryData->receivedUnichar = FALSE;
-	if( entryData->maxTextLen >= ENTRY_TEXT_LEN )
+	if( entryData->maxTextLen > ENTRY_TEXT_LEN )
 		entryData->maxTextLen = ENTRY_TEXT_LEN;
 
 	// allocate entry data
