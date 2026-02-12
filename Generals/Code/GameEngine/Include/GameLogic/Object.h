@@ -550,6 +550,7 @@ public:
 	void setDisabled( DisabledType type );
 	void setDisabledUntil( DisabledType type, UnsignedInt frame );
 	Bool isDisabledByType( DisabledType type ) const { return TEST_DISABLEDMASK( m_disabledMask, type ); }
+	Bool isUnderpoweredForAttack() const; ///< Returns true if powered-type and underpowered
 
 	void pauseAllSpecialPowers( const Bool disabling ) const;
 
