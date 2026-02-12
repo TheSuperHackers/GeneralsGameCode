@@ -119,7 +119,7 @@ protected:
 #endif
 	/// factory for creating the TerrainVisual
 	// TheSuperHackers @fix bobtista 31/01/2026 Return dummy in headless mode
-	virtual TerrainVisual *createTerrainVisual() { return TheGlobalData->m_headless ? NEW TerrainVisualDummy : NEW W3DTerrainVisual; }
+	virtual TerrainVisual *createTerrainVisual() { return TheGlobalData->m_headless ? static_cast<TerrainVisual*>(NEW TerrainVisualDummy) : NEW W3DTerrainVisual; }
 
 	/// factory for creating the snow manager
 	virtual SnowManager *createSnowManager() { return NEW W3DSnowManager; }

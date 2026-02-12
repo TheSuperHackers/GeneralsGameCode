@@ -71,7 +71,7 @@ protected:
 
 	/// factory for views
 	// TheSuperHackers @fix bobtista 31/01/2026 Return dummy in headless mode
-	virtual View *createView() { return TheGlobalData->m_headless ? NEW ViewDummy : NEW W3DView; }
+	virtual View *createView() { return TheGlobalData->m_headless ? static_cast<View*>(NEW ViewDummy) : NEW W3DView; }
 
 	virtual void drawSelectionRegion();			///< draw the selection region on screen
 	virtual void drawMoveHints( View *view );			///< draw move hint visual feedback
