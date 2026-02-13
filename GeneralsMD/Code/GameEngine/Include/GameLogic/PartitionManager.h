@@ -465,6 +465,11 @@ private:
 	);
 
 	/**
+		A more advanced implementation of doCircleFill that is 100% accurate.
+	*/
+	void doCircleFillPrecise(Real centerX, Real centerY, Real radius);
+
+	/**
 		fill in the pixels covered by the given rectangular shape with the given
 		center, dimensions, and rotation.
 	*/

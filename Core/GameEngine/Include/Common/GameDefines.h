@@ -45,6 +45,10 @@
 #define RETAIL_COMPATIBLE_PATHFINDING_ALLOCATION (1)
 #endif
 
+#ifndef RETAIL_COMPATIBLE_CIRCLE_FILL_ALGORITHM
+#define RETAIL_COMPATIBLE_CIRCLE_FILL_ALGORITHM (1) // Use the original circle fill algorithm, which is more efficient but less accurate
+#endif
+
 // This is essentially synonymous for RETAIL_COMPATIBLE_CRC. There is a lot wrong with AIGroup, such as use-after-free, double-free, leaks,
 // but we cannot touch it much without breaking retail compatibility. Do not shy away from using massive hacks when fixing issues with AIGroup,
 // but put them behind this macro.
