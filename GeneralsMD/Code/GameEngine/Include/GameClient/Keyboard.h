@@ -77,6 +77,7 @@ struct KeyboardIO
 	UnsignedByte	status;									// StatusType, above
 	UnsignedShort	state;									// KEY_STATE_* in KeyDefs.h
 	UnsignedInt		keyDownTimeMsec;				// real-time in milliseconds when key went down
+	UnsignedInt		keyRepeatTimeMsecOffset;	// shorten key repeat delay by offset
 
 };
 
@@ -88,8 +89,12 @@ class Keyboard : public SubsystemInterface
 
 	enum
 	{
-		KEY_REPEAT_DELAY_MSEC = 333,	// 10 frames at 30 FPS
-		KEY_REPEAT_INTERVAL_MSEC = 67	// ~2 frames at 30 FPS
+		// TheSuperHackers @info Holding a button down requires 200 msec to register as a repeated key for the first time.
+		// After that the delay gets shorter and shorter, between 140 (200 - 60) and 15 (200 - 185) msec, with a decrease step of 15 msec.
+		KEY_REPEAT_DELAY_MSEC             = 200,
+		KEY_REPEAT_OFFSET_DELAY_MIN_MSEC  =  60,
+		KEY_REPEAT_OFFSET_DELAY_MAX_MSEC  = 185,
+		KEY_REPEAT_OFFSET_DELAY_STEP_MSEC =  15
 	};
 
 public:
