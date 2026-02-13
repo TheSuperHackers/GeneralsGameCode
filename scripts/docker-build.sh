@@ -128,6 +128,17 @@ build_docker_image() {
     print_success "Docker image ready"
 }
 
+fix_compile_commands() {
+    local fix_script="$SCRIPT_DIR/fix_compile_commands.py"
+    if [[ -f "$fix_script" ]] && command -v python3 &>/dev/null; then
+        # Only run if compile_commands.json exists in the build dir
+        if [[ -f "$BUILD_DIR/compile_commands.json" ]]; then
+            print_info "Fixing compile_commands.json for host environment..."
+            python3 "$fix_script" || print_warning "Failed to fix compile_commands.json"
+        fi
+    fi
+}
+
 run_build() {
     local force_cmake="$1"
     local target="$2"
@@ -266,6 +277,7 @@ build_docker_image
 run_build "$FORCE_CMAKE" "$TARGET" "$INTERACTIVE"
 
 if [[ "$INTERACTIVE" != "true" ]]; then
+    fix_compile_commands
     list_outputs
 
     echo ""
