@@ -93,10 +93,13 @@ public:
 	Bool amIObserver( void ) { return m_isObserver;} 	///< Am I an observer?( need this for scripts )
 	virtual UnsignedInt getEndFrame( void ) { return m_endFrame; }	///< on which frame was the game effectively over?
 private:
+	Bool multipleAlliancesExist(void); ///< Are there multiple alliances still alive?
+
 	Player*				m_players[MAX_PLAYER_COUNT];
 	Int						m_localSlotNum;
 	UnsignedInt		m_endFrame;
 	Bool					m_isDefeated[MAX_PLAYER_COUNT];
+	Bool					m_isVictorious[MAX_PLAYER_COUNT];
 	Bool					m_localPlayerDefeated;												///< prevents condition from being signaled each frame
 	Bool					m_singleAllianceRemaining;										///< prevents condition from being signaled each frame
 	Bool					m_isObserver;
@@ -128,6 +131,7 @@ void VictoryConditions::reset( void )
 	{
 		m_players[i] = nullptr;
 		m_isDefeated[i] = false;
+		m_isVictorious[i] = false;
 	}
 	m_localSlotNum = -1;
 
@@ -140,6 +144,35 @@ void VictoryConditions::reset( void )
 }
 
 //-------------------------------------------------------------------------------------------------
+Bool VictoryConditions::multipleAlliancesExist()
+{
+	Player* alive = nullptr;
+
+	for (Int i = 0; i < MAX_PLAYER_COUNT; ++i)
+	{
+		Player* player = m_players[i];
+
+		if (player && !hasSinglePlayerBeenDefeated(player))
+		{
+			if (alive)
+			{
+				// check to verify they are on the same team
+				if (!areAllies(alive, player))
+				{
+					return true;
+				}
+			}
+			else
+			{
+				alive = player; // save this pointer to check against
+			}
+		}
+	}
+
+	return false;
+}
+
+//-------------------------------------------------------------------------------------------------
 void VictoryConditions::update( void )
 {
 	if (!TheRecorder->isMultiplayer() || (m_localSlotNum < 0 && !m_isObserver))
@@ -148,34 +181,33 @@ void VictoryConditions::update( void )
 	// Check for a single winning alliance
 	if (!m_singleAllianceRemaining)
 	{
-		Bool multipleAlliances = false;
-		Player *alive = nullptr;
-		Player *player;
-		for (Int i=0; i<MAX_PLAYER_COUNT; ++i)
-		{
-			player = m_players[i];
-			if (player && !hasSinglePlayerBeenDefeated(player))
-			{
-				if (alive)
-				{
-					// check to verify they are on the same team
-					if (!areAllies(alive, player))
-					{
-						multipleAlliances = true;
-						break;
-					}
-				}
-				else
-				{
-					alive = player; // save this pointer to check against
-				}
-			}
-		}
-
-		if (!multipleAlliances)
+		if (!multipleAlliancesExist())
 		{
 			m_singleAllianceRemaining = true; // don't check again
 			m_endFrame = TheGameLogic->getFrame();
+
+			// TheSuperHackers @bugfix Stubbjax 11/02/2026 Cache victory status so that premature exits don't void the victory.
+
+			Player* victoriousPlayer = nullptr;
+			for (Int i = 0; i < MAX_PLAYER_COUNT; ++i)
+			{
+				Player* player = m_players[i];
+				if (player && !hasSinglePlayerBeenDefeated(player))
+				{
+					victoriousPlayer = player;
+					break;
+				}
+			}
+
+			if (victoriousPlayer)
+			{
+				for (Int i = 0; i < MAX_PLAYER_COUNT; ++i)
+				{
+					Player* player = m_players[i];
+					if (player == victoriousPlayer || (player && areAllies(player, victoriousPlayer)))
+						m_isVictorious[i] = true;
+				}
+			}
 		}
 	}
 
@@ -241,14 +273,13 @@ Bool VictoryConditions::hasAchievedVictory(Player *player)
 	if (!player)
 		return false;
 
-	if (m_singleAllianceRemaining)
+	if (!m_singleAllianceRemaining)
+		return false;
+
+	for (Int i = 0; i < MAX_PLAYER_COUNT; ++i)
 	{
-		for (Int i=0; i<MAX_PLAYER_COUNT; ++i)
-		{
-			if ( m_players[i] && !hasSinglePlayerBeenDefeated(m_players[i]) &&
-				(player == m_players[i] || areAllies(m_players[i], player)) )
-				return true;
-		}
+		if (player == m_players[i] && m_isVictorious[i])
+			return true;
 	}
 
 	return false;
@@ -260,8 +291,14 @@ Bool VictoryConditions::hasBeenDefeated(Player *player)
 	if (!player)
 		return false;
 
-	if (m_singleAllianceRemaining && !hasAchievedVictory(player))
-		return true;
+	if (!m_singleAllianceRemaining)
+		return false;
+
+	for (Int i = 0; i < MAX_PLAYER_COUNT; ++i)
+	{
+		if (player == m_players[i] && m_isDefeated[i])
+			return true;
+	}
 
 	return false;
 }
