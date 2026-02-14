@@ -378,3 +378,93 @@ Bool FileSystem::isPathInDirectory(const AsciiString& testPath, const AsciiStrin
 
 	return true;
 }
+
+//============================================================================
+// FileSystem::hasValidTransferFileContent
+//============================================================================
+// TheSuperHackers @security bobtista 12/02/2026 Validates transferred file
+// content in memory before writing to disk.
+Bool FileSystem::hasValidTransferFileContent(const AsciiString& filePath, const UnsignedByte* data, Int dataSize)
+{
+	struct TransferFileRule
+	{
+		const char* ext;
+		Int maxSize;
+	};
+
+	static const TransferFileRule transferFileRules[] =
+	{
+		{ ".map", 5 * 1024 * 1024 },
+		{ ".ini", 512 * 1024 },
+		{ ".str", 512 * 1024 },
+		{ ".txt", 512 * 1024 },
+		{ ".tga", 2 * 1024 * 1024 },
+		{ ".wak", 512 * 1024 },
+	};
+
+	const char* lastDot = strrchr(filePath.str(), '.');
+	if (lastDot == nullptr)
+	{
+		DEBUG_LOG(("File '%s' has no extension for content validation.", filePath.str()));
+		return false;
+	}
+
+	// Find matching rule by extension
+	const TransferFileRule* matchedRule = nullptr;
+	for (Int i = 0; i < ARRAY_SIZE(transferFileRules); ++i)
+	{
+		if (stricmp(lastDot, transferFileRules[i].ext) == 0)
+		{
+			matchedRule = &transferFileRules[i];
+			break;
+		}
+	}
+
+	if (matchedRule == nullptr)
+	{
+		DEBUG_LOG(("File '%s' has unrecognized extension '%s' for content validation.", filePath.str(), lastDot));
+		return false;
+	}
+
+	// Check size limit
+	if (dataSize > matchedRule->maxSize)
+	{
+		DEBUG_LOG(("File '%s' exceeds maximum size (%d bytes, limit %d bytes).", filePath.str(), dataSize, matchedRule->maxSize));
+		return false;
+	}
+
+	// Extension-specific content validation
+	if (stricmp(lastDot, ".map") == 0)
+	{
+		// Validate magic bytes "CkMp"
+		if (dataSize < 4 || data[0] != 'C' || data[1] != 'k' || data[2] != 'M' || data[3] != 'p')
+		{
+			DEBUG_LOG(("Map file '%s' has invalid magic bytes.", filePath.str()));
+			return false;
+		}
+	}
+	else if (stricmp(lastDot, ".ini") == 0)
+	{
+		// Check for null bytes to ensure text format
+		Int bytesToCheck = dataSize < 512 ? dataSize : 512;
+		for (Int i = 0; i < bytesToCheck; ++i)
+		{
+			if (data[i] == 0)
+			{
+				DEBUG_LOG(("INI file '%s' contains null bytes (likely binary).", filePath.str()));
+				return false;
+			}
+		}
+	}
+	else if (stricmp(lastDot, ".tga") == 0)
+	{
+		// Validate minimum TGA header size
+		if (dataSize < 18)
+		{
+			DEBUG_LOG(("TGA file '%s' is too small to be valid (minimum 18 bytes).", filePath.str()));
+			return false;
+		}
+	}
+
+	return true;
+}
