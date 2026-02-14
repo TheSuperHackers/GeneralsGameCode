@@ -39,6 +39,7 @@
 // present in the raw data.
 NetCommandRef * NetPacket::ConstructNetCommandMsgFromRawData(UnsignedByte *data, UnsignedShort dataLength) {
 	NetCommandType commandType = NETCOMMANDTYPE_GAMECOMMAND;
+	UnsignedByte commandTypeByte = static_cast<NetCommandType>(commandType);
 	UnsignedShort commandID = 0;
 	UnsignedInt frame = 0;
 	UnsignedByte playerID = 0;
@@ -54,32 +55,32 @@ NetCommandRef * NetPacket::ConstructNetCommandMsgFromRawData(UnsignedByte *data,
 
 		case NetPacketFieldTypes::CommandType:
 			++offset;
-			memcpy(&commandType, data + offset, sizeof(UnsignedByte));
-			offset += sizeof(UnsignedByte);
+			memcpy(&commandTypeByte, data + offset, sizeof(commandTypeByte));
+			offset += sizeof(commandTypeByte);
 			break;
 
 		case NetPacketFieldTypes::Relay:
 			++offset;
-			memcpy(&relay, data + offset, sizeof(UnsignedByte));
-			offset += sizeof(UnsignedByte);
+			memcpy(&relay, data + offset, sizeof(relay));
+			offset += sizeof(relay);
 			break;
 
 		case NetPacketFieldTypes::PlayerId:
 			++offset;
-			memcpy(&playerID, data + offset, sizeof(UnsignedByte));
-			offset += sizeof(UnsignedByte);
+			memcpy(&playerID, data + offset, sizeof(playerID));
+			offset += sizeof(playerID);
 			break;
 
 		case NetPacketFieldTypes::CommandId:
 			++offset;
-			memcpy(&commandID, data + offset, sizeof(UnsignedShort));
-			offset += sizeof(UnsignedShort);
+			memcpy(&commandID, data + offset, sizeof(commandID));
+			offset += sizeof(commandID);
 			break;
 
 		case NetPacketFieldTypes::Frame:
 			++offset;
-			memcpy(&frame, data + offset, sizeof(UnsignedInt));
-			offset += sizeof(UnsignedInt);
+			memcpy(&frame, data + offset, sizeof(frame));
+			offset += sizeof(frame);
 			break;
 
 		case NetPacketFieldTypes::Data:
@@ -385,30 +386,29 @@ void NetPacket::FillBufferWithGameCommand(UnsignedByte *buffer, NetCommandRef *m
 	packet.commandId.commandId = cmdMsg->getID();
 
 	memcpy(buffer, &packet, sizeof(packet));
+	buffer += sizeof(packet);
 
 	// Variable data portion
-	UnsignedShort offset = sizeof(NetPacketGameCommand);
 
 	// Now copy the GameMessage type into the packet.
 	GameMessage::Type newType = gmsg->getType();
-	memcpy(buffer + offset, &newType, sizeof(GameMessage::Type));
-	offset += sizeof(GameMessage::Type);
-
+	memcpy(buffer, &newType, sizeof(newType));
+	buffer += sizeof(newType);
 
 	GameMessageParser *parser = newInstance(GameMessageParser)(gmsg);
 	UnsignedByte numTypes = parser->getNumTypes();
-	memcpy(buffer + offset, &numTypes, sizeof(numTypes));
-	offset += sizeof(numTypes);
+	memcpy(buffer, &numTypes, sizeof(numTypes));
+	buffer += sizeof(numTypes);
 
 	GameMessageParserArgumentType *argType = parser->getFirstArgumentType();
 	while (argType != nullptr) {
 		UnsignedByte type = (UnsignedByte)(argType->getType());
-		memcpy(buffer + offset, &type, sizeof(type));
-		offset += sizeof(type);
+		memcpy(buffer, &type, sizeof(type));
+		buffer += sizeof(type);
 
 		UnsignedByte argTypeCount = argType->getArgCount();
-		memcpy(buffer + offset, &argTypeCount, sizeof(argTypeCount));
-		offset += sizeof(argTypeCount);
+		memcpy(buffer, &argTypeCount, sizeof(argTypeCount));
+		buffer += sizeof(argTypeCount);
 
 		argType = argType->getNext();
 	}
@@ -421,48 +421,48 @@ void NetPacket::FillBufferWithGameCommand(UnsignedByte *buffer, NetCommandRef *m
 		switch (type) {
 
 		case ARGUMENTDATATYPE_INTEGER:
-			memcpy(buffer + offset, &(arg.integer), sizeof(arg.integer));
-			offset += sizeof(arg.integer);
+			memcpy(buffer, &(arg.integer), sizeof(arg.integer));
+			buffer += sizeof(arg.integer);
 			break;
 		case ARGUMENTDATATYPE_REAL:
-			memcpy(buffer + offset, &(arg.real), sizeof(arg.real));
-			offset += sizeof(arg.real);
+			memcpy(buffer, &(arg.real), sizeof(arg.real));
+			buffer += sizeof(arg.real);
 			break;
 		case ARGUMENTDATATYPE_BOOLEAN:
-			memcpy(buffer + offset, &(arg.boolean), sizeof(arg.boolean));
-			offset += sizeof(arg.boolean);
+			memcpy(buffer, &(arg.boolean), sizeof(arg.boolean));
+			buffer += sizeof(arg.boolean);
 			break;
 		case ARGUMENTDATATYPE_OBJECTID:
-			memcpy(buffer + offset, &(arg.objectID), sizeof(arg.objectID));
-			offset += sizeof(arg.objectID);
+			memcpy(buffer, &(arg.objectID), sizeof(arg.objectID));
+			buffer += sizeof(arg.objectID);
 			break;
 		case ARGUMENTDATATYPE_DRAWABLEID:
-			memcpy(buffer + offset, &(arg.drawableID), sizeof(arg.drawableID));
-			offset += sizeof(arg.drawableID);
+			memcpy(buffer, &(arg.drawableID), sizeof(arg.drawableID));
+			buffer += sizeof(arg.drawableID);
 			break;
 		case ARGUMENTDATATYPE_TEAMID:
-			memcpy(buffer + offset, &(arg.teamID), sizeof(arg.teamID));
-			offset += sizeof(arg.teamID);
+			memcpy(buffer, &(arg.teamID), sizeof(arg.teamID));
+			buffer += sizeof(arg.teamID);
 			break;
 		case ARGUMENTDATATYPE_LOCATION:
-			memcpy(buffer + offset, &(arg.location), sizeof(arg.location));
-			offset += sizeof(arg.location);
+			memcpy(buffer, &(arg.location), sizeof(arg.location));
+			buffer += sizeof(arg.location);
 			break;
 		case ARGUMENTDATATYPE_PIXEL:
-			memcpy(buffer + offset, &(arg.pixel), sizeof(arg.pixel));
-			offset += sizeof(arg.pixel);
+			memcpy(buffer, &(arg.pixel), sizeof(arg.pixel));
+			buffer += sizeof(arg.pixel);
 			break;
 		case ARGUMENTDATATYPE_PIXELREGION:
-			memcpy(buffer + offset, &(arg.pixelRegion), sizeof(arg.pixelRegion));
-			offset += sizeof(arg.pixelRegion);
+			memcpy(buffer, &(arg.pixelRegion), sizeof(arg.pixelRegion));
+			buffer += sizeof(arg.pixelRegion);
 			break;
 		case ARGUMENTDATATYPE_TIMESTAMP:
-			memcpy(buffer + offset, &(arg.timestamp), sizeof(arg.timestamp));
-			offset += sizeof(arg.timestamp);
+			memcpy(buffer, &(arg.timestamp), sizeof(arg.timestamp));
+			buffer += sizeof(arg.timestamp);
 			break;
 		case ARGUMENTDATATYPE_WIDECHAR:
-			memcpy(buffer + offset, &(arg.wChar), sizeof(arg.wChar));
-			offset += sizeof(arg.wChar);
+			memcpy(buffer, &(arg.wChar), sizeof(arg.wChar));
+			buffer += sizeof(arg.wChar);
 			break;
 		}
 
@@ -678,11 +678,10 @@ void NetPacket::FillBufferWithDisconnectChatCommand(UnsignedByte *buffer, NetCom
 	packet.textLength = NetPacketDisconnectChatCommand::getUsableTextLength(unitext);
 
 	memcpy(buffer, &packet, sizeof(packet));
+	buffer += sizeof(packet);
 
 	// Variable data portion
-	UnsignedShort offset = sizeof(NetPacketDisconnectChatCommand);
-	memcpy(buffer + offset, unitext.str(), packet.textLength * sizeof(UnsignedShort));
-	offset += packet.textLength * sizeof(UnsignedShort);
+	memcpy(buffer, unitext.str(), packet.textLength * sizeof(WideChar));
 }
 
 void NetPacket::FillBufferWithDisconnectVoteCommand(UnsignedByte *buffer, NetCommandRef *msg) {
@@ -715,15 +714,16 @@ void NetPacket::FillBufferWithChatCommand(UnsignedByte *buffer, NetCommandRef *m
 	packet.textLength = NetPacketChatCommand::getUsableTextLength(unitext);
 
 	memcpy(buffer, &packet, sizeof(packet));
+	buffer += sizeof(packet);
 
 	// Variable data portion
-	UnsignedShort offset = sizeof(NetPacketChatCommand);
-	memcpy(buffer + offset, unitext.str(), packet.textLength * sizeof(UnsignedShort));
-	offset += packet.textLength * sizeof(UnsignedShort);
+
+	memcpy(buffer, unitext.str(), packet.textLength * sizeof(WideChar));
+	buffer += packet.textLength * sizeof(WideChar);
 
 	Int playerMask = cmdMsg->getPlayerMask();
-	memcpy(buffer + offset, &playerMask, sizeof(Int));
-	offset += sizeof(Int);
+	memcpy(buffer, &playerMask, sizeof(playerMask));
+	buffer += sizeof(playerMask);
 }
 
 void NetPacket::FillBufferWithProgressMessage(UnsignedByte *buffer, NetCommandRef *msg) {
@@ -772,24 +772,20 @@ void NetPacket::FillBufferWithFileMessage(UnsignedByte *buffer, NetCommandRef *m
 	packet.commandId.commandId = cmdMsg->getID();
 
 	memcpy(buffer, &packet, sizeof(packet));
+	buffer += sizeof(packet);
 
 	// Variable data portion
-	UnsignedInt offset = sizeof(NetPacketFileCommand);
 
-	AsciiString filename = cmdMsg->getPortableFilename();	// PORTABLE
-	for (Int i = 0; i < filename.getLength(); ++i) {
-		buffer[offset] = filename.getCharAt(i);
-		++offset;
-	}
-	buffer[offset] = 0;
-	++offset;
+	AsciiString filename = cmdMsg->getPortableFilename();
+	memcpy(buffer, filename.str(), filename.getByteCount() + 1);
+	buffer += filename.getByteCount() + 1;
 
 	UnsignedInt newInt = cmdMsg->getFileLength();
-	memcpy(buffer + offset, &newInt, sizeof(newInt));
-	offset += sizeof(newInt);
+	memcpy(buffer, &newInt, sizeof(newInt));
+	buffer += sizeof(newInt);
 
-	memcpy(buffer + offset, cmdMsg->getFileData(), cmdMsg->getFileLength());
-	offset += cmdMsg->getFileLength();
+	memcpy(buffer, cmdMsg->getFileData(), cmdMsg->getFileLength());
+	buffer += cmdMsg->getFileLength();
 }
 
 void NetPacket::FillBufferWithFileAnnounceMessage(UnsignedByte *buffer, NetCommandRef *msg) {
@@ -802,25 +798,21 @@ void NetPacket::FillBufferWithFileAnnounceMessage(UnsignedByte *buffer, NetComma
 	packet.commandId.commandId = cmdMsg->getID();
 
 	memcpy(buffer, &packet, sizeof(packet));
+	buffer += sizeof(packet);
 
 	// Variable data portion
-	UnsignedInt offset = sizeof(NetPacketFileAnnounceCommand);
 
-	AsciiString filename = cmdMsg->getPortableFilename();	// PORTABLE
-	for (Int i = 0; i < filename.getLength(); ++i) {
-		buffer[offset] = filename.getCharAt(i);
-		++offset;
-	}
-	buffer[offset] = 0;
-	++offset;
+	AsciiString filename = cmdMsg->getPortableFilename();
+	memcpy(buffer, filename.str(), filename.getByteCount() + 1);
+	buffer += filename.getByteCount() + 1;
 
 	UnsignedShort fileID = cmdMsg->getFileID();
-	memcpy(buffer + offset, &fileID, sizeof(fileID));
-	offset += sizeof(fileID);
+	memcpy(buffer, &fileID, sizeof(fileID));
+	buffer += sizeof(fileID);
 
 	UnsignedByte playerMask = cmdMsg->getPlayerMask();
-	memcpy(buffer + offset, &playerMask, sizeof(playerMask));
-	offset += sizeof(playerMask);
+	memcpy(buffer, &playerMask, sizeof(playerMask));
+	buffer += sizeof(playerMask);
 }
 
 void NetPacket::FillBufferWithFileProgressMessage(UnsignedByte *buffer, NetCommandRef *msg) {
