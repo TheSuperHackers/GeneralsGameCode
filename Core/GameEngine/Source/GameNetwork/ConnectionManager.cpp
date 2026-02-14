@@ -302,6 +302,7 @@ Int ConnectionManager::getPingsReceived()
 
 Bool ConnectionManager::isPlayerConnected( Int playerID )
 {
+	DEBUG_ASSERTCRASH( playerID < MAX_SLOTS, ("ConnectionManager::isPlayerConnected - %d is an invalid player number", playerID) );
 	return ( playerID == m_localSlot || (m_connections[playerID] && !m_connections[playerID]->isQuitting()) );
 }
 
