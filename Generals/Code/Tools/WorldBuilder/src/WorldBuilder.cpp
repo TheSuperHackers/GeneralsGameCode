@@ -373,7 +373,6 @@ BOOL CWorldBuilderApp::InitInstance()
 	WorldHeightMapEdit::init();
 
 	initSubsystem(TheScriptEngine, (ScriptEngine*)(new ScriptEngine()));
-
 	initSubsystem(TheAudio, (AudioManager*)new MilesAudioManager());
 	if (!TheAudio->isMusicAlreadyLoaded())
 		return FALSE;

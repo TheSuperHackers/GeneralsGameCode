@@ -895,7 +895,6 @@ void GameEngine::update( void )
 			{
 				TheNetwork->UPDATE();
 			}
-
 		}
 
 		const Bool canUpdate = canUpdateGameLogic();

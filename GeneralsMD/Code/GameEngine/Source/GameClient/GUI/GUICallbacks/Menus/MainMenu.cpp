@@ -1412,7 +1412,7 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 				showLogo = FALSE;
 				showSide = SHOW_USA;
 */
-				checkCDBeforeCampaign(DIFFICULTY_NORMAL);
+				prepareCampaignGame(DIFFICULTY_NORMAL);
 				break;
 #endif
 				TheShell->push( "Menus/SkirmishGameOptionsMenu.wnd" );

@@ -447,7 +447,6 @@ void reallyDoStart( void )
 	}
 }
 
-
 Bool sandboxOk = FALSE;
 static void startPressed(void)
 {

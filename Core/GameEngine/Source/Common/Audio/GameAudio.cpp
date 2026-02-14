@@ -230,7 +230,6 @@ void AudioManager::init()
 	// do the miscellaneous sound files last so that we find the AudioEventRTS associated with the events.
 	ini.loadFileDirectory( "Data\\INI\\MiscAudio", INI_LOAD_OVERWRITE, nullptr);
 
-
 	m_music = NEW MusicManager;
 	m_sound = NEW SoundManager;
 

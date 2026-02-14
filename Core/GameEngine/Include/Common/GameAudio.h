@@ -380,8 +380,6 @@ class AudioManager : public SubsystemInterface
 		Bool m_volumeHasChanged		: 1;
 		Bool m_hardwareAccel			: 1;
 		Bool m_surroundSpeakers		: 1;
-
-		// Next 8
 		Bool m_disallowSpeech			: 1;
 };
 
