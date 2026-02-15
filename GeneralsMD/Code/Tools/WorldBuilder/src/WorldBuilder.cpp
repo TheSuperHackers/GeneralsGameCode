@@ -21,7 +21,6 @@
 
 #include "StdAfx.h"
 #include "WorldBuilder.h"
-#include "euladialog.h"
 #include "MainFrm.h"
 #include "OpenMap.h"
 #include "SplashScreen.h"
@@ -275,14 +274,6 @@ static LONG WINAPI UnHandledExceptionFilter(struct _EXCEPTION_POINTERS* e_info)
 
 BOOL CWorldBuilderApp::InitInstance()
 {
-//#ifdef RTS_RELEASE
-	EulaDialog eulaDialog;
-	if( eulaDialog.DoModal() == IDCANCEL )
-	{
-		return FALSE;
-	}
-//#endif
-
 	ApplicationHWnd = GetDesktopWindow();
 
 	// initialization
