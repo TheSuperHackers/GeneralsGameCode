@@ -20,6 +20,7 @@
 //
 
 #include "StdAfx.h"
+#include "W3DDevice/GameClient/Module/W3DTreeDraw.h"
 #include "resource.h"
 #include "wwmath.h"
 #include "ww3d.h"
@@ -1117,6 +1118,14 @@ AsciiString WbView3d::getBestModelName(const ThingTemplate* tt, const ModelCondi
 			if (md)
 			{
 				return md->getBestModelNameForWB(c);
+			}
+
+			// TheSuperHackers @bugfix ViTeXFTW 15/02/2025 Fix tree objects not showing
+			// a preview in WB object placer. The W3DTreeDraw module stores its model name
+			// differently from W3DModelDraw.
+			const W3DTreeDrawModuleData* treeData = mdd ? mdd->getAsW3DTreeDrawModuleData() : nullptr;
+			if(treeData) {
+				return treeData->m_modelName;
 			}
 		}
 	}
