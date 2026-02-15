@@ -86,13 +86,13 @@ class DozerActionPickActionPosState : public State
 public:
 
 	DozerActionPickActionPosState( StateMachine *machine, DozerTask task );
-	virtual StateReturnType update( void );
+	StateReturnType update( void ) OVERRIDE;
 
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	void crc( Xfer *xfer ) OVERRIDE;
+	void xfer( Xfer *xfer ) OVERRIDE;
+	void loadPostProcess() OVERRIDE;
 
 protected:
 
@@ -243,13 +243,13 @@ class DozerActionMoveToActionPosState : public State
 public:
 
 	DozerActionMoveToActionPosState( StateMachine *machine, DozerTask task ) : State( machine, "DozerActionMoveToActionPosState" ) { m_task = task; }
-	virtual StateReturnType update( void );
+	StateReturnType update( void ) OVERRIDE;
 
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	void crc( Xfer *xfer ) OVERRIDE;
+	void xfer( Xfer *xfer ) OVERRIDE;
+	void loadPostProcess() OVERRIDE;
 
 protected:
 
@@ -386,15 +386,15 @@ public:
 		m_task = task;
 		m_enterFrame = 0;
 	}
-	virtual StateReturnType update( void );
-	virtual StateReturnType onEnter( void );
-	virtual void onExit( StateExitType status ) { }
+	StateReturnType update( void ) OVERRIDE;
+	StateReturnType onEnter( void ) OVERRIDE;
+	void onExit( StateExitType status ) OVERRIDE { }
 
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	void crc( Xfer *xfer ) OVERRIDE;
+	void xfer( Xfer *xfer ) OVERRIDE;
+	void loadPostProcess() OVERRIDE;
 
 protected:
 
@@ -792,9 +792,9 @@ public:
 
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	void crc( Xfer *xfer ) OVERRIDE;
+	void xfer( Xfer *xfer ) OVERRIDE;
+	void loadPostProcess() OVERRIDE;
 
 protected:
 
@@ -967,15 +967,15 @@ public:
 		m_idlePlayerNumber = 0;
 		m_isMarkedAsIdle   = FALSE;
 	}
-	virtual StateReturnType update( void );
-	virtual StateReturnType onEnter( void );
-	virtual void onExit( StateExitType status );
+	StateReturnType update( void ) OVERRIDE;
+	StateReturnType onEnter( void ) OVERRIDE;
+	void onExit( StateExitType status ) OVERRIDE;
 
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	void crc( Xfer *xfer ) OVERRIDE;
+	void xfer( Xfer *xfer ) OVERRIDE;
+	void loadPostProcess() OVERRIDE;
 
 protected:
 
@@ -1154,16 +1154,16 @@ public:
 		Note that we DON'T use CONVERT_SLEEP_TO_CONTINUE; since we're not doing anything else
 		interesting in update, we can sleep when this machine sleeps
 	*/
-	virtual StateReturnType update( void ) { return m_actionMachine->updateStateMachine(); }
+	StateReturnType update( void ) OVERRIDE { return m_actionMachine->updateStateMachine(); }
 
-	virtual StateReturnType onEnter( void );
-	virtual void onExit( StateExitType status );
+	StateReturnType onEnter( void ) OVERRIDE;
+	void onExit( StateExitType status ) OVERRIDE;
 
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	void crc( Xfer *xfer ) OVERRIDE;
+	void xfer( Xfer *xfer ) OVERRIDE;
+	void loadPostProcess() OVERRIDE;
 
 protected:
 
@@ -1253,14 +1253,14 @@ class DozerPrimaryGoingHomeState : public State
 
 protected:
 	// snapshot interface	 STUBBED no member vars
-	virtual void crc( Xfer *xfer ){};
-	virtual void xfer( Xfer *xfer ){};
-	virtual void loadPostProcess(){};
+	void crc( Xfer *xfer ) OVERRIDE{};
+	void xfer( Xfer *xfer ) OVERRIDE{};
+	void loadPostProcess() OVERRIDE{};
 
 public:
 
 	DozerPrimaryGoingHomeState( StateMachine *machine ) : State( machine, "DozerPrimaryGoingHomeState" ) { }
-	virtual StateReturnType update( void ) { return STATE_FAILURE; }
+	StateReturnType update( void ) OVERRIDE { return STATE_FAILURE; }
 
 };
 EMPTY_DTOR(DozerPrimaryGoingHomeState)

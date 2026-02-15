@@ -220,7 +220,7 @@ private:
 	Real											m_elevatorCorrectionRate;
 };
 
-typedef OVERRIDE<LocomotorTemplate> LocomotorTemplateOverride;
+typedef OverridePtr<LocomotorTemplate> LocomotorTemplateOverride;
 
 // ---------------------------------------------------------
 class Locomotor : public MemoryPoolObject, public Snapshot

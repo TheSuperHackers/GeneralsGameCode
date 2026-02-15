@@ -27,12 +27,16 @@
 
 #if __cplusplus >= 201103L
 #define CPP_11(code) code
+#define OVERRIDE override
+#define FINAL final
 #else
 #define CPP_11(code)
 #define static_assert(expr, msg)
 #define constexpr
 #define noexcept
 #define nullptr 0
+#define OVERRIDE
+#define FINAL
 #endif
 
 #if __cplusplus >= 201703L

@@ -1430,9 +1430,9 @@ void DazzleRenderObjClass::Special_Render(SpecialRenderInfoClass & rinfo)
 
 class DazzlePersistFactoryClass : public PersistFactoryClass
 {
-	virtual uint32				Chunk_ID(void) const;
-	virtual PersistClass *	Load(ChunkLoadClass & cload) const;
-	virtual void				Save(ChunkSaveClass & csave,PersistClass * obj)	const;
+	uint32				Chunk_ID(void) const OVERRIDE;
+	PersistClass *	Load(ChunkLoadClass & cload) const OVERRIDE;
+	void				Save(ChunkSaveClass & csave,PersistClass * obj)	const OVERRIDE;
 
 	enum
 	{
