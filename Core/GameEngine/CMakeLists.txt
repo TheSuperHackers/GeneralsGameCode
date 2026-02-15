@@ -117,6 +117,7 @@ set(GAMEENGINE_SRC
 #    Include/Common/StatsCollector.h
     Include/Common/STLTypedefs.h
     Include/Common/StreamingArchiveFile.h
+    Include/Common/SimulationMathCrc.h
     Include/Common/SubsystemInterface.h
 #    Include/Common/SystemInfo.h
 #    Include/Common/Team.h
@@ -580,6 +581,7 @@ set(GAMEENGINE_SRC
 #    Source/Common/GameMain.cpp
     Source/Common/GameUtility.cpp
 #    Source/Common/GlobalData.cpp
+    Source/Common/SimulationMathCrc.cpp
     Source/Common/INI/INI.cpp
 #    Source/Common/INI/INIAiData.cpp
 #    Source/Common/INI/INIAnimation.cpp
