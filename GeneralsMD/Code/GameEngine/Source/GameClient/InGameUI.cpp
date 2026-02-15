@@ -1377,7 +1377,7 @@ void InGameUI::init( void )
 		TheTacticalView->setWidth( TheDisplay->getWidth() );
 		TheTacticalView->setHeight( TheDisplay->getHeight() );
 	}
-	TheTacticalView->setDefaultView(0.0f, 0.0f, 1.0f);
+	TheTacticalView->setCameraHeightAboveGroundLimitsToDefault();
 
 	/** @todo this may be the wrong place to create the sidebar, but for now
 	this is where it lives */
@@ -2147,7 +2147,7 @@ void InGameUI::reset( void )
 	// reset the command bar
 	TheControlBar->reset();
 
-	TheTacticalView->setDefaultView(0.0f, 0.0f, 1.0f);
+	TheTacticalView->setCameraHeightAboveGroundLimitsToDefault();
 
 	ResetInGameChat();
 

@@ -168,7 +168,8 @@ public:
 	virtual Bool isTimeFrozen(void){ return false;}					///< Freezes time during the next camera movement.
 	virtual Int	 getTimeMultiplier(void) {return 1;};				///< Get the time multiplier.
 	virtual void setTimeMultiplier(Int multiple) {}; ///< Set the time multiplier.
-	virtual void setDefaultView(Real pitch, Real angle, Real maxHeight) {}; // TheSuperHackers @todo Replace with setDefaultPitch(), setMaxHeightScale()
+	virtual void setCameraHeightAboveGroundLimitsToDefault(Real heightScale = 1.0f) {};
+	virtual void setDefaultView(Real pitch, Real angle, Real maxHeight) {};
 	virtual void zoomCamera( Real finalZoom, Int milliseconds, Real easeIn=0.0f, Real easeOut=0.0f ) {};
 	virtual void pitchCamera( Real finalPitch, Int milliseconds, Real easeIn=0.0f, Real easeOut=0.0f ) {};
 
@@ -187,7 +188,8 @@ public:
 	virtual Real getHeightAboveGround() { return m_heightAboveGround; }
 	virtual void setHeightAboveGround(Real z);
 	virtual void zoom( Real height ); ///< Zoom in/out, closer to the ground, limit to min, or farther away from the ground, limit to max
-	virtual void setZoomToDefault( void ) { m_zoom  = 1.0f; } ///< Set zoom to default value
+	virtual void setZoomToMax();
+	virtual void setZoomToDefault() { m_zoom  = 1.0f; } ///< Set zoom to default value
 	virtual void setOkToAdjustHeight( Bool val ) { m_okToAdjustHeight = val; }	///< Set this to adjust camera height
 
 	// for debugging
