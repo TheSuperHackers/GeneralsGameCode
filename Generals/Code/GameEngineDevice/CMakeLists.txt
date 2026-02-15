@@ -206,3 +206,8 @@ target_link_libraries(g_gameenginedevice PUBLIC
     corei_gameenginedevice_public
     g_gameengine
 )
+
+# Apply D3DXWrapper forced include for NO_D3DX builds
+if(MINGW AND DEFINED MINGW_D3DX_WRAPPER_INCLUDE)
+    target_compile_options(g_gameenginedevice PRIVATE ${MINGW_D3DX_WRAPPER_INCLUDE})
+endif()
