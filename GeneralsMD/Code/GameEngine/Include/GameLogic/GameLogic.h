@@ -137,6 +137,7 @@ public:
 	Bool hasUpdated() const { return m_hasUpdated; } ///< Returns true if the logic frame has advanced in the current client/render update
 	UnsignedInt getFrame( void );										///< Returns the current simulation frame number
 	UnsignedInt getCRC( Int mode = CRC_CACHED, AsciiString deepCRCFileName = AsciiString::TheEmptyString );		///< Returns the CRC
+	UnsignedInt getStartedGamesCount() const { return m_startedGamesCount; } ///< Returns the total number of map starts since game launch
 
 	void setObjectIDCounter( ObjectID nextObjID ) { m_nextObjID = nextObjID; }
 	ObjectID getObjectIDCounter( void ) { return m_nextObjID; }
@@ -389,6 +390,7 @@ private:
 #endif
 
 	UnsignedInt m_frameObjectsChangedTriggerAreas;					///< Last frame objects moved into/outof trigger areas, or were created/destroyed. jba.
+	UnsignedInt m_startedGamesCount; ///< total number of map starts since game launch, excluding the shell map
 
 	// ----------------------------------------------------------------------------------------------
 	struct ObjectTOCEntry
