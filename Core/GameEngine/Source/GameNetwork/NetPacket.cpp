@@ -39,7 +39,7 @@
 // present in the raw data.
 NetCommandRef * NetPacket::ConstructNetCommandMsgFromRawData(UnsignedByte *data, UnsignedShort dataLength) {
 	NetCommandType commandType = NETCOMMANDTYPE_GAMECOMMAND;
-	UnsignedByte commandTypeByte = static_cast<NetCommandType>(commandType);
+	UnsignedByte commandTypeByte = static_cast<UnsignedByte>(commandType);
 	UnsignedShort commandID = 0;
 	UnsignedInt frame = 0;
 	UnsignedByte playerID = 0;
@@ -57,6 +57,7 @@ NetCommandRef * NetPacket::ConstructNetCommandMsgFromRawData(UnsignedByte *data,
 			++offset;
 			memcpy(&commandTypeByte, data + offset, sizeof(commandTypeByte));
 			offset += sizeof(commandTypeByte);
+			commandType = static_cast<NetCommandType>(commandTypeByte);
 			break;
 
 		case NetPacketFieldTypes::Relay:
