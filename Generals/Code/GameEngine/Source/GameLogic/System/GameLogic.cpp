@@ -387,14 +387,12 @@ void GameLogic::reset( void )
 	m_objHash.reserve(OBJ_HASH_SIZE);
 #endif
 
-	m_pauseFrame = 0;
-	m_gamePaused = FALSE;
-	m_pauseSound = FALSE;
-	m_pauseMusic = FALSE;
-	m_pauseInput = FALSE;
+	m_logicTimeScaleEnabledMemory = FALSE;
 	m_inputEnabledMemory = TRUE;
 	m_mouseVisibleMemory = TRUE;
-	m_logicTimeScaleEnabledMemory = FALSE;
+	setGamePaused(FALSE);
+	m_pauseFrame = 0;
+	TheAudio->stopAudio(AudioAffect_All);
 
 	setFPMode();
 
