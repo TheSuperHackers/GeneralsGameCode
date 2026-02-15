@@ -157,7 +157,7 @@ void W3DRenderObjectSnapshot::update(RenderObjClass *robj, DrawableInfo *drawInf
 // ------------------------------------------------------------------------------------------------
 Bool W3DRenderObjectSnapshot::addToScene(void)
 {
-	if (W3DDisplay::m_3DScene != nullptr && !m_robj->Is_In_Scene())
+	if (!m_robj->Is_In_Scene())
 	{
 		W3DDisplay::m_3DScene->Add_Render_Object(m_robj);
 		return true;

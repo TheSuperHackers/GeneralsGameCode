@@ -36,6 +36,7 @@
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
+#include "Common/GlobalData.h"
 #include "GameLogic/GameLogic.h"
 #include "W3DDevice/GameLogic/W3DTerrainLogic.h"
 #include "W3DDevice/GameLogic/W3DGhostObject.h"
@@ -59,6 +60,7 @@ protected:
 
 	/// factory for TheTerrainLogic, called from init()
 	virtual TerrainLogic *createTerrainLogic( void ) { return NEW W3DTerrainLogic; };
-	virtual GhostObjectManager *createGhostObjectManager(void) { return NEW W3DGhostObjectManager; }
+	// TheSuperHackers @feature bobtista 19/01/2026 Use dummy for headless mode
+	virtual GhostObjectManager *createGhostObjectManager(void) { return TheGlobalData->m_headless ? static_cast<GhostObjectManager*>(NEW GhostObjectManagerDummy) : NEW W3DGhostObjectManager; }
 
 };
