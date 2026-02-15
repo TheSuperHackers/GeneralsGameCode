@@ -95,7 +95,6 @@ void initSubsystem(SUBSYSTEM*& sysref, SUBSYSTEM* sys, const char* path1 = nullp
 
 
 #define APP_SECTION "WorldbuilderApp"
-#define ACCEPT_EULA "AcceptEULA"
 #define OPEN_FILE_DIR "OpenDirectory"
 
 Win32Mouse *TheWin32Mouse = nullptr;
@@ -201,8 +200,7 @@ CWorldBuilderApp::CWorldBuilderApp() :
 	m_selTool(nullptr),
 	m_lockCurTool(0),
 	m_3dtemplate(nullptr),
-	m_pasteMapObjList(nullptr),
-	m_acceptEULA(FALSE)
+	m_pasteMapObjList(nullptr)
 {
 
 	for (Int i=0; i<NUM_VIEW_TOOLS; i++) {
@@ -277,6 +275,14 @@ static LONG WINAPI UnHandledExceptionFilter(struct _EXCEPTION_POINTERS* e_info)
 
 BOOL CWorldBuilderApp::InitInstance()
 {
+//#ifdef RTS_RELEASE
+	EulaDialog eulaDialog;
+	if( eulaDialog.DoModal() == IDCANCEL )
+	{
+		return FALSE;
+	}
+//#endif
+
 	ApplicationHWnd = GetDesktopWindow();
 
 	// initialization
@@ -363,18 +369,6 @@ BOOL CWorldBuilderApp::InitInstance()
 #endif
 	m_pszProfileName = (const char *)malloc(strlen(buf)+2);
 	strcpy((char*)m_pszProfileName, buf);
-
-	// TheSuperHackers @tweak Save EULA acceptance to avoid showing the window on every launch.
-	if (const Bool showEULA = !this->GetProfileInt(APP_SECTION, ACCEPT_EULA, 0))
-	{
-		EulaDialog eulaDialog;
-		if( eulaDialog.DoModal() == IDCANCEL )
-		{
-			return FALSE;
-		}
-	}
-
-	m_acceptEULA = TRUE;
 
 	// ensure the user maps dir exists
 	snprintf(buf, ARRAY_SIZE(buf), "%sMaps\\", TheGlobalData->getPath_UserData().str());
@@ -648,8 +642,6 @@ void CWorldBuilderApp::OnAppAbout()
 
 int CWorldBuilderApp::ExitInstance()
 {
-
-	WriteProfileInt(APP_SECTION, ACCEPT_EULA, m_acceptEULA);
 
 	WriteProfileString(APP_SECTION, OPEN_FILE_DIR, m_currentDirectory.str());
 	m_currentDirectory.clear();
