@@ -872,8 +872,18 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 #endif
 
 		// register windows class and create application window
-		if(!TheGlobalData->m_headless && initializeAppWindows(hInstance, nCmdShow, TheGlobalData->m_windowed) == false)
+		// TheSuperHackers @fix bobtista 02/03/2026 Set DX8Wrapper_IsWindowed to false in headless
+		// mode so that ignoringAsserts() works correctly throughout the entire process lifetime,
+		// including during shutdown after TheGlobalData has been destroyed.
+		if (TheGlobalData->m_headless)
+		{
+			extern bool DX8Wrapper_IsWindowed;
+			DX8Wrapper_IsWindowed = false;
+		}
+		else if (initializeAppWindows(hInstance, nCmdShow, TheGlobalData->m_windowed) == false)
+		{
 			return exitcode;
+		}
 
 		// save our application instance for future use
 		ApplicationHInstance = hInstance;
