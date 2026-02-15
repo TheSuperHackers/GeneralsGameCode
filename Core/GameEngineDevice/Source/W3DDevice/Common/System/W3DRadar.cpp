@@ -602,12 +602,17 @@ void W3DRadar::drawEvents( Int pixelX, Int pixelY, Int width, Int height )
 void W3DRadar::drawIcons( Int pixelX, Int pixelY, Int width, Int height )
 {
 	Player *player = rts::getObservedOrLocalPlayer();
-	for (RadarObject *heroObj = m_localHeroObjectList; heroObj; heroObj = heroObj->friend_getNext())
+	for (RadarObject *heroObj = m_localObjectList; heroObj; heroObj = heroObj->friend_getNext())
 	{
-		if (canRenderObject(heroObj, player))
-		{
-			drawHeroIcon(pixelX, pixelY, width, height, heroObj->friend_getObject()->getPosition());
-		}
+		const Object *obj = heroObj->friend_getObject();
+
+		if (!obj->isHero())
+			continue;
+
+		if (!canRenderObject(heroObj, player))
+			continue;
+
+		drawHeroIcon(pixelX, pixelY, width, height, obj->getPosition());
 	}
 }
 
@@ -623,7 +628,6 @@ void W3DRadar::updateObjectTexture(TextureClass *texture)
 	// rebuild the object overlay
 	renderObjectList( m_objectList, texture );
 	renderObjectList( m_localObjectList, texture );
-	renderObjectList( m_localHeroObjectList, texture );
 }
 
 //-------------------------------------------------------------------------------------------------
