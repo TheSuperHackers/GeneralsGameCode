@@ -402,7 +402,7 @@ HTREEITEM ObjectOptions::_FindOrDont(const char* pLabel, HTREEITEM startPoint)
 	std::list<HTREEITEM> itemsToEx;
 	itemsToEx.push_back(startPoint);
 
-	while (itemsToEx.front()) {
+	while (!itemsToEx.empty()) {
 		char buffer[_MAX_PATH];
 		HTREEITEM hItem = itemsToEx.front();
 		itemsToEx.pop_front();
