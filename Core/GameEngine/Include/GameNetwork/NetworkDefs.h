@@ -41,11 +41,10 @@ extern Int MIN_RUNAHEAD;
 extern Int FRAME_DATA_LENGTH;
 extern Int FRAMES_TO_KEEP;
 
-// This is the connection numbering: 1-8 are for players, 9 is a broadcast con.
+// This is the connection numbering: 1-8 are for players
 enum ConnectionNumbers CPP_11(: Int)
 {
 	MAX_PLAYER = 7,			// The index of the highest possible player number.  This is 0 based, so the most players allowed in a game is MAX_PLAYER+1.
-	NUM_CONNECTIONS
 };
 
 static constexpr const Int MAX_SLOTS = MAX_PLAYER+1;
