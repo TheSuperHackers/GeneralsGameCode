@@ -1367,17 +1367,17 @@ void InGameUI::init( void )
 	been moved to where all the other translators are attached in game client */
 
 	// create the tactical view
-	if (TheDisplay)
+	TheTacticalView = createView();
+	if (TheTacticalView && TheDisplay)
 	{
-		TheTacticalView = createView();
 		TheTacticalView->init();
 		TheDisplay->attachView( TheTacticalView );
 
 		// make the tactical display the full screen width and height
 		TheTacticalView->setWidth( TheDisplay->getWidth() );
 		TheTacticalView->setHeight( TheDisplay->getHeight() );
+		TheTacticalView->setDefaultView(0.0f, 0.0f, 1.0f);
 	}
-	TheTacticalView->setDefaultView(0.0f, 0.0f, 1.0f);
 
 	/** @todo this may be the wrong place to create the sidebar, but for now
 	this is where it lives */
@@ -2382,6 +2382,10 @@ void InGameUI::messageColor( const RGBColor *rgbColor, UnicodeString format, ...
 //-------------------------------------------------------------------------------------------------
 void InGameUI::addMessageText( const UnicodeString& formattedMessage, const RGBColor *rgbColor )
 {
+	// TheSuperHackers @fix bobtista 30/01/2026 Skip message display in headless mode to prevent crashes from font/display system
+	if (TheGlobalData && TheGlobalData->m_headless)
+		return;
+
 	Int i;
 	Color color1 = m_messageColor1;
 	Color color2 = m_messageColor2;

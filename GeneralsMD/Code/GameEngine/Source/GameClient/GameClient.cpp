@@ -381,7 +381,7 @@ void GameClient::init( void )
 	TheTerrainVisual = createTerrainVisual();
 	if( TheTerrainVisual ) {
 		TheTerrainVisual->init();
- 		TheTerrainVisual->setName("TheTerrainVisual");
+		TheTerrainVisual->setName("TheTerrainVisual");
 	}
 
 	// allocate the ray effects manager
