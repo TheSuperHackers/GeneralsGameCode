@@ -4244,13 +4244,14 @@ void GameLogic::prepareLogicForObjectLoad( void )
 	*		 this version breaks compatibility with previous versions. (CBD)
 	* 5: Added xfering the BuildAssistant's sell list.
 	* 9: Added m_rankPointsToAddAtGameStart, or else on a load game, your RestartGame button will forget your exp
+	* 10: TheSuperHackers @tweak Save objects in reverse order so they load in correct order. Reverse object list for old saves.
 	*/
 // ------------------------------------------------------------------------------------------------
 void GameLogic::xfer( Xfer *xfer )
 {
 
 	// version
-	const XferVersion currentVersion = 9;
+	const XferVersion currentVersion = 10;
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
@@ -4284,7 +4285,13 @@ void GameLogic::xfer( Xfer *xfer )
 	if( xfer->getXferMode() == XFER_SAVE )
 	{
 
+		// TheSuperHackers @fix bobtista 27/01/2026 Save objects in reverse order (newest first)
+		// so they load in the correct order (oldest objects at head of list).
+		Object *lastObj = nullptr;
 		for( obj = getFirstObject(); obj; obj = obj->getNextObject() )
+			lastObj = obj;
+
+		for( obj = lastObj; obj; obj = obj->getPrevObject() )
 		{
 
 			// get the object TOC entry for this template
@@ -4365,6 +4372,25 @@ void GameLogic::xfer( Xfer *xfer )
 			if( obj->isKindOf( KINDOF_WALK_ON_TOP_OF_WALL ) )
 				TheAI->pathfinder()->addWallPiece( obj );
 
+		}
+
+		// TheSuperHackers @fix bobtista 27/01/2026 Reverse object list for old saves.
+		// Old saves stored objects oldest-first, which results in reversed order when loaded
+		// since objects are prepended during creation. Version 10+ saves in reverse order.
+		if ( version <= 9 )
+		{
+			Object *prev = nullptr;
+			Object *current = m_objList;
+			Object *next = nullptr;
+			while ( current != nullptr )
+			{
+				next = current->getNextObject();
+				current->friend_setNextObject( prev );
+				current->friend_setPrevObject( next );
+				prev = current;
+				current = next;
+			}
+			m_objList = prev;
 		}
 
 	}
