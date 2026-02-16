@@ -557,9 +557,9 @@ Bool FileSystem::hasValidTransferFileContent(const AsciiString& filePath, const 
 	}
 
 	case TRANSFER_FILE_TGA:
-		if (dataSize < 18)
+		if (dataSize < 44)
 		{
-			DEBUG_LOG(("TGA file '%s' is too small to be valid (minimum 18 bytes).", filePath.str()));
+			DEBUG_LOG(("TGA file '%s' is too small to be valid (minimum header 18 + footer 26 = 44 bytes).", filePath.str()));
 			return false;
 		}
 		if (memcmp(data + dataSize - 18, "TRUEVISION-XFILE.", 18) != 0)
