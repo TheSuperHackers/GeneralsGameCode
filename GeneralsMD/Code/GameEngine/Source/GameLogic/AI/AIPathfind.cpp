@@ -8367,7 +8367,18 @@ struct TightenPathStruct
 	if (d->layer != to->getLayer()) {
 		return 0; // abort.
 	}
+
+	// TheSuperHackers @todo Caball009 15/02/2026 This is an incomplete workaround to initialize the variable,
+	// and needs to be replaced with a proper opt-in mechanism. The fix may introduce too many new mismatches to enable unconditionally,
+	// and the uninitialized values vary too much to imitate.
 	Coord3D pos;
+#if RETAIL_COMPATIBLE_PATHFINDING
+	if (s_useFixedPathfinding)
+#endif
+	{
+		adjustCoordToCell(to_x, to_y, d->center, pos, to->getLayer());
+	}
+
 	if (!TheAI->pathfinder()->checkForAdjust(d->obj, *d->locomotorSet, true, to_x, to_y, to->getLayer(), d->radius, d->center, &pos, nullptr))
 	{
 		return 0;	// bail early
@@ -8977,7 +8988,7 @@ Path *Pathfinder::findClosestPath( Object *obj, const LocomotorSet& locomotorSet
 }
 
 
-void Pathfinder::adjustCoordToCell(Int cellX, Int cellY, Bool centerInCell, Coord3D &pos, PathfindLayerEnum layer)
+/*static*/ void Pathfinder::adjustCoordToCell(Int cellX, Int cellY, Bool centerInCell, Coord3D& pos, PathfindLayerEnum layer)
 {
 	if (centerInCell) {
 		pos.x = ((Real)cellX + 0.5f) * PATHFIND_CELL_SIZE_F;
