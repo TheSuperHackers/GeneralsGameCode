@@ -376,7 +376,7 @@ class AudioManagerDummy : public MilesAudioManager
 	virtual void friend_forcePlayAudioEventRTS(const AudioEventRTS* eventToPlay) {}
 	virtual void setPreferredProvider(AsciiString providerNdx) {}
 	virtual void setPreferredSpeaker(AsciiString speakerType) {}
-	//virtual Real getFileLengthMS(AsciiString strToLoad) const { return -1; }
+	//virtual Real getFileLengthMS(AsciiString strToLoad) const { return 0.0f; }
 	virtual void closeAnySamplesUsingFile(const void* fileToClose) {}
 	virtual void setDeviceListenerPosition(void) {}
 };
