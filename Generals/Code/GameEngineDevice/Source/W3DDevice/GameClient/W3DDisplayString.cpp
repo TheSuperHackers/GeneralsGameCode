@@ -300,7 +300,10 @@ void W3DDisplayString::setFont( GameFont *font )
 	// set the font in our renderer
 	m_textRenderer.Set_Font( static_cast<FontCharsClass *>(m_font->fontData) );
 
-	m_textRendererHotKey.Set_Font( static_cast<FontCharsClass *>(TheFontLibrary->getFont(font->nameString,font->pointSize, TRUE)->fontData) );
+	// TheSuperHackers @fix bobtista 30/01/2026 Check for null before dereferencing to prevent crash if font loading fails
+	GameFont *boldFont = TheFontLibrary->getFont(font->nameString, font->pointSize, TRUE);
+	if (boldFont != nullptr)
+		m_textRendererHotKey.Set_Font( static_cast<FontCharsClass *>(boldFont->fontData) );
 	// recompute extents for text with new font
 	computeExtents();
 

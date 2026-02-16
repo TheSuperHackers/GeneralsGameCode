@@ -306,5 +306,47 @@ protected:
 
 };
 
+// TheSuperHackers @feature bobtista 31/01/2026
+// TerrainVisual that does nothing. Used for Headless Mode.
+class TerrainVisualDummy : public TerrainVisual
+{
+public:
+	virtual void getTerrainColorAt( Real x, Real y, RGBColor *pColor ) {}
+	virtual TerrainType *getTerrainTile( Real x, Real y ) { return nullptr; }
+	virtual void enableWaterGrid( Bool enable ) {}
+	virtual void setWaterGridHeightClamps( const WaterHandle *waterTable, Real minZ, Real maxZ ) {}
+	virtual void setWaterAttenuationFactors( const WaterHandle *waterTable, Real a, Real b, Real c, Real range ) {}
+	virtual void setWaterTransform( const WaterHandle *waterTable, Real angle, Real x, Real y, Real z ) {}
+	virtual void setWaterTransform( const Matrix3D *transform ) {}
+	virtual void getWaterTransform( const WaterHandle *waterTable, Matrix3D *transform ) {}
+	virtual void setWaterGridResolution( const WaterHandle *waterTable, Real gridCellsX, Real gridCellsY, Real cellSize ) {}
+	virtual void getWaterGridResolution( const WaterHandle *waterTable, Real *gridCellsX, Real *gridCellsY, Real *cellSize ) {}
+	virtual void changeWaterHeight( Real x, Real y, Real delta ) {}
+	virtual void addWaterVelocity( Real worldX, Real worldY, Real velocity, Real preferredHeight ) {}
+	virtual Bool getWaterGridHeight( Real worldX, Real worldY, Real *height) { return FALSE; }
+	virtual void setTerrainTracksDetail(void) {}
+	virtual void setShoreLineDetail(void) {}
+	virtual void addFactionBib(Object *factionBuilding, Bool highlight, Real extra = 0) {}
+	virtual void removeFactionBib(Object *factionBuilding) {}
+	virtual void addFactionBibDrawable(Drawable *factionBuilding, Bool highlight, Real extra = 0) {}
+	virtual void removeFactionBibDrawable(Drawable *factionBuilding) {}
+	virtual void removeAllBibs(void) {}
+	virtual void removeBibHighlighting(void) {}
+	virtual void removeTreesAndPropsForConstruction( const Coord3D* pos, const GeometryInfo& geom, Real angle ) {}
+	virtual void addProp(const ThingTemplate *tt, const Coord3D *pos, Real angle) {}
+	virtual void setRawMapHeight(const ICoord2D *gridPos, Int height) {}
+	virtual Int getRawMapHeight(const ICoord2D *gridPos) { return 0; }
+#ifdef DO_SEISMIC_SIMULATIONS
+	virtual void updateSeismicSimulations( void ) {}
+	virtual void addSeismicSimulation( const SeismicSimulationNode& sim ) {}
+#endif
+	virtual void replaceSkyboxTextures(const AsciiString *oldTexName[NumSkyboxTextures], const AsciiString *newTexName[NumSkyboxTextures]) {}
+
+protected:
+	virtual void crc( Xfer *xfer ) {}
+	virtual void xfer( Xfer *xfer ) {}
+	virtual void loadPostProcess( void ) {}
+};
+
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
 extern TerrainVisual *TheTerrainVisual;  ///< singleton extern

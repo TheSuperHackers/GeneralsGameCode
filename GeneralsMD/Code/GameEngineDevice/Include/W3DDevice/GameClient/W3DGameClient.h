@@ -37,6 +37,7 @@
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
+#include "Common/GlobalData.h"
 #include "GameClient/GameClient.h"
 #include "W3DDevice/GameClient/W3DParticleSys.h"
 #include "W3DDevice/GameClient/W3DDisplay.h"
@@ -117,7 +118,8 @@ protected:
 	virtual VideoPlayerInterface *createVideoPlayer( void ) { return NEW BinkVideoPlayer; }
 #endif
 	/// factory for creating the TerrainVisual
-	virtual TerrainVisual *createTerrainVisual( void ) { return NEW W3DTerrainVisual; }
+	// TheSuperHackers @fix bobtista 31/01/2026 Return dummy in headless mode
+	virtual TerrainVisual *createTerrainVisual( void ) { return TheGlobalData->m_headless ? static_cast<TerrainVisual*>(NEW TerrainVisualDummy) : NEW W3DTerrainVisual; }
 
 	/// factory for creating the snow manager
 	virtual SnowManager *createSnowManager( void ) { return NEW W3DSnowManager; }

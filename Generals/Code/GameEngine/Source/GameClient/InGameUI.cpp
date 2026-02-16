@@ -2325,6 +2325,10 @@ void InGameUI::messageColor( const RGBColor *rgbColor, UnicodeString format, ...
 //-------------------------------------------------------------------------------------------------
 void InGameUI::addMessageText( const UnicodeString& formattedMessage, const RGBColor *rgbColor )
 {
+	// TheSuperHackers @fix bobtista 30/01/2026 Skip message display in headless mode to prevent crashes from font/display system
+	if (TheGlobalData && TheGlobalData->m_headless)
+		return;
+
 	Int i;
 	Color color1 = m_messageColor1;
 	Color color2 = m_messageColor2;

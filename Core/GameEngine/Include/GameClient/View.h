@@ -331,5 +331,27 @@ class ViewLocation
 		}
 };
 
+// TheSuperHackers @feature bobtista 31/01/2026
+// View that does nothing. Used for Headless Mode.
+class ViewDummy : public View
+{
+public:
+	virtual Drawable *pickDrawable( const ICoord2D *screen, Bool forceAttack, PickType pickType ) { return nullptr; }
+	virtual Int iterateDrawablesInRegion( IRegion2D *screenRegion, Bool (*callback)( Drawable *draw, void *userData ), void *userData ) { return 0; }
+	virtual void forceRedraw() {}
+	virtual const Coord3D& get3DCameraPosition() const { static Coord3D zero = {0,0,0}; return zero; }
+	virtual WorldToScreenReturn worldToScreenTriReturn(const Coord3D *w, ICoord2D *s ) { return WTS_INVALID; }
+	virtual void screenToWorld( const ICoord2D *s, Coord3D *w ) {}
+	virtual void screenToTerrain( const ICoord2D *screen, Coord3D *world ) {}
+	virtual void screenToWorldAtZ( const ICoord2D *s, Coord3D *w, Real z ) {}
+	virtual void drawView( void ) {}
+	virtual void updateView(void) {}
+	virtual void stepView() {}
+	virtual void setGuardBandBias( const Coord2D *gb ) {}
+
+protected:
+	virtual void xfer( Xfer *xfer ) {}
+};
+
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
 extern View *TheTacticalView;		///< the main tactical interface to the game world

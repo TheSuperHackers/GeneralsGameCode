@@ -1362,7 +1362,7 @@ void GameState::xferSaveData( Xfer *xfer, SnapshotType which )
 			// get block name
 			blockName = blockInfo->blockName;
 
-			DEBUG_LOG(("Looking at block '%s'", blockName.str()));
+			DEBUG_LOG(("GameState::xferSaveData - Looking at block '%s'", blockName.str()));
 
 			//
 			// for mission save files, we only save the game state block and campaign manager
