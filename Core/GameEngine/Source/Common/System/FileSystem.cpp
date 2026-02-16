@@ -516,7 +516,7 @@ Bool FileSystem::hasValidTransferFileContent(const AsciiString& filePath, const 
 	if (stricmp(lastDot, ".map") == 0)
 	{
 		// Validate magic bytes "CkMp"
-		if (dataSize < 4 || data[0] != 'C' || data[1] != 'k' || data[2] != 'M' || data[3] != 'p')
+		if (dataSize < 4 || memcmp(data, "CkMp", 4) != 0)
 		{
 			DEBUG_LOG(("Map file '%s' has invalid magic bytes.", filePath.str()));
 			return false;
