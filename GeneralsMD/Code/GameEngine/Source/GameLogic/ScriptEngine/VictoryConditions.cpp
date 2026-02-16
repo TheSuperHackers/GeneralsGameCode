@@ -278,8 +278,13 @@ Bool VictoryConditions::hasAchievedVictory(Player *player)
 
 	for (Int i = 0; i < MAX_PLAYER_COUNT; ++i)
 	{
-		if (player == m_players[i] && m_isVictorious[i])
-			return true;
+		if (player == m_players[i])
+		{
+			if (m_isVictorious[i])
+				return true;
+
+			break;
+		}
 	}
 
 	return false;
@@ -296,8 +301,13 @@ Bool VictoryConditions::hasBeenDefeated(Player *player)
 
 	for (Int i = 0; i < MAX_PLAYER_COUNT; ++i)
 	{
-		if (player == m_players[i] && m_isDefeated[i])
-			return true;
+		if (player == m_players[i])
+		{
+			if (m_isDefeated[i])
+				return true;
+
+			break;
+		}
 	}
 
 	return false;
