@@ -352,17 +352,17 @@ class MilesAudioManagerDummy : public MilesAudioManager
 	//virtual void closeDevice() {}
 	virtual void* getDevice() { return nullptr; }
 	virtual void notifyOfAudioCompletion(UnsignedInt audioCompleted, UnsignedInt flags) {}
-	virtual UnsignedInt getProviderCount(void) const { return 0; };
+	virtual UnsignedInt getProviderCount() const { return 0; };
 	virtual AsciiString getProviderName(UnsignedInt providerNum) const { return ""; }
 	virtual UnsignedInt getProviderIndex(AsciiString providerName) const { return 0; }
 	virtual void selectProvider(UnsignedInt providerNdx) {}
-	virtual void unselectProvider(void) {}
-	virtual UnsignedInt getSelectedProvider(void) const { return 0; }
+	virtual void unselectProvider() {}
+	virtual UnsignedInt getSelectedProvider() const { return 0; }
 	virtual void setSpeakerType(UnsignedInt speakerType) {}
-	virtual UnsignedInt getSpeakerType(void) { return 0; }
-	virtual UnsignedInt getNum2DSamples(void) const { return 0; }
-	virtual UnsignedInt getNum3DSamples(void) const { return 0; }
-	virtual UnsignedInt getNumStreams(void) const { return 0; }
+	virtual UnsignedInt getSpeakerType() { return 0; }
+	virtual UnsignedInt getNum2DSamples() const { return 0; }
+	virtual UnsignedInt getNum3DSamples() const { return 0; }
+	virtual UnsignedInt getNumStreams() const { return 0; }
 	virtual Bool doesViolateLimit(AudioEventRTS* event) const { return false; }
 	virtual Bool isPlayingLowerPriority(AudioEventRTS* event) const { return false; }
 	virtual Bool isPlayingAlready(AudioEventRTS* event) const { return false; }
@@ -370,13 +370,13 @@ class MilesAudioManagerDummy : public MilesAudioManager
 	virtual void adjustVolumeOfPlayingAudio(AsciiString eventName, Real newVolume) {}
 	virtual void removePlayingAudio(AsciiString eventName) {}
 	virtual void removeAllDisabledAudio() {}
-	virtual Bool has3DSensitiveStreamsPlaying(void) const { return false; }
-	virtual void* getHandleForBink(void) { return nullptr; }
-	virtual void releaseHandleForBink(void) {}
+	virtual Bool has3DSensitiveStreamsPlaying() const { return false; }
+	virtual void* getHandleForBink() { return nullptr; }
+	virtual void releaseHandleForBink() {}
 	virtual void friend_forcePlayAudioEventRTS(const AudioEventRTS* eventToPlay) {}
 	virtual void setPreferredProvider(AsciiString providerNdx) {}
 	virtual void setPreferredSpeaker(AsciiString speakerType) {}
 	//virtual Real getFileLengthMS(AsciiString strToLoad) const { return 0.0f; }
 	virtual void closeAnySamplesUsingFile(const void* fileToClose) {}
-	virtual void setDeviceListenerPosition(void) {}
+	virtual void setDeviceListenerPosition() {}
 };
