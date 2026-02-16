@@ -8356,7 +8356,8 @@ struct TightenPathStruct
 	Int		radius;
 	Bool	center;
 	Bool	foundDest;
-	Coord3D destPos;
+	Coord3D orgDestPos;
+	Coord3D newDestPos;
 };
 
 
@@ -8376,7 +8377,7 @@ struct TightenPathStruct
 	if (s_useFixedPathfinding)
 #endif
 	{
-		adjustCoordToCell(to_x, to_y, d->center, pos, to->getLayer());
+		pos = d->orgDestPos;
 	}
 
 	if (!TheAI->pathfinder()->checkForAdjust(d->obj, *d->locomotorSet, true, to_x, to_y, to->getLayer(), d->radius, d->center, &pos, nullptr))
@@ -8384,7 +8385,7 @@ struct TightenPathStruct
 		return 0;	// bail early
 	}
 	d->foundDest = true;
-	d->destPos = pos;
+	d->newDestPos = pos;
 
 	return 0;	// keep going
 }
@@ -8400,9 +8401,10 @@ void Pathfinder::tightenPath(Object *obj, const LocomotorSet& locomotorSet, Coor
 	info.obj = obj;
 	info.locomotorSet = &locomotorSet;
 	info.foundDest = false;
+	info.orgDestPos = *to;
 	iterateCellsAlongLine(*from, *to, info.layer, tightenPathCallback, &info);
 	if (info.foundDest) {
-		*from = info.destPos;
+		*from = info.newDestPos;
 	}
 }
 
