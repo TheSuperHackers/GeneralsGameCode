@@ -50,7 +50,7 @@ CrateCollideModuleData::CrateCollideModuleData()
 	m_executeAnimationFades = TRUE;
 	m_isBuildingPickup = FALSE;
 	m_isHumanOnlyPickup = FALSE;
-	m_allowMultiPickup = FALSE;
+	m_allowMultiPickup = (PRESERVE_RETAIL_BEHAVIOR != 0);
 	m_executeFX = nullptr;
 	m_pickupScience = SCIENCE_INVALID;
 	m_executionAnimationTemplate = AsciiString::TheEmptyString;
