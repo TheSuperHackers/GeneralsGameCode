@@ -95,7 +95,7 @@ protected:
 	virtual Radar *createRadar( void ) = 0;											///< Factory for radar
 	virtual WebBrowser *createWebBrowser( void ) = 0;						///< Factory for embedded browser
 	virtual ParticleSystemManager* createParticleSystemManager( void ) = 0;
-	virtual AudioManager *createAudioManager( void ) = 0;				///< Factory for Audio Manager
+	virtual AudioManager *createAudioManager( bool headless ) = 0;				///< Factory for Audio Manager
 
 	Real m_logicTimeAccumulator; ///< Frame time accumulated towards submitting a new logic frame
 
