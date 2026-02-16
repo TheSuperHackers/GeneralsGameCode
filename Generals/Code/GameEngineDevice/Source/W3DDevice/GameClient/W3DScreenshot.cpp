@@ -68,7 +68,7 @@ void W3D_TakeCompressedScreenshot(ScreenshotFormat format, int quality)
 	Bool done = false;
 	while (!done) {
 		sprintf(leafname, "sshot%.3d.%s", (*frameNumber)++, extension);
-		strcpy(pathname, TheGlobalData->getPath_UserData().str());
+		strlcpy(pathname, TheGlobalData->getPath_UserData().str(), ARRAY_SIZE(pathname));
 		strlcat(pathname, leafname, ARRAY_SIZE(pathname));
 		if (_access(pathname, 0) == -1)
 			done = true;
@@ -79,10 +79,10 @@ void W3D_TakeCompressedScreenshot(ScreenshotFormat format, int quality)
 	surface->Get_Description(surfaceDesc);
 
 	SurfaceClass* surfaceCopy = NEW_REF(SurfaceClass, (DX8Wrapper::_Create_DX8_Surface(surfaceDesc.Width, surfaceDesc.Height, surfaceDesc.Format)));
-	DX8Wrapper::_Copy_DX8_Rects(surface->Peek_D3D_Surface(), NULL, 0, surfaceCopy->Peek_D3D_Surface(), NULL);
+	DX8Wrapper::_Copy_DX8_Rects(surface->Peek_D3D_Surface(), nullptr, 0, surfaceCopy->Peek_D3D_Surface(), nullptr);
 
 	surface->Release_Ref();
-	surface = NULL;
+	surface = nullptr;
 
 	struct Rect
 	{
@@ -91,7 +91,7 @@ void W3D_TakeCompressedScreenshot(ScreenshotFormat format, int quality)
 	} lrect;
 
 	lrect.pBits = surfaceCopy->Lock(&lrect.Pitch);
-	if (lrect.pBits == NULL)
+	if (lrect.pBits == nullptr)
 	{
 		surfaceCopy->Release_Ref();
 		return;
@@ -118,7 +118,7 @@ void W3D_TakeCompressedScreenshot(ScreenshotFormat format, int quality)
 
 	surfaceCopy->Unlock();
 	surfaceCopy->Release_Ref();
-	surfaceCopy = NULL;
+	surfaceCopy = nullptr;
 
 	if (quality <= 0 && format == SCREENSHOT_JPEG)
 		quality = TheGlobalData->m_jpegQuality;
@@ -129,13 +129,16 @@ void W3D_TakeCompressedScreenshot(ScreenshotFormat format, int quality)
 	threadData->height = height;
 	threadData->quality = quality;
 	threadData->format = format;
-	strcpy(threadData->pathname, pathname);
-	strcpy(threadData->leafname, leafname);
+	strlcpy(threadData->pathname, pathname, ARRAY_SIZE(threadData->pathname));
+	strlcpy(threadData->leafname, leafname, ARRAY_SIZE(threadData->leafname));
 
 	DWORD threadId;
-	HANDLE hThread = CreateThread(NULL, 0, screenshotThreadFunc, threadData, 0, &threadId);
+	HANDLE hThread = CreateThread(nullptr, 0, screenshotThreadFunc, threadData, 0, &threadId);
 	if (hThread) {
 		CloseHandle(hThread);
+	} else {
+		delete [] threadData->imageData;
+		delete threadData;
 	}
 
 	UnicodeString ufileName;
