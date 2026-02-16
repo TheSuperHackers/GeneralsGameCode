@@ -1215,7 +1215,10 @@ ParticleSystem::ParticleSystem( const ParticleSystemTemplate *sysTemplate,
 	m_personalityStore = 0;
 	m_controlParticle = nullptr;
 
-	TheParticleSystemManager->friend_addParticleSystem(this);
+	if ( m_systemID != INVALID_PARTICLE_SYSTEM_ID )
+	{
+		TheParticleSystemManager->friend_addParticleSystem(this);
+	}
 
 	//DEBUG_ASSERTLOG(!(m_totalParticleSystemCount % 10 == 0), ( "TotalParticleSystemCount = %d", m_totalParticleSystemCount ));
 }
@@ -3364,22 +3367,28 @@ void ParticleSystemManager::xfer( Xfer *xfer )
 			}
 
 			// create system
-			system = createParticleSystem( systemTemplate, FALSE );
-
-			if( system == nullptr )
-			{
-
-				DEBUG_CRASH(( "ParticleSystemManager::xfer - Unable to allocate particle system '%s'",
-											systemName.str() ));
-				throw SC_INVALID_DATA;
-
-			}
+			// TheSuperHackers @bugfix stephanmeesters 16/02/2026
+			// Particle systems originally were assigned an incrementing system ID in the constructor that did not
+			// always match the ID that was xfer'd. When using findParticleSystem this would cause master/slave lookups to fail.
+			// Defer registering particle systems to ParticleSys until the system ID is properly restored.
+			system = newInstance(ParticleSystem)( systemTemplate, INVALID_PARTICLE_SYSTEM_ID, FALSE );
 
 			// read system data
 			xfer->xferSnapshot( system );
 
-		}
+			if( system->getSystemID() == INVALID_PARTICLE_SYSTEM_ID )
+			{
+				DEBUG_CRASH(( "ParticleSystemManager::xfer - Unable to restore system ID to particle system '%s'",
+											systemName.str() ));
+				throw SC_INVALID_DATA;
+			}
 
+			friend_addParticleSystem(system);
+
+			// TheSuperHackers @bugfix stephanmeesters 16/02/2026
+			// Ensure that particle systems created later in the game won't collide with the xfer'd systems.
+			m_uniqueSystemID = MAX(m_uniqueSystemID, system->getSystemID());
+		}
 	}
 
 }
