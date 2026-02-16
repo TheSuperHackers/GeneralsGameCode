@@ -16,7 +16,13 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <io.h>
+
 #include "W3DDevice/GameClient/W3DScreenshot.h"
+#include "W3DDevice/GameClient/W3DDisplay.h"
+#include "Common/GlobalData.h"
+#include "GameClient/GameText.h"
+#include "GameClient/InGameUI.h"
 #include <stb_image_write.h>
 
 struct ScreenshotThreadData
