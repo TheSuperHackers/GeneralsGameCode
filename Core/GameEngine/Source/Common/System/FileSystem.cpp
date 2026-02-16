@@ -458,6 +458,51 @@ Bool FileSystem::isPathInDirectory(const AsciiString& testPath, const AsciiStrin
 	return true;
 }
 
+namespace
+{
+
+enum TransferFileType
+{
+	TRANSFER_FILE_MAP,
+	TRANSFER_FILE_INI,
+	TRANSFER_FILE_STR,
+	TRANSFER_FILE_TXT,
+	TRANSFER_FILE_TGA,
+	TRANSFER_FILE_WAK,
+	TRANSFER_FILE_COUNT
+};
+
+struct TransferFileRule
+{
+	const char* ext;
+	Int maxSize;
+	TransferFileType type;
+};
+
+const TransferFileRule transferFileRules[] =
+{
+	{ ".map", 5 * 1024 * 1024, TRANSFER_FILE_MAP },
+	{ ".ini", 512 * 1024, TRANSFER_FILE_INI },
+	{ ".str", 512 * 1024, TRANSFER_FILE_STR },
+	{ ".txt", 512 * 1024, TRANSFER_FILE_TXT },
+	{ ".tga", 2 * 1024 * 1024, TRANSFER_FILE_TGA },
+	{ ".wak", 512 * 1024, TRANSFER_FILE_WAK },
+};
+
+const TransferFileRule* getTransferFileRule(const char* extension)
+{
+	for (Int i = 0; i < ARRAY_SIZE(transferFileRules); ++i)
+	{
+		if (stricmp(extension, transferFileRules[i].ext) == 0)
+		{
+			return &transferFileRules[i];
+		}
+	}
+	return nullptr;
+}
+
+} // namespace
+
 //============================================================================
 // FileSystem::hasValidTransferFileContent
 //============================================================================
@@ -465,22 +510,6 @@ Bool FileSystem::isPathInDirectory(const AsciiString& testPath, const AsciiStrin
 // content in memory before writing to disk.
 Bool FileSystem::hasValidTransferFileContent(const AsciiString& filePath, const UnsignedByte* data, Int dataSize)
 {
-	struct TransferFileRule
-	{
-		const char* ext;
-		Int maxSize;
-	};
-
-	static const TransferFileRule transferFileRules[] =
-	{
-		{ ".map", 5 * 1024 * 1024 },
-		{ ".ini", 512 * 1024 },
-		{ ".str", 512 * 1024 },
-		{ ".txt", 512 * 1024 },
-		{ ".tga", 2 * 1024 * 1024 },
-		{ ".wak", 512 * 1024 },
-	};
-
 	const char* lastDot = strrchr(filePath.str(), '.');
 	if (lastDot == nullptr)
 	{
@@ -488,43 +517,33 @@ Bool FileSystem::hasValidTransferFileContent(const AsciiString& filePath, const 
 		return false;
 	}
 
-	// Find matching rule by extension
-	const TransferFileRule* matchedRule = nullptr;
-	for (Int i = 0; i < ARRAY_SIZE(transferFileRules); ++i)
-	{
-		if (stricmp(lastDot, transferFileRules[i].ext) == 0)
-		{
-			matchedRule = &transferFileRules[i];
-			break;
-		}
-	}
-
-	if (matchedRule == nullptr)
+	const TransferFileRule* rule = getTransferFileRule(lastDot);
+	if (rule == nullptr)
 	{
 		DEBUG_LOG(("File '%s' has unrecognized extension '%s' for content validation.", filePath.str(), lastDot));
 		return false;
 	}
 
 	// Check size limit
-	if (dataSize > matchedRule->maxSize)
+	if (dataSize > rule->maxSize)
 	{
-		DEBUG_LOG(("File '%s' exceeds maximum size (%d bytes, limit %d bytes).", filePath.str(), dataSize, matchedRule->maxSize));
+		DEBUG_LOG(("File '%s' exceeds maximum size (%d bytes, limit %d bytes).", filePath.str(), dataSize, rule->maxSize));
 		return false;
 	}
 
 	// Extension-specific content validation
-	if (stricmp(lastDot, ".map") == 0)
+	switch (rule->type)
 	{
-		// Validate magic bytes "CkMp"
+	case TRANSFER_FILE_MAP:
 		if (dataSize < 4 || memcmp(data, "CkMp", 4) != 0)
 		{
 			DEBUG_LOG(("Map file '%s' has invalid magic bytes.", filePath.str()));
 			return false;
 		}
-	}
-	else if (stricmp(lastDot, ".ini") == 0)
+		break;
+
+	case TRANSFER_FILE_INI:
 	{
-		// Check for null bytes to ensure text format
 		Int bytesToCheck = std::min(dataSize, 512);
 		for (Int i = 0; i < bytesToCheck; ++i)
 		{
@@ -534,22 +553,24 @@ Bool FileSystem::hasValidTransferFileContent(const AsciiString& filePath, const 
 				return false;
 			}
 		}
+		break;
 	}
-	else if (stricmp(lastDot, ".tga") == 0)
-	{
-		// Validate minimum TGA header size
+
+	case TRANSFER_FILE_TGA:
 		if (dataSize < 18)
 		{
 			DEBUG_LOG(("TGA file '%s' is too small to be valid (minimum 18 bytes).", filePath.str()));
 			return false;
 		}
-
-		// Validate TGA 2.0 footer signature
 		if (memcmp(data + dataSize - 18, "TRUEVISION-XFILE.", 18) != 0)
 		{
 			DEBUG_LOG(("TGA file '%s' is missing TRUEVISION-XFILE footer signature.", filePath.str()));
 			return false;
 		}
+		break;
+
+	default:
+		break;
 	}
 
 	return true;
