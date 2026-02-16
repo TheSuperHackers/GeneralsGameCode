@@ -23,6 +23,8 @@
 #include "Common/GlobalData.h"
 #include "GameClient/GameText.h"
 #include "GameClient/InGameUI.h"
+#include "WW3D2/dx8wrapper.h"
+#include "WW3D2/surfaceclass.h"
 #include <stb_image_write.h>
 
 struct ScreenshotThreadData

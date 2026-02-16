@@ -2880,7 +2880,6 @@ static void CreateBMPFile(LPTSTR pszFile, char *image, Int width, Int height)
 }
 
 ///Save Screen Capture to a file
-#include "W3DScreenshot.cpp"
 
 /** Start/Stop capturing an AVI movie*/
 void W3DDisplay::toggleMovieCapture(void)
