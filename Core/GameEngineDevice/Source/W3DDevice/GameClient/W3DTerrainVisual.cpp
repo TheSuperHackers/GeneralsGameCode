@@ -605,18 +605,35 @@ Bool W3DTerrainVisual::load( AsciiString filename )
 	RefRenderObjListIterator *it = W3DDisplay::m_3DScene ? W3DDisplay::m_3DScene->createLightsIterator() : nullptr;
 	// apply the heightmap to the terrain render object
 
+	// TheSuperHackers @feature mirelle 05/02/2026
+	// Enable unlimited terrain rendering distance.
 #ifdef DO_SEISMIC_SIMULATIONS
-	m_terrainRenderObject->initHeightData( m_clientHeightMap->getDrawWidth(),
-																				 m_clientHeightMap->getDrawHeight(),
-																				 m_clientHeightMap,
-																				 it);
+    auto* heightMap = m_clientHeightMap;
 #else
-	m_terrainRenderObject->initHeightData( m_logicHeightMap->getDrawWidth(),
-																				 m_logicHeightMap->getDrawHeight(),
-																				 m_logicHeightMap,
-																				 it);
+    auto* heightMap = m_logicHeightMap;
 #endif
 
+// Cache runtime zoom flag to stack to minimize pointer dereferencing
+const bool isUnlimited = TheGlobalData->m_unlimitedzoom;
+
+Int xExt, yExt;
+
+// Single branch logic for runtime efficiency and better branch prediction
+if (isUnlimited) {
+    // In unlimited mode, we force the 'Draw' dimensions to match the 'Full' extent.
+    xExt = heightMap->getXExtent();
+    yExt = heightMap->getYExtent();
+    
+    heightMap->setDrawWidth(xExt);
+    heightMap->setDrawHeight(yExt);
+} else {
+    // Use standard dimensions when unlimited zoom is disabled
+    xExt = heightMap->getDrawWidth();
+    yExt = heightMap->getDrawHeight();
+}
+
+// Pass resolved values to the renderer
+m_terrainRenderObject->initHeightData(xExt, yExt, heightMap, it);
 
 	if (it) {
 	 W3DDisplay::m_3DScene->destroyLightsIterator(it);
