@@ -525,7 +525,7 @@ Bool FileSystem::hasValidTransferFileContent(const AsciiString& filePath, const 
 	else if (stricmp(lastDot, ".ini") == 0)
 	{
 		// Check for null bytes to ensure text format
-		Int bytesToCheck = dataSize < 512 ? dataSize : 512;
+		Int bytesToCheck = std::min(dataSize, 512);
 		for (Int i = 0; i < bytesToCheck; ++i)
 		{
 			if (data[i] == 0)
