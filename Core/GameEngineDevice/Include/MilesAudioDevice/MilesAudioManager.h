@@ -333,7 +333,7 @@ class MilesAudioManager : public AudioManager
 // TheSuperHackers @feature helmutbuhler 17/05/2025 AudioManager that does almost nothing. Used for Headless Mode.
 // @tweak Caball009 16/02/2026 Scripts may require the actual audio file length to function properly.
 // The Miles audio manager handles the device opening / closure, so that getFileLengthMS can function as intended.
-class AudioManagerDummy : public MilesAudioManager
+class MilesAudioManagerDummy : public MilesAudioManager
 {
 #if defined(RTS_DEBUG)
 	virtual void audioDebugDisplay(DebugDisplayInterface* dd, void* userData, FILE* fp) {}
