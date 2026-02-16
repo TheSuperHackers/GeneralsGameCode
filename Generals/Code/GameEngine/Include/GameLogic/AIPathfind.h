@@ -247,6 +247,24 @@ protected:
 	UnsignedInt m_closed:1;												///< place for marking this cell as on the closed list
 };
 
+// TheSuperHackers @info The PathfindCellList class acts as a new management class for the pathfindcell open and closed lists
+class PathfindCellList
+{
+	friend class PathfindCell;
+
+public:
+	PathfindCellList() : m_head(nullptr) {}
+
+	void reset(PathfindCell* newHead = nullptr) { m_head = newHead; }
+
+	PathfindCell* getHead() const { return m_head; }
+
+	Bool empty() const { return m_head == nullptr; }
+
+private:
+	PathfindCell* m_head;
+};
+
 /**
  * This represents one cell in the pathfinding grid.
  * These cells categorize the world into idealized cellular states,
@@ -307,11 +325,11 @@ public:
 
 	UnsignedInt costSoFar( PathfindCell *parent );
 
-	/// put self on "open" list in ascending cost order, return new list
-	PathfindCell *putOnSortedOpenList( PathfindCell *list );
+	/// put self on "open" list in ascending cost order
+	void putOnSortedOpenList( PathfindCellList &list );
 
 	/// remove self from "open" list
-	PathfindCell *removeFromOpenList( PathfindCell *list );
+	void removeFromOpenList( PathfindCellList &list );
 
 	/// put self on "closed" list, return new list
 	PathfindCell *putOnClosedList( PathfindCell *list );
@@ -323,7 +341,7 @@ public:
 	static Int releaseClosedList( PathfindCell *list );
 
 	/// remove all cells from closed list.
-	static Int releaseOpenList( PathfindCell *list );
+	static Int releaseOpenList( PathfindCellList &list );
 
 	inline PathfindCell *getNextOpen(void) {return m_info->m_nextOpen?m_info->m_nextOpen->m_cell: nullptr;}
 
@@ -848,7 +866,7 @@ private:
 	IRegion2D m_extent;														///< Grid extent limits
 	IRegion2D m_logicalExtent;										///< Logical grid extent limits
 
-	PathfindCell *m_openList;											///< Cells ready to be explored
+	PathfindCellList m_openList;									///< Cells ready to be explored
 	PathfindCell *m_closedList;										///< Cells already explored
 
 	Bool m_isMapReady;														///< True if all cells of map have been classified

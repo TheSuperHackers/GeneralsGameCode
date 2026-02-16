@@ -1132,7 +1132,7 @@ void Pathfinder::forceCleanCells()
 	TheAudio->addAudioEvent(&TheAudio->getMiscAudio()->m_allCheerSound);
 
 	PathfindCellInfo::forceCleanPathFindCellInfos();
-	m_openList = nullptr;
+	m_openList.reset();
 	m_closedList = nullptr;
 
 	for (int j = 0; j <= m_extent.hi.y; ++j) {
@@ -1682,13 +1682,13 @@ Bool PathfindCell::removeObstacle( Object *obstacle )
 }
 
 /// put self on "open" list in ascending cost order, return new list
-PathfindCell *PathfindCell::putOnSortedOpenList( PathfindCell *list )
+void PathfindCell::putOnSortedOpenList( PathfindCellList &list )
 {
 	DEBUG_ASSERTCRASH(m_info, ("Has to have info."));
 	DEBUG_ASSERTCRASH(m_info->m_closed==FALSE && m_info->m_open==FALSE, ("Serious error - Invalid flags. jba"));
-	if (list == nullptr)
+	if (list.m_head == nullptr)
 	{
-		list = this;
+		list.m_head = this;
 		m_info->m_prevOpen = nullptr;
 		m_info->m_nextOpen = nullptr;
 	}
@@ -1701,11 +1701,11 @@ PathfindCell *PathfindCell::putOnSortedOpenList( PathfindCell *list )
 		// External code should pickup on the bad behaviour and cleanup properly, but we need to explicitly break out here
 		// The fixed pathfinding does not have this issue due to the proper cleanup of pathfindCells and their pathfindCellInfos
 		UnsignedInt cellCount = 0;
-		for (c = list; c && cellCount < PATHFIND_CELLS_PER_FRAME; c = c->getNextOpen())
+		for (c = list.m_head; c && cellCount < PATHFIND_CELLS_PER_FRAME; c = c->getNextOpen())
 		{
 			cellCount++;
 #else
-		for (c = list; c; c = c->getNextOpen())
+		for (c = list.m_head; c; c = c->getNextOpen())
 		{
 #endif
 			if (c->m_info->m_totalCost > m_info->m_totalCost)
@@ -1720,7 +1720,7 @@ PathfindCell *PathfindCell::putOnSortedOpenList( PathfindCell *list )
 			if (c->m_info->m_prevOpen)
 				c->m_info->m_prevOpen->m_nextOpen = this->m_info;
 			else
-				list = this;
+				list.m_head = this;
 
 			m_info->m_prevOpen = c->m_info->m_prevOpen;
 			c->m_info->m_prevOpen = this->m_info;
@@ -1741,11 +1741,10 @@ PathfindCell *PathfindCell::putOnSortedOpenList( PathfindCell *list )
 	m_info->m_open = true;
 	m_info->m_closed = false;
 
-	return list;
 }
 
 /// remove self from "open" list
-PathfindCell *PathfindCell::removeFromOpenList( PathfindCell *list )
+void PathfindCell::removeFromOpenList( PathfindCellList &list )
 {
 	DEBUG_ASSERTCRASH(m_info, ("Has to have info."));
 	DEBUG_ASSERTCRASH(m_info->m_closed==FALSE && m_info->m_open==TRUE, ("Serious error - Invalid flags. jba"));
@@ -1755,25 +1754,24 @@ PathfindCell *PathfindCell::removeFromOpenList( PathfindCell *list )
 	if (m_info->m_prevOpen)
 		m_info->m_prevOpen->m_nextOpen = m_info->m_nextOpen;
 	else
-		list = getNextOpen();
+		list.m_head = getNextOpen();
 
 	m_info->m_open = false;
 	m_info->m_nextOpen = nullptr;
 	m_info->m_prevOpen = nullptr;
 
-	return list;
 }
 
 /// remove all cells from "open" list
-Int PathfindCell::releaseOpenList( PathfindCell *list )
+Int PathfindCell::releaseOpenList( PathfindCellList &list )
 {
 	Int count = 0;
-	while (list) {
+	while (list.m_head) {
 		count++;
-		DEBUG_ASSERTCRASH(list->m_info, ("Has to have info."));
-		DEBUG_ASSERTCRASH(list->m_info->m_closed==FALSE && list->m_info->m_open==TRUE, ("Serious error - Invalid flags. jba"));
-		PathfindCell *cur = list;
-		PathfindCellInfo *curInfo = list->m_info;
+		DEBUG_ASSERTCRASH(list.m_head->m_info, ("Has to have info."));
+		DEBUG_ASSERTCRASH(list.m_head->m_info->m_closed==FALSE && list.m_head->m_info->m_open==TRUE, ("Serious error - Invalid flags. jba"));
+		PathfindCell *cur = list.m_head;
+		PathfindCellInfo *curInfo = list.m_head->m_info;
 
 #if RETAIL_COMPATIBLE_PATHFINDING
 		// TheSuperHackers @info This is only here to catch a crash point in the retail compatible pathfinding
@@ -1787,9 +1785,9 @@ Int PathfindCell::releaseOpenList( PathfindCell *list )
 #endif
 
 		if (curInfo->m_nextOpen) {
-			list = curInfo->m_nextOpen->m_cell;
+			list.m_head = curInfo->m_nextOpen->m_cell;
 		} else {
-			list = nullptr;
+			list.m_head = nullptr;
 		}
 		DEBUG_ASSERTCRASH(cur == curInfo->m_cell, ("Bad backpointer in PathfindCellInfo"));
 		curInfo->m_nextOpen = nullptr;
@@ -3882,7 +3880,7 @@ void Pathfinder::reset( void )
 	// reset the pathfind grid
 	m_extent.lo.x=m_extent.lo.y=m_extent.hi.x=m_extent.hi.y=0;
 	m_logicalExtent.lo.x=m_logicalExtent.lo.y=m_logicalExtent.hi.x=m_logicalExtent.hi.y=0;
-	m_openList = nullptr;
+	m_openList.reset();
 	m_closedList = nullptr;
 
 	m_ignoreObstacleID = INVALID_ID;
@@ -4637,7 +4635,7 @@ void Pathfinder::debugShowSearch(  Bool pathFound  )
 		addIcon(nullptr, 0, 0, color);	 // erase.
 	}
 
-	for( s = m_openList; s; s=s->getNextOpen() )
+	for( s = m_openList.getHead(); s; s=s->getNextOpen() )
 	{
 		// create objects to show path - they decay
 		RGBColor color;
@@ -4741,9 +4739,9 @@ Bool Pathfinder::validMovementTerrain( PathfindLayerEnum layer, const Locomotor*
 //
 void Pathfinder::cleanOpenAndClosedLists(void) {
 	Int count = 0;
-	if (m_openList) {
+	if (!m_openList.empty()) {
 		count += PathfindCell::releaseOpenList(m_openList);
-		m_openList = nullptr;
+		m_openList.reset();
 	}
 
 #if RETAIL_COMPATIBLE_PATHFINDING
@@ -5881,7 +5879,7 @@ void Pathfinder::checkChangeLayers(PathfindCell *parentCell)
 	newCell->setCostSoFar(parentCell->getCostSoFar()); // same as parent cost
 	newCell->setTotalCost(parentCell->getTotalCost());
 	// insert newCell in open list such that open list is sorted, smallest total path cost first
-	m_openList = newCell->putOnSortedOpenList( m_openList );
+	newCell->putOnSortedOpenList( m_openList );
 }
 
 bool Pathfinder::checkCellOutsideExtents(ICoord2D& cell) {
@@ -5984,10 +5982,10 @@ struct ExamineCellsStruct
 
 			// if the to was already on the open list, remove it so it can be re-inserted in order
 			if (to->getOpen())
-				d->thePathfinder->m_openList = to->removeFromOpenList( d->thePathfinder->m_openList );
+				to->removeFromOpenList( d->thePathfinder->m_openList );
 
 			// insert to in open list such that open list is sorted, smallest total path cost first
-			d->thePathfinder->m_openList = to->putOnSortedOpenList( d->thePathfinder->m_openList );
+			to->putOnSortedOpenList( d->thePathfinder->m_openList );
 	}
 
 	return 0;	// keep going
@@ -6218,10 +6216,10 @@ Int Pathfinder::examineNeighboringCells(PathfindCell *parentCell, PathfindCell *
 
 			// if the newCell was already on the open list, remove it so it can be re-inserted in order
 			if (newCell->getOpen())
-				m_openList = newCell->removeFromOpenList( m_openList );
+				newCell->removeFromOpenList( m_openList );
 
 			// insert newCell in open list such that open list is sorted, smallest total path cost first
-			m_openList = newCell->putOnSortedOpenList( m_openList );
+			newCell->putOnSortedOpenList( m_openList );
 		}
 	return cellCount;
 }
@@ -6287,7 +6285,7 @@ Path *Pathfinder::internalFindPath( Object *obj, const LocomotorSet& locomotorSe
 		DEBUG_LOG(("Attempting pathfind to 0,0, generally a bug."));
 		return nullptr;
 	}
-	DEBUG_ASSERTCRASH(m_openList== nullptr && m_closedList == nullptr, ("Dangling lists."));
+	DEBUG_ASSERTCRASH(m_openList.empty() && m_closedList == nullptr, ("Dangling lists."));
 	if (m_isMapReady == false) {
 		return nullptr;
 	}
@@ -6399,7 +6397,16 @@ Path *Pathfinder::internalFindPath( Object *obj, const LocomotorSet& locomotorSe
 	parentCell->startPathfind(goalCell);
 
 	// initialize "open" list to contain start cell
-	m_openList = parentCell;
+#if RETAIL_COMPATIBLE_PATHFINDING
+	if (!s_useFixedPathfinding) {
+		m_openList.reset(parentCell);
+	}
+	else
+#endif
+	{
+		m_openList.reset();
+		parentCell->putOnSortedOpenList(m_openList);
+	}
 
 	// "closed" list is initially empty
 	m_closedList = nullptr;
@@ -6410,11 +6417,11 @@ Path *Pathfinder::internalFindPath( Object *obj, const LocomotorSet& locomotorSe
 	// Continue search until "open" list is empty, or
 	// until goal is found.
 	//
-	while( m_openList != nullptr )
+	while( !m_openList.empty() )
 	{
 		// take head cell off of open list - it has lowest estimated total path cost
-		parentCell = m_openList;
-		m_openList = parentCell->removeFromOpenList(m_openList);
+		parentCell = m_openList.getHead();
+		parentCell->removeFromOpenList(m_openList);
 
 		if (parentCell == goalCell)
 		{
@@ -6819,7 +6826,7 @@ struct GroundCellsStruct
 			to->setTotalCost(to->getCostSoFar() + costRemaining) ;
 
 			// insert to in open list such that open list is sorted, smallest total path cost first
-			d->thePathfinder->m_openList = to->putOnSortedOpenList( d->thePathfinder->m_openList );
+			to->putOnSortedOpenList( d->thePathfinder->m_openList );
 	}
 
 	return 0;	// keep going
@@ -6855,7 +6862,7 @@ Path *Pathfinder::findGroundPath( const Coord3D *from,
 		DEBUG_LOG(("Attempting pathfind to 0,0, generally a bug."));
 		return nullptr;
 	}
-	DEBUG_ASSERTCRASH(m_openList== nullptr && m_closedList == nullptr, ("Dangling lists."));
+	DEBUG_ASSERTCRASH(m_openList.empty() && m_closedList == nullptr, ("Dangling lists."));
 	if (m_isMapReady == false) {
 		return nullptr;
 	}
@@ -6948,7 +6955,16 @@ Path *Pathfinder::findGroundPath( const Coord3D *from,
 	parentCell->startPathfind(goalCell);
 
 	// initialize "open" list to contain start cell
-	m_openList = parentCell;
+#if RETAIL_COMPATIBLE_PATHFINDING
+	if (!s_useFixedPathfinding) {
+		m_openList.reset(parentCell);
+	}
+	else
+#endif
+	{
+		m_openList.reset();
+		parentCell->putOnSortedOpenList(m_openList);
+	}
 
 	// "closed" list is initially empty
 	m_closedList = nullptr;
@@ -6963,11 +6979,11 @@ Path *Pathfinder::findGroundPath( const Coord3D *from,
 	// until goal is found.
 	//
 	Int cellCount = 0;
-	while( m_openList != nullptr )
+	while( !m_openList.empty() )
 	{
 		// take head cell off of open list - it has lowest estimated total path cost
-		parentCell = m_openList;
-		m_openList = parentCell->removeFromOpenList(m_openList);
+		parentCell = m_openList.getHead();
+		parentCell->removeFromOpenList(m_openList);
 
 		if (parentCell == goalCell)
 		{
@@ -7139,10 +7155,10 @@ Path *Pathfinder::findGroundPath( const Coord3D *from,
 
 			// if the newCell was already on the open list, remove it so it can be re-inserted in order
 			if (newCell->getOpen())
-				m_openList = newCell->removeFromOpenList( m_openList );
+				newCell->removeFromOpenList( m_openList );
 
 			// insert newCell in open list such that open list is sorted, smallest total path cost first
-			m_openList = newCell->putOnSortedOpenList( m_openList );
+			newCell->putOnSortedOpenList( m_openList );
 		}
 	}
 	// failure - goal cannot be reached
@@ -7299,7 +7315,7 @@ void Pathfinder::processHierarchicalCell( const ICoord2D &scanCell, const ICoord
 			adjNewCell->setTotalCost(adjNewCell->getCostSoFar()+remCost);
 			adjNewCell->setParentCellHierarchical(parentCell);
 			// insert newCell in open list such that open list is sorted, smallest total path cost first
-			m_openList = adjNewCell->putOnSortedOpenList( m_openList );
+			adjNewCell->putOnSortedOpenList( m_openList );
 		}
 
 	}
@@ -7345,7 +7361,7 @@ Path *Pathfinder::internal_findHierarchicalPath( Bool isHuman, const LocomotorSu
 		DEBUG_LOG(("Attempting pathfind to 0,0, generally a bug."));
 		return nullptr;
 	}
-	DEBUG_ASSERTCRASH(m_openList== nullptr && m_closedList == nullptr, ("Dangling lists."));
+	DEBUG_ASSERTCRASH(m_openList.empty() && m_closedList == nullptr, ("Dangling lists."));
 	if (m_isMapReady == false) {
 		return nullptr;
 	}
@@ -7421,7 +7437,16 @@ Path *Pathfinder::internal_findHierarchicalPath( Bool isHuman, const LocomotorSu
 	}
 
 	// initialize "open" list to contain start cell
-	m_openList = parentCell;
+#if RETAIL_COMPATIBLE_PATHFINDING
+	if (!s_useFixedPathfinding) {
+		m_openList.reset(parentCell);
+	}
+	else
+#endif
+	{
+		m_openList.reset();
+		parentCell->putOnSortedOpenList(m_openList);
+	}
 
 	if (parentCell->getLayer()!=LAYER_GROUND) {
 		PathfindLayerEnum layer = parentCell->getLayer();
@@ -7434,7 +7459,7 @@ Path *Pathfinder::internal_findHierarchicalPath( Bool isHuman, const LocomotorSu
 		PathfindCell *startCell = getCell(LAYER_GROUND, ndx.x, ndx.y);
 		if (cell && startCell) {
 			// Close parent cell;
-			m_openList = parentCell->removeFromOpenList(m_openList);
+			parentCell->removeFromOpenList(m_openList);
 			m_closedList = parentCell->putOnClosedList(m_closedList);
 			if (!startCell->allocateInfo(ndx)) {
 				// TheSuperHackers @info We need to forcefully cleanup dangling pathfinding cells if this failure condition is hit in retail
@@ -7460,7 +7485,7 @@ Path *Pathfinder::internal_findHierarchicalPath( Bool isHuman, const LocomotorSu
 			startCell->setTotalCost(remCost);
 			startCell->setParentCellHierarchical(parentCell);
 			// insert newCell in open list such that open list is sorted, smallest total path cost first
-			m_openList = startCell->putOnSortedOpenList( m_openList );
+			startCell->putOnSortedOpenList( m_openList );
 
 			cellCount++;
 			if(!cell->allocateInfo(toNdx)) {
@@ -7485,7 +7510,7 @@ Path *Pathfinder::internal_findHierarchicalPath( Bool isHuman, const LocomotorSu
 			cell->setTotalCost(remCost);
 			cell->setParentCellHierarchical(parentCell);
 			// insert newCell in open list such that open list is sorted, smallest total path cost first
-			m_openList = cell->putOnSortedOpenList( m_openList );
+			cell->putOnSortedOpenList( m_openList );
 		}
 	}
 
@@ -7496,11 +7521,11 @@ Path *Pathfinder::internal_findHierarchicalPath( Bool isHuman, const LocomotorSu
 	// Continue search until "open" list is empty, or
 	// until goal is found.
 	//
-	while( m_openList != nullptr )
+	while( !m_openList.empty() )
 	{
 		// take head cell off of open list - it has lowest estimated total path cost
-		parentCell = m_openList;
-		m_openList = parentCell->removeFromOpenList(m_openList);
+		parentCell = m_openList.getHead();
+		parentCell->removeFromOpenList(m_openList);
 
 		zoneStorageType parentZone;
 		if (parentCell->getLayer()==LAYER_GROUND) {
@@ -7613,7 +7638,7 @@ Path *Pathfinder::internal_findHierarchicalPath( Bool isHuman, const LocomotorSu
 					cell->setTotalCost(cell->getCostSoFar()+remCost);
 					cell->setParentCellHierarchical(startCell);
 					// insert newCell in open list such that open list is sorted, smallest total path cost first
-					m_openList = cell->putOnSortedOpenList( m_openList );
+					cell->putOnSortedOpenList( m_openList );
 
 				}
 			}
@@ -8115,7 +8140,7 @@ Bool Pathfinder::pathDestination( 	Object *obj, const LocomotorSet& locomotorSet
 
 	Coord3D adjustTo = *groupDest;
 	Coord3D *to = &adjustTo;
-	DEBUG_ASSERTCRASH(m_openList== nullptr && m_closedList == nullptr, ("Dangling lists."));
+	DEBUG_ASSERTCRASH(m_openList.empty() && m_closedList == nullptr, ("Dangling lists."));
 	// create unique "mark" values for open and closed cells for this pathfind invocation
 
 	Bool isCrusher = obj ? obj->getCrusherLevel() > 0 : false;
@@ -8178,7 +8203,16 @@ Bool Pathfinder::pathDestination( 	Object *obj, const LocomotorSet& locomotorSet
 	parentCell->startPathfind(goalCell);
 
 	// initialize "open" list to contain start cell
-	m_openList = parentCell;
+#if RETAIL_COMPATIBLE_PATHFINDING
+	if (!s_useFixedPathfinding) {
+		m_openList.reset(parentCell);
+	}
+	else
+#endif
+	{
+		m_openList.reset();
+		parentCell->putOnSortedOpenList(m_openList);
+	}
 
 	// "closed" list is initially empty
 	m_closedList = nullptr;
@@ -8187,11 +8221,11 @@ Bool Pathfinder::pathDestination( 	Object *obj, const LocomotorSet& locomotorSet
 	// Continue search until "open" list is empty, or
 	// until goal is found.
 	//
-	while( m_openList != nullptr )
+	while( !m_openList.empty() )
 	{
 		// take head cell off of open list - it has lowest estimated total path cost
-		parentCell = m_openList;
-		m_openList = parentCell->removeFromOpenList(m_openList);
+		parentCell = m_openList.getHead();
+		parentCell->removeFromOpenList(m_openList);
 
 		Coord3D pos;
 		// put parent cell onto closed list - its evaluation is finished
@@ -8316,10 +8350,10 @@ Bool Pathfinder::pathDestination( 	Object *obj, const LocomotorSet& locomotorSet
 
 			// if the newCell was already on the open list, remove it so it can be re-inserted in order
 			if (newCell->getOpen())
-				m_openList = newCell->removeFromOpenList( m_openList );
+				newCell->removeFromOpenList( m_openList );
 
 			// insert newCell in open list such that open list is sorted, smallest total path cost first
-			m_openList = newCell->putOnSortedOpenList( m_openList );
+			newCell->putOnSortedOpenList( m_openList );
 		}
 	}
 
@@ -8409,7 +8443,7 @@ Int Pathfinder::checkPathCost(Object *obj, const LocomotorSet& locomotorSet, con
 
 	Coord3D adjustTo = *rawTo;
 	Coord3D *to = &adjustTo;
-	DEBUG_ASSERTCRASH(m_openList== nullptr && m_closedList == nullptr, ("Dangling lists."));
+	DEBUG_ASSERTCRASH(m_openList.empty() && m_closedList == nullptr, ("Dangling lists."));
 	// create unique "mark" values for open and closed cells for this pathfind invocation
 
 	Bool isCrusher = obj ? obj->getCrusherLevel() > 0 : false;
@@ -8454,7 +8488,16 @@ Int Pathfinder::checkPathCost(Object *obj, const LocomotorSet& locomotorSet, con
 	parentCell->startPathfind(goalCell);
 
 	// initialize "open" list to contain start cell
-	m_openList = parentCell;
+#if RETAIL_COMPATIBLE_PATHFINDING
+	if (!s_useFixedPathfinding) {
+		m_openList.reset(parentCell);
+	}
+	else
+#endif
+	{
+		m_openList.reset();
+		parentCell->putOnSortedOpenList(m_openList);
+	}
 
 	// "closed" list is initially empty
 	m_closedList = nullptr;
@@ -8463,11 +8506,11 @@ Int Pathfinder::checkPathCost(Object *obj, const LocomotorSet& locomotorSet, con
 	// Continue search until "open" list is empty, or
 	// until goal is found.
 	//
-	while( m_openList != nullptr )
+	while( !m_openList.empty() )
 	{
 		// take head cell off of open list - it has lowest estimated total path cost
-		parentCell = m_openList;
-		m_openList = parentCell->removeFromOpenList(m_openList);
+		parentCell = m_openList.getHead();
+		parentCell->removeFromOpenList(m_openList);
 
 		// put parent cell onto closed list - its evaluation is finished - Retail compatible behaviour
 #if RETAIL_COMPATIBLE_PATHFINDING
@@ -8601,12 +8644,12 @@ Int Pathfinder::checkPathCost(Object *obj, const LocomotorSet& locomotorSet, con
 
 			// if the newCell was already on the open list, remove it so it can be re-inserted in order
 			if (newCell->getOpen())
-				m_openList = newCell->removeFromOpenList( m_openList );
+				newCell->removeFromOpenList( m_openList );
 
 #if RETAIL_COMPATIBLE_PATHFINDING
 			// TheSuperHacker @info This is here to catch a retail pathfinding crash point and to recover from it
 			// A cell has gotten onto the open list without pathfinding info due to a danling m_open pointer on the previous listed cell so we need to force a cleanup
-			if (!s_useFixedPathfinding && m_openList && !m_openList->hasInfo()) {
+			if (!s_useFixedPathfinding && m_openList.getHead() && !m_openList.getHead()->hasInfo()) {
 				s_useFixedPathfinding = true;
 				forceCleanCells();
 				return MAX_COST;
@@ -8614,7 +8657,7 @@ Int Pathfinder::checkPathCost(Object *obj, const LocomotorSet& locomotorSet, con
 #endif
 
 			// insert newCell in open list such that open list is sorted, smallest total path cost first
-			m_openList = newCell->putOnSortedOpenList( m_openList );
+			newCell->putOnSortedOpenList( m_openList );
 		}
 	}
 
@@ -8678,7 +8721,7 @@ Path *Pathfinder::findClosestPath( Object *obj, const LocomotorSet& locomotorSet
 		adjustTo.x += PATHFIND_CELL_SIZE_F/2;
 		adjustTo.y += PATHFIND_CELL_SIZE_F/2;
 	}
-	DEBUG_ASSERTCRASH(m_openList== nullptr && m_closedList == nullptr, ("Dangling lists."));
+	DEBUG_ASSERTCRASH(m_openList.empty() && m_closedList == nullptr, ("Dangling lists."));
 	// create unique "mark" values for open and closed cells for this pathfind invocation
 
 	Bool isCrusher = obj ? obj->getCrusherLevel() > 0 : false;
@@ -8783,7 +8826,16 @@ Path *Pathfinder::findClosestPath( Object *obj, const LocomotorSet& locomotorSet
 	Real closestDistScreenSqr = FLT_MAX;
 
 	// initialize "open" list to contain start cell
-	m_openList = parentCell;
+#if RETAIL_COMPATIBLE_PATHFINDING
+	if (!s_useFixedPathfinding) {
+		m_openList.reset(parentCell);
+	}
+	else
+#endif
+	{
+		m_openList.reset();
+		parentCell->putOnSortedOpenList(m_openList);
+	}
 
 	// "closed" list is initially empty
 	m_closedList = nullptr;
@@ -8793,14 +8845,14 @@ Path *Pathfinder::findClosestPath( Object *obj, const LocomotorSet& locomotorSet
 	// until goal is found.
 	//
 	Bool foundGoal = false;
-	while( m_openList != nullptr )
+	while( !m_openList.empty() )
 	{
 		Real dx;
 		Real dy;
 		Real distSqr;
 		// take head cell off of open list - it has lowest estimated total path cost
-		parentCell = m_openList;
-		m_openList = parentCell->removeFromOpenList(m_openList);
+		parentCell = m_openList.getHead();
+		parentCell->removeFromOpenList(m_openList);
 
 		if (parentCell == goalCell)
 		{
@@ -10274,7 +10326,7 @@ Path *Pathfinder::getMoveAwayFromPath(Object* obj, Object *otherObj,
 	Int radius;
 	getRadiusAndCenter(obj, radius, centerInCell);
 
-	DEBUG_ASSERTCRASH(m_openList== nullptr && m_closedList == nullptr, ("Dangling lists."));
+	DEBUG_ASSERTCRASH(m_openList.empty() && m_closedList == nullptr, ("Dangling lists."));
 
 	// determine start cell
 	ICoord2D startCellNdx;
@@ -10315,7 +10367,16 @@ Path *Pathfinder::getMoveAwayFromPath(Object* obj, Object *otherObj,
 	parentCell->startPathfind(nullptr);
 
 	// initialize "open" list to contain start cell
-	m_openList = parentCell;
+#if RETAIL_COMPATIBLE_PATHFINDING
+	if (!s_useFixedPathfinding) {
+		m_openList.reset(parentCell);
+	}
+	else
+#endif
+	{
+		m_openList.reset();
+		parentCell->putOnSortedOpenList(m_openList);
+	}
 
 	// "closed" list is initially empty
 	m_closedList = nullptr;
@@ -10330,11 +10391,11 @@ Path *Pathfinder::getMoveAwayFromPath(Object* obj, Object *otherObj,
 	boxHalfWidth += otherRadius*PATHFIND_CELL_SIZE_F;
 	if (otherCenter) boxHalfWidth+=PATHFIND_CELL_SIZE_F/2;
 
-	while( m_openList != nullptr )
+	while( !m_openList.empty() )
 	{
 		// take head cell off of open list - it has lowest estimated total path cost
-		parentCell = m_openList;
-		m_openList = parentCell->removeFromOpenList(m_openList);
+		parentCell = m_openList.getHead();
+		parentCell->removeFromOpenList(m_openList);
 
 		Region2D bounds;
 		Coord3D cellCenter;
@@ -10451,7 +10512,7 @@ Path *Pathfinder::patchPath( const Object *obj, const LocomotorSet& locomotorSet
 
 	m_zoneManager.setAllPassable();
 
-	DEBUG_ASSERTCRASH(m_openList== nullptr && m_closedList == nullptr, ("Dangling lists."));
+	DEBUG_ASSERTCRASH(m_openList.empty() && m_closedList == nullptr, ("Dangling lists."));
 
 	enum {CELL_LIMIT = 2000}; // max cells to examine.
 	Int cellCount = 0;
@@ -10482,7 +10543,16 @@ Path *Pathfinder::patchPath( const Object *obj, const LocomotorSet& locomotorSet
 	parentCell->startPathfind( nullptr);
 
 	// initialize "open" list to contain start cell
-	m_openList = parentCell;
+#if RETAIL_COMPATIBLE_PATHFINDING
+	if (!s_useFixedPathfinding) {
+		m_openList.reset(parentCell);
+	}
+	else
+#endif
+	{
+		m_openList.reset();
+		parentCell->putOnSortedOpenList(m_openList);
+	}
 
 	// "closed" list is initially empty
 	m_closedList = nullptr;
@@ -10566,11 +10636,11 @@ Path *Pathfinder::patchPath( const Object *obj, const LocomotorSet& locomotorSet
 		return nullptr;
 	}
 
-	while( m_openList != nullptr )
+	while( !m_openList.empty() )
 	{
 		// take head cell off of open list - it has lowest estimated total path cost
-		parentCell = m_openList;
-		m_openList = parentCell->removeFromOpenList(m_openList);
+		parentCell = m_openList.getHead();
+		parentCell->removeFromOpenList(m_openList);
 
 		Coord3D cellCenter;
 		adjustCoordToCell(parentCell->getXIndex(), parentCell->getYIndex(), centerInCell, cellCenter, parentCell->getLayer());
@@ -10725,7 +10795,7 @@ Path *Pathfinder::findAttackPath( const Object *obj, const LocomotorSet& locomot
 
 	Int cellCount = 0;
 
-	DEBUG_ASSERTCRASH(m_openList== nullptr && m_closedList == nullptr, ("Dangling lists."));
+	DEBUG_ASSERTCRASH(m_openList.empty() && m_closedList == nullptr, ("Dangling lists."));
 
 	Int attackDistance = weapon->getAttackDistance(obj, victim, victimPos);
 	attackDistance += 3*PATHFIND_CELL_SIZE;
@@ -10767,7 +10837,16 @@ Path *Pathfinder::findAttackPath( const Object *obj, const LocomotorSet& locomot
 	}
 
 	// initialize "open" list to contain start cell
-	m_openList = parentCell;
+#if RETAIL_COMPATIBLE_PATHFINDING
+	if (!s_useFixedPathfinding) {
+		m_openList.reset(parentCell);
+	}
+	else
+#endif
+	{
+		m_openList.reset();
+		parentCell->putOnSortedOpenList(m_openList);
+	}
 
 	// "closed" list is initially empty
 	m_closedList = nullptr;
@@ -10787,11 +10866,11 @@ Path *Pathfinder::findAttackPath( const Object *obj, const LocomotorSet& locomot
 		checkLOS = true;
 	}
 
-	while( m_openList != nullptr )
+	while( !m_openList.empty() )
 	{
 		// take head cell off of open list - it has lowest estimated total path cost
-		parentCell = m_openList;
-		m_openList = parentCell->removeFromOpenList(m_openList);
+		parentCell = m_openList.getHead();
+		parentCell->removeFromOpenList(m_openList);
 
 		Coord3D cellCenter;
 		adjustCoordToCell(parentCell->getXIndex(), parentCell->getYIndex(), centerInCell, cellCenter, parentCell->getLayer());
@@ -11017,7 +11096,7 @@ Path *Pathfinder::findSafePath( const Object *obj, const LocomotorSet& locomotor
 		isHuman = false; // computer gets to cheat.
 	}
 
-	DEBUG_ASSERTCRASH(m_openList== nullptr && m_closedList == nullptr, ("Dangling lists."));
+	DEBUG_ASSERTCRASH(m_openList.empty() && m_closedList == nullptr, ("Dangling lists."));
 	// create unique "mark" values for open and closed cells for this pathfind invocation
 
 	m_zoneManager.setAllPassable();
@@ -11036,7 +11115,16 @@ Path *Pathfinder::findSafePath( const Object *obj, const LocomotorSet& locomotor
 	parentCell->startPathfind( nullptr);
 
 	// initialize "open" list to contain start cell
-	m_openList = parentCell;
+#if RETAIL_COMPATIBLE_PATHFINDING
+	if (!s_useFixedPathfinding) {
+		m_openList.reset(parentCell);
+	}
+	else
+#endif
+	{
+		m_openList.reset();
+		parentCell->putOnSortedOpenList(m_openList);
+	}
 
 	// "closed" list is initially empty
 	m_closedList = nullptr;
@@ -11048,11 +11136,11 @@ Path *Pathfinder::findSafePath( const Object *obj, const LocomotorSet& locomotor
 
 	Real farthestDistanceSqr = 0;
 
-	while( m_openList != nullptr )
+	while( !m_openList.empty() )
 	{
 		// take head cell off of open list - it has lowest estimated total path cost
-		parentCell = m_openList;
-		m_openList = parentCell->removeFromOpenList(m_openList);
+		parentCell = m_openList.getHead();
+		parentCell->removeFromOpenList(m_openList);
 
 		Coord3D cellCenter;
 		adjustCoordToCell(parentCell->getXIndex(), parentCell->getYIndex(), centerInCell, cellCenter, parentCell->getLayer());
@@ -11071,7 +11159,7 @@ Path *Pathfinder::findSafePath( const Object *obj, const LocomotorSet& locomotor
 		if (distSqr>repulsorDistSqr) {
 			ok = true;
 		}
-		if (m_openList == nullptr && cellCount>0) {
+		if (m_openList.empty() && cellCount>0) {
 			ok = true; // exhausted the search space, just take the last cell.
 		}
 		if (distSqr > farthestDistanceSqr) {
