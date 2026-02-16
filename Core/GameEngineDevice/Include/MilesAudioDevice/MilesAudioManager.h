@@ -330,3 +330,53 @@ class MilesAudioManager : public AudioManager
 
 };
 
+// TheSuperHackers @feature helmutbuhler 17/05/2025 AudioManager that does almost nothing. Used for Headless Mode.
+// @bugfix Caball009 16/02/2026 Scripts may require the actual audio file length to function properly.
+// The Miles AudioManager handles the device opening / closure, so that getFileLengthMS can function as intended.
+class MilesAudioManagerDummy : public MilesAudioManager
+{
+#if defined(RTS_DEBUG)
+	virtual void audioDebugDisplay(DebugDisplayInterface* dd, void* userData, FILE* fp) {}
+#endif
+	virtual void stopAudio(AudioAffect which) {}
+	virtual void pauseAudio(AudioAffect which) {}
+	virtual void resumeAudio(AudioAffect which) {}
+	virtual void pauseAmbient(Bool shouldPause) {}
+	virtual void killAudioEventImmediately(AudioHandle audioEvent) {}
+	virtual void nextMusicTrack() {}
+	virtual void prevMusicTrack() {}
+	virtual Bool isMusicPlaying() const { return false; }
+	virtual Bool hasMusicTrackCompleted(const AsciiString& trackName, Int numberOfTimes) const { return false; }
+	virtual AsciiString getMusicTrackName() const { return ""; }
+	//virtual void openDevice() {}
+	//virtual void closeDevice() {}
+	virtual void* getDevice() { return nullptr; }
+	virtual void notifyOfAudioCompletion(UnsignedInt audioCompleted, UnsignedInt flags) {}
+	virtual UnsignedInt getProviderCount() const { return 0; };
+	virtual AsciiString getProviderName(UnsignedInt providerNum) const { return ""; }
+	virtual UnsignedInt getProviderIndex(AsciiString providerName) const { return 0; }
+	virtual void selectProvider(UnsignedInt providerNdx) {}
+	virtual void unselectProvider() {}
+	virtual UnsignedInt getSelectedProvider() const { return 0; }
+	virtual void setSpeakerType(UnsignedInt speakerType) {}
+	virtual UnsignedInt getSpeakerType() { return 0; }
+	virtual UnsignedInt getNum2DSamples() const { return 0; }
+	virtual UnsignedInt getNum3DSamples() const { return 0; }
+	virtual UnsignedInt getNumStreams() const { return 0; }
+	virtual Bool doesViolateLimit(AudioEventRTS* event) const { return false; }
+	virtual Bool isPlayingLowerPriority(AudioEventRTS* event) const { return false; }
+	virtual Bool isPlayingAlready(AudioEventRTS* event) const { return false; }
+	virtual Bool isObjectPlayingVoice(UnsignedInt objID) const { return false; }
+	virtual void adjustVolumeOfPlayingAudio(AsciiString eventName, Real newVolume) {}
+	virtual void removePlayingAudio(AsciiString eventName) {}
+	virtual void removeAllDisabledAudio() {}
+	virtual Bool has3DSensitiveStreamsPlaying() const { return false; }
+	virtual void* getHandleForBink() { return nullptr; }
+	virtual void releaseHandleForBink() {}
+	virtual void friend_forcePlayAudioEventRTS(const AudioEventRTS* eventToPlay) {}
+	virtual void setPreferredProvider(AsciiString providerNdx) {}
+	virtual void setPreferredSpeaker(AsciiString speakerType) {}
+	//virtual Real getFileLengthMS(AsciiString strToLoad) const { return 0.0f; }
+	virtual void closeAnySamplesUsingFile(const void* fileToClose) {}
+	virtual void setDeviceListenerPosition() {}
+};
