@@ -330,9 +330,10 @@ class MilesAudioManager : public AudioManager
 
 };
 
-// TheSuperHackers @feature helmutbuhler 17/05/2025
-// AudioManager that does nothing. Used for Headless Mode.
-class AudioManagerDummy : public AudioManager
+// TheSuperHackers @feature helmutbuhler 17/05/2025 AudioManager that does almost nothing. Used for Headless Mode.
+// @tweak Caball009 16/02/2026 Scripts may require the actual audio file length to function properly.
+// The Miles audio manager handles the device opening / closure, so that getFileLengthMS can function as intended.
+class AudioManagerDummy : public MilesAudioManager
 {
 #if defined(RTS_DEBUG)
 	virtual void audioDebugDisplay(DebugDisplayInterface* dd, void* userData, FILE* fp) {}
@@ -347,8 +348,8 @@ class AudioManagerDummy : public AudioManager
 	virtual Bool isMusicPlaying() const { return false; }
 	virtual Bool hasMusicTrackCompleted(const AsciiString& trackName, Int numberOfTimes) const { return false; }
 	virtual AsciiString getMusicTrackName() const { return ""; }
-	virtual void openDevice() {}
-	virtual void closeDevice() {}
+	//virtual void openDevice() {}
+	//virtual void closeDevice() {}
 	virtual void* getDevice() { return nullptr; }
 	virtual void notifyOfAudioCompletion(UnsignedInt audioCompleted, UnsignedInt flags) {}
 	virtual UnsignedInt getProviderCount(void) const { return 0; };
@@ -375,7 +376,7 @@ class AudioManagerDummy : public AudioManager
 	virtual void friend_forcePlayAudioEventRTS(const AudioEventRTS* eventToPlay) {}
 	virtual void setPreferredProvider(AsciiString providerNdx) {}
 	virtual void setPreferredSpeaker(AsciiString speakerType) {}
-	virtual Real getFileLengthMS(AsciiString strToLoad) const { return -1; }
+	//virtual Real getFileLengthMS(AsciiString strToLoad) const { return -1; }
 	virtual void closeAnySamplesUsingFile(const void* fileToClose) {}
 	virtual void setDeviceListenerPosition(void) {}
 };
