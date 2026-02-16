@@ -543,6 +543,13 @@ Bool FileSystem::hasValidTransferFileContent(const AsciiString& filePath, const 
 			DEBUG_LOG(("TGA file '%s' is too small to be valid (minimum 18 bytes).", filePath.str()));
 			return false;
 		}
+
+		// Validate TGA 2.0 footer signature
+		if (memcmp(data + dataSize - 18, "TRUEVISION-XFILE.", 18) != 0)
+		{
+			DEBUG_LOG(("TGA file '%s' is missing TRUEVISION-XFILE footer signature.", filePath.str()));
+			return false;
+		}
 	}
 
 	return true;
