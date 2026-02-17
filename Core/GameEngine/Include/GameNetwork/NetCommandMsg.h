@@ -127,25 +127,13 @@ protected:
  * The NetAckBothCommandMsg is the NetCommandMsg representation of the combination of a
  * stage 1 ack and a stage 2 ack.
  */
-class NetAckBothCommandMsg : public NetCommandMsg
+class NetAckBothCommandMsg : public NetAckCommandMsg
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetAckBothCommandMsg, "NetAckBothCommandMsg")
 public:
 	NetAckBothCommandMsg(NetCommandMsg *msg);
 	NetAckBothCommandMsg();
 	//virtual ~NetAckBothCommandMsg();
-
-	UnsignedShort getCommandID() const;
-	void setCommandID(UnsignedShort commandID);
-	UnsignedByte getOriginalPlayerID() const;
-	void setOriginalPlayerID(UnsignedByte originalPlayerID);
-	virtual Int getSortNumber() const;
-
-	virtual size_t getPackedByteCount() const;
-
-protected:
-	UnsignedShort m_commandID;
-	UnsignedByte m_originalPlayerID;
 };
 
 //-----------------------------------------------------------------------------
@@ -153,25 +141,13 @@ protected:
  * The NetAckStage1CommandMsg is the NetCommandMsg representation of an ack message for the initial
  * recipient.
  */
-class NetAckStage1CommandMsg : public NetCommandMsg
+class NetAckStage1CommandMsg : public NetAckCommandMsg
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetAckStage1CommandMsg, "NetAckStage1CommandMsg")
 public:
 	NetAckStage1CommandMsg(NetCommandMsg *msg);
 	NetAckStage1CommandMsg();
 	//virtual ~NetAckStage1CommandMsg();
-
-	UnsignedShort getCommandID() const;
-	void setCommandID(UnsignedShort commandID);
-	UnsignedByte getOriginalPlayerID() const;
-	void setOriginalPlayerID(UnsignedByte originalPlayerID);
-	virtual Int getSortNumber() const;
-
-	virtual size_t getPackedByteCount() const;
-
-protected:
-	UnsignedShort m_commandID;
-	UnsignedByte m_originalPlayerID;
 };
 
 //-----------------------------------------------------------------------------
@@ -179,25 +155,13 @@ protected:
  * The NetAckStage2CommandMsg is the NetCommandMsg representation of an ack message for all eventual
  * recipients. (when this is returned, all the players in the relay mask have received the packet)
  */
-class NetAckStage2CommandMsg : public NetCommandMsg
+class NetAckStage2CommandMsg : public NetAckCommandMsg
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetAckStage2CommandMsg, "NetAckStage2CommandMsg")
 public:
 	NetAckStage2CommandMsg(NetCommandMsg *msg);
 	NetAckStage2CommandMsg();
 	//virtual ~NetAckStage2CommandMsg();
-
-	UnsignedShort getCommandID() const;
-	void setCommandID(UnsignedShort commandID);
-	UnsignedByte getOriginalPlayerID() const;
-	void setOriginalPlayerID(UnsignedByte originalPlayerID);
-	virtual Int getSortNumber() const;
-
-	virtual size_t getPackedByteCount() const;
-
-protected:
-	UnsignedShort m_commandID;
-	UnsignedByte m_originalPlayerID;
 };
 
 //-----------------------------------------------------------------------------

@@ -336,16 +336,14 @@ size_t NetAckCommandMsg::getPackedByteCount() const {
 /**
  * Constructor.  Sets the member variables according to the given message.
  */
-NetAckBothCommandMsg::NetAckBothCommandMsg(NetCommandMsg *msg) : NetCommandMsg() {
-	m_commandID = msg->getID();
+NetAckBothCommandMsg::NetAckBothCommandMsg(NetCommandMsg *msg) : NetAckCommandMsg(msg) {
 	m_commandType = NETCOMMANDTYPE_ACKBOTH;
-	m_originalPlayerID = msg->getPlayerID();
 }
 
 /**
  * Constructor.  Sets the member variables to default values.
  */
-NetAckBothCommandMsg::NetAckBothCommandMsg() : NetCommandMsg() {
+NetAckBothCommandMsg::NetAckBothCommandMsg() {
 	m_commandType = NETCOMMANDTYPE_ACKBOTH;
 }
 
@@ -355,58 +353,20 @@ NetAckBothCommandMsg::NetAckBothCommandMsg() : NetCommandMsg() {
 NetAckBothCommandMsg::~NetAckBothCommandMsg() {
 }
 
-/**
- * Returns the command ID of the command being ack'd.
- */
-UnsignedShort NetAckBothCommandMsg::getCommandID() const {
-	return m_commandID;
-}
-
-/**
- * Set the command ID of the command being ack'd.
- */
-void NetAckBothCommandMsg::setCommandID(UnsignedShort commandID) {
-	m_commandID = commandID;
-}
-
-/**
- * Get the player id of the player who originally sent the command.
- */
-UnsignedByte NetAckBothCommandMsg::getOriginalPlayerID() const {
-	return m_originalPlayerID;
-}
-
-/**
- * Set the player id of the player who originally sent the command.
- */
-void NetAckBothCommandMsg::setOriginalPlayerID(UnsignedByte originalPlayerID) {
-	m_originalPlayerID = originalPlayerID;
-}
-
-Int NetAckBothCommandMsg::getSortNumber() const {
-	return m_commandID;
-}
-
-size_t NetAckBothCommandMsg::getPackedByteCount() const {
-	return sizeof(NetPacketAckCommand);
-}
-
 //-------------------------
 // NetAckStage1CommandMsg
 //-------------------------
 /**
  * Constructor.  Sets the member variables according to the given message.
  */
-NetAckStage1CommandMsg::NetAckStage1CommandMsg(NetCommandMsg *msg) : NetCommandMsg() {
-	m_commandID = msg->getID();
+NetAckStage1CommandMsg::NetAckStage1CommandMsg(NetCommandMsg *msg) : NetAckCommandMsg(msg) {
 	m_commandType = NETCOMMANDTYPE_ACKSTAGE1;
-	m_originalPlayerID = msg->getPlayerID();
 }
 
 /**
  * Constructor.  Sets the member variables to default values.
  */
-NetAckStage1CommandMsg::NetAckStage1CommandMsg() : NetCommandMsg() {
+NetAckStage1CommandMsg::NetAckStage1CommandMsg() {
 	m_commandType = NETCOMMANDTYPE_ACKSTAGE1;
 }
 
@@ -416,58 +376,20 @@ NetAckStage1CommandMsg::NetAckStage1CommandMsg() : NetCommandMsg() {
 NetAckStage1CommandMsg::~NetAckStage1CommandMsg() {
 }
 
-/**
- * Returns the command ID of the command being ack'd.
- */
-UnsignedShort NetAckStage1CommandMsg::getCommandID() const {
-	return m_commandID;
-}
-
-/**
- * Set the command ID of the command being ack'd.
- */
-void NetAckStage1CommandMsg::setCommandID(UnsignedShort commandID) {
-	m_commandID = commandID;
-}
-
-/**
- * Get the player id of the player who originally sent the command.
- */
-UnsignedByte NetAckStage1CommandMsg::getOriginalPlayerID() const {
-	return m_originalPlayerID;
-}
-
-/**
- * Set the player id of the player who originally sent the command.
- */
-void NetAckStage1CommandMsg::setOriginalPlayerID(UnsignedByte originalPlayerID) {
-	m_originalPlayerID = originalPlayerID;
-}
-
-Int NetAckStage1CommandMsg::getSortNumber() const {
-	return m_commandID;
-}
-
-size_t NetAckStage1CommandMsg::getPackedByteCount() const {
-	return sizeof(NetPacketAckCommand);
-}
-
 //-------------------------
 // NetAckStage2CommandMsg
 //-------------------------
 /**
  * Constructor.  Sets the member variables according to the given message.
  */
-NetAckStage2CommandMsg::NetAckStage2CommandMsg(NetCommandMsg *msg) : NetCommandMsg() {
-	m_commandID = msg->getID();
+NetAckStage2CommandMsg::NetAckStage2CommandMsg(NetCommandMsg *msg) : NetAckCommandMsg(msg) {
 	m_commandType = NETCOMMANDTYPE_ACKSTAGE2;
-	m_originalPlayerID = msg->getPlayerID();
 }
 
 /**
  * Constructor.  Sets the member variables to default values.
  */
-NetAckStage2CommandMsg::NetAckStage2CommandMsg() : NetCommandMsg() {
+NetAckStage2CommandMsg::NetAckStage2CommandMsg() {
 	m_commandType = NETCOMMANDTYPE_ACKSTAGE2;
 }
 
@@ -475,42 +397,6 @@ NetAckStage2CommandMsg::NetAckStage2CommandMsg() : NetCommandMsg() {
  * Destructor.
  */
 NetAckStage2CommandMsg::~NetAckStage2CommandMsg() {
-}
-
-/**
- * Returns the command ID of the command being ack'd.
- */
-UnsignedShort NetAckStage2CommandMsg::getCommandID() const {
-	return m_commandID;
-}
-
-/**
- * Set the command ID of the command being ack'd.
- */
-void NetAckStage2CommandMsg::setCommandID(UnsignedShort commandID) {
-	m_commandID = commandID;
-}
-
-/**
- * Get the player id of the player who originally sent the command.
- */
-UnsignedByte NetAckStage2CommandMsg::getOriginalPlayerID() const {
-	return m_originalPlayerID;
-}
-
-/**
- * Set the player id of the player who originally sent the command.
- */
-void NetAckStage2CommandMsg::setOriginalPlayerID(UnsignedByte originalPlayerID) {
-	m_originalPlayerID = originalPlayerID;
-}
-
-Int NetAckStage2CommandMsg::getSortNumber() const {
-	return m_commandID;
-}
-
-size_t NetAckStage2CommandMsg::getPackedByteCount() const {
-	return sizeof(NetPacketAckCommand);
 }
 
 //-------------------------
