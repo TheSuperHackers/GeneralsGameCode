@@ -547,8 +547,7 @@ Bool FileSystem::hasValidTransferFileContent(const AsciiString& filePath, const 
 
 	case TransferFileType_Ini:
 	{
-		const UnsignedInt bytesToCheck = std::min(dataSize, 512u);
-		for (UnsignedInt i = 0; i < bytesToCheck; ++i)
+		for (UnsignedInt i = 0; i < dataSize; ++i)
 		{
 			if (data[i] == 0)
 			{
