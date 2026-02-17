@@ -3384,10 +3384,6 @@ void ParticleSystemManager::xfer( Xfer *xfer )
 			}
 
 			friend_addParticleSystem(system);
-
-			// TheSuperHackers @bugfix stephanmeesters 16/02/2026
-			// Ensure that particle systems created later in the game won't collide with the xfer'd systems.
-			m_uniqueSystemID = MAX(m_uniqueSystemID, system->getSystemID());
 		}
 	}
 
