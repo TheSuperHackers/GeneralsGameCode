@@ -8366,7 +8366,7 @@ struct TightenPathStruct
 	TightenPathStruct* d = (TightenPathStruct*)userData;
 	if (from == nullptr || to==nullptr) return 0;
 	if (d->layer != to->getLayer()) {
-		return 0; // abort.
+		return 0; // failure
 	}
 
 	// TheSuperHackers @todo Caball009 15/02/2026 This is an incomplete workaround to initialize the variable,
@@ -8382,12 +8382,12 @@ struct TightenPathStruct
 
 	if (!TheAI->pathfinder()->checkForAdjust(d->obj, *d->locomotorSet, true, to_x, to_y, to->getLayer(), d->radius, d->center, &pos, nullptr))
 	{
-		return 0;	// bail early
+		return 0; // failure
 	}
 	d->foundDest = true;
 	d->newDestPos = pos;
 
-	return 0;	// keep going
+	return 0; // success but keep going
 }
 
 /* Returns the cost, which is in the same units as coord3d distance. */
