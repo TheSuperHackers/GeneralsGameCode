@@ -291,6 +291,46 @@ size_t NetGameCommandMsg::getPackedByteCount() const {
 }
 
 //-------------------------
+// NetAckCommandMsg
+//-------------------------
+
+/**
+ * Returns the command ID of the command being ack'd.
+ */
+UnsignedShort NetAckCommandMsg::getCommandID() const {
+	return m_commandID;
+}
+
+/**
+ * Set the command ID of the command being ack'd.
+ */
+void NetAckCommandMsg::setCommandID(UnsignedShort commandID) {
+	m_commandID = commandID;
+}
+
+/**
+ * Get the player id of the player who originally sent the command.
+ */
+UnsignedByte NetAckCommandMsg::getOriginalPlayerID() const {
+	return m_originalPlayerID;
+}
+
+/**
+ * Set the player id of the player who originally sent the command.
+ */
+void NetAckCommandMsg::setOriginalPlayerID(UnsignedByte originalPlayerID) {
+	m_originalPlayerID = originalPlayerID;
+}
+
+Int NetAckCommandMsg::getSortNumber() const {
+	return m_commandID;
+}
+
+size_t NetAckCommandMsg::getPackedByteCount() const {
+	return sizeof(NetPacketAckCommand);
+}
+
+//-------------------------
 // NetAckBothCommandMsg
 //-------------------------
 /**

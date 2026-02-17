@@ -92,6 +92,38 @@ protected:
 
 //-----------------------------------------------------------------------------
 /**
+ * The NetAckCommandMsg is the base class for other ack command messages.
+ */
+class NetAckCommandMsg : public NetCommandMsg
+{
+protected:
+	NetAckCommandMsg(NetCommandMsg *msg)
+	{
+		m_commandID = msg->getID();
+		m_originalPlayerID = msg->getPlayerID();
+	}
+	NetAckCommandMsg()
+	{
+		m_commandID = 0;
+		m_originalPlayerID = 0;
+	}
+
+public:
+	UnsignedShort getCommandID() const;
+	void setCommandID(UnsignedShort commandID);
+	UnsignedByte getOriginalPlayerID() const;
+	void setOriginalPlayerID(UnsignedByte originalPlayerID);
+	virtual Int getSortNumber() const;
+
+	virtual size_t getPackedByteCount() const;
+
+protected:
+	UnsignedShort m_commandID;
+	UnsignedByte m_originalPlayerID;
+};
+
+//-----------------------------------------------------------------------------
+/**
  * The NetAckBothCommandMsg is the NetCommandMsg representation of the combination of a
  * stage 1 ack and a stage 2 ack.
  */
