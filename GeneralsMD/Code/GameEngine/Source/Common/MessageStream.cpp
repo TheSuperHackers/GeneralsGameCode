@@ -102,7 +102,7 @@ const GameMessageArgumentType *GameMessage::getArgument( Int argIndex ) const
 /**
  * Return the given argument data type
  */
-GameMessageArgumentDataType GameMessage::getArgumentDataType( Int argIndex )
+GameMessageArgumentDataType GameMessage::getArgumentDataType( Int argIndex ) const
 {
 	if (argIndex >= m_argCount) {
 		return ARGUMENTDATATYPE_UNKNOWN;

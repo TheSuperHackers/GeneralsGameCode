@@ -48,8 +48,8 @@ public:
 	UnsignedInt getPlayerID() const { return m_playerID; }
 	UnsignedShort getID() const { return m_id; }
 	void setNetCommandType(NetCommandType type) { m_commandType = type; }
-	NetCommandType getNetCommandType() { return m_commandType; }
-	virtual Int getSortNumber();
+	NetCommandType getNetCommandType() const { return m_commandType; }
+	virtual Int getSortNumber() const;
 	virtual size_t getPackedByteCount() const = 0;
 	void attach();
 	void detach();
@@ -103,11 +103,11 @@ public:
 	NetAckBothCommandMsg();
 	//virtual ~NetAckBothCommandMsg();
 
-	UnsignedShort getCommandID();
+	UnsignedShort getCommandID() const;
 	void setCommandID(UnsignedShort commandID);
-	UnsignedByte getOriginalPlayerID();
+	UnsignedByte getOriginalPlayerID() const;
 	void setOriginalPlayerID(UnsignedByte originalPlayerID);
-	virtual Int getSortNumber();
+	virtual Int getSortNumber() const;
 
 	virtual size_t getPackedByteCount() const;
 
@@ -129,11 +129,11 @@ public:
 	NetAckStage1CommandMsg();
 	//virtual ~NetAckStage1CommandMsg();
 
-	UnsignedShort getCommandID();
+	UnsignedShort getCommandID() const;
 	void setCommandID(UnsignedShort commandID);
-	UnsignedByte getOriginalPlayerID();
+	UnsignedByte getOriginalPlayerID() const;
 	void setOriginalPlayerID(UnsignedByte originalPlayerID);
-	virtual Int getSortNumber();
+	virtual Int getSortNumber() const;
 
 	virtual size_t getPackedByteCount() const;
 
@@ -155,11 +155,11 @@ public:
 	NetAckStage2CommandMsg();
 	//virtual ~NetAckStage2CommandMsg();
 
-	UnsignedShort getCommandID();
+	UnsignedShort getCommandID() const;
 	void setCommandID(UnsignedShort commandID);
-	UnsignedByte getOriginalPlayerID();
+	UnsignedByte getOriginalPlayerID() const;
 	void setOriginalPlayerID(UnsignedByte originalPlayerID);
-	virtual Int getSortNumber();
+	virtual Int getSortNumber() const;
 
 	virtual size_t getPackedByteCount() const;
 
@@ -177,7 +177,7 @@ public:
 	//virtual ~NetFrameCommandMsg();
 
 	void setCommandCount(UnsignedShort commandCount);
-	UnsignedShort getCommandCount();
+	UnsignedShort getCommandCount() const;
 
 	virtual size_t getPackedByteCount() const;
 
@@ -193,7 +193,7 @@ public:
 	NetPlayerLeaveCommandMsg();
 	//virtual ~NetPlayerLeaveCommandMsg();
 
-	UnsignedByte getLeavingPlayerID();
+	UnsignedByte getLeavingPlayerID() const;
 	void setLeavingPlayerID(UnsignedByte id);
 
 	virtual size_t getPackedByteCount() const;
@@ -210,9 +210,9 @@ public:
 	NetRunAheadMetricsCommandMsg();
 	//virtual ~NetRunAheadMetricsCommandMsg();
 
-	Real getAverageLatency();
+	Real getAverageLatency() const;
 	void setAverageLatency(Real avgLat);
-	Int  getAverageFps();
+	Int  getAverageFps() const;
 	void setAverageFps(Int fps);
 
 	virtual size_t getPackedByteCount() const;
@@ -230,10 +230,10 @@ public:
 	NetRunAheadCommandMsg();
 	//virtual ~NetRunAheadCommandMsg();
 
-	UnsignedShort getRunAhead();
+	UnsignedShort getRunAhead() const;
 	void setRunAhead(UnsignedShort runAhead);
 
-	UnsignedByte getFrameRate();
+	UnsignedByte getFrameRate() const;
 	void setFrameRate(UnsignedByte frameRate);
 
 	virtual size_t getPackedByteCount() const;
@@ -251,7 +251,7 @@ public:
 	NetDestroyPlayerCommandMsg();
 	//virtual ~NetDestroyPlayerCommandMsg();
 
-	UnsignedInt getPlayerIndex();
+	UnsignedInt getPlayerIndex() const;
 	void setPlayerIndex(UnsignedInt playerIndex);
 
 	virtual size_t getPackedByteCount() const;
@@ -290,10 +290,10 @@ public:
 	NetDisconnectPlayerCommandMsg();
 	//virtual ~NetDisconnectPlayerCommandMsg();
 
-	UnsignedByte getDisconnectSlot();
+	UnsignedByte getDisconnectSlot() const;
 	void setDisconnectSlot(UnsignedByte slot);
 
-	UnsignedInt getDisconnectFrame();
+	UnsignedInt getDisconnectFrame() const;
 	void setDisconnectFrame(UnsignedInt frame);
 
 	virtual size_t getPackedByteCount() const;
@@ -333,7 +333,7 @@ public:
 	NetDisconnectChatCommandMsg();
 	//virtual ~NetDisconnectChatCommandMsg();
 
-	UnicodeString getText();
+	UnicodeString getText() const;
 	void setText(UnicodeString text);
 
 	virtual size_t getPackedByteCount() const;
@@ -350,10 +350,10 @@ public:
 	NetChatCommandMsg();
 	//virtual ~NetChatCommandMsg();
 
-	UnicodeString getText();
+	UnicodeString getText() const;
 	void setText(UnicodeString text);
 
-	Int getPlayerMask();
+	Int getPlayerMask() const;
 	void setPlayerMask( Int playerMask );
 
 	virtual size_t getPackedByteCount() const;
@@ -371,10 +371,10 @@ public:
 	NetDisconnectVoteCommandMsg();
 	//virtual ~NetDisconnectVoteCommandMsg();
 
-	UnsignedByte getSlot();
+	UnsignedByte getSlot() const;
 	void setSlot(UnsignedByte slot);
 
-	UnsignedInt getVoteFrame();
+	UnsignedInt getVoteFrame() const;
 	void setVoteFrame(UnsignedInt voteFrame);
 
 	virtual size_t getPackedByteCount() const;
@@ -392,7 +392,7 @@ public:
 	NetProgressCommandMsg();
 	//virtual ~NetProgressCommandMsg();
 
-	UnsignedByte getPercentage();
+	UnsignedByte getPercentage() const;
 	void setPercentage( UnsignedByte percent );
 
 	virtual size_t getPackedByteCount() const;
@@ -409,26 +409,27 @@ public:
 	NetWrapperCommandMsg();
 	//virtual ~NetWrapperCommandMsg();
 
+	const UnsignedByte * getData() const;
 	UnsignedByte * getData();
 	void setData(UnsignedByte *data, UnsignedInt dataLength);
 
 	virtual size_t getPackedByteCount() const;
 
-	UnsignedInt getChunkNumber();
+	UnsignedInt getChunkNumber() const;
 	void setChunkNumber(UnsignedInt chunkNumber);
 
-	UnsignedInt getNumChunks();
+	UnsignedInt getNumChunks() const;
 	void setNumChunks(UnsignedInt numChunks);
 
-	UnsignedInt getDataLength();
+	UnsignedInt getDataLength() const;
 
-	UnsignedInt getTotalDataLength();
+	UnsignedInt getTotalDataLength() const;
 	void setTotalDataLength(UnsignedInt totalDataLength);
 
-	UnsignedInt getDataOffset();
+	UnsignedInt getDataOffset() const;
 	void setDataOffset(UnsignedInt offset);
 
-	UnsignedShort getWrappedCommandID();
+	UnsignedShort getWrappedCommandID() const;
 	void setWrappedCommandID(UnsignedShort wrappedCommandID);
 
 private:
@@ -450,14 +451,15 @@ public:
 	NetFileCommandMsg();
 	//virtual ~NetFileCommandMsg();
 
-	AsciiString getRealFilename();
+	AsciiString getRealFilename() const;
 	void setRealFilename(AsciiString filename);
 
-	AsciiString getPortableFilename() { return m_portableFilename; }
+	AsciiString getPortableFilename() const { return m_portableFilename; }
 	void setPortableFilename(AsciiString filename) { m_portableFilename = filename; }
 
-	UnsignedInt getFileLength();
+	UnsignedInt getFileLength() const;
 
+	const UnsignedByte * getFileData() const;
 	UnsignedByte * getFileData();
 	void setFileData(UnsignedByte *data, UnsignedInt dataLength);
 
@@ -478,16 +480,16 @@ public:
 	NetFileAnnounceCommandMsg();
 	//virtual ~NetFileAnnounceCommandMsg();
 
-	AsciiString getRealFilename();
+	AsciiString getRealFilename() const;
 	void setRealFilename(AsciiString filename);
 
-	AsciiString getPortableFilename() { return m_portableFilename; }
+	AsciiString getPortableFilename() const { return m_portableFilename; }
 	void setPortableFilename(AsciiString filename) { m_portableFilename = filename; }
 
-	UnsignedShort getFileID();
+	UnsignedShort getFileID() const;
 	void setFileID(UnsignedShort fileID);
 
-	UnsignedByte getPlayerMask();
+	UnsignedByte getPlayerMask() const;
 	void setPlayerMask(UnsignedByte playerMask);
 
 	virtual size_t getPackedByteCount() const;
@@ -506,10 +508,10 @@ public:
 	NetFileProgressCommandMsg();
 	//virtual ~NetFileProgressCommandMsg();
 
-	UnsignedShort getFileID();
+	UnsignedShort getFileID() const;
 	void setFileID(UnsignedShort val);
 
-	Int getProgress();
+	Int getProgress() const;
 	void setProgress(Int val);
 
 	virtual size_t getPackedByteCount() const;
@@ -526,7 +528,7 @@ class NetDisconnectFrameCommandMsg : public NetCommandMsg
 public:
 	NetDisconnectFrameCommandMsg();
 
-	UnsignedInt getDisconnectFrame();
+	UnsignedInt getDisconnectFrame() const;
 	void setDisconnectFrame(UnsignedInt disconnectFrame);
 
 	virtual size_t getPackedByteCount() const;
@@ -542,7 +544,7 @@ class NetDisconnectScreenOffCommandMsg : public NetCommandMsg
 public:
 	NetDisconnectScreenOffCommandMsg();
 
-	UnsignedInt getNewFrame();
+	UnsignedInt getNewFrame() const;
 	void setNewFrame(UnsignedInt newFrame);
 
 	virtual size_t getPackedByteCount() const;
@@ -558,7 +560,7 @@ class NetFrameResendRequestCommandMsg : public NetCommandMsg
 public:
 	NetFrameResendRequestCommandMsg();
 
-	UnsignedInt getFrameToResend();
+	UnsignedInt getFrameToResend() const;
 	void setFrameToResend(UnsignedInt frame);
 
 	virtual size_t getPackedByteCount() const;
