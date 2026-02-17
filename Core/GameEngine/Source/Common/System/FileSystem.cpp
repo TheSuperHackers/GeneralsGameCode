@@ -567,7 +567,7 @@ Bool FileSystem::hasValidTransferFileContent(const AsciiString& filePath, const 
 		}
 		TGA2Footer footer;
 		memcpy(&footer, data + dataSize - sizeof(footer), sizeof(footer));
-		if (memcmp(footer.Signature, "TRUEVISION-XFILE", sizeof(footer.Signature)) != 0
+		if (memcmp(footer.Signature, TGA2_SIGNATURE, sizeof(footer.Signature)) != 0
 			|| footer.RsvdChar != '.'
 			|| footer.BZST != '\0')
 		{
