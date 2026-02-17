@@ -8990,7 +8990,7 @@ Path *Pathfinder::findClosestPath( Object *obj, const LocomotorSet& locomotorSet
 }
 
 
-/*static*/ void Pathfinder::adjustCoordToCell(Int cellX, Int cellY, Bool centerInCell, Coord3D& pos, PathfindLayerEnum layer)
+void Pathfinder::adjustCoordToCell(Int cellX, Int cellY, Bool centerInCell, Coord3D &pos, PathfindLayerEnum layer)
 {
 	if (centerInCell) {
 		pos.x = ((Real)cellX + 0.5f) * PATHFIND_CELL_SIZE_F;
