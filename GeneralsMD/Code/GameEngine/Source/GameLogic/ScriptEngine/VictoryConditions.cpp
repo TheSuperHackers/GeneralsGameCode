@@ -93,6 +93,8 @@ public:
 	Bool amIObserver( void ) { return m_isObserver;} 	///< Am I an observer?( need this for scripts )
 	virtual UnsignedInt getEndFrame( void ) { return m_endFrame; }	///< on which frame was the game effectively over?
 private:
+	Player* findFirstVictoriousPlayer(); ///< Find the first player that has achieved victory.
+  void markAllianceVictorious(Player* victoriousPlayer); ///< Mark the victorious player and his allies as victorious.
 	Bool multipleAlliancesExist(void); ///< Are there multiple alliances still alive?
 
 	Player*				m_players[MAX_PLAYER_COUNT];
@@ -188,26 +190,10 @@ void VictoryConditions::update( void )
 
 			// TheSuperHackers @bugfix Stubbjax 11/02/2026 Cache victory status so that premature exits don't void the victory.
 
-			Player* victoriousPlayer = nullptr;
-			for (Int i = 0; i < MAX_PLAYER_COUNT; ++i)
-			{
-				Player* player = m_players[i];
-				if (player && !hasSinglePlayerBeenDefeated(player))
-				{
-					victoriousPlayer = player;
-					break;
-				}
-			}
+			Player* victoriousPlayer = findFirstVictoriousPlayer();
 
 			if (victoriousPlayer)
-			{
-				for (Int i = 0; i < MAX_PLAYER_COUNT; ++i)
-				{
-					Player* player = m_players[i];
-					if (player == victoriousPlayer || (player && areAllies(player, victoriousPlayer)))
-						m_isVictorious[i] = true;
-				}
-			}
+				markAllianceVictorious(victoriousPlayer);
 		}
 	}
 
@@ -264,6 +250,30 @@ void VictoryConditions::update( void )
 			TheRadar->forceOn(localPlayer->getPlayerIndex(), TRUE);
 			SetInGameChatType( INGAME_CHAT_EVERYONE ); // can't chat to allies after death.  Only to other observers.
 		}
+	}
+}
+
+//-------------------------------------------------------------------------------------------------
+Player* VictoryConditions::findFirstVictoriousPlayer()
+{
+	for (Int i = 0; i < MAX_PLAYER_COUNT; ++i)
+	{
+		Player* player = m_players[i];
+		if (player && !hasSinglePlayerBeenDefeated(player))
+			return player;
+	}
+
+	return nullptr;
+}
+
+//-------------------------------------------------------------------------------------------------
+void VictoryConditions::markAllianceVictorious(Player* victoriousPlayer)
+{
+	for (Int i = 0; i < MAX_PLAYER_COUNT; ++i)
+	{
+		Player* player = m_players[i];
+		if (player == victoriousPlayer || (player && areAllies(player, victoriousPlayer)))
+			m_isVictorious[i] = true;
 	}
 }
 
