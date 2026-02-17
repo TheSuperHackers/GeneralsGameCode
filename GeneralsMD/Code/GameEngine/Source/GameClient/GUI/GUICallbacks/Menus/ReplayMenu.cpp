@@ -84,6 +84,7 @@ void deleteReplay( void );
 void copyReplay( void );
 static Bool callCopy = FALSE;
 static Bool callDelete = FALSE;
+static Bool needsListRefresh = FALSE;
 void deleteReplayFlag( void ) { callDelete = TRUE;}
 void copyReplayFlag( void ) { callCopy = TRUE;}
 
@@ -462,6 +463,12 @@ void ReplayMenuUpdate( WindowLayout *layout, void *userData )
 		copyReplay();
 	if(callDelete)
 		deleteReplay();
+	if(needsListRefresh)
+	{
+		needsListRefresh = FALSE;
+		GadgetListBoxReset(listboxReplayFiles);
+		PopulateReplayFileListbox(listboxReplayFiles);
+	}
 		// We'll only be successful if we've requested to
 	if(isShuttingDown && TheShell->isAnimFinished()&& TheTransitionHandler->isFinished())
 		TheShell->shutdownComplete( layout );
@@ -535,26 +542,28 @@ void reallyLoadReplay(void)
 	asciiFilename.translate(filename);
 
 	// TheSuperHackers @bugfix bobtista Re-validate replay file before playback to handle file deletion
-	// during version mismatch prompt, using the same validation pattern as loadReplay
-	RecorderClass::ReplayHeader header;
-	ReplayGameInfo info;
-	const MapMetaData *mapData;
-
-	if(!readReplayMapInfo(asciiFilename, header, info, mapData))
+	// during version mismatch prompt, using the same error pattern as deleteReplay
+	AsciiString filepath = TheRecorder->getReplayDir();
+	filepath.concat(asciiFilename);
+	if(GetFileAttributes(filepath.str()) == INVALID_FILE_ATTRIBUTES)
 	{
-		UnicodeString title = TheGameText->FETCH_OR_SUBSTITUTE("GUI:ReplayFileNotFoundTitle", L"REPLAY NOT FOUND");
-		UnicodeString body = TheGameText->FETCH_OR_SUBSTITUTE("GUI:ReplayFileNotFound", L"This replay cannot be loaded because the file no longer exists on this device.");
-		MessageBoxOk(title, body, nullptr);
-		GadgetListBoxReset(listboxReplayFiles);
-		PopulateReplayFileListbox(listboxReplayFiles);
+		char buffer[1024];
+		FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, nullptr, GetLastError(), 0, buffer, sizeof(buffer), nullptr);
+		UnicodeString errorStr;
+		AsciiString translate;
+		translate.set(buffer);
+		errorStr.translate(translate);
+		MessageBoxOk(TheGameText->fetch("GUI:Error"), errorStr, nullptr);
+		needsListRefresh = TRUE;
 		return;
 	}
 
-	TheRecorder->playbackFile(asciiFilename);
-
-	if(parentReplayMenu != nullptr)
+	if(TheRecorder->playbackFile(asciiFilename))
 	{
-		parentReplayMenu->winHide(TRUE);
+		if(parentReplayMenu != nullptr)
+		{
+			parentReplayMenu->winHide(TRUE);
+		}
 	}
 }
 
