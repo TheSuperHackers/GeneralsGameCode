@@ -78,7 +78,7 @@ class GameMessageParser : public MemoryPoolObject
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(GameMessageParser, "GameMessageParser")
 public:
 	GameMessageParser();
-	GameMessageParser(GameMessage *msg);
+	GameMessageParser(const GameMessage *msg);
 	//virtual ~GameMessageParser();
 
 	GameMessageParserArgumentType *getFirstArgumentType();
