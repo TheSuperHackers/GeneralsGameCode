@@ -3385,6 +3385,7 @@ void ParticleSystemManager::xfer( Xfer *xfer )
 
 			friend_addParticleSystem(system);
 		}
+
 	}
 
 }
