@@ -463,13 +463,13 @@ namespace
 
 enum TransferFileType
 {
-	TRANSFER_FILE_MAP,
-	TRANSFER_FILE_INI,
-	TRANSFER_FILE_STR,
-	TRANSFER_FILE_TXT,
-	TRANSFER_FILE_TGA,
-	TRANSFER_FILE_WAK,
-	TRANSFER_FILE_COUNT
+	TransferFileType_Map,
+	TransferFileType_Ini,
+	TransferFileType_Str,
+	TransferFileType_Txt,
+	TransferFileType_Tga,
+	TransferFileType_Wak,
+	TransferFileType_Count
 };
 
 struct TransferFileRule
@@ -481,12 +481,12 @@ struct TransferFileRule
 
 const TransferFileRule transferFileRules[] =
 {
-	{ ".map", 5 * 1024 * 1024, TRANSFER_FILE_MAP },
-	{ ".ini", 512 * 1024, TRANSFER_FILE_INI },
-	{ ".str", 512 * 1024, TRANSFER_FILE_STR },
-	{ ".txt", 512 * 1024, TRANSFER_FILE_TXT },
-	{ ".tga", 2 * 1024 * 1024, TRANSFER_FILE_TGA },
-	{ ".wak", 512 * 1024, TRANSFER_FILE_WAK },
+	{ ".map", 5 * 1024 * 1024, TransferFileType_Map },
+	{ ".ini", 512 * 1024, TransferFileType_Ini },
+	{ ".str", 512 * 1024, TransferFileType_Str },
+	{ ".txt", 512 * 1024, TransferFileType_Txt },
+	{ ".tga", 2 * 1024 * 1024, TransferFileType_Tga },
+	{ ".wak", 512 * 1024, TransferFileType_Wak },
 };
 
 const TransferFileRule* getTransferFileRule(const char* extension)
@@ -534,7 +534,7 @@ Bool FileSystem::hasValidTransferFileContent(const AsciiString& filePath, const 
 	// Extension-specific content validation
 	switch (rule->type)
 	{
-	case TRANSFER_FILE_MAP:
+	case TransferFileType_Map:
 		if (dataSize < 4 || memcmp(data, "CkMp", 4) != 0)
 		{
 			DEBUG_LOG(("Map file '%s' has invalid magic bytes.", filePath.str()));
@@ -542,7 +542,7 @@ Bool FileSystem::hasValidTransferFileContent(const AsciiString& filePath, const 
 		}
 		break;
 
-	case TRANSFER_FILE_INI:
+	case TransferFileType_Ini:
 	{
 		UnsignedInt bytesToCheck = std::min(dataSize, 512u);
 		for (UnsignedInt i = 0; i < bytesToCheck; ++i)
@@ -556,7 +556,7 @@ Bool FileSystem::hasValidTransferFileContent(const AsciiString& filePath, const 
 		break;
 	}
 
-	case TRANSFER_FILE_TGA:
+	case TransferFileType_Tga:
 		if (dataSize < 44)
 		{
 			DEBUG_LOG(("TGA file '%s' is too small to be valid (minimum header 18 + footer 26 = 44 bytes).", filePath.str()));
