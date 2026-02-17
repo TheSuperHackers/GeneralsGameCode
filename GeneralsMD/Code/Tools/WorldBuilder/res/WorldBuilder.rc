@@ -1693,17 +1693,6 @@ BEGIN
                     BS_AUTOCHECKBOX | BS_LEFTTEXT | WS_TABSTOP,40,51,95,14
 END
 
-IDD_EULA_AGREEMENT DIALOG DISCARDABLE  0, 0, 267, 289
-STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "EA TOOLS END USER LICENSE"
-FONT 8, "MS Sans Serif"
-BEGIN
-    PUSHBUTTON      "Cancel",IDCANCEL,210,268,50,14
-    DEFPUSHBUTTON   "Accept Terms",IDOK,154,268,50,14
-    EDITTEXT        IDC_EDIT1,17,18,230,246,ES_MULTILINE | ES_READONLY | 
-                    WS_VSCROLL
-END
-
 IDD_TeamObjectProperties DIALOG DISCARDABLE  0, 0, 213, 327
 STYLE DS_MODALFRAME | WS_CHILD | WS_DISABLED | WS_CAPTION | WS_SYSMENU
 CAPTION "Common Object Properties"
@@ -2366,14 +2355,6 @@ BEGIN
         BOTTOMMARGIN, 88
     END
 
-    IDD_EULA_AGREEMENT, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 260
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 282
-    END
-
     IDD_TeamObjectProperties, DIALOG
     BEGIN
         BOTTOMMARGIN, 321
@@ -2795,11 +2776,6 @@ BEGIN
     IDS_SINGLE_SELECTION_ONLY "Single Selection Only"
     IDS_NO_UPGRADES         "No Upgrades Available"
     IDS_TEAMS_FIXED         "One or more teams have been fixed.  Please save and re-open the file."
-    IDS_EULA_AGREEMENT1     "Electronic Arts Inc, and its subsidiaries, affiliates and licensors (collectively, ""EA"") grants you a non- transferable license to download and use one copy of the software tool (""Tool""), other materials accompanying the tool, and the materials created with the tool (collectively the ""Tools & Materials"") solely for your personal noncommercial use in connection with EA products."
-    IDS_EULA_AGREEMENT2     "\r\n\r\nEA and its Licensors own all of the rights in the Tools & Materials.  You may not alter any of EA's trademarks or logos, or alter or remove any of EA's or its Licensor's trademark or copyright notices included in or with the Tools & Materials. Your right to use Tools & Materials is limited to the license grant above, and you may not otherwise copy, display, distribute, perform, publish, modify, or use any of the Tools & Materials.  Without limiting the preceding sentence, you may not modify, reverse engineer, disassemble, license, transfer, distribute, create derivative works from, or sell the Tool, or use the Tools & Materials to further any commercial or unlawful purpose.  Without limiting the foregoing, you may not use the Tools & Materials to sell advertising, to promote another product or business, or on any site that operates or promotes a server emulator."
-    IDS_EULA_AGREEMENT3     "\r\n\r\nEA does not represent or warrant that you will be able to use any of the Tools & Materials. You expressly agree that your use of the Tools & Materials is at your sole risk. The Tools & Materials are provided on an ""as is,"" ""as available"" basis. EA disclaims all implied warranties and conditions, including without limitation any implied warranties of merchantability, fitness for a particular purpose, or non-infringement of third party rights. EA assumes no responsibility for any damages suffered by you. At EA's request, you agree to defend, indemnify and hold harmless EA from all liabilities, claims and expenses, including attorneys' fees, arising from any breach of this License by you and/or your use or misuse of the Tools & Materials."
-    IDS_EULA_AGREEMENT4     "\r\n\r\nEA may make the Tools & Materials available at its site(s) located in the United States and/or Canada and/or the European Union.  You are solely responsible for knowing and complying with all federal, state, and local laws that may apply to your use of Tools & Materials in your own locale. By downloading any Tools & Materials, you warrant that you are not located in any country, or exporting the Tools & Materials to any person or place, to which the United States and/or Canada and/or European Union or its member countries has embargoed goods."
-    IDS_EULA_AGREEMENT5     "\r\n\r\nEA may terminate this License at any time.  Upon termination, you must destroy or return to EA all Tools & Materials.  This License is governed by United States Copyright and California law (without regard to conflicts of law), and is the entire agreement between EA and you regarding the Tools & Materials."
     IDS_MAPOBJECT_PROPS_TITLE "Object Properties"
     IDS_NO_PROBLEMS         "No problems were detected."
     IDS_DUPLICATE_TEAM_REMOVED "Duplicate instance of team ""%s"" removed."

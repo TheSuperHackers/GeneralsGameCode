@@ -48,18 +48,35 @@ enum ConnectionNumbers CPP_11(: Int)
 	NUM_CONNECTIONS
 };
 
-static const Int MAX_SLOTS = MAX_PLAYER+1;
+static constexpr const Int MAX_SLOTS = MAX_PLAYER+1;
 
+// TheSuperHackers @info As we are not detecting for network fragmentation and dynamically adjusting payload sizes, we set an 1100 bytes UDP payload as a safe upper limit for various networks
+// We chose 1100 bytes as when taking mobile networks into account, maximum transmission unit sizes can vary from 1340 - 1500 bytes
+// and when the packet headers for PPPOE, IPV6 and other virtual network encapsulation are considered, we need a lower safe UDP payload to prevent fragmentation.
+static constexpr const Int MAX_UDP_PAYLOAD_SIZE = 1100;
 // UDP (8 bytes) + IP header (28 bytes) = 36 bytes total.  We want a total packet size of 512, so 512 - 36 = 476
-static const Int MAX_PACKET_SIZE = 476;
+static constexpr const Int RETAIL_GAME_PACKET_SIZE = 476;
+
+// TheSuperHackers @info The legacy lanapi cannot use a larger packet size without breaking the gameinfo command
+static constexpr const Int MAX_LANAPI_PACKET_SIZE = RETAIL_GAME_PACKET_SIZE;
+
+// TheSuperHackers @bugfix Mauller 08/02/2026 Allow larger ethernet UDP payload to be used for game messages, this fixes connection issues and eliminates disconnection bugs
+#if RETAIL_COMPATIBLE_NETWORKING
+static constexpr const Int MAX_PACKET_SIZE = RETAIL_GAME_PACKET_SIZE;
+static constexpr const Int MAX_NETWORK_MESSAGE_LEN = 1024;
+#else
+static constexpr const Int MAX_PACKET_SIZE = MAX_UDP_PAYLOAD_SIZE - sizeof(TransportMessageHeader);
+static constexpr const Int MAX_NETWORK_MESSAGE_LEN = MAX_UDP_PAYLOAD_SIZE;
+#endif
+
+// TheSuperHackers @bugfix Mauller 08/02/2026 Double send and receive buffer sizes to alleviate the occurance of disconnection issues in retail and non retail code.
+static constexpr const Int MAX_MESSAGES = 256;
 
 /**
  * Command packet - contains frame #, total # of commands, and each command.  This is what gets sent
  * to each player every frame
  */
-#define MAX_MESSAGE_LEN 1024
-#define MAX_MESSAGES 128
-static const Int numCommandsPerCommandPacket = (MAX_MESSAGE_LEN - sizeof(UnsignedInt) - sizeof(UnsignedShort))/sizeof(GameMessage);
+static const Int numCommandsPerCommandPacket = (MAX_NETWORK_MESSAGE_LEN - sizeof(UnsignedInt) - sizeof(UnsignedShort))/sizeof(GameMessage);
 #pragma pack(push, 1)
 struct CommandPacket
 {
@@ -89,7 +106,14 @@ struct TransportMessageHeader
 struct TransportMessage
 {
 	TransportMessageHeader header;
-	UnsignedByte data[MAX_MESSAGE_LEN];
+#if RETAIL_COMPATIBLE_NETWORKING
+	// TheSuperHackers @info This value is not the correct one that should be used here, it should have been max packet size
+	// The non retail max network message len takes the extra bytes of the network message header into account when handling UDP payload data
+	// In retail this only works since no data larger than the retail game packet size is put into a network message
+	UnsignedByte data[MAX_NETWORK_MESSAGE_LEN];
+#else
+	UnsignedByte data[MAX_PACKET_SIZE];
+#endif
 	Int length;
 	UnsignedInt addr;
 	UnsignedShort port;
