@@ -54,6 +54,7 @@
 #include "Common/GameAudio.h"
 #include "Common/LocalFileSystem.h"
 #include "Common/PerfTimer.h"
+#include "TARGA.h"
 
 
 DECLARE_PERF_TIMER(FileSystem)
@@ -560,12 +561,16 @@ Bool FileSystem::hasValidTransferFileContent(const AsciiString& filePath, const 
 
 	case TransferFileType_Tga:
 	{
-		if (dataSize < 44)
+		if (dataSize < sizeof(TGAHeader) + sizeof(TGA2Footer))
 		{
-			DEBUG_LOG(("TGA file '%s' is too small to be valid (minimum header 18 + footer 26 = 44 bytes).", filePath.str()));
+			DEBUG_LOG(("TGA file '%s' is too small to be valid.", filePath.str()));
 			return false;
 		}
-		if (memcmp(data + dataSize - 18, "TRUEVISION-XFILE.", 18) != 0)
+		TGA2Footer footer;
+		memcpy(&footer, data + dataSize - sizeof(footer), sizeof(footer));
+		if (memcmp(footer.Signature, "TRUEVISION-XFILE", sizeof(footer.Signature)) != 0
+			|| footer.RsvdChar != '.'
+			|| footer.BZST != '\0')
 		{
 			DEBUG_LOG(("TGA file '%s' is missing TRUEVISION-XFILE footer signature.", filePath.str()));
 			return false;
