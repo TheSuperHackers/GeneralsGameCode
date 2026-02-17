@@ -476,29 +476,28 @@ struct TransferFileRule
 {
 	const char* ext;
 	UnsignedInt maxSize;
-	TransferFileType type;
 };
 
-const TransferFileRule transferFileRules[] =
+const TransferFileRule transferFileRules[TransferFileType_Count] =
 {
-	{ ".map", 5 * 1024 * 1024, TransferFileType_Map },
-	{ ".ini", 512 * 1024, TransferFileType_Ini },
-	{ ".str", 512 * 1024, TransferFileType_Str },
-	{ ".txt", 512 * 1024, TransferFileType_Txt },
-	{ ".tga", 2 * 1024 * 1024, TransferFileType_Tga },
-	{ ".wak", 512 * 1024, TransferFileType_Wak },
+	{ ".map", 5 * 1024 * 1024 },
+	{ ".ini", 512 * 1024 },
+	{ ".str", 512 * 1024 },
+	{ ".txt", 512 * 1024 },
+	{ ".tga", 2 * 1024 * 1024 },
+	{ ".wak", 512 * 1024 },
 };
 
-const TransferFileRule* getTransferFileRule(const char* extension)
+TransferFileType getTransferFileType(const char* extension)
 {
-	for (Int i = 0; i < ARRAY_SIZE(transferFileRules); ++i)
+	for (Int i = 0; i < TransferFileType_Count; ++i)
 	{
 		if (stricmp(extension, transferFileRules[i].ext) == 0)
 		{
-			return &transferFileRules[i];
+			return static_cast<TransferFileType>(i);
 		}
 	}
-	return nullptr;
+	return TransferFileType_Count;
 }
 
 } // namespace
@@ -517,22 +516,23 @@ Bool FileSystem::hasValidTransferFileContent(const AsciiString& filePath, const 
 		return false;
 	}
 
-	const TransferFileRule* rule = getTransferFileRule(lastDot);
-	if (rule == nullptr)
+	const TransferFileType fileType = getTransferFileType(lastDot);
+	if (fileType == TransferFileType_Count)
 	{
 		DEBUG_LOG(("File '%s' has unrecognized extension '%s' for content validation.", filePath.str(), lastDot));
 		return false;
 	}
 
 	// Check size limit
-	if (dataSize > rule->maxSize)
+	const TransferFileRule& rule = transferFileRules[fileType];
+	if (dataSize > rule.maxSize)
 	{
-		DEBUG_LOG(("File '%s' exceeds maximum size (%u bytes, limit %u bytes).", filePath.str(), dataSize, rule->maxSize));
+		DEBUG_LOG(("File '%s' exceeds maximum size (%u bytes, limit %u bytes).", filePath.str(), dataSize, rule.maxSize));
 		return false;
 	}
 
 	// Extension-specific content validation
-	switch (rule->type)
+	switch (fileType)
 	{
 	case TransferFileType_Map:
 		if (dataSize < 4 || memcmp(data, "CkMp", 4) != 0)
