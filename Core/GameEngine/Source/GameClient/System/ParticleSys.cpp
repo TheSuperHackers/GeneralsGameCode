@@ -3370,11 +3370,12 @@ void ParticleSystemManager::xfer( Xfer *xfer )
 			// TheSuperHackers @bugfix stephanmeesters 16/02/2026
 			// Particle systems originally were assigned an incrementing system ID in the constructor that did not
 			// always match the ID that was xfer'd. When using findParticleSystem this would cause master/slave lookups to fail.
-			// Defer registering particle systems to ParticleSys until the system ID is properly restored.
+			// Defer registering particle systems to ParticleSystemManager until the system ID is properly restored.
 			system = newInstance(ParticleSystem)( systemTemplate, INVALID_PARTICLE_SYSTEM_ID, FALSE );
 
 			// read system data
 			xfer->xferSnapshot( system );
+			friend_addParticleSystem(system);
 
 			if( system->getSystemID() == INVALID_PARTICLE_SYSTEM_ID )
 			{
@@ -3383,7 +3384,6 @@ void ParticleSystemManager::xfer( Xfer *xfer )
 				throw SC_INVALID_DATA;
 			}
 
-			friend_addParticleSystem(system);
 		}
 
 	}
