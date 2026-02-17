@@ -127,8 +127,8 @@ struct TWheelInfo
 	Real m_rearLeftHeightOffset;
 	Real m_rearRightHeightOffset;
 	Real m_wheelAngle;								///< Wheel angle.  0 = straight, >0 left, <0 right.
-	Int	 m_framesAirborneCounter;			///< Counter.
-	Int	 m_framesAirborne;						///< How many frames it was in the air.
+	Real m_framesAirborneCounter;			///< Counter (in 30fps-equivalent frames).
+	Real m_framesAirborne;						///< How long it was in the air (in 30fps-equivalent frames).
 };
 
 //-----------------------------------------------------------------------------
@@ -653,7 +653,7 @@ private:
 		FADING_OUT
 	};
 	FadingMode		m_fadeMode;
-	UnsignedInt		m_timeElapsedFade;			///< for how many frames have i been fading
+	Real			m_timeElapsedFade;			///< for how long have i been fading (in 30fps-equivalent frames)
 	UnsignedInt		m_timeToFade;						///< how slowly am I fading
 
 	UnsignedInt		m_shroudClearFrame;						///< Last frame the local player saw this drawable "OBJECTSHROUD_CLEAR"

@@ -1170,7 +1170,9 @@ void Drawable::updateDrawable( void )
 			Real numer = (m_fadeMode == FADING_IN) ? (m_timeElapsedFade) : (m_timeToFade-m_timeElapsedFade);
 
 			setDrawableOpacity(numer/(Real)m_timeToFade);
-			++m_timeElapsedFade;
+			// TheSuperHackers @tweak Drawable fade is now decoupled from the render update.
+			const Real fadeTimeScale = TheFramePacer->getActualLogicTimeScaleOverFpsRatio();
+			m_timeElapsedFade += fadeTimeScale;
 
 			if (m_timeElapsedFade > m_timeToFade)
 				m_fadeMode = FADING_NONE;
@@ -1188,7 +1190,9 @@ void Drawable::updateDrawable( void )
 			{
 				//LERP
 				(*dm)->setTerrainDecalOpacity(m_decalOpacity);
-				m_decalOpacity += m_decalOpacityFadeRate;
+				// TheSuperHackers @tweak Decal opacity fade is now decoupled from the render update.
+				const Real decalFadeTimeScale = TheFramePacer->getActualLogicTimeScaleOverFpsRatio();
+				m_decalOpacity += m_decalOpacityFadeRate * decalFadeTimeScale;
 			}
 			//---------------
 
@@ -1372,17 +1376,34 @@ void Drawable::applyPhysicsXform(Matrix3D* mtx)
 {
 	if (m_physicsXform != nullptr)
 	{
-		// TheSuperHackers @tweak Update the physics transform on every WW Sync only.
-		// All calculations are originally catered to a 30 fps logic step.
+		// TheSuperHackers @tweak Run physics on logic frames only, interpolate for rendering.
+		// This provides stable physics at any framerate without numerical integration issues.
 		if (WW3D::Get_Sync_Frame_Time() != 0)
 		{
+			// Save previous state before calculating new physics
+			m_physicsXform->m_prevTotalPitch = m_physicsXform->m_totalPitch;
+			m_physicsXform->m_prevTotalRoll = m_physicsXform->m_totalRoll;
+			m_physicsXform->m_prevTotalYaw = m_physicsXform->m_totalYaw;
+			m_physicsXform->m_prevTotalZ = m_physicsXform->m_totalZ;
+
 			calcPhysicsXform(*m_physicsXform);
 		}
 
-		mtx->Translate(0.0f, 0.0f, m_physicsXform->m_totalZ);
-		mtx->Rotate_Y( m_physicsXform->m_totalPitch );
-		mtx->Rotate_X( -m_physicsXform->m_totalRoll );
-		mtx->Rotate_Z( m_physicsXform->m_totalYaw );
+		// Interpolate between previous and current state based on fractional sync time.
+		// Logic runs at ~33.3ms per frame (30fps), fractional time accumulates between logic frames.
+		const Real LOGIC_FRAME_MS = TheFramePacer->getLogicTimeStepMilliseconds();
+		const Real fractionalMs = (Real)WW3D::Get_Fractional_Sync_Milliseconds();
+		const Real t = (LOGIC_FRAME_MS > 0.0f) ? clamp(0.0f, fractionalMs / LOGIC_FRAME_MS, 1.0f) : 0.0f;
+
+		const Real interpPitch = m_physicsXform->m_prevTotalPitch + t * (m_physicsXform->m_totalPitch - m_physicsXform->m_prevTotalPitch);
+		const Real interpRoll = m_physicsXform->m_prevTotalRoll + t * (m_physicsXform->m_totalRoll - m_physicsXform->m_prevTotalRoll);
+		const Real interpYaw = m_physicsXform->m_prevTotalYaw + t * (m_physicsXform->m_totalYaw - m_physicsXform->m_prevTotalYaw);
+		const Real interpZ = m_physicsXform->m_prevTotalZ + t * (m_physicsXform->m_totalZ - m_physicsXform->m_prevTotalZ);
+
+		mtx->Translate(0.0f, 0.0f, interpZ);
+		mtx->Rotate_Y( interpPitch );
+		mtx->Rotate_X( -interpRoll );
+		mtx->Rotate_Z( interpYaw );
 	}
 }
 
@@ -1770,7 +1791,9 @@ void Drawable::calcPhysicsXformTreads( const Locomotor *locomotor, PhysicsXformI
 		// if we had an overlap last frame, and we're now in the air, give a
 		// kick to the pitch for effect
 		if (physics->getPreviousOverlap() != INVALID_ID && m_locoInfo->m_overlapZ > 0.0f)
+		{
 			m_locoInfo->m_pitchRate += LEAVE_OVERLAP_PITCH_KICK;
+		}
 	}
 
 
@@ -1788,7 +1811,9 @@ void Drawable::calcPhysicsXformTreads( const Locomotor *locomotor, PhysicsXformI
 	{
 		m_locoInfo->m_pitchRate += ((-PITCH_STIFFNESS * (m_locoInfo->m_pitch - groundPitch)) + (-PITCH_DAMPING * m_locoInfo->m_pitchRate));		// spring/damper
 		if (m_locoInfo->m_pitchRate > 0.0f)
+		{
 			m_locoInfo->m_pitchRate *= 0.5f;
+		}
 
 		m_locoInfo->m_rollRate += ((-ROLL_STIFFNESS * (m_locoInfo->m_roll - groundRoll)) + (-ROLL_DAMPING * m_locoInfo->m_rollRate));		// spring/damper
 	}
@@ -1953,16 +1978,18 @@ void Drawable::calcPhysicsXformWheels( const Locomotor *locomotor, PhysicsXformI
 		{
 			// Wheels extend when airborne.
 			m_locoInfo->m_wheelInfo.m_framesAirborne = 0;
-			m_locoInfo->m_wheelInfo.m_framesAirborneCounter++;
+			m_locoInfo->m_wheelInfo.m_framesAirborneCounter += 1.0f;
+			const Real suspensionFactor = 0.5f;
+
 			if (pos->z - hheight > -MAX_SUSPENSION_EXTENSION)
 			{
-				m_locoInfo->m_wheelInfo.m_rearLeftHeightOffset += (MAX_SUSPENSION_EXTENSION - m_locoInfo->m_wheelInfo.m_rearLeftHeightOffset)/2.0f;
-				m_locoInfo->m_wheelInfo.m_rearRightHeightOffset += (MAX_SUSPENSION_EXTENSION - m_locoInfo->m_wheelInfo.m_rearRightHeightOffset)/2.0f;
+				m_locoInfo->m_wheelInfo.m_rearLeftHeightOffset += (MAX_SUSPENSION_EXTENSION - m_locoInfo->m_wheelInfo.m_rearLeftHeightOffset) * suspensionFactor;
+				m_locoInfo->m_wheelInfo.m_rearRightHeightOffset += (MAX_SUSPENSION_EXTENSION - m_locoInfo->m_wheelInfo.m_rearRightHeightOffset) * suspensionFactor;
 			}
 			else
 			{
-				m_locoInfo->m_wheelInfo.m_rearLeftHeightOffset += (0 - m_locoInfo->m_wheelInfo.m_rearLeftHeightOffset)/2.0f;
-				m_locoInfo->m_wheelInfo.m_rearRightHeightOffset += (0 - m_locoInfo->m_wheelInfo.m_rearRightHeightOffset)/2.0f;
+				m_locoInfo->m_wheelInfo.m_rearLeftHeightOffset += (0 - m_locoInfo->m_wheelInfo.m_rearLeftHeightOffset) * suspensionFactor;
+				m_locoInfo->m_wheelInfo.m_rearRightHeightOffset += (0 - m_locoInfo->m_wheelInfo.m_rearRightHeightOffset) * suspensionFactor;
 			}
 		}
 		// Calculate suspension info.
@@ -1983,24 +2010,25 @@ void Drawable::calcPhysicsXformWheels( const Locomotor *locomotor, PhysicsXformI
 		Real factor = curSpeed/maxSpeed;
 		if (fabs(m_locoInfo->m_pitchRate)<factor*BOUNCE_ANGLE_KICK/4 && fabs(m_locoInfo->m_rollRate)<factor*BOUNCE_ANGLE_KICK/8)
 		{
+			const Real scaledBounceKick = BOUNCE_ANGLE_KICK * factor;
 			// do the bouncy.
 			switch (GameClientRandomValue(0,3))
 			{
 			case 0:
-				m_locoInfo->m_pitchRate -= BOUNCE_ANGLE_KICK*factor;
-				m_locoInfo->m_rollRate -= BOUNCE_ANGLE_KICK*factor/2;
+				m_locoInfo->m_pitchRate -= scaledBounceKick;
+				m_locoInfo->m_rollRate -= scaledBounceKick/2;
 				break;
 			case 1:
-				m_locoInfo->m_pitchRate += BOUNCE_ANGLE_KICK*factor;
-				m_locoInfo->m_rollRate -= BOUNCE_ANGLE_KICK*factor/2;
+				m_locoInfo->m_pitchRate += scaledBounceKick;
+				m_locoInfo->m_rollRate -= scaledBounceKick/2;
 				break;
 			case 2:
-				m_locoInfo->m_pitchRate -= BOUNCE_ANGLE_KICK*factor;
-				m_locoInfo->m_rollRate += BOUNCE_ANGLE_KICK*factor/2;
+				m_locoInfo->m_pitchRate -= scaledBounceKick;
+				m_locoInfo->m_rollRate += scaledBounceKick/2;
 				break;
 			case 3:
-				m_locoInfo->m_pitchRate += BOUNCE_ANGLE_KICK*factor;
-				m_locoInfo->m_rollRate += BOUNCE_ANGLE_KICK*factor/2;
+				m_locoInfo->m_pitchRate += scaledBounceKick;
+				m_locoInfo->m_rollRate += scaledBounceKick/2;
 				break;
 			}
 		}
@@ -2015,7 +2043,9 @@ void Drawable::calcPhysicsXformWheels( const Locomotor *locomotor, PhysicsXformI
 	{
 		m_locoInfo->m_pitchRate += ((-PITCH_STIFFNESS * (m_locoInfo->m_pitch - groundPitch)) + (-PITCH_DAMPING * m_locoInfo->m_pitchRate));		// spring/damper
 		if (m_locoInfo->m_pitchRate > 0.0f)
+		{
 			m_locoInfo->m_pitchRate *= 0.5f;
+		}
 
 		m_locoInfo->m_rollRate += ((-ROLL_STIFFNESS * (m_locoInfo->m_roll - groundRoll)) + (-ROLL_DAMPING * m_locoInfo->m_rollRate));		// spring/damper
 	}
@@ -2092,8 +2122,10 @@ void Drawable::calcPhysicsXformWheels( const Locomotor *locomotor, PhysicsXformI
 		// etc, this smaller angle we'll be adding covers the constant wheel shifting
 		// left and right when moving in a relatively straight line
 		//
+		// TheSuperHackers @tweak Wheel angle smoothing is now decoupled from the render update.
 		#define WHEEL_SMOOTHNESS 10.0f  // higher numbers add smaller angles, make it more "smooth"
-		m_locoInfo->m_wheelInfo.m_wheelAngle += (newInfo.m_wheelAngle - m_locoInfo->m_wheelInfo.m_wheelAngle)/WHEEL_SMOOTHNESS;
+		const Real wheelAngleTimeScale = TheFramePacer->getActualLogicTimeScaleOverFpsRatio();
+		m_locoInfo->m_wheelInfo.m_wheelAngle += (newInfo.m_wheelAngle - m_locoInfo->m_wheelInfo.m_wheelAngle)/WHEEL_SMOOTHNESS * wheelAngleTimeScale;
 
 		const Real SPRING_FACTOR = 0.9f;
 		if (pitchHeight<0) {	// Front raising up
@@ -2118,27 +2150,31 @@ void Drawable::calcPhysicsXformWheels( const Locomotor *locomotor, PhysicsXformI
 			newInfo.m_rearLeftHeightOffset += SPRING_FACTOR*(rollHeight/3+rollHeight/2);
 			newInfo.m_frontLeftHeightOffset += SPRING_FACTOR*(rollHeight/3+rollHeight/2);
 		}
+		// TheSuperHackers @tweak Wheel compression dampening is now decoupled from the render update.
+		const Real compressionTimeScale = TheFramePacer->getActualLogicTimeScaleOverFpsRatio();
+		const Real compressionFactor = 0.5f * compressionTimeScale;
+
 		if (newInfo.m_frontLeftHeightOffset < m_locoInfo->m_wheelInfo.m_frontLeftHeightOffset) {
 			// If it's going down, dampen the movement a bit
-			m_locoInfo->m_wheelInfo.m_frontLeftHeightOffset += (newInfo.m_frontLeftHeightOffset - m_locoInfo->m_wheelInfo.m_frontLeftHeightOffset)/2.0f;
+			m_locoInfo->m_wheelInfo.m_frontLeftHeightOffset += (newInfo.m_frontLeftHeightOffset - m_locoInfo->m_wheelInfo.m_frontLeftHeightOffset) * compressionFactor;
 		}	else {
 			m_locoInfo->m_wheelInfo.m_frontLeftHeightOffset = newInfo.m_frontLeftHeightOffset;
 		}
 		if (newInfo.m_frontRightHeightOffset < m_locoInfo->m_wheelInfo.m_frontRightHeightOffset) {
 			// If it's going down, dampen the movement a bit
-			m_locoInfo->m_wheelInfo.m_frontRightHeightOffset += (newInfo.m_frontRightHeightOffset - m_locoInfo->m_wheelInfo.m_frontRightHeightOffset)/2.0f;
+			m_locoInfo->m_wheelInfo.m_frontRightHeightOffset += (newInfo.m_frontRightHeightOffset - m_locoInfo->m_wheelInfo.m_frontRightHeightOffset) * compressionFactor;
 		}	else {
 			m_locoInfo->m_wheelInfo.m_frontRightHeightOffset = newInfo.m_frontRightHeightOffset;
 		}
 		if (newInfo.m_rearLeftHeightOffset < m_locoInfo->m_wheelInfo.m_rearLeftHeightOffset) {
 			// If it's going down, dampen the movement a bit
-			m_locoInfo->m_wheelInfo.m_rearLeftHeightOffset += (newInfo.m_rearLeftHeightOffset - m_locoInfo->m_wheelInfo.m_rearLeftHeightOffset)/2.0f;
+			m_locoInfo->m_wheelInfo.m_rearLeftHeightOffset += (newInfo.m_rearLeftHeightOffset - m_locoInfo->m_wheelInfo.m_rearLeftHeightOffset) * compressionFactor;
 		}	else {
 			m_locoInfo->m_wheelInfo.m_rearLeftHeightOffset = newInfo.m_rearLeftHeightOffset;
 		}
 		if (newInfo.m_rearRightHeightOffset < m_locoInfo->m_wheelInfo.m_rearRightHeightOffset) {
 			// If it's going down, dampen the movement a bit
-			m_locoInfo->m_wheelInfo.m_rearRightHeightOffset += (newInfo.m_rearRightHeightOffset - m_locoInfo->m_wheelInfo.m_rearRightHeightOffset)/2.0f;
+			m_locoInfo->m_wheelInfo.m_rearRightHeightOffset += (newInfo.m_rearRightHeightOffset - m_locoInfo->m_wheelInfo.m_rearRightHeightOffset) * compressionFactor;
 		}	else {
 			m_locoInfo->m_wheelInfo.m_rearRightHeightOffset = newInfo.m_rearRightHeightOffset;
 		}
@@ -2248,15 +2284,17 @@ void Drawable::calcPhysicsXformMotorcycle( const Locomotor *locomotor, PhysicsXf
 		{
 			// Wheels extend when airborne.
 			m_locoInfo->m_wheelInfo.m_framesAirborne = 0;
-			m_locoInfo->m_wheelInfo.m_framesAirborneCounter++;
+			m_locoInfo->m_wheelInfo.m_framesAirborneCounter += 1.0f;
+			const Real suspensionFactor = 0.5f;
+
 			if (pos->z - hheight > -MAX_SUSPENSION_EXTENSION)
 			{
-				m_locoInfo->m_wheelInfo.m_rearLeftHeightOffset += (MAX_SUSPENSION_EXTENSION - m_locoInfo->m_wheelInfo.m_rearLeftHeightOffset)/2.0f;
+				m_locoInfo->m_wheelInfo.m_rearLeftHeightOffset += (MAX_SUSPENSION_EXTENSION - m_locoInfo->m_wheelInfo.m_rearLeftHeightOffset) * suspensionFactor;
 				m_locoInfo->m_wheelInfo.m_rearRightHeightOffset = m_locoInfo->m_wheelInfo.m_rearLeftHeightOffset;
 			}
 			else
 			{
-				m_locoInfo->m_wheelInfo.m_rearLeftHeightOffset += (0 - m_locoInfo->m_wheelInfo.m_rearLeftHeightOffset)/2.0f;
+				m_locoInfo->m_wheelInfo.m_rearLeftHeightOffset += (0 - m_locoInfo->m_wheelInfo.m_rearLeftHeightOffset) * suspensionFactor;
 				m_locoInfo->m_wheelInfo.m_rearRightHeightOffset = m_locoInfo->m_wheelInfo.m_rearLeftHeightOffset;
 			}
 		}
@@ -2278,24 +2316,25 @@ void Drawable::calcPhysicsXformMotorcycle( const Locomotor *locomotor, PhysicsXf
 		Real factor = curSpeed/maxSpeed;
 		if (fabs(m_locoInfo->m_pitchRate)<factor*BOUNCE_ANGLE_KICK/4 && fabs(m_locoInfo->m_rollRate)<factor*BOUNCE_ANGLE_KICK/8)
 		{
+			const Real scaledBounceKick = BOUNCE_ANGLE_KICK * factor;
 			// do the bouncy.
 			switch (GameClientRandomValue(0,3))
 			{
 			case 0:
-				m_locoInfo->m_pitchRate -= BOUNCE_ANGLE_KICK*factor;
-				m_locoInfo->m_rollRate -= BOUNCE_ANGLE_KICK*factor/2;
+				m_locoInfo->m_pitchRate -= scaledBounceKick;
+				m_locoInfo->m_rollRate -= scaledBounceKick/2;
 				break;
 			case 1:
-				m_locoInfo->m_pitchRate += BOUNCE_ANGLE_KICK*factor;
-				m_locoInfo->m_rollRate -= BOUNCE_ANGLE_KICK*factor/2;
+				m_locoInfo->m_pitchRate += scaledBounceKick;
+				m_locoInfo->m_rollRate -= scaledBounceKick/2;
 				break;
 			case 2:
-				m_locoInfo->m_pitchRate -= BOUNCE_ANGLE_KICK*factor;
-				m_locoInfo->m_rollRate += BOUNCE_ANGLE_KICK*factor/2;
+				m_locoInfo->m_pitchRate -= scaledBounceKick;
+				m_locoInfo->m_rollRate += scaledBounceKick/2;
 				break;
 			case 3:
-				m_locoInfo->m_pitchRate += BOUNCE_ANGLE_KICK*factor;
-				m_locoInfo->m_rollRate += BOUNCE_ANGLE_KICK*factor/2;
+				m_locoInfo->m_pitchRate += scaledBounceKick;
+				m_locoInfo->m_rollRate += scaledBounceKick/2;
 				break;
 			}
 		}
@@ -2399,8 +2438,10 @@ void Drawable::calcPhysicsXformMotorcycle( const Locomotor *locomotor, PhysicsXf
 		// etc, this smaller angle we'll be adding covers the constant wheel shifting
 		// left and right when moving in a relatively straight line
 		//
+		// TheSuperHackers @tweak Wheel angle smoothing is now decoupled from the render update.
 		#define WHEEL_SMOOTHNESS 10.0f  // higher numbers add smaller angles, make it more "smooth"
-		m_locoInfo->m_wheelInfo.m_wheelAngle += (newInfo.m_wheelAngle - m_locoInfo->m_wheelInfo.m_wheelAngle)/WHEEL_SMOOTHNESS;
+		const Real wheelAngleTimeScale = TheFramePacer->getActualLogicTimeScaleOverFpsRatio();
+		m_locoInfo->m_wheelInfo.m_wheelAngle += (newInfo.m_wheelAngle - m_locoInfo->m_wheelInfo.m_wheelAngle)/WHEEL_SMOOTHNESS * wheelAngleTimeScale;
 
 		const Real SPRING_FACTOR = 0.9f;
 		if (pitchHeight<0)
@@ -2428,10 +2469,14 @@ void Drawable::calcPhysicsXformMotorcycle( const Locomotor *locomotor, PhysicsXf
 			newInfo.m_rearLeftHeightOffset += SPRING_FACTOR*(rollHeight/3+rollHeight/2);
 		}
 		*/
+		// TheSuperHackers @tweak Wheel compression dampening is now decoupled from the render update.
+		const Real compressionTimeScale2 = TheFramePacer->getActualLogicTimeScaleOverFpsRatio();
+		const Real compressionFactor2 = 0.5f * compressionTimeScale2;
+
 		if (newInfo.m_frontLeftHeightOffset < m_locoInfo->m_wheelInfo.m_frontLeftHeightOffset)
 		{
 			// If it's going down, dampen the movement a bit
-			m_locoInfo->m_wheelInfo.m_frontLeftHeightOffset += (newInfo.m_frontLeftHeightOffset - m_locoInfo->m_wheelInfo.m_frontLeftHeightOffset)/2.0f;
+			m_locoInfo->m_wheelInfo.m_frontLeftHeightOffset += (newInfo.m_frontLeftHeightOffset - m_locoInfo->m_wheelInfo.m_frontLeftHeightOffset) * compressionFactor2;
 			m_locoInfo->m_wheelInfo.m_frontRightHeightOffset = m_locoInfo->m_wheelInfo.m_frontLeftHeightOffset;
 		}
 		else
@@ -2442,7 +2487,7 @@ void Drawable::calcPhysicsXformMotorcycle( const Locomotor *locomotor, PhysicsXf
 		if (newInfo.m_rearLeftHeightOffset < m_locoInfo->m_wheelInfo.m_rearLeftHeightOffset)
 		{
 			// If it's going down, dampen the movement a bit
-			m_locoInfo->m_wheelInfo.m_rearLeftHeightOffset += (newInfo.m_rearLeftHeightOffset - m_locoInfo->m_wheelInfo.m_rearLeftHeightOffset)/2.0f;
+			m_locoInfo->m_wheelInfo.m_rearLeftHeightOffset += (newInfo.m_rearLeftHeightOffset - m_locoInfo->m_wheelInfo.m_rearLeftHeightOffset) * compressionFactor2;
 			m_locoInfo->m_wheelInfo.m_rearRightHeightOffset = m_locoInfo->m_wheelInfo.m_rearLeftHeightOffset;
 		}
 		else
@@ -4247,8 +4292,10 @@ Bool Drawable::handleWeaponFireFX(WeaponSlotType wslot, Int specificBarrelToUse,
 		recoilAngle += PI;
 		if (m_locoInfo)
 		{
-			m_locoInfo->m_accelerationPitchRate += recoilAmount * Cos(recoilAngle);
-			m_locoInfo->m_accelerationRollRate += recoilAmount * Sin(recoilAngle);
+			// TheSuperHackers @tweak Weapon recoil is now decoupled from the render update.
+			const Real recoilTimeScale = TheFramePacer->getActualLogicTimeScaleOverFpsRatio();
+			m_locoInfo->m_accelerationPitchRate += recoilAmount * Cos(recoilAngle) * recoilTimeScale;
+			m_locoInfo->m_accelerationRollRate += recoilAmount * Sin(recoilAngle) * recoilTimeScale;
 		}
 	}
 
@@ -4928,7 +4975,7 @@ void Drawable::xfer( Xfer *xfer )
 #if RETAIL_COMPATIBLE_XFER_SAVE
 	const XferVersion currentVersion = 7;
 #else
-	const XferVersion currentVersion = 8;
+	const XferVersion currentVersion = 9;
 #endif
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
@@ -5103,7 +5150,17 @@ void Drawable::xfer( Xfer *xfer )
 	xfer->xferUser( &m_fadeMode, sizeof( FadingMode ) );
 
 	// time elapsed fade
-	xfer->xferUnsignedInt( &m_timeElapsedFade );
+	// TheSuperHackers @tweak Changed from UnsignedInt to Real for frame-rate independent fading.
+	if (version >= 9)
+	{
+		xfer->xferReal( &m_timeElapsedFade );
+	}
+	else
+	{
+		UnsignedInt timeElapsedFadeFrames = static_cast<UnsignedInt>(m_timeElapsedFade);
+		xfer->xferUnsignedInt( &timeElapsedFadeFrames );
+		m_timeElapsedFade = static_cast<Real>(timeElapsedFadeFrames);
+	}
 
 	// time to fade
 	xfer->xferUnsignedInt( &m_timeToFade );
@@ -5157,8 +5214,21 @@ void Drawable::xfer( Xfer *xfer )
 		xfer->xferReal( &m_locoInfo->m_wheelInfo.m_rearLeftHeightOffset );
 		xfer->xferReal( &m_locoInfo->m_wheelInfo.m_rearRightHeightOffset );
 		xfer->xferReal( &m_locoInfo->m_wheelInfo.m_wheelAngle );
-		xfer->xferInt( &m_locoInfo->m_wheelInfo.m_framesAirborneCounter );
-		xfer->xferInt( &m_locoInfo->m_wheelInfo.m_framesAirborne );
+		// TheSuperHackers @tweak Changed from Int to Real for frame-rate independent airborne tracking.
+		if (version >= 9)
+		{
+			xfer->xferReal( &m_locoInfo->m_wheelInfo.m_framesAirborneCounter );
+			xfer->xferReal( &m_locoInfo->m_wheelInfo.m_framesAirborne );
+		}
+		else
+		{
+			Int framesAirborneCounter = static_cast<Int>(m_locoInfo->m_wheelInfo.m_framesAirborneCounter);
+			Int framesAirborne = static_cast<Int>(m_locoInfo->m_wheelInfo.m_framesAirborne);
+			xfer->xferInt( &framesAirborneCounter );
+			xfer->xferInt( &framesAirborne );
+			m_locoInfo->m_wheelInfo.m_framesAirborneCounter = static_cast<Real>(framesAirborneCounter);
+			m_locoInfo->m_wheelInfo.m_framesAirborne = static_cast<Real>(framesAirborne);
+		}
 	}
 
 	// modules
