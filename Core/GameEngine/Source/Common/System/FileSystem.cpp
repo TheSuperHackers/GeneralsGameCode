@@ -475,7 +475,7 @@ enum TransferFileType
 struct TransferFileRule
 {
 	const char* ext;
-	Int maxSize;
+	UnsignedInt maxSize;
 	TransferFileType type;
 };
 
@@ -508,7 +508,7 @@ const TransferFileRule* getTransferFileRule(const char* extension)
 //============================================================================
 // TheSuperHackers @security bobtista 12/02/2026 Validates transferred file
 // content in memory before writing to disk.
-Bool FileSystem::hasValidTransferFileContent(const AsciiString& filePath, const UnsignedByte* data, Int dataSize)
+Bool FileSystem::hasValidTransferFileContent(const AsciiString& filePath, const UnsignedByte* data, UnsignedInt dataSize)
 {
 	const char* lastDot = strrchr(filePath.str(), '.');
 	if (lastDot == nullptr)
@@ -527,7 +527,7 @@ Bool FileSystem::hasValidTransferFileContent(const AsciiString& filePath, const 
 	// Check size limit
 	if (dataSize > rule->maxSize)
 	{
-		DEBUG_LOG(("File '%s' exceeds maximum size (%d bytes, limit %d bytes).", filePath.str(), dataSize, rule->maxSize));
+		DEBUG_LOG(("File '%s' exceeds maximum size (%u bytes, limit %u bytes).", filePath.str(), dataSize, rule->maxSize));
 		return false;
 	}
 
@@ -544,8 +544,8 @@ Bool FileSystem::hasValidTransferFileContent(const AsciiString& filePath, const 
 
 	case TRANSFER_FILE_INI:
 	{
-		Int bytesToCheck = std::min(dataSize, 512);
-		for (Int i = 0; i < bytesToCheck; ++i)
+		UnsignedInt bytesToCheck = std::min(dataSize, 512u);
+		for (UnsignedInt i = 0; i < bytesToCheck; ++i)
 		{
 			if (data[i] == 0)
 			{
