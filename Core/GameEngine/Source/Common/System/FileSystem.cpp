@@ -535,16 +535,18 @@ Bool FileSystem::hasValidTransferFileContent(const AsciiString& filePath, const 
 	switch (fileType)
 	{
 	case TransferFileType_Map:
+	{
 		if (dataSize < 4 || memcmp(data, "CkMp", 4) != 0)
 		{
 			DEBUG_LOG(("Map file '%s' has invalid magic bytes.", filePath.str()));
 			return false;
 		}
 		break;
+	}
 
 	case TransferFileType_Ini:
 	{
-		UnsignedInt bytesToCheck = std::min(dataSize, 512u);
+		const UnsignedInt bytesToCheck = std::min(dataSize, 512u);
 		for (UnsignedInt i = 0; i < bytesToCheck; ++i)
 		{
 			if (data[i] == 0)
@@ -557,6 +559,7 @@ Bool FileSystem::hasValidTransferFileContent(const AsciiString& filePath, const 
 	}
 
 	case TransferFileType_Tga:
+	{
 		if (dataSize < 44)
 		{
 			DEBUG_LOG(("TGA file '%s' is too small to be valid (minimum header 18 + footer 26 = 44 bytes).", filePath.str()));
@@ -568,9 +571,12 @@ Bool FileSystem::hasValidTransferFileContent(const AsciiString& filePath, const 
 			return false;
 		}
 		break;
+	}
 
 	default:
+	{
 		break;
+	}
 	}
 
 	return true;
