@@ -33,6 +33,12 @@ target_link_libraries(core_compression PRIVATE
     corei_always
 )
 
+# NoxCompress.cpp uses FILE/fopen without <stdio.h>; on Windows this comes
+# transitively through windows.h. Ensure our shim is included via PCH.
+if(NOT WIN32)
+    target_precompile_headers(core_compression PRIVATE <windows.h>)
+endif()
+
 
 target_link_libraries(core_compression PUBLIC
     liblzhl

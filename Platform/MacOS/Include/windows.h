@@ -13,6 +13,7 @@
 #include <math.h>
 #include <stddef.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -63,13 +64,12 @@ typedef void VOID;
 typedef int64_t LONGLONG;
 typedef uint64_t ULONGLONG;
 
-// MSVC-specific type aliases
-#ifndef __int64
-#define __int64 long long
-#endif
-#ifndef _int64
-#define _int64 long long
-#endif
+// MSVC-specific type aliases — use typedef, NOT #define,
+// because code like wwprofile.h does `typedef long long __int64`
+// and #define would expand it to `typedef long long long long`.
+typedef long long __int64;
+typedef long long _int64;
+
 #ifndef __forceinline
 #define __forceinline inline __attribute__((always_inline))
 #endif
@@ -88,6 +88,34 @@ typedef uint64_t ULONGLONG;
 #ifndef _vsnprintf
 #define _vsnprintf vsnprintf
 #endif
+#ifndef _strdup
+#define _strdup strdup
+#endif
+
+// Win32 string functions
+#ifndef lstrcpyn
+#define lstrcpyn(dst, src, n) strncpy(dst, src, n)
+#endif
+#ifndef lstrcat
+#define lstrcat(dst, src) strcat(dst, src)
+#endif
+
+// Win32 memory/utility macros
+#ifndef ZeroMemory
+#define ZeroMemory(dst, len) memset((dst), 0, (len))
+#endif
+#ifndef CopyMemory
+#define CopyMemory(dst, src, len) memcpy((dst), (src), (len))
+#endif
+#ifndef FillMemory
+#define FillMemory(dst, len, val) memset((dst), (val), (len))
+#endif
+
+#ifndef MAKEFOURCC
+#define MAKEFOURCC(a, b, c, d)                                                 \
+  ((DWORD)(BYTE)(a) | ((DWORD)(BYTE)(b) << 8) | ((DWORD)(BYTE)(c) << 16) |     \
+   ((DWORD)(BYTE)(d) << 24))
+#endif
 
 typedef uintptr_t UINT_PTR;
 typedef intptr_t INT_PTR;
@@ -96,8 +124,10 @@ typedef intptr_t LONG_PTR;
 typedef size_t SIZE_T;
 
 // ── Pointer types ──────────────────────────────────────────────────────
+typedef void *PVOID;
 typedef void *LPVOID;
 typedef const void *LPCVOID;
+typedef BYTE *PBYTE;
 typedef char *LPSTR;
 typedef const char *LPCSTR;
 typedef wchar_t *LPWSTR;

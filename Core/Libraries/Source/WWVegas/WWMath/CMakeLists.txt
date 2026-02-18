@@ -91,5 +91,10 @@ target_link_libraries(core_wwmath PRIVATE
     core_wwsaveload
 )
 
+# matrix3d/matrix4 include d3d8types.h which needs DWORD/LONG from windows.h
+if(NOT WIN32)
+    target_precompile_headers(core_wwmath PRIVATE <windows.h>)
+endif()
+
 # @todo Test its impact and see what to do with the legacy functions.
 #add_compile_definitions(core_wwmath PUBLIC ALLOW_TEMPORARIES) # Enables legacy math with "temporaries"
