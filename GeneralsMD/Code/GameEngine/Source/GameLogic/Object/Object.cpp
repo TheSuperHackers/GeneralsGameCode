@@ -1724,6 +1724,16 @@ Bool Object::isLogicallyVisible() const
 //=============================================================================
 // Object::isLocallyControlled
 //=============================================================================
+Bool Object::isUnderpoweredForAttack() const
+{
+#if !RETAIL_COMPATIBLE_CRC
+	return isKindOf( KINDOF_POWERED ) && isDisabledByType( DISABLED_UNDERPOWERED );
+#else
+	return false;
+#endif
+}
+
+//-------------------------------------------------------------------------------------------------
 Bool Object::isLocallyControlled() const
 {
 	return getControllingPlayer() == ThePlayerList->getLocalPlayer();
@@ -2235,6 +2245,20 @@ void Object::setDisabledUntil( DisabledType type, UnsignedInt frame )
 		}
 
 	}
+
+#if !RETAIL_COMPATIBLE_CRC
+	// TheSuperHackers @bugfix bobtista 21/12/2025 Fix Gatling Cannon barrels rotating despite insufficient energy.
+	// When power is lost (UNDERPOWERED, EMP, SUBDUED, HACKED), immediately force FiringTracker cooldown to stop barrel animations.
+	// getDisabledTypesToProcess() prevents update() from restarting animations, and isUnderpoweredForAttack() prevents cursor/attack logic.
+	if (m_firingTracker)
+	{
+		Bool isPowerDisableType = (type == DISABLED_UNDERPOWERED || type == DISABLED_EMP || type == DISABLED_SUBDUED || type == DISABLED_HACKED);
+		if (isPowerDisableType)
+		{
+			m_firingTracker->forceCoolDown();
+		}
+	}
+#endif
 
 	// This will only be called if we were NOT disabled before coming into this function.
 	if (edgeCase) {
@@ -3240,6 +3264,11 @@ Bool Object::isAbleToAttack() const
 
   if ( isDisabledByType( DISABLED_SUBDUED ) )
     return FALSE; // A Microwave Tank is cooking me
+
+#if !RETAIL_COMPATIBLE_CRC
+	if (isUnderpoweredForAttack())
+		return false;
+#endif
 
 	//We can't fire if we, as a portable structure, are aptly disabled
 	if ( isKindOf( KINDOF_PORTABLE_STRUCTURE ) || isKindOf( KINDOF_SPAWNS_ARE_THE_WEAPONS ))
@@ -4793,6 +4822,12 @@ void Object::adjustModelConditionForWeaponStatus()
 			// we really don't care, so we just force the issue here. (This might still need tweaking for the pursue state.)
 			conditionToSet = WSF_NONE;
 		}
+#if !RETAIL_COMPATIBLE_CRC
+		else if (isUnderpoweredForAttack())
+		{
+			conditionToSet = WSF_NONE;
+		}
+#endif
 		else
 		{
 			WeaponStatus newStatus = w->getStatus();
@@ -4816,7 +4851,14 @@ void Object::adjustModelConditionForWeaponStatus()
 			if (newStatus == READY_TO_FIRE && conditionToSet == WSF_NONE && testStatus( OBJECT_STATUS_IS_ATTACKING ) &&
 					(testStatus( OBJECT_STATUS_IS_AIMING_WEAPON ) || testStatus( OBJECT_STATUS_IS_FIRING_WEAPON )))
 			{
+#if !RETAIL_COMPATIBLE_CRC
+				if (!isUnderpoweredForAttack())
+				{
+					conditionToSet = WSF_BETWEEN;
+				}
+#else
 				conditionToSet = WSF_BETWEEN;
+#endif
 			}
 
 		}

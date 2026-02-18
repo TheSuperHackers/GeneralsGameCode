@@ -283,6 +283,13 @@ void FiringTracker::speedUp()
 }
 
 //-------------------------------------------------------------------------------------------------
+void FiringTracker::forceCoolDown()
+{
+	m_frameToStartCooldown = 0;
+	coolDown();
+}
+
+//-------------------------------------------------------------------------------------------------
 void FiringTracker::coolDown()
 {
 	ModelConditionFlags clr, set;
