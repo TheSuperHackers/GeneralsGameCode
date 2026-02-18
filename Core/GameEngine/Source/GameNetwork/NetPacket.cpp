@@ -279,7 +279,7 @@ UnsignedInt NetPacket::GetBufferSizeNeededForCommand(NetCommandMsg *msg) {
 		return 0; // There was nothing to add.
 	}
 	// Use the virtual function for all command message types
-	return msg->getPackedByteCount();
+	return msg->getSizeForNetPacket();
 }
 
 
