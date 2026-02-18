@@ -187,8 +187,6 @@ void VictoryConditions::update( void )
 			m_singleAllianceRemaining = true; // don't check again
 			m_endFrame = TheGameLogic->getFrame();
 
-			// TheSuperHackers @bugfix Stubbjax 11/02/2026 Cache victory status so that premature exits don't void the victory.
-
 			Player* victoriousPlayer = findFirstVictoriousPlayer();
 
 			if (victoriousPlayer)
@@ -264,13 +262,12 @@ Player* VictoryConditions::findFirstVictoriousPlayer()
 	return nullptr;
 }
 
+// TheSuperHackers @bugfix Stubbjax 11/02/2026 This marks the player and any allies as victorious, including
+// defeated allies. This also ensures players retain their victorious status if their assets are destroyed
+// after the victory conditions are met (e.g. when quitting the game prior to the victory screen).
 //-------------------------------------------------------------------------------------------------
 void VictoryConditions::markAllianceVictorious(Player* victoriousPlayer)
 {
-	// This marks the player and any allies as victorious, including defeated allies.
-	// This also ensures players retain their victorious status if their assets are destroyed after
-	// the victory conditions are met (e.g. when quitting the game prior to the victory screen).
-
 	for (Int i = 0; i < MAX_PLAYER_COUNT; ++i)
 	{
 		Player* player = m_players[i];
