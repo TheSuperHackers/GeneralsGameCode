@@ -85,18 +85,11 @@ if(APPLE)
     )
 
     # ── DirectX 8 SDK ──
-    # Fetch headers for compilation, but don't link Windows libs
-    FetchContent_Declare(
-        dx8
-        GIT_REPOSITORY https://github.com/TheSuperHackers/min-dx8-sdk.git
-        GIT_TAG        7bddff8c01f5fb931c3cb73d4aa8e66d303d97bc
-    )
-    FetchContent_Populate(dx8)
+    # On macOS: use our d3d8_stub.h (clean C++ interfaces, no COM) — MetalDevice8 implements these
+    # Do NOT use the real DX8 SDK headers — they require GUID, IStream, and real COM vtable layout
     add_library(d3d8lib INTERFACE)
     target_include_directories(d3d8lib INTERFACE
-        ${CMAKE_SOURCE_DIR}/Platform/MacOS/Include  # macOS shim headers (windows.h, objbase.h — must be first)
-        ${dx8_SOURCE_DIR}                            # DX8 SDK headers (d3d8.h, d3d8types.h, d3d8caps.h)
-        ${CMAKE_SOURCE_DIR}/Dependencies/dx8         # D3DX8 utility headers (original Microsoft d3dx8math.h, d3dx8core.h, etc.)
+        ${CMAKE_SOURCE_DIR}/Platform/MacOS/Include  # d3d8_stub.h + shim d3d8.h/d3d8types.h/d3d8caps.h
     )
     target_compile_definitions(d3d8lib INTERFACE BUILD_WITH_D3D8)
     # Individual DX8 targets referenced elsewhere

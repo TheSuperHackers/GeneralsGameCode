@@ -99,6 +99,40 @@ typedef long long _int64;
 #ifndef lstrcat
 #define lstrcat(dst, src) strcat(dst, src)
 #endif
+#ifndef lstrcpy
+#define lstrcpy(dst, src) strcpy(dst, src)
+#endif
+#ifndef lstrcmpi
+#define lstrcmpi(a, b) strcasecmp(a, b)
+#endif
+#ifndef lstrlen
+#define lstrlen(s) ((int)strlen(s))
+#endif
+#ifndef _isnan
+#define _isnan(x) isnan(x)
+#endif
+
+// strupr — in-place uppercase (POSIX doesn't have it, not in string_compat.h)
+#include <ctype.h>
+#ifndef _STRUPR_DEFINED
+#define _STRUPR_DEFINED
+inline char *strupr(char *s) {
+  for (char *p = s; *p; ++p)
+    *p = (char)toupper((unsigned char)*p);
+  return s;
+}
+inline char *_strupr(char *s) { return strupr(s); }
+#endif
+// strlwr is provided by Dependencies/Utility/string_compat.h
+
+// Minimal filesystem stubs (return "not found" / empty)
+#ifndef GetCurrentDirectory
+#define GetCurrentDirectory(n, buf) ((buf)[0] = '\0', 0)
+#endif
+#ifndef GetFileAttributes
+#define INVALID_FILE_ATTRIBUTES ((DWORD) - 1)
+#define GetFileAttributes(path) INVALID_FILE_ATTRIBUTES
+#endif
 
 // Win32 memory/utility macros
 #ifndef ZeroMemory
