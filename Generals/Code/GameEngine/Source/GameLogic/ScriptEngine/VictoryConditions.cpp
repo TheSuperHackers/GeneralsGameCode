@@ -92,7 +92,7 @@ public:
 	Bool amIObserver( void ) { return m_isObserver;} 	///< Am I an observer?( need this for scripts )
 	virtual UnsignedInt getEndFrame( void ) { return m_endFrame; }	///< on which frame was the game effectively over?
 private:
-	Player* findFirstVictoriousPlayer(); ///< Find the first player that has achieved victory.
+	Player* findFirstUndefeatedPlayer(); ///< Find the first player that has not been defeated.
 	void markAllianceVictorious(Player* victoriousPlayer); ///< Mark the victorious player and his allies as victorious.
 	Bool multipleAlliancesExist(void); ///< Are there multiple alliances still alive?
 
@@ -187,7 +187,7 @@ void VictoryConditions::update( void )
 			m_singleAllianceRemaining = true; // don't check again
 			m_endFrame = TheGameLogic->getFrame();
 
-			Player* victoriousPlayer = findFirstVictoriousPlayer();
+			Player* victoriousPlayer = findFirstUndefeatedPlayer();
 
 			if (victoriousPlayer)
 				markAllianceVictorious(victoriousPlayer);
@@ -250,7 +250,7 @@ void VictoryConditions::update( void )
 }
 
 //-------------------------------------------------------------------------------------------------
-Player* VictoryConditions::findFirstVictoriousPlayer()
+Player* VictoryConditions::findFirstUndefeatedPlayer()
 {
 	for (Int i = 0; i < MAX_PLAYER_COUNT; ++i)
 	{
