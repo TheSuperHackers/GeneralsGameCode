@@ -4,6 +4,10 @@
 #include "d3d8_stub.h"
 #include <math.h>
 
+#ifndef D3DX_PI
+#define D3DX_PI ((FLOAT)3.141592654f)
+#endif
+
 /*──────────────────── D3DX Math Types ────────────────────*/
 
 struct D3DXVECTOR2 {
@@ -31,6 +35,8 @@ struct D3DXVECTOR4 {
   D3DXVECTOR4() : x(0), y(0), z(0), w(0) {}
   D3DXVECTOR4(float _x, float _y, float _z, float _w)
       : x(_x), y(_y), z(_z), w(_w) {}
+  float &operator[](int i) { return (&x)[i]; }
+  const float &operator[](int i) const { return (&x)[i]; }
 };
 
 struct D3DXMATRIX : public D3DMATRIX {
@@ -165,4 +171,45 @@ inline D3DXMATRIX operator*(const D3DXMATRIX &a, const D3DXMATRIX &b) {
   D3DXMATRIX out;
   D3DXMatrixMultiply(&out, &a, &b);
   return out;
+}
+
+/* Matrix rotation around Z axis */
+inline D3DXMATRIX *D3DXMatrixRotationZ(D3DXMATRIX *pOut, FLOAT angle) {
+  D3DXMatrixIdentity(pOut);
+  float c = cosf(angle), s = sinf(angle);
+  pOut->m[0][0] = c;
+  pOut->m[0][1] = s;
+  pOut->m[1][0] = -s;
+  pOut->m[1][1] = c;
+  return pOut;
+}
+
+/* Matrix translation */
+inline D3DXMATRIX *D3DXMatrixTranslation(D3DXMATRIX *pOut, FLOAT x, FLOAT y,
+                                         FLOAT z) {
+  D3DXMatrixIdentity(pOut);
+  pOut->m[3][0] = x;
+  pOut->m[3][1] = y;
+  pOut->m[3][2] = z;
+  return pOut;
+}
+
+/* Matrix scaling */
+inline D3DXMATRIX *D3DXMatrixScaling(D3DXMATRIX *pOut, FLOAT sx, FLOAT sy,
+                                     FLOAT sz) {
+  D3DXMatrixIdentity(pOut);
+  pOut->m[0][0] = sx;
+  pOut->m[1][1] = sy;
+  pOut->m[2][2] = sz;
+  return pOut;
+}
+
+/* Matrix transpose */
+inline D3DXMATRIX *D3DXMatrixTranspose(D3DXMATRIX *pOut, const D3DXMATRIX *pM) {
+  D3DXMATRIX tmp;
+  for (int i = 0; i < 4; ++i)
+    for (int j = 0; j < 4; ++j)
+      tmp.m[i][j] = pM->m[j][i];
+  *pOut = tmp;
+  return pOut;
 }

@@ -12,6 +12,10 @@ set(WWDOWNLOAD_SRC
     urlBuilder.h
 )
 
+if(APPLE)
+    list(REMOVE_ITEM WWDOWNLOAD_SRC FTP.cpp registry.cpp)
+endif()
+
 add_library(corei_wwdownload INTERFACE)
 
 target_sources(corei_wwdownload INTERFACE ${WWDOWNLOAD_SRC})

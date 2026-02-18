@@ -14,10 +14,3 @@
 #ifndef D3DXGetImageInfoFromFile
 #define D3DXGetImageInfoFromFile D3DXGetImageInfoFromFileA
 #endif
-
-/* Inline stubs for rarely used tex utilities */
-inline HRESULT D3DXFilterTexture(IDirect3DBaseTexture8 *pBaseTexture,
-                                 const void *pPalette, UINT SrcLevel,
-                                 DWORD Filter) {
-  return D3D_OK;
-}

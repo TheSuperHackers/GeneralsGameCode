@@ -82,11 +82,19 @@ HRESULT WINAPI D3DXAssembleShader(const void *pSrcData, UINT SrcDataLen,
 #endif
 
 /* Inline utilities that don't need separate .mm implementation */
-inline const char *D3DXGetErrorStringA(HRESULT hr) {
+inline HRESULT D3DXGetErrorStringA(HRESULT hr, char *pBuffer, UINT BufferLen) {
   (void)hr;
-  return "D3D error (stub)";
+  if (pBuffer && BufferLen > 0)
+    snprintf(pBuffer, BufferLen, "D3D error 0x%08lx (stub)", (unsigned long)hr);
+  return S_OK;
 }
 #define D3DXGetErrorString D3DXGetErrorStringA
+
+/* D3DXFilterTexture — generate mip levels for a texture */
+inline HRESULT D3DXFilterTexture(IDirect3DBaseTexture8 *, const void *, DWORD,
+                                 DWORD) {
+  return S_OK; /* stub — mip filtering handled by Metal */
+}
 
 /* Compute vertex size from FVF flags (used by dx8fvf.cpp) */
 inline UINT D3DXGetFVFVertexSize(DWORD FVF) {

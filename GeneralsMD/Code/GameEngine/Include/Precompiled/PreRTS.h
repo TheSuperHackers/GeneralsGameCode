@@ -39,7 +39,7 @@ class STLSpecialAlloc;
 // included in 40 different .cpp files, so I bit the bullet and included it
 // here. PLEASE DO NOT ABUSE WINDOWS OR IT WILL BE REMOVED ENTIRELY. :-)
 //---------------------------------------------------------------------------------
-//System Includes
+// System Includes
 #ifdef __APPLE__
 // ── macOS: use our minimal Win32 compatibility shims ──
 #include <objbase.h> // our shim: COM types (IUnknown, GUID, STDMETHOD, etc.)
@@ -63,6 +63,14 @@ class STLSpecialAlloc;
 // Cross-platform utility adapters
 #include <Utility/compat.h>
 #include <Utility/fstream_adapter.h>
+
+// Windows shim headers needed by game engine code
+#include <dinput.h>
+#include <lmcons.h>
+#include <shellapi.h>
+#include <shlobj.h>
+#include <winerror.h>
+#include <winreg.h>
 
 #else // _WIN32
 // ── Windows: original includes ──
@@ -119,7 +127,7 @@ class STLSpecialAlloc;
 #endif // __APPLE__
 
 //------------------------------------------------------------------------------------
-//STL Includes
+// STL Includes
 // srj sez: no, include STLTypesdefs below, instead, thanks
 // #include <algorithm>
 // #include <bitset>
@@ -133,7 +141,7 @@ class STLSpecialAlloc;
 // #include <vector>
 
 //------------------------------------------------------------------------------------
-//RTS Includes
+// RTS Includes
 // Icky. These have to be in this order.
 #include "Common/AsciiString.h"
 #include "Common/Debug.h"

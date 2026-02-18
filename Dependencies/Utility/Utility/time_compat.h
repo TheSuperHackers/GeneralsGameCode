@@ -26,6 +26,8 @@ typedef int MMRESULT;
 static inline MMRESULT timeBeginPeriod(int) { return TIMERR_NOERROR; }
 static inline MMRESULT timeEndPeriod(int) { return TIMERR_NOERROR; }
 
+#ifndef _TIMEGETTIME_DEFINED
+#define _TIMEGETTIME_DEFINED
 inline unsigned int timeGetTime() {
   struct timespec ts;
   // CLOCK_BOOTTIME is Linux-only; CLOCK_MONOTONIC works on all POSIX platforms
@@ -36,6 +38,7 @@ inline unsigned int timeGetTime() {
 #endif
   return ts.tv_sec * 1000 + ts.tv_nsec / 1000000;
 }
+#endif
 inline unsigned int GetTickCount() {
   struct timespec ts;
   clock_gettime(CLOCK_MONOTONIC, &ts);
