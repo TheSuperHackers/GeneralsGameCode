@@ -1263,8 +1263,10 @@ ParticleSystem::~ParticleSystem()
 
 	m_controlParticle = nullptr;
 
-	if (m_systemID != INVALID_PARTICLE_SYSTEM_ID)
+	if ( m_systemID != INVALID_PARTICLE_SYSTEM_ID )
+	{
 		TheParticleSystemManager->friend_removeParticleSystem(this);
+	}
 	//DEBUG_ASSERTLOG(!(m_totalParticleSystemCount % 10 == 0), ( "TotalParticleSystemCount = %d", m_totalParticleSystemCount ));
 }
 
