@@ -81,6 +81,33 @@ HRESULT WINAPI D3DXAssembleShader(const void *pSrcData, UINT SrcDataLen,
 }
 #endif
 
+/* Inline utilities that don't need separate .mm implementation */
+inline const char *D3DXGetErrorStringA(HRESULT hr) {
+  (void)hr;
+  return "D3D error (stub)";
+}
+#define D3DXGetErrorString D3DXGetErrorStringA
+
+/* Compute vertex size from FVF flags (used by dx8fvf.cpp) */
+inline UINT D3DXGetFVFVertexSize(DWORD FVF) {
+  UINT size = 0;
+  if (FVF & D3DFVF_XYZ)
+    size += 3 * sizeof(float);
+  if (FVF & D3DFVF_XYZRHW)
+    size += 4 * sizeof(float);
+  if (FVF & D3DFVF_NORMAL)
+    size += 3 * sizeof(float);
+  if (FVF & D3DFVF_DIFFUSE)
+    size += sizeof(DWORD);
+  if (FVF & D3DFVF_SPECULAR)
+    size += sizeof(DWORD);
+  if (FVF & D3DFVF_PSIZE)
+    size += sizeof(float);
+  UINT texCount = (FVF & D3DFVF_TEXCOUNT_MASK) >> D3DFVF_TEXCOUNT_SHIFT;
+  size += texCount * 2 * sizeof(float); // assume 2D tex coords
+  return size;
+}
+
 /*──────────────────── D3DX Filter flags ────────────────────*/
 #ifndef D3DX_FILTER_NONE
 #define D3DX_FILTER_NONE 0x00000001

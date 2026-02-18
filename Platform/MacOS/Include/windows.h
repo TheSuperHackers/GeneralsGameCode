@@ -134,6 +134,60 @@ inline char *_strupr(char *s) { return strupr(s); }
 #define GetFileAttributes(path) INVALID_FILE_ATTRIBUTES
 #endif
 
+// DLL loading stubs (not applicable on macOS — Metal doesn't need DLLs)
+typedef void *HMODULE;
+typedef void *HINSTANCE;
+#ifndef _LOADLIBRARY_DEFINED
+#define _LOADLIBRARY_DEFINED
+inline HMODULE LoadLibrary(const char *) { return nullptr; }
+inline HMODULE LoadLibraryA(const char *) { return nullptr; }
+inline void *GetProcAddress(HMODULE, const char *) { return nullptr; }
+inline BOOL FreeLibrary(HMODULE) { return FALSE; }
+#endif
+
+// Window management stubs (macOS uses Cocoa, not Win32 windowing)
+#ifndef _WINSTUBS_DEFINED
+#define _WINSTUBS_DEFINED
+inline BOOL GetClientRect(HWND, RECT *r) {
+  if (r) {
+    r->left = r->top = 0;
+    r->right = 800;
+    r->bottom = 600;
+  }
+  return TRUE;
+}
+#define GWL_STYLE (-16)
+#define GWL_EXSTYLE (-20)
+inline LONG GetWindowLong(HWND, int) { return 0; }
+inline LONG GetWindowLongA(HWND h, int n) { return GetWindowLong(h, n); }
+inline BOOL AdjustWindowRect(RECT *, DWORD, BOOL) { return TRUE; }
+#define HWND_TOPMOST ((HWND)(LONG_PTR) - 1)
+#define HWND_NOTOPMOST ((HWND)(LONG_PTR) - 2)
+#define SWP_NOSIZE 0x0001
+#define SWP_NOMOVE 0x0002
+#define SWP_NOZORDER 0x0004
+inline BOOL SetWindowPos(HWND, HWND, int, int, int, int, UINT) { return TRUE; }
+#define MONITOR_DEFAULTTOPRIMARY 1
+typedef void *HMONITOR;
+typedef struct {
+  DWORD cbSize;
+  RECT rcMonitor;
+  RECT rcWork;
+  DWORD dwFlags;
+} MONITORINFO;
+inline HMONITOR MonitorFromWindow(HWND, DWORD) { return nullptr; }
+inline BOOL GetMonitorInfo(HMONITOR, MONITORINFO *mi) {
+  if (mi) {
+    mi->rcMonitor = {0, 0, 800, 600};
+    mi->rcWork = mi->rcMonitor;
+  }
+  return TRUE;
+}
+inline BOOL GetMonitorInfoA(HMONITOR h, MONITORINFO *mi) {
+  return GetMonitorInfo(h, mi);
+}
+#endif
+
 // Win32 memory/utility macros
 #ifndef ZeroMemory
 #define ZeroMemory(dst, len) memset((dst), 0, (len))

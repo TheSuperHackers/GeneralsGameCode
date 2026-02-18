@@ -125,5 +125,11 @@ inline HRESULT CoCreateInstance(REFCLSID rclsid, LPUNKNOWN pUnkOuter,
   return E_NOTIMPL;
 }
 #endif
+// ── IDispatch stub (used by dx8webbrowser.h) ──────────────────────────
+#ifndef __IDispatch_FWD_DEFINED__
+#define __IDispatch_FWD_DEFINED__
+typedef IUnknown IDispatch;
+typedef IDispatch *LPDISPATCH;
+#endif
 
 #endif // _OBJBASE_H_MACOS_SHIM_
