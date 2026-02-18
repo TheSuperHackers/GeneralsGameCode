@@ -26,6 +26,13 @@ target_link_libraries(corei_always INTERFACE
     corei_libraries_include
     resources
 )
+# On macOS, expose the Win32 compatibility shim headers (windows.h, objbase.h)
+# so that all targets can find them via PCH or direct #include
+if(APPLE)
+    target_include_directories(corei_always INTERFACE
+        ${CMAKE_SOURCE_DIR}/Platform/MacOS/Include
+    )
+endif()
 target_link_libraries(corei_always_no_pch INTERFACE
     core_config
     core_utility_no_pch

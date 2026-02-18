@@ -166,6 +166,17 @@ if(WIN32)
     )
 endif()
 
+# Exclude Windows-only debug utilities on Apple
+if(APPLE)
+    list(REMOVE_ITEM WWLIB_SRC
+        "DbgHelpGuard.cpp"
+        "DbgHelpGuard.h"
+        "DbgHelpLoader.cpp"
+        "DbgHelpLoader.h"
+        "DbgHelpLoader_minidump.h"
+    )
+endif()
+
 add_library(core_wwlib STATIC)
 set_target_properties(core_wwlib PROPERTIES OUTPUT_NAME wwlib)
 
@@ -177,12 +188,12 @@ target_include_directories(core_wwlib PUBLIC
 
 target_precompile_headers(core_wwlib PRIVATE
     [["Utility/CppMacros.h"]] # Must be first, to be removed when abandoning VC6
+    <windows.h>
     always.h
     STLUtils.h
     win.h
     WWCommon.h
     wwstring.h
-    <windows.h>
 )
 
 target_link_libraries(core_wwlib PRIVATE

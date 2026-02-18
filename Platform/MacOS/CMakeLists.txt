@@ -1,0 +1,154 @@
+# Platform/MacOS — Metal backend, Cocoa integration, platform stubs
+# This library provides the macOS platform layer that replaces Win32Device components.
+
+# ── Metal rendering backend (DX8 → Metal) ──
+set(METAL_SRC
+    Source/Metal/MetalDevice8.mm
+    Source/Metal/MetalInterface8.mm
+    Source/Metal/MetalSurface8.mm
+    Source/Metal/MetalTexture8.mm
+    Source/Metal/MetalVertexBuffer8.mm
+    Source/Metal/MetalIndexBuffer8.mm
+)
+
+# ── Main application (game client, window, input, shaders) ──
+set(MAIN_SRC
+    Source/Main/MacOSGameClient.mm
+    Source/Main/MacOSWindowManager.mm
+    Source/Main/MacOSGameWindowManager.mm
+    Source/Main/MacOSGadgetDraw.mm
+    Source/Main/D3DXStubs.mm
+    Source/Main/StdKeyboard.mm
+    Source/Main/StdMouse.mm
+)
+
+# ── Client (display, text rendering) ──
+set(CLIENT_SRC
+    Source/Client/MacOSDisplay.mm
+    Source/Client/MacOSDisplayString.mm
+)
+
+# ── Audio ──
+set(AUDIO_SRC
+    Source/Audio/MacOSAudioManager.mm
+)
+
+# ── File system (cross-platform .big + local) ──
+set(COMMON_SRC
+    Source/Common/StdBIGFile.cpp
+    Source/Common/StdBIGFileSystem.cpp
+    Source/Common/StdLocalFile.cpp
+    Source/Common/StdLocalFileSystem.cpp
+)
+
+# ── Stubs (GameSpy, LZHL, WWDownload — Windows-only libs) ──
+set(STUBS_SRC
+    Source/Stubs/GameSpyStubs.cpp
+    Source/Stubs/GitInfoStubs.cpp
+    Source/Stubs/LZHLStubs.cpp
+    Source/Stubs/MacOSW3DShaderManager.mm
+    Source/Stubs/WWDownloadStubs.cpp
+)
+
+# ── Debug ──
+set(DEBUG_SRC
+    Source/Debug/MacOSScreenshot.mm
+)
+
+# ── Combine all sources ──
+add_library(macos_platform STATIC
+    ${METAL_SRC}
+    ${MAIN_SRC}
+    ${CLIENT_SRC}
+    ${AUDIO_SRC}
+    ${COMMON_SRC}
+    ${STUBS_SRC}
+    ${DEBUG_SRC}
+)
+
+# ── Include directories ──
+# Platform/MacOS/Include is already in d3d8lib INTERFACE (set in root CMakeLists.txt),
+# but we also need it for our own sources.
+target_include_directories(macos_platform PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/Include
+)
+
+# Private includes for implementation files
+target_include_directories(macos_platform PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/Metal
+)
+
+# ── macOS frameworks ──
+find_library(METAL_FRAMEWORK Metal REQUIRED)
+find_library(METALKIT_FRAMEWORK MetalKit REQUIRED)
+find_library(QUARTZCORE_FRAMEWORK QuartzCore REQUIRED)
+find_library(COCOA_FRAMEWORK Cocoa REQUIRED)
+find_library(APPKIT_FRAMEWORK AppKit REQUIRED)
+find_library(IOKIT_FRAMEWORK IOKit REQUIRED)
+find_library(AUDIOTOOLBOX_FRAMEWORK AudioToolbox REQUIRED)
+find_library(AVFOUNDATION_FRAMEWORK AVFoundation REQUIRED)
+
+target_link_libraries(macos_platform PUBLIC
+    ${METAL_FRAMEWORK}
+    ${METALKIT_FRAMEWORK}
+    ${QUARTZCORE_FRAMEWORK}
+    ${COCOA_FRAMEWORK}
+    ${APPKIT_FRAMEWORK}
+    ${IOKIT_FRAMEWORK}
+    ${AUDIOTOOLBOX_FRAMEWORK}
+    ${AVFOUNDATION_FRAMEWORK}
+)
+
+# ── Project dependencies ──
+target_link_libraries(macos_platform PUBLIC
+    d3d8lib
+    core_config
+    corei_always
+    corei_gameengine_include
+)
+
+# ── Compile Metal shaders ──
+# Ensure Metal Toolchain is available (auto-download if missing)
+execute_process(
+    COMMAND xcrun -sdk macosx metal --version
+    RESULT_VARIABLE METAL_CHECK_RESULT
+    OUTPUT_QUIET ERROR_QUIET
+)
+if(NOT METAL_CHECK_RESULT EQUAL 0)
+    message(STATUS "Metal Toolchain not found — downloading automatically...")
+    execute_process(
+        COMMAND xcodebuild -downloadComponent MetalToolchain
+        RESULT_VARIABLE METAL_DL_RESULT
+    )
+    if(NOT METAL_DL_RESULT EQUAL 0)
+        message(FATAL_ERROR "Failed to download Metal Toolchain. Please run manually:\n  xcodebuild -downloadComponent MetalToolchain")
+    endif()
+    message(STATUS "Metal Toolchain installed successfully")
+endif()
+
+set(METAL_SHADER_SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/Source/Main/MacOSShaders.metal)
+set(METAL_AIR_OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/MacOSShaders.air)
+set(METAL_LIB_OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/default.metallib)
+
+add_custom_command(
+    OUTPUT ${METAL_AIR_OUTPUT}
+    COMMAND xcrun -sdk macosx metal -c ${METAL_SHADER_SOURCE} -o ${METAL_AIR_OUTPUT}
+    DEPENDS ${METAL_SHADER_SOURCE}
+    COMMENT "Compiling Metal shaders"
+)
+
+add_custom_command(
+    OUTPUT ${METAL_LIB_OUTPUT}
+    COMMAND xcrun -sdk macosx metallib ${METAL_AIR_OUTPUT} -o ${METAL_LIB_OUTPUT}
+    DEPENDS ${METAL_AIR_OUTPUT}
+    COMMENT "Linking Metal shader library"
+)
+
+add_custom_target(metal_shaders ALL DEPENDS ${METAL_LIB_OUTPUT})
+add_dependencies(macos_platform metal_shaders)
+
+# ── ObjC++ settings ──
+set_source_files_properties(${METAL_SRC} ${MAIN_SRC} ${CLIENT_SRC} ${AUDIO_SRC} ${DEBUG_SRC}
+    ${STUBS_SRC}  # MacOSW3DShaderManager.mm
+    PROPERTIES COMPILE_FLAGS "-fobjc-arc"
+)

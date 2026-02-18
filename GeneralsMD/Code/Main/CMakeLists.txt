@@ -1,11 +1,12 @@
-add_executable(z_generals WIN32)
+# ── Executable target ──
+if(APPLE)
+    add_executable(z_generals)
+else()
+    add_executable(z_generals WIN32)
+endif()
 
 # Use a binary name that doesn't conflict with original game.
-if("${CMAKE_SYSTEM}" MATCHES "Windows")
-    set_target_properties(z_generals PROPERTIES OUTPUT_NAME generalszh)
-else()
-    set_target_properties(z_generals PROPERTIES OUTPUT_NAME generalszh)
-endif()
+set_target_properties(z_generals PROPERTIES OUTPUT_NAME generalszh)
 
 target_link_libraries(z_generals PRIVATE
     binkstub
@@ -24,6 +25,11 @@ target_link_libraries(z_generals PRIVATE
     z_gameenginedevice
     zi_always
 )
+
+# ── macOS platform layer ──
+if(APPLE)
+    target_link_libraries(z_generals PRIVATE macos_platform)
+endif()
 
 # TODO Originally referred to build host and user, replace with git info perhaps?
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/GeneratedVersion.h
@@ -54,10 +60,21 @@ target_include_directories(z_generals PRIVATE
     ${CMAKE_CURRENT_BINARY_DIR}
 )
 
-target_sources(z_generals PRIVATE
-    WinMain.cpp
-    WinMain.h
-)
+# ── Entry point (platform-specific) ──
+if(APPLE)
+    target_sources(z_generals PRIVATE
+        ${CMAKE_SOURCE_DIR}/Platform/MacOS/Source/Main/MacOSMain.mm
+    )
+    set_source_files_properties(
+        ${CMAKE_SOURCE_DIR}/Platform/MacOS/Source/Main/MacOSMain.mm
+        PROPERTIES COMPILE_FLAGS "-fobjc-arc"
+    )
+else()
+    target_sources(z_generals PRIVATE
+        WinMain.cpp
+        WinMain.h
+    )
+endif()
 
 # RC files optional for MinGW builds
 # Icon: LoadIcon() handles missing resource gracefully (uses default system icon)

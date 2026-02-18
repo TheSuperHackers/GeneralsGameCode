@@ -21,6 +21,11 @@ set(DEBUG_SRC
     "internal.h"
 )
 
+# Exclude Windows-only debug utilities on Apple
+if(APPLE)
+    list(REMOVE_ITEM DEBUG_SRC "debug_stack.cpp")
+endif()
+
 add_library(core_debug STATIC)
 
 target_sources(core_debug PRIVATE ${DEBUG_SRC})
@@ -31,11 +36,11 @@ target_include_directories(core_debug INTERFACE
 
 target_precompile_headers(core_debug PRIVATE
     [["Utility/CppMacros.h"]] # Must be first, to be removed when abandoning VC6
+    <windows.h>
     "debug.h"
     "internal.h"
     "internal_except.h"
     "internal_io.h"
-    <windows.h>
 )
 
 target_link_libraries(core_debug PRIVATE

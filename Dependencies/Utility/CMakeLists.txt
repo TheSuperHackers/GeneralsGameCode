@@ -21,6 +21,10 @@ set(UTILITY_SRC
 
 add_library(core_utility INTERFACE)
 target_include_directories(core_utility INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
+if(NOT WIN32)
+    # On non-Windows (_UNIX defined), code does #include "osdep.h" without prefix
+    target_include_directories(core_utility INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/Utility)
+endif()
 target_precompile_headers(core_utility INTERFACE
     [["Utility/CppMacros.h"]] # Must be first, to be removed when abandoning VC6
 )

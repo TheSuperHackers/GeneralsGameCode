@@ -31,7 +31,11 @@ if (CMAKE_BINARY_DIR STREQUAL CMAKE_SOURCE_DIR)
 endif()
 
 # Top level project, doesn't really affect anything.
-project(genzh LANGUAGES C CXX)
+if(APPLE)
+    project(genzh LANGUAGES C CXX OBJC OBJCXX)
+else()
+    project(genzh LANGUAGES C CXX)
+endif()
 
 # This file handles extra settings wanted/needed for different compilers.
 include(cmake/compilers.cmake)
@@ -63,7 +67,62 @@ else()
 endif()
 
 include(cmake/config.cmake)
-include(cmake/gamespy.cmake)
+if(APPLE)
+    # ── GameSpy SDK ──
+    # Doesn't compile on macOS — stubs are in Platform/MacOS/Source/Stubs/
+    FetchContent_Declare(
+        gamespy
+        GIT_REPOSITORY https://github.com/TheAssemblyArmada/GamespySDK.git
+        GIT_TAG        07e3d15c500415abc281efb74322ab6d9c857eb8
+    )
+    FetchContent_Populate(gamespy)
+    # Stub targets providing include paths only
+    add_library(gamespy INTERFACE)
+    add_library(gamespy::gamespy ALIAS gamespy)
+    target_include_directories(gamespy INTERFACE
+        ${gamespy_SOURCE_DIR}/include
+        ${gamespy_SOURCE_DIR}/include/gamespy
+    )
+
+    # ── DirectX 8 SDK ──
+    # Fetch headers for compilation, but don't link Windows libs
+    FetchContent_Declare(
+        dx8
+        GIT_REPOSITORY https://github.com/TheSuperHackers/min-dx8-sdk.git
+        GIT_TAG        7bddff8c01f5fb931c3cb73d4aa8e66d303d97bc
+    )
+    FetchContent_Populate(dx8)
+    add_library(d3d8lib INTERFACE)
+    target_include_directories(d3d8lib INTERFACE
+        ${CMAKE_SOURCE_DIR}/Platform/MacOS/Include  # macOS shim headers (windows.h, objbase.h — must be first)
+        ${dx8_SOURCE_DIR}                            # DX8 SDK headers (d3d8.h, d3d8types.h, d3d8caps.h)
+        ${CMAKE_SOURCE_DIR}/Dependencies/dx8         # D3DX8 utility headers (original Microsoft d3dx8math.h, d3dx8core.h, etc.)
+    )
+    target_compile_definitions(d3d8lib INTERFACE BUILD_WITH_D3D8)
+    # Individual DX8 targets referenced elsewhere
+    add_library(d3d8 INTERFACE)
+    add_library(d3dx8 INTERFACE)
+    target_link_libraries(d3dx8 INTERFACE d3d8lib)  # propagate include paths
+    add_library(dinput8 INTERFACE)
+    add_library(dxguid INTERFACE)
+
+    # ── Miles/Bink/other Windows libs ──
+    add_library(binkstub INTERFACE)
+    target_include_directories(binkstub INTERFACE
+        ${CMAKE_SOURCE_DIR}/Dependencies/bink  # <bink.h>
+    )
+    add_library(milesstub INTERFACE)
+    target_include_directories(milesstub INTERFACE
+        ${CMAKE_SOURCE_DIR}/Dependencies/miles      # <mss/mss.h>
+        ${CMAKE_SOURCE_DIR}/Dependencies/miles/mss  # <mss.h>
+    )
+    add_library(comctl32 INTERFACE)
+    add_library(vfw32 INTERFACE)
+    add_library(winmm INTERFACE)
+    add_library(imm32 INTERFACE)
+else()
+    include(cmake/gamespy.cmake)
+endif()
 include(cmake/lzhl.cmake)
 
 if (IS_VS6_BUILD)
@@ -80,6 +139,11 @@ if (IS_VS6_BUILD)
 endif()
 
 add_subdirectory(resources)
+
+# macOS platform layer (shim headers + Metal/Cocoa implementations)
+if(APPLE)
+    add_subdirectory(Platform/MacOS)
+endif()
 
 add_subdirectory(Core)
 

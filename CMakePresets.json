@@ -190,6 +190,27 @@
             "cacheVariables": {
                 "RTS_BUILD_OPTION_PROFILE": "ON"
             }
+        },
+        {
+            "name": "macos",
+            "displayName": "macOS ARM64 Debug",
+            "generator": "Ninja",
+            "hidden": false,
+            "binaryDir": "${sourceDir}/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+                "CMAKE_BUILD_TYPE": "Debug",
+                "RTS_BUILD_ZEROHOUR": "ON"
+            }
+        },
+        {
+            "name": "macos-release",
+            "displayName": "macOS ARM64 Release",
+            "hidden": false,
+            "inherits": "macos",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
         }
     ],
     "buildPresets": [
@@ -289,6 +310,18 @@
             "configurePreset": "mingw-w64-i686-profile",
             "displayName": "Build MinGW-w64 32-bit (i686) Profile",
             "description": "Build MinGW-w64 32-bit (i686) Profile"
+        },
+        {
+            "name": "macos",
+            "configurePreset": "macos",
+            "displayName": "Build macOS ARM64 Debug",
+            "description": "Build macOS ARM64 Debug"
+        },
+        {
+            "name": "macos-release",
+            "configurePreset": "macos-release",
+            "displayName": "Build macOS ARM64 Release",
+            "description": "Build macOS ARM64 Release"
         }
     ],
     "workflowPresets": [
@@ -484,6 +517,19 @@
                 {
                     "type": "build",
                     "name": "mingw-w64-i686-profile"
+                }
+            ]
+        },
+        {
+            "name": "macos",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "macos"
+                },
+                {
+                    "type": "build",
+                    "name": "macos"
                 }
             ]
         }
