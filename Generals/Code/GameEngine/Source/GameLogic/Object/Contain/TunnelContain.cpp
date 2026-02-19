@@ -228,6 +228,16 @@ UnsignedInt TunnelContain::getContainCount() const
 	return 0;
 }
 
+UnsignedInt TunnelContain::getHeroUnitsContained() const
+{
+	Player *owningPlayer = getObject()->getControllingPlayer();
+	if( owningPlayer && owningPlayer->getTunnelSystem() )
+	{
+		return owningPlayer->getTunnelSystem()->getHeroUnitsContained();
+	}
+	return 0;
+}
+
 Int TunnelContain::getContainMax( void ) const
 {
 	Player *owningPlayer = getObject()->getControllingPlayer();

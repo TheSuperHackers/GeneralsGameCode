@@ -126,7 +126,6 @@ OpenContain::OpenContain( Thing *thing, const ModuleData* moduleData ) : UpdateM
 	m_containListSize = 0;
 	m_stealthUnitsContained = 0;
 	m_heroUnitsContained = 0;
-	m_xferVersion = 1;
 	m_doorCloseCountdown = 0;
 
 	m_rallyPoint.zero();
@@ -1455,21 +1454,15 @@ void OpenContain::crc( Xfer *xfer )
 /** Xfer method
 	* Version Info:
 	* 1: Initial version
-	* 2: TheSuperHackers @tweak Serialize hero units contained count
 	*/
 // ------------------------------------------------------------------------------------------------
 void OpenContain::xfer( Xfer *xfer )
 {
 
 	// version
-#if RETAIL_COMPATIBLE_XFER_SAVE
 	XferVersion currentVersion = 1;
-#else
-	XferVersion currentVersion = 2;
-#endif
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
-	m_xferVersion = version;
 
 	// extend base class
 	UpdateModule::xfer( xfer );
@@ -1494,7 +1487,7 @@ void OpenContain::xfer( Xfer *xfer )
 	else
 	{
 
-		// the containment list should be emtpy at this time
+		// the containment list should be empty at this time
 		if( m_containList.empty() == FALSE )
 		{
 #if 1
@@ -1543,18 +1536,12 @@ void OpenContain::xfer( Xfer *xfer )
 	xfer->xferUnsignedInt( &m_lastLoadSoundFrame );
 
 	// stealth units contained
-	xfer->xferUnsignedInt( &m_stealthUnitsContained );
-
-	// hero units contained
-	if (version >= 2)
-	{
-		xfer->xferUnsignedInt( &m_heroUnitsContained );
-	}
+	xfer->xferUnsignedInt( &m_stealthUnitsContained ); // TheSuperHackers @todo This is redundant information in xfer. Remove it.
 
 	// door close countdown
 	xfer->xferUnsignedInt( &m_doorCloseCountdown );
 
-	// conditionstate
+	// condition state
 	m_conditionState.xfer( xfer );
 
 	// fire points
@@ -1603,7 +1590,7 @@ void OpenContain::xfer( Xfer *xfer )
 	else
 	{
 
-		// the map should be emtpy now
+		// the map should be empty now
 		if( m_objectEnterExitInfo.empty() == FALSE )
 		{
 
@@ -1654,6 +1641,9 @@ void OpenContain::loadPostProcess( void )
 	}
 
 	// turn the contained id list into actual object pointers in the contain list
+	m_containListSize = 0;
+	m_stealthUnitsContained = 0;
+	m_heroUnitsContained = 0;
 	Object *obj;
 	std::list<ObjectID>::const_iterator idIt;
 	for( idIt = m_xferContainIDList.begin(); idIt != m_xferContainIDList.end(); ++idIt )
@@ -1672,7 +1662,7 @@ void OpenContain::loadPostProcess( void )
 		}
 
 		// put object on list
-		m_containList.push_back( obj );
+		addToContainList( obj );
 
 		// remove this object from the world if we need to
 		if( isEnclosingContainerFor( obj ) )
@@ -1681,19 +1671,6 @@ void OpenContain::loadPostProcess( void )
 		// record in the object who we are contained by
 		obj->friend_setContainedBy( us );
 
-	}
-
-	if (m_xferVersion < 2)
-	{
-		// Restore hero count by iterating hero objects for old save versions
-		m_heroUnitsContained = 0;
-		for( ContainedItemsList::const_iterator it = m_containList.begin(); it != m_containList.end(); ++it )
-		{
-			if( (*it)->isKindOf( KINDOF_HERO ) )
-			{
-				m_heroUnitsContained++;
-			}
-		}
 	}
 
 	// sanity
