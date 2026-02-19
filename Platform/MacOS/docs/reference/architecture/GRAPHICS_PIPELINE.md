@@ -1,50 +1,45 @@
 # Graphics Rendering Pipeline (macOS) — Architecture Cheatsheet
 
-The rendering pipeline in the MacOS port bridges the original DirectX 8 based W3D engine with Apple **Metal** API.
+The rendering pipeline in the macOS port bridges the original DirectX 8 based W3D engine with Apple **Metal** API.
 **Last updated:** 2026-02-18
 
 ## High-Level Architecture
 
-```
-┌──────────────────────────────────────────────────┐
-│            Игровой код (W3D Engine)               │
-│  DX8Wrapper::Set_Texture, Draw_Triangles, etc.   │
-└────────────────────┬─────────────────────────────┘
-                     │ вызывает
-                     ▼
-┌──────────────────────────────────────────────────┐
-│         IDirect3DDevice8 (d3d8_stub.h)            │
-│    виртуальные методы COM интерфейса              │
-└────────────────────┬─────────────────────────────┘
-                     │ реализует
-                     ▼
-┌──────────────────────────────────────────────────┐
-│          MetalDevice8 (MetalDevice8.mm)           │
-│                                                   │
-│  • State Cache (RenderStates[256], TSS[8][32])   │
-│  • Transform Cache (m_Transforms[260])            │
-│  • PSO Cache (m_PsoCache: FVF → PSO)             │
-│  • MetalTexture8 (IDirect3DTexture8)             │
-│  • MetalVertexBuffer8 / MetalIndexBuffer8        │
-│  • MacOSShaders.metal (vertex_main/fragment_main)│
-└────────────────────┬─────────────────────────────┘
-                     │
-                     ▼
-               Metal Framework (GPU)
+```mermaid
+graph TD
+    GameCode[Game Code :: W3D Engine] -- "DrawPrimitive" --> DX8I[IDirect3DDevice8 :: d3d8_stub.h]
+    DX8I -- implements --> MetalDevice8[MetalDevice8 :: MetalDevice8.mm]
+    
+    subgraph MetalDevice8_Components [Metal Backend Components]
+        direction TB
+        StateCache[State Cache :: RenderStates, TSS]
+        TransformCache[Transform Cache :: Matrices]
+        PSOCache[PSO Cache :: FVF -> PSO]
+        Resources[Resources :: Texture8, VB8, IB8]
+        Shaders[Metal Shaders :: MacOSShaders.metal]
+    end
+    
+    MetalDevice8 --> StateCache
+    MetalDevice8 --> TransformCache
+    MetalDevice8 --> PSOCache
+    MetalDevice8 --> Resources
+    MetalDevice8 --> Shaders
+    
+    MetalDevice8_Components -- drives --> MetalAPI[Metal Framework :: GPU]
 ```
 
 ## Key Files
 
 | File | Purpose |
 |:---|:---|
-| `Platform/MacOS/Source/Metal/MetalDevice8.h` | IDirect3DDevice8 declaration + state members |
+| `Platform/MacOS/Source/Metal/MetalDevice8.h` | `IDirect3DDevice8` declaration + state members |
 | `Platform/MacOS/Source/Metal/MetalDevice8.mm` | Full implementation (~2010 lines) |
-| `Platform/MacOS/Source/Metal/MetalInterface8.h/mm` | IDirect3D8, factory for MetalDevice8 |
-| `Platform/MacOS/Source/Metal/MetalVertexBuffer8.h/mm` | VB: sys mem copy + lazy MTLBuffer |
-| `Platform/MacOS/Source/Metal/MetalIndexBuffer8.h/mm` | IB: sys mem copy + lazy MTLBuffer |
-| `Platform/MacOS/Source/Metal/MetalTexture8.h/mm` | Texture: MTLTexture + LockRect staging |
+| `Platform/MacOS/Source/Metal/MetalInterface8.h/mm` | `IDirect3D8`, factory for `MetalDevice8` |
+| `Platform/MacOS/Source/Metal/MetalVertexBuffer8.h/mm` | VB: system memory copy + lazy `MTLBuffer` |
+| `Platform/MacOS/Source/Metal/MetalIndexBuffer8.h/mm` | IB: system memory copy + lazy `MTLBuffer` |
+| `Platform/MacOS/Source/Metal/MetalTexture8.h/mm` | Texture: `MTLTexture` + `LockRect` staging |
 | `Platform/MacOS/Source/Main/D3DXStubs.mm` | D3DX functions + entry points |
-| `Platform/MacOS/Source/Main/MacOSShaders.metal` | Metal shaders (vertex_main, fragment_main) |
+| `Platform/MacOS/Source/Main/MacOSShaders.metal` | Metal shaders (`vertex_main`, `fragment_main`) |
 | `Core/Libraries/Source/WWVegas/WWLib/d3d8_stub.h` | COM interfaces, enums, types |
 
 ## Memory Management (W3DMPO_GLUE)
@@ -54,7 +49,7 @@ Resource classes use `W3DMPO_GLUE(ClassName)` from `always.h`:
 - This means pools are auto-created on first use.
 - Must use `W3DNEW` (= `new(__FILE__, __LINE__)`) to allocate. Standard `new` will CRASH.
 - ⚠️ `Release()` uses `delete this` which triggers `DEBUG_CRASH` in the pool's `operator delete`.
-  In release builds: works (freeBlock called). In debug: assertion fail. Consider `deleteInstance()` later.
+  In release builds: works (`freeBlock` called). In debug: assertion fail. Consider `deleteInstance()` later.
 
 ## PSO Cache Details
 
@@ -78,9 +73,13 @@ struct MetalUniforms {
 
 ## Entry Points
 
-```
-dx8wrapper.cpp → CreateMacOSD3D8()      → D3DXStubs.mm → CreateMetalInterface8()
-dx8wrapper.cpp → CreateMacOSD3DDevice8() → D3DXStubs.mm → CreateMetalDevice8()
+```mermaid
+graph LR
+    W3D[dx8wrapper.cpp] -- CreateMacOSD3D8 --> Stubs[D3DXStubs.mm]
+    Stubs -- CreateMetalInterface8 --> MI[MetalInterface8]
+    
+    W3D -- CreateMacOSD3DDevice8 --> Stubs
+    Stubs -- CreateMetalDevice8 --> MD[MetalDevice8]
 ```
 
 ## Implementation Stage Status (see DX8_METAL_BACKEND.md)

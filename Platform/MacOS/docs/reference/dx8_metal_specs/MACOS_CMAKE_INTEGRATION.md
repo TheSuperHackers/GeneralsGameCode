@@ -1,59 +1,63 @@
 # macOS CMake Integration Plan
 
-## Цель
-Единая система сборки через CMake. Одна команда `cmake --preset macos && cmake --build --preset macos`.
+## Goal
+A unified build system via CMake. A single command: `cmake --preset macos && cmake --build build/macos`.
 
-## Архитектура (3 слоя)
+## Architecture (3 Layers)
 
+```mermaid
+graph TD
+    Entry[CMakePresets.json :: 'macos' preset] -- Entry Point --> Root[Root CMakeLists.txt]
+    Root -- "if(APPLE)" --> Platform[Platform/MacOS/CMakeLists.txt]
+    
+    subgraph Platform_Layer [macos_platform Library]
+        direction TB
+        Source[MM/CPP Source :: Metal, Cocoa]
+        Include[Include/ :: Shim Headers]
+        Frameworks[Metal, Cocoa, Foundation]
+    end
+    
+    Platform --> Source
+    Platform --> Include
+    Platform --> Frameworks
+    
+    Root --> Core[Core Engine Libraries]
+    Core & Platform_Layer --> Exec[GeneralsMD :: executable]
+    
+    style Exec fill:#f9f,stroke:#333,stroke-width:2px
 ```
-┌──────────────────────────────────────────┐
-│ CMakePresets.json (macos preset)         │  ← Точка входа
-├──────────────────────────────────────────┤
-│ Root CMakeLists.txt                      │  ← Условия: APPLE → skip dx8/miles/bink,
-│                                          │     подключить Platform/MacOS
-├──────────────────────────────────────────┤
-│ Platform/MacOS/CMakeLists.txt            │  ← Статическая библиотека macos_platform:
-│   ├── Source/**/*.mm, *.cpp              │     - Metal рендер
-│   ├── Include/ (shim headers)            │     - Cocoa окна
-│   └── Frameworks: Metal, Cocoa, etc.     │     - Stub хедеры (windows.h и др.)
-├──────────────────────────────────────────┤
-│ GeneralsMD/Code/Main/CMakeLists.txt      │  ← APPLE: MacOSMain.mm вместо WinMain.cpp
-│                                          │     link macos_platform вместо d3d8/winmm/etc
-└──────────────────────────────────────────┘
-```
 
-## Что НЕЛЬЗЯ трогать
-- Файлы в `GeneralsMD/Code/`, `Core/`, `Generals/` — НЕ МОДИФИЦИРУЕМ.
-  Все совместимости решаются через include-path и shim-хедеры в Platform/MacOS/Include/.
+## What NOT to Touch
+- Files in `GeneralsMD/Code/`, `Core/`, `Generals/` — DO NOT MODIFY.
+  All compatibility issues are resolved via include-path and shim headers in `Platform/MacOS/Include/`.
 
-## Шаг 1: Stub-хедеры в Platform/MacOS/Include/
+## Step 1: Stub Headers in Platform/MacOS/Include/
 
-PreRTS.h включает Windows-хедеры. Мы НЕ модифицируем PreRTS.h.
-Вместо этого наш `-IPlatform/MacOS/Include` стоит ПЕРЕД `-IDependencies/dx8`,
-и компилятор находит наши shim-файлы первыми.
+`PreRTS.h` includes Windows headers. We DO NOT modify `PreRTS.h`.
+Instead, our `-IPlatform/MacOS/Include` is placed BEFORE `-IDependencies/dx8`, and the compiler finds our shim files first.
 
-Нужно создать stubs для:
-- [x] windows.h        (уже есть)
-- [x] malloc.h          (уже есть)
-- [x] d3d8.h и d3d8*.h  (уже есть, ведут к d3d8_stub)
-- [ ] atlbase.h          → пустой или minimal stub (ATL не нужен на macOS)
-- [ ] direct.h           → stub
-- [ ] excpt.h            → stub  
-- [ ] imagehlp.h         → stub
-- [ ] io.h               → stub
-- [ ] lmcons.h           → stub
-- [ ] mmsystem.h         → stub (timeGetTime и др.)
-- [ ] objbase.h          → stub (COM)
-- [ ] ocidl.h            → stub
-- [ ] process.h          → stub (_beginthread и др.)
-- [ ] shellapi.h         → stub
-- [ ] shlobj.h           → stub
-- [ ] shlguid.h          → stub
-- [ ] snmp.h             → stub
-- [ ] dinput.h           → stub (keyboard/mouse через Cocoa)
-- [ ] tchar.h            → forward to Utility/tchar_compat.h
+Need to create stubs for:
+- [x] `windows.h`        (exists)
+- [x] `malloc.h`         (exists)
+- [x] `d3d8.h` and `d3d8*.h` (exist, point to `d3d8_stub`)
+- [ ] `atlbase.h`        → empty or minimal stub (ATL not needed on macOS)
+- [ ] `direct.h`         → stub
+- [ ] `excpt.h`          → stub  
+- [ ] `imagehlp.h`       → stub
+- [ ] `io.h`             → stub
+- [ ] `lmcons.h`         → stub
+- [ ] `mmsystem.h`       → stub (`timeGetTime` etc.)
+- [ ] `objbase.h`        → stub (COM)
+- [ ] `ocidl.h`          → stub
+- [ ] `process.h`        → stub (`_beginthread` etc.)
+- [ ] `shellapi.h`       → stub
+- [ ] `shlobj.h`         → stub
+- [ ] `shlguid.h`        → stub
+- [ ] `snmp.h`           → stub
+- [ ] `dinput.h`         → stub (keyboard/mouse via Cocoa)
+- [ ] `tchar.h`          → forward to `Utility/tchar_compat.h`
 
-## Шаг 2: Platform/MacOS/CMakeLists.txt
+## Step 2: Platform/MacOS/CMakeLists.txt
 
 ```cmake
 add_library(macos_platform STATIC
@@ -106,7 +110,7 @@ target_link_libraries(macos_platform PUBLIC
 )
 ```
 
-## Шаг 3: Root CMakeLists.txt changes
+## Step 3: Root CMakeLists.txt Changes
 
 ```cmake
 # After existing FetchContent block:
@@ -123,7 +127,7 @@ endif()
 # ↑ Already correct — these are Windows-only
 ```
 
-## Шаг 4: GeneralsMD/Code/Main/CMakeLists.txt changes
+## Step 4: GeneralsMD/Code/Main/CMakeLists.txt Changes
 
 ```cmake
 if(APPLE)
@@ -146,7 +150,7 @@ else()
 endif()
 ```
 
-## Шаг 5: CMakePresets.json
+## Step 5: CMakePresets.json
 
 ```json
 {
@@ -162,16 +166,16 @@ endif()
 }
 ```
 
-## Шаг 6: Удаляем
-- build_macos.sh
-- setup_dependencies.sh
-- Platform/MacOS/Scripts/files.sh (список файлов теперь в CMakeLists.txt)
+## Step 6: Cleanup
+- `build_macos.sh` — Remove
+- `setup_dependencies.sh` — Remove
+- `Platform/MacOS/Scripts/files.sh` — Remove (file list is now in `CMakeLists.txt`)
 
-## Порядок выполнения
-1. Создать все stub-хедеры (Шаг 1)
-2. Создать Platform/MacOS/CMakeLists.txt (Шаг 2)
-3. Модифицировать root CMakeLists.txt (Шаг 3)
-4. Модифицировать GeneralsMD/Code/Main/CMakeLists.txt (Шаг 4)
-5. Добавить macos preset (Шаг 5)
-6. Попробовать cmake --preset macos
-7. Итеративно фиксить ошибки компиляции
+## Execution Order
+1. Create all stub headers (Step 1)
+2. Create `Platform/MacOS/CMakeLists.txt` (Step 2)
+3. Modify root `CMakeLists.txt` (Step 3)
+4. Modify `GeneralsMD/Code/Main/CMakeLists.txt` (Step 4)
+5. Add `macos` preset (Step 5)
+6. Run `cmake --preset macos`
+7. Iteratively fix compilation errors

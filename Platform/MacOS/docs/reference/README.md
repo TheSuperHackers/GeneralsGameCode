@@ -44,9 +44,4 @@ Detailed rendering call chain analysis created during debugging.
 |:---|:---|
 | [PORTING_STATUS.md](PORTING_STATUS.md) | Full porting status with build flow diagram, stub tables, backlog |
 
-## Screenshots
 
-| Image | Description |
-|:---|:---|
-| [generals.png](screenshots/generals.png) | Generals game screenshot |
-| [generals_zh.png](screenshots/generals_zh.png) | Zero Hour game screenshot |

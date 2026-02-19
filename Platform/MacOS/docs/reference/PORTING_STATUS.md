@@ -2,9 +2,9 @@
 
 **Goal:** Clean macOS build via CMake (`--preset macos`).
 **Branch:** `feature/macos-c_make`
-**Last updated:** 2026-02-19 14:57
-**Build progress:** ✅ BUILD SUCCESSFUL — both generalsv (21MB) and generalszh (22MB) linked and built
-**Runtime progress:** 🟢 Phase 5 — STABLE RUNTIME! 10 crashes resolved. Game runs 35+ seconds, 400+ frames via Metal, zero crashes.
+**Last Updated:** 2026-02-19 14:57
+**Build Progress:** ✅ BUILD SUCCESSFUL — both `generalsv` (21MB) and `generalszh` (22MB) linked and built
+**Runtime Progress:** 🟢 Phase 5 — STABLE RUNTIME! 10 crashes resolved. Game runs 35+ seconds, 400+ frames via Metal, zero crashes.
 
 ---
 
@@ -85,8 +85,8 @@ build/macos/GeneralsMD/generalszh  → run
   │   └─ GameEngine/          → g_gameengine  ◄── ✅ CLEAN        │
   │                           │                                   │
   │  GeneralsMD/Code/         │                                   │
-  │   ├─ GameEngine/          → z_gameengine  ◄── ✅ CLEAN         │
-  │   ├─ GameEngineDevice/    → z_gameenginedevice ◄── ✅ CLEAN        │
+  │   ├─ GameEngine/          → z_gameengine  ◄── ✅ CLEAN        │
+  │   ├─ GameEngineDevice/    → z_gameenginedevice ◄── ✅ CLEAN   │
   │   │   └─ PCH: <windows.h> (uses shim)                         │
   │   │   └─ links: corei_gameenginedevice_*, z_gameengine        │
   │   └─ Main/                → z_generals (executable)           │
@@ -105,7 +105,7 @@ build/macos/GeneralsMD/generalszh  → run
 ### DX8 Core (d3d8_stub.h architecture)
 | File | Lines | Purpose |
 |:---|:---|:---|
-| `d3d8_stub.h` | 1114 | **Source of truth** — pure C++ DX8 interfaces (no COM vtable). MetalDevice8 implements these. |
+| `d3d8_stub.h` | 1114 | **Source of Truth** — pure C++ DX8 interfaces (no COM vtable). MetalDevice8 implements these. |
 | `d3d8.h` | 3 | Thin redirect → `d3d8_stub.h` |
 | `d3d8types.h` | 3 | Thin redirect → `d3d8_stub.h` |
 | `d3d8caps.h` | 3 | Thin redirect → `d3d8_stub.h` |
@@ -138,69 +138,69 @@ build/macos/GeneralsMD/generalszh  → run
 | `shlguid.h` | 1 | Empty |
 | `snmp.h` | 1 | Empty |
 | `mapicode.h` | 4 | Empty |
-| `dinput.h` | ~120 | DIK_ key codes + IDirectInput stubs |
-| `oleauto.h` | ~10 | BSTR/OLE stubs |
-| `atlbase.h` | ~10 | CComModule stub |
-| `atlcom.h` | 4 | Includes atlbase.h |
+| `dinput.h` | ~120 | `DIK_` key codes + `IDirectInput` stubs |
+| `oleauto.h` | ~10 | `BSTR`/`OLE` stubs |
+| `atlbase.h` | ~10 | `CComModule` stub |
+| `atlcom.h` | 4 | Includes `atlbase.h` |
 | `EABrowserDispatch/BrowserDispatch.h` | 1 | Empty |
 
 ---
 
 ## ✅ z_gameengine — CLEAN BUILD (0 errors)
 
-Все 10 категорий проблем решены:
-- StackDump.cpp, MiniDumper.cpp, WorkerProcess.cpp — исключены из CMake
-- Все GameSpy/WinSock-зависимые файлы исключены (LANAPI*, Transport, udp, IPEnumeration, DownloadManager, GameSpy/*)
-- Pointer-to-int casts исправлены (INI.cpp, LocalFile.cpp, GUIUtil.cpp, FirewallHelper.cpp)
-- ShowWindow, MB_* константы добавлены в windows.h
-- endian_compat.h — стандартные uint*_t типы
-- GetModuleFileNameW stub добавлен
-- FARPROC → function pointer type + explicit casts в ScriptEngine.cpp
-- QueryPerformanceFrequency/Counter + FPU control stubs добавлены
+All 10 categories of issues resolved:
+- `StackDump.cpp`, `MiniDumper.cpp`, `WorkerProcess.cpp` — excluded from CMake.
+- All GameSpy/WinSock-dependent files excluded (`LANAPI*`, `Transport`, `udp`, `IPEnumeration`, `DownloadManager`, `GameSpy/*`).
+- Pointer-to-int casts fixed (`INI.cpp`, `LocalFile.cpp`, `GUIUtil.cpp`, `FirewallHelper.cpp`).
+- `ShowWindow`, `MB_*` constants added to `windows.h`.
+- `endian_compat.h` — standard `uint*_t` types.
+- `GetModuleFileNameW` stub added.
+- `FARPROC` → function pointer type + explicit casts in `ScriptEngine.cpp`.
+- `QueryPerformanceFrequency`/`Counter` + FPU control stubs added.
 
 ## ✅ g_gameengine — CLEAN BUILD (0 errors)
 
-- WOL Browser code guarded with `#ifndef __APPLE__`
-- 40+ pointer-to-int casts fixed across GUI callbacks, GameLogic, GameNetwork
-- GameSpy/Network files excluded from CMake
-- GadgetTextEntry WindowMsgData cast via uintptr_t
+- WOL Browser code guarded with `#ifndef __APPLE__`.
+- 40+ pointer-to-int casts fixed across GUI callbacks, GameLogic, GameNetwork.
+- GameSpy/Network files excluded from CMake.
+- `GadgetTextEntry` `WindowMsgData` cast via `uintptr_t`.
 
 ---
 
 ## ✅ z_gameenginedevice — CLEAN BUILD (0 errors)
 
-Все ошибки компиляции решены:
-- D3DXVECTOR4 duplicate typedef removed (d3d8_stub.h)
-- D3DXVECTOR4::operator const void*() added for SetPixelShaderConstant
-- D3DXMATRIX::operator*= added for compound matrix ops
-- D3DXMatrixInverse implemented (Gauss-Jordan)
-- d3dx8math.h → d3dx8core.h transitive include (fixes D3DXAssembleShader undeclared in W3DWater.cpp)
-- GetAsyncKeyState stub added to windows.h
-- HeapAlloc/HeapFree/GetProcessHeap/HEAP_ZERO_MEMORY stubs added (malloc/free backend)
-- Missing #endif for _FPCONTROL_DEFINED fixed
+All compilation errors resolved:
+- `D3DXVECTOR4` duplicate typedef removed (`d3d8_stub.h`).
+- `D3DXVECTOR4::operator const void*()` added for `SetPixelShaderConstant`.
+- `D3DXMATRIX::operator*=` added for compound matrix ops.
+- `D3DXMatrixInverse` implemented (Gauss-Jordan).
+- `d3dx8math.h` → `d3dx8core.h` transitive include (fixes `D3DXAssembleShader` undeclared in `W3DWater.cpp`).
+- `GetAsyncKeyState` stub added to `windows.h`.
+- `HeapAlloc`/`HeapFree`/`GetProcessHeap`/`HEAP_ZERO_MEMORY` stubs added (`malloc`/`free` backend).
+- Missing `#endif` for `_FPCONTROL_DEFINED` fixed.
 
 ---
 
-## ✅ Что уже работает
+## ✅ What's Already Working
 
-| Компонент | Статус | Детали |
+| Component | Status | Details |
 |:---|:---|:---|
-| **CMakePresets.json** | ✅ | Пресеты `macos` и `macos-release` |
-| **Root CMakeLists.txt** | ✅ | Apple ветвления, DX8 через d3d8_stub.h |
-| **DX8 → d3d8_stub.h** | ✅ | **Без FetchContent!** Чистые C++ интерфейсы |
-| **d3dx8 shims** | ✅ | math/core/tex — типы + функции объявлены |
-| **GameSpy** | ✅ | INTERFACE-only + стабы |
+| **CMakePresets.json** | ✅ | `macos` and `macos-release` presets |
+| **Root CMakeLists.txt** | ✅ | Apple branching, DX8 via `d3d8_stub.h` |
+| **DX8 → d3d8_stub.h** | ✅ | **No FetchContent!** Pure C++ interfaces |
+| **d3dx8 shims** | ✅ | math/core/tex — types + functions declared |
+| **GameSpy** | ✅ | INTERFACE-only + stubs |
 | **Miles/Bink** | ✅ | INTERFACE stubs |
 | **Win32 dummy libs** | ✅ | comctl32, vfw32, winmm, imm32 |
-| **LZHL** | ✅ | Реальная STATIC lib |
+| **LZHL** | ✅ | Real STATIC lib |
 | **stlport** | ✅ | INTERFACE (non-VC6) |
-| **config.cmake** | ✅ | build/debug/memory конфиг |
+| **config.cmake** | ✅ | build/debug/memory config |
 | **Platform/MacOS/CMakeLists** | ✅ | Metal, Cocoa, stubs, shaders |
-| **Win32 shims** | ✅ | windows.h (~1470 строк), objbase.h, tchar.h, winreg.h и др. |
-| **PCH ordering** | ✅ | windows.h first in all PCH lists |
-| **debug exclusions** | ✅ | debug_stack.cpp, DbgHelp*, debug_io_* excluded |
+| **Win32 shims** | ✅ | `windows.h` (~1470 lines), `objbase.h`, `tchar.h`, `winreg.h` etc. |
+| **PCH ordering** | ✅ | `windows.h` first in all PCH lists |
+| **debug exclusions** | ✅ | `debug_stack.cpp`, `DbgHelp*`, `debug_io_*` excluded |
 | **profile exclusions** | ✅ | Windows-specific profile .cpp excluded |
-| **osdep.h** | ✅ | _UNIX mechanism, Utility include path |
+| **osdep.h** | ✅ | `_UNIX` mechanism, Utility include path |
 | **core_debug** | ✅ | Compiles |
 | **core_profile** | ✅ | Compiles |
 | **core_wwlib** | ✅ | Compiles |
@@ -215,17 +215,17 @@ build/macos/GeneralsMD/generalszh  → run
 | **Override mismatches** | ✅ | Removed non-virtual methods from derived classes |
 | **Memory pool macros** | ✅ | `allocateBlockImplementation(msg)` → `allocateBlock(msg)` for release builds |
 | **WOL Browser code** | ✅ | Guarded with `#ifndef __APPLE__` |
-| **LANMessage size** | ✅ | `MAX_LANAPI_PACKET_SIZE *= 2` на macOS |
+| **LANMessage size** | ✅ | `MAX_LANAPI_PACKET_SIZE *= 2` on macOS |
 | **_strlwr/_strupr linkage** | ✅ | `extern "C"` wrapper |
 | **GadgetTextEntry pointer cast** | ✅ | `WindowMsgData` via `uintptr_t` |
 | **GameSpy/Network exclusions** | ✅ | 20+ WinSock-dependent files excluded |
 | **Pointer-to-int 64-bit fixes** | ✅ | Multiple files fixed |
-| **windows.h stubs** | ✅ | IsIconic, SetCursor, GetCursorPos, ScreenToClient, MSG, PeekMessage, SetErrorMode, SetThreadExecutionState, MessageBox constants, threading (CreateEvent, SetEvent, WaitForSingleObject, _beginthread), BITMAPINFO pointer types, GetAsyncKeyState, HeapAlloc/HeapFree/GetProcessHeap, FPU control |
-| **Win32GameEngine.h** | ✅ | WebBrowser include guarded, CComObject guarded |
-| **W3DDisplay.cpp** | ✅ | IsIconic guarded, CreateBMPFile guarded |
-| **WWAudio PCH** | ✅ | windows.h added via target_precompile_headers |
+| **windows.h stubs** | ✅ | `IsIconic`, `SetCursor`, `GetCursorPos`, `ScreenToClient`, `MSG`, `PeekMessage`, `SetErrorMode`, `SetThreadExecutionState`, `MessageBox` constants, threading (`CreateEvent`, `SetEvent`, `WaitForSingleObject`, `_beginthread`), `BITMAPINFO` pointer types, `GetAsyncKeyState`, `HeapAlloc`/`HeapFree`/`GetProcessHeap`, FPU control |
+| **Win32GameEngine.h** | ✅ | WebBrowser include guarded, `CComObject` guarded |
+| **W3DDisplay.cpp** | ✅ | `IsIconic` guarded, `CreateBMPFile` guarded |
+| **WWAudio PCH** | ✅ | `windows.h` added via target_precompile_headers |
 | **BINKEXPORT macro** | ✅ | Uses `__attribute__((visibility("default")))` on macOS |
-| **D3DX math extensions** | ✅ | D3DXMatrixInverse, operator*=, D3DXVECTOR4 void* cast, transitive d3dx8core.h include |
+| **D3DX math extensions** | ✅ | `D3DXMatrixInverse`, `operator*=`, `D3DXVECTOR4` void* cast, transitive `d3dx8core.h` include |
 | **z_gameenginedevice** | ✅ | **CLEAN BUILD — 0 errors** |
 | **g_generals (compile)** | ✅ | **ALL COMPILATION PASSED** — factory methods guarded with `#ifndef __APPLE__` |
 | **z_generals (compile)** | ✅ | **ALL COMPILATION PASSED** — ZH-only virtuals (`notifyTerrainObjectMoved`, `createSnowManager`) guarded with `#if RTS_ZEROHOUR` |
@@ -256,39 +256,39 @@ Stub categories:
 
 ## 🔧 Phase 5: Runtime Debugging — Progress
 
-| Проблема | Статус | Детали |
+| Problem | Status | Details |
 |:---|:---|:---|
-| **SIGBUS в MacOSAudioManager::init()** | ✅ FIXED | AVAudioEngine exception → обёрнуто в @try/@catch |
-| **SIGSEGV в ThingTemplate::parseModuleName** | ✅ FIXED | `createModuleFactory()` возвращал базовый `ModuleFactory` → исправлено на `W3DModuleFactory` |
-| **SIGBUS в GameClient::init() / setFrameRate()** | ✅ FIXED | **Vtable mismatch** — `macos_platform` не имел `zi_always` (PRIVATE), `RTS_ZEROHOUR` не определён при компиляции. Сдвиг на 2 vtable слота → typeinfo как код → EXC_BAD_ACCESS(code=2) |
-| **ERROR_INVALID_D3D в DX8Wrapper::Init()** | ✅ FIXED | `LoadLibrary`/`GetProcAddress` стабы возвращали nullptr → исправлено: `LoadLibrary` возвращает маркер, `GetProcAddress("Direct3DCreate8")` → `CreateMetalInterface8` |
-| **ERROR_OUT_OF_MEMORY (0xDEAD0002)** | ✅ FIXED | Пулы памяти `MetalSurface8`/`MetalTexture8` отсутствовали в `GameMemoryInitPools_GeneralsMD.inl` → добавлены под `#ifdef __APPLE__` |
-| **SIGSEGV в GameResultsInterface** | ✅ FIXED | `createNewGameResultsInterface()` возвращал nullptr → создан `StubGameResultsInterface` с no-op методами |
-| **SIGSEGV в audio playback (scheduleFile)** | ✅ FIXED | AVAudioEngine not running / incompatible format → `@try/@catch` + engine guard в `friend_forcePlayAudioEventRTS` |
-| **SIGABRT — Metal vs custom allocator** | ✅ FIXED | Глобальный `operator new/delete` конфликтовал с Metal/AppKit → на macOS используется `calloc/free` вместо `DynamicMemoryAllocator` |
-| **SIGSEGV в W3DBridgeBuffer constructor** | ✅ FIXED | `m_numBridges` не инициализирован перед `clearAllBridges()` → мусорный цикл. Инициализация + calloc |
-| **SIGSEGV в Pathfinder constructor** | ✅ FIXED | Неинициализированные поля при переходе на системный malloc → решено через calloc (обнуление) |
+| **SIGBUS in MacOSAudioManager::init()** | ✅ FIXED | `AVAudioEngine` exception → wrapped in `@try`/`@catch` |
+| **SIGSEGV in ThingTemplate::parseModuleName** | ✅ FIXED | `createModuleFactory()` returned base `ModuleFactory` → fixed to `W3DModuleFactory` |
+| **SIGBUS in GameClient::init() / setFrameRate()** | ✅ FIXED | **Vtable mismatch** — `macos_platform` lacked `zi_always` (PRIVATE), `RTS_ZEROHOUR` not defined during compilation. 2 vtable slot shift → typeinfo as code → `EXC_BAD_ACCESS` |
+| **ERROR_INVALID_D3D in DX8Wrapper::Init()** | ✅ FIXED | `LoadLibrary`/`GetProcAddress` stubs returned `nullptr` → fixed: `LoadLibrary` returns marker, `GetProcAddress("Direct3DCreate8")` → `CreateMetalInterface8` |
+| **ERROR_OUT_OF_MEMORY (0xDEAD0002)** | ✅ FIXED | Memory pools for `MetalSurface8`/`MetalTexture8` missing in `GameMemoryInitPools_GeneralsMD.inl` → added under `#ifdef __APPLE__` |
+| **SIGSEGV in GameResultsInterface** | ✅ FIXED | `createNewGameResultsInterface()` returned `nullptr` → created `StubGameResultsInterface` with no-op methods |
+| **SIGSEGV in audio playback (scheduleFile)** | ✅ FIXED | `AVAudioEngine` not running / incompatible format → `@try`/`@catch` + engine guard in `friend_forcePlayAudioEventRTS` |
+| **SIGABRT — Metal vs custom allocator** | ✅ FIXED | Global `operator new`/`delete` conflicted with Metal/AppKit → macOS uses `calloc`/`free` instead of `DynamicMemoryAllocator` |
+| **SIGSEGV in W3DBridgeBuffer constructor** | ✅ FIXED | `m_numBridges` not initialized before `clearAllBridges()` → garbage loop. Initialization + `calloc` |
+| **SIGSEGV in Pathfinder constructor** | ✅ FIXED | Uninitialized fields when switching to system `malloc` → resolved via `calloc` (zeroing) |
 
-### Ключевой урок: CMake vtable mismatch
+### Key Lesson: CMake Vtable Mismatch
 
-`Platform/MacOS/CMakeLists.txt` — `macos_platform` компилируется один раз как STATIC library.
-- `zi_always` (даёт `RTS_ZEROHOUR=1`) должен быть **PRIVATE**, чтобы не утекал в Generals-таргет.
-- Include-пути должны указывать на `GeneralsMD/` (не `Generals/`), иначе используется неправильный `GameClient.h`.
-- Zero Hour `GameClient.h` имеет 2 дополнительных чисто-виртуальных метода (`notifyTerrainObjectMoved`, `createSnowManager`), которые сдвигают vtable.
+`Platform/MacOS/CMakeLists.txt` — `macos_platform` is compiled once as a STATIC library.
+- `zi_always` (provides `RTS_ZEROHOUR=1`) must be **PRIVATE** to avoid leaking into the Generals target.
+- Include paths must point to `GeneralsMD/` (not `Generals/`), otherwise the wrong `GameClient.h` is used.
+- Zero Hour `GameClient.h` has 2 additional pure-virtual methods (`notifyTerrainObjectMoved`, `createSnowManager`) which shift the vtable.
 
 ---
 
 ## 📋 BACKLOG
 
-| Задача | Приоритет | Заметки |
+| Task | Priority | Notes |
 |:---|:---|:---|
-| Input handling | **High** | Keyboard/Mouse через Cocoa events — нужно проверить маршрутизацию событий |
-| Metal rendering полноценный | **High** | Текстуры, шейдеры, 3D-сцена — проверка при реальном рендеринге |
-| UI / меню рендеринг | **High** | Элементы интерфейса, кнопки, текст — проверка отрисовки |
-| Аудио воспроизведение | **Medium** | Обёрнуто в @try/@catch, нужна проверка загрузки файлов из .big |
-| .big archives mounting | **Medium** | Загрузка ассетов работает (INI файлы грузятся), но полнота не проверена |
-| WOL авторизация | Low | Браузер исключён. Возможно REST API. |
-| Cross-platform LAN wire format | Low | wchar_t 4B на macOS vs 2B |
+| Input handling | **High** | Keyboard/Mouse via Cocoa events — verify event routing |
+| Full Metal rendering | **High** | Textures, shaders, 3D scene — verify with real rendering |
+| UI / Menu rendering | **High** | Interface elements, buttons, text — verify drawing |
+| Audio playback | **Medium** | Wrapped in `@try`/`@catch`, needs `.big` file loading verification |
+| .big archives mounting | **Medium** | Asset loading works (INI files load), completeness unverified |
+| WOL authorization | Low | Browser excluded. Possibly REST API. |
+| Cross-platform LAN wire format | Low | `wchar_t` is 4B on macOS vs 2B on Windows |
 
 ---
 
@@ -316,8 +316,8 @@ Stub categories:
 ---
 
 ## 📜 Golden Rules
-1. **Не трогать Core/**: Платформенный код живёт в `Platform/MacOS/Source/`. Минимум правок в `Core/`.
-2. **Минимальный `windows.h`**: Шим содержит только то, что реально нужно. Добавлять по ошибке сборки.
-3. **Исключать, а не затыкать**: Проблемные Windows-файлы исключаются из сборки через CMake.
-4. **d3d8_stub.h — source of truth**: Все DX8 интерфейсы на macOS только через stub, не через оригинальный SDK.
-5. **Unified Pipeline**: Весь рендеринг через `MetalDevice8`. Без side-channels.
+1. **Don't touch `Core/`**: Platform code lives in `Platform/MacOS/Source/`. Minimal edits in `Core/`.
+2. **Minimal `windows.h`**: Shim contains only what is actually needed. Add on build error.
+3. **Exclude, don't patch**: Problematic Windows files are excluded from the build via CMake.
+4. **`d3d8_stub.h` is the source of truth**: All DX8 interfaces on macOS only via stub, not the original SDK.
+5. **Unified Pipeline**: All rendering through `MetalDevice8`. No side-channels.

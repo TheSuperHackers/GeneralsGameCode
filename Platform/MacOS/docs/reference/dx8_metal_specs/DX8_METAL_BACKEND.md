@@ -1,154 +1,139 @@
 # DX8 → Metal Graphics Backend — Implementation Plan
 
-> **Цель:** Чистая, по спецификации DX8.1, реализация графического backend-а на Metal.
-> Заменяет все ad-hoc заглушки одним архитектурно-чистым адаптером.
+> **Goal:** A clean, DX8.1-compliant implementation of the graphics backend using Metal.
+> Replaces all ad-hoc stubs with a single architecturally-clean adapter.
 
-## Архитектура
+## Architecture
 
-```
-┌──────────────────────────────────────────────────┐
-│            Игровой код (W3D Engine)               │
-│  DX8Wrapper::Set_Texture, Draw_Triangles, etc.   │
-└────────────────────┬─────────────────────────────┘
-                     │ вызывает
-                     ▼
-┌──────────────────────────────────────────────────┐
-│         IDirect3DDevice8 (COM интерфейс)          │
-│    d3d8_stub.h — виртуальные методы               │
-└────────────────────┬─────────────────────────────┘
-                     │ реализует
-                     ▼
-┌──────────────────────────────────────────────────┐
-│     MetalDevice8 : IDirect3DDevice8    [НОВЫЙ]    │
-│                                                   │
-│  ┌─────────────┐ ┌──────────────┐ ┌────────────┐ │
-│  │ State Cache  │ │ Buffer Mgr   │ │ Texture Mgr│ │
-│  │ RenderStates │ │ VB/IB Pool   │ │ DDS/TGA    │ │
-│  │ TSS Cache    │ │ MTLBuffer    │ │ MTLTexture │ │
-│  └─────────────┘ └──────────────┘ └────────────┘ │
-│  ┌─────────────────────────────────────────────┐  │
-│  │        MetalPipelineManager                  │  │
-│  │  - FVF → MTLVertexDescriptor                 │  │
-│  │  - Blend/Depth/Stencil state cache           │  │
-│  │  - Pipeline State Objects (PSO) cache         │  │
-│  └─────────────────────────────────────────────┘  │
-│  ┌─────────────────────────────────────────────┐  │
-│  │     Metal Shaders (fixed_function.metal)      │  │
-│  │  - Vertex: transform + per-vertex lighting    │  │
-│  │  - Fragment: texture stage blending + fog     │  │
-│  └─────────────────────────────────────────────┘  │
-└──────────────────────────────────────────────────┘
-                     │
-                     ▼
-              Metal Framework (GPU)
+```mermaid
+graph TD
+    GameCode[Game Code :: W3D Engine] -- calls --> DX8I[IDirect3DDevice8 :: d3d8_stub.h]
+    DX8I -- implements --> MetalDevice8[MetalDevice8 :: MetalDevice8.mm]
+    
+    subgraph MetalDevice8_Internal [MetalDevice8 Architecture]
+        direction TB
+        StateCache[State Cache :: RenderStates, TSS]
+        BufferMgr[Buffer Manager :: VB/IB Pool, MTLBuffer]
+        TextureMgr[Texture Manager :: DDS/TGA, MTLTexture]
+        PipelineMgr[MetalPipelineManager :: FVF -> PSO Cache]
+        Shaders[Metal Shaders :: fixed_function.metal]
+    end
+    
+    MetalDevice8 --> StateCache
+    MetalDevice8 --> BufferMgr
+    MetalDevice8 --> TextureMgr
+    MetalDevice8 --> PipelineMgr
+    MetalDevice8 --> Shaders
+    
+    MetalDevice8_Internal -- drives --> MetalAPI[Metal Framework :: GPU]
 ```
 
-## Что удаляем / заменяем
+## What to Remove / Replace
 
-| Файл | Действие |
+| File | Action |
 |:---|:---|
-| `MacOSRenderer.mm` (858 строк) | **УДАЛЯЕМ** — заменяется MetalDevice8 |
-| `MacOSShaders.metal` (104 строки) | **УДАЛЯЕМ** — заменяется `fixed_function.metal` |
-| `Shaders.metal` | **УДАЛЯЕМ** — дубликат |
-| `MacOSRenderDevice_Internal.h` | **УДАЛЯЕМ** — заменяется MetalDevice8.h |
-| `IRenderDevice.h` | **УДАЛЯЕМ** — не нужен, используем IDirect3DDevice8 |
-| `D3DXStubs.cpp` | **ОБНОВЛЯЕМ** — дополняем недостающее |
+| `MacOSRenderer.mm` (858 lines) | **REMOVE** — replaced by MetalDevice8 |
+| `MacOSShaders.metal` (104 lines) | **REMOVE** — replaced by `fixed_function.metal` |
+| `Shaders.metal` | **REMOVE** — duplicate |
+| `MacOSRenderDevice_Internal.h` | **REMOVE** — replaced by MetalDevice8.h |
+| `IRenderDevice.h` | **REMOVE** — not needed, using IDirect3DDevice8 |
+| `D3DXStubs.cpp` | **UPDATE** — fill missing functionality |
 
-## Что оставляем
+## What to Keep
 
-- `d3d8_stub.h` — все типы, enums, интерфейсы (уже корректны)
-- `dx8wrapper.h/cpp` — W3D обёртка, вызывает наш MetalDevice8
-- `d3dx8math.h`, `d3dx8tex.h` — helper функции
-- Весь остальной движок — НЕ ТРОГАЕМ
-
----
-
-## Источники истины
-
-1. **`documentation.pdf`** (549 стр.) — DX8.1 SDK, формулы освещения, TSS, blend states
-2. **`d3d8_stub.h`** (1115 строк) — все enums/types/interfaces
-3. **`dx8wrapper.h`** (1546 строк) — какие методы реально вызываются
-4. **`.agent/dx8_spec_extracted.txt`** (497 KB) — извлечённый текст спецификации
+- `d3d8_stub.h` — all types, enums, interfaces (already correct)
+- `dx8wrapper.h/cpp` — W3D wrapper, calls our MetalDevice8
+- `d3dx8math.h`, `d3dx8tex.h` — helper functions
+- Rest of the engine — DO NOT TOUCH
 
 ---
 
-## Этапы реализации
+## Sources of Truth
 
-### Этап 0: Каркас (фундамент)
-**Цель:** MetalDevice8 компилируется и движок запускается через него
-
-**Файлы:**
-- `Platform/MacOS/Source/Metal/MetalDevice8.h` — объявления
-- `Platform/MacOS/Source/Metal/MetalDevice8.mm` — реализация
-- `Platform/MacOS/Source/Metal/MetalInterface8.h` — IDirect3D8
-- `Platform/MacOS/Source/Metal/MetalInterface8.mm` — реализация
-
-**Задачи:**
-1. Создать класс `MetalDevice8 : IDirect3DDevice8` с ВСЕМИ методами (заглушки, return D3D_OK)
-2. Создать класс `MetalInterface8 : IDirect3D8` (CreateDevice → создаёт MetalDevice8)
-3. В `dx8wrapper.cpp`, функции `CreateMacOSD3D8()` и `CreateMacOSD3DDevice8()` — вернуть наши классы
-4. Metal device, command queue, CAMetalLayer — инициализация в конструкторе
-5. **Проверка:** Игра запускается, логирование показывает вызовы всех методов
-
-**Критерий готовности:** Сборка проходит, игра запускается, пустой экран
+1. **`documentation.pdf`** (549 pages) — DX8.1 SDK, lighting formulas, TSS, blend states
+2. **`d3d8_stub.h`** (1115 lines) — all enums/types/interfaces
+3. **`dx8wrapper.h`** (1546 lines) — what methods are actually called
+4. **`dx8_spec_extracted.txt`** (497 KB) — extracted specification text
 
 ---
 
-### Этап 1: Scene Management + Clear
-**Цель:** Чёрный экран с правильным clear color
+## Implementation Phases
 
-**Спецификация (documentation.pdf p.258):**
-- `BeginScene` — начало рендеринга кадра
-- `EndScene` — конец рендеринга кадра  
-- `Present` — показ backbuffer на экране
-- `Clear` — заполнение render target цветом/depth/stencil
+### Phase 0: Skeleton (Foundation)
+**Goal:** `MetalDevice8` compiles and the engine launches through it.
 
-**Реализация:**
+**Files:**
+- `Platform/MacOS/Source/Metal/MetalDevice8.h` — Declarations
+- `Platform/MacOS/Source/Metal/MetalDevice8.mm` — Implementation
+- `Platform/MacOS/Source/Metal/MetalInterface8.h` — `IDirect3D8`
+- `Platform/MacOS/Source/Metal/MetalInterface8.mm` — Implementation
+
+**Tasks:**
+1. Create class `MetalDevice8 : IDirect3DDevice8` with ALL methods (stubs, return `D3D_OK`).
+2. Create class `MetalInterface8 : IDirect3D8` (`CreateDevice` → creates `MetalDevice8`).
+3. In `dx8wrapper.cpp`, functions `CreateMacOSD3D8()` and `CreateMacOSD3DDevice8()` — return our classes.
+4. Initialize Metal device, command queue, and `CAMetalLayer` in the constructor.
+5. **Verification:** Game launches, logs show calls to all methods.
+
+**Readiness Criteria:** Build passes, game launches, empty screen.
+
+---
+
+### Phase 1: Scene Management + Clear
+**Goal:** Black screen with the correct clear color.
+
+**Specification (`documentation.pdf` p.258):**
+- `BeginScene` — start of frame rendering
+- `EndScene` — end of frame rendering
+- `Present` — display backbuffer on screen
+- `Clear` — fill render target with color/depth/stencil
+
+**Implementation:**
 ```
 BeginScene   → [m_CommandQueue commandBuffer], nextDrawable, beginEncoder
 EndScene     → endEncoder
 Present      → presentDrawable, commitCommandBuffer
-Clear(flags) → MTLRenderPassDescriptor с clearColor/clearDepth
+Clear(flags) → MTLRenderPassDescriptor with clearColor/clearDepth
 ```
 
-**Задачи:**
-1. `BeginScene()` — создать MTLCommandBuffer, получить drawable, начать render pass
-2. `EndScene()` — закончить render pass encoder
-3. `Present()` — present drawable, commit command buffer
+**Tasks:**
+1. `BeginScene()` — create `MTLCommandBuffer`, acquire drawable, start render pass.
+2. `EndScene()` — end render pass encoder.
+3. `Present()` — present drawable, commit command buffer.
 4. `Clear(count, rects, flags, color, z, stencil)`:
-   - `D3DCLEAR_TARGET` → `loadAction = MTLLoadActionClear`, clearColor из D3DCOLOR
-   - `D3DCLEAR_ZBUFFER` → `clearDepth`
-   - `D3DCLEAR_STENCIL` → `clearStencil`
-5. `SetViewport(D3DVIEWPORT8)` → `[encoder setViewport:]`
+   - `D3DCLEAR_TARGET` → `loadAction = MTLLoadActionClear`, `clearColor` from `D3DCOLOR`.
+   - `D3DCLEAR_ZBUFFER` → `clearDepth`.
+   - `D3DCLEAR_STENCIL` → `clearStencil`.
+5. `SetViewport(D3DVIEWPORT8)` → `[encoder setViewport:]`.
 
-**Критерий:** Экран заливается цветом, указанным игрой
+**Criteria:** Screen is filled with the color specified by the game.
 
 ---
 
-### Этап 2: Vertex/Index Buffers
-**Цель:** Геометрия создаётся и хранится в GPU памяти
+### Phase 2: Vertex/Index Buffers
+**Goal:** Geometry is created and stored in GPU memory.
 
-**Спецификация (d3d8_stub.h, строки 883-895):**
-- `IDirect3DVertexBuffer8` — Lock/Unlock/GetDesc
-- `IDirect3DIndexBuffer8` — Lock/Unlock/GetDesc
+**Specification (`d3d8_stub.h`, lines 883-895):**
+- `IDirect3DVertexBuffer8` — `Lock`/`Unlock`/`GetDesc`
+- `IDirect3DIndexBuffer8` — `Lock`/`Unlock`/`GetDesc`
 
-**Файлы:**
+**Files:**
 - `Platform/MacOS/Source/Metal/MetalVertexBuffer8.h/mm`
 - `Platform/MacOS/Source/Metal/MetalIndexBuffer8.h/mm`
 
-**Реализация:**
+**Implementation:**
 ```
 CreateVertexBuffer(length, usage, fvf, pool) → MetalVertexBuffer8
-  - MTLBuffer с MTLResourceStorageModeShared
-  - Хранит FVF, размер
+  - MTLBuffer with MTLResourceStorageModeShared
+  - Stores FVF, size
   
 Lock(offset, size, &ptr, flags) → contents() + offset
-Unlock() → no-op (shared memory), или didModifyRange
+Unlock() → no-op (shared memory), or didModifyRange
 ```
 
-**FVF (Flexible Vertex Format) парсер** — критически важная часть:
+**FVF (Flexible Vertex Format) Parser** — a critical component:
 ```
-FVF bits → stride и layout:
+FVF bits → stride and layout:
   D3DFVF_XYZ      → float3 position (12 bytes)
   D3DFVF_XYZRHW   → float4 position (16 bytes, pre-transformed)
   D3DFVF_NORMAL   → float3 normal (12 bytes)
@@ -159,57 +144,57 @@ FVF bits → stride и layout:
   D3DFVF_XYZBn    → bone weights
 ```
 
-**Задачи:**
-1. Реализовать `MetalVertexBuffer8` с MTLBuffer backing
-2. Реализовать `MetalIndexBuffer8` (16-bit indices)
-3. FVF parser: `DWORD fvf` → `{stride, offsets для position, normal, diffuse, specular, texN}`
-4. `CreateVertexBuffer` / `CreateIndexBuffer` в MetalDevice8
-5. `SetStreamSource(stream, vb, stride)` — запомнить текущий VB
-6. `SetIndices(ib, baseVertex)` — запомнить текущий IB
+**Tasks:**
+1. Implement `MetalVertexBuffer8` with `MTLBuffer` backing.
+2. Implement `MetalIndexBuffer8` (16-bit indices).
+3. FVF parser: `DWORD fvf` → `{stride, offsets for position, normal, diffuse, specular, texN}`.
+4. `CreateVertexBuffer` / `CreateIndexBuffer` in `MetalDevice8`.
+5. `SetStreamSource(stream, vb, stride)` — remember current VB.
+6. `SetIndices(ib, baseVertex)` — remember current IB.
 
-**Критерий:** Буферы создаются без крашей, Lock/Unlock работают
+**Criteria:** Buffers are created without crashes, `Lock`/`Unlock` work.
 
 ---
 
-### Этап 3: Pipeline State + Draw Calls
-**Цель:** Треугольники рисуются на экране (белые, без текстур)
+### Phase 3: Pipeline State + Draw Calls
+**Goal:** Triangles are drawn on screen (white, no textures).
 
-**Спецификация:**
-- `DrawPrimitive(type, startVertex, primCount)` 
+**Specification:**
+- `DrawPrimitive(type, startVertex, primCount)`
 - `DrawIndexedPrimitive(type, minIndex, numVertices, startIndex, primCount)`
-- Primitive types: TRIANGLELIST, TRIANGLESTRIP, TRIANGLEFAN, LINELIST, LINESTRIP
+- Primitive types: `TRIANGLELIST`, `TRIANGLESTRIP`, `TRIANGLEFAN`, `LINELIST`, `LINESTRIP`
 
-**Pipeline State Object (PSO) кэш:**
+**Pipeline State Object (PSO) Cache:**
 ```
 PSO key = hash(FVF, blendEnable, srcBlend, dstBlend, 
                depthEnable, depthWrite, depthFunc,
                cullMode, colorWriteMask)
 ```
 
-**Файлы:**
+**Files:**
 - `Platform/MacOS/Source/Metal/MetalPipelineManager.h/mm`
 
-**Задачи:**
-1. FVF → `MTLVertexDescriptor` маппинг
-2. PSO кэш: `std::unordered_map<uint64_t, id<MTLRenderPipelineState>>`
-3. Depth/Stencil state кэш: `std::unordered_map<uint32_t, id<MTLDepthStencilState>>`
-4. `DrawPrimitive` → `[encoder drawPrimitives:vertexStart:vertexCount:]`
-5. `DrawIndexedPrimitive` → `[encoder drawIndexedPrimitives:indexCount:indexType:indexBuffer:indexBufferOffset:]`
-6. Primitive type маппинг:
+**Tasks:**
+1. FVF → `MTLVertexDescriptor` mapping.
+2. PSO cache: `std::unordered_map<uint64_t, id<MTLRenderPipelineState>>`.
+3. Depth/Stencil state cache: `std::unordered_map<uint32_t, id<MTLDepthStencilState>>`.
+4. `DrawPrimitive` → `[encoder drawPrimitives:vertexStart:vertexCount:]`.
+5. `DrawIndexedPrimitive` → `[encoder drawIndexedPrimitives:indexCount:indexType:indexBuffer:indexBufferOffset:]`.
+6. Primitive type mapping:
    - `D3DPT_TRIANGLELIST` → `MTLPrimitiveTypeTriangle`
    - `D3DPT_TRIANGLESTRIP` → `MTLPrimitiveTypeTriangleStrip`
    - `D3DPT_LINELIST` → `MTLPrimitiveTypeLine`
    - `D3DPT_LINESTRIP` → `MTLPrimitiveTypeLineStrip`
-   - `D3DPT_TRIANGLEFAN` → конвертировать в triangle list (Metal не поддерживает)
+   - `D3DPT_TRIANGLEFAN` → convert to triangle list (not natively supported by Metal).
 
-**Критерий:** Треугольники видны на экране
+**Criteria:** Triangles are visible on screen.
 
 ---
 
-### Этап 4: Transforms (матрицы)
-**Цель:** 3D трансформации работают — объекты в правильных позициях
+### Phase 4: Transforms (Matrices)
+**Goal:** 3D transformations work — objects are in correct positions.
 
-**Спецификация (d3d8_stub.h строки 633-645):**
+**Specification (`d3d8_stub.h` lines 633-645):**
 ```
 D3DTS_WORLD      = 256  → Model matrix
 D3DTS_VIEW       = 2    → Camera matrix  
@@ -217,12 +202,12 @@ D3DTS_PROJECTION = 3    → Projection matrix
 D3DTS_TEXTUREn   = 16+n → Texture coordinate transform
 ```
 
-**Формула (стандартная):**
+**Formula (Standard):**
 ```
 clipPos = Projection × View × World × localPos
 ```
 
-**Для pre-transformed вершин (D3DFVF_XYZRHW):**
+**For pre-transformed vertices (D3DFVF_XYZRHW):**
 ```
 clipPos.x = (x / screenWidth) * 2 - 1
 clipPos.y = 1 - (y / screenHeight) * 2
@@ -242,73 +227,73 @@ struct Uniforms {
 };
 ```
 
-**Задачи:**
-1. `SetTransform(state, matrix)` — сохранить в массив `m_Transforms[state]`
-2. `GetTransform(state, matrix)` — вернуть из массива
-3. Перед draw call: заполнить uniform buffer и привязать к encoder
-4. Vertex shader: умножить позицию на WVP
-5. Обработка XYZRHW (2D режим, UI) — screen space → clip space
+**Tasks:**
+1. `SetTransform(state, matrix)` — save to `m_Transforms[state]` array.
+2. `GetTransform(state, matrix)` — return from array.
+3. Before draw call: fill uniform buffer and bind to encoder.
+4. Vertex shader: multiply position by WVP.
+5. Handling of `XYZRHW` (2D mode, UI) — screen space → clip space.
 
-**Критерий:** UI элементы в правильных позициях, 3D объекты с перспективой
+**Criteria:** UI elements in correct positions, 3D objects with perspective.
 
 ---
 
-### Этап 5: Textures
-**Цель:** Текстуры загружаются и отображаются на геометрии
+### Phase 5: Textures
+**Goal:** Textures are loaded and displayed on geometry.
 
-**Спецификация (d3d8_stub.h строки 917-926):**
+**Specification (`d3d8_stub.h` lines 917-926):**
 ```
 IDirect3DTexture8 — GetLevelDesc, GetSurfaceLevel, LockRect, UnlockRect
 ```
 
-**Файлы:**
+**Files:**
 - `Platform/MacOS/Source/Metal/MetalTexture8.h/mm`
 - `Platform/MacOS/Source/Metal/MetalSurface8.h/mm`
 
-**Форматы текстур (маппинг DX8 → Metal):**
+**Texture Formats (DX8 → Metal Mapping):**
 | D3DFORMAT | Metal | Bytes/pixel |
 |:---|:---|:---|
-| D3DFMT_A8R8G8B8 | MTLPixelFormatBGRA8Unorm | 4 |
-| D3DFMT_X8R8G8B8 | MTLPixelFormatBGRA8Unorm | 4 |
-| D3DFMT_R5G6B5 | MTLPixelFormatB5G6R5Unorm* | 2 |
-| D3DFMT_A1R5G5B5 | MTLPixelFormatA1BGR5Unorm* | 2 |
-| D3DFMT_A4R4G4B4 | MTLPixelFormatABGR4Unorm* | 2 |
-| D3DFMT_A8 | MTLPixelFormatA8Unorm | 1 |
-| D3DFMT_DXT1 | MTLPixelFormatBC1_RGBA | 0.5 |
-| D3DFMT_DXT2/3 | MTLPixelFormatBC2_RGBA | 1 |
-| D3DFMT_DXT4/5 | MTLPixelFormatBC3_RGBA | 1 |
-| D3DFMT_L8 | MTLPixelFormatR8Unorm | 1 |
-| D3DFMT_P8 | → convert to A8R8G8B8 | 4 |
+| `D3DFMT_A8R8G8B8` | `MTLPixelFormatBGRA8Unorm` | 4 |
+| `D3DFMT_X8R8G8B8` | `MTLPixelFormatBGRA8Unorm` | 4 |
+| `D3DFMT_R5G6B5` | `MTLPixelFormatB5G6R5Unorm`* | 2 |
+| `D3DFMT_A1R5G5B5` | `MTLPixelFormatA1BGR5Unorm`* | 2 |
+| `D3DFMT_A4R4G4B4` | `MTLPixelFormatABGR4Unorm`* | 2 |
+| `D3DFMT_A8` | `MTLPixelFormatA8Unorm` | 1 |
+| `D3DFMT_DXT1` | `MTLPixelFormatBC1_RGBA` | 0.5 |
+| `D3DFMT_DXT2/3` | `MTLPixelFormatBC2_RGBA` | 1 |
+| `D3DFMT_DXT4/5` | `MTLPixelFormatBC3_RGBA` | 1 |
+| `D3DFMT_L8` | `MTLPixelFormatR8Unorm` | 1 |
+| `D3DFMT_P8` | → convert to `A8R8G8B8` | 4 |
 
-\* Некоторые 16-bit форматы недоступны на macOS Metal — конвертируем в BGRA8
+\* Some 16-bit formats are not available on macOS Metal — convert to `BGRA8`.
 
-**Задачи:**
-1. `CreateTexture(w, h, levels, usage, format)` → MetalTexture8
-2. `LockRect(level, &rect, rect, flags)` → staging buffer
-3. `UnlockRect(level)` → blit staging → MTLTexture
-4. `SetTexture(stage, texture)` → `[encoder setFragmentTexture:atIndex:]`
-5. DDS loader integration (уже частично есть)
-6. Swizzle ARGB → BGRA при необходимости
+**Tasks:**
+1. `CreateTexture(w, h, levels, usage, format)` → `MetalTexture8`.
+2. `LockRect(level, &rect, rect, flags)` → staging buffer.
+3. `UnlockRect(level)` → blit staging → `MTLTexture`.
+4. `SetTexture(stage, texture)` → `[encoder setFragmentTexture:atIndex:]`.
+5. DDS loader integration (already partially exists).
+6. Swizzle `ARGB` → `BGRA` if necessary.
 
-**Критерий:** Текстуры видны на геометрии
+**Criteria:** Textures are visible on geometry.
 
 ---
 
-### Этап 6: Render States
-**Цель:** Прозрачность, z-buffer, отсечение граней работают правильно
+### Phase 6: Render States
+**Goal:** Transparency, z-buffer, and face culling work correctly.
 
-**Спецификация (d3d8_stub.h строки 404-482):**
+**Specification (`d3d8_stub.h` lines 404-482):**
 
-**Группа 1: Depth/Stencil → `MTLDepthStencilDescriptor`**
+**Group 1: Depth/Stencil → `MTLDepthStencilDescriptor`**
 | D3DRS | Metal |
 |:---|:---|
-| D3DRS_ZENABLE | depthCompareFunction != Never |
-| D3DRS_ZWRITEENABLE | isDepthWriteEnabled |
-| D3DRS_ZFUNC | depthCompareFunction (D3DCMP → MTLCompareFunction) |
-| D3DRS_STENCILENABLE | stencil config |
-| D3DRS_STENCILFUNC/REF/MASK | frontFaceStencil |
+| `D3DRS_ZENABLE` | `depthCompareFunction != Never` |
+| `D3DRS_ZWRITEENABLE` | `isDepthWriteEnabled` |
+| `D3DRS_ZFUNC` | `depthCompareFunction` (`D3DCMP` → `MTLCompareFunction`) |
+| `D3DRS_STENCILENABLE` | stencil configuration |
+| `D3DRS_STENCILFUNC/REF/MASK` | `frontFaceStencil` |
 
-**Маппинг D3DCMP → MTLCompareFunction:**
+**Mapping D3DCMP → MTLCompareFunction:**
 ```
 D3DCMP_NEVER        → MTLCompareFunctionNever
 D3DCMP_LESS         → MTLCompareFunctionLess  
@@ -320,15 +305,15 @@ D3DCMP_GREATEREQUAL → MTLCompareFunctionGreaterEqual
 D3DCMP_ALWAYS       → MTLCompareFunctionAlways
 ```
 
-**Группа 2: Alpha Blending → `MTLRenderPipelineColorAttachmentDescriptor`**
+**Group 2: Alpha Blending → `MTLRenderPipelineColorAttachmentDescriptor`**
 | D3DRS | Metal |
 |:---|:---|
-| D3DRS_ALPHABLENDENABLE | blendingEnabled |
-| D3DRS_SRCBLEND | sourceRGBBlendFactor |
-| D3DRS_DESTBLEND | destinationRGBBlendFactor |
-| D3DRS_BLENDOP | rgbBlendOperation |
+| `D3DRS_ALPHABLENDENABLE` | `blendingEnabled` |
+| `D3DRS_SRCBLEND` | `sourceRGBBlendFactor` |
+| `D3DRS_DESTBLEND` | `destinationRGBBlendFactor` |
+| `D3DRS_BLENDOP` | `rgbBlendOperation` |
 
-**Маппинг D3DBLEND → MTLBlendFactor:**
+**Mapping D3DBLEND → MTLBlendFactor:**
 ```
 D3DBLEND_ZERO         → MTLBlendFactorZero
 D3DBLEND_ONE          → MTLBlendFactorOne
@@ -343,46 +328,46 @@ D3DBLEND_INVDESTCOLOR → MTLBlendFactorOneMinusDestinationColor
 D3DBLEND_SRCALPHASAT  → MTLBlendFactorSourceAlphaSaturated
 ```
 
-**Группа 3: Miscellaneous → encoder calls**
+**Group 3: Miscellaneous → encoder calls**
 | D3DRS | Metal |
 |:---|:---|
-| D3DRS_CULLMODE | [encoder setCullMode:] |
-| D3DRS_FILLMODE | [encoder setTriangleFillMode:] |
-| D3DRS_ALPHATESTENABLE + D3DRS_ALPHAREF | fragment shader discard |
-| D3DRS_COLORWRITEENABLE | colorWriteMask на PSO |
+| `D3DRS_CULLMODE` | `[encoder setCullMode:]` |
+| `D3DRS_FILLMODE` | `[encoder setTriangleFillMode:]` |
+| `D3DRS_ALPHATESTENABLE + D3DRS_ALPHAREF` | fragment shader discard |
+| `D3DRS_COLORWRITEENABLE` | `colorWriteMask` on PSO |
 
-**Маппинг D3DCULL → MTLCullMode:**
+**Mapping D3DCULL → MTLCullMode:**
 ```
 D3DCULL_NONE → MTLCullModeNone
 D3DCULL_CW   → MTLCullModeFront (DX8 CW = Metal Front)
 D3DCULL_CCW  → MTLCullModeBack
 ```
-*Внимание: DX8 и Metal используют разные winding orders по умолчанию!*
+*Note: DX8 and Metal use different default winding orders!*
 
-**Задачи:**
-1. `SetRenderState(state, value)` — кэш в массив `m_RenderStates[256]`
-2. Dirty tracking: при изменении RS, пометить соответствующий Metal state как dirty
-3. Перед draw: пересоздать необходимые Metal state objects
-4. PSO кэш с включением blend state в ключ
-5. Depth/Stencil state кэш
+**Tasks:**
+1. `SetRenderState(state, value)` — cache in `m_RenderStates[256]` array.
+2. Dirty tracking: when RS changes, mark corresponding Metal state as dirty.
+3. Before draw: re-create necessary Metal state objects.
+4. PSO cache including blend state in the key.
+5. Depth/Stencil state cache.
 
-**Критерий:** Прозрачные объекты рисуются корректно, z-fighting отсутствует
+**Criteria:** Transparent objects are drawn correctly, no z-fighting.
 
 ---
 
-### Этап 7: Texture Stage States (самое сложное!)
-**Цель:** Multi-texturing и texture blending работают как в DX8
+### Phase 7: Texture Stage States (The Hard Part!)
+**Goal:** Multi-texturing and texture blending work just like in DX8.
 
-**Спецификация (d3d8_stub.h строки 681-709, 768-796, 815-823):**
+**Specification (`d3d8_stub.h` lines 681-709, 768-796, 815-823):**
 
-DX8 имеет до 8 texture stages. Каждый stage:
-- Входы: `D3DTA_TEXTURE`, `D3DTA_CURRENT`, `D3DTA_DIFFUSE`, `D3DTA_TFACTOR`, `D3DTA_SPECULAR`
-- Операция: `D3DTOP_*` (цвет и альфа отдельно)
-- Модификаторы: `D3DTA_COMPLEMENT` (1-x), `D3DTA_ALPHAREPLICATE` (a,a,a,a)
+DX8 has up to 8 texture stages. Each stage:
+- Inputs: `D3DTA_TEXTURE`, `D3DTA_CURRENT`, `D3DTA_DIFFUSE`, `D3DTA_TFACTOR`, `D3DTA_SPECULAR`
+- Operation: `D3DTOP_*` (color and alpha separately)
+- Modifiers: `D3DTA_COMPLEMENT` (1-x), `D3DTA_ALPHAREPLICATE` (a,a,a,a)
 
-**Формулы D3DTOP (из спецификации):**
+**D3DTOP Formulas (from spec):**
 ```
-D3DTOP_DISABLE            = этот и последующие stages отключены
+D3DTOP_DISABLE            = this and subsequent stages are disabled
 D3DTOP_SELECTARG1         = Arg1
 D3DTOP_SELECTARG2         = Arg2
 D3DTOP_MODULATE           = Arg1 × Arg2
@@ -401,24 +386,23 @@ D3DTOP_MODULATEALPHA_ADDCOLOR   = Arg1.RGB + Arg1.A × Arg2.RGB
 D3DTOP_MODULATECOLOR_ADDALPHA   = Arg1.RGB × Arg2.RGB + Arg1.A
 D3DTOP_MODULATEINVALPHA_ADDCOLOR = (1-Arg1.A) × Arg2.RGB + Arg1.RGB
 D3DTOP_MODULATEINVCOLOR_ADDALPHA = (1-Arg1.RGB) × Arg2.RGB + Arg1.A
-D3DTOP_DOTPRODUCT3        = dot(Arg1, Arg2) × 4 (в range [-1,1])
+D3DTOP_DOTPRODUCT3        = dot(Arg1, Arg2) × 4 (in range [-1,1])
 D3DTOP_MULTIPLYADD        = Arg0 + Arg1 × Arg2
 D3DTOP_LERP               = Arg0 × Arg1 + (1-Arg0) × Arg2
 ```
 
-**Sampler States из TSS:**
+**Sampler States from TSS:**
 | D3DTSS | Metal |
 |:---|:---|
-| D3DTSS_ADDRESSU | MTLSamplerAddressMode |
-| D3DTSS_ADDRESSV | MTLSamplerAddressMode |
-| D3DTSS_MINFILTER | MTLSamplerMinMagFilter |
-| D3DTSS_MAGFILTER | MTLSamplerMinMagFilter |
-| D3DTSS_MIPFILTER | MTLSamplerMipFilter |
+| `D3DTSS_ADDRESSU` | `MTLSamplerAddressMode` |
+| `D3DTSS_ADDRESSV` | `MTLSamplerAddressMode` |
+| `D3DTSS_MINFILTER` | `MTLSamplerMinMagFilter` |
+| `D3DTSS_MAGFILTER` | `MTLSamplerMinMagFilter` |
+| `D3DTSS_MIPFILTER` | `MTLSamplerMipFilter` |
 
-**Подход к реализации:**
+**Implementation Approach:**
 
-Generals использует максимум 2 texture stages. Вместо полной эмуляции 8 stages,
-реализуем через uniform buffer, передающий операцию и аргументы в fragment shader:
+Generals mainly uses 2 texture stages. Instead of fully emulating 8 stages, we'll use a uniform buffer to pass operations and arguments to the fragment shader:
 
 ```metal
 struct TextureStageConfig {
@@ -444,57 +428,57 @@ struct FragmentUniforms {
 };
 ```
 
-**Задачи:**
-1. `SetTextureStageState(stage, type, value)` — кэш в `m_TSS[stage][type]`
-2. Fragment uniform buffer с TextureStageConfig
-3. Fragment shader: вычисление по формулам D3DTOP
-4. Sampler state кэш: `std::map<uint32_t, id<MTLSamplerState>>`
-5. Texture coordinate generation (D3DTSS_TEXCOORDINDEX flags)
+**Tasks:**
+1. `SetTextureStageState(stage, type, value)` — cache in `m_TSS[stage][type]`.
+2. Fragment uniform buffer with `TextureStageConfig`.
+3. Fragment shader: calculation based on `D3DTOP` formulas.
+4. Sampler state cache: `std::map<uint32_t, id<MTLSamplerState>>`.
+5. Texture coordinate generation (`D3DTSS_TEXCOORDINDEX` flags).
 
-**Критерий:** Мультитекстурирование работает, terrain с двумя текстурами виден
+**Criteria:** Multi-texturing works, terrain with two textures is visible.
 
 ---
 
-### Этап 8: Lighting (per-vertex)
-**Цель:** Per-vertex освещение по формулам DX8
+### Phase 8: Lighting (per-vertex)
+**Goal:** Per-vertex lighting using DX8 formulas.
 
-**Спецификация (documentation.pdf p.118-119):**
+**Specification (`documentation.pdf` p.118-119):**
 
-**Формула Global Illumination:**
+**Global Illumination Formula:**
 ```
 VertexColor = Emissive + Ambient_global + Σ(Ambient_i + Diffuse_i + Specular_i)
 ```
 
-**Формула Diffuse:**
+**Diffuse Formula:**
 ```
 Diffuse_i = Cd × Ld × max(0, N · Ldir) × Atten × Spot
 ```
-- `Cd` = vertex diffuse color или material diffuse (по D3DRS_DIFFUSEMATERIALSOURCE)
+- `Cd` = vertex diffuse color or material diffuse (via `D3DRS_DIFFUSEMATERIALSOURCE`)
 - `Ld` = light diffuse color
 - `N` = normalized vertex normal
 - `Ldir` = normalized direction to light
-- `Atten` = 1/(att0 + att1×d + att2×d²) для point/spot, 1.0 для directional
+- `Atten` = 1/(att0 + att1×d + att2×d²) for point/spot, 1.0 for directional
 
-**Формула Specular:**
+**Specular Formula:**
 ```
 Specular_i = Cs × Ls × max(0, N · H)^P × Atten × Spot
 ```
 - `H` = normalize(Ldir + Vdir) — halfway vector
 - `P` = material power (glossiness)
 
-**Формула Spotlight:**
+**Spotlight Formula:**
 ```
 Spot = (cos(angle) - cos(Phi/2))^Falloff / (cos(Theta/2) - cos(Phi/2))
 ```
 
-**Формула Ambient per-light:**
+**Ambient per-light Formula:**
 ```
 Ambient_i = Ca × La × Atten × Spot
 ```
-- `Ca` = vertex ambient color или material ambient
+- `Ca` = vertex ambient color or material ambient
 - `La` = light ambient color
 
-**Uniform buffer для освещения:**
+**Lighting Uniform Buffer:**
 ```metal
 struct LightData {
     float4 diffuse;
@@ -530,128 +514,129 @@ struct LightingUniforms {
 };
 ```
 
-**ВАЖНО:** Generals в основном использует:
-- 4 directional lights (солнце + 3 fill)
-- Vertex colors для подсветки ландшафта
-- D3DRS_LIGHTING = FALSE для UI и некоторых эффектов
+**IMPORTANT:** Generals primarily uses:
+- 4 directional lights (sun + 3 fill)
+- Vertex colors for terrain highlights
+- `D3DRS_LIGHTING = FALSE` for UI and certain effects
 
-**Задачи:**
-1. `SetLight(index, D3DLIGHT8)` — сохранить в uniform
-2. `LightEnable(index, bool)` — вкл/выкл
-3. `SetMaterial(D3DMATERIAL8)` — сохранить в uniform
-4. `SetRenderState(D3DRS_LIGHTING, v)` — переключатель
-5. `SetRenderState(D3DRS_AMBIENT, color)` — global ambient
-6. `SetRenderState(D3DRS_DIFFUSEMATERIALSOURCE, v)` — источник цвета
-7. Vertex shader: полный расчёт per-vertex lighting по формулам
+**Tasks:**
+1. `SetLight(index, D3DLIGHT8)` — save to uniform.
+2. `LightEnable(index, bool)` — on/off.
+3. `SetMaterial(D3DMATERIAL8)` — save to uniform.
+4. `SetRenderState(D3DRS_LIGHTING, v)` — switch.
+5. `SetRenderState(D3DRS_AMBIENT, color)` — global ambient.
+6. `SetRenderState(D3DRS_DIFFUSEMATERIALSOURCE, v)` — color source.
+7. Vertex shader: full calculation of per-vertex lighting using formulas.
 
-**Критерий:** Освещённые объекты, тени от направленного света
+**Criteria:** Lit objects, shadows from directional lights.
 
 ---
 
-### Этап 9: Fog
-**Цель:** Туман работает (для дальних объектов и атмосферы)
+### Phase 9: Fog
+**Goal:** Fog works (for distant objects and atmosphere).
 
-**Спецификация (documentation.pdf p.262, d3d8_stub.h строки 257-260):**
+**Specification (`documentation.pdf` p.262, `d3d8_stub.h` lines 257-260):**
 
-**Формулы fog factor (0 = полный fog, 1 = нет fog):**
+**Fog Factor Formulas (0 = full fog, 1 = no fog):**
 ```
 Linear: f = (end - d) / (end - start)
 Exp:    f = 1 / e^(density × d)
 Exp2:   f = 1 / e^(density × d)²
 ```
 
-**Применение:**
+**Application:**
 ```
 finalColor = f × objectColor + (1-f) × fogColor
 ```
 
 **Render States:**
 ```
-D3DRS_FOGENABLE       → вкл/выкл
+D3DRS_FOGENABLE       → on/off
 D3DRS_FOGCOLOR        → D3DCOLOR (ARGB)
 D3DRS_FOGTABLEMODE    → 0=none, 1=exp, 2=exp2, 3=linear (pixel fog)
-D3DRS_FOGVERTEXMODE   → то же для vertex fog
-D3DRS_FOGSTART        → float (для linear)
-D3DRS_FOGEND          → float (для linear)
-D3DRS_FOGDENSITY      → float (для exp/exp2)
+D3DRS_FOGVERTEXMODE   → same for vertex fog
+D3DRS_FOGSTART        → float (for linear)
+D3DRS_FOGEND          → float (for linear)
+D3DRS_FOGDENSITY      → float (for exp/exp2)
 ```
 
-**Задачи:**
-1. Передать fog параметры во FragmentUniforms
-2. В vertex shader: вычислить distance для vertex fog
-3. В fragment shader: применить формулу и blend с fog color
+**Tasks:**
+1. Pass fog parameters in `FragmentUniforms`.
+2. In vertex shader: calculate distance for vertex fog.
+3. In fragment shader: apply formula and blend with `fogColor`.
 
-**Критерий:** Туман видим, дальние объекты плавно затуманиваются
-
----
-
-### Этап 10: Depth Buffer + Render Targets
-**Цель:** Z-buffer работает, рендеринг в текстуры для теней
-
-**Задачи:**
-1. Создать depth texture: `MTLPixelFormatDepth32Float_Stencil8`
-2. Привязать к render pass descriptor
-3. `CreateDepthStencilSurface` → MetalSurface8 с depth MTLTexture
-4. `SetRenderTarget(colorSurface, depthSurface)` — смена render target
-5. `CreateRenderTarget` → для shadow maps и post-processing
-6. `GetBackBuffer` → вернуть primary render target
-
-**Критерий:** Нет z-fighting, правильная перекрытие объектов
+**Criteria:** Fog is visible, distant objects smoothly fade into fog.
 
 ---
 
-### Этап 11: Дополнительные ресурсы
-**Цель:** Cube textures, volume textures, surface copy
+### Phase 10: Depth Buffer + Render Targets
+**Goal:** Z-buffer works, rendering to textures for shadows.
 
-**Задачи:**
-1. `CreateCubeTexture` → MetalCubeTexture8 (для environment maps)
-2. `CopyRects` → blit encoder copy
-3. `GetFrontBuffer` → screenshots
+**Tasks:**
+1. Create depth texture: `MTLPixelFormatDepth32Float_Stencil8`.
+2. Bind to render pass descriptor.
+3. `CreateDepthStencilSurface` → `MetalSurface8` with depth `MTLTexture`.
+4. `SetRenderTarget(colorSurface, depthSurface)` — change render target.
+5. `CreateRenderTarget` → for shadow maps and post-processing.
+6. `GetBackBuffer` → return primary render target.
+
+**Criteria:** No z-fighting, correct object occlusion.
 
 ---
 
-## Порядок тестирования
+### Phase 11: Additional Resources
+**Goal:** Cube textures, volume textures, surface copy.
 
-| Этап | Визуальный результат |
+**Tasks:**
+1. `CreateCubeTexture` → `MetalCubeTexture8` (for environment maps).
+2. `CopyRects` → blit encoder copy.
+3. `GetFrontBuffer` → screenshots.
+
+---
+
+## Testing Order
+
+| Phase | Visual Result |
 |:---|:---|
-| 0 | Компиляция, пустой экран |
-| 1 | Чёрный/цветной экран (Clear) |
-| 2 | Ничего (буферы без рисования) |
-| 3 | Белые треугольники |
-| 4 | Треугольники в правильных позициях (3D + 2D UI) |
-| 5 | Текстурированные объекты |
-| 6 | Корректная прозрачность, z-buffer |
-| 7 | Мультитекстурирование, terrain |
-| 8 | Освещённая сцена |
-| 9 | Атмосферный туман |
-| 10 | Тени |
+| 0 | Compilation, empty screen |
+| 1 | Black/colored screen (Clear) |
+| 2 | Nothing (buffers without drawing) |
+| 3 | White triangles |
+| 4 | Triangles in correct positions (3D + 2D UI) |
+| 5 | Textured objects |
+| 6 | Correct transparency, z-buffer |
+| 7 | Multi-texturing, terrain |
+| 8 | Lit scene |
+| 9 | Atmospheric fog |
+| 10 | Shadows |
 
-## Количество кода (оценка)
+## Code Volume (Estimate)
 
-| Компонент | Строки |
+| Component | Lines |
 |:---|:---|
-| MetalDevice8 (все методы) | ~2000 |
-| MetalInterface8 | ~200 |
-| MetalVertexBuffer8 / IndexBuffer8 | ~300 |
-| MetalTexture8 / Surface8 | ~500 |
-| MetalPipelineManager | ~600 |
-| fixed_function.metal (vertex + fragment) | ~400 |
+| `MetalDevice8` (all methods) | ~2000 |
+| `MetalInterface8` | ~200 |
+| `MetalVertexBuffer8` / `IndexBuffer8` | ~300 |
+| `MetalTexture8` / `Surface8` | ~500 |
+| `MetalPipelineManager` | ~600 |
+| `fixed_function.metal` (vertex + fragment) | ~400 |
 | FVF parser | ~150 |
 | State mapping utilities | ~200 |
-| **ИТОГО** | **~4350** |
+| **TOTAL** | **~4350** |
 
-## Зависимости между этапами
+## Interdependencies
 
+```mermaid
+graph LR
+    P0[Phase 0] --> P1[Phase 1] --> P2[Phase 2] --> P3[Phase 3] --> P4[Phase 4]
+    P3 --> P5[Phase 5]
+    P4 --> P6[Phase 6]
+    P5 --> P7[Phase 7]
+    P6 --> P8[Phase 8]
+    P7 --> P8
+    P8 --> P9[Phase 9] --> P10[Phase 10]
 ```
-Этап 0 ──→ Этап 1 ──→ Этап 2 ──→ Этап 3 ──→ Этап 4
-                                      │          │
-                                      ▼          ▼
-                                   Этап 5 ──→ Этап 6
-                                      │          │
-                                      ▼          ▼
-                                   Этап 7 ──→ Этап 8 ──→ Этап 9 ──→ Этап 10
-```
 
-Этапы 0-6 — must have для рабочего 3D.
-Этапы 7-10 — для качественного рендеринга.
-Этап 11 — по мере необходимости.
+Phases 0-6 are must-haves for operational 3D.
+Phases 7-10 are for high-quality rendering.
+Phase 11 — as needed.
