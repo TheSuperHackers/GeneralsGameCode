@@ -79,6 +79,13 @@ cmake --build build/win32 --config Release
 ./scripts/docker-install.sh --detect # Install to your game
 ```
 
+**macOS (Apple Silicon)** — [Full documentation](Platform/MacOS/docs/README.md)
+```bash
+cmake --preset macos
+cmake --build build/macos
+build/macos/GeneralsMD/generalszh
+```
+
 ### Dependency management
 
 The repository uses a vcpkg manifest (`vcpkg.json`) paired with a lockfile (`vcpkg-lock.json`). When you add or upgrade
