@@ -55,6 +55,7 @@
 #include "GameClient/GameWindowTransitions.h"
 #include "GameClient/GameWindow.h"
 #include "GameClient/GameWindowManager.h"
+#include "Common/FramePacer.h"
 //-----------------------------------------------------------------------------
 // DEFINES ////////////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
@@ -270,7 +271,9 @@ void TransitionGroup::init( void )
 
 void TransitionGroup::update( void )
 {
-	m_currentFrame += m_directionMultiplier; // we go forward or backwards depending.
+	// TheSuperHackers @tweak bobtista GUI transition timing is now decoupled from the render update.
+	const Real timeScale = TheFramePacer->getBaseOverUpdateFpsRatio();
+	m_currentFrame += m_directionMultiplier * timeScale; // we go forward or backwards depending.
 	TransitionWindowList::iterator it = m_transitionWindowList.begin();
 	while (it != m_transitionWindowList.end())
 	{
