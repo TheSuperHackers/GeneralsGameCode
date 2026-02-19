@@ -6,15 +6,20 @@ set(PROFILE_SRC
     "internal.h"
     "profile_cmd.cpp"
     "profile_doc.h"
-    "profile_funclevel.cpp"
     "profile_funclevel.h"
-    "profile_highlevel.cpp"
     "profile_highlevel.h"
-    "profile_result.cpp"
     "profile_result.h"
-    "profile.cpp"
     "profile.h"
 )
+
+if(NOT APPLE)
+    list(APPEND PROFILE_SRC
+        "profile_funclevel.cpp"
+        "profile_highlevel.cpp"
+        "profile_result.cpp"
+        "profile.cpp"
+    )
+endif()
 
 add_library(core_profile STATIC)
 

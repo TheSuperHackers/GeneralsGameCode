@@ -339,11 +339,15 @@ typedef struct tagSIZE {
 // ── DLL loading stubs ──────────────────────────────────────────────────
 typedef void *HMODULE;
 typedef void *HINSTANCE;
+#ifndef _FARPROC_DEFINED
+#define _FARPROC_DEFINED
+typedef INT_PTR (*FARPROC)();
+#endif
 #ifndef _LOADLIBRARY_DEFINED
 #define _LOADLIBRARY_DEFINED
 inline HMODULE LoadLibrary(const char *) { return nullptr; }
 inline HMODULE LoadLibraryA(const char *) { return nullptr; }
-inline void *GetProcAddress(HMODULE, const char *) { return nullptr; }
+inline FARPROC GetProcAddress(HMODULE, const char *) { return nullptr; }
 inline BOOL FreeLibrary(HMODULE) { return FALSE; }
 #endif
 
@@ -609,7 +613,11 @@ typedef struct tagRGBQUAD {
 typedef struct tagBITMAPINFO {
   BITMAPINFOHEADER bmiHeader;
   RGBQUAD bmiColors[1];
-} BITMAPINFO;
+} BITMAPINFO, *PBITMAPINFO, *LPBITMAPINFO;
+typedef BITMAPINFOHEADER *PBITMAPINFOHEADER, *LPBITMAPINFOHEADER;
+#ifndef LPTR
+#define LPTR 0x0040
+#endif
 #endif
 
 // ── GDI function stubs (after BMP/COLORREF defs) ───────────────────────
@@ -691,6 +699,78 @@ inline void InitializeCriticalSection(CRITICAL_SECTION *cs) {
 inline void DeleteCriticalSection(CRITICAL_SECTION *) {}
 inline void EnterCriticalSection(CRITICAL_SECTION *) {}
 inline void LeaveCriticalSection(CRITICAL_SECTION *) {}
+
+// ── Threading stubs ───────────────────────────────────────────────────
+#ifndef WAIT_TIMEOUT
+#define WAIT_TIMEOUT 0x00000102L
+#endif
+#ifndef INFINITE
+#define INFINITE 0xFFFFFFFF
+#endif
+
+inline HANDLE CreateEvent(void *, BOOL, BOOL, const char *) { return nullptr; }
+inline HANDLE CreateEventA(void *, BOOL, BOOL, const char *) { return nullptr; }
+inline BOOL SetEvent(HANDLE) { return FALSE; }
+inline BOOL ResetEvent(HANDLE) { return FALSE; }
+inline DWORD WaitForSingleObject(HANDLE, DWORD) { return WAIT_TIMEOUT; }
+
+typedef void (*_beginthread_proc_type)(void *);
+inline uintptr_t _beginthread(_beginthread_proc_type, unsigned, void *) { return (uintptr_t)-1; }
+
+// ── Cursor / Window stubs ─────────────────────────────────────────────
+typedef void* HCURSOR;
+inline HCURSOR SetCursor(HCURSOR) { return nullptr; }
+inline BOOL GetCursorPos(POINT *) { return FALSE; }
+inline BOOL ScreenToClient(HWND, POINT *) { return FALSE; }
+inline BOOL IsIconic(HWND) { return FALSE; }
+inline BOOL SetErrorMode(UINT) { return 0; }
+
+// ── Message processing stubs ──────────────────────────────────────────
+#ifndef PM_NOREMOVE
+#define PM_NOREMOVE 0x0000
+#define PM_REMOVE   0x0001
+#endif
+typedef struct tagMSG {
+  HWND hwnd;
+  UINT message;
+  WPARAM wParam;
+  LPARAM lParam;
+  DWORD time;
+  POINT pt;
+} MSG, *LPMSG;
+inline BOOL PeekMessage(LPMSG, HWND, UINT, UINT, UINT) { return FALSE; }
+inline BOOL TranslateMessage(const MSG *) { return FALSE; }
+inline LONG DispatchMessage(const MSG *) { return 0; }
+
+// ── Error mode constants ──────────────────────────────────────────────
+#ifndef SEM_FAILCRITICALERRORS
+#define SEM_FAILCRITICALERRORS 0x0001
+#endif
+
+// ── Execution state stubs ─────────────────────────────────────────────
+typedef DWORD EXECUTION_STATE;
+#ifndef ES_CONTINUOUS
+#define ES_CONTINUOUS       0x80000000
+#define ES_DISPLAY_REQUIRED 0x00000002
+#define ES_SYSTEM_REQUIRED  0x00000001
+#endif
+inline EXECUTION_STATE SetThreadExecutionState(EXECUTION_STATE) { return 0; }
+
+// ── MessageBox constants ──────────────────────────────────────────────
+#ifndef MB_APPLMODAL
+#define MB_APPLMODAL       0x00000000
+#define MB_ICONEXCLAMATION 0x00000030
+#define MB_YESNO           0x00000004
+#define MB_YESNOCANCEL     0x00000003
+#define MB_OKCANCEL        0x00000001
+#define MB_OK              0x00000000
+#define MB_ICONWARNING     0x00000030
+#define MB_ICONERROR       0x00000010
+#define IDYES              6
+#define IDNO               7
+#define IDOK               1
+#define IDCANCEL           2
+#endif
 
 // ── FILETIME / SYSTEMTIME ──────────────────────────────────────────────
 typedef struct _FILETIME {
@@ -831,11 +911,7 @@ inline DWORD GetModuleFileNameW(void *hModule, wchar_t *lpFilename,
   return (DWORD)wlen;
 }
 
-/* FARPROC */
-#ifndef _FARPROC_DEFINED
-#define _FARPROC_DEFINED
-typedef void *FARPROC;
-#endif
+
 
 /* __max / __min — MSVC built-in macros */
 #ifndef __max

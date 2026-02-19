@@ -76,7 +76,7 @@ void W3DGadgetProgressBarDraw( GameWindow *window, WinInstanceData *instData )
 {
 	ICoord2D origin, size, start, end;
 	Color backColor, backBorder, barColor, barBorder;
-	Int progress = (Int)window->winGetUserData();
+	Int progress = (Int)(intptr_t)window->winGetUserData();
 
 	// get window size and position
   window->winGetScreenPosition( &origin.x, &origin.y );
@@ -186,7 +186,7 @@ void W3DGadgetProgressBarImageDrawA( GameWindow *window, WinInstanceData *instDa
 {
 	ICoord2D origin, size;
 	const Image *barCenter, *barRight, *left, *right, *center;
-	Int progress = (Int)window->winGetUserData();
+	Int progress = (Int)(intptr_t)window->winGetUserData();
 	Int xOffset, yOffset;
 	Int i;
 	// get window size and position
@@ -229,7 +229,7 @@ void W3DGadgetProgressBarImageDraw( GameWindow *window, WinInstanceData *instDat
 	ICoord2D origin, size, start, end;
 	const Image *backLeft, *backRight, *backCenter,
 				 *barRight, *barCenter;//*backSmallCenter,*barLeft,, *barSmallCenter;
-	Int progress = (Int)window->winGetUserData();
+	Int progress = (Int)(intptr_t)window->winGetUserData();
 	Int xOffset, yOffset;
 	Int i;
 

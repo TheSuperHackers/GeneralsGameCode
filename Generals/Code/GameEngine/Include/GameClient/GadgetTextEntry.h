@@ -66,7 +66,7 @@ class GameWindow;
 
 inline void GadgetTextEntrySetText( GameWindow *g, UnicodeString text )
 {
-	TheWindowManager->winSendSystemMsg( g, GEM_SET_TEXT, (WindowMsgData)&text, 0 );
+	TheWindowManager->winSendSystemMsg( g, GEM_SET_TEXT, (WindowMsgData)(uintptr_t)&text, 0 );
 }
 extern UnicodeString GadgetTextEntryGetText( GameWindow *textentry ); ///< Get the text from the text entry field
 extern void GadgetTextEntrySetMaxLen( GameWindow *g, Short length );

@@ -519,7 +519,7 @@ WindowMsgHandledType ScoreScreenSystem( GameWindow *window, UnsignedInt msg,
 				if( controlID == TheNameKeyGenerator->nameToKey(name))
 				{
 					Bool notBuddy = TRUE;
-					Int playerID = (Int)GadgetButtonGetData(TheWindowManager->winGetWindowFromId(nullptr,controlID));
+					Int playerID = (Int)(intptr_t)GadgetButtonGetData(TheWindowManager->winGetWindowFromId(nullptr,controlID));
 											// request to add a buddy
 					BuddyInfoMap *buddies = TheGameSpyInfo->getBuddyMap();
 					BuddyInfoMap::iterator bIt;

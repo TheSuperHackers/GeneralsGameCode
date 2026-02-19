@@ -344,7 +344,7 @@ static void playerTooltip(GameWindow *window,
 		return;
 	}
 
-	UnsignedInt playerIP = (UnsignedInt)GadgetListBoxGetItemData( window, row, col );
+	UnsignedInt playerIP = (UnsignedInt)(uintptr_t)GadgetListBoxGetItemData( window, row, col );
 	LANPlayer *player = TheLAN->LookupPlayer(playerIP);
 	if (!player)
 	{

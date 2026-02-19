@@ -100,7 +100,9 @@
 #include "GameClient/GUICallbacks.h"
 
 #include "GameNetwork/NetworkInterface.h"
+#ifndef __APPLE__
 #include "GameNetwork/WOLBrowser/WebBrowser.h"
+#endif
 #include "GameNetwork/LANAPI.h"
 #include "GameNetwork/GameSpy/GameResultsThread.h"
 #include "GameNetwork/GameSpy/PeerDefs.h"

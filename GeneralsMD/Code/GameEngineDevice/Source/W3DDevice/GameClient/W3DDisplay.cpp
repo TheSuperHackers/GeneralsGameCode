@@ -1659,9 +1659,11 @@ void W3DDisplay::draw( void )
 	//USE_PERF_TIMER(W3DDisplay_draw)
 
 	extern HWND ApplicationHWnd;
+#ifndef __APPLE__
 	if (ApplicationHWnd && ::IsIconic(ApplicationHWnd)) {
 		return;
 	}
+#endif
 
 	if (TheGlobalData->m_headless)
 		return;
@@ -2915,6 +2917,7 @@ void W3DDisplay::setShroudLevel( Int x, Int y, CellShroudStatus setting )
 
 //=============================================================================
 ///Utility function to dump data into a .BMP file
+#ifndef __APPLE__
 static void CreateBMPFile(LPTSTR pszFile, char *image, Int width, Int height)
 {
 	HANDLE hf;                  // file handle
@@ -2990,6 +2993,9 @@ static void CreateBMPFile(LPTSTR pszFile, char *image, Int width, Int height)
 	LocalFree( (HLOCAL) pbmi);
 }
 
+#else
+static void CreateBMPFile(LPTSTR, char *, Int, Int) {}
+#endif
 ///Save Screen Capture to a file
 void W3DDisplay::takeScreenShot(void)
 {

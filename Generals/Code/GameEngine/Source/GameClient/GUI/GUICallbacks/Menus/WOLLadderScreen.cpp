@@ -36,7 +36,9 @@
 #include "GameClient/KeyDefs.h"
 #include "GameClient/GameWindowManager.h"
 #include "GameClient/MessageBox.h"
+#ifndef __APPLE__
 #include "GameNetwork/WOLBrowser/WebBrowser.h"
+#endif
 
 // window ids -------------------------------------------------------------------------------------
 static NameKeyType parentWindowID = NAMEKEY_INVALID;
@@ -70,10 +72,12 @@ void WOLLadderScreenInit( WindowLayout *layout, void *userData )
 //	PopulateReplayFileListbox(listboxReplayFiles);
 
 	//TheWebBrowser->createBrowserWindow("Westwood", windowLadder);
+#ifndef __APPLE__
 	if (TheWebBrowser != nullptr)
 	{
 		TheWebBrowser->createBrowserWindow("MessageBoard", windowLadder);
 	}
+#endif
 
 	// show menu
 	layout->hide( FALSE );
@@ -89,10 +93,12 @@ void WOLLadderScreenInit( WindowLayout *layout, void *userData )
 void WOLLadderScreenShutdown( WindowLayout *layout, void *userData )
 {
 
+#ifndef __APPLE__
 	if (TheWebBrowser != nullptr)
 	{
 		TheWebBrowser->closeBrowserWindow(windowLadder);
 	}
+#endif
 
 	// hide menu
 	layout->hide( TRUE );

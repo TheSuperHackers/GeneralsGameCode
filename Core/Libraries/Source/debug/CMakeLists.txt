@@ -23,7 +23,18 @@ set(DEBUG_SRC
 
 # Exclude Windows-only debug utilities on Apple
 if(APPLE)
-    list(REMOVE_ITEM DEBUG_SRC "debug_stack.cpp")
+    list(REMOVE_ITEM DEBUG_SRC
+        "debug_stack.cpp"
+        "debug_io_con.cpp"
+        "debug_io_flat.cpp"
+        "debug_io_net.cpp"
+        "debug_io_ods.cpp"
+        "debug_except.cpp"
+        "debug_debug.cpp"
+        "debug_internal.cpp"
+        "debug_cmd.cpp"
+        "debug_getdefaultcommands.cpp"
+    )
 endif()
 
 add_library(core_debug STATIC)

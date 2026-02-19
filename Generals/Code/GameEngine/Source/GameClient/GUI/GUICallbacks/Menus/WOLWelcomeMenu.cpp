@@ -64,7 +64,9 @@
 #include "GameNetwork/GameSpy/PersistentStorageThread.h"
 #include "GameNetwork/GameSpy/ThreadUtils.h"
 #include "GameNetwork/GameSpy/MainMenuUtils.h"
+#ifndef __APPLE__
 #include "GameNetwork/WOLBrowser/WebBrowser.h"
+#endif
 
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
 static Bool isShuttingDown = FALSE;

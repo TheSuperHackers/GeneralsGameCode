@@ -1229,7 +1229,7 @@ Bool outOfWeaponRangePosition( State *thisState, void* userData )
  */
 static Bool cannotPossiblyAttackObject( State *thisState, void* userData )
 {
-	AbleToAttackType attackType = (AbleToAttackType)(UnsignedInt)userData;
+	AbleToAttackType attackType = (AbleToAttackType)(uintptr_t)userData;
 	Object *obj = thisState->getMachineOwner();
 	Object *victim = thisState->getMachineGoalObject();
 

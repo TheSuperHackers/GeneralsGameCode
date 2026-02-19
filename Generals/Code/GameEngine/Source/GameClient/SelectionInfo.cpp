@@ -63,7 +63,7 @@ SelectionInfo::SelectionInfo() :
 //-------------------------------------------------------------------------------------------------
 PickDrawableStruct::PickDrawableStruct() : drawableListToFill(nullptr)
 {
-	drawableListToFill = FALSE;
+	drawableListToFill = nullptr;
 	forceAttackMode = TheInGameUI->isInForceAttackMode();
 	UnsignedInt pickType = getPickTypesForContext(forceAttackMode);
 	translatePickTypesToKindof(pickType, kindofsToMatch);

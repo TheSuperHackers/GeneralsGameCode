@@ -32,7 +32,9 @@
 
 #include "Common/INI.h"
 #include "Common/Registry.h"
+#ifndef __APPLE__
 #include "GameNetwork/WOLBrowser/WebBrowser.h"
+#endif
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -77,6 +79,7 @@ AsciiString encodeURL(AsciiString source)
 //-------------------------------------------------------------------------------------------------
 void INI::parseWebpageURLDefinition( INI* ini )
 {
+#ifndef __APPLE__
 	AsciiString tag;
 	WebBrowserURL *url;
 
@@ -118,6 +121,7 @@ void INI::parseWebpageURLDefinition( INI* ini )
 		url->m_url.format("file://%s\\Data\\%s\\%s", encodeURL(cwd).str(), GetRegistryLanguage().str(), url->m_url.str()+7);
 		DEBUG_LOG(("INI::parseWebpageURLDefinition() - converted URL to [%s]", url->m_url.str()));
 	}
+#endif // __APPLE__
 }
 
 

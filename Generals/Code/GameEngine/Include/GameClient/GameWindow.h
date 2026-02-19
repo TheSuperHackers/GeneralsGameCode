@@ -73,7 +73,11 @@ enum { WIN_COLOR_UNDEFINED = GAME_COLOR_UNDEFINED };
 
 // WindowMsgData --------------------------------------------------------------
 //-----------------------------------------------------------------------------
+#ifdef __APPLE__
+typedef uintptr_t WindowMsgData;
+#else
 typedef UnsignedInt WindowMsgData;
+#endif
 
 //-----------------------------------------------------------------------------
 enum WindowMsgHandledType CPP_11(: Int) { MSG_IGNORED, MSG_HANDLED };

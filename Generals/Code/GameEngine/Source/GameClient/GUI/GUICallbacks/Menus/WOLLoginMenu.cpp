@@ -67,7 +67,9 @@
 
 #include "GameNetwork/GameSpyOverlay.h"
 
+#ifndef __APPLE__
 #include "GameNetwork/WOLBrowser/WebBrowser.h"
+#endif
 
 
 #ifdef ALLOW_NON_PROFILED_LOGIN
@@ -739,10 +741,12 @@ void WOLLoginMenuShutdown( WindowLayout *layout, void *userData )
 	TheWindowManager->clearTabList();
 	if (webBrowserActive)
 	{
+#ifndef __APPLE__
 		if (TheWebBrowser != nullptr)
 		{
 			TheWebBrowser->closeBrowserWindow(listboxTOS);
 		}
+#endif
 		webBrowserActive = FALSE;
 	}
 
@@ -1433,12 +1437,15 @@ WindowMsgHandledType WOLLoginMenuSystem( GameWindow *window, UnsignedInt msg,
 				{
 					parentTOS->winHide(FALSE);
 					useWebBrowserForTOS = FALSE;//loginPref->getBool("UseTOSBrowser", TRUE);
+#ifndef __APPLE__
 					if (useWebBrowserForTOS && (TheWebBrowser != nullptr))
 					{
 						TheWebBrowser->createBrowserWindow("TermsOfService", listboxTOS);
 						webBrowserActive = TRUE;
 					}
 					else
+#else
+#endif
 					{
 						// Okay, no web browser.  This means we're looking at a UTF-8 text file.
 						GadgetListBoxReset(listboxTOS);
@@ -1485,6 +1492,7 @@ WindowMsgHandledType WOLLoginMenuSystem( GameWindow *window, UnsignedInt msg,
 					EnableLoginControls( TRUE );
 
 					parentTOS->winHide(TRUE);
+#ifndef __APPLE__
 					if (useWebBrowserForTOS && (TheWebBrowser != nullptr))
 					{
 						if (listboxTOS != nullptr)
@@ -1492,6 +1500,7 @@ WindowMsgHandledType WOLLoginMenuSystem( GameWindow *window, UnsignedInt msg,
 							TheWebBrowser->closeBrowserWindow(listboxTOS);
 						}
 					}
+#endif
 
 					OptionPreferences optionPref;
 					optionPref["SawTOS"] = "yes";
