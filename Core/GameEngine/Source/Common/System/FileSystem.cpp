@@ -510,17 +510,17 @@ TransferFileType getTransferFileType(const char* extension)
 // content in memory before writing to disk.
 Bool FileSystem::hasValidTransferFileContent(const AsciiString& filePath, const UnsignedByte* data, UnsignedInt dataSize)
 {
-	const char* lastDot = strrchr(filePath.str(), '.');
-	if (lastDot == nullptr)
+	const char* fileExt = strrchr(filePath.str(), '.');
+	if (fileExt == nullptr)
 	{
 		DEBUG_LOG(("File '%s' has no extension for content validation.", filePath.str()));
 		return false;
 	}
 
-	const TransferFileType fileType = getTransferFileType(lastDot);
+	const TransferFileType fileType = getTransferFileType(fileExt);
 	if (fileType == TransferFileType_Count)
 	{
-		DEBUG_LOG(("File '%s' has unrecognized extension '%s' for content validation.", filePath.str(), lastDot));
+		DEBUG_LOG(("File '%s' has unrecognized extension '%s' for content validation.", filePath.str(), fileExt));
 		return false;
 	}
 
