@@ -13,6 +13,7 @@ This is the official documentation hub for the macOS/Metal port of Generals Zero
 | **[Development Guide](DEVELOPMENT.md)** | Architecture, conventions, gotchas, and golden rules for contributors |
 | **[Rendering Pipeline](RENDERING.md)** | Metal backend architecture, DX8→Metal translation, shader details |
 | **[Build System](BUILD_SYSTEM.md)** | CMake structure, dependency graph, platform targets |
+| **[Reference Materials](reference/README.md)** | DX8 specs, engine architecture analysis, rendering flow diagrams, screenshots |
 
 ## 🚀 Quick Start
 
