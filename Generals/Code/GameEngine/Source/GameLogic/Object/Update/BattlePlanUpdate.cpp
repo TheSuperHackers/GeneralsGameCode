@@ -370,6 +370,10 @@ UpdateSleepTime BattlePlanUpdate::update()
 							{
 								//It's not centered, and not trying to center, so order it to center.
 								ai->aiIdle( CMD_FROM_AI );
+#if !RETAIL_COMPATIBLE_CRC
+								// TheSuperHackers @bugfix Stubbjax 19/02/2026 Prevent using the turret while it recenters.
+								enableTurret(false);
+#endif
 								recenterTurret();
 								m_centeringTurret = true;
 							}
