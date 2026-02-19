@@ -52,21 +52,27 @@ StdBIGFileSystem::~StdBIGFileSystem() {
 
 void StdBIGFileSystem::init() {
 	DEBUG_ASSERTCRASH(TheLocalFileSystem != nullptr, ("TheLocalFileSystem must be initialized before TheArchiveFileSystem."));
+	fprintf(stderr, "StdBIGFileSystem::init() - TheLocalFileSystem=%p\n", (void*)TheLocalFileSystem);
 	if (TheLocalFileSystem == nullptr) {
+		fprintf(stderr, "StdBIGFileSystem::init() - ABORT: TheLocalFileSystem is null!\n");
 		return;
 	}
 
+	fprintf(stderr, "StdBIGFileSystem::init() - loading .big files from root...\n");
 	loadBigFilesFromDirectory("", "*.big");
+	fprintf(stderr, "StdBIGFileSystem::init() - root loading done\n");
 
 #if RTS_ZEROHOUR
     // load original Generals assets
     AsciiString installPath;
     GetStringFromGeneralsRegistry("", "InstallPath", installPath );
+    fprintf(stderr, "StdBIGFileSystem::init() - Generals InstallPath='%s'\n", installPath.str());
     //@todo this will need to be ramped up to a crash for release
     DEBUG_ASSERTCRASH(!installPath.isEmpty(), ("Be 1337! Go install Generals!"));
     if (!installPath.isEmpty())
       loadBigFilesFromDirectory(installPath, "*.big");
 #endif
+	fprintf(stderr, "StdBIGFileSystem::init() - COMPLETE\n");
 }
 
 void StdBIGFileSystem::reset() {
@@ -209,8 +215,10 @@ void StdBIGFileSystem::closeAllFiles() {
 
 Bool StdBIGFileSystem::loadBigFilesFromDirectory(AsciiString dir, AsciiString fileMask, Bool overwrite) {
 
+	fprintf(stderr, "loadBigFilesFromDirectory('%s', '%s', overwrite=%d)\n", dir.str(), fileMask.str(), overwrite);
 	FilenameList filenameList;
 	TheLocalFileSystem->getFileListInDirectory(dir, "", fileMask, filenameList, TRUE);
+	fprintf(stderr, "  found %d files\n", (int)filenameList.size());
 
 	Bool actuallyAdded = FALSE;
 	FilenameListIter it = filenameList.begin();

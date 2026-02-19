@@ -239,12 +239,16 @@ GameClient::~GameClient()
 //-------------------------------------------------------------------------------------------------
 void GameClient::init( void )
 {
-
+	fprintf(stderr, "GameClient::init() STEP 1: setFrameRate\n"); fflush(stderr);
 	setFrameRate(MSEC_PER_LOGICFRAME_REAL);		// from GameCommon.h... tell W3D what our expected framerate is
+	fprintf(stderr, "GameClient::init() STEP 1b: setFrameRate done\n"); fflush(stderr);
 
+	fprintf(stderr, "GameClient::init() STEP 2: INI DrawGroupInfo\n"); fflush(stderr);
 	INI ini;
+	fprintf(stderr, "GameClient::init() STEP 2a: INI constructed\n"); fflush(stderr);
 	// Load the DrawGroupInfo here, before the Display Manager is loaded.
 	ini.loadFileDirectory("Data\\INI\\DrawGroupInfo", INI_LOAD_OVERWRITE, nullptr);
+	fprintf(stderr, "GameClient::init() STEP 3: DrawGroupInfo loaded\n"); fflush(stderr);
 
 	// Override the ini values with localized versions:
 	if (TheGlobalLanguageData && TheGlobalLanguageData->m_drawGroupInfoFont.name.isNotEmpty())

@@ -209,6 +209,8 @@ UnsignedInt INI::loadFileDirectory(AsciiString fileDirName,
                                    Bool subdirs) {
   UnsignedInt filesRead = 0;
 
+  fprintf(stderr, "INI::loadFileDirectory('%s')\n", fileDirName.str());
+
   AsciiString iniDir = fileDirName;
   AsciiString iniFile = fileDirName;
 
@@ -222,16 +224,23 @@ UnsignedInt INI::loadFileDirectory(AsciiString fileDirName,
     iniFile.concat(ext);
   }
 
+  fprintf(stderr, "  checking file: '%s'\n", iniFile.str());
   if (TheFileSystem->doesFileExist(iniFile.str())) {
+    fprintf(stderr, "  file EXISTS, loading...\n");
     filesRead += load(iniFile, loadType, pXfer);
+  } else {
+    fprintf(stderr, "  file NOT found\n");
   }
 
   // Load any additional ini files from a "filename" directory and its
   // subdirectories.
+  fprintf(stderr, "  loading directory: '%s'\n", iniDir.str());
   filesRead += loadDirectory(iniDir, loadType, pXfer, subdirs);
+  fprintf(stderr, "  total filesRead=%d\n", filesRead);
 
   // Expect to open and load at least one file.
   if (filesRead == 0) {
+    fprintf(stderr, "  THROW INI_CANT_OPEN_FILE for '%s'!\n", fileDirName.str());
     throw INI_CANT_OPEN_FILE;
   }
 
@@ -372,6 +381,8 @@ static INIFieldParseProc findFieldParse(const FieldParse *parseTable,
 UnsignedInt INI::load(AsciiString filename, INILoadType loadType, Xfer *pXfer) {
   setFPMode(); // so we have consistent Real values for GameLogic -MDC
 
+  fprintf(stderr, "INI::load('%s')\n", filename.str());
+
   s_xfer = pXfer;
   prepFile(filename, loadType);
 
@@ -400,6 +411,8 @@ UnsignedInt INI::load(AsciiString filename, INILoadType loadType, Xfer *pXfer) {
             (*parse)(this);
 
           } catch (...) {
+            fprintf(stderr, "INI::load ERROR parsing block '%s' in file '%s' at line %d\n",
+                    token, m_filename.str(), getLineNum());
             DEBUG_CRASH(("Error parsing block '%s' in INI file '%s'", token,
                          m_filename.str()));
             char buff[1024];
@@ -413,19 +426,25 @@ UnsignedInt INI::load(AsciiString filename, INILoadType loadType, Xfer *pXfer) {
           strcpy(m_curBlockStart, "NO_BLOCK");
 #endif
         } else {
+          fprintf(stderr, "INI::load WARNING: UNKNOWN TOKEN '%s' in file '%s' at line %d - SKIPPING\n",
+                  token, m_filename.str(), getLineNum());
+#ifdef _WIN32
           DEBUG_ASSERTCRASH(0, ("[LINE: %d - FILE: '%s'] Unknown block '%s'",
                                 getLineNum(), getFilename().str(), token));
           throw INI_UNKNOWN_TOKEN;
+#endif
         }
       }
     }
   } catch (...) {
+    fprintf(stderr, "INI::load EXCEPTION in file '%s'\n", m_filename.str());
     unPrepFile();
 
     // propagate the exception.
     throw;
   }
 
+  fprintf(stderr, "INI::load('%s') - DONE\n", filename.str());
   unPrepFile();
 
   return 1;

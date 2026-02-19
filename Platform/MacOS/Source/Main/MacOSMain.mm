@@ -64,6 +64,7 @@
 #include "Common/Snapshot.h"
 #include "StdBIGFileSystem.h"
 #include "StdLocalFileSystem.h"
+#include "W3DDevice/Common/W3DModuleFactory.h"
 
 // Engine globals
 const char *gAppPrefix = "";
@@ -223,7 +224,7 @@ AudioEventInfo *AudioManager::findAudioEventInfo(AsciiString) const {
 }
 const Coord3D *AudioManager::getListenerPosition() const { return nullptr; }
 void AudioManager::getInfoForAudioEvent(const AudioEventRTS *) const {}
-Bool AudioManager::isMusicAlreadyLoaded() const { return false; }
+Bool AudioManager::isMusicAlreadyLoaded() const { return true; }  // Must return true or engine quits immediately
 Bool AudioManager::isOn(AudioAffect) const { return false; }
 void AudioManager::findAllAudioEventsOfType(AudioType,
                                             std::vector<AudioEventInfo *> &) {}
@@ -470,8 +471,8 @@ ArchiveFileSystem *Win32GameEngine::createArchiveFileSystem(void) {
 }
 
 ModuleFactory *Win32GameEngine::createModuleFactory(void) {
-  fprintf(stderr, "FACTORY: createModuleFactory\n");
-  return new ModuleFactory();
+  fprintf(stderr, "FACTORY: createModuleFactory (W3D)\n");
+  return new W3DModuleFactory();
 }
 ThingFactory *Win32GameEngine::createThingFactory(void) {
   fprintf(stderr, "FACTORY: createThingFactory\n");

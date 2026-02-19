@@ -347,10 +347,25 @@ typedef INT_PTR (*FARPROC)();
 #endif
 #ifndef _LOADLIBRARY_DEFINED
 #define _LOADLIBRARY_DEFINED
-inline HMODULE LoadLibrary(const char *) { return nullptr; }
-inline HMODULE LoadLibraryA(const char *) { return nullptr; }
-inline FARPROC GetProcAddress(HMODULE, const char *) { return nullptr; }
-inline BOOL FreeLibrary(HMODULE) { return FALSE; }
+// Metal backend: LoadLibrary returns a non-null marker so DX8Wrapper::Init proceeds.
+// GetProcAddress("Direct3DCreate8") returns our Metal factory function.
+// We use a wrapper to avoid return-type conflicts with windows.h (no d3d8.h here).
+extern "C" void *_CreateMetalInterface8_Wrapper();
+
+inline HMODULE LoadLibrary(const char *name) {
+  // Return a non-null marker handle — we don't actually load a DLL on macOS
+  return (HMODULE)0x1;
+}
+inline HMODULE LoadLibraryA(const char *name) {
+  return (HMODULE)0x1;
+}
+inline FARPROC GetProcAddress(HMODULE hModule, const char *procName) {
+  if (procName && strcmp(procName, "Direct3DCreate8") == 0) {
+    return (FARPROC)&_CreateMetalInterface8_Wrapper;
+  }
+  return nullptr;
+}
+inline BOOL FreeLibrary(HMODULE) { return TRUE; }
 #endif
 
 // ── Window management stubs ────────────────────────────────────────────

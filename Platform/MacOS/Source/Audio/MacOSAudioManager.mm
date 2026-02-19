@@ -43,26 +43,45 @@ void MacOSAudioManager::init() {
   fprintf(stderr, "MACOS AUDIO: init() started\n");
   fflush(stderr);
 
-  if (!m_engine) {
-    m_engine = (__bridge_retained void *)[[AVAudioEngine alloc] init];
-    AVAudioEngine *engine = (__bridge AVAudioEngine *)m_engine;
-    m_mainMixer = (__bridge void *)[engine mainMixerNode];
-    fprintf(stderr, "MACOS AUDIO: Engine allocated: %p, Mixer: %p\n", m_engine,
-            m_mainMixer);
-    fflush(stderr);
-  }
-
   AudioManager::init();
 
-  NSError *error = nil;
-  AVAudioEngine *engine = (__bridge AVAudioEngine *)m_engine;
-  if (![engine startAndReturnError:&error]) {
-    fprintf(stderr, "MACOS AUDIO: Failed to start engine: %s\n",
-            [[error localizedDescription] UTF8String]);
+  @try {
+    if (!m_engine) {
+      AVAudioEngine *engine = [[AVAudioEngine alloc] init];
+      m_engine = (__bridge_retained void *)engine;
+      fprintf(stderr, "MACOS AUDIO: Engine allocated: %p\n", m_engine);
+      fflush(stderr);
+
+      NSError *error = nil;
+      if (![engine startAndReturnError:&error]) {
+        fprintf(stderr, "MACOS AUDIO: Failed to start engine: %s\n",
+                error ? [[error localizedDescription] UTF8String] : "unknown");
+        fflush(stderr);
+        // Properly release the engine to stop background dispatch work
+        [engine stop];
+        (void)(__bridge_transfer AVAudioEngine *)m_engine;
+        m_engine = nullptr;
+        m_mainMixer = nullptr;
+        return;
+      }
+
+      // Access mainMixerNode AFTER engine start to avoid SIGBUS
+      m_mainMixer = (__bridge void *)[engine mainMixerNode];
+      fprintf(stderr, "MACOS AUDIO: Engine started, mainMixer=%p\n", m_mainMixer);
+      fflush(stderr);
+    }
+  } @catch (NSException *exception) {
+    fprintf(stderr, "MACOS AUDIO: Exception during init: %s - %s\n",
+            [[exception name] UTF8String], [[exception reason] UTF8String]);
     fflush(stderr);
-  } else {
-    fprintf(stderr, "MACOS AUDIO: Engine started, mainMixer=%p\n", m_mainMixer);
-    fflush(stderr);
+    // Properly release the engine - bridge_transfer hands ownership to ARC
+    if (m_engine) {
+      AVAudioEngine *engine = (__bridge AVAudioEngine *)m_engine;
+      [engine stop];
+      (void)(__bridge_transfer AVAudioEngine *)m_engine;
+    }
+    m_engine = nullptr;
+    m_mainMixer = nullptr;
   }
 }
 

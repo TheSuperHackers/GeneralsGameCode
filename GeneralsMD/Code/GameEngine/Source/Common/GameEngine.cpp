@@ -161,8 +161,10 @@ template <class SUBSYSTEM>
 void initSubsystem(SUBSYSTEM *&sysref, AsciiString name, SUBSYSTEM *sys,
                    Xfer *pXfer, const char *path1 = nullptr,
                    const char *path2 = nullptr) {
+  fprintf(stderr, "initSubsystem: %s (path1=%s, path2=%s)\n", name.str(), path1 ? path1 : "(null)", path2 ? path2 : "(null)");
   sysref = sys;
   TheSubsystemList->initSubsystem(sys, path1, path2, pXfer, name);
+  fprintf(stderr, "initSubsystem: %s - DONE\n", name.str());
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -907,21 +909,27 @@ void GameEngine::init() {
       TheWritableGlobalData->m_afterIntro = TRUE;
 
   } catch (ErrorCode ec) {
+    fprintf(stderr, "CATCH: ErrorCode=%d (0x%08x)\n", (int)ec, (unsigned int)ec);
     if (ec == ERROR_INVALID_D3D) {
       RELEASE_CRASHLOCALIZED("ERROR:D3DFailurePrompt",
                              "ERROR:D3DFailureMessage");
     }
+    // For OOM and other errors, log but don't SIGSEGV
+    fprintf(stderr, "CATCH: TheGlobalData=%p, TheWritableGlobalData=%p\n",
+            (void*)TheGlobalData, (void*)TheWritableGlobalData);
   } catch (INIException e) {
+    fprintf(stderr, "CATCH: INIException: %s\n", e.mFailureMessage ? e.mFailureMessage : "(null)");
     if (e.mFailureMessage)
       RELEASE_CRASH((e.mFailureMessage));
     else
       RELEASE_CRASH(("Uncaught Exception during initialization."));
 
   } catch (...) {
+    fprintf(stderr, "CATCH: Unknown exception during initialization!\n");
     RELEASE_CRASH(("Uncaught Exception during initialization."));
   }
 
-  if (!TheGlobalData->m_playIntro)
+  if (TheGlobalData && !TheGlobalData->m_playIntro && TheWritableGlobalData)
     TheWritableGlobalData->m_afterIntro = TRUE;
 
   resetSubsystems();

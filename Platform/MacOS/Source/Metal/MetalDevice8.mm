@@ -341,9 +341,12 @@ bool MetalDevice8::InitMetal(void *windowHandle) {
   NSString *shaderSource = nil;
   // Try multiple paths to find the shader source
   NSArray *shaderPaths = @[
+    @"MacOSShaders.metal",
     @"Platform/MacOS/Source/Main/MacOSShaders.metal",
     @"../../Platform/MacOS/Source/Main/MacOSShaders.metal",
     @"../Platform/MacOS/Source/Main/MacOSShaders.metal",
+    @"../../../Platform/MacOS/Source/Main/MacOSShaders.metal",
+    @"../../../../Platform/MacOS/Source/Main/MacOSShaders.metal",
   ];
 
   NSString *shaderPath = nil;

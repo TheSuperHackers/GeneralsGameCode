@@ -234,8 +234,10 @@ static Int roundUpMemBound(Int i)
 static void* sysAllocateDoNotZero(Int numBytes)
 {
 	void* p = ::GlobalAlloc(GMEM_FIXED, numBytes);
-	if (!p)
+	if (!p) {
+		fprintf(stderr, "ERROR_OUT_OF_MEMORY at sysAllocateDoNotZero: numBytes=%d\n", numBytes);
 		throw ERROR_OUT_OF_MEMORY;
+	}
 #ifdef MEMORYPOOL_DEBUG
 	{
 		USE_PERF_TIMER(MemoryPoolDebugging)
@@ -1652,6 +1654,8 @@ void* MemoryPool::allocateBlockDoNotZeroImplementation(DECLARE_LITERALSTRING_ARG
 	{
 		if (m_overflowAllocationCount == 0)
 		{
+			fprintf(stderr, "ERROR_OUT_OF_MEMORY: pool '%s' exhausted (allocationSize=%d, used=%d, total=%d, overflow=0)\n",
+				m_poolName, m_allocationSize, m_usedBlocksInPool, m_totalBlocksInPool);
 			throw ERROR_OUT_OF_MEMORY;	// this pool is not allowed to grow
 		}
 		else
@@ -2248,8 +2252,10 @@ void *DynamicMemoryAllocator::allocateBytesDoNotZeroImplementation(Int numBytes 
 
 #if defined(RTS_DEBUG)
   // check alignment
-  if (unsigned(result)&3)
+  if ((uintptr_t)(result)&3) {
+    fprintf(stderr, "ERROR_OUT_OF_MEMORY at DMA alignment check: result=%p\n", result);
     throw ERROR_OUT_OF_MEMORY;
+  }
 #endif
 
 	return result;
@@ -2660,6 +2666,7 @@ MemoryPool *MemoryPoolFactory::createMemoryPool(const char *poolName, Int alloca
 	if (initialAllocationCount <= 0 || overflowAllocationCount < 0)
 	{
 		DEBUG_CRASH(("illegal pool size: %d %d",initialAllocationCount,overflowAllocationCount));
+		fprintf(stderr, "ERROR_OUT_OF_MEMORY at createMemoryPool: poolName=%s, init=%d, overflow=%d\n", poolName, initialAllocationCount, overflowAllocationCount);
 		throw ERROR_OUT_OF_MEMORY;
 	}
 
@@ -3398,6 +3405,7 @@ void *malloc(size_t a)
 void *realloc(void *p, size_t s)
 {
 	DEBUG_CRASH(("realloc is evil. do not call it."));
+	fprintf(stderr, "ERROR_OUT_OF_MEMORY at realloc override: p=%p, s=%zu\n", p, s);
 	throw ERROR_OUT_OF_MEMORY;
 }
 #endif

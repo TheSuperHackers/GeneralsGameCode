@@ -335,7 +335,22 @@ AsciiString WorkerProcess::getStdOutput() const { return AsciiString::TheEmptySt
 //  GAME RESULTS
 // ══════════════════════════════════════════════════════
 
-GameResultsInterface *GameResultsInterface::createNewGameResultsInterface() { return nullptr; }
+class StubGameResultsInterface : public GameResultsInterface {
+public:
+	void init() override {}
+	void reset() override {}
+	void update() override {}
+	void startThreads() override {}
+	void endThreads() override {}
+	Bool areThreadsRunning() override { return false; }
+	void addRequest(const GameResultsRequest&) override {}
+	Bool getRequest(GameResultsRequest&) override { return false; }
+	void addResponse(const GameResultsResponse&) override {}
+	Bool getResponse(GameResultsResponse&) override { return false; }
+	Bool areGameResultsBeingSent() override { return false; }
+};
+
+GameResultsInterface *GameResultsInterface::createNewGameResultsInterface() { return new StubGameResultsInterface(); }
 
 // ══════════════════════════════════════════════════════
 //  INI PARSE

@@ -82,11 +82,12 @@ target_include_directories(macos_platform PRIVATE
     ${CMAKE_SOURCE_DIR}/Core/Libraries/Source/WWVegas
     # WW3D2 headers (dx8indexbuffer.h, dx8vertexbuffer.h, dx8wrapper.h)
     ${CMAKE_SOURCE_DIR}/Generals/Code/Libraries/Source/WWVegas/WW3D2
-    # Precompiled header path (PreRTS.h)
-    ${CMAKE_SOURCE_DIR}/Generals/Code/GameEngine/Include/Precompiled
+    # Precompiled header path (PreRTS.h) — use GeneralsMD for Zero Hour
+    ${CMAKE_SOURCE_DIR}/GeneralsMD/Code/GameEngine/Include/Precompiled
     # W3DDevice headers (W3DShaderManager.h, W3DAssetManager.h, W3DInGameUI.h, etc.)
-    ${CMAKE_SOURCE_DIR}/Generals/Code/GameEngine/Include
-    ${CMAKE_SOURCE_DIR}/Generals/Code/GameEngineDevice/Include
+    # Use GeneralsMD (Zero Hour) versions to match zi_always/zi_gameengine_include
+    ${CMAKE_SOURCE_DIR}/GeneralsMD/Code/GameEngine/Include
+    ${CMAKE_SOURCE_DIR}/GeneralsMD/Code/GameEngineDevice/Include
     ${CMAKE_SOURCE_DIR}/Generals/Code/Libraries/Source/WWVegas
     # Core WWVegas subdirectories (bare includes from WW3D2 chain)
     ${CMAKE_SOURCE_DIR}/Core/Libraries/Source/WWVegas/WWDebug
@@ -133,8 +134,13 @@ target_link_libraries(macos_platform PUBLIC
     core_config
     corei_always
     corei_gameengine_include
-    zi_gameengine_include
     zi_libraries_source_wwvegas
+)
+# Zero Hour includes and defines — PRIVATE to avoid leaking RTS_ZEROHOUR
+# to the Generals target that also links macos_platform
+target_link_libraries(macos_platform PRIVATE
+    zi_always
+    zi_gameengine_include
 )
 
 # ── Compile Metal shaders ──

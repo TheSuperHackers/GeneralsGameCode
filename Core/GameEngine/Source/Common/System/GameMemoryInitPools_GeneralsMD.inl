@@ -654,5 +654,10 @@ static PoolSizeRec PoolSizes[] =
 	{ "ThumbnailManagerClass", 32, 32},
 	{ "SmudgeSet", 32, 32},
 	{ "Smudge", 128, 32},
+#ifdef __APPLE__
+	// Metal backend pools for macOS
+	{ "MetalSurface8", 64, 32 },
+	{ "MetalTexture8", 256, 64 },
+#endif
 	{ 0, 0, 0 }
 };

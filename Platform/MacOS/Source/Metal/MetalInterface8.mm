@@ -174,4 +174,10 @@ extern "C" IDirect3D8 *CreateMetalInterface8() { return new MetalInterface8(); }
 
 extern "C" IDirect3DDevice8 *CreateMetalDevice8() { return new MetalDevice8(); }
 
+// Wrapper with void* return type — called from windows.h GetProcAddress stub
+// which cannot include d3d8.h. This avoids return-type conflicts.
+extern "C" void *_CreateMetalInterface8_Wrapper() {
+  return static_cast<void *>(CreateMetalInterface8());
+}
+
 #endif // __APPLE__
