@@ -67,3 +67,4 @@ build.ninja
 ## Python
 __pycache__/
 *.pycData/
+Data/*.big

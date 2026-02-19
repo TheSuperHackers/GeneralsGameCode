@@ -322,28 +322,35 @@ void MacOSAudioManager::friend_forcePlayAudioEventRTS(
   fflush(stderr);
 
   AVAudioEngine *engine = (__bridge AVAudioEngine *)m_engine;
-  AVAudioPlayerNode *playerNode = [[AVAudioPlayerNode alloc] init];
-  [engine attachNode:playerNode];
-  [engine connect:playerNode
-               to:(__bridge AVAudioMixerNode *)m_mainMixer
-           format:audioFile.processingFormat];
+  if (!engine || ![engine isRunning]) {
+    fprintf(stderr, "MACOS AUDIO: Engine not running, skipping %s\n", pathStr.c_str());
+    fflush(stderr);
+    return;
+  }
 
-  // Volume
-  float baseVol = this->getVolume(AudioAffect_Sound);
-  playerNode.volume = eventToPlay->getVolume() * baseVol;
+  @try {
+    AVAudioPlayerNode *playerNode = [[AVAudioPlayerNode alloc] init];
+    [engine attachNode:playerNode];
+    [engine connect:playerNode
+                 to:(__bridge AVAudioMixerNode *)m_mainMixer
+             format:audioFile.processingFormat];
 
-  [playerNode scheduleFile:audioFile atTime:nil completionHandler:nil];
-  [playerNode play];
+    // Volume
+    float baseVol = this->getVolume(AudioAffect_Sound);
+    playerNode.volume = eventToPlay->getVolume() * baseVol;
 
-  ApplePlayingAudio playing;
-  playing.playerNode = (__bridge_retained void *)playerNode;
-  // Since we take ownership in our tracking list, we must be careful.
-  // In the real engine, addAudioEvent creates a NEW event anyway.
-  playing.event = mutableEvent;
-  m_playingAudio.push_back(playing);
+    [playerNode scheduleFile:audioFile atTime:nil completionHandler:nil];
+    [playerNode play];
 
-  // fprintf(stderr, "MACOS AUDIO: Playing %s (vol: %.2f)\n", pathStr.c_str(),
-  // playerNode.volume);
+    ApplePlayingAudio playing;
+    playing.playerNode = (__bridge_retained void *)playerNode;
+    playing.event = mutableEvent;
+    m_playingAudio.push_back(playing);
+  } @catch (NSException *e) {
+    fprintf(stderr, "MACOS AUDIO: Exception playing %s: %s\n",
+            pathStr.c_str(), [[e reason] UTF8String]);
+    fflush(stderr);
+  }
 }
 
 void MacOSAudioManager::setPreferredProvider(AsciiString providerNdx) {}

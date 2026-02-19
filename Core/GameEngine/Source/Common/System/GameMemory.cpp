@@ -3249,18 +3249,28 @@ static int theLinkTester = 0;
 void* STLSpecialAlloc::allocate(size_t __n)
 {
 	++theLinkTester;
+#ifdef __APPLE__
+	void *p = ::calloc(1, __n);
+	if (!p) throw std::bad_alloc();
+	return p;
+#else
 	preMainInitMemoryManager();
 	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != nullptr, ("must init memory manager before calling global operator new"));
 	return TheDynamicMemoryAllocator->allocateBytes(__n, "STL_");
+#endif
 }
 
 //-----------------------------------------------------------------------------
 void STLSpecialAlloc::deallocate(void* __p, size_t)
 {
 	++theLinkTester;
+#ifdef __APPLE__
+	::free(__p);
+#else
 	preMainInitMemoryManager();
 	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != nullptr, ("must init memory manager before calling global operator new"));
 	TheDynamicMemoryAllocator->freeBytes(__p);
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -3270,9 +3280,20 @@ void STLSpecialAlloc::deallocate(void* __p, size_t)
 void *operator new(size_t size)
 {
 	++theLinkTester;
+#ifdef __APPLE__
+	// On macOS, system frameworks (Metal, AppKit) share the same global
+	// operator new/delete. If we route through TheDynamicMemoryAllocator,
+	// those frameworks crash when freeing memory because the allocator
+	// expects a MemoryPoolSingleBlock header. Use system calloc to
+	// zero-initialize memory (the game relies on zeroed allocations).
+	void *p = ::calloc(1, size);
+	if (!p) throw std::bad_alloc();
+	return p;
+#else
 	preMainInitMemoryManager();
 	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != nullptr, ("must init memory manager before calling global operator new"));
 	return TheDynamicMemoryAllocator->allocateBytes(size, "global operator new");
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -3282,9 +3303,15 @@ void *operator new(size_t size)
 void *operator new[](size_t size)
 {
 	++theLinkTester;
+#ifdef __APPLE__
+	void *p = ::calloc(1, size);
+	if (!p) throw std::bad_alloc();
+	return p;
+#else
 	preMainInitMemoryManager();
 	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != nullptr, ("must init memory manager before calling global operator new"));
 	return TheDynamicMemoryAllocator->allocateBytes(size, "global operator new[]");
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -3294,9 +3321,13 @@ void *operator new[](size_t size)
 void operator delete(void *p)
 {
 	++theLinkTester;
+#ifdef __APPLE__
+	::free(p);
+#else
 	preMainInitMemoryManager();
 	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != nullptr, ("must init memory manager before calling global operator delete"));
 	TheDynamicMemoryAllocator->freeBytes(p);
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -3306,9 +3337,13 @@ void operator delete(void *p)
 void operator delete[](void *p)
 {
 	++theLinkTester;
+#ifdef __APPLE__
+	::free(p);
+#else
 	preMainInitMemoryManager();
 	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != nullptr, ("must init memory manager before calling global operator delete"));
 	TheDynamicMemoryAllocator->freeBytes(p);
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -3318,12 +3353,18 @@ void operator delete[](void *p)
 void* operator new(size_t size, const char * fname, int)
 {
 	++theLinkTester;
+#ifdef __APPLE__
+	void *p = ::calloc(1, size);
+	if (!p) throw std::bad_alloc();
+	return p;
+#else
 	preMainInitMemoryManager();
 	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != nullptr, ("must init memory manager before calling global operator new"));
 #ifdef MEMORYPOOL_DEBUG
 	return TheDynamicMemoryAllocator->allocateBytesImplementation(size, fname);
 #else
 	return TheDynamicMemoryAllocator->allocateBytesImplementation(size);
+#endif
 #endif
 }
 
@@ -3334,9 +3375,13 @@ void* operator new(size_t size, const char * fname, int)
 void operator delete(void * p, const char *, int)
 {
 	++theLinkTester;
+#ifdef __APPLE__
+	::free(p);
+#else
 	preMainInitMemoryManager();
 	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != nullptr, ("must init memory manager before calling global operator delete"));
 	TheDynamicMemoryAllocator->freeBytes(p);
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -3346,12 +3391,18 @@ void operator delete(void * p, const char *, int)
 void* operator new[](size_t size, const char * fname, int)
 {
 	++theLinkTester;
+#ifdef __APPLE__
+	void *p = ::calloc(1, size);
+	if (!p) throw std::bad_alloc();
+	return p;
+#else
 	preMainInitMemoryManager();
 	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != nullptr, ("must init memory manager before calling global operator new"));
 #ifdef MEMORYPOOL_DEBUG
 	return TheDynamicMemoryAllocator->allocateBytesImplementation(size, fname);
 #else
 	return TheDynamicMemoryAllocator->allocateBytesImplementation(size);
+#endif
 #endif
 }
 
@@ -3362,9 +3413,13 @@ void* operator new[](size_t size, const char * fname, int)
 void operator delete[](void * p, const char *, int)
 {
 	++theLinkTester;
+#ifdef __APPLE__
+	::free(p);
+#else
 	preMainInitMemoryManager();
 	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != nullptr, ("must init memory manager before calling global operator delete"));
 	TheDynamicMemoryAllocator->freeBytes(p);
+#endif
 }
 
 //-----------------------------------------------------------------------------
