@@ -225,69 +225,29 @@ void NetGameCommandMsg::setGameMessageType(GameMessage::Type type) {
 }
 
 size_t NetGameCommandMsg::getSizeForNetPacket() const {
-	UnsignedShort msglen = sizeof(NetPacketGameCommand);
+	return NetPacketGameCommand::getSize(*this);
+}
 
-	// Variable data portion
-	GameMessage *gmsg = constructGameMessage();
-	GameMessageParser *parser = newInstance(GameMessageParser)(gmsg);
+size_t NetGameCommandMsg::copyBytesForNetPacket(UnsignedByte* buffer, const NetCommandRef& ref) const {
+	return NetPacketGameCommand::copyBytes(buffer, ref);
+}
 
-	msglen += sizeof(GameMessage::Type);
-	msglen += sizeof(UnsignedByte);
+size_t NetGameCommandMsg::getSizeForSmallNetPacket(const Select* select) const {
+	return SmallNetPacketGameCommand::getSize(*this, select);
+}
 
-	GameMessageParserArgumentType *arg = parser->getFirstArgumentType();
-	while (arg != nullptr) {
-		msglen += sizeof(UnsignedByte); // argument type
-		msglen += sizeof(UnsignedByte); // argument count
-		GameMessageArgumentDataType type = arg->getType();
+size_t NetGameCommandMsg::copyBytesForSmallNetPacket(UnsignedByte* buffer, const NetCommandRef& ref, const Select* select) const {
+	return SmallNetPacketGameCommand::copyBytes(buffer, ref, select);
+}
 
-		switch (type) {
-
-		case ARGUMENTDATATYPE_INTEGER:
-			msglen += arg->getArgCount() * sizeof(Int);
-			break;
-		case ARGUMENTDATATYPE_REAL:
-			msglen += arg->getArgCount() * sizeof(Real);
-			break;
-		case ARGUMENTDATATYPE_BOOLEAN:
-			msglen += arg->getArgCount() * sizeof(Bool);
-			break;
-		case ARGUMENTDATATYPE_OBJECTID:
-			msglen += arg->getArgCount() * sizeof(ObjectID);
-			break;
-		case ARGUMENTDATATYPE_DRAWABLEID:
-			msglen += arg->getArgCount() * sizeof(DrawableID);
-			break;
-		case ARGUMENTDATATYPE_TEAMID:
-			msglen += arg->getArgCount() * sizeof(UnsignedInt);
-			break;
-		case ARGUMENTDATATYPE_LOCATION:
-			msglen += arg->getArgCount() * sizeof(Coord3D);
-			break;
-		case ARGUMENTDATATYPE_PIXEL:
-			msglen += arg->getArgCount() * sizeof(ICoord2D);
-			break;
-		case ARGUMENTDATATYPE_PIXELREGION:
-			msglen += arg->getArgCount() * sizeof(IRegion2D);
-			break;
-		case ARGUMENTDATATYPE_TIMESTAMP:
-			msglen += arg->getArgCount() * sizeof(UnsignedInt);
-			break;
-		case ARGUMENTDATATYPE_WIDECHAR:
-			msglen += arg->getArgCount() * sizeof(WideChar);
-			break;
-
-		}
-
-		arg = arg->getNext();
-	}
-
-	deleteInstance(parser);
-	parser = nullptr;
-
-	deleteInstance(gmsg);
-	gmsg = nullptr;
-
-	return msglen;
+NetCommandMsg::Select NetGameCommandMsg::getSmallNetPacketSelect() const {
+	Select select;
+	select.useCommandType = 1;
+	select.useRelay = 1;
+	select.useFrame = 1;
+	select.usePlayerId = 1;
+	select.useCommandId = 1;
+	return select;
 }
 
 //-------------------------
@@ -327,7 +287,29 @@ Int NetAckCommandMsg::getSortNumber() const {
 }
 
 size_t NetAckCommandMsg::getSizeForNetPacket() const {
-	return sizeof(NetPacketAckCommand);
+	return NetPacketAckCommand::getSize(*this);
+}
+
+size_t NetAckCommandMsg::copyBytesForNetPacket(UnsignedByte* buffer, const NetCommandRef& ref) const {
+	return NetPacketAckCommand::copyBytes(buffer, ref);
+}
+
+size_t NetAckCommandMsg::getSizeForSmallNetPacket(const Select* select) const {
+	return SmallNetPacketAckCommand::getSize(*this, select);
+}
+
+size_t NetAckCommandMsg::copyBytesForSmallNetPacket(UnsignedByte* buffer, const NetCommandRef& ref, const Select* select) const {
+	return SmallNetPacketAckCommand::copyBytes(buffer, ref, select);
+}
+
+NetCommandMsg::Select NetAckCommandMsg::getSmallNetPacketSelect() const {
+	Select select;
+	select.useCommandType = 1;
+	select.useRelay = 0;
+	select.useFrame = 0;
+	select.usePlayerId = 1;
+	select.useCommandId = 0;
+	return select;
 }
 
 //-------------------------
@@ -431,7 +413,29 @@ UnsignedShort NetFrameCommandMsg::getCommandCount() const {
 }
 
 size_t NetFrameCommandMsg::getSizeForNetPacket() const {
-	return sizeof(NetPacketFrameCommand);
+	return NetPacketFrameCommand::getSize(*this);
+}
+
+size_t NetFrameCommandMsg::copyBytesForNetPacket(UnsignedByte* buffer, const NetCommandRef& ref) const {
+	return NetPacketFrameCommand::copyBytes(buffer, ref);
+}
+
+size_t NetFrameCommandMsg::getSizeForSmallNetPacket(const Select* select) const {
+	return SmallNetPacketFrameCommand::getSize(*this, select);
+}
+
+size_t NetFrameCommandMsg::copyBytesForSmallNetPacket(UnsignedByte* buffer, const NetCommandRef& ref, const Select* select) const {
+	return SmallNetPacketFrameCommand::copyBytes(buffer, ref, select);
+}
+
+NetCommandMsg::Select NetFrameCommandMsg::getSmallNetPacketSelect() const {
+	Select select;
+	select.useCommandType = 1;
+	select.useRelay = 1;
+	select.useFrame = 1;
+	select.usePlayerId = 1;
+	select.useCommandId = 1;
+	return select;
 }
 
 //-------------------------
@@ -466,7 +470,29 @@ void NetPlayerLeaveCommandMsg::setLeavingPlayerID(UnsignedByte id) {
 }
 
 size_t NetPlayerLeaveCommandMsg::getSizeForNetPacket() const {
-	return sizeof(NetPacketPlayerLeaveCommand);
+	return NetPacketPlayerLeaveCommand::getSize(*this);
+}
+
+size_t NetPlayerLeaveCommandMsg::copyBytesForNetPacket(UnsignedByte* buffer, const NetCommandRef& ref) const {
+	return NetPacketPlayerLeaveCommand::copyBytes(buffer, ref);
+}
+
+size_t NetPlayerLeaveCommandMsg::getSizeForSmallNetPacket(const Select* select) const {
+	return SmallNetPacketPlayerLeaveCommand::getSize(*this, select);
+}
+
+size_t NetPlayerLeaveCommandMsg::copyBytesForSmallNetPacket(UnsignedByte* buffer, const NetCommandRef& ref, const Select* select) const {
+	return SmallNetPacketPlayerLeaveCommand::copyBytes(buffer, ref, select);
+}
+
+NetCommandMsg::Select NetPlayerLeaveCommandMsg::getSmallNetPacketSelect() const {
+	Select select;
+	select.useCommandType = 1;
+	select.useRelay = 1;
+	select.useFrame = 1;
+	select.usePlayerId = 1;
+	select.useCommandId = 1;
+	return select;
 }
 
 //-------------------------
@@ -516,7 +542,29 @@ Int NetRunAheadMetricsCommandMsg::getAverageFps() const {
 }
 
 size_t NetRunAheadMetricsCommandMsg::getSizeForNetPacket() const {
-	return sizeof(NetPacketRunAheadMetricsCommand);
+	return NetPacketRunAheadMetricsCommand::getSize(*this);
+}
+
+size_t NetRunAheadMetricsCommandMsg::copyBytesForNetPacket(UnsignedByte* buffer, const NetCommandRef& ref) const {
+	return NetPacketRunAheadMetricsCommand::copyBytes(buffer, ref);
+}
+
+size_t NetRunAheadMetricsCommandMsg::getSizeForSmallNetPacket(const Select* select) const {
+	return SmallNetPacketRunAheadMetricsCommand::getSize(*this, select);
+}
+
+size_t NetRunAheadMetricsCommandMsg::copyBytesForSmallNetPacket(UnsignedByte* buffer, const NetCommandRef& ref, const Select* select) const {
+	return SmallNetPacketRunAheadMetricsCommand::copyBytes(buffer, ref, select);
+}
+
+NetCommandMsg::Select NetRunAheadMetricsCommandMsg::getSmallNetPacketSelect() const {
+	Select select;
+	select.useCommandType = 1;
+	select.useRelay = 1;
+	select.useFrame = 0;
+	select.usePlayerId = 1;
+	select.useCommandId = 1;
+	return select;
 }
 
 //-------------------------
@@ -548,7 +596,29 @@ void NetRunAheadCommandMsg::setFrameRate(UnsignedByte frameRate) {
 }
 
 size_t NetRunAheadCommandMsg::getSizeForNetPacket() const {
-	return sizeof(NetPacketRunAheadCommand);
+	return NetPacketRunAheadCommand::getSize(*this);
+}
+
+size_t NetRunAheadCommandMsg::copyBytesForNetPacket(UnsignedByte* buffer, const NetCommandRef& ref) const {
+	return NetPacketRunAheadCommand::copyBytes(buffer, ref);
+}
+
+size_t NetRunAheadCommandMsg::getSizeForSmallNetPacket(const Select* select) const {
+	return SmallNetPacketRunAheadCommand::getSize(*this, select);
+}
+
+size_t NetRunAheadCommandMsg::copyBytesForSmallNetPacket(UnsignedByte* buffer, const NetCommandRef& ref, const Select* select) const {
+	return SmallNetPacketRunAheadCommand::copyBytes(buffer, ref, select);
+}
+
+NetCommandMsg::Select NetRunAheadCommandMsg::getSmallNetPacketSelect() const {
+	Select select;
+	select.useCommandType = 1;
+	select.useRelay = 1;
+	select.useFrame = 1;
+	select.usePlayerId = 1;
+	select.useCommandId = 1;
+	return select;
 }
 
 //-------------------------
@@ -587,7 +657,29 @@ UnsignedInt NetDestroyPlayerCommandMsg::getPlayerIndex() const
 }
 
 size_t NetDestroyPlayerCommandMsg::getSizeForNetPacket() const {
-	return sizeof(NetPacketDestroyPlayerCommand);
+	return NetPacketDestroyPlayerCommand::getSize(*this);
+}
+
+size_t NetDestroyPlayerCommandMsg::copyBytesForNetPacket(UnsignedByte* buffer, const NetCommandRef& ref) const {
+	return NetPacketDestroyPlayerCommand::copyBytes(buffer, ref);
+}
+
+size_t NetDestroyPlayerCommandMsg::getSizeForSmallNetPacket(const Select* select) const {
+	return SmallNetPacketDestroyPlayerCommand::getSize(*this, select);
+}
+
+size_t NetDestroyPlayerCommandMsg::copyBytesForSmallNetPacket(UnsignedByte* buffer, const NetCommandRef& ref, const Select* select) const {
+	return SmallNetPacketDestroyPlayerCommand::copyBytes(buffer, ref, select);
+}
+
+NetCommandMsg::Select NetDestroyPlayerCommandMsg::getSmallNetPacketSelect() const {
+	Select select;
+	select.useCommandType = 1;
+	select.useRelay = 1;
+	select.useFrame = 1;
+	select.usePlayerId = 1;
+	select.useCommandId = 1;
+	return select;
 }
 
 //-------------------------
@@ -604,7 +696,29 @@ NetKeepAliveCommandMsg::~NetKeepAliveCommandMsg() {
 }
 
 size_t NetKeepAliveCommandMsg::getSizeForNetPacket() const {
-	return sizeof(NetPacketKeepAliveCommand);
+	return NetPacketKeepAliveCommand::getSize(*this);
+}
+
+size_t NetKeepAliveCommandMsg::copyBytesForNetPacket(UnsignedByte* buffer, const NetCommandRef& ref) const {
+	return NetPacketKeepAliveCommand::copyBytes(buffer, ref);
+}
+
+size_t NetKeepAliveCommandMsg::getSizeForSmallNetPacket(const Select* select) const {
+	return SmallNetPacketKeepAliveCommand::getSize(*this, select);
+}
+
+size_t NetKeepAliveCommandMsg::copyBytesForSmallNetPacket(UnsignedByte* buffer, const NetCommandRef& ref, const Select* select) const {
+	return SmallNetPacketKeepAliveCommand::copyBytes(buffer, ref, select);
+}
+
+NetCommandMsg::Select NetKeepAliveCommandMsg::getSmallNetPacketSelect() const {
+	Select select;
+	select.useCommandType = 1;
+	select.useRelay = 1;
+	select.useFrame = 0;
+	select.usePlayerId = 1;
+	select.useCommandId = 0;
+	return select;
 }
 
 //-------------------------
@@ -621,7 +735,29 @@ NetDisconnectKeepAliveCommandMsg::~NetDisconnectKeepAliveCommandMsg() {
 }
 
 size_t NetDisconnectKeepAliveCommandMsg::getSizeForNetPacket() const {
-	return sizeof(NetPacketDisconnectKeepAliveCommand);
+	return NetPacketDisconnectKeepAliveCommand::getSize(*this);
+}
+
+size_t NetDisconnectKeepAliveCommandMsg::copyBytesForNetPacket(UnsignedByte* buffer, const NetCommandRef& ref) const {
+	return NetPacketDisconnectKeepAliveCommand::copyBytes(buffer, ref);
+}
+
+size_t NetDisconnectKeepAliveCommandMsg::getSizeForSmallNetPacket(const Select* select) const {
+	return SmallNetPacketDisconnectKeepAliveCommand::getSize(*this, select);
+}
+
+size_t NetDisconnectKeepAliveCommandMsg::copyBytesForSmallNetPacket(UnsignedByte* buffer, const NetCommandRef& ref, const Select* select) const {
+	return SmallNetPacketDisconnectKeepAliveCommand::copyBytes(buffer, ref, select);
+}
+
+NetCommandMsg::Select NetDisconnectKeepAliveCommandMsg::getSmallNetPacketSelect() const {
+	Select select;
+	select.useCommandType = 1;
+	select.useRelay = 1;
+	select.useFrame = 0;
+	select.usePlayerId = 1;
+	select.useCommandId = 0;
+	return select;
 }
 
 //-------------------------
@@ -670,7 +806,29 @@ UnsignedInt NetDisconnectPlayerCommandMsg::getDisconnectFrame() const {
 }
 
 size_t NetDisconnectPlayerCommandMsg::getSizeForNetPacket() const {
-	return sizeof(NetPacketDisconnectPlayerCommand);
+	return NetPacketDisconnectPlayerCommand::getSize(*this);
+}
+
+size_t NetDisconnectPlayerCommandMsg::copyBytesForNetPacket(UnsignedByte* buffer, const NetCommandRef& ref) const {
+	return NetPacketDisconnectPlayerCommand::copyBytes(buffer, ref);
+}
+
+size_t NetDisconnectPlayerCommandMsg::getSizeForSmallNetPacket(const Select* select) const {
+	return SmallNetPacketDisconnectPlayerCommand::getSize(*this, select);
+}
+
+size_t NetDisconnectPlayerCommandMsg::copyBytesForSmallNetPacket(UnsignedByte* buffer, const NetCommandRef& ref, const Select* select) const {
+	return SmallNetPacketDisconnectPlayerCommand::copyBytes(buffer, ref, select);
+}
+
+NetCommandMsg::Select NetDisconnectPlayerCommandMsg::getSmallNetPacketSelect() const {
+	Select select;
+	select.useCommandType = 1;
+	select.useRelay = 1;
+	select.useFrame = 0;
+	select.usePlayerId = 1;
+	select.useCommandId = 1;
+	return select;
 }
 
 //-------------------------
@@ -690,7 +848,29 @@ NetPacketRouterQueryCommandMsg::~NetPacketRouterQueryCommandMsg() {
 }
 
 size_t NetPacketRouterQueryCommandMsg::getSizeForNetPacket() const {
-	return sizeof(NetPacketRouterQueryCommand);
+	return NetPacketRouterQueryCommand::getSize(*this);
+}
+
+size_t NetPacketRouterQueryCommandMsg::copyBytesForNetPacket(UnsignedByte* buffer, const NetCommandRef& ref) const {
+	return NetPacketRouterQueryCommand::copyBytes(buffer, ref);
+}
+
+size_t NetPacketRouterQueryCommandMsg::getSizeForSmallNetPacket(const Select* select) const {
+	return SmallNetPacketRouterQueryCommand::getSize(*this, select);
+}
+
+size_t NetPacketRouterQueryCommandMsg::copyBytesForSmallNetPacket(UnsignedByte* buffer, const NetCommandRef& ref, const Select* select) const {
+	return SmallNetPacketRouterQueryCommand::copyBytes(buffer, ref, select);
+}
+
+NetCommandMsg::Select NetPacketRouterQueryCommandMsg::getSmallNetPacketSelect() const {
+	Select select;
+	select.useCommandType = 1;
+	select.useRelay = 1;
+	select.useFrame = 0;
+	select.usePlayerId = 1;
+	select.useCommandId = 0;
+	return select;
 }
 
 //-------------------------
@@ -710,7 +890,29 @@ NetPacketRouterAckCommandMsg::~NetPacketRouterAckCommandMsg() {
 }
 
 size_t NetPacketRouterAckCommandMsg::getSizeForNetPacket() const {
-	return sizeof(NetPacketRouterAckCommand);
+	return NetPacketRouterAckCommand::getSize(*this);
+}
+
+size_t NetPacketRouterAckCommandMsg::copyBytesForNetPacket(UnsignedByte* buffer, const NetCommandRef& ref) const {
+	return NetPacketRouterAckCommand::copyBytes(buffer, ref);
+}
+
+size_t NetPacketRouterAckCommandMsg::getSizeForSmallNetPacket(const Select* select) const {
+	return SmallNetPacketRouterAckCommand::getSize(*this, select);
+}
+
+size_t NetPacketRouterAckCommandMsg::copyBytesForSmallNetPacket(UnsignedByte* buffer, const NetCommandRef& ref, const Select* select) const {
+	return SmallNetPacketRouterAckCommand::copyBytes(buffer, ref, select);
+}
+
+NetCommandMsg::Select NetPacketRouterAckCommandMsg::getSmallNetPacketSelect() const {
+	Select select;
+	select.useCommandType = 1;
+	select.useRelay = 1;
+	select.useFrame = 0;
+	select.usePlayerId = 1;
+	select.useCommandId = 0;
+	return select;
 }
 
 //-------------------------
@@ -741,6 +943,32 @@ void NetDisconnectChatCommandMsg::setText(UnicodeString text) {
  */
 UnicodeString NetDisconnectChatCommandMsg::getText() const {
 	return m_text;
+}
+
+size_t NetDisconnectChatCommandMsg::getSizeForNetPacket() const {
+	return NetPacketDisconnectChatCommand::getSize(*this);
+}
+
+size_t NetDisconnectChatCommandMsg::copyBytesForNetPacket(UnsignedByte* buffer, const NetCommandRef& ref) const {
+	return NetPacketDisconnectChatCommand::copyBytes(buffer, ref);
+}
+
+size_t NetDisconnectChatCommandMsg::getSizeForSmallNetPacket(const Select* select) const {
+	return SmallNetPacketDisconnectChatCommand::getSize(*this, select);
+}
+
+size_t NetDisconnectChatCommandMsg::copyBytesForSmallNetPacket(UnsignedByte* buffer, const NetCommandRef& ref, const Select* select) const {
+	return SmallNetPacketDisconnectChatCommand::copyBytes(buffer, ref, select);
+}
+
+NetCommandMsg::Select NetDisconnectChatCommandMsg::getSmallNetPacketSelect() const {
+	Select select;
+	select.useCommandType = 1;
+	select.useRelay = 1;
+	select.useFrame = 0;
+	select.usePlayerId = 1;
+	select.useCommandId = 0;
+	return select;
 }
 
 //-------------------------
@@ -794,20 +1022,30 @@ void NetChatCommandMsg::setPlayerMask( Int playerMask )
 	m_playerMask = playerMask;
 }
 
-size_t NetChatCommandMsg::getSizeForNetPacket() const
-{
-	return sizeof(NetPacketChatCommand)
-		+ m_text.getByteCount()
-		+ sizeof(m_playerMask);
+size_t NetChatCommandMsg::getSizeForNetPacket() const {
+	return NetPacketChatCommand::getSize(*this);
 }
 
-//-------------------------
-// NetDisconnectChatCommandMsg
-//-------------------------
-size_t NetDisconnectChatCommandMsg::getSizeForNetPacket() const
-{
-	return sizeof(NetPacketDisconnectChatCommand)
-		+ m_text.getByteCount();
+size_t NetChatCommandMsg::copyBytesForNetPacket(UnsignedByte* buffer, const NetCommandRef& ref) const {
+	return NetPacketChatCommand::copyBytes(buffer, ref);
+}
+
+size_t NetChatCommandMsg::getSizeForSmallNetPacket(const Select* select) const {
+	return SmallNetPacketChatCommand::getSize(*this, select);
+}
+
+size_t NetChatCommandMsg::copyBytesForSmallNetPacket(UnsignedByte* buffer, const NetCommandRef& ref, const Select* select) const {
+	return SmallNetPacketChatCommand::copyBytes(buffer, ref, select);
+}
+
+NetCommandMsg::Select NetChatCommandMsg::getSmallNetPacketSelect() const {
+	Select select;
+	select.useCommandType = 1;
+	select.useRelay = 1;
+	select.useFrame = 1;
+	select.usePlayerId = 1;
+	select.useCommandId = 1;
+	return select;
 }
 
 //-------------------------
@@ -856,7 +1094,29 @@ void NetDisconnectVoteCommandMsg::setVoteFrame(UnsignedInt voteFrame) {
 }
 
 size_t NetDisconnectVoteCommandMsg::getSizeForNetPacket() const {
-	return sizeof(NetPacketDisconnectVoteCommand);
+	return NetPacketDisconnectVoteCommand::getSize(*this);
+}
+
+size_t NetDisconnectVoteCommandMsg::copyBytesForNetPacket(UnsignedByte* buffer, const NetCommandRef& ref) const {
+	return NetPacketDisconnectVoteCommand::copyBytes(buffer, ref);
+}
+
+size_t NetDisconnectVoteCommandMsg::getSizeForSmallNetPacket(const Select* select) const {
+	return SmallNetPacketDisconnectVoteCommand::getSize(*this, select);
+}
+
+size_t NetDisconnectVoteCommandMsg::copyBytesForSmallNetPacket(UnsignedByte* buffer, const NetCommandRef& ref, const Select* select) const {
+	return SmallNetPacketDisconnectVoteCommand::copyBytes(buffer, ref, select);
+}
+
+NetCommandMsg::Select NetDisconnectVoteCommandMsg::getSmallNetPacketSelect() const {
+	Select select;
+	select.useCommandType = 1;
+	select.useRelay = 1;
+	select.useFrame = 0;
+	select.usePlayerId = 1;
+	select.useCommandId = 1;
+	return select;
 }
 
 //-------------------------
@@ -881,7 +1141,29 @@ void NetProgressCommandMsg::setPercentage( UnsignedByte percent )
 }
 
 size_t NetProgressCommandMsg::getSizeForNetPacket() const {
-	return sizeof(NetPacketProgressCommand);
+	return NetPacketProgressCommand::getSize(*this);
+}
+
+size_t NetProgressCommandMsg::copyBytesForNetPacket(UnsignedByte* buffer, const NetCommandRef& ref) const {
+	return NetPacketProgressCommand::copyBytes(buffer, ref);
+}
+
+size_t NetProgressCommandMsg::getSizeForSmallNetPacket(const Select* select) const {
+	return SmallNetPacketProgressCommand::getSize(*this, select);
+}
+
+size_t NetProgressCommandMsg::copyBytesForSmallNetPacket(UnsignedByte* buffer, const NetCommandRef& ref, const Select* select) const {
+	return SmallNetPacketProgressCommand::copyBytes(buffer, ref, select);
+}
+
+NetCommandMsg::Select NetProgressCommandMsg::getSmallNetPacketSelect() const {
+	Select select;
+	select.useCommandType = 1;
+	select.useRelay = 1;
+	select.useFrame = 0;
+	select.usePlayerId = 1;
+	select.useCommandId = 0;
+	return select;
 }
 
 //-------------------------
@@ -964,7 +1246,29 @@ void NetWrapperCommandMsg::setWrappedCommandID(UnsignedShort wrappedCommandID) {
 }
 
 size_t NetWrapperCommandMsg::getSizeForNetPacket() const {
-	return sizeof(NetPacketWrapperCommand) + m_dataLength;
+	return NetPacketWrapperCommand::getSize(*this);
+}
+
+size_t NetWrapperCommandMsg::copyBytesForNetPacket(UnsignedByte* buffer, const NetCommandRef& ref) const {
+	return NetPacketWrapperCommand::copyBytes(buffer, ref);
+}
+
+size_t NetWrapperCommandMsg::getSizeForSmallNetPacket(const Select* select) const {
+	return SmallNetPacketWrapperCommand::getSize(*this, select);
+}
+
+size_t NetWrapperCommandMsg::copyBytesForSmallNetPacket(UnsignedByte* buffer, const NetCommandRef& ref, const Select* select) const {
+	return SmallNetPacketWrapperCommand::copyBytes(buffer, ref, select);
+}
+
+NetCommandMsg::Select NetWrapperCommandMsg::getSmallNetPacketSelect() const {
+	Select select;
+	select.useCommandType = 1;
+	select.useRelay = 1;
+	select.useFrame = 0;
+	select.usePlayerId = 1;
+	select.useCommandId = 1;
+	return select;
 }
 
 //-------------------------
@@ -1011,12 +1315,30 @@ void NetFileCommandMsg::setFileData(UnsignedByte *data, UnsignedInt dataLength)
 	memcpy(m_data, data, dataLength);
 }
 
-size_t NetFileCommandMsg::getSizeForNetPacket() const
-{
-	return sizeof(NetPacketFileCommand)
-		+ m_portableFilename.getLength() + 1
-		+ sizeof(m_dataLength)
-		+ m_dataLength;
+size_t NetFileCommandMsg::getSizeForNetPacket() const {
+	return NetPacketFileCommand::getSize(*this);
+}
+
+size_t NetFileCommandMsg::copyBytesForNetPacket(UnsignedByte* buffer, const NetCommandRef& ref) const {
+	return NetPacketFileCommand::copyBytes(buffer, ref);
+}
+
+size_t NetFileCommandMsg::getSizeForSmallNetPacket(const Select* select) const {
+	return SmallNetPacketFileCommand::getSize(*this, select);
+}
+
+size_t NetFileCommandMsg::copyBytesForSmallNetPacket(UnsignedByte* buffer, const NetCommandRef& ref, const Select* select) const {
+	return SmallNetPacketFileCommand::copyBytes(buffer, ref, select);
+}
+
+NetCommandMsg::Select NetFileCommandMsg::getSmallNetPacketSelect() const {
+	Select select;
+	select.useCommandType = 1;
+	select.useRelay = 1;
+	select.useFrame = 0;
+	select.usePlayerId = 1;
+	select.useCommandId = 1;
+	return select;
 }
 
 //-------------------------
@@ -1058,12 +1380,30 @@ void NetFileAnnounceCommandMsg::setPlayerMask(UnsignedByte playerMask) {
 	m_playerMask = playerMask;
 }
 
-size_t NetFileAnnounceCommandMsg::getSizeForNetPacket() const
-{
-	return sizeof(NetPacketFileAnnounceCommand)
-		+ m_portableFilename.getLength() + 1
-		+ sizeof(m_fileID)
-		+ sizeof(m_playerMask);
+size_t NetFileAnnounceCommandMsg::getSizeForNetPacket() const {
+	return NetPacketFileAnnounceCommand::getSize(*this);
+}
+
+size_t NetFileAnnounceCommandMsg::copyBytesForNetPacket(UnsignedByte* buffer, const NetCommandRef& ref) const {
+	return NetPacketFileAnnounceCommand::copyBytes(buffer, ref);
+}
+
+size_t NetFileAnnounceCommandMsg::getSizeForSmallNetPacket(const Select* select) const {
+	return SmallNetPacketFileAnnounceCommand::getSize(*this, select);
+}
+
+size_t NetFileAnnounceCommandMsg::copyBytesForSmallNetPacket(UnsignedByte* buffer, const NetCommandRef& ref, const Select* select) const {
+	return SmallNetPacketFileAnnounceCommand::copyBytes(buffer, ref, select);
+}
+
+NetCommandMsg::Select NetFileAnnounceCommandMsg::getSmallNetPacketSelect() const {
+	Select select;
+	select.useCommandType = 1;
+	select.useRelay = 1;
+	select.useFrame = 0;
+	select.usePlayerId = 1;
+	select.useCommandId = 1;
+	return select;
 }
 
 //-------------------------
@@ -1095,7 +1435,29 @@ void NetFileProgressCommandMsg::setProgress(Int val) {
 }
 
 size_t NetFileProgressCommandMsg::getSizeForNetPacket() const {
-	return sizeof(NetPacketFileProgressCommand);
+	return NetPacketFileProgressCommand::getSize(*this);
+}
+
+size_t NetFileProgressCommandMsg::copyBytesForNetPacket(UnsignedByte* buffer, const NetCommandRef& ref) const {
+	return NetPacketFileProgressCommand::copyBytes(buffer, ref);
+}
+
+size_t NetFileProgressCommandMsg::getSizeForSmallNetPacket(const Select* select) const {
+	return SmallNetPacketFileProgressCommand::getSize(*this, select);
+}
+
+size_t NetFileProgressCommandMsg::copyBytesForSmallNetPacket(UnsignedByte* buffer, const NetCommandRef& ref, const Select* select) const {
+	return SmallNetPacketFileProgressCommand::copyBytes(buffer, ref, select);
+}
+
+NetCommandMsg::Select NetFileProgressCommandMsg::getSmallNetPacketSelect() const {
+	Select select;
+	select.useCommandType = 1;
+	select.useRelay = 1;
+	select.useFrame = 0;
+	select.usePlayerId = 1;
+	select.useCommandId = 1;
+	return select;
 }
 
 //-------------------------
@@ -1118,7 +1480,29 @@ void NetDisconnectFrameCommandMsg::setDisconnectFrame(UnsignedInt disconnectFram
 }
 
 size_t NetDisconnectFrameCommandMsg::getSizeForNetPacket() const {
-	return sizeof(NetPacketDisconnectFrameCommand);
+	return NetPacketDisconnectFrameCommand::getSize(*this);
+}
+
+size_t NetDisconnectFrameCommandMsg::copyBytesForNetPacket(UnsignedByte* buffer, const NetCommandRef& ref) const {
+	return NetPacketDisconnectFrameCommand::copyBytes(buffer, ref);
+}
+
+size_t NetDisconnectFrameCommandMsg::getSizeForSmallNetPacket(const Select* select) const {
+	return SmallNetPacketDisconnectFrameCommand::getSize(*this, select);
+}
+
+size_t NetDisconnectFrameCommandMsg::copyBytesForSmallNetPacket(UnsignedByte* buffer, const NetCommandRef& ref, const Select* select) const {
+	return SmallNetPacketDisconnectFrameCommand::copyBytes(buffer, ref, select);
+}
+
+NetCommandMsg::Select NetDisconnectFrameCommandMsg::getSmallNetPacketSelect() const {
+	Select select;
+	select.useCommandType = 1;
+	select.useRelay = 1;
+	select.useFrame = 1;
+	select.usePlayerId = 1;
+	select.useCommandId = 1;
+	return select;
 }
 
 //-------------------------
@@ -1141,7 +1525,29 @@ void NetDisconnectScreenOffCommandMsg::setNewFrame(UnsignedInt newFrame) {
 }
 
 size_t NetDisconnectScreenOffCommandMsg::getSizeForNetPacket() const {
-	return sizeof(NetPacketDisconnectScreenOffCommand);
+	return NetPacketDisconnectScreenOffCommand::getSize(*this);
+}
+
+size_t NetDisconnectScreenOffCommandMsg::copyBytesForNetPacket(UnsignedByte* buffer, const NetCommandRef& ref) const {
+	return NetPacketDisconnectScreenOffCommand::copyBytes(buffer, ref);
+}
+
+size_t NetDisconnectScreenOffCommandMsg::getSizeForSmallNetPacket(const Select* select) const {
+	return SmallNetPacketDisconnectScreenOffCommand::getSize(*this, select);
+}
+
+size_t NetDisconnectScreenOffCommandMsg::copyBytesForSmallNetPacket(UnsignedByte* buffer, const NetCommandRef& ref, const Select* select) const {
+	return SmallNetPacketDisconnectScreenOffCommand::copyBytes(buffer, ref, select);
+}
+
+NetCommandMsg::Select NetDisconnectScreenOffCommandMsg::getSmallNetPacketSelect() const {
+	Select select;
+	select.useCommandType = 1;
+	select.useRelay = 1;
+	select.useFrame = 1;
+	select.usePlayerId = 1;
+	select.useCommandId = 1;
+	return select;
 }
 
 //-------------------------
@@ -1164,7 +1570,29 @@ void NetFrameResendRequestCommandMsg::setFrameToResend(UnsignedInt frame) {
 }
 
 size_t NetFrameResendRequestCommandMsg::getSizeForNetPacket() const {
-	return sizeof(NetPacketFrameResendRequestCommand);
+	return NetPacketFrameResendRequestCommand::getSize(*this);
+}
+
+size_t NetFrameResendRequestCommandMsg::copyBytesForNetPacket(UnsignedByte* buffer, const NetCommandRef& ref) const {
+	return NetPacketFrameResendRequestCommand::copyBytes(buffer, ref);
+}
+
+size_t NetFrameResendRequestCommandMsg::getSizeForSmallNetPacket(const Select* select) const {
+	return SmallNetPacketFrameResendRequestCommand::getSize(*this, select);
+}
+
+size_t NetFrameResendRequestCommandMsg::copyBytesForSmallNetPacket(UnsignedByte* buffer, const NetCommandRef& ref, const Select* select) const {
+	return SmallNetPacketFrameResendRequestCommand::copyBytes(buffer, ref, select);
+}
+
+NetCommandMsg::Select NetFrameResendRequestCommandMsg::getSmallNetPacketSelect() const {
+	Select select;
+	select.useCommandType = 1;
+	select.useRelay = 1;
+	select.useFrame = 1;
+	select.usePlayerId = 1;
+	select.useCommandId = 1;
+	return select;
 }
 
 //-------------------------
@@ -1178,7 +1606,29 @@ NetLoadCompleteCommandMsg::~NetLoadCompleteCommandMsg() {
 }
 
 size_t NetLoadCompleteCommandMsg::getSizeForNetPacket() const {
-	return sizeof(NetPacketLoadCompleteCommand);
+	return NetPacketLoadCompleteCommand::getSize(*this);
+}
+
+size_t NetLoadCompleteCommandMsg::copyBytesForNetPacket(UnsignedByte* buffer, const NetCommandRef& ref) const {
+	return NetPacketLoadCompleteCommand::copyBytes(buffer, ref);
+}
+
+size_t NetLoadCompleteCommandMsg::getSizeForSmallNetPacket(const Select* select) const {
+	return SmallNetPacketLoadCompleteCommand::getSize(*this, select);
+}
+
+size_t NetLoadCompleteCommandMsg::copyBytesForSmallNetPacket(UnsignedByte* buffer, const NetCommandRef& ref, const Select* select) const {
+	return SmallNetPacketLoadCompleteCommand::copyBytes(buffer, ref, select);
+}
+
+NetCommandMsg::Select NetLoadCompleteCommandMsg::getSmallNetPacketSelect() const {
+	Select select;
+	select.useCommandType = 1;
+	select.useRelay = 1;
+	select.useFrame = 0;
+	select.usePlayerId = 1;
+	select.useCommandId = 1;
+	return select;
 }
 
 //-------------------------
@@ -1192,5 +1642,27 @@ NetTimeOutGameStartCommandMsg::~NetTimeOutGameStartCommandMsg() {
 }
 
 size_t NetTimeOutGameStartCommandMsg::getSizeForNetPacket() const {
-	return sizeof(NetPacketTimeOutGameStartCommand);
+	return NetPacketTimeOutGameStartCommand::getSize(*this);
+}
+
+size_t NetTimeOutGameStartCommandMsg::copyBytesForNetPacket(UnsignedByte* buffer, const NetCommandRef& ref) const {
+	return NetPacketTimeOutGameStartCommand::copyBytes(buffer, ref);
+}
+
+size_t NetTimeOutGameStartCommandMsg::getSizeForSmallNetPacket(const Select* select) const {
+	return SmallNetPacketTimeOutGameStartCommand::getSize(*this, select);
+}
+
+size_t NetTimeOutGameStartCommandMsg::copyBytesForSmallNetPacket(UnsignedByte* buffer, const NetCommandRef& ref, const Select* select) const {
+	return SmallNetPacketTimeOutGameStartCommand::copyBytes(buffer, ref, select);
+}
+
+NetCommandMsg::Select NetTimeOutGameStartCommandMsg::getSmallNetPacketSelect() const {
+	Select select;
+	select.useCommandType = 1;
+	select.useRelay = 1;
+	select.useFrame = 0;
+	select.usePlayerId = 1;
+	select.useCommandId = 1;
+	return select;
 }
