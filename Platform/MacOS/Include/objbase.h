@@ -80,6 +80,13 @@ inline bool IsEqualCLSID(REFCLSID a, REFCLSID b) { return IsEqualGUID(a, b); }
 #ifndef STDMETHODCALLTYPE
 #define STDMETHODCALLTYPE
 #endif
+// Implementation-side macros (used in .cpp/.mm files to define COM methods)
+#ifndef STDMETHODIMP
+#define STDMETHODIMP HRESULT WINAPI
+#endif
+#ifndef STDMETHODIMP_
+#define STDMETHODIMP_(type) type WINAPI
+#endif
 
 #ifndef DECLARE_INTERFACE
 #define DECLARE_INTERFACE(iface) struct iface

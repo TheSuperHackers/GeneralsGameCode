@@ -4,6 +4,7 @@
 #import "GameClient/GameClient.h"
 #import "GameClient/GameWindowManager.h"
 #import "MacOSGameWindowManager.h"
+#import "MacOSWindowManager.h"
 #include "PreRTS.h"
 #import "StdKeyboard.h"
 #import "StdMouse.h"
@@ -141,12 +142,7 @@ Display *MacOSGameClient::createGameDisplay(void) {
 
 InGameUI *MacOSGameClient::createInGameUI(void) { return new W3DInGameUI(); }
 
-#include "W3DDevice/GameClient/W3DSnow.h"
 #include "W3DDevice/GameClient/W3DTerrainVisual.h"
-
-SnowManager *MacOSGameClient::createSnowManager(void) {
-  return new W3DSnowManager();
-}
 
 TerrainVisual *MacOSGameClient::createTerrainVisual(void) {
   return new W3DTerrainVisual();
@@ -183,7 +179,7 @@ void MacOSGameClient::setFrameRate(Real msecsPerFrame) {}
 Drawable *
 MacOSGameClient::friend_createDrawable(const ThingTemplate *thing,
                                        DrawableStatusBits statusBits) {
-  return new Drawable(thing, statusBits);
+  return newInstance(Drawable)(thing, statusBits);
 }
 void MacOSGameClient::addScorch(const Coord3D *pos, Real radius,
                                 Scorches type) {}
@@ -192,6 +188,5 @@ void MacOSGameClient::createRayEffectByTemplate(const Coord3D *start,
                                                 const ThingTemplate *tmpl) {}
 void MacOSGameClient::setTeamColor(Int red, Int green, Int blue) {}
 void MacOSGameClient::setTextureLOD(Int level) {}
-void MacOSGameClient::notifyTerrainObjectMoved(Object *obj) {}
 void MacOSGameClient::releaseShadows(void) {}
 void MacOSGameClient::allocateShadows(void) {}

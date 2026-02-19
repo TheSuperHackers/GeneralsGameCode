@@ -117,7 +117,13 @@ typedef uint32_t	                UnsignedInt;	  	    // 4 bytes
 typedef uint16_t	                UnsignedShort;		    // 2 bytes
 typedef int16_t						Short;					// 2 bytes
 typedef unsigned char	            UnsignedByte;			// 1 byte		USED TO BE "Byte"
+// TheSuperHackers @build macOS - MacTypes.h defines Byte as UInt8 (unsigned char).
+// Game uses char. On macOS, match MacTypes.h to avoid redefinition conflict.
+#ifdef __APPLE__
+typedef unsigned char				Byte;					// 1 byte
+#else
 typedef char						Byte;					// 1 byte		USED TO BE "SignedByte"
+#endif
 typedef char						Char;					// 1 byte of text
 typedef bool						Bool;					//
 // note, the types below should use "long long", but MSVC doesn't support it yet

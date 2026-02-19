@@ -3,6 +3,8 @@
 
 #import "GameClient/GameClient.h"
 
+class SnowManager;
+
 class MacOSGameClient : public GameClient {
 public:
   MacOSGameClient();
@@ -22,7 +24,6 @@ public:
                                          const ThingTemplate *tmpl) override;
   virtual void setTeamColor(Int red, Int green, Int blue) override;
   virtual void setTextureLOD(Int level) override;
-  virtual void notifyTerrainObjectMoved(Object *obj) override;
   virtual void releaseShadows(void) override;
   virtual void allocateShadows(void) override;
 
@@ -36,7 +37,6 @@ protected:
   virtual TerrainVisual *createTerrainVisual(void) override;
   virtual Keyboard *createKeyboard(void) override;
   virtual Mouse *createMouse(void) override;
-  virtual SnowManager *createSnowManager(void) override;
   virtual void setFrameRate(Real msecsPerFrame) override;
 };
 

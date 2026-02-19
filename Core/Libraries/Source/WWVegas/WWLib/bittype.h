@@ -37,14 +37,28 @@
 
 #pragma once
 
+#ifdef __APPLE__
+#include <stdint.h>
+#endif
+
 typedef unsigned char uint8;
 typedef unsigned short uint16;
+// TheSuperHackers @build macOS - On macOS LP64, unsigned long is 8 bytes.
+// Security framework defines uint32 as uint32_t (4 bytes). Use matching types.
+#ifdef __APPLE__
+typedef uint32_t uint32;
+#else
 typedef unsigned long uint32;
+#endif
 typedef unsigned int uint;
 
 typedef signed char sint8;
 typedef signed short sint16;
+#ifdef __APPLE__
+typedef int32_t sint32;
+#else
 typedef signed long sint32;
+#endif
 typedef signed int sint;
 
 typedef float float32;

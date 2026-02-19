@@ -2,7 +2,6 @@
 
 #ifndef _WIN32
 
-#include "always.h"
 #include <objbase.h>
 #include <stdint.h>
 #include <windows.h>

@@ -46,7 +46,13 @@
 // ── Basic integer types ────────────────────────────────────────────────
 #ifndef _WINDEF_H // guard against real windef.h
 
+#ifdef __OBJC__
+// ObjC/ObjC++ compilers: use the runtime's native BOOL (bool).
+// Must include this before anything else tries to use BOOL.
+#include <objc/objc.h>
+#else
 typedef int BOOL;
+#endif
 typedef unsigned char BYTE;
 typedef unsigned short WORD;
 typedef unsigned int DWORD;
@@ -728,7 +734,8 @@ typedef LRESULT (*WNDPROC)(HWND, UINT, WPARAM, LPARAM);
 #endif // _WINDEF_H
 
 // ── interface keyword (needed by d3d8.h) ───────────────────────────────
-#ifndef interface
+// Do NOT define in ObjC/ObjC++ — it breaks @interface / @protocol syntax
+#if !defined(interface) && !defined(__OBJC__)
 #define interface struct
 #endif
 
@@ -807,11 +814,27 @@ inline DWORD GetModuleFileName(void *hModule, char *lpFilename, DWORD nSize) {
   return 0;
 }
 #define GetModuleFileNameA GetModuleFileName
+inline DWORD GetModuleFileNameW(void *hModule, wchar_t *lpFilename,
+                                DWORD nSize) {
+  char narrow[1024];
+  DWORD len = GetModuleFileName(hModule, narrow, sizeof(narrow));
+  if (len == 0 || nSize == 0) {
+    if (lpFilename && nSize)
+      lpFilename[0] = L'\0';
+    return 0;
+  }
+  size_t wlen = mbstowcs(lpFilename, narrow, nSize);
+  if (wlen == (size_t)-1) {
+    lpFilename[0] = L'\0';
+    return 0;
+  }
+  return (DWORD)wlen;
+}
 
 /* FARPROC */
 #ifndef _FARPROC_DEFINED
 #define _FARPROC_DEFINED
-typedef int (*FARPROC)(void);
+typedef void *FARPROC;
 #endif
 
 /* __max / __min — MSVC built-in macros */
@@ -910,6 +933,7 @@ typedef struct _IMAGEHLP_SYMBOL {
   DWORD SizeOfStruct;
   DWORD Address;
   DWORD Size;
+  DWORD MaxNameLength;
   char Name[256];
 } IMAGEHLP_SYMBOL, *PIMAGEHLP_SYMBOL;
 typedef struct _IMAGEHLP_LINE {
@@ -1010,6 +1034,7 @@ inline BOOL SetCurrentDirectory(const char *path) {
 
 // ── Locale / Date formatting ───────────────────────────────────────────
 #define LOCALE_USER_DEFAULT 0x0400
+#define LOCALE_SYSTEM_DEFAULT 0x0800
 #define DATE_SHORTDATE 0x00000001
 #define TIME_NOSECONDS 0x00000002
 
@@ -1059,6 +1084,17 @@ inline int GetTimeFormat(DWORD, DWORD, const SYSTEMTIME *st, const char *,
 #define IDCANCEL 2
 #define IDYES 6
 #define IDNO 7
+#define IDABORT 3
+#define IDRETRY 4
+#define IDIGNORE 5
+#define MB_SYSTEMMODAL 0x00001000
+#define MB_TASKMODAL 0x00002000
+#define MB_ABORTRETRYIGNORE 0x00000002
+#define MB_ICONSTOP 0x00000010
+#define MB_SETFOREGROUND 0x00010000
+#define SW_HIDE 0
+#define SW_SHOW 5
+inline BOOL ShowWindow(HWND, int) { return TRUE; }
 
 inline int MessageBox(HWND, const char *, const char *, UINT) { return IDOK; }
 #define MessageBoxA MessageBox
@@ -1193,6 +1229,163 @@ inline int GetTimeFormatW(DWORD, DWORD, const SYSTEMTIME *st, const wchar_t *,
 // ── Registry extras ────────────────────────────────────────────────────
 #ifndef REG_OPTION_NON_VOLATILE
 #define REG_OPTION_NON_VOLATILE 0x00000000
+#endif
+// ── itoa ───────────────────────────────────────────────────────────────
+#ifndef _ITOA_DEFINED
+#define _ITOA_DEFINED
+#include <cstdio>
+inline char *itoa(int value, char *str, int base) {
+  if (base == 10) {
+    snprintf(str, 33, "%d", value);
+  } else if (base == 16) {
+    snprintf(str, 33, "%x", value);
+  } else if (base == 8) {
+    snprintf(str, 33, "%o", value);
+  } else {
+    str[0] = '\0';
+  }
+  return str;
+}
+#endif
+
+// ── CreateMutex / CloseHandle / GetLastError ──────────────────────────
+#ifndef _MUTEX_STUBS_DEFINED
+#define _MUTEX_STUBS_DEFINED
+#ifndef ERROR_ALREADY_EXISTS
+#define ERROR_ALREADY_EXISTS 183
+#endif
+inline HANDLE CreateMutex(void *, BOOL, const char *) {
+  return (HANDLE)(uintptr_t)1; // always succeed, single-instance not enforced
+                               // on macOS
+}
+#define CreateMutexA CreateMutex
+inline DWORD GetLastError(void) { return 0; }
+inline BOOL CloseHandle(HANDLE) { return TRUE; }
+#endif
+
+// ── MEMORYSTATUS / GlobalMemoryStatus ─────────────────────────────────
+#ifndef _MEMORYSTATUS_DEFINED
+#define _MEMORYSTATUS_DEFINED
+typedef struct _MEMORYSTATUS {
+  DWORD dwLength;
+  DWORD dwMemoryLoad;
+  DWORD dwTotalPhys;
+  DWORD dwAvailPhys;
+  DWORD dwTotalPageFile;
+  DWORD dwAvailPageFile;
+  DWORD dwTotalVirtual;
+  DWORD dwAvailVirtual;
+} MEMORYSTATUS;
+inline void GlobalMemoryStatus(MEMORYSTATUS *ms) {
+  if (ms) {
+    memset(ms, 0, sizeof(*ms));
+    ms->dwLength = sizeof(*ms);
+  }
+}
+#endif
+
+// ── Font resource stubs ───────────────────────────────────────────────
+#ifndef _FONTRESOURCE_DEFINED
+#define _FONTRESOURCE_DEFINED
+inline int AddFontResource(const char *) { return 1; }
+#define AddFontResourceA AddFontResource
+inline BOOL RemoveFontResource(const char *) { return TRUE; }
+#define RemoveFontResourceA RemoveFontResource
+#endif
+
+// ── Exception constants (for StackDump.cpp) ───────────────────────────
+#ifndef EXCEPTION_ACCESS_VIOLATION
+#define EXCEPTION_ACCESS_VIOLATION 0xC0000005
+#define EXCEPTION_ARRAY_BOUNDS_EXCEEDED 0xC000008C
+#define EXCEPTION_BREAKPOINT 0x80000003
+#define EXCEPTION_DATATYPE_MISALIGNMENT 0x80000002
+#define EXCEPTION_FLT_DENORMAL_OPERAND 0xC000008D
+#define EXCEPTION_FLT_DIVIDE_BY_ZERO 0xC000008E
+#define EXCEPTION_FLT_INEXACT_RESULT 0xC000008F
+#define EXCEPTION_FLT_INVALID_OPERATION 0xC0000090
+#define EXCEPTION_FLT_OVERFLOW 0xC0000091
+#define EXCEPTION_FLT_STACK_CHECK 0xC0000092
+#define EXCEPTION_FLT_UNDERFLOW 0xC0000093
+#define EXCEPTION_ILLEGAL_INSTRUCTION 0xC000001D
+#define EXCEPTION_IN_PAGE_ERROR 0xC0000006
+#define EXCEPTION_INT_DIVIDE_BY_ZERO 0xC0000094
+#define EXCEPTION_INT_OVERFLOW 0xC0000095
+#define EXCEPTION_PRIV_INSTRUCTION 0xC0000096
+#define EXCEPTION_SINGLE_STEP 0x80000004
+#define EXCEPTION_STACK_OVERFLOW 0xC00000FD
+#define EXCEPTION_NONCONTINUABLE_EXCEPTION 0xC0000025
+#endif
+
+/* ─── Virtual-Key constants ─────────────────────────────────────────── */
+#ifndef VK_RETURN
+#define VK_RETURN 0x0D
+#endif
+
+/* ─── FormatMessage stubs ──────────────────────────────────────────── */
+#ifndef FORMAT_MESSAGE_FROM_SYSTEM
+#define FORMAT_MESSAGE_FROM_SYSTEM 0x00001000
+#define FORMAT_MESSAGE_IGNORE_INSERTS 0x00000200
+#endif
+#ifndef _FORMATMESSAGE_DEFINED
+#define _FORMATMESSAGE_DEFINED
+inline DWORD FormatMessage(DWORD /*flags*/, const void * /*src*/,
+                           DWORD /*msgId*/, DWORD /*langId*/, char *buf,
+                           DWORD size, ...) {
+  if (buf && size > 0)
+    buf[0] = '\0';
+  return 0;
+}
+inline DWORD FormatMessageA(DWORD f, const void *s, DWORD m, DWORD l, char *b,
+                            DWORD sz, ...) {
+  return FormatMessage(f, s, m, l, b, sz);
+}
+inline DWORD FormatMessageW(DWORD /*flags*/, const void * /*src*/,
+                            DWORD /*msgId*/, DWORD /*langId*/, wchar_t *buf,
+                            DWORD size, ...) {
+  if (buf && size > 0)
+    buf[0] = L'\0';
+  return 0;
+}
+#endif
+
+/* ─── _wtoi stub ───────────────────────────────────────────────────── */
+#ifndef _WTOI_DEFINED
+#define _WTOI_DEFINED
+#include <cwchar>
+inline int _wtoi(const wchar_t *str) { return (int)wcstol(str, nullptr, 10); }
+#endif
+
+/* ─── QueryPerformanceCounter / QueryPerformanceFrequency ─────────── */
+#ifndef _QPC_DEFINED
+#define _QPC_DEFINED
+#include <mach/mach_time.h>
+inline BOOL QueryPerformanceFrequency(LARGE_INTEGER *lpFrequency) {
+  mach_timebase_info_data_t info;
+  mach_timebase_info(&info);
+  // Convert to ticks per second: (1e9 * denom) / numer
+  lpFrequency->QuadPart = (int64_t)(1000000000ULL * info.denom / info.numer);
+  return TRUE;
+}
+inline BOOL QueryPerformanceCounter(LARGE_INTEGER *lpCount) {
+  lpCount->QuadPart = (int64_t)mach_absolute_time();
+  return TRUE;
+}
+#endif
+
+/* ─── x87 FPU control stubs (macOS uses SSE, these are no-ops) ────── */
+#ifndef _FPCONTROL_DEFINED
+#define _FPCONTROL_DEFINED
+#define _MCW_RC 0x0300
+#define _RC_NEAR 0x0000
+#define _MCW_PC 0x0030
+#define _PC_24 0x0020
+inline void _fpreset(void) {}
+inline unsigned int _statusfp(void) { return 0; }
+inline unsigned int _controlfp(unsigned int newval, unsigned int mask) {
+  (void)newval;
+  (void)mask;
+  return 0;
+}
 #endif
 
 #endif // _WINDOWS_H_MACOS_SHIM_

@@ -21,8 +21,8 @@ inline LONG RegOpenKeyEx(HKEY, const char *, DWORD, DWORD, HKEY *phk) {
 }
 #define RegOpenKeyExA RegOpenKeyEx
 
-inline LONG RegQueryValueEx(HKEY, const char *, DWORD *, DWORD *, BYTE *,
-                            DWORD *) {
+inline LONG RegQueryValueEx(HKEY, const char *, void *, unsigned long *, BYTE *,
+                            unsigned long *) {
   return 2L;
 }
 #define RegQueryValueExA RegQueryValueEx

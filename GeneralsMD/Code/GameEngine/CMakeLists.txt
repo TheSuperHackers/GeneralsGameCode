@@ -1149,6 +1149,13 @@ else()
 endif()
 
 
+if(APPLE)
+    list(REMOVE_ITEM GAMEENGINE_SRC
+        Source/Common/System/StackDump.cpp
+        Source/GameClient/GUI/IMEManager.cpp
+    )
+endif()
+
 add_library(z_gameengine STATIC)
 
 target_sources(z_gameengine PRIVATE ${GAMEENGINE_SRC})

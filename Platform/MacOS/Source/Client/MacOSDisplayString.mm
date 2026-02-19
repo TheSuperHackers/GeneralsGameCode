@@ -18,7 +18,7 @@
 class MacOSDisplayString : public DisplayString {
 public:
   void *operator new(size_t size, const char *msg) {
-    return getClassMemoryPool()->allocateBlockImplementation(msg);
+    return getClassMemoryPool()->allocateBlock(msg);
   }
   void operator delete(void *p) { getClassMemoryPool()->freeBlock(p); }
   virtual MemoryPool *getObjectMemoryPool() override {

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "always.h"  // For W3DMPO_GLUE macro
 #include <d3d8.h>  // DX8 SDK header
 #include <Metal/Metal.h>
 

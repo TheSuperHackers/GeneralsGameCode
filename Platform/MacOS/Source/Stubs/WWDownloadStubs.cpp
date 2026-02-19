@@ -1,6 +1,6 @@
-#include <Utility/win_compat.h>
-#include <WWVegas/WWDownload/Download.h>
-#include <WWVegas/WWDownload/ftp.h>
+#include <windows.h>
+#include "WWDownload/Download.h"
+#include "WWDownload/ftp.h"
 
 /*
 ** Stub implementation of CDownload and related classes to satisfy linker

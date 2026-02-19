@@ -72,6 +72,12 @@
 
 **************************************************************************************/
 
+// TheSuperHackers @build macOS - Prevent Carbon's AIFF.h from loading.
+// It defines ChunkHeader, conflicting with our struct below.
+#if defined(__APPLE__) && !defined(__AIFF__)
+#define __AIFF__
+#endif
+
 struct ChunkHeader
 {
 	// Functions.

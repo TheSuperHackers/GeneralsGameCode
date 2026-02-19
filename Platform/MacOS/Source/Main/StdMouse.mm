@@ -4,6 +4,7 @@
 #include "GameClient/GameWindow.h"
 #include "GameClient/Image.h"
 #include "always.h"
+#import <AppKit/AppKit.h>
 
 StdMouse::StdMouse(void) {
   m_nextFreeIndex = 0;

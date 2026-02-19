@@ -243,7 +243,7 @@ HRESULT WINAPI D3DXCreateTexture(IDirect3DDevice8 *pDevice, UINT Width,
 HRESULT WINAPI D3DXCreateTextureFromFileExA(
     IDirect3DDevice8 *pDevice, const char *pSrcFile, UINT Width, UINT Height,
     UINT MipLevels, DWORD Usage, D3DFORMAT Format, D3DPOOL Pool, DWORD Filter,
-    DWORD MipFilter, D3DCOLOR ColorKey, void *pSrcInfo, const void *pPalette,
+    DWORD MipFilter, D3DCOLOR ColorKey, void *pSrcInfo, void *pPalette,
     IDirect3DTexture8 **ppTexture) {
   if (!ppTexture)
     return E_POINTER;
@@ -464,11 +464,6 @@ IDirect3DSurface8 *CreateMacOSD3DSurfaceWrapper(void *tex, int level) {
 
 extern "C" {
 
-HRESULT WINAPI D3DXFilterTexture(IDirect3DBaseTexture8 *pBaseTexture,
-                                 const void *pPalette, UINT SrcLevel,
-                                 DWORD Filter) {
-  return D3D_OK;
-}
 
 HRESULT WINAPI D3DXLoadSurfaceFromSurface(IDirect3DSurface8 *pDestSurface,
                                           const void *pDestPalette,
@@ -507,56 +502,6 @@ HRESULT WINAPI D3DXCreateVolumeTexture(
   return E_NOTIMPL;
 }
 
-HRESULT WINAPI D3DXGetErrorStringA(HRESULT hr, char *pBuffer, UINT BufferSize) {
-  if (pBuffer && BufferSize > 0) {
-    snprintf(pBuffer, BufferSize, "D3D Error 0x%08X", (unsigned int)hr);
-  }
-  return D3D_OK;
-}
-
-UINT WINAPI D3DXGetFVFVertexSize(DWORD FVF) {
-  UINT size = 0;
-
-  DWORD posType = FVF & 0x00E;
-  if (FVF & D3DFVF_XYZRHW) {
-    size += 16;
-  } else if (posType >= D3DFVF_XYZB1 && posType <= D3DFVF_XYZB5) {
-    size += 12;
-    int numWeights = (posType - D3DFVF_XYZ) / 2;
-    size += numWeights * 4;
-  } else if (FVF & D3DFVF_XYZ) {
-    size += 12;
-  }
-
-  if (FVF & D3DFVF_NORMAL)
-    size += 12;
-  if (FVF & D3DFVF_PSIZE)
-    size += 4;
-  if (FVF & D3DFVF_DIFFUSE)
-    size += 4;
-  if (FVF & D3DFVF_SPECULAR)
-    size += 4;
-
-  UINT nTex = (FVF & D3DFVF_TEXCOUNT_MASK) >> D3DFVF_TEXCOUNT_SHIFT;
-  for (UINT i = 0; i < nTex; i++) {
-    UINT texFmt = (FVF >> (i * 2 + 16)) & 0x3;
-    switch (texFmt) {
-    case D3DFVF_TEXTUREFORMAT1:
-      size += 4;
-      break;
-    case D3DFVF_TEXTUREFORMAT2:
-      size += 8;
-      break;
-    case D3DFVF_TEXTUREFORMAT3:
-      size += 12;
-      break;
-    case D3DFVF_TEXTUREFORMAT4:
-      size += 16;
-      break;
-    }
-  }
-  return size;
-}
 
 HRESULT WINAPI D3DXAssembleShader(const void *pSrcData, UINT SrcDataLen,
                                   DWORD Flags, LPD3DXBUFFER *ppConstants,

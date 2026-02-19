@@ -35,6 +35,12 @@
 //-----------------------------------------------------------------------------
 typedef wchar_t WideChar;  ///< multi-byte character representations
 
+// TheSuperHackers @build macOS - Prevent Carbon's IntlResources.h from loading.
+// It defines WideChar as a 2-byte union, conflicting with our wchar_t typedef.
+#if defined(__APPLE__) && !defined(__INTLRESOURCES__)
+#define __INTLRESOURCES__
+#endif
+
 //-----------------------------------------------------------------------------
 template <typename NUM>
 inline NUM sqr(NUM x)
@@ -480,6 +486,11 @@ struct IRegion3D
 };
 
 
+// TheSuperHackers @build macOS - QuickDraw.h defines its own struct RGBColor
+// with unsigned short members. We only define our float-based RGBColor when
+// QuickDraw hasn't been loaded (i.e. non-Apple builds or C++ translation units
+// that don't import Apple frameworks).
+#if !defined(__QUICKDRAW__)
 struct RGBColor
 {
 	Real red, green, blue;		// range between 0 and 1
@@ -500,6 +511,7 @@ struct RGBColor
 	}
 
 };
+#endif // !defined(__QUICKDRAW__)
 
 struct RGBAColorReal
 {

@@ -107,6 +107,7 @@ typedef UnsignedByte FileInstance;
 #endif
 
 
+
 struct FileInfo {
 
 	Int64 size() const { return (Int64)sizeHigh << 32 | sizeLow; }
