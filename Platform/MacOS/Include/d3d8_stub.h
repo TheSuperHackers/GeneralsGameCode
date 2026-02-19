@@ -10,6 +10,11 @@
 extern "C" {
 #endif
 
+/* Cursor flags */
+#ifndef D3DCURSOR_IMMEDIATE_UPDATE
+#define D3DCURSOR_IMMEDIATE_UPDATE 0x00000001
+#endif
+
 // Forward declarations of interfaces
 struct IDirect3D8;
 struct IDirect3DDevice8;
@@ -1053,6 +1058,10 @@ struct IDirect3DDevice8 : public IUnknown {
                                 DWORD Flags) PURE;
   STDMETHOD(SetGammaRamp)(THIS_ DWORD Flags, const D3DGAMMARAMP *pRamp) PURE;
   STDMETHOD(GetGammaRamp)(THIS_ D3DGAMMARAMP *pRamp) PURE;
+  STDMETHOD_(BOOL, ShowCursor)(THIS_ BOOL bShow) PURE;
+  STDMETHOD(SetCursorProperties)(THIS_ UINT XHotSpot, UINT YHotSpot,
+                                  IDirect3DSurface8 *pCursorBitmap) PURE;
+  STDMETHOD_(void, SetCursorPosition)(THIS_ int X, int Y, DWORD Flags) PURE;
 };
 
 struct IDirect3DVolumeTexture8 : public IDirect3DBaseTexture8 {

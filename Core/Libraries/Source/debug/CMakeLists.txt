@@ -35,6 +35,9 @@ if(APPLE)
         "debug_cmd.cpp"
         "debug_getdefaultcommands.cpp"
     )
+    # Create a dummy .cpp so the static library has at least one object file
+    file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/debug_dummy.cpp "// Dummy source for core_debug on Apple\n")
+    list(APPEND DEBUG_SRC "${CMAKE_CURRENT_BINARY_DIR}/debug_dummy.cpp")
 endif()
 
 add_library(core_debug STATIC)

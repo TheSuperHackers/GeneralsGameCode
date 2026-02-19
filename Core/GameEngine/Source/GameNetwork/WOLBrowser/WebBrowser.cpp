@@ -41,6 +41,8 @@
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
+#ifndef __APPLE__
+
 //#include "WinMain.h"
 #include "GameNetwork/WOLBrowser/WebBrowser.h"
 #include "GameClient/GameWindow.h"
@@ -308,3 +310,4 @@ STDMETHODIMP WebBrowser::TestMethod(Int num1)
 	DEBUG_LOG(("WebBrowser::TestMethod - num1 = %d", num1));
 	return S_OK;
 }
+#endif // !__APPLE__

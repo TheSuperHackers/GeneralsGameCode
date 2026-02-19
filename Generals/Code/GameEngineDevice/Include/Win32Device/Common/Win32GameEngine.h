@@ -41,7 +41,9 @@
 #include "W3DDevice/Common/W3DModuleFactory.h"
 #include "W3DDevice/GameLogic/W3DGameLogic.h"
 #include "W3DDevice/GameClient/W3DGameClient.h"
+#ifndef __APPLE__
 #include "W3DDevice/GameClient/W3DWebBrowser.h"
+#endif
 #include "W3DDevice/Common/W3DFunctionLexicon.h"
 #include "W3DDevice/Common/W3DRadar.h"
 #include "W3DDevice/Common/W3DThingFactory.h"
@@ -86,6 +88,7 @@ protected:
 };
 
 // INLINE -----------------------------------------------------------------------------------------
+#ifndef __APPLE__
 inline GameLogic *Win32GameEngine::createGameLogic( void ) { return NEW W3DGameLogic; }
 inline GameClient *Win32GameEngine::createGameClient( void ) { return NEW W3DGameClient; }
 inline ModuleFactory *Win32GameEngine::createModuleFactory( void ) { return NEW W3DModuleFactory; }
@@ -99,3 +102,4 @@ inline NetworkInterface *Win32GameEngine::createNetwork( void ) { return Network
 inline Radar *Win32GameEngine::createRadar( void ) { return NEW W3DRadar; }
 inline WebBrowser *Win32GameEngine::createWebBrowser( void ) { return NEW CComObject<W3DWebBrowser>; }
 inline AudioManager *Win32GameEngine::createAudioManager( void ) { return NEW MilesAudioManager; }
+#endif // !__APPLE__

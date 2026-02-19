@@ -37,6 +37,7 @@ struct D3DXVECTOR4 {
       : x(_x), y(_y), z(_z), w(_w) {}
   float &operator[](int i) { return (&x)[i]; }
   const float &operator[](int i) const { return (&x)[i]; }
+  operator const void*() const { return this; }
 };
 
 struct D3DXMATRIX : public D3DMATRIX {
@@ -63,6 +64,17 @@ struct D3DXMATRIX : public D3DMATRIX {
   }
   float &operator()(int row, int col) { return m[row][col]; }
   float operator()(int row, int col) const { return m[row][col]; }
+  D3DXMATRIX &operator*=(const D3DXMATRIX &rhs) {
+    D3DXMATRIX tmp;
+    for (int i = 0; i < 4; i++)
+      for (int j = 0; j < 4; j++) {
+        tmp.m[i][j] = 0;
+        for (int k = 0; k < 4; k++)
+          tmp.m[i][j] += m[i][k] * rhs.m[k][j];
+      }
+    *this = tmp;
+    return *this;
+  }
 };
 
 struct D3DXQUATERNION {
@@ -213,3 +225,46 @@ inline D3DXMATRIX *D3DXMatrixTranspose(D3DXMATRIX *pOut, const D3DXMATRIX *pM) {
   *pOut = tmp;
   return pOut;
 }
+
+/* Matrix inverse using Gauss-Jordan elimination */
+inline D3DXMATRIX *D3DXMatrixInverse(D3DXMATRIX *pOut, FLOAT *pDeterminant,
+                                     const D3DXMATRIX *pM) {
+  float a[4][8];
+  // Build augmented matrix [M | I]
+  for (int i = 0; i < 4; i++)
+    for (int j = 0; j < 4; j++) {
+      a[i][j] = pM->m[i][j];
+      a[i][j + 4] = (i == j) ? 1.0f : 0.0f;
+    }
+  // Forward elimination with partial pivoting
+  for (int col = 0; col < 4; col++) {
+    int best = col;
+    float bestVal = fabsf(a[col][col]);
+    for (int row = col + 1; row < 4; row++) {
+      float v = fabsf(a[row][col]);
+      if (v > bestVal) { bestVal = v; best = row; }
+    }
+    if (bestVal < 1e-12f) return nullptr; // singular
+    if (best != col)
+      for (int j = 0; j < 8; j++) {
+        float t = a[col][j]; a[col][j] = a[best][j]; a[best][j] = t;
+      }
+    float pivot = 1.0f / a[col][col];
+    for (int j = 0; j < 8; j++) a[col][j] *= pivot;
+    for (int row = 0; row < 4; row++) {
+      if (row == col) continue;
+      float factor = a[row][col];
+      for (int j = 0; j < 8; j++) a[row][j] -= factor * a[col][j];
+    }
+  }
+  for (int i = 0; i < 4; i++)
+    for (int j = 0; j < 4; j++)
+      pOut->m[i][j] = a[i][j + 4];
+  if (pDeterminant) *pDeterminant = 1.0f; // approximate
+  return pOut;
+}
+
+/* Include d3dx8core.h so that any file including d3dx8math.h also gets
+   D3DXAssembleShader and other D3DX utility declarations.  Both headers
+   use #pragma once, so the circular include is safe. */
+#include "d3dx8core.h"

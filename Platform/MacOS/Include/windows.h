@@ -255,6 +255,8 @@ typedef LONG HRESULT;
 #define SEVERITY_ERROR 1
 #endif
 
+#include "objbase.h"
+
 // ── Boolean constants ──────────────────────────────────────────────────
 #ifndef TRUE
 #define TRUE 1
@@ -713,6 +715,7 @@ inline HANDLE CreateEventA(void *, BOOL, BOOL, const char *) { return nullptr; }
 inline BOOL SetEvent(HANDLE) { return FALSE; }
 inline BOOL ResetEvent(HANDLE) { return FALSE; }
 inline DWORD WaitForSingleObject(HANDLE, DWORD) { return WAIT_TIMEOUT; }
+inline BOOL ReleaseMutex(HANDLE) { return TRUE; }
 
 typedef void (*_beginthread_proc_type)(void *);
 inline uintptr_t _beginthread(_beginthread_proc_type, unsigned, void *) { return (uintptr_t)-1; }
@@ -722,8 +725,50 @@ typedef void* HCURSOR;
 inline HCURSOR SetCursor(HCURSOR) { return nullptr; }
 inline BOOL GetCursorPos(POINT *) { return FALSE; }
 inline BOOL ScreenToClient(HWND, POINT *) { return FALSE; }
+inline BOOL ClientToScreen(HWND, POINT *) { return FALSE; }
+inline BOOL ClipCursor(const RECT *) { return FALSE; }
+inline HCURSOR LoadCursorFromFile(const char *) { return nullptr; }
+#define LoadCursorFromFileA LoadCursorFromFile
 inline BOOL IsIconic(HWND) { return FALSE; }
 inline BOOL SetErrorMode(UINT) { return 0; }
+
+// ── Window message constants ──────────────────────────────────────────
+#ifndef WM_DESTROY
+#define WM_DESTROY          0x0002
+#define WM_SIZE             0x0005
+#define WM_ACTIVATE         0x0006
+#define WM_SETFOCUS         0x0007
+#define WM_KILLFOCUS        0x0008
+#define WM_PAINT            0x000F
+#define WM_CLOSE            0x0010
+#define WM_QUIT             0x0012
+#define WM_ERASEBKGND       0x0014
+#define WM_SHOWWINDOW       0x0018
+#define WM_SETCURSOR        0x0020
+#define WM_CHAR             0x0102
+#define WM_KEYDOWN          0x0100
+#define WM_KEYUP            0x0101
+#define WM_SYSCOMMAND       0x0112
+#define WM_TIMER            0x0113
+#define WM_MOUSEMOVE        0x0200
+#define WM_LBUTTONDOWN      0x0201
+#define WM_LBUTTONUP        0x0202
+#define WM_LBUTTONDBLCLK    0x0203
+#define WM_RBUTTONDOWN      0x0204
+#define WM_RBUTTONUP        0x0205
+#define WM_RBUTTONDBLCLK    0x0206
+#define WM_MBUTTONDOWN      0x0207
+#define WM_MBUTTONUP        0x0208
+#define WM_MBUTTONDBLCLK    0x0209
+#define WM_MOUSEWHEEL       0x020A
+#define WM_MOVE             0x0003
+#define WM_IME_CHAR         0x0286
+#define WM_IME_STARTCOMPOSITION 0x010D
+#define WM_IME_ENDCOMPOSITION   0x010E
+#define WM_IME_COMPOSITION      0x010F
+#define WM_INPUTLANGCHANGE  0x0051
+#define WM_USER             0x0400
+#endif
 
 // ── Message processing stubs ──────────────────────────────────────────
 #ifndef PM_NOREMOVE
@@ -739,8 +784,12 @@ typedef struct tagMSG {
   POINT pt;
 } MSG, *LPMSG;
 inline BOOL PeekMessage(LPMSG, HWND, UINT, UINT, UINT) { return FALSE; }
+inline BOOL GetMessage(LPMSG, HWND, UINT, UINT) { return FALSE; }
 inline BOOL TranslateMessage(const MSG *) { return FALSE; }
 inline LONG DispatchMessage(const MSG *) { return 0; }
+#define PeekMessageA PeekMessage
+#define GetMessageA GetMessage
+#define DispatchMessageA DispatchMessage
 
 // ── Error mode constants ──────────────────────────────────────────────
 #ifndef SEM_FAILCRITICALERRORS
@@ -1395,6 +1444,52 @@ inline BOOL RemoveFontResource(const char *) { return TRUE; }
 /* ─── Virtual-Key constants ─────────────────────────────────────────── */
 #ifndef VK_RETURN
 #define VK_RETURN 0x0D
+#define VK_INSERT 0x2D
+#define VK_DELETE 0x2E
+#define VK_F1  0x70
+#define VK_F2  0x71
+#define VK_F3  0x72
+#define VK_F4  0x73
+#define VK_F5  0x74
+#define VK_F6  0x75
+#define VK_F7  0x76
+#define VK_F8  0x77
+#define VK_F9  0x78
+#define VK_F10 0x79
+#define VK_F11 0x7A
+#define VK_F12 0x7B
+#endif
+
+/* ─── GetFullPathName stub ─────────────────────────────────────────── */
+#ifndef _GETFULLPATHNAME_DEFINED
+#define _GETFULLPATHNAME_DEFINED
+#include <limits.h>
+inline DWORD GetFullPathNameA(const char *lpFileName, DWORD nBufferLength,
+                              char *lpBuffer, char **lpFilePart) {
+  if (!lpFileName || !lpBuffer || nBufferLength == 0) return 0;
+  // On macOS, use realpath for an approximation
+  char resolved[PATH_MAX];
+  if (realpath(lpFileName, resolved)) {
+    DWORD len = (DWORD)strlen(resolved);
+    if (len + 1 > nBufferLength) return len + 1;
+    strcpy(lpBuffer, resolved);
+    if (lpFilePart) {
+      char *last = strrchr(lpBuffer, '/');
+      *lpFilePart = last ? last + 1 : lpBuffer;
+    }
+    return len;
+  }
+  // File doesn't exist yet — just copy the input
+  DWORD len = (DWORD)strlen(lpFileName);
+  if (len + 1 > nBufferLength) return len + 1;
+  strcpy(lpBuffer, lpFileName);
+  if (lpFilePart) {
+    char *last = strrchr(lpBuffer, '/');
+    if (!last) last = strrchr(lpBuffer, '\\');
+    *lpFilePart = last ? last + 1 : lpBuffer;
+  }
+  return len;
+}
 #endif
 
 /* ─── FormatMessage stubs ──────────────────────────────────────────── */
@@ -1461,6 +1556,31 @@ inline unsigned int _controlfp(unsigned int newval, unsigned int mask) {
   (void)newval;
   (void)mask;
   return 0;
+}
+#endif
+
+/* ─── GetAsyncKeyState stub ────────────────────────────────────────── */
+#ifndef _GETASYNCKEYSTATE_DEFINED
+#define _GETASYNCKEYSTATE_DEFINED
+inline SHORT GetAsyncKeyState(int /*vKey*/) { return 0; }
+#endif
+
+/* ─── Heap API stubs (map to malloc/free) ──────────────────────────── */
+#ifndef _HEAPAPI_DEFINED
+#define _HEAPAPI_DEFINED
+#include <cstdlib>
+#ifndef HEAP_ZERO_MEMORY
+#define HEAP_ZERO_MEMORY 0x00000008
+#endif
+inline HANDLE GetProcessHeap(void) { return nullptr; }
+inline void *HeapAlloc(HANDLE /*hHeap*/, DWORD dwFlags, size_t dwBytes) {
+  if (dwFlags & HEAP_ZERO_MEMORY)
+    return calloc(1, dwBytes);
+  return malloc(dwBytes);
+}
+inline BOOL HeapFree(HANDLE /*hHeap*/, DWORD /*dwFlags*/, void *lpMem) {
+  free(lpMem);
+  return TRUE;
 }
 #endif
 

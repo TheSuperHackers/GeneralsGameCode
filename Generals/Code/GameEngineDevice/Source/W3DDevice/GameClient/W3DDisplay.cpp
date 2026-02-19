@@ -2803,6 +2803,7 @@ void W3DDisplay::setShroudLevel( Int x, Int y, CellShroudStatus setting )
 
 //=============================================================================
 ///Utility function to dump data into a .BMP file
+#ifndef __APPLE__
 static void CreateBMPFile(LPTSTR pszFile, char *image, Int width, Int height)
 {
 	HANDLE hf;                  // file handle
@@ -2846,8 +2847,8 @@ static void CreateBMPFile(LPTSTR pszFile, char *image, Int width, Int height)
 		hdr.bfType = 0x4d42;        // 0x42 = "B" 0x4d = "M"
 		// Compute the size of the entire file.
 		hdr.bfSize = (DWORD) (sizeof(BITMAPFILEHEADER) +
-									pbih->biSize + pbih->biClrUsed
-									* sizeof(RGBQUAD) + pbih->biSizeImage);
+								pbih->biSize + pbih->biClrUsed
+								* sizeof(RGBQUAD) + pbih->biSizeImage);
 		hdr.bfReserved1 = 0;
 		hdr.bfReserved2 = 0;
 
@@ -2877,6 +2878,7 @@ static void CreateBMPFile(LPTSTR pszFile, char *image, Int width, Int height)
 	// Free memory.
 	LocalFree( (HLOCAL) pbmi);
 }
+#endif // !__APPLE__
 
 ///Save Screen Capture to a file
 void W3DDisplay::takeScreenShot(void)
@@ -3006,7 +3008,9 @@ void W3DDisplay::takeScreenShot(void)
 			ptr1++;
 			}
 	}
+#ifndef __APPLE__
 	CreateBMPFile(pathname, image, width, height);
+#endif
 #endif
 
 	delete [] image;

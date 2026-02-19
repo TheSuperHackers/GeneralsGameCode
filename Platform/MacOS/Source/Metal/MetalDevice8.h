@@ -73,6 +73,11 @@ public:
   STDMETHOD(SetGammaRamp)(DWORD Flags, const D3DGAMMARAMP *pRamp) override;
   STDMETHOD(GetGammaRamp)(D3DGAMMARAMP *pRamp) override;
 
+  STDMETHOD_(BOOL, ShowCursor)(BOOL bShow) override;
+  STDMETHOD(SetCursorProperties)(UINT XHotSpot, UINT YHotSpot,
+                                  IDirect3DSurface8 *pCursorBitmap) override;
+  STDMETHOD_(void, SetCursorPosition)(int X, int Y, DWORD Flags) override;
+
   STDMETHOD(CreateTexture)(UINT Width, UINT Height, UINT Levels, DWORD Usage,
                            D3DFORMAT Format, D3DPOOL Pool,
                            IDirect3DTexture8 **ppTexture) override;

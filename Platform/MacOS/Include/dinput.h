@@ -132,11 +132,55 @@
 #define DIK_PGUP DIK_PRIOR
 #define DIK_PGDN DIK_NEXT
 
-/* DirectInput interfaces (opaque on macOS) */
-typedef void *LPDIRECTINPUT8;
-typedef void *LPDIRECTINPUTDEVICE8;
+/* ── DirectInput error codes ─────────────────────────────────────────── */
+#define DI_OK                         S_OK
+#define DIERR_ACQUIRED                ((HRESULT)0x800704BBL)
+#define DIERR_ALREADYINITIALIZED      ((HRESULT)0x800704B0L)
+#define DIERR_BADDRIVERVER            ((HRESULT)0x80070077L)
+#define DIERR_BETADIRECTINPUTVERSION  ((HRESULT)0x80040154L)
+#define DIERR_DEVICEFULL              ((HRESULT)0x80040203L)
+#define DIERR_DEVICENOTREG            ((HRESULT)0x80040154L)
+#define DIERR_EFFECTPLAYING           ((HRESULT)0x80040208L)
+#define DIERR_GENERIC                 E_FAIL
+#define DIERR_HANDLEEXISTS            ((HRESULT)0x80070005L)
+#define DIERR_HASEFFECTS              ((HRESULT)0x80040209L)
+#define DIERR_INCOMPLETEEFFECT        ((HRESULT)0x80040206L)
+#define DIERR_INPUTLOST               ((HRESULT)0x8007001EL)
+#define DIERR_INVALIDPARAM            E_INVALIDARG
+#define DIERR_MAPFILEFAIL             ((HRESULT)0x8004020BL)
+#define DIERR_MOREDATA                ((HRESULT)0x80040207L)
+#define DIERR_NOAGGREGATION           ((HRESULT)0x80040110L)
+#define DIERR_NOINTERFACE             E_NOINTERFACE
+#define DIERR_NOTACQUIRED             ((HRESULT)0x8007000CL)
+#define DIERR_NOTBUFFERED             ((HRESULT)0x80040204L)
+#define DIERR_NOTDOWNLOADED           ((HRESULT)0x80040205L)
+#define DIERR_NOTEXCLUSIVEACQUIRED    ((HRESULT)0x80040207L)
+#define DIERR_NOTFOUND                ((HRESULT)0x80070002L)
+#define DIERR_NOTINITIALIZED          ((HRESULT)0x80070015L)
+#define DIERR_OBJECTNOTFOUND          ((HRESULT)0x80070002L)
+#define DIERR_OLDDIRECTINPUTVERSION   ((HRESULT)0x80040154L)
+#define DIERR_OTHERAPPHASPRIO         ((HRESULT)0x80040003L)
+#define DIERR_OUTOFMEMORY             E_OUTOFMEMORY
+#define DIERR_READONLY                ((HRESULT)0x80070005L)
+#define DIERR_REPORTFULL              ((HRESULT)0x80040204L)
+#define DIERR_UNPLUGGED               ((HRESULT)0x80040209L)
+#define DIERR_UNSUPPORTED             E_NOTIMPL
 
-/* DIDEVICEOBJECTDATA */
+/* ── DirectInput version ────────────────────────────────────────────── */
+#define DIRECTINPUT_VERSION 0x0800
+
+/* ── Cooperative level flags ────────────────────────────────────────── */
+#define DISCL_EXCLUSIVE   0x00000001
+#define DISCL_NONEXCLUSIVE 0x00000002
+#define DISCL_FOREGROUND  0x00000004
+#define DISCL_BACKGROUND  0x00000008
+#define DISCL_NOWINKEY    0x00000010
+
+/* ── Property constants ─────────────────────────────────────────────── */
+#define DIPH_DEVICE       0
+#define DIPH_BYOFFSET     1
+
+/* ── DIDEVICEOBJECTDATA ─────────────────────────────────────────────── */
 typedef struct _DIDEVICEOBJECTDATA {
   DWORD dwOfs;
   DWORD dwData;
@@ -144,3 +188,86 @@ typedef struct _DIDEVICEOBJECTDATA {
   DWORD dwSequence;
   UINT_PTR uAppData;
 } DIDEVICEOBJECTDATA, *LPDIDEVICEOBJECTDATA;
+
+/* ── DIPROPHEADER / DIPROPDWORD ─────────────────────────────────────── */
+typedef struct _DIPROPHEADER {
+  DWORD dwSize;
+  DWORD dwHeaderSize;
+  DWORD dwObj;
+  DWORD dwHow;
+} DIPROPHEADER, *LPDIPROPHEADER;
+
+typedef struct _DIPROPDWORD {
+  DIPROPHEADER diph;
+  DWORD dwData;
+} DIPROPDWORD, *LPDIPROPDWORD;
+
+/* Property GUIDs (as pointers — stub) */
+#define DIPROP_BUFFERSIZE ((const DIPROPHEADER*)1)
+
+/* ── Data format structures ─────────────────────────────────────────── */
+typedef struct _DIOBJECTDATAFORMAT {
+  const GUID *pguid;
+  DWORD dwOfs;
+  DWORD dwType;
+  DWORD dwFlags;
+} DIOBJECTDATAFORMAT, *LPDIOBJECTDATAFORMAT;
+
+typedef struct _DIDATAFORMAT {
+  DWORD dwSize;
+  DWORD dwObjSize;
+  DWORD dwFlags;
+  DWORD dwDataSize;
+  DWORD dwNumObjs;
+  LPDIOBJECTDATAFORMAT rgodf;
+} DIDATAFORMAT, *LPDIDATAFORMAT;
+typedef const DIDATAFORMAT *LPCDIDATAFORMAT;
+
+/* Predefined data format for keyboard */
+#ifdef __cplusplus
+extern "C" {
+#endif
+static const DIDATAFORMAT c_dfDIKeyboard = {sizeof(DIDATAFORMAT), sizeof(DIOBJECTDATAFORMAT), 0, 256, 0, nullptr};
+#ifdef __cplusplus
+}
+#endif
+
+/* ── GUIDs (stubs) ──────────────────────────────────────────────────── */
+static const GUID GUID_SysKeyboard = {};
+static const GUID GUID_SysMouse = {};
+static const GUID IID_IDirectInput8 = {};
+
+/* ── VK constants ───────────────────────────────────────────────────── */
+#ifndef VK_CAPITAL
+#define VK_CAPITAL 0x14
+#endif
+
+/* GetKeyState stub */
+inline SHORT GetKeyState(int) { return 0; }
+
+/* ── IDirectInputDevice8 (stub interface) ───────────────────────────── */
+struct IDirectInputDevice8 {
+  virtual HRESULT SetDataFormat(LPCDIDATAFORMAT) { return S_OK; }
+  virtual HRESULT SetCooperativeLevel(HWND, DWORD) { return S_OK; }
+  virtual HRESULT SetProperty(const DIPROPHEADER*, const DIPROPHEADER*) { return S_OK; }
+  virtual HRESULT Acquire() { return S_OK; }
+  virtual HRESULT Unacquire() { return S_OK; }
+  virtual HRESULT GetDeviceData(DWORD, LPDIDEVICEOBJECTDATA, DWORD*, DWORD) { return S_OK; }
+  virtual HRESULT Release() { return 0; }
+  virtual ~IDirectInputDevice8() {}
+};
+
+/* ── IDirectInput8 (stub interface) ─────────────────────────────────── */
+struct IDirectInput8 {
+  virtual HRESULT CreateDevice(const GUID&, IDirectInputDevice8**, void*) { return E_FAIL; }
+  virtual HRESULT Release() { return 0; }
+  virtual ~IDirectInput8() {}
+};
+
+typedef IDirectInput8 *LPDIRECTINPUT8;
+typedef IDirectInputDevice8 *LPDIRECTINPUTDEVICE8;
+
+/* DirectInput8Create stub */
+inline HRESULT DirectInput8Create(HINSTANCE, DWORD, const GUID&, void**, void*) {
+  return E_FAIL;
+}

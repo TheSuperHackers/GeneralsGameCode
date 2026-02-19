@@ -88,6 +88,7 @@ protected:
 };
 
 // INLINE -----------------------------------------------------------------------------------------
+#ifndef __APPLE__
 inline GameLogic *Win32GameEngine::createGameLogic( void ) { return NEW W3DGameLogic; }
 inline GameClient *Win32GameEngine::createGameClient( void ) { return NEW W3DGameClient; }
 inline ModuleFactory *Win32GameEngine::createModuleFactory( void ) { return NEW W3DModuleFactory; }
@@ -99,9 +100,6 @@ inline ParticleSystemManager* Win32GameEngine::createParticleSystemManager( void
 
 inline NetworkInterface *Win32GameEngine::createNetwork( void ) { return NetworkInterface::createNetwork(); }
 inline Radar *Win32GameEngine::createRadar( void ) { return NEW W3DRadar; }
-#ifndef __APPLE__
 inline WebBrowser *Win32GameEngine::createWebBrowser( void ) { return NEW CComObject<W3DWebBrowser>; }
-#else
-inline WebBrowser *Win32GameEngine::createWebBrowser( void ) { return nullptr; }
-#endif
 inline AudioManager *Win32GameEngine::createAudioManager( void ) { return NEW MilesAudioManager; }
+#endif // !__APPLE__

@@ -2,6 +2,7 @@
 #pragma once
 
 #include "d3d8_stub.h"
+#include "d3dx8math.h"
 
 /*──────────────────── ID3DXFont ────────────────────*/
 /* ID3DXFont not used in game runtime on macOS — stub */

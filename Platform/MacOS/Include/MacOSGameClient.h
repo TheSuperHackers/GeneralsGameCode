@@ -27,6 +27,13 @@ public:
   virtual void releaseShadows(void) override;
   virtual void allocateShadows(void) override;
 
+  // GeneralsMD (Zero Hour) adds these pure virtuals to GameClient;
+  // Generals does not. Guard with RTS_ZEROHOUR.
+#if RTS_ZEROHOUR
+  virtual void notifyTerrainObjectMoved(Object *obj) override;
+  virtual SnowManager *createSnowManager(void) override;
+#endif
+
 protected:
   virtual Display *createGameDisplay(void) override;
   virtual InGameUI *createInGameUI(void) override;

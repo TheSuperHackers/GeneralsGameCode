@@ -190,3 +190,9 @@ void MacOSGameClient::setTeamColor(Int red, Int green, Int blue) {}
 void MacOSGameClient::setTextureLOD(Int level) {}
 void MacOSGameClient::releaseShadows(void) {}
 void MacOSGameClient::allocateShadows(void) {}
+#if RTS_ZEROHOUR
+void MacOSGameClient::notifyTerrainObjectMoved(Object *obj) {}
+SnowManager *MacOSGameClient::createSnowManager(void) {
+  return new MacOSSnowManager();
+}
+#endif

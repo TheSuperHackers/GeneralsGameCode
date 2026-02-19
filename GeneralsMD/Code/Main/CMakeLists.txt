@@ -9,25 +9,27 @@ endif()
 set_target_properties(z_generals PROPERTIES OUTPUT_NAME generalszh)
 
 target_link_libraries(z_generals PRIVATE
-    binkstub
-    comctl32
     core_debug
     core_profile
-    d3d8
-    d3dx8
-    dinput8
-    dxguid
-    imm32
-    milesstub
-    vfw32
-    winmm
     z_gameengine
     z_gameenginedevice
     zi_always
 )
 
-# ── macOS platform layer ──
-if(APPLE)
+if(NOT APPLE)
+    target_link_libraries(z_generals PRIVATE
+        binkstub
+        comctl32
+        d3d8
+        d3dx8
+        dinput8
+        dxguid
+        imm32
+        milesstub
+        vfw32
+        winmm
+    )
+else()
     target_link_libraries(z_generals PRIVATE macos_platform)
 endif()
 
@@ -60,6 +62,12 @@ target_include_directories(z_generals PRIVATE
     ${CMAKE_CURRENT_BINARY_DIR}
 )
 
+if(APPLE)
+    target_include_directories(z_generals PRIVATE
+        ${CMAKE_SOURCE_DIR}/GeneralsMD/Code/GameEngine/Include/Precompiled
+    )
+endif()
+
 # ── Entry point (platform-specific) ──
 if(APPLE)
     target_sources(z_generals PRIVATE
@@ -67,7 +75,8 @@ if(APPLE)
     )
     set_source_files_properties(
         ${CMAKE_SOURCE_DIR}/Platform/MacOS/Source/Main/MacOSMain.mm
-        PROPERTIES COMPILE_FLAGS "-fobjc-arc"
+        PROPERTIES COMPILE_FLAGS "-fobjc-arc -include ${CMAKE_SOURCE_DIR}/Dependencies/Utility/Utility/CppMacros.h"
+        SKIP_PRECOMPILE_HEADERS TRUE
     )
 else()
     target_sources(z_generals PRIVATE

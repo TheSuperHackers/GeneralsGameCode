@@ -1,6 +1,29 @@
-#include "PreRTS.h"
-#include "always.h"
-#include <windows.h>  // macOS Win32 type shim
+// PreRTS.h is NOT included here - it pulls in Windows-only headers that
+// conflict with macOS system frameworks. All needed headers are included
+// individually below.
+
+// ── Prevent macOS SDK type conflicts with engine types ──
+// These defines suppress macOS SDK headers that define types conflicting with
+// the game engine (WideChar, FileInfo, ChunkHeader, etc.)
+#define __INTLRESOURCES__   // Prevents IntlResources.h WideChar union
+#define __FINDER__          // Prevents Finder.h FileInfo struct
+#define __AIFF__            // Prevents AIFF.h ChunkHeader struct
+
+// ── macOS frameworks MUST be imported before ANY engine headers ──
+// The engine defines macros like BitSet(x,i) in Lib/BaseType.h that conflict
+// with macOS SDK functions of the same name in CarbonCore/ToolUtils.h.
+// By importing Foundation first, the macOS SDK headers are fully parsed before
+// any conflicting macros are defined.
+#import <Foundation/Foundation.h>
+#import <Cocoa/Cocoa.h>
+#import <Metal/Metal.h>
+#import <MetalKit/MetalKit.h>
+
+// Now import our ObjC class headers (they include engine headers which define BitSet etc.)
+#import "MacOSGameClient.h"
+#import "MacOSWindowManager.h"
+
+// ── Standard C/C++ headers ──
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -8,7 +31,10 @@
 #include <unistd.h>
 #include <vector>
 
-// Engine headers for real types
+// ── Engine core headers ──
+#include "always.h"
+#include <windows.h>  // macOS Win32 type shim
+
 #include "Common/AsciiString.h"
 #include "Common/CommandLine.h"
 #include "Common/CriticalSection.h"
@@ -33,14 +59,9 @@
 
 // Remaining specific headers
 #include "Common/ArchiveFileSystem.h"
-#include "Common/Snapshot.h"
-#include <Utility/atlbase.h>
-
-#include "Common/ArchiveFileSystem.h"
 #include "Common/FileSystem.h"
 #include "Common/LocalFileSystem.h"
-#import "MacOSGameClient.h"
-#import "MacOSWindowManager.h"
+#include "Common/Snapshot.h"
 #include "StdBIGFileSystem.h"
 #include "StdLocalFileSystem.h"
 
@@ -63,7 +84,7 @@ void *TheGameTimer = nullptr;
 // FramePacer *TheFramePacer = nullptr; // Duplicate
 extern "C" unsigned int TheMessageTime = 0;
 
-extern "C" const GUID IID_IUnknown = {
+const GUID IID_IUnknown = {
     0x00000000,
     0x0000,
     0x0000,
@@ -95,7 +116,7 @@ extern "C" void GetMacOSHardwareName(char *buffer, size_t size) {
 void *ApplicationHWnd = nullptr;
 
 // D3DX stubs moved to D3DXStubs.cpp
-#include <Utility/atlbase.h>
+#include <atlbase.h>
 CComModule _Module;
 
 // Memory manager will be handled by
@@ -396,7 +417,9 @@ public:
   virtual void selfDestructPlayer(Int index) {}
   virtual void voteForPlayerDisconnect(Int slot) {}
   virtual Bool isPacketRouter(void) { return false; }
+#if defined(RTS_DEBUG)
   virtual void toggleNetworkOn(void) override {}
+#endif
 };
 
 class StubParticleSystemManager : public ParticleSystemManager {

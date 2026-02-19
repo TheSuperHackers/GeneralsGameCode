@@ -24,8 +24,8 @@
 // Set during MetalDevice8::InitMetal(), cleared in destructor.
 void *g_MetalMTLDevice = nullptr;
 
-// Forward declaration (defined in D3DXStubs.cpp)
-extern "C" UINT WINAPI D3DXGetFVFVertexSize(DWORD FVF);
+// D3DXGetFVFVertexSize is inline in d3dx8core.h
+#include "d3dx8core.h"
 
 // ─────────────────────────────────────────────────────
 //  Helpers: Cast opaque pointers to Metal types
@@ -935,6 +935,19 @@ STDMETHODIMP MetalDevice8::SetGammaRamp(DWORD f, const D3DGAMMARAMP *p) {
   return D3D_OK;
 }
 STDMETHODIMP MetalDevice8::GetGammaRamp(D3DGAMMARAMP *p) { return D3D_OK; }
+
+// ─────────────────────────────────────────────────────
+//  Cursor — no-ops (macOS uses NSCursor natively)
+// ─────────────────────────────────────────────────────
+
+STDMETHODIMP_(BOOL) MetalDevice8::ShowCursor(BOOL bShow) { return FALSE; }
+STDMETHODIMP MetalDevice8::SetCursorProperties(UINT XHotSpot, UINT YHotSpot,
+                                                IDirect3DSurface8 *pCursorBitmap) {
+  return D3D_OK;
+}
+STDMETHODIMP_(void) MetalDevice8::SetCursorPosition(int X, int Y, DWORD Flags) {
+  // no-op
+}
 
 // ─────────────────────────────────────────────────────
 //  Resource Creation

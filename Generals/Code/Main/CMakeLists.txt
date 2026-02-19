@@ -1,4 +1,8 @@
-add_executable(g_generals WIN32)
+if(APPLE)
+    add_executable(g_generals)
+else()
+    add_executable(g_generals WIN32)
+endif()
 
 # Use a binary name that doesn't conflict with original game.
 if("${CMAKE_SYSTEM}" MATCHES "Windows")
@@ -8,20 +12,31 @@ else()
 endif()
 
 target_link_libraries(g_generals PRIVATE
-    binkstub
-    comctl32
-    d3d8
-    d3dx8
-    dinput8
-    dxguid
     g_gameengine
     g_gameenginedevice
     gi_always
-    imm32
-    milesstub
-    vfw32
-    winmm
 )
+
+if(NOT APPLE)
+    target_link_libraries(g_generals PRIVATE
+        binkstub
+        comctl32
+        d3d8
+        d3dx8
+        dinput8
+        dxguid
+        imm32
+        milesstub
+        vfw32
+        winmm
+    )
+else()
+    target_link_libraries(g_generals PRIVATE
+        macos_platform
+        core_debug
+        core_profile
+    )
+endif()
 
 # TODO Originally referred to build host and user, replace with git info perhaps?
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/GeneratedVersion.h
@@ -64,10 +79,27 @@ target_include_directories(g_generals PRIVATE
     ${CMAKE_BINARY_DIR}/Code/Libraries
 )
 
-target_sources(g_generals PRIVATE
-    WinMain.cpp
-    WinMain.h
-)
+if(APPLE)
+    target_include_directories(g_generals PRIVATE
+        ${CMAKE_SOURCE_DIR}/Generals/Code/GameEngine/Include/Precompiled
+    )
+endif()
+
+if(APPLE)
+    target_sources(g_generals PRIVATE
+        ${CMAKE_SOURCE_DIR}/Platform/MacOS/Source/Main/MacOSMain.mm
+    )
+    set_source_files_properties(
+        ${CMAKE_SOURCE_DIR}/Platform/MacOS/Source/Main/MacOSMain.mm
+        PROPERTIES COMPILE_FLAGS "-fobjc-arc -include ${CMAKE_SOURCE_DIR}/Dependencies/Utility/Utility/CppMacros.h"
+        SKIP_PRECOMPILE_HEADERS TRUE
+    )
+else()
+    target_sources(g_generals PRIVATE
+        WinMain.cpp
+        WinMain.h
+    )
+endif()
 
 # RC files are optional for MinGW builds
 # Icon: LoadIcon() handles missing resource gracefully (uses default system icon)

@@ -52,4 +52,6 @@ add_subdirectory(GameEngine)
 # Platform specific GameEngine code
 add_subdirectory(GameEngineDevice)
 
-add_subdirectory(Tools)
+if(NOT APPLE)
+    add_subdirectory(Tools)
+endif()

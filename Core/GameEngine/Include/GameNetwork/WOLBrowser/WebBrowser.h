@@ -42,6 +42,54 @@
 
 #pragma once
 
+#ifdef __APPLE__
+// Minimal stub for macOS — no COM/ATL support
+#include "Common/SubsystemInterface.h"
+#include <Common/GameMemory.h>
+#include <Lib/BaseType.h>
+
+class GameWindow;
+
+class WebBrowserURL : public MemoryPoolObject
+{
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( WebBrowserURL, "WebBrowserURL" )
+
+public:
+	WebBrowserURL() : m_next(nullptr) {}
+
+	const FieldParse *getFieldParse( void ) const { return m_URLFieldParseTable; }
+
+	AsciiString m_tag;
+	AsciiString m_url;
+
+	WebBrowserURL *m_next;
+
+	static const FieldParse m_URLFieldParseTable[];
+};
+
+class WebBrowser : public SubsystemInterface
+{
+public:
+	void init( void ) {}
+	void reset( void ) {}
+	void update( void ) {}
+
+	virtual Bool createBrowserWindow(const char *tag, GameWindow *win) { return FALSE; }
+	virtual void closeBrowserWindow(GameWindow *win) {}
+
+	WebBrowserURL *makeNewURL(AsciiString tag) { return nullptr; }
+	WebBrowserURL *findURL(AsciiString tag) { return nullptr; }
+
+protected:
+	WebBrowser() {}
+	virtual ~WebBrowser() {}
+};
+
+// No CComObject on macOS
+#define TheWebBrowser ((WebBrowser*)nullptr)
+
+#else // !__APPLE__
+
 #include "Common/SubsystemInterface.h"
 #include <atlbase.h>
 #include <windows.h>
@@ -122,3 +170,5 @@ class WebBrowser :
 	};
 
 extern CComObject<WebBrowser> *TheWebBrowser;
+
+#endif // !__APPLE__

@@ -67,7 +67,7 @@ static std::filesystem::path fixFilenameFromWindowsPath(const Char *filename, In
 
 		std::filesystem::path pathFixed;
 		std::filesystem::path pathCurrent;
-		for (auto& p : path)
+		for (const auto& p : path)
 		{
 			std::filesystem::path pathFixedPart;
 			if (pathCurrent.empty())
@@ -341,7 +341,7 @@ AsciiString StdLocalFileSystem::normalizePath(const AsciiString& filePath) const
 	std::string nonNormalized(filePath.str());
 #ifndef _WIN32
 	// Replace backslashes with forward slashes on non-Windows platforms
-	std::replace(unNormalized.begin(), unNormalized.end(), '\\', '/');
+	std::replace(nonNormalized.begin(), nonNormalized.end(), '\\', '/');
 #endif
 	std::filesystem::path pathNonNormalized(nonNormalized);
 	return AsciiString(pathNonNormalized.lexically_normal().string().c_str());

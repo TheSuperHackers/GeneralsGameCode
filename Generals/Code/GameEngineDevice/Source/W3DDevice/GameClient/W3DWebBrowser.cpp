@@ -25,6 +25,7 @@
 ////// W3DWebBrowser.cpp ///////////////
 // July 2002 Bryan Cleveland
 
+#ifndef __APPLE__
 #include "W3DDevice/GameClient/W3DWebBrowser.h"
 #include "WW3D2/texture.h"
 #include "WW3D2/textureloader.h"
@@ -76,3 +77,4 @@ void W3DWebBrowser::closeBrowserWindow(GameWindow *win)
 {
 	DX8WebBrowser::DestroyBrowser(win->winGetInstanceData()->m_decoratedNameString.str());
 }
+#endif // !__APPLE__
