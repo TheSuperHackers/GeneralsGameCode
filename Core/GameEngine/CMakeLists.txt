@@ -1138,6 +1138,7 @@ set(GAMEENGINE_SRC
     Source/GameNetwork/NetCommandWrapperList.cpp
     Source/GameNetwork/NetMessageStream.cpp
     Source/GameNetwork/NetPacket.cpp
+    Source/GameNetwork/NetPacketStructs.cpp
     Source/GameNetwork/Network.cpp
     Source/GameNetwork/NetworkUtil.cpp
     Source/GameNetwork/Transport.cpp
