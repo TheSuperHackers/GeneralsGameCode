@@ -464,6 +464,7 @@ namespace
 
 enum TransferFileType
 {
+	TransferFileType_Invalid = -1,
 	TransferFileType_Map,
 	TransferFileType_Ini,
 	TransferFileType_Str,
@@ -498,7 +499,7 @@ TransferFileType getTransferFileType(const char* extension)
 			return static_cast<TransferFileType>(i);
 		}
 	}
-	return TransferFileType_Count;
+	return TransferFileType_Invalid;
 }
 
 } // namespace
@@ -518,7 +519,7 @@ Bool FileSystem::hasValidTransferFileContent(const AsciiString& filePath, const 
 	}
 
 	const TransferFileType fileType = getTransferFileType(fileExt);
-	if (fileType == TransferFileType_Count)
+	if (fileType == TransferFileType_Invalid)
 	{
 		DEBUG_LOG(("File '%s' has unrecognized extension '%s' for content validation.", filePath.str(), fileExt));
 		return false;
