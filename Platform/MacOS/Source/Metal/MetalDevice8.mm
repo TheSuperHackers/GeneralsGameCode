@@ -2162,6 +2162,16 @@ STDMETHODIMP MetalDevice8::DrawPrimitiveUP(DWORD pt, UINT pc, const void *data,
   }
   ApplyPerDrawState();
 
+  // For XYZRHW (2D/UI) vertices, force-disable back-face culling.
+  // The vertex shader flips Y (screenPos.y = 1.0 - y/screenH * 2.0) which
+  // reverses the triangle winding order from CW to CCW in NDC space.
+  // With the default CW front-face winding + back-face culling, all 2D
+  // triangles would be discarded as back-facing. Must set AFTER
+  // ApplyPerDrawState() which sets cull mode from D3D render state.
+  if (is2D) {
+    [MTL_ENCODER setCullMode:MTLCullModeNone];
+  }
+
   // Upload vertex data inline (up to 4KB via setVertexBytes)
   UINT dataSize = vertexCount * stride;
   if (dataSize <= 4096) {

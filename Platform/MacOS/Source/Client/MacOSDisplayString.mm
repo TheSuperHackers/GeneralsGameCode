@@ -132,6 +132,12 @@ public:
       [NSGraphicsContext restoreGraphicsState];
 
       unsigned char *dst = (unsigned char *)lr.pBits;
+      if (!dst) {
+        m_D3DTexture->UnlockRect(0);
+        m_Stale = false;
+        return;
+      }
+
       for (int i = 0; i < m_Width * m_Height; i++) {
         unsigned char r = src[i * 4 + 0];
         unsigned char g = src[i * 4 + 1];
@@ -165,6 +171,8 @@ public:
       x, y, (unsigned)color, ascii.str(), m_Width, m_Height);
 
     updateTexture();
+
+
 
     if (m_D3DTexture) {
       // Draw through the DX8/Metal pipeline using TheDisplay
@@ -229,6 +237,9 @@ public:
       dev->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
 
       dev->SetVertexShader(D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1);
+
+
+
       dev->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, verts,
                            sizeof(TexturedVertex));
                            
