@@ -28,6 +28,7 @@
 #include "GameClient/LanguageFilter.h"
 #include "Common/FileSystem.h"
 #include "Common/file.h"
+#include "Common/WideCharUtils.h"
 
 
 
@@ -158,7 +159,7 @@ Bool LanguageFilter::readWord(File *file1, WideChar *buf) {
 
 	WideChar c;
 
-	val = file1->read(&c, sizeof(WideChar));
+	val = readUTF16CharFromFile(file1, &c);
 	if ((val == -1) || (val == 0)) {
 		buf[index] = 0;
 		return FALSE;
@@ -167,7 +168,7 @@ Bool LanguageFilter::readWord(File *file1, WideChar *buf) {
 
 	while (buf[index] != L' ') {
 		++index;
-		val = file1->read(&c, sizeof(WideChar));
+		val = readUTF16CharFromFile(file1, &c);
 		if ((val == -1) || (val == 0)) {
 			c = WEOF;
 		}

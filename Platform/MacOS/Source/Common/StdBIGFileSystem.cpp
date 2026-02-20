@@ -64,14 +64,22 @@ void StdBIGFileSystem::init() {
   printf("StdBIGFileSystem::init: loadBigFilesFromDirectory returned.\n");
   fflush(stdout);
 
-#if 0 // RTS_ZEROHOUR
+#if RTS_ZEROHOUR
   // load original Generals assets
+  // On macOS there's no registry, so use env var or relative path
   AsciiString installPath;
-  GetStringFromGeneralsRegistry("", "InstallPath", installPath);
-  //@todo this will need to be ramped up to a crash for release
-  DEBUG_ASSERTCRASH(!installPath.isEmpty(), ("Be 1337! Go install Generals!"));
-  if (!installPath.isEmpty())
+  const char* envPath = getenv("GENERALS_INSTALL_PATH");
+  if (envPath && envPath[0]) {
+    installPath = envPath;
+    fprintf(stderr, "StdBIGFileSystem::init - Generals InstallPath from env: '%s'\n", installPath.str());
+  } else {
+    // Try common relative path
+    installPath = "../Command and Conquer - Generals/Command and Conquer Generals/";
+    fprintf(stderr, "StdBIGFileSystem::init - trying relative Generals path: '%s'\n", installPath.str());
+  }
+  if (!installPath.isEmpty()) {
     loadBigFilesFromDirectory(installPath, "*.big");
+  }
 #endif
 }
 
@@ -225,8 +233,14 @@ Bool StdBIGFileSystem::loadBigFilesFromDirectory(AsciiString dir,
                                                  Bool overwrite) {
 
   FilenameList filenameList;
+  printf("loadBigFilesFromDirectory: calling getFileListInDirectory dir='%s' mask='%s'\n",
+    dir.str(), fileMask.str());
+  fflush(stdout);
   TheLocalFileSystem->getFileListInDirectory(dir, "", fileMask, filenameList,
                                              TRUE);
+  printf("loadBigFilesFromDirectory: getFileListInDirectory returned %d files\n",
+    (int)filenameList.size());
+  fflush(stdout);
 
   Bool actuallyAdded = FALSE;
   FilenameListIter it = filenameList.begin();

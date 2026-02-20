@@ -8,6 +8,7 @@
 #import <AppKit/AppKit.h>
 #import <Foundation/Foundation.h>
 
+#include "MacOSDebugLog.h"
 #include "W3DDevice/GameClient/W3DAssetManager.h"
 #include "W3DDevice/GameClient/W3DDisplay.h"
 #include "W3DDevice/GameClient/W3DScene.h"
@@ -55,45 +56,25 @@ public:
   virtual void draw(void) override {
     static int frameCount = 0;
     frameCount++;
-    if (frameCount <= 5 || frameCount % 200 == 0) {
-      printf("DEBUG: MacOSDisplay::draw heartbeat frame %d\n", frameCount);
-      fflush(stdout);
-    }
+
+    DLOG_RFLOW(1, "MacOSDisplay::draw frame=%d winMgr=%p inGameUI=%p mouse=%p",
+      frameCount, (void*)TheWindowManager, (void*)TheInGameUI, (void*)TheMouse);
 
     // Simplified render loop — safe with any combination of subsystems
     WW3DErrorType result =
         WW3D::Begin_Render(true, true, Vector3(0.02f, 0.05f, 0.1f));
     if (result != WW3D_ERROR_OK) {
-      if (frameCount <= 10 || frameCount % 200 == 0) {
-        fprintf(
-            stderr,
-            "DEBUG: MacOSDisplay::draw frame %d - Begin_Render FAILED (%d)\n",
-            frameCount, (int)result);
-      }
+      DLOG_RFLOW(1, "MacOSDisplay::draw frame=%d Begin_Render FAILED result=%d",
+        frameCount, (int)result);
       return;
     }
-    if (frameCount <= 5)
-      fprintf(stderr, "DEBUG: MacOSDisplay::draw frame %d - Begin_Render OK\n",
-              frameCount);
 
     // Draw all views of the world (may be empty during shell)
     Display::draw();
 
-    // Draw the in-game UI
+    // Draw the in-game UI (W3DInGameUI::draw() calls winRepaint() internally)
     if (TheInGameUI) {
       TheInGameUI->draw();
-    }
-
-    // Repaint windows (GUI / menus)
-    if (TheWindowManager) {
-      if (frameCount <= 5)
-        fprintf(stderr,
-                "DEBUG: MacOSDisplay::draw frame %d - winRepaint BEGIN\n",
-                frameCount);
-      TheWindowManager->winRepaint();
-      if (frameCount <= 5)
-        fprintf(stderr, "DEBUG: MacOSDisplay::draw frame %d - winRepaint END\n",
-                frameCount);
     }
 
     // Draw the mouse cursor
@@ -102,9 +83,6 @@ public:
     }
 
     WW3D::End_Render();
-    if (frameCount <= 5)
-      fprintf(stderr, "DEBUG: MacOSDisplay::draw frame %d - End_Render done\n",
-              frameCount);
   }
 
   // Inherited from W3DDisplay:

@@ -240,7 +240,13 @@ Bool FileSystem::doesFileExist(const Char *filename, FileInstance instance) cons
 	}
 #endif
 
-	if (TheLocalFileSystem->doesFileExist(filename))
+	Bool localResult = TheLocalFileSystem->doesFileExist(filename);
+	static int fsLog = 0;
+	bool isTexFile = (strstr(filename, ".tga") || strstr(filename, ".dds") || strstr(filename, ".TGA") || strstr(filename, ".DDS"));
+	if (fsLog < 30 && isTexFile) {
+		fprintf(stderr, "FS_DFE[%d] file='%s' local=%d\n", fsLog, filename, (int)localResult);
+	}
+	if (localResult)
 	{
 		if (instance == 0)
 		{
@@ -250,13 +256,19 @@ Bool FileSystem::doesFileExist(const Char *filename, FileInstance instance) cons
 				m_fileExist[filename];
 			}
 #endif
+			if (fsLog < 30 && isTexFile) { fprintf(stderr, "FS_DFE[%d] => local TRUE\n", fsLog++); }
 			return TRUE;
 		}
 
 		--instance;
 	}
 
-	if (TheArchiveFileSystem->doesFileExist(filename, instance))
+	Bool archResult = TheArchiveFileSystem->doesFileExist(filename, instance);
+	if (fsLog < 30 && isTexFile) {
+		fprintf(stderr, "FS_DFE[%d] file='%s' archive=%d\n", fsLog, filename, (int)archResult);
+		fsLog++;
+	}
+	if (archResult)
 	{
 #if ENABLE_FILESYSTEM_EXISTENCE_CACHE
 		{

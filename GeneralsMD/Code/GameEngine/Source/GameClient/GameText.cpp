@@ -56,6 +56,7 @@
 #include "Common/file.h"
 #include "Common/FileSystem.h"
 #include "Common/version.h"
+#include "Common/WideCharUtils.h"
 
 
 
@@ -310,13 +311,16 @@ void GameTextManager::init( void )
 	if ( m_useStringFile && getStringCount( g_strFile, m_textCount ) )
 	{
 		format = STRING_FILE;
+		fprintf(stderr, "GAMETEXT: Using STR file '%s', textCount=%d\n", g_strFile, m_textCount);
 	}
 	else if ( getCSFInfo ( csfFile.str() ) )
 	{
 		format = CSF_FILE;
+		fprintf(stderr, "GAMETEXT: Using CSF file '%s', textCount=%d\n", csfFile.str(), m_textCount);
 	}
 	else
 	{
+		fprintf(stderr, "GAMETEXT: FAILED to open STR='%s' or CSF='%s' - NO TEXT WILL BE AVAILABLE\n", g_strFile, csfFile.str());
 		return;
 	}
 
@@ -339,6 +343,7 @@ void GameTextManager::init( void )
 	{
 		if( parseStringFile( g_strFile ) == FALSE )
 		{
+			fprintf(stderr, "GAMETEXT: parseStringFile('%s') FAILED - calling deinit\n", g_strFile);
 			deinit();
 			return;
 		}
@@ -347,6 +352,7 @@ void GameTextManager::init( void )
 	{
 		if ( !parseCSF ( csfFile.str() ) )
 		{
+			fprintf(stderr, "GAMETEXT: parseCSF('%s') FAILED\n", csfFile.str());
 			deinit();
 			return;
 		}
@@ -901,6 +907,7 @@ Bool GameTextManager::parseCSF( const Char *filename )
 		return FALSE;
 	}
 
+
 	while( file->read ( &id, sizeof (id)) == sizeof ( id) )
 	{
 		Int num;
@@ -908,6 +915,7 @@ Bool GameTextManager::parseCSF( const Char *filename )
 
 		if ( id != CSF_LABEL )
 		{
+			fprintf(stderr, "GAMETEXT: parseCSF label mismatch at entry %d: got 0x%08X, expected 0x%08X\n", listCount, id, CSF_LABEL);
 			goto quit;
 		}
 
@@ -945,7 +953,7 @@ Bool GameTextManager::parseCSF( const Char *filename )
 
 			if ( len )
 			{
-				file->read ( m_tbuffer, len*sizeof(WideChar) );
+				readUTF16FromFile( file, m_tbuffer, len );
 			}
 
 			if ( num == 0 )

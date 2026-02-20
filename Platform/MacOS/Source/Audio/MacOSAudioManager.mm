@@ -12,6 +12,13 @@
 
 extern FileSystem *TheFileSystem;
 
+// ─────────────────────────────────────────────────────
+//  Simple audio playback using AVAudioPlayer
+//  AVAudioEngine was crashing because it couldn't find
+//  audio input/output nodes in our process context.
+//  AVAudioPlayer is simpler and more reliable for our needs.
+// ─────────────────────────────────────────────────────
+
 MacOSAudioManager::MacOSAudioManager()
     : m_engine(nullptr), m_mainMixer(nullptr) {
   fprintf(stderr, "MACOS AUDIO: Constructor started\n");
@@ -21,21 +28,24 @@ MacOSAudioManager::MacOSAudioManager()
 MacOSAudioManager::~MacOSAudioManager() {
   fprintf(stderr, "MACOS AUDIO: Destructor started\n");
   fflush(stderr);
-  if (m_engine) {
-    AVAudioEngine *engine = (__bridge_transfer AVAudioEngine *)m_engine;
-    [engine stop];
-    // ARC handles engine release now due to bridge_transfer
-    for (auto &playing : m_playingAudio) {
-      if (playing.playerNode) {
-        // Use bridge_transfer to let ARC handle the release of the retained
-        // node
-        (void)(__bridge_transfer AVAudioPlayerNode *)playing.playerNode;
-      }
-      if (playing.event) {
-        delete playing.event;
-      }
+  // Stop and release all playing audio
+  for (auto &playing : m_playingAudio) {
+    if (playing.playerNode) {
+      AVAudioPlayer *player = (__bridge_transfer AVAudioPlayer *)playing.playerNode;
+      [player stop];
+      // ARC releases player
     }
-    m_playingAudio.clear();
+    if (playing.event) {
+      delete playing.event;
+    }
+  }
+  m_playingAudio.clear();
+  
+  // Release the music player
+  if (m_engine) {
+    AVAudioPlayer *musicPlayer = (__bridge_transfer AVAudioPlayer *)m_engine;
+    [musicPlayer stop];
+    m_engine = nullptr;
   }
 }
 
@@ -45,55 +55,21 @@ void MacOSAudioManager::init() {
 
   AudioManager::init();
 
-  @try {
-    if (!m_engine) {
-      AVAudioEngine *engine = [[AVAudioEngine alloc] init];
-      m_engine = (__bridge_retained void *)engine;
-      fprintf(stderr, "MACOS AUDIO: Engine allocated: %p\n", m_engine);
-      fflush(stderr);
-
-      NSError *error = nil;
-      if (![engine startAndReturnError:&error]) {
-        fprintf(stderr, "MACOS AUDIO: Failed to start engine: %s\n",
-                error ? [[error localizedDescription] UTF8String] : "unknown");
-        fflush(stderr);
-        // Properly release the engine to stop background dispatch work
-        [engine stop];
-        (void)(__bridge_transfer AVAudioEngine *)m_engine;
-        m_engine = nullptr;
-        m_mainMixer = nullptr;
-        return;
-      }
-
-      // Access mainMixerNode AFTER engine start to avoid SIGBUS
-      m_mainMixer = (__bridge void *)[engine mainMixerNode];
-      fprintf(stderr, "MACOS AUDIO: Engine started, mainMixer=%p\n", m_mainMixer);
-      fflush(stderr);
-    }
-  } @catch (NSException *exception) {
-    fprintf(stderr, "MACOS AUDIO: Exception during init: %s - %s\n",
-            [[exception name] UTF8String], [[exception reason] UTF8String]);
-    fflush(stderr);
-    // Properly release the engine - bridge_transfer hands ownership to ARC
-    if (m_engine) {
-      AVAudioEngine *engine = (__bridge AVAudioEngine *)m_engine;
-      [engine stop];
-      (void)(__bridge_transfer AVAudioEngine *)m_engine;
-    }
-    m_engine = nullptr;
-    m_mainMixer = nullptr;
-  }
+  // No engine initialization needed — AVAudioPlayer creates its own
+  // audio session automatically. Just mark ourselves as ready.
+  fprintf(stderr, "MACOS AUDIO: init() complete (AVAudioPlayer mode)\n");
+  fflush(stderr);
 }
 
 void MacOSAudioManager::reset() {
   AudioManager::reset();
   // Stop all playing audio
   for (auto &playing : m_playingAudio) {
-    AVAudioPlayerNode *node = (__bridge AVAudioPlayerNode *)playing.playerNode;
-    [node stop];
-    AVAudioEngine *engine = (__bridge AVAudioEngine *)m_engine;
-    [engine detachNode:node];
-    (void)(__bridge_transfer AVAudioPlayerNode *)playing.playerNode;
+    if (playing.playerNode) {
+      AVAudioPlayer *player = (__bridge AVAudioPlayer *)playing.playerNode;
+      [player stop];
+      (void)(__bridge_transfer AVAudioPlayer *)playing.playerNode;
+    }
     if (playing.event) {
       delete playing.event;
     }
@@ -105,19 +81,14 @@ void MacOSAudioManager::update() {
   AudioManager::update();
   processRequestList();
 
-  AVAudioEngine *engine = (__bridge AVAudioEngine *)m_engine;
-  if (!engine)
-    return;
-
   // Cleanup finished audio
   for (auto it = m_playingAudio.begin(); it != m_playingAudio.end();) {
-    AVAudioPlayerNode *node = (__bridge AVAudioPlayerNode *)it->playerNode;
-    if (!node.isPlaying) {
-      [engine detachNode:node];
+    AVAudioPlayer *player = (__bridge AVAudioPlayer *)it->playerNode;
+    if (!player.isPlaying) {
       void *toRelease = it->playerNode;
       AudioEventRTS *event = it->event;
       it = m_playingAudio.erase(it);
-      (void)(__bridge_transfer AVAudioPlayerNode *)toRelease;
+      (void)(__bridge_transfer AVAudioPlayer *)toRelease;
       if (event) {
         delete event;
       }
@@ -137,21 +108,17 @@ void MacOSAudioManager::processRequestList() {
     AudioRequest *req = *it;
     if (req) {
       if (req->m_request == AR_Play) {
-        fprintf(stderr, "MACOS AUDIO: Request Play\n");
-        fflush(stderr);
         playAudioEvent(req->m_pendingEvent);
       } else if (req->m_request == AR_Stop) {
-        fprintf(stderr, "MACOS AUDIO: Request Stop\n");
-        fflush(stderr);
         // Stop matching events
         for (auto &playing : m_playingAudio) {
           if (playing.event == req->m_pendingEvent ||
               (req->m_pendingEvent && playing.event &&
                playing.event->getEventName() ==
                    req->m_pendingEvent->getEventName())) {
-            AVAudioPlayerNode *node =
-                (__bridge AVAudioPlayerNode *)playing.playerNode;
-            [node stop];
+            AVAudioPlayer *player =
+                (__bridge AVAudioPlayer *)playing.playerNode;
+            [player stop];
           }
         }
       }
@@ -164,37 +131,75 @@ void MacOSAudioManager::processRequestList() {
 void MacOSAudioManager::playAudioEvent(AudioEventRTS *event) {
   if (!event)
     return;
-  fprintf(stderr, "MACOS AUDIO: playAudioEvent(%p)\n", event);
-  fflush(stderr);
-  // For now, use the same logic as force play but we own the event now
   friend_forcePlayAudioEventRTS(event);
 }
 
 void MacOSAudioManager::stopAudio(AudioAffect which) {
-  // TODO: Implement global stop
+  for (auto &playing : m_playingAudio) {
+    if (playing.playerNode) {
+      AVAudioPlayer *player = (__bridge AVAudioPlayer *)playing.playerNode;
+      [player stop];
+    }
+  }
 }
+
 void MacOSAudioManager::pauseAudio(AudioAffect which) {
-  [(__bridge AVAudioEngine *)m_engine pause];
+  for (auto &playing : m_playingAudio) {
+    if (playing.playerNode) {
+      AVAudioPlayer *player = (__bridge AVAudioPlayer *)playing.playerNode;
+      [player pause];
+    }
+  }
+  // Pause music too
+  if (m_engine) {
+    AVAudioPlayer *musicPlayer = (__bridge AVAudioPlayer *)m_engine;
+    [musicPlayer pause];
+  }
 }
+
 void MacOSAudioManager::resumeAudio(AudioAffect which) {
-  NSError *error = nil;
-  [(__bridge AVAudioEngine *)m_engine startAndReturnError:&error];
+  for (auto &playing : m_playingAudio) {
+    if (playing.playerNode) {
+      AVAudioPlayer *player = (__bridge AVAudioPlayer *)playing.playerNode;
+      [player play];
+    }
+  }
+  if (m_engine) {
+    AVAudioPlayer *musicPlayer = (__bridge AVAudioPlayer *)m_engine;
+    [musicPlayer play];
+  }
 }
+
 void MacOSAudioManager::pauseAmbient(Bool shouldPause) {}
 void MacOSAudioManager::killAudioEventImmediately(AudioHandle audioEvent) {}
 
-void MacOSAudioManager::nextMusicTrack() {}
-void MacOSAudioManager::prevMusicTrack() {}
-Bool MacOSAudioManager::isMusicPlaying() const { return false; }
+void MacOSAudioManager::nextMusicTrack() {
+  fprintf(stderr, "MACOS AUDIO: nextMusicTrack() called\n");
+  fflush(stderr);
+}
+
+void MacOSAudioManager::prevMusicTrack() {
+  fprintf(stderr, "MACOS AUDIO: prevMusicTrack() called\n");
+  fflush(stderr);
+}
+
+Bool MacOSAudioManager::isMusicPlaying() const {
+  if (m_engine) {
+    AVAudioPlayer *musicPlayer = (__bridge AVAudioPlayer *)m_engine;
+    return musicPlayer.isPlaying ? TRUE : FALSE;
+  }
+  return FALSE;
+}
+
 Bool MacOSAudioManager::hasMusicTrackCompleted(const AsciiString &trackName,
                                                Int numberOfTimes) const {
-  return false;
+  return FALSE;
 }
 AsciiString MacOSAudioManager::getMusicTrackName() const { return ""; }
 
 void MacOSAudioManager::openDevice() {}
 void MacOSAudioManager::closeDevice() {}
-void *MacOSAudioManager::getDevice() { return m_engine; }
+void *MacOSAudioManager::getDevice() { return nullptr; }
 
 void MacOSAudioManager::notifyOfAudioCompletion(UnsignedInt audioCompleted,
                                                 UnsignedInt flags) {}
@@ -219,16 +224,16 @@ UnsignedInt MacOSAudioManager::getNum3DSamples() const { return 64; }
 UnsignedInt MacOSAudioManager::getNumStreams() const { return 8; }
 
 Bool MacOSAudioManager::doesViolateLimit(AudioEventRTS *event) const {
-  return false;
+  return FALSE;
 }
 Bool MacOSAudioManager::isPlayingLowerPriority(AudioEventRTS *event) const {
-  return false;
+  return FALSE;
 }
 Bool MacOSAudioManager::isPlayingAlready(AudioEventRTS *event) const {
-  return false;
+  return FALSE;
 }
 Bool MacOSAudioManager::isObjectPlayingVoice(UnsignedInt objID) const {
-  return false;
+  return FALSE;
 }
 
 void MacOSAudioManager::adjustVolumeOfPlayingAudio(AsciiString eventName,
@@ -236,9 +241,62 @@ void MacOSAudioManager::adjustVolumeOfPlayingAudio(AsciiString eventName,
 void MacOSAudioManager::removePlayingAudio(AsciiString eventName) {}
 void MacOSAudioManager::removeAllDisabledAudio() {}
 
-Bool MacOSAudioManager::has3DSensitiveStreamsPlaying() const { return false; }
+Bool MacOSAudioManager::has3DSensitiveStreamsPlaying() const { return FALSE; }
 void *MacOSAudioManager::getHandleForBink() { return nullptr; }
 void MacOSAudioManager::releaseHandleForBink() {}
+
+// ─────────────────────────────────────────────────────
+//  Helper: resolve a game audio path to a file URL
+//  Handles BIG archive extraction to temp cache
+// ─────────────────────────────────────────────────────
+static NSURL *resolveAudioFileURL(const std::string &pathStr) {
+  NSString *nsPath = [NSString stringWithUTF8String:pathStr.c_str()];
+  NSURL *fileURL = nil;
+
+  // Try absolute path first
+  if ([nsPath isAbsolutePath]) {
+    fileURL = [NSURL fileURLWithPath:nsPath];
+    if ([[NSFileManager defaultManager] fileExistsAtPath:[fileURL path]]) {
+      return fileURL;
+    }
+  }
+
+  // Try relative to current directory
+  NSString *cwd = [[NSFileManager defaultManager] currentDirectoryPath];
+  NSString *fullPath = [cwd stringByAppendingPathComponent:nsPath];
+  if ([[NSFileManager defaultManager] fileExistsAtPath:fullPath]) {
+    return [NSURL fileURLWithPath:fullPath];
+  }
+
+  // Try temp cache (previously extracted from BIG)
+  NSString *tempPath = [NSTemporaryDirectory()
+      stringByAppendingPathComponent:[nsPath lastPathComponent]];
+  if ([[NSFileManager defaultManager] fileExistsAtPath:tempPath]) {
+    return [NSURL fileURLWithPath:tempPath];
+  }
+
+  // Extract from BIG archive via TheFileSystem
+  if (TheFileSystem && TheFileSystem->doesFileExist(pathStr.c_str())) {
+    File *f = TheFileSystem->openFile(pathStr.c_str(), File::READ);
+    if (f) {
+      size_t fileSize = f->size();
+      char *buffer = f->readEntireAndClose();
+      if (buffer && fileSize > 0) {
+        NSURL *tempURL = [NSURL fileURLWithPath:tempPath];
+        NSData *data = [NSData dataWithBytesNoCopy:buffer
+                                            length:fileSize
+                                      freeWhenDone:YES];
+        [data writeToURL:tempURL atomically:YES];
+        fprintf(stderr, "MACOS AUDIO: Extracted '%s' -> cache (%zu bytes)\n",
+                pathStr.c_str(), fileSize);
+        fflush(stderr);
+        return tempURL;
+      }
+    }
+  }
+
+  return nil;
+}
 
 void MacOSAudioManager::friend_forcePlayAudioEventRTS(
     const AudioEventRTS *eventToPlay) {
@@ -252,102 +310,53 @@ void MacOSAudioManager::friend_forcePlayAudioEventRTS(
   if (filename.isEmpty())
     return;
 
-  // Convert \ to /
+  // Convert backslashes to forward slashes
   std::string pathStr = filename.str();
   for (size_t i = 0; i < pathStr.length(); ++i) {
     if (pathStr[i] == '\\')
       pathStr[i] = '/';
   }
 
-  NSString *nsPath = [NSString stringWithUTF8String:pathStr.c_str()];
-  NSURL *fileURL = [NSURL fileURLWithPath:nsPath];
+  fprintf(stderr, "MACOS AUDIO: Playing '%s'\n", pathStr.c_str());
+  fflush(stderr);
 
-  // Try relative to current directory if not absolute
-  if (![nsPath isAbsolutePath]) {
-    NSString *cwd = [[NSFileManager defaultManager] currentDirectoryPath];
-    fileURL =
-        [NSURL fileURLWithPath:[cwd stringByAppendingPathComponent:nsPath]];
+  NSURL *fileURL = resolveAudioFileURL(pathStr);
+  if (!fileURL) {
+    fprintf(stderr, "MACOS AUDIO: File not found: '%s'\n", pathStr.c_str());
+    fflush(stderr);
+    return;
   }
 
-  // Check if file exists on disk
-  if (![[NSFileManager defaultManager] fileExistsAtPath:[fileURL path]]) {
-    // If not, try to load from TheFileSystem (BIG files)
-    NSString *tempPath = [NSTemporaryDirectory()
-        stringByAppendingPathComponent:[nsPath lastPathComponent]];
-    if ([[NSFileManager defaultManager] fileExistsAtPath:tempPath]) {
-      fileURL = [NSURL fileURLWithPath:tempPath];
-    } else if (TheFileSystem && TheFileSystem->doesFileExist(pathStr.c_str())) {
-      File *f = TheFileSystem->openFile(pathStr.c_str(), File::READ);
-      if (f) {
-        size_t fileSize = f->size();
-        char *buffer = f->readEntireAndClose();
-        if (buffer) {
-          NSURL *tempURL = [NSURL fileURLWithPath:tempPath];
-          NSData *data = [NSData dataWithBytesNoCopy:buffer
-                                              length:fileSize
-                                        freeWhenDone:YES];
-          [data writeToURL:tempURL atomically:YES];
-          fileURL = tempURL;
-          fprintf(stderr, "MACOS AUDIO: Extracted %s to cache\n",
-                  pathStr.c_str());
-          fflush(stderr);
-        }
-      }
+  @try {
+    NSError *error = nil;
+    AVAudioPlayer *player =
+        [[AVAudioPlayer alloc] initWithContentsOfURL:fileURL error:&error];
+    if (!player) {
+      fprintf(stderr, "MACOS AUDIO: Failed to create player for '%s': %s\n",
+              pathStr.c_str(),
+              error ? [[error localizedDescription] UTF8String]
+                    : "Unknown error");
+      fflush(stderr);
+      return;
     }
-  }
-
-  fprintf(stderr, "MACOS AUDIO: Attempting to load URL: %s\n",
-          [[fileURL description] UTF8String]);
-  fflush(stderr);
-
-  NSError *error = nil;
-  AVAudioFile *audioFile = nil;
-  @try {
-    audioFile = [[AVAudioFile alloc] initForReading:fileURL error:&error];
-  } @catch (NSException *e) {
-    fprintf(stderr, "MACOS AUDIO: Exception loading file: %s\n",
-            [[e reason] UTF8String]);
-    fflush(stderr);
-  }
-
-  if (!audioFile) {
-    fprintf(stderr, "MACOS AUDIO: Failed to load %s: %s\n", pathStr.c_str(),
-            error ? [[error localizedDescription] UTF8String]
-                  : "Unknown error");
-    fflush(stderr);
-    return;
-  }
-
-  fprintf(stderr, "MACOS AUDIO: Playing %s\n", pathStr.c_str());
-  fflush(stderr);
-
-  AVAudioEngine *engine = (__bridge AVAudioEngine *)m_engine;
-  if (!engine || ![engine isRunning]) {
-    fprintf(stderr, "MACOS AUDIO: Engine not running, skipping %s\n", pathStr.c_str());
-    fflush(stderr);
-    return;
-  }
-
-  @try {
-    AVAudioPlayerNode *playerNode = [[AVAudioPlayerNode alloc] init];
-    [engine attachNode:playerNode];
-    [engine connect:playerNode
-                 to:(__bridge AVAudioMixerNode *)m_mainMixer
-             format:audioFile.processingFormat];
 
     // Volume
     float baseVol = this->getVolume(AudioAffect_Sound);
-    playerNode.volume = eventToPlay->getVolume() * baseVol;
+    player.volume = eventToPlay->getVolume() * baseVol;
 
-    [playerNode scheduleFile:audioFile atTime:nil completionHandler:nil];
-    [playerNode play];
+    // Play the audio
+    [player prepareToPlay];
+    [player play];
 
     ApplePlayingAudio playing;
-    playing.playerNode = (__bridge_retained void *)playerNode;
+    playing.playerNode = (__bridge_retained void *)player;
     playing.event = mutableEvent;
     m_playingAudio.push_back(playing);
+
+    fprintf(stderr, "MACOS AUDIO: 🔊 Playing: '%s' vol=%.2f\n",
+            pathStr.c_str(), player.volume);
   } @catch (NSException *e) {
-    fprintf(stderr, "MACOS AUDIO: Exception playing %s: %s\n",
+    fprintf(stderr, "MACOS AUDIO: Exception playing '%s': %s\n",
             pathStr.c_str(), [[e reason] UTF8String]);
     fflush(stderr);
   }
@@ -361,12 +370,7 @@ Real MacOSAudioManager::getFileLengthMS(AsciiString strToLoad) const {
 }
 void MacOSAudioManager::closeAnySamplesUsingFile(const void *fileToClose) {}
 
-void MacOSAudioManager::setDeviceListenerPosition() {
-  const Coord3D *pos = getListenerPosition();
-  if (pos) {
-    // Map to AVAudioEngine listener if needed
-  }
-}
+void MacOSAudioManager::setDeviceListenerPosition() {}
 
 #if defined(RTS_DEBUG)
 void MacOSAudioManager::audioDebugDisplay(DebugDisplayInterface *dd,

@@ -900,7 +900,11 @@ WWINLINE void DX8Wrapper::Set_DX8_Texture(unsigned int stage, IDirect3DBaseTextu
   		return;
   	}
 
+#ifndef __APPLE__
+	// On Windows/DX8, texture bindings persist between draw calls,
+	// so we can skip redundant SetTexture calls.
 	if (Textures[stage]==texture) return;
+#endif
 
 	SNAPSHOT_SAY(("DX8 - SetTexture(%x) ",texture));
 

@@ -14,6 +14,7 @@ StdMouse::StdMouse(void) {
 StdMouse::~StdMouse(void) {}
 
 void StdMouse::init(void) {
+  Mouse::init();
   m_inputMovesAbsolute = TRUE;
   setVisibility(TRUE);
 }

@@ -57,6 +57,7 @@
 #include "wwprofile.h"
 #include "wwmemlog.h"
 #include "assetmgr.h"
+#include "MacOSDebugLog.h"
 
 RectClass							Render2DClass::ScreenResolution( 0,0,0,0 );
 
@@ -132,6 +133,7 @@ void Render2DClass::Set_Texture(TextureClass* tex)
 void Render2DClass::Set_Texture( const char * filename)
 {
 	TextureClass * tex = WW3DAssetManager::Get_Instance()->Get_Texture( filename, MIP_LEVELS_1 );
+	DLOG_RFLOW(10, "Set_Texture('%s') -> tex=%p", filename ? filename : "(null)", (void*)tex);
 	Set_Texture( tex );
 	if ( tex != nullptr ) {
 		SET_REF_OWNER( tex );
@@ -459,6 +461,9 @@ void	Render2DClass::Add_Quad_HGradient( const RectClass & screen, unsigned long 
 
 void	Render2DClass::Add_Quad( const RectClass & screen, const RectClass & uv, unsigned long color )
 {
+	DLOG_RFLOW(11, "Add_Quad screen=(%.0f,%.0f)-(%.0f,%.0f) uv=(%.3f,%.3f)-(%.3f,%.3f) color=0x%08lX tex=%p",
+		screen.Left, screen.Top, screen.Right, screen.Bottom,
+		uv.Left, uv.Top, uv.Right, uv.Bottom, color, (void*)Texture);
 	Internal_Add_Quad_Indicies( Vertices.Count() );
 	Internal_Add_Quad_Vertices( screen );
 	Internal_Add_Quad_UVs( uv );
@@ -604,6 +609,9 @@ void Render2DClass::Render(void)
 		return;
 	}
 
+	DLOG_RFLOW(12, "Render verts=%d indices=%d tex=%p hidden=%d grayscale=%d",
+		Vertices.Count(), Indices.Count(), (void*)Texture, (int)IsHidden, (int)IsGrayScale);
+
 	// save the view and projection matrices since we're nuking them
 	Matrix4x4 view,proj;
 	Matrix4x4 identity(true);
@@ -626,6 +634,17 @@ void Render2DClass::Render(void)
 	vp.MaxZ		= 1;
 	DX8Wrapper::Set_Viewport(&vp);
 	DX8Wrapper::Set_Texture(0,Texture);
+	if (Texture) {
+		static int r2dTexLog = 0;
+		if (r2dTexLog < 20) {
+			IDirect3DBaseTexture8* d3d = Texture->Peek_D3D_Base_Texture();
+			const char* tname = Texture->Get_Full_Path().Is_Empty() ? "?" : (const char*)Texture->Get_Full_Path();
+			printf("R2D_TEX[%d] tex=%p d3d=%p name='%s' init=%d\n",
+				r2dTexLog++, (void*)Texture, (void*)d3d, tname,
+				(int)Texture->Is_Initialized());
+			fflush(stdout);
+		}
+	}
 
 	VertexMaterialClass *vm=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
 	DX8Wrapper::Set_Material(vm);

@@ -15,6 +15,8 @@
 #include "WW3D2/dx8wrapper.h"
 #include "d3d8.h"
 
+#include "MacOSDebugLog.h"
+
 class MacOSDisplayString : public DisplayString {
 public:
   void *operator new(size_t size, const char *msg) {
@@ -157,6 +159,11 @@ public:
     if (m_textString.getLength() == 0)
       return;
 
+    AsciiString ascii;
+    ascii.translate(m_textString);
+    DLOG_RFLOW(8, "MacOSDisplayString::draw x=%d y=%d color=0x%08X text='%s' w=%d h=%d",
+      x, y, (unsigned)color, ascii.str(), m_Width, m_Height);
+
     updateTexture();
 
     if (m_D3DTexture) {
@@ -194,9 +201,48 @@ public:
           {fx + m_Width, fy + m_Height, 0.0f, 1.0f, d3dColor, 1.0f, 1.0f},
       };
 
+      // Backup states
+      DWORD oldAlphaBlend, oldSrcBlend, oldDstBlend;
+      DWORD oldColorOp, oldColorArg1, oldColorArg2;
+      DWORD oldAlphaOp, oldAlphaArg1, oldAlphaArg2;
+      dev->GetRenderState(D3DRS_ALPHABLENDENABLE, &oldAlphaBlend);
+      dev->GetRenderState(D3DRS_SRCBLEND, &oldSrcBlend);
+      dev->GetRenderState(D3DRS_DESTBLEND, &oldDstBlend);
+      dev->GetTextureStageState(0, D3DTSS_COLOROP, &oldColorOp);
+      dev->GetTextureStageState(0, D3DTSS_COLORARG1, &oldColorArg1);
+      dev->GetTextureStageState(0, D3DTSS_COLORARG2, &oldColorArg2);
+      dev->GetTextureStageState(0, D3DTSS_ALPHAOP, &oldAlphaOp);
+      dev->GetTextureStageState(0, D3DTSS_ALPHAARG1, &oldAlphaArg1);
+      dev->GetTextureStageState(0, D3DTSS_ALPHAARG2, &oldAlphaArg2);
+
+      // Set correct states for text rendering
+      dev->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+      dev->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+      dev->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+      
+      dev->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+      dev->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
+      dev->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
+      
+      dev->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+      dev->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
+      dev->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
+
       dev->SetVertexShader(D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1);
       dev->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, verts,
                            sizeof(TexturedVertex));
+                           
+      // Restore states
+      dev->SetRenderState(D3DRS_ALPHABLENDENABLE, oldAlphaBlend);
+      dev->SetRenderState(D3DRS_SRCBLEND, oldSrcBlend);
+      dev->SetRenderState(D3DRS_DESTBLEND, oldDstBlend);
+      dev->SetTextureStageState(0, D3DTSS_COLOROP, oldColorOp);
+      dev->SetTextureStageState(0, D3DTSS_COLORARG1, oldColorArg1);
+      dev->SetTextureStageState(0, D3DTSS_COLORARG2, oldColorArg2);
+      dev->SetTextureStageState(0, D3DTSS_ALPHAOP, oldAlphaOp);
+      dev->SetTextureStageState(0, D3DTSS_ALPHAARG1, oldAlphaArg1);
+      dev->SetTextureStageState(0, D3DTSS_ALPHAARG2, oldAlphaArg2);
+      
       dev->SetTexture(0, nullptr);
     }
   }
@@ -208,6 +254,10 @@ public:
 
   virtual void getSize(Int *width, Int *height) override {
     updateTexture();
+    AsciiString ascii;
+    ascii.translate(m_textString);
+    DLOG_RFLOW(8, "MacOSDisplayString::getSize w=%d h=%d text='%s' stale=%d tex=%p",
+      m_Width, m_Height, ascii.str(), (int)m_Stale, (void*)m_D3DTexture);
     if (width)
       *width = m_Width;
     if (height)

@@ -413,6 +413,10 @@ UnsignedInt INI::load(AsciiString filename, INILoadType loadType, Xfer *pXfer) {
           } catch (...) {
             fprintf(stderr, "INI::load ERROR parsing block '%s' in file '%s' at line %d\n",
                     token, m_filename.str(), getLineNum());
+#ifdef __APPLE__
+            // On macOS, log and continue past INI parse errors to reach the render loop
+            fprintf(stderr, "  -> macOS: continuing past INI error\n");
+#else
             DEBUG_CRASH(("Error parsing block '%s' in INI file '%s'", token,
                          m_filename.str()));
             char buff[1024];
@@ -421,6 +425,7 @@ UnsignedInt INI::load(AsciiString filename, INILoadType loadType, Xfer *pXfer) {
                      m_filename.str(), currentLine.str());
 
             throw INIException(buff);
+#endif
           }
 #ifdef DEBUG_CRASHING
           strcpy(m_curBlockStart, "NO_BLOCK");

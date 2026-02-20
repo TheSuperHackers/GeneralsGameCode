@@ -39,6 +39,7 @@ static void drawFramerateBar(void);
 #include <windows.h>
 #include <io.h>
 #include <time.h>
+#include "MacOSDebugLog.h"
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "Common/FramePacer.h"
@@ -1668,6 +1669,10 @@ void W3DDisplay::draw( void )
 	if (TheGlobalData->m_headless)
 		return;
 
+	static int rflowFrameNum = 0;
+	DLOG_RFLOW(1, "W3DDisplay::draw frame=%d fps=%.1f headless=%d",
+		rflowFrameNum++, m_averageFPS, (int)TheGlobalData->m_headless);
+
 	updateAverageFPS();
 	if (TheGlobalData->m_enableDynamicLOD && TheGameLogic->getShowDynamicLOD())
 	{
@@ -2593,6 +2598,12 @@ void W3DDisplay::drawImage( const Image *image, Int startX, Int startY,
 	// sanity
 	if( image == nullptr )
 		return;
+
+	DLOG_RFLOW(9, "drawImage img=%p status=0x%X rawTex=%d filename='%s' rect=(%d,%d)-(%d,%d) color=0x%08X mode=%d",
+		(void*)image, (unsigned)image->getStatus(),
+		(int)BitIsSet(image->getStatus(), IMAGE_STATUS_RAW_TEXTURE),
+		image->getFilename().str() ? image->getFilename().str() : "(null)",
+		startX, startY, endX, endY, (unsigned)color, (int)mode);
 
 	// !!
 	// Remember to update the GUIEditDisplay::drawImage when you make

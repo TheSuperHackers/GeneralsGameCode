@@ -46,6 +46,7 @@
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 #include <stdlib.h>
+#include "MacOSDebugLog.h"
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "GameClient/Gadget.h"
@@ -87,7 +88,11 @@ static void drawButtonText( GameWindow *window, WinInstanceData *instData )
 
 	// sanity
 	if( text == nullptr || text->getTextLength() == 0 )
+	{
+		DLOG_RFLOW(7, "drawButtonText SKIP: text=%p len=%d",
+			(void*)text, text ? text->getTextLength() : -1);
 		return;
+	}
 
 	// get window position and size
 	window->winGetScreenPosition( &origin.x, &origin.y );
@@ -120,6 +125,11 @@ static void drawButtonText( GameWindow *window, WinInstanceData *instData )
 	// get text size
 	text->getSize( &width, &height );
 
+	DLOG_RFLOW(7, "drawButtonText OK: len=%d size=%dx%d color=0x%08X origin=(%d,%d) btnSize=(%d,%d) font=%p",
+		text->getTextLength(), width, height,
+		(unsigned)textColor,
+		origin.x, origin.y, size.x, size.y, (void*)window->winGetFont());
+
 	// where to draw
 	if( BitIsSet( window->winGetStatus(), WIN_STATUS_SHORTCUT_BUTTON ) )
 	{
@@ -147,6 +157,15 @@ static void drawButtonText( GameWindow *window, WinInstanceData *instData )
 //=============================================================================
 void W3DGadgetPushButtonDraw( GameWindow *window, WinInstanceData *instData )
 {
+	{
+		ICoord2D dbgO, dbgS;
+		window->winGetScreenPosition( &dbgO.x, &dbgO.y );
+		window->winGetSize( &dbgS.x, &dbgS.y );
+		DLOG_RFLOW(4, "PushButtonDraw pos=(%d,%d) size=(%dx%d) textLen=%d enabled=%d",
+			dbgO.x, dbgO.y, dbgS.x, dbgS.y,
+			instData->getTextLength(), (int)BitIsSet(window->winGetStatus(), WIN_STATUS_ENABLED));
+	}
+
 	Color color, border;
 	ICoord2D origin, size, start, end;
 
@@ -276,12 +295,24 @@ void W3DGadgetPushButtonDraw( GameWindow *window, WinInstanceData *instData )
 
 
 
+
 // W3DGadgetPushButtonImageDraw ===============================================
 /** Draw pushbutton with user supplied images */
 //=============================================================================
 void W3DGadgetPushButtonImageDraw( GameWindow *window,
 																	 WinInstanceData *instData )
 {
+	{
+		ICoord2D dbgO, dbgS;
+		window->winGetScreenPosition( &dbgO.x, &dbgO.y );
+		window->winGetSize( &dbgS.x, &dbgS.y );
+		const Image *enImg = GadgetButtonGetEnabledImage( window );
+		const Image *midImg = GadgetButtonGetMiddleEnabledImage( window );
+		DLOG_RFLOW(5, "PushButtonImageDraw pos=(%d,%d) size=(%dx%d) textLen=%d enabledImg=%p middleImg=%p",
+			dbgO.x, dbgO.y, dbgS.x, dbgS.y,
+			instData->getTextLength(), (void*)enImg, (void*)midImg);
+	}
+
 	// if we return nullptr then we'll call the one picture drawing code, if we return a value
 	// then we'll call the 3 picture drawing code
 	if( GadgetButtonGetMiddleEnabledImage( window ) )
@@ -375,24 +406,23 @@ void W3DGadgetPushButtonImageDrawOne( GameWindow *window,
 
 		if(BitIsSet( window->winGetStatus(), WIN_STATUS_USE_OVERLAY_STATES ) )
 		{
-			//we're using a new drawing system which does "grayscale" disabled buttons using original color artwork.
 			if( !BitIsSet( window->winGetStatus(), WIN_STATUS_ENABLED ) )
 			{
 				if( !BitIsSet( window->winGetStatus(), WIN_STATUS_NOT_READY ) )
 				{
-					//The button is disabled -- but if the button isn't "ready", we don't want to do this because
-					//we want to show the button in color with just the clock overlay.
 					if( !BitIsSet( window->winGetStatus(), WIN_STATUS_ALWAYS_COLOR ) )
 					{
 						drawMode=Display::DRAW_IMAGE_GRAYSCALE;
 					}
 					else
 					{
-						colorMultiplier = 0xff909090; //RGB values are 144/255 (90) -- Alpha is opaque (ff) --> ff909090;
+						colorMultiplier = 0xff909090;
 					}
 				}
 			}
 		}
+		DLOG_RFLOW(6, "ImageDrawOne drawImage img=%p rect=(%d,%d)-(%d,%d) mode=%d",
+			(void*)image, start.x, start.y, end.x, end.y, (int)drawMode);
 		TheDisplay->drawImage( image, start.x, start.y, end.x, end.y, colorMultiplier, drawMode );
 	}
 

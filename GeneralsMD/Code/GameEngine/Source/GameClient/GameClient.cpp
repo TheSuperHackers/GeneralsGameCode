@@ -515,13 +515,35 @@ DECLARE_PERF_TIMER(GameClient_draw)
 void GameClient::update( void )
 {
 	USE_PERF_TIMER(GameClient_update)
+	static int updateLogCount = 0;
+	if (updateLogCount < 5) {
+		printf("MENU_FLOW: GameClient::update() #%d, playIntro=%d, afterIntro=%d, isMoviePlaying=%d\n",
+			updateLogCount++, (int)TheGlobalData->m_playIntro, (int)TheGlobalData->m_afterIntro,
+			(int)TheDisplay->isMoviePlaying());
+		fflush(stdout);
+	}
 	// create the FRAME_TICK message
+	static Bool playSizzle = FALSE;
+
+	static int detailLogCount = 0;
+	if (detailLogCount < 10) {
+		printf("MENU_DETAIL[%d] playIntro=%d afterIntro=%d isMoviePlaying=%d playSizzle=%d m_playSizzle=%d\n",
+			detailLogCount++,
+			(int)TheGlobalData->m_playIntro,
+			(int)TheGlobalData->m_afterIntro,
+			(int)TheDisplay->isMoviePlaying(),
+			(int)playSizzle,
+			(int)TheGlobalData->m_playSizzle);
+		fflush(stdout);
+	}
+
 	GameMessage *frameMsg = TheMessageStream->appendMessage( GameMessage::MSG_FRAME_TICK );
 	frameMsg->appendTimestampArgument( getFrame() );
-	static Bool playSizzle = FALSE;
+
 	// We need to show the movie first.
 	if(TheGlobalData->m_playIntro && !TheDisplay->isMoviePlaying())
 	{
+		fprintf(stderr, "MENU_FLOW: playIntro path, starting logo movie\n");
 		if(TheGameLODManager && TheGameLODManager->didMemPass())
 			TheDisplay->playLogoMovie("EALogoMovie", 5000, 3000);
 		else
@@ -529,6 +551,8 @@ void GameClient::update( void )
 		TheWritableGlobalData->m_playIntro = FALSE;
 		TheWritableGlobalData->m_afterIntro = TRUE;
 		playSizzle = TRUE;
+		fprintf(stderr, "MENU_FLOW: afterIntro=%d, playSizzle=%d, isMoviePlaying=%d\n",
+			(int)TheGlobalData->m_afterIntro, (int)playSizzle, (int)TheDisplay->isMoviePlaying());
 	}
 
 	//Initial Game Condition.  We must show the movie first and then we can display the shell
@@ -536,15 +560,19 @@ void GameClient::update( void )
 	{
 		if( playSizzle && TheGlobalData->m_playSizzle )
 		{
+			fprintf(stderr, "MENU_FLOW: sizzle path\n");
 			TheWritableGlobalData->m_allowExitOutOfMovies = TRUE;
 			if(TheGameLODManager && TheGameLODManager->didMemPass())
 				TheDisplay->playMovie("Sizzle");
 			else
 				TheDisplay->playMovie("Sizzle640");
 			playSizzle = FALSE;
+			fprintf(stderr, "MENU_FLOW: after sizzle, isMoviePlaying=%d\n", (int)TheDisplay->isMoviePlaying());
 		}
 		else
 		{
+			fprintf(stderr, "MENU_FLOW: shell path! shellMapOn=%d, didMemPass=%d\n",
+				(int)TheGlobalData->m_shellMapOn, TheGameLODManager ? (int)TheGameLODManager->didMemPass() : -1);
 			TheWritableGlobalData->m_breakTheMovie = TRUE;
 			TheWritableGlobalData->m_allowExitOutOfMovies = TRUE;
 
@@ -577,8 +605,17 @@ void GameClient::update( void )
 
 			}
 
+#ifdef __APPLE__
+			// macOS: 3D shell map not supported yet, ensure shellMapOn is FALSE
+			// so showShellMap(TRUE) will load 2D BlankWindow background instead
+			fprintf(stderr, "MENU_FLOW: macOS -> setting shellMapOn=FALSE, calling showShellMap+showShell\n");
+			TheWritableGlobalData->m_shellMapOn = FALSE;
 			TheShell->showShellMap(TRUE);
 			TheShell->showShell();
+#else
+			TheShell->showShellMap(TRUE);
+			TheShell->showShell();
+#endif
 			TheWritableGlobalData->m_afterIntro = FALSE;
 		}
 	}

@@ -989,6 +989,8 @@ struct IDirect3DDevice8 : public IUnknown {
   STDMETHOD(GetRenderState)(THIS_ D3DRENDERSTATETYPE s, DWORD *v) PURE;
   STDMETHOD(SetTextureStageState)
   (THIS_ DWORD s, D3DTEXTURESTAGESTATETYPE t, DWORD v) PURE;
+  STDMETHOD(GetTextureStageState)
+  (THIS_ DWORD s, D3DTEXTURESTAGESTATETYPE t, DWORD *v) PURE;
   STDMETHOD(SetLight)(THIS_ DWORD i, const D3DLIGHT8 *l) PURE;
   STDMETHOD(SetViewport)(THIS_ const D3DVIEWPORT8 *v) PURE;
   STDMETHOD(Clear)(THIS_ DWORD c, const void *r, DWORD f, D3DCOLOR cl, float z,

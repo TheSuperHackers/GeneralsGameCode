@@ -29,7 +29,41 @@ DisplayStringManager *MacOS_CreateDisplayStringManager(void);
 
 class MacOSFontLibrary : public FontLibrary {
 public:
-  virtual Bool loadFontData(GameFont *font) override { return TRUE; }
+  virtual Bool loadFontData(GameFont *font) override {
+    if (!font) return FALSE;
+
+    @autoreleasepool {
+      // Map font name — game uses "Arial", "Times New Roman", "Generals" etc.
+      NSString *fontName = [NSString stringWithUTF8String:font->nameString.str()];
+      CGFloat pointSize = (CGFloat)font->pointSize;
+
+      // Try the requested font, fall back to system font
+      NSFont *nsFont = [NSFont fontWithName:fontName size:pointSize];
+      if (!nsFont && [fontName isEqualToString:@"Generals"]) {
+        nsFont = [NSFont fontWithName:@"Arial-BoldMT" size:pointSize];
+      }
+      if (!nsFont) {
+        nsFont = font->bold
+          ? [NSFont boldSystemFontOfSize:pointSize]
+          : [NSFont systemFontOfSize:pointSize];
+      }
+
+      // Calculate pixel height using the same formula as W3D GDI path:
+      // font_height = -MulDiv(PointSize, 96, 72) → logical height
+      // Then GetTextMetrics returns tmHeight as actual pixel height
+      // On macOS: ascender + descender + leading ≈ pixel height
+      int pixelHeight = (int)ceil([nsFont ascender] - [nsFont descender] + [nsFont leading]);
+      if (pixelHeight < 1) pixelHeight = (int)ceil(pointSize * 96.0 / 72.0);
+
+      font->height = pixelHeight;
+      font->fontData = nullptr; // MacOSDisplayString doesn't use fontData
+
+      printf("FONT: Loaded '%s' pt=%d bold=%d → height=%d px\n",
+             font->nameString.str(), font->pointSize, (int)font->bold, font->height);
+      fflush(stdout);
+    }
+    return TRUE;
+  }
 };
 
 class MacOSSnowManager : public SnowManager {
@@ -124,6 +158,11 @@ void MacOSGameClient::init() {
 }
 
 void MacOSGameClient::update() {
+  static int callCount = 0;
+  if (callCount < 3) {
+    printf("MENU_FLOW: MacOSGameClient::update() #%d\n", callCount++);
+    fflush(stdout);
+  }
   MacOS_PumpEvents();
   GameClient::update();
 }

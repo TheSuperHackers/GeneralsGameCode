@@ -45,8 +45,8 @@
 //-----------------------------------------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////
 
-// SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 #include <stdlib.h>
+#include "MacOSDebugLog.h"
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "GameClient/GameClient.h"
@@ -163,6 +163,11 @@ void W3DDisplayString::draw( Int x, Int y, Color color, Color dropColor, Int xDr
 	// sanity
 	if( getTextLength() == 0 )
 		return;  // nothing to draw
+
+	DLOG_RFLOW(8, "DisplayString::draw pos=(%d,%d) color=0x%08X len=%d fontChanged=%d textChanged=%d font=%p",
+		x, y, (unsigned)color, (int)getTextLength(),
+		(int)m_fontChanged, (int)m_textChanged,
+		(void*)m_font);
 
 	// if our font or text has changed we need to build a new sentence
 	if( m_fontChanged || m_textChanged )

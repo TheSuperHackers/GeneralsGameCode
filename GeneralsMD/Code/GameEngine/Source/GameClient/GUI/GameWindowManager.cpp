@@ -30,6 +30,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "MacOSDebugLog.h"
 
 #include "Common/Debug.h"
 #include "Common/Language.h"
@@ -1226,6 +1227,20 @@ Int GameWindowManager::drawWindow( GameWindow *window )
 	if( window == nullptr )
 		return WIN_ERR_INVALID_WINDOW;
 
+	{
+		ICoord2D pos;
+		window->winGetScreenPosition( &pos.x, &pos.y );
+		ICoord2D sz;
+		window->winGetSize( &sz.x, &sz.y );
+		DLOG_RFLOW(3, "drawWindow id=%d pos=(%d,%d) size=(%dx%d) hidden=%d seeThru=%d drawFn=%p textLen=%d",
+			window->winGetWindowId(),
+			pos.x, pos.y, sz.x, sz.y,
+			(int)BitIsSet( window->m_status, WIN_STATUS_HIDDEN ),
+			(int)BitIsSet( window->m_status, WIN_STATUS_SEE_THRU ),
+			(void*)(window->m_draw),
+			window->m_instData.getTextLength());
+	}
+
 	if( BitIsSet( window->m_status, WIN_STATUS_HIDDEN ) == FALSE )
 	{
 
@@ -1268,6 +1283,15 @@ Int GameWindowManager::drawWindow( GameWindow *window )
 void GameWindowManager::winRepaint( void )
 {
 	GameWindow *window, *next;
+
+	static int repaintLogCount = 0;
+	{
+		int winCount = 0;
+		for( GameWindow *w = m_windowTail; w; w = w->m_prev )
+			winCount++;
+		DLOG_RFLOW(2, "winRepaint windowCount=%d tail=%p list=%p",
+			winCount, (void*)m_windowTail, (void*)m_windowList);
+	}
 
 	// draw below windows
 	for( window = m_windowTail; window; window = next )

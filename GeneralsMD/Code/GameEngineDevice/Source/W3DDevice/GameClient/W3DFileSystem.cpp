@@ -214,7 +214,15 @@ char const * GameFileClass::Set_Name( char const *filename )
 			strlcpy(m_filePath, filename, ARRAY_SIZE(m_filePath));
 
 		// see if the file exists
+		static int step2log = 0;
+		if (step2log < 20) {
+			fprintf(stderr, "GF_STEP2[%d] checking='%s' (fileType=%d)\n", step2log, m_filePath, (int)fileType);
+		}
 		m_fileExists = TheFileSystem->doesFileExist( m_filePath );
+		if (step2log < 20) {
+			fprintf(stderr, "GF_STEP2[%d] result=%d\n", step2log, (int)m_fileExists);
+			step2log++;
+		}
 	}
 
 
@@ -312,6 +320,13 @@ char const * GameFileClass::Set_Name( char const *filename )
 		// see if the file exists
 		m_fileExists = TheFileSystem->doesFileExist( m_filePath );
 
+	}
+
+	static int setNameLogCount = 0;
+	if (setNameLogCount < 200) {
+		printf("GAMEFILE[%d] req='%s' path='%s' exists=%d\n",
+			setNameLogCount++, filename, m_filePath, (int)m_fileExists);
+		fflush(stdout);
 	}
 
 	return m_filename;

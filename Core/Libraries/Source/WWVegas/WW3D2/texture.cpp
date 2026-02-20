@@ -756,6 +756,20 @@ TextureClass::TextureClass
 			Init();
 		}
 	}
+
+	{
+		static int ctorLogCount = 0;
+		if (ctorLogCount < 50) {
+			printf("TEXCTOR[%d] name='%s' full='%s' Initialized=%d TexEnabled=%d ThumbEnabled=%d this=%p\n",
+				ctorLogCount++, name ? name : "(null)",
+				full_path ? full_path : "(null)",
+				(int)Initialized,
+				(int)WW3D::Is_Texturing_Enabled(),
+				(int)WW3D::Get_Thumbnail_Enabled(),
+				(void*)this);
+			fflush(stdout);
+		}
+	}
 }
 
 // ----------------------------------------------------------------------------
@@ -862,6 +876,12 @@ void TextureClass::Init()
 
 	if (!Peek_D3D_Base_Texture())
 	{
+#ifdef __APPLE__
+		// On macOS, always use foreground loading. The thumbnail path creates a small
+		// preview texture and sets Initialized=true, which prevents Request_Background_Loading
+		// from ever loading the full-resolution texture.
+		TextureLoader::Request_Foreground_Loading(this);
+#else
 		if (!WW3D::Get_Thumbnail_Enabled() || MipLevelCount==MIP_LEVELS_1)
 		{
 //		if (MipLevelCount==MIP_LEVELS_1) {
@@ -873,6 +893,7 @@ void TextureClass::Init()
 			Load_Locked_Surface();
 			TextureFormat=format;
 		}
+#endif
 	}
 
 	if (!Initialized)
@@ -931,6 +952,15 @@ void TextureClass::Apply(unsigned int stage)
 	// XBOX always initializes textures at creation time.
 	if (!Initialized)
 	{
+		static int applyLogCount = 0;
+		if (applyLogCount < 100) {
+			const char* texName = Get_Texture_Name() ? Get_Texture_Name() : "(null)";
+			const StringClass& fp = Get_Full_Path();
+			const char* texPath = fp.Is_Empty() ? "(empty)" : (const char*)fp;
+			printf("TEXAPPLY[%d] stage=%u name='%s' path='%s' Initialized=%d\n",
+				applyLogCount++, stage, texName, texPath, (int)Initialized);
+			fflush(stdout);
+		}
 		Init();
 
 		/* was in battlefield// Non-thumbnailed textures are always initialized when used
@@ -963,6 +993,17 @@ void TextureClass::Apply(unsigned int stage)
 	DX8_RECORD_TEXTURE(this);
 
 	// Set texture itself
+	{
+		IDirect3DBaseTexture8* d3dTex = Peek_D3D_Base_Texture();
+		static int texApplyLog = 0;
+		if (texApplyLog < 30) {
+			const char* texName = Get_Texture_Name() ? Get_Texture_Name() : "(null)";
+			printf("TEXAPPLY2[%d] stage=%u name='%s' d3dTex=%p texEnabled=%d Initialized=%d\n",
+				texApplyLog++, stage, texName, (void*)d3dTex,
+				(int)WW3D::Is_Texturing_Enabled(), (int)Initialized);
+			fflush(stdout);
+		}
+	}
 	if (WW3D::Is_Texturing_Enabled())
 	{
 		DX8Wrapper::Set_DX8_Texture(stage, Peek_D3D_Base_Texture());

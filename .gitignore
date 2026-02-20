@@ -68,3 +68,10 @@ build.ninja
 __pycache__/
 *.pycData/
 Data/*.big
+
+# macOS build logs
+Platform/MacOS/Build/Logs/
+bt.log
+test_bgra.*
+*.orig
+*.rej

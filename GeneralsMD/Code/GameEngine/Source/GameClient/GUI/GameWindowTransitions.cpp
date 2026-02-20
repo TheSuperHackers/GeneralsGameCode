@@ -47,6 +47,7 @@
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include <cstdio>
 
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
@@ -451,6 +452,9 @@ void GameWindowTransitionsHandler::draw( void )
 
 void GameWindowTransitionsHandler::setGroup(AsciiString groupName, Bool immediate )
 {
+	printf("TRANSITION: setGroup('%s') immediate=%d currentGroup=%p\n",
+		groupName.str(), (int)immediate, (void*)m_currentGroup);
+	fflush(stdout);
 	if(groupName.isEmpty() && immediate)
 		m_currentGroup = nullptr;
 	if(immediate && m_currentGroup)
@@ -475,14 +479,19 @@ void GameWindowTransitionsHandler::setGroup(AsciiString groupName, Bool immediat
 	m_currentGroup = findGroup(groupName);
 	if(m_currentGroup)
 		m_currentGroup->init();
-
-
-
 }
 
 void GameWindowTransitionsHandler::reverse( AsciiString groupName )
 {
 	TransitionGroup *g = findGroup(groupName);
+	printf("TRANSITION: reverse('%s') found=%p currentGroup=%p pendingGroup=%p\n",
+		groupName.str(), (void*)g, (void*)m_currentGroup, (void*)m_pendingGroup);
+	fflush(stdout);
+	if (!g) {
+		printf("TRANSITION: WARNING - group '%s' NOT FOUND!\n", groupName.str());
+		fflush(stdout);
+		return;
+	}
 	if( m_currentGroup == g )
 	{
 		m_currentGroup->reverse();

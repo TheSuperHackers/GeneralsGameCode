@@ -133,8 +133,8 @@ typedef struct _TGAHeader
  */
 typedef struct _TGA2Footer
 	{
-	long Extension;
-	long Developer;
+	int Extension;
+	int Developer;
 	char Signature[16];
 	char RsvdChar;
 	char BZST;
@@ -224,12 +224,12 @@ typedef struct _TGA2Extension
 	TGA2TimeStamp JobTime;
 	char          SoftID[41];
 	TGA2SoftVer   SoftVer;
-	long          KeyColor;
+	int           KeyColor;
 	TGA2Ratio     Aspect;
 	TGA2Ratio     Gamma;
-	long          ColorCor;
-	long          PostStamp;
-	long          ScanLine;
+	int           ColorCor;
+	int           PostStamp;
+	int           ScanLine;
 	char          Attributes;
 	} TGA2Extension;
 

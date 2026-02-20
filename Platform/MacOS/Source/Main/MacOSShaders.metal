@@ -196,29 +196,36 @@ vertex VertexOut vertex_main(VertexIn in [[stage_in]],
     out.texCoord2 = in.texCoord2;
     out.specularColor = float4(0.0, 0.0, 0.0, 0.0);
     
-    // Simple fog distance — computed properly using DX8 fog formulas
-    float4 viewPos = uniforms.view * uniforms.world * pos;
-    float dist = length(viewPos.xyz); // distance from camera in view space
-    
-    // Compute fog factor based on fog mode from LightingUniforms
-    // fogFactor: 1.0 = no fog (fully visible), 0.0 = fully fogged
-    if (lighting.fogMode == D3DFOG_LINEAR) {
-        float fogRange = lighting.fogEnd - lighting.fogStart;
-        if (fogRange > 0.0001) {
-            out.fogFactor = clamp((lighting.fogEnd - dist) / fogRange, 0.0, 1.0);
-        } else {
-            out.fogFactor = (dist < lighting.fogEnd) ? 1.0 : 0.0;
-        }
-    } else if (lighting.fogMode == D3DFOG_EXP) {
-        out.fogFactor = exp(-lighting.fogDensity * dist);
-        out.fogFactor = clamp(out.fogFactor, 0.0, 1.0);
-    } else if (lighting.fogMode == D3DFOG_EXP2) {
-        float exponent = lighting.fogDensity * dist;
-        out.fogFactor = exp(-(exponent * exponent));
-        out.fogFactor = clamp(out.fogFactor, 0.0, 1.0);
+    // For 2D/screen-space vertices (XYZRHW), skip fog entirely.
+    // The world/view transforms are meaningless for screen-space coords,
+    // and applying fog to UI elements would make them invisible.
+    if (uniforms.useProjection == 2) {
+        out.fogFactor = 1.0; // fully visible, no fog
     } else {
-        // D3DFOG_NONE — no fog
-        out.fogFactor = 1.0; // fully visible
+        // 3D fog distance — computed properly using DX8 fog formulas
+        float4 viewPos = uniforms.view * uniforms.world * pos;
+        float dist = length(viewPos.xyz); // distance from camera in view space
+        
+        // Compute fog factor based on fog mode from LightingUniforms
+        // fogFactor: 1.0 = no fog (fully visible), 0.0 = fully fogged
+        if (lighting.fogMode == D3DFOG_LINEAR) {
+            float fogRange = lighting.fogEnd - lighting.fogStart;
+            if (fogRange > 0.0001) {
+                out.fogFactor = clamp((lighting.fogEnd - dist) / fogRange, 0.0, 1.0);
+            } else {
+                out.fogFactor = (dist < lighting.fogEnd) ? 1.0 : 0.0;
+            }
+        } else if (lighting.fogMode == D3DFOG_EXP) {
+            out.fogFactor = exp(-lighting.fogDensity * dist);
+            out.fogFactor = clamp(out.fogFactor, 0.0, 1.0);
+        } else if (lighting.fogMode == D3DFOG_EXP2) {
+            float exponent = lighting.fogDensity * dist;
+            out.fogFactor = exp(-(exponent * exponent));
+            out.fogFactor = clamp(out.fogFactor, 0.0, 1.0);
+        } else {
+            // D3DFOG_NONE — no fog
+            out.fogFactor = 1.0; // fully visible
+        }
     }
     
     // ─── Per-vertex lighting ───

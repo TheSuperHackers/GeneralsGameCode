@@ -2,6 +2,7 @@
 #include "MetalDevice8.h"
 #include "MetalSurface8.h"
 #include <map>
+#include <cstdio>
 
 #ifndef D3DERR_INVALIDCALL
 #define D3DERR_INVALIDCALL E_FAIL
@@ -254,7 +255,28 @@ STDMETHODIMP MetalTexture8::LockRect(UINT Level, D3DLOCKED_RECT *pLockedRect,
   if (!data)
     return D3DERR_OUTOFVIDEOMEMORY;
 
-  pLockedRect->pBits = data;
+  // Retrieve existing texture data if it's already uploaded.
+  if (m_Texture && !(Flags & D3DLOCK_DISCARD)) {
+    id<MTLTexture> mtlTex = (__bridge id<MTLTexture>)m_Texture;
+    MTLRegion region = MTLRegionMake2D(0, 0, width, height);
+    if (isCompressed) {
+      UINT bytesPerImage = pitch * std::max(1u, (height + 3) / 4);
+      [mtlTex getBytes:data bytesPerRow:pitch bytesPerImage:bytesPerImage fromRegion:region mipmapLevel:Level slice:0];
+    } else {
+      [mtlTex getBytes:data bytesPerRow:pitch fromRegion:region mipmapLevel:Level];
+    }
+  }
+
+  uint8_t *pBits = (uint8_t *)data;
+  if (pRect) {
+    if (isCompressed) {
+      pBits += (pRect->top / 4) * pitch + (pRect->left / 4) * bpp;
+    } else {
+      pBits += pRect->top * pitch + pRect->left * bpp;
+    }
+  }
+
+  pLockedRect->pBits = pBits;
   pLockedRect->Pitch = pitch;
 
   LockedLevel lvl;
@@ -268,24 +290,89 @@ STDMETHODIMP MetalTexture8::LockRect(UINT Level, D3DLOCKED_RECT *pLockedRect,
 }
 
 STDMETHODIMP MetalTexture8::UnlockRect(UINT Level) {
+  static int unlockEntryCount = 0;
   auto it = m_LockedLevels.find(Level);
-  if (it == m_LockedLevels.end())
+  if (it == m_LockedLevels.end()) {
+    if (unlockEntryCount < 50) {
+      printf("TEX_UNLOCK_MISS[%d] level=%u lockedCount=%zu this=%p\n",
+             unlockEntryCount++, Level, m_LockedLevels.size(), this);
+      fflush(stdout);
+    }
     return D3DERR_INVALIDCALL;
+  }
 
   LockedLevel &lvl = it->second;
 
   // Upload to Metal Texture
   id<MTLTexture> tex = (__bridge id<MTLTexture>)m_Texture;
 
+  // On Apple Silicon, textures use Shared memory. Updating a texture via replaceRegion
+  // while the GPU might be reading from it causes tearing / flickering.
+  // For single-level textures (which are typical for dynamic UI/video), we can simply
+  // allocate a new texture, resolving the synchronization problem.
+  if (m_Levels == 1) {
+    MTLTextureDescriptor *desc = [[MTLTextureDescriptor alloc] init];
+    desc.pixelFormat = tex.pixelFormat;
+    desc.width = tex.width;
+    desc.height = tex.height;
+    desc.mipmapLevelCount = 1;
+    desc.usage = tex.usage;
+    
+    id<MTLTexture> newTex = [tex.device newTextureWithDescriptor:desc];
+    CFRelease(m_Texture);
+    m_Texture = (__bridge_retained void *)newTex;
+    tex = newTex;
+  }
+
   UINT width = std::max(1u, m_Width >> Level);
   UINT height = std::max(1u, m_Height >> Level);
 
+  bool isCompressed = (m_Format == D3DFMT_DXT1 || m_Format == D3DFMT_DXT2 ||
+                       m_Format == D3DFMT_DXT3 || m_Format == D3DFMT_DXT4 ||
+                       m_Format == D3DFMT_DXT5);
+
+  static int texUploadLogCount = 0;
+
   MTLRegion region = MTLRegionMake2D(0, 0, width, height);
 
-  [tex replaceRegion:region
-         mipmapLevel:Level
-           withBytes:lvl.ptr
-         bytesPerRow:lvl.pitch];
+  if (isCompressed) {
+    // For BC compressed formats, bytesPerRow = blocksWide * bytesPerBlock
+    UINT bytesPerBlock = lvl.bytesPerPixel; // 8 for DXT1, 16 for DXT3/5
+    UINT blocksWide = std::max(1u, (width + 3) / 4);
+    UINT blocksHigh = std::max(1u, (height + 3) / 4);
+    UINT bytesPerRow = blocksWide * bytesPerBlock;
+    UINT bytesPerImage = bytesPerRow * blocksHigh;
+
+    if (texUploadLogCount < 200) {
+      uint8_t *bytes = (uint8_t*)lvl.ptr;
+      printf("TEX_UPLOAD[%d] COMPRESSED fmt=%d level=%u %ux%u blocks=%ux%u bpr=%u bpi=%u first4bytes=[%02x %02x %02x %02x]\n",
+              texUploadLogCount++, (int)m_Format, Level, width, height,
+              blocksWide, blocksHigh, bytesPerRow, bytesPerImage,
+              bytes[0], bytes[1], bytes[2], bytes[3]);
+      fflush(stdout);
+    }
+
+    [tex replaceRegion:region
+           mipmapLevel:Level
+                 slice:0
+             withBytes:lvl.ptr
+           bytesPerRow:bytesPerRow
+         bytesPerImage:bytesPerImage];
+  } else {
+    if (texUploadLogCount < 200) {
+      uint8_t *bytes = (uint8_t*)lvl.ptr;
+      printf("TEX_UPLOAD[%d] UNCOMPRESSED fmt=%d level=%u %ux%u pitch=%u bpp=%u first4bytes=[%02x %02x %02x %02x]\n",
+              texUploadLogCount++, (int)m_Format, Level, width, height,
+              lvl.pitch, lvl.bytesPerPixel,
+              bytes[0], bytes[1], bytes[2], bytes[3]);
+      fflush(stdout);
+    }
+
+    [tex replaceRegion:region
+           mipmapLevel:Level
+             withBytes:lvl.ptr
+           bytesPerRow:lvl.pitch];
+  }
 
   free(lvl.ptr);
   m_LockedLevels.erase(it);

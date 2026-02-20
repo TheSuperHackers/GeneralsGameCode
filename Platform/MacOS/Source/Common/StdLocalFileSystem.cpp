@@ -203,6 +203,11 @@ void StdLocalFileSystem::getFileListInDirectory(
     const AsciiString &searchName, FilenameList &filenameList,
     Bool searchSubdirectories) const {
 
+  printf("GFLD_ENTRY: cur='%s' orig='%s' search='%s' subdirs=%d\n",
+    currentDirectory.str(), originalDirectory.str(), searchName.str(),
+    (int)searchSubdirectories);
+  fflush(stdout);
+
   AsciiString asciisearch;
   asciisearch = originalDirectory;
   asciisearch.concat(currentDirectory);
@@ -210,6 +215,10 @@ void StdLocalFileSystem::getFileListInDirectory(
   if (asciisearch.isEmpty()) {
     asciisearch = ".";
   }
+
+  printf("GFLD_SEARCH: asciisearch='%s' ext='%s'\n",
+    asciisearch.str(), searchExt.c_str());
+  fflush(stdout);
 
   std::filesystem::path fixedPath =
       fixFilenameFromWindowsPath(asciisearch.str(), 0);

@@ -138,7 +138,7 @@ struct LegacyDDSURFACEDESC2 {
 	};
 	unsigned AlphaBitDepth;
 	unsigned Reserved;
-	void* Surface;
+	unsigned Surface; // Was void* but must be 4 bytes to match DDS file format on 64-bit platforms
 	union
 	{
 		LegacyDDCOLORKEY CKDestOverlay;

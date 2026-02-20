@@ -33,6 +33,7 @@
 #include "Common/DataChunk.h"
 #include "Common/file.h"
 #include "Common/FileSystem.h"
+#include "Common/WideCharUtils.h"
 
 // If verbose, lots of debug logging.
 #define not_VERBOSE
@@ -357,7 +358,7 @@ void DataChunkOutput::writeUnicodeString( UnicodeString theString )
 {
 	UnsignedShort len = theString.getLength();
 	::fwrite( (const char *)&len, sizeof(UnsignedShort) , 1, m_tmp_file );
-	::fwrite( theString.str(), len*sizeof(WideChar) , 1, m_tmp_file );
+	writeUTF16ToStdioFile( m_tmp_file, theString.str(), len );
 }
 
 void DataChunkOutput::writeNameKey( const NameKeyType key )
@@ -970,8 +971,8 @@ UnicodeString DataChunkInput::readUnicodeString(void)
 	UnicodeString theString;
 	if (len>0) {
 		WideChar *str = theString.getBufferForRead(len);
-		m_file->read( (char*)str, len*sizeof(WideChar) );
-		decrementDataLeft( len*sizeof(WideChar) );
+		readUTF16FromFile( m_file, str, len );
+		decrementDataLeft( len*UTF16_CHAR_SIZE );
 		// add null delimiter to string.  Note that getBufferForRead allocates space for terminating null.
 		str[len] = '\000';
 	}

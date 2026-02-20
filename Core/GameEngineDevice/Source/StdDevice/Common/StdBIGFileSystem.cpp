@@ -65,8 +65,21 @@ void StdBIGFileSystem::init() {
 #if RTS_ZEROHOUR
     // load original Generals assets
     AsciiString installPath;
-    GetStringFromGeneralsRegistry("", "InstallPath", installPath );
+#ifdef __APPLE__
+    // On macOS there's no Windows registry, use env var or relative path
+    const char* envPath = getenv("GENERALS_INSTALL_PATH");
+    if (envPath && envPath[0]) {
+        installPath = envPath;
+        fprintf(stderr, "StdBIGFileSystem::init() - Generals InstallPath from env: '%s'\n", installPath.str());
+    } else {
+        // Try common relative path (CWD is ZH dir, Generals is sibling)
+        installPath = "../Command and Conquer Generals/";
+        fprintf(stderr, "StdBIGFileSystem::init() - trying relative Generals path: '%s'\n", installPath.str());
+    }
+#else
+    GetStringFromGeneralsRegistry("", "InstallPath", installPath);
     fprintf(stderr, "StdBIGFileSystem::init() - Generals InstallPath='%s'\n", installPath.str());
+#endif
     //@todo this will need to be ramped up to a crash for release
     DEBUG_ASSERTCRASH(!installPath.isEmpty(), ("Be 1337! Go install Generals!"));
     if (!installPath.isEmpty())
@@ -234,6 +247,7 @@ Bool StdBIGFileSystem::loadBigFilesFromDirectory(AsciiString dir, AsciiString fi
 #endif
 
 		ArchiveFile *archiveFile = openArchiveFile((*it).str());
+		fprintf(stderr, "  BIG: '%s' -> %s\n", (*it).str(), archiveFile ? "OK" : "FAILED");
 
 		if (archiveFile != nullptr) {
 			DEBUG_LOG(("StdBIGFileSystem::loadBigFilesFromDirectory - loading %s into the directory tree.", (*it).str()));

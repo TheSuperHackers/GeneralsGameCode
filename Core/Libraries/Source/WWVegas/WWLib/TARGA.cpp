@@ -64,6 +64,10 @@
 #ifndef TGA_USES_WWLIB_FILE_CLASSES
 #include "WWDebug/wwdebug.h"
 #endif
+
+#ifdef __APPLE__
+#include <stdio.h>
+#endif
 #include <malloc.h>
 #include <memory.h>
 #include "stringex.h"
@@ -196,11 +200,13 @@ long Targa::Open(const char* name, long mode)
 
 				/* Check for 2.0 targa file by loading the footer */
 				if (File_Seek(-26, SEEK_END) == -1) {
+					printf("TEXTURE: Targa: File_Seek(-26, SEEK_END) failed\n"); fflush(stdout);
 					error = TGAERR_READ;
 				}
 
 				if (!error) {
 					if (File_Read(&footer, sizeof(TGA2Footer)) != sizeof(TGA2Footer)) {
+						printf("TEXTURE: Targa: File_Read footer failed, expected %d\n", (int)sizeof(TGA2Footer)); fflush(stdout);
 						error = TGAERR_READ;
 					} else {
 						/* If this a 2.0 file with an extension? */
@@ -216,11 +222,13 @@ long Targa::Open(const char* name, long mode)
 				if (!error && (mFlags & TGAF_TGA2)) {
 
 					if (File_Seek(footer.Extension, SEEK_SET) == -1) {
+						printf("TEXTURE: Targa: File_Seek footer.Extension failed\n"); fflush(stdout);
 						error = TGAERR_READ;
 					}
 
 					if (!error) {
 						if (File_Read(&mExtension, sizeof(TGA2Extension)) != sizeof(TGA2Extension)) {
+							printf("TEXTURE: Targa: File_Read mExtension failed\n"); fflush(stdout);
 							error = TGAERR_READ;
 						}
 					}
@@ -228,11 +236,13 @@ long Targa::Open(const char* name, long mode)
 
 				/* Read in header. */
 				if (!error && (File_Seek(0, SEEK_SET) == -1)) {
+					printf("TEXTURE: Targa: File_Seek 0 SEEK_SET failed\n"); fflush(stdout);
 					error = TGAERR_READ;
 				} else {
 
 					size = File_Read(&Header, sizeof(TGAHeader));
 					if (size != sizeof(TGAHeader)) {
+						printf("TEXTURE: Targa: File_Read Header failed, size=%d expected %d\n", (int)size, (int)sizeof(TGAHeader)); fflush(stdout);
 						error = TGAERR_READ;
 					}
 				}
@@ -240,6 +250,7 @@ long Targa::Open(const char* name, long mode)
 				/* Skip the ID field */
 				if (!error && (Header.IDLength != 0)) {
 					if (File_Seek(Header.IDLength, SEEK_CUR) == -1) {
+						printf("TEXTURE: Targa: File_Seek Header.IDLength failed\n"); fflush(stdout);
 						error = TGAERR_READ;
 					}
 				}
@@ -1431,22 +1442,42 @@ long Targa_Error_Handler(long load_err,const char* filename)
 	case 0:
 		return 0;
 	case TGAERR_OPEN:
+#ifdef __APPLE__
+		printf("TEXTURE: Targa: Failed to open file \"%s\"\n", filename);
+		fflush(stdout);
+#endif
 		WWDEBUG_SAY(("Targa: Failed to open file \"%s\"", filename));
 		break;
 
 	case TGAERR_READ:
+#ifdef __APPLE__
+		printf("TEXTURE: Targa: Failed to read file \"%s\"\n", filename);
+		fflush(stdout);
+#endif
 		WWDEBUG_SAY(("Targa: Failed to read file \"%s\"", filename));
 		break;
 
 	case TGAERR_NOTSUPPORTED:
+#ifdef __APPLE__
+		printf("TEXTURE: Targa: File \"%s\" is an unsupported Targa type\n", filename);
+		fflush(stdout);
+#endif
 		WWDEBUG_SAY(("Targa: File \"%s\" is an unsupported Targa type", filename));
 		break;
 
 	case TGAERR_NOMEM:
+#ifdef __APPLE__
+		printf("TEXTURE: Targa: Failed to allocate memory for file \"%s\"\n", filename);
+		fflush(stdout);
+#endif
 		WWDEBUG_SAY(("Targa: Failed to allocate memory for file \"%s\"", filename));
 		break;
 
 	default:
+#ifdef __APPLE__
+		printf("TEXTURE: Targa: Unknown error when loading file \"%s\"\n", filename);
+		fflush(stdout);
+#endif
 		WWDEBUG_SAY(("Targa: Unknown error when loading file \"%s\"", filename));
 		break;
 	}

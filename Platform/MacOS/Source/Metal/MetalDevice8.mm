@@ -17,6 +17,7 @@
 #include "MetalSurface8.h"
 #include "MetalTexture8.h"
 #include "MetalVertexBuffer8.h"
+#include "MacOSDebugLog.h"
 #include <cstdio>
 #include <cstring>
 
@@ -325,10 +326,14 @@ bool MetalDevice8::InitMetal(void *windowHandle) {
   // Create a small zero buffer for default vertex attributes (missing FVF
   // components)
   {
-    uint8_t zeros[16] = {0};
+    uint32_t defaultData[16] = {0};
+    defaultData[0] = 0xFFFFFFFF; // offset 0: Opaque White (for diffuse)
+    defaultData[1] = 0x00000000; // offset 4: Black (for specular)
+    // offset 8+: Zeroes (for pos, normal, texcoords)
+    
     id<MTLBuffer> zeroBuf =
-        [device newBufferWithBytes:zeros
-                            length:sizeof(zeros)
+        [device newBufferWithBytes:defaultData
+                            length:sizeof(defaultData)
                            options:MTLResourceStorageModeShared];
     m_ZeroBuffer = (__bridge_retained void *)zeroBuf;
   }
@@ -412,14 +417,18 @@ bool MetalDevice8::InitMetal(void *windowHandle) {
     window.contentView.wantsLayer = YES;
     CGSize viewSize = window.contentView.bounds.size;
     CGFloat scale = window.backingScaleFactor;
-    layer.drawableSize =
-        CGSizeMake(viewSize.width * scale, viewSize.height * scale);
+
+    // Force contentsScale=1.0: the game renders at its native resolution
+    // (e.g. 800x600) and macOS scales it to fill the window on Retina displays.
+    // This avoids the "squished to 1/4" problem on Retina screens.
+    layer.contentsScale = 1.0;
+    layer.drawableSize = CGSizeMake(viewSize.width, viewSize.height);
     m_ScreenWidth = viewSize.width;
     m_ScreenHeight = viewSize.height;
 
-    fprintf(stderr, "[MetalDevice8] Initialized: %gx%g (drawable: %gx%g)\n",
+    fprintf(stderr, "[MetalDevice8] Initialized: %gx%g (drawable: %gx%g, backingScale: %g, contentsScale: 1.0)\n",
             m_ScreenWidth, m_ScreenHeight, layer.drawableSize.width,
-            layer.drawableSize.height);
+            layer.drawableSize.height, scale);
   } else {
     // Window not yet available — use fallback size
     layer.drawableSize = CGSizeMake(m_ScreenWidth, m_ScreenHeight);
@@ -895,12 +904,9 @@ STDMETHODIMP MetalDevice8::Reset(D3DPRESENT_PARAMETERS *p) { return D3D_OK; }
 STDMETHODIMP MetalDevice8::Present(const void *s, const void *d, HWND w,
                                    const void *r) {
   static int presentCount = 0;
-  if (presentCount++ % 120 == 0) {
-    fprintf(stderr, "DEBUG Present #%d: encoder=%p drawable=%p cmdBuf=%p\n",
-            presentCount, m_CurrentEncoder, m_CurrentDrawable,
-            m_CurrentCommandBuffer);
-    fflush(stderr);
-  }
+  presentCount++;
+  DLOG_RFLOW(16, "Present #%d encoder=%p drawable=%p cmdBuf=%p",
+    presentCount, m_CurrentEncoder, m_CurrentDrawable, m_CurrentCommandBuffer);
   if (m_CurrentEncoder) {
     [MTL_ENCODER endEncoding];
     CLEAR_MTL(CurrentEncoder);
@@ -1344,6 +1350,19 @@ STDMETHODIMP MetalDevice8::SetTexture(DWORD Stage,
                                       IDirect3DBaseTexture8 *pTexture) {
   if (Stage < MAX_TEXTURE_STAGES)
     m_Textures[Stage] = pTexture;
+
+  if (Stage == 0) {
+    if (pTexture) {
+      MetalTexture8 *mt = (MetalTexture8 *)pTexture;
+      id<MTLTexture> mtl = mt->GetMTLTexture();
+      DLOG_RFLOW(17, "SetTexture stage=0 tex=%p mtl=%p %lux%lu fmt=%lu",
+        (void*)pTexture, mtl ? (__bridge void*)mtl : nullptr,
+        mtl ? (unsigned long)mtl.width : 0, mtl ? (unsigned long)mtl.height : 0,
+        mtl ? (unsigned long)mtl.pixelFormat : 0);
+    } else {
+      DLOG_RFLOW(17, "SetTexture stage=0 tex=NULL");
+    }
+  }
   return D3D_OK;
 }
 
@@ -1525,48 +1544,42 @@ void *MetalDevice8::GetPSO(DWORD fvf) {
   vd.layouts[0].stride = currentOffset;
   vd.layouts[0].stepFunction = MTLVertexStepFunctionPerVertex;
 
-  // --- Provide defaults for missing attributes via a constant zero buffer ---
-  // Metal requires all shader-declared attributes to be present in the vertex
-  // descriptor. For attributes not in the FVF, we bind them to a separate
-  // buffer (index 30) filled with zeros, using stepFunction=Constant so all
-  // vertices read the same default (zero) values.
   bool needDefaultBuffer = !hasPosition || !hasDiffuse || !hasTexCoord0 ||
                            !hasNormal || !hasSpecular || !hasTexCoord1;
   if (needDefaultBuffer) {
-    // Layout for constant buffer: all missing attributes overlap at offset 0
-    // Buffer contains at least 16 bytes of zeros (enough for float4)
-    vd.layouts[30].stride = 16;
+    // Layout for constant buffer
+    vd.layouts[30].stride = 64;
     vd.layouts[30].stepFunction = MTLVertexStepFunctionConstant;
     vd.layouts[30].stepRate = 0;
 
     if (!hasPosition) {
       vd.attributes[0].format = MTLVertexFormatFloat3;
-      vd.attributes[0].offset = 0;
+      vd.attributes[0].offset = 8;
       vd.attributes[0].bufferIndex = 30;
     }
     if (!hasDiffuse) {
       vd.attributes[1].format = MTLVertexFormatUChar4Normalized_BGRA;
-      vd.attributes[1].offset = 0;
+      vd.attributes[1].offset = 0; // White
       vd.attributes[1].bufferIndex = 30;
     }
     if (!hasTexCoord0) {
       vd.attributes[2].format = MTLVertexFormatFloat2;
-      vd.attributes[2].offset = 0;
+      vd.attributes[2].offset = 8;
       vd.attributes[2].bufferIndex = 30;
     }
     if (!hasNormal) {
       vd.attributes[3].format = MTLVertexFormatFloat3;
-      vd.attributes[3].offset = 0;
+      vd.attributes[3].offset = 8;
       vd.attributes[3].bufferIndex = 30;
     }
     if (!hasSpecular) {
       vd.attributes[4].format = MTLVertexFormatUChar4Normalized_BGRA;
-      vd.attributes[4].offset = 0;
+      vd.attributes[4].offset = 4; // Black
       vd.attributes[4].bufferIndex = 30;
     }
     if (!hasTexCoord1) {
       vd.attributes[5].format = MTLVertexFormatFloat2;
-      vd.attributes[5].offset = 0;
+      vd.attributes[5].offset = 8;
       vd.attributes[5].bufferIndex = 30;
     }
   }
@@ -1595,6 +1608,9 @@ void *MetalDevice8::GetPSO(DWORD fvf) {
 STDMETHODIMP MetalDevice8::DrawPrimitive(DWORD pt, UINT sv, UINT pc) {
   if (!m_CurrentEncoder || !m_StreamSource)
     return D3D_OK;
+
+  DLOG_RFLOW(14, "DrawPrimitive pt=%u startVert=%u primCount=%u fvf=0x%x",
+    (unsigned)pt, sv, pc, (unsigned)GetBufferFVF(m_StreamSource));
 
   // 1. Get FVF and PSO
   DWORD fvf = GetBufferFVF(m_StreamSource);
@@ -1773,7 +1789,17 @@ STDMETHODIMP MetalDevice8::DrawPrimitive(DWORD pt, UINT sv, UINT pc) {
       id<MTLTexture> mtlTex = tex->GetMTLTexture();
       if (mtlTex) {
         [MTL_ENCODER setFragmentTexture:mtlTex atIndex:s];
+        if (s == 0) {
+          DLOG_RFLOW(18, "BindTex stage=0 mtl=%p %lux%lu fmt=%lu",
+            (__bridge void*)mtlTex,
+            (unsigned long)mtlTex.width, (unsigned long)mtlTex.height,
+            (unsigned long)mtlTex.pixelFormat);
+        }
+      } else if (s == 0) {
+        DLOG_RFLOW(18, "BindTex stage=0 tex=%p mtl=NULL!", (void*)tex);
       }
+    } else if (s == 0) {
+      DLOG_RFLOW(18, "BindTex stage=0 m_Textures=NULL");
     }
     // Always bind a sampler (even if no texture) to avoid Metal validation
     // errors
@@ -1810,13 +1836,8 @@ STDMETHODIMP MetalDevice8::DrawPrimitive(DWORD pt, UINT sv, UINT pc) {
 
 STDMETHODIMP MetalDevice8::DrawIndexedPrimitive(DWORD pt, UINT mi, UINT nv,
                                                 UINT si, UINT pc) {
-  static int dipCount = 0;
-  dipCount++;
-  if (dipCount <= 5)
-    fprintf(stderr,
-            "DEBUG DIP[%d]: ENTER encoder=%p src=%p ib=%p pt=%u pc=%u\n",
-            dipCount, m_CurrentEncoder, (void *)m_StreamSource,
-            (void *)m_IndexBuffer, (unsigned)pt, pc);
+  DLOG_RFLOW(15, "DrawIndexedPrimitive pt=%u minIdx=%u numVerts=%u startIdx=%u primCount=%u encoder=%p",
+    (unsigned)pt, mi, nv, si, pc, m_CurrentEncoder);
   if (!m_CurrentEncoder || !m_StreamSource || !m_IndexBuffer) {
     return D3D_OK;
   }
@@ -1826,9 +1847,7 @@ STDMETHODIMP MetalDevice8::DrawIndexedPrimitive(DWORD pt, UINT mi, UINT nv,
   id<MTLRenderPipelineState> pso =
       (__bridge id<MTLRenderPipelineState>)GetPSO(fvf);
   if (!pso) {
-    if (dipCount <= 5)
-      fprintf(stderr, "DEBUG DIP[%d]: NO PSO for fvf=0x%x\n", dipCount,
-              (unsigned)fvf);
+    DLOG_RFLOW(15, "DrawIndexedPrimitive NO PSO for fvf=0x%x", (unsigned)fvf);
     return D3D_OK;
   }
 
@@ -2021,13 +2040,33 @@ STDMETHODIMP MetalDevice8::DrawIndexedPrimitive(DWORD pt, UINT mi, UINT nv,
                           baseVertex:(NSInteger)m_BaseVertexIndex
                         baseInstance:0];
 
-  if (dipCount <= 10)
-    fprintf(stderr,
-            "DEBUG DIP[%d]: DRAW pt=%u fvf=0x%x nv=%u pc=%u idxCnt=%u "
-            "baseVtx=%u ibOff=%u tex0=%p tex1=%p\n",
-            dipCount, (unsigned)pt, (unsigned)fvf, nv, pc, indexCount,
-            (unsigned)m_BaseVertexIndex, offset, (void *)m_Textures[0],
-            (void *)m_Textures[1]);
+  static int drawIdxCount = 0;
+  if (drawIdxCount++ < 50) {
+    printf("RFLOW[%d] DrawIndexedPrimitive DRAW pt=%u fvf=0x%x nv=%u pc=%u idxCnt=%u "
+           "baseVtx=%u ibOff=%u tex0=%p tex1=%p\n",
+           drawIdxCount, (unsigned)pt, (unsigned)fvf, nv, pc, indexCount,
+           (unsigned)m_BaseVertexIndex, offset, (void *)m_Textures[0],
+           (void *)m_Textures[1]);
+    printf("         STATES: alphaB=%u alphaT=%u alphaRef=%u ZEn=%u ZFunc=%u srcBlnd=%u dstBlnd=%u\n",
+           (unsigned)m_RenderStates[D3DRS_ALPHABLENDENABLE],
+           (unsigned)m_RenderStates[D3DRS_ALPHATESTENABLE],
+           (unsigned)m_RenderStates[D3DRS_ALPHAREF],
+           (unsigned)m_RenderStates[D3DRS_ZENABLE],
+           (unsigned)m_RenderStates[D3DRS_ZFUNC],
+           (unsigned)m_RenderStates[D3DRS_SRCBLEND],
+           (unsigned)m_RenderStates[D3DRS_DESTBLEND]);
+    
+    // Also check ColorOp for Stage 0
+    printf("         TEX STAGE 0: ColorOp=%u ColorArg1=%u ColorArg2=%u AlphaOp=%u AlphaArg1=%u AlphaArg2=%u\n",
+           (unsigned)m_TextureStageStates[0][D3DTSS_COLOROP],
+           (unsigned)m_TextureStageStates[0][D3DTSS_COLORARG1],
+           (unsigned)m_TextureStageStates[0][D3DTSS_COLORARG2],
+           (unsigned)m_TextureStageStates[0][D3DTSS_ALPHAOP],
+           (unsigned)m_TextureStageStates[0][D3DTSS_ALPHAARG1],
+           (unsigned)m_TextureStageStates[0][D3DTSS_ALPHAARG2]);
+    fflush(stdout);
+  }
+
 
   return D3D_OK;
 }
@@ -2036,6 +2075,38 @@ STDMETHODIMP MetalDevice8::DrawPrimitiveUP(DWORD pt, UINT pc, const void *data,
                                            UINT stride) {
   if (!m_CurrentEncoder || !data || pc == 0)
     return D3D_OK;
+
+  // Use current FVF (from SetVertexShader or stream source)
+  DWORD fvf = m_VertexShader;
+  if (fvf == 0 && m_StreamSource) {
+    fvf = GetBufferFVF(m_StreamSource);
+  }
+  if (fvf == 0) {
+    fvf = D3DFVF_XYZ | D3DFVF_DIFFUSE | D3DFVF_TEX1;
+  }
+
+  static int drawUpLogCount = 0;
+  if ((fvf == 0x144 || fvf == 0x252 || fvf == 0x140) && drawUpLogCount++ < 500) {
+    if (fvf == 0x144 || drawUpLogCount % 10 == 0 || fvf == 0x252) {
+      printf("RFLOW_UP[%d] DrawPrimitiveUP pt=%u fvf=0x%x pc=%u tex0=%p "
+             "screenW=%.0f screenH=%.0f ZEn=%u ZWrite=%u ZFunc=%u "
+             "alphaBlend=%u src=%u dst=%u alphaTest=%u alphaRef=%u "
+             "colorOp=%u alphaOp=%u\n",
+             drawUpLogCount, (unsigned)pt, (unsigned)fvf, pc, (void*)m_Textures[0],
+             (double)m_ScreenWidth, (double)m_ScreenHeight,
+             (unsigned)m_RenderStates[D3DRS_ZENABLE],
+             (unsigned)m_RenderStates[D3DRS_ZWRITEENABLE],
+             (unsigned)m_RenderStates[D3DRS_ZFUNC],
+             (unsigned)m_RenderStates[D3DRS_ALPHABLENDENABLE],
+             (unsigned)m_RenderStates[D3DRS_SRCBLEND],
+             (unsigned)m_RenderStates[D3DRS_DESTBLEND],
+             (unsigned)m_RenderStates[D3DRS_ALPHATESTENABLE],
+             (unsigned)m_RenderStates[D3DRS_ALPHAREF],
+             (unsigned)m_TextureStageStates[0][D3DTSS_COLOROP],
+             (unsigned)m_TextureStageStates[0][D3DTSS_ALPHAOP]);
+      fflush(stdout);
+    }
+  }
 
   // Determine vertex count from primitive type and count
   UINT vertexCount = 0;
@@ -2066,14 +2137,7 @@ STDMETHODIMP MetalDevice8::DrawPrimitiveUP(DWORD pt, UINT pc, const void *data,
   }
 
   // Use current FVF (from SetVertexShader or stream source)
-  DWORD fvf = m_VertexShader;
-  if (fvf == 0 && m_StreamSource) {
-    fvf = GetBufferFVF(m_StreamSource);
-  }
-  if (fvf == 0) {
-    // Default: position + diffuse + tex1 (common for UP draws)
-    fvf = D3DFVF_XYZ | D3DFVF_DIFFUSE | D3DFVF_TEX1;
-  }
+  // (already evaluated above)
 
   id<MTLRenderPipelineState> pso =
       (__bridge id<MTLRenderPipelineState>)GetPSO(fvf);
@@ -2081,6 +2145,21 @@ STDMETHODIMP MetalDevice8::DrawPrimitiveUP(DWORD pt, UINT pc, const void *data,
     return D3D_OK;
 
   [MTL_ENCODER setRenderPipelineState:pso];
+
+  // For XYZRHW (2D/UI) vertices, force-disable depth test & depth write.
+  // DX8 spec: pretransformed vertices bypass the transform pipeline and
+  // typically render with Z-test disabled. Without this, 2D UI quads at z=0
+  // fail the depth test against previously rendered 3D geometry.
+  bool is2D = (fvf & D3DFVF_XYZRHW) != 0;
+  DWORD savedZEnable = 0;
+  DWORD savedZWrite  = 0;
+  if (is2D) {
+    savedZEnable = m_RenderStates[D3DRS_ZENABLE];
+    savedZWrite  = m_RenderStates[D3DRS_ZWRITEENABLE];
+    m_RenderStates[D3DRS_ZENABLE] = FALSE;
+    m_RenderStates[D3DRS_ZWRITEENABLE] = FALSE;
+    m_DepthStateDirty = true;
+  }
   ApplyPerDrawState();
 
   // Upload vertex data inline (up to 4KB via setVertexBytes)
@@ -2201,6 +2280,13 @@ STDMETHODIMP MetalDevice8::DrawPrimitiveUP(DWORD pt, UINT pc, const void *data,
   [MTL_ENCODER drawPrimitives:mtlPrimType
                   vertexStart:0
                   vertexCount:vertexCount];
+
+  // Restore depth state for XYZRHW (2D) draws
+  if (is2D) {
+    m_RenderStates[D3DRS_ZENABLE] = savedZEnable;
+    m_RenderStates[D3DRS_ZWRITEENABLE] = savedZWrite;
+    m_DepthStateDirty = true;
+  }
 
   return D3D_OK;
 }

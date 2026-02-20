@@ -468,8 +468,17 @@ void Shell::showShell( Bool runInit )
 {
 	DEBUG_LOG(("Shell:showShell() - %s (%s)", TheGlobalData->m_initialFile.str(), (top())?top()->getFilename().str():"no top screen"));
 
+	printf("SHELL: showShell() called, initialFile='%s', simulateReplaysEmpty=%d, screenCount=%d, shellMapOn=%d\n",
+		TheGlobalData->m_initialFile.str(),
+		(int)TheGlobalData->m_simulateReplays.empty(),
+		m_screenCount,
+		(int)TheGlobalData->m_shellMapOn);
+	fflush(stdout);
+
 	if(!TheGlobalData->m_initialFile.isEmpty() || !TheGlobalData->m_simulateReplays.empty())
 	{
+		printf("SHELL: showShell() EARLY RETURN (initialFile or simulateReplays set)\n");
+		fflush(stdout);
 		return;
 	}
 
@@ -484,46 +493,22 @@ void Shell::showShell( Bool runInit )
 		//	layout->bringForward();
 		}
 	}
-	// @todo remove this hack
-//	TheGlobalData->m_inGame = FALSE;
-	// add in the background stuff
-
-//	if(TheGlobalData->m_shellMapOn)
-	//	{
-	//		if( top() )
-	//			top()->hide(TRUE);
-	//		m_background = TheWindowManager->winCreateLayout("Menus/BlankWindow.wnd");
-	//		DEBUG_ASSERTCRASH(m_background,("We Couldn't Load Menus/BlankWindow.wnd"));
-	//		m_background->hide(FALSE);
-	//		m_background->bringForward();
-	//		if (TheGameLogic->isInGame())
-	//				TheMessageStream->appendMessage( GameMessage::MSG_CLEAR_GAME_DATA );
-	//
-	//		TheGlobalData->m_pendingFile = TheGlobalData->m_shellMapName;
-	//		GameMessage *msg = TheMessageStream->appendMessage( GameMessage::MSG_NEW_GAME );
-	//		msg->appendIntegerArgument(GAME_SHELL);
-	//	}
-	//	else
-	//	{
-	//
-	//		m_background = TheWindowManager->winCreateLayout("Menus/BlankWindow.wnd");
-	//
-	//		DEBUG_ASSERTCRASH(m_background,("We Couldn't Load Menus/BlankWindow.wnd"));
-	//		m_background->hide(FALSE);
-	//		if (top())
-	//			top()->bringForward();
-	//
-	//	}
-
 
 	if (!TheGlobalData->m_shellMapOn && m_screenCount == 0)
   {
 #ifdef RTS_PROFILE
     Profile::StopRange("init");
 #endif
-	//else
+		printf("SHELL: pushing Menus/MainMenu.wnd\n");
+		fflush(stdout);
 		push( "Menus/MainMenu.wnd" );
   }
+	else
+	{
+		printf("SHELL: NOT pushing MainMenu.wnd (shellMapOn=%d, screenCount=%d)\n",
+			(int)TheGlobalData->m_shellMapOn, m_screenCount);
+		fflush(stdout);
+	}
 	m_isShellActive = TRUE;
 }
 

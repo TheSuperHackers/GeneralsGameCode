@@ -242,10 +242,28 @@ Bool ArchiveFileSystem::doesFileExist(const Char *filename, FileInstance instanc
 {
 	ArchivedDirectoryInfoResult result = const_cast<ArchiveFileSystem*>(this)->getArchivedDirectoryInfo(filename);
 
-	if (!result.valid())
+	bool isTga = (strstr(filename, ".tga") != nullptr || strstr(filename, ".dds") != nullptr);
+
+	if (!result.valid()) {
+		if (isTga) {
+			fprintf(stderr, "ARCH_TEX_MISS file='%s' (dirInfo invalid)\n", filename);
+		}
 		return false;
+	}
 
 	stl::const_range<ArchivedFileLocationMap> range = stl::get_range(result.dirInfo->m_files, result.lastToken, instance);
+
+	if (isTga) {
+		fprintf(stderr, "ARCH_TEX file='%s' token='%s' found=%d dirFiles=%d\n",
+			filename, result.lastToken.str(), (int)range.valid(), (int)result.dirInfo->m_files.size());
+		if (!range.valid()) {
+			int k = 0;
+			for (auto& fkv : result.dirInfo->m_files) {
+				fprintf(stderr, "  fk[%d]='%s'\n", k++, fkv.first.str());
+				if (k >= 10) { fprintf(stderr, "  ... +%d more\n", (int)result.dirInfo->m_files.size() - k); break; }
+			}
+		}
+	}
 
 	return range.valid();
 }
@@ -259,6 +277,29 @@ ArchivedDirectoryInfo* ArchiveFileSystem::friend_getArchivedDirectoryInfo(const 
 
 ArchiveFileSystem::ArchivedDirectoryInfoResult ArchiveFileSystem::getArchivedDirectoryInfo(const Char* directory)
 {
+	// Dump root directory entries once
+	static bool dumpedRoot = false;
+	if (!dumpedRoot) {
+		dumpedRoot = true;
+		fprintf(stderr, "ARCH_TREE: root has %d directories, %d files\n",
+			(int)m_rootDirectory.m_directories.size(),
+			(int)m_rootDirectory.m_files.size());
+		int i = 0;
+		for (auto& kv : m_rootDirectory.m_directories) {
+			fprintf(stderr, "ARCH_TREE: root dir[%d] = '%s' (subdirs=%d, files=%d)\n",
+				i++, kv.first.str(), (int)kv.second.m_directories.size(), (int)kv.second.m_files.size());
+			// Also dump second level
+			int j = 0;
+			for (auto& kv2 : kv.second.m_directories) {
+				fprintf(stderr, "ARCH_TREE:   subdir[%d] = '%s' (subdirs=%d, files=%d)\n",
+					j++, kv2.first.str(), (int)kv2.second.m_directories.size(), (int)kv2.second.m_files.size());
+				if (j >= 5) { fprintf(stderr, "ARCH_TREE:   ... and more\n"); break; }
+			}
+			if (i >= 10) { fprintf(stderr, "ARCH_TREE: ... and more root dirs\n"); break; }
+		}
+		fflush(stderr);
+	}
+
 	ArchivedDirectoryInfoResult result;
 	ArchivedDirectoryInfo* dirInfo = &m_rootDirectory;
 

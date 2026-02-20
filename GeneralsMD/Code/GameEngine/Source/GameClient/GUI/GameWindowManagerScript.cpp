@@ -1470,6 +1470,7 @@ static void setWindowText(GameWindow *window, AsciiString textLabel) {
   UnicodeString theText, entryText;
   // Translate the text
   theText = TheGameText->fetch((char *)textLabel.str());
+  fprintf(stderr, "WNDTEXT: setWindowText label='%s' text='%ls' len=%d\n", textLabel.str(), theText.str(), theText.getLength());
   // set the text in the window based on what it is
   if (BitIsSet(window->winGetStyle(), GWS_PUSH_BUTTON))
     GadgetButtonSetText(window, theText);
@@ -2334,6 +2335,7 @@ Bool parseLayoutBlock(File *inFile, char *buffer, UnsignedInt version,
  * new window layout */
 //=============================================================================
 WindowLayout *GameWindowManager::winCreateLayout(AsciiString filename) {
+  printf("WNDLOAD: winCreateLayout('%s')\n", filename.str()); fflush(stdout);
   WindowLayout *layout;
 
   // allocate a new window layout
@@ -2410,11 +2412,14 @@ GameWindow *GameWindowManager::winCreateFromScript(AsciiString filenameString,
     strlcpy(filepath, filename, ARRAY_SIZE(filepath));
 
   // Open the input file
+  printf("WNDLOAD: openFile('%s')\n", filepath); fflush(stdout);
   inFile = TheFileSystem->openFile(filepath, File::READ);
   if (inFile == nullptr) {
+    printf("WNDLOAD: FAILED to open '%s'\n", filepath); fflush(stdout);
     DEBUG_LOG(("WinCreateFromScript: Cannot access file '%s'.", filename));
     return nullptr;
   }
+  printf("WNDLOAD: opened '%s' successfully\n", filepath); fflush(stdout);
 
   // read into memory
   inFile = inFile->convertToRAMFile();

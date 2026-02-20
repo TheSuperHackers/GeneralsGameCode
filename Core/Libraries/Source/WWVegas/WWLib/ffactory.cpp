@@ -298,6 +298,12 @@ FileClass * SimpleFileFactoryClass::Get_File( char const *filename )
 		// END SERIALIZATION
 	}
 
+	static int ffGetFileLogCount = 0;
+	if (ffGetFileLogCount < 50) {
+		fprintf(stderr, "FFGETFILE[%d] req='%s' resolved='%s' subDir='%s'\n",
+			ffGetFileLogCount++, filename, new_name.str(), SubDirectory.str());
+	}
+
 	file->Set_Name( new_name );	// Call Set_Name to force an allocated name
 	return file;
 }
