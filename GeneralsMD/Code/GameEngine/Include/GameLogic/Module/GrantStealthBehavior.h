@@ -101,6 +101,8 @@ public:
 private:
 
 	void grantStealthToObject( Object *obj );
+	void createEmitters();
+
 	ParticleSystemID m_radiusParticleSystemID;
   Real m_currentScanRadius;
 };
