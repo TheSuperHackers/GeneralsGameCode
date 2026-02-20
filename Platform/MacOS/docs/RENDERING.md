@@ -214,3 +214,46 @@ three critical overrides that differ from standard 3D rendering:
 3. **Projection bypass** — `useProjection == 2` uses screen-space→NDC transform
    instead of the standard MVP pipeline.
 
+---
+
+## UI Widget Rendering (W3D Gadgets)
+
+### Architecture
+
+`MacOSGameWindowManager` inherits from `W3DGameWindowManager` (not the base `GameWindowManager`). This gives access to the original W3D gadget draw functions:
+
+```
+MacOSGameWindowManager → W3DGameWindowManager → GameWindowManager
+                                 ↓
+                    W3DGadget*Draw functions
+                    (PushButton, ComboBox, ListBox, 
+                     Slider, ProgressBar, StaticText, etc.)
+                                 ↓
+                    TheWindowManager->winDrawImage()
+                                 ↓
+                    TheDisplay->drawImage()
+                                 ↓
+                    Render2DClass → DX8Wrapper → MetalDevice8
+```
+
+### Why This Works
+
+The W3D gadget draw functions (`W3DGadgetPushButtonDraw`, `W3DGadgetComboBoxDraw`, etc.) were already compiled as part of `z_gameenginedevice`. They internally call `TheWindowManager->winDrawImage()` for images and `TheWindowManager->winFillRect()`/`winOpenRect()` for solid geometry. Since these ultimately route through our working Metal pipeline (via `Render2DClass` → `DX8Wrapper` → `MetalDevice8`), all UI rendering works "out of the box".
+
+### MacOSGameWindow (fontData Safety)
+
+`W3DGameWindow` uses `Render2DSentenceClass` for text rendering, which requires `FontCharsClass` (initialised via Windows GDI `CreateFont`). On macOS, `fontData = nullptr` because fonts use CoreText/NSFont via `MacOSDisplayString`.
+
+`MacOSGameWindow` is a subclass of `W3DGameWindow` that overrides:
+- `winSetFont()` — skips `m_textRenderer.Set_Font()` (avoids nullptr crash)
+- `winSetText()` — skips `m_textRenderer.Build_Sentence()` 
+- `drawText()` — no-op (text is drawn through `MacOSDisplayString`)
+
+### Key Files
+
+| File | Role |
+|:---|:---|
+| `MacOSGameWindowManager.h` | Inherits `W3DGameWindowManager`, overrides `allocateNewWindow`, `winFormatText`, `winGetTextSize` |
+| `MacOSGameWindowManager.mm` | Creates `MacOSGameWindow` instances, text rendering via `DisplayString` |
+| `MacOSGadgetDraw.mm` | Legacy simplified draw functions (no longer used but kept) |
+

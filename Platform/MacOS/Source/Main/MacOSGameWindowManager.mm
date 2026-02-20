@@ -6,122 +6,62 @@
 #include "GameClient/GadgetPushButton.h"
 #include "GameClient/GameWindow.h"
 #include "GameClient/GameWindowManager.h"
+#include "W3DDevice/GameClient/W3DGameWindow.h"
 #include "PreRTS.h"
-#include <set>
-#include <string>
 
-// Simple MacOS GameWindow implementation
-class MacOSGameWindow : public GameWindow {
-  MEMORY_POOL_GLUE_WITH_EXPLICIT_CREATE(MacOSGameWindow, "MacOSGameWindow", 256,
-                                        32)
+// MacOSGameWindow: a subclass of W3DGameWindow that safely handles
+// nullptr fontData. On macOS, fonts use CoreText (via MacOSDisplayString)
+// rather than Windows GDI (FontCharsClass), so font->fontData is always nullptr.
+// W3DGameWindow::winSetFont would crash passing nullptr to Render2DSentenceClass::Set_Font.
+// We override to skip that code path.
+class MacOSGameWindow : public W3DGameWindow {
+  MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(MacOSGameWindow, "MacOSGameWindow")
 public:
-  virtual void winDrawBorder(void) override {
-    // Basic border drawing could go here if needed
+  MacOSGameWindow(void) : W3DGameWindow() {}
+
+  // Override winSetFont to skip the Render2DSentenceClass::Set_Font call
+  // when fontData is nullptr (macOS uses MacOSDisplayString for text rendering)
+  void winSetFont(GameFont *font) override {
+    if (font == nullptr)
+      return;
+    // Only call the base GameWindow::winSetFont (which stores the font pointer)
+    // but skip W3DGameWindow::winSetFont which calls m_textRenderer.Set_Font()
+    GameWindow::winSetFont(font);
+    // Don't call m_textRenderer.Set_Font since fontData is nullptr on macOS
+  }
+
+  // Override winSetText to skip Render2DSentenceClass::Build_Sentence
+  Int winSetText(UnicodeString newText) override {
+    // Only update the text through the base class
+    return GameWindow::winSetText(newText);
+    // Skip m_textRenderer.Build_Sentence which would crash with nullptr font
+  }
+
+  // Override drawText. Not virtual in base class, but MacOSGameWindow instances
+  // won't use W3DGameWindow::drawText pathway since we skip Build_Sentence.
+  // The Render2DSentenceClass will have empty SentenceData so Render() is safe.
+  void drawText(Color color) {
+    // No-op: text rendering is handled by MacOSDisplayString via
+    // WinInstanceData::getTextDisplayString() -> draw()
   }
 };
 
 MacOSGameWindow::~MacOSGameWindow() {}
+
+// MacOSGameWindowManager now inherits from W3DGameWindowManager which provides:
+// - getDefaultDraw() → W3DGameWinDefaultDraw
+// - getPushButtonDrawFunc() → W3DGadgetPushButtonDraw
+// - getPushButtonImageDrawFunc() → W3DGadgetPushButtonImageDraw
+// - getComboBoxDrawFunc() → W3DGadgetComboBoxDraw
+// - getListBoxDrawFunc() → W3DGadgetListBoxDraw
+// - getStaticTextDrawFunc() → W3DGadgetStaticTextDraw
+// - (all other gadget draw functions)
 
 MacOSGameWindowManager::MacOSGameWindowManager(void) {}
 MacOSGameWindowManager::~MacOSGameWindowManager(void) {}
 
 GameWindow *MacOSGameWindowManager::allocateNewWindow(void) {
   return newInstance(MacOSGameWindow);
-}
-
-// Gadget draw functions
-GameWinDrawFunc MacOSGameWindowManager::getPushButtonImageDrawFunc(void) {
-  return MacOSGadgetPushButtonImageDraw;
-}
-GameWinDrawFunc MacOSGameWindowManager::getPushButtonDrawFunc(void) {
-  return MacOSGadgetPushButtonDraw;
-}
-GameWinDrawFunc MacOSGameWindowManager::getCheckBoxImageDrawFunc(void) {
-  return MacOSGadgetCheckBoxDraw;
-}
-GameWinDrawFunc MacOSGameWindowManager::getCheckBoxDrawFunc(void) {
-  return MacOSGadgetCheckBoxDraw;
-}
-GameWinDrawFunc MacOSGameWindowManager::getRadioButtonImageDrawFunc(void) {
-  return MacOSGadgetRadioButtonDraw;
-}
-GameWinDrawFunc MacOSGameWindowManager::getRadioButtonDrawFunc(void) {
-  return MacOSGadgetRadioButtonDraw;
-}
-GameWinDrawFunc MacOSGameWindowManager::getTabControlImageDrawFunc(void) {
-  return MacOSGadgetTabControlDraw;
-}
-GameWinDrawFunc MacOSGameWindowManager::getTabControlDrawFunc(void) {
-  return MacOSGadgetTabControlDraw;
-}
-GameWinDrawFunc MacOSGameWindowManager::getListBoxImageDrawFunc(void) {
-  return MacOSGadgetListBoxDraw;
-}
-GameWinDrawFunc MacOSGameWindowManager::getListBoxDrawFunc(void) {
-  return MacOSGadgetListBoxDraw;
-}
-GameWinDrawFunc MacOSGameWindowManager::getComboBoxImageDrawFunc(void) {
-  return MacOSGadgetComboBoxDraw;
-}
-GameWinDrawFunc MacOSGameWindowManager::getComboBoxDrawFunc(void) {
-  return MacOSGadgetComboBoxDraw;
-}
-GameWinDrawFunc MacOSGameWindowManager::getHorizontalSliderImageDrawFunc(void) {
-  return MacOSGadgetSliderDraw;
-}
-GameWinDrawFunc MacOSGameWindowManager::getHorizontalSliderDrawFunc(void) {
-  return MacOSGadgetSliderDraw;
-}
-GameWinDrawFunc MacOSGameWindowManager::getVerticalSliderImageDrawFunc(void) {
-  return MacOSGadgetSliderDraw;
-}
-GameWinDrawFunc MacOSGameWindowManager::getVerticalSliderDrawFunc(void) {
-  return MacOSGadgetSliderDraw;
-}
-GameWinDrawFunc MacOSGameWindowManager::getProgressBarImageDrawFunc(void) {
-  return MacOSGadgetProgressBarDraw;
-}
-GameWinDrawFunc MacOSGameWindowManager::getProgressBarDrawFunc(void) {
-  return MacOSGadgetProgressBarDraw;
-}
-GameWinDrawFunc MacOSGameWindowManager::getStaticTextImageDrawFunc(void) {
-  return MacOSGadgetStaticTextDraw;
-}
-GameWinDrawFunc MacOSGameWindowManager::getStaticTextDrawFunc(void) {
-  return MacOSGadgetStaticTextDraw;
-}
-GameWinDrawFunc MacOSGameWindowManager::getTextEntryImageDrawFunc(void) {
-  return MacOSGadgetTextEntryDraw;
-}
-GameWinDrawFunc MacOSGameWindowManager::getTextEntryDrawFunc(void) {
-  return MacOSGadgetTextEntryDraw;
-}
-
-void MacOSGameWindowManager::winDrawImage(const Image *image, Int startX,
-                                          Int startY, Int endX, Int endY,
-                                          Color color) {
-  if (!image)
-    return;
-  // Route through TheDisplay->drawImage which uses the DX8/Metal pipeline
-  // (Render2DClass -> DX8Wrapper -> MetalDevice8) instead of the separate
-  // MacOSRenderDevice, ensuring all rendering uses the same encoder.
-  TheDisplay->drawImage(image, startX, startY, endX, endY, color);
-}
-
-void MacOSGameWindowManager::winFillRect(Color color, Real width, Int startX,
-                                         Int startY, Int endX, Int endY) {
-  TheDisplay->drawFillRect(startX, startY, endX - startX, endY - startY, color);
-}
-
-void MacOSGameWindowManager::winOpenRect(Color color, Real width, Int startX,
-                                         Int startY, Int endX, Int endY) {
-  TheDisplay->drawOpenRect(startX, startY, endX - startX, endY - startY, width,
-                           color);
-}
-
-void MacOSGameWindowManager::winDrawLine(Color color, Real width, Int startX,
-                                         Int startY, Int endX, Int endY) {
-  TheDisplay->drawLine(startX, startY, endX, endY, width, color);
 }
 
 void MacOSGameWindowManager::winFormatText(GameFont *font, UnicodeString text,
@@ -149,13 +89,4 @@ void MacOSGameWindowManager::winGetTextSize(GameFont *font, UnicodeString text,
     ds->getSize(width, height);
     TheDisplayStringManager->freeDisplayString(ds);
   }
-}
-
-void MacOSGameWindowManager::assignDefaultGadgetLook(GameWindow *gadget,
-                                                     GameFont *defaultFont,
-                                                     Bool assignVisual) {
-  // Call base class first to set up colors and fonts
-  GameWindowManager::assignDefaultGadgetLook(gadget, defaultFont, assignVisual);
-
-  // Any MacOS specific defaults can go here
 }

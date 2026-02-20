@@ -658,6 +658,7 @@ static PoolSizeRec PoolSizes[] =
 	// Metal backend pools for macOS
 	{ "MetalSurface8", 64, 32 },
 	{ "MetalTexture8", 256, 64 },
+	{ "MacOSGameWindow", 700, 256 },
 #endif
 	{ 0, 0, 0 }
 };

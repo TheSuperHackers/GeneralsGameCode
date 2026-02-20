@@ -2,11 +2,22 @@
 
 ## Current Status (2026-02-20)
 
-🟢 **Main Menu Working** — Buttons visible with text (SOLO PLAY, MULTIPLAYER, etc.), 30fps, audio plays, zero crashes.
+🟢 **Full UI + 3D Shell Map Rendering!** — All menu elements render with original W3D textures (buttons, dialogs, list boxes, combo boxes, sliders). 3D animated battle scene as menu background. Skirmish setup fully functional. 30fps, audio plays. Next: gameplay terrain/3D scene rendering.
 
 ---
 
-## Resolved Runtime Issues (Phase 7) — Text Rendering
+## Resolved Runtime Issues (Phase 7) — Full UI Rendering ⭐ MAJOR BREAKTHROUGH
+
+### #12: Full UI Rendering — W3DGameWindowManager Integration
+- **Symptom:** Dialog frames missing, dropdowns empty, static graphics absent, buttons had oversaturated colors
+- **Root Cause:** `MacOSGameWindowManager` inherited from `GameWindowManager` and returned simplified `MacOSGadget*Draw` functions that only drew colored rectangles (`DrawBeveledRect`) without textures/images
+- **Fix:** Changed inheritance to `W3DGameWindowManager` which provides the original `W3DGadget*Draw` functions (push buttons, combo boxes, list boxes, sliders, progress bars, etc.) that properly render through `TheWindowManager->winDrawImage()` → `Render2DClass` → `DX8Wrapper` → `MetalDevice8`
+- **Additional Fix:** Created `MacOSGameWindow` subclass of `W3DGameWindow` to safely handle `nullptr fontData` (since macOS uses CoreText/`MacOSDisplayString` instead of Windows GDI/`FontCharsClass`)
+- **Files:** `MacOSGameWindowManager.h`, `MacOSGameWindowManager.mm`, `GameMemoryInitPools_GeneralsMD.inl`
+
+---
+
+## Resolved Runtime Issues (Phase 7 earlier) — Text Rendering
 
 ### #11: Invisible UI Text — Back-Face Culling ⭐ KEY FIX
 - **Symptom:** All button text (SOLO PLAY, MULTIPLAYER, etc.) was completely invisible despite textures being created and DrawPrimitiveUP being called
@@ -105,5 +116,5 @@
 | Phase 4: Linker Resolution | ✅ Done | GameSpy stubs, Win32 stubs, 170+ functions |
 | Phase 5: Runtime Debugging | ✅ Done | 10/10 init crashes fixed, stable runtime |
 | Phase 6: UI Rendering | ✅ Done | Buttons visible, TSS evaluation, fog/depth/lighting |
-| Phase 7: Text Rendering | ✅ Done | Back-face culling fix for 2D, text on all buttons |
-| Phase 8: Interaction & Polish | 🔲 Next | Mouse input, sub-menu navigation, color polish |
+| Phase 7: Full UI + Text | ✅ Done | W3DGameWindowManager integration, all UI widgets render with textures, 3D shell map |
+| Phase 8: Gameplay Scene | 🔲 Next | Terrain rendering, units, buildings, camera, gameplay loop |
