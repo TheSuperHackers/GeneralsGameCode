@@ -1668,62 +1668,60 @@ void PathfindCell::removeObstacle( Object *obstacle )
 void PathfindCell::putOnSortedOpenList( PathfindCellList &list )
 {
 	DEBUG_ASSERTCRASH(m_info, ("Has to have info."));
-	DEBUG_ASSERTCRASH(m_info->m_closed==FALSE && m_info->m_open==FALSE, ("Serious error - Invalid flags. jba"));
+	DEBUG_ASSERTCRASH(m_info->m_closed == FALSE && m_info->m_open == FALSE, ("Serious error - Invalid flags. jba"));
+
+	// mark the newCell as being on the open list
+	m_info->m_open = true;
+	m_info->m_closed = false;
+
 	if (list.m_head == nullptr)
 	{
 		list.m_head = this;
 		m_info->m_prevOpen = nullptr;
 		m_info->m_nextOpen = nullptr;
+		return;
+	}
+
+	// insertion sort
+	PathfindCell* currentCell = list.m_head;
+	PathfindCell* previousCell = nullptr;
+#if RETAIL_COMPATIBLE_PATHFINDING
+	// TheSuperHackers @bugfix In the retail compatible pathfinding, on rare occasions, we get stuck in an infinite loop
+	// External code should pickup on the bad behaviour and cleanup properly, but we need to explicitly break out here
+	// The fixed pathfinding does not have this issue due to the proper cleanup of pathfindCells and their pathfindCellInfos
+	UnsignedInt cellCount = 0;
+	while (currentCell && cellCount < PATHFIND_CELLS_PER_FRAME && currentCell->m_info->m_totalCost <= m_info->m_totalCost)
+	{
+		cellCount++;
+#else
+	while (currentCell && currentCell->m_info->m_totalCost <= m_info->m_totalCost)
+	{
+#endif
+		previousCell = currentCell;
+		currentCell = currentCell->getNextOpen();
+	}
+
+	if (currentCell)
+	{
+		// insert just before "currentCell"
+		if (currentCell->m_info->m_prevOpen)
+			currentCell->m_info->m_prevOpen->m_nextOpen = this->m_info;
+		else
+			list.m_head = this;
+
+		m_info->m_prevOpen = currentCell->m_info->m_prevOpen;
+		currentCell->m_info->m_prevOpen = this->m_info;
+
+		m_info->m_nextOpen = currentCell->m_info;
+
 	}
 	else
 	{
-		// insertion sort
-		PathfindCell *c, *lastCell = nullptr;
-#if RETAIL_COMPATIBLE_PATHFINDING
-		// TheSuperHackers @bugfix In the retail compatible pathfinding, on rare occasions, we get stuck in an infinite loop
-		// External code should pickup on the bad behaviour and cleanup properly, but we need to explicitly break out here
-		// The fixed pathfinding does not have this issue due to the proper cleanup of pathfindCells and their pathfindCellInfos
-		UnsignedInt cellCount = 0;
-		for (c = list.m_head; c && cellCount < PATHFIND_CELLS_PER_FRAME; c = c->getNextOpen())
-		{
-			cellCount++;
-#else
-		for (c = list.m_head; c; c = c->getNextOpen())
-		{
-#endif
-			if (c->m_info->m_totalCost > m_info->m_totalCost)
-				break;
-
-			lastCell = c;
-		}
-
-		if (c)
-		{
-			// insert just before "c"
-			if (c->m_info->m_prevOpen)
-				c->m_info->m_prevOpen->m_nextOpen = this->m_info;
-			else
-				list.m_head = this;
-
-			m_info->m_prevOpen = c->m_info->m_prevOpen;
-			c->m_info->m_prevOpen = this->m_info;
-
-			m_info->m_nextOpen = c->m_info;
-
-		}
-		else
-		{
-			// append after "lastCell" - end of list
-			lastCell->m_info->m_nextOpen = this->m_info;
-			m_info->m_prevOpen = lastCell->m_info;
-			m_info->m_nextOpen = nullptr;
-		}
+		// append after "previousCell" - we are at the end of the list
+		previousCell->m_info->m_nextOpen = this->m_info;
+		m_info->m_prevOpen = previousCell->m_info;
+		m_info->m_nextOpen = nullptr;
 	}
-
-	// mark newCell as being on open list
-	m_info->m_open = true;
-	m_info->m_closed = false;
-
 }
 
 /// remove self from "open" list
