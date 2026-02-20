@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<resource xmlns="http://www.wxwidgets.org/wxxrc" version="2.5.3.0">
+	<object class="wxFrame" name="DbgWinBaseFrame">
+		<style>wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL</style>
+		<size>320,600</size>
+		<title>Debug Window</title>
+		<centered>1</centered>
+		<object class="wxPanel" name="m_panel">
+			<style>wxTAB_TRAVERSAL</style>
+			<object class="wxBoxSizer">
+				<orient>wxVERTICAL</orient>
+				<!-- Top button row: Pause, Step, Step 10 -->
+				<object class="sizeritem">
+					<option>0</option>
+					<flag>wxEXPAND</flag>
+					<border>0</border>
+					<object class="wxFlexGridSizer">
+						<rows>1</rows>
+						<cols>3</cols>
+						<vgap>0</vgap>
+						<hgap>5</hgap>
+						<object class="sizeritem">
+							<option>0</option>
+							<flag>wxALL</flag>
+							<border>5</border>
+							<object class="wxToggleButton" name="m_pauseBtn">
+								<label>Pause</label>
+								<size>85,30</size>
+							</object>
+						</object>
+						<object class="sizeritem">
+							<option>0</option>
+							<flag>wxALL</flag>
+							<border>5</border>
+							<object class="wxButton" name="m_stepBtn">
+								<label>Step</label>
+								<size>85,30</size>
+							</object>
+						</object>
+						<object class="sizeritem">
+							<option>0</option>
+							<flag>wxALL</flag>
+							<border>5</border>
+							<object class="wxButton" name="m_stepTenBtn">
+								<label>Step 10</label>
+								<size>85,30</size>
+							</object>
+						</object>
+					</object>
+				</object>
+				<!-- Frame counter + bottom button row -->
+				<object class="sizeritem">
+					<option>0</option>
+					<flag>wxEXPAND</flag>
+					<border>0</border>
+					<object class="wxFlexGridSizer">
+						<rows>1</rows>
+						<cols>3</cols>
+						<vgap>0</vgap>
+						<hgap>5</hgap>
+						<growablecols>0</growablecols>
+						<!-- Frame counter on left -->
+						<object class="sizeritem">
+							<option>0</option>
+							<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+							<border>5</border>
+							<object class="wxBoxSizer">
+								<orient>wxHORIZONTAL</orient>
+								<object class="sizeritem">
+									<option>0</option>
+									<flag>wxRIGHT|wxALIGN_CENTER_VERTICAL</flag>
+									<border>5</border>
+									<object class="wxStaticText" name="m_frameLabel">
+										<label>Frame</label>
+									</object>
+								</object>
+								<object class="sizeritem">
+									<option>0</option>
+									<flag>wxALIGN_CENTER_VERTICAL</flag>
+									<border>0</border>
+									<object class="wxStaticText" name="m_frameTxt">
+										<label>0</label>
+										<size>40,-1</size>
+									</object>
+								</object>
+							</object>
+						</object>
+						<!-- Run Fast button (aligned with Step above) -->
+						<object class="sizeritem">
+							<option>0</option>
+							<flag>wxALL</flag>
+							<border>5</border>
+							<object class="wxToggleButton" name="m_runFastXTenBtn">
+								<label>Run Fast (10 X)</label>
+								<size>115,30</size>
+							</object>
+						</object>
+						<!-- Clear button (aligned with Step 10 above) -->
+						<object class="sizeritem">
+							<option>0</option>
+							<flag>wxALL</flag>
+							<border>5</border>
+							<object class="wxButton" name="m_clearBtn">
+								<label>Clear</label>
+								<size>85,30</size>
+							</object>
+						</object>
+					</object>
+				</object>
+				<!-- Variables label -->
+				<object class="sizeritem">
+					<option>0</option>
+					<flag>wxLEFT|wxRIGHT|wxTOP</flag>
+					<border>5</border>
+					<object class="wxStaticText" name="m_variablesLabel">
+						<label>Variables</label>
+					</object>
+				</object>
+				<!-- Variables list -->
+				<object class="sizeritem">
+					<option>2</option>
+					<flag>wxEXPAND|wxALL</flag>
+					<border>5</border>
+					<object class="wxListBox" name="m_variableList">
+						<style>wxLB_SINGLE|wxLB_HSCROLL</style>
+						<size>-1,150</size>
+					</object>
+				</object>
+				<!-- Messages label -->
+				<object class="sizeritem">
+					<option>0</option>
+					<flag>wxLEFT|wxRIGHT|wxTOP</flag>
+					<border>5</border>
+					<object class="wxStaticText" name="m_messagesLabel">
+						<label>Messages</label>
+					</object>
+				</object>
+				<!-- Messages text area -->
+				<object class="sizeritem">
+					<option>2</option>
+					<flag>wxEXPAND|wxALL</flag>
+					<border>5</border>
+					<object class="wxTextCtrl" name="m_msgTxt">
+						<style>wxTE_MULTILINE|wxTE_READONLY|wxTE_WORDWRAP</style>
+						<size>-1,200</size>
+					</object>
+				</object>
+			</object>
+		</object>
+	</object>
+</resource>
