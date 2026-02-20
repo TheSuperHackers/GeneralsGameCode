@@ -184,18 +184,33 @@ The macOS port implements the `IDirect3D8` and `IDirect3DDevice8` interfaces (fr
 
 ## Known Gaps
 
-| Feature | Status | Priority |
+| Feature | Status | Notes |
 |:---|:---|:---|
-| Depth/Stencil state | ❌ Not implemented | High |
-| Dynamic blending (per render state) | ❌ | High |
-| CullMode binding | ❌ | Medium |
-| Multi-texturing (stage 1+) | ❌ | Medium |
-| TSS formulas in shader | ❌ | Medium |
-| Sampler states | ❌ | Medium |
-| Per-vertex lighting | ❌ | Medium |
-| Real fog parameters | ❌ | Low |
-| Render targets | ❌ | Low |
-| DrawPrimitiveUP | ❌ | Low |
-| Surface (GetSurfaceLevel) | ❌ | Low |
-| 16-bit format conversion | ❌ | Low |
-| TriangleFan → TriangleList | ❌ | Low |
+| DrawPrimitiveUP | ✅ Working | 2D text/UI quads render correctly |
+| Depth/Stencil state | ✅ Working | Depth state created per PSO, dirty-flag tracked |
+| Dynamic blending (per render state) | ✅ Working | Encoded in PSO cache key |
+| CullMode binding | ✅ Working | Force MTLCullModeNone for 2D/XYZRHW draws (Y-flip fix) |
+| TSS formulas in shader | ✅ Working | evaluateBlendOp handles SELECTARG1/2, MODULATE, ADD, etc. |
+| Sampler states | ✅ Working | Per-stage sampler state cache |
+| Per-vertex lighting | ✅ Working | Light uniforms buffer, up to 4 directional lights |
+| Real fog parameters | ✅ Working | Linear/exp/exp2 fog in vertex + fragment shaders |
+| Multi-texturing (stage 1+) | ⚠️ Partial | Stage 0+1 bound, TSS evaluated for 2 stages |
+| Render targets | ❌ Not implemented | Low priority |
+| Surface (GetSurfaceLevel) | ❌ Not implemented | Low priority |
+| 16-bit format conversion | ⚠️ Fallback | Falls back to BGRA8 |
+| TriangleFan → TriangleList | ❌ Not implemented | Low priority |
+
+---
+
+## 2D Rendering Workarounds
+
+For `D3DFVF_XYZRHW` (screen-space / 2D) vertices, `DrawPrimitiveUP` applies
+three critical overrides that differ from standard 3D rendering:
+
+1. **Depth test & write disabled** — 2D UI must render on top of 3D geometry
+2. **Back-face culling disabled** — The vertex shader flips Y for screen→NDC
+   conversion (`1.0 - y/screenH * 2.0`), which reverses triangle winding
+   from CW to CCW. Without disabling culling, all 2D triangles are discarded.
+3. **Projection bypass** — `useProjection == 2` uses screen-space→NDC transform
+   instead of the standard MVP pipeline.
+

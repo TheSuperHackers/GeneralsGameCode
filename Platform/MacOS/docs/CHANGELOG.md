@@ -1,8 +1,29 @@
 # macOS Port — Changelog
 
-## Current Status (2026-02-19)
+## Current Status (2026-02-20)
 
-🟢 **Stable Runtime** — Game runs 35+ seconds, 400+ frames via Metal, zero crashes.
+🟢 **Main Menu Working** — Buttons visible with text (SOLO PLAY, MULTIPLAYER, etc.), 30fps, audio plays, zero crashes.
+
+---
+
+## Resolved Runtime Issues (Phase 7) — Text Rendering
+
+### #11: Invisible UI Text — Back-Face Culling ⭐ KEY FIX
+- **Symptom:** All button text (SOLO PLAY, MULTIPLAYER, etc.) was completely invisible despite textures being created and DrawPrimitiveUP being called
+- **Root Cause:** The vertex shader flips Y for screen-space (XYZRHW) coordinates: `screenPos.y = 1.0 - y/screenH * 2.0`. This reverses triangle winding order from CW to CCW in NDC. With Metal's default CW front-face winding + back-face culling enabled, **all 2D triangles were silently discarded**
+- **Fix:** Force `setCullMode:MTLCullModeNone` for XYZRHW vertices in `DrawPrimitiveUP`, applied after `ApplyPerDrawState()`
+- **Files:** `Platform/MacOS/Source/Metal/MetalDevice8.mm`
+
+## Resolved Runtime Issues (Phase 6) — UI Rendering
+
+### #10.1: UI Buttons Not Visible
+- **Symptom:** Menu buttons appeared as empty rectangles without visible borders
+- **Root Cause:** Missing TSS evaluation in fragment shader, incorrect blend states
+- **Fix:** Implemented full TextureStageState evaluation (SELECTARG1/2, MODULATE, ADD), per-PSO blend state caching, depth/fog/lighting uniforms
+
+### #10.2: FPS Text Position (y=-1)
+- **Symptom:** FPS counter text rendered at y=-1 (1 pixel off-screen top)
+- **Status:** Cosmetic — text partially visible at top-left. Not blocking.
 
 ---
 
@@ -47,15 +68,14 @@
 
 ### #9: SIGABRT — Metal driver vs custom allocator ⭐ CRITICAL FIX
 - **Symptom:** `BUG_IN_CLIENT_OF_LIBMALLOC_POINTER_BEING_FREED_WAS_NOT_ALLOCATED`
-- **Root Cause:** Global `operator new/delete` override routed ALL allocations through `DynamicMemoryAllocator` (which prepends a `MemoryPoolSingleBlock` header). Metal/AppKit/libdispatch use system malloc but free through our overridden `delete` — crash when trying to read non-existent header
-- **Fix:** On macOS (`#ifdef __APPLE__`), global `operator new` uses `calloc(1, size)` and `operator delete` uses `free()`. `calloc` ensures zero-initialization (the game relies on zeroed allocations). Pool-based allocations (`MEMORY_POOL_GLUE`) still use the game's allocator
+- **Root Cause:** Global `operator new/delete` override routed ALL allocations through `DynamicMemoryAllocator`. Metal/AppKit/libdispatch use system malloc but free through our overridden `delete` — crash
+- **Fix:** On macOS, global `operator new` uses `calloc(1, size)` and `operator delete` uses `free()`
 - **Files:** `Core/GameEngine/Source/Common/System/GameMemory.cpp`
 
 ### #10: SIGSEGV in `W3DBridgeBuffer` / `Pathfinder` constructors
 - **Symptom:** Crash in `clearAllBridges()` — iterating over garbage data
-- **Root Cause:** `m_numBridges` uninitialized before `clearAllBridges()` call in constructor. Custom allocator on Windows zeroed memory, masking the bug. System `malloc` on macOS does not
+- **Root Cause:** `m_numBridges` uninitialized before `clearAllBridges()` call in constructor
 - **Fix:** Initialize `m_numBridges=0` before `clearAllBridges()`. Also fixed systemically by using `calloc` (issue #9)
-- **Files:** `GeneralsMD/Code/GameEngineDevice/Source/W3DDevice/GameClient/W3DBridgeBuffer.cpp`
 
 ---
 
@@ -63,6 +83,8 @@
 
 | Commit | Description |
 |:---|:---|
+| `d8d58c12` | **fix(macos): text rendering — disable back-face culling for 2D/XYZRHW draws** ⭐ |
+| `03100065` | fix(macos): UI buttons, Metal TSS/fog/lighting, audio playback |
 | `838d93c7` | fix(macos): resolve 10 runtime crashes — stable 35s game loop |
 | `a2e7a7ba` | **macOS: resolve all linker errors — successful build 🎉** (31 files, +1121/-81) |
 | `ac60483f` | fix: resolve macos_platform compilation errors — Carbon compat, D3DX stubs, overrides |
@@ -81,5 +103,7 @@
 | Phase 2: Compilation Fixes | ✅ Done | windows.h shims, type stubs, PCH config |
 | Phase 3: DX8→Metal Stubs | ✅ Done | d3d8_stub.h, MetalDevice8, Metal shaders |
 | Phase 4: Linker Resolution | ✅ Done | GameSpy stubs, Win32 stubs, 170+ functions |
-| Phase 5: Runtime Debugging | 🟢 Active | 10/10 init crashes fixed, stable runtime |
-| Phase 6: Interactive | 🔲 Next | Input handling, full rendering, UI |
+| Phase 5: Runtime Debugging | ✅ Done | 10/10 init crashes fixed, stable runtime |
+| Phase 6: UI Rendering | ✅ Done | Buttons visible, TSS evaluation, fog/depth/lighting |
+| Phase 7: Text Rendering | ✅ Done | Back-face culling fix for 2D, text on all buttons |
+| Phase 8: Interaction & Polish | 🔲 Next | Mouse input, sub-menu navigation, color polish |
