@@ -221,16 +221,32 @@ MacOSGameClient::friend_createDrawable(const ThingTemplate *thing,
   return newInstance(Drawable)(thing, statusBits);
 }
 void MacOSGameClient::addScorch(const Coord3D *pos, Real radius,
-                                Scorches type) {}
+                                Scorches type) {
+  // Delegate to base — GameClient doesn't have addScorch, but W3DGameClient does.
+  // Since MacOSGameClient doesn't inherit W3DGameClient, keep as no-op for now.
+  // TODO: implement via TheTerrainRenderObject->addScorch() when terrain rendering is complete.
+}
 void MacOSGameClient::createRayEffectByTemplate(const Coord3D *start,
                                                 const Coord3D *end,
-                                                const ThingTemplate *tmpl) {}
-void MacOSGameClient::setTeamColor(Int red, Int green, Int blue) {}
-void MacOSGameClient::setTextureLOD(Int level) {}
-void MacOSGameClient::releaseShadows(void) {}
-void MacOSGameClient::allocateShadows(void) {}
+                                                const ThingTemplate *tmpl) {
+  // TODO: implement ray effects (lasers, tracers) — needs W3D scene integration
+}
+void MacOSGameClient::setTeamColor(Int red, Int green, Int blue) {
+  // TODO: implement team color tinting
+}
+void MacOSGameClient::setTextureLOD(Int level) {
+  // TODO: implement texture LOD via TheTerrainRenderObject->setTextureLOD()
+}
+void MacOSGameClient::releaseShadows(void) {
+  GameClient::releaseShadows(); // iterates all drawables, calls draw->releaseShadows()
+}
+void MacOSGameClient::allocateShadows(void) {
+  GameClient::allocateShadows(); // iterates all drawables, calls draw->allocateShadows()
+}
 #if RTS_ZEROHOUR
-void MacOSGameClient::notifyTerrainObjectMoved(Object *obj) {}
+void MacOSGameClient::notifyTerrainObjectMoved(Object *obj) {
+  // TODO: implement terrain deformation notification
+}
 SnowManager *MacOSGameClient::createSnowManager(void) {
   return new MacOSSnowManager();
 }

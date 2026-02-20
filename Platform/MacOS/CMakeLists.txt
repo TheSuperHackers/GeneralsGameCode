@@ -41,11 +41,11 @@ set(COMMON_SRC
     Source/Common/StdLocalFileSystem.cpp
 )
 
-# ── Stubs (GameSpy, LZHL, WWDownload — Windows-only libs) ──
+# ── Stubs (GameSpy, WWDownload — Windows-only libs) ──
+# NOTE: LZHLStubs.cpp was REMOVED — real liblzhl is linked via core_compression.
 set(STUBS_SRC
     Source/Stubs/GameSpyStubs.cpp
     Source/Stubs/GitInfoStubs.cpp
-    Source/Stubs/LZHLStubs.cpp
     Source/Stubs/MacOSW3DShaderManager.mm
     Source/Stubs/WWDownloadStubs.cpp
 )

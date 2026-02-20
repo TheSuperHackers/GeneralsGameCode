@@ -174,97 +174,19 @@ void CommandLine::parseCommandLineForStartup() {
   }
 }
 
-// GlobalData stubs
-GlobalData::GlobalData() {
-  m_headless = false;
-  m_windowed = true;
-  m_xResolution = 800;
-  m_yResolution = 600;
-
-#ifdef __APPLE__
-  // On Mac, we use ~/Library/Application Support/Generals
-  NSString *appName = @"Generals Zero Hour";
-  NSArray *paths = NSSearchPathForDirectoriesInDomains(
-      NSApplicationSupportDirectory, NSUserDomainMask, YES);
-  NSString *basePath = ([paths count] > 0) ? [paths objectAtIndex:0] : @"./";
-  NSString *userDataPath = [basePath stringByAppendingPathComponent:appName];
-
-  // Create directory if it doesn't exist
-  [[NSFileManager defaultManager] createDirectoryAtPath:userDataPath
-                            withIntermediateDirectories:YES
-                                             attributes:nil
-                                                  error:nil];
-
-  m_userDataDir = [userDataPath UTF8String];
-  m_userDataDir.concat("/");
-#else
-  m_userDataDir = "./";
-#endif
-
-  fprintf(stderr, "USER DATA DIRECTORY: %s\n", m_userDataDir.str());
-}
-GlobalData::~GlobalData() {}
-void GlobalData::init() {}
-void GlobalData::reset() {}
-Bool GlobalData::setTimeOfDay(TimeOfDay tod) { return false; }
+// GlobalData stubs — REMOVED
+// All GlobalData methods are now in GeneralsMD/Code/GameEngine/Source/Common/GlobalData.cpp
+// The macOS-specific m_userDataDir setup is handled via #ifdef __APPLE__ in that file.
+// Having stubs here was an ODR violation.
 
 // Stubs removed for Version, Money, FramePacer, INI.
 
-// AudioManager stubs
-AudioManager::AudioManager() {}
-AudioManager::~AudioManager() {}
-void AudioManager::muteAudio(AudioManager::MuteAudioReason) {}
-void AudioManager::unmuteAudio(AudioManager::MuteAudioReason) {}
-Bool AudioManager::isValidAudioEvent(const AudioEventRTS *) const {
-  return false;
-}
-Bool AudioManager::isValidAudioEvent(AudioEventRTS *) const { return false; }
-AudioEventInfo *AudioManager::findAudioEventInfo(AsciiString) const {
-  return nullptr;
-}
-const Coord3D *AudioManager::getListenerPosition() const { return nullptr; }
-void AudioManager::getInfoForAudioEvent(const AudioEventRTS *) const {}
-Bool AudioManager::isMusicAlreadyLoaded() const { return true; }  // Must return true or engine quits immediately
-Bool AudioManager::isOn(AudioAffect) const { return false; }
-void AudioManager::findAllAudioEventsOfType(AudioType,
-                                            std::vector<AudioEventInfo *> &) {}
-void AudioManager::setAudioEventVolumeOverride(AsciiString, Real) {}
-Bool AudioManager::isCurrentSpeakerTypeSurroundSound() { return false; }
-UnsignedInt
-AudioManager::translateSpeakerTypeToUnsignedInt(const AsciiString &) {
-  return 0;
-}
-AsciiString AudioManager::translateUnsignedIntToSpeakerType(UnsignedInt) {
-  return "";
-}
-void AudioManager::removeLevelSpecificAudioEventInfos() {}
-Bool AudioManager::isCurrentProviderHardwareAccelerated() { return false; }
-void AudioManager::init() {}
-void AudioManager::reset() {}
-void AudioManager::setOn(Bool, AudioAffect) {}
-void AudioManager::update() {}
-Real AudioManager::getVolume(AudioAffect) { return 1.0f; }
-void AudioManager::setVolume(Real, AudioAffect) {}
-AudioHandle AudioManager::addAudioEvent(const AudioEventRTS *) { return 0; }
-void AudioManager::postProcessLoad() {}
-Real AudioManager::getAudioLengthMS(const AudioEventRTS *) { return 0.0f; }
-void AudioManager::removeAudioEvent(AsciiString) {}
-void AudioManager::removeAudioEvent(UnsignedInt) {}
-void AudioManager::addAudioEventInfo(AudioEventInfo *) {}
-AudioHandle AudioManager::allocateNewHandle() { return 0; }
-AudioEventInfo *AudioManager::newAudioEventInfo(AsciiString) { return nullptr; }
-Bool AudioManager::shouldPlayLocally(const AudioEventRTS *) { return true; }
-// void AudioManager::appendAudioRequest(AudioRequest *) {}
-Bool AudioManager::isCurrentlyPlaying(AudioHandle) { return false; }
-void AudioManager::processRequestList() {}
-void AudioManager::releaseAudioRequest(AudioRequest *) {}
-void AudioManager::setListenerPosition(const Coord3D *, const Coord3D *) {}
-AudioRequest *AudioManager::allocateAudioRequest(Bool) { return nullptr; }
-void AudioManager::releaseAudioEventRTS(AudioEventRTS *&) {}
-void AudioManager::removeDisabledEvents() {}
-void AudioManager::setAudioEventEnabled(AsciiString, Bool) {}
-void AudioManager::set3DVolumeAdjustment(Real) {}
-void AudioManager::refreshCachedVariables() {}
+// AudioManager stubs — REMOVED
+// All AudioManager base class methods are implemented in
+// Core/GameEngine/Source/Common/Audio/GameAudio.cpp (which IS compiled).
+// Having stubs here was an ODR violation — the linker could pick the stub
+// (returning nullptr from allocateAudioRequest, getListenerPosition, etc.)
+// over the real implementation, causing crashes.
 #endif
 
 // GameEngine stubs
@@ -349,6 +271,7 @@ GameLogic *Win32GameEngine::createGameLogic(void) {
 #include "Common/Radar.h"
 #include "Common/ThingFactory.h"
 #include "GameClient/ParticleSys.h" // Defines ParticleSystemManager
+#include "W3DDevice/GameClient/W3DParticleSys.h" // W3DParticleSystemManager
 #include "GameNetwork/NetworkInterface.h"
 // WebBrowser is in GameNetwork/WOLBrowser/WebBrowser.h but let's check exact
 // include path validness If it fails, we will fix it. Based on find output:
@@ -483,8 +406,8 @@ FunctionLexicon *Win32GameEngine::createFunctionLexicon(void) {
   return new W3DFunctionLexicon();
 }
 ParticleSystemManager *Win32GameEngine::createParticleSystemManager(void) {
-  fprintf(stderr, "FACTORY: createParticleSystemManager\n");
-  return new StubParticleSystemManager();
+  fprintf(stderr, "FACTORY: createParticleSystemManager (W3D)\n");
+  return new W3DParticleSystemManager();
 }
 NetworkInterface *Win32GameEngine::createNetwork(void) {
   fprintf(stderr, "FACTORY: createNetwork\n");

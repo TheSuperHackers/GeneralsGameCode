@@ -1674,7 +1674,7 @@ void W3DDisplay::draw( void )
 		rflowFrameNum++, m_averageFPS, (int)TheGlobalData->m_headless);
 
 	updateAverageFPS();
-	if (TheGlobalData->m_enableDynamicLOD && TheGameLogic->getShowDynamicLOD())
+	if (TheGameLogic && TheGlobalData->m_enableDynamicLOD && TheGameLogic->getShowDynamicLOD())
 	{
 		DynamicGameLODLevel lod=TheGameLODManager->findDynamicLODLevel(m_averageFPS);
 		TheGameLODManager->setDynamicLODLevel(lod);
@@ -1748,14 +1748,15 @@ AGAIN:
   	//
 	//PredictiveLODOptimizerClass::Optimize_LODs( 5000 );
 
-	Bool freezeTime = TheFramePacer->isTimeFrozen() || TheFramePacer->isGameHalted();
+	Bool freezeTime = TheFramePacer ? (TheFramePacer->isTimeFrozen() || TheFramePacer->isGameHalted()) : FALSE;
 
 	/// @todo: I'm assuming the first view is our main 3D view.
 	W3DView *primaryW3DView=(W3DView *)getFirstView();
 
-	if (!freezeTime && TheScriptEngine->isTimeFast())
+	if (!freezeTime && TheScriptEngine && TheScriptEngine->isTimeFast())
 	{
-		primaryW3DView->updateCameraMovements();  // Update camera motion effects.
+		if (primaryW3DView)
+			primaryW3DView->updateCameraMovements();  // Update camera motion effects.
 		return;
 	}
 
@@ -1784,15 +1785,15 @@ AGAIN:
 		}
 	}
 
-	WW3D::Update_Logic_Frame_Time(TheFramePacer->getLogicTimeStepMilliseconds());
+	WW3D::Update_Logic_Frame_Time(TheFramePacer ? TheFramePacer->getLogicTimeStepMilliseconds() : 33);
 
 	// TheSuperHackers @info This binds the WW3D update to the logic update.
-	WW3D::Sync(TheGameLogic->hasUpdated());
+	WW3D::Sync(TheGameLogic ? TheGameLogic->hasUpdated() : false);
 
 	static Int now;
 	now=timeGetTime();
 
-	if (TheTacticalView->getTimeMultiplier()>1)
+	if (TheTacticalView && TheTacticalView->getTimeMultiplier()>1)
 	{
 		static Int timeMultiplierCounter = 1;
 		timeMultiplierCounter--;
@@ -1810,7 +1811,7 @@ AGAIN:
 			//trying to refresh the visible terrain geometry.
 //			if(TheGlobalData->m_loadScreenRender != TRUE)
 				updateViews();
-     		TheParticleSystemManager->update();//LORENZEN AND WILCZYNSKI MOVED THIS FROM ITS NATIVE POSITION, ABOVE
+     		if (TheParticleSystemManager) TheParticleSystemManager->update();//LORENZEN AND WILCZYNSKI MOVED THIS FROM ITS NATIVE POSITION, ABOVE
                                            //FOR THE PURPOSE OF LETTING THE PARTICLE SYSTEM LOOK UP THE RENDER OBJECT"S
                                            //TRANSFORM MATRIX, WHILE IT IS STILL VALID (HAVING DONE ITS CLIENT TRANSFORMS
                                            //BUT NOT YET RESETTING TOT HE LOGICAL TRANSFORM)
@@ -1820,7 +1821,7 @@ AGAIN:
                                            //-LORENZEN
 
 
-			if (TheWaterRenderObj && TheGlobalData->m_waterType == 2)
+			if (TheWaterRenderObj && primaryW3DView && TheGlobalData->m_waterType == 2)
 				TheWaterRenderObj->updateRenderTargetTextures(primaryW3DView->get3DCamera());	//do a render into each texture
 
 			//Can't render into textures while rendering to screen so these textures need to be updated
@@ -1837,14 +1838,15 @@ AGAIN:
 
 		// start render block
 		#if defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
-    if ( (TheGameLogic->getFrame() % 30 == 1) || ( ! ( !TheGameLogic->isGamePaused() && TheGlobalData->m_TiVOFastMode) ) )
+    if ( !TheGameLogic || (TheGameLogic->getFrame() % 30 == 1) || ( ! ( !TheGameLogic->isGamePaused() && TheGlobalData->m_TiVOFastMode) ) )
 		#else
-	    if ( (TheGameLogic->getFrame() % 30 == 1) || ( ! (!TheGameLogic->isGamePaused() && TheGlobalData->m_TiVOFastMode && TheGameLogic->isInReplayGame())) )
+	    if ( !TheGameLogic || (TheGameLogic->getFrame() % 30 == 1) || ( ! (!TheGameLogic->isGamePaused() && TheGlobalData->m_TiVOFastMode && TheGameLogic->isInReplayGame())) )
     #endif
 		{
 			//USE_PERF_TIMER(BigAssRenderLoop)
 			static Bool couldRender = true;
-			if ((TheGlobalData->m_breakTheMovie == FALSE) && (TheGlobalData->m_disableRender == false) && WW3D::Begin_Render( true, true, Vector3( 0.0f, 0.0f, 0.0f ), TheWaterTransparency->m_minWaterOpacity ) == WW3D_ERROR_OK)
+			Real minWaterOpacity = TheWaterTransparency ? TheWaterTransparency->m_minWaterOpacity : 1.0f;
+			if ((TheGlobalData->m_breakTheMovie == FALSE) && (TheGlobalData->m_disableRender == false) && WW3D::Begin_Render( true, true, Vector3( 0.0f, 0.0f, 0.0f ), minWaterOpacity ) == WW3D_ERROR_OK)
 			{
 
 				if(TheGlobalData->m_loadScreenRender == TRUE)
@@ -1955,12 +1957,12 @@ AGAIN:
 			}
 		}
 
-		if (TheScriptEngine->isTimeFrozenDebug() || TheScriptEngine->isTimeFrozenScript() || TheGameLogic->isGamePaused())
+		if ((TheScriptEngine && (TheScriptEngine->isTimeFrozenDebug() || TheScriptEngine->isTimeFrozenScript())) || (TheGameLogic && TheGameLogic->isGamePaused()))
 		{
 			freezeTime = false; // We're frozen for debug or for pause, and need to continue out of the loop.
 		}
 
-	} while (freezeTime && !TheTacticalView->isCameraMovementFinished());
+	} while (freezeTime && TheTacticalView && !TheTacticalView->isCameraMovementFinished());
 
 #ifdef EXTENDED_STATS
 	if (DX8Wrapper::stats.m_disableOverhead) {

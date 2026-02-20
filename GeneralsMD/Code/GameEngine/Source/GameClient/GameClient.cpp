@@ -605,17 +605,8 @@ void GameClient::update( void )
 
 			}
 
-#ifdef __APPLE__
-			// macOS: 3D shell map not supported yet, ensure shellMapOn is FALSE
-			// so showShellMap(TRUE) will load 2D BlankWindow background instead
-			fprintf(stderr, "MENU_FLOW: macOS -> setting shellMapOn=FALSE, calling showShellMap+showShell\n");
-			TheWritableGlobalData->m_shellMapOn = FALSE;
 			TheShell->showShellMap(TRUE);
 			TheShell->showShell();
-#else
-			TheShell->showShellMap(TRUE);
-			TheShell->showShell();
-#endif
 			TheWritableGlobalData->m_afterIntro = FALSE;
 		}
 	}

@@ -618,9 +618,14 @@ void GameLODManager::applyStaticLODLevel(StaticGameLODLevel level)
 		TheWritableGlobalData->m_useFpsLimit = lodInfo->m_useFpsLimit;
 		TheWritableGlobalData->m_useTrees = requestedTrees;
 
+		fprintf(stderr, "LOD: memPassed=%d cpuFreq=%d reallyLowMHz=%d isReallyLow=%d numRAM=%llu\n",
+			(int)m_memPassed, m_cpuFreq, m_reallyLowMHz, (int)isReallyLowMHz(), (unsigned long long)m_numRAM);
+#ifndef __APPLE__
+		// On macOS, testMinimumRequirements is a stub — don't disable shell map based on fake values
 		if (!m_memPassed || isReallyLowMHz()) {
 			TheWritableGlobalData->m_shellMapOn = false;
 		}
+#endif
 	}
 
 	if (TheTerrainVisual)

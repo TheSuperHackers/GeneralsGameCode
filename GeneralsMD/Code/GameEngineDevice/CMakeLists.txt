@@ -196,6 +196,15 @@ add_library(z_gameenginedevice STATIC)
 
 target_sources(z_gameenginedevice PRIVATE ${GAMEENGINEDEVICE_SRC})
 
+# On macOS, Win32GameEngine.cpp is replaced by MacOSMain.mm (in macos_platform).
+# Both defining Win32GameEngine methods would be an ODR violation.
+if(APPLE)
+    set_source_files_properties(
+        Source/Win32Device/Common/Win32GameEngine.cpp
+        PROPERTIES HEADER_FILE_ONLY TRUE
+    )
+endif()
+
 target_include_directories(z_gameenginedevice PUBLIC
     Include
 )

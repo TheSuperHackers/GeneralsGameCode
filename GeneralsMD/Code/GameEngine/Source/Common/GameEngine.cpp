@@ -895,13 +895,18 @@ void GameEngine::init() {
     }
 
     //
+    fprintf(stderr, "SHELLMAP_CHECK: shellMapOn=%d shellMapName='%s' MapCache=%p\n",
+      (int)TheGlobalData->m_shellMapOn, TheGlobalData->m_shellMapName.str(), (void*)TheMapCache);
     if (TheMapCache && TheGlobalData->m_shellMapOn) {
       AsciiString lowerName = TheGlobalData->m_shellMapName;
       lowerName.toLower();
 
       MapCache::const_iterator it = TheMapCache->find(lowerName);
       if (it == TheMapCache->end()) {
+        fprintf(stderr, "SHELLMAP_CHECK: map '%s' NOT found in cache -> disabling shellMap!\n", lowerName.str());
         TheWritableGlobalData->m_shellMapOn = FALSE;
+      } else {
+        fprintf(stderr, "SHELLMAP_CHECK: map '%s' found in cache -> OK\n", lowerName.str());
       }
     }
 

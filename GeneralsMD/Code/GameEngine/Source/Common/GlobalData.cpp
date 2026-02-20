@@ -1036,8 +1036,25 @@ GlobalData::GlobalData()
 
 	m_keyboardCameraRotateSpeed = 0.1f;
 
-  // Set user data directory based on registry settings instead of INI parameters. This allows us to
-  // localize the leaf name.
+  // Set user data directory based on platform
+#ifdef __APPLE__
+  {
+    // On macOS, use ~/Library/Application Support/Generals Zero Hour
+    const char *home = getenv("HOME");
+    if (home) {
+      AsciiString macDir = home;
+      macDir.concat("/Library/Application Support/Generals Zero Hour/");
+      // Create directory if needed (mkdir -p equivalent)
+      // Note: using mkdir from sys/stat.h (included via PreRTS.h)
+      AsciiString mkdirCmd;
+      mkdirCmd.format("mkdir -p \"%s\"", macDir.str());
+      system(mkdirCmd.str());
+      m_userDataDir = macDir;
+    } else {
+      m_userDataDir = "./";
+    }
+  }
+#else
   char temp[_MAX_PATH + 1];
   if (::SHGetSpecialFolderPath(nullptr, temp, CSIDL_PERSONAL, true))
   {
@@ -1062,6 +1079,7 @@ GlobalData::GlobalData()
     CreateDirectory(myDocumentsDirectory.str(), nullptr);
     m_userDataDir = myDocumentsDirectory;
   }
+#endif
 
 	//-allAdvice feature
 	//m_allAdvice = FALSE;

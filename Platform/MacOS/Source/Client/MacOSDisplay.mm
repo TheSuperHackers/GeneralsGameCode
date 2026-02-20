@@ -16,14 +16,22 @@
 #include "WW3D2/render2d.h"
 #include "WW3D2/ww3d.h"
 
+// For subsystem availability checks
+#include "Common/FramePacer.h"
+#include "GameClient/ParticleSys.h"
+#include "GameClient/View.h"
+#include "GameLogic/GameLogic.h"
+#include "GameLogic/ScriptEngine.h"
+
 // MacOSDisplay inherits from W3DDisplay to get all draw methods (drawImage,
 // drawLine, drawFillRect, etc.) through Render2DClass → DX8Wrapper → Metal.
 //
-// Now that WW3D::Init() and DX8Wrapper::Set_Render_Device() are idempotent,
-// W3DDisplay::init() can be called safely even when the device already exists.
-//
-// We override draw() because W3DDisplay::draw() requires many game subsystems
-// (TheScriptEngine, TheTacticalView, etc.) that aren't available during shell.
+// Strategy:
+// - When critical subsystems exist (TheGameLogic, TheScriptEngine,
+//   TheFramePacer, TheTacticalView, TheParticleSystemManager), delegate
+//   to W3DDisplay::draw() which renders the full 3D scene.
+// - During shell/menu phase when those are null, use a simplified
+//   render loop that only draws views + UI + mouse cursor.
 class MacOSDisplay : public W3DDisplay {
 public:
   MacOSDisplay() {
@@ -50,39 +58,12 @@ public:
 
   virtual void reset(void) override { W3DDisplay::reset(); }
 
-  // Override draw() — W3DDisplay::draw() requires TheScriptEngine,
-  // TheFramePacer, TheTacticalView, TheParticleSystemManager, etc.
-  // which are null during the shell/menu phase. Use simplified loop.
   virtual void draw(void) override {
-    static int frameCount = 0;
-    frameCount++;
-
-    DLOG_RFLOW(1, "MacOSDisplay::draw frame=%d winMgr=%p inGameUI=%p mouse=%p",
-      frameCount, (void*)TheWindowManager, (void*)TheInGameUI, (void*)TheMouse);
-
-    // Simplified render loop — safe with any combination of subsystems
-    WW3DErrorType result =
-        WW3D::Begin_Render(true, true, Vector3(0.02f, 0.05f, 0.1f));
-    if (result != WW3D_ERROR_OK) {
-      DLOG_RFLOW(1, "MacOSDisplay::draw frame=%d Begin_Render FAILED result=%d",
-        frameCount, (int)result);
-      return;
-    }
-
-    // Draw all views of the world (may be empty during shell)
-    Display::draw();
-
-    // Draw the in-game UI (W3DInGameUI::draw() calls winRepaint() internally)
-    if (TheInGameUI) {
-      TheInGameUI->draw();
-    }
-
-    // Draw the mouse cursor
-    if (TheMouse) {
-      TheMouse->draw();
-    }
-
-    WW3D::End_Render();
+    // W3DDisplay::draw() now has null-safety guards for all subsystems
+    // (TheGameLogic, TheScriptEngine, TheFramePacer, TheTacticalView,
+    // TheParticleSystemManager, TheWaterTransparency), so it is safe
+    // to call at any phase — shell/menu or gameplay.
+    W3DDisplay::draw();
   }
 
   // Inherited from W3DDisplay:
@@ -97,7 +78,7 @@ public:
   virtual void dumpAssetUsage(const char *mapname) override {}
   virtual void dumpModelAssets(const char *path) override {}
 #endif
-  virtual void update(void) override {}
+  virtual void update(void) override { W3DDisplay::update(); }
 };
 
 extern "C" Display *MacOS_CreateDisplay(void) {
@@ -106,3 +87,4 @@ extern "C" Display *MacOS_CreateDisplay(void) {
   fflush(stdout);
   return d;
 }
+
