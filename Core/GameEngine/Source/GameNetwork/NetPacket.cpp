@@ -392,11 +392,11 @@ Bool NetPacket::addCommand(NetCommandRef *msg) {
 	else
 	{
 		SmallNetPacketCommandBaseSelect select = cmdMsg->getSmallNetPacketSelect();
-		select.useCommandType *= m_lastCommandType != cmdMsg->getNetCommandType();
-		select.useRelay *= m_lastRelay != msg->getRelay();
-		select.useFrame *= m_lastFrame != cmdMsg->getExecutionFrame();
-		select.usePlayerId *= m_lastPlayerID != cmdMsg->getPlayerID();
-		select.useCommandId *= ((m_lastCommandID + 1) != cmdMsg->getID()) | select.usePlayerId;
+		select.useCommandType &= m_lastCommandType != cmdMsg->getNetCommandType();
+		select.useRelay &= m_lastRelay != msg->getRelay();
+		select.useFrame &= m_lastFrame != cmdMsg->getExecutionFrame();
+		select.usePlayerId &= m_lastPlayerID != cmdMsg->getPlayerID();
+		select.useCommandId &= ((m_lastCommandID + 1) != cmdMsg->getID()) | select.usePlayerId;
 
 		if (select.useCommandType)
 			m_lastCommandType = cmdMsg->getNetCommandType();
