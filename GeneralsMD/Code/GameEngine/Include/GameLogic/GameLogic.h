@@ -136,6 +136,7 @@ public:
 	Bool isInGameLogicUpdate( void ) const { return m_isInUpdate; }
 	Bool hasUpdated() const { return m_hasUpdated; } ///< Returns true if the logic frame has advanced in the current client/render update
 	UnsignedInt getFrame( void );										///< Returns the current simulation frame number
+	void quit(Bool toDesktop);
 	UnsignedInt getCRC( Int mode = CRC_CACHED, AsciiString deepCRCFileName = AsciiString::TheEmptyString );		///< Returns the CRC
 
 	void setObjectIDCounter( ObjectID nextObjID ) { m_nextObjID = nextObjID; }
@@ -405,6 +406,7 @@ private:
 	void xferObjectTOC( Xfer *xfer );												///< save/load object TOC for current state of map
 	void prepareLogicForObjectLoad( void );									///< prepare engine for object data from game file
 
+	Bool m_quitToDesktopAfterMatch;
 };
 
 // INLINE /////////////////////////////////////////////////////////////////////////////////////////

@@ -141,6 +141,8 @@ enum { OBJ_HASH_SIZE	= 8192 };
 /// The GameLogic singleton instance
 GameLogic *TheGameLogic = nullptr;
 
+extern GameInfo *TheGameInfo;
+
 static void findAndSelectCommandCenter(Object *obj, void* alreadyFound);
 
 
@@ -262,6 +264,7 @@ GameLogic::GameLogic( void )
 	m_loadingMap = FALSE;
 	m_loadingSave = FALSE;
 	m_clearingGameData = FALSE;
+	m_quitToDesktopAfterMatch = FALSE;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -4168,6 +4171,61 @@ void GameLogic::exitGame()
 	TheScriptEngine->doUnfreezeTime();
 
 	TheMessageStream->appendMessage(GameMessage::MSG_CLEAR_GAME_DATA);
+}
+
+// ------------------------------------------------------------------------------------------------
+void GameLogic::quit(Bool toDesktop)
+{
+	if (isInGame())
+	{
+		if (isInMultiplayerGame() && !isInSkirmishGame() && TheGameInfo && !TheGameInfo->isSandbox())
+		{
+			GameMessage *msg = TheMessageStream->appendMessage(GameMessage::MSG_SELF_DESTRUCT);
+			msg->appendBooleanArgument(TRUE);
+		}
+
+		if (TheRecorder && TheRecorder->getMode() == RECORDERMODETYPE_RECORD)
+		{
+			TheRecorder->stopRecording();
+		}
+
+		setGamePaused(FALSE);
+		if (TheScriptEngine)
+		{
+			TheScriptEngine->forceUnfreezeTime();
+			TheScriptEngine->doUnfreezeTime();
+		}
+
+		if (toDesktop)
+		{
+			if (isInMultiplayerGame())
+			{
+				m_quitToDesktopAfterMatch = TRUE;
+				exitGame();
+			}
+			else
+			{
+				clearGameData();
+			}
+		}
+		else
+		{
+			exitGame();
+		}
+	}
+
+	if (toDesktop)
+	{
+		if (!isInMultiplayerGame())
+		{
+			TheGameEngine->setQuitting(TRUE);
+		}
+	}
+
+	if (TheInGameUI)
+	{
+		TheInGameUI->setClientQuiet(TRUE);
+	}
 }
 
 // ------------------------------------------------------------------------------------------------
