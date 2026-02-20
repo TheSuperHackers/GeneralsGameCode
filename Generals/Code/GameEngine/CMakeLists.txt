@@ -185,7 +185,7 @@ set(GAMEENGINE_SRC
     Include/GameClient/Image.h
     Include/GameClient/IMEManager.h
     Include/GameClient/InGameUI.h
-    Include/GameClient/Keyboard.h
+#    Include/GameClient/Keyboard.h
     Include/GameClient/KeyDefs.h
     Include/GameClient/LanguageFilter.h
     Include/GameClient/Line2D.h
@@ -197,7 +197,7 @@ set(GAMEENGINE_SRC
     Include/GameClient/Module/AnimatedParticleSysBoneClientUpdate.h
     Include/GameClient/Module/BeaconClientUpdate.h
     Include/GameClient/Module/SwayClientUpdate.h
-    Include/GameClient/Mouse.h
+#    Include/GameClient/Mouse.h
 #    Include/GameClient/ParticleSys.h
     Include/GameClient/PlaceEventTranslator.h
     Include/GameClient/ProcessAnimateWindow.h
@@ -748,8 +748,8 @@ set(GAMEENGINE_SRC
 #    Source/GameClient/GUI/WindowVideoManager.cpp
     Source/GameClient/GUI/WinInstanceData.cpp
     Source/GameClient/InGameUI.cpp
-    Source/GameClient/Input/Keyboard.cpp
-    Source/GameClient/Input/Mouse.cpp
+#    Source/GameClient/Input/Keyboard.cpp
+#    Source/GameClient/Input/Mouse.cpp
     Source/GameClient/LanguageFilter.cpp
     Source/GameClient/Line2D.cpp
 #    Source/GameClient/MapUtil.cpp

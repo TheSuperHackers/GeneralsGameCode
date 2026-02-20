@@ -344,6 +344,19 @@ def main():
     #unify_move_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/GameClient/Drawable/Draw/W3DOverlordAircraftDraw.cpp", Game.CORE, "GameEngineDevice/Source/W3DDevice/GameClient/Drawable/Draw/W3DOverlordAircraftDraw.cpp")
     #unify_move_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/GameClient/Drawable/Draw/W3DOverlordTruckDraw.cpp", Game.CORE, "GameEngineDevice/Source/W3DDevice/GameClient/Drawable/Draw/W3DOverlordTruckDraw.cpp")
 
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameClient/Mouse.h", Game.CORE, "GameEngine/Include/GameClient/Mouse.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/Input/Mouse.cpp", Game.CORE, "GameEngine/Source/GameClient/Input/Mouse.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameClient/Keyboard.h", Game.CORE, "GameEngine/Include/GameClient/Keyboard.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/Input/Keyboard.cpp", Game.CORE, "GameEngine/Source/GameClient/Input/Keyboard.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Include/W3DDevice/GameClient/W3DMouse.h", Game.CORE, "GameEngineDevice/Include/W3DDevice/GameClient/W3DMouse.h")
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/GameClient/W3DMouse.cpp", Game.CORE, "GameEngineDevice/Source/W3DDevice/GameClient/W3DMouse.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Include/Win32Device/GameClient/Win32DIKeyboard.h", Game.CORE, "GameEngineDevice/Include/Win32Device/GameClient/Win32DIKeyboard.h")
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Include/Win32Device/GameClient/Win32DIMouse.h", Game.CORE, "GameEngineDevice/Include/Win32Device/GameClient/Win32DIMouse.h")
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Include/Win32Device/GameClient/Win32Mouse.h", Game.CORE, "GameEngineDevice/Include/Win32Device/GameClient/Win32Mouse.h")
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Source/Win32Device/GameClient/Win32DIKeyboard.cpp", Game.CORE, "GameEngineDevice/Source/Win32Device/GameClient/Win32DIKeyboard.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Source/Win32Device/GameClient/Win32DIMouse.cpp", Game.CORE, "GameEngineDevice/Source/Win32Device/GameClient/Win32DIMouse.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Source/Win32Device/GameClient/Win32Mouse.cpp", Game.CORE, "GameEngineDevice/Source/Win32Device/GameClient/Win32Mouse.cpp")
+
     return
 
 
