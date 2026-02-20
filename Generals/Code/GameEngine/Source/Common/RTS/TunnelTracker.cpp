@@ -52,6 +52,7 @@ TunnelTracker::TunnelTracker()
 {
 	m_tunnelCount = 0;
 	m_containListSize = 0;
+	m_heroUnitsContained = 0;
 	m_curNemesisID = INVALID_ID;
 	m_nemesisTimestamp = 0;
 	m_framesForFullHeal = 0;
@@ -186,6 +187,11 @@ void TunnelTracker::addToContainList( Object *obj )
 {
 	m_containList.push_back(obj);
 	++m_containListSize;
+
+	if (obj->isKindOf(KINDOF_HERO))
+	{
+		++m_heroUnitsContained;
+	}
 }
 
 // ------------------------------------------------------------------------
@@ -198,6 +204,12 @@ void TunnelTracker::removeFromContain( Object *obj, Bool exposeStealthUnits )
 		// note that this invalidates the iterator!
 		m_containList.erase(it);
 		--m_containListSize;
+
+		if (obj->isKindOf(KINDOF_HERO))
+		{
+			DEBUG_ASSERTCRASH(m_heroUnitsContained > 0, ("TunnelTracker::removeFromContain - Removing hero but hero count is %d", m_heroUnitsContained));
+			--m_heroUnitsContained;
+		}
 	}
 
 }
@@ -432,6 +444,8 @@ void TunnelTracker::loadPostProcess( void )
 	}
 
 	// translate each object ids on the xferContainList into real object pointers in the contain list
+	m_containListSize = 0;
+	m_heroUnitsContained = 0;
 	Object *obj;
 	std::list< ObjectID >::const_iterator it;
 	for( it = m_xferContainList.begin(); it != m_xferContainList.end(); ++it )
@@ -447,7 +461,7 @@ void TunnelTracker::loadPostProcess( void )
 		}
 
 		// push on the back of the contain list
-		m_containList.push_back( obj );
+		addToContainList( obj );
 
 		// Crap.  This is in OpenContain as a fix, but not here.
 		{

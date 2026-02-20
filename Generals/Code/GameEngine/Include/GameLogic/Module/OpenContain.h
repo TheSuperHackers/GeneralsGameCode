@@ -240,7 +240,6 @@ private:
 	ObjectEnterExitMap	m_objectEnterExitInfo;
 	UnsignedInt					m_stealthUnitsContained;				///< number of stealth units that can't be seen by enemy players.
 	UnsignedInt					m_heroUnitsContained;						///< cached hero count
-	XferVersion					m_xferVersion;									///< version of loaded save file for loadPostProcess
 	Int									m_whichExitPath; ///< Cycles from 1 to n and is used only in modules whose data has numberOfExitPaths > 1.
 	UnsignedInt					m_doorCloseCountdown;						///< When should I shut my door.
 

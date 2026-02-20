@@ -165,6 +165,13 @@ UpdateSleepTime BunkerBusterBehavior::update( void )
 // ------------------------------------------------------------------------------------------------
 void BunkerBusterBehavior::onDie( const DamageInfo *damageInfo )
 {
+#if !RETAIL_COMPATIBLE_CRC
+  // TheSuperHackers @bugfix Stubbjax 17/02/2026 Only bust the bunker if the missile kills itself
+  // by reaching its destination and not when killed via external sources such as a zap from a PDL.
+  if (!getObject()->testStatus(OBJECT_STATUS_MISSILE_KILLING_SELF))
+    return;
+#endif
+
   // do what we came here to do!
   bustTheBunker();
 }
