@@ -63,8 +63,6 @@ void DirectInputMouse::openMouse( void )
 
 	// create a device for the system mouse
 	hr = m_pDirectInput->CreateDevice( GUID_SysMouse, &m_pMouseDevice, nullptr );
-																		 &m_pMouseDevice,
-																		 nullptr );
 	if( FAILED( hr ) )
 	{
 

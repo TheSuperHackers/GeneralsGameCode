@@ -227,8 +227,6 @@ Bool Keyboard::checkKeyRepeat( void )
 
 			const UnsignedInt now = timeGetTime();
 			const UnsignedInt keyDownTime = m_keyStatus[ key ].keyDownTimeMsec;
-
-			// Unsigned subtraction handles wraparound correctly
 			const UnsignedInt elapsedMsec = now - keyDownTime;
 
 			if( elapsedMsec > Keyboard::KEY_REPEAT_DELAY_MSEC )
