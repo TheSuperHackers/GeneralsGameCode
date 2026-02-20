@@ -256,15 +256,15 @@ STDMETHODIMP MetalTexture8::LockRect(UINT Level, D3DLOCKED_RECT *pLockedRect,
     return D3DERR_OUTOFVIDEOMEMORY;
 
   // Retrieve existing texture data if it's already uploaded.
-  if (m_Texture && !(Flags & D3DLOCK_DISCARD)) {
+  // Skip for compressed textures — getBytes on uninitialized BC textures can corrupt heap.
+  // Also skip if D3DLOCK_DISCARD is set (caller will overwrite all data).
+  if (m_Texture && !(Flags & D3DLOCK_DISCARD) && !isCompressed && m_HasBeenWritten) {
     id<MTLTexture> mtlTex = (__bridge id<MTLTexture>)m_Texture;
     MTLRegion region = MTLRegionMake2D(0, 0, width, height);
-    if (isCompressed) {
-      UINT bytesPerImage = pitch * std::max(1u, (height + 3) / 4);
-      [mtlTex getBytes:data bytesPerRow:pitch bytesPerImage:bytesPerImage fromRegion:region mipmapLevel:Level slice:0];
-    } else {
-      [mtlTex getBytes:data bytesPerRow:pitch fromRegion:region mipmapLevel:Level];
-    }
+    [mtlTex getBytes:data bytesPerRow:pitch fromRegion:region mipmapLevel:Level];
+  } else {
+    // Zero-fill for fresh textures or compressed formats
+    memset(data, 0, dataSize);
   }
 
   uint8_t *pBits = (uint8_t *)data;
@@ -376,6 +376,7 @@ STDMETHODIMP MetalTexture8::UnlockRect(UINT Level) {
 
   free(lvl.ptr);
   m_LockedLevels.erase(it);
+  m_HasBeenWritten = true;
 
   return D3D_OK;
 }

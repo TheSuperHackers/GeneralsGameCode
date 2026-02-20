@@ -62,6 +62,7 @@ private:
   DWORD m_Usage;
   D3DFORMAT m_Format;
   D3DPOOL m_Pool;
+  bool m_HasBeenWritten = false;  // Track if texture data has been uploaded
 
   // Staging for LockRect (assuming single lock for now)
   // We might need a map of locked levels if multiple levels are locked
