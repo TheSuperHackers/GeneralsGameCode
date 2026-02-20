@@ -150,11 +150,8 @@ LoadScreen::LoadScreen( void )
 
 LoadScreen::~LoadScreen( void )
 {
-	//if(m_loadScreen)
-	//	delete (m_loadScreen);
 	if(m_loadScreen)
 		TheWindowManager->winDestroy( m_loadScreen );
-	m_loadScreen = nullptr;
 }
 
 void LoadScreen::update( Int percent )
@@ -192,24 +189,14 @@ SinglePlayerLoadScreen::SinglePlayerLoadScreen( void )
 
 SinglePlayerLoadScreen::~SinglePlayerLoadScreen( void )
 {
-	m_progressBar = nullptr;
-	m_percent = nullptr;
-	m_objectiveWin = nullptr;
-	for(Int i = 0; i < MAX_OBJECTIVE_LINES; ++i)
-		m_objectiveLines[i] = nullptr;
-
 	delete m_videoBuffer;
-	m_videoBuffer = nullptr;
 
 	if ( m_videoStream )
 	{
 		m_videoStream->close();
-		m_videoStream = nullptr;
 	}
 
 	TheAudio->removeAudioEvent( m_ambientLoopHandle );
-	m_ambientLoopHandle = 0;
-
 }
 
 void SinglePlayerLoadScreen::moveWindows( Int frame )
@@ -687,54 +674,16 @@ ChallengeLoadScreen::ChallengeLoadScreen( void )
 
 ChallengeLoadScreen::~ChallengeLoadScreen( void )
 {
-	m_progressBar = nullptr;
-
 	delete m_videoBuffer;
-	m_videoBuffer = nullptr;
 
 	if ( m_videoStream )
 	{
 		m_videoStream->close();
-		m_videoStream = nullptr;
 	}
 
-	m_bioNameLeft = nullptr;
-	m_bioAgeLeft = nullptr;
-	m_bioBirthplaceLeft = nullptr;
-	m_bioStrategyLeft = nullptr;
-	m_bioBigNameEntryLeft = nullptr;
-	m_bioNameEntryLeft = nullptr;
-	m_bioAgeEntryLeft = nullptr;
-	m_bioBirthplaceEntryLeft = nullptr;
-	m_bioStrategyEntryLeft = nullptr;
-	m_bioBigNameEntryRight = nullptr;
-	m_bioNameRight = nullptr;
-	m_bioAgeRight = nullptr;
-	m_bioBirthplaceRight = nullptr;
-	m_bioStrategyRight = nullptr;
-	m_bioNameEntryRight = nullptr;
-	m_bioAgeEntryRight = nullptr;
-	m_bioBirthplaceEntryRight = nullptr;
-	m_bioStrategyEntryRight = nullptr;
-
-	m_portraitLeft = nullptr;
-	m_portraitRight = nullptr;
-	m_portraitMovieLeft = nullptr;
-	m_portraitMovieRight = nullptr;
-
-//	m_overlayReticleCrosshairs = nullptr;
-//	m_overlayReticleCircleLineOuter = nullptr;
-//	m_overlayReticleCircleLineInner = nullptr;
-	m_overlayReticleCircleAlphaOuter = nullptr;
-	m_overlayReticleCircleAlphaInner = nullptr;
-	m_overlayVsBackdrop = nullptr;
-	m_overlayVs = nullptr;
-
 	delete m_wndVideoManager;
-	m_wndVideoManager = nullptr;
 
 	TheAudio->removeAudioEvent( m_ambientLoopHandle );
-	m_ambientLoopHandle = 0;
 }
 
 // accepts the number of chars to advance, the window we're concerned with, the total text for final display, and the current position of the readout
@@ -1184,8 +1133,6 @@ ShellGameLoadScreen::ShellGameLoadScreen( void )
 
 ShellGameLoadScreen::~ShellGameLoadScreen( void )
 {
-
-	m_progressBar = nullptr;
 }
 
 void ShellGameLoadScreen::init( GameInfo *game )
@@ -1238,6 +1185,9 @@ void ShellGameLoadScreen::update( Int percent )
 MultiPlayerLoadScreen::MultiPlayerLoadScreen( void )
 {
 	m_mapPreview = nullptr;
+	m_portraitLocalGeneral = nullptr;
+	m_featuresLocalGeneral = nullptr;
+	m_nameLocalGeneral = nullptr;
 
 	for(Int i = 0; i < MAX_SLOTS; ++i)
 	{
@@ -1255,18 +1205,6 @@ MultiPlayerLoadScreen::~MultiPlayerLoadScreen( void )
 	{
 		m_mapPreview->winSetUserData(nullptr);
 	}
-
-	for(Int i = 0; i < MAX_SLOTS; ++i)
-	{
-		m_progressBars[i] = nullptr;
-		m_playerNames[i] = nullptr;
-		m_playerSide[i]= nullptr;
-		m_playerLookup[i] = -1;
-	}
-
-	m_portraitLocalGeneral = nullptr;
-	m_featuresLocalGeneral = nullptr;
-	m_nameLocalGeneral = nullptr;
 
 	TheAudio->removeAudioEvent( AHSV_StopTheMusicFade );
 //	TheAudio->stopAudio( AudioAffect_Music );
@@ -1498,6 +1436,9 @@ GameSpyLoadScreen::GameSpyLoadScreen( void )
 {
 
 	m_mapPreview = nullptr;
+	m_portraitLocalGeneral = nullptr;
+	m_featuresLocalGeneral = nullptr;
+	m_nameLocalGeneral = nullptr;
 
 	for(Int i = 0; i < MAX_SLOTS; ++i)
 	{
@@ -1522,18 +1463,6 @@ GameSpyLoadScreen::~GameSpyLoadScreen( void )
 	if(m_mapPreview)
 	{
 		m_mapPreview->winSetUserData(nullptr);
-	}
-
-	for(Int i = 0; i < MAX_SLOTS; ++i)
-	{
-		m_progressBars[i] = nullptr;
-		m_playerNames[i] = nullptr;
-		m_playerSide[i]= nullptr;
-		m_playerLookup[i] = -1;
-		m_playerFavoriteFactions[i]= nullptr;
-		m_playerTotalDisconnects[i]= nullptr;
-		m_playerWin[i]= nullptr;
-		m_playerWinLosses[i]= nullptr;
 	}
 }
 
@@ -1873,16 +1802,6 @@ MapTransferLoadScreen::MapTransferLoadScreen( void )
 
 MapTransferLoadScreen::~MapTransferLoadScreen( void )
 {
-	for(Int i = 0; i < MAX_SLOTS; ++i)
-	{
-		m_progressBars[i] = nullptr;
-		m_playerNames[i] = nullptr;
-		m_progressText[i]= nullptr;
-		m_playerLookup[i] = -1;
-		m_oldProgress[i] = -1;
-	}
-	m_fileNameText = nullptr;
-	m_timeoutText = nullptr;
 }
 
 void MapTransferLoadScreen::init( GameInfo *game )
