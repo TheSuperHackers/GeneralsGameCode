@@ -121,6 +121,34 @@ static unsigned char MacOSVirtualKeyToDIK(unsigned short keyCode) {
     return DIK_RALT;
   case 0x3E:
     return DIK_RCONTROL;
+
+  // F-keys
+  case 0x7A:
+    return DIK_F1;
+  case 0x78:
+    return DIK_F2;
+  case 0x63:
+    return DIK_F3;
+  case 0x76:
+    return DIK_F4;
+  case 0x60:
+    return DIK_F5;
+  case 0x61:
+    return DIK_F6;
+  case 0x62:
+    return DIK_F7;
+  case 0x64:
+    return DIK_F8;
+  case 0x65:
+    return DIK_F9;
+  case 0x6D:
+    return DIK_F10;
+  case 0x67:
+    return DIK_F11;
+  case 0x6F:
+    return DIK_F12;
+
+  // Navigation keys
   case 0x7B:
     return DIK_LEFT;
   case 0x7C:
@@ -129,6 +157,24 @@ static unsigned char MacOSVirtualKeyToDIK(unsigned short keyCode) {
     return DIK_DOWN;
   case 0x7E:
     return DIK_UP;
+  case 0x75:
+    return DIK_DELETE;
+  case 0x73:
+    return DIK_HOME;
+  case 0x77:
+    return DIK_END;
+  case 0x74:
+    return DIK_PRIOR;  // Page Up
+  case 0x79:
+    return DIK_NEXT;   // Page Down
+
+  // Period/dot
+  case 0x2F:
+    return DIK_PERIOD;
+  // Numpad Enter
+  case 0x4C:
+    return DIK_NUMPADENTER;
+
   default:
     return 0;
   }
@@ -157,7 +203,9 @@ void StdKeyboard::reset(void) {
 }
 
 void StdKeyboard::update(void) {
-  // Events are added via addEvent from Win32GameEngine::serviceWindowsOS
+  // Call base class update() which calls updateKeys() → getKey()
+  // This reads events from our ring buffer into m_keys array
+  Keyboard::update();
 }
 
 Bool StdKeyboard::getCapsState(void) {

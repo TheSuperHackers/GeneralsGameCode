@@ -15,7 +15,32 @@
 - (BOOL)acceptsFirstResponder {
   return YES;
 }
+// Override to prevent beep on keyDown
+- (void)keyDown:(NSEvent *)event {
+  // Don't call super — prevents NSBeep for unhandled key events
+}
 @end
+
+// Custom content view that accepts first responder for keyboard input
+@interface GameContentView : NSView
+@end
+
+@implementation GameContentView
+- (BOOL)acceptsFirstResponder {
+  return YES;
+}
+- (BOOL)canBecomeKeyView {
+  return YES;
+}
+// Override to prevent beep on unhandled keys
+- (void)keyDown:(NSEvent *)event {
+  // Intentionally empty — events are handled in MacOS_PumpEvents
+}
+- (void)keyUp:(NSEvent *)event {
+  // Intentionally empty
+}
+@end
+
 
 @interface MacOSWindowDelegate
     : NSObject <NSWindowDelegate, NSApplicationDelegate>
@@ -132,6 +157,11 @@ void *MacOS_CreateWindow(int width, int height, const char *title) {
   printf("MacOS_CreateWindow: Window created at %p, title: %s, thread=%p\n",
          (__bridge void *)window, title,
          (__bridge void *)[NSThread currentThread]);
+  
+  // Create custom content view that accepts keyboard input
+  GameContentView *contentView = [[GameContentView alloc] initWithFrame:frame];
+  [window setContentView:contentView];
+  
   [window setBackgroundColor:[NSColor redColor]];
   fflush(stdout);
   [window makeKeyAndOrderFront:nil];
@@ -144,10 +174,16 @@ void *MacOS_CreateWindow(int width, int height, const char *title) {
   [NSApp activateIgnoringOtherApps:YES];
   [window makeKeyWindow];
   [window makeMainWindow];
+  
+  // Make the content view first responder for keyboard input
+  [window makeFirstResponder:contentView];
 
   printf("MacOS_CreateWindow: Window visibility: %s, frame=(%f,%f,%f,%f)\n",
          [window isVisible] ? "YES" : "NO", frame.origin.x, frame.origin.y,
          frame.size.width, frame.size.height);
+  printf("MacOS_CreateWindow: firstResponder=%p (contentView=%p)\n",
+         (__bridge void *)[window firstResponder],
+         (__bridge void *)contentView);
   fflush(stdout);
 
   return (__bridge void *)window;

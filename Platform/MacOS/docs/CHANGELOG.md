@@ -2,7 +2,20 @@
 
 ## Current Status (2026-02-20)
 
-🟢 **Full UI + 3D Shell Map Rendering!** — All menu elements render with original W3D textures (buttons, dialogs, list boxes, combo boxes, sliders). 3D animated battle scene as menu background. Skirmish setup fully functional. 30fps, audio plays. Next: gameplay terrain/3D scene rendering.
+🟢 **Full UI + Input Complete!** — All menu elements render with original W3D textures. Keyboard fully connected (Escape, arrows, F-keys, all letters/numbers). Mouse input working. 3D terrain geometry renders but textures not binding (black terrain). Next: fix terrain texture binding.
+
+---
+
+## Resolved Runtime Issues (Phase 8) — Keyboard Input ⭐
+
+### #13: Keyboard Input Not Working — Two Root Causes
+- **Symptom:** All keyboard presses ignored. NSEvents captured (`INPUT: KeyDown` in logs) but game didn't react
+- **Root Cause 1:** Window's `contentView` was a plain `NSView` without `acceptsFirstResponder` override → macOS didn't deliver keyboard events reliably
+- **Fix 1:** Created `GameContentView` (NSView subclass) with `acceptsFirstResponder = YES`, `keyDown:`/`keyUp:` overrides. Set as window's contentView and firstResponder. Added `keyDown:` override on `MacOSWindow` to prevent system beep.
+- **Root Cause 2:** `StdKeyboard::update()` was **empty** — never called `Keyboard::update()`. The base class `update()` is what triggers `updateKeys()` → `getKey()` → reads from ring buffer → populates `m_keys[]`. Without it, `createStreamMessages()` produced zero `MSG_RAW_KEY_DOWN/UP` messages.
+- **Fix 2:** Added `Keyboard::update()` call in `StdKeyboard::update()`
+- **Bonus:** Extended key mapping with F1-F12, Delete, Home, End, PageUp/Down, Period, NumpadEnter
+- **Files:** `MacOSWindowManager.mm`, `StdKeyboard.mm`
 
 ---
 
@@ -16,6 +29,7 @@
 - **Files:** `MacOSGameWindowManager.h`, `MacOSGameWindowManager.mm`, `GameMemoryInitPools_GeneralsMD.inl`
 
 ---
+
 
 ## Resolved Runtime Issues (Phase 7 earlier) — Text Rendering
 
