@@ -82,6 +82,7 @@ public:
 	AsciiString m_locationNameLabel;
 	AsciiString m_unitNames[MAX_DISPLAYED_UNITS];
 	Int m_voiceLength;
+	AsciiString m_generalName;
 };
 
 class Campaign : public MemoryPoolObject

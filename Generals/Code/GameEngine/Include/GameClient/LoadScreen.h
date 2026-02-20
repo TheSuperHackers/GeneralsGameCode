@@ -37,11 +37,14 @@
 #include "GameClient/GameWindow.h"
 #include "GameNetwork/GameInfo.h"
 #include "GameClient/CampaignManager.h"
+#include "GameClient/ChallengeGenerals.h"
+
 // FORWARD REFERENCES /////////////////////////////////////////////////////////
 
 // TYPE DEFINES ///////////////////////////////////////////////////////////////
 class VideoBuffer;
 class VideoStreamInterface;
+class WindowVideoManager;
 
 
 
@@ -117,6 +120,79 @@ private:
 };
 
 
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// class ChallengeLoadScreen is to be used only when we're loading a Generals' Challenge mission
+///////////////////////////////////////////////////////////////////////////////////////////////////
+class ChallengeLoadScreen : public LoadScreen
+{
+public:
+	ChallengeLoadScreen( void );
+	virtual ~ChallengeLoadScreen( void );
+
+	virtual void init( GameInfo *game );		///< Init the loadscreen
+	virtual void reset( void );		///< Reset the system
+	virtual void update( void )
+	{
+		DEBUG_CRASH(("Call update(Int) instead.  This update isn't supported"));
+	};
+	virtual void update(Int percent);		 ///< Update the state of the progress bar
+	virtual void processProgress(Int playerId, Int percentage)
+	{
+		DEBUG_CRASH(("We Got to a single player load screen throw the Network..."));
+	}
+
+	virtual void setProgressRange( Int min, Int max );
+
+private:
+	GameWindow *m_progressBar;				///< Pointer to the Progress Bar on the window
+
+	VideoBuffer *m_videoBuffer;
+	VideoStreamInterface *m_videoStream;
+
+	WindowVideoManager *m_wndVideoManager;
+
+	AudioEventRTS m_ambientLoop;
+	AudioHandle m_ambientLoopHandle;
+
+	GameWindow *m_bioNameLeft;
+	GameWindow *m_bioAgeLeft;
+	GameWindow *m_bioBirthplaceLeft;
+	GameWindow *m_bioStrategyLeft;
+	GameWindow *m_bioBigNameEntryLeft;
+	GameWindow *m_bioNameEntryLeft;
+	GameWindow *m_bioAgeEntryLeft;
+	GameWindow *m_bioBirthplaceEntryLeft;
+	GameWindow *m_bioStrategyEntryLeft;
+	GameWindow *m_bioNameRight;
+	GameWindow *m_bioAgeRight;
+	GameWindow *m_bioBirthplaceRight;
+	GameWindow *m_bioStrategyRight;
+	GameWindow *m_bioBigNameEntryRight;
+	GameWindow *m_bioNameEntryRight;
+	GameWindow *m_bioAgeEntryRight;
+	GameWindow *m_bioBirthplaceEntryRight;
+	GameWindow *m_bioStrategyEntryRight;
+
+	GameWindow *m_portraitLeft;
+	GameWindow *m_portraitRight;
+	GameWindow *m_portraitMovieLeft;
+	GameWindow *m_portraitMovieRight;
+
+//	GameWindow *m_overlayReticleCrosshairs;
+	GameWindow *m_overlayReticleCircleLineOuter;
+	GameWindow *m_overlayReticleCircleLineInner;
+	GameWindow *m_overlayReticleCircleAlphaOuter;
+	GameWindow *m_overlayReticleCircleAlphaInner;
+	GameWindow *m_overlayVsBackdrop;
+	GameWindow *m_overlayVs;
+
+	void activatePieces( Int frame, const GeneralPersona *generalPlayer, const GeneralPersona *generalOpponent );
+	void activatePiecesMinSpec(const GeneralPersona *generalPlayer, const GeneralPersona *generalOpponent);
+};
+
+
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // class ShellGameLoadScreen is to be used for the Shell Game loadscreen
 ////	///////////////////////////////////////////////////////////////////////////////////////////////
@@ -170,6 +246,9 @@ private:
 	Int m_playerLookup[MAX_SLOTS];					///< lookup table to translate network slot info screen slot (to account for holes in the slot list)
 	GameWindow *m_mapPreview;
 	GameWindow *m_buttonMapStartPosition[MAX_SLOTS];
+	GameWindow *m_portraitLocalGeneral;
+	GameWindow *m_featuresLocalGeneral;
+	GameWindow *m_nameLocalGeneral;
 
 };
 
@@ -205,6 +284,10 @@ private:
 	GameWindow *m_buttonMapStartPosition[MAX_SLOTS];
 
 	Int m_playerLookup[MAX_SLOTS];					///< lookup table to translate network slot info screen slot (to account for holes in the slot list)
+
+	GameWindow *m_portraitLocalGeneral;
+	GameWindow *m_featuresLocalGeneral;
+	GameWindow *m_nameLocalGeneral;
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////

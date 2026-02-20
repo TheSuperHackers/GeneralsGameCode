@@ -496,18 +496,36 @@ void SinglePlayerLoadScreen::init( GameInfo *game )
 	GameWindow *backgroundWin = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( "SinglePlayerLoadScreen.wnd:ParentSinglePlayerLoadScreen" ));
 	if (campaignName.compareNoCase("USA") == 0)
 	{
-		backgroundWin->winSetEnabledImage( 0, TheMappedImageCollection->findImageByName("MissionLoad_USA") );
-		m_progressBar->winSetEnabledImage( 6, TheMappedImageCollection->findImageByName("LoadingBar_ProgressCenter2") );
+		if (const Image *image = TheMappedImageCollection->findImageByName("MissionLoad_USA"))
+		{
+			backgroundWin->winSetEnabledImage( 0, image);
+		}
+		if (const Image *image = TheMappedImageCollection->findImageByName("LoadingBar_ProgressCenter2"))
+		{
+			m_progressBar->winSetEnabledImage( 6, image );
+		}
 	}
 	else if (campaignName.compareNoCase("GLA") == 0)
 	{
-		backgroundWin->winSetEnabledImage( 0, TheMappedImageCollection->findImageByName("MissionLoad_GLA") );
-		m_progressBar->winSetEnabledImage( 6, TheMappedImageCollection->findImageByName("LoadingBar_ProgressCenter3") );
+		if (const Image *image = TheMappedImageCollection->findImageByName("MissionLoad_GLA"))
+		{
+			backgroundWin->winSetEnabledImage( 0, image );
+		}
+		if (const Image *image = TheMappedImageCollection->findImageByName("LoadingBar_ProgressCenter3"))
+		{
+			m_progressBar->winSetEnabledImage( 6, image );
+		}
 	}
 	else if (campaignName.compareNoCase("China") == 0)
 	{
-		backgroundWin->winSetEnabledImage( 0, TheMappedImageCollection->findImageByName("MissionLoad_China") );
-		m_progressBar->winSetEnabledImage( 6, TheMappedImageCollection->findImageByName("LoadingBar_ProgressCenter1") );
+		if (const Image *image = TheMappedImageCollection->findImageByName("MissionLoad_China"))
+		{
+			backgroundWin->winSetEnabledImage( 0, image );
+		}
+		if (const Image *image = TheMappedImageCollection->findImageByName("LoadingBar_ProgressCenter1"))
+		{
+			m_progressBar->winSetEnabledImage( 6, image );
+		}
 	}
 	// else leave the default background screen
 
@@ -544,8 +562,9 @@ void SinglePlayerLoadScreen::init( GameInfo *game )
 			m_videoStream->frameDecompress();
 			m_videoStream->frameRender(m_videoBuffer);
 
-// PULLED FROM THE MISSION DISK
-//			moveWindows( m_videoStream->frameIndex());
+#if RTS_GENERALS
+			moveWindows( m_videoStream->frameIndex());
+#endif
 
 			m_videoStream->frameNext();
 
@@ -570,15 +589,41 @@ void SinglePlayerLoadScreen::init( GameInfo *game )
 			TheDisplay->draw();
 		}
 
+#if !RTS_GENERALS
 		// let the background image show through
 		m_videoStream->close();
 		m_videoStream = nullptr;
 		m_loadScreen->winGetInstanceData()->setVideoBuffer( nullptr );
 		TheDisplay->draw();
+#endif
 	}
 	else
 	{
+#if RTS_GENERALS
+		// if we're min speced
+		m_videoStream->frameGoto(m_videoStream->frameCount()); // zero based
+		while(!m_videoStream->isFrameReady())
+			Sleep(1);
+		m_videoStream->frameDecompress();
+		m_videoStream->frameRender(m_videoBuffer);
+		if(m_videoBuffer)
+				m_loadScreen->winGetInstanceData()->setVideoBuffer(m_videoBuffer);
+
+		m_objectiveWin->winHide(FALSE);
+		for(i = 0; i < MAX_DISPLAYED_UNITS; ++i)
+			m_unitDesc[i]->winHide(FALSE);
+		m_location->winHide(FALSE);
+
+		// Audio was choppy so, I chopped it out!
+		TheAudio->friend_forcePlayAudioEventRTS(&TheCampaignManager->getCurrentMission()->m_briefingVoice);
+
+		for(Int i = 0; i < MAX_OBJECTIVE_LINES; ++i)
+		{
+			GadgetStaticTextSetText(m_objectiveLines[i], m_unicodeObjectiveLines[i]);
+		}
+#else
 		// if we're min spec'ed don't play a movie
+#endif
 
 		Int delay = mission->m_voiceLength * 1000;
 		Int begin = timeGetTime();
@@ -1224,8 +1269,12 @@ void MultiPlayerLoadScreen::init( GameInfo *game )
 		pt = ThePlayerTemplateStore->getNthPlayerTemplate(lSlot->getPlayerTemplate());
 	else
 		pt = ThePlayerTemplateStore->findPlayerTemplate( TheNameKeyGenerator->nameToKey("FactionObserver") );
-//	const Image *loadScreenImage = TheMappedImageCollection->findImageByName(pt->getLoadScreen());
 
+#if RTS_GENERALS
+	const Image *loadScreenImage = TheMappedImageCollection->findImageByName(pt->getLoadScreen());
+	if(loadScreenImage)
+		m_loadScreen->winSetEnabledImage(0, loadScreenImage);
+#else
 	// add portrait, features, and name for the local player's general
 	const GeneralPersona *localGeneral = TheChallengeGenerals->getGeneralByTemplateName( pt->getName() );
 	const Image *portrait = nullptr;
@@ -1257,6 +1306,7 @@ void MultiPlayerLoadScreen::init( GameInfo *game )
 	GadgetStaticTextSetText( m_featuresLocalGeneral, TheGameText->fetch( features.isEmpty() ? "GUI:PlayerObserver" : pt->getGeneralFeatures() ) );
 	m_nameLocalGeneral = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( "MultiplayerLoadScreen.wnd:LocalGeneralName"));
 	GadgetStaticTextSetText( m_nameLocalGeneral, localName );
+#endif
 
 	AsciiString musicName = pt->getLoadScreenMusic();
 	if ( ! musicName.isEmpty() )
@@ -1270,9 +1320,6 @@ void MultiPlayerLoadScreen::init( GameInfo *game )
 
 	}
 
-
-//	if(loadScreenImage)
-//		m_loadScreen->winSetEnabledImage(0, loadScreenImage);
 	//DEBUG_ASSERTCRASH(TheNetwork, ("Where the Heck is the Network!!!!"));
 	//DEBUG_LOG(("NumPlayers %d", TheNetwork->getNumPlayers()));
 
@@ -1320,7 +1367,9 @@ void MultiPlayerLoadScreen::init( GameInfo *game )
 			continue;
 
 		Color houseColor = TheMultiplayerSettings->getColor(slot->getApparentColor())->getColor();
-
+#if RTS_GENERALS
+		GadgetProgressBarSetEnabledBarColor(m_progressBars[netSlot],houseColor );
+#else
 		// format the progress bar to house colors
 		AsciiString imageName;
 		imageName.format("LoadingBar_ProgressCenter%d", slot->getApparentColor());
@@ -1328,6 +1377,7 @@ void MultiPlayerLoadScreen::init( GameInfo *game )
 		if (! houseImage)
 			houseImage = TheMappedImageCollection->findImageByName("LoadingBar_Progress");
 		m_progressBars[netSlot]->winSetEnabledImage( 6, houseImage );
+#endif
 
 		UnicodeString name = slot->getName();
 		GadgetStaticTextSetText(m_playerNames[netSlot], name );
@@ -1484,10 +1534,12 @@ GameSlot *lSlot = game->getSlot(game->getLocalSlotNum());
 		pt = ThePlayerTemplateStore->getNthPlayerTemplate(lSlot->getPlayerTemplate());
 	else
 		pt = ThePlayerTemplateStore->findPlayerTemplate( TheNameKeyGenerator->nameToKey("FactionObserver") );
-//	const Image *loadScreenImage = TheMappedImageCollection->findImageByName(pt->getLoadScreen());
-//	if(loadScreenImage)
-//		m_loadScreen->winSetEnabledImage(0, loadScreenImage);
 
+#if RTS_GENERALS
+	const Image *loadScreenImage = TheMappedImageCollection->findImageByName(pt->getLoadScreen());
+	if(loadScreenImage)
+		m_loadScreen->winSetEnabledImage(0, loadScreenImage);
+#else
 	// add portrait, features, and name for the local player's general
 	const GeneralPersona *localGeneral = TheChallengeGenerals->getGeneralByTemplateName( pt->getName() );
 	const Image *portrait = nullptr;
@@ -1519,6 +1571,7 @@ GameSlot *lSlot = game->getSlot(game->getLocalSlotNum());
 	GadgetStaticTextSetText( m_featuresLocalGeneral, TheGameText->fetch( features.isEmpty() ? "GUI:PlayerObserver" : pt->getGeneralFeatures() ) );
 	m_nameLocalGeneral = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( "GameSpyLoadScreen.wnd:LocalGeneralName"));
 	GadgetStaticTextSetText( m_nameLocalGeneral, localName );
+#endif
 
 	GameWindow *teamWin[MAX_SLOTS];
 	Int i = 0;
@@ -1594,7 +1647,9 @@ GameSlot *lSlot = game->getSlot(game->getLocalSlotNum());
 			continue;
 
 		Color houseColor = TheMultiplayerSettings->getColor(slot->getApparentColor())->getColor();
-
+#if RTS_GENERALS
+		GadgetProgressBarSetEnabledBarColor(m_progressBars[netSlot],houseColor );
+#else
 		// format the progress bar to house colors
 		AsciiString imageName;
 		imageName.format("LoadingBar_ProgressCenter%d", slot->getApparentColor());
@@ -1602,6 +1657,7 @@ GameSlot *lSlot = game->getSlot(game->getLocalSlotNum());
 		if (! houseImage)
 			houseImage = TheMappedImageCollection->findImageByName("LoadingBar_Progress");
 		m_progressBars[netSlot]->winSetEnabledImage( 6, houseImage );
+#endif
 
 		UnicodeString name = slot->getName();
 		GadgetStaticTextSetText(m_playerNames[netSlot], name );
