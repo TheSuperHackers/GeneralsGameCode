@@ -266,7 +266,6 @@ GameTextManager::GameTextManager()
 		m_buffer2[i] = 0;
 		m_buffer3[i] = 0;
 	}
-	//
 }
 
 //============================================================================
@@ -1459,4 +1458,3 @@ static int __cdecl compareLUT ( const void *i1,  const void*i2)
 
 	return stricmp( lut1->label->str(), lut2->label->str());
 }
-

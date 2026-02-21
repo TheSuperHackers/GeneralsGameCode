@@ -35,8 +35,8 @@
 #include "GameClient/SelectionInfo.h"
 #include "GameClient/CommandXlat.h"
 #include "GameClient/ControlBar.h"
-#include "GameClient/GameClient.h"
 #include "GameClient/Drawable.h"
+#include "GameClient/GameClient.h"
 #include "GameClient/KeyDefs.h"
 
 
@@ -202,7 +202,7 @@ extern Bool contextCommandForNewSelection(const DrawableList *currentlySelectedD
 
 		if (outSelectionInfo->newCountMine > 0) {
 			if (outSelectionInfo->newCountMine == 1 && selectionIsPoint && !TheInGameUI->isInPreferSelectionMode()) {
- 				return TheGameClient->evaluateContextCommand(newMine, newMine->getPosition(), CommandTranslator::EVALUATE_ONLY) != GameMessage::MSG_INVALID;
+				return TheGameClient->evaluateContextCommand(newMine, newMine->getPosition(), CommandTranslator::EVALUATE_ONLY) != GameMessage::MSG_INVALID;
 			}
 
 			return FALSE;
@@ -346,6 +346,10 @@ Bool addDrawableToList( Drawable *draw, void *userData )
 		return FALSE;
 
 #if !RTS_GENERALS || !PRESERVE_RETAIL_BEHAVIOR
+	// TheSuperHackers @info
+	// In retail, drag-selecting allows the player to select stealthed objects and objects through the
+	// fog. Some players exploit this bug to determine where an opponent's units are and consider this
+	// an important feature and an advanced skill to pull off, so we must leave the exploit.
 	if (draw->getFullyObscuredByShroud())
 		return FALSE;
 

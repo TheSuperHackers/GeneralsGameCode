@@ -87,6 +87,7 @@ static const FieldParse TheGlobalLanguageDataFieldParseTable[] =
 	{ "CopyrightFont",					GlobalLanguage::parseFontDesc,	nullptr,	offsetof( GlobalLanguage, m_copyrightFont ) },
 	{ "MessageFont",					GlobalLanguage::parseFontDesc,	nullptr,	offsetof( GlobalLanguage, m_messageFont) },
 	{ "MilitaryCaptionTitleFont",		GlobalLanguage::parseFontDesc,	nullptr,	offsetof( GlobalLanguage, m_militaryCaptionTitleFont) },
+	{ "MilitaryCaptionDelayMS",					INI::parseInt,					nullptr,		offsetof( GlobalLanguage, m_militaryCaptionDelayMS ) },
 	{ "MilitaryCaptionFont",			GlobalLanguage::parseFontDesc,	nullptr,	offsetof( GlobalLanguage, m_militaryCaptionFont) },
 	{ "SuperweaponCountdownNormalFont",	GlobalLanguage::parseFontDesc,	nullptr,	offsetof( GlobalLanguage, m_superweaponCountdownNormalFont) },
 	{ "SuperweaponCountdownReadyFont",	GlobalLanguage::parseFontDesc,	nullptr,	offsetof( GlobalLanguage, m_superweaponCountdownReadyFont) },
@@ -128,6 +129,7 @@ GlobalLanguage::GlobalLanguage()
 	m_useHardWrap = FALSE;
 	m_resolutionFontSizeAdjustment = 0.7f;
 	m_resolutionFontSizeMethod = ResolutionFontSizeMethod_Default;
+	m_militaryCaptionDelayMS = 750;
 
 	m_userResolutionFontSizeAdjustment = -1.0f;
 }
@@ -152,7 +154,7 @@ void GlobalLanguage::init( void )
 
 		INI ini;
 		ini.loadFileDirectory( fname, INI_LOAD_OVERWRITE, nullptr );
- 	}
+	}
 
 	StringListIt it = m_localFonts.begin();
 	while( it != m_localFonts.end())
