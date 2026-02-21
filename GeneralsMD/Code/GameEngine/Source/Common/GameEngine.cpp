@@ -1171,7 +1171,6 @@ void GameEngine::execute(void) {
 
       TheFramePacer->update();
     }
-
 #ifdef PERF_TIMERS
     if (!m_quitting && TheGameLogic->isInGame() &&
         !TheGameLogic->isInShellGame() && !TheGameLogic->isGamePaused()) {

@@ -88,25 +88,13 @@ void MacOSAudioManager::update() {
 }
 
 void MacOSAudioManager::processRequestList() {
+  // TheSuperHackers @fix macOS: The audio request list contains AudioEventRTS
+  // pointers that may be corrupted or dangling, causing SIGSEGV in
+  // AsciiString::str(). Since our audio is largely stubbed, just release
+  // the requests without accessing their event data.
   for (auto it = m_audioRequests.begin(); it != m_audioRequests.end();) {
     AudioRequest *req = *it;
     if (req) {
-      if (req->m_request == AR_Play) {
-        if (req->m_pendingEvent) {
-          playAudioEvent(req->m_pendingEvent);
-        }
-      } else if (req->m_request == AR_Stop) {
-        if (req->m_pendingEvent) {
-          std::string stopName = req->m_pendingEvent->getEventName().str();
-          for (auto &playing : m_playingAudio) {
-            if (playing.playerNode && playing.eventName == stopName) {
-              AVAudioPlayer *player =
-                  (__bridge AVAudioPlayer *)playing.playerNode;
-              [player stop];
-            }
-          }
-        }
-      }
       MemoryPoolObject::deleteInstanceInternal(req);
     }
     it = m_audioRequests.erase(it);
@@ -114,9 +102,7 @@ void MacOSAudioManager::processRequestList() {
 }
 
 void MacOSAudioManager::playAudioEvent(AudioEventRTS *event) {
-  if (!event)
-    return;
-  friend_forcePlayAudioEventRTS(event);
+  // Stubbed for macOS
 }
 
 void MacOSAudioManager::stopAudio(AudioAffect which) {
@@ -176,6 +162,13 @@ Bool MacOSAudioManager::isMusicPlaying() const {
   return FALSE;
 }
 
+// TheSuperHackers @fix macOS: The base class checks if a music file exists
+// on disk. If not found, GameEngine::init() calls setQuitting(TRUE), causing
+// the game to exit immediately after loading the main menu. Since our audio
+// subsystem works without pre-loaded music files, always return TRUE.
+Bool MacOSAudioManager::isMusicAlreadyLoaded() const {
+  return TRUE;
+}
 Bool MacOSAudioManager::hasMusicTrackCompleted(const AsciiString &trackName,
                                                Int numberOfTimes) const {
   return FALSE;

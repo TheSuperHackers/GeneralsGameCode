@@ -83,12 +83,12 @@ Bool FramePacer::isActualFramesPerSecondLimitEnabled() const
 {
 	Bool allowFpsLimit = true;
 
-	if (TheTacticalView != nullptr)
+	if (TheTacticalView != nullptr && TheScriptEngine != nullptr)
 	{
 		allowFpsLimit &= TheTacticalView->getTimeMultiplier()<=1 && !TheScriptEngine->isTimeFast();
 	}
 
-	if (TheGameLogic != nullptr)
+	if (TheGameLogic != nullptr && TheGlobalData != nullptr)
 	{
 #if defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 		allowFpsLimit &= !(!TheGameLogic->isGamePaused() && TheGlobalData->m_TiVOFastMode);
@@ -97,7 +97,9 @@ Bool FramePacer::isActualFramesPerSecondLimitEnabled() const
 #endif
 	}
 
-	allowFpsLimit &= TheGlobalData->m_useFpsLimit;
+	if (TheGlobalData != nullptr) {
+		allowFpsLimit &= TheGlobalData->m_useFpsLimit;
+	}
 	allowFpsLimit &= isFramesPerSecondLimitEnabled();
 
 	return allowFpsLimit;

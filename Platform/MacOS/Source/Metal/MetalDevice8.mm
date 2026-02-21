@@ -10,6 +10,7 @@
 #import <AppKit/AppKit.h>
 #import <Metal/Metal.h>
 #import <QuartzCore/CAMetalLayer.h>
+#include <unistd.h>
 
 // Now include our header (which includes d3d8.h / win_compat.h)
 #import "MetalDevice8.h"
@@ -414,19 +415,13 @@ bool MetalDevice8::InitMetal(void *windowHandle) {
   layer.framebufferOnly = NO;
 
   // === VSync / Frame Rate Control ===
-  // On Windows DirectX 8, Present() blocked until VSync (~60Hz).
-  // Without this, macOS runs at 37000+ FPS causing heap corruption.
-  // displaySyncEnabled=YES limits to display refresh rate (typically 60Hz).
-  // Override with env GENERALS_FPS_LIMIT: 0=uncapped, N=target FPS.
+  // Always disable displaySync — it causes nextDrawable to block on VSync,
+  // which deadlocks our single-threaded game loop (can't pump events while
+  // waiting for VSync). Frame rate is controlled by FramePacer instead.
+  layer.displaySyncEnabled = NO;
   const char *fpsEnv = getenv("GENERALS_FPS_LIMIT");
   int fpsLimit = fpsEnv ? atoi(fpsEnv) : 60;
-  if (fpsLimit == 0) {
-    layer.displaySyncEnabled = NO;
-    fprintf(stderr, "[MetalDevice8] VSync: OFF (uncapped FPS)\n");
-  } else {
-    layer.displaySyncEnabled = YES;
-    fprintf(stderr, "[MetalDevice8] VSync: ON (target ~%d FPS via display sync)\n", fpsLimit);
-  }
+  fprintf(stderr, "[MetalDevice8] VSync: OFF (frame rate controlled by FramePacer, target=%d)\n", fpsLimit);
 
   m_MetalLayer = (__bridge_retained void *)layer;
 
@@ -924,12 +919,6 @@ int g_metalPresentCount = 0;
 
 STDMETHODIMP MetalDevice8::Present(const void *s, const void *d, HWND w,
                                    const void *r) {
-  g_metalPresentCount++;
-  if (g_metalPresentCount <= 20) {
-    printf("PRESENT[%d] encoder=%p drawable=%p cmdBuf=%p\n",
-           g_metalPresentCount, m_CurrentEncoder, m_CurrentDrawable, m_CurrentCommandBuffer);
-    fflush(stdout);
-  }
   if (m_CurrentEncoder) {
     [MTL_ENCODER endEncoding];
     CLEAR_MTL(CurrentEncoder);
@@ -1112,25 +1101,15 @@ STDMETHODIMP MetalDevice8::BeginScene() {
     return D3D_OK; // Still have a valid drawable from this frame
   }
 
+  // TheSuperHackers @fix macOS: nextDrawable can return nil if all drawables
+  // are in flight. With displaySyncEnabled=NO this should not block for VSync.
   id<MTLCommandBuffer> cmdBuf = [MTL_QUEUE commandBuffer];
   SET_MTL(CurrentCommandBuffer, cmdBuf);
 
   id<CAMetalDrawable> drawable = [MTL_LAYER nextDrawable];
-  static int beginCount = 0;
-  if (beginCount++ % 120 == 0) {
-    fprintf(stderr,
-            "DEBUG BeginScene #%d: layer=%p drawable=%p cmdBuf=%p "
-            "layerSize=%.0fx%.0f\n",
-            beginCount, MTL_LAYER, drawable, cmdBuf,
-            MTL_LAYER ? MTL_LAYER.drawableSize.width : 0,
-            MTL_LAYER ? MTL_LAYER.drawableSize.height : 0);
-    fflush(stderr);
-  }
   if (!drawable) {
-    fprintf(stderr,
-            "[MetalDevice8] WARNING: No drawable available (layer=%p)\n",
-            MTL_LAYER);
     m_InScene = false;
+    CLEAR_MTL(CurrentCommandBuffer);
     return E_FAIL;
   }
   SET_MTL(CurrentDrawable, drawable);

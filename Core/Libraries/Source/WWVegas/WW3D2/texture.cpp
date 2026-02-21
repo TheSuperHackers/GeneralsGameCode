@@ -603,6 +603,11 @@ TextureClass::TextureClass
 	Filter(mip_level_count),
 	TextureFormat(format)
 {
+	static int s_whCtorCount = 0;
+	if (++s_whCtorCount <= 20) {
+		fprintf(stderr, "[TextureClass::ctor(w,h)] #%d: %ux%u fmt=%d mips=%d pool=%d rt=%d\n",
+			s_whCtorCount, width, height, (int)format, (int)mip_level_count, (int)pool, (int)rendertarget);
+	}
 	Initialized=true;
 	IsProcedural=true;
 	IsReducible=false;
@@ -674,6 +679,12 @@ TextureClass::TextureClass
 	Filter(mip_level_count),
 	TextureFormat(texture_format)
 {
+	static int s_ctorCount = 0;
+	if (++s_ctorCount <= 30) {
+		fprintf(stderr, "[TextureClass::ctor(name)] #%d: name='%s' path='%s' fmt=%d mips=%d\n",
+			s_ctorCount, name ? name : "(null)", full_path ? full_path : "(null)",
+			(int)texture_format, (int)mip_level_count);
+	}
 	IsCompressionAllowed=allow_compression;
 	InactivationTime=DEFAULT_INACTIVATION_TIME;		// Default inactivation time 30 seconds
 	IsReducible=allow_reduction;
@@ -730,6 +741,11 @@ TextureClass::TextureClass
 	WWASSERT(name[0]!='\0');
 	if (!WW3D::Is_Texturing_Enabled())
 	{
+		static int s_texDisabled = 0;
+		if (++s_texDisabled <= 10) {
+			fprintf(stderr, "[TextureClass] TEXTURING DISABLED #%d: name='%s'\n",
+				s_texDisabled, name);
+		}
 		Initialized=true;
 		Poke_Texture(nullptr);
 	}
@@ -749,6 +765,15 @@ TextureClass::TextureClass
 
 	// If the thumbnails are not enabled, init the texture at this point to avoid stalling when the
 	// mesh is rendered.
+#ifdef __APPLE__
+	// On macOS, always initialize textures immediately during construction.
+	// The thumbnail/background loading system doesn't work with our Metal backend,
+	// so we must load textures eagerly.
+	if (TextureLoader::Is_DX8_Thread())
+	{
+		Init();
+	}
+#else
 	if (!WW3D::Get_Thumbnail_Enabled())
 	{
 		if (TextureLoader::Is_DX8_Thread())
@@ -756,6 +781,7 @@ TextureClass::TextureClass
 			Init();
 		}
 	}
+#endif
 }
 
 // ----------------------------------------------------------------------------
@@ -848,6 +874,18 @@ void TextureClass::Init()
 
 	WWPROFILE("TextureClass::Init");
 
+	static int s_initCount = 0;
+	s_initCount++;
+	if (s_initCount <= 30) {
+		const char* texName = "(none)";
+		StringClass tmpName = Get_Texture_Name();
+		if (!tmpName.Is_Empty()) texName = tmpName.Peek_Buffer();
+		fprintf(stderr, "[TextureClass::Init] #%d: name='%s' hasD3DTex=%d fmt=%d mips=%d w=%u h=%u\n",
+			s_initCount, texName,
+			(int)(Peek_D3D_Base_Texture() != nullptr), (int)TextureFormat,
+			(int)MipLevelCount, Width, Height);
+	}
+
 	// If the texture has recently been inactivated, increase the inactivation time (this texture obviously
 	// should not have been inactivated yet).
 	if (InactivationTime && LastInactivationSyncTime)
@@ -901,6 +939,14 @@ void TextureClass::Apply_New_Surface
 	bool disable_auto_invalidation
 )
 {
+	static int s_applyCount = 0;
+	s_applyCount++;
+	if (s_applyCount <= 30) {
+		StringClass tmpName2 = Get_Texture_Name();
+		fprintf(stderr, "[Apply_New_Surface] #%d: name='%s' init=%d tex=%p\n",
+			s_applyCount, tmpName2.Is_Empty() ? "(none)" : tmpName2.Peek_Buffer(),
+			(int)initialized, (void*)d3d_texture);
+	}
 	IDirect3DBaseTexture8* d3d_tex=Peek_D3D_Base_Texture();
 
 	if (d3d_tex) d3d_tex->Release();
@@ -934,6 +980,14 @@ void TextureClass::Apply_New_Surface
 */
 void TextureClass::Apply(unsigned int stage)
 {
+	static int s_applyLogCount = 0;
+	if (s_applyLogCount < 30) {
+		s_applyLogCount++;
+		StringClass tmpN3 = Get_Texture_Name();
+		fprintf(stderr, "[TextureClass::Apply] #%d: name='%s' init=%d hasD3D=%d stage=%u\n",
+			s_applyLogCount, tmpN3.Is_Empty() ? "(none)" : tmpN3.Peek_Buffer(),
+			(int)Initialized, (int)(Peek_D3D_Base_Texture() != nullptr), stage);
+	}
 	// Initialization needs to be done when texture is used if it hasn't been done before.
 	// XBOX always initializes textures at creation time.
 	if (!Initialized)

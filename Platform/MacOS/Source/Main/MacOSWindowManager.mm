@@ -1,6 +1,9 @@
 #import "../../Include/MacOSWindowManager.h"
 #import "always.h"
 #import <Cocoa/Cocoa.h>
+#include <signal.h>
+#include <execinfo.h>
+#include <unistd.h>
 
 @interface MacOSWindow : NSWindow
 @end
@@ -50,8 +53,24 @@ static BOOL g_ShouldQuit = NO;
 
 @implementation MacOSWindowDelegate
 - (void)windowWillClose:(NSNotification *)notification {
+  fprintf(stderr, "QUIT: windowWillClose triggered! notification=%s\n",
+    [[notification description] UTF8String]);
+  fflush(stderr);
   g_ShouldQuit = YES;
-  [NSApp terminate:nil];
+  // Don't call [NSApp terminate:nil] — let the game loop handle the exit
+}
+
+// TheSuperHackers @fix macOS: Prevent NSApp from silently calling exit(0).
+// NSApp's terminate: calls exit(0) by default. If the app receives a terminate
+// notification (from Automatic Termination, system shutdown, or Dock quit),
+// it would kill the process immediately without our game loop handling cleanup.
+// By returning NSTerminateCancel, we prevent the immediate exit and instead
+// set g_ShouldQuit so the game loop will exit gracefully.
+- (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender {
+  fprintf(stderr, "QUIT: applicationShouldTerminate called! Setting g_ShouldQuit.\n");
+  fflush(stderr);
+  g_ShouldQuit = YES;
+  return NSTerminateCancel;  // Don't let NSApp call exit()
 }
 @end
 static id g_WindowDelegate = nil;
@@ -68,21 +87,39 @@ extern "C" void MacOS_InitRenderer(void *windowHandle);
 #include "Common/CommandLine.h"
 
 int MacOS_Main(int argc, char *argv[]) {
-  @autoreleasepool {
-    printf("MacOS_Main: Initializing TheVersion...\n");
-    fflush(stdout);
-    TheVersion = new Version();
-    printf("MacOS_Main: TheVersion = %p\n", (void *)TheVersion);
-    fflush(stdout);
-    printf("MacOS_Main: Initializing NSApp...\n");
-    fflush(stdout);
-    [NSApplication sharedApplication];
-    printf("MacOS_Main: Setting Activation Policy...\n");
-    fflush(stdout);
-    [NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
+  // TheSuperHackers @feature macOS: Signal handlers for crash debugging
+  auto installSigHandler = [](int sig, const char* name) {
+    struct sigaction sa;
+    memset(&sa, 0, sizeof(sa));
+    sa.sa_handler = [](int s) {
+      const char* signame = (s == SIGSEGV) ? "SIGSEGV" : (s == SIGBUS) ? "SIGBUS" : (s == SIGTERM) ? "SIGTERM" : (s == SIGABRT) ? "SIGABRT" : "UNKNOWN";
+      fprintf(stderr, "\n=== %s (signal %d) CAUGHT ===\n", signame, s);
+      void *bt[128];
+      int n = backtrace(bt, 128);
+      backtrace_symbols_fd(bt, n, STDERR_FILENO);
+      fprintf(stderr, "=== END BACKTRACE ===\n");
+      fflush(stderr);
+      _exit(128 + s);
+    };
+    sigemptyset(&sa.sa_mask);
+    sa.sa_flags = SA_RESETHAND;
+    sigaction(sig, &sa, nullptr);
+  };
+  installSigHandler(SIGSEGV, "SIGSEGV");
+  installSigHandler(SIGBUS, "SIGBUS");
+  installSigHandler(SIGABRT, "SIGABRT");
 
-    printf("MacOS_Main: Entering GameMain()...\n");
-    fflush(stdout);
+  @autoreleasepool {
+    TheVersion = new Version();
+    [NSApplication sharedApplication];
+
+    // Set app delegate FIRST — before finishLaunching — so that
+    // applicationShouldTerminate: is called if NSApp tries to exit.
+    if (!g_WindowDelegate) {
+      g_WindowDelegate = [[MacOSWindowDelegate alloc] init];
+    }
+    [NSApp setDelegate:g_WindowDelegate];
+    [NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
 
     // Give Cocoa time to settle
     [NSThread sleepForTimeInterval:0.1];
@@ -92,6 +129,13 @@ int MacOS_Main(int argc, char *argv[]) {
 
     // Finish launching to ensure NSApp is ready
     [NSApp finishLaunching];
+
+    // TheSuperHackers @fix macOS: Disable Automatic Termination.
+    // macOS automatically terminates apps it considers "idle" — but our game
+    // drives its own loop instead of using NSApp's run loop. Without this,
+    // macOS silently kills the game ~10s after the main menu loads.
+    [[NSProcessInfo processInfo] disableAutomaticTermination:@"Game is running"];
+    [[NSProcessInfo processInfo] disableSuddenTermination];
 
     // Parse command line and init global data
     CommandLine::parseCommandLineForStartup();
@@ -107,8 +151,6 @@ int MacOS_Main(int argc, char *argv[]) {
     void *window =
         MacOS_CreateWindow(w, h, "Command & Conquer Generals (macOS)");
     ApplicationHWnd = window; // Must set before GameMain → WW3D::Init
-    fprintf(stderr, "DEBUG: ApplicationHWnd SET to %p (window=%p)\n",
-            ApplicationHWnd, window);
 
     // Pump events for a bit to ensure window shows up
     for (int i = 0; i < 30; ++i) {
@@ -119,11 +161,7 @@ int MacOS_Main(int argc, char *argv[]) {
     // Initialize renderer
     MacOS_InitRenderer(window);
 
-    printf("MacOS_Main: About to call GameMain()...\n");
-    fflush(stdout);
     int result = GameMain();
-    printf("MacOS_Main: GameMain() returned %d\n", result);
-    fflush(stdout);
     return result;
   }
 }

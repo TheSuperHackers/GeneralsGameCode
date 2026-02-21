@@ -1247,13 +1247,32 @@ void TextureLoadTaskClass::End_Load(void)
 
 void TextureLoadTaskClass::Finish_Load(void)
 {
+	static int s_finishCount = 0;
+	if (++s_finishCount <= 30) {
+		const char* texPath = "(null)";
+		if (Texture) {
+			StringClass tmp = Texture->Get_Full_Path();
+			texPath = tmp.Peek_Buffer();
+			fprintf(stderr, "[Finish_Load] #%d: state=%d tex='%s'\n",
+				s_finishCount, (int)State, texPath);
+		} else {
+			fprintf(stderr, "[Finish_Load] #%d: state=%d tex='(null)'\n",
+				s_finishCount, (int)State);
+		}
+	}
 	switch (State) {
 		// NOTE: fall-through below is intentional.
 
 		case STATE_NONE:
 			if (!Begin_Load()) {
+				if (s_finishCount <= 30) {
+					fprintf(stderr, "[Finish_Load] #%d: Begin_Load FAILED\n", s_finishCount);
+				}
 				Apply_Missing_Texture();
 				break;
+			}
+			if (s_finishCount <= 30) {
+				fprintf(stderr, "[Finish_Load] #%d: Begin_Load OK, D3DTex=%p\n", s_finishCount, (void*)D3DTexture);
 			}
 			FALLTHROUGH;
 

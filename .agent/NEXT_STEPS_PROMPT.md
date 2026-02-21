@@ -1,118 +1,84 @@
-# Фаза: Fixing Crash After Object Loading
+# Фаза: Audio & Texture Polish
 
 Привет, следующий агент! Мы портируем **Command & Conquer Generals (Zero Hour)** на macOS через Metal API.
 
-## Текущее состояние (2026-02-21)
+## Текущее состояние (2026-02-22)
 
-**� Исправлена корневая причина отсутствия 3D объектов!** Фабричный метод `createGameLogic()` создавал `GameLogic` вместо `W3DGameLogic`, из-за чего `createTerrainLogic()` возвращал обычный `TerrainLogic` вместо `W3DTerrainLogic`. Это приводило к тому, что `WorldHeightMap` НЕ парсил `ObjectsList` чанк из `.map` файла → 0 объектов в мире.
-
-**Исправление** (одна строка в `MacOSMain.mm:271`):
-```cpp
-// БЫЛО (неправильно):
-return new GameLogic();
-// СТАЛО (правильно):
-return NEW W3DGameLogic();
-```
-
-Теперь: **771 MapObject загружается**, объекты создаются (`Infa_ChinaTankGattling`, `Lazr_AmericaTankCrusader`, `ChainLinkFence03` и т.д.), terrain загружается через `W3DTerrainLogic` с правильными данными высот.
+**🎉 MAJOR MILESTONE: Игра работает!** Главное меню с shell map рендерится, катсцены (cutscenes) играются, миссии загружаются с 3D юнитами, зданиями и ландшафтом. Game loop стабилен — 5500+ итераций без крашей.
 
 ### ✅ Что работает
 
-1. **W3DGameLogic** — правильный фабричный метод, `W3DTerrainLogic` + `W3DGhostObjectManager`
-2. **MapObject loading** — 771 объект парсится из shell map через `WorldHeightMap`
-3. **Object creation** — `ThingFactory::newObject()` вызывается, объекты создаются
-4. **3D terrain рендеринг** — terrain видимый с vertex diffuse lighting цветами
-5. **2D UI** — кнопки, текст, диалоги рендерятся через TSS pipeline
-6. **Shell map** — 3D фон загружается, main menu (`MainMenu.wnd`) загружается
-7. **Frame lifecycle** — рендерится ~86 кадров, потом загружается меню
+1. **Game loop** — стабильный, без зависаний и крашей
+2. **Shell map** — 3D анимированный фон (корабли, вода, взрывы)
+3. **Main menu** — кнопки, навигация, все меню загружаются
+4. **Cutscenes** — видео сцены перед миссиями проигрываются
+5. **Mission loading** — карты загружаются, юниты и здания создаются
+6. **3D rendering** — terrain, модели, тени, частично текстуры
+7. **2D UI** — HUD, миникарта, командная панель, текст
+8. **Keyboard/Mouse** — ввод работает
+9. **`applicationShouldTerminate:`** — macOS не убивает процесс
+10. **Signal handlers** — SIGSEGV/SIGBUS/SIGABRT дают backtrace через sigaction
 
-### 🔴 Приоритет 1: SIGSEGV (exit code 139) после загрузки меню
+### 🔴 Приоритет 1: Звук не работает
 
-**Симптом:** Игра успешно загружает shell map, рендерит 86 кадров (fps от 5000 до 300), загружает `MainMenu.wnd`, но потом крашится с SIGSEGV.
+**Симптом:** Нет звуков — ни музыки, ни эффектов, ни голосов.
 
-**Последние строки лога перед крашем:**
-```
-SHELLMAP: showShellMap(1) shellMapOn=1 initialFile='' gameLogic=0x750455980
-SHELLMAP: already in shell game, return
-TRANSITION: reverse('FadeWholeScreen') found=0x7502f2a60
-[processCommandList] msg type=1097 (MSG_NEW_GAME=28)
-[processCommandList] msg type=1 (MSG_NEW_GAME=28)
-DEBUG: Pump heartbeat #51, isActive=0, keyWin=0x0
-```
+**Причина:** `MacOSAudioManager::processRequestList()` заstubлен — мы вынуждены были отключить обработку audio requests из-за SIGSEGV в `AsciiString::str()`. Corrupted/dangling `AudioEventRTS` pointers в request list.
 
-**Как дебажить:**
-1. `lldb build/macos/GeneralsMD/generalszh` → `run -quick` → дождаться краша → `bt` для backtrace
-2. Проверить: может быть рендеринг объектов (W3D models), или transition effect, или что-то с GhostObjectManager
-3. Возможно что-то с `isActive=0` — окно теряет фокус?
+**Как починить:**
+1. Разобраться, почему `AudioEventRTS` pointers corrupted. Вероятно, объект удаляется игровой логикой, но pointer остается в request queue.
+2. Возможно `allocateAudioRequest()` возвращает request с невалидным `m_pendingEvent`.
+3. Нужно проверить ownership — кто создаёт и кто удаляет AudioEventRTS объекты.
+4. Референс: `GeneralsMD/Code/GameEngine/Include/Common/AudioRequest.h` — структура AudioRequest.
 
-### 🔴 Приоритет 2: TSS Pipeline для 3D draws — MODULATE даёт ноль
+**Файлы:**
+- `Platform/MacOS/Source/Audio/MacOSAudioManager.mm` — наш stub
+- `GeneralsMD/Code/GameEngine/Include/Common/AudioManager.h` — base class
+- `GeneralsMD/Code/GameEngine/Source/Common/Audio/AudioManager.cpp` — base implementation
 
-**Симптом:** `MODULATE(texColor0=white, diffuse)` должен давать `diffuse`, но post-TSS `current` = (0,0,0).
+### 🔴 Приоритет 2: Белые текстуры на 3D объектах
 
-В `MacOSShaders.metal` fragment_main() есть **bypass workaround** — для 3D draws (`useProjection == 1`) мы возвращаем `float4(diffuse.rgb, 1.0)` напрямую вместо TSS pipeline. Это потому что полный TSS pipeline даёт zero output для 3D draws.
+**Симптом:** Здания и многие юниты рендерятся полностью белыми. Terrain нормальный, UI нормальный.
 
-```metal
-// В fragment_main():
-if (uniforms.useProjection == 1) {
-    return float4(diffuse.rgb, 1.0);  // TEMPORARY WORKAROUND
-}
-```
+**Причина:** TSS pipeline не правильно применяет текстуры к 3D объектам. `MODULATE(texture, diffuse)` должен давать текстурированный объект, но даёт белый.
 
-**Что НЕ проверено:**
-- Struct alignment между `simd::float4` (CPU) и `float4` (GPU)
-- Buffer binding conflict — `setFragmentBytes` index 1
-- Metal shader compiler optimizations
+**Как починить:**
+1. Проверить, загружены ли текстуры для 3D моделей (W3D format)
+2. Разобраться с texture stage states для 3D draw calls
+3. Возможно проблема в `D3DTOP_MODULATE` или `D3DTOP_SELECTARG1` в Metal шейдере
+4. Проверить vertex color override — может diffuse всегда белый
 
-### 🔴 Приоритет 3: Terrain Texture Data пустая
+**Файлы:**
+- `Platform/MacOS/Source/Metal/MetalDevice8.mm` — DrawIndexedPrimitive + TSS
+- `Platform/MacOS/Source/Metal/MacOSShaders.metal` — пиксельный шейдер
 
-TEX pass texture содержит zero data. Мультипликативный blend `srcBlend=ZERO, dstBlend=SRCCOLOR` даёт чёрный.
+### 🟡 Приоритет 3: Crash при выходе из миссии
 
-### 🟡 Приоритет 4: 2D Texture Colors
+Exit code 139 (SIGSEGV) при завершении игры. Скорее всего cleanup/dealloc проблема.
 
-2D статические текстуры имеют неправильные цвета (чёрно-бело-зелёные). Проблема pixel format mapping DDS→Metal.
+## Ключевые технические детали
 
-## Диагностические логи (МОЖНО УДАЛИТЬ)
+### Исправленные проблемы (эта сессия)
+1. **SIGSEGV в MacOSAudioManager::processRequestList()** — corrupted AudioEventRTS pointers → stub
+2. **Automatic Termination** — macOS убивал "idle" процесс → `disableAutomaticTermination`, `applicationShouldTerminate:` → NSTerminateCancel
+3. **FramePacer null deref** — `TheScriptEngine` и `TheGlobalData` null checks добавлены
+4. **displaySyncEnabled** → NO для предотвращения блокировки nextDrawable
 
-В коде остались `printf` логи для отладки, которые можно убрать при cleanup:
+### Архитектура
+- **MetalDevice8** — реализация IDirect3DDevice8 поверх Metal API
+- **MacOSAudioManager** — реализация AudioManager (пока stub)
+- **MacOSWindowManager** — Cocoa NSWindow + event pump
+- **Signal handlers** — sigaction-based crash reporter с backtrace
+- **Frame pacing** — FramePacer контролирует FPS, displaySyncEnabled=NO
 
-| Файл | Что логирует |
-|:---|:---|
-| `GameEngine.cpp:1081-1091` | `GameEngine::update()` — canUpdateLogic, halted, frozen (первые 10) |
-| `GameLogic.cpp:1102-1108` | `startNewGame()` — loadingSave, gameMode, mapName |
-| `GameLogic.cpp:1298-1303` | `startNewGame()` — loadMap done |
-| `GameLogic.cpp:1827-1833` | `startNewGame()` — MapObject count |
-| `GameLogic.cpp:2576-2585` | `processCommandList()` — message types |
-| `ThingFactory.cpp:310-315` | `newObject()` — первые 5 created objects |
-
-## Terrain Rendering Pipeline (DX8)
-
-Terrain рисуется в 2 прохода за кадр:
-
-1. **BASE pass** (16 draws): `alphaB=0, ZFunc=LESSEQUAL`
-   - Без текстуры (`tex0=NULL`)
-   - TSS: `MODULATE(TEXTURE, DIFFUSE)` → с tex=white = diffuse
-   - Записывает diffuse цвет в framebuffer + Z-buffer
-   
-2. **TEX pass** (16 draws): `alphaB=1, srcBlend=ZERO, dstBlend=SRCCOLOR, ZFunc=EQUAL`
-   - С текстурой (`tex0=terrain_tile`)
-   - TSS: `SELECTARG1(TEXTURE)`
-   - Модулирует framebuffer текстурой: `result = framebuffer × texColor`
-
-## Ключевые файлы
-
-| Файл | Что в нём |
-|:---|:---|
-| `Platform/MacOS/Source/Main/MacOSMain.mm` | **Factory methods** (createGameLogic → W3DGameLogic), Win32GameEngine stubs |
-| `Platform/MacOS/Source/Main/MacOSShaders.metal` | Vertex + Fragment шейдер, TSS evaluation, 3D bypass workaround |
-| `Platform/MacOS/Source/Metal/MetalDevice8.mm` | Metal rendering: BeginScene, Present, Draw*, PSO, transforms |
-| `Platform/MacOS/Source/Metal/MetalSurface8.mm` | Surface lock/unlock, parent texture upload |
-| `Platform/MacOS/Source/Metal/MetalTexture8.mm` | Texture creation, format mapping |
-| `GeneralsMD/Code/GameEngineDevice/Source/W3DDevice/GameLogic/W3DTerrainLogic.cpp` | W3D terrain logic — loadMap с height data |
-| `Core/GameEngineDevice/Source/W3DDevice/GameClient/WorldHeightMap.cpp` | Height map + MapObject чтение из .map файла |
-| `GeneralsMD/Code/GameEngine/Source/GameLogic/System/GameLogic.cpp` | startNewGame(), processCommandList(), object creation loop |
-
-## Сборка и запуск
-
+### Команды
 ```bash
+# Собрать
+cmake --build build/macos
+
+# Запустить
+GENERALS_INSTALL_PATH="/path/to/game/" GENERALS_FPS_LIMIT=60 build/macos/GeneralsMD/generalszh -quick
+
+# Или скрипт
 sh build_run_mac.sh
 ```

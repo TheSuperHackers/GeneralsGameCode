@@ -247,6 +247,12 @@ void Win32GameEngine::serviceWindowsOS() {
   MacOS_PumpEvents();
 
   if (MacOS_ShouldQuit() && TheGameEngine) {
+    static bool loggedQuit = false;
+    if (!loggedQuit) {
+      fprintf(stderr, "QUIT: MacOS_ShouldQuit()=true, calling setQuitting!\n");
+      fflush(stderr);
+      loggedQuit = true;
+    }
     TheGameEngine->setQuitting(true);
   }
 #endif

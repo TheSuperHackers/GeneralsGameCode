@@ -31,6 +31,7 @@ public:
   virtual void nextMusicTrack() override;
   virtual void prevMusicTrack() override;
   virtual Bool isMusicPlaying() const override;
+  virtual Bool isMusicAlreadyLoaded() const override;  // TheSuperHackers @fix macOS: bypass music file check that causes quit
   virtual Bool hasMusicTrackCompleted(const AsciiString &trackName,
                                       Int numberOfTimes) const override;
   virtual AsciiString getMusicTrackName() const override;
