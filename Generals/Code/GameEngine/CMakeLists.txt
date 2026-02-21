@@ -167,29 +167,29 @@ set(GAMEENGINE_SRC
     Include/GameClient/GadgetTabControl.h
     Include/GameClient/GadgetTextEntry.h
     Include/GameClient/GameClient.h
-    Include/GameClient/GameFont.h
+#    Include/GameClient/GameFont.h
     Include/GameClient/GameInfoWindow.h
     Include/GameClient/GameText.h
-    Include/GameClient/GameWindow.h
-    Include/GameClient/GameWindowGlobal.h
+#    Include/GameClient/GameWindow.h
+#    Include/GameClient/GameWindowGlobal.h
     Include/GameClient/GameWindowID.h
     Include/GameClient/GameWindowManager.h
-    Include/GameClient/GameWindowTransitions.h
+#    Include/GameClient/GameWindowTransitions.h
     Include/GameClient/GlobalLanguage.h
     Include/GameClient/GraphDraw.h
     Include/GameClient/GUICallbacks.h
     Include/GameClient/GUICommandTranslator.h
-    Include/GameClient/HeaderTemplate.h
+#    Include/GameClient/HeaderTemplate.h
     Include/GameClient/HintSpy.h
     Include/GameClient/HotKey.h
     Include/GameClient/Image.h
-    Include/GameClient/IMEManager.h
+#    Include/GameClient/IMEManager.h
     Include/GameClient/InGameUI.h
-    Include/GameClient/Keyboard.h
+#    Include/GameClient/Keyboard.h
     Include/GameClient/KeyDefs.h
     Include/GameClient/LanguageFilter.h
     Include/GameClient/Line2D.h
-    Include/GameClient/LoadScreen.h
+#    Include/GameClient/LoadScreen.h
     Include/GameClient/LookAtXlat.h
 #    Include/GameClient/MapUtil.h
     Include/GameClient/MessageBox.h
@@ -197,10 +197,10 @@ set(GAMEENGINE_SRC
     Include/GameClient/Module/AnimatedParticleSysBoneClientUpdate.h
     Include/GameClient/Module/BeaconClientUpdate.h
     Include/GameClient/Module/SwayClientUpdate.h
-    Include/GameClient/Mouse.h
+#    Include/GameClient/Mouse.h
 #    Include/GameClient/ParticleSys.h
     Include/GameClient/PlaceEventTranslator.h
-    Include/GameClient/ProcessAnimateWindow.h
+#    Include/GameClient/ProcessAnimateWindow.h
     Include/GameClient/RadiusDecal.h
     Include/GameClient/RayEffect.h
     Include/GameClient/SelectionInfo.h
@@ -215,10 +215,10 @@ set(GAMEENGINE_SRC
 #    Include/GameClient/VideoPlayer.h
 #    Include/GameClient/View.h
 #    Include/GameClient/Water.h
-    Include/GameClient/WindowLayout.h
+#    Include/GameClient/WindowLayout.h
 #    Include/GameClient/WindowVideoManager.h
     Include/GameClient/WindowXlat.h
-    Include/GameClient/WinInstanceData.h
+#    Include/GameClient/WinInstanceData.h
     Include/GameLogic/AI.h
     Include/GameLogic/AIDock.h
     Include/GameLogic/AIGuard.h
@@ -681,12 +681,12 @@ set(GAMEENGINE_SRC
     Source/GameClient/GUI/Gadget/GadgetTabControl.cpp
     Source/GameClient/GUI/Gadget/GadgetTextEntry.cpp
     Source/GameClient/GUI/Gadget/GadgetVerticalSlider.cpp
-    Source/GameClient/GUI/GameFont.cpp
-    Source/GameClient/GUI/GameWindow.cpp
-    Source/GameClient/GUI/GameWindowGlobal.cpp
+#    Source/GameClient/GUI/GameFont.cpp
+#    Source/GameClient/GUI/GameWindow.cpp
+#    Source/GameClient/GUI/GameWindowGlobal.cpp
     Source/GameClient/GUI/GameWindowManager.cpp
     Source/GameClient/GUI/GameWindowManagerScript.cpp
-    Source/GameClient/GUI/GameWindowTransitions.cpp
+#    Source/GameClient/GUI/GameWindowTransitions.cpp
     Source/GameClient/GUI/GameWindowTransitionsStyles.cpp
     Source/GameClient/GUI/GUICallbacks/ControlBarCallback.cpp
     Source/GameClient/GUI/GUICallbacks/ControlBarPopupDescription.cpp
@@ -738,18 +738,18 @@ set(GAMEENGINE_SRC
     Source/GameClient/GUI/GUICallbacks/Menus/WOLWelcomeMenu.cpp
     Source/GameClient/GUI/GUICallbacks/MessageBox.cpp
     Source/GameClient/GUI/GUICallbacks/ReplayControls.cpp
-    Source/GameClient/GUI/HeaderTemplate.cpp
-    Source/GameClient/GUI/IMEManager.cpp
-    Source/GameClient/GUI/LoadScreen.cpp
-    Source/GameClient/GUI/ProcessAnimateWindow.cpp
+#    Source/GameClient/GUI/HeaderTemplate.cpp
+#    Source/GameClient/GUI/IMEManager.cpp
+#    Source/GameClient/GUI/LoadScreen.cpp
+#    Source/GameClient/GUI/ProcessAnimateWindow.cpp
     Source/GameClient/GUI/Shell/Shell.cpp
     Source/GameClient/GUI/Shell/ShellMenuScheme.cpp
-    Source/GameClient/GUI/WindowLayout.cpp
+#    Source/GameClient/GUI/WindowLayout.cpp
 #    Source/GameClient/GUI/WindowVideoManager.cpp
-    Source/GameClient/GUI/WinInstanceData.cpp
+#    Source/GameClient/GUI/WinInstanceData.cpp
     Source/GameClient/InGameUI.cpp
-    Source/GameClient/Input/Keyboard.cpp
-    Source/GameClient/Input/Mouse.cpp
+#    Source/GameClient/Input/Keyboard.cpp
+#    Source/GameClient/Input/Mouse.cpp
     Source/GameClient/LanguageFilter.cpp
     Source/GameClient/Line2D.cpp
 #    Source/GameClient/MapUtil.cpp

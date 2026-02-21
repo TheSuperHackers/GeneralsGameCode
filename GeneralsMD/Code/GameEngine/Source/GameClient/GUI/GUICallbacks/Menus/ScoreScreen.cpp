@@ -1858,18 +1858,42 @@ winName.format("ScoreScreen.wnd:StaticTextScore%d", pos);
 					if (TheNetwork->sawCRCMismatch())
 					{
 						++stats.desyncs[ptIdx];
+
+						stats.lossesInARow = 0;
+						stats.desyncsInARow++;
+						stats.disconsInARow = 0;
+						stats.winsInARow = 0;
+						stats.maxDesyncsInARow = max(stats.desyncsInARow, stats.maxDesyncsInARow);
 					}
 					else if (gameEndedInDisconnect)
 					{
 						++stats.discons[ptIdx];
+
+						stats.lossesInARow = 0;
+						stats.desyncsInARow = 0;
+						stats.disconsInARow++;
+						stats.winsInARow = 0;
+						stats.maxDisconsInARow = max(stats.disconsInARow, stats.maxDisconsInARow);
 					}
-					else if (TheVictoryConditions->isLocalAlliedDefeat() || !TheVictoryConditions->getEndFrame())
+					else if (TheVictoryConditions->isLocalAlliedVictory())
 					{
-						++stats.losses[ptIdx];
+						++stats.wins[ptIdx];
+
+						stats.lossesInARow = 0;
+						stats.desyncsInARow = 0;
+						stats.disconsInARow = 0;
+						stats.winsInARow++;
+						stats.maxWinsInARow = max(stats.winsInARow, stats.maxWinsInARow);
 					}
 					else
 					{
-						++stats.wins[ptIdx];
+						++stats.losses[ptIdx];
+
+						stats.lossesInARow++;
+						stats.desyncsInARow = 0;
+						stats.disconsInARow = 0;
+						stats.winsInARow = 0;
+						stats.maxLossesInARow = max(stats.lossesInARow, stats.maxLossesInARow);
 					}
 
 					ScoreKeeper *s = player->getScoreKeeper();
@@ -1884,39 +1908,6 @@ winName.format("ScoreScreen.wnd:StaticTextScore%d", pos);
 					else
 					{
 						stats.customGames[ptIdx]++;
-					}
-
-					if (TheNetwork->sawCRCMismatch())
-					{
-						stats.lossesInARow = 0;
-						stats.desyncsInARow++;
-						stats.disconsInARow = 0;
-						stats.winsInARow = 0;
-						stats.maxDesyncsInARow = max(stats.desyncsInARow, stats.maxDesyncsInARow);
-					}
-					else if (gameEndedInDisconnect)
-					{
-						stats.lossesInARow = 0;
-						stats.desyncsInARow = 0;
-						stats.disconsInARow++;
-						stats.winsInARow = 0;
-						stats.maxDisconsInARow = max(stats.disconsInARow, stats.maxDisconsInARow);
-					}
-					else if (TheVictoryConditions->isLocalAlliedVictory())
-					{
-						stats.lossesInARow = 0;
-						stats.desyncsInARow = 0;
-						stats.disconsInARow = 0;
-						stats.winsInARow++;
-						stats.maxWinsInARow = max(stats.winsInARow, stats.maxWinsInARow);
-					}
-					else
-					{
-						stats.lossesInARow++;
-						stats.desyncsInARow = 0;
-						stats.disconsInARow = 0;
-						stats.winsInARow = 0;
-						stats.maxLossesInARow = max(stats.lossesInARow, stats.maxLossesInARow);
 					}
 
 					stats.earnings[ptIdx] += s->getTotalMoneyEarned();

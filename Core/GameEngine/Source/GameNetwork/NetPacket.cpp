@@ -276,7 +276,7 @@ UnsignedInt NetPacket::GetBufferSizeNeededForCommand(NetCommandMsg *msg) {
 	// This is where the fun begins...
 
 	if (msg == nullptr) {
-		return TRUE; // There was nothing to add, so it was successful.
+		return 0; // There was nothing to add.
 	}
 	// Use the virtual function for all command message types
 	return msg->getPackedByteCount();
