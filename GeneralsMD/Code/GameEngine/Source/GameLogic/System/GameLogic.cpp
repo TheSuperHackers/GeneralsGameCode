@@ -1055,6 +1055,8 @@ static void populateRandomStartPosition( GameInfo *game )
 	}
 }
 
+struct QuitGameException {};
+
 // ------------------------------------------------------------------------------------------------
 /** Update the load screen progress */
 // ------------------------------------------------------------------------------------------------
@@ -1064,6 +1066,10 @@ void GameLogic::updateLoadProgress( Int progress )
 	if( m_loadScreen )
 		m_loadScreen->update( progress );
 
+	if (TheGameEngine->getQuitting() || m_quitToDesktopAfterMatch)
+	{
+		throw QuitGameException();
+	}
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1105,6 +1111,8 @@ void GameLogic::setGameMode( GameMode mode )
 // ------------------------------------------------------------------------------------------------
 void GameLogic::startNewGame( Bool loadingSaveGame )
 {
+	try
+	{
 
 	#ifdef DUMP_PERF_STATS
 	__int64 startTime64;
@@ -2372,7 +2380,11 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 		TheInGameUI->messageNoFormat( TheGameText->FETCH_OR_SUBSTITUTE( "GUI:FastForwardInstructions", L"Press F to toggle Fast Forward" ) );
   }
 
-
+	}
+	catch (QuitGameException&)
+	{
+		// TheSuperHackers: The application is cleanly aborting the loading process.
+	}
 }
 
 //-----------------------------------------------------------------------------------------

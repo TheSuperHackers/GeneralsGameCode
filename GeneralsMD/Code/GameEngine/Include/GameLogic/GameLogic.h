@@ -262,6 +262,8 @@ public:
 	// this should be called only by UpdateModule, thanks.
 	void friend_awakenUpdateModule(Object* obj, UpdateModulePtr update, UnsignedInt whenToWakeUp);
 
+	Bool m_quitToDesktopAfterMatch;
+
 protected:
 
 	// snapshot methods
@@ -406,7 +408,6 @@ private:
 	void xferObjectTOC( Xfer *xfer );												///< save/load object TOC for current state of map
 	void prepareLogicForObjectLoad( void );									///< prepare engine for object data from game file
 
-	Bool m_quitToDesktopAfterMatch;
 };
 
 // INLINE /////////////////////////////////////////////////////////////////////////////////////////
