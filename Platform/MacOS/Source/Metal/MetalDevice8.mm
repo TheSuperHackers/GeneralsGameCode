@@ -1178,12 +1178,14 @@ STDMETHODIMP MetalDevice8::Clear(DWORD Count, const void *pRects, DWORD Flags,
   rpd.colorAttachments[0].texture = MTL_DRAWABLE.texture;
 
   if (Flags & D3DCLEAR_TARGET) {
-    float a = ((Color >> 24) & 0xFF) / 255.0f;
     float r = ((Color >> 16) & 0xFF) / 255.0f;
     float g = ((Color >> 8) & 0xFF) / 255.0f;
     float b = ((Color >> 0) & 0xFF) / 255.0f;
+    // Force alpha=1.0: DX8 framebuffer alpha is unused for window compositing,
+    // but macOS CAMetalLayer composites with alpha. Without this, cleared areas
+    // appear transparent on macOS desktop.
     rpd.colorAttachments[0].loadAction = MTLLoadActionClear;
-    rpd.colorAttachments[0].clearColor = MTLClearColorMake(r, g, b, a);
+    rpd.colorAttachments[0].clearColor = MTLClearColorMake(r, g, b, 1.0);
   } else {
     rpd.colorAttachments[0].loadAction = MTLLoadActionLoad;
   }

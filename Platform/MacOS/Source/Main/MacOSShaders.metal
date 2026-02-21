@@ -507,14 +507,13 @@ fragment float4 fragment_main(VertexOut in [[stage_in]],
     
     float4 diffuse = in.color;
     
-    // Bypass TSS for 3D draws until terrain texture upload is fixed.
-    // TSS pipeline works correctly for 2D, but 3D terrain textures are
-    // still empty (zero data in surface uploads), causing black output.
-    if (uniforms.useProjection == 1) {
+    // Untextured 3D draws (terrain BASE pass): return diffuse directly.
+    // Textured 3D/2D draws: go through full TSS pipeline below.
+    if (uniforms.useProjection == 1 && fragUniforms.hasTexture0 == 0) {
         return float4(diffuse.rgb, 1.0);
     }
 
-    // 2D path with full TSS processing
+    // Full TSS processing for 2D and textured 3D draws
     float4 specular = in.specularColor;
     float4 tFactor = fragUniforms.textureFactor;
     float4 current = diffuse;
@@ -559,6 +558,13 @@ fragment float4 fragment_main(VertexOut in [[stage_in]],
 
     // Add specular
     current.rgb = clamp(current.rgb + specular.rgb, 0.0, 1.0);
+
+    // For 3D draws: discard fragments where TSS produced near-black output
+    // (usually from empty/unloaded textures). This prevents multiplicative
+    // blend passes from destroying the visible BASE terrain underneath.
+    if (uniforms.useProjection == 1 && dot(current.rgb, float3(1.0)) < 0.01) {
+        discard_fragment();
+    }
 
     return current;
 }
