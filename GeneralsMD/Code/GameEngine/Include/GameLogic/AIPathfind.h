@@ -798,9 +798,6 @@ protected:
 										Bool centerInCell, Int radius, const ICoord2D &startCellNdx,
 										const Object *obj, Int attackDistance);
 
- 	Bool pathDestination( Object *obj, const LocomotorSet& locomotorSet, Coord3D *dest,
-		PathfindLayerEnum layer, const Coord3D *groupDest);	///< Checks cost between given locations
-
 	Int checkPathCost(Object *obj, const LocomotorSet& locomotorSet, const Coord3D *from,
 		const Coord3D *to);
 
