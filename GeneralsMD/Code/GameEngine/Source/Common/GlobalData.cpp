@@ -47,7 +47,7 @@
 #include "Common/GameAudio.h"
 #include "Common/INI.h"
 #include "Common/Registry.h"
-#include "Common/UserPreferences.h"
+#include "Common/OptionPreferences.h"
 #include "Common/version.h"
 
 #include "GameLogic/AI.h"

@@ -64,7 +64,7 @@
 #include "Common/SpecialPower.h"
 #include "Common/TerrainTypes.h"
 #include "Common/Upgrade.h"
-#include "Common/UserPreferences.h"
+#include "Common/OptionPreferences.h"
 #include "Common/Xfer.h"
 #include "Common/XferCRC.h"
 #include "Common/GameLOD.h"

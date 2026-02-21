@@ -59,7 +59,7 @@
 #include "Common/OSDisplay.h"
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
-#include "Common/UserPreferences.h"
+#include "Common/OptionPreferences.h"
 
 #include "GameClient/ControlBar.h"
 #include "GameClient/Drawable.h"

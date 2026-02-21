@@ -264,7 +264,7 @@ Int SkirmishPreferences::getPreferredFaction(void)
 
 Bool SkirmishPreferences::usesSystemMapDir(void)
 {
-	OptionPreferences::const_iterator it = find("UseSystemMapDir");
+	SkirmishPreferences::const_iterator it = find("UseSystemMapDir");
 	if (it == end())
 		return TRUE;
 
