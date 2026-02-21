@@ -50,6 +50,7 @@ public:
   }
   void *GetMTLTextureVoid() const { return m_Texture; }
   void *GetMetalTexture() const { return m_Texture; }
+  void MarkWritten() { m_HasBeenWritten = true; }
 
 private:
   ULONG m_RefCount;

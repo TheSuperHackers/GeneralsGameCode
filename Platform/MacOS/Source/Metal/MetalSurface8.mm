@@ -175,12 +175,14 @@ STDMETHODIMP MetalSurface8::UnlockRect() {
     
     // Calculate bytes per pixel matching the surface format
     UINT bpp = 4;
+    bool is16bit = false;
     switch (m_Format) {
     case D3DFMT_A1R5G5B5:
     case D3DFMT_X1R5G5B5:
     case D3DFMT_R5G6B5:
     case D3DFMT_A4R4G4B4:
       bpp = 2;
+      is16bit = true;
       break;
     case D3DFMT_A8:
       bpp = 1;
@@ -191,7 +193,6 @@ STDMETHODIMP MetalSurface8::UnlockRect() {
     }
 
     // The Metal texture may have a different pixel format than the D3D surface.
-    // If so, we need to convert. Common case: D3D A1R5G5B5 (16-bit) → Metal BGRA8 (32-bit)
     MTLPixelFormat mtlFmt = tex.pixelFormat;
     UINT mtlBpp = 4; // Metal side bytes per pixel
     if (mtlFmt == MTLPixelFormatBGRA8Unorm || mtlFmt == MTLPixelFormatRGBA8Unorm) {
@@ -200,21 +201,70 @@ STDMETHODIMP MetalSurface8::UnlockRect() {
       mtlBpp = 1;
     }
 
-    if (bpp == 2 && mtlBpp == 4 && m_Format == D3DFMT_A1R5G5B5) {
-      // Convert A1R5G5B5 → BGRA8
+    // Diagnostic: log first few surface uploads
+    static int s_surfaceUploadCount = 0;
+    if (s_surfaceUploadCount < 30) {
+      // Check if data is non-zero
+      uint32_t nonZeroCount = 0;
+      UINT checkBytes = std::min((UINT)(m_Width * m_Height * bpp), (UINT)256);
+      const uint8_t *checkPtr = (const uint8_t *)m_LockedData;
+      for (UINT i = 0; i < checkBytes; i++) {
+        if (checkPtr[i] != 0) nonZeroCount++;
+      }
+      fprintf(stderr, "[MetalSurface8] UnlockRect #%d: %ux%u fmt=%u(bpp=%u) → mtlFmt=%lu(bpp=%u) mip=%u nonZero=%u/%u parent=%p\n",
+              s_surfaceUploadCount, m_Width, m_Height, (unsigned)m_Format, bpp,
+              (unsigned long)mtlFmt, mtlBpp, m_MipLevel, nonZeroCount, checkBytes,
+              (void*)m_ParentTexture);
+      s_surfaceUploadCount++;
+    }
+
+    bool isCompressed = (mtlFmt == MTLPixelFormatBC1_RGBA ||
+                         mtlFmt == MTLPixelFormatBC2_RGBA ||
+                         mtlFmt == MTLPixelFormatBC3_RGBA);
+
+    if (is16bit && mtlBpp == 4) {
+      // Convert ALL 16-bit formats to BGRA8
       UINT pixelCount = m_Width * m_Height;
       uint8_t *converted = (uint8_t *)malloc(pixelCount * 4);
+      if (!converted) return E_FAIL;
       uint16_t *src = (uint16_t *)m_LockedData;
       for (UINT i = 0; i < pixelCount; i++) {
         uint16_t px = src[i];
-        uint8_t a = (px & 0x8000) ? 255 : 0;
-        uint8_t r = ((px >> 10) & 0x1F) * 255 / 31;
-        uint8_t g = ((px >> 5) & 0x1F) * 255 / 31;
-        uint8_t b = (px & 0x1F) * 255 / 31;
-        converted[i * 4 + 0] = b; // B
-        converted[i * 4 + 1] = g; // G
-        converted[i * 4 + 2] = r; // R
-        converted[i * 4 + 3] = a; // A
+        uint8_t B, G, R, A;
+        switch (m_Format) {
+        case D3DFMT_R5G6B5:
+          B = (uint8_t)(((px      ) & 0x1F) * 255 / 31);
+          G = (uint8_t)(((px >>  5) & 0x3F) * 255 / 63);
+          R = (uint8_t)(((px >> 11) & 0x1F) * 255 / 31);
+          A = 255;
+          break;
+        case D3DFMT_X1R5G5B5:
+          B = (uint8_t)(((px      ) & 0x1F) * 255 / 31);
+          G = (uint8_t)(((px >>  5) & 0x1F) * 255 / 31);
+          R = (uint8_t)(((px >> 10) & 0x1F) * 255 / 31);
+          A = 255;
+          break;
+        case D3DFMT_A1R5G5B5:
+          B = (uint8_t)(((px      ) & 0x1F) * 255 / 31);
+          G = (uint8_t)(((px >>  5) & 0x1F) * 255 / 31);
+          R = (uint8_t)(((px >> 10) & 0x1F) * 255 / 31);
+          A = (px >> 15) ? 255 : 0;
+          break;
+        case D3DFMT_A4R4G4B4:
+          B = (uint8_t)(((px      ) & 0x0F) * 255 / 15);
+          G = (uint8_t)(((px >>  4) & 0x0F) * 255 / 15);
+          R = (uint8_t)(((px >>  8) & 0x0F) * 255 / 15);
+          A = (uint8_t)(((px >> 12) & 0x0F) * 255 / 15);
+          break;
+        default:
+          B = G = R = A = 255;
+          break;
+        }
+        // Metal BGRA8Unorm: byte order B, G, R, A in memory
+        converted[i * 4 + 0] = B;
+        converted[i * 4 + 1] = G;
+        converted[i * 4 + 2] = R;
+        converted[i * 4 + 3] = A;
       }
       MTLRegion region = MTLRegionMake2D(0, 0, m_Width, m_Height);
       [tex replaceRegion:region
@@ -224,40 +274,34 @@ STDMETHODIMP MetalSurface8::UnlockRect() {
              bytesPerRow:m_Width * 4
            bytesPerImage:m_Width * m_Height * 4];
       free(converted);
+    } else if (isCompressed) {
+      UINT bytesPerBlock = (mtlFmt == MTLPixelFormatBC1_RGBA) ? 8 : 16;
+      UINT blocksWide = std::max(1u, (m_Width + 3) / 4);
+      UINT blocksHigh = std::max(1u, (m_Height + 3) / 4);
+      UINT bytesPerRow = blocksWide * bytesPerBlock;
+      UINT bytesPerImage = bytesPerRow * blocksHigh;
+
+      MTLRegion region = MTLRegionMake2D(0, 0, m_Width, m_Height);
+      [tex replaceRegion:region
+             mipmapLevel:m_MipLevel
+                   slice:0
+               withBytes:m_LockedData
+             bytesPerRow:bytesPerRow
+           bytesPerImage:bytesPerImage];
     } else {
-      bool isCompressed = (mtlFmt == MTLPixelFormatBC1_RGBA ||
-                           mtlFmt == MTLPixelFormatBC2_RGBA ||
-                           mtlFmt == MTLPixelFormatBC3_RGBA);
-
-      if (isCompressed) {
-        // DXT1 is 8 bytes per block, DXT3/5 are 16 bytes per block.
-        // The D3D format determines bytes per pixel value used for block bpp in LockRect.
-        // Wait, MetalFormatFromD3D gave us BC format. Let's infer block size.
-        UINT bytesPerBlock = (mtlFmt == MTLPixelFormatBC1_RGBA) ? 8 : 16;
-        UINT blocksWide = std::max(1u, (m_Width + 3) / 4);
-        UINT blocksHigh = std::max(1u, (m_Height + 3) / 4);
-        UINT bytesPerRow = blocksWide * bytesPerBlock;
-        UINT bytesPerImage = bytesPerRow * blocksHigh;
-
-        MTLRegion region = MTLRegionMake2D(0, 0, m_Width, m_Height);
-        [tex replaceRegion:region
-               mipmapLevel:m_MipLevel
-                     slice:0
-                 withBytes:m_LockedData
-               bytesPerRow:bytesPerRow
-             bytesPerImage:bytesPerImage];
-      } else {
-        // Direct upload (formats match or close enough, uncompressed)
-        UINT uploadBpr = m_Width * mtlBpp;
-        MTLRegion region = MTLRegionMake2D(0, 0, m_Width, m_Height);
-        [tex replaceRegion:region
-               mipmapLevel:m_MipLevel
-                     slice:0
-                 withBytes:m_LockedData
-               bytesPerRow:uploadBpr
-             bytesPerImage:uploadBpr * m_Height];
-      }
+      // Direct upload (formats match: 32-bit or 8-bit)
+      UINT uploadBpr = m_Width * mtlBpp;
+      MTLRegion region = MTLRegionMake2D(0, 0, m_Width, m_Height);
+      [tex replaceRegion:region
+             mipmapLevel:m_MipLevel
+                   slice:0
+               withBytes:m_LockedData
+             bytesPerRow:uploadBpr
+           bytesPerImage:uploadBpr * m_Height];
     }
+
+    // Mark texture as written so LockRect can read back existing data
+    m_ParentTexture->MarkWritten();
 
     // NOTE: Do NOT free m_LockedData here!
     // DirectX 8 pattern: callers (W3DShroud, TerrainTex) store pBits from

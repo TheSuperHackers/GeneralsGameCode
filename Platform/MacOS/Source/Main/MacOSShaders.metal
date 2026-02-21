@@ -507,16 +507,14 @@ fragment float4 fragment_main(VertexOut in [[stage_in]],
     
     float4 diffuse = in.color;
     
-    // TEMPORARY: bypass TSS for 3D draws to get visible terrain
-    // The TSS pipeline currently produces black output for 3D draws.
-    // TODO: investigate terrain texture upload and TSS pipeline
+    // Bypass TSS for 3D draws until terrain texture upload is fixed.
+    // TSS pipeline works correctly for 2D, but 3D terrain textures are
+    // still empty (zero data in surface uploads), causing black output.
     if (uniforms.useProjection == 1) {
-        // DX8 terrain vertices have alpha=0 (used for multi-pass blending).
-        // Force opaque since we bypass the blend pipeline.
         return float4(diffuse.rgb, 1.0);
     }
 
-    // Normal 2D path with full TSS processing
+    // 2D path with full TSS processing
     float4 specular = in.specularColor;
     float4 tFactor = fragUniforms.textureFactor;
     float4 current = diffuse;
