@@ -792,7 +792,7 @@ set(GAMEENGINE_SRC
 #    Source/GameClient/GUI/GUICallbacks/MessageBox.cpp
 #    Source/GameClient/GUI/GUICallbacks/ReplayControls.cpp
     Source/GameClient/GUI/HeaderTemplate.cpp
-    Source/GameClient/GUI/IMEManager.cpp
+    #Source/GameClient/GUI/IMEManager.cpp # Windows IME-only
     Source/GameClient/GUI/LoadScreen.cpp
     Source/GameClient/GUI/ProcessAnimateWindow.cpp
 #    Source/GameClient/GUI/Shell/Shell.cpp
