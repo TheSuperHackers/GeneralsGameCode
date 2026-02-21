@@ -203,7 +203,7 @@ static void restartMissionMenu()
 	// TheSuperHackers @bugfix Caball009 07/02/2026 Reuse the previous seed value for the new skirmish match to prevent mismatches.
 	// Campaign, challenge, and skirmish single-player scenarios all use GAME_SINGLE_PLAYER and are expected to use 0 as seed value.
 	DEBUG_ASSERTCRASH((TheSkirmishGameInfo != nullptr) == (gameMode == GAME_SKIRMISH), ("Unexpected game mode on map / mission restart"));
-	const UnsignedInt seed = TheSkirmishGameInfo ? TheSkirmishGameInfo->getSeed() : 0;
+	const Int seed = TheSkirmishGameInfo ? TheSkirmishGameInfo->getSeed() : 0;
 
 	//
 	// if the map name was from a save game it will have "Save/" at the front of it,
