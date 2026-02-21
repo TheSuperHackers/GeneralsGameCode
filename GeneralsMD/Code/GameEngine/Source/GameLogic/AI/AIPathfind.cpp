@@ -8388,7 +8388,8 @@ struct TightenPathStruct
 	Int		radius;
 	Bool	center;
 	Bool	foundDest;
-	Coord3D destPos;
+	Coord3D orgDestPos;
+	Coord3D newDestPos;
 };
 
 
@@ -8397,17 +8398,28 @@ struct TightenPathStruct
 	TightenPathStruct* d = (TightenPathStruct*)userData;
 	if (from == nullptr || to==nullptr) return 0;
 	if (d->layer != to->getLayer()) {
-		return 0; // abort.
+		return 0; // failure
 	}
+
+	// TheSuperHackers @todo Caball009 15/02/2026 This is an incomplete workaround to initialize the variable,
+	// and needs to be replaced with a proper opt-in mechanism. The fix may introduce too many new mismatches to enable unconditionally,
+	// and the uninitialized values vary too much to imitate.
 	Coord3D pos;
+#if RETAIL_COMPATIBLE_PATHFINDING
+	if (s_useFixedPathfinding)
+#endif
+	{
+		pos = d->orgDestPos;
+	}
+
 	if (!TheAI->pathfinder()->checkForAdjust(d->obj, *d->locomotorSet, true, to_x, to_y, to->getLayer(), d->radius, d->center, &pos, nullptr))
 	{
-		return 0;	// bail early
+		return 0; // failure
 	}
 	d->foundDest = true;
-	d->destPos = pos;
+	d->newDestPos = pos;
 
-	return 0;	// keep going
+	return 0; // success but keep going
 }
 
 /* Returns the cost, which is in the same units as coord3d distance. */
@@ -8421,9 +8433,10 @@ void Pathfinder::tightenPath(Object *obj, const LocomotorSet& locomotorSet, Coor
 	info.obj = obj;
 	info.locomotorSet = &locomotorSet;
 	info.foundDest = false;
+	info.orgDestPos = *to;
 	iterateCellsAlongLine(*from, *to, info.layer, tightenPathCallback, &info);
 	if (info.foundDest) {
-		*from = info.destPos;
+		*from = info.newDestPos;
 	}
 }
 
