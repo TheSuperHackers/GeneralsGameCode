@@ -265,10 +265,11 @@ void Win32GameEngine::serviceWindowsOS() {
   TheMessageTime = timeGetTime();
 }
 
-// Factory methods now as stubs to avoid linking W3D classes
+// Factory methods
+#include "W3DDevice/GameLogic/W3DGameLogic.h"
 GameLogic *Win32GameEngine::createGameLogic(void) {
-  fprintf(stderr, "FACTORY: createGameLogic\n");
-  return new GameLogic();
+  fprintf(stderr, "FACTORY: createGameLogic (W3DGameLogic)\n");
+  return NEW W3DGameLogic();
 }
 
 // Headers for factory return types

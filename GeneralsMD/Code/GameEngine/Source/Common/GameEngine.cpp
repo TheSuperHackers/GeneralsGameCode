@@ -1081,6 +1081,17 @@ void GameEngine::update(void) {
                                 !TheFramePacer->isTimeFrozen();
     const Bool canUpdateScript = canUpdate && !TheFramePacer->isGameHalted();
 
+    {
+      static int s_updateLogCount = 0;
+      if (s_updateLogCount < 10) {
+        printf("[GameEngine::update] canUpdate=%d canUpdateLogic=%d halted=%d frozen=%d\n",
+          (int)canUpdate, (int)canUpdateLogic,
+          (int)TheFramePacer->isGameHalted(), (int)TheFramePacer->isTimeFrozen());
+        fflush(stdout);
+        s_updateLogCount++;
+      }
+    }
+
     if (canUpdateLogic) {
       TheGameClient->step();
       TheGameLogic->UPDATE();

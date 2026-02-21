@@ -309,6 +309,12 @@ ThingTemplate *ThingFactory::findTemplateInternal( const AsciiString& name, Bool
 //=============================================================================
 Object *ThingFactory::newObject( const ThingTemplate *tmplate, Team *team, ObjectStatusMaskType statusBits )
 {
+	static int s_objCount = 0;
+	if (s_objCount < 5) {
+		printf("[newObject] #%d template='%s'\n", s_objCount, tmplate ? tmplate->getName().str() : "null");
+		fflush(stdout);
+	}
+	s_objCount++;
 	if (tmplate == nullptr)
 		throw ERROR_BAD_ARG;
 

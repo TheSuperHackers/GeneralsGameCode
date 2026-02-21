@@ -1102,6 +1102,10 @@ void GameLogic::setGameMode( GameMode mode )
 // ------------------------------------------------------------------------------------------------
 void GameLogic::startNewGame( Bool loadingSaveGame )
 {
+	printf("[startNewGame] loadingSave=%d gameMode=%d mapName='%s' startNewGame=%d\n",
+		(int)loadingSaveGame, (int)m_gameMode,
+		TheGlobalData->m_mapName.str(), (int)m_startNewGame);
+	fflush(stdout);
 
 	#ifdef DUMP_PERF_STATS
 	__int64 startTime64;
@@ -1296,6 +1300,7 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 
 	// load a map
 	TheTerrainLogic->loadMap( TheGlobalData->m_mapName, false );
+	printf("[startNewGame] loadMap done for '%s'\n", TheGlobalData->m_mapName.str()); fflush(stdout);
 	// anytime the world's size changes, must reset the partition mgr
 	//ThePartitionManager->init();
 
@@ -1815,6 +1820,13 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 	{
 		Int progressCount = LOAD_PROGRESS_LOOP_ALL_THE_FREAKN_OBJECTS;
 		Int timer = timeGetTime();
+		{
+			int mapObjCount = 0;
+			for (MapObject *pCheck = MapObject::getFirstMapObject(); pCheck; pCheck = pCheck->getNext())
+				mapObjCount++;
+			printf("[startNewGame] MapObject count=%d, useTrees=%d, forceFluffToProp=%d\n", mapObjCount, (int)useTrees, (int)forceFluffToProp);
+			fflush(stdout);
+		}
 		for (MapObject *pMapObj = MapObject::getFirstMapObject(); pMapObj; pMapObj = pMapObj->getNext())
 		{
 
@@ -2565,6 +2577,13 @@ void GameLogic::processCommandList( CommandList *list )
 
 	for( msg = list->getFirstMessage(); msg; msg = msg->next() )
 	{
+		static int s_cmdLogCount = 0;
+		if (msg->getType() == GameMessage::MSG_NEW_GAME || s_cmdLogCount < 30) {
+			printf("[processCommandList] msg type=%d (MSG_NEW_GAME=%d)\n",
+				(int)msg->getType(), (int)GameMessage::MSG_NEW_GAME);
+			fflush(stdout);
+			s_cmdLogCount++;
+		}
 #ifdef RTS_DEBUG
 		DEBUG_ASSERTCRASH(msg != nullptr && msg != (GameMessage*)0xdeadbeef, ("bad msg"));
 #endif
