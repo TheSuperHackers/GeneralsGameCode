@@ -19,6 +19,8 @@
 #include "GameClient/TerrainVisual.h"
 #include "GameClient/VideoPlayer.h"
 #include "GameClient/View.h"
+#include "GameClient/Shell.h"
+#include "Common/GlobalData.h"
 #include "W3DDevice/GameClient/W3DInGameUI.h"
 #include "W3DDevice/GameClient/W3DView.h"
 
@@ -160,11 +162,32 @@ void MacOSGameClient::init() {
 void MacOSGameClient::update() {
   static int callCount = 0;
   if (callCount < 3) {
-    printf("MENU_FLOW: MacOSGameClient::update() #%d\n", callCount++);
+    printf("MENU_FLOW: MacOSGameClient::update() #%d\n", callCount);
     fflush(stdout);
   }
   MacOS_PumpEvents();
+
+  // On macOS, there's no video player. The intro/sizzle movie state machine
+  // in GameClient::update() doesn't complete properly, so the shell map
+  // never loads. Force-skip the movies and directly trigger shell map loading.
+  // NOTE: Do NOT set m_breakTheMovie=TRUE — W3DDisplay::draw() checks this flag
+  // and skips Begin_Render() when it's TRUE, which would prevent all 3D rendering.
+  if (callCount == 0) {
+    TheWritableGlobalData->m_playIntro = FALSE;
+    TheWritableGlobalData->m_afterIntro = FALSE;
+    TheWritableGlobalData->m_allowExitOutOfMovies = TRUE;
+  }
+
   GameClient::update();
+
+  // After first update, trigger shell map + shell if not yet loaded
+  if (callCount == 0) {
+    printf("MACOS: Forcing showShellMap(TRUE) + showShell()\n");
+    fflush(stdout);
+    TheShell->showShellMap(TRUE);
+    TheShell->showShell();
+  }
+  callCount++;
 }
 
 DisplayStringManager *MacOSGameClient::createDisplayStringManager(void) {

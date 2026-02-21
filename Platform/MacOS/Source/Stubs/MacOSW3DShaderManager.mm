@@ -5,6 +5,7 @@
 // Remaining stubs
 #include "Common/GameLOD.h"
 #include "W3DDevice/GameClient/W3DShaderManager.h"
+#include "WW3D2/DX8Wrapper.h"
 #include <stdio.h>
 
 // Stubs for W3DShaderManager to bypass DirectX dependencies and provide
@@ -43,6 +44,28 @@ Int W3DShaderManager::getShaderPasses(ShaderTypes shader) { return 1; }
 Int W3DShaderManager::setShader(ShaderTypes shader, Int pass) {
   m_currentShader = shader;
   m_currentShaderPass = pass;
+
+  // Bind textures that were stored via setTexture() to DX8 stages.
+  // On Windows this is done through D3D pixel shaders, but on macOS
+  // we just need to set the textures so the fixed-function pipeline
+  // (or our Metal shader) can sample them.
+  switch (shader) {
+    case ST_TERRAIN_BASE:
+    case ST_TERRAIN_BASE_NOISE1:
+    case ST_TERRAIN_BASE_NOISE2:
+    case ST_TERRAIN_BASE_NOISE12:
+      // Bind terrain texture atlas
+      DX8Wrapper::Set_Texture(0, m_Textures[0]);
+      break;
+
+    default:
+      // For other shader types, bind stage 0 if available
+      if (m_Textures[0]) {
+        DX8Wrapper::Set_Texture(0, m_Textures[0]);
+      }
+      break;
+  }
+
   return TRUE;
 }
 

@@ -16,23 +16,35 @@ graph TD
         D --> E[MacOS_PumpEvents]
         D --> F[GameEngine::update]
         F --> G[GameClient::UPDATE]
-        G --> H[MacOSDisplay::draw]
+        G --> H[W3DDisplay::draw]
     end
 
-    subgraph "MacOSDisplay::draw"
-        H --> H1[WW3D::Begin_Render]
-        H --> H2[Display::draw → W3DView::draw]
-        H --> H3[WindowManager::winRepaint — UI]
-        H --> H4[WW3D::End_Render]
+    subgraph "W3DDisplay::draw (line 1658)"
+        H --> H0{m_breakTheMovie?}
+        H0 -->|FALSE| H1[WW3D::Begin_Render]
+        H0 -->|TRUE| SKIP[SKIP ALL 3D!]
+        H1 --> H2[drawViews — 3D scene]
+        H2 --> H3[TheInGameUI::DRAW — UI]
+        H3 --> H4[WW3D::End_Render]
+    end
+
+    subgraph "Shell Map Startup"
+        G --> SM[MacOSGameClient::update]
+        SM --> SM1[Skip playIntro/afterIntro]
+        SM1 --> SM2[showShellMap TRUE]
+        SM2 --> SM3[MSG_NEW_GAME GAME_SHELL]
+        SM3 --> SM4[Shell Map Game Active]
     end
 
     subgraph "Metal Backend"
         H1 --> M1[MetalDevice8::BeginScene]
-        H2 --> M2[MetalDevice8::DrawPrimitive]
+        H2 --> M2[MetalDevice8::DrawIndexedPrimitive]
         H3 --> M2
         H4 --> M3[MetalDevice8::Present]
     end
 ```
+
+⚠️ **CRITICAL:** `m_breakTheMovie` must remain `FALSE` on macOS. Setting it to `TRUE` causes `W3DDisplay::draw()` (line 1849) to skip `WW3D::Begin_Render()`, which disables **ALL** 3D rendering.
 
 ---
 
@@ -47,6 +59,7 @@ The macOS port implements the `IDirect3D8` and `IDirect3DDevice8` interfaces (fr
 | `MetalInterface8` | Implements `IDirect3D8` — adapter enumeration, device creation |
 | `MetalDevice8` | Implements `IDirect3DDevice8` — `MTLDevice`, `MTLCommandQueue`, `CAMetalLayer` |
 | `MetalTexture8` | Implements `IDirect3DTexture8` — wraps `MTLTexture` |
+| `MetalSurface8` | Implements `IDirect3DSurface8` — staging buffer + parent texture upload |
 | `MetalVertexBuffer8` | Implements `IDirect3DVertexBuffer8` — wraps vertex data |
 | `MetalIndexBuffer8` | Implements `IDirect3DIndexBuffer8` — wraps index data |
 | `D3DXStubs.mm` | Factory functions — isolates C++ from Objective-C++ |
@@ -89,6 +102,7 @@ The macOS port implements the `IDirect3D8` and `IDirect3DDevice8` interfaces (fr
 ### 4. `Present()`
 - `endEncoding` on current encoder
 - `presentDrawable` + `commit` command buffer
+- `waitUntilCompleted` for GPU-CPU sync (replaces semaphore-based approach)
 - Release encoder, drawable, command buffer
 
 ---
@@ -142,11 +156,16 @@ The macOS port implements the `IDirect3D8` and `IDirect3DDevice8` interfaces (fr
 
 ### Creation Flow
 1. `CreateTexture(w, h, levels, usage, format, pool)` → `MetalTexture8` creates `MTLTexture`
-2. `LockRect(level)` → allocates staging buffer, returns ptr + pitch
-3. Game writes pixels to staging buffer
-4. `UnlockRect(level)` → `[mtlTexture replaceRegion:withBytes:bytesPerRow:]`, frees staging
-5. `SetTexture(stage, tex)` → stores in `m_Textures[stage]`
-6. At draw call: `setFragmentTexture:mtlTex atIndex:stage`
+2. `GetSurfaceLevel(level)` → creates `MetalSurface8` with parent texture reference
+3. `LockRect(level)` → allocates staging buffer (`m_LockedData`), returns ptr + pitch
+4. Game writes pixels to staging buffer
+5. `UnlockRect(level)` → `[mtlTexture replaceRegion:withBytes:bytesPerRow:]`, **does NOT free buffer**
+6. Buffer lives until `~MetalSurface8()` destructor (W3D code re-locks the same surface)
+7. `SetTexture(stage, tex)` → stores in `m_Textures[stage]`
+8. At draw call: `setFragmentTexture:mtlTex atIndex:stage`
+
+### ⚠️ Surface Lifetime (Critical Bug History)
+The original implementation freed `m_LockedData` in `UnlockRect()`. This caused use-after-free crashes because W3D classes (W3DShroud, TerrainTex) hold surface pointers and write to them repeatedly without re-locking. The buffer now lives for the lifetime of the `MetalSurface8` object.
 
 ### Format Mapping
 
@@ -160,6 +179,32 @@ The macOS port implements the `IDirect3D8` and `IDirect3DDevice8` interfaces (fr
 
 ---
 
+## Shell Map Loading Flow
+
+On macOS, the intro/sizzle movie state machine is bypassed because `VideoPlayer::open()` returns `nullptr`:
+
+```
+MacOSGameClient::update()  (callCount == 0)
+  → m_playIntro = FALSE
+  → m_afterIntro = FALSE
+  → GameClient::update()     ← base class, state machine skipped
+  → TheShell->showShellMap(TRUE)
+    → m_pendingFile = "Maps\ShellMapMD\ShellMapMD.map"
+    → MSG_NEW_GAME dispatched (GAME_SHELL)
+    → m_shellMapOn = TRUE
+  → TheShell->showShell()
+    → pushes MainMenu.wnd
+
+Next frames:
+  → GameLogic processes MSG_NEW_GAME
+  → prepareNewGame() → startNewGame(FALSE)
+  → Shell map terrain + objects loaded
+  → isInGame=1, gameMode=GAME_SHELL
+  → drawViews() renders 3D scene
+```
+
+---
+
 ## Visibility & Culling
 
 ### `RTS3DScene::Visibility_Check`
@@ -170,15 +215,6 @@ The macOS port implements the `IDirect3D8` and `IDirect3DDevice8` interfaces (fr
 4. **Frustum Culling** — `camera->Cull_Sphere(robj->Get_Bounding_Sphere())`
 5. **Gameplay Visibility** — stealth, fog of war checks
 6. **Binning** — translucent, occluders, occludees, normal objects
-
-### Visibility Bits
-
-| Bit | Value | Meaning |
-|:---|:---|:---|
-| `IS_VISIBLE` | 0x100 | In camera frustum |
-| `IS_NOT_HIDDEN` | 0x200 | Not hidden by game logic |
-| `IS_NOT_ANIMATION_HIDDEN` | 0x400 | Not hidden by animation |
-| `IS_REALLY_VISIBLE` | All three | Actually rendered |
 
 ---
 
@@ -194,10 +230,11 @@ The macOS port implements the `IDirect3D8` and `IDirect3DDevice8` interfaces (fr
 | Sampler states | ✅ Working | Per-stage sampler state cache |
 | Per-vertex lighting | ✅ Working | Light uniforms buffer, up to 4 directional lights |
 | Real fog parameters | ✅ Working | Linear/exp/exp2 fog in vertex + fragment shaders |
+| Shell map loading | ✅ Working | Movie bypass + forced showShellMap in MacOSGameClient |
+| 3D draw calls | ✅ Working | fvf=0x252, terrain chunks rendered |
 | Multi-texturing (stage 1+) | ⚠️ Partial | Stage 0+1 bound, TSS evaluated for 2 stages |
+| Terrain textures visible | ❌ Black | Texture data may not upload correctly |
 | Render targets | ❌ Not implemented | Low priority |
-| Surface (GetSurfaceLevel) | ❌ Not implemented | Low priority |
-| 16-bit format conversion | ⚠️ Fallback | Falls back to BGRA8 |
 | TriangleFan → TriangleList | ❌ Not implemented | Low priority |
 
 ---
@@ -236,10 +273,6 @@ MacOSGameWindowManager → W3DGameWindowManager → GameWindowManager
                     Render2DClass → DX8Wrapper → MetalDevice8
 ```
 
-### Why This Works
-
-The W3D gadget draw functions (`W3DGadgetPushButtonDraw`, `W3DGadgetComboBoxDraw`, etc.) were already compiled as part of `z_gameenginedevice`. They internally call `TheWindowManager->winDrawImage()` for images and `TheWindowManager->winFillRect()`/`winOpenRect()` for solid geometry. Since these ultimately route through our working Metal pipeline (via `Render2DClass` → `DX8Wrapper` → `MetalDevice8`), all UI rendering works "out of the box".
-
 ### MacOSGameWindow (fontData Safety)
 
 `W3DGameWindow` uses `Render2DSentenceClass` for text rendering, which requires `FontCharsClass` (initialised via Windows GDI `CreateFont`). On macOS, `fontData = nullptr` because fonts use CoreText/NSFont via `MacOSDisplayString`.
@@ -256,4 +289,3 @@ The W3D gadget draw functions (`W3DGadgetPushButtonDraw`, `W3DGadgetComboBoxDraw
 | `MacOSGameWindowManager.h` | Inherits `W3DGameWindowManager`, overrides `allocateNewWindow`, `winFormatText`, `winGetTextSize` |
 | `MacOSGameWindowManager.mm` | Creates `MacOSGameWindow` instances, text rendering via `DisplayString` |
 | `MacOSGadgetDraw.mm` | Legacy simplified draw functions (no longer used but kept) |
-

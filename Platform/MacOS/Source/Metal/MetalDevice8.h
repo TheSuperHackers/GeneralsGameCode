@@ -260,6 +260,10 @@ private:
   // --- Default Zero Buffer for missing vertex attributes ---
   void *m_ZeroBuffer; // id<MTLBuffer>, 16 bytes of zeros, bound at index 30
 
+  // --- GPU-CPU Frame Synchronization ---
+  void *m_FrameSemaphore;       // dispatch_semaphore_t — limits in-flight frames
+  static const int MAX_FRAMES_IN_FLIGHT = 2; // double-buffered like DirectX 8
+
   // --- Default Render Target / Depth Surfaces ---
   MetalSurface8
       *m_DefaultRTSurface; // returned by GetRenderTarget / GetBackBuffer

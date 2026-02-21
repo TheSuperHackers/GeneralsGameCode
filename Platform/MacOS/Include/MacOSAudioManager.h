@@ -4,10 +4,11 @@
 #include "Common/GameAudio.h"
 #include <AVFoundation/AVFoundation.h>
 #include <vector>
+#include <string>
 
 struct ApplePlayingAudio {
-  void *playerNode; // Type-erased for header if needed, or just use __bridge
-  AudioEventRTS *event;
+  void *playerNode;
+  std::string eventName;  // Copy of event name, NOT a pointer (avoids dangling)
 };
 
 class MacOSAudioManager : public AudioManager {

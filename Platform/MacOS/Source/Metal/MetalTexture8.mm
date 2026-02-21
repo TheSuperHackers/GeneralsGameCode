@@ -211,10 +211,18 @@ MetalTexture8::GetSurfaceLevel(UINT Level, IDirect3DSurface8 **ppSurfaceLevel) {
   UINT w = std::max(1u, m_Width >> Level);
   UINT h = std::max(1u, m_Height >> Level);
 
-  // Create a lightweight surface wrapper for this mip level.
-  // MetalSurface8 ctor sets refcount to 1, which the caller will Release.
+  static int gslLog = 0;
+  if (gslLog < 20) {
+    fprintf(stderr, "GetSurfaceLevel[%d] tex=%p level=%u %ux%u fmt=%d mtlTex=%p\n",
+            gslLog++, (void*)this, Level, w, h, (int)m_Format, m_Texture);
+    fflush(stderr);
+  }
+
+  // Create a surface wrapper linked to this texture's mip level.
+  // When the surface is unlocked, it will upload data to our Metal texture.
   auto *surface =
-      new MetalSurface8(m_Device, MetalSurface8::kColor, w, h, m_Format);
+      new MetalSurface8(m_Device, MetalSurface8::kColor, w, h, m_Format,
+                        this, Level);
   *ppSurfaceLevel = surface;
   return D3D_OK;
 }

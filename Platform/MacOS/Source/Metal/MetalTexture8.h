@@ -49,6 +49,7 @@ public:
     return (__bridge id<MTLTexture>)m_Texture;
   }
   void *GetMTLTextureVoid() const { return m_Texture; }
+  void *GetMetalTexture() const { return m_Texture; }
 
 private:
   ULONG m_RefCount;

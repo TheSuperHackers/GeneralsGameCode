@@ -4,6 +4,7 @@
 #include <d3d8.h>  // DX8 SDK header
 
 class MetalDevice8;
+class MetalTexture8;
 
 // Minimal IDirect3DSurface8 implementation for render-target / depth-buffer
 // token passing.  The engine stores default RT and depth surfaces to hand
@@ -14,7 +15,8 @@ public:
   enum SurfaceKind { kColor, kDepth };
 
   MetalSurface8(MetalDevice8 *device, SurfaceKind kind, UINT w, UINT h,
-                D3DFORMAT fmt);
+                D3DFORMAT fmt,
+                MetalTexture8 *parentTexture = nullptr, UINT mipLevel = 0);
   virtual ~MetalSurface8();
 
   // IUnknown
@@ -50,4 +52,6 @@ private:
   D3DFORMAT m_Format;
   void *m_LockedData = nullptr;
   UINT m_LockedPitch = 0;
+  MetalTexture8 *m_ParentTexture = nullptr; // if from GetSurfaceLevel
+  UINT m_MipLevel = 0;
 };

@@ -223,6 +223,9 @@ void Win32GameEngine::init() {
 
 void Win32GameEngine::reset() { GameEngine::reset(); }
 void Win32GameEngine::update() {
+#if defined(__APPLE__) && defined(__OBJC__)
+  @autoreleasepool {
+#endif
   // THE HEARTBEAT: W3D now owns the Metal frame lifecycle
   // (BeginScene/Clear/Present happen inside WW3D::Begin_Render/End_Render)
   // MacOSRenderDevice BeginScene/EndScene removed to avoid stealing the
@@ -234,6 +237,9 @@ void Win32GameEngine::update() {
   GameEngine::update();
 
   serviceWindowsOS();
+#if defined(__APPLE__) && defined(__OBJC__)
+  }
+#endif
 }
 void Win32GameEngine::serviceWindowsOS() {
   // First, pump native macOS events
@@ -790,7 +796,7 @@ void signal_handler(int sig) {
   }
   fprintf(stderr, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
   fflush(stderr);
-  exit(sig);
+  _exit(128 + sig);
 }
 
 void on_exit_handler() {

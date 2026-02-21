@@ -33,10 +33,6 @@ MacOSAudioManager::~MacOSAudioManager() {
     if (playing.playerNode) {
       AVAudioPlayer *player = (__bridge_transfer AVAudioPlayer *)playing.playerNode;
       [player stop];
-      // ARC releases player
-    }
-    if (playing.event) {
-      delete playing.event;
     }
   }
   m_playingAudio.clear();
@@ -70,9 +66,6 @@ void MacOSAudioManager::reset() {
       [player stop];
       (void)(__bridge_transfer AVAudioPlayer *)playing.playerNode;
     }
-    if (playing.event) {
-      delete playing.event;
-    }
   }
   m_playingAudio.clear();
 }
@@ -86,12 +79,8 @@ void MacOSAudioManager::update() {
     AVAudioPlayer *player = (__bridge AVAudioPlayer *)it->playerNode;
     if (!player.isPlaying) {
       void *toRelease = it->playerNode;
-      AudioEventRTS *event = it->event;
       it = m_playingAudio.erase(it);
       (void)(__bridge_transfer AVAudioPlayer *)toRelease;
-      if (event) {
-        delete event;
-      }
     } else {
       ++it;
     }
@@ -99,26 +88,22 @@ void MacOSAudioManager::update() {
 }
 
 void MacOSAudioManager::processRequestList() {
-  if (!m_audioRequests.empty()) {
-    fprintf(stderr, "MACOS AUDIO: Processing %lu requests\n",
-            (unsigned long)m_audioRequests.size());
-    fflush(stderr);
-  }
   for (auto it = m_audioRequests.begin(); it != m_audioRequests.end();) {
     AudioRequest *req = *it;
     if (req) {
       if (req->m_request == AR_Play) {
-        playAudioEvent(req->m_pendingEvent);
+        if (req->m_pendingEvent) {
+          playAudioEvent(req->m_pendingEvent);
+        }
       } else if (req->m_request == AR_Stop) {
-        // Stop matching events
-        for (auto &playing : m_playingAudio) {
-          if (playing.event == req->m_pendingEvent ||
-              (req->m_pendingEvent && playing.event &&
-               playing.event->getEventName() ==
-                   req->m_pendingEvent->getEventName())) {
-            AVAudioPlayer *player =
-                (__bridge AVAudioPlayer *)playing.playerNode;
-            [player stop];
+        if (req->m_pendingEvent) {
+          std::string stopName = req->m_pendingEvent->getEventName().str();
+          for (auto &playing : m_playingAudio) {
+            if (playing.playerNode && playing.eventName == stopName) {
+              AVAudioPlayer *player =
+                  (__bridge AVAudioPlayer *)playing.playerNode;
+              [player stop];
+            }
           }
         }
       }
@@ -285,8 +270,9 @@ static NSURL *resolveAudioFileURL(const std::string &pathStr) {
         NSURL *tempURL = [NSURL fileURLWithPath:tempPath];
         NSData *data = [NSData dataWithBytesNoCopy:buffer
                                             length:fileSize
-                                      freeWhenDone:YES];
+                                      freeWhenDone:NO];
         [data writeToURL:tempURL atomically:YES];
+        delete[] buffer;
         fprintf(stderr, "MACOS AUDIO: Extracted '%s' -> cache (%zu bytes)\n",
                 pathStr.c_str(), fileSize);
         fflush(stderr);
@@ -350,7 +336,7 @@ void MacOSAudioManager::friend_forcePlayAudioEventRTS(
 
     ApplePlayingAudio playing;
     playing.playerNode = (__bridge_retained void *)player;
-    playing.event = mutableEvent;
+    playing.eventName = eventToPlay->getEventName().str();
     m_playingAudio.push_back(playing);
 
     fprintf(stderr, "MACOS AUDIO: 🔊 Playing: '%s' vol=%.2f\n",

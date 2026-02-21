@@ -14,6 +14,8 @@ This document covers architecture decisions, coding conventions, known gotchas, 
 6. **PRIVATE deps for `zi_always`** — Never let Zero Hour defines leak into the Generals target.
 7. **Always `killall generalszh`** — Kill stale processes before launching; Metal layer doesn't release cleanly.
 8. **`calloc`, not `malloc`** — On macOS, global allocations use calloc for zero-initialization.
+9. **NEVER set `m_breakTheMovie = TRUE`** — `W3DDisplay::draw()` line 1849 checks this flag. When TRUE, `WW3D::Begin_Render()` is skipped and **all 3D rendering is disabled**.
+10. **Use `printf` + `fflush(stdout)` for logs** — `fprintf(stderr)` may not appear in redirected logs due to buffering.
 
 ---
 
@@ -25,14 +27,29 @@ This document covers architecture decisions, coding conventions, known gotchas, 
 |:---|:---|:---|
 | **Metal Backend** | `Source/Metal/MetalDevice8.mm` (85KB+), 5 pairs .h/.mm | DX8 → Metal translator |
 | **Entry Point** | `Source/Main/MacOSMain.mm` | NSApplication, game loop, factory functions |
-| **Game Client** | `Source/Main/MacOSGameClient.mm` | W3D-compatible game client |
+| **Game Client** | `Source/Main/MacOSGameClient.mm` | W3D-compatible game client, shell map bypass |
 | **Window** | `Source/Main/MacOSWindowManager.mm` | NSWindow/NSView management |
 | **Input** | `Source/Main/StdKeyboard.mm`, `StdMouse.mm` | Cocoa events → game input |
-| **Audio** | `Source/Audio/MacOSAudioManager.mm` | AVAudioEngine backend |
+| **Audio** | `Source/Audio/MacOSAudioManager.mm` | AVAudioPlayer backend |
 | **Display** | `Source/Client/MacOSDisplay.mm` | CoreText rendering, W3D integration |
 | **D3DX Shims** | `Source/Main/D3DXStubs.mm` | `D3DXCreateTextureFromFileEx` etc. |
 | **Stubs** | `Source/Stubs/GameSpyStubs.cpp` | 170+ network/Win32 function stubs |
 | **Shaders** | `Source/Main/MacOSShaders.metal` | Metal vertex/fragment shaders |
+
+### Shell Map Loading (macOS specific)
+
+On macOS there's no video player. The intro/sizzle movie state machine in `GameClient::update()` doesn't complete properly. `MacOSGameClient::update()` bypasses it:
+
+```
+callCount == 0:
+  m_playIntro = FALSE
+  m_afterIntro = FALSE
+  → GameClient::update()    (state machine skipped)
+  → TheShell->showShellMap(TRUE)  (loads ShellMapMD.map)
+  → TheShell->showShell()        (pushes MainMenu.wnd)
+```
+
+**Key insight:** On Windows, `W3DGameClient::update()` also just calls `GameClient::update()` — no extra logic. The movie state machine works on Windows because `VideoPlayer::open()` returns a valid stream.
 
 ### Stubs Overview
 
@@ -103,6 +120,19 @@ Windows API stubs (`LoadResource`, `GetCurrentThread`) conflict with macOS syste
 
 **Fix:** `StdMouse::reset()` restores `m_inputMovesAbsolute = TRUE` after calling base `Mouse::reset()`.
 
+### 6. m_breakTheMovie Flag
+
+`W3DDisplay::draw()` (W3DDisplay.cpp line 1849) checks:
+```cpp
+if ((TheGlobalData->m_breakTheMovie == FALSE) && (TheGlobalData->m_disableRender == false) && WW3D::Begin_Render(...) == WW3D_ERROR_OK)
+```
+
+If `m_breakTheMovie` is TRUE, **no 3D rendering happens**. On Windows this flag is used during movie playback to suppress rendering. On macOS, since we have no movie player, this flag should **never** be set to TRUE.
+
+### 7. stderr vs stdout in Log Files
+
+When redirecting output with `> file 2>&1`, `fprintf(stderr)` output may not appear in the log due to buffering differences. Always use `printf()` + `fflush(stdout)` for diagnostic logs.
+
 ---
 
 ## 🔄 Development Workflow
@@ -113,18 +143,19 @@ Windows API stubs (`LoadResource`, `GetCurrentThread`) conflict with macOS syste
 1. Identify crash/issue (from logs or stack trace)
 2. Analyze root cause (grep, view code, check headers)
 3. Implement fix (minimal, often with #ifdef __APPLE__)
-4. Build:  cmake --build build/macos
-5. Test:   killall generalszh 2>/dev/null; sleep 1
-           build/macos/GeneralsMD/generalszh > /tmp/test.log 2>&1 &
-           sleep 30 && tail -20 /tmp/test.log
-6. Check:  grep "Signal received" /tmp/test.log
+4. Build:  ninja -j$(sysctl -n hw.ncpu) -C build/macos GeneralsMD/generalszh
+5. Test:   kill $(pgrep generalszh) 2>/dev/null
+           export GENERALS_INSTALL_PATH="/Users/okji/dev/games/Command and Conquer - Generals/Command and Conquer Generals/"
+           build/macos/GeneralsMD/generalszh > Platform/MacOS/Build/Logs/game.log 2>&1 &
+           sleep 20; grep "KEYWORD" Platform/MacOS/Build/Logs/game.log
+6. Check:  grep "Signal received" Platform/MacOS/Build/Logs/game.log
 7. Commit: git add -A && git commit -m "fix(macos): ..."
 ```
 
 ### Debugging with lldb
 
 ```bash
-killall generalszh 2>/dev/null; sleep 1
+kill $(pgrep generalszh) 2>/dev/null
 cd build/macos/GeneralsMD
 lldb ./generalszh
 # In lldb:
@@ -138,17 +169,23 @@ lldb ./generalszh
 ### Useful log analysis
 
 ```bash
-# Count crashes
-grep -c "Signal received" /tmp/test.log
+# Last lines before crash
+tail -30 Platform/MacOS/Build/Logs/game.log
 
-# Check rendering is working
-grep "Present #" /tmp/test.log | tail -5
+# Check rendering frames
+grep "Present #" Platform/MacOS/Build/Logs/game.log | tail -5
+
+# Check 3D rendering
+grep "fvf=0x252\|DIP_3D" Platform/MacOS/Build/Logs/game.log | head -10
+
+# Check shell map status
+grep "SHELLMAP:" Platform/MacOS/Build/Logs/game.log
+
+# Monitor FPS  
+grep "W3DDisplay::draw" Platform/MacOS/Build/Logs/game.log | tail -5
 
 # Check subsystem init
-grep "initSubsystem" /tmp/test.log
-
-# Monitor heartbeats
-grep "heartbeat" /tmp/test.log | tail -5
+grep "initSubsystem" Platform/MacOS/Build/Logs/game.log
 ```
 
 ---
@@ -157,9 +194,9 @@ grep "heartbeat" /tmp/test.log | tail -5
 
 | Task | Priority | Notes |
 |:---|:---|:---|
-| Input handling | **High** | Keyboard/Mouse via Cocoa events — verify event routing |
-| Metal rendering full | **High** | Textures, shaders, 3D scene — verify under real rendering |
-| UI / menu rendering | **High** | Interface elements, buttons, text — verify drawing |
+| Terrain textures black | **Critical** | 3D draws confirmed but texture data appears black |
+| Cursor texture | **Medium** | Green square instead of proper cursor texture |
+| Crash on exit | **Medium** | SIGSEGV exit code 11, inconsistent |
 | Audio playback | **Medium** | Wrapped in @try/@catch, needs .big file loading verification |
 | .big archives mounting | **Medium** | Asset loading works (INI files load), completeness unverified |
 | WOL authorization | Low | Browser excluded. Possibly REST API. |

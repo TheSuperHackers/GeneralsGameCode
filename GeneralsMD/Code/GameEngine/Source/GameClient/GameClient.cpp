@@ -605,6 +605,7 @@ void GameClient::update( void )
 
 			}
 
+			fprintf(stderr, ">>> SHELL_PATH: calling showShellMap(TRUE) and showShell()\n"); fflush(stderr);
 			TheShell->showShellMap(TRUE);
 			TheShell->showShell();
 			TheWritableGlobalData->m_afterIntro = FALSE;

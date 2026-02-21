@@ -64,8 +64,11 @@ MetalDevice8::MetalDevice8()
       m_Library(nullptr), m_FunctionVertex(nullptr),
       m_FunctionFragment(nullptr), m_DepthTexture(nullptr),
       m_DepthStencilState(nullptr), m_DepthStateDirty(true),
-      m_ZeroBuffer(nullptr), m_DefaultRTSurface(nullptr),
+      m_ZeroBuffer(nullptr), m_FrameSemaphore(nullptr),
+      m_DefaultRTSurface(nullptr),
       m_DefaultDepthSurface(nullptr) {
+  // Create frame semaphore for GPU-CPU sync (like DirectX's Present VSync)
+  m_FrameSemaphore = (__bridge_retained void *)dispatch_semaphore_create(MAX_FRAMES_IN_FLIGHT);
   memset(m_RenderStates, 0, sizeof(m_RenderStates));
   memset(m_TextureStageStates, 0, sizeof(m_TextureStageStates));
   memset(m_Textures, 0, sizeof(m_Textures));
@@ -409,6 +412,22 @@ bool MetalDevice8::InitMetal(void *windowHandle) {
   layer.device = device;
   layer.pixelFormat = MTLPixelFormatBGRA8Unorm;
   layer.framebufferOnly = NO;
+
+  // === VSync / Frame Rate Control ===
+  // On Windows DirectX 8, Present() blocked until VSync (~60Hz).
+  // Without this, macOS runs at 37000+ FPS causing heap corruption.
+  // displaySyncEnabled=YES limits to display refresh rate (typically 60Hz).
+  // Override with env GENERALS_FPS_LIMIT: 0=uncapped, N=target FPS.
+  const char *fpsEnv = getenv("GENERALS_FPS_LIMIT");
+  int fpsLimit = fpsEnv ? atoi(fpsEnv) : 60;
+  if (fpsLimit == 0) {
+    layer.displaySyncEnabled = NO;
+    fprintf(stderr, "[MetalDevice8] VSync: OFF (uncapped FPS)\n");
+  } else {
+    layer.displaySyncEnabled = YES;
+    fprintf(stderr, "[MetalDevice8] VSync: ON (target ~%d FPS via display sync)\n", fpsLimit);
+  }
+
   m_MetalLayer = (__bridge_retained void *)layer;
 
   NSWindow *window = (__bridge NSWindow *)windowHandle;
@@ -916,6 +935,10 @@ STDMETHODIMP MetalDevice8::Present(const void *s, const void *d, HWND w,
   }
   if (m_CurrentCommandBuffer) {
     [MTL_CMD_BUF commit];
+    // Wait for GPU to finish — matches DirectX 8's Present() which blocked
+    // until VSync. Without this, CPU races ahead causing resource conflicts.
+    // displaySyncEnabled=YES on CAMetalLayer handles the actual frame rate cap.
+    [MTL_CMD_BUF waitUntilCompleted];
     CLEAR_MTL(CurrentCommandBuffer);
   }
   CLEAR_MTL(CurrentDrawable);
@@ -1587,13 +1610,21 @@ void *MetalDevice8::GetPSO(DWORD fvf) {
   pd.vertexDescriptor = vd;
 
   NSError *err = nil;
-  id<MTLRenderPipelineState> pso = [(__bridge id<MTLDevice>)m_Device
-      newRenderPipelineStateWithDescriptor:pd
-                                     error:&err];
+  id<MTLRenderPipelineState> pso = nil;
+  @try {
+    pso = [(__bridge id<MTLDevice>)m_Device
+        newRenderPipelineStateWithDescriptor:pd
+                                       error:&err];
+  } @catch (NSException *exception) {
+    fprintf(stderr,
+            "[MetalDevice8] Exception creating PSO for FVF 0x%x key 0x%llx: %s\n",
+            fvf, key, [[exception reason] UTF8String]);
+    return nil;
+  }
   if (!pso) {
     fprintf(stderr,
             "[MetalDevice8] Error creating PSO for FVF %x key %llx: %s\n", fvf,
-            key, [[err localizedDescription] UTF8String]);
+            key, err ? [[err localizedDescription] UTF8String] : "(no error)");
     return nil;
   }
 
@@ -1844,6 +1875,14 @@ STDMETHODIMP MetalDevice8::DrawIndexedPrimitive(DWORD pt, UINT mi, UINT nv,
 
   // 1. Get FVF and PSO
   DWORD fvf = GetBufferFVF(m_StreamSource);
+
+  static int diag3DCount = 0;
+  if (!(fvf & D3DFVF_XYZRHW) && diag3DCount < 10) {
+    fprintf(stderr, "DIP_3D[%d] fvf=0x%x nv=%u pc=%u tex0=%p tex1=%p\n",
+            diag3DCount++, (unsigned)fvf, nv, pc, (void*)m_Textures[0], (void*)m_Textures[1]);
+    fflush(stderr);
+  }
+
   id<MTLRenderPipelineState> pso =
       (__bridge id<MTLRenderPipelineState>)GetPSO(fvf);
   if (!pso) {
@@ -1879,6 +1918,35 @@ STDMETHODIMP MetalDevice8::DrawIndexedPrimitive(DWORD pt, UINT mi, UINT nv,
   u.screenSize.y = m_ScreenHeight;
   u.useProjection = (fvf & D3DFVF_XYZRHW) ? 2 : 1;
   u.shaderSettings = 0; // legacy
+
+  // --- Diagnostic: dump matrices for first 3D draw calls ---
+  static int diagLog3D = 0;
+  if (diagLog3D < 20) {
+    fprintf(stderr, "DRAW_DIAG[%d] fvf=0x%x useProj=%d nv=%u pc=%u\n",
+            diagLog3D, (unsigned)fvf, u.useProjection, nv, pc);
+  }
+  if (u.useProjection == 1 && diagLog3D < 20) {
+    float *w = (float*)&u.world;
+    float *v = (float*)&u.view;
+    float *p = (float*)&u.projection;
+    fprintf(stderr, "3D_DRAW[%d] fvf=0x%x nv=%u pc=%u\n", diagLog3D, (unsigned)fvf, nv, pc);
+    fprintf(stderr, "  WORLD: [%.2f %.2f %.2f %.2f] [%.2f %.2f %.2f %.2f] [%.2f %.2f %.2f %.2f] [%.2f %.2f %.2f %.2f]\n",
+            w[0],w[1],w[2],w[3], w[4],w[5],w[6],w[7], w[8],w[9],w[10],w[11], w[12],w[13],w[14],w[15]);
+    fprintf(stderr, "  VIEW:  [%.2f %.2f %.2f %.2f] [%.2f %.2f %.2f %.2f] [%.2f %.2f %.2f %.2f] [%.2f %.2f %.2f %.2f]\n",
+            v[0],v[1],v[2],v[3], v[4],v[5],v[6],v[7], v[8],v[9],v[10],v[11], v[12],v[13],v[14],v[15]);
+    fprintf(stderr, "  PROJ:  [%.2f %.2f %.2f %.2f] [%.2f %.2f %.2f %.2f] [%.2f %.2f %.2f %.2f] [%.2f %.2f %.2f %.2f]\n",
+            p[0],p[1],p[2],p[3], p[4],p[5],p[6],p[7], p[8],p[9],p[10],p[11], p[12],p[13],p[14],p[15]);
+    // Also dump first vertex data
+    MetalVertexBuffer8 *dvb = (MetalVertexBuffer8 *)m_StreamSource;
+    id<MTLBuffer> mtlBuf = (__bridge id<MTLBuffer>)dvb->GetMTLBuffer();
+    float *vtxData = (float*)mtlBuf.contents;
+    if (vtxData) {
+      fprintf(stderr, "  VTX0: [%.2f %.2f %.2f] N[%.2f %.2f %.2f]\n",
+              vtxData[0], vtxData[1], vtxData[2], vtxData[3], vtxData[4], vtxData[5]);
+    }
+    diagLog3D++;
+  }
+
   [MTL_ENCODER setVertexBytes:&u length:sizeof(u) atIndex:1];
   [MTL_ENCODER setFragmentBytes:&u length:sizeof(u) atIndex:1];
 

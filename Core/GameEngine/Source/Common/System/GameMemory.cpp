@@ -3281,13 +3281,12 @@ void *operator new(size_t size)
 {
 	++theLinkTester;
 #ifdef __APPLE__
-	// On macOS, system frameworks (Metal, AppKit) share the same global
-	// operator new/delete. If we route through TheDynamicMemoryAllocator,
-	// those frameworks crash when freeing memory because the allocator
-	// expects a MemoryPoolSingleBlock header. Use system calloc to
-	// zero-initialize memory (the game relies on zeroed allocations).
-	void *p = ::calloc(1, size);
+	void *p = std::malloc(size);
 	if (!p) throw std::bad_alloc();
+	// Only zero-init for game-specific things if absolutely necessary, but standard new doesn't guarantee zeroing.
+	// If the game engine relies on new zeroing memory, we must use calloc, BUT doing so might anger system libs.
+	// We'll use std::malloc and memset for safety
+	std::memset(p, 0, size);
 	return p;
 #else
 	preMainInitMemoryManager();
@@ -3304,8 +3303,9 @@ void *operator new[](size_t size)
 {
 	++theLinkTester;
 #ifdef __APPLE__
-	void *p = ::calloc(1, size);
+	void *p = std::malloc(size);
 	if (!p) throw std::bad_alloc();
+	std::memset(p, 0, size);
 	return p;
 #else
 	preMainInitMemoryManager();
@@ -3318,11 +3318,11 @@ void *operator new[](size_t size)
 /**
 	overload for global operator delete; send requests to TheDynamicMemoryAllocator.
 */
-void operator delete(void *p)
+void operator delete(void *p) _NOEXCEPT
 {
 	++theLinkTester;
 #ifdef __APPLE__
-	::free(p);
+	std::free(p);
 #else
 	preMainInitMemoryManager();
 	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != nullptr, ("must init memory manager before calling global operator delete"));
@@ -3334,11 +3334,11 @@ void operator delete(void *p)
 /**
 	overload for global operator delete[]; send requests to TheDynamicMemoryAllocator.
 */
-void operator delete[](void *p)
+void operator delete[](void *p) _NOEXCEPT
 {
 	++theLinkTester;
 #ifdef __APPLE__
-	::free(p);
+	std::free(p);
 #else
 	preMainInitMemoryManager();
 	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != nullptr, ("must init memory manager before calling global operator delete"));

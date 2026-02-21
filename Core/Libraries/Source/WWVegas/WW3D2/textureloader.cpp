@@ -58,7 +58,6 @@
 #include "texturethumbnail.h"
 #include "ddsfile.h"
 #include "bitmaphandler.h"
-#include "MacOSDebugLog.h"
 #include "wwprofile.h"
 
 bool TextureLoader::TextureLoadSuspended;
@@ -1193,22 +1192,11 @@ bool TextureLoadTaskClass::Begin_Load(void)
 
 	// if not loaded, abort.
 	if (!loaded) {
-		const char* name = Texture->Get_Texture_Name() ? Texture->Get_Texture_Name() : "(null)";
-		const char* path = Texture->Get_Full_Path().Is_Empty() ? "(empty)" : (const char*)Texture->Get_Full_Path();
-		DLOG_TEXTURE("TEX_BEGIN_LOAD_FAIL name='%s' path='%s' comprAllowed=%d",
-			name, path, (int)Texture->Is_Compression_Allowed());
 		return false;
-	}
-
-	{
-		const char* path = Texture->Get_Full_Path().Is_Empty() ? "(empty)" : (const char*)Texture->Get_Full_Path();
-		DLOG_TEXTURE("TEX_PRELOCK path='%s' %dx%d fmt=%d D3DTex=%p", path, (int)Width, (int)Height, (int)Format, (void*)D3DTexture);
 	}
 
 	// lock surfaces in preparation for copy
 	Lock_Surfaces();
-
-	DLOG_TEXTURE("TEX_POSTLOCK OK");
 
 	State = STATE_LOAD_BEGUN;
 
@@ -1321,8 +1309,6 @@ static bool	Get_Texture_Information
 )
 {
 	ThumbnailClass* thumb=ThumbnailManagerClass::Peek_Thumbnail_Instance_From_Any_Manager(filename);
-
-	DLOG_TEXTURE("GTI file='%s' thumb=%p compressed=%d", filename ? filename : "(null)", (void*)thumb, (int)compressed);
 
 	if (!thumb)
 	{
@@ -1531,16 +1517,6 @@ bool TextureLoadTaskClass::Begin_Compressed_Load(void)
 		mip_level_count = max_mip_level_count;
 	}
 
-	{
-		static int compLogCount = 0;
-		if (compLogCount < 20) {
-			const char* p = Texture->Get_Full_Path().Is_Empty() ? "(empty)" : (const char*)Texture->Get_Full_Path();
-			printf("TEX_COMP_PRE_CREATE[%d] path='%s' %dx%d fmt=%d mips=%d reduction=%d\n",
-				compLogCount++, p, reducedWidth, reducedHeight, (int)Format, mip_level_count, Reduction);
-			fflush(stdout);
-		}
-	}
-
 	D3DTexture	= DX8Wrapper::_Create_DX8_Texture
 	(
 		reducedWidth,
@@ -1553,8 +1529,6 @@ bool TextureLoadTaskClass::Begin_Compressed_Load(void)
 		D3DPOOL_SYSTEMMEM
 #endif
 	);
-
-	printf("TEX_COMP_POST_CREATE D3DTex=%p\n", (void*)D3DTexture); fflush(stdout);
 
 	MipLevelCount = mip_level_count;
 
@@ -1638,16 +1612,6 @@ bool TextureLoadTaskClass::Begin_Uncompressed_Load(void)
 			reducedMipCount -= Reduction;
 	}
 
-	{
-		static int uncompLogCount = 0;
-		if (uncompLogCount < 20) {
-			const char* p = Texture->Get_Full_Path().Is_Empty() ? "(empty)" : (const char*)Texture->Get_Full_Path();
-			printf("TEX_UNCOMP_PRE_CREATE[%d] path='%s' %dx%d fmt=%d mips=%d\n",
-				uncompLogCount++, p, reducedWidth, reducedHeight, (int)Format, reducedMipCount);
-			fflush(stdout);
-		}
-	}
-
 	D3DTexture = DX8Wrapper::_Create_DX8_Texture
 	(
 		reducedWidth,
@@ -1660,8 +1624,6 @@ bool TextureLoadTaskClass::Begin_Uncompressed_Load(void)
 		D3DPOOL_SYSTEMMEM
 #endif
 	);
-
-	printf("TEX_UNCOMP_POST_CREATE D3DTex=%p\n", (void*)D3DTexture); fflush(stdout);
 
 	return true;
 }
@@ -1836,23 +1798,14 @@ void TextureLoadTaskClass::Lock_Surfaces(void)
 
 void TextureLoadTaskClass::Unlock_Surfaces(void)
 {
-	static int unlockSurfCount = 0;
-	int unlockedLevels = 0;
 	for (unsigned int i = 0; i < MipLevelCount; ++i)
 	{
 		if (LockedSurfacePtr[i])
 		{
 			WWASSERT(ThreadClass::_Get_Current_Thread_ID() == DX8Wrapper::_Get_Main_Thread_ID());
 			DX8_ErrorCode(Peek_D3D_Texture()->UnlockRect(i));
-			unlockedLevels++;
 		}
 		LockedSurfacePtr[i] = nullptr;
-	}
-	if (unlockSurfCount < 100) {
-		const char* name = Texture->Get_Texture_Name() ? Texture->Get_Texture_Name() : "(null)";
-		printf("TEX_UNLOCK_SURF[%d] name='%s' mips=%u unlocked=%d\n",
-			unlockSurfCount++, name, MipLevelCount, unlockedLevels);
-		fflush(stdout);
 	}
 
 #ifndef USE_MANAGED_TEXTURES

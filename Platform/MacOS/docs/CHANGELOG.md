@@ -1,8 +1,30 @@
 # macOS Port — Changelog
 
-## Current Status (2026-02-20)
+## Current Status (2026-02-21)
 
-🟢 **Full UI + Input Complete!** — All menu elements render with original W3D textures. Keyboard fully connected (Escape, arrows, F-keys, all letters/numbers). Mouse input working. 3D terrain geometry renders but textures not binding (black terrain). Next: fix terrain texture binding.
+🟢 **Shell Map + 3D Draws Working!** — Shell map loads, 3D draw calls confirmed (fvf=0x252). Terrain textures still render black — texture upload pipeline under investigation. All UI menus complete, keyboard/mouse working.
+
+---
+
+## Resolved Runtime Issues (Phase 9) — Shell Map Loading ⭐ MAJOR FIX
+
+### #14: Shell Map Not Loading — Movie State Machine Broken on macOS
+- **Symptom:** Main menu displayed but with black background. No 3D shell map scene rendered.
+- **Root Cause (3 issues):**
+  1. **Intro/sizzle state machine broken:** `VideoPlayer::open()` returns `nullptr` on macOS (no video player). The state machine in `GameClient::update()` was supposed to transition `playIntro → afterIntro → shell path`, but the transitions didn't complete properly — `playSizzle` static variable wasn't getting set correctly.
+  2. **`showShellMap(TRUE)` never called:** Because the state machine never reached the shell path code.
+  3. **`m_breakTheMovie = TRUE` blocked ALL rendering:** `W3DDisplay::draw()` line 1849 checks `m_breakTheMovie == FALSE` before calling `WW3D::Begin_Render()`. If TRUE, no 3D rendering happens at all. Previous macOS code was incorrectly setting this flag.
+- **Fix (in `MacOSGameClient::update()`):**
+  - On first update: clear `m_playIntro` and `m_afterIntro` (bypass broken state machine)
+  - Do NOT set `m_breakTheMovie = TRUE` (this kills rendering!)
+  - After `GameClient::update()`, explicitly call `TheShell->showShellMap(TRUE)` + `TheShell->showShell()`
+- **Result:** Shell map game loads (`GAME_SHELL` mode active), 3D draw calls appear (`fvf=0x252`, terrain chunks with textures)
+- **Files:** `Platform/MacOS/Source/Main/MacOSGameClient.mm`, `GeneralsMD/Code/GameEngine/Source/GameClient/GUI/Shell/Shell.cpp`
+
+### #15: Terrain Textures Black (IN PROGRESS)
+- **Symptom:** 3D terrain draw calls execute but terrain appears black
+- **Status:** Under investigation — `MetalSurface8::UnlockRect()` texture upload may have issues with terrain tile data
+- **Files:** `Platform/MacOS/Source/Metal/MetalSurface8.mm`, `MetalTexture8.mm`
 
 ---
 
@@ -130,5 +152,7 @@
 | Phase 4: Linker Resolution | ✅ Done | GameSpy stubs, Win32 stubs, 170+ functions |
 | Phase 5: Runtime Debugging | ✅ Done | 10/10 init crashes fixed, stable runtime |
 | Phase 6: UI Rendering | ✅ Done | Buttons visible, TSS evaluation, fog/depth/lighting |
-| Phase 7: Full UI + Text | ✅ Done | W3DGameWindowManager integration, all UI widgets render with textures, 3D shell map |
-| Phase 8: Gameplay Scene | 🔲 Next | Terrain rendering, units, buildings, camera, gameplay loop |
+| Phase 7: Full UI + Text | ✅ Done | W3DGameWindowManager integration, all UI widgets render with textures |
+| Phase 8: Input System | ✅ Done | Keyboard + Mouse fully working |
+| Phase 9: Shell Map + 3D | 🔄 Active | Shell map loads, 3D draws confirmed, terrain textures black |
+| Phase 10: Gameplay Scene | 🔲 Next | Terrain rendering, units, buildings, camera, gameplay loop |
