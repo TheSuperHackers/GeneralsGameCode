@@ -3505,7 +3505,7 @@ Int Player::getBattlePlansActiveSpecific( BattlePlanStatus plan ) const
 //------------------------------------------------------------------------------------------------
 static void localApplyBattlePlanBonusesToObject( Object *obj, void *userData )
 {
-	const BattlePlanBonusesData* bonus = (const BattlePlanBonusesData*)userData;
+	const BattlePlanBonusesData* bonus = static_cast<const BattlePlanBonusesData*>(userData);
 	Object *objectToValidate = obj;
 	Object *objectToModify = obj;
 
@@ -3638,7 +3638,7 @@ void Player::applyBattlePlanBonusesForPlayerObjects( const BattlePlanBonusesData
 	}
 
 	DUMPBATTLEPLANBONUSES(m_battlePlanBonuses, this, nullptr);
-	iterateObjects( localApplyBattlePlanBonusesToObject, (void*)bonus );
+	iterateObjects( localApplyBattlePlanBonusesToObject, const_cast<BattlePlanBonusesData *>(bonus) );
 }
 
 
