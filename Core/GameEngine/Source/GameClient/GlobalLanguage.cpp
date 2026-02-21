@@ -64,7 +64,7 @@
 //-----------------------------------------------------------------------------
 // DEFINES ////////////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-GlobalLanguage *TheGlobalLanguageData = nullptr;				///< The global language singleton
+GlobalLanguage *TheGlobalLanguageData = nullptr;
 
 static const LookupListRec ResolutionFontSizeMethodNames[] =
 {
@@ -116,7 +116,7 @@ void INI::parseLanguageDefinition( INI *ini )
 		DEBUG_ASSERTCRASH(TheGlobalLanguageData, ("INI::parseLanguageDefinition - TheGlobalLanguage Data is not around, please create it before trying to parse the ini file."));
 		return;
 	}
-	// parse the ini weapon definition
+
 	ini->initFromINI( TheGlobalLanguageData, TheGlobalLanguageDataFieldParseTable );
 }
 
@@ -136,7 +136,7 @@ GlobalLanguage::GlobalLanguage()
 
 GlobalLanguage::~GlobalLanguage()
 {
-	StringListIt it = m_localFonts.begin();
+	StringList::iterator it = m_localFonts.begin();
 	while( it != m_localFonts.end())
 	{
 		AsciiString font = *it;
@@ -146,7 +146,7 @@ GlobalLanguage::~GlobalLanguage()
 	}
 }
 
-void GlobalLanguage::init( void )
+void GlobalLanguage::init()
 {
 	{
 		AsciiString fname;
@@ -156,7 +156,7 @@ void GlobalLanguage::init( void )
 		ini.loadFileDirectory( fname, INI_LOAD_OVERWRITE, nullptr );
 	}
 
-	StringListIt it = m_localFonts.begin();
+	StringList::iterator it = m_localFonts.begin();
 	while( it != m_localFonts.end())
 	{
 		AsciiString font = *it;
@@ -174,12 +174,13 @@ void GlobalLanguage::init( void )
 	// override values with user preferences
 	OptionPreferences optionPref;
 	m_userResolutionFontSizeAdjustment = optionPref.getResolutionFontAdjustment();
-
 }
-void GlobalLanguage::reset( void ) {}
 
+void GlobalLanguage::reset()
+{
+}
 
-void GlobalLanguage::parseFontDesc(INI *ini, void *instance, void *store, const void* userData)
+void GlobalLanguage::parseFontDesc(INI *ini, void *instance, void *store, const void *userData)
 {
 	FontDesc *fontDesc = (FontDesc *)store;
 	fontDesc->name = ini->getNextQuotedAsciiString();
@@ -187,14 +188,14 @@ void GlobalLanguage::parseFontDesc(INI *ini, void *instance, void *store, const 
 	fontDesc->bold = ini->scanBool(ini->getNextToken());
 }
 
-void GlobalLanguage::parseFontFileName( INI *ini, void * instance, void *store, const void* userData )
+void GlobalLanguage::parseFontFileName(INI *ini, void *instance, void *store, const void *userData)
 {
-	GlobalLanguage *monkey = (GlobalLanguage *)instance;
+	GlobalLanguage *globalLanguage = static_cast<GlobalLanguage *>(instance);
 	AsciiString asciiString = ini->getNextAsciiString();
-	monkey->m_localFonts.push_front(asciiString);
+	globalLanguage->m_localFonts.push_front(asciiString);
 }
 
-float GlobalLanguage::getResolutionFontSizeAdjustment( void ) const
+Real GlobalLanguage::getResolutionFontSizeAdjustment() const
 {
 	if (m_userResolutionFontSizeAdjustment >= 0.0f)
 		return m_userResolutionFontSizeAdjustment;
@@ -202,13 +203,11 @@ float GlobalLanguage::getResolutionFontSizeAdjustment( void ) const
 		return m_resolutionFontSizeAdjustment;
 }
 
-Int GlobalLanguage::adjustFontSize(Int theFontSize)
+Real GlobalLanguage::getResolutionFontSizeScale(ResolutionFontSizeMethod method, Real scaler)
 {
-	// TheSuperHackers @todo This function is called very often.
-	// Therefore cache the adjustFactor on resolution change to not recompute it on every call.
 	Real adjustFactor;
 
-	switch (m_resolutionFontSizeMethod)
+	switch (method)
 	{
 	default:
 	case ResolutionFontSizeMethod_Classic:
@@ -216,7 +215,7 @@ Int GlobalLanguage::adjustFontSize(Int theFontSize)
 		// TheSuperHackers @info The original font scaling for this game.
 		// Useful for not breaking legacy Addons and Mods. Scales poorly with large resolutions.
 		adjustFactor = TheDisplay->getWidth() / (Real)DEFAULT_DISPLAY_WIDTH;
-		adjustFactor = 1.0f + (adjustFactor - 1.0f) * getResolutionFontSizeAdjustment();
+		adjustFactor = 1.0f + (adjustFactor - 1.0f) * scaler;
 		if (adjustFactor > 2.0f)
 			adjustFactor = 2.0f;
 		break;
@@ -226,7 +225,7 @@ Int GlobalLanguage::adjustFontSize(Int theFontSize)
 		// TheSuperHackers @feature The original font scaling, but without ceiling.
 		// Useful for not changing the original look of the game. Scales alright with large resolutions.
 		adjustFactor = TheDisplay->getWidth() / (Real)DEFAULT_DISPLAY_WIDTH;
-		adjustFactor = 1.0f + (adjustFactor - 1.0f) * getResolutionFontSizeAdjustment();
+		adjustFactor = 1.0f + (adjustFactor - 1.0f) * scaler;
 		break;
 	}
 	case ResolutionFontSizeMethod_Strict:
@@ -236,7 +235,7 @@ Int GlobalLanguage::adjustFontSize(Int theFontSize)
 		const Real wScale = TheDisplay->getWidth() / (Real)DEFAULT_DISPLAY_WIDTH;
 		const Real hScale = TheDisplay->getHeight() / (Real)DEFAULT_DISPLAY_HEIGHT;
 		adjustFactor = min(wScale, hScale);
-		adjustFactor = 1.0f + (adjustFactor - 1.0f) * getResolutionFontSizeAdjustment();
+		adjustFactor = 1.0f + (adjustFactor - 1.0f) * scaler;
 		break;
 	}
 	case ResolutionFontSizeMethod_Balanced:
@@ -265,14 +264,25 @@ Int GlobalLanguage::adjustFontSize(Int theFontSize)
 			hScale = h / (Real)DEFAULT_DISPLAY_HEIGHT;
 		}
 		adjustFactor = (wScale + hScale) * 0.5f;
-		adjustFactor = 1.0f + (adjustFactor - 1.0f) * getResolutionFontSizeAdjustment();
+		adjustFactor = 1.0f + (adjustFactor - 1.0f) * scaler;
 		break;
 	}
 	}
 
 	if (adjustFactor < 1.0f)
 		adjustFactor = 1.0f;
-	Int pointSize = REAL_TO_INT_FLOOR(theFontSize*adjustFactor);
+
+	return adjustFactor;
+}
+
+Int GlobalLanguage::adjustFontSize(Int theFontSize)
+{
+	// TheSuperHackers @todo This function is called very often.
+	// Therefore cache the adjustFactor on resolution change to not recompute it on every call.
+	const Real resolutionScaler = getResolutionFontSizeAdjustment();
+	const Real adjustFactor = getResolutionFontSizeScale(m_resolutionFontSizeMethod, resolutionScaler);
+	const Int pointSize = REAL_TO_INT_FLOOR(theFontSize * adjustFactor);
+
 	return pointSize;
 }
 
@@ -288,9 +298,9 @@ void GlobalLanguage::parseCustomDefinition()
 
 FontDesc::FontDesc(void)
 {
-	name = "Arial Unicode MS";	///<name of font
-	size = 12;			///<point size
-	bold = FALSE;			///<is bold?
+	name = "Arial Unicode MS";
+	size = 12;
+	bold = FALSE;
 }
 //-----------------------------------------------------------------------------
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////
