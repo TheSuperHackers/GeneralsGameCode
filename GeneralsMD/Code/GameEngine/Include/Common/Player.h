@@ -80,6 +80,7 @@ class Upgrade;
 class UpgradeTemplate;
 class SpecialPowerModule;
 
+class BattlePlanBonusesData;
 class BattlePlanBonuses;
 
 enum BattlePlanStatus CPP_11(: Int);
@@ -368,12 +369,12 @@ public:
 	//it's possible for multiple strategy centers to have the same plan, so we need
 	//to keep track of that like radar. Keep in mind multiple strategy centers with
 	//same plan do not stack, but different strategy centers with different plans do.
-	void changeBattlePlan( BattlePlanStatus plan, Int delta, BattlePlanBonuses *bonus );
+	void changeBattlePlan( BattlePlanStatus plan, Int delta, BattlePlanBonusesData *bonus );
 	Int getNumBattlePlansActive() const { return m_bombardBattlePlans + m_holdTheLineBattlePlans + m_searchAndDestroyBattlePlans; }
 	Int getBattlePlansActiveSpecific( BattlePlanStatus plan ) const;
 	void applyBattlePlanBonusesForObject( Object *obj ) const;	//New object or converted object gaining our current battle plan bonuses.
 	void removeBattlePlanBonusesForObject( Object *obj ) const; //Object left team
-	void applyBattlePlanBonusesForPlayerObjects( const BattlePlanBonuses *bonus ); //Battle plan bonuses changing, so apply to all of our objects!
+	void applyBattlePlanBonusesForPlayerObjects( const BattlePlanBonusesData *bonus ); //Battle plan bonuses changing, so apply to all of our objects!
 	Bool doesObjectQualifyForBattlePlan( Object *obj ) const;
 
 	// If apply is false, then we are repealing already granted bonuses.
