@@ -80,7 +80,7 @@ class Upgrade;
 class UpgradeTemplate;
 class SpecialPowerModule;
 
-class BattlePlanBonusesData;
+struct BattlePlanBonusesData;
 class BattlePlanBonuses;
 
 enum BattlePlanStatus CPP_11(: Int);
