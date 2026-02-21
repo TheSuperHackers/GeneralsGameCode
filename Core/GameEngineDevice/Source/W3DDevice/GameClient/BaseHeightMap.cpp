@@ -514,6 +514,12 @@ void BaseHeightMapRenderObjClass::doTheLight(VERTEX_FORMAT *vb, Vector3*light, V
 	shadeG = TheGlobalData->m_terrainAmbient[0].green;
 	shadeB = TheGlobalData->m_terrainAmbient[0].blue;
 
+	static int lightDiagCount = 0;
+	if (lightDiagCount++ < 3) {
+		printf("TERRAIN_LIGHT: ambient=(%.3f %.3f %.3f) numGlobalLights=%d alpha=%u\n",
+		       shadeR, shadeG, shadeB, TheGlobalData->m_numGlobalLights, (unsigned)alpha);
+	}
+
 	if (pLightsIterator) {
 		for (pLightsIterator->First(); !pLightsIterator->Is_Done(); pLightsIterator->Next())
 		{
@@ -605,6 +611,10 @@ void BaseHeightMapRenderObjClass::doTheLight(VERTEX_FORMAT *vb, Vector3*light, V
 	shadeG*=255.0f;
 	shadeB*=255.0f;
 	vb->diffuse = REAL_TO_INT(shadeB) | (REAL_TO_INT(shadeG) << 8) | (REAL_TO_INT(shadeR) << 16) | ((Int)alpha << 24);
+	if (lightDiagCount <= 3) {
+		printf("TERRAIN_LIGHT: final shadeRGB=(%.1f %.1f %.1f) diffuse=0x%08x\n",
+		       shadeR, shadeG, shadeB, (unsigned)vb->diffuse);
+	}
 #endif
 }
 

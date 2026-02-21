@@ -483,6 +483,12 @@ void GameEngine::init() {
                   "Data\\INI\\Default\\GameData", "Data\\INI\\GameData");
     TheWritableGlobalData->parseCustomDefinition();
 
+    // TheSuperHackers @fix macOS: After INI parsing fills m_terrainLighting[],
+    // re-apply setTimeOfDay so m_terrainAmbient/m_terrainDiffuse/m_terrainLightPos
+    // are updated from the loaded INI values. Without this, terrain vertex lighting
+    // uses the all-zero defaults from the constructor, making terrain black.
+    TheWritableGlobalData->setTimeOfDay(TheGlobalData->m_timeOfDay);
+
 #ifdef DUMP_PERF_STATS ///////////////////////////////////////////////////////////////////////////
     GetPrecisionTimer(
         &endTime64); //////////////////////////////////////////////////////////////////

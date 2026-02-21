@@ -506,73 +506,61 @@ fragment float4 fragment_main(VertexOut in [[stage_in]],
                                                         : float4(1.0);
     
     float4 diffuse = in.color;
+    
+    // TEMPORARY: bypass TSS for 3D draws to get visible terrain
+    // The TSS pipeline currently produces black output for 3D draws.
+    // TODO: investigate terrain texture upload and TSS pipeline
+    if (uniforms.useProjection == 1) {
+        // DX8 terrain vertices have alpha=0 (used for multi-pass blending).
+        // Force opaque since we bypass the blend pipeline.
+        return float4(diffuse.rgb, 1.0);
+    }
+
+    // Normal 2D path with full TSS processing
     float4 specular = in.specularColor;
     float4 tFactor = fragUniforms.textureFactor;
-    float4 current = diffuse; // Stage 0 "current" starts as diffuse
-    
+    float4 current = diffuse;
+
     // --- Process Stage 0 ---
     uint colorOp0 = fragUniforms.stages[0].colorOp;
     if (colorOp0 != D3DTOP_DISABLE) {
-        float4 cArg1 = resolveArg(fragUniforms.stages[0].colorArg1,
-                                   texColor0, texColor1, diffuse, specular, current, tFactor, 0);
-        float4 cArg2 = resolveArg(fragUniforms.stages[0].colorArg2,
-                                   texColor0, texColor1, diffuse, specular, current, tFactor, 0);
-        
-        float4 colorResult = evaluateBlendOp(colorOp0, cArg1, cArg2,
-                                              diffuse, texColor0, tFactor, current);
-        
-        // Alpha operation
+        float4 cArg1 = resolveArg(fragUniforms.stages[0].colorArg1, texColor0, texColor1, diffuse, specular, current, tFactor, 0);
+        float4 cArg2 = resolveArg(fragUniforms.stages[0].colorArg2, texColor0, texColor1, diffuse, specular, current, tFactor, 0);
+        float4 colorResult = evaluateBlendOp(colorOp0, cArg1, cArg2, diffuse, texColor0, tFactor, current);
         uint alphaOp0 = fragUniforms.stages[0].alphaOp;
-        float4 aArg1 = resolveArg(fragUniforms.stages[0].alphaArg1,
-                                   texColor0, texColor1, diffuse, specular, current, tFactor, 0);
-        float4 aArg2 = resolveArg(fragUniforms.stages[0].alphaArg2,
-                                   texColor0, texColor1, diffuse, specular, current, tFactor, 0);
-        
-        float4 alphaResult = evaluateBlendOp(alphaOp0, aArg1, aArg2,
-                                              diffuse, texColor0, tFactor, current);
-        
+        float4 aArg1 = resolveArg(fragUniforms.stages[0].alphaArg1, texColor0, texColor1, diffuse, specular, current, tFactor, 0);
+        float4 aArg2 = resolveArg(fragUniforms.stages[0].alphaArg2, texColor0, texColor1, diffuse, specular, current, tFactor, 0);
+        float4 alphaResult = evaluateBlendOp(alphaOp0, aArg1, aArg2, diffuse, texColor0, tFactor, current);
         current = float4(colorResult.rgb, alphaResult.a);
     }
-    
+
     // --- Process Stage 1 ---
     uint colorOp1 = fragUniforms.stages[1].colorOp;
     if (colorOp1 != D3DTOP_DISABLE) {
-        float4 cArg1 = resolveArg(fragUniforms.stages[1].colorArg1,
-                                   texColor0, texColor1, diffuse, specular, current, tFactor, 1);
-        float4 cArg2 = resolveArg(fragUniforms.stages[1].colorArg2,
-                                   texColor0, texColor1, diffuse, specular, current, tFactor, 1);
-        
-        float4 colorResult = evaluateBlendOp(colorOp1, cArg1, cArg2,
-                                              diffuse, texColor0, tFactor, current);
-        
+        float4 c1a1 = resolveArg(fragUniforms.stages[1].colorArg1, texColor0, texColor1, diffuse, specular, current, tFactor, 1);
+        float4 c1a2 = resolveArg(fragUniforms.stages[1].colorArg2, texColor0, texColor1, diffuse, specular, current, tFactor, 1);
+        float4 cr1 = evaluateBlendOp(colorOp1, c1a1, c1a2, diffuse, texColor0, tFactor, current);
         uint alphaOp1 = fragUniforms.stages[1].alphaOp;
-        float4 aArg1 = resolveArg(fragUniforms.stages[1].alphaArg1,
-                                   texColor0, texColor1, diffuse, specular, current, tFactor, 1);
-        float4 aArg2 = resolveArg(fragUniforms.stages[1].alphaArg2,
-                                   texColor0, texColor1, diffuse, specular, current, tFactor, 1);
-        
-        float4 alphaResult = evaluateBlendOp(alphaOp1, aArg1, aArg2,
-                                              diffuse, texColor0, tFactor, current);
-        
-        current = float4(colorResult.rgb, alphaResult.a);
+        float4 a1a1 = resolveArg(fragUniforms.stages[1].alphaArg1, texColor0, texColor1, diffuse, specular, current, tFactor, 1);
+        float4 a1a2 = resolveArg(fragUniforms.stages[1].alphaArg2, texColor0, texColor1, diffuse, specular, current, tFactor, 1);
+        float4 ar1 = evaluateBlendOp(alphaOp1, a1a1, a1a2, diffuse, texColor0, tFactor, current);
+        current = float4(cr1.rgb, ar1.a);
     }
-    
+
     // --- Alpha Test ---
     if (fragUniforms.alphaTestEnable != 0) {
         if (!alphaTestPass(fragUniforms.alphaFunc, current.a, fragUniforms.alphaRef)) {
             discard_fragment();
         }
     }
-    
+
     // --- Fog ---
     if (fragUniforms.fogMode != 0) {
-        // fogFactor: 1.0 = visible, 0.0 = fully fogged
-        // DX8: finalColor = fogFactor * pixelColor + (1 - fogFactor) * fogColor
         current.rgb = mix(fragUniforms.fogColor.rgb, current.rgb, in.fogFactor);
     }
-    
-    // Add specular after TSS processing (per DX8 spec: D3DRS_SPECULARENABLE)
+
+    // Add specular
     current.rgb = clamp(current.rgb + specular.rgb, 0.0, 1.0);
-    
+
     return current;
 }

@@ -41,24 +41,25 @@ UINT BytesPerPixelFromD3D(D3DFORMAT fmt) {
 MTLPixelFormat MetalFormatFromD3D(D3DFORMAT fmt) {
   switch (fmt) {
   case D3DFMT_A8R8G8B8:
-  case D3DFMT_X8R8G8B8: // Ignore alpha channel in shader if needed
+  case D3DFMT_X8R8G8B8:
+    return MTLPixelFormatBGRA8Unorm;
+
+  // 16-bit formats → BGRA8Unorm (CPU conversion in UnlockRect)
+  case D3DFMT_R5G6B5:
+  case D3DFMT_X1R5G5B5:
+  case D3DFMT_A1R5G5B5:
+  case D3DFMT_A4R4G4B4:
     return MTLPixelFormatBGRA8Unorm;
 
   // macOS Metal supports BC compression
   case D3DFMT_DXT1:
     return MTLPixelFormatBC1_RGBA;
-  case D3DFMT_DXT3: // DXT2 is premultiplied alpha DXT3, usually same storage
+  case D3DFMT_DXT2: // premultiplied alpha DXT3
+  case D3DFMT_DXT3:
     return MTLPixelFormatBC2_RGBA;
-  case D3DFMT_DXT5: // DXT4 is premultiplied alpha DXT5
+  case D3DFMT_DXT4: // premultiplied alpha DXT5
+  case D3DFMT_DXT5:
     return MTLPixelFormatBC3_RGBA;
-
-    // 16-bit formats often need conversion on macOS Desktop (no B5G6R5 native
-    // support typically) Converting to BGRA8 on CPU is safer, but let's assume
-    // keys are handled or return Invalid for now. Actually, we can return
-    // BGRA8Unorm and rely on LockRect/UnlockRect to convert if we implement
-    // conversion logic. For basic support, let's map to BGRA8Unorm and warn if
-    // mismatch. But D3D will try to write 16-bit data. We'll stick to 32-bit
-    // and Compressed for Stage 3.
 
   default:
     return MTLPixelFormatBGRA8Unorm;
@@ -74,11 +75,12 @@ MetalTexture8::MetalTexture8(MetalDevice8 *device, UINT width, UINT height,
   if (m_Device)
     m_Device->AddRef();
 
-  if (m_Levels == 0)
-    m_Levels = 1; // Actually 0 means "all levels", typically mipmapping. Metal
-                  // needs specific count.
-  // Typically we'd calculate log2(max(w, h)) + 1. But for now clamp to 1 if 0.
-  // IDirect3DTexture8::GetLevelCount returns actual count.
+  if (m_Levels == 0) {
+    // DX8 spec: 0 means generate all mipmap levels down to 1x1
+    UINT maxDim = std::max(width, height);
+    m_Levels = 1;
+    while (maxDim > 1) { maxDim >>= 1; m_Levels++; }
+  }
 
   MTLTextureDescriptor *desc = [[MTLTextureDescriptor alloc] init];
   desc.pixelFormat = MetalFormatFromD3D(format);
@@ -211,12 +213,7 @@ MetalTexture8::GetSurfaceLevel(UINT Level, IDirect3DSurface8 **ppSurfaceLevel) {
   UINT w = std::max(1u, m_Width >> Level);
   UINT h = std::max(1u, m_Height >> Level);
 
-  static int gslLog = 0;
-  if (gslLog < 20) {
-    fprintf(stderr, "GetSurfaceLevel[%d] tex=%p level=%u %ux%u fmt=%d mtlTex=%p\n",
-            gslLog++, (void*)this, Level, w, h, (int)m_Format, m_Texture);
-    fflush(stderr);
-  }
+
 
   // Create a surface wrapper linked to this texture's mip level.
   // When the surface is unlocked, it will upload data to our Metal texture.
@@ -297,15 +294,85 @@ STDMETHODIMP MetalTexture8::LockRect(UINT Level, D3DLOCKED_RECT *pLockedRect,
   return D3D_OK;
 }
 
+// ─────────────────────────────────────────────────────────────────
+// 16-bit → 32-bit pixel format conversion helpers
+// Called during UnlockRect to convert source data before GPU upload
+// ─────────────────────────────────────────────────────────────────
+
+static bool Is16BitFormat(D3DFORMAT fmt) {
+  return fmt == D3DFMT_R5G6B5 || fmt == D3DFMT_X1R5G5B5 ||
+         fmt == D3DFMT_A1R5G5B5 || fmt == D3DFMT_A4R4G4B4;
+}
+
+// Convert a buffer of 16-bit pixels to BGRA8 (32-bit).
+// Returns malloc'd buffer that caller must free. Sets outPitch.
+static void *Convert16to32(D3DFORMAT fmt, const void *src, UINT width,
+                           UINT height, UINT srcPitch, UINT *outPitch) {
+  UINT dstPitch = width * 4;
+  *outPitch = dstPitch;
+  uint8_t *dst = (uint8_t *)malloc(dstPitch * height);
+  if (!dst) return nullptr;
+
+  const uint8_t *srcRow = (const uint8_t *)src;
+  uint8_t *dstRow = dst;
+
+  for (UINT y = 0; y < height; y++) {
+    const uint16_t *sp = (const uint16_t *)srcRow;
+    uint32_t *dp = (uint32_t *)dstRow;
+
+    for (UINT x = 0; x < width; x++) {
+      uint16_t px = sp[x];
+      uint8_t B, G, R, A;
+
+      switch (fmt) {
+      case D3DFMT_R5G6B5:
+        // RRRR RGGG GGGB BBBB
+        B = (uint8_t)(((px      ) & 0x1F) * 255 / 31);
+        G = (uint8_t)(((px >>  5) & 0x3F) * 255 / 63);
+        R = (uint8_t)(((px >> 11) & 0x1F) * 255 / 31);
+        A = 255;
+        break;
+      case D3DFMT_X1R5G5B5:
+        // xRRR RRGG GGGB BBBB
+        B = (uint8_t)(((px      ) & 0x1F) * 255 / 31);
+        G = (uint8_t)(((px >>  5) & 0x1F) * 255 / 31);
+        R = (uint8_t)(((px >> 10) & 0x1F) * 255 / 31);
+        A = 255;
+        break;
+      case D3DFMT_A1R5G5B5:
+        // ARRR RRGG GGGB BBBB
+        B = (uint8_t)(((px      ) & 0x1F) * 255 / 31);
+        G = (uint8_t)(((px >>  5) & 0x1F) * 255 / 31);
+        R = (uint8_t)(((px >> 10) & 0x1F) * 255 / 31);
+        A = (px >> 15) ? 255 : 0;
+        break;
+      case D3DFMT_A4R4G4B4:
+        // AAAA RRRR GGGG BBBB
+        B = (uint8_t)(((px      ) & 0x0F) * 255 / 15);
+        G = (uint8_t)(((px >>  4) & 0x0F) * 255 / 15);
+        R = (uint8_t)(((px >>  8) & 0x0F) * 255 / 15);
+        A = (uint8_t)(((px >> 12) & 0x0F) * 255 / 15);
+        break;
+      default:
+        B = G = R = A = 255;
+        break;
+      }
+
+      // Metal BGRA8Unorm: byte order is B, G, R, A in memory
+      dp[x] = ((uint32_t)A << 24) | ((uint32_t)R << 16) |
+              ((uint32_t)G << 8)  | ((uint32_t)B);
+    }
+    srcRow += srcPitch;
+    dstRow += dstPitch;
+  }
+  return dst;
+}
+
+// ─────────────────────────────────────────────────────────────────
+
 STDMETHODIMP MetalTexture8::UnlockRect(UINT Level) {
-  static int unlockEntryCount = 0;
   auto it = m_LockedLevels.find(Level);
   if (it == m_LockedLevels.end()) {
-    if (unlockEntryCount < 50) {
-      printf("TEX_UNLOCK_MISS[%d] level=%u lockedCount=%zu this=%p\n",
-             unlockEntryCount++, Level, m_LockedLevels.size(), this);
-      fflush(stdout);
-    }
     return D3DERR_INVALIDCALL;
   }
 
@@ -325,7 +392,7 @@ STDMETHODIMP MetalTexture8::UnlockRect(UINT Level) {
     desc.height = tex.height;
     desc.mipmapLevelCount = 1;
     desc.usage = tex.usage;
-    
+
     id<MTLTexture> newTex = [tex.device newTextureWithDescriptor:desc];
     CFRelease(m_Texture);
     m_Texture = (__bridge_retained void *)newTex;
@@ -339,26 +406,15 @@ STDMETHODIMP MetalTexture8::UnlockRect(UINT Level) {
                        m_Format == D3DFMT_DXT3 || m_Format == D3DFMT_DXT4 ||
                        m_Format == D3DFMT_DXT5);
 
-  static int texUploadLogCount = 0;
-
   MTLRegion region = MTLRegionMake2D(0, 0, width, height);
 
   if (isCompressed) {
     // For BC compressed formats, bytesPerRow = blocksWide * bytesPerBlock
-    UINT bytesPerBlock = lvl.bytesPerPixel; // 8 for DXT1, 16 for DXT3/5
+    UINT bytesPerBlock = lvl.bytesPerPixel; // 8 for DXT1, 16 for DXT2-5
     UINT blocksWide = std::max(1u, (width + 3) / 4);
     UINT blocksHigh = std::max(1u, (height + 3) / 4);
     UINT bytesPerRow = blocksWide * bytesPerBlock;
     UINT bytesPerImage = bytesPerRow * blocksHigh;
-
-    if (texUploadLogCount < 200) {
-      uint8_t *bytes = (uint8_t*)lvl.ptr;
-      printf("TEX_UPLOAD[%d] COMPRESSED fmt=%d level=%u %ux%u blocks=%ux%u bpr=%u bpi=%u first4bytes=[%02x %02x %02x %02x]\n",
-              texUploadLogCount++, (int)m_Format, Level, width, height,
-              blocksWide, blocksHigh, bytesPerRow, bytesPerImage,
-              bytes[0], bytes[1], bytes[2], bytes[3]);
-      fflush(stdout);
-    }
 
     [tex replaceRegion:region
            mipmapLevel:Level
@@ -366,16 +422,19 @@ STDMETHODIMP MetalTexture8::UnlockRect(UINT Level) {
              withBytes:lvl.ptr
            bytesPerRow:bytesPerRow
          bytesPerImage:bytesPerImage];
-  } else {
-    if (texUploadLogCount < 200) {
-      uint8_t *bytes = (uint8_t*)lvl.ptr;
-      printf("TEX_UPLOAD[%d] UNCOMPRESSED fmt=%d level=%u %ux%u pitch=%u bpp=%u first4bytes=[%02x %02x %02x %02x]\n",
-              texUploadLogCount++, (int)m_Format, Level, width, height,
-              lvl.pitch, lvl.bytesPerPixel,
-              bytes[0], bytes[1], bytes[2], bytes[3]);
-      fflush(stdout);
+  } else if (Is16BitFormat(m_Format)) {
+    // Convert 16-bit source data to 32-bit BGRA8 before uploading to Metal
+    UINT dstPitch = 0;
+    void *converted = Convert16to32(m_Format, lvl.ptr, width, height,
+                                    lvl.pitch, &dstPitch);
+    if (converted) {
+      [tex replaceRegion:region
+             mipmapLevel:Level
+               withBytes:converted
+             bytesPerRow:dstPitch];
+      free(converted);
     }
-
+  } else {
     [tex replaceRegion:region
            mipmapLevel:Level
              withBytes:lvl.ptr

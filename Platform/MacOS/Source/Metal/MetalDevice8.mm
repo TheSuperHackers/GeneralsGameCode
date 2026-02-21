@@ -920,12 +920,16 @@ STDMETHODIMP MetalDevice8::CreateAdditionalSwapChain(D3DPRESENT_PARAMETERS *p,
 
 STDMETHODIMP MetalDevice8::Reset(D3DPRESENT_PARAMETERS *p) { return D3D_OK; }
 
+int g_metalPresentCount = 0;
+
 STDMETHODIMP MetalDevice8::Present(const void *s, const void *d, HWND w,
                                    const void *r) {
-  static int presentCount = 0;
-  presentCount++;
-  DLOG_RFLOW(16, "Present #%d encoder=%p drawable=%p cmdBuf=%p",
-    presentCount, m_CurrentEncoder, m_CurrentDrawable, m_CurrentCommandBuffer);
+  g_metalPresentCount++;
+  if (g_metalPresentCount <= 20) {
+    printf("PRESENT[%d] encoder=%p drawable=%p cmdBuf=%p\n",
+           g_metalPresentCount, m_CurrentEncoder, m_CurrentDrawable, m_CurrentCommandBuffer);
+    fflush(stdout);
+  }
   if (m_CurrentEncoder) {
     [MTL_ENCODER endEncoding];
     CLEAR_MTL(CurrentEncoder);
@@ -1100,6 +1104,14 @@ STDMETHODIMP MetalDevice8::BeginScene() {
     return D3D_OK;
   m_InScene = true;
 
+  // Reuse existing drawable/cmdBuf if we haven't presented yet.
+  // DX8 games may call BeginScene/EndScene multiple times per frame
+  // (for render-to-texture passes). We must keep drawing to the same
+  // drawable until Present() commits and releases it.
+  if (m_CurrentDrawable && m_CurrentCommandBuffer) {
+    return D3D_OK; // Still have a valid drawable from this frame
+  }
+
   id<MTLCommandBuffer> cmdBuf = [MTL_QUEUE commandBuffer];
   SET_MTL(CurrentCommandBuffer, cmdBuf);
 
@@ -1136,14 +1148,13 @@ STDMETHODIMP MetalDevice8::EndScene() {
 STDMETHODIMP MetalDevice8::Clear(DWORD Count, const void *pRects, DWORD Flags,
                                  D3DCOLOR Color, float Z, DWORD Stencil) {
   static int clearCount = 0;
-  if (clearCount++ % 120 == 0) {
-    float dr = ((Color >> 16) & 0xFF) / 255.0f;
-    float dg = ((Color >> 8) & 0xFF) / 255.0f;
-    float db = ((Color >> 0) & 0xFF) / 255.0f;
-    printf("DEBUG MetalDevice8::Clear #%d flags=0x%x color=0x%08x (r=%.2f "
-           "g=%.2f b=%.2f) drawable=%p cmdBuf=%p\n",
-           clearCount, (unsigned)Flags, (unsigned)Color, dr, dg, db,
-           m_CurrentDrawable, m_CurrentCommandBuffer);
+  clearCount++;
+  if (clearCount <= 20) {
+    printf("CLEAR[%d] flags=0x%x color=0x%08x hasTarget=%d hasZ=%d encoder=%p drawable=%p\n",
+           clearCount, (unsigned)Flags, (unsigned)Color,
+           (int)((Flags & D3DCLEAR_TARGET) != 0),
+           (int)((Flags & D3DCLEAR_ZBUFFER) != 0),
+           m_CurrentEncoder, m_CurrentDrawable);
     fflush(stdout);
   }
   // WW3D calls Clear() BEFORE BeginScene(), so auto-start if needed.
@@ -1239,6 +1250,22 @@ STDMETHODIMP MetalDevice8::SetTransform(D3DTRANSFORMSTATETYPE State,
     return E_POINTER;
   if ((int)State >= 0 && (int)State < 260) {
     m_Transforms[(int)State] = *pMatrix;
+  }
+  // Log non-identity VIEW/PROJ transforms
+  static int viewSetCount = 0, projSetCount = 0;
+  if (State == D3DTS_VIEW && viewSetCount < 5) {
+    bool isIdentity = (pMatrix->_11 == 1 && pMatrix->_22 == 1 && pMatrix->_33 == 1 && pMatrix->_44 == 1 &&
+                       pMatrix->_12 == 0 && pMatrix->_13 == 0 && pMatrix->_21 == 0);
+    float *m = (float*)pMatrix;
+    printf("SET_VIEW[%d] identity=%d: [%.3f %.3f %.3f %.3f] [%.3f %.3f %.3f %.3f] [%.3f %.3f %.3f %.3f] [%.3f %.3f %.3f %.3f]\n",
+           viewSetCount++, isIdentity, m[0],m[1],m[2],m[3], m[4],m[5],m[6],m[7], m[8],m[9],m[10],m[11], m[12],m[13],m[14],m[15]);
+    fflush(stdout);
+  }
+  if (State == D3DTS_PROJECTION && projSetCount < 5) {
+    float *m = (float*)pMatrix;
+    printf("SET_PROJ[%d]: [%.3f %.3f %.3f %.3f] [%.3f %.3f %.3f %.3f] [%.3f %.3f %.3f %.3f] [%.3f %.3f %.3f %.3f]\n",
+           projSetCount++, m[0],m[1],m[2],m[3], m[4],m[5],m[6],m[7], m[8],m[9],m[10],m[11], m[12],m[13],m[14],m[15]);
+    fflush(stdout);
   }
   return D3D_OK;
 }
@@ -1876,12 +1903,33 @@ STDMETHODIMP MetalDevice8::DrawIndexedPrimitive(DWORD pt, UINT mi, UINT nv,
   // 1. Get FVF and PSO
   DWORD fvf = GetBufferFVF(m_StreamSource);
 
-  static int diag3DCount = 0;
-  if (!(fvf & D3DFVF_XYZRHW) && diag3DCount < 10) {
-    fprintf(stderr, "DIP_3D[%d] fvf=0x%x nv=%u pc=%u tex0=%p tex1=%p\n",
-            diag3DCount++, (unsigned)fvf, nv, pc, (void*)m_Textures[0], (void*)m_Textures[1]);
-    fflush(stderr);
+  // --- Per-frame terrain draw log for frame #100 ---
+  extern int g_metalPresentCount; // defined in Present
+  static int frameDrawCount = 0;
+  if (g_metalPresentCount == 100) {
+    if (fvf == 0x242) { // terrain FVF
+      static int basePass = 0, texPass = 0;
+      bool isBase = (m_Textures[0] == nullptr);
+      if ((isBase && basePass < 2) || (!isBase && texPass < 2)) {
+        printf("FRAME[100] DRAW#%d %s tex0=%p tex1=%p alphaB=%u "
+               "S0:COP=%u CA1=%u CA2=%u S1:COP=%u CA1=%u CA2=%u AOP=%u AA1=%u AA2=%u fogEn=%u\n",
+               frameDrawCount, isBase ? "BASE" : "TEX", (void*)m_Textures[0], (void*)m_Textures[1],
+               (unsigned)m_RenderStates[D3DRS_ALPHABLENDENABLE],
+               (unsigned)m_TextureStageStates[0][D3DTSS_COLOROP],
+               (unsigned)m_TextureStageStates[0][D3DTSS_COLORARG1],
+               (unsigned)m_TextureStageStates[0][D3DTSS_COLORARG2],
+               (unsigned)m_TextureStageStates[1][D3DTSS_COLOROP],
+               (unsigned)m_TextureStageStates[1][D3DTSS_COLORARG1],
+               (unsigned)m_TextureStageStates[1][D3DTSS_COLORARG2],
+               (unsigned)m_TextureStageStates[1][D3DTSS_ALPHAOP],
+               (unsigned)m_TextureStageStates[1][D3DTSS_ALPHAARG1],
+               (unsigned)m_TextureStageStates[1][D3DTSS_ALPHAARG2],
+               (unsigned)m_RenderStates[D3DRS_FOGENABLE]);
+        if (isBase) basePass++; else texPass++;
+      }
+    }
   }
+  frameDrawCount++;
 
   id<MTLRenderPipelineState> pso =
       (__bridge id<MTLRenderPipelineState>)GetPSO(fvf);
@@ -1919,32 +1967,65 @@ STDMETHODIMP MetalDevice8::DrawIndexedPrimitive(DWORD pt, UINT mi, UINT nv,
   u.useProjection = (fvf & D3DFVF_XYZRHW) ? 2 : 1;
   u.shaderSettings = 0; // legacy
 
-  // --- Diagnostic: dump matrices for first 3D draw calls ---
+  // --- Diagnostic: dump matrices for 3D draw calls ---
   static int diagLog3D = 0;
-  if (diagLog3D < 20) {
-    fprintf(stderr, "DRAW_DIAG[%d] fvf=0x%x useProj=%d nv=%u pc=%u\n",
-            diagLog3D, (unsigned)fvf, u.useProjection, nv, pc);
-  }
-  if (u.useProjection == 1 && diagLog3D < 20) {
-    float *w = (float*)&u.world;
-    float *v = (float*)&u.view;
-    float *p = (float*)&u.projection;
-    fprintf(stderr, "3D_DRAW[%d] fvf=0x%x nv=%u pc=%u\n", diagLog3D, (unsigned)fvf, nv, pc);
-    fprintf(stderr, "  WORLD: [%.2f %.2f %.2f %.2f] [%.2f %.2f %.2f %.2f] [%.2f %.2f %.2f %.2f] [%.2f %.2f %.2f %.2f]\n",
-            w[0],w[1],w[2],w[3], w[4],w[5],w[6],w[7], w[8],w[9],w[10],w[11], w[12],w[13],w[14],w[15]);
-    fprintf(stderr, "  VIEW:  [%.2f %.2f %.2f %.2f] [%.2f %.2f %.2f %.2f] [%.2f %.2f %.2f %.2f] [%.2f %.2f %.2f %.2f]\n",
-            v[0],v[1],v[2],v[3], v[4],v[5],v[6],v[7], v[8],v[9],v[10],v[11], v[12],v[13],v[14],v[15]);
-    fprintf(stderr, "  PROJ:  [%.2f %.2f %.2f %.2f] [%.2f %.2f %.2f %.2f] [%.2f %.2f %.2f %.2f] [%.2f %.2f %.2f %.2f]\n",
-            p[0],p[1],p[2],p[3], p[4],p[5],p[6],p[7], p[8],p[9],p[10],p[11], p[12],p[13],p[14],p[15]);
-    // Also dump first vertex data
-    MetalVertexBuffer8 *dvb = (MetalVertexBuffer8 *)m_StreamSource;
-    id<MTLBuffer> mtlBuf = (__bridge id<MTLBuffer>)dvb->GetMTLBuffer();
-    float *vtxData = (float*)mtlBuf.contents;
-    if (vtxData) {
-      fprintf(stderr, "  VTX0: [%.2f %.2f %.2f] N[%.2f %.2f %.2f]\n",
-              vtxData[0], vtxData[1], vtxData[2], vtxData[3], vtxData[4], vtxData[5]);
+  static int totalDraw3D = 0;
+  if (u.useProjection == 1) {
+    totalDraw3D++;
+    // Log first 5, then every 1000th
+    if (diagLog3D < 5 || totalDraw3D % 1000 == 0) {
+      float *w = (float*)&u.world;
+      float *v = (float*)&u.view;
+      float *p = (float*)&u.projection;
+      printf("MTX_DIAG[%d/%d] fvf=0x%x nv=%u pc=%u tex0=%p\n", diagLog3D, totalDraw3D, (unsigned)fvf, nv, pc, (void*)m_Textures[0]);
+      printf("  WORLD: [%.3f %.3f %.3f %.3f] [%.3f %.3f %.3f %.3f] [%.3f %.3f %.3f %.3f] [%.3f %.3f %.3f %.3f]\n",
+              w[0],w[1],w[2],w[3], w[4],w[5],w[6],w[7], w[8],w[9],w[10],w[11], w[12],w[13],w[14],w[15]);
+      printf("  VIEW:  [%.3f %.3f %.3f %.3f] [%.3f %.3f %.3f %.3f] [%.3f %.3f %.3f %.3f] [%.3f %.3f %.3f %.3f]\n",
+              v[0],v[1],v[2],v[3], v[4],v[5],v[6],v[7], v[8],v[9],v[10],v[11], v[12],v[13],v[14],v[15]);
+      printf("  PROJ:  [%.3f %.3f %.3f %.3f] [%.3f %.3f %.3f %.3f] [%.3f %.3f %.3f %.3f] [%.3f %.3f %.3f %.3f]\n",
+              p[0],p[1],p[2],p[3], p[4],p[5],p[6],p[7], p[8],p[9],p[10],p[11], p[12],p[13],p[14],p[15]);
+      MetalVertexBuffer8 *dvb = (MetalVertexBuffer8 *)m_StreamSource;
+      id<MTLBuffer> mtlBuf = (__bridge id<MTLBuffer>)dvb->GetMTLBuffer();
+      float *vtxData = (float*)mtlBuf.contents;
+      if (vtxData) {
+      // Compute vertex stride from FVF
+      UINT vStride = D3DXGetFVFVertexSize(fvf);
+      int fOff = 0;
+      int posF = 3; // xyz = 3 floats
+      fOff += posF;
+      if (fvf & D3DFVF_NORMAL) fOff += 3;
+      // Next is DIFFUSE (DWORD)
+      uint32_t diffuse = 0;
+      if (fvf & D3DFVF_DIFFUSE) {
+        memcpy(&diffuse, ((uint8_t*)vtxData) + fOff*4, 4);
+      }
+      printf("  VTX0: pos[%.2f %.2f %.2f] nrm[%.2f %.2f %.2f] diffuse=0x%08x stride=%u\n",
+              vtxData[0], vtxData[1], vtxData[2], vtxData[3], vtxData[4], vtxData[5],
+              diffuse, vStride);
+      }
+      fflush(stdout);
+      diagLog3D++;
     }
-    diagLog3D++;
+  }
+
+  // --- Targeted terrain diagnostic ---
+  static int terrainDiag = 0;
+  if (fvf == 0x242 && terrainDiag < 3) {
+    MetalVertexBuffer8 *tvb = (MetalVertexBuffer8 *)m_StreamSource;
+    id<MTLBuffer> tbuf = (__bridge id<MTLBuffer>)tvb->GetMTLBuffer();
+    uint8_t *tdata = (uint8_t*)tbuf.contents;
+    if (tdata) {
+      // FVF 0x242: XYZ(12B) + DIFFUSE(4B) + UV1(8B) + UV2(8B) = 32B stride
+      uint32_t d0, d1, d2;
+      memcpy(&d0, tdata + 12, 4);       // vertex 0 diffuse
+      memcpy(&d1, tdata + 32 + 12, 4);  // vertex 1 diffuse
+      memcpy(&d2, tdata + 64 + 12, 4);  // vertex 2 diffuse
+      float *pos = (float*)tdata;
+      printf("TERRAIN_VTX[%d]: pos0=(%.1f,%.1f,%.1f) diffuse0=0x%08x diffuse1=0x%08x diffuse2=0x%08x nv=%u tex0=%p alphaB=%u\n",
+             terrainDiag, pos[0], pos[1], pos[2], d0, d1, d2, nv, (void*)m_Textures[0],
+             (unsigned)m_RenderStates[D3DRS_ALPHABLENDENABLE]);
+    }
+    terrainDiag++;
   }
 
   [MTL_ENCODER setVertexBytes:&u length:sizeof(u) atIndex:1];
@@ -2109,7 +2190,8 @@ STDMETHODIMP MetalDevice8::DrawIndexedPrimitive(DWORD pt, UINT mi, UINT nv,
                         baseInstance:0];
 
   static int drawIdxCount = 0;
-  if (drawIdxCount++ < 50) {
+  drawIdxCount++;
+  if (drawIdxCount <= 50 || (drawIdxCount >= 995 && drawIdxCount <= 1010)) {
     printf("RFLOW[%d] DrawIndexedPrimitive DRAW pt=%u fvf=0x%x nv=%u pc=%u idxCnt=%u "
            "baseVtx=%u ibOff=%u tex0=%p tex1=%p\n",
            drawIdxCount, (unsigned)pt, (unsigned)fvf, nv, pc, indexCount,
