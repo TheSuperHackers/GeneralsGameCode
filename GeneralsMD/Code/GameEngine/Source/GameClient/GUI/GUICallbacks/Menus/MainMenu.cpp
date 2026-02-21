@@ -38,7 +38,7 @@
 #include "Common/GlobalData.h"
 #include "Common/NameKeyGenerator.h"
 #include "Common/RandomValue.h"
-#include "Common/UserPreferences.h"
+#include "Common/OptionPreferences.h"
 #include "Common/version.h"
 #include "Common/GameLOD.h"
 #include "GameClient/AnimateWindowManager.h"

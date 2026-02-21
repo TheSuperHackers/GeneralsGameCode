@@ -34,7 +34,7 @@
 #include "Common/GameEngine.h"
 #include "Common/GlobalData.h"
 #include "Common/INI.h"
-#include "Common/UserPreferences.h"
+#include "Common/OptionPreferences.h"
 
 #include "GameClient/Display.h"
 #include "GameClient/DisplayStringManager.h"

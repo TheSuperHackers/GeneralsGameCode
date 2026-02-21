@@ -49,7 +49,7 @@
 #include "Common/PlayerTemplate.h"
 #include "Common/RandomValue.h"
 #include "Common/GlobalData.h"
-#include "Common/UserPreferences.h"
+#include "Common/OptionPreferences.h"
 #include "GameLogic/ScriptEngine.h"
 
 MutexClass TheGameSpyMutex;

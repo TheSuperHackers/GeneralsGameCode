@@ -32,8 +32,9 @@
 
 #include "Common/GameEngine.h"
 #include "Common/GameState.h"
-#include "GameClient/GameText.h"
 #include "Common/MultiplayerSettings.h"
+#include "Common/OptionPreferences.h"
+#include "GameClient/GameText.h"
 #include "Common/PlayerTemplate.h"
 #include "Common/CustomMatchPreferences.h"
 #include "GameClient/AnimateWindowManager.h"
