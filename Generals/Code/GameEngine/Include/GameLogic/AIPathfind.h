@@ -332,13 +332,13 @@ public:
 	void removeFromOpenList( PathfindCellList &list );
 
 	/// put self on "closed" list, return new list
-	PathfindCell *putOnClosedList( PathfindCell *list );
+	void putOnClosedList( PathfindCellList &list );
 
 	/// remove self from "closed" list
-	PathfindCell *removeFromClosedList( PathfindCell *list );
+	void removeFromClosedList( PathfindCellList &list );
 
 	/// remove all cells from closed list.
-	static Int releaseClosedList( PathfindCell *list );
+	static Int releaseClosedList( PathfindCellList &list );
 
 	/// remove all cells from closed list.
 	static Int releaseOpenList( PathfindCellList &list );
@@ -867,7 +867,7 @@ private:
 	IRegion2D m_logicalExtent;										///< Logical grid extent limits
 
 	PathfindCellList m_openList;									///< Cells ready to be explored
-	PathfindCell *m_closedList;										///< Cells already explored
+	PathfindCellList m_closedList;								///< Cells already explored
 
 	Bool m_isMapReady;														///< True if all cells of map have been classified
 	Bool m_isTunneling;														///< True if path started in an obstacle
