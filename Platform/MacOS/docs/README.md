@@ -18,27 +18,26 @@ This is the official documentation hub for the macOS/Metal port of Generals Zero
 ## 🚀 Quick Start
 
 ```bash
-# Configure
+# Build & Run (recommended)
+sh build_run_mac.sh
+
+# Or manually:
 cmake --preset macos
-
-# Build
 cmake --build build/macos
-
-# Run (kill previous instances first!)
-killall generalszh 2>/dev/null; sleep 1
-build/macos/GeneralsMD/generalszh
+GENERALS_INSTALL_PATH="/path/to/game/" GENERALS_FPS_LIMIT=60 build/macos/GeneralsMD/generalszh -quick
 ```
 
 ## 📊 Current Status
 
 | Metric | Value |
 |:---|:---|
-| **Build** | ✅ Successful — `generalsv` (21MB) + `generalszh` (22MB) |
-| **Runtime** | 🟢 Stable — 35+ seconds, 400+ frames, zero crashes |
-| **Crashes Resolved** | 10 |
-| **Rendering** | Metal Clear/BeginScene/Present working |
-| **Audio** | AVAudioEngine initialized, graceful fallback |
-| **Input** | Cocoa events → game engine (needs testing) |
+| **Build** | ✅ Successful — `generalsv` + `generalszh` |
+| **Runtime** | 🟢 **Stable** — 5500+ loop iterations, no crashes |
+| **Game Loop** | ✅ Shell map → cutscenes → missions all work |
+| **Rendering** | 🟡 Terrain + UI working, some 3D textures white |
+| **Audio** | ❌ Stubbed (SIGSEGV workaround — needs fix) |
+| **Input** | ✅ Keyboard + Mouse fully working |
+| **Crashes Resolved** | 22 |
 
 ## 🏗 Architecture Overview
 
@@ -48,12 +47,19 @@ Platform/MacOS/
 ├── Include/                    # Headers (d3d8_stub.h, win_compat.h)
 ├── Source/
 │   ├── Main/                   # Entry point, window, input, game client
-│   ├── Metal/                  # MetalDevice8 — DX8→Metal backend (85KB+)
-│   ├── Audio/                  # AVAudioEngine audio manager
+│   ├── Metal/                  # MetalDevice8 — DX8→Metal backend (95KB+)
+│   ├── Audio/                  # MacOSAudioManager (partially stubbed)
 │   ├── Client/                 # Display, text rendering (CoreText)
 │   └── Stubs/                  # GameSpy, Win32, network stubs
 └── docs/                       # ← You are here
 ```
+
+## 🔧 Key Features
+
+- **Signal handlers** — SIGSEGV/SIGBUS/SIGABRT produce backtraces via `sigaction`
+- **Automatic Termination disabled** — macOS won't silently kill the process
+- **NSApp delegate** — `applicationShouldTerminate:` returns `NSTerminateCancel`
+- **Frame pacing** — `FramePacer` with `displaySyncEnabled=NO` for smooth rendering
 
 ## 📝 Branch
 

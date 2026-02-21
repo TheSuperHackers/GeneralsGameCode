@@ -122,16 +122,43 @@ Windows API stubs (`LoadResource`, `GetCurrentThread`) conflict with macOS syste
 
 ### 6. m_breakTheMovie Flag
 
-`W3DDisplay::draw()` (W3DDisplay.cpp line 1849) checks:
-```cpp
-if ((TheGlobalData->m_breakTheMovie == FALSE) && (TheGlobalData->m_disableRender == false) && WW3D::Begin_Render(...) == WW3D_ERROR_OK)
+`W3DDisplay::draw()` checks `m_breakTheMovie == FALSE` before `WW3D::Begin_Render()`. If TRUE, **no 3D rendering happens**. On macOS this flag should **never** be set to TRUE.
+
+### 7. macOS Automatic Termination ⭐ NEW
+
+macOS has a feature called "Automatic Termination" that silently kills apps it considers idle. Since our game drives its own loop instead of using NSApp's run loop, macOS thinks the app is idle.
+
+**Symptoms:** Game dies silently ~10s after menu loads. No crash signal, no log output, exit code 0.
+
+**Solution (all 3 required):**
+```objc
+[[NSProcessInfo processInfo] disableAutomaticTermination:@"Game is running"];
+[[NSProcessInfo processInfo] disableSuddenTermination];
+// + applicationShouldTerminate: returning NSTerminateCancel
+// + Set NSApp delegate BEFORE finishLaunching
 ```
 
-If `m_breakTheMovie` is TRUE, **no 3D rendering happens**. On Windows this flag is used during movie playback to suppress rendering. On macOS, since we have no movie player, this flag should **never** be set to TRUE.
+### 8. AudioEventRTS Corrupted Pointers ⭐ NEW
 
-### 7. stderr vs stdout in Log Files
+`AudioManager::processRequestList()` iterates over `m_audioRequests` and accesses `req->m_pendingEvent->getEventName()`. The `AudioEventRTS` objects can be corrupted/dangling by the time `processRequestList()` runs.
 
-When redirecting output with `> file 2>&1`, `fprintf(stderr)` output may not appear in the log due to buffering differences. Always use `printf()` + `fflush(stdout)` for diagnostic logs.
+**Symptom:** SIGSEGV in `AsciiString::str()` on 3rd execute() loop iteration.
+
+**Current workaround:** `processRequestList()` just clears requests without accessing event data. This means **no audio** but no crash.
+
+**TODO:** Investigate AudioEventRTS ownership — who creates and who deletes these objects.
+
+### 9. FramePacer Null Globals ⭐ NEW
+
+`FramePacer::isActualFramesPerSecondLimitEnabled()` accesses `TheScriptEngine->isTimeFast()` without null check (only `TheTacticalView` is checked). Also `TheGlobalData->m_useFpsLimit` accessed without null check.
+
+**Fix:** Added null checks for both `TheScriptEngine` and `TheGlobalData`.
+
+### 10. nextDrawable Blocking ⭐ NEW
+
+`[CAMetalLayer nextDrawable]` blocks indefinitely when `displaySyncEnabled=YES` and the window is not visible/active. There are only 3 drawables in the pool — if all are in flight, it blocks.
+
+**Fix:** `displaySyncEnabled = NO` + nil guard on drawable return value. Frame rate controlled by `FramePacer`.
 
 ---
 
@@ -194,12 +221,12 @@ grep "initSubsystem" Platform/MacOS/Build/Logs/game.log
 
 | Task | Priority | Notes |
 |:---|:---|:---|
-| Terrain textures black | **Critical** | 3D draws confirmed but texture data appears black |
-| Cursor texture | **Medium** | Green square instead of proper cursor texture |
-| Crash on exit | **Medium** | SIGSEGV exit code 11, inconsistent |
-| Audio playback | **Medium** | Wrapped in @try/@catch, needs .big file loading verification |
-| .big archives mounting | **Medium** | Asset loading works (INI files load), completeness unverified |
-| WOL authorization | Low | Browser excluded. Possibly REST API. |
+| Audio — fix AudioEventRTS | **Critical** | Corrupted pointers cause SIGSEGV. Need lifetime/ownership fix |
+| White 3D textures | **Critical** | TSS pipeline — MODULATE not applying textures to models |
+| Crash on exit | **Medium** | SIGSEGV on cleanup/dealloc |
+| Cursor texture | **Medium** | Green square instead of proper cursor |
+| Particle effects | **Low** | ParticleSystemManager stubbed |
+| WOL authorization | Low | Browser excluded |
 | Cross-platform LAN | Low | wchar_t 4B on macOS vs 2B on Windows |
 
 ---
