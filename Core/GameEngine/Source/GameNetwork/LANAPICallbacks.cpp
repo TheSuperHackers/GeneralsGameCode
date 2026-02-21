@@ -256,9 +256,9 @@ void LANAPI::OnGameStart( void )
 
 		TheWritableGlobalData->m_useFpsLimit = false;
 
-		// Set the random seed
-		InitGameLogicRandom( m_currentGame->getSeed() );
-		DEBUG_LOG(("InitGameLogicRandom( %d )", m_currentGame->getSeed()));
+		// Set the seeds
+		InitRandom( m_currentGame->getSeed() );
+		DEBUG_LOG(("InitRandom( %d )", m_currentGame->getSeed()));
 	}
 }
 

@@ -852,9 +852,9 @@ void GameSpyStagingRoom::launchGame( void )
 
 	TheWritableGlobalData->m_useFpsLimit = false;
 
-	// Set the random seed
-	InitGameLogicRandom( getSeed() );
-	DEBUG_LOG(("InitGameLogicRandom( %d )", getSeed()));
+	// Set the seeds
+	InitRandom( getSeed() );
+	DEBUG_LOG(("InitRandom( %d )", getSeed()));
 
 	// mark us as "Loading" in the buddy list
 	BuddyRequest req;
