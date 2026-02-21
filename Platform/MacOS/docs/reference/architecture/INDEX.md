@@ -1,6 +1,10 @@
-# Generals Architecture: Source of Truth
+# Generals Architecture: Pre-Port Analysis
 
-This directory contains verified architectural overviews of the Generals engine, modernized for cross-platform development (macOS/Linux).
+> This directory contains architectural overviews of the **original** Generals engine,
+> created during initial codebase research before the macOS port.
+>
+> For the **current** build system docs, see [`docs/BUILD_SYSTEM.md`](../../BUILD_SYSTEM.md).
+> For the **current** rendering pipeline docs, see [`docs/RENDERING.md`](../../RENDERING.md).
 
 ## 🗺️ Subsystem Index
 
@@ -9,31 +13,30 @@ This directory contains verified architectural overviews of the Generals engine,
 2.  **[Engine Initialization and Main Loop](ENGINE_MAIN_LOOP.md)**
     How the game starts and pulses (the heart of the process).
 3.  **[Graphics Rendering Pipeline](GRAPHICS_PIPELINE.md)**
-    From W3D draw calls to Metal/Vulkan backends.
+    The original DX8 rendering pipeline and W3D draw call chain.
 4.  **[Object System Architecture](OBJECT_SYSTEM.md)**
     Composition-based units and behavioral modules.
 5.  **[Configuration and Data Management](CONFIGURATION.md)**
     INI files, BIG archives, and data-driven design.
-6.  **[Build System Architecture](BUILD_SYSTEM.md)**
-    CMake structure and modular library management.
 
 ---
 
-## 📂 Repository Structure (Verified)
+## 📂 Repository Structure
 
 ```text
 /
 ├── Core/               # Shared engine code (Math, WWVegas, Tools)
-├── Dependencies/       # 3rd party libs (GameSpy, STLPort, Mock DX8)
+├── Dependencies/       # 3rd party libs (GameSpy, STLPort, DX8 stubs)
 ├── GeneralsMD/         # Zero Hour specific code (Main, GameLogic)
-├── Platform/           # Platform-specific folders (MacOS, Win32)
+├── Platform/           # Platform-specific folders (MacOS)
 │   └── MacOS/          # Entry points, Metal renderer, Window management
-├── GameResources/      # Shaders, Windows, UI layouts
-├── scripts/            # Build and deployment utilities
+├── resources/          # Build resources
+├── cmake/              # CMake modules
+└── scripts/            # Build utilities
 ```
 
 ## 🛠️ Key Philosophy
 
-- **Modernization without Mutilation**: Keep the core legacy SAGE logic (which works perfectly for RTS) but replace the platform layer (DirectX 8 -> Metal/Vulkan, Win32 -> SDL2).
+- **Modernization without Mutilation**: Keep the core legacy SAGE logic but replace the platform layer (DirectX 8 → Metal, Win32 → Cocoa).
 - **Logic Determinism**: Protect the fixed 30 FPS update loop at all costs.
 - **Data-Driven**: Prefer changing an INI property over changing code.
