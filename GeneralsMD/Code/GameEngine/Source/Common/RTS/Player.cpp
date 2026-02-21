@@ -2431,7 +2431,7 @@ void Player::doBountyForKill(const Object* killer, const Object* victim)
 	Int bounty = REAL_TO_INT_CEIL(costToBuild * m_cashBountyPercent);
 #else
 	// TheSuperHackers @bugfix Stubbjax 20/02/2026 Subtract epsilon to ensure bounty is rounded up correctly.
-	Int bounty = REAL_TO_INT_CEIL((costToBuild * m_cashBountyPercent) - WWMATH_EPSILON);
+	Int bounty = ceil((costToBuild * m_cashBountyPercent) - WWMATH_EPSILON);
 #endif
 
 	if( bounty )
