@@ -136,14 +136,37 @@
 
 | Commit | Description |
 |:---|:---|
+| `42f1e5d1` | docs(macos): Update documentation for Phase 12 milestone |
 | `426bd96c` | **fix(macos): Resolve game loop crash and stabilize gameplay** 🎉 ⭐ |
-| (prev) | fix(macos): 3D object loading — W3DGameLogic factory |
-| (prev) | fix(macos): Terrain texture pipeline — surface upload |
-| `d8d58c12` | fix(macos): text rendering — disable back-face culling for 2D |
-| `03100065` | fix(macos): UI buttons, Metal TSS/fog/lighting, audio playback |
-| `838d93c7` | fix(macos): resolve 10 runtime crashes — stable game loop |
-| `a2e7a7ba` | macOS: resolve all linker errors — successful build 🎉 |
-| Earlier | CMake setup, compilation fixes, DX8→Metal stubs |
+| `315e4659` | fix: use W3DGameLogic instead of GameLogic — loads 771 map objects |
+| `2600b265` | Fix 3D/2D rendering: selective TSS bypass + Clear alpha fix |
+| `5f2658b1` | fix(cmake): exclude IMEManager.cpp from macOS build |
+| `741af5fc` | Merge remote-tracking branch 'origin/main' into feature/macos-c_make |
+| `9bfbc396` | fix: MetalSurface8 16-bit format conversion + diagnostic logging |
+| `a60488a6` | fix: terrain rendering visible with diffuse lighting |
+| `5449c3c1` | feat: add initial documentation for DX8 to Metal porting audit and action plan |
+| `c12ac07a` | docs(macos): consolidate docs — remove duplicates, add Metal spec |
+| `d57c5a39` | fix(metal): Fix heap corruption in MetalTexture8::LockRect |
+| `0fbd4f50` | fix(macos): shell map loading, surface UAF, audio crash, rendering pipeline fixes |
+| `57a97e79` | fix(macos): Fix LANMessage size assertion after merge with main |
+| `7595d15d` | Merge remote-tracking branch 'origin/main' into feature/macos-c_make |
+| `cf4d0d20` | macOS: Enable full W3DDisplay::draw() + shell map test case |
+| `020e7f61` | feat(macos): keyboard input — GameContentView + StdKeyboard::update() fix ⭐ |
+| `6e4cf724` | fix(macos): full UI rendering — W3DGameWindowManager integration ⭐ |
+| `20868664` | docs: update porting status, changelog, rendering docs to Phase 7 |
+| `d8d58c12` | **fix(macos): text rendering — disable back-face culling for 2D/XYZRHW** ⭐ |
+| `03100065` | feat(macos): UI buttons visible, Metal TSS/fog/lighting pipeline, audio via AVAudioPlayer |
+| `f299f06b` | docs: translate macOS port documentation to English and update architecture diagrams |
+| `81ad1060` | docs(macos): add reference materials and research to docs |
+| `157d9481` | docs(macos): organize documentation in Platform/MacOS/docs/ |
+| `838d93c7` | **fix(macos): resolve 10 runtime crashes — stable 35s game loop** ⭐ |
+| `b846c79a` | fix(macos): resolve 7 runtime init crashes — game enters main loop 🎉 |
+| `a2e7a7ba` | **macOS: resolve all linker errors — successful build** 🎉 ⭐ |
+| `3b3130e5` | fix(macos): W3DDisplay, W3DGameEngine, windows.h stubs — iterative build fixes |
+| `ac60483f` | fix: resolve macos_platform compilation errors — Carbon compat, D3DX stubs, overrides |
+| `0edf1903` | fix(macos): Replace DX8 SDK with d3d8_stub.h + shim d3dx8 headers |
+| `1f33c17a` | fix(macos): Resolve compilation errors (windows.h shims, PCH, exclusions) |
+| `2dfbe0e4` | feat(macos): Clean restart — Platform/MacOS/ (78 files), CMake skeleton |
 
 ---
 
