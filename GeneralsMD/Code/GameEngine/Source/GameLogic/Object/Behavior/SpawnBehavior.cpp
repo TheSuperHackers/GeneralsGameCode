@@ -1093,8 +1093,9 @@ void SpawnBehavior::xfer( Xfer *xfer )
 		xfer->xferBool(&m_initialBurstTimesInited);
 	}
 
-	if (version >= 3)
+	if (version >= 3) {
 		xfer->xferUnsignedInt(&m_initialBurstCountdown);
+	}
 
 	// spawn template
 	name = m_spawnTemplate ? m_spawnTemplate->getName() : AsciiString::TheEmptyString;
