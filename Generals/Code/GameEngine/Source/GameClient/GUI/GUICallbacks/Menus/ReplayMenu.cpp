@@ -84,6 +84,7 @@ void deleteReplay( void );
 void copyReplay( void );
 static Bool callCopy = FALSE;
 static Bool callDelete = FALSE;
+static Bool needsListRefresh = FALSE;
 void deleteReplayFlag( void ) { callDelete = TRUE;}
 void copyReplayFlag( void ) { callCopy = TRUE;}
 
@@ -492,6 +493,12 @@ void ReplayMenuUpdate( WindowLayout *layout, void *userData )
 		copyReplay();
 	if(callDelete)
 		deleteReplay();
+	if(needsListRefresh)
+	{
+		needsListRefresh = FALSE;
+		GadgetListBoxReset(listboxReplayFiles);
+		PopulateReplayFileListbox(listboxReplayFiles);
+	}
 		// We'll only be successful if we've requested to
 	if(isShuttingDown && TheShell->isAnimFinished()&& TheTransitionHandler->isFinished())
 		TheShell->shutdownComplete( layout );
@@ -564,11 +571,29 @@ void reallyLoadReplay(void)
 	AsciiString asciiFilename;
 	asciiFilename.translate(filename);
 
-	TheRecorder->playbackFile(asciiFilename);
-
-	if(parentReplayMenu != nullptr)
+	// TheSuperHackers @bugfix bobtista Re-validate replay file before playback to handle file deletion
+	// during version mismatch prompt, using the same error pattern as deleteReplay
+	AsciiString filepath = TheRecorder->getReplayDir();
+	filepath.concat(asciiFilename);
+	if(GetFileAttributes(filepath.str()) == INVALID_FILE_ATTRIBUTES)
 	{
-		parentReplayMenu->winHide(TRUE);
+		char buffer[1024];
+		FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, nullptr, GetLastError(), 0, buffer, sizeof(buffer), nullptr);
+		UnicodeString errorStr;
+		AsciiString translate;
+		translate.set(buffer);
+		errorStr.translate(translate);
+		MessageBoxOk(TheGameText->fetch("GUI:Error"), errorStr, nullptr);
+		needsListRefresh = TRUE;
+		return;
+	}
+
+	if(TheRecorder->playbackFile(asciiFilename))
+	{
+		if(parentReplayMenu != nullptr)
+		{
+			parentReplayMenu->winHide(TRUE);
+		}
 	}
 }
 
