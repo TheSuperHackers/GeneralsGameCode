@@ -101,7 +101,7 @@ public:
 	virtual void drawScaledVideoBuffer( VideoBuffer *buffer, VideoStreamInterface *stream ) { }
 	virtual void drawVideoBuffer( VideoBuffer *buffer, Int startX, Int startY,
 																Int endX, Int endY ) { }
-	virtual void takeScreenShot(void){ }
+	virtual void takeScreenShot(ScreenshotFormat){ }
 	virtual void toggleMovieCapture(void) {}
 
 	// methods that we need to stub

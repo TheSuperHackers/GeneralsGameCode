@@ -256,6 +256,7 @@ def main():
     #unify_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/GameClient/W3DTerrainVisual.cpp", Game.CORE, "GameEngineDevice/Source/W3DDevice/GameClient/W3DTerrainVisual.cpp")
     #unify_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/GameClient/W3DTreeBuffer.cpp", Game.CORE, "GameEngineDevice/Source/W3DDevice/GameClient/W3DTreeBuffer.cpp")
     #unify_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/GameClient/WorldHeightMap.cpp", Game.CORE, "GameEngineDevice/Source/W3DDevice/GameClient/WorldHeightMap.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/GameClient/stb_image_write_impl.cpp", Game.CORE, "GameEngineDevice/Source/W3DDevice/GameClient/stb_image_write_impl.cpp")
 
     #unify_file(Game.ZEROHOUR, "GameEngine/Include/Common/UserPreferences.h", Game.CORE, "GameEngine/Include/Common/UserPreferences.h")
     #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/UserPreferences.cpp", Game.CORE, "GameEngine/Source/Common/UserPreferences.cpp")

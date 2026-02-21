@@ -93,6 +93,7 @@ public:
 	Bool getAlternateMouseModeEnabled(void);	// convenience function
 	Bool getRetaliationModeEnabled();					// convenience function
 	Bool getDoubleClickAttackMoveEnabled(void);	// convenience function
+	Int getJPEGQuality(void);									// convenience function
 	Real getScrollFactor(void);								// convenience function
 	Bool getDrawScrollAnchor(void);
 	Bool getMoveScrollAnchor(void);
