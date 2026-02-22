@@ -174,7 +174,7 @@ AsciiString kindofMaskAsAsciiString(KindOfMaskType m)
 		s = "KINDOF_INVALID";
 	return s;
 }
-void dumpBattlePlanBonuses(const BattlePlanBonuses *b, AsciiString name, const Player *p, const Object *o, AsciiString fname, Int line, Bool doDebugLog)
+void dumpBattlePlanBonuses(const BattlePlanBonusesData *b, AsciiString name, const Player *p, const Object *o, AsciiString fname, Int line, Bool doDebugLog)
 {
 	CRCDEBUG_LOG(("dumpBattlePlanBonuses() %s:%d %s\n  Player %d(%ls) object %d(%s) armor:%g/%8.8X bombardment:%d, holdTheLine:%d, searchAndDestroy:%d sight:%g/%8.8X, valid:%s invalid:%s",
 		fname.str(), line, name.str(),
@@ -3413,7 +3413,7 @@ Bool Player::doesObjectQualifyForBattlePlan( Object *obj ) const
 
 //-------------------------------------------------------------------------------------------------
 // note, bonus is an in-out parm.
-void Player::changeBattlePlan( BattlePlanStatus plan, Int delta, BattlePlanBonuses *bonus )
+void Player::changeBattlePlan( BattlePlanStatus plan, Int delta, BattlePlanBonusesData *bonus )
 {
 	DUMPBATTLEPLANBONUSES(bonus, this, nullptr);
 	Bool addBonus = false;
@@ -3510,7 +3510,7 @@ Int Player::getBattlePlansActiveSpecific( BattlePlanStatus plan ) const
 //------------------------------------------------------------------------------------------------
 static void localApplyBattlePlanBonusesToObject( Object *obj, void *userData )
 {
-	const BattlePlanBonuses* bonus = (const BattlePlanBonuses*)userData;
+	const BattlePlanBonusesData* bonus = static_cast<const BattlePlanBonusesData*>(userData);
 	Object *objectToValidate = obj;
 	Object *objectToModify = obj;
 
@@ -3589,7 +3589,7 @@ static void localApplyBattlePlanBonusesToObject( Object *obj, void *userData )
 //-------------------------------------------------------------------------------------------------
 void Player::applyBattlePlanBonusesForObject( Object *obj ) const
 {
-	localApplyBattlePlanBonusesToObject( obj, m_battlePlanBonuses );
+	localApplyBattlePlanBonusesToObject( obj, static_cast<BattlePlanBonusesData*>(m_battlePlanBonuses) );
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -3597,25 +3597,24 @@ void Player::applyBattlePlanBonusesForObject( Object *obj ) const
 //-------------------------------------------------------------------------------------------------
 void Player::removeBattlePlanBonusesForObject( Object *obj ) const
 {
-	//Copy bonuses, and invert them.
-	BattlePlanBonuses* bonus = newInstance(BattlePlanBonuses);
-	*bonus = *m_battlePlanBonuses;
-	bonus->m_armorScalar					= 1.0f / __max( bonus->m_armorScalar, 0.01f );
-	bonus->m_sightRangeScalar			= 1.0f / __max( bonus->m_sightRangeScalar, 0.01f );
-	bonus->m_bombardment					= -ALL_PLANS; //Safe to remove as it clears the weapon bonus flag
-	bonus->m_searchAndDestroy			= -ALL_PLANS; //Safe to remove as it clears the weapon bonus flag
-	bonus->m_holdTheLine					= -ALL_PLANS; //Safe to remove as it clears the weapon bonus flag
+	//Create inverted bonuses.
+	BattlePlanBonusesData bonus;
+	bonus.m_armorScalar = 1.0f / __max( m_battlePlanBonuses->m_armorScalar, 0.01f );
+	bonus.m_sightRangeScalar = 1.0f / __max( m_battlePlanBonuses->m_sightRangeScalar, 0.01f );
+	bonus.m_bombardment = -ALL_PLANS; //Safe to remove as it clears the weapon bonus flag
+	bonus.m_searchAndDestroy = -ALL_PLANS; //Safe to remove as it clears the weapon bonus flag
+	bonus.m_holdTheLine = -ALL_PLANS; //Safe to remove as it clears the weapon bonus flag
+	bonus.m_validKindOf = m_battlePlanBonuses->m_validKindOf;
+	bonus.m_invalidKindOf = m_battlePlanBonuses->m_invalidKindOf;
 
-	DUMPBATTLEPLANBONUSES(bonus, this, obj);
-	localApplyBattlePlanBonusesToObject( obj, bonus );
-
-	deleteInstance(bonus);
+	DUMPBATTLEPLANBONUSES(&bonus, this, obj);
+	localApplyBattlePlanBonusesToObject( obj, &bonus );
 }
 
 //-------------------------------------------------------------------------------------------------
 //Battle plan bonuses changing, so apply to all of our objects!
 //-------------------------------------------------------------------------------------------------
-void Player::applyBattlePlanBonusesForPlayerObjects( const BattlePlanBonuses *bonus )
+void Player::applyBattlePlanBonusesForPlayerObjects( const BattlePlanBonusesData *bonus )
 {
 	DUMPBATTLEPLANBONUSES(bonus, this, nullptr);
 
@@ -3624,7 +3623,7 @@ void Player::applyBattlePlanBonusesForPlayerObjects( const BattlePlanBonuses *bo
 	{
 		DEBUG_LOG(("Allocating new m_battlePlanBonuses"));
 		m_battlePlanBonuses = newInstance( BattlePlanBonuses );
-		*m_battlePlanBonuses = *bonus;
+		*static_cast<BattlePlanBonusesData*>(m_battlePlanBonuses) = *bonus;
 	}
 	else
 	{
@@ -3644,7 +3643,7 @@ void Player::applyBattlePlanBonusesForPlayerObjects( const BattlePlanBonuses *bo
 	}
 
 	DUMPBATTLEPLANBONUSES(m_battlePlanBonuses, this, nullptr);
-	iterateObjects( localApplyBattlePlanBonusesToObject, (void*)bonus );
+	iterateObjects( localApplyBattlePlanBonusesToObject, const_cast<BattlePlanBonusesData *>(bonus) );
 }
 
 
