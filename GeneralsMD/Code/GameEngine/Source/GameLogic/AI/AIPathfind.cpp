@@ -9758,22 +9758,26 @@ void Pathfinder::updateGoal( Object *obj, const Coord3D *newGoalPos, PathfindLay
 
 	AIUpdateInterface *ai = obj->getAIUpdateInterface();
 	if (!ai) return; // only consider ai objects.
-
-
-
-  if (!ai->isDoingGroundMovement()) // exception:sniped choppers are on ground
-  {
-
-    Bool isUnmannedHelicopter = ( obj->isKindOf( KINDOF_PRODUCED_AT_HELIPAD ) && obj->isDisabledByType( DISABLED_UNMANNED  ) ) ;
-    if ( ! isUnmannedHelicopter )
-    {
-		  updateAircraftGoal(obj, newGoalPos);
-		  return;
-    }
+#if RTS_GENERALS
+	if (!ai->isDoingGroundMovement()) {
+		updateAircraftGoal(obj, newGoalPos);
+		return;
 	}
+#else
+	if (!ai->isDoingGroundMovement()) {
+		// exception:sniped choppers are on ground
+		Bool isUnmannedHelicopter = ( obj->isKindOf( KINDOF_PRODUCED_AT_HELIPAD ) && obj->isDisabledByType( DISABLED_UNMANNED  ) ) ;
+		if ( ! isUnmannedHelicopter )
+		{
+			  updateAircraftGoal(obj, newGoalPos);
+			  return;
+		}
+	}
+#endif
 
 	PathfindLayerEnum originalLayer = obj->getDestinationLayer();
 
+	//DEBUG_LOG(("Object Goal layer is %d", layer));
 	Bool layerChanged = originalLayer != layer;
 
 	Bool doGround=false;
@@ -10208,7 +10212,8 @@ if (g_UT_startTiming) return false;
 				if (!otherObj->getAI() || otherObj->getAI()->isMoving()) {
 					continue;
 				}
-
+				
+#if RTS_ZEROHOUR
 				if (otherObj->getAI()->isAttacking()) {
 					continue; // Don't move units that are attacking. [8/14/2003]
 				}
@@ -10218,6 +10223,7 @@ if (g_UT_startTiming) return false;
 				if( otherObj->testStatus( OBJECT_STATUS_IS_USING_ABILITY ) || otherObj->getAI()->isBusy() ) {
 					continue; // Packing or unpacking objects for example
 				}
+#endif
 
 				//DEBUG_LOG(("Moving ally"));
 				otherObj->getAI()->aiMoveAwayFromUnit(obj, CMD_FROM_AI);
@@ -10660,6 +10666,10 @@ Path *Pathfinder::findAttackPath( const Object *obj, const LocomotorSet& locomot
 	if (!m_isMapReady)
 		return nullptr; // Should always be ok.
 
+#ifdef DEBUG_LOGGING
+	Int startTimeMS = ::GetTickCount();
+#endif
+
 	Bool isCrusher = obj ? obj->getCrusherLevel() > 0 : false;
 	Int radius;
 	Bool centerInCell;
@@ -10858,7 +10868,11 @@ Path *Pathfinder::findAttackPath( const Object *obj, const LocomotorSet& locomot
 	#endif
 				if (show)
 					debugShowSearch(true);
-
+	#ifdef DEBUG_LOGGING
+				DEBUG_LOG(("Attack path took %d cells, %f sec", cellCount, (::GetTickCount()-startTimeMS)/1000.0f));
+	#endif
+	
+	#if RTS_ZEROHOUR
 				// put parent cell onto closed list - its evaluation is finished
 				parentCell->putOnClosedList( m_closedList );
 				// construct and return path
@@ -10919,6 +10933,7 @@ Path *Pathfinder::findAttackPath( const Object *obj, const LocomotorSet& locomot
 						}
 					}
 				}
+#endif // RTS_ZEROHOUR
 				Path *path = buildActualPath( obj, locomotorSet.getValidSurfaces(), obj->getPosition(), parentCell, centerInCell, false);
 #if RETAIL_COMPATIBLE_PATHFINDING
 				if (!s_useFixedPathfinding) {

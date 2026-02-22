@@ -9758,10 +9758,22 @@ void Pathfinder::updateGoal( Object *obj, const Coord3D *newGoalPos, PathfindLay
 
 	AIUpdateInterface *ai = obj->getAIUpdateInterface();
 	if (!ai) return; // only consider ai objects.
+#if RTS_GENERALS
 	if (!ai->isDoingGroundMovement()) {
 		updateAircraftGoal(obj, newGoalPos);
 		return;
 	}
+#else
+	if (!ai->isDoingGroundMovement()) {
+		// exception:sniped choppers are on ground
+		Bool isUnmannedHelicopter = ( obj->isKindOf( KINDOF_PRODUCED_AT_HELIPAD ) && obj->isDisabledByType( DISABLED_UNMANNED  ) ) ;
+		if ( ! isUnmannedHelicopter )
+		{
+			  updateAircraftGoal(obj, newGoalPos);
+			  return;
+		}
+	}
+#endif
 
 	PathfindLayerEnum originalLayer = obj->getDestinationLayer();
 
@@ -10200,6 +10212,18 @@ if (g_UT_startTiming) return false;
 				if (!otherObj->getAI() || otherObj->getAI()->isMoving()) {
 					continue;
 				}
+				
+#if RTS_ZEROHOUR
+				if (otherObj->getAI()->isAttacking()) {
+					continue; // Don't move units that are attacking. [8/14/2003]
+				}
+
+				//Kris: Patch 1.01 November 3, 2003
+				//Black Lotus exploit fix -- moving while hacking.
+				if( otherObj->testStatus( OBJECT_STATUS_IS_USING_ABILITY ) || otherObj->getAI()->isBusy() ) {
+					continue; // Packing or unpacking objects for example
+				}
+#endif
 
 				//DEBUG_LOG(("Moving ally"));
 				otherObj->getAI()->aiMoveAwayFromUnit(obj, CMD_FROM_AI);
@@ -10642,6 +10666,10 @@ Path *Pathfinder::findAttackPath( const Object *obj, const LocomotorSet& locomot
 	if (!m_isMapReady)
 		return nullptr; // Should always be ok.
 
+#ifdef DEBUG_LOGGING
+	Int startTimeMS = ::GetTickCount();
+#endif
+
 	Bool isCrusher = obj ? obj->getCrusherLevel() > 0 : false;
 	Int radius;
 	Bool centerInCell;
@@ -10840,10 +10868,72 @@ Path *Pathfinder::findAttackPath( const Object *obj, const LocomotorSet& locomot
 	#endif
 				if (show)
 					debugShowSearch(true);
-	#if defined(RTS_DEBUG)
-				//DEBUG_LOG(("Attack path took %d cells, %f sec", cellCount, (::GetTickCount()-startTimeMS)/1000.0f));
+	#ifdef DEBUG_LOGGING
+				DEBUG_LOG(("Attack path took %d cells, %f sec", cellCount, (::GetTickCount()-startTimeMS)/1000.0f));
 	#endif
+	
+	#if RTS_ZEROHOUR
+				// put parent cell onto closed list - its evaluation is finished
+				parentCell->putOnClosedList( m_closedList );
 				// construct and return path
+				if (obj->isKindOf(KINDOF_VEHICLE)) {
+					// Strip backwards.
+					PathfindCell *lastBlocked = nullptr;
+					PathfindCell *cur = parentCell;
+					Bool useLargeRadius = false;
+					Int cellLimit = 12; // Magic number, yes I know - jba.   It is about 4 * size of an average vehicle width (3 cells) [8/15/2003]
+					while (cur) {
+						cellLimit--;
+						if (cellLimit<0) {
+							break;
+						}
+						TCheckMovementInfo info;
+						info.cell.x = cur->getXIndex();
+						info.cell.y = cur->getYIndex();
+						info.layer = cur->getLayer();
+						if (useLargeRadius) {
+							info.centerInCell = centerInCell;
+							info.radius = radius;
+						} else {
+							info.centerInCell = true;
+							info.radius = 0;
+						}
+						info.considerTransient = false;
+						info.acceptableSurfaces = locomotorSet.getValidSurfaces();
+						PathfindCell	*cell = getCell(info.layer,info.cell.x,info.cell.y);
+						Bool unitIdle = false;
+						if (cell) {
+							ObjectID posUnit = cell->getPosUnit();
+							Object *unit = TheGameLogic->findObjectByID(posUnit);
+							if (unit && unit->getAI() && unit->getAI()->isIdle()) {
+								unitIdle = true;
+							}
+						}
+						Bool checkMovement = checkForMovement(obj, info);
+						Bool blockedByEnemy = info.enemyFixed;
+						Bool blockedByAllies = info.allyFixedCount || info.allyGoal;
+						if (unitIdle) {
+							// If the unit present is idle, it doesn't block allies. [8/18/2003]
+							blockedByAllies = false;
+						}
+
+
+						if (!checkMovement || blockedByEnemy || blockedByAllies) {
+							lastBlocked = cur;
+							useLargeRadius = true;
+						} else {
+							useLargeRadius = false;
+						}
+						cur = cur->getParentCell();
+					}
+					if (lastBlocked) {
+						parentCell = lastBlocked;
+						if (lastBlocked->getParentCell()) {
+							parentCell = lastBlocked->getParentCell();
+						}
+					}
+				}
+#endif // RTS_ZEROHOUR
 				Path *path = buildActualPath( obj, locomotorSet.getValidSurfaces(), obj->getPosition(), parentCell, centerInCell, false);
 #if RETAIL_COMPATIBLE_PATHFINDING
 				if (!s_useFixedPathfinding) {
