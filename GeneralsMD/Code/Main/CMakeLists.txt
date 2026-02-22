@@ -13,7 +13,6 @@ target_link_libraries(z_generals PRIVATE
     core_debug
     core_profile
     d3d8
-    d3dx8
     dinput8
     dxguid
     imm32
@@ -24,6 +23,11 @@ target_link_libraries(z_generals PRIVATE
     z_gameenginedevice
     zi_always
 )
+
+# Only link d3dx8 if NO_D3DX is not enabled
+if(NOT (MINGW AND MINGW_NO_D3DX))
+    target_link_libraries(z_generals PRIVATE d3dx8)
+endif()
 
 # TODO Originally referred to build host and user, replace with git info perhaps?
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/GeneratedVersion.h
@@ -79,4 +83,9 @@ endif()
 # This creates generalszh.exe.debug (similar to MSVC .pdb files)
 if(MINGW AND COMMAND add_debug_strip_target)
     add_debug_strip_target(z_generals)
+endif()
+
+# Verify no D3DX8 DLL dependency when NO_D3DX is enabled
+if(MINGW AND COMMAND add_no_d3dx_verification)
+    add_no_d3dx_verification(z_generals)
 endif()
