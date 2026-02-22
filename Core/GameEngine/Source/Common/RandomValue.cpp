@@ -177,21 +177,6 @@ DEBUG_LOG(( "InitRandom %08lx",seed));
 #endif
 }
 
-void InitGameLogicRandom( UnsignedInt seed )
-{
-#ifdef DETERMINISTIC
-	// needs to be the same every time
-	seedRandom(0, theGameLogicSeed);
-	theGameLogicBaseSeed = 0;
-#else
-	seedRandom(seed, theGameLogicSeed);
-	theGameLogicBaseSeed = seed;
-#endif
-#ifdef DEBUG_RANDOM_LOGIC
-DEBUG_LOG(( "InitRandom Logic %08lx",seed));
-#endif
-}
-
 //
 // Integer random value
 //
