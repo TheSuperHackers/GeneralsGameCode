@@ -76,21 +76,21 @@ class VictoryConditions : public VictoryConditionsInterface
 public:
 	VictoryConditions();
 
-	void init( void );
-	void reset( void );
-	void update( void );
+	virtual void init( void ) override;
+	virtual void reset( void ) override;
+	virtual void update( void ) override;
 
-	Bool hasAchievedVictory(Player *player);					///< has a specific player and his allies won?
-	Bool hasBeenDefeated(Player *player);							///< has a specific player and his allies lost?
-	Bool hasSinglePlayerBeenDefeated(Player *player);	///< has a specific player lost?
+	virtual Bool hasAchievedVictory(Player *player) override;					///< has a specific player and his allies won?
+	virtual Bool hasBeenDefeated(Player *player) override;							///< has a specific player and his allies lost?
+	virtual Bool hasSinglePlayerBeenDefeated(Player *player) override;	///< has a specific player lost?
 
-	void cachePlayerPtrs( void );											///< players have been created - cache the ones of interest
+	virtual void cachePlayerPtrs( void ) override;											///< players have been created - cache the ones of interest
 
-	Bool isLocalAlliedVictory( void );								///< convenience function
-	Bool isLocalAlliedDefeat( void );									///< convenience function
-	Bool isLocalDefeat( void );												///< convenience function
-	Bool amIObserver( void ) { return m_isObserver;} 	///< Am I an observer?( need this for scripts )
-	virtual UnsignedInt getEndFrame( void ) { return m_endFrame; }	///< on which frame was the game effectively over?
+	virtual Bool isLocalAlliedVictory( void ) override;								///< convenience function
+	virtual Bool isLocalAlliedDefeat( void ) override;									///< convenience function
+	virtual Bool isLocalDefeat( void ) override;												///< convenience function
+	virtual Bool amIObserver( void ) override { return m_isObserver;} 	///< Am I an observer?( need this for scripts )
+	virtual UnsignedInt getEndFrame( void ) override { return m_endFrame; }	///< on which frame was the game effectively over?
 private:
 	Player* findFirstUndefeatedPlayer(); ///< Find the first player that has not been defeated.
 	void markAllianceVictorious(Player* victoriousPlayer); ///< Mark the victorious player and his allies as victorious.

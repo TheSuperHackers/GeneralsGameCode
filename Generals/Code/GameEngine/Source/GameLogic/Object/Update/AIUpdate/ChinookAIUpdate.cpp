@@ -110,13 +110,13 @@ class ChinookEvacuateState : public State
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ChinookEvacuateState, "ChinookEvacuateState")
 protected:
 	// snapshot interface	STUBBED - no member vars to save. jba.
-	virtual void crc( Xfer *xfer ){};
-	virtual void xfer( Xfer *xfer ){};
-	virtual void loadPostProcess(){};
+	virtual void crc( Xfer *xfer ) override {};
+	virtual void xfer( Xfer *xfer ) override {};
+	virtual void loadPostProcess() override {};
 public:
 	ChinookEvacuateState( StateMachine *machine ) : State( machine, "ChinookEvacuateState" ) { }
 
-	StateReturnType onEnter()
+	virtual StateReturnType onEnter() override
 	{
 		Object* obj = getMachineOwner();
 		if( obj->getContain() )
@@ -127,7 +127,7 @@ public:
 		return STATE_SUCCESS;
 	}
 
-	virtual StateReturnType update()
+	virtual StateReturnType update() override
 	{
 		return STATE_SUCCESS;
 	}
@@ -141,13 +141,13 @@ class ChinookHeadOffMapState :  public State
 	//I'm outta here
 protected:
 	// snapshot interface	STUBBED - no member vars to save. jba.
-	virtual void crc( Xfer *xfer ){};
-	virtual void xfer( Xfer *xfer ){};
-	virtual void loadPostProcess(){};
+	virtual void crc( Xfer *xfer ) override {};
+	virtual void xfer( Xfer *xfer ) override {};
+	virtual void loadPostProcess() override {};
 public:
 	ChinookHeadOffMapState( StateMachine *machine ) : State( machine, "ChinookHeadOffMapState" ) {}
 
-	StateReturnType onEnter() // Give move order out of town
+	virtual StateReturnType onEnter() override // Give move order out of town
 	{
 		Object *owner = getMachineOwner();
 		AIUpdateInterface *ai = owner->getAIUpdateInterface();
@@ -170,7 +170,7 @@ public:
 		return STATE_CONTINUE;
 	}
 
-	StateReturnType update()
+	virtual StateReturnType update() override
 	{
 		Object *owner = getMachineOwner();
 
@@ -197,12 +197,12 @@ private:
 
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer )
+	virtual void crc( Xfer *xfer ) override
 	{
 		// empty
 	}
 
-	virtual void xfer( Xfer *xfer )
+	virtual void xfer( Xfer *xfer ) override
 	{
 		// version
 		XferVersion currentVersion = 1;
@@ -213,7 +213,7 @@ protected:
 		xfer->xferBool(&m_landing);
 	}
 
-	virtual void loadPostProcess()
+	virtual void loadPostProcess() override
 	{
 		// empty
 	}
@@ -224,7 +224,7 @@ public:
 		m_destLoc.zero();
 	}
 
-	virtual StateReturnType onEnter()
+	virtual StateReturnType onEnter() override
 	{
 		Object* obj = getMachineOwner();
 		ChinookAIUpdate* ai = (ChinookAIUpdate*)obj->getAIUpdateInterface();
@@ -281,7 +281,7 @@ public:
 		return STATE_CONTINUE;
 	}
 
-	virtual StateReturnType update()
+	virtual StateReturnType update() override
 	{
 		Object* obj = getMachineOwner();
 		if (obj->isEffectivelyDead())
@@ -299,7 +299,7 @@ public:
 		return STATE_CONTINUE;
 	}
 
-	virtual void onExit( StateExitType status )
+	virtual void onExit( StateExitType status ) override
 	{
 		Object* obj = getMachineOwner();
 		ChinookAIUpdate* ai = (ChinookAIUpdate*)obj->getAIUpdateInterface();
@@ -415,12 +415,12 @@ private:
 
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer )
+	virtual void crc( Xfer *xfer ) override
 	{
 		// empty
 	}
 
-	virtual void xfer( Xfer *xfer )
+	virtual void xfer( Xfer *xfer ) override
 	{
 		// version
 		const XferVersion currentVersion = 2;
@@ -467,7 +467,7 @@ protected:
 		}
 	}
 
-	virtual void loadPostProcess()
+	virtual void loadPostProcess() override
 	{
 		for (std::vector<RopeInfo>::iterator it = m_ropes.begin(); it != m_ropes.end(); ++it)
 		{
@@ -481,7 +481,7 @@ public:
 	ChinookCombatDropState( StateMachine *machine ): State( machine, "ChinookCombatDropState" ) { }
 
 	// --------------
-	virtual StateReturnType onEnter()
+	virtual StateReturnType onEnter() override
 	{
 		Object* obj = getMachineOwner();
 		Drawable* draw = obj->getDrawable();
@@ -547,7 +547,7 @@ public:
 	}
 
 	// --------------
-	virtual StateReturnType update()
+	virtual StateReturnType update() override
 	{
 		Object* obj = getMachineOwner();
 		ChinookAIUpdate* ai = (ChinookAIUpdate*)obj->getAIUpdateInterface();
@@ -639,7 +639,7 @@ public:
 	}
 
 	// --------------
-	virtual void onExit( StateExitType status )
+	virtual void onExit( StateExitType status ) override
 	{
 		Object* obj = getMachineOwner();
 		ChinookAIUpdate* ai = (ChinookAIUpdate*)obj->getAIUpdateInterface();
@@ -697,12 +697,12 @@ private:
 	Real m_destZ;
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer )
+	virtual void crc( Xfer *xfer ) override
 	{
 		// empty
 	}
 
-	virtual void xfer( Xfer *xfer )
+	virtual void xfer( Xfer *xfer ) override
 	{
 		// version
 		XferVersion currentVersion = 1;
@@ -714,7 +714,7 @@ protected:
 		xfer->xferReal(&m_destZ);
 	}
 
-	virtual void loadPostProcess()
+	virtual void loadPostProcess() override
 	{
 		// empty
 	}
@@ -722,7 +722,7 @@ protected:
 public:
 	ChinookMoveToBldgState( StateMachine *machine ): AIMoveToState( machine ) { }
 
-	virtual StateReturnType onEnter()
+	virtual StateReturnType onEnter() override
 	{
 		Object* obj = getMachineOwner();
 		ChinookAIUpdate* ai = (ChinookAIUpdate*)obj->getAIUpdateInterface();
@@ -753,7 +753,7 @@ public:
 		return AIMoveToState::onEnter();
 	}
 
-	virtual StateReturnType update()
+	virtual StateReturnType update() override
 	{
 		Object* obj = getMachineOwner();
 
@@ -767,7 +767,7 @@ public:
 		return status;
 	}
 
-	virtual void onExit( StateExitType status )
+	virtual void onExit( StateExitType status ) override
 	{
 		Object* obj = getMachineOwner();
 		ChinookAIUpdate* ai = (ChinookAIUpdate*)obj->getAIUpdateInterface();
