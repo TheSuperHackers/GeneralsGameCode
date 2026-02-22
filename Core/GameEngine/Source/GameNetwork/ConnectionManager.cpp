@@ -31,6 +31,7 @@
 #include "Common/CRCDebug.h"
 #include "Common/Debug.h"
 #include "Common/file.h"
+#include "Common/FileSystem.h"
 #include "Common/GameAudio.h"
 #include "Common/LocalFileSystem.h"
 #include "Common/Player.h"
@@ -741,6 +742,20 @@ void ConnectionManager::processFile(NetFileCommandMsg *msg)
 		}
 	}
 #endif // COMPRESS_TARGAS
+
+	// TheSuperHackers @security bobtista 12/02/2026 Validate file content in memory before writing to disk
+	if (!FileSystem::hasValidTransferFileContent(realFileName, buf, len))
+	{
+		DEBUG_LOG(("File '%s' failed content validation. Transfer aborted.", realFileName.str()));
+#ifdef COMPRESS_TARGAS
+		if (deleteBuf)
+		{
+			delete[] buf;
+			buf = nullptr;
+		}
+#endif // COMPRESS_TARGAS
+		return;
+	}
 
 	File *fp = TheFileSystem->openFile(realFileName.str(), File::CREATE | File::BINARY | File::WRITE);
 	if (fp)
