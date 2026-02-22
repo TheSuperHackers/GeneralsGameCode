@@ -50,6 +50,10 @@
 #define RETAIL_COMPATIBLE_NETWORKING (1)
 #endif
 
+#ifndef USE_ACCURATE_SPHERE_TO_RECT
+#define USE_ACCURATE_SPHERE_TO_RECT (0) // Use Accurate Sphere to Rect Collision Detection
+#endif
+
 // This is essentially synonymous for RETAIL_COMPATIBLE_CRC. There is a lot wrong with AIGroup, such as use-after-free, double-free, leaks,
 // but we cannot touch it much without breaking retail compatibility. Do not shy away from using massive hacks when fixing issues with AIGroup,
 // but put them behind this macro.
