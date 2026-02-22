@@ -75,6 +75,8 @@ public:
 	virtual Bool isActive(void) {return m_isActive;}	///< returns whether app has OS focus.
 	virtual void setIsActive(Bool isActive) { m_isActive = isActive; };
 
+	UnsignedInt getLaunchTime() const; ///< returns the system time when the game engine was created
+
 protected:
 
 	virtual void resetSubsystems( void );
@@ -101,6 +103,8 @@ protected:
 
 	Bool m_quitting; ///< true when we need to quit the game
 	Bool m_isActive; ///< app has OS focus.
+
+	UnsignedInt m_launchTime; ///< stores the system time when the game engine was created
 };
 
 inline void GameEngine::setQuitting( Bool quitting ) { m_quitting = quitting; }

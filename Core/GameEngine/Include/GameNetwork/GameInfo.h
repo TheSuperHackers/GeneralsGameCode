@@ -57,6 +57,34 @@ enum
 class GameSlot
 {
 public:
+	struct ProductInfo
+	{
+		ProductInfo() :
+			flags(0),
+			launchTime(0),
+			exeCRC(0),
+			iniCRC(0),
+			fpMathCRC(0)
+		{}
+
+		enum Flags CPP_11(: UnsignedInt)
+		{
+			NO_RETAIL         = 1 << 0,
+			SHELLMAP_ENABLED  = 1 << 1,
+			ZERO_MAPS_STARTED = 1 << 2,
+		};
+
+		UnsignedInt flags;
+		UnsignedInt launchTime;
+		UnsignedInt exeCRC;
+		UnsignedInt iniCRC;
+		UnsignedInt fpMathCRC;
+		UnicodeString productTitle;
+		UnicodeString productVersion;
+		UnicodeString productAuthor;
+		UnicodeString gitShortHash;
+	};
+
 	GameSlot();
 	virtual void reset();
 
@@ -125,6 +153,10 @@ public:
 
 	void mute( Bool isMuted ) { m_isMuted = isMuted; }
 	Bool isMuted( void ) const { return m_isMuted; }
+
+	void setProductInfo(const ProductInfo& productInfo) { m_productInfo = productInfo; }
+	const ProductInfo& getProductInfo() const { return m_productInfo; }
+
 protected:
 	SlotState m_state;
 	Bool m_isAccepted;
@@ -143,6 +175,7 @@ protected:
 	FirewallHelperClass::FirewallBehaviorType m_NATBehavior;	///< The NAT behavior for this slot's player.
 	UnsignedInt m_lastFrameInGame;	// only valid for human players
 	Bool m_disconnected;						// only valid for human players
+	ProductInfo m_productInfo; ///< Community made product information
 };
 
 /**

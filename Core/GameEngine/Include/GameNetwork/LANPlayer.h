@@ -35,7 +35,7 @@
 class LANPlayer
 {
 public:
-	LANPlayer() { m_name = m_login = m_host = L""; m_lastHeard = 0; m_next = nullptr; m_IP = 0; }
+	LANPlayer() { m_name = m_login = m_host = L""; m_lastHeard = 0; m_next = nullptr; m_IP = 0; m_productInfoFlags = 0; }
 
 	// Access functions
 	UnicodeString getName( void ) { return m_name; }
@@ -52,6 +52,8 @@ public:
 	void setNext( LANPlayer *next ) { m_next = next; }
 	UnsignedInt getIP( void ) { return m_IP; }
 	void setIP( UnsignedInt IP ) { m_IP = IP; }
+	UnsignedInt getProductInfoFlags() const { return m_productInfoFlags; }
+	void setProductInfoFlags(UnsignedInt productInfoFlags) { m_productInfoFlags = productInfoFlags; }
 
 protected:
 	UnicodeString m_name;			///< Player name
@@ -60,4 +62,5 @@ protected:
 	UnsignedInt m_lastHeard;	///< The last time we heard from this player (for timeout purposes)
 	LANPlayer *m_next;				///< Linked list pointer
 	UnsignedInt m_IP;					///< Player's IP
+	UnsignedInt m_productInfoFlags;	///< Community made product information flags
 };

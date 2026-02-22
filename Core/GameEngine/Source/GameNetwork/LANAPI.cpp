@@ -87,6 +87,7 @@ LANAPI::LANAPI( void ) : m_transport(nullptr)
 	m_lastUpdate = 0;
 	m_transport = new Transport;
 	m_isActive = TRUE;
+	m_productInfoMessage = createProductInfoMessage();
 }
 
 LANAPI::~LANAPI( void )
@@ -179,13 +180,13 @@ void LANAPI::reset( void )
 
 }
 
-void LANAPI::sendMessage(LANMessage *msg, UnsignedInt ip /* = 0 */)
+void LANAPI::sendMessage(LANMessage *msg, UnsignedInt ip /* = 0 */, Bool broadcast /*= TRUE*/)
 {
 	if (ip != 0)
 	{
 		m_transport->queueSend(ip, lobbyPort, (unsigned char *)msg, sizeof(LANMessage) /*, 0, 0 */);
 	}
-	else if ((m_currentGame != nullptr) && (m_currentGame->getIsDirectConnect()))
+	else if (m_currentGame != nullptr && (m_currentGame->getIsDirectConnect() || !broadcast))
 	{
 		Int localSlot = m_currentGame->getLocalSlotNum();
 		for (Int i = 0; i < MAX_SLOTS; ++i)
@@ -423,6 +424,26 @@ void LANAPI::update( void )
 				break;
 			case LANMessage::MSG_INACTIVE:		// someone is telling us that we're inactive.
 				handleInActive( msg, senderIP );
+				break;
+
+				// exchange product information with other players
+			case LANMessage::MSG_GAME_REQUEST_PRODUCT_INFO:
+				handleGameProductInfoRequest(msg, senderIP);
+				break;
+			case LANMessage::MSG_GAME_RESPONSE_PRODUCT_INFO:
+				handleGameProductInfoResponse(msg, senderIP);
+				break;
+			case LANMessage::MSG_LOBBY_REQUEST_PRODUCT_INFO:
+				handleLobbyProductInfoRequest(msg, senderIP);
+				break;
+			case LANMessage::MSG_LOBBY_RESPONSE_PRODUCT_INFO:
+				handleLobbyProductInfoResponse(msg, senderIP);
+				break;
+			case LANMessage::MSG_MATCH_REQUEST_PRODUCT_INFO:
+				handleMatchProductInfoRequest(msg, senderIP);
+				break;
+			case LANMessage::MSG_MATCH_RESPONSE_PRODUCT_INFO:
+				handleMatchProductInfoResponse(msg, senderIP);
 				break;
 
 			default:
@@ -905,6 +926,9 @@ void LANAPI::RequestGameCreate( UnicodeString gameName, Bool isDirectConnect )
 	newSlot.setLastHeard(0);
 	newSlot.setLogin(m_userName);
 	newSlot.setHost(m_hostName);
+
+	// set product information for local game slot
+	setProductInfoFromLocalData(newSlot);
 
 	myGame->setSlot(0,newSlot);
 	myGame->setNext(nullptr);
