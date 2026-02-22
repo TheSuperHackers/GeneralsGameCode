@@ -284,7 +284,11 @@ public:
 		CELL_RUBBLE		= 0x03,									///< Cell is occupied by rubble.
 		CELL_OBSTACLE	= 0x04,									///< Occupied by a structure
 		CELL_BRIDGE_IMPASSABLE = 0x05,				///< Piece of a bridge that is impassable.
+#if RTS_ZEROHOUR
 		CELL_IMPASSABLE = 0x06								///< Just plain impassable except for aircraft.
+#else
+		CELL_IMPASSABLE = 0x0B								///< Just plain impassable except for aircraft.
+#endif
 	};
 
 	enum CellFlags
@@ -483,7 +487,6 @@ struct TCheckMovementInfo;
 class ZoneBlock
 {
 public:
-
 	ZoneBlock();
 	~ZoneBlock();  // not virtual, please don't override without making virtual.  jba.
 
@@ -507,7 +510,6 @@ protected:
 	zoneStorageType m_firstZone; // First zone in this block.
 	UnsignedShort m_numZones;	 // Number of zones in this block.  If == 1, there is only one zone, and
 														 // no zone equivalency arrays will be allocated.
-
 
 	UnsignedShort m_zonesAllocated;
 	zoneStorageType *m_groundCliffZones;
@@ -539,14 +541,16 @@ public:
 
 	void reset(void);
 
+#if RTS_GENERALS
+	Bool needToCalculateZones(void) const {return m_needToCalculateZones;} ///< Returns true if the zones need to be recalculated.
+#else
 	Bool needToCalculateZones(void) const {return m_nextFrameToCalculateZones <= TheGameLogic->getFrame() ;} ///< Returns true if the zones need to be recalculated.
- 	void markZonesDirty( Bool insert ) ; ///< Called when the zones need to be recalculated.
+#endif
+	void markZonesDirty(void); ///< Called when the zones need to be recalculated.
  	void updateZonesForModify( PathfindCell **map,  PathfindLayer layers[], const IRegion2D &structureBounds, const IRegion2D &globalBounds ) ; ///< Called to recalculate an area when a structure has been removed.
 	void calculateZones(	PathfindCell **map, PathfindLayer layers[], const IRegion2D &bounds);	///< Does zone calculations.
 	zoneStorageType getEffectiveZone(LocomotorSurfaceTypeMask acceptableSurfaces, Bool crusher, zoneStorageType zone) const;
 	zoneStorageType getEffectiveTerrainZone(zoneStorageType zone) const;
-
-	zoneStorageType getNextZone(void);
 
 	void getExtent(ICoord2D &extent) const {extent = m_zoneBlockExtent;}
 
@@ -575,7 +579,11 @@ private:
 	ICoord2D			m_zoneBlockExtent;				///< Zone block extents. Not the same scale as the pathfind extents.
 
 	UnsignedShort m_maxZone;								///< Max zone used.
+#if RTS_GENERALS
+	Bool			m_needToCalculateZones;		///< True if terrain has changed.
+#else
 	UnsignedInt		m_nextFrameToCalculateZones;		///< WHen should I recalculate, next?.
+#endif
 	UnsignedShort m_zonesAllocated;
 	zoneStorageType *m_groundCliffZones;
 	zoneStorageType *m_groundWaterZones;

@@ -1,5 +1,5 @@
 /*
-**	Command & Conquer Generals(tm)
+**	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
 **
 **	This program is free software: you can redistribute it and/or modify
@@ -33,12 +33,13 @@
 #include "Common/Snapshot.h"
 //#include "GameLogic/Locomotor.h"	// no, do not include this, unless you like long recompiles
 #include "GameLogic/LocomotorSet.h"
+#include "GameLogic/GameLogic.h"
 
 class Bridge;
 class Object;
-class PathfindCell;
-class PathfindZoneManager;
 class Weapon;
+class PathfindZoneManager;
+class PathfindCell;
 
 // How close is close enough when moving.
 
@@ -281,9 +282,13 @@ public:
 		CELL_WATER		= 0x01,									///< water area
 		CELL_CLIFF		= 0x02,									///< steep altitude change
 		CELL_RUBBLE		= 0x03,									///< Cell is occupied by rubble.
-		CELL_OBSTACLE	= 0x04,									///< impassable area
-		CELL_unused		= 0x08,									///< Unused.
+		CELL_OBSTACLE	= 0x04,									///< Occupied by a structure
+		CELL_BRIDGE_IMPASSABLE = 0x05,				///< Piece of a bridge that is impassable.
+#if RTS_ZEROHOUR
+		CELL_IMPASSABLE = 0x06								///< Just plain impassable except for aircraft.
+#else
 		CELL_IMPASSABLE = 0x0B								///< Just plain impassable except for aircraft.
+#endif
 	};
 
 	enum CellFlags
@@ -301,8 +306,8 @@ public:
 	PathfindCell(void);
 	~PathfindCell(void);
 
-	void setTypeAsObstacle( Object *obstacle, Bool isFence, const ICoord2D &pos );				///< flag this cell as an obstacle, from the given one
-	void removeObstacle( Object *obstacle );				///< flag this cell as an obstacle, from the given one
+	Bool setTypeAsObstacle( Object *obstacle, Bool isFence, const ICoord2D &pos );				///< flag this cell as an obstacle, from the given one
+	Bool removeObstacle( Object *obstacle );				///< unflag this cell as an obstacle, from the given one
 	void setType( CellType type );	///< set the cell type
 	CellType getType( void ) const { return (CellType)m_type; }				///< get the cell type
 	CellFlags getFlags( void ) const { return (CellFlags)m_flags; }				///< get the cell type
@@ -356,13 +361,13 @@ public:
 	inline UnsignedInt getCostSoFar(void) const {return m_info->m_costSoFar;}
 	inline UnsignedInt getTotalCost(void) const {return m_info->m_totalCost;}
 
-	inline void setCostSoFar(UnsignedInt cost) {m_info->m_costSoFar = cost;}
-	inline void setTotalCost(UnsignedInt cost) {m_info->m_totalCost = cost;}
+	inline void setCostSoFar(UnsignedInt cost) { if( m_info ) m_info->m_costSoFar = cost;}
+	inline void setTotalCost(UnsignedInt cost) { if( m_info ) m_info->m_totalCost = cost;}
 
 	void setParentCell(PathfindCell* parent);
 	void clearParentCell(void);
 	void setParentCellHierarchical(PathfindCell* parent);
-	inline PathfindCell* getParentCell(void) const {return m_info->m_pathParent?m_info->m_pathParent->m_cell: nullptr;}
+	inline PathfindCell* getParentCell(void) const {return m_info ? m_info->m_pathParent ? m_info->m_pathParent->m_cell : nullptr : nullptr;}
 
 	Bool startPathfind( PathfindCell *goalCell );
 	Bool getPinched(void) const {return m_pinched;}
@@ -529,14 +534,20 @@ class PathfindZoneManager
 public:
 	enum {INITIAL_ZONES = 256};
 	enum {ZONE_BLOCK_SIZE = 10};	// Zones are calculated in blocks of 20x20.  This way, the raw zone numbers can be used to
+	enum {UNINITIALIZED_ZONE = 0};
 																// compute hierarchically between the 20x20 blocks of cells. jba.
 	PathfindZoneManager();
 	~PathfindZoneManager();
 
 	void reset(void);
 
+#if RTS_GENERALS
 	Bool needToCalculateZones(void) const {return m_needToCalculateZones;} ///< Returns true if the zones need to be recalculated.
-	void markZonesDirty(void) ; ///< Called when the zones need to be recalculated.
+#else
+	Bool needToCalculateZones(void) const {return m_nextFrameToCalculateZones <= TheGameLogic->getFrame() ;} ///< Returns true if the zones need to be recalculated.
+#endif
+	void markZonesDirty(void); ///< Called when the zones need to be recalculated.
+ 	void updateZonesForModify( PathfindCell **map,  PathfindLayer layers[], const IRegion2D &structureBounds, const IRegion2D &globalBounds ) ; ///< Called to recalculate an area when a structure has been removed.
 	void calculateZones(	PathfindCell **map, PathfindLayer layers[], const IRegion2D &bounds);	///< Does zone calculations.
 	zoneStorageType getEffectiveZone(LocomotorSurfaceTypeMask acceptableSurfaces, Bool crusher, zoneStorageType zone) const;
 	zoneStorageType getEffectiveTerrainZone(zoneStorageType zone) const;
@@ -557,18 +568,22 @@ public:
 	void setBridge(Int cellX, Int cellY, Bool bridge);
 	Bool interactsWithBridge(Int cellX, Int cellY) const;
 
-protected:
+private:
 	void allocateZones(void);
 	void freeZones(void);
 	void freeBlocks(void);
 
-protected:
+private:
 	ZoneBlock			*m_blockOfZoneBlocks;			///< Zone blocks - Info for hierarchical pathfinding at a "blocky" level.
 	ZoneBlock			**m_zoneBlocks;						///< Zone blocks as a matrix - contains matrix indexing into the map.
 	ICoord2D			m_zoneBlockExtent;				///< Zone block extents. Not the same scale as the pathfind extents.
 
 	UnsignedShort m_maxZone;								///< Max zone used.
-	Bool					m_needToCalculateZones;		///< True if terrain has changed.
+#if RTS_GENERALS
+	Bool			m_needToCalculateZones;		///< True if terrain has changed.
+#else
+	UnsignedInt		m_nextFrameToCalculateZones;		///< WHen should I recalculate, next?.
+#endif
 	UnsignedShort m_zonesAllocated;
 	zoneStorageType *m_groundCliffZones;
 	zoneStorageType *m_groundWaterZones;
@@ -590,7 +605,7 @@ public:
 	virtual Path *findPath( Object *obj, const LocomotorSet& locomotorSet, const Coord3D *from,
 		const Coord3D *to )=0;	///< Find a short, valid path between given locations
 	/** Find a short, valid path to a location NEAR the to location.
-		This succeds when the destination is unreachable (like inside a building).
+		This succeeds when the destination is unreachable (like inside a building).
 		If the destination is unreachable, it will adjust the to point.  */
 	virtual Path *findClosestPath( Object *obj, const LocomotorSet& locomotorSet, const Coord3D *from,
 		Coord3D *to, Bool blocked, Real pathCostMultiplier, Bool moveAllies )=0;
@@ -619,7 +634,7 @@ class Pathfinder : PathfindServicesInterface, public Snapshot
 private:
 	virtual Path *findPath( Object *obj, const LocomotorSet& locomotorSet, const Coord3D *from, const Coord3D *to);	///< Find a short, valid path between given locations
 	/** Find a short, valid path to a location NEAR the to location.
-		This succeds when the destination is unreachable (like inside a building).
+		This succeeds when the destination is unreachable (like inside a building).
 		If the destination is unreachable, it will adjust the to point.  */
 	virtual Path *findClosestPath( Object *obj, const LocomotorSet& locomotorSet, const Coord3D *from,
 		Coord3D *to, Bool blocked, Real pathCostMultiplier, Bool moveAllies );
@@ -648,7 +663,8 @@ public:
 	void xfer( Xfer *xfer );
 	void loadPostProcess( void );
 
-	Bool quickDoesPathExist( const LocomotorSet& locomotorSet, const Coord3D *from, const Coord3D *to );  ///< Can we build any path at all between the locations	(terrain & buildings check - fast)
+	Bool clientSafeQuickDoesPathExist( const LocomotorSet& locomotorSet, const Coord3D *from, const Coord3D *to );  ///< Can we build any path at all between the locations	(terrain & buildings check - fast)
+	Bool clientSafeQuickDoesPathExistForUI( const LocomotorSet& locomotorSet, const Coord3D *from, const Coord3D *to );  ///< Can we build any path at all between the locations	(terrain onlyk - fast)
 	Bool slowDoesPathExist( Object *obj, const Coord3D *from,
 		const Coord3D *to, ObjectID ignoreObject=INVALID_ID );  ///< Can we build any path at all between the locations	(terrain, buildings & units check - slower)
 

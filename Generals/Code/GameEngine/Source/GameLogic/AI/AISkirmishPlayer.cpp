@@ -711,7 +711,7 @@ Bool AISkirmishPlayer::checkBridges(Object *unit, Waypoint *way)
 	const LocomotorSet& locoSet = ai->getLocomotorSet();
 	Waypoint *curWay;
 	for (curWay = way; curWay; curWay = curWay->getNext()) {
-		if (TheAI->pathfinder()->quickDoesPathExist(locoSet, &unitPos, curWay->getLocation())) {
+		if (TheAI->pathfinder()->clientSafeQuickDoesPathExist(locoSet, &unitPos, curWay->getLocation())) {
 			continue;
 		}
 		ObjectID brokenBridge = INVALID_ID;
