@@ -33,6 +33,7 @@
 #include "Common/ThingTemplate.h"
 #include "Common/INI.h"
 #include "Common/Player.h"
+#include "Common/GameState.h"
 #include "Common/Xfer.h"
 #include "GameClient/ParticleSys.h"
 #include "GameClient/Anim2D.h"
@@ -96,21 +97,11 @@ GrantStealthBehavior::GrantStealthBehavior( Thing *thing, const ModuleData* modu
 
   m_currentScanRadius = d->m_startRadius;
 
-
-  Object *obj = getObject();
-
+	// TheSuperHackers @bugfix stephanmeesters 20/02/2026
+	// If loading from savegame, delay non-saveable emitter creation until postProcess.
+	if ( TheGameState == nullptr || TheGameState->isInLoadGame() == FALSE )
 	{
-		if( d->m_radiusParticleSystemTmpl )
-		{
-			ParticleSystem *particleSystem;
-
-			particleSystem = TheParticleSystemManager->createParticleSystem( d->m_radiusParticleSystemTmpl );
-			if( particleSystem )
-			{
-				particleSystem->setPosition( obj->getPosition() );
-				m_radiusParticleSystemID = particleSystem->getSystemID();
-			}
-		}
+		createEmitters();
 	}
 
 		setWakeFrame( getObject(), UPDATE_SLEEP_NONE );
@@ -246,5 +237,21 @@ void GrantStealthBehavior::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
+	createEmitters();
+}
 
+// ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
+void GrantStealthBehavior::createEmitters( void )
+{
+	const GrantStealthBehaviorModuleData *d = getGrantStealthBehaviorModuleData();
+	if( m_radiusParticleSystemID == INVALID_PARTICLE_SYSTEM_ID && d->m_radiusParticleSystemTmpl )
+	{
+		ParticleSystem *particleSystem = TheParticleSystemManager->createParticleSystem(d->m_radiusParticleSystemTmpl);
+		if( particleSystem )
+		{
+			particleSystem->setPosition( getObject()->getPosition() );
+			m_radiusParticleSystemID = particleSystem->getSystemID();
+		}
+	}
 }

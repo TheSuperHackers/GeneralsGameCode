@@ -34,6 +34,7 @@
 #include "Common/ThingTemplate.h"
 #include "Common/INI.h"
 #include "Common/Player.h"
+#include "Common/GameState.h"
 #include "Common/Xfer.h"
 #include "GameClient/ParticleSys.h"
 #include "GameClient/Anim2D.h"
@@ -94,20 +95,12 @@ AutoHealBehavior::AutoHealBehavior( Thing *thing, const ModuleData* moduleData )
 	m_radiusParticleSystemID = INVALID_PARTICLE_SYSTEM_ID;
 	m_soonestHealFrame = 0;
 	m_stopped = false;
-	Object *obj = getObject();
 
+	// TheSuperHackers @bugfix stephanmeesters 20/02/2026
+	// If loading from savegame, delay non-saveable emitter creation until postProcess.
+	if (TheGameState == nullptr || TheGameState->isInLoadGame() == FALSE)
 	{
-		if( d->m_radiusParticleSystemTmpl )
-		{
-			ParticleSystem *particleSystem;
-
-			particleSystem = TheParticleSystemManager->createParticleSystem( d->m_radiusParticleSystemTmpl );
-			if( particleSystem )
-			{
-				particleSystem->setPosition( obj->getPosition() );
-				m_radiusParticleSystemID = particleSystem->getSystemID();
-			}
-		}
+		createEmitters();
 	}
 
 	if (d->m_initiallyActive)
@@ -373,4 +366,22 @@ void AutoHealBehavior::loadPostProcess( void )
 	// extend base class
 	UpgradeMux::upgradeMuxLoadPostProcess();
 
+	createEmitters();
+
+}
+
+// ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
+void AutoHealBehavior::createEmitters( void )
+{
+	const AutoHealBehaviorModuleData *d = getAutoHealBehaviorModuleData();
+	if( m_radiusParticleSystemID == INVALID_PARTICLE_SYSTEM_ID && d->m_radiusParticleSystemTmpl )
+	{
+		ParticleSystem *particleSystem = TheParticleSystemManager->createParticleSystem(d->m_radiusParticleSystemTmpl);
+		if( particleSystem )
+		{
+			particleSystem->setPosition( getObject()->getPosition() );
+			m_radiusParticleSystemID = particleSystem->getSystemID();
+		}
+	}
 }

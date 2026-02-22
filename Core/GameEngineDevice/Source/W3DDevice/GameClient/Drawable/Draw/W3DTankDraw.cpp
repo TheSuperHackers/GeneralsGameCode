@@ -34,6 +34,7 @@
 #include "Common/Thing.h"
 #include "Common/ThingFactory.h"
 #include "Common/GameAudio.h"
+#include "Common/GameState.h"
 #include "Common/ThingTemplate.h"
 #include "Common/Xfer.h"
 #include "GameLogic/Weapon.h"
@@ -106,7 +107,12 @@ W3DTankDraw::W3DTankDraw( Thing *thing, const ModuleData* moduleData )
 	m_lastDirection.y=0.0f;
 	m_lastDirection.z=0.0f;
 
-	createTreadEmitters();
+	// TheSuperHackers @bugfix stephanmeesters 20/02/2026
+	// If loading from savegame, delay non-saveable emitter creation until postProcess.
+	if (TheGameState == nullptr || TheGameState->isInLoadGame() == FALSE)
+	{
+		createTreadEmitters();
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -435,8 +441,6 @@ void W3DTankDraw::loadPostProcess( void )
 	// extend base class
 	W3DModelDraw::loadPostProcess();
 
-	// toss any existing tread emitters and re-create 'em (since this module expects 'em to always be around)
-	tossTreadEmitters();
 	createTreadEmitters();
 
 }

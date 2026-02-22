@@ -32,6 +32,7 @@
 #include "Common/Thing.h"
 #include "Common/ThingFactory.h"
 #include "Common/GameAudio.h"
+#include "Common/GameState.h"
 #include "Common/GlobalData.h"
 #include "Common/ThingTemplate.h"
 #include "Common/Xfer.h"
@@ -119,7 +120,12 @@ m_prevRenderObj(nullptr)
 
 	m_treadCount=0;
 
-	createTreadEmitters();
+	// TheSuperHackers @bugfix stephanmeesters 20/02/2026
+	// If loading from savegame, delay non-saveable emitter creation until postProcess.
+	if (TheGameState == nullptr || TheGameState->isInLoadGame() == FALSE)
+	{
+		createTreadEmitters();
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -761,8 +767,6 @@ void W3DTankTruckDraw::loadPostProcess( void )
 	// toss any existing wheel emitters (no need to re-create; we'll do that on demand)
 	tossWheelEmitters();
 
-	// toss any existing tread emitters and re-create 'em (since this module expects 'em to always be around)
-	tossTreadEmitters();
 	createTreadEmitters();
 
 }
