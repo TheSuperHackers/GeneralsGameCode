@@ -76,7 +76,7 @@ public:
 	virtual void onCollide( Object *other, const Coord3D *loc, const Coord3D *normal );
 	virtual void onDie( const DamageInfo * damageInfo );
 
-	virtual void setOverrideDestination( const Coord3D *override ); ///< Instead of falling peacefully towards a clear spot, I will now aim here
+	virtual void setOverrideDestination( const Coord3D *dest ); ///< Instead of falling peacefully towards a clear spot, I will now aim here
 
 protected:
 

@@ -114,7 +114,7 @@ class PartitionFilterStealthedOrStealthGarrisoned : public PartitionFilter
 public:
 	PartitionFilterStealthedOrStealthGarrisoned() { }
 
-	virtual Bool allow(Object *objOther);
+	virtual Bool allow(Object *objOther) override;
 
 #if defined(RTS_DEBUG)
 	virtual const char* debugGetName() { return "PartitionFilterStealthedOrStealthGarrisoned"; }

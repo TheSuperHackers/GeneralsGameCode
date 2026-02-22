@@ -45,40 +45,40 @@ class GameSpyConfig : public GameSpyConfigInterface
 {
 public:
 	GameSpyConfig( AsciiString config );
-	~GameSpyConfig() {}
+	virtual ~GameSpyConfig() override {}
 
 	// Pings
-	std::list<AsciiString> getPingServers(void)	{ return m_pingServers; }
-	Int getNumPingRepetitions(void)							{ return m_pingReps; }
-	Int getPingTimeoutInMs(void)								{ return m_pingTimeout; }
-	virtual Int getPingCutoffGood( void )				{	return m_pingCutoffGood; }
-	virtual Int getPingCutoffBad( void )				{ return m_pingCutoffBad;	}
+	virtual std::list<AsciiString> getPingServers(void) override { return m_pingServers; }
+	virtual Int getNumPingRepetitions(void) override { return m_pingReps; }
+	virtual Int getPingTimeoutInMs(void) override { return m_pingTimeout; }
+	virtual Int getPingCutoffGood( void ) override {	return m_pingCutoffGood; }
+	virtual Int getPingCutoffBad( void ) override { return m_pingCutoffBad;	}
 
 	// QM
-	std::list<AsciiString> getQMMaps(void)			{ return m_qmMaps; }
-	Int getQMBotID(void)												{ return m_qmBotID; }
-	Int getQMChannel(void)											{ return m_qmChannel; }
-	void setQMChannel(Int channel)							{ m_qmChannel = channel; }
+	virtual std::list<AsciiString> getQMMaps(void) override { return m_qmMaps; }
+	virtual Int getQMBotID(void) override { return m_qmBotID; }
+	virtual Int getQMChannel(void) override { return m_qmChannel; }
+	virtual void setQMChannel(Int channel) override { m_qmChannel = channel; }
 
 	// Player Info
-	Int getPointsForRank(Int rank);
-	virtual Bool isPlayerVIP(Int id);
+	virtual Int getPointsForRank(Int rank) override;
+	virtual Bool isPlayerVIP(Int id) override;
 
-	virtual Bool getManglerLocation(Int index, AsciiString& host, UnsignedShort& port);
+	virtual Bool getManglerLocation(Int index, AsciiString& host, UnsignedShort& port) override;
 
 	// Ladder / Any other external parsing
-	AsciiString getLeftoverConfig(void)					{ return m_leftoverConfig; }
+	virtual AsciiString getLeftoverConfig(void) override { return m_leftoverConfig; }
 
 	// NAT Timeouts
-	virtual Int getTimeBetweenRetries() { return m_natRetryInterval; }
-	virtual Int getMaxManglerRetries() { return m_natMaxManglerRetries; }
-	virtual time_t getRetryInterval() { return m_natManglerRetryInterval; }
-	virtual time_t getKeepaliveInterval() { return m_natKeepaliveInterval; }
-	virtual time_t getPortTimeout() { return m_natPortTimeout; }
-	virtual time_t getRoundTimeout() { return m_natRoundTimeout; }
+	virtual Int getTimeBetweenRetries() override { return m_natRetryInterval; }
+	virtual Int getMaxManglerRetries() override { return m_natMaxManglerRetries; }
+	virtual time_t getRetryInterval() override { return m_natManglerRetryInterval; }
+	virtual time_t getKeepaliveInterval() override { return m_natKeepaliveInterval; }
+	virtual time_t getPortTimeout() override { return m_natPortTimeout; }
+	virtual time_t getRoundTimeout() override { return m_natRoundTimeout; }
 
 	// Custom match
-	virtual Bool restrictGamesToLobby() { return m_restrictGamesToLobby; }
+	virtual Bool restrictGamesToLobby() override { return m_restrictGamesToLobby; }
 
 protected:
 	std::list<AsciiString> m_pingServers;

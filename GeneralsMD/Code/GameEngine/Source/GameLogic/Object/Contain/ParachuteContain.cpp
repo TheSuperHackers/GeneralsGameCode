@@ -623,10 +623,10 @@ void ParachuteContain::positionContainedObjectsRelativeToContainer()
 }
 
 //-------------------------------------------------------------------------------------------------
-void ParachuteContain::setOverrideDestination( const Coord3D *override )
+void ParachuteContain::setOverrideDestination( const Coord3D *dest )
 {
 	// Instead of trying to float straight down, I am going to nail this spot.
-	m_landingOverride = *override;
+	m_landingOverride = *dest;
 	m_isLandingOverrideSet = TRUE;
 }
 
