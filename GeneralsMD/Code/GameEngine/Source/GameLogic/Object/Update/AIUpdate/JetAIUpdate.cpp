@@ -1347,7 +1347,7 @@ private:
 
 				if (ai->getCurrentStateID() != TAXI_TO_TAKEOFF)
 					continue;
-				
+
 				return otherJet;
 			}
 		}
@@ -1997,6 +1997,23 @@ UpdateSleepTime JetAIUpdate::update()
 				friend_setAllowAirLoco(true);
 				getStateMachine()->clear();
 				setLastCommandSource( CMD_FROM_AI );
+
+				// TheSuperHackers @bugfix arcticdolphin 08/02/2026 Move healed helicopter to rally point if present.
+#if !RETAIL_COMPATIBLE_CRC
+				{
+					Object *airfield = TheGameLogic->findObjectByID( jet->getProducerID() );
+					ExitInterface *exitInterface = airfield ? airfield->getObjectExitInterface() : nullptr;
+					const Coord3D *rp = exitInterface ? exitInterface->getRallyPoint() : nullptr;
+					if( rp )
+					{
+						AICommandParms parms( AICMD_MOVE_TO_POSITION, CMD_FROM_AI );
+						parms.m_pos = *rp;
+						m_mostRecentCommand.store( parms );
+						setFlag(HAS_PENDING_COMMAND, true);
+					}
+				}
+#endif
+
 				getStateMachine()->setState( TAKING_OFF_AWAIT_CLEARANCE );
 			}
 			else
