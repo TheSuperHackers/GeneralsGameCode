@@ -606,10 +606,10 @@ UnsignedShort OptionPreferences::getFirewallPortOverride()
 		return TheGlobalData->m_firewallPortOverride;
 	}
 
-	Int override = atoi(it->second.str());
-	if (override < 0 || override > 65535)
-		override = 0;
-	return override;
+	Int portOverride = atoi(it->second.str());
+	if (portOverride < 0 || portOverride > 65535)
+		portOverride = 0;
+	return portOverride;
 }
 
 Bool OptionPreferences::getFirewallNeedToRefresh()
@@ -1333,12 +1333,12 @@ static void saveOptions( void )
 		UnicodeString uStr = GadgetTextEntryGetText(textEntryFirewallPortOverride);
 		AsciiString aStr;
 		aStr.translate(uStr);
-		Int override = atoi(aStr.str());
-		if (override < 0 || override > 65535)
-			override = 0;
-		if (TheGlobalData->m_firewallPortOverride != override)
-		{	TheWritableGlobalData->m_firewallPortOverride = override;
-		    aStr.format("%d", override);
+		Int portOverride = atoi(aStr.str());
+		if (portOverride < 0 || portOverride > 65535)
+			portOverride = 0;
+		if (TheGlobalData->m_firewallPortOverride != portOverride)
+		{	TheWritableGlobalData->m_firewallPortOverride = portOverride;
+		    aStr.format("%d", portOverride);
 			(*pref)["FirewallPortOverride"] = aStr;
 		}
 	}
