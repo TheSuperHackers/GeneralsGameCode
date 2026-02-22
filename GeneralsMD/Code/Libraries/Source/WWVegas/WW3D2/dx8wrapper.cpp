@@ -87,6 +87,13 @@
 
 #include "shdlib.h"
 
+#ifdef RTS_HAS_IMGUI
+#include "imgui.h"
+#include "imgui_impl_dx8.h"
+#include "ImGuiFrameManager.h"
+#include "ImGuiContextManager.h"
+#endif
+
 const int DEFAULT_RESOLUTION_WIDTH = 640;
 const int DEFAULT_RESOLUTION_HEIGHT = 480;
 const int DEFAULT_BIT_DEPTH = 32;
@@ -102,6 +109,9 @@ int DX8Wrapper_PreserveFPU = 0;
 ** DX8Wrapper Static Variables
 **
 ***********************************************************************************/
+#ifdef RTS_HAS_IMGUI
+static rts::ImGui::ContextManager g_imguiContextManager;
+#endif
 
 static HWND						_Hwnd															= nullptr;
 bool								DX8Wrapper::IsInitted									= false;
@@ -636,7 +646,11 @@ bool DX8Wrapper::Create_Device(void)
 				return false;
 		}
 	}
-
+#ifdef RTS_HAS_IMGUI
+	g_imguiContextManager.Init(_Hwnd, DX8Wrapper::_Get_D3D_Device8());
+	ImGuiIO& io = ImGui::GetIO();
+	io.DisplaySize = ImVec2(ResolutionWidth,ResolutionHeight);
+#endif
 	dbgHelpGuard.deactivate();
 
 	/*
@@ -651,6 +665,9 @@ bool DX8Wrapper::Reset_Device(bool reload_assets)
 	WWDEBUG_SAY(("Resetting device."));
 	DX8_THREAD_ASSERT();
 	if ((IsInitted) && (D3DDevice != nullptr)) {
+#ifdef RTS_HAS_IMGUI
+		ImGui_ImplDX8_InvalidateDeviceObjects();
+#endif
 		// Release all non-MANAGED stuff
 		WW3D::_Invalidate_Textures();
 
@@ -692,6 +709,9 @@ bool DX8Wrapper::Reset_Device(bool reload_assets)
 		Invalidate_Cached_Render_States();
 		Set_Default_Global_Render_States();
 		SHD_INIT_SHADERS;
+#ifdef RTS_HAS_IMGUI
+		ImGui_ImplDX8_CreateDeviceObjects();
+#endif
 		WWDEBUG_SAY(("Device reset completed"));
 		return true;
 	}
@@ -1714,6 +1734,9 @@ void DX8Wrapper::Begin_Scene(void)
 {
 	DX8_THREAD_ASSERT();
 
+#ifdef RTS_HAS_IMGUI
+	rts::ImGui::FrameManager::BeginFrame();
+#endif
 #if ENABLE_EMBEDDED_BROWSER
 	DX8WebBrowser::Update();
 #endif
@@ -1726,6 +1749,11 @@ void DX8Wrapper::Begin_Scene(void)
 void DX8Wrapper::End_Scene(bool flip_frames)
 {
 	DX8_THREAD_ASSERT();
+
+#ifdef RTS_HAS_IMGUI
+	rts::ImGui::FrameManager::EndFrame();
+#endif
+
 	DX8CALL(EndScene());
 
 	DX8WebBrowser::Render(0);

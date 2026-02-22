@@ -10,3 +10,10 @@ add_subdirectory(Source/debug)
 add_subdirectory(Source/EABrowserDispatch)
 add_subdirectory(Source/EABrowserEngine)
 add_subdirectory(Source/Compression)
+
+# Imgui library
+if (RTS_BUILD_OPTION_IMGUI)
+    add_subdirectory(Source/ImGui)
+else ()
+    add_library(lib_imgui INTERFACE)
+endif ()

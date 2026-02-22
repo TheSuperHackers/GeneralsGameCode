@@ -97,6 +97,11 @@
 #include <d3dx8.h>
 
 
+#ifdef RTS_HAS_IMGUI
+#include <imgui.h>
+#include <imgui_impl_dx8.h>
+#include "ImGuiFrameManager.h"
+#endif
 // ----------------------------------------------------------------------------
 // Misc. Forward Declarations
 // ----------------------------------------------------------------------------
@@ -799,7 +804,9 @@ void WbView3d::resetRenderObjects()
 	if (TheW3DShadowManager) {
 		TheW3DShadowManager->removeAllShadows();
 	}
-
+#ifdef RTS_HAS_IMGUI
+	ImGui_ImplDX8_InvalidateDeviceObjects();
+#endif
 	SceneIterator *sceneIter = m_scene->Create_Iterator();
 	sceneIter->First();
 	while(!sceneIter->Is_Done()) {
@@ -849,6 +856,10 @@ void WbView3d::resetRenderObjects()
 		m_heightMapRenderObj->removeAllTrees();
 		m_heightMapRenderObj->removeAllProps();
 	}
+
+#ifdef RTS_HAS_IMGUI
+	ImGui_ImplDX8_CreateDeviceObjects();
+#endif
 }
 
 // ----------------------------------------------------------------------------
@@ -2085,6 +2096,14 @@ void WbView3d::render()
 {
 	++m_updateCount;
 
+#ifdef RTS_HAS_IMGUI
+	rts::ImGui::FrameGuard frame_guard;
+	static bool show_demo = true;
+	if (show_demo) {
+		  ImGui::ShowDemoWindow(&show_demo);
+	}
+#endif
+
 	if (WW3D::Begin_Render(true,true,Vector3(0.5f,0.5f,0.5f), TheWaterTransparency->m_minWaterOpacity) == WW3D_ERROR_OK)
 	{
 
@@ -2219,6 +2238,24 @@ void WbView3d::OnDraw(CDC* pDC)
 	// Not used.  See OnPaint.
 }
 
+#ifdef RTS_HAS_IMGUI
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND, UINT, WPARAM, LPARAM);
+BOOL WbView3d::PreTranslateMessage(MSG *pMsg)
+{
+	if (ImGui_ImplWin32_WndProcHandler(m_hWnd, pMsg->message,pMsg->wParam, pMsg->lParam))
+	{
+		return TRUE;
+	}
+	return WbView::PreTranslateMessage(pMsg);
+}
+
+LRESULT WbView3d::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
+{
+	if (ImGui_ImplWin32_WndProcHandler(m_hWnd, message, wParam, lParam))
+		return TRUE;
+	return WbView::WindowProc(message, wParam, lParam);
+}
+#endif
 // ----------------------------------------------------------------------------
 // WbView3d diagnostics
 

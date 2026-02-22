@@ -219,6 +219,7 @@ target_link_libraries(g_worldbuilder PRIVATE
     imm32
     vfw32
     winmm
+    lib_imgui
 )
 
 if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")

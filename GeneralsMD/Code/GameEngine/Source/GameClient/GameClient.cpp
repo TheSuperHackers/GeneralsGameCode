@@ -32,6 +32,11 @@
 #include "GameClient/GameClient.h"
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
+#ifdef RTS_HAS_IMGUI
+#include "imgui.h"
+#include "ImGuiFrameManager.h"
+#endif
+
 #include "Common/ActionManager.h"
 #include "Common/GameEngine.h"
 #include "Common/GameState.h"
@@ -511,6 +516,14 @@ DECLARE_PERF_TIMER(GameClient_draw)
 void GameClient::update( void )
 {
 	USE_PERF_TIMER(GameClient_update)
+#ifdef RTS_HAS_IMGUI
+	rts::ImGui::FrameGuard frame_guard;
+	static bool show_demo = true;
+	if (show_demo)
+	{
+		ImGui::ShowDemoWindow(&show_demo);
+	}
+#endif
 	// create the FRAME_TICK message
 	GameMessage *frameMsg = TheMessageStream->appendMessage( GameMessage::MSG_FRAME_TICK );
 	frameMsg->appendTimestampArgument( getFrame() );
