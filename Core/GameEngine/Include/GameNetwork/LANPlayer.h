@@ -52,8 +52,8 @@ public:
 	void setNext( LANPlayer *next ) { m_next = next; }
 	UnsignedInt getIP( void ) { return m_IP; }
 	void setIP( UnsignedInt IP ) { m_IP = IP; }
-	void setProductInfoFlags(UnsignedInt productInfoFlags) { m_productInfoFlags = productInfoFlags; }
 	UnsignedInt getProductInfoFlags() const { return m_productInfoFlags; }
+	void setProductInfoFlags(UnsignedInt productInfoFlags) { m_productInfoFlags = productInfoFlags; }
 
 protected:
 	UnicodeString m_name;			///< Player name

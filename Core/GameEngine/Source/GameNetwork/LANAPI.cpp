@@ -87,6 +87,7 @@ LANAPI::LANAPI( void ) : m_transport(nullptr)
 	m_lastUpdate = 0;
 	m_transport = new Transport;
 	m_isActive = TRUE;
+	m_productInfoMessage = createProductInfoMessage();
 }
 
 LANAPI::~LANAPI( void )
@@ -179,13 +180,13 @@ void LANAPI::reset( void )
 
 }
 
-void LANAPI::sendMessage(LANMessage *msg, UnsignedInt ip /* = 0 */)
+void LANAPI::sendMessage(LANMessage *msg, UnsignedInt ip /* = 0 */, Bool broadcast /*= TRUE*/)
 {
 	if (ip != 0)
 	{
 		m_transport->queueSend(ip, lobbyPort, (unsigned char *)msg, sizeof(LANMessage) /*, 0, 0 */);
 	}
-	else if ((m_currentGame != nullptr) && (m_currentGame->getIsDirectConnect()))
+	else if (m_currentGame != nullptr && (m_currentGame->getIsDirectConnect() || !broadcast))
 	{
 		Int localSlot = m_currentGame->getLocalSlotNum();
 		for (Int i = 0; i < MAX_SLOTS; ++i)
@@ -927,7 +928,7 @@ void LANAPI::RequestGameCreate( UnicodeString gameName, Bool isDirectConnect )
 	newSlot.setHost(m_hostName);
 
 	// set product information for local game slot
-	setProductInfoFromLocalData(&newSlot);
+	setProductInfoFromLocalData(newSlot);
 
 	myGame->setSlot(0,newSlot);
 	myGame->setNext(nullptr);

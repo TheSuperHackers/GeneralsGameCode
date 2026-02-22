@@ -31,67 +31,85 @@
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/crc.h"
+#include "Common/GameEngine.h"
 #include "Common/GameState.h"
 #include "Common/Registry.h"
 #include "Common/GlobalData.h"
 #include "Common/QuotedPrintable.h"
 #include "Common/UserPreferences.h"
-#include "Common/GameEngine.h"
 #include "Common/version.h"
 #include "GameNetwork/LANAPI.h"
 #include "GameNetwork/LANAPICallbacks.h"
 #include "GameClient/MapUtil.h"
 #include "GameLogic/GameLogic.h"
 
+template <typename T> size_t etx_strlen_t(const T* str)
+{
+	const T* begin = str;
+	while (*str != '\0' && *str != '\3')
+		++str;
+	return static_cast<size_t>(str - begin);
+}
+
 Bool LANAPI::setProductInfoStrings(const UnicodeString(&input)[4], WideChar(&output)[201])
 {
-	// concatenate strings separated by null terminators
+	// concatenate strings separated by end of text characters
 
-	// null terminate the output buffer to mirror the get function
-	output[ARRAY_SIZE(output) - 1] = 0;
-
-	size_t totalSize = 0;
+	size_t outputIndex = 0;
 	for (size_t i = 0; i < ARRAY_SIZE(input); ++i)
 	{
-		totalSize += wcslcpy(output + totalSize, input[i].str(), ARRAY_SIZE(output) - totalSize) + 1;
-		if (totalSize >= ARRAY_SIZE(output))
-		{
-			return FALSE;
-		}
+		outputIndex += wcslcpy(output + outputIndex, input[i].str(), ARRAY_SIZE(output) - outputIndex);
+		if (outputIndex >= ARRAY_SIZE(output))
+			break;
+
+		if (i == ARRAY_SIZE(input) - 1)
+			break;
+
+		output[outputIndex++] = '\3';
 	}
 
-	return totalSize <= ARRAY_SIZE(output);
+	// null terminate the output buffer to signal the end of the last input string
+	if (outputIndex < ARRAY_SIZE(output))
+	{
+		output[outputIndex++] = '\0';
+		return TRUE;
+	}
+	else
+	{
+		output[ARRAY_SIZE(output) - 1] = '\0';
+		return FALSE;
+	}
 }
 
 Bool LANAPI::getProductInfoStrings(WideChar(&input)[201], UnicodeString*(&output)[4])
 {
-	// extract strings separated by null terminators
+	// extract strings separated by end of text characters
 
 	// null terminate the input buffer to prevent potential out-of-bound reads
-	const Bool nullTerminated = !static_cast<Bool>(input[ARRAY_SIZE(input) - 1]);
-	input[ARRAY_SIZE(input) - 1] = 0;
+	input[ARRAY_SIZE(input) - 1] = '\0';
 
-	for (size_t totalSize = 0, i = 0; i < ARRAY_SIZE(output); ++i)
+	size_t inputIndex = 0;
+	for (size_t i = 0; i < ARRAY_SIZE(output); ++i)
 	{
-		const size_t size = wcslen(input + totalSize);
-		output[i]->set(input + totalSize, size);
+		const size_t length = etx_strlen_t(input + inputIndex);
+		output[i]->set(input + inputIndex, length);
 
-		totalSize += size + 1;
-		if (!nullTerminated && totalSize >= ARRAY_SIZE(input))
+		inputIndex += length + 1;
+		if (inputIndex >= ARRAY_SIZE(input))
 		{
 			for (size_t j = i + 1; j < ARRAY_SIZE(output); ++j)
 			{
 				output[j]->clear();
 			}
 
-			return FALSE;
+			break;
 		}
 	}
 
-	return TRUE;
+	return inputIndex <= ARRAY_SIZE(input);
 }
 
-UnsignedInt LANAPI::getProductInfoFlags()
+UnsignedInt LANAPI::buildProductInfoFlags()
 {
 	const UnsignedInt flags = GameSlot::ProductInfo::NO_RETAIL
 		| (GameSlot::ProductInfo::SHELLMAP_ENABLED * TheGlobalData->m_shellMapOn)
@@ -100,11 +118,11 @@ UnsignedInt LANAPI::getProductInfoFlags()
 	return flags;
 }
 
-void LANAPI::setProductInfoFromLocalData(GameSlot *slot)
+void LANAPI::setProductInfoFromLocalData(GameSlot &slot)
 {
 	GameSlot::ProductInfo productInfo;
-	productInfo.flags = getProductInfoFlags();
-	productInfo.uptime = TheGameEngine->getUptime();
+	productInfo.flags = buildProductInfoFlags();
+	productInfo.launchTime = TheGameEngine->getLaunchTime();
 	productInfo.exeCRC = TheGlobalData->m_exeCRC;
 	productInfo.iniCRC = TheGlobalData->m_iniCRC;
 	productInfo.fpMathCRC = 0; // needs to be replaced with SimulationMathCrc::calculate() from #2100
@@ -113,14 +131,14 @@ void LANAPI::setProductInfoFromLocalData(GameSlot *slot)
 	productInfo.productAuthor = TheVersion->getUnicodeProductAuthor();
 	productInfo.gitShortHash = TheVersion->getUnicodeGitShortHash();
 
-	slot->setProductInfo(productInfo);
+	slot.setProductInfo(productInfo);
 }
 
-void LANAPI::setProductInfoFromMessage(LANMessage *msg, GameSlot *slot)
+void LANAPI::setProductInfoFromMessage(GameSlot &slot, LANMessage *msg)
 {
 	GameSlot::ProductInfo productInfo;
 	productInfo.flags = msg->ProductInfo.flags;
-	productInfo.uptime = msg->ProductInfo.uptime;
+	productInfo.launchTime = msg->ProductInfo.launchTime;
 	productInfo.exeCRC = msg->ProductInfo.exeCRC;
 	productInfo.iniCRC = msg->ProductInfo.iniCRC;
 	productInfo.fpMathCRC = msg->ProductInfo.fpMathCRC;
@@ -134,17 +152,13 @@ void LANAPI::setProductInfoFromMessage(LANMessage *msg, GameSlot *slot)
 	};
 	getProductInfoStrings(msg->ProductInfo.data, strings);
 
-	slot->setProductInfo(productInfo);
+	slot.setProductInfo(productInfo);
 }
 
-void LANAPI::sendProductInfoMessage(LANMessage::Type messageType, UnsignedInt senderIP)
+LANMessage LANAPI::createProductInfoMessage()
 {
 	LANMessage msg;
-	fillInLANMessage(&msg);
-	msg.messageType = messageType;
-
-	msg.ProductInfo.flags = getProductInfoFlags();
-	msg.ProductInfo.uptime = TheGameEngine->getUptime();
+	msg.ProductInfo.launchTime = TheGameEngine->getLaunchTime();
 	msg.ProductInfo.exeCRC = TheGlobalData->m_exeCRC;
 	msg.ProductInfo.iniCRC = TheGlobalData->m_iniCRC;
 	msg.ProductInfo.fpMathCRC = 0; // needs to be replaced with SimulationMathCrc::calculate() from #2100
@@ -158,7 +172,23 @@ void LANAPI::sendProductInfoMessage(LANMessage::Type messageType, UnsignedInt se
 	};
 	setProductInfoStrings(strings, msg.ProductInfo.data);
 
-	sendMessage(&msg, senderIP);
+	return msg;
+}
+
+void LANAPI::sendProductInfoMessage(LANMessage::Type messageType, UnsignedInt senderIP)
+{
+	fillInLANMessage(&m_productInfoMessage);
+	m_productInfoMessage.messageType = messageType;
+	m_productInfoMessage.ProductInfo.flags = buildProductInfoFlags();
+
+	if (senderIP != 0)
+	{
+		sendMessage(&m_productInfoMessage, senderIP);
+	}
+	else
+	{
+		sendMessage(&m_productInfoMessage, 0, FALSE);
+	}
 }
 
 void LANAPI::handleGameProductInfoRequest(LANMessage *msg, UnsignedInt senderIP)
@@ -180,7 +210,7 @@ void LANAPI::handleGameProductInfoResponse(LANMessage *msg, UnsignedInt senderIP
 		return;
 
 	// a game host has acknowledged our request for product information
-	setProductInfoFromMessage(msg, game->getSlot(0));
+	setProductInfoFromMessage(*game->getSlot(0), msg);
 }
 
 void LANAPI::handleLobbyProductInfoRequest(LANMessage *msg, UnsignedInt senderIP)
@@ -228,7 +258,7 @@ void LANAPI::handleMatchProductInfoResponse(LANMessage *msg, UnsignedInt senderI
 			continue;
 
 		// a fellow player in the game has acknowledged our request for product information
-		setProductInfoFromMessage(msg, m_currentGame->getSlot(i));
+		setProductInfoFromMessage(*m_currentGame->getSlot(i), msg);
 
 		break;
 	}
@@ -364,7 +394,7 @@ void LANAPI::handleLobbyAnnounce( LANMessage *msg, UnsignedInt senderIP )
 		player = NEW LANPlayer;
 		player->setIP(senderIP);
 
-		// request a player in the lobby to send product information
+		// request this player in the lobby to send product information
 		sendProductInfoMessage(LANMessage::MSG_LOBBY_REQUEST_PRODUCT_INFO, senderIP);
 	}
 	else
@@ -653,7 +683,7 @@ void LANAPI::handleJoinAccept( LANMessage *msg, UnsignedInt senderIP )
 				slot.setHost(m_hostName);
 
 				// set product information for local game slot
-				setProductInfoFromLocalData(&slot);
+				setProductInfoFromLocalData(slot);
 
 				m_currentGame->setSlot(pos, slot);
 
@@ -670,7 +700,7 @@ void LANAPI::handleJoinAccept( LANMessage *msg, UnsignedInt senderIP )
 				//DEBUG_ASSERTCRASH(false, ("setting host to %ls@%ls", m_currentGame->getLANSlot(0)->getUser()->getLogin().str(),
 				//	m_currentGame->getLANSlot(0)->getUser()->getHost().str()));
 
-				// request players in the match to send product information
+				// request all players in the match to send product information
 				sendProductInfoMessage(LANMessage::MSG_MATCH_REQUEST_PRODUCT_INFO, 0);
 			}
 			m_pendingAction = ACT_NONE;

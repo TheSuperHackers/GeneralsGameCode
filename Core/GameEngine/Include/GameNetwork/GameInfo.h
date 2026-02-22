@@ -59,15 +59,23 @@ class GameSlot
 public:
 	struct ProductInfo
 	{
-		enum CPP_11(: UnsignedInt)
+		ProductInfo() :
+			flags(0),
+			launchTime(0),
+			exeCRC(0),
+			iniCRC(0),
+			fpMathCRC(0)
+		{}
+
+		enum Flags CPP_11(: UnsignedInt)
 		{
 			NO_RETAIL         = 1 << 0,
 			SHELLMAP_ENABLED  = 1 << 1,
-			ZERO_MAPS_STARTED = 1 << 2
+			ZERO_MAPS_STARTED = 1 << 2,
 		};
 
 		UnsignedInt flags;
-		UnsignedInt uptime;
+		UnsignedInt launchTime;
 		UnsignedInt exeCRC;
 		UnsignedInt iniCRC;
 		UnsignedInt fpMathCRC;
@@ -148,6 +156,7 @@ public:
 
 	void setProductInfo(const ProductInfo& productInfo) { m_productInfo = productInfo; }
 	const ProductInfo& getProductInfo() const { return m_productInfo; }
+
 protected:
 	SlotState m_state;
 	Bool m_isAccepted;

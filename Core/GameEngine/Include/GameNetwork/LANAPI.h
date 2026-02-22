@@ -290,12 +290,11 @@ struct LANMessage
 		struct
 		{
 			UnsignedInt flags;
-			UnsignedInt uptime;
+			UnsignedInt launchTime;
 			UnsignedInt exeCRC;
 			UnsignedInt iniCRC;
 			UnsignedInt fpMathCRC;
 			WideChar data[201];
-			Byte padding[20];
 		} ProductInfo;
 	};
 };
@@ -416,17 +415,19 @@ protected:
 
 	Bool								m_isActive;			///< is the game currently active?
 
+	LANMessage					m_productInfoMessage; ///< store product info message to avoid having to recreate it multiple times
+
 protected:
-	void sendMessage(LANMessage *msg, UnsignedInt ip = 0); // Convenience function
+	void sendMessage(LANMessage *msg, UnsignedInt ip = 0, Bool broadcast = TRUE); // Convenience function
 	void removePlayer(LANPlayer *player);
 	void removeGame(LANGameInfo *game);
 	void addPlayer(LANPlayer *player);
 	void addGame(LANGameInfo *game);
 	AsciiString createSlotString( void );
 
-	static UnsignedInt getProductInfoFlags();
-	static void setProductInfoFromLocalData(GameSlot *slot);
-	static void setProductInfoFromMessage(LANMessage *msg, GameSlot *slot);
+	static UnsignedInt buildProductInfoFlags();
+	static void setProductInfoFromLocalData(GameSlot &slot);
+	static void setProductInfoFromMessage(GameSlot &slot, LANMessage *msg);
 	static Bool setProductInfoStrings(const UnicodeString(&input)[4], WideChar(&output)[201]);
 	static Bool getProductInfoStrings(WideChar(&input)[201], UnicodeString*(&output)[4]);
 
@@ -448,6 +449,7 @@ protected:
 	void handleGameOptions( LANMessage *msg, UnsignedInt senderIP );
 	void handleInActive( LANMessage *msg, UnsignedInt senderIP );
 
+	static LANMessage createProductInfoMessage();
 	void sendProductInfoMessage(LANMessage::Type messageType, UnsignedInt senderIP);
 	void handleGameProductInfoRequest(LANMessage *msg, UnsignedInt senderIP);
 	void handleGameProductInfoResponse(LANMessage *msg, UnsignedInt senderIP);

@@ -75,7 +75,7 @@ public:
 	virtual Bool isActive(void) {return m_isActive;}	///< returns whether app has OS focus.
 	virtual void setIsActive(Bool isActive) { m_isActive = isActive; };
 
-	UnsignedInt getUptime() const; ///< returns time since engine creation
+	UnsignedInt getLaunchTime() const; ///< returns the system time when the game engine was created
 
 protected:
 

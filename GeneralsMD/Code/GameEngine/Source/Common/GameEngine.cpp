@@ -1031,9 +1031,9 @@ Bool GameEngine::isMultiplayerSession( void )
 }
 
 //-------------------------------------------------------------------------------------------------
-UnsignedInt GameEngine::getUptime() const
+UnsignedInt GameEngine::getLaunchTime() const
 {
-	return ::timeGetTime() - m_launchTime;
+	return m_launchTime;
 }
 
 //-------------------------------------------------------------------------------------------------
