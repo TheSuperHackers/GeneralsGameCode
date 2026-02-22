@@ -2419,7 +2419,11 @@ void ZoneBlock::allocateZones(void)
 
 //------------------------  PathfindZoneManager  -------------------------------
 PathfindZoneManager::PathfindZoneManager() : m_maxZone(0),
+#if RTS_GENERALS
+m_needToCalculateZones(false),
+#else
 m_nextFrameToCalculateZones(0),
+#endif
 m_groundCliffZones(nullptr),
 m_groundWaterZones(nullptr),
 m_groundRubbleZones(nullptr),
@@ -2522,15 +2526,17 @@ void PathfindZoneManager::reset(void)  ///< Called when the map is reset.
 	freeBlocks();
 }
 
-
-void PathfindZoneManager::markZonesDirty( Bool insert )  ///< Called when the zones need to be recalculated.
+void PathfindZoneManager::markZonesDirty(void)  ///< Called when the zones need to be recalculated.
 {
-
+#if RTS_GENERALS
+	m_needToCalculateZones = true;
+#else
 	if (TheGameLogic->getFrame()<2) {
 		m_nextFrameToCalculateZones = 2;
 		return;
 	}
-    m_nextFrameToCalculateZones = MIN( m_nextFrameToCalculateZones, TheGameLogic->getFrame() + ZONE_UPDATE_FREQUENCY );
+	m_nextFrameToCalculateZones = MIN( m_nextFrameToCalculateZones, TheGameLogic->getFrame() + ZONE_UPDATE_FREQUENCY );
+#endif
 }
 
 /**
@@ -2548,13 +2554,12 @@ static  Bool  s_stopForceCalling = FALSE;
 
 void PathfindZoneManager::calculateZones( PathfindCell **map, PathfindLayer layers[], const IRegion2D &globalBounds )
 {
-
 #ifdef DEBUG_QPF
 #if defined(DEBUG_LOGGING)
 	__int64 startTime64;
 	static double timeToUpdate = 0.0f;
-  static double averageTimeToUpdate = 0.0f;
-  static Int updateSamples = 0;
+	static double averageTimeToUpdate = 0.0f;
+	static Int updateSamples = 0;
 	__int64 endTime64,freq64;
 	QueryPerformanceFrequency((LARGE_INTEGER *)&freq64);
 	QueryPerformanceCounter((LARGE_INTEGER *)&startTime64);
@@ -2589,6 +2594,12 @@ void PathfindZoneManager::calculateZones( PathfindCell **map, PathfindLayer laye
 			if (bounds.hi.y > globalBounds.hi.y) {
 				bounds.hi.y = globalBounds.hi.y;
 			}
+#if RTS_GENERALS
+			if (bounds.lo.x>bounds.hi.x || bounds.lo.y>bounds.hi.y) {
+				DEBUG_CRASH(("Incorrect bounds calculation. Logic error, fix me. jba."));
+				continue;
+			}
+#endif
 			m_zoneBlocks[xBlock][yBlock].setInteractsWithBridge(false);
 			for( j=bounds.lo.y; j<=bounds.hi.y; j++ )	{
 				for( i=bounds.lo.x; i<=bounds.hi.x; i++ )	{
@@ -2608,6 +2619,12 @@ void PathfindZoneManager::calculateZones( PathfindCell **map, PathfindLayer laye
 					if (cell->getZone()==0) {
 						cell->setZone(m_maxZone);
 						m_maxZone++;
+#if RTS_GENERALS
+						if (m_maxZone>= maxZones) {
+							DEBUG_CRASH(("Ran out of pathfind zones.  SERIOUS ERROR! jba."));
+							break;
+						}
+#endif
 					}
 					if (cell->getConnectLayer() > LAYER_GROUND) {
  						m_zoneBlocks[xBlock][yBlock].setInteractsWithBridge(true);
@@ -2619,199 +2636,226 @@ void PathfindZoneManager::calculateZones( PathfindCell **map, PathfindLayer laye
 	}
 
 	Int totalZones = m_maxZone;
+#if RTS_GENERALS
+	if (totalZones>maxZones/2) {
+		DEBUG_LOG(("Max zones %d", m_maxZone));
+	}
+#endif
 
 	// Collapse the zones into a 1,2,3... sequence, removing collapsed zones.
 	m_maxZone = 1;
 	Int collapsedZones[maxZones];
 	collapsedZones[0] = 0;
-
-  i = 1;
-  while ( i < totalZones )
-  {
-		Int zone = zoneEquivalency[ i ];
-		if (zone == i)
-    {
-			collapsedZones[ i ] = m_maxZone;
+	for (i=1; i<totalZones; i++) {
+		Int zone = zoneEquivalency[i];
+		if (zone == i) {
+			collapsedZones[i] = m_maxZone;
 			++m_maxZone;
+		} else {
+			collapsedZones[i] = collapsedZones[zone];
 		}
-    else
-			collapsedZones[ i ] = collapsedZones[zone];
-
-    ++i;
-  }
-
-	// Now map the zones in the map back into the collapsed zones.
-	j=globalBounds.lo.y;
-  while( j<=globalBounds.hi.y )
-  {
-    i=globalBounds.lo.x;
-		while( i<=globalBounds.hi.x )
-    {
-      PathfindCell &cell = map[i][j];
-			cell.setZone(collapsedZones[cell.getZone()]);
-      ++i;
-		}
-    ++j;
 	}
-
-  i = 0;
-	while ( i <= LAYER_LAST )
-  {
-    PathfindLayer &r_thisLayer = layers[i];
-
+#ifdef DEBUG_QPF
+#if defined(DEBUG_LOGGING)
+	QueryPerformanceCounter((LARGE_INTEGER *)&endTime64);
+	timeToUpdate = ((double)(endTime64-startTime64) / (double)(freq64));
+	DEBUG_LOG(("Time to calculate first %f", timeToUpdate));
+#endif
+#endif
+	// Now map the zones in the map back into the collapsed zones.
+	for( j=globalBounds.lo.y; j<=globalBounds.hi.y; j++ ) {
+		for( i=globalBounds.lo.x; i<=globalBounds.hi.x; i++ ) {
+			PathfindCell &cell = map[i][j];
+			cell.setZone(collapsedZones[cell.getZone()]);
+			if (cell.getZone()==0) {
+				DEBUG_CRASH(("Zone not set cell %d, %d", i, j));
+			}
+		}
+	}
+	
+	for (i=0; i<=LAYER_LAST; i++) {
+    	PathfindLayer &r_thisLayer = layers[i];
 		Int zone = collapsedZones[r_thisLayer.getZone()];
-		if (zone == 0)
-    {
+
+		if (zone == 0) {
 			zone = m_maxZone;
 			m_maxZone++;
 		}
-
-    r_thisLayer.setZone( zone );
-    r_thisLayer.applyZone();
-
-    if (!r_thisLayer.isUnused() && !r_thisLayer.isDestroyed())
-    {
+		
+		r_thisLayer.setZone( zone );
+		if (!r_thisLayer.isUnused() && !r_thisLayer.isDestroyed() && r_thisLayer.getZone()==0) {
+			DEBUG_CRASH(("Zone not set Layer %d", i));
+		}
+		r_thisLayer.applyZone();
+		
+		if (!r_thisLayer.isUnused() && !r_thisLayer.isDestroyed()) {
 			ICoord2D ndx;
 			r_thisLayer.getStartCellIndex(&ndx);
 			setBridge(ndx.x, ndx.y, true);
 			r_thisLayer.getEndCellIndex(&ndx);
 			setBridge(ndx.x, ndx.y, true);
 		}
-
-    ++i;
 	}
 
 	allocateZones();
-
-	for (xBlock=0; xBlock<xCount; xBlock++)
-  {
-		for (yBlock=0; yBlock<yCount; yBlock++)
-    {
+#if RTS_GENERALS
+	DEBUG_ASSERTCRASH(xBlock==m_zoneBlockExtent.x && yBlock==m_zoneBlockExtent.y, ("Inconsistent allocation - SERIOUS ERROR. jba"));
+#endif
+	for (xBlock=0; xBlock<xCount; xBlock++) {
+		for (yBlock=0; yBlock<yCount; yBlock++) {
 			IRegion2D bounds;
 			bounds.lo.x = globalBounds.lo.x + xBlock*ZONE_BLOCK_SIZE;
 			bounds.lo.y = globalBounds.lo.y + yBlock*ZONE_BLOCK_SIZE;
 			bounds.hi.x = bounds.lo.x + ZONE_BLOCK_SIZE - 1; // bounds are inclusive.
 			bounds.hi.y = bounds.lo.y + ZONE_BLOCK_SIZE - 1; // bounds are inclusive.
-
-      if (bounds.hi.x > globalBounds.hi.x)
+			if (bounds.hi.x > globalBounds.hi.x) {
 				bounds.hi.x = globalBounds.hi.x;
-
-      if (bounds.hi.y > globalBounds.hi.y)
+			}
+			if (bounds.hi.y > globalBounds.hi.y) {
 				bounds.hi.y = globalBounds.hi.y;
-
+			}
+#if RTS_GENERALS
+			if (bounds.lo.x>bounds.hi.x || bounds.lo.y>bounds.hi.y) {
+				DEBUG_CRASH(("Incorrect bounds calculation. Logic error, fix me. jba."));
+				continue;
+			}
+#endif
 			m_zoneBlocks[xBlock][yBlock].blockCalculateZones(map, layers, bounds);
 		}
 	}
 
-	i = 0;
-  while ( i < m_zonesAllocated )
-	{
-    m_groundCliffZones[i] = m_groundWaterZones[i] = m_groundRubbleZones[i] = m_terrainZones[i] = m_crusherZones[i] = m_hierarchicalZones[i] = i;
-    i++;
-  }
 
-  REGISTER UnsignedInt maxZone = m_maxZone;
-	j=globalBounds.lo.y;
-  while( j <= globalBounds.hi.y )
-  {
-    i=globalBounds.lo.x;
-		while( i <= globalBounds.hi.x )
-    {
-      PathfindCell &r_thisCell = map[i][j];
 
-			if ( (r_thisCell.getConnectLayer() > LAYER_GROUND) &&
-				(r_thisCell.getType() == PathfindCell::CELL_CLEAR) )
-      {
-				PathfindLayer *layer = layers + r_thisCell.getConnectLayer();
-				resolveZones(r_thisCell.getZone(), layer->getZone(), m_hierarchicalZones, maxZone);
-			}
-
-			if ( i > globalBounds.lo.x && r_thisCell.getZone() != map[i-1][j].getZone() )
-      {
-        const PathfindCell &r_leftCell = map[i-1][j];
-
-				if (r_thisCell.getType() == r_leftCell.getType())
-					applyZone(r_thisCell, r_leftCell, m_hierarchicalZones, maxZone);//if this is true, skip all the ones below
-        else
-        {
-          Bool notTerrainOrCrusher = TRUE; // if this is false, skip the if-else-ladder below
-
-          if (terrain(r_thisCell, r_leftCell))
-          {
-					  applyZone(r_thisCell, r_leftCell, m_terrainZones, maxZone);
-            notTerrainOrCrusher = FALSE;
-          }
-
-          if (crusherGround(r_thisCell, r_leftCell))
-          {
-					  applyZone(r_thisCell, r_leftCell, m_crusherZones, maxZone);
-            notTerrainOrCrusher = FALSE;
-          }
-
-          if ( notTerrainOrCrusher )
-          {
-            if (waterGround(r_thisCell, r_leftCell))
-					    applyZone(r_thisCell, r_leftCell, m_groundWaterZones, maxZone);
-            else if (groundRubble(r_thisCell, r_leftCell))
-					    applyZone(r_thisCell, r_leftCell, m_groundRubbleZones, maxZone);
-            else if (groundCliff(r_thisCell, r_leftCell))
-					    applyZone(r_thisCell, r_leftCell, m_groundCliffZones, maxZone);
-          }
-
-        }
-
-      }
-
-			if (j>globalBounds.lo.y && r_thisCell.getZone()!=map[i][j-1].getZone())
-      {
-        const PathfindCell &r_topCell = map[i][j-1];
-
-        if (r_thisCell.getType() == r_topCell.getType())
-					applyZone(r_thisCell, r_topCell, m_hierarchicalZones, maxZone);
-        else
-        {
-          Bool notTerrainOrCrusher = TRUE; // if this is false, skip the if-else-ladder below
-
-          if (terrain(r_thisCell, r_topCell))
-          {
-            applyZone(r_thisCell, r_topCell, m_terrainZones, maxZone);
-            notTerrainOrCrusher = FALSE;
-          }
-
-          if (crusherGround(r_thisCell, r_topCell))
-          {
-					  applyZone(r_thisCell, r_topCell, m_crusherZones, maxZone);
-            notTerrainOrCrusher = FALSE;
-          }
-
-          if (waterGround(r_thisCell,r_topCell))
-					  applyZone(r_thisCell, r_topCell, m_groundWaterZones, maxZone);
-          else if (groundRubble(r_thisCell, r_topCell))
-					  applyZone(r_thisCell, r_topCell, m_groundRubbleZones, maxZone);
-          else if (groundCliff(r_thisCell,r_topCell))
-					  applyZone(r_thisCell, r_topCell, m_groundCliffZones, maxZone);
-
-        }
-
-      }
-
-      ++i;
-		}
-
-    ++j;
+	// Determine water/ground equivalent zones, and ground/cliff equivalent zones.
+	for (i=0; i<m_zonesAllocated; i++) {
+		m_groundCliffZones[i] = i;
+		m_groundWaterZones[i] = i;
+		m_groundRubbleZones[i] = i;
+		m_terrainZones[i] = i;
+		m_crusherZones[i] = i;
+		m_hierarchicalZones[i] = i;
 	}
 
-  //FLATTEN HIERARCHICAL ZONES
-  {
-	  i = 1;
-    REGISTER Int zone;
-    while ( i < maxZone )
-    {		// Flatten hierarchical zones.
-		  zone = m_hierarchicalZones[i];
-		  m_hierarchicalZones[i] = m_hierarchicalZones[ zone ];
-      ++i;
-	  }
-  }
+	for( j=globalBounds.lo.y; j<=globalBounds.hi.y; j++ ) {
+		for( i=globalBounds.lo.x; i<=globalBounds.hi.x; i++ ) {
+			PathfindCell &r_thisCell = map[i][j];
+			
+			if ( (r_thisCell.getConnectLayer() > LAYER_GROUND) &&
+				(r_thisCell.getType() == PathfindCell::CELL_CLEAR) ) {
+				PathfindLayer *layer = layers + r_thisCell.getConnectLayer();
+				resolveZones(r_thisCell.getZone(), layer->getZone(), m_hierarchicalZones, m_maxZone);
+			}
+			
+			if ( i > globalBounds.lo.x && r_thisCell.getZone() != map[i-1][j].getZone() ) {
+				const PathfindCell &r_leftCell = map[i-1][j];
+				
+				//if this is true, skip all the ones below
+				if (r_thisCell.getType() == r_leftCell.getType()) {
+					applyZone(r_thisCell, r_leftCell, m_hierarchicalZones, m_maxZone);
+				}
+		        else
+		        {
+					Bool notTerrainOrCrusher = TRUE; // if this is false, skip the if-else-ladder below
+		
+					if (terrain(r_thisCell, r_leftCell)) {
+						applyZone(r_thisCell, r_leftCell, m_terrainZones, m_maxZone);
+						notTerrainOrCrusher = FALSE;
+					}
+		
+					if (crusherGround(r_thisCell, r_leftCell)) {
+						applyZone(r_thisCell, r_leftCell, m_crusherZones, m_maxZone);
+						notTerrainOrCrusher = FALSE;
+					}
+		
+					if ( notTerrainOrCrusher ) {
+						if (waterGround(r_thisCell, r_leftCell))
+							applyZone(r_thisCell, r_leftCell, m_groundWaterZones, m_maxZone);
+						else if (groundRubble(r_thisCell, r_leftCell)) {
+#if RTS_GENERALS
+							Int zone1 = r_thisCell.getZone();
+							Int zone2 = r_leftCell.getZone();
+							if (m_terrainZones[zone1] != m_terrainZones[zone2]) {
+								//DEBUG_LOG(("Matching terrain zone %d to %d.", zone1, zone2));
+							}
+#endif
+							applyZone(r_thisCell, r_leftCell, m_groundRubbleZones, m_maxZone);
+						}
+						else if (groundCliff(r_thisCell, r_leftCell))
+							applyZone(r_thisCell, r_leftCell, m_groundCliffZones, m_maxZone);
+					}
+				}
+				
+			}
+			
+			if (j>globalBounds.lo.y && r_thisCell.getZone()!=map[i][j-1].getZone()) {
+				const PathfindCell &r_topCell = map[i][j-1];
+				
+				if (r_thisCell.getType() == r_topCell.getType()) {
+					applyZone(r_thisCell, r_topCell, m_hierarchicalZones, m_maxZone);
+				}
+#if RTS_GENERALS
+				if (waterGround(r_thisCell,r_topCell)) {
+					applyZone(r_thisCell, r_topCell, m_groundWaterZones, m_maxZone);
+				}
+				if (groundRubble(r_thisCell, r_topCell)) {
+					Int zone1 = r_thisCell.getZone();
+					Int zone2 = r_topCell.getZone();
+					if (m_terrainZones[zone1] != m_terrainZones[zone2]) {
+						//DEBUG_LOG(("Matching terrain zone %d to %d.", zone1, zone2));
+					}
+					applyZone(r_thisCell, r_topCell, m_groundRubbleZones, m_maxZone);
+				}
+				if (groundCliff(r_thisCell,r_topCell)) {
+					applyZone(r_thisCell, r_topCell, m_groundCliffZones, m_maxZone);
+				}
+				if (terrain(r_thisCell, r_topCell)) {
+					applyZone(r_thisCell, r_topCell, m_terrainZones, m_maxZone);
+				}
+				if (crusherGround(r_thisCell, r_topCell)) {
+					applyZone(r_thisCell, r_topCell, m_crusherZones, m_maxZone);
+				}
+#else
+				else
+				{
+					Bool notTerrainOrCrusher = TRUE; // if this is false, skip the if-else-ladder below
+					
+					if (terrain(r_thisCell, r_topCell)) {
+						applyZone(r_thisCell, r_topCell, m_terrainZones, m_maxZone);
+						notTerrainOrCrusher = FALSE;
+					}
+					
+					if (crusherGround(r_thisCell, r_topCell)) {
+						applyZone(r_thisCell, r_topCell, m_crusherZones, m_maxZone);
+						notTerrainOrCrusher = FALSE;
+					}
+					
+					if ( notTerrainOrCrusher ) {
+						if (waterGround(r_thisCell,r_topCell))
+							applyZone(r_thisCell, r_topCell, m_groundWaterZones, m_maxZone);
+						else if (groundRubble(r_thisCell, r_topCell))
+							applyZone(r_thisCell, r_topCell, m_groundRubbleZones, m_maxZone);
+						else if (groundCliff(r_thisCell,r_topCell))
+							applyZone(r_thisCell, r_topCell, m_groundCliffZones, m_maxZone);
+					}
+				}
+#endif // RTS_GENERALS
+			}
+			DEBUG_ASSERTCRASH(r_thisCell.getZone() != 0, ("Cleared the zone."));
+		}
+	}
+	
+#if RTS_GENERALS
+	if (m_maxZone >= m_zonesAllocated) {
+		RELEASE_CRASH("Pathfind allocation error - fatal. see jba.");
+	}
+#endif
+
+  	//FLATTEN HIERARCHICAL ZONES
+    Int zone;
+	for (i=1; i<m_maxZone; i++) {
+		zone = m_hierarchicalZones[i];
+		m_hierarchicalZones[i] = m_hierarchicalZones[zone];
+	}
 
   //THIS BLOCK IS 20%
 	flattenZones(m_groundCliffZones, m_hierarchicalZones, m_maxZone);
@@ -2824,22 +2868,23 @@ void PathfindZoneManager::calculateZones( PathfindCell **map, PathfindLayer laye
 #if defined(DEBUG_LOGGING)
 	QueryPerformanceCounter((LARGE_INTEGER *)&endTime64);
 	timeToUpdate = ((double)(endTime64-startTime64) / (double)(freq64));
-
-  if ( updateSamples < 400 )
-  {
-    averageTimeToUpdate = ((averageTimeToUpdate * updateSamples) + timeToUpdate) / (updateSamples + 1.0f);
-    updateSamples++;
-  	DEBUG_LOG(("computing...: %f", averageTimeToUpdate));
-  }
-  else if ( updateSamples == 400 )
-  {
-  	DEBUG_LOG((" =============DONE============= Average time to calculate zones: %f", averageTimeToUpdate));
-  	DEBUG_LOG(("                                           Percent of baseline : %f", averageTimeToUpdate/0.003335f));
-    updateSamples = 777;
-#ifdef forceRefreshCalling
-    s_stopForceCalling = TRUE;
-#endif
-  }
+#if RTS_GENERALS
+	DEBUG_LOG(("Time to calculate second %f", timeToUpdate));
+#else
+	if ( updateSamples < 400 ) {
+		averageTimeToUpdate = ((averageTimeToUpdate * updateSamples) + timeToUpdate) / (updateSamples + 1.0f);
+		updateSamples++;
+		DEBUG_LOG(("computing...: %f", averageTimeToUpdate));
+	}
+	else if ( updateSamples == 400 ) {
+		DEBUG_LOG((" =============DONE============= Average time to calculate zones: %f", averageTimeToUpdate));
+		DEBUG_LOG(("                                           Percent of baseline : %f", averageTimeToUpdate/0.003335f));
+		updateSamples = 777;
+		#ifdef forceRefreshCalling
+		s_stopForceCalling = TRUE;
+		#endif
+	}
+#endif // RTS_GENERALS
 
 #endif
 #endif
@@ -2869,7 +2914,11 @@ void PathfindZoneManager::calculateZones( PathfindCell **map, PathfindLayer laye
 		}
 	}
 #endif
+#if RTS_GENERALS
+	m_needToCalculateZones = false;
+#else
 	m_nextFrameToCalculateZones = 0xffffffff;
+#endif
 }
 
 /**
@@ -2980,6 +3029,7 @@ void PathfindZoneManager::updateZonesForModify(PathfindCell **map, PathfindLayer
 #if defined(DEBUG_LOGGING)
 	QueryPerformanceCounter((LARGE_INTEGER *)&endTime64);
 	timeToUpdate = ((double)(endTime64-startTime64) / (double)(freq64));
+	DEBUG_LOG(("Time to calculate zones %f, cells %d", timeToUpdate, (globalBounds.hi.x-globalBounds.lo.x)*(globalBounds.hi.y-globalBounds.lo.y)));
 #endif
 #endif
 #if defined(RTS_DEBUG)
@@ -3010,7 +3060,6 @@ void PathfindZoneManager::updateZonesForModify(PathfindCell **map, PathfindLayer
 		}
 	}
 #endif
-
 }
 
 //
@@ -3152,9 +3201,15 @@ zoneStorageType PathfindZoneManager::getBlockZone(LocomotorSurfaceTypeMask accep
 		return 0;
 	}
 	zoneStorageType zone =  m_zoneBlocks[blockX][blockY].getEffectiveZone(acceptableSurfaces, crusher, cell->getZone());
+#if RTS_GENERALS
+	if (zone > m_maxZone) {
+		DEBUG_CRASH(("Invalid zone."));
+		return 0;
+#else
 	if (zone >= m_maxZone) {
 		DEBUG_CRASH(("Invalid zone."));
 		return UNINITIALIZED_ZONE;
+#endif
 	}
 	return zone;
 }

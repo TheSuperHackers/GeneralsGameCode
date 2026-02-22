@@ -541,8 +541,13 @@ public:
 
 	void reset(void);
 
+#if RTS_GENERALS
 	Bool needToCalculateZones(void) const {return m_needToCalculateZones;} ///< Returns true if the zones need to be recalculated.
-	void markZonesDirty(void) ; ///< Called when the zones need to be recalculated.
+#else
+	Bool needToCalculateZones(void) const {return m_nextFrameToCalculateZones <= TheGameLogic->getFrame() ;} ///< Returns true if the zones need to be recalculated.
+#endif
+	void markZonesDirty(void); ///< Called when the zones need to be recalculated.
+ 	void updateZonesForModify( PathfindCell **map,  PathfindLayer layers[], const IRegion2D &structureBounds, const IRegion2D &globalBounds ) ; ///< Called to recalculate an area when a structure has been removed.
 	void calculateZones(	PathfindCell **map, PathfindLayer layers[], const IRegion2D &bounds);	///< Does zone calculations.
 	zoneStorageType getEffectiveZone(LocomotorSurfaceTypeMask acceptableSurfaces, Bool crusher, zoneStorageType zone) const;
 	zoneStorageType getEffectiveTerrainZone(zoneStorageType zone) const;
@@ -574,7 +579,11 @@ private:
 	ICoord2D			m_zoneBlockExtent;				///< Zone block extents. Not the same scale as the pathfind extents.
 
 	UnsignedShort m_maxZone;								///< Max zone used.
-	Bool					m_needToCalculateZones;		///< True if terrain has changed.
+#if RTS_GENERALS
+	Bool			m_needToCalculateZones;		///< True if terrain has changed.
+#else
+	UnsignedInt		m_nextFrameToCalculateZones;		///< WHen should I recalculate, next?.
+#endif
 	UnsignedShort m_zonesAllocated;
 	zoneStorageType *m_groundCliffZones;
 	zoneStorageType *m_groundWaterZones;
