@@ -77,7 +77,6 @@ static void doGameStart( void )
 	msg->appendIntegerArgument(s_AIDiff);
 	msg->appendIntegerArgument(0);
 
-	/// @todo: when Campaign & skirmish are separated, make campaign have fixed seed and skirmish random.
 	InitRandom(0);
 
 	isShuttingDown = true;
