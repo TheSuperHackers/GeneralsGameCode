@@ -281,7 +281,7 @@ void HideQuitMenu( void )
 //-------------------------------------------------------------------------------------------------
 void ToggleQuitMenu()
 {
-	if (TheGameLogic->isIntroMoviePlaying() || TheGameLogic->isLoadingGame() ||TheScriptEngine->isGameEnding())
+	if (TheGameLogic->isIntroMoviePlaying() || TheGameLogic->isLoadingGame())
 		return;
 
 	// BGC- If we are currently in the disconnect screen, don't let the quit menu come up.
@@ -343,6 +343,9 @@ void ToggleQuitMenu()
 			//}
 			//end KRISMORNESS
 		}
+
+		if (TheScriptEngine->isGameEnding())
+			TheMouse->setVisibility(false);
 	}
 	else
 	{
@@ -433,6 +436,8 @@ void ToggleQuitMenu()
 		HideDiplomacy();
 		HideInGameChat();
 		TheControlBar->hidePurchaseScience();
+		quitMenuLayout->bringForward();
+		TheMouse->setVisibility(true);
 		isVisible = TRUE;
 	}
 
