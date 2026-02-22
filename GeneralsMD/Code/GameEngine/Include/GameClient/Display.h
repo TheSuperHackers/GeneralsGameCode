@@ -147,7 +147,6 @@ public:
 													Int endX, Int endY ) = 0;
 
 	/// FullScreen video playback
-	virtual void playLogoMovie( AsciiString movieName, Int minMovieLength, Int minCopyrightLength );
 	virtual void playMovie( AsciiString movieName );
 	virtual void stopMovie( void );
 	virtual Bool isMoviePlaying(void);
@@ -206,11 +205,6 @@ protected:
 	Real	m_letterBoxFadeLevel;	///<tracks the current alpha level for fading letter-boxed mode in/out.
 	Bool	m_letterBoxEnabled;		///<current state of letterbox
 	UnsignedInt	m_letterBoxFadeStartTime;		///< time of letterbox fade start
-	Int		m_movieHoldTime;									///< time that we hold on the last frame of the movie
-	Int		m_copyrightHoldTime;							///< time that the copyright must be on the screen
-	UnsignedInt m_elapsedMovieTime;					///< used to make sure we show the stuff long enough
-	UnsignedInt m_elapsedCopywriteTime;			///< Hold on the last frame until both have expired
-	DisplayString *m_copyrightDisplayString;///< this'll hold the display string
 };
 
 // the singleton
