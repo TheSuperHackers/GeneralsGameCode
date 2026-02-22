@@ -1367,17 +1367,17 @@ void InGameUI::init( void )
 	been moved to where all the other translators are attached in game client */
 
 	// create the tactical view
-	if (TheDisplay)
+	TheTacticalView = createView();
+	if (TheTacticalView && TheDisplay)
 	{
-		TheTacticalView = createView();
 		TheTacticalView->init();
 		TheDisplay->attachView( TheTacticalView );
 
 		// make the tactical display the full screen width and height
 		TheTacticalView->setWidth( TheDisplay->getWidth() );
 		TheTacticalView->setHeight( TheDisplay->getHeight() );
+		TheTacticalView->setDefaultView(0.0f, 0.0f, 1.0f);
 	}
-	TheTacticalView->setDefaultView(0.0f, 0.0f, 1.0f);
 
 	/** @todo this may be the wrong place to create the sidebar, but for now
 	this is where it lives */

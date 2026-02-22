@@ -36,6 +36,7 @@
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
+#include "Common/GlobalData.h"
 #include "GameClient/InGameUI.h"
 #include "GameClient/View.h"
 #include "W3DDevice/GameClient/W3DView.h"
@@ -69,7 +70,8 @@ public:
 protected:
 
 	/// factory for views
-	virtual View *createView( void ) { return NEW W3DView; }
+	// TheSuperHackers @fix bobtista 31/01/2026 Return dummy in headless mode
+	virtual View *createView( void ) { return TheGlobalData->m_headless ? static_cast<View*>(NEW ViewDummy) : NEW W3DView; }
 
 	virtual void drawSelectionRegion( void );			///< draw the selection region on screen
 	virtual void drawMoveHints( View *view );			///< draw move hint visual feedback
