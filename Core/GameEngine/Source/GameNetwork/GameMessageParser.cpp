@@ -35,7 +35,7 @@ GameMessageParser::GameMessageParser()
 }
 
 //----------------------------------------------------------------------------
-GameMessageParser::GameMessageParser(GameMessage *msg)
+GameMessageParser::GameMessageParser(const GameMessage *msg)
 {
 	m_first = nullptr;
 	m_argTypeCount = 0;
