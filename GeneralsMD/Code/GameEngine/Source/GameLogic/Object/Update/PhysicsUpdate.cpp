@@ -1385,7 +1385,12 @@ void PhysicsBehavior::onCollide( Object *other, const Coord3D *loc, const Coord3
 				else
 				{
 					// fall into a nonbuilding -- whatever. if we're a vehicle, quietly do a little damage.
+#if RETAIL_COMPATIBLE_CRC
 					if (obj->isKindOf(KINDOF_VEHICLE))
+#else
+					// TheSuperHackers @bugfix Stubbjax 28/01/2026 Prevent dead units from repeatedly dealing damage.
+					if (obj->isKindOf(KINDOF_VEHICLE) && !obj->isEffectivelyDead())
+#endif
 					{
 						TheWeaponStore->createAndFireTempWeapon(getPhysicsBehaviorModuleData()->m_vehicleCrashesIntoNonBuildingWeaponTemplate, obj, obj->getPosition());
 					}
