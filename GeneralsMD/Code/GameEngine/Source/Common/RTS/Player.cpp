@@ -3644,7 +3644,17 @@ void Player::applyBattlePlanBonusesForPlayerObjects( const BattlePlanBonuses *bo
 	}
 
 	DUMPBATTLEPLANBONUSES(m_battlePlanBonuses, this, nullptr);
+#if RETAIL_COMPATIBLE_CRC
 	iterateObjects( localApplyBattlePlanBonusesToObject, (void*)bonus );
+#else
+	// TheSuperHackers @bugfix Stubbjax 05/02/2026 Apply all bonuses the player has rather than just the most recent.
+	BattlePlanBonuses* newBonus = newInstance(BattlePlanBonuses);
+	*newBonus = *m_battlePlanBonuses;
+	newBonus->m_armorScalar = bonus->m_armorScalar;
+
+	iterateObjects(localApplyBattlePlanBonusesToObject, (void*)newBonus);
+	deleteInstance(newBonus);
+#endif
 }
 
 
