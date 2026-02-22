@@ -32,7 +32,7 @@
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Registry.h"
-#include "Common/UserPreferences.h"
+#include "Common/OptionPreferences.h"
 #include "Common/version.h"
 #include "GameNetwork/IPEnumeration.h"
 #include "GameNetwork/GameSpy/BuddyThread.h"

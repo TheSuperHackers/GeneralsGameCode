@@ -36,7 +36,7 @@
 #include "Common/PlayerList.h"
 #include "Common/Recorder.h"
 #include "Common/StatsCollector.h"
-#include "Common/UserPreferences.h"
+#include "Common/OptionPreferences.h"
 #include "GameLogic/Object.h"
 #include "GameLogic/PartitionManager.h"
 #include "GameClient/Display.h"

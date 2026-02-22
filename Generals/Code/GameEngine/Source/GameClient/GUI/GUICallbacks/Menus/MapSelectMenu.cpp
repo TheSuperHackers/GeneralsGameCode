@@ -33,7 +33,7 @@
 #include "Common/GameEngine.h"
 #include "Common/MessageStream.h"
 #include "Common/RandomValue.h"
-#include "Common/UserPreferences.h"
+#include "Common/OptionPreferences.h"
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/ScriptEngine.h"
 #include "GameClient/AnimateWindowManager.h"

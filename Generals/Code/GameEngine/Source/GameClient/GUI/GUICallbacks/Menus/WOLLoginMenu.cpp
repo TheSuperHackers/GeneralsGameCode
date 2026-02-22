@@ -39,7 +39,7 @@
 #include "Common/GameSpyMiscPreferences.h"
 #include "Common/QuotedPrintable.h"
 #include "Common/Registry.h"
-#include "Common/UserPreferences.h"
+#include "Common/OptionPreferences.h"
 #include "GameClient/AnimateWindowManager.h"
 #include "GameClient/ClientInstance.h"
 #include "GameClient/WindowLayout.h"

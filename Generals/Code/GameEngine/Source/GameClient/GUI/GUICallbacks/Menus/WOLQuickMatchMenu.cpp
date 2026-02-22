@@ -35,6 +35,7 @@
 #include "Common/QuickmatchPreferences.h"
 #include "Common/LadderPreferences.h"
 #include "Common/MultiplayerSettings.h"
+#include "Common/OptionPreferences.h"
 #include "Common/PlayerTemplate.h"
 #include "GameClient/AnimateWindowManager.h"
 #include "GameClient/WindowLayout.h"

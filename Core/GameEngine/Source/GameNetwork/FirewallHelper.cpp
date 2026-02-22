@@ -49,7 +49,7 @@
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/crc.h"
-#include "Common/UserPreferences.h"
+#include "Common/OptionPreferences.h"
 #include "GameNetwork/FirewallHelper.h"
 #include "GameNetwork/NAT.h"
 #include "GameNetwork/udp.h"

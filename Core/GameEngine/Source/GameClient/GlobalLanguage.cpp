@@ -56,7 +56,7 @@
 #include "Common/INI.h"
 #include "Common/Registry.h"
 #include "Common/FileSystem.h"
-#include "Common/UserPreferences.h"
+#include "Common/OptionPreferences.h"
 
 #include "GameClient/Display.h"
 #include "GameClient/GlobalLanguage.h"
