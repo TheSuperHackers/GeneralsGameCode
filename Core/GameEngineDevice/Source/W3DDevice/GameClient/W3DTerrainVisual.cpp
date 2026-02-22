@@ -630,7 +630,7 @@ Bool W3DTerrainVisual::load( AsciiString filename )
 	// Icon drawing utility object for pathfinding.
 	if (W3DDisplay::m_3DScene != nullptr)
 	{
-		W3DDebugIcons *icons = NEW W3DDebugIcons;
+		W3DDebugIcons *icons = NEW W3DDebugIcons(m_logicHeightMap->getXExtent(), m_logicHeightMap->getYExtent());
 		W3DDisplay::m_3DScene->Add_Render_Object( icons );
 		icons->Release_Ref(); // belongs to scene.
 	}

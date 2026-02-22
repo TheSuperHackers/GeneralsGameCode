@@ -959,6 +959,20 @@ Int OptionPreferences::getGameTimeFontSize(void)
 	return fontSize;
 }
 
+Int OptionPreferences::getPlayerInfoListFontSize(void)
+{
+	OptionPreferences::const_iterator it = find("PlayerInfoListFontSize");
+	if (it == end())
+		return 8;
+
+	Int fontSize = atoi(it->second.str());
+	if (fontSize < 0)
+	{
+		fontSize = 0;
+	}
+	return fontSize;
+}
+
 Real OptionPreferences::getResolutionFontAdjustment(void)
 {
 	OptionPreferences::const_iterator it = find("ResolutionFontAdjustment");
@@ -1526,6 +1540,17 @@ static void saveOptions( void )
 		prefString.format("%d", val);
 		(*pref)["GameTimeFontSize"] = prefString;
 		TheInGameUI->refreshGameTimeResources();
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	// Set Player Info List Font Size
+	val = pref->getPlayerInfoListFontSize();
+	if (val >= 0)
+	{
+		AsciiString prefString;
+		prefString.format("%d", val);
+		(*pref)["PlayerInfoListFontSize"] = prefString;
+		TheInGameUI->refreshPlayerInfoListResources();
 	}
 
 	//-------------------------------------------------------------------------------------------------

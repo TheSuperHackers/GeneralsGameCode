@@ -582,3 +582,17 @@ UnicodeString GadgetTextEntryGetText( GameWindow *textentry )
 	return result;
 
 }
+
+//=============================================================================
+void GadgetTextEntrySetMaxLen( GameWindow *g, Short length )
+{
+	if( g == nullptr )
+		return;
+
+	EntryData *data = static_cast<EntryData *>( g->winGetUserData() );
+
+	if( length > ENTRY_TEXT_LEN )
+		length = ENTRY_TEXT_LEN;
+
+	data->maxTextLen = length;
+}

@@ -469,7 +469,8 @@ void Dump_Exception_Info(EXCEPTION_POINTERS *e_info)
 
 	if (!IsBadCodePtr((FARPROC)context->Eip)) {
 		if (_SymGetSymFromAddr != nullptr && _SymGetSymFromAddr (GetCurrentProcess(), context->Eip, &displacement, symptr)) {
-			sprintf (scrap, "Exception occurred at %08X - %s + %08X\r\n", context->Eip, symptr->Name, displacement);
+			snprintf(scrap, ARRAY_SIZE(scrap), "Exception occurred at %08X - %s + %08X\r\n",
+				context->Eip, symptr->Name, displacement);
 		} else {
 			DebugString ("Exception Handler: Failed to get symbol for EIP\r\n");
 			if (_SymGetSymFromAddr != nullptr) {
@@ -509,7 +510,7 @@ void Dump_Exception_Info(EXCEPTION_POINTERS *e_info)
 
 				if (_SymGetSymFromAddr != nullptr && _SymGetSymFromAddr (GetCurrentProcess(), temp_addr, &displacement, symptr)) {
 					char symbuf[256];
-					sprintf(symbuf, "%s + %08X\r\n", symptr->Name, displacement);
+					snprintf(symbuf, ARRAY_SIZE(symbuf), "%s + %08X\r\n", symptr->Name, displacement);
 					Add_Txt(symbuf);
 				}
 			} else {
@@ -546,7 +547,7 @@ void Dump_Exception_Info(EXCEPTION_POINTERS *e_info)
 #endif	//(0)
 
 	if (AppVersionCallback) {
-		sprintf(scrap, "%s\r\n\r\n", AppVersionCallback());
+		snprintf(scrap, ARRAY_SIZE(scrap), "%s\r\n\r\n", AppVersionCallback());
 		Add_Txt(scrap);
 	}
 
@@ -559,7 +560,8 @@ void Dump_Exception_Info(EXCEPTION_POINTERS *e_info)
 	** Get the thread info from ThreadClass.
 	*/
 	for (int thread = 0 ; thread < ThreadList.Count() ; thread++) {
-		sprintf(scrap, "  ID: %08X - %s", ThreadList[thread]->ThreadID, ThreadList[thread]->ThreadName);
+		snprintf(scrap, ARRAY_SIZE(scrap), "  ID: %08X - %s",
+			ThreadList[thread]->ThreadID, ThreadList[thread]->ThreadName);
 		Add_Txt(scrap);
 		if (GetCurrentThreadId() == ThreadList[thread]->ThreadID) {
 			Add_Txt("   ***CURRENT THREAD***");
@@ -570,7 +572,9 @@ void Dump_Exception_Info(EXCEPTION_POINTERS *e_info)
 	/*
 	** CPU type
 	*/
-	sprintf(scrap, "\r\nCPU %s, %d Mhz, Vendor: %s\r\n", (char*)CPUDetectClass::Get_Processor_String(), Get_RDTSC_CPU_Speed(), (char*)CPUDetectClass::Get_Processor_Manufacturer_Name());
+	snprintf(scrap, ARRAY_SIZE(scrap), "\r\nCPU %s, %d Mhz, Vendor: %s\r\n",
+		(char*)CPUDetectClass::Get_Processor_String(), Get_RDTSC_CPU_Speed(),
+		(char*)CPUDetectClass::Get_Processor_Manufacturer_Name());
 	Add_Txt(scrap);
 
 
@@ -690,7 +694,7 @@ void Dump_Exception_Info(EXCEPTION_POINTERS *e_info)
 
 					if (_SymGetSymFromAddr != nullptr && _SymGetSymFromAddr (GetCurrentProcess(), *stackptr, &displacement, symptr)) {
 						char symbuf[256];
-						sprintf(symbuf, " - %s + %08X", symptr->Name, displacement);
+						snprintf(symbuf, ARRAY_SIZE(symbuf), " - %s + %08X", symptr->Name, displacement);
 						strlcat(scrap, symbuf, ARRAY_SIZE(scrap));
 					}
 				} else {

@@ -62,7 +62,6 @@
 
 #include "Common/MultiplayerSettings.h"
 #include "GameClient/GameText.h"
-#include "GameClient/CDCheck.h"
 #include "GameClient/ExtendedMessageBox.h"
 #include "GameClient/MessageBox.h"
 #include "GameNetwork/GameInfo.h"
@@ -432,7 +431,6 @@ void reallyDoStart( void )
 
   TheWritableGlobalData->m_mapName = TheSkirmishGameInfo->getMap();
   TheSkirmishGameInfo->startGame(0);
-	InitGameLogicRandom(TheSkirmishGameInfo->getSeed());
 
 		Bool isSkirmish = TRUE;
 	const MapMetaData *md = TheMapCache->findMap(TheSkirmishGameInfo->getMap());
@@ -443,6 +441,8 @@ void reallyDoStart( void )
 
 	if (isSkirmish)
 	{
+		InitGameLogicRandom(TheSkirmishGameInfo->getSeed());
+
 		GameMessage *msg = TheMessageStream->appendMessage( GameMessage::MSG_NEW_GAME );
 		msg->appendIntegerArgument(GAME_SKIRMISH);
 		msg->appendIntegerArgument(DIFFICULTY_NORMAL);	// not really used; just specified so we can add the game speed last
@@ -451,55 +451,13 @@ void reallyDoStart( void )
 	}
 	else
 	{
+		InitGameLogicRandom(0);
+
 		GameMessage *msg = TheMessageStream->appendMessage( GameMessage::MSG_NEW_GAME );
 		msg->appendIntegerArgument(GAME_SINGLE_PLAYER);
 		msg->appendIntegerArgument(DIFFICULTY_NORMAL);	// not really used; just specified so we can add the game speed last
 		msg->appendIntegerArgument(0);									// not really used; just specified so we can add the game speed last
 		msg->appendIntegerArgument(maxFPS);							// FPS limit
-	}
-}
-
-static MessageBoxReturnType cancelStartBecauseOfNoCD( void *userData )
-{
-	buttonPushed = FALSE;
-	return MB_RETURN_CLOSE;
-}
-
-Bool IsFirstCDPresent(void)
-{
-#if !defined(RTS_DEBUG)
-	return TheFileSystem->areMusicFilesOnCD();
-#else
-	return TRUE;
-#endif
-}
-
-static MessageBoxReturnType checkCDCallback( void *userData )
-{
-	if (!IsFirstCDPresent())
-	{
-		return (IsFirstCDPresent())?MB_RETURN_CLOSE:MB_RETURN_KEEPOPEN;
-	}
-	else
-	{
-		gameStartCallback callback = (gameStartCallback)userData;
-		if (callback)
-			callback();
-		return MB_RETURN_CLOSE;
-	}
-}
-
-void CheckForCDAtGameStart( gameStartCallback callback )
-{
-	if (!IsFirstCDPresent())
-	{
-		// popup a dialog asking for a CD
-		ExMessageBoxOkCancel(TheGameText->fetch("GUI:InsertCDPrompt"), TheGameText->fetch("GUI:InsertCDMessage"),
-			(void*)callback, checkCDCallback, cancelStartBecauseOfNoCD);
-	}
-	else
-	{
-		callback();
 	}
 }
 
@@ -539,7 +497,7 @@ static void startPressed(void)
 
 	if(isReady)
 	{
-		CheckForCDAtGameStart( reallyDoStart );
+		reallyDoStart();
 	}
 
 }

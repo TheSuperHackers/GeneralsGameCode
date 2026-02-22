@@ -454,7 +454,7 @@ Bool ActionManager::canResumeConstructionOf( const Object *obj,
 	if( obj->isKindOf( KINDOF_DOZER ) == FALSE )
 		return FALSE;
 
-	// TheSuperHackers @bugfix Stubbjax 06/01/2025 Ensure only the owner of the construction can resume it.
+	// TheSuperHackers @bugfix Stubbjax 06/01/2026 Ensure only the owner of the construction can resume it.
 #if RETAIL_COMPATIBLE_CRC
 	Relationship r = obj->getRelationship(objectBeingConstructed);
 
@@ -482,7 +482,7 @@ Bool ActionManager::canResumeConstructionOf( const Object *obj,
 	// in the future)
 	//
 	Object *builder = TheGameLogic->findObjectByID( objectBeingConstructed->getBuilderID() );
-#if RETAIL_COMPATIBLE_CRC
+#if RETAIL_COMPATIBLE_CRC || PRESERVE_RETAIL_BEHAVIOR
 	if( builder )
 #else
 	// TheSuperHackers @bugfix Stubbjax 18/11/2025 Allow scaffold to be immediately resumed after builder death.

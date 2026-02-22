@@ -3470,7 +3470,7 @@ void Object::crc( Xfer *xfer )
 #if RETAIL_COMPATIBLE_CRC
 		tmp.format("m_objectUpgradesCompleted: %I64X, ", m_objectUpgradesCompleted);
 #else
-		tmp.format("m_objectUpgradesCompleted: %s, ", m_objectUpgradesCompleted.toHexString().c_str());
+		tmp.format("m_objectUpgradesCompleted: %s, ", m_objectUpgradesCompleted.toHexString().str());
 #endif
 		logString.concat(tmp);
 	}
@@ -4046,7 +4046,18 @@ void Object::onCapture( Player *oldOwner, Player *newOwner )
 		getAIUpdateInterface()->aiIdle(CMD_FROM_AI);
 #else
 		if (oldOwner->getRelationship(newOwner->getDefaultTeam()) != ALLIES)
+		{
 			getAIUpdateInterface()->aiIdle(CMD_FROM_AI);
+
+			DozerAIInterface* dozerAI = getAIUpdateInterface()->getDozerAIInterface();
+			if (dozerAI)
+			{
+				for (UnsignedInt task = DOZER_TASK_FIRST; task < DOZER_NUM_TASKS; ++task)
+				{
+					dozerAI->cancelTask((DozerTask)task);
+				}
+			}
+		}
 #endif
 	}
 

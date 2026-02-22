@@ -217,6 +217,10 @@ Bool Transport::doSend() {
 		if (m_outBuffer[i].length != 0)
 		{
 			int bytesSent = 0;
+			// TheSuperHackers @info The handling of data sizing of the payload within a UDP packet is confusing due to the current networking implementation
+			// The max game packet size needs to be smaller than max udp payload by sizeof(TransportMessageHeader)
+			// But the max network message size needs to include the bytes of the transport message header and equal the max udp payload
+			// Therefore, transmitted data needs to add the extra bytes of the network header to the payloads length
 			int bytesToSend = m_outBuffer[i].length + sizeof(TransportMessageHeader);
 			// Send this message
 			if ((bytesSent = m_udpsock->Write((unsigned char *)(&m_outBuffer[i]), bytesToSend, m_outBuffer[i].addr, m_outBuffer[i].port)) > 0)
@@ -281,12 +285,15 @@ Bool Transport::doRecv()
 #if defined(RTS_DEBUG)
 	UnsignedInt now = timeGetTime();
 #endif
-
+	// TheSuperHackers @info The handling of data sizing of the payload within a UDP packet is confusing due to the current networking implementation
+	// The max game packet size needs to be smaller than max udp payload by sizeof(TransportMessageHeader)
+	// But the max network message size needs to include the bytes of the transport message header and equal the max udp payload
+	// Therefore, when receiving data we use the max udp payload size to receive the game packet payload and network header
 	TransportMessage incomingMessage;
 	unsigned char *buf = (unsigned char *)&incomingMessage;
-	int len = MAX_MESSAGE_LEN;
+	int len = MAX_NETWORK_MESSAGE_LEN;
 //	DEBUG_LOG(("Transport::doRecv - checking"));
-	while ( (len=m_udpsock->Read(buf, MAX_MESSAGE_LEN, &from)) > 0 )
+	while ( (len=m_udpsock->Read(buf, MAX_NETWORK_MESSAGE_LEN, &from)) > 0 )
 	{
 #if defined(RTS_DEBUG)
 		// Packet loss simulation
@@ -417,7 +424,7 @@ Bool Transport::isGeneralsPacket( TransportMessage *msg )
 	if (!msg)
 		return false;
 
-	if (msg->length < 0 || msg->length > MAX_MESSAGE_LEN)
+	if (msg->length < 0 || msg->length > MAX_NETWORK_MESSAGE_LEN)
 		return false;
 
 	CRC crc;

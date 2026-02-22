@@ -708,7 +708,7 @@ void DX8Caps::Vendor_Specific_Hacks(const D3DADAPTER_IDENTIFIER8& adapter_id)
 	}
 
 	if (adapter_id.VendorId==VENDOR_ID_VMWARE) {
-		// TheSuperHackers @bugfix Stubbjax 15/01/2025 Disable DOT3 support for VMWare's virtual GPU.
+		// TheSuperHackers @bugfix Stubbjax 15/01/2026 Disable DOT3 support for VMWare's virtual GPU.
 		// The D3DTA_ALPHAREPLICATE modifier fails when passed to a D3DTOP_MULTIPLYADD operation.
 		SupportDot3 = false;
 	}

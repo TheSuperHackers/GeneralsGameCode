@@ -241,6 +241,7 @@ void PopulateReplayFileListbox(GameWindow *listbox)
 
 	GadgetListBoxReset(listbox);
 	const Int listboxLength = GadgetListBoxGetListLength(listbox);
+	const Int columns = GadgetListBoxGetNumColumns(listbox);
 
 	// TheSuperHackers @tweak xezon 08/06/2025 Now shows missing maps in red color.
 	enum {
@@ -290,9 +291,9 @@ void PopulateReplayFileListbox(GameWindow *listbox)
 			// name
 			UnicodeString replayNameToShow = createReplayName(asciistr);
 
-			UnicodeString displayTimeBuffer = getUnicodeTimeBuffer(header.timeVal);
-
-			//displayTimeBuffer.format( L"%ls", timeBuffer);
+			// TheSuperHackers @tweak Caball009 07/02/2026 Display both time and date instead of only time.
+			const UnicodeString displayTimeBuffer = getUnicodeTimeBuffer(header.timeVal);
+			const UnicodeString displayDateBuffer = getUnicodeDateBuffer(header.timeVal);
 
 			// version (no-op)
 
@@ -353,9 +354,29 @@ void PopulateReplayFileListbox(GameWindow *listbox)
 
 			const Int insertionIndex = GadgetListBoxAddEntryText(listbox, replayNameToShow, color, -1, 0);
 			DEBUG_ASSERTCRASH(insertionIndex >= 0, ("Expects valid index"));
-			GadgetListBoxAddEntryText(listbox, displayTimeBuffer, color, insertionIndex, 1);
-			GadgetListBoxAddEntryText(listbox, header.versionString, color, insertionIndex, 2);
-			GadgetListBoxAddEntryText(listbox, mapStr, mapColor, insertionIndex, 3);
+
+			// TheSuperHackers @info Caball009 09/02/2026 Original replay menu has 4 columns; the code now supports a future 5-column layout.
+			// If there aren't two columns for time and date, concatenate them for a single column.
+			if (columns == 4)
+			{
+				UnicodeString displayDateTimeBuffer;
+				displayDateTimeBuffer.format(L"%s %s", displayTimeBuffer.str(), displayDateBuffer.str());
+
+				GadgetListBoxAddEntryText(listbox, displayDateTimeBuffer, color, insertionIndex, 1);
+				GadgetListBoxAddEntryText(listbox, header.versionString, color, insertionIndex, 2);
+				GadgetListBoxAddEntryText(listbox, mapStr, mapColor, insertionIndex, 3);
+			}
+			else if (columns == 5)
+			{
+				GadgetListBoxAddEntryText(listbox, displayTimeBuffer, color, insertionIndex, 1);
+				GadgetListBoxAddEntryText(listbox, displayDateBuffer, color, insertionIndex, 2);
+				GadgetListBoxAddEntryText(listbox, header.versionString, color, insertionIndex, 3);
+				GadgetListBoxAddEntryText(listbox, mapStr, mapColor, insertionIndex, 4);
+			}
+			else
+			{
+				DEBUG_CRASH(("Replay menu uses %d columns; expected either 4 or 5", columns));
+			}
 
 			// TheSuperHackers @performance Now stops processing when the list is full.
 			if (insertionIndex == listboxLength - 1)
@@ -387,6 +408,15 @@ void ReplayMenuInit( WindowLayout *layout, void *userData )
 	listboxReplayFiles->winSetTooltipFunc(showReplayTooltip);
 	buttonDelete = TheWindowManager->winGetWindowFromId( parentReplayMenu, buttonDeleteID );
 	buttonCopy = TheWindowManager->winGetWindowFromId( parentReplayMenu, buttonCopyID );
+
+#if ENABLE_GUI_HACKS
+	// TheSuperHackers @tweak Caball009 07/02/2026 The version column is wider than the time / date column.
+	// Switch them so that there's enough space to show both time and date without a line break.
+	ListboxData* list = static_cast<ListboxData*>(listboxReplayFiles->winGetUserData());
+
+	if (list->columns == 4 && list->columnWidth[1] < list->columnWidth[2])
+		std::swap(list->columnWidth[1], list->columnWidth[2]);
+#endif
 
 	//Load the listbox shiznit
 	GadgetListBoxReset(listboxReplayFiles);

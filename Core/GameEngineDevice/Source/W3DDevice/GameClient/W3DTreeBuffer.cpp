@@ -458,10 +458,10 @@ void W3DTreeBuffer::updateTexture(void)
 	for (i=0; i<m_numTreeTypes; i++) {
 		char texturePath[ _MAX_PATH ];
 		m_treeTypes[i].m_numTiles = 0;
-		sprintf( texturePath, "%s%s", TERRAIN_TGA_DIR_PATH, m_treeTypes[i].m_data->m_textureName.str() );
+		snprintf( texturePath, ARRAY_SIZE(texturePath), "%s%s", TERRAIN_TGA_DIR_PATH, m_treeTypes[i].m_data->m_textureName.str() );
 		theFile = TheFileSystem->openFile( texturePath, File::READ|File::BINARY);
 		if (theFile==nullptr) {
-			sprintf( texturePath, "%s%s", TGA_DIR_PATH, m_treeTypes[i].m_data->m_textureName.str() );
+			snprintf( texturePath, ARRAY_SIZE(texturePath), "%s%s", TGA_DIR_PATH, m_treeTypes[i].m_data->m_textureName.str() );
 			theFile = TheFileSystem->openFile( texturePath, File::READ|File::BINARY);
 		}
 		if (theFile != nullptr) {

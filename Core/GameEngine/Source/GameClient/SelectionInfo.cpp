@@ -1,5 +1,5 @@
 /*
-**	Command & Conquer Generals(tm)
+**	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
 **
 **	This program is free software: you can redistribute it and/or modify
@@ -23,14 +23,16 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "PreRTS.h"
-#include "GameClient/SelectionInfo.h"
+
+#include "GameLogic/Damage.h"
+#include "GameLogic/Module/ContainModule.h"
 
 #include "Common/ActionManager.h"
-#include "GameLogic/Damage.h"
-#include "Common/Player.h"
-#include "Common/PlayerList.h"
 #include "Common/ThingTemplate.h"
+#include "Common/PlayerList.h"
+#include "Common/Player.h"
 
+#include "GameClient/SelectionInfo.h"
 #include "GameClient/CommandXlat.h"
 #include "GameClient/ControlBar.h"
 #include "GameClient/Drawable.h"
@@ -61,9 +63,8 @@ SelectionInfo::SelectionInfo() :
 { }
 
 //-------------------------------------------------------------------------------------------------
-PickDrawableStruct::PickDrawableStruct() : drawableListToFill(nullptr)
+PickDrawableStruct::PickDrawableStruct() : drawableListToFill(nullptr), isPointSelection(FALSE)
 {
-	drawableListToFill = FALSE;
 	forceAttackMode = TheInGameUI->isInForceAttackMode();
 	UnsignedInt pickType = getPickTypesForContext(forceAttackMode);
 	translatePickTypesToKindof(pickType, kindofsToMatch);
@@ -360,7 +361,36 @@ Bool addDrawableToList( Drawable *draw, void *userData )
 		return FALSE;
 
 	if (!draw->isSelectable())
-		return FALSE;
+  {
+    const Object *obj = draw->getObject();
+    if ( obj && obj->getContainedBy() )//hmm, interesting... he is not selectable but he is contained
+    {// What we are after here is to propagate the selection the selection ti the container
+      // if the container is non-enclosing... see also SelectionXlat, in the left_click case
+
+      ContainModuleInterface *contain = obj->getContainedBy()->getContain();
+      Drawable *containDraw = obj->getContainedBy()->getDrawable();
+      if (contain && ! contain->isEnclosingContainerFor( obj ) && containDraw )
+        return addDrawableToList( containDraw, userData );
+    }
+    else
+      return FALSE;
+  }
+
+#if !RTS_GENERALS && PRESERVE_RETAIL_BEHAVIOR
+	// TheSuperHackers @info
+	// In retail, hidden objects such as passengers are included here when drag-selected, which causes
+	// enemy selection logic to exit early (only 1 enemy unit can be selected at a time). Some players
+	// exploit this bug to determine if a transport contains passengers and consider this an important
+	// feature and an advanced skill to pull off, so we must leave the exploit.
+	if (!pds->isPointSelection)
+	{
+		const Object *obj = draw->getObject();
+		if (obj)
+			if (obj->getControllingPlayer() != ThePlayerList->getLocalPlayer())
+				if (obj->getContain() && draw->getObject()->getContain()->getContainCount() > 0)
+					return FALSE;
+	}
+#endif
 
 	pds->drawableListToFill->push_back(draw);
 	return TRUE;

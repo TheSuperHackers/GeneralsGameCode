@@ -554,7 +554,7 @@ void VertexMaterialClass::Parse_Mapping_Args(const W3dVertexMaterialStruct & vma
 		int mapping0_arg_len = strlen(mapping0_arg_buffer);
 
 		char *extended_arg_buffer = MSGW3DNEWARRAY("VertexMaterialClassTemp") char[mapping0_arg_len + 10];
-		sprintf(extended_arg_buffer, "[Args]\n%s", mapping0_arg_buffer);
+		snprintf(extended_arg_buffer, mapping0_arg_len + 10, "[Args]\n%s", mapping0_arg_buffer);
 		mapping0_arg_len = strlen(extended_arg_buffer) + 1;
 
 		BufferStraw map_arg_buf_straw((void *)extended_arg_buffer, mapping0_arg_len);
@@ -570,7 +570,7 @@ void VertexMaterialClass::Parse_Mapping_Args(const W3dVertexMaterialStruct & vma
 		int mapping1_arg_len = strlen(mapping1_arg_buffer);
 
 		char *extended_arg_buffer = MSGW3DNEWARRAY("VertexMaterialClassTemp") char[mapping1_arg_len + 20];
-		sprintf(extended_arg_buffer, "[Args]\n%s", mapping1_arg_buffer);
+		snprintf(extended_arg_buffer, mapping1_arg_len + 20, "[Args]\n%s", mapping1_arg_buffer);
 		mapping1_arg_len = strlen(extended_arg_buffer) + 1;
 
 		BufferStraw map_arg_buf_straw((void *)extended_arg_buffer, mapping1_arg_len);

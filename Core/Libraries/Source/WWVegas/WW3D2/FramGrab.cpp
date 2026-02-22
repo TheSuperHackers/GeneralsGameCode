@@ -49,7 +49,7 @@ FrameGrabClass::FrameGrabClass(const char *filename, MODE mode, int width, int h
 	int result;
 	char file[256];
 	do {
-		sprintf(file, "%s%d.AVI", filename, counter++);
+		snprintf(file, ARRAY_SIZE(file), "%s%d.AVI", filename, counter++);
 		result = _access(file, 0);
 	} while(result != -1);
 
@@ -57,7 +57,7 @@ FrameGrabClass::FrameGrabClass(const char *filename, MODE mode, int width, int h
     hr = AVIFileOpen(&AVIFile, file, OF_WRITE | OF_CREATE, nullptr);
     if (hr != 0) {
 		char buf[256];
-		sprintf(buf, "Unable to open %s\n", Filename);
+		snprintf(buf, ARRAY_SIZE(buf), "Unable to open %s\n", Filename);
 		OutputDebugString(buf);
 		CleanupAVI();
 		return;

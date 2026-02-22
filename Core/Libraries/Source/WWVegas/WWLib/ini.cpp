@@ -866,7 +866,7 @@ unsigned INIClass::Enumerate_Entries(const char *Section, const char * Entry_Pre
 	char entry[256];
 	do
 	{
-		sprintf(entry, "%s%d", Entry_Prefix, count);
+		snprintf(entry, ARRAY_SIZE(entry), "%s%d", Entry_Prefix, count);
 		present = Is_Present(Section, entry);
 		if(present)
 			count++;

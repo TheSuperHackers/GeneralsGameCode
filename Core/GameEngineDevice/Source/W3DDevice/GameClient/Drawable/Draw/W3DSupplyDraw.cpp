@@ -96,7 +96,7 @@ void W3DSupplyDraw::updateDrawModuleSupplyStatus( Int maxSupply, Int currentSupp
 		while( currentIndex <= highIndex )
 		{
 			char buffer[16];
-			sprintf( buffer, "%s%02d", boneName.str(), currentIndex );
+			snprintf( buffer, ARRAY_SIZE(buffer), "%s%02d", boneName.str(), currentIndex );
 			ModelConditionInfo::HideShowSubObjInfo info;
 			info.hide = hide;
 			info.subObjName = buffer;

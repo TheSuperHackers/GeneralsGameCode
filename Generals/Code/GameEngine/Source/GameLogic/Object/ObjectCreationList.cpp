@@ -1294,12 +1294,24 @@ protected:
 			// longer be necessary and can be taken out -- amit
 			if (m_spreadFormation)
 			{
-				Coord3D resultPos;
 				FindPositionOptions fpOptions;
 				fpOptions.minRadius = GameLogicRandomValueReal(m_minDistanceAFormation, m_minDistanceBFormation);
 				fpOptions.maxRadius = m_maxDistanceFormation;
 				fpOptions.flags = FPF_USE_HIGHEST_LAYER;
-				ThePartitionManager->findPositionAround(pos, &fpOptions, &resultPos);
+
+				// TheSuperHackers @bugfix Caball009 12/01/2026 Position variable needs to be initialized before use.
+				// The non-deterministic behavior for retail clients cannot be fixed, so this will remain a source of potential mismatches for unpatched clients.
+				// Fall back to the center position if no valid position was found, so that the behavior is deterministic for patched clients.
+				Coord3D resultPos = *pos;
+
+				if (!ThePartitionManager->findPositionAround(pos, &fpOptions, &resultPos))
+				{
+					DEBUG_ASSERTCRASH(resultPos == *pos, ("Position should not have been changed"));
+
+#if RETAIL_COMPATIBLE_CRC
+					DEBUG_CRASH(("A mismatch is likely to happen if this code path is used in a match with unpatched clients."));
+#endif
+				}
 				doStuffToObj( debris, m_names[pick], &resultPos, mtx, orientation, sourceObj, lifetimeFrames );
 			}
 			else

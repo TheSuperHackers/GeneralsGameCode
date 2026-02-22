@@ -1323,7 +1323,7 @@ void WW3D::Make_Screen_Shot( const char * filename_base , const float gamma, con
 
 	bool done = false;
 	while (!done) {
-		sprintf( filename, "%s%.2d.%s", filename_base, frame_number++, ext);
+		snprintf( filename, ARRAY_SIZE(filename), "%s%.2d.%s", filename_base, frame_number++, ext);
 		FileClass*file=_TheFileFactory->Get_File( filename );
 		if ( file ) {
 			file->Open();

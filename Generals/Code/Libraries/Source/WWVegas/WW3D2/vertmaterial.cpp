@@ -510,7 +510,7 @@ WW3DErrorType VertexMaterialClass::Load_W3D(ChunkLoadClass & cload)
 	if (mapping0_arg_buffer) {
 
 		char *extended_arg_buffer = MSGW3DNEWARRAY("VertexMaterialClassTemp") char[mapping0_arg_len + 10];
-		sprintf(extended_arg_buffer, "[Args]\n%s", mapping0_arg_buffer);
+		snprintf(extended_arg_buffer, mapping0_arg_len + 10, "[Args]\n%s", mapping0_arg_buffer);
 		mapping0_arg_len = strlen(extended_arg_buffer) + 1;
 
 		delete [] mapping0_arg_buffer;
@@ -527,7 +527,7 @@ WW3DErrorType VertexMaterialClass::Load_W3D(ChunkLoadClass & cload)
 	if (mapping1_arg_buffer) {
 
 		char *extended_arg_buffer = MSGW3DNEWARRAY("VertexMaterialClassTemp") char[mapping1_arg_len + 20];
-		sprintf(extended_arg_buffer, "[Args]\n%s", mapping1_arg_buffer);
+		snprintf(extended_arg_buffer, mapping1_arg_len + 20, "[Args]\n%s", mapping1_arg_buffer);
 		mapping1_arg_len = strlen(extended_arg_buffer) + 1;
 
 		delete [] mapping1_arg_buffer;

@@ -202,9 +202,8 @@ GameState::SnapshotBlock *GameState::findBlockInfoByToken( AsciiString token, Sn
 
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////
+// TheSuperHackers @tweak Use the user's default locale instead of the system default to match Windows regional settings.
+// This allows regional formats such as Europe (English) to use 24-hour and DD/MM/YYYY formats in-game.
 UnicodeString getUnicodeDateBuffer(SYSTEMTIME timeVal)
 {
 	// setup date buffer for local region date format
@@ -217,7 +216,7 @@ UnicodeString getUnicodeDateBuffer(SYSTEMTIME timeVal)
 		if (osvi.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS)
 		{
 			char dateBuffer[ DATE_BUFFER_SIZE ];
-			GetDateFormat( LOCALE_SYSTEM_DEFAULT,
+			GetDateFormat( LOCALE_USER_DEFAULT,
 										 DATE_SHORTDATE,
 										 &timeVal,
 										 nullptr,
@@ -227,7 +226,7 @@ UnicodeString getUnicodeDateBuffer(SYSTEMTIME timeVal)
 		}
 	}
 	wchar_t dateBuffer[ DATE_BUFFER_SIZE ];
-	GetDateFormatW( LOCALE_SYSTEM_DEFAULT,
+	GetDateFormatW( LOCALE_USER_DEFAULT,
 								 DATE_SHORTDATE,
 								 &timeVal,
 								 nullptr,
@@ -248,7 +247,7 @@ UnicodeString getUnicodeTimeBuffer(SYSTEMTIME timeVal)
 		if (osvi.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS)
 		{
 			char timeBuffer[ DATE_BUFFER_SIZE ];
-			GetTimeFormat( LOCALE_SYSTEM_DEFAULT,
+			GetTimeFormat( LOCALE_USER_DEFAULT,
 										 TIME_NOSECONDS|TIME_FORCE24HOURFORMAT|TIME_NOTIMEMARKER,
 										 &timeVal,
 										 nullptr,
@@ -260,7 +259,7 @@ UnicodeString getUnicodeTimeBuffer(SYSTEMTIME timeVal)
 	// setup time buffer for local region time format
 	#define TIME_BUFFER_SIZE 256
 	wchar_t timeBuffer[ TIME_BUFFER_SIZE ];
-	GetTimeFormatW( LOCALE_SYSTEM_DEFAULT,
+	GetTimeFormatW( LOCALE_USER_DEFAULT,
 								 TIME_NOSECONDS,
 								 &timeVal,
 								 nullptr,

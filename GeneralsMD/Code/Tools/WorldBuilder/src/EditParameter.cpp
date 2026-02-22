@@ -1238,7 +1238,7 @@ Bool EditParameter::loadCommandButtons(CComboBox *pCombo, AsciiString match)
 	char buf[1024];
 	char *string;
 	char *token;
-	char seps[]   = " ,\t\n";
+	char seps[]   = " ,\t\n\r";
 
 	fp->nextLine(buf, 1024);
 	string = buf;

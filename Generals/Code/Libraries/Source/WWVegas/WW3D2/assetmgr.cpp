@@ -797,7 +797,7 @@ RenderObjClass * WW3DAssetManager::Create_Render_Obj(const char * name)
 			::lstrcpyn (filename, name, ((int)mesh_name) - ((int)name) + 1);
 			::lstrcat (filename, ".w3d");
 		} else {
-			sprintf( filename, "%s.w3d", name);
+			snprintf( filename, ARRAY_SIZE(filename), "%s.w3d", name);
 		}
 
 		// If we can't find it, try the parent directory
@@ -975,7 +975,7 @@ HAnimClass *	WW3DAssetManager::Get_HAnim(const char * name)
 			char filename[ MAX_PATH ];
 			const char *animname = strchr( name, '.');
 			if (animname != nullptr) {
-				sprintf( filename, "%s.w3d", animname+1);
+				snprintf( filename, ARRAY_SIZE(filename), "%s.w3d", animname+1);
 			} else {
 				WWDEBUG_SAY(( "Animation %s has no . in the name", name ));
 				WWASSERT( 0 );
@@ -1025,7 +1025,7 @@ HTreeClass *	WW3DAssetManager::Get_HTree(const char * name)
 		AssetStatusClass::Peek_Instance()->Report_Load_On_Demand_HTree(name);
 
 		char filename[ MAX_PATH ];
-		sprintf( filename, "%s.w3d", name);
+		snprintf( filename, ARRAY_SIZE(filename), "%s.w3d", name);
 
 		// If we can't find it, try the parent directory
 		if ( Load_3D_Assets( filename ) == false ) {

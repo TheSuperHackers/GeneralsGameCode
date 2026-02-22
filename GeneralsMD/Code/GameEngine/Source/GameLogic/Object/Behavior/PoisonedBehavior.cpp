@@ -159,7 +159,7 @@ void PoisonedBehavior::startPoisonedEffects( const DamageInfo *damageInfo )
 
 	// We are going to take the damage dealt by the original poisoner every so often for a while.
 	m_poisonDamageAmount = damageInfo->out.m_actualDamageDealt;
-#if !RETAIL_COMPATIBLE_CRC
+#if !RETAIL_COMPATIBLE_CRC && !PRESERVE_RETAIL_BEHAVIOR
 	// TheSuperHackers @bugfix Stubbjax 03/09/2025 Allow poison damage to award xp to the poison source.
 	m_poisonSource = damageInfo->in.m_sourceID;
 #endif

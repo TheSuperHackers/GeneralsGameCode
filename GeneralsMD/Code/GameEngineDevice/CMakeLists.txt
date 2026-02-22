@@ -53,7 +53,7 @@ set(GAMEENGINEDEVICE_SRC
     Include/W3DDevice/GameClient/W3DGUICallbacks.h
     Include/W3DDevice/GameClient/W3DInGameUI.h
     Include/W3DDevice/GameClient/W3DMirror.h
-    Include/W3DDevice/GameClient/W3DMouse.h
+#    Include/W3DDevice/GameClient/W3DMouse.h
     Include/W3DDevice/GameClient/W3DParticleSys.h
     Include/W3DDevice/GameClient/W3DPoly.h
     Include/W3DDevice/GameClient/W3DProjectedShadow.h
@@ -83,13 +83,12 @@ set(GAMEENGINEDEVICE_SRC
     Include/W3DDevice/GameLogic/W3DTerrainLogic.h
 #    Include/Win32Device/Common/Win32BIGFile.h
 #    Include/Win32Device/Common/Win32BIGFileSystem.h
-    Include/Win32Device/Common/Win32CDManager.h
     Include/Win32Device/Common/Win32GameEngine.h
 #    Include/Win32Device/Common/Win32LocalFile.h
 #    Include/Win32Device/Common/Win32LocalFileSystem.h
-    Include/Win32Device/GameClient/Win32DIKeyboard.h
-    Include/Win32Device/GameClient/Win32DIMouse.h
-    Include/Win32Device/GameClient/Win32Mouse.h
+#    Include/Win32Device/GameClient/Win32DIKeyboard.h
+#    Include/Win32Device/GameClient/Win32DIMouse.h
+#    Include/Win32Device/GameClient/Win32Mouse.h
 #    Source/MilesAudioDevice/MilesAudioManager.cpp
 #    Source/VideoDevice/Bink/BinkVideoPlayer.cpp
     Source/W3DDevice/Common/System/W3DFunctionLexicon.cpp
@@ -157,7 +156,7 @@ set(GAMEENGINEDEVICE_SRC
     Source/W3DDevice/GameClient/W3DFileSystem.cpp
     Source/W3DDevice/GameClient/W3DGameClient.cpp
     Source/W3DDevice/GameClient/W3DInGameUI.cpp
-    Source/W3DDevice/GameClient/W3DMouse.cpp
+#    Source/W3DDevice/GameClient/W3DMouse.cpp
     Source/W3DDevice/GameClient/W3DParticleSys.cpp
     Source/W3DDevice/GameClient/W3DPoly.cpp
 #    Source/W3DDevice/GameClient/W3DPropBuffer.cpp
@@ -184,14 +183,13 @@ set(GAMEENGINEDEVICE_SRC
     Source/W3DDevice/GameLogic/W3DTerrainLogic.cpp
 #    Source/Win32Device/Common/Win32BIGFile.cpp
 #    Source/Win32Device/Common/Win32BIGFileSystem.cpp
-    Source/Win32Device/Common/Win32CDManager.cpp
     Source/Win32Device/Common/Win32GameEngine.cpp
 #    Source/Win32Device/Common/Win32LocalFile.cpp
 #    Source/Win32Device/Common/Win32LocalFileSystem.cpp
     Source/Win32Device/Common/Win32OSDisplay.cpp
-    Source/Win32Device/GameClient/Win32DIKeyboard.cpp
-    #Source/Win32Device/GameClient/Win32DIMouse.cpp
-    Source/Win32Device/GameClient/Win32Mouse.cpp
+#    Source/Win32Device/GameClient/Win32DIKeyboard.cpp
+#    #Source/Win32Device/GameClient/Win32DIMouse.cpp
+#    Source/Win32Device/GameClient/Win32Mouse.cpp
 )
 
 add_library(z_gameenginedevice STATIC)

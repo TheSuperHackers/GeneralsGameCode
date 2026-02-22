@@ -2688,8 +2688,8 @@ VideoBuffer*	W3DDisplay::createVideoBuffer( void )
 			return nullptr;
 		}
 	}
-	// on low mem machines, render every video in 16bit except for the EA Logo movie
-	if(!TheGlobalData->m_playIntro )//&& TheGameLODManager && (!TheGameLODManager->didMemPass() || W3DShaderManager::getChipset() == DC_GEFORCE2))
+	// on low mem machines, render every video in 16bit
+	if (TheGameLODManager && (!TheGameLODManager->didMemPass() || W3DShaderManager::getChipset() == DC_GEFORCE2))
 		format = VideoBuffer::TYPE_R5G6B5;
 
 	W3DVideoBuffer *buffer = NEW W3DVideoBuffer( format );

@@ -166,6 +166,7 @@ void ScriptConditionsDlg::setSel(OrCondition *pOr, Condition *pCond)
 		while (m_orCondition) {
 			if (m_orCondition==pOr && pCond==nullptr) {
 				pList->SetCurSel(count);
+				m_index = count;
 				enableUI();
 				return;
 			}
@@ -174,6 +175,7 @@ void ScriptConditionsDlg::setSel(OrCondition *pOr, Condition *pCond)
 			while (m_condition) {
 				if (m_condition == pCond) {
 					pList->SetCurSel(count);
+					m_index = count;
 					enableUI();
 					return;
 				}

@@ -47,7 +47,6 @@
 #include "Common/FileSystem.h"
 #include "Common/ArchiveFileSystem.h"
 #include "Common/LocalFileSystem.h"
-#include "Common/CDManager.h"
 #include "Common/GlobalData.h"
 #include "Common/PerfTimer.h"
 #include "Common/RandomValue.h"
@@ -435,7 +434,6 @@ void GameEngine::init()
 		initSubsystem(TheTerrainRoads,"TheTerrainRoads", MSGNEW("GameEngineSubsystem") TerrainRoadCollection(), &xferCRC, "Data\\INI\\Default\\Roads", "Data\\INI\\Roads");
 		initSubsystem(TheGlobalLanguageData,"TheGlobalLanguageData",MSGNEW("GameEngineSubsystem") GlobalLanguage, nullptr); // must be before the game text
 		TheGlobalLanguageData->parseCustomDefinition();
-		initSubsystem(TheCDManager,"TheCDManager", CreateCDManager(), nullptr);
 		initSubsystem(TheAudio,"TheAudio", TheGlobalData->m_headless ? NEW AudioManagerDummy : createAudioManager(), nullptr);
 		if (!TheAudio->isMusicAlreadyLoaded())
 			setQuitting(TRUE);
@@ -730,8 +728,6 @@ void GameEngine::update( void )
 			{
 				TheNetwork->UPDATE();
 			}
-
-			TheCDManager->UPDATE();
 		}
 
 		const Bool canUpdate = canUpdateGameLogic();

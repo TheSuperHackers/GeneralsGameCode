@@ -871,7 +871,6 @@ void NetChatCommandMsg::setPlayerMask( Int playerMask )
 size_t NetChatCommandMsg::getPackedByteCount() const
 {
 	return sizeof(NetPacketChatCommand)
-		+ sizeof(UnsignedByte) // text length byte
 		+ m_text.getByteCount()
 		+ sizeof(m_playerMask);
 }
@@ -882,7 +881,6 @@ size_t NetChatCommandMsg::getPackedByteCount() const
 size_t NetDisconnectChatCommandMsg::getPackedByteCount() const
 {
 	return sizeof(NetPacketDisconnectChatCommand)
-		+ sizeof(UnsignedByte) // text length byte
 		+ m_text.getByteCount();
 }
 
@@ -957,7 +955,7 @@ void NetProgressCommandMsg::setPercentage( UnsignedByte percent )
 }
 
 size_t NetProgressCommandMsg::getPackedByteCount() const {
-	return sizeof(NetPacketProgressMessage);
+	return sizeof(NetPacketProgressCommand);
 }
 
 //-------------------------
@@ -975,7 +973,7 @@ NetWrapperCommandMsg::NetWrapperCommandMsg() : NetCommandMsg() {
 }
 
 NetWrapperCommandMsg::~NetWrapperCommandMsg() {
-	delete m_data;
+	delete[] m_data;
 	m_data = nullptr;
 }
 
@@ -985,7 +983,7 @@ UnsignedByte * NetWrapperCommandMsg::getData() {
 
 void NetWrapperCommandMsg::setData(UnsignedByte *data, UnsignedInt dataLength)
 {
-	delete m_data;
+	delete[] m_data;
 	m_data = NEW UnsignedByte[dataLength];	// pool[]ify
 	memcpy(m_data, data, dataLength);
 	m_dataLength = dataLength;
@@ -1246,7 +1244,7 @@ NetLoadCompleteCommandMsg::~NetLoadCompleteCommandMsg() {
 }
 
 size_t NetLoadCompleteCommandMsg::getPackedByteCount() const {
-	return sizeof(NetPacketLoadCompleteMessage);
+	return sizeof(NetPacketLoadCompleteCommand);
 }
 
 //-------------------------
@@ -1260,5 +1258,5 @@ NetTimeOutGameStartCommandMsg::~NetTimeOutGameStartCommandMsg() {
 }
 
 size_t NetTimeOutGameStartCommandMsg::getPackedByteCount() const {
-	return sizeof(NetPacketTimeOutGameStartMessage);
+	return sizeof(NetPacketTimeOutGameStartCommand);
 }

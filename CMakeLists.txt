@@ -72,6 +72,13 @@ if (IS_VS6_BUILD)
     add_subdirectory(Dependencies/MaxSDK)
 endif()
 add_subdirectory(Dependencies/Utility)
+
+# To be removed when abandoning VC6
+if (IS_VS6_BUILD)
+    include_directories(Dependencies/Utility)
+    add_compile_options(/FIUtility/CppMacros.h)
+endif()
+
 add_subdirectory(resources)
 
 add_subdirectory(Core)

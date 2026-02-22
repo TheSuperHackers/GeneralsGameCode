@@ -112,6 +112,7 @@ public:
 	// contain list access
 	virtual void iterateContained( ContainIterateFunc func, void *userData, Bool reverse );
 	virtual UnsignedInt getContainCount() const;
+	virtual UnsignedInt getHeroUnitsContained() const;
 	virtual Int getContainMax( void ) const;
 	virtual const ContainedItemsList* getContainedItemsList() const;
 	virtual UnsignedInt getFullTimeForHeal(void) const; ///< Returns the time in frames until a contained object becomes fully healed
