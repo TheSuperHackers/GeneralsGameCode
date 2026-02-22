@@ -3,9 +3,7 @@
 > **Command & Conquer: Generals — Zero Hour** on Apple Silicon (ARM64)
 
 <div align="center">
-  
-![](demo_generals_arm64.mp4)
-
+  <video src="https://github.com/Okladnoj/GeneralsGameCode/raw/feature/macos-c_make/Platform/MacOS/docs/demo_generals_arm64.mp4" width="800" controls muted autoplay loop></video>
 </div>
 
 This is the official documentation hub for the macOS/Metal port of Generals Zero Hour. The port translates the original DirectX 8 rendering pipeline to Apple Metal, replaces Win32 subsystems with Cocoa/AVFoundation equivalents, and builds natively for ARM64.
