@@ -4832,6 +4832,7 @@ Locomotor* Pathfinder::chooseBestLocomotorForPosition(PathfindLayerEnum layer, L
 			return LOCOMOTORSURFACE_RUBBLE | LOCOMOTORSURFACE_AIR;
 
 		case PathfindCell::CELL_OBSTACLE:
+		case PathfindCell::CELL_BRIDGE_IMPASSABLE:
 		case PathfindCell::CELL_IMPASSABLE:
 			return LOCOMOTORSURFACE_AIR;
 
@@ -4972,6 +4973,12 @@ Bool Pathfinder::checkDestination(const Object *obj, Int cellX, Int cellY, Pathf
 				return false;
 			}
 
+#if RTS_ZEROHOUR
+			if (IS_IMPASSABLE(cell->getType())) {
+				return false;
+			}
+#endif
+
 			if (cell->getFlags() == PathfindCell::NO_UNITS) {
 				continue;  // Nobody is here, so it's ok.
 			}
@@ -5102,9 +5109,11 @@ Bool Pathfinder::checkForMovement(const Object *obj, TCheckMovementInfo &info)
 				if (!unit->getAIUpdateInterface()) {
 					return false; // can't path through not-idle units.
 				}
+#if RTS_GENERALS
 				if (!unit->getAIUpdateInterface()->isIdle()) {
 					return false; // can't path through not-idle units.
 				}
+#endif
 				Bool found = false;
 				Int k;
 				for (k=0; k<numAlly; k++) {
@@ -5257,10 +5266,10 @@ Bool Pathfinder::checkForAdjust(Object *obj, const LocomotorSet& locomotorSet, B
 			pathExists = true;
 			adjustedPathExists = true;
 		}	else {
-			pathExists = quickDoesPathExist( locomotorSet, obj->getPosition(), dest);
-			adjustedPathExists = quickDoesPathExist( locomotorSet, obj->getPosition(), &adjustDest);
+			pathExists = clientSafeQuickDoesPathExist( locomotorSet, obj->getPosition(), dest);
+			adjustedPathExists = clientSafeQuickDoesPathExist( locomotorSet, obj->getPosition(), &adjustDest);
 			if (!pathExists) {
-				if (quickDoesPathExist( locomotorSet, dest, &adjustDest))	{
+				if (clientSafeQuickDoesPathExist( locomotorSet, dest, &adjustDest))	{
  					adjustedPathExists = true;
 				}
 			}
@@ -5543,7 +5552,11 @@ Bool Pathfinder::checkForPossible(Bool isCrusher, Int fromZone,  Bool center, co
 {
 	PathfindCell *goalCell = getCell(layer, cellX, cellY);
 	if (!goalCell) return false;
+#if RTS_GENERALS
 	if (goalCell->getType() == PathfindCell::CELL_OBSTACLE) return false;
+#else
+	if (IS_IMPASSABLE(goalCell->getType())) return false;
+#endif
 	Int zone2 =  m_zoneManager.getEffectiveZone(locomotorSet.getValidSurfaces(), isCrusher, goalCell->getZone());
 	if (startingInObstacle) {
 		zone2 = m_zoneManager.getEffectiveTerrainZone(zone2);
@@ -5755,6 +5768,12 @@ void Pathfinder::doDebugIcons(void) {
 							color.red = 1;
 							empty = false;
 							break;
+#if RTS_ZEROHOUR
+						case PathfindCell::CELL_BRIDGE_IMPASSABLE:
+							color.blue = color.red = 1;
+							empty = false;
+							break;
+#endif
 						case PathfindCell::CELL_IMPASSABLE:
 							color.green = 1;
 							empty = false;
@@ -5912,7 +5931,12 @@ void Pathfinder::processPathfindQueue(void)
 #endif
 #endif
 
-	if (m_zoneManager.needToCalculateZones()) {
+	if (
+#ifdef forceRefreshCalling
+#pragma message("AHHHH!, forced calls to pathzonerefresh still in code...  notify M Lorenzen")
+    s_stopForceCalling==FALSE ||
+#endif
+    m_zoneManager.needToCalculateZones()) {
 		m_zoneManager.calculateZones(m_map, m_layers, m_extent);
 		return;
 	}
@@ -5930,7 +5954,9 @@ void Pathfinder::processPathfindQueue(void)
 	m_logicalExtent = bounds;
 
 	m_cumulativeCellsAllocated = 0;	// Number of pathfind cells examined.
+#ifdef DEBUG_QPF
 	Int pathsFound = 0;
+#endif
 	while (m_cumulativeCellsAllocated < PATHFIND_CELLS_PER_FRAME &&
 		m_queuePRTail!=m_queuePRHead) {
 		Object *obj = TheGameLogic->findObjectByID(m_queuedPathfindRequests[m_queuePRHead]);
@@ -5939,7 +5965,9 @@ void Pathfinder::processPathfindQueue(void)
 			AIUpdateInterface *ai = obj->getAIUpdateInterface();
 			if (ai) {
 				ai->doPathfind(this);
+#ifdef DEBUG_QPF
 				pathsFound++;
+#endif
 			}
 		}
 		m_queuePRHead = m_queuePRHead+1;
@@ -6278,14 +6306,22 @@ Int Pathfinder::examineNeighboringCells(PathfindCell *parentCell, PathfindCell *
 
 			newCell->setBlockedByAlly(false);
 			if (info.allyFixedCount>0) {
+#if RTS_GENERALS
 				newCostSoFar += 3*COST_DIAGONAL*info.allyFixedCount;
+#else
+				newCostSoFar += 3*COST_DIAGONAL;
+#endif
 				if (!canPathThroughUnits)
 					newCell->setBlockedByAlly(true);
 			}
 
 			Int costRemaining = 0;
 			if (goalCell) {
+#if RTS_GENERALS
 				if (attackDistance == 0)  {
+#else
+				if (attackDistance == NO_ATTACK)  {
+#endif
 					costRemaining = newCell->costToGoal( goalCell );
 				}	else {
 					dx = newCellCoord.x - goalCell->getXIndex();
@@ -6349,7 +6385,7 @@ Int Pathfinder::examineNeighboringCells(PathfindCell *parentCell, PathfindCell *
 Path *Pathfinder::findPath( Object *obj, const LocomotorSet& locomotorSet, const Coord3D *from,
 													 const Coord3D *rawTo)
 {
-	if (!quickDoesPathExist(locomotorSet, from, rawTo)) {
+	if (!clientSafeQuickDoesPathExist(locomotorSet, from, rawTo)) {
 		return nullptr;
 	}
 	Bool isHuman = true;

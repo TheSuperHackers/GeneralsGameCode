@@ -4973,9 +4973,11 @@ Bool Pathfinder::checkDestination(const Object *obj, Int cellX, Int cellY, Pathf
 				return false;
 			}
 
+#if RTS_ZEROHOUR
 			if (IS_IMPASSABLE(cell->getType())) {
 				return false;
 			}
+#endif
 
 			if (cell->getFlags() == PathfindCell::NO_UNITS) {
 				continue;  // Nobody is here, so it's ok.
@@ -5107,6 +5109,11 @@ Bool Pathfinder::checkForMovement(const Object *obj, TCheckMovementInfo &info)
 				if (!unit->getAIUpdateInterface()) {
 					return false; // can't path through not-idle units.
 				}
+#if RTS_GENERALS
+				if (!unit->getAIUpdateInterface()->isIdle()) {
+					return false; // can't path through not-idle units.
+				}
+#endif
 				Bool found = false;
 				Int k;
 				for (k=0; k<numAlly; k++) {
@@ -5545,7 +5552,11 @@ Bool Pathfinder::checkForPossible(Bool isCrusher, Int fromZone,  Bool center, co
 {
 	PathfindCell *goalCell = getCell(layer, cellX, cellY);
 	if (!goalCell) return false;
+#if RTS_GENERALS
+	if (goalCell->getType() == PathfindCell::CELL_OBSTACLE) return false;
+#else
 	if (IS_IMPASSABLE(goalCell->getType())) return false;
+#endif
 	Int zone2 =  m_zoneManager.getEffectiveZone(locomotorSet.getValidSurfaces(), isCrusher, goalCell->getZone());
 	if (startingInObstacle) {
 		zone2 = m_zoneManager.getEffectiveTerrainZone(zone2);
@@ -5757,10 +5768,12 @@ void Pathfinder::doDebugIcons(void) {
 							color.red = 1;
 							empty = false;
 							break;
+#if RTS_ZEROHOUR
 						case PathfindCell::CELL_BRIDGE_IMPASSABLE:
 							color.blue = color.red = 1;
 							empty = false;
 							break;
+#endif
 						case PathfindCell::CELL_IMPASSABLE:
 							color.green = 1;
 							empty = false;
@@ -5923,8 +5936,7 @@ void Pathfinder::processPathfindQueue(void)
 #pragma message("AHHHH!, forced calls to pathzonerefresh still in code...  notify M Lorenzen")
     s_stopForceCalling==FALSE ||
 #endif
-    m_zoneManager.needToCalculateZones())
-  {
+    m_zoneManager.needToCalculateZones()) {
 		m_zoneManager.calculateZones(m_map, m_layers, m_extent);
 		return;
 	}
@@ -6294,14 +6306,22 @@ Int Pathfinder::examineNeighboringCells(PathfindCell *parentCell, PathfindCell *
 
 			newCell->setBlockedByAlly(false);
 			if (info.allyFixedCount>0) {
+#if RTS_GENERALS
+				newCostSoFar += 3*COST_DIAGONAL*info.allyFixedCount;
+#else
 				newCostSoFar += 3*COST_DIAGONAL;
+#endif
 				if (!canPathThroughUnits)
 					newCell->setBlockedByAlly(true);
 			}
 
 			Int costRemaining = 0;
 			if (goalCell) {
+#if RTS_GENERALS
+				if (attackDistance == 0)  {
+#else
 				if (attackDistance == NO_ATTACK)  {
+#endif
 					costRemaining = newCell->costToGoal( goalCell );
 				}	else {
 					dx = newCellCoord.x - goalCell->getXIndex();
