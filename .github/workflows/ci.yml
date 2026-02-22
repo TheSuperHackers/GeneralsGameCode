@@ -178,3 +178,197 @@ jobs:
       userdata: "GeneralsReplays/GeneralsZH/1.04"
       preset: ${{ matrix.preset }}
     secrets: inherit
+
+  build-mingw-generals:
+    name: Build Generals MinGW-w64 (${{ matrix.preset }})
+    needs: detect-changes
+    if: ${{ github.event_name == 'workflow_dispatch' || needs.detect-changes.outputs.generals == 'true' || needs.detect-changes.outputs.shared == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      matrix:
+        preset: ["mingw-w64-i686", "mingw-w64-i686-debug"]
+        # Note: mingw-w64-i686-profile excluded - profiling uses ASM with no GCC equivalent
+      fail-fast: false
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Cache MinGW-w64 Dependencies
+        id: cache-mingw-deps
+        uses: actions/cache@v4
+        with:
+          path: |
+            /usr/lib/gcc/i686-w64-mingw32
+            /usr/i686-w64-mingw32
+          key: mingw-w64-deps-${{ runner.os }}-v1
+
+      - name: Install MinGW-w64 Toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y mingw-w64 cmake
+
+      - name: Install Wine and widl
+        run: |
+
+          # Add Wine repository
+          sudo dpkg --add-architecture i386
+          sudo mkdir -pm755 /etc/apt/keyrings
+          sudo wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key
+
+          # Determine Ubuntu codename
+          CODENAME=$(lsb_release -cs)
+
+          # Download appropriate sources file
+          sudo wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/ubuntu/dists/${CODENAME}/winehq-${CODENAME}.sources || {
+            sudo wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/ubuntu/dists/jammy/winehq-jammy.sources
+          }
+
+          # Update and install Wine
+          sudo apt-get update
+          sudo apt-get install -y --install-recommends winehq-stable wine-stable-dev || {
+            sudo apt-get install -y wine-stable-dev
+          }
+
+      - name: Cache CMake Dependencies
+        id: cache-cmake-deps
+        uses: actions/cache@v4
+        with:
+          path: build/${{ matrix.preset }}/_deps
+          key: cmake-deps-mingw-${{ matrix.preset }}-${{ hashFiles('CMakePresets.json','cmake/**/*.cmake','**/CMakeLists.txt') }}
+
+      - name: Configure Generals with CMake (${{ matrix.preset }})
+        run: |
+
+          # Unset LD_LIBRARY_PATH to avoid library conflicts
+          unset LD_LIBRARY_PATH
+
+          # Configure with appropriate flags
+          cmake --preset ${{ matrix.preset }} \
+            -DRTS_BUILD_ZEROHOUR=OFF \
+            -DRTS_BUILD_GENERALS=ON \
+            -DRTS_BUILD_CORE_TOOLS=OFF \
+            -DRTS_BUILD_GENERALS_TOOLS=OFF \
+            -DRTS_BUILD_ZEROHOUR_TOOLS=OFF \
+            -DRTS_BUILD_CORE_EXTRAS=OFF \
+            -DRTS_BUILD_GENERALS_EXTRAS=OFF \
+            -DRTS_BUILD_ZEROHOUR_EXTRAS=OFF
+      - name: Build Generals (${{ matrix.preset }})
+        run: |
+
+          # Build with parallel jobs
+          cmake --build build/${{ matrix.preset }} --target g_generals -j$(nproc)
+
+      - name: Collect Generals Artifacts
+        run: |
+          ARTIFACTS_DIR="build/${{ matrix.preset }}/Generals/artifacts"
+          mkdir -p "$ARTIFACTS_DIR"
+
+          # Copy executables, DLLs, and debug symbols
+          find build/${{ matrix.preset }}/Core build/${{ matrix.preset }}/Generals -type f \( -name "*.exe" -o -name "*.dll" -o -name "*.exe.debug" \) -exec cp {} "$ARTIFACTS_DIR/" \; 2>/dev/null || true
+
+      - name: Upload Generals ${{ matrix.preset }} Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Generals-${{ matrix.preset }}
+          path: build/${{ matrix.preset }}/Generals/artifacts
+          retention-days: 30
+          if-no-files-found: error
+
+  build-mingw-generalsmd:
+    name: Build GeneralsMD MinGW-w64 (${{ matrix.preset }})
+    needs: detect-changes
+    if: ${{ github.event_name == 'workflow_dispatch' || needs.detect-changes.outputs.generalsmd == 'true' || needs.detect-changes.outputs.shared == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      matrix:
+        preset: ["mingw-w64-i686", "mingw-w64-i686-debug"]
+        # Note: mingw-w64-i686-profile excluded - profiling uses ASM with no GCC equivalent
+      fail-fast: false
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Cache MinGW-w64 Dependencies
+        id: cache-mingw-deps
+        uses: actions/cache@v4
+        with:
+          path: |
+            /usr/lib/gcc/i686-w64-mingw32
+            /usr/i686-w64-mingw32
+          key: mingw-w64-deps-${{ runner.os }}-v1
+
+      - name: Install MinGW-w64 Toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y mingw-w64 cmake
+
+      - name: Install Wine and widl
+        run: |
+
+          # Add Wine repository
+          sudo dpkg --add-architecture i386
+          sudo mkdir -pm755 /etc/apt/keyrings
+          sudo wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key
+
+          # Determine Ubuntu codename
+          CODENAME=$(lsb_release -cs)
+
+          # Download appropriate sources file
+          sudo wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/ubuntu/dists/${CODENAME}/winehq-${CODENAME}.sources || {
+            sudo wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/ubuntu/dists/jammy/winehq-jammy.sources
+          }
+
+          # Update and install Wine
+          sudo apt-get update
+          sudo apt-get install -y --install-recommends winehq-stable wine-stable-dev || {
+            sudo apt-get install -y wine-stable-dev
+          }
+
+      - name: Cache CMake Dependencies
+        id: cache-cmake-deps
+        uses: actions/cache@v4
+        with:
+          path: build/${{ matrix.preset }}/_deps
+          key: cmake-deps-mingw-${{ matrix.preset }}-${{ hashFiles('CMakePresets.json','cmake/**/*.cmake','**/CMakeLists.txt') }}
+
+      - name: Configure GeneralsMD with CMake (${{ matrix.preset }})
+        run: |
+
+          # Unset LD_LIBRARY_PATH to avoid library conflicts
+          unset LD_LIBRARY_PATH
+
+          # Configure with appropriate flags
+          cmake --preset ${{ matrix.preset }} \
+            -DRTS_BUILD_ZEROHOUR=ON \
+            -DRTS_BUILD_GENERALS=OFF \
+            -DRTS_BUILD_CORE_TOOLS=OFF \
+            -DRTS_BUILD_GENERALS_TOOLS=OFF \
+            -DRTS_BUILD_ZEROHOUR_TOOLS=OFF \
+            -DRTS_BUILD_CORE_EXTRAS=OFF \
+            -DRTS_BUILD_GENERALS_EXTRAS=OFF \
+            -DRTS_BUILD_ZEROHOUR_EXTRAS=OFF
+      - name: Build GeneralsMD (${{ matrix.preset }})
+        run: |
+
+          # Build with parallel jobs
+          cmake --build build/${{ matrix.preset }} --target z_generals -j$(nproc)
+
+      - name: Collect GeneralsMD Artifacts
+        run: |
+          ARTIFACTS_DIR="build/${{ matrix.preset }}/GeneralsMD/artifacts"
+          mkdir -p "$ARTIFACTS_DIR"
+
+          # Copy executables, DLLs, and debug symbols
+          find build/${{ matrix.preset }}/Core build/${{ matrix.preset }}/GeneralsMD -type f \( -name "*.exe" -o -name "*.dll" -o -name "*.exe.debug" \) -exec cp {} "$ARTIFACTS_DIR/" \; 2>/dev/null || true
+
+      - name: Upload GeneralsMD ${{ matrix.preset }} Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: GeneralsMD-${{ matrix.preset }}
+          path: build/${{ matrix.preset }}/GeneralsMD/artifacts
+          retention-days: 30
+          if-no-files-found: error
