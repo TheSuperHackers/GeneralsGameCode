@@ -197,13 +197,17 @@ static void restartMissionMenu() {
   Int gameMode = TheGameLogic->getGameMode();
   AsciiString mapName = TheGlobalData->m_mapName;
 
-  //
-  // if the map name was from a save game it will have "Save/" at the front of
-  // it, we want to go back to the original pristine map string for the map name
-  // when restarting
-  //
-  if (TheGameState->isInSaveDirectory(mapName))
-    mapName = TheGameState->getPristineMapName();
+	// TheSuperHackers @bugfix Caball009 07/02/2026 Reuse the previous seed value for the new skirmish match to prevent mismatches.
+	// Campaign, challenge, and skirmish single-player scenarios all use GAME_SINGLE_PLAYER and are expected to use 0 as seed value.
+	DEBUG_ASSERTCRASH((TheSkirmishGameInfo != nullptr) == (gameMode == GAME_SKIRMISH), ("Unexpected game mode on map / mission restart"));
+	const Int seed = TheSkirmishGameInfo ? TheSkirmishGameInfo->getSeed() : 0;
+
+	//
+	// if the map name was from a save game it will have "Save/" at the front of it,
+	// we want to go back to the original pristine map string for the map name when restarting
+	//
+	if (TheGameState->isInSaveDirectory(mapName))
+		mapName = TheGameState->getPristineMapName();
 
   // End the current game
   AsciiString replayFile = TheRecorder->getCurrentReplayFilename();
@@ -220,30 +224,31 @@ static void restartMissionMenu() {
   TheGameLogic->clearGameData(FALSE);
   TheGameEngine->setQuitting(FALSE);
 
-  if (replayFile.isNotEmpty()) {
-    TheRecorder->playbackFile(replayFile);
-  } else {
-    // send a message to the logic for a new game
-    TheWritableGlobalData->m_pendingFile = mapName;
-    GameMessage *msg =
-        TheMessageStream->appendMessage(GameMessage::MSG_NEW_GAME);
-    msg->appendIntegerArgument(gameMode);
-    msg->appendIntegerArgument(diff);
-    msg->appendIntegerArgument(rankPointsStartedWith);
-    msg->appendIntegerArgument(fps);
-    DEBUG_LOG(("Restarting game mode %d, Diff=%d, RankPoints=%d", gameMode,
-               TheScriptEngine->getGlobalDifficulty(), rankPointsStartedWith));
-    // if (TheGlobalData->m_fixedSeed >= 0)
-    // InitRandom(TheGlobalData->m_fixedSeed);
-    InitRandom(0);
-    // else
-    //	InitGameLogicRandom(GameClientRandomValue(0, INT_MAX - 1));
-  }
-  // TheTransitionHandler->remove("QuitFull"); //KRISMORNESS ADD
-  // quitMenuLayout = nullptr; //KRISMORNESS ADD
-  // isVisible = TRUE; //KRISMORNESS ADD
-  // HideQuitMenu();	//KRISMORNESS ADD
-  TheInGameUI->setClientQuiet(TRUE);
+	if (replayFile.isNotEmpty())
+	{
+		TheRecorder->playbackFile(replayFile);
+	}
+	else
+	{
+		// send a message to the logic for a new game
+		TheWritableGlobalData->m_pendingFile = mapName;
+		GameMessage *msg = TheMessageStream->appendMessage( GameMessage::MSG_NEW_GAME );
+		msg->appendIntegerArgument(gameMode);
+		msg->appendIntegerArgument(diff);
+		msg->appendIntegerArgument(rankPointsStartedWith);
+		msg->appendIntegerArgument(fps);
+		DEBUG_LOG(("Restarting game mode %d, Diff=%d, RankPoints=%d", gameMode,
+																																		TheScriptEngine->getGlobalDifficulty(),
+																																		rankPointsStartedWith)
+							);
+
+		InitRandom(seed);
+	}
+	//TheTransitionHandler->remove("QuitFull"); //KRISMORNESS ADD
+	//quitMenuLayout = nullptr; //KRISMORNESS ADD
+	//isVisible = TRUE; //KRISMORNESS ADD
+	//HideQuitMenu();	//KRISMORNESS ADD
+	TheInGameUI->setClientQuiet( TRUE );
 }
 
 //-------------------------------------------------------------------------------------------------

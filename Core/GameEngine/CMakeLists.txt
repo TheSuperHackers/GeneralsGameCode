@@ -144,28 +144,28 @@ set(GAMEENGINE_SRC
 #    Include/GameClient/AnimateWindowManager.h
 #    Include/GameClient/CampaignManager.h
     Include/GameClient/ChallengeGenerals.h
-#    Include/GameClient/ClientInstance.h
+    Include/GameClient/ClientInstance.h
     Include/GameClient/ClientRandomValue.h
-#    Include/GameClient/Color.h
+    Include/GameClient/Color.h
 #    Include/GameClient/CommandXlat.h
 #    Include/GameClient/ControlBar.h
 #    Include/GameClient/ControlBarResizer.h
 #    Include/GameClient/ControlBarScheme.h
-#    Include/GameClient/Credits.h
+    Include/GameClient/Credits.h
 #    Include/GameClient/DebugDisplay.h
 #    Include/GameClient/Diplomacy.h
 #    Include/GameClient/DisconnectMenu.h
 #    Include/GameClient/Display.h
-#    Include/GameClient/DisplayString.h
-#    Include/GameClient/DisplayStringManager.h
+    Include/GameClient/DisplayString.h
+    Include/GameClient/DisplayStringManager.h
 #    Include/GameClient/Drawable.h
 #    Include/GameClient/DrawableInfo.h
-#    Include/GameClient/DrawGroupInfo.h
+    Include/GameClient/DrawGroupInfo.h
 #    Include/GameClient/EstablishConnectionsMenu.h
 #    Include/GameClient/Eva.h
 #    Include/GameClient/ExtendedMessageBox.h
 #    Include/GameClient/FontDesc.h
-#    Include/GameClient/FXList.h
+    Include/GameClient/FXList.h
 #    Include/GameClient/Gadget.h
 #    Include/GameClient/GadgetCheckBox.h
 #    Include/GameClient/GadgetComboBox.h
@@ -180,14 +180,14 @@ set(GAMEENGINE_SRC
 #    Include/GameClient/GameClient.h
     Include/GameClient/GameFont.h
 #    Include/GameClient/GameInfoWindow.h
-#    Include/GameClient/GameText.h
+    Include/GameClient/GameText.h
     Include/GameClient/GameWindow.h
     Include/GameClient/GameWindowGlobal.h
 #    Include/GameClient/GameWindowID.h
 #    Include/GameClient/GameWindowManager.h
     Include/GameClient/GameWindowTransitions.h
-#    Include/GameClient/GlobalLanguage.h
-#    Include/GameClient/GraphDraw.h
+    Include/GameClient/GlobalLanguage.h
+    Include/GameClient/GraphDraw.h
 #    Include/GameClient/GUICallbacks.h
 #    Include/GameClient/GUICommandTranslator.h
     Include/GameClient/HeaderTemplate.h
@@ -198,8 +198,8 @@ set(GAMEENGINE_SRC
 #    Include/GameClient/InGameUI.h
     Include/GameClient/Keyboard.h
 #    Include/GameClient/KeyDefs.h
-#    Include/GameClient/LanguageFilter.h
-#    Include/GameClient/Line2D.h
+    Include/GameClient/LanguageFilter.h
+    Include/GameClient/Line2D.h
     Include/GameClient/LoadScreen.h
 #    Include/GameClient/LookAtXlat.h
     Include/GameClient/MapUtil.h
@@ -213,9 +213,9 @@ set(GAMEENGINE_SRC
     Include/GameClient/ParticleSys.h
 #    Include/GameClient/PlaceEventTranslator.h
     Include/GameClient/ProcessAnimateWindow.h
-#    Include/GameClient/RadiusDecal.h
+    Include/GameClient/RadiusDecal.h
 #    Include/GameClient/RayEffect.h
-#    Include/GameClient/SelectionInfo.h
+    Include/GameClient/SelectionInfo.h
 #    Include/GameClient/SelectionXlat.h
 #    Include/GameClient/Shadow.h
 #    Include/GameClient/Shell.h
@@ -223,7 +223,7 @@ set(GAMEENGINE_SRC
 #    Include/GameClient/ShellMenuScheme.h
     Include/GameClient/Smudge.h
     Include/GameClient/Snow.h
-#    Include/GameClient/Statistics.h
+    Include/GameClient/Statistics.h
     Include/GameClient/TerrainRoads.h
     Include/GameClient/TerrainVisual.h
     Include/GameClient/VideoPlayer.h
@@ -687,25 +687,26 @@ set(GAMEENGINE_SRC
 #    Source/Common/Thing/ThingTemplate.cpp
     Source/Common/UserPreferences.cpp
 #    Source/Common/version.cpp
-    #Source/Common/WorkerProcess.cpp # Windows-only
-#    Source/GameClient/ClientInstance.cpp
-#    Source/GameClient/Color.cpp
-#    Source/GameClient/Credits.cpp
+    Source/Common/WorkerProcess.cpp
+    Source/GameClient/ClientInstance.cpp
+    Source/GameClient/Color.cpp
+    Source/GameClient/Credits.cpp
+
 #    Source/GameClient/Display.cpp
-#    Source/GameClient/DisplayString.cpp
-#    Source/GameClient/DisplayStringManager.cpp
+    Source/GameClient/DisplayString.cpp
+    Source/GameClient/DisplayStringManager.cpp
 #    Source/GameClient/Drawable.cpp
 #    Source/GameClient/Drawable/Update/AnimatedParticleSysBoneClientUpdate.cpp
 #    Source/GameClient/Drawable/Update/BeaconClientUpdate.cpp
 #    Source/GameClient/Drawable/Update/SwayClientUpdate.cpp
-#    Source/GameClient/DrawGroupInfo.cpp
+    Source/GameClient/DrawGroupInfo.cpp
 #    Source/GameClient/Eva.cpp
-#    Source/GameClient/FXList.cpp
+    Source/GameClient/FXList.cpp
 #    Source/GameClient/GameClient.cpp
 #    Source/GameClient/GameClientDispatch.cpp
-#    Source/GameClient/GameText.cpp
-#    Source/GameClient/GlobalLanguage.cpp
-#    Source/GameClient/GraphDraw.cpp
+    Source/GameClient/GameText.cpp
+    Source/GameClient/GlobalLanguage.cpp
+    Source/GameClient/GraphDraw.cpp
 #    Source/GameClient/GUI/AnimateWindowManager.cpp
     Source/GameClient/GUI/ChallengeGenerals.cpp
 #    Source/GameClient/GUI/ControlBar/ControlBar.cpp
@@ -803,8 +804,8 @@ set(GAMEENGINE_SRC
 #    Source/GameClient/InGameUI.cpp
     Source/GameClient/Input/Keyboard.cpp
     Source/GameClient/Input/Mouse.cpp
-#    Source/GameClient/LanguageFilter.cpp
-#    Source/GameClient/Line2D.cpp
+    Source/GameClient/LanguageFilter.cpp
+    Source/GameClient/Line2D.cpp
     Source/GameClient/MapUtil.cpp
 #    Source/GameClient/MessageStream/CommandXlat.cpp
 #    Source/GameClient/MessageStream/GUICommandTranslator.cpp
@@ -816,10 +817,10 @@ set(GAMEENGINE_SRC
 #    Source/GameClient/MessageStream/SelectionXlat.cpp
 #    Source/GameClient/MessageStream/WindowXlat.cpp
     Source/GameClient/ParabolicEase.cpp
-#    Source/GameClient/RadiusDecal.cpp
-#    Source/GameClient/SelectionInfo.cpp
+    Source/GameClient/RadiusDecal.cpp
+    Source/GameClient/SelectionInfo.cpp
     Source/GameClient/Snow.cpp
-#    Source/GameClient/Statistics.cpp
+    Source/GameClient/Statistics.cpp
 #    Source/GameClient/System/Anim2D.cpp
 #    Source/GameClient/System/CampaignManager.cpp
     Source/GameClient/System/Debug/AudioDebugDisplay.cpp
