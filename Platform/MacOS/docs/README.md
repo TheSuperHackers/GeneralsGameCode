@@ -2,6 +2,10 @@
 
 > **Command & Conquer: Generals — Zero Hour** on Apple Silicon (ARM64)
 
+<div align="center">
+  <video src="demo_generals_arm64.mp4" width="800" controls muted autoplay loop></video>
+</div>
+
 This is the official documentation hub for the macOS/Metal port of Generals Zero Hour. The port translates the original DirectX 8 rendering pipeline to Apple Metal, replaces Win32 subsystems with Cocoa/AVFoundation equivalents, and builds natively for ARM64.
 
 ## 📖 Documents
@@ -53,13 +57,6 @@ Platform/MacOS/
 │   └── Stubs/                  # GameSpy, Win32, network stubs
 └── docs/                       # ← You are here
 ```
-
-## 🔧 Key Features
-
-- **Signal handlers** — SIGSEGV/SIGBUS/SIGABRT produce backtraces via `sigaction`
-- **Automatic Termination disabled** — macOS won't silently kill the process
-- **NSApp delegate** — `applicationShouldTerminate:` returns `NSTerminateCancel`
-- **Frame pacing** — `FramePacer` with `displaySyncEnabled=NO` for smooth rendering
 
 ## 📝 Branch
 
