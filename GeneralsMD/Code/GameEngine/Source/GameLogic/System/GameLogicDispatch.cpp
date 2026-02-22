@@ -280,9 +280,10 @@ void GameLogic::clearGameData( Bool showScoreScreen )
 //	if(shellGame)
 
 
-	if (TheGlobalData->m_initialFile.isEmpty() == FALSE)
+	if (TheGlobalData->m_initialFile.isEmpty() == FALSE || m_quitToDesktopAfterMatch)
 	{
 		TheGameEngine->setQuitting(TRUE);
+		m_quitToDesktopAfterMatch = FALSE;
 	}
 
 	HideControlBar();

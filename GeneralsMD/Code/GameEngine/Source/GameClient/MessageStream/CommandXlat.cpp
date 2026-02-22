@@ -91,10 +91,6 @@
 
 #include "ww3d.h"
 
-
-#define dont_ALLOW_ALT_F4
-
-
 #if defined(RTS_DEBUG)
 /*non-static*/ Real TheSkateDistOverride = 0.0f;
 
@@ -4076,26 +4072,12 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 
 		}
 
-
-
-#ifdef ALLOW_ALT_F4
 		case GameMessage::MSG_META_DEMO_INSTANT_QUIT:
     {
-			if (TheGameLogic->isInGame())
-			{
-				if (TheRecorder->getMode() == RECORDERMODETYPE_RECORD)
-				{
-					TheRecorder->stopRecording();
-				}
-				TheGameLogic->clearGameData();
-			}
-			TheGameEngine->setQuitting(TRUE);
+			TheGameLogic->quit(TRUE);
 			disp = DESTROY_MESSAGE;
 			break;
     }
-#endif
-
-
 
 		//------------------------------------------------------------------------------- DEMO MESSAGES
 
@@ -5586,6 +5568,7 @@ static Bool isSystemMessage( const GameMessage *msg )
 		case GameMessage::MSG_LOGIC_CRC:
 		case GameMessage::MSG_SET_REPLAY_CAMERA:
 		case GameMessage::MSG_FRAME_TICK:
+		case GameMessage::MSG_META_DEMO_INSTANT_QUIT:
 			return TRUE;
 	}
 	return FALSE;
