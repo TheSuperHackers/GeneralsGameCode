@@ -58,7 +58,6 @@
 
 #include "Common/UnitTimings.h" //Contains the DO_UNIT_TIMINGS define jba.
 
-
 #define no_INTENSE_DEBUG
 
 #define DEBUG_QPF
@@ -75,6 +74,20 @@
 
 //-------------------------------------------------------------------------------------------------
 
+
+static inline Bool IS_IMPASSABLE(PathfindCell::CellType type) {
+	// Return true if cell is impassable to ground units. jba. [8/18/2003]
+	if (type==PathfindCell::CELL_IMPASSABLE) {
+		return true;
+	}
+	if (type==PathfindCell::CELL_OBSTACLE) {
+		return true;
+	}
+	if (type==PathfindCell::CELL_BRIDGE_IMPASSABLE) {
+		return true;
+	}
+	return false;
+}
 
 
 struct TCheckMovementInfo
@@ -98,6 +111,8 @@ inline Int IABS(Int x) {	if (x>=0) return x; return -x;};
 //-----------------------------------------------------------------------------------
 static Int frameToShowObstacles;
 
+
+constexpr const UnsignedInt ZONE_UPDATE_FREQUENCY = 300;
 constexpr const UnsignedInt MAX_CELL_COUNT = 500;
 constexpr const UnsignedInt MAX_ADJUSTMENT_CELL_COUNT = 400;
 constexpr const UnsignedInt MAX_SAFE_PATH_CELL_COUNT = 2000;
@@ -1545,11 +1560,12 @@ inline ObjectID PathfindCell::getObstacleID(void) const
 
 /**
  * Flag this cell as an obstacle, from the given one.
+ * Return true if cell was flagged.
  */
-void PathfindCell::setTypeAsObstacle( Object *obstacle, Bool isFence, const ICoord2D &pos )
+Bool PathfindCell::setTypeAsObstacle( Object *obstacle, Bool isFence, const ICoord2D &pos )
 {
 	if (m_type!=PathfindCell::CELL_CLEAR && m_type != PathfindCell::CELL_IMPASSABLE) {
-		return;
+		return false;
 	}
 
 	Bool isRubble = false;
@@ -1565,7 +1581,7 @@ void PathfindCell::setTypeAsObstacle( Object *obstacle, Bool isFence, const ICoo
 		m_obstacleIsTransparent = false;
 #if RETAIL_COMPATIBLE_PATHFINDING_ALLOCATION
 		if (s_useFixedPathfinding) {
-			return;
+			return true;
 		}
 
 		if (m_info) {
@@ -1573,7 +1589,7 @@ void PathfindCell::setTypeAsObstacle( Object *obstacle, Bool isFence, const ICoo
 			releaseInfo();
 		}
 #endif
-		return;
+		return true;
 	}
 
 	m_type = PathfindCell::CELL_OBSTACLE;
@@ -1584,21 +1600,21 @@ void PathfindCell::setTypeAsObstacle( Object *obstacle, Bool isFence, const ICoo
 	// TheSuperHackers @info In retail mode we need to track orphaned cells set as obstacles so we can cleanup and failover properly
 	// So we always make sure to set and clear the local obstacle data on the PathfindCell regardless of retail compat or not
 	if (s_useFixedPathfinding) {
-		return;
+		return true;
 	}
 
 	if (!m_info) {
 		m_info = PathfindCellInfo::getACellInfo(this, pos);
 		if (!m_info) {
 			DEBUG_CRASH(("Not enough PathFindCellInfos in pool."));
-			return;
+			return false;
 		}
 	}
 	m_info->m_obstacleID = obstacle->getID();
 	m_info->m_obstacleIsFence = isFence;
 	m_info->m_obstacleIsTransparent = obstacle->isKindOf(KINDOF_CAN_SEE_THROUGH_STRUCTURE);
 #endif
-	return;
+	return true;
 }
 
 /**
@@ -1632,36 +1648,37 @@ void PathfindCell::setType( CellType type )
 
 /**
  * Unflag this cell as an obstacle, from the given one.
+ * Return true if this cell was previously flagged as an obstacle by this object.
  */
-void PathfindCell::removeObstacle( Object *obstacle )
+Bool PathfindCell::removeObstacle( Object *obstacle )
 {
 	if (m_type == PathfindCell::CELL_RUBBLE) {
 		m_type = PathfindCell::CELL_CLEAR;
 	}
 #if RETAIL_COMPATIBLE_PATHFINDING_ALLOCATION
 	if (s_useFixedPathfinding) {
-		if (m_obstacleID != obstacle->getID()) return;
+		if (m_obstacleID != obstacle->getID()) return false;
 		m_type = PathfindCell::CELL_CLEAR;
 		m_obstacleID = INVALID_ID;
 		m_obstacleIsFence = false;
 		m_obstacleIsTransparent = false;
-		return;
+		return true;
 	}
 
-	if (!m_info) return;
-	if (m_info->m_obstacleID != obstacle->getID()) return;
+	if (!m_info) return false;
+	if (m_info->m_obstacleID != obstacle->getID()) return false;
 	m_type = PathfindCell::CELL_CLEAR;
 	m_info->m_obstacleID = INVALID_ID;
 	releaseInfo();
 
 #else
-	if (m_obstacleID != obstacle->getID()) return;
+	if (m_obstacleID != obstacle->getID()) return false;
 	m_type = PathfindCell::CELL_CLEAR;
 #endif
 	m_obstacleID = INVALID_ID;
 	m_obstacleIsFence = false;
 	m_obstacleIsTransparent = false;
-	return;
+	return true;
 }
 
 /// put self on "open" list in ascending cost order, return new list
@@ -1941,7 +1958,15 @@ UnsignedInt PathfindCell::costToGoal( PathfindCell *goal )
 
 UnsignedInt PathfindCell::costToHierGoal( PathfindCell *goal )
 {
+#if RTS_GENERALS
 	DEBUG_ASSERTCRASH(m_info, ("Has to have info."));
+#else
+	if( !m_info )
+	{
+		DEBUG_CRASH( ("Has to have info.") );
+		return 100000; //...patch hack 1.01
+	}
+#endif
 	Int dx = m_info->m_pos.x - goal->getXIndex();
 	Int dy = m_info->m_pos.y - goal->getYIndex();
 	Int cost = REAL_TO_INT_FLOOR(COST_ORTHOGONAL*sqrt(dx*dx + dy*dy) + 0.5f);
@@ -2304,6 +2329,12 @@ zoneStorageType ZoneBlock::getEffectiveZone( LocomotorSurfaceTypeMask acceptable
 																					 Bool crusher, zoneStorageType zone) const
 {
 	DEBUG_ASSERTCRASH(zone, ("Zone not set"));
+#if RTS_ZEROHOUR
+	if (zone==PathfindZoneManager::UNINITIALIZED_ZONE) {
+		return zone;
+	}
+#endif
+
 	if (acceptableSurfaces&LOCOMOTORSURFACE_AIR) return 1; // air is all zone 1.
 
 	if ( (acceptableSurfaces&LOCOMOTORSURFACE_GROUND) &&

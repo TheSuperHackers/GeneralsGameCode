@@ -1958,11 +1958,15 @@ UnsignedInt PathfindCell::costToGoal( PathfindCell *goal )
 
 UnsignedInt PathfindCell::costToHierGoal( PathfindCell *goal )
 {
+#if RTS_GENERALS
+	DEBUG_ASSERTCRASH(m_info, ("Has to have info."));
+#else
 	if( !m_info )
 	{
 		DEBUG_CRASH( ("Has to have info.") );
 		return 100000; //...patch hack 1.01
 	}
+#endif
 	Int dx = m_info->m_pos.x - goal->getXIndex();
 	Int dy = m_info->m_pos.y - goal->getYIndex();
 	Int cost = REAL_TO_INT_FLOOR(COST_ORTHOGONAL*sqrt(dx*dx + dy*dy) + 0.5f);
@@ -2324,9 +2328,12 @@ void ZoneBlock::blockCalculateZones(PathfindCell **map, PathfindLayer layers[], 
 zoneStorageType ZoneBlock::getEffectiveZone( LocomotorSurfaceTypeMask acceptableSurfaces,
 																					 Bool crusher, zoneStorageType zone) const
 {
+	DEBUG_ASSERTCRASH(zone, ("Zone not set"));
+#if RTS_ZEROHOUR
 	if (zone==PathfindZoneManager::UNINITIALIZED_ZONE) {
 		return zone;
 	}
+#endif
 
 	if (acceptableSurfaces&LOCOMOTORSURFACE_AIR) return 1; // air is all zone 1.
 
