@@ -20,6 +20,7 @@
 
 #include "resource.h"
 #include "WWAudio.h"
+#include "ref_ptr.h"
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -61,7 +62,7 @@ protected:
 
 private:
 	CString					Filename;
-	AudibleSoundClass *	SoundObj;
+	RefCountPtr<AudibleSoundClass>	SoundObj;
 };
 
 //{{AFX_INSERT_LOCATION}}

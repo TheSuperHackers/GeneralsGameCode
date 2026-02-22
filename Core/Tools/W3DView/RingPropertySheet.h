@@ -39,6 +39,7 @@
 #include "RingColorPropPage.h"
 #include "RingGeneralPropPage.h"
 #include "RingSizePropPage.h"
+#include "ref_ptr.h"
 
 
 // Forward declarations
@@ -109,7 +110,7 @@ private:
 	RingGeneralPropPageClass	m_GeneralPage;
 	RingColorPropPageClass		m_ColorPage;
 	RingSizePropPageClass		m_ScalePage;
-	RingRenderObjClass *			m_RenderObj;
+	RefCountPtr<RingRenderObjClass>			m_RenderObj;
 	CString							m_LastSavedName;
 };
 
