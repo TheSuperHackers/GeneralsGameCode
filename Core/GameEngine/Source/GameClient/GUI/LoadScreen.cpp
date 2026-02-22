@@ -60,6 +60,7 @@
 #include "Common/GameEngine.h"
 #include "Common/GameLOD.h"
 #include "Common/GameState.h"
+#include "Common/MessageStream.h"
 #include "Common/MultiplayerSettings.h"
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
@@ -76,7 +77,6 @@
 #include "GameClient/LoadScreen.h"
 #include "GameClient/MapUtil.h"
 #include "GameClient/Mouse.h"
-#include "Common/MessageStream.h"
 #include "GameClient/Shell.h"
 #include "GameClient/VideoPlayer.h"
 #include "GameClient/WindowLayout.h"
@@ -160,7 +160,7 @@ void LoadScreen::update( Int percent )
 {
 	TheGameEngine->serviceWindowsOS();
 	TheMessageStream->propagateMessages();
-	if (TheGameEngine->getQuitting() || TheGameLogic->m_quitToDesktopAfterMatch)
+	if (TheGameEngine->getQuitting() || (TheGameLogic && TheGameLogic->m_quitToDesktopAfterMatch))
 		return;	//don't bother with any of this if the player is exiting game.
 
 	TheWindowManager->update();

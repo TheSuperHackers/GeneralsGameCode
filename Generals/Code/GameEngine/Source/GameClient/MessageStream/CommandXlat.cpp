@@ -3697,20 +3697,15 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 			break;
 
 		}
-
-
-#if defined(RTS_DEBUG)
-		//------------------------------------------------------------------------- BEGIN DEMO MESSAGES
-		//------------------------------------------------------------------------- BEGIN DEMO MESSAGES
-		//------------------------------------------------------------------------- BEGIN DEMO MESSAGES
-		//------------------------------------------------------------------------------- DEMO MESSAGES
-		//-----------------------------------------------------------------------------------------
+		
 		case GameMessage::MSG_META_DEMO_INSTANT_QUIT:
-			{
+		{
 			TheGameLogic->quit(TRUE);
 			disp = DESTROY_MESSAGE;
 			break;
+		}
 
+#if defined(RTS_DEBUG)
 		//------------------------------------------------------------------------------- DEMO MESSAGES
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_DEMO_SWITCH_TEAMS:

@@ -760,10 +760,10 @@ void GameClient::updateHeadless()
 	TheParticleSystemManager->reset();
 }
 
-	// TheSuperHackers Check if the user has requested to abort movie
-Bool GameClient::isMovieAbortRequested( void )
+// TheSuperHackers @feature Check if the user has requested to abort movie
+Bool GameClient::isMovieAbortRequested()
 {
-	// User can skip video by pressing ESC
+	// TheSuperHackers @feature User can skip video by pressing ESC
 	if (TheKeyboard)
 	{
 		TheKeyboard->UPDATE();
@@ -775,7 +775,7 @@ Bool GameClient::isMovieAbortRequested( void )
 		}
 	}
 
-	// Service OS for Window Close / Alt-F4 events
+// TheSuperHackers @feature Service OS for Window Close / Alt-F4 events
 	TheGameEngine->serviceWindowsOS();
 	TheMessageStream->propagateMessages();
 	

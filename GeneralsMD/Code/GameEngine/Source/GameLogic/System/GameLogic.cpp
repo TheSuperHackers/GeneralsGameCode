@@ -141,8 +141,6 @@ enum { OBJ_HASH_SIZE	= 8192 };
 /// The GameLogic singleton instance
 GameLogic *TheGameLogic = nullptr;
 
-extern GameInfo *TheGameInfo;
-
 static void findAndSelectCommandCenter(Object *obj, void* alreadyFound);
 
 
@@ -2383,7 +2381,7 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 	}
 	catch (QuitGameException&)
 	{
-		// TheSuperHackers: The application is cleanly aborting the loading process.
+		// TheSuperHackers @info The application is cleanly aborting the loading process
 	}
 }
 
