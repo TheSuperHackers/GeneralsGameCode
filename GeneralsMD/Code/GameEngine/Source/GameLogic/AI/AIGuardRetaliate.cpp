@@ -184,7 +184,7 @@ AIGuardRetaliateMachine::AIGuardRetaliateMachine( Object *owner ) :
 // srj sez: I made "return" the start state, so that if ordered to guard a position
 // that isn't the unit's current position, it moves to that position first.
 	defineState( AI_GUARD_RETALIATE_ATTACK_AGGRESSOR, newInstance(AIGuardRetaliateAttackAggressorState)( this ), AI_GUARD_RETALIATE_RETURN, AI_GUARD_RETALIATE_RETURN );
-	defineState( AI_GUARD_RETALIATE_RETURN,						newInstance(AIGuardRetaliateReturnState)( this ), AI_GUARD_RETALIATE_IDLE, AI_GUARD_RETALIATE_INNER, attackAggressors );
+	defineState( AI_GUARD_RETALIATE_RETURN,						newInstance(AIGuardRetaliateReturnState)( this ), AI_GUARD_RETALIATE_IDLE, AI_GUARD_RETALIATE_INNER );
 	defineState( AI_GUARD_RETALIATE_IDLE,							newInstance(AIGuardRetaliateIdleState)( this ), AI_GUARD_RETALIATE_INNER, EXIT_MACHINE_WITH_SUCCESS, attackAggressors );
 	defineState( AI_GUARD_RETALIATE_INNER,						newInstance(AIGuardRetaliateInnerState)( this ), AI_GUARD_RETALIATE_OUTER, AI_GUARD_RETALIATE_OUTER );
 	defineState( AI_GUARD_RETALIATE_OUTER,						newInstance(AIGuardRetaliateOuterState)( this ), AI_GUARD_RETALIATE_GET_CRATE, AI_GUARD_RETALIATE_GET_CRATE );
