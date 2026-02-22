@@ -6830,6 +6830,27 @@ Path *Pathfinder::buildHierarchicalPath( const Coord3D *fromPos, PathfindCell *g
 
 	prependCells(path, fromPos, goalCell, true);
 
+#if RTS_ZEROHOUR
+	// Expand the hierarchical path around the starting point. jba [8/24/2003]
+	// This allows the unit to get around friendly units that may be near it.
+	Coord3D pos = *path->getFirstNode()->getPosition();
+	Coord3D minPos = pos;
+	minPos.x -= PathfindZoneManager::ZONE_BLOCK_SIZE*PATHFIND_CELL_SIZE_F;
+	minPos.y -= PathfindZoneManager::ZONE_BLOCK_SIZE*PATHFIND_CELL_SIZE_F;
+	Coord3D maxPos = pos;
+	maxPos.x += PathfindZoneManager::ZONE_BLOCK_SIZE*PATHFIND_CELL_SIZE_F;
+	maxPos.y += PathfindZoneManager::ZONE_BLOCK_SIZE*PATHFIND_CELL_SIZE_F;
+	ICoord2D cellNdxMin, cellNdxMax;
+	worldToCell(&minPos, &cellNdxMin);
+	worldToCell(&maxPos, &cellNdxMax);
+	Int i, j;
+	for (i=cellNdxMin.x; i<=cellNdxMax.x; i++) {
+		for (j=cellNdxMin.y; j<=cellNdxMax.y; j++) {
+			m_zoneManager.setPassable(i, j, true);
+		}
+	}
+#endif
+
 #if defined(RTS_DEBUG)
 	if (TheGlobalData->m_debugAI==AI_DEBUG_PATHS)
 	{
@@ -6886,6 +6907,14 @@ struct MADStruct
 			return 0;  // Only move allies.
 		}
 		if (otherObj && otherObj->getAI() && !otherObj->getAI()->isMoving()) {
+#if RTS_ZEROHOUR
+			//Kris: Patch 1.01 November 3, 2003
+			//Black Lotus exploit fix -- moving while hacking.
+			if( otherObj->testStatus( OBJECT_STATUS_IS_USING_ABILITY ) || otherObj->getAI()->isBusy() )
+			{
+				return 0; // Packing or unpacking objects for example
+			}
+#endif
 			//DEBUG_LOG(("Moving ally"));
 			otherObj->getAI()->aiMoveAwayFromUnit(d->obj, CMD_FROM_AI);
 		}
@@ -7362,11 +7391,27 @@ void Pathfinder::processHierarchicalCell( const ICoord2D &scanCell, const ICoord
 		scanCell.y<m_extent.lo.y || scanCell.y>m_extent.hi.y) {
 		return;
 	}
+#if RTS_ZEROHOUR
+	if (parentZone == PathfindZoneManager::UNINITIALIZED_ZONE) {
+		return;
+	}
+#endif
 	if (parentZone == m_zoneManager.getBlockZone(LOCOMOTORSURFACE_GROUND,
 		crusher, scanCell.x, scanCell.y, m_map)) {
 		PathfindCell *newCell = getCell(LAYER_GROUND, scanCell.x, scanCell.y);
+#if RTS_GENERALS
 		if (newCell->hasInfo() && (newCell->getOpen() || newCell->getClosed())) return; // already looked at this one.
-	  ICoord2D adjacentCell = scanCell;
+#else
+		if( !newCell->hasInfo() )
+		{
+ 			return;
+		}
+
+		if( newCell->getOpen() || newCell->getClosed() )
+			return; // already looked at this one.
+#endif
+
+		ICoord2D adjacentCell = scanCell;
 		//DEBUG_ASSERTCRASH(parentZone==newCell->getZone(), ("Different zones?"));
 		if (parentZone!=newCell->getZone()) return;
 		adjacentCell.x += delta.x;
@@ -7415,21 +7460,23 @@ void Pathfinder::processHierarchicalCell( const ICoord2D &scanCell, const ICoord
 		}
 
 		adjNewCell->allocateInfo(adjacentCell);
-		cellCount++;
-		Int curCost = adjNewCell->costToHierGoal(parentCell);
-		Int remCost = adjNewCell->costToHierGoal(goalCell);
-		if (adjNewCell->getPinched() || newCell->getPinched()) {
-			curCost += 2*COST_ORTHOGONAL;
-		}	else {
-			examinedZones[numExZones] = newZone;
-			numExZones++;
-		}
+		if( adjNewCell->hasInfo() ) {
+			cellCount++;
+			Int curCost = adjNewCell->costToHierGoal(parentCell);
+			Int remCost = adjNewCell->costToHierGoal(goalCell);
+			if (adjNewCell->getPinched() || newCell->getPinched()) {
+				curCost += 2*COST_ORTHOGONAL;
+			}	else {
+				examinedZones[numExZones] = newZone;
+				numExZones++;
+			}
 
-		adjNewCell->setCostSoFar(parentCell->getCostSoFar() + curCost);
-		adjNewCell->setTotalCost(adjNewCell->getCostSoFar()+remCost);
-		adjNewCell->setParentCellHierarchical(parentCell);
-		// insert newCell in open list such that open list is sorted, smallest total path cost first
-		adjNewCell->putOnSortedOpenList( m_openList );
+			adjNewCell->setCostSoFar(parentCell->getCostSoFar() + curCost);
+			adjNewCell->setTotalCost(adjNewCell->getCostSoFar()+remCost);
+			adjNewCell->setParentCellHierarchical(parentCell);
+			// insert newCell in open list such that open list is sorted, smallest total path cost first
+			adjNewCell->putOnSortedOpenList( m_openList );
+		}
 
 	}
 }
@@ -8084,12 +8131,17 @@ Bool Pathfinder::findBrokenBridge(const LocomotorSet& locoSet,
  * False means it is impossible to path.
  * True means it is possible given the terrain, but there may be units in the way.
  */
-Bool Pathfinder::quickDoesPathExist( const LocomotorSet& locomotorSet,
+Bool Pathfinder::clientSafeQuickDoesPathExist( const LocomotorSet& locomotorSet,
 																const Coord3D *from,
 																const Coord3D *to )
 {
 	// See if terrain or building is blocking the destination.
 	PathfindLayerEnum destinationLayer = TheTerrainLogic->getLayerForDestination(to);
+#if RTS_ZEROHOUR
+	if (!validMovementPosition(false, destinationLayer, locomotorSet, to)) {
+		return false;
+	}
+#endif
 	PathfindLayerEnum fromLayer = TheTerrainLogic->getLayerForDestination(from);
 	Int zone1, zone2;
 

@@ -6830,6 +6830,7 @@ Path *Pathfinder::buildHierarchicalPath( const Coord3D *fromPos, PathfindCell *g
 
 	prependCells(path, fromPos, goalCell, true);
 
+#if RTS_ZEROHOUR
 	// Expand the hierarchical path around the starting point. jba [8/24/2003]
 	// This allows the unit to get around friendly units that may be near it.
 	Coord3D pos = *path->getFirstNode()->getPosition();
@@ -6848,6 +6849,7 @@ Path *Pathfinder::buildHierarchicalPath( const Coord3D *fromPos, PathfindCell *g
 			m_zoneManager.setPassable(i, j, true);
 		}
 	}
+#endif
 
 #if defined(RTS_DEBUG)
 	if (TheGlobalData->m_debugAI==AI_DEBUG_PATHS)
@@ -6904,14 +6906,15 @@ struct MADStruct
 		if (d->obj->getRelationship(otherObj)!=ALLIES) {
 			return 0;  // Only move allies.
 		}
-		if( otherObj && otherObj->getAI() && !otherObj->getAI()->isMoving() )
-		{
+		if (otherObj && otherObj->getAI() && !otherObj->getAI()->isMoving()) {
+#if RTS_ZEROHOUR
 			//Kris: Patch 1.01 November 3, 2003
 			//Black Lotus exploit fix -- moving while hacking.
 			if( otherObj->testStatus( OBJECT_STATUS_IS_USING_ABILITY ) || otherObj->getAI()->isBusy() )
 			{
 				return 0; // Packing or unpacking objects for example
 			}
+#endif
 			//DEBUG_LOG(("Moving ally"));
 			otherObj->getAI()->aiMoveAwayFromUnit(d->obj, CMD_FROM_AI);
 		}
@@ -7388,12 +7391,17 @@ void Pathfinder::processHierarchicalCell( const ICoord2D &scanCell, const ICoord
 		scanCell.y<m_extent.lo.y || scanCell.y>m_extent.hi.y) {
 		return;
 	}
+#if RTS_ZEROHOUR
 	if (parentZone == PathfindZoneManager::UNINITIALIZED_ZONE) {
 		return;
 	}
+#endif
 	if (parentZone == m_zoneManager.getBlockZone(LOCOMOTORSURFACE_GROUND,
 		crusher, scanCell.x, scanCell.y, m_map)) {
 		PathfindCell *newCell = getCell(LAYER_GROUND, scanCell.x, scanCell.y);
+#if RTS_GENERALS
+		if (newCell->hasInfo() && (newCell->getOpen() || newCell->getClosed())) return; // already looked at this one.
+#else
 		if( !newCell->hasInfo() )
 		{
  			return;
@@ -7401,6 +7409,7 @@ void Pathfinder::processHierarchicalCell( const ICoord2D &scanCell, const ICoord
 
 		if( newCell->getOpen() || newCell->getClosed() )
 			return; // already looked at this one.
+#endif
 
 		ICoord2D adjacentCell = scanCell;
 		//DEBUG_ASSERTCRASH(parentZone==newCell->getZone(), ("Different zones?"));
@@ -7451,9 +7460,7 @@ void Pathfinder::processHierarchicalCell( const ICoord2D &scanCell, const ICoord
 		}
 
 		adjNewCell->allocateInfo(adjacentCell);
-		if( adjNewCell->hasInfo() )
-		{
-
+		if( adjNewCell->hasInfo() ) {
 			cellCount++;
 			Int curCost = adjNewCell->costToHierGoal(parentCell);
 			Int remCost = adjNewCell->costToHierGoal(goalCell);
