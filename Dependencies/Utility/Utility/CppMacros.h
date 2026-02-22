@@ -33,6 +33,8 @@
 #define constexpr
 #define noexcept
 #define nullptr 0
+#define override
+#define final
 #endif
 
 #if __cplusplus >= 201703L
