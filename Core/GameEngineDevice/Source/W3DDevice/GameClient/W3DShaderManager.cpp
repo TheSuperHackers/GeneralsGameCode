@@ -120,13 +120,13 @@ IDirect3DSurface8 *W3DShaderManager::m_oldDepthSurface=nullptr;	///<previous dep
 class ScreenDefaultFilter : public W3DFilterInterface
 {
 public:
-	virtual Int init(void);			///<perform any one time initialization and validation
-	virtual Bool preRender(Bool &skipRender, CustomScenePassModes &scenePassMode); ///< Set up at start of render.  Only applies to screen filter shaders.
-	virtual Bool postRender(FilterModes mode, Coord2D &scrollDelta,Bool &doExtraRender); ///< Called after render.  Only applies to screen filter shaders.
-	virtual Bool setup(FilterModes mode){return true;} ///< Called when the filter is started, one time before the first prerender.
+	virtual Int init(void) override;			///<perform any one time initialization and validation
+	virtual Bool preRender(Bool &skipRender, CustomScenePassModes &scenePassMode) override; ///< Set up at start of render.  Only applies to screen filter shaders.
+	virtual Bool postRender(FilterModes mode, Coord2D &scrollDelta,Bool &doExtraRender) override; ///< Called after render.  Only applies to screen filter shaders.
+	virtual Bool setup(FilterModes mode) override {return true;} ///< Called when the filter is started, one time before the first prerender.
 protected:
-	virtual Int set(FilterModes mode);		///<setup shader for the specified rendering pass.
-	virtual void reset(void);		///<do any custom resetting necessary to bring W3D in sync.
+	virtual Int set(FilterModes mode) override;		///<setup shader for the specified rendering pass.
+	virtual void reset(void) override;		///<do any custom resetting necessary to bring W3D in sync.
 };
 
 ScreenDefaultFilter screenDefaultFilter;
@@ -1177,9 +1177,9 @@ Int ScreenMotionBlurFilter::shutdown(void)
 ///Shroud layer rendering shader
 class ShroudTextureShader : public W3DShaderInterface
 {
-	virtual Int set(Int pass);		///<setup shader for the specified rendering pass.
-	virtual Int init(void);			///<perform any one time initialization and validation
-	virtual void reset(void);		///<do any custom resetting necessary to bring W3D in sync.
+	virtual Int set(Int pass) override;		///<setup shader for the specified rendering pass.
+	virtual Int init(void) override;			///<perform any one time initialization and validation
+	virtual void reset(void) override;		///<do any custom resetting necessary to bring W3D in sync.
 	Int m_stageOfSet;
 } shroudTextureShader;
 
@@ -1277,9 +1277,9 @@ void ShroudTextureShader::reset(void)
 ///Shroud layer rendering shader
 class FlatShroudTextureShader : public W3DShaderInterface
 {
-	virtual Int set(Int pass);		///<setup shader for the specified rendering pass.
-	virtual Int init(void);			///<perform any one time initialization and validation
-	virtual void reset(void);		///<do any custom resetting necessary to bring W3D in sync.
+	virtual Int set(Int pass) override;		///<setup shader for the specified rendering pass.
+	virtual Int init(void) override;			///<perform any one time initialization and validation
+	virtual void reset(void) override;		///<do any custom resetting necessary to bring W3D in sync.
 	Int m_stageOfSet;
 } flatShroudTextureShader;
 
@@ -1370,9 +1370,9 @@ void FlatShroudTextureShader::reset(void)
 ///Mask layer rendering shader
 class MaskTextureShader : public W3DShaderInterface
 {
-	virtual Int set(Int pass);		///<setup shader for the specified rendering pass.
-	virtual Int init(void);			///<perform any one time initialization and validation
-	virtual void reset(void);		///<do any custom resetting necessary to bring W3D in sync.
+	virtual Int set(Int pass) override;		///<setup shader for the specified rendering pass.
+	virtual Int init(void) override;			///<perform any one time initialization and validation
+	virtual void reset(void) override;		///<do any custom resetting necessary to bring W3D in sync.
 } maskTextureShader;
 
 ///List of different shroud shader implementations in order of preference
@@ -1486,9 +1486,9 @@ public:
 	float m_xOffset;
 	float m_yOffset;
 
-	virtual Int set(Int pass);		///<setup shader for the specified rendering pass.
-	virtual Int init(void);			///<perform any one time initialization and validation
-	virtual void reset(void);		///<do any custom resetting necessary to bring W3D in sync.
+	virtual Int set(Int pass) override;		///<setup shader for the specified rendering pass.
+	virtual Int init(void) override;			///<perform any one time initialization and validation
+	virtual void reset(void) override;		///<do any custom resetting necessary to bring W3D in sync.
 
 	void updateCloud();
 	void updateNoise1 (D3DXMATRIX *destMatrix,D3DXMATRIX *curViewInverse, Bool doUpdate=true);	///<generate the uv coordinates for Noise1 (i.e clouds)
@@ -1499,9 +1499,9 @@ public:
 class FlatTerrainShader2Stage : public W3DShaderInterface
 {
 public:
-	virtual Int set(Int pass);		///<setup shader for the specified rendering pass.
-	virtual Int init(void);			///<perform any one time initialization and validation
-	virtual void reset(void);		///<do any custom resetting necessary to bring W3D in sync.
+	virtual Int set(Int pass) override;		///<setup shader for the specified rendering pass.
+	virtual Int init(void) override;			///<perform any one time initialization and validation
+	virtual void reset(void) override;		///<do any custom resetting necessary to bring W3D in sync.
 } flatTerrainShader2Stage;
 
 ///regular terrain shader that should work on all multi-texture video cards (slowest version)
@@ -1512,18 +1512,18 @@ public:
 	DWORD					m_dwBaseNoise1PixelShader;	///<handle to terrain/single noise D3D pixel shader
 	DWORD					m_dwBaseNoise2PixelShader;	///<handle to terrain/double noise D3D pixel shader
 	DWORD					m_dwBase0PixelShader;	///<handle to terrain only pixel shader
-	virtual Int set(Int pass);		///<setup shader for the specified rendering pass.
-	virtual Int init(void);			///<perform any one time initialization and validation
-	virtual void reset(void);		///<do any custom resetting necessary to bring W3D in sync.
-	virtual Int shutdown(void);			///<release resources used by shader
+	virtual Int set(Int pass) override;		///<setup shader for the specified rendering pass.
+	virtual Int init(void) override;			///<perform any one time initialization and validation
+	virtual void reset(void) override;		///<do any custom resetting necessary to bring W3D in sync.
+	virtual Int shutdown(void) override;			///<release resources used by shader
 } flatTerrainShaderPixelShader;
 
 ///8 stage terrain shader which only works on certain Nvidia cards.
 class TerrainShader8Stage : public W3DShaderInterface
 {
-	virtual Int set(Int pass);		///<setup shader for the specified rendering pass.
-	virtual void reset(void);		///<do any custom resetting necessary to bring W3D in sync.
-	virtual Int init(void);			///<perform any one time initialization and validation
+	virtual Int set(Int pass) override;		///<setup shader for the specified rendering pass.
+	virtual void reset(void) override;		///<do any custom resetting necessary to bring W3D in sync.
+	virtual Int init(void) override;			///<perform any one time initialization and validation
 } terrainShader8Stage;
 
 //Offsets into constant register pool used by vertex shader
@@ -1536,10 +1536,10 @@ class TerrainShaderPixelShader : public W3DShaderInterface
 	DWORD					m_dwBaseNoise1PixelShader;	///<handle to terrain/single noise D3D pixel shader
 	DWORD					m_dwBaseNoise2PixelShader;	///<handle to terrain/double noise D3D pixel shader
 
-	virtual Int set(Int pass);		///<setup shader for the specified rendering pass.
-	virtual void reset(void);		///<do any custom resetting necessary to bring W3D in sync.
-	virtual Int init(void);			///<perform any one time initialization and validation
-	virtual Int shutdown(void);			///<release resources used by shader
+	virtual Int set(Int pass) override;		///<setup shader for the specified rendering pass.
+	virtual void reset(void) override;		///<do any custom resetting necessary to bring W3D in sync.
+	virtual Int init(void) override;			///<perform any one time initialization and validation
+	virtual Int shutdown(void) override;			///<release resources used by shader
 } terrainShaderPixelShader;
 
 ///List of different terrain shader implementations in order of preference
@@ -2133,9 +2133,9 @@ void TerrainShaderPixelShader::reset(void)
 ///Cloud layer rendering shader - used for objects similar to terrain which only need the cloud layer.
 class CloudTextureShader : public W3DShaderInterface
 {
-	virtual Int set(Int stage);		///<setup shader for the specified rendering pass.
-	virtual Int init(void);			///<perform any one time initialization and validation
-	virtual void reset(void);		///<do any custom resetting necessary to bring W3D in sync.
+	virtual Int set(Int stage) override;		///<setup shader for the specified rendering pass.
+	virtual Int init(void) override;			///<perform any one time initialization and validation
+	virtual void reset(void) override;		///<do any custom resetting necessary to bring W3D in sync.
 	Int m_stageOfSet;
 } cloudTextureShader;
 
@@ -2208,18 +2208,18 @@ class RoadShaderPixelShader : public W3DShaderInterface
 {
 	DWORD					m_dwBaseNoise2PixelShader;	///<handle to road/double noise D3D pixel shader
 
-	virtual Int set(Int pass);		///<setup shader for the specified rendering pass.
-	virtual void reset(void);		///<do any custom resetting necessary to bring W3D in sync.
-	virtual Int init(void);			///<perform any one time initialization and validation
-	virtual Int shutdown(void);			///<release resources used by shader
+	virtual Int set(Int pass) override;		///<setup shader for the specified rendering pass.
+	virtual void reset(void) override;		///<do any custom resetting necessary to bring W3D in sync.
+	virtual Int init(void) override;			///<perform any one time initialization and validation
+	virtual Int shutdown(void) override;			///<release resources used by shader
 } roadShaderPixelShader;
 
 class RoadShader2Stage : public W3DShaderInterface
 {	friend class RoadShaderPixelShader;	//pixel shader version uses some of the same features.
 
-	virtual Int set(Int pass);		///<setup shader for the specified rendering pass.
-	virtual Int init(void);			///<perform any one time initialization and validation
-	virtual void reset(void);
+	virtual Int set(Int pass) override;		///<setup shader for the specified rendering pass.
+	virtual Int init(void) override;			///<perform any one time initialization and validation
+	virtual void reset(void) override;
 } roadShader2Stage;
 
 ///List of different terrain shader implementations in order of preference
