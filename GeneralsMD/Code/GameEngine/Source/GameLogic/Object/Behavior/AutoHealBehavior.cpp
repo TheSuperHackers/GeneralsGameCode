@@ -375,7 +375,7 @@ void AutoHealBehavior::loadPostProcess( void )
 void AutoHealBehavior::createEmitters( void )
 {
     const AutoHealBehaviorModuleData *d = getAutoHealBehaviorModuleData();
-	if( d->m_radiusParticleSystemTmpl )
+	if( m_radiusParticleSystemID == INVALID_PARTICLE_SYSTEM_ID && d->m_radiusParticleSystemTmpl )
 	{
 		ParticleSystem *particleSystem = TheParticleSystemManager->createParticleSystem(d->m_radiusParticleSystemTmpl);
 		if( particleSystem )
