@@ -361,6 +361,16 @@ void Display::reset()
 }
 
 //============================================================================
+// Display::getMovieProgress
+//============================================================================
+
+Real Display::getMovieProgress()
+{
+	return m_videoStream && m_videoStream->frameCount() > 0 ?
+		(Real)m_videoStream->frameIndex() / (Real)m_videoStream->frameCount() : 0.0f;
+}
+
+//============================================================================
 // Display::isMoviePlaying
 //============================================================================
 

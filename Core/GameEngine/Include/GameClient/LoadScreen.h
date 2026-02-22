@@ -110,9 +110,6 @@ private:
 
 	UnicodeString m_unicodeObjectiveLines[MAX_OBJECTIVE_LINES];
 
-	VideoBuffer *m_videoBuffer;
-	VideoStreamInterface *m_videoStream;
-
 	void moveWindows( Int frame );
 
 	AudioEventRTS m_ambientLoop;

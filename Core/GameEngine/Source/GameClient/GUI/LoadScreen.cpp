@@ -179,8 +179,6 @@ SinglePlayerLoadScreen::SinglePlayerLoadScreen( void )
 	m_currentObjectiveWidthOffset = 0;
 	m_progressBar = nullptr;
 	m_percent = nullptr;
-	m_videoStream = nullptr;
-	m_videoBuffer = nullptr;
 	m_objectiveWin = nullptr;
 	for(Int i = 0; i < MAX_OBJECTIVE_LINES; ++i)
 		m_objectiveLines[i] = nullptr;
@@ -189,13 +187,6 @@ SinglePlayerLoadScreen::SinglePlayerLoadScreen( void )
 
 SinglePlayerLoadScreen::~SinglePlayerLoadScreen( void )
 {
-	delete m_videoBuffer;
-
-	if ( m_videoStream )
-	{
-		m_videoStream->close();
-	}
-
 	TheAudio->removeAudioEvent( m_ambientLoopHandle );
 }
 
@@ -463,32 +454,6 @@ void SinglePlayerLoadScreen::init( GameInfo *game )
 
 */
 	m_ambientLoop.setEventName("LoadScreenAmbient");
-	// create the new stream
-	m_videoStream = TheVideoPlayer->open( TheCampaignManager->getCurrentMission()->m_movieLabel );
-	if ( m_videoStream == nullptr )
-	{
-		m_percent->winHide(TRUE);
-		return;
-	}
-
-	// Create the new buffer
-	m_videoBuffer = TheDisplay->createVideoBuffer();
-	if (	m_videoBuffer == nullptr ||
-				!m_videoBuffer->allocate(	m_videoStream->width(),
-													m_videoStream->height())
-		)
-	{
-		delete m_videoBuffer;
-		m_videoBuffer = nullptr;
-
-		if ( m_videoStream )
-		{
-			m_videoStream->close();
-			m_videoStream = nullptr;
-		}
-
-		return;
-	}
 
 	// format the progress bar: USA to blue, GLA to green, China to red
 	// and set the background image
@@ -535,9 +500,18 @@ void SinglePlayerLoadScreen::init( GameInfo *game )
 		// TheSuperHackers @bugfix Originally this movie render loop stopped rendering when the game window was inactive.
 		// This either skipped the movie or caused decompression artifacts. Now the video just keeps playing until it done.
 
-		Int progressUpdateCount = m_videoStream->frameCount() / FRAME_FUDGE_ADD;
-		Int shiftedPercent = -FRAME_FUDGE_ADD + 1;
-		while (m_videoStream->frameIndex() < m_videoStream->frameCount() - 1 )
+#if !RTS_GENERALS
+		// Hide the background window while the movie is playing
+		backgroundWin->winEnable(false);
+#endif
+
+		// Show video progress bar
+		m_progressBar->winEnable(true);
+
+		// TheSuperHackers @info We now make use of movie playback within the display object
+		TheDisplay->playMovie(TheCampaignManager->getCurrentMission()->m_movieLabel);
+
+		while(TheDisplay->isMoviePlaying())
 		{
 			// TheSuperHackers @feature User can now skip video by pressing ESC
 			if (TheKeyboard)
@@ -553,76 +527,34 @@ void SinglePlayerLoadScreen::init( GameInfo *game )
 
 			TheGameEngine->serviceWindowsOS();
 
-			if(!m_videoStream->isFrameReady())
-			{
-				Sleep(1);
-				continue;
-			}
-
-			m_videoStream->frameDecompress();
-			m_videoStream->frameRender(m_videoBuffer);
-
-#if RTS_GENERALS
-			moveWindows( m_videoStream->frameIndex());
-#endif
-
-			m_videoStream->frameNext();
-
-			if(m_videoBuffer)
-				m_loadScreen->winGetInstanceData()->setVideoBuffer(m_videoBuffer);
-			if(m_videoStream->frameIndex() % progressUpdateCount == 0)
-			{
-				shiftedPercent++;
-				if(shiftedPercent >0)
-					shiftedPercent = 0;
-				Int percent = (shiftedPercent + FRAME_FUDGE_ADD)/1.3;
-				UnicodeString per;
-				per.format(L"%d%%",percent);
-				TheMouse->setCursorTooltip(UnicodeString::TheEmptyString);
-				GadgetProgressBarSetProgress(m_progressBar, percent);
-				GadgetStaticTextSetText(m_percent, per);
-
-			}
-			TheWindowManager->update();
+			// Update the video progress in the progress bar
+			Int percentValue = TheDisplay->getMovieProgress() * 100.0f;
+			UnicodeString percentText;
+			percentText.format(L"%d%%", percentValue);
+			TheMouse->setCursorTooltip(UnicodeString::TheEmptyString);
+			GadgetProgressBarSetProgress(m_progressBar, percentValue);
+			GadgetStaticTextSetText(m_percent, percentText);
 
 			// redraw all views, update the GUI
+			TheWindowManager->update();
+			TheDisplay->update();
 			TheDisplay->draw();
 		}
 
-#if !RTS_GENERALS
+
 		// let the background image show through
-		m_videoStream->close();
-		m_videoStream = nullptr;
-		m_loadScreen->winGetInstanceData()->setVideoBuffer( nullptr );
-		TheDisplay->draw();
+		TheDisplay->stopMovie();
+#if !RTS_GENERALS
+		backgroundWin->winEnable(true);
 #endif
+		TheDisplay->draw();
 	}
 	else
 	{
-#if RTS_GENERALS
-		// if we're min speced
-		m_videoStream->frameGoto(m_videoStream->frameCount()); // zero based
-		while(!m_videoStream->isFrameReady())
-			Sleep(1);
-		m_videoStream->frameDecompress();
-		m_videoStream->frameRender(m_videoBuffer);
-		if(m_videoBuffer)
-				m_loadScreen->winGetInstanceData()->setVideoBuffer(m_videoBuffer);
-
-		m_objectiveWin->winHide(FALSE);
-		for(i = 0; i < MAX_DISPLAYED_UNITS; ++i)
-			m_unitDesc[i]->winHide(FALSE);
-		m_location->winHide(FALSE);
-
-		// Audio was choppy so, I chopped it out!
-		TheAudio->friend_forcePlayAudioEventRTS(&TheCampaignManager->getCurrentMission()->m_briefingVoice);
-
-		for(Int i = 0; i < MAX_OBJECTIVE_LINES; ++i)
-		{
-			GadgetStaticTextSetText(m_objectiveLines[i], m_unicodeObjectiveLines[i]);
-		}
-#else
 		// if we're min spec'ed don't play a movie
+
+#if !RTS_GENERALS
+		backgroundWin->winEnable(true);
 #endif
 
 		Int delay = mission->m_voiceLength * 1000;
@@ -645,6 +577,10 @@ void SinglePlayerLoadScreen::init( GameInfo *game )
 		TheDisplay->draw();
 
 	}
+
+	GadgetProgressBarSetProgress(m_progressBar, 0);
+	GadgetStaticTextSetText(m_percent, UnicodeString::TheEmptyString);
+
 	setFPMode();
 	m_percent->winHide(TRUE);
 	m_ambientLoopHandle = TheAudio->addAudioEvent(&m_ambientLoop);

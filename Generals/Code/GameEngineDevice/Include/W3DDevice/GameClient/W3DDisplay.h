@@ -115,8 +115,9 @@ public:
 
 	/// draw a video buffer fit within the screen coordinates
 	virtual void drawScaledVideoBuffer( VideoBuffer *buffer, VideoStreamInterface *stream );
-	virtual void drawVideoBuffer( VideoBuffer *buffer, Int startX, Int startY,
-													Int endX, Int endY );
+	virtual void drawScaledVideoBuffer();
+	virtual void drawVideoBuffer( VideoBuffer *buffer, Int startX, Int startY, Int endX, Int endY );
+	virtual void drawVideoBuffer( Int startX, Int startY, Int endX, Int endY );
 
 	virtual VideoBuffer*	createVideoBuffer( void ) ;							///< Create a video buffer that can be used for this display
 
