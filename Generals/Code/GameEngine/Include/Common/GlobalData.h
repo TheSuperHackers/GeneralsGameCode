@@ -120,6 +120,10 @@ public:
 	// Run game without graphics, input or audio.
 	Bool m_headless;
 
+	// TheSuperHackers @feature mirelle 05/02/2026
+	// Enable unlimited terrain rendering distance.
+	Bool m_unlimitedzoom;
+
 	Bool m_windowed;
 	Int m_xResolution;
 	Int m_yResolution;

@@ -143,6 +143,15 @@ Int parseNoVideo(char *args[], int)
 
 //=============================================================================
 //=============================================================================
+Int parseUnlimitedZoom(char *args[], int)
+{
+	TheWritableGlobalData->m_unlimitedzoom = true;
+
+	return 1;
+}
+
+//=============================================================================
+//=============================================================================
 Int parseFPUPreserve(char *args[], int argc)
 {
 	if (argc > 1)
@@ -1169,6 +1178,10 @@ static CommandLineParam paramsForEngineInit[] =
 
 	// TheSuperHackers @feature xezon 03/08/2025 Force full viewport for 'Control Bar Pro' Addons like GenTool did it.
 	{ "-forcefullviewport", parseFullViewport },
+
+	// TheSuperHackers @feature mirelle 05/02/2026
+	// Enable unlimited terrain rendering distance.
+	{ "-unlimitedzoom", parseUnlimitedZoom },
 
 #if defined(RTS_DEBUG)
 	{ "-noaudio", parseNoAudio },
