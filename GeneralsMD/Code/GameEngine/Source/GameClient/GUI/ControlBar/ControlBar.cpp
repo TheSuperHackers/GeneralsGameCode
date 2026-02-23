@@ -3020,7 +3020,7 @@ void ControlBar::switchControlBarStage( ControlBarStages stage )
 		setHiddenControlBar();
 		break;
 	default:
-		DEBUG_ASSERTCRASH(FALSE,("ControlBar::switchControlBarStage we were passed in a stage that's not supported %d", stage));
+		DEBUG_CRASH(("ControlBar::switchControlBarStage we were passed in a stage that's not supported %d", stage));
 	}
 
 }

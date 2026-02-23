@@ -568,7 +568,7 @@ void ThingTemplate::parseModuleName(INI* ini, void *instance, void* store, const
 	{
 
 //    if (self->getName().compare("GLAVehicleQuadCannon"))
-//      DEBUG_ASSERTCRASH( FALSE, ("WE ARE CLEARING DEFAULT MODULES FROM A QUAD CANNON.") );
+//      DEBUG_CRASH( ("WE ARE CLEARING DEFAULT MODULES FROM A QUAD CANNON.") );
 
 		self->m_behaviorModuleInfo.clearCopiedFromDefaultEntries(interfaceMask, tokenStr, self );
 		self->m_drawModuleInfo.clearCopiedFromDefaultEntries(interfaceMask, tokenStr, self );

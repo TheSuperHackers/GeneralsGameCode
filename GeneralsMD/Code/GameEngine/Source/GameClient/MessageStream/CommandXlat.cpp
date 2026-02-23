@@ -3163,7 +3163,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_DEPLOY:
 			#ifdef RTS_DEBUG
-			DEBUG_ASSERTCRASH(FALSE, ("unimplemented meta command MSG_META_DEPLOY !"));
+			DEBUG_CRASH(("unimplemented meta command MSG_META_DEPLOY !"));
 			#endif
 			/// @todo srj implement me
 			disp = DESTROY_MESSAGE;
@@ -3172,7 +3172,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_FOLLOW:
 			#ifdef RTS_DEBUG
-			DEBUG_ASSERTCRASH(FALSE, ("unimplemented meta command MSG_META_FOLLOW !"));
+			DEBUG_CRASH(("unimplemented meta command MSG_META_FOLLOW !"));
 			#endif
 			/// @todo srj implement me
 			disp = DESTROY_MESSAGE;

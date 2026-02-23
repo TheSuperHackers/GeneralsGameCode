@@ -117,7 +117,7 @@ ResizerWindow *ControlBarResizer::findResizerWindow( AsciiString name )
 		ResizerWindow *rWin = *it;
 		if( !rWin )
 		{
-			DEBUG_ASSERTCRASH(FALSE,("There's no resizerWindow in ControlBarResizer::findResizerWindow"));
+			DEBUG_CRASH(("There's no resizerWindow in ControlBarResizer::findResizerWindow"));
 			it++;
 			continue;
 		}
@@ -160,7 +160,7 @@ void ControlBarResizer::sizeWindowsDefault( void )
 		ResizerWindow *rWin = *it;
 		if( !rWin )
 		{
-			DEBUG_ASSERTCRASH(FALSE,("There's no resizerWindow in ControlBarResizer::sizeWindowsDefault"));
+			DEBUG_CRASH(("There's no resizerWindow in ControlBarResizer::sizeWindowsDefault"));
 			it++;
 			continue;
 		}
@@ -187,7 +187,7 @@ void ControlBarResizer::sizeWindowsAlt( void )
 		ResizerWindow *rWin = *it;
 		if( !rWin )
 		{
-			DEBUG_ASSERTCRASH(FALSE,("There's no resizerWindow in ControlBarResizer::sizeWindowsDefault"));
+			DEBUG_CRASH(("There's no resizerWindow in ControlBarResizer::sizeWindowsDefault"));
 			it++;
 			continue;
 		}

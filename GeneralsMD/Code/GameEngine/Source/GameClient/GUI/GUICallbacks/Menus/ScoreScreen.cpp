@@ -1423,7 +1423,7 @@ void populatePlayerInfo( Player *player, Int pos)
 	ScoreKeeper *scoreKpr = player->getScoreKeeper();
 	if(!scoreKpr)
 	{
-		DEBUG_ASSERTCRASH(FALSE,("Player %s does not have a scoreKeeper", player->getPlayerDisplayName().str()));
+		DEBUG_CRASH(("Player %s does not have a scoreKeeper", player->getPlayerDisplayName().str()));
 		return;
 	}
 	AsciiString winName;

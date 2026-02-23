@@ -3859,7 +3859,7 @@ void Player::removeKindOfProductionCostChange(	KindOfMaskType kindOf, Real perce
 		}
 		++it;
 	}
-	DEBUG_ASSERTCRASH(FALSE, ("removeKindOfProductionCostChange was called with kindOf=%d and percent=%f. We could not find the entry in the list with these variables. CLH.",kindOf, percent));
+	DEBUG_CRASH(("removeKindOfProductionCostChange was called with kindOf=%d and percent=%f. We could not find the entry in the list with these variables. CLH.",kindOf, percent));
 }
 
 //-------------------------------------------------------------------------------------------------

@@ -373,7 +373,7 @@ void ToggleQuitMenu()
 		// load the quit menu from the layout file if needed
 		if( quitMenuLayout == nullptr )
 		{
-			DEBUG_ASSERTCRASH(FALSE, ("Could not load a quit menu layout"));
+			DEBUG_CRASH(("Could not load a quit menu layout"));
 			isVisible = FALSE;
 			TheInGameUI->setQuitMenuVisible(FALSE);
 			return;
