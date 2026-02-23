@@ -478,7 +478,7 @@ Bool Radar::removeObject( Object *obj )
 		return TRUE;
 	else
 	{
-		DEBUG_ASSERTCRASH( 0, ("Radar: Tried to remove object '%s' which was not found",
+		DEBUG_CRASH( ("Radar: Tried to remove object '%s' which was not found",
 											 obj->getTemplate()->getName().str()) );
 		return FALSE;
 	}
