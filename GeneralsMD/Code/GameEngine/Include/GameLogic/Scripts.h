@@ -378,14 +378,14 @@ public:
 		TEAM_STOP_AND_DISBAND,						///< Make a team stop and be merged into the default player team. Also, mark the whole team recruitable
 		RECRUIT_TEAM,	  									///< Recruit a team?
 		TEAM_SET_OVERRIDE_RELATION_TO_TEAM,					///< override a team's relation to another team
-		virtual TEAM_REMOVE_OVERRIDE_RELATION_TO_TEAM,			///< remove that override
+		TEAM_REMOVE_OVERRIDE_RELATION_TO_TEAM,			///< remove that override
 		TEAM_REMOVE_ALL_OVERRIDE_RELATIONS,///< remove all overrides
 		CAMERA_LOOK_TOWARD_OBJECT,				///< Rotate the camera to be pointing toward a unit
 		NAMED_FIRE_WEAPON_FOLLOWING_WAYPOINT_PATH,    ///< Fires a specific weapon that follows waypoint path and detonates at the final waypoint.
 		TEAM_SET_OVERRIDE_RELATION_TO_PLAYER,					///< override a team's relation to another player
-		virtual TEAM_REMOVE_OVERRIDE_RELATION_TO_PLAYER,			///< remove that override
+		TEAM_REMOVE_OVERRIDE_RELATION_TO_PLAYER,			///< remove that override
 		PLAYER_SET_OVERRIDE_RELATION_TO_TEAM,					///< override a Player's relation to another team
-		virtual PLAYER_REMOVE_OVERRIDE_RELATION_TO_TEAM,			///< remove that override
+		PLAYER_REMOVE_OVERRIDE_RELATION_TO_TEAM,			///< remove that override
 		UNIT_EXECUTE_SEQUENTIAL_SCRIPT,		///< Make a unit execute a script sequentially
 		UNIT_EXECUTE_SEQUENTIAL_SCRIPT_LOOPING,		///< Make a unit execute a script sequentially (forever)
 		UNIT_STOP_SEQUENTIAL_SCRIPT,			///< Make a unit stop executing its sequential scripts
