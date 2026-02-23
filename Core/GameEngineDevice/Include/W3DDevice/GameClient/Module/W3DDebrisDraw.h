@@ -65,7 +65,7 @@ public:
 	virtual void reactToGeometryChange() { }
 
 	virtual void setModelName(AsciiString name, Color color, ShadowType t);
-	virtual void setAnimNames(AsciiString initial, AsciiString flying, AsciiString final, const FXList* finalFX);
+	virtual void setAnimNames(AsciiString initial, AsciiString flying, AsciiString finalAnim, const FXList* finalFX);
 
 	virtual DebrisDrawInterface* getDebrisDrawInterface() { return this; }
 	virtual const DebrisDrawInterface* getDebrisDrawInterface() const { return this; }
