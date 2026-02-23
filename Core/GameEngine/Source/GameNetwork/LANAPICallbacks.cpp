@@ -551,7 +551,7 @@ void LANAPI::OnPlayerLeave( UnicodeString player )
 	if (m_name.compare(player) == 0)
 	{
 		// We're leaving.  Save options and Pop the shell up a screen.
-		//DEBUG_ASSERTCRASH(false, ("Slot is %d", m_currentGame->getLocalSlotNum()));
+		//DEBUG_CRASH(("Slot is %d", m_currentGame->getLocalSlotNum()));
 		if (m_currentGame && m_currentGame->isInGame() && m_currentGame->getLocalSlotNum() >= 0)
 		{
 			LANPreferences pref;

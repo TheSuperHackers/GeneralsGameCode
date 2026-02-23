@@ -162,7 +162,7 @@ void GlobalLanguage::init()
 		AsciiString font = *it;
 		if(AddFontResource(font.str()) == 0)
 		{
-			DEBUG_ASSERTCRASH(FALSE,("GlobalLanguage::init Failed to add font %s", font.str()));
+			DEBUG_CRASH(("GlobalLanguage::init Failed to add font %s", font.str()));
 		}
 		else
 		{

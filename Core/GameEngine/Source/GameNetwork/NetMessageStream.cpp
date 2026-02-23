@@ -181,7 +181,7 @@ Bool AddCommandToPacket(const GameMessage *msg)
 		commandBuf[0] = MSGTYPE_PARTIALCOMMAND;
 		if (!TheNetwork->queueSend(BROADCAST_CON, commandBuf, bytesUsed + sizeof(CommandPacketHeader) + 1, MSG_NEEDACK | MSG_SEQUENCED))
 		{
-			//DEBUG_ASSERTCRASH(false, ("Too many commands in one frame!  Some will be dropped."));
+			//DEBUG_CRASH(("Too many commands in one frame!  Some will be dropped."));
 			DEBUG_LOG(("Too many commands in one frame!  Some will be dropped."));
 			return false;
 		}
@@ -192,7 +192,7 @@ Bool AddCommandToPacket(const GameMessage *msg)
 
 	if (bytesUsed + sizeof(CommandPacketHeader) + messageSize >= MAX_MESSAGE_LEN)
 	{
-		//DEBUG_ASSERTCRASH(false, ("Too many commands in one frame!  Some will be dropped."));
+		//DEBUG_CRASH(("Too many commands in one frame!  Some will be dropped."));
 		DEBUG_LOG(("Too many commands in one frame!  Some will be dropped."));
 		return false;
 	}

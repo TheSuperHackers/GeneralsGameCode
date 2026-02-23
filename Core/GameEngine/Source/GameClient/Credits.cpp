@@ -460,7 +460,7 @@ void CreditsManager::addText( AsciiString text )
 			}
 			break;
 		default:
-			DEBUG_ASSERTCRASH( FALSE, ("CreditsManager::addText we tried to add a credit text with the wrong style before it.  Style is %d", m_currentStyle) );
+			DEBUG_CRASH( ("CreditsManager::addText we tried to add a credit text with the wrong style before it.  Style is %d", m_currentStyle) );
 			delete cLine;
 	}
 

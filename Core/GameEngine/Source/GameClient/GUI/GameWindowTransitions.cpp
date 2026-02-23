@@ -135,7 +135,7 @@ Transition *getTransitionForStyle( Int style )
 		return NEW ScoreScaleUpTransition;
 
 	default:
-		DEBUG_ASSERTCRASH(FALSE, ("getTransitionForStyle:: An invalid style was passed in. Style = %d", style));
+		DEBUG_CRASH(("getTransitionForStyle:: An invalid style was passed in. Style = %d", style));
 		return nullptr;
 	}
 	return nullptr;
@@ -532,7 +532,7 @@ TransitionGroup *GameWindowTransitionsHandler::getNewGroup( AsciiString name )
 	// test to see if we're trying to add an already existing group.
 	if(findGroup(name))
 	{
-		DEBUG_ASSERTCRASH(FALSE, ("GameWindowTransitionsHandler::getNewGroup - We already have a group %s", name.str()));
+		DEBUG_CRASH(("GameWindowTransitionsHandler::getNewGroup - We already have a group %s", name.str()));
 		return nullptr;
 	}
 	TransitionGroup *g = NEW TransitionGroup;

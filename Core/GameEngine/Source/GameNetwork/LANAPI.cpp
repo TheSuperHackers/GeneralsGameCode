@@ -989,7 +989,7 @@ AsciiString LANAPI::createSlotString( void )
 		}
 		else
 		{
-			DEBUG_ASSERTCRASH(false, ("Bad slot type"));
+			DEBUG_CRASH(("Bad slot type"));
 			str = "X,";
 		}
 
@@ -1153,7 +1153,7 @@ void LANAPI::removeGame( LANGameInfo *game )
 		else
 		{
 			// Odd.  We went the whole way without finding it in the list.
-			DEBUG_ASSERTCRASH(false, ("LANGameInfo wasn't in the list"));
+			DEBUG_CRASH(("LANGameInfo wasn't in the list"));
 		}
 	}
 }
@@ -1194,7 +1194,7 @@ void LANAPI::removePlayer( LANPlayer *player )
 		else
 		{
 			// Odd.  We went the whole way without finding it in the list.
-			DEBUG_ASSERTCRASH(false, ("LANPlayer wasn't in the list"));
+			DEBUG_CRASH(("LANPlayer wasn't in the list"));
 		}
 	}
 }
