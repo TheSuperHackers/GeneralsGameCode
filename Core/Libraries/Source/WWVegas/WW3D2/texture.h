@@ -96,7 +96,7 @@ public:
 		bool reducible=true
 	);
 
-	virtual ~TextureBaseClass();
+	virtual ~TextureBaseClass() override;
 
 	virtual TexAssetType Get_Asset_Type() const=0;
 
@@ -315,12 +315,12 @@ public:
 	)
 	: TextureBaseClass(width,height,mip_level_count,pool,rendertarget,allow_reduction), TextureFormat(format), Filter(mip_level_count) { }
 
-	virtual TexAssetType Get_Asset_Type() const { return TEX_REGULAR; }
+	virtual TexAssetType Get_Asset_Type() const override { return TEX_REGULAR; }
 
-	virtual void Init();
+	virtual void Init() override;
 
 	// Background texture loader will call this when texture has been loaded
-	virtual void Apply_New_Surface(IDirect3DBaseTexture8* tex, bool initialized, bool disable_auto_invalidation = false);	// If the parameter is true, the texture will be flagged as initialised
+	virtual void Apply_New_Surface(IDirect3DBaseTexture8* tex, bool initialized, bool disable_auto_invalidation = false) override;	// If the parameter is true, the texture will be flagged as initialised
 
 	// Get the surface of one of the mipmap levels (defaults to highest-resolution one)
 	SurfaceClass *Get_Surface_Level(unsigned int level = 0);
@@ -331,11 +331,11 @@ public:
 
 	WW3DFormat Get_Texture_Format() const { return TextureFormat; }
 
-	virtual void Apply(unsigned int stage);
+	virtual void Apply(unsigned int stage) override;
 
-	virtual unsigned Get_Texture_Memory_Usage() const;
+	virtual unsigned Get_Texture_Memory_Usage() const override;
 
-	virtual TextureClass* As_TextureClass() { return this; }
+	virtual TextureClass* As_TextureClass() override { return this; }
 
 protected:
 
@@ -360,17 +360,17 @@ public:
 
 	WW3DZFormat Get_Texture_Format() const { return DepthStencilTextureFormat; }
 
-	virtual TexAssetType Get_Asset_Type() const { return TEX_REGULAR; }
+	virtual TexAssetType Get_Asset_Type() const override { return TEX_REGULAR; }
 
-	virtual void Init() {}
+	virtual void Init() override {}
 
 	// Background texture loader will call this when texture has been loaded
-	virtual void Apply_New_Surface(IDirect3DBaseTexture8* tex, bool initialized, bool disable_auto_invalidation = false);	// If the parameter is true, the texture will be flagged as initialised
+	virtual void Apply_New_Surface(IDirect3DBaseTexture8* tex, bool initialized, bool disable_auto_invalidation = false) override;	// If the parameter is true, the texture will be flagged as initialised
 
-	virtual void Apply(unsigned int stage);
+	virtual void Apply(unsigned int stage) override;
 
 	IDirect3DSurface8 *Get_D3D_Surface_Level(unsigned int level = 0);
-	virtual unsigned Get_Texture_Memory_Usage() const;
+	virtual unsigned Get_Texture_Memory_Usage() const override;
 
 private:
 
@@ -414,11 +414,11 @@ public:
 
 	CubeTextureClass(IDirect3DBaseTexture8* d3d_texture);
 
-	virtual void Apply_New_Surface(IDirect3DBaseTexture8* tex, bool initialized, bool disable_auto_invalidation = false);	// If the parameter is true, the texture will be flagged as initialised
+	virtual void Apply_New_Surface(IDirect3DBaseTexture8* tex, bool initialized, bool disable_auto_invalidation = false) override;	// If the parameter is true, the texture will be flagged as initialised
 
-	virtual TexAssetType Get_Asset_Type() const { return TEX_CUBEMAP; }
+	virtual TexAssetType Get_Asset_Type() const override { return TEX_CUBEMAP; }
 
-	virtual CubeTextureClass* As_CubeTextureClass() { return this; }
+	virtual CubeTextureClass* As_CubeTextureClass() override { return this; }
 
 };
 
@@ -460,11 +460,11 @@ public:
 
 	VolumeTextureClass(IDirect3DBaseTexture8* d3d_texture);
 
-	virtual void Apply_New_Surface(IDirect3DBaseTexture8* tex, bool initialized, bool disable_auto_invalidation = false);	// If the parameter is true, the texture will be flagged as initialised
+	virtual void Apply_New_Surface(IDirect3DBaseTexture8* tex, bool initialized, bool disable_auto_invalidation = false) override;	// If the parameter is true, the texture will be flagged as initialised
 
-	virtual TexAssetType Get_Asset_Type() const { return TEX_VOLUME; }
+	virtual TexAssetType Get_Asset_Type() const override { return TEX_VOLUME; }
 
-	virtual VolumeTextureClass* As_VolumeTextureClass() { return this; }
+	virtual VolumeTextureClass* As_VolumeTextureClass() override { return this; }
 
 protected:
 

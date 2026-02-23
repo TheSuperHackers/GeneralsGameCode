@@ -72,7 +72,7 @@ public:
 			m_SharpnessPos (0, 0, 0),
 			Curve3DClass () { }
 
-	virtual ~VehicleCurveClass () {}
+	virtual ~VehicleCurveClass () override {}
 
 
 	///////////////////////////////////////////////////////////////////////////
@@ -87,11 +87,11 @@ public:
 	//
 	//	From Curve3DClass
 	//
-	void			Evaluate (float time, Vector3 *set_val);
-	void			Set_Key (int i,const Vector3 & point);
-	int			Add_Key (const Vector3 & point,float t);
-	void			Remove_Key (int i);
-	void			Clear_Keys ();
+	void			Evaluate (float time, Vector3 *set_val) override;
+	void			Set_Key (int i,const Vector3 & point) override;
+	int			Add_Key (const Vector3 & point,float t) override;
+	void			Remove_Key (int i) override;
+	void			Clear_Keys () override;
 
 	//
 	//	Vehicle curve specific
@@ -102,9 +102,9 @@ public:
 	//
 	// Save-load support
 	//
-	virtual const PersistFactoryClass &	Get_Factory() const;
-	virtual bool								Save(ChunkSaveClass &csave);
-	virtual bool								Load(ChunkLoadClass &cload);
+	virtual const PersistFactoryClass &	Get_Factory() const override;
+	virtual bool								Save(ChunkSaveClass &csave) override;
+	virtual bool								Load(ChunkLoadClass &cload) override;
 
 protected:
 

@@ -56,7 +56,7 @@ public:
 class GameResultsInterface : public SubsystemInterface
 {
 public:
-	virtual ~GameResultsInterface() {}
+	virtual ~GameResultsInterface() override {}
 	virtual void startThreads() = 0;
 	virtual void endThreads() = 0;
 	virtual Bool areThreadsRunning() = 0;

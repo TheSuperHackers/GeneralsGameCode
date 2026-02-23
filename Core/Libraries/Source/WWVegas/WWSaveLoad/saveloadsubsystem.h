@@ -63,7 +63,7 @@ class SaveLoadSubSystemClass : public PostLoadableClass
 public:
 
 	SaveLoadSubSystemClass ();
-	virtual ~SaveLoadSubSystemClass ();
+	virtual ~SaveLoadSubSystemClass () override;
 
 	virtual uint32				Chunk_ID () const = 0;
 

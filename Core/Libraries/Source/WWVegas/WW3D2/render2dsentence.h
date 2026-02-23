@@ -76,7 +76,7 @@ class FontCharsClass : public W3DMPO, public RefCountClass
 
 public:
 	FontCharsClass();
-	~FontCharsClass();
+	~FontCharsClass() override;
 
 	// TR: Hack for unicode font support
 	FontCharsClass					*AlternateUnicodeFont;

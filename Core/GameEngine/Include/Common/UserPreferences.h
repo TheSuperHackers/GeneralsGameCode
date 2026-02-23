@@ -77,7 +77,7 @@ class LANPreferences : public UserPreferences
 {
 public:
 	LANPreferences();
-	virtual ~LANPreferences();
+	virtual ~LANPreferences() override;
 
 	Bool loadFromIniFile();
 

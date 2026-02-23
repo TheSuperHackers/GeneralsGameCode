@@ -91,22 +91,22 @@ class LocalFile : public File
 		//virtual				~LocalFile();
 
 
-		virtual Bool	open( const Char *filename, Int access = NONE, size_t bufferSize = BUFFERSIZE ); ///< Open a file for access
-		virtual void	close();																			///< Close the file
-		virtual Int		read( void *buffer, Int bytes );										///< Read the specified number of bytes in to buffer: See File::read
-		virtual Int		readChar();																///< Read a character from the file
-		virtual Int		readWideChar();															///< Read a wide character from the file
-		virtual Int		write( const void *buffer, Int bytes );							///< Write the specified number of bytes from the buffer: See File::write
-		virtual Int		writeFormat( const Char* format, ... );							///< Write an unterminated formatted string to the file
-		virtual Int		writeFormat( const WideChar* format, ... );						///< Write an unterminated formatted string to the file
-		virtual Int		writeChar( const Char* character );								///< Write a character to the file
-		virtual Int		writeChar( const WideChar* character );							///< Write a wide character to the file
-		virtual Int		seek( Int new_pos, seekMode mode = CURRENT );				///< Set file position: See File::seek
-		virtual Bool	flush();													///< flush data to disk
-		virtual void	nextLine(Char *buf = nullptr, Int bufSize = 0);				///< moves file position to after the next new-line
-		virtual Bool	scanInt(Int &newInt);																///< return what gets read in as an integer at the current file position.
-		virtual Bool	scanReal(Real &newReal);														///< return what gets read in as a float at the current file position.
-		virtual	Bool	scanString(AsciiString &newString);									///< return what gets read in as a string at the current file position.
+		virtual Bool	open( const Char *filename, Int access = NONE, size_t bufferSize = BUFFERSIZE ) override; ///< Open a file for access
+		virtual void	close() override;																			///< Close the file
+		virtual Int		read( void *buffer, Int bytes ) override;										///< Read the specified number of bytes in to buffer: See File::read
+		virtual Int		readChar() override;																///< Read a character from the file
+		virtual Int		readWideChar() override;															///< Read a wide character from the file
+		virtual Int		write( const void *buffer, Int bytes ) override;							///< Write the specified number of bytes from the buffer: See File::write
+		virtual Int		writeFormat( const Char* format, ... ) override;							///< Write an unterminated formatted string to the file
+		virtual Int		writeFormat( const WideChar* format, ... ) override;						///< Write an unterminated formatted string to the file
+		virtual Int		writeChar( const Char* character ) override;								///< Write a character to the file
+		virtual Int		writeChar( const WideChar* character ) override;							///< Write a wide character to the file
+		virtual Int		seek( Int new_pos, seekMode mode = CURRENT ) override;				///< Set file position: See File::seek
+		virtual Bool	flush() override;													///< flush data to disk
+		virtual void	nextLine(Char *buf = nullptr, Int bufSize = 0) override;				///< moves file position to after the next new-line
+		virtual Bool	scanInt(Int &newInt) override;																///< return what gets read in as an integer at the current file position.
+		virtual Bool	scanReal(Real &newReal) override;														///< return what gets read in as a float at the current file position.
+		virtual	Bool	scanString(AsciiString &newString) override;									///< return what gets read in as a string at the current file position.
 		/**
 			Allocate a buffer large enough to hold entire file, read
 			the entire file into the buffer, then close the file.
@@ -114,8 +114,8 @@ class LocalFile : public File
 			for freeing is (via delete[]). This is a Good Thing to
 			use because it minimizes memory copies for BIG files.
 		*/
-		virtual char* readEntireAndClose();
-		virtual File* convertToRAMFile();
+		virtual char* readEntireAndClose() override;
+		virtual File* convertToRAMFile() override;
 
 	protected:
 

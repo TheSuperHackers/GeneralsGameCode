@@ -46,19 +46,19 @@ class CardinalSpline3DClass : public HermiteSpline3DClass
 {
 public:
 
-	virtual int			Add_Key(const Vector3 & point,float t);
-	virtual void		Remove_Key(int i);
-	virtual void		Clear_Keys();
+	virtual int			Add_Key(const Vector3 & point,float t) override;
+	virtual void		Remove_Key(int i) override;
+	virtual void		Clear_Keys() override;
 
 	virtual void		Set_Tightness(int i,float tightness);
 	virtual float		Get_Tightness(int i);
 
-	virtual void		Update_Tangents();
+	virtual void		Update_Tangents() override;
 
 	// save-load support
-	virtual const PersistFactoryClass &	Get_Factory() const;
-	virtual bool								Save(ChunkSaveClass &csave);
-	virtual bool								Load(ChunkLoadClass &cload);
+	virtual const PersistFactoryClass &	Get_Factory() const override;
+	virtual bool								Save(ChunkSaveClass &csave) override;
+	virtual bool								Load(ChunkLoadClass &cload) override;
 
 protected:
 
@@ -75,18 +75,18 @@ class CardinalSpline1DClass : public HermiteSpline1DClass
 public:
 
 	virtual int			Add_Key(float point,float t);
-	virtual void		Remove_Key(int i);
-	virtual void		Clear_Keys();
+	virtual void		Remove_Key(int i) override;
+	virtual void		Clear_Keys() override;
 
 	virtual void		Set_Tightness(int i,float tightness);
 	virtual float		Get_Tightness(int i);
 
-	virtual void		Update_Tangents();
+	virtual void		Update_Tangents() override;
 
 	// save-load support
-	virtual const PersistFactoryClass &	Get_Factory() const;
-	virtual bool								Save(ChunkSaveClass &csave);
-	virtual bool								Load(ChunkLoadClass &cload);
+	virtual const PersistFactoryClass &	Get_Factory() const override;
+	virtual bool								Save(ChunkSaveClass &csave) override;
+	virtual bool								Load(ChunkLoadClass &cload) override;
 
 protected:
 

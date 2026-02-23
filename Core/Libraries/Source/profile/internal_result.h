@@ -39,8 +39,8 @@ class ProfileResultFileCSV: public ProfileResultInterface
 public:
   static ProfileResultInterface *Create(int argn, const char * const *);
   virtual const char *GetName() const { return "file_csv"; }
-  virtual void WriteResults();
-  virtual void Delete();
+  virtual void WriteResults() override;
+  virtual void Delete() override;
 };
 
 /**
@@ -75,8 +75,8 @@ public:
   static ProfileResultInterface *Create(int argn, const char * const *);
 
   virtual const char *GetName() const { return "file_dot"; }
-  virtual void WriteResults();
-  virtual void Delete();
+  virtual void WriteResults() override;
+  virtual void Delete() override;
 
 private:
 
