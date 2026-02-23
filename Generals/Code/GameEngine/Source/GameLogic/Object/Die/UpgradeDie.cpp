@@ -76,7 +76,7 @@ void UpgradeDie::onDie( const DamageInfo *damageInfo )
 			}
 			else
 			{
-				DEBUG_ASSERTCRASH( 0, ("Object %s just died, but is trying to free upgrade %s in it's producer %s%s",
+				DEBUG_CRASH( ("Object %s just died, but is trying to free upgrade %s in it's producer %s%s",
 					getObject()->getTemplate()->getName().str(),
 					getUpgradeDieModuleData()->m_upgradeName.str(),
 					producer->getTemplate()->getName().str(),

@@ -873,7 +873,7 @@ UpdateSleepTime ProductionUpdate::update( void )
 			{
 
 				// there is no exit interface, this is an error
-				DEBUG_ASSERTCRASH( 0, ("Cannot create '%s', there is no ExitUpdate interface defined for producer object '%s'",
+				DEBUG_CRASH( ("Cannot create '%s', there is no ExitUpdate interface defined for producer object '%s'",
 															production->m_objectToProduce->getName().str(),
 															creationBuilding->getTemplate()->getName().str()) );
 

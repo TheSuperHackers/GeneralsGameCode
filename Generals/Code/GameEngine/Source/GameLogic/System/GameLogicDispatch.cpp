@@ -1353,7 +1353,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			if( pu == nullptr )
 			{
 
-				DEBUG_ASSERTCRASH( 0, ("MSG_QUEUE_UNIT_CREATE: Producer '%s' doesn't have a unit production interface",
+				DEBUG_CRASH( ("MSG_QUEUE_UNIT_CREATE: Producer '%s' doesn't have a unit production interface",
 															producer->getTemplate()->getName().str()) );
 				break;
 

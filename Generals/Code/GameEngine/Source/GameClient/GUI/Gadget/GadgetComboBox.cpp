@@ -395,7 +395,7 @@ WindowMsgHandledType GadgetComboBoxSystem( GameWindow *window, UnsignedInt msg,
 				GadgetListBoxGetSelected(comboData->listBox, (Int *)mData2);
 			else
 			{
-				DEBUG_ASSERTCRASH(0,("We don't have a listbox as part of the combo box"));
+				DEBUG_CRASH(("We don't have a listbox as part of the combo box"));
 				*(Int *)mData2 = -1;
 			}
 			break;

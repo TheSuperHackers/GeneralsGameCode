@@ -3111,7 +3111,7 @@ void InGameUI::setGUICommand( const CommandButton *command )
 		if( BitIsSet( command->getOptions(), COMMAND_OPTION_NEED_TARGET ) == FALSE )
 		{
 
-			DEBUG_ASSERTCRASH( 0, ("setGUICommand: Command '%s' does not need additional user interaction",
+			DEBUG_CRASH( ("setGUICommand: Command '%s' does not need additional user interaction",
 														command->getName().str()) );
 			m_pendingGUICommand = nullptr;
 			m_mouseMode = MOUSEMODE_DEFAULT;
