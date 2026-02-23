@@ -69,7 +69,7 @@
 class TestSeismicFilter : public SeismicSimulationFilterBase
 {
 
-  virtual SeismicSimStatusCode filterCallback( WorldHeightMapInterfaceClass *heightMap, const SeismicSimulationNode *node )
+  virtual SeismicSimStatusCode filterCallback( WorldHeightMapInterfaceClass *heightMap, const SeismicSimulationNode *node ) override
   {
 
 
@@ -140,7 +140,7 @@ class TestSeismicFilter : public SeismicSimulationFilterBase
       return SEISMIC_STATUS_ZERO_ENERGY;
   }
 
-  virtual Real applyGravityCallback( Real velocityIn )
+  virtual Real applyGravityCallback( Real velocityIn ) override
   {
     Real velocityOut = velocityIn;
     velocityOut -= 1.5f;
