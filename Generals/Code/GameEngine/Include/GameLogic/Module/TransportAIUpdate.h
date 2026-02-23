@@ -51,14 +51,14 @@ public:
 
 	TransportAIUpdate( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
-	virtual AIFreeToExitType getAiFreeToExit(const Object* exiter) const;
+	virtual AIFreeToExitType getAiFreeToExit(const Object* exiter) const override;
 
 protected:
 
-	virtual AIStateMachine* makeStateMachine();
+	virtual AIStateMachine* makeStateMachine() override;
 
 protected:
-	virtual void privateAttackObject( Object *victim, Int maxShotsToFire, CommandSourceType cmdSource );///< Extension.  Also tell occupants to attackObject
-	virtual void privateAttackPosition( const Coord3D *pos, Int maxShotsToFire, CommandSourceType cmdSource );///< Extension.  Also tell occupants to attackPosition
-	virtual void privateForceAttackObject( Object *victim, Int maxShotsToFire, CommandSourceType cmdSource );///< Extension.  Also tell occupants to forceAttackObject
+	virtual void privateAttackObject( Object *victim, Int maxShotsToFire, CommandSourceType cmdSource ) override;///< Extension.  Also tell occupants to attackObject
+	virtual void privateAttackPosition( const Coord3D *pos, Int maxShotsToFire, CommandSourceType cmdSource ) override;///< Extension.  Also tell occupants to attackPosition
+	virtual void privateForceAttackObject( Object *victim, Int maxShotsToFire, CommandSourceType cmdSource ) override;///< Extension.  Also tell occupants to forceAttackObject
 };

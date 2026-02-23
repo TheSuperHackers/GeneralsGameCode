@@ -141,12 +141,12 @@ class Eva : public SubsystemInterface
 
 	public:
 		Eva();
-		virtual ~Eva();
+		virtual ~Eva() override;
 
 	public:		// From SubsystemInterface
-		virtual void init();
-		virtual void reset();
-		virtual void update();
+		virtual void init() override;
+		virtual void reset() override;
+		virtual void update() override;
 
 		static EvaMessage nameToMessage(const AsciiString& name);
 		static AsciiString messageToName(EvaMessage message);

@@ -86,17 +86,17 @@ public:
 		KILL_SELF			= 7, ///< Destroy self.
 	};
 
-	virtual ProjectileUpdateInterface* getProjectileUpdateInterface() { return this; }
-	virtual void projectileFireAtObjectOrPosition( const Object *victim, const Coord3D *victimPos, const WeaponTemplate *detWeap, const ParticleSystemTemplate* exhaustSysOverride );
-	virtual void projectileLaunchAtObjectOrPosition(const Object *victim, const Coord3D* victimPos, const Object *launcher, WeaponSlotType wslot, Int specificBarrelToUse, const WeaponTemplate* detWeap, const ParticleSystemTemplate* exhaustSysOverride);
-	virtual Bool projectileHandleCollision( Object *other );
-	virtual Bool projectileIsArmed() const { return m_isArmed; }
-	virtual ObjectID projectileGetLauncherID() const { return m_launcherID; }
+	virtual ProjectileUpdateInterface* getProjectileUpdateInterface() override { return this; }
+	virtual void projectileFireAtObjectOrPosition( const Object *victim, const Coord3D *victimPos, const WeaponTemplate *detWeap, const ParticleSystemTemplate* exhaustSysOverride ) override;
+	virtual void projectileLaunchAtObjectOrPosition(const Object *victim, const Coord3D* victimPos, const Object *launcher, WeaponSlotType wslot, Int specificBarrelToUse, const WeaponTemplate* detWeap, const ParticleSystemTemplate* exhaustSysOverride) override;
+	virtual Bool projectileHandleCollision( Object *other ) override;
+	virtual Bool projectileIsArmed() const override { return m_isArmed; }
+	virtual ObjectID projectileGetLauncherID() const override { return m_launcherID; }
 
-	virtual Bool processCollision(PhysicsBehavior *physics, Object *other); ///< Returns true if the physics collide should apply the force.  Normally not.  jba.
+	virtual Bool processCollision(PhysicsBehavior *physics, Object *other) override; ///< Returns true if the physics collide should apply the force.  Normally not.  jba.
 
-	virtual UpdateSleepTime update();
-	virtual void onDelete();
+	virtual UpdateSleepTime update() override;
+	virtual void onDelete() override;
 
 protected:
 

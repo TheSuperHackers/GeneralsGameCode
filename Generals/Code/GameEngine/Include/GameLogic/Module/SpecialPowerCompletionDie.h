@@ -77,7 +77,7 @@ public:
 	void setCreator( ObjectID creatorID );
 	void notifyScriptEngine();
 
-	virtual void onDie( const DamageInfo *damageInfo );
+	virtual void onDie( const DamageInfo *damageInfo ) override;
 
 protected:
 

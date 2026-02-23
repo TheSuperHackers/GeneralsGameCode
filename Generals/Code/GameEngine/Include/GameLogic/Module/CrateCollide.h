@@ -74,13 +74,13 @@ public:
 	// virtual destructor prototype provided by memory pool declaration
 
 	/// This collide method gets called when collision occur
-	virtual void onCollide( Object *other, const Coord3D *loc, const Coord3D *normal );
+	virtual void onCollide( Object *other, const Coord3D *loc, const Coord3D *normal ) override;
 
-	virtual Bool wouldLikeToCollideWith(const Object* other) const { return isValidToExecute(other); }
+	virtual Bool wouldLikeToCollideWith(const Object* other) const override { return isValidToExecute(other); }
 
-	virtual Bool isRailroad() const { return FALSE;};
- 	virtual Bool isCarBombCrateCollide() const { return FALSE; }
-	virtual Bool isHijackedVehicleCrateCollide() const { return FALSE; }
+	virtual Bool isRailroad() const override { return FALSE;};
+ 	virtual Bool isCarBombCrateCollide() const override { return FALSE; }
+	virtual Bool isHijackedVehicleCrateCollide() const override { return FALSE; }
 
 protected:
 

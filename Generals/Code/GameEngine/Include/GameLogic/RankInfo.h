@@ -52,12 +52,12 @@ public:
 class RankInfoStore : public SubsystemInterface
 {
 public:
-	virtual ~RankInfoStore();
+	virtual ~RankInfoStore() override;
 
 public:
-	void init();
-	void reset();
-	void update() { }
+	virtual void init() override;
+	virtual void reset() override;
+	virtual void update() override { }
 
 	Int getRankLevelCount() const;
 

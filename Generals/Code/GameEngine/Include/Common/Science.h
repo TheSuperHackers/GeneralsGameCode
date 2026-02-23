@@ -78,11 +78,11 @@ class ScienceStore : public SubsystemInterface
 	friend class ScienceInfo;
 
 public:
-	virtual ~ScienceStore();
+	virtual ~ScienceStore() override;
 
-	void init();
-	void reset();
-	void update() { }
+	virtual void init() override;
+	virtual void reset() override;
+	virtual void update() override { }
 
 	Bool isValidScience(ScienceType st) const;
 

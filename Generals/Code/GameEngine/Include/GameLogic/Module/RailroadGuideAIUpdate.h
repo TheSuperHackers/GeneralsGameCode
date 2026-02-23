@@ -219,12 +219,12 @@ public:
 //	virtual SleepyUpdatePhase getUpdatePhase() const { return PHASE_FINAL; }
 
 	// PhysicsBehavior methods
-	virtual void onCollide( Object *other, const Coord3D *loc, const Coord3D *normal );
-	virtual Bool wouldLikeToCollideWith(const Object* other) const {return FALSE;}; // will need to add this!
-	virtual Bool isHijackedVehicleCrateCollide() const {return FALSE;};
-	virtual Bool isCarBombCrateCollide() const {return FALSE;};
-	virtual Bool isRailroad() const ;
-	virtual UpdateSleepTime update();
+	virtual void onCollide( Object *other, const Coord3D *loc, const Coord3D *normal ) override;
+	virtual Bool wouldLikeToCollideWith(const Object* other) const override {return FALSE;}; // will need to add this!
+	virtual Bool isHijackedVehicleCrateCollide() const override {return FALSE;};
+	virtual Bool isCarBombCrateCollide() const override {return FALSE;};
+	virtual Bool isRailroad() const override;
+	virtual UpdateSleepTime update() override;
 
 	// TRAINY METHODS
 	void getPulled( PullInfo *info );

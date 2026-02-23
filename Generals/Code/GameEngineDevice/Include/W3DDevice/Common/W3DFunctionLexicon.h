@@ -40,11 +40,11 @@ class W3DFunctionLexicon : public FunctionLexicon
 public:
 
 	W3DFunctionLexicon();
-	virtual ~W3DFunctionLexicon();
+	virtual ~W3DFunctionLexicon() override;
 
-	virtual void init();
-	virtual void reset();
-	virtual void update();
+	virtual void init() override;
+	virtual void reset() override;
+	virtual void update() override;
 
 protected:
 

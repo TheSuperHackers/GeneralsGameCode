@@ -79,28 +79,28 @@ public:
 	static Int getInterfaceMask() { return (MODULEINTERFACE_DIE) | (MODULEINTERFACE_UPGRADE); }
 
 	// BehaviorModule
-	virtual DieModuleInterface* getDie() { return this; }
-	virtual UpgradeModuleInterface* getUpgrade() { return this; }
+	virtual DieModuleInterface* getDie() override { return this; }
+	virtual UpgradeModuleInterface* getUpgrade() override { return this; }
 
 	// DamageModuleInterface
-	virtual void onDie( const DamageInfo *damageInfo );
+	virtual void onDie( const DamageInfo *damageInfo ) override;
 
 	void setMinefieldTarget(const Coord3D* pos);
 
 protected:
 
-	virtual void upgradeImplementation();
-	virtual Bool isSubObjectsUpgrade() { return false; }
+	virtual void upgradeImplementation() override;
+	virtual Bool isSubObjectsUpgrade() override { return false; }
 
-	virtual void getUpgradeActivationMasks(UpgradeMaskType& activation, UpgradeMaskType& conflicting) const
+	virtual void getUpgradeActivationMasks(UpgradeMaskType& activation, UpgradeMaskType& conflicting) const override
 	{
 		getGenerateMinefieldBehaviorModuleData()->m_upgradeMuxData.getUpgradeActivationMasks(activation, conflicting);
 	}
-	virtual void performUpgradeFX()
+	virtual void performUpgradeFX() override
 	{
 		getGenerateMinefieldBehaviorModuleData()->m_upgradeMuxData.performUpgradeFX(getObject());
 	}
-	virtual Bool requiresAllActivationUpgrades() const
+	virtual Bool requiresAllActivationUpgrades() const override
 	{
 		return getGenerateMinefieldBehaviorModuleData()->m_upgradeMuxData.m_requiresAllTriggers;
 	}

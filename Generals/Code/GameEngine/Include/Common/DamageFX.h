@@ -138,11 +138,11 @@ class DamageFXStore : public SubsystemInterface
 public:
 
 	DamageFXStore();
-	~DamageFXStore();
+	virtual ~DamageFXStore() override;
 
-	void init();
-	void reset();
-	void update();
+	virtual void init() override;
+	virtual void reset() override;
+	virtual void update() override;
 
 	/**
 		Find the DamageFX with the given name. If no such DamageFX exists, return null.

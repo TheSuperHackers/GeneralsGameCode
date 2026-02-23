@@ -77,12 +77,12 @@ class PlayerList : public SubsystemInterface,
 public:
 
 	PlayerList();
-	~PlayerList();
+	virtual ~PlayerList() override;
 
 	// subsystem methods
-	virtual void init();
-	virtual void reset();
-	virtual void update();
+	virtual void init() override;
+	virtual void reset() override;
+	virtual void update() override;
 
 	virtual void newGame(); // called during GameLogic::startNewGame()
 	virtual void newMap();	 // Called after a new map is loaded.
@@ -153,9 +153,9 @@ public:
 protected:
 
 	// snapshot methods
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 private:
 

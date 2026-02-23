@@ -1420,7 +1420,7 @@ public:
 		return STATE_CONTINUE;
 	}
 
-	virtual StateReturnType update()
+	virtual StateReturnType update() override
 	{
 		Object* jet = getMachineOwner();
 		UnsignedInt now = TheGameLogic->getFrame();
