@@ -93,7 +93,7 @@ void ControlBar::populateInvDataCallback( Object *obj, void *userData )
 	if( data->currIndex > data->maxIndex )
 	{
 
-		DEBUG_ASSERTCRASH( 0, ("There is not enough GUI slots to hold the # of items inside a '%s'",
+		DEBUG_CRASH( ("There is not enough GUI slots to hold the # of items inside a '%s'",
 													data->transport->getTemplate()->getName().str()) );
 		return;
 

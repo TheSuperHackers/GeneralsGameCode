@@ -2379,7 +2379,7 @@ void ControlBar::switchToContext( ControlBarContext context, Drawable *draw )
 		default:
 		{
 
-			DEBUG_ASSERTCRASH( 0, ("ControlBar::switchToContext, unknown context '%d'", context) );
+			DEBUG_CRASH( ("ControlBar::switchToContext, unknown context '%d'", context) );
 			break;
 
 		}
@@ -2440,7 +2440,7 @@ void ControlBar::setControlCommand( GameWindow *button, const CommandButton *com
 	if( button->winGetInputFunc() != GadgetPushButtonInput )
 	{
 
-		DEBUG_ASSERTCRASH( 0, ("setControlCommand: Window is not a button") );
+		DEBUG_CRASH( ("setControlCommand: Window is not a button") );
 		return;
 
 	}
@@ -2449,7 +2449,7 @@ void ControlBar::setControlCommand( GameWindow *button, const CommandButton *com
 	if( commandButton == nullptr )
 	{
 
-		DEBUG_ASSERTCRASH( 0, ("setControlCommand: null commandButton passed in") );
+		DEBUG_CRASH( ("setControlCommand: null commandButton passed in") );
 		return;
 
 	}
@@ -2551,7 +2551,7 @@ void ControlBar::setControlCommand( const AsciiString& buttonWindowName, GameWin
 	if( win == nullptr )
 	{
 
-		DEBUG_ASSERTCRASH( 0, ("setControlCommand: Unable to find window '%s'", buttonWindowName.str()) );
+		DEBUG_CRASH( ("setControlCommand: Unable to find window '%s'", buttonWindowName.str()) );
 		return;
 
 	}

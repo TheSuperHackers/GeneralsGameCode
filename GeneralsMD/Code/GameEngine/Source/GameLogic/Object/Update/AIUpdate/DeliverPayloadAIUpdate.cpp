@@ -851,7 +851,7 @@ StateReturnType DeliveringState::update() // Kick a dude out every so often
 								const WeaponTemplate *weaponTemplate = ai->getData()->m_visiblePayloadWeaponTemplate;
 								if( !weaponTemplate )
 								{
-									DEBUG_ASSERTCRASH( 0, ("%s tried to fire missile %s via DeliverPayload, and is missing required weapon template in ObjectCreationList.ini entry.",
+									DEBUG_CRASH( ("%s tried to fire missile %s via DeliverPayload, and is missing required weapon template in ObjectCreationList.ini entry.",
 																				owner->getTemplate()->getName().str(), payload->getTemplate()->getName().str() ) );
 									break;
 								}
