@@ -54,7 +54,7 @@ template <class T> class OVERRIDE
 		// Copy constructor
 		OVERRIDE(OVERRIDE<T> &overridable);
 		// Operator= for copying from another OVERRIDE and T*
-		__inline OVERRIDE &operator=( const OVERRIDE<T>& override );
+		__inline OVERRIDE &operator=( const OVERRIDE<T>& other );
 		__inline OVERRIDE &operator=( const T* overridable );
 
 		// these are the methods which we can use to access data in a pointer. (Dereference*, ->, and cast
@@ -88,9 +88,9 @@ OVERRIDE<T>::OVERRIDE(OVERRIDE<T> &overridable)
 
 //-------------------------------------------------------------------------------------------------
 template <class T>
-OVERRIDE<T> &OVERRIDE<T>::operator=( const OVERRIDE<T>& override )
+OVERRIDE<T> &OVERRIDE<T>::operator=( const OVERRIDE<T>& other )
 {
-	m_overridable = override.m_overridable;
+	m_overridable = other.m_overridable;
 	return *this;
 }
 
