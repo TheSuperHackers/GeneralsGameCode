@@ -188,7 +188,7 @@ void InitBuddyControls(Int type)
 	case BUDDY_WINDOW_WELCOME_SCREEN:
 		break;
 	default:
-		DEBUG_ASSERTCRASH(FALSE, ("Well, you really shouldn't have gotten here, if you really care about GUI Bugs, search for this string, you you don't care, call chris (who probably doesn't care either"));
+		DEBUG_CRASH(("Well, you really shouldn't have gotten here, if you really care about GUI Bugs, search for this string, you you don't care, call chris (who probably doesn't care either"));
 	}
 
 }

@@ -1704,7 +1704,7 @@ GameWindow *GameWindowManager::gogoMessageBox(Int x, Int y, Int width, Int heigh
 	//we shouldn't have button OK and Yes on the same dialog
 	if((buttonFlags & (MSG_BOX_OK | MSG_BOX_YES)) == (MSG_BOX_OK | MSG_BOX_YES) )
 	{
-		DEBUG_ASSERTCRASH(false, ("Passed in MSG_BOX_OK and MSG_BOX_YES.  Big No No."));
+		DEBUG_CRASH(("Passed in MSG_BOX_OK and MSG_BOX_YES.  Big No No."));
 	}
 
 	//Position the OK button if we have one

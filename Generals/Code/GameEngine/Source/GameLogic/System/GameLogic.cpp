@@ -3835,7 +3835,7 @@ void GameLogic::processProgressComplete(Int playerId)
 {
 	if(playerId < 0 || playerId >= MAX_SLOTS)
 	{
-		DEBUG_ASSERTCRASH(FALSE,("GameLogic::processProgressComplete, Invalid playerid was passed in %d", playerId));
+		DEBUG_CRASH(("GameLogic::processProgressComplete, Invalid playerid was passed in %d", playerId));
 		return;
 	}
 	if(m_progressComplete[playerId] == TRUE)

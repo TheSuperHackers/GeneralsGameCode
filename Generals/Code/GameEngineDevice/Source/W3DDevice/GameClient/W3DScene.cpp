@@ -1337,7 +1337,7 @@ void RTS3DScene::flushOccludedObjectsIntoStencil(RenderInfoClass & rinfo)
 
 			if ((lastPlayerObject[index]-&playerObjects[index][0]) >= MAX_VISIBLE_OCCLUDED_PLAYER_OBJECTS)
 			{
-				DEBUG_ASSERTCRASH(FALSE,("Exceeded Maximum Number of potentially occluded models"));
+				DEBUG_CRASH(("Exceeded Maximum Number of potentially occluded models"));
 				continue;
 			}
 

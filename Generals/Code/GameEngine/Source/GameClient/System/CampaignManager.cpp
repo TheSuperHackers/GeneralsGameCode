@@ -171,7 +171,7 @@ Mission *Campaign::getMission( AsciiString missionName )
 			return mission;
 		++it;
 	}
-	DEBUG_ASSERTCRASH(FALSE, ("getMission couldn't find %s", missionName.str()));
+	DEBUG_CRASH(("getMission couldn't find %s", missionName.str()));
 	return nullptr;
 }
 
@@ -199,7 +199,7 @@ Mission *Campaign::getNextMission( Mission *current)
 			return mission;
 		++it;
 	}
-//	DEBUG_ASSERTCRASH(FALSE, ("GetNextMission couldn't find %s", current->m_nextMission.str()));
+//	DEBUG_CRASH(("GetNextMission couldn't find %s", current->m_nextMission.str()));
 	return nullptr;
 }
 

@@ -148,7 +148,7 @@ void HotKeyManager::addHotKey( GameWindow *win, const AsciiString& keyIn)
 	HotKeyMap::iterator it = m_hotKeyMap.find(key);
 	if( it != m_hotKeyMap.end() )
 	{
-		DEBUG_ASSERTCRASH(FALSE,("Hotkey %s is already mapped to window %s, current window is %s", key.str(), it->second.m_win->winGetInstanceData()->m_decoratedNameString.str(), win->winGetInstanceData()->m_decoratedNameString.str()));
+		DEBUG_CRASH(("Hotkey %s is already mapped to window %s, current window is %s", key.str(), it->second.m_win->winGetInstanceData()->m_decoratedNameString.str(), win->winGetInstanceData()->m_decoratedNameString.str()));
 		return;
 	}
 	HotKey newHK;

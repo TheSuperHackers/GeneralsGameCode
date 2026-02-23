@@ -1454,7 +1454,7 @@ void RailroadBehavior::FindPosByPathDistance( Coord3D *pos, const Real dist, con
 
 	}
 
-	//DEBUG_ASSERTCRASH(FALSE,("Railroad could not find a position on the path!"));
+	//DEBUG_CRASH(("Railroad could not find a position on the path!"));
 
 }
 

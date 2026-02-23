@@ -113,7 +113,7 @@ void FlashTransition::update( Int frame )
 	m_drawState = -1;
 	if(frame < FLASHTRANSITION_START || frame > FLASHTRANSITION_END)
 	{
-		DEBUG_ASSERTCRASH(FALSE, ("FlashTransition::update - Frame is out of the range the this update can handle %d", frame));
+		DEBUG_CRASH(("FlashTransition::update - Frame is out of the range the this update can handle %d", frame));
 		return;
 	}
 	switch (frame) {
@@ -269,7 +269,7 @@ void ButtonFlashTransition::update( Int frame )
 	m_drawState = -1;
 	if(frame < BUTTONFLASHTRANSITION_START || frame > BUTTONFLASHTRANSITION_END)
 	{
-		DEBUG_ASSERTCRASH(FALSE, ("ButtonFlashTransition::update - Frame is out of the range the this update can handle %d", frame));
+		DEBUG_CRASH(("ButtonFlashTransition::update - Frame is out of the range the this update can handle %d", frame));
 		return;
 	}
 	switch (frame) {
@@ -642,7 +642,7 @@ void FadeTransition::update( Int frame )
 	m_drawState = -1;
 	if(frame < FADETRANSITION_START || frame > FADETRANSITION_END)
 	{
-		DEBUG_ASSERTCRASH(FALSE, ("FadeTransition::update - Frame is out of the range the this update can handle %d", frame));
+		DEBUG_CRASH(("FadeTransition::update - Frame is out of the range the this update can handle %d", frame));
 		return;
 	}
 	switch (frame) {
@@ -785,7 +785,7 @@ void ScaleUpTransition::update( Int frame )
 	m_drawState = -1;
 	if(frame < SCALEUPTRANSITION_START || frame > SCALEUPTRANSITION_END)
 	{
-		DEBUG_ASSERTCRASH(FALSE, ("ScaleUpTransition::update - Frame is out of the range the this update can handle %d", frame));
+		DEBUG_CRASH(("ScaleUpTransition::update - Frame is out of the range the this update can handle %d", frame));
 		return;
 	}
 	switch (frame) {
@@ -908,7 +908,7 @@ void ScoreScaleUpTransition::update( Int frame )
 	m_drawState = -1;
 	if(frame < SCORESCALEUPTRANSITION_START || frame > SCORESCALEUPTRANSITION_END)
 	{
-		DEBUG_ASSERTCRASH(FALSE, ("ScoreScaleUpTransition::update - Frame is out of the range the this update can handle %d", frame));
+		DEBUG_CRASH(("ScoreScaleUpTransition::update - Frame is out of the range the this update can handle %d", frame));
 		return;
 	}
 	switch (frame) {
@@ -1039,7 +1039,7 @@ void MainMenuScaleUpTransition::update( Int frame )
 	m_drawState = -1;
 	if(frame < MAINMENUSCALEUPTRANSITION_START || frame > MAINMENUSCALEUPTRANSITION_END)
 	{
-		DEBUG_ASSERTCRASH(FALSE, ("MainMenuScaleUpTransition::update - Frame is out of the range the this update can handle %d", frame));
+		DEBUG_CRASH(("MainMenuScaleUpTransition::update - Frame is out of the range the this update can handle %d", frame));
 		return;
 	}
 	switch (frame) {
@@ -1158,7 +1158,7 @@ void MainMenuMediumScaleUpTransition::update( Int frame )
 	m_drawState = -1;
 	if(frame < MAINMENUMEDIUMSCALEUPTRANSITION_START || frame > MAINMENUMEDIUMSCALEUPTRANSITION_END)
 	{
-		DEBUG_ASSERTCRASH(FALSE, ("MainMenuMediumScaleUpTransition::update - Frame is out of the range the this update can handle %d", frame));
+		DEBUG_CRASH(("MainMenuMediumScaleUpTransition::update - Frame is out of the range the this update can handle %d", frame));
 		return;
 	}
 	switch (frame) {
@@ -1277,7 +1277,7 @@ void MainMenuSmallScaleDownTransition::update( Int frame )
 	m_drawState = -1;
 	if(frame < MAINMENUSMALLSCALEDOWNTRANSITION_START || frame > MAINMENUSMALLSCALEDOWNTRANSITION_END)
 	{
-		DEBUG_ASSERTCRASH(FALSE, ("MainMenuSmallScaleDownTransition::update - Frame is out of the range the this update can handle %d", frame));
+		DEBUG_CRASH(("MainMenuSmallScaleDownTransition::update - Frame is out of the range the this update can handle %d", frame));
 		return;
 	}
 	switch (frame) {
@@ -1382,7 +1382,7 @@ void TextTypeTransition::update( Int frame )
 	m_drawState = -1;
 	if(frame < TEXTTYPETRANSITION_START || frame > TEXTTYPETRANSITION_END)
 	{
-		DEBUG_ASSERTCRASH(FALSE, ("TextTypeTransition::update - Frame is out of the range the this update can handle %d", frame));
+		DEBUG_CRASH(("TextTypeTransition::update - Frame is out of the range the this update can handle %d", frame));
 		return;
 	}
 	switch (frame) {
@@ -1521,7 +1521,7 @@ void CountUpTransition::update( Int frame )
 	m_drawState = -1;
 	if(frame < COUNTUPTRANSITION_START || frame > COUNTUPTRANSITION_END)
 	{
-		DEBUG_ASSERTCRASH(FALSE, ("CountUpTransition::update - Frame is out of the range the this update can handle %d", frame));
+		DEBUG_CRASH(("CountUpTransition::update - Frame is out of the range the this update can handle %d", frame));
 		return;
 	}
 	switch (frame) {
@@ -1638,7 +1638,7 @@ void ScreenFadeTransition::update( Int frame )
 	m_drawState = -1;
 	if(frame < SCREENFADETRANSITION_START || frame > SCREENFADETRANSITION_END)
 	{
-		DEBUG_ASSERTCRASH(FALSE, ("ScreenFadeTransition::update - Frame is out of the range the this update can handle %d", frame));
+		DEBUG_CRASH(("ScreenFadeTransition::update - Frame is out of the range the this update can handle %d", frame));
 		return;
 	}
 	switch (frame) {
@@ -1731,7 +1731,7 @@ void ControlBarArrowTransition::update( Int frame )
 	m_drawState = -1;
 	if(frame < CONTROLBARARROWTRANSITION_START || frame > CONTROLBARARROWTRANSITION_END)
 	{
-		DEBUG_ASSERTCRASH(FALSE, ("ControlBarArrowTransition::update - Frame is out of the range the this update can handle %d", frame));
+		DEBUG_CRASH(("ControlBarArrowTransition::update - Frame is out of the range the this update can handle %d", frame));
 		return;
 	}
 	switch (frame) {
@@ -1826,7 +1826,7 @@ void FullFadeTransition::update( Int frame )
 	m_drawState = -1;
 	if(frame < FULLFADETRANSITION_START || frame > FULLFADETRANSITION_END)
 	{
-		DEBUG_ASSERTCRASH(FALSE, ("FullFadeTransition::update - Frame is out of the range the this update can handle %d", frame));
+		DEBUG_CRASH(("FullFadeTransition::update - Frame is out of the range the this update can handle %d", frame));
 		return;
 	}
 	switch (frame) {
@@ -1927,7 +1927,7 @@ void TextOnFrameTransition::update( Int frame )
 {
 	if(frame < TEXTONFRAMETRANSITION_START || frame > TEXTONFRAMETRANSITION_END)
 	{
-		DEBUG_ASSERTCRASH(FALSE, ("TextOnFrameTransition::update - Frame is out of the range the this update can handle %d", frame));
+		DEBUG_CRASH(("TextOnFrameTransition::update - Frame is out of the range the this update can handle %d", frame));
 		return;
 	}
 	switch (frame) {
@@ -2001,7 +2001,7 @@ void ReverseSoundTransition::update( Int frame )
 {
 	if(frame < REVERSESOUNDTRANSITION_START || frame > REVERSESOUNDTRANSITION_END)
 	{
-		DEBUG_ASSERTCRASH(FALSE, ("ReverseSoundTransition::update - Frame is out of the range the this update can handle %d", frame));
+		DEBUG_CRASH(("ReverseSoundTransition::update - Frame is out of the range the this update can handle %d", frame));
 		return;
 	}
 	switch (frame) {
