@@ -58,7 +58,7 @@ public:
 	void getAllPoints( Vector3 *points, Int *count );					///< unroll circular array and write down all projectile positions
 	void setPosition( const Coord3D *newPosition );						///< I need to exist at the place I want to draw since only (near) on screen Drawables get updated
 
-	virtual UpdateSleepTime update();
+	virtual UpdateSleepTime update() override;
 
 protected:
 

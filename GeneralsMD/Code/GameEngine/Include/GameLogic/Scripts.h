@@ -107,9 +107,9 @@ class ScriptGroup : public MemoryPoolObject, public Snapshot
 protected:
 
 	// snapshot methods
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 protected:
 	Script			*m_firstScript;
@@ -378,14 +378,14 @@ public:
 		TEAM_STOP_AND_DISBAND,						///< Make a team stop and be merged into the default player team. Also, mark the whole team recruitable
 		RECRUIT_TEAM,	  									///< Recruit a team?
 		TEAM_SET_OVERRIDE_RELATION_TO_TEAM,					///< override a team's relation to another team
-		TEAM_REMOVE_OVERRIDE_RELATION_TO_TEAM,			///< remove that override
+		virtual TEAM_REMOVE_OVERRIDE_RELATION_TO_TEAM,			///< remove that override
 		TEAM_REMOVE_ALL_OVERRIDE_RELATIONS,///< remove all overrides
 		CAMERA_LOOK_TOWARD_OBJECT,				///< Rotate the camera to be pointing toward a unit
 		NAMED_FIRE_WEAPON_FOLLOWING_WAYPOINT_PATH,    ///< Fires a specific weapon that follows waypoint path and detonates at the final waypoint.
 		TEAM_SET_OVERRIDE_RELATION_TO_PLAYER,					///< override a team's relation to another player
-		TEAM_REMOVE_OVERRIDE_RELATION_TO_PLAYER,			///< remove that override
+		virtual TEAM_REMOVE_OVERRIDE_RELATION_TO_PLAYER,			///< remove that override
 		PLAYER_SET_OVERRIDE_RELATION_TO_TEAM,					///< override a Player's relation to another team
-		PLAYER_REMOVE_OVERRIDE_RELATION_TO_TEAM,			///< remove that override
+		virtual PLAYER_REMOVE_OVERRIDE_RELATION_TO_TEAM,			///< remove that override
 		UNIT_EXECUTE_SEQUENTIAL_SCRIPT,		///< Make a unit execute a script sequentially
 		UNIT_EXECUTE_SEQUENTIAL_SCRIPT_LOOPING,		///< Make a unit execute a script sequentially (forever)
 		UNIT_STOP_SEQUENTIAL_SCRIPT,			///< Make a unit stop executing its sequential scripts
@@ -604,9 +604,9 @@ class Script : public MemoryPoolObject, public Snapshot
 protected:	// Note - If you add any member vars, you must take them into account in duplicate() and updateFrom(), as well as file read/write.
 
 	// snapshot methods
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 	AsciiString	m_scriptName;   ///<Short name.
 	AsciiString m_comment;			///< Long comment.
@@ -1088,9 +1088,9 @@ class ScriptList : public MemoryPoolObject, public Snapshot
 protected:
 
 	// snapshot methods
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 	ScriptGroup		*m_firstGroup;
 	Script				*m_firstScript;

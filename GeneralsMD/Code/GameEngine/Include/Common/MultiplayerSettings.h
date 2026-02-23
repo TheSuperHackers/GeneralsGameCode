@@ -80,9 +80,9 @@ public:
 
 	MultiplayerSettings();
 
-	virtual void init() { }
-	virtual void update() { }
-	virtual void reset() { }
+	virtual void init() override { }
+	virtual void update() override { }
+	virtual void reset() override { }
 
 	//-----------------------------------------------------------------------------------------------
 	static const FieldParse m_multiplayerSettingsFieldParseTable[];		///< the parse table for INI definition

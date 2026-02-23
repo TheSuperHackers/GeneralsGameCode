@@ -53,9 +53,9 @@ class MissingAnimClass : public HashableClass {
 
 public:
 	MissingAnimClass( const char * name ) : Name( name ) {}
-	virtual	~MissingAnimClass() {}
+	virtual	~MissingAnimClass() override {}
 
-	virtual	const char * Get_Key()	{ return Name;	}
+	virtual	const char * Get_Key() override { return Name;	}
 
 private:
 	StringClass	Name;

@@ -73,51 +73,51 @@ public:
 	MeshClass();
 	MeshClass(const MeshClass & src);
 	MeshClass & operator = (const MeshClass &);
-	virtual ~MeshClass();
+	virtual ~MeshClass() override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface
 	/////////////////////////////////////////////////////////////////////////////
-	virtual RenderObjClass *	Clone() const;
-	virtual int						Class_ID() const { return CLASSID_MESH; }
-	virtual const char *			Get_Name() const;
-	virtual void					Set_Name(const char * name);
-	virtual int						Get_Num_Polys() const;
-	virtual void					Render(RenderInfoClass & rinfo);
+	virtual RenderObjClass *	Clone() const override;
+	virtual int						Class_ID() const override { return CLASSID_MESH; }
+	virtual const char *			Get_Name() const override;
+	virtual void					Set_Name(const char * name) override;
+	virtual int						Get_Num_Polys() const override;
+	virtual void					Render(RenderInfoClass & rinfo) override;
 	void								Render_Material_Pass(MaterialPassClass * pass,IndexBufferClass * ib);
-	virtual void					Special_Render(SpecialRenderInfoClass & rinfo);
+	virtual void					Special_Render(SpecialRenderInfoClass & rinfo) override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface - Collision Detection
 	/////////////////////////////////////////////////////////////////////////////
-	virtual bool					Cast_Ray(RayCollisionTestClass & raytest);
-	virtual bool					Cast_AABox(AABoxCollisionTestClass & boxtest);
-	virtual bool					Cast_OBBox(OBBoxCollisionTestClass & boxtest);
-	virtual bool					Intersect_AABox(AABoxIntersectionTestClass & boxtest);
-	virtual bool					Intersect_OBBox(OBBoxIntersectionTestClass & boxtest);
+	virtual bool					Cast_Ray(RayCollisionTestClass & raytest) override;
+	virtual bool					Cast_AABox(AABoxCollisionTestClass & boxtest) override;
+	virtual bool					Cast_OBBox(OBBoxCollisionTestClass & boxtest) override;
+	virtual bool					Intersect_AABox(AABoxIntersectionTestClass & boxtest) override;
+	virtual bool					Intersect_OBBox(OBBoxIntersectionTestClass & boxtest) override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface - Bounding Volumes
 	/////////////////////////////////////////////////////////////////////////////
-	virtual void					Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const;
-   virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & box) const;
+	virtual void					Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const override;
+   virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & box) const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface - Attributes, Options, Properties, etc
 	/////////////////////////////////////////////////////////////////////////////
-	virtual void					Scale(float scale);
-	virtual void					Scale(float scalex, float scaley, float scalez);
-	virtual MaterialInfoClass * Get_Material_Info();
+	virtual void					Scale(float scale) override;
+	virtual void					Scale(float scalex, float scaley, float scalez) override;
+	virtual MaterialInfoClass * Get_Material_Info() override;
 
-   virtual int						Get_Sort_Level() const;
-   virtual void					Set_Sort_Level(int level);
+   virtual int						Get_Sort_Level() const override;
+   virtual void					Set_Sort_Level(int level) override;
 
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface - Decals
 	/////////////////////////////////////////////////////////////////////////////
-	virtual void					Create_Decal(DecalGeneratorClass * generator);
-	virtual void					Delete_Decal(uint32 decal_id);
+	virtual void					Create_Decal(DecalGeneratorClass * generator) override;
+	virtual void					Delete_Decal(uint32 decal_id) override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// MeshClass Interface
@@ -160,9 +160,9 @@ public:
 
 protected:
 
-	virtual void					Add_Dependencies_To_List (DynamicVectorClass<StringClass> &file_list, bool textures_only = false);
+	virtual void					Add_Dependencies_To_List (DynamicVectorClass<StringClass> &file_list, bool textures_only = false) override;
 
-	virtual void					Update_Cached_Bounding_Volumes() const;
+	virtual void					Update_Cached_Bounding_Volumes() const override;
 
 	void								Free();
 

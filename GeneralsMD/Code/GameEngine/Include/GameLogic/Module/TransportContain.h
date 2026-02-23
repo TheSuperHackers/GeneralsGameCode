@@ -76,31 +76,31 @@ public:
 	TransportContain( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual Bool isValidContainerFor( const Object* obj, Bool checkCapacity) const;
+	virtual Bool isValidContainerFor( const Object* obj, Bool checkCapacity) const override;
 
-	virtual void onCapture( Player *oldOwner, Player *newOwner ); // have to kick everyone out on capture.
-	virtual void onContaining( Object *obj, Bool wasSelected );		///< object now contains 'obj'
-	virtual void onRemoving( Object *obj );			///< object no longer contains 'obj'
-	virtual UpdateSleepTime update();							///< called once per frame
+	virtual void onCapture( Player *oldOwner, Player *newOwner ) override; // have to kick everyone out on capture.
+	virtual void onContaining( Object *obj, Bool wasSelected ) override;		///< object now contains 'obj'
+	virtual void onRemoving( Object *obj ) override;			///< object no longer contains 'obj'
+	virtual UpdateSleepTime update() override;							///< called once per frame
 
-	virtual Bool isRiderChangeContain() const { return FALSE; }
-  virtual Bool isSpecialOverlordStyleContainer() const {return FALSE;}
+	virtual Bool isRiderChangeContain() const override { return FALSE; }
+  virtual Bool isSpecialOverlordStyleContainer() const override {return FALSE;}
 
-	virtual Int getContainMax() const;
+	virtual Int getContainMax() const override;
 
-	virtual Int getExtraSlotsInUse() { return m_extraSlotsInUse; }///< Transports have the ability to carry guys how take up more than spot.
+	virtual Int getExtraSlotsInUse() override { return m_extraSlotsInUse; }///< Transports have the ability to carry guys how take up more than spot.
 
-	virtual Bool isExitBusy() const;	///< Contain style exiters are getting the ability to space out exits, so ask this before reserveDoor as a kind of no-commitment check.
-	virtual ExitDoorType reserveDoorForExit( const ThingTemplate* objType, Object *specificObject );
-	virtual void unreserveDoorForExit( ExitDoorType exitDoor );
-	virtual Bool isDisplayedOnControlBar() const {return TRUE;}///< Does this container display its contents on the ControlBar?
+	virtual Bool isExitBusy() const override;	///< Contain style exiters are getting the ability to space out exits, so ask this before reserveDoor as a kind of no-commitment check.
+	virtual ExitDoorType reserveDoorForExit( const ThingTemplate* objType, Object *specificObject ) override;
+	virtual void unreserveDoorForExit( ExitDoorType exitDoor ) override;
+	virtual Bool isDisplayedOnControlBar() const override {return TRUE;}///< Does this container display its contents on the ControlBar?
 
 protected:
 
 	// exists primarily for TransportContain to override
-	virtual void killRidersWhoAreNotFreeToExit();
+	virtual void killRidersWhoAreNotFreeToExit() override;
 	virtual Bool isSpecificRiderFreeToExit(Object* obj);
-	virtual Bool isPassengerAllowedToFire( ObjectID id = INVALID_ID ) const;	///< Hey, can I shoot out of this container?
+	virtual Bool isPassengerAllowedToFire( ObjectID id = INVALID_ID ) const override;	///< Hey, can I shoot out of this container?
 
 	virtual void createPayload();
 	void letRidersUpgradeWeaponSet();

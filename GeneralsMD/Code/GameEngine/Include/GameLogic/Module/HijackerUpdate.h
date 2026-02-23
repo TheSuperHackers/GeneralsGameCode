@@ -70,7 +70,7 @@ public:
 	HijackerUpdate( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual UpdateSleepTime update();							///< called once per frame
+	virtual UpdateSleepTime update() override;							///< called once per frame
 
 	void setTargetObject( const Object *object );
 	Object* getTargetObject() const;

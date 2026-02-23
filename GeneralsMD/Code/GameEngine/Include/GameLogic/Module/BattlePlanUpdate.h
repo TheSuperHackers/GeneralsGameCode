@@ -146,24 +146,24 @@ public:
 	// virtual destructor prototype provided by memory pool declaration
 
 	// SpecialPowerUpdateInterface
-	virtual Bool initiateIntentToDoSpecialPower(const SpecialPowerTemplate *specialPowerTemplate, const Object *targetObj, const Coord3D *targetPos, const Waypoint *way, UnsignedInt commandOptions );
-	virtual Bool isSpecialAbility() const { return false; }
-	virtual Bool isSpecialPower() const { return true; }
-	virtual Bool isActive() const {return m_status != TRANSITIONSTATUS_IDLE;}
-	virtual SpecialPowerUpdateInterface* getSpecialPowerUpdateInterface() { return this; }
-	virtual Bool doesSpecialPowerHaveOverridableDestinationActive() const { return false; } //Is it active now?
-	virtual Bool doesSpecialPowerHaveOverridableDestination() const { return false; }	//Does it have it, even if it's not active?
-	virtual void setSpecialPowerOverridableDestination( const Coord3D *loc ) {}
-	virtual Bool isPowerCurrentlyInUse( const CommandButton *command = nullptr ) const;
+	virtual Bool initiateIntentToDoSpecialPower(const SpecialPowerTemplate *specialPowerTemplate, const Object *targetObj, const Coord3D *targetPos, const Waypoint *way, UnsignedInt commandOptions ) override;
+	virtual Bool isSpecialAbility() const override { return false; }
+	virtual Bool isSpecialPower() const override { return true; }
+	virtual Bool isActive() const override {return m_status != TRANSITIONSTATUS_IDLE;}
+	virtual SpecialPowerUpdateInterface* getSpecialPowerUpdateInterface() override { return this; }
+	virtual Bool doesSpecialPowerHaveOverridableDestinationActive() const override { return false; } //Is it active now?
+	virtual Bool doesSpecialPowerHaveOverridableDestination() const override { return false; }	//Does it have it, even if it's not active?
+	virtual void setSpecialPowerOverridableDestination( const Coord3D *loc ) override {}
+	virtual Bool isPowerCurrentlyInUse( const CommandButton *command = nullptr ) const override;
 
 	//Returns the currently active battle plan -- unpacked and ready... returns PLANSTATUS_NONE if in transition!
 	BattlePlanStatus getActiveBattlePlan() const;
 
-	virtual void onObjectCreated();
-	virtual void onDelete();
-	virtual UpdateSleepTime update();
+	virtual void onObjectCreated() override;
+	virtual void onDelete() override;
+	virtual UpdateSleepTime update() override;
 
-	virtual CommandOption getCommandOption() const;
+	virtual CommandOption getCommandOption() const override;
 protected:
 
 	void setStatus( TransitionStatus status );

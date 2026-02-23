@@ -83,53 +83,53 @@ public:
 	TunnelContain( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual CreateModuleInterface* getCreate() { return this; }
+	virtual CreateModuleInterface* getCreate() override { return this; }
 	static Int getInterfaceMask() { return OpenContain::getInterfaceMask() | (MODULEINTERFACE_CREATE); }
 
-	virtual OpenContain *asOpenContain() { return this; }  ///< treat as open container
-	virtual Bool isGarrisonable() const { return false; }	///< can this unit be Garrisoned? (ick)
-	virtual Bool isBustable() const { return TRUE; }	///< can this container get busted by a bunkerbuster
-	virtual Bool isHealContain() const { return false; } ///< true when container only contains units while healing (not a transport!)
-	virtual Bool isTunnelContain() const { return TRUE; }
-	virtual Bool isImmuneToClearBuildingAttacks() const { return true; }
-  virtual Bool isSpecialOverlordStyleContainer() const {return FALSE;}
+	virtual OpenContain *asOpenContain() override { return this; }  ///< treat as open container
+	virtual Bool isGarrisonable() const override { return false; }	///< can this unit be Garrisoned? (ick)
+	virtual Bool isBustable() const override { return TRUE; }	///< can this container get busted by a bunkerbuster
+	virtual Bool isHealContain() const override { return false; } ///< true when container only contains units while healing (not a transport!)
+	virtual Bool isTunnelContain() const override { return TRUE; }
+	virtual Bool isImmuneToClearBuildingAttacks() const override { return true; }
+  virtual Bool isSpecialOverlordStyleContainer() const override {return FALSE;}
 
-	virtual void onContaining( Object *obj, Bool wasSelected );		///< object now contains 'obj'
-	virtual void onRemoving( Object *obj );			///< object no longer contains 'obj'
-	virtual void onSelling();///< Container is being sold.  Tunnel responds by kicking people out if this is the last tunnel.
-	virtual void onCapture( Player *oldOwner, Player *newOwner ); // Need to change who we are registered with.
+	virtual void onContaining( Object *obj, Bool wasSelected ) override;		///< object now contains 'obj'
+	virtual void onRemoving( Object *obj ) override;			///< object no longer contains 'obj'
+	virtual void onSelling() override;///< Container is being sold.  Tunnel responds by kicking people out if this is the last tunnel.
+	virtual void onCapture( Player *oldOwner, Player *newOwner ) override; // Need to change who we are registered with.
 
-	virtual void orderAllPassengersToExit( CommandSourceType commandSource, Bool instantly ); ///< All of the smarts of exiting are in the passenger's AIExit. removeAllFrommContain is a last ditch system call, this is the game Evacuate
-	virtual void orderAllPassengersToIdle( CommandSourceType commandSource ); ///< Just like it sounds
+	virtual void orderAllPassengersToExit( CommandSourceType commandSource, Bool instantly ) override; ///< All of the smarts of exiting are in the passenger's AIExit. removeAllFrommContain is a last ditch system call, this is the game Evacuate
+	virtual void orderAllPassengersToIdle( CommandSourceType commandSource ) override; ///< Just like it sounds
 
-	virtual Bool isValidContainerFor(const Object* obj, Bool checkCapacity) const;
+	virtual Bool isValidContainerFor(const Object* obj, Bool checkCapacity) const override;
 	virtual void addToContainList( Object *obj );		///< The part of AddToContain that inheritors can override (Can't do whole thing because of all the private stuff involved)
-	virtual void removeFromContain( Object *obj, Bool exposeStealthUnits = FALSE );	///< remove 'obj' from contain list
-	virtual void removeAllContained( Bool exposeStealthUnits = FALSE );				///< remove all objects on contain list
-  virtual void harmAndForceExitAllContained( DamageInfo *info );
-  virtual void killAllContained();				///< kill all objects on contain list
+	virtual void removeFromContain( Object *obj, Bool exposeStealthUnits = FALSE ) override;	///< remove 'obj' from contain list
+	virtual void removeAllContained( Bool exposeStealthUnits = FALSE ) override;				///< remove all objects on contain list
+  virtual void harmAndForceExitAllContained( DamageInfo *info ) override;
+  virtual void killAllContained() override;				///< kill all objects on contain list
 
 	// contain list access
-	virtual void iterateContained( ContainIterateFunc func, void *userData, Bool reverse );
-	virtual UnsignedInt getContainCount() const;
-	virtual UnsignedInt getHeroUnitsContained() const;
-	virtual Int getContainMax() const;
-	virtual const ContainedItemsList* getContainedItemsList() const;
+	virtual void iterateContained( ContainIterateFunc func, void *userData, Bool reverse ) override;
+	virtual UnsignedInt getContainCount() const override;
+	virtual UnsignedInt getHeroUnitsContained() const override;
+	virtual Int getContainMax() const override;
+	virtual const ContainedItemsList* getContainedItemsList() const override;
 	virtual UnsignedInt getFullTimeForHeal() const; ///< Returns the time in frames until a contained object becomes fully healed
-	virtual Bool isDisplayedOnControlBar() const { return TRUE; } ///< Does this container display its contents on the ControlBar?
-	virtual Bool isKickOutOnCapture(){ return FALSE; }///< Caves and Tunnels don't kick out on capture.
+	virtual Bool isDisplayedOnControlBar() const override { return TRUE; } ///< Does this container display its contents on the ControlBar?
+	virtual Bool isKickOutOnCapture() override { return FALSE; }///< Caves and Tunnels don't kick out on capture.
 
 	// override the onDie we inherit from OpenContain
-	virtual void onDie( const DamageInfo *damageInfo );  ///< the die callback
+	virtual void onDie( const DamageInfo *damageInfo ) override;  ///< the die callback
 
-	virtual void onDelete();
-	virtual void onCreate();
-	virtual void onObjectCreated();
-	virtual void onBuildComplete();
-	virtual Bool shouldDoOnBuildComplete() const { return m_needToRunOnBuildComplete; }
+	virtual void onDelete() override;
+	virtual void onCreate() override;
+	virtual void onObjectCreated() override;
+	virtual void onBuildComplete() override;
+	virtual Bool shouldDoOnBuildComplete() const override { return m_needToRunOnBuildComplete; }
 
 	// so that the ppl within the tunnel network can get healed
-	virtual UpdateSleepTime update();												///< called once per frame
+	virtual UpdateSleepTime update() override;												///< called once per frame
 
 protected:
 

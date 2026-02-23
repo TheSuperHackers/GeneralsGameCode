@@ -57,10 +57,10 @@ public:
 
 	SupplyCenterDockUpdate( Thing *thing, const ModuleData* moduleData );
 
-	virtual DockUpdateInterface* getDockUpdateInterface() { return this; }
-	virtual Bool action( Object* docker, Object *drone = nullptr );	///<For me, this means taking boxes and turning them into money for my ownerplayer
+	virtual DockUpdateInterface* getDockUpdateInterface() override { return this; }
+	virtual Bool action( Object* docker, Object *drone = nullptr ) override;	///<For me, this means taking boxes and turning them into money for my ownerplayer
 
-	virtual UpdateSleepTime update();
+	virtual UpdateSleepTime update() override;
 
 protected:
 

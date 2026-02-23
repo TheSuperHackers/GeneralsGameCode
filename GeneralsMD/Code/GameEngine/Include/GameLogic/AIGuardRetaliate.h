@@ -79,7 +79,7 @@ public:
 		m_center.zero();
 	}
 
-	virtual Bool shouldExit(const StateMachine* machine) const;
+	virtual Bool shouldExit(const StateMachine* machine) const override;
 };
 
 
@@ -96,9 +96,9 @@ private:
 
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 public:
 	/**
@@ -130,14 +130,14 @@ public:
 		m_attackState = 0;
 		m_enterState = 0;
 	}
-	virtual StateReturnType onEnter();
-	virtual StateReturnType update();
-	virtual void onExit( StateExitType status );
+	virtual StateReturnType onEnter() override;
+	virtual StateReturnType update() override;
+	virtual void onExit( StateExitType status ) override;
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 private:
 	AIGuardRetaliateMachine* getGuardMachine() { return (AIGuardRetaliateMachine*)getMachine(); }
 
@@ -152,14 +152,14 @@ class AIGuardRetaliateIdleState : public State
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIGuardRetaliateIdleState, "AIGuardRetaliateIdleState")
 public:
 	AIGuardRetaliateIdleState( StateMachine *machine ) : State( machine, "AIGuardRetaliateIdleState" ) { }
-	virtual StateReturnType onEnter();
-	virtual StateReturnType update();
-	virtual void onExit( StateExitType status );
+	virtual StateReturnType onEnter() override;
+	virtual StateReturnType update() override;
+	virtual void onExit( StateExitType status ) override;
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 private:
 	AIGuardRetaliateMachine* getGuardMachine() { return (AIGuardRetaliateMachine*)getMachine(); }
 
@@ -177,14 +177,14 @@ public:
 	{
 		m_attackState = nullptr;
 	}
-	virtual StateReturnType onEnter();
-	virtual StateReturnType update();
-	virtual void onExit( StateExitType status );
+	virtual StateReturnType onEnter() override;
+	virtual StateReturnType update() override;
+	virtual void onExit( StateExitType status ) override;
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 private:
 	AIGuardRetaliateMachine* getGuardMachine() { return (AIGuardRetaliateMachine*)getMachine(); }
 
@@ -203,14 +203,14 @@ public:
 	{
 		m_nextReturnScanTime = 0;
 	}
-	virtual StateReturnType onEnter();
-	virtual StateReturnType update();
-	virtual void onExit( StateExitType status );
+	virtual StateReturnType onEnter() override;
+	virtual StateReturnType update() override;
+	virtual void onExit( StateExitType status ) override;
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 private:
 	UnsignedInt m_nextReturnScanTime;
 };
@@ -223,9 +223,9 @@ class AIGuardRetaliatePickUpCrateState : public AIPickUpCrateState
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIGuardRetaliatePickUpCrateState, "AIGuardRetaliatePickUpCrateState")
 public:
 	AIGuardRetaliatePickUpCrateState( StateMachine *machine );
-	virtual StateReturnType onEnter();
-	virtual StateReturnType update();
-	virtual void onExit( StateExitType status );
+	virtual StateReturnType onEnter() override;
+	virtual StateReturnType update() override;
+	virtual void onExit( StateExitType status ) override;
 };
 EMPTY_DTOR(AIGuardRetaliatePickUpCrateState)
 
@@ -235,17 +235,17 @@ class AIGuardRetaliateAttackAggressorState : public State
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIGuardRetaliateAttackAggressorState, "AIGuardRetaliateAttackAggressorState")
 public:
 	AIGuardRetaliateAttackAggressorState( StateMachine *machine );
-	virtual StateReturnType onEnter();
-	virtual StateReturnType update();
-	virtual void onExit( StateExitType status );
+	virtual StateReturnType onEnter() override;
+	virtual StateReturnType update() override;
+	virtual void onExit( StateExitType status ) override;
 #ifdef STATE_MACHINE_DEBUG
 	virtual AsciiString getName() const ;
 #endif
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 private:
 	AIGuardRetaliateMachine* getGuardMachine() { return (AIGuardRetaliateMachine*)getMachine(); }
 	GuardRetaliateExitConditions m_exitConditions;
