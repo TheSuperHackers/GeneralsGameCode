@@ -110,14 +110,14 @@ public:
 	virtual void draw(){DEBUG_CRASH(("Shouldn't call base class.  jba."));}
 
 #ifdef DUMP_PERF_STATS
-	void UPDATE(void);
-	void DRAW(void);
-	Real getUpdateTime(void) {return m_curUpdateTime;}
-	Real getDrawTime(void) {return m_curDrawTime;}
-	Bool doDumpUpdate(void) {return m_dumpUpdate;}
-	Bool doDumpDraw(void) {return m_dumpDraw;}
-	static Real getTotalTime(void) {return s_msConsumed;}
-	static void clearTotalTime(void) {s_msConsumed = 0;}
+	void UPDATE();
+	void DRAW();
+	Real getUpdateTime() {return m_curUpdateTime;}
+	Real getDrawTime() {return m_curDrawTime;}
+	Bool doDumpUpdate() {return m_dumpUpdate;}
+	Bool doDumpDraw() {return m_dumpDraw;}
+	static Real getTotalTime() {return s_msConsumed;}
+	static void clearTotalTime() {s_msConsumed = 0;}
 protected:
 	static Real s_msConsumed;
 	Real m_startTimeConsumed;

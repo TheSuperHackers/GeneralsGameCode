@@ -472,7 +472,7 @@ bool MeshModelClass::Is_Alternate_Material_Description_Enabled()
 	return CurMatDesc == AlternateMatDesc;
 }
 /*
-void MeshModelClass::Process_Texture_Reduction(void)
+void MeshModelClass::Process_Texture_Reduction()
 {
 	MatInfo->Process_Texture_Reduction();
 }

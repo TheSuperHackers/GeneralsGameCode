@@ -164,7 +164,7 @@ public:
 
 #ifdef STATE_MACHINE_DEBUG
 	virtual AsciiString getName() const {return m_name;}
-	std::vector<StateID> *getTransitions(void);
+	std::vector<StateID> *getTransitions();
 #endif
 
 	// for internal use by the StateMachine class ---------------------------------------------------------

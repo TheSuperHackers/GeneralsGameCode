@@ -269,7 +269,7 @@ public:
 	// srj sez: this is called a ton and never overridden, so inline it
 	RenderObjClass *	Get_Container() const { return Container; }
 #else
-	virtual RenderObjClass *	Get_Container(void) const;
+	virtual RenderObjClass *	Get_Container() const;
 #endif
 
 	virtual void 					Set_Transform(const Matrix3D &m);
@@ -446,7 +446,7 @@ public:
 	virtual void					Set_Visible(int onoff)														{ if (onoff) { Bits |= IS_VISIBLE; } else { Bits &= ~IS_VISIBLE; } }
 
 // The cheatSpy has been put on ice until later... perhaps the next patch? - M Lorenzen
-  //	virtual int						Is_VisibleWithCheatSpy(void) const								{ return ((Bits&=~0x80) & (IS_VISIBLE); }
+  //	virtual int						Is_VisibleWithCheatSpy() const								{ return ((Bits&=~0x80) & (IS_VISIBLE); }
 //	virtual void					Set_VisibleWithCheatSpy(int onoff)								{ if (onoff) { Bits |= IS_VISIBLE|0x80; } else { Bits &= ~IS_VISIBLE; } }
 
 	virtual int						Is_Hidden() const														{ return !(Bits & IS_NOT_HIDDEN); }

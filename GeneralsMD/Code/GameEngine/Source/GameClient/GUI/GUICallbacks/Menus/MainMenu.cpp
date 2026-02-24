@@ -97,7 +97,7 @@ static NameKeyType campaignID = NAMEKEY_INVALID;
 static GameWindow *buttonCampaign = nullptr;
 #ifdef TEST_COMPRESSION
 static GameWindow *buttonCompressTest = nullptr;
-void DoCompressTest( void );
+void DoCompressTest();
 #endif // TEST_COMPRESSION
 #endif
 

@@ -217,19 +217,19 @@ const Image *PlayerTemplate::getEnabledImage() const
 }
 
 //-----------------------------------------------------------------------------
-//const Image *PlayerTemplate::getDisabledImage( void ) const
+//const Image *PlayerTemplate::getDisabledImage() const
 //{
 //	return TheMappedImageCollection->findImageByName(m_disabledImage);
 //}
 
 //-----------------------------------------------------------------------------
-//const Image *PlayerTemplate::getHiliteImage( void ) const
+//const Image *PlayerTemplate::getHiliteImage() const
 //{
 //	return TheMappedImageCollection->findImageByName(m_hiliteImage);
 //}
 
 //-----------------------------------------------------------------------------
-//const Image *PlayerTemplate::getPushedImage( void ) const
+//const Image *PlayerTemplate::getPushedImage() const
 //{
 //	return TheMappedImageCollection->findImageByName(m_pushedImage);
 //}

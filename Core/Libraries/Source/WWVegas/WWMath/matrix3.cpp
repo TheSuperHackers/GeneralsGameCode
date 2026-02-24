@@ -263,7 +263,7 @@ void Matrix3x3::Compute_Jacobi_Rotation(int i,int j,Matrix3x3 * r,Matrix3x3 * ri
 
 }
 
-void Matrix3x3::Symmetric_Eigen_Solve(void)
+void Matrix3x3::Symmetric_Eigen_Solve()
 {
 	Matrix3x3 eigen_vals = *this;
 	Matrix3x3 eigen_vecs(1);

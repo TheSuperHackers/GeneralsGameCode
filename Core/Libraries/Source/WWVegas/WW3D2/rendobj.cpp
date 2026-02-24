@@ -396,7 +396,7 @@ void RenderObjClass::Set_Container(RenderObjClass * con)
  * HISTORY:                                                                                    *
  *   3/4/99     GTH : Created.                                                                 *
  *=============================================================================================*/
-RenderObjClass * RenderObjClass::Get_Container(void) const
+RenderObjClass * RenderObjClass::Get_Container() const
 {
 	return Container;
 }

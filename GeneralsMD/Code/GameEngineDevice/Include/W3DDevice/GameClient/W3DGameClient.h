@@ -112,7 +112,7 @@ protected:
   /// Manager for display strings
 	virtual DisplayStringManager *createDisplayStringManager() { return NEW W3DDisplayStringManager; }
 #ifdef RTS_HAS_FFMPEG
-	virtual VideoPlayerInterface *createVideoPlayer( void ) { return NEW FFmpegVideoPlayer; }
+	virtual VideoPlayerInterface *createVideoPlayer() { return NEW FFmpegVideoPlayer; }
 #else
 	virtual VideoPlayerInterface *createVideoPlayer() { return NEW BinkVideoPlayer; }
 #endif

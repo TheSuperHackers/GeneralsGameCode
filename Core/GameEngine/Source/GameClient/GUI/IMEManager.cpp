@@ -190,8 +190,8 @@ class IMEManager : public IMEManagerInterface
 		Char*					getMessageName( MessageInfo *msgTable, Int value );
 		void					buildFlagsString( IMEManager::MessageInfo *msgTable, Int value, AsciiString &string );
 		void					printMessageInfo( Int message, Int wParam, Int lParam );
-		void					printConversionStatus( void );
-		void					printSentenceStatus( void );
+		void					printConversionStatus();
+		void					printSentenceStatus();
 	#endif
 };
 
@@ -439,7 +439,7 @@ void		IMEManager::printMessageInfo( Int message, Int wParam, Int lParam )
 // IMEManager::printConversionStatus
 //============================================================================
 
-void IMEManager::printConversionStatus( void )
+void IMEManager::printConversionStatus()
 {
 	DWORD mode;
 	if ( m_context )
@@ -458,7 +458,7 @@ void IMEManager::printConversionStatus( void )
 // IMEManager::printSentenceStatus
 //============================================================================
 
-void IMEManager::printSentenceStatus( void )
+void IMEManager::printSentenceStatus()
 {
 	DWORD mode;
 	if ( m_context )

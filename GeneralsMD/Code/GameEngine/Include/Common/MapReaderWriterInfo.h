@@ -104,15 +104,15 @@ class FileInputStream : public ChunkInputStream
 protected:
 	File *m_file;
 public:
-	FileInputStream(void);
-	~FileInputStream(void);
+	FileInputStream();
+	~FileInputStream();
 	Bool open(AsciiString path);	///< Returns true if open succeeded.
-	void close(void);  ///< Explict close.  Destructor closes if file is left open.
+	void close();  ///< Explict close.  Destructor closes if file is left open.
 	virtual Int read(void *pData, Int numBytes);
-	virtual UnsignedInt tell(void);
+	virtual UnsignedInt tell();
 	virtual Bool absoluteSeek(UnsignedInt pos);
-	virtual Bool eof(void);
-	void rewind(void);
+	virtual Bool eof();
+	void rewind();
 };
 */
 

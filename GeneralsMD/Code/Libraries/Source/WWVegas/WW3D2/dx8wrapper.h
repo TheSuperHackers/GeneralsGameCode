@@ -151,7 +151,7 @@ public:
 	int  m_debugLinesToShow;
 	int	 m_sleepTime;
 public:
-	DX8_Stats::DX8_Stats(void) {
+	DX8_Stats::DX8_Stats() {
 		m_disableConsole = m_showingStats = m_disableTerrain = m_disableWater = m_disableOverhead = m_disableObjects = false;
 		m_sleepTime = 0;
 		m_debugLinesToShow = -1; // -1 means show all expected lines of output

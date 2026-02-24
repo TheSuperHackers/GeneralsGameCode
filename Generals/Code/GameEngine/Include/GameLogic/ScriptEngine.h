@@ -134,7 +134,7 @@ public:
 	Int getPriority(const ThingTemplate *tThing) const;
 	AsciiString getName() const {return m_name;}
 #ifdef RTS_DEBUG
-	void dumpPriorityInfo(void);
+	void dumpPriorityInfo();
 #endif
 
 	void friend_setName(const AsciiString& n) { m_name = n; }
@@ -200,7 +200,7 @@ protected:
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
+	virtual void loadPostProcess();
 
 };
 #endif

@@ -140,7 +140,7 @@ public: \
 protected: \
 	virtual void crc( Xfer *xfer ); \
 	virtual void xfer( Xfer *xfer ); \
-	virtual void loadPostProcess( void );
+	virtual void loadPostProcess();
 
 // ------------------------------------------------------------------------------------------------
 // For the creation of abstract module classes
@@ -149,7 +149,7 @@ protected: \
 protected: \
 	virtual void crc( Xfer *xfer ); \
 	virtual void xfer( Xfer *xfer ); \
-	virtual void loadPostProcess( void );
+	virtual void loadPostProcess();
 
 //-------------------------------------------------------------------------------------------------
 // only use this macro for an ABC. for a real class, use MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA.

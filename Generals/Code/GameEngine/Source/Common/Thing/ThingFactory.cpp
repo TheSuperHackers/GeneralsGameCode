@@ -443,7 +443,7 @@ AsciiString TheThingTemplateBeingParsedName;
 const char *outFilenameINI				= "thing.txt";
 const char *outFilenameStringFile	= "thingString.txt";
 
-void resetReportFile( void )
+void resetReportFile()
 {
 	FILE *fp = fopen(outFilenameINI, "w");
 	if (fp)
@@ -471,7 +471,7 @@ void reportMissingNameInStringFile( AsciiString templateName )
 	missingStrings.push_back(templateName);
 }
 
-void dumpMissingStringNames( void )
+void dumpMissingStringNames()
 {
 	missingStrings.sort();
 	FILE *fp = fopen(outFilenameStringFile, "w");

@@ -127,7 +127,7 @@ public:
 	** to this object.
 	*/
 #ifdef RTS_DEBUG
-	void Add_Ref(void) const;
+	void Add_Ref() const;
 #else
 	void Add_Ref() const							{ NumRefs++; }
 #endif

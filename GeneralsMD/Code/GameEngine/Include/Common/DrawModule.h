@@ -220,7 +220,7 @@ public:
 	*/
 #ifdef ALLOW_ANIM_INQUIRIES
 // srj sez: not sure if this is a good idea, for net sync reasons...
-	virtual Real getAnimationScrubScalar( void ) const { return 0.0f;};
+	virtual Real getAnimationScrubScalar() const { return 0.0f;};
 #endif
 };
 

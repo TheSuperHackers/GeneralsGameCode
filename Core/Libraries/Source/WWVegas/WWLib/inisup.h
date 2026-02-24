@@ -54,8 +54,8 @@
 struct INIEntry : public Node<INIEntry *> {
 	INIEntry(char * entry = nullptr, char * value = nullptr) : Entry(entry), Value(value) {}
 	~INIEntry();
-//	~INIEntry(void) {free(Entry);Entry = nullptr;free(Value);Value = nullptr;}
-//	int Index_ID(void) const {return(CRCEngine()(Entry, strlen(Entry)));};
+//	~INIEntry() {free(Entry);Entry = nullptr;free(Value);Value = nullptr;}
+//	int Index_ID() const {return(CRCEngine()(Entry, strlen(Entry)));};
 	int Index_ID() const { return CRC::String(Entry);};
 
 	char * Entry;
@@ -69,9 +69,9 @@ struct INIEntry : public Node<INIEntry *> {
 struct INISection : public Node<INISection *> {
 		INISection(char * section) : Section(section) {}
 		~INISection();
-//		~INISection(void) {free(Section);Section = 0;EntryList.Delete();}
+//		~INISection() {free(Section);Section = 0;EntryList.Delete();}
 		INIEntry * Find_Entry(char const * entry) const;
-//		int Index_ID(void) const {return(CRCEngine()(Section, strlen(Section)));};
+//		int Index_ID() const {return(CRCEngine()(Section, strlen(Section)));};
 		int Index_ID() const { return CRC::String(Section); };
 
 		char * Section;

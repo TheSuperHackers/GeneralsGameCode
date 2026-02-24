@@ -120,16 +120,16 @@ public:
 	DeepCRCSanityCheck() {}
 	virtual ~DeepCRCSanityCheck() {}
 
-	virtual void init(void) {}
-	virtual void reset(void);
-	virtual void update(void) {}
+	virtual void init() {}
+	virtual void reset();
+	virtual void update() {}
 
 protected:
 };
 
 DeepCRCSanityCheck *TheDeepCRCSanityCheck = nullptr;
 
-void DeepCRCSanityCheck::reset(void)
+void DeepCRCSanityCheck::reset()
 {
 	static Int timesThrough = 0;
 	static UnsignedInt lastCRC = 0;

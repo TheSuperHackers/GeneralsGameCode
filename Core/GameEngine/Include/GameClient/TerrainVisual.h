@@ -282,7 +282,7 @@ public:
   ////////////////////////////////////////////////////
   ////////////////////////////////////////////////////
 #ifdef DO_SEISMIC_SIMULATIONS
-  virtual void updateSeismicSimulations( void ) = 0; /// walk the SeismicSimulationList and, well, do it.
+  virtual void updateSeismicSimulations() = 0; /// walk the SeismicSimulationList and, well, do it.
   virtual void addSeismicSimulation( const SeismicSimulationNode& sim ) = 0;
 #endif
   virtual WorldHeightMap* getLogicHeightMap() {return nullptr;};

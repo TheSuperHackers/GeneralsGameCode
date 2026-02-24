@@ -88,8 +88,8 @@ public:
 	float					Get_Merge_Abort_Factor() const					{ return MergeAbortFactor; }
 	unsigned int		Get_Current_Subdivision_Level()	const			{ return SubdivisionLevel; }
 	TextureMapMode		Get_Texture_Mapping_Mode() const;
-	// float					Get_Texture_Tile_Factor(void) const					{ return TextureTileFactor; }
-	// Vector2				Get_UV_Offset_Rate(void) const;
+	// float					Get_Texture_Tile_Factor() const					{ return TextureTileFactor; }
+	// Vector2				Get_UV_Offset_Rate() const;
 	int					Is_Merge_Intersections() const					{ return Bits & MERGE_INTERSECTIONS; }
 	int					Is_Freeze_Random() const							{ return Bits & FREEZE_RANDOM; }
 	int					Is_Sorting_Disabled() const						{ return Bits & DISABLE_SORTING; }
@@ -207,7 +207,7 @@ inline void StreakRendererClass::Set_Texture_Mapping_Mode(StreakRendererClass::T
 	Bits |= ((mode << TEXTURE_MAP_MODE_OFFSET) & TEXTURE_MAP_MODE_MASK);
 }
 
-// inline Vector2 StreakRendererClass::Get_UV_Offset_Rate(void) const
+// inline Vector2 StreakRendererClass::Get_UV_Offset_Rate() const
 // {
 // 	return UVOffsetDeltaPerMS * 1000.0f;
 // }

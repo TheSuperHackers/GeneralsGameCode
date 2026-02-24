@@ -87,7 +87,7 @@ public:
 	virtual void RequestGameOptions( AsciiString gameOptions, Bool isPublic, UnsignedInt ip = 0 ) = 0;		///< Change the game options
 	virtual void RequestGameCreate( UnicodeString gameName, Bool isDirectConnect ) = 0;	///< Try to host a game
 	virtual void RequestGameAnnounce() = 0;																			///< Sound out current game info if host
-//	virtual void RequestSlotList( void ) = 0;																					///< Pump out the Slot info.
+//	virtual void RequestSlotList() = 0;																					///< Pump out the Slot info.
 	virtual void RequestSetName( UnicodeString newName ) = 0;													///< Pick a new name
 	virtual void RequestLobbyLeave( Bool forced ) = 0;																///< Announce that we're leaving the lobby
 	virtual void ResetGameStartTimer() = 0;
@@ -305,7 +305,7 @@ public:
 	virtual void RequestGameCreate( UnicodeString gameName, Bool isDirectConnect );	///< Try to host a game
 	virtual void RequestGameAnnounce();																			///< Send out game info if host
 	virtual void RequestSetName( UnicodeString newName );													///< Pick a new name
-//	virtual void RequestSlotList( void );																					///< Pump out the Slot info.
+//	virtual void RequestSlotList();																					///< Pump out the Slot info.
 	virtual void RequestLobbyLeave( Bool forced );																///< Announce that we're leaving the lobby
 	virtual void ResetGameStartTimer();
 

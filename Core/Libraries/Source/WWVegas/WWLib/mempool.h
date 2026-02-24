@@ -121,7 +121,7 @@ protected:
 ** ListNode.cpp:
 ** DEFINE_AUTO_POOL(ListNodeClass);
 **
-** function do_stuff(void) {
+** function do_stuff() {
 **		ListNodeClass * node = new ListNodeClass;
 **		delete node;
 ** }

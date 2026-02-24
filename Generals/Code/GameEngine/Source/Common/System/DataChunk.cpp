@@ -154,11 +154,11 @@ void CachedFileInputStream::rewind()
 // FileInputStream - helper class.	Used to read in data using a FILE *
 //
 /*
-FileInputStream::FileInputStream(void):m_file(nullptr)
+FileInputStream::FileInputStream():m_file(nullptr)
 {
 }
 
-FileInputStream::~FileInputStream(void)
+FileInputStream::~FileInputStream()
 {
 	if (m_file != nullptr) {
 		m_file->close();
@@ -172,7 +172,7 @@ Bool FileInputStream::open(AsciiString path)
 	return m_file == nullptr?false:true;
 }
 
-void FileInputStream::close(void)
+void FileInputStream::close()
 {
 	if (m_file != nullptr) {
 		m_file->close();
@@ -189,7 +189,7 @@ Int FileInputStream::read(void *pData, Int numBytes)
 	return(bytesRead);
 }
 
-UnsignedInt FileInputStream::tell(void)
+UnsignedInt FileInputStream::tell()
 {
 	UnsignedInt pos = 0;
 	if (m_file != nullptr) {
@@ -206,7 +206,7 @@ Bool FileInputStream::absoluteSeek(UnsignedInt pos)
 	return(false);
 }
 
-Bool FileInputStream::eof(void)
+Bool FileInputStream::eof()
 {
 	if (m_file != nullptr) {
 		return (m_file->size() == m_file->position());

@@ -86,8 +86,8 @@ template<class T>
 class IndexClass
 {
 	public:
-		IndexClass(void);
-		~IndexClass(void);
+		IndexClass();
+		~IndexClass();
 
 		/*
 		**	Add element to index table.
@@ -107,7 +107,7 @@ class IndexClass
 		/*
 		**	Fetch number of indexes in the table.
 		*/
-		int Count(void) const;
+		int Count() const;
 
 		/*
 		**	Actually a fetch an index data element from the table.
@@ -117,7 +117,7 @@ class IndexClass
 		/*
 		**	Clear out the index table to null (empty) state.
 		*/
-		void Clear(void);
+		void Clear();
 
 	private:
 		/*
@@ -176,7 +176,7 @@ class IndexClass
 		/*
 		**	Invalidate the archive pointer.
 		*/
-		void Invalidate_Archive(void);
+		void Invalidate_Archive();
 
 		/*
 		**	Set archive to specified value.
@@ -207,7 +207,7 @@ class IndexClass
  *   11/02/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
 template<class T>
-IndexClass<T>::IndexClass(void) :
+IndexClass<T>::IndexClass() :
 	IndexTable(0),
 	IndexCount(0),
 	IndexSize(0),
@@ -233,7 +233,7 @@ IndexClass<T>::IndexClass(void) :
  *   11/02/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
 template<class T>
-IndexClass<T>::~IndexClass(void)
+IndexClass<T>::~IndexClass()
 {
 	Clear();
 }
@@ -255,7 +255,7 @@ IndexClass<T>::~IndexClass(void)
  *   11/02/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
 template<class T>
-void IndexClass<T>::Clear(void)
+void IndexClass<T>::Clear()
 {
 	delete [] IndexTable;
 	IndexTable = 0;
@@ -338,7 +338,7 @@ bool IndexClass<T>::Increase_Table_Size(int amount)
  *   11/02/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
 template<class T>
-int IndexClass<T>::Count(void) const
+int IndexClass<T>::Count() const
 {
 	return(IndexCount);
 }
@@ -481,7 +481,7 @@ bool IndexClass<T>::Is_Archive_Same(int id) const
  *   11/02/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
 template<class T>
-void IndexClass<T>::Invalidate_Archive(void)
+void IndexClass<T>::Invalidate_Archive()
 {
 	Archive = 0;
 }

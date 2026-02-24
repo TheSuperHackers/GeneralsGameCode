@@ -144,7 +144,7 @@ class GenericList {
 		bool Is_Empty() const {return(!FirstNode.Next()->Is_Valid());}
 		void Add_Head(GenericNode * node) {FirstNode.Link(node);}
 		void Add_Tail(GenericNode * node) {LastNode.Prev()->Link(node);}
-//		void Delete(void) {while (FirstNode.Next()->Is_Valid()) delete FirstNode.Next();}
+//		void Delete() {while (FirstNode.Next()->Is_Valid()) delete FirstNode.Next();}
 
 		int Get_Valid_Count() const
 		{

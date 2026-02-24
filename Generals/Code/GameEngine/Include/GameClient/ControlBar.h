@@ -732,7 +732,7 @@ public:
 	/// Returns the relationship with the currently viewed player. May return NEUTRAL if no player is selected while observing.
 	Relationship getCurrentlyViewedPlayerRelationship(const Team* team);
 
-//	ControlBarResizer *getControlBarResizer( void ) {return m_controlBarResizer;}
+//	ControlBarResizer *getControlBarResizer() {return m_controlBarResizer;}
 
 	// Functions for repositioning/resizing the control bar
 	void switchControlBarStage( ControlBarStages stage );
@@ -905,7 +905,7 @@ protected:
 		// removed from multiplayer branch
 	//GameWindow *m_commandMarkers[ MAX_COMMANDS_PER_SET ];			///< When we don't have a command, they want to show an image
 // removed from multiplayer branch
-	//void showCommandMarkers( void );													///< function that compare's what's being shown in m_commandWindows and shows the ones that are hidden.
+	//void showCommandMarkers();													///< function that compare's what's being shown in m_commandWindows and shows the ones that are hidden.
 
 
 public:

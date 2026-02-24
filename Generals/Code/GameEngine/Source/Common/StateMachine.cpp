@@ -88,7 +88,7 @@ public:
 };
 #ifdef STATE_MACHINE_DEBUG
 //-----------------------------------------------------------------------------
-std::vector<StateID> * State::getTransitions( void )
+std::vector<StateID> * State::getTransitions()
 {
 	std::vector<StateID> *ids = new std::vector<StateID>;
 	ids->push_back(m_successStateID);

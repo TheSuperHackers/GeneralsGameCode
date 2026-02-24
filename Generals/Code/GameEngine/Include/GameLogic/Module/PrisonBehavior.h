@@ -44,7 +44,7 @@ class PrisonBehaviorModuleData : public OpenContainModuleData
 
 public:
 
-	PrisonBehaviorModuleData( void );
+	PrisonBehaviorModuleData();
 
 	static void buildFieldParse( MultiIniFieldParse &p );
 
@@ -67,7 +67,7 @@ public:
 	// virtual destructor prototype provided by memory pool object
 
 	// module methods
-	virtual void onDelete( void );
+	virtual void onDelete();
 
 	// contain methods
 	virtual void onContaining( Object *obj );

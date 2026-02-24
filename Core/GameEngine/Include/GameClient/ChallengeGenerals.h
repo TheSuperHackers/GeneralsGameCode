@@ -81,7 +81,7 @@ public:
 		m_imageBioPortraitLarge(nullptr)
 	{
 	}
-//	~GeneralPersona( void );
+//	~GeneralPersona();
 
 	Bool isStartingEnabled() const { return m_bStartsEnabled; }
 	const AsciiString& getBioName() const { return m_strBioName; }

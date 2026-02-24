@@ -675,7 +675,7 @@ void Drawable::showSubObject( const AsciiString& name, Bool show )
 /**
 	This call asks, "In the current animation (if any) how far along are you, from 0.0f to 1.0f".
 */
-Real Drawable::getAnimationScrubScalar( void ) const // lorenzen
+Real Drawable::getAnimationScrubScalar() const // lorenzen
 {
 	for (const DrawModule** dm = getDrawModules(); *dm; ++dm)
 	{

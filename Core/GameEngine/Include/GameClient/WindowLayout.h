@@ -56,7 +56,7 @@ class WindowLayout : public MemoryPoolObject
 public:
 
 	WindowLayout();
-	// ~WindowLayout( void );												///< defined by memory pool glue
+	// ~WindowLayout();												///< defined by memory pool glue
 
 	// manipulating screen properties ---------------------------------------------------------------
 	AsciiString getFilename() const;					///< return source window filename

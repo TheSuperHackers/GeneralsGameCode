@@ -161,7 +161,7 @@ class W3DTreeBuffer : public Snapshot
 			/// Create texture.
 			W3DTreeTextureClass(unsigned width, unsigned height);
 
-			// just use default destructor. ~TerrainTextureClass(void);
+			// just use default destructor. ~TerrainTextureClass();
 	public:
 		int update(W3DTreeBuffer *buffer); ///< Sets the pixels, and returns the actual height of the texture.
 		void setLOD(Int LOD) const;

@@ -177,10 +177,10 @@ public:
 	void setNumVertices(Int num) {m_numRoadVertices=num;}
 	Int getNumIndices() {return m_numRoadIndices;}
 #ifdef LOAD_TEST_ASSETS
-	void setAutoLoaded(void) {m_isAutoLoaded = true;};
-	Bool isAutoLoaded(void) {return m_isAutoLoaded;};
-	AsciiString getPath(void) {return(m_texturePath);};
-	void loadTestTexture(void);
+	void setAutoLoaded() {m_isAutoLoaded = true;};
+	Bool isAutoLoaded() {return m_isAutoLoaded;};
+	AsciiString getPath() {return(m_texturePath);};
+	void loadTestTexture();
 #endif
 }	;
 

@@ -3104,7 +3104,7 @@ void drawGraph( const char* style, Real scale, double value )
 
 	enum {TIME_FRAMES=20};
 	enum {SETTLE_FRAMES=10};
-static void unitTimings(void)
+static void unitTimings()
 {
 	static Int settleFrames = 0;
 	static Int timeFrames = 0;

@@ -249,7 +249,7 @@ class FloatingTextData : public MemoryPoolObject
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(FloatingTextData, "FloatingTextData")
 public:
 	FloatingTextData();
-	//~FloatingTextData(void);
+	//~FloatingTextData();
 
 	Color						m_color;														///< It's current color
 	UnicodeString		m_text;											///< the text we're displaying

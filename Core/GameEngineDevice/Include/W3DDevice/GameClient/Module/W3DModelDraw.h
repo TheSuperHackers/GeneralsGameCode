@@ -415,7 +415,7 @@ public:
 
 #ifdef ALLOW_ANIM_INQUIRIES
 // srj sez: not sure if this is a good idea, for net sync reasons...
-	virtual Real getAnimationScrubScalar( void ) const;
+	virtual Real getAnimationScrubScalar() const;
 #endif
 
 	virtual ObjectDrawInterface* getObjectDrawInterface() { return this; }

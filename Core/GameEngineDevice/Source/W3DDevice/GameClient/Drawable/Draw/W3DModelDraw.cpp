@@ -3858,7 +3858,7 @@ void W3DModelDraw::setPauseAnimation(Bool pauseAnim)
 //-------------------------------------------------------------------------------------------------
 #ifdef ALLOW_ANIM_INQUIRIES
 // srj sez: not sure if this is a good idea, for net sync reasons...
-Real W3DModelDraw::getAnimationScrubScalar( void ) const
+Real W3DModelDraw::getAnimationScrubScalar() const
 {
 	return getCurAnimDistanceCovered();
 }

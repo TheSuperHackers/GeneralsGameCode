@@ -390,7 +390,7 @@ class NetProgressCommandMsg: public NetCommandMsg
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetProgressCommandMsg, "NetProgressCommandMsg")
 public:
 	NetProgressCommandMsg();
-	//virtual ~NetProgressCommandMsg( void );
+	//virtual ~NetProgressCommandMsg();
 
 	UnsignedByte getPercentage();
 	void setPercentage( UnsignedByte percent );

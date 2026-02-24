@@ -98,7 +98,7 @@ void GameSpyThreadClass::Thread_Function()
 	}
 }
 
-AsciiString GameSpyThreadClass::getNextShellScreen( void )
+AsciiString GameSpyThreadClass::getNextShellScreen()
 {
 	MutexClass::LockClass m(TheGameSpyMutex, 0);
 	if (m.Failed())
@@ -106,7 +106,7 @@ AsciiString GameSpyThreadClass::getNextShellScreen( void )
 	return m_nextShellScreen;
 }
 
-Bool GameSpyThreadClass::showLocaleSelect( void )
+Bool GameSpyThreadClass::showLocaleSelect()
 {
 	MutexClass::LockClass m(TheGameSpyMutex, 0);
 	if (m.Failed())
@@ -135,28 +135,28 @@ public:
 	GameSpyChat();
 	virtual ~GameSpyChat();
 
-	virtual void init( void );
-	virtual void reset( void );
-	virtual void update( void );
+	virtual void init();
+	virtual void reset();
+	virtual void update();
 
-	virtual Bool isConnected( void );
+	virtual Bool isConnected();
 	virtual void login(AsciiString loginName, AsciiString password = AsciiString::TheEmptyString, AsciiString email = AsciiString::TheEmptyString);
-	virtual void reconnectProfile( void );
-	virtual void disconnectFromChat( void );
+	virtual void reconnectProfile();
+	virtual void disconnectFromChat();
 
 	virtual void UTMRoom( RoomType roomType, const char *key, const char *val, Bool authenticate = FALSE );
 	virtual void UTMPlayer( const char *name, const char *key, const char *val, Bool authenticate = FALSE );
-	virtual void startGame( void );
+	virtual void startGame();
 	virtual void leaveRoom( RoomType roomType );
 	virtual void setReady( Bool ready );
 	virtual void enumPlayers( RoomType roomType, peerEnumPlayersCallback callback, void *userData );
 	virtual void startListingGames( peerListingGamesCallback callback );
-	virtual void stopListingGames( void );
+	virtual void stopListingGames();
 
 	virtual void joinGroupRoom( Int ID );
 	virtual void joinStagingRoom( GServer server, AsciiString password );
 	virtual void createStagingRoom( AsciiString gameName, AsciiString password, Int maxPlayers );
-	virtual void joinBestGroupRoom( void );
+	virtual void joinBestGroupRoom();
 
 	void loginQuick(AsciiString loginName);
 	void loginProfile(AsciiString loginName, AsciiString password, AsciiString email);
@@ -167,8 +167,8 @@ public:
 	void _GPConnectCallback(GPConnection * pconnection, GPConnectResponseArg * arg, void * param);
 	void _GPReconnectCallback(GPConnection * pconnection, GPConnectResponseArg * arg, void * param);
 
-	inline void finishJoiningGroupRoom( void ) { m_joiningGroupRoom = false; }
-	inline void finishJoiningStagingRoom( void ) { m_joiningStagingRoom = false; }
+	inline void finishJoiningGroupRoom() { m_joiningGroupRoom = false; }
+	inline void finishJoiningStagingRoom() { m_joiningStagingRoom = false; }
 
 private:
 	UnsignedInt m_loginTimeoutPeriod; // in ms
@@ -181,13 +181,13 @@ private:
 };
 
 GameSpyChatInterface *TheGameSpyChat;
-GameSpyChatInterface *createGameSpyChat( void )
+GameSpyChatInterface *createGameSpyChat()
 {
 	mainThreadID = ThreadClass::_Get_Current_Thread_ID();
 	return NEW GameSpyChat;
 }
 
-void GameSpyChatInterface::clearGroupRoomList(void)
+void GameSpyChatInterface::clearGroupRoomList()
 {
 	m_groupRooms.clear();
 }
@@ -205,7 +205,7 @@ GameSpyChat::~GameSpyChat()
 	TheGameSpyThread = nullptr;
 }
 
-void GameSpyChat::init( void )
+void GameSpyChat::init()
 {
 	reset();
 
@@ -216,7 +216,7 @@ void GameSpyChat::init( void )
 	TheGameSpyThread = &thread;
 }
 
-void GameSpyChat::reset( void )
+void GameSpyChat::reset()
 {
 	MutexClass::LockClass m(TheGameSpyMutex);
 	m_loginName.clear();
@@ -240,7 +240,7 @@ void GameSpyChat::reset( void )
 		//thread.Stop();
 }
 
-void GameSpyChat::update( void )
+void GameSpyChat::update()
 {
 	MutexClass::LockClass m(TheGameSpyMutex, 0);
 	if (!m.Failed() && m_peer)
@@ -324,7 +324,7 @@ void GameSpyChat::update( void )
 	}
 }
 
-Bool GameSpyChat::isConnected( void )
+Bool GameSpyChat::isConnected()
 {
 	return m_peer && peerIsConnected(m_peer);
 }
@@ -339,7 +339,7 @@ void GameSpyChat::UTMPlayer( const char *name, const char *key, const char *val,
 	peerUTMPlayer( m_peer, name, key, val, (authenticate)?PEERTrue:PEERFalse );
 }
 
-void GameSpyChat::startGame( void )
+void GameSpyChat::startGame()
 {
 	peerStartGame( m_peer, nullptr, PEER_STOP_REPORTING );
 }
@@ -365,7 +365,7 @@ void GameSpyChat::startListingGames( peerListingGamesCallback callback )
 	peerStartListingGames( m_peer, nullptr, callback, nullptr );
 }
 
-void GameSpyChat::stopListingGames( void )
+void GameSpyChat::stopListingGames()
 {
 	peerStopListingGames( m_peer );
 }
@@ -412,7 +412,7 @@ void GameSpyChat::createStagingRoom( AsciiString gameName, AsciiString password,
 	peerCreateStagingRoom(m_peer, m_loginName.str(), maxPlayers, password.str(), createRoomCallback, (void *)oldGroupID, PEERFalse);
 }
 
-void GameSpyChat::joinBestGroupRoom( void )
+void GameSpyChat::joinBestGroupRoom()
 {
 	if (m_groupRooms.size())
 	{
@@ -449,7 +449,7 @@ void GameSpyChat::joinBestGroupRoom( void )
 	}
 }
 
-void GameSpyChat::disconnectFromChat( void )
+void GameSpyChat::disconnectFromChat()
 {
 	TheScriptEngine->signalUIInteract("GameSpyLogout");
 
@@ -525,7 +525,7 @@ void GameStartedCallback(PEER peer, unsigned int IP,
 	GameSpyStartGame();
 }
 
-void populateLobbyPlayerListbox(void);
+void populateLobbyPlayerListbox();
 void PlayerJoinedCallback(PEER peer, RoomType roomType,
 													const char * nick, void * param)
 {
@@ -1309,7 +1309,7 @@ void GameSpyChat::loginProfile(AsciiString loginName, AsciiString password, Asci
 	*/
 }
 
-void GameSpyChat::reconnectProfile( void )
+void GameSpyChat::reconnectProfile()
 {
 	if (inGPReconnect)
 		return;

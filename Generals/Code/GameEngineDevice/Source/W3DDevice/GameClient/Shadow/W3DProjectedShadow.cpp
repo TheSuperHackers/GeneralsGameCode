@@ -776,7 +776,7 @@ void W3DProjectedShadowManager::flushDecals(W3DShadowTexture *texture, ShadowTyp
 }
 
 /*
-void testShadowDecal(void)
+void testShadowDecal()
 {
 	Shadow::ShadowTypeInfo decalInfo;
 	decalInfo.allowUpdates = FALSE;	//shadow image will never update

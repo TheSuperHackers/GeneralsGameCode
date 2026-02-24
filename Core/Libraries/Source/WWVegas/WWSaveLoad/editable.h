@@ -109,7 +109,7 @@ EditableClass::Unlock_Parameter (int i)
 	//////////////////////////////////////////////////////////////////////////////////
 	#define DECLARE_EDITABLE(_class, _parent)										\
 	ParameterListClass plist_##_class;												\
-	virtual int _class::Get_Parameter_Count(void) const						\
+	virtual int _class::Get_Parameter_Count() const						\
 	{																							\
 		return plist_##_class.Count () + _parent::Get_Parameter_Count ();	\
 	}																							\

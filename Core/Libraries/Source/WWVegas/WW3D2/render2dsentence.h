@@ -178,8 +178,8 @@ public:
 //	void	Draw_Block( const RectClass & screen, unsigned long color = 0xFFFFFFFF );
 
 	const RectClass & Get_Draw_Extents()			{ return DrawExtents; }
-//	const RectClass & Get_Total_Extents( void )			{ return TotalExtents; }
-//	const Vector2 & Get_Cursor( void )						{ return Cursor; }
+//	const RectClass & Get_Total_Extents()			{ return TotalExtents; }
+//	const Vector2 & Get_Cursor()						{ return Cursor; }
 
 	Vector2	Get_Text_Extents( const WCHAR * text );
 	Vector2	Get_Formatted_Text_Extents( const WCHAR * text );

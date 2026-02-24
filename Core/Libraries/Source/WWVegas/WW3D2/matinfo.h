@@ -99,7 +99,7 @@ public:
 	void							Replace_Texture(int index, TextureClass *newTexture);
 
 //	void							Set_Texture_Reduction_Factor(float trf);
-//	void							Process_Texture_Reduction(void);
+//	void							Process_Texture_Reduction();
 
 private:
 

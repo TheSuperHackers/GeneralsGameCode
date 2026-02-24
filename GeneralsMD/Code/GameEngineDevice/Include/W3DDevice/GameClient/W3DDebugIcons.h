@@ -43,13 +43,13 @@ public:
 	W3DDebugIcons(Int mapWidth, Int mapHeight);
 	W3DDebugIcons(const W3DDebugIcons & src);
 	W3DDebugIcons & operator = (const W3DDebugIcons &);
-	~W3DDebugIcons(void);
+	~W3DDebugIcons();
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface
 	/////////////////////////////////////////////////////////////////////////////
-	virtual RenderObjClass *	Clone(void) const;
-	virtual int						Class_ID(void) const;
+	virtual RenderObjClass *	Clone() const;
+	virtual int						Class_ID() const;
 	virtual void					Render(RenderInfoClass & rinfo);
 
 	virtual bool					Cast_Ray(RayCollisionTestClass & raytest);
@@ -66,8 +66,8 @@ protected:
 	static Int              m_maxDebugIcons;
 
 protected:
-	void allocateIconsArray(void);
-	void compressIconsArray(void);
+	void allocateIconsArray();
+	void compressIconsArray();
 
 public:
 	static void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color);

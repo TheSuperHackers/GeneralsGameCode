@@ -310,7 +310,7 @@ public:
 	virtual const DozerAIInterface* getDozerAIInterface() const {return nullptr;}
 	virtual const SupplyTruckAIInterface* getSupplyTruckAIInterface() const {return nullptr;}
 #ifdef ALLOW_SURRENDER
-	virtual POWTruckAIUpdateInterface *getPOWTruckAIUpdateInterface( void ) { return nullptr; }
+	virtual POWTruckAIUpdateInterface *getPOWTruckAIUpdateInterface() { return nullptr; }
 #endif
 	virtual WorkerAIInterface* getWorkerAIInterface() { return nullptr; }
 	virtual const WorkerAIInterface* getWorkerAIInterface() const { return nullptr; }
@@ -323,7 +323,7 @@ public:
 
 #ifdef ALLOW_SURRENDER
 	void setSurrendered( const Object *objWeSurrenderedTo, Bool surrendered );
-	inline Bool isSurrendered( void ) const { return m_surrenderedFramesLeft > 0; }
+	inline Bool isSurrendered() const { return m_surrenderedFramesLeft > 0; }
 	inline Int getSurrenderedPlayerIndex() const { return m_surrenderedPlayerIndex; }
 #endif
 
@@ -569,7 +569,7 @@ public:
 
 #ifdef ALLOW_DEMORALIZE
 	// demoralization ... what a nifty word to write.
-	Bool isDemoralized( void ) const { return m_demoralizedFramesLeft > 0; }
+	Bool isDemoralized() const { return m_demoralizedFramesLeft > 0; }
 	void setDemoralized( UnsignedInt durationInFrames );
 #endif
 

@@ -108,9 +108,9 @@ public:
 	const Image *getHeadWaterMarkImage() const;
 	const Image *getFlagWaterMarkImage() const;
 	const Image *getEnabledImage() const;
-	//const Image *getDisabledImage( void ) const;
-	//const Image *getHiliteImage( void ) const;
-	//const Image *getPushedImage( void ) const;
+	//const Image *getDisabledImage() const;
+	//const Image *getHiliteImage() const;
+	//const Image *getPushedImage() const;
 	const Image *getSideIconImage() const;
 	const Image *getGeneralImage() const;
 	const AsciiString getTooltip() const { return m_tooltip; }

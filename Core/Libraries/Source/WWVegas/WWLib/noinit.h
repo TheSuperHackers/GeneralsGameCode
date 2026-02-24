@@ -48,6 +48,6 @@
 #ifndef NoInitClass
 class NoInitClass {
 	public:
-		void operator () (void) const {};
+		void operator () () const {};
 };
 #endif

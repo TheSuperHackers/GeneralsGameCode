@@ -254,7 +254,7 @@ public:
 	/*
 	** Access to textures
 	*/
-//	virtual AssetIterator *			Create_Texture_Iterator(void);
+//	virtual AssetIterator *			Create_Texture_Iterator();
 
 	HashTemplateClass<StringClass,TextureClass*>& Texture_Hash() { return TextureHash; }
 

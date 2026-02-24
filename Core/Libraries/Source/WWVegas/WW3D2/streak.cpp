@@ -94,7 +94,7 @@ StreakLineClass & StreakLineClass::operator = (const StreakLineClass &that)
 	return * this;
 }
 
-//StreakLineClass::~StreakLineClass(void)
+//StreakLineClass::~StreakLineClass()
 //{
 //}
 

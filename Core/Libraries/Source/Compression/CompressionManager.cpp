@@ -358,7 +358,7 @@ public:
 	Int compressedSize[COMPRESSION_MAX+1];
 };
 
-void DoCompressTest( void )
+void DoCompressTest()
 {
 
 	Int i;

@@ -3070,7 +3070,7 @@ Bool PathfindLayer::isUnused()
  * Draws debug cell info.
  */
 #if defined(RTS_DEBUG)
-void PathfindLayer::doDebugIcons(void) {
+void PathfindLayer::doDebugIcons() {
 	if (isUnused()) return;
 	extern void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color);
 	// render AI debug information
@@ -5290,7 +5290,7 @@ Bool Pathfinder::queueForPath(ObjectID id)
 }
 
 #if defined(RTS_DEBUG)
-void Pathfinder::doDebugIcons(void) {
+void Pathfinder::doDebugIcons() {
 	const Int FRAMES_TO_SHOW_OBSTACLES = 100;
 	extern void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color);
 	// render AI debug information

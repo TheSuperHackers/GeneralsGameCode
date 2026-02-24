@@ -114,9 +114,9 @@ Bool st_particleSystemNeedsStopping = FALSE; ///< Set along with st_particleSyst
 	static VTProc VTPause = nullptr;
 	static VTProc VTResume = nullptr;
 
-	static void _initVTune( void );
-	static void _updateVTune ( void );
-	static void _cleanUpVTune( void );
+	static void _initVTune();
+	static void _updateVTune ();
+	static void _cleanUpVTune();
 
 #endif
 
@@ -192,7 +192,7 @@ Int AttackPriorityInfo::getPriority(const ThingTemplate *tThing) const
 #ifdef RTS_DEBUG
 /** Dump the info. */
 //-------------------------------------------------------------------------------------------------
-void AttackPriorityInfo::dumpPriorityInfo(void)
+void AttackPriorityInfo::dumpPriorityInfo()
 {
 #ifdef DEBUG_LOGGING
 	DEBUG_LOG(("Attack priority '%s', default %d", m_name.str(), m_defaultPriority));
@@ -8273,7 +8273,7 @@ void SequentialScriptStatus::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 // Load post process */
 // ------------------------------------------------------------------------------------------------
-void SequentialScriptStatus::loadPostProcess( void )
+void SequentialScriptStatus::loadPostProcess()
 {
 
 }

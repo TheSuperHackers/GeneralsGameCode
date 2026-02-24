@@ -841,7 +841,7 @@ void TextureLoader::Flush_Pending_Load_Tasks()
 	}                                                  \
 
 
-void TextureLoader::Update(void (*network_callback)(void))
+void TextureLoader::Update(void (*network_callback)())
 {
 	WWASSERT_PRINT(Is_DX8_Thread(), "TextureLoader::Update must be called from the main thread!");
 
@@ -1629,7 +1629,7 @@ bool TextureLoadTaskClass::Begin_Uncompressed_Load()
 }
 
 /*
-bool TextureLoadTaskClass::Begin_Compressed_Load(void)
+bool TextureLoadTaskClass::Begin_Compressed_Load()
 {
 	DDSFileClass dds_file(Texture->Get_Full_Path(), Get_Reduction());
 	if (!dds_file.Is_Available()) {
@@ -1703,7 +1703,7 @@ bool TextureLoadTaskClass::Begin_Compressed_Load(void)
 }
 
 
-bool TextureLoadTaskClass::Begin_Uncompressed_Load(void)
+bool TextureLoadTaskClass::Begin_Uncompressed_Load()
 {
 	Targa targa;
 	if (TARGA_ERROR_HANDLER(targa.Open(Texture->Get_Full_Path(), TGA_READMODE), Texture->Get_Full_Path())) {

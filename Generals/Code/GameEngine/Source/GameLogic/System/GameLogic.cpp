@@ -2756,7 +2756,7 @@ void GameLogic::friend_awakenUpdateModule(Object* obj, UpdateModulePtr u, Unsign
 // ------------------------------------------------------------------------------------------------
 #ifdef DO_UNIT_TIMINGS
 	enum {TIME_FRAMES=100};
-static void unitTimings(void)
+static void unitTimings()
 {
 	static Int settleFrames = 0;
 	static Int timeFrames = 0;

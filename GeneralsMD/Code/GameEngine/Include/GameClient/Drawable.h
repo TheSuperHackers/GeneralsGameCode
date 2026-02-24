@@ -389,7 +389,7 @@ public:
 	Bool getFullyObscuredByShroud() {return m_drawableFullyObscuredByShroud;}
 
   // Put on ice until later... M Lorenzen
-  //	inline UnsignedByte getFullyObscuredByShroudWithCheatSpy(void) {return (UnsignedByte)m_drawableFullyObscuredByShroud | 128;}//8 looks like a zero in most fonts
+  //	inline UnsignedByte getFullyObscuredByShroudWithCheatSpy() {return (UnsignedByte)m_drawableFullyObscuredByShroud | 128;}//8 looks like a zero in most fonts
 
 	Bool getDrawsInMirror() const { return BitIsSet(m_status, DRAWABLE_STATUS_DRAWS_IN_MIRROR) || isKindOf(KINDOF_CAN_CAST_REFLECTIONS); }
 
@@ -515,7 +515,7 @@ public:
 
 #ifdef ALLOW_ANIM_INQUIRIES
 // srj sez: not sure if this is a good idea, for net sync reasons...
-	Real getAnimationScrubScalar( void ) const; // lorenzen // returns 0 to 1... where are we between start and finish?
+	Real getAnimationScrubScalar() const; // lorenzen // returns 0 to 1... where are we between start and finish?
 #endif
 
 	UnsignedInt getExpirationDate() const { return m_expirationDate; }

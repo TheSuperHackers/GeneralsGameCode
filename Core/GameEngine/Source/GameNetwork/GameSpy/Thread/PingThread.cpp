@@ -461,7 +461,7 @@ Int PingThreadClass::doPing(UnsignedInt IP, Int timeout)
    /*
     * Get pointers to ICMP.DLL functions
     */
-   lpfnIcmpCreateFile = (void * (__stdcall *)(void))GetProcAddress( (HINSTANCE)hICMP_DLL, "IcmpCreateFile");
+   lpfnIcmpCreateFile = (void * (__stdcall *)())GetProcAddress( (HINSTANCE)hICMP_DLL, "IcmpCreateFile");
    lpfnIcmpCloseHandle = (int (__stdcall *)(void *))GetProcAddress( (HINSTANCE)hICMP_DLL, "IcmpCloseHandle");
    lpfnIcmpSendEcho = (unsigned long (__stdcall *)(void *, unsigned long, void *, unsigned short,
                        void *, void *, unsigned long, unsigned long))GetProcAddress( (HINSTANCE)hICMP_DLL, "IcmpSendEcho" );

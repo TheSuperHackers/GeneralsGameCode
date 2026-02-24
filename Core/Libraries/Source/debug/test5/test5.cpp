@@ -28,12 +28,12 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "../debug.h"
 
-const char *DebugGetDefaultCommands(void)
+const char *DebugGetDefaultCommands()
 {
   return "!debug.io con add";
 }
 
-void main(void)
+void main()
 {
   // turn on all logs
   Debug::Command("add l + *");

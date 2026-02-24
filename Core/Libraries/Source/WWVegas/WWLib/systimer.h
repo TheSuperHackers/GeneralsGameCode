@@ -48,7 +48,7 @@
 #else
 #include <sys/time.h>
 
-inline unsigned long systimerGetMS(void)
+inline unsigned long systimerGetMS()
 {
 	struct timeval tv;
 	gettimeofday(&tv, nullptr);

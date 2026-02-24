@@ -87,7 +87,7 @@
 * SYNOPSIS
 *     Targa()
 *
-*     void Targa(void);
+*     void Targa();
 *
 * FUNCTION
 *     Initialize the targa class instance.
@@ -120,7 +120,7 @@ Targa::Targa()
 * SYNOPSIS
 *     ~Targa()
 *
-*     void ~Targa(void);
+*     void ~Targa();
 *
 * FUNCTION
 *
@@ -298,7 +298,7 @@ long Targa::Open(const char* name, long mode)
 * SYNOPSIS
 *     Close()
 *
-*     void Close(void);
+*     void Close();
 *
 * FUNCTION
 *     Close the Targa image file and free its handle.
@@ -1016,7 +1016,7 @@ bool Targa::IsCompressed()
 * SYNOPSIS
 *     Ext = GetExtension()
 *
-*     TGA2Extension *GetExtension(void);
+*     TGA2Extension *GetExtension();
 *
 * FUNCTION
 *     Retrieve a pointer to the Targa 2.0 extension data area. If the file
@@ -1139,7 +1139,7 @@ long Targa::DecodeImage()
 * SYNOPSIS
 *     EncodeImage()
 *
-*     void EncodeImage(void);
+*     void EncodeImage();
 *
 * FUNCTION
 *     Encode the image data using the RLE algorithm outlined in the TARGA
@@ -1284,7 +1284,7 @@ long Targa::EncodeImage()
 * SYNOPSIS
 *     InvertImage()
 *
-*     void InvertImage(void);
+*     void InvertImage();
 *
 * FUNCTION
 *

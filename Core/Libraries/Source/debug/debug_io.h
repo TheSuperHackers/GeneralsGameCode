@@ -187,7 +187,7 @@ public:
   #define DEBUG_DECLARE_IO_INTERFACE(type) \
     public: \
       static bool __RegisterClassFactory; \
-      static DebugIOInterface *__ClassFactory(void) { return new type; }
+      static DebugIOInterface *__ClassFactory() { return new type; }
 
   #define DEBUG_IMPLEMENT_IO_INTERFACE(io_id,descr,type) \
     static bool type::__RegisterClassFactory=Debug::AddIOFactory(#io_id,descr,type::__ClassFactory);

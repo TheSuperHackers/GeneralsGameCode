@@ -181,7 +181,7 @@ TextureClass * StreakRendererClass::Get_Texture() const
 //	TextureTileFactor = factor;
 //}
 
-// void StreakRendererClass::Reset_Line(void)
+// void StreakRendererClass::Reset_Line()
 // {
 	// LastUsedSyncTime = WW3D::Get_Sync_Time();
 	// CurrentUVOffset.Set(0.0f,0.0f);

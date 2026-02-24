@@ -196,7 +196,7 @@ void RoadType::loadTexture(AsciiString path, Int ID)
 //=============================================================================
 /** Sets the W3D texture. */
 //=============================================================================
-void RoadType::loadTestTexture(void)
+void RoadType::loadTestTexture()
 {
 	if (m_isAutoLoaded && m_uniqueID>0 && !m_texturePath.isEmpty()) {
 		/// @todo - delay loading textures and only load textures referenced by map.

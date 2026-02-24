@@ -66,7 +66,7 @@ public:
 
 	W3DGameWindow();
 	// already defined by MPO.
-	//~W3DGameWindow( void );
+	//~W3DGameWindow();
 
 	/// draw borders for this window only, NO child windows or anything else
 	void winDrawBorder();

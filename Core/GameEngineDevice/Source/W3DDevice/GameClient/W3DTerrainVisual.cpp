@@ -352,7 +352,7 @@ void W3DTerrainVisual::addSeismicSimulation( const SeismicSimulationNode& sim )
 
 
 
-void W3DTerrainVisual::handleSeismicSimulations( void )
+void W3DTerrainVisual::handleSeismicSimulations()
 {
   if ( ! m_clientHeightMap || ! m_logicHeightMap || ! m_terrainRenderObject )
     return;
@@ -443,7 +443,7 @@ void W3DTerrainVisual::handleSeismicSimulations( void )
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void W3DTerrainVisual::updateSeismicSimulations( void )
+void W3DTerrainVisual::updateSeismicSimulations()
 {
 
 	if (m_logicHeightMap==nullptr)

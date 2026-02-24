@@ -56,11 +56,11 @@
 class CRandom {
 
 public:
-	CRandom( void )		{}
-	~CRandom( void )		{}
+	CRandom()		{}
+	~CRandom()		{}
 
 	// Get a random 32 bit long integer
-	inline int Get_Int( void )		{ return Generator(); }
+	inline int Get_Int()		{ return Generator(); }
 
 	// Get a random 32 bit long integer less than max
 	inline int Get_Int( int max )	{	WWASSERT( max > 0 );	return (Generator() & 0x7FFFFFFF) % max;	}
@@ -69,7 +69,7 @@ public:
 	inline int Get_Int( int min, int max );
 
 	// Get a random float between 0 and 1 (both inclusive)
-	inline float Get_Float( void )	{	return (float)(Get_Int( CRANDOM_FLOAT_RANGE+1 )) / (float)CRANDOM_FLOAT_RANGE;	}
+	inline float Get_Float()	{	return (float)(Get_Int( CRANDOM_FLOAT_RANGE+1 )) / (float)CRANDOM_FLOAT_RANGE;	}
 
 	// Get a random float between 0 and max (both inclusive)
 	inline float Get_Float( float max )	{	return Get_Float() * max; }

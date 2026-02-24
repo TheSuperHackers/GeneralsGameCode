@@ -497,7 +497,7 @@ public:
 
 #ifdef ALLOW_ANIM_INQUIRIES
 // srj sez: not sure if this is a good idea, for net sync reasons...
-	Real getAnimationScrubScalar( void ) const; // lorenzen // returns 0 to 1... where are we between start and finish?
+	Real getAnimationScrubScalar() const; // lorenzen // returns 0 to 1... where are we between start and finish?
 #endif
 
 	UnsignedInt getExpirationDate() const { return m_expirationDate; }

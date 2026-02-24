@@ -376,11 +376,11 @@ class W3DShadowGeometryHeightmapMesh : public W3DShadowGeometryMesh
 public:
 	virtual int GetPolygonIndex (long dwPolyId, short *psIndexList) const;
 	virtual Vector3 *GetVertex (int dwVertId, Vector3 *pvVertex);
-	W3DShadowGeometryHeightmapMesh(void) : m_patchOriginX(0),m_patchOriginY(0) { }
+	W3DShadowGeometryHeightmapMesh() : m_patchOriginX(0),m_patchOriginY(0) { }
 	void setPatchOrigin(Int x, Int y) {m_patchOriginX=x; m_patchOriginY=y;}
 	void getPatchOrigin(Int *x, Int *y) {*x=m_patchOriginX; *y=m_patchOriginY;}
 	void setPatchSize(Int size)	{m_width=size; m_numPolygons=(size-1)*(size-1)*2;}
-	Int getPatchSize(void)	{return m_width;}
+	Int getPatchSize()	{return m_width;}
 
 	protected:
 
@@ -539,7 +539,7 @@ Bool isPatchShadowed(W3DShadowGeometryHeightmapMesh	*hm_mesh)
 static W3DShadowGeometryHeightmapMesh terrainMeshes[SV_MAX_TERRAIN_MESHES];
 static Int numTerrainMeshes=0;
 
-void W3DVolumetricShadowManager::loadTerrainShadows(void)
+void W3DVolumetricShadowManager::loadTerrainShadows()
 {
 	WorldHeightMap *map=nullptr;
 	Int patchSize=3;

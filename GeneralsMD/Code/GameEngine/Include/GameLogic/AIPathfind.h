@@ -442,7 +442,7 @@ public:
 	Bool isPointOnWall(ObjectID *wallPieces, Int numPieces, const Coord3D *pt);
 
 #if defined(RTS_DEBUG)
-	void doDebugIcons(void) ;
+	void doDebugIcons() ;
 #endif
 protected:
 	void classifyLayerMapCell( Int i, Int j , PathfindCell *cell, Bridge *theBridge);
@@ -861,7 +861,7 @@ protected:
 	bool checkCellOutsideExtents(ICoord2D& cell);
 
 #if defined(RTS_DEBUG)
-	void doDebugIcons(void) ;
+	void doDebugIcons() ;
 #endif
 
 private:

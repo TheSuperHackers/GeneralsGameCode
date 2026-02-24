@@ -28,7 +28,7 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "../debug.h"
 
-const char *DebugGetDefaultCommands(void)
+const char *DebugGetDefaultCommands()
 {
   return "!debug.io con add";
 }
@@ -36,7 +36,7 @@ const char *DebugGetDefaultCommands(void)
 int divByNull;
 unsigned *invalidPtr=(unsigned *)0x666;
 
-bool crash(void)
+bool crash()
 {
   *invalidPtr/=divByNull;
   return true;
@@ -44,6 +44,6 @@ bool crash(void)
 
 bool thisWillCrash=crash();
 
-void main(void)
+void main()
 {
 }

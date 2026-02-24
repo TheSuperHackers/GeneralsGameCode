@@ -216,7 +216,7 @@ Bool AddCommandToPacket(const GameMessage *msg)
 /**
  * TheNetwork calls GetCommandPacket to get commands to send.
  *
-CommandPacket *GetCommandPacket(void)
+CommandPacket *GetCommandPacket()
 {
 	commandBuf[0] = MSGTYPE_COMMANDCOUNT;
 	return commandPacket;

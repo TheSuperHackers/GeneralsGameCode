@@ -43,7 +43,7 @@
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-DemoralizeSpecialPowerModuleData::DemoralizeSpecialPowerModuleData( void )
+DemoralizeSpecialPowerModuleData::DemoralizeSpecialPowerModuleData()
 {
 
 	m_baseRange = 0.0f;
@@ -91,7 +91,7 @@ DemoralizeSpecialPower::DemoralizeSpecialPower( Thing *thing, const ModuleData *
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-DemoralizeSpecialPower::~DemoralizeSpecialPower( void )
+DemoralizeSpecialPower::~DemoralizeSpecialPower()
 {
 
 }
@@ -221,7 +221,7 @@ void DemoralizeSpecialPower::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void DemoralizeSpecialPower::loadPostProcess( void )
+void DemoralizeSpecialPower::loadPostProcess()
 {
 
 	// extend base class

@@ -68,11 +68,11 @@ public:
     virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & aabox) const;
 
 
-//	virtual int					 	Get_Num_Polys(void) const;
-//	virtual const char *		 	Get_Name(void) const;
+//	virtual int					 	Get_Num_Polys() const;
+//	virtual const char *		 	Get_Name() const;
 //	virtual void				 	Set_Name(const char * name);
 
-//	unsigned int					Get_Flags(void)  { return Flags; }
+//	unsigned int					Get_Flags()  { return Flags; }
 //	void								Set_Flags(unsigned int flags) { Flags = flags; }
 //	void								Set_Flag(unsigned int flag, Bool onoff) { Flags &= (~flag); if (onoff) Flags |= flag; }
 

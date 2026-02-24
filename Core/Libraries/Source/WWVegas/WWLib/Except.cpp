@@ -954,7 +954,7 @@ bool Register_Thread_Handle(unsigned long thread_id, HANDLE thread_handle)
  * HISTORY:                                                                                    *
  *   2/6/2002 9:43PM ST : Created                                                              *
  *=============================================================================================*/
-int Get_Num_Threads(void)
+int Get_Num_Threads()
 {
 	return(ThreadList.Count());
 }

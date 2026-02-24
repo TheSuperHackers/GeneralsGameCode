@@ -105,7 +105,7 @@ public:
 	virtual void								DeleteSelf()							{	deleteInstance(this); }
 
 protected:
-	//virtual ~W3DPrototypeClass(void);
+	//virtual ~W3DPrototypeClass();
 
 private:
 	RenderObjClass *					Proto;

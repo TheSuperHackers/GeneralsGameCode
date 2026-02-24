@@ -58,7 +58,7 @@ bool Is_Trying_To_Exit();
 unsigned long Get_Main_Thread_ID();
 #if (0)
 bool Register_Thread_Handle(unsigned long thread_id, HANDLE thread_handle);
-int Get_Num_Thread(void);
+int Get_Num_Thread();
 HANDLE Get_Thread_Handle(int thread_index);
 #endif //(0)
 

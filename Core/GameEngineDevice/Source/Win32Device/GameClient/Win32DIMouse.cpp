@@ -41,7 +41,7 @@ enum { MOUSE_BUFFER_SIZE = 256, };
 /** Create our direct input object, mouse device, and initialize it to the
 	* data formats we want */
 //-------------------------------------------------------------------------------------------------
-void DirectInputMouse::openMouse( void )
+void DirectInputMouse::openMouse()
 {
 	HRESULT hr;
 
@@ -160,7 +160,7 @@ void DirectInputMouse::openMouse( void )
 //-------------------------------------------------------------------------------------------------
 /** Release any resources for our direct input mouse */
 //-------------------------------------------------------------------------------------------------
-void DirectInputMouse::closeMouse( void )
+void DirectInputMouse::closeMouse()
 {
 
 	// release the mouse device
@@ -315,7 +315,7 @@ void DirectInputMouse::mapDirectInputMouse( MouseIO *mouse,
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-DirectInputMouse::DirectInputMouse( void )
+DirectInputMouse::DirectInputMouse()
 {
 
 	m_pDirectInput = nullptr;
@@ -325,7 +325,7 @@ DirectInputMouse::DirectInputMouse( void )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-DirectInputMouse::~DirectInputMouse( void )
+DirectInputMouse::~DirectInputMouse()
 {
 
 	// release all mouse resources
@@ -337,7 +337,7 @@ DirectInputMouse::~DirectInputMouse( void )
 //-------------------------------------------------------------------------------------------------
 /** Initialize the direct input mouse device */
 //-------------------------------------------------------------------------------------------------
-void DirectInputMouse::init( void )
+void DirectInputMouse::init()
 {
 	POINT p;
 
@@ -359,7 +359,7 @@ void DirectInputMouse::init( void )
 //-------------------------------------------------------------------------------------------------
 /** Reset direct input mouse */
 //-------------------------------------------------------------------------------------------------
-void DirectInputMouse::reset( void )
+void DirectInputMouse::reset()
 {
 
 	// extend
@@ -372,7 +372,7 @@ void DirectInputMouse::reset( void )
 	* frame in the engine.  NOTE that this routine is extendion functionality
 	* that we may need that is direct input specific, not replacing */
 //-------------------------------------------------------------------------------------------------
-void DirectInputMouse::update( void )
+void DirectInputMouse::update()
 {
 
 	// extendion functionality from our base class
@@ -399,7 +399,7 @@ void DirectInputMouse::update( void )
 	* allow for the mouse to move within the title bar at the top of
 	* the window */
 //-------------------------------------------------------------------------------------------------
-void DirectInputMouse::setMouseLimits( void )
+void DirectInputMouse::setMouseLimits()
 {
 
 	//
@@ -490,7 +490,7 @@ void DirectInputMouse::setCursor( MouseCursor cursor )
 //-------------------------------------------------------------------------------------------------
 /** Capture the mouse to our application */
 //-------------------------------------------------------------------------------------------------
-void DirectInputMouse::capture( void )
+void DirectInputMouse::capture()
 {
 
 	SetCapture( ApplicationHWnd );
@@ -500,7 +500,7 @@ void DirectInputMouse::capture( void )
 //-------------------------------------------------------------------------------------------------
 /** Release the mouse capture for our app window */
 //-------------------------------------------------------------------------------------------------
-void DirectInputMouse::releaseCapture( void )
+void DirectInputMouse::releaseCapture()
 {
 
 	ReleaseCapture();

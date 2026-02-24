@@ -80,7 +80,7 @@ class Listener3DClass : public Sound3DClass
 		//////////////////////////////////////////////////////////////////////
 		//	State control methods
 		//////////////////////////////////////////////////////////////////////
-		//virtual bool			Play (void)		{ return false; }
+		//virtual bool			Play ()		{ return false; }
 		virtual bool			Pause ()	{ return false; }
 		virtual bool			Resume ()	{ return false; }
 		virtual bool			Stop (bool /*remove*/)		{ return false; }

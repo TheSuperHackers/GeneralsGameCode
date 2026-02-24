@@ -166,7 +166,7 @@ StatDumpClass::~StatDumpClass()
 	}
 }
 
-static const char *getCurrentTimeString(void)
+static const char *getCurrentTimeString()
 {
 	time_t aclock;
 	time(&aclock);

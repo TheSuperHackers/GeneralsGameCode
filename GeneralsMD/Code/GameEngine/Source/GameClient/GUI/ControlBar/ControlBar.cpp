@@ -3078,7 +3078,7 @@ void ControlBar::setHiddenControlBar()
 	m_contextParent[ CP_MASTER ]->winHide(TRUE);
 }
 // removed from multiplayer test
-//void ControlBar::showCommandMarkers( void )
+//void ControlBar::showCommandMarkers()
 //{
 //	for(Int i =0; i < MAX_COMMANDS_PER_SET; ++i)
 //	{

@@ -31,7 +31,7 @@
 #include <windows.h>
 #include <commctrl.h>
 
-DebugExceptionhandler::DebugExceptionhandler(void)
+DebugExceptionhandler::DebugExceptionhandler()
 {
   // don't do anything here!
 }

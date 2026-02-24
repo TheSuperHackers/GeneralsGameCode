@@ -264,7 +264,7 @@ WWAudioThreadsClass::Delayed_Release_Thread_Proc (LPVOID /*param*/)
 //
 ///////////////////////////////////////////////////////////////////////////////////////////
 bool
-WWAudioThreadsClass::Begin_Modify_List (void)
+WWAudioThreadsClass::Begin_Modify_List ()
 {
 	bool retval = false;
 
@@ -286,7 +286,7 @@ WWAudioThreadsClass::Begin_Modify_List (void)
 //
 ///////////////////////////////////////////////////////////////////////////////////////////
 void
-WWAudioThreadsClass::End_Modify_List (void)
+WWAudioThreadsClass::End_Modify_List ()
 {
 	//
 	//	Release this thread's hold on the mutex object.

@@ -45,7 +45,7 @@ AsciiString GetMessageTypeString(UnsignedInt type);
 
 const UnsignedInt LANAPI::s_resendDelta = 10 * 1000;	///< This is how often we announce ourselves to the world
 /*
-LANGame::LANGame( void )
+LANGame::LANGame()
 {
 	m_gameName = L"";
 
@@ -952,7 +952,7 @@ static const char gameOptionsID	= 'G';
 static const char acceptID			= 'A';
 static const char wannaStartID	= 'W';
 
-AsciiString LANAPI::createSlotString( void )
+AsciiString LANAPI::createSlotString()
 {
 	AsciiString slotList;
 	slotList.concat(slotListID);
@@ -999,7 +999,7 @@ AsciiString LANAPI::createSlotString( void )
 }
 */
 /*
-void LANAPI::RequestSlotList( void )
+void LANAPI::RequestSlotList()
 {
 
 	LANMessage reply;

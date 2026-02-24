@@ -240,7 +240,7 @@ class ParticleEmitterClass : public RenderObjClass
 		Vector3					Get_Start_Color () const		{ return Buffer->Get_Start_Color(); }
 		float						Get_Start_Opacity () const	{ return Buffer->Get_Start_Opacity(); }
 		float						Get_Position_Random () const	{ return PosRand ? PosRand->Get_Maximum_Extent() : 0.0f; }
-		//float						Get_Velocity_Random (void) const	{ return VelRand ? (VelRand->Get_Maximum_Extent() * 1000.0f) : 0.0f; }
+		//float						Get_Velocity_Random () const	{ return VelRand ? (VelRand->Get_Maximum_Extent() * 1000.0f) : 0.0f; }
 		float						Get_Emission_Rate () const	{ return 1000.0f / float(EmitRate); }
 		int						Get_Burst_Size () const		{ return BurstSize; }
 		int						Get_Max_Particles () const	{ return MaxParticles; }
@@ -275,7 +275,7 @@ class ParticleEmitterClass : public RenderObjClass
 		// Global debugging option for disabling all particle emission
 #ifdef WWDEBUG
 		static void				Disable_All_Emitters(bool onoff)	{ DebugDisable = onoff; }
-		static bool				Are_Emitters_Disabled(void)		{ return DebugDisable; }
+		static bool				Are_Emitters_Disabled()		{ return DebugDisable; }
 #endif
 
 	protected:

@@ -75,7 +75,7 @@ public:
 	friend DisplayStringManager;
 
 	DisplayString();
-	// virtual ~DisplayString( void );  // destructor defined by memory pool
+	// virtual ~DisplayString();  // destructor defined by memory pool
 
 	virtual void setText( UnicodeString text );		///< set text for this string
 	virtual UnicodeString getText();				///< get text for this string

@@ -50,7 +50,7 @@ public:
 	virtual Bool isModuleForPower( const SpecialPowerTemplate *specialPowerTemplate ) const = 0;
 	virtual Bool isReady() const = 0;
 //  This is the althernate way to one-at-a-time BlackLotus' specials; we'll keep it commented her until Dustin decides, or until 12/10/02
-//	virtual Bool isBusy( void ) const = 0;
+//	virtual Bool isBusy() const = 0;
 	virtual Real getPercentReady() const = 0;
 	virtual UnsignedInt getReadyFrame() const = 0;
 	virtual AsciiString getPowerName() const = 0;
@@ -110,7 +110,7 @@ public:
 	Bool isModuleForPower( const SpecialPowerTemplate *specialPowerTemplate ) const;	///< is this module for the specified special power
 	Bool isReady() const; 						///< is this special power available now
 //  This is the althernate way to one-at-a-time BlackLotus' specials; we'll keep it commented her until Dustin decides, or until 12/10/02
-//	Bool isBusy( void ) const { return FALSE; }
+//	Bool isBusy() const { return FALSE; }
 
 	Real getPercentReady() const;		///< get the percent ready (1.0 = ready now, 0.5 = half charged up etc.)
 

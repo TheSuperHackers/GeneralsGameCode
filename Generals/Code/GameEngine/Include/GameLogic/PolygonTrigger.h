@@ -96,7 +96,7 @@ protected:
 
 public:
 	PolygonTrigger(Int initialAllocation);
-	//~PolygonTrigger(void);		///< Note that deleting the head of a list deletes all linked objects in the list.
+	//~PolygonTrigger();		///< Note that deleting the head of a list deletes all linked objects in the list.
 
 public:
 	static PolygonTrigger *getFirstPolygonTrigger() {return ThePolygonTriggerListPtr;}

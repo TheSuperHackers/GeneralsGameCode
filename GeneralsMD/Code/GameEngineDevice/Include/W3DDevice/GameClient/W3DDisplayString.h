@@ -72,7 +72,7 @@ public:
 	friend W3DDisplayStringManager;
 
 	W3DDisplayString();
-	// ~W3DDisplayString( void );  // destructor defined by memory pool
+	// ~W3DDisplayString();  // destructor defined by memory pool
 
 	void notifyTextChanged();							///< called when text contents change
 	void draw( Int x, Int y, Color color, Color dropColor );  ///< render text

@@ -138,9 +138,9 @@ protected:
 	** Internal stat tracking
 	*/
 #ifdef WWDEBUG
-	void	NODE_ACCEPTED(void)					{ Stats.NodesAccepted ++; }
-	void	NODE_TRIVIALLY_ACCEPTED(void)		{ Stats.NodesTriviallyAccepted ++; }
-	void	NODE_REJECTED(void)					{ Stats.NodesRejected ++; }
+	void	NODE_ACCEPTED()					{ Stats.NodesAccepted ++; }
+	void	NODE_TRIVIALLY_ACCEPTED()		{ Stats.NodesTriviallyAccepted ++; }
+	void	NODE_REJECTED()					{ Stats.NodesRejected ++; }
 #else
 	void	NODE_ACCEPTED()					{ }
 	void	NODE_TRIVIALLY_ACCEPTED()		{ }

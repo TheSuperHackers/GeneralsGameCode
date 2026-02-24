@@ -108,7 +108,7 @@ void MaterialInfoClass::Set_Texture_Reduction_Factor(float trf)
 }
 
 
-void MaterialInfoClass::Process_Texture_Reduction(void)
+void MaterialInfoClass::Process_Texture_Reduction()
 {
 	for (int i = 0; i < Textures.Count(); i++) {
 		Textures[i]->Process_Reduction();

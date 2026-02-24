@@ -149,7 +149,7 @@ public:
 	virtual const PersistFactoryClass &	Get_Factory () const;
 	virtual bool								Save (ChunkSaveClass &csave);
 	virtual bool								Load (ChunkLoadClass &cload);
-	//bool isDonut(void) {return Donut; };
+	//bool isDonut() {return Donut; };
 	//void setDonut(bool donut) { Donut = donut; };
 
 protected:

@@ -262,7 +262,7 @@ public:
 	enum {UNLIMITED_REBUILDS=0xFFFFFFFF};
 	enum {MAX_RESOURCE_GATHERERS = 10};
 	BuildListInfo();
-	//~BuildListInfo(void);								///< Note that deleting the head of a list deletes all linked objects in the list.
+	//~BuildListInfo();								///< Note that deleting the head of a list deletes all linked objects in the list.
 
 	static void parseStructure(INI *ini, void *instance, void* /*store*/, const void* /*userData*/);
 

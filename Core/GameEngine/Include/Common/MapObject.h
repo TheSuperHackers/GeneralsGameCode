@@ -113,7 +113,7 @@ public:
 public:
 	MapObject(Coord3D loc, AsciiString name, Real angle, Int flags, const Dict* props,
 						const ThingTemplate *thingTemplate );
-	//~MapObject(void);		///< Note that deleting the head of a list deletes all linked objects in the list.
+	//~MapObject();		///< Note that deleting the head of a list deletes all linked objects in the list.
 
 public:
 

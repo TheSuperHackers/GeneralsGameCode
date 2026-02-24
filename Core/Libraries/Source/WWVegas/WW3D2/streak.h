@@ -60,7 +60,7 @@ class StreakLineClass : public RenderObjClass
 		StreakLineClass();
 		StreakLineClass(const StreakLineClass & src);
 		StreakLineClass & operator = (const StreakLineClass &that);
-//		virtual ~StreakLineClass(void);
+//		virtual ~StreakLineClass();
 
 		void					Reset_Line();
 

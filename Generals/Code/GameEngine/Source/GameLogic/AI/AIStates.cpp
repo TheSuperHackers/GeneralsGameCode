@@ -826,7 +826,7 @@ void AIStateMachine::setGoalPath( std::vector<Coord3D>* path )
 /**
  * Get the current state name.
  */
-AsciiString AIStateMachine::getCurrentStateName(void) const
+AsciiString AIStateMachine::getCurrentStateName() const
 {
 	AsciiString name = StateMachine::getCurrentStateName();
 

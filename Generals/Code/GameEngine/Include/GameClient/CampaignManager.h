@@ -70,7 +70,7 @@ class Mission : public MemoryPoolObject
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( Mission, "Mission" )
 public:
 	Mission();
-	//~Mission( void );
+	//~Mission();
 
 public:
 	AsciiString m_name;
@@ -90,7 +90,7 @@ class Campaign : public MemoryPoolObject
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( Campaign, "Campaign" )
 public:
 	Campaign();
-	//~Campaign( void );
+	//~Campaign();
 
 	Mission *newMission( AsciiString name );
 	Mission *getNextMission( Mission *current);

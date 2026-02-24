@@ -77,7 +77,7 @@ class Anim2DTemplate : public MemoryPoolObject
 public:
 
 	Anim2DTemplate( AsciiString name );
-	//virtual ~Anim2DTemplate( void );
+	//virtual ~Anim2DTemplate();
 
 	AsciiString getName() const { return m_name; }
 	const Image *getFrame( UnsignedShort frameNumber ) const;
