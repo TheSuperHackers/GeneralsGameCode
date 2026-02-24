@@ -122,12 +122,12 @@ Directory::Directory( const AsciiString& dirPath ) : m_dirPath(dirPath)
 	SetCurrentDirectory( currDir );
 }
 
-FileInfoSet* Directory::getFiles( void )
+FileInfoSet* Directory::getFiles()
 {
 	return &m_files;
 }
 
-FileInfoSet* Directory::getSubdirs( void )
+FileInfoSet* Directory::getSubdirs()
 {
 	return &m_subdirs;
 }

@@ -167,7 +167,7 @@ MetalMapManagerClass::MetalMapManagerClass(INIClass &ini) :
  * HISTORY:                                                                                    *
  *   11/19/1999 NH : Created.                                                                  *
  *=============================================================================================*/
-MetalMapManagerClass::~MetalMapManagerClass(void)
+MetalMapManagerClass::~MetalMapManagerClass()
 {
 	if (Textures) {
 		for (int i = 0; i < MapCount; i++) {
@@ -216,7 +216,7 @@ TextureClass * MetalMapManagerClass::Get_Metal_Map(int id)
  * HISTORY:                                                                                    *
  *   11/19/1999 NH : Created.                                                                  *
  *=============================================================================================*/
-int MetalMapManagerClass::Metal_Map_Count(void)
+int MetalMapManagerClass::Metal_Map_Count()
 {
 	return MapCount;
 }
@@ -257,7 +257,7 @@ void MetalMapManagerClass::Update_Lighting(const Vector3& ambient, const Vector3
  * HISTORY:                                                                                    *
  *   11/19/1999 NH : Created.                                                                  *
  *=============================================================================================*/
-void MetalMapManagerClass::Update_Textures(void)
+void MetalMapManagerClass::Update_Textures()
 {
 	// Currently the lighting is done using a simple Phong (actually Blinn) model.
 	Vector3 &l = CurrentMainLightDir;
@@ -356,7 +356,7 @@ void MetalMapManagerClass::Update_Textures(void)
  * HISTORY:                                                                                    *
  *   11/19/1999 NH : Created.                                                                  *
  *=============================================================================================*/
-void MetalMapManagerClass::initialize_normal_table(void)
+void MetalMapManagerClass::initialize_normal_table()
 {
 	// NOTE: changing the actual static _NormalTable member must be the last thing this function
 	// does to avoid synchronization errors.

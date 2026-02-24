@@ -131,11 +131,11 @@ public:
 	virtual const WorkerAIInterface* getWorkerAIInterface() const { return this; }
 
 	// Dozer side
-	virtual void onDelete( void );
+	virtual void onDelete();
 
-	virtual Real getRepairHealthPerSecond( void ) const;	///< get health to repair per second
-	virtual Real getBoredTime( void ) const;							///< how long till we're bored
-	virtual Real getBoredRange( void ) const;							///< when we're bored, we look this far away to do things
+	virtual Real getRepairHealthPerSecond() const;	///< get health to repair per second
+	virtual Real getBoredTime() const;							///< how long till we're bored
+	virtual Real getBoredRange() const;							///< when we're bored, we look this far away to do things
 
 	virtual Object *construct( const ThingTemplate *what,
 														 const Coord3D *pos, Real angle,
@@ -143,19 +143,19 @@ public:
 														 Bool isRebuild );			///< construct a building
 
 	// get task information
-	virtual DozerTask getMostRecentCommand( void );				///< return task that was most recently issued
+	virtual DozerTask getMostRecentCommand();				///< return task that was most recently issued
 	virtual Bool isTaskPending( DozerTask task );					///< is there a desire to do the requested task
 	virtual ObjectID getTaskTarget( DozerTask task );			///< get target of task
-	virtual Bool isAnyTaskPending( void );								///< is there any dozer task pending
-	virtual DozerTask getCurrentTask( void ) const { return m_currentTask; }	///< return the current task we're doing
+	virtual Bool isAnyTaskPending();								///< is there any dozer task pending
+	virtual DozerTask getCurrentTask() const { return m_currentTask; }	///< return the current task we're doing
 	virtual void setCurrentTask( DozerTask task ) { m_currentTask = task; }		///< set the current task of the dozer
 
-	virtual Bool getIsRebuild( void ) { return m_isRebuild; } ///< get whether or not our task is a rebuild.
+	virtual Bool getIsRebuild() { return m_isRebuild; } ///< get whether or not our task is a rebuild.
 
 	// task actions
 	virtual void newTask( DozerTask task, Object* target );	///< set a desire to do the requrested task
 	virtual void cancelTask( DozerTask task );						///< cancel this task from the queue, if it's the current task the dozer will stop working on it
-	virtual void resumePreviousTask(void);									///< resume the previous task if there was one
+	virtual void resumePreviousTask();									///< resume the previous task if there was one
 
 	// internal methods to manage behavior from within the dozer state machine
 	virtual void internalTaskComplete( DozerTask task );					///< set a dozer task as successfully completed
@@ -167,7 +167,7 @@ public:
 	virtual const Coord3D* getDockPoint( DozerTask task, DozerDockPoint point );
 
 	virtual void setBuildSubTask( DozerBuildSubTask subTask ) { m_buildSubTask = subTask; };
-	virtual DozerBuildSubTask getBuildSubTask( void ) { return m_buildSubTask; }
+	virtual DozerBuildSubTask getBuildSubTask() { return m_buildSubTask; }
 	//
 	// the following methods must be overridden so that if a player issues a command the dozer
 	// can exit the internal state machine and do whatever the player says
@@ -265,7 +265,7 @@ protected:
 
 private:
 
-	void createMachines( void );		///< create our behavior machines we need
+	void createMachines();		///< create our behavior machines we need
  	AudioEventRTS m_suppliesDepletedVoice;						///< Sound played when I take the last box.
 
 };

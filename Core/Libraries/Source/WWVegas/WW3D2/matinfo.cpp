@@ -40,7 +40,7 @@
 #include "meshmdl.h"
 #include "texture.h"
 
-MaterialInfoClass::MaterialInfoClass(void)
+MaterialInfoClass::MaterialInfoClass()
 {
 }
 
@@ -60,13 +60,13 @@ MaterialInfoClass::MaterialInfoClass(const MaterialInfoClass & src)
 }
 
 
-MaterialInfoClass::~MaterialInfoClass(void)
+MaterialInfoClass::~MaterialInfoClass()
 {
 	Free();
 }
 
 
-MaterialInfoClass * MaterialInfoClass::Clone(void) const
+MaterialInfoClass * MaterialInfoClass::Clone() const
 {
 	return W3DNEW MaterialInfoClass(*this);
 }
@@ -108,14 +108,14 @@ void MaterialInfoClass::Set_Texture_Reduction_Factor(float trf)
 }
 
 
-void MaterialInfoClass::Process_Texture_Reduction(void)
+void MaterialInfoClass::Process_Texture_Reduction()
 {
 	for (int i = 0; i < Textures.Count(); i++) {
 		Textures[i]->Process_Reduction();
 	}
 }
 */
-void MaterialInfoClass::Free(void)
+void MaterialInfoClass::Free()
 {
 	int i;
 
@@ -170,7 +170,7 @@ MaterialRemapperClass::MaterialRemapperClass(MaterialInfoClass * src,MaterialInf
 	}
 }
 
-MaterialRemapperClass::~MaterialRemapperClass(void)
+MaterialRemapperClass::~MaterialRemapperClass()
 {
 	SrcMatInfo->Release_Ref();
 	DestMatInfo->Release_Ref();
@@ -261,14 +261,14 @@ void MaterialRemapperClass::Remap_Mesh(const MeshMatDescClass * srcmeshmatdesc, 
 	}
 }
 
-MaterialCollectorClass::MaterialCollectorClass(void)
+MaterialCollectorClass::MaterialCollectorClass()
 {
 	LastShader = ShaderClass(0xFFFFFFFF);
 	LastMaterial = nullptr;
 	LastTexture = nullptr;
 }
 
-MaterialCollectorClass::~MaterialCollectorClass(void)
+MaterialCollectorClass::~MaterialCollectorClass()
 {
 	Reset();
 }
@@ -323,7 +323,7 @@ void MaterialCollectorClass::Collect_Materials(MeshModelClass * mesh)
 	}
 }
 
-void MaterialCollectorClass::Reset(void)
+void MaterialCollectorClass::Reset()
 {
 	for (int ti=0; ti<Textures.Count(); ti++) {
 		REF_PTR_RELEASE(Textures[ti]);
@@ -364,17 +364,17 @@ void MaterialCollectorClass::Add_Vertex_Material(VertexMaterialClass * vmat)
 	LastMaterial = vmat;
 }
 
-int MaterialCollectorClass::Get_Shader_Count(void)
+int MaterialCollectorClass::Get_Shader_Count()
 {
 	return Shaders.Count();
 }
 
-int MaterialCollectorClass::Get_Vertex_Material_Count(void)
+int MaterialCollectorClass::Get_Vertex_Material_Count()
 {
 	return VertexMaterials.Count();
 }
 
-int MaterialCollectorClass::Get_Texture_Count(void)
+int MaterialCollectorClass::Get_Texture_Count()
 {
 	return Textures.Count();
 }

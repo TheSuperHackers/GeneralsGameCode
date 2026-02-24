@@ -74,7 +74,7 @@ public:
 	//for construction sites like the sneak attack.
 	AsciiString				m_referenceThingName;
 
-	OCLSpecialPowerModuleData( void );
+	OCLSpecialPowerModuleData();
 	static void buildFieldParse(MultiIniFieldParse& p);
 
 };

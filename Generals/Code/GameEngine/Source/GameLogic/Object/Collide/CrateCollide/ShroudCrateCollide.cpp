@@ -45,7 +45,7 @@ ShroudCrateCollide::ShroudCrateCollide( Thing *thing, const ModuleData* moduleDa
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-ShroudCrateCollide::~ShroudCrateCollide( void )
+ShroudCrateCollide::~ShroudCrateCollide()
 {
 
 }
@@ -96,7 +96,7 @@ void ShroudCrateCollide::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void ShroudCrateCollide::loadPostProcess( void )
+void ShroudCrateCollide::loadPostProcess()
 {
 
 	// extend base class

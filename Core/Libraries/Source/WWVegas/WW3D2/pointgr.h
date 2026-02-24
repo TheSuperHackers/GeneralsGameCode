@@ -72,8 +72,8 @@ public:
 		TRANSFORM,	// transform points w. modelview matrix (worldspace points)
 	};
 
-	PointGroupClass(void);
-	virtual ~PointGroupClass(void);
+	PointGroupClass();
+	virtual ~PointGroupClass();
 	PointGroupClass & operator = (const PointGroupClass & that);
 
 	// PointGroupClass interface:
@@ -87,35 +87,35 @@ public:
 									float vpxmin = 0.0f, float vpymin = 0.0f,
 									float vpxmax = 0.0f, float vpymax = 0.0f);
 	void						Set_Point_Size(float size);
-	float						Get_Point_Size(void);
+	float						Get_Point_Size();
 	void						Set_Point_Color(Vector3 color);
-	Vector3					Get_Point_Color(void);
+	Vector3					Get_Point_Color();
 	void						Set_Point_Alpha(float alpha);
-	float						Get_Point_Alpha(void);
+	float						Get_Point_Alpha();
 	void						Set_Point_Orientation(unsigned char orientation);
-	unsigned char		Get_Point_Orientation(void);
+	unsigned char		Get_Point_Orientation();
 	void						Set_Point_Frame(unsigned char frame);
-	unsigned char		Get_Point_Frame(void);
+	unsigned char		Get_Point_Frame();
 	void						Set_Point_Mode(PointModeEnum mode);
-	PointModeEnum		Get_Point_Mode(void);
+	PointModeEnum		Get_Point_Mode();
 	void						Set_Flag(FlagsType flag, bool onoff);
 	int							Get_Flag(FlagsType flag);
 	void						Set_Texture(TextureClass* texture);
-	TextureClass * 	Get_Texture(void);
-	TextureClass * 	Peek_Texture(void);
+	TextureClass * 	Get_Texture();
+	TextureClass * 	Peek_Texture();
 	void						Set_Shader(ShaderClass shader);
-	ShaderClass			Get_Shader(void);
+	ShaderClass			Get_Shader();
 	void						Set_Billboard(bool shouldBillboard);
-	bool						Get_Billboard(void);
+	bool						Get_Billboard();
 
 	// The frame property is taken from a set of possible frames. The rows/columns in the frame
 	// texture determine the number of possible frames. Since it must be a power of 2, we represent
 	// it as its log base 2. This number cannot be greater than 4 (which corresponds to a 16x16
 	// square of frames, i.e. 256 frames).
-	unsigned char			Get_Frame_Row_Column_Count_Log2(void);
+	unsigned char			Get_Frame_Row_Column_Count_Log2();
 	void						Set_Frame_Row_Column_Count_Log2(unsigned char frccl2);
 
-	int						Get_Polygon_Count(void);
+	int						Get_Polygon_Count();
 
 	void						Render(RenderInfoClass &rinfo);
 	void						RenderVolumeParticle(RenderInfoClass &rinfo, unsigned int depth);
@@ -203,8 +203,8 @@ protected:
 	// arrays, and the Shutdown function (which is called by WW3D::Shutdown()
 	// releases them.
 public:
-	static void				_Init(void);
-	static void				_Shutdown(void);
+	static void				_Init();
+	static void				_Shutdown();
 
 private:
 	static Vector3 _TriVertexLocationOrientationTable[256][3];
@@ -227,7 +227,7 @@ private:
 class SegmentGroupClass : public PointGroupClass
 {
 public:
-	SegmentGroupClass(void);
-	virtual ~SegmentGroupClass(void);
+	SegmentGroupClass();
+	virtual ~SegmentGroupClass();
 
 };

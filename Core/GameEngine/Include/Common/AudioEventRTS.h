@@ -61,95 +61,95 @@ enum AudioPriority CPP_11(: Int);
 class AudioEventRTS
 {
 public:
-	AudioEventRTS( );
+	AudioEventRTS();
 	AudioEventRTS( const AsciiString& eventName );
 	AudioEventRTS( const AsciiString& eventName, ObjectID ownerID );
 	AudioEventRTS( const AsciiString& eventName, DrawableID drawableID );	// Pass 0 for unused if attaching to drawable
 	AudioEventRTS( const AsciiString& eventName, const Coord3D *positionOfAudio );
 
-	virtual ~AudioEventRTS( );
+	virtual ~AudioEventRTS();
 
 	AudioEventRTS( const AudioEventRTS& right );
 	AudioEventRTS& operator=( const AudioEventRTS& right );
 
 	void setEventName( AsciiString name );
-	const AsciiString& getEventName( void ) const { return m_eventName; }
+	const AsciiString& getEventName() const { return m_eventName; }
 
 	// generateFilename is separate from generatePlayInfo because generatePlayInfo should only be called once
 	// per triggered event. generateFilename will be called once per loop, or once to get each filename if 'all' is
 	// specified.
-	void generateFilename( void );
-	AsciiString getFilename( void );
+	void generateFilename();
+	AsciiString getFilename();
 
 	// The attack and decay sounds are generated in generatePlayInfo, because they will never be played more
 	// than once during a given sound event.
-	void generatePlayInfo( void );
-	Real getPitchShift( void ) const;
-	Real getVolumeShift( void ) const;
-	AsciiString getAttackFilename( void ) const;
-	AsciiString getDecayFilename( void ) const;
-	Real getDelay( void ) const;
+	void generatePlayInfo();
+	Real getPitchShift() const;
+	Real getVolumeShift() const;
+	AsciiString getAttackFilename() const;
+	AsciiString getDecayFilename() const;
+	Real getDelay() const;
 
 	void decrementDelay( Real timeToDecrement );
 
-	PortionToPlay getNextPlayPortion( void ) const;
-	void advanceNextPlayPortion( void );
+	PortionToPlay getNextPlayPortion() const;
+	void advanceNextPlayPortion();
 	void setNextPlayPortion( PortionToPlay ptp );
 
-	void decreaseLoopCount( void );
-	Bool hasMoreLoops( void ) const;
+	void decreaseLoopCount();
+	Bool hasMoreLoops() const;
 
 	void setAudioEventInfo( const AudioEventInfo *eventInfo ) const; // is mutable
-	const AudioEventInfo *getAudioEventInfo( void ) const;
+	const AudioEventInfo *getAudioEventInfo() const;
 
 	void setPlayingHandle( AudioHandle handle );	// for ID of this audio piece.
-	AudioHandle getPlayingHandle( void ); // for ID of this audio piece
+	AudioHandle getPlayingHandle(); // for ID of this audio piece
 
 	void setPosition( const Coord3D *pos );
-	const Coord3D* getPosition( void );
+	const Coord3D* getPosition();
 
 	void setObjectID( ObjectID objID );
-	ObjectID getObjectID( void );
+	ObjectID getObjectID();
 
 	Bool isDead() const { return m_ownerType == OT_Dead; }
 	OwnerType getOwnerType() const { return m_ownerType; }
 
 	void setDrawableID( DrawableID drawID );
-	DrawableID getDrawableID( void );
+	DrawableID getDrawableID();
 
 	void setTimeOfDay( TimeOfDay tod );
-	TimeOfDay getTimeOfDay( void ) const;
+	TimeOfDay getTimeOfDay() const;
 
 	void setHandleToKill( AudioHandle handleToKill );
-	AudioHandle getHandleToKill( void ) const;
+	AudioHandle getHandleToKill() const;
 
 	void setShouldFade( Bool shouldFade );
-	Bool getShouldFade( void ) const;
+	Bool getShouldFade() const;
 
 	void setIsLogicalAudio( Bool isLogicalAudio );
-	Bool getIsLogicalAudio( void ) const;
+	Bool getIsLogicalAudio() const;
 
-	Bool isPositionalAudio( void ) const;
-	Bool isCurrentlyPlaying( void ) const;
+	Bool isPositionalAudio() const;
+	Bool isCurrentlyPlaying() const;
 
-	AudioPriority getAudioPriority( void ) const;
+	AudioPriority getAudioPriority() const;
 	void setAudioPriority( AudioPriority newPriority );
 
-	Real getVolume( void ) const;
+	Real getVolume() const;
 	void setVolume( Real vol );
 
-	Int getPlayerIndex( void ) const;
+	Int getPlayerIndex() const;
 	void setPlayerIndex( Int playerNdx );
 
-	Int getPlayingAudioIndex( void ) const { return m_playingAudioIndex; }
+	Int getPlayingAudioIndex() const { return m_playingAudioIndex; }
 	void setPlayingAudioIndex( Int pai ) const { m_playingAudioIndex = pai; } // is mutable
 
-	Bool getUninterruptible( ) const { return m_uninterruptible; }
+	Bool getUninterruptible() const { return m_uninterruptible; }
 	void setUninterruptible( Bool uninterruptible ) { m_uninterruptible = uninterruptible; }
 
 
 	// This will retrieve the appropriate position based on type.
-	const Coord3D *getCurrentPosition( void );
+	const Coord3D *getCurrentPosition();
 
 	// This will return the directory leading up to the appropriate type, including the trailing '\\'
 	// If localized is true, we'll append a language specific directory to the end of the path.

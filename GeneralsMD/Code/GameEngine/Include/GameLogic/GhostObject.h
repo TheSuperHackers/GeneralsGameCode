@@ -47,18 +47,18 @@ public:
 	virtual void snapShot(int playerIndex)=0;
 	virtual void updateParentObject(Object *object, PartitionData *mod)=0;
 	virtual void freeSnapShot(int playerIndex)=0;
-	PartitionData *friend_getPartitionData(void) const {return m_partitionData;}
-	GeometryType getGeometryType(void) const {return m_parentGeometryType;}
-	Bool getGeometrySmall(void) const {return m_parentGeometryIsSmall;}
-	Real getGeometryMajorRadius(void) const {return m_parentGeometryMajorRadius;}
-	Real getGeometryMinorRadius(void) const {return m_parentGeometryminorRadius;}
-	Real getParentAngle(void) const {return m_parentAngle;}
-	const Coord3D *getParentPosition(void) const {return &m_parentPosition;}
+	PartitionData *friend_getPartitionData() const {return m_partitionData;}
+	GeometryType getGeometryType() const {return m_parentGeometryType;}
+	Bool getGeometrySmall() const {return m_parentGeometryIsSmall;}
+	Real getGeometryMajorRadius() const {return m_parentGeometryMajorRadius;}
+	Real getGeometryMinorRadius() const {return m_parentGeometryminorRadius;}
+	Real getParentAngle() const {return m_parentAngle;}
+	const Coord3D *getParentPosition() const {return &m_parentPosition;}
 
 protected:
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
+	virtual void loadPostProcess();
 
 	Object *m_parentObject;		///< object which we are ghosting
 	GeometryType m_parentGeometryType;
@@ -76,14 +76,14 @@ public:
 	GhostObjectManager();
 	virtual ~GhostObjectManager();
 
-	virtual void reset(void);
+	virtual void reset();
 	virtual GhostObject *addGhostObject(Object *object, PartitionData *pd);
 	virtual void removeGhostObject(GhostObject *mod);
 	virtual void setLocalPlayerIndex(int playerIndex) { m_localPlayer = playerIndex; }
-	int getLocalPlayerIndex(void)	{ return m_localPlayer; }
+	int getLocalPlayerIndex()	{ return m_localPlayer; }
 	virtual void updateOrphanedObjects(int *playerIndexList, int playerIndexCount);
-	virtual void releasePartitionData(void);	///<saves data needed to later rebuild partition manager data.
-	virtual void restorePartitionData(void);	///<restores ghost objects into the partition manager.
+	virtual void releasePartitionData();	///<saves data needed to later rebuild partition manager data.
+	virtual void restorePartitionData();	///<restores ghost objects into the partition manager.
 	void lockGhostObjects(Bool enableLock) {m_lockGhostObjects=enableLock;}	///<temporary lock on creating new ghost objects. Only used by map border resizing!
 	void saveLockGhostObjects(Bool enableLock) {m_saveLockGhostObjects=enableLock;}
 	inline Bool trackAllPlayers() const; ///< returns whether the ghost object status is tracked for all players or for the local player only
@@ -91,7 +91,7 @@ public:
 protected:
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
+	virtual void loadPostProcess();
 
 	Int m_localPlayer;
 	Bool m_lockGhostObjects;

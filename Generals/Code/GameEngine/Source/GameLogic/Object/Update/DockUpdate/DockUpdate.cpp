@@ -40,7 +40,7 @@
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-DockUpdateModuleData::DockUpdateModuleData( void )
+DockUpdateModuleData::DockUpdateModuleData()
 {
 	m_numberApproachPositionsData = 0;
 	m_isAllowPassthrough = TRUE;
@@ -373,7 +373,7 @@ void DockUpdate::onExitReached( Object* docker )
 		// to continue moving to the exit position cause they are leaving after all
 		//
 		if( isDockOpen() )
-			DEBUG_ASSERTCRASH( FALSE, ("Fiddle.  Someone said goodbye to a dock when the dock didn't think it was talking to that someone."));
+			DEBUG_CRASH( ("Fiddle.  Someone said goodbye to a dock when the dock didn't think it was talking to that someone."));
 
 	}
 }
@@ -621,7 +621,7 @@ void DockUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void DockUpdate::loadPostProcess( void )
+void DockUpdate::loadPostProcess()
 {
 
 	// call base class

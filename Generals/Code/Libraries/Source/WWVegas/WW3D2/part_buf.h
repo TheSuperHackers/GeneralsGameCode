@@ -92,16 +92,16 @@ class ParticleBufferClass : public RenderObjClass
 
 		ParticleBufferClass(const ParticleBufferClass & src);
 		ParticleBufferClass & operator = (const ParticleBufferClass &);
-		virtual ~ParticleBufferClass(void);
+		virtual ~ParticleBufferClass();
 
 		/*
 		** RenderObjClass Interface:
 		*/
-		virtual RenderObjClass * Clone(void) const;
-		virtual int Class_ID(void) const { return CLASSID_PARTICLEBUFFER; }
+		virtual RenderObjClass * Clone() const;
+		virtual int Class_ID() const { return CLASSID_PARTICLEBUFFER; }
 
-		virtual int Get_Num_Polys(void) const;
-		int			Get_Particle_Count(void) const;
+		virtual int Get_Num_Polys() const;
+		int			Get_Particle_Count() const;
 
 		// Update particle state and draw the particles.
 		virtual void Render(RenderInfoClass & rinfo);
@@ -116,7 +116,7 @@ class ParticleBufferClass : public RenderObjClass
 		// the cached bounding volumes will not be invalidated unless we do
 		// it elsewhere (such as here). We also need to call the particle
 		// emitter's Emit() function (done here to avoid order dependence).
-		virtual void On_Frame_Update(void);
+		virtual void On_Frame_Update();
 
 		virtual void Notify_Added(SceneClass * scene);
 		virtual void Notify_Removed(SceneClass * scene);
@@ -129,14 +129,14 @@ class ParticleBufferClass : public RenderObjClass
 		/////////////////////////////////////////////////////////////////////////////
 
 		virtual void	Prepare_LOD(CameraClass &camera);
-		virtual void	Increment_LOD(void);
-		virtual void	Decrement_LOD(void);
-		virtual float	Get_Cost(void) const;
-		virtual float	Get_Value(void) const;
-		virtual float	Get_Post_Increment_Value(void) const;
+		virtual void	Increment_LOD();
+		virtual void	Decrement_LOD();
+		virtual float	Get_Cost() const;
+		virtual float	Get_Value() const;
+		virtual float	Get_Post_Increment_Value() const;
 		virtual void	Set_LOD_Level(int lod);
-		virtual int		Get_LOD_Level(void) const;
-		virtual int		Get_LOD_Count(void) const;
+		virtual int		Get_LOD_Level() const;
+		virtual int		Get_LOD_Count() const;
 		virtual void	Set_LOD_Bias(float bias)	{ LodBias = MAX(bias, 0.0f); }
 		virtual int		Calculate_Cost_Value_Arrays(float screen_area, float *values, float *costs) const;
 
@@ -153,7 +153,7 @@ class ParticleBufferClass : public RenderObjClass
 		// This informs the buffer that the emitter is dead, so it can release
 		// its pointer to it and be removed itself after all its particles dies
 		// out.
-		void Emitter_Is_Dead(void);
+		void Emitter_Is_Dead();
 
 		// This set's the buffer's current emitter - this should usually be
 		// called only by the emitter's copy constructor after it clones a
@@ -161,13 +161,13 @@ class ParticleBufferClass : public RenderObjClass
 		void Set_Emitter(ParticleEmitterClass *emitter);
 
 		// from RenderObj...
-      virtual bool	Is_Complete(void)		{ return IsEmitterDead && !NonNewNum && !NewNum; }
+      virtual bool	Is_Complete()		{ return IsEmitterDead && !NonNewNum && !NewNum; }
 
 		// This adds an uninitialized NewParticleStuct to the new particle
 		// buffer and returns its address so the particle emitter can
 		// initialize it. This is how the emitter sends new particles to the
 		// buffer - it is done this way to avoid needless copying.
-		NewParticleStruct * Add_Uninitialized_New_Particle(void);
+		NewParticleStruct * Add_Uninitialized_New_Particle();
 
 		//	Change the acceleration of the particles on the fly
 		void Set_Acceleration (const Vector3 &acceleration)	{ Accel = acceleration;  HasAccel = ((Accel.X != 0) || (Accel.Y != 0) || (Accel.Z != 0)); }
@@ -176,38 +176,38 @@ class ParticleBufferClass : public RenderObjClass
 		// Inline accessors.
 		//	These methods are provided as a means to get the emitter's settings.
 		//
-		int						Get_Render_Mode (void) const		{ return RenderMode; }
-		int						Get_Frame_Mode (void) const		{ return FrameMode; }
-		float						Get_Particle_Size (void) const	{ return SizeKeyFrameValues[0]; }
-		Vector3					Get_Acceleration (void) const		{ return Accel * 1000000.0F; }
-		float						Get_Lifetime (void) const			{ return (float(MaxAge)) / 1000.0F; }
-		Vector3					Get_Start_Color (void) const		{ return ColorKeyFrameValues[0]; }
-		float						Get_Start_Opacity (void) const	{ return AlphaKeyFrameValues[0]; }
-		Vector3					Get_End_Color (void) const			{ return (NumColorKeyFrames > 1) ? ColorKeyFrameValues[NumColorKeyFrames - 1] : ColorKeyFrameValues[0]; }
-		float						Get_End_Opacity (void) const		{ return (NumAlphaKeyFrames > 1) ? AlphaKeyFrameValues[NumAlphaKeyFrames - 1] : AlphaKeyFrameValues[0]; }
-		TextureClass *			Get_Texture (void) const			{ return PointGroup->Get_Texture (); }
+		int						Get_Render_Mode () const		{ return RenderMode; }
+		int						Get_Frame_Mode () const		{ return FrameMode; }
+		float						Get_Particle_Size () const	{ return SizeKeyFrameValues[0]; }
+		Vector3					Get_Acceleration () const		{ return Accel * 1000000.0F; }
+		float						Get_Lifetime () const			{ return (float(MaxAge)) / 1000.0F; }
+		Vector3					Get_Start_Color () const		{ return ColorKeyFrameValues[0]; }
+		float						Get_Start_Opacity () const	{ return AlphaKeyFrameValues[0]; }
+		Vector3					Get_End_Color () const			{ return (NumColorKeyFrames > 1) ? ColorKeyFrameValues[NumColorKeyFrames - 1] : ColorKeyFrameValues[0]; }
+		float						Get_End_Opacity () const		{ return (NumAlphaKeyFrames > 1) ? AlphaKeyFrameValues[NumAlphaKeyFrames - 1] : AlphaKeyFrameValues[0]; }
+		TextureClass *			Get_Texture () const			{ return PointGroup->Get_Texture (); }
 		void						Set_Texture (TextureClass *tex)  { PointGroup->Set_Texture(tex); }
-		float						Get_Fade_Time (void) const			{ return (NumColorKeyFrames > 1) ? (((float)ColorKeyFrameTimes[1]) / 1000.0f) : 0.0f; }
-		ShaderClass				Get_Shader (void) const				{ return PointGroup->Get_Shader (); }
+		float						Get_Fade_Time () const			{ return (NumColorKeyFrames > 1) ? (((float)ColorKeyFrameTimes[1]) / 1000.0f) : 0.0f; }
+		ShaderClass				Get_Shader () const				{ return PointGroup->Get_Shader (); }
 
 		//
 		// Line rendering properties.  These functions will always return
 		// a default value if line rendering is not enabled.
 		//
-		int						Get_Line_Texture_Mapping_Mode(void) const;
-		int						Is_Merge_Intersections(void) const;
-		int						Is_Freeze_Random(void) const;
-		int						Is_Sorting_Disabled(void) const;
-		int						Are_End_Caps_Enabled(void)	const;
-		int						Get_Subdivision_Level(void) const;
-		float						Get_Noise_Amplitude(void) const;
-		float						Get_Merge_Abort_Factor(void) const;
-		float						Get_Texture_Tile_Factor(void) const;
-		Vector2					Get_UV_Offset_Rate(void) const;
+		int						Get_Line_Texture_Mapping_Mode() const;
+		int						Is_Merge_Intersections() const;
+		int						Is_Freeze_Random() const;
+		int						Is_Sorting_Disabled() const;
+		int						Are_End_Caps_Enabled()	const;
+		int						Get_Subdivision_Level() const;
+		float						Get_Noise_Amplitude() const;
+		float						Get_Merge_Abort_Factor() const;
+		float						Get_Texture_Tile_Factor() const;
+		Vector2					Get_UV_Offset_Rate() const;
 
 
 		// This is a utility function only meant to be called by the particle emitter.
-		unsigned int			Get_Buffer_Size(void) const		{ return MaxNum; }
+		unsigned int			Get_Buffer_Size() const		{ return MaxNum; }
 
 		// Note: Caller IS RESPONSIBLE for freeing any memory allocated by these calls
 		void						Get_Color_Key_Frames (ParticlePropertyStruct<Vector3>	&colors) const;
@@ -216,10 +216,10 @@ class ParticleBufferClass : public RenderObjClass
 		void						Get_Rotation_Key_Frames (ParticlePropertyStruct<float> &rotations) const;
 		void						Get_Frame_Key_Frames (ParticlePropertyStruct<float> &frames) const;
 		void						Get_Blur_Time_Key_Frames (ParticlePropertyStruct<float> &blurtimes) const;
-		float						Get_Initial_Orientation_Random (void) const { return InitialOrientationRandom; }
+		float						Get_Initial_Orientation_Random () const { return InitialOrientationRandom; }
 
 		// Total Active Particle Buffer Count
-		static unsigned int	Get_Total_Active_Count( void )	{ return TotalActiveCount; }
+		static unsigned int	Get_Total_Active_Count()	{ return TotalActiveCount; }
 
 		// Global control of particle LOD.
 		static void				Set_LOD_Max_Screen_Size(int lod_level,float max_screen_size);
@@ -227,7 +227,7 @@ class ParticleBufferClass : public RenderObjClass
 
 	protected:
 
-		virtual void			Update_Cached_Bounding_Volumes(void) const;
+		virtual void			Update_Cached_Bounding_Volumes() const;
 
 		// render the particle system as a collection of particles
 		void						Render_Particles(RenderInfoClass & rinfo);
@@ -239,23 +239,23 @@ class ParticleBufferClass : public RenderObjClass
 		// particles from the new particle queue, updating velocity/position
 		// for any existing particles, killing old ones, and updating
 		// LastUpdateTime.
-		void Update_Kinematic_Particle_State(void);
+		void Update_Kinematic_Particle_State();
 
 		// Update the visual particle state. This includes updating color/size
 		// for all existing particles. Only needs to happen at rendering time.
-		void Update_Visual_Particle_State(void);
+		void Update_Visual_Particle_State();
 
 		// Update the bounding box. (Updates the particle state if it needs to).
-		void Update_Bounding_Box(void);
+		void Update_Bounding_Box();
 
 		// Get new particles from the emitter and write them into the circular
 		// particle buffer, possibly overwriting older particles. Perform
 		// partial-interval update on them as well.
-		void Get_New_Particles(void);
+		void Get_New_Particles();
 
 		// Kill all remaining particles which will be above their maxage at the
 		// end of this time interval.
-		void Kill_Old_Particles(void);
+		void Kill_Old_Particles();
 
 		// Update all living non-new particles according to time elapsed since
 		// last update.

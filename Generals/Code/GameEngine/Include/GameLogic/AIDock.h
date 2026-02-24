@@ -62,7 +62,7 @@ public:
 	AIDockMachine( Object *owner );
 
 	static Bool ableToAdvance( State *thisState, void* userData ); // Condition for scooting forward in line while waiting
-	virtual void halt(void); ///< Stops the state machine & disables it in preparation for deleting it.
+	virtual void halt(); ///< Stops the state machine & disables it in preparation for deleting it.
 
 	Int m_approachPosition;	///< The Approach Position I am holding, to make scoot forward checks quicker.
 
@@ -82,9 +82,9 @@ class AIDockApproachState : public AIInternalMoveToState
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIDockApproachState, "AIDockApproachState")
 public:
 	AIDockApproachState( StateMachine *machine ) : AIInternalMoveToState( machine, "AIDockApproachState" ) { }
-	virtual StateReturnType onEnter( void );
+	virtual StateReturnType onEnter();
 	virtual void onExit( StateExitType status );
-	virtual StateReturnType update( void );
+	virtual StateReturnType update();
 protected:
 	// snapshot interface STUBBED.
 	virtual void crc( Xfer *xfer ){};
@@ -99,8 +99,8 @@ class AIDockWaitForClearanceState : public State
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIDockWaitForClearanceState, "AIDockWaitForClearanceState")
 public:
 	AIDockWaitForClearanceState( StateMachine *machine ) : State( machine, "AIDockWaitForClearanceState" ), m_enterFrame(0) { }
-	virtual StateReturnType onEnter( void );
-	virtual StateReturnType update( void );
+	virtual StateReturnType onEnter();
+	virtual StateReturnType update();
 	virtual void onExit( StateExitType status );
 protected:
 	UnsignedInt m_enterFrame;
@@ -118,9 +118,9 @@ class AIDockAdvancePositionState : public AIInternalMoveToState
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIDockAdvancePositionState, "AIDockAdvancePositionState")
 public:
 	AIDockAdvancePositionState( StateMachine *machine ) : AIInternalMoveToState( machine, "AIDockApproachState" ) { }
-	virtual StateReturnType onEnter( void );
+	virtual StateReturnType onEnter();
 	virtual void onExit( StateExitType status );
-	virtual StateReturnType update( void );
+	virtual StateReturnType update();
 };
 EMPTY_DTOR(AIDockAdvancePositionState)
 
@@ -130,9 +130,9 @@ class AIDockMoveToEntryState : public AIInternalMoveToState
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIDockMoveToEntryState, "AIDockMoveToEntryState")
 public:
 	AIDockMoveToEntryState( StateMachine *machine ) : AIInternalMoveToState( machine, "AIDockMoveToEntryState" ) { }
-	virtual StateReturnType onEnter( void );
+	virtual StateReturnType onEnter();
 	virtual void onExit( StateExitType status );
-	virtual StateReturnType update( void );
+	virtual StateReturnType update();
 };
 EMPTY_DTOR(AIDockMoveToEntryState)
 
@@ -142,9 +142,9 @@ class AIDockMoveToDockState : public AIInternalMoveToState
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIDockMoveToDockState, "AIDockMoveToDockState")
 public:
 	AIDockMoveToDockState( StateMachine *machine ) : AIInternalMoveToState( machine, "AIDockMoveToDockState" ) { }
-	virtual StateReturnType onEnter( void );
+	virtual StateReturnType onEnter();
 	virtual void onExit( StateExitType status );
-	virtual StateReturnType update( void );
+	virtual StateReturnType update();
 };
 EMPTY_DTOR(AIDockMoveToDockState)
 
@@ -154,9 +154,9 @@ class AIDockMoveToRallyState : public AIInternalMoveToState
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIDockMoveToRallyState, "AIDockMoveToRallyState")
 public:
 	AIDockMoveToRallyState( StateMachine *machine ) : AIInternalMoveToState( machine, "AIDockMoveToRallyState" ) { }
-	virtual StateReturnType onEnter( void );
+	virtual StateReturnType onEnter();
 	virtual void onExit( StateExitType status );
-	virtual StateReturnType update( void );
+	virtual StateReturnType update();
 };
 EMPTY_DTOR(AIDockMoveToRallyState)
 
@@ -166,9 +166,9 @@ class AIDockProcessDockState : public State
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIDockProcessDockState, "AIDockProcessDockState")
 public:
 	AIDockProcessDockState( StateMachine *machine );
-	virtual StateReturnType onEnter( void );
+	virtual StateReturnType onEnter();
 	virtual void onExit( StateExitType status );
-	virtual StateReturnType update( void );
+	virtual StateReturnType update();
 
 	void setNextDockActionFrame();//This puts a delay between callings of Action to tweak the speed of docking.
 	UnsignedInt m_nextDockActionFrame;// In the unlikely event of saving a game in the middle of docking, you may
@@ -193,9 +193,9 @@ class AIDockMoveToExitState : public AIInternalMoveToState
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIDockMoveToExitState, "AIDockMoveToExitState")
 public:
 	AIDockMoveToExitState( StateMachine *machine ) : AIInternalMoveToState( machine, "AIDockMoveToExitState" ) { }
-	virtual StateReturnType onEnter( void );
+	virtual StateReturnType onEnter();
 	virtual void onExit( StateExitType status );
-	virtual StateReturnType update( void );
+	virtual StateReturnType update();
 };
 EMPTY_DTOR(AIDockMoveToExitState)
 

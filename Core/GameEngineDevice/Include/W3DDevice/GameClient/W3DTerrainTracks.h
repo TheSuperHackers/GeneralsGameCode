@@ -52,23 +52,23 @@ class TerrainTracksRenderObjClass : public W3DMPO, public RenderObjClass
 
 public:
 
-	TerrainTracksRenderObjClass(void);
-	~TerrainTracksRenderObjClass(void);
+	TerrainTracksRenderObjClass();
+	~TerrainTracksRenderObjClass();
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface (W3D methods)
 	/////////////////////////////////////////////////////////////////////////////
-	virtual RenderObjClass *	Clone(void) const;
-	virtual int						Class_ID(void) const;
+	virtual RenderObjClass *	Clone() const;
+	virtual int						Class_ID() const;
 	virtual void					Render(RenderInfoClass & rinfo);
 	virtual void					Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const;
     virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & aabox) const;
 
-	Int freeTerrainTracksResources(void);	///<free W3D assets used for this track
+	Int freeTerrainTracksResources();	///<free W3D assets used for this track
 	void init( Real width, Real length, const Char *texturename);	///<allocate W3D resources and set size
 	void addEdgeToTrack(Real x, Real y);	///< add a new segment to the track
 	void addCapEdgeToTrack(Real x, Real y);	///< cap the existing segment so we can resume at an unconnected position.
-	void setAirborne(void) {m_airborne = true; }	///< Starts a new section of track, generally after going airborne.
+	void setAirborne() {m_airborne = true; }	///< Starts a new section of track, generally after going airborne.
 	void setOwnerDrawable(const Drawable *owner) {m_ownerDrawable = owner;}
 
 protected:
@@ -113,20 +113,20 @@ class TerrainTracksRenderObjClassSystem
 
 public:
 
-	TerrainTracksRenderObjClassSystem( void );
-	~TerrainTracksRenderObjClassSystem( void );
+	TerrainTracksRenderObjClassSystem();
+	~TerrainTracksRenderObjClassSystem();
 
-	void ReleaseResources(void);	///< Release all dx8 resources so the device can be reset.
-	void ReAcquireResources(void);  ///< Reacquire all resources after device reset.
+	void ReleaseResources();	///< Release all dx8 resources so the device can be reset.
+	void ReAcquireResources();  ///< Reacquire all resources after device reset.
 
-	void setDetail(void);
+	void setDetail();
 
-	void flush (void);	///<draw all tracks that were requested for rendering.
-	void update(void);	///<update the state of all edges (fade alpha, remove old, etc.)
+	void flush ();	///<draw all tracks that were requested for rendering.
+	void update();	///<update the state of all edges (fade alpha, remove old, etc.)
 
 	void init( SceneClass *TerrainTracksScene);	///< pre-allocate track objects
-	void shutdown( void );		///< release all pre-allocated track objects, called by destructor
-	void Reset(void);	///<empties the system, ready for a new scene.
+	void shutdown();		///< release all pre-allocated track objects, called by destructor
+	void Reset();	///<empties the system, ready for a new scene.
 
 	TerrainTracksRenderObjClass *bindTrack(RenderObjClass *renderObject, Real length, const Char *texturename);	///<track object to be controlled by owner
 	void unbindTrack( TerrainTracksRenderObjClass *mod );	///<releases control of track object
@@ -144,7 +144,7 @@ protected:
 	Int	m_edgesToFlush;			///< number of edges to flush on next render.
 
 	void releaseTrack( TerrainTracksRenderObjClass *mod );	///<returns track object to free store.
-	void clearTracks(void);	///<reset the amount of visible track marks of each object.
+	void clearTracks();	///<reset the amount of visible track marks of each object.
 
 	Int m_maxTankTrackEdges;	///<maximum length of tank track
 	Int m_maxTankTrackOpaqueEdges;	///<maximum length of tank track before it starts fading.

@@ -42,9 +42,9 @@ typedef UnsignedByte W3DShroudLevel;
 class W3DShroudMaterialPassClass : public MaterialPassClass
 {
 public:
-	W3DShroudMaterialPassClass(void) : m_isTransparentObjectPass(FALSE) {}
-	virtual void	Install_Materials(void) const;
-	virtual void	UnInstall_Materials(void) const;
+	W3DShroudMaterialPassClass() : m_isTransparentObjectPass(FALSE) {}
+	virtual void	Install_Materials() const;
+	virtual void	UnInstall_Materials() const;
 	void enableTransparentObjectPass(Bool enable) {m_isTransparentObjectPass = enable;}
 protected:
 	//customized version to deal with transparent (alpha-tested) polys.
@@ -59,9 +59,9 @@ protected:
 class W3DMaskMaterialPassClass : public MaterialPassClass
 {
 public:
-	W3DMaskMaterialPassClass(void) : m_texture(nullptr), m_allowUninstall(TRUE) {}
-	virtual void	Install_Materials(void) const;
-	virtual void	UnInstall_Materials(void) const;
+	W3DMaskMaterialPassClass() : m_texture(nullptr), m_allowUninstall(TRUE) {}
+	virtual void	Install_Materials() const;
+	virtual void	UnInstall_Materials() const;
 	void	setTexture(TextureClass *texture)	{m_texture=texture;}
 	void	setAllowUninstall(Bool state)	{ m_allowUninstall = state;}
 
@@ -75,28 +75,28 @@ class W3DShroud
 {
 
 public:
-	W3DShroud(void);
-	~W3DShroud(void);
+	W3DShroud();
+	~W3DShroud();
 
 	void render(CameraClass *cam);	///< render the current shroud state as seen from camera
 	void init(WorldHeightMap *pMap, Real worldCellSizeX, Real worldCellSizeY);
-	void reset(void);
-	TextureClass *getShroudTexture(void) { return m_pDstTexture;}	//<return shroud projection texture.
-	void ReleaseResources(void);	///<release resources that can't survive D3D device reset.
-	Bool ReAcquireResources(void);	///<allocate resources that can't survive D3D device reset.
+	void reset();
+	TextureClass *getShroudTexture() { return m_pDstTexture;}	//<return shroud projection texture.
+	void ReleaseResources();	///<release resources that can't survive D3D device reset.
+	Bool ReAcquireResources();	///<allocate resources that can't survive D3D device reset.
 	void fillShroudData(W3DShroudLevel level);	///<sets the state of the current shroud to some constant value
-	Int	getNumShroudCellsY(void)	{return m_numCellsY;}
-	Int getNumShroudCellsX(void)	{return m_numCellsX;}
-	Real getCellWidth(void)			{return m_cellWidth;}	///<world-space width (x) of each shroud cell.
-	Real getCellHeight(void)		{return m_cellHeight;}	///<world-space height (y)of each shroud cell.
-	Int	 getTextureWidth(void)		{return m_dstTextureWidth;}	///<internal use by the shader system.
-	Int	 getTextureHeight(void)		{return m_dstTextureHeight;}
+	Int	getNumShroudCellsY()	{return m_numCellsY;}
+	Int getNumShroudCellsX()	{return m_numCellsX;}
+	Real getCellWidth()			{return m_cellWidth;}	///<world-space width (x) of each shroud cell.
+	Real getCellHeight()		{return m_cellHeight;}	///<world-space height (y)of each shroud cell.
+	Int	 getTextureWidth()		{return m_dstTextureWidth;}	///<internal use by the shader system.
+	Int	 getTextureHeight()		{return m_dstTextureHeight;}
 	W3DShroudLevel getShroudLevel(Int x, Int y);
 	void setShroudLevel(Int x, Int y, W3DShroudLevel,Bool textureOnly=FALSE);
 	void setShroudFilter(Bool enable);	///<turns on bilinear filtering of shroud cells.
 	void setBorderShroudLevel(W3DShroudLevel level);	///<color that will appear in unused border terrain.
-	Real	getDrawOriginX(void)	{return m_drawOriginX;}	///<returns ws origin of first pixel in shroud texture.
-	Real	getDrawOriginY(void)	{return m_drawOriginY;}	///<returns ws origin of first pixel in shroud texture.
+	Real	getDrawOriginX()	{return m_drawOriginX;}	///<returns ws origin of first pixel in shroud texture.
+	Real	getDrawOriginY()	{return m_drawOriginY;}	///<returns ws origin of first pixel in shroud texture.
 
 protected:
 	Int m_numCellsX;						///<number of cells covering entire map

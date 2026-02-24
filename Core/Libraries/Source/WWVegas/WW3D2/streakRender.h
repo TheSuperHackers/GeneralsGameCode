@@ -64,10 +64,10 @@ class StreakRendererClass
 {
 public:
 
-	StreakRendererClass(void);
+	StreakRendererClass();
 	StreakRendererClass(const StreakRendererClass & that);
 	StreakRendererClass & operator = (const StreakRendererClass & that);
-	~StreakRendererClass(void);
+	~StreakRendererClass();
 
 	enum TextureMapMode {
 		UNIFORM_WIDTH_TEXTURE_MAP =	0x00000000,	// Entire line uses one row of texture (constant V)
@@ -78,22 +78,22 @@ public:
 	void					Init(const W3dEmitterLinePropertiesStruct & props);
 
 	// Get properties used to render this line segment
-	TextureClass *		Get_Texture(void) const;
-	TextureClass *		Peek_Texture(void) const								{ return Texture; }
-	ShaderClass			Get_Shader(void) const									{ return Shader; }
-	float					Get_Width(void) const									{ return Width; }
-	const Vector3 &	Get_Color(void) const 									{ return Color; }
-	float					Get_Opacity(void) const									{ return Opacity; }
-	float					Get_Noise_Amplitude(void) const						{ return NoiseAmplitude; }
-	float					Get_Merge_Abort_Factor(void) const					{ return MergeAbortFactor; }
-	unsigned int		Get_Current_Subdivision_Level(void)	const			{ return SubdivisionLevel; }
-	TextureMapMode		Get_Texture_Mapping_Mode(void) const;
-	// float					Get_Texture_Tile_Factor(void) const					{ return TextureTileFactor; }
-	// Vector2				Get_UV_Offset_Rate(void) const;
-	int					Is_Merge_Intersections(void) const					{ return Bits & MERGE_INTERSECTIONS; }
-	int					Is_Freeze_Random(void) const							{ return Bits & FREEZE_RANDOM; }
-	int					Is_Sorting_Disabled(void) const						{ return Bits & DISABLE_SORTING; }
-	int					Are_End_Caps_Enabled(void)	const						{ return Bits & END_CAPS; }
+	TextureClass *		Get_Texture() const;
+	TextureClass *		Peek_Texture() const								{ return Texture; }
+	ShaderClass			Get_Shader() const									{ return Shader; }
+	float					Get_Width() const									{ return Width; }
+	const Vector3 &	Get_Color() const 									{ return Color; }
+	float					Get_Opacity() const									{ return Opacity; }
+	float					Get_Noise_Amplitude() const						{ return NoiseAmplitude; }
+	float					Get_Merge_Abort_Factor() const					{ return MergeAbortFactor; }
+	unsigned int		Get_Current_Subdivision_Level()	const			{ return SubdivisionLevel; }
+	TextureMapMode		Get_Texture_Mapping_Mode() const;
+	// float					Get_Texture_Tile_Factor() const					{ return TextureTileFactor; }
+	// Vector2				Get_UV_Offset_Rate() const;
+	int					Is_Merge_Intersections() const					{ return Bits & MERGE_INTERSECTIONS; }
+	int					Is_Freeze_Random() const							{ return Bits & FREEZE_RANDOM; }
+	int					Is_Sorting_Disabled() const						{ return Bits & DISABLE_SORTING; }
+	int					Are_End_Caps_Enabled()	const						{ return Bits & END_CAPS; }
 
 	// Set properties used to render this line segment
 	void					Set_Texture(TextureClass *texture);
@@ -118,7 +118,7 @@ public:
 	void					Set_Disable_Sorting(int onoff)						{ if (onoff) { Bits |= DISABLE_SORTING; } else { Bits &= ~DISABLE_SORTING; }; }
 	void					Set_End_Caps(int onoff)									{ if (onoff) { Bits |= END_CAPS; } else { Bits &= ~END_CAPS; }; }
 
-	void					Reset_Line(void);
+	void					Reset_Line();
 
 
 	void	Render(	RenderInfoClass & rinfo,
@@ -196,7 +196,7 @@ private:
 
 
 
-inline StreakRendererClass::TextureMapMode StreakRendererClass::Get_Texture_Mapping_Mode(void) const
+inline StreakRendererClass::TextureMapMode StreakRendererClass::Get_Texture_Mapping_Mode() const
 {
 	return (TextureMapMode)((Bits & TEXTURE_MAP_MODE_MASK) >> TEXTURE_MAP_MODE_OFFSET);
 }
@@ -207,7 +207,7 @@ inline void StreakRendererClass::Set_Texture_Mapping_Mode(StreakRendererClass::T
 	Bits |= ((mode << TEXTURE_MAP_MODE_OFFSET) & TEXTURE_MAP_MODE_MASK);
 }
 
-// inline Vector2 StreakRendererClass::Get_UV_Offset_Rate(void) const
+// inline Vector2 StreakRendererClass::Get_UV_Offset_Rate() const
 // {
 // 	return UVOffsetDeltaPerMS * 1000.0f;
 // }
@@ -217,7 +217,7 @@ inline void StreakRendererClass::Set_Texture_Mapping_Mode(StreakRendererClass::T
 // 	UVOffsetDeltaPerMS = rate * 0.001f;
 // }
 
-inline void StreakRendererClass::Reset_Line(void)
+inline void StreakRendererClass::Reset_Line()
 {
 	// Empty
 }

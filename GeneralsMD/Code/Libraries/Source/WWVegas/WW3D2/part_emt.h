@@ -121,17 +121,17 @@ class ParticleEmitterClass : public RenderObjClass
 
 		ParticleEmitterClass(const ParticleEmitterClass & src);
 		ParticleEmitterClass & operator = (const ParticleEmitterClass &);
-		virtual ~ParticleEmitterClass(void);
+		virtual ~ParticleEmitterClass();
 
 		// Creation/serialization methods
-		virtual RenderObjClass *		Clone(void) const;
+		virtual RenderObjClass *		Clone() const;
 		static ParticleEmitterClass * Create_From_Definition (const ParticleEmitterDefClass &definition);
-		ParticleEmitterDefClass *		Build_Definition (void) const;
+		ParticleEmitterDefClass *		Build_Definition () const;
 		WW3DErrorType						Save (ChunkSaveClass &chunk_save) const;
 
 		// Identification methods
-		virtual int				Class_ID (void) const { return CLASSID_PARTICLEEMITTER; }
-		virtual const char *	Get_Name (void) const { return NameString; }
+		virtual int				Class_ID () const { return CLASSID_PARTICLEEMITTER; }
+		virtual const char *	Get_Name () const { return NameString; }
 		virtual void			Set_Name (const char *pname);
 
 		virtual void			Notify_Added(SceneClass * scene);
@@ -139,7 +139,7 @@ class ParticleEmitterClass : public RenderObjClass
 
 		// Update particle state and draw the particles.
 		virtual void			Render(RenderInfoClass & rinfo) { }
-		virtual void			Restart(void);
+		virtual void			Restart();
 
 		// Scales the size of all particles and effects positions/velocities of
 		// particles emitted after the Scale() call (but not before)
@@ -147,7 +147,7 @@ class ParticleEmitterClass : public RenderObjClass
 
 		// Put particle buffer in scene if this is the first time (clunky code
 		// - hopefully can be rewritten more cleanly in future)...
-		virtual void			On_Frame_Update(void);
+		virtual void			On_Frame_Update();
 
       virtual void			Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const { sphere.Center.Set(0,0,0); sphere.Radius = 0; }
       virtual void			Get_Obj_Space_Bounding_Box(AABoxClass & box) const { box.Center.Set(0,0,0); box.Extent.Set(0,0,0); }
@@ -162,16 +162,16 @@ class ParticleEmitterClass : public RenderObjClass
 		// These are not part of the renderobject interface:
 		// You can use Reset() to re-cycle a particle emitter.  Make sure its transform is
 		// set up before you call Reset().
-		void						Reset(void);
-		void						Start(void);
-		void						Stop(void);
-		bool						Is_Stopped(void);
+		void						Reset();
+		void						Start();
+		void						Stop();
+		bool						Is_Stopped();
 
 		// Yet another way to make an emitter stop rendering (besides setting Hidden or Animation_Hidden).
 		// We added this because we needed a way independent from the other two. This would be appropriate
 		// to set, for example, when setting RINFO_OVERRIDE_ADDITIONAL_PASSES_ONLY on the container.
 		void						Set_Invisible(bool onoff)	{ IsInvisible = onoff; }
-		bool						Is_Invisible(void)			{ return IsInvisible; }
+		bool						Is_Invisible()			{ return IsInvisible; }
 
 		// Change starting position/velocity/acceleration parameters:
 		void Set_Position_Randomizer(Vector3Randomizer *rand);
@@ -200,56 +200,56 @@ class ParticleEmitterClass : public RenderObjClass
 
 		// Emit particles (put in particle buffer). This is called by the
 		// particle buffer On_Frame_Update() function to avoid order dependence.
-		virtual void Emit(void);
+		virtual void Emit();
 
 		// Buffer control
-		ParticleBufferClass *Peek_Buffer( void )					{ return Buffer; }
-		void						Buffer_Scene_Not_Needed( void )	{ BufferSceneNeeded = false; }
-		void						Remove_Buffer_From_Scene (void)	{ Buffer->Remove (); FirstTime = true; BufferSceneNeeded = true; }
+		ParticleBufferClass *Peek_Buffer()					{ return Buffer; }
+		void						Buffer_Scene_Not_Needed()	{ BufferSceneNeeded = false; }
+		void						Remove_Buffer_From_Scene ()	{ Buffer->Remove (); FirstTime = true; BufferSceneNeeded = true; }
 
 		// from RenderObj...
-      virtual bool			Is_Complete(void)							{ return IsComplete; }
+      virtual bool			Is_Complete()							{ return IsComplete; }
 
 		// Auto deletion behavior controls
-		bool						Is_Remove_On_Complete_Enabled(void)				{ return RemoveOnComplete; }
+		bool						Is_Remove_On_Complete_Enabled()				{ return RemoveOnComplete; }
 		void						Enable_Remove_On_Complete(bool onoff)			{ RemoveOnComplete = onoff; }
-		static bool				Default_Remove_On_Complete (void)				{ return DefaultRemoveOnComplete; }
+		static bool				Default_Remove_On_Complete ()				{ return DefaultRemoveOnComplete; }
 		static void				Set_Default_Remove_On_Complete (bool onoff)	{ DefaultRemoveOnComplete = onoff; }
 
 		//
 		//	Virtual accessors (used for type specific information)
 		//
-		virtual int				Get_User_Type (void) const			{ return EMITTER_TYPEID_DEFAULT; }
-		virtual const char *	Get_User_String (void) const		{ return nullptr; }
+		virtual int				Get_User_Type () const			{ return EMITTER_TYPEID_DEFAULT; }
+		virtual const char *	Get_User_String () const		{ return nullptr; }
 
 		//
 		// Inline accessors.
 		//	These methods are provided as a means to get the emitter's settings.
 		//
-		int						Get_Render_Mode (void) const		{ return Buffer->Get_Render_Mode(); }
-		int						Get_Frame_Mode (void) const		{ return Buffer->Get_Frame_Mode(); }
-		float						Get_Particle_Size (void) const	{ return Buffer->Get_Particle_Size(); }
-		Vector3					Get_Acceleration (void) const		{ return Buffer->Get_Acceleration (); }
-		float						Get_Lifetime (void) const			{ return Buffer->Get_Lifetime (); }
-		float						Get_Future_Start_Time (void) const { return Buffer->Get_Future_Start_Time(); }
-		Vector3					Get_End_Color (void) const			{ return Buffer->Get_End_Color (); }
-		float						Get_End_Opacity (void) const		{ return Buffer->Get_End_Opacity (); }
-		TextureClass *			Get_Texture (void) const			{ return Buffer->Get_Texture (); }
+		int						Get_Render_Mode () const		{ return Buffer->Get_Render_Mode(); }
+		int						Get_Frame_Mode () const		{ return Buffer->Get_Frame_Mode(); }
+		float						Get_Particle_Size () const	{ return Buffer->Get_Particle_Size(); }
+		Vector3					Get_Acceleration () const		{ return Buffer->Get_Acceleration (); }
+		float						Get_Lifetime () const			{ return Buffer->Get_Lifetime (); }
+		float						Get_Future_Start_Time () const { return Buffer->Get_Future_Start_Time(); }
+		Vector3					Get_End_Color () const			{ return Buffer->Get_End_Color (); }
+		float						Get_End_Opacity () const		{ return Buffer->Get_End_Opacity (); }
+		TextureClass *			Get_Texture () const			{ return Buffer->Get_Texture (); }
 		void						Set_Texture (TextureClass *tex)  { Buffer->Set_Texture(tex); }
-		float						Get_Fade_Time (void) const			{ return Buffer->Get_Fade_Time (); }
-		Vector3					Get_Start_Color (void) const		{ return Buffer->Get_Start_Color(); }
-		float						Get_Start_Opacity (void) const	{ return Buffer->Get_Start_Opacity(); }
-		float						Get_Position_Random (void) const	{ return PosRand ? PosRand->Get_Maximum_Extent() : 0.0f; }
-		//float						Get_Velocity_Random (void) const	{ return VelRand ? (VelRand->Get_Maximum_Extent() * 1000.0f) : 0.0f; }
-		float						Get_Emission_Rate (void) const	{ return 1000.0f / float(EmitRate); }
-		int						Get_Burst_Size (void) const		{ return BurstSize; }
-		int						Get_Max_Particles (void) const	{ return MaxParticles; }
-		Vector3					Get_Start_Velocity (void) const	{ return BaseVel * 1000.0F; }
-		Vector3Randomizer *	Get_Creation_Volume (void) const;
-		Vector3Randomizer *	Get_Velocity_Random (void) const;
-		float						Get_Outwards_Vel (void) const		{ return OutwardVel * 1000.0F; }
-		float						Get_Velocity_Inherit (void) const{ return VelInheritFactor; }
-		ShaderClass				Get_Shader (void) const				{ return Buffer->Get_Shader (); }
+		float						Get_Fade_Time () const			{ return Buffer->Get_Fade_Time (); }
+		Vector3					Get_Start_Color () const		{ return Buffer->Get_Start_Color(); }
+		float						Get_Start_Opacity () const	{ return Buffer->Get_Start_Opacity(); }
+		float						Get_Position_Random () const	{ return PosRand ? PosRand->Get_Maximum_Extent() : 0.0f; }
+		//float						Get_Velocity_Random () const	{ return VelRand ? (VelRand->Get_Maximum_Extent() * 1000.0f) : 0.0f; }
+		float						Get_Emission_Rate () const	{ return 1000.0f / float(EmitRate); }
+		int						Get_Burst_Size () const		{ return BurstSize; }
+		int						Get_Max_Particles () const	{ return MaxParticles; }
+		Vector3					Get_Start_Velocity () const	{ return BaseVel * 1000.0F; }
+		Vector3Randomizer *	Get_Creation_Volume () const;
+		Vector3Randomizer *	Get_Velocity_Random () const;
+		float						Get_Outwards_Vel () const		{ return OutwardVel * 1000.0F; }
+		float						Get_Velocity_Inherit () const{ return VelInheritFactor; }
+		ShaderClass				Get_Shader () const				{ return Buffer->Get_Shader (); }
 
 		// Note: Caller IS RESPONSIBLE for freeing any memory allocated by these calls
 		void						Get_Color_Key_Frames (ParticlePropertyStruct<Vector3>	&colors) const			{ Buffer->Get_Color_Key_Frames (colors); }
@@ -258,24 +258,24 @@ class ParticleEmitterClass : public RenderObjClass
 		void						Get_Rotation_Key_Frames (ParticlePropertyStruct<float> &rotations) const	{ Buffer->Get_Rotation_Key_Frames (rotations); }
 		void						Get_Frame_Key_Frames (ParticlePropertyStruct<float> &frames) const			{ Buffer->Get_Frame_Key_Frames (frames); }
 		void						Get_Blur_Time_Key_Frames (ParticlePropertyStruct<float> &blurtimes) const	{ Buffer->Get_Blur_Time_Key_Frames (blurtimes); }
-		float						Get_Initial_Orientation_Random (void) const											{ return Buffer->Get_Initial_Orientation_Random(); }
+		float						Get_Initial_Orientation_Random () const											{ return Buffer->Get_Initial_Orientation_Random(); }
 
 		// Line rendering accessors
-		int						Get_Line_Texture_Mapping_Mode(void) const	{ return Buffer->Get_Line_Texture_Mapping_Mode(); }
-		int						Is_Merge_Intersections(void) const			{ return Buffer->Is_Merge_Intersections(); }
-		int						Is_Freeze_Random(void) const					{ return Buffer->Is_Freeze_Random(); }
-		int						Is_Sorting_Disabled(void) const				{ return Buffer->Is_Sorting_Disabled(); }
-		int						Are_End_Caps_Enabled(void)	const				{ return Buffer->Are_End_Caps_Enabled(); }
-		int						Get_Subdivision_Level(void) const			{ return Buffer->Get_Subdivision_Level(); }
-		float						Get_Noise_Amplitude(void) const				{ return Buffer->Get_Noise_Amplitude(); }
-		float						Get_Merge_Abort_Factor(void) const			{ return Buffer->Get_Merge_Abort_Factor(); }
-		float						Get_Texture_Tile_Factor(void) const			{ return Buffer->Get_Texture_Tile_Factor(); }
-		Vector2					Get_UV_Offset_Rate(void) const				{ return Buffer->Get_UV_Offset_Rate(); }
+		int						Get_Line_Texture_Mapping_Mode() const	{ return Buffer->Get_Line_Texture_Mapping_Mode(); }
+		int						Is_Merge_Intersections() const			{ return Buffer->Is_Merge_Intersections(); }
+		int						Is_Freeze_Random() const					{ return Buffer->Is_Freeze_Random(); }
+		int						Is_Sorting_Disabled() const				{ return Buffer->Is_Sorting_Disabled(); }
+		int						Are_End_Caps_Enabled()	const				{ return Buffer->Are_End_Caps_Enabled(); }
+		int						Get_Subdivision_Level() const			{ return Buffer->Get_Subdivision_Level(); }
+		float						Get_Noise_Amplitude() const				{ return Buffer->Get_Noise_Amplitude(); }
+		float						Get_Merge_Abort_Factor() const			{ return Buffer->Get_Merge_Abort_Factor(); }
+		float						Get_Texture_Tile_Factor() const			{ return Buffer->Get_Texture_Tile_Factor(); }
+		Vector2					Get_UV_Offset_Rate() const				{ return Buffer->Get_UV_Offset_Rate(); }
 
 		// Global debugging option for disabling all particle emission
 #ifdef WWDEBUG
 		static void				Disable_All_Emitters(bool onoff)	{ DebugDisable = onoff; }
-		static bool				Are_Emitters_Disabled(void)		{ return DebugDisable; }
+		static bool				Are_Emitters_Disabled()		{ return DebugDisable; }
 #endif
 
 	protected:
@@ -284,14 +284,14 @@ class ParticleEmitterClass : public RenderObjClass
 		virtual void			Add_Dependencies_To_List (DynamicVectorClass<StringClass> &file_list, bool textures_only = false);
 
 		// This method is called each time the visibility state of the emitter changes.
-		virtual void			Update_On_Visibility (void);
+		virtual void			Update_On_Visibility ();
 
 	private:
 
 		// Collision sphere is a point - emitter emits also when not visible,
       // so this is only important to avoid affecting the collision spheres
       // of hierarchy objects into which the emitter is inserted.
-		virtual void Update_Cached_Bounding_Volumes(void) const;
+		virtual void Update_Cached_Bounding_Volumes() const;
 
       // Create new particles and pass them to the particle buffer. Receives
       // the end-of-interval quaternion and origin and interpolates between

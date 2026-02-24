@@ -404,7 +404,7 @@ AnimatedSoundMgrClass::Initialize (const char *ini_filename)
 //
 //////////////////////////////////////////////////////////////////////
 void
-AnimatedSoundMgrClass::Shutdown (void)
+AnimatedSoundMgrClass::Shutdown ()
 {
 	//
 	//	Reset the animation name hash

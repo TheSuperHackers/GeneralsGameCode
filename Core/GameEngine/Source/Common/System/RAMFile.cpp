@@ -235,7 +235,7 @@ Bool RAMFile::openFromArchive(File *archiveFile, const AsciiString& filename, In
 	*/
 //=================================================================
 
-void RAMFile::close( void )
+void RAMFile::close()
 {
 	closeFile();
 	File::close();
@@ -281,7 +281,7 @@ Int RAMFile::read( void *buffer, Int bytes )
 // RAMFile::readChar
 //=================================================================
 
-Int RAMFile::readChar( )
+Int RAMFile::readChar()
 {
 	return EOF;
 }
@@ -290,7 +290,7 @@ Int RAMFile::readChar( )
 // RAMFile::readWideChar
 //=================================================================
 
-Int RAMFile::readWideChar( )
+Int RAMFile::readWideChar()
 {
 	return WEOF;
 }

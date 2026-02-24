@@ -77,7 +77,7 @@ SimplePersistFactoryClass<TwiddlerClass, CHUNKID_TWIDDLER>						_TwiddlerPersist
 //	TwiddlerClass
 //
 //////////////////////////////////////////////////////////////////////////////////
-TwiddlerClass::TwiddlerClass (void)
+TwiddlerClass::TwiddlerClass ()
 	:	m_IndirectClassID (0)
 
 {
@@ -91,7 +91,7 @@ TwiddlerClass::TwiddlerClass (void)
 //	~TwiddlerClass
 //
 //////////////////////////////////////////////////////////////////////////////////
-TwiddlerClass::~TwiddlerClass (void)
+TwiddlerClass::~TwiddlerClass ()
 {
 	return ;
 }
@@ -103,7 +103,7 @@ TwiddlerClass::~TwiddlerClass (void)
 //
 //////////////////////////////////////////////////////////////////////////////////
 DefinitionClass *
-TwiddlerClass::Twiddle (void) const
+TwiddlerClass::Twiddle () const
 {
 	DefinitionClass *definition = nullptr;
 
@@ -132,7 +132,7 @@ TwiddlerClass::Twiddle (void) const
 //
 //////////////////////////////////////////////////////////////////////////////////
 PersistClass *
-TwiddlerClass::Create (void) const
+TwiddlerClass::Create () const
 {
 	PersistClass *retval = nullptr;
 
@@ -159,7 +159,7 @@ TwiddlerClass::Create (void) const
 //
 //////////////////////////////////////////////////////////////////////////////////
 const PersistFactoryClass &
-TwiddlerClass::Get_Factory (void) const
+TwiddlerClass::Get_Factory () const
 {
 	return _TwiddlerPersistFactory;
 }

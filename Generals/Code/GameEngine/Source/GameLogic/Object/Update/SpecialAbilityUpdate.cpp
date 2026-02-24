@@ -88,7 +88,7 @@ SpecialAbilityUpdate::SpecialAbilityUpdate( Thing *thing, const ModuleData* modu
 }
 
 //-------------------------------------------------------------------------------------------------
-SpecialAbilityUpdate::~SpecialAbilityUpdate( void )
+SpecialAbilityUpdate::~SpecialAbilityUpdate()
 {
 	onExit( true );
 }
@@ -180,7 +180,7 @@ Options:
 	7 -- FINISH: Stop the special ability
 
 -------------------------------------------------------------------------------------------------*/
-UpdateSleepTime SpecialAbilityUpdate::update( void )
+UpdateSleepTime SpecialAbilityUpdate::update()
 {
 
 /// @todo srj -- this could probably sleep more between stages. maybe someday.
@@ -1213,7 +1213,7 @@ void SpecialAbilityUpdate::triggerAbilityEffect()
 				StickyBombUpdate *update = (StickyBombUpdate*)charge->findUpdateModule( key_StickyBombUpdate );
 				if( !update )
 				{
-					DEBUG_ASSERTCRASH( 0,
+					DEBUG_CRASH( 
 						("Unit '%s' attempted to place %s on %s but the bomb requires a StickyBombUpdate module.",
 						object->getTemplate()->getName().str(),
 						charge->getTemplate()->getName().str(),
@@ -1419,7 +1419,7 @@ void SpecialAbilityUpdate::triggerAbilityEffect()
 					StickyBombUpdate *update = (StickyBombUpdate*)charge->findUpdateModule( key_StickyBombUpdate );
 					if( !update )
 					{
-						DEBUG_ASSERTCRASH( 0,
+						DEBUG_CRASH( 
 							("Unit '%s' attempted to place remote charge but the charge '%s' requires a StickyBombUpdate module.",
 							object->getTemplate()->getName().str(),
 							charge->getTemplate()->getName().str() ) );
@@ -1889,7 +1889,7 @@ void SpecialAbilityUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void SpecialAbilityUpdate::loadPostProcess( void )
+void SpecialAbilityUpdate::loadPostProcess()
 {
 
 	// extend base class

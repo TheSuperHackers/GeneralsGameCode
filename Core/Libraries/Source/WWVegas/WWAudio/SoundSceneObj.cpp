@@ -75,8 +75,8 @@ CriticalSectionClass	SoundSceneObjClass::m_IDListMutex;
 class HandleMgrClass
 {
 public:
-	HandleMgrClass (void)	{ SoundSceneObjClass::m_IDListMutex = ::CreateMutex (nullptr, FALSE, nullptr); }
-	~HandleMgrClass (void)	{ ::CloseHandle (SoundSceneObjClass::m_IDListMutex); }
+	HandleMgrClass ()	{ SoundSceneObjClass::m_IDListMutex = ::CreateMutex (nullptr, FALSE, nullptr); }
+	~HandleMgrClass ()	{ ::CloseHandle (SoundSceneObjClass::m_IDListMutex); }
 
 };
 
@@ -88,7 +88,7 @@ HandleMgrClass _GlobalMutexHandleMgr;
 //	SoundSceneObjClass
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
-SoundSceneObjClass::SoundSceneObjClass (void)
+SoundSceneObjClass::SoundSceneObjClass ()
 	:	m_Scene (nullptr),
 		m_PhysWrapper (nullptr),
 		m_pCallback (nullptr),
@@ -133,7 +133,7 @@ SoundSceneObjClass::SoundSceneObjClass (const SoundSceneObjClass &src)
 //	~SoundSceneObjClass
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
-SoundSceneObjClass::~SoundSceneObjClass (void)
+SoundSceneObjClass::~SoundSceneObjClass ()
 {
 	REF_PTR_RELEASE (m_UserObj);
 	REF_PTR_RELEASE (m_AttachedObject);
@@ -221,7 +221,7 @@ SoundSceneObjClass::Attach_To_Object
 //
 //////////////////////////////////////////////////////////////////////////////
 void
-SoundSceneObjClass::Apply_Auto_Position (void)
+SoundSceneObjClass::Apply_Auto_Position ()
 {
 	// If the sound is attached to an object, then update its transform
 	// based on this link.

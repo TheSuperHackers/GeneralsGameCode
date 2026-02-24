@@ -41,7 +41,7 @@ class POWTruckBehaviorModuleData : public OpenContainModuleData
 
 public:
 
-	POWTruckBehaviorModuleData( void );
+	POWTruckBehaviorModuleData();
 
 	static void buildFieldParse( MultiIniFieldParse &p );
 

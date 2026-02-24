@@ -1526,7 +1526,7 @@ void PartitionCell::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void PartitionCell::loadPostProcess( void )
+void PartitionCell::loadPostProcess()
 {
 
 }
@@ -2332,7 +2332,7 @@ void PartitionData::attachToGhostObject(GhostObject* object)
 }
 
 //-----------------------------------------------------------------------------
-void PartitionData::detachFromGhostObject(void)
+void PartitionData::detachFromGhostObject()
 {
 	// this is a little hokey... if we are in the midst of processing the contact
 	// list, we have to ensure that any potential collisions get removed from that
@@ -4719,7 +4719,7 @@ void PartitionManager::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void PartitionManager::loadPostProcess( void )
+void PartitionManager::loadPostProcess()
 {
 
 }

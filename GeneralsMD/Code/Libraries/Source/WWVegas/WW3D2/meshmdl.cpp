@@ -68,7 +68,7 @@ static DynamicVectorClass<unsigned long> _TempClipFlagBuffer;
 */
 
 
-MeshModelClass::MeshModelClass(void) :
+MeshModelClass::MeshModelClass() :
 	DefMatDesc(nullptr),
 	AlternateMatDesc(nullptr),
 	CurMatDesc(nullptr),
@@ -104,7 +104,7 @@ MeshModelClass::MeshModelClass(const MeshModelClass & that) :
 	return ;
 }
 
-MeshModelClass::~MeshModelClass(void)
+MeshModelClass::~MeshModelClass()
 {
 
 	Reset(0,0,0);
@@ -340,17 +340,17 @@ void MeshModelClass::Enable_Alternate_Material_Description(bool onoff)
 	}
 }
 
-bool MeshModelClass::Is_Alternate_Material_Description_Enabled(void)
+bool MeshModelClass::Is_Alternate_Material_Description_Enabled()
 {
 	return CurMatDesc == AlternateMatDesc;
 }
 /*
-void MeshModelClass::Process_Texture_Reduction(void)
+void MeshModelClass::Process_Texture_Reduction()
 {
 	MatInfo->Process_Texture_Reduction();
 }
 */
-bool MeshModelClass::Needs_Vertex_Normals(void)
+bool MeshModelClass::Needs_Vertex_Normals()
 {
 	if (Get_Flag(MeshModelClass::PRELIT_MASK) == 0) {
 		return true;

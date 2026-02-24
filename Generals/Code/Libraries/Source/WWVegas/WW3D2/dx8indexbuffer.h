@@ -131,7 +131,7 @@ public:
 	// the recycled dynamic index buffer.
 	static void _Deinit();
 	static void _Reset(bool frame_changed);
-	static unsigned short Get_Default_Index_Count(void);	///<current size of dynamic index buffer
+	static unsigned short Get_Default_Index_Count();	///<current size of dynamic index buffer
 
 	// To lock the index buffer, create instance of this write class locally.
 	// The buffer is automatically unlocked when you exit the scope.

@@ -63,7 +63,7 @@ RailedTransportContain::RailedTransportContain( Thing *thing, const ModuleData *
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-RailedTransportContain::~RailedTransportContain( void )
+RailedTransportContain::~RailedTransportContain()
 {
 
 }
@@ -149,7 +149,7 @@ void RailedTransportContain::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void RailedTransportContain::loadPostProcess( void )
+void RailedTransportContain::loadPostProcess()
 {
 
 	// extend base class

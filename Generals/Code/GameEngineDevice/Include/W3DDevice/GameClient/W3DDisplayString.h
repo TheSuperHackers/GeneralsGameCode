@@ -71,10 +71,10 @@ public:
 
 	friend W3DDisplayStringManager;
 
-	W3DDisplayString( void );
-	// ~W3DDisplayString( void );  // destructor defined by memory pool
+	W3DDisplayString();
+	// ~W3DDisplayString();  // destructor defined by memory pool
 
-	void notifyTextChanged( void );							///< called when text contents change
+	void notifyTextChanged();							///< called when text contents change
 	void draw( Int x, Int y, Color color, Color dropColor );  ///< render text
 	void draw( Int x, Int y, Color color, Color dropColor, Int xDrop, Int yDrop );  ///< render text with the drop shadow being at the offsets passed in
 	void getSize( Int *width, Int *height );		///< get render size
@@ -87,11 +87,11 @@ public:
 
 protected:
 
-	void checkForChangedTextData( void );  /**< called when we need to update our
+	void checkForChangedTextData();  /**< called when we need to update our
 																				 render sentence and update extents */
 	void usingResources( UnsignedInt frame );  /**< call this whenever display
 																						 resources are in use */
-	void computeExtents( void );  ///< compupte text width and height
+	void computeExtents();  ///< compupte text width and height
 
 	Render2DSentenceClass m_textRenderer;  ///< for drawing text
 	Render2DSentenceClass m_textRendererHotKey;  ///< for drawing text

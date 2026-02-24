@@ -103,7 +103,7 @@ void ProfileResultFileCSV::WriteThread(ProfileFuncLevel::Thread &thread)
   fclose(f);
 }
 
-void ProfileResultFileCSV::WriteResults(void)
+void ProfileResultFileCSV::WriteResults()
 {
   ProfileFuncLevel::Thread t;
   unsigned k=0;
@@ -134,7 +134,7 @@ void ProfileResultFileCSV::WriteResults(void)
   fclose(f);
 }
 
-void ProfileResultFileCSV::Delete(void)
+void ProfileResultFileCSV::Delete()
 {
   this->~ProfileResultFileCSV();
   ProfileFreeMemory(this);
@@ -167,7 +167,7 @@ ProfileResultFileDOT::ProfileResultFileDOT(const char *fileName, const char *fra
   m_foldThreshold=foldThreshold;
 }
 
-void ProfileResultFileDOT::WriteResults(void)
+void ProfileResultFileDOT::WriteResults()
 {
   // search "main" thread
   ProfileFuncLevel::Thread t,tMax;
@@ -304,7 +304,7 @@ void ProfileResultFileDOT::WriteResults(void)
   fclose(f);
 }
 
-void ProfileResultFileDOT::Delete(void)
+void ProfileResultFileDOT::Delete()
 {
   this->~ProfileResultFileDOT();
   ProfileFreeMemory(this);

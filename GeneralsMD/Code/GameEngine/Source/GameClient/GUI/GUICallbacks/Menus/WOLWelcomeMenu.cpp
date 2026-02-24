@@ -219,7 +219,7 @@ static UnsignedByte grabUByte(const char *s)
 	return b;
 }
 
-static void updateNumPlayersOnline(void)
+static void updateNumPlayersOnline()
 {
 	GameWindow *playersOnlineWindow = TheWindowManager->winGetWindowFromId(
 		nullptr, NAMEKEY("WOLWelcomeMenu.wnd:StaticTextNumPlayersOnline") );
@@ -368,7 +368,7 @@ void HandleOverallStats( const char* szHTTPStats, unsigned len )
 
 
 //called only from WOLWelcomeMenuInit to set %win stats
-static void updateOverallStats(void)
+static void updateOverallStats()
 {
 	UnicodeString percStr;
 	AsciiString wndName;
@@ -394,7 +394,7 @@ static void updateOverallStats(void)
 /** Handle player stats */
 //-------------------------------------------------------------------------------------------------
 
-void UpdateLocalPlayerStats(void)
+void UpdateLocalPlayerStats()
 {
 
 	GameWindow *welcomeParent = TheWindowManager->winGetWindowFromId( nullptr, NAMEKEY("WOLWelcomeMenu.wnd:WOLWelcomeMenuParent") );

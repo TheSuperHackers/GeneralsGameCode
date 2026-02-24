@@ -113,7 +113,7 @@ void INI::parseCampaignDefinition( INI *ini )
 }
 
 //-----------------------------------------------------------------------------
-Campaign::Campaign( void ):
+Campaign::Campaign():
 	m_isChallengeCampaign(FALSE)
 {
 	m_missions.clear();
@@ -123,7 +123,7 @@ Campaign::Campaign( void ):
 }
 
 //-----------------------------------------------------------------------------
-Campaign::~Campaign( void )
+Campaign::~Campaign()
 {
 	MissionListIt it = m_missions.begin();
 	while(it != m_missions.end())
@@ -134,7 +134,7 @@ Campaign::~Campaign( void )
 	}
 }
 
-AsciiString Campaign::getFinalVictoryMovie( void )
+AsciiString Campaign::getFinalVictoryMovie()
 {
 	return m_finalMovieName;
 }
@@ -178,7 +178,7 @@ Mission *Campaign::getMission( AsciiString missionName )
 			return mission;
 		++it;
 	}
-	DEBUG_ASSERTCRASH(FALSE, ("getMission couldn't find %s", missionName.str()));
+	DEBUG_CRASH(("getMission couldn't find %s", missionName.str()));
 	return nullptr;
 }
 
@@ -206,13 +206,13 @@ Mission *Campaign::getNextMission( Mission *current)
 			return mission;
 		++it;
 	}
-//	DEBUG_ASSERTCRASH(FALSE, ("GetNextMission couldn't find %s", current->m_nextMission.str()));
+//	DEBUG_CRASH(("GetNextMission couldn't find %s", current->m_nextMission.str()));
 	return nullptr;
 }
 
 
 //-----------------------------------------------------------------------------
-CampaignManager::CampaignManager( void )
+CampaignManager::CampaignManager()
 {
 	m_campaignList.clear();
 	m_currentCampaign = nullptr;
@@ -224,7 +224,7 @@ CampaignManager::CampaignManager( void )
 }
 
 //-----------------------------------------------------------------------------
-CampaignManager::~CampaignManager( void )
+CampaignManager::~CampaignManager()
 {
 	m_currentCampaign = nullptr;
 	m_currentMission = nullptr;
@@ -240,7 +240,7 @@ CampaignManager::~CampaignManager( void )
 }
 
 //-----------------------------------------------------------------------------
-void CampaignManager::init( void )
+void CampaignManager::init()
 {
 	INI ini;
 	// Read from INI all the CampaignManager
@@ -248,19 +248,19 @@ void CampaignManager::init( void )
 }
 
 //-----------------------------------------------------------------------------
-Campaign *CampaignManager::getCurrentCampaign( void )
+Campaign *CampaignManager::getCurrentCampaign()
 {
 	return m_currentCampaign;
 }
 
 //-----------------------------------------------------------------------------
-Mission *CampaignManager::getCurrentMission( void )
+Mission *CampaignManager::getCurrentMission()
 {
 	return m_currentMission;
 }
 
 //-----------------------------------------------------------------------------
-Mission *CampaignManager::gotoNextMission( void )
+Mission *CampaignManager::gotoNextMission()
 {
 	if (!m_currentCampaign || !m_currentMission)
 		return nullptr;
@@ -318,7 +318,7 @@ void CampaignManager::setCampaign( AsciiString campaign )
 }
 
 //-----------------------------------------------------------------------------
-AsciiString CampaignManager::getCurrentMap( void )
+AsciiString CampaignManager::getCurrentMap()
 {
 	if(!m_currentMission)
 		return AsciiString::TheEmptyString;
@@ -329,7 +329,7 @@ AsciiString CampaignManager::getCurrentMap( void )
 // ------------------------------------------------------------------------------------------------
 /** Return the 0 based mission number */
 // ------------------------------------------------------------------------------------------------
-Int CampaignManager::getCurrentMissionNumber( void )
+Int CampaignManager::getCurrentMissionNumber()
 {
 	Int number = INVALID_MISSION_NUMBER;
 
@@ -488,7 +488,7 @@ void CampaignManager::xfer( Xfer *xfer )
 
 }
 
-void CampaignManager::loadPostProcess( void )
+void CampaignManager::loadPostProcess()
 {
 	if(TheChallengeGenerals == nullptr)
 	{
@@ -506,13 +506,13 @@ void CampaignManager::loadPostProcess( void )
 
 
 //-----------------------------------------------------------------------------
-Mission::Mission( void )
+Mission::Mission()
 {
 	m_voiceLength = 0;
 }
 
 //-----------------------------------------------------------------------------
-Mission::~Mission( void )
+Mission::~Mission()
 {
 
 }

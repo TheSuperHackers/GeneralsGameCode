@@ -193,8 +193,8 @@ public:
 	////////////////////////////////////////////////////////////////////////////////////////
 	struct ColmathStatsStruct
 	{
-		ColmathStatsStruct(void);
-		void Reset(void);
+		ColmathStatsStruct();
+		void Reset();
 
 		int TotalCollisionCount;
 		int TotalCollisionHitCount;
@@ -215,8 +215,8 @@ public:
 		int CollisionOBBoxOBBoxHitCount;
 	};
 
-	static void									Reset_Stats(void)				{ Stats.Reset(); }
-	static const ColmathStatsStruct &	Get_Current_Stats(void)		{ return Stats; }
+	static void									Reset_Stats()				{ Stats.Reset(); }
+	static const ColmathStatsStruct &	Get_Current_Stats()		{ return Stats; }
 
 private:
 

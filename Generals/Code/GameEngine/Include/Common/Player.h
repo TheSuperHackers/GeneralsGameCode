@@ -133,7 +133,7 @@ struct SpecialPowerReadyTimerType
 	{
 		clear();
 	}
-	void clear( void )
+	void clear()
 	{
 		m_readyFrame = 0xffffffff;
 		m_templateID = INVALID_ID;
@@ -155,7 +155,7 @@ class PlayerRelationMap : public MemoryPoolObject,
 
 public:
 
-	PlayerRelationMap( void );
+	PlayerRelationMap();
 	// virtual destructor provided by memory pool object
 
 	/** @todo I'm just wrapping this up in a nice snapshot object, we really should isolate
@@ -166,7 +166,7 @@ protected:
 
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
+	virtual void loadPostProcess();
 
 };
 
@@ -215,7 +215,7 @@ public:
 
 	void init(const PlayerTemplate* pt);
 	void initFromDict(const Dict* d);
-	void setDefaultTeam(void);
+	void setDefaultTeam();
 
 	void deletePlayerAI();
 
@@ -267,7 +267,7 @@ public:
 	Bool canAffordBuild( const ThingTemplate *whatToBuild ) const;
 
 	/// Difficulty level for this player.
-	GameDifficulty getPlayerDifficulty(void) const;
+	GameDifficulty getPlayerDifficulty() const;
 
 	/** return the player's command center. (must be one of his "normal" ones,
 			not a captured one.)
@@ -409,7 +409,7 @@ public:
 	Bool isSupplySourceSafe( Int minSupplies );
 
 	/// Is a supply source attacked?
-	Bool isSupplySourceAttacked( void );
+	Bool isSupplySourceAttacked();
 
 	/// Set delay between team production.
 	void setTeamDelaySeconds(Int delay);
@@ -420,10 +420,10 @@ public:
 	virtual void computeSuperweaponTarget(const SpecialPowerTemplate *power, Coord3D *pos, Int playerNdx, Real weaponRadius); ///< Calculates best pos for weapon given radius.
 
 	/// Get the enemy an ai player is currently focused on.  NOTE - Can be nullptr.
-	Player  *getCurrentEnemy( void );
+	Player  *getCurrentEnemy();
 
 	/// Is this player a skirmish ai player?
-	Bool isSkirmishAIPlayer( void );
+	Bool isSkirmishAIPlayer();
 
 	/// Have the ai check for bridges.
 	virtual Bool checkBridges(Object *unit, Waypoint *way);
@@ -454,7 +454,7 @@ public:
 	/**
 		simply returns the number of buildings owned by this player
 	*/
-	Int countBuildings(void);
+	Int countBuildings();
 
 	/**
 		simply returns the number of objects owned by this player with a specific KindOfMaskType
@@ -467,7 +467,7 @@ public:
 	/**
 		a convenience routine to quickly check if any buildings are owned.
 	*/
-	Bool hasAnyBuildings(void) const;
+	Bool hasAnyBuildings() const;
 
 	/**
 		a convenience routine to quickly check if any buildings with a specific KindOfType flag are owned.
@@ -477,22 +477,22 @@ public:
 	/**
 		a convenience routine to quickly check if any units are owned.
 	*/
-	Bool hasAnyUnits(void) const;
+	Bool hasAnyUnits() const;
 
 	/**
 		a convenience routine to quickly check if any objects are owned.
 	*/
-	Bool hasAnyObjects(void) const;
+	Bool hasAnyObjects() const;
 
 	/**
 		a convenience routine to quickly check if any buildfacilities are owned.
 	*/
-	Bool hasAnyBuildFacility(void) const;
+	Bool hasAnyBuildFacility() const;
 
 	/**
 		a convenience routine to quickly update the state flags on all teams.
 	*/
-	void updateTeamStates(void);
+	void updateTeamStates();
 
 	/**
 		This player will heal everything owned by it
@@ -511,7 +511,7 @@ public:
 	const Team *getDefaultTeam() const { DEBUG_ASSERTCRASH(m_defaultTeam!=nullptr,("default team is null")); return m_defaultTeam; }
 
 	void setBuildList(BuildListInfo *pBuildList);			///< sets the build list.
-	BuildListInfo *getBuildList( void ) { return m_pBuildList; }		///< returns the build list. (build list might be modified by the solo AI)
+	BuildListInfo *getBuildList() { return m_pBuildList; }		///< returns the build list. (build list might be modified by the solo AI)
 	void addToBuildList(Object *obj);			///< Adds this to the build list.	 Used for factories placed instead of in build list.
 	void addToPriorityBuildList(AsciiString templateName, Coord3D *pos, Real angle);			///< Adds this to the build list.	 Used for factories placed instead of in build list.
 
@@ -530,7 +530,7 @@ public:
 	typedef std::list<TeamPrototype*> PlayerTeamList;
 	const PlayerTeamList* getPlayerTeams() const { return &m_playerTeamPrototypes; }
 
-	Int getMpStartIndex(void) {return m_mpStartIndex;}
+	Int getMpStartIndex() {return m_mpStartIndex;}
 
 	/// Set that all units should begin hunting.
 	void setUnitsShouldHunt(Bool unitsShouldHunt, CommandSourceType source);
@@ -543,7 +543,7 @@ public:
 	PlayerMaskType getVisionSpiedMask() const;
 
 	/// Destroy all of the teams for this player, causing him to DIE.
-	void killPlayer(void);
+	void killPlayer();
 
 	/// Enabled/Disable all objects of type templateTypeToAffect
 	void setObjectsEnabled(AsciiString templateTypeToAffect, Bool enable);
@@ -570,34 +570,34 @@ public:
 	void recruitSpecificTeam(TeamPrototype *teamProto, Real recruitRadius);
 
 	/// Enable/Disable the construction of units
-	Bool getCanBuildUnits(void) { return m_canBuildUnits; }
+	Bool getCanBuildUnits() { return m_canBuildUnits; }
 	void setCanBuildUnits(Bool canProduce) { m_canBuildUnits = canProduce; }
 
 	/// Enable/Disable the construction of base buildings.
-	Bool getCanBuildBase(void) { return m_canBuildBase; }
+	Bool getCanBuildBase() { return m_canBuildBase; }
 	void setCanBuildBase(Bool canProduce) { m_canBuildBase = canProduce; }
 
 	/// Transfer all assets from player that to this
 	void transferAssetsFromThat(Player* that);
 
 	/// Sell everything this player owns.
-	void sellEverythingUnderTheSun(void);
+	void sellEverythingUnderTheSun();
 
 	void garrisonAllUnits(CommandSourceType source);
 	void ungarrisonAllUnits(CommandSourceType source);
 
 	void setUnitsShouldIdleOrResume(Bool idle);
 
-	Bool isPlayableSide( void ) const;
+	Bool isPlayableSide() const;
 
-	Bool isPlayerObserver( void ) const; // Favor !isPlayerActive() - this is used for Observer GUI mostly, not in-game stuff
-	Bool isPlayerDead(void) const; // Favor !isPlayerActive() - this is used so OCLs don't give us stuff after death.
-	Bool isPlayerActive(void) const; // Player is alive and not observer. !isPlayerActive() is synonymous with observing.
+	Bool isPlayerObserver() const; // Favor !isPlayerActive() - this is used for Observer GUI mostly, not in-game stuff
+	Bool isPlayerDead() const; // Favor !isPlayerActive() - this is used so OCLs don't give us stuff after death.
+	Bool isPlayerActive() const; // Player is alive and not observer. !isPlayerActive() is synonymous with observing.
 
-	Bool didPlayerPreorder( void ) const { return m_isPreorder; }
+	Bool didPlayerPreorder() const { return m_isPreorder; }
 
 	/// Grab the scorekeeper so we can score up in here!
-	ScoreKeeper* getScoreKeeper( void ) { return &m_scoreKeeper; }
+	ScoreKeeper* getScoreKeeper() { return &m_scoreKeeper; }
 
 	/// time to create a hotkey team based on this GameMessage
 	void processCreateTeamGameMessage(Int hotkeyNum, const GameMessage *msg);
@@ -628,7 +628,7 @@ public:
 
 	void setAttackedBy( Int playerNdx );
 	Bool getAttackedBy( Int playerNdx ) const;
-	UnsignedInt getAttackedFrame(void) {return m_attackedFrame;}  // Return last frame attacked.
+	UnsignedInt getAttackedFrame() {return m_attackedFrame;}  // Return last frame attacked.
 
 	Real getCashBounty() const { return m_cashBountyPercent; }
 	void setCashBounty(Real percentage) { m_cashBountyPercent = percentage; }
@@ -666,7 +666,7 @@ public:
 	void addSciencePurchasePoints(Int delta);
 
 	void setSkillPointsModifier(Real expMod) { m_skillPointsModifier = expMod; }
-	Real getSkillPointsModifier(void) const { return m_skillPointsModifier; }
+	Real getSkillPointsModifier() const { return m_skillPointsModifier; }
 
 	/// reset the sciences to just the intrinsic ones from the playertemplate, if any.
 	void resetSciences();
@@ -696,9 +696,9 @@ protected:
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
+	virtual void loadPostProcess();
 
-	void deleteUpgradeList( void );															///< delete all our upgrades
+	void deleteUpgradeList();															///< delete all our upgrades
 
 private:
 

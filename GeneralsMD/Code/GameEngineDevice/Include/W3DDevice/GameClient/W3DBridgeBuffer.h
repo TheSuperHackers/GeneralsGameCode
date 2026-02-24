@@ -121,21 +121,21 @@ protected:
 																MeshClass *pMesh, RefRenderObjListIterator *pLightsIterator);
 
 public:
-	W3DBridge(void);
-	~W3DBridge(void);
+	W3DBridge();
+	~W3DBridge();
 
 	void init(Vector3 fromLoc, Vector3 toLoc, AsciiString name);
-	AsciiString getTemplateName(void) {return m_templateName;}
-	const Vector3* getStart(void) const {return &m_start;}
-	const Vector3* getEnd(void) const { return &m_end;}
+	AsciiString getTemplateName() {return m_templateName;}
+	const Vector3* getStart() const {return &m_start;}
+	const Vector3* getEnd() const { return &m_end;}
 	Bool load(BodyDamageType curDamageState);
-	BodyDamageType getDamageState(void) {return m_curDamageState;};
+	BodyDamageType getDamageState() {return m_curDamageState;};
 	void setDamageState(BodyDamageType state) { m_curDamageState = state;};
 	void getIndicesNVertices(UnsignedShort *destination_ib, VertexFormatXYZNDUV1 *destination_vb, Int *curIndexP, Int *curVertexP, RefRenderObjListIterator *pLightsIterator);
 	Bool cullBridge(CameraClass * camera);						 ///< Culls the bridges.  Returns true if visibility changed.
-	void clearBridge(void);		///< Frees all objects associated with a bridge.
-	Bool isVisible(void) {return m_visible;};
-	Bool isEnabled(void) {return m_enabled;};
+	void clearBridge();		///< Frees all objects associated with a bridge.
+	Bool isVisible() {return m_visible;};
+	Bool isEnabled() {return m_enabled;};
 	void setEnabled(Bool enable) {m_enabled = enable;};
 	void renderBridge(Bool wireframe);
 	void getBridgeInfo(BridgeInfo *pInfo);
@@ -150,15 +150,15 @@ class W3DBridgeBuffer
 friend class BaseHeightMapRenderObjClass;
 public:
 
-	W3DBridgeBuffer(void);
-	~W3DBridgeBuffer(void);
+	W3DBridgeBuffer();
+	~W3DBridgeBuffer();
 	/// Empties the bridge buffer.
-	void clearAllBridges(void);
+	void clearAllBridges();
 	/// Draws the bridges.  Uses camera for culling.
 	void drawBridges(CameraClass * camera, Bool wireframe, TextureClass *cloudTexture);
 	/// Called when the view changes, and sort key needs to be recalculated.
 	/// Normally sortKey gets calculated when a bridge becomes visible.
-	void doFullUpdate(void) {m_updateVis = true;};
+	void doFullUpdate() {m_updateVis = true;};
 	void loadBridges(W3DTerrainLogic *pTerrainLogic, Bool saveGame); ///< Loads the bridges from the map objects list.
 	void worldBuilderUpdateBridgeTowers( W3DAssetManager *assetManager, SimpleSceneClass *scene );			///< for the editor and showing visual bridge towers
 	void updateCenter(CameraClass *camera, RefRenderObjListIterator *pLightsIterator);
@@ -180,7 +180,7 @@ protected:
 	/// Add a bridge at location.  Name is the gdf item name.
 	void addBridge(Vector3 fromLoc, Vector3 toLoc, AsciiString name, W3DTerrainLogic *pTerrainLogic, Dict *props);
 	void loadBridgesInVertexAndIndexBuffers(RefRenderObjListIterator *pLightsIterator); ///< Fills the index and vertex buffers for drawing.
-	void allocateBridgeBuffers(void);							 ///< Allocates the buffers.
+	void allocateBridgeBuffers();							 ///< Allocates the buffers.
 	void cull(CameraClass * camera);						 ///< Culls the bridges.
-	void freeBridgeBuffers(void);									 ///< Frees the index and vertex buffers.
+	void freeBridgeBuffers();									 ///< Frees the index and vertex buffers.
 };

@@ -115,7 +115,7 @@ W3DTreeDraw::W3DTreeDraw( Thing *thing, const ModuleData* moduleData ) : DrawMod
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-W3DTreeDraw::~W3DTreeDraw( void )
+W3DTreeDraw::~W3DTreeDraw()
 {
 	addToTreeBuffer();
 }
@@ -168,7 +168,7 @@ void W3DTreeDraw::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void W3DTreeDraw::loadPostProcess( void )
+void W3DTreeDraw::loadPostProcess()
 {
 
 	// extend base class

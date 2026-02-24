@@ -107,23 +107,23 @@ public:
 	virtual void removeFromContain( Object *obj, Bool exposeStealthUnits = FALSE );	///< remove 'obj' from contain list
 	virtual void removeAllContained( Bool exposeStealthUnits = FALSE );				///< remove all objects on contain list
   virtual void harmAndForceExitAllContained( DamageInfo *info );
-  virtual void killAllContained( void );				///< kill all objects on contain list
+  virtual void killAllContained();				///< kill all objects on contain list
 
 	// contain list access
 	virtual void iterateContained( ContainIterateFunc func, void *userData, Bool reverse );
 	virtual UnsignedInt getContainCount() const;
 	virtual UnsignedInt getHeroUnitsContained() const;
-	virtual Int getContainMax( void ) const;
+	virtual Int getContainMax() const;
 	virtual const ContainedItemsList* getContainedItemsList() const;
-	virtual UnsignedInt getFullTimeForHeal(void) const; ///< Returns the time in frames until a contained object becomes fully healed
+	virtual UnsignedInt getFullTimeForHeal() const; ///< Returns the time in frames until a contained object becomes fully healed
 	virtual Bool isDisplayedOnControlBar() const { return TRUE; } ///< Does this container display its contents on the ControlBar?
 	virtual Bool isKickOutOnCapture(){ return FALSE; }///< Caves and Tunnels don't kick out on capture.
 
 	// override the onDie we inherit from OpenContain
 	virtual void onDie( const DamageInfo *damageInfo );  ///< the die callback
 
-	virtual void onDelete( void );
-	virtual void onCreate( void );
+	virtual void onDelete();
+	virtual void onCreate();
 	virtual void onObjectCreated();
 	virtual void onBuildComplete();
 	virtual Bool shouldDoOnBuildComplete() const { return m_needToRunOnBuildComplete; }

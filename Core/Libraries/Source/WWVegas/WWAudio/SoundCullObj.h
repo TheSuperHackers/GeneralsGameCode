@@ -57,21 +57,21 @@ class SoundCullObjClass : public MultiListObjectClass, public CullableClass
 		//////////////////////////////////////////////////////////////////////
 		//	Public constructors/destructors
 		//////////////////////////////////////////////////////////////////////
-		SoundCullObjClass (void)
+		SoundCullObjClass ()
 			: m_SoundObj (nullptr),
 			  m_Transform (1) {}
 
-		virtual ~SoundCullObjClass (void) { REF_PTR_RELEASE (m_SoundObj); }
+		virtual ~SoundCullObjClass () { REF_PTR_RELEASE (m_SoundObj); }
 
 		//////////////////////////////////////////////////////////////////////
 		//	Get the 'bounds' of this sound
 		//////////////////////////////////////////////////////////////////////
-		virtual const AABoxClass & Get_Bounding_Box (void) const;
+		virtual const AABoxClass & Get_Bounding_Box () const;
 
 		//////////////////////////////////////////////////////////////////////
 		//	Access to the Position/Orientation state of the object
 		//////////////////////////////////////////////////////////////////////
-		virtual const Matrix3D &	Get_Transform (void) const;
+		virtual const Matrix3D &	Get_Transform () const;
 		virtual void					Set_Transform (const Matrix3D &transform);
 
 		//////////////////////////////////////////////////////////////////////
@@ -83,7 +83,7 @@ class SoundCullObjClass : public MultiListObjectClass, public CullableClass
 		//	Sound object wrapping
 		//////////////////////////////////////////////////////////////////////
 		virtual void						Set_Sound_Obj (SoundSceneObjClass *sound_obj);
-		virtual SoundSceneObjClass *	Peek_Sound_Obj (void) const					{ return m_SoundObj; }
+		virtual SoundSceneObjClass *	Peek_Sound_Obj () const					{ return m_SoundObj; }
 
 	protected:
 
@@ -103,7 +103,7 @@ class SoundCullObjClass : public MultiListObjectClass, public CullableClass
 
 
 __inline const Matrix3D &
-SoundCullObjClass::Get_Transform (void) const
+SoundCullObjClass::Get_Transform () const
 {
 	// Determine the transform to use
 	if (m_SoundObj != nullptr) {
@@ -146,7 +146,7 @@ SoundCullObjClass::Set_Sound_Obj (SoundSceneObjClass *sound_obj)
 
 
 __inline const AABoxClass &
-SoundCullObjClass::Get_Bounding_Box (void) const
+SoundCullObjClass::Get_Bounding_Box () const
 {
 	// Get the 'real' values from the
 	if (m_SoundObj != nullptr) {

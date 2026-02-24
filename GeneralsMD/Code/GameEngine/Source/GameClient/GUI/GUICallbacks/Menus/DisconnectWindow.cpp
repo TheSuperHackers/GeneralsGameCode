@@ -68,7 +68,7 @@ static GameWindow *buttonVotePlayer5Window = nullptr;
 static GameWindow *buttonVotePlayer6Window = nullptr;
 static GameWindow *buttonVotePlayer7Window = nullptr;
 
-static void InitDisconnectWindow( void ) {
+static void InitDisconnectWindow() {
 	textEntryID = TheNameKeyGenerator->nameToKey( "DisconnectScreen.wnd:TextEntry");
 	textDisplayID = TheNameKeyGenerator->nameToKey( "DisconnectScreen.wnd:ListboxTextDisplay");
 
@@ -103,7 +103,7 @@ static void InitDisconnectWindow( void ) {
 //------------------------------------------------------
 /** Show the Disconnect Screen */
 //------------------------------------------------------
-void ShowDisconnectWindow( void )
+void ShowDisconnectWindow()
 {
 
 	// load the quit menu from the layout file if needed
@@ -146,7 +146,7 @@ void ShowDisconnectWindow( void )
 //------------------------------------------------------
 /** Hide the Disconnect Screen */
 //------------------------------------------------------
-void HideDisconnectWindow( void )
+void HideDisconnectWindow()
 {
 
 	// load the quit menu from the layout file if needed

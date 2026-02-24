@@ -38,7 +38,7 @@ GhostObjectManager *TheGhostObjectManager = nullptr;
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-GhostObject::GhostObject(void):
+GhostObject::GhostObject():
 m_parentAngle(0.0f),
 // TheSuperHackers @bugfix tomsons26 26/04/2025 Change initialization of m_parentGeometryIsSmall from 0.0f.
 // Assigning a float to a bool results in the compiler using a random 1 byte value to assign to the bool.
@@ -121,13 +121,13 @@ void GhostObject::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void GhostObject::loadPostProcess( void )
+void GhostObject::loadPostProcess()
 {
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-GhostObjectManager::GhostObjectManager(void)
+GhostObjectManager::GhostObjectManager()
 {
 	m_lockGhostObjects = FALSE;
 	m_saveLockGhostObjects = FALSE;
@@ -143,7 +143,7 @@ GhostObjectManager::~GhostObjectManager()
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void GhostObjectManager::reset(void)
+void GhostObjectManager::reset()
 {
 	m_trackAllPlayers = TheGlobalData->m_enablePlayerObserver;
 }
@@ -169,13 +169,13 @@ void GhostObjectManager::updateOrphanedObjects(int *playerIndexList, int playerI
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void GhostObjectManager::releasePartitionData(void)
+void GhostObjectManager::releasePartitionData()
 {
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void GhostObjectManager::restorePartitionData(void)
+void GhostObjectManager::restorePartitionData()
 {
 }
 
@@ -204,6 +204,6 @@ void GhostObjectManager::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void GhostObjectManager::loadPostProcess( void )
+void GhostObjectManager::loadPostProcess()
 {
 }

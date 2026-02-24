@@ -164,7 +164,7 @@ W3DVideoBuffer::~W3DVideoBuffer()
 // W3DVideoBuffer::lock
 //============================================================================
 
-void*		W3DVideoBuffer::lock( void )
+void*		W3DVideoBuffer::lock()
 {
 	void *mem = nullptr;
 
@@ -187,7 +187,7 @@ void*		W3DVideoBuffer::lock( void )
 // W3DVideoBuffer::unlock
 //============================================================================
 
-void		W3DVideoBuffer::unlock( void )
+void		W3DVideoBuffer::unlock()
 {
 	if ( m_surface != nullptr )
 	{
@@ -201,7 +201,7 @@ void		W3DVideoBuffer::unlock( void )
 // W3DVideoBuffer::valid
 //============================================================================
 
-Bool		W3DVideoBuffer::valid( void )
+Bool		W3DVideoBuffer::valid()
 {
 	return m_texture != nullptr;
 }
@@ -210,7 +210,7 @@ Bool		W3DVideoBuffer::valid( void )
 // W3DVideoBuffer::reset
 //============================================================================
 
-void	W3DVideoBuffer::free( void )
+void	W3DVideoBuffer::free()
 {
 	unlock();
 

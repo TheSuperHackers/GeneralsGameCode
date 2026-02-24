@@ -217,7 +217,7 @@ void AIPlayer::checkForSupplyCenter( BuildListInfo *info, Object *bldg )
 // ------------------------------------------------------------------------------------------------
 /** Queue up a supply truck to be built. */
 // ------------------------------------------------------------------------------------------------
-void AIPlayer::queueSupplyTruck( void )
+void AIPlayer::queueSupplyTruck()
 {
 	Bool truckInQueue = false;
 	for ( DLINK_ITERATOR<TeamInQueue> iter = iterate_TeamBuildQueue(); !iter.done(); iter.advance())
@@ -438,7 +438,7 @@ static void deleteQueue(TeamInQueue* o)
 // ------------------------------------------------------------------------------------------------
 /** Clear the current work order */
 // ------------------------------------------------------------------------------------------------
-void AIPlayer::clearTeamsInQueue( void )
+void AIPlayer::clearTeamsInQueue()
 {
 	removeAll_TeamBuildQueue(deleteQueue);
 	removeAll_TeamReadyQueue(deleteQueue);
@@ -698,7 +698,7 @@ Object *AIPlayer::buildStructureWithDozer(const ThingTemplate *bldgPlan, BuildLi
 // ------------------------------------------------------------------------------------------------
 /** Build our base. */
 // ------------------------------------------------------------------------------------------------
-void AIPlayer::processBaseBuilding( void )
+void AIPlayer::processBaseBuilding()
 {
 	//
 	// Refresh base buildings. Scan through list, if a building is missing,
@@ -927,7 +927,7 @@ void AIPlayer::guardSupplyCenter( Team *team, Int minSupplies )
 //-------------------------------------------------------------------------------------------------
 /** Is a supply source attacked? */
 //-------------------------------------------------------------------------------------------------
-Bool AIPlayer::isSupplySourceAttacked( void )
+Bool AIPlayer::isSupplySourceAttacked()
 {
 	const Int SCAN_RATE = 10; // don't scan more often than every 10 seconds.
 	UnsignedInt curFrame = TheGameLogic->getFrame();
@@ -1661,7 +1661,7 @@ Bool AIPlayer::selectTeamToReinforce( Int minPriority )
 // ------------------------------------------------------------------------------------------------
 /** Determine the next team to build.  Return true if one was selected. */
 // ------------------------------------------------------------------------------------------------
-Bool AIPlayer::selectTeamToBuild( void )
+Bool AIPlayer::selectTeamToBuild()
 {
 
 	// find the highest priority of all teams
@@ -2334,7 +2334,7 @@ void AIPlayer::selectSkillset(Int skillset)
 // ------------------------------------------------------------------------------------------------
 /** Do per frame work (if any) repairing bridges. */
 // ------------------------------------------------------------------------------------------------
-void AIPlayer::updateBridgeRepair(void)
+void AIPlayer::updateBridgeRepair()
 {
 	if (m_structuresInQueue == 0) return;
 	// Check once a second.
@@ -2658,7 +2658,7 @@ void AIPlayer::recruitSpecificAITeam(TeamPrototype *teamProto, Real recruitRadiu
 // ------------------------------------------------------------------------------------------------
 /** Train our teams. */
 // ------------------------------------------------------------------------------------------------
-void AIPlayer::processTeamBuilding( void )
+void AIPlayer::processTeamBuilding()
 {
 	// select a new team
 	if (selectTeamToBuild()) {
@@ -2668,7 +2668,7 @@ void AIPlayer::processTeamBuilding( void )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void AIPlayer::queueUnits( void )
+void AIPlayer::queueUnits()
 {
 
 	queueSupplyTruck();
@@ -2737,7 +2737,7 @@ void AIPlayer::queueUnits( void )
 /**
  * See if it's time to build another base building.
  */
-void AIPlayer::doBaseBuilding( void )
+void AIPlayer::doBaseBuilding()
 {
 	if (m_player->getCanBuildBase()) {
 		// See if we are ready to start trying a structure.
@@ -2767,7 +2767,7 @@ void AIPlayer::doBaseBuilding( void )
 /**
  * See if any ready teams have finished moving to the rally point.
  */
-void AIPlayer::checkReadyTeams( void )
+void AIPlayer::checkReadyTeams()
 {
 	// See if any ready teams are gathered at their rally point
 	{	// needed to scope iter.  silly ms c++.
@@ -2848,7 +2848,7 @@ void AIPlayer::checkReadyTeams( void )
 /**
  * See if any queued teams have finished building, or have run out of time.
  */
-void AIPlayer::checkQueuedTeams( void )
+void AIPlayer::checkQueuedTeams()
 {
 	// See if any teams are expired.
 	{	// needed to scope iter.  silly ms c++.
@@ -2915,7 +2915,7 @@ void AIPlayer::checkQueuedTeams( void )
 /**
  * See if it is time to start another ai team building.
  */
-void AIPlayer::doTeamBuilding( void )
+void AIPlayer::doTeamBuilding()
 {
 	// See if any teams are expired.
 	if (m_player->getCanBuildUnits()) {
@@ -2946,7 +2946,7 @@ void AIPlayer::doTeamBuilding( void )
 /**
  * See if it is time to start another upgrade or skill building.
  */
-void AIPlayer::doUpgradesAndSkills( void )
+void AIPlayer::doUpgradesAndSkills()
 {
 	if (TheGameLogic->getFrame() < 2) {
 		// can't do updates on the first few frames
@@ -3025,7 +3025,7 @@ void AIPlayer::doUpgradesAndSkills( void )
  * Perform computer-controlled player AI
  */
 //DECLARE_PERF_TIMER(AIPlayer_update)
-void AIPlayer::update( void )
+void AIPlayer::update()
 {
 	//USE_PERF_TIMER(AIPlayer_update)
 
@@ -3048,7 +3048,7 @@ void AIPlayer::update( void )
  * Find any things that build stuff & add them to the build list.  Then build any initially built
  * buildings.
  */
-void AIPlayer::newMap( void )
+void AIPlayer::newMap()
 {
 	BuildListInfo *info = m_player->getBuildList();
 	// Add any factories placed to the build list.
@@ -3147,7 +3147,7 @@ void AIPlayer::computeCenterAndRadiusOfBase(Coord3D *center, Real *radius)
 /**
  * Checks to see if we're building a dozer.
  */
-Bool AIPlayer::dozerInQueue( void )
+Bool AIPlayer::dozerInQueue()
 {
 	{	// needed to scope iter.  silly ms c++.
 		for ( DLINK_ITERATOR<TeamInQueue> iter = iterate_TeamBuildQueue(); !iter.done(); iter.advance())
@@ -3166,7 +3166,7 @@ Bool AIPlayer::dozerInQueue( void )
 /**
  * Queues up a dozer.
  */
-void AIPlayer::queueDozer( void )
+void AIPlayer::queueDozer()
 {
 
 	if (dozerInQueue()) return;
@@ -3215,7 +3215,7 @@ void AIPlayer::queueDozer( void )
 //-------------------------------------------------------------------------------------------------
 /** Difficulty level for this player */
 //-------------------------------------------------------------------------------------------------
-enum GameDifficulty AIPlayer::getAIDifficulty(void) const
+enum GameDifficulty AIPlayer::getAIDifficulty() const
 {
 	return m_difficulty;
 }
@@ -3486,7 +3486,7 @@ void AIPlayer::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void AIPlayer::loadPostProcess( void )
+void AIPlayer::loadPostProcess()
 {
 
 }
@@ -3707,7 +3707,7 @@ void TeamInQueue::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void TeamInQueue::loadPostProcess( void )
+void TeamInQueue::loadPostProcess()
 {
 
 }
@@ -3789,7 +3789,7 @@ void WorkOrder::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void WorkOrder::loadPostProcess( void )
+void WorkOrder::loadPostProcess()
 {
 
 }

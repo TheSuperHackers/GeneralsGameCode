@@ -49,7 +49,7 @@
 class VisPolyClass
 {
 public:
-	void Reset(void);
+	void Reset();
 	void Add_Vertex(const Vector3 & point);
 	void Clip(const PlaneClass & plane,VisPolyClass & dest) const;
 
@@ -57,7 +57,7 @@ public:
 };
 
 
-void VisPolyClass::Reset(void)
+void VisPolyClass::Reset()
 {
 	Verts.Delete_All(false);
 }
@@ -143,14 +143,14 @@ static VisPolyClass _VisPoly1;
 *********************************************************************************************/
 
 
-VisRasterizerClass::VisRasterizerClass(void) :
+VisRasterizerClass::VisRasterizerClass() :
 	ModelTransform(1),
 	Camera(nullptr),
 	MVTransform(1)
 {
 }
 
-VisRasterizerClass::~VisRasterizerClass(void)
+VisRasterizerClass::~VisRasterizerClass()
 {
 	REF_PTR_RELEASE(Camera);
 }
@@ -177,7 +177,7 @@ void	VisRasterizerClass::Set_Camera(CameraClass * camera)
 	Update_MV_Transform();
 }
 
-CameraClass * VisRasterizerClass::Get_Camera(void)
+CameraClass * VisRasterizerClass::Get_Camera()
 {
 	if (Camera != nullptr) {
 		Camera->Add_Ref();
@@ -185,12 +185,12 @@ CameraClass * VisRasterizerClass::Get_Camera(void)
 	return Camera;
 }
 
-CameraClass * VisRasterizerClass::Peek_Camera(void)
+CameraClass * VisRasterizerClass::Peek_Camera()
 {
 	return Camera;
 }
 
-void VisRasterizerClass::Update_MV_Transform(void)
+void VisRasterizerClass::Update_MV_Transform()
 {
 	Matrix3D view_tm(1);
 
@@ -205,7 +205,7 @@ void VisRasterizerClass::Update_MV_Transform(void)
 #endif
 }
 
-const Matrix3D & VisRasterizerClass::Get_MV_Transform(void)
+const Matrix3D & VisRasterizerClass::Get_MV_Transform()
 {
 	// TODO: optimize this
 	Update_MV_Transform();  // the user can and does mess with the camera directly!
@@ -366,7 +366,7 @@ bool VisRasterizerClass::Render_Triangles_Clip
 
 *********************************************************************************************/
 
-IDBufferClass::IDBufferClass(void) :
+IDBufferClass::IDBufferClass() :
 	BackfaceID(0),
 	FrontfaceID(0),
 	CurID(0),
@@ -381,7 +381,7 @@ IDBufferClass::IDBufferClass(void) :
 }
 
 
-IDBufferClass::~IDBufferClass(void)
+IDBufferClass::~IDBufferClass()
 {
 	Reset();
 }
@@ -403,7 +403,7 @@ void IDBufferClass::Get_Resolution(int * get_w,int * get_h)
 	if (get_h != nullptr) { *get_h = ResHeight; }
 }
 
-void IDBufferClass::Reset(void)
+void IDBufferClass::Reset()
 {
 	delete[] IDBuffer;
 	IDBuffer = nullptr;
@@ -414,7 +414,7 @@ void IDBufferClass::Reset(void)
 	PixelCounter = 0;
 }
 
-void IDBufferClass::Allocate_Buffers(void)
+void IDBufferClass::Allocate_Buffers()
 {
 	Reset();
 
@@ -426,7 +426,7 @@ void IDBufferClass::Allocate_Buffers(void)
 	}
 }
 
-void IDBufferClass::Clear(void)
+void IDBufferClass::Clear()
 {
 	if ((ResWidth > 0) && (ResHeight > 0)) {
 		int byte_count = ResWidth * ResWidth * sizeof(uint32);
@@ -491,7 +491,7 @@ struct EdgeStruct
 		OOZStep = XStep * grad.DOOZ_DX + grad.DOOZ_DY;
 	}
 
-	int Step(void)
+	int Step()
 	{
 		X+=XStep;
 		Y++;

@@ -41,6 +41,6 @@ class W3DThingFactory : public ThingFactory
 
 public:
 
-	W3DThingFactory( void );
-	virtual ~W3DThingFactory( void );
+	W3DThingFactory();
+	virtual ~W3DThingFactory();
 };

@@ -44,13 +44,13 @@ class ProfileCmdInterface: public DebugCmdInterface
   ProfileResultInterface **resFunc;
 
 public:
-  ProfileCmdInterface(void): numResFunc(0), resFunc(0) {}
+  ProfileCmdInterface(): numResFunc(0), resFunc(0) {}
 
   static void AddResultFunction(ProfileResultInterface* (*func)(int, const char * const *),
                                 const char *name, const char *arg);
-  void RunResultFunctions(void);
+  void RunResultFunctions();
 
   virtual bool Execute(class Debug& dbg, const char *cmd, CommandMode cmdmode,
                        unsigned argn, const char * const * argv);
-  virtual void Delete(void) {}
+  virtual void Delete() {}
 };

@@ -76,7 +76,7 @@ Bool TrainTrack::releaseReference()
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-RailroadBehaviorModuleData::RailroadBehaviorModuleData( void )
+RailroadBehaviorModuleData::RailroadBehaviorModuleData()
 {
 	m_carriageTemplateNameData.clear();
 	m_pathPrefixName.clear();
@@ -163,7 +163,7 @@ RailroadBehavior::RailroadBehavior( Thing *thing, const ModuleData *moduleData )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-RailroadBehavior::~RailroadBehavior( void )
+RailroadBehavior::~RailroadBehavior()
 {
 
 	TheAudio->removeAudioEvent( m_runningSound.getPlayingHandle() );// no more chugchug when I'm dead
@@ -499,7 +499,7 @@ void RailroadBehavior::playImpactSound(Object *victim, const Coord3D *impactPosi
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void RailroadBehavior::loadTrackData( void )
+void RailroadBehavior::loadTrackData()
 {
 
 	if ( m_track != nullptr )
@@ -641,7 +641,7 @@ void RailroadBehavior::loadTrackData( void )
 
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-UpdateSleepTime RailroadBehavior::update( void )
+UpdateSleepTime RailroadBehavior::update()
 {
 
 
@@ -814,7 +814,7 @@ UpdateSleepTime RailroadBehavior::update( void )
 
 
 
-void RailroadBehavior::disembark(void)
+void RailroadBehavior::disembark()
 {
 	ContainModuleInterface *contain = getObject()->getContain();
 	if (contain)
@@ -895,7 +895,7 @@ public:
 };
 
 
-void RailroadBehavior::createCarriages( void )
+void RailroadBehavior::createCarriages()
 {
 
 
@@ -1293,7 +1293,7 @@ void RailroadBehavior::updatePositionTrackDistance( PullInfo *pullerInfo, PullIn
 
 //---------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------
-void RailroadBehavior::destroyTheWholeTrainNow( void )
+void RailroadBehavior::destroyTheWholeTrainNow()
 {
 	TheGameLogic->destroyObject( getObject());
 
@@ -1454,7 +1454,7 @@ void RailroadBehavior::FindPosByPathDistance( Coord3D *pos, const Real dist, con
 
 	}
 
-	//DEBUG_ASSERTCRASH(FALSE,("Railroad could not find a position on the path!"));
+	//DEBUG_CRASH(("Railroad could not find a position on the path!"));
 
 }
 
@@ -1569,7 +1569,7 @@ void RailroadBehavior::PullInfo::xferPullInfo( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void RailroadBehavior::loadPostProcess( void )
+void RailroadBehavior::loadPostProcess()
 {
 	// extend base class
 	PhysicsBehavior::loadPostProcess();

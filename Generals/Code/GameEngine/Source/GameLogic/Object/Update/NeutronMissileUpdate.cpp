@@ -129,13 +129,13 @@ NeutronMissileUpdate::NeutronMissileUpdate( Thing *thing, const ModuleData* modu
 }
 
 //-------------------------------------------------------------------------------------------------
-NeutronMissileUpdate::~NeutronMissileUpdate( void )
+NeutronMissileUpdate::~NeutronMissileUpdate()
 {
 	m_deliveryDecal.clear();
 }
 
 //-------------------------------------------------------------------------------------------------
-void NeutronMissileUpdate::onDelete( void )
+void NeutronMissileUpdate::onDelete()
 {
 }
 
@@ -197,7 +197,7 @@ void NeutronMissileUpdate::projectileFireAtObjectOrPosition( const Object *victi
 /**
  * Implement LAUNCH state
  */
-void NeutronMissileUpdate::doLaunch( void )
+void NeutronMissileUpdate::doLaunch()
 {
 	if (!m_isLaunched)
 	{
@@ -331,7 +331,7 @@ static Real calcTransform(const Object* obj, const Coord3D *pos, Real maxTurnRat
 /**
  * Implement ATTACK state
  */
-void NeutronMissileUpdate::doAttack( void )
+void NeutronMissileUpdate::doAttack()
 {
 	Matrix3D mx;
 	Real speed = getNeutronMissileUpdateModuleData()->m_relativeSpeed;
@@ -469,7 +469,7 @@ void NeutronMissileUpdate::detonate()
 /**
  * Simulate one frame of a missile's behavior
  */
-UpdateSleepTime NeutronMissileUpdate::update( void )
+UpdateSleepTime NeutronMissileUpdate::update()
 {
 	m_deliveryDecal.update();
 
@@ -633,7 +633,7 @@ void NeutronMissileUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void NeutronMissileUpdate::loadPostProcess( void )
+void NeutronMissileUpdate::loadPostProcess()
 {
 
 	// extend base class

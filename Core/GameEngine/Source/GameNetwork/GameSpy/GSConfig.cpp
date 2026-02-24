@@ -48,16 +48,16 @@ public:
 	~GameSpyConfig() {}
 
 	// Pings
-	std::list<AsciiString> getPingServers(void)	{ return m_pingServers; }
-	Int getNumPingRepetitions(void)							{ return m_pingReps; }
-	Int getPingTimeoutInMs(void)								{ return m_pingTimeout; }
-	virtual Int getPingCutoffGood( void )				{	return m_pingCutoffGood; }
-	virtual Int getPingCutoffBad( void )				{ return m_pingCutoffBad;	}
+	std::list<AsciiString> getPingServers()	{ return m_pingServers; }
+	Int getNumPingRepetitions()							{ return m_pingReps; }
+	Int getPingTimeoutInMs()								{ return m_pingTimeout; }
+	virtual Int getPingCutoffGood()				{	return m_pingCutoffGood; }
+	virtual Int getPingCutoffBad()				{ return m_pingCutoffBad;	}
 
 	// QM
-	std::list<AsciiString> getQMMaps(void)			{ return m_qmMaps; }
-	Int getQMBotID(void)												{ return m_qmBotID; }
-	Int getQMChannel(void)											{ return m_qmChannel; }
+	std::list<AsciiString> getQMMaps()			{ return m_qmMaps; }
+	Int getQMBotID()												{ return m_qmBotID; }
+	Int getQMChannel()											{ return m_qmChannel; }
 	void setQMChannel(Int channel)							{ m_qmChannel = channel; }
 
 	// Player Info
@@ -67,7 +67,7 @@ public:
 	virtual Bool getManglerLocation(Int index, AsciiString& host, UnsignedShort& port);
 
 	// Ladder / Any other external parsing
-	AsciiString getLeftoverConfig(void)					{ return m_leftoverConfig; }
+	AsciiString getLeftoverConfig()					{ return m_leftoverConfig; }
 
 	// NAT Timeouts
 	virtual Int getTimeBetweenRetries() { return m_natRetryInterval; }

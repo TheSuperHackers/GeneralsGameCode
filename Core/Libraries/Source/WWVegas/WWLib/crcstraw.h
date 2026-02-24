@@ -46,11 +46,11 @@
 class CRCStraw : public Straw
 {
 	public:
-		CRCStraw(void) {}
+		CRCStraw() {}
 		virtual int Get(void * source, int slen);
 
 		// Calculate and return the CRC value.
-		long Result(void) const;
+		long Result() const;
 
 	protected:
 		CRCEngine CRC;

@@ -77,7 +77,7 @@ public:
 
     \return true if range profiling is enabled, false if not
   */
-  static bool IsEnabled(void);
+  static bool IsEnabled();
 
   /**
     \brief Determines the number of known (recorded) range frames.
@@ -88,7 +88,7 @@ public:
 
     \return number of recorded range frames
   */
-  static unsigned GetFrameCount(void);
+  static unsigned GetFrameCount();
 
   /**
     \brief Determines the range name of a recorded range frame.
@@ -106,7 +106,7 @@ public:
 
     This function does not change any recorded frames.
   */
-  static void ClearTotals(void);
+  static void ClearTotals();
 
   /**
     \brief Determines number of CPU clock cycles per second.
@@ -116,7 +116,7 @@ public:
 
     \return number of CPU clock cycles per second
   */
-  static _int64 GetClockCyclesPerSecond(void);
+  static _int64 GetClockCyclesPerSecond();
 
   /**
     \brief Add the given result function interface.

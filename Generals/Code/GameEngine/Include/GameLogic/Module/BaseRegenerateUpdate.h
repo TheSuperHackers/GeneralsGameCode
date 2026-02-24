@@ -42,7 +42,7 @@ class BaseRegenerateUpdateModuleData : public UpdateModuleData
 {
 
 public:
-	BaseRegenerateUpdateModuleData( void );
+	BaseRegenerateUpdateModuleData();
 	static void buildFieldParse( MultiIniFieldParse &p );
 
 };
@@ -67,7 +67,7 @@ public:
 	virtual DamageModuleInterface* getDamage() { return this; }
 
 	// UpdateModuleInterface
-	virtual UpdateSleepTime update( void );
+	virtual UpdateSleepTime update();
 
 	// DamageModuleInterface
 	virtual void onDamage( DamageInfo *damageInfo );

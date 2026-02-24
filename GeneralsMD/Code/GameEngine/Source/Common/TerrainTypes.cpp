@@ -53,7 +53,7 @@ const FieldParse TerrainType::m_terrainTypeFieldParseTable[] =
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-TerrainType::TerrainType( void )
+TerrainType::TerrainType()
 {
 
 	m_name.clear();
@@ -67,7 +67,7 @@ TerrainType::TerrainType( void )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-TerrainType::~TerrainType( void )
+TerrainType::~TerrainType()
 {
 
 }
@@ -78,7 +78,7 @@ TerrainType::~TerrainType( void )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-TerrainTypeCollection::TerrainTypeCollection( void )
+TerrainTypeCollection::TerrainTypeCollection()
 {
 
 	m_terrainList = nullptr;
@@ -87,7 +87,7 @@ TerrainTypeCollection::TerrainTypeCollection( void )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-TerrainTypeCollection::~TerrainTypeCollection( void )
+TerrainTypeCollection::~TerrainTypeCollection()
 {
 	TerrainType *temp;
 

@@ -64,32 +64,32 @@ class MaterialPassClass : public RefCountClass
 {
 public:
 
-	MaterialPassClass(void);
-	~MaterialPassClass(void);
+	MaterialPassClass();
+	~MaterialPassClass();
 
 	/// MW: Had to make this virtual so app can perform direct/custom D3D setup.
-	virtual void	Install_Materials(void) const;
-	virtual void	UnInstall_Materials(void) const { };	///< reset/cleanup D3D states
+	virtual void	Install_Materials() const;
+	virtual void	UnInstall_Materials() const { };	///< reset/cleanup D3D states
 
 	void							Set_Texture(TextureClass * Texture,int stage = 0);
 	void							Set_Shader(ShaderClass shader);
 	void							Set_Material(VertexMaterialClass * mat);
 
 	TextureClass *				Get_Texture(int stage = 0) const;
-	VertexMaterialClass *	Get_Material(void) const;
+	VertexMaterialClass *	Get_Material() const;
 
 	TextureClass *				Peek_Texture(int stage = 0) const;
-	ShaderClass					Peek_Shader(void)	const							{ return Shader; }
-	VertexMaterialClass *	Peek_Material(void) const						{ return Material; }
+	ShaderClass					Peek_Shader()	const							{ return Shader; }
+	VertexMaterialClass *	Peek_Material() const						{ return Material; }
 
 	void							Set_Cull_Volume(OBBoxClass * volume)		{ CullVolume = volume; }
-	OBBoxClass *				Get_Cull_Volume(void) const					{ return CullVolume; }
+	OBBoxClass *				Get_Cull_Volume() const					{ return CullVolume; }
 
 	void							Enable_On_Translucent_Meshes(bool onoff)	{ EnableOnTranslucentMeshes = onoff; }
-	bool							Is_Enabled_On_Translucent_Meshes(void)		{ return EnableOnTranslucentMeshes; }
+	bool							Is_Enabled_On_Translucent_Meshes()		{ return EnableOnTranslucentMeshes; }
 
 	static void					Enable_Per_Polygon_Culling(bool onoff)		{ EnablePerPolygonCulling = onoff; }
-	static bool					Is_Per_Polygon_Culling_Enabled(void)		{ return EnablePerPolygonCulling; }
+	static bool					Is_Per_Polygon_Culling_Enabled()		{ return EnablePerPolygonCulling; }
 
 protected:
 

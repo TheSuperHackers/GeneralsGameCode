@@ -36,18 +36,18 @@ public:
 	Win32BIGFileSystem();
 	virtual ~Win32BIGFileSystem();
 
-	virtual void init( void );
-	virtual void update( void );
-	virtual void reset( void );
-	virtual void postProcessLoad( void );
+	virtual void init();
+	virtual void update();
+	virtual void reset();
+	virtual void postProcessLoad();
 
 	// ArchiveFile operations
-	virtual void closeAllArchiveFiles( void );											///< Close all Archivefiles currently open
+	virtual void closeAllArchiveFiles();											///< Close all Archivefiles currently open
 
 	// File operations
 	virtual ArchiveFile * openArchiveFile(const Char *filename);
 	virtual void closeArchiveFile(const Char *filename);
-	virtual void closeAllFiles( void );															///< Close all files associated with ArchiveFiles
+	virtual void closeAllFiles();															///< Close all files associated with ArchiveFiles
 
 	virtual Bool loadBigFilesFromDirectory(AsciiString dir, AsciiString fileMask, Bool overwrite = FALSE);
 protected:

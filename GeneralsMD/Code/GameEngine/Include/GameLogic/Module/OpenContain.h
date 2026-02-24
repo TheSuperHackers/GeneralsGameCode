@@ -70,7 +70,7 @@ public:
  	Bool m_allowEnemiesInside;			///< allow enemies inside us
  	Bool m_allowNeutralInside;			///< allow neutral inside us
 
-	OpenContainModuleData( void );
+	OpenContainModuleData();
 	static void buildFieldParse(MultiIniFieldParse& p);
 };
 
@@ -100,7 +100,7 @@ public:
 	static Int getInterfaceMask() { return UpdateModule::getInterfaceMask() | (MODULEINTERFACE_CONTAIN) | (MODULEINTERFACE_COLLIDE) | (MODULEINTERFACE_DIE) | (MODULEINTERFACE_DAMAGE); }
 
 	virtual void onDie( const DamageInfo *damageInfo );  ///< the die callback
-	virtual void onDelete( void );	///< Last possible moment cleanup
+	virtual void onDelete();	///< Last possible moment cleanup
 	virtual void onCapture( Player *oldOwner, Player *newOwner ){}
 
 	// CollideModuleInterface
@@ -155,7 +155,7 @@ public:
 	virtual void addToContainList( Object *obj );		///< The part of AddToContain that inheritors can override (Can't do whole thing because of all the private stuff involved)
 	virtual void removeFromContain( Object *obj, Bool exposeStealthUnits = FALSE );	///< remove 'obj' from contain list
 	virtual void removeAllContained( Bool exposeStealthUnits = FALSE );				///< remove all objects on contain list
-	virtual void killAllContained( void );				///< kill all objects on contain list
+	virtual void killAllContained();				///< kill all objects on contain list
   virtual void harmAndForceExitAllContained( DamageInfo *info ); // apply canned damage against those contains
 	virtual Bool isEnclosingContainerFor( const Object *obj ) const;	///< Does this type of Contain Visibly enclose its contents?
 	virtual Bool isPassengerAllowedToFire( ObjectID id = INVALID_ID ) const;	///< Hey, can I shoot out of this container?
@@ -164,7 +164,7 @@ public:
 
   virtual void setOverrideDestination( const Coord3D * ){} ///< Instead of falling peacefully towards a clear spot, I will now aim here
 	virtual Bool isDisplayedOnControlBar() const {return FALSE;}///< Does this container display its contents on the ControlBar?
-	virtual Int getExtraSlotsInUse( void ) { return 0; }
+	virtual Int getExtraSlotsInUse() { return 0; }
 	virtual Bool isKickOutOnCapture(){ return TRUE; }///< By default, yes, all contain modules kick passengers out on capture
 
 	// contain list access
@@ -176,7 +176,7 @@ public:
 	virtual UnsignedInt getStealthUnitsContained() const { return m_stealthUnitsContained; }
 	virtual UnsignedInt getHeroUnitsContained() const { return m_heroUnitsContained; }
 
-	virtual PlayerMaskType getPlayerWhoEntered(void) const { return m_playerEnteredMask; }
+	virtual PlayerMaskType getPlayerWhoEntered() const { return m_playerEnteredMask; }
 
 	virtual Int getContainMax() const;
 
@@ -191,7 +191,7 @@ public:
 	virtual void exitObjectByBudding( Object *newObj, Object *budHost ) { return; };
 
 	virtual void setRallyPoint( const Coord3D *pos );				///< define a "rally point" for units to move towards
-	virtual const Coord3D *getRallyPoint( void ) const;			///< define a "rally point" for units to move towards
+	virtual const Coord3D *getRallyPoint() const;			///< define a "rally point" for units to move towards
 	virtual Bool getExitPosition(Coord3D& exitPosition ) const { return FALSE; };					///< access to the "Door" position of the production object
 	virtual Bool getNaturalRallyPoint( Coord3D& rallyPoint, Bool offset = TRUE ) const;			///< get the natural "rally point" for units to move towards
 
@@ -205,7 +205,7 @@ public:
 	virtual Bool isSpecialZeroSlotContainer() const { return false; }
 	virtual Bool isImmuneToClearBuildingAttacks() const { return true; }
   virtual Bool isSpecialOverlordStyleContainer() const { return false; }
-  virtual Bool isAnyRiderAttacking( void ) const;
+  virtual Bool isAnyRiderAttacking() const;
 
 	/**
 		this is used for containers that must do something to allow people to enter or exit...
@@ -225,15 +225,15 @@ public:
 
 	virtual void enableLoadSounds( Bool enable ) { m_loadSoundsEnabled = enable; }
 
-  Real getDamagePercentageToUnits( void );
+  Real getDamagePercentageToUnits();
   virtual Object* getClosestRider ( const Coord3D *pos );
 
   virtual void setEvacDisposition( EvacDisposition disp ) {};
 protected:
 
-	virtual void monitorConditionChanges( void );				///< check to see if we need to update our occupant positions from a model change or anything else
+	virtual void monitorConditionChanges();				///< check to see if we need to update our occupant positions from a model change or anything else
 	virtual void putObjAtNextFirePoint( Object *obj );	///< place object at position of the next fire point to use
-	virtual void redeployOccupants( void );							///< redeploy any objects at firepoints due to a model condition change
+	virtual void redeployOccupants();							///< redeploy any objects at firepoints due to a model condition change
 
 	const ContainedItemsList& getContainList() const { return m_containList; }
 

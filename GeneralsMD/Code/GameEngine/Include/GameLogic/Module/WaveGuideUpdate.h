@@ -42,7 +42,7 @@ class WaveGuideUpdateModuleData : public UpdateModuleData
 
 public:
 
-	WaveGuideUpdateModuleData( void );
+	WaveGuideUpdateModuleData();
 
 	static void buildFieldParse(MultiIniFieldParse& p);
 
@@ -77,21 +77,21 @@ public:
   WaveGuideUpdate( Thing *thing, const ModuleData *moduleData );
 	// virtual destructor prototype provided by MemoryPoolObject
 
-	virtual UpdateSleepTime update( void );		///< the update implementation
+	virtual UpdateSleepTime update();		///< the update implementation
 
 protected:
 
-	Bool initWaveGuide( void );						///< initialize the waveguide on motion start
-	Bool startMoving( void );							///< start the waveguide moving
+	Bool initWaveGuide();						///< initialize the waveguide on motion start
+	Bool startMoving();							///< start the waveguide moving
 
-	void computeWaveShapePoints( void );	///< compute the wave shape points
+	void computeWaveShapePoints();	///< compute the wave shape points
 
-	void transformWaveShape( void );			///< build an array we can re-use of the wave shape points
+	void transformWaveShape();			///< build an array we can re-use of the wave shape points
 
-	void doShapeEffects( void );					///< maintenance for the wave shape effects
-	void doWaterMotion( void );						///< do the push up water motion
-	void doShoreEffects( void );					///< do any effects on the shorelines
-	void doDamage( void );								///< do damage to things that have crossed our path
+	void doShapeEffects();					///< maintenance for the wave shape effects
+	void doWaterMotion();						///< do the push up water motion
+	void doShoreEffects();					///< do any effects on the shorelines
+	void doDamage();								///< do damage to things that have crossed our path
 
 	UnsignedInt m_activeFrame;						///< frame we became active on
 	Bool m_needDisable;

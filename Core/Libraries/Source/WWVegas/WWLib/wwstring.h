@@ -74,7 +74,7 @@ public:
 	StringClass (const TCHAR *string, bool hint_temporary = false);
 	StringClass (TCHAR ch, bool hint_temporary = false);
 	StringClass (const WCHAR *string, bool hint_temporary = false);
-	~StringClass (void);
+	~StringClass ();
 
 	////////////////////////////////////////////////////////////
 	//	Public operators
@@ -102,7 +102,7 @@ public:
 
 	const TCHAR & operator[] (int index) const;
 	TCHAR & operator[] (int index);
-	inline operator const TCHAR * (void) const;
+	inline operator const TCHAR * () const;
 
 	////////////////////////////////////////////////////////////
 	//	Public methods
@@ -110,26 +110,26 @@ public:
 	int			Compare (const TCHAR *string) const;
 	int			Compare_No_Case (const TCHAR *string) const;
 
-	inline int	Get_Length (void) const;
-	bool			Is_Empty (void) const;
+	inline int	Get_Length () const;
+	bool			Is_Empty () const;
 
 	void			Erase (int start_index, int char_count);
 	int __cdecl  Format (const TCHAR *format, ...);
 	int __cdecl  Format_Args (const TCHAR *format, va_list arg_list );
 
 	// Trim leading and trailing whitespace characters (values <= 32)
-	void Trim(void);
+	void Trim();
 
 	TCHAR *		Get_Buffer (int new_length);
-	TCHAR *		Peek_Buffer (void);
-	const TCHAR * str (void) const;
+	TCHAR *		Peek_Buffer ();
+	const TCHAR * str () const;
 
 	bool Copy_Wide (const WCHAR *source);
 
 	////////////////////////////////////////////////////////////
 	//	Static methods
 	////////////////////////////////////////////////////////////
-	void	Release_Resources (void);	//why was this static? -MW
+	void	Release_Resources ();	//why was this static? -MW
 
 private:
 
@@ -161,12 +161,12 @@ private:
 	TCHAR *		Allocate_Buffer (int length);
 	void			Resize (int size);
 	void			Uninitialised_Grow (int length);
-	void			Free_String (void);
+	void			Free_String ();
 
 	inline void	Store_Length (int length);
 	inline void	Store_Allocated_Length (int allocated_length);
-	inline HEADER * Get_Header (void) const;
-	int			Get_Allocated_Length (void) const;
+	inline HEADER * Get_Header () const;
+	int			Get_Allocated_Length () const;
 
 	void			Set_Buffer_And_Allocated_Length (TCHAR *buffer, int length);
 
@@ -339,7 +339,7 @@ StringClass::StringClass (const WCHAR *string, bool hint_temporary)
 //	~StringClass
 ///////////////////////////////////////////////////////////////////
 inline
-StringClass::~StringClass (void)
+StringClass::~StringClass ()
 {
 	Free_String ();
 	return ;
@@ -350,7 +350,7 @@ StringClass::~StringClass (void)
 //	Is_Empty
 ///////////////////////////////////////////////////////////////////
 inline bool
-StringClass::Is_Empty (void) const
+StringClass::Is_Empty () const
 {
 	return (m_Buffer[0] == m_NullChar);
 }
@@ -397,7 +397,7 @@ StringClass::operator[] (int index)
 //	operator const TCHAR *
 ///////////////////////////////////////////////////////////////////
 inline
-StringClass::operator const TCHAR * (void) const
+StringClass::operator const TCHAR * () const
 {
 	return m_Buffer;
 }
@@ -485,7 +485,7 @@ StringClass::Erase (int start_index, int char_count)
 ///////////////////////////////////////////////////////////////////
 // Trim leading and trailing whitespace characters (values <= 32)
 ///////////////////////////////////////////////////////////////////
-inline void StringClass::Trim(void)
+inline void StringClass::Trim()
 {
 	strtrim(m_Buffer);
 }
@@ -550,7 +550,7 @@ StringClass::Get_Buffer (int new_length)
 //	Peek_Buffer
 ///////////////////////////////////////////////////////////////////
 inline TCHAR *
-StringClass::Peek_Buffer (void)
+StringClass::Peek_Buffer ()
 {
 	return m_Buffer;
 }
@@ -559,7 +559,7 @@ StringClass::Peek_Buffer (void)
 //	str (formerly Peek_Buffer)
 ///////////////////////////////////////////////////////////////////
 inline const TCHAR *
-StringClass::str (void) const
+StringClass::str () const
 {
 	return m_Buffer;
 }
@@ -630,7 +630,7 @@ operator+ (const StringClass &string1, const TCHAR *string2)
 //	Return allocated size of the string buffer
 ///////////////////////////////////////////////////////////////////
 inline int
-StringClass::Get_Allocated_Length (void) const
+StringClass::Get_Allocated_Length () const
 {
 	int allocated_length = 0;
 
@@ -654,7 +654,7 @@ StringClass::Get_Allocated_Length (void) const
 // performed.
 ///////////////////////////////////////////////////////////////////
 inline int
-StringClass::Get_Length (void) const
+StringClass::Get_Length () const
 {
 	int length = 0;
 
@@ -733,7 +733,7 @@ StringClass::Allocate_Buffer (int length)
 // Get_Header
 ///////////////////////////////////////////////////////////////////
 inline StringClass::HEADER *
-StringClass::Get_Header (void) const
+StringClass::Get_Header () const
 {
 	return reinterpret_cast<HEADER *>(((char *)m_Buffer) - sizeof (StringClass::_HEADER));
 }

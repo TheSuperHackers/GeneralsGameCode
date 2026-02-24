@@ -284,7 +284,7 @@ Find_Tangents
 //
 //////////////////////////////////////////////////////////////////////
 void
-VehicleCurveClass::Update_Arc_List (void)
+VehicleCurveClass::Update_Arc_List ()
 {
 	WWMEMLOG(MEM_PATHFIND);
 	m_ArcList.Delete_All ();
@@ -583,7 +583,7 @@ VehicleCurveClass::Evaluate (float time, Vector3 *set_val)
 	return ;
 }
 
-const PersistFactoryClass & VehicleCurveClass::Get_Factory(void) const
+const PersistFactoryClass & VehicleCurveClass::Get_Factory() const
 {
 	return _VehicleCurveFactory;
 }

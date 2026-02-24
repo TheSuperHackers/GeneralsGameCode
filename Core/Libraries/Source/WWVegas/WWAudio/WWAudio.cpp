@@ -103,7 +103,7 @@ WWAudioClass::Is_OK_To_Give_Handle (const AudibleSoundClass &sound_obj)
 //	WWAudioClass
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
-WWAudioClass::WWAudioClass (void)
+WWAudioClass::WWAudioClass ()
 	: m_Driver2D (nullptr),
 	  m_Driver3D (nullptr),
 	  m_PlaybackRate (44100),
@@ -153,7 +153,7 @@ WWAudioClass::WWAudioClass (void)
 //	~WWAudioClass
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
-WWAudioClass::~WWAudioClass (void)
+WWAudioClass::~WWAudioClass ()
 {
 	//
 	//	Make sure the delayed-release thread is terminated
@@ -182,7 +182,7 @@ WWAudioClass::~WWAudioClass (void)
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
 void
-WWAudioClass::Flush_Cache (void)
+WWAudioClass::Flush_Cache ()
 {
 	// Loop through all the hash indices
 	for (int hash_index = 0; hash_index < MAX_CACHE_HASH; hash_index ++) {
@@ -322,7 +322,7 @@ WWAudioClass::Open_2D_Device
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
 bool
-WWAudioClass::Close_2D_Device (void)
+WWAudioClass::Close_2D_Device ()
 {
 	MMSLockClass lock;
 
@@ -1093,7 +1093,7 @@ WWAudioClass::Create_Instant_Sound
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
 void
-WWAudioClass::Flush_Playlist (void)
+WWAudioClass::Flush_Playlist ()
 {
 	// First make sure to free any completed sounds
 	Free_Completed_Sounds ();
@@ -1116,7 +1116,7 @@ WWAudioClass::Flush_Playlist (void)
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
 void
-WWAudioClass::Free_Completed_Sounds (void)
+WWAudioClass::Free_Completed_Sounds ()
 {
 	if (m_CompletedSounds.Count () > 0) {
 
@@ -1279,7 +1279,7 @@ WWAudioClass::Is_Sound_In_Playlist (AudibleSoundClass *sound_obj)
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
 void
-WWAudioClass::Reprioritize_Playlist (void)
+WWAudioClass::Reprioritize_Playlist ()
 {
 	AudibleSoundClass *sound_to_get_handle = nullptr;
 	float hightest_priority = 0;
@@ -1349,7 +1349,7 @@ WWAudioClass::On_Frame_Update (unsigned int milliseconds)
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
 void
-WWAudioClass::Release_2D_Handles (void)
+WWAudioClass::Release_2D_Handles ()
 {
 	MMSLockClass lock;
 
@@ -1372,7 +1372,7 @@ WWAudioClass::Release_2D_Handles (void)
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
 void
-WWAudioClass::Allocate_2D_Handles (void)
+WWAudioClass::Allocate_2D_Handles ()
 {
 	MMSLockClass lock;
 
@@ -1541,7 +1541,7 @@ WWAudioClass::Get_3D_Sample (const Sound3DClass &sound_obj)
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
 H3DPOBJECT
-WWAudioClass::Get_Listener_Handle (void)
+WWAudioClass::Get_Listener_Handle ()
 {
 	MMSLockClass lock;
 	return ::AIL_3D_open_listener (m_Driver3D);
@@ -1554,7 +1554,7 @@ WWAudioClass::Get_Listener_Handle (void)
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
 void
-WWAudioClass::Build_3D_Driver_List (void)
+WWAudioClass::Build_3D_Driver_List ()
 {
 	MMSLockClass lock;
 
@@ -1601,7 +1601,7 @@ WWAudioClass::Build_3D_Driver_List (void)
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
 void
-WWAudioClass::Free_3D_Driver_List (void)
+WWAudioClass::Free_3D_Driver_List ()
 {
 	MMSLockClass lock;
 
@@ -1822,7 +1822,7 @@ WWAudioClass::Find_3D_Device (DRIVER_TYPE_3D type)
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
 void
-WWAudioClass::Allocate_3D_Handles (void)
+WWAudioClass::Allocate_3D_Handles ()
 {
 	MMSLockClass lock;
 
@@ -1851,7 +1851,7 @@ WWAudioClass::Allocate_3D_Handles (void)
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
 void
-WWAudioClass::Release_3D_Handles (void)
+WWAudioClass::Release_3D_Handles ()
 {
 	MMSLockClass lock;
 
@@ -1902,7 +1902,7 @@ WWAudioClass::Validate_3D_Sound_Buffer (SoundBufferClass *buffer)
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
 void
-WWAudioClass::ReAssign_2D_Handles (void)
+WWAudioClass::ReAssign_2D_Handles ()
 {
 	// Loop through all the entries in the playlist
 	for (int index = 0; index < m_Playlist.Count (); index ++) {
@@ -1929,7 +1929,7 @@ WWAudioClass::ReAssign_2D_Handles (void)
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
 void
-WWAudioClass::ReAssign_3D_Handles (void)
+WWAudioClass::ReAssign_3D_Handles ()
 {
 	// Loop through all the entries in the playlist
 	for (int index = 0; index < m_Playlist.Count (); index ++) {
@@ -1953,7 +1953,7 @@ WWAudioClass::ReAssign_3D_Handles (void)
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
 void
-WWAudioClass::Remove_2D_Sound_Handles (void)
+WWAudioClass::Remove_2D_Sound_Handles ()
 {
 	// Loop through all the entries in the playlist
 	for (int index = 0; index < m_Playlist.Count (); index ++) {
@@ -1975,7 +1975,7 @@ WWAudioClass::Remove_2D_Sound_Handles (void)
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
 void
-WWAudioClass::Remove_3D_Sound_Handles (void)
+WWAudioClass::Remove_3D_Sound_Handles ()
 {
 	// Loop through all the entries in the playlist
 	for (int index = 0; index < m_Playlist.Count (); index ++) {
@@ -2047,7 +2047,7 @@ WWAudioClass::Set_Music_Volume (float volume)
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
 bool
-WWAudioClass::Is_Disabled (void) const
+WWAudioClass::Is_Disabled () const
 {
 	static bool _firsttime = true;
 	static bool _disabled = false;
@@ -2157,7 +2157,7 @@ WWAudioClass::Initialize
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
 void
-WWAudioClass::Shutdown (void)
+WWAudioClass::Shutdown ()
 {
 	//
 	// If there is a timer running, then stop the timer...
@@ -2462,7 +2462,7 @@ WWAudioClass::Return_File (FileClass *file)
 //
 ////////////////////////////////////////////////////////////////////////////////////////////
 LogicalSoundClass *
-WWAudioClass::Create_Logical_Sound (void)
+WWAudioClass::Create_Logical_Sound ()
 {
 	return W3DNEW LogicalSoundClass;
 }
@@ -2474,7 +2474,7 @@ WWAudioClass::Create_Logical_Sound (void)
 //
 ////////////////////////////////////////////////////////////////////////////////////////////
 LogicalListenerClass *
-WWAudioClass::Create_Logical_Listener (void)
+WWAudioClass::Create_Logical_Listener ()
 {
 	return W3DNEW LogicalListenerClass;
 }
@@ -2499,7 +2499,7 @@ WWAudioClass::Add_Logical_Type (int id, LPCTSTR display_name)
 //
 ////////////////////////////////////////////////////////////////////////////////////////////
 void
-WWAudioClass::Reset_Logical_Types (void)
+WWAudioClass::Reset_Logical_Types ()
 {
 	m_LogicalTypes.Delete_All ();
 	return ;

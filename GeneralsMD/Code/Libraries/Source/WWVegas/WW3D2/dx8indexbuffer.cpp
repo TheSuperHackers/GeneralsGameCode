@@ -535,7 +535,7 @@ void DynamicIBAccessClass::_Reset(bool frame_changed)
 	if (frame_changed) _DynamicDX8IndexBufferOffset=0;
 }
 
-unsigned short DynamicIBAccessClass::Get_Default_Index_Count(void)
+unsigned short DynamicIBAccessClass::Get_Default_Index_Count()
 {
 	return _DynamicDX8IndexBufferSize;
 }

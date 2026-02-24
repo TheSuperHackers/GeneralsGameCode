@@ -42,21 +42,21 @@ class LANGameSlot : public GameSlot
 public:
 	LANGameSlot();
 
-	LANPlayer *getUser( void );																	///< Get the User structure associated with the slot (null for non-humans)
+	LANPlayer *getUser();																	///< Get the User structure associated with the slot (null for non-humans)
 
 	// Various tests
 	Bool isUser( LANPlayer *user );															///< Does this slot contain the given user?  Based off user->name
 	Bool isUser( UnicodeString userName );									///< Does this slot contain the given user?
-	Bool isLocalPlayer( void ) const;															///< Is this slot me?
+	Bool isLocalPlayer() const;															///< Is this slot me?
 	void setLogin( UnicodeString name ) { m_user.setLogin(name); }
 	void setLogin( AsciiString name ) { m_user.setLogin(name); }
 	void setHost( UnicodeString name ) { m_user.setHost(name); }
 	void setHost( AsciiString name ) { m_user.setHost(name); }
 	void setSerial( AsciiString serial ) { m_serial = serial; }
-	AsciiString getSerial( void ) { return m_serial; }
+	AsciiString getSerial() { return m_serial; }
 
 	void setLastHeard( UnsignedInt t ) { m_lastHeard = t; }
-	UnsignedInt getLastHeard( void ) { return m_lastHeard; }
+	UnsignedInt getLastHeard() { return m_lastHeard; }
 
 	//LANGameSlot& operator=(const LANGameSlot& src);
 
@@ -82,12 +82,12 @@ public:
 	void setSlot( Int slotNum, LANGameSlot slotInfo );	///< Set the slot state (human, open, AI, etc)
 	LANGameSlot* getLANSlot( Int slotNum );							///< Get the slot
 	const LANGameSlot* getConstLANSlot( Int slotNum ) const;							///< Get the slot
-	virtual Int getLocalSlotNum( void ) const;												///< Get the local slot number, or -1 if we're not present
+	virtual Int getLocalSlotNum() const;												///< Get the local slot number, or -1 if we're not present
 	Int getSlotNum( UnicodeString userName );						///< Get the slot number corresponding to a specific user, or -1 if he's not present
 
-	UnsignedInt getLastHeard( void ) { return m_lastHeard; }
+	UnsignedInt getLastHeard() { return m_lastHeard; }
 	void setLastHeard( UnsignedInt lastHeard ) { m_lastHeard = lastHeard; }
-	LANGameInfo *getNext( void ) { return m_next; }
+	LANGameInfo *getNext() { return m_next; }
 	void setNext( LANGameInfo *next ) { m_next = next; }
 
 	// Game options
@@ -95,11 +95,11 @@ public:
 	void setSeed( Int seed );														///< Set the random seed for the game
 
 	void setName( UnicodeString name ) { m_gameName = name; }		///< Set the Name of the Game
-	UnicodeString getName( void ) { return m_gameName; }					///< Get the Name of the Game
+	UnicodeString getName() { return m_gameName; }					///< Get the Name of the Game
 
 	// Convenience functions that interface with the LANPlayer held in the slot list
-	virtual void resetAccepted(void);														///< Reset the accepted flag on all players
-	Bool amIHost( void );																///< Convenience function - is the local player the game host?
+	virtual void resetAccepted();														///< Reset the accepted flag on all players
+	Bool amIHost();																///< Convenience function - is the local player the game host?
 
 	/// Get the IP of selected player or return 0
 	UnsignedInt getIP( int who )
@@ -154,7 +154,7 @@ public:
 	}
 
 	/// Return the hosts IP or 0
-	UnsignedInt getHostIP(void)
+	UnsignedInt getHostIP()
 	{
 		if (m_LANSlot[0].isHuman())
 			return m_LANSlot[0].getIP();
@@ -172,8 +172,8 @@ private:
 void LANDisplayGameList( GameWindow *gameListbox, LANGameInfo *gameList );	///< Displays the list of games in a listbox, preserving selections
 void LANEnableStartButton(Bool enabled);
 
-void LANDisplaySlotList( void );		///< Displays the slot list according to TheLANGameInfo
-void LANDisplayGameOptions( void );	///< Displays the game options according to TheLANGameInfo
+void LANDisplaySlotList();		///< Displays the slot list according to TheLANGameInfo
+void LANDisplayGameOptions();	///< Displays the game options according to TheLANGameInfo
 
-AsciiString GenerateGameOptionsString( void );
+AsciiString GenerateGameOptionsString();
 Bool ParseGameOptionsString(LANGameInfo *game, AsciiString options);

@@ -161,7 +161,7 @@ public:
 	// the recycled dynamic vertex buffer.
 	static void _Deinit();
 	static void _Reset(bool frame_changed);
-	static unsigned short Get_Default_Vertex_Count(void);	///<current size of dynamic vertex buffer
+	static unsigned short Get_Default_Vertex_Count();	///<current size of dynamic vertex buffer
 
 	// To lock the vertex buffer, create instance of this write class locally.
 	// The buffer is automatically unlocked when you exit the scope.

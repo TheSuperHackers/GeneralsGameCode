@@ -51,8 +51,8 @@ public:
 	///////////////////////////////////////////////////////////////////
 	//	Public constructors/destructors
 	///////////////////////////////////////////////////////////////////
-	Sound3DHandleClass  (void);
-	~Sound3DHandleClass (void);
+	Sound3DHandleClass  ();
+	~Sound3DHandleClass ();
 
 	///////////////////////////////////////////////////////////////////
 	//	Public methods
@@ -61,12 +61,12 @@ public:
 	//
 	//	RTTI
 	//
-	Sound3DHandleClass *		As_Sound3DHandleClass (void)	{ return this; }
+	Sound3DHandleClass *		As_Sound3DHandleClass ()	{ return this; }
 
 	//
 	//	Handle access
 	//
-	H3DSAMPLE					Get_H3DSAMPLE (void)		{ return SampleHandle; }
+	H3DSAMPLE					Get_H3DSAMPLE ()		{ return SampleHandle; }
 
 
 	//
@@ -74,21 +74,21 @@ public:
 	//
 	void							Set_Miles_Handle (uint32 handle);
 	void							Initialize (SoundBufferClass *buffer);
-	void							Start_Sample (void);
-	void							Stop_Sample (void);
-	void							Resume_Sample (void);
-	void							End_Sample (void);
+	void							Start_Sample ();
+	void							Stop_Sample ();
+	void							Resume_Sample ();
+	void							End_Sample ();
 	void							Set_Sample_Pan (S32 pan);
-	S32							Get_Sample_Pan (void);
+	S32							Get_Sample_Pan ();
 	void							Set_Sample_Volume (S32 volume);
-	S32							Get_Sample_Volume (void);
+	S32							Get_Sample_Volume ();
 	void							Set_Sample_Loop_Count (U32 count);
-	U32							Get_Sample_Loop_Count (void);
+	U32							Get_Sample_Loop_Count ();
 	void							Set_Sample_MS_Position (U32 ms);
 	void							Get_Sample_MS_Position (S32 *len, S32 *pos);
 	void							Set_Sample_User_Data (S32 i, void *val);
 	void *							Get_Sample_User_Data (S32 i);
-	S32							Get_Sample_Playback_Rate (void);
+	S32							Get_Sample_Playback_Rate ();
 	void							Set_Sample_Playback_Rate (S32 rate);
 
 protected:

@@ -190,7 +190,7 @@ public:
 	UnsignedInt getSpecialObjectCount() const;
 	UnsignedInt getSpecialObjectMax() const;
 	Object* findSpecialObjectWithProducerID( const Object *target );
-	SpecialPowerType getSpecialPowerType( void ) const;
+	SpecialPowerType getSpecialPowerType() const;
 
 protected:
 	void onExit( Bool cleanup );

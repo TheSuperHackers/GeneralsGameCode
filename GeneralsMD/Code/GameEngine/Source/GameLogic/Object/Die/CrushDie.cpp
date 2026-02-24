@@ -152,7 +152,7 @@ CrushDie::CrushDie( Thing *thing, const ModuleData* moduleData ) : DieModule( th
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-CrushDie::~CrushDie( void )
+CrushDie::~CrushDie()
 {
 
 }
@@ -239,7 +239,7 @@ void CrushDie::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void CrushDie::loadPostProcess( void )
+void CrushDie::loadPostProcess()
 {
 
 	// extend base class

@@ -145,12 +145,12 @@ static const Int TELETYPE_UPDATE_FREQ = 2; // how many frames between teletype u
 // LoadScreen Class
 //-----------------------------------------------------------------------------
 
-LoadScreen::LoadScreen( void )
+LoadScreen::LoadScreen()
 {
 	m_loadScreen = nullptr;
 }
 
-LoadScreen::~LoadScreen( void )
+LoadScreen::~LoadScreen()
 {
 	if(m_loadScreen)
 		TheWindowManager->winDestroy( m_loadScreen );
@@ -174,7 +174,7 @@ void LoadScreen::update( Int percent )
 
 // SinglePlayerLoadScreen Class ///////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-SinglePlayerLoadScreen::SinglePlayerLoadScreen( void )
+SinglePlayerLoadScreen::SinglePlayerLoadScreen()
 {
 	m_currentObjectiveLine = 0;
 	m_currentObjectiveLineCharacter = 0;
@@ -190,7 +190,7 @@ SinglePlayerLoadScreen::SinglePlayerLoadScreen( void )
 
 }
 
-SinglePlayerLoadScreen::~SinglePlayerLoadScreen( void )
+SinglePlayerLoadScreen::~SinglePlayerLoadScreen()
 {
 	delete m_videoBuffer;
 
@@ -650,7 +650,7 @@ void SinglePlayerLoadScreen::init( GameInfo *game )
 
 }
 
-void SinglePlayerLoadScreen::reset( void )
+void SinglePlayerLoadScreen::reset()
 {
  setLoadScreen(nullptr);
  m_progressBar = nullptr;
@@ -676,7 +676,7 @@ void SinglePlayerLoadScreen::setProgressRange( Int min, Int max )
 
 // ChallengeLoadScreen Class ///////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-ChallengeLoadScreen::ChallengeLoadScreen( void )
+ChallengeLoadScreen::ChallengeLoadScreen()
 {
 	m_progressBar = nullptr;
 	m_videoStream = nullptr;
@@ -716,7 +716,7 @@ ChallengeLoadScreen::ChallengeLoadScreen( void )
 	m_wndVideoManager = nullptr;
 }
 
-ChallengeLoadScreen::~ChallengeLoadScreen( void )
+ChallengeLoadScreen::~ChallengeLoadScreen()
 {
 	delete m_videoBuffer;
 
@@ -1147,7 +1147,7 @@ void ChallengeLoadScreen::init( GameInfo *game )
 	TheAudio->update();
 }
 
-void ChallengeLoadScreen::reset( void )
+void ChallengeLoadScreen::reset()
 {
  setLoadScreen(nullptr);
  m_progressBar = nullptr;
@@ -1172,12 +1172,12 @@ void ChallengeLoadScreen::setProgressRange( Int min, Int max )
 
 // ShellGameLoadScreen Class //////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-ShellGameLoadScreen::ShellGameLoadScreen( void )
+ShellGameLoadScreen::ShellGameLoadScreen()
 {
 	m_progressBar = nullptr;
 }
 
-ShellGameLoadScreen::~ShellGameLoadScreen( void )
+ShellGameLoadScreen::~ShellGameLoadScreen()
 {
 }
 
@@ -1211,7 +1211,7 @@ void ShellGameLoadScreen::init( GameInfo *game )
 	m_progressBar->winHide(FALSE);
 }
 
-void ShellGameLoadScreen::reset( void )
+void ShellGameLoadScreen::reset()
 {
  setLoadScreen(nullptr);
  m_progressBar = nullptr;
@@ -1228,7 +1228,7 @@ void ShellGameLoadScreen::update( Int percent )
 
 // MultiPlayerLoadScreen Class //////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-MultiPlayerLoadScreen::MultiPlayerLoadScreen( void )
+MultiPlayerLoadScreen::MultiPlayerLoadScreen()
 {
 	m_mapPreview = nullptr;
 	m_portraitLocalGeneral = nullptr;
@@ -1245,7 +1245,7 @@ MultiPlayerLoadScreen::MultiPlayerLoadScreen( void )
 	}
 }
 
-MultiPlayerLoadScreen::~MultiPlayerLoadScreen( void )
+MultiPlayerLoadScreen::~MultiPlayerLoadScreen()
 {
 	if(m_mapPreview)
 	{
@@ -1435,7 +1435,7 @@ void MultiPlayerLoadScreen::init( GameInfo *game )
 	TheGameLogic->initTimeOutValues();
 }
 
-void MultiPlayerLoadScreen::reset( void )
+void MultiPlayerLoadScreen::reset()
 {
 	setLoadScreen(nullptr);
 	for(Int i = 0; i < MAX_SLOTS; ++i)
@@ -1473,7 +1473,7 @@ void MultiPlayerLoadScreen::processProgress(Int playerId, Int percentage)
 
 	if( percentage < 0 || percentage > 100 || playerId >= MAX_SLOTS || playerId < 0 || m_playerLookup[playerId] == -1)
 	{
-		DEBUG_ASSERTCRASH(FALSE, ("Percentage %d was passed in for Player %d", percentage, playerId));
+		DEBUG_CRASH(("Percentage %d was passed in for Player %d", percentage, playerId));
 		return;
 	}
 	//DEBUG_LOG(("Percentage %d was passed in for Player %d (in loadscreen position %d)", percentage, playerId, m_playerLookup[playerId]));
@@ -1483,7 +1483,7 @@ void MultiPlayerLoadScreen::processProgress(Int playerId, Int percentage)
 
 // GameSpyLoadScreen Class //////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-GameSpyLoadScreen::GameSpyLoadScreen( void )
+GameSpyLoadScreen::GameSpyLoadScreen()
 {
 
 	m_mapPreview = nullptr;
@@ -1509,7 +1509,7 @@ GameSpyLoadScreen::GameSpyLoadScreen( void )
 	}
 }
 
-GameSpyLoadScreen::~GameSpyLoadScreen( void )
+GameSpyLoadScreen::~GameSpyLoadScreen()
 {
 	if(m_mapPreview)
 	{
@@ -1802,7 +1802,7 @@ GameSlot *lSlot = game->getSlot(game->getLocalSlotNum());
 	TheGameLogic->initTimeOutValues();
 }
 
-void GameSpyLoadScreen::reset( void )
+void GameSpyLoadScreen::reset()
 {
 	setLoadScreen(nullptr);
 	for(Int i = 0; i < MAX_SLOTS; ++i)
@@ -1832,7 +1832,7 @@ void GameSpyLoadScreen::processProgress(Int playerId, Int percentage)
 
 	if( percentage < 0 || percentage > 100 || playerId >= MAX_SLOTS || playerId < 0 || m_playerLookup[playerId] == -1)
 	{
-		DEBUG_ASSERTCRASH(FALSE, ("Percentage %d was passed in for Player %d", percentage, playerId));
+		DEBUG_CRASH(("Percentage %d was passed in for Player %d", percentage, playerId));
 		return;
 	}
 	//DEBUG_LOG(("Percentage %d was passed in for Player %d (in loadscreen position %d)", percentage, playerId, m_playerLookup[playerId]));
@@ -1842,7 +1842,7 @@ void GameSpyLoadScreen::processProgress(Int playerId, Int percentage)
 
 // MapTransferLoadScreen Class //////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-MapTransferLoadScreen::MapTransferLoadScreen( void )
+MapTransferLoadScreen::MapTransferLoadScreen()
 {
 	m_oldTimeout = 0;
 	for(Int i = 0; i < MAX_SLOTS; ++i)
@@ -1857,7 +1857,7 @@ MapTransferLoadScreen::MapTransferLoadScreen( void )
 	m_timeoutText = nullptr;
 }
 
-MapTransferLoadScreen::~MapTransferLoadScreen( void )
+MapTransferLoadScreen::~MapTransferLoadScreen()
 {
 }
 
@@ -1937,7 +1937,7 @@ void MapTransferLoadScreen::init( GameInfo *game )
 	}
 }
 
-void MapTransferLoadScreen::reset( void )
+void MapTransferLoadScreen::reset()
 {
 	setLoadScreen(nullptr);
 	for(Int i = 0; i < MAX_SLOTS; ++i)
@@ -1970,7 +1970,7 @@ void MapTransferLoadScreen::processProgress(Int playerId, Int percentage, AsciiS
 
 	if( percentage < 0 || percentage > 100 || playerId >= MAX_SLOTS || playerId < 0 || m_playerLookup[playerId] == -1)
 	{
-		DEBUG_ASSERTCRASH(FALSE, ("Percentage %d was passed in for Player %d", percentage, playerId));
+		DEBUG_CRASH(("Percentage %d was passed in for Player %d", percentage, playerId));
 		return;
 	}
 

@@ -766,13 +766,13 @@ void Locomotor::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void Locomotor::loadPostProcess( void )
+void Locomotor::loadPostProcess()
 {
 
 }
 
 //-------------------------------------------------------------------------------------------------
-void Locomotor::startMove(void)
+void Locomotor::startMove()
 {
 	// Reset the donut timer.
 	m_donutTimer = TheGameLogic->getFrame()+DONUT_TIME_DELAY_SECONDS*LOGICFRAMES_PER_SECOND;
@@ -2707,7 +2707,7 @@ void LocomotorSet::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void LocomotorSet::loadPostProcess( void )
+void LocomotorSet::loadPostProcess()
 {
 
 }

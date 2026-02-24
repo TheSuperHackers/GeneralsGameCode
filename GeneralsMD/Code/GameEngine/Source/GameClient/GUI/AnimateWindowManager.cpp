@@ -66,7 +66,7 @@
 //-----------------------------------------------------------------------------
 namespace wnd
 {
-AnimateWindow::AnimateWindow(void)
+AnimateWindow::AnimateWindow()
 {
 	m_delay = 0;
 	m_startPos.x = m_startPos.y = 0;
@@ -82,7 +82,7 @@ AnimateWindow::AnimateWindow(void)
 	m_endTime = 0;
 	m_startTime = 0;
 }
-AnimateWindow::~AnimateWindow( void )
+AnimateWindow::~AnimateWindow()
 {
 	m_win = nullptr;
 }
@@ -119,7 +119,7 @@ static void clearWinList(AnimateWindowList &winList)
 	}
 }
 
-AnimateWindowManager::AnimateWindowManager( void )
+AnimateWindowManager::AnimateWindowManager()
 {
 // we don't allocate many of these, so no MemoryPools used
 	m_slideFromRight = NEW ProcessAnimateWindowSlideFromRight;
@@ -135,7 +135,7 @@ AnimateWindowManager::AnimateWindowManager( void )
 	m_reverse = FALSE;
 	m_winMustFinishList.clear();
 }
-AnimateWindowManager::~AnimateWindowManager( void )
+AnimateWindowManager::~AnimateWindowManager()
 {
 	delete m_slideFromRight;
 	delete m_slideFromRightFast;
@@ -147,13 +147,13 @@ AnimateWindowManager::~AnimateWindowManager( void )
 	delete m_slideFromBottomTimed;
 
 	m_slideFromRight = nullptr;
-	resetToRestPosition( );
+	resetToRestPosition();
 	clearWinList(m_winList);
 	clearWinList(m_winMustFinishList);
 }
 
 
-void AnimateWindowManager::init( void )
+void AnimateWindowManager::init()
 {
 	clearWinList(m_winList);
 	clearWinList(m_winMustFinishList);
@@ -161,7 +161,7 @@ void AnimateWindowManager::init( void )
 	m_reverse = FALSE;
 }
 
-void AnimateWindowManager::reset( void )
+void AnimateWindowManager::reset()
 {
 	resetToRestPosition();
 	clearWinList(m_winList);
@@ -170,7 +170,7 @@ void AnimateWindowManager::reset( void )
 	m_reverse = FALSE;
 }
 
-void AnimateWindowManager::update( void )
+void AnimateWindowManager::update()
 {
 
 	ProcessAnimateWindow *processAnim = nullptr;
@@ -312,7 +312,7 @@ ProcessAnimateWindow *AnimateWindowManager::getProcessAnimate( AnimTypes animTyp
 	}
 }
 
-void AnimateWindowManager::reverseAnimateWindow( void )
+void AnimateWindowManager::reverseAnimateWindow()
 {
 
 	m_reverse = TRUE;
@@ -374,7 +374,7 @@ void AnimateWindowManager::reverseAnimateWindow( void )
 
 }
 
-void AnimateWindowManager::resetToRestPosition( void )
+void AnimateWindowManager::resetToRestPosition()
 {
 
 	m_reverse = TRUE;

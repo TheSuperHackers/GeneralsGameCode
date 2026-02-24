@@ -90,20 +90,20 @@ class RadarObject : public MemoryPoolObject,
 
 public:
 
-	RadarObject( void );
+	RadarObject();
 	// destructor prototype defined by memory pool glue
 
 	// color management
 	void setColor( Color c ) { m_color = c; }
-	Color getColor( void ) const { return m_color; }
+	Color getColor() const { return m_color; }
 
 	void friend_setObject( Object *obj ) { m_object = obj; }
-	Object *friend_getObject( void ) { return m_object; }
-	const Object *friend_getObject( void ) const { return m_object; }
+	Object *friend_getObject() { return m_object; }
+	const Object *friend_getObject() const { return m_object; }
 
 	void friend_setNext( RadarObject *next ) { m_next = next; }
-	RadarObject *friend_getNext( void ) { return m_next; }
-	const RadarObject *friend_getNext( void ) const { return m_next; }
+	RadarObject *friend_getNext() { return m_next; }
+	const RadarObject *friend_getNext() const { return m_next; }
 
 	Bool isTemporarilyHidden() const;
 
@@ -112,7 +112,7 @@ protected:
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
+	virtual void loadPostProcess();
 
 	Object *m_object;				///< the object
 	RadarObject *m_next;		///< next radar object
@@ -156,12 +156,12 @@ class Radar : public Snapshot,
 
 public:
 
-	Radar( void );
-	virtual ~Radar( void );
+	Radar();
+	virtual ~Radar();
 
-	virtual void init( void ) { }														///< subsystem initialization
-	virtual void reset( void );															///< subsystem reset
-	virtual void update( void );														///< subsystem per frame update
+	virtual void init() { }														///< subsystem initialization
+	virtual void reset();															///< subsystem reset
+	virtual void update();														///< subsystem per frame update
 
 	// is the game window parameter the radar window
 	Bool isRadarWindow( GameWindow *window ) { return (m_radarWindow == window) && (m_radarWindow != nullptr); }
@@ -208,7 +208,7 @@ public:
 	virtual void refreshObjects() {};
 
 	/// queue a refresh of the terrain at the next available time
-	virtual void queueTerrainRefresh( void );
+	virtual void queueTerrainRefresh();
 
 	virtual void newMap( TerrainLogic *terrain );	///< reset radar for new map
 
@@ -230,20 +230,20 @@ protected:
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
+	virtual void loadPostProcess();
 
 	/// internal method for creating a radar event with specific colors
 	void internalCreateEvent( const Coord3D *world, RadarEventType type, Real secondsToLive,
 														const RGBAColorInt *color1, const RGBAColorInt *color2 );
 
 	void deleteList( RadarObject **list );
-	void deleteListResources( void );			///< delete list radar resources used
+	void deleteListResources();			///< delete list radar resources used
 	Bool deleteFromList( Object *obj, RadarObject **list );	///< try to remove object from specific list
 
 	Real getTerrainAverageZ() const { return m_terrainAverageZ; }
 	Real getWaterAverageZ() const { return m_waterAverageZ; }
 
-	void clearAllEvents( void );					///< remove all radar events in progress
+	void clearAllEvents();					///< remove all radar events in progress
 
 	// search the object list for an object that maps to the given logical radar coordinates
 	Object *searchListForRadarLocationMatch( RadarObject *listHead, ICoord2D *radarMatch );

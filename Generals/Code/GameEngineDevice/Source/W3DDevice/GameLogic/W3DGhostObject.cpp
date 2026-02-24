@@ -63,14 +63,14 @@ class W3DRenderObjectSnapshot : public Snapshot
 	~W3DRenderObjectSnapshot() {REF_PTR_RELEASE(m_robj);}
 
 	inline void update(RenderObjClass *robj, DrawableInfo *drawInfo, Bool cloneParentRobj = TRUE);	///<refresh the current snapshot with latest state
-	inline Bool addToScene(void); ///< add this fogged render object to the scene.
+	inline Bool addToScene(); ///< add this fogged render object to the scene.
 	inline Bool removeFromScene(); ///< remove this fogged render object from the scene.
 
 protected:
 
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
+	virtual void loadPostProcess();
 
 #ifdef DEBUG_FOG_MEMORY
 	const char *m_robjName;		///<debug pointer so we know what this is a snapshot of.
@@ -151,7 +151,7 @@ void W3DRenderObjectSnapshot::update(RenderObjClass *robj, DrawableInfo *drawInf
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-Bool W3DRenderObjectSnapshot::addToScene(void)
+Bool W3DRenderObjectSnapshot::addToScene()
 {
 	if (W3DDisplay::m_3DScene != nullptr && !m_robj->Is_In_Scene())
 	{
@@ -284,7 +284,7 @@ void W3DRenderObjectSnapshot::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void W3DRenderObjectSnapshot::loadPostProcess( void )
+void W3DRenderObjectSnapshot::loadPostProcess()
 {
 
 }
@@ -410,7 +410,7 @@ void W3DGhostObject::snapShot(int playerIndex)
 // ------------------------------------------------------------------------------------------------
 /** Remove the original object from our 3D scene*/
 // ------------------------------------------------------------------------------------------------
-void W3DGhostObject::removeParentObject(void)
+void W3DGhostObject::removeParentObject()
 {
 	// sanity
 	if( m_parentObject == nullptr )
@@ -447,7 +447,7 @@ void W3DGhostObject::removeParentObject(void)
 // ------------------------------------------------------------------------------------------------
 /** Reinsert the original object into our 3D scene*/
 // ------------------------------------------------------------------------------------------------
-void W3DGhostObject::restoreParentObject(void)
+void W3DGhostObject::restoreParentObject()
 {
 	if (TheGlobalData->m_headless)
 		return;
@@ -488,7 +488,7 @@ void W3DGhostObject::restoreParentObject(void)
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void W3DGhostObject::freeAllSnapShots(void)
+void W3DGhostObject::freeAllSnapShots()
 {
 	if (TheGhostObjectManager->trackAllPlayers())
 	{
@@ -785,7 +785,7 @@ void W3DGhostObject::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void W3DGhostObject::loadPostProcess( void )
+void W3DGhostObject::loadPostProcess()
 {
 	// extend base class
 	GhostObject::loadPostProcess();
@@ -804,7 +804,7 @@ void W3DGhostObject::loadPostProcess( void )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-W3DGhostObjectManager::W3DGhostObjectManager(void)
+W3DGhostObjectManager::W3DGhostObjectManager()
 {
 	m_freeModules = nullptr;
 	m_usedModules = nullptr;
@@ -829,7 +829,7 @@ W3DGhostObjectManager::~W3DGhostObjectManager()
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void W3DGhostObjectManager::reset(void)
+void W3DGhostObjectManager::reset()
 {
 	GhostObjectManager::reset();
 
@@ -1059,7 +1059,7 @@ void W3DGhostObjectManager::updateOrphanedObjects(int *playerIndexList, int play
 stored inside the partition manager, we need to save and restore them.  This function will save
 enough data to restore the state of the partition manager.*/
 // ------------------------------------------------------------------------------------------------
-void W3DGhostObjectManager::releasePartitionData(void)
+void W3DGhostObjectManager::releasePartitionData()
 {
 	W3DGhostObject *mod = m_usedModules;
 	W3DGhostObject *nextmod;
@@ -1089,7 +1089,7 @@ void W3DGhostObjectManager::releasePartitionData(void)
 // ------------------------------------------------------------------------------------------------
 /*Insert ghost objects back into the partition manager*/
 // ------------------------------------------------------------------------------------------------
-void W3DGhostObjectManager::restorePartitionData(void)
+void W3DGhostObjectManager::restorePartitionData()
 {
 	W3DGhostObject *mod = m_usedModules;
 	W3DGhostObject *nextmod;
@@ -1233,7 +1233,7 @@ void W3DGhostObjectManager::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void W3DGhostObjectManager::loadPostProcess( void )
+void W3DGhostObjectManager::loadPostProcess()
 {
 	// extend base class
 	GhostObjectManager::loadPostProcess();

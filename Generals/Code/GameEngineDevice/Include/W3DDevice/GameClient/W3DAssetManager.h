@@ -53,8 +53,8 @@ class VertexMaterialClass;
 class W3DAssetManager: public WW3DAssetManager
 {
 public:
-	W3DAssetManager(void);
-	virtual ~W3DAssetManager(void);
+	W3DAssetManager();
+	virtual ~W3DAssetManager();
 
 	virtual RenderObjClass * Create_Render_Obj(const char * name);
 	// unique to W3DAssetManager
@@ -67,11 +67,11 @@ public:
 		bool allow_compression=true);
 
 	//'Generals' customizations
-	void Report_Used_Assets(void);
-	void Report_Used_Prototypes (void);
-	void Report_Used_Textures(void);
-	void Report_Used_Font3DDatas( void );
-	void Report_Used_FontChars (void);
+	void Report_Used_Assets();
+	void Report_Used_Prototypes ();
+	void Report_Used_Textures();
+	void Report_Used_Font3DDatas();
+	void Report_Used_FontChars ();
 
 	virtual RenderObjClass * Create_Render_Obj(const char * name,float scale, const int color, const char *oldTexture=nullptr, const char *newTexture=nullptr);
 	///Swaps the specified textures in the render object prototype.

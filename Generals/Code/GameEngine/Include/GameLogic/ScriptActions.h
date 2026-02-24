@@ -48,9 +48,9 @@ public:
 
 	virtual ~ScriptActionsInterface() { };
 
-	virtual void init( void ) = 0;		///< Init
-	virtual void reset( void ) = 0;		///< Reset
-	virtual void update( void ) = 0;	///< Update
+	virtual void init() = 0;		///< Init
+	virtual void reset() = 0;		///< Reset
+	virtual void update() = 0;	///< Update
 
 	virtual void executeAction( ScriptAction *pAction ) = 0; ///< execute a script action.
 	virtual void closeWindows( Bool suppressNewWindows ) = 0;
@@ -74,9 +74,9 @@ public:
 	~ScriptActions();
 
 public:
-	virtual void init( void );		///< Init
-	virtual void reset( void );		///< Reset
-	virtual void update( void );	///< Update
+	virtual void init();		///< Init
+	virtual void reset();		///< Reset
+	virtual void update();	///< Update
 
 	void executeAction( ScriptAction *pAction );
 	void closeWindows( Bool suppressNewWindows );
@@ -86,7 +86,7 @@ public:
 protected:
 
 	static GameWindow *m_messageWindow;
-	static void clearWindow(void) {m_messageWindow=nullptr;};
+	static void clearWindow() {m_messageWindow=nullptr;};
 
 	Bool m_suppressNewWindows;
 	AsciiString m_unnamedUnit;
@@ -107,22 +107,22 @@ protected:
 	void doZoomCamera(Real zoom, Real sec);
 	void doResetCamera(const AsciiString& waypoint, Real sec);
 	void doCameraFollowNamed(const AsciiString& unit, Bool snapToUnit);
-	void doStopCameraFollowUnit(void);
+	void doStopCameraFollowUnit();
 
 	void doCameraTetherNamed(const AsciiString& unit, Bool snapToUnit, Real play);
-	void doCameraStopTetherNamed(void);
+	void doCameraStopTetherNamed();
 	void doCameraSetDefault(Real pitch, Real angle, Real maxHeight);
 
 	void doOversizeTheTerrain(Int amount);
 	void doMoveCameraAlongWaypointPath(const AsciiString& waypoint, Real sec, Real cameraStutterSec);
 	void doPlaySoundEffectAt(const AsciiString& sound, const AsciiString& waypoint);
-	void doVictory(void);
-	void doQuickVictory(void);
+	void doVictory();
+	void doQuickVictory();
 	void doSetInfantryLightingOverride(Real setting);
 	void doDamageTeamMembers(const AsciiString& team, Real amount);
-	void doModCameraMoveToSelection(void);
-	void doDefeat(void);
-	void doLocalDefeat(void);
+	void doModCameraMoveToSelection();
+	void doDefeat();
+	void doLocalDefeat();
 	void doMoveToWaypoint(const AsciiString& team, const AsciiString& waypoint);
 	void doNamedMoveToWaypoint(const AsciiString& unit, const AsciiString& waypoint);
 	void doSetTeamState(const AsciiString& team, const AsciiString& state);
@@ -173,8 +173,8 @@ protected:
 	void doBlackWhiteMode(Bool startBWMode, Int frames);	// if true, start it. If false, end it.
 	void doSkyBox(Bool showSkyBox);	// if true, start it. If false, end it.
 
-	void doFreezeTime( void );
-	void doUnfreezeTime( void );
+	void doFreezeTime();
+	void doUnfreezeTime();
 
 	void doMilitaryCaption(const AsciiString& briefing, Int duration);
 	void doCameraSetAudibleDistance(Real audibleDistance);
@@ -184,8 +184,8 @@ protected:
 	void doNamedSetStoppingDistance(const AsciiString& unit, Real stoppingDistance);
 	void doSetStoppingDistance(const AsciiString& team, Real stoppingDistance);
 
-	void doDisableSpecialPowerDisplay( void );
-	void doEnableSpecialPowerDisplay( void );
+	void doDisableSpecialPowerDisplay();
+	void doEnableSpecialPowerDisplay();
 	void doNamedHideSpecialPowerDisplay( const AsciiString& unit );
 	void doNamedShowSpecialPowerDisplay( const AsciiString& unit );
 
@@ -205,8 +205,8 @@ protected:
 
 	void doDisplayCountdownTimer(const AsciiString& timerName, const AsciiString& timerText);
 	void doHideCountdownTimer(const AsciiString& timerName);
-	void doDisableCountdownTimerDisplay(void);
-	void doEnableCountdownTimerDisplay(void);
+	void doDisableCountdownTimerDisplay();
+	void doEnableCountdownTimerDisplay();
 
 	void doDisplayCounter(const AsciiString& counterName, const AsciiString& counterText);
 	void doHideCounter(const AsciiString& counterName);
@@ -239,7 +239,7 @@ protected:
 	void doPlayerEnableFactories(const AsciiString& playerName, const AsciiString& objectName);
 	void doPlayerRepairStructure(const AsciiString& playerName, const AsciiString& objectName);
 	void doPlayerEnableUnitConstruction(const AsciiString& playerName);
-	void doCameraMoveHome(void);
+	void doCameraMoveHome();
 	void doBuildTeam(const AsciiString& teamName);
 	void doRecruitTeam(const AsciiString& teamName, Real recrutiRadius);
 	void doNamedDamage(const AsciiString& unitName, Int damageAmt);
@@ -268,8 +268,8 @@ protected:
 	void enableScoring(Bool score);
 	void updatePlayerRelationTowardPlayer(const AsciiString& playerSrcName, Int relationType, const AsciiString& playerDestPlayer);
 	void doRadarCreateEvent(Coord3D *pos, Int eventType);
-	void doRadarDisable(void);
-	void doRadarEnable(void);
+	void doRadarDisable();
+	void doRadarEnable();
 	void doNamedEnableStealth(const AsciiString& unitName, Bool enabled);
 	void doTeamEnableStealth(const AsciiString& unitName, Bool enabled);
 	void doRevealMapAtWaypoint(const AsciiString& waypointName, Real radiusToReveal, const AsciiString& playerName);
@@ -289,7 +289,7 @@ protected:
 	void doShroudMapEntire(const AsciiString& playerName);
 	void doCameraMotionBlur(Bool zoomIn, Bool saturate);
 	void doCameraMotionBlurJump(const AsciiString& waypointName, Bool saturate);
-	void doRadarRefresh( void );
+	void doRadarRefresh();
 	void doNamedStop(const AsciiString& unitName);
 	void doTeamStop(const AsciiString& teamName, Bool shouldDisband);
 	void doTeamSetOverrideRelationToTeam(const AsciiString& teamName, const AsciiString& otherTeam, Int relation);
@@ -312,8 +312,8 @@ protected:
 	void doBorderSwitch(Int borderToUse);
 	void doForceObjectSelection(const AsciiString& teamName, const AsciiString& objectType, Bool centerInView, const AsciiString& audioToPlay);
 	void doDestroyAllContained(const AsciiString& unitName, Int damageType);
-	void doRadarForceEnable(void);
-	void doRadarRevertNormal(void);
+	void doRadarForceEnable();
+	void doRadarRevertNormal();
 	void doScreenShake( UnsignedInt intensity );
 	void doModifyBuildableStatus( const AsciiString& objectType, Int buildableStatus );
 	void doSetWarehouseValue( const AsciiString& warehouseName, Int cashValue );

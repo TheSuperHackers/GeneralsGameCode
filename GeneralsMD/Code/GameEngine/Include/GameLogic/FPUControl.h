@@ -34,4 +34,4 @@
 	* leave the FPU in a good state, we must call this at the start of GameLogic::update() and
 	* anywhere that touches DirectX inside GameLogic loops (LoadScreen).
 	*/
-void setFPMode( void );
+void setFPMode();

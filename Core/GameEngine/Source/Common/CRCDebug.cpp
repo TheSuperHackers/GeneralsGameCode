@@ -88,7 +88,7 @@ CRCVerification::~CRCVerification()
 #endif
 }
 
-void outputCRCDebugLines( void )
+void outputCRCDebugLines()
 {
 	IPEnumeration ips;
 	AsciiString fname;
@@ -165,7 +165,7 @@ static void outputCRCDebugLinesPerFrame()
 	fclose(fp);
 }
 
-void outputCRCDumpLines( void )
+void outputCRCDumpLines()
 {
 	/*
 	int start = 0;

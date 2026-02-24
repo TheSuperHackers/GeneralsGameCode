@@ -52,7 +52,7 @@ ProjectileStreamUpdate::ProjectileStreamUpdate( Thing *thing, const ModuleData* 
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-ProjectileStreamUpdate::~ProjectileStreamUpdate( void )
+ProjectileStreamUpdate::~ProjectileStreamUpdate()
 {
 
 }
@@ -60,7 +60,7 @@ ProjectileStreamUpdate::~ProjectileStreamUpdate( void )
 //-------------------------------------------------------------------------------------------------
 /** The update callback. */
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime ProjectileStreamUpdate::update( void )
+UpdateSleepTime ProjectileStreamUpdate::update()
 {
 	cullFrontOfList();
 
@@ -254,7 +254,7 @@ void ProjectileStreamUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void ProjectileStreamUpdate::loadPostProcess( void )
+void ProjectileStreamUpdate::loadPostProcess()
 {
 
 	// extend base class

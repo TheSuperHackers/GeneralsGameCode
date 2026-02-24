@@ -94,18 +94,18 @@ class Keyboard : public SubsystemInterface
 
 public:
 
-	Keyboard( void );
-	virtual ~Keyboard( void );
+	Keyboard();
+	virtual ~Keyboard();
 
 	// you may extend the functionality of these for your device
-	virtual void init( void );							/**< initialize the keyboard, only extend this
+	virtual void init();							/**< initialize the keyboard, only extend this
 																							 functionality, do not replace */
-	virtual void reset( void );							///< Reset keyboard system
-	virtual void update( void );						/**< gather current state of all keys, extend
+	virtual void reset();							///< Reset keyboard system
+	virtual void update();						/**< gather current state of all keys, extend
 																							 this functionality, do not replace */
-	virtual Bool getCapsState( void ) = 0;  ///< get state of caps lock key, return TRUE if down
+	virtual Bool getCapsState() = 0;  ///< get state of caps lock key, return TRUE if down
 
-	virtual void createStreamMessages( void );  /**< given state of device, create
+	virtual void createStreamMessages();  /**< given state of device, create
 																							messages and put them on the
 																							stream for the raw state. */
 	// simplified versions where the caller doesn't care which key type was pressed.
@@ -115,8 +115,8 @@ public:
 	Int getModifierFlags() { return m_modifiers; }
 
 	// access methods for key data
-	void resetKeys( void );												///< reset the state of the keys
-	KeyboardIO *getFirstKey( void );							///< get first key ready for processing
+	void resetKeys();												///< reset the state of the keys
+	KeyboardIO *getFirstKey();							///< get first key ready for processing
 	KeyboardIO *findKey( KeyDefType key, KeyboardIO::StatusType status ); ///< get key ready for processing, can return nullptr
 	void setKeyStatusData( KeyDefType key,
 												 KeyboardIO::StatusType data );   ///< set key status
@@ -132,9 +132,9 @@ protected:
 	virtual void getKey( KeyboardIO *key ) = 0;
 
 	// internal methods to update the key states
-	void initKeyNames( void );  ///< initialize the key names table
-	void updateKeys( void );  ///< update the state of our key data
-	Bool checkKeyRepeat( void );  ///< check for repeating keys
+	void initKeyNames();  ///< initialize the key names table
+	void updateKeys();  ///< update the state of our key data
+	Bool checkKeyRepeat();  ///< check for repeating keys
 	UnsignedByte getKeyStatusData( KeyDefType key );  ///< get key status
 	Bool getKeyStateBit( KeyDefType key, Int bit );  ///< get key state bit
 	void setKeyStateData( KeyDefType key, UnsignedByte data );  ///< get key state

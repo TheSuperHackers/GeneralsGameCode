@@ -232,7 +232,7 @@ WindowMsgHandledType PopupReplayInput( GameWindow *window, UnsignedInt msg, Wind
 	return MSG_IGNORED;
 }
 
-static void reallySaveReplay(void);
+static void reallySaveReplay();
 static std::string replayPath;
 
 // ------------------------------------------------------------------------------------------------
@@ -266,7 +266,7 @@ static void saveReplay( UnicodeString filename )
 		reallySaveReplay();
 	}
 }
-void reallySaveReplay(void)
+void reallySaveReplay()
 {
 	AsciiString filename = replayPath.c_str();
 

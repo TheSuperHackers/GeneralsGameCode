@@ -39,7 +39,7 @@ class RadarUpdateModuleData : public UpdateModuleData
 
 public:
 
-	RadarUpdateModuleData( void );
+	RadarUpdateModuleData();
 
 	static void buildFieldParse(MultiIniFieldParse& p)
 	{
@@ -73,10 +73,10 @@ public:
 	RadarUpdate( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype defined by MemoryPoolObject
 
-	void extendRadar( void );									 ///< extend the radar from this object
+	void extendRadar();									 ///< extend the radar from this object
 	Bool isRadarActive() { return m_radarActive; }
 
-	virtual UpdateSleepTime update( void ); ///< Here's the actual work of Upgrading
+	virtual UpdateSleepTime update(); ///< Here's the actual work of Upgrading
 
 protected:
 

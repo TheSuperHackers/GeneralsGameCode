@@ -42,7 +42,7 @@ class RailedTransportAIUpdateModuleData : public AIUpdateModuleData
 
 public:
 
-	RailedTransportAIUpdateModuleData( void );
+	RailedTransportAIUpdateModuleData();
 
 	static void buildFieldParse( MultiIniFieldParse &p );
 
@@ -65,7 +65,7 @@ public:
 
 	// AIUpdate interface methods
 	virtual void aiDoCommand( const AICommandParms *parms );
-	virtual UpdateSleepTime update( void );
+	virtual UpdateSleepTime update();
 
 protected:
 
@@ -75,8 +75,8 @@ protected:
 
 	// our methods
 	void setInTransit( Bool inTransit );
-	void loadWaypointData( void );
-	void pickAndMoveToInitialLocation( void );
+	void loadWaypointData();
+	void pickAndMoveToInitialLocation();
 
 	// our data
 	Bool m_inTransit;								///< in transit

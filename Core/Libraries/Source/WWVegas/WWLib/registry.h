@@ -51,9 +51,9 @@ public:
 
 	// Constructor & Destructor
 	RegistryClass( const char * sub_key, bool create = true );
-	~RegistryClass( void );
+	~RegistryClass();
 
-	bool	Is_Valid( void )		{ return IsValid; }
+	bool	Is_Valid()		{ return IsValid; }
 
 	// Int data type access
 	int	Get_Int( const char * name, int def_value = 0 );
@@ -87,7 +87,7 @@ public:
 
 	// Delete support
 	void	Delete_Value( const char * name);
-	void	Deleta_All_Values( void );
+	void	Deleta_All_Values();
 
 	// Read only.
 	static void Set_Read_Only(bool set) {IsLocked = set;}

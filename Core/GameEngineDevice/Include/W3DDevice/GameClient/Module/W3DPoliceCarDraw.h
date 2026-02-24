@@ -54,7 +54,7 @@ public:
 protected:
 
 	/// create the dynamic light for the search light
-	W3DDynamicLight *createDynamicLight( void );
+	W3DDynamicLight *createDynamicLight();
 
 	W3DDynamicLight *m_light;  ///< light for the POLICECAR
 	Real					m_curFrame;

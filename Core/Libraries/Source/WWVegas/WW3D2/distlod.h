@@ -64,10 +64,10 @@ public:
 
 	DistLODClass(const DistLODDefClass & desc);
 	DistLODClass(const DistLODClass & that);
-	virtual ~DistLODClass(void);
-	virtual RenderObjClass *	Clone(void) const { return W3DNEW DistLODClass(*this); }
-	virtual int						Class_ID(void)	const { return CLASSID_DISTLOD; }
-	virtual int						Get_Num_Polys(void) const;
+	virtual ~DistLODClass();
+	virtual RenderObjClass *	Clone() const { return W3DNEW DistLODClass(*this); }
+	virtual int						Class_ID()	const { return CLASSID_DISTLOD; }
+	virtual int						Get_Num_Polys() const;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface - Rendering
@@ -82,7 +82,7 @@ public:
 	virtual void 					Set_Transform(const Matrix3D &m);
 	virtual void 					Set_Position(const Vector3 &v);
 
-	virtual int						Get_Num_Sub_Objects(void) const;
+	virtual int						Get_Num_Sub_Objects() const;
 	virtual RenderObjClass *	Get_Sub_Object(int index) const;
 
 	virtual int						Add_Sub_Object_To_Bone(RenderObjClass * subobj,int bone_index);
@@ -94,12 +94,12 @@ public:
 	// animation-compatible) so the bone query functions simply pass to the top
 	// LOD.
 	/////////////////////////////////////////////////////////////////////////////
-	virtual void					Set_Animation( void );
+	virtual void					Set_Animation();
 	virtual void					Set_Animation( HAnimClass * motion, float frame, int anim_mode = ANIM_MODE_MANUAL);
 	virtual void					Set_Animation( HAnimClass * motion0,float frame0,HAnimClass * motion1,float frame1,float percentage);
 	virtual void					Set_Animation( HAnimComboClass * anim_combo);
-	virtual HAnimClass *			Peek_Animation( void );
-	virtual int						Get_Num_Bones(void);
+	virtual HAnimClass *			Peek_Animation();
+	virtual int						Get_Num_Bones();
 	virtual const char *			Get_Bone_Name(int bone_index);
 	virtual int						Get_Bone_Index(const char * bonename);
 	virtual const Matrix3D &	Get_Bone_Transform(const char * bonename);
@@ -120,7 +120,7 @@ public:
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface - Attributes, Options, Properties, etc
 	/////////////////////////////////////////////////////////////////////////////
-	virtual int						Get_Num_Snap_Points(void);
+	virtual int						Get_Num_Snap_Points();
 	virtual void					Get_Snap_Point(int index,Vector3 * set);
 	virtual void					Scale(float scale);
 	virtual void					Scale(float scalex, float scaley, float scalez);
@@ -137,10 +137,10 @@ private:
 
 	enum { HIGHEST_LOD = 0 };
 
-	void								Free(void);
+	void								Free();
 	void								Update_Lod(const CameraClass & camera);
-	void								Increment_Lod(void);
-	void								Decrement_Lod(void);
+	void								Increment_Lod();
+	void								Decrement_Lod();
 
 	struct LODNodeClass
 	{
@@ -163,7 +163,7 @@ class DistLODLoaderClass : public PrototypeLoaderClass
 {
 public:
 
-	virtual int						Chunk_Type (void)  { return W3D_CHUNK_LODMODEL; }
+	virtual int						Chunk_Type ()  { return W3D_CHUNK_LODMODEL; }
 	virtual PrototypeClass *	Load_W3D(ChunkLoadClass & cload);
 };
 
@@ -173,7 +173,7 @@ public:
 */
 struct DistLODNodeDefStruct
 {
-	DistLODNodeDefStruct(void) : Name(nullptr),ResDownDist(0.0f),ResUpDist(0.0f) {}
+	DistLODNodeDefStruct() : Name(nullptr),ResDownDist(0.0f),ResUpDist(0.0f) {}
 
 	char *	Name;
 	float		ResDownDist;
@@ -190,12 +190,12 @@ class DistLODDefClass
 {
 public:
 
-	DistLODDefClass(void);
+	DistLODDefClass();
 	DistLODDefClass(const char * name,int lodcount,DistLODNodeDefStruct * lods);
-	~DistLODDefClass(void);
+	~DistLODDefClass();
 
 	WW3DErrorType				Load_W3D(ChunkLoadClass & cload);
-	const char *				Get_Name(void) const { return Name; }
+	const char *				Get_Name() const { return Name; }
 
 private:
 
@@ -204,7 +204,7 @@ private:
 	int							LodCount;
 	DistLODNodeDefStruct *	Lods;
 
-	void							Free(void);
+	void							Free();
 	bool							read_header(ChunkLoadClass & cload);
 	bool							read_node(ChunkLoadClass & cload,DistLODNodeDefStruct * node);
 
@@ -220,13 +220,13 @@ class DistLODPrototypeClass : public W3DMPO, public PrototypeClass
 public:
 	DistLODPrototypeClass( DistLODDefClass *def ) { Definition = def; }
 
-	virtual const char *			Get_Name(void) const			{ return Definition->Get_Name(); }
-	virtual int								Get_Class_ID(void) const	{ return RenderObjClass::CLASSID_DISTLOD; }
-	virtual RenderObjClass *	Create(void);
+	virtual const char *			Get_Name() const			{ return Definition->Get_Name(); }
+	virtual int								Get_Class_ID() const	{ return RenderObjClass::CLASSID_DISTLOD; }
+	virtual RenderObjClass *	Create();
 	virtual void							DeleteSelf()							{ delete this; }
 
 protected:
-	virtual ~DistLODPrototypeClass(void) { delete Definition; }
+	virtual ~DistLODPrototypeClass() { delete Definition; }
 
 private:
 	DistLODDefClass *				Definition;

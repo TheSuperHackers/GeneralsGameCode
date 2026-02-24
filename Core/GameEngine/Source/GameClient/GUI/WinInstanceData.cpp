@@ -70,7 +70,7 @@
 
 // WinInstanceData::WinInstanceData ===========================================
 //=============================================================================
-WinInstanceData::WinInstanceData( void )
+WinInstanceData::WinInstanceData()
 {
 
 	// we don't allocate strings unless we need them
@@ -83,7 +83,7 @@ WinInstanceData::WinInstanceData( void )
 
 // WinInstanceData::~WinInstanceData ==========================================
 //=============================================================================
-WinInstanceData::~WinInstanceData( void )
+WinInstanceData::~WinInstanceData()
 {
 
 	if( m_text )
@@ -99,7 +99,7 @@ WinInstanceData::~WinInstanceData( void )
 // WinInstanceData::init ======================================================
 /** Set initial values for instance data if desired */
 //=============================================================================
-void WinInstanceData::init( void )
+void WinInstanceData::init()
 {
 	Int i;
 

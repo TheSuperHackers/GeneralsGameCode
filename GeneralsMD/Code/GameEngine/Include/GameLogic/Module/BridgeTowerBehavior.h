@@ -44,7 +44,7 @@ class BridgeTowerBehaviorInterface
 public:
 
 	virtual void setBridge( Object *bridge ) = 0;
-	virtual ObjectID getBridgeID( void ) = 0;
+	virtual ObjectID getBridgeID() = 0;
 	virtual void setTowerType( BridgeTowerType type ) = 0;
 
 };
@@ -66,10 +66,10 @@ public:
 	// virtual destructor prototype provided by memory pool declaration
 
 	static Int getInterfaceMask() { return (MODULEINTERFACE_DAMAGE) | (MODULEINTERFACE_DIE); }
-	BridgeTowerBehaviorInterface* getBridgeTowerBehaviorInterface( void ) { return this; }
+	BridgeTowerBehaviorInterface* getBridgeTowerBehaviorInterface() { return this; }
 
 	virtual void setBridge( Object *bridge );
-	virtual ObjectID getBridgeID( void );
+	virtual ObjectID getBridgeID();
 	virtual void setTowerType( BridgeTowerType type );
 
 	static BridgeTowerBehaviorInterface *getBridgeTowerBehaviorInterfaceFromObject( Object *obj );

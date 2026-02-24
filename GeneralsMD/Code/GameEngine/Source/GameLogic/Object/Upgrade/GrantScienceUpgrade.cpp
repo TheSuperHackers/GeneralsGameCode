@@ -76,13 +76,13 @@ GrantScienceUpgrade::GrantScienceUpgrade( Thing *thing, const ModuleData* module
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-GrantScienceUpgrade::~GrantScienceUpgrade( void )
+GrantScienceUpgrade::~GrantScienceUpgrade()
 {
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void GrantScienceUpgrade::upgradeImplementation( )
+void GrantScienceUpgrade::upgradeImplementation()
 {
 	if( m_scienceType == SCIENCE_INVALID )
 	{
@@ -130,7 +130,7 @@ void GrantScienceUpgrade::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void GrantScienceUpgrade::loadPostProcess( void )
+void GrantScienceUpgrade::loadPostProcess()
 {
 
 	// extend base class

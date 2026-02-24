@@ -76,7 +76,7 @@ Render2DClass::~Render2DClass()
 }
 
 ShaderClass
-Render2DClass::Get_Default_Shader( void )
+Render2DClass::Get_Default_Shader()
 {
 	ShaderClass shader;
 
@@ -91,7 +91,7 @@ Render2DClass::Get_Default_Shader( void )
 	return shader;
 }
 
-void	Render2DClass::Reset(void)
+void	Render2DClass::Reset()
 {
 	Vertices.Delete_All( false );
 	UVCoordinates.Delete_All( false );
@@ -170,7 +170,7 @@ void	Render2DClass::Set_Coordinate_Range( const RectClass & range )
 	Update_Bias();
 }
 
-void	  Render2DClass::Update_Bias( void )
+void	  Render2DClass::Update_Bias()
 {
 	BiasedCoordinateOffset = CoordinateOffset;
 
@@ -525,7 +525,7 @@ void	Render2DClass::Add_Outline( const RectClass & rect, float width, const Rect
 	Add_Line (Vector2 (rect.Right, rect.Bottom),	Vector2 (rect.Left + 1, rect.Bottom),	width, color);
 }
 
-void Render2DClass::Render(void)
+void Render2DClass::Render()
 {
 	if ( !Indices.Count() || IsHidden) {
 		return;
@@ -653,7 +653,7 @@ Render2DTextClass::~Render2DTextClass()
 	REF_PTR_RELEASE(Font);
 }
 
-void	Render2DTextClass::Reset(void)
+void	Render2DTextClass::Reset()
 {
 	Render2DClass::Reset();
 	Cursor = Location;

@@ -119,7 +119,7 @@ class ParticleInfo : public Snapshot
 
 public:
 
-	ParticleInfo( void );
+	ParticleInfo();
 
 	Coord3D m_vel;															///< initial velocity
 	Coord3D m_pos;															///< initial position
@@ -159,7 +159,7 @@ protected:
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
+	virtual void loadPostProcess();
 
 };
 
@@ -178,29 +178,29 @@ public:
 
 	Particle( ParticleSystem *system, const ParticleInfo *data );
 
-	Bool update( void );												///< update this particle's behavior - return false if dead
-	void doWindMotion( void );									///< do wind motion (if present) from particle system
+	Bool update();												///< update this particle's behavior - return false if dead
+	void doWindMotion();									///< do wind motion (if present) from particle system
 
 	void applyForce( const Coord3D *force );		///< add the given acceleration
 
-	const Coord3D *getPosition( void ) { return &m_pos; }
-	Real getSize( void ) { return m_size; }
-	Real getAngle( void ) { return m_angleZ; }
-	Real getAlpha( void ) { return m_alpha; }
-	const RGBColor *getColor( void ) { return &m_color; }
+	const Coord3D *getPosition() { return &m_pos; }
+	Real getSize() { return m_size; }
+	Real getAngle() { return m_angleZ; }
+	Real getAlpha() { return m_alpha; }
+	const RGBColor *getColor() { return &m_color; }
 	void setColor( RGBColor *color ) { m_color = *color; }
 
-	Bool isInvisible( void );										///< return true if this particle is invisible
-	Bool isCulled (void) {return m_isCulled;}				///< return true if the particle falls off the edge of the screen
+	Bool isInvisible();										///< return true if this particle is invisible
+	Bool isCulled () {return m_isCulled;}				///< return true if the particle falls off the edge of the screen
 	void setIsCulled (Bool enable) { m_isCulled = enable;}		///< set particle to not visible because it's outside view frustum
 
 	void controlParticleSystem( ParticleSystem *sys ) { m_systemUnderControl = sys; }
-	void detachControlledParticleSystem( void ) { m_systemUnderControl = nullptr; }
+	void detachControlledParticleSystem() { m_systemUnderControl = nullptr; }
 
 	// get priority of this particle ... which is the priority of the system it belongs to
-	ParticlePriorityType getPriority( void );
+	ParticlePriorityType getPriority();
 
-	UnsignedInt getPersonality(void) { return m_personality; };
+	UnsignedInt getPersonality() { return m_personality; };
 	void setPersonality(UnsignedInt p) { m_personality = p; };
 
 protected:
@@ -208,10 +208,10 @@ protected:
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
+	virtual void loadPostProcess();
 
-	void computeAlphaRate( void );							///< compute alpha rate to get to next key
-	void computeColorRate( void );							///< compute color change to get to next key
+	void computeAlphaRate();							///< compute alpha rate to get to next key
+	void computeColorRate();							///< compute color change to get to next key
 
 public:
 	Particle *				m_systemNext;
@@ -266,7 +266,7 @@ public:
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
+	virtual void loadPostProcess();
 
 	Bool m_isOneShot;														///< if true, destroy system after one burst has occurred
 
@@ -511,12 +511,12 @@ class ParticleSystemTemplate : public MemoryPoolObject, protected ParticleSystem
 public:
 	ParticleSystemTemplate( const AsciiString &name );
 
-	AsciiString getName( void ) const { return m_name; }
+	AsciiString getName() const { return m_name; }
 
 	// This function was made const because of update modules' module data being all const.
 	ParticleSystem *createSlaveSystem( Bool createSlaves = TRUE ) const ;					///< if returns non-null, it is a slave system for use
 
-	const FieldParse *getFieldParse( void ) const { return m_fieldParseTable; }	///< Parsing from INI access
+	const FieldParse *getFieldParse() const { return m_fieldParseTable; }	///< Parsing from INI access
 	static void parseRGBColorKeyframe( INI* ini, void *instance, void *store, const void* /*userData*/ );
 	static void parseRandomKeyframe( INI* ini, void *instance, void *store, const void* /*userData*/ );
 	static void parseRandomRGBColor( INI* ini, void *instance, void *store, const void* /*userData*/ );
@@ -561,7 +561,7 @@ public:
 									ParticleSystemID id,
 									Bool createSlaves );			///< create a particle system from a template and assign it this ID
 
-	ParticleSystemID getSystemID( void ) const { return m_systemID; }	///< get unique system ID
+	ParticleSystemID getSystemID() const { return m_systemID; }	///< get unique system ID
 
 	void setPosition( const Coord3D *pos );			///< set the position of the particle system
 	void getPosition( Coord3D *pos );				///< get the position of the particle system
@@ -571,62 +571,62 @@ public:
 	void rotateLocalTransformZ( Real z );				///< rotate local transform matrix
 	void setSkipParentXfrm(Bool enable) { m_skipParentXfrm = enable; } ///<disable transforming particle system with parent matrix.
 
-	const Coord3D *getDriftVelocity( void ) { return &m_driftVelocity; }	///< get the drift velocity of the system
+	const Coord3D *getDriftVelocity() { return &m_driftVelocity; }	///< get the drift velocity of the system
 
 	void attachToDrawable( const Drawable *draw );							///< attach this particle system to a Drawable
 	void attachToObject( const Object *obj );									///< attach this particle system to an Object
 
 	virtual Bool update( Int localPlayerIndex );								///< update this particle system, return false if dead
-	void updateWindMotion( void );							///< update wind motion
+	void updateWindMotion();							///< update wind motion
 
 	void setControlParticle( Particle *p );			///< set control particle
 
-	void start( void );													///< (re)start a stopped particle system
-	void stop( void );													///< stop a particle system from emitting
-	void destroy( void );												///< stop emitting, and wait for particles to die, then destroy self
+	void start();													///< (re)start a stopped particle system
+	void stop();													///< stop a particle system from emitting
+	void destroy();												///< stop emitting, and wait for particles to die, then destroy self
 
 	void setVelocityMultiplier( const Coord3D *value ) { m_velCoeff = *value; }	///< set the velocity multiplier coefficient
-	const Coord3D *getVelocityMultiplier( void ) { return &m_velCoeff; }					///< get the velocity multiplier coefficient
+	const Coord3D *getVelocityMultiplier() { return &m_velCoeff; }					///< get the velocity multiplier coefficient
 
 	void setBurstCountMultiplier( Real value ) { m_countCoeff = value; }
-	Real getBurstCountMultiplier( void ) { return m_countCoeff; }
+	Real getBurstCountMultiplier() { return m_countCoeff; }
 
 	void setBurstDelayMultiplier( Real value ) { m_delayCoeff = value; }
-	Real getBurstDelayMultiplier( void ) { return m_delayCoeff; }
+	Real getBurstDelayMultiplier() { return m_delayCoeff; }
 
 	void setSizeMultiplier( Real value ) { m_sizeCoeff = value; }
-	Real getSizeMultiplier( void ) { return m_sizeCoeff; }
+	Real getSizeMultiplier() { return m_sizeCoeff; }
 
 	/// Force a burst of particles to be emitted immediately.
-	void trigger (void) { m_burstDelayLeft = 0; m_delayLeft = 0;}
+	void trigger () { m_burstDelayLeft = 0; m_delayLeft = 0;}
 
 	void setInitialDelay( UnsignedInt delay ) { m_delayLeft = delay; }
 
-	AsciiString getParticleTypeName( void ) { return m_particleTypeName; }	///< return the name of the particles
-	Bool isUsingDrawables( void ) { return (m_particleType == DRAWABLE) ? true : false; }
-	Bool isUsingStreak( void ) { return (m_particleType == STREAK) ? true : false; }
-	Bool isUsingSmudge( void ) { return (m_particleType == SMUDGE) ? true : false; }
-	UnsignedInt getVolumeParticleDepth( void ) { return ( m_particleType == VOLUME_PARTICLE ) ? OPTIMUM_VOLUME_PARTICLE_DEPTH : 0; }
+	AsciiString getParticleTypeName() { return m_particleTypeName; }	///< return the name of the particles
+	Bool isUsingDrawables() { return (m_particleType == DRAWABLE) ? true : false; }
+	Bool isUsingStreak() { return (m_particleType == STREAK) ? true : false; }
+	Bool isUsingSmudge() { return (m_particleType == SMUDGE) ? true : false; }
+	UnsignedInt getVolumeParticleDepth() { return ( m_particleType == VOLUME_PARTICLE ) ? OPTIMUM_VOLUME_PARTICLE_DEPTH : 0; }
 
-	Bool shouldBillboard( void ) { return !m_isGroundAligned; }
+	Bool shouldBillboard() { return !m_isGroundAligned; }
 
-	ParticleShaderType getShaderType( void ) { return m_shaderType; }
+	ParticleShaderType getShaderType() { return m_shaderType; }
 
 	void setSlave( ParticleSystem *slave );			///< set a slave system for us
-	ParticleSystem *getSlave( void ) { return m_slaveSystem; }
+	ParticleSystem *getSlave() { return m_slaveSystem; }
 	void setMaster( ParticleSystem *master );  ///< make this a slave with a master
-	ParticleSystem *getMaster( void ) { return m_masterSystem; }
-	const Coord3D *getSlavePositionOffset( void ) { return &m_slavePosOffset; }
+	ParticleSystem *getMaster() { return m_masterSystem; }
+	const Coord3D *getSlavePositionOffset() { return &m_slavePosOffset; }
 
 	void setSystemLifetime( UnsignedInt frames ) { m_systemLifetimeLeft = frames; }; ///< not the particle life, the system!... Lorenzen
 	void setLifetimeRange( Real min, Real max );
 	Bool isSystemForever() const {return m_isForever;}
 
-	UnsignedInt getStartFrame( void ) { return m_startTimestamp; }	///< return frame when this system was created
-	Bool isDestroyed( void ) const { return m_isDestroyed; }
+	UnsignedInt getStartFrame() { return m_startTimestamp; }	///< return frame when this system was created
+	Bool isDestroyed() const { return m_isDestroyed; }
 
 	void setSaveable( Bool b );
-	Bool isSaveable( void ) const { return m_isSaveable; }
+	Bool isSaveable() const { return m_isSaveable; }
 
 	/// called when the particle this system is controlled by dies
 	void detachControlParticle( Particle *p ) { m_controlParticle = nullptr; }
@@ -636,18 +636,18 @@ public:
 	static ParticleInfo mergeRelatedParticleSystems( ParticleSystem *masterParticleSystem, ParticleSystem *slaveParticleSystem, Bool slaveNeedsFullPromotion);
 
 	/// @todo Const this (MSB)
-	const ParticleSystemTemplate *getTemplate( void ) { return m_template; }	///< get the template used to create this system
+	const ParticleSystemTemplate *getTemplate() { return m_template; }	///< get the template used to create this system
 
 	// @todo Const this jkmcd
-	Particle *getFirstParticle( void ) { return m_systemParticlesHead; }
+	Particle *getFirstParticle() { return m_systemParticlesHead; }
 
 	void addParticle( Particle *particleToAdd );
 	/// when a particle dies, it calls this method - ONLY FOR USE BY PARTICLE
 	void removeParticle( Particle *p );
-	UnsignedInt getParticleCount( void ) const { return m_particleCount; }
+	UnsignedInt getParticleCount() const { return m_particleCount; }
 
-	ObjectID getAttachedObject( void ) { return m_attachedToObjectID; }
-	DrawableID getAttachedDrawable( void ) { return m_attachedToDrawableID; }
+	ObjectID getAttachedObject() { return m_attachedToObjectID; }
+	DrawableID getAttachedDrawable() { return m_attachedToDrawableID; }
 
 	// Access to dynamically changing part of a particle system.
 	void setEmissionVolumeSphereRadius( Real newRadius ) { if (m_emissionVolumeType == SPHERE) m_emissionVolume.sphere.radius = newRadius; }
@@ -656,15 +656,15 @@ public:
 	ParticlePriorityType getPriority() const { return m_priority; }
 
 	// Access to wind motion
-	Real getWindAngle( void ) { return m_windAngle; }
-	WindMotion getWindMotion( void ) { return m_windMotion; }
+	Real getWindAngle() { return m_windAngle; }
+	WindMotion getWindMotion() { return m_windMotion; }
 
 protected:
 
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
+	virtual void loadPostProcess();
 
 	virtual Particle *createParticle( const ParticleInfo *data,
 																		ParticlePriorityType priority,
@@ -672,9 +672,9 @@ protected:
 
 
 	const ParticleInfo *generateParticleInfo( Int particleNum, Int particleCount );	///< generate a new, random set of ParticleInfo
-	const Coord3D *computeParticlePosition( void );		///< compute a position based on emission properties
+	const Coord3D *computeParticlePosition();		///< compute a position based on emission properties
 	const Coord3D *computeParticleVelocity( const Coord3D *pos );	///< compute a velocity vector based on emission properties
-	const Coord3D *computePointOnUnitSphere( void );	///< compute a random point on a unit sphere
+	const Coord3D *computePointOnUnitSphere();	///< compute a random point on a unit sphere
 
 protected:
 	Particle *				m_systemParticlesHead;
@@ -746,14 +746,14 @@ public:
 	typedef std::hash_map<ParticleSystemID, ParticleSystem *, rts::hash<ParticleSystemID>, rts::equal_to<ParticleSystemID> > ParticleSystemIDMap;
 	typedef std::hash_map<AsciiString, ParticleSystemTemplate *, rts::hash<AsciiString>, rts::equal_to<AsciiString> > TemplateMap;
 
-	ParticleSystemManager( void );
+	ParticleSystemManager();
 	virtual ~ParticleSystemManager();
 
-	virtual void init( void );									///< initialize the manager
-	virtual void reset( void );									///< reset the manager and all particle systems
-	virtual void update( void );								///< update all particle systems
+	virtual void init();									///< initialize the manager
+	virtual void reset();									///< reset the manager and all particle systems
+	virtual void update();								///< update all particle systems
 
-	virtual Int getOnScreenParticleCount( void ) = 0;   ///< returns the number of particles on screen
+	virtual Int getOnScreenParticleCount() = 0;   ///< returns the number of particles on screen
   virtual void setOnScreenParticleCount(int count);
 
 	ParticleSystemTemplate *findTemplate( const AsciiString &name ) const;
@@ -791,14 +791,14 @@ public:
 	void addParticle( Particle *particleToAdd, ParticlePriorityType priority );
 	void removeParticle( Particle *particleToRemove );
 	Int removeOldestParticles( UnsignedInt count, ParticlePriorityType priorityCap );
-	UnsignedInt getParticleCount( void ) const { return m_particleCount; }
+	UnsignedInt getParticleCount() const { return m_particleCount; }
 
-	UnsignedInt getFieldParticleCount( void )     const { return m_fieldParticleCount; }
+	UnsignedInt getFieldParticleCount()     const { return m_fieldParticleCount; }
 
-	UnsignedInt getParticleSystemCount( void ) const { return m_particleSystemCount; }
+	UnsignedInt getParticleSystemCount() const { return m_particleSystemCount; }
 
 	// @todo const this jkmcd
-	ParticleSystemList &getAllParticleSystems( void ) { return m_allParticleSystemList; }
+	ParticleSystemList &getAllParticleSystems() { return m_allParticleSystemList; }
 
 	virtual void doParticles(RenderInfoClass &rinfo) = 0;
 	virtual void queueParticleRender() = 0;
@@ -814,7 +814,7 @@ protected:
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
+	virtual void loadPostProcess();
 
 	Particle *m_allParticlesHead[ NUM_PARTICLE_PRIORITIES ];
 	Particle *m_allParticlesTail[ NUM_PARTICLE_PRIORITIES ];

@@ -78,7 +78,7 @@ static const Image *borderPieces[NUM_BORDER_PIECES] = { nullptr };
 
 // initBorders ================================================================
 //=============================================================================
-static void initBorders( void )
+static void initBorders()
 {
 
 	borderPieces[ BORDER_CORNER_UL ] =
@@ -261,7 +261,7 @@ void W3DGameWindow::blitBorderRect( Int x, Int y, Int width, Int height )
 
 // W3DGameWindow::W3DGameWindow ===============================================
 //=============================================================================
-W3DGameWindow::W3DGameWindow( void )
+W3DGameWindow::W3DGameWindow()
 {
 
 	// override the default draw with our own default draw function for W3D
@@ -276,7 +276,7 @@ W3DGameWindow::W3DGameWindow( void )
 
 // W3DGameWindow::~W3DGameWindow ==============================================
 //=============================================================================
-W3DGameWindow::~W3DGameWindow( void )
+W3DGameWindow::~W3DGameWindow()
 {
 
 }
@@ -392,7 +392,7 @@ void W3DGameWinDefaultDraw( GameWindow *window, WinInstanceData *instData )
 
 // W3DGameWindow::winDrawBorder ===============================================
 //=============================================================================
-void W3DGameWindow::winDrawBorder( void )
+void W3DGameWindow::winDrawBorder()
 {
 	Bool found = FALSE;
 	Int originalX, originalY;

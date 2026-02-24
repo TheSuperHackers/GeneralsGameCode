@@ -727,7 +727,7 @@ ParticleBufferClass & ParticleBufferClass::operator = (const ParticleBufferClass
 }
 
 
-ParticleBufferClass::~ParticleBufferClass(void)
+ParticleBufferClass::~ParticleBufferClass()
 {
 	delete [] NewParticleQueue;
 	delete [] ColorKeyFrameTimes;
@@ -797,19 +797,19 @@ ParticleBufferClass::~ParticleBufferClass(void)
 }
 
 
-RenderObjClass * ParticleBufferClass::Clone(void) const
+RenderObjClass * ParticleBufferClass::Clone() const
 {
 	return W3DNEW ParticleBufferClass(*this);
 }
 
 
-int ParticleBufferClass::Get_Num_Polys(void) const
+int ParticleBufferClass::Get_Num_Polys() const
 {
 	// Currently in particle buffers, the cost happens to be equal to the polygon count.
 	return (int)Get_Cost();
 }
 
-int ParticleBufferClass::Get_Particle_Count(void) const
+int ParticleBufferClass::Get_Particle_Count() const
 {
 	return NonNewNum + NewNum;
 }
@@ -1212,7 +1212,7 @@ void ParticleBufferClass::Scale(float scale)
 // the cached bounding volumes will not be invalidated unless we do
 // it elsewhere (such as here). We also need to call the particle
 // emitter's Emit() function (done here to avoid order dependence).
-void ParticleBufferClass::On_Frame_Update(void)
+void ParticleBufferClass::On_Frame_Update()
 {
 	WWPROFILE("ParticleBufferClass::On_Frame_Update");
 	Invalidate_Cached_Bounding_Volumes();
@@ -1316,27 +1316,27 @@ void ParticleBufferClass::Prepare_LOD(CameraClass &camera)
 	PredictiveLODOptimizerClass::Add_Object(this);
 }
 
-void ParticleBufferClass::Increment_LOD(void)
+void ParticleBufferClass::Increment_LOD()
 {
 	if (DecimationThreshold > 0) DecimationThreshold--;
 }
 
-void ParticleBufferClass::Decrement_LOD(void)
+void ParticleBufferClass::Decrement_LOD()
 {
 	if (DecimationThreshold < LodCount) DecimationThreshold++;
 }
 
-float ParticleBufferClass::Get_Cost(void) const
+float ParticleBufferClass::Get_Cost() const
 {
 	return(Cost[(LodCount - 1) - DecimationThreshold]);
 }
 
-float ParticleBufferClass::Get_Value(void) const
+float ParticleBufferClass::Get_Value() const
 {
 	return(Value[(LodCount - 1) - DecimationThreshold]);
 }
 
-float ParticleBufferClass::Get_Post_Increment_Value(void) const
+float ParticleBufferClass::Get_Post_Increment_Value() const
 {
 	return(Value[LodCount - DecimationThreshold]);
 }
@@ -1347,12 +1347,12 @@ void ParticleBufferClass::Set_LOD_Level(int lod)
 	DecimationThreshold = (LodCount - 1) - lod;
 }
 
-int ParticleBufferClass::Get_LOD_Level(void) const
+int ParticleBufferClass::Get_LOD_Level() const
 {
 	return((LodCount - 1) - DecimationThreshold);
 }
 
-int ParticleBufferClass::Get_LOD_Count(void) const
+int ParticleBufferClass::Get_LOD_Count() const
 {
 	return LodCount;
 }
@@ -2354,7 +2354,7 @@ void ParticleBufferClass::Reset_Blur_Times(ParticlePropertyStruct<float> &new_bl
 // This informs the buffer that the emitter is dead, so it can release
 // its pointer to it and be removed itself after all its particles dies
 // out.
-void ParticleBufferClass::Emitter_Is_Dead(void)
+void ParticleBufferClass::Emitter_Is_Dead()
 {
 	IsEmitterDead = true;
 	// We do not have a ref for the emitter (see DTor for detailed explanation)
@@ -2383,7 +2383,7 @@ void ParticleBufferClass::Set_Emitter(ParticleEmitterClass *emitter)
 }
 
 
-NewParticleStruct * ParticleBufferClass::Add_Uninitialized_New_Particle(void)
+NewParticleStruct * ParticleBufferClass::Add_Uninitialized_New_Particle()
 {
 	// Note that this function does not initialize the new particle - it
 	// returns its address to a different function which performs the actual
@@ -2403,7 +2403,7 @@ NewParticleStruct * ParticleBufferClass::Add_Uninitialized_New_Particle(void)
 }
 
 
-void ParticleBufferClass::Update_Cached_Bounding_Volumes(void) const
+void ParticleBufferClass::Update_Cached_Bounding_Volumes() const
 {
 	// This ugly cast is done because the alternative is to make everything
 	// in the class mutable, which does not seem like a good solution
@@ -2417,7 +2417,7 @@ void ParticleBufferClass::Update_Cached_Bounding_Volumes(void) const
 }
 
 
-void ParticleBufferClass::Update_Kinematic_Particle_State(void)
+void ParticleBufferClass::Update_Kinematic_Particle_State()
 {
 	// Note: elapsed may be very large indeed the first time the object is
 	// updated, but this doesn't matter, since it is actually only used in
@@ -2447,7 +2447,7 @@ void ParticleBufferClass::Update_Kinematic_Particle_State(void)
 }
 
 
-void ParticleBufferClass::Update_Visual_Particle_State(void)
+void ParticleBufferClass::Update_Visual_Particle_State()
 {
 	// NOTE: The visual state (color/alpha/size) is "stateless" in that each time it is calculated
 	// without referring to what it was before. This is important for when we optimize the particle
@@ -2702,7 +2702,7 @@ void ParticleBufferClass::Update_Visual_Particle_State(void)
 }
 
 
-void ParticleBufferClass::Update_Bounding_Box(void)
+void ParticleBufferClass::Update_Bounding_Box()
 {
 	// Ensure all particle positions are updated. If bounding box still not
 	// dirty, return.
@@ -2772,7 +2772,7 @@ void ParticleBufferClass::Update_Bounding_Box(void)
 // particles (including possibly other new particles) so that the newest
 // particles are preserved. The particles are initialized to their state at
 // the end of the current interval.
-void ParticleBufferClass::Get_New_Particles(void)
+void ParticleBufferClass::Get_New_Particles()
 {
 	unsigned int current_time = WW3D::Get_Sync_Time();
 
@@ -2850,7 +2850,7 @@ void ParticleBufferClass::Get_New_Particles(void)
 }
 
 
-void ParticleBufferClass::Kill_Old_Particles(void)
+void ParticleBufferClass::Kill_Old_Particles()
 {
 	// Scan from Start and find the first particle which has an age less than
 	// MaxAge - set Start to that position.
@@ -3326,7 +3326,7 @@ float ParticleBufferClass::Get_LOD_Max_Screen_Size(int lod_level)
 }
 
 
-int ParticleBufferClass::Get_Line_Texture_Mapping_Mode(void) const
+int ParticleBufferClass::Get_Line_Texture_Mapping_Mode() const
 {
 	if (LineRenderer != nullptr) {
 		return LineRenderer->Get_Texture_Mapping_Mode();
@@ -3334,7 +3334,7 @@ int ParticleBufferClass::Get_Line_Texture_Mapping_Mode(void) const
 	return SegLineRendererClass::UNIFORM_WIDTH_TEXTURE_MAP;
 }
 
-int ParticleBufferClass::Is_Merge_Intersections(void) const
+int ParticleBufferClass::Is_Merge_Intersections() const
 {
 	if (LineRenderer != nullptr) {
 		return LineRenderer->Is_Merge_Intersections();
@@ -3342,7 +3342,7 @@ int ParticleBufferClass::Is_Merge_Intersections(void) const
 	return false;
 }
 
-int ParticleBufferClass::Is_Freeze_Random(void) const
+int ParticleBufferClass::Is_Freeze_Random() const
 {
 	if (LineRenderer != nullptr) {
 		return LineRenderer->Is_Freeze_Random();
@@ -3350,7 +3350,7 @@ int ParticleBufferClass::Is_Freeze_Random(void) const
 	return false;
 }
 
-int ParticleBufferClass::Is_Sorting_Disabled(void) const
+int ParticleBufferClass::Is_Sorting_Disabled() const
 {
 	if (LineRenderer != nullptr) {
 		return LineRenderer->Is_Sorting_Disabled();
@@ -3358,7 +3358,7 @@ int ParticleBufferClass::Is_Sorting_Disabled(void) const
 	return false;
 }
 
-int ParticleBufferClass::Are_End_Caps_Enabled(void)	const
+int ParticleBufferClass::Are_End_Caps_Enabled()	const
 {
 	if (LineRenderer != nullptr) {
 		return LineRenderer->Are_End_Caps_Enabled();
@@ -3366,7 +3366,7 @@ int ParticleBufferClass::Are_End_Caps_Enabled(void)	const
 	return false;
 }
 
-int ParticleBufferClass::Get_Subdivision_Level(void) const
+int ParticleBufferClass::Get_Subdivision_Level() const
 {
 	if (LineRenderer != nullptr) {
 		return LineRenderer->Get_Current_Subdivision_Level();
@@ -3374,7 +3374,7 @@ int ParticleBufferClass::Get_Subdivision_Level(void) const
 	return 0;
 }
 
-float ParticleBufferClass::Get_Noise_Amplitude(void) const
+float ParticleBufferClass::Get_Noise_Amplitude() const
 {
 	if (LineRenderer != nullptr) {
 		return LineRenderer->Get_Noise_Amplitude();
@@ -3382,7 +3382,7 @@ float ParticleBufferClass::Get_Noise_Amplitude(void) const
 	return 0.0f;
 }
 
-float ParticleBufferClass::Get_Merge_Abort_Factor(void) const
+float ParticleBufferClass::Get_Merge_Abort_Factor() const
 {
 	if (LineRenderer != nullptr) {
 		return LineRenderer->Get_Merge_Abort_Factor();
@@ -3390,7 +3390,7 @@ float ParticleBufferClass::Get_Merge_Abort_Factor(void) const
 	return 0.0f;
 }
 
-float ParticleBufferClass::Get_Texture_Tile_Factor(void) const
+float ParticleBufferClass::Get_Texture_Tile_Factor() const
 {
 	if (LineRenderer != nullptr) {
 		return LineRenderer->Get_Texture_Tile_Factor();
@@ -3398,7 +3398,7 @@ float ParticleBufferClass::Get_Texture_Tile_Factor(void) const
 	return 1.0f;
 }
 
-Vector2 ParticleBufferClass::Get_UV_Offset_Rate(void) const
+Vector2 ParticleBufferClass::Get_UV_Offset_Rate() const
 {
 	if (LineRenderer != nullptr) {
 		return LineRenderer->Get_UV_Offset_Rate();
@@ -3443,7 +3443,7 @@ ParticleBufferClass::TailDiffuseTypeEnum ParticleBufferClass::Determine_Tail_Dif
 	return SAME_AS_HEAD;
 }
 
-TextureClass * ParticleBufferClass::Get_Texture (void) const
+TextureClass * ParticleBufferClass::Get_Texture () const
 {
 	if (PointGroup) return PointGroup->Get_Texture();
 	else if (LineGroup) return LineGroup->Get_Texture();
@@ -3458,7 +3458,7 @@ void ParticleBufferClass::Set_Texture (TextureClass *tex)
 	else if (LineRenderer) LineRenderer->Set_Texture(tex);
 }
 
-ShaderClass ParticleBufferClass::Get_Shader (void) const
+ShaderClass ParticleBufferClass::Get_Shader () const
 {
 	if (PointGroup) return PointGroup->Get_Shader();
 	else if (LineGroup) return LineGroup->Get_Shader();

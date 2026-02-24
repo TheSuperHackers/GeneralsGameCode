@@ -32,15 +32,15 @@
 /// \brief Simple CSV format flat file result function, for all threads.
 class ProfileResultFileCSV: public ProfileResultInterface
 {
-  ProfileResultFileCSV(void) {}
+  ProfileResultFileCSV() {}
 
   void WriteThread(ProfileFuncLevel::Thread &thread);
 
 public:
   static ProfileResultInterface *Create(int argn, const char * const *);
-  virtual const char *GetName(void) const { return "file_csv"; }
-  virtual void WriteResults(void);
-  virtual void Delete(void);
+  virtual const char *GetName() const { return "file_csv"; }
+  virtual void WriteResults();
+  virtual void Delete();
 };
 
 /**
@@ -74,9 +74,9 @@ public:
   */
   static ProfileResultInterface *Create(int argn, const char * const *);
 
-  virtual const char *GetName(void) const { return "file_dot"; }
-  virtual void WriteResults(void);
-  virtual void Delete(void);
+  virtual const char *GetName() const { return "file_dot"; }
+  virtual void WriteResults();
+  virtual void Delete();
 
 private:
 

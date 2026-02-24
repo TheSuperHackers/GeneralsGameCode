@@ -75,7 +75,7 @@ StructureCollapseUpdate::StructureCollapseUpdate( Thing *thing, const ModuleData
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-StructureCollapseUpdate::~StructureCollapseUpdate( void )
+StructureCollapseUpdate::~StructureCollapseUpdate()
 {
 }
 
@@ -165,7 +165,7 @@ void StructureCollapseUpdate::onDie( const DamageInfo *damageInfo )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime StructureCollapseUpdate::update( void )
+UpdateSleepTime StructureCollapseUpdate::update()
 {
 	static const Real COLLAPSE_ACCELERATION_FACTOR = 0.02f;
 	const StructureCollapseUpdateModuleData *d = getStructureCollapseUpdateModuleData();
@@ -397,7 +397,7 @@ void StructureCollapseUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void StructureCollapseUpdate::loadPostProcess( void )
+void StructureCollapseUpdate::loadPostProcess()
 {
 
 	// extend base class

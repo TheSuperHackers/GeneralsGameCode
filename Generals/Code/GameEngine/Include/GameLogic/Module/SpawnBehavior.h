@@ -130,8 +130,8 @@ public:
 	// virtual destructor prototype provided by memory pool declaration
 
 	// module methods
-	static Int getInterfaceMask( void ) { return (MODULEINTERFACE_UPDATE) | (MODULEINTERFACE_DIE) | (MODULEINTERFACE_DAMAGE); }
-	virtual void onDelete( void );
+	static Int getInterfaceMask() { return (MODULEINTERFACE_UPDATE) | (MODULEINTERFACE_DIE) | (MODULEINTERFACE_DAMAGE); }
+	virtual void onDelete();
 	virtual UpdateModuleInterface *getUpdate() { return this; }
 	virtual DieModuleInterface *getDie() { return this; }
 	virtual DamageModuleInterface *getDamage() { return this; }
@@ -166,7 +166,7 @@ public:
 	void stopSpawning();	///< Whoever owns this module may want to turn it off
 	void startSpawning();	///< Whoever owns this module may want to turn it on
 
-	void computeAggregateStates(void);
+	void computeAggregateStates();
 //	void notifySelfTasking( Bool isSelfTasking );
 
 private:
@@ -192,7 +192,7 @@ private:
 	Bool m_active;									///< Am I currently turned on
 
 
-	Object *reclaimOrphanSpawn( void );		///< find existing orphaned spawn object if present
+	Object *reclaimOrphanSpawn();		///< find existing orphaned spawn object if present
 
 	Bool m_aggregateHealth;			///< should I calc an offset for the healthbox, averaging all my spawn
 	Bool m_initialBurstTimesInited;

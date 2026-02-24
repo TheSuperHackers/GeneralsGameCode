@@ -82,7 +82,7 @@ void CardinalSpline3DClass::Remove_Key(int i)
 	HermiteSpline3DClass::Remove_Key(i);
 }
 
-void CardinalSpline3DClass::Clear_Keys(void)
+void CardinalSpline3DClass::Clear_Keys()
 {
 	Tightness.Clear();
 	HermiteSpline3DClass::Clear_Keys();
@@ -101,7 +101,7 @@ float CardinalSpline3DClass::Get_Tightness(int i)
 	return Tightness[i];
 }
 
-void CardinalSpline3DClass::Update_Tangents(void)
+void CardinalSpline3DClass::Update_Tangents()
 {
 	if (Keys.Count() < 2) {
 		for (int i=0; i<Keys.Count(); i++) {
@@ -160,7 +160,7 @@ void CardinalSpline3DClass::Update_Tangents(void)
 	TangentsDirty = false;
 }
 
-const PersistFactoryClass & CardinalSpline3DClass::Get_Factory(void) const
+const PersistFactoryClass & CardinalSpline3DClass::Get_Factory() const
 {
 	return _CardinalSpline3DFactory;
 }
@@ -232,7 +232,7 @@ void CardinalSpline1DClass::Remove_Key(int i)
 	HermiteSpline1DClass::Remove_Key(i);
 }
 
-void CardinalSpline1DClass::Clear_Keys(void)
+void CardinalSpline1DClass::Clear_Keys()
 {
 	Tightness.Clear();
 	HermiteSpline1DClass::Clear_Keys();
@@ -251,7 +251,7 @@ float CardinalSpline1DClass::Get_Tightness(int i)
 	return Tightness[i];
 }
 
-void CardinalSpline1DClass::Update_Tangents(void)
+void CardinalSpline1DClass::Update_Tangents()
 {
 	if (Keys.Count() < 2) {
 		for (int i=0; i<Keys.Count(); i++) {
@@ -299,7 +299,7 @@ void CardinalSpline1DClass::Update_Tangents(void)
 	TangentsDirty = false;
 }
 
-const PersistFactoryClass & CardinalSpline1DClass::Get_Factory(void) const
+const PersistFactoryClass & CardinalSpline1DClass::Get_Factory() const
 {
 	return _CardinalSpline1DFactory;
 }

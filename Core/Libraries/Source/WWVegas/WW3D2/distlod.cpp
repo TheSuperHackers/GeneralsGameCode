@@ -96,7 +96,7 @@
 DistLODLoaderClass			_DistLODLoader;
 
 
-RenderObjClass * DistLODPrototypeClass::Create(void)
+RenderObjClass * DistLODPrototypeClass::Create()
 {
 	DistLODClass * dist = NEW_REF( DistLODClass , ( *Definition ) );
 
@@ -168,7 +168,7 @@ PrototypeClass *DistLODLoaderClass::Load_W3D( ChunkLoadClass &cload )
  *                                                                                             *
  * HISTORY:                                                                                    *
  *=============================================================================================*/
-DistLODDefClass::DistLODDefClass(void) :
+DistLODDefClass::DistLODDefClass() :
 	Name(nullptr),
 	LodCount(0),
 	Lods(nullptr)
@@ -222,7 +222,7 @@ DistLODDefClass::DistLODDefClass(const char * name,int lodcount,DistLODNodeDefSt
  * HISTORY:                                                                                    *
  *   7/15/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-DistLODDefClass::~DistLODDefClass(void)
+DistLODDefClass::~DistLODDefClass()
 {
 	Free();
 }
@@ -240,7 +240,7 @@ DistLODDefClass::~DistLODDefClass(void)
  * HISTORY:                                                                                    *
  *   7/15/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-void DistLODDefClass::Free(void)
+void DistLODDefClass::Free()
 {
 	delete[] Name;
 	Name = nullptr;
@@ -452,7 +452,7 @@ DistLODClass::DistLODClass(const DistLODClass & that) :
  * HISTORY:                                                                                    *
  *   3/3/99     GTH : Created.                                                                 *
  *=============================================================================================*/
-DistLODClass::~DistLODClass(void)
+DistLODClass::~DistLODClass()
 {
 	Free();
 }
@@ -470,7 +470,7 @@ DistLODClass::~DistLODClass(void)
  * HISTORY:                                                                                    *
  *   3/3/99     GTH : Created.                                                                 *
  *=============================================================================================*/
-void DistLODClass::Free(void)
+void DistLODClass::Free()
 {
 	if (Lods != nullptr) {
 		for (int i=0; i<LodCount; i++) {
@@ -501,7 +501,7 @@ void DistLODClass::Free(void)
  * HISTORY:                                                                                    *
  *   3/3/99     GTH : Created.                                                                 *
  *=============================================================================================*/
-int DistLODClass::Get_Num_Polys(void) const
+int DistLODClass::Get_Num_Polys() const
 {
 	return Lods[CurLod].Model->Get_Num_Polys();
 }
@@ -561,7 +561,7 @@ void DistLODClass::Special_Render(SpecialRenderInfoClass & rinfo)
  * HISTORY:                                                                                    *
  *   3/1/99     GTH : Created.                                                                 *
  *=============================================================================================*/
-int DistLODClass::Get_Num_Sub_Objects(void) const
+int DistLODClass::Get_Num_Sub_Objects() const
 {
 	return LodCount;
 }
@@ -668,7 +668,7 @@ void DistLODClass::Set_Position(const Vector3 &v)
  * HISTORY:                                                                                    *
  *   3/3/99     GTH : Created.                                                                 *
  *=============================================================================================*/
-void	DistLODClass::Set_Animation( void )
+void	DistLODClass::Set_Animation()
 {
 	for (int i=0; i<LodCount; i++) {
 		assert(Lods[i].Model != nullptr);
@@ -752,7 +752,7 @@ void DistLODClass::Set_Animation( HAnimComboClass * anim_combo)
  * HISTORY:                                                                                    *
  *   12/8/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-HAnimClass *	DistLODClass::Peek_Animation( void )
+HAnimClass *	DistLODClass::Peek_Animation()
 {
 	return Lods[0].Model->Peek_Animation();
 }
@@ -770,7 +770,7 @@ HAnimClass *	DistLODClass::Peek_Animation( void )
  * HISTORY:                                                                                    *
  *   3/3/99     GTH : Created.                                                                 *
  *=============================================================================================*/
-int DistLODClass::Get_Num_Bones(void)
+int DistLODClass::Get_Num_Bones()
 {
 	return Lods[0].Model->Get_Num_Bones();
 }
@@ -1014,7 +1014,7 @@ bool DistLODClass::Cast_OBBox(OBBoxCollisionTestClass & boxtest)
  * HISTORY:                                                                                    *
  *   3/1/99     GTH : Created.                                                                 *
  *=============================================================================================*/
-int DistLODClass::Get_Num_Snap_Points(void)
+int DistLODClass::Get_Num_Snap_Points()
 {
 	return Lods[0].Model->Get_Num_Snap_Points();
 }
@@ -1120,7 +1120,7 @@ void DistLODClass::Update_Lod(const CameraClass & camera)
  * HISTORY:                                                                                    *
  *   3/1/99     GTH : Created.                                                                 *
  *=============================================================================================*/
-void DistLODClass::Increment_Lod(void)
+void DistLODClass::Increment_Lod()
 {
 	// TODO: change the order in which models are stored
 	if (CurLod > 0) {
@@ -1147,7 +1147,7 @@ void DistLODClass::Increment_Lod(void)
  * HISTORY:                                                                                    *
  *   3/1/99     GTH : Created.                                                                 *
  *=============================================================================================*/
-void DistLODClass::Decrement_Lod(void)
+void DistLODClass::Decrement_Lod()
 {
 	if (CurLod < LodCount - 1) {
 		if (Is_In_Scene()) {

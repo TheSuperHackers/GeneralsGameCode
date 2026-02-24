@@ -104,7 +104,7 @@ File* Win32BIGFile::openFile( const Char *filename, Int access )
 // Win32BIGFile::closeAllFiles
 //============================================================================
 
-void Win32BIGFile::closeAllFiles( void )
+void Win32BIGFile::closeAllFiles()
 {
 
 }
@@ -113,7 +113,7 @@ void Win32BIGFile::closeAllFiles( void )
 // Win32BIGFile::getName
 //============================================================================
 
-AsciiString Win32BIGFile::getName( void )
+AsciiString Win32BIGFile::getName()
 {
 	return m_name;
 }
@@ -122,7 +122,7 @@ AsciiString Win32BIGFile::getName( void )
 // Win32BIGFile::getPath
 //============================================================================
 
-AsciiString Win32BIGFile::getPath( void )
+AsciiString Win32BIGFile::getPath()
 {
 	return m_path;
 }
@@ -140,7 +140,7 @@ void Win32BIGFile::setSearchPriority( Int new_priority )
 // Win32BIGFile::close
 //============================================================================
 
-void Win32BIGFile::close( void )
+void Win32BIGFile::close()
 {
 
 }

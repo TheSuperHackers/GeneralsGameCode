@@ -68,8 +68,8 @@ class LightEnvironmentClass
 {
 public:
 
-	LightEnvironmentClass(void);
-	~LightEnvironmentClass(void);
+	LightEnvironmentClass();
+	~LightEnvironmentClass();
 
 	/*
 	** Usage (starting from scratch each frame):
@@ -89,9 +89,9 @@ public:
 	/*
 	** Accessors
 	*/
-	const Vector3 &	Get_Equivalent_Ambient(void) const			{ return OutputAmbient; }
+	const Vector3 &	Get_Equivalent_Ambient() const			{ return OutputAmbient; }
 	void Set_Output_Ambient(Vector3& oa) { OutputAmbient = oa; }
-	int					Get_Light_Count(void) const					{ return LightCount; }
+	int					Get_Light_Count() const					{ return LightCount; }
 	const Vector3 &	Get_Light_Direction(int i)	const				{ return InputLights[i].Direction; }
 	const Vector3 &	Get_Light_Diffuse(int i) const				{ return InputLights[i].Diffuse; }
 
@@ -107,7 +107,7 @@ public:
 	** into pure ambient lights.
 	*/
 	static void			Set_Lighting_LOD_Cutoff(float inten);
-	static float		Get_Lighting_LOD_Cutoff(void);
+	static float		Get_Lighting_LOD_Cutoff();
 
 	static int			Get_Max_Lights() { return MAX_LIGHTS; }
 	enum { MAX_LIGHTS = 4 };	//Made this public, so other code can tell how many lights are allowed. - MW
@@ -119,7 +119,7 @@ protected:
 		void				Init(const LightClass & light,const Vector3 & object_center);
 		void				Init_From_Point_Or_Spot_Light(const LightClass & light,const Vector3 & object_center);
 		void				Init_From_Directional_Light(const LightClass & light,const Vector3 & object_center);
-		float				Contribution(void);
+		float				Contribution();
 
 		Vector3			Direction;
 		Vector3			Ambient;

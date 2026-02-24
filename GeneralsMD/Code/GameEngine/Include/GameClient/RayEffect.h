@@ -56,12 +56,12 @@ class RayEffectSystem : public SubsystemInterface
 
 public:
 
-	RayEffectSystem( void );
-	~RayEffectSystem( void );
+	RayEffectSystem();
+	~RayEffectSystem();
 
-	virtual void init( void );
-	virtual void reset( void );
-	virtual void update( void ) { }
+	virtual void init();
+	virtual void reset();
+	virtual void update() { }
 
 	/// add a ray effect entry for this drawable
 	void addRayEffect( const Drawable *draw, const Coord3D *startLoc, const Coord3D *endLoc );

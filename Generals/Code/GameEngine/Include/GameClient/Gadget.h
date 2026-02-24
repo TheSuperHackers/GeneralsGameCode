@@ -522,9 +522,9 @@ extern WindowMsgHandledType GadgetComboBoxSystem( GameWindow *window, UnsignedIn
 																								 WindowMsgData mData1, WindowMsgData mData2 );
 
 
-extern Bool InitializeEntryGadget( void );
+extern Bool InitializeEntryGadget();
 
-extern Bool ShutdownEntryGadget( void );
+extern Bool ShutdownEntryGadget();
 
 // Entry Gadget Functions
 extern void InformEntry( WideChar c );

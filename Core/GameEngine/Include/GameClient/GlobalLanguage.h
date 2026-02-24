@@ -77,6 +77,8 @@ public:
 		ResolutionFontSizeMethod_Default = ResolutionFontSizeMethod_ClassicNoCeiling,
 	};
 
+	typedef std::list<AsciiString> StringList; // Used for our font file names that we want to load
+
 public:
 
 	GlobalLanguage();
@@ -84,7 +86,19 @@ public:
 
 	void init();
 	void reset();
-	void update() { }
+	void update() {}
+
+	Real getResolutionFontSizeAdjustment() const;
+	Int adjustFontSize(Int theFontSize); // Adjusts font size for resolution. jba.
+
+	void parseCustomDefinition();
+
+	// Get current resolution font size scale for the given method and scaler, based on the base game resolution of 800 x 600.
+	// Defaults to a scaler of 1 for a uniform resolution scale.
+	static Real getResolutionFontSizeScale(ResolutionFontSizeMethod method, Real scaler = 1.0f);
+
+	static void parseFontFileName(INI *ini, void *instance, void *store, const void *userData);
+	static void parseFontDesc(INI *ini, void *instance, void *store, const void *userData);
 
 	AsciiString m_unicodeFontName;
 	AsciiString m_unicodeFontFileName;
@@ -111,19 +125,9 @@ public:
 	Real			m_resolutionFontSizeAdjustment;
 	Real			m_userResolutionFontSizeAdjustment;
 	ResolutionFontSizeMethod m_resolutionFontSizeMethod;
-
-	float getResolutionFontSizeAdjustment() const;
-	Int adjustFontSize(Int theFontSize);	// Adjusts font size for resolution. jba.
-
-	void parseCustomDefinition();
-
-	typedef std::list<AsciiString> StringList;					// Used for our font file names that we want to load
-	typedef StringList::iterator StringListIt;
-
-	StringList m_localFonts;														// List of the font filenames that are in our local directory
-	static void parseFontFileName( INI *ini, void *instance, void *store, const void* userData );
-	static void parseFontDesc(INI *ini, void *instance, void *store, const void* userData);
+	StringList m_localFonts; // List of the font filenames that are in our local directory
 };
+
 //-----------------------------------------------------------------------------
 // INLINING ///////////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------

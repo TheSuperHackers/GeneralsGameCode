@@ -115,7 +115,7 @@ void DieModule::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void DieModule::loadPostProcess( void )
+void DieModule::loadPostProcess()
 {
 
 	// call base class

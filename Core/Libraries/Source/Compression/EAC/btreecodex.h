@@ -31,7 +31,7 @@ extern "C" {
 
 /* Information Functions */
 
-CODEXABOUT *GCALL BTREE_about(void);
+CODEXABOUT *GCALL BTREE_about();
 bool        GCALL BTREE_is(const void *compresseddata);
 
 /* Decode Functions */

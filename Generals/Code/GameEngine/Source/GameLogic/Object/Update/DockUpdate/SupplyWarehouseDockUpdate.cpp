@@ -40,7 +40,7 @@
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-SupplyWarehouseDockUpdateModuleData::SupplyWarehouseDockUpdateModuleData( void )
+SupplyWarehouseDockUpdateModuleData::SupplyWarehouseDockUpdateModuleData()
 {
 	m_startingBoxesData = 1;
 	m_deleteWhenEmpty = FALSE;
@@ -213,7 +213,7 @@ void SupplyWarehouseDockUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void SupplyWarehouseDockUpdate::loadPostProcess( void )
+void SupplyWarehouseDockUpdate::loadPostProcess()
 {
 
 	// extend base class

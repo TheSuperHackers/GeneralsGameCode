@@ -45,10 +45,10 @@
 class CatmullRomSpline3DClass : public HermiteSpline3DClass
 {
 public:
-	void					Update_Tangents(void);
+	void					Update_Tangents();
 
 	// save-load support
-	virtual const PersistFactoryClass &	Get_Factory(void) const;
+	virtual const PersistFactoryClass &	Get_Factory() const;
 	virtual bool								Save(ChunkSaveClass &csave);
 	virtual bool								Load(ChunkLoadClass &cload);
 };
@@ -61,10 +61,10 @@ public:
 class CatmullRomSpline1DClass : public HermiteSpline1DClass
 {
 public:
-	void					Update_Tangents(void);
+	void					Update_Tangents();
 
 	// save-load support
-	virtual const PersistFactoryClass &	Get_Factory(void) const;
+	virtual const PersistFactoryClass &	Get_Factory() const;
 	virtual bool								Save(ChunkSaveClass &csave);
 	virtual bool								Load(ChunkLoadClass &cload);
 };

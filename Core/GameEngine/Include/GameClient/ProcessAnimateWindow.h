@@ -74,8 +74,8 @@ class ProcessAnimateWindow
 {
 public:
 
-	ProcessAnimateWindow( void ){};
-	virtual ~ProcessAnimateWindow( void ){};
+	ProcessAnimateWindow(){};
+	virtual ~ProcessAnimateWindow(){};
 
 	virtual void initAnimateWindow( wnd::AnimateWindow *animWin ) = 0;
 	virtual void initReverseAnimateWindow( wnd::AnimateWindow *animWin, UnsignedInt maxDelay = 0 ) = 0;
@@ -90,8 +90,8 @@ class ProcessAnimateWindowSlideFromRight : public ProcessAnimateWindow
 {
 public:
 
-	ProcessAnimateWindowSlideFromRight( void );
-	virtual ~ProcessAnimateWindowSlideFromRight( void );
+	ProcessAnimateWindowSlideFromRight();
+	virtual ~ProcessAnimateWindowSlideFromRight();
 
 	virtual void initAnimateWindow( wnd::AnimateWindow *animWin );
 	virtual void initReverseAnimateWindow( wnd::AnimateWindow *animWin, UnsignedInt maxDelay = 0 );
@@ -113,8 +113,8 @@ class ProcessAnimateWindowSlideFromLeft : public ProcessAnimateWindow
 {
 public:
 
-	ProcessAnimateWindowSlideFromLeft( void );
-	virtual ~ProcessAnimateWindowSlideFromLeft( void );
+	ProcessAnimateWindowSlideFromLeft();
+	virtual ~ProcessAnimateWindowSlideFromLeft();
 
 	virtual void initAnimateWindow( wnd::AnimateWindow *animWin );
 	virtual void initReverseAnimateWindow( wnd::AnimateWindow *animWin, UnsignedInt maxDelay = 0 );
@@ -136,8 +136,8 @@ class ProcessAnimateWindowSlideFromTop : public ProcessAnimateWindow
 {
 public:
 
-	ProcessAnimateWindowSlideFromTop( void );
-	virtual ~ProcessAnimateWindowSlideFromTop( void );
+	ProcessAnimateWindowSlideFromTop();
+	virtual ~ProcessAnimateWindowSlideFromTop();
 
 	virtual void initAnimateWindow( wnd::AnimateWindow *animWin );
 	virtual void initReverseAnimateWindow( wnd::AnimateWindow *animWin, UnsignedInt maxDelay = 0 );
@@ -157,8 +157,8 @@ class ProcessAnimateWindowSlideFromTopFast : public ProcessAnimateWindow
 {
 public:
 
-	ProcessAnimateWindowSlideFromTopFast( void );
-	virtual ~ProcessAnimateWindowSlideFromTopFast( void );
+	ProcessAnimateWindowSlideFromTopFast();
+	virtual ~ProcessAnimateWindowSlideFromTopFast();
 
 	virtual void initAnimateWindow( wnd::AnimateWindow *animWin );
 	virtual void initReverseAnimateWindow( wnd::AnimateWindow *animWin, UnsignedInt maxDelay = 0 );
@@ -180,8 +180,8 @@ class ProcessAnimateWindowSlideFromBottom : public ProcessAnimateWindow
 {
 public:
 
-	ProcessAnimateWindowSlideFromBottom( void );
-	virtual ~ProcessAnimateWindowSlideFromBottom( void );
+	ProcessAnimateWindowSlideFromBottom();
+	virtual ~ProcessAnimateWindowSlideFromBottom();
 
 	virtual void initAnimateWindow( wnd::AnimateWindow *animWin );
 	virtual void initReverseAnimateWindow( wnd::AnimateWindow *animWin, UnsignedInt maxDelay = 0 );
@@ -202,8 +202,8 @@ class ProcessAnimateWindowSpiral : public ProcessAnimateWindow
 {
 public:
 
-	ProcessAnimateWindowSpiral( void );
-	virtual ~ProcessAnimateWindowSpiral( void );
+	ProcessAnimateWindowSpiral();
+	virtual ~ProcessAnimateWindowSpiral();
 
 	virtual void initAnimateWindow( wnd::AnimateWindow *animWin );
 	virtual void initReverseAnimateWindow( wnd::AnimateWindow *animWin, UnsignedInt maxDelay = 0 );
@@ -220,8 +220,8 @@ class ProcessAnimateWindowSlideFromBottomTimed : public ProcessAnimateWindow
 {
 public:
 
-	ProcessAnimateWindowSlideFromBottomTimed( void );
-	virtual ~ProcessAnimateWindowSlideFromBottomTimed( void );
+	ProcessAnimateWindowSlideFromBottomTimed();
+	virtual ~ProcessAnimateWindowSlideFromBottomTimed();
 
 	virtual void initAnimateWindow( wnd::AnimateWindow *animWin );
 	virtual void initReverseAnimateWindow( wnd::AnimateWindow *animWin, UnsignedInt maxDelay = 0 );
@@ -238,8 +238,8 @@ class ProcessAnimateWindowSlideFromRightFast : public ProcessAnimateWindow
 {
 public:
 
-	ProcessAnimateWindowSlideFromRightFast( void );
-	virtual ~ProcessAnimateWindowSlideFromRightFast( void );
+	ProcessAnimateWindowSlideFromRightFast();
+	virtual ~ProcessAnimateWindowSlideFromRightFast();
 
 	virtual void initAnimateWindow( wnd::AnimateWindow *animWin );
 	virtual void initReverseAnimateWindow( wnd::AnimateWindow *animWin, UnsignedInt maxDelay = 0 );

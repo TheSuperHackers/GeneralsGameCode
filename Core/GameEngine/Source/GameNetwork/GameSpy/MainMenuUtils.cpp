@@ -80,13 +80,13 @@ enum {
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-static void startOnline( void );
-static void reallyStartPatchCheck( void );
+static void startOnline();
+static void reallyStartPatchCheck();
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
 // someone has hit a button allowing downloads to start
-void StartDownloadingPatches( void )
+void StartDownloadingPatches()
 {
 	if (queuedDownloads.empty())
 	{
@@ -119,13 +119,13 @@ void StartDownloadingPatches( void )
 ///////////////////////////////////////////////////////////////////////////////////////
 
 // user agrees to patch before going online
-static void patchBeforeOnlineCallback( void )
+static void patchBeforeOnlineCallback()
 {
 	StartDownloadingPatches();
 }
 
 // user doesn't want to patch before going online
-static void noPatchBeforeOnlineCallback( void )
+static void noPatchBeforeOnlineCallback()
 {
 	queuedDownloads.clear();
 	if (mustDownloadPatch || cantConnectBeforeOnline)
@@ -173,7 +173,7 @@ static Bool hasWriteAccess()
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-static void startOnline( void )
+static void startOnline()
 {
 	checkingForPatchBeforeGameSpy = FALSE;
 
@@ -546,13 +546,13 @@ static GHTTPBool gamePatchCheckCallback( GHTTPRequest request, GHTTPResult resul
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-void CancelPatchCheckCallbackAndReopenDropdown( void )
+void CancelPatchCheckCallbackAndReopenDropdown()
 {
 	HandleCanceledDownload();
 	CancelPatchCheckCallback();
 }
 
-void CancelPatchCheckCallback( void )
+void CancelPatchCheckCallback()
 {
 	s_asyncDNSLookupInProgress = FALSE;
 	HandleCanceledDownload(FALSE); // don't dropdown
@@ -687,7 +687,7 @@ static GHTTPBool numPlayersOnlineCallback( GHTTPRequest request, GHTTPResult res
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-void CheckOverallStats( void )
+void CheckOverallStats()
 {
 #if RTS_GENERALS
 	const char *const url = "http://gamestats.gamespy.com/ccgenerals/display.html";
@@ -699,7 +699,7 @@ void CheckOverallStats( void )
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-void CheckNumPlayersOnline( void )
+void CheckNumPlayersOnline()
 {
 #if RTS_GENERALS
 	const char *const url = "http://launch.gamespyarcade.com/software/launch/arcadecount2.dll?svcname=ccgenerals";
@@ -769,7 +769,7 @@ int asyncGethostbyname(char * szName)
 // time out) but at least we'll live.
 static Bool isHttpOk = TRUE;
 
-void HTTPThinkWrapper( void )
+void HTTPThinkWrapper()
 {
 	if (s_asyncDNSLookupInProgress)
 	{
@@ -804,7 +804,7 @@ void HTTPThinkWrapper( void )
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-void StopAsyncDNSCheck( void )
+void StopAsyncDNSCheck()
 {
 	if (s_asyncDNSThreadHandle)
 	{
@@ -820,7 +820,7 @@ void StopAsyncDNSCheck( void )
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-void StartPatchCheck( void )
+void StartPatchCheck()
 {
 	checkingForPatchBeforeGameSpy = TRUE;
 	cantConnectBeforeOnline = FALSE;
@@ -847,7 +847,7 @@ void StartPatchCheck( void )
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-static void reallyStartPatchCheck( void )
+static void reallyStartPatchCheck()
 {
 	checksLeftBeforeOnline = 4;
 

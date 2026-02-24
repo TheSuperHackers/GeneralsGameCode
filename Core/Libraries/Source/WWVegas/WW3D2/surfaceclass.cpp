@@ -187,7 +187,7 @@ SurfaceClass::SurfaceClass(IDirect3DSurface8 *d3d_surface)	:
 	SurfaceFormat=desc.Format;
 }
 
-SurfaceClass::~SurfaceClass(void)
+SurfaceClass::~SurfaceClass()
 {
 	if (D3DSurface) {
 		D3DSurface->Release();
@@ -237,7 +237,7 @@ SurfaceClass::LockedSurfacePtr SurfaceClass::Lock(int *pitch, const Vector2i &mi
 	return static_cast<LockedSurfacePtr>(lock_rect.pBits);
 }
 
-void SurfaceClass::Unlock(void)
+void SurfaceClass::Unlock()
 {
 	DX8_ErrorCode(D3DSurface->UnlockRect());
 }
@@ -734,7 +734,7 @@ void SurfaceClass::Attach (IDirect3DSurface8 *surface)
  * HISTORY:                                                                                    *
  *   3/27/2001  pds : Created.                                                                 *
  *=============================================================================================*/
-void SurfaceClass::Detach (void)
+void SurfaceClass::Detach ()
 {
 	//
 	//	Release the hold we have on the D3D object
@@ -816,7 +816,7 @@ void SurfaceClass::Draw_H_Line(const unsigned int y, const unsigned int x1, cons
  * HISTORY:                                                                                    *
  *   7/5/2001   hy : Created.                                                                  *
  *=============================================================================================*/
-bool SurfaceClass::Is_Monochrome(void)
+bool SurfaceClass::Is_Monochrome()
 {
 	unsigned int x,y;
 	SurfaceDescription sd;

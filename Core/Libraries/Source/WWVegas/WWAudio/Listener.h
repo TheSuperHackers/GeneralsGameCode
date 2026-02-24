@@ -58,43 +58,43 @@ class Listener3DClass : public Sound3DClass
 		//////////////////////////////////////////////////////////////////////
 		//	Public constructors/destructors
 		//////////////////////////////////////////////////////////////////////
-		Listener3DClass (void);
-		virtual ~Listener3DClass (void);
+		Listener3DClass ();
+		virtual ~Listener3DClass ();
 
 		//////////////////////////////////////////////////////////////////////
 		//	Identification methods
 		//////////////////////////////////////////////////////////////////////
-		virtual SOUND_CLASSID	Get_Class_ID (void) const	{ return CLASSID_LISTENER; }
+		virtual SOUND_CLASSID	Get_Class_ID () const	{ return CLASSID_LISTENER; }
 
 		//////////////////////////////////////////////////////////////////////
 		//	Conversion methods
 		//////////////////////////////////////////////////////////////////////
-		virtual Listener3DClass *	As_Listener3DClass (void) 	{ return this; }
+		virtual Listener3DClass *	As_Listener3DClass () 	{ return this; }
 
 		//////////////////////////////////////////////////////////////////////
 		//	Initialization methods
 		//////////////////////////////////////////////////////////////////////
-		virtual void			On_Added_To_Scene (void);
-		virtual void			On_Removed_From_Scene (void);
+		virtual void			On_Added_To_Scene ();
+		virtual void			On_Removed_From_Scene ();
 
 		//////////////////////////////////////////////////////////////////////
 		//	State control methods
 		//////////////////////////////////////////////////////////////////////
-		//virtual bool			Play (void)		{ return false; }
-		virtual bool			Pause (void)	{ return false; }
-		virtual bool			Resume (void)	{ return false; }
+		//virtual bool			Play ()		{ return false; }
+		virtual bool			Pause ()	{ return false; }
+		virtual bool			Resume ()	{ return false; }
 		virtual bool			Stop (bool /*remove*/)		{ return false; }
 		virtual void			Seek (unsigned long milliseconds) { }
-		virtual SOUND_STATE	Get_State (void) const	{ return STATE_STOPPED; }
+		virtual SOUND_STATE	Get_State () const	{ return STATE_STOPPED; }
 
 
 		//////////////////////////////////////////////////////////////////////
 		//	Attenuation settings
 		//////////////////////////////////////////////////////////////////////
 		virtual void			Set_Max_Vol_Radius (float radius = 0)			{ }
-		virtual float			Get_Max_Vol_Radius (void) const					{ return 0; }
+		virtual float			Get_Max_Vol_Radius () const					{ return 0; }
 		virtual void			Set_DropOff_Radius (float radius = 1)			{ }
-		virtual float			Get_DropOff_Radius (void) const					{ return 0; }
+		virtual float			Get_DropOff_Radius () const					{ return 0; }
 
 		//////////////////////////////////////////////////////////////////////
 		//	Velocity methods
@@ -107,27 +107,27 @@ class Listener3DClass : public Sound3DClass
 		//////////////////////////////////////////////////////////////////////
 		//	Internal representations
 		//////////////////////////////////////////////////////////////////////
-		virtual void			Start_Sample (void)							{ }
-		virtual void			Stop_Sample (void)							{ }
-		virtual void			Resume_Sample (void)							{ }
-		virtual void			End_Sample (void)								{ }
+		virtual void			Start_Sample ()							{ }
+		virtual void			Stop_Sample ()							{ }
+		virtual void			Resume_Sample ()							{ }
+		virtual void			End_Sample ()								{ }
 		virtual void			Set_Sample_Volume (S32 volume)			{ }
-		virtual S32				Get_Sample_Volume (void)					{ return 0; }
+		virtual S32				Get_Sample_Volume ()					{ return 0; }
 		virtual void			Set_Sample_Pan (S32 pan)					{ }
-		virtual S32				Get_Sample_Pan (void)						{ return 64; }
+		virtual S32				Get_Sample_Pan ()						{ return 64; }
 		virtual void			Set_Sample_Loop_Count (U32 count)		{ }
-		virtual U32				Get_Sample_Loop_Count (void)				{ return 0; }
+		virtual U32				Get_Sample_Loop_Count ()				{ return 0; }
 		virtual void			Set_Sample_MS_Position (U32 ms)			{ }
 		virtual void			Get_Sample_MS_Position (S32 *len, S32 *pos) { }
-		virtual S32				Get_Sample_Playback_Rate (void)			{ return 0; }
+		virtual S32				Get_Sample_Playback_Rate ()			{ return 0; }
 		virtual void			Set_Sample_Playback_Rate (S32 rate)		{ }
 
 		//////////////////////////////////////////////////////////////////////
 		//	Handle information
 		//////////////////////////////////////////////////////////////////////
-		virtual void			Initialize_Miles_Handle (void);
-		virtual void			Allocate_Miles_Handle (void);
-		virtual void			Free_Miles_Handle (void);
+		virtual void			Initialize_Miles_Handle ();
+		virtual void			Allocate_Miles_Handle ();
+		virtual void			Free_Miles_Handle ();
 
 	private:
 

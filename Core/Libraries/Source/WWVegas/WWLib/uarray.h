@@ -58,12 +58,12 @@ template <class T> class UniqueArrayClass
 public:
 
 	UniqueArrayClass(int initialsize,int growthrate,HashCalculatorClass<T> * hasher);
-	~UniqueArrayClass(void);
+	~UniqueArrayClass();
 
 	int				Add(const T & new_item);
 
-	int				Count(void) const								{ return Get_Unique_Count(); }
-	int				Get_Unique_Count(void) const				{ return UniqueItems.Count(); }
+	int				Count() const								{ return Get_Unique_Count(); }
+	int				Get_Unique_Count() const				{ return UniqueItems.Count(); }
 	const T &		Get(int index) const							{ return UniqueItems[index].Item; }
 	const T &		operator [] (int index) const				{ return Get(index); }
 
@@ -143,7 +143,7 @@ UniqueArrayClass<T>::UniqueArrayClass(int initial_size,int growth_rate,HashCalcu
  *   5/29/98    GTH : Created.                                                                 *
  *=============================================================================================*/
 template <class T>
-UniqueArrayClass<T>::~UniqueArrayClass(void)
+UniqueArrayClass<T>::~UniqueArrayClass()
 {
 	delete[] HashTable;
 	HashTable = nullptr;

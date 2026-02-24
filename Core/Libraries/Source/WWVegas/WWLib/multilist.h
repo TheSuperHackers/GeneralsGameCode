@@ -72,8 +72,8 @@ class MultiListObjectClass
 {
 public:
 
-	MultiListObjectClass(void) : ListNode(nullptr)								{ }
-	virtual ~MultiListObjectClass(void);
+	MultiListObjectClass() : ListNode(nullptr)								{ }
+	virtual ~MultiListObjectClass();
 
 	MultiListNodeClass *		Get_List_Node() const							{ return ListNode; }
 	void							Set_List_Node(MultiListNodeClass *node)	{ ListNode = node; }
@@ -93,7 +93,7 @@ private:
 class MultiListNodeClass : public AutoPoolClass<MultiListNodeClass, 256>
 {
 public:
-	MultiListNodeClass(void) { Prev = Next = NextList = 0; Object = 0; List = 0; }
+	MultiListNodeClass() { Prev = Next = NextList = 0; Object = 0; List = 0; }
 
 	MultiListNodeClass		*Prev;					// prev object in list
 	MultiListNodeClass		*Next;					// next object in list
@@ -115,13 +115,13 @@ class GenericMultiListClass
 {
 public:
 
-	GenericMultiListClass(void)	{ Head.Next = Head.Prev = &Head; Head.Object = 0; Head.NextList = 0; }
-	virtual ~GenericMultiListClass(void);
+	GenericMultiListClass()	{ Head.Next = Head.Prev = &Head; Head.Object = 0; Head.NextList = 0; }
+	virtual ~GenericMultiListClass();
 
 	bool							Is_In_List(MultiListObjectClass *obj);
 	bool							Contains(MultiListObjectClass * obj);
-	bool							Is_Empty(void);
-	int							Count(void);
+	bool							Is_Empty();
+	int							Count();
 
 protected:
 
@@ -130,8 +130,8 @@ protected:
 	bool							Internal_Add_After(MultiListObjectClass * obj,const MultiListObjectClass * existing_list_member,bool onlyonce = true);
 	bool							Internal_Remove(MultiListObjectClass *obj);
 
-	MultiListObjectClass	*	Internal_Get_List_Head(void);
-	MultiListObjectClass	*	Internal_Remove_List_Head(void);
+	MultiListObjectClass	*	Internal_Get_List_Head();
+	MultiListObjectClass	*	Internal_Remove_List_Head();
 
 private:
 
@@ -145,12 +145,12 @@ inline bool GenericMultiListClass::Is_In_List(MultiListObjectClass * obj)
 	return Contains(obj);
 }
 
-inline bool GenericMultiListClass::Is_Empty(void)
+inline bool GenericMultiListClass::Is_Empty()
 {
 	return (Head.Next == &Head);
 }
 
-inline MultiListObjectClass * GenericMultiListClass::Internal_Get_List_Head(void)
+inline MultiListObjectClass * GenericMultiListClass::Internal_Get_List_Head()
 {
 	if (Head.Next == &Head) {
 		return 0;					// no more objects
@@ -174,17 +174,17 @@ public:
 	GenericMultiListIterator(GenericMultiListClass *list)	{ assert(list); First(list); }
 
 	void				First(GenericMultiListClass *list)		{ List = list; CurNode = List->Head.Next; }
-	void				First(void)										{ CurNode = List->Head.Next; }
+	void				First()										{ CurNode = List->Head.Next; }
 	void				Last(GenericMultiListClass *list)		{ List = list; CurNode = List->Head.Prev; }
-	void				Last(void)										{ CurNode = List->Head.Prev; }
+	void				Last()										{ CurNode = List->Head.Prev; }
 
-	void				Next(void)										{ CurNode = CurNode->Next; }
-	void				Prev(void)										{ CurNode = CurNode->Prev; }
-	bool				Is_Done(void)									{ return (CurNode == &(List->Head)); }
+	void				Next()										{ CurNode = CurNode->Next; }
+	void				Prev()										{ CurNode = CurNode->Prev; }
+	bool				Is_Done()									{ return (CurNode == &(List->Head)); }
 
 protected:
 
-	MultiListObjectClass	*		Current_Object(void)			{ return CurNode->Object; }
+	MultiListObjectClass	*		Current_Object()			{ return CurNode->Object; }
 
 	GenericMultiListClass *		List;				// list we're working in
 	MultiListNodeClass *			CurNode;			// node we're currently at.
@@ -216,9 +216,9 @@ class MultiListClass : public GenericMultiListClass
 {
 public:
 
-	MultiListClass(void) { }
+	MultiListClass() { }
 
-	virtual ~MultiListClass(void)
+	virtual ~MultiListClass()
 	{
 		while (!Is_Empty()) {
 			Remove_Head();
@@ -297,17 +297,17 @@ public:
 
 	MultiListIterator(MultiListClass<ObjectType> *list) : GenericMultiListIterator(list)	{}
 
-	ObjectType *	Get_Obj(void)
+	ObjectType *	Get_Obj()
 	{
 		return (ObjectType*)Current_Object();
 	}
 
-	ObjectType *	Peek_Obj(void)
+	ObjectType *	Peek_Obj()
 	{
 		return (ObjectType*)Current_Object();
 	}
 
-	void				Remove_Current_Object(void)
+	void				Remove_Current_Object()
 	{
 		ObjectType * obj = Peek_Obj();
 		if (obj != nullptr) {
@@ -342,7 +342,7 @@ class RefMultiListClass : public GenericMultiListClass
 {
 public:
 
-	virtual			~RefMultiListClass(void)
+	virtual			~RefMultiListClass()
 	{
 		while (!Is_Empty()) {
 			Release_Head();
@@ -389,7 +389,7 @@ public:
 		return result;
 	}
 
-	bool				Release_Head(void)
+	bool				Release_Head()
 	{
 		// remove the head from the list and release our reference to it
 		ObjectType * obj = ((ObjectType*)Internal_Remove_List_Head());
@@ -448,7 +448,7 @@ public:
 
 	RefMultiListIterator(RefMultiListClass<ObjectType> *list) : GenericMultiListIterator(list) {}
 
-	ObjectType *	Get_Obj(void)
+	ObjectType *	Get_Obj()
 	{
 		ObjectType * obj = (ObjectType*)Current_Object();
 		if (obj != nullptr) {
@@ -457,12 +457,12 @@ public:
 		return obj;
 	}
 
-	ObjectType *	Peek_Obj(void)
+	ObjectType *	Peek_Obj()
 	{
 		return ((ObjectType*)Current_Object());
 	}
 
-	void				Remove_Current_Object(void)
+	void				Remove_Current_Object()
 	{
 		ObjectType * obj = Peek_Obj();
 		if (obj != nullptr) {

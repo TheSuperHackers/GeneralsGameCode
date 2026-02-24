@@ -113,10 +113,10 @@ class MeshLoadContextClass : public W3DMPO
 {
 	W3DMPO_GLUE(MeshLoadContextClass)
 private:
-	MeshLoadContextClass(void);
-	~MeshLoadContextClass(void);
+	MeshLoadContextClass();
+	~MeshLoadContextClass();
 
-	W3dTexCoordStruct *		Get_Texcoord_Array(void);
+	W3dTexCoordStruct *		Get_Texcoord_Array();
 
 	int							Add_Shader(ShaderClass shader);
 	int							Add_Vertex_Material(VertexMaterialClass * vmat);
@@ -126,9 +126,9 @@ private:
 	VertexMaterialClass *	Peek_Vertex_Material(int index)								{ return VertexMaterials[index]; }
 	TextureClass *				Peek_Texture(int index)											{ return Textures[index]; }
 
-	int							Shader_Count(void)												{ return Shaders.Count(); }
-	int							Vertex_Material_Count(void)									{ return VertexMaterials.Count(); }
-	int							Texture_Count(void)												{ return Textures.Count(); }
+	int							Shader_Count()												{ return Shaders.Count(); }
+	int							Vertex_Material_Count()									{ return VertexMaterials.Count(); }
+	int							Texture_Count()												{ return Textures.Count(); }
 
 	/*
 	** Legacy material support.
@@ -153,14 +153,14 @@ private:
 	** these flags provide that functionality.
 	*/
 	void							Notify_Loaded_DIG_Chunk(bool onoff = true)				{ LoadedDIG = onoff; }
-	bool							Already_Loaded_DIG(void)										{ return LoadedDIG; }
+	bool							Already_Loaded_DIG()										{ return LoadedDIG; }
 
 private:
 
 	struct LegacyMaterialClass
 	{
-		LegacyMaterialClass(void) : VertexMaterialIdx(0),ShaderIdx(0),TextureIdx(0)	{ }
-		~LegacyMaterialClass(void)	{ }
+		LegacyMaterialClass() : VertexMaterialIdx(0),ShaderIdx(0),TextureIdx(0)	{ }
+		~LegacyMaterialClass()	{ }
 		void		Set_Name(const char * name) { Name=name; }
 
 		StringClass Name;
@@ -213,8 +213,8 @@ private:
 class MeshSaveContextClass
 {
 public:
-	MeshSaveContextClass(void);
-	~MeshSaveContextClass(void);
+	MeshSaveContextClass();
+	~MeshSaveContextClass();
 
 	int								CurPass;
 	int								CurStage;
@@ -1684,7 +1684,7 @@ void MeshModelClass::post_process()
 	}
 }
 
-void MeshModelClass::post_process_fog(void)
+void MeshModelClass::post_process_fog()
 {
 	// If two pass...
 	if (DefMatDesc->Get_Pass_Count() == 2) {
@@ -1788,7 +1788,7 @@ unsigned int MeshModelClass::get_sort_flags(int pass) const
 	return flags;
 }
 
-unsigned int MeshModelClass::get_sort_flags(void) const
+unsigned int MeshModelClass::get_sort_flags() const
 {
 	unsigned int flags = 0;
 	for (int pass = 0; pass < Get_Pass_Count(); pass++) {
@@ -1797,7 +1797,7 @@ unsigned int MeshModelClass::get_sort_flags(void) const
 	return flags;
 }
 
-void MeshModelClass::compute_static_sort_levels(void)
+void MeshModelClass::compute_static_sort_levels()
 {
 	enum StaticSortCategoryBitFieldType
 	{
@@ -1833,7 +1833,7 @@ void MeshModelClass::compute_static_sort_levels(void)
 	};
 }
 
-void MeshModelClass::modify_for_overbright(void)
+void MeshModelClass::modify_for_overbright()
 {
 	// Iterate over all passes
 	int pass_cnt = Get_Pass_Count();
@@ -1936,7 +1936,7 @@ void MeshModelClass::install_alternate_material_desc(MeshLoadContextClass * cont
  * HISTORY:                                                                                    *
  *   12/10/98   GTH : Created.                                                                 *
  *=============================================================================================*/
-MeshLoadContextClass::MeshLoadContextClass(void)
+MeshLoadContextClass::MeshLoadContextClass()
 {
 	memset(&Header,0,sizeof(Header));
 	memset(&MatInfo,0,sizeof(MatInfo));
@@ -1960,7 +1960,7 @@ MeshLoadContextClass::MeshLoadContextClass(void)
  * HISTORY:                                                                                    *
  *   12/10/98   GTH : Created.                                                                 *
  *=============================================================================================*/
-MeshLoadContextClass::~MeshLoadContextClass(void)
+MeshLoadContextClass::~MeshLoadContextClass()
 {
 	int i;
 
@@ -1993,7 +1993,7 @@ MeshLoadContextClass::~MeshLoadContextClass(void)
  * HISTORY:                                                                                    *
  *   12/10/98   GTH : Created.                                                                 *
  *=============================================================================================*/
-W3dTexCoordStruct * MeshLoadContextClass::Get_Texcoord_Array(void)
+W3dTexCoordStruct * MeshLoadContextClass::Get_Texcoord_Array()
 {
 	if (TexCoords == nullptr) {
 		TexCoords = W3DNEWARRAY W3dTexCoordStruct[Header.NumVertices];
@@ -2228,7 +2228,7 @@ Vector2 * MeshLoadContextClass::Get_Temporary_UV_Array(int elementcount)
  *                                                                                             *
  * HISTORY:                                                                                    *
  *=============================================================================================*/
-MeshSaveContextClass::MeshSaveContextClass(void) :
+MeshSaveContextClass::MeshSaveContextClass() :
 	CurPass(0),
 	CurStage(0)
 {
@@ -2246,7 +2246,7 @@ MeshSaveContextClass::MeshSaveContextClass(void) :
  *                                                                                             *
  * HISTORY:                                                                                    *
  *=============================================================================================*/
-MeshSaveContextClass::~MeshSaveContextClass(void)
+MeshSaveContextClass::~MeshSaveContextClass()
 {
 }
 

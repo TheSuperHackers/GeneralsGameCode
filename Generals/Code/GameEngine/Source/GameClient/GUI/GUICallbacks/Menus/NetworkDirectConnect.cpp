@@ -34,7 +34,7 @@
 #include "gamespy/peer/peer.h"
 
 #include "Common/QuotedPrintable.h"
-#include "Common/UserPreferences.h"
+#include "Common/OptionPreferences.h"
 #include "GameClient/AnimateWindowManager.h"
 #include "GameClient/WindowLayout.h"
 #include "GameClient/Gadget.h"

@@ -46,7 +46,7 @@ class PropagandaCenterBehaviorModuleData : public PrisonBehaviorModuleData
 
 public:
 
-	PropagandaCenterBehaviorModuleData( void );
+	PropagandaCenterBehaviorModuleData();
 
 	static void buildFieldParse( MultiIniFieldParse &p );
 
@@ -68,10 +68,10 @@ public:
 	// virtual destructor prototype provided by memory pool object
 
 	// generic module methods
-	virtual void onDelete( void );
+	virtual void onDelete();
 
 	// contain methods
-	virtual UpdateSleepTime update( void );
+	virtual UpdateSleepTime update();
 	virtual void onRemoving( Object *obj );
 
 protected:

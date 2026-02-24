@@ -48,8 +48,8 @@ friend class XferCRC;
 
 public:
 
-	Snapshot( void );
-	~Snapshot( void );
+	Snapshot();
+	~Snapshot();
 
 protected:
 
@@ -62,6 +62,6 @@ protected:
 
 	/** post process phase for loading save games.  All save systems have their xfer
 	run using XferLoad mode, and then all systems each have their post process run */
-	virtual void loadPostProcess( void ) = 0;
+	virtual void loadPostProcess() = 0;
 
 };

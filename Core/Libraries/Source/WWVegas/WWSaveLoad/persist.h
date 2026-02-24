@@ -59,7 +59,7 @@ class PersistClass : public PostLoadableClass
 {
 public:
 
-	virtual const PersistFactoryClass &	Get_Factory (void) const			= 0;
+	virtual const PersistFactoryClass &	Get_Factory () const			= 0;
 	virtual bool								Save (ChunkSaveClass &csave)		{ return true; }
 	virtual bool								Load (ChunkLoadClass &cload)		{ return true; }
 

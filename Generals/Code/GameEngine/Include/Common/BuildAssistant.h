@@ -54,7 +54,7 @@ class ObjectSellInfo : public MemoryPoolObject
 
 public:
 
-	ObjectSellInfo( void );
+	ObjectSellInfo();
 	// virtual destructor prototypes provided by memory pool object
 
 	ObjectID m_id;									///< id of object to sell
@@ -119,12 +119,12 @@ public:
 
 public:
 
-	BuildAssistant( void );
-	virtual ~BuildAssistant( void );
+	BuildAssistant();
+	virtual ~BuildAssistant();
 
-	virtual void init( void );					///< for subsytem
-	virtual void reset( void );					///< for subsytem
-	virtual void update( void );				///< for subsytem
+	virtual void init();					///< for subsytem
+	virtual void reset();					///< for subsytem
+	virtual void update();				///< for subsytem
 
 	/// iterate the "footprint" area of a structure at the given "sample resolution"
 	void iterateFootprint( const ThingTemplate *build,
@@ -171,7 +171,7 @@ public:
 																							Object *builderObject );
 
 	/// return the "scratch pad" array that can be used to create a line of build locations
-	virtual Coord3D *getBuildLocations( void ) { return m_buildPositions; }
+	virtual Coord3D *getBuildLocations() { return m_buildPositions; }
 
 	/// is the template a line build object, like a wall
 	virtual Bool isLineBuildTemplate( const ThingTemplate *tTemplate );

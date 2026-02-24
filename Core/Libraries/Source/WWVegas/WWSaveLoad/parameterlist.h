@@ -55,7 +55,7 @@ public:
 	/////////////////////////////////////////////////////////////////////
 	// Public constructurs/destructors
 	/////////////////////////////////////////////////////////////////////
-	~ParameterListClass (void);
+	~ParameterListClass ();
 
 	/////////////////////////////////////////////////////////////////////
 	// Public methods
@@ -68,7 +68,7 @@ protected:
 	/////////////////////////////////////////////////////////////////////
 	// Protected methods
 	/////////////////////////////////////////////////////////////////////
-	void			Free_Parameters (void);
+	void			Free_Parameters ();
 
 private:
 
@@ -83,7 +83,7 @@ private:
 // ~ParameterListClass
 /////////////////////////////////////////////////////////////////////
 inline
-ParameterListClass::~ParameterListClass (void)
+ParameterListClass::~ParameterListClass ()
 {
 	Free_Parameters ();
 	return ;
@@ -131,7 +131,7 @@ ParameterListClass::Add (ParameterClass *new_param)
 // Free_Parameters
 /////////////////////////////////////////////////////////////////////
 inline void
-ParameterListClass::Free_Parameters (void)
+ParameterListClass::Free_Parameters ()
 {
 	for (int index = 0; index < Count (); index ++) {
 		ParameterClass *param = Vector[index];

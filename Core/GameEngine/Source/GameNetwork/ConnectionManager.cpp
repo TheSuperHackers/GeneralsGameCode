@@ -87,7 +87,7 @@ static Bool hasValidTransferFileExtension(const AsciiString& filePath)
 /**
  * Le destructor.
  */
-ConnectionManager::~ConnectionManager(void)
+ConnectionManager::~ConnectionManager()
 {
 	deleteInstance(m_localUser);
 	m_localUser = nullptr;
@@ -133,7 +133,7 @@ ConnectionManager::~ConnectionManager(void)
 /**
  * Le constructor
  */
-ConnectionManager::ConnectionManager(void)
+ConnectionManager::ConnectionManager()
 {
 	for (Int i = 0; i < MAX_SLOTS; ++i) {
 		m_frameData[i] = nullptr;
@@ -1002,7 +1002,7 @@ UnsignedInt ConnectionManager::getPacketRouterSlot() {
 	return m_packetRouterSlot;
 }
 
-Bool ConnectionManager::areAllQueuesEmpty(void) {
+Bool ConnectionManager::areAllQueuesEmpty() {
 	Bool retval = TRUE;
 	for (Int i = 0; (i < MAX_SLOTS) && retval; ++i) {
 		if (m_connections[i] != nullptr) {
@@ -1624,7 +1624,7 @@ Bool ConnectionManager::allCommandsReady(UnsignedInt frame, Bool justTesting /* 
 	return retval;
 }
 
-void ConnectionManager::handleAllCommandsReady(void)
+void ConnectionManager::handleAllCommandsReady()
 {
 	m_disconnectManager->allCommandsReady(TheGameLogic->getFrame(), this, FALSE);
 }
@@ -2038,7 +2038,7 @@ void ConnectionManager::parseUserList(const GameInfo *game)
 /**
  * Return the number of incoming bytes per second averaged over 30 sec.
  */
-Real ConnectionManager::getIncomingBytesPerSecond( void )
+Real ConnectionManager::getIncomingBytesPerSecond()
 {
 	if (m_transport)
 		return m_transport->getIncomingBytesPerSecond();
@@ -2049,7 +2049,7 @@ Real ConnectionManager::getIncomingBytesPerSecond( void )
 /**
  * Return the number of incoming packets per second averaged over the last 30 sec.
  */
-Real ConnectionManager::getIncomingPacketsPerSecond( void )
+Real ConnectionManager::getIncomingPacketsPerSecond()
 {
 	if (m_transport)
 		return m_transport->getIncomingPacketsPerSecond();
@@ -2060,7 +2060,7 @@ Real ConnectionManager::getIncomingPacketsPerSecond( void )
 /**
  * Return the number of outgoing bytes per second averaged over the last 30 sec.
  */
-Real ConnectionManager::getOutgoingBytesPerSecond( void )
+Real ConnectionManager::getOutgoingBytesPerSecond()
 {
 	if (m_transport)
 		return m_transport->getOutgoingBytesPerSecond();
@@ -2071,7 +2071,7 @@ Real ConnectionManager::getOutgoingBytesPerSecond( void )
 /**
  * Return the number of outgoing packets per second averaged over the last 30 sec.
  */
-Real ConnectionManager::getOutgoingPacketsPerSecond( void )
+Real ConnectionManager::getOutgoingPacketsPerSecond()
 {
 	if (m_transport) {
 		return m_transport->getOutgoingPacketsPerSecond();
@@ -2083,7 +2083,7 @@ Real ConnectionManager::getOutgoingPacketsPerSecond( void )
 /**
  * Return the number of bytes not from generals clients received per second averaged over the last 30 sec.
  */
-Real ConnectionManager::getUnknownBytesPerSecond( void )
+Real ConnectionManager::getUnknownBytesPerSecond()
 {
 	if (m_transport)
 		return m_transport->getUnknownBytesPerSecond();
@@ -2094,7 +2094,7 @@ Real ConnectionManager::getUnknownBytesPerSecond( void )
 /**
  * Return the number ov packets not from generals clients received per second averaged over the last 30 sec.
  */
-Real ConnectionManager::getUnknownPacketsPerSecond( void )
+Real ConnectionManager::getUnknownPacketsPerSecond()
 {
 	if (m_transport)
 		return m_transport->getUnknownPacketsPerSecond();
@@ -2325,12 +2325,12 @@ void ConnectionManager::sendTimeOutGameStart()
 	msg->detach();
 }
 
-Bool ConnectionManager::isPacketRouter( void )
+Bool ConnectionManager::isPacketRouter()
 {
 	return m_localSlot == m_packetRouterSlot;
 }
 
-Int ConnectionManager::getAverageFPS( void )
+Int ConnectionManager::getAverageFPS()
 {
 	return m_frameMetrics.getAverageFPS();
 }

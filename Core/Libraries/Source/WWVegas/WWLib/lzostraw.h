@@ -53,7 +53,7 @@ class LZOStraw : public Straw
 		} CompControl;
 
 		LZOStraw(CompControl control, int blocksize=1024*8);
-		virtual ~LZOStraw(void);
+		virtual ~LZOStraw();
 
 		virtual int Get(void * source, int slen);
 

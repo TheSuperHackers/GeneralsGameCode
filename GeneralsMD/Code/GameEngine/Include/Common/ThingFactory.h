@@ -53,21 +53,21 @@ class ThingFactory : public SubsystemInterface
 {
 public:
 
-	ThingFactory( void );
-	virtual ~ThingFactory( void );
+	ThingFactory();
+	virtual ~ThingFactory();
 
 	// From the subsystem interface =================================================================
-	virtual void init( void );
-	virtual void postProcessLoad( void );
-	virtual void reset( void );
-	virtual void update( void );
+	virtual void init();
+	virtual void postProcessLoad();
+	virtual void reset();
+	virtual void update();
 	//===============================================================================================
 
 	/// create a new template with name 'name' and add to template list
 	ThingTemplate *newTemplate( const AsciiString& name );
 
 	// get the first template in our list
-	const ThingTemplate *firstTemplate( void ) { return m_firstTemplate; }
+	const ThingTemplate *firstTemplate() { return m_firstTemplate; }
 
 	/**
 		get a template given template database name. return null if not found.
@@ -96,7 +96,7 @@ public:
 private:
 
 	/// free all template database data
-	void freeDatabase( void );
+	void freeDatabase();
 
 	void addTemplate( ThingTemplate *thing );		///< add the template to the DB
 

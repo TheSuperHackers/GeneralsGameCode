@@ -70,7 +70,7 @@ const FieldParse ControlBarResizer::m_controlBarResizerParseTable[] =
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 
-ResizerWindow::ResizerWindow(void)
+ResizerWindow::ResizerWindow()
 {
 	m_defaultPos.x = m_defaultPos.y = 0;
 	m_defaultSize.x = m_defaultSize.y = 0;
@@ -78,11 +78,11 @@ ResizerWindow::ResizerWindow(void)
 	m_altPos.x = m_altPos.y = 0;
 }
 
-ControlBarResizer::ControlBarResizer( void )
+ControlBarResizer::ControlBarResizer()
 {
 
 }
-ControlBarResizer::~ControlBarResizer( void )
+ControlBarResizer::~ControlBarResizer()
 {
 	ResizerWindowList::iterator it = m_resizerWindowsList.begin();
 	while (it != m_resizerWindowsList.end())
@@ -99,7 +99,7 @@ ControlBarResizer::~ControlBarResizer( void )
 	m_resizerWindowsList.clear();
 }
 
-void ControlBarResizer::init( void )
+void ControlBarResizer::init()
 {
 	INI ini;
 	// Read from INI all the ControlBarSchemes
@@ -117,7 +117,7 @@ ResizerWindow *ControlBarResizer::findResizerWindow( AsciiString name )
 		ResizerWindow *rWin = *it;
 		if( !rWin )
 		{
-			DEBUG_ASSERTCRASH(FALSE,("There's no resizerWindow in ControlBarResizer::findResizerWindow"));
+			DEBUG_CRASH(("There's no resizerWindow in ControlBarResizer::findResizerWindow"));
 			it++;
 			continue;
 		}
@@ -151,7 +151,7 @@ ResizerWindow *ControlBarResizer::newResizerWindow( AsciiString name )
 	m_resizerWindowsList.push_back(newRwin);
 	return newRwin;
 }
-void ControlBarResizer::sizeWindowsDefault( void )
+void ControlBarResizer::sizeWindowsDefault()
 {
 	ResizerWindowList::iterator it = m_resizerWindowsList.begin();
 	GameWindow *win = nullptr;
@@ -160,7 +160,7 @@ void ControlBarResizer::sizeWindowsDefault( void )
 		ResizerWindow *rWin = *it;
 		if( !rWin )
 		{
-			DEBUG_ASSERTCRASH(FALSE,("There's no resizerWindow in ControlBarResizer::sizeWindowsDefault"));
+			DEBUG_CRASH(("There's no resizerWindow in ControlBarResizer::sizeWindowsDefault"));
 			it++;
 			continue;
 		}
@@ -176,7 +176,7 @@ void ControlBarResizer::sizeWindowsDefault( void )
 		it ++;
 	}
 }
-void ControlBarResizer::sizeWindowsAlt( void )
+void ControlBarResizer::sizeWindowsAlt()
 {
 	ResizerWindowList::iterator it = m_resizerWindowsList.begin();
 	GameWindow *win = nullptr;
@@ -187,7 +187,7 @@ void ControlBarResizer::sizeWindowsAlt( void )
 		ResizerWindow *rWin = *it;
 		if( !rWin )
 		{
-			DEBUG_ASSERTCRASH(FALSE,("There's no resizerWindow in ControlBarResizer::sizeWindowsDefault"));
+			DEBUG_CRASH(("There's no resizerWindow in ControlBarResizer::sizeWindowsDefault"));
 			it++;
 			continue;
 		}

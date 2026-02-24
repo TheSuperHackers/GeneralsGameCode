@@ -75,16 +75,16 @@ class IMEManagerInterface : public SubsystemInterface
 		virtual ~IMEManagerInterface() {};
 
 		virtual void					attach( GameWindow *window ) = 0;		///< attach IME to specified window
-		virtual void					detach( void ) = 0;								///< detach IME from current window
-		virtual void					enable( void ) = 0;									///< Enable IME
-		virtual void					disable( void ) = 0;								///< Disable IME
-		virtual Bool					isEnabled( void ) = 0;							///< Is IME enabled
+		virtual void					detach() = 0;								///< detach IME from current window
+		virtual void					enable() = 0;									///< Enable IME
+		virtual void					disable() = 0;								///< Disable IME
+		virtual Bool					isEnabled() = 0;							///< Is IME enabled
 		virtual Bool					isAttachedTo( GameWindow *window ) = 0;	///< Is the manager currently attached to the window
-		virtual GameWindow*		getWindow( void ) = 0;							///< Returns the window we are currently attached to
-		virtual Bool					isComposing( void ) = 0;						///< Manager is currently composing new input string
+		virtual GameWindow*		getWindow() = 0;							///< Returns the window we are currently attached to
+		virtual Bool					isComposing() = 0;						///< Manager is currently composing new input string
 		virtual void					getCompositionString( UnicodeString &string ) = 0; ///< Return the current composition string
-		virtual Int						getCompositionCursorPosition( void ) =0;			///< Returns the composition cursor position
-		virtual Int						getIndexBase( void ) = 0;						///< Get index base for candidate list
+		virtual Int						getCompositionCursorPosition() =0;			///< Returns the composition cursor position
+		virtual Int						getIndexBase() = 0;						///< Get index base for candidate list
 
 
 		virtual Int						getCandidateCount() = 0;						///< Returns the total number of candidates
@@ -100,12 +100,12 @@ class IMEManagerInterface : public SubsystemInterface
 												UnsignedInt message,
 												Int wParam,
 												Int lParam ) = 0;
-		virtual Int result( void ) = 0;							///< result return value of last serviced IME message
+		virtual Int result() = 0;							///< result return value of last serviced IME message
 };
 
 
 extern IMEManagerInterface *TheIMEManager;
-extern IMEManagerInterface *CreateIMEManagerInterface( void );
+extern IMEManagerInterface *CreateIMEManagerInterface();
 
 
 //----------------------------------------------------------------------------
