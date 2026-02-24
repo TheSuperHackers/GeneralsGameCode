@@ -775,7 +775,7 @@ Bool GameClient::isMovieAbortRequested()
 		}
 	}
 
-// TheSuperHackers @feature Service OS for Window Close / Alt-F4 events
+	// TheSuperHackers @feature Service OS for Window Close / Alt-F4 events
 	TheGameEngine->serviceWindowsOS();
 	TheMessageStream->propagateMessages();
 	
