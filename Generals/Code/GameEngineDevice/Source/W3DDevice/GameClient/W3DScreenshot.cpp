@@ -144,14 +144,14 @@ void W3D_TakeCompressedScreenshot(ScreenshotFormat format, int quality)
 	HANDLE hThread = CreateThread(nullptr, 0, screenshotThreadFunc, threadData, 0, &threadId);
 	if (hThread) {
 		CloseHandle(hThread);
+
+		UnicodeString ufileName;
+		ufileName.translate(leafname);
+		TheInGameUI->message(TheGameText->fetch("GUI:ScreenCapture"), ufileName.str());
 	} else {
 		delete [] threadData->imageData;
 		delete threadData;
 	}
-
-	UnicodeString ufileName;
-	ufileName.translate(leafname);
-	TheInGameUI->message(TheGameText->fetch("GUI:ScreenCapture"), ufileName.str());
 }
 
 void W3DDisplay::takeScreenShot(ScreenshotFormat format)
