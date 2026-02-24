@@ -875,7 +875,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 #endif
 
 		// register windows class and create application window
-		// TheSuperHackers @fix bobtista 02/03/2026 Set DX8Wrapper_IsWindowed to false in headless
+		// TheSuperHackers @fix bobtista 03/02/2026 Set DX8Wrapper_IsWindowed to false in headless
 		// mode so that ignoringAsserts() works correctly throughout the entire process lifetime,
 		// including during shutdown after TheGlobalData has been destroyed.
 		if (TheGlobalData->m_headless)
