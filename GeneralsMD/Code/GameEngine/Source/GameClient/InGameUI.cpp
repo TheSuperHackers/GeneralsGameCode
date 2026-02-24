@@ -1131,6 +1131,7 @@ InGameUI::InGameUI()
 	m_placeAnchorStart.x = m_placeAnchorStart.y = 0;
 	m_placeAnchorEnd.x = m_placeAnchorEnd.y = 0;
 	m_placeAnchorInProgress = FALSE;
+	m_latestBuildingOrientation = RANDOM_START_ANGLE;
 
 	m_videoStream = nullptr;
 	m_videoBuffer = nullptr;
@@ -1652,9 +1653,14 @@ void InGameUI::handleBuildPlacements( void )
 				}
 			}
 
+			m_latestBuildingOrientation = RANDOM_START_ANGLE;
 		}
 		else
 		{
+			// TheSuperHackers @tweak Caball009 10/02/2026 Use force attack to get the latest building orientation for convenience.
+			if (isInForceAttackMode() && m_latestBuildingOrientation != RANDOM_START_ANGLE)
+				angle = m_latestBuildingOrientation;
+
 			const MouseIO *mouseIO = TheMouse->getMouseStatus();
 
 			// location is the mouse position
@@ -2159,6 +2165,7 @@ void InGameUI::reset( void )
 
 	// remove any build available status
 	placeBuildAvailable( nullptr, nullptr );
+	m_latestBuildingOrientation = RANDOM_START_ANGLE;
 
 	// free any message resources allocated
 	freeMessageResources();

@@ -284,6 +284,8 @@ GameMessageDisposition PlaceEventTranslator::translateGameMessage(const GameMess
 					// get out of pending placement mode, this will also clear the arrow anchor status
 					TheInGameUI->placeBuildAvailable( nullptr, nullptr );
 
+					// TheSuperHackers @tweak Caball009 10/02/2026 Store the latest building orientation for convenience.
+					TheInGameUI->setLatestBuildingOrientation(angle);
 				}
 				else
 				{
