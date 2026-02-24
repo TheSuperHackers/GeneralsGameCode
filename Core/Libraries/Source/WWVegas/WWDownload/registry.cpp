@@ -154,11 +154,9 @@ bool SetStringInRegistry( std::string path, std::string key, std::string val)
 #endif
 	fullPath.append(path);
 
-	// TheSuperHackers @fix bobtista 12/02/2026 Prefer HKCU for writes to match read priority
-	if (setStringInRegistry( HKEY_CURRENT_USER, fullPath, key, val))
-		return true;
-
-	return setStringInRegistry( HKEY_LOCAL_MACHINE, fullPath, key, val );
+	// TheSuperHackers @fix bobtista 12/02/2026 Always write to HKCU. Per-user settings belong
+	// in HKEY_CURRENT_USER and writes there should always succeed without admin privileges.
+	return setStringInRegistry( HKEY_CURRENT_USER, fullPath, key, val );
 }
 
 bool SetUnsignedIntInRegistry( std::string path, std::string key, unsigned int val)
@@ -170,10 +168,8 @@ bool SetUnsignedIntInRegistry( std::string path, std::string key, unsigned int v
 #endif
 	fullPath.append(path);
 
-	// TheSuperHackers @fix bobtista 12/02/2026 Prefer HKCU for writes to match read priority
-	if (setUnsignedIntInRegistry( HKEY_CURRENT_USER, fullPath, key, val))
-		return true;
-
-	return setUnsignedIntInRegistry( HKEY_LOCAL_MACHINE, fullPath, key, val );
+	// TheSuperHackers @fix bobtista 12/02/2026 Always write to HKCU. Per-user settings belong
+	// in HKEY_CURRENT_USER and writes there should always succeed without admin privileges.
+	return setUnsignedIntInRegistry( HKEY_CURRENT_USER, fullPath, key, val );
 }
 
