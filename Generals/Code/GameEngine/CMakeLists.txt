@@ -1095,6 +1095,10 @@ target_link_libraries(g_gameengine PUBLIC
     g_wwvegas
 )
 
+target_link_libraries(g_gameengine PRIVATE
+    lib_imgui
+)
+
 target_precompile_headers(g_gameengine PRIVATE
     [["Utility/CppMacros.h"]] # Must be first, to be removed when abandoning VC6
     Include/Precompiled/PreRTS.h

@@ -254,6 +254,10 @@ target_precompile_headers(z_ww3d2 PRIVATE
 )
 
 target_link_libraries(z_ww3d2 PRIVATE
+    lib_imgui
+)
+
+target_link_libraries(z_ww3d2 PRIVATE
     core_wwdebug
     corei_ww3d2
     z_wwcommon
