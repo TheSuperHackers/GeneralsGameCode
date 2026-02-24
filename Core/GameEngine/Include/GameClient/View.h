@@ -336,18 +336,47 @@ class ViewLocation
 class ViewDummy : public View
 {
 public:
-	virtual Drawable *pickDrawable( const ICoord2D *screen, Bool forceAttack, PickType pickType ) { return nullptr; }
-	virtual Int iterateDrawablesInRegion( IRegion2D *screenRegion, Bool (*callback)( Drawable *draw, void *userData ), void *userData ) { return 0; }
-	virtual void forceRedraw() {}
-	virtual const Coord3D& get3DCameraPosition() const { static Coord3D zero = {0,0,0}; return zero; }
-	virtual WorldToScreenReturn worldToScreenTriReturn(const Coord3D *w, ICoord2D *s ) { return WTS_INVALID; }
-	virtual void screenToWorld( const ICoord2D *s, Coord3D *w ) {}
-	virtual void screenToTerrain( const ICoord2D *screen, Coord3D *world ) {}
-	virtual void screenToWorldAtZ( const ICoord2D *s, Coord3D *w, Real z ) {}
-	virtual void drawView( void ) {}
-	virtual void updateView(void) {}
-	virtual void stepView() {}
-	virtual void setGuardBandBias( const Coord2D *gb ) {}
+	virtual Drawable *pickDrawable( const ICoord2D *screen, Bool forceAttack, PickType pickType )
+	{
+		return nullptr;
+	}
+	virtual Int iterateDrawablesInRegion( IRegion2D *screenRegion, Bool (*callback)( Drawable *draw, void *userData ), void *userData )
+	{
+		return 0;
+	}
+	virtual void forceRedraw()
+	{
+	}
+	virtual const Coord3D& get3DCameraPosition() const
+	{
+		static Coord3D zero = {0,0,0};
+		return zero;
+	}
+	virtual WorldToScreenReturn worldToScreenTriReturn(const Coord3D *w, ICoord2D *s )
+	{
+		return WTS_INVALID;
+	}
+	virtual void screenToWorld( const ICoord2D *s, Coord3D *w )
+	{
+	}
+	virtual void screenToTerrain( const ICoord2D *screen, Coord3D *world )
+	{
+	}
+	virtual void screenToWorldAtZ( const ICoord2D *s, Coord3D *w, Real z )
+	{
+	}
+	virtual void drawView( void )
+	{
+	}
+	virtual void updateView(void)
+	{
+	}
+	virtual void stepView()
+	{
+	}
+	virtual void setGuardBandBias( const Coord2D *gb )
+	{
+	}
 
 	// TheSuperHackers @bugfix bobtista 03/02/2026 Do not override View::xfer(). The base
 	// implementation must run to serialize valid view state for save file compatibility.
