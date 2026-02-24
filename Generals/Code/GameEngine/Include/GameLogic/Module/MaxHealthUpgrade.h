@@ -43,7 +43,7 @@ class MaxHealthUpgradeModuleData: public UpgradeModuleData
 
 public:
 
-	MaxHealthUpgradeModuleData( void );
+	MaxHealthUpgradeModuleData( );
 
 	static void buildFieldParse(MultiIniFieldParse& p);
 

@@ -55,7 +55,7 @@ CommandSetUpgrade::CommandSetUpgrade( Thing *thing, const ModuleData* moduleData
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-CommandSetUpgrade::~CommandSetUpgrade( void )
+CommandSetUpgrade::~CommandSetUpgrade( )
 {
 }
 
@@ -101,7 +101,7 @@ void CommandSetUpgrade::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void CommandSetUpgrade::loadPostProcess( void )
+void CommandSetUpgrade::loadPostProcess( )
 {
 
 	// extend base class

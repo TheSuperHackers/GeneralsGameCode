@@ -341,7 +341,7 @@ WindowMsgHandledType ControlBarInput( GameWindow *window, UnsignedInt msg,
 	return MSG_IGNORED;
 
 }
-void ToggleQuitMenu(void);
+void ToggleQuitMenu();
 //-------------------------------------------------------------------------------------------------
 /** System callback for the control bar parent */
 //-------------------------------------------------------------------------------------------------
@@ -487,9 +487,9 @@ WindowMsgHandledType ControlBarSystem( GameWindow *window, UnsignedInt msg,
 
 }
 
-extern void showReplayControls( void );
-extern void hideReplayControls( void );
-extern void toggleReplayControls( void );
+extern void showReplayControls( );
+extern void hideReplayControls( );
+extern void toggleReplayControls( );
 
 //-------------------------------------------------------------------------------------------------
 /** Force the control bar to be shown */

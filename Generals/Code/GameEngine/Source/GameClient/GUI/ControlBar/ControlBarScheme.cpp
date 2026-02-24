@@ -172,7 +172,7 @@ static void animSlideRight( ControlBarSchemeAnimation *anim );
 //-----------------------------------------------------------------------------
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-ControlBarSchemeImage::ControlBarSchemeImage( void )
+ControlBarSchemeImage::ControlBarSchemeImage( )
 {
 	m_name.clear();
 	m_position.x = m_position.y = 0;
@@ -181,12 +181,12 @@ ControlBarSchemeImage::ControlBarSchemeImage( void )
 	m_layer = 0;
 }
 
-ControlBarSchemeImage::~ControlBarSchemeImage( void )
+ControlBarSchemeImage::~ControlBarSchemeImage( )
 {
 	m_image = nullptr;
 }
 
-ControlBarSchemeAnimation::ControlBarSchemeAnimation( void )
+ControlBarSchemeAnimation::ControlBarSchemeAnimation( )
 {
 	m_animDuration = 0;
 	m_finalPos.x = m_finalPos.y = 0;
@@ -197,13 +197,13 @@ ControlBarSchemeAnimation::ControlBarSchemeAnimation( void )
 	m_currentFrame = 0;
 }
 
-ControlBarSchemeAnimation::~ControlBarSchemeAnimation( void )
+ControlBarSchemeAnimation::~ControlBarSchemeAnimation( )
 {
 	m_animImage = nullptr;
 }
 
 
-void ControlBarScheme::reset(void)
+void ControlBarScheme::reset()
 {
 	for (Int i = 0; i < MAX_CONTROL_BAR_SCHEME_IMAGE_LAYERS; i++)
 	{
@@ -270,12 +270,12 @@ void ControlBarScheme::reset(void)
 
 }
 
-ControlBarScheme::~ControlBarScheme(void)
+ControlBarScheme::~ControlBarScheme()
 {
 	reset();
 }
 
-ControlBarScheme::ControlBarScheme(void)
+ControlBarScheme::ControlBarScheme()
 {
 
 	m_animations.clear();
@@ -398,7 +398,7 @@ ControlBarScheme::ControlBarScheme(void)
 }
 
 
-void ControlBarScheme::init(void)
+void ControlBarScheme::init()
 {
 	if(TheControlBar)
 	{
@@ -708,7 +708,7 @@ void ControlBarScheme::updateAnim (ControlBarSchemeAnimation * anim)
 //
 // Add an image to the proper layer list
 //-----------------------------------------------------------------------------
-void ControlBarScheme::update( void )
+void ControlBarScheme::update( )
 {
 	ControlBarSchemeAnimationList::iterator it = m_animations.begin();
 
@@ -803,7 +803,7 @@ void ControlBarScheme::drawBackground( Coord2D multi, ICoord2D offset )
 //
 // Constructor for the manager
 //-----------------------------------------------------------------------------
-ControlBarSchemeManager::ControlBarSchemeManager( void )
+ControlBarSchemeManager::ControlBarSchemeManager( )
 {
 	m_currentScheme = nullptr;
 	m_schemeList.clear();
@@ -813,7 +813,7 @@ ControlBarSchemeManager::ControlBarSchemeManager( void )
 //
 // Destructor for the Manager
 //-----------------------------------------------------------------------------
-ControlBarSchemeManager::~ControlBarSchemeManager( void )
+ControlBarSchemeManager::~ControlBarSchemeManager( )
 {
 	ControlBarSchemeList::iterator it = m_schemeList.begin();
 
@@ -992,7 +992,7 @@ void ControlBarSchemeManager::preloadAssets( TimeOfDay timeOfDay )
 //
 // Find a scheme based on name
 //-----------------------------------------------------------------------------
-void ControlBarSchemeManager::init( void )
+void ControlBarSchemeManager::init( )
 {
 
 	INI ini;
@@ -1043,7 +1043,7 @@ void ControlBarSchemeManager::setControlBarScheme(AsciiString schemeName)
 //
 // Update calls all the animation update calls for the
 //-----------------------------------------------------------------------------
-void ControlBarSchemeManager::update( void )
+void ControlBarSchemeManager::update( )
 {
 	if(m_currentScheme)
 		m_currentScheme->update();

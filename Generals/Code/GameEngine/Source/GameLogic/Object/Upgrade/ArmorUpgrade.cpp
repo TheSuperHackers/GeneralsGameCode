@@ -76,7 +76,7 @@ ArmorUpgrade::ArmorUpgrade( Thing *thing, const ModuleData* moduleData ) : Upgra
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-ArmorUpgrade::~ArmorUpgrade( void )
+ArmorUpgrade::~ArmorUpgrade( )
 {
 }
 
@@ -127,7 +127,7 @@ void ArmorUpgrade::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void ArmorUpgrade::loadPostProcess( void )
+void ArmorUpgrade::loadPostProcess( )
 {
 
 	// extend base class

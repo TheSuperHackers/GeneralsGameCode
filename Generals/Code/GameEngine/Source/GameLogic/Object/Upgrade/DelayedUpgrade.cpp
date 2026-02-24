@@ -44,7 +44,7 @@ DelayedUpgrade::DelayedUpgrade( Thing *thing, const ModuleData* moduleData ) : U
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-DelayedUpgrade::~DelayedUpgrade( void )
+DelayedUpgrade::~DelayedUpgrade( )
 {
 }
 
@@ -105,7 +105,7 @@ void DelayedUpgrade::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void DelayedUpgrade::loadPostProcess( void )
+void DelayedUpgrade::loadPostProcess( )
 {
 
 	// extend base class

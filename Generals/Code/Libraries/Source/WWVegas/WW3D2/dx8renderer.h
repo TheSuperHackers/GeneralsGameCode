@@ -90,7 +90,7 @@ public:
 
 	void									Add_Render_Task(DX8PolygonRendererClass * p_renderer,MeshClass * p_mesh);
 
-	void									Render(void);
+	void									Render();
 	bool									Anything_To_Render() { return (render_task_head != nullptr); }
 	void									Clear_Render_List();
 
@@ -112,7 +112,7 @@ public:
 	void Add_Polygon_Renderer(DX8PolygonRendererClass* p_renderer,DX8PolygonRendererClass* add_after_this=nullptr);
 
 
-	DX8FVFCategoryContainer * Get_Container(void) { return container; }
+	DX8FVFCategoryContainer * Get_Container() { return container; }
 
 	// Force multiply blend on all objects inserted from now on. (Doesn't affect the objects that are already in the lists)
 	static void						SetForceMultiply(bool multiply) { m_gForceMultiply=multiply; }
@@ -156,7 +156,7 @@ protected:
 		int pass,
 		unsigned vertex_offset);
 	inline bool Anything_To_Render();
-	void Render_Procedural_Material_Passes(void);
+	void Render_Procedural_Material_Passes();
 
 	DX8TextureCategoryClass* Find_Matching_Texture_Category(
 		TextureClass* texture,
@@ -192,7 +192,7 @@ public:
 
 	void Remove_Texture_Category(DX8TextureCategoryClass* tex_category);
 
-	virtual void Render(void)=0;
+	virtual void Render()=0;
 	virtual void Add_Mesh(MeshModelClass* mmc)=0;
 	virtual void Log(bool only_visible)=0;
 	virtual bool Check_If_Mesh_Fits(MeshModelClass* mmc)=0;
@@ -242,7 +242,7 @@ public:
 	void Log(bool only_visible);
 	bool Check_If_Mesh_Fits(MeshModelClass* mmc);
 
-	void Render(void);	// Generic render function
+	void Render();	// Generic render function
 
 protected:
 
@@ -262,7 +262,7 @@ public:
 	DX8SkinFVFCategoryContainer(bool sorting);
 	~DX8SkinFVFCategoryContainer();
 
-	void Render(void);
+	void Render();
 	void Add_Mesh(MeshModelClass* mmc);
 	void Log(bool only_visible);
 	bool Check_If_Mesh_Fits(MeshModelClass* mmc);
@@ -307,7 +307,7 @@ public:
 	void						Register_Mesh_Type(MeshModelClass* mmc);
 	void						Unregister_Mesh_Type(MeshModelClass* mmc);
 	void						Set_Camera(CameraClass* cam) { camera=cam; }
-	CameraClass *			Peek_Camera(void)	{ return camera; }
+	CameraClass *			Peek_Camera()	{ return camera; }
 	void						Add_To_Render_List(DecalMeshClass * decalmesh);
 
 	// Enable or disable lighting on all objects inserted from now on. (Doesn't affect the objects that are already in the lists)
@@ -318,7 +318,7 @@ public:
 
 protected:
 
-	void Render_Decal_Meshes(void);
+	void Render_Decal_Meshes();
 
 	bool													enable_lighting;
 	CameraClass *										camera;

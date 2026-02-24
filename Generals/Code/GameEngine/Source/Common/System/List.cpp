@@ -202,7 +202,7 @@ void	LList::addItemToTail( void *item )
 // LList::Clear
 //============================================================================
 
-void LList::clear( void )
+void LList::clear( )
 {
 	LListNode *node;
 
@@ -217,7 +217,7 @@ void LList::clear( void )
 // LList::nodeCount
 //=================================================================
 
-Int LList::nodeCount( void )
+Int LList::nodeCount( )
 {
 	LListNode* node;
 	Int	count = 0;
@@ -347,7 +347,7 @@ void 		 	LListNode::append( LListNode* new_node )
 // LListNode::remove
 //=================================================================
 
-void 		 	LListNode::remove( void )
+void 		 	LListNode::remove( )
 {
 	m_prev->m_next = m_next;
 	m_next->m_prev = m_prev;
@@ -358,7 +358,7 @@ void 		 	LListNode::remove( void )
 // LListNode::next
 //=================================================================
 
-LListNode*		LListNode::next( void )
+LListNode*		LListNode::next( )
 {
 
 	if( m_next->isHead( ))
@@ -373,7 +373,7 @@ LListNode*		LListNode::next( void )
 // LListNode::prev
 //=================================================================
 
-LListNode*		LListNode::prev( void )
+LListNode*		LListNode::prev( )
 {
 	if( m_prev->isHead())
 	{
@@ -387,7 +387,7 @@ LListNode*		LListNode::prev( void )
 // LListNode::loopNext
 //=================================================================
 
-LListNode*		LListNode::loopNext( void )
+LListNode*		LListNode::loopNext( )
 {
 	LListNode*	next;
 
@@ -410,7 +410,7 @@ LListNode*		LListNode::loopNext( void )
 // LListNode::loopPrev
 //=================================================================
 
-LListNode*		LListNode::loopPrev( void )
+LListNode*		LListNode::loopPrev( )
 {
 	LListNode*	prev;
 
@@ -433,7 +433,7 @@ LListNode*		LListNode::loopPrev( void )
 // LListNode::destroy
 //============================================================================
 
-void	LListNode::destroy( void )
+void	LListNode::destroy( )
 {
 	if ( m_autoDelete )
 	{

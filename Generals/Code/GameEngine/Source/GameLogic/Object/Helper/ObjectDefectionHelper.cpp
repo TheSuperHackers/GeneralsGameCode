@@ -39,7 +39,7 @@
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-ObjectDefectionHelper::~ObjectDefectionHelper( void )
+ObjectDefectionHelper::~ObjectDefectionHelper( )
 {
 }
 
@@ -171,7 +171,7 @@ void ObjectDefectionHelper::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void ObjectDefectionHelper::loadPostProcess( void )
+void ObjectDefectionHelper::loadPostProcess( )
 {
 
 	// object helper base class

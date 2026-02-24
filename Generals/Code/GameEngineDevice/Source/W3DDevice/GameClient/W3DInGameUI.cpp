@@ -335,7 +335,7 @@ static void loadText( char *filename, GameWindow *listboxText )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void W3DInGameUI::init( void )
+void W3DInGameUI::init( )
 {
 
 	// extending functionality
@@ -363,7 +363,7 @@ void W3DInGameUI::init( void )
 //-------------------------------------------------------------------------------------------------
 /** Update in game UI */
 //-------------------------------------------------------------------------------------------------
-void W3DInGameUI::update( void )
+void W3DInGameUI::update( )
 {
 
 	// call base
@@ -374,7 +374,7 @@ void W3DInGameUI::update( void )
 //-------------------------------------------------------------------------------------------------
 /** Reset the in game ui */
 //-------------------------------------------------------------------------------------------------
-void W3DInGameUI::reset( void )
+void W3DInGameUI::reset( )
 {
 
 	// call base
@@ -385,7 +385,7 @@ void W3DInGameUI::reset( void )
 //-------------------------------------------------------------------------------------------------
 /** Draw member for the W3D implementation of the game user interface */
 //-------------------------------------------------------------------------------------------------
-void W3DInGameUI::draw( void )
+void W3DInGameUI::draw( )
 {
 	preDraw();
 
@@ -444,7 +444,7 @@ void W3DInGameUI::draw( void )
 //-------------------------------------------------------------------------------------------------
 /** draw 2d selection region on screen */
 //-------------------------------------------------------------------------------------------------
-void W3DInGameUI::drawSelectionRegion( void )
+void W3DInGameUI::drawSelectionRegion( )
 {
 	Real width = 2.0f;
 	UnsignedInt color = 0x9933FF33;  //0xAARRGGBB

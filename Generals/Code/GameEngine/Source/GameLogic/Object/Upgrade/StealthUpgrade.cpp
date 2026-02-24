@@ -42,7 +42,7 @@ StealthUpgrade::StealthUpgrade( Thing *thing, const ModuleData* moduleData ) : U
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-StealthUpgrade::~StealthUpgrade( void )
+StealthUpgrade::~StealthUpgrade( )
 {
 }
 
@@ -86,7 +86,7 @@ void StealthUpgrade::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void StealthUpgrade::loadPostProcess( void )
+void StealthUpgrade::loadPostProcess( )
 {
 
 	// extend base class

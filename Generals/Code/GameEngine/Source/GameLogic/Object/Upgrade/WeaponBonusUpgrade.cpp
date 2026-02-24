@@ -77,7 +77,7 @@ WeaponBonusUpgrade::WeaponBonusUpgrade( Thing *thing, const ModuleData* moduleDa
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-WeaponBonusUpgrade::~WeaponBonusUpgrade( void )
+WeaponBonusUpgrade::~WeaponBonusUpgrade( )
 {
 }
 
@@ -124,7 +124,7 @@ void WeaponBonusUpgrade::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void WeaponBonusUpgrade::loadPostProcess( void )
+void WeaponBonusUpgrade::loadPostProcess( )
 {
 
 	// extend base class

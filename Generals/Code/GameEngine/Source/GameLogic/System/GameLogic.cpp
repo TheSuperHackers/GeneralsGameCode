@@ -180,7 +180,7 @@ static Waypoint * findNamedWaypoint(AsciiString name)
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void setFPMode( void )
+void setFPMode( )
 {
   // Set floating point round mode to CHOP, which only comes
   // into play when precision is exceeded.  This is necessary
@@ -205,7 +205,7 @@ void setFPMode( void )
 // ------------------------------------------------------------------------------------------------
 /** GameLogic class constructor */
 // ------------------------------------------------------------------------------------------------
-GameLogic::GameLogic( void )
+GameLogic::GameLogic( )
 {
 	m_background = nullptr;
 	m_CRC = 0;
@@ -251,7 +251,7 @@ GameLogic::GameLogic( void )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-Bool GameLogic::isInSinglePlayerGame( void )
+Bool GameLogic::isInSinglePlayerGame( )
 {
 	return (m_gameMode == GAME_SINGLE_PLAYER ||
 		(TheRecorder && TheRecorder->isPlaybackMode() && TheRecorder->getGameMode() == GAME_SINGLE_PLAYER));
@@ -335,7 +335,7 @@ GameLogic::~GameLogic()
 // ------------------------------------------------------------------------------------------------
 /** (re)initialize the instance. */
 // ------------------------------------------------------------------------------------------------
-void GameLogic::init( void )
+void GameLogic::init( )
 {
 
 	setFPMode();
@@ -374,7 +374,7 @@ void GameLogic::init( void )
 //-------------------------------------------------------------------------------------------------
 /** Reset the game logic systems */
 //-------------------------------------------------------------------------------------------------
-void GameLogic::reset( void )
+void GameLogic::reset( )
 {
 	m_thingTemplateBuildableOverrides.clear();
 	m_controlBarOverrides.clear();
@@ -925,7 +925,7 @@ void GameLogic::updateLoadProgress( Int progress )
 // ------------------------------------------------------------------------------------------------
 /** Delete the load screen */
 // ------------------------------------------------------------------------------------------------
-void GameLogic::deleteLoadScreen( void )
+void GameLogic::deleteLoadScreen( )
 {
 
 	delete m_loadScreen;
@@ -2169,7 +2169,7 @@ void GameLogic::loadMapINI( AsciiString mapName )
  * same at the start of the update as it is at the end of the update. */
 // ------------------------------------------------------------------------------------------------
 //DECLARE_PERF_TIMER(processDestroyList)
-void GameLogic::processDestroyList( void )
+void GameLogic::processDestroyList( )
 {
 	//USE_PERF_TIMER(processDestroyList)
 
@@ -3078,7 +3078,7 @@ extern __int64 Total_Load_3D_Assets;
 // ------------------------------------------------------------------------------------------------
 /** Update all objects in the world by invoking their update() methods. */
 // ------------------------------------------------------------------------------------------------
-void GameLogic::update( void )
+void GameLogic::update( )
 {
 	USE_PERF_TIMER(GameLogic_update)
 
@@ -3317,7 +3317,7 @@ void GameLogic::preUpdate()
 // ------------------------------------------------------------------------------------------------
 /** Return the first object in the world list */
 // ------------------------------------------------------------------------------------------------
-Object *GameLogic::getFirstObject( void )
+Object *GameLogic::getFirstObject( )
 {
 	return m_objList;
 }
@@ -3325,7 +3325,7 @@ Object *GameLogic::getFirstObject( void )
 // ------------------------------------------------------------------------------------------------
 /** Return a new unique object id. */
 // ------------------------------------------------------------------------------------------------
-ObjectID GameLogic::allocateObjectID( void )
+ObjectID GameLogic::allocateObjectID( )
 {
 	/// @todo Find unused value in current object set
 	ObjectID ret = m_nextObjID;
@@ -3667,7 +3667,7 @@ void GameLogic::sendObjectDestroyed( Object *obj )
 // ------------------------------------------------------------------------------------------------
 /** Return if the game is paused or not */
 // ------------------------------------------------------------------------------------------------
-Bool GameLogic::isGamePaused( void )
+Bool GameLogic::isGamePaused( )
 {
 	return m_gamePaused;
 }
@@ -3851,7 +3851,7 @@ void GameLogic::processProgressComplete(Int playerId)
 // ------------------------------------------------------------------------------------------------
 /// @TODO: Add check to account for timeouts
 // ------------------------------------------------------------------------------------------------
-Bool GameLogic::isProgressComplete( void )
+Bool GameLogic::isProgressComplete( )
 {
 	//If we're not in a network game, always return true
 	if(!isInMultiplayerGame() || !TheNetwork || m_forceGameStartByTimeOut)
@@ -3877,7 +3877,7 @@ void GameLogic::lastHeardFrom( Int playerId )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void GameLogic::testTimeOut( void )
+void GameLogic::testTimeOut( )
 {
 	// if everyone is loaded, lets just load the game like normal.
 	if(isProgressComplete())
@@ -3899,7 +3899,7 @@ void GameLogic::testTimeOut( void )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void GameLogic::timeOutGameStart( void )
+void GameLogic::timeOutGameStart( )
 {
 	DEBUG_LOG(("We got the Force TimeOut Start Message"));
 	m_forceGameStartByTimeOut = TRUE;
@@ -3907,7 +3907,7 @@ void GameLogic::timeOutGameStart( void )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void GameLogic::initTimeOutValues( void )
+void GameLogic::initTimeOutValues( )
 {
 	if (!TheNetwork)
 		return;
@@ -3920,7 +3920,7 @@ void GameLogic::initTimeOutValues( void )
 // ------------------------------------------------------------------------------------------------
 /** returns the total number of objects in the world */
 // ------------------------------------------------------------------------------------------------
-UnsignedInt GameLogic::getObjectCount( void )
+UnsignedInt GameLogic::getObjectCount( )
 {
 	UnsignedInt totalObjects = 0;
 	Object *obj;
@@ -3933,14 +3933,14 @@ UnsignedInt GameLogic::getObjectCount( void )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-GhostObjectManager *GameLogic::createGhostObjectManager(void)
+GhostObjectManager *GameLogic::createGhostObjectManager()
 {
 	return NEW GhostObjectManager;
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-TerrainLogic *GameLogic::createTerrainLogic( void )
+TerrainLogic *GameLogic::createTerrainLogic( )
 {
 	return NEW TerrainLogic;
 }
@@ -4165,7 +4165,7 @@ void GameLogic::xferObjectTOC( Xfer *xfer )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void GameLogic::prepareLogicForObjectLoad( void )
+void GameLogic::prepareLogicForObjectLoad( )
 {
 
 	//
@@ -4568,7 +4568,7 @@ void GameLogic::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process entry point */
 // ------------------------------------------------------------------------------------------------
-void GameLogic::loadPostProcess( void )
+void GameLogic::loadPostProcess( )
 {
 
 	//

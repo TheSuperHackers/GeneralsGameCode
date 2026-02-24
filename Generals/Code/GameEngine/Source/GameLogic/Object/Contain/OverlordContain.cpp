@@ -75,7 +75,7 @@ OverlordContain::OverlordContain( Thing *thing, const ModuleData *moduleData ) :
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-OverlordContain::~OverlordContain( void )
+OverlordContain::~OverlordContain( )
 {
 
 }
@@ -150,7 +150,7 @@ void OverlordContain::onDie( const DamageInfo *damageInfo )
 }
 
 //-------------------------------------------------------------------------------------------------
-void OverlordContain::onDelete( void )
+void OverlordContain::onDelete( )
 {
 	// Do you mean me the Overlord, or my behavior of passing stuff on to my passengers?
 	if( getRedirectedContain() == nullptr )
@@ -492,7 +492,7 @@ void OverlordContain::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void OverlordContain::loadPostProcess( void )
+void OverlordContain::loadPostProcess( )
 {
 
 	// extend base class
