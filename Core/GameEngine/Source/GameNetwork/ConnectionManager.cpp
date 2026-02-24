@@ -126,8 +126,6 @@ static TransferFileType getTransferFileType(const char* extension)
 	return TransferFileType_Invalid;
 }
 
-// TheSuperHackers @security bobtista 12/02/2026 Validates transferred file
-// content in memory before writing to disk.
 static Bool hasValidTransferFileContent(const AsciiString& filePath, const UnsignedByte* data, UnsignedInt dataSize)
 {
 	const char* fileExt = strrchr(filePath.str(), '.');
