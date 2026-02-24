@@ -62,7 +62,7 @@ ReplaceObjectUpgrade::ReplaceObjectUpgrade( Thing *thing, const ModuleData* modu
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-ReplaceObjectUpgrade::~ReplaceObjectUpgrade( void )
+ReplaceObjectUpgrade::~ReplaceObjectUpgrade( )
 {
 }
 
@@ -171,7 +171,7 @@ void ReplaceObjectUpgrade::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void ReplaceObjectUpgrade::loadPostProcess( void )
+void ReplaceObjectUpgrade::loadPostProcess( )
 {
 
 	// extend base class

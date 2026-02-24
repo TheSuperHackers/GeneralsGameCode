@@ -83,18 +83,18 @@ public:
 	bool						Get_Flag(uint32 flag) const;
 
 	void						Set_Type(MappingType type);
-	MappingType				Get_Type(void);
+	MappingType				Get_Type();
 
 	void						Set_Texture_Transform(const Matrix3D & view_to_texture,float texsize);
 	void						Set_Texture_Transform(const Matrix4x4 & view_to_texture,float texsize);
-	const Matrix4x4 &		Get_Texture_Transform(void) const;
+	const Matrix4x4 &		Get_Texture_Transform() const;
 
 	void						Set_Gradient_U_Coord(float coord) { GradientUCoord = coord; }
-	float						Get_Gradient_U_Coord(void) { return GradientUCoord; }
+	float						Get_Gradient_U_Coord() { return GradientUCoord; }
 
 	void						Compute_Texture_Coordinate(const Vector3 & point,Vector3 * set_stq);
 
-	TextureMapperClass*	Clone(void) const { 	WWASSERT(0);	return nullptr; }
+	TextureMapperClass*	Clone() const { 	WWASSERT(0);	return nullptr; }
 
 	virtual void			Apply(int uv_array_index);
 	virtual void			Calculate_Texture_Matrix(Matrix4x4 &tex_matrix);
@@ -126,9 +126,9 @@ public:
 
 	CompositeMatrixMapperClass(TextureMapperClass *internal_mapper, unsigned int stage);
 	CompositeMatrixMapperClass(const CompositeMatrixMapperClass & src);
-	virtual ~CompositeMatrixMapperClass(void);
+	virtual ~CompositeMatrixMapperClass();
 
-	virtual TextureMapperClass *Clone(void) const { return NEW_REF( CompositeMatrixMapperClass, (*this)); }
+	virtual TextureMapperClass *Clone() const { return NEW_REF( CompositeMatrixMapperClass, (*this)); }
 
 	virtual void Apply(int uv_array_index);
 	virtual void Calculate_Texture_Matrix(Matrix4x4 &tex_matrix);
@@ -157,12 +157,12 @@ inline void MatrixMapperClass::Set_Type(MappingType type)
 	Type = type;
 }
 
-inline MatrixMapperClass::MappingType MatrixMapperClass::Get_Type(void)
+inline MatrixMapperClass::MappingType MatrixMapperClass::Get_Type()
 {
 	return Type;
 }
 
-inline const Matrix4x4 & MatrixMapperClass::Get_Texture_Transform(void) const
+inline const Matrix4x4 & MatrixMapperClass::Get_Texture_Transform() const
 {
 	return ViewToTexture;
 }

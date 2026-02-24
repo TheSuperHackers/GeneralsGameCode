@@ -37,7 +37,7 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-ExperienceScalarUpgradeModuleData::ExperienceScalarUpgradeModuleData( void )
+ExperienceScalarUpgradeModuleData::ExperienceScalarUpgradeModuleData( )
 {
 	m_addXPScalar = 0.0f;
 }
@@ -67,7 +67,7 @@ ExperienceScalarUpgrade::ExperienceScalarUpgrade( Thing *thing, const ModuleData
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-ExperienceScalarUpgrade::~ExperienceScalarUpgrade( void )
+ExperienceScalarUpgrade::~ExperienceScalarUpgrade( )
 {
 }
 
@@ -118,7 +118,7 @@ void ExperienceScalarUpgrade::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void ExperienceScalarUpgrade::loadPostProcess( void )
+void ExperienceScalarUpgrade::loadPostProcess( )
 {
 
 	// extend base class

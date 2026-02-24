@@ -942,7 +942,7 @@ void findCommandCenterOrMostExpensiveBuilding(Object* obj, void* vccl)
 	ccl->atLeastOne = true;
 }
 
-static void viewCommandCenter( void )
+static void viewCommandCenter( )
 {
 	Player* localPlayer = rts::getObservedOrLocalPlayer();
 	if (!localPlayer->isPlayerActive())
@@ -984,7 +984,7 @@ void amIAHero(Object* obj, void* heroHolder)
 
 
 
-static Object *iNeedAHero( void )
+static Object *iNeedAHero( )
 {
 	Player* localPlayer = rts::getObservedOrLocalPlayer();
 	if (!localPlayer->isPlayerActive())

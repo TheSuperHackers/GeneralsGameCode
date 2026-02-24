@@ -31,7 +31,7 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-static void drawFramerateBar(void);
+static void drawFramerateBar();
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 #include <numeric>
@@ -475,7 +475,7 @@ inline Bool isResolutionSupported(const ResolutionDescClass &res)
 }
 
 /*Return number of screen modes supported by the current device*/
-Int W3DDisplay::getDisplayModeCount(void)
+Int W3DDisplay::getDisplayModeCount()
 {
 	const RenderDeviceDescClass &devDesc=WW3D::Get_Render_Device_Desc(0);
 	const DynamicVectorClass <ResolutionDescClass> &resolutions=devDesc.Enumerate_Resolutions();
@@ -587,7 +587,7 @@ void W3DDisplay::setHeight( UnsignedInt height )
 // W3DDisplay::initAssets =====================================================
 /** */
 //=============================================================================
-void W3DDisplay::initAssets( void )
+void W3DDisplay::initAssets( )
 {
 
 }
@@ -595,7 +595,7 @@ void W3DDisplay::initAssets( void )
 // W3DDisplay::init3DScene ====================================================
 /** */
 //=============================================================================
-void W3DDisplay::init3DScene( void )
+void W3DDisplay::init3DScene( )
 {
 
 }
@@ -604,7 +604,7 @@ void W3DDisplay::init3DScene( void )
 /** This is the 2D scene, you can use it to draw on a 2D plane over the
 	* 3D background */
 //=============================================================================
-void W3DDisplay::init2DScene( void )
+void W3DDisplay::init2DScene( )
 {
 
 }
@@ -613,7 +613,7 @@ void W3DDisplay::init2DScene( void )
 /** Initialize or re-initialize the W3D display system.  Here we need to
   * create our window, and get our 3D hardware setup and online */
 //=============================================================================
-void W3DDisplay::init( void )
+void W3DDisplay::init( )
 {
 
 	//
@@ -844,7 +844,7 @@ void W3DDisplay::init( void )
 /** Reset the W3D display system.  Here we need to
   * remove the objects from the previous map. */
 //=============================================================================
-void W3DDisplay::reset( void )
+void W3DDisplay::reset( )
 {
 
 	Display::reset();
@@ -877,7 +877,7 @@ void W3DDisplay::reset( void )
 
 const UnsignedInt START_CUMU_FRAME = LOGICFRAMES_PER_SECOND / 2;	// skip first half-sec
 
-void W3DDisplay::updateAverageFPS(void)
+void W3DDisplay::updateAverageFPS()
 {
 	constexpr const Int FPS_HISTORY_SIZE = 30;
 
@@ -921,7 +921,7 @@ ICoord2D TheMousePos;
 // W3DDisplay::gatherDebugStats ===================================================
 /** Compute and display debug stats on screen */
 //=============================================================================
-void W3DDisplay::gatherDebugStats( void )
+void W3DDisplay::gatherDebugStats( )
 {
 	static UnsignedInt s_framesRenderedSinceLastUpdate = 0;
 	static Int64 s_lastUpdateTime64 = 0;
@@ -1473,7 +1473,7 @@ void W3DDisplay::gatherDebugStats( void )
 // W3DDisplay::drawDebugStats =================================================
 /** Draw debug statistics */
 //=============================================================================
-void W3DDisplay::drawDebugStats( void )
+void W3DDisplay::drawDebugStats( )
 {
 	Int	x = 3;
 	Int	y = 30;
@@ -1503,7 +1503,7 @@ void W3DDisplay::drawDebugStats( void )
 // W3DDisplay::drawFPSStats =================================================
 /** Draw the FPS on the screen */
 //=============================================================================
-void W3DDisplay::drawFPSStats( void )
+void W3DDisplay::drawFPSStats( )
 {
 	Int	x = 3;
 	Int	y = 20;
@@ -1528,7 +1528,7 @@ void StatDebugDisplay( DebugDisplayInterface *, void *, FILE *fp )
 // W3DDisplay::drawCurrentDebugDisplay =================================================
 /** Draw current debug display */
 //=============================================================================
-void W3DDisplay::drawCurrentDebugDisplay( void )
+void W3DDisplay::drawCurrentDebugDisplay( )
 {
 	if (m_debugDisplayCallback == StatDebugDisplay)
 	{
@@ -1547,7 +1547,7 @@ void W3DDisplay::drawCurrentDebugDisplay( void )
 // W3DDisplay::calculateTerrainLOD =================================================
 /** Calculates an adequately speedy terrain Level Of Detail. */
 //=============================================================================
-void W3DDisplay::calculateTerrainLOD( void )
+void W3DDisplay::calculateTerrainLOD( )
 {
 	const Int NUM_SAMPLES=20;
 	const Int NUM_TO_DISCARD=5;
@@ -1654,7 +1654,7 @@ void W3DDisplay::step()
 /** Draw the entire W3D Display */
 //=============================================================================
 //DECLARE_PERF_TIMER(W3DDisplay_draw)
-void W3DDisplay::draw( void )
+void W3DDisplay::draw( )
 {
 	//USE_PERF_TIMER(W3DDisplay_draw)
 
@@ -2015,7 +2015,7 @@ void W3DDisplay::renderLetterBox(UnsignedInt currentTime)
 		}
 }
 
-Bool W3DDisplay::isLetterBoxFading(void)
+Bool W3DDisplay::isLetterBoxFading()
 {
 	if (m_letterBoxEnabled && m_letterBoxFadeLevel != 1.0f)
 		return TRUE;
@@ -2025,7 +2025,7 @@ Bool W3DDisplay::isLetterBoxFading(void)
 }
 
 //WST 10/2/2002 added query function.  JSC Integrated 5/20/03
-Bool W3DDisplay::isLetterBoxed(void)
+Bool W3DDisplay::isLetterBoxed()
 {
 	return (m_letterBoxEnabled);
 }
@@ -2061,7 +2061,7 @@ void W3DDisplay::createLightPulse( const Coord3D *pos, const RGBColor *color,
 	theDynamicLight->Set_Flag(LightClass::FAR_ATTENUATION,true);
 }
 
-void W3DDisplay::toggleLetterBox(void)
+void W3DDisplay::toggleLetterBox()
 {
 	m_letterBoxEnabled = !m_letterBoxEnabled;
 	m_letterBoxFadeStartTime = timeGetTime();
@@ -2758,7 +2758,7 @@ void W3DDisplay::drawImage( const Image *image, Int startX, Int startY,
 // W3DDisplay::createVideoBuffer
 //============================================================================
 
-VideoBuffer*	W3DDisplay::createVideoBuffer( void )
+VideoBuffer*	W3DDisplay::createVideoBuffer( )
 {
 	VideoBuffer::Type format = VideoBuffer::TYPE_UNKNOWN;
 
@@ -2991,7 +2991,7 @@ static void CreateBMPFile(LPTSTR pszFile, char *image, Int width, Int height)
 }
 
 ///Save Screen Capture to a file
-void W3DDisplay::takeScreenShot(void)
+void W3DDisplay::takeScreenShot()
 {
 	char leafname[256];
 	char pathname[1024];
@@ -3129,7 +3129,7 @@ void W3DDisplay::takeScreenShot(void)
 }
 
 /** Start/Stop capturing an AVI movie*/
-void W3DDisplay::toggleMovieCapture(void)
+void W3DDisplay::toggleMovieCapture()
 {
 	WW3D::Toggle_Movie_Capture("Movie",30);
 }
@@ -3327,7 +3327,7 @@ void W3DDisplay::dumpAssetUsage(const char* mapname)
 #endif
 
 //-------------------------------------------------------------------------------------------------
-static void drawFramerateBar(void)
+static void drawFramerateBar()
 {
 	static DWORD prevTime = timeGetTime();
 	DWORD now = timeGetTime();

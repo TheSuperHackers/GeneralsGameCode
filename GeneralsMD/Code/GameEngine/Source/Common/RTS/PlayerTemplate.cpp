@@ -202,31 +202,31 @@ PlayerTemplate::PlayerTemplate() :
 }
 
 //-----------------------------------------------------------------------------
-const Image *PlayerTemplate::getHeadWaterMarkImage( void ) const
+const Image *PlayerTemplate::getHeadWaterMarkImage( ) const
 {
 	return TheMappedImageCollection->findImageByName(m_headWaterMark);
 }
 
 //-----------------------------------------------------------------------------
-const Image *PlayerTemplate::getFlagWaterMarkImage( void ) const
+const Image *PlayerTemplate::getFlagWaterMarkImage( ) const
 {
 	return TheMappedImageCollection->findImageByName(m_flagWaterMark);
 }
 
 //-----------------------------------------------------------------------------
-const Image *PlayerTemplate::getSideIconImage( void ) const
+const Image *PlayerTemplate::getSideIconImage( ) const
 {
 	return TheMappedImageCollection->findImageByName(m_sideIconImage);
 }
 
 //-----------------------------------------------------------------------------
-const Image *PlayerTemplate::getGeneralImage( void ) const
+const Image *PlayerTemplate::getGeneralImage( ) const
 {
 	return TheMappedImageCollection->findImageByName(m_generalImage);
 }
 
 //-----------------------------------------------------------------------------
-const Image *PlayerTemplate::getEnabledImage( void ) const
+const Image *PlayerTemplate::getEnabledImage( ) const
 {
 	return TheMappedImageCollection->findImageByName(m_enabledImage);
 }

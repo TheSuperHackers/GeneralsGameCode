@@ -143,7 +143,7 @@ protected:
 	//
 	virtual void upgradeMuxCRC( Xfer *xfer );
 	virtual void upgradeMuxXfer( Xfer *xfer);
-	virtual void upgradeMuxLoadPostProcess( void );
+	virtual void upgradeMuxLoadPostProcess( );
 
 private:
 	Bool m_upgradeExecuted;				///< Upgrade only executes once

@@ -117,25 +117,25 @@ HotKey::HotKey()
 }
 
 //-----------------------------------------------------------------------------
-HotKeyManager::HotKeyManager( void )
+HotKeyManager::HotKeyManager( )
 {
 
 }
 
 //-----------------------------------------------------------------------------
-HotKeyManager::~HotKeyManager( void )
-{
-	m_hotKeyMap.clear();
-}
-
-//-----------------------------------------------------------------------------
-void HotKeyManager::init( void )
+HotKeyManager::~HotKeyManager( )
 {
 	m_hotKeyMap.clear();
 }
 
 //-----------------------------------------------------------------------------
-void HotKeyManager::reset( void )
+void HotKeyManager::init( )
+{
+	m_hotKeyMap.clear();
+}
+
+//-----------------------------------------------------------------------------
+void HotKeyManager::reset( )
 {
 	m_hotKeyMap.clear();
 }

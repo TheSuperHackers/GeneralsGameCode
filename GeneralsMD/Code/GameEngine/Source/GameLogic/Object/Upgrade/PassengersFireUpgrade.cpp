@@ -43,7 +43,7 @@ PassengersFireUpgrade::PassengersFireUpgrade( Thing *thing, const ModuleData* mo
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-PassengersFireUpgrade::~PassengersFireUpgrade( void )
+PassengersFireUpgrade::~PassengersFireUpgrade( )
 {
 }
 
@@ -97,7 +97,7 @@ void PassengersFireUpgrade::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void PassengersFireUpgrade::loadPostProcess( void )
+void PassengersFireUpgrade::loadPostProcess( )
 {
 
 	// extend base class

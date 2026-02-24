@@ -98,13 +98,13 @@ OverlordContain::OverlordContain( Thing *thing, const ModuleData *moduleData ) :
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-OverlordContain::~OverlordContain( void )
+OverlordContain::~OverlordContain( )
 {
 
 }
 
 
-void OverlordContain::onObjectCreated( void )
+void OverlordContain::onObjectCreated( )
 {
   OverlordContain::createPayload();
 }
@@ -224,7 +224,7 @@ void OverlordContain::onDie( const DamageInfo *damageInfo )
 }
 
 //-------------------------------------------------------------------------------------------------
-void OverlordContain::onDelete( void )
+void OverlordContain::onDelete( )
 {
 	// Do you mean me the Overlord, or my behavior of passing stuff on to my passengers?
 	if( getRedirectedContain() == nullptr )
@@ -402,7 +402,7 @@ void OverlordContain::onContaining( Object *obj, Bool wasSelected )
 }
 
 //-------------------------------------------------------------------------------------------------
-void OverlordContain::killAllContained( void )
+void OverlordContain::killAllContained( )
 {
 	// This is a game call meant to clear actual passengers.  We don't want it to kill our turret.  That'd be weird.
 	if( getRedirectedContain() )
@@ -624,7 +624,7 @@ void OverlordContain::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void OverlordContain::loadPostProcess( void )
+void OverlordContain::loadPostProcess( )
 {
 
 	// extend base class

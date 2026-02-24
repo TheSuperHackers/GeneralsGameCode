@@ -942,7 +942,7 @@ void RTS3DScene::updateFixedLightEnvironments(RenderInfoClass & rinfo)
 
 /**Generate custom rendering passes for each potential player color.  This is currently only used
 to render occluded objects using the color of the player*/
-void RTS3DScene::updatePlayerColorPasses(void)
+void RTS3DScene::updatePlayerColorPasses()
 {
 #ifdef USE_NON_STENCIL_OCCLUSION
 	Vector3 hsv,rgb;
@@ -1673,7 +1673,7 @@ void RTS3DScene::flushTranslucentObjects(RenderInfoClass & rinfo)
 //=============================================================================
 /** Returns an iterator of the lights in the scene. */
 //=============================================================================
-RefRenderObjListIterator * RTS3DScene::createLightsIterator(void)
+RefRenderObjListIterator * RTS3DScene::createLightsIterator()
 {
 	RefRenderObjListIterator * it = NEW RefRenderObjListIterator(&LightList);	// poolify
 	return it;
@@ -1707,7 +1707,7 @@ void RTS3DScene::addDynamicLight(W3DDynamicLight * obj)
 //=============================================================================
 /** Adds a dynamic light. */
 //=============================================================================
-W3DDynamicLight * RTS3DScene::getADynamicLight(void)
+W3DDynamicLight * RTS3DScene::getADynamicLight()
 {
 	RefRenderObjListIterator dynaLightIt(&m_dynamicLightList);
 	W3DDynamicLight *pLight;

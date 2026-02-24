@@ -101,16 +101,16 @@ static UnsignedInt noticeExpires = 0;
 enum { NOTIFICATION_EXPIRES = 3000 };
 
 void setUnignoreText( WindowLayout *layout, AsciiString nick, GPProfile id);
-void refreshIgnoreList( void );
+void refreshIgnoreList( );
 void showNotificationBox( AsciiString nick, UnicodeString message);
-void deleteNotificationBox( void );
+void deleteNotificationBox( );
 static Bool lastNotificationWasStatus = FALSE;
 static Int numOnlineInNotification = 0;
 
 class BuddyControls
 {
 public:
-	BuddyControls(void );
+	BuddyControls( );
 	GameWindow *listboxChat;
 	NameKeyType listboxChatID;
 
@@ -123,7 +123,7 @@ public:
 };
 
 static BuddyControls buddyControls;
-BuddyControls::BuddyControls(	void )
+BuddyControls::BuddyControls(	)
 {
 	listboxChat = nullptr;
 	listboxChatID = NAMEKEY_INVALID;
@@ -376,7 +376,7 @@ void insertChat( BuddyMessage msg )
 	}
 }
 
-void updateBuddyInfo( void )
+void updateBuddyInfo( )
 {
 	if (!TheGameSpyBuddyMessageQueue->isConnected())
 	{
@@ -485,7 +485,7 @@ void updateBuddyInfo( void )
 	GadgetListBoxSetTopVisibleEntry(buddyControls.listboxBuddies, visiblePos);
 }
 
-void HandleBuddyResponses( void )
+void HandleBuddyResponses( )
 {
 	if (TheGameSpyBuddyMessageQueue)
 	{
@@ -681,7 +681,7 @@ void showNotificationBox( AsciiString nick, UnicodeString message)
 
 }
 
-void deleteNotificationBox( void )
+void deleteNotificationBox( )
 {
 	lastNotificationWasStatus = FALSE;
 	numOnlineInNotification = 0;
@@ -693,7 +693,7 @@ void deleteNotificationBox( void )
 	}
 }
 
-void PopulateOldBuddyMessages(void)
+void PopulateOldBuddyMessages()
 {
 	// show previous messages
 	BuddyMessageList *messages = TheGameSpyInfo->getBuddyMessages();
@@ -1401,7 +1401,7 @@ void setUnignoreText( WindowLayout *layout, AsciiString nick, GPProfile id)
 	}
 }
 
-void refreshIgnoreList( void )
+void refreshIgnoreList( )
 {
 
 

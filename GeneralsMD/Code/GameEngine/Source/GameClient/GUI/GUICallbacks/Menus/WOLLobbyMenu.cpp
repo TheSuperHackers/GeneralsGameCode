@@ -484,7 +484,7 @@ static Int insertPlayerInListbox(const PlayerInfo& info, Color color)
 }
 
 
-void PopulateLobbyPlayerListbox(void)
+void PopulateLobbyPlayerListbox()
 {
 
 	if (!listboxLobbyPlayers)

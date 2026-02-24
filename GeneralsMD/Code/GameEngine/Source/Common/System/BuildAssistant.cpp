@@ -65,7 +65,7 @@ BuildAssistant *TheBuildAssistant = nullptr;
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-ObjectSellInfo::ObjectSellInfo( void )
+ObjectSellInfo::ObjectSellInfo( )
 {
 
 	m_id = INVALID_ID;
@@ -75,7 +75,7 @@ ObjectSellInfo::ObjectSellInfo( void )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-ObjectSellInfo::~ObjectSellInfo( void )
+ObjectSellInfo::~ObjectSellInfo( )
 {
 
 }
@@ -104,7 +104,7 @@ static Bool isDozer( Object *obj )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-BuildAssistant::BuildAssistant( void )
+BuildAssistant::BuildAssistant( )
 {
 
 	m_buildPositions = nullptr;
@@ -114,7 +114,7 @@ BuildAssistant::BuildAssistant( void )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-BuildAssistant::~BuildAssistant( void )
+BuildAssistant::~BuildAssistant( )
 {
 
 	delete [] m_buildPositions;
@@ -125,7 +125,7 @@ BuildAssistant::~BuildAssistant( void )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void BuildAssistant::init( void )
+void BuildAssistant::init( )
 {
 
 	//
@@ -139,7 +139,7 @@ void BuildAssistant::init( void )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void BuildAssistant::reset( void )
+void BuildAssistant::reset( )
 {
 
 	// clear all our data from the sell list
@@ -166,7 +166,7 @@ static const Real TOTAL_FRAMES_TO_SELL_OBJECT = LOGICFRAMES_PER_SECOND * 3.0f;
 //-------------------------------------------------------------------------------------------------
 /** Update phase for the build assistant */
 //-------------------------------------------------------------------------------------------------
-void BuildAssistant::update( void )
+void BuildAssistant::update( )
 {
 	ObjectSellInfo *sellInfo;
 	Object *obj;

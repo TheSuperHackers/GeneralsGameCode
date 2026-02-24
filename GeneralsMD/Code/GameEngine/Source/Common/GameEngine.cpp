@@ -244,7 +244,7 @@ static void updateWindowTitle()
 }
 
 //-------------------------------------------------------------------------------------------------
-GameEngine::GameEngine( void )
+GameEngine::GameEngine( )
 {
 	// initialize to non garbage values
 	m_logicTimeAccumulator = 0.0f;
@@ -761,7 +761,7 @@ void GameEngine::init()
 /** -----------------------------------------------------------------------------------------------
 	* Reset all necessary parts of the game engine to be ready to accept new game data
 	*/
-void GameEngine::reset( void )
+void GameEngine::reset( )
 {
 
 	WindowLayout *background = TheWindowManager->winCreateLayout("Menus/BlankWindow.wnd");
@@ -790,7 +790,7 @@ void GameEngine::reset( void )
 }
 
 /// -----------------------------------------------------------------------------------------------
-void GameEngine::resetSubsystems( void )
+void GameEngine::resetSubsystems( )
 {
 	// TheSuperHackers @fix xezon 09/06/2025 Reset GameLogic first to purge all world objects early.
 	// This avoids potentially catastrophic issues when objects and subsystems have cross dependencies.
@@ -875,7 +875,7 @@ DECLARE_PERF_TIMER(GameEngine_update)
 /** -----------------------------------------------------------------------------------------------
  * Update the game engine by updating the GameClient and GameLogic singletons.
  */
-void GameEngine::update( void )
+void GameEngine::update( )
 {
 	USE_PERF_TIMER(GameEngine_update)
 	{
@@ -922,7 +922,7 @@ extern HWND ApplicationHWnd;
 /** -----------------------------------------------------------------------------------------------
  * The "main loop" of the game engine. It will not return until the game exits.
  */
-void GameEngine::execute( void )
+void GameEngine::execute( )
 {
 #if defined(RTS_DEBUG)
 	DWORD startTime = timeGetTime() / 1000;
@@ -1010,7 +1010,7 @@ void GameEngine::execute( void )
 /** -----------------------------------------------------------------------------------------------
 	* Factory for the message stream
 	*/
-MessageStream *GameEngine::createMessageStream( void )
+MessageStream *GameEngine::createMessageStream( )
 {
 	// if you change this update the tools that use the engine systems
 	// like GUIEdit, it creates a message stream to run in "test" mode
@@ -1018,13 +1018,13 @@ MessageStream *GameEngine::createMessageStream( void )
 }
 
 //-------------------------------------------------------------------------------------------------
-FileSystem *GameEngine::createFileSystem( void )
+FileSystem *GameEngine::createFileSystem( )
 {
 	return MSGNEW("GameEngineSubsystem") FileSystem;
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool GameEngine::isMultiplayerSession( void )
+Bool GameEngine::isMultiplayerSession( )
 {
 	return TheRecorder->isMultiplayer();
 }

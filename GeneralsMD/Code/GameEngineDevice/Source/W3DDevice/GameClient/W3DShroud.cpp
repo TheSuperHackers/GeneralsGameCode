@@ -68,7 +68,7 @@
 #define DEFAULT_VISIBLE_TERRAIN 96	//assumed size of visible terrain cells.
 
 //-----------------------------------------------------------------------------
-W3DShroud::W3DShroud(void)
+W3DShroud::W3DShroud()
 {
 	m_finalFogData=nullptr;
 	m_currentFogData=nullptr;
@@ -89,7 +89,7 @@ W3DShroud::W3DShroud(void)
 }
 
 //-----------------------------------------------------------------------------
-W3DShroud::~W3DShroud(void)
+W3DShroud::~W3DShroud()
 {
 	ReleaseResources();
 
@@ -220,14 +220,14 @@ void W3DShroud::reset()
 
 //-----------------------------------------------------------------------------
 ///Release any resources that can't survive a D3D device reset.
-void W3DShroud::ReleaseResources(void)
+void W3DShroud::ReleaseResources()
 {
 	REF_PTR_RELEASE (m_pDstTexture);
 }
 
 //-----------------------------------------------------------------------------
 ///Restore resources that are lost on D3D device reset.
-Bool W3DShroud::ReAcquireResources(void)
+Bool W3DShroud::ReAcquireResources()
 {
 		if (!m_dstTextureWidth)
 			return TRUE;	//nothing to reacquire since shroud was never initialized with valid data
@@ -782,7 +782,7 @@ void W3DShroud::setShroudFilter(Bool enable)
 
 //-----------------------------------------------------------------------------
 ///Set render states required to draw shroud pass.
-void W3DShroudMaterialPassClass::Install_Materials(void) const
+void W3DShroudMaterialPassClass::Install_Materials() const
 {
 	if (TheTerrainRenderObject->getShroud())
 	{
@@ -793,21 +793,21 @@ void W3DShroudMaterialPassClass::Install_Materials(void) const
 
 //-----------------------------------------------------------------------------
 ///Restore render states that W3D doesn't know about.
-void W3DShroudMaterialPassClass::UnInstall_Materials(void) const
+void W3DShroudMaterialPassClass::UnInstall_Materials() const
 {
 	W3DShaderManager::resetShader(W3DShaderManager::ST_SHROUD_TEXTURE);
 }
 
 //-----------------------------------------------------------------------------
 ///Set render states required to draw shroud pass.
-void W3DMaskMaterialPassClass::Install_Materials(void) const
+void W3DMaskMaterialPassClass::Install_Materials() const
 {
 	W3DShaderManager::setShader(W3DShaderManager::ST_MASK_TEXTURE, 0);
 }
 
 //-----------------------------------------------------------------------------
 ///Restore render states that W3D doesn't know about.
-void W3DMaskMaterialPassClass::UnInstall_Materials(void) const
+void W3DMaskMaterialPassClass::UnInstall_Materials() const
 {
 	if (m_allowUninstall)
 		W3DShaderManager::resetShader(W3DShaderManager::ST_MASK_TEXTURE);

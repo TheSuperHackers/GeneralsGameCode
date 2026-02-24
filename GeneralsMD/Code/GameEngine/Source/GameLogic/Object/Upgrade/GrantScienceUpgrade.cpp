@@ -76,7 +76,7 @@ GrantScienceUpgrade::GrantScienceUpgrade( Thing *thing, const ModuleData* module
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-GrantScienceUpgrade::~GrantScienceUpgrade( void )
+GrantScienceUpgrade::~GrantScienceUpgrade( )
 {
 }
 
@@ -130,7 +130,7 @@ void GrantScienceUpgrade::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void GrantScienceUpgrade::loadPostProcess( void )
+void GrantScienceUpgrade::loadPostProcess( )
 {
 
 	// extend base class

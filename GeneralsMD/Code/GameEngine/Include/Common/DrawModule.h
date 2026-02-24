@@ -72,8 +72,8 @@ public:
 	virtual void doDrawModule(const Matrix3D* transformMtx) = 0;
 
 	virtual void setShadowsEnabled(Bool enable) = 0;
-	virtual void releaseShadows(void) = 0;	///< frees all shadow resources used by this module - used by Options screen.
-	virtual void allocateShadows(void) = 0; ///< create shadow resources if not already present. Used by Options screen.
+	virtual void releaseShadows() = 0;	///< frees all shadow resources used by this module - used by Options screen.
+	virtual void allocateShadows() = 0; ///< create shadow resources if not already present. Used by Options screen.
 
 #if defined(RTS_DEBUG)
 	virtual void getRenderCost(RenderCost & rc) const { };  ///< estimates the render cost of this draw module
@@ -202,7 +202,7 @@ public:
 		"in between", it is included in the completion time.
 	*/
 	virtual void setAnimationCompletionTime(UnsignedInt numFrames) = 0;
-	virtual Bool updateBonesForClientParticleSystems( void ) = 0;///< this will reposition particle systems on the fly ML
+	virtual Bool updateBonesForClientParticleSystems( ) = 0;///< this will reposition particle systems on the fly ML
 
 	//Kris: Manually set a drawable's current animation to specific frame.
 	virtual void setAnimationFrame( int frame ) = 0;
@@ -229,21 +229,21 @@ public:
 class RenderCost
 {
 public:
-	RenderCost(void) { clear(); }
-	~RenderCost(void) { }
+	RenderCost() { clear(); }
+	~RenderCost() { }
 
-	void	clear(void) { m_drawCallCount = m_sortedMeshCount = m_boneCount = m_skinMeshCount = m_shadowDrawCount = 0; }
+	void	clear() { m_drawCallCount = m_sortedMeshCount = m_boneCount = m_skinMeshCount = m_shadowDrawCount = 0; }
 	void	addDrawCalls(int count) { m_drawCallCount += count; }
 	void	addSortedMeshes(int count) { m_sortedMeshCount += count; }
 	void	addSkinMeshes(int count) { m_skinMeshCount += count; }
 	void	addBones(int count) { m_boneCount += count; }
 	void	addShadowDrawCalls(int count) { m_shadowDrawCount += count; }
 
-	int		getDrawCallCount(void) { return m_drawCallCount; }
-	int		getSortedMeshCount(void) { return m_sortedMeshCount; }
-	int		getSkinMeshCount(void) { return m_skinMeshCount; }
-	int		getBoneCount(void) { return m_boneCount; }
-	int		getShadowDrawCount(void) { return m_shadowDrawCount; }
+	int		getDrawCallCount() { return m_drawCallCount; }
+	int		getSortedMeshCount() { return m_sortedMeshCount; }
+	int		getSkinMeshCount() { return m_skinMeshCount; }
+	int		getBoneCount() { return m_boneCount; }
+	int		getShadowDrawCount() { return m_shadowDrawCount; }
 
 protected:
 

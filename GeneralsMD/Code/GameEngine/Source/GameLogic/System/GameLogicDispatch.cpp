@@ -220,7 +220,7 @@ static Object * getSingleObjectFromSelection(const AIGroup *currentlySelectedGro
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void GameLogic::closeWindows( void )
+void GameLogic::closeWindows( )
 {
 	HideDiplomacy();
 	ResetDiplomacy();
@@ -270,7 +270,7 @@ void GameLogic::clearGameData( Bool showScoreScreen )
 		TheShell->showShell(FALSE); // by passing in false, we don't want to run the Init on the shell screen we just pushed on
 		TheTransitionHandler->reverse("FadeWholeScreen");
 
-		void FixupScoreScreenMovieWindow( void );
+		void FixupScoreScreenMovieWindow( );
 		FixupScoreScreenMovieWindow();
 	}
 

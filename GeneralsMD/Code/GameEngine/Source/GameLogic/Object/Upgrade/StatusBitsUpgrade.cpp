@@ -94,7 +94,7 @@ StatusBitsUpgrade::StatusBitsUpgrade( Thing *thing, const ModuleData* moduleData
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-StatusBitsUpgrade::~StatusBitsUpgrade( void )
+StatusBitsUpgrade::~StatusBitsUpgrade( )
 {
 }
 
@@ -139,7 +139,7 @@ void StatusBitsUpgrade::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void StatusBitsUpgrade::loadPostProcess( void )
+void StatusBitsUpgrade::loadPostProcess( )
 {
 
 	// extend base class

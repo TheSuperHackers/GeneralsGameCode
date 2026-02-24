@@ -69,7 +69,7 @@ public:
 /*
 ** VertexMaterialClass Implementation
 */
-VertexMaterialClass::VertexMaterialClass(void):
+VertexMaterialClass::VertexMaterialClass():
 #ifdef DYN_MAT8
 	MaterialDyn(nullptr),
 #else
@@ -147,7 +147,7 @@ void VertexMaterialClass::Make_Unique()
 	unique++;
 }
 
-VertexMaterialClass::~VertexMaterialClass(void)
+VertexMaterialClass::~VertexMaterialClass()
 {
 	int i;
 
@@ -200,7 +200,7 @@ VertexMaterialClass & VertexMaterialClass::operator = (const VertexMaterialClass
 	return *this;
 }
 
-unsigned long VertexMaterialClass::Compute_CRC(void) const
+unsigned long VertexMaterialClass::Compute_CRC() const
 {
 	unsigned long crc = 0;
 
@@ -322,7 +322,7 @@ void VertexMaterialClass::Set_Emissive(float r,float g,float b)
 }
 
 
-float	VertexMaterialClass::Get_Shininess(void) const
+float	VertexMaterialClass::Get_Shininess() const
 {
 	return Material->Power;
 }
@@ -333,7 +333,7 @@ void	VertexMaterialClass::Set_Shininess(float shin)
 	Material->Power=shin;
 }
 
-float	VertexMaterialClass::Get_Opacity(void) const
+float	VertexMaterialClass::Get_Opacity() const
 {
 	return Material->Diffuse.a;
 }
@@ -378,7 +378,7 @@ void	VertexMaterialClass::Set_Diffuse_Color_Source(ColorSourceType src)
 }
 
 VertexMaterialClass::ColorSourceType
-VertexMaterialClass::Get_Ambient_Color_Source(void)
+VertexMaterialClass::Get_Ambient_Color_Source()
 {
 	switch(AmbientColorSource)
 	{
@@ -389,7 +389,7 @@ VertexMaterialClass::Get_Ambient_Color_Source(void)
 }
 
 VertexMaterialClass::ColorSourceType
-VertexMaterialClass::Get_Emissive_Color_Source(void)
+VertexMaterialClass::Get_Emissive_Color_Source()
 {
 	switch(EmissiveColorSource)
 	{
@@ -400,7 +400,7 @@ VertexMaterialClass::Get_Emissive_Color_Source(void)
 }
 
 VertexMaterialClass::ColorSourceType
-VertexMaterialClass::Get_Diffuse_Color_Source(void)
+VertexMaterialClass::Get_Diffuse_Color_Source()
 {
 	switch(DiffuseColorSource)
 	{
@@ -944,7 +944,7 @@ WW3DErrorType VertexMaterialClass::Save_W3D(ChunkSaveClass & csave)
 	return WW3D_ERROR_OK;
 }
 
-void VertexMaterialClass::Apply(void) const
+void VertexMaterialClass::Apply() const
 {
 	int i;
 
@@ -969,7 +969,7 @@ void VertexMaterialClass::Apply(void) const
 	}
 }
 
-void VertexMaterialClass::Apply_Null(void)
+void VertexMaterialClass::Apply_Null()
 {
 	int i;
 	static D3DMATERIAL8 default_settings =

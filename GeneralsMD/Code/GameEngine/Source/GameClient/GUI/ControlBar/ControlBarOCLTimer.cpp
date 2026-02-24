@@ -137,7 +137,7 @@ void ControlBar::populateOCLTimer( Object *creatorObject )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void ControlBar::updateContextOCLTimer( void )
+void ControlBar::updateContextOCLTimer( )
 {
 	Object *obj = m_currentSelectedDrawable->getObject();
 

@@ -91,7 +91,7 @@ void ShowInGameChat( Bool immediate )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void ResetInGameChat( void )
+void ResetInGameChat( )
 {
 	if(chatWindow)
 		TheWindowManager->winDestroy( chatWindow );

@@ -42,7 +42,7 @@ class ExperienceScalarUpgradeModuleData: public UpgradeModuleData
 
 public:
 
-	ExperienceScalarUpgradeModuleData( void );
+	ExperienceScalarUpgradeModuleData( );
 
 	static void buildFieldParse(MultiIniFieldParse& p);
 
