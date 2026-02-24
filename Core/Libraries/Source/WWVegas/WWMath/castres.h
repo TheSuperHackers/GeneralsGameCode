@@ -53,8 +53,8 @@
 */
 struct CastResultStruct
 {
-	CastResultStruct(void)	{ Reset(); }
-	void		Reset(void)		{ StartBad = false; Fraction = 1.0f; Normal.Set(0,0,0); SurfaceType = 0; ComputeContactPoint = false; ContactPoint.Set(0,0,0); }
+	CastResultStruct()	{ Reset(); }
+	void		Reset()		{ StartBad = false; Fraction = 1.0f; Normal.Set(0,0,0); SurfaceType = 0; ComputeContactPoint = false; ContactPoint.Set(0,0,0); }
 
 	bool		StartBad;		// was the initial configuration interpenetrating something?
 	float		Fraction;		// fraction of the move up until collision

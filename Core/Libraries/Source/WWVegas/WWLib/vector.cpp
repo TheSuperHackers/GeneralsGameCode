@@ -237,7 +237,7 @@ int BooleanVectorClass::Resize(unsigned size)
  * HISTORY:                                                                                    *
  *   07/18/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-void BooleanVectorClass::Clear(void)
+void BooleanVectorClass::Clear()
 {
 	Fixup();
 	BitCount = 0;
@@ -259,7 +259,7 @@ void BooleanVectorClass::Clear(void)
  * HISTORY:                                                                                    *
  *   07/18/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-void BooleanVectorClass::Reset(void)
+void BooleanVectorClass::Reset()
 {
 	LastIndex = -1;
 	if (BitArray.Length() > 0) {
@@ -282,7 +282,7 @@ void BooleanVectorClass::Reset(void)
  * HISTORY:                                                                                    *
  *   07/18/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-void BooleanVectorClass::Set(void)
+void BooleanVectorClass::Set()
 {
 	LastIndex = -1;
 	if (BitArray.Length() > 0) {

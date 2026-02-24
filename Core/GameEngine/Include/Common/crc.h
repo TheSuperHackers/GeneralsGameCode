@@ -63,7 +63,7 @@ private:
 class CRC
 {
 public:
-	CRC(void) { crc=0; }
+	CRC() { crc=0; }
 
   /// Compute the CRC for a buffer, added into current CRC
 	__forceinline void computeCRC( const void *buf, Int len )
@@ -113,13 +113,13 @@ public:
   }
 
   /// Clears the CRC to 0
-	void clear( void )
+	void clear( )
   {
     crc = 0;
   }
 
   ///< Get the combined CRC
-	UnsignedInt get( void ) const
+	UnsignedInt get( ) const
   {
     return crc;
   }

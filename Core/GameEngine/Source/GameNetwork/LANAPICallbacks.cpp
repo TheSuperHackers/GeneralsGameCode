@@ -182,7 +182,7 @@ void LANAPI::OnGameStartTimer( Int seconds )
 	OnChat(L"SYSTEM", m_localIP, text, LANCHAT_SYSTEM);
 }
 
-void LANAPI::OnGameStart( void )
+void LANAPI::OnGameStart( )
 {
 	//DEBUG_LOG(("Map is '%s', preview is '%s'", m_currentGame->getMap().str(), GetPreviewFromMap(m_currentGame->getMap()).str()));
 	//DEBUG_LOG(("Map is '%s', INI is '%s'", m_currentGame->getMap().str(), GetINIFromMap(m_currentGame->getMap()).str()));
@@ -532,7 +532,7 @@ void LANAPI::OnGameJoin( ReturnType ret, LANGameInfo *theGame )
 	}
 }
 
-void LANAPI::OnHostLeave( void )
+void LANAPI::OnHostLeave( )
 {
 	DEBUG_ASSERTCRASH(!m_inLobby && m_currentGame, ("Game info is gone!"));
 	if (m_inLobby || !m_currentGame)

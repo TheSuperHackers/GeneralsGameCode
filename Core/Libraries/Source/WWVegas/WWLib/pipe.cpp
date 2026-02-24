@@ -59,7 +59,7 @@
  * HISTORY:                                                                                    *
  *   07/03/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-Pipe::~Pipe(void)
+Pipe::~Pipe()
 {
 	if (ChainTo != nullptr) {
 		ChainTo->ChainFrom = ChainFrom;
@@ -154,7 +154,7 @@ int Pipe::Put(void const * source, int length)
  * HISTORY:                                                                                    *
  *   07/03/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-int Pipe::Flush(void)
+int Pipe::Flush()
 {
 	if (ChainTo != nullptr) {
 		return(ChainTo->Flush());

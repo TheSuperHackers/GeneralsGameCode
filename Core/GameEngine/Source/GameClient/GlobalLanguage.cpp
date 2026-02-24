@@ -296,7 +296,7 @@ void GlobalLanguage::parseCustomDefinition()
 	}
 }
 
-FontDesc::FontDesc(void)
+FontDesc::FontDesc()
 {
 	name = "Arial Unicode MS";
 	size = 12;

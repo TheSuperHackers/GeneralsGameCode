@@ -76,7 +76,7 @@ public:
 	};
 
 	// Constructors
-	WWINLINE Vector2(void) {};
+	WWINLINE Vector2() {};
 	WWINLINE Vector2(const Vector2 & v) { X = v.X; Y = v.Y; }
 	WWINLINE Vector2(float x, float y) { X = x; Y = y; }
 	WWINLINE Vector2(const float vector[2]) { X = vector[0]; Y = vector[1]; }
@@ -92,9 +92,9 @@ public:
 	WWINLINE const float &  operator [](int i) const { return (&X)[i]; }
 
 	// normalize, compute length
-	WWINLINE void	Normalize(void);
-	WWINLINE float Length(void) const;
-	WWINLINE float Length2(void) const;
+	WWINLINE void	Normalize();
+	WWINLINE float Length() const;
+	WWINLINE float Length2() const;
 
 	// unary operators
 	WWINLINE Vector2 operator-() const { return Vector2(-X,-Y); }
@@ -133,7 +133,7 @@ public:
 	WWINLINE bool Rotate_Towards_Vector(Vector2 &target, float max_s, float max_c, bool & positive_turn);
 
 	// verify that none of the members of this vector are invalid floats
-	WWINLINE bool Is_Valid(void) const;
+	WWINLINE bool Is_Valid() const;
 
 	// make this vector the min or max of itself and the passed vector
 	WWINLINE void Update_Min (const Vector2 & a);
@@ -500,7 +500,7 @@ WWINLINE void Swap(Vector2 & a,Vector2 & b)
  * HISTORY:                                                                                    *
  *   10/18/99   gth : Created.                                                                 *
  *=============================================================================================*/
-WWINLINE bool Vector2::Is_Valid(void) const
+WWINLINE bool Vector2::Is_Valid() const
 {
 	return (WWMath::Is_Valid_Float(X) && WWMath::Is_Valid_Float(Y));
 }

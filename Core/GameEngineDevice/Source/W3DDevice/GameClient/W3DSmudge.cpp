@@ -44,7 +44,7 @@
 
 SmudgeManager *TheSmudgeManager=nullptr;
 
-W3DSmudgeManager::W3DSmudgeManager(void)
+W3DSmudgeManager::W3DSmudgeManager()
 {
 }
 
@@ -53,18 +53,18 @@ W3DSmudgeManager::~W3DSmudgeManager()
 	ReleaseResources();
 }
 
-void W3DSmudgeManager::init(void)
+void W3DSmudgeManager::init()
 {
 	SmudgeManager::init();
 	ReAcquireResources();
 }
 
-void W3DSmudgeManager::reset (void)
+void W3DSmudgeManager::reset ()
 {
 	SmudgeManager::reset();	//base
 }
 
-void W3DSmudgeManager::ReleaseResources(void)
+void W3DSmudgeManager::ReleaseResources()
 {
 #ifdef USE_COPY_RECTS
 	REF_PTR_RELEASE(m_backgroundTexture);
@@ -75,7 +75,7 @@ void W3DSmudgeManager::ReleaseResources(void)
 //Make sure (SMUDGE_DRAW_SIZE * 12) < 65535 because that's the max index buffer size.
 #define SMUDGE_DRAW_SIZE	500	//draw at most 50 smudges per call. Tweak value to improve CPU/GPU parallelism.
 
-void W3DSmudgeManager::ReAcquireResources(void)
+void W3DSmudgeManager::ReAcquireResources()
 {
 	ReleaseResources();
 
@@ -201,7 +201,7 @@ error:
 #define UNIQUE_COLOR	(0x12345678)
 #define BLOCK_SIZE	(8)
 
-Bool W3DSmudgeManager::testHardwareSupport(void)
+Bool W3DSmudgeManager::testHardwareSupport()
 {
 	if (m_hardwareSupportStatus == SMUDGE_SUPPORT_UNKNOWN)
 	{	//we have not done the test yet.

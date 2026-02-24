@@ -235,7 +235,7 @@ Bool RAMFile::openFromArchive(File *archiveFile, const AsciiString& filename, In
 	*/
 //=================================================================
 
-void RAMFile::close( void )
+void RAMFile::close( )
 {
 	closeFile();
 	File::close();

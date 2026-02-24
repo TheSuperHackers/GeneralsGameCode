@@ -54,7 +54,7 @@
 
 
 
-StreakRendererClass::StreakRendererClass(void) :
+StreakRendererClass::StreakRendererClass() :
 		Texture(nullptr),
 		Shader(ShaderClass::_PresetAdditiveSpriteShader),
 		Width(0.0f),
@@ -115,7 +115,7 @@ StreakRendererClass & StreakRendererClass::operator = (const StreakRendererClass
 	return *this;
 }
 
-StreakRendererClass::~StreakRendererClass(void)
+StreakRendererClass::~StreakRendererClass()
 {
 	REF_PTR_RELEASE(Texture);
 	delete [] m_vertexBuffer;
@@ -157,7 +157,7 @@ void StreakRendererClass::Set_Texture(TextureClass *texture)
 	REF_PTR_SET(Texture,texture);
 }
 
-TextureClass * StreakRendererClass::Get_Texture(void) const
+TextureClass * StreakRendererClass::Get_Texture() const
 {
 	if (Texture != nullptr) {
 		Texture->Add_Ref();

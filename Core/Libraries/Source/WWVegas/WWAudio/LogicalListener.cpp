@@ -77,7 +77,7 @@ enum
 //	LogicalListenerClass
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
-LogicalListenerClass::LogicalListenerClass (void)
+LogicalListenerClass::LogicalListenerClass ()
 	:	m_Scale (1),
 		m_TypeMask (0),
 		m_Position (0, 0, 0),
@@ -92,7 +92,7 @@ LogicalListenerClass::LogicalListenerClass (void)
 //	~LogicalListenerClass
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
-LogicalListenerClass::~LogicalListenerClass (void)
+LogicalListenerClass::~LogicalListenerClass ()
 {
 	return ;
 }
@@ -126,7 +126,7 @@ LogicalListenerClass::Add_To_Scene (bool /*start_playing*/)
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
 void
-LogicalListenerClass::Remove_From_Scene (void)
+LogicalListenerClass::Remove_From_Scene ()
 {
 	if (m_Scene != nullptr) {
 
@@ -148,7 +148,7 @@ LogicalListenerClass::Remove_From_Scene (void)
 //
 /////////////////////////////////////////////////////////////////////////////////
 const PersistFactoryClass &
-LogicalListenerClass::Get_Factory (void) const
+LogicalListenerClass::Get_Factory () const
 {
 	return _LogicalListenerPersistFactory;
 }

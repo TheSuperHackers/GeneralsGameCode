@@ -66,21 +66,21 @@ public:
 	/////////////////////////////////////////////////////////////////////
 	//	Public constructors/destructors
 	/////////////////////////////////////////////////////////////////////
-	DefinitionMgrClass (void);
-	~DefinitionMgrClass (void);
+	DefinitionMgrClass ();
+	~DefinitionMgrClass ();
 
 	/////////////////////////////////////////////////////////////////////
 	//	Public methods
 	/////////////////////////////////////////////////////////////////////
 
 	// From SaveLoadSubSystemClass
-	virtual uint32					Chunk_ID (void) const;
+	virtual uint32					Chunk_ID () const;
 
 	// Type identification
 	static DefinitionClass *	Find_Definition (uint32 id, bool twiddle = true);
 	static DefinitionClass *	Find_Named_Definition (const char *name, bool twiddle = true);
 	static DefinitionClass *	Find_Typed_Definition (const char *name, uint32 class_id, bool twiddle = true);
-   static void                List_Available_Definitions (void);
+   static void                List_Available_Definitions ();
    static void                List_Available_Definitions (int superclass_id);
 	static uint32					Get_New_ID (uint32 class_id);
 
@@ -97,12 +97,12 @@ public:
 		ID_SUPERCLASS,
 	} ID_TYPE;
 
-	static DefinitionClass *	Get_First (void);
+	static DefinitionClass *	Get_First ();
 	static DefinitionClass *	Get_First (uint32 id, ID_TYPE type = ID_CLASS);
 	static DefinitionClass *	Get_Next (DefinitionClass *curr_def);
 	static DefinitionClass *	Get_Next (DefinitionClass *curr_def, uint32 id, ID_TYPE type = ID_CLASS);
 
-	static void						Free_Definitions (void);
+	static void						Free_Definitions ();
 
 protected:
 
@@ -111,10 +111,10 @@ protected:
 	/////////////////////////////////////////////////////////////////////
 
 	// From SaveLoadSubSystemClass
-	virtual bool					Contains_Data (void) const;
+	virtual bool					Contains_Data () const;
 	virtual bool					Save (ChunkSaveClass &csave);
 	virtual bool					Load (ChunkLoadClass &cload);
-	virtual const char*			Name (void) const						{ return "DefinitionMgrClass"; }
+	virtual const char*			Name () const						{ return "DefinitionMgrClass"; }
 
 	// Persistence methods
 	bool								Save_Objects (ChunkSaveClass &csave);
@@ -128,7 +128,7 @@ private:
 	/////////////////////////////////////////////////////////////////////
 	//	Private methods
 	/////////////////////////////////////////////////////////////////////
-	static void						Prepare_Definition_Array (void);
+	static void						Prepare_Definition_Array ();
 	static int __cdecl			fnCompareDefinitionsCallback (const void *elem1, const void *elem2);
 
 	/////////////////////////////////////////////////////////////////////
@@ -148,7 +148,7 @@ private:
 //	Chunk_ID
 /////////////////////////////////////////////////////////////////////
 inline uint32
-DefinitionMgrClass::Chunk_ID (void) const
+DefinitionMgrClass::Chunk_ID () const
 {
 	return CHUNKID_SAVELOAD_DEFMGR;
 }
@@ -157,7 +157,7 @@ DefinitionMgrClass::Chunk_ID (void) const
 //	Contains_Data
 /////////////////////////////////////////////////////////////////////
 inline bool
-DefinitionMgrClass::Contains_Data (void) const
+DefinitionMgrClass::Contains_Data () const
 {
 	return true;  // TODO: check if we have any definitions...
 }
@@ -166,7 +166,7 @@ DefinitionMgrClass::Contains_Data (void) const
 //	Get_First_Definition
 /////////////////////////////////////////////////////////////////////
 inline DefinitionClass *
-DefinitionMgrClass::Get_First (void)
+DefinitionMgrClass::Get_First ()
 {
 	DefinitionClass *definition = nullptr;
 	if (_DefinitionCount > 0) {

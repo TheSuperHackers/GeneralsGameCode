@@ -596,7 +596,7 @@ void W3DTerrainBackground::doTesselatedUpdate(const IRegion2D &partialRange, Wor
 //=============================================================================
 /** Destructor. Releases w3d assets. */
 //=============================================================================
-W3DTerrainBackground::~W3DTerrainBackground(void)
+W3DTerrainBackground::~W3DTerrainBackground()
 {
 	freeTerrainBuffers();
 	REF_PTR_RELEASE(m_terrainTexture);
@@ -610,7 +610,7 @@ W3DTerrainBackground::~W3DTerrainBackground(void)
 /** Constructor. Sets m_initialized to true if it finds the w3d models it needs
 for the bibs. */
 //=============================================================================
-W3DTerrainBackground::W3DTerrainBackground(void):
+W3DTerrainBackground::W3DTerrainBackground():
 m_vertexTerrain(nullptr),
 m_vertexTerrainSize(0),
 m_initialized(FALSE),
@@ -629,7 +629,7 @@ m_texMultiplier(TEX1X)
 //=============================================================================
 /** Frees the index and vertex buffers. */
 //=============================================================================
-void W3DTerrainBackground::freeTerrainBuffers(void)
+void W3DTerrainBackground::freeTerrainBuffers()
 {
 	REF_PTR_RELEASE(m_vertexTerrain);
 	REF_PTR_RELEASE(m_indexTerrain);
@@ -720,7 +720,7 @@ void W3DTerrainBackground::updateCenter(CameraClass *camera)
 //=============================================================================
 /** Updates the culling status. */
 //=============================================================================
-void W3DTerrainBackground::updateTexture(void)
+void W3DTerrainBackground::updateTexture()
 {
 	if (m_cullStatus==CULL_STATUS_INVISIBLE) {
 		REF_PTR_RELEASE(m_terrainTexture2X);

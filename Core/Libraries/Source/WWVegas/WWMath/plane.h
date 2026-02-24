@@ -62,7 +62,7 @@ public:
 	Vector3	N;			// Normal of the plane
 	float		D;			// Distance along the normal from the origin
 
-	PlaneClass(void) : N(0.0f,0.0f,1.0f), D(0.0f) { }
+	PlaneClass() : N(0.0f,0.0f,1.0f), D(0.0f) { }
 
 	/*
 	** Plane initialization:

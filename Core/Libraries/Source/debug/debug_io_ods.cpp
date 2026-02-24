@@ -37,12 +37,12 @@ void DebugIOOds::Write(StringType type, const char *src, const char *str)
     OutputDebugString(str);
 }
 
-DebugIOInterface *DebugIOOds::Create(void)
+DebugIOInterface *DebugIOOds::Create()
 {
   return new (DebugAllocMemory(sizeof(DebugIOOds))) DebugIOOds();
 }
 
-void DebugIOOds::Delete(void)
+void DebugIOOds::Delete()
 {
   this->~DebugIOOds();
   DebugFreeMemory(this);

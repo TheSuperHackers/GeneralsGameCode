@@ -54,7 +54,7 @@ public:
 
 	// Loads or creates a file with the given name in the user data directory.
 	virtual Bool load(AsciiString fname);
-	virtual Bool write(void);
+	virtual Bool write();
 
 	Bool getBool(AsciiString key, Bool defaultValue) const;
 	Real getReal(AsciiString key, Real defaultValue) const;
@@ -81,16 +81,16 @@ public:
 
 	Bool loadFromIniFile();
 
-	UnicodeString getUserName(void);		// convenience function
-	Int getPreferredFaction(void);			// convenience function
-	Int getPreferredColor(void);				// convenience function
-	AsciiString getPreferredMap(void);	// convenience function
-	Bool usesSystemMapDir(void);		// convenience function
-	Int getNumRemoteIPs(void);					// convenience function
+	UnicodeString getUserName();		// convenience function
+	Int getPreferredFaction();			// convenience function
+	Int getPreferredColor();				// convenience function
+	AsciiString getPreferredMap();	// convenience function
+	Bool usesSystemMapDir();		// convenience function
+	Int getNumRemoteIPs();					// convenience function
 	UnicodeString getRemoteIPEntry(Int i);	// convenience function
 
-  Bool getSuperweaponRestricted(void) const;
-  Money getStartingCash(void) const;
+  Bool getSuperweaponRestricted() const;
+  Money getStartingCash() const;
   void setSuperweaponRestricted( Bool superweaponRestricted);
   void setStartingCash( const Money & startingCash );
 };

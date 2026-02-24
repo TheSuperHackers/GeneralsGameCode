@@ -57,7 +57,7 @@ protected:
 
 public:
   // interface only so no functionality here
-  explicit DebugIOInterface(void) {}
+  explicit DebugIOInterface() {}
 
   /// List of possible log string types
   enum StringType
@@ -129,7 +129,7 @@ public:
     This function gets called during an exception and should perform the
     absolute bare minimum (e.g. just flushing and closing the output file).
   */
-  virtual void EmergencyFlush(void)=0;
+  virtual void EmergencyFlush()=0;
 
   /**
     \brief I/O class specific command.
@@ -152,7 +152,7 @@ public:
 
     Use this function instead of just delete'ing the instance.
   */
-  virtual void Delete(void)=0;
+  virtual void Delete()=0;
 };
 
 /**

@@ -66,7 +66,7 @@ public:
 	// by the DECLARE_EDITABLE macro.
 	//
 	/////////////////////////////////////////////////////////////////////
-	virtual int						Get_Parameter_Count (void) const;
+	virtual int						Get_Parameter_Count () const;
 	virtual ParameterClass *	Lock_Parameter (int i);
 	virtual void					Unlock_Parameter (int i);
 };
@@ -75,7 +75,7 @@ public:
 //	Get_Parameter_Count
 /////////////////////////////////////////////////////////////////////
 inline int
-EditableClass::Get_Parameter_Count (void) const
+EditableClass::Get_Parameter_Count () const
 {
 	return 0;
 }

@@ -68,7 +68,7 @@
 
 
 
-SegLineRendererClass::SegLineRendererClass(void) :
+SegLineRendererClass::SegLineRendererClass() :
 		Texture(nullptr),
 		Shader(ShaderClass::_PresetAdditiveSpriteShader),
 		Width(0.0f),
@@ -129,7 +129,7 @@ SegLineRendererClass & SegLineRendererClass::operator = (const SegLineRendererCl
 	return *this;
 }
 
-SegLineRendererClass::~SegLineRendererClass(void)
+SegLineRendererClass::~SegLineRendererClass()
 {
 	REF_PTR_RELEASE(Texture);
 	delete [] m_vertexBuffer;
@@ -171,7 +171,7 @@ void SegLineRendererClass::Set_Texture(TextureClass *texture)
 	REF_PTR_SET(Texture,texture);
 }
 
-TextureClass * SegLineRendererClass::Get_Texture(void) const
+TextureClass * SegLineRendererClass::Get_Texture() const
 {
 	if (Texture != nullptr) {
 		Texture->Add_Ref();
@@ -199,7 +199,7 @@ void SegLineRendererClass::Set_Texture_Tile_Factor(float factor)
 	TextureTileFactor = factor;
 }
 
-void SegLineRendererClass::Reset_Line(void)
+void SegLineRendererClass::Reset_Line()
 {
 	LastUsedSyncTime = WW3D::Get_Logic_Time_Milliseconds();
 	CurrentUVOffset.Set(0.0f,0.0f);

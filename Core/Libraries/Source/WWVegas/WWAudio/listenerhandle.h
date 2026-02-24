@@ -51,8 +51,8 @@ public:
 	///////////////////////////////////////////////////////////////////
 	//	Public constructors/destructors
 	///////////////////////////////////////////////////////////////////
-	ListenerHandleClass  (void);
-	~ListenerHandleClass (void);
+	ListenerHandleClass  ();
+	~ListenerHandleClass ();
 
 	///////////////////////////////////////////////////////////////////
 	//	Public methods
@@ -61,25 +61,25 @@ public:
 	//
 	//	RTTI
 	//
-	ListenerHandleClass *	As_ListenerHandleClass (void)		{ return this; }
+	ListenerHandleClass *	As_ListenerHandleClass ()		{ return this; }
 
 	//
 	//	Inherited
 	//
 	void							Initialize (SoundBufferClass *buffer);
-	void							Start_Sample (void)									{ }
-	void							Stop_Sample (void)									{ }
-	void							Resume_Sample (void)									{ }
-	void							End_Sample (void)										{ }
+	void							Start_Sample ()									{ }
+	void							Stop_Sample ()									{ }
+	void							Resume_Sample ()									{ }
+	void							End_Sample ()										{ }
 	void							Set_Sample_Volume (S32 volume)					{ }
-	S32							Get_Sample_Volume (void)							{ return 0; }
+	S32							Get_Sample_Volume ()							{ return 0; }
 	void							Set_Sample_Pan (S32 pan)							{ }
-	S32							Get_Sample_Pan (void)								{ return 64; }
+	S32							Get_Sample_Pan ()								{ return 64; }
 	void							Set_Sample_Loop_Count (U32 count)				{ }
-	U32							Get_Sample_Loop_Count (void)						{ return 0; }
+	U32							Get_Sample_Loop_Count ()						{ return 0; }
 	void							Set_Sample_MS_Position (U32 ms)					{ }
 	void							Get_Sample_MS_Position (S32 *len, S32 *pos)	{ }
-	S32							Get_Sample_Playback_Rate (void)					{ return 0; }
+	S32							Get_Sample_Playback_Rate ()					{ return 0; }
 	void							Set_Sample_Playback_Rate (S32 rate)				{ }
 
 protected:

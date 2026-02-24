@@ -70,26 +70,26 @@ public:
 
 	// Create metal map manager with maps specified by INI file
 	MetalMapManagerClass(INIClass &ini);
-	~MetalMapManagerClass(void);
+	~MetalMapManagerClass();
 
 	// Get the texture for a metal map by id number
 	TextureClass *	Get_Metal_Map(int id);
 
 	// Get the number of metal maps in the manager
-	int				Metal_Map_Count(void);
+	int				Metal_Map_Count();
 
 	// Update the lighting parameters used for generating the maps
 	void				Update_Lighting(const Vector3& ambient, const Vector3& main_light_color,
 							const Vector3& main_light_dir, const Vector3& camera_dir);
 
 	// Update the metal map textures (should call once/frame before rendering)
-	void				Update_Textures(void);
+	void				Update_Textures();
 
 private:
 
 	// 16 x 16 table of cameraspace normals for the environment maps
 	static Vector3 *	_NormalTable;
-	void					initialize_normal_table(void);	// Utility function
+	void					initialize_normal_table();	// Utility function
 
 	// Utility function - shared CTor code
 	void					initialize_metal_params(int map_count, MetalParams *metal_params);

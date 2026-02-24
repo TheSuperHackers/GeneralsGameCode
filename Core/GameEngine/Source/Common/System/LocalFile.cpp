@@ -293,7 +293,7 @@ error:
 	*/
 //=================================================================
 
-void LocalFile::close( void )
+void LocalFile::close( )
 {
 	closeFile();
 	File::close();

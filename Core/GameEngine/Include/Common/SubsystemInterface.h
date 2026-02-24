@@ -107,7 +107,7 @@ public:
 	virtual void update() = 0;
 
 
-	virtual void draw( void ){DEBUG_CRASH(("Shouldn't call base class.  jba."));}
+	virtual void draw( ){DEBUG_CRASH(("Shouldn't call base class.  jba."));}
 
 #ifdef DUMP_PERF_STATS
 	void UPDATE(void);
@@ -128,13 +128,13 @@ protected:
 	Bool m_dumpUpdate;
 	Bool m_dumpDraw;
 #else
-	void UPDATE(void) {update();}
-	void DRAW(void) {draw();}
+	void UPDATE() {update();}
+	void DRAW() {draw();}
 #endif
 protected:
 	AsciiString m_name;
 public:
-	AsciiString getName(void) {return m_name;}
+	AsciiString getName() {return m_name;}
 	void setName(AsciiString name) {m_name = name;}
 
 };

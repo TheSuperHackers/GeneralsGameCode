@@ -217,7 +217,7 @@ W3DLaserDraw::W3DLaserDraw( Thing *thing, const ModuleData* moduleData ) :
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-W3DLaserDraw::~W3DLaserDraw( void )
+W3DLaserDraw::~W3DLaserDraw( )
 {
 	const W3DLaserDrawModuleData *data = getW3DLaserDrawModuleData();
 
@@ -457,7 +457,7 @@ void W3DLaserDraw::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void W3DLaserDraw::loadPostProcess( void )
+void W3DLaserDraw::loadPostProcess( )
 {
 
 	// extend base class

@@ -81,18 +81,18 @@ class PrototypeClass
 
 public:
 
-	PrototypeClass(void) : NextHash(nullptr) {}
+	PrototypeClass() : NextHash(nullptr) {}
 
-	virtual const char *			Get_Name(void)	const = 0;
-	virtual int								Get_Class_ID(void) const = 0;
-	virtual RenderObjClass *	Create(void) = 0;
+	virtual const char *			Get_Name()	const = 0;
+	virtual int								Get_Class_ID() const = 0;
+	virtual RenderObjClass *	Create() = 0;
 	virtual void							DeleteSelf() = 0;
 
 	void friend_setNextHash(PrototypeClass* n) { NextHash = n; }
 	PrototypeClass* friend_getNextHash() { return NextHash; }
 
 protected:
-	virtual ~PrototypeClass(void) {};
+	virtual ~PrototypeClass() {};
 
 private:
 	PrototypeClass *				NextHash;
@@ -108,15 +108,15 @@ class PrimitivePrototypeClass : public W3DMPO, public PrototypeClass
 public:
 	PrimitivePrototypeClass(RenderObjClass * proto);
 
-	virtual const char *			Get_Name(void) const;
-	virtual int						Get_Class_ID(void) const;
-	virtual RenderObjClass *	Create(void);
+	virtual const char *			Get_Name() const;
+	virtual int						Get_Class_ID() const;
+	virtual RenderObjClass *	Create();
 	virtual void							DeleteSelf()										{ delete this; }
 
 	RenderObjClass *				Proto;
 
 protected:
-	virtual ~PrimitivePrototypeClass(void);
+	virtual ~PrimitivePrototypeClass();
 };
 
 /*
@@ -130,10 +130,10 @@ class PrototypeLoaderClass
 
 public:
 
-	PrototypeLoaderClass(void) {}
-	~PrototypeLoaderClass(void) {}
+	PrototypeLoaderClass() {}
+	~PrototypeLoaderClass() {}
 
-	virtual int						Chunk_Type(void) = 0;
+	virtual int						Chunk_Type() = 0;
 	virtual PrototypeClass *	Load_W3D(ChunkLoadClass & cload) = 0;
 
 private:
@@ -152,7 +152,7 @@ class MeshLoaderClass : public PrototypeLoaderClass
 {
 public:
 
-	virtual int						Chunk_Type(void) { return W3D_CHUNK_MESH; }
+	virtual int						Chunk_Type() { return W3D_CHUNK_MESH; }
 	virtual PrototypeClass *	Load_W3D(ChunkLoadClass & cload);
 };
 
@@ -160,7 +160,7 @@ class HModelLoaderClass : public PrototypeLoaderClass
 {
 public:
 
-	virtual int						Chunk_Type(void) { return W3D_CHUNK_HMODEL; }
+	virtual int						Chunk_Type() { return W3D_CHUNK_HMODEL; }
 	virtual PrototypeClass *	Load_W3D(ChunkLoadClass & cload);
 };
 

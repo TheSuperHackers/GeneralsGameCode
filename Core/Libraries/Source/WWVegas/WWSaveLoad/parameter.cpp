@@ -292,7 +292,7 @@ StringParameterClass::Copy_Value (const ParameterClass &src)
 //
 /////////////////////////////////////////////////////////////////////
 const char *
-StringParameterClass::Get_String (void) const
+StringParameterClass::Get_String () const
 {
 	const char * string = nullptr;
 	if (m_String != nullptr) {

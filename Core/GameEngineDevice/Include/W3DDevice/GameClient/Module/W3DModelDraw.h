@@ -332,7 +332,7 @@ private:
 public:
  	virtual void crc( Xfer *xfer );
  	virtual void xfer( Xfer *xfer );
- 	virtual void loadPostProcess( void );
+ 	virtual void loadPostProcess( );
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -353,8 +353,8 @@ public:
 	/// the draw method
 	virtual void doDrawModule(const Matrix3D* transformMtx);
 	virtual void setShadowsEnabled(Bool enable);
-	virtual void releaseShadows(void);	///< frees all shadow resources used by this module - used by Options screen.
-	virtual void allocateShadows(void); ///< create shadow resources if not already present. Used by Options screen.
+	virtual void releaseShadows();	///< frees all shadow resources used by this module - used by Options screen.
+	virtual void allocateShadows(); ///< create shadow resources if not already present. Used by Options screen.
 
 #if defined(RTS_DEBUG)
 	virtual void getRenderCost(RenderCost & rc) const;  ///< estimates the render cost of this draw module
@@ -423,7 +423,7 @@ public:
 
 	///@todo: I had to make this public because W3DDevice needs access for casting shadows -MW
 	RenderObjClass *getRenderObject() { return m_renderObject; }
-	virtual Bool updateBonesForClientParticleSystems( void );///< this will reposition particle systems on the fly ML
+	virtual Bool updateBonesForClientParticleSystems( );///< this will reposition particle systems on the fly ML
 
 	virtual void onDrawableBoundToObject();
 	virtual void setTerrainDecalSize(Real x, Real y);
@@ -431,7 +431,7 @@ public:
 
 protected:
 
-	virtual void onRenderObjRecreated(void){};
+	virtual void onRenderObjRecreated(){};
 
 	const ModelConditionInfo* getCurState() const { return m_curState; }
 

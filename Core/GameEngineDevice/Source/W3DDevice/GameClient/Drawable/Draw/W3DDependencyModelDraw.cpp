@@ -186,7 +186,7 @@ void W3DDependencyModelDraw::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void W3DDependencyModelDraw::loadPostProcess( void )
+void W3DDependencyModelDraw::loadPostProcess( )
 {
 
 	// extend base class

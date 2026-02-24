@@ -230,7 +230,7 @@ class RefCountPtr
 			return RefCountPtr<T>(t, RefCountPtr<T>::PEEK);
 		}
 
-		RefCountPtr(void)
+		RefCountPtr()
 			: Referent(0)
 		{
 		}
@@ -329,7 +329,7 @@ class RefCountPtr
 			return *this;
 		}
 
-		~RefCountPtr(void)
+		~RefCountPtr()
 		{
 			if (Referent) {
 				Referent->Release_Ref();
@@ -344,12 +344,12 @@ class RefCountPtr
 		// class automatically when trying to compare against 0 or with !my_ptr
 		// However, the compiler will not perform conversions from DummyPtrType *
 		//  (except to void *, which is probably acceptable).
-		operator const DummyPtrType *(void) const
+		operator const DummyPtrType *() const
 		{
 			return (DummyPtrType *)(Referent);
 		}
 
-		void Clear(void)
+		void Clear()
 		{
 			if (Referent) {
 				Referent->Release_Ref();
@@ -357,12 +357,12 @@ class RefCountPtr
 			}
 		}
 
-		T * operator ->(void) const
+		T * operator ->() const
 		{
 			return Referent;
 		}
 
-		T & operator *(void) const
+		T & operator *() const
 		{
 			WWASSERT(0 != Referent);
 			return *Referent;
@@ -371,13 +371,13 @@ class RefCountPtr
 		// Note : This should typically only be used when mixing code that uses RefCountPtr and
 		//   manually managed ref counts on raw points.
 		// Code that consistently uses RefCountPtr should never get a hold of a raw T*
-		T * Peek(void) const
+		T * Peek() const
 		{
 			return Referent;
 		}
 
 		// Releases the held pointer without changing its reference counter.
-		T * Release(void)
+		T * Release()
 		{
 			T * p = Referent;
 			Referent = 0;

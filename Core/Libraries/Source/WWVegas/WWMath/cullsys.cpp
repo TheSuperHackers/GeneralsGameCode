@@ -44,14 +44,14 @@
 ** CullableClass Implementation
 **
 *************************************************************************/
-CullableClass::CullableClass(void) :
+CullableClass::CullableClass() :
 	CullLink(nullptr),
 	NextCollected(nullptr)
 {
 	CullBox.Init(Vector3(0,0,0),Vector3(1,1,1));
 }
 
-CullableClass::~CullableClass(void)
+CullableClass::~CullableClass()
 {
 	// the cull system that contains us is responsible for any culling link
 	// so we better be out of it and it should have cleared our pointer before
@@ -83,7 +83,7 @@ void CullableClass::Set_Culling_System(CullSystemClass * sys)
 	}
 }
 
-CullSystemClass * CullableClass::Get_Culling_System(void) const
+CullSystemClass * CullableClass::Get_Culling_System() const
 {
 	if (CullLink) {
 		return CullLink->Get_Culling_System();
@@ -100,18 +100,18 @@ CullSystemClass * CullableClass::Get_Culling_System(void) const
 ** current collection list and iterating through it.
 **
 *************************************************************************/
-CullSystemClass::CullSystemClass(void) :
+CullSystemClass::CullSystemClass() :
 	CollectionHead(nullptr)
 {
 }
 
-CullSystemClass::~CullSystemClass(void)
+CullSystemClass::~CullSystemClass()
 {
 }
 
 // NOTE: THE Get_() functions currently are the same as the Peek_() functions (e.g., they do not
 // add a Ref). This is wrong and will be fixed.
-CullableClass * CullSystemClass::Get_First_Collected_Object_Internal(void)
+CullableClass * CullSystemClass::Get_First_Collected_Object_Internal()
 {
 	return CollectionHead;
 }
@@ -124,7 +124,7 @@ CullableClass * CullSystemClass::Get_Next_Collected_Object_Internal(CullableClas
 	return nullptr;
 }
 
-CullableClass * CullSystemClass::Peek_First_Collected_Object_Internal(void)
+CullableClass * CullSystemClass::Peek_First_Collected_Object_Internal()
 {
 	return CollectionHead;
 }
@@ -137,7 +137,7 @@ CullableClass * CullSystemClass::Peek_Next_Collected_Object_Internal(CullableCla
 	return nullptr;
 }
 
-void CullSystemClass::Reset_Collection(void)
+void CullSystemClass::Reset_Collection()
 {
 	CollectionHead = nullptr;
 }

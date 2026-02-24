@@ -53,7 +53,7 @@ class LineSegClass
 
 public:
 
-	LineSegClass(void) { }
+	LineSegClass() { }
 	LineSegClass(const Vector3 & p0,const Vector3 & p1) : P0(p0), P1(p1) { recalculate(); }
 	LineSegClass(const LineSegClass & that,const Matrix3D & tm) { Set(that,tm); }
 
@@ -74,7 +74,7 @@ public:
 
 protected:
 
-	void					recalculate(void) { DP = P1 - P0; Dir = DP; Dir.Normalize(); Length = DP.Length(); }
+	void					recalculate() { DP = P1 - P0; Dir = DP; Dir.Normalize(); Length = DP.Length(); }
 
 	Vector3				P0;		// start point
 	Vector3				P1;		// end point

@@ -109,7 +109,7 @@ RandomClass::RandomClass(unsigned seed) :
  * HISTORY:                                                                                    *
  *   02/27/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-int RandomClass::operator ()(void)
+int RandomClass::operator ()()
 {
 	/*
 	**	Transform the seed value into the next number in the sequence.
@@ -190,7 +190,7 @@ Random2Class::Random2Class(unsigned seed) :
  * HISTORY:                                                                                    *
  *   05/20/1997 JLB : Created.                                                                 *
  *=============================================================================================*/
-int Random2Class::operator() (void)
+int Random2Class::operator() ()
 {
 	Table[Index1] ^= Table[Index2];
 	int val = Table[Index1];
@@ -296,7 +296,7 @@ Random3Class::Random3Class(unsigned seed1, unsigned seed2) :
  * HISTORY:                                                                                    *
  *   05/20/1997 JLB : Created.                                                                 *
  *=============================================================================================*/
-int Random3Class::operator() (void)
+int Random3Class::operator() ()
 {
 	int loword = Seed;
 	int hiword = Index++;
@@ -368,7 +368,7 @@ Random4Class::Random4Class(unsigned int seed)
 	 // mti is N+1 after this
 }
 
-int Random4Class::operator() (void)
+int Random4Class::operator() ()
 {
     unsigned int y;
     static unsigned int mag01[2]={0x0, MATRIX_A};

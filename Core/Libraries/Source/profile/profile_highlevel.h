@@ -51,7 +51,7 @@ public:
     friend ProfileHighLevel;
 
   public:
-    Id(void): m_idPtr(0) {}
+    Id(): m_idPtr(0) {}
 
     /**
       \brief Increment the internal profile value.
@@ -80,21 +80,21 @@ public:
 
       \return internal Id name, e.g. 'render.texture.count.512x512'
     */
-    const char *GetName(void) const;
+    const char *GetName() const;
 
     /**
       \brief Returns the descriptive name.
 
       \return descriptive name, e.g. '# of 512x512 textures'
     */
-    const char *GetDescr(void) const;
+    const char *GetDescr() const;
 
     /**
       \brief Returns the value's unit text.
 
       \return unit text, e.g. 'bytes'
     */
-    const char *GetUnit(void) const;
+    const char *GetUnit() const;
 
     /**
       \brief Returns the current value.
@@ -110,7 +110,7 @@ public:
 
       \return current value
     */
-    const char *GetCurrentValue(void) const;
+    const char *GetCurrentValue() const;
 
     /**
       \brief Returns the value for the given recorded frame/range.
@@ -133,7 +133,7 @@ public:
 
       \return total value
     */
-    const char *GetTotalValue(void) const;
+    const char *GetTotalValue() const;
 
   private:
 
@@ -227,7 +227,7 @@ private:
     We can make this private as well so nobody accidentally tries to create
     another instance.
   */
-  ProfileHighLevel(void);
+  ProfileHighLevel();
 
   /**
     \brief The only high level profiler instance.

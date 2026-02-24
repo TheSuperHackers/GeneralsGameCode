@@ -46,11 +46,11 @@
 class Pipe
 {
 	public:
-		Pipe(void) : ChainTo(0), ChainFrom(0) {}
-		virtual ~Pipe(void);
+		Pipe() : ChainTo(0), ChainFrom(0) {}
+		virtual ~Pipe();
 
-		virtual int Flush(void);
-		virtual int End(void) {return(Flush());}
+		virtual int Flush();
+		virtual int End() {return(Flush());}
 		virtual void Put_To(Pipe * pipe);
 		void Put_To(Pipe & pipe) {Put_To(&pipe);}
 		virtual int Put(void const * source, int slen);

@@ -145,7 +145,7 @@ struct BTCollisionStruct
 		Reset();
 	}
 
-	void Reset(void)
+	void Reset()
 	{
 		StartBad = true;				// true until an axis clears it
 		MaxFrac = -1.0f;				// maximum move allowed so far (accept slightly negative but clamp to zero at end)

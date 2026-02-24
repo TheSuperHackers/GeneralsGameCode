@@ -78,8 +78,8 @@ class W3DTerrainBackground
 friend class HeightMapRenderObjClass;
 public:
 
-	W3DTerrainBackground(void);
-	~W3DTerrainBackground(void);
+	W3DTerrainBackground();
+	~W3DTerrainBackground();
 	/// Draws the terrain.
 	void drawVisiblePolys(RenderInfoClass & rinfo, Bool disableTextures);
 	void setFlip(WorldHeightMap *htMap); ///< Sets the flip bit for required vertices.
@@ -87,9 +87,9 @@ public:
 	void doTesselatedUpdate(const IRegion2D &partialRange, WorldHeightMap *htMap, Bool doTextures );
 	void allocateTerrainBuffers(WorldHeightMap *htMap, Int xOrigin, Int yOrigin, Int width);							 ///< Allocates the buffers.
 	void updateCenter(CameraClass *camera); // notify camera moved [3/24/2003]
-	void updateTexture(void); // notify camera moved [3/24/2003]
-	Bool isCulled(void) {return m_cullStatus==CULL_STATUS_INVISIBLE;}
-	Int getTexMultiplier(void) {return m_texMultiplier;}
+	void updateTexture(); // notify camera moved [3/24/2003]
+	Bool isCulled() {return m_cullStatus==CULL_STATUS_INVISIBLE;}
+	Int getTexMultiplier() {return m_texMultiplier;}
 protected:
 	enum {CULL_STATUS_UNKNOWN, CULL_STATUS_VISIBLE, CULL_STATUS_INVISIBLE} m_cullStatus;
 	AABoxClass						m_bounds;
@@ -115,7 +115,7 @@ protected:
 
 protected:
 	typedef enum {HORIZONTAL, VERTICAL} TDirection;
-	void freeTerrainBuffers(void);									 ///< Frees the index and vertex buffers.
+	void freeTerrainBuffers();									 ///< Frees the index and vertex buffers.
 	void fillVBRecursive(UnsignedShort *ib, Int xOffset, Int yOffset, Int width, UnsignedShort *ndx, Int &curIndex);
 	void setFlipRecursive(Int xOffset, Int yOffset, Int width);
 	Bool advanceLeft(ICoord2D &left, Int xOffset, Int yOffset, Int width);

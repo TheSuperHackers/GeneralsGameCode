@@ -60,8 +60,8 @@ public:
 	///////////////////////////////////////////////////////////////////
 	//	Public constructors/destructors
 	///////////////////////////////////////////////////////////////////
-	SoundHandleClass (void);
-	virtual ~SoundHandleClass (void);
+	SoundHandleClass ();
+	virtual ~SoundHandleClass ();
 
 	///////////////////////////////////////////////////////////////////
 	//	Public methods
@@ -70,17 +70,17 @@ public:
 	//
 	//	RTTI
 	//
-	virtual Sound3DHandleClass *		As_Sound3DHandleClass (void)		{ return nullptr; }
-	virtual Sound2DHandleClass *		As_Sound2DHandleClass (void)		{ return nullptr; }
-	virtual SoundStreamHandleClass *	As_SoundStreamHandleClass (void)	{ return nullptr; }
-	virtual ListenerHandleClass *		As_ListenerHandleClass (void)		{ return nullptr; }
+	virtual Sound3DHandleClass *		As_Sound3DHandleClass ()		{ return nullptr; }
+	virtual Sound2DHandleClass *		As_Sound2DHandleClass ()		{ return nullptr; }
+	virtual SoundStreamHandleClass *	As_SoundStreamHandleClass ()	{ return nullptr; }
+	virtual ListenerHandleClass *		As_ListenerHandleClass ()		{ return nullptr; }
 
 	//
 	//	Handle access
 	//
-	virtual H3DSAMPLE		Get_H3DSAMPLE (void)		{ return nullptr; }
-	virtual HSAMPLE		Get_HSAMPLE (void)		{ return nullptr; }
-	virtual HSTREAM		Get_HSTREAM (void)		{ return nullptr; }
+	virtual H3DSAMPLE		Get_H3DSAMPLE ()		{ return nullptr; }
+	virtual HSAMPLE		Get_HSAMPLE ()		{ return nullptr; }
+	virtual HSTREAM		Get_HSTREAM ()		{ return nullptr; }
 
 	//
 	//	Initialization
@@ -91,21 +91,21 @@ public:
 	//
 	//	Sample control
 	//
-	virtual void	Start_Sample (void) = 0;
-	virtual void	Stop_Sample (void) = 0;
-	virtual void	Resume_Sample (void) = 0;
-	virtual void	End_Sample (void) = 0;
+	virtual void	Start_Sample () = 0;
+	virtual void	Stop_Sample () = 0;
+	virtual void	Resume_Sample () = 0;
+	virtual void	End_Sample () = 0;
 	virtual void	Set_Sample_Pan (S32 pan) = 0;
-	virtual S32		Get_Sample_Pan (void) = 0;
+	virtual S32		Get_Sample_Pan () = 0;
 	virtual void	Set_Sample_Volume (S32 volume) = 0;
-	virtual S32		Get_Sample_Volume (void) = 0;
+	virtual S32		Get_Sample_Volume () = 0;
 	virtual void	Set_Sample_Loop_Count (U32 count) = 0;
-	virtual U32		Get_Sample_Loop_Count (void) = 0;
+	virtual U32		Get_Sample_Loop_Count () = 0;
 	virtual void	Set_Sample_MS_Position (U32 ms) = 0;
 	virtual void	Get_Sample_MS_Position (S32 *len, S32 *pos) = 0;
 	virtual void	Set_Sample_User_Data (S32 i, void *val) = 0;
 	virtual void *	Get_Sample_User_Data (S32 i) = 0;
-	virtual S32		Get_Sample_Playback_Rate (void) = 0;
+	virtual S32		Get_Sample_Playback_Rate () = 0;
 	virtual void	Set_Sample_Playback_Rate (S32 rate) = 0;
 
 protected:

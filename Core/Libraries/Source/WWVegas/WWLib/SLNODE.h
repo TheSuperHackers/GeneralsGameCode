@@ -49,9 +49,9 @@ template	<class T> class SList;
 class	GenericSLNode : public AutoPoolClass<GenericSLNode, 256>
 {
 	protected:
-		void* Internal_Get_Next(void) { return NodeNext; };
+		void* Internal_Get_Next() { return NodeNext; };
 		void Internal_Set_Next(void* n) { NodeNext=n; };
-		void *Internal_Get_Data(void) { return NodeData; };
+		void *Internal_Get_Data() { return NodeData; };
 		void Internal_Get_Data(void* d) { NodeData=d; };
 
 		//
@@ -68,7 +68,7 @@ class	GenericSLNode : public AutoPoolClass<GenericSLNode, 256>
 		//	that it cannot be used.
 		//
 	private:
-		GenericSLNode(void) {};
+		GenericSLNode() {};
 
 		void		*NodeNext;			//	Next Node in the list chain
 		void		*NodeData;			//	Current Node in the list chain
@@ -85,8 +85,8 @@ class	SLNode : public GenericSLNode
 		//
 		friend class SList<T>;
 
-		SLNode<T>* Next(void) { return reinterpret_cast<SLNode<T>*>(Internal_Get_Next()); }
-		T *Data(void) { return reinterpret_cast<T*>(Internal_Get_Data()); }
+		SLNode<T>* Next() { return reinterpret_cast<SLNode<T>*>(Internal_Get_Next()); }
+		T *Data() { return reinterpret_cast<T*>(Internal_Get_Data()); }
 
 		void Set_Next(SLNode<T>* n) { Internal_Set_Next(reinterpret_cast<void*>(n)); }
 
@@ -104,5 +104,5 @@ class	SLNode : public GenericSLNode
 		//	that it cannot be used.
 		//
 	private:
-		SLNode(void) {};
+		SLNode() {};
 };

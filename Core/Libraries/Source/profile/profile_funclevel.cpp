@@ -735,22 +735,22 @@ bool ProfileFuncLevel::IdList::Enum(unsigned index, Id &id, unsigned *) const
   return false;
 }
 
-const char *ProfileFuncLevel::Id::GetSource(void) const
+const char *ProfileFuncLevel::Id::GetSource() const
 {
   return nullptr;
 }
 
-const char *ProfileFuncLevel::Id::GetFunction(void) const
+const char *ProfileFuncLevel::Id::GetFunction() const
 {
   return nullptr;
 }
 
-unsigned ProfileFuncLevel::Id::GetAddress(void) const
+unsigned ProfileFuncLevel::Id::GetAddress() const
 {
   return 0;
 }
 
-unsigned ProfileFuncLevel::Id::GetLine(void) const
+unsigned ProfileFuncLevel::Id::GetLine() const
 {
   return 0;
 }
@@ -785,7 +785,7 @@ bool ProfileFuncLevel::EnumThreads(unsigned index, Thread &thread)
   return false;
 }
 
-ProfileFuncLevel::ProfileFuncLevel(void)
+ProfileFuncLevel::ProfileFuncLevel()
 {
 }
 

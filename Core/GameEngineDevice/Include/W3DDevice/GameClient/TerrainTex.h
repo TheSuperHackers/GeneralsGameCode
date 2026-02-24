@@ -139,5 +139,5 @@ public:
 
 		// just use default destructor. ~TerrainTextureClass(void);
 
-		void restore(void);
+		void restore();
 };

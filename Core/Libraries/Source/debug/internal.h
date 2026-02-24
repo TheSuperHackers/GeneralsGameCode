@@ -88,7 +88,7 @@ public:
   virtual bool Execute(class Debug& dbg, const char *cmd, CommandMode cmdmode,
                        unsigned argn, const char * const * argv);
 
-  virtual void Delete(void)
+  virtual void Delete()
   {
     this->~DebugCmdInterfaceDebug();
     DebugFreeMemory(this);

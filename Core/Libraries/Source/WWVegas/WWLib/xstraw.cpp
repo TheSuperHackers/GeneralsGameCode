@@ -140,7 +140,7 @@ int FileStraw::Get(void * source, int slen)
  * HISTORY:                                                                                    *
  *   07/03/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-FileStraw::~FileStraw(void)
+FileStraw::~FileStraw()
 {
 	if (Valid_File() && HasOpened) {
 		File->Close();

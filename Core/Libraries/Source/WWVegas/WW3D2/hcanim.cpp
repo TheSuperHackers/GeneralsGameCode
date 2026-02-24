@@ -169,7 +169,7 @@ NodeCompressedMotionStruct::~NodeCompressedMotionStruct()
  * HISTORY:                                                                                    *
  *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-HCompressedAnimClass::HCompressedAnimClass(void) :
+HCompressedAnimClass::HCompressedAnimClass() :
 	NumFrames(0),
 	NumNodes(0),
 	Flavor(0),
@@ -193,7 +193,7 @@ HCompressedAnimClass::HCompressedAnimClass(void) :
  * HISTORY:                                                                                    *
  *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-HCompressedAnimClass::~HCompressedAnimClass(void)
+HCompressedAnimClass::~HCompressedAnimClass()
 {
 	Free();
 }
@@ -211,7 +211,7 @@ HCompressedAnimClass::~HCompressedAnimClass(void)
  * HISTORY:                                                                                    *
  *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-void HCompressedAnimClass::Free(void)
+void HCompressedAnimClass::Free()
 {
 	delete[] NodeMotion;
 	NodeMotion = nullptr;

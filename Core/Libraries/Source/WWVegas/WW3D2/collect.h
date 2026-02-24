@@ -56,20 +56,20 @@ class CollectionClass : public CompositeRenderObjClass
 {
 public:
 
-	CollectionClass(void);
+	CollectionClass();
 	CollectionClass(const CollectionDefClass & def);
 	CollectionClass(const CollectionClass & src);
 	CollectionClass & operator = (const CollectionClass &);
-	virtual ~CollectionClass(void);
-	virtual RenderObjClass *	Clone(void) const;
+	virtual ~CollectionClass();
+	virtual RenderObjClass *	Clone() const;
 
-	virtual int						Class_ID(void)	const;
-	virtual int						Get_Num_Polys(void) const;
+	virtual int						Class_ID()	const;
+	virtual int						Get_Num_Polys() const;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Proxy interface
 	/////////////////////////////////////////////////////////////////////////////
-	virtual int						Get_Proxy_Count (void) const;
+	virtual int						Get_Proxy_Count () const;
 	virtual bool					Get_Proxy (int index, ProxyClass &proxy) const;
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -83,7 +83,7 @@ public:
 	/////////////////////////////////////////////////////////////////////////////
 	virtual void 					Set_Transform(const Matrix3D &m);
 	virtual void 					Set_Position(const Vector3 &v);
-	virtual int						Get_Num_Sub_Objects(void) const;
+	virtual int						Get_Num_Sub_Objects() const;
 	virtual RenderObjClass *	Get_Sub_Object(int index) const;
 	virtual int						Add_Sub_Object(RenderObjClass * subobj);
 	virtual int						Remove_Sub_Object(RenderObjClass * robj);
@@ -107,16 +107,16 @@ public:
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface - Attributes, Options, Properties, etc
 	/////////////////////////////////////////////////////////////////////////////
-	virtual int						Snap_Point_Count(void);
+	virtual int						Snap_Point_Count();
 	virtual void					Get_Snap_Point(int index,Vector3 * set);
 	virtual void					Scale(float scale);
 	virtual void					Scale(float scalex, float scaley, float scalez);
-   virtual void               Update_Obj_Space_Bounding_Volumes(void);
+   virtual void               Update_Obj_Space_Bounding_Volumes();
 
 protected:
 
-	void								Free(void);
-	void								Update_Sub_Object_Transforms(void);
+	void								Free();
+	void								Update_Sub_Object_Transforms();
 
 	DynamicVectorClass <ProxyClass>			ProxyList;
 	DynamicVectorClass <RenderObjClass *>	SubObjects;
@@ -135,7 +135,7 @@ class CollectionLoaderClass : public PrototypeLoaderClass
 {
 public:
 
-	virtual int						Chunk_Type(void) { return W3D_CHUNK_COLLECTION; }
+	virtual int						Chunk_Type() { return W3D_CHUNK_COLLECTION; }
 	virtual PrototypeClass *	Load_W3D(ChunkLoadClass & cload);
 };
 

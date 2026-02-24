@@ -81,7 +81,7 @@ FirewallHelperClass * createFirewallHelper()
  *=============================================================================================*/
 /* static */ Int FirewallHelperClass::m_sourcePortPool = 4096;
 
-FirewallHelperClass::FirewallHelperClass(void)
+FirewallHelperClass::FirewallHelperClass()
 {
 	m_currentTry = 0;
 	m_numManglers = 0;
@@ -148,7 +148,7 @@ FirewallHelperClass::~FirewallHelperClass()
  * HISTORY:                                                                                    *
  *   3/29/01 1:04AM ST : Created                                                               *
  *=============================================================================================*/
-void FirewallHelperClass::reset(void)
+void FirewallHelperClass::reset()
 {
 	closeAllSpareSockets();
 	m_currentState = DETECTIONSTATE_IDLE;
@@ -174,7 +174,7 @@ void FirewallHelperClass::reset(void)
  * HISTORY:                                                                                    *
  *   3/15/01 6:47PM ST : Created                                                               *
  *=============================================================================================*/
-Bool FirewallHelperClass::detectFirewall(void)
+Bool FirewallHelperClass::detectFirewall()
 {
 	OptionPreferences pref;
 
@@ -497,7 +497,7 @@ UnsignedShort FirewallHelperClass::getManglerResponse(UnsignedShort packetID, In
  * HISTORY:                                                                                    *
  *   3/22/01 10:23PM ST : Created                                                              *
  *=============================================================================================*/
-void FirewallHelperClass::writeFirewallBehavior(void)
+void FirewallHelperClass::writeFirewallBehavior()
 {
 	OptionPreferences pref;
 
@@ -557,7 +557,7 @@ void FirewallHelperClass::flagNeedToRefresh(Bool flag)
  * HISTORY:                                                                                    *
  *   3/22/01 10:25PM ST : Created                                                              *
  *=============================================================================================*/
-void FirewallHelperClass::readFirewallBehavior(void)
+void FirewallHelperClass::readFirewallBehavior()
 {
 #if (0)
 	m_lastBehavior = (FirewallBehaviorType) ConfigINI.Get_Int("MultiPlayer", "FirewallSettings", FIREWALL_UNKNOWN);
