@@ -457,4 +457,3 @@ Bool FileSystem::isPathInDirectory(const AsciiString& testPath, const AsciiStrin
 
 	return true;
 }
-
