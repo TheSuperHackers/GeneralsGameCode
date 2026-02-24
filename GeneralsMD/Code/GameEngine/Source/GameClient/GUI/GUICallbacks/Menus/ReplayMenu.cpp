@@ -575,7 +575,7 @@ void reallyLoadReplay()
 	// during version mismatch prompt, using the same error pattern as deleteReplay
 	AsciiString filepath = TheRecorder->getReplayDir();
 	filepath.concat(asciiFilename);
-	if(GetFileAttributes(filepath.str()) == INVALID_FILE_ATTRIBUTES)
+	if(GetFileAttributes(filepath.str()) == 0xFFFFFFFF)
 	{
 		char buffer[1024];
 		FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, nullptr, GetLastError(), 0, buffer, sizeof(buffer), nullptr);
