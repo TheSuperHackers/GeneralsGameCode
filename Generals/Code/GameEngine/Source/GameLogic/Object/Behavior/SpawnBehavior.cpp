@@ -90,7 +90,7 @@ SpawnBehavior::SpawnBehavior( Thing *thing, const ModuleData* moduleData )
 }
 
 //-------------------------------------------------------------------------------------------------
-SpawnBehavior::~SpawnBehavior( )
+SpawnBehavior::~SpawnBehavior()
 {
 	m_replacementTimes.clear();
 }
@@ -188,7 +188,7 @@ void SpawnBehavior::onDie( const DamageInfo *damageInfo )
 }
 
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime SpawnBehavior::update( )
+UpdateSleepTime SpawnBehavior::update()
 {
 /// @todo srj use SLEEPY_UPDATE here
 
@@ -468,7 +468,7 @@ class OrphanData
 
 public:
 
-	OrphanData( );
+	OrphanData();
 
 	const ThingTemplate *m_matchTemplate;
 	Object *m_source;
@@ -480,7 +480,7 @@ public:
 #define BIG_DISTANCE 99999999.9f
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-OrphanData::OrphanData( )
+OrphanData::OrphanData()
 {
 
 	m_matchTemplate = nullptr;
@@ -516,7 +516,7 @@ static void findClosestOrphan( Object *obj, void *userData )
 }
 
 // ------------------------------------------------------------------------------------------------
-Object *SpawnBehavior::reclaimOrphanSpawn( )
+Object *SpawnBehavior::reclaimOrphanSpawn()
 {
 	Player *player = getObject()->getControllingPlayer();
 	const SpawnBehaviorModuleData *md = getSpawnBehaviorModuleData();
@@ -1069,7 +1069,7 @@ void SpawnBehavior::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void SpawnBehavior::loadPostProcess( )
+void SpawnBehavior::loadPostProcess()
 {
 
 	// extend base class

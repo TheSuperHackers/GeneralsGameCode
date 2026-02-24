@@ -615,7 +615,7 @@ WaterTracksRenderSystem::WaterTracksRenderSystem()
 //=============================================================================
 /** Destructor.  Free all pre-allocated track laying render objects*/
 //=============================================================================
-WaterTracksRenderSystem::~WaterTracksRenderSystem( )
+WaterTracksRenderSystem::~WaterTracksRenderSystem()
 {
 
 	// free all data
@@ -772,7 +772,7 @@ void WaterTracksRenderSystem::reset()
 //=============================================================================
 /** Shutdown and free all memory for this system */
 //=============================================================================
-void WaterTracksRenderSystem::shutdown( )
+void WaterTracksRenderSystem::shutdown()
 {
 	WaterTracksObj *nextMod,*mod;
 
@@ -839,7 +839,7 @@ void WaterTracksRenderSystem::update()
 
 
 void TestWaterUpdate();
-void setFPMode( );
+void setFPMode();
 
 //=============================================================================
 // WaterTracksRenderSystem::flush

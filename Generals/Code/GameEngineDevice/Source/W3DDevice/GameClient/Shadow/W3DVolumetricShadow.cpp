@@ -266,8 +266,8 @@ class W3DShadowGeometryMesh
 	friend class W3DVolumetricShadow;
 
 public:
-	W3DShadowGeometryMesh( );
-	~W3DShadowGeometryMesh( );
+	W3DShadowGeometryMesh();
+	~W3DShadowGeometryMesh();
 
 	/// @todo: Cache/Store face normals someplace so they are not recomputed when lights move.
 	Vector3 *GetPolygonNormal (long dwPolyNormId, Vector3 *pvNorm)
@@ -296,7 +296,7 @@ public:
 	}
 	int GetNumPolygon () const {return m_numPolygons;}
 	/// given loaded geometry this builds the polygon neighbor information
-	void buildPolygonNeighbors( );
+	void buildPolygonNeighbors();
 	void buildPolygonNormals()
 	{
 		if (!m_polygonNormals)
@@ -312,7 +312,7 @@ public:
 protected:
 	/// creating and deleting storage for the polygon neighbors
 	Bool allocateNeighbors( Int numPolys );
-	void deleteNeighbors( );
+	void deleteNeighbors();
 
 	// geometry shadow data access
 	PolyNeighbor *GetPolyNeighbor( Int polyIndex );
@@ -568,10 +568,10 @@ class W3DShadowGeometry : public RefCountClass, public	HashableClass
 
 	public:
 
-		W3DShadowGeometry( ) { };
-		~W3DShadowGeometry( ) { };
+		W3DShadowGeometry() { };
+		~W3DShadowGeometry() { };
 
-		virtual	const char * Get_Key( )	{ return m_namebuf;	}
+		virtual	const char * Get_Key()	{ return m_namebuf;	}
 
 		Int init (RenderObjClass *robj);
 		Int initFromHLOD (RenderObjClass *robj);	///<initialize the geometry from a W3D HLOD object.
@@ -750,7 +750,7 @@ Int W3DShadowGeometry::init(RenderObjClass *robj)
 
 // W3DShadowGeometry =============================================================
 // ============================================================================
-W3DShadowGeometryMesh::W3DShadowGeometryMesh( )
+W3DShadowGeometryMesh::W3DShadowGeometryMesh()
 {
 	// init polygon neighbor information
 	m_polyNeighbors = nullptr;
@@ -761,7 +761,7 @@ W3DShadowGeometryMesh::W3DShadowGeometryMesh( )
 
 // ~W3DShadowGeometry ============================================================
 // ============================================================================
-W3DShadowGeometryMesh::~W3DShadowGeometryMesh( )
+W3DShadowGeometryMesh::~W3DShadowGeometryMesh()
 {
 	// remove our neighbor list information allocated
 	deleteNeighbors();
@@ -796,7 +796,7 @@ PolyNeighbor *W3DShadowGeometryMesh::GetPolyNeighbor( Int polyIndex )
 // the faces in the new geometry so that we can efficiently traverse across
 // the surface to neighboring polygons
 // ============================================================================
-void W3DShadowGeometryMesh::buildPolygonNeighbors( )
+void W3DShadowGeometryMesh::buildPolygonNeighbors()
 {
 	Int numPolys;
 	Int i, j;
@@ -1009,7 +1009,7 @@ Bool W3DShadowGeometryMesh::allocateNeighbors( Int numPolys )
 // deleteNeighbors ============================================================
 // Delete all polygon neighbor storage and information
 // ============================================================================
-void W3DShadowGeometryMesh::deleteNeighbors( )
+void W3DShadowGeometryMesh::deleteNeighbors()
 {
 
 	// delete list
@@ -1532,7 +1532,7 @@ void W3DVolumetricShadow::RenderMeshVolumeBounds(Int meshIndex, Int lightIndex, 
 // Shadow =====================================================================
 // Shadow default constructor
 // ============================================================================
-W3DVolumetricShadow::W3DVolumetricShadow( )
+W3DVolumetricShadow::W3DVolumetricShadow()
 {
 	Int i,j;
 
@@ -1571,7 +1571,7 @@ W3DVolumetricShadow::W3DVolumetricShadow( )
 // ~W3DVolumetricShadow ====================================================================
 // W3DVolumetricShadow destructor
 // ============================================================================
-W3DVolumetricShadow::~W3DVolumetricShadow( )
+W3DVolumetricShadow::~W3DVolumetricShadow()
 {
 	Int i,j;
 
@@ -3186,7 +3186,7 @@ void W3DVolumetricShadow::resetSilhouette( Int meshIndex )
 // info and draw a big transparent rectangle over the screen for the final
 // shadow pass wherever there is data in the stencil buffer
 // ============================================================================
-void W3DVolumetricShadowManager::renderStencilShadows( )
+void W3DVolumetricShadowManager::renderStencilShadows()
 {
 	LPDIRECT3DDEVICE8 m_pDev=DX8Wrapper::_Get_D3D_Device8();
 
@@ -3504,7 +3504,7 @@ public:
 
 	void					Register_Missing( const char * name );
 	Bool					Is_Missing( const char * name );
-	void					Reset_Missing( );
+	void					Reset_Missing();
 
 private:
 
@@ -3520,7 +3520,7 @@ private:
 class W3DShadowGeometryManagerIterator : public HashTableIteratorClass {
 public:
 	W3DShadowGeometryManagerIterator( W3DShadowGeometryManager & manager ) : HashTableIteratorClass( *manager.GeomPtrTable ) {}
-	W3DShadowGeometry * Get_Current_Geom( );
+	W3DShadowGeometry * Get_Current_Geom();
 };
 
 /** Used to cause a rebuild of all shadow volumes*/
@@ -3548,7 +3548,7 @@ void W3DVolumetricShadowManager::invalidateCachedLightPositions()
 
 // W3DVolumetricShadowManager =============================================================
 // ============================================================================
-W3DVolumetricShadowManager::W3DVolumetricShadowManager( )
+W3DVolumetricShadowManager::W3DVolumetricShadowManager()
 {
 
 	m_shadowList = nullptr;
@@ -3561,7 +3561,7 @@ W3DVolumetricShadowManager::W3DVolumetricShadowManager( )
 
 // ~W3DVolumetricShadowManager ============================================================
 // ============================================================================
-W3DVolumetricShadowManager::~W3DVolumetricShadowManager( )
+W3DVolumetricShadowManager::~W3DVolumetricShadowManager()
 {
 	ReleaseResources();
 	delete m_W3DShadowGeometryManager;
@@ -3632,7 +3632,7 @@ Bool W3DVolumetricShadowManager::ReAcquireResources()
 // Init =======================================================================
 // User called initialization
 // ============================================================================
-Bool W3DVolumetricShadowManager::init( )
+Bool W3DVolumetricShadowManager::init()
 {
 	return TRUE;
 }
@@ -3640,7 +3640,7 @@ Bool W3DVolumetricShadowManager::init( )
 // Reset ======================================================================
 // Reset our list of shadows to empty
 // ============================================================================
-void W3DVolumetricShadowManager::reset( )
+void W3DVolumetricShadowManager::reset()
 {
 
 	assert (m_shadowList == nullptr);
@@ -3819,9 +3819,9 @@ class MissingGeomClass : public HashableClass {
 
 public:
 	MissingGeomClass( const char * name ) : Name( name ) {}
-	virtual	~MissingGeomClass( ) {}
+	virtual	~MissingGeomClass() {}
 
-	virtual	const char * Get_Key( )	{ return Name;	}
+	virtual	const char * Get_Key()	{ return Name;	}
 
 private:
 	StringClass	Name;
@@ -3895,7 +3895,7 @@ Error:
 /*
 ** Iterator converter from HashableClass to W3DShadowGeometry
 */
-W3DShadowGeometry * W3DShadowGeometryManagerIterator::Get_Current_Geom( )
+W3DShadowGeometry * W3DShadowGeometryManagerIterator::Get_Current_Geom()
 {
 	return (W3DShadowGeometry *)Get_Current();
 }

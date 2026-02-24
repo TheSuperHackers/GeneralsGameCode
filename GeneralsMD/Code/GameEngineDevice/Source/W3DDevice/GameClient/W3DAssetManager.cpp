@@ -1229,7 +1229,7 @@ void W3DAssetManager::Report_Used_Textures()
 
 //---------------------------------------------------------------------
 /**Report all used fonts*/
-void W3DAssetManager::Report_Used_Font3DDatas( )
+void W3DAssetManager::Report_Used_Font3DDatas()
 {
 	/*
 	** for each font data in the list, get it, check it's refcount, and and release ref it if the

@@ -189,7 +189,7 @@ void W3DDefaultDraw::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void W3DDefaultDraw::loadPostProcess( )
+void W3DDefaultDraw::loadPostProcess()
 {
 
 	// extend base class

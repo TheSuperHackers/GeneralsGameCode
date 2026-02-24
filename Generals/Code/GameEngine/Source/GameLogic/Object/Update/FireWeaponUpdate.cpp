@@ -71,14 +71,14 @@ FireWeaponUpdate::FireWeaponUpdate( Thing *thing, const ModuleData* moduleData )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-FireWeaponUpdate::~FireWeaponUpdate( )
+FireWeaponUpdate::~FireWeaponUpdate()
 {
 	deleteInstance(m_weapon);
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime FireWeaponUpdate::update( )
+UpdateSleepTime FireWeaponUpdate::update()
 {
 	// If my weapon is ready, shoot it.
 	if( isOkayToFire() )
@@ -136,7 +136,7 @@ void FireWeaponUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void FireWeaponUpdate::loadPostProcess( )
+void FireWeaponUpdate::loadPostProcess()
 {
 
 	// extend base class

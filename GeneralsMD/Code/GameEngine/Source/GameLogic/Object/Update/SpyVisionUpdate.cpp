@@ -52,7 +52,7 @@ SpyVisionUpdate::SpyVisionUpdate( Thing *thing, const ModuleData* moduleData ) :
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-SpyVisionUpdate::~SpyVisionUpdate( )
+SpyVisionUpdate::~SpyVisionUpdate()
 {
 }
 
@@ -130,7 +130,7 @@ void SpyVisionUpdate::onDisabledEdge( Bool nowDisabled )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime SpyVisionUpdate::update( )
+UpdateSleepTime SpyVisionUpdate::update()
 {
 	const SpyVisionUpdateModuleData *data = getSpyVisionUpdateModuleData();
 	UnsignedInt now = TheGameLogic->getFrame();
@@ -205,7 +205,7 @@ void SpyVisionUpdate::doActivationWork( Player *playerToSetFor, Bool setting )
 }
 
 //-------------------------------------------------------------------------------------------------
-void SpyVisionUpdate::onDelete( )
+void SpyVisionUpdate::onDelete()
 {
 	// If I was left on at the time of death, then turn me off.
 	if( m_currentlyActive )
@@ -267,7 +267,7 @@ void SpyVisionUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void SpyVisionUpdate::loadPostProcess( )
+void SpyVisionUpdate::loadPostProcess()
 {
 
 	// extend base class

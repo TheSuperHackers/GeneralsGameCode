@@ -181,7 +181,7 @@ static Int getFirstSelectablePlayer(const GameInfo *game)
 
 void updateMapStartSpots( GameInfo *myGame, GameWindow *buttonMapStartPositions[], Bool onLoadScreen = FALSE );
 void positionStartSpots( GameInfo *myGame, GameWindow *buttonMapStartPositions[], GameWindow *mapWindow);
-void LanPositionStartSpots( )
+void LanPositionStartSpots()
 {
 
 	positionStartSpots( TheLAN->GetMyGame(), buttonMapStartPosition, windowMap);
@@ -655,7 +655,7 @@ static void handleLimitSuperweaponsClick()
   }
 }
 
-void lanUpdateSlotList( )
+void lanUpdateSlotList()
 {
 	if(!AreSlotListUpdatesEnabled() || s_isIniting)
 		return;
@@ -668,7 +668,7 @@ void lanUpdateSlotList( )
 //-------------------------------------------------------------------------------------------------
 /** Initialize the Gadgets Options Menu */
 //-------------------------------------------------------------------------------------------------
-void InitLanGameGadgets( )
+void InitLanGameGadgets()
 {
 	//Initialize the gadget IDs
 	parentLanGameOptionsID = TheNameKeyGenerator->nameToKey( "LanGameOptionsMenu.wnd:LanGameOptionsMenuParent" );
@@ -788,7 +788,7 @@ void InitLanGameGadgets( )
 
 }
 
-void DeinitLanGameGadgets( )
+void DeinitLanGameGadgets()
 {
 	parentLanGameOptions = nullptr;
 	buttonEmote = nullptr;
@@ -936,7 +936,7 @@ void LanGameOptionsMenuInit( WindowLayout *layout, void *userData )
 //-------------------------------------------------------------------------------------------------
 /** Update options on screen */
 //-------------------------------------------------------------------------------------------------
-void updateGameOptions( )
+void updateGameOptions()
 {
 	LANGameInfo *theGame = TheLAN->GetMyGame();
 	UnicodeString mapDisplayName;

@@ -79,5 +79,5 @@ class PartitionSolver
 
 		// Solve could potentially take a LONG TIME (as in NEVER complete). This problem is NP-complete.
 		void solve();
-		const SolutionVec& getSolution( ) const;
+		const SolutionVec& getSolution() const;
 };

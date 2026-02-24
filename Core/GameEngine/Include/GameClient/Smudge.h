@@ -50,13 +50,13 @@ public:
 
 	friend class SmudgeManager;
 
-	SmudgeSet( );
+	SmudgeSet();
 	virtual ~SmudgeSet();
 	void reset();
 
 	Smudge *addSmudgeToSet();
 	void removeSmudgeFromSet ( Smudge &mySmudge);
-	DLListClass<Smudge> &getUsedSmudgeList( ) { return m_usedSmudgeList;}
+	DLListClass<Smudge> &getUsedSmudgeList() { return m_usedSmudgeList;}
 	Int getUsedSmudgeCount() { return m_usedSmudgeCount; }	///<active smudges that need rendering.
 
 private:
@@ -68,7 +68,7 @@ private:
 class SmudgeManager
 {
 public:
-	SmudgeManager( );
+	SmudgeManager();
 	virtual ~SmudgeManager();
 
 	virtual void init();

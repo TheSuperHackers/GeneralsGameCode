@@ -92,8 +92,8 @@ static AnimateWindowManager *theAnimateWindowManager = nullptr;
 WindowMsgHandledType BuddyControlSystem( GameWindow *window, UnsignedInt msg,
 														 WindowMsgData mData1, WindowMsgData mData2);
 void InitBuddyControls(Int type);
-void updateBuddyInfo( );
-static void grabWindowPointers( )
+void updateBuddyInfo();
+static void grabWindowPointers()
 {
 	for (Int i=0; i<MAX_SLOTS; ++i)
 	{
@@ -122,7 +122,7 @@ static void grabWindowPointers( )
 	}
 }
 
-static void releaseWindowPointers( )
+static void releaseWindowPointers()
 {
 	for (Int i=0; i<MAX_SLOTS; ++i)
 	{
@@ -279,7 +279,7 @@ void ShowDiplomacy( Bool immediate )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void ResetDiplomacy( )
+void ResetDiplomacy()
 {
 	if(theLayout)
 	{
@@ -454,7 +454,7 @@ WindowMsgHandledType DiplomacySystem( GameWindow *window, UnsignedInt msg,
 
 }
 
-void PopulateInGameDiplomacyPopup( )
+void PopulateInGameDiplomacyPopup()
 {
 	if (!TheGameInfo)
 		return;

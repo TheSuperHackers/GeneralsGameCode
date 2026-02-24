@@ -267,21 +267,21 @@ public:
 
 public:
 
-	Mouse( );
-	virtual ~Mouse( );
+	Mouse();
+	virtual ~Mouse();
 
 	// you may need to extend these for your device
 	virtual void parseIni();	///< parse ini settings associated with mouse (do this before init()).
-	virtual void init( );		///< init mouse, extend this functionality, do not replace
-	virtual void reset( );		///< Reset the system
-	virtual void update( );  ///< update the state of the mouse position and buttons
+	virtual void init();		///< init mouse, extend this functionality, do not replace
+	virtual void reset();		///< Reset the system
+	virtual void update();  ///< update the state of the mouse position and buttons
 	virtual void initCursorResources()=0;	///< needed so Win32 cursors can load resources before D3D device created.
 
-	virtual void createStreamMessages( );  /**< given state of device, create
+	virtual void createStreamMessages();  /**< given state of device, create
 																									 messages and put them on the
 																									 stream for the raw state. */
 
-	virtual void draw( );													///< draw the mouse
+	virtual void draw();													///< draw the mouse
 	virtual void setPosition( Int x, Int y );						///< set the mouse position
 	virtual void setCursor( MouseCursor cursor ) = 0;		///< set mouse cursor
 
@@ -291,24 +291,24 @@ public:
 	Bool isCursorCaptured(); ///< true if the mouse is captured in the game window
 
 	// access methods for the mouse data
-	const MouseIO *getMouseStatus( ) { return &m_currMouse; }							///< get current mouse status
+	const MouseIO *getMouseStatus() { return &m_currMouse; }							///< get current mouse status
 
   Int  getCursorTooltipDelay() { return m_tooltipDelay; }
   void setCursorTooltipDelay(Int delay) { m_tooltipDelay = delay; }
 
 	void setCursorTooltip( UnicodeString tooltip, Int tooltipDelay = -1, const RGBColor *color = nullptr, Real width = 1.0f );		///< set tooltip string at cursor
 	void setMouseText( UnicodeString text, const RGBAColorInt *color, const RGBAColorInt *dropColor );					///< set the cursor text, *NOT* the tooltip text
-	virtual void setMouseLimits( );					///< update the limit extents the mouse can move in
+	virtual void setMouseLimits();					///< update the limit extents the mouse can move in
 	MouseCursor getMouseCursor() { return m_currentCursor; }	///< get the current mouse cursor image type
 	virtual void setRedrawMode(RedrawMode mode)	{m_currentRedrawMode=mode;} ///<set cursor drawing method.
 	virtual RedrawMode getRedrawMode() { return m_currentRedrawMode; } //get cursor drawing method
 	virtual void setVisibility(Bool visible) { m_visible = visible; } // set visibility for load screens, etc
 	Bool getVisibility() { return m_visible; } // get visibility state
 
-	void drawTooltip( );					///< draw the tooltip text
-	void drawCursorText( );			///< draw the mouse cursor text
+	void drawTooltip();					///< draw the tooltip text
+	void drawCursorText();			///< draw the mouse cursor text
 	Int getCursorIndex( const AsciiString& name );
-	void resetTooltipDelay( );
+	void resetTooltipDelay();
 
 	virtual void loseFocus(); ///< called when window has lost focus
 	virtual void regainFocus(); ///< called when window has regained focus
@@ -354,8 +354,8 @@ protected:
 	void blockCapture(CursorCaptureBlockReason reason); // set a reason to block mouse capture
 	void onCursorCaptured(Bool captured); ///< called when the mouse was successfully captured or released
 
-	virtual void capture( ) = 0; ///< capture the mouse in the game window
-	virtual void releaseCapture( ) = 0; ///< release the mouse capture
+	virtual void capture() = 0; ///< capture the mouse in the game window
+	virtual void releaseCapture() = 0; ///< release the mouse capture
 
 	/// you must implement getting a buffered mouse event from you device here
 	virtual UnsignedByte getMouseEvent( MouseIO *result, Bool flush ) = 0;
@@ -363,9 +363,9 @@ protected:
 	//-----------------------------------------------------------------------------------------------
 
 	// internal methods
-	void updateMouseData( );													///< update the mouse with the current device data
+	void updateMouseData();													///< update the mouse with the current device data
 	void processMouseEvent( Int eventToProcess );			///< combine mouse events into final data
-	void checkForDrag( );												///< check for mouse drag
+	void checkForDrag();												///< check for mouse drag
 	void moveMouse( Int x, Int y, Int relOrAbs );			///< move mouse by delta or absolute
 
 	//---------------------------------------------------------------------------

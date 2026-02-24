@@ -655,7 +655,7 @@ void NetDestroyPlayerCommandMsg::setPlayerIndex( UnsignedInt playerIndex )
 /**
  * get the average CRC
  */
-UnsignedInt NetDestroyPlayerCommandMsg::getPlayerIndex( )
+UnsignedInt NetDestroyPlayerCommandMsg::getPlayerIndex()
 {
 	return m_playerIndex;
 }
@@ -936,13 +936,13 @@ size_t NetDisconnectVoteCommandMsg::getPackedByteCount() const {
 //-------------------------
 // NetProgressCommandMsg
 //-------------------------
-NetProgressCommandMsg::NetProgressCommandMsg( ) : NetCommandMsg()
+NetProgressCommandMsg::NetProgressCommandMsg() : NetCommandMsg()
 {
 	m_commandType = NETCOMMANDTYPE_PROGRESS;
 	m_percent = 0;
 }
 
-NetProgressCommandMsg::~NetProgressCommandMsg( ) {}
+NetProgressCommandMsg::~NetProgressCommandMsg() {}
 
 UnsignedByte NetProgressCommandMsg::getPercentage()
 {

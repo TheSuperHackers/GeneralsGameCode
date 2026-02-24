@@ -246,7 +246,7 @@ HAnimComboClass::~HAnimComboClass()
 }
 
 
-void	HAnimComboClass::Clear( )
+void	HAnimComboClass::Clear()
 {
 	int numAnimations = HAnimComboData.Count();
 	while ( numAnimations-- ) {
@@ -256,7 +256,7 @@ void	HAnimComboClass::Clear( )
 	}
 }
 
-void	HAnimComboClass::Reset( )
+void	HAnimComboClass::Reset()
 {
 	int numAnimations = HAnimComboData.Count();
 	while ( numAnimations-- ) {

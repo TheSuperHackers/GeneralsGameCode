@@ -40,7 +40,7 @@
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-DockUpdateModuleData::DockUpdateModuleData( )
+DockUpdateModuleData::DockUpdateModuleData()
 {
 	m_numberApproachPositionsData = 0;
 	m_isAllowPassthrough = TRUE;
@@ -621,7 +621,7 @@ void DockUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void DockUpdate::loadPostProcess( )
+void DockUpdate::loadPostProcess()
 {
 
 	// call base class

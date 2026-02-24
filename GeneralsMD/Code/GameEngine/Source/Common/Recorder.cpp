@@ -179,7 +179,7 @@ void RecorderClass::logPlayerDisconnect(UnicodeString player, Int slot)
 #endif
 }
 
-void RecorderClass::logCRCMismatch( )
+void RecorderClass::logCRCMismatch()
 {
 	if (!m_file)
 		return;
@@ -225,7 +225,7 @@ void RecorderClass::logCRCMismatch( )
 #endif
 }
 
-void RecorderClass::logGameEnd( )
+void RecorderClass::logGameEnd()
 {
 	if (!m_file)
 		return;
@@ -283,7 +283,7 @@ void RecorderClass::logGameEnd( )
 #endif
 }
 
-void RecorderClass::cleanUpReplayFile( )
+void RecorderClass::cleanUpReplayFile()
 {
 #if defined(RTS_DEBUG)
 	if (TheGlobalData->m_saveStats)
@@ -991,12 +991,12 @@ Bool RecorderClass::analyzeReplay( AsciiString filename )
 
 #endif
 
-Bool RecorderClass::isPlaybackInProgress( ) const
+Bool RecorderClass::isPlaybackInProgress() const
 {
 	return isPlaybackMode() && m_nextFrame != -1;
 }
 
-AsciiString RecorderClass::getCurrentReplayFilename( )
+AsciiString RecorderClass::getCurrentReplayFilename()
 {
 	if (isPlaybackMode())
 	{
@@ -1776,7 +1776,7 @@ void RecorderClass::initControls()
 }
 
 ///< is this a multiplayer game (record OR playback)?
-Bool RecorderClass::isMultiplayer( )
+Bool RecorderClass::isMultiplayer()
 {
 
 	if (isPlaybackMode())

@@ -438,7 +438,7 @@ void ControlBar::populateCommand( Object *obj )
 //-------------------------------------------------------------------------------------------------
 /** reset transport data */
 //-------------------------------------------------------------------------------------------------
-void ControlBar::resetContainData( )
+void ControlBar::resetContainData()
 {
 	Int i;
 
@@ -455,7 +455,7 @@ void ControlBar::resetContainData( )
 //-------------------------------------------------------------------------------------------------
 /** reset the build queue data we use to die queue entries to control */
 //-------------------------------------------------------------------------------------------------
-void ControlBar::resetBuildQueueData( )
+void ControlBar::resetBuildQueueData()
 {
 	Int i;
 
@@ -620,7 +620,7 @@ void ControlBar::populateBuildQueue( Object *producer )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void ControlBar::updateContextCommand( )
+void ControlBar::updateContextCommand()
 {
  	Object *obj = nullptr;
 	Int i;

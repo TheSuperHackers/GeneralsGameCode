@@ -76,7 +76,7 @@ Bool TrainTrack::releaseReference()
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-RailroadBehaviorModuleData::RailroadBehaviorModuleData( )
+RailroadBehaviorModuleData::RailroadBehaviorModuleData()
 {
 	m_carriageTemplateNameData.clear();
 	m_pathPrefixName.clear();
@@ -163,7 +163,7 @@ RailroadBehavior::RailroadBehavior( Thing *thing, const ModuleData *moduleData )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-RailroadBehavior::~RailroadBehavior( )
+RailroadBehavior::~RailroadBehavior()
 {
 
 	TheAudio->removeAudioEvent( m_runningSound.getPlayingHandle() );// no more chugchug when I'm dead
@@ -499,7 +499,7 @@ void RailroadBehavior::playImpactSound(Object *victim, const Coord3D *impactPosi
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void RailroadBehavior::loadTrackData( )
+void RailroadBehavior::loadTrackData()
 {
 
 	if ( m_track != nullptr )
@@ -641,7 +641,7 @@ void RailroadBehavior::loadTrackData( )
 
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-UpdateSleepTime RailroadBehavior::update( )
+UpdateSleepTime RailroadBehavior::update()
 {
 
 
@@ -895,7 +895,7 @@ public:
 };
 
 
-void RailroadBehavior::createCarriages( )
+void RailroadBehavior::createCarriages()
 {
 
 
@@ -1293,7 +1293,7 @@ void RailroadBehavior::updatePositionTrackDistance( PullInfo *pullerInfo, PullIn
 
 //---------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------
-void RailroadBehavior::destroyTheWholeTrainNow( )
+void RailroadBehavior::destroyTheWholeTrainNow()
 {
 	TheGameLogic->destroyObject( getObject());
 
@@ -1569,7 +1569,7 @@ void RailroadBehavior::PullInfo::xferPullInfo( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void RailroadBehavior::loadPostProcess( )
+void RailroadBehavior::loadPostProcess()
 {
 	// extend base class
 	PhysicsBehavior::loadPostProcess();

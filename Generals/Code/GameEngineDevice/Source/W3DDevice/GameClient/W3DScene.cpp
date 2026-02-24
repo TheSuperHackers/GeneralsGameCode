@@ -1682,7 +1682,7 @@ void RTS3DScene::doRender( CameraClass * cam )
 //=============================================================================
 /** Customized render for the 2d scene management */
 //=============================================================================
-void RTS3DScene::draw( )
+void RTS3DScene::draw()
 {
 	if (m_camera == nullptr) {
 		DEBUG_CRASH(("Null m_camera in RTS3DScene::draw"));
@@ -1747,7 +1747,7 @@ void RTS2DScene::doRender( CameraClass * cam )
 //=============================================================================
 /** Customized render for the 2d scene management */
 //=============================================================================
-void RTS2DScene::draw( )
+void RTS2DScene::draw()
 {
 	if (m_camera == nullptr) {
 		DEBUG_CRASH(("Null m_camera in RTS2DScene::draw"));

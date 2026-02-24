@@ -868,7 +868,7 @@ Drawable *Bridge::pickBridge(const Vector3 &from, const Vector3 &to, Vector3 *po
 //-------------------------------------------------------------------------------------------------
 /** updateDamageState - Update the damage state. */
 //-------------------------------------------------------------------------------------------------
-void Bridge::updateDamageState( )
+void Bridge::updateDamageState()
 {
 	m_bridgeInfo.damageStateChanged = false;
 	if (m_bridgeInfo.bridgeObjectID==0) return;
@@ -995,7 +995,7 @@ TerrainLogic::~TerrainLogic()
 //-------------------------------------------------------------------------------------------------
 /** Init */
 //-------------------------------------------------------------------------------------------------
-void TerrainLogic::init( )
+void TerrainLogic::init()
 {
 
 }
@@ -1003,7 +1003,7 @@ void TerrainLogic::init( )
 //-------------------------------------------------------------------------------------------------
 /** Reset */
 //-------------------------------------------------------------------------------------------------
-void TerrainLogic::reset( )
+void TerrainLogic::reset()
 {
 
 	deleteWaypoints();
@@ -1016,7 +1016,7 @@ void TerrainLogic::reset( )
 //-------------------------------------------------------------------------------------------------
 /** Update */
 //-------------------------------------------------------------------------------------------------
-void TerrainLogic::update( )
+void TerrainLogic::update()
 {
 
 	// bridge damage states have not changed this frame now
@@ -1855,7 +1855,7 @@ Bool TerrainLogic::objectInteractsWithBridgeEnd(Object *obj, Int layer) const
 //-------------------------------------------------------------------------------------------------
 /** Updates the damage state of the bridge from the logic. */
 //-------------------------------------------------------------------------------------------------
-void TerrainLogic::updateBridgeDamageStates( )
+void TerrainLogic::updateBridgeDamageStates()
 {
 	Bridge *pBridge = getFirstBridge();
 	while (pBridge) {
@@ -2952,7 +2952,7 @@ void TerrainLogic::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void TerrainLogic::loadPostProcess( )
+void TerrainLogic::loadPostProcess()
 {
 	Bridge* pBridge = getFirstBridge();
 	Bridge* pNext;

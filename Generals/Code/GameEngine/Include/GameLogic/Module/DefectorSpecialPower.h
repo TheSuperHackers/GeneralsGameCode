@@ -51,7 +51,7 @@ class DefectorSpecialPowerModuleData : public SpecialPowerModuleData
 
 public:
 
-	DefectorSpecialPowerModuleData( );
+	DefectorSpecialPowerModuleData();
 
 	static void buildFieldParse( MultiIniFieldParse& p );
 

@@ -40,7 +40,7 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-AnimationSteeringUpdateModuleData::AnimationSteeringUpdateModuleData( )
+AnimationSteeringUpdateModuleData::AnimationSteeringUpdateModuleData()
 {
 	m_transitionFrames = 0;
 }
@@ -60,14 +60,14 @@ AnimationSteeringUpdate::AnimationSteeringUpdate( Thing *thing, const ModuleData
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-AnimationSteeringUpdate::~AnimationSteeringUpdate( )
+AnimationSteeringUpdate::~AnimationSteeringUpdate()
 {
 
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime AnimationSteeringUpdate::update( )
+UpdateSleepTime AnimationSteeringUpdate::update()
 {
 
 	const AnimationSteeringUpdateModuleData *data = getAnimationSteeringUpdateModuleData();
@@ -167,7 +167,7 @@ void AnimationSteeringUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void AnimationSteeringUpdate::loadPostProcess( )
+void AnimationSteeringUpdate::loadPostProcess()
 {
 
 	// extend base class

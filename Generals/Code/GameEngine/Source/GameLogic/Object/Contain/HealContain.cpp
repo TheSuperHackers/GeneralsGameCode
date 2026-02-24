@@ -43,7 +43,7 @@
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-HealContainModuleData::HealContainModuleData( )
+HealContainModuleData::HealContainModuleData()
 {
 
 	m_framesForFullHeal = 0;
@@ -81,7 +81,7 @@ HealContain::HealContain( Thing *thing, const ModuleData *moduleData )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-HealContain::~HealContain( )
+HealContain::~HealContain()
 {
 
 }
@@ -89,7 +89,7 @@ HealContain::~HealContain( )
 // ------------------------------------------------------------------------------------------------
 /** Per frame update */
 // ------------------------------------------------------------------------------------------------
-UpdateSleepTime HealContain::update( )
+UpdateSleepTime HealContain::update()
 {
 
 	// extending functionality
@@ -213,7 +213,7 @@ void HealContain::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void HealContain::loadPostProcess( )
+void HealContain::loadPostProcess()
 {
 
 	// extend base class

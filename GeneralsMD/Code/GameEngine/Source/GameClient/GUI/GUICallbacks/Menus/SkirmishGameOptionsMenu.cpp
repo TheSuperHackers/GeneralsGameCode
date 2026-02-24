@@ -147,8 +147,8 @@ static Int	initialGadgetDelay = 2;
 static Bool justEntered = FALSE;
 static Bool buttonPushed = FALSE;
 static Bool stillNeedsToSetOptions = FALSE;
-void skirmishUpdateSlotList( );
-static void populateSkirmishBattleHonors( );
+void skirmishUpdateSlotList();
+static void populateSkirmishBattleHonors();
 enum{ GREATER_NO_FPS_LIMIT = 60};
 Bool doUpdateSlotList = TRUE;
 
@@ -167,7 +167,7 @@ static Int getNextSelectablePlayer(Int start)
 	return -1;
 }
 
-SkirmishPreferences::SkirmishPreferences( )
+SkirmishPreferences::SkirmishPreferences()
 {
 	loadFromIniFile();
 }
@@ -415,7 +415,7 @@ void setFPSTextBox( Int sliderPos )
 	GadgetStaticTextSetText(staticTextGameSpeed, text);
 }
 
-void reallyDoStart( )
+void reallyDoStart()
 {
 	if (TheGameLogic->isInGame())
 		TheGameLogic->clearGameData(FALSE);
@@ -1020,7 +1020,7 @@ static void handleLimitSuperweaponsClick()
 //-------------------------------------------------------------------------------------------------
 /** Initialize the Gadgets Options Menu */
 //-------------------------------------------------------------------------------------------------
-void InitSkirmishGameGadgets( )
+void InitSkirmishGameGadgets()
 {
 	//Initialize the gadget IDs
 	parentSkirmishGameOptionsID = TheNameKeyGenerator->nameToKey( "SkirmishGameOptionsMenu.wnd:SkirmishGameOptionsMenuParent" );
@@ -1145,7 +1145,7 @@ void InitSkirmishGameGadgets( )
 	populateSkirmishBattleHonors();
 }
 
-void skirmishUpdateSlotList( )
+void skirmishUpdateSlotList()
 {
   if(doUpdateSlotList)
   {
@@ -1166,8 +1166,8 @@ void skirmishUpdateSlotList( )
     doUpdateSlotList = TRUE;
   }
 }
-void updateSkirmishGameOptions( );
-void skirmishPositionStartSpots( )
+void updateSkirmishGameOptions();
+void skirmishPositionStartSpots()
 {
 	positionStartSpots( TheSkirmishGameInfo, buttonMapStartPosition, windowMap);
 
@@ -1176,7 +1176,7 @@ void skirmishPositionStartSpots( )
 //-------------------------------------------------------------------------------------------------
 /** Init TextEntryMapDisplay */
 //-------------------------------------------------------------------------------------------------
-void initSkirmishGameOptions( )
+void initSkirmishGameOptions()
 {
 
 }
@@ -1204,7 +1204,7 @@ static const char *perPlayerGadgetsToHide[] =
 //-------------------------------------------------------------------------------------------------
 /** Update options on screen */
 //-------------------------------------------------------------------------------------------------
-void updateSkirmishGameOptions( )
+void updateSkirmishGameOptions()
 {
 	Bool isSkirmish = TRUE;
 	const MapMetaData *md = TheMapCache->findMap(TheSkirmishGameInfo->getMap());

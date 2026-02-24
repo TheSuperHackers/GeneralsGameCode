@@ -131,7 +131,7 @@ public:
 
 	void					registerMissing( const char * name );
 	Bool					isMissing( const char * name );
-	void					resetMissing( );
+	void					resetMissing();
 
 private:
 
@@ -146,14 +146,14 @@ class W3DShadowTexture : public RefCountClass, public	HashableClass
 
 	public:
 
-		W3DShadowTexture( )
+		W3DShadowTexture()
 		{	m_lastLightPosition.Set(0,0,0); m_lastObjectOrientation.Make_Identity();
 			m_shadowUV[0].Set(1.0f,0.0f,0.0f);	//u runs along world x axis
 			m_shadowUV[1].Set(0.0f,-1.0f,0.0f);	//v runs along world -y axis
 		}
-		~W3DShadowTexture( ) { REF_PTR_RELEASE(m_texture);}
+		~W3DShadowTexture() { REF_PTR_RELEASE(m_texture);}
 
-		virtual	const char * Get_Key( )	{ return m_namebuf;	}
+		virtual	const char * Get_Key()	{ return m_namebuf;	}
 
 		Int init (RenderObjClass *robj);
 
@@ -194,7 +194,7 @@ class W3DShadowTexture : public RefCountClass, public	HashableClass
 class W3DShadowTextureManagerIterator : public HashTableIteratorClass {
 public:
 	W3DShadowTextureManagerIterator( W3DShadowTextureManager & manager ) : HashTableIteratorClass( *manager.texturePtrTable ) {}
-	W3DShadowTexture * getCurrentTexture( ) { 	return (W3DShadowTexture *)Get_Current();}
+	W3DShadowTexture * getCurrentTexture() { 	return (W3DShadowTexture *)Get_Current();}
 };
 
 
@@ -230,7 +230,7 @@ W3DProjectedShadowManager::~W3DProjectedShadowManager()
 	DEBUG_ASSERTCRASH(m_decalList == nullptr, ("Destroy of non-empty projected decal list"));
 }
 
-void W3DProjectedShadowManager::reset( )
+void W3DProjectedShadowManager::reset()
 {
 
 	DEBUG_ASSERTCRASH(m_shadowList == nullptr, ("Reset of non-empty projected shadow list"));
@@ -240,7 +240,7 @@ void W3DProjectedShadowManager::reset( )
 
 }
 
-Bool W3DProjectedShadowManager::init( )
+Bool W3DProjectedShadowManager::init()
 {
 	m_W3DShadowTextureManager = NEW W3DShadowTextureManager;
 	m_shadowCamera = NEW_REF( CameraClass, () );
@@ -2376,9 +2376,9 @@ class MissingTextureClass : public HashableClass {
 
 public:
 	MissingTextureClass( const char * name ) : Name( name ) {}
-	virtual	~MissingTextureClass( ) {}
+	virtual	~MissingTextureClass() {}
 
-	virtual	const char * Get_Key( )	{ return Name;	}
+	virtual	const char * Get_Key()	{ return Name;	}
 
 private:
 	StringClass	Name;

@@ -442,15 +442,15 @@ public:
 	Real getShadowOffsetX() const { return m_shadowOffsetX; }
 	Real getShadowOffsetY() const { return m_shadowOffsetY; }
 
-	const AsciiString& getShadowTextureName( ) const { return m_shadowTextureName; }
+	const AsciiString& getShadowTextureName() const { return m_shadowTextureName; }
 	UnsignedInt getOcclusionDelay() const { return m_occlusionDelay;}
 
 	const ModuleInfo& getBehaviorModuleInfo() const { return m_behaviorModuleInfo; }
 	const ModuleInfo& getDrawModuleInfo() const { return m_drawModuleInfo; }
 	const ModuleInfo& getClientUpdateModuleInfo() const { return m_clientUpdateModuleInfo; }
 
-	const Image *getSelectedPortraitImage( ) const { return m_selectedPortraitImage; }
-	const Image *getButtonImage( ) const { return m_buttonImage; }
+	const Image *getSelectedPortraitImage() const { return m_selectedPortraitImage; }
+	const Image *getButtonImage() const { return m_buttonImage; }
 
 	//Code renderer handles these states now.
 	//const AsciiString& getInventoryImageName( InventoryImageType type ) const { return m_inventoryImage[ type ]; }
@@ -585,7 +585,7 @@ public:
 	const FieldParse* getReskinFieldParse() const { return s_objectReskinFieldParseTable; }
 
 	Bool isBuildFacility() const { return m_isBuildFacility; }
-	Real getPlacementViewAngle( ) const { return m_placementViewAngle; }
+	Real getPlacementViewAngle() const { return m_placementViewAngle; }
 
 	Real getFactoryExitWidth() const { return m_factoryExitWidth; }
 	Real getFactoryExtraBibWidth() const { return m_factoryExtraBibWidth; }
@@ -618,7 +618,7 @@ protected:
 	//
 	Int getBuildCost() const { return m_buildCost; }
 	Real getBuildTime() const { return m_buildTime; }
-	const PerUnitSoundMap* getAllPerUnitSounds( ) const { return &m_perUnitSounds; }
+	const PerUnitSoundMap* getAllPerUnitSounds() const { return &m_perUnitSounds; }
 	void validateAudio();
 	const AudioEventRTS* getAudio(ThingTemplateAudioType t) const { return m_audioarray.m_audio[t] ? &m_audioarray.m_audio[t]->m_event : &s_audioEventNoSound; }
 

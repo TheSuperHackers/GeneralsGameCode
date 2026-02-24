@@ -312,13 +312,13 @@ public:
 	/*
 	** Load on Demand
 	*/
-	bool	Get_WW3D_Load_On_Demand( )			{ return WW3D_Load_On_Demand; }
+	bool	Get_WW3D_Load_On_Demand()			{ return WW3D_Load_On_Demand; }
 	void	Set_WW3D_Load_On_Demand( bool on_off )	{ WW3D_Load_On_Demand = on_off; }
 
 	/*
 	** Add fog to objects on load
 	*/
-	bool	Get_Activate_Fog_On_Load( )				{ return Activate_Fog_On_Load; }
+	bool	Get_Activate_Fog_On_Load()				{ return Activate_Fog_On_Load; }
 	void	Set_Activate_Fog_On_Load( bool on_off )	{ Activate_Fog_On_Load = on_off; }
 
 	// Log texture statistics
@@ -333,10 +333,10 @@ protected:
 	virtual void						Add_Font3DData(Font3DDataClass * font);
 	virtual void						Remove_Font3DData(Font3DDataClass * font);
 	virtual Font3DDataClass *		Get_Font3DData(const char * name);
-	virtual void						Release_All_Font3DDatas( );
-	virtual void						Release_Unused_Font3DDatas( );
+	virtual void						Release_All_Font3DDatas();
+	virtual void						Release_Unused_Font3DDatas();
 
-	virtual void						Release_All_FontChars( );
+	virtual void						Release_All_FontChars();
 
 	void									Free();
 

@@ -1143,7 +1143,7 @@ void WaterRenderObjClass::updateMapOverrides()
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void WaterRenderObjClass::reset( )
+void WaterRenderObjClass::reset()
 {
 
 	// for vertex animated water mesh reset the values
@@ -1214,7 +1214,7 @@ void WaterRenderObjClass::enableWaterGrid(Bool state)
 // ------------------------------------------------------------------------------------------------
 /** Update phase for water if we need it. */
 // ------------------------------------------------------------------------------------------------
-void WaterRenderObjClass::update( )
+void WaterRenderObjClass::update()
 {
 	// TheSuperHackers @tweak The water movement time step is now decoupled from the render update.
 	const Real timeScale = TheFramePacer->getActualLogicTimeScaleOverFpsRatio();
@@ -3487,7 +3487,7 @@ void WaterRenderObjClass::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void WaterRenderObjClass::loadPostProcess( )
+void WaterRenderObjClass::loadPostProcess()
 {
 
 }

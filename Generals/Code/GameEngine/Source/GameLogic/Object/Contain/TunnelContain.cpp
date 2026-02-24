@@ -238,7 +238,7 @@ UnsignedInt TunnelContain::getHeroUnitsContained() const
 	return 0;
 }
 
-Int TunnelContain::getContainMax( ) const
+Int TunnelContain::getContainMax() const
 {
 	Player *owningPlayer = getObject()->getControllingPlayer();
 	if( owningPlayer && owningPlayer->getTunnelSystem() )
@@ -344,7 +344,7 @@ void TunnelContain::onDie( const DamageInfo * damageInfo )
 }
 
 //-------------------------------------------------------------------------------------------------
-void TunnelContain::onDelete( )
+void TunnelContain::onDelete()
 {
 	// Being sold is a straight up delete.  no death
 
@@ -363,12 +363,12 @@ void TunnelContain::onDelete( )
 }
 
 //-------------------------------------------------------------------------------------------------
-void TunnelContain::onCreate( )
+void TunnelContain::onCreate()
 {
 }
 
 //-------------------------------------------------------------------------------------------------
-void TunnelContain::onBuildComplete( )
+void TunnelContain::onBuildComplete()
 {
 	if( ! shouldDoOnBuildComplete() )
 		return;
@@ -423,7 +423,7 @@ void TunnelContain::orderAllPassengersToExit( CommandSourceType commandSource )
 // ------------------------------------------------------------------------------------------------
 /** Per frame update */
 // ------------------------------------------------------------------------------------------------
-UpdateSleepTime TunnelContain::update( )
+UpdateSleepTime TunnelContain::update()
 {
 	// extending functionality to heal the units within the tunnel system
 	OpenContain::update();
@@ -506,7 +506,7 @@ void TunnelContain::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void TunnelContain::loadPostProcess( )
+void TunnelContain::loadPostProcess()
 {
 
 	// extend base class

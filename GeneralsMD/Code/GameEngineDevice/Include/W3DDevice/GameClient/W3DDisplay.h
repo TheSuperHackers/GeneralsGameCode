@@ -58,8 +58,8 @@ public:
 	W3DDisplay();
 	~W3DDisplay();
 
-	virtual void init( );  ///< initialize or re-initialize the system
- 	virtual void reset( ) ;																///< Reset system
+	virtual void init();  ///< initialize or re-initialize the system
+ 	virtual void reset() ;																///< Reset system
 
 	virtual void setWidth( UnsignedInt width );
 	virtual void setHeight( UnsignedInt height );
@@ -75,11 +75,11 @@ public:
 	//---------------------------------------------------------------------------
 	// Drawing management
 	virtual void setClipRegion( IRegion2D *region );	///< Set clip rectangle for 2D draw operations.
-	virtual Bool	isClippingEnabled( ) 	{ return m_isClippedEnabled; }
+	virtual Bool	isClippingEnabled() 	{ return m_isClippedEnabled; }
 	virtual void	enableClipping( Bool onoff )		{ m_isClippedEnabled = onoff; }
 
 	virtual void step(); ///< Do one fixed time step
-	virtual void draw( );  ///< redraw the entire display
+	virtual void draw();  ///< redraw the entire display
 
 	/// @todo Replace these light management routines with a LightManager singleton
 	virtual void createLightPulse( const Coord3D *pos, const RGBColor *color, Real innerRadius,Real outerRadius,
@@ -118,7 +118,7 @@ public:
 	virtual void drawVideoBuffer( VideoBuffer *buffer, Int startX, Int startY,
 													Int endX, Int endY );
 
-	virtual VideoBuffer*	createVideoBuffer( ) ;							///< Create a video buffer that can be used for this display
+	virtual VideoBuffer*	createVideoBuffer() ;							///< Create a video buffer that can be used for this display
 
 	virtual void takeScreenShot();						//save screenshot to file
 	virtual void toggleMovieCapture();			//enable AVI or frame capture mode.
@@ -144,19 +144,19 @@ public:
 	static RTS3DInterfaceScene *m_3DInterfaceScene;	///< our 3d interface scene that draws last (for 3d mouse cursor, etc)
 	static W3DAssetManager *m_assetManager;		///< W3D asset manager
 
-	void drawFPSStats( );								///< draw the fps on the screen
-	virtual Real getAverageFPS( );						///< return the average FPS.
-	virtual Real getCurrentFPS( );						///< return the current FPS.
-	virtual Int getLastFrameDrawCalls( );				///< returns the number of draw calls issued in the previous frame
+	void drawFPSStats();								///< draw the fps on the screen
+	virtual Real getAverageFPS();						///< return the average FPS.
+	virtual Real getCurrentFPS();						///< return the current FPS.
+	virtual Int getLastFrameDrawCalls();				///< returns the number of draw calls issued in the previous frame
 
 protected:
 
-	void initAssets( );									///< init assets for WW3D
-	void init3DScene( );									///< init 3D scene for WW3D
-	void init2DScene( );									///< init 2D scene for WW3D
-	void gatherDebugStats( );						///< compute debug stats
-	void drawDebugStats( );							///< display debug stats
-	void drawCurrentDebugDisplay( );			///< draws current debug display
+	void initAssets();									///< init assets for WW3D
+	void init3DScene();									///< init 3D scene for WW3D
+	void init2DScene();									///< init 2D scene for WW3D
+	void gatherDebugStats();						///< compute debug stats
+	void drawDebugStats();							///< display debug stats
+	void drawCurrentDebugDisplay();			///< draws current debug display
 	void calculateTerrainLOD();						///< Calculate terrain LOD.
 	void renderLetterBox(UnsignedInt time);							///< draw letter box border
 	void updateAverageFPS();	///< calculate the average fps over the last 30 frames.

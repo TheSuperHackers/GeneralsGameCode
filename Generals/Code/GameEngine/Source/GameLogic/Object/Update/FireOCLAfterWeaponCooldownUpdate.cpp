@@ -89,12 +89,12 @@ FireOCLAfterWeaponCooldownUpdate::FireOCLAfterWeaponCooldownUpdate( Thing *thing
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-FireOCLAfterWeaponCooldownUpdate::~FireOCLAfterWeaponCooldownUpdate( )
+FireOCLAfterWeaponCooldownUpdate::~FireOCLAfterWeaponCooldownUpdate()
 {
 }
 
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime FireOCLAfterWeaponCooldownUpdate::update( )
+UpdateSleepTime FireOCLAfterWeaponCooldownUpdate::update()
 {
 	const FireOCLAfterWeaponCooldownUpdateModuleData* data = getFireOCLAfterWeaponCooldownUpdateModuleData();
 	UpgradeMaskType activation, conflicting;
@@ -249,7 +249,7 @@ void FireOCLAfterWeaponCooldownUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void FireOCLAfterWeaponCooldownUpdate::loadPostProcess( )
+void FireOCLAfterWeaponCooldownUpdate::loadPostProcess()
 {
 
 	// extend base class

@@ -323,7 +323,7 @@ void W3DDebrisDraw::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void W3DDebrisDraw::loadPostProcess( )
+void W3DDebrisDraw::loadPostProcess()
 {
 
 	// extend base class

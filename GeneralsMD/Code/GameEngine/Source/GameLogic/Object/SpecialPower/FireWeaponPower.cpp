@@ -58,7 +58,7 @@
 #include "GameLogic/Module/FireWeaponPower.h"
 
 
-FireWeaponPowerModuleData::FireWeaponPowerModuleData( )
+FireWeaponPowerModuleData::FireWeaponPowerModuleData()
 {
 	m_maxShotsToFire = 1;
 }
@@ -87,7 +87,7 @@ FireWeaponPower::FireWeaponPower( Thing *thing, const ModuleData *moduleData )
 }
 
 // ------------------------------------------------------------------------------------------------
-FireWeaponPower::~FireWeaponPower( )
+FireWeaponPower::~FireWeaponPower()
 {
 
 }
@@ -208,7 +208,7 @@ void FireWeaponPower::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void FireWeaponPower::loadPostProcess( )
+void FireWeaponPower::loadPostProcess()
 {
 
 	// extend base class

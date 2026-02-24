@@ -51,11 +51,11 @@ class GameSpyBuddyMessageQueue : public GameSpyBuddyMessageQueueInterface
 public:
 	virtual ~GameSpyBuddyMessageQueue();
 	GameSpyBuddyMessageQueue();
-	virtual void startThread( );
-	virtual void endThread( );
-	virtual Bool isThreadRunning( );
-	virtual Bool isConnected( );
-	virtual Bool isConnecting( );
+	virtual void startThread();
+	virtual void endThread();
+	virtual Bool isThreadRunning();
+	virtual Bool isConnected();
+	virtual Bool isConnecting();
 
 	virtual void addRequest( const BuddyRequest& req );
 	virtual Bool getRequest( BuddyRequest& req );
@@ -63,9 +63,9 @@ public:
 	virtual void addResponse( const BuddyResponse& resp );
 	virtual Bool getResponse( BuddyResponse& resp );
 
-	virtual GPProfile getLocalProfileID( );
+	virtual GPProfile getLocalProfileID();
 
-	BuddyThreadClass* getThread( );
+	BuddyThreadClass* getThread();
 
 private:
 	MutexClass m_requestMutex;
@@ -75,7 +75,7 @@ private:
 	BuddyThreadClass *m_thread;
 };
 
-GameSpyBuddyMessageQueueInterface* GameSpyBuddyMessageQueueInterface::createNewMessageQueue( )
+GameSpyBuddyMessageQueueInterface* GameSpyBuddyMessageQueueInterface::createNewMessageQueue()
 {
 	return NEW GameSpyBuddyMessageQueue;
 }
@@ -99,10 +99,10 @@ public:
 	void requestCallback( GPConnection *con, GPRecvBuddyRequestArg *arg );
 	void statusCallback( GPConnection *con, GPRecvBuddyStatusArg *arg );
 
-	Bool isConnecting( ) { return m_isConnecting; }
-	Bool isConnected( ) { return m_isConnected; }
+	Bool isConnecting() { return m_isConnecting; }
+	Bool isConnected() { return m_isConnected; }
 
-	GPProfile getLocalProfileID( ) { return m_profileID; }
+	GPProfile getLocalProfileID() { return m_profileID; }
 
 private:
 	Bool m_isNewAccount;
@@ -162,7 +162,7 @@ GameSpyBuddyMessageQueue::~GameSpyBuddyMessageQueue()
 	endThread();
 }
 
-void GameSpyBuddyMessageQueue::startThread( )
+void GameSpyBuddyMessageQueue::startThread()
 {
 	if (!m_thread)
 	{
@@ -178,23 +178,23 @@ void GameSpyBuddyMessageQueue::startThread( )
 	}
 }
 
-void GameSpyBuddyMessageQueue::endThread( )
+void GameSpyBuddyMessageQueue::endThread()
 {
 	delete m_thread;
 	m_thread = nullptr;
 }
 
-Bool GameSpyBuddyMessageQueue::isThreadRunning( )
+Bool GameSpyBuddyMessageQueue::isThreadRunning()
 {
 	return (m_thread) ? m_thread->Is_Running() : false;
 }
 
-Bool GameSpyBuddyMessageQueue::isConnected( )
+Bool GameSpyBuddyMessageQueue::isConnected()
 {
 	return (m_thread) ? m_thread->isConnected() : false;
 }
 
-Bool GameSpyBuddyMessageQueue::isConnecting( )
+Bool GameSpyBuddyMessageQueue::isConnecting()
 {
 	return (m_thread) ? m_thread->isConnecting() : false;
 }
@@ -243,12 +243,12 @@ Bool GameSpyBuddyMessageQueue::getResponse( BuddyResponse& resp )
 	return true;
 }
 
-BuddyThreadClass* GameSpyBuddyMessageQueue::getThread( )
+BuddyThreadClass* GameSpyBuddyMessageQueue::getThread()
 {
 	return m_thread;
 }
 
-GPProfile GameSpyBuddyMessageQueue::getLocalProfileID( )
+GPProfile GameSpyBuddyMessageQueue::getLocalProfileID()
 {
 	return (m_thread) ? m_thread->getLocalProfileID() : 0;
 }

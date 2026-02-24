@@ -224,7 +224,7 @@ class ParticleBufferClass : public RenderObjClass
 		void						Set_Current_GroupID(unsigned char grp) { CurrentGroupID = grp; }
 
 		// Total Active Particle Buffer Count
-		static unsigned int	Get_Total_Active_Count( )	{ return TotalActiveCount; }
+		static unsigned int	Get_Total_Active_Count()	{ return TotalActiveCount; }
 
 		// Global control of particle LOD.
 		static void				Set_LOD_Max_Screen_Size(int lod_level,float max_screen_size);

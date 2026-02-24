@@ -176,7 +176,7 @@ Bool INI::isValidINIFilename( const char *filename )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-INI::INI( )
+INI::INI()
 {
 
 	m_readBuffer = nullptr;
@@ -200,7 +200,7 @@ INI::INI( )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-INI::~INI( )
+INI::~INI()
 {
 
 }
@@ -466,7 +466,7 @@ UnsignedInt INI::load( AsciiString filename, INILoadType loadType, Xfer *pXfer )
 	* full File Ram buffer into the INI Line Buffer without a third buffer in between.
 	*/
 //-------------------------------------------------------------------------------------------------
-void INI::readLine( )
+void INI::readLine()
 {
 	// sanity
 	DEBUG_ASSERTCRASH( m_readBuffer, ("readLine(), read buffer is null") );

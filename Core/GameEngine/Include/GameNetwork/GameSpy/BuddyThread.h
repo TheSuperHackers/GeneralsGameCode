@@ -151,11 +151,11 @@ class GameSpyBuddyMessageQueueInterface
 {
 public:
 	virtual ~GameSpyBuddyMessageQueueInterface() {}
-	virtual void startThread( ) = 0;
-	virtual void endThread( ) = 0;
-	virtual Bool isThreadRunning( ) = 0;
-	virtual Bool isConnected( ) = 0;
-	virtual Bool isConnecting( ) = 0;
+	virtual void startThread() = 0;
+	virtual void endThread() = 0;
+	virtual Bool isThreadRunning() = 0;
+	virtual Bool isConnected() = 0;
+	virtual Bool isConnecting() = 0;
 
 	virtual void addRequest( const BuddyRequest& req ) = 0;
 	virtual Bool getRequest( BuddyRequest& req ) = 0;
@@ -163,9 +163,9 @@ public:
 	virtual void addResponse( const BuddyResponse& resp ) = 0;
 	virtual Bool getResponse( BuddyResponse& resp ) = 0;
 
-	virtual GPProfile getLocalProfileID( ) = 0;
+	virtual GPProfile getLocalProfileID() = 0;
 
-	static GameSpyBuddyMessageQueueInterface* createNewMessageQueue( );
+	static GameSpyBuddyMessageQueueInterface* createNewMessageQueue();
 };
 
 extern GameSpyBuddyMessageQueueInterface *TheGameSpyBuddyMessageQueue;

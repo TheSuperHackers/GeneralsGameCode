@@ -44,7 +44,7 @@ HighlanderBody::HighlanderBody( Thing *thing, const ModuleData* moduleData )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-HighlanderBody::~HighlanderBody( )
+HighlanderBody::~HighlanderBody()
 {
 
 }
@@ -92,7 +92,7 @@ void HighlanderBody::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void HighlanderBody::loadPostProcess( )
+void HighlanderBody::loadPostProcess()
 {
 
 	// extend base class

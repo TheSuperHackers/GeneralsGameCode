@@ -114,13 +114,13 @@ OCLUpdate::OCLUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModul
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-OCLUpdate::~OCLUpdate( )
+OCLUpdate::~OCLUpdate()
 {
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime OCLUpdate::update( )
+UpdateSleepTime OCLUpdate::update()
 {
 #if RETAIL_COMPATIBLE_CRC
 	if( getObject()->isDisabled() )
@@ -321,7 +321,7 @@ void OCLUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void OCLUpdate::loadPostProcess( )
+void OCLUpdate::loadPostProcess()
 {
 
 	// extend base class

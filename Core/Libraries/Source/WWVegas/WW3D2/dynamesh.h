@@ -135,7 +135,7 @@ public:
 	DynamicMeshClass( int max_poly, int max_vert);
 	DynamicMeshClass( int max_poly, int max_vert, MaterialInfoClass *mat_info);
 	DynamicMeshClass( const DynamicMeshClass & src);
-	virtual ~DynamicMeshClass( );
+	virtual ~DynamicMeshClass();
 
 	// Inherited from RenderObjClass:
 	virtual RenderObjClass * 		Clone() const;
@@ -211,7 +211,7 @@ public:
 
 	// Reset all polys and verts. Call the other reset functions directly if you do not want all
 	// characteristics to be reset.
-	virtual void Reset( )
+	virtual void Reset()
 	{
 		// Note that the active poly count has changed since the last render call by setting the dirty flag
 		Reset_Flags();
@@ -231,11 +231,11 @@ public:
 	void Resize(int max_polys, int max_verts);
 
 	// Triangle creation routines
-	void	Begin_Tri_Strip( )	{ 	TriVertexCount = 0; TriMode = TRI_MODE_STRIPS; }
-	void	Begin_Tri_Fan( )	{	TriVertexCount = 0; TriMode = TRI_MODE_FANS; FanVertex = VertCount; }
+	void	Begin_Tri_Strip()	{ 	TriVertexCount = 0; TriMode = TRI_MODE_STRIPS; }
+	void	Begin_Tri_Fan()	{	TriVertexCount = 0; TriMode = TRI_MODE_FANS; FanVertex = VertCount; }
 
 	// vertex creation routines
-	void	Begin_Vertex( ) {}
+	void	Begin_Vertex() {}
 
 	virtual void Location( float x, float y, float z);
 
@@ -313,7 +313,7 @@ public:
 		return Model->Get_UV_Array(uv_array_index)[index];
 	}
 
-	bool End_Vertex( );
+	bool End_Vertex();
 
 	// vertex creation shortcut, performs a begin, projected, rotated, and end
 	bool Vertex(float x, float y, float z, float u, float v)
@@ -331,12 +331,12 @@ public:
 		return End_Vertex();
 	}
 
-	void End_Tri_Strip( )
+	void End_Tri_Strip()
 	{
 		TriVertexCount = 0;
 	}
 
-	void End_Tri_Fan( )
+	void End_Tri_Fan()
 	{
 		TriVertexCount = 0;
 	}
@@ -390,7 +390,7 @@ public:
 	bool Test_Bounding_Sphere()			{ return (Model->Get_Flag(MeshGeometryClass::DISABLE_BOUNDING_SPHERE) == 0); }
 
 	// this is called by the Reset function
-	void Set_Dirty( ) { Set_Dirty_Bounds(); Set_Dirty_Planes(); Set_Dirty_Vertex_Normals(); }
+	void Set_Dirty() { Set_Dirty_Bounds(); Set_Dirty_Planes(); Set_Dirty_Vertex_Normals(); }
 
 	enum {
 		MAX_COLOR_ARRAYS = MeshMatDescClass::MAX_COLOR_ARRAYS,
@@ -407,7 +407,7 @@ protected:
 	inline void	Switch_To_Multi_Vertex_Color(int color_array_index = 0);
 
 	// tells when the triangle needs to be back flipped
-	virtual bool	Flip_Face( ) { return (!(TriVertexCount & 1)); }
+	virtual bool	Flip_Face() { return (!(TriVertexCount & 1)); }
 
 	// Low-level mesh object
 	DynamicMeshModel *		Model;
@@ -541,7 +541,7 @@ public:
 	// constructor and destructor
 	DynamicScreenMeshClass( int max_poly, int max_vert, float aspect = 1.0f ) : DynamicMeshClass( max_poly, max_vert), Aspect( aspect ) {}
 	DynamicScreenMeshClass( const DynamicScreenMeshClass & src) : DynamicMeshClass(src), Aspect(src.Aspect) {}
-	virtual ~DynamicScreenMeshClass( ) {}
+	virtual ~DynamicScreenMeshClass() {}
 
 	// function to clone a dynamic screen mesh class
 	virtual RenderObjClass * 		Clone() const	{ return NEW_REF( DynamicScreenMeshClass, (*this)); }
@@ -558,7 +558,7 @@ public:
 	// Set position
 	virtual void Set_Position(const Vector3 &v);
 
-	virtual void Reset( );
+	virtual void Reset();
 
 	virtual void Set_Aspect(float aspect) { Aspect=aspect; };
 
@@ -570,5 +570,5 @@ protected:
 	float		Aspect;
 
 	// tells when the triangle needs to be back flipped
-	virtual	bool	Flip_Face( ) { return !DynamicMeshClass::Flip_Face(); }
+	virtual	bool	Flip_Face() { return !DynamicMeshClass::Flip_Face(); }
 };

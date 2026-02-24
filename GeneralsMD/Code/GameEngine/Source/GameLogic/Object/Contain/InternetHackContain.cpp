@@ -70,7 +70,7 @@ InternetHackContain::InternetHackContain( Thing *thing, const ModuleData *module
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-InternetHackContain::~InternetHackContain( )
+InternetHackContain::~InternetHackContain()
 {
 
 }
@@ -117,7 +117,7 @@ void InternetHackContain::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void InternetHackContain::loadPostProcess( )
+void InternetHackContain::loadPostProcess()
 {
 
 	// extend base class

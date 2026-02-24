@@ -45,8 +45,8 @@ public:
 	virtual ~CustomMatchPreferences();
 
 	void setLastLadder(const AsciiString& addr, UnsignedShort port);
-	AsciiString getLastLadderAddr( );
-	UnsignedShort getLastLadderPort( );
+	AsciiString getLastLadderAddr();
+	UnsignedShort getLastLadderPort();
 
 	Int getPreferredFaction();
 	void setPreferredFaction(Int val);
@@ -69,10 +69,10 @@ public:
 	Bool allowsObservers();
 	void setAllowsObserver(Bool val);
 
-	Bool getDisallowAsianText( );
+	Bool getDisallowAsianText();
 	void setDisallowAsianText(Bool val);
 
-	Bool getDisallowNonAsianText( );
+	Bool getDisallowNonAsianText();
 	void setDisallowNonAsianText( Bool val );
 
   Bool getSuperweaponRestricted() const;
@@ -84,6 +84,6 @@ public:
   Bool getFactionsLimited() const; // Prefers to only use the original 3 sides, not USA Air Force General, GLA Toxin General, et al
   void setFactionsLimited( Bool factionsLimited );
 
-  Bool getUseStats( ) const;
+  Bool getUseStats() const;
   void setUseStats( Bool useStats );
 };

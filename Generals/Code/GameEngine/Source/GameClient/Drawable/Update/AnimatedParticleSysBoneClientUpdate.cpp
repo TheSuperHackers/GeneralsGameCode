@@ -54,7 +54,7 @@ AnimatedParticleSysBoneClientUpdate::AnimatedParticleSysBoneClientUpdate( Thing 
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-AnimatedParticleSysBoneClientUpdate::~AnimatedParticleSysBoneClientUpdate( )
+AnimatedParticleSysBoneClientUpdate::~AnimatedParticleSysBoneClientUpdate()
 {
 
 }
@@ -63,7 +63,7 @@ AnimatedParticleSysBoneClientUpdate::~AnimatedParticleSysBoneClientUpdate( )
 //-------------------------------------------------------------------------------------------------
 /** The client update callback. */
 //-------------------------------------------------------------------------------------------------
-void AnimatedParticleSysBoneClientUpdate::clientUpdate( )
+void AnimatedParticleSysBoneClientUpdate::clientUpdate()
 {
 	//THIS IS HAPPENING CLIENT-SIDE
 	// I CAN DO WHAT I NEED HERE AND NOT HAVE TO BE LOGIC SYNC-SAFE
@@ -124,7 +124,7 @@ void AnimatedParticleSysBoneClientUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void AnimatedParticleSysBoneClientUpdate::loadPostProcess( )
+void AnimatedParticleSysBoneClientUpdate::loadPostProcess()
 {
 
 	// extend base class

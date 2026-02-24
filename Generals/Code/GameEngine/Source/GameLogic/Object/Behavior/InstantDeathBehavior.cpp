@@ -114,7 +114,7 @@ InstantDeathBehavior::InstantDeathBehavior( Thing *thing, const ModuleData* modu
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-InstantDeathBehavior::~InstantDeathBehavior( )
+InstantDeathBehavior::~InstantDeathBehavior()
 {
 }
 
@@ -205,7 +205,7 @@ void InstantDeathBehavior::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void InstantDeathBehavior::loadPostProcess( )
+void InstantDeathBehavior::loadPostProcess()
 {
 
 	// extend base class

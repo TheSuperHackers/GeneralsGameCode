@@ -48,7 +48,7 @@ StatusDamageHelper::StatusDamageHelper( Thing *thing, const ModuleData *modData 
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-StatusDamageHelper::~StatusDamageHelper( )
+StatusDamageHelper::~StatusDamageHelper()
 {
 
 }
@@ -127,7 +127,7 @@ void StatusDamageHelper::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void StatusDamageHelper::loadPostProcess( )
+void StatusDamageHelper::loadPostProcess()
 {
 
 	// object helper base class

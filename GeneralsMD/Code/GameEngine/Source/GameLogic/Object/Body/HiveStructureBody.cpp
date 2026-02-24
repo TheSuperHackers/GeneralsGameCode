@@ -61,7 +61,7 @@ HiveStructureBody::HiveStructureBody( Thing *thing, const ModuleData* moduleData
 }
 
 //-------------------------------------------------------------------------------------------------
-HiveStructureBody::~HiveStructureBody( )
+HiveStructureBody::~HiveStructureBody()
 {
 }
 
@@ -162,7 +162,7 @@ void HiveStructureBody::xfer( Xfer *xfer )
 }
 
 //------------------------------------------------------------------------------------------------
-void HiveStructureBody::loadPostProcess( )
+void HiveStructureBody::loadPostProcess()
 {
 
 	// extend parent class

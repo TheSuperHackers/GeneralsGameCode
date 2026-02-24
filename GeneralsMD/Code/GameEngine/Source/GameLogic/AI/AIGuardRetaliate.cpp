@@ -327,7 +327,7 @@ void AIGuardRetaliateMachine::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void AIGuardRetaliateMachine::loadPostProcess( )
+void AIGuardRetaliateMachine::loadPostProcess()
 {
 }
 
@@ -354,7 +354,7 @@ void AIGuardRetaliateInnerState::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void AIGuardRetaliateInnerState::loadPostProcess( )
+void AIGuardRetaliateInnerState::loadPostProcess()
 {
 	onEnter();
 }
@@ -367,7 +367,7 @@ AIGuardRetaliateInnerState::~AIGuardRetaliateInnerState()
 }
 
 //--------------------------------------------------------------------------------------
-StateReturnType AIGuardRetaliateInnerState::onEnter( )
+StateReturnType AIGuardRetaliateInnerState::onEnter()
 {
 	// See if we try to enter the target
 	if (getMachineOwner()->getTemplate()->isEnterGuard())
@@ -417,7 +417,7 @@ StateReturnType AIGuardRetaliateInnerState::onEnter( )
 }
 
 //--------------------------------------------------------------------------------------
-StateReturnType AIGuardRetaliateInnerState::update( )
+StateReturnType AIGuardRetaliateInnerState::update()
 {
 	if (m_attackState)
 	{
@@ -477,7 +477,7 @@ void AIGuardRetaliateOuterState::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void AIGuardRetaliateOuterState::loadPostProcess( )
+void AIGuardRetaliateOuterState::loadPostProcess()
 {						 AIGuardRetaliateOuterState
 	onEnter();
 }
@@ -489,7 +489,7 @@ AIGuardRetaliateOuterState::~AIGuardRetaliateOuterState()
 }
 
 //--------------------------------------------------------------------------------------
-StateReturnType AIGuardRetaliateOuterState::onEnter( )
+StateReturnType AIGuardRetaliateOuterState::onEnter()
 {
 	//if (getGuardMachine()->getGuardMode() == GUARDMODE_GUARD_WITHOUT_PURSUIT)
 	//{
@@ -529,7 +529,7 @@ StateReturnType AIGuardRetaliateOuterState::onEnter( )
 }
 
 //--------------------------------------------------------------------------------------
-StateReturnType AIGuardRetaliateOuterState::update( )
+StateReturnType AIGuardRetaliateOuterState::update()
 {
 	if (m_attackState==nullptr) return STATE_SUCCESS;
 
@@ -586,12 +586,12 @@ void AIGuardRetaliateReturnState::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void AIGuardRetaliateReturnState::loadPostProcess( )
+void AIGuardRetaliateReturnState::loadPostProcess()
 {
 }
 
 //--------------------------------------------------------------------------------------
-StateReturnType AIGuardRetaliateReturnState::onEnter( )
+StateReturnType AIGuardRetaliateReturnState::onEnter()
 {
 	UnsignedInt now = TheGameLogic->getFrame();
 	m_nextReturnScanTime = now + GameLogicRandomValue(0, TheAI->getAiData()->m_guardEnemyReturnScanRate);
@@ -612,7 +612,7 @@ StateReturnType AIGuardRetaliateReturnState::onEnter( )
 }
 
 //--------------------------------------------------------------------------------------
-StateReturnType AIGuardRetaliateReturnState::update( )
+StateReturnType AIGuardRetaliateReturnState::update()
 {
 	UnsignedInt now = TheGameLogic->getFrame();
 	if (now >= m_nextReturnScanTime)
@@ -656,12 +656,12 @@ void AIGuardRetaliateIdleState::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void AIGuardRetaliateIdleState::loadPostProcess( )
+void AIGuardRetaliateIdleState::loadPostProcess()
 {
 }
 
 //--------------------------------------------------------------------------------------
-StateReturnType AIGuardRetaliateIdleState::onEnter( )
+StateReturnType AIGuardRetaliateIdleState::onEnter()
 {
 	// first time thru, use a random amount so that everyone doesn't scan on the same frame,
 	// to avoid "spikes".
@@ -672,7 +672,7 @@ StateReturnType AIGuardRetaliateIdleState::onEnter( )
 }
 
 //--------------------------------------------------------------------------------------
-StateReturnType AIGuardRetaliateIdleState::update( )
+StateReturnType AIGuardRetaliateIdleState::update()
 {
 	//DEBUG_LOG(("AIGuardRetaliateIdleState frame %d: %08lx",TheGameLogic->getFrame(),getMachineOwner()));
 
@@ -722,7 +722,7 @@ AIGuardRetaliatePickUpCrateState::AIGuardRetaliatePickUpCrateState( StateMachine
 #endif
 }
 //--------------------------------------------------------------------------------------
-StateReturnType AIGuardRetaliatePickUpCrateState::onEnter( )
+StateReturnType AIGuardRetaliatePickUpCrateState::onEnter()
 {
 	Object *owner = getMachineOwner();
 	AIUpdateInterface *ai = owner->getAIUpdateInterface();
@@ -739,7 +739,7 @@ StateReturnType AIGuardRetaliatePickUpCrateState::onEnter( )
 }
 
 //--------------------------------------------------------------------------------------
-StateReturnType AIGuardRetaliatePickUpCrateState::update( )
+StateReturnType AIGuardRetaliatePickUpCrateState::update()
 {
 	return AIPickUpCrateState::update();
 }
@@ -776,7 +776,7 @@ AIGuardRetaliateAttackAggressorState::~AIGuardRetaliateAttackAggressorState()
 }
 
 //-------------------------------------------------------------------------------------------------
-StateReturnType AIGuardRetaliateAttackAggressorState::onEnter( )
+StateReturnType AIGuardRetaliateAttackAggressorState::onEnter()
 {
 	Object *obj = getMachineOwner();
 	ObjectID nemID = INVALID_ID;
@@ -826,7 +826,7 @@ StateReturnType AIGuardRetaliateAttackAggressorState::onEnter( )
 }
 
 //-------------------------------------------------------------------------------------------------
-StateReturnType AIGuardRetaliateAttackAggressorState::update( )
+StateReturnType AIGuardRetaliateAttackAggressorState::update()
 {
 	if (m_attackState==nullptr) return STATE_SUCCESS;
 

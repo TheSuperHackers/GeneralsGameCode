@@ -424,22 +424,22 @@ const LadderInfo* LadderList::findLadderByIndex( Int index )
 	return nullptr;
 }
 
-const LadderInfoList* LadderList::getSpecialLadders( )
+const LadderInfoList* LadderList::getSpecialLadders()
 {
 	return &m_specialLadders;
 }
 
-const LadderInfoList* LadderList::getStandardLadders( )
+const LadderInfoList* LadderList::getStandardLadders()
 {
 	return &m_standardLadders;
 }
 
-const LadderInfoList* LadderList::getLocalLadders( )
+const LadderInfoList* LadderList::getLocalLadders()
 {
 	return &m_localLadders;
 }
 
-void LadderList::loadLocalLadders( )
+void LadderList::loadLocalLadders()
 {
 	AsciiString dirname;
 	dirname.format("%sGeneralsOnline\\Ladders\\", TheGlobalData->getPath_UserData().str());

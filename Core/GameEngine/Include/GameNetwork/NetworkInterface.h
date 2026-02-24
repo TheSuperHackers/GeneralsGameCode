@@ -54,17 +54,17 @@ protected:
 public:
 	virtual ~NetworkInterface() { };
 
-	static NetworkInterface * createNetwork( );
+	static NetworkInterface * createNetwork();
 
 	//---------------------------------------------------------------------------------------
 	// SubsystemInterface functions
-	virtual void init( ) = 0;																		///< Initialize the network
-	virtual void reset( ) = 0;																		///< Re-initialize the network
-	virtual void update( ) = 0;																	///< Updates the network
-	virtual void liteupdate( ) = 0;															///< does a lightweight update for passing messages around.
+	virtual void init() = 0;																		///< Initialize the network
+	virtual void reset() = 0;																		///< Re-initialize the network
+	virtual void update() = 0;																	///< Updates the network
+	virtual void liteupdate() = 0;															///< does a lightweight update for passing messages around.
 
 	virtual void setLocalAddress(UnsignedInt ip, UnsignedInt port) = 0;	///< Tell the network what local ip and port to bind to.
-	virtual Bool isFrameDataReady( ) = 0;												///< Are the commands for the next frame available?
+	virtual Bool isFrameDataReady() = 0;												///< Are the commands for the next frame available?
 	virtual Bool isStalling() = 0;
 	virtual void parseUserList( const GameInfo *game ) = 0;						///< Parse a userlist, creating connections
 	virtual void startGame() = 0;																	///< Sets the network game frame counter to -1
@@ -86,19 +86,19 @@ public:
 	virtual void selfDestructPlayer(Int index) = 0;
 
 	virtual void voteForPlayerDisconnect(Int slot) = 0;								///< register a vote towards this player's disconnect.
-	virtual Bool isPacketRouter( ) = 0;
+	virtual Bool isPacketRouter() = 0;
 
 	// Bandwidth metrics
-	virtual Real getIncomingBytesPerSecond( ) = 0;
-	virtual Real getIncomingPacketsPerSecond( ) = 0;
-	virtual Real getOutgoingBytesPerSecond( ) = 0;
-	virtual Real getOutgoingPacketsPerSecond( ) = 0;
-	virtual Real getUnknownBytesPerSecond( ) = 0;
-	virtual Real getUnknownPacketsPerSecond( ) = 0;
+	virtual Real getIncomingBytesPerSecond() = 0;
+	virtual Real getIncomingPacketsPerSecond() = 0;
+	virtual Real getOutgoingBytesPerSecond() = 0;
+	virtual Real getOutgoingPacketsPerSecond() = 0;
+	virtual Real getUnknownBytesPerSecond() = 0;
+	virtual Real getUnknownPacketsPerSecond() = 0;
 
 	virtual void updateLoadProgress( Int percent ) = 0;
-	virtual void loadProgressComplete( ) = 0;
-	virtual void sendTimeOutGameStart( ) = 0;
+	virtual void loadProgressComplete() = 0;
+	virtual void sendTimeOutGameStart() = 0;
 	virtual UnsignedInt getLocalPlayerID()= 0;
 	virtual UnicodeString getPlayerName(Int playerNum)= 0;
 	virtual Int getNumPlayers() = 0;

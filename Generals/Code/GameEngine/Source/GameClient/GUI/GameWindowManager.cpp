@@ -75,7 +75,7 @@ static Bool sendMousePosMessages = TRUE;
 //-------------------------------------------------------------------------------------------------
 /** Process windows waiting to be destroyed */
 //-------------------------------------------------------------------------------------------------
-void GameWindowManager::processDestroyList( )
+void GameWindowManager::processDestroyList()
 {
 	GameWindow *next;
 	GameWindow *doDestroy;
@@ -176,7 +176,7 @@ WindowMsgHandledType PassMessagesToParentSystem( GameWindow *window, UnsignedInt
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-GameWindowManager::GameWindowManager( )
+GameWindowManager::GameWindowManager()
 {
 
 	m_windowList = nullptr;			// list of all top level windows
@@ -198,7 +198,7 @@ GameWindowManager::GameWindowManager( )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-GameWindowManager::~GameWindowManager( )
+GameWindowManager::~GameWindowManager()
 {
 
 	// destroy all windows
@@ -212,7 +212,7 @@ GameWindowManager::~GameWindowManager( )
 //-------------------------------------------------------------------------------------------------
 /** Initialize the game window manager system */
 //-------------------------------------------------------------------------------------------------
-void GameWindowManager::init( )
+void GameWindowManager::init()
 {
 	if(!TheTransitionHandler)
 		TheTransitionHandler = NEW GameWindowTransitionsHandler;
@@ -223,7 +223,7 @@ void GameWindowManager::init( )
 //-------------------------------------------------------------------------------------------------
 /** Reset window system */
 //-------------------------------------------------------------------------------------------------
-void GameWindowManager::reset( )
+void GameWindowManager::reset()
 {
 
 	// destroy all windows left
@@ -236,7 +236,7 @@ void GameWindowManager::reset( )
 //-------------------------------------------------------------------------------------------------
 /** Update cycle for game window manager */
 //-------------------------------------------------------------------------------------------------
-void GameWindowManager::update( )
+void GameWindowManager::update()
 {
 
 	// Process windows waiting to be destroyed
@@ -641,7 +641,7 @@ Int GameWindowManager::winRelease( GameWindow *window )
 //-------------------------------------------------------------------------------------------------
 /** Returns the current mouse captor. */
 //-------------------------------------------------------------------------------------------------
-GameWindow *GameWindowManager::winGetCapture( )
+GameWindow *GameWindowManager::winGetCapture()
 {
 
 	return m_mouseCaptor;
@@ -680,7 +680,7 @@ GameWindow *GameWindowManager::winGetWindowFromId( GameWindow *window, Int id )
 //-------------------------------------------------------------------------------------------------
 /** Gets the Window List Pointer */
 //-------------------------------------------------------------------------------------------------
-GameWindow *GameWindowManager::winGetWindowList( )
+GameWindow *GameWindowManager::winGetWindowList()
 {
 
 	return m_windowList;
@@ -728,7 +728,7 @@ WindowMsgHandledType GameWindowManager::winSendInputMsg( GameWindow *window,
 //-------------------------------------------------------------------------------------------------
 /** Get the current input focus */
 //-------------------------------------------------------------------------------------------------
-GameWindow *GameWindowManager::winGetFocus( )
+GameWindow *GameWindowManager::winGetFocus()
 {
 
 	return m_keyboardFocus;
@@ -1265,7 +1265,7 @@ Int GameWindowManager::drawWindow( GameWindow *window )
 //-------------------------------------------------------------------------------------------------
 /** Draw the GUI in reverse order to correlate with clicking priority */
 //-------------------------------------------------------------------------------------------------
-void GameWindowManager::winRepaint( )
+void GameWindowManager::winRepaint()
 {
 	GameWindow *window, *next;
 
@@ -1463,7 +1463,7 @@ Int GameWindowManager::winDestroy( GameWindow *window )
 //-------------------------------------------------------------------------------------------------
 /** Destroy all windows on the window list IMMEDIATELY */
 //-------------------------------------------------------------------------------------------------
-Int GameWindowManager::winDestroyAll( )
+Int GameWindowManager::winDestroyAll()
 {
 	GameWindow *win, *next;
 
@@ -1558,7 +1558,7 @@ Int GameWindowManager::winUnsetModal( GameWindow *window )
 //-------------------------------------------------------------------------------------------------
 /** Get the grabbed window */
 //-------------------------------------------------------------------------------------------------
-GameWindow *GameWindowManager::winGetGrabWindow( )
+GameWindow *GameWindowManager::winGetGrabWindow()
 {
 
 	return m_grabWindow;
@@ -3664,7 +3664,7 @@ static WindowMsgHandledType testGrab( GameWindow *window, UnsignedInt msg,
 //-------------------------------------------------------------------------------------------------
 /** Just for testing */
 //-------------------------------------------------------------------------------------------------
-Bool GameWindowManager::initTestGUI( )
+Bool GameWindowManager::initTestGUI()
 {
 
 //	winCreateFromScript( "_ATest.wnd" );
@@ -4028,7 +4028,7 @@ void GameWindowManager::registerTabList( GameWindowList tabList )
 	m_tabList = tabList;
 }
 
-void GameWindowManager::clearTabList( )
+void GameWindowManager::clearTabList()
 {
 	m_tabList.clear();
 }

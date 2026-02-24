@@ -229,7 +229,7 @@ GameClient::~GameClient()
 //-------------------------------------------------------------------------------------------------
 /** Initialize resources for the game client */
 //-------------------------------------------------------------------------------------------------
-void GameClient::init( )
+void GameClient::init()
 {
 
 	setFrameRate(MSEC_PER_LOGICFRAME_REAL);		// from GameCommon.h... tell W3D what our expected framerate is
@@ -422,7 +422,7 @@ void GameClient::init( )
 
 //-------------------------------------------------------------------------------------------------
 /** Reset the game client for a new game */
-void GameClient::reset( )
+void GameClient::reset()
 {
 	Drawable *draw, *nextDraw;
 	m_drawableHash.clear();
@@ -460,7 +460,7 @@ void GameClient::reset( )
 /** -----------------------------------------------------------------------------------------------
  * Return a new unique object id.
  */
-DrawableID GameClient::allocDrawableID( )
+DrawableID GameClient::allocDrawableID()
 {
 	/// @todo Find unused value in current set
 	DrawableID ret = m_nextDrawableID;
@@ -487,7 +487,7 @@ void GameClient::registerDrawable( Drawable *draw )
  */
 DECLARE_PERF_TIMER(GameClient_update)
 DECLARE_PERF_TIMER(GameClient_draw)
-void GameClient::update( )
+void GameClient::update()
 {
 	USE_PERF_TIMER(GameClient_update)
 	// create the FRAME_TICK message
@@ -970,7 +970,7 @@ void GameClient::addTextBearingDrawable( Drawable *tbd )
 		m_textBearingDrawableList.push_back( tbd );
 }
 // ------------------------------------------------------------------------------------------------
-void GameClient::flushTextBearingDrawables( )
+void GameClient::flushTextBearingDrawables()
 {
 
 	/////////////////////////////
@@ -1568,7 +1568,7 @@ void GameClient::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void GameClient::loadPostProcess( )
+void GameClient::loadPostProcess()
 {
 
 	//

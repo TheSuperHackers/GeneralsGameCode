@@ -70,15 +70,15 @@ public:
 
 public:
 
-	FunctionLexicon( );
-	virtual ~FunctionLexicon( );
+	FunctionLexicon();
+	virtual ~FunctionLexicon();
 
-	virtual void init( );
-	virtual void reset( );
-	virtual void update( );
+	virtual void init();
+	virtual void reset();
+	virtual void update();
 
 	/// validate the tables and make sure all entries are unique
-	Bool validate( );
+	Bool validate();
 
 	/// get internal function table
 	TableEntry *getTable( TableIndex index );

@@ -51,11 +51,11 @@ class W3DVolumetricShadowManager
 
 public:
 
-	W3DVolumetricShadowManager( );
-	~W3DVolumetricShadowManager( );
-	Bool init( );	///<initialize resources used by manager, must have valid D3D device.
+	W3DVolumetricShadowManager();
+	~W3DVolumetricShadowManager();
+	Bool init();	///<initialize resources used by manager, must have valid D3D device.
 	// shadow list management
-	void reset( );
+	void reset();
 	W3DVolumetricShadow* addShadow( RenderObjClass *robj, Shadow::ShadowTypeInfo *shadowInfo, Drawable *draw);	///< adds shadow caster to rendering system.
 	void removeShadow(W3DVolumetricShadow *shadow);	///< removed shadow from rendering system and frees its resources.
 	void removeAllShadows(); ///< Remove all shadows.
@@ -76,7 +76,7 @@ public:
 protected:
 
 		// to render the stencil buffer polygon to the screen
-		void renderStencilShadows( );
+		void renderStencilShadows();
 
 		W3DVolumetricShadow *m_shadowList;
 		W3DVolumetricShadowRenderTask *m_dynamicShadowVolumesToRender;
@@ -97,8 +97,8 @@ class W3DVolumetricShadow	: public Shadow
 
 	public:
 
-		W3DVolumetricShadow( );
-		~W3DVolumetricShadow( );
+		W3DVolumetricShadow();
+		~W3DVolumetricShadow();
 
 	protected:
 

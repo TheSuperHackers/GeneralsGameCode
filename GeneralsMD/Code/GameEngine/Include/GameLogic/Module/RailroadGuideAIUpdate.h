@@ -45,7 +45,7 @@ class RailroadBehaviorModuleData : public PhysicsBehaviorModuleData
 
 public:
 
-	RailroadBehaviorModuleData( );
+	RailroadBehaviorModuleData();
 	static void buildFieldParse( MultiIniFieldParse &p )
 	{
 		PhysicsBehaviorModuleData::buildFieldParse( p );
@@ -106,12 +106,12 @@ public:
 
 struct TrackPoint
 {
-	TrackPoint( )
+	TrackPoint()
 	{
 		clear();
 	};
 
-	void clear( )
+	void clear()
 	{
 		m_position.set(0,0,0);
 		m_distanceFromPrev = 0;
@@ -126,7 +126,7 @@ struct TrackPoint
 	};
 
 
-	Int getHandle( )
+	Int getHandle()
 	{
 		return m_handle;
 	};
@@ -148,14 +148,14 @@ typedef std::list<TrackPoint> TrackPointList;
 struct TrainTrack
 {
 
-	TrainTrack( ) // a constructor 4 u
+	TrainTrack() // a constructor 4 u
 	{
 		clear();
 		incReference();
 	};
 
 
-	void clear( )
+	void clear()
 	{
 		m_pointList.clear();
 		m_isLooping = FALSE;
@@ -173,8 +173,8 @@ struct TrainTrack
 
 	// To protect the track form ever going out of sync between cars on the same train...
 	// I restrict write access to the first referencer, before a second one is added (the locomotive)
-	TrackPointList* getWritablePointList( ) { return m_refCount == 1 ? &m_pointList : nullptr; };
-	const TrackPointList* getPointList( ) { return &m_pointList; };
+	TrackPointList* getWritablePointList() { return m_refCount == 1 ? &m_pointList : nullptr; };
+	const TrackPointList* getPointList() { return &m_pointList; };
 
 private:
 	TrackPointList m_pointList;
@@ -221,16 +221,16 @@ public:
 	// PhysicsBehavior methods
 	virtual void onCollide( Object *other, const Coord3D *loc, const Coord3D *normal );
 	virtual Bool isRailroad() const ;
-	virtual UpdateSleepTime update( );
+	virtual UpdateSleepTime update();
 
 
 	// TRAINY METHODS
 	void getPulled( PullInfo *info );
-	void destroyTheWholeTrainNow( );
+	void destroyTheWholeTrainNow();
 	void hitchNewCarriagebyTemplate( ObjectID parentID, const TemplateNameVector& list, TemplateNameIterator& iter, TrainTrack *trackPointList );
 	void hitchNewCarriagebyProximity( ObjectID parentID, TrainTrack *trackPointList );
-	void disembark( );
-	Bool hasEverBeenHitched( ) { return m_hasEverBeenHitched; };
+	void disembark();
+	Bool hasEverBeenHitched() { return m_hasEverBeenHitched; };
 
   void setHeld( Bool held ) {m_held = held;};
 
@@ -257,8 +257,8 @@ protected:
 
 	// our methods
 	void updatePositionTrackDistance( PullInfo *pullerInfo, PullInfo *myInfo );
-	void loadTrackData( );
-	void createCarriages( );
+	void loadTrackData();
+	void createCarriages();
 	void FindPosByPathDistance( Coord3D *pos, const Real dist, const Real length, Bool setState = FALSE );
 	void playImpactSound(Object *victim, const Coord3D *impactPosition);
 

@@ -134,7 +134,7 @@ struct SpecialPowerReadyTimerType
 	{
 		clear();
 	}
-	void clear( )
+	void clear()
 	{
 		m_readyFrame = 0xffffffff;
 		m_templateID = INVALID_ID;
@@ -156,7 +156,7 @@ class PlayerRelationMap : public MemoryPoolObject,
 
 public:
 
-	PlayerRelationMap( );
+	PlayerRelationMap();
 	// virtual destructor provided by memory pool object
 
 	/** @todo I'm just wrapping this up in a nice snapshot object, we really should isolate
@@ -167,7 +167,7 @@ protected:
 
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( );
+	virtual void loadPostProcess();
 
 };
 
@@ -433,7 +433,7 @@ public:
 	Bool isSupplySourceSafe( Int minSupplies );
 
 	/// Is a supply source attacked?
-	Bool isSupplySourceAttacked( );
+	Bool isSupplySourceAttacked();
 
 	/// Set delay between team production.
 	void setTeamDelaySeconds(Int delay);
@@ -444,10 +444,10 @@ public:
 	virtual Bool computeSuperweaponTarget(const SpecialPowerTemplate *power, Coord3D *pos, Int playerNdx, Real weaponRadius); ///< Calculates best pos for weapon given radius.
 
 	/// Get the enemy an ai player is currently focused on.  NOTE - Can be nullptr.
-	Player  *getCurrentEnemy( );
+	Player  *getCurrentEnemy();
 
 	/// Is this player a skirmish ai player?
-	Bool isSkirmishAIPlayer( );
+	Bool isSkirmishAIPlayer();
 
 	/// Have the ai check for bridges.
 	virtual Bool checkBridges(Object *unit, Waypoint *way);
@@ -535,7 +535,7 @@ public:
 	const Team *getDefaultTeam() const { DEBUG_ASSERTCRASH(m_defaultTeam!=nullptr,("default team is null")); return m_defaultTeam; }
 
 	void setBuildList(BuildListInfo *pBuildList);			///< sets the build list.
-	BuildListInfo *getBuildList( ) { return m_pBuildList; }		///< returns the build list. (build list might be modified by the solo AI)
+	BuildListInfo *getBuildList() { return m_pBuildList; }		///< returns the build list. (build list might be modified by the solo AI)
 	void addToBuildList(Object *obj);			///< Adds this to the build list.	 Used for factories placed instead of in build list.
 	void addToPriorityBuildList(AsciiString templateName, Coord3D *pos, Real angle);			///< Adds this to the build list.	 Used for factories placed instead of in build list.
 
@@ -615,16 +615,16 @@ public:
 
 	void setUnitsShouldIdleOrResume(Bool idle);
 
-	Bool isPlayableSide( ) const;
+	Bool isPlayableSide() const;
 
-	Bool isPlayerObserver( ) const; // Favor !isPlayerActive() - this is used for Observer GUI mostly, not in-game stuff
+	Bool isPlayerObserver() const; // Favor !isPlayerActive() - this is used for Observer GUI mostly, not in-game stuff
 	Bool isPlayerDead() const; // Favor !isPlayerActive() - this is used so OCLs don't give us stuff after death.
 	Bool isPlayerActive() const; // Player is alive and not observer. !isPlayerActive() is synonymous with observing.
 
-	Bool didPlayerPreorder( ) const { return m_isPreorder; }
+	Bool didPlayerPreorder() const { return m_isPreorder; }
 
 	/// Grab the scorekeeper so we can score up in here!
-	ScoreKeeper* getScoreKeeper( ) { return &m_scoreKeeper; }
+	ScoreKeeper* getScoreKeeper() { return &m_scoreKeeper; }
 
 	/// time to create a hotkey team based on this GameMessage
 	void processCreateTeamGameMessage(Int hotkeyNum, const GameMessage *msg);
@@ -731,9 +731,9 @@ protected:
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( );
+	virtual void loadPostProcess();
 
-	void deleteUpgradeList( );															///< delete all our upgrades
+	void deleteUpgradeList();															///< delete all our upgrades
 
 private:
 

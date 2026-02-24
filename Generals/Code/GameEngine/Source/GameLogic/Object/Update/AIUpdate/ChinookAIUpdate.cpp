@@ -1281,7 +1281,7 @@ void ChinookAIUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void ChinookAIUpdate::loadPostProcess( )
+void ChinookAIUpdate::loadPostProcess()
 {
 	SupplyTruckAIUpdate::loadPostProcess();
 }

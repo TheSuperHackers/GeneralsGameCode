@@ -120,8 +120,8 @@ public:
 class	SimpleFileFactoryClass : public FileFactoryClass {
 
 public:
-	SimpleFileFactoryClass( );
-	~SimpleFileFactoryClass( )	{}
+	SimpleFileFactoryClass();
+	~SimpleFileFactoryClass()	{}
 
 	virtual FileClass *	Get_File( char const *filename );
 	virtual void			Return_File( FileClass *file );
@@ -132,9 +132,9 @@ public:
 	void						Set_Sub_Directory( const char * sub_directory );
 	void						Prepend_Sub_Directory( const char * sub_directory );
 	void						Append_Sub_Directory( const char * sub_directory );
-	bool						Get_Strip_Path( ) const								{ return IsStripPath; }
+	bool						Get_Strip_Path() const								{ return IsStripPath; }
 	void						Set_Strip_Path( bool set )									{ IsStripPath = set; }
-	void						Reset_Sub_Directory( )								{ SubDirectory = ""; }
+	void						Reset_Sub_Directory()								{ SubDirectory = ""; }
 
 protected:
 	StringClass				SubDirectory;

@@ -147,7 +147,7 @@ protected:
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( );
+	virtual void loadPostProcess();
 
 	AsciiString m_name;
 	Int	m_defaultPriority;
@@ -179,7 +179,7 @@ protected:
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( );
+	virtual void loadPostProcess();
 
 };
 EMPTY_DTOR(SequentialScript)
@@ -220,9 +220,9 @@ public:
 	ScriptEngine();
 	virtual ~ScriptEngine();
 
-	virtual void init( );		///< Init
-	virtual void reset( );		///< Reset
-	virtual void update( );	///< Update
+	virtual void init();		///< Init
+	virtual void reset();		///< Reset
+	virtual void update();	///< Update
 
 	void appendSequentialScript(const SequentialScript *scriptToSequence);
 	void removeSequentialScript(SequentialScript *scriptToRemove);
@@ -241,7 +241,7 @@ public:
 	virtual const ActionTemplate *getActionTemplate( Int ndx); ///< Get the template for a script action.
 	virtual const ConditionTemplate *getConditionTemplate( Int ndx); ///< Get the template for a script Condition.
 	virtual void startEndGameTimer(); ///< Starts the end game timer after a mission is won or lost.
-	Bool isGameEnding( ) { return m_endGameTimer >= 0;	}
+	Bool isGameEnding() { return m_endGameTimer >= 0;	}
 	virtual void startQuickEndGameTimer(); ///< Starts the quick end game timer after a campaign is won or lost.
 	virtual void startCloseWindowTimer(); ///< Starts the timer to close windows after a mission is won or lost.
 	virtual void runScript(const AsciiString& scriptName, Team *pThisTeam=nullptr); ///<  Runs a script.
@@ -305,14 +305,14 @@ public:
 
 	const BreezeInfo& getBreezeInfo() const {return m_breezeInfo;}
 
-	Bool isTimeFrozenScript( );		///< Ask whether a script has frozen time or not
-	void doFreezeTime( );
-	void doUnfreezeTime( );
+	Bool isTimeFrozenScript();		///< Ask whether a script has frozen time or not
+	void doFreezeTime();
+	void doUnfreezeTime();
 
 	/// The following functions are used to update and query the debug window
-	Bool isTimeFrozenDebug( );		///< Ask whether the debug window has requested a pause.
-	Bool isTimeFast( );		///< Ask whether the debug window has requested a fast forward.
-	void forceUnfreezeTime( );	///< Force that time becomes unfrozen temporarily.
+	Bool isTimeFrozenDebug();		///< Ask whether the debug window has requested a pause.
+	Bool isTimeFast();		///< Ask whether the debug window has requested a fast forward.
+	void forceUnfreezeTime();	///< Force that time becomes unfrozen temporarily.
 	void AppendDebugMessage(const AsciiString& strToAdd, Bool forcePause);
 	void AdjustDebugVariableData(const AsciiString& variableName, Int value, Bool forcePause);
 
@@ -325,7 +325,7 @@ public:
 	AsciiString getCurrentTrackName() const { return m_currentTrackName; }
 	void setCurrentTrackName(AsciiString a) { m_currentTrackName = a; }
 
-	GameDifficulty getGlobalDifficulty( ) const { return m_gameDifficulty; }
+	GameDifficulty getGlobalDifficulty() const { return m_gameDifficulty; }
 	void setGlobalDifficulty( GameDifficulty difficulty );
 
 	/// Attack priority stuff.
@@ -343,14 +343,14 @@ public:
 	void setObjectCount(Int playerIndex, const AsciiString& objectTypeName, Int newCount);
 
 	//Kris: Moved to public... so that I can refresh it when building abilities in script dialogs.
-	void createNamedCache( );
+	void createNamedCache();
 
 	///Begin VTUNE
 	void setEnableVTune(Bool value);
 	Bool getEnableVTune() const;
 	///End VTUNE
 //#if defined(RTS_DEBUG)
-	void debugVictory( );
+	void debugVictory();
 //#endif
 
 
@@ -362,7 +362,7 @@ protected:
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( );
+	virtual void loadPostProcess();
 
 	Int allocateCounter( const AsciiString& name);
 	Int allocateFlag( const AsciiString& name);
@@ -397,8 +397,8 @@ protected:
 	// For Object types maintenance.
 	void removeObjectTypes(ObjectTypes *typesToRemove);
 
-	void particleEditorUpdate( );
-	void updateFades( );
+	void particleEditorUpdate();
+	void updateFades();
 
 	AttackPriorityInfo *findAttackInfo(const AsciiString& name, Bool addIfNotFound);
 
@@ -409,7 +409,7 @@ protected:
 
 	VecSequentialScriptPtr m_sequentialScripts;
 
-	void evaluateAndProgressAllSequentialScripts( );
+	void evaluateAndProgressAllSequentialScripts();
 	VecSequentialScriptPtrIt cleanupSequentialScript(VecSequentialScriptPtrIt it, Bool cleanDanglers);
 
 	Bool hasUnitCompletedSequentialScript( Object *object, const AsciiString& sequentialScriptName );

@@ -886,7 +886,7 @@ void SidesList::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void SidesList::loadPostProcess( )
+void SidesList::loadPostProcess()
 {
 
 }
@@ -1045,7 +1045,7 @@ void BuildListInfo::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void BuildListInfo::loadPostProcess( )
+void BuildListInfo::loadPostProcess()
 {
 
 }

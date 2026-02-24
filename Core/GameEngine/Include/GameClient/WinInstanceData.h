@@ -100,10 +100,10 @@ class WinInstanceData
 
 public:
 
-	WinInstanceData( );  ///< constructor automatically runs init()
-	virtual ~WinInstanceData( );
+	WinInstanceData();  ///< constructor automatically runs init()
+	virtual ~WinInstanceData();
 
-	void init( );  ///< initialize default values if desired
+	void init();  ///< initialize default values if desired
 
 
 	// setting text
@@ -111,18 +111,18 @@ public:
 	void setText( UnicodeString text );  ///< set instance text text
 
 	// a couple of nice access methods
-	UnicodeString getTooltipText( );		///< get tooltip text
-	UnicodeString getText( );					///< get instance text
-	Int getTextLength( );						///< get number of chars in instance text
-	Int getTooltipTextLength( );						///< get number of chars in tooltip text
-	UnsignedInt getStyle( );				///< return window style
-	UnsignedInt getStatus( );			///< return window status
-	UnsignedInt getState( );				///< return window state
-	GameWindow *getOwner( );				///< return window owner
-	GameFont	 *getFont( );				///< return window font
+	UnicodeString getTooltipText();		///< get tooltip text
+	UnicodeString getText();					///< get instance text
+	Int getTextLength();						///< get number of chars in instance text
+	Int getTooltipTextLength();						///< get number of chars in tooltip text
+	UnsignedInt getStyle();				///< return window style
+	UnsignedInt getStatus();			///< return window status
+	UnsignedInt getState();				///< return window state
+	GameWindow *getOwner();				///< return window owner
+	GameFont	 *getFont();				///< return window font
 
-	DisplayString *getTextDisplayString( );			///< return the text display string
-	DisplayString *getTooltipDisplayString( );		///< return the tooltip display string
+	DisplayString *getTextDisplayString();			///< return the text display string
+	DisplayString *getTooltipDisplayString();		///< return the tooltip display string
 
 	void setVideoBuffer( VideoBuffer * videoBuffer );	///< set the videobuffer to display a video frame
 
@@ -179,33 +179,33 @@ protected:
 ///////////////////////////////////////////////////////////////////////////////
 // INLINING ///////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-inline UnsignedInt WinInstanceData::getStyle( ) { return m_style; }
-inline UnsignedInt WinInstanceData::getStatus( ) { return m_status; }
-inline UnsignedInt WinInstanceData::getState( ) { return m_state; }
-inline GameWindow *WinInstanceData::getOwner( ) { return m_owner; }
-inline GameFont		*WinInstanceData::getFont( ) { return m_font; }
-inline DisplayString *WinInstanceData::getTextDisplayString( ) { return m_text; }
-inline DisplayString *WinInstanceData::getTooltipDisplayString( ) { return m_tooltip; }
-inline UnicodeString WinInstanceData::getTooltipText( )
+inline UnsignedInt WinInstanceData::getStyle() { return m_style; }
+inline UnsignedInt WinInstanceData::getStatus() { return m_status; }
+inline UnsignedInt WinInstanceData::getState() { return m_state; }
+inline GameWindow *WinInstanceData::getOwner() { return m_owner; }
+inline GameFont		*WinInstanceData::getFont() { return m_font; }
+inline DisplayString *WinInstanceData::getTextDisplayString() { return m_text; }
+inline DisplayString *WinInstanceData::getTooltipDisplayString() { return m_tooltip; }
+inline UnicodeString WinInstanceData::getTooltipText()
 {
 	if( m_tooltip )
 		return m_tooltip->getText();
 	return UnicodeString::TheEmptyString;
 
 }
-inline UnicodeString WinInstanceData::getText( )
+inline UnicodeString WinInstanceData::getText()
 {
 	if( m_text )
 		return m_text->getText();
 	return UnicodeString::TheEmptyString;
 }
-inline Int WinInstanceData::getTextLength( )
+inline Int WinInstanceData::getTextLength()
 {
 	if( m_text )
 		return m_text->getTextLength();
 	return 0;
 }
-inline Int WinInstanceData::getTooltipTextLength( )
+inline Int WinInstanceData::getTooltipTextLength()
 {
 	if( m_tooltip )
 		return m_tooltip->getTextLength();

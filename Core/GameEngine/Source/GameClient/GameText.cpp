@@ -140,10 +140,10 @@ class GameTextManager : public GameTextInterface
 		GameTextManager();
 		virtual ~GameTextManager();
 
-		virtual void					init( );						///< Initializes the text system
-		virtual void					deinit( );					///< Shuts down the text system
-		virtual void					update( ) {};			///< update text manager
-		virtual void					reset( );					///< Resets the text system
+		virtual void					init();						///< Initializes the text system
+		virtual void					deinit();					///< Shuts down the text system
+		virtual void					update() {};			///< update text manager
+		virtual void					reset();					///< Resets the text system
 
 		virtual UnicodeString fetch( const Char *label, Bool *exists = nullptr );		///< Returns the associated labeled unicode text
 		virtual UnicodeString fetch( AsciiString label, Bool *exists = nullptr );		///< Returns the associated labeled unicode text
@@ -232,7 +232,7 @@ GameTextInterface *TheGameText = nullptr;
 // CreateGameTextInterface
 //============================================================================
 
-GameTextInterface* CreateGameTextInterface( )
+GameTextInterface* CreateGameTextInterface()
 {
 	return NEW GameTextManager;
 }
@@ -284,7 +284,7 @@ GameTextManager::~GameTextManager()
 extern const Char *g_strFile;
 extern const Char *g_csfFile;
 
-void GameTextManager::init( )
+void GameTextManager::init()
 {
 	AsciiString csfFile;
 	csfFile.format(g_csfFile, GetRegistryLanguage().str());
@@ -372,7 +372,7 @@ void GameTextManager::init( )
 // GameTextManager::deinit
 //============================================================================
 
-void GameTextManager::deinit( )
+void GameTextManager::deinit()
 {
 
 	delete [] m_stringInfo;
@@ -406,7 +406,7 @@ void GameTextManager::deinit( )
 // GameTextManager::reset
 //============================================================================
 
-void GameTextManager::reset( )
+void GameTextManager::reset()
 {
 	delete [] m_mapStringInfo;
 	m_mapStringInfo = nullptr;

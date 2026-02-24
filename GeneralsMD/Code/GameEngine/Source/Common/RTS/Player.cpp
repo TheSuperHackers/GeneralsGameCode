@@ -110,7 +110,7 @@ class ClosestKindOfData
 {
 public:
 
-	ClosestKindOfData( );
+	ClosestKindOfData();
 
 	//In
 	KindOfMaskType m_setKindOf;
@@ -124,7 +124,7 @@ public:
 };
 
 // ------------------------------------------------------------------------------------------------
-ClosestKindOfData::ClosestKindOfData( )
+ClosestKindOfData::ClosestKindOfData()
 {
 	m_setKindOf.clear();
 	m_clearKindOf.clear();
@@ -202,14 +202,14 @@ void dumpBattlePlanBonuses(const BattlePlanBonuses *b, AsciiString name, const P
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-PlayerRelationMap::PlayerRelationMap( )
+PlayerRelationMap::PlayerRelationMap()
 {
 
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-PlayerRelationMap::~PlayerRelationMap( )
+PlayerRelationMap::~PlayerRelationMap()
 {
 
 	// make sure the data is cleared
@@ -289,7 +289,7 @@ void PlayerRelationMap::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void PlayerRelationMap::loadPostProcess( )
+void PlayerRelationMap::loadPostProcess()
 {
 
 }
@@ -1146,7 +1146,7 @@ void Player::becomingLocalPlayer(Bool yes)
 //-------------------------------------------------------------------------------------------------
 /** Is this player a skirmish ai player? */
 //-------------------------------------------------------------------------------------------------
-Bool Player::isSkirmishAIPlayer( )
+Bool Player::isSkirmishAIPlayer()
 {
 	return m_ai ? m_ai->isSkirmishAI() : false;
 }
@@ -1168,7 +1168,7 @@ Bool Player::computeSuperweaponTarget(const SpecialPowerTemplate *power, Coord3D
 //-------------------------------------------------------------------------------------------------
 /** Get this player's current enemy. NOTE - Can be nullptr. */
 //-------------------------------------------------------------------------------------------------
-Player  *Player::getCurrentEnemy( )
+Player  *Player::getCurrentEnemy()
 {
 	return m_ai?m_ai->getAiEnemy():nullptr;
 }
@@ -1577,11 +1577,11 @@ Bool Player::isSupplySourceSafe( Int minSupplies )
 //-------------------------------------------------------------------------------------------------
 /** Is a supply source attacked? */
 //-------------------------------------------------------------------------------------------------
-Bool Player::isSupplySourceAttacked( )
+Bool Player::isSupplySourceAttacked()
 {
 	// ai query
 	if( m_ai )
-		return m_ai->isSupplySourceAttacked( );
+		return m_ai->isSupplySourceAttacked();
 	return false;
 }
 
@@ -2961,7 +2961,7 @@ Bool Player::canAffordBuild( const ThingTemplate *whatToBuild ) const
 }
 
 //=================================================================================================
-void Player::deleteUpgradeList( )
+void Player::deleteUpgradeList()
 {
 	Upgrade *next;
 
@@ -3140,7 +3140,7 @@ void Player::removeUpgrade( const UpgradeTemplate *upgradeTemplate )
 
 
 //-------------------------------------------------------------------------------------------------
-Bool Player::okToPlayRadarEdgeSound( )
+Bool Player::okToPlayRadarEdgeSound()
 {
 	return (
 		! TheVictoryConditions->hasSinglePlayerBeenDefeated( this )
@@ -3950,7 +3950,7 @@ Bool Player::isPlayerActive() const
 }
 
 // ------------------------------------------------------------------------------------------------
-Bool Player::isPlayableSide( ) const
+Bool Player::isPlayableSide() const
 {
 
 	return m_playerTemplate ? m_playerTemplate->isPlayableSide() : FALSE;
@@ -4539,7 +4539,7 @@ void Player::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void Player::loadPostProcess( )
+void Player::loadPostProcess()
 {
 
 }

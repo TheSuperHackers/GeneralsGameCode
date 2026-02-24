@@ -51,7 +51,7 @@
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-NeutronMissileSlowDeathBehaviorModuleData::NeutronMissileSlowDeathBehaviorModuleData( )
+NeutronMissileSlowDeathBehaviorModuleData::NeutronMissileSlowDeathBehaviorModuleData()
 {
 
 	for( Int i = 0; i < MAX_NEUTRON_BLASTS; ++i )
@@ -207,14 +207,14 @@ NeutronMissileSlowDeathBehavior::NeutronMissileSlowDeathBehavior( Thing *thing, 
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-NeutronMissileSlowDeathBehavior::~NeutronMissileSlowDeathBehavior( )
+NeutronMissileSlowDeathBehavior::~NeutronMissileSlowDeathBehavior()
 {
 
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-UpdateSleepTime NeutronMissileSlowDeathBehavior::update( )
+UpdateSleepTime NeutronMissileSlowDeathBehavior::update()
 {
 /// @todo srj use SLEEPY_UPDATE here
 	// get the module data
@@ -519,7 +519,7 @@ void NeutronMissileSlowDeathBehavior::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void NeutronMissileSlowDeathBehavior::loadPostProcess( )
+void NeutronMissileSlowDeathBehavior::loadPostProcess()
 {
 
 	// extend base class

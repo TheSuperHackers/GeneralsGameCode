@@ -100,7 +100,7 @@ class AISideInfo : public MemoryPoolObject
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AISideInfo, "AISideInfo")
 public:
-	AISideInfo( ) : m_easy(0), m_normal(1), m_hard(2), m_next(nullptr)
+	AISideInfo() : m_easy(0), m_normal(1), m_hard(2), m_next(nullptr)
 	{
 		m_side.clear();
 		m_baseDefenseStructure1.clear();
@@ -149,7 +149,7 @@ public:
 	// --------------- inherited from Snapshot interface --------------
 	void crc( Xfer *xfer );
 	void xfer( Xfer *xfer );
-	void loadPostProcess( );
+	void loadPostProcess();
 
 	Real m_structureSeconds;		// Try to build a structure every N seconds.
 	Real m_teamSeconds;					// Try to build a team every N seconds.
@@ -246,14 +246,14 @@ public:
 class AI : public SubsystemInterface, public Snapshot
 {
 public:
-	AI( );
+	AI();
 	~AI();
 
-	virtual void init( );						///< initialize AI to default values
-	virtual void reset( );						///< reset the AI system to prepare for a new map
-	virtual void update( );					///< do one frame of AI computation
+	virtual void init();						///< initialize AI to default values
+	virtual void reset();						///< reset the AI system to prepare for a new map
+	virtual void update();					///< do one frame of AI computation
 
-	Pathfinder *pathfinder( ) { return m_pathfinder; }	///< public access to the pathfind system
+	Pathfinder *pathfinder() { return m_pathfinder; }	///< public access to the pathfind system
 	enum
 	{
 		CAN_SEE														=	1 << 0,
@@ -273,10 +273,10 @@ public:
 	// --------------- inherited from Snapshot interface --------------
 	void crc( Xfer *xfer );
 	void xfer( Xfer *xfer );
-	void loadPostProcess( );
+	void loadPostProcess();
 
 	// AI Groups -----------------------------------------------------------------------------------------------
-	AIGroupPtr createGroup( ); ///< instantiate a new AI Group
+	AIGroupPtr createGroup(); ///< instantiate a new AI Group
 	void destroyGroup( AIGroup *group );	///< destroy the given AI Group
 	AIGroup *findGroup( UnsignedInt id );	///< return the AI Group with the given ID
 
@@ -295,7 +295,7 @@ public:
 	static void parseSkillSet( INI* ini, void *instance, void *store, const void *userData );					///< Parse the image part of the INI file
 	static void parseScience( INI* ini, void *instance, void *store, const void *userData );					///< Parse the image part of the INI file
 
-	UnsignedInt getNextGroupID( ) { return ++m_nextGroupID; }
+	UnsignedInt getNextGroupID() { return ++m_nextGroupID; }
 
 protected:
 	Pathfinder *m_pathfinder;							///< the pathfinding system
@@ -893,7 +893,7 @@ public:
 	// --------------- inherited from Snapshot interface --------------
 	void crc( Xfer *xfer );
 	void xfer( Xfer *xfer );
-	void loadPostProcess( );
+	void loadPostProcess();
 
 #if !RETAIL_COMPATIBLE_AIGROUP
 	void Add_Ref() const { m_refCount.Add_Ref(); }
@@ -962,7 +962,7 @@ public:
 	void groupOverrideSpecialPowerDestination( SpecialPowerType spType, const Coord3D *loc, CommandSourceType cmdSource );
 
 	void setAttitude( AttitudeType tude );	///< set the behavior modifier for this agent
-	AttitudeType getAttitude( ) const;				///< get the current behavior modifier state
+	AttitudeType getAttitude() const;				///< get the current behavior modifier state
 
 	Bool isIdle() const;
 	//Definition of busy -- when explicitly in the busy state. Moving or attacking is not considered busy!
@@ -978,13 +978,13 @@ public:
 	// Group methods --------------------------------------------------------------------------------
 	Bool isMember( Object *obj );						///< return true if object is in this group
 
-	Real getSpeed( );									///< return the speed of the group's slowest member
+	Real getSpeed();									///< return the speed of the group's slowest member
 	Bool getCenter( Coord3D *center );				///< compute centroid of group
 	Bool getMinMaxAndCenter( Coord2D *min, Coord2D *max, Coord3D *center );
 	void computeIndividualDestination( Coord3D *dest, const Coord3D *groupDest,
 		Object *obj, const Coord3D *center, Bool isFormation ); ///< compute destination of individual object, based on group destination
-	Int getCount( );										///< return the number of objects in the group
-	Bool isEmpty( );										///< returns true if the group has no members
+	Int getCount();										///< return the number of objects in the group
+	Bool isEmpty();										///< returns true if the group has no members
 	void queueUpgrade( const UpgradeTemplate *upgrade );	///< queue an upgrade
 
 	void add( Object *obj );								///< add object to group
@@ -992,7 +992,7 @@ public:
 	// Returns true if the group was emptied.
 	Bool remove( Object *obj);
 
-	void removeAll( );
+	void removeAll();
 
 	// If the group contains any objects not owned by ownerPlayer, return TRUE.
 	Bool containsAnyObjectsNotOwnedByPlayer( const Player *ownerPlayer );
@@ -1000,10 +1000,10 @@ public:
 	// Removes any objects that aren't owned by the player, and returns true if the group was emptied.
 	Bool removeAnyObjectsNotOwnedByPlayer( const Player *ownerPlayer );
 
-	UnsignedInt getID( );
+	UnsignedInt getID();
 
 	///< get IDs for every object in this group
-	const VecObjectID& getAllIDs ( ) const;
+	const VecObjectID& getAllIDs () const;
 
 	void recomputeGroupSpeed() { m_dirty = true; }
 
@@ -1025,7 +1025,7 @@ protected:
 private:
 	// AIGroups must be created through TheAI->createGroup()
 	friend class AI;
-	AIGroup( );
+	AIGroup();
 
 #if !RETAIL_COMPATIBLE_AIGROUP
 	static void destroy(AIGroup* self)
@@ -1034,7 +1034,7 @@ private:
 	}
 #endif
 
-	void recompute( );									///< recompute various group info, such as speed, leader, etc
+	void recompute();									///< recompute various group info, such as speed, leader, etc
 
 	ListObjectPtr m_memberList;							///< the list of member Objects
 	UnsignedInt	m_memberListSize;	 					///< the size of the list of member Objects

@@ -117,14 +117,14 @@ EMPUpdate::EMPUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModul
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-EMPUpdate::~EMPUpdate( )
+EMPUpdate::~EMPUpdate()
 {
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 
-UpdateSleepTime EMPUpdate::update( )
+UpdateSleepTime EMPUpdate::update()
 {
 /// @todo srj use SLEEPY_UPDATE here
 
@@ -164,7 +164,7 @@ UpdateSleepTime EMPUpdate::update( )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void EMPUpdate::doDisableAttack( )
+void EMPUpdate::doDisableAttack()
 {
 	Object *object = getObject();
 	const EMPUpdateModuleData *data = getEMPUpdateModuleData();
@@ -296,7 +296,7 @@ void EMPUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void EMPUpdate::loadPostProcess( )
+void EMPUpdate::loadPostProcess()
 {
 
 }

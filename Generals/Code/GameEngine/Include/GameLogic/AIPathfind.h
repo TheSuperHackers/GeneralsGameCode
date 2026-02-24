@@ -65,18 +65,18 @@ class PathNode : public MemoryPoolObject
 public:
 	PathNode();
 
-	Coord3D *getPosition( ) { return &m_pos; }			///< return position of this node
-	const Coord3D *getPosition( ) const { return &m_pos; }			///< return position of this node
+	Coord3D *getPosition() { return &m_pos; }			///< return position of this node
+	const Coord3D *getPosition() const { return &m_pos; }			///< return position of this node
 	void setPosition( const Coord3D *pos ) { m_pos = *pos; }	///< set the position of this path node
 
-	const Coord3D *computeDirectionVector( );			///< compute direction to next node
+	const Coord3D *computeDirectionVector();			///< compute direction to next node
 
-	PathNode *getNext( ) { return m_next; }				///< return next node in the path
-	PathNode *getPrevious( ) { return m_prev; }		///< return previous node in the path
-	const PathNode *getNext( ) const { return m_next; }				///< return next node in the path
-	const PathNode *getPrevious( ) const { return m_prev; }		///< return previous node in the path
+	PathNode *getNext() { return m_next; }				///< return next node in the path
+	PathNode *getPrevious() { return m_prev; }		///< return previous node in the path
+	const PathNode *getNext() const { return m_next; }				///< return next node in the path
+	const PathNode *getPrevious() const { return m_prev; }		///< return previous node in the path
 
-	PathfindLayerEnum getLayer( ) const { return m_layer; }				///< return layer of this node.
+	PathfindLayerEnum getLayer() const { return m_layer; }				///< return layer of this node.
 	void setLayer( PathfindLayerEnum layer ) { m_layer = layer; }	///< set the layer of this path node
 
 	void setNextOptimized( PathNode *node );
@@ -100,7 +100,7 @@ public:
 	}
 
 	void setCanOptimize(Bool canOpt) { m_canOptimize = canOpt;}
-	Bool getCanOptimize( ) const { return m_canOptimize;}
+	Bool getCanOptimize() const { return m_canOptimize;}
 
 	/// given a list, prepend this node, return new list
 	PathNode *prependToList( PathNode *list );
@@ -149,8 +149,8 @@ class Path : public MemoryPoolObject, public Snapshot
 public:
 	Path();
 
-	PathNode *getFirstNode( ) { return m_path; }
-	PathNode *getLastNode( ) { return m_pathTail; }
+	PathNode *getFirstNode() { return m_path; }
+	PathNode *getLastNode() { return m_pathTail; }
 
 	void updateLastNode( const Coord3D *pos );
 
@@ -296,7 +296,7 @@ public:
 	};
 
 	/// reset the cell
-	void reset( );
+	void reset();
 
 	PathfindCell();
 	~PathfindCell();
@@ -304,9 +304,9 @@ public:
 	void setTypeAsObstacle( Object *obstacle, Bool isFence, const ICoord2D &pos );				///< flag this cell as an obstacle, from the given one
 	void removeObstacle( Object *obstacle );				///< flag this cell as an obstacle, from the given one
 	void setType( CellType type );	///< set the cell type
-	CellType getType( ) const { return (CellType)m_type; }				///< get the cell type
-	CellFlags getFlags( ) const { return (CellFlags)m_flags; }				///< get the cell type
-	Bool isAircraftGoal( ) const {return m_aircraftGoal != 0;}
+	CellType getType() const { return (CellType)m_type; }				///< get the cell type
+	CellFlags getFlags() const { return (CellFlags)m_flags; }				///< get the cell type
+	Bool isAircraftGoal() const {return m_aircraftGoal != 0;}
 
 	Bool isObstaclePresent( ObjectID objID ) const;					///< return true if the given object ID is registered as an obstacle in this cell
 #if RETAIL_COMPATIBLE_PATHFINDING_ALLOCATION
@@ -383,10 +383,10 @@ public:
 	inline ObjectID getObstacleID() const;
 
 	void setLayer( PathfindLayerEnum layer ) { m_layer = layer; }	///< set the cell layer
-	PathfindLayerEnum getLayer( ) const { return (PathfindLayerEnum)m_layer; }				///< get the cell layer
+	PathfindLayerEnum getLayer() const { return (PathfindLayerEnum)m_layer; }				///< get the cell layer
 
 	void setConnectLayer( PathfindLayerEnum layer ) { m_connectsToLayer = layer; }	///< set the cell layer	connect id
-	PathfindLayerEnum getConnectLayer( ) const { return (PathfindLayerEnum)m_connectsToLayer; }				///< get the cell layer connect id
+	PathfindLayerEnum getConnectLayer() const { return (PathfindLayerEnum)m_connectsToLayer; }				///< get the cell layer connect id
 
 private:
 	PathfindCellInfo *m_info;
@@ -638,15 +638,15 @@ private:
 		Path *originalPath, Bool blocked );
 
 public:
-	Pathfinder( );
+	Pathfinder();
 	~Pathfinder() ;
 
-	void reset( );														///< Reset system in preparation for new map
+	void reset();														///< Reset system in preparation for new map
 
 	// --------------- inherited from Snapshot interface --------------
 	void crc( Xfer *xfer );
 	void xfer( Xfer *xfer );
-	void loadPostProcess( );
+	void loadPostProcess();
 
 	Bool quickDoesPathExist( const LocomotorSet& locomotorSet, const Coord3D *from, const Coord3D *to );  ///< Can we build any path at all between the locations	(terrain & buildings check - fast)
 	Bool slowDoesPathExist( Object *obj, const Coord3D *from,
@@ -654,7 +654,7 @@ public:
 
 	Bool queueForPath(ObjectID id);	 ///< The object wants to request a pathfind, so put it on the list to process.
 	void processPathfindQueue(); ///< Process some or all of the queued pathfinds.
-	void forceMapRecalculation( );	///< Force pathfind map recomputation. If region is given, only that area is recomputed
+	void forceMapRecalculation();	///< Force pathfind map recomputation. If region is given, only that area is recomputed
 
 	/** Returns an aircraft path to the goal.  */
 	Path *getAircraftPath( const Object *obj, const Coord3D *to);
@@ -717,9 +717,9 @@ public:
 		const Coord3D& endWorld, Int pathDiameter);	///< Return true if the straight line between the given points is passable
 
 	// for debugging
-	const Coord3D *getDebugPathPosition( );
+	const Coord3D *getDebugPathPosition();
 	void setDebugPathPosition( const Coord3D *pos );
-	Path *getDebugPath( );
+	Path *getDebugPath();
 	void setDebugPath( Path *debugpath );
 
 #if RETAIL_COMPATIBLE_PATHFINDING
@@ -819,7 +819,7 @@ protected:
 
 	static Int segmentIntersectsBuildingCallback(Pathfinder* pathfinder, PathfindCell* from, PathfindCell* to, Int to_x, Int to_y, void* userData);
 
-	void classifyMap( );					///< Classify all cells in grid as obstacles, etc
+	void classifyMap();					///< Classify all cells in grid as obstacles, etc
 	void classifyObjectFootprint( Object *obj, Bool insert );	/** Classify the cells under the given object
 																																If 'insert' is true, object is being added
 																																If 'insert' is false, object is being removed */
@@ -920,7 +920,7 @@ inline Bool Pathfinder::validMovementPosition( Bool isCrusher, PathfindLayerEnum
 	return validMovementPosition( isCrusher, layer, locomotorSet, x, y );
 }
 
-inline const Coord3D *Pathfinder::getDebugPathPosition( )
+inline const Coord3D *Pathfinder::getDebugPathPosition()
 {
 	return &debugPathPos;
 }
@@ -930,7 +930,7 @@ inline void Pathfinder::setDebugPathPosition( const Coord3D *pos )
 	debugPathPos = *pos;
 }
 
-inline Path *Pathfinder::getDebugPath( )
+inline Path *Pathfinder::getDebugPath()
 {
 	return debugPath;
 }

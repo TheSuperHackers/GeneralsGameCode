@@ -571,7 +571,7 @@ HRESULT  Cftp::LoginToServer( LPCSTR szUserName, LPCSTR szPassword )
 ***************************************************************************/
 
 
-HRESULT  Cftp::LogoffFromServer( )
+HRESULT  Cftp::LogoffFromServer()
 {
 	char command[ 256 ];
 	int iReply, iRetCode;
@@ -1086,7 +1086,7 @@ unsigned long MyIPAddress( int sockfd )
 ***************************************************************************/
 
 
-int Cftp::SendNewPort( )
+int Cftp::SendNewPort()
 {
 	unsigned long uTemp;
 	char command[ 256 ];

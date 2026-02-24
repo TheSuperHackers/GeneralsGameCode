@@ -778,7 +778,7 @@ void AudioManager::setListenerPosition( const Coord3D *newListenerPos, const Coo
 }
 
 //-------------------------------------------------------------------------------------------------
-const Coord3D *AudioManager::getListenerPosition( ) const
+const Coord3D *AudioManager::getListenerPosition() const
 {
 	return &m_listenerPosition;
 }
@@ -806,7 +806,7 @@ void AudioManager::appendAudioRequest( AudioRequest *m_request )
 
 //-------------------------------------------------------------------------------------------------
 // Remove all pending audio requests
-void AudioManager::removeAllAudioRequests( )
+void AudioManager::removeAllAudioRequests()
 {
   std::list<AudioRequest*>::iterator it;
   for ( it = m_audioRequests.begin(); it != m_audioRequests.end(); it++ ) {
@@ -817,7 +817,7 @@ void AudioManager::removeAllAudioRequests( )
 }
 
 //-------------------------------------------------------------------------------------------------
-void AudioManager::processRequestList( )
+void AudioManager::processRequestList()
 {
 
 }
@@ -887,31 +887,31 @@ void AudioManager::removeLevelSpecificAudioEventInfos()
 }
 
 //-------------------------------------------------------------------------------------------------
-const AudioSettings *AudioManager::getAudioSettings( ) const
+const AudioSettings *AudioManager::getAudioSettings() const
 {
 	return m_audioSettings;
 }
 
 //-------------------------------------------------------------------------------------------------
-AudioSettings *AudioManager::friend_getAudioSettings( )
+AudioSettings *AudioManager::friend_getAudioSettings()
 {
 	return m_audioSettings;
 }
 
 //-------------------------------------------------------------------------------------------------
-const MiscAudio *AudioManager::getMiscAudio( ) const
+const MiscAudio *AudioManager::getMiscAudio() const
 {
 	return m_miscAudio;
 }
 
 //-------------------------------------------------------------------------------------------------
-MiscAudio *AudioManager::friend_getMiscAudio( )
+MiscAudio *AudioManager::friend_getMiscAudio()
 {
 	return m_miscAudio;
 }
 
 //-------------------------------------------------------------------------------------------------
-const FieldParse *AudioManager::getFieldParseTable( ) const
+const FieldParse *AudioManager::getFieldParseTable() const
 {
 	return audioSettingsFieldParseTable;
 }
@@ -1066,7 +1066,7 @@ Bool AudioManager::shouldPlayLocally(const AudioEventRTS *audioEvent)
 }
 
 //-------------------------------------------------------------------------------------------------
-AudioHandle AudioManager::allocateNewHandle( )
+AudioHandle AudioManager::allocateNewHandle()
 {
 	// note, intenionally a post increment rather than a pre increment.
 	return theAudioHandlePool++;

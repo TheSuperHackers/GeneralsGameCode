@@ -49,7 +49,7 @@ W3DSnowManager::~W3DSnowManager()
 	ReleaseResources();
 }
 
-void W3DSnowManager::init( )
+void W3DSnowManager::init()
 {
 	SnowManager::init();
 	ReAcquireResources();
@@ -149,7 +149,7 @@ void W3DSnowManager::updateIniSettings()
 	}
 }
 
-void W3DSnowManager::reset( )
+void W3DSnowManager::reset()
 {
 	SnowManager::reset();
 }

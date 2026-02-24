@@ -231,7 +231,7 @@ void ControlBar::showBuildTooltipLayout( GameWindow *cmdButton )
 }
 
 
-void ControlBar::repopulateBuildTooltipLayout( )
+void ControlBar::repopulateBuildTooltipLayout()
 {
 	if(!prevWindow || !m_buildToolTipLayout)
 		return;
@@ -631,7 +631,7 @@ void ControlBar::hideBuildTooltipLayout()
 
 }
 
-void ControlBar::deleteBuildTooltipLayout( )
+void ControlBar::deleteBuildTooltipLayout()
 {
 	m_showBuildToolTipLayout = FALSE;
 	prevWindow= nullptr;

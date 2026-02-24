@@ -83,7 +83,7 @@ Display::~Display()
 /**
 	* Delete all views in the Display
 	*/
-void Display::deleteViews( )
+void Display::deleteViews()
 {
 	View *v, *next;
 
@@ -108,7 +108,7 @@ void Display::attachView( View *view )
 /**
  * Render all views of the world
  */
-void Display::drawViews( )
+void Display::drawViews()
 {
 
 	for( View *v = m_viewList; v; v = v->getNextView() )
@@ -120,7 +120,7 @@ void Display::drawViews( )
  * Updates all views of the world.  This forces state variables
    to refresh without actually drawing anything.
  */
-void Display::updateViews( )
+void Display::updateViews()
 {
 
 	for( View *v = m_viewList; v; v = v->getNextView() )
@@ -128,7 +128,7 @@ void Display::updateViews( )
 
 }
 
-void Display::stepViews( )
+void Display::stepViews()
 {
 
 	for( View *v = m_viewList; v; v = v->getNextView() )
@@ -137,7 +137,7 @@ void Display::stepViews( )
 }
 
 /// Redraw the entire display
-void Display::draw( )
+void Display::draw()
 {
 	// redraw all views
 	drawViews();
@@ -270,7 +270,7 @@ void Display::playMovie( AsciiString movieName)
 // Display::stopMovie
 //============================================================================
 
-void Display::stopMovie( )
+void Display::stopMovie()
 {
 	delete m_videoBuffer;
 	m_videoBuffer = nullptr;
@@ -298,7 +298,7 @@ void Display::stopMovie( )
 // Display::update
 //============================================================================
 
-void Display::update( )
+void Display::update()
 {
 	if ( m_videoStream && m_videoBuffer )
 	{

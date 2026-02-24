@@ -79,7 +79,7 @@ static NameKeyType buttonReturn = NAMEKEY_INVALID;
 static NameKeyType buttonOptions = NAMEKEY_INVALID;
 static NameKeyType buttonSaveLoad = NAMEKEY_INVALID;
 
-static void initGadgetsFullQuit( )
+static void initGadgetsFullQuit()
 {
 	buttonExit = TheNameKeyGenerator->nameToKey( "QuitMenu.wnd:ButtonExit" );
 	buttonRestart = TheNameKeyGenerator->nameToKey( "QuitMenu.wnd:ButtonRestart" );
@@ -93,7 +93,7 @@ static void initGadgetsFullQuit( )
 	buttonExitWin = TheWindowManager->winGetWindowFromId( nullptr, buttonExit );
 }
 
-static void initGadgetsNoSaveQuit( )
+static void initGadgetsNoSaveQuit()
 {
 	buttonExit = TheNameKeyGenerator->nameToKey( "QuitNoSave.wnd:ButtonExit" );
 	buttonRestart = TheNameKeyGenerator->nameToKey( "QuitNoSave.wnd:ButtonRestart" );
@@ -255,7 +255,7 @@ static void restartMissionMenu()
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void HideQuitMenu( )
+void HideQuitMenu()
 {
 	// Note: This is called as a safety a lot, without checking for the prescence of the quit menu.
 	// So don't do anything that counts on that menu actually being here.

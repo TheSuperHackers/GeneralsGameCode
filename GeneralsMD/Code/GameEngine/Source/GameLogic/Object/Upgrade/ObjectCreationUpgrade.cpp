@@ -40,7 +40,7 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-ObjectCreationUpgradeModuleData::ObjectCreationUpgradeModuleData( )
+ObjectCreationUpgradeModuleData::ObjectCreationUpgradeModuleData()
 {
 
 	m_ocl = nullptr;
@@ -76,20 +76,20 @@ ObjectCreationUpgrade::ObjectCreationUpgrade( Thing *thing, const ModuleData* mo
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-ObjectCreationUpgrade::~ObjectCreationUpgrade( )
+ObjectCreationUpgrade::~ObjectCreationUpgrade()
 {
 
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void ObjectCreationUpgrade::onDelete( )
+void ObjectCreationUpgrade::onDelete()
 {
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void ObjectCreationUpgrade::upgradeImplementation( )
+void ObjectCreationUpgrade::upgradeImplementation()
 {
 	// spawn everything in the OCL
 	if (getObjectCreationUpgradeModuleData() && getObjectCreationUpgradeModuleData()->m_ocl)
@@ -130,7 +130,7 @@ void ObjectCreationUpgrade::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void ObjectCreationUpgrade::loadPostProcess( )
+void ObjectCreationUpgrade::loadPostProcess()
 {
 
 	// extend base class

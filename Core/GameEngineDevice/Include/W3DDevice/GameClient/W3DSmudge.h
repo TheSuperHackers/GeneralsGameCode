@@ -35,7 +35,7 @@ class DX8IndexBufferClass;
 class W3DSmudgeManager : public SmudgeManager
 {
 public:
-	W3DSmudgeManager( );
+	W3DSmudgeManager();
 	virtual ~W3DSmudgeManager();
 
 	virtual void init();

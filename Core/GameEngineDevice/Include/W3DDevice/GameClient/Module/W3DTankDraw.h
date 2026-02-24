@@ -93,10 +93,10 @@ protected:
 	Int m_treadCount;
 	Coord3D m_lastDirection;		///< orientation of tank last time it was drawn.
 
-	void createTreadEmitters( ); ///< Create particle effects for treads.
-	void tossTreadEmitters( ); ///< Destroy particle effects for treads.
+	void createTreadEmitters(); ///< Create particle effects for treads.
+	void tossTreadEmitters(); ///< Destroy particle effects for treads.
 
-	void stopMoveDebris( ); ///< Stop creating debris from the tank treads.
+	void stopMoveDebris(); ///< Stop creating debris from the tank treads.
 	void updateTreadObjects(); ///< Update pointers to sub-objects like treads.
 	void updateTreadPositions(Real uvDelta); ///< Update uv coordinates on each tread.
 };

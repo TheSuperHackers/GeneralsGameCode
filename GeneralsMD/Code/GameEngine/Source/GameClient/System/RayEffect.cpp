@@ -68,7 +68,7 @@ RayEffectData *RayEffectSystem::findEntry( const Drawable *draw )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-RayEffectSystem::RayEffectSystem( )
+RayEffectSystem::RayEffectSystem()
 {
 
 	init();
@@ -77,7 +77,7 @@ RayEffectSystem::RayEffectSystem( )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-RayEffectSystem::~RayEffectSystem( )
+RayEffectSystem::~RayEffectSystem()
 {
 
 }
@@ -85,7 +85,7 @@ RayEffectSystem::~RayEffectSystem( )
 //-------------------------------------------------------------------------------------------------
 /** initialize the system */
 //-------------------------------------------------------------------------------------------------
-void RayEffectSystem::init( )
+void RayEffectSystem::init()
 {
 	Int i;
 
@@ -103,7 +103,7 @@ void RayEffectSystem::init( )
 //-------------------------------------------------------------------------------------------------
 /** Reset */
 //-------------------------------------------------------------------------------------------------
-void RayEffectSystem::reset( )
+void RayEffectSystem::reset()
 {
 
 	// nothing dynamic going on here, just initialize it

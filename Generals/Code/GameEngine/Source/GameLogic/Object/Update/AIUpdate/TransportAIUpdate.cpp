@@ -50,7 +50,7 @@ TransportAIUpdate::TransportAIUpdate( Thing *thing, const ModuleData* moduleData
 }
 
 //-------------------------------------------------------------------------------------------------
-TransportAIUpdate::~TransportAIUpdate( )
+TransportAIUpdate::~TransportAIUpdate()
 {
 
 }
@@ -222,7 +222,7 @@ void TransportAIUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void TransportAIUpdate::loadPostProcess( )
+void TransportAIUpdate::loadPostProcess()
 {
  // extend base class
 	AIUpdateInterface::loadPostProcess();

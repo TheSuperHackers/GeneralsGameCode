@@ -113,16 +113,16 @@ class Shell : public SubsystemInterface
 
 public:
 
-	Shell( );
-	~Shell( );
+	Shell();
+	~Shell();
 
 	// Inhertited from subsystem ====================================================================
-	virtual void init( );
-	virtual void reset( );
-	virtual void update( );
+	virtual void init();
+	virtual void reset();
+	virtual void update();
 	//===============================================================================================
 
-	void recreateWindowLayouts( );
+	void recreateWindowLayouts();
 
 	void showShellMap(Bool useShellMap );										///< access function to turn on and off the shell map
 
@@ -130,37 +130,37 @@ public:
 
 	// pseudo-stack operations for manipulating layouts
 	void push( AsciiString filename, Bool shutdownImmediate = FALSE );	///< load new screen on top, optionally doing an immediate shutdown
-	void pop( );																				///< pop top layout
-	void popImmediate( );															///< pop now, don't wait for shutdown
+	void pop();																				///< pop top layout
+	void popImmediate();															///< pop now, don't wait for shutdown
 	void showShell( Bool runInit = TRUE );									///< init the top of stack
-	void hideShell( );																	///< shutdown the top of stack
-	WindowLayout *top( );															///< return top layout
+	void hideShell();																	///< shutdown the top of stack
+	WindowLayout *top();															///< return top layout
 
 	void shutdownComplete( WindowLayout *layout, Bool impendingPush = FALSE );	///< layout has completed shutdown
 
 	WindowLayout *findScreenByFilename( AsciiString filename );		///< find screen
-	Bool isShellActive( ) { return m_isShellActive; }  ///<	Returns true if the shell is active
+	Bool isShellActive() { return m_isShellActive; }  ///<	Returns true if the shell is active
 
 	void registerWithAnimateManager( GameWindow *win, AnimTypes animType, Bool needsToFinish, UnsignedInt delayMS = 0);
-	Bool isAnimFinished( );
-	void reverseAnimatewindow( );
-	Bool isAnimReversed( );
+	Bool isAnimFinished();
+	void reverseAnimatewindow();
+	Bool isAnimReversed();
 
 	void loadScheme( AsciiString name );
-	ShellMenuSchemeManager *getShellMenuSchemeManager( ) { return m_schemeManager;	}
+	ShellMenuSchemeManager *getShellMenuSchemeManager() { return m_schemeManager;	}
 
-	Int getScreenCount( ) const { return m_screenCount; } ///< Return the current number of screens
+	Int getScreenCount() const { return m_screenCount; } ///< Return the current number of screens
 	WindowLayout *getScreenLayout( Int index ) const;
 
-	WindowLayout *getSaveLoadMenuLayout( );		///< create if necessary and return layout for save load menu
-	WindowLayout *getPopupReplayLayout( );			///< create if necessary and return layout for replay save menu
+	WindowLayout *getSaveLoadMenuLayout();		///< create if necessary and return layout for save load menu
+	WindowLayout *getPopupReplayLayout();			///< create if necessary and return layout for replay save menu
 	WindowLayout *getOptionsLayout( Bool create );	///< return layout for options menu, create if necessary and we are allowed to.
-	void destroyOptionsLayout( );							///< destroy the shell's options layout.
+	void destroyOptionsLayout();							///< destroy the shell's options layout.
 
 protected:
 
-	void construct( );
-	void deconstruct( );
+	void construct();
+	void deconstruct();
 
 	void linkScreen( WindowLayout *screen );								///< link screen to list
 	void unlinkScreen( WindowLayout *screen );							///< remove screen from list

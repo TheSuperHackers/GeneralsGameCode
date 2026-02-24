@@ -244,7 +244,7 @@ public:
 	/**
 	  Remove leading and trailing whitespace from the string.
 	*/
-	void trim( );
+	void trim();
 
 	/**
 	  Remove trailing whitespace from the string.

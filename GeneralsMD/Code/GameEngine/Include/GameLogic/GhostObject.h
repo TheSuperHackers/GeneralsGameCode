@@ -58,7 +58,7 @@ public:
 protected:
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( );
+	virtual void loadPostProcess();
 
 	Object *m_parentObject;		///< object which we are ghosting
 	GeometryType m_parentGeometryType;
@@ -91,7 +91,7 @@ public:
 protected:
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( );
+	virtual void loadPostProcess();
 
 	Int m_localPlayer;
 	Bool m_lockGhostObjects;

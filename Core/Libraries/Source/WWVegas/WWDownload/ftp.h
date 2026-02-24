@@ -99,7 +99,7 @@ public:
 	HRESULT DisconnectFromServer();
 
 	HRESULT LoginToServer( LPCSTR szUserName, LPCSTR szPassword );
-	HRESULT LogoffFromServer( );
+	HRESULT LogoffFromServer();
 
 	HRESULT FindFile( LPCSTR szRemoteFileName, int * piSize );
 

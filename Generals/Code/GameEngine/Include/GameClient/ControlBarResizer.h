@@ -63,7 +63,7 @@
 class ResizerWindow
 {
 public:
-ResizerWindow( );
+ResizerWindow();
 	AsciiString m_name;
 	ICoord2D m_defaultSize;
 	ICoord2D m_defaultPos;
@@ -74,10 +74,10 @@ ResizerWindow( );
 class ControlBarResizer
 {
 public:
-	ControlBarResizer( );
-	~ControlBarResizer( );
+	ControlBarResizer();
+	~ControlBarResizer();
 
-	void init( );
+	void init();
 
 	// parse Functions for the INI file
 	const FieldParse *getFieldParse() const { return m_controlBarResizerParseTable; }								///< returns the parsing fields
@@ -86,8 +86,8 @@ public:
 	ResizerWindow *findResizerWindow( AsciiString name ); ///< attempt to find the control bar scheme by it's name
 	ResizerWindow *newResizerWindow( AsciiString name );	///< create a new control bar scheme and return it.
 
-	void sizeWindowsDefault( );
-	void sizeWindowsAlt( );
+	void sizeWindowsDefault();
+	void sizeWindowsAlt();
 
 	typedef std::list< ResizerWindow *> ResizerWindowList;
 	ResizerWindowList m_resizerWindowsList;

@@ -43,7 +43,7 @@ class BattleBusSlowDeathBehaviorModuleData : public SlowDeathBehaviorModuleData
 
 public:
 
-	BattleBusSlowDeathBehaviorModuleData( );
+	BattleBusSlowDeathBehaviorModuleData();
 
 	static void buildFieldParse( MultiIniFieldParse &p );
 
@@ -75,7 +75,7 @@ public:
 	// slow death methods
 	virtual void onDie( const DamageInfo *damageInfo );
 	virtual void beginSlowDeath( const DamageInfo *damageInfo );
-	virtual UpdateSleepTime update( );
+	virtual UpdateSleepTime update();
 
 protected:
 

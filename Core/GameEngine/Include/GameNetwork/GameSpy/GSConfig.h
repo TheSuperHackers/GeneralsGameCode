@@ -41,8 +41,8 @@ public:
 	virtual std::list<AsciiString> getPingServers() = 0;
 	virtual Int getNumPingRepetitions() = 0;
 	virtual Int getPingTimeoutInMs() = 0;
-	virtual Int getPingCutoffGood( ) = 0;
-	virtual Int getPingCutoffBad( ) = 0;
+	virtual Int getPingCutoffGood() = 0;
+	virtual Int getPingCutoffBad() = 0;
 
 	// QM
 	virtual std::list<AsciiString> getQMMaps() = 0;

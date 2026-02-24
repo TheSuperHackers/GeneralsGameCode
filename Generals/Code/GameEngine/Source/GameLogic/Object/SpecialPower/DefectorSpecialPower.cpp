@@ -43,7 +43,7 @@
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-DefectorSpecialPowerModuleData::DefectorSpecialPowerModuleData( )
+DefectorSpecialPowerModuleData::DefectorSpecialPowerModuleData()
 {
 
 	m_fatCursorRadius = 0.0f;
@@ -82,7 +82,7 @@ DefectorSpecialPower::DefectorSpecialPower( Thing *thing, const ModuleData *modu
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-DefectorSpecialPower::~DefectorSpecialPower( )
+DefectorSpecialPower::~DefectorSpecialPower()
 {
 
 }
@@ -166,7 +166,7 @@ void DefectorSpecialPower::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void DefectorSpecialPower::loadPostProcess( )
+void DefectorSpecialPower::loadPostProcess()
 {
 
 	// extend base class

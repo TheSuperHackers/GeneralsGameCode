@@ -151,7 +151,7 @@ m_howitzerTrackerDecal.clear();
 }
 
 //-------------------------------------------------------------------------------------------------
-SpectreGunshipUpdate::~SpectreGunshipUpdate( )
+SpectreGunshipUpdate::~SpectreGunshipUpdate()
 {
 	m_attackAreaDecal.clear();
 	m_targetingReticleDecal.clear();
@@ -904,7 +904,7 @@ void SpectreGunshipUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void SpectreGunshipUpdate::loadPostProcess( )
+void SpectreGunshipUpdate::loadPostProcess()
 {
 
 	// extend base class

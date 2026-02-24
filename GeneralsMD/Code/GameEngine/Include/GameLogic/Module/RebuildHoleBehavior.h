@@ -41,7 +41,7 @@ class RebuildHoleBehaviorModuleData : public UpdateModuleData
 
 public:
 
-	RebuildHoleBehaviorModuleData( );
+	RebuildHoleBehaviorModuleData();
 
 	static void buildFieldParse( MultiIniFieldParse &p );
 
@@ -61,8 +61,8 @@ class RebuildHoleBehaviorInterface
 public:
 
 	virtual void startRebuildProcess( const ThingTemplate *rebuild, ObjectID spawnerID ) = 0;
-	virtual ObjectID getSpawnerID( ) = 0;
-	virtual ObjectID getReconstructedBuildingID( ) = 0;
+	virtual ObjectID getSpawnerID() = 0;
+	virtual ObjectID getReconstructedBuildingID() = 0;
 	virtual const ThingTemplate* getRebuildTemplate() const = 0;
 
 };
@@ -84,21 +84,21 @@ public:
 
 	virtual RebuildHoleBehaviorInterface* getRebuildHoleBehaviorInterface() { return this; }
 
-	static Int getInterfaceMask( ) { return UpdateModule::getInterfaceMask() | (MODULEINTERFACE_DIE); }
+	static Int getInterfaceMask() { return UpdateModule::getInterfaceMask() | (MODULEINTERFACE_DIE); }
 
 	// BehaviorModule
-	virtual DieModuleInterface* getDie( ) { return this; }
+	virtual DieModuleInterface* getDie() { return this; }
 
 	// UpdateModuleInterface
-	virtual UpdateSleepTime update( );
+	virtual UpdateSleepTime update();
 
 	// DieModuleInterface
 	virtual void onDie( const DamageInfo *damageInfo );
 
 	// RebuildHole specific methods
 	virtual void startRebuildProcess( const ThingTemplate *rebuild, ObjectID spawnerID );
-	virtual ObjectID getSpawnerID( ) { return m_spawnerObjectID; }
-	virtual ObjectID getReconstructedBuildingID( ) { return m_reconstructingID; }
+	virtual ObjectID getSpawnerID() { return m_spawnerObjectID; }
+	virtual ObjectID getReconstructedBuildingID() { return m_reconstructingID; }
 	virtual const ThingTemplate* getRebuildTemplate() const { return m_rebuildTemplate; }
 	void transferBombs( Object *reconstruction );
 

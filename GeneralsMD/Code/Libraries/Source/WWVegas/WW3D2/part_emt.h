@@ -203,8 +203,8 @@ class ParticleEmitterClass : public RenderObjClass
 		virtual void Emit();
 
 		// Buffer control
-		ParticleBufferClass *Peek_Buffer( )					{ return Buffer; }
-		void						Buffer_Scene_Not_Needed( )	{ BufferSceneNeeded = false; }
+		ParticleBufferClass *Peek_Buffer()					{ return Buffer; }
+		void						Buffer_Scene_Not_Needed()	{ BufferSceneNeeded = false; }
 		void						Remove_Buffer_From_Scene ()	{ Buffer->Remove (); FirstTime = true; BufferSceneNeeded = true; }
 
 		// from RenderObj...

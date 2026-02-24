@@ -1936,7 +1936,7 @@ void Object::attemptHealing(Real amount, const Object* source)
 	}
 }
 
-ObjectID Object::getSoleHealingBenefactor( ) const
+ObjectID Object::getSoleHealingBenefactor() const
 {
 	UnsignedInt now = TheGameLogic->getFrame();
 	if( now > m_soleHealingBenefactorExpirationFrame )
@@ -3395,7 +3395,7 @@ void Object::maskObject( Bool mask )
 /*
  * returns true if the current locomotor is an airborne one
  */
-Bool Object::isUsingAirborneLocomotor( ) const
+Bool Object::isUsingAirborneLocomotor() const
 {
 	return ( m_ai && m_ai->getCurLocomotor() && ((m_ai->getCurLocomotor()->getLegalSurfaces() & LOCOMOTORSURFACE_AIR) != 0) );
 }
@@ -3705,7 +3705,7 @@ void Object::updateObjValuesFromMapProperties(Dict* properties)
       {
         if ( audioToModify == nullptr )
         {
-          const AudioEventInfo * baseInfo = drawable->getBaseSoundAmbientInfo( );
+          const AudioEventInfo * baseInfo = drawable->getBaseSoundAmbientInfo();
           DEBUG_ASSERTCRASH( baseInfo != nullptr, ("getBaseSoundAmbientInfo() return null" ) );
           if ( baseInfo != nullptr )
           {
@@ -3781,7 +3781,7 @@ void Object::updateObjValuesFromMapProperties(Dict* properties)
       else
       {
         // Use default audio
-        const AudioEventInfo * baseInfo = drawable->getBaseSoundAmbientInfo( );
+        const AudioEventInfo * baseInfo = drawable->getBaseSoundAmbientInfo();
         if ( baseInfo != nullptr )
         {
           soundEnabled = baseInfo->isPermanentSound();
@@ -5909,7 +5909,7 @@ void Object::clearLeechRangeModeForAllWeapons()
 // ------------------------------------------------------------------------------------------------
 /** Search our update modules for a production update interface and return it if one is found */
 // ------------------------------------------------------------------------------------------------
-ProductionUpdateInterface* Object::getProductionUpdateInterface( )
+ProductionUpdateInterface* Object::getProductionUpdateInterface()
 {
 	ProductionUpdateInterface *pui;
 
@@ -5929,7 +5929,7 @@ ProductionUpdateInterface* Object::getProductionUpdateInterface( )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-DockUpdateInterface *Object::getDockUpdateInterface( )
+DockUpdateInterface *Object::getDockUpdateInterface()
 {
 	DockUpdateInterface *dock = nullptr;
 
@@ -6346,7 +6346,7 @@ void Object::goInvulnerable( UnsignedInt time )
 // ------------------------------------------------------------------------------------------------
 /** Return the radar priority for this object type */
 // ------------------------------------------------------------------------------------------------
-RadarPriorityType Object::getRadarPriority( ) const
+RadarPriorityType Object::getRadarPriority() const
 {
 	// first, get the priority at the thing template level
 	RadarPriorityType priority = getTemplate()->getDefaultRadarPriority();
@@ -6408,7 +6408,7 @@ void Object::enterGroup( AIGroup *group )
 }
 
 //-------------------------------------------------------------------------------------------------
-void Object::leaveGroup( )
+void Object::leaveGroup()
 {
 //	DEBUG_LOG(("***AIGROUP %x involved in leaveGroup on %x", m_group, this));
 	// if we are in a group, remove ourselves from it

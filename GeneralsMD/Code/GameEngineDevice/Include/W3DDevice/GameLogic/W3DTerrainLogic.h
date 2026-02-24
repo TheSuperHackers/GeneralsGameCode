@@ -45,9 +45,9 @@ public:
 	W3DTerrainLogic();
 	virtual ~W3DTerrainLogic();
 
-	virtual void init( );		///< Init
-	virtual void reset( );		///< Reset
-	virtual void update( );	///< Update
+	virtual void init();		///< Init
+	virtual void reset();		///< Reset
+	virtual void update();	///< Update
 
 	/// @todo The loading of the raw height data should be device independent
 	virtual Bool loadMap( AsciiString filename , Bool query );
@@ -72,7 +72,7 @@ protected:
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( );
+	virtual void loadPostProcess();
 
 	Real m_mapMinZ;	///< Minimum terrain z value.
 	Real m_mapMaxZ;	///< Maximum terrain z value.

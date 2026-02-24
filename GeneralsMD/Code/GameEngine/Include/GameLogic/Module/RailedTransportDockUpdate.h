@@ -39,7 +39,7 @@ class RailedTransportDockUpdateModuleData : public DockUpdateModuleData
 
 public:
 
-	RailedTransportDockUpdateModuleData( );
+	RailedTransportDockUpdateModuleData();
 
 	static void buildFieldParse( MultiIniFieldParse &p );
 
@@ -58,8 +58,8 @@ class RailedTransportDockUpdateInterface
 
 public:
 
-	virtual Bool isLoadingOrUnloading( ) = 0;
-	virtual void unloadAll( ) = 0;
+	virtual Bool isLoadingOrUnloading() = 0;
+	virtual void unloadAll() = 0;
 	virtual void unloadSingleObject( Object *obj ) = 0;
 
 };
@@ -79,10 +79,10 @@ public:
 	// virtual destructor prototype provided by memory pool declaration
 
 	// module interfaces
-	virtual RailedTransportDockUpdateInterface *getRailedTransportDockUpdateInterface( ) { return this; }
+	virtual RailedTransportDockUpdateInterface *getRailedTransportDockUpdateInterface() { return this; }
 
 	// update module methods
-	virtual UpdateSleepTime update( );
+	virtual UpdateSleepTime update();
 
 	// dock methods
 	virtual DockUpdateInterface* getDockUpdateInterface() { return this; }
@@ -90,15 +90,15 @@ public:
 	virtual Bool isClearToEnter( Object const* docker ) const;
 
 	// our own methods
-	virtual Bool isLoadingOrUnloading( );
-	virtual void unloadAll( );
+	virtual Bool isLoadingOrUnloading();
+	virtual void unloadAll();
 	virtual void unloadSingleObject( Object *obj );
 
 protected:
 
-	void doPullInDocking( );							///< pull docking objects into us
-	void doPushOutDocking( );						///< push unloading objects out of us
-	void unloadNext( );									///< start the "next" object we have inside us coming out
+	void doPullInDocking();							///< pull docking objects into us
+	void doPushOutDocking();						///< push unloading objects out of us
+	void unloadNext();									///< start the "next" object we have inside us coming out
 
 	ObjectID m_dockingObjectID;								///< object docking with us
 	Real m_pullInsideDistancePerFrame;				///< when docking, pull object inside this much each frame

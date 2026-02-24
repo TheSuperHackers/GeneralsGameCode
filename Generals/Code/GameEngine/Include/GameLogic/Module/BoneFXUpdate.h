@@ -94,7 +94,7 @@ class BoneFXUpdateModuleData : public UpdateModuleData
 
 public:
 
-	BoneFXUpdateModuleData( );
+	BoneFXUpdateModuleData();
 
 	static void buildFieldParse(MultiIniFieldParse& p)
 	{

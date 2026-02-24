@@ -668,7 +668,7 @@ void DistLODClass::Set_Position(const Vector3 &v)
  * HISTORY:                                                                                    *
  *   3/3/99     GTH : Created.                                                                 *
  *=============================================================================================*/
-void	DistLODClass::Set_Animation( )
+void	DistLODClass::Set_Animation()
 {
 	for (int i=0; i<LodCount; i++) {
 		assert(Lods[i].Model != nullptr);
@@ -752,7 +752,7 @@ void DistLODClass::Set_Animation( HAnimComboClass * anim_combo)
  * HISTORY:                                                                                    *
  *   12/8/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-HAnimClass *	DistLODClass::Peek_Animation( )
+HAnimClass *	DistLODClass::Peek_Animation()
 {
 	return Lods[0].Model->Peek_Animation();
 }

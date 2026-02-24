@@ -127,7 +127,7 @@ protected:
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( );
+	virtual void loadPostProcess();
 
 protected:
 	enum { MAX_PROPS=4000};

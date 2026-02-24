@@ -1394,7 +1394,7 @@ void WW3DAssetManager::Remove_Font3DData(Font3DDataClass * font)
  * HISTORY:                                                                                    *
  *   1/6/98     GTH : Created.                                                                 *
  *=============================================================================================*/
-void	WW3DAssetManager::Release_All_Font3DDatas( )
+void	WW3DAssetManager::Release_All_Font3DDatas()
 {
 	// for each mat in the list, get it and release ref it
 	Font3DDataClass *head;
@@ -1415,7 +1415,7 @@ void	WW3DAssetManager::Release_All_Font3DDatas( )
  * HISTORY:                                                                                    *
  *   1/6/98     GTH : Created.                                                                 *
  *=============================================================================================*/
-void	WW3DAssetManager::Release_Unused_Font3DDatas( )
+void	WW3DAssetManager::Release_Unused_Font3DDatas()
 {
 	/*
 	** for each font data in the list, get it, check it's refcount, and and release ref it if the
@@ -1482,7 +1482,7 @@ FontCharsClass *	WW3DAssetManager::Get_FontChars( const char * name, int point_s
  * HISTORY:                                                                                    *
  *   6/1/01     BMG : Created.                                                                 *
  *=============================================================================================*/
-void	WW3DAssetManager::Release_All_FontChars( )
+void	WW3DAssetManager::Release_All_FontChars()
 {
 	// for each fontchars in the list, get it and release ref it
 	while ( FontCharsList.Count() ) {

@@ -4256,7 +4256,7 @@ void W3DModelDraw::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void W3DModelDraw::loadPostProcess( )
+void W3DModelDraw::loadPostProcess()
 {
 
 	// extend base class
@@ -4315,7 +4315,7 @@ void W3DModelDrawModuleData::xfer( Xfer *x )
 }
 
 // ------------------------------------------------------------------------------------------------
-void W3DModelDrawModuleData::loadPostProcess( )
+void W3DModelDrawModuleData::loadPostProcess()
 {
 }
 

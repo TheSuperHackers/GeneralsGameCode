@@ -128,7 +128,7 @@ void W3DWaypointBuffer::freeWaypointBuffers()
 }
 
 
-void W3DWaypointBuffer::setDefaultLineStyle( )
+void W3DWaypointBuffer::setDefaultLineStyle()
 {
 	if( m_texture )
 	{

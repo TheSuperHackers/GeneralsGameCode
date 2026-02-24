@@ -45,13 +45,13 @@ SupplyWarehouseCreate::SupplyWarehouseCreate( Thing *thing, const ModuleData* mo
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-SupplyWarehouseCreate::~SupplyWarehouseCreate( )
+SupplyWarehouseCreate::~SupplyWarehouseCreate()
 {
 
 }
 
 //-------------------------------------------------------------------------------------------------
-void SupplyWarehouseCreate::onCreate( )
+void SupplyWarehouseCreate::onCreate()
 {
 	// Warehouses are never Built.
 	if( ThePlayerList == nullptr )
@@ -101,7 +101,7 @@ void SupplyWarehouseCreate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void SupplyWarehouseCreate::loadPostProcess( )
+void SupplyWarehouseCreate::loadPostProcess()
 {
 
 	// extend base class

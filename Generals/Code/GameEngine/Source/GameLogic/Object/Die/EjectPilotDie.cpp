@@ -74,7 +74,7 @@ EjectPilotDie::EjectPilotDie( Thing *thing, const ModuleData* moduleData ) : Die
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-EjectPilotDie::~EjectPilotDie( )
+EjectPilotDie::~EjectPilotDie()
 {
 
 }
@@ -143,7 +143,7 @@ void EjectPilotDie::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void EjectPilotDie::loadPostProcess( )
+void EjectPilotDie::loadPostProcess()
 {
 
 	// extend base class

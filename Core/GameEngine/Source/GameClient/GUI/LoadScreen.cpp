@@ -143,12 +143,12 @@ static const Int TELETYPE_UPDATE_FREQ = 2; // how many frames between teletype u
 // LoadScreen Class
 //-----------------------------------------------------------------------------
 
-LoadScreen::LoadScreen( )
+LoadScreen::LoadScreen()
 {
 	m_loadScreen = nullptr;
 }
 
-LoadScreen::~LoadScreen( )
+LoadScreen::~LoadScreen()
 {
 	if(m_loadScreen)
 		TheWindowManager->winDestroy( m_loadScreen );
@@ -171,7 +171,7 @@ void LoadScreen::update( Int percent )
 
 // SinglePlayerLoadScreen Class ///////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-SinglePlayerLoadScreen::SinglePlayerLoadScreen( )
+SinglePlayerLoadScreen::SinglePlayerLoadScreen()
 {
 	m_currentObjectiveLine = 0;
 	m_currentObjectiveLineCharacter = 0;
@@ -187,7 +187,7 @@ SinglePlayerLoadScreen::SinglePlayerLoadScreen( )
 
 }
 
-SinglePlayerLoadScreen::~SinglePlayerLoadScreen( )
+SinglePlayerLoadScreen::~SinglePlayerLoadScreen()
 {
 	delete m_videoBuffer;
 
@@ -651,7 +651,7 @@ void SinglePlayerLoadScreen::init( GameInfo *game )
 
 }
 
-void SinglePlayerLoadScreen::reset( )
+void SinglePlayerLoadScreen::reset()
 {
  setLoadScreen(nullptr);
  m_progressBar = nullptr;
@@ -677,7 +677,7 @@ void SinglePlayerLoadScreen::setProgressRange( Int min, Int max )
 
 // ChallengeLoadScreen Class ///////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-ChallengeLoadScreen::ChallengeLoadScreen( )
+ChallengeLoadScreen::ChallengeLoadScreen()
 {
 	m_progressBar = nullptr;
 	m_videoStream = nullptr;
@@ -717,7 +717,7 @@ ChallengeLoadScreen::ChallengeLoadScreen( )
 	m_wndVideoManager = nullptr;
 }
 
-ChallengeLoadScreen::~ChallengeLoadScreen( )
+ChallengeLoadScreen::~ChallengeLoadScreen()
 {
 	delete m_videoBuffer;
 
@@ -1146,7 +1146,7 @@ void ChallengeLoadScreen::init( GameInfo *game )
 	TheAudio->update();
 }
 
-void ChallengeLoadScreen::reset( )
+void ChallengeLoadScreen::reset()
 {
  setLoadScreen(nullptr);
  m_progressBar = nullptr;
@@ -1171,12 +1171,12 @@ void ChallengeLoadScreen::setProgressRange( Int min, Int max )
 
 // ShellGameLoadScreen Class //////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-ShellGameLoadScreen::ShellGameLoadScreen( )
+ShellGameLoadScreen::ShellGameLoadScreen()
 {
 	m_progressBar = nullptr;
 }
 
-ShellGameLoadScreen::~ShellGameLoadScreen( )
+ShellGameLoadScreen::~ShellGameLoadScreen()
 {
 }
 
@@ -1210,7 +1210,7 @@ void ShellGameLoadScreen::init( GameInfo *game )
 	m_progressBar->winHide(FALSE);
 }
 
-void ShellGameLoadScreen::reset( )
+void ShellGameLoadScreen::reset()
 {
  setLoadScreen(nullptr);
  m_progressBar = nullptr;
@@ -1227,7 +1227,7 @@ void ShellGameLoadScreen::update( Int percent )
 
 // MultiPlayerLoadScreen Class //////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-MultiPlayerLoadScreen::MultiPlayerLoadScreen( )
+MultiPlayerLoadScreen::MultiPlayerLoadScreen()
 {
 	m_mapPreview = nullptr;
 	m_portraitLocalGeneral = nullptr;
@@ -1244,7 +1244,7 @@ MultiPlayerLoadScreen::MultiPlayerLoadScreen( )
 	}
 }
 
-MultiPlayerLoadScreen::~MultiPlayerLoadScreen( )
+MultiPlayerLoadScreen::~MultiPlayerLoadScreen()
 {
 	if(m_mapPreview)
 	{
@@ -1434,7 +1434,7 @@ void MultiPlayerLoadScreen::init( GameInfo *game )
 	TheGameLogic->initTimeOutValues();
 }
 
-void MultiPlayerLoadScreen::reset( )
+void MultiPlayerLoadScreen::reset()
 {
 	setLoadScreen(nullptr);
 	for(Int i = 0; i < MAX_SLOTS; ++i)
@@ -1482,7 +1482,7 @@ void MultiPlayerLoadScreen::processProgress(Int playerId, Int percentage)
 
 // GameSpyLoadScreen Class //////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-GameSpyLoadScreen::GameSpyLoadScreen( )
+GameSpyLoadScreen::GameSpyLoadScreen()
 {
 
 	m_mapPreview = nullptr;
@@ -1508,7 +1508,7 @@ GameSpyLoadScreen::GameSpyLoadScreen( )
 	}
 }
 
-GameSpyLoadScreen::~GameSpyLoadScreen( )
+GameSpyLoadScreen::~GameSpyLoadScreen()
 {
 	if(m_mapPreview)
 	{
@@ -1801,7 +1801,7 @@ GameSlot *lSlot = game->getSlot(game->getLocalSlotNum());
 	TheGameLogic->initTimeOutValues();
 }
 
-void GameSpyLoadScreen::reset( )
+void GameSpyLoadScreen::reset()
 {
 	setLoadScreen(nullptr);
 	for(Int i = 0; i < MAX_SLOTS; ++i)
@@ -1841,7 +1841,7 @@ void GameSpyLoadScreen::processProgress(Int playerId, Int percentage)
 
 // MapTransferLoadScreen Class //////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-MapTransferLoadScreen::MapTransferLoadScreen( )
+MapTransferLoadScreen::MapTransferLoadScreen()
 {
 	m_oldTimeout = 0;
 	for(Int i = 0; i < MAX_SLOTS; ++i)
@@ -1856,7 +1856,7 @@ MapTransferLoadScreen::MapTransferLoadScreen( )
 	m_timeoutText = nullptr;
 }
 
-MapTransferLoadScreen::~MapTransferLoadScreen( )
+MapTransferLoadScreen::~MapTransferLoadScreen()
 {
 }
 
@@ -1936,7 +1936,7 @@ void MapTransferLoadScreen::init( GameInfo *game )
 	}
 }
 
-void MapTransferLoadScreen::reset( )
+void MapTransferLoadScreen::reset()
 {
 	setLoadScreen(nullptr);
 	for(Int i = 0; i < MAX_SLOTS; ++i)

@@ -93,7 +93,7 @@ void NeutronBlastBehavior::onDie( const DamageInfo *damageInfo )
 //-------------------------------------------------------------------------------------------------
 /** The update callback. */
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime NeutronBlastBehavior::update( )
+UpdateSleepTime NeutronBlastBehavior::update()
 {
 	return UPDATE_SLEEP_FOREVER;
 }
@@ -189,7 +189,7 @@ void NeutronBlastBehavior::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void NeutronBlastBehavior::loadPostProcess( )
+void NeutronBlastBehavior::loadPostProcess()
 {
 
 	// extend base class

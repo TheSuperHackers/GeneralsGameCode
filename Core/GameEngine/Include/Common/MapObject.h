@@ -127,7 +127,7 @@ public:
 	AsciiString getName() const {return m_objectName;} ///< Gets the object name
 	void setName(AsciiString name); ///< Sets the object name
 	void setThingTemplate( const ThingTemplate* thing ); ///< set template
-	const ThingTemplate *getThingTemplate( ) const;
+	const ThingTemplate *getThingTemplate() const;
 	MapObject *getNext() const {return m_nextMapObject;}		 ///< Next map object in the list.  Not a copy, don't delete it.
 	MapObject *duplicate();		 ///< Allocates a copy.  Caller is responsible for delete-ing this when done with it.
 

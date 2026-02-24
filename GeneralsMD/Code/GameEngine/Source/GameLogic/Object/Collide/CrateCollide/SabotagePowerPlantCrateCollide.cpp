@@ -66,7 +66,7 @@ SabotagePowerPlantCrateCollide::SabotagePowerPlantCrateCollide( Thing *thing, co
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-SabotagePowerPlantCrateCollide::~SabotagePowerPlantCrateCollide( )
+SabotagePowerPlantCrateCollide::~SabotagePowerPlantCrateCollide()
 {
 }
 
@@ -184,7 +184,7 @@ void SabotagePowerPlantCrateCollide::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void SabotagePowerPlantCrateCollide::loadPostProcess( )
+void SabotagePowerPlantCrateCollide::loadPostProcess()
 {
 
 	// extend base class

@@ -76,7 +76,7 @@ BeaconClientUpdate::BeaconClientUpdate( Thing *thing, const ModuleData* moduleDa
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-BeaconClientUpdate::~BeaconClientUpdate( )
+BeaconClientUpdate::~BeaconClientUpdate()
 {
 
 }
@@ -125,7 +125,7 @@ static ParticleSystem* createParticleSystem( Drawable *draw )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void BeaconClientUpdate::hideBeacon( )
+void BeaconClientUpdate::hideBeacon()
 {
 	Drawable *draw = getDrawable();
 	if (draw)
@@ -159,7 +159,7 @@ void BeaconClientUpdate::hideBeacon( )
 //-------------------------------------------------------------------------------------------------
 /** The client update callback. */
 //-------------------------------------------------------------------------------------------------
-void BeaconClientUpdate::clientUpdate( )
+void BeaconClientUpdate::clientUpdate()
 {
 	Drawable *draw = getDrawable();
 	if (!draw)
@@ -221,7 +221,7 @@ void BeaconClientUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void BeaconClientUpdate::loadPostProcess( )
+void BeaconClientUpdate::loadPostProcess()
 {
 
 	// extend base class

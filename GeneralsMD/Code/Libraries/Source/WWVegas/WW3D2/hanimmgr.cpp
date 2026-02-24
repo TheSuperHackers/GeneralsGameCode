@@ -433,7 +433,7 @@ bool	HAnimManagerClass::Is_Missing( const char * name )
 	return ( MissingAnimTable->Find( name ) != nullptr );
 }
 
-void	HAnimManagerClass::Reset_Missing( )
+void	HAnimManagerClass::Reset_Missing()
 {
 	// Make an iterator, and release all ptrs
 	HashTableIteratorClass it( *MissingAnimTable );
@@ -450,7 +450,7 @@ void	HAnimManagerClass::Reset_Missing( )
 /*
 ** Iterator converter from HashableClass to HAnimClass
 */
-HAnimClass * HAnimManagerIterator::Get_Current_Anim( )
+HAnimClass * HAnimManagerIterator::Get_Current_Anim()
 {
 	return (HAnimClass *)Get_Current();
 }

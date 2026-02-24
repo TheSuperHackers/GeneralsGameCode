@@ -65,8 +65,8 @@ class INI;
 class HeaderTemplate
 {
 public:
-	HeaderTemplate( );
-	~HeaderTemplate( );
+	HeaderTemplate();
+	~HeaderTemplate();
 
 	GameFont *m_font;
 	AsciiString m_name;
@@ -79,25 +79,25 @@ public:
 class HeaderTemplateManager
 {
 public:
-	HeaderTemplateManager( );
-	~HeaderTemplateManager( );
+	HeaderTemplateManager();
+	~HeaderTemplateManager();
 
-	void init( );
+	void init();
 
-	const FieldParse *getFieldParse( ) const { return m_headerFieldParseTable; }		///< Return the field parse info
+	const FieldParse *getFieldParse() const { return m_headerFieldParseTable; }		///< Return the field parse info
 	static const FieldParse m_headerFieldParseTable[];
 
 	HeaderTemplate *findHeaderTemplate( AsciiString name );
 	HeaderTemplate *newHeaderTemplate( AsciiString name );
 
 	GameFont *getFontFromTemplate( AsciiString name );
-	HeaderTemplate *getFirstHeader( );
+	HeaderTemplate *getFirstHeader();
 	HeaderTemplate *getNextHeader( HeaderTemplate *ht );
 
 	void onResolutionChanged();
 
 private:
-	void populateGameFonts( );
+	void populateGameFonts();
 	typedef std::list< HeaderTemplate* > HeaderTemplateList;
 	typedef HeaderTemplateList::iterator HeaderTemplateListIt;
 	HeaderTemplateList m_headerTemplateList;

@@ -47,7 +47,7 @@ public:
 	float	Bottom;
 
 	// Constructors
-	RectClass( )		{};
+	RectClass()		{};
 	RectClass( const RectClass & r )	{ Left = r.Left; Top = r.Top; Right = r.Right; Bottom = r.Bottom; }
 	RectClass( float left, float top, float right, float bottom )	{ Left = left; Top = top; Right = right; Bottom = bottom; }
 	RectClass( const Vector2 & top_left, const Vector2 & bottom_right )	{ Left = top_left.X; Top = top_left.Y; Right = bottom_right.X; Bottom = bottom_right.Y; }
@@ -61,12 +61,12 @@ public:
 	// Access
 	float	Width() const		{ return Right - Left; }
 	float	Height() const	{ return Bottom - Top; }
-	Vector2 Center( ) const { return Vector2( (Left + Right)/2, (Top + Bottom)/2 ); }
-	Vector2 Extent( ) const { return Vector2( (Right - Left)/2, (Bottom - Top)/2 ); }
-	Vector2 Upper_Left( ) const { return Vector2( Left, Top ); }
-	Vector2 Lower_Right( ) const { return Vector2( Right, Bottom ); }
-	Vector2 Upper_Right( ) const { return Vector2( Right, Top ); }
-	Vector2 Lower_Left( ) const { return Vector2( Left, Bottom ); }
+	Vector2 Center() const { return Vector2( (Left + Right)/2, (Top + Bottom)/2 ); }
+	Vector2 Extent() const { return Vector2( (Right - Left)/2, (Bottom - Top)/2 ); }
+	Vector2 Upper_Left() const { return Vector2( Left, Top ); }
+	Vector2 Lower_Right() const { return Vector2( Right, Bottom ); }
+	Vector2 Upper_Right() const { return Vector2( Right, Top ); }
+	Vector2 Lower_Left() const { return Vector2( Left, Bottom ); }
 
 	// Scaling
 	RectClass & operator *= (float k) { return Scale( k ); }

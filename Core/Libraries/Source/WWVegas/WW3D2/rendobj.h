@@ -319,7 +319,7 @@ public:
 		ANIM_MODE_COUNT
 	};
 
-	virtual void					Set_Animation( )														{ }
+	virtual void					Set_Animation()														{ }
 	virtual void					Set_Animation( HAnimClass * motion,
 															float frame, int anim_mode = ANIM_MODE_MANUAL)	{ }
 	virtual void					Set_Animation( HAnimClass * motion0,
@@ -329,7 +329,7 @@ public:
 															float percentage)											{ }
 	virtual void					Set_Animation( HAnimComboClass * anim_combo)							{ }
 
-	virtual HAnimClass *			Peek_Animation( )														{ return nullptr; }
+	virtual HAnimClass *			Peek_Animation()														{ return nullptr; }
 	virtual int						Get_Num_Bones()															{ return 0; }
 	virtual const char *			Get_Bone_Name(int bone_index)												{ return nullptr; }
 	virtual int						Get_Bone_Index(const char * bonename)									{ return 0; }
@@ -433,9 +433,9 @@ public:
 	virtual void					Scale(float scale) 															{ };
 	virtual void					Scale(float scalex, float scaley, float scalez)						{ };
  	virtual void					Set_ObjectScale(float scale) { ObjectScale=scale;}	//set's a scale factor that's factored into transform matrix.									{ScaleFactor=scale; };
-	float							Get_ObjectScale( ) const { return ObjectScale; };
+	float							Get_ObjectScale() const { return ObjectScale; };
  	void							Set_ObjectColor(unsigned int color) { ObjectColor=color;}	//the color that was used to modify the asset for player team color (for Generals). -MW
-	unsigned int					Get_ObjectColor( ) const { return ObjectColor; };
+	unsigned int					Get_ObjectColor() const { return ObjectColor; };
 
    virtual int						Get_Sort_Level() const													{ return 0; /* SORT_LEVEL_NONE */ }
    virtual void					Set_Sort_Level(int level)													{ }

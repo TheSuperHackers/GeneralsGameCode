@@ -45,18 +45,18 @@ PreorderCreate::PreorderCreate( Thing *thing, const ModuleData* moduleData ) : C
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-PreorderCreate::~PreorderCreate( )
+PreorderCreate::~PreorderCreate()
 {
 
 }
 
 //-------------------------------------------------------------------------------------------------
-void PreorderCreate::onCreate( )
+void PreorderCreate::onCreate()
 {
 }
 
 //-------------------------------------------------------------------------------------------------
-void PreorderCreate::onBuildComplete( )
+void PreorderCreate::onBuildComplete()
 {
 	if (getObject()->getControllingPlayer()->didPlayerPreorder())
 	{
@@ -100,7 +100,7 @@ void PreorderCreate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void PreorderCreate::loadPostProcess( )
+void PreorderCreate::loadPostProcess()
 {
 
 	// extend base class

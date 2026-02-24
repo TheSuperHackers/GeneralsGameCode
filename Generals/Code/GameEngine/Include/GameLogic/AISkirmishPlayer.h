@@ -77,7 +77,7 @@ protected:
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( );
+	virtual void loadPostProcess();
 
 	virtual void doBaseBuilding();
 	virtual void checkReadyTeams();
@@ -88,13 +88,13 @@ protected:
 
 protected:
 
-	virtual Bool selectTeamToBuild( );			///< determine the next team to build
+	virtual Bool selectTeamToBuild();			///< determine the next team to build
 	virtual Bool selectTeamToReinforce( Int minPriority );			///< determine the next team to reinforce
 	virtual Bool startTraining( WorkOrder *order, Bool busyOK, AsciiString teamName);	///< find a production building that can handle the order, and start building
 
 	virtual Bool isAGoodIdeaToBuildTeam( TeamPrototype *proto );		///< return true if team should be built
-	virtual void processBaseBuilding( );		///< do base-building behaviors
-	virtual void processTeamBuilding( );		///< do team-building behaviors
+	virtual void processBaseBuilding();		///< do base-building behaviors
+	virtual void processTeamBuilding();		///< do team-building behaviors
 
 protected:
 	void adjustBuildList(BuildListInfo *list);

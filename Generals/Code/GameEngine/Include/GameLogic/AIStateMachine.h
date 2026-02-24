@@ -468,7 +468,7 @@ private:
 
 	enum { MIN_RECOMPUTE_TIME = 10 };
 
-	StateReturnType updateInternal( );
+	StateReturnType updateInternal();
 
 	Coord3D				m_prevVictimPos;									///< Where we think our victim is
 	UnsignedInt		m_approachTimestamp;							///< When we last computed an approach goal
@@ -516,7 +516,7 @@ private:
 
 	enum { MIN_RECOMPUTE_TIME = 10 };
 
-	StateReturnType updateInternal( );
+	StateReturnType updateInternal();
 
 	Coord3D				m_prevVictimPos;									///< Where we think our victim is
 	UnsignedInt		m_approachTimestamp;							///< When we last computed an approach goal
@@ -1017,9 +1017,9 @@ public:
 			State( machine , "AIAttackSquadState") {	}
 	//~AIAttackSquadState();
 
-	virtual StateReturnType onEnter( );
+	virtual StateReturnType onEnter();
 	virtual void onExit( StateExitType status );
-	virtual StateReturnType update( );
+	virtual StateReturnType update();
 	Object *chooseVictim();
 #ifdef STATE_MACHINE_DEBUG
 	virtual AsciiString getName() const ;

@@ -187,7 +187,7 @@ public:
 	void setBuilder( const Object *obj );
 
 	void enterGroup( AIGroup *group );							///< become a member of the AIGroup
-	void leaveGroup( );												///< leave our current AIGroup
+	void leaveGroup();												///< leave our current AIGroup
 	AIGroup *getGroup();
 
 	// physical properties
@@ -206,7 +206,7 @@ public:
 	// cannot set velocity, since this is calculated from position every frame
 	Bool isDestroyed() const { return m_status.test( OBJECT_STATUS_DESTROYED ); }		///< Returns TRUE if object has been destroyed
 	Bool isAirborneTarget() const { return m_status.test( OBJECT_STATUS_AIRBORNE_TARGET ); }	///< Our locomotor will control marking us as a valid target for anti air weapons or not
-	Bool isUsingAirborneLocomotor( ) const;										///< returns true if the current locomotor is an airborne one
+	Bool isUsingAirborneLocomotor() const;										///< returns true if the current locomotor is an airborne one
 
 	/// central place for us to put any additional capture logic
 	void onCapture( Player *oldOwner, Player *newOwner );
@@ -218,7 +218,7 @@ public:
 	void attemptDamage( DamageInfo *damageInfo );			///< damage object as specified by the info
 	void attemptHealing(Real amount, const Object* source);		///< heal object as specified by the info
 	Bool attemptHealingFromSoleBenefactor ( Real amount, const Object* source, UnsignedInt duration );///< for the non-stacking healers like ambulance and propaganda
-	ObjectID getSoleHealingBenefactor( ) const;
+	ObjectID getSoleHealingBenefactor() const;
 
 	Real estimateDamage( DamageInfoInput& damageInfo ) const;
 	void kill( DamageType damageType = DAMAGE_UNRESISTABLE, DeathType deathType = DEATH_NORMAL );	///< kill the object with an optional type of damage and death.
@@ -312,13 +312,13 @@ public:
 	// Find us our production update interface if we have one.  This method exists simply
 	// because we do this in a lot of places in the code and I want a convenient way to get this (CBD)
 	//
-	ProductionUpdateInterface* getProductionUpdateInterface( );
+	ProductionUpdateInterface* getProductionUpdateInterface();
 
 	//
 	// Find us our dock update interface if we have one.  Again, this method exists simple
 	// because we want to do this in a lot of places throughout the code
 	//
-	DockUpdateInterface *getDockUpdateInterface( );
+	DockUpdateInterface *getDockUpdateInterface();
 
 	// Ditto for special powers -- Kris
 	SpecialPowerModuleInterface* findSpecialPowerModuleInterface( SpecialPowerType type ) const;

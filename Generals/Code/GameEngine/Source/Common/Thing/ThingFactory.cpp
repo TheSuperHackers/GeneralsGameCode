@@ -63,7 +63,7 @@ ThingFactory *TheThingFactory = nullptr;  ///< Thing manager singleton declarati
 //-------------------------------------------------------------------------------------------------
 /** Free all data loaded into this template database */
 //-------------------------------------------------------------------------------------------------
-void ThingFactory::freeDatabase( )
+void ThingFactory::freeDatabase()
 {
 	while (m_firstTemplate)
 	{
@@ -197,7 +197,7 @@ ThingTemplate* ThingFactory::newOverride( ThingTemplate *thingTemplate )
 //-------------------------------------------------------------------------------------------------
 /** Init */
 //-------------------------------------------------------------------------------------------------
-void ThingFactory::init( )
+void ThingFactory::init()
 {
 
 }
@@ -205,7 +205,7 @@ void ThingFactory::init( )
 //-------------------------------------------------------------------------------------------------
 /** Reset */
 //-------------------------------------------------------------------------------------------------
-void ThingFactory::reset( )
+void ThingFactory::reset()
 {
 	ThingTemplate *t;
 	// go through all templates and delete any overrides
@@ -249,7 +249,7 @@ void ThingFactory::reset( )
 //-------------------------------------------------------------------------------------------------
 /** Update */
 //-------------------------------------------------------------------------------------------------
-void ThingFactory::update( )
+void ThingFactory::update()
 {
 
 }

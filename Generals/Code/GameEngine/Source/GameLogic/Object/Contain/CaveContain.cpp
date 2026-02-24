@@ -203,7 +203,7 @@ UnsignedInt CaveContain::getContainCount() const
 	return myTracker->getContainCount();
 }
 
-Int CaveContain::getContainMax( ) const
+Int CaveContain::getContainMax() const
 {
 	TunnelTracker *myTracker = TheCaveSystem->getTunnelTrackerForCaveIndex( m_caveIndex );
 	return myTracker->getContainMax();
@@ -236,13 +236,13 @@ void CaveContain::onDie( const DamageInfo * damageInfo )
 
 
 //-------------------------------------------------------------------------------------------------
-void CaveContain::onCreate( )
+void CaveContain::onCreate()
 {
 	m_caveIndex = getCaveContainModuleData()->m_caveIndexData;
 }
 
 //-------------------------------------------------------------------------------------------------
-void CaveContain::onBuildComplete( )
+void CaveContain::onBuildComplete()
 {
 	if( ! shouldDoOnBuildComplete() )
 		return;
@@ -275,7 +275,7 @@ void CaveContain::tryToSetCaveIndex( Int newIndex )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void CaveContain::recalcApparentControllingPlayer( )
+void CaveContain::recalcApparentControllingPlayer()
 {
 	//Record original team first time through.
 	if( m_originalTeam == nullptr )
@@ -427,7 +427,7 @@ void CaveContain::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void CaveContain::loadPostProcess( )
+void CaveContain::loadPostProcess()
 {
 
 	// extend base class

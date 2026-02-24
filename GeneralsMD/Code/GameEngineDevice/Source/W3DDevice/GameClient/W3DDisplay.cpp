@@ -587,7 +587,7 @@ void W3DDisplay::setHeight( UnsignedInt height )
 // W3DDisplay::initAssets =====================================================
 /** */
 //=============================================================================
-void W3DDisplay::initAssets( )
+void W3DDisplay::initAssets()
 {
 
 }
@@ -595,7 +595,7 @@ void W3DDisplay::initAssets( )
 // W3DDisplay::init3DScene ====================================================
 /** */
 //=============================================================================
-void W3DDisplay::init3DScene( )
+void W3DDisplay::init3DScene()
 {
 
 }
@@ -604,7 +604,7 @@ void W3DDisplay::init3DScene( )
 /** This is the 2D scene, you can use it to draw on a 2D plane over the
 	* 3D background */
 //=============================================================================
-void W3DDisplay::init2DScene( )
+void W3DDisplay::init2DScene()
 {
 
 }
@@ -613,7 +613,7 @@ void W3DDisplay::init2DScene( )
 /** Initialize or re-initialize the W3D display system.  Here we need to
   * create our window, and get our 3D hardware setup and online */
 //=============================================================================
-void W3DDisplay::init( )
+void W3DDisplay::init()
 {
 
 	//
@@ -844,7 +844,7 @@ void W3DDisplay::init( )
 /** Reset the W3D display system.  Here we need to
   * remove the objects from the previous map. */
 //=============================================================================
-void W3DDisplay::reset( )
+void W3DDisplay::reset()
 {
 
 	Display::reset();
@@ -921,7 +921,7 @@ ICoord2D TheMousePos;
 // W3DDisplay::gatherDebugStats ===================================================
 /** Compute and display debug stats on screen */
 //=============================================================================
-void W3DDisplay::gatherDebugStats( )
+void W3DDisplay::gatherDebugStats()
 {
 	static UnsignedInt s_framesRenderedSinceLastUpdate = 0;
 	static Int64 s_lastUpdateTime64 = 0;
@@ -1473,7 +1473,7 @@ void W3DDisplay::gatherDebugStats( )
 // W3DDisplay::drawDebugStats =================================================
 /** Draw debug statistics */
 //=============================================================================
-void W3DDisplay::drawDebugStats( )
+void W3DDisplay::drawDebugStats()
 {
 	Int	x = 3;
 	Int	y = 30;
@@ -1503,7 +1503,7 @@ void W3DDisplay::drawDebugStats( )
 // W3DDisplay::drawFPSStats =================================================
 /** Draw the FPS on the screen */
 //=============================================================================
-void W3DDisplay::drawFPSStats( )
+void W3DDisplay::drawFPSStats()
 {
 	Int	x = 3;
 	Int	y = 20;
@@ -1528,7 +1528,7 @@ void StatDebugDisplay( DebugDisplayInterface *, void *, FILE *fp )
 // W3DDisplay::drawCurrentDebugDisplay =================================================
 /** Draw current debug display */
 //=============================================================================
-void W3DDisplay::drawCurrentDebugDisplay( )
+void W3DDisplay::drawCurrentDebugDisplay()
 {
 	if (m_debugDisplayCallback == StatDebugDisplay)
 	{
@@ -1547,7 +1547,7 @@ void W3DDisplay::drawCurrentDebugDisplay( )
 // W3DDisplay::calculateTerrainLOD =================================================
 /** Calculates an adequately speedy terrain Level Of Detail. */
 //=============================================================================
-void W3DDisplay::calculateTerrainLOD( )
+void W3DDisplay::calculateTerrainLOD()
 {
 	const Int NUM_SAMPLES=20;
 	const Int NUM_TO_DISCARD=5;
@@ -1654,7 +1654,7 @@ void W3DDisplay::step()
 /** Draw the entire W3D Display */
 //=============================================================================
 //DECLARE_PERF_TIMER(W3DDisplay_draw)
-void W3DDisplay::draw( )
+void W3DDisplay::draw()
 {
 	//USE_PERF_TIMER(W3DDisplay_draw)
 
@@ -2758,7 +2758,7 @@ void W3DDisplay::drawImage( const Image *image, Int startX, Int startY,
 // W3DDisplay::createVideoBuffer
 //============================================================================
 
-VideoBuffer*	W3DDisplay::createVideoBuffer( )
+VideoBuffer*	W3DDisplay::createVideoBuffer()
 {
 	VideoBuffer::Type format = VideoBuffer::TYPE_UNKNOWN;
 

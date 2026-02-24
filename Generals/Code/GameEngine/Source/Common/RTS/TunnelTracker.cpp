@@ -431,7 +431,7 @@ void TunnelTracker::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void TunnelTracker::loadPostProcess( )
+void TunnelTracker::loadPostProcess()
 {
 
 	// sanity, the contain list should be empty until we post process the id list

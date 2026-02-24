@@ -538,7 +538,7 @@ void PolygonTrigger::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void PolygonTrigger::loadPostProcess( )
+void PolygonTrigger::loadPostProcess()
 {
 
 }

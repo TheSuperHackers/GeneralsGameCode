@@ -2029,7 +2029,7 @@ void W3DTreeBuffer::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void W3DTreeBuffer::loadPostProcess( )
+void W3DTreeBuffer::loadPostProcess()
 {
 	// empty. jba [8/11/2003]
 }

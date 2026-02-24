@@ -40,7 +40,7 @@ class RepairDockUpdateModuleData : public DockUpdateModuleData
 
 public:
 
-	RepairDockUpdateModuleData( );
+	RepairDockUpdateModuleData();
 
 	static void buildFieldParse(MultiIniFieldParse& p);
 

@@ -76,8 +76,8 @@ public:
 	virtual UpdateSleepTime update();
 
 	void createGridDecals( const RadiusDecalTemplate& tmpl, Real radius, const Coord3D& pos );
-	void killGridDecals( );
-	void animateGridDecals( );
+	void killGridDecals();
+	void animateGridDecals();
 
 
 protected:

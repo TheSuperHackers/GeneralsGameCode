@@ -121,7 +121,7 @@ ToppleUpdate::ToppleUpdate( Thing *thing, const ModuleData* moduleData ) : Updat
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-ToppleUpdate::~ToppleUpdate( )
+ToppleUpdate::~ToppleUpdate()
 {
 }
 
@@ -453,7 +453,7 @@ void ToppleUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void ToppleUpdate::loadPostProcess( )
+void ToppleUpdate::loadPostProcess()
 {
 
 	// extend base class

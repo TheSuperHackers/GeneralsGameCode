@@ -72,7 +72,7 @@ SabotageInternetCenterCrateCollide::SabotageInternetCenterCrateCollide( Thing *t
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-SabotageInternetCenterCrateCollide::~SabotageInternetCenterCrateCollide( )
+SabotageInternetCenterCrateCollide::~SabotageInternetCenterCrateCollide()
 {
 }
 
@@ -225,7 +225,7 @@ void SabotageInternetCenterCrateCollide::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void SabotageInternetCenterCrateCollide::loadPostProcess( )
+void SabotageInternetCenterCrateCollide::loadPostProcess()
 {
 
 	// extend base class

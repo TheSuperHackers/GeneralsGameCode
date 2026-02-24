@@ -136,11 +136,11 @@ class GameSpyPeerMessageQueue : public GameSpyPeerMessageQueueInterface
 public:
 	virtual ~GameSpyPeerMessageQueue();
 	GameSpyPeerMessageQueue();
-	virtual void startThread( );
-	virtual void endThread( );
-	virtual Bool isThreadRunning( );
-	virtual Bool isConnected( );
-	virtual Bool isConnecting( );
+	virtual void startThread();
+	virtual void endThread();
+	virtual Bool isThreadRunning();
+	virtual Bool isConnected();
+	virtual Bool isConnecting();
 
 	virtual void addRequest( const PeerRequest& req );
 	virtual Bool getRequest( PeerRequest& req );
@@ -148,10 +148,10 @@ public:
 	virtual void addResponse( const PeerResponse& resp );
 	virtual Bool getResponse( PeerResponse& resp );
 
-	virtual SerialAuthResult getSerialAuthResult( ) { return m_serialAuth; }
+	virtual SerialAuthResult getSerialAuthResult() { return m_serialAuth; }
 	void setSerialAuthResult( SerialAuthResult result ) { m_serialAuth = result; }
 
-	PeerThreadClass* getThread( );
+	PeerThreadClass* getThread();
 
 private:
 	MutexClass m_requestMutex;
@@ -163,7 +163,7 @@ private:
 	SerialAuthResult m_serialAuth;
 };
 
-GameSpyPeerMessageQueueInterface* GameSpyPeerMessageQueueInterface::createNewMessageQueue( )
+GameSpyPeerMessageQueueInterface* GameSpyPeerMessageQueueInterface::createNewMessageQueue()
 {
 	return NEW GameSpyPeerMessageQueue;
 }
@@ -208,35 +208,35 @@ public:
 
 	void Thread_Function();
 
-	void markAsDisconnected( ) { m_isConnecting = m_isConnected = false; }
+	void markAsDisconnected() { m_isConnecting = m_isConnected = false; }
 
 	void connectCallback( PEER peer, PEERBool success );
 	void nickErrorCallback( PEER peer, Int type, const char *nick );
 
-	Bool isConnecting( ) { return m_isConnecting; }
-	Bool isConnected( ) { return m_isConnected; }
+	Bool isConnecting() { return m_isConnecting; }
+	Bool isConnected() { return m_isConnected; }
 
 	Int addServerToMap( SBServer server );
 	Int removeServerFromMap( SBServer server );
-	void clearServers( );
+	void clearServers();
 	SBServer findServerByID( Int id );
 	Int findServer( SBServer server );
 
 	// get info about the game we are hosting
-	Bool isHosting( ) { return m_isHosting; }
+	Bool isHosting() { return m_isHosting; }
 	void stopHostingAlready(PEER peer);
-	Bool hasPassword( ) { return m_hasPassword; }
-	Bool allowObservers( ) { return m_allowObservers; }
+	Bool hasPassword() { return m_hasPassword; }
+	Bool allowObservers() { return m_allowObservers; }
   Bool useStats() const { return m_useStats; }
-	std::string getMapName( ) { return m_mapName; }
-	UnsignedInt exeCRC( ) { return m_exeCRC; }
-	UnsignedInt iniCRC( ) { return m_iniCRC; }
-	UnsignedInt gameVersion( ) { return m_gameVersion; }
-	std::wstring getLocalStagingServerName( ) { return m_localStagingServerName; }
-	Int getLocalRoomID( ) { return m_localRoomID; }
-	std::string ladderIP( ) { return m_ladderIP; }
-	UnsignedShort ladderPort( ) { return m_ladderPort; }
-	std::string pingStr( ) { return m_pingStr; }
+	std::string getMapName() { return m_mapName; }
+	UnsignedInt exeCRC() { return m_exeCRC; }
+	UnsignedInt iniCRC() { return m_iniCRC; }
+	UnsignedInt gameVersion() { return m_gameVersion; }
+	std::wstring getLocalStagingServerName() { return m_localStagingServerName; }
+	Int getLocalRoomID() { return m_localRoomID; }
+	std::string ladderIP() { return m_ladderIP; }
+	UnsignedShort ladderPort() { return m_ladderPort; }
+	std::string pingStr() { return m_pingStr; }
 	std::string getPlayerName(Int idx) { return m_playerNames[idx]; }
 	Int getPlayerWins(Int idx) { return m_playerWins[idx]; }
 	Int getPlayerLosses(Int idx) { return m_playerLosses[idx]; }
@@ -249,13 +249,13 @@ public:
 
 	void roomJoined( Bool val ) { m_roomJoined = val; }
 	void setQMGroupRoom( Int groupID ) { m_qmGroupRoom = groupID; }
-	void sawEndOfEnumPlayers( ) { m_sawEndOfEnumPlayers = true; }
+	void sawEndOfEnumPlayers() { m_sawEndOfEnumPlayers = true; }
 	void sawMatchbot( std::string bot ) { m_sawMatchbot = true; m_matchbotName = bot; }
-	QMStatus getQMStatus( ) { return m_qmStatus; }
+	QMStatus getQMStatus() { return m_qmStatus; }
 	void handleQMMatch(PEER peer, Int mapIndex, Int seed, char *playerName[MAX_SLOTS], char *playerIP[MAX_SLOTS], char *playerSide[MAX_SLOTS], char *playerColor[MAX_SLOTS], char *playerNAT[MAX_SLOTS]);
-	std::string getQMBotName( ) { return m_matchbotName; }
-	Int getQMGroupRoom( ) { return m_qmGroupRoom; }
-	Int getQMLadder( ) { return m_qmInfo.QM.ladderID; }
+	std::string getQMBotName() { return m_matchbotName; }
+	Int getQMGroupRoom() { return m_qmGroupRoom; }
+	Int getQMLadder() { return m_qmInfo.QM.ladderID; }
 
 	Int getCurrentGroupRoom() { return m_groupRoomID; }
 
@@ -428,7 +428,7 @@ Int PeerThreadClass::removeServerFromMap( SBServer server )
 	return 0;
 }
 
-void PeerThreadClass::clearServers( )
+void PeerThreadClass::clearServers()
 {
 	m_stagingServers.clear();
 }
@@ -540,7 +540,7 @@ GameSpyPeerMessageQueue::~GameSpyPeerMessageQueue()
 	endThread();
 }
 
-void GameSpyPeerMessageQueue::startThread( )
+void GameSpyPeerMessageQueue::startThread()
 {
 	if (!m_thread)
 	{
@@ -556,23 +556,23 @@ void GameSpyPeerMessageQueue::startThread( )
 	}
 }
 
-void GameSpyPeerMessageQueue::endThread( )
+void GameSpyPeerMessageQueue::endThread()
 {
 	delete m_thread;
 	m_thread = nullptr;
 }
 
-Bool GameSpyPeerMessageQueue::isThreadRunning( )
+Bool GameSpyPeerMessageQueue::isThreadRunning()
 {
 	return (m_thread) ? m_thread->Is_Running() : false;
 }
 
-Bool GameSpyPeerMessageQueue::isConnected( )
+Bool GameSpyPeerMessageQueue::isConnected()
 {
 	return (m_thread) ? m_thread->isConnected() : false;
 }
 
-Bool GameSpyPeerMessageQueue::isConnecting( )
+Bool GameSpyPeerMessageQueue::isConnecting()
 {
 	return (m_thread) ? m_thread->isConnecting() : false;
 }
@@ -626,7 +626,7 @@ Bool GameSpyPeerMessageQueue::getResponse( PeerResponse& resp )
 	return true;
 }
 
-PeerThreadClass* GameSpyPeerMessageQueue::getThread( )
+PeerThreadClass* GameSpyPeerMessageQueue::getThread()
 {
 	return m_thread;
 }

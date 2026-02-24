@@ -181,7 +181,7 @@ Bool File::open( const Char *filename, Int access, size_t bufferSize )
 	*/
 //=================================================================
 
-void File::close( )
+void File::close()
 {
 	if( m_open )
 	{
@@ -214,7 +214,7 @@ void File::closeWithoutDelete()
 	*/
 //=================================================================
 
-Int File::size( )
+Int File::size()
 {
 	Int pos = seek( 0, CURRENT );
 	Int size = seek( 0, END );
@@ -228,7 +228,7 @@ Int File::size( )
 // File::position
 //============================================================================
 
-Int File::position( )
+Int File::position()
 {
 	return seek(0, CURRENT);
 }

@@ -107,14 +107,14 @@ DynamicGeometryInfoUpdate::DynamicGeometryInfoUpdate( Thing *thing, const Module
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-DynamicGeometryInfoUpdate::~DynamicGeometryInfoUpdate( )
+DynamicGeometryInfoUpdate::~DynamicGeometryInfoUpdate()
 {
 }
 
 //-------------------------------------------------------------------------------------------------
 /** The update callback. */
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime DynamicGeometryInfoUpdate::update( )
+UpdateSleepTime DynamicGeometryInfoUpdate::update()
 {
 /// @todo srj use SLEEPY_UPDATE here
 	if( m_finished )
@@ -256,7 +256,7 @@ void DynamicGeometryInfoUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void DynamicGeometryInfoUpdate::loadPostProcess( )
+void DynamicGeometryInfoUpdate::loadPostProcess()
 {
 
 	// extend base class

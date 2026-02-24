@@ -822,7 +822,7 @@ void DynamicScreenMeshClass::Set_Position(const Vector3 &v)
 	DynamicMeshClass::Set_Position(Vector3(v.X * 2, -(v.Y * 2 * Aspect), 0));
 }
 
-void DynamicScreenMeshClass::Reset( )
+void DynamicScreenMeshClass::Reset()
 {
 	Reset_Flags();
 	Reset_Mesh_Counters();

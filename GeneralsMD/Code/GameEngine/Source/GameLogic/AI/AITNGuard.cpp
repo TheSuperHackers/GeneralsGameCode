@@ -287,7 +287,7 @@ void AITNGuardMachine::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void AITNGuardMachine::loadPostProcess( )
+void AITNGuardMachine::loadPostProcess()
 {
 }
 
@@ -314,7 +314,7 @@ void AITNGuardInnerState::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void AITNGuardInnerState::loadPostProcess( )
+void AITNGuardInnerState::loadPostProcess()
 {
 	onEnter();
 }
@@ -326,7 +326,7 @@ AITNGuardInnerState::~AITNGuardInnerState()
 }
 
 //--------------------------------------------------------------------------------------
-StateReturnType AITNGuardInnerState::onEnter( )
+StateReturnType AITNGuardInnerState::onEnter()
 {
 	Object* nemesis = TheGameLogic->findObjectByID(getGuardMachine()->getNemesisID()) ;
 	if (nemesis == nullptr)
@@ -371,7 +371,7 @@ static Object *TunnelNetworkScan(Object *owner)
 }
 
 //--------------------------------------------------------------------------------------
-StateReturnType AITNGuardInnerState::update( )
+StateReturnType AITNGuardInnerState::update()
 {
 	Object* nemesis = TheGameLogic->findObjectByID(getGuardMachine()->getNemesisID()) ;
 	Player *ownerPlayer = getMachineOwner()->getControllingPlayer();
@@ -458,7 +458,7 @@ void AITNGuardOuterState::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void AITNGuardOuterState::loadPostProcess( )
+void AITNGuardOuterState::loadPostProcess()
 {						 AITNGuardOuterState
 	onEnter();
 }
@@ -470,7 +470,7 @@ AITNGuardOuterState::~AITNGuardOuterState()
 }
 
 //--------------------------------------------------------------------------------------
-StateReturnType AITNGuardOuterState::onEnter( )
+StateReturnType AITNGuardOuterState::onEnter()
 {
 	if (getGuardMachine()->getGuardMode() == GUARDMODE_GUARD_WITHOUT_PURSUIT)
 	{
@@ -499,7 +499,7 @@ StateReturnType AITNGuardOuterState::onEnter( )
 }
 
 //--------------------------------------------------------------------------------------
-StateReturnType AITNGuardOuterState::update( )
+StateReturnType AITNGuardOuterState::update()
 {
 	Object *owner = getMachineOwner();
 	Object* goalObj = m_attackState->getMachineGoalObject();
@@ -565,13 +565,13 @@ void AITNGuardReturnState::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void AITNGuardReturnState::loadPostProcess( )
+void AITNGuardReturnState::loadPostProcess()
 {
 	AIEnterState::loadPostProcess();
 }
 
 //--------------------------------------------------------------------------------------
-StateReturnType AITNGuardReturnState::onEnter( )
+StateReturnType AITNGuardReturnState::onEnter()
 {
 	UnsignedInt now = TheGameLogic->getFrame();
 	m_nextReturnScanTime = now + GameLogicRandomValue(0, TheAI->getAiData()->m_guardEnemyReturnScanRate);
@@ -604,7 +604,7 @@ StateReturnType AITNGuardReturnState::onEnter( )
 }
 
 //--------------------------------------------------------------------------------------
-StateReturnType AITNGuardReturnState::update( )
+StateReturnType AITNGuardReturnState::update()
 {
 	Player *ownerPlayer = getMachineOwner()->getControllingPlayer();
 	if (getMachineOwner()->getTeam()) {
@@ -669,12 +669,12 @@ void AITNGuardIdleState::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void AITNGuardIdleState::loadPostProcess( )
+void AITNGuardIdleState::loadPostProcess()
 {
 }
 
 //--------------------------------------------------------------------------------------
-StateReturnType AITNGuardIdleState::onEnter( )
+StateReturnType AITNGuardIdleState::onEnter()
 {
 	// first time thru, use a random amount so that everyone doesn't scan on the same frame,
 	// to avoid "spikes".
@@ -686,7 +686,7 @@ StateReturnType AITNGuardIdleState::onEnter( )
 }
 
 //--------------------------------------------------------------------------------------
-StateReturnType AITNGuardIdleState::update( )
+StateReturnType AITNGuardIdleState::update()
 {
 	//DEBUG_LOG(("AITNGuardIdleState frame %d: %08lx",TheGameLogic->getFrame(),getMachineOwner()));
 
@@ -754,7 +754,7 @@ AITNGuardPickUpCrateState::AITNGuardPickUpCrateState( StateMachine *machine )	: 
 #endif
 }
 //--------------------------------------------------------------------------------------
-StateReturnType AITNGuardPickUpCrateState::onEnter( )
+StateReturnType AITNGuardPickUpCrateState::onEnter()
 {
 	Object *owner = getMachineOwner();
 	AIUpdateInterface *ai = owner->getAIUpdateInterface();
@@ -771,7 +771,7 @@ StateReturnType AITNGuardPickUpCrateState::onEnter( )
 }
 
 //--------------------------------------------------------------------------------------
-StateReturnType AITNGuardPickUpCrateState::update( )
+StateReturnType AITNGuardPickUpCrateState::update()
 {
 	return AIPickUpCrateState::update();
 }
@@ -797,7 +797,7 @@ AITNGuardAttackAggressorState::~AITNGuardAttackAggressorState()
 }
 
 //-------------------------------------------------------------------------------------------------
-StateReturnType AITNGuardAttackAggressorState::onEnter( )
+StateReturnType AITNGuardAttackAggressorState::onEnter()
 {
 	Object *obj = getMachineOwner();
 	ObjectID nemID = INVALID_ID;
@@ -836,7 +836,7 @@ StateReturnType AITNGuardAttackAggressorState::onEnter( )
 }
 
 //-------------------------------------------------------------------------------------------------
-StateReturnType AITNGuardAttackAggressorState::update( )
+StateReturnType AITNGuardAttackAggressorState::update()
 {
 	if (m_attackState->getMachine()->getCurrentStateID() == AttackStateMachine::FIRE_WEAPON) {
 		Object *nemesis = TheGameLogic->findObjectByID(getGuardMachine()->getNemesisID());

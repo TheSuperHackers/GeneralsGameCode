@@ -34,9 +34,9 @@ class W3DSnowManager : public SnowManager
 	W3DSnowManager();
 	~W3DSnowManager();
 
-	virtual void init( );
-	virtual void reset( );
-	virtual void update ( );
+	virtual void init();
+	virtual void reset();
+	virtual void update ();
 	virtual void updateIniSettings();
 
 	void	render(RenderInfoClass &rinfo);

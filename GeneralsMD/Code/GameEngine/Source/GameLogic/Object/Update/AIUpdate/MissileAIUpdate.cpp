@@ -145,7 +145,7 @@ MissileAIUpdate::~MissileAIUpdate()
 }
 
 //-------------------------------------------------------------------------------------------------
-void MissileAIUpdate::onDelete( )
+void MissileAIUpdate::onDelete()
 {
 	//
 	// there is no need to destroy the attached particle systems here because the particle
@@ -916,7 +916,7 @@ void MissileAIUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void MissileAIUpdate::loadPostProcess( )
+void MissileAIUpdate::loadPostProcess()
 {
  // extend base class
 	AIUpdateInterface::loadPostProcess();

@@ -54,14 +54,14 @@ class GameEngine : public SubsystemInterface
 {
 public:
 
-	GameEngine( );
+	GameEngine();
 	virtual ~GameEngine();
 
-	virtual void init( );								///< Init engine by creating client and logic
-	virtual void reset( );								///< reset system to starting state
-	virtual void update( );							///< per frame update
+	virtual void init();								///< Init engine by creating client and logic
+	virtual void reset();								///< reset system to starting state
+	virtual void update();							///< per frame update
 
-	virtual void execute( );											/**< The "main loop" of the game engine.
+	virtual void execute();											/**< The "main loop" of the game engine.
 																								 It will not return until the game exits. */
 
 	static Bool isTimeFrozen(); ///< Returns true if a script has frozen time.
@@ -70,32 +70,32 @@ public:
 	virtual void setQuitting( Bool quitting );				///< set quitting status
 	virtual Bool getQuitting();						///< is app getting ready to quit.
 
-	virtual Bool isMultiplayerSession( );
+	virtual Bool isMultiplayerSession();
 	virtual void serviceWindowsOS() {};		///< service the native OS
 	virtual Bool isActive() {return m_isActive;}	///< returns whether app has OS focus.
 	virtual void setIsActive(Bool isActive) { m_isActive = isActive; };
 
 protected:
 
-	virtual void resetSubsystems( );
+	virtual void resetSubsystems();
 
 	Bool canUpdateGameLogic();
 	Bool canUpdateNetworkGameLogic();
 	Bool canUpdateRegularGameLogic();
 
-	virtual FileSystem *createFileSystem( );								///< Factory for FileSystem classes
-	virtual LocalFileSystem *createLocalFileSystem( ) = 0;	///< Factory for LocalFileSystem classes
-	virtual ArchiveFileSystem *createArchiveFileSystem( ) = 0;	///< Factory for ArchiveFileSystem classes
-	virtual GameLogic *createGameLogic( ) = 0;							///< Factory for GameLogic classes.
-	virtual GameClient *createGameClient( ) = 0;						///< Factory for GameClient classes.
-	virtual MessageStream *createMessageStream( );					///< Factory for the message stream
-	virtual ModuleFactory *createModuleFactory( ) = 0;			///< Factory for modules
-	virtual ThingFactory *createThingFactory( ) = 0;				///< Factory for the thing factory
-	virtual FunctionLexicon *createFunctionLexicon( ) = 0;	///< Factory for Function Lexicon
-	virtual Radar *createRadar( ) = 0;											///< Factory for radar
-	virtual WebBrowser *createWebBrowser( ) = 0;						///< Factory for embedded browser
-	virtual ParticleSystemManager* createParticleSystemManager( ) = 0;
-	virtual AudioManager *createAudioManager( ) = 0;				///< Factory for Audio Manager
+	virtual FileSystem *createFileSystem();								///< Factory for FileSystem classes
+	virtual LocalFileSystem *createLocalFileSystem() = 0;	///< Factory for LocalFileSystem classes
+	virtual ArchiveFileSystem *createArchiveFileSystem() = 0;	///< Factory for ArchiveFileSystem classes
+	virtual GameLogic *createGameLogic() = 0;							///< Factory for GameLogic classes.
+	virtual GameClient *createGameClient() = 0;						///< Factory for GameClient classes.
+	virtual MessageStream *createMessageStream();					///< Factory for the message stream
+	virtual ModuleFactory *createModuleFactory() = 0;			///< Factory for modules
+	virtual ThingFactory *createThingFactory() = 0;				///< Factory for the thing factory
+	virtual FunctionLexicon *createFunctionLexicon() = 0;	///< Factory for Function Lexicon
+	virtual Radar *createRadar() = 0;											///< Factory for radar
+	virtual WebBrowser *createWebBrowser() = 0;						///< Factory for embedded browser
+	virtual ParticleSystemManager* createParticleSystemManager() = 0;
+	virtual AudioManager *createAudioManager() = 0;				///< Factory for Audio Manager
 
 	Real m_logicTimeAccumulator; ///< Frame time accumulated towards submitting a new logic frame
 
@@ -110,7 +110,7 @@ inline Bool GameEngine::getQuitting() { return m_quitting; }
 extern GameEngine *TheGameEngine;
 
 /// This function creates a new game engine instance, and is device specific
-extern GameEngine *CreateGameEngine( );
+extern GameEngine *CreateGameEngine();
 
 /// The entry point for the game system
 extern Int GameMain();

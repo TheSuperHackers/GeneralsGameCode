@@ -193,25 +193,25 @@ PlayerTemplate::PlayerTemplate() :
 }
 
 //-----------------------------------------------------------------------------
-const Image *PlayerTemplate::getHeadWaterMarkImage( ) const
+const Image *PlayerTemplate::getHeadWaterMarkImage() const
 {
 	return TheMappedImageCollection->findImageByName(m_headWaterMark);
 }
 
 //-----------------------------------------------------------------------------
-const Image *PlayerTemplate::getFlagWaterMarkImage( ) const
+const Image *PlayerTemplate::getFlagWaterMarkImage() const
 {
 	return TheMappedImageCollection->findImageByName(m_flagWaterMark);
 }
 
 //-----------------------------------------------------------------------------
-const Image *PlayerTemplate::getSideIconImage( ) const
+const Image *PlayerTemplate::getSideIconImage() const
 {
 	return TheMappedImageCollection->findImageByName(m_sideIconImage);
 }
 
 //-----------------------------------------------------------------------------
-const Image *PlayerTemplate::getEnabledImage( ) const
+const Image *PlayerTemplate::getEnabledImage() const
 {
 	return TheMappedImageCollection->findImageByName(m_enabledImage);
 }

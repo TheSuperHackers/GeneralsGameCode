@@ -141,15 +141,15 @@ protected:
 
 	RenderObjClass *m_prevRenderObj;
 
-	void createTreadEmitters( ); ///< Create particle effects for treads.
-	void tossTreadEmitters( ); ///< Destroy particle effects for treads.
+	void createTreadEmitters(); ///< Create particle effects for treads.
+	void tossTreadEmitters(); ///< Destroy particle effects for treads.
 
-	void createWheelEmitters( ); ///< Create particle effects for wheels.
-	void tossWheelEmitters( ); ///< Destroy particle effects for wheels.
+	void createWheelEmitters(); ///< Create particle effects for wheels.
+	void tossWheelEmitters(); ///< Destroy particle effects for wheels.
 	void enableWheelEmitters( Bool enable ); ///< Start or stop creating effects from the wheels.
-	void updateBones( );
+	void updateBones();
 
-	void stopMoveDebris( ); ///< Stop creating debris from the tank treads.
+	void stopMoveDebris(); ///< Stop creating debris from the tank treads.
 	void updateTreadObjects(); ///< Update pointers to sub-objects like treads.
 	void updateTreadPositions(Real uvDelta); ///< Update uv coordinates on each tread.
 };

@@ -48,7 +48,7 @@ UpgradeDie::UpgradeDie( Thing *thing, const ModuleData* moduleData ) : DieModule
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UpgradeDie::~UpgradeDie( )
+UpgradeDie::~UpgradeDie()
 {
 }
 
@@ -118,7 +118,7 @@ void UpgradeDie::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void UpgradeDie::loadPostProcess( )
+void UpgradeDie::loadPostProcess()
 {
 
 	// extend base class

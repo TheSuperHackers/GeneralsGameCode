@@ -70,7 +70,7 @@ protected:
 
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( );
+	virtual void loadPostProcess();
 
 #ifdef DEBUG_FOG_MEMORY
 	const char *m_robjName;		///<debug pointer so we know what this is a snapshot of.
@@ -288,7 +288,7 @@ void W3DRenderObjectSnapshot::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void W3DRenderObjectSnapshot::loadPostProcess( )
+void W3DRenderObjectSnapshot::loadPostProcess()
 {
 
 }
@@ -789,7 +789,7 @@ void W3DGhostObject::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void W3DGhostObject::loadPostProcess( )
+void W3DGhostObject::loadPostProcess()
 {
 	// extend base class
 	GhostObject::loadPostProcess();
@@ -1237,7 +1237,7 @@ void W3DGhostObjectManager::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void W3DGhostObjectManager::loadPostProcess( )
+void W3DGhostObjectManager::loadPostProcess()
 {
 	// extend base class
 	GhostObjectManager::loadPostProcess();

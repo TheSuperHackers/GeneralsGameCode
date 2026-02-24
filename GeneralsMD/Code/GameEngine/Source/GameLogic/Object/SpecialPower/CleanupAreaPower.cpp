@@ -134,7 +134,7 @@ void CleanupAreaPower::xfer( Xfer *xfer )
 }
 
 //-------------------------------------------------------------------------------------------------
-void CleanupAreaPower::loadPostProcess( )
+void CleanupAreaPower::loadPostProcess()
 {
 
 	// extend base class

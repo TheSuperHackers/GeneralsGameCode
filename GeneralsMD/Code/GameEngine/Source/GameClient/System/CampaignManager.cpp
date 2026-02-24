@@ -113,7 +113,7 @@ void INI::parseCampaignDefinition( INI *ini )
 }
 
 //-----------------------------------------------------------------------------
-Campaign::Campaign( ):
+Campaign::Campaign():
 	m_isChallengeCampaign(FALSE)
 {
 	m_missions.clear();
@@ -123,7 +123,7 @@ Campaign::Campaign( ):
 }
 
 //-----------------------------------------------------------------------------
-Campaign::~Campaign( )
+Campaign::~Campaign()
 {
 	MissionListIt it = m_missions.begin();
 	while(it != m_missions.end())
@@ -134,7 +134,7 @@ Campaign::~Campaign( )
 	}
 }
 
-AsciiString Campaign::getFinalVictoryMovie( )
+AsciiString Campaign::getFinalVictoryMovie()
 {
 	return m_finalMovieName;
 }
@@ -212,7 +212,7 @@ Mission *Campaign::getNextMission( Mission *current)
 
 
 //-----------------------------------------------------------------------------
-CampaignManager::CampaignManager( )
+CampaignManager::CampaignManager()
 {
 	m_campaignList.clear();
 	m_currentCampaign = nullptr;
@@ -224,7 +224,7 @@ CampaignManager::CampaignManager( )
 }
 
 //-----------------------------------------------------------------------------
-CampaignManager::~CampaignManager( )
+CampaignManager::~CampaignManager()
 {
 	m_currentCampaign = nullptr;
 	m_currentMission = nullptr;
@@ -240,7 +240,7 @@ CampaignManager::~CampaignManager( )
 }
 
 //-----------------------------------------------------------------------------
-void CampaignManager::init( )
+void CampaignManager::init()
 {
 	INI ini;
 	// Read from INI all the CampaignManager
@@ -248,19 +248,19 @@ void CampaignManager::init( )
 }
 
 //-----------------------------------------------------------------------------
-Campaign *CampaignManager::getCurrentCampaign( )
+Campaign *CampaignManager::getCurrentCampaign()
 {
 	return m_currentCampaign;
 }
 
 //-----------------------------------------------------------------------------
-Mission *CampaignManager::getCurrentMission( )
+Mission *CampaignManager::getCurrentMission()
 {
 	return m_currentMission;
 }
 
 //-----------------------------------------------------------------------------
-Mission *CampaignManager::gotoNextMission( )
+Mission *CampaignManager::gotoNextMission()
 {
 	if (!m_currentCampaign || !m_currentMission)
 		return nullptr;
@@ -318,7 +318,7 @@ void CampaignManager::setCampaign( AsciiString campaign )
 }
 
 //-----------------------------------------------------------------------------
-AsciiString CampaignManager::getCurrentMap( )
+AsciiString CampaignManager::getCurrentMap()
 {
 	if(!m_currentMission)
 		return AsciiString::TheEmptyString;
@@ -329,7 +329,7 @@ AsciiString CampaignManager::getCurrentMap( )
 // ------------------------------------------------------------------------------------------------
 /** Return the 0 based mission number */
 // ------------------------------------------------------------------------------------------------
-Int CampaignManager::getCurrentMissionNumber( )
+Int CampaignManager::getCurrentMissionNumber()
 {
 	Int number = INVALID_MISSION_NUMBER;
 
@@ -488,7 +488,7 @@ void CampaignManager::xfer( Xfer *xfer )
 
 }
 
-void CampaignManager::loadPostProcess( )
+void CampaignManager::loadPostProcess()
 {
 	if(TheChallengeGenerals == nullptr)
 	{
@@ -506,13 +506,13 @@ void CampaignManager::loadPostProcess( )
 
 
 //-----------------------------------------------------------------------------
-Mission::Mission( )
+Mission::Mission()
 {
 	m_voiceLength = 0;
 }
 
 //-----------------------------------------------------------------------------
-Mission::~Mission( )
+Mission::~Mission()
 {
 
 }

@@ -135,7 +135,7 @@ ScriptConditions::~ScriptConditions()
 //-------------------------------------------------------------------------------------------------
 /** Init */
 //-------------------------------------------------------------------------------------------------
-void ScriptConditions::init( )
+void ScriptConditions::init()
 {
 
 	reset();
@@ -145,7 +145,7 @@ void ScriptConditions::init( )
 //-------------------------------------------------------------------------------------------------
 /** Reset */
 //-------------------------------------------------------------------------------------------------
-void ScriptConditions::reset( )
+void ScriptConditions::reset()
 {
 
 	deleteInstance(s_transportStatuses);
@@ -156,7 +156,7 @@ void ScriptConditions::reset( )
 //-------------------------------------------------------------------------------------------------
 /** Update */
 //-------------------------------------------------------------------------------------------------
-void ScriptConditions::update( )
+void ScriptConditions::update()
 {
 
 	// Empty for now. jba
@@ -2592,7 +2592,7 @@ Bool ScriptConditions::evaluateSkirmishSupplySourceAttacked(Parameter *pSkirmish
 	if (!player) {
 		return FALSE;
 	}
-	return player->isSupplySourceAttacked( );
+	return player->isSupplySourceAttacked();
 }
 
 //-------------------------------------------------------------------------------------------------

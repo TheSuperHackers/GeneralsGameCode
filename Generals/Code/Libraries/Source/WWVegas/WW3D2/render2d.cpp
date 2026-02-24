@@ -76,7 +76,7 @@ Render2DClass::~Render2DClass()
 }
 
 ShaderClass
-Render2DClass::Get_Default_Shader( )
+Render2DClass::Get_Default_Shader()
 {
 	ShaderClass shader;
 
@@ -170,7 +170,7 @@ void	Render2DClass::Set_Coordinate_Range( const RectClass & range )
 	Update_Bias();
 }
 
-void	  Render2DClass::Update_Bias( )
+void	  Render2DClass::Update_Bias()
 {
 	BiasedCoordinateOffset = CoordinateOffset;
 

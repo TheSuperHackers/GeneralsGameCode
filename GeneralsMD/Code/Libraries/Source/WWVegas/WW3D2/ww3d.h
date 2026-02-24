@@ -112,20 +112,20 @@ public:
 	static WW3DErrorType		Set_Render_Device( int dev=-1, int resx=-1, int resy=-1, int bits=-1, int windowed=-1, bool resize_window = false, bool reset_device=false, bool restore_assets=true);
 	static WW3DErrorType		Set_Render_Device( const char *dev_name, int resx=-1, int resy=-1, int bits=-1, int windowed=-1, bool resize_window = false  );
 	static WW3DErrorType		Set_Next_Render_Device();
-	static WW3DErrorType		Set_Any_Render_Device( );
+	static WW3DErrorType		Set_Any_Render_Device();
 
 	static void					Get_Pixel_Center(float &x, float &y);
 	static void					Get_Render_Target_Resolution(int & set_w,int & set_h,int & get_bits,bool & get_windowed);
 	static void					Get_Device_Resolution(int & set_w,int & set_h,int & get_bits,bool & get_windowed);
 	static WW3DErrorType		Set_Device_Resolution(int w=-1,int h=-1,int bits=-1,int windowed=-1, bool resize_window=false );
 
-	static bool					Is_Windowed( );
-	static WW3DErrorType		Toggle_Windowed ( );
+	static bool					Is_Windowed();
+	static WW3DErrorType		Toggle_Windowed ();
 	static void					Set_Window( void *hwnd );
-	static void *				Get_Window( );
+	static void *				Get_Window();
 
-	static WW3DErrorType		On_Activate_App( );
-	static WW3DErrorType		On_Deactivate_App( );
+	static WW3DErrorType		On_Activate_App();
+	static WW3DErrorType		On_Deactivate_App();
 
 	static WW3DErrorType		Registry_Save_Render_Device( const char * sub_key );
 	static WW3DErrorType		Registry_Save_Render_Device( const char * sub_key, int device, int width, int height, int depth, bool windowed, int texture_depth );
@@ -152,7 +152,7 @@ public:
 
 	static WW3DErrorType		End_Render(bool flip_frame = true);
 
-	static bool					Is_Rendering( ) { return( IsRendering ); }
+	static bool					Is_Rendering() { return( IsRendering ); }
 
 	static void Flip_To_Primary();
 
@@ -196,12 +196,12 @@ public:
 	*/
 	static void					Make_Screen_Shot( const char * filename = "ScreenShot", const float gamma = 1.3f, const ScreenShotFormatEnum format = TGA);
 	static void					Start_Movie_Capture( const char * filename_base = "Movie", float frame_rate = 15);
-	static void					Stop_Movie_Capture( );
+	static void					Stop_Movie_Capture();
 	static void					Toggle_Movie_Capture( const char * filename_base = "Movie", float frame_rate = 15);
 	static void					Start_Single_Frame_Movie_Capture(const char *filename_base = "Frames");
 	static void					Capture_Next_Movie_Frame();
-	static void					Update_Movie_Capture( );
-	static float				Get_Movie_Capture_Frame_Rate( );
+	static void					Update_Movie_Capture();
+	static float				Get_Movie_Capture_Frame_Rate();
 	static void					Pause_Movie(bool mode);
 	static bool					Is_Movie_Paused();
 	static bool					Is_Recording_Next_Frame();
@@ -221,7 +221,7 @@ public:
 	** be cut in half twice, etc
 	*/
 	static void					Set_Texture_Reduction( int value, int min_dim=1 );
-	static int					Get_Texture_Reduction( );
+	static int					Get_Texture_Reduction();
 	static int					Get_Texture_Min_Dimension();
 	static void					Enable_Large_Texture_Extra_Reduction(bool onoff);
 	static bool					Is_Large_Texture_Extra_Reduction_Enabled();
@@ -235,7 +235,7 @@ public:
 	static bool					Is_Sorting_Enabled()					{ return IsSortingEnabled; }
 
 	static void					Set_Screen_UV_Bias( bool onoff )			{ IsScreenUVBiased = onoff; }
-	static bool					Is_Screen_UV_Biased( )				{ return IsScreenUVBiased; }
+	static bool					Is_Screen_UV_Biased()				{ return IsScreenUVBiased; }
 
 	static void					Set_Collision_Box_Display_Mask(int mask);
 	static int					Get_Collision_Box_Display_Mask();

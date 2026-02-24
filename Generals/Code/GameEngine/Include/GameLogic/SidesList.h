@@ -188,7 +188,7 @@ protected:
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( );
+	virtual void loadPostProcess();
 
 	Int					m_numSides;
 	SidesInfo		m_sides[MAX_PLAYER_COUNT];
@@ -271,7 +271,7 @@ protected:
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( );
+	virtual void loadPostProcess();
 
 	AsciiString			m_buildingName;			///< The name of this building.
 	AsciiString			m_templateName;			///< The thing template name for this model's info.
@@ -346,10 +346,10 @@ public:
 
 	// used by the solo AI
 	void setObjectID( ObjectID objID ) { m_objectID = objID; }
-	ObjectID getObjectID( ) const { return m_objectID; }
+	ObjectID getObjectID() const { return m_objectID; }
 	void setObjectTimestamp( UnsignedInt frame ) { m_objectTimestamp = frame; }
-	UnsignedInt getObjectTimestamp( ) const { return m_objectTimestamp; }
-	Bool isBuildable( );															///< returns true if has enough rebuilds left to build again
+	UnsignedInt getObjectTimestamp() const { return m_objectTimestamp; }
+	Bool isBuildable();															///< returns true if has enough rebuilds left to build again
 	Bool isUnderConstruction() {return m_underConstruction;}
 	void setUnderConstruction(Bool construction) { m_underConstruction=construction;}
 	void markPriorityBuild() {m_priorityBuild = true; }
@@ -380,7 +380,7 @@ inline void BuildListInfo::incrementNumRebuilds()
 		m_numRebuilds++;
 }
 
-inline Bool BuildListInfo::isBuildable( )
+inline Bool BuildListInfo::isBuildable()
 {
 	if (getNumRebuilds() > 0 || getNumRebuilds() == BuildListInfo::UNLIMITED_REBUILDS)
 		return true;

@@ -534,7 +534,7 @@ Drawable::~Drawable()
 //-------------------------------------------------------------------------------------------------
 /** Run from GameClient::destroyDrawable */
 //-------------------------------------------------------------------------------------------------
-void Drawable::onDestroy( )
+void Drawable::onDestroy()
 {
 
 	//
@@ -853,7 +853,7 @@ void Drawable::setFullyObscuredByShroud(Bool fullyObscured)
 /** Set drawable's "selected" status, if not already set.  Also update running
  * total count of selected drawables. */
 //-------------------------------------------------------------------------------------------------
-void Drawable::friend_setSelected( )
+void Drawable::friend_setSelected()
 {
 	if(isSelected() == false)
 	{
@@ -867,7 +867,7 @@ void Drawable::friend_setSelected( )
 /** Clear drawable's "selected" status, if not already clear.  Also update running
  * total count of selected drawables. */
 //-------------------------------------------------------------------------------------------------
-void Drawable::friend_clearSelected( )
+void Drawable::friend_clearSelected()
 {
 	if(isSelected())
 	{
@@ -948,7 +948,7 @@ void Drawable::onUnselected()
 //-------------------------------------------------------------------------------------------------
 /** get FX color value to add to ALL LIGHTS when drawing */
 //-------------------------------------------------------------------------------------------------
-const Vector3 * Drawable::getTintColor( ) const
+const Vector3 * Drawable::getTintColor() const
 {
 	if ( m_colorTintEnvelope )
 	{
@@ -964,7 +964,7 @@ const Vector3 * Drawable::getTintColor( ) const
 //-------------------------------------------------------------------------------------------------
 /** get SELECTION color value to add to ALL LIGHTS when drawing */
 //-------------------------------------------------------------------------------------------------
-const Vector3 * Drawable::getSelectionColor( )	const
+const Vector3 * Drawable::getSelectionColor()	const
 {
 	if (m_selectionFlashEnvelope)
 	{
@@ -1057,7 +1057,7 @@ void Drawable::imitateStealthLook( Drawable& otherDraw )
 /** update is called once per frame */
 //-------------------------------------------------------------------------------------------------
 //DECLARE_PERF_TIMER(updateDrawable)
-void Drawable::updateDrawable( )
+void Drawable::updateDrawable()
 {
 	//USE_PERF_TIMER(updateDrawable)
 
@@ -2253,7 +2253,7 @@ static Bool computeHealthRegion( const Drawable *draw, IRegion2D& region )
 
 // ------------------------------------------------------------------------------------------------
 
-Bool Drawable::drawsAnyUIText( )
+Bool Drawable::drawsAnyUIText()
 {
 	if (!isSelected())
 		return FALSE;
@@ -2282,7 +2282,7 @@ Bool Drawable::drawsAnyUIText( )
 	* that we should overlay on the screen any 2D elements for purposes of user interface
 	* information (such as a heatlh bar, veterency levels, etc.) */
 // ------------------------------------------------------------------------------------------------
-void Drawable::drawIconUI( )
+void Drawable::drawIconUI()
 {
 	if( TheGameLogic->getDrawIconUI() && (TheScriptEngine->getFade()==ScriptEngine::FADE_NONE) )
 	{
@@ -3615,7 +3615,7 @@ void Drawable::setID( DrawableID id )
 // ------------------------------------------------------------------------------------------------
 /** Return drawable ID, this ID is only good on the client */
 // ------------------------------------------------------------------------------------------------
-DrawableID Drawable::getID( ) const
+DrawableID Drawable::getID() const
 {
 
 	// we should never be getting the ID of a drawable who doesn't yet have and ID assigned to it
@@ -3756,7 +3756,7 @@ void Drawable::setInstanceMatrix( const Matrix3D *instance )
  * If this Drawable is attached to an Object, return the Object's transform instead.
  */
 //-------------------------------------------------------------------------------------------------
-const Matrix3D *Drawable::getTransformMatrix( ) const
+const Matrix3D *Drawable::getTransformMatrix() const
 {
 	const Object *obj = getObject();
 
@@ -3803,7 +3803,7 @@ void Drawable::setCaptionText( const UnicodeString& captionText )
 }
 
 //-------------------------------------------------------------------------------------------------
-void Drawable::clearCaptionText( )
+void Drawable::clearCaptionText()
 {
 	if (m_captionDisplayString)
 		TheDisplayStringManager->freeDisplayString(m_captionDisplayString);
@@ -3811,7 +3811,7 @@ void Drawable::clearCaptionText( )
 }
 
 //-------------------------------------------------------------------------------------------------
-UnicodeString Drawable::getCaptionText( )
+UnicodeString Drawable::getCaptionText()
 {
 	if (m_captionDisplayString)
 		return m_captionDisplayString->getText();
@@ -3921,7 +3921,7 @@ void Drawable::startAmbientSound()
 //-------------------------------------------------------------------------------------------------
 /** Stop playing the drawables ambient sound if it has one */
 //-------------------------------------------------------------------------------------------------
-void	Drawable::stopAmbientSound( )
+void	Drawable::stopAmbientSound()
 {
 	if (m_ambientSound)
 		TheAudio->removeAudioEvent(m_ambientSound->m_event.getPlayingHandle());
@@ -4055,7 +4055,7 @@ void Drawable::setSelectable( Bool selectable )
 //-------------------------------------------------------------------------------------------------
 /** Return whether or not this Drawable is selectable. */
 //-------------------------------------------------------------------------------------------------
-Bool Drawable::isSelectable( ) const
+Bool Drawable::isSelectable() const
 {
 	return getObject() && getObject()->isSelectable();
 }
@@ -4063,7 +4063,7 @@ Bool Drawable::isSelectable( ) const
 //-------------------------------------------------------------------------------------------------
 /** Return whether or not this Drawable is selectable as part of a group. */
 //-------------------------------------------------------------------------------------------------
-Bool Drawable::isMassSelectable( ) const
+Bool Drawable::isMassSelectable() const
 {
 	return getObject() && getObject()->isMassSelectable();
 }
@@ -4659,7 +4659,7 @@ void Drawable::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void Drawable::loadPostProcess( )
+void Drawable::loadPostProcess()
 {
 		// if we have an object, we don't need to save/load the pos, just restore it.
 		// if we don't, we'd better save it!
@@ -4915,7 +4915,7 @@ void TintEnvelope::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load Post Process */
 // ------------------------------------------------------------------------------------------------
-void TintEnvelope::loadPostProcess( )
+void TintEnvelope::loadPostProcess()
 {
 
 }

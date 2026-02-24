@@ -239,7 +239,7 @@ int BufferedFileClass::Seek(int pos, int dir)
 /*
 **
 */
-void	BufferedFileClass::Reset_Buffer( )
+void	BufferedFileClass::Reset_Buffer()
 {
 	delete [] Buffer;
 	Buffer = nullptr;

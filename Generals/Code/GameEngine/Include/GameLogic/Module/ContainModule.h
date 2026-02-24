@@ -145,7 +145,7 @@ public:
 	virtual Bool isPassengerAllowedToFire() const = 0;	///< Hey, can I shoot out of this container?
 	virtual void setOverrideDestination( const Coord3D * ) = 0; ///< Instead of falling peacefully towards a clear spot, I will now aim here
 	virtual Bool isDisplayedOnControlBar() const = 0;///< Does this container display its contents on the ControlBar?
-	virtual Int getExtraSlotsInUse( ) = 0;
+	virtual Int getExtraSlotsInUse() = 0;
 	virtual Bool isKickOutOnCapture() = 0;///< Does this contain module kick people out when captured?
 
 	// list access

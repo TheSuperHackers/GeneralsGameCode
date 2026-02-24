@@ -44,18 +44,18 @@ SpecialPowerCreate::SpecialPowerCreate( Thing *thing, const ModuleData* moduleDa
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-SpecialPowerCreate::~SpecialPowerCreate( )
+SpecialPowerCreate::~SpecialPowerCreate()
 {
 
 }
 
 //-------------------------------------------------------------------------------------------------
-void SpecialPowerCreate::onCreate( )
+void SpecialPowerCreate::onCreate()
 {
 }
 
 //-------------------------------------------------------------------------------------------------
-void SpecialPowerCreate::onBuildComplete( )
+void SpecialPowerCreate::onBuildComplete()
 {
 	if( ! shouldDoOnBuildComplete() )
 		return;
@@ -104,7 +104,7 @@ void SpecialPowerCreate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void SpecialPowerCreate::loadPostProcess( )
+void SpecialPowerCreate::loadPostProcess()
 {
 
 	// extend base class

@@ -509,7 +509,7 @@ const char *FunctionLexicon::funcToName( void *func, TableEntry *table )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-FunctionLexicon::FunctionLexicon( )
+FunctionLexicon::FunctionLexicon()
 {
 	Int i;
 
@@ -521,7 +521,7 @@ FunctionLexicon::FunctionLexicon( )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-FunctionLexicon::~FunctionLexicon( )
+FunctionLexicon::~FunctionLexicon()
 {
 
 }
@@ -529,7 +529,7 @@ FunctionLexicon::~FunctionLexicon( )
 //-------------------------------------------------------------------------------------------------
 /** Initialize our dictionary of function pointers and symbols */
 //-------------------------------------------------------------------------------------------------
-void FunctionLexicon::init( )
+void FunctionLexicon::init()
 {
 
 	// if you change this method, check the reset() and make sure it's OK
@@ -551,7 +551,7 @@ void FunctionLexicon::init( )
 //-------------------------------------------------------------------------------------------------
 /** reset */
 //-------------------------------------------------------------------------------------------------
-void FunctionLexicon::reset( )
+void FunctionLexicon::reset()
 {
 
 	//
@@ -567,7 +567,7 @@ void FunctionLexicon::reset( )
 //-------------------------------------------------------------------------------------------------
 /** Update */
 //-------------------------------------------------------------------------------------------------
-void FunctionLexicon::update( )
+void FunctionLexicon::update()
 {
 
 }
@@ -611,7 +611,7 @@ char *FunctionLexicon::functionToName( void *func )
 	* same parameters) which we MUST keep separate for when we add code to
 	* them */
 //-------------------------------------------------------------------------------------------------
-Bool FunctionLexicon::validate( )
+Bool FunctionLexicon::validate()
 {
 	Bool valid = TRUE;
 	Int i, j;

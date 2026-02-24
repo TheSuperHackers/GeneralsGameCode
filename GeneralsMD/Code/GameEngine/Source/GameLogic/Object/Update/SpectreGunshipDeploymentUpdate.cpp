@@ -114,7 +114,7 @@ SpectreGunshipDeploymentUpdate::SpectreGunshipDeploymentUpdate( Thing *thing, co
 }
 
 //-------------------------------------------------------------------------------------------------
-SpectreGunshipDeploymentUpdate::~SpectreGunshipDeploymentUpdate( )
+SpectreGunshipDeploymentUpdate::~SpectreGunshipDeploymentUpdate()
 {
 }
 
@@ -320,7 +320,7 @@ void SpectreGunshipDeploymentUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void SpectreGunshipDeploymentUpdate::loadPostProcess( )
+void SpectreGunshipDeploymentUpdate::loadPostProcess()
 {
 	// extend base class
 	UpdateModule::loadPostProcess();

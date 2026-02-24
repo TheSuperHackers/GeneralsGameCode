@@ -81,7 +81,7 @@ public:
 	virtual const char *		Get_Name() const = 0;
 	virtual const char *		Get_HName() const = 0;
 
-	virtual const char *		Get_Key( )						{ return Get_Name(); }
+	virtual const char *		Get_Key()						{ return Get_Name(); }
 
 	virtual int					Get_Num_Frames() = 0;
 	virtual float				Get_Frame_Rate() = 0;
@@ -219,12 +219,12 @@ public:
 	HAnimComboClass( int num_animations ); // allocates specified number of channels and sets then all to not-shared
 	~HAnimComboClass();
 
-	void	Clear( );		// zeros all data
+	void	Clear();		// zeros all data
 
-	void	Reset( );		// empties the dynamic vector
+	void	Reset();		// empties the dynamic vector
 
  	bool	Normalize_Weights();	// Normalizes all weights (returns true if succeeded)
-	int	Get_Num_Anims( ) { return HAnimComboData.Count(); }
+	int	Get_Num_Anims() { return HAnimComboData.Count(); }
 
 	void	Set_Motion( int indx, HAnimClass *motion );
 	HAnimClass *Get_Motion( int indx );

@@ -141,7 +141,7 @@ Transition *getTransitionForStyle( Int style )
 	return nullptr;
 }
 
-TransitionWindow::TransitionWindow( )
+TransitionWindow::TransitionWindow()
 {
 	m_currentFrameDelay = m_frameDelay = 0;
 	m_style = 0;
@@ -151,7 +151,7 @@ TransitionWindow::TransitionWindow( )
 	m_transition = nullptr;
 }
 
-TransitionWindow::~TransitionWindow( )
+TransitionWindow::~TransitionWindow()
 {
 	if (m_win)
 		m_win->unlinkTransitionWindow(this);
@@ -162,7 +162,7 @@ TransitionWindow::~TransitionWindow( )
 	m_transition = nullptr;
 }
 
-Bool TransitionWindow::init( )
+Bool TransitionWindow::init()
 {
 	m_winID = TheNameKeyGenerator->nameToKey(m_winName);
 	m_win		= TheWindowManager->winGetWindowFromId(nullptr, m_winID);
@@ -191,7 +191,7 @@ void TransitionWindow::update( Int frame )
 		m_transition->update( frame - m_currentFrameDelay);
 }
 
-Bool TransitionWindow::isFinished( )
+Bool TransitionWindow::isFinished()
 {
 	if(m_transition)
 		return m_transition->isFinished();
@@ -205,13 +205,13 @@ void TransitionWindow::reverse( Int totalFrames )
 		m_transition->reverse();
 }
 
-void TransitionWindow::skip( )
+void TransitionWindow::skip()
 {
 	if(m_transition)
 		m_transition->skip();
 }
 
-void TransitionWindow::draw( )
+void TransitionWindow::draw()
 {
 	if(m_transition)
 		m_transition->draw();
@@ -226,7 +226,7 @@ void TransitionWindow::unlinkGameWindow(GameWindow* win)
 	m_win = nullptr;
 }
 
-Int TransitionWindow::getTotalFrames( )
+Int TransitionWindow::getTotalFrames()
 {
 	if(m_transition)
 	{
@@ -237,13 +237,13 @@ Int TransitionWindow::getTotalFrames( )
 }
 
 //-----------------------------------------------------------------------------
-TransitionGroup::TransitionGroup( )
+TransitionGroup::TransitionGroup()
 {
 	m_currentFrame = 0;
 	m_fireOnce = FALSE;
 }
 
-TransitionGroup::~TransitionGroup( )
+TransitionGroup::~TransitionGroup()
 {
 	TransitionWindowList::iterator it = m_transitionWindowList.begin();
 	while (it != m_transitionWindowList.end())
@@ -254,7 +254,7 @@ TransitionGroup::~TransitionGroup( )
 	}
 }
 
-void TransitionGroup::init( )
+void TransitionGroup::init()
 {
 	m_currentFrame = 0;
 	m_directionMultiplier = 1;
@@ -268,7 +268,7 @@ void TransitionGroup::init( )
 
 }
 
-void TransitionGroup::update( )
+void TransitionGroup::update()
 {
 	m_currentFrame += m_directionMultiplier; // we go forward or backwards depending.
 	TransitionWindowList::iterator it = m_transitionWindowList.begin();
@@ -280,7 +280,7 @@ void TransitionGroup::update( )
 	}
 }
 
-Bool TransitionGroup::isFinished( )
+Bool TransitionGroup::isFinished()
 {
 	TransitionWindowList::iterator it = m_transitionWindowList.begin();
 	while (it != m_transitionWindowList.end())
@@ -294,7 +294,7 @@ Bool TransitionGroup::isFinished( )
 	return TRUE;
 }
 
-void TransitionGroup::reverse( )
+void TransitionGroup::reverse()
 {
 	Int totalFrames =0;
 	m_directionMultiplier = -1;
@@ -319,14 +319,14 @@ void TransitionGroup::reverse( )
 //	m_currentFrame ++;
 }
 
-Bool TransitionGroup::isReversed( )
+Bool TransitionGroup::isReversed()
 {
 	if(m_directionMultiplier < 0)
 		return TRUE;
 	return FALSE;
 }
 
-void TransitionGroup::skip ( )
+void TransitionGroup::skip ()
 {
 	TransitionWindowList::iterator it = m_transitionWindowList.begin();
 	while (it != m_transitionWindowList.end())
@@ -337,7 +337,7 @@ void TransitionGroup::skip ( )
 	}
 }
 
-void TransitionGroup::draw ( )
+void TransitionGroup::draw ()
 {
 	TransitionWindowList::iterator it = m_transitionWindowList.begin();
 	while (it != m_transitionWindowList.end())
@@ -366,7 +366,7 @@ GameWindowTransitionsHandler::GameWindowTransitionsHandler()
 
 }
 
-GameWindowTransitionsHandler::~GameWindowTransitionsHandler( )
+GameWindowTransitionsHandler::~GameWindowTransitionsHandler()
 {
 	m_currentGroup = nullptr;
 	m_pendingGroup = nullptr;
@@ -382,7 +382,7 @@ GameWindowTransitionsHandler::~GameWindowTransitionsHandler( )
 	}
 }
 
-void GameWindowTransitionsHandler::init( )
+void GameWindowTransitionsHandler::init()
 {
 	m_currentGroup = nullptr;
 	m_pendingGroup = nullptr;
@@ -390,7 +390,7 @@ void GameWindowTransitionsHandler::init( )
 	m_secondaryDrawGroup = nullptr;
 }
 
-void GameWindowTransitionsHandler::load( )
+void GameWindowTransitionsHandler::load()
 {
 	INI ini;
 	// Read from INI all the ControlBarSchemes
@@ -398,7 +398,7 @@ void GameWindowTransitionsHandler::load( )
 
 }
 
-void GameWindowTransitionsHandler::reset( )
+void GameWindowTransitionsHandler::reset()
 {
 	m_currentGroup = nullptr;
 	m_pendingGroup = nullptr;
@@ -407,7 +407,7 @@ void GameWindowTransitionsHandler::reset( )
 
 }
 
-void GameWindowTransitionsHandler::update( )
+void GameWindowTransitionsHandler::update()
 {
 	if(m_drawGroup != m_currentGroup)
 		m_secondaryDrawGroup = m_drawGroup;
@@ -440,7 +440,7 @@ void GameWindowTransitionsHandler::update( )
 }
 
 
-void GameWindowTransitionsHandler::draw( )
+void GameWindowTransitionsHandler::draw()
 {
 //	if( TheGameLogic->getFrame() > 0 )//if( areTransitionsEnabled() ) //KRIS
 	if(m_drawGroup)
@@ -541,7 +541,7 @@ TransitionGroup *GameWindowTransitionsHandler::getNewGroup( AsciiString name )
 	return g;
 }
 
-Bool GameWindowTransitionsHandler::isFinished( )
+Bool GameWindowTransitionsHandler::isFinished()
 {
 	if(m_currentGroup)
 		return m_currentGroup->isFinished();

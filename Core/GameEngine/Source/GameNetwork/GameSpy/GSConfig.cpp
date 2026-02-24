@@ -51,8 +51,8 @@ public:
 	std::list<AsciiString> getPingServers()	{ return m_pingServers; }
 	Int getNumPingRepetitions()							{ return m_pingReps; }
 	Int getPingTimeoutInMs()								{ return m_pingTimeout; }
-	virtual Int getPingCutoffGood( )				{	return m_pingCutoffGood; }
-	virtual Int getPingCutoffBad( )				{ return m_pingCutoffBad;	}
+	virtual Int getPingCutoffGood()				{	return m_pingCutoffGood; }
+	virtual Int getPingCutoffBad()				{ return m_pingCutoffBad;	}
 
 	// QM
 	std::list<AsciiString> getQMMaps()			{ return m_qmMaps; }

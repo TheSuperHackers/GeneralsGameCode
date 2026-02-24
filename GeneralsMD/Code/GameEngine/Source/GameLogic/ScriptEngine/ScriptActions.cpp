@@ -143,7 +143,7 @@ ScriptActions::~ScriptActions()
 //-------------------------------------------------------------------------------------------------
 /** Init */
 //-------------------------------------------------------------------------------------------------
-void ScriptActions::init( )
+void ScriptActions::init()
 {
 
 	reset();
@@ -153,7 +153,7 @@ void ScriptActions::init( )
 //-------------------------------------------------------------------------------------------------
 /** Reset */
 //-------------------------------------------------------------------------------------------------
-void ScriptActions::reset( )
+void ScriptActions::reset()
 {
 	m_suppressNewWindows = FALSE;
 	closeWindows(FALSE); // Close victory or defeat windows.
@@ -163,7 +163,7 @@ void ScriptActions::reset( )
 //-------------------------------------------------------------------------------------------------
 /** Update */
 //-------------------------------------------------------------------------------------------------
-void ScriptActions::update( )
+void ScriptActions::update()
 {
 	// Empty for now.  jba.
 }
@@ -185,7 +185,7 @@ void ScriptActions::closeWindows( Bool suppressNewWindows )
 //-------------------------------------------------------------------------------------------------
 /** doQuickVictory */
 //-------------------------------------------------------------------------------------------------
-void ScriptActions::doQuickVictory( )
+void ScriptActions::doQuickVictory()
 {
 	closeWindows(FALSE);
 	TheGameLogic->closeWindows();
@@ -207,7 +207,7 @@ void ScriptActions::doSetInfantryLightingOverride(Real setting)
 //-------------------------------------------------------------------------------------------------
 /** doVictory */
 //-------------------------------------------------------------------------------------------------
-void ScriptActions::doVictory( )
+void ScriptActions::doVictory()
 {
 	closeWindows(FALSE);
 	TheGameLogic->closeWindows();
@@ -231,7 +231,7 @@ void ScriptActions::doVictory( )
 //-------------------------------------------------------------------------------------------------
 /** doDefeat */
 //-------------------------------------------------------------------------------------------------
-void ScriptActions::doDefeat( )
+void ScriptActions::doDefeat()
 {
 	closeWindows(FALSE);
 	TheGameLogic->closeWindows();
@@ -255,7 +255,7 @@ void ScriptActions::doDefeat( )
 //-------------------------------------------------------------------------------------------------
 /** doLocalDefeat */
 //-------------------------------------------------------------------------------------------------
-void ScriptActions::doLocalDefeat( )
+void ScriptActions::doLocalDefeat()
 {
 	TheScriptEngine->markMPLocalDefeatWindowShown();
 	closeWindows(FALSE);
@@ -2169,7 +2169,7 @@ void ScriptActions::doTeamHuntWithCommandButton(const AsciiString& teamName, con
 			continue;
 		}
 		Bool foundCommand = false;
-		const CommandSet *commandSet = TheControlBar->findCommandSet( obj->getCommandSetString( ) );
+		const CommandSet *commandSet = TheControlBar->findCommandSet( obj->getCommandSetString() );
 		if( commandSet )
 		{
 			for( int i = 0; i < MAX_COMMANDS_PER_SET; i++ )
@@ -3046,7 +3046,7 @@ void ScriptActions::doCameraMotionBlur(Bool zoomIn, Bool saturate)
 	}
 }
 
-static PlayerMaskType getHumanPlayerMask( )
+static PlayerMaskType getHumanPlayerMask()
 {
 #if RETAIL_COMPATIBLE_CRC
 	PlayerMaskType mask;
@@ -4574,7 +4574,7 @@ void ScriptActions::doTeamUseCommandButtonAbilityAtWaypoint( const AsciiString& 
 //-------------------------------------------------------------------------------------------------
 /** doRadarRefresh */
 //-------------------------------------------------------------------------------------------------
-void ScriptActions::doRadarRefresh( )
+void ScriptActions::doRadarRefresh()
 {
 	TheRadar->refreshTerrain( TheTerrainLogic );
 }
@@ -6212,7 +6212,7 @@ void ScriptActions::doC3CameraEnableSlaveMode
 }
 
 //-------------------------------------------------------------------------------------------------
-void ScriptActions::doC3CameraDisableSlaveMode( )
+void ScriptActions::doC3CameraDisableSlaveMode()
 {
 	TheTacticalView->cameraDisableSlaveMode();
 }

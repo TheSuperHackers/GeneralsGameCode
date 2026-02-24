@@ -97,7 +97,7 @@ CountermeasuresBehavior::CountermeasuresBehavior( Thing *thing, const ModuleData
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-CountermeasuresBehavior::~CountermeasuresBehavior( )
+CountermeasuresBehavior::~CountermeasuresBehavior()
 {
 }
 
@@ -203,7 +203,7 @@ Bool CountermeasuresBehavior::isActive() const
 //-------------------------------------------------------------------------------------------------
 /** The update callback. */
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime CountermeasuresBehavior::update( )
+UpdateSleepTime CountermeasuresBehavior::update()
 {
 	UnsignedInt now = TheGameLogic->getFrame();
 	const CountermeasuresBehaviorModuleData *data = getCountermeasuresBehaviorModuleData();
@@ -402,7 +402,7 @@ void CountermeasuresBehavior::xfer( Xfer *xfer )
 //------------------------------------------------------------------------------------------------
 /** Load post process */
 //------------------------------------------------------------------------------------------------
-void CountermeasuresBehavior::loadPostProcess( )
+void CountermeasuresBehavior::loadPostProcess()
 {
 
 	// extend base class

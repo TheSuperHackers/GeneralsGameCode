@@ -53,14 +53,14 @@ HashTableClass::HashTableClass( int size ) :
 	Reset();
 }
 
-HashTableClass::~HashTableClass( )
+HashTableClass::~HashTableClass()
 {
 	// If we need to, free the hash table
 	delete [] HashTable;
 	HashTable = nullptr;
 }
 
-void	HashTableClass::Reset( )
+void	HashTableClass::Reset()
 {
 	for ( int i = 0; i < HashTableSize; i++ ) {
 		HashTable[i] = nullptr;

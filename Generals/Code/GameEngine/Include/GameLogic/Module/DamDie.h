@@ -39,7 +39,7 @@ class DamDieModuleData : public DieModuleData
 
 public:
 
-	DamDieModuleData( );
+	DamDieModuleData();
 
 	static void buildFieldParse(MultiIniFieldParse& p);
 

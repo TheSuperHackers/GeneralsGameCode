@@ -177,7 +177,7 @@ void SpecialPowerModule::setReadyFrame( UnsignedInt frame )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void SpecialPowerModule::resolveSpecialPower( )
+void SpecialPowerModule::resolveSpecialPower()
 {
 	/*
 
@@ -199,7 +199,7 @@ void SpecialPowerModule::resolveSpecialPower( )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void SpecialPowerModule::onSpecialPowerCreation( )
+void SpecialPowerModule::onSpecialPowerCreation()
 {
 	// THIS gets called by addScience(), that is, when the General has purchased a new special power,
 	// and this module is thus activated.
@@ -238,7 +238,7 @@ void SpecialPowerModule::onSpecialPowerCreation( )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-ScienceType SpecialPowerModule::getRequiredScience( ) const
+ScienceType SpecialPowerModule::getRequiredScience() const
 {
 
 	return getSpecialPowerModuleData()->m_specialPowerTemplate->getRequiredScience();
@@ -246,7 +246,7 @@ ScienceType SpecialPowerModule::getRequiredScience( ) const
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-const SpecialPowerTemplate * SpecialPowerModule::getSpecialPowerTemplate( ) const
+const SpecialPowerTemplate * SpecialPowerModule::getSpecialPowerTemplate() const
 {
 
 	return getSpecialPowerModuleData()->m_specialPowerTemplate;
@@ -254,7 +254,7 @@ const SpecialPowerTemplate * SpecialPowerModule::getSpecialPowerTemplate( ) cons
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-AsciiString SpecialPowerModule::getPowerName( ) const
+AsciiString SpecialPowerModule::getPowerName() const
 {
 
 	return getSpecialPowerModuleData()->m_specialPowerTemplate->getName();
@@ -793,7 +793,7 @@ void SpecialPowerModule::pauseCountdown( Bool pause )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UnsignedInt SpecialPowerModule::getReadyFrame( ) const
+UnsignedInt SpecialPowerModule::getReadyFrame() const
 {
 	if ( getSpecialPowerTemplate()->isSharedNSync() )
 	{
@@ -861,7 +861,7 @@ void SpecialPowerModule::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void SpecialPowerModule::loadPostProcess( )
+void SpecialPowerModule::loadPostProcess()
 {
 
 	// extend base class

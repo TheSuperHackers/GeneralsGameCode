@@ -64,14 +64,14 @@ class W3DMouse : public Win32Mouse
 
 public:
 
-	W3DMouse( );
-	virtual ~W3DMouse( );
+	W3DMouse();
+	virtual ~W3DMouse();
 
-	virtual void init( );		///< init mouse, extend this functionality, do not replace
-	virtual void reset( );		///< reset the system
+	virtual void init();		///< init mouse, extend this functionality, do not replace
+	virtual void reset();		///< reset the system
 
 	virtual void setCursor( MouseCursor cursor );		///< set mouse cursor
-	virtual void draw( );		///< draw the cursor or refresh the image
+	virtual void draw();		///< draw the cursor or refresh the image
 	virtual void setRedrawMode(RedrawMode mode);	///<set cursor drawing method.
 
 private:

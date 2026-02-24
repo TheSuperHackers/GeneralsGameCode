@@ -93,7 +93,7 @@ class TransitionDamageFXModuleData : public DamageModuleData
 
 public:
 
-	TransitionDamageFXModuleData( );
+	TransitionDamageFXModuleData();
 
 	static void buildFieldParse(MultiIniFieldParse& p)
 	{

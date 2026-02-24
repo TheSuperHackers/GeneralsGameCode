@@ -40,7 +40,7 @@
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-TechBuildingBehaviorModuleData::TechBuildingBehaviorModuleData( )
+TechBuildingBehaviorModuleData::TechBuildingBehaviorModuleData()
 {
 	m_pulseFX = nullptr;
 	m_pulseFXRate = 0;
@@ -79,13 +79,13 @@ TechBuildingBehavior::TechBuildingBehavior( Thing *thing, const ModuleData *modD
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-TechBuildingBehavior::~TechBuildingBehavior( )
+TechBuildingBehavior::~TechBuildingBehavior()
 {
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-UpdateSleepTime TechBuildingBehavior::update( )
+UpdateSleepTime TechBuildingBehavior::update()
 {
 	Object *us = getObject();
 	const TechBuildingBehaviorModuleData* d = getTechBuildingBehaviorModuleData();
@@ -171,7 +171,7 @@ void TechBuildingBehavior::xfer( Xfer *xfer )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void TechBuildingBehavior::loadPostProcess( )
+void TechBuildingBehavior::loadPostProcess()
 {
 
 	// extend base class

@@ -42,7 +42,7 @@ class SpyVisionSpecialPowerModuleData : public SpecialPowerModuleData
 
 public:
 
-	SpyVisionSpecialPowerModuleData( );
+	SpyVisionSpecialPowerModuleData();
 
 	static void buildFieldParse( MultiIniFieldParse& p );
 

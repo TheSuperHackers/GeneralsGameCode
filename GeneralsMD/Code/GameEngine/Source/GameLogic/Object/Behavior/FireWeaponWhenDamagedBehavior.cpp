@@ -143,7 +143,7 @@ FireWeaponWhenDamagedBehavior::FireWeaponWhenDamagedBehavior( Thing *thing, cons
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-FireWeaponWhenDamagedBehavior::~FireWeaponWhenDamagedBehavior( )
+FireWeaponWhenDamagedBehavior::~FireWeaponWhenDamagedBehavior()
 {
 	deleteInstance(m_reactionWeaponPristine);
 	deleteInstance(m_reactionWeaponDamaged);
@@ -212,7 +212,7 @@ void FireWeaponWhenDamagedBehavior::onDamage( DamageInfo *damageInfo )
 //-------------------------------------------------------------------------------------------------
 /** if object fires weapon constantly, figure out which one and do it */
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime FireWeaponWhenDamagedBehavior::update( )
+UpdateSleepTime FireWeaponWhenDamagedBehavior::update()
 {
 	if (!isUpgradeActive())
 	{
@@ -344,7 +344,7 @@ void FireWeaponWhenDamagedBehavior::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void FireWeaponWhenDamagedBehavior::loadPostProcess( )
+void FireWeaponWhenDamagedBehavior::loadPostProcess()
 {
 
 	// extend base class

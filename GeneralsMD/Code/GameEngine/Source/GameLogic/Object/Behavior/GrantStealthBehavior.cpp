@@ -118,7 +118,7 @@ GrantStealthBehavior::GrantStealthBehavior( Thing *thing, const ModuleData* modu
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-GrantStealthBehavior::~GrantStealthBehavior( )
+GrantStealthBehavior::~GrantStealthBehavior()
 {
 
 	if( m_radiusParticleSystemID != INVALID_PARTICLE_SYSTEM_ID )
@@ -131,7 +131,7 @@ GrantStealthBehavior::~GrantStealthBehavior( )
 //-------------------------------------------------------------------------------------------------
 /** The update callback. */
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime GrantStealthBehavior::update( )
+UpdateSleepTime GrantStealthBehavior::update()
 {
 
 	Object *self = getObject();
@@ -240,7 +240,7 @@ void GrantStealthBehavior::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void GrantStealthBehavior::loadPostProcess( )
+void GrantStealthBehavior::loadPostProcess()
 {
 
 	// extend base class

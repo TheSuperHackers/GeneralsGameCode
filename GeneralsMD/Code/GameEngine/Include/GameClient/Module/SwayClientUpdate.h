@@ -50,9 +50,9 @@ public:
 	// virtual destructor prototype provided by memory pool declaration
 
 	/// the client update callback
-	virtual void clientUpdate( );
+	virtual void clientUpdate();
 
-	void stopSway( ) { m_swaying = false; }
+	void stopSway() { m_swaying = false; }
 
 protected:
 

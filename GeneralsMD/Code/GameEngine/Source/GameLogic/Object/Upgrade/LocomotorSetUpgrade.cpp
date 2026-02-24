@@ -43,13 +43,13 @@ LocomotorSetUpgrade::LocomotorSetUpgrade( Thing *thing, const ModuleData* module
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-LocomotorSetUpgrade::~LocomotorSetUpgrade( )
+LocomotorSetUpgrade::~LocomotorSetUpgrade()
 {
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void LocomotorSetUpgrade::upgradeImplementation( )
+void LocomotorSetUpgrade::upgradeImplementation()
 {
 	AIUpdateInterface* ai = getObject()->getAIUpdateInterface();
 	if (ai)
@@ -88,7 +88,7 @@ void LocomotorSetUpgrade::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void LocomotorSetUpgrade::loadPostProcess( )
+void LocomotorSetUpgrade::loadPostProcess()
 {
 
 	// extend base class

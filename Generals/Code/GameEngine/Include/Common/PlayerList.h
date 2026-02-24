@@ -80,12 +80,12 @@ public:
 	~PlayerList();
 
 	// subsystem methods
-	virtual void init( );
-	virtual void reset( );
-	virtual void update( );
+	virtual void init();
+	virtual void reset();
+	virtual void update();
 
-	virtual void newGame( ); // called during GameLogic::startNewGame()
-	virtual void newMap( );	 // Called after a new map is loaded.
+	virtual void newGame(); // called during GameLogic::startNewGame()
+	virtual void newMap();	 // Called after a new map is loaded.
 
 	void teamAboutToBeDeleted(Team* team);
 
@@ -155,7 +155,7 @@ protected:
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( );
+	virtual void loadPostProcess();
 
 private:
 

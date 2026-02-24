@@ -53,9 +53,9 @@ class MissingAnimClass : public HashableClass {
 
 public:
 	MissingAnimClass( const char * name ) : Name( name ) {}
-	virtual	~MissingAnimClass( ) {}
+	virtual	~MissingAnimClass() {}
 
-	virtual	const char * Get_Key( )	{ return Name;	}
+	virtual	const char * Get_Key()	{ return Name;	}
 
 private:
 	StringClass	Name;
@@ -85,7 +85,7 @@ public:
 
 	void					Register_Missing( const char * name );
 	bool					Is_Missing( const char * name );
-	void					Reset_Missing( );
+	void					Reset_Missing();
 
 private:
 	int					Load_Compressed_Anim(ChunkLoadClass & cload);
@@ -105,5 +105,5 @@ private:
 class HAnimManagerIterator : public HashTableIteratorClass {
 public:
 	HAnimManagerIterator( HAnimManagerClass & manager ) : HashTableIteratorClass( *manager.AnimPtrTable ) {}
-	HAnimClass * Get_Current_Anim( );
+	HAnimClass * Get_Current_Anim();
 };

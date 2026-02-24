@@ -45,9 +45,9 @@ public:
 
 	virtual ~ScriptConditionsInterface() { };
 
-	virtual void init( ) = 0;		///< Init
-	virtual void reset( ) = 0;		///< Reset
-	virtual void update( ) = 0;	///< Update
+	virtual void init() = 0;		///< Init
+	virtual void reset() = 0;		///< Reset
+	virtual void update() = 0;	///< Update
 
 	virtual Bool evaluateCondition( Condition *pCondition ) = 0; ///< evaluate a a script condition.
 
@@ -72,9 +72,9 @@ public:
 
 public:
 
-	virtual void init( );		///< Init
-	virtual void reset( );		///< Reset
-	virtual void update( );	///< Update
+	virtual void init();		///< Init
+	virtual void reset();		///< Reset
+	virtual void update();	///< Update
 
 	Bool evaluateCondition( Condition *pCondition );
 

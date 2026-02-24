@@ -113,8 +113,8 @@ class TerrainTracksRenderObjClassSystem
 
 public:
 
-	TerrainTracksRenderObjClassSystem( );
-	~TerrainTracksRenderObjClassSystem( );
+	TerrainTracksRenderObjClassSystem();
+	~TerrainTracksRenderObjClassSystem();
 
 	void ReleaseResources();	///< Release all dx8 resources so the device can be reset.
 	void ReAcquireResources();  ///< Reacquire all resources after device reset.
@@ -125,7 +125,7 @@ public:
 	void update();	///<update the state of all edges (fade alpha, remove old, etc.)
 
 	void init( SceneClass *TerrainTracksScene);	///< pre-allocate track objects
-	void shutdown( );		///< release all pre-allocated track objects, called by destructor
+	void shutdown();		///< release all pre-allocated track objects, called by destructor
 	void Reset();	///<empties the system, ready for a new scene.
 
 	TerrainTracksRenderObjClass *bindTrack(RenderObjClass *renderObject, Real length, const Char *texturename);	///<track object to be controlled by owner

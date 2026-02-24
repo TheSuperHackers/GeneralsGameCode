@@ -49,7 +49,7 @@ static DomeStyleSeismicFilter bunkerBusterHeavingEarthSeismicFilter;
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-BunkerBusterBehaviorModuleData::BunkerBusterBehaviorModuleData( )
+BunkerBusterBehaviorModuleData::BunkerBusterBehaviorModuleData()
 {
 
 	m_upgradeRequired = nullptr;
@@ -107,14 +107,14 @@ BunkerBusterBehavior::BunkerBusterBehavior( Thing *thing, const ModuleData *modD
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-BunkerBusterBehavior::~BunkerBusterBehavior( )
+BunkerBusterBehavior::~BunkerBusterBehavior()
 {
 
 }
 
 
 
-void BunkerBusterBehavior::onObjectCreated( )
+void BunkerBusterBehavior::onObjectCreated()
 {
 	const BunkerBusterBehaviorModuleData *modData = getBunkerBusterBehaviorModuleData();
 
@@ -127,7 +127,7 @@ void BunkerBusterBehavior::onObjectCreated( )
 // ------------------------------------------------------------------------------------------------
 /** The update callback */
 // ------------------------------------------------------------------------------------------------
-UpdateSleepTime BunkerBusterBehavior::update( )
+UpdateSleepTime BunkerBusterBehavior::update()
 {
   const BunkerBusterBehaviorModuleData *modData = getBunkerBusterBehaviorModuleData();
   AIUpdateInterface *ai = getObject()->getAI();
@@ -183,7 +183,7 @@ void BunkerBusterBehavior::onDie( const DamageInfo *damageInfo )
 // ------------------------------------------------------------------------------------------------
 /** The bunker-busting effect callback */
 // ------------------------------------------------------------------------------------------------
-void BunkerBusterBehavior::bustTheBunker( )
+void BunkerBusterBehavior::bustTheBunker()
 {
 	const BunkerBusterBehaviorModuleData *modData = getBunkerBusterBehaviorModuleData();
 
@@ -290,7 +290,7 @@ void BunkerBusterBehavior::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void BunkerBusterBehavior::loadPostProcess( )
+void BunkerBusterBehavior::loadPostProcess()
 {
 
 	// extend base class

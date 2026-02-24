@@ -211,7 +211,7 @@ void CashBountyPower::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void CashBountyPower::loadPostProcess( )
+void CashBountyPower::loadPostProcess()
 {
 
 	// extend base class

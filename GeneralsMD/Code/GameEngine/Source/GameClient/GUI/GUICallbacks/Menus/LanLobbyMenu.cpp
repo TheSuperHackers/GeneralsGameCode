@@ -72,7 +72,7 @@ static Bool justEntered = FALSE;
 
 
 
-LANPreferences::LANPreferences( )
+LANPreferences::LANPreferences()
 {
 	loadFromIniFile();
 }

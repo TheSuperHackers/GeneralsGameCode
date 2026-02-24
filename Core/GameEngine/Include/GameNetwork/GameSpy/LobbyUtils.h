@@ -30,15 +30,15 @@
 
 class GameWindow;
 
-GameWindow *GetGameListBox( );
-GameWindow *GetGameInfoListBox( );
-NameKeyType GetGameListBoxID( );
-NameKeyType GetGameInfoListBoxID( );
-void GrabWindowInfo( );
-void ReleaseWindowInfo( );
+GameWindow *GetGameListBox();
+GameWindow *GetGameInfoListBox();
+NameKeyType GetGameListBoxID();
+NameKeyType GetGameInfoListBoxID();
+void GrabWindowInfo();
+void ReleaseWindowInfo();
 void RefreshGameInfoListBox( GameWindow *mainWin, GameWindow *win );
-void RefreshGameListBoxes( );
-void ToggleGameListType( );
+void RefreshGameListBoxes();
+void ToggleGameListType();
 
 void playerTemplateComboBoxTooltip(GameWindow *wndComboBox, WinInstanceData *instData, UnsignedInt mouse);
 void playerTemplateListBoxTooltip(GameWindow *wndListBox, WinInstanceData *instData, UnsignedInt mouse);

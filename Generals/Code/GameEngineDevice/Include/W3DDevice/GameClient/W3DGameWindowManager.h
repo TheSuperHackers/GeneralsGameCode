@@ -44,63 +44,63 @@ class W3DGameWindowManager : public GameWindowManager
 
 public:
 
-	W3DGameWindowManager( );
-	virtual ~W3DGameWindowManager( );
+	W3DGameWindowManager();
+	virtual ~W3DGameWindowManager();
 
-	virtual void init( );  ///< initialize the singlegon
+	virtual void init();  ///< initialize the singlegon
 
-	virtual GameWindow *allocateNewWindow( );  ///< allocate a new game window
-	virtual GameWinDrawFunc getDefaultDraw( );  ///< return default draw func to use
+	virtual GameWindow *allocateNewWindow();  ///< allocate a new game window
+	virtual GameWinDrawFunc getDefaultDraw();  ///< return default draw func to use
 
-	virtual GameWinDrawFunc getPushButtonImageDrawFunc( );
-	virtual GameWinDrawFunc getPushButtonDrawFunc( );
-	virtual GameWinDrawFunc getCheckBoxImageDrawFunc( );
-	virtual GameWinDrawFunc getCheckBoxDrawFunc( );
-	virtual GameWinDrawFunc getRadioButtonImageDrawFunc( );
-	virtual GameWinDrawFunc getRadioButtonDrawFunc( );
-	virtual GameWinDrawFunc getTabControlImageDrawFunc( );
-	virtual GameWinDrawFunc getTabControlDrawFunc( );
-	virtual GameWinDrawFunc getListBoxImageDrawFunc( );
-	virtual GameWinDrawFunc getListBoxDrawFunc( );
-	virtual GameWinDrawFunc getComboBoxImageDrawFunc( );
-	virtual GameWinDrawFunc getComboBoxDrawFunc( );
-	virtual GameWinDrawFunc getHorizontalSliderImageDrawFunc( );
-	virtual GameWinDrawFunc getHorizontalSliderDrawFunc( );
-	virtual GameWinDrawFunc getVerticalSliderImageDrawFunc( );
-	virtual GameWinDrawFunc getVerticalSliderDrawFunc( );
-	virtual GameWinDrawFunc getProgressBarImageDrawFunc( );
-	virtual GameWinDrawFunc getProgressBarDrawFunc( );
-	virtual GameWinDrawFunc getStaticTextImageDrawFunc( );
-	virtual GameWinDrawFunc getStaticTextDrawFunc( );
-	virtual GameWinDrawFunc getTextEntryImageDrawFunc( );
-	virtual GameWinDrawFunc getTextEntryDrawFunc( );
+	virtual GameWinDrawFunc getPushButtonImageDrawFunc();
+	virtual GameWinDrawFunc getPushButtonDrawFunc();
+	virtual GameWinDrawFunc getCheckBoxImageDrawFunc();
+	virtual GameWinDrawFunc getCheckBoxDrawFunc();
+	virtual GameWinDrawFunc getRadioButtonImageDrawFunc();
+	virtual GameWinDrawFunc getRadioButtonDrawFunc();
+	virtual GameWinDrawFunc getTabControlImageDrawFunc();
+	virtual GameWinDrawFunc getTabControlDrawFunc();
+	virtual GameWinDrawFunc getListBoxImageDrawFunc();
+	virtual GameWinDrawFunc getListBoxDrawFunc();
+	virtual GameWinDrawFunc getComboBoxImageDrawFunc();
+	virtual GameWinDrawFunc getComboBoxDrawFunc();
+	virtual GameWinDrawFunc getHorizontalSliderImageDrawFunc();
+	virtual GameWinDrawFunc getHorizontalSliderDrawFunc();
+	virtual GameWinDrawFunc getVerticalSliderImageDrawFunc();
+	virtual GameWinDrawFunc getVerticalSliderDrawFunc();
+	virtual GameWinDrawFunc getProgressBarImageDrawFunc();
+	virtual GameWinDrawFunc getProgressBarDrawFunc();
+	virtual GameWinDrawFunc getStaticTextImageDrawFunc();
+	virtual GameWinDrawFunc getStaticTextDrawFunc();
+	virtual GameWinDrawFunc getTextEntryImageDrawFunc();
+	virtual GameWinDrawFunc getTextEntryDrawFunc();
 
 protected:
 
 };
 
 // INLINE //////////////////////////////////////////////////////////////////////////////////////////
-inline GameWindow *W3DGameWindowManager::allocateNewWindow( ) { return newInstance(W3DGameWindow); }
-inline GameWinDrawFunc W3DGameWindowManager::getDefaultDraw( ) { return W3DGameWinDefaultDraw; }
-inline GameWinDrawFunc W3DGameWindowManager::getPushButtonImageDrawFunc( ) { return W3DGadgetPushButtonImageDraw; }
-inline GameWinDrawFunc W3DGameWindowManager::getPushButtonDrawFunc( ) { return W3DGadgetPushButtonDraw; }
-inline GameWinDrawFunc W3DGameWindowManager::getCheckBoxImageDrawFunc( ) { return W3DGadgetCheckBoxImageDraw; }
-inline GameWinDrawFunc W3DGameWindowManager::getCheckBoxDrawFunc( ) { return W3DGadgetCheckBoxDraw; }
-inline GameWinDrawFunc W3DGameWindowManager::getRadioButtonImageDrawFunc( ) { return W3DGadgetRadioButtonImageDraw; }
-inline GameWinDrawFunc W3DGameWindowManager::getRadioButtonDrawFunc( ) { return W3DGadgetRadioButtonDraw; }
-inline GameWinDrawFunc W3DGameWindowManager::getTabControlImageDrawFunc( ) { return W3DGadgetTabControlImageDraw; }
-inline GameWinDrawFunc W3DGameWindowManager::getTabControlDrawFunc( ) { return W3DGadgetTabControlDraw; }
-inline GameWinDrawFunc W3DGameWindowManager::getListBoxImageDrawFunc( ) { return W3DGadgetListBoxImageDraw; }
-inline GameWinDrawFunc W3DGameWindowManager::getListBoxDrawFunc( ) { return W3DGadgetListBoxDraw; }
-inline GameWinDrawFunc W3DGameWindowManager::getComboBoxImageDrawFunc( ) { return W3DGadgetComboBoxImageDraw; }
-inline GameWinDrawFunc W3DGameWindowManager::getComboBoxDrawFunc( ) { return W3DGadgetComboBoxDraw; }
-inline GameWinDrawFunc W3DGameWindowManager::getHorizontalSliderImageDrawFunc( ) { return W3DGadgetHorizontalSliderImageDraw; }
-inline GameWinDrawFunc W3DGameWindowManager::getHorizontalSliderDrawFunc( ) { return W3DGadgetHorizontalSliderDraw; }
-inline GameWinDrawFunc W3DGameWindowManager::getVerticalSliderImageDrawFunc( ) { return W3DGadgetVerticalSliderImageDraw; }
-inline GameWinDrawFunc W3DGameWindowManager::getVerticalSliderDrawFunc( ) { return W3DGadgetVerticalSliderDraw; }
-inline GameWinDrawFunc W3DGameWindowManager::getProgressBarImageDrawFunc( ) { return W3DGadgetProgressBarImageDraw; }
-inline GameWinDrawFunc W3DGameWindowManager::getProgressBarDrawFunc( ) { return W3DGadgetProgressBarDraw; }
-inline GameWinDrawFunc W3DGameWindowManager::getStaticTextImageDrawFunc( ) { return W3DGadgetStaticTextImageDraw; }
-inline GameWinDrawFunc W3DGameWindowManager::getStaticTextDrawFunc( ) { return W3DGadgetStaticTextDraw; }
-inline GameWinDrawFunc W3DGameWindowManager::getTextEntryImageDrawFunc( ) { return W3DGadgetTextEntryImageDraw; }
-inline GameWinDrawFunc W3DGameWindowManager::getTextEntryDrawFunc( ) { return W3DGadgetTextEntryDraw; }
+inline GameWindow *W3DGameWindowManager::allocateNewWindow() { return newInstance(W3DGameWindow); }
+inline GameWinDrawFunc W3DGameWindowManager::getDefaultDraw() { return W3DGameWinDefaultDraw; }
+inline GameWinDrawFunc W3DGameWindowManager::getPushButtonImageDrawFunc() { return W3DGadgetPushButtonImageDraw; }
+inline GameWinDrawFunc W3DGameWindowManager::getPushButtonDrawFunc() { return W3DGadgetPushButtonDraw; }
+inline GameWinDrawFunc W3DGameWindowManager::getCheckBoxImageDrawFunc() { return W3DGadgetCheckBoxImageDraw; }
+inline GameWinDrawFunc W3DGameWindowManager::getCheckBoxDrawFunc() { return W3DGadgetCheckBoxDraw; }
+inline GameWinDrawFunc W3DGameWindowManager::getRadioButtonImageDrawFunc() { return W3DGadgetRadioButtonImageDraw; }
+inline GameWinDrawFunc W3DGameWindowManager::getRadioButtonDrawFunc() { return W3DGadgetRadioButtonDraw; }
+inline GameWinDrawFunc W3DGameWindowManager::getTabControlImageDrawFunc() { return W3DGadgetTabControlImageDraw; }
+inline GameWinDrawFunc W3DGameWindowManager::getTabControlDrawFunc() { return W3DGadgetTabControlDraw; }
+inline GameWinDrawFunc W3DGameWindowManager::getListBoxImageDrawFunc() { return W3DGadgetListBoxImageDraw; }
+inline GameWinDrawFunc W3DGameWindowManager::getListBoxDrawFunc() { return W3DGadgetListBoxDraw; }
+inline GameWinDrawFunc W3DGameWindowManager::getComboBoxImageDrawFunc() { return W3DGadgetComboBoxImageDraw; }
+inline GameWinDrawFunc W3DGameWindowManager::getComboBoxDrawFunc() { return W3DGadgetComboBoxDraw; }
+inline GameWinDrawFunc W3DGameWindowManager::getHorizontalSliderImageDrawFunc() { return W3DGadgetHorizontalSliderImageDraw; }
+inline GameWinDrawFunc W3DGameWindowManager::getHorizontalSliderDrawFunc() { return W3DGadgetHorizontalSliderDraw; }
+inline GameWinDrawFunc W3DGameWindowManager::getVerticalSliderImageDrawFunc() { return W3DGadgetVerticalSliderImageDraw; }
+inline GameWinDrawFunc W3DGameWindowManager::getVerticalSliderDrawFunc() { return W3DGadgetVerticalSliderDraw; }
+inline GameWinDrawFunc W3DGameWindowManager::getProgressBarImageDrawFunc() { return W3DGadgetProgressBarImageDraw; }
+inline GameWinDrawFunc W3DGameWindowManager::getProgressBarDrawFunc() { return W3DGadgetProgressBarDraw; }
+inline GameWinDrawFunc W3DGameWindowManager::getStaticTextImageDrawFunc() { return W3DGadgetStaticTextImageDraw; }
+inline GameWinDrawFunc W3DGameWindowManager::getStaticTextDrawFunc() { return W3DGadgetStaticTextDraw; }
+inline GameWinDrawFunc W3DGameWindowManager::getTextEntryImageDrawFunc() { return W3DGadgetTextEntryImageDraw; }
+inline GameWinDrawFunc W3DGameWindowManager::getTextEntryDrawFunc() { return W3DGadgetTextEntryDraw; }

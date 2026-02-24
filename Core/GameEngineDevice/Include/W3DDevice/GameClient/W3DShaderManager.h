@@ -76,7 +76,7 @@ public:
 
 
 	W3DShaderManager();	///<constructor
-	static void init( );	///<determine optimal shaders for current device.
+	static void init();	///<determine optimal shaders for current device.
 	static void shutdown();	///<release resources used by shaders
 	static void updateCloud();	///<update the cloud position once every render frame.
 

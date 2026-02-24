@@ -48,10 +48,10 @@ class HashTableIteratorClass;
 class	HashableClass {
 
 public:
-	HashableClass( ) : NextHash( nullptr ) {}
-	virtual	~HashableClass( ) {}
+	HashableClass() : NextHash( nullptr ) {}
+	virtual	~HashableClass() {}
 
-	virtual	const char * Get_Key( )				= 0;
+	virtual	const char * Get_Key()				= 0;
 
 private:
 	HashableClass * NextHash;
@@ -67,9 +67,9 @@ class HashTableClass {
 
 public:
 	HashTableClass( int size );
-	~HashTableClass( );
+	~HashTableClass();
 
-	void					Reset( );
+	void					Reset();
 	void					Add( HashableClass * entry );
 	bool					Remove( HashableClass * entry );
 
@@ -94,12 +94,12 @@ class HashTableIteratorClass
 {
 public:
 	HashTableIteratorClass( HashTableClass & table ) : Table( table ) {}
-	virtual ~HashTableIteratorClass( ) {}
+	virtual ~HashTableIteratorClass() {}
 
-	void					First( );
-	void					Next( );
-	bool					Is_Done( )		{ return CurrentEntry == nullptr; }
-	HashableClass *	Get_Current( )	{ return CurrentEntry; }
+	void					First();
+	void					Next();
+	bool					Is_Done()		{ return CurrentEntry == nullptr; }
+	HashableClass *	Get_Current()	{ return CurrentEntry; }
 
 private:
 	const HashTableClass	&	Table;
@@ -107,5 +107,5 @@ private:
 	HashableClass *			CurrentEntry;
 	HashableClass *			NextEntry;
 
-	void					Advance_Next( );
+	void					Advance_Next();
 };

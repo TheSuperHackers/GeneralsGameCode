@@ -285,8 +285,8 @@ class WorldAnimationData
 
 public:
 
-	WorldAnimationData( );
-	~WorldAnimationData( ) { }
+	WorldAnimationData();
+	~WorldAnimationData() { }
 
 	Anim2D *m_anim;												///< the animation instance
 	Coord3D m_worldPos;										///< position in the world
@@ -346,20 +346,20 @@ public:  // ********************************************************************
 		NUM_ACTIONTYPES
 	};
 
-	InGameUI( );
-	virtual ~InGameUI( );
+	InGameUI();
+	virtual ~InGameUI();
 
 	// Inherited from subsystem interface -----------------------------------------------------------
-	virtual	void init( );															///< Initialize the in-game user interface
-	virtual void update( );														///< Update the UI by calling preDraw(), draw(), and postDraw()
-	virtual void reset( );															///< Reset
+	virtual	void init();															///< Initialize the in-game user interface
+	virtual void update();														///< Update the UI by calling preDraw(), draw(), and postDraw()
+	virtual void reset();															///< Reset
 	//-----------------------------------------------------------------------------------------------
 
 	// interface for the popup messages
 	virtual void popupMessage( const AsciiString& message, Int x, Int y, Int width, Bool pause, Bool pauseMusic);
 	virtual void popupMessage( const AsciiString& message, Int x, Int y, Int width, Color textColor, Bool pause, Bool pauseMusic);
-	PopupMessageData *getPopupMessageData( ) { return m_popupMessageData; }
-	void clearPopupMessageData( );
+	PopupMessageData *getPopupMessageData() { return m_popupMessageData; }
+	void clearPopupMessageData();
 
 	// interface for messages to the user
 	// srj sez: passing as const-ref screws up varargs for some reason. dunno why. just pass by value.
@@ -368,15 +368,15 @@ public:  // ********************************************************************
 	virtual void messageNoFormat( const RGBColor *rgbColor, const UnicodeString& message ); ///< display a colored message to the user
 	virtual void message( UnicodeString format, ... );				  ///< display a message to the user
 	virtual void message( AsciiString stringManagerLabel, ... );///< display a message to the user
-	virtual void toggleMessages( ) { m_messagesOn = 1 - m_messagesOn; }	///< toggle messages on/off
-	virtual Bool isMessagesOn( ) { return m_messagesOn; }	///< are the display messages on
-	void freeMessageResources( );				///< free resources for the ui messages
-	void freeCustomUiResources( );				///< free resources for custom ui elements
+	virtual void toggleMessages() { m_messagesOn = 1 - m_messagesOn; }	///< toggle messages on/off
+	virtual Bool isMessagesOn() { return m_messagesOn; }	///< are the display messages on
+	void freeMessageResources();				///< free resources for the ui messages
+	void freeCustomUiResources();				///< free resources for custom ui elements
 	Color getMessageColor(Bool altColor) { return (altColor)?m_messageColor2:m_messageColor1; }
 
 	// interface for military style messages
 	virtual void militarySubtitle( const AsciiString& label, Int duration );			// time in milliseconds
-	virtual void removeMilitarySubtitle( );
+	virtual void removeMilitarySubtitle();
 
 	// for can't build messages
 	virtual void displayCantBuildMessage( LegalBuildCode lbc ); ///< display message to use as to why they can't build here
@@ -397,7 +397,7 @@ public:  // ********************************************************************
 	virtual void objectChangedTeam(const Object *obj, Int oldPlayerIndex, Int newPlayerIndex);	// notification for superweapons, etc
 
 	virtual void setSuperweaponDisplayEnabledByScript( Bool enable );	///< Set the superweapon display enabled or disabled
-	virtual Bool getSuperweaponDisplayEnabledByScript( ) const;				///< Get the current superweapon display status
+	virtual Bool getSuperweaponDisplayEnabledByScript() const;				///< Get the current superweapon display status
 
 	virtual void hideObjectSuperweaponDisplayByScript(const Object *obj);
 	virtual void showObjectSuperweaponDisplayByScript(const Object *obj);
@@ -408,39 +408,39 @@ public:  // ********************************************************************
 
 	// mouse mode interface
 	virtual void setScrolling( Bool isScrolling );							///< set right-click scroll mode
-	virtual Bool isScrolling( );														///< are we scrolling?
+	virtual Bool isScrolling();														///< are we scrolling?
 	virtual void setSelecting( Bool isSelecting );							///< set drag select mode
-	virtual Bool isSelecting( );														///< are we selecting?
+	virtual Bool isSelecting();														///< are we selecting?
 	virtual void setScrollAmount( Coord2D amt );								///< set scroll amount
-	virtual Coord2D getScrollAmount( );										///< get scroll amount
+	virtual Coord2D getScrollAmount();										///< get scroll amount
 
 	// gui command interface
 	virtual void setGUICommand( const CommandButton *command );				///< the command has been clicked in the UI and needs additional data
-	virtual const CommandButton *getGUICommand( ) const;								///< get the pending gui command
+	virtual const CommandButton *getGUICommand() const;								///< get the pending gui command
 
 	// build interface
 	virtual void placeBuildAvailable( const ThingTemplate *build, Drawable *buildDrawable );				///< built thing being placed
-	virtual const ThingTemplate *getPendingPlaceType( );					///< get item we're trying to place
-	virtual ObjectID getPendingPlaceSourceObjectID( );			///< get producing object
+	virtual const ThingTemplate *getPendingPlaceType();					///< get item we're trying to place
+	virtual ObjectID getPendingPlaceSourceObjectID();			///< get producing object
 	virtual Bool getPreventLeftClickDeselectionInAlternateMouseModeForOneClick() const { return m_preventLeftClickDeselectionInAlternateMouseModeForOneClick; }
 	virtual void setPreventLeftClickDeselectionInAlternateMouseModeForOneClick( Bool set ) { m_preventLeftClickDeselectionInAlternateMouseModeForOneClick = set; }
 	virtual void setPlacementStart( const ICoord2D *start );					///< placement anchor point (for choosing angles)
 	virtual void setPlacementEnd( const ICoord2D *end );							///< set target placement point (for choosing angles)
-	virtual Bool isPlacementAnchored( );													///< is placement arrow anchor set
+	virtual Bool isPlacementAnchored();													///< is placement arrow anchor set
 	virtual void getPlacementPoints( ICoord2D *start, ICoord2D *end );///< get the placemnt arrow points
-	virtual Real getPlacementAngle( );														///< placement angle of drawable at cursor when placing down structures
+	virtual Real getPlacementAngle();														///< placement angle of drawable at cursor when placing down structures
 
 	// Drawable selection mechanisms
 	virtual void selectDrawable( Drawable *draw );					///< Mark given Drawable as "selected"
 	virtual void deselectDrawable( Drawable *draw );				///< Clear "selected" status from Drawable
 	virtual void deselectAllDrawables( Bool postMsg = true );							///< Clear the "select" flag from all drawables
-	virtual Int getSelectCount( ) { return m_selectCount; }		///< Get count of currently selected drawables
-	virtual Int getMaxSelectCount( ) { return m_maxSelectCount; }	///< Get the max number of selected drawables
-	virtual UnsignedInt getFrameSelectionChanged( ) { return m_frameSelectionChanged; }	///< Get the max number of selected drawables
-	virtual const DrawableList *getAllSelectedDrawables( ) const;	///< Return the list of all the currently selected Drawable IDs.
-	virtual const DrawableList *getAllSelectedLocalDrawables( );		///< Return the list of all the currently selected Drawable IDs owned by the current player.
-	virtual Drawable *getFirstSelectedDrawable( );							///< get the first selected drawable (if any)
-	virtual DrawableID getSoloNexusSelectedDrawableID( ) { return m_soloNexusSelectedDrawableID; }  ///< Return the one drawable of the nexus if only 1 angry mob is selected
+	virtual Int getSelectCount() { return m_selectCount; }		///< Get count of currently selected drawables
+	virtual Int getMaxSelectCount() { return m_maxSelectCount; }	///< Get the max number of selected drawables
+	virtual UnsignedInt getFrameSelectionChanged() { return m_frameSelectionChanged; }	///< Get the max number of selected drawables
+	virtual const DrawableList *getAllSelectedDrawables() const;	///< Return the list of all the currently selected Drawable IDs.
+	virtual const DrawableList *getAllSelectedLocalDrawables();		///< Return the list of all the currently selected Drawable IDs owned by the current player.
+	virtual Drawable *getFirstSelectedDrawable();							///< get the first selected drawable (if any)
+	virtual DrawableID getSoloNexusSelectedDrawableID() { return m_soloNexusSelectedDrawableID; }  ///< Return the one drawable of the nexus if only 1 angry mob is selected
 	virtual Bool isDrawableSelected( DrawableID idToCheck ) const;	///< Return true if the selected ID is in the drawable list
 	virtual Bool areAllObjectsSelected(const std::vector<Object*>& objectsToCheck) const;	///< Return true if all of the selected objects are in the drawable list
 	virtual Bool isAnySelectedKindOf( KindOfType kindOf ) const;		///< is any selected object a kind of
@@ -450,34 +450,34 @@ public:  // ********************************************************************
 	virtual void setRadiusCursorNone() { setRadiusCursor(RADIUSCURSOR_NONE, nullptr, PRIMARY_WEAPON); }
 
 	virtual void setInputEnabled( Bool enable );										///< Set the input enabled or disabled
-	virtual Bool getInputEnabled( ) { return m_inputEnabled; }	///< Get the current input status
+	virtual Bool getInputEnabled() { return m_inputEnabled; }	///< Get the current input status
 
 	virtual void disregardDrawable( Drawable *draw );				///< Drawable is being destroyed, clean up any UI elements associated with it
 
-	virtual void preDraw( );														///< Logic which needs to occur before the UI renders
-	virtual void draw( ) = 0;													///< Render the in-game user interface
-	virtual void postDraw( );													///< Logic which needs to occur after the UI renders
-	virtual void postWindowDraw( );											///< Logic which needs to occur after the WindowManager has repainted the menus
+	virtual void preDraw();														///< Logic which needs to occur before the UI renders
+	virtual void draw() = 0;													///< Render the in-game user interface
+	virtual void postDraw();													///< Logic which needs to occur after the UI renders
+	virtual void postWindowDraw();											///< Logic which needs to occur after the WindowManager has repainted the menus
 
 	/// Ingame video playback
 	virtual void playMovie( const AsciiString& movieName );
-	virtual void stopMovie( );
-	virtual VideoBuffer* videoBuffer( );
+	virtual void stopMovie();
+	virtual VideoBuffer* videoBuffer();
 
 	/// Ingame cameo video playback
 	virtual void playCameoMovie( const AsciiString& movieName );
-	virtual void stopCameoMovie( );
-	virtual VideoBuffer* cameoVideoBuffer( );
+	virtual void stopCameoMovie();
+	virtual VideoBuffer* cameoVideoBuffer();
 
   // mouse over information
-	virtual DrawableID getMousedOverDrawableID( ) const;	///< Get drawble ID of drawable under cursor
+	virtual DrawableID getMousedOverDrawableID() const;	///< Get drawble ID of drawable under cursor
 
 	/// Set the ingame flag as to if we have the Quit menu up or not
 	virtual void setQuitMenuVisible( Bool t ) { m_isQuitMenuVisible = t; }
-	virtual Bool isQuitMenuVisible( ) const { return m_isQuitMenuVisible; }
+	virtual Bool isQuitMenuVisible() const { return m_isQuitMenuVisible; }
 
 	// INI file parsing
-	virtual const FieldParse* getFieldParse( ) const { return s_fieldParseTable; }
+	virtual const FieldParse* getFieldParse() const { return s_fieldParseTable; }
 
 
 	//Provides a global way to determine whether or not we can issue orders to what we have selected.
@@ -504,25 +504,25 @@ public:  // ********************************************************************
 
 	virtual void buildRegion( const ICoord2D *anchor, const ICoord2D *dest, IRegion2D *region );  ///< builds a region around the specified coordinates
 
-	virtual Bool getDisplayedMaxWarning( ) { return m_displayedMaxWarning; }
+	virtual Bool getDisplayedMaxWarning() { return m_displayedMaxWarning; }
 	virtual void setDisplayedMaxWarning( Bool selected ) { m_displayedMaxWarning = selected; }
 
 	// Floating Test Methods
 	virtual void addFloatingText(const UnicodeString& text,const Coord3D * pos, Color color);
 
 	// Drawable caption stuff
-	AsciiString	getDrawableCaptionFontName( )	{ return m_drawableCaptionFont; }
-	Int					getDrawableCaptionPointSize( )	{ return m_drawableCaptionPointSize; }
-	Bool				isDrawableCaptionBold( )				{ return m_drawableCaptionBold; }
-	Color				getDrawableCaptionColor( )			{ return m_drawableCaptionColor; }
+	AsciiString	getDrawableCaptionFontName()	{ return m_drawableCaptionFont; }
+	Int					getDrawableCaptionPointSize()	{ return m_drawableCaptionPointSize; }
+	Bool				isDrawableCaptionBold()				{ return m_drawableCaptionBold; }
+	Color				getDrawableCaptionColor()			{ return m_drawableCaptionColor; }
 
-	Bool shouldMoveRMBScrollAnchor( ) { return m_moveRMBScrollAnchor; }
+	Bool shouldMoveRMBScrollAnchor() { return m_moveRMBScrollAnchor; }
 
-	Bool isClientQuiet( ) const			{ return m_clientQuiet; }
-	Bool isInWaypointMode( ) const			{ return m_waypointMode; }
-	Bool isInForceAttackMode( ) const	{ return m_forceAttackMode; }
-	Bool isInForceMoveToMode( ) const	{ return m_forceMoveToMode; }
-	Bool isInPreferSelectionMode( ) const { return m_preferSelection; }
+	Bool isClientQuiet() const			{ return m_clientQuiet; }
+	Bool isInWaypointMode() const			{ return m_waypointMode; }
+	Bool isInForceAttackMode() const	{ return m_forceAttackMode; }
+	Bool isInForceMoveToMode() const	{ return m_forceMoveToMode; }
+	Bool isInPreferSelectionMode() const { return m_preferSelection; }
 
 	void setClientQuiet( Bool enabled )  { m_clientQuiet = enabled; }
 	void setWaypointMode( Bool enabled )		{ m_waypointMode = enabled; }
@@ -530,9 +530,9 @@ public:  // ********************************************************************
 	void setForceAttackMode( Bool enabled )		{ m_forceAttackMode = enabled; }
 	void setPreferSelectionMode( Bool enabled )		{ m_preferSelection = enabled; }
 
-	void toggleAttackMoveToMode( )				{ m_attackMoveToMode = !m_attackMoveToMode; }
-	Bool isInAttackMoveToMode( ) const		{ return m_attackMoveToMode; }
-	void clearAttackMoveToMode( )				{ m_attackMoveToMode = FALSE; }
+	void toggleAttackMoveToMode()				{ m_attackMoveToMode = !m_attackMoveToMode; }
+	Bool isInAttackMoveToMode() const		{ return m_attackMoveToMode; }
+	void clearAttackMoveToMode()				{ m_attackMoveToMode = FALSE; }
 
 	void setCameraRotateLeft( Bool set )		{ m_cameraRotatingLeft = set; }
 	void setCameraRotateRight( Bool set )		{ m_cameraRotatingRight = set; }
@@ -546,16 +546,16 @@ public:  // ********************************************************************
 
 	virtual void addIdleWorker( Object *obj );
 	virtual void removeIdleWorker( Object *obj, Int playerNumber );
-	virtual void selectNextIdleWorker( );
+	virtual void selectNextIdleWorker();
 	static std::vector<Object*> getUniqueIdleWorkers(const ObjectList& idleWorkers);
 
-	virtual void recreateControlBar( );
-	virtual void refreshCustomUiResources( );
+	virtual void recreateControlBar();
+	virtual void refreshCustomUiResources();
 	virtual void refreshNetworkLatencyResources();
 	virtual void refreshRenderFpsResources();
-	virtual void refreshSystemTimeResources( );
-	virtual void refreshGameTimeResources( );
-	virtual void refreshPlayerInfoListResources( );
+	virtual void refreshSystemTimeResources();
+	virtual void refreshGameTimeResources();
+	virtual void refreshPlayerInfoListResources();
 
 	virtual void disableTooltipsUntil(UnsignedInt frameNum);
 	virtual void clearTooltipsDisabled();
@@ -568,12 +568,12 @@ public:  // ********************************************************************
 	void setMoveRMBScrollAnchor(Bool b) { m_moveRMBScrollAnchor = b; }
 
 private:
-	virtual Int getIdleWorkerCount( );
+	virtual Int getIdleWorkerCount();
 	virtual Object *findIdleWorker( Object *obj);
-	virtual void showIdleWorkerLayout( );
-	virtual void hideIdleWorkerLayout( );
-	virtual void updateIdleWorker( );
-	virtual void resetIdleWorker( );
+	virtual void showIdleWorkerLayout();
+	virtual void hideIdleWorkerLayout();
+	virtual void updateIdleWorker();
+	virtual void resetIdleWorker();
 
 	void updateRenderFpsString();
 	void drawNetworkLatency(Int &x, Int &y);
@@ -602,7 +602,7 @@ protected:
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( );
+	virtual void loadPostProcess();
 
 protected:
 
@@ -663,20 +663,20 @@ protected:
 	// Protected Methods ----------------------------------------------------------------------------
 	// ----------------------------------------------------------------------------------------------
 
-	void destroyPlacementIcons( );													///< Destroy placement icons
-	void handleBuildPlacements( );													///< handle updating of placement icons based on mouse pos
+	void destroyPlacementIcons();													///< Destroy placement icons
+	void handleBuildPlacements();													///< handle updating of placement icons based on mouse pos
 	void handleRadiusCursor();																	///< handle updating of "radius cursors" that follow the mouse pos
 
-	void incrementSelectCount( ) { ++m_selectCount; }			///< Increase by one the running total of "selected" drawables
-	void decrementSelectCount( ) { --m_selectCount; }			///< Decrease by one the running total of "selected" drawables
-	virtual View *createView( ) = 0;												///< Factory for Views
+	void incrementSelectCount() { ++m_selectCount; }			///< Increase by one the running total of "selected" drawables
+	void decrementSelectCount() { --m_selectCount; }			///< Decrease by one the running total of "selected" drawables
+	virtual View *createView() = 0;												///< Factory for Views
 	void evaluateSoloNexus( Drawable *newlyAddedDrawable = nullptr );
 
 	/// expire a hint from of the specified type at the hint index
 	void expireHint( HintType type, UnsignedInt hintIndex );
 
-	void createControlBar( );			///< create the control bar user interface
-	void createReplayControl( );		///< create the replay control window
+	void createControlBar();			///< create the control bar user interface
+	void createReplayControl();		///< create the replay control window
 
 	void setMouseCursor(Mouse::MouseCursor c);
 
@@ -684,12 +684,12 @@ protected:
 	void addMessageText( const UnicodeString& formattedMessage, const RGBColor *rgbColor = nullptr );  ///< internal workhorse for adding plain text for messages
 	void removeMessageAtIndex( Int i );				///< remove the message at index i
 
-	void updateFloatingText( );						///< Update function to move our floating text
-	void drawFloatingText( );							///< Draw all our floating text
-	void clearFloatingText( );							///< clear the floating text list
+	void updateFloatingText();						///< Update function to move our floating text
+	void drawFloatingText();							///< Draw all our floating text
+	void clearFloatingText();							///< clear the floating text list
 
-	void clearWorldAnimations( );					///< delete all world animations
-	void updateAndDrawWorldAnimations( );	///< update and draw visible world animations
+	void clearWorldAnimations();					///< delete all world animations
+	void updateAndDrawWorldAnimations();	///< update and draw visible world animations
 
 	SuperweaponInfo* findSWInfo(Int playerIndex, const AsciiString& powerName, ObjectID id, const SpecialPowerTemplate *powerTemplate);
 

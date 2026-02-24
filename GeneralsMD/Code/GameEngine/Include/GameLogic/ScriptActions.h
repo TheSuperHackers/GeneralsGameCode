@@ -48,9 +48,9 @@ public:
 
 	virtual ~ScriptActionsInterface() { };
 
-	virtual void init( ) = 0;		///< Init
-	virtual void reset( ) = 0;		///< Reset
-	virtual void update( ) = 0;	///< Update
+	virtual void init() = 0;		///< Init
+	virtual void reset() = 0;		///< Reset
+	virtual void update() = 0;	///< Update
 
 	virtual void executeAction( ScriptAction *pAction ) = 0; ///< execute a script action.
 	virtual void closeWindows( Bool suppressNewWindows ) = 0;
@@ -74,9 +74,9 @@ public:
 	~ScriptActions();
 
 public:
-	virtual void init( );		///< Init
-	virtual void reset( );		///< Reset
-	virtual void update( );	///< Update
+	virtual void init();		///< Init
+	virtual void reset();		///< Reset
+	virtual void update();	///< Update
 
 	void executeAction( ScriptAction *pAction );
 	void closeWindows( Bool suppressNewWindows );
@@ -176,8 +176,8 @@ protected:
 	void doSkyBox(Bool showSkyBox);	// if true, start it. If false, end it.
 	void doWeather(Bool showWeather);	// if true, show weather effects defined in INI file.
 
-	void doFreezeTime( );
-	void doUnfreezeTime( );
+	void doFreezeTime();
+	void doUnfreezeTime();
 
 	void doMilitaryCaption(const AsciiString& briefing, Int duration);
 	void doCameraSetAudibleDistance(Real audibleDistance);
@@ -187,8 +187,8 @@ protected:
 	void doNamedSetStoppingDistance(const AsciiString& unit, Real stoppingDistance);
 	void doSetStoppingDistance(const AsciiString& team, Real stoppingDistance);
 
-	void doDisableSpecialPowerDisplay( );
-	void doEnableSpecialPowerDisplay( );
+	void doDisableSpecialPowerDisplay();
+	void doEnableSpecialPowerDisplay();
 	void doNamedHideSpecialPowerDisplay( const AsciiString& unit );
 	void doNamedShowSpecialPowerDisplay( const AsciiString& unit );
 
@@ -297,7 +297,7 @@ protected:
 	void doShroudMapEntire(const AsciiString& playerName);
 	void doCameraMotionBlur(Bool zoomIn, Bool saturate);
 	void doCameraMotionBlurJump(const AsciiString& waypointName, Bool saturate);
-	void doRadarRefresh( );
+	void doRadarRefresh();
 	void doNamedStop(const AsciiString& unitName);
 	void doTeamStop(const AsciiString& teamName, Bool shouldDisband);
 	void doTeamSetOverrideRelationToTeam(const AsciiString& teamName, const AsciiString& otherTeam, Int relation);
@@ -366,7 +366,7 @@ protected:
 	void doSetOcclusionMode(Bool setEnabled);
 	void doC3CameraEnableSlaveMode( const AsciiString &thingTemplateName, const AsciiString &boneName );
 	void doSetDrawIconUIMode(Bool setEnabled);
-	void doC3CameraDisableSlaveMode( );
+	void doC3CameraDisableSlaveMode();
 	void doSetDynamicLODMode(Bool setEnabled);
 	void doAffectObjectPanelFlagsUnit(const AsciiString& unitName, const AsciiString& flagName, Bool enable);
 	void doAffectObjectPanelFlagsTeam(const AsciiString& teamName, const AsciiString& flagName, Bool enable);

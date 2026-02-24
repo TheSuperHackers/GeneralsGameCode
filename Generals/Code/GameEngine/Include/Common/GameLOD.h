@@ -184,7 +184,7 @@ public:
 	Int getLevelTextureReduction(StaticGameLODLevel level);	///<return texture reduction specified in INI for this game detail.
 	LODPresetInfo *newLODPreset(StaticGameLODLevel index);
 	BenchProfile *newBenchProfile();
-	Bool didMemPass( );
+	Bool didMemPass();
 	void setReallyLowMHz(Int mhz) { m_reallyLowMHz = mhz; }
 	Bool isReallyLowMHz() const { return m_cpuFreq < m_reallyLowMHz; }
 

@@ -75,7 +75,7 @@ void GameSlot::reset()
 	m_origColor = -1;
 }
 
-void GameSlot::saveOffOriginalInfo( )
+void GameSlot::saveOffOriginalInfo()
 {
 	DEBUG_LOG(("GameSlot::saveOffOriginalInfo() - orig was color=%d, pos=%d, house=%d",
 		m_origColor, m_origStartPos, m_origPlayerTemplate));
@@ -122,7 +122,7 @@ static Bool isSlotLocalAlly(const GameSlot *slot)
 	return FALSE;
 }
 
-UnicodeString GameSlot::getApparentPlayerTemplateDisplayName( ) const
+UnicodeString GameSlot::getApparentPlayerTemplateDisplayName() const
 {
 	if (TheMultiplayerSettings && TheMultiplayerSettings->showRandomPlayerTemplate() &&
 		m_origPlayerTemplate == PLAYERTEMPLATE_RANDOM && !isSlotLocalAlly(this))
@@ -142,7 +142,7 @@ UnicodeString GameSlot::getApparentPlayerTemplateDisplayName( ) const
 	return ThePlayerTemplateStore->getNthPlayerTemplate(m_playerTemplate)->getDisplayName();
 }
 
-Int GameSlot::getApparentPlayerTemplate( ) const
+Int GameSlot::getApparentPlayerTemplate() const
 {
 	if (TheMultiplayerSettings && TheMultiplayerSettings->showRandomPlayerTemplate() &&
 		!isSlotLocalAlly(this))
@@ -152,7 +152,7 @@ Int GameSlot::getApparentPlayerTemplate( ) const
 	return m_playerTemplate;
 }
 
-Int GameSlot::getApparentColor( ) const
+Int GameSlot::getApparentColor() const
 {
 	if (TheMultiplayerSettings && m_origPlayerTemplate == PLAYERTEMPLATE_OBSERVER)
 		return TheMultiplayerSettings->getColor(PLAYERTEMPLATE_OBSERVER)->getColor();
@@ -165,7 +165,7 @@ Int GameSlot::getApparentColor( ) const
 	return m_color;
 }
 
-Int GameSlot::getApparentStartPos( ) const
+Int GameSlot::getApparentStartPos() const
 {
 	if (TheMultiplayerSettings && TheMultiplayerSettings->showRandomStartPos() &&
 		!isSlotLocalAlly(this))
@@ -176,7 +176,7 @@ Int GameSlot::getApparentStartPos( ) const
 }
 
 
-void GameSlot::unAccept( )
+void GameSlot::unAccept()
 {
 	if (isHuman())
 	{
@@ -242,17 +242,17 @@ void GameSlot::setState( SlotState state, UnicodeString name, UnsignedInt IP )
 }
 
 // Various tests
-Bool GameSlot::isHuman( ) const
+Bool GameSlot::isHuman() const
 {
 	return m_state == SLOT_PLAYER;
 }
 
-Bool GameSlot::isOccupied( ) const
+Bool GameSlot::isOccupied() const
 {
 	return m_state == SLOT_PLAYER || m_state == SLOT_EASY_AI || m_state == SLOT_MED_AI || m_state == SLOT_BRUTAL_AI;
 }
 
-Bool GameSlot::isAI( ) const
+Bool GameSlot::isAI() const
 {
 	return m_state == SLOT_EASY_AI || m_state == SLOT_MED_AI || m_state == SLOT_BRUTAL_AI;
 }
@@ -274,7 +274,7 @@ Bool GameSlot::isPlayer( UnsignedInt ip ) const
 	return (m_state == SLOT_PLAYER && m_IP == ip);
 }
 
-Bool GameSlot::isOpen( ) const
+Bool GameSlot::isOpen() const
 {
 	return m_state == SLOT_OPEN;
 }
@@ -290,12 +290,12 @@ GameInfo::GameInfo()
 	reset();
 }
 
-void GameInfo::init( )
+void GameInfo::init()
 {
 	reset();
 }
 
-void GameInfo::reset( )
+void GameInfo::reset()
 {
 	m_crcInterval = NET_CRC_INTERVAL;
 	m_inGame = false;
@@ -337,7 +337,7 @@ void GameInfo::markPlayerAsPreorder(Int index)
 }
 
 
-void GameInfo::clearSlotList( )
+void GameInfo::clearSlotList()
 {
 	for (int i=0; i<MAX_SLOTS; ++i)
 	{
@@ -346,7 +346,7 @@ void GameInfo::clearSlotList( )
 	}
 }
 
-Int GameInfo::getNumPlayers( ) const
+Int GameInfo::getNumPlayers() const
 {
 	Int numPlayers = 0;
 	for (int i=0; i<MAX_SLOTS; ++i)
@@ -357,7 +357,7 @@ Int GameInfo::getNumPlayers( ) const
 	return numPlayers;
 }
 
-Int GameInfo::getNumNonObserverPlayers( ) const
+Int GameInfo::getNumNonObserverPlayers() const
 {
 	Int numPlayers = 0;
 	for (int i=0; i<MAX_SLOTS; ++i)
@@ -368,7 +368,7 @@ Int GameInfo::getNumNonObserverPlayers( ) const
 	return numPlayers;
 }
 
-Int GameInfo::getMaxPlayers( ) const
+Int GameInfo::getMaxPlayers() const
 {
 	if (!TheMapCache)
 		return -1;
@@ -382,7 +382,7 @@ Int GameInfo::getMaxPlayers( ) const
 	return data.m_numPlayers;
 }
 
-void GameInfo::enterGame( )
+void GameInfo::enterGame()
 {
 	DEBUG_ASSERTCRASH(!m_inGame && !m_inProgress, ("Entering game at a bad time!"));
 	reset();
@@ -390,7 +390,7 @@ void GameInfo::enterGame( )
 	m_inProgress = false;
 }
 
-void GameInfo::leaveGame( )
+void GameInfo::leaveGame()
 {
 	DEBUG_ASSERTCRASH(m_inGame && !m_inProgress, ("Leaving game at a bad time!"));
 	reset();
@@ -404,7 +404,7 @@ void GameInfo::startGame( Int gameID )
 	m_inProgress = true;
 }
 
-void GameInfo::endGame( )
+void GameInfo::endGame()
 {
 	DEBUG_ASSERTCRASH(m_inGame && m_inProgress, ("Ending game without playing one!"));
 	m_inGame = false;
@@ -459,7 +459,7 @@ const GameSlot* GameInfo::getConstSlot( Int slotNum ) const
 	return m_slot[slotNum];
 }
 
-Int GameInfo::getLocalSlotNum( ) const
+Int GameInfo::getLocalSlotNum() const
 {
 	DEBUG_ASSERTCRASH(m_inGame, ("Looking for local game slot while not in game"));
 	if (!m_inGame)
@@ -494,7 +494,7 @@ Int GameInfo::getSlotNum( AsciiString userName ) const
 	return -1;
 }
 
-Bool GameInfo::amIHost( ) const
+Bool GameInfo::amIHost() const
 {
 	DEBUG_ASSERTCRASH(m_inGame, ("Looking for game slot while not in game"));
 	if (!m_inGame)
@@ -722,7 +722,7 @@ Bool GameInfo::isStartPositionTaken(Int positionIdx, Int slotToIgnore ) const
 	return false;
 }
 
-void GameInfo::resetAccepted( )
+void GameInfo::resetAccepted()
 {
 	GameSlot *slot = getSlot(0);
 	if (slot)
@@ -1638,7 +1638,7 @@ void SkirmishGameInfo::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void SkirmishGameInfo::loadPostProcess( )
+void SkirmishGameInfo::loadPostProcess()
 {
 }
 

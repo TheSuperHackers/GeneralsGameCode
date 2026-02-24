@@ -59,19 +59,19 @@ public:
 	virtual ~W3DInGameUI();
 
 	// Inherited from subsystem interface -----------------------------------------------------------
-	virtual	void init( );		///< Initialize the in-game user interface
-	virtual void update( );	//< Update the UI by calling preDraw(), draw(), and postDraw()
-	virtual void reset( );		///< Reset
+	virtual	void init();		///< Initialize the in-game user interface
+	virtual void update();	//< Update the UI by calling preDraw(), draw(), and postDraw()
+	virtual void reset();		///< Reset
 	//-----------------------------------------------------------------------------------------------
 
-	virtual void draw( ); ///< Render the in-game user interface
+	virtual void draw(); ///< Render the in-game user interface
 
 protected:
 
 	/// factory for views
-	virtual View *createView( ) { return NEW W3DView; }
+	virtual View *createView() { return NEW W3DView; }
 
-	virtual void drawSelectionRegion( );			///< draw the selection region on screen
+	virtual void drawSelectionRegion();			///< draw the selection region on screen
 	virtual void drawMoveHints( View *view );			///< draw move hint visual feedback
 	virtual void drawAttackHints( View *view );		///< draw attack hint visual feedback
 	virtual void drawPlaceAngle( View *view ); 		///< draw place building angle if needed

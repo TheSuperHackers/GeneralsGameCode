@@ -40,7 +40,7 @@ DisplayStringManager *TheDisplayStringManager = nullptr;
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-DisplayStringManager::DisplayStringManager( )
+DisplayStringManager::DisplayStringManager()
 {
 
 	m_stringList = nullptr;
@@ -50,7 +50,7 @@ DisplayStringManager::DisplayStringManager( )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-DisplayStringManager::~DisplayStringManager( )
+DisplayStringManager::~DisplayStringManager()
 {
 
 	//

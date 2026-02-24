@@ -53,7 +53,7 @@ public:
 protected:
 	virtual void crc( Xfer *xfer);
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( );
+	virtual void loadPostProcess();
 	void removeParentObject();
 	void restoreParentObject();	///< restore the original non-ghosted object to scene.
 	Bool addToScene(int playerIndex);
@@ -85,7 +85,7 @@ public:
 protected:
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( );
+	virtual void loadPostProcess();
 
 	///@todo this list should really be part of the device independent base class (CBD 12-3-2002)
 	W3DGhostObject	*m_freeModules;

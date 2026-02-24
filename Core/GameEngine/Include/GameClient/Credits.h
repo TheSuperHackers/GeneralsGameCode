@@ -113,19 +113,19 @@ public:
 	CreditsManager();
 	~CreditsManager();
 
-	void init( );
-	void load( );
-	void reset( );
-	void update( );
-	void draw( );
+	void init();
+	void load();
+	void reset();
+	void update();
+	void draw();
 
 	const FieldParse *getFieldParse() const { return m_creditsFieldParseTable; }								///< returns the parsing fields
 	static const FieldParse m_creditsFieldParseTable[];																				///< the parse table
 	static void parseBlank( INI* ini, void *instance, void *store, const void *userData );					///< Parse the image part of the INI file
 	static void parseText( INI* ini, void *instance, void *store, const void *userData );					///< Parse the image part of the INI file
 
-	Bool isFinished( ) { return m_isFinished;	}
-	void addBlank( );
+	Bool isFinished() { return m_isFinished;	}
+	void addBlank();
 	void addText( AsciiString text );
 private:
 

@@ -39,7 +39,7 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-RadarUpdateModuleData::RadarUpdateModuleData( )
+RadarUpdateModuleData::RadarUpdateModuleData()
 {
 
 	m_radarExtendTime = 0.0f;
@@ -64,14 +64,14 @@ RadarUpdate::RadarUpdate( Thing *thing, const ModuleData *moduleData )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-RadarUpdate::~RadarUpdate( )
+RadarUpdate::~RadarUpdate()
 {
 
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void RadarUpdate::extendRadar( )
+void RadarUpdate::extendRadar()
 {
 	const RadarUpdateModuleData *modData = getRadarUpdateModuleData();
 
@@ -90,7 +90,7 @@ void RadarUpdate::extendRadar( )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime RadarUpdate::update( )
+UpdateSleepTime RadarUpdate::update()
 {
 /// @todo srj use SLEEPY_UPDATE here
 
@@ -163,7 +163,7 @@ void RadarUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void RadarUpdate::loadPostProcess( )
+void RadarUpdate::loadPostProcess()
 {
 
 	// extend base class

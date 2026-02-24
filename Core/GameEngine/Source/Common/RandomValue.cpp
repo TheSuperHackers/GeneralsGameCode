@@ -136,19 +136,19 @@ static void seedRandom(UnsignedInt SEED, UnsignedInt *seed)
 // of the effects displayed on the GameClient.
 //
 
-UnsignedInt GetGameLogicRandomSeed( )
+UnsignedInt GetGameLogicRandomSeed()
 {
 	return theGameLogicBaseSeed;
 }
 
-UnsignedInt GetGameLogicRandomSeedCRC( )
+UnsignedInt GetGameLogicRandomSeedCRC()
 {
 	CRC c;
 	c.computeCRC(theGameLogicSeed, 6*sizeof(UnsignedInt));
 	return c.get();
 }
 
-void InitRandom( )
+void InitRandom()
 {
 #ifdef DETERMINISTIC
 	// needs to be the same every time
@@ -432,7 +432,7 @@ void GameClientRandomVariable::setRange( Real low, Real high, DistributionType t
 /**
  * Return a value from the random distribution
  */
-Real GameClientRandomVariable::getValue( ) const
+Real GameClientRandomVariable::getValue() const
 {
 	switch( m_type )
 	{
@@ -478,7 +478,7 @@ void GameLogicRandomVariable::setRange( Real low, Real high, DistributionType ty
 /**
  * Return a value from the random distribution
  */
-Real GameLogicRandomVariable::getValue( ) const
+Real GameLogicRandomVariable::getValue() const
 {
 	switch( m_type )
 	{

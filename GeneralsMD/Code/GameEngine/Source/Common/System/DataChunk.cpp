@@ -294,7 +294,7 @@ void DataChunkOutput::openDataChunk( const char *name, DataChunkVersionType ver 
 	::fwrite( (const char *)&dummy, sizeof(Int), 1, m_tmp_file  );
 }
 
-void DataChunkOutput::closeDataChunk( )
+void DataChunkOutput::closeDataChunk()
 {
 	if (m_chunkStack == nullptr)
 	{
@@ -413,7 +413,7 @@ void DataChunkOutput::writeDict( const Dict& d )
 // DataChunkTableOfContents
 //----------------------------------------------------------------------
 
-DataChunkTableOfContents::DataChunkTableOfContents( ) :
+DataChunkTableOfContents::DataChunkTableOfContents() :
 m_list(nullptr),
 m_nextID(1),
 m_listLength(0),
@@ -684,7 +684,7 @@ Bool DataChunkInput::parse( void *userData )
 }
 
 // clear the stack
-void DataChunkInput::clearChunkStack( )
+void DataChunkInput::clearChunkStack()
 {
 	InputChunk *c, *next;
 
@@ -698,7 +698,7 @@ void DataChunkInput::clearChunkStack( )
 }
 
 // reset the stream to just-opened state - ready to parse the first chunk
-void DataChunkInput::reset( )
+void DataChunkInput::reset()
 {
 	clearChunkStack();
 	m_file->absoluteSeek( m_fileposOfFirstChunk );
@@ -745,7 +745,7 @@ AsciiString DataChunkInput::openDataChunk(DataChunkVersionType *ver )
 }
 
 // close chunk and move to start of next chunk
-void DataChunkInput::closeDataChunk( )
+void DataChunkInput::closeDataChunk()
 {
 	if (m_chunkStack == nullptr)
 	{
@@ -769,7 +769,7 @@ void DataChunkInput::closeDataChunk( )
 
 
 // return label of current data chunk
-AsciiString DataChunkInput::getChunkLabel( )
+AsciiString DataChunkInput::getChunkLabel()
 {
 	if (m_chunkStack == nullptr)
 	{
@@ -782,7 +782,7 @@ AsciiString DataChunkInput::getChunkLabel( )
 }
 
 // return version of current data chunk
-DataChunkVersionType DataChunkInput::getChunkVersion( )
+DataChunkVersionType DataChunkInput::getChunkVersion()
 {
 	if (m_chunkStack == nullptr)
 	{
@@ -795,7 +795,7 @@ DataChunkVersionType DataChunkInput::getChunkVersion( )
 }
 
 // return size of data stored in this chunk
-UnsignedInt DataChunkInput::getChunkDataSize( )
+UnsignedInt DataChunkInput::getChunkDataSize()
 {
 	if (m_chunkStack == nullptr)
 	{
@@ -809,7 +809,7 @@ UnsignedInt DataChunkInput::getChunkDataSize( )
 
 
 // return size of data left to read in this chunk
-UnsignedInt DataChunkInput::getChunkDataSizeLeft( )
+UnsignedInt DataChunkInput::getChunkDataSizeLeft()
 {
 	if (m_chunkStack == nullptr)
 	{
@@ -821,7 +821,7 @@ UnsignedInt DataChunkInput::getChunkDataSizeLeft( )
 	return m_chunkStack->dataLeft;
 }
 
-Bool DataChunkInput::atEndOfChunk( )
+Bool DataChunkInput::atEndOfChunk()
 {
 	if (m_chunkStack)
 	{

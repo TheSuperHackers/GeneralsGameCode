@@ -100,7 +100,7 @@ public:
 	AsciiStringList getNicksForEmail( AsciiString email );
 	void addLogin( AsciiString email, AsciiString nick, AsciiString password, AsciiString date );
 	void forgetLogin( AsciiString email );
-	AsciiStringList getEmails( );
+	AsciiStringList getEmails();
 
 private:
 	typedef std::map<AsciiString, AsciiString> PassMap;
@@ -200,7 +200,7 @@ Bool GameSpyLoginPreferences::load( AsciiString fname )
 	return true;
 }
 
-Bool GameSpyLoginPreferences::write( )
+Bool GameSpyLoginPreferences::write()
 {
 	if (m_filename.isEmpty())
 		return false;
@@ -296,7 +296,7 @@ void GameSpyLoginPreferences::forgetLogin( AsciiString email )
 
 }
 
-AsciiStringList GameSpyLoginPreferences::getEmails( )
+AsciiStringList GameSpyLoginPreferences::getEmails()
 {
 	AsciiStringList theList;
 	NickMap::iterator it = m_emailNickMap.begin();
@@ -310,7 +310,7 @@ AsciiStringList GameSpyLoginPreferences::getEmails( )
 
 static GameSpyLoginPreferences *loginPref = nullptr;
 
-static void startPings( )
+static void startPings()
 {
 	std::list<AsciiString> pingServers = TheGameSpyConfig->getPingServers();
 	Int timeout = TheGameSpyConfig->getPingTimeoutInMs();
@@ -763,7 +763,7 @@ void WOLLoginMenuShutdown( WindowLayout *layout, void *userData )
 
 
 // this is used to check if we've got all the pings
-static void checkLogin( )
+static void checkLogin()
 {
 	if (loggedInOK && ThePinger && !ThePinger->arePingsInProgress())
 	{

@@ -334,7 +334,7 @@ static Int scanUnsignedInt( const char *source, UnsignedInt& val )
 
 // resetWindowStack ===========================================================
 //=============================================================================
-static void resetWindowStack( )
+static void resetWindowStack()
 {
 
   memset( windowStack, 0, sizeof( windowStack ) );
@@ -344,7 +344,7 @@ static void resetWindowStack( )
 
 // resetWindowDefaults ========================================================
 //=============================================================================
-static void resetWindowDefaults( )
+static void resetWindowDefaults()
 {
 
 	defEnabledColor = 0;
@@ -359,7 +359,7 @@ static void resetWindowDefaults( )
 
 // peekWindow =================================================================
 //=============================================================================
-static GameWindow *peekWindow( )
+static GameWindow *peekWindow()
 {
   if (stackPtr == windowStack)
     return nullptr;
@@ -370,7 +370,7 @@ static GameWindow *peekWindow( )
 
 // popWindow ==================================================================
 //=============================================================================
-static GameWindow *popWindow( )
+static GameWindow *popWindow()
 {
 
   if( stackPtr == windowStack )

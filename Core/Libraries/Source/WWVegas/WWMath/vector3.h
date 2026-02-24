@@ -185,8 +185,8 @@ public:
 #endif
 
 	// Color Conversion
-	WWINLINE unsigned	long	Convert_To_ABGR( ) const;
-	WWINLINE unsigned	long	Convert_To_ARGB( ) const;
+	WWINLINE unsigned	long	Convert_To_ABGR() const;
+	WWINLINE unsigned	long	Convert_To_ARGB() const;
 	WWINLINE unsigned	long	Convert_To_ARGB( float alpha ) const;
 };
 
@@ -897,7 +897,7 @@ WWINLINE float Vector3::Quick_Distance(const Vector3 &p1, const Vector3 &p2)
  * HISTORY:                                                                                    *
  *   11/29/1999MLL: Created.                                                                   *
  *=============================================================================================*/
-WWINLINE unsigned long	Vector3::Convert_To_ABGR( ) const
+WWINLINE unsigned long	Vector3::Convert_To_ABGR() const
 {
 	return (unsigned(255)<<24) |
 			 (unsigned(Z*255.0f)<<16) |
@@ -914,7 +914,7 @@ WWINLINE unsigned long	Vector3::Convert_To_ABGR( ) const
  * HISTORY:                                                                                    *
  *   11/29/1999MLL: Created.                                                                   *
  *=============================================================================================*/
-WWINLINE unsigned long	Vector3::Convert_To_ARGB( ) const
+WWINLINE unsigned long	Vector3::Convert_To_ARGB() const
 {
 	return (unsigned(255)<<24) |
 			 (unsigned(X*255.0f)<<16) |

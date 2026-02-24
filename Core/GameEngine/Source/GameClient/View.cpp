@@ -39,7 +39,7 @@ UnsignedInt View::m_idNext = 1;
 View *TheTacticalView = nullptr;
 
 
-View::View( )
+View::View()
 {
 	m_viewLockedUntilFrame = 0u;
 	m_currentHeightAboveGround = 0.0f;
@@ -82,7 +82,7 @@ View::~View()
 {
 }
 
-void View::init( )
+void View::init()
 {
 	m_width = DEFAULT_VIEW_WIDTH;
 	m_height = DEFAULT_VIEW_HEIGHT;
@@ -104,7 +104,7 @@ void View::init( )
 	m_defaultPitch = 0.0f;
 }
 
-void View::reset( )
+void View::reset()
 {
 	// Only fixing the reported bug.  Who knows what side effects resetting the rest could have.
 	m_zoomLimited = TRUE;
@@ -174,7 +174,7 @@ void View::setPitch( Real radians )
 /**
  * Set the view angle back to default
  */
-void View::setAngleToDefault( )
+void View::setAngleToDefault()
 {
 	m_angle = m_defaultAngle;
 }
@@ -182,7 +182,7 @@ void View::setAngleToDefault( )
 /**
  * Set the view pitch back to default
  */
-void View::setPitchToDefault( )
+void View::setPitchToDefault()
 {
 	m_pitch = m_defaultPitch;
 }

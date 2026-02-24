@@ -57,7 +57,7 @@ enum
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-BattleBusSlowDeathBehaviorModuleData::BattleBusSlowDeathBehaviorModuleData( )
+BattleBusSlowDeathBehaviorModuleData::BattleBusSlowDeathBehaviorModuleData()
 {
 
 	m_fxStartUndeath = nullptr;
@@ -117,7 +117,7 @@ BattleBusSlowDeathBehavior::BattleBusSlowDeathBehavior( Thing *thing, const Modu
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-BattleBusSlowDeathBehavior::~BattleBusSlowDeathBehavior( )
+BattleBusSlowDeathBehavior::~BattleBusSlowDeathBehavior()
 {
 
 }
@@ -185,7 +185,7 @@ void BattleBusSlowDeathBehavior::beginSlowDeath( const DamageInfo *damageInfo )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-UpdateSleepTime BattleBusSlowDeathBehavior::update( )
+UpdateSleepTime BattleBusSlowDeathBehavior::update()
 {
 	Object *me = getObject();
 	const BattleBusSlowDeathBehaviorModuleData * data = getBattleBusSlowDeathBehaviorModuleData();
@@ -312,7 +312,7 @@ void BattleBusSlowDeathBehavior::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void BattleBusSlowDeathBehavior::loadPostProcess( )
+void BattleBusSlowDeathBehavior::loadPostProcess()
 {
 
 	// extend base class

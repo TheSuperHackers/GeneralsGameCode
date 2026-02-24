@@ -130,19 +130,19 @@ std::string LastReplayFileName;
 static Bool canSaveReplay = FALSE;
 extern void PopupReplayUpdate(WindowLayout *layout, void *userData);
 
-void initSinglePlayer( );
-void finishSinglePlayerInit( );
+void initSinglePlayer();
+void finishSinglePlayerInit();
 static Bool s_needToFinishSinglePlayerInit = FALSE;
 static Bool buttonIsFinishCampaign = FALSE;
 static WindowLayout *s_blankLayout = nullptr;
 
-void initSkirmish( );
+void initSkirmish();
 void initLANMultiPlayer();
 void initInternetMultiPlayer();
 void initReplayMultiPlayer();
 void initReplaySinglePlayer();
-void grabMultiPlayerInfo( );
-void grabSinglePlayerInfo( );
+void grabMultiPlayerInfo();
+void grabSinglePlayerInfo();
 void hideWindows( Int pos );
 void ScoreScreenEnableControls(Bool enable);
 void setObserverWindows( Player *player, Int i );
@@ -316,7 +316,7 @@ void ScoreScreenInit( WindowLayout *layout, void *userData )
 	}
 }
 
-void FixupScoreScreenMovieWindow( )
+void FixupScoreScreenMovieWindow()
 {
 	if (s_blankLayout)
 	{
@@ -584,7 +584,7 @@ WindowMsgHandledType ScoreScreenSystem( GameWindow *window, UnsignedInt msg,
 
 /** Special Init path for making this a single player Score Screen */
 //-------------------------------------------------------------------------------------------------
-void initSkirmish( )
+void initSkirmish()
 {
 	screenType = SCORESCREEN_SKIRMISH;
 	grabMultiPlayerInfo();
@@ -686,7 +686,7 @@ void PlayMovieAndBlock(AsciiString movieTitle)
 	setFPMode();
 }
 
-void initSinglePlayer( )
+void initSinglePlayer()
 {
 	screenType = SCORESCREEN_SINGLEPLAYER;
 	TheCampaignManager->setRankPoints(ThePlayerList->getLocalPlayer()->getSkillPoints());
@@ -700,7 +700,7 @@ void initSinglePlayer( )
 	s_blankLayout->getFirstWindow()->winClearStatus(WIN_STATUS_IMAGE);
 }
 
-void finishSinglePlayerInit( )
+void finishSinglePlayerInit()
 {
 	if(TheCampaignManager->isVictorious())
 	{
@@ -809,7 +809,7 @@ void finishSinglePlayerInit( )
 
 /** Special Init path for making this a single player replay Score Screen */
 //-------------------------------------------------------------------------------------------------
-void initReplaySinglePlayer( )
+void initReplaySinglePlayer()
 {
 	screenType = SCORESCREEN_REPLAY;
 	grabSinglePlayerInfo();
@@ -1764,7 +1764,7 @@ winName.format("ScoreScreen.wnd:StaticTextScore%d", pos);
 /** We Grab information about the players differently in Multiplayer.  We only want the players
 		listed in the slots */
 //-------------------------------------------------------------------------------------------------
-void grabMultiPlayerInfo( )
+void grabMultiPlayerInfo()
 {
 	typedef std::map<Int, Player *> ScoreMap;
 	typedef ScoreMap::iterator ScoreMapIt;
@@ -1835,7 +1835,7 @@ enum
 };
 /**	Grab the single player info */
 //-------------------------------------------------------------------------------------------------
-void grabSinglePlayerInfo( )
+void grabSinglePlayerInfo()
 {
 	Int playerCount = 0;
 	Player *player, *localPlayer;

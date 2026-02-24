@@ -87,7 +87,7 @@ Bool CompressionManager::isDataCompressed( const void *mem, Int len )
 	return t != COMPRESSION_NONE;
 }
 
-CompressionType CompressionManager::getPreferredCompression( )
+CompressionType CompressionManager::getPreferredCompression()
 {
 	return COMPRESSION_REFPACK;
 }

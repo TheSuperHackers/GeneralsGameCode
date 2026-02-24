@@ -57,7 +57,7 @@ m_maxMinorRadius(0)
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-CheckpointUpdate::~CheckpointUpdate( )
+CheckpointUpdate::~CheckpointUpdate()
 {
 }
 
@@ -65,7 +65,7 @@ CheckpointUpdate::~CheckpointUpdate( )
 /**
  * Look around us for enemies.
  */
-void CheckpointUpdate::checkForAlliesAndEnemies( )
+void CheckpointUpdate::checkForAlliesAndEnemies()
 {
 	// periodic enemy checks
 	if (m_enemyScanDelay == 0 || TRUE)
@@ -214,7 +214,7 @@ void CheckpointUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void CheckpointUpdate::loadPostProcess( )
+void CheckpointUpdate::loadPostProcess()
 {
 
 	// extend base class

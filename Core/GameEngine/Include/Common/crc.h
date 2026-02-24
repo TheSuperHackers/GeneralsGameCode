@@ -113,13 +113,13 @@ public:
   }
 
   /// Clears the CRC to 0
-	void clear( )
+	void clear()
   {
     crc = 0;
   }
 
   ///< Get the combined CRC
-	UnsignedInt get( ) const
+	UnsignedInt get() const
   {
     return crc;
   }

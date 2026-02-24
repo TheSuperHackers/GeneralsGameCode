@@ -93,8 +93,8 @@ public:
 
 	virtual HAnimClass *	Peek_Animation_And_Info(float& frame, int& numFrames, int& mode, float& mult);	// 020710 srj -- added
 
-	virtual HAnimClass *			Peek_Animation( );
-	virtual bool					Is_Animation_Complete( ) const;
+	virtual HAnimClass *			Peek_Animation();
+	virtual bool					Is_Animation_Complete() const;
 	virtual int						Get_Num_Bones();
 	virtual const char *			Get_Bone_Name(int bone_index);
 	virtual int						Get_Bone_Index(const char * bonename);
@@ -153,10 +153,10 @@ protected:
 	void								Set_Hierarchy_Valid(bool onoff) const  	{ IsTreeValid = onoff; }
 
 	// Progress animations for single anim (loop and once)
-	void								Single_Anim_Progress( );
+	void								Single_Anim_Progress();
 
 	// Release any animations
-	void								Release( );
+	void								Release();
 
 protected:
 

@@ -154,7 +154,7 @@ void W3DTruckDraw::setFullyObscuredByShroud(Bool fullyObscured)
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void W3DTruckDraw::createWheelEmitters( )
+void W3DTruckDraw::createWheelEmitters()
 {
 	if (getDrawable()->isDrawableEffectivelyHidden())
 		return;
@@ -225,7 +225,7 @@ void W3DTruckDraw::enableWheelEmitters( Bool enable )
 	}
 }
 //-------------------------------------------------------------------------------------------------
-void W3DTruckDraw::updateBones( )
+void W3DTruckDraw::updateBones()
 {
 	if( getW3DTruckDrawModuleData() )
 	{
@@ -627,7 +627,7 @@ void W3DTruckDraw::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void W3DTruckDraw::loadPostProcess( )
+void W3DTruckDraw::loadPostProcess()
 {
 
 	// extend base class

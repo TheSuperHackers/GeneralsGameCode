@@ -763,7 +763,7 @@ Int GameLODManager::getLevelTextureReduction(StaticGameLODLevel level)
 	return m_staticGameLODInfo[level].m_textureReduction;
 }
 
-Bool GameLODManager::didMemPass( )
+Bool GameLODManager::didMemPass()
 {
 	return m_memPassed;
 }

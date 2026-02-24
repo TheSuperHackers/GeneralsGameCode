@@ -39,7 +39,7 @@ class HeightDieUpdateModuleData: public UpdateModuleData
 
 public:
 
-	HeightDieUpdateModuleData( );
+	HeightDieUpdateModuleData();
 
 	static void buildFieldParse(MultiIniFieldParse& p);
 

@@ -882,7 +882,7 @@ static RenderObjClass* createTower( SimpleSceneClass *scene,
 		return nullptr;
 
 	// find the name of the render object to show
-	const ModuleInfo& mi = towerTemplate->getDrawModuleInfo( );
+	const ModuleInfo& mi = towerTemplate->getDrawModuleInfo();
 	if( mi.getCount() <= 0 )
 		return nullptr;
 	const ModuleData* mdd = mi.getNthData(0);

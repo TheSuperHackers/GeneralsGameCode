@@ -118,7 +118,7 @@ WorkerAIUpdate::WorkerAIUpdate( Thing *thing, const ModuleData* moduleData ) :
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-WorkerAIUpdate::~WorkerAIUpdate( )
+WorkerAIUpdate::~WorkerAIUpdate()
 {
 
 	// delete our behavior state machine
@@ -154,23 +154,23 @@ Bool WorkerAIUpdate::isAvailableForSupplying() const
 }
 
 // ------------------------------------------------------------------------------------------------
-Real WorkerAIUpdate::getRepairHealthPerSecond( ) const
+Real WorkerAIUpdate::getRepairHealthPerSecond() const
 {
 	return getWorkerAIUpdateModuleData()->m_repairHealthPercentPerSecond;
 }
 // ------------------------------------------------------------------------------------------------
-Real WorkerAIUpdate::getBoredTime( ) const
+Real WorkerAIUpdate::getBoredTime() const
 {
 	return getWorkerAIUpdateModuleData()->m_boredTime;
 }
 // ------------------------------------------------------------------------------------------------
-Real WorkerAIUpdate::getBoredRange( ) const
+Real WorkerAIUpdate::getBoredRange() const
 {
 	return getWorkerAIUpdateModuleData()->m_boredRange;
 }
 
 // ------------------------------------------------------------------------------------------------
-void WorkerAIUpdate::createMachines( )
+void WorkerAIUpdate::createMachines()
 {
 
 	if( m_workerMachine == nullptr )
@@ -233,7 +233,7 @@ Real WorkerAIUpdate::getWarehouseScanDistance() const
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime WorkerAIUpdate::update( )
+UpdateSleepTime WorkerAIUpdate::update()
 {
 
 	//
@@ -725,7 +725,7 @@ Bool WorkerAIUpdate::isTaskPending( DozerTask task )
 //-------------------------------------------------------------------------------------------------
 /** Is there any task pending */
 //-------------------------------------------------------------------------------------------------
-Bool WorkerAIUpdate::isAnyTaskPending( )
+Bool WorkerAIUpdate::isAnyTaskPending()
 {
 
 	for( Int i = 0; i < DOZER_NUM_TASKS; i++ )
@@ -894,7 +894,7 @@ void WorkerAIUpdate::internalTaskCompleteOrCancelled( DozerTask task )
 //-------------------------------------------------------------------------------------------------
 /** If we were building something, kill the active-construction flag on it */
 //-------------------------------------------------------------------------------------------------
-void WorkerAIUpdate::onDelete( )
+void WorkerAIUpdate::onDelete()
 {
 	Int i;
 
@@ -920,7 +920,7 @@ void WorkerAIUpdate::onDelete( )
 //-------------------------------------------------------------------------------------------------
 /** Get the most recently issued task */
 //-------------------------------------------------------------------------------------------------
-DozerTask WorkerAIUpdate::getMostRecentCommand( )
+DozerTask WorkerAIUpdate::getMostRecentCommand()
 {
 	Int i;
 	DozerTask mostRecentTask = DOZER_TASK_INVALID;
@@ -1235,7 +1235,7 @@ void WorkerStateMachine::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void WorkerStateMachine::loadPostProcess( )
+void WorkerStateMachine::loadPostProcess()
 {
 	StateMachine::loadPostProcess();
 }
@@ -1490,7 +1490,7 @@ void WorkerAIUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void WorkerAIUpdate::loadPostProcess( )
+void WorkerAIUpdate::loadPostProcess()
 {
  // extend base class
 	AIUpdateInterface::loadPostProcess();

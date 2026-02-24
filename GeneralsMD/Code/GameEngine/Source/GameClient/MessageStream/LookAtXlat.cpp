@@ -97,7 +97,7 @@ void LookAtTranslator::setScrolling(ScrollType scrollType)
 }
 
 //-----------------------------------------------------------------------------
-void LookAtTranslator::stopScrolling( )
+void LookAtTranslator::stopScrolling()
 {
 	m_isScrolling = false;
 	TheInGameUI->setScrolling( FALSE );
@@ -169,7 +169,7 @@ const ICoord2D* LookAtTranslator::getRMBScrollAnchor()
 	return nullptr;
 }
 
-Bool LookAtTranslator::hasMouseMovedRecently( )
+Bool LookAtTranslator::hasMouseMovedRecently()
 {
 	const UnsignedInt now = timeGetTime();
 	const UnsignedInt lastMove = m_lastMouseMoveTimeMsec;

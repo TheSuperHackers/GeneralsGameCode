@@ -111,13 +111,13 @@ public:
 	 * used by this machine.
 	 */
 	AIGuardMachine( Object *owner );
-	Object* findTargetToGuardByID( ) { return TheGameLogic->findObjectByID(m_targetToGuard); }
+	Object* findTargetToGuardByID() { return TheGameLogic->findObjectByID(m_targetToGuard); }
 	void setTargetToGuard( const Object *object ) { m_targetToGuard = object ? object->getID() : INVALID_ID; }
 
-	const Coord3D *getPositionToGuard( ) const { return &m_positionToGuard; }
+	const Coord3D *getPositionToGuard() const { return &m_positionToGuard; }
 	void setTargetPositionToGuard( const Coord3D *pos) { m_positionToGuard = *pos; }
 
-	const PolygonTrigger *getAreaToGuard( ) const { return m_areaToGuard; }
+	const PolygonTrigger *getAreaToGuard() const { return m_areaToGuard; }
 	void setAreaToGuard( const PolygonTrigger *area) { m_areaToGuard = area; }
 
 	void setNemesisID(ObjectID id) { m_nemesisToAttack = id; }
@@ -140,8 +140,8 @@ public:
 	{
 		m_attackState = nullptr;
 	}
-	virtual StateReturnType onEnter( );
-	virtual StateReturnType update( );
+	virtual StateReturnType onEnter();
+	virtual StateReturnType update();
 	virtual void onExit( StateExitType status );
 protected:
 	// snapshot interface
@@ -161,8 +161,8 @@ class AIGuardIdleState : public State
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIGuardIdleState, "AIGuardIdleState")
 public:
 	AIGuardIdleState( StateMachine *machine ) : State( machine, "AIGuardIdleState" ) { }
-	virtual StateReturnType onEnter( );
-	virtual StateReturnType update( );
+	virtual StateReturnType onEnter();
+	virtual StateReturnType update();
 	virtual void onExit( StateExitType status );
 protected:
 	// snapshot interface
@@ -186,8 +186,8 @@ public:
 	{
 		m_attackState = nullptr;
 	}
-	virtual StateReturnType onEnter( );
-	virtual StateReturnType update( );
+	virtual StateReturnType onEnter();
+	virtual StateReturnType update();
 	virtual void onExit( StateExitType status );
 protected:
 	// snapshot interface
@@ -212,8 +212,8 @@ public:
 	{
 		m_nextReturnScanTime = 0;
 	}
-	virtual StateReturnType onEnter( );
-	virtual StateReturnType update( );
+	virtual StateReturnType onEnter();
+	virtual StateReturnType update();
 	virtual void onExit( StateExitType status );
 protected:
 	// snapshot interface
@@ -232,8 +232,8 @@ class AIGuardPickUpCrateState : public AIPickUpCrateState
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIGuardPickUpCrateState, "AIGuardPickUpCrateState")
 public:
 	AIGuardPickUpCrateState( StateMachine *machine );
-	virtual StateReturnType onEnter( );
-	virtual StateReturnType update( );
+	virtual StateReturnType onEnter();
+	virtual StateReturnType update();
 	virtual void onExit( StateExitType status );
 };
 EMPTY_DTOR(AIGuardPickUpCrateState)
@@ -244,8 +244,8 @@ class AIGuardAttackAggressorState : public State
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIGuardAttackAggressorState, "AIGuardAttackAggressorState")
 public:
 	AIGuardAttackAggressorState( StateMachine *machine );
-	virtual StateReturnType onEnter( );
-	virtual StateReturnType update( );
+	virtual StateReturnType onEnter();
+	virtual StateReturnType update();
 	virtual void onExit( StateExitType status );
 protected:
 	// snapshot interface

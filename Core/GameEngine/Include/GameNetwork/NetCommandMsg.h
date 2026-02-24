@@ -353,7 +353,7 @@ public:
 	UnicodeString getText();
 	void setText(UnicodeString text);
 
-	Int getPlayerMask( );
+	Int getPlayerMask();
 	void setPlayerMask( Int playerMask );
 
 	virtual size_t getPackedByteCount() const;
@@ -389,7 +389,7 @@ class NetProgressCommandMsg: public NetCommandMsg
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetProgressCommandMsg, "NetProgressCommandMsg")
 public:
-	NetProgressCommandMsg( );
+	NetProgressCommandMsg();
 	//virtual ~NetProgressCommandMsg( void );
 
 	UnsignedByte getPercentage();
@@ -406,7 +406,7 @@ class NetWrapperCommandMsg : public NetCommandMsg
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetWrapperCommandMsg, "NetWrapperCommandMsg")
 public:
-	NetWrapperCommandMsg( );
+	NetWrapperCommandMsg();
 	//virtual ~NetWrapperCommandMsg();
 
 	UnsignedByte * getData();

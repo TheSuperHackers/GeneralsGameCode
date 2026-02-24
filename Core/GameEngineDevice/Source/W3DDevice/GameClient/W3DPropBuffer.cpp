@@ -413,7 +413,7 @@ void W3DPropBuffer::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void W3DPropBuffer::loadPostProcess( )
+void W3DPropBuffer::loadPostProcess()
 {
 	// empty. jba [8/11/2003]
 }

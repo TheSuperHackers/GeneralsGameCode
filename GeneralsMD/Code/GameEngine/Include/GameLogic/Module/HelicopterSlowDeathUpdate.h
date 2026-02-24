@@ -43,7 +43,7 @@ class HelicopterSlowDeathBehaviorModuleData : public SlowDeathBehaviorModuleData
 
 public:
 
-	HelicopterSlowDeathBehaviorModuleData( );
+	HelicopterSlowDeathBehaviorModuleData();
 
 	static void buildFieldParse(MultiIniFieldParse &p );
 

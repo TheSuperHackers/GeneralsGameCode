@@ -48,30 +48,30 @@ public:
 	Bool isMapSelected(const AsciiString& mapName);
 
 	void setLastLadder(const AsciiString& addr, UnsignedShort port);
-	AsciiString getLastLadderAddr( );
-	UnsignedShort getLastLadderPort( );
+	AsciiString getLastLadderAddr();
+	UnsignedShort getLastLadderPort();
 
 	void setMaxDisconnects(Int val);
-	Int getMaxDisconnects( );
+	Int getMaxDisconnects();
 
 	void setMaxPoints(Int val);
-	Int getMaxPoints( );
+	Int getMaxPoints();
 
 	void setMinPoints(Int val);
-	Int getMinPoints( );
+	Int getMinPoints();
 
 	void setWaitTime(Int val);
-	Int getWaitTime( );
+	Int getWaitTime();
 
 	void setNumPlayers(Int val);
-	Int getNumPlayers( );
+	Int getNumPlayers();
 
 	void setMaxPing(Int val);
-	Int getMaxPing( );
+	Int getMaxPing();
 
 	void setColor(Int val);
-	Int getColor( );
+	Int getColor();
 
 	void setSide(Int val);
-	Int getSide( );
+	Int getSide();
 };

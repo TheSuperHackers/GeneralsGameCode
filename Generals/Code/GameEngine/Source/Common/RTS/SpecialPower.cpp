@@ -209,7 +209,7 @@ SpecialPowerTemplate::~SpecialPowerTemplate()
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-SpecialPowerStore::SpecialPowerStore( )
+SpecialPowerStore::SpecialPowerStore()
 {
 
 	m_nextSpecialPowerID = 0;
@@ -218,7 +218,7 @@ SpecialPowerStore::SpecialPowerStore( )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-SpecialPowerStore::~SpecialPowerStore( )
+SpecialPowerStore::~SpecialPowerStore()
 {
 
 	// delete all templates
@@ -278,7 +278,7 @@ const SpecialPowerTemplate *SpecialPowerStore::getSpecialPowerTemplateByIndex( U
 //-------------------------------------------------------------------------------------------------
 /** Return the size of the store (WB) */
 //-------------------------------------------------------------------------------------------------
-Int SpecialPowerStore::getNumSpecialPowers( )
+Int SpecialPowerStore::getNumSpecialPowers()
 {
 
 	return m_specialPowerTemplates.size();
@@ -330,7 +330,7 @@ Bool SpecialPowerStore::canUseSpecialPower( Object *obj, const SpecialPowerTempl
 //-------------------------------------------------------------------------------------------------
 /** Reset */
 //-------------------------------------------------------------------------------------------------
-void SpecialPowerStore::reset( )
+void SpecialPowerStore::reset()
 {
 	for (SpecialPowerTemplatePtrVector::iterator it = m_specialPowerTemplates.begin(); it != m_specialPowerTemplates.end(); /*++it*/)
 	{

@@ -45,7 +45,7 @@ ImmortalBody::ImmortalBody( Thing *thing, const ModuleData* moduleData )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-ImmortalBody::~ImmortalBody( )
+ImmortalBody::~ImmortalBody()
 {
 
 }
@@ -97,7 +97,7 @@ void ImmortalBody::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void ImmortalBody::loadPostProcess( )
+void ImmortalBody::loadPostProcess()
 {
 
 	// extend base class

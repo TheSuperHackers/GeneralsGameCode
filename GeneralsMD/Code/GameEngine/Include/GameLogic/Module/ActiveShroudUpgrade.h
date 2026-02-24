@@ -44,7 +44,7 @@ class ActiveShroudUpgradeModuleData : public UpgradeModuleData
 
 public:
 
-	ActiveShroudUpgradeModuleData( );
+	ActiveShroudUpgradeModuleData();
 
 	static void buildFieldParse(MultiIniFieldParse& p);
 
@@ -68,7 +68,7 @@ public:
 
 protected:
 
-	virtual void upgradeImplementation( ); ///< Here's the actual work of Upgrading
+	virtual void upgradeImplementation(); ///< Here's the actual work of Upgrading
 	virtual Bool isSubObjectsUpgrade() { return false; }
 
 };

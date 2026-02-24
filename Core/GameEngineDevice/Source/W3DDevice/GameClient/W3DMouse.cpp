@@ -82,7 +82,7 @@ void MouseThreadClass::Thread_Function()
 	}
 }
 
-W3DMouse::W3DMouse( )
+W3DMouse::W3DMouse()
 {
 	// zero our event list
 	for (Int i=0; i<NUM_MOUSE_CURSORS; i++)
@@ -106,7 +106,7 @@ W3DMouse::W3DMouse( )
 
 }
 
-W3DMouse::~W3DMouse( )
+W3DMouse::~W3DMouse()
 {
 	LPDIRECT3DDEVICE8 m_pDev=DX8Wrapper::_Get_D3D_Device8();
 
@@ -328,7 +328,7 @@ void W3DMouse::freeW3DAssets()
 //-------------------------------------------------------------------------------------------------
 /** Initialize our device */
 //-------------------------------------------------------------------------------------------------
-void W3DMouse::init( )
+void W3DMouse::init()
 {
 
 	//check if system already initialized and texture assets loaded.
@@ -348,7 +348,7 @@ void W3DMouse::init( )
 //-------------------------------------------------------------------------------------------------
 /** Reset */
 //-------------------------------------------------------------------------------------------------
-void W3DMouse::reset( )
+void W3DMouse::reset()
 {
 
 	// extend

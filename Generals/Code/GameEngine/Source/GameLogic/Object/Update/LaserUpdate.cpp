@@ -91,7 +91,7 @@ LaserUpdate::LaserUpdate( Thing *thing, const ModuleData* moduleData ) : ClientU
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-LaserUpdate::~LaserUpdate( )
+LaserUpdate::~LaserUpdate()
 {
 
 	if( m_particleSystemID )
@@ -104,7 +104,7 @@ LaserUpdate::~LaserUpdate( )
 //-------------------------------------------------------------------------------------------------
 /** The update callback. */
 //-------------------------------------------------------------------------------------------------
-void LaserUpdate::clientUpdate( )
+void LaserUpdate::clientUpdate()
 {
 	m_dirty |= m_laserRadius.updateRadius();
 }
@@ -392,7 +392,7 @@ void LaserUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void LaserUpdate::loadPostProcess( )
+void LaserUpdate::loadPostProcess()
 {
 
 	// extend base class

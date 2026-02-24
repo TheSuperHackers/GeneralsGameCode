@@ -99,7 +99,7 @@ public:
 	 */
 	AITNGuardMachine( Object *owner );
 
-	const Coord3D *getPositionToGuard( ) const { return &m_positionToGuard; }
+	const Coord3D *getPositionToGuard() const { return &m_positionToGuard; }
 	void setTargetPositionToGuard( const Coord3D *pos) { m_positionToGuard = *pos; }
 
 	void setNemesisID(ObjectID id) { m_nemesisToAttack = id; }
@@ -122,8 +122,8 @@ public:
 	{
 		m_attackState = nullptr;
 	}
-	virtual StateReturnType onEnter( );
-	virtual StateReturnType update( );
+	virtual StateReturnType onEnter();
+	virtual StateReturnType update();
 	virtual void onExit( StateExitType status );
 protected:
 	// snapshot interface
@@ -144,8 +144,8 @@ class AITNGuardIdleState : public State
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AITNGuardIdleState, "AITNGuardIdleState")
 public:
 	AITNGuardIdleState( StateMachine *machine ) : State( machine, "AITNGuardIdleState" ) { }
-	virtual StateReturnType onEnter( );
-	virtual StateReturnType update( );
+	virtual StateReturnType onEnter();
+	virtual StateReturnType update();
 	virtual void onExit( StateExitType status );
 protected:
 	// snapshot interface
@@ -169,8 +169,8 @@ public:
 	{
 		m_attackState = nullptr;
 	}
-	virtual StateReturnType onEnter( );
-	virtual StateReturnType update( );
+	virtual StateReturnType onEnter();
+	virtual StateReturnType update();
 	virtual void onExit( StateExitType status );
 protected:
 	// snapshot interface
@@ -195,8 +195,8 @@ public:
 	{
 		m_nextReturnScanTime = 0;
 	}
-	virtual StateReturnType onEnter( );
-	virtual StateReturnType update( );
+	virtual StateReturnType onEnter();
+	virtual StateReturnType update();
 	virtual void onExit( StateExitType status );
 
 protected:
@@ -217,8 +217,8 @@ class AITNGuardPickUpCrateState : public AIPickUpCrateState
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AITNGuardPickUpCrateState, "AITNGuardPickUpCrateState")
 public:
 	AITNGuardPickUpCrateState( StateMachine *machine );
-	virtual StateReturnType onEnter( );
-	virtual StateReturnType update( );
+	virtual StateReturnType onEnter();
+	virtual StateReturnType update();
 	virtual void onExit( StateExitType status );
 };
 EMPTY_DTOR(AITNGuardPickUpCrateState)
@@ -229,8 +229,8 @@ class AITNGuardAttackAggressorState : public State
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AITNGuardAttackAggressorState, "AITNGuardAttackAggressorState")
 public:
 	AITNGuardAttackAggressorState( StateMachine *machine );
-	virtual StateReturnType onEnter( );
-	virtual StateReturnType update( );
+	virtual StateReturnType onEnter();
+	virtual StateReturnType update();
 	virtual void onExit( StateExitType status );
 protected:
 	// snapshot interface

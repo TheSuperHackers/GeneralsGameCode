@@ -69,18 +69,18 @@ static void drawTypeText( GameWindow *window, DisplayString *str);
 //-----------------------------------------------------------------------------
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-Transition::Transition ( )
+Transition::Transition ()
 {
 
 }
 
-Transition::~Transition( )
+Transition::~Transition()
 {
 
 }
 //-----------------------------------------------------------------------------
 
-FlashTransition::FlashTransition ( )
+FlashTransition::FlashTransition ()
 {
 	m_frameLength = FLASHTRANSITION_END;
 	m_win = nullptr;
@@ -88,7 +88,7 @@ FlashTransition::FlashTransition ( )
 	m_isForward = TRUE;
 }
 
-FlashTransition::~FlashTransition( )
+FlashTransition::~FlashTransition()
 {
 	m_win = nullptr;
 }
@@ -172,14 +172,14 @@ void FlashTransition::update( Int frame )
 
 }
 
-void FlashTransition::reverse( )
+void FlashTransition::reverse()
 {
 	m_isFinished = FALSE;
 	m_isForward = FALSE;
 
 }
 
-void FlashTransition::draw( )
+void FlashTransition::draw()
 {
 	switch (m_drawState)
 	{
@@ -228,7 +228,7 @@ void FlashTransition::draw( )
 	}
 }
 
-void FlashTransition::skip( )
+void FlashTransition::skip()
 {
 	update(FLASHTRANSITION_END);
 }
@@ -236,7 +236,7 @@ void FlashTransition::skip( )
 //-----------------------------------------------------------------------------
 
 
-ButtonFlashTransition::ButtonFlashTransition ( )
+ButtonFlashTransition::ButtonFlashTransition ()
 {
 	m_frameLength = BUTTONFLASHTRANSITION_END;
 	m_win = nullptr;
@@ -244,7 +244,7 @@ ButtonFlashTransition::ButtonFlashTransition ( )
 	m_isForward = TRUE;
 }
 
-ButtonFlashTransition::~ButtonFlashTransition( )
+ButtonFlashTransition::~ButtonFlashTransition()
 {
 	m_win = nullptr;
 }
@@ -489,14 +489,14 @@ void ButtonFlashTransition::update( Int frame )
 
 }
 
-void ButtonFlashTransition::reverse( )
+void ButtonFlashTransition::reverse()
 {
 	m_isFinished = FALSE;
 	m_isForward = FALSE;
 
 }
 
-void ButtonFlashTransition::draw( )
+void ButtonFlashTransition::draw()
 {
 	switch (m_drawState)
 	{
@@ -602,7 +602,7 @@ void ButtonFlashTransition::draw( )
 	}
 }
 
-void ButtonFlashTransition::skip( )
+void ButtonFlashTransition::skip()
 {
 	update(BUTTONFLASHTRANSITION_END);
 }
@@ -610,7 +610,7 @@ void ButtonFlashTransition::skip( )
 
 //-----------------------------------------------------------------------------
 
-FadeTransition::FadeTransition ( )
+FadeTransition::FadeTransition ()
 {
 	m_frameLength = FADETRANSITION_END;
 	m_win = nullptr;
@@ -618,7 +618,7 @@ FadeTransition::FadeTransition ( )
 	m_isForward = TRUE;
 }
 
-FadeTransition::~FadeTransition( )
+FadeTransition::~FadeTransition()
 {
 	m_win = nullptr;
 }
@@ -678,14 +678,14 @@ void FadeTransition::update( Int frame )
 	}
 }
 
-void FadeTransition::reverse( )
+void FadeTransition::reverse()
 {
 	m_isFinished = FALSE;
 	m_isForward = FALSE;
 
 }
 
-void FadeTransition::draw( )
+void FadeTransition::draw()
 {
 	if(!m_win)
 		return;
@@ -741,13 +741,13 @@ void FadeTransition::draw( )
 	}
 }
 
-void FadeTransition::skip( )
+void FadeTransition::skip()
 {
 	update(FADETRANSITION_END);
 }
 //-----------------------------------------------------------------------------
 
-ScaleUpTransition::ScaleUpTransition ( )
+ScaleUpTransition::ScaleUpTransition ()
 {
 	m_frameLength = SCALEUPTRANSITION_END;
 	m_win = nullptr;
@@ -755,7 +755,7 @@ ScaleUpTransition::ScaleUpTransition ( )
 	m_isForward = TRUE;
 }
 
-ScaleUpTransition::~ScaleUpTransition( )
+ScaleUpTransition::~ScaleUpTransition()
 {
 	m_win = nullptr;
 }
@@ -842,14 +842,14 @@ void ScaleUpTransition::update( Int frame )
 	}
 }
 
-void ScaleUpTransition::reverse( )
+void ScaleUpTransition::reverse()
 {
 	m_isFinished = FALSE;
 	m_isForward = FALSE;
 
 }
 
-void ScaleUpTransition::draw( )
+void ScaleUpTransition::draw()
 {
 	if(!m_win)
 		return;
@@ -863,14 +863,14 @@ void ScaleUpTransition::draw( )
 	TheDisplay->drawImage(image, x,y, x1, y1);
 }
 
-void ScaleUpTransition::skip( )
+void ScaleUpTransition::skip()
 {
 	update(SCALEUPTRANSITION_END);
 }
 
 //-----------------------------------------------------------------------------
 
-ScoreScaleUpTransition::ScoreScaleUpTransition ( )
+ScoreScaleUpTransition::ScoreScaleUpTransition ()
 {
 	m_frameLength = SCORESCALEUPTRANSITION_END;
 	m_win = nullptr;
@@ -878,7 +878,7 @@ ScoreScaleUpTransition::ScoreScaleUpTransition ( )
 	m_isForward = TRUE;
 }
 
-ScoreScaleUpTransition::~ScoreScaleUpTransition( )
+ScoreScaleUpTransition::~ScoreScaleUpTransition()
 {
 	m_win = nullptr;
 }
@@ -965,14 +965,14 @@ void ScoreScaleUpTransition::update( Int frame )
 	}
 }
 
-void ScoreScaleUpTransition::reverse( )
+void ScoreScaleUpTransition::reverse()
 {
 	m_isFinished = FALSE;
 	m_isForward = FALSE;
 
 }
 
-void ScoreScaleUpTransition::draw( )
+void ScoreScaleUpTransition::draw()
 {
 	if(!m_win)
 		return;
@@ -986,14 +986,14 @@ void ScoreScaleUpTransition::draw( )
 	TheDisplay->drawImage(image, x,y, x1, y1);
 }
 
-void ScoreScaleUpTransition::skip( )
+void ScoreScaleUpTransition::skip()
 {
 	update(SCORESCALEUPTRANSITION_END);
 }
 
 //-----------------------------------------------------------------------------
 
-MainMenuScaleUpTransition::MainMenuScaleUpTransition ( )
+MainMenuScaleUpTransition::MainMenuScaleUpTransition ()
 {
 	m_frameLength = MAINMENUSCALEUPTRANSITION_END;
 	m_win = nullptr;
@@ -1001,7 +1001,7 @@ MainMenuScaleUpTransition::MainMenuScaleUpTransition ( )
 	m_isForward = TRUE;
 }
 
-MainMenuScaleUpTransition::~MainMenuScaleUpTransition( )
+MainMenuScaleUpTransition::~MainMenuScaleUpTransition()
 {
 	m_win = nullptr;
 }
@@ -1082,14 +1082,14 @@ void MainMenuScaleUpTransition::update( Int frame )
 
 }
 
-void MainMenuScaleUpTransition::reverse( )
+void MainMenuScaleUpTransition::reverse()
 {
 	m_isFinished = FALSE;
 	m_isForward = FALSE;
 
 }
 
-void MainMenuScaleUpTransition::draw( )
+void MainMenuScaleUpTransition::draw()
 {
 	if(!m_win)
 		return;
@@ -1103,14 +1103,14 @@ void MainMenuScaleUpTransition::draw( )
 	TheDisplay->drawImage(image, x,y, x1, y1);
 }
 
-void MainMenuScaleUpTransition::skip( )
+void MainMenuScaleUpTransition::skip()
 {
 	update(MAINMENUSCALEUPTRANSITION_END);
 }
 
 //-----------------------------------------------------------------------------
 
-MainMenuMediumScaleUpTransition::MainMenuMediumScaleUpTransition ( )
+MainMenuMediumScaleUpTransition::MainMenuMediumScaleUpTransition ()
 {
 	m_frameLength = MAINMENUMEDIUMSCALEUPTRANSITION_END;
 	m_win = nullptr;
@@ -1118,7 +1118,7 @@ MainMenuMediumScaleUpTransition::MainMenuMediumScaleUpTransition ( )
 	m_isForward = TRUE;
 }
 
-MainMenuMediumScaleUpTransition::~MainMenuMediumScaleUpTransition( )
+MainMenuMediumScaleUpTransition::~MainMenuMediumScaleUpTransition()
 {
 	m_win = nullptr;
 }
@@ -1200,7 +1200,7 @@ void MainMenuMediumScaleUpTransition::update( Int frame )
 	}
 }
 
-void MainMenuMediumScaleUpTransition::reverse( )
+void MainMenuMediumScaleUpTransition::reverse()
 {
 	m_isFinished = FALSE;
 	m_isForward = FALSE;
@@ -1209,7 +1209,7 @@ void MainMenuMediumScaleUpTransition::reverse( )
 
 }
 
-void MainMenuMediumScaleUpTransition::draw( )
+void MainMenuMediumScaleUpTransition::draw()
 {
 	if(!m_win)
 		return;
@@ -1223,13 +1223,13 @@ void MainMenuMediumScaleUpTransition::draw( )
 	TheDisplay->drawImage(image, x,y, x1, y1);
 }
 
-void MainMenuMediumScaleUpTransition::skip( )
+void MainMenuMediumScaleUpTransition::skip()
 {
 	update(MAINMENUMEDIUMSCALEUPTRANSITION_END);
 }
 //-----------------------------------------------------------------------------
 
-MainMenuSmallScaleDownTransition::MainMenuSmallScaleDownTransition ( )
+MainMenuSmallScaleDownTransition::MainMenuSmallScaleDownTransition ()
 {
 	m_frameLength = MAINMENUSMALLSCALEDOWNTRANSITION_END;
 	m_win = nullptr;
@@ -1237,7 +1237,7 @@ MainMenuSmallScaleDownTransition::MainMenuSmallScaleDownTransition ( )
 	m_isForward = TRUE;
 }
 
-MainMenuSmallScaleDownTransition::~MainMenuSmallScaleDownTransition( )
+MainMenuSmallScaleDownTransition::~MainMenuSmallScaleDownTransition()
 {
 	m_win = nullptr;
 }
@@ -1313,14 +1313,14 @@ void MainMenuSmallScaleDownTransition::update( Int frame )
 	}
 }
 
-void MainMenuSmallScaleDownTransition::reverse( )
+void MainMenuSmallScaleDownTransition::reverse()
 {
 	m_isFinished = FALSE;
 	m_isForward = FALSE;
 
 }
 
-void MainMenuSmallScaleDownTransition::draw( )
+void MainMenuSmallScaleDownTransition::draw()
 {
 	if(!m_win)
 		return;
@@ -1334,7 +1334,7 @@ void MainMenuSmallScaleDownTransition::draw( )
 	TheDisplay->drawImage(image, x,y, x1, y1);
 }
 
-void MainMenuSmallScaleDownTransition::skip( )
+void MainMenuSmallScaleDownTransition::skip()
 {
 	update(MAINMENUSMALLSCALEDOWNTRANSITION_END);
 }
@@ -1342,7 +1342,7 @@ void MainMenuSmallScaleDownTransition::skip( )
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 
-TextTypeTransition::TextTypeTransition ( )
+TextTypeTransition::TextTypeTransition ()
 {
 	m_frameLength = TEXTTYPETRANSITION_END;
 	m_win = nullptr;
@@ -1351,7 +1351,7 @@ TextTypeTransition::TextTypeTransition ( )
 	m_dStr = nullptr;
 }
 
-TextTypeTransition::~TextTypeTransition( )
+TextTypeTransition::~TextTypeTransition()
 {
 	m_win = nullptr;
 	if(m_dStr)
@@ -1429,7 +1429,7 @@ void TextTypeTransition::update( Int frame )
 	}
 }
 
-void TextTypeTransition::reverse( )
+void TextTypeTransition::reverse()
 {
 	m_isFinished = FALSE;
 	m_isForward = FALSE;
@@ -1437,7 +1437,7 @@ void TextTypeTransition::reverse( )
 	m_partialText = m_fullText;
 }
 
-void TextTypeTransition::draw( )
+void TextTypeTransition::draw()
 {
 	if(m_drawState > TEXTTYPETRANSITION_START && m_drawState < m_frameLength)
 	{
@@ -1446,7 +1446,7 @@ void TextTypeTransition::draw( )
 	}
 }
 
-void TextTypeTransition::skip( )
+void TextTypeTransition::skip()
 {
 	update(TEXTTYPETRANSITION_END);
 }
@@ -1454,7 +1454,7 @@ void TextTypeTransition::skip( )
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 
-CountUpTransition::CountUpTransition ( )
+CountUpTransition::CountUpTransition ()
 {
 	m_frameLength = COUNTUPTRANSITION_END;
 	m_win = nullptr;
@@ -1463,7 +1463,7 @@ CountUpTransition::CountUpTransition ( )
 
 }
 
-CountUpTransition::~CountUpTransition( )
+CountUpTransition::~CountUpTransition()
 {
 	m_win = nullptr;
 }
@@ -1577,7 +1577,7 @@ void CountUpTransition::update( Int frame )
 	}
 }
 
-void CountUpTransition::reverse( )
+void CountUpTransition::reverse()
 {
 	if( m_win->winIsHidden() )
 	{
@@ -1591,11 +1591,11 @@ void CountUpTransition::reverse( )
 
 }
 
-void CountUpTransition::draw( )
+void CountUpTransition::draw()
 {
 }
 
-void CountUpTransition::skip( )
+void CountUpTransition::skip()
 {
 	if (!m_isFinished)
 		update(COUNTUPTRANSITION_END);
@@ -1603,7 +1603,7 @@ void CountUpTransition::skip( )
 
 //-----------------------------------------------------------------------------
 
-ScreenFadeTransition::ScreenFadeTransition ( )
+ScreenFadeTransition::ScreenFadeTransition ()
 {
 	m_frameLength = SCREENFADETRANSITION_END;
 	m_win = nullptr;
@@ -1612,7 +1612,7 @@ ScreenFadeTransition::ScreenFadeTransition ( )
 
 }
 
-ScreenFadeTransition::~ScreenFadeTransition( )
+ScreenFadeTransition::~ScreenFadeTransition()
 {
 	m_win = nullptr;
 
@@ -1655,13 +1655,13 @@ void ScreenFadeTransition::update( Int frame )
 	m_drawState = frame;
 }
 
-void ScreenFadeTransition::reverse( )
+void ScreenFadeTransition::reverse()
 {
 	m_isFinished = FALSE;
 	m_isForward = FALSE;
 }
 
-void ScreenFadeTransition::draw( )
+void ScreenFadeTransition::draw()
 {
 	Int alpha = m_percent*255 *m_drawState;
 	if(alpha > 255)
@@ -1670,7 +1670,7 @@ void ScreenFadeTransition::draw( )
 
 }
 
-void ScreenFadeTransition::skip( )
+void ScreenFadeTransition::skip()
 {
 	update(SCREENFADETRANSITION_END);
 }
@@ -1678,7 +1678,7 @@ void ScreenFadeTransition::skip( )
 
 //-----------------------------------------------------------------------------
 
-ControlBarArrowTransition::ControlBarArrowTransition ( )
+ControlBarArrowTransition::ControlBarArrowTransition ()
 {
 	m_frameLength = CONTROLBARARROWTRANSITION_END;
 	m_win = nullptr;
@@ -1688,7 +1688,7 @@ ControlBarArrowTransition::ControlBarArrowTransition ( )
 
 }
 
-ControlBarArrowTransition::~ControlBarArrowTransition( )
+ControlBarArrowTransition::~ControlBarArrowTransition()
 {
 	m_win = nullptr;
 	m_arrowImage = nullptr;
@@ -1748,13 +1748,13 @@ void ControlBarArrowTransition::update( Int frame )
 	m_drawState = frame;
 }
 
-void ControlBarArrowTransition::reverse( )
+void ControlBarArrowTransition::reverse()
 {
 	m_isFinished = FALSE;
 	m_isForward = FALSE;
 }
 
-void ControlBarArrowTransition::draw( )
+void ControlBarArrowTransition::draw()
 {
 	if(m_drawState < CONTROLBARARROWTRANSITION_START)
 		return;
@@ -1776,7 +1776,7 @@ void ControlBarArrowTransition::draw( )
 
 }
 
-void ControlBarArrowTransition::skip( )
+void ControlBarArrowTransition::skip()
 {
 	update(CONTROLBARARROWTRANSITION_END);
 }
@@ -1787,7 +1787,7 @@ void ControlBarArrowTransition::skip( )
 
 //-----------------------------------------------------------------------------
 
-FullFadeTransition::FullFadeTransition ( )
+FullFadeTransition::FullFadeTransition ()
 {
 	m_frameLength = FULLFADETRANSITION_END;
 	m_win = nullptr;
@@ -1796,7 +1796,7 @@ FullFadeTransition::FullFadeTransition ( )
 
 }
 
-FullFadeTransition::~FullFadeTransition( )
+FullFadeTransition::~FullFadeTransition()
 {
 	m_win = nullptr;
 
@@ -1860,13 +1860,13 @@ void FullFadeTransition::update( Int frame )
 	m_drawState = frame;
 }
 
-void FullFadeTransition::reverse( )
+void FullFadeTransition::reverse()
 {
 	m_isFinished = FALSE;
 	m_isForward = FALSE;
 }
 
-void FullFadeTransition::draw( )
+void FullFadeTransition::draw()
 {
 	Int alpha;
 	if(m_drawState > (FULLFADETRANSITION_END/2))
@@ -1879,7 +1879,7 @@ void FullFadeTransition::draw( )
 	TheDisplay->drawOpenRect(m_pos.x, m_pos.y, m_size.x, m_size.y , 1.0f, GameMakeColor(255,190,0,alpha));
 }
 
-void FullFadeTransition::skip( )
+void FullFadeTransition::skip()
 {
 	update(FULLFADETRANSITION_END);
 }
@@ -1887,7 +1887,7 @@ void FullFadeTransition::skip( )
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 
-TextOnFrameTransition::TextOnFrameTransition ( )
+TextOnFrameTransition::TextOnFrameTransition ()
 {
 	m_frameLength = TEXTONFRAMETRANSITION_END;
 	m_win = nullptr;
@@ -1895,7 +1895,7 @@ TextOnFrameTransition::TextOnFrameTransition ( )
 
 }
 
-TextOnFrameTransition::~TextOnFrameTransition( )
+TextOnFrameTransition::~TextOnFrameTransition()
 {
 	m_win = nullptr;
 
@@ -1953,7 +1953,7 @@ void TextOnFrameTransition::update( Int frame )
 	}
 }
 
-void TextOnFrameTransition::reverse( )
+void TextOnFrameTransition::reverse()
 {
 	m_isFinished = FALSE;
 	m_isForward = FALSE;
@@ -1964,11 +1964,11 @@ void TextOnFrameTransition::reverse( )
 	}
 }
 
-void TextOnFrameTransition::draw( )
+void TextOnFrameTransition::draw()
 {
 }
 
-void TextOnFrameTransition::skip( )
+void TextOnFrameTransition::skip()
 {
 	if (!m_isFinished)
 		update(TEXTONFRAMETRANSITION_END);
@@ -1977,7 +1977,7 @@ void TextOnFrameTransition::skip( )
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 
-ReverseSoundTransition::ReverseSoundTransition ( )
+ReverseSoundTransition::ReverseSoundTransition ()
 {
 	m_frameLength = REVERSESOUNDTRANSITION_END;
 	m_win = nullptr;
@@ -1985,7 +1985,7 @@ ReverseSoundTransition::ReverseSoundTransition ( )
 
 }
 
-ReverseSoundTransition::~ReverseSoundTransition( )
+ReverseSoundTransition::~ReverseSoundTransition()
 {
 	m_win = nullptr;
 
@@ -2037,17 +2037,17 @@ void ReverseSoundTransition::update( Int frame )
 	}
 }
 
-void ReverseSoundTransition::reverse( )
+void ReverseSoundTransition::reverse()
 {
 	m_isFinished = FALSE;
 	m_isForward = FALSE;
 }
 
-void ReverseSoundTransition::draw( )
+void ReverseSoundTransition::draw()
 {
 }
 
-void ReverseSoundTransition::skip( )
+void ReverseSoundTransition::skip()
 {
 	if (!m_isFinished)
 		update(REVERSESOUNDTRANSITION_END);

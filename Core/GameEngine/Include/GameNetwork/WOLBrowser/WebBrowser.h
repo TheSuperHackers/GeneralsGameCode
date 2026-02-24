@@ -61,7 +61,7 @@ public:
 	WebBrowserURL();
 	// virtual destructor prototype defined by memory pool object
 
-	const FieldParse *getFieldParse( ) const { return m_URLFieldParseTable; }
+	const FieldParse *getFieldParse() const { return m_URLFieldParseTable; }
 
 	AsciiString m_tag;
 	AsciiString m_url;
@@ -79,9 +79,9 @@ class WebBrowser :
 		public SubsystemInterface
 	{
 	public:
-		void init( );
-		void reset( );
-		void update( );
+		void init();
+		void reset();
+		void update();
 
 		// Create an instance of the embedded browser for Dune Emperor.
 		virtual Bool createBrowserWindow(const char *tag, GameWindow *win) = 0;

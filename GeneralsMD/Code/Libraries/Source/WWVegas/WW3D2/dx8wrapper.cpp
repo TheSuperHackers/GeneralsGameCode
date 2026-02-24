@@ -4503,7 +4503,7 @@ const char* DX8Wrapper::Get_DX8_Blend_Op_Name(unsigned value)
 // DX8Wrapper::getBackBufferFormat
 //============================================================================
 
-WW3DFormat	DX8Wrapper::getBackBufferFormat( )
+WW3DFormat	DX8Wrapper::getBackBufferFormat()
 {
 	return D3DFormat_To_WW3DFormat( _PresentParameters.BackBufferFormat );
 }

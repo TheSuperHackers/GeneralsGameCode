@@ -43,7 +43,7 @@ class OverchargeBehaviorModuleData : public UpdateModuleData
 
 public:
 
-	OverchargeBehaviorModuleData( );
+	OverchargeBehaviorModuleData();
 
 	static void buildFieldParse( MultiIniFieldParse &p );
 
@@ -59,9 +59,9 @@ class OverchargeBehaviorInterface
 
 public:
 
-	virtual void toggle( ) = 0;
+	virtual void toggle() = 0;
 	virtual void enable( Bool enable ) = 0;
-	virtual Bool isOverchargeActive( ) = 0;
+	virtual Bool isOverchargeActive() = 0;
 
 };
 
@@ -82,13 +82,13 @@ public:
 
 	// interface housekeeping
 	virtual OverchargeBehaviorInterface* getOverchargeBehaviorInterface() { return this; }
-	static Int getInterfaceMask( ) { return UpdateModule::getInterfaceMask() | (MODULEINTERFACE_DAMAGE); }
+	static Int getInterfaceMask() { return UpdateModule::getInterfaceMask() | (MODULEINTERFACE_DAMAGE); }
 
 	// BehaviorModule
-	virtual DamageModuleInterface* getDamage( ) { return this; }
+	virtual DamageModuleInterface* getDamage() { return this; }
 
 	// UpdateModuleInterface
-	virtual UpdateSleepTime update( );
+	virtual UpdateSleepTime update();
 
 	// DamageModuleInterface
 	virtual void onDamage( DamageInfo *damageInfo );
@@ -99,11 +99,11 @@ public:
 
 
 	// specific methods
-	virtual void toggle( );						///< toggle overcharge on/off
+	virtual void toggle();						///< toggle overcharge on/off
 	virtual void enable( Bool enable );			///< turn overcharge on/off
-	virtual Bool isOverchargeActive( ) { return m_overchargeActive; }
+	virtual Bool isOverchargeActive() { return m_overchargeActive; }
 
-	void onDelete( );																///< we have some work to do when this module goes away
+	void onDelete();																///< we have some work to do when this module goes away
 	void onCapture( Player *oldOwner, Player *newOwner );	///< object containing upgrade has changed teams
 
 protected:

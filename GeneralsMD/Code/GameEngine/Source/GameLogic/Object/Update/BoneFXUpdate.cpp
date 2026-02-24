@@ -105,7 +105,7 @@ void BoneFXUpdate::onObjectCreated()
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-BoneFXUpdate::~BoneFXUpdate( )
+BoneFXUpdate::~BoneFXUpdate()
 {
 	killRunningParticleSystems();
 }
@@ -283,7 +283,7 @@ void BoneFXUpdateModuleData::parseParticleSystem( INI *ini, void *instance,
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime BoneFXUpdate::update( )
+UpdateSleepTime BoneFXUpdate::update()
 {
 /// @todo srj use SLEEPY_UPDATE here
 	const BoneFXUpdateModuleData *d = getBoneFXUpdateModuleData();
@@ -648,7 +648,7 @@ void BoneFXUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void BoneFXUpdate::loadPostProcess( )
+void BoneFXUpdate::loadPostProcess()
 {
 
 	// extend base class

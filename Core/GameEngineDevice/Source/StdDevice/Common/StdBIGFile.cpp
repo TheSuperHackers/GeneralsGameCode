@@ -104,7 +104,7 @@ File* StdBIGFile::openFile( const Char *filename, Int access )
 // StdBIGFile::closeAllFiles
 //============================================================================
 
-void StdBIGFile::closeAllFiles( )
+void StdBIGFile::closeAllFiles()
 {
 
 }
@@ -113,7 +113,7 @@ void StdBIGFile::closeAllFiles( )
 // StdBIGFile::getName
 //============================================================================
 
-AsciiString StdBIGFile::getName( )
+AsciiString StdBIGFile::getName()
 {
 	return m_name;
 }
@@ -122,7 +122,7 @@ AsciiString StdBIGFile::getName( )
 // StdBIGFile::getPath
 //============================================================================
 
-AsciiString StdBIGFile::getPath( )
+AsciiString StdBIGFile::getPath()
 {
 	return m_path;
 }
@@ -140,7 +140,7 @@ void StdBIGFile::setSearchPriority( Int new_priority )
 // StdBIGFile::close
 //============================================================================
 
-void StdBIGFile::close( )
+void StdBIGFile::close()
 {
 
 }

@@ -1012,7 +1012,7 @@ void PopulatePlayerInfoWindows( AsciiString parentWindowName )
 
 
 
-void HandlePersistentStorageResponses( )
+void HandlePersistentStorageResponses()
 {
 	if (TheGameSpyPSMessageQueue)
 	{
@@ -1318,7 +1318,7 @@ WindowMsgHandledType GameSpyPlayerInfoOverlayInput( GameWindow *window, Unsigned
 
 	return MSG_IGNORED;
 }
-static void messageBoxYes( );
+static void messageBoxYes();
 //-------------------------------------------------------------------------------------------------
 /** Overlay window system callback */
 //-------------------------------------------------------------------------------------------------
@@ -1435,7 +1435,7 @@ WindowMsgHandledType GameSpyPlayerInfoOverlaySystem( GameWindow *window, Unsigne
 	return MSG_HANDLED;
 }
 
-static void messageBoxYes( )
+static void messageBoxYes()
 {
 	BuddyRequest breq;
 	breq.buddyRequestType = BuddyRequest::BUDDYREQUEST_DELETEACCT;

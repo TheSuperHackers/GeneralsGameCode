@@ -51,7 +51,7 @@ class TeamRelationMap : public MemoryPoolObject,
 
 public:
 
-	TeamRelationMap( );
+	TeamRelationMap();
 	// virtual destructor provided by memory pool object
 
 	/** @todo I'm just wrapping this up in a nice snapshot object, we really should isolate
@@ -62,7 +62,7 @@ protected:
 
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( );
+	virtual void loadPostProcess();
 
 };
 
@@ -170,7 +170,7 @@ protected:
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( );
+	virtual void loadPostProcess();
 
 };
 
@@ -235,7 +235,7 @@ protected:
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( );
+	virtual void loadPostProcess();
 
 public:
 
@@ -243,7 +243,7 @@ public:
 	// ~Team();
 
 	/// return the prototype used to create this team
-	const TeamPrototype *getPrototype( ) { return m_proto; }
+	const TeamPrototype *getPrototype() { return m_proto; }
 
 	void setID( TeamID id ) { m_id = id; }
 	TeamID getID() const { return m_id; }
@@ -334,7 +334,7 @@ public:
 	*/
 	void updateState();
 
-	void notifyTeamOfObjectDeath( );
+	void notifyTeamOfObjectDeath();
 
 	Bool didAllEnter(PolygonTrigger *pTrigger, UnsignedInt whichToConsider) const;					///< All members entered the area
 	Bool didPartialEnter(PolygonTrigger *pTrigger, UnsignedInt whichToConsider) const;			///< One member entered the area
@@ -575,7 +575,7 @@ public:
 	void iterateObjects( ObjectIterateFunc func, void *userData );
 
 	/// count the number of teams that have been instanced by this prototype
-	Int countTeamInstances( );
+	Int countTeamInstances();
 
 	/**
 		Checks & clears the flags that a team member entered or exited a trigger area, or was created.
@@ -637,7 +637,7 @@ protected:
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( );
+	virtual void loadPostProcess();
 
 private:
 
@@ -683,9 +683,9 @@ public:
 	~TeamFactory();
 
 	// subsystem methods
-	virtual void init( );
-	virtual void reset( );
-	virtual void update( );
+	virtual void init();
+	virtual void reset();
+	virtual void update();
 
 	void clear();
 	void initFromSides(SidesList *sides);
@@ -729,7 +729,7 @@ protected:
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( );
+	virtual void loadPostProcess();
 
 private:
 

@@ -49,7 +49,7 @@
 
 GameSpyInfoInterface *TheGameSpyInfo = nullptr;
 extern GameSpyStagingRoom *TheGameSpyGame = nullptr;
-void deleteNotificationBox( );
+void deleteNotificationBox();
 
 bool AsciiComparator::operator()(AsciiString s1, AsciiString s2) const
 {
@@ -69,7 +69,7 @@ GameSpyInfo::~GameSpyInfo()
 	reset();
 }
 
-void GameSpyInfo::reset( )
+void GameSpyInfo::reset()
 {
 	m_sawFullGameList = FALSE;
 	m_isDisconAfterGameStart = FALSE;
@@ -121,34 +121,34 @@ void GameSpyInfo::setLocalIPs(UnsignedInt internalIP, UnsignedInt externalIP)
 	m_externalIP = externalIP;
 }
 
-void GameSpyInfo::readAdditionalDisconnects( )
+void GameSpyInfo::readAdditionalDisconnects()
 {
 	m_additionalDisconnects = GetAdditionalDisconnectsFromUserFile(m_localProfileID);
 	DEBUG_LOG(("GameSpyInfo::readAdditionalDisconnects() found %d disconnects.", m_additionalDisconnects));
 }
 
-Int GameSpyInfo::getAdditionalDisconnects( )
+Int GameSpyInfo::getAdditionalDisconnects()
 {
 	DEBUG_LOG(("GameSpyInfo::getAdditionalDisconnects() would have returned %d.  Returning 0 instead.", m_additionalDisconnects));
 	return 0;
 }
 
-void GameSpyInfo::clearAdditionalDisconnects( )
+void GameSpyInfo::clearAdditionalDisconnects()
 {
 	m_additionalDisconnects = 0;
 }
 
-GameSpyInfoInterface* GameSpyInfoInterface::createNewGameSpyInfoInterface( )
+GameSpyInfoInterface* GameSpyInfoInterface::createNewGameSpyInfoInterface()
 {
 	return NEW GameSpyInfo;
 }
 
-Bool GameSpyInfo::amIHost( )
+Bool GameSpyInfo::amIHost()
 {
 	return m_isHosting;
 }
 
-GameSpyStagingRoom* GameSpyInfo::getCurrentStagingRoom( )
+GameSpyStagingRoom* GameSpyInfo::getCurrentStagingRoom()
 {
 	if (m_isHosting || m_joinedStagingRoom)
 		return &m_localStagingRoom;
@@ -160,7 +160,7 @@ GameSpyStagingRoom* GameSpyInfo::getCurrentStagingRoom( )
 	return nullptr;
 }
 
-void GameSpyInfo::setGameOptions( )
+void GameSpyInfo::setGameOptions()
 {
 	if (!m_isHosting)
 		return;
@@ -360,7 +360,7 @@ void GameSpyInfo::joinGroupRoom( Int groupID )
 	}
 }
 
-void GameSpyInfo::leaveGroupRoom( )
+void GameSpyInfo::leaveGroupRoom()
 {
 	PeerRequest req;
 	req.peerRequestType = PeerRequest::PEERREQUEST_LEAVEGROUPROOM;
@@ -369,7 +369,7 @@ void GameSpyInfo::leaveGroupRoom( )
 	m_playerInfoMap.clear();
 }
 
-void GameSpyInfo::joinBestGroupRoom( )
+void GameSpyInfo::joinBestGroupRoom()
 {
 	if (m_currentGroupRoomID)
 	{
@@ -437,7 +437,7 @@ void GameSpyInfo::playerLeftGroupRoom( AsciiString nick )
 	}
 }
 
-void GameSpyInfo::clearStagingRoomList( )
+void GameSpyInfo::clearStagingRoomList()
 {
 	Int numRoomsRemoved = 0;
 	m_sawFullGameList = FALSE;
@@ -485,7 +485,7 @@ void GameSpyInfo::removeStagingRoom( GameSpyStagingRoom room )
 	}
 }
 
-Bool GameSpyInfo::hasStagingRoomListChanged( )
+Bool GameSpyInfo::hasStagingRoomListChanged()
 {
 	Bool val = m_stagingRoomsDirty;
 	m_stagingRoomsDirty = false;
@@ -501,7 +501,7 @@ GameSpyStagingRoom* GameSpyInfo::findStagingRoomByID( Int id )
 	return nullptr;
 }
 
-void GameSpyInfo::leaveStagingRoom( )
+void GameSpyInfo::leaveStagingRoom()
 {
 	m_localStagingRoomID = 0;
 	PeerRequest req;
@@ -512,7 +512,7 @@ void GameSpyInfo::leaveStagingRoom( )
 	m_isHosting = FALSE;
 }
 
-void GameSpyInfo::markAsStagingRoomHost( )
+void GameSpyInfo::markAsStagingRoomHost()
 {
 	m_localStagingRoomID = 0;
 	m_joinedStagingRoom = FALSE; m_isHosting = TRUE;
@@ -580,7 +580,7 @@ void GameSpyInfo::setMOTD( const AsciiString& motd )
 	m_rawMotd = motd;
 }
 
-const AsciiString& GameSpyInfo::getMOTD( )
+const AsciiString& GameSpyInfo::getMOTD()
 {
 	return m_rawMotd;
 }
@@ -590,7 +590,7 @@ void GameSpyInfo::setConfig( const AsciiString& config )
 	m_rawConfig = config;
 }
 
-const AsciiString& GameSpyInfo::getConfig( )
+const AsciiString& GameSpyInfo::getConfig()
 {
 	return m_rawConfig;
 }
@@ -643,7 +643,7 @@ void SetUpGameSpy( const char *motdBuffer, const char *configBuffer )
 	TheRankPointValues = NEW RankPoints;
 }
 
-void TearDownGameSpy( )
+void TearDownGameSpy()
 {
 	// save off cached stats
 	if (TheGameSpyInfo && TheGameSpyInfo->getLocalProfileID())
@@ -722,7 +722,7 @@ Bool GameSpyInfo::isIgnored( AsciiString nick )
 	return m_ignoreList.find(nick) != m_ignoreList.end();
 }
 
-IgnoreList GameSpyInfo::returnIgnoreList( )
+IgnoreList GameSpyInfo::returnIgnoreList()
 {
  return m_ignoreList;
 }
@@ -748,7 +748,7 @@ Bool GameSpyInfo::isSavedIgnored( Int profileID )
 	return m_savedIgnoreMap.find(profileID) != m_savedIgnoreMap.end();
 }
 
-SavedIgnoreMap	GameSpyInfo::returnSavedIgnoreList( )
+SavedIgnoreMap	GameSpyInfo::returnSavedIgnoreList()
 {
 	return m_savedIgnoreMap;
 }
@@ -791,12 +791,12 @@ Int GameSpyInfo::getPingValue( const AsciiString& otherPing )
 	return best * TheGameSpyConfig->getPingTimeoutInMs() / (255+255);
 }
 
-Bool PlayerInfo::isIgnored( )
+Bool PlayerInfo::isIgnored()
 {
 	return (m_profileID)?TheGameSpyInfo->isSavedIgnored(m_profileID):TheGameSpyInfo->isIgnored(m_name);
 }
 
-void GameSpyInfo::loadSavedIgnoreList( )
+void GameSpyInfo::loadSavedIgnoreList()
 {
 	m_savedIgnoreMap.clear();
 	IgnorePreferences prefs;
@@ -813,11 +813,11 @@ void GameSpyInfo::setDisallowNonAsianText( Bool val )
 	m_disallowNonAsianText = val;
 }
 
-Bool GameSpyInfo::getDisallowAsianText( )
+Bool GameSpyInfo::getDisallowAsianText()
 {
 	return m_disallowAsainText;
 }
-Bool GameSpyInfo::getDisallowNonAsianText( )
+Bool GameSpyInfo::getDisallowNonAsianText()
 {
 	return m_disallowNonAsianText;
 }
@@ -827,7 +827,7 @@ void GameSpyInfo::setMaxMessagesPerUpdate( Int num )
 	m_maxMessagesPerUpdate = num;
 }
 
-Int GameSpyInfo::getMaxMessagesPerUpdate( )
+Int GameSpyInfo::getMaxMessagesPerUpdate()
 {
 	return m_maxMessagesPerUpdate;
 }

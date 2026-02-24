@@ -413,7 +413,7 @@ WW3DErrorType WW3D::Set_Render_Device( const char * dev_name, int width, int hei
  * HISTORY:                                                                                    *
  *   3/24/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-WW3DErrorType WW3D::Set_Any_Render_Device( )
+WW3DErrorType WW3D::Set_Any_Render_Device()
 {
 	bool success = DX8Wrapper::Set_Any_Render_Device();
 	if (success) {
@@ -481,7 +481,7 @@ WW3DErrorType WW3D::Set_Next_Render_Device()
  * HISTORY:                                                                                    *
  *   3/28/2001  pds : Created.                                                                 *
  *=============================================================================================*/
-void *WW3D::Get_Window( )
+void *WW3D::Get_Window()
 {
 	return _Hwnd;
 }
@@ -498,7 +498,7 @@ void *WW3D::Get_Window( )
  * HISTORY:                                                                                    *
  *   1/26/2001  gth : Created.                                                                 *
  *=============================================================================================*/
-bool WW3D::Is_Windowed( )
+bool WW3D::Is_Windowed()
 {
 	return DX8Wrapper::Is_Windowed();
 }
@@ -1532,7 +1532,7 @@ void WW3D::Start_Movie_Capture( const char * filename_base, float frame_rate )
  * HISTORY:                                                                                    *
  *   5/19/99    GTH : Created.                                                                 *
  *=============================================================================================*/
-void WW3D::Stop_Movie_Capture( )
+void WW3D::Stop_Movie_Capture()
 {
 #ifdef _WIN32
 	if (IsCapturing) {
@@ -1690,7 +1690,7 @@ bool WW3D::Is_Movie_Ready()
  *   5/19/99    GTH : Created.                                                                 *
  *   2/26/2001  hy : Updated to dx8                                                            *
  *=============================================================================================*/
-void WW3D::Update_Movie_Capture( )
+void WW3D::Update_Movie_Capture()
 {
 #ifdef _WIN32
 	WWASSERT( IsCapturing);
@@ -1767,7 +1767,7 @@ void WW3D::Update_Movie_Capture( )
  * HISTORY:                                                                                    *
  *   5/19/99    GTH : Created.                                                                 *
  *=============================================================================================*/
-float	WW3D::Get_Movie_Capture_Frame_Rate( )
+float	WW3D::Get_Movie_Capture_Frame_Rate()
 {
 #ifdef _WIN32
 	if (IsCapturing) {
@@ -1824,7 +1824,7 @@ void WW3D::Enable_Coloring(unsigned int color)
  * HISTORY:                                                                                    *
  *   11/25/99    TSS : Created.                                                                 *
  *=============================================================================================*/
-int	WW3D::Get_Texture_Reduction( )
+int	WW3D::Get_Texture_Reduction()
 {
 	return _TextureReduction;
 }
@@ -1841,7 +1841,7 @@ int	WW3D::Get_Texture_Reduction( )
  * HISTORY:                                                                                    *
  *   11/25/99    TSS : Created.                                                                 *
  *=============================================================================================*/
-int	WW3D::Get_Texture_Min_Dimension( )
+int	WW3D::Get_Texture_Min_Dimension()
 {
 	return _TextureMinDim;
 }

@@ -44,13 +44,13 @@ public:
 	GameSpyMiscPreferences();
 	virtual ~GameSpyMiscPreferences();
 
-	Int getLocale( );
+	Int getLocale();
 	void setLocale( Int val );
 
-	AsciiString getCachedStats( );
+	AsciiString getCachedStats();
 	void setCachedStats( AsciiString val );
 
-	Bool getQuickMatchResLocked( );
+	Bool getQuickMatchResLocked();
 
-	Int getMaxMessagesPerUpdate( );
+	Int getMaxMessagesPerUpdate();
 };

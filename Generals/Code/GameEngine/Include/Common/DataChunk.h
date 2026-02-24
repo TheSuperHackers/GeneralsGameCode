@@ -94,7 +94,7 @@ class DataChunkTableOfContents
 	Mapping *findMapping( const AsciiString& name );			// return mapping data
 
 public:
-	DataChunkTableOfContents( );
+	DataChunkTableOfContents();
 	~DataChunkTableOfContents();
 
 	UnsignedInt getID( const AsciiString& name );				// convert name to integer identifier
@@ -124,7 +124,7 @@ public:
 	~DataChunkOutput();
 
 	void openDataChunk( const char *name, DataChunkVersionType ver );
-	void closeDataChunk( );
+	void closeDataChunk();
 
 	void writeReal(Real r);
 	void writeInt(Int i);
@@ -178,7 +178,7 @@ protected:
 	UserParser*								m_parserList;																		// list of all registered parsers for this input stream
 	InputChunk*								m_chunkStack;																		// current stack of open data chunks
 
-	void clearChunkStack( );										// clear the stack
+	void clearChunkStack();										// clear the stack
 
 	void decrementDataLeft( int size );							// update data left in chunk(s)
 
@@ -205,17 +205,17 @@ public:
 
 	Bool isValidFileType();											///< Returns TRUE if it is our file format.
 	AsciiString openDataChunk(DataChunkVersionType *ver );
-	void closeDataChunk( );										// close chunk and move to start of next chunk
+	void closeDataChunk();										// close chunk and move to start of next chunk
 
-	Bool atEndOfFile( ) { return (m_file->eof()) ? true : false; }					// return true if at end of file
-	Bool atEndOfChunk( );											// return true if all data has been read from this chunk
+	Bool atEndOfFile() { return (m_file->eof()) ? true : false; }					// return true if at end of file
+	Bool atEndOfChunk();											// return true if all data has been read from this chunk
 
-	void reset( );															// reset to just-opened state
+	void reset();															// reset to just-opened state
 
-	AsciiString getChunkLabel( );							// return label of current data chunk
-	DataChunkVersionType getChunkVersion( );		// return version of current data chunk
-	unsigned int getChunkDataSize( );					// return size of data stored in this chunk
-	unsigned int getChunkDataSizeLeft( );			// return size of data left to read in this chunk
+	AsciiString getChunkLabel();							// return label of current data chunk
+	DataChunkVersionType getChunkVersion();		// return version of current data chunk
+	unsigned int getChunkDataSize();					// return size of data stored in this chunk
+	unsigned int getChunkDataSizeLeft();			// return size of data left to read in this chunk
 
 
 	Real readReal();

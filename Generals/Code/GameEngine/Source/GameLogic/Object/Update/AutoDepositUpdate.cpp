@@ -109,7 +109,7 @@ AutoDepositUpdate::AutoDepositUpdate( Thing *thing, const ModuleData* moduleData
 }
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-AutoDepositUpdate::~AutoDepositUpdate( )
+AutoDepositUpdate::~AutoDepositUpdate()
 {
 
 }
@@ -142,7 +142,7 @@ void AutoDepositUpdate::awardInitialCaptureBonus( Player *player )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime AutoDepositUpdate::update( )
+UpdateSleepTime AutoDepositUpdate::update()
 {
 /// @todo srj use SLEEPY_UPDATE here
 	if( TheGameLogic->getFrame() >= m_depositOnFrame)
@@ -223,7 +223,7 @@ void AutoDepositUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void AutoDepositUpdate::loadPostProcess( )
+void AutoDepositUpdate::loadPostProcess()
 {
 
 	// extend base class

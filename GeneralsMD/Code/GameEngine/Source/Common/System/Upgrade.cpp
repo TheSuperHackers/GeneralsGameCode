@@ -67,7 +67,7 @@ Upgrade::Upgrade( const UpgradeTemplate *upgradeTemplate )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-Upgrade::~Upgrade( )
+Upgrade::~Upgrade()
 {
 
 }
@@ -101,7 +101,7 @@ void Upgrade::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void Upgrade::loadPostProcess( )
+void Upgrade::loadPostProcess()
 {
 
 }
@@ -129,7 +129,7 @@ const FieldParse UpgradeTemplate::m_upgradeFieldParseTable[] =
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UpgradeTemplate::UpgradeTemplate( )
+UpgradeTemplate::UpgradeTemplate()
 {
 	m_cost = 0;
 	m_type = UPGRADE_TYPE_PLAYER;
@@ -144,7 +144,7 @@ UpgradeTemplate::UpgradeTemplate( )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UpgradeTemplate::~UpgradeTemplate( )
+UpgradeTemplate::~UpgradeTemplate()
 {
 
 }
@@ -220,7 +220,7 @@ void UpgradeTemplate::cacheButtonImage()
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UpgradeCenter::UpgradeCenter( )
+UpgradeCenter::UpgradeCenter()
 {
 
 	m_upgradeList = nullptr;
@@ -231,7 +231,7 @@ UpgradeCenter::UpgradeCenter( )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UpgradeCenter::~UpgradeCenter( )
+UpgradeCenter::~UpgradeCenter()
 {
 
 	// delete all the upgrades loaded from the INI database
@@ -255,7 +255,7 @@ UpgradeCenter::~UpgradeCenter( )
 //-------------------------------------------------------------------------------------------------
 /** Upgrade center initialization */
 //-------------------------------------------------------------------------------------------------
-void UpgradeCenter::init( )
+void UpgradeCenter::init()
 {
 	UpgradeTemplate* up;
 
@@ -279,7 +279,7 @@ void UpgradeCenter::init( )
 //-------------------------------------------------------------------------------------------------
 /** Upgrade center system reset */
 //-------------------------------------------------------------------------------------------------
-void UpgradeCenter::reset( )
+void UpgradeCenter::reset()
 {
 	if( TheMappedImageCollection && !buttonImagesCached )
 	{
@@ -321,7 +321,7 @@ UpgradeTemplate *UpgradeCenter::findNonConstUpgradeByKey( NameKeyType key )
 // ------------------------------------------------------------------------------------------------
 /** Return the first upgrade template */
 // ------------------------------------------------------------------------------------------------
-UpgradeTemplate *UpgradeCenter::firstUpgradeTemplate( )
+UpgradeTemplate *UpgradeCenter::firstUpgradeTemplate()
 {
 
 	return m_upgradeList;
@@ -462,7 +462,7 @@ Bool UpgradeCenter::canAffordUpgrade( Player *player, const UpgradeTemplate *upg
 //-------------------------------------------------------------------------------------------------
 /** generate a list of upgrade names for WorldBuilder */
 //-------------------------------------------------------------------------------------------------
-std::vector<AsciiString> UpgradeCenter::getUpgradeNames( ) const
+std::vector<AsciiString> UpgradeCenter::getUpgradeNames() const
 {
 	std::vector<AsciiString> upgradeNames;
 

@@ -85,7 +85,7 @@ GameFileClass::GameFileClass( char const *filename )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-GameFileClass::GameFileClass( )
+GameFileClass::GameFileClass()
 {
 
 	m_fileExists = FALSE;
@@ -107,7 +107,7 @@ GameFileClass::~GameFileClass()
 //-------------------------------------------------------------------------------------------------
 /** Gets the file name */
 //-------------------------------------------------------------------------------------------------
-char const * GameFileClass::File_Name( ) const
+char const * GameFileClass::File_Name() const
 {
 
 	return m_filename;

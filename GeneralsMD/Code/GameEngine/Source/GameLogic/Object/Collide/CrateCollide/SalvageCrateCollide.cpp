@@ -53,7 +53,7 @@ SalvageCrateCollide::SalvageCrateCollide( Thing *thing, const ModuleData* module
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-SalvageCrateCollide::~SalvageCrateCollide( )
+SalvageCrateCollide::~SalvageCrateCollide()
 {
 
 }
@@ -291,7 +291,7 @@ void SalvageCrateCollide::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void SalvageCrateCollide::loadPostProcess( )
+void SalvageCrateCollide::loadPostProcess()
 {
 
 	// extend base class

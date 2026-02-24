@@ -92,7 +92,7 @@ StealthDetectorUpdate::StealthDetectorUpdate( Thing *thing, const ModuleData* mo
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-StealthDetectorUpdate::~StealthDetectorUpdate( )
+StealthDetectorUpdate::~StealthDetectorUpdate()
 {
 }
 
@@ -140,7 +140,7 @@ Bool PartitionFilterStealthedOrStealthGarrisoned::allow( Object *objOther)
 //-------------------------------------------------------------------------------------------------
 /** The update callback. */
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime StealthDetectorUpdate::update( )
+UpdateSleepTime StealthDetectorUpdate::update()
 {
 	const StealthDetectorUpdateModuleData *data = getStealthDetectorUpdateModuleData();
 	Object* self = getObject();
@@ -456,7 +456,7 @@ void StealthDetectorUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void StealthDetectorUpdate::loadPostProcess( )
+void StealthDetectorUpdate::loadPostProcess()
 {
 
 	// extend base class

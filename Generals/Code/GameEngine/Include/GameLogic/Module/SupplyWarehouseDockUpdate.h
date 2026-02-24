@@ -40,7 +40,7 @@ class SupplyWarehouseDockUpdateModuleData : public DockUpdateModuleData
 {
 public:
 
-  SupplyWarehouseDockUpdateModuleData( );
+  SupplyWarehouseDockUpdateModuleData();
 
 	static void buildFieldParse(MultiIniFieldParse& p);
 

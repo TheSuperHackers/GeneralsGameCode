@@ -105,13 +105,13 @@ public:
 	Bool canILeave();																///< Returns true if the local player is allowed to leave.
 
 	// Bandwidth metrics
-	Real getIncomingBytesPerSecond( );
-	Real getIncomingPacketsPerSecond( );
-	Real getOutgoingBytesPerSecond( );
-	Real getOutgoingPacketsPerSecond( );
-	Real getUnknownBytesPerSecond( );
-	Real getUnknownPacketsPerSecond( );
-	UnsignedInt getPacketArrivalCushion( );
+	Real getIncomingBytesPerSecond();
+	Real getIncomingPacketsPerSecond();
+	Real getOutgoingBytesPerSecond();
+	Real getOutgoingPacketsPerSecond();
+	Real getUnknownBytesPerSecond();
+	Real getUnknownPacketsPerSecond();
+	UnsignedInt getPacketArrivalCushion();
 
 	UnsignedInt getMinimumCushion();
 
@@ -120,10 +120,10 @@ public:
 	void processChat(NetChatCommandMsg *msg); // this actually needs to be public because it is frame-synchronized
 
 	void updateLoadProgress( Int progress );
-	void loadProgressComplete( );
-	void sendTimeOutGameStart( );
+	void loadProgressComplete();
+	void sendTimeOutGameStart();
 
-	Bool isPacketRouter( );
+	Bool isPacketRouter();
 
 	Bool isPlayerConnected( Int playerID );
 
@@ -134,7 +134,7 @@ public:
 
 	UnsignedInt getNextPacketRouterSlot(UnsignedInt playerID); ///< returns the packet router player that comes after the given player.
 
-	Int getAverageFPS( );
+	Int getAverageFPS();
 	Int getSlotAverageFPS(Int slot);
 
 #if defined(RTS_DEBUG)

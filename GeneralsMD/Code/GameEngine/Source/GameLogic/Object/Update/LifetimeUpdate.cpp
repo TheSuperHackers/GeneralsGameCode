@@ -58,7 +58,7 @@ LifetimeUpdate::LifetimeUpdate( Thing *thing, const ModuleData* moduleData ) : U
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-LifetimeUpdate::~LifetimeUpdate( )
+LifetimeUpdate::~LifetimeUpdate()
 {
 }
 
@@ -82,7 +82,7 @@ UnsignedInt LifetimeUpdate::calcSleepDelay(UnsignedInt minFrames, UnsignedInt ma
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime LifetimeUpdate::update( )
+UpdateSleepTime LifetimeUpdate::update()
 {
 	// Kill (NOT destroy) if time is up
 	getObject()->kill();
@@ -124,7 +124,7 @@ void LifetimeUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void LifetimeUpdate::loadPostProcess( )
+void LifetimeUpdate::loadPostProcess()
 {
 
 	// extend base class

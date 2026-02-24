@@ -111,7 +111,7 @@ W3DTankDraw::W3DTankDraw( Thing *thing, const ModuleData* moduleData )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void W3DTankDraw::tossTreadEmitters( )
+void W3DTankDraw::tossTreadEmitters()
 {
 	for (size_t i = 0; i < ARRAY_SIZE(m_treadDebrisIDs); ++i)
 	{
@@ -126,7 +126,7 @@ void W3DTankDraw::tossTreadEmitters( )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void W3DTankDraw::createTreadEmitters( )
+void W3DTankDraw::createTreadEmitters()
 {
 	const AsciiString *treadDebrisNames[2];
 	static_assert(ARRAY_SIZE(treadDebrisNames) == ARRAY_SIZE(m_treadDebrisIDs), "Array size must match");
@@ -165,7 +165,7 @@ W3DTankDraw::~W3DTankDraw()
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void W3DTankDraw::stopMoveDebris( )
+void W3DTankDraw::stopMoveDebris()
 {
 	for (size_t i = 0; i < ARRAY_SIZE(m_treadDebrisIDs); ++i)
 	{
@@ -429,7 +429,7 @@ void W3DTankDraw::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void W3DTankDraw::loadPostProcess( )
+void W3DTankDraw::loadPostProcess()
 {
 
 	// extend base class

@@ -87,7 +87,7 @@ RebuildHoleExposeDie::RebuildHoleExposeDie( Thing *thing, const ModuleData* modu
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-RebuildHoleExposeDie::~RebuildHoleExposeDie( )
+RebuildHoleExposeDie::~RebuildHoleExposeDie()
 {
 
 }
@@ -199,7 +199,7 @@ void RebuildHoleExposeDie::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void RebuildHoleExposeDie::loadPostProcess( )
+void RebuildHoleExposeDie::loadPostProcess()
 {
 
 	// extend base class

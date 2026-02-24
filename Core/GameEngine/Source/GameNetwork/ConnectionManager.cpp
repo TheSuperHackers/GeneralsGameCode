@@ -2038,7 +2038,7 @@ void ConnectionManager::parseUserList(const GameInfo *game)
 /**
  * Return the number of incoming bytes per second averaged over 30 sec.
  */
-Real ConnectionManager::getIncomingBytesPerSecond( )
+Real ConnectionManager::getIncomingBytesPerSecond()
 {
 	if (m_transport)
 		return m_transport->getIncomingBytesPerSecond();
@@ -2049,7 +2049,7 @@ Real ConnectionManager::getIncomingBytesPerSecond( )
 /**
  * Return the number of incoming packets per second averaged over the last 30 sec.
  */
-Real ConnectionManager::getIncomingPacketsPerSecond( )
+Real ConnectionManager::getIncomingPacketsPerSecond()
 {
 	if (m_transport)
 		return m_transport->getIncomingPacketsPerSecond();
@@ -2060,7 +2060,7 @@ Real ConnectionManager::getIncomingPacketsPerSecond( )
 /**
  * Return the number of outgoing bytes per second averaged over the last 30 sec.
  */
-Real ConnectionManager::getOutgoingBytesPerSecond( )
+Real ConnectionManager::getOutgoingBytesPerSecond()
 {
 	if (m_transport)
 		return m_transport->getOutgoingBytesPerSecond();
@@ -2071,7 +2071,7 @@ Real ConnectionManager::getOutgoingBytesPerSecond( )
 /**
  * Return the number of outgoing packets per second averaged over the last 30 sec.
  */
-Real ConnectionManager::getOutgoingPacketsPerSecond( )
+Real ConnectionManager::getOutgoingPacketsPerSecond()
 {
 	if (m_transport) {
 		return m_transport->getOutgoingPacketsPerSecond();
@@ -2083,7 +2083,7 @@ Real ConnectionManager::getOutgoingPacketsPerSecond( )
 /**
  * Return the number of bytes not from generals clients received per second averaged over the last 30 sec.
  */
-Real ConnectionManager::getUnknownBytesPerSecond( )
+Real ConnectionManager::getUnknownBytesPerSecond()
 {
 	if (m_transport)
 		return m_transport->getUnknownBytesPerSecond();
@@ -2094,7 +2094,7 @@ Real ConnectionManager::getUnknownBytesPerSecond( )
 /**
  * Return the number ov packets not from generals clients received per second averaged over the last 30 sec.
  */
-Real ConnectionManager::getUnknownPacketsPerSecond( )
+Real ConnectionManager::getUnknownPacketsPerSecond()
 {
 	if (m_transport)
 		return m_transport->getUnknownPacketsPerSecond();
@@ -2325,12 +2325,12 @@ void ConnectionManager::sendTimeOutGameStart()
 	msg->detach();
 }
 
-Bool ConnectionManager::isPacketRouter( )
+Bool ConnectionManager::isPacketRouter()
 {
 	return m_localSlot == m_packetRouterSlot;
 }
 
-Int ConnectionManager::getAverageFPS( )
+Int ConnectionManager::getAverageFPS()
 {
 	return m_frameMetrics.getAverageFPS();
 }

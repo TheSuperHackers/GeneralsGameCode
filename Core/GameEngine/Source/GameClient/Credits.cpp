@@ -144,14 +144,14 @@ CreditsManager::~CreditsManager()
 	}
 }
 
-void CreditsManager::init( )
+void CreditsManager::init()
 {
 	m_isFinished = FALSE;
 	m_creditLineListIt = m_creditLineList.begin();
 	m_framesSinceStarted = 0;
 }
 
-void CreditsManager::load( )
+void CreditsManager::load()
 {
 	INI ini;
 	// Read from INI all the ControlBarSchemes
@@ -169,7 +169,7 @@ void CreditsManager::load( )
 	m_normalFontHeight = font ? font->height : 0;
 }
 
-void CreditsManager::reset( )
+void CreditsManager::reset()
 {
 	m_displayedCreditLineList.clear();
 	m_isFinished = FALSE;
@@ -178,7 +178,7 @@ void CreditsManager::reset( )
 
 }
 
-void CreditsManager::update( )
+void CreditsManager::update()
 {
 	if(m_isFinished)
 		return;
@@ -346,7 +346,7 @@ void CreditsManager::update( )
 
 }
 
-void CreditsManager::draw( )
+void CreditsManager::draw()
 {
 	CreditsLineList::iterator drawIt = m_displayedCreditLineList.begin();
 	while (drawIt != m_displayedCreditLineList.end())
@@ -401,7 +401,7 @@ void CreditsManager::draw( )
 		drawIt++;
 	}
 }
-void CreditsManager::addBlank( )
+void CreditsManager::addBlank()
 {
 	CreditsLine *cLine = new CreditsLine;
 	cLine->m_style = CREDIT_STYLE_BLANK;

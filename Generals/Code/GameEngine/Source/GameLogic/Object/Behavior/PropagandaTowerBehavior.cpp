@@ -61,13 +61,13 @@ class ObjectTracker : public MemoryPoolObject
 
 public:
 
-	ObjectTracker( ) { objectID = INVALID_ID; next = nullptr; }
+	ObjectTracker() { objectID = INVALID_ID; next = nullptr; }
 
 	ObjectID objectID;
 	ObjectTracker *next;
 
 };
-ObjectTracker::~ObjectTracker( ) { }
+ObjectTracker::~ObjectTracker() { }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -75,7 +75,7 @@ ObjectTracker::~ObjectTracker( ) { }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-PropagandaTowerBehaviorModuleData::PropagandaTowerBehaviorModuleData( )
+PropagandaTowerBehaviorModuleData::PropagandaTowerBehaviorModuleData()
 {
 
 	m_scanRadius = 1.0f;
@@ -127,7 +127,7 @@ PropagandaTowerBehavior::PropagandaTowerBehavior( Thing *thing, const ModuleData
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-PropagandaTowerBehavior::~PropagandaTowerBehavior( )
+PropagandaTowerBehavior::~PropagandaTowerBehavior()
 {
 
 }
@@ -135,7 +135,7 @@ PropagandaTowerBehavior::~PropagandaTowerBehavior( )
 // ------------------------------------------------------------------------------------------------
 /** Module is being deleted */
 // ------------------------------------------------------------------------------------------------
-void PropagandaTowerBehavior::onDelete( )
+void PropagandaTowerBehavior::onDelete()
 {
 
 	// remove any benefits from anybody in our area of influence
@@ -146,7 +146,7 @@ void PropagandaTowerBehavior::onDelete( )
 // ------------------------------------------------------------------------------------------------
 /** Resolve */
 // ------------------------------------------------------------------------------------------------
-void PropagandaTowerBehavior::onObjectCreated( )
+void PropagandaTowerBehavior::onObjectCreated()
 {
 	const PropagandaTowerBehaviorModuleData *modData = getPropagandaTowerBehaviorModuleData();
 
@@ -171,7 +171,7 @@ void PropagandaTowerBehavior::onCapture( Player *oldOwner, Player *newOwner )
 // ------------------------------------------------------------------------------------------------
 /** The update callback */
 // ------------------------------------------------------------------------------------------------
-UpdateSleepTime PropagandaTowerBehavior::update( )
+UpdateSleepTime PropagandaTowerBehavior::update()
 {
 /// @todo srj use SLEEPY_UPDATE here
 	const PropagandaTowerBehaviorModuleData *modData = getPropagandaTowerBehaviorModuleData();
@@ -347,7 +347,7 @@ void PropagandaTowerBehavior::effectLogic( Object *obj, Bool giving,
 // ------------------------------------------------------------------------------------------------
 /** Remove all influence from objects we've given bonuses to */
 // ------------------------------------------------------------------------------------------------
-void PropagandaTowerBehavior::removeAllInfluence( )
+void PropagandaTowerBehavior::removeAllInfluence()
 {
 	ObjectTracker *o;
 
@@ -377,7 +377,7 @@ void PropagandaTowerBehavior::removeAllInfluence( )
 // ------------------------------------------------------------------------------------------------
 /** Do a scan */
 // ------------------------------------------------------------------------------------------------
-void PropagandaTowerBehavior::doScan( )
+void PropagandaTowerBehavior::doScan()
 {
 	const PropagandaTowerBehaviorModuleData *modData = getPropagandaTowerBehaviorModuleData();
 	Object *us = getObject();
@@ -591,7 +591,7 @@ void PropagandaTowerBehavior::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void PropagandaTowerBehavior::loadPostProcess( )
+void PropagandaTowerBehavior::loadPostProcess()
 {
 
 	// extend base class

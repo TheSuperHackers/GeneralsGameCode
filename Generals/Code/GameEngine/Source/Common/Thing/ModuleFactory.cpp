@@ -261,7 +261,7 @@ ModuleFactory *TheModuleFactory = nullptr;  ///< the module factory singleton
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-ModuleFactory::ModuleFactory( )
+ModuleFactory::ModuleFactory()
 {
 	m_moduleTemplateMap.clear();
 	m_moduleDataList.clear();
@@ -270,7 +270,7 @@ ModuleFactory::ModuleFactory( )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-ModuleFactory::~ModuleFactory( )
+ModuleFactory::~ModuleFactory()
 {
 	m_moduleTemplateMap.clear();
 
@@ -288,7 +288,7 @@ ModuleFactory::~ModuleFactory( )
 	* to objects or drawables as modules needs to add a template
 	* for that class here */
 //-------------------------------------------------------------------------------------------------
-void ModuleFactory::init( )
+void ModuleFactory::init()
 {
 
 	// behavior modules
@@ -665,6 +665,6 @@ void ModuleFactory::xfer( Xfer *xfer )
 }
 
 //-------------------------------------------------------------------------------------------------
-void ModuleFactory::loadPostProcess( )
+void ModuleFactory::loadPostProcess()
 {
 }

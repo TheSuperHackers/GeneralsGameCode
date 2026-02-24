@@ -69,7 +69,7 @@ public:
 	const ObjectCreationList*	m_defaultOCL;
 	OCLCreateLocType					m_createLoc;
 
-	OCLSpecialPowerModuleData( );
+	OCLSpecialPowerModuleData();
 	static void buildFieldParse(MultiIniFieldParse& p);
 
 };

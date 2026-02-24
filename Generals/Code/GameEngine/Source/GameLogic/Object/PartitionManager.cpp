@@ -1526,7 +1526,7 @@ void PartitionCell::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void PartitionCell::loadPostProcess( )
+void PartitionCell::loadPostProcess()
 {
 
 }
@@ -4719,7 +4719,7 @@ void PartitionManager::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void PartitionManager::loadPostProcess( )
+void PartitionManager::loadPostProcess()
 {
 
 }

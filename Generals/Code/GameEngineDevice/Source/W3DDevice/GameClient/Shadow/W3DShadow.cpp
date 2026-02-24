@@ -99,7 +99,7 @@ void DoShadows(RenderInfoClass & rinfo, Bool stencilPass)
 
 }
 
-W3DShadowManager::W3DShadowManager( )
+W3DShadowManager::W3DShadowManager()
 {
 	DEBUG_ASSERTCRASH(TheW3DVolumetricShadowManager == nullptr && TheW3DProjectedShadowManager == nullptr,
 		("Creating new shadow managers without deleting old ones"));
@@ -118,7 +118,7 @@ W3DShadowManager::W3DShadowManager( )
 	TheProjectedShadowManager = TheW3DProjectedShadowManager = NEW W3DProjectedShadowManager;
 }
 
-W3DShadowManager::~W3DShadowManager( )
+W3DShadowManager::~W3DShadowManager()
 {
 	delete TheW3DVolumetricShadowManager;
 	TheW3DVolumetricShadowManager = nullptr;
@@ -128,7 +128,7 @@ W3DShadowManager::~W3DShadowManager( )
 
 /** Do one-time initilalization of shadow systems that need to be
 active for full duration of game*/
-Bool W3DShadowManager::init( )
+Bool W3DShadowManager::init()
 {
 	Bool result=TRUE;
 
@@ -148,7 +148,7 @@ Bool W3DShadowManager::init( )
 
 /** Do per-map reset.  This frees up shadows from all objects since
 they may not exist on the next map*/
-void W3DShadowManager::Reset( )
+void W3DShadowManager::Reset()
 {
 
 	if (TheW3DVolumetricShadowManager)

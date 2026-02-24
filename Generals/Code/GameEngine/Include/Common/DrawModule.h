@@ -178,7 +178,7 @@ public:
 	virtual Bool getProjectileLaunchOffset(const ModelConditionFlags& condition, WeaponSlotType wslot, Int specificBarrelToUse, Matrix3D* launchPos, WhichTurretType tur, Coord3D* turretRotPos, Coord3D* turretPitchPos) const = 0;
 	virtual void updateProjectileClipStatus( UnsignedInt shotsRemaining, UnsignedInt maxShots, WeaponSlotType slot ) = 0; ///< This will do the show/hide work if ProjectileBoneFeedbackEnabled is set.
 	virtual void updateDrawModuleSupplyStatus( Int maxSupply, Int currentSupply ) = 0; ///< This will do visual feedback on Supplies carried
-	virtual void notifyDrawModuleDependencyCleared( ) = 0; ///< if you were waiting for something before you drew, it's ready now
+	virtual void notifyDrawModuleDependencyCleared() = 0; ///< if you were waiting for something before you drew, it's ready now
 
 	virtual void setHidden(Bool h) = 0;
 	virtual void replaceModelConditionState(const ModelConditionFlags& a) = 0;
@@ -202,7 +202,7 @@ public:
 		"in between", it is included in the completion time.
 	*/
 	virtual void setAnimationCompletionTime(UnsignedInt numFrames) = 0;
-	virtual Bool updateBonesForClientParticleSystems( ) = 0;///< this will reposition particle systems on the fly ML
+	virtual Bool updateBonesForClientParticleSystems() = 0;///< this will reposition particle systems on the fly ML
 
 	/**
 	  This call is used to pause or resume an animation.

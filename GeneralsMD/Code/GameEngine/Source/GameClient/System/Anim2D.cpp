@@ -63,7 +63,7 @@ Anim2DTemplate::Anim2DTemplate( AsciiString name )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-Anim2DTemplate::~Anim2DTemplate( )
+Anim2DTemplate::~Anim2DTemplate()
 {
 
 	delete [] m_images;
@@ -331,7 +331,7 @@ Anim2D::Anim2D( Anim2DTemplate *animTemplate, Anim2DCollection *collectionSystem
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-Anim2D::~Anim2D( )
+Anim2D::~Anim2D()
 {
 
 	// if we were registered with a system, un-register ourselves
@@ -370,7 +370,7 @@ void Anim2D::setCurrentFrame( UnsignedShort frame )
 // ------------------------------------------------------------------------------------------------
 /** Randomize the current frame */
 // ------------------------------------------------------------------------------------------------
-void Anim2D::randomizeCurrentFrame( )
+void Anim2D::randomizeCurrentFrame()
 {
 
 	// sanity
@@ -384,7 +384,7 @@ void Anim2D::randomizeCurrentFrame( )
 // ------------------------------------------------------------------------------------------------
 /** Reset this animation instance to the "start" of the animation */
 // ------------------------------------------------------------------------------------------------
-void Anim2D::reset( )
+void Anim2D::reset()
 {
 
 	// sanity
@@ -421,7 +421,7 @@ void Anim2D::reset( )
 /** This is called after we are drawn ... if sufficient time has passed since our last
 	* frame update we will update our current frame */
 // ------------------------------------------------------------------------------------------------
-void Anim2D::tryNextFrame( )
+void Anim2D::tryNextFrame()
 {
 
 	// sanity
@@ -578,7 +578,7 @@ void Anim2D::clearStatus( UnsignedByte statusBits )
 // ------------------------------------------------------------------------------------------------
 /** Return the "natural" width of the image for our current frame */
 // ------------------------------------------------------------------------------------------------
-UnsignedInt Anim2D::getCurrentFrameWidth( ) const
+UnsignedInt Anim2D::getCurrentFrameWidth() const
 {
 	const Image *currentFrameImage = m_template->getFrame( m_currentFrame );
 
@@ -592,7 +592,7 @@ UnsignedInt Anim2D::getCurrentFrameWidth( ) const
 // ------------------------------------------------------------------------------------------------
 /** Return the "natural" height of the image for our current frame */
 // ------------------------------------------------------------------------------------------------
-UnsignedInt Anim2D::getCurrentFrameHeight( ) const
+UnsignedInt Anim2D::getCurrentFrameHeight() const
 {
 	const Image *currentFrameImage = m_template->getFrame( m_currentFrame );
 
@@ -703,7 +703,7 @@ void Anim2D::xfer( Xfer *xfer )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-Anim2DCollection::Anim2DCollection( )
+Anim2DCollection::Anim2DCollection()
 {
 
 	m_templateList = nullptr;
@@ -712,7 +712,7 @@ Anim2DCollection::Anim2DCollection( )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-Anim2DCollection::~Anim2DCollection( )
+Anim2DCollection::~Anim2DCollection()
 {
 
 	// there should not be any animation instances registered with us since we're being destroyed
@@ -739,7 +739,7 @@ Anim2DCollection::~Anim2DCollection( )
 // ------------------------------------------------------------------------------------------------
 /** Initialize 2D animation collection */
 // ------------------------------------------------------------------------------------------------
-void Anim2DCollection::init( )
+void Anim2DCollection::init()
 {
 	INI ini;
 
@@ -750,7 +750,7 @@ void Anim2DCollection::init( )
 // ------------------------------------------------------------------------------------------------
 /** System update phase */
 // ------------------------------------------------------------------------------------------------
-void Anim2DCollection::update( )
+void Anim2DCollection::update()
 {
 	Anim2D *anim;
 

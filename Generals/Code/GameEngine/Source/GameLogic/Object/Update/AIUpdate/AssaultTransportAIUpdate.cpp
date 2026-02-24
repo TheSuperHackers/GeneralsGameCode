@@ -75,7 +75,7 @@ void AssaultTransportAIUpdate::reset()
 }
 
 //-------------------------------------------------------------------------------------------------
-AssaultTransportAIUpdate::~AssaultTransportAIUpdate( )
+AssaultTransportAIUpdate::~AssaultTransportAIUpdate()
 {
 }
 
@@ -142,7 +142,7 @@ UpdateSleepTime calcSleepTime()
 }
 
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime AssaultTransportAIUpdate::update( )
+UpdateSleepTime AssaultTransportAIUpdate::update()
 {
 	Object *transport = getObject();
 	//const AssaultTransportAIUpdateModuleData *data = getAssaultTransportAIUpdateModuleData();
@@ -526,7 +526,7 @@ void AssaultTransportAIUpdate::xfer( Xfer *xfer )
 //-------------------------------------------------------------------------------------------------
 /** Load post process */
 //-------------------------------------------------------------------------------------------------
-void AssaultTransportAIUpdate::loadPostProcess( )
+void AssaultTransportAIUpdate::loadPostProcess()
 {
  // extend base class
 	AIUpdateInterface::loadPostProcess();

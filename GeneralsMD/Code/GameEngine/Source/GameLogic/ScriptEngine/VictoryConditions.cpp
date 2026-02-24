@@ -77,21 +77,21 @@ class VictoryConditions : public VictoryConditionsInterface
 public:
 	VictoryConditions();
 
-	void init( );
-	void reset( );
-	void update( );
+	void init();
+	void reset();
+	void update();
 
 	Bool hasAchievedVictory(Player *player);					///< has a specific player and his allies won?
 	Bool hasBeenDefeated(Player *player);							///< has a specific player and his allies lost?
 	Bool hasSinglePlayerBeenDefeated(Player *player);	///< has a specific player lost?
 
-	void cachePlayerPtrs( );											///< players have been created - cache the ones of interest
+	void cachePlayerPtrs();											///< players have been created - cache the ones of interest
 
-	Bool isLocalAlliedVictory( );								///< convenience function
-	Bool isLocalAlliedDefeat( );									///< convenience function
-	Bool isLocalDefeat( );												///< convenience function
-	Bool amIObserver( ) { return m_isObserver;} 	///< Am I an observer?( need this for scripts )
-	virtual UnsignedInt getEndFrame( ) { return m_endFrame; }	///< on which frame was the game effectively over?
+	Bool isLocalAlliedVictory();								///< convenience function
+	Bool isLocalAlliedDefeat();									///< convenience function
+	Bool isLocalDefeat();												///< convenience function
+	Bool amIObserver() { return m_isObserver;} 	///< Am I an observer?( need this for scripts )
+	virtual UnsignedInt getEndFrame() { return m_endFrame; }	///< on which frame was the game effectively over?
 private:
 	Player* findFirstUndefeatedPlayer(); ///< Find the first player that has not been defeated.
 	void markAllianceVictorious(Player* victoriousPlayer); ///< Mark the victorious player and his allies as victorious.
@@ -108,7 +108,7 @@ private:
 };
 
 //-------------------------------------------------------------------------------------------------
-VictoryConditionsInterface * createVictoryConditions( )
+VictoryConditionsInterface * createVictoryConditions()
 {
 	// only one created, so no MemoryPool usage
 	return NEW VictoryConditions;
@@ -121,13 +121,13 @@ VictoryConditions::VictoryConditions()
 }
 
 //-------------------------------------------------------------------------------------------------
-void VictoryConditions::init( )
+void VictoryConditions::init()
 {
 	reset();
 }
 
 //-------------------------------------------------------------------------------------------------
-void VictoryConditions::reset( )
+void VictoryConditions::reset()
 {
 	for (Int i=0; i<MAX_PLAYER_COUNT; ++i)
 	{
@@ -175,7 +175,7 @@ Bool VictoryConditions::multipleAlliancesExist()
 }
 
 //-------------------------------------------------------------------------------------------------
-void VictoryConditions::update( )
+void VictoryConditions::update()
 {
 	if (!TheRecorder->isMultiplayer() || (m_localSlotNum < 0 && !m_isObserver))
 		return;
@@ -359,7 +359,7 @@ Bool VictoryConditions::hasSinglePlayerBeenDefeated(Player *player)
 }
 
 //-------------------------------------------------------------------------------------------------
-void VictoryConditions::cachePlayerPtrs( )
+void VictoryConditions::cachePlayerPtrs()
 {
 	if (!TheRecorder->isMultiplayer())
 		return;
@@ -392,7 +392,7 @@ void VictoryConditions::cachePlayerPtrs( )
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool VictoryConditions::isLocalAlliedVictory( )
+Bool VictoryConditions::isLocalAlliedVictory()
 {
 	if (m_isObserver)
 		return false;
@@ -401,7 +401,7 @@ Bool VictoryConditions::isLocalAlliedVictory( )
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool VictoryConditions::isLocalAlliedDefeat( )
+Bool VictoryConditions::isLocalAlliedDefeat()
 {
 	if (m_isObserver)
 		return m_singleAllianceRemaining;
@@ -410,7 +410,7 @@ Bool VictoryConditions::isLocalAlliedDefeat( )
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool VictoryConditions::isLocalDefeat( )
+Bool VictoryConditions::isLocalDefeat()
 {
 	if (m_isObserver)
 		return FALSE;

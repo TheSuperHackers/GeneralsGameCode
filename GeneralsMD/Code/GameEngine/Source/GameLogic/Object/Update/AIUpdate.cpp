@@ -631,7 +631,7 @@ void AIUpdateInterface::onObjectCreated()
 }
 
 //-------------------------------------------------------------------------------------------------
-AIUpdateInterface::~AIUpdateInterface( )
+AIUpdateInterface::~AIUpdateInterface()
 {
 	m_locomotorSet.clear();
 	m_curLocomotor = nullptr;
@@ -847,7 +847,7 @@ Bool AIUpdateInterface::chooseLocomotorSetExplicit(LocomotorSetType wst)
 }
 
 //-------------------------------------------------------------------------------------------------
-void AIUpdateInterface::chooseGoodLocomotorFromCurrentSet( )
+void AIUpdateInterface::chooseGoodLocomotorFromCurrentSet()
 {
 	Locomotor* prevLoco = m_curLocomotor;
 
@@ -999,7 +999,7 @@ void AIUpdateInterface::friend_notifyStateMachineChanged()
  * The "main loop" of the AI subsystem
  */
 DECLARE_PERF_TIMER(AIUpdateInterface_update)
-UpdateSleepTime AIUpdateInterface::update( )
+UpdateSleepTime AIUpdateInterface::update()
 {
 	//DEBUG_LOG(("AIUpdateInterface frame %d: %08lx",TheGameLogic->getFrame(),getObject()));
 
@@ -1167,7 +1167,7 @@ Bool AIUpdateInterface::queueWaypoint( const Coord3D *pos )
 /**
  * Start moving along the waypoint path in the queue
  */
-void AIUpdateInterface::executeWaypointQueue( )
+void AIUpdateInterface::executeWaypointQueue()
 {
 	// the dead don't listen very well
 	if (isAiInDeadState())
@@ -1183,7 +1183,7 @@ void AIUpdateInterface::executeWaypointQueue( )
 }
 
 //-------------------------------------------------------------------------------------------------
-void AIUpdateInterface::clearWaypointQueue( )
+void AIUpdateInterface::clearWaypointQueue()
 {
 	m_waypointCount = 0;
 	m_executingWaypointQueue = FALSE;
@@ -1585,7 +1585,7 @@ Bool AIUpdateInterface::processCollision(PhysicsBehavior *physics, Object *other
 /**
  * See if we can do a quick path without pathfinding.
  */
-Bool AIUpdateInterface::canComputeQuickPath( )
+Bool AIUpdateInterface::canComputeQuickPath()
 {
 	/* Basically, if a unit is moving through the air, we can quick path.  jba. */
 	Bool landBound = FALSE;
@@ -2015,7 +2015,7 @@ Bool AIUpdateInterface::computeAttackPath( PathfindServicesInterface *pathServic
 /**
  * Destroy the current path, and set it to null
  */
-void AIUpdateInterface::destroyPath( )
+void AIUpdateInterface::destroyPath()
 {
 	// destroy previous path
 	deleteInstance(m_path);
@@ -2120,7 +2120,7 @@ DECLARE_PERF_TIMER(doLocomotor)
 /**
  * Compute drive forces
  */
-UpdateSleepTime AIUpdateInterface::doLocomotor( )
+UpdateSleepTime AIUpdateInterface::doLocomotor()
 {
 	USE_PERF_TIMER(doLocomotor)
 
@@ -2529,7 +2529,7 @@ Real AIUpdateInterface::getLocomotorDistanceToGoal()
 /**
  * Catch up with the rest of the team.
  */
-void AIUpdateInterface::joinTeam( )
+void AIUpdateInterface::joinTeam()
 {
 	// the dead don't listen very well
 	if (isAiInDeadState())
@@ -4229,7 +4229,7 @@ void AIUpdateInterface::setCurrentVictim( const Object *victim )
 /**
  * Who is our current victim?
  */
-Object *AIUpdateInterface::getCurrentVictim( ) const
+Object *AIUpdateInterface::getCurrentVictim() const
 {
 	if (m_currentVictimID != INVALID_ID)
 		return TheGameLogic->findObjectByID( m_currentVictimID );
@@ -4238,7 +4238,7 @@ Object *AIUpdateInterface::getCurrentVictim( ) const
 }
 
 // if we are attacking a position (and NOT an object), return it. otherwise return null.
-const Coord3D *AIUpdateInterface::getCurrentVictimPos( ) const
+const Coord3D *AIUpdateInterface::getCurrentVictimPos() const
 {
 	if (getObject()->testStatus(OBJECT_STATUS_IS_ATTACKING))
 	{
@@ -4263,7 +4263,7 @@ void AIUpdateInterface::setAttitude( AttitudeType tude )
 /**
  * Get the current behavior modifier state
  */
-AttitudeType AIUpdateInterface::getAttitude( ) const
+AttitudeType AIUpdateInterface::getAttitude() const
 {
 	return m_attitude;
 }
@@ -4289,7 +4289,7 @@ void AIUpdateInterface::ignoreObstacleID( ObjectID id )
 }
 
 //-------------------------------------------------------------------------------------------------
-ObjectID AIUpdateInterface::getIgnoredObstacleID( ) const
+ObjectID AIUpdateInterface::getIgnoredObstacleID() const
 {
 	return m_ignoreObstacleID;
 }
@@ -4314,7 +4314,7 @@ void AIUpdateInterface::setLastCommandSource( CommandSourceType source )
 }
 
 //-------------------------------------------------------------------------------------------------
-UnsignedInt AIUpdateInterface::getMoodMatrixValue( ) const
+UnsignedInt AIUpdateInterface::getMoodMatrixValue() const
 {
 	UnsignedInt returnVal = 0;
 	// seems like a weird way to get my controlling object, but I don't see another
@@ -4455,7 +4455,7 @@ UnsignedInt AIUpdateInterface::getMoodMatrixActionAdjustment( MoodMatrixAction a
 }
 
 //----------------------------------------------------------------------------------------------
-void AIUpdateInterface::wakeUpAndAttemptToTarget( )
+void AIUpdateInterface::wakeUpAndAttemptToTarget()
 {
 	if (!isIdle()) {
 		return;
@@ -5280,7 +5280,7 @@ void AIUpdateInterface::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void AIUpdateInterface::loadPostProcess( )
+void AIUpdateInterface::loadPostProcess()
 {
 	UpdateModule::loadPostProcess();
 

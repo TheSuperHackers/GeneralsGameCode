@@ -108,14 +108,14 @@ FirestormDynamicGeometryInfoUpdate::FirestormDynamicGeometryInfoUpdate( Thing *t
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-FirestormDynamicGeometryInfoUpdate::~FirestormDynamicGeometryInfoUpdate( )
+FirestormDynamicGeometryInfoUpdate::~FirestormDynamicGeometryInfoUpdate()
 {
 }
 
 //-------------------------------------------------------------------------------------------------
 /** The update callback. */
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime FirestormDynamicGeometryInfoUpdate::update( )
+UpdateSleepTime FirestormDynamicGeometryInfoUpdate::update()
 {
 
 	// extend functionality
@@ -222,7 +222,7 @@ UpdateSleepTime FirestormDynamicGeometryInfoUpdate::update( )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void FirestormDynamicGeometryInfoUpdate::doDamageScan( )
+void FirestormDynamicGeometryInfoUpdate::doDamageScan()
 {
 
 	// get the module data
@@ -310,7 +310,7 @@ void FirestormDynamicGeometryInfoUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void FirestormDynamicGeometryInfoUpdate::loadPostProcess( )
+void FirestormDynamicGeometryInfoUpdate::loadPostProcess()
 {
 
 	// extend base class

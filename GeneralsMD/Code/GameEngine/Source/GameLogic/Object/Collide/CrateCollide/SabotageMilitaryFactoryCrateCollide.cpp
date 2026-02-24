@@ -70,7 +70,7 @@ SabotageMilitaryFactoryCrateCollide::SabotageMilitaryFactoryCrateCollide( Thing 
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-SabotageMilitaryFactoryCrateCollide::~SabotageMilitaryFactoryCrateCollide( )
+SabotageMilitaryFactoryCrateCollide::~SabotageMilitaryFactoryCrateCollide()
 {
 }
 
@@ -182,7 +182,7 @@ void SabotageMilitaryFactoryCrateCollide::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void SabotageMilitaryFactoryCrateCollide::loadPostProcess( )
+void SabotageMilitaryFactoryCrateCollide::loadPostProcess()
 {
 
 	// extend base class

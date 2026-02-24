@@ -873,7 +873,7 @@ void StateMachine::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void StateMachine::loadPostProcess( )
+void StateMachine::loadPostProcess()
 {
 
 }

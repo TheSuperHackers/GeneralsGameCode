@@ -66,28 +66,28 @@ class TerrainRoadType : public MemoryPoolObject
 
 public:
 
-	TerrainRoadType( );
+	TerrainRoadType();
 	// destructor prototypes defined by memory pool object
 
-	AsciiString getName( ) { return m_name; }
-	AsciiString getTexture( ) { return m_texture; }
-	Bool isBridge( ) { return m_isBridge; }
-	UnsignedInt getID( ) { return m_id; }
+	AsciiString getName() { return m_name; }
+	AsciiString getTexture() { return m_texture; }
+	Bool isBridge() { return m_isBridge; }
+	UnsignedInt getID() { return m_id; }
 
-	Real getRoadWidth( ) { return m_roadWidth; }
-	Real getRoadWidthInTexture( ) { return m_roadWidthInTexture; }
+	Real getRoadWidth() { return m_roadWidth; }
+	Real getRoadWidthInTexture() { return m_roadWidthInTexture; }
 
-	Real getBridgeScale( ) { return m_bridgeScale; }
-	AsciiString getScaffoldObjectName( ) { return m_scaffoldObjectName; }
-	AsciiString getScaffoldSupportObjectName( ) { return m_scaffoldSupportObjectName; }
-	RGBColor getRadarColor( ) { return m_radarColor; }
-	AsciiString getBridgeModel( ) { return m_bridgeModelName; }
-	AsciiString getBridgeModelNameDamaged( ) { return m_bridgeModelNameDamaged; }
-	AsciiString getBridgeModelNameReallyDamaged( ) { return m_bridgeModelNameReallyDamaged; }
-	AsciiString getBridgeModelNameBroken( ) { return m_bridgeModelNameBroken; }
-	AsciiString getTextureDamaged( ) { return m_textureDamaged; }
-	AsciiString getTextureReallyDamaged( ) { return m_textureReallyDamaged; }
-	AsciiString getTextureBroken( ) { return m_textureBroken; }
+	Real getBridgeScale() { return m_bridgeScale; }
+	AsciiString getScaffoldObjectName() { return m_scaffoldObjectName; }
+	AsciiString getScaffoldSupportObjectName() { return m_scaffoldSupportObjectName; }
+	RGBColor getRadarColor() { return m_radarColor; }
+	AsciiString getBridgeModel() { return m_bridgeModelName; }
+	AsciiString getBridgeModelNameDamaged() { return m_bridgeModelNameDamaged; }
+	AsciiString getBridgeModelNameReallyDamaged() { return m_bridgeModelNameReallyDamaged; }
+	AsciiString getBridgeModelNameBroken() { return m_bridgeModelNameBroken; }
+	AsciiString getTextureDamaged() { return m_textureDamaged; }
+	AsciiString getTextureReallyDamaged() { return m_textureReallyDamaged; }
+	AsciiString getTextureBroken() { return m_textureBroken; }
 	AsciiString getTowerObjectName( BridgeTowerType tower ) { return m_towerObjectName[ tower ]; }
 	AsciiString getDamageToSoundString( BodyDamageType state ) { return m_damageToSoundString[ state ]; }
 	AsciiString getDamageToOCLString( BodyDamageType state, Int index ) { return m_damageToOCLString[ state ][ index ]; }
@@ -95,8 +95,8 @@ public:
 	AsciiString getRepairedToSoundString( BodyDamageType state ) { return m_repairedToSoundString[ state ]; }
 	AsciiString getRepairedToOCLString( BodyDamageType state, Int index ) { return m_repairedToOCLString[ state ][ index ]; }
 	AsciiString getRepairedToFXString( BodyDamageType state, Int index ) { return m_repairedToFXString[ state ][ index ]; }
-	Real getTransitionEffectsHeight( ) { return m_transitionEffectsHeight; }
-	Int getNumFXPerType( ) { return m_numFXPerType; }
+	Real getTransitionEffectsHeight() { return m_transitionEffectsHeight; }
+	Int getNumFXPerType() { return m_numFXPerType; }
 
 	// friend access methods to be used by the road collection only!
 	void friend_setName( AsciiString name ) { m_name = name; }
@@ -104,7 +104,7 @@ public:
 	void friend_setBridge( Bool isBridge ) { m_isBridge = isBridge; }
 	void friend_setID( UnsignedInt id ) { m_id = id; }
 	void friend_setNext( TerrainRoadType *next ) { m_next = next; }
-	TerrainRoadType *friend_getNext( ) { return m_next; }
+	TerrainRoadType *friend_getNext() { return m_next; }
 	void friend_setRoadWidth( Real width ) { m_roadWidth = width; }
 	void friend_setRoadWidthInTexture( Real width ) { m_roadWidthInTexture = width; }
 	void friend_setBridgeScale( Real scale ) { m_bridgeScale = scale; }
@@ -128,8 +128,8 @@ public:
 	void friend_setNumFXPerType( Int num ) { m_numFXPerType = num; }
 
 	/// get the parsing table for INI
-	const FieldParse *getRoadFieldParse( ) { return m_terrainRoadFieldParseTable; }
-	const FieldParse *getBridgeFieldParse( ) { return m_terrainBridgeFieldParseTable; }
+	const FieldParse *getRoadFieldParse() { return m_terrainRoadFieldParseTable; }
+	const FieldParse *getBridgeFieldParse() { return m_terrainBridgeFieldParseTable; }
 
 protected:
 
@@ -198,8 +198,8 @@ class TerrainRoadCollection : public SubsystemInterface
 
 public:
 
-	TerrainRoadCollection( );
-	~TerrainRoadCollection( );
+	TerrainRoadCollection();
+	~TerrainRoadCollection();
 
 	void init() { }
 	void reset() { }
@@ -207,12 +207,12 @@ public:
 
 	TerrainRoadType *findRoad( AsciiString name );		///< find road with matching name
 	TerrainRoadType *newRoad( AsciiString name );			///< allocate new road, assign name, and link to list
-	TerrainRoadType *firstRoad( ) { return m_roadList; }			///< return first road
+	TerrainRoadType *firstRoad() { return m_roadList; }			///< return first road
 	TerrainRoadType *nextRoad( TerrainRoadType *road );						///< get next road
 
 	TerrainRoadType *findBridge( AsciiString name );	///< find bridge with matching name
 	TerrainRoadType *newBridge( AsciiString name );		///< allocate new bridge, assign name, and link
-	TerrainRoadType *firstBridge( ) { return m_bridgeList; } ///< return first bridge
+	TerrainRoadType *firstBridge() { return m_bridgeList; } ///< return first bridge
 	TerrainRoadType *nextBridge( TerrainRoadType *bridge );				///< get next bridge
 
 	TerrainRoadType *findRoadOrBridge( AsciiString name );				///< search roads and bridges

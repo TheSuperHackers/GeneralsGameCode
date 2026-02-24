@@ -99,13 +99,13 @@ HelixContain::HelixContain( Thing *thing, const ModuleData *moduleData ) :
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-HelixContain::~HelixContain( )
+HelixContain::~HelixContain()
 {
 
 }
 
 
-void HelixContain::onObjectCreated( )
+void HelixContain::onObjectCreated()
 {
   HelixContain::createPayload();
 }
@@ -128,7 +128,7 @@ UpdateSleepTime HelixContain::update()
 }
 
 
-void HelixContain::redeployOccupants( )
+void HelixContain::redeployOccupants()
 {
   Coord3D firePos = *getObject()->getPosition();
   firePos.z += 8;
@@ -205,7 +205,7 @@ void HelixContain::onBodyDamageStateChange( const DamageInfo* damageInfo,
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-Object* HelixContain::getPortableStructure( )
+Object* HelixContain::getPortableStructure()
 {
   return TheGameLogic->findObjectByID( m_portableStructureID );
 }
@@ -223,13 +223,13 @@ void HelixContain::onDie( const DamageInfo *damageInfo )
 }
 
 //-------------------------------------------------------------------------------------------------
-void HelixContain::onDelete( )
+void HelixContain::onDelete()
 {
   Object *portable = getPortableStructure();
   if ( portable )
     TheGameLogic->destroyObject( portable );
 
-  TransportContain::onDelete( );
+  TransportContain::onDelete();
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -467,7 +467,7 @@ void HelixContain::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void HelixContain::loadPostProcess( )
+void HelixContain::loadPostProcess()
 {
 
 	// extend base class

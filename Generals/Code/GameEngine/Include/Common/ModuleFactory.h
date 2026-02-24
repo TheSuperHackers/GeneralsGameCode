@@ -67,12 +67,12 @@ class ModuleFactory : public SubsystemInterface, public Snapshot
 
 public:
 
-	ModuleFactory( );
-	virtual ~ModuleFactory( );
+	ModuleFactory();
+	virtual ~ModuleFactory();
 
-	virtual void init( );
-	virtual void reset( ) { }					///< We don't reset during the lifetime of the app
-	virtual void update( ) { }					///< As of now, we don't have a need for an update
+	virtual void init();
+	virtual void reset() { }					///< We don't reset during the lifetime of the app
+	virtual void update() { }					///< As of now, we don't have a need for an update
 
 	Module *newModule( Thing *thing, const AsciiString& name, const ModuleData* data, ModuleType type );  ///< allocate a new module
 
@@ -83,7 +83,7 @@ public:
 
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( );
+	virtual void loadPostProcess();
 
 protected:
 

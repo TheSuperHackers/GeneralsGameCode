@@ -44,7 +44,7 @@ DestroyDie::DestroyDie( Thing *thing, const ModuleData* moduleData ) : DieModule
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-DestroyDie::~DestroyDie( )
+DestroyDie::~DestroyDie()
 {
 }
 
@@ -90,7 +90,7 @@ void DestroyDie::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void DestroyDie::loadPostProcess( )
+void DestroyDie::loadPostProcess()
 {
 
 	// extend base class

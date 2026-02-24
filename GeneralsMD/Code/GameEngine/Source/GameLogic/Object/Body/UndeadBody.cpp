@@ -66,7 +66,7 @@ UndeadBody::UndeadBody( Thing *thing, const ModuleData* moduleData )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UndeadBody::~UndeadBody( )
+UndeadBody::~UndeadBody()
 {
 
 }
@@ -184,7 +184,7 @@ void UndeadBody::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void UndeadBody::loadPostProcess( )
+void UndeadBody::loadPostProcess()
 {
 
 	// extend base class

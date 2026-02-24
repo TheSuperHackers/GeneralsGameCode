@@ -117,7 +117,7 @@ void PartitionSolver::solve()
 	}
 }
 
-const SolutionVec& PartitionSolver::getSolution( ) const
+const SolutionVec& PartitionSolver::getSolution() const
 {
 	return m_bestSolution;
 }

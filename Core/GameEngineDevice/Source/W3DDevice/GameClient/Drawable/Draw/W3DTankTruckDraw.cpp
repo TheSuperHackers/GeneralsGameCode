@@ -136,7 +136,7 @@ W3DTankTruckDraw::~W3DTankTruckDraw()
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void W3DTankTruckDraw::stopMoveDebris( )
+void W3DTankTruckDraw::stopMoveDebris()
 {
 	for (size_t i = 0; i < ARRAY_SIZE(m_treadDebrisIDs); ++i)
 	{
@@ -182,7 +182,7 @@ void W3DTankTruckDraw::setFullyObscuredByShroud(Bool fullyObscured)
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void W3DTankTruckDraw::createTreadEmitters( )
+void W3DTankTruckDraw::createTreadEmitters()
 {
 	if (getW3DTankTruckDrawModuleData())
 	{
@@ -212,7 +212,7 @@ void W3DTankTruckDraw::createTreadEmitters( )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void W3DTankTruckDraw::tossTreadEmitters( )
+void W3DTankTruckDraw::tossTreadEmitters()
 {
 	for (size_t i = 0; i < ARRAY_SIZE(m_treadDebrisIDs); ++i)
 	{
@@ -227,7 +227,7 @@ void W3DTankTruckDraw::tossTreadEmitters( )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void W3DTankTruckDraw::createWheelEmitters( )
+void W3DTankTruckDraw::createWheelEmitters()
 {
 	if (getDrawable()->isDrawableEffectivelyHidden())
 		return;
@@ -298,7 +298,7 @@ void W3DTankTruckDraw::enableWheelEmitters( Bool enable )
 	}
 }
 //-------------------------------------------------------------------------------------------------
-void W3DTankTruckDraw::updateBones( ) {
+void W3DTankTruckDraw::updateBones() {
 	if( getW3DTankTruckDrawModuleData() )
 	{
 		//Front tires
@@ -752,7 +752,7 @@ void W3DTankTruckDraw::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void W3DTankTruckDraw::loadPostProcess( )
+void W3DTankTruckDraw::loadPostProcess()
 {
 
 	// extend base class

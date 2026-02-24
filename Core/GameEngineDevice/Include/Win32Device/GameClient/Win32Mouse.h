@@ -62,12 +62,12 @@ class Win32Mouse : public Mouse
 
 public:
 
-	Win32Mouse( );
-	virtual ~Win32Mouse( );
+	Win32Mouse();
+	virtual ~Win32Mouse();
 
-	virtual void init( );		///< init mouse, extend this functionality, do not replace
-	virtual void reset( );		///< reset the system
-	virtual void update( );	///< update
+	virtual void init();		///< init mouse, extend this functionality, do not replace
+	virtual void reset();		///< reset the system
+	virtual void update();	///< update
 	virtual void initCursorResources();	///< load windows resources needed for 2d cursors.
 
 	virtual void setCursor( MouseCursor cursor );		///< set mouse cursor
@@ -82,8 +82,8 @@ public:
 
 protected:
 
-	virtual void capture( ); ///< capture the mouse
-	virtual void releaseCapture( ); ///< release mouse capture
+	virtual void capture(); ///< capture the mouse
+	virtual void releaseCapture(); ///< release mouse capture
 
 	/// get the next event available in the buffer
 	virtual UnsignedByte getMouseEvent( MouseIO *result, Bool flush );

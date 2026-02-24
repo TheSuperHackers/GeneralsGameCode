@@ -35,7 +35,7 @@
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-ObjectRepulsorHelper::~ObjectRepulsorHelper( )
+ObjectRepulsorHelper::~ObjectRepulsorHelper()
 {
 
 }
@@ -83,7 +83,7 @@ void ObjectRepulsorHelper::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void ObjectRepulsorHelper::loadPostProcess( )
+void ObjectRepulsorHelper::loadPostProcess()
 {
 
 	// object helper base class

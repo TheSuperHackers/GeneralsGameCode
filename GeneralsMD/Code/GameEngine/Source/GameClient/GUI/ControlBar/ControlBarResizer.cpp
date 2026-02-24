@@ -78,11 +78,11 @@ ResizerWindow::ResizerWindow()
 	m_altPos.x = m_altPos.y = 0;
 }
 
-ControlBarResizer::ControlBarResizer( )
+ControlBarResizer::ControlBarResizer()
 {
 
 }
-ControlBarResizer::~ControlBarResizer( )
+ControlBarResizer::~ControlBarResizer()
 {
 	ResizerWindowList::iterator it = m_resizerWindowsList.begin();
 	while (it != m_resizerWindowsList.end())
@@ -99,7 +99,7 @@ ControlBarResizer::~ControlBarResizer( )
 	m_resizerWindowsList.clear();
 }
 
-void ControlBarResizer::init( )
+void ControlBarResizer::init()
 {
 	INI ini;
 	// Read from INI all the ControlBarSchemes
@@ -151,7 +151,7 @@ ResizerWindow *ControlBarResizer::newResizerWindow( AsciiString name )
 	m_resizerWindowsList.push_back(newRwin);
 	return newRwin;
 }
-void ControlBarResizer::sizeWindowsDefault( )
+void ControlBarResizer::sizeWindowsDefault()
 {
 	ResizerWindowList::iterator it = m_resizerWindowsList.begin();
 	GameWindow *win = nullptr;
@@ -176,7 +176,7 @@ void ControlBarResizer::sizeWindowsDefault( )
 		it ++;
 	}
 }
-void ControlBarResizer::sizeWindowsAlt( )
+void ControlBarResizer::sizeWindowsAlt()
 {
 	ResizerWindowList::iterator it = m_resizerWindowsList.begin();
 	GameWindow *win = nullptr;

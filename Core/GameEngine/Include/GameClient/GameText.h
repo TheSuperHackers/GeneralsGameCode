@@ -100,7 +100,7 @@ class GameTextInterface : public SubsystemInterface
 
 
 extern GameTextInterface *TheGameText;
-extern GameTextInterface* CreateGameTextInterface( );
+extern GameTextInterface* CreateGameTextInterface();
 
 //----------------------------------------------------------------------------
 //           Inlining

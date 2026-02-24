@@ -205,9 +205,9 @@ public:
 	TerrainVisual();
 	virtual ~TerrainVisual();
 
-	virtual void init( );
-	virtual void reset( );
-	virtual void update( );
+	virtual void init();
+	virtual void reset();
+	virtual void update();
 
 	virtual Bool load( AsciiString filename );
 
@@ -285,8 +285,8 @@ public:
   virtual void updateSeismicSimulations( void ) = 0; /// walk the SeismicSimulationList and, well, do it.
   virtual void addSeismicSimulation( const SeismicSimulationNode& sim ) = 0;
 #endif
-  virtual WorldHeightMap* getLogicHeightMap( ) {return nullptr;};
-  virtual WorldHeightMap* getClientHeightMap( ) {return nullptr;};
+  virtual WorldHeightMap* getLogicHeightMap() {return nullptr;};
+  virtual WorldHeightMap* getClientHeightMap() {return nullptr;};
   ////////////////////////////////////////////////////
   ////////////////////////////////////////////////////
   ////////////////////////////////////////////////////
@@ -300,7 +300,7 @@ protected:
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( );
+	virtual void loadPostProcess();
 
 	AsciiString m_filenameString;							///< file with terrain data
 

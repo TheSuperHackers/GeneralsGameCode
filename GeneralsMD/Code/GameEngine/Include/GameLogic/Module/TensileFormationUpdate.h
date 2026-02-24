@@ -41,7 +41,7 @@ class TensileFormationUpdateModuleData: public UpdateModuleData
 
 public:
 
-	TensileFormationUpdateModuleData( );
+	TensileFormationUpdateModuleData();
 
 	static void buildFieldParse(MultiIniFieldParse& p);
 
@@ -68,7 +68,7 @@ public:
 protected:
 
 	void propagateDislodgement( Bool enabled );
-	void initLinks( );
+	void initLinks();
 
 	struct TensileLink
 	{

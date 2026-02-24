@@ -70,7 +70,7 @@ AssistedTargetingUpdate::AssistedTargetingUpdate( Thing *thing, const ModuleData
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-AssistedTargetingUpdate::~AssistedTargetingUpdate( )
+AssistedTargetingUpdate::~AssistedTargetingUpdate()
 {
 }
 
@@ -135,7 +135,7 @@ void AssistedTargetingUpdate::makeFeedbackLaser( const ThingTemplate *laserTempl
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime AssistedTargetingUpdate::update( )
+UpdateSleepTime AssistedTargetingUpdate::update()
 {
 	return UPDATE_SLEEP_FOREVER;
 }
@@ -172,7 +172,7 @@ void AssistedTargetingUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void AssistedTargetingUpdate::loadPostProcess( )
+void AssistedTargetingUpdate::loadPostProcess()
 {
 
 	// extend base class

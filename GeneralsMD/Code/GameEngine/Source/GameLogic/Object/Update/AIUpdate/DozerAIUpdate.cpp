@@ -86,7 +86,7 @@ class DozerActionPickActionPosState : public State
 public:
 
 	DozerActionPickActionPosState( StateMachine *machine, DozerTask task );
-	virtual StateReturnType update( );
+	virtual StateReturnType update();
 
 protected:
 	// snapshot interface
@@ -139,14 +139,14 @@ void DozerActionPickActionPosState::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void DozerActionPickActionPosState::loadPostProcess( )
+void DozerActionPickActionPosState::loadPostProcess()
 {
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Pick a position around the target */
 //-------------------------------------------------------------------------------------------------
-StateReturnType DozerActionPickActionPosState::update( )
+StateReturnType DozerActionPickActionPosState::update()
 {
 	StateMachine *machine = getMachine();
 	Object *dozer = machine->getOwner();
@@ -243,7 +243,7 @@ class DozerActionMoveToActionPosState : public State
 public:
 
 	DozerActionMoveToActionPosState( StateMachine *machine, DozerTask task ) : State( machine, "DozerActionMoveToActionPosState" ) { m_task = task; }
-	virtual StateReturnType update( );
+	virtual StateReturnType update();
 
 protected:
 	// snapshot interface
@@ -281,7 +281,7 @@ void DozerActionMoveToActionPosState::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void DozerActionMoveToActionPosState::loadPostProcess( )
+void DozerActionMoveToActionPosState::loadPostProcess()
 {
 }
 
@@ -289,7 +289,7 @@ void DozerActionMoveToActionPosState::loadPostProcess( )
 /** We are supposed to be on route to our action position now, see when we get there or
 	* detect that we have encountered a problem that's going to cause it to give up */
 //-------------------------------------------------------------------------------------------------
-StateReturnType DozerActionMoveToActionPosState::update( )
+StateReturnType DozerActionMoveToActionPosState::update()
 {
 	Object *goalObject = getMachineGoalObject();
 	Object *dozer = getMachineOwner();
@@ -386,8 +386,8 @@ public:
 		m_task = task;
 		m_enterFrame = 0;
 	}
-	virtual StateReturnType update( );
-	virtual StateReturnType onEnter( );
+	virtual StateReturnType update();
+	virtual StateReturnType onEnter();
 	virtual void onExit( StateExitType status ) { }
 
 protected:
@@ -428,14 +428,14 @@ void DozerActionDoActionState::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void DozerActionDoActionState::loadPostProcess( )
+void DozerActionDoActionState::loadPostProcess()
 {
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Entering the do action state */
 //-------------------------------------------------------------------------------------------------
-StateReturnType DozerActionDoActionState::onEnter( )
+StateReturnType DozerActionDoActionState::onEnter()
 {
 	Object *dozer = getMachineOwner();
 	DozerAIInterface *dozerAI = dozer->getAIUpdateInterface()->getDozerAIInterface();
@@ -459,7 +459,7 @@ StateReturnType DozerActionDoActionState::onEnter( )
 //-------------------------------------------------------------------------------------------------
 /** Do the action */
 //-------------------------------------------------------------------------------------------------
-StateReturnType DozerActionDoActionState::update( )
+StateReturnType DozerActionDoActionState::update()
 {
 	Object *goalObject = getMachineGoalObject();
 	Object *dozer = getMachineOwner();
@@ -847,7 +847,7 @@ void DozerActionStateMachine::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void DozerActionStateMachine::loadPostProcess( )
+void DozerActionStateMachine::loadPostProcess()
 {
 }
 
@@ -972,8 +972,8 @@ public:
 		m_idlePlayerNumber = 0;
 		m_isMarkedAsIdle   = FALSE;
 	}
-	virtual StateReturnType update( );
-	virtual StateReturnType onEnter( );
+	virtual StateReturnType update();
+	virtual StateReturnType onEnter();
 	virtual void onExit( StateExitType status );
 
 protected:
@@ -1015,7 +1015,7 @@ void DozerPrimaryIdleState::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void DozerPrimaryIdleState::loadPostProcess( )
+void DozerPrimaryIdleState::loadPostProcess()
 {
 }
 
@@ -1023,7 +1023,7 @@ void DozerPrimaryIdleState::loadPostProcess( )
 //-------------------------------------------------------------------------------------------------
 /** Upon entering the dozer primary idle state */
 //-------------------------------------------------------------------------------------------------
-StateReturnType DozerPrimaryIdleState::onEnter( )
+StateReturnType DozerPrimaryIdleState::onEnter()
 {
 
 	//
@@ -1056,7 +1056,7 @@ void DozerPrimaryIdleState::onExit( StateExitType status )
 //-------------------------------------------------------------------------------------------------
 /** Dozer idle behavior */
 //-------------------------------------------------------------------------------------------------
-StateReturnType DozerPrimaryIdleState::update( )
+StateReturnType DozerPrimaryIdleState::update()
 {
 	Object *dozer = getMachineOwner();
 	AIUpdateInterface *ai = dozer->getAIUpdateInterface();
@@ -1159,9 +1159,9 @@ public:
 		Note that we DON'T use CONVERT_SLEEP_TO_CONTINUE; since we're not doing anything else
 		interesting in update, we can sleep when this machine sleeps
 	*/
-	virtual StateReturnType update( ) { return m_actionMachine->updateStateMachine(); }
+	virtual StateReturnType update() { return m_actionMachine->updateStateMachine(); }
 
-	virtual StateReturnType onEnter( );
+	virtual StateReturnType onEnter();
 	virtual void onExit( StateExitType status );
 
 protected:
@@ -1176,7 +1176,7 @@ protected:
 	StateMachine *m_actionMachine;
 
 };
-inline DozerActionState::~DozerActionState( ) { deleteInstance(m_actionMachine); }
+inline DozerActionState::~DozerActionState() { deleteInstance(m_actionMachine); }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -1202,14 +1202,14 @@ void DozerActionState::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void DozerActionState::loadPostProcess( )
+void DozerActionState::loadPostProcess()
 {
 }
 
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-StateReturnType DozerActionState::onEnter( )
+StateReturnType DozerActionState::onEnter()
 {
 
 	// save this as the current action of the dozer
@@ -1265,7 +1265,7 @@ protected:
 public:
 
 	DozerPrimaryGoingHomeState( StateMachine *machine ) : State( machine, "DozerPrimaryGoingHomeState" ) { }
-	virtual StateReturnType update( ) { return STATE_FAILURE; }
+	virtual StateReturnType update() { return STATE_FAILURE; }
 
 };
 EMPTY_DTOR(DozerPrimaryGoingHomeState)
@@ -1293,7 +1293,7 @@ DozerPrimaryStateMachine::DozerPrimaryStateMachine( Object *owner ) : StateMachi
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-DozerPrimaryStateMachine::~DozerPrimaryStateMachine( )
+DozerPrimaryStateMachine::~DozerPrimaryStateMachine()
 {
 
 }
@@ -1321,7 +1321,7 @@ void DozerPrimaryStateMachine::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void DozerPrimaryStateMachine::loadPostProcess( )
+void DozerPrimaryStateMachine::loadPostProcess()
 {
 	StateMachine::loadPostProcess();
 }
@@ -1407,7 +1407,7 @@ Bool DozerPrimaryStateMachine::isFortifyMostImportant( State *thisState, void* u
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-DozerAIUpdateModuleData::DozerAIUpdateModuleData( )
+DozerAIUpdateModuleData::DozerAIUpdateModuleData()
 {
 
 	m_repairHealthPercentPerSecond = 0.0f;
@@ -1472,7 +1472,7 @@ DozerAIUpdate::DozerAIUpdate( Thing *thing, const ModuleData* moduleData ) :
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-DozerAIUpdate::~DozerAIUpdate( )
+DozerAIUpdate::~DozerAIUpdate()
 {
 
 	// delete our behavior state machine
@@ -1492,7 +1492,7 @@ DozerAIUpdate::~DozerAIUpdate( )
 // ------------------------------------------------------------------------------------------------
 /** Create any sub machines we need to do all our behavior */
 // ------------------------------------------------------------------------------------------------
-void DozerAIUpdate::createMachines( )
+void DozerAIUpdate::createMachines()
 {
 
 	if( m_dozerMachine == nullptr )
@@ -1559,7 +1559,7 @@ void DozerAIUpdate::removeBridgeScaffolding( Object *bridgeTower )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime DozerAIUpdate::update( )
+UpdateSleepTime DozerAIUpdate::update()
 {
 
 	//
@@ -2075,7 +2075,7 @@ Bool DozerAIUpdate::isTaskPending( DozerTask task )
 //-------------------------------------------------------------------------------------------------
 /** Is there any task pending */
 //-------------------------------------------------------------------------------------------------
-Bool DozerAIUpdate::isAnyTaskPending( )
+Bool DozerAIUpdate::isAnyTaskPending()
 {
 
 	for( Int i = 0; i < DOZER_NUM_TASKS; i++ )
@@ -2256,7 +2256,7 @@ void DozerAIUpdate::internalTaskCompleteOrCancelled( DozerTask task )
 //-------------------------------------------------------------------------------------------------
 /** If we were building something, kill the active-construction flag on it */
 //-------------------------------------------------------------------------------------------------
-void DozerAIUpdate::onDelete( )
+void DozerAIUpdate::onDelete()
 {
 	Int i;
 
@@ -2282,7 +2282,7 @@ void DozerAIUpdate::onDelete( )
 //-------------------------------------------------------------------------------------------------
 /** Get the most recently issued task */
 //-------------------------------------------------------------------------------------------------
-DozerTask DozerAIUpdate::getMostRecentCommand( )
+DozerTask DozerAIUpdate::getMostRecentCommand()
 {
 	Int i;
 	DozerTask mostRecentTask = DOZER_TASK_INVALID;
@@ -2333,17 +2333,17 @@ const Coord3D* DozerAIUpdate::getDockPoint( DozerTask task, DozerDockPoint point
 }
 
 // ------------------------------------------------------------------------------------------------
-Real DozerAIUpdate::getRepairHealthPerSecond( ) const
+Real DozerAIUpdate::getRepairHealthPerSecond() const
 {
 	return getDozerAIUpdateModuleData()->m_repairHealthPercentPerSecond;
 }
 // ------------------------------------------------------------------------------------------------
-Real DozerAIUpdate::getBoredTime( ) const
+Real DozerAIUpdate::getBoredTime() const
 {
 	return getDozerAIUpdateModuleData()->m_boredTime;
 }
 // ------------------------------------------------------------------------------------------------
-Real DozerAIUpdate::getBoredRange( ) const
+Real DozerAIUpdate::getBoredRange() const
 {
 	if (getObject()->getControllingPlayer() &&
 		getObject()->getControllingPlayer()->getPlayerType() == PLAYER_COMPUTER) {
@@ -2525,7 +2525,7 @@ void DozerAIUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void DozerAIUpdate::loadPostProcess( )
+void DozerAIUpdate::loadPostProcess()
 {
  // extend base class
 	AIUpdateInterface::loadPostProcess();

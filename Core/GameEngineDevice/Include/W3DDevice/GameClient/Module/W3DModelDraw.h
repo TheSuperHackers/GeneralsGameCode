@@ -332,7 +332,7 @@ private:
 public:
  	virtual void crc( Xfer *xfer );
  	virtual void xfer( Xfer *xfer );
- 	virtual void loadPostProcess( );
+ 	virtual void loadPostProcess();
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -378,7 +378,7 @@ public:
 	virtual Bool getProjectileLaunchOffset(const ModelConditionFlags& condition, WeaponSlotType wslot, Int specificBarrelToUse, Matrix3D* launchPos, WhichTurretType tur, Coord3D* turretRotPos, Coord3D* turretPitchPos = nullptr) const;
 	virtual void updateProjectileClipStatus( UnsignedInt shotsRemaining, UnsignedInt maxShots, WeaponSlotType slot ); ///< This will do the show/hide work if ProjectileBoneFeedbackEnabled is set.
 	virtual void updateDrawModuleSupplyStatus( Int maxSupply, Int currentSupply ); ///< This will do visual feedback on Supplies carried
-	virtual void notifyDrawModuleDependencyCleared( ){}///< if you were waiting for something before you drew, it's ready now
+	virtual void notifyDrawModuleDependencyCleared(){}///< if you were waiting for something before you drew, it's ready now
 
 	virtual void setHidden(Bool h);
 	virtual void replaceModelConditionState(const ModelConditionFlags& c);
@@ -423,7 +423,7 @@ public:
 
 	///@todo: I had to make this public because W3DDevice needs access for casting shadows -MW
 	RenderObjClass *getRenderObject() { return m_renderObject; }
-	virtual Bool updateBonesForClientParticleSystems( );///< this will reposition particle systems on the fly ML
+	virtual Bool updateBonesForClientParticleSystems();///< this will reposition particle systems on the fly ML
 
 	virtual void onDrawableBoundToObject();
 	virtual void setTerrainDecalSize(Real x, Real y);

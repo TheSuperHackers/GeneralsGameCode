@@ -92,21 +92,21 @@ class IMEManager : public IMEManagerInterface
 		IMEManager();
 		~IMEManager();
 
-		virtual void					init( );
-		virtual void					reset( );
-		virtual void					update( );
+		virtual void					init();
+		virtual void					reset();
+		virtual void					update();
 
 		virtual void					attach( GameWindow *window );		///< attach IME to specified window
-		virtual void					detach( );								///< detach IME from current window
-		virtual void					enable( );									///< Enable IME
-		virtual void					disable( );								///< Disable IME
-		virtual Bool					isEnabled( );							///< Is IME enabled
+		virtual void					detach();								///< detach IME from current window
+		virtual void					enable();									///< Enable IME
+		virtual void					disable();								///< Disable IME
+		virtual Bool					isEnabled();							///< Is IME enabled
 		virtual Bool					isAttachedTo( GameWindow *window );	///< Is the manager attached toa window
-		virtual GameWindow*		getWindow( );							///< Returns the window we are currently attached to
-		virtual Bool					isComposing( );						///< Manager is currently composing new input string
+		virtual GameWindow*		getWindow();							///< Returns the window we are currently attached to
+		virtual Bool					isComposing();						///< Manager is currently composing new input string
 		virtual void					getCompositionString( UnicodeString &string ); ///< Return the current composition string
-		virtual Int						getCompositionCursorPosition( );			///< Returns the composition cursor position
-		virtual Int						getIndexBase( );						///< Get index base for candidate list
+		virtual Int						getCompositionCursorPosition();			///< Returns the composition cursor position
+		virtual Int						getIndexBase();						///< Get index base for candidate list
 
 		virtual Int						getCandidateCount();						///< Returns the total number of candidates
 		virtual const UnicodeString* getCandidate( Int index );	///< Returns the candidate string
@@ -121,7 +121,7 @@ class IMEManager : public IMEManagerInterface
 												UnsignedInt message,
 												Int wParam,
 												Int lParam );
-		virtual Int result( );														///< result return value of last serviced IME message
+		virtual Int result();														///< result return value of last serviced IME message
 
 	protected:
 
@@ -157,9 +157,9 @@ class IMEManager : public IMEManagerInterface
 		Int										m_compositionCharsDisplayed;		///< number of temporary composition characters displayed that need to be replaced with result string.
 
 		WideChar			convertCharToWide( WPARAM mbchar );						///< Convert multibyte character to wide
-		void					updateCompositionString( );							///< Update the context of the composition string from the IMM
-		void					getResultsString( );											///< Get the final composition string result
-		void					updateProperties( );											///< Read the current IME properties
+		void					updateCompositionString();							///< Update the context of the composition string from the IMM
+		void					getResultsString();											///< Get the final composition string result
+		void					updateProperties();											///< Read the current IME properties
 		void					openCandidateList( Int candidateFlags  );			///< open candidate window
 		void					closeCandidateList( Int candidateFlags  );		///< Close candidate window
 		void					updateCandidateList( Int candidateFlags  );		///< Update candidate window
@@ -167,9 +167,9 @@ class IMEManager : public IMEManagerInterface
 		void					convertToUnicode( Char *mbcs, UnicodeString &unicode );
 		void					resizeCandidateWindow( Int pageSize );
 
-		void					openStatusWindow( );
-		void					closeStatusWindow( );
-		void					updateStatusWindow( );
+		void					openStatusWindow();
+		void					closeStatusWindow();
+		void					updateStatusWindow();
 
 		GameWindow						*m_candidateWindow;							///< IME candidate window interface
 		GameWindow						*m_statusWindow;								///< IME status window interface
@@ -483,7 +483,7 @@ void IMEManager::printSentenceStatus( void )
 // *CreateIMEManagerInterface
 //============================================================================
 
-IMEManagerInterface *CreateIMEManagerInterface( )
+IMEManagerInterface *CreateIMEManagerInterface()
 {
 	return NEW IMEManager;
 }
@@ -552,7 +552,7 @@ IMEManager::~IMEManager()
 // IMEManager::init
 //============================================================================
 
-void IMEManager::init( )
+void IMEManager::init()
 {
 	//HWND ImeWindow = ImmGetDefaultIMEWnd(ApplicationHWnd);
   // if(ImeWindow)
@@ -612,7 +612,7 @@ void IMEManager::init( )
 // IMEManager::reset
 //============================================================================
 
-void IMEManager::reset( )
+void IMEManager::reset()
 {
 
 }
@@ -621,7 +621,7 @@ void IMEManager::reset( )
 // IMEManager::update
 //============================================================================
 
-void IMEManager::update( )
+void IMEManager::update()
 {
 
 }
@@ -649,7 +649,7 @@ void IMEManager::attach( GameWindow *window )
 // IMEManager::detach
 //============================================================================
 
-void IMEManager::detach( )
+void IMEManager::detach()
 {
 	//ImmAssociateContext( ApplicationHWnd, nullptr );
 	m_window = nullptr;
@@ -974,7 +974,7 @@ Bool IMEManager::serviceIMEMessage(	void *windowsHandle, UnsignedInt message,	In
 // IMEManager::result
 //============================================================================
 
-Int IMEManager::result( )
+Int IMEManager::result()
 {
 	return m_result;
 }
@@ -983,7 +983,7 @@ Int IMEManager::result( )
 // IMEManager::enable
 //============================================================================
 
-void IMEManager::enable( )
+void IMEManager::enable()
 {
 	if ( --m_disabled <= 0 )
 	{
@@ -996,7 +996,7 @@ void IMEManager::enable( )
 // IMEManager::disable
 //============================================================================
 
-void IMEManager::disable( )
+void IMEManager::disable()
 {
 	m_disabled++;
 	ImmAssociateContext( ApplicationHWnd, nullptr );
@@ -1006,7 +1006,7 @@ void IMEManager::disable( )
 // IMEManager::isEnabled
 //============================================================================
 
-Bool IMEManager::isEnabled( )
+Bool IMEManager::isEnabled()
 {
 	return m_context != nullptr && m_disabled == 0;
 }
@@ -1024,7 +1024,7 @@ Bool IMEManager::isAttachedTo( GameWindow *window )
 // IMEManager::getWindow
 //============================================================================
 
-GameWindow* IMEManager::getWindow( )
+GameWindow* IMEManager::getWindow()
 {
 	return m_window;
 }
@@ -1065,7 +1065,7 @@ WideChar IMEManager::convertCharToWide( WPARAM wParam )
 // IMEManager::isComposing
 //============================================================================
 
-Bool IMEManager::isComposing( )
+Bool IMEManager::isComposing()
 {
 	return m_composing;
 }
@@ -1080,7 +1080,7 @@ void IMEManager::getCompositionString ( UnicodeString &string )
 // IMEManager::getCompositionCursorPosition
 //============================================================================
 
-Int	IMEManager::getCompositionCursorPosition( )
+Int	IMEManager::getCompositionCursorPosition()
 {
 	return 0;//m_compositionCursorPos;
 }
@@ -1089,7 +1089,7 @@ Int	IMEManager::getCompositionCursorPosition( )
 // IMEManager::updateCompositionString
 //============================================================================
 
-void IMEManager::updateCompositionString( )
+void IMEManager::updateCompositionString()
 {
 	char tempBuf[ (MAX_COMPSTRINGLEN+1)*2];
 
@@ -1158,7 +1158,7 @@ void IMEManager::updateCompositionString( )
 // IMEManager::getResultsString
 //============================================================================
 
-void IMEManager::getResultsString ( )
+void IMEManager::getResultsString ()
 {
 	Int stringLen = 0;
 	m_resultsString[0] = 0;
@@ -1455,7 +1455,7 @@ void IMEManager::updateCandidateList( Int candidateFlags  )
 // IMEManager::updateProperties
 //============================================================================
 
-void IMEManager::updateProperties( )
+void IMEManager::updateProperties()
 {
 	HKL kb = GetKeyboardLayout( 0 );
 	Int prop = ImmGetProperty( kb, IGP_PROPERTY );
@@ -1467,7 +1467,7 @@ void IMEManager::updateProperties( )
 // IMEManager::getIndexBase
 //============================================================================
 
-Int IMEManager::getIndexBase( )
+Int IMEManager::getIndexBase()
 {
 	return m_indexBase;
 }
@@ -1566,7 +1566,7 @@ Int IMEManager::getCandidatePageStart()
 // IMEManager::openStatusWindow
 //============================================================================
 
-void IMEManager::openStatusWindow( )
+void IMEManager::openStatusWindow()
 {
 	if ( m_statusWindow == nullptr )
 	{
@@ -1579,7 +1579,7 @@ void IMEManager::openStatusWindow( )
 // IMEManager::closeStatusWindow
 //============================================================================
 
-void IMEManager::closeStatusWindow( )
+void IMEManager::closeStatusWindow()
 {
 	if ( m_statusWindow == nullptr )
 	{
@@ -1593,7 +1593,7 @@ void IMEManager::closeStatusWindow( )
 // IMEManager::updateStatusWindow
 //============================================================================
 
-void IMEManager::updateStatusWindow( )
+void IMEManager::updateStatusWindow()
 {
 
 }

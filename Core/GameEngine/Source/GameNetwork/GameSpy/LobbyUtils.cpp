@@ -347,27 +347,27 @@ static void gameTooltip(GameWindow *window,
 
 static Bool isSmall = TRUE;
 
-GameWindow *GetGameListBox( )
+GameWindow *GetGameListBox()
 {
 	return listboxLobbyGamesLarge;
 }
 
-GameWindow *GetGameInfoListBox( )
+GameWindow *GetGameInfoListBox()
 {
 	return nullptr;
 }
 
-NameKeyType GetGameListBoxID( )
+NameKeyType GetGameListBoxID()
 {
 	return listboxLobbyGamesLargeID;
 }
 
-NameKeyType GetGameInfoListBoxID( )
+NameKeyType GetGameInfoListBoxID()
 {
 	return NAMEKEY_INVALID;
 }
 
-void GrabWindowInfo( )
+void GrabWindowInfo()
 {
 	isSmall = TRUE;
 	parentID = NAMEKEY( "WOLCustomLobby.wnd:WOLLobbyMenuParent" );
@@ -414,7 +414,7 @@ void GrabWindowInfo( )
 	showSortIcons();
 }
 
-void ReleaseWindowInfo( )
+void ReleaseWindowInfo()
 {
 	isSmall = TRUE;
 	parent = nullptr;
@@ -851,7 +851,7 @@ void RefreshGameInfoListBox( GameWindow *mainWin, GameWindow *win )
 
 }
 
-void RefreshGameListBoxes( )
+void RefreshGameListBoxes()
 {
 	GameWindow *main = GetGameListBox();
 	GameWindow *info = GetGameInfoListBox();
@@ -864,7 +864,7 @@ void RefreshGameListBoxes( )
 	}
 }
 
-void ToggleGameListType( )
+void ToggleGameListType()
 {
 	isSmall = !isSmall;
 	if(isSmall)

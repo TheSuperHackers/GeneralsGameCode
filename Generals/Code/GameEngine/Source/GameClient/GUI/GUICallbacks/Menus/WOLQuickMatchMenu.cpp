@@ -136,7 +136,7 @@ static Int maxPingEntries = 0;
 static Int maxPoints= 100;
 static Int minPoints = 0;
 
-static const LadderInfo * getLadderInfo( );
+static const LadderInfo * getLadderInfo();
 
 
 // [SKB: Jul 01 2003 @ 7:7pm] :
@@ -482,7 +482,7 @@ void PopulateQMLadderListBox( GameWindow *win )
 	isPopulatingLadderBox = false;
 }
 
-static const LadderInfo * getLadderInfo( )
+static const LadderInfo * getLadderInfo()
 {
 	Int index;
 	Int selected;
@@ -492,7 +492,7 @@ static const LadderInfo * getLadderInfo( )
 	return li;
 }
 
-void PopulateQMLadderComboBox( )
+void PopulateQMLadderComboBox()
 {
 	if (!parentWOLQuickMatch || !comboBoxLadder)
 		return;
@@ -630,7 +630,7 @@ static void populateQuickMatchMapSelectListbox( QuickMatchPreferences& pref )
 	}
 }
 
-static void saveQuickMatchOptions( )
+static void saveQuickMatchOptions()
 {
 	if(isInInit)
 		return;

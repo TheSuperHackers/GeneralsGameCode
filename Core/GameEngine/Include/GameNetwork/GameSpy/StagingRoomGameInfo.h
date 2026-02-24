@@ -35,25 +35,25 @@ class GameSpyGameSlot : public GameSlot
 {
 public:
 	GameSpyGameSlot();
-	Int getProfileID( ) const { return m_profileID; }
+	Int getProfileID() const { return m_profileID; }
 	void setProfileID( Int id ) { m_profileID = id; }
-	AsciiString getLoginName( ) const { return m_gameSpyLogin; }
+	AsciiString getLoginName() const { return m_gameSpyLogin; }
 	void setLoginName( AsciiString name ) { m_gameSpyLogin = name; }
-	AsciiString getLocale( ) const { return m_gameSpyLocale; }
+	AsciiString getLocale() const { return m_gameSpyLocale; }
 	void setLocale( AsciiString name ) { m_gameSpyLocale = name; }
-	Int getWins( ) const { return m_wins; }
-	Int getLosses( ) const { return m_losses; }
+	Int getWins() const { return m_wins; }
+	Int getLosses() const { return m_losses; }
 	void setWins( Int wins ) { m_wins = wins; }
 	void setLosses( Int losses ) { m_losses = losses; }
 
-	Int getSlotRankPoints( ) const { return m_rankPoints; }
-	Int getFavoriteSide( ) const { return m_favoriteSide; }
+	Int getSlotRankPoints() const { return m_rankPoints; }
+	Int getFavoriteSide() const { return m_favoriteSide; }
 	void setSlotRankPoints( Int val ) { m_rankPoints = val; }
 	void setFavoriteSide( Int val ) { m_favoriteSide = val; }
 
 	void setPingString( AsciiString pingStr );
-	AsciiString getPingString( ) const { return m_pingStr; }
-	Int getPingAsInt( ) const { return m_pingInt; }
+	AsciiString getPingString() const { return m_pingStr; }
+	Int getPingAsInt() const { return m_pingInt; }
 
 protected:
 	Int m_profileID;
@@ -96,11 +96,11 @@ private:
 
 public:
 	GameSpyStagingRoom();
-	virtual void reset( );
+	virtual void reset();
 
 	void cleanUpSlotPointers();
 	void setID(Int id) { m_id = id; }
-	Int getID( ) const { return m_id; }
+	Int getID() const { return m_id; }
 
 	void setHasPassword(Bool val) { m_requiresPassword = val; }
 	Bool getHasPassword() const { return m_requiresPassword; }
@@ -124,31 +124,31 @@ public:
 	Int getReportedNumObservers() const { return m_reportedNumObservers; }
 
 	void setLadderIP( AsciiString ladderIP ) { m_ladderIP = ladderIP; }
-	AsciiString getLadderIP( ) const { return m_ladderIP; }
+	AsciiString getLadderIP() const { return m_ladderIP; }
 	void setLadderPort( UnsignedShort ladderPort ) { m_ladderPort = ladderPort; }
-	UnsignedShort getLadderPort( ) const { return m_ladderPort; }
+	UnsignedShort getLadderPort() const { return m_ladderPort; }
 	void setPingString( AsciiString pingStr );
-	AsciiString getPingString( ) const { return m_pingStr; }
-	Int getPingAsInt( ) const { return m_pingInt; }
+	AsciiString getPingString() const { return m_pingStr; }
+	Int getPingAsInt() const { return m_pingInt; }
 
-	virtual Bool amIHost( ) const;															///< Convenience function - is the local player the game host?
+	virtual Bool amIHost() const;															///< Convenience function - is the local player the game host?
 
 	GameSpyGameSlot *getGameSpySlot( Int index );
 
-	AsciiString generateGameSpyGameResultsPacket( );
-	AsciiString generateLadderGameResultsPacket( );
-	void markGameAsQM( ) { m_isQM = TRUE; }
-	Bool isQMGame( ) { return m_isQM; }
+	AsciiString generateGameSpyGameResultsPacket();
+	AsciiString generateLadderGameResultsPacket();
+	void markGameAsQM() { m_isQM = TRUE; }
+	Bool isQMGame() { return m_isQM; }
 
 	virtual void init();
 	virtual void resetAccepted();															///< Reset the accepted flag on all players
 
 	virtual void startGame(Int gameID);														///< Mark our game as started and record the game ID.
-	void launchGame( );																			///< NAT negotiation has finished - really start
-	virtual Int getLocalSlotNum( ) const;										///< Get the local slot number, or -1 if we're not present
+	void launchGame();																			///< NAT negotiation has finished - really start
+	virtual Int getLocalSlotNum() const;										///< Get the local slot number, or -1 if we're not present
 
 	void setGameName( UnicodeString name ) { m_gameName = name; }
-	UnicodeString getGameName( ) const { return m_gameName; }
+	UnicodeString getGameName() const { return m_gameName; }
 
 	void setLocalName( AsciiString name ) { m_localName = name; }
 };

@@ -45,7 +45,7 @@ RadiusDecalUpdate::RadiusDecalUpdate( Thing *thing, const ModuleData* moduleData
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-RadiusDecalUpdate::~RadiusDecalUpdate( )
+RadiusDecalUpdate::~RadiusDecalUpdate()
 {
 	m_deliveryDecal.clear();
 }
@@ -69,7 +69,7 @@ void RadiusDecalUpdate::killRadiusDecal()
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime RadiusDecalUpdate::update( )
+UpdateSleepTime RadiusDecalUpdate::update()
 {
 	if (m_killWhenNoLongerAttacking && !getObject()->testStatus( OBJECT_STATUS_IS_ATTACKING ))
 	{
@@ -118,7 +118,7 @@ void RadiusDecalUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void RadiusDecalUpdate::loadPostProcess( )
+void RadiusDecalUpdate::loadPostProcess()
 {
 
 	// extend base class

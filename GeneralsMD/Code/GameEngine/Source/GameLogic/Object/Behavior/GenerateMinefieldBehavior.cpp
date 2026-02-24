@@ -115,7 +115,7 @@ GenerateMinefieldBehavior::GenerateMinefieldBehavior( Thing *thing, const Module
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-GenerateMinefieldBehavior::~GenerateMinefieldBehavior( )
+GenerateMinefieldBehavior::~GenerateMinefieldBehavior()
 {
 	m_mineList.clear();
 }
@@ -571,7 +571,7 @@ void GenerateMinefieldBehavior::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void GenerateMinefieldBehavior::loadPostProcess( )
+void GenerateMinefieldBehavior::loadPostProcess()
 {
 
 	// extend base class

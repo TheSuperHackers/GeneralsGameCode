@@ -59,7 +59,7 @@ TerrainVisual::~TerrainVisual()
 //-------------------------------------------------------------------------------------------------
 /** initialize the device independent functionality of the visual terrain */
 //-------------------------------------------------------------------------------------------------
-void TerrainVisual::init( )
+void TerrainVisual::init()
 {
 
 }
@@ -67,7 +67,7 @@ void TerrainVisual::init( )
 //-------------------------------------------------------------------------------------------------
 /** Reset */
 //-------------------------------------------------------------------------------------------------
-void TerrainVisual::reset( )
+void TerrainVisual::reset()
 {
 
 	m_filenameString.clear();
@@ -77,7 +77,7 @@ void TerrainVisual::reset( )
 //-------------------------------------------------------------------------------------------------
 /** Update */
 //-------------------------------------------------------------------------------------------------
-void TerrainVisual::update( )
+void TerrainVisual::update()
 {
 	// All the interesting stuff happens in load.  jba.
 }
@@ -124,7 +124,7 @@ void TerrainVisual::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void TerrainVisual::loadPostProcess( )
+void TerrainVisual::loadPostProcess()
 {
 
 }

@@ -65,8 +65,8 @@ class Image;
 class ShellMenuSchemeLine
 {
 public:
-	ShellMenuSchemeLine( );
-	~ShellMenuSchemeLine( );
+	ShellMenuSchemeLine();
+	~ShellMenuSchemeLine();
 
 	ICoord2D m_startPos;
 	ICoord2D m_endPos;
@@ -78,8 +78,8 @@ public:
 class ShellMenuSchemeImage
 {
 public:
-	ShellMenuSchemeImage( );
-	~ShellMenuSchemeImage( );
+	ShellMenuSchemeImage();
+	~ShellMenuSchemeImage();
 
 	AsciiString m_name;						///< Name of the image
 	ICoord2D m_position;					///< the position we'll draw it at
@@ -90,10 +90,10 @@ public:
 class ShellMenuScheme
 {
 public:
-	ShellMenuScheme( );
-	~ShellMenuScheme( );
+	ShellMenuScheme();
+	~ShellMenuScheme();
 
-	void draw( );
+	void draw();
 	void addImage( ShellMenuSchemeImage* schemeImage );
 	void addLine( ShellMenuSchemeLine* schemeLine );
 
@@ -116,15 +116,15 @@ public:
 class ShellMenuSchemeManager
 {
 public:
-	ShellMenuSchemeManager( );
-	~ShellMenuSchemeManager( );
+	ShellMenuSchemeManager();
+	~ShellMenuSchemeManager();
 
-	void init( );
-	void update( );
+	void init();
+	void update();
 
 	void setShellMenuScheme( AsciiString name );
 
-	void draw( );
+	void draw();
 
 	// parse Functions for the INI file
 	const FieldParse *getFieldParse() const { return m_shellMenuSchemeFieldParseTable; }								///< returns the parsing fields

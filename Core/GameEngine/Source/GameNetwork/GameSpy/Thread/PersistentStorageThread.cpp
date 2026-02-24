@@ -370,9 +370,9 @@ class GameSpyPSMessageQueue : public GameSpyPSMessageQueueInterface
 public:
 	virtual ~GameSpyPSMessageQueue();
 	GameSpyPSMessageQueue();
-	virtual void startThread( );
-	virtual void endThread( );
-	virtual Bool isThreadRunning( );
+	virtual void startThread();
+	virtual void endThread();
+	virtual Bool isThreadRunning();
 
 	virtual void addRequest( const PSRequest& req );
 	virtual Bool getRequest( PSRequest& req );
@@ -383,7 +383,7 @@ public:
 	virtual void trackPlayerStats( PSPlayerStats stats );
 	virtual PSPlayerStats findPlayerStatsByID( Int id );
 
-	PSThreadClass* getThread( );
+	PSThreadClass* getThread();
 
 	Int getLocalPlayerID() { return m_localPlayerID; }
 	void setLocalPlayerID(Int localPlayerID) { m_localPlayerID = localPlayerID; }
@@ -411,7 +411,7 @@ private:
 	std::map<Int, PSPlayerStats> m_playerStats;
 };
 
-GameSpyPSMessageQueueInterface* GameSpyPSMessageQueueInterface::createNewMessageQueue( )
+GameSpyPSMessageQueueInterface* GameSpyPSMessageQueueInterface::createNewMessageQueue()
 {
 	return NEW GameSpyPSMessageQueue;
 }
@@ -434,14 +434,14 @@ public:
 	void Thread_Function();
 
 	void persAuthCallback( Bool val ) { m_loginOK = val; m_doneTryingToLogin = true; }
-	void decrOpCount( ) { --m_opCount; }
-	void incrOpCount( ) { ++m_opCount; }
-	Int getOpCount( ) { return m_opCount; }
-	Bool sawLocalPlayerData( ) { return m_sawLocalData; }
-	void gotLocalPlayerData( ) { m_sawLocalData = TRUE; }
+	void decrOpCount() { --m_opCount; }
+	void incrOpCount() { ++m_opCount; }
+	Int getOpCount() { return m_opCount; }
+	Bool sawLocalPlayerData() { return m_sawLocalData; }
+	void gotLocalPlayerData() { m_sawLocalData = TRUE; }
 
 private:
-	Bool tryConnect( );
+	Bool tryConnect();
 	Bool tryLogin( Int id, std::string nick, std::string password, std::string email );
 	Bool m_loginOK;
 	Bool m_doneTryingToLogin;
@@ -463,7 +463,7 @@ GameSpyPSMessageQueue::~GameSpyPSMessageQueue()
 	endThread();
 }
 
-void GameSpyPSMessageQueue::startThread( )
+void GameSpyPSMessageQueue::startThread()
 {
 	if (!m_thread)
 	{
@@ -479,13 +479,13 @@ void GameSpyPSMessageQueue::startThread( )
 	}
 }
 
-void GameSpyPSMessageQueue::endThread( )
+void GameSpyPSMessageQueue::endThread()
 {
 	delete m_thread;
 	m_thread = nullptr;
 }
 
-Bool GameSpyPSMessageQueue::isThreadRunning( )
+Bool GameSpyPSMessageQueue::isThreadRunning()
 {
 	return (m_thread) ? m_thread->Is_Running() : false;
 }
@@ -534,7 +534,7 @@ Bool GameSpyPSMessageQueue::getResponse( PSResponse& resp )
 	return true;
 }
 
-PSThreadClass* GameSpyPSMessageQueue::getThread( )
+PSThreadClass* GameSpyPSMessageQueue::getThread()
 {
 	return m_thread;
 }
@@ -574,7 +574,7 @@ PSPlayerStats GameSpyPSMessageQueue::findPlayerStatsByID( Int id )
 
 //-------------------------------------------------------------------------
 
-Bool PSThreadClass::tryConnect( )
+Bool PSThreadClass::tryConnect()
 {
 	Int result;
 
@@ -1080,12 +1080,12 @@ void PSThreadClass::Thread_Function()
 }
 
 //-------------------------------------------------------------------------
-PSPlayerStats::PSPlayerStats( )
+PSPlayerStats::PSPlayerStats()
 {
 	reset();
 }
 
-void PSPlayerStats::reset( )
+void PSPlayerStats::reset()
 {
 	id = 0;
 	locale = 0;

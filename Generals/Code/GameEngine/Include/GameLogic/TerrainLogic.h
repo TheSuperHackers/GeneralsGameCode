@@ -110,15 +110,15 @@ public:
 	/// Get the integer id.
 	WaypointID getID() const {return m_id; }
 	/// Get the waypoint's position
-	const Coord3D *getLocation( ) const { return &m_location;  }
+	const Coord3D *getLocation() const { return &m_location;  }
 	/// Get the waypoint's first path label
-	AsciiString getPathLabel1( ) const { return m_pathLabel1;  }
+	AsciiString getPathLabel1() const { return m_pathLabel1;  }
 	/// Get the waypoint's second path label
-	AsciiString getPathLabel2( ) const { return m_pathLabel2;  }
+	AsciiString getPathLabel2() const { return m_pathLabel2;  }
 	/// Get the waypoint's third path label
-	AsciiString getPathLabel3( ) const { return m_pathLabel3;  }
+	AsciiString getPathLabel3() const { return m_pathLabel3;  }
 	/// Get bi-directionality.
-	Bool getBiDirectional( ) const { return m_biDirectional; }
+	Bool getBiDirectional() const { return m_biDirectional; }
 
 	void setLocationZ(Real z) { m_location.z = z; }
 };
@@ -183,7 +183,7 @@ public:
 
 public:
 	/// return the bridge template name
-	AsciiString getBridgeTemplateName( ) { return m_templateName; }
+	AsciiString getBridgeTemplateName() { return m_templateName; }
 	/// Enumerate all bridges using getNext;
 	Bridge	*getNext() {return m_next; }
 	/// Get the height for an object on bridge.  Note - assumes object is on bridge. Use isPointOnBridge to check.
@@ -220,9 +220,9 @@ public:
 	TerrainLogic();
 	virtual ~TerrainLogic();
 
-	virtual void init( );		///< Init
-	virtual void reset( );		///< Reset
-	virtual void update( );	///< Update
+	virtual void init();		///< Init
+	virtual void reset();		///< Reset
+	virtual void update();	///< Update
 
 	virtual Bool loadMap( AsciiString filename, Bool query );
 	virtual void newMap( Bool saveGame );	///< Initialize the logic for new map.
@@ -236,7 +236,7 @@ public:
 	virtual Coord3D findFarthestEdgePoint( const Coord3D *farthestFrom ) const ;
 	virtual Bool isClearLineOfSight(const Coord3D& pos, const Coord3D& posOther) const;
 
-	virtual AsciiString getSourceFilename( ) { return m_filenameString; }
+	virtual AsciiString getSourceFilename() { return m_filenameString; }
 
 	virtual PathfindLayerEnum alignOnTerrain( Real angle, const Coord3D& pos, Bool stickToGround, Matrix3D& mtx);
 
@@ -318,7 +318,7 @@ protected:
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( );
+	virtual void loadPostProcess();
 
 	/// Chunk parser callback.
  	static Bool parseWaypointDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData);

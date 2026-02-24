@@ -133,14 +133,14 @@ public:
 	W3DView();
 	~W3DView();
 
-	virtual void init( );  ///< init/re-init the W3DView
-	virtual void reset( );
-	virtual void drawView( );  ///< draw this view
+	virtual void init();  ///< init/re-init the W3DView
+	virtual void reset();
+	virtual void drawView();  ///< draw this view
 	virtual void updateView();	///<called once per frame to determine the final camera and object transforms
 	virtual void stepView(); ///< Update view for every fixed time step
 
-	virtual void draw( );  ///< draw this view
-	virtual void update( );	///<called once per frame to determine the final camera and object transforms
+	virtual void draw();  ///< draw this view
+	virtual void update();	///<called once per frame to determine the final camera and object transforms
 
 	virtual Drawable *pickDrawable( const ICoord2D *screen, Bool forceAttack, PickType pickType );  ///< pick drawable given the screen pixel coords.  If force attack, picks bridges.
 
@@ -159,11 +159,11 @@ public:
 
 	virtual void setAngle( Real radians );									///< Rotate the view around the vertical axis to the given angle (yaw)
 	virtual void setPitch( Real radians );									///< Rotate the view around the horizontal axis to the given angle (pitch)
-	virtual void setAngleToDefault( );									///< Set the view angle back to default
-	virtual void setPitchToDefault( );									///< Set the view pitch back to default
+	virtual void setAngleToDefault();									///< Set the view angle back to default
+	virtual void setPitchToDefault();									///< Set the view pitch back to default
 
 	virtual void lookAt( const Coord3D *o );											///< Center the view on the given coordinate
-	virtual void initHeightForMap( );												///<  Init the camera height for the map at the current position.
+	virtual void initHeightForMap();												///<  Init the camera height for the map at the current position.
 	virtual void moveCameraTo(const Coord3D *o, Int milliseconds,  Int shutter, Bool orient, Real easeIn, Real easeOut);
 	virtual void moveCameraAlongWaypointPath(Waypoint *pWay, Int frames, Int shutter, Bool orient, Real easeIn, Real easeOut);
 	virtual Bool isCameraMovementFinished();
@@ -197,7 +197,7 @@ public:
 
 	virtual void setHeightAboveGround(Real z);
 	virtual void setZoom(Real z);
-	virtual void setZoomToDefault( );									///< Set zoom to default value
+	virtual void setZoomToDefault();									///< Set zoom to default value
 
 	virtual void setFieldOfView( Real angle );							///< Set the horizontal field of view angle
 
@@ -215,7 +215,7 @@ public:
 	/// Add an impulse force to shake the camera
 	virtual void shake( const Coord3D *epicenter, CameraShakeType shakeType );
 
-	virtual Real getFXPitch( ) const { return m_FXPitch; }					///< returns the FX pitch angle
+	virtual Real getFXPitch() const { return m_FXPitch; }					///< returns the FX pitch angle
 
 	virtual Bool setViewFilterMode(FilterModes filterMode);			///< Turns on viewport special effect (black & white mode)
 	virtual Bool setViewFilter(FilterTypes filter);			///< Turns on viewport special effect (black & white mode)

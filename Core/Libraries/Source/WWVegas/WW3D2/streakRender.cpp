@@ -305,10 +305,10 @@ void StreakRendererClass::RenderStreak
 	const Matrix3D & transform,
 	unsigned int num_points,
 	Vector3 * points,
-	Vector4 * colors,								/////////////// DIFFERENT FROM RENDER( )
-	float * widths,									/////////////// DIFFERENT FROM RENDER( )
+	Vector4 * colors,								/////////////// DIFFERENT FROM RENDER()
+	float * widths,									/////////////// DIFFERENT FROM RENDER()
 	const SphereClass & obj_sphere,
-	unsigned int *personalities			/////////////// DIFFERENT FROM RENDER( )
+	unsigned int *personalities			/////////////// DIFFERENT FROM RENDER()
 )
 {
 	Matrix4x4 view;

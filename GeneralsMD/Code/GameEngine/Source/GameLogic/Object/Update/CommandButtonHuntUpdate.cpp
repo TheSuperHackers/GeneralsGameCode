@@ -86,7 +86,7 @@ m_commandButton(nullptr)
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-CommandButtonHuntUpdate::~CommandButtonHuntUpdate( )
+CommandButtonHuntUpdate::~CommandButtonHuntUpdate()
 {
 
 }
@@ -463,7 +463,7 @@ void CommandButtonHuntUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void CommandButtonHuntUpdate::loadPostProcess( )
+void CommandButtonHuntUpdate::loadPostProcess()
 {
 
 	// extend base class

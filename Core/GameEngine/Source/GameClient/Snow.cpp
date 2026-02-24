@@ -41,7 +41,7 @@ SnowManager::SnowManager()
 	m_isVisible = TRUE;	//default to showing if it's enabled via INI.
 }
 
-void SnowManager::init( )
+void SnowManager::init()
 {
 	//starting heights of each particle
 	//TODO: replace this lookup table with some kind of procedural method that takes x,y as input.

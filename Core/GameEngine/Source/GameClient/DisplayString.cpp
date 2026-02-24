@@ -71,7 +71,7 @@
 // DisplayString::DisplayString ===============================================
 /** */
 //=============================================================================
-DisplayString::DisplayString( )
+DisplayString::DisplayString()
 {
 	// m_textString = "";	// not necessary, done by default
 	m_font = nullptr;
@@ -84,7 +84,7 @@ DisplayString::DisplayString( )
 // DisplayString::~DisplayString ==============================================
 /** */
 //=============================================================================
-DisplayString::~DisplayString( )
+DisplayString::~DisplayString()
 {
 
 	// free any data
@@ -111,7 +111,7 @@ void DisplayString::setText( UnicodeString text )
 /** Free and reset all the data for this string, effectively making this
 	* instance like brand new */
 //=============================================================================
-void DisplayString::reset( )
+void DisplayString::reset()
 {
 
 	m_textString.clear();
@@ -124,7 +124,7 @@ void DisplayString::reset( )
 // DisplayString::removeLastChar ==============================================
 /** Remove the last character from the string text */
 //=============================================================================
-void DisplayString::removeLastChar( )
+void DisplayString::removeLastChar()
 {
 	m_textString.removeLastChar();
 

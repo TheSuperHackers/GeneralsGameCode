@@ -568,7 +568,7 @@ TerrainTracksRenderObjClassSystem::TerrainTracksRenderObjClassSystem()
 //=============================================================================
 /** Destructor.  Free all pre-allocated track laying render objects*/
 //=============================================================================
-TerrainTracksRenderObjClassSystem::~TerrainTracksRenderObjClassSystem( )
+TerrainTracksRenderObjClassSystem::~TerrainTracksRenderObjClassSystem()
 {
 
 	// free all data
@@ -690,7 +690,7 @@ void TerrainTracksRenderObjClassSystem::init( SceneClass *TerrainTracksScene )
 //=============================================================================
 /** Shutdown and free all memory for this system */
 //=============================================================================
-void TerrainTracksRenderObjClassSystem::shutdown( )
+void TerrainTracksRenderObjClassSystem::shutdown()
 {
 	TerrainTracksRenderObjClass *nextMod,*mod;
 

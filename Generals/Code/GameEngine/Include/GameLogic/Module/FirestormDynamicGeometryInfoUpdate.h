@@ -74,7 +74,7 @@ public:
 
 protected:
 
-	void doDamageScan( );
+	void doDamageScan();
 
 	ParticleSystemID m_myParticleSystemID[ MAX_FIRESTORM_SYSTEMS ];
 	Bool m_effectsFired;							///< TRUE once the effects have been fired off

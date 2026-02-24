@@ -59,14 +59,14 @@ TeamFactory *TheTeamFactory = nullptr;
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-TeamRelationMap::TeamRelationMap( )
+TeamRelationMap::TeamRelationMap()
 {
 
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-TeamRelationMap::~TeamRelationMap( )
+TeamRelationMap::~TeamRelationMap()
 {
 
 	// maek sure the data is clear
@@ -145,7 +145,7 @@ void TeamRelationMap::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void TeamRelationMap::loadPostProcess( )
+void TeamRelationMap::loadPostProcess()
 {
 
 }
@@ -182,13 +182,13 @@ TeamFactory::~TeamFactory()
 }
 
 // ------------------------------------------------------------------------
-void TeamFactory::init( )
+void TeamFactory::init()
 {
 	clear();
 }
 
 // ------------------------------------------------------------------------
-void TeamFactory::reset( )
+void TeamFactory::reset()
 {
 	m_uniqueTeamPrototypeID = TEAM_PROTOTYPE_ID_INVALID;
 	m_uniqueTeamID = TEAM_ID_INVALID;
@@ -196,7 +196,7 @@ void TeamFactory::reset( )
 }
 
 // ------------------------------------------------------------------------
-void TeamFactory::update( )
+void TeamFactory::update()
 {
 }
 
@@ -550,7 +550,7 @@ fclose( fp );
 // ------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------
-void TeamFactory::loadPostProcess( )
+void TeamFactory::loadPostProcess()
 {
 
 	// set the next unique team and prototype ID to just over the highest one in use
@@ -789,7 +789,7 @@ void TeamTemplateInfo::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------
-void TeamTemplateInfo::loadPostProcess( )
+void TeamTemplateInfo::loadPostProcess()
 {
 
 }
@@ -994,7 +994,7 @@ void TeamPrototype::iterateObjects( ObjectIterateFunc func, void *userData )
 /**
  * Count the number of teams that have been instanced by this prototype
  */
-Int TeamPrototype::countTeamInstances( )
+Int TeamPrototype::countTeamInstances()
 {
 	Int count = 0;
 	for (DLINK_ITERATOR<Team> iter = iterate_TeamInstanceList(); !iter.done(); iter.advance())
@@ -1288,7 +1288,7 @@ void TeamPrototype::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------
-void TeamPrototype::loadPostProcess( )
+void TeamPrototype::loadPostProcess()
 {
 
 }
@@ -1911,7 +1911,7 @@ void Team::updateState()
 }
 
 // ------------------------------------------------------------------------
-void Team::notifyTeamOfObjectDeath( )
+void Team::notifyTeamOfObjectDeath()
 {
 	const TeamTemplateInfo *pInfo = m_proto->getTemplateInfo();
 	if (!pInfo) {
@@ -2693,7 +2693,7 @@ void Team::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void Team::loadPostProcess( )
+void Team::loadPostProcess()
 {
 
 	//

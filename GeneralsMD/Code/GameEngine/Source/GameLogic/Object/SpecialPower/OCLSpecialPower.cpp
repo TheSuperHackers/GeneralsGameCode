@@ -65,7 +65,7 @@ static_assert(ARRAY_SIZE(TheOCLCreateLocTypeNames) == OCL_CREATE_LOC_COUNT + 1, 
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-OCLSpecialPowerModuleData::OCLSpecialPowerModuleData( )
+OCLSpecialPowerModuleData::OCLSpecialPowerModuleData()
 {
 	m_defaultOCL = nullptr;
 	m_upgradeOCL.clear();
@@ -138,7 +138,7 @@ const ObjectCreationList* OCLSpecialPower::findOCL() const
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-OCLSpecialPower::~OCLSpecialPower( )
+OCLSpecialPower::~OCLSpecialPower()
 {
 
 }
@@ -286,7 +286,7 @@ void OCLSpecialPower::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void OCLSpecialPower::loadPostProcess( )
+void OCLSpecialPower::loadPostProcess()
 {
 
 	// extend base class

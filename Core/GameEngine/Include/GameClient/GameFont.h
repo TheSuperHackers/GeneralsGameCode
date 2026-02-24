@@ -61,23 +61,23 @@ public:
 
 public:
 
-	FontLibrary( );
-	virtual ~FontLibrary( );
+	FontLibrary();
+	virtual ~FontLibrary();
 
-	virtual void init( );
-	virtual void reset( );
-	virtual void update( ) { }
+	virtual void init();
+	virtual void reset();
+	virtual void update() { }
 
 	GameFont *getFont( AsciiString name, Int pointSize, Bool bold );  ///< get a font pointer
 
-	GameFont *firstFont( );  ///< return first font
+	GameFont *firstFont();  ///< return first font
 	GameFont *nextFont( GameFont *font );  ///< get next font in library
 
-	Int getCount( );  ///< return how many fonts are loaded in this lib
+	Int getCount();  ///< return how many fonts are loaded in this lib
 
 protected:
 
-	void deleteAllFonts( );				///< delete all fonts in this library
+	void deleteAllFonts();				///< delete all fonts in this library
 	void linkFont( GameFont *font );		///< add to font list
 	void unlinkFont( GameFont *font );  ///< remove font from list
 
@@ -92,8 +92,8 @@ protected:
 };
 
 // INLINING ///////////////////////////////////////////////////////////////////////////////////////
-inline Int FontLibrary::getCount( ) { return m_count; }
-inline GameFont *FontLibrary::firstFont( ) { return m_fontList; }
+inline Int FontLibrary::getCount() { return m_count; }
+inline GameFont *FontLibrary::firstFont() { return m_fontList; }
 inline GameFont *FontLibrary::nextFont( GameFont *font )
 {
 	if( font )

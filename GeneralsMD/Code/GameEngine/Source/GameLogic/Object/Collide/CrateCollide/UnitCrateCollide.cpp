@@ -47,7 +47,7 @@ UnitCrateCollide::UnitCrateCollide( Thing *thing, const ModuleData* moduleData )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UnitCrateCollide::~UnitCrateCollide( )
+UnitCrateCollide::~UnitCrateCollide()
 {
 
 }
@@ -123,7 +123,7 @@ void UnitCrateCollide::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void UnitCrateCollide::loadPostProcess( )
+void UnitCrateCollide::loadPostProcess()
 {
 
 	// extend base class

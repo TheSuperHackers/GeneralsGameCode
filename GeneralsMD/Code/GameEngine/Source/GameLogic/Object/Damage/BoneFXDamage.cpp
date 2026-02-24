@@ -46,7 +46,7 @@ BoneFXDamage::BoneFXDamage( Thing *thing, const ModuleData* moduleData )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-BoneFXDamage::~BoneFXDamage( )
+BoneFXDamage::~BoneFXDamage()
 {
 
 }
@@ -109,7 +109,7 @@ void BoneFXDamage::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void BoneFXDamage::loadPostProcess( )
+void BoneFXDamage::loadPostProcess()
 {
 
 	// extend base class

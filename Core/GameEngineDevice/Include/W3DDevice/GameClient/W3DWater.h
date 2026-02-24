@@ -97,9 +97,9 @@ public:
 	///allocate W3D resources needed to render water
 	void renderWater();				///<draw the water surface (flat)
 	Int init(Real waterLevel, Real dx, Real dy, SceneClass *parentScene, WaterType type);
-	void reset( );  ///< reset any resources we need to
+	void reset();  ///< reset any resources we need to
 	void load();	///< load/setup any map dependent features
-	void update( ); ///< update phase of the water
+	void update(); ///< update phase of the water
 	void enableWaterGrid(Bool state);	///< used to active custom water for special maps. (i.e DAM).
 	void updateMapOverrides();	///< used to update any map specific map overrides for water appearance.
 	void setTimeOfDay(TimeOfDay tod); ///<change sky/water for time of day
@@ -260,7 +260,7 @@ protected:
 	// snapshot methods for save/load
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( );
+	virtual void loadPostProcess();
 
 };
 

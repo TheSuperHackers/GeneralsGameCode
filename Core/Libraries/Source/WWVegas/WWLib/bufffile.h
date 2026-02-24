@@ -67,7 +67,7 @@ class BufferedFileClass : public RawFileClass
 
 		static	void		Set_Desired_Buffer_Size( int size ) { _DesiredBufferSize = size; }
 
-		void					Reset_Buffer( );
+		void					Reset_Buffer();
 
 	private:
 		unsigned char *	Buffer;				// The read buffer

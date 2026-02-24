@@ -64,7 +64,7 @@ static void setupGameStart(AsciiString mapName)
 	TheShell->reverseAnimatewindow();
 }
 
-static void doGameStart( )
+static void doGameStart()
 {
 	startGame = false;
 
@@ -106,7 +106,7 @@ static void shutdownComplete( WindowLayout *layout )
 
 }
 
-void SetDifficultyRadioButton( )
+void SetDifficultyRadioButton()
 {
 	NameKeyType parentID = TheNameKeyGenerator->nameToKey( "MapSelectMenu.wnd:MapSelectMenuParent" );
 	GameWindow *parent = TheWindowManager->winGetWindowFromId( nullptr, parentID );

@@ -159,7 +159,7 @@ Bool Transport::init( UnsignedInt ip, UnsignedShort port )
 	return true;
 }
 
-void Transport::reset( )
+void Transport::reset()
 {
 	delete m_udpsock;
 	m_udpsock = nullptr;
@@ -171,7 +171,7 @@ void Transport::reset( )
 	}
 }
 
-Bool Transport::update( )
+Bool Transport::update()
 {
 	Bool retval = TRUE;
 	if (doRecv() == FALSE && m_udpsock && m_udpsock->GetStatus() == UDP::ADDRNOTAVAIL)
@@ -441,7 +441,7 @@ Bool Transport::isGeneralsPacket( TransportMessage *msg )
 }
 
 // Statistics ---------------------------------------------------
-Real Transport::getIncomingBytesPerSecond( )
+Real Transport::getIncomingBytesPerSecond()
 {
 	Real val = 0.0;
 	for (int i=0; i<MAX_TRANSPORT_STATISTICS_SECONDS; ++i)
@@ -452,7 +452,7 @@ Real Transport::getIncomingBytesPerSecond( )
 	return val / (MAX_TRANSPORT_STATISTICS_SECONDS-1);
 }
 
-Real Transport::getIncomingPacketsPerSecond( )
+Real Transport::getIncomingPacketsPerSecond()
 {
 	Real val = 0.0;
 	for (int i=0; i<MAX_TRANSPORT_STATISTICS_SECONDS; ++i)
@@ -463,7 +463,7 @@ Real Transport::getIncomingPacketsPerSecond( )
 	return val / (MAX_TRANSPORT_STATISTICS_SECONDS-1);
 }
 
-Real Transport::getOutgoingBytesPerSecond( )
+Real Transport::getOutgoingBytesPerSecond()
 {
 	Real val = 0.0;
 	for (int i=0; i<MAX_TRANSPORT_STATISTICS_SECONDS; ++i)
@@ -474,7 +474,7 @@ Real Transport::getOutgoingBytesPerSecond( )
 	return val / (MAX_TRANSPORT_STATISTICS_SECONDS-1);
 }
 
-Real Transport::getOutgoingPacketsPerSecond( )
+Real Transport::getOutgoingPacketsPerSecond()
 {
 	Real val = 0.0;
 	for (int i=0; i<MAX_TRANSPORT_STATISTICS_SECONDS; ++i)
@@ -485,7 +485,7 @@ Real Transport::getOutgoingPacketsPerSecond( )
 	return val / (MAX_TRANSPORT_STATISTICS_SECONDS-1);
 }
 
-Real Transport::getUnknownBytesPerSecond( )
+Real Transport::getUnknownBytesPerSecond()
 {
 	Real val = 0.0;
 	for (int i=0; i<MAX_TRANSPORT_STATISTICS_SECONDS; ++i)
@@ -496,7 +496,7 @@ Real Transport::getUnknownBytesPerSecond( )
 	return val / (MAX_TRANSPORT_STATISTICS_SECONDS-1);
 }
 
-Real Transport::getUnknownPacketsPerSecond( )
+Real Transport::getUnknownPacketsPerSecond()
 {
 	Real val = 0.0;
 	for (int i=0; i<MAX_TRANSPORT_STATISTICS_SECONDS; ++i)

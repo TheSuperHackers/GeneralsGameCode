@@ -77,7 +77,7 @@ PoisonedBehavior::PoisonedBehavior( Thing *thing, const ModuleData* moduleData )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-PoisonedBehavior::~PoisonedBehavior( )
+PoisonedBehavior::~PoisonedBehavior()
 {
 }
 
@@ -252,7 +252,7 @@ void PoisonedBehavior::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void PoisonedBehavior::loadPostProcess( )
+void PoisonedBehavior::loadPostProcess()
 {
 
 	// extend base class

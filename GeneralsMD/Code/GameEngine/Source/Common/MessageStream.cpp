@@ -66,7 +66,7 @@ GameMessage::GameMessage( GameMessage::Type type )
 /**
  * Destructor
  */
-GameMessage::~GameMessage( )
+GameMessage::~GameMessage()
 {
 	// free all arguments
 	GameMessageArgument *arg, *nextArg;
@@ -121,7 +121,7 @@ GameMessageArgumentDataType GameMessage::getArgumentDataType( Int argIndex )
 /**
  * Allocate a new argument, add it to the argument list, and increment the total arg count
  */
-GameMessageArgument *GameMessage::allocArg( )
+GameMessageArgument *GameMessage::allocArg()
 {
 	// allocate a new argument
 	GameMessageArgument *arg = newInstance(GameMessageArgument);
@@ -223,7 +223,7 @@ void GameMessage::appendWideCharArgument( const WideChar& arg )
 	a->m_type = ARGUMENTDATATYPE_WIDECHAR;
 }
 
-const char *GameMessage::getCommandAsString( ) const
+const char *GameMessage::getCommandAsString() const
 {
 	return getCommandTypeAsString(m_type);
 }
@@ -708,7 +708,7 @@ const char *GameMessage::getCommandTypeAsString(GameMessage::Type t)
 /**
  * Constructor
  */
-GameMessageList::GameMessageList( )
+GameMessageList::GameMessageList()
 {
 	m_firstMessage = nullptr;
 	m_lastMessage = nullptr;
@@ -821,7 +821,7 @@ Bool GameMessageList::containsMessageOfType( GameMessage::Type type )
 /**
  * Constructor
  */
-MessageStream::MessageStream( )
+MessageStream::MessageStream()
 {
 	m_firstTranslator = nullptr;
 	m_nextTranslatorID = 1;
@@ -844,7 +844,7 @@ MessageStream::~MessageStream()
 /**
 	* Init
 	*/
-void MessageStream::init( )
+void MessageStream::init()
 {
 	// extend
 	GameMessageList::init();
@@ -853,7 +853,7 @@ void MessageStream::init( )
 /**
 	* Reset
 	*/
-void MessageStream::reset( )
+void MessageStream::reset()
 {
 
 	/// @todo Reset the MessageStream
@@ -866,7 +866,7 @@ void MessageStream::reset( )
 /**
 	* Update
 	*/
-void MessageStream::update( )
+void MessageStream::update()
 {
 	// extend
 	GameMessageList::update();
@@ -1094,7 +1094,7 @@ Bool isInvalidDebugCommand( GameMessage::Type t )
  * Once all Translators have evaluated the message stream, all messages
  * in the stream are destroyed.
  */
-void MessageStream::propagateMessages( )
+void MessageStream::propagateMessages()
 {
 	MessageStream::TranslatorData *ss;
 	GameMessage *msg, *next;
@@ -1142,7 +1142,7 @@ void MessageStream::propagateMessages( )
 /**
  * Constructor
  */
-CommandList::CommandList( )
+CommandList::CommandList()
 {
 }
 
@@ -1157,7 +1157,7 @@ CommandList::~CommandList()
 /**
 	* Init
 	*/
-void CommandList::init( )
+void CommandList::init()
 {
 
 	// extend
@@ -1168,7 +1168,7 @@ void CommandList::init( )
 /**
 	* Destroy all messages on the list, and reset list to empty
 	*/
-void CommandList::reset( )
+void CommandList::reset()
 {
 
 	// extend
@@ -1182,7 +1182,7 @@ void CommandList::reset( )
 /**
 	* Update
 	*/
-void CommandList::update( )
+void CommandList::update()
 {
 
 	// extend
@@ -1194,7 +1194,7 @@ void CommandList::update( )
 	* Destroy all messages on the command list, this will get called from the
 	* destructor and reset methods, DO NOT throw exceptions
 	*/
-void CommandList::destroyAllMessages( )
+void CommandList::destroyAllMessages()
 {
 	GameMessage *msg, *next;
 

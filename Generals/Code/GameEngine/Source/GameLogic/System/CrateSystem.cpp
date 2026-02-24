@@ -52,12 +52,12 @@ CrateSystem::~CrateSystem()
 	m_crateTemplateVector.clear();
 }
 
-void CrateSystem::init( )
+void CrateSystem::init()
 {
 	reset();
 }
 
-void CrateSystem::reset( )
+void CrateSystem::reset()
 {
 	// clean up overrides
 	std::vector<CrateTemplate *>::iterator it;

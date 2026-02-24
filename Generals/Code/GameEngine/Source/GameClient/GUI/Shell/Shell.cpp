@@ -49,7 +49,7 @@ Shell *TheShell = nullptr;  ///< the shell singleton definition
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////////////////////////
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-Shell::Shell( )
+Shell::Shell()
 {
 	construct();
 
@@ -57,14 +57,14 @@ Shell::Shell( )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-Shell::~Shell( )
+Shell::~Shell()
 {
 	deconstruct();
 
 }
 
 //-------------------------------------------------------------------------------------------------
-void Shell::construct( )
+void Shell::construct()
 {
 	Int i;
 
@@ -88,7 +88,7 @@ void Shell::construct( )
 }
 
 //-------------------------------------------------------------------------------------------------
-void Shell::deconstruct( )
+void Shell::deconstruct()
 {
 	WindowLayout *newTop = top();
 	while(newTop)
@@ -141,7 +141,7 @@ void Shell::deconstruct( )
 //-------------------------------------------------------------------------------------------------
 /** Initialize the shell system */
 //-------------------------------------------------------------------------------------------------
-void Shell::init( )
+void Shell::init()
 {
 	INI ini;
 	// Read from INI all the ShellMenuScheme
@@ -157,7 +157,7 @@ void Shell::init( )
 /** Reset the shell system to a clean state just as though init had
 	* just been called and ready to re-use */
 //-------------------------------------------------------------------------------------------------
-void Shell::reset( )
+void Shell::reset()
 {
 
 	if (TheIMEManager)
@@ -175,7 +175,7 @@ void Shell::reset( )
 /** Update shell system cycle.  All windows are updated that are on the stack, starting
 	* with the top layout and progressing to the bottom one */
 //-------------------------------------------------------------------------------------------------
-void Shell::update( )
+void Shell::update()
 {
 	static Int lastUpdate = timeGetTime();
 	static const Int shellUpdateDelay = 30;  // try to update 30 frames a second
@@ -229,7 +229,7 @@ namespace
 }
 
 //-------------------------------------------------------------------------------------------------
-void Shell::recreateWindowLayouts( )
+void Shell::recreateWindowLayouts()
 {
 		// collect state of the current shell
 	const Int screenCount = getScreenCount();
@@ -383,7 +383,7 @@ void Shell::push( AsciiString filename, Bool shutdownImmediate )
 	* we instead run the layout shutdown.  That shutdown() in turn notifies the
 	* shell when the shutdown is complete and at that point we do the actual pop */
 //-------------------------------------------------------------------------------------------------
-void Shell::pop( )
+void Shell::pop()
 {
 	WindowLayout *screen = top();
 	if(TheGameSpyInfo)
@@ -425,7 +425,7 @@ void Shell::pop( )
 	* from the shutdown() for the screen, it will be immediately popped off
 	* the stack */
 //-------------------------------------------------------------------------------------------------
-void Shell::popImmediate( )
+void Shell::popImmediate()
 {
 	WindowLayout *screen = top();
 
@@ -568,7 +568,7 @@ void Shell::showShellMap(Bool useShellMap )
 	* pre-game menus and entering the game and want the shell to still exist and contain
 	* the stack information but don't want it to go away */
 //-------------------------------------------------------------------------------------------------
-void Shell::hideShell( )
+void Shell::hideShell()
 {
 	// If we have the 3d background running, mark it to close
 	m_clearBackground = TRUE;
@@ -596,7 +596,7 @@ void Shell::hideShell( )
 //-------------------------------------------------------------------------------------------------
 /** Return the top layout on the stack */
 //-------------------------------------------------------------------------------------------------
-WindowLayout *Shell::top( )
+WindowLayout *Shell::top()
 {
 
 	// empty stack
@@ -782,7 +782,7 @@ void Shell::registerWithAnimateManager( GameWindow *win, AnimTypes animType, Boo
 		m_animateWindowManager->registerGameWindow(win,animType,needsToFinish, 500,delayMS);
 }
 
-Bool Shell::isAnimFinished( )
+Bool Shell::isAnimFinished()
 {
 	// check the new way also.
 	if (!TheTransitionHandler->isFinished())
@@ -799,7 +799,7 @@ Bool Shell::isAnimFinished( )
 		return TRUE;
 }
 
-void Shell::reverseAnimatewindow( )
+void Shell::reverseAnimatewindow()
 {
 	if(!m_animateWindowManager)
 	{
@@ -810,7 +810,7 @@ void Shell::reverseAnimatewindow( )
 		m_animateWindowManager->reverseAnimateWindow();
 }
 
-Bool Shell::isAnimReversed( )
+Bool Shell::isAnimReversed()
 {
 	if(!m_animateWindowManager)
 	{
@@ -834,7 +834,7 @@ void Shell::loadScheme( AsciiString name )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-WindowLayout *Shell::getSaveLoadMenuLayout( )
+WindowLayout *Shell::getSaveLoadMenuLayout()
 {
 
 	// if layout has not been created, create it now
@@ -851,7 +851,7 @@ WindowLayout *Shell::getSaveLoadMenuLayout( )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-WindowLayout *Shell::getPopupReplayLayout( )
+WindowLayout *Shell::getPopupReplayLayout()
 {
 
 	// if layout has not been created, create it now

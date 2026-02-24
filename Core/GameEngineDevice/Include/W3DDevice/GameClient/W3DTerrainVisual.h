@@ -49,9 +49,9 @@ public:
 	W3DTerrainVisual();
 	virtual ~W3DTerrainVisual();
 
-	virtual void init( );
-	virtual void reset( );
-	virtual void update( );
+	virtual void init();
+	virtual void reset();
+	virtual void update();
 
 	virtual Bool load( AsciiString filename );
 
@@ -131,8 +131,8 @@ public:
 #ifdef DO_SEISMIC_SIMULATIONS
   virtual void addSeismicSimulation( const SeismicSimulationNode& sim );
 #endif
-  WorldHeightMap* getLogicHeightMap( ) {return m_logicHeightMap;};
-  WorldHeightMap* getClientHeightMap( )
+  WorldHeightMap* getLogicHeightMap() {return m_logicHeightMap;};
+  WorldHeightMap* getClientHeightMap()
   {
 #ifdef DO_SEISMIC_SIMULATIONS
     return m_clientHeightMap;
@@ -149,7 +149,7 @@ protected:
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( );
+	virtual void loadPostProcess();
 
 #ifdef DO_SEISMIC_SIMULATIONS
   ////////////////////////////////////////////////////

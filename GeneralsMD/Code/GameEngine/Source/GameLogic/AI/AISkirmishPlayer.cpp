@@ -91,7 +91,7 @@ AISkirmishPlayer::~AISkirmishPlayer()
 /**
  * Build our base.
  */
-void AISkirmishPlayer::processBaseBuilding( )
+void AISkirmishPlayer::processBaseBuilding()
 {
 	//
 	// Refresh base buildings. Scan through list, if a building is missing,
@@ -398,7 +398,7 @@ Bool AISkirmishPlayer::selectTeamToReinforce( Int minPriority )
 /**
  * Determine the next team to build.  Return true if one was selected.
  */
-Bool AISkirmishPlayer::selectTeamToBuild( )
+Bool AISkirmishPlayer::selectTeamToBuild()
 {
 	return AIPlayer::selectTeamToBuild();
 }
@@ -853,7 +853,7 @@ void AISkirmishPlayer::recruitSpecificAITeam(TeamPrototype *teamProto, Real recr
 /**
  * Train our teams.
  */
-void AISkirmishPlayer::processTeamBuilding( )
+void AISkirmishPlayer::processTeamBuilding()
 {
 	// select a new team
 	if (selectTeamToBuild()) {
@@ -865,7 +865,7 @@ void AISkirmishPlayer::processTeamBuilding( )
 /**
  * See if it's time to build another base building.
  */
-void AISkirmishPlayer::doBaseBuilding( )
+void AISkirmishPlayer::doBaseBuilding()
 {
 	if (m_player->getCanBuildBase()) {
 		// See if we are ready to start trying a structure.
@@ -898,7 +898,7 @@ void AISkirmishPlayer::doBaseBuilding( )
 /**
  * See if any ready teams have finished moving to the rally point.
  */
-void AISkirmishPlayer::checkReadyTeams( )
+void AISkirmishPlayer::checkReadyTeams()
 {
 	AIPlayer::checkReadyTeams();
 }
@@ -907,7 +907,7 @@ void AISkirmishPlayer::checkReadyTeams( )
 /**
  * See if any queued teams have finished building, or have run out of time.
  */
-void AISkirmishPlayer::checkQueuedTeams( )
+void AISkirmishPlayer::checkQueuedTeams()
 {
 	AIPlayer::checkQueuedTeams();
 }
@@ -916,7 +916,7 @@ void AISkirmishPlayer::checkQueuedTeams( )
 /**
  * See if it is time to start another ai team building.
  */
-void AISkirmishPlayer::doTeamBuilding( )
+void AISkirmishPlayer::doTeamBuilding()
 {
 	// See if any teams are expired.
 	if (m_player->getCanBuildUnits()) {
@@ -950,7 +950,7 @@ void AISkirmishPlayer::doTeamBuilding( )
 /**
  * Perform computer-controlled player AI
  */
-void AISkirmishPlayer::update( )
+void AISkirmishPlayer::update()
 {
 	AIPlayer::update();
 }
@@ -1069,7 +1069,7 @@ void AISkirmishPlayer::adjustBuildList(BuildListInfo *list)
  * Find any things that build stuff & add them to the build list.  Then build any initially built
  * buildings.
  */
-void AISkirmishPlayer::newMap( )
+void AISkirmishPlayer::newMap()
 {
 
 	/* Get our proper build list. */
@@ -1110,7 +1110,7 @@ void AISkirmishPlayer::newMap( )
 /**
  * Queues up a dozer.
  */
-void AISkirmishPlayer::queueDozer( )
+void AISkirmishPlayer::queueDozer()
 {
 	AIPlayer::queueDozer();
 }
@@ -1228,7 +1228,7 @@ void AISkirmishPlayer::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void AISkirmishPlayer::loadPostProcess( )
+void AISkirmishPlayer::loadPostProcess()
 {
 
 }

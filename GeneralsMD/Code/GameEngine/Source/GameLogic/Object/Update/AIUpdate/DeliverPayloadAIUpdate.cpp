@@ -122,7 +122,7 @@ DeliverPayloadAIUpdate::DeliverPayloadAIUpdate( Thing *thing, const ModuleData* 
 }
 
 //-------------------------------------------------------------------------------------------------
-DeliverPayloadAIUpdate::~DeliverPayloadAIUpdate( )
+DeliverPayloadAIUpdate::~DeliverPayloadAIUpdate()
 {
 	m_deliveryDecal.clear();
 	deleteInstance(m_deliverPayloadStateMachine);
@@ -155,7 +155,7 @@ Bool DeliverPayloadAIUpdate::isAllowedToRespondToAiCommands(const AICommandParms
 }
 
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime DeliverPayloadAIUpdate::update( )
+UpdateSleepTime DeliverPayloadAIUpdate::update()
 {
 	m_deliveryDecal.update();
 
@@ -491,7 +491,7 @@ void DeliverPayloadAIUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void DeliverPayloadAIUpdate::loadPostProcess( )
+void DeliverPayloadAIUpdate::loadPostProcess()
 {
  // extend base class
 	AIUpdateInterface::loadPostProcess();
@@ -549,7 +549,7 @@ void DeliverPayloadStateMachine::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void DeliverPayloadStateMachine::loadPostProcess( )
+void DeliverPayloadStateMachine::loadPostProcess()
 {
 	StateMachine::loadPostProcess();
 }
@@ -650,7 +650,7 @@ void DeliveringState::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void DeliveringState::loadPostProcess( )
+void DeliveringState::loadPostProcess()
 {
 }
 
@@ -939,7 +939,7 @@ void ConsiderNewApproachState::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void ConsiderNewApproachState::loadPostProcess( )
+void ConsiderNewApproachState::loadPostProcess()
 {
 }
 
@@ -1051,7 +1051,7 @@ void RecoverFromOffMapState::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void RecoverFromOffMapState::loadPostProcess( )
+void RecoverFromOffMapState::loadPostProcess()
 {
 }
 

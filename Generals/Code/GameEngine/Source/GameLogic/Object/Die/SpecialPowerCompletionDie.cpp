@@ -46,7 +46,7 @@ SpecialPowerCompletionDie::SpecialPowerCompletionDie( Thing *thing, const Module
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-SpecialPowerCompletionDie::~SpecialPowerCompletionDie( )
+SpecialPowerCompletionDie::~SpecialPowerCompletionDie()
 {
 
 }
@@ -62,7 +62,7 @@ void SpecialPowerCompletionDie::onDie( const DamageInfo *damageInfo )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void SpecialPowerCompletionDie::notifyScriptEngine( )
+void SpecialPowerCompletionDie::notifyScriptEngine()
 {
 	if (m_creatorID != INVALID_ID)
 	{
@@ -122,7 +122,7 @@ void SpecialPowerCompletionDie::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void SpecialPowerCompletionDie::loadPostProcess( )
+void SpecialPowerCompletionDie::loadPostProcess()
 {
 
 	// extend base class

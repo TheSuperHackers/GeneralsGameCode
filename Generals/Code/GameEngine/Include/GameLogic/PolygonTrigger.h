@@ -52,7 +52,7 @@ class WaterHandle
 
 public:
 
-	WaterHandle( ) { m_polygon = nullptr; }
+	WaterHandle() { m_polygon = nullptr; }
 
 	///@todo we need to formalize the water systems
 	PolygonTrigger *m_polygon;	///< valid when water is a polygon area, nullptr if water is a grid
@@ -92,7 +92,7 @@ protected:
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( );
+	virtual void loadPostProcess();
 
 public:
 	PolygonTrigger(Int initialAllocation);

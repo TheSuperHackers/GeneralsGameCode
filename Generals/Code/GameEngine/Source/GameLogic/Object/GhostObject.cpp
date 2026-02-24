@@ -121,7 +121,7 @@ void GhostObject::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void GhostObject::loadPostProcess( )
+void GhostObject::loadPostProcess()
 {
 }
 
@@ -204,6 +204,6 @@ void GhostObjectManager::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void GhostObjectManager::loadPostProcess( )
+void GhostObjectManager::loadPostProcess()
 {
 }

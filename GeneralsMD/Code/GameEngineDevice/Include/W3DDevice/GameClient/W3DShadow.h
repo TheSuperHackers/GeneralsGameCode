@@ -35,13 +35,13 @@ class W3DShadowManager
 
 public:
 
-	W3DShadowManager( );
-	~W3DShadowManager( );
-	Bool init( );	///<initialize resources used by manager, must have valid D3D device.
+	W3DShadowManager();
+	~W3DShadowManager();
+	Bool init();	///<initialize resources used by manager, must have valid D3D device.
 	void queueShadows(Bool state) {m_isShadowScene=state;}	///<flags system to process shadows on next render call.
 
 	// shadow list management
-	void Reset( );
+	void Reset();
 	Shadow* addShadow( RenderObjClass *robj,Shadow::ShadowTypeInfo *shadowInfo=nullptr, Drawable *draw=nullptr);	///< adds shadow caster to rendering system.
 	void removeShadow(Shadow *shadow);	///< removed shadow from rendering system and frees its resources.
 	void removeAllShadows(); ///< Remove all shadows.
@@ -56,7 +56,7 @@ public:
 	Int getStencilShadowMask()	{return m_stencilShadowMask;}
 
 	// rendering
-	void RenderShadows( );
+	void RenderShadows();
 	void ReleaseResources();
 	Bool ReAcquireResources();
 

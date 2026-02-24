@@ -74,7 +74,7 @@ public:
 class HotKey
 {
 public:
-	HotKey( );
+	HotKey();
 	GameWindow *m_win;
 	AsciiString m_key;
 	// we may need a checkmark system.
@@ -84,12 +84,12 @@ public:
 class HotKeyManager : public SubsystemInterface
 {
 public:
-	HotKeyManager( );
-	~HotKeyManager( );
+	HotKeyManager();
+	~HotKeyManager();
 	// Inherited from subsystem interface -----------------------------------------------------------
-	virtual	void init( );															///< Initialize the Hotkey system
-	virtual void update( ) {}														///< A No-op for us
-	virtual void reset( );															///< Reset
+	virtual	void init();															///< Initialize the Hotkey system
+	virtual void update() {}														///< A No-op for us
+	virtual void reset();															///< Reset
 	//-----------------------------------------------------------------------------------------------
 
 	void addHotKey( GameWindow *win, const AsciiString& key);

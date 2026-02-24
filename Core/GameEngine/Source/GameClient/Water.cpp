@@ -81,7 +81,7 @@ const FieldParse WaterTransparencySetting::m_waterTransparencySettingFieldParseT
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-WaterSetting::WaterSetting( )
+WaterSetting::WaterSetting()
 {
 
 	m_skyTextureFile.clear();
@@ -126,7 +126,7 @@ WaterSetting::WaterSetting( )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-WaterSetting::~WaterSetting( )
+WaterSetting::~WaterSetting()
 {
 
 }

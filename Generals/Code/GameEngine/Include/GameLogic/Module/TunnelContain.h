@@ -107,7 +107,7 @@ public:
 	virtual void iterateContained( ContainIterateFunc func, void *userData, Bool reverse );
 	virtual UnsignedInt getContainCount() const;
 	virtual UnsignedInt getHeroUnitsContained() const;
-	virtual Int getContainMax( ) const;
+	virtual Int getContainMax() const;
 	virtual const ContainedItemsList* getContainedItemsList() const;
 	virtual UnsignedInt getFullTimeForHeal() const; ///< Returns the time in frames until a contained object becomes fully healed
 	virtual Bool isDisplayedOnControlBar() const { return TRUE; } ///< Does this container display its contents on the ControlBar?
@@ -116,8 +116,8 @@ public:
 	// override the onDie we inherit from OpenContain
 	virtual void onDie( const DamageInfo *damageInfo );  ///< the die callback
 
-	virtual void onDelete( );
-	virtual void onCreate( );
+	virtual void onDelete();
+	virtual void onCreate();
 	virtual void onBuildComplete();	///< This is called when you are a finished game object
 	virtual Bool shouldDoOnBuildComplete() const { return m_needToRunOnBuildComplete; }
 

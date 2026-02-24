@@ -28,7 +28,7 @@
 
 #pragma once
 
-void PopulateInGameDiplomacyPopup( );
+void PopulateInGameDiplomacyPopup();
 void UpdateDiplomacyBriefingText(AsciiString newText, Bool clear);
 
 typedef std::list<AsciiString> BriefingList;

@@ -121,7 +121,7 @@ ParachuteContain::ParachuteContain( Thing *thing, const ModuleData *moduleData )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-ParachuteContain::~ParachuteContain( )
+ParachuteContain::~ParachuteContain()
 {
 }
 
@@ -273,7 +273,7 @@ void ParachuteContain::containReactToTransformChange()
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime ParachuteContain::update( )
+UpdateSleepTime ParachuteContain::update()
 {
 	OpenContain::update();
 
@@ -720,7 +720,7 @@ void ParachuteContain::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void ParachuteContain::loadPostProcess( )
+void ParachuteContain::loadPostProcess()
 {
 
 	// extend base class

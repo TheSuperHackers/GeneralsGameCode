@@ -42,7 +42,7 @@ static const Int INVALID_PATH = -1;
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-RailedTransportAIUpdateModuleData::RailedTransportAIUpdateModuleData( )
+RailedTransportAIUpdateModuleData::RailedTransportAIUpdateModuleData()
 {
 
 }
@@ -85,14 +85,14 @@ RailedTransportAIUpdate::RailedTransportAIUpdate( Thing *thing, const ModuleData
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-RailedTransportAIUpdate::~RailedTransportAIUpdate( )
+RailedTransportAIUpdate::~RailedTransportAIUpdate()
 {
 
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void RailedTransportAIUpdate::loadWaypointData( )
+void RailedTransportAIUpdate::loadWaypointData()
 {
 	const RailedTransportAIUpdateModuleData *modData = getRailedTransportAIUpdateModuleData();
 
@@ -129,7 +129,7 @@ void RailedTransportAIUpdate::loadWaypointData( )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void RailedTransportAIUpdate::pickAndMoveToInitialLocation( )
+void RailedTransportAIUpdate::pickAndMoveToInitialLocation()
 {
 	Object *us = getObject();
 	const Coord3D *ourPos = us->getPosition();
@@ -187,7 +187,7 @@ void RailedTransportAIUpdate::pickAndMoveToInitialLocation( )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-UpdateSleepTime RailedTransportAIUpdate::update( )
+UpdateSleepTime RailedTransportAIUpdate::update()
 {
 	Object *us = getObject();
 
@@ -409,7 +409,7 @@ void RailedTransportAIUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void RailedTransportAIUpdate::loadPostProcess( )
+void RailedTransportAIUpdate::loadPostProcess()
 {
  // extend base class
 	AIUpdateInterface::loadPostProcess();

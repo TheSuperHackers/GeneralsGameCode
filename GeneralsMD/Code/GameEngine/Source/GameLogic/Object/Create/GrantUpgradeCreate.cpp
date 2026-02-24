@@ -71,7 +71,7 @@ GrantUpgradeCreate::GrantUpgradeCreate( Thing *thing, const ModuleData* moduleDa
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-GrantUpgradeCreate::~GrantUpgradeCreate( )
+GrantUpgradeCreate::~GrantUpgradeCreate()
 {
 
 }
@@ -79,7 +79,7 @@ GrantUpgradeCreate::~GrantUpgradeCreate( )
 //-------------------------------------------------------------------------------------------------
 /** The create callback. */
 //-------------------------------------------------------------------------------------------------
-void GrantUpgradeCreate::onCreate( )
+void GrantUpgradeCreate::onCreate()
 {
 
 	ObjectStatusMaskType exemptStatus = getGrantUpgradeCreateModuleData()->m_exemptStatus;
@@ -114,7 +114,7 @@ void GrantUpgradeCreate::onCreate( )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void GrantUpgradeCreate::onBuildComplete( )
+void GrantUpgradeCreate::onBuildComplete()
 {
 	if( ! shouldDoOnBuildComplete() )
 		return;
@@ -172,7 +172,7 @@ void GrantUpgradeCreate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void GrantUpgradeCreate::loadPostProcess( )
+void GrantUpgradeCreate::loadPostProcess()
 {
 
 	// extend base class

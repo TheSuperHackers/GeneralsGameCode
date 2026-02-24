@@ -65,9 +65,9 @@ public:
 	virtual ~LadderPreferences();
 
 	Bool loadProfile( Int profileID );
-	virtual bool write( );
+	virtual bool write();
 
-	const LadderPrefMap& getRecentLadders( );
+	const LadderPrefMap& getRecentLadders();
 	void addRecentLadder( LadderPref ladder );
 
 private:

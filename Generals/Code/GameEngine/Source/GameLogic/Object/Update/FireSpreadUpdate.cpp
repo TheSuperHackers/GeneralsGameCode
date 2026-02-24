@@ -108,13 +108,13 @@ FireSpreadUpdate::FireSpreadUpdate( Thing *thing, const ModuleData* moduleData )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-FireSpreadUpdate::~FireSpreadUpdate( )
+FireSpreadUpdate::~FireSpreadUpdate()
 {
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime FireSpreadUpdate::update( )
+UpdateSleepTime FireSpreadUpdate::update()
 {
 	const FireSpreadUpdateModuleData* d = getFireSpreadUpdateModuleData();
 	Object* me = getObject();
@@ -211,7 +211,7 @@ void FireSpreadUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void FireSpreadUpdate::loadPostProcess( )
+void FireSpreadUpdate::loadPostProcess()
 {
 
 	// extend base class

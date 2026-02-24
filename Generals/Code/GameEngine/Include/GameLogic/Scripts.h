@@ -116,7 +116,7 @@ protected:
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( );
+	virtual void loadPostProcess();
 
 protected:
 	Script			*m_firstScript;
@@ -598,7 +598,7 @@ protected:	// Note - If you add any member vars, you must take them into account
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( );
+	virtual void loadPostProcess();
 
 	AsciiString	m_scriptName;   ///<Short name.
 	AsciiString m_comment;			///< Long comment.
@@ -1062,7 +1062,7 @@ protected:
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( );
+	virtual void loadPostProcess();
 
 	ScriptGroup		*m_firstGroup;
 	Script				*m_firstScript;

@@ -237,7 +237,7 @@ Bool Connection::isQueueEmpty() {
 	return FALSE;
 }
 
-void Connection::setQuitting( )
+void Connection::setQuitting()
 {
 	m_isQuitting = TRUE;
 	m_quitTime = timeGetTime();

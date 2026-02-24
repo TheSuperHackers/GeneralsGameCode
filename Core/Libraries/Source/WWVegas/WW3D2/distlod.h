@@ -94,11 +94,11 @@ public:
 	// animation-compatible) so the bone query functions simply pass to the top
 	// LOD.
 	/////////////////////////////////////////////////////////////////////////////
-	virtual void					Set_Animation( );
+	virtual void					Set_Animation();
 	virtual void					Set_Animation( HAnimClass * motion, float frame, int anim_mode = ANIM_MODE_MANUAL);
 	virtual void					Set_Animation( HAnimClass * motion0,float frame0,HAnimClass * motion1,float frame1,float percentage);
 	virtual void					Set_Animation( HAnimComboClass * anim_combo);
-	virtual HAnimClass *			Peek_Animation( );
+	virtual HAnimClass *			Peek_Animation();
 	virtual int						Get_Num_Bones();
 	virtual const char *			Get_Bone_Name(int bone_index);
 	virtual int						Get_Bone_Index(const char * bonename);

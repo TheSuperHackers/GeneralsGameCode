@@ -373,7 +373,7 @@ Font3DInstanceClass::~Font3DInstanceClass()
 /*
 **
 */
-void	Font3DInstanceClass::Set_Mono_Spaced( )
+void	Font3DInstanceClass::Set_Mono_Spaced()
 {
 	MonoSpacing = FontData->Char_Width('W') + 1;
 	Build_Cached_Tables();

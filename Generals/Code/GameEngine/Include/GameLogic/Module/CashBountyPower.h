@@ -95,7 +95,7 @@ public:
 #endif
 	Real											m_defaultBounty;
 
-	CashBountyPowerModuleData( );
+	CashBountyPowerModuleData();
 	static void buildFieldParse(MultiIniFieldParse& p);
 };
 

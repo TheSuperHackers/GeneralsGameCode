@@ -226,7 +226,7 @@ void ParticleUplinkCannonUpdate::killEverything()
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-ParticleUplinkCannonUpdate::~ParticleUplinkCannonUpdate( )
+ParticleUplinkCannonUpdate::~ParticleUplinkCannonUpdate()
 {
 	killEverything();
 }
@@ -1436,7 +1436,7 @@ void ParticleUplinkCannonUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void ParticleUplinkCannonUpdate::loadPostProcess( )
+void ParticleUplinkCannonUpdate::loadPostProcess()
 {
 
 	// extend base class
