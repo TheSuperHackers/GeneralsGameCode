@@ -1889,15 +1889,15 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			{
 				if (TheTacticalView->isCameraMovementFinished())
 				{
-					ViewLocation loc;
-					Coord3D pos;
-					Real pitch, angle, zoom;
-					pos = msg->getArgument( 0 )->location;
-					angle = msg->getArgument( 1 )->real;
-					pitch = msg->getArgument( 2 )->real;
-					zoom = msg->getArgument( 3 )->real;
-					loc.init(pos.x, pos.y, pos.z, angle, pitch, zoom);
-					TheTacticalView->setLocation( &loc );
+					const Coord3D pos = msg->getArgument( 0 )->location;
+					const Real angle = msg->getArgument( 1 )->real;
+					const Real pitch = msg->getArgument( 2 )->real;
+					const Real zoom = msg->getArgument( 3 )->real;
+
+					TheTacticalView->setPosition(&pos);
+					TheTacticalView->setAngle(angle);
+					TheTacticalView->setPitch(pitch);
+					TheTacticalView->setZoom(zoom);
 
 					// TheSuperHackers @fix xezon 18/09/2025 Lock the new location to avoid user input from changing the camera in this frame.
 					TheTacticalView->lockViewUntilFrame( getFrame() + 1 );
