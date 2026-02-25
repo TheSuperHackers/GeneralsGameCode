@@ -1574,7 +1574,7 @@ void ParticleUplinkCannonUpdate::loadPostProcess( void )
 			m_unpackToReadySound.setPlayingHandle( TheAudio->addAudioEvent( &m_unpackToReadySound ) );
 		}
 
-		if ( m_status == STATUS_FIRING || m_status == STATUS_POSTFIRE ||
+		if( m_status == STATUS_FIRING || m_status == STATUS_POSTFIRE ||
 			(m_status == STATUS_PACKING && (m_laserStatus == LASERSTATUS_DECAYING || m_laserStatus == LASERSTATUS_DEAD)) )
 		{
 			if( m_firingToIdleSound.getEventName().isNotEmpty() )
