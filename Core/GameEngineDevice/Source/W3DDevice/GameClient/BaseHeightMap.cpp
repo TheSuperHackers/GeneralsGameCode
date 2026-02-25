@@ -375,8 +375,7 @@ void BaseHeightMapRenderObjClass::adjustTerrainLOD(Int adj)
 		newROBJ->m_roadBuffer->loadRoads();
 	}
 	if (TheTacticalView) {
-		TheTacticalView->setAngle(TheTacticalView->getAngle() + 1);
-		TheTacticalView->setAngle(TheTacticalView->getAngle() - 1);
+		TheTacticalView->forceRedraw();
 	}
 }
 
@@ -485,11 +484,8 @@ void BaseHeightMapRenderObjClass::ReAcquireResources()
 	}
 #endif
 
-	if (TheTacticalView)
-	{	TheTacticalView->forceRedraw();	//force map to update itself for the current camera position.
-		//for some reason we need to do it twice otherwise we sometimes end up with a black map until
-		//the player moves.
-		TheTacticalView->forceRedraw();
+	if (TheTacticalView) {
+		TheTacticalView->forceRedraw(); //force map to update itself for the current camera position.
 	}
 }
 
