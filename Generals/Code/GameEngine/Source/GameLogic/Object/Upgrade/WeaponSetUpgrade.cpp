@@ -42,13 +42,13 @@ WeaponSetUpgrade::WeaponSetUpgrade( Thing *thing, const ModuleData* moduleData )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-WeaponSetUpgrade::~WeaponSetUpgrade( void )
+WeaponSetUpgrade::~WeaponSetUpgrade()
 {
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void WeaponSetUpgrade::upgradeImplementation( )
+void WeaponSetUpgrade::upgradeImplementation()
 {
 	// Very simple; just need to flag the Object as having the player upgrade, and the WeaponSet chooser
 	// will do the work of picking the right one from ini.  This comment is as long as the code.
@@ -88,7 +88,7 @@ void WeaponSetUpgrade::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void WeaponSetUpgrade::loadPostProcess( void )
+void WeaponSetUpgrade::loadPostProcess()
 {
 
 	// extend base class

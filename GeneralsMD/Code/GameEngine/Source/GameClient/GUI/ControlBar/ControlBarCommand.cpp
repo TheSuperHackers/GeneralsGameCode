@@ -93,7 +93,7 @@ void ControlBar::populateInvDataCallback( Object *obj, void *userData )
 	if( data->currIndex > data->maxIndex )
 	{
 
-		DEBUG_ASSERTCRASH( 0, ("There is not enough GUI slots to hold the # of items inside a '%s'",
+		DEBUG_CRASH( ("There is not enough GUI slots to hold the # of items inside a '%s'",
 													data->transport->getTemplate()->getName().str()) );
 		return;
 
@@ -508,7 +508,7 @@ void ControlBar::populateCommand( Object *obj )
 //-------------------------------------------------------------------------------------------------
 /** reset transport data */
 //-------------------------------------------------------------------------------------------------
-void ControlBar::resetContainData( void )
+void ControlBar::resetContainData()
 {
 	Int i;
 
@@ -525,7 +525,7 @@ void ControlBar::resetContainData( void )
 //-------------------------------------------------------------------------------------------------
 /** reset the build queue data we use to die queue entries to control */
 //-------------------------------------------------------------------------------------------------
-void ControlBar::resetBuildQueueData( void )
+void ControlBar::resetBuildQueueData()
 {
 	Int i;
 
@@ -690,7 +690,7 @@ void ControlBar::populateBuildQueue( Object *producer )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void ControlBar::updateContextCommand( void )
+void ControlBar::updateContextCommand()
 {
  	Object *obj = nullptr;
 	Int i;

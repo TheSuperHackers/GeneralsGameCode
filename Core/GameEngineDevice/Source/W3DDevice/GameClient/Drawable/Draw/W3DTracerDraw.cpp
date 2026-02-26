@@ -86,7 +86,7 @@ void W3DTracerDraw::setTracerParms(Real speed, Real length, Real width, const RG
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-W3DTracerDraw::~W3DTracerDraw( void )
+W3DTracerDraw::~W3DTracerDraw()
 {
 	// remove tracer from the scene and delete
 	if( m_theTracer )
@@ -185,7 +185,7 @@ void W3DTracerDraw::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void W3DTracerDraw::loadPostProcess( void )
+void W3DTracerDraw::loadPostProcess()
 {
 
 	// extend base class

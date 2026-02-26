@@ -110,7 +110,7 @@ AutoDepositUpdate::AutoDepositUpdate( Thing *thing, const ModuleData* moduleData
 }
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-AutoDepositUpdate::~AutoDepositUpdate( void )
+AutoDepositUpdate::~AutoDepositUpdate()
 {
 
 }
@@ -143,7 +143,7 @@ void AutoDepositUpdate::awardInitialCaptureBonus( Player *player )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime AutoDepositUpdate::update( void )
+UpdateSleepTime AutoDepositUpdate::update()
 {
 	const AutoDepositUpdateModuleData *modData = getAutoDepositUpdateModuleData();
 /// @todo srj use SLEEPY_UPDATE here
@@ -271,7 +271,7 @@ void AutoDepositUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void AutoDepositUpdate::loadPostProcess( void )
+void AutoDepositUpdate::loadPostProcess()
 {
 
 	// extend base class

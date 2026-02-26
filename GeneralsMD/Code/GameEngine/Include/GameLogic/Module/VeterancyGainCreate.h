@@ -62,7 +62,7 @@ public:
 	// virtual destructor prototype provided by memory pool declaration
 
 	/// the create method
-	virtual void onCreate( void );
+	virtual void onCreate();
 
 protected:
 

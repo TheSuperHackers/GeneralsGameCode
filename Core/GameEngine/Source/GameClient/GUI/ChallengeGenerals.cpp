@@ -34,7 +34,7 @@
 
 ChallengeGenerals *TheChallengeGenerals = nullptr;
 
-ChallengeGenerals *createChallengeGenerals( void )
+ChallengeGenerals *createChallengeGenerals()
 {
 	return MSGNEW("ChallengeGenerals") ChallengeGenerals;
 }
@@ -52,7 +52,7 @@ ChallengeGenerals::~ChallengeGenerals()
 }
 
 
-void ChallengeGenerals::init( void )
+void ChallengeGenerals::init()
 {
 	INI ini;
 	ini.loadFileDirectory( "Data\\INI\\ChallengeMode", INI_LOAD_OVERWRITE, nullptr );

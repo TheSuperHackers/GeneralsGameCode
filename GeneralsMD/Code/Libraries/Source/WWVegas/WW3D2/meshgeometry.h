@@ -89,9 +89,9 @@ class MeshGeometryClass : public W3DMPO, public RefCountClass, public MultiListO
 
 public:
 
-	MeshGeometryClass(void);
+	MeshGeometryClass();
 	MeshGeometryClass(const MeshGeometryClass & that);
-	virtual ~MeshGeometryClass(void);
+	virtual ~MeshGeometryClass();
 
 	MeshGeometryClass & operator = (const MeshGeometryClass & that);
 
@@ -122,36 +122,36 @@ public:
 
 	void							Reset_Geometry(int polycount,int vertcount);
 
-	const char *				Get_Name(void) const;
+	const char *				Get_Name() const;
 	void							Set_Name(const char * newname);
 
-	const char *				Get_User_Text(void);
+	const char *				Get_User_Text();
 	void							Set_User_Text(char * usertext);
 
 	void							Set_Flag(FlagsType flag,bool onoff)						{ if (onoff) {	Flags |= flag;	} else {	Flags &= ~flag; } }
 	int							Get_Flag(FlagsType flag)									{ return Flags & flag; }
 
 	void							Set_Sort_Level(int level)									{ SortLevel = level; }
-	int							Get_Sort_Level(void) const									{ return SortLevel; }
+	int							Get_Sort_Level() const									{ return SortLevel; }
 
-	int							Get_Polygon_Count(void) const								{ return PolyCount; }
-	int							Get_Vertex_Count(void) const								{ return VertexCount; }
+	int							Get_Polygon_Count() const								{ return PolyCount; }
+	int							Get_Vertex_Count() const								{ return VertexCount; }
 
-	const TriIndex*			Get_Polygon_Array(void)										{ return get_polys(); }
-	Vector3 *					Get_Vertex_Array(void)										{ WWASSERT(Vertex); return Vertex->Get_Array(); }
-	const Vector3 *			Get_Vertex_Normal_Array(void);
+	const TriIndex*			Get_Polygon_Array()										{ return get_polys(); }
+	Vector3 *					Get_Vertex_Array()										{ WWASSERT(Vertex); return Vertex->Get_Array(); }
+	const Vector3 *			Get_Vertex_Normal_Array();
 	const Vector4 *			Get_Plane_Array(bool create = true);
 	void							Compute_Plane(int pidx,PlaneClass * set_plane) const;
 	const uint32 *				Get_Vertex_Shade_Index_Array(bool create = true)	{ return get_shade_indices(create); }
-	const uint16 *				Get_Vertex_Bone_Links(void)								{ return get_bone_links(); }
-	uint8 *						Get_Poly_Surface_Type_Array(void)						{ WWASSERT(PolySurfaceType); return PolySurfaceType->Get_Array(); }
+	const uint16 *				Get_Vertex_Bone_Links()								{ return get_bone_links(); }
+	uint8 *						Get_Poly_Surface_Type_Array()						{ WWASSERT(PolySurfaceType); return PolySurfaceType->Get_Array(); }
 	uint8							Get_Poly_Surface_Type(int poly_index) const;
 
 	void							Get_Bounding_Box(AABoxClass * set_box);
 	void							Get_Bounding_Sphere(SphereClass * set_sphere);
 
 	// exposed culling support
-	bool							Has_Cull_Tree(void)											{ return CullTree != nullptr; }
+	bool							Has_Cull_Tree()											{ return CullTree != nullptr; }
 
 	void							Generate_Rigid_APT(const Vector3 & view_dir, SimpleDynVecClass<uint32> & apt);
 	void							Generate_Rigid_APT(const OBBoxClass & local_box, SimpleDynVecClass<uint32> & apt);
@@ -184,8 +184,8 @@ public:
 protected:
 
 	// internal accessor functions that are not exposed to the user (non-const...)
-	TriIndex *					get_polys(void);
-	Vector3 *					get_vert_normals(void);
+	TriIndex *					get_polys();
+	Vector3 *					get_vert_normals();
 	uint32 *						get_shade_indices(bool create = true);
 	Vector4 *					get_planes(bool create = true);
 	uint16 *						get_bone_links(bool create = true);
@@ -207,7 +207,7 @@ protected:
 	virtual void				Compute_Plane_Equations(Vector4 * array);
 	virtual void				Compute_Vertex_Normals(Vector3 * array);
 	virtual void				Compute_Bounds(Vector3 * verts);
-	void							Generate_Culling_Tree(void);
+	void							Generate_Culling_Tree();
 
 	// W3D chunk reading
 	WW3DErrorType				read_chunks(ChunkLoadClass & cload);
@@ -255,7 +255,7 @@ protected:
 /*
 ** Inline functions for MeshGeometryClass
 */
-inline TriIndex * MeshGeometryClass::get_polys(void)
+inline TriIndex * MeshGeometryClass::get_polys()
 {
 	WWASSERT(Poly);
 	return Poly->Get_Array();

@@ -80,10 +80,10 @@ public:
 
 	virtual void setTower( BridgeTowerType towerType, Object *tower ) = 0;
 	virtual ObjectID getTowerID( BridgeTowerType towerType ) = 0;
-	virtual void createScaffolding( void ) = 0;
-	virtual void removeScaffolding( void ) = 0;
-	virtual Bool isScaffoldInMotion( void ) = 0;
-	virtual Bool isScaffoldPresent( void ) = 0;
+	virtual void createScaffolding() = 0;
+	virtual void removeScaffolding() = 0;
+	virtual Bool isScaffoldInMotion() = 0;
+	virtual Bool isScaffoldPresent() = 0;
 
 };
 
@@ -94,8 +94,8 @@ class BridgeBehaviorModuleData : public BehaviorModuleData
 
 public:
 
-	BridgeBehaviorModuleData( void );
-	~BridgeBehaviorModuleData( void );
+	BridgeBehaviorModuleData();
+	~BridgeBehaviorModuleData();
 
 	static void buildFieldParse( MultiIniFieldParse &p );
 
@@ -126,14 +126,14 @@ public:
 	// virtual destructor prototype provided by memory pool declaration
 
 	// module methods
-	static Int getInterfaceMask( void ) { return (MODULEINTERFACE_DAMAGE) |
+	static Int getInterfaceMask() { return (MODULEINTERFACE_DAMAGE) |
 																							 (MODULEINTERFACE_DIE) |
 																							 (MODULEINTERFACE_UPDATE); }
-	virtual BridgeBehaviorInterface* getBridgeBehaviorInterface( void ) { return this; }
-	virtual void onDelete( void );
+	virtual BridgeBehaviorInterface* getBridgeBehaviorInterface() { return this; }
+	virtual void onDelete();
 
 	// Damage methods
-	virtual DamageModuleInterface* getDamage( void ) { return this; }
+	virtual DamageModuleInterface* getDamage() { return this; }
 	virtual void onDamage( DamageInfo *damageInfo );
 	virtual void onHealing( DamageInfo *damageInfo );
 	virtual void onBodyDamageStateChange( const DamageInfo* damageInfo,
@@ -141,26 +141,26 @@ public:
 																				BodyDamageType newState );
 
 	// Die methods
-	virtual DieModuleInterface* getDie( void ) { return this; }
+	virtual DieModuleInterface* getDie() { return this; }
 	virtual void onDie( const DamageInfo *damageInfo );
 
 	// Update methods
-	virtual UpdateModuleInterface *getUpdate( void ) { return this; }
-	virtual UpdateSleepTime update( void );
+	virtual UpdateModuleInterface *getUpdate() { return this; }
+	virtual UpdateSleepTime update();
 
 	// our own methods
 	static BridgeBehaviorInterface *getBridgeBehaviorInterfaceFromObject( Object *obj );
 	virtual void setTower( BridgeTowerType towerType, Object *tower );	///< connect tower to us
 	virtual ObjectID getTowerID( BridgeTowerType towerType );						///< retrieve one of our towers
-	virtual void createScaffolding( void );		///< create scaffolding around bridge
-	virtual void removeScaffolding( void );		///< remove scaffolding around bridge
-	virtual Bool isScaffoldInMotion( void );	///< is scaffold in motion
-	virtual Bool isScaffoldPresent( void ) { return m_scaffoldPresent; }
+	virtual void createScaffolding();		///< create scaffolding around bridge
+	virtual void removeScaffolding();		///< remove scaffolding around bridge
+	virtual Bool isScaffoldInMotion();	///< is scaffold in motion
+	virtual Bool isScaffoldPresent() { return m_scaffoldPresent; }
 
 protected:
 
-	void resolveFX( void );
-	void handleObjectsOnBridgeOnDie( void );
+	void resolveFX();
+	void handleObjectsOnBridgeOnDie();
 	void doAreaEffects( TerrainRoadType *bridgeTemplate, Bridge *bridge,
 											const ObjectCreationList *ocl, const FXList *fx );
 	void setScaffoldData( Object *obj,

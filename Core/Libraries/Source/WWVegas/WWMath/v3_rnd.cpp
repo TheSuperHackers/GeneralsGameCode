@@ -55,7 +55,7 @@ void Vector3SolidBoxRandomizer::Get_Vector(Vector3 &vector)
 	vector.Z = Get_Random_Float_Minus1_To_1() * Extents.Z;
 }
 
-float Vector3SolidBoxRandomizer::Get_Maximum_Extent(void)
+float Vector3SolidBoxRandomizer::Get_Maximum_Extent()
 {
 	float max = MAX(Extents.X, Extents.Y);
 	max = MAX(max, Extents.Z);
@@ -88,7 +88,7 @@ void Vector3SolidSphereRandomizer::Get_Vector(Vector3 &vector)
 	}
 }
 
-float Vector3SolidSphereRandomizer::Get_Maximum_Extent(void)
+float Vector3SolidSphereRandomizer::Get_Maximum_Extent()
 {
 	return Radius;
 }
@@ -125,7 +125,7 @@ void Vector3HollowSphereRandomizer::Get_Vector(Vector3 &vector)
 	vector.Z *= scale;
 }
 
-float Vector3HollowSphereRandomizer::Get_Maximum_Extent(void)
+float Vector3HollowSphereRandomizer::Get_Maximum_Extent()
 {
 	return Radius;
 }
@@ -160,7 +160,7 @@ void Vector3SolidCylinderRandomizer::Get_Vector(Vector3 &vector)
 	vector.Z = vec2.Y;
 }
 
-float Vector3SolidCylinderRandomizer::Get_Maximum_Extent(void)
+float Vector3SolidCylinderRandomizer::Get_Maximum_Extent()
 {
 	return MAX(Extent, Radius);
 }

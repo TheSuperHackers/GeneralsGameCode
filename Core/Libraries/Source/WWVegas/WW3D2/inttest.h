@@ -160,7 +160,7 @@ public:
 	bool								Intersect_Triangle(const TriClass & tri);
 
 protected:
-	void								update_bounding_box(void);
+	void								update_bounding_box();
 
 public:
 	OBBoxClass						Box;					// world space obbox that we want to test with
@@ -240,7 +240,7 @@ inline bool OBBoxIntersectionTestClass::Intersect_Triangle(const TriClass & tri)
 	return CollisionMath::Intersection_Test(Box,tri);
 }
 
-inline void OBBoxIntersectionTestClass::update_bounding_box(void)
+inline void OBBoxIntersectionTestClass::update_bounding_box()
 {
 	BoundingBox.Center = Box.Center;
 	Box.Basis.Rotate_AABox_Extent(Box.Extent,&BoundingBox.Extent);

@@ -44,13 +44,13 @@ WanderAIUpdate::WanderAIUpdate( Thing *thing, const ModuleData* moduleData ) : A
 }
 
 //-------------------------------------------------------------------------------------------------
-WanderAIUpdate::~WanderAIUpdate( void )
+WanderAIUpdate::~WanderAIUpdate()
 {
 
 }
 
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime WanderAIUpdate::update( void )
+UpdateSleepTime WanderAIUpdate::update()
 {
 	// If I'm standing still, move somewhere
 	if (isIdle())
@@ -96,7 +96,7 @@ void WanderAIUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void WanderAIUpdate::loadPostProcess( void )
+void WanderAIUpdate::loadPostProcess()
 {
  // extend base class
 	AIUpdateInterface::loadPostProcess();

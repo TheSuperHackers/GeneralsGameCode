@@ -693,7 +693,7 @@ void MinefieldBehavior::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void MinefieldBehavior::loadPostProcess( void )
+void MinefieldBehavior::loadPostProcess()
 {
 
 	// extend base class

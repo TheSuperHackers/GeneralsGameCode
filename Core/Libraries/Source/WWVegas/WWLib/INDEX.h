@@ -80,8 +80,8 @@ template<class INDEX, class T>
 class IndexClass
 {
 	public:
-		IndexClass(void);
-		~IndexClass(void);
+		IndexClass();
+		~IndexClass();
 
 		/*
 		**	Add element to index table.
@@ -101,7 +101,7 @@ class IndexClass
 		/*
 		**	Fetch number of index entries in the table.
 		*/
-		int Count(void) const;
+		int Count() const;
 
 		/*
 		**	Actually a fetch an index data element from the table.
@@ -117,7 +117,7 @@ class IndexClass
 		/*
 		**	Clear out the index table to null (empty) state.
 		*/
-		void Clear(void);
+		void Clear();
 
 	private:
 		/*
@@ -125,7 +125,7 @@ class IndexClass
 		**	object and the index identifier number.
 		*/
 		struct NodeElement {
-			NodeElement(void) {}		// Default constructor does nothing (by design).
+			NodeElement() {}		// Default constructor does nothing (by design).
 			NodeElement(INDEX const & id, T & data) : ID(id), Data(data) {}
 
 			INDEX ID;		// ID number (must be first element in this structure).
@@ -178,7 +178,7 @@ class IndexClass
 		/*
 		**	Invalidate the archive pointer.
 		*/
-		void Invalidate_Archive(void) const;
+		void Invalidate_Archive() const;
 
 		/*
 		**	Set archive to specified value.
@@ -209,7 +209,7 @@ class IndexClass
  *   11/02/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
 template<class INDEX, class T>
-IndexClass<INDEX, T>::IndexClass(void) :
+IndexClass<INDEX, T>::IndexClass() :
 	IndexTable(0),
 	IndexCount(0),
 	IndexSize(0),
@@ -235,7 +235,7 @@ IndexClass<INDEX, T>::IndexClass(void) :
  *   11/02/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
 template<class INDEX, class T>
-IndexClass<INDEX, T>::~IndexClass(void)
+IndexClass<INDEX, T>::~IndexClass()
 {
 	Clear();
 }
@@ -257,7 +257,7 @@ IndexClass<INDEX, T>::~IndexClass(void)
  *   11/02/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
 template<class INDEX, class T>
-void IndexClass<INDEX, T>::Clear(void)
+void IndexClass<INDEX, T>::Clear()
 {
 	delete [] IndexTable;
 	IndexTable = 0;
@@ -340,7 +340,7 @@ bool IndexClass<INDEX, T>::Increase_Table_Size(int amount)
  *   11/02/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
 template<class INDEX, class T>
-int IndexClass<INDEX, T>::Count(void) const
+int IndexClass<INDEX, T>::Count() const
 {
 	return(IndexCount);
 }
@@ -492,7 +492,7 @@ bool IndexClass<INDEX, T>::Is_Archive_Same(INDEX const & id) const
  *   11/02/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
 template<class INDEX, class T>
-void IndexClass<INDEX, T>::Invalidate_Archive(void) const
+void IndexClass<INDEX, T>::Invalidate_Archive() const
 {
 	Archive = 0;
 }

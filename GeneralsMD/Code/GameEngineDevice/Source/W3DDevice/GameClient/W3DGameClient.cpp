@@ -76,7 +76,7 @@ W3DGameClient::~W3DGameClient()
 //-------------------------------------------------------------------------------------------------
 /** Initialize resources for the w3d game client */
 //-------------------------------------------------------------------------------------------------
-void W3DGameClient::init( void )
+void W3DGameClient::init()
 {
 
 	// extending initialization routine
@@ -87,7 +87,7 @@ void W3DGameClient::init( void )
 //-------------------------------------------------------------------------------------------------
 /** Per frame update, note we are extending functionality */
 //-------------------------------------------------------------------------------------------------
-void W3DGameClient::update( void )
+void W3DGameClient::update()
 {
 
 	// call base
@@ -99,7 +99,7 @@ void W3DGameClient::update( void )
 /** Reset this device client system.  Note we are extending reset functionality from
 	* the device independent client */
 //-------------------------------------------------------------------------------------------------
-void W3DGameClient::reset( void )
+void W3DGameClient::reset()
 {
 
 	// call base class

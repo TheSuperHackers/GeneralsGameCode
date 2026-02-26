@@ -136,7 +136,7 @@ MissileAIUpdate::~MissileAIUpdate()
 }
 
 //-------------------------------------------------------------------------------------------------
-void MissileAIUpdate::onDelete( void )
+void MissileAIUpdate::onDelete()
 {
 	//
 	// there is no need to destroy the attached particle systems here because the particle
@@ -543,7 +543,7 @@ void MissileAIUpdate::doAttackState(Bool turnOK)
 }
 
 //-------------------------------------------------------------------------------------------------
-void MissileAIUpdate::doKillState(void)
+void MissileAIUpdate::doKillState()
 {
 	if (TheGameLogic->getFrame() >= m_fuelExpirationDate)
 	{
@@ -808,7 +808,7 @@ void MissileAIUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void MissileAIUpdate::loadPostProcess( void )
+void MissileAIUpdate::loadPostProcess()
 {
  // extend base class
 	AIUpdateInterface::loadPostProcess();

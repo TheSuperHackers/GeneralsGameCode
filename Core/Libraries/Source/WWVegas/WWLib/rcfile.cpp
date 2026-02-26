@@ -63,7 +63,7 @@ ResourceFileClass::ResourceFileClass(HMODULE hmodule, char const *filename) :
 	}
 }
 
-ResourceFileClass::~ResourceFileClass(void)
+ResourceFileClass::~ResourceFileClass()
 {
 	free(ResourceName);
 }
@@ -117,7 +117,7 @@ int ResourceFileClass::Seek(int pos, int dir)
 	return FilePtr - FileBytes;
 }
 
-int ResourceFileClass::Size(void)
+int ResourceFileClass::Size()
 {
 	return EndOfFile - FileBytes;
 }

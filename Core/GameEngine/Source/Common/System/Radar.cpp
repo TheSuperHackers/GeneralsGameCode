@@ -77,7 +77,7 @@ void Radar::deleteList( RadarObject **list )
 //-------------------------------------------------------------------------------------------------
 /** Delete list resources used by the radar and return them to the memory pools */
 //-------------------------------------------------------------------------------------------------
-void Radar::deleteListResources( void )
+void Radar::deleteListResources()
 {
 	deleteList(&m_objectList);
 	deleteList(&m_localObjectList);
@@ -94,7 +94,7 @@ void Radar::deleteListResources( void )
 // PUBLIC METHODS /////////////////////////////////////////////////////////////////////////////////
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-RadarObject::RadarObject( void )
+RadarObject::RadarObject()
 {
 
 	m_object = nullptr;
@@ -105,7 +105,7 @@ RadarObject::RadarObject( void )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-RadarObject::~RadarObject( void )
+RadarObject::~RadarObject()
 {
 
 }
@@ -172,14 +172,14 @@ void RadarObject::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void RadarObject::loadPostProcess( void )
+void RadarObject::loadPostProcess()
 {
 
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-Radar::Radar( void )
+Radar::Radar()
 {
 
 	m_radarWindow = nullptr;
@@ -206,7 +206,7 @@ Radar::Radar( void )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-Radar::~Radar( void )
+Radar::~Radar()
 {
 
 	// delete list resources
@@ -217,7 +217,7 @@ Radar::~Radar( void )
 //-------------------------------------------------------------------------------------------------
 /** Clear all radar events */
 //-------------------------------------------------------------------------------------------------
-void Radar::clearAllEvents( void )
+void Radar::clearAllEvents()
 {
 
 	// set next free index to the first one
@@ -253,7 +253,7 @@ void Radar::clearAllEvents( void )
 //-------------------------------------------------------------------------------------------------
 /** Reset radar data */
 //-------------------------------------------------------------------------------------------------
-void Radar::reset( void )
+void Radar::reset()
 {
 
 	// delete list resources
@@ -273,7 +273,7 @@ void Radar::reset( void )
 //-------------------------------------------------------------------------------------------------
 /** Radar per frame update */
 //-------------------------------------------------------------------------------------------------
-void Radar::update( void )
+void Radar::update()
 {
 	Int i;
 	UnsignedInt thisFrame = TheGameLogic->getFrame();
@@ -478,7 +478,7 @@ Bool Radar::removeObject( Object *obj )
 		return TRUE;
 	else
 	{
-		DEBUG_ASSERTCRASH( 0, ("Radar: Tried to remove object '%s' which was not found",
+		DEBUG_CRASH( ("Radar: Tried to remove object '%s' which was not found",
 											 obj->getTemplate()->getName().str()) );
 		return FALSE;
 	}
@@ -1227,7 +1227,7 @@ void Radar::refreshTerrain( TerrainLogic *terrain )
 	* rebuilding the radar graphic because that process is slow.  If you need to update
 	* the terrain on the radar immediately use refreshTerrain() */
 // ------------------------------------------------------------------------------------------------
-void Radar::queueTerrainRefresh( void )
+void Radar::queueTerrainRefresh()
 {
 
 	//
@@ -1433,7 +1433,7 @@ void Radar::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void Radar::loadPostProcess( void )
+void Radar::loadPostProcess()
 {
 
 	//

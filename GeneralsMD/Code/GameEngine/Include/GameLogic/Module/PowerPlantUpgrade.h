@@ -50,12 +50,12 @@ public:
 	PowerPlantUpgrade( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype defined by MemoryPoolObject
 
-	virtual void onDelete( void );																///< we have some work to do when this module goes away
+	virtual void onDelete();																///< we have some work to do when this module goes away
 	virtual void onCapture( Player *oldOwner, Player *newOwner );	///< object containing upgrade has changed teams
 
 protected:
 
-	virtual void upgradeImplementation( void ); ///< Here's the actual work of Upgrading
+	virtual void upgradeImplementation(); ///< Here's the actual work of Upgrading
 	virtual Bool isSubObjectsUpgrade() { return false; }
 
 };

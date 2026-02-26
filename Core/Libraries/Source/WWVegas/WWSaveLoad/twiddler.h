@@ -57,8 +57,8 @@ public:
 	/////////////////////////////////////////////////////////////////////
 	//	Public constructors/destructors
 	/////////////////////////////////////////////////////////////////////
-	TwiddlerClass (void);
-	virtual ~TwiddlerClass (void);
+	TwiddlerClass ();
+	virtual ~TwiddlerClass ();
 
 	/////////////////////////////////////////////////////////////////////
 	//	Public methods
@@ -67,21 +67,21 @@ public:
 	//
 	// Type identification
 	//
-	uint32								Get_Class_ID (void) const	{ return CLASSID_TWIDDLERS; }
-	PersistClass *						Create (void) const;
+	uint32								Get_Class_ID () const	{ return CLASSID_TWIDDLERS; }
+	PersistClass *						Create () const;
 
 	//
 	// From PersistClass
 	//
 	bool									Save (ChunkSaveClass &csave);
 	bool									Load (ChunkLoadClass &cload);
-	const PersistFactoryClass &	Get_Factory (void) const;
+	const PersistFactoryClass &	Get_Factory () const;
 
 	//
 	//	Twiddler specific
 	//
-	virtual DefinitionClass *		Twiddle (void) const;
-	virtual uint32						Get_Indirect_Class_ID (void) const;
+	virtual DefinitionClass *		Twiddle () const;
+	virtual uint32						Get_Indirect_Class_ID () const;
 	virtual void						Set_Indirect_Class_ID (uint32 class_id);
 
 private:
@@ -104,7 +104,7 @@ private:
 //	Get_Indirect_Class_ID
 /////////////////////////////////////////////////////////////////////
 inline uint32
-TwiddlerClass::Get_Indirect_Class_ID (void) const
+TwiddlerClass::Get_Indirect_Class_ID () const
 {
 	return m_IndirectClassID;
 }

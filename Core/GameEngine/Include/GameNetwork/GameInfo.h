@@ -60,71 +60,71 @@ public:
 	GameSlot();
 	virtual void reset();
 
-	void setAccept( void ) { m_isAccepted = true; }		///< Accept the current options
-	void unAccept( void );														///< Unaccept (options changed, etc)
-	Bool isAccepted( void ) const { return m_isAccepted; }	///< Non-human slots are always accepted
+	void setAccept() { m_isAccepted = true; }		///< Accept the current options
+	void unAccept();														///< Unaccept (options changed, etc)
+	Bool isAccepted() const { return m_isAccepted; }	///< Non-human slots are always accepted
 
 	void setMapAvailability( Bool hasMap );						///< Set whether the slot has the map
-	Bool hasMap( void ) const { return m_hasMap; }		///< Non-human slots always have the map
+	Bool hasMap() const { return m_hasMap; }		///< Non-human slots always have the map
 
 	void setState( SlotState state,
 		UnicodeString name = UnicodeString::TheEmptyString,
 		UnsignedInt IP = 0);														///< Set the slot's state (human, AI, open, etc)
-	SlotState getState( void ) const { return m_state; }		///< Get the slot state
+	SlotState getState() const { return m_state; }		///< Get the slot state
 
 	void setColor( Int color ) { m_color = color; }
-	Int getColor( void ) const { return m_color; }
+	Int getColor() const { return m_color; }
 
 	void setStartPos( Int startPos ) { m_startPos = startPos; }
-	Int getStartPos( void ) const { return m_startPos; }
+	Int getStartPos() const { return m_startPos; }
 
 	void setPlayerTemplate( Int playerTemplate )
 	{ m_playerTemplate = playerTemplate;
 		if (playerTemplate <= PLAYERTEMPLATE_MIN)
 			m_startPos = -1;
 	 }
-	Int getPlayerTemplate( void ) const { return m_playerTemplate; }
+	Int getPlayerTemplate() const { return m_playerTemplate; }
 
 	void setTeamNumber( Int teamNumber ) { m_teamNumber = teamNumber; }
-	Int getTeamNumber( void ) const { return m_teamNumber; }
+	Int getTeamNumber() const { return m_teamNumber; }
 
 	void setName( UnicodeString name ) { m_name = name; }
-	UnicodeString getName( void ) const { return m_name; }
+	UnicodeString getName() const { return m_name; }
 
 	void setIP( UnsignedInt IP ) { m_IP = IP; }
-	UnsignedInt getIP( void ) const { return m_IP; }
+	UnsignedInt getIP() const { return m_IP; }
 
 	void setPort( UnsignedShort port ) { m_port = port; }
-	UnsignedShort getPort( void ) const { return m_port; }
+	UnsignedShort getPort() const { return m_port; }
 
 	void setNATBehavior( FirewallHelperClass::FirewallBehaviorType NATBehavior) { m_NATBehavior = NATBehavior; }
 	FirewallHelperClass::FirewallBehaviorType getNATBehavior() const { return m_NATBehavior; }
 
-	void saveOffOriginalInfo( void );
-	Int getOriginalPlayerTemplate( void ) const	{ return m_origPlayerTemplate; }
-	Int getOriginalColor( void ) const						{ return m_origColor; }
-	Int getOriginalStartPos( void ) const				{ return m_origStartPos; }
-	Int getApparentPlayerTemplate( void ) const;
-	Int getApparentColor( void ) const;
-	Int getApparentStartPos( void ) const;
-	UnicodeString getApparentPlayerTemplateDisplayName( void ) const;
+	void saveOffOriginalInfo();
+	Int getOriginalPlayerTemplate() const	{ return m_origPlayerTemplate; }
+	Int getOriginalColor() const						{ return m_origColor; }
+	Int getOriginalStartPos() const				{ return m_origStartPos; }
+	Int getApparentPlayerTemplate() const;
+	Int getApparentColor() const;
+	Int getApparentStartPos() const;
+	UnicodeString getApparentPlayerTemplateDisplayName() const;
 
 	// Various tests
-	Bool isHuman( void ) const;															///< Is this slot occupied by a human player?
-	Bool isOccupied( void ) const;													///< Is this slot occupied (by a human or an AI)?
-	Bool isAI( void ) const;																///< Is this slot occupied by an AI?
+	Bool isHuman() const;															///< Is this slot occupied by a human player?
+	Bool isOccupied() const;													///< Is this slot occupied (by a human or an AI)?
+	Bool isAI() const;																///< Is this slot occupied by an AI?
 	Bool isPlayer( AsciiString userName ) const;						///< Does this slot contain the given user?
 	Bool isPlayer( UnicodeString userName ) const;					///< Does this slot contain the given user?
 	Bool isPlayer( UnsignedInt ip ) const;									///< Is this slot at this IP?
-	Bool isOpen( void ) const;
+	Bool isOpen() const;
 
 	void setLastFrameInGame( UnsignedInt frame ) { m_lastFrameInGame = frame; }
-	void markAsDisconnected( void ) { m_disconnected = TRUE; }
-	UnsignedInt lastFrameInGame( void ) const { return m_lastFrameInGame; }
-	Bool disconnected( void ) const { return isHuman() && m_disconnected; }
+	void markAsDisconnected() { m_disconnected = TRUE; }
+	UnsignedInt lastFrameInGame() const { return m_lastFrameInGame; }
+	Bool disconnected() const { return isHuman() && m_disconnected; }
 
 	void mute( Bool isMuted ) { m_isMuted = isMuted; }
-	Bool isMuted( void ) const { return m_isMuted; }
+	Bool isMuted() const { return m_isMuted; }
 protected:
 	SlotState m_state;
 	Bool m_isAccepted;
@@ -154,30 +154,30 @@ class GameInfo
 public:
 	GameInfo();
 
-	void init( void );
-	virtual void reset( void );
+	void init();
+	virtual void reset();
 
-	void clearSlotList( void );
+	void clearSlotList();
 
-	Int getNumPlayers( void ) const;									///< How many players (human and AI) are in the game?
-	Int getNumNonObserverPlayers( void ) const;				///< How many non-observer players (human and AI) are in the game?
-	Int getMaxPlayers( void ) const;									///< How many players (human and AI) can be in the game?
+	Int getNumPlayers() const;									///< How many players (human and AI) are in the game?
+	Int getNumNonObserverPlayers() const;				///< How many non-observer players (human and AI) are in the game?
+	Int getMaxPlayers() const;									///< How many players (human and AI) can be in the game?
 
-	void enterGame( void );														///< Mark us as having entered the game
-	void leaveGame( void );														///< Mark us as having left the game
+	void enterGame();														///< Mark us as having entered the game
+	void leaveGame();														///< Mark us as having left the game
 	virtual void startGame( Int gameID );											///< Mark our game as started, and record the game ID
-	void endGame( void );															///< Mark us as out of game
-	inline Int getGameID( void ) const;								///< Get the game ID of the current game or the last one if we're not in game
+	void endGame();															///< Mark us as out of game
+	inline Int getGameID() const;								///< Get the game ID of the current game or the last one if we're not in game
 
-	inline void setInGame( void );										///< set the m_inGame flag
-	inline Bool isInGame( void ) const;											///< Are we (in game or in game setup)?  As opposed to chatting, matching, etc
-	inline Bool isGameInProgress( void ) const;							///< Is the game in progress?
+	inline void setInGame();										///< set the m_inGame flag
+	inline Bool isInGame() const;											///< Are we (in game or in game setup)?  As opposed to chatting, matching, etc
+	inline Bool isGameInProgress() const;							///< Is the game in progress?
 	inline void setGameInProgress( Bool inProgress ); ///< Set whether the game is in progress or not.
 	void setSlot( Int slotNum, GameSlot slotInfo );		///< Set the slot state (human, open, AI, etc)
 	GameSlot* getSlot( Int slotNum );									///< Get the slot
 	const GameSlot* getConstSlot( Int slotNum ) const;	///< Get the slot
-	virtual Bool amIHost( void ) const;															///< Convenience function - is the local player the game host?
-	virtual Int getLocalSlotNum( void ) const;				///< Get the local slot number, or -1 if we're not present
+	virtual Bool amIHost() const;															///< Convenience function - is the local player the game host?
+	virtual Int getLocalSlotNum() const;				///< Get the local slot number, or -1 if we're not present
 	Int getSlotNum( AsciiString userName ) const;			///< Get the slot number corresponding to a specific user, or -1 if he's not present
 
 	// Game options
@@ -185,49 +185,49 @@ public:
 	void setMapCRC( UnsignedInt mapCRC );							///< Set the map CRC
 	void setMapSize( UnsignedInt mapSize );						///< Set the map size
 	void setMapContentsMask( Int mask );							///< Set the map contents mask (1=map,2=preview,4=map.ini)
-	inline AsciiString getMap( void ) const;								///< Get the game map
-	inline UnsignedInt getMapCRC( void ) const;							///< Get the map CRC
-	inline UnsignedInt getMapSize( void ) const;						///< Get the map size
-	inline Int getMapContentsMask( void ) const;						///< Get the map contents mask
+	inline AsciiString getMap() const;								///< Get the game map
+	inline UnsignedInt getMapCRC() const;							///< Get the map CRC
+	inline UnsignedInt getMapSize() const;						///< Get the map size
+	inline Int getMapContentsMask() const;						///< Get the map contents mask
 	void setSeed( Int seed );													///< Set the random seed for the game
-	inline Int getSeed( void ) const;												///< Get the game seed
-	inline Int getUseStats( void ) const;		///< Does this game count towards gamespy stats?
+	inline Int getSeed() const;												///< Get the game seed
+	inline Int getUseStats() const;		///< Does this game count towards gamespy stats?
 	inline void setUseStats( Int useStats );
 
-  inline UnsignedShort getSuperweaponRestriction( void ) const; ///< Get any optional limits on superweapons
+  inline UnsignedShort getSuperweaponRestriction() const; ///< Get any optional limits on superweapons
   void setSuperweaponRestriction( UnsignedShort restriction ); ///< Set the optional limits on superweapons
-  inline const Money & getStartingCash(void) const;
+  inline const Money & getStartingCash() const;
   void setStartingCash( const Money & startingCash );
 
 	void setSlotPointer( Int index, GameSlot *slot );	///< Set the slot info pointer
 
 	void setLocalIP( UnsignedInt ip ) { m_localIP =ip; }	///< Set the local IP
-	UnsignedInt getLocalIP( void ) const { return m_localIP; }	///< Get the local IP
+	UnsignedInt getLocalIP() const { return m_localIP; }	///< Get the local IP
 
 	Bool isColorTaken(Int colorIdx, Int slotToIgnore = -1 ) const;
 	Bool isStartPositionTaken(Int positionIdx, Int slotToIgnore = -1 ) const;
 
-	virtual void resetAccepted(void);															///< Reset the accepted flag on all players
-	virtual void resetStartSpots(void);						///< reset the start spots for the new map.
-	virtual void adjustSlotsForMap(void);					///< adjusts the slots to open and closed depending on the players in the game and the number of players the map can hold.
+	virtual void resetAccepted();															///< Reset the accepted flag on all players
+	virtual void resetStartSpots();						///< reset the start spots for the new map.
+	virtual void adjustSlotsForMap();					///< adjusts the slots to open and closed depending on the players in the game and the number of players the map can hold.
 
-	virtual void closeOpenSlots(void);						///< close all slots that are currently unoccupied.
+	virtual void closeOpenSlots();						///< close all slots that are currently unoccupied.
 
 	// CRC checking hack
 	void setCRCInterval( Int val ) { m_crcInterval = (val<100)?val:100; }
-	Int getCRCInterval( void ) const { return m_crcInterval; }
+	Int getCRCInterval() const { return m_crcInterval; }
 
-	Bool haveWeSurrendered(void) { return m_surrendered; }
-	void markAsSurrendered(void) { m_surrendered = TRUE; }
+	Bool haveWeSurrendered() { return m_surrendered; }
+	void markAsSurrendered() { m_surrendered = TRUE; }
 
-	Bool isSkirmish(void); // TRUE if 1 human & 1+ AI are present && !isSandbox()
-	Bool isMultiPlayer(void); // TRUE if 2+ human are present
-	Bool isSandbox(void); // TRUE if everybody is on the same team
+	Bool isSkirmish(); // TRUE if 1 human & 1+ AI are present && !isSandbox()
+	Bool isMultiPlayer(); // TRUE if 2+ human are present
+	Bool isSandbox(); // TRUE if everybody is on the same team
 
 	Bool isPlayerPreorder(Int index);
 	void markPlayerAsPreorder(Int index);
 
-  inline Bool oldFactionsOnly(void) const;
+  inline Bool oldFactionsOnly() const;
   inline void setOldFactionsOnly( Bool oldFactionsOnly );
 
 protected:
@@ -256,21 +256,21 @@ protected:
 extern GameInfo *TheGameInfo;
 
 // Inline functions
-Int					GameInfo::getGameID( void ) const								{ return m_gameID; }
-AsciiString	GameInfo::getMap( void ) const									{ return m_mapName; }
-UnsignedInt	GameInfo::getMapCRC( void ) const								{ return m_mapCRC; }
-UnsignedInt	GameInfo::getMapSize( void ) const							{ return m_mapSize; }
-Int					GameInfo::getMapContentsMask( void ) const			{ return m_mapMask; }
-Int					GameInfo::getSeed( void ) const									{ return m_seed; }
-Bool				GameInfo::isInGame( void ) const								{ return m_inGame; }
-void				GameInfo::setInGame( void )											{ m_inGame = true; }
-Bool				GameInfo::isGameInProgress( void ) const				{ return m_inProgress; }
+Int					GameInfo::getGameID() const								{ return m_gameID; }
+AsciiString	GameInfo::getMap() const									{ return m_mapName; }
+UnsignedInt	GameInfo::getMapCRC() const								{ return m_mapCRC; }
+UnsignedInt	GameInfo::getMapSize() const							{ return m_mapSize; }
+Int					GameInfo::getMapContentsMask() const			{ return m_mapMask; }
+Int					GameInfo::getSeed() const									{ return m_seed; }
+Bool				GameInfo::isInGame() const								{ return m_inGame; }
+void				GameInfo::setInGame()											{ m_inGame = true; }
+Bool				GameInfo::isGameInProgress() const				{ return m_inProgress; }
 void				GameInfo::setGameInProgress( Bool inProgress )	{ m_inProgress = inProgress; }
-Int					GameInfo::getUseStats( void ) const             { return m_useStats; }
+Int					GameInfo::getUseStats() const             { return m_useStats; }
 void				GameInfo::setUseStats( Int useStats )           { m_useStats = useStats; }
-const Money&GameInfo::getStartingCash( void ) const         { return m_startingCash; }
-UnsignedShort GameInfo::getSuperweaponRestriction( void ) const { return m_superweaponRestriction; }
-Bool        GameInfo::oldFactionsOnly(void) const           { return m_oldFactionsOnly; }
+const Money&GameInfo::getStartingCash() const         { return m_startingCash; }
+UnsignedShort GameInfo::getSuperweaponRestriction() const { return m_superweaponRestriction; }
+Bool        GameInfo::oldFactionsOnly() const           { return m_oldFactionsOnly; }
 void        GameInfo::setOldFactionsOnly( Bool oldFactionsOnly ) { m_oldFactionsOnly = oldFactionsOnly; }
 
 AsciiString GameInfoToAsciiString( const GameInfo *game );
@@ -291,7 +291,7 @@ protected:
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
+	virtual void loadPostProcess();
 
 public:
 	SkirmishGameInfo()

@@ -43,6 +43,6 @@ class W3DModuleFactory : public ModuleFactory
 
 public:
 
-	virtual void init( void );
+	virtual void init();
 
 };

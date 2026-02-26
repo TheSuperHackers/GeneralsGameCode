@@ -35,7 +35,7 @@
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-ObjectSMCHelper::~ObjectSMCHelper( void )
+ObjectSMCHelper::~ObjectSMCHelper()
 {
 
 }
@@ -83,7 +83,7 @@ void ObjectSMCHelper::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void ObjectSMCHelper::loadPostProcess( void )
+void ObjectSMCHelper::loadPostProcess()
 {
 
 	// object helper base class

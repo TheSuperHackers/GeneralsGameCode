@@ -75,11 +75,11 @@ public:
 		LOAD_ERROR
 	};
 
-	HModelDefClass(void);
-	~HModelDefClass(void);
+	HModelDefClass();
+	~HModelDefClass();
 
 	int				Load_W3D(ChunkLoadClass & cload);
-	const char *	Get_Name(void) const { return Name; }
+	const char *	Get_Name() const { return Name; }
 
 private:
 
@@ -91,7 +91,7 @@ private:
 	HmdlNodeDefStruct *		SubObjects;
 	SnapPointsClass *			SnapPoints;
 
-	void Free(void);
+	void Free();
 	bool read_header(ChunkLoadClass & cload);
 	bool read_connection(ChunkLoadClass & cload,HmdlNodeDefStruct * con,bool pre30);
 	bool read_mesh_connection(ChunkLoadClass & cload,int idx,bool pre30);

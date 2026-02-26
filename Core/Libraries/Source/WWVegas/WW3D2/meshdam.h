@@ -75,8 +75,8 @@ class DamageClass
 {
 public:
 
-	DamageClass(void);
-	~DamageClass(void);
+	DamageClass();
+	~DamageClass();
 
 	WW3DErrorType				Load_W3D(ChunkLoadClass & cload,MeshModelClass * basemesh);
 

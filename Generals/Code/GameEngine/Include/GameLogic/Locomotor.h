@@ -344,9 +344,9 @@ public:
 	void setUltraAccurate(Bool u) { setFlag(ULTRA_ACCURATE, u); }
 	Bool isUltraAccurate() const { return getFlag(ULTRA_ACCURATE); }
 
-	Bool isMovingBackwards(void) const {return getFlag(MOVING_BACKWARDS);}
+	Bool isMovingBackwards() const {return getFlag(MOVING_BACKWARDS);}
 
-	void startMove(void); ///< Indicates that a move is starting, primarily to reset the donut timer. jba.
+	void startMove(); ///< Indicates that a move is starting, primarily to reset the donut timer. jba.
 
 protected:
 	void moveTowardsPositionLegs(Object* obj, PhysicsBehavior *physics, const Coord3D& goalPos, Real onPathDistToGoal, Real desiredSpeed);
@@ -385,7 +385,7 @@ protected:
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
+	virtual void loadPostProcess();
 
 protected:
 

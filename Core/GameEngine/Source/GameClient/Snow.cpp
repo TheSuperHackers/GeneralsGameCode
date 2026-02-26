@@ -41,7 +41,7 @@ SnowManager::SnowManager()
 	m_isVisible = TRUE;	//default to showing if it's enabled via INI.
 }
 
-void SnowManager::init( void )
+void SnowManager::init()
 {
 	//starting heights of each particle
 	//TODO: replace this lookup table with some kind of procedural method that takes x,y as input.
@@ -51,7 +51,7 @@ void SnowManager::init( void )
 	updateIniSettings();
 }
 
-void SnowManager::updateIniSettings(void)
+void SnowManager::updateIniSettings()
 {
 	Real *dst=m_startingHeights;
 	//initialize a table of random starting positions for each particle.
@@ -85,7 +85,7 @@ void SnowManager::setVisible(Bool showWeather)
 	m_isVisible = showWeather;
 }
 
-void SnowManager::reset(void)
+void SnowManager::reset()
 {
 	m_isVisible = TRUE;	//default to showing if it's enabled via INI.
 }

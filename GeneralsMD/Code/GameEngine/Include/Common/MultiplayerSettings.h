@@ -44,13 +44,13 @@ public:
 	MultiplayerColorDefinition();
 	//-----------------------------------------------------------------------------------------------
 	static const FieldParse m_colorFieldParseTable[];		///< the parse table for INI definition
-	const FieldParse *getFieldParse( void ) const { return m_colorFieldParseTable; }
+	const FieldParse *getFieldParse() const { return m_colorFieldParseTable; }
 
-	AsciiString getTooltipName(void) const { return m_tooltipName; };
-	RGBColor getRGBValue(void) const { return m_rgbValue; };
-	RGBColor getRGBNightValue(void) const { return m_rgbValueNight; };
-	Color getColor(void) const { return m_color; }
-	Color getNightColor(void) const { return m_colorNight; }
+	AsciiString getTooltipName() const { return m_tooltipName; };
+	RGBColor getRGBValue() const { return m_rgbValue; };
+	RGBColor getRGBNightValue() const { return m_rgbValueNight; };
+	Color getColor() const { return m_color; }
+	Color getNightColor() const { return m_colorNight; }
 	void setColor( RGBColor rgb );
 	void setNightColor( RGBColor rgb );
 
@@ -78,7 +78,7 @@ class MultiplayerSettings : public SubsystemInterface
 {
 public:
 
-	MultiplayerSettings( void );
+	MultiplayerSettings();
 
 	virtual void init() { }
 	virtual void update() { }
@@ -86,20 +86,20 @@ public:
 
 	//-----------------------------------------------------------------------------------------------
 	static const FieldParse m_multiplayerSettingsFieldParseTable[];		///< the parse table for INI definition
-	const FieldParse *getFieldParse( void ) const { return m_multiplayerSettingsFieldParseTable; }
+	const FieldParse *getFieldParse() const { return m_multiplayerSettingsFieldParseTable; }
 
 	// Color management --------------------
 	MultiplayerColorDefinition * findMultiplayerColorDefinitionByName(AsciiString name);
 	MultiplayerColorDefinition * newMultiplayerColorDefinition(AsciiString name);
 
-	Int getStartCountdownTimerSeconds( void ) { return m_startCountdownTimerSeconds; }
-	Int getMaxBeaconsPerPlayer( void ) { return m_maxBeaconsPerPlayer; }
-	Bool isShroudInMultiplayer( void ) { return m_isShroudInMultiplayer; }
-	Bool showRandomPlayerTemplate( void ) { return m_showRandomPlayerTemplate; }
-	Bool showRandomStartPos( void ) { return m_showRandomStartPos; }
-	Bool showRandomColor( void ) { return m_showRandomColor; }
+	Int getStartCountdownTimerSeconds() { return m_startCountdownTimerSeconds; }
+	Int getMaxBeaconsPerPlayer() { return m_maxBeaconsPerPlayer; }
+	Bool isShroudInMultiplayer() { return m_isShroudInMultiplayer; }
+	Bool showRandomPlayerTemplate() { return m_showRandomPlayerTemplate; }
+	Bool showRandomStartPos() { return m_showRandomStartPos; }
+	Bool showRandomColor() { return m_showRandomColor; }
 
-	Int getNumColors( void )
+	Int getNumColors()
 	{
 		if (m_numColors == 0) {
 			m_numColors = m_colorList.size();

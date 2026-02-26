@@ -65,18 +65,18 @@ class PathNode : public MemoryPoolObject
 public:
 	PathNode();
 
-	Coord3D *getPosition( void ) { return &m_pos; }			///< return position of this node
-	const Coord3D *getPosition( void ) const { return &m_pos; }			///< return position of this node
+	Coord3D *getPosition() { return &m_pos; }			///< return position of this node
+	const Coord3D *getPosition() const { return &m_pos; }			///< return position of this node
 	void setPosition( const Coord3D *pos ) { m_pos = *pos; }	///< set the position of this path node
 
-	const Coord3D *computeDirectionVector( void );			///< compute direction to next node
+	const Coord3D *computeDirectionVector();			///< compute direction to next node
 
-	PathNode *getNext( void ) { return m_next; }				///< return next node in the path
-	PathNode *getPrevious( void ) { return m_prev; }		///< return previous node in the path
-	const PathNode *getNext( void ) const { return m_next; }				///< return next node in the path
-	const PathNode *getPrevious( void ) const { return m_prev; }		///< return previous node in the path
+	PathNode *getNext() { return m_next; }				///< return next node in the path
+	PathNode *getPrevious() { return m_prev; }		///< return previous node in the path
+	const PathNode *getNext() const { return m_next; }				///< return next node in the path
+	const PathNode *getPrevious() const { return m_prev; }		///< return previous node in the path
 
-	PathfindLayerEnum getLayer( void ) const { return m_layer; }				///< return layer of this node.
+	PathfindLayerEnum getLayer() const { return m_layer; }				///< return layer of this node.
 	void setLayer( PathfindLayerEnum layer ) { m_layer = layer; }	///< set the layer of this path node
 
 	void setNextOptimized( PathNode *node );
@@ -100,7 +100,7 @@ public:
 	}
 
 	void setCanOptimize(Bool canOpt) { m_canOptimize = canOpt;}
-	Bool getCanOptimize( void ) const { return m_canOptimize;}
+	Bool getCanOptimize() const { return m_canOptimize;}
 
 	/// given a list, prepend this node, return new list
 	PathNode *prependToList( PathNode *list );
@@ -149,15 +149,15 @@ class Path : public MemoryPoolObject, public Snapshot
 public:
 	Path();
 
-	PathNode *getFirstNode( void ) { return m_path; }
-	PathNode *getLastNode( void ) { return m_pathTail; }
+	PathNode *getFirstNode() { return m_path; }
+	PathNode *getLastNode() { return m_pathTail; }
 
 	void updateLastNode( const Coord3D *pos );
 
 	void prependNode( const Coord3D *pos, PathfindLayerEnum layer );				///< Create a new node at the head of the path
 	void appendNode( const Coord3D *pos, PathfindLayerEnum layer );				///< Create a new node at the end of the path
 	void setBlockedByAlly(Bool blocked) {m_blockedByAlly = blocked;}
-	Bool getBlockedByAlly(void) {return m_blockedByAlly;}
+	Bool getBlockedByAlly() {return m_blockedByAlly;}
 	void optimize( const Object *obj, LocomotorSurfaceTypeMask acceptableSurfaces, Bool blocked );			///< Optimize the path to discard redundant nodes
 
 	void optimizeGroundPath( Bool crusher, Int diameter );			///< Optimize the ground path to discard redundant nodes
@@ -172,7 +172,7 @@ public:
 	Real computeFlightDistToGoal( const Coord3D *pos, Coord3D& goalPos );
 
 	/// Given a location, return closest location on path, and along-path dist to end as function result
-	void markOptimized(void) {m_isOptimized = true;}
+	void markOptimized() {m_isOptimized = true;}
 
 protected:
 	// snapshot interface
@@ -209,10 +209,10 @@ class PathfindCellInfo
 	friend class PathfindCell;
 public:
 #if RETAIL_COMPATIBLE_PATHFINDING
-	static void forceCleanPathFindCellInfos(void);
+	static void forceCleanPathFindCellInfos();
 #endif
-	static void allocateCellInfos(void);
-	static void releaseCellInfos(void);
+	static void allocateCellInfos();
+	static void releaseCellInfos();
 
 	static PathfindCellInfo * getACellInfo(PathfindCell *cell, const ICoord2D &pos);
 	static void releaseACellInfo(PathfindCellInfo *theInfo);
@@ -296,17 +296,17 @@ public:
 	};
 
 	/// reset the cell
-	void reset( );
+	void reset();
 
-	PathfindCell(void);
-	~PathfindCell(void);
+	PathfindCell();
+	~PathfindCell();
 
 	void setTypeAsObstacle( Object *obstacle, Bool isFence, const ICoord2D &pos );				///< flag this cell as an obstacle, from the given one
 	void removeObstacle( Object *obstacle );				///< flag this cell as an obstacle, from the given one
 	void setType( CellType type );	///< set the cell type
-	CellType getType( void ) const { return (CellType)m_type; }				///< get the cell type
-	CellFlags getFlags( void ) const { return (CellFlags)m_flags; }				///< get the cell type
-	Bool isAircraftGoal( void) const {return m_aircraftGoal != 0;}
+	CellType getType() const { return (CellType)m_type; }				///< get the cell type
+	CellFlags getFlags() const { return (CellFlags)m_flags; }				///< get the cell type
+	Bool isAircraftGoal() const {return m_aircraftGoal != 0;}
 
 	Bool isObstaclePresent( ObjectID objID ) const;					///< return true if the given object ID is registered as an obstacle in this cell
 #if RETAIL_COMPATIBLE_PATHFINDING_ALLOCATION
@@ -316,7 +316,7 @@ public:
 #endif
 
 	inline Bool isObstacleTransparent() const;
-	inline Bool isObstacleFence(void) const;
+	inline Bool isObstacleFence() const;
 
 	/// Return estimated cost from given cell to reach goal cell
 	UnsignedInt costToGoal( PathfindCell *goal );
@@ -343,50 +343,50 @@ public:
 	/// remove all cells from closed list.
 	static Int releaseOpenList( PathfindCellList &list );
 
-	inline PathfindCell *getNextOpen(void) {return m_info->m_nextOpen?m_info->m_nextOpen->m_cell: nullptr;}
+	inline PathfindCell *getNextOpen() {return m_info->m_nextOpen?m_info->m_nextOpen->m_cell: nullptr;}
 
-	inline UnsignedShort getXIndex(void) const {return m_info->m_pos.x;}
-	inline UnsignedShort getYIndex(void) const {return m_info->m_pos.y;}
+	inline UnsignedShort getXIndex() const {return m_info->m_pos.x;}
+	inline UnsignedShort getYIndex() const {return m_info->m_pos.y;}
 
-	inline Bool isBlockedByAlly(void) const;
+	inline Bool isBlockedByAlly() const;
 	inline void setBlockedByAlly(Bool blocked);
 
-	inline Bool getOpen(void) const {return m_info->m_open;}
-	inline Bool getClosed(void) const {return m_info->m_closed;}
-	inline UnsignedInt getCostSoFar(void) const {return m_info->m_costSoFar;}
-	inline UnsignedInt getTotalCost(void) const {return m_info->m_totalCost;}
+	inline Bool getOpen() const {return m_info->m_open;}
+	inline Bool getClosed() const {return m_info->m_closed;}
+	inline UnsignedInt getCostSoFar() const {return m_info->m_costSoFar;}
+	inline UnsignedInt getTotalCost() const {return m_info->m_totalCost;}
 
 	inline void setCostSoFar(UnsignedInt cost) {m_info->m_costSoFar = cost;}
 	inline void setTotalCost(UnsignedInt cost) {m_info->m_totalCost = cost;}
 
 	void setParentCell(PathfindCell* parent);
-	void clearParentCell(void);
+	void clearParentCell();
 	void setParentCellHierarchical(PathfindCell* parent);
-	inline PathfindCell* getParentCell(void) const {return m_info->m_pathParent?m_info->m_pathParent->m_cell: nullptr;}
+	inline PathfindCell* getParentCell() const {return m_info->m_pathParent?m_info->m_pathParent->m_cell: nullptr;}
 
 	Bool startPathfind( PathfindCell *goalCell );
-	Bool getPinched(void) const {return m_pinched;}
+	Bool getPinched() const {return m_pinched;}
 	void setPinched(Bool pinch) {m_pinched = pinch;	}
 
 	Bool allocateInfo(const ICoord2D &pos);
-	void releaseInfo(void);
-	Bool hasInfo(void) const {return m_info!=nullptr;}
-	zoneStorageType getZone(void) const {return m_zone;}
+	void releaseInfo();
+	Bool hasInfo() const {return m_info!=nullptr;}
+	zoneStorageType getZone() const {return m_zone;}
 	void setZone(zoneStorageType zone) {m_zone = zone;}
 	void setGoalUnit(ObjectID unit, const ICoord2D &pos );
 	void setGoalAircraft(ObjectID unit, const ICoord2D &pos );
 	void setPosUnit(ObjectID unit, const ICoord2D &pos );
-	inline ObjectID getGoalUnit(void) const {ObjectID id = m_info?m_info->m_goalUnitID:INVALID_ID; return id;}
-	inline ObjectID getGoalAircraft(void) const {ObjectID id = m_info?m_info->m_goalAircraftID:INVALID_ID; return id;}
-	inline ObjectID getPosUnit(void) const {ObjectID id = m_info?m_info->m_posUnitID:INVALID_ID; return id;}
+	inline ObjectID getGoalUnit() const {ObjectID id = m_info?m_info->m_goalUnitID:INVALID_ID; return id;}
+	inline ObjectID getGoalAircraft() const {ObjectID id = m_info?m_info->m_goalAircraftID:INVALID_ID; return id;}
+	inline ObjectID getPosUnit() const {ObjectID id = m_info?m_info->m_posUnitID:INVALID_ID; return id;}
 
-	inline ObjectID getObstacleID(void) const;
+	inline ObjectID getObstacleID() const;
 
 	void setLayer( PathfindLayerEnum layer ) { m_layer = layer; }	///< set the cell layer
-	PathfindLayerEnum getLayer( void ) const { return (PathfindLayerEnum)m_layer; }				///< get the cell layer
+	PathfindLayerEnum getLayer() const { return (PathfindLayerEnum)m_layer; }				///< get the cell layer
 
 	void setConnectLayer( PathfindLayerEnum layer ) { m_connectsToLayer = layer; }	///< set the cell layer	connect id
-	PathfindLayerEnum getConnectLayer( void ) const { return (PathfindLayerEnum)m_connectsToLayer; }				///< get the cell layer connect id
+	PathfindLayerEnum getConnectLayer() const { return (PathfindLayerEnum)m_connectsToLayer; }				///< get the cell layer connect id
 
 private:
 	PathfindCellInfo *m_info;
@@ -420,28 +420,28 @@ public:
 	PathfindLayer();
 	~PathfindLayer();
 public:
-	void reset(void);
+	void reset();
 	Bool init(Bridge *theBridge, PathfindLayerEnum layer);
 	void allocateCells(const IRegion2D *extent);
 	void allocateCellsForWallLayer(const IRegion2D *extent, ObjectID *wallPieces, Int numPieces);
 	void classifyCells();
 	void classifyWallCells(ObjectID *wallPieces, Int numPieces);
 	Bool setDestroyed(Bool destroyed);
-	Bool isUnused(void); // True if it doesn't contain a bridge.
-	Bool isDestroyed(void) {return m_destroyed;} // True if it has been destroyed.
+	Bool isUnused(); // True if it doesn't contain a bridge.
+	Bool isDestroyed() {return m_destroyed;} // True if it has been destroyed.
 	PathfindCell *getCell(Int x, Int y);
-	Int getZone(void) {return m_zone;}
+	Int getZone() {return m_zone;}
 	void setZone(Int zone) {m_zone = zone;}
-	void applyZone(void); // Propagates m_zone to all cells.
+	void applyZone(); // Propagates m_zone to all cells.
 	void getStartCellIndex(ICoord2D *start) {*start = m_startCell;}
 	void getEndCellIndex(ICoord2D *end) {*end = m_endCell;}
 
-	ObjectID getBridgeID(void);
+	ObjectID getBridgeID();
 	Bool connectsZones(PathfindZoneManager *zm, const LocomotorSet& locomotorSet,Int zone1, Int zone2);
 	Bool isPointOnWall(ObjectID *wallPieces, Int numPieces, const Coord3D *pt);
 
 #if defined(RTS_DEBUG)
-	void doDebugIcons(void) ;
+	void doDebugIcons() ;
 #endif
 protected:
 	void classifyLayerMapCell( Int i, Int j , PathfindCell *cell, Bridge *theBridge);
@@ -488,16 +488,16 @@ public:
 	void blockCalculateZones(	PathfindCell **map, PathfindLayer layers[], const IRegion2D &bounds);	///< Does zone calculations.
 	zoneStorageType getEffectiveZone(LocomotorSurfaceTypeMask acceptableSurfaces, Bool crusher, zoneStorageType zone) const;
 
-	void clearMarkedPassable(void) {m_markedPassable = false;}
-	Bool isPassable(void) {return m_markedPassable;}
+	void clearMarkedPassable() {m_markedPassable = false;}
+	Bool isPassable() {return m_markedPassable;}
 	void setPassable(Bool pass) {m_markedPassable = pass;}
 
-	Bool getInteractsWithBridge(void) const {return m_interactsWithBridge;}
+	Bool getInteractsWithBridge() const {return m_interactsWithBridge;}
 	void setInteractsWithBridge(Bool interacts) {m_interactsWithBridge = interacts;}
 
 protected:
-	void allocateZones(void);
-	void freeZones(void);
+	void allocateZones();
+	void freeZones();
 
 protected:
 	ICoord2D		m_cellOrigin;
@@ -533,10 +533,10 @@ public:
 	PathfindZoneManager();
 	~PathfindZoneManager();
 
-	void reset(void);
+	void reset();
 
-	Bool needToCalculateZones(void) const {return m_needToCalculateZones;} ///< Returns true if the zones need to be recalculated.
-	void markZonesDirty(void) ; ///< Called when the zones need to be recalculated.
+	Bool needToCalculateZones() const {return m_needToCalculateZones;} ///< Returns true if the zones need to be recalculated.
+	void markZonesDirty() ; ///< Called when the zones need to be recalculated.
 	void calculateZones(	PathfindCell **map, PathfindLayer layers[], const IRegion2D &bounds);	///< Does zone calculations.
 	zoneStorageType getEffectiveZone(LocomotorSurfaceTypeMask acceptableSurfaces, Bool crusher, zoneStorageType zone) const;
 	zoneStorageType getEffectiveTerrainZone(zoneStorageType zone) const;
@@ -547,20 +547,20 @@ public:
 	zoneStorageType getBlockZone(LocomotorSurfaceTypeMask acceptableSurfaces, Bool crusher, Int cellX, Int cellY, PathfindCell **map) const;
 	void allocateBlocks(const IRegion2D &globalBounds);
 
-	void clearPassableFlags(void);
+	void clearPassableFlags();
 	Bool isPassable(Int cellX, Int cellY) const;
 	Bool clipIsPassable(Int cellX, Int cellY) const;
 	void setPassable(Int cellX, Int cellY, Bool passable);
 
-	void setAllPassable(void);
+	void setAllPassable();
 
 	void setBridge(Int cellX, Int cellY, Bool bridge);
 	Bool interactsWithBridge(Int cellX, Int cellY) const;
 
 protected:
-	void allocateZones(void);
-	void freeZones(void);
-	void freeBlocks(void);
+	void allocateZones();
+	void freeZones();
+	void freeBlocks();
 
 protected:
 	ZoneBlock			*m_blockOfZoneBlocks;			///< Zone blocks - Info for hierarchical pathfinding at a "blocky" level.
@@ -638,23 +638,23 @@ private:
 		Path *originalPath, Bool blocked );
 
 public:
-	Pathfinder( void );
+	Pathfinder();
 	~Pathfinder() ;
 
-	void reset( void );														///< Reset system in preparation for new map
+	void reset();														///< Reset system in preparation for new map
 
 	// --------------- inherited from Snapshot interface --------------
 	void crc( Xfer *xfer );
 	void xfer( Xfer *xfer );
-	void loadPostProcess( void );
+	void loadPostProcess();
 
 	Bool quickDoesPathExist( const LocomotorSet& locomotorSet, const Coord3D *from, const Coord3D *to );  ///< Can we build any path at all between the locations	(terrain & buildings check - fast)
 	Bool slowDoesPathExist( Object *obj, const Coord3D *from,
 		const Coord3D *to, ObjectID ignoreObject=INVALID_ID );  ///< Can we build any path at all between the locations	(terrain, buildings & units check - slower)
 
 	Bool queueForPath(ObjectID id);	 ///< The object wants to request a pathfind, so put it on the list to process.
-	void processPathfindQueue(void); ///< Process some or all of the queued pathfinds.
-	void forceMapRecalculation( );	///< Force pathfind map recomputation. If region is given, only that area is recomputed
+	void processPathfindQueue(); ///< Process some or all of the queued pathfinds.
+	void forceMapRecalculation();	///< Force pathfind map recomputation. If region is given, only that area is recomputed
 
 	/** Returns an aircraft path to the goal.  */
 	Path *getAircraftPath( const Object *obj, const Coord3D *to);
@@ -684,7 +684,7 @@ public:
 
 	Bool findBrokenBridge(const LocomotorSet &locomotorSet, const Coord3D *from, const Coord3D *to, ObjectID *bridgeID);
 
-	void newMap(void);
+	void newMap();
 
 	PathfindCell *getCell( PathfindLayerEnum layer, Int x, Int y );							///< Return the cell at grid coords (x,y)
 	PathfindCell *getCell( PathfindLayerEnum layer, const Coord3D *pos );				///< Given a position, return associated grid cell
@@ -692,7 +692,7 @@ public:
 	void clip(Coord3D *from, Coord3D *to);
 	Bool worldToCell( const Coord3D *pos, ICoord2D *cell );	///< Given a world position, return grid cell coordinate
 
-	const ICoord2D *getExtent(void) const {return &m_extent.hi;}
+	const ICoord2D *getExtent() const {return &m_extent.hi;}
 
 	void setIgnoreObstacleID( ObjectID objID );					///< if non-zero, the pathfinder will ignore the given obstacle
 
@@ -717,15 +717,15 @@ public:
 		const Coord3D& endWorld, Int pathDiameter);	///< Return true if the straight line between the given points is passable
 
 	// for debugging
-	const Coord3D *getDebugPathPosition( void );
+	const Coord3D *getDebugPathPosition();
 	void setDebugPathPosition( const Coord3D *pos );
-	Path *getDebugPath( void );
+	Path *getDebugPath();
 	void setDebugPath( Path *debugpath );
 
 #if RETAIL_COMPATIBLE_PATHFINDING
-	void forceCleanCells(void);
+	void forceCleanCells();
 #endif
-	void cleanOpenAndClosedLists(void);
+	void cleanOpenAndClosedLists();
 
 	// Adjusts the destination to a spot near dest that is not occupied by other units.
 	Bool adjustDestination(Object *obj, const LocomotorSet& locomotorSet,
@@ -749,7 +749,7 @@ public:
 
 	void addWallPiece(Object *wallPiece); // Adds a wall piece.
 	void removeWallPiece(Object *wallPiece);  // Removes a wall piece.
-	Real getWallHeight(void) {return m_wallHeight;}
+	Real getWallHeight() {return m_wallHeight;}
 	Bool isPointOnWall(const Coord3D *pos);
 
 	void updateLayer(Object *obj, PathfindLayerEnum layer); ///< Updates object's layer.
@@ -819,7 +819,7 @@ protected:
 
 	static Int segmentIntersectsBuildingCallback(Pathfinder* pathfinder, PathfindCell* from, PathfindCell* to, Int to_x, Int to_y, void* userData);
 
-	void classifyMap( void );					///< Classify all cells in grid as obstacles, etc
+	void classifyMap();					///< Classify all cells in grid as obstacles, etc
 	void classifyObjectFootprint( Object *obj, Bool insert );	/** Classify the cells under the given object
 																																If 'insert' is true, object is being added
 																																If 'insert' is false, object is being removed */
@@ -853,7 +853,7 @@ protected:
 	bool checkCellOutsideExtents(ICoord2D& cell);
 
 #if defined(RTS_DEBUG)
-	void doDebugIcons(void) ;
+	void doDebugIcons() ;
 #endif
 
 private:
@@ -920,7 +920,7 @@ inline Bool Pathfinder::validMovementPosition( Bool isCrusher, PathfindLayerEnum
 	return validMovementPosition( isCrusher, layer, locomotorSet, x, y );
 }
 
-inline const Coord3D *Pathfinder::getDebugPathPosition( void )
+inline const Coord3D *Pathfinder::getDebugPathPosition()
 {
 	return &debugPathPos;
 }
@@ -930,7 +930,7 @@ inline void Pathfinder::setDebugPathPosition( const Coord3D *pos )
 	debugPathPos = *pos;
 }
 
-inline Path *Pathfinder::getDebugPath( void )
+inline Path *Pathfinder::getDebugPath()
 {
 	return debugPath;
 }

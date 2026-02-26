@@ -97,7 +97,7 @@ void ControlBar::populateOCLTimer( Object *creatorObject )
 
 
 	// set the text percent and bar of our timer we are displaying
-	updateContextOCLTimer( );
+	updateContextOCLTimer();
 
 	// set the portrait for the thing being constructed
 	setPortraitByObject( creatorObject );
@@ -106,7 +106,7 @@ void ControlBar::populateOCLTimer( Object *creatorObject )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void ControlBar::updateContextOCLTimer( void )
+void ControlBar::updateContextOCLTimer()
 {
 	Object *obj = m_currentSelectedDrawable->getObject();
 

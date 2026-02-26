@@ -139,7 +139,7 @@ protected:
 	Bool canDisguise() const { return getStealthUpdateModuleData()->m_teamDisguised; }
 	Real getRevealDistanceFromTarget() const { return getStealthUpdateModuleData()->m_revealDistanceFromTarget; }
 	Bool allowedToStealth() const;
-	void hintDetectableWhileUnstealthed( void ) ;
+	void hintDetectableWhileUnstealthed() ;
 
 	void changeVisualDisguise();
 

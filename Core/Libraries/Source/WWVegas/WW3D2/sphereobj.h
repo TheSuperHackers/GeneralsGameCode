@@ -51,7 +51,7 @@ class TextureClass;
 
 struct AlphaVectorStruct
 {
-	AlphaVectorStruct (void)
+	AlphaVectorStruct ()
 		:	angle (true),
 			intensity (1.0F)		{ }
 	AlphaVectorStruct (const AlphaVectorStruct &src) { *this = src; }
@@ -152,20 +152,20 @@ friend class SphereRenderObjClass;
 
 public:
 	// Constructor
-	SphereMeshClass(void);
+	SphereMeshClass();
 	SphereMeshClass(float radius, int slices, int stacks);
 	// Destructor
-	~SphereMeshClass(void);
+	~SphereMeshClass();
 
 	void	Generate (float radius, int slices, int stacks);
-	int	Get_Num_Polys (void) { return face_ct; };
+	int	Get_Num_Polys () { return face_ct; };
 	void	Set_Alpha_Vector (const AlphaVectorStruct &v, bool inverse, bool is_additive, bool force = false);
 
 private:
 
 	void		Set_DCG (bool is_additive, int index, float value);
 
-	void		Free(void);
+	void		Free();
 
 	float		Radius;
 	int		Slices;
@@ -234,17 +234,17 @@ public:
 		USE_ANIMATION_LOOP= 0x00000008,
 	};
 
-	SphereRenderObjClass(void);
+	SphereRenderObjClass();
 	SphereRenderObjClass(const W3dSphereStruct & def);
 	SphereRenderObjClass(const SphereRenderObjClass & src);
 	SphereRenderObjClass & operator = (const SphereRenderObjClass &);
-	~SphereRenderObjClass(void);
+	~SphereRenderObjClass();
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface
 	/////////////////////////////////////////////////////////////////////////////
-	virtual RenderObjClass *	Clone(void) const;
-	virtual int						Class_ID(void) const;
+	virtual RenderObjClass *	Clone() const;
+	virtual int						Class_ID() const;
 	virtual void					Render(RenderInfoClass & rinfo);
 	virtual void					Special_Render(SpecialRenderInfoClass & rinfo);
 	virtual void 					Set_Transform(const Matrix3D &m);
@@ -253,14 +253,14 @@ public:
    virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & aabox) const;
 
 	virtual void					Prepare_LOD(CameraClass &camera);
-	virtual void					Increment_LOD(void);
-	virtual void					Decrement_LOD(void);
-	virtual float					Get_Cost(void) const;
-	virtual float					Get_Value(void) const;
-	virtual float					Get_Post_Increment_Value(void) const;
+	virtual void					Increment_LOD();
+	virtual void					Decrement_LOD();
+	virtual float					Get_Cost() const;
+	virtual float					Get_Value() const;
+	virtual float					Get_Post_Increment_Value() const;
 	virtual void					Set_LOD_Level(int lod);
-	virtual int						Get_LOD_Level(void) const;
-	virtual int						Get_LOD_Count(void) const;
+	virtual int						Get_LOD_Level() const;
+	virtual int						Get_LOD_Count() const;
 	virtual void					Set_LOD_Bias(float bias)	{ LODBias = MAX(bias, 0.0f); }
 	virtual int						Calculate_Cost_Value_Arrays(float screen_area, float *values, float *costs) const;
 
@@ -272,20 +272,20 @@ public:
 	virtual void					Set_Force_Visible(int onoff)		{ RenderObjClass::Set_Force_Visible (onoff); Update_On_Visibility (); }
 
 
-	const AABoxClass	&			Get_Box(void);
+	const AABoxClass	&			Get_Box();
 
-	virtual int					 	Get_Num_Polys(void) const;
-	virtual const char *		 	Get_Name(void) const;
+	virtual int					 	Get_Num_Polys() const;
+	virtual const char *		 	Get_Name() const;
 	virtual void				 	Set_Name(const char * name);
 
-	unsigned int					Get_Flags(void)  { return Flags; }
+	unsigned int					Get_Flags()  { return Flags; }
 	void								Set_Flags(unsigned int flags) { Flags = flags; }
 	void								Set_Flag(unsigned int flag, bool onoff) { Flags &= (~flag); if (onoff) Flags |= flag; }
 
 	// Animation access
-	bool								Is_Animating (void)		{ return IsAnimating; }
-	void								Start_Animating (void)	{ IsAnimating = true; anim_time = 0; }
-	void								Stop_Animating (void)	{ IsAnimating = false; anim_time = 0; }
+	bool								Is_Animating ()		{ return IsAnimating; }
+	void								Start_Animating ()	{ IsAnimating = true; anim_time = 0; }
+	void								Stop_Animating ()	{ IsAnimating = false; anim_time = 0; }
 
 	// Current state access
 	void							 	Set_Color(const Vector3 & color)			{ CurrentColor = color; }
@@ -293,15 +293,15 @@ public:
 	void							 	Set_Scale(const Vector3 & scale)			{ CurrentScale = scale; }
 	void								Set_Vector(const AlphaVectorStruct &v)	{ CurrentVector = v; }
 
-	const Vector3 &				Get_Color(void) const	{ return CurrentColor; }
-	float								Get_Alpha(void) const	{ return CurrentAlpha; }
-	const Vector3 &				Get_Scale(void) const	{ return CurrentScale; }
-	const AlphaVectorStruct &	Get_Vector(void) const	{ return CurrentVector; }
+	const Vector3 &				Get_Color() const	{ return CurrentColor; }
+	float								Get_Alpha() const	{ return CurrentAlpha; }
+	const Vector3 &				Get_Scale() const	{ return CurrentScale; }
+	const AlphaVectorStruct &	Get_Vector() const	{ return CurrentVector; }
 
-	Vector3							Get_Default_Color(void) const;
-	float								Get_Default_Alpha(void) const;
-	Vector3							Get_Default_Scale(void) const;
-	AlphaVectorStruct				Get_Default_Vector(void) const;
+	Vector3							Get_Default_Color() const;
+	float								Get_Default_Alpha() const;
+	Vector3							Get_Default_Scale() const;
+	AlphaVectorStruct				Get_Default_Vector() const;
 
 	// Size/position methods
 	void								Set_Extent (const Vector3 &extent);
@@ -310,27 +310,27 @@ public:
 
 	// Texture access
 	void							  	Set_Texture(TextureClass *tf);
-	TextureClass	*				Peek_Texture(void)					{return SphereTexture;}
-	ShaderClass	&					Get_Shader(void)						{return SphereShader;}
+	TextureClass	*				Peek_Texture()					{return SphereTexture;}
+	ShaderClass	&					Get_Shader()						{return SphereShader;}
 	void								Set_Shader(ShaderClass &shader)	{SphereShader=shader;}
 
 	// Animation control
-	float								Get_Animation_Duration (void) const		{ return AnimDuration; }
+	float								Get_Animation_Duration () const		{ return AnimDuration; }
 	void								Set_Animation_Duration (float time)		{ AnimDuration = time; Restart_Animation (); }
-	void								Restart_Animation (void)					{ anim_time = 0; }
+	void								Restart_Animation ()					{ anim_time = 0; }
 
 	// Animatable channel access
-	SphereColorChannelClass &			Get_Color_Channel (void)				{ return ColorChannel; }
-	const SphereColorChannelClass &	Peek_Color_Channel (void)				{ return ColorChannel; }
+	SphereColorChannelClass &			Get_Color_Channel ()				{ return ColorChannel; }
+	const SphereColorChannelClass &	Peek_Color_Channel ()				{ return ColorChannel; }
 
-	SphereAlphaChannelClass &			Get_Alpha_Channel (void)				{ return AlphaChannel; }
-	const SphereAlphaChannelClass &	Peek_Alpha_Channel (void)				{ return AlphaChannel; }
+	SphereAlphaChannelClass &			Get_Alpha_Channel ()				{ return AlphaChannel; }
+	const SphereAlphaChannelClass &	Peek_Alpha_Channel ()				{ return AlphaChannel; }
 
-	SphereScaleChannelClass &			Get_Scale_Channel (void)				{ return ScaleChannel; }
-	const SphereScaleChannelClass &	Peek_Scale_Channel (void)				{ return ScaleChannel; }
+	SphereScaleChannelClass &			Get_Scale_Channel ()				{ return ScaleChannel; }
+	const SphereScaleChannelClass &	Peek_Scale_Channel ()				{ return ScaleChannel; }
 
-	SphereVectorChannelClass &			Get_Vector_Channel (void)				{ return VectorChannel; }
-	const SphereVectorChannelClass &	Peek_Vector_Channel (void)				{ return VectorChannel; }
+	SphereVectorChannelClass &			Get_Vector_Channel ()				{ return VectorChannel; }
+	const SphereVectorChannelClass &	Peek_Vector_Channel ()				{ return VectorChannel; }
 
 	void								Set_Color_Channel (const SphereColorChannelClass &data)		{ ColorChannel = data; }
 	void								Set_Alpha_Channel (const SphereAlphaChannelClass &data)		{ AlphaChannel = data; }
@@ -339,16 +339,16 @@ public:
 
 protected:
 
-	virtual void			 		update_cached_box(void);
-	virtual void			 		Update_Cached_Bounding_Volumes(void) const;
-	void								Update_On_Visibility(void);
+	virtual void			 		update_cached_box();
+	virtual void			 		Update_Cached_Bounding_Volumes() const;
+	void								Update_On_Visibility();
 
 	// Initialization stuff
-	void								Init_Material (void);
+	void								Init_Material ();
 	static void						Generate_Shared_Mesh_Arrays (const AlphaVectorStruct &alphavector);
 
 	// Animation Stuff
-	void								animate(void);		// animation update function
+	void								animate();		// animation update function
 	float								anim_time;			// what time in seconds are we in the animation
 	float								AnimDuration;
 	bool								IsAnimating;
@@ -415,7 +415,7 @@ inline void SphereRenderObjClass::Set_Local_Min_Max(const Vector3 & min,const Ve
 }
 
 
-inline const AABoxClass & SphereRenderObjClass::Get_Box(void)
+inline const AABoxClass & SphereRenderObjClass::Get_Box()
 {
 	Validate_Transform();
 	update_cached_box();
@@ -428,7 +428,7 @@ inline const AABoxClass & SphereRenderObjClass::Get_Box(void)
 class SphereLoaderClass : public PrototypeLoaderClass
 {
 public:
-	virtual int						Chunk_Type (void)  { return W3D_CHUNK_SPHERE; }
+	virtual int						Chunk_Type ()  { return W3D_CHUNK_SPHERE; }
 	virtual PrototypeClass *	Load_W3D(ChunkLoadClass & cload);
 };
 
@@ -439,19 +439,19 @@ class SpherePrototypeClass : public W3DMPO, public PrototypeClass
 {
 	W3DMPO_GLUE(SpherePrototypeClass)
 public:
-	SpherePrototypeClass (void);
+	SpherePrototypeClass ();
 	SpherePrototypeClass (SphereRenderObjClass *sphere);
 
-	virtual const char *			Get_Name(void) const;
-	virtual int						Get_Class_ID(void) const;
-	virtual RenderObjClass *	Create(void);
+	virtual const char *			Get_Name() const;
+	virtual int						Get_Class_ID() const;
+	virtual RenderObjClass *	Create();
 	virtual void							DeleteSelf()										{ delete this; }
 
 	bool								Load (ChunkLoadClass &cload);
 	bool								Save (ChunkSaveClass &csave);
 
 protected:
-	~SpherePrototypeClass (void);
+	~SpherePrototypeClass ();
 
 private:
 	W3dSphereStruct				Definition;

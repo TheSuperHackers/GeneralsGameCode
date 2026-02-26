@@ -89,15 +89,15 @@ enum WindowVideoStates CPP_11(: Int)
 class WindowVideo
 {
 public:
-	WindowVideo( void );
-	~WindowVideo( void );
+	WindowVideo();
+	~WindowVideo();
 
-	VideoStreamInterface *getVideoStream( void );
-	VideoBuffer *getVideoBuffer( void );
-	GameWindow *getWin( void );
-	AsciiString getMovieName( void );
-	WindowVideoPlayType getPlayType ( void );
-	WindowVideoStates getState( void );
+	VideoStreamInterface *getVideoStream();
+	VideoBuffer *getVideoBuffer();
+	GameWindow *getWin();
+	AsciiString getMovieName();
+	WindowVideoPlayType getPlayType ();
+	WindowVideoStates getState();
 
 	void setPlayType(WindowVideoPlayType playType);
 	void setWindowState( WindowVideoStates state );
@@ -119,13 +119,13 @@ private:
 class WindowVideoManager : public SubsystemInterface
 {
 public:
-	WindowVideoManager( void );
-	~WindowVideoManager( void );
+	WindowVideoManager();
+	~WindowVideoManager();
 
 	// Inhertited from subsystem ====================================================================
-	virtual void init( void );
-	virtual void reset( void );
-	virtual void update( void );
+	virtual void init();
+	virtual void reset();
+	virtual void update();
 	//===============================================================================================
 
 
@@ -135,9 +135,9 @@ public:
 	void resumeMovie( GameWindow *win );						///< If a movie has been stopped, resume it.
 	void stopMovie( GameWindow *win );							///< Stop a movie
 	void stopAndRemoveMovie( GameWindow *win );			///< Stop a movie, and remove it from the manager
-	void stopAllMovies( void );											///< Stop all playing movies
-	void pauseAllMovies( void );										///< Pauses all movies on their current frame
-	void resumeAllMovies( void );										///< Resume Playing all movies
+	void stopAllMovies();											///< Stop all playing movies
+	void pauseAllMovies();										///< Pauses all movies on their current frame
+	void resumeAllMovies();										///< Resume Playing all movies
 	Int getWinState( GameWindow *win );			///< return the current state of the window.
 
 private:
@@ -166,12 +166,12 @@ private:
 //-----------------------------------------------------------------------------
 // INLINING ///////////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-inline VideoStreamInterface *WindowVideo::getVideoStream( void ){ return m_videoStream; };
-inline VideoBuffer *WindowVideo::getVideoBuffer( void ){ return m_videoBuffer; };
-inline GameWindow *WindowVideo::getWin( void ){ return m_win; };
-inline AsciiString WindowVideo::getMovieName( void ){ return m_movieName; };
-inline WindowVideoPlayType WindowVideo::getPlayType ( void ){ return m_playType; };
-inline WindowVideoStates WindowVideo::getState( void ){ return m_state; };
+inline VideoStreamInterface *WindowVideo::getVideoStream(){ return m_videoStream; };
+inline VideoBuffer *WindowVideo::getVideoBuffer(){ return m_videoBuffer; };
+inline GameWindow *WindowVideo::getWin(){ return m_win; };
+inline AsciiString WindowVideo::getMovieName(){ return m_movieName; };
+inline WindowVideoPlayType WindowVideo::getPlayType (){ return m_playType; };
+inline WindowVideoStates WindowVideo::getState(){ return m_state; };
 
 inline void WindowVideo::setPlayType(WindowVideoPlayType playType){ m_playType = playType; };
 

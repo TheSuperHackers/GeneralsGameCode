@@ -126,7 +126,7 @@ public:
 	virtual AIUpdateInterface* getAIUpdateInterface() = 0;
 	virtual ExitInterface* getUpdateExitInterface() = 0;
 	virtual DockUpdateInterface* getDockUpdateInterface() = 0;
-	virtual RailedTransportDockUpdateInterface *getRailedTransportDockUpdateInterface( void ) = 0;
+	virtual RailedTransportDockUpdateInterface *getRailedTransportDockUpdateInterface() = 0;
 	virtual SlowDeathBehaviorInterface* getSlowDeathBehaviorInterface() = 0;
 	virtual SpecialPowerUpdateInterface* getSpecialPowerUpdateInterface() = 0;
 	virtual SlavedUpdateInterface* getSlavedUpdateInterface() = 0;
@@ -181,7 +181,7 @@ public:
 	virtual AIUpdateInterface* getAIUpdateInterface() { return nullptr; }
 	virtual ExitInterface* getUpdateExitInterface() { return nullptr; }
 	virtual DockUpdateInterface* getDockUpdateInterface() { return nullptr; }
-	virtual RailedTransportDockUpdateInterface *getRailedTransportDockUpdateInterface( void ) { return nullptr; }
+	virtual RailedTransportDockUpdateInterface *getRailedTransportDockUpdateInterface() { return nullptr; }
 	virtual SlowDeathBehaviorInterface* getSlowDeathBehaviorInterface() { return nullptr; }
 	virtual SpecialPowerUpdateInterface* getSpecialPowerUpdateInterface() { return nullptr; }
 	virtual SlavedUpdateInterface* getSlavedUpdateInterface() { return nullptr; }
@@ -197,7 +197,7 @@ protected:
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
+	virtual void loadPostProcess();
 
 };
 inline BehaviorModule::BehaviorModule( Thing *thing, const ModuleData* moduleData ) : ObjectModule( thing, moduleData ) { }

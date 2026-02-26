@@ -33,7 +33,7 @@
 #include <stdlib.h>
 #include <new>      // needed for placement new prototype
 
-DebugIOCon::DebugIOCon(void):
+DebugIOCon::DebugIOCon():
   m_inputUsed(0), m_inputRead(0)
 {
   // check: is there already a console window open?
@@ -221,12 +221,12 @@ void DebugIOCon::Execute(class Debug& dbg, const char *cmd, bool structuredCmd,
   }
 }
 
-DebugIOInterface *DebugIOCon::Create(void)
+DebugIOInterface *DebugIOCon::Create()
 {
   return new (DebugAllocMemory(sizeof(DebugIOCon))) DebugIOCon();
 }
 
-void DebugIOCon::Delete(void)
+void DebugIOCon::Delete()
 {
   this->~DebugIOCon();
   DebugFreeMemory(this);

@@ -84,9 +84,9 @@ public:
 	///////////////////////////////////////////////////////////
 	//	Public constructors/destructors
 	///////////////////////////////////////////////////////////
-	SoundRenderObjClass (void);
+	SoundRenderObjClass ();
 	SoundRenderObjClass (const SoundRenderObjClass &src);
-	virtual ~SoundRenderObjClass (void);
+	virtual ~SoundRenderObjClass ();
 
 	///////////////////////////////////////////////////////////
 	//	Public operators
@@ -100,12 +100,12 @@ public:
 	//
 	//	From RenderObjClass
 	//
-	RenderObjClass *	Clone (void) const					{ return W3DNEW SoundRenderObjClass (*this); }
-	int					Class_ID (void) const				{ return CLASSID_SOUND; }
-	const char *		Get_Name (void) const				{ return Name; }
+	RenderObjClass *	Clone () const					{ return W3DNEW SoundRenderObjClass (*this); }
+	int					Class_ID () const				{ return CLASSID_SOUND; }
+	const char *		Get_Name () const				{ return Name; }
 	void					Set_Name (const char *name)		{ Name = name; }
 	void					Render (RenderInfoClass &rinfo)	{ }
-	void					On_Frame_Update (void);
+	void					On_Frame_Update ();
 	void					Set_Hidden (int onoff);
 	void					Set_Visible (int onoff);
 	void					Set_Animation_Hidden (int onoff);
@@ -119,13 +119,13 @@ public:
 	//	SoundRenderObjClass specific
 	//
 	virtual void						Set_Sound (AudibleSoundDefinitionClass *definition);
-	virtual AudibleSoundClass *	Get_Sound (void) const;
-	virtual AudibleSoundClass *	Peek_Sound (void) const			{ return Sound; }
+	virtual AudibleSoundClass *	Get_Sound () const;
+	virtual AudibleSoundClass *	Peek_Sound () const			{ return Sound; }
 
 	//
 	//	Flag support
 	//
-	uint32					Get_Flags (void) const					{ return Flags; }
+	uint32					Get_Flags () const					{ return Flags; }
 	void						Set_Flags (uint32 flags)				{ Flags = flags; }
 	bool						Get_Flag (uint32 flag)					{ return bool((Flags & flag) == flag); }
 	void						Set_Flag (uint32 flag, bool onoff);
@@ -136,7 +136,7 @@ protected:
 	///////////////////////////////////////////////////////////
 	//	Protected methods
 	///////////////////////////////////////////////////////////
-	virtual void		Update_On_Visibility (void);
+	virtual void		Update_On_Visibility ();
 
 private:
 
@@ -162,10 +162,10 @@ public:
 	///////////////////////////////////////////////////////////
 	//	Public constructors/destructors
 	///////////////////////////////////////////////////////////
-	SoundRenderObjDefClass (void);
+	SoundRenderObjDefClass ();
 	SoundRenderObjDefClass (SoundRenderObjClass &render_obj);
 	SoundRenderObjDefClass (const SoundRenderObjDefClass &src);
-	virtual ~SoundRenderObjDefClass (void);
+	virtual ~SoundRenderObjDefClass ();
 
 	///////////////////////////////////////////////////////////
 	//	Public operators
@@ -175,12 +175,12 @@ public:
 	///////////////////////////////////////////////////////////
 	//	Public methods
 	///////////////////////////////////////////////////////////
-	RenderObjClass *				Create (void);
+	RenderObjClass *				Create ();
 	WW3DErrorType					Load_W3D (ChunkLoadClass &cload);
 	WW3DErrorType					Save_W3D (ChunkSaveClass &csave);
-	const char *					Get_Name (void) const					{ return Name; }
+	const char *					Get_Name () const					{ return Name; }
 	void								Set_Name (const char *name)			{ Name = name; }
-	SoundRenderObjDefClass *	Clone (void) const						{ return NEW_REF( SoundRenderObjDefClass, (*this) ); }
+	SoundRenderObjDefClass *	Clone () const						{ return NEW_REF( SoundRenderObjDefClass, (*this) ); }
 
 	//
 	//	Initialization
@@ -236,16 +236,16 @@ public:
 	///////////////////////////////////////////////////////////
 	//	Public methods
 	///////////////////////////////////////////////////////////
-	const char *					Get_Name(void) const					{ return Definition->Get_Name (); }
-	int								Get_Class_ID(void) const			{ return RenderObjClass::CLASSID_SOUND; }
-	RenderObjClass *				Create (void)							{ return Definition->Create (); }
+	const char *					Get_Name() const					{ return Definition->Get_Name (); }
+	int								Get_Class_ID() const			{ return RenderObjClass::CLASSID_SOUND; }
+	RenderObjClass *				Create ()							{ return Definition->Create (); }
 	virtual void							DeleteSelf()										{ delete this; }
 
-	SoundRenderObjDefClass	*	Peek_Definition (void) const						{ return Definition; }
+	SoundRenderObjDefClass	*	Peek_Definition () const						{ return Definition; }
 	void								Set_Definition (SoundRenderObjDefClass *def)	{ REF_PTR_SET (Definition, def); }
 
 protected:
-	virtual ~SoundRenderObjPrototypeClass (void)						{ REF_PTR_RELEASE (Definition); }
+	virtual ~SoundRenderObjPrototypeClass ()						{ REF_PTR_RELEASE (Definition); }
 
 private:
 
@@ -264,7 +264,7 @@ private:
 class SoundRenderObjLoaderClass : public PrototypeLoaderClass
 {
 public:
-	virtual int						Chunk_Type (void)		{ return W3D_CHUNK_SOUNDROBJ; }
+	virtual int						Chunk_Type ()		{ return W3D_CHUNK_SOUNDROBJ; }
 	virtual PrototypeClass *	Load_W3D (ChunkLoadClass &cload);
 };
 

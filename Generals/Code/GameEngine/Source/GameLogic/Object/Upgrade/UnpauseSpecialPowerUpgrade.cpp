@@ -39,7 +39,7 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UnpauseSpecialPowerUpgradeModuleData::UnpauseSpecialPowerUpgradeModuleData( void )
+UnpauseSpecialPowerUpgradeModuleData::UnpauseSpecialPowerUpgradeModuleData()
 {
 	m_specialPower = nullptr;
 }
@@ -73,14 +73,14 @@ UnpauseSpecialPowerUpgrade::UnpauseSpecialPowerUpgrade( Thing *thing, const Modu
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UnpauseSpecialPowerUpgrade::~UnpauseSpecialPowerUpgrade( void )
+UnpauseSpecialPowerUpgrade::~UnpauseSpecialPowerUpgrade()
 {
 
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void UnpauseSpecialPowerUpgrade::upgradeImplementation( void )
+void UnpauseSpecialPowerUpgrade::upgradeImplementation()
 {
 	for (BehaviorModule** m = getObject()->getBehaviorModules(); *m; ++m)
 	{
@@ -125,7 +125,7 @@ void UnpauseSpecialPowerUpgrade::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void UnpauseSpecialPowerUpgrade::loadPostProcess( void )
+void UnpauseSpecialPowerUpgrade::loadPostProcess()
 {
 
 	// extend base class

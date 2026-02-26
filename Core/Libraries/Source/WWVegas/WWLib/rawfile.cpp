@@ -138,7 +138,7 @@
  * HISTORY:                                                                                    *
  *   10/18/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-RawFileClass::RawFileClass(void) :
+RawFileClass::RawFileClass() :
 	Rights(READ),
 	BiasStart(0),
 	BiasLength(-1),
@@ -166,7 +166,7 @@ RawFileClass::RawFileClass(void) :
  * HISTORY:                                                                                    *
  *   10/18/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-bool RawFileClass::Is_Open(void) const
+bool RawFileClass::Is_Open() const
 {
 	return(Handle != NULL_HANDLE);
 }
@@ -214,7 +214,7 @@ void RawFileClass::Error(int, int, char const * )
  * HISTORY:                                                                                    *
  *   10/18/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-int RawFileClass::Transfer_Block_Size(void)
+int RawFileClass::Transfer_Block_Size()
 {
 	return (int)((unsigned)UINT_MAX)-16L;
 }
@@ -263,7 +263,7 @@ RawFileClass::RawFileClass(char const * filename) :
  * HISTORY:                                                                                    *
  *   10/18/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-RawFileClass::~RawFileClass(void)
+RawFileClass::~RawFileClass()
 {
 	Reset ();
 }
@@ -280,7 +280,7 @@ RawFileClass::~RawFileClass(void)
  * HISTORY:                                                                                    *
  *   06/10/1999 PDS : Created.                                                                 *
  *=============================================================================================*/
-void RawFileClass::Reset(void)
+void RawFileClass::Reset()
 {
 	Close();
 	Filename = "";
@@ -304,7 +304,7 @@ void RawFileClass::Reset(void)
  *   11/25/2001 Jani: Note that this is virtual function and thus can't be inlined. Is there a *
  *					 reason for it to be virtual?																	  *
  *=============================================================================================*/
-char const * RawFileClass::File_Name(void) const
+char const * RawFileClass::File_Name() const
 {
 	return(Filename);
 }
@@ -553,7 +553,7 @@ bool RawFileClass::Is_Available(int forced)
  * HISTORY:                                                                                    *
  *   10/18/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-void RawFileClass::Close(void)
+void RawFileClass::Close()
 {
 	/*
 	**	If the file is open, then close it. If the file is already closed, then just return. This
@@ -818,7 +818,7 @@ int RawFileClass::Seek(int pos, int dir)
  * HISTORY:                                                                                    *
  *   10/18/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-int RawFileClass::Size(void)
+int RawFileClass::Size()
 {
 	int size = 0;
 
@@ -887,7 +887,7 @@ int RawFileClass::Size(void)
  * HISTORY:                                                                                    *
  *   10/18/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-int RawFileClass::Create(void)
+int RawFileClass::Create()
 {
 	Close();
 	if (Open(WRITE)) {
@@ -925,7 +925,7 @@ int RawFileClass::Create(void)
  * HISTORY:                                                                                    *
  *   10/18/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-int RawFileClass::Delete(void)
+int RawFileClass::Delete()
 {
 	/*
 	**	If the file was open, then it must be closed first.
@@ -987,7 +987,7 @@ int RawFileClass::Delete(void)
  *   11/14/1995 DRD : Created.                                                                 *
  *   07/13/1996 JLB : Handles win32 method.                                                    *
  *=============================================================================================*/
-unsigned long RawFileClass::Get_Date_Time(void)
+unsigned long RawFileClass::Get_Date_Time()
 {
 	// Return value
 	unsigned long retval = 0;
@@ -1162,7 +1162,7 @@ void RawFileClass::Attach (void *handle, int rights)
  * HISTORY:                                                                                    *
  *   06/10/1999 PDS : Created.                                                                 *
  *=============================================================================================*/
-void RawFileClass::Detach (void)
+void RawFileClass::Detach ()
 {
 	Rights = 0;
 	BiasStart = 0;

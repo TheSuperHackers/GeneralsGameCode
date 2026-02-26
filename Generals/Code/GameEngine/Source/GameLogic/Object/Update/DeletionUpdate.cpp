@@ -47,7 +47,7 @@ DeletionUpdate::DeletionUpdate( Thing *thing, const ModuleData* moduleData ) : U
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-DeletionUpdate::~DeletionUpdate( void )
+DeletionUpdate::~DeletionUpdate()
 {
 }
 
@@ -79,7 +79,7 @@ UnsignedInt DeletionUpdate::calcSleepDelay(UnsignedInt minFrames, UnsignedInt ma
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime DeletionUpdate::update( void )
+UpdateSleepTime DeletionUpdate::update()
 {
 	// Destroy (NOT kill) if time is up
 #if defined RTS_DEBUG  && defined CRISS_CROSS_GEOMETRY
@@ -141,7 +141,7 @@ void DeletionUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void DeletionUpdate::loadPostProcess( void )
+void DeletionUpdate::loadPostProcess()
 {
 
 	// extend base class

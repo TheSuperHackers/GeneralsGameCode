@@ -61,25 +61,25 @@ class FileClass
 			PRINTF_BUFFER_SIZE = 1024
 		};
 
-		virtual ~FileClass(void) {};
-		virtual char const * File_Name(void) const = 0;
+		virtual ~FileClass() {};
+		virtual char const * File_Name() const = 0;
 		virtual char const * Set_Name(char const *filename) = 0;
-		virtual int Create(void) = 0;
-		virtual int Delete(void) = 0;
+		virtual int Create() = 0;
+		virtual int Delete() = 0;
 		virtual bool Is_Available(int forced=false) = 0;
-		virtual bool Is_Open(void) const = 0;
+		virtual bool Is_Open() const = 0;
 		virtual int Open(char const *filename, int rights=READ) = 0;
 		virtual int Open(int rights=READ) = 0;
 		virtual int Read(void *buffer, int size) = 0;
 		virtual int Seek(int pos, int dir=SEEK_CUR) = 0;
-		virtual int Tell(void) { return Seek(0); }
-		virtual int Size(void) = 0;
+		virtual int Tell() { return Seek(0); }
+		virtual int Size() = 0;
 		virtual int Write(void const *buffer, int size) = 0;
-		virtual void Close(void) = 0;
-		virtual unsigned long Get_Date_Time(void) {return(0);}
+		virtual void Close() = 0;
+		virtual unsigned long Get_Date_Time() {return(0);}
 		virtual bool Set_Date_Time(unsigned long ) {return(false);}
 //		virtual void Error(int error, int canretry = false, char const * filename=nullptr) = 0;
-		virtual void * Get_File_Handle(void) { return reinterpret_cast<void *>(-1); }
+		virtual void * Get_File_Handle() { return reinterpret_cast<void *>(-1); }
 //		virtual void Bias(int start, int length=-1) = 0;
 
 		operator char const * ()

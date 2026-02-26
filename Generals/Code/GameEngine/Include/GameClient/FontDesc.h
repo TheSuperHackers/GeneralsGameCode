@@ -32,7 +32,7 @@
 
 struct FontDesc
 {
-	FontDesc(void);
+	FontDesc();
 	AsciiString name;	///<name of font
 	Int	size;			///<point size
 	Bool bold;			///<is bold?

@@ -809,7 +809,7 @@ void DumbProjectileBehavior::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void DumbProjectileBehavior::loadPostProcess( void )
+void DumbProjectileBehavior::loadPostProcess()
 {
 
 	// extend base class

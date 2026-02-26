@@ -89,7 +89,7 @@ static bool table_valid = false;
  * HISTORY:                                                                                    *
  *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-MotionChannelClass::MotionChannelClass(void) :
+MotionChannelClass::MotionChannelClass() :
 	PivotIdx(0),
 	Type(0),
 	VectorLen(0),
@@ -114,7 +114,7 @@ MotionChannelClass::MotionChannelClass(void) :
  * HISTORY:                                                                                    *
  *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-MotionChannelClass::~MotionChannelClass(void)
+MotionChannelClass::~MotionChannelClass()
 {
 	Free();
 }
@@ -131,7 +131,7 @@ MotionChannelClass::~MotionChannelClass(void)
  * HISTORY:                                                                                    *
  *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-void MotionChannelClass::Free(void)
+void MotionChannelClass::Free()
 {
 	delete[] CompressedData;
 	CompressedData=nullptr;
@@ -203,7 +203,7 @@ bool MotionChannelClass::Load_W3D(ChunkLoadClass & cload)
  *                                                                                             *
  * HISTORY:                                                                                    *
  *=============================================================================================*/
-BitChannelClass::BitChannelClass(void) :
+BitChannelClass::BitChannelClass() :
 	PivotIdx(0),
 	Type(0),
 	DefaultVal(0),
@@ -226,7 +226,7 @@ BitChannelClass::BitChannelClass(void) :
  * HISTORY:                                                                                    *
  *   1/21/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-BitChannelClass::~BitChannelClass(void)
+BitChannelClass::~BitChannelClass()
 {
 	Free();
 }
@@ -244,7 +244,7 @@ BitChannelClass::~BitChannelClass(void)
  * HISTORY:                                                                                    *
  *   1/21/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-void BitChannelClass::Free(void)
+void BitChannelClass::Free()
 {
 	delete[] Bits;
 	Bits = nullptr;
@@ -314,7 +314,7 @@ bool BitChannelClass::Load_W3D(ChunkLoadClass & cload)
  * HISTORY:                                                                                    *
  *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-TimeCodedMotionChannelClass::TimeCodedMotionChannelClass(void) :
+TimeCodedMotionChannelClass::TimeCodedMotionChannelClass() :
 	PivotIdx(0),
 	Type(0),
 	VectorLen(0),
@@ -338,7 +338,7 @@ TimeCodedMotionChannelClass::TimeCodedMotionChannelClass(void) :
  * HISTORY:                                                                                    *
  *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-TimeCodedMotionChannelClass::~TimeCodedMotionChannelClass(void)
+TimeCodedMotionChannelClass::~TimeCodedMotionChannelClass()
 {
 	Free();
 }
@@ -355,7 +355,7 @@ TimeCodedMotionChannelClass::~TimeCodedMotionChannelClass(void)
  * HISTORY:                                                                                    *
  *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-void TimeCodedMotionChannelClass::Free(void)
+void TimeCodedMotionChannelClass::Free()
 {
 	delete[] Data;
 	Data = nullptr;
@@ -681,7 +681,7 @@ void TimeCodedMotionChannelClass::set_identity(float * setvec)
  *                                                                                             *
  * HISTORY:                                                                                    *
  *=============================================================================================*/
-TimeCodedBitChannelClass::TimeCodedBitChannelClass(void) :
+TimeCodedBitChannelClass::TimeCodedBitChannelClass() :
 	PivotIdx(0),
 	Type(0),
 	DefaultVal(0),
@@ -703,7 +703,7 @@ TimeCodedBitChannelClass::TimeCodedBitChannelClass(void) :
  * HISTORY:                                                                                    *
  *   1/21/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-TimeCodedBitChannelClass::~TimeCodedBitChannelClass(void)
+TimeCodedBitChannelClass::~TimeCodedBitChannelClass()
 {
 	Free();
 }
@@ -721,7 +721,7 @@ TimeCodedBitChannelClass::~TimeCodedBitChannelClass(void)
  * HISTORY:                                                                                    *
  *   1/21/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-void TimeCodedBitChannelClass::Free(void)
+void TimeCodedBitChannelClass::Free()
 {
 	delete[] Bits;
 	Bits = nullptr;
@@ -841,7 +841,7 @@ int TimeCodedBitChannelClass::Get_Bit(int frame)
  * HISTORY:                                                                                    *
  *   02/18/2000 JGA : Created.                                                                 *
  *=============================================================================================*/
-AdaptiveDeltaMotionChannelClass::AdaptiveDeltaMotionChannelClass(void) :
+AdaptiveDeltaMotionChannelClass::AdaptiveDeltaMotionChannelClass() :
 	PivotIdx(0),
 	Type(0),
 	VectorLen(0),
@@ -882,7 +882,7 @@ AdaptiveDeltaMotionChannelClass::AdaptiveDeltaMotionChannelClass(void) :
  * HISTORY:                                                                                    *
  *   02/18/1000 JGA : Created.                                                                 *
  *=============================================================================================*/
-AdaptiveDeltaMotionChannelClass::~AdaptiveDeltaMotionChannelClass(void)
+AdaptiveDeltaMotionChannelClass::~AdaptiveDeltaMotionChannelClass()
 {
 	Free();
 }
@@ -899,7 +899,7 @@ AdaptiveDeltaMotionChannelClass::~AdaptiveDeltaMotionChannelClass(void)
  * HISTORY:                                                                                    *
  *   02/18/2000 JGA  : Created.                                                                 *
  *=============================================================================================*/
-void AdaptiveDeltaMotionChannelClass::Free(void)
+void AdaptiveDeltaMotionChannelClass::Free()
 {
 	delete[] Data;
 	Data = nullptr;

@@ -81,14 +81,14 @@ SupplyTruckAIUpdate::SupplyTruckAIUpdate( Thing *thing, const ModuleData* module
 }
 
 //-------------------------------------------------------------------------------------------------
-SupplyTruckAIUpdate::~SupplyTruckAIUpdate( void )
+SupplyTruckAIUpdate::~SupplyTruckAIUpdate()
 {
 	deleteInstance(m_supplyTruckStateMachine);
 }
 
 
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime SupplyTruckAIUpdate::update( void )
+UpdateSleepTime SupplyTruckAIUpdate::update()
 {
 
 	StateReturnType stRet = m_supplyTruckStateMachine->updateStateMachine();
@@ -271,7 +271,7 @@ void SupplyTruckAIUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void SupplyTruckAIUpdate::loadPostProcess( void )
+void SupplyTruckAIUpdate::loadPostProcess()
 {
  // extend base class
 	AIUpdateInterface::loadPostProcess();
@@ -460,7 +460,7 @@ void SupplyTruckStateMachine::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void SupplyTruckStateMachine::loadPostProcess( void )
+void SupplyTruckStateMachine::loadPostProcess()
 {
 	StateMachine::loadPostProcess();
 }

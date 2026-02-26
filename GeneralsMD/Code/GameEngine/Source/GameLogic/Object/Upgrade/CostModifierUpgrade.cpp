@@ -72,7 +72,7 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-CostModifierUpgradeModuleData::CostModifierUpgradeModuleData( void )
+CostModifierUpgradeModuleData::CostModifierUpgradeModuleData()
 {
 
 	m_kindOf = KINDOFMASK_NONE;
@@ -110,14 +110,14 @@ CostModifierUpgrade::CostModifierUpgrade( Thing *thing, const ModuleData* module
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-CostModifierUpgrade::~CostModifierUpgrade( void )
+CostModifierUpgrade::~CostModifierUpgrade()
 {
 
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void CostModifierUpgrade::onDelete( void )
+void CostModifierUpgrade::onDelete()
 {
 
 	// if we haven't been upgraded there is nothing to clean up
@@ -163,7 +163,7 @@ void CostModifierUpgrade::onCapture( Player *oldOwner, Player *newOwner )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void CostModifierUpgrade::upgradeImplementation( void )
+void CostModifierUpgrade::upgradeImplementation()
 {
 	Player *player = getObject()->getControllingPlayer();
 
@@ -204,7 +204,7 @@ void CostModifierUpgrade::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void CostModifierUpgrade::loadPostProcess( void )
+void CostModifierUpgrade::loadPostProcess()
 {
 
 	// extend base class

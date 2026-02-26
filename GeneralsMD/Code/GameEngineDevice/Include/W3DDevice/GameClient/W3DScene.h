@@ -73,7 +73,7 @@ public:
 	virtual void  Render(RenderInfoClass & rinfo);
 
 	void setCustomPassMode (CustomScenePassModes mode) {m_customPassMode = mode;}
-	CustomScenePassModes getCustomPassMode (void)	{return m_customPassMode;}
+	CustomScenePassModes getCustomPassMode ()	{return m_customPassMode;}
 
 	void Flush(RenderInfoClass & rinfo);	//draw queued up models.
 	/// Drawing control method
@@ -85,12 +85,12 @@ public:
 	/// Lighting methods
 	void addDynamicLight(W3DDynamicLight * obj);
 	void removeDynamicLight(W3DDynamicLight * obj);
-	RefRenderObjListIterator *createLightsIterator(void);
+	RefRenderObjListIterator *createLightsIterator();
 	void destroyLightsIterator(RefRenderObjListIterator * it);
-	RefRenderObjListClass *getDynamicLights(void) {return &m_dynamicLightList;};
-	W3DDynamicLight *getADynamicLight(void);
+	RefRenderObjListClass *getDynamicLights() {return &m_dynamicLightList;};
+	W3DDynamicLight *getADynamicLight();
 	void setGlobalLight(LightClass *pLight,Int lightIndex=0);
-	LightEnvironmentClass &getDefaultLightEnv(void) {return m_defaultLightEnv;}
+	LightEnvironmentClass &getDefaultLightEnv() {return m_defaultLightEnv;}
 
 	void init() {}
 	void update() {}
@@ -105,7 +105,7 @@ protected:
 	void flushOccludedObjects(RenderInfoClass & rinfo);
 	void flagOccludedObjects(CameraClass * camera);
 	void flushOccludedObjectsIntoStencil(RenderInfoClass & rinfo);
-	void updatePlayerColorPasses(void);
+	void updatePlayerColorPasses();
 
 protected:
 	RefRenderObjListClass	m_dynamicLightList;

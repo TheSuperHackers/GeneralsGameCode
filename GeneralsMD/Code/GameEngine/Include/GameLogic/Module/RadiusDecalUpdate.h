@@ -74,7 +74,7 @@ public:
 	void killWhenNoLongerAttacking(Bool v) { m_killWhenNoLongerAttacking = v; }
 	void killRadiusDecal();
 
-	virtual UpdateSleepTime update( void );
+	virtual UpdateSleepTime update();
 
 private:
 

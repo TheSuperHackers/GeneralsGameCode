@@ -65,12 +65,12 @@ class RenderInfoClass;
 class ViewportClass
 {
 public:
-	ViewportClass(void) : Min(0,0), Max(1,1)													{ }
+	ViewportClass() : Min(0,0), Max(1,1)													{ }
 	ViewportClass(const Vector2 & min,const Vector2 & max) : Min(min), Max(max)	{ }
 	ViewportClass(const ViewportClass & vp) : Min(vp.Min), Max(vp.Max)				{ }
 
-	float	Width(void)	const																			{ return Max.X - Min.X; }
-	float Height(void) const																		{ return Max.Y - Min.Y; }
+	float	Width()	const																			{ return Max.X - Min.X; }
+	float Height() const																		{ return Max.Y - Min.Y; }
 
 	Vector2 Min;
 	Vector2 Max;
@@ -117,12 +117,12 @@ public:
 		OUTSIDE_FAR_CLIP,
 	};
 
-	CameraClass(void);
+	CameraClass();
 	CameraClass(const CameraClass & src);
 	CameraClass & operator = (const CameraClass &);
-	virtual ~CameraClass(void);
-	virtual RenderObjClass *	Clone(void) const;
-	virtual int						Class_ID(void) const { return CLASSID_CAMERA; }
+	virtual ~CameraClass();
+	virtual RenderObjClass *	Clone() const;
+	virtual int						Class_ID() const { return CLASSID_CAMERA; }
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface -  Rendering, cameras don't "render"
@@ -147,11 +147,11 @@ public:
 	// Camera parameter control
 	///////////////////////////////////////////////////////////////////////////
 	// Depth of the scene.
-	float								Get_Depth(void) const;
+	float								Get_Depth() const;
 
 	// Setting the projection type
 	void								Set_Projection_Type(ProjectionType ptype);
-	ProjectionType					Get_Projection_Type(void);
+	ProjectionType					Get_Projection_Type();
 
 	// Setting the clipping ranges in world space distances
 	void								Set_Clip_Planes(float znear,float zfar);
@@ -169,16 +169,16 @@ public:
 
 	// Methods for querying the View Plane settings.
 	void								Get_View_Plane(Vector2 & set_min,Vector2 & set_max) const;
-	float								Get_Horizontal_FOV(void) const;
-	float								Get_Vertical_FOV(void) const;
-	float								Get_Aspect_Ratio(void) const;
+	float								Get_Horizontal_FOV() const;
+	float								Get_Vertical_FOV() const;
+	float								Get_Aspect_Ratio() const;
 
 	// Access to the projection matrices for this camera
 	void								Get_Projection_Matrix(Matrix4x4 * set_tm);
 	void								Get_D3D_Projection_Matrix(Matrix4x4 * set_tm);
 	void								Get_View_Matrix(Matrix3D * set_tm);
-	const Matrix4x4 &				Get_Projection_Matrix(void);
-	const Matrix3D &				Get_View_Matrix(void);
+	const Matrix4x4 &				Get_Projection_Matrix();
+	const Matrix3D &				Get_View_Matrix();
 
 	// Projecting and Un-Projecting a point
 	ProjectionResType				Project(Vector3 & dest,const Vector3 & ws_point) const;
@@ -190,7 +190,7 @@ public:
 	// Viewport control
 	void								Set_Viewport(const Vector2 & min,const Vector2 & max);
 	void								Get_Viewport(Vector2 & set_min,Vector2 & set_max) const;
-	const ViewportClass &		Get_Viewport(void) const;
+	const ViewportClass &		Get_Viewport() const;
 
 	void								Set_Depth_Range(float zstart = 0.0f,float zend = 1.0f);
 	void								Get_Depth_Range(float * set_zstart,float * set_zend) const;
@@ -206,13 +206,13 @@ public:
 	// 6 frustum planes, 8 corner points, see the implementations of these
 	// functions for definitions on which points/planes are associated with
 	// each index.  Better yet, just use the Frustum object.
-	const FrustumClass &			Get_Frustum(void) const;
-	const PlaneClass *			Get_Frustum_Planes(void) const;
-	const Vector3 *				Get_Frustum_Corners(void) const;
-	const FrustumClass &			Get_View_Space_Frustum(void) const;
-	const PlaneClass *			Get_View_Space_Frustum_Planes(void) const;
-	const Vector3 *				Get_View_Space_Frustum_Corners(void) const;
-	const OBBoxClass &			Get_Near_Clip_Bounding_Box(void) const;
+	const FrustumClass &			Get_Frustum() const;
+	const PlaneClass *			Get_Frustum_Planes() const;
+	const Vector3 *				Get_Frustum_Corners() const;
+	const FrustumClass &			Get_View_Space_Frustum() const;
+	const PlaneClass *			Get_View_Space_Frustum_Planes() const;
+	const Vector3 *				Get_View_Space_Frustum_Corners() const;
+	const OBBoxClass &			Get_Near_Clip_Bounding_Box() const;
 
 	// Methods for transforming/projecting points between various coordinate systems
 	// associated with this camera.
@@ -224,14 +224,14 @@ public:
 	float								Compute_Projected_Sphere_Radius(float dist,float radius);
 
 	// apply this camera's settings into d3d.
-	void								Apply(void);
+	void								Apply();
 
 	// utility class to convert to old space of 0..1
 	static void	Convert_Old(Vector3 &pos);
 
 protected:
 
-	void								Update_Frustum(void) const;
+	void								Update_Frustum() const;
 
 	ProjectionType					Projection;		// projection type, orthographic or perspective
 	ViewportClass					Viewport;		// pixel viewport to render into
@@ -251,7 +251,7 @@ protected:
 };
 
 
-inline float CameraClass::Get_Depth(void) const
+inline float CameraClass::Get_Depth() const
 {
 	return ZFar;
 }
@@ -262,7 +262,7 @@ inline void CameraClass::Set_Projection_Type(ProjectionType ptype)
 	Projection = ptype;
 }
 
-inline CameraClass::ProjectionType CameraClass::Get_Projection_Type(void)
+inline CameraClass::ProjectionType CameraClass::Get_Projection_Type()
 {
 	return Projection;
 }
@@ -295,7 +295,7 @@ inline void	CameraClass::Get_Depth_Range(float * set_zmin,float * set_zmax) cons
 	}
 }
 
-inline const ViewportClass & CameraClass::Get_Viewport(void) const
+inline const ViewportClass & CameraClass::Get_Viewport() const
 {
 	return Viewport;
 }
@@ -331,7 +331,7 @@ inline bool CameraClass::Cull_Sphere_On_Frustum_Sides(const SphereClass & sphere
  *   3/24/99    GTH : Created.                                                                 *
  *=============================================================================================*/
 inline const FrustumClass &
-CameraClass::Get_Frustum(void) const
+CameraClass::Get_Frustum() const
 {
 	Update_Frustum();
 	return Frustum;
@@ -350,7 +350,7 @@ CameraClass::Get_Frustum(void) const
  *   5/29/98    GTH : Created.                                                                 *
  *=============================================================================================*/
 inline const PlaneClass *
-CameraClass::Get_Frustum_Planes(void) const
+CameraClass::Get_Frustum_Planes() const
 {
 	const FrustumClass & frustum = Get_Frustum();
 	return frustum.Planes;
@@ -377,7 +377,7 @@ CameraClass::Get_Frustum_Planes(void) const
  *   5/29/98    GTH : Created.                                                                 *
  *=============================================================================================*/
 inline const Vector3 *
-CameraClass::Get_Frustum_Corners(void) const
+CameraClass::Get_Frustum_Corners() const
 {
 	const FrustumClass & frustum = Get_Frustum();
 	return frustum.Corners;
@@ -396,7 +396,7 @@ CameraClass::Get_Frustum_Corners(void) const
  * HISTORY:                                                                                    *
  *   5/16/2001  gth : Created.                                                                 *
  *=============================================================================================*/
-inline const FrustumClass & CameraClass::Get_View_Space_Frustum(void) const
+inline const FrustumClass & CameraClass::Get_View_Space_Frustum() const
 {
 	Update_Frustum();
 	return ViewSpaceFrustum;
@@ -415,7 +415,7 @@ inline const FrustumClass & CameraClass::Get_View_Space_Frustum(void) const
  * HISTORY:                                                                                    *
  *   5/16/2001  gth : Created.                                                                 *
  *=============================================================================================*/
-inline const PlaneClass * CameraClass::Get_View_Space_Frustum_Planes(void) const
+inline const PlaneClass * CameraClass::Get_View_Space_Frustum_Planes() const
 {
 	const FrustumClass & frustum = Get_View_Space_Frustum();
 	return frustum.Planes;
@@ -441,7 +441,7 @@ inline const PlaneClass * CameraClass::Get_View_Space_Frustum_Planes(void) const
  * HISTORY:                                                                                    *
  *   5/16/2001  gth : Created.                                                                 *
  *=============================================================================================*/
-inline const Vector3 * CameraClass::Get_View_Space_Frustum_Corners(void) const
+inline const Vector3 * CameraClass::Get_View_Space_Frustum_Corners() const
 {
 	const FrustumClass & frustum = Get_View_Space_Frustum();
 	return frustum.Corners;

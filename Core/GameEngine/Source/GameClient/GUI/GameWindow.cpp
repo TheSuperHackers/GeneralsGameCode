@@ -79,7 +79,7 @@
 
 // GameWindow::GameWindow =====================================================
 //=============================================================================
-GameWindow::GameWindow( void )
+GameWindow::GameWindow()
 {
 	m_status = WIN_STATUS_NONE;
 
@@ -121,7 +121,7 @@ GameWindow::GameWindow( void )
 
 // GameWindow::~GameWindow ====================================================
 //=============================================================================
-GameWindow::~GameWindow( void )
+GameWindow::~GameWindow()
 {
 
 	delete m_inputData;
@@ -164,7 +164,7 @@ void GameWindow::unlinkTransitionWindow( TransitionWindow* transitionWindow )
 
 // GameWindow::unlinkFromTransitionWindows =========================================
 //=============================================================================
-void GameWindow::unlinkFromTransitionWindows( void )
+void GameWindow::unlinkFromTransitionWindows()
 {
 
 	while ( !m_transitionWindows.empty() )
@@ -178,7 +178,7 @@ void GameWindow::unlinkFromTransitionWindows( void )
 // GameWindow::normalizeWindowRegion ==========================================
 /** Puts the upper left corner in the window's region.lo field */
 //=============================================================================
-void GameWindow::normalizeWindowRegion( void )
+void GameWindow::normalizeWindowRegion()
 {
 	Int temp;
 
@@ -205,7 +205,7 @@ void GameWindow::normalizeWindowRegion( void )
 // GameWindow::findFirstLeaf ==================================================
 /** Returns the first leaf of the branch */
 //=============================================================================
-GameWindow *GameWindow::findFirstLeaf( void )
+GameWindow *GameWindow::findFirstLeaf()
 {
 	GameWindow *leaf = this;
 
@@ -224,7 +224,7 @@ GameWindow *GameWindow::findFirstLeaf( void )
 // GameWindow::findLastLeaf ===================================================
 /** Returns the last leaf of the branch */
 //=============================================================================
-GameWindow *GameWindow::findLastLeaf( void )
+GameWindow *GameWindow::findLastLeaf()
 {
 	GameWindow *leaf = this;
 
@@ -250,7 +250,7 @@ GameWindow *GameWindow::findLastLeaf( void )
 // GameWindow::findPrevLeaf ===================================================
 /** Returns the prev leaf of the tree */
 //=============================================================================
-GameWindow *GameWindow::findPrevLeaf( void )
+GameWindow *GameWindow::findPrevLeaf()
 {
 	GameWindow *leaf = this;
 
@@ -317,7 +317,7 @@ GameWindow *GameWindow::findPrevLeaf( void )
 // GameWindow::findNextLeaf ===================================================
 /** Returns the next leaf of the tree */
 //=============================================================================
-GameWindow *GameWindow::findNextLeaf( void )
+GameWindow *GameWindow::findNextLeaf()
 {
 	GameWindow *leaf = this;
 
@@ -367,7 +367,7 @@ GameWindow *GameWindow::findNextLeaf( void )
 // GameWindow::winNextTab =====================================================
 /** Go to next window in tab chain */
 //=============================================================================
-Int GameWindow::winNextTab( void )
+Int GameWindow::winNextTab()
 {
 /*
 	GameWindow *newTab = this;
@@ -402,7 +402,7 @@ Int GameWindow::winNextTab( void )
 // GameWindow::winPrevTab =====================================================
 /** Go to previous window in tab chain */
 //=============================================================================
-Int GameWindow::winPrevTab( void )
+Int GameWindow::winPrevTab()
 {
 /*
 	GameWindow *newTab = this;
@@ -440,7 +440,7 @@ Int GameWindow::winPrevTab( void )
 /** Bring this window to the top of the window list, if we have a parent
 	* we will go to the top of the child list for that parent */
 //=============================================================================
-Int GameWindow::winBringToTop( void )
+Int GameWindow::winBringToTop()
 {
 	GameWindow *current;
 	GameWindow *parent = winGetParent();
@@ -495,7 +495,7 @@ Int GameWindow::winBringToTop( void )
 // GameWindow::winActivate ====================================================
 /** Pop window to top of window list AND activate it */
 //=============================================================================
-Int GameWindow::winActivate( void )
+Int GameWindow::winActivate()
 {
 	Int returnCode;
 
@@ -699,7 +699,7 @@ Int GameWindow::winEnable( Bool enable )
 /** Enable or disable a window based on the enable parameter.
 	* A disabled window can be seen but accepts no input. */
 //=============================================================================
-Bool GameWindow::winGetEnabled( void )
+Bool GameWindow::winGetEnabled()
 {
   return BitIsSet( m_status, WIN_STATUS_ENABLED );
 
@@ -743,7 +743,7 @@ Int GameWindow::winHide( Bool hide )
 // GameWindow::winIsHidden ====================================================
 /** Am I hidden? */
 //=============================================================================
-Bool GameWindow::winIsHidden( void )
+Bool GameWindow::winIsHidden()
 {
 
 	return BitIsSet( m_status, WIN_STATUS_HIDDEN );
@@ -782,7 +782,7 @@ UnsignedInt GameWindow::winClearStatus( UnsignedInt status )
 // GameWindow::winGetStatus ===================================================
 /** Returns a window's status flags. */
 //=============================================================================
-UnsignedInt GameWindow::winGetStatus( void )
+UnsignedInt GameWindow::winGetStatus()
 {
 
 	return m_status;
@@ -792,7 +792,7 @@ UnsignedInt GameWindow::winGetStatus( void )
 // GameWindow::winGetStyle ====================================================
 /** Returns a window's style flags. */
 //=============================================================================
-UnsignedInt GameWindow::winGetStyle( void )
+UnsignedInt GameWindow::winGetStyle()
 {
 
 	return m_instData.m_style;
@@ -854,7 +854,7 @@ Int GameWindow::winSetText( UnicodeString newText )
 /** Get text from a window ... this works for static text windows and
 	* edit boxes */
 //=============================================================================
-UnicodeString GameWindow::winGetText( void )
+UnicodeString GameWindow::winGetText()
 {
 	// return the contents of our text field
 	return m_instData.getText();
@@ -873,7 +873,7 @@ Int GameWindow::winGetTextLength()
 // GameWindow::winGetFont =====================================================
 /** Get the font being used by this window */
 //=============================================================================
-GameFont *GameWindow::winGetFont( void )
+GameFont *GameWindow::winGetFont()
 {
 
 	return m_instData.getFont();
@@ -972,7 +972,7 @@ void GameWindow::winSetIMECompositeTextColors( Color color, Color borderColor )
 // GameWindow::winGetEnabledTextColor =========================================
 /** Get the enabled text color */
 //=============================================================================
-Color GameWindow::winGetEnabledTextColor( void )
+Color GameWindow::winGetEnabledTextColor()
 {
 
 	return m_instData.m_enabledText.color;
@@ -982,7 +982,7 @@ Color GameWindow::winGetEnabledTextColor( void )
 // GameWindow::winGetEnabledTextBorderColor ===================================
 /** Get the enabled text color */
 //=============================================================================
-Color GameWindow::winGetEnabledTextBorderColor( void )
+Color GameWindow::winGetEnabledTextBorderColor()
 {
 
 	return m_instData.m_enabledText.borderColor;
@@ -992,7 +992,7 @@ Color GameWindow::winGetEnabledTextBorderColor( void )
 // GameWindow::winGetDisabledTextColor ========================================
 /** Get the disabled text color */
 //=============================================================================
-Color GameWindow::winGetDisabledTextColor( void )
+Color GameWindow::winGetDisabledTextColor()
 {
 
 	return m_instData.m_disabledText.color;
@@ -1002,7 +1002,7 @@ Color GameWindow::winGetDisabledTextColor( void )
 // GameWindow::winGetDisabledTextBorderColor ==================================
 /** Get the disabled text color */
 //=============================================================================
-Color GameWindow::winGetDisabledTextBorderColor( void )
+Color GameWindow::winGetDisabledTextBorderColor()
 {
 
 	return m_instData.m_disabledText.borderColor;
@@ -1012,7 +1012,7 @@ Color GameWindow::winGetDisabledTextBorderColor( void )
 // GameWindow::winGetIMECompositeTextColor ==========================================
 /** Get the IME composite text color */
 //=============================================================================
-Color GameWindow::winGetIMECompositeTextColor( void )
+Color GameWindow::winGetIMECompositeTextColor()
 {
 
 	return m_instData.m_imeCompositeText.color;
@@ -1022,7 +1022,7 @@ Color GameWindow::winGetIMECompositeTextColor( void )
 // GameWindow::winGetIMECompositeBorderColor ==========================================
 /** Get the IME composite border color */
 //=============================================================================
-Color GameWindow::winGetIMECompositeBorderColor( void )
+Color GameWindow::winGetIMECompositeBorderColor()
 {
 
 	return m_instData.m_imeCompositeText.borderColor;
@@ -1032,7 +1032,7 @@ Color GameWindow::winGetIMECompositeBorderColor( void )
 // GameWindow::winGetHiliteTextColor ==========================================
 /** Get the hilite text color */
 //=============================================================================
-Color GameWindow::winGetHiliteTextColor( void )
+Color GameWindow::winGetHiliteTextColor()
 {
 
 	return m_instData.m_hiliteText.color;
@@ -1042,7 +1042,7 @@ Color GameWindow::winGetHiliteTextColor( void )
 // GameWindow::winGetHiliteTextBorderColor ====================================
 /** Get the hilite text color */
 //=============================================================================
-Color GameWindow::winGetHiliteTextBorderColor( void )
+Color GameWindow::winGetHiliteTextBorderColor()
 {
 
 	return m_instData.m_hiliteText.borderColor;
@@ -1086,7 +1086,7 @@ Int GameWindow::winSetInstanceData( WinInstanceData *data )
 // GameWindow::winGetInstanceData =============================================
 /** Return pointer to the instance data for this window */
 //=============================================================================
-WinInstanceData *GameWindow::winGetInstanceData( void )
+WinInstanceData *GameWindow::winGetInstanceData()
 {
 
 	return &m_instData;
@@ -1096,7 +1096,7 @@ WinInstanceData *GameWindow::winGetInstanceData( void )
 // GameWindow::winGetUserData =================================================
 /** Return the user data stored */
 //=============================================================================
-void *GameWindow::winGetUserData( void )
+void *GameWindow::winGetUserData()
 {
 
 	return m_userData;
@@ -1138,7 +1138,7 @@ Int GameWindow::winSetWindowId( Int id )
 // GameWindow::winGetWindowId =================================================
 /** Gets the window's id */
 //=============================================================================
-Int GameWindow::winGetWindowId( void )
+Int GameWindow::winGetWindowId()
 {
 
 	return m_instData.m_id;
@@ -1185,7 +1185,7 @@ Int GameWindow::winSetParent( GameWindow *parent )
 // GameWindow::winGetParent ===================================================
 /** Gets the window's parent */
 //=============================================================================
-GameWindow *GameWindow::winGetParent( void )
+GameWindow *GameWindow::winGetParent()
 {
 
 	return m_parent;
@@ -1216,7 +1216,7 @@ Bool GameWindow::winIsChild( GameWindow *child )
 // GameWindow::winGetChild ====================================================
 /** Get the child window of this window */
 //=============================================================================
-GameWindow *GameWindow::winGetChild( void )
+GameWindow *GameWindow::winGetChild()
 {
 
 	return m_child;
@@ -1241,7 +1241,7 @@ Int GameWindow::winSetOwner( GameWindow *owner )
 // GameWindow::winGetOwner ====================================================
 /** Gets the window's owner */
 //=============================================================================
-GameWindow *GameWindow::winGetOwner( void )
+GameWindow *GameWindow::winGetOwner()
 {
 
 	return m_instData.getOwner();
@@ -1261,7 +1261,7 @@ void GameWindow::winSetNext( GameWindow *next )
 // GameWindow::winGetNext =====================================================
 /** Gets the next window */
 //=============================================================================
-GameWindow *GameWindow::winGetNext( void )
+GameWindow *GameWindow::winGetNext()
 {
 
 	return m_next;
@@ -1281,7 +1281,7 @@ void GameWindow::winSetPrev( GameWindow *prev )
 // GameWindow::winGetPrev =====================================================
 /** Get the previous window */
 //=============================================================================
-GameWindow *GameWindow::winGetPrev( void )
+GameWindow *GameWindow::winGetPrev()
 {
 
 	return m_prev;
@@ -1315,7 +1315,7 @@ void GameWindow::winSetLayout( WindowLayout *layout )
 // GameWindow::winGetLayout ===================================================
 /** Get layout this window is a part of, if any */
 //=============================================================================
-WindowLayout *GameWindow::winGetLayout( void )
+WindowLayout *GameWindow::winGetLayout()
 {
 	return m_layout;
 }
@@ -1323,7 +1323,7 @@ WindowLayout *GameWindow::winGetLayout( void )
 // GameWindow::winGetNextInLayout =============================================
 /** Get next window in layout list if any */
 //=============================================================================
-GameWindow *GameWindow::winGetNextInLayout( void )
+GameWindow *GameWindow::winGetNextInLayout()
 {
 	return m_nextLayout;
 }
@@ -1331,7 +1331,7 @@ GameWindow *GameWindow::winGetNextInLayout( void )
 // GameWindow::winGetPrevInLayout =============================================
 /** Get prev window in layout list if any */
 //=============================================================================
-GameWindow *GameWindow::winGetPrevInLayout( void )
+GameWindow *GameWindow::winGetPrevInLayout()
 {
 	return m_prevLayout;
 }
@@ -1411,7 +1411,7 @@ Int GameWindow::winSetCallbacks( GameWinInputFunc input,
 // GameWindow::winDrawWindow ==================================================
 /** Draws the default background for the specified window. */
 //=============================================================================
-Int GameWindow::winDrawWindow( void )
+Int GameWindow::winDrawWindow()
 {
 
 	if( BitIsSet( m_status, WIN_STATUS_HIDDEN ) == FALSE && m_draw )
@@ -1784,7 +1784,7 @@ Int GameWindow::winSetHiliteBorderColor( Int index, Color color )
 
 // GameWindow::winGetInputFunc ================================================
 //=============================================================================
-GameWinInputFunc GameWindow::winGetInputFunc( void )
+GameWinInputFunc GameWindow::winGetInputFunc()
 {
 
 	return m_input;
@@ -1793,7 +1793,7 @@ GameWinInputFunc GameWindow::winGetInputFunc( void )
 
 // GameWindow::winGetSystemFunc ===============================================
 //=============================================================================
-GameWinSystemFunc GameWindow::winGetSystemFunc( void )
+GameWinSystemFunc GameWindow::winGetSystemFunc()
 {
 
 	return m_system;
@@ -1802,7 +1802,7 @@ GameWinSystemFunc GameWindow::winGetSystemFunc( void )
 
 // GameWindow::winGetTooltipFunc ==============================================
 //=============================================================================
-GameWinTooltipFunc GameWindow::winGetTooltipFunc( void )
+GameWinTooltipFunc GameWindow::winGetTooltipFunc()
 {
 
 	return m_tooltip;
@@ -1811,7 +1811,7 @@ GameWinTooltipFunc GameWindow::winGetTooltipFunc( void )
 
 // GameWindow::winGetDrawFunc =================================================
 //=============================================================================
-GameWinDrawFunc GameWindow::winGetDrawFunc( void )
+GameWinDrawFunc GameWindow::winGetDrawFunc()
 {
 
 	return m_draw;
@@ -1829,7 +1829,7 @@ void GameWindow::winSetEditData( GameWindowEditData *editData )
 
 // GameWindow::winGetEditData =================================================
 //=============================================================================
-GameWindowEditData *GameWindow::winGetEditData( void )
+GameWindowEditData *GameWindow::winGetEditData()
 {
 
 	return m_editData;

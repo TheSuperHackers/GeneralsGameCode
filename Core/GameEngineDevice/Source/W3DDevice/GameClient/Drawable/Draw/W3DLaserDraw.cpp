@@ -217,7 +217,7 @@ W3DLaserDraw::W3DLaserDraw( Thing *thing, const ModuleData* moduleData ) :
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-W3DLaserDraw::~W3DLaserDraw( void )
+W3DLaserDraw::~W3DLaserDraw()
 {
 	const W3DLaserDrawModuleData *data = getW3DLaserDrawModuleData();
 
@@ -259,7 +259,7 @@ void W3DLaserDraw::doDrawModule(const Matrix3D* transformMtx)
 	LaserUpdate *update = (LaserUpdate*)draw->findClientUpdateModule( key_LaserUpdate );
 	if( !update )
 	{
-		DEBUG_ASSERTCRASH( 0, ("W3DLaserDraw::doDrawModule() expects its owner drawable %s to have a ClientUpdate = LaserUpdate module.", draw->getTemplate()->getName().str() ));
+		DEBUG_CRASH( ("W3DLaserDraw::doDrawModule() expects its owner drawable %s to have a ClientUpdate = LaserUpdate module.", draw->getTemplate()->getName().str() ));
 		return;
 	}
 
@@ -457,7 +457,7 @@ void W3DLaserDraw::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void W3DLaserDraw::loadPostProcess( void )
+void W3DLaserDraw::loadPostProcess()
 {
 
 	// extend base class

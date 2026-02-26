@@ -53,21 +53,21 @@ class BufferedFileClass : public RawFileClass
 	public:
 
 		BufferedFileClass(char const *filename);
-		BufferedFileClass(void);
+		BufferedFileClass();
 		BufferedFileClass (RawFileClass const & f);
 		BufferedFileClass & operator = (BufferedFileClass const & f);
-		virtual ~BufferedFileClass(void);
+		virtual ~BufferedFileClass();
 
 		virtual int Read(void *buffer, int size);
 		virtual int Seek(int pos, int dir=SEEK_CUR);
 		virtual int Write(void const *buffer, int size);
-		virtual void Close(void);
+		virtual void Close();
 
 	protected:
 
 		static	void		Set_Desired_Buffer_Size( int size ) { _DesiredBufferSize = size; }
 
-		void					Reset_Buffer( void );
+		void					Reset_Buffer();
 
 	private:
 		unsigned char *	Buffer;				// The read buffer

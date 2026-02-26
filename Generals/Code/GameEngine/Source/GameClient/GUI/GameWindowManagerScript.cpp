@@ -334,7 +334,7 @@ static Int scanUnsignedInt( const char *source, UnsignedInt& val )
 
 // resetWindowStack ===========================================================
 //=============================================================================
-static void resetWindowStack( void )
+static void resetWindowStack()
 {
 
   memset( windowStack, 0, sizeof( windowStack ) );
@@ -344,7 +344,7 @@ static void resetWindowStack( void )
 
 // resetWindowDefaults ========================================================
 //=============================================================================
-static void resetWindowDefaults( void )
+static void resetWindowDefaults()
 {
 
 	defEnabledColor = 0;
@@ -359,7 +359,7 @@ static void resetWindowDefaults( void )
 
 // peekWindow =================================================================
 //=============================================================================
-static GameWindow *peekWindow( void )
+static GameWindow *peekWindow()
 {
   if (stackPtr == windowStack)
     return nullptr;
@@ -370,7 +370,7 @@ static GameWindow *peekWindow( void )
 
 // popWindow ==================================================================
 //=============================================================================
-static GameWindow *popWindow( void )
+static GameWindow *popWindow()
 {
 
   if( stackPtr == windowStack )
@@ -2657,7 +2657,7 @@ WindowLayout *GameWindowManager::winCreateLayout( AsciiString filename )
 /** Free up the memory used by static strings.  Normally this memory
 is freed by the string destructor but we do it here to make the
 memory leak detection code happy.*/
-void GameWindowManager::freeStaticStrings(void)
+void GameWindowManager::freeStaticStrings()
 {
 	theSystemString.clear();
 	theInputString.clear();

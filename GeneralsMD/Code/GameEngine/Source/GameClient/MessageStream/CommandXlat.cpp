@@ -942,7 +942,7 @@ void findCommandCenterOrMostExpensiveBuilding(Object* obj, void* vccl)
 	ccl->atLeastOne = true;
 }
 
-static void viewCommandCenter( void )
+static void viewCommandCenter()
 {
 	Player* localPlayer = rts::getObservedOrLocalPlayer();
 	if (!localPlayer->isPlayerActive())
@@ -984,7 +984,7 @@ void amIAHero(Object* obj, void* heroHolder)
 
 
 
-static Object *iNeedAHero( void )
+static Object *iNeedAHero()
 {
 	Player* localPlayer = rts::getObservedOrLocalPlayer();
 	if (!localPlayer->isPlayerActive())
@@ -1132,7 +1132,7 @@ GameMessage::Type CommandTranslator::issueAttackCommand( Drawable *target,
 				msgType = GameMessage::MSG_DO_ATTACK_OBJECT;
 				break;
 			default:
-				DEBUG_ASSERTCRASH( 0, ("issueAttackCommand was passed in a GUICommandType type that isn't supported yet...") );
+				DEBUG_CRASH( ("issueAttackCommand was passed in a GUICommandType type that isn't supported yet...") );
 				return msgType;
 		}
 
@@ -3163,7 +3163,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_DEPLOY:
 			#ifdef RTS_DEBUG
-			DEBUG_ASSERTCRASH(FALSE, ("unimplemented meta command MSG_META_DEPLOY !"));
+			DEBUG_CRASH(("unimplemented meta command MSG_META_DEPLOY !"));
 			#endif
 			/// @todo srj implement me
 			disp = DESTROY_MESSAGE;
@@ -3172,7 +3172,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_FOLLOW:
 			#ifdef RTS_DEBUG
-			DEBUG_ASSERTCRASH(FALSE, ("unimplemented meta command MSG_META_FOLLOW !"));
+			DEBUG_CRASH(("unimplemented meta command MSG_META_FOLLOW !"));
 			#endif
 			/// @todo srj implement me
 			disp = DESTROY_MESSAGE;
@@ -3405,7 +3405,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_TOGGLE_ATTACKMOVE:
-			TheInGameUI->toggleAttackMoveToMode( );
+			TheInGameUI->toggleAttackMoveToMode();
 			break;
 
 		case GameMessage::MSG_META_BEGIN_CAMERA_ROTATE_LEFT:

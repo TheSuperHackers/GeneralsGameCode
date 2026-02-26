@@ -68,7 +68,7 @@ static NameKeyType buttonMapStartPositionID[MAX_SLOTS] = { NAMEKEY_INVALID,NAMEK
 
 static GameWindow *winMapWindow = nullptr;
 
-static void NullifyControls(void)
+static void NullifyControls()
 {
 	parent = nullptr;
 	mapList = nullptr;
@@ -273,7 +273,7 @@ WindowMsgHandledType WOLMapSelectMenuInput( GameWindow *window, UnsignedInt msg,
 	return MSG_IGNORED;
 
 }
-void WOLPositionStartSpots( void );
+void WOLPositionStartSpots();
 
 //-------------------------------------------------------------------------------------------------
 /** MapSelect menu window system callback */

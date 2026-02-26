@@ -179,8 +179,8 @@ class DazzleLayerClass {
 
 	public:
 
-		DazzleLayerClass(void);
-		~DazzleLayerClass(void);
+		DazzleLayerClass();
+		~DazzleLayerClass();
 
 		// Render all dazzles in this layer (DazzleRenderObj::Render() only sets visibility)
 		void Render(CameraClass* camera);
@@ -271,8 +271,8 @@ public:
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface
 	/////////////////////////////////////////////////////////////////////////////
-	virtual RenderObjClass *	Clone(void) const;
-	virtual int						Class_ID(void)	const { return CLASSID_DAZZLE; }
+	virtual RenderObjClass *	Clone() const;
+	virtual int						Class_ID()	const { return CLASSID_DAZZLE; }
 
 	virtual void					Render(RenderInfoClass & rinfo);
 	virtual void Special_Render(SpecialRenderInfoClass & rinfo);
@@ -285,7 +285,7 @@ public:
 	void Set_Halo_Color(const Vector3& col) { halo_color=col; }
 	void Set_Lensflare_Intensity (float intensity) {lensflare_intensity=intensity;}
 
-	unsigned int					Get_Dazzle_Type(void) { return type; }
+	unsigned int					Get_Dazzle_Type() { return type; }
 
 	// Usually, a DazzleRenderObj adds itself to the appropriate visible list
 	// (determined by the current layer) when it is rendered. This does not
@@ -300,7 +300,7 @@ public:
 
 	// Persistent object save-load interface
 	// Dazzles save their "dazzle-type" and transform
-	virtual const PersistFactoryClass &	Get_Factory (void) const;
+	virtual const PersistFactoryClass &	Get_Factory () const;
 
 	// Set the static "current layer" variable. This variable is used in the
 	// Render() call so that the dazzle knows which list to add itself to if
@@ -328,7 +328,7 @@ public:
 
 	// Globally disable/enable dazzle rendering
 	static void Enable_Dazzle_Rendering(bool onoff) { _dazzle_rendering_enabled = onoff; }
-	static bool Is_Dazzle_Rendering_Enabled(void) { return _dazzle_rendering_enabled; }
+	static bool Is_Dazzle_Rendering_Enabled() { return _dazzle_rendering_enabled; }
 };
 
 
@@ -357,11 +357,11 @@ class DazzlePrototypeClass : public W3DMPO, public PrototypeClass
 {
 	W3DMPO_GLUE(DazzlePrototypeClass)
 public:
-	DazzlePrototypeClass(void) : DazzleType(0)				{ }
+	DazzlePrototypeClass() : DazzleType(0)				{ }
 
-	virtual const char *			Get_Name(void) const			{ return Name; }
-	virtual int								Get_Class_ID(void) const	{ return RenderObjClass::CLASSID_DAZZLE; }
-	virtual RenderObjClass *	Create(void);
+	virtual const char *			Get_Name() const			{ return Name; }
+	virtual int								Get_Class_ID() const	{ return RenderObjClass::CLASSID_DAZZLE; }
+	virtual RenderObjClass *	Create();
 	virtual void							DeleteSelf()							{ delete this; }
 
 	WW3DErrorType					Load_W3D(ChunkLoadClass & cload);
@@ -381,10 +381,10 @@ private:
 class DazzleLoaderClass : public PrototypeLoaderClass
 {
 public:
-	DazzleLoaderClass(void)														{ }
-	~DazzleLoaderClass(void)													{ }
+	DazzleLoaderClass()														{ }
+	~DazzleLoaderClass()													{ }
 
-	virtual int						Chunk_Type(void)							{ return W3D_CHUNK_DAZZLE; }
+	virtual int						Chunk_Type()							{ return W3D_CHUNK_DAZZLE; }
 	virtual PrototypeClass *	Load_W3D(ChunkLoadClass & cload);
 };
 

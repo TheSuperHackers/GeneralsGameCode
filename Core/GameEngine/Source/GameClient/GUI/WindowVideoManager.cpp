@@ -78,7 +78,7 @@
 //-----------------------------------------------------------------------------
 // WindowVideo PUBLIC FUNCTIONS ///////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-WindowVideo::WindowVideo( void )
+WindowVideo::WindowVideo()
 {
 
 	m_playType = WINDOW_PLAY_MOVIE_ONCE;
@@ -90,7 +90,7 @@ WindowVideo::WindowVideo( void )
 
 }
 
-WindowVideo::~WindowVideo( void )
+WindowVideo::~WindowVideo()
 {
 	// Don't Delete the window, only set it's video buffer to null
 	if(m_win)
@@ -135,7 +135,7 @@ void WindowVideo::setWindowState( WindowVideoStates state )
 //-----------------------------------------------------------------------------
 // WindowVideoManager PUBLIC FUNCTIONS ////////////////////////////////////////
 //-----------------------------------------------------------------------------
-WindowVideoManager::WindowVideoManager( void )
+WindowVideoManager::WindowVideoManager()
 {
 	WindowVideoMap::iterator it = m_playingVideos.begin();
 	while(it != m_playingVideos.end())
@@ -151,7 +151,7 @@ WindowVideoManager::WindowVideoManager( void )
 
 }
 
-WindowVideoManager::~WindowVideoManager( void )
+WindowVideoManager::~WindowVideoManager()
 {
 	WindowVideoMap::iterator it = m_playingVideos.begin();
 	while(it != m_playingVideos.end())
@@ -165,7 +165,7 @@ WindowVideoManager::~WindowVideoManager( void )
 }
 
 
-void WindowVideoManager::init( void )
+void WindowVideoManager::init()
 {
 	m_playingVideos.clear();
 
@@ -173,7 +173,7 @@ void WindowVideoManager::init( void )
 	m_pauseAllMovies = FALSE;
 }
 
-void WindowVideoManager::reset( void )
+void WindowVideoManager::reset()
 {
 	WindowVideoMap::iterator it = m_playingVideos.begin();
 	while(it != m_playingVideos.end())
@@ -188,7 +188,7 @@ void WindowVideoManager::reset( void )
 	m_pauseAllMovies = FALSE;
 }
 
-void WindowVideoManager::update( void )
+void WindowVideoManager::update()
 {
 	WindowVideoMap::iterator it = m_playingVideos.begin();
 
@@ -354,7 +354,7 @@ void WindowVideoManager::stopAndRemoveMovie( GameWindow *win )
 	}
 }
 
-void WindowVideoManager::stopAllMovies( void )
+void WindowVideoManager::stopAllMovies()
 {
 	WindowVideoMap::iterator it = m_playingVideos.begin();
 	//Iterate through the maps
@@ -370,7 +370,7 @@ void WindowVideoManager::stopAllMovies( void )
 	m_pauseAllMovies = FALSE;
 }
 
-void WindowVideoManager::pauseAllMovies( void )
+void WindowVideoManager::pauseAllMovies()
 {
 	WindowVideoMap::iterator it = m_playingVideos.begin();
 	//Iterate through the maps
@@ -386,7 +386,7 @@ void WindowVideoManager::pauseAllMovies( void )
 	m_stopAllMovies = FALSE;
 }
 
-void WindowVideoManager::resumeAllMovies( void )
+void WindowVideoManager::resumeAllMovies()
 {
 	WindowVideoMap::iterator it = m_playingVideos.begin();
 	//Iterate through the maps

@@ -193,43 +193,43 @@ PlayerTemplate::PlayerTemplate() :
 }
 
 //-----------------------------------------------------------------------------
-const Image *PlayerTemplate::getHeadWaterMarkImage( void ) const
+const Image *PlayerTemplate::getHeadWaterMarkImage() const
 {
 	return TheMappedImageCollection->findImageByName(m_headWaterMark);
 }
 
 //-----------------------------------------------------------------------------
-const Image *PlayerTemplate::getFlagWaterMarkImage( void ) const
+const Image *PlayerTemplate::getFlagWaterMarkImage() const
 {
 	return TheMappedImageCollection->findImageByName(m_flagWaterMark);
 }
 
 //-----------------------------------------------------------------------------
-const Image *PlayerTemplate::getSideIconImage( void ) const
+const Image *PlayerTemplate::getSideIconImage() const
 {
 	return TheMappedImageCollection->findImageByName(m_sideIconImage);
 }
 
 //-----------------------------------------------------------------------------
-const Image *PlayerTemplate::getEnabledImage( void ) const
+const Image *PlayerTemplate::getEnabledImage() const
 {
 	return TheMappedImageCollection->findImageByName(m_enabledImage);
 }
 
 //-----------------------------------------------------------------------------
-//const Image *PlayerTemplate::getDisabledImage( void ) const
+//const Image *PlayerTemplate::getDisabledImage() const
 //{
 //	return TheMappedImageCollection->findImageByName(m_disabledImage);
 //}
 
 //-----------------------------------------------------------------------------
-//const Image *PlayerTemplate::getHiliteImage( void ) const
+//const Image *PlayerTemplate::getHiliteImage() const
 //{
 //	return TheMappedImageCollection->findImageByName(m_hiliteImage);
 //}
 
 //-----------------------------------------------------------------------------
-//const Image *PlayerTemplate::getPushedImage( void ) const
+//const Image *PlayerTemplate::getPushedImage() const
 //{
 //	return TheMappedImageCollection->findImageByName(m_pushedImage);
 //}

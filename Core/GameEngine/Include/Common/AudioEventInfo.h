@@ -131,5 +131,5 @@ public:
   Bool isPermanentSound() const { return BitIsSet( m_control, AC_LOOP ) && (m_loopCount == 0 );  }
 
 	static const FieldParse m_audioEventInfo[];		///< the parse table for INI definition
-	const FieldParse *getFieldParse( void ) const { return m_audioEventInfo; }
+	const FieldParse *getFieldParse() const { return m_audioEventInfo; }
 };

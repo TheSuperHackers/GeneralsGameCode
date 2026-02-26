@@ -125,8 +125,8 @@ class AudibleSoundClass : public SoundSceneObjClass
 		//	Public constructors/destructors
 		//////////////////////////////////////////////////////////////////////
 		AudibleSoundClass (const AudibleSoundClass &src);
-		AudibleSoundClass (void);
-		virtual ~AudibleSoundClass (void);
+		AudibleSoundClass ();
+		virtual ~AudibleSoundClass ();
 
 		//////////////////////////////////////////////////////////////////////
 		//	Public operators
@@ -136,14 +136,14 @@ class AudibleSoundClass : public SoundSceneObjClass
 		//////////////////////////////////////////////////////////////////////
 		//	Identification methods
 		//////////////////////////////////////////////////////////////////////
-		virtual SOUND_CLASSID	Get_Class_ID (void) const	{ return CLASSID_2D; }
-		virtual SOUND_TYPE		Get_Type (void) const		{ return m_Type; }
+		virtual SOUND_CLASSID	Get_Class_ID () const	{ return CLASSID_2D; }
+		virtual SOUND_TYPE		Get_Type () const		{ return m_Type; }
 		virtual void				Set_Type (SOUND_TYPE type)	{ m_Type = type; }
 
 		//////////////////////////////////////////////////////////////////////
 		//	Conversion methods
 		//////////////////////////////////////////////////////////////////////
-		virtual AudibleSoundClass *	As_AudibleSoundClass(void) 	{ return this; }
+		virtual AudibleSoundClass *	As_AudibleSoundClass() 	{ return this; }
 
 		//////////////////////////////////////////////////////////////////////
 		//	Update methods
@@ -154,20 +154,20 @@ class AudibleSoundClass : public SoundSceneObjClass
 		//	State control methods
 		//////////////////////////////////////////////////////////////////////
 		virtual bool				Play (bool alloc_handle = true);
-		virtual bool				Pause (void);
-		virtual bool				Resume (void);
+		virtual bool				Pause ();
+		virtual bool				Resume ();
 		virtual bool				Stop (bool remove_from_playlist = true);
 		virtual void				Seek (unsigned long milliseconds);
-		virtual SOUND_STATE		Get_State (void) const	{ return m_State; }
+		virtual SOUND_STATE		Get_State () const	{ return m_State; }
 
 		// The timestamp represents when the sound started playing
-		virtual unsigned long	Get_Timestamp (void) const { return m_Timestamp; }
+		virtual unsigned long	Get_Timestamp () const { return m_Timestamp; }
 
 		//////////////////////////////////////////////////////////////////////
 		//	Informational methods
 		//////////////////////////////////////////////////////////////////////
-		virtual LPCTSTR			Get_Filename (void) const;
-		virtual bool				Is_Playing (void) const  {return(Get_State() == STATE_PLAYING);}
+		virtual LPCTSTR			Get_Filename () const;
+		virtual bool				Is_Playing () const  {return(Get_State() == STATE_PLAYING);}
 
 		//////////////////////////////////////////////////////////////////////
 		//	Pan control
@@ -177,21 +177,21 @@ class AudibleSoundClass : public SoundSceneObjClass
 		//	Note:  Pan values are normalized values from 0 (hard left) to
 		// 1.0F (hard right).  Dead center is 0.5F.
 		//
-		virtual float				Get_Pan (void);
+		virtual float				Get_Pan ();
 		virtual void				Set_Pan (float pan = 0.5F);
 
 		//////////////////////////////////////////////////////////////////////
 		//	Volume control
 		//////////////////////////////////////////////////////////////////////
-		virtual float				Get_Volume (void);
+		virtual float				Get_Volume ();
 		virtual void				Set_Volume (float volume = 1.0F);
-		virtual void				Update_Volume (void)						{ Set_Volume (m_Volume); }
+		virtual void				Update_Volume ()						{ Set_Volume (m_Volume); }
 
 		//////////////////////////////////////////////////////////////////////
 		//	Loop control
 		//////////////////////////////////////////////////////////////////////
-		virtual int					Get_Loop_Count (void) const			{ return m_LoopCount; }
-		virtual int					Get_Loops_Left (void) const;
+		virtual int					Get_Loop_Count () const			{ return m_LoopCount; }
+		virtual int					Get_Loops_Left () const;
 
 		// Note:  Use the INFINITE_LOOPS constant for an infinite number of loops. (i.e. for use w/ music)
 		virtual void				Set_Loop_Count (int count = 1);
@@ -199,20 +199,20 @@ class AudibleSoundClass : public SoundSceneObjClass
 		//////////////////////////////////////////////////////////////////////
 		//	Priority control
 		//////////////////////////////////////////////////////////////////////
-		virtual float				Get_Priority (void) const					{ return m_Priority; }
-		virtual float				Peek_Priority (void) const					{ return m_Priority; }
+		virtual float				Get_Priority () const					{ return m_Priority; }
+		virtual float				Peek_Priority () const					{ return m_Priority; }
 		virtual void				Set_Priority (float priority = 0.5F);
 
-		virtual float				Get_Runtime_Priority (void) const		{ return m_RuntimePriority; }
+		virtual float				Get_Runtime_Priority () const		{ return m_RuntimePriority; }
 		virtual void				Set_Runtime_Priority (float priority)	{ m_RuntimePriority = priority; }
 
 		//////////////////////////////////////////////////////////////////////
 		//	Playback rate control
 		//////////////////////////////////////////////////////////////////////
-		virtual int					Get_Playback_Rate (void);
+		virtual int					Get_Playback_Rate ();
 		virtual void				Set_Playback_Rate (int rate_in_hz);
 
-		virtual float				Get_Pitch_Factor (void)						{ return m_PitchFactor; }
+		virtual float				Get_Pitch_Factor ()						{ return m_PitchFactor; }
 		virtual void				Set_Pitch_Factor (float factor);
 
 		//////////////////////////////////////////////////////////////////////
@@ -224,35 +224,35 @@ class AudibleSoundClass : public SoundSceneObjClass
 		// can either be set as a normalized value from 0 to 1 or a millisecond
 		// offset from the start of the sound.
 		//
-		virtual unsigned long	Get_Duration (void) const								{ return m_Length; }
-		virtual unsigned long	Get_Play_Position (void) const						{ return m_CurrentPosition; }
+		virtual unsigned long	Get_Duration () const								{ return m_Length; }
+		virtual unsigned long	Get_Play_Position () const						{ return m_CurrentPosition; }
 		virtual void				Set_Play_Position (float position)					{ Seek (position * m_Length); }
 		virtual void				Set_Play_Position (unsigned long milliseconds)	{ Seek (milliseconds); }
 
 		virtual void				Set_Start_Offset (float offset)						{ m_StartOffset = offset; }
-		virtual float				Get_Start_Offset (void) const							{ return m_StartOffset; }
+		virtual float				Get_Start_Offset () const							{ return m_StartOffset; }
 
 		//////////////////////////////////////////////////////////////////////
 		//	Position/direction methods
 		//////////////////////////////////////////////////////////////////////
 		virtual void			Set_Position (const Vector3 &position);
-		virtual Vector3		Get_Position (void) const							{ return m_Transform.Get_Translation (); }
+		virtual Vector3		Get_Position () const							{ return m_Transform.Get_Translation (); }
 
 		virtual void			Set_Listener_Transform (const Matrix3D &tm)	{ m_ListenerTransform = tm; }
 		virtual void			Set_Transform (const Matrix3D &transform);
-		virtual Matrix3D		Get_Transform (void) const							{ return m_Transform; }
+		virtual Matrix3D		Get_Transform () const							{ return m_Transform; }
 
 		//////////////////////////////////////////////////////////////////////
 		//	Culling methods
 		//////////////////////////////////////////////////////////////////////
 		virtual void			Cull_Sound (bool culled = true);
-		virtual bool			Is_Sound_Culled (void) const { return m_IsCulled; }
+		virtual bool			Is_Sound_Culled () const { return m_IsCulled; }
 
 		//////////////////////////////////////////////////////////////////////
 		//	Scene integration
 		//////////////////////////////////////////////////////////////////////
 		virtual void			Add_To_Scene (bool start_playing = true);
-		virtual void			Remove_From_Scene (void);
+		virtual void			Remove_From_Scene ();
 
 		//////////////////////////////////////////////////////////////////////
 		//	Attenuation settings
@@ -262,32 +262,32 @@ class AudibleSoundClass : public SoundSceneObjClass
 		//	This is the distance where the sound can not be heard any longer.  (its vol is 0)
 		//
 		virtual void			Set_DropOff_Radius (float radius = 1);
-		virtual float			Get_DropOff_Radius (void) const	{ return m_DropOffRadius; }
+		virtual float			Get_DropOff_Radius () const	{ return m_DropOffRadius; }
 
 		//////////////////////////////////////////////////////////////////////
 		//	Update methods
 		//////////////////////////////////////////////////////////////////////
 		virtual void			Set_Dirty (bool dirty = true)		{ m_bDirty = dirty; }
-		virtual bool			Is_Dirty (void) const				{ return m_bDirty; }
+		virtual bool			Is_Dirty () const				{ return m_bDirty; }
 
 		//////////////////////////////////////////////////////////////////////
 		//	Definition managmenent
 		//////////////////////////////////////////////////////////////////////
 		virtual void									Set_Definition (AudibleSoundDefinitionClass *def) { m_Definition = def; }
-		virtual AudibleSoundDefinitionClass *	Get_Definition (void) { return m_Definition; }
+		virtual AudibleSoundDefinitionClass *	Get_Definition () { return m_Definition; }
 
 		//////////////////////////////////////////////////////////////////////
 		//	Conversion methods
 		//////////////////////////////////////////////////////////////////////
 		virtual void					Re_Sync (AudibleSoundClass &src);
-		virtual void					Free_Conversion (void);
-		virtual void					Convert_To_Filtered (void);
-		virtual AudibleSoundClass *As_Converted_Format (void);
+		virtual void					Free_Conversion ();
+		virtual void					Convert_To_Filtered ();
+		virtual AudibleSoundClass *As_Converted_Format ();
 
 		//////////////////////////////////////////////////////////////////////
 		//	From PersistClass
 		//////////////////////////////////////////////////////////////////////
-		const PersistFactoryClass &	Get_Factory (void) const;
+		const PersistFactoryClass &	Get_Factory () const;
 		bool									Save (ChunkSaveClass &csave);
 		bool									Load (ChunkLoadClass &cload);
 
@@ -296,34 +296,34 @@ class AudibleSoundClass : public SoundSceneObjClass
 		//////////////////////////////////////////////////////////////////////
 		//	Protected methods
 		//////////////////////////////////////////////////////////////////////
-		virtual float				Determine_Real_Volume (void) const;
+		virtual float				Determine_Real_Volume () const;
 
 		//////////////////////////////////////////////////////////////////////
 		//	Handle information
 		//////////////////////////////////////////////////////////////////////
-		virtual SoundHandleClass *	Get_Miles_Handle (void) const			{ return m_SoundHandle; }
+		virtual SoundHandleClass *	Get_Miles_Handle () const			{ return m_SoundHandle; }
 		virtual void				Set_Miles_Handle (MILES_HANDLE handle = INVALID_MILES_HANDLE);
-		virtual void				Free_Miles_Handle (void);
-		virtual void				Initialize_Miles_Handle (void);
-		virtual void				Allocate_Miles_Handle (void);
+		virtual void				Free_Miles_Handle ();
+		virtual void				Initialize_Miles_Handle ();
+		virtual void				Allocate_Miles_Handle ();
 
 		//////////////////////////////////////////////////////////////////////
 		//	Buffer information
 		//////////////////////////////////////////////////////////////////////
-		virtual SoundBufferClass *	Get_Buffer (void) const;
-		virtual SoundBufferClass *	Peek_Buffer (void) const;
+		virtual SoundBufferClass *	Get_Buffer () const;
+		virtual SoundBufferClass *	Peek_Buffer () const;
 		virtual void					Set_Buffer (SoundBufferClass *buffer);
 
 		//////////////////////////////////////////////////////////////////////
 		//	Loop methods
 		//////////////////////////////////////////////////////////////////////
-		virtual void				Restart_Loop (void) {}
-		virtual void				Update_Play_Position (void);
+		virtual void				Restart_Loop () {}
+		virtual void				Update_Play_Position ();
 
 		//////////////////////////////////////////////////////////////////////
 		//	Event handling
 		//////////////////////////////////////////////////////////////////////
-		virtual void				On_Loop_End (void);
+		virtual void				On_Loop_End ();
 
 		//////////////////////////////////////////////////////////////////////
 		//	Protected member data
@@ -387,31 +387,31 @@ public:
 	//////////////////////////////////////////////////////////////
 	//	Public constructors/destructors
 	//////////////////////////////////////////////////////////////
-	AudibleSoundDefinitionClass (void);
-	virtual ~AudibleSoundDefinitionClass (void) { }
+	AudibleSoundDefinitionClass ();
+	virtual ~AudibleSoundDefinitionClass () { }
 
 	// From DefinitionClass
-	virtual uint32								Get_Class_ID (void) const;
+	virtual uint32								Get_Class_ID () const;
 
 	// From PersistClass
-	virtual const PersistFactoryClass &	Get_Factory (void) const;
+	virtual const PersistFactoryClass &	Get_Factory () const;
 	virtual bool								Save (ChunkSaveClass &csave);
 	virtual bool								Load (ChunkLoadClass &cload);
-	virtual PersistClass *					Create (void) const;
+	virtual PersistClass *					Create () const;
 	virtual AudibleSoundClass *			Create_Sound (int classid_hint) const;
 
 	// Initialization
 	virtual void								Initialize_From_Sound (AudibleSoundClass *sound);
 
 	// Accessors
-	virtual const StringClass &			Get_Filename (void) const			{ return m_Filename; }
-	virtual const StringClass &			Get_Display_Text (void) const		{ return m_DisplayText; }
-	virtual float								Get_Max_Vol_Radius (void) const	{ return m_MaxVolRadius; }
-	virtual float								Get_DropOff_Radius (void) const	{ return m_DropOffRadius; }
-	virtual const Vector3 &					Get_Sphere_Color (void) const		{ return m_AttenuationSphereColor; }
-	virtual float								Get_Volume (void) const				{ return m_Volume; }
-	virtual float								Get_Start_Offset (void) const		{ return m_StartOffset; }
-	virtual float								Get_Pitch_Factor (void) const		{ return m_PitchFactor; }
+	virtual const StringClass &			Get_Filename () const			{ return m_Filename; }
+	virtual const StringClass &			Get_Display_Text () const		{ return m_DisplayText; }
+	virtual float								Get_Max_Vol_Radius () const	{ return m_MaxVolRadius; }
+	virtual float								Get_DropOff_Radius () const	{ return m_DropOffRadius; }
+	virtual const Vector3 &					Get_Sphere_Color () const		{ return m_AttenuationSphereColor; }
+	virtual float								Get_Volume () const				{ return m_Volume; }
+	virtual float								Get_Start_Offset () const		{ return m_StartOffset; }
+	virtual float								Get_Pitch_Factor () const		{ return m_PitchFactor; }
 
 	virtual void								Set_Volume (float volume)			{ m_Volume = volume; }
 	virtual void								Set_Max_Vol_Radius (float radius){ m_MaxVolRadius = radius; }
@@ -420,7 +420,7 @@ public:
 	virtual void								Set_Pitch_Factor (float factor)	{ m_PitchFactor = factor; }
 
 	// Logical sound creation
-	virtual LogicalSoundClass *			Create_Logical (void);
+	virtual LogicalSoundClass *			Create_Logical ();
 
 protected:
 

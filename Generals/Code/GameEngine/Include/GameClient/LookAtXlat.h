@@ -49,8 +49,8 @@ public:
 	~LookAtTranslator();
 
 	virtual GameMessageDisposition translateGameMessage(const GameMessage *msg);
-	virtual const ICoord2D* getRMBScrollAnchor(void); // get m_anchor ICoord2D if we're RMB scrolling
-	Bool hasMouseMovedRecently( void );
+	virtual const ICoord2D* getRMBScrollAnchor(); // get m_anchor ICoord2D if we're RMB scrolling
+	Bool hasMouseMovedRecently();
 	void setCurrentPos( const ICoord2D& pos );
 	void setScreenEdgeScrollMode(ScreenEdgeScrollMode mode);
 
@@ -84,7 +84,7 @@ private:
 	UnsignedInt m_lastMouseMoveTimeMsec;				// real-time in milliseconds when mouse last moved
 
 	void setScrolling( ScrollType scrollType );
-	void stopScrolling( void );
+	void stopScrolling();
 	Bool canScrollAtScreenEdge() const;
 };
 

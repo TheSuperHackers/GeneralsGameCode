@@ -41,7 +41,7 @@ class FloatUpdateModuleData: public UpdateModuleData
 
 public:
 
-	FloatUpdateModuleData( void );
+	FloatUpdateModuleData();
 
 	static void buildFieldParse(MultiIniFieldParse& p);
 

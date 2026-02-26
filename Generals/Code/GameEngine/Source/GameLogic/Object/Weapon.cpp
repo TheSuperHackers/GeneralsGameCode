@@ -322,7 +322,7 @@ WeaponTemplate::~WeaponTemplate()
 }
 
 // ------------------------------------------------------------------------------------------------
-void WeaponTemplate::reset( void )
+void WeaponTemplate::reset()
 {
 	m_historicDamage.clear();
 }
@@ -1563,7 +1563,7 @@ void WeaponStore::deleteAllDelayedDamage()
 }
 
 // ------------------------------------------------------------------------------------------------
-void WeaponStore::resetWeaponTemplates( void )
+void WeaponStore::resetWeaponTemplates()
 {
 
 	for (size_t i = 0; i < m_weaponTemplateVector.size(); i++)
@@ -3313,7 +3313,7 @@ void Weapon::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void Weapon::loadPostProcess( void )
+void Weapon::loadPostProcess()
 {
 	if( m_projectileStreamID != INVALID_ID )
 	{

@@ -75,7 +75,7 @@ static const Int MAX_SAVE_FILE_NUMBER  =  99999999;
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-SaveGameInfo::SaveGameInfo( void )
+SaveGameInfo::SaveGameInfo()
 {
 
 	date.day					= 0;
@@ -93,7 +93,7 @@ SaveGameInfo::SaveGameInfo( void )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-SaveGameInfo::~SaveGameInfo( void )
+SaveGameInfo::~SaveGameInfo()
 {
 
 }
@@ -272,7 +272,7 @@ UnicodeString getUnicodeTimeBuffer(SYSTEMTIME timeVal)
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-GameState::GameState( void )
+GameState::GameState()
 {
 
 	m_availableGames = nullptr;
@@ -282,7 +282,7 @@ GameState::GameState( void )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-GameState::~GameState( void )
+GameState::~GameState()
 {
 
 	// clear our snapshot block list
@@ -300,7 +300,7 @@ GameState::~GameState( void )
 // ------------------------------------------------------------------------------------------------
 /** Init the game state subsystem */
 // ------------------------------------------------------------------------------------------------
-void GameState::init( void )
+void GameState::init()
 {
 
 	// add all the snapshot objects to our list of data blocks for save game files
@@ -337,7 +337,7 @@ void GameState::init( void )
 // ------------------------------------------------------------------------------------------------
 /** Reset */
 // ------------------------------------------------------------------------------------------------a
-void GameState::reset( void )
+void GameState::reset()
 {
 
 	// clear the post process snapshot list
@@ -353,7 +353,7 @@ void GameState::reset( void )
 // ------------------------------------------------------------------------------------------------
 /** Clear any available games entries */
 // ------------------------------------------------------------------------------------------------
-void GameState::clearAvailableGames( void )
+void GameState::clearAvailableGames()
 {
 	AvailableGameInfo *gameInfo;
 
@@ -620,7 +620,7 @@ SaveCode GameState::saveGame( AsciiString filename, UnicodeString desc,
 // ------------------------------------------------------------------------------------------------
 /** A mission save */
 // ------------------------------------------------------------------------------------------------
-SaveCode GameState::missionSave( void )
+SaveCode GameState::missionSave()
 {
 
 	// get campaign
@@ -1529,7 +1529,7 @@ void GameState::addPostProcessSnapshot( Snapshot *snapshot )
 // ------------------------------------------------------------------------------------------------
 /** Post process entry point after all game data has been xferd from disk */
 // ------------------------------------------------------------------------------------------------
-void GameState::gameStatePostProcessLoad( void )
+void GameState::gameStatePostProcessLoad()
 {
 
 	// post process each snapshot that registered with us

@@ -63,19 +63,19 @@ protected:
 
 public:
 	W3DDynamicLight();
-	~W3DDynamicLight(void);
+	~W3DDynamicLight();
 
 public:
-	virtual void					On_Frame_Update(void);
+	virtual void					On_Frame_Update();
 
 	void setEnabled(Bool enabled) { m_enabled = enabled; m_decayRange = false; m_decayFrameCount = 0; m_decayColor = false; m_increaseFrameCount = 0;};
-	Bool isEnabled(void) {return m_enabled;};
+	Bool isEnabled() {return m_enabled;};
 
 
 	/// 0 frameIncreaseTime means it starts out full size/intensity, 0 decay time means it lasts forever.
 	void setFrameFade(UnsignedInt frameIncreaseTime, UnsignedInt decayFrameTime);
-	void setDecayRange(void) {m_decayRange = true;};
-	void setDecayColor(void) {m_decayColor = true;};
+	void setDecayRange() {m_decayRange = true;};
+	void setDecayColor() {m_decayColor = true;};
 	// Cull returns true if the terrain vertex at x,y is outside of the light's influence.
 	Bool cull(Int x, Int y ) {return (x<m_minX||y<m_minY||x>m_maxX||y>m_maxY);}
 };

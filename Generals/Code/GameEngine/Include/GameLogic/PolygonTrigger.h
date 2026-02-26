@@ -52,7 +52,7 @@ class WaterHandle
 
 public:
 
-	WaterHandle( void ) { m_polygon = nullptr; }
+	WaterHandle() { m_polygon = nullptr; }
 
 	///@todo we need to formalize the water systems
 	PolygonTrigger *m_polygon;	///< valid when water is a polygon area, nullptr if water is a grid
@@ -86,25 +86,25 @@ protected:
 	static Int s_currentID; ///< Current id for new triggers.
 
 protected:
-	void reallocate(void);
-	void updateBounds(void) const;
+	void reallocate();
+	void updateBounds() const;
 
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
+	virtual void loadPostProcess();
 
 public:
 	PolygonTrigger(Int initialAllocation);
-	//~PolygonTrigger(void);		///< Note that deleting the head of a list deletes all linked objects in the list.
+	//~PolygonTrigger();		///< Note that deleting the head of a list deletes all linked objects in the list.
 
 public:
-	static PolygonTrigger *getFirstPolygonTrigger(void) {return ThePolygonTriggerListPtr;}
+	static PolygonTrigger *getFirstPolygonTrigger() {return ThePolygonTriggerListPtr;}
 	static PolygonTrigger *getPolygonTriggerByID(Int triggerID);
 	static Bool ParsePolygonTriggersDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData);
 	/// Writes Triggers Info
 	static void WritePolygonTriggersDataChunk(DataChunkOutput &chunkWriter);
-	static void deleteTriggers(void);
+	static void deleteTriggers();
 
 public:
 	static void addPolygonTrigger(PolygonTrigger *pTrigger);
@@ -117,24 +117,24 @@ public:
 	void setTriggerName(AsciiString name) {m_triggerName = name;};
 
 	void getCenterPoint(Coord3D* pOutCoord) const;
-	Real getRadius(void) const;
+	Real getRadius() const;
 
 public:
 	const ICoord3D *getPoint(Int ndx) const {if (ndx<0) ndx=0; if (ndx>=m_numPoints) ndx=m_numPoints-1; return m_points+ndx;} ///< Get a point.
-	Int getNumPoints(void) const {return m_numPoints;}
-	Int getID(void) const {return m_triggerID;}
-	PolygonTrigger *getNext(void) {return m_nextPolygonTrigger;}
-	const PolygonTrigger *getNext(void) const {return m_nextPolygonTrigger;}
-	AsciiString getTriggerName(void)  const {return m_triggerName;} ///< Gets the trigger name.
+	Int getNumPoints() const {return m_numPoints;}
+	Int getID() const {return m_triggerID;}
+	PolygonTrigger *getNext() {return m_nextPolygonTrigger;}
+	const PolygonTrigger *getNext() const {return m_nextPolygonTrigger;}
+	AsciiString getTriggerName()  const {return m_triggerName;} ///< Gets the trigger name.
 	Bool pointInTrigger(ICoord3D &point) const;
-	Bool doExportWithScripts(void) const {return m_exportWithScripts;}
+	Bool doExportWithScripts() const {return m_exportWithScripts;}
 	void setDoExportWithScripts(Bool val) {m_exportWithScripts = val;}
-	Bool isWaterArea(void) const {return m_isWaterArea;}
+	Bool isWaterArea() const {return m_isWaterArea;}
 	void setWaterArea(Bool val) {m_isWaterArea = val;}
-	Bool isRiver(void) const {return m_isRiver;}
+	Bool isRiver() const {return m_isRiver;}
 	void setRiver(Bool val) {m_isRiver = val;}
-	Int getRiverStart(void) const {return m_riverStart;}
+	Int getRiverStart() const {return m_riverStart;}
 	void setRiverStart(Int val) {m_riverStart = val;}
-	const WaterHandle* getWaterHandle(void) const;
-	Bool isValid(void) const;
+	const WaterHandle* getWaterHandle() const;
+	Bool isValid() const;
 };

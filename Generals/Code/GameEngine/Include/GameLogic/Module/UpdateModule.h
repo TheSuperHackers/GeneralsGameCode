@@ -319,7 +319,7 @@ public:
 
 	virtual void cancelDock( Object* docker ) = 0;	///< Clear me from any reserved points, and if I was the reason you were Busy, you aren't anymore.
 
-	virtual Bool isDockOpen( void ) = 0;						///< Is the dock open to accepting dockers
+	virtual Bool isDockOpen() = 0;						///< Is the dock open to accepting dockers
 	virtual void setDockOpen( Bool open ) = 0;			///< Open/Close the dock
 
 	virtual void setDockCrippled( Bool setting ) = 0; ///< Game Logic can set me as inoperative.  I get to decide what that means.
@@ -357,7 +357,7 @@ public:
 	virtual void exitObjectInAHurry( Object *newObj) {}; ///< Special call for objects exiting a tunnel network, does NOT change the ai state. jba.
 
 	virtual void setRallyPoint( const Coord3D *pos ) = 0;				///< define a "rally point" for units to move towards
-	virtual const Coord3D *getRallyPoint( void ) const = 0;			///< define a "rally point" for units to move towards
+	virtual const Coord3D *getRallyPoint() const = 0;			///< define a "rally point" for units to move towards
 	virtual Bool getNaturalRallyPoint( Coord3D& rallyPoint, Bool offset = TRUE ) const {rallyPoint.x=rallyPoint.y=rallyPoint.z=0; return false;}	///< get the natural "rally point" for units to move towards
 	virtual Bool getExitPosition( Coord3D& exitPosition ) const {exitPosition.x=exitPosition.y=exitPosition.z=0; return false;};					///< access to the "Door" position of the production object
 };

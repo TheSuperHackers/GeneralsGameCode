@@ -73,7 +73,7 @@ LookupTableClass::LookupTableClass(int sample_count) :
 {
 }
 
-LookupTableClass::~LookupTableClass(void)
+LookupTableClass::~LookupTableClass()
 {
 }
 
@@ -103,7 +103,7 @@ void LookupTableClass::Init(const char * name,Curve1DClass * curve)
 ** LookupTableManager Implementation
 **
 ***********************************************************************************************/
-void LookupTableMgrClass::Init(void)
+void LookupTableMgrClass::Init()
 {
 	// create a default table that the user can use in an emergency
 	LookupTableClass * default_table = NEW_REF(LookupTableClass,(2));
@@ -118,12 +118,12 @@ void LookupTableMgrClass::Init(void)
 	default_table->Release_Ref();
 }
 
-void LookupTableMgrClass::Shutdown(void)
+void LookupTableMgrClass::Shutdown()
 {
 	Reset();
 }
 
-void LookupTableMgrClass::Reset(void)
+void LookupTableMgrClass::Reset()
 {
 	while (Tables.Peek_Head() != nullptr) {
 		Tables.Release_Head();

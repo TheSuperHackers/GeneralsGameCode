@@ -111,13 +111,13 @@ public:
 	 * used by this machine.
 	 */
 	AIGuardMachine( Object *owner );
-	Object* findTargetToGuardByID( void ) { return TheGameLogic->findObjectByID(m_targetToGuard); }
+	Object* findTargetToGuardByID() { return TheGameLogic->findObjectByID(m_targetToGuard); }
 	void setTargetToGuard( const Object *object ) { m_targetToGuard = object ? object->getID() : INVALID_ID; }
 
-	const Coord3D *getPositionToGuard( void ) const { return &m_positionToGuard; }
+	const Coord3D *getPositionToGuard() const { return &m_positionToGuard; }
 	void setTargetPositionToGuard( const Coord3D *pos) { m_positionToGuard = *pos; }
 
-	const PolygonTrigger *getAreaToGuard( void ) const { return m_areaToGuard; }
+	const PolygonTrigger *getAreaToGuard() const { return m_areaToGuard; }
 	void setAreaToGuard( const PolygonTrigger *area) { m_areaToGuard = area; }
 
 	void setNemesisID(ObjectID id) { m_nemesisToAttack = id; }
@@ -126,7 +126,7 @@ public:
 	GuardMode getGuardMode() const { return m_guardMode; }
 	void setGuardMode(GuardMode guardMode) { m_guardMode = guardMode; }
 
-	Bool lookForInnerTarget(void);
+	Bool lookForInnerTarget();
 
 	static Real getStdGuardRange(const Object* obj);
 };
@@ -142,8 +142,8 @@ public:
 		m_enterState = nullptr;
 	}
 	virtual Bool isAttack() const { return m_attackState ? m_attackState->isAttack() : FALSE; }
-	virtual StateReturnType onEnter( void );
-	virtual StateReturnType update( void );
+	virtual StateReturnType onEnter();
+	virtual StateReturnType update();
 	virtual void onExit( StateExitType status );
 protected:
 	// snapshot interface
@@ -166,8 +166,8 @@ public:
 	AIGuardIdleState( StateMachine *machine ) : State( machine, "AIGuardIdleState" ) { }
 	virtual Bool isAttack() const { return FALSE; }
 	virtual Bool isGuardIdle() const { return TRUE; }
-	virtual StateReturnType onEnter( void );
-	virtual StateReturnType update( void );
+	virtual StateReturnType onEnter();
+	virtual StateReturnType update();
 	virtual void onExit( StateExitType status );
 protected:
 	// snapshot interface
@@ -192,8 +192,8 @@ public:
 		m_attackState = nullptr;
 	}
 	virtual Bool isAttack() const { return m_attackState ? m_attackState->isAttack() : FALSE; }
-	virtual StateReturnType onEnter( void );
-	virtual StateReturnType update( void );
+	virtual StateReturnType onEnter();
+	virtual StateReturnType update();
 	virtual void onExit( StateExitType status );
 protected:
 	// snapshot interface
@@ -219,8 +219,8 @@ public:
 		m_nextReturnScanTime = 0;
 	}
 	virtual Bool isAttack() const { return FALSE; }
-	virtual StateReturnType onEnter( void );
-	virtual StateReturnType update( void );
+	virtual StateReturnType onEnter();
+	virtual StateReturnType update();
 	virtual void onExit( StateExitType status );
 protected:
 	// snapshot interface
@@ -240,8 +240,8 @@ class AIGuardPickUpCrateState : public AIPickUpCrateState
 public:
 	AIGuardPickUpCrateState( StateMachine *machine );
 	virtual Bool isAttack() const { return FALSE; }
-	virtual StateReturnType onEnter( void );
-	virtual StateReturnType update( void );
+	virtual StateReturnType onEnter();
+	virtual StateReturnType update();
 	virtual void onExit( StateExitType status );
 };
 EMPTY_DTOR(AIGuardPickUpCrateState)
@@ -253,8 +253,8 @@ class AIGuardAttackAggressorState : public State
 public:
 	AIGuardAttackAggressorState( StateMachine *machine );
 	virtual Bool isAttack() const { return m_attackState ? m_attackState->isAttack() : FALSE; }
-	virtual StateReturnType onEnter( void );
-	virtual StateReturnType update( void );
+	virtual StateReturnType onEnter();
+	virtual StateReturnType update();
 	virtual void onExit( StateExitType status );
 protected:
 	// snapshot interface

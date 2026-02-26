@@ -181,7 +181,7 @@ const float INTENSITY_RATE_OF_CHANGE			= 1.0f;			// change in intensity per seco
  * HISTORY:                                                                                    *
  *   1/4/00     gth : Created.                                                                 *
  *=============================================================================================*/
-TexProjectClass::TexProjectClass(void) :
+TexProjectClass::TexProjectClass() :
 	Flags(DEFAULT_FLAGS),
 	DesiredIntensity(1.0f),
 	Intensity(1.0f),
@@ -232,7 +232,7 @@ TexProjectClass::TexProjectClass(void) :
  * HISTORY:                                                                                    *
  *   1/4/00     gth : Created.                                                                 *
  *=============================================================================================*/
-TexProjectClass::~TexProjectClass(void)
+TexProjectClass::~TexProjectClass()
 {
 	REF_PTR_RELEASE(Mapper1);
 	REF_PTR_RELEASE(MaterialPass);
@@ -282,7 +282,7 @@ void TexProjectClass::Set_Texture_Size(int size)
  * HISTORY:                                                                                    *
  *   1/4/00     gth : Created.                                                                 *
  *=============================================================================================*/
-int TexProjectClass::Get_Texture_Size(void)
+int TexProjectClass::Get_Texture_Size()
 {
 	return (Flags & SIZE_MASK) >> SIZE_SHIFT;
 }
@@ -378,7 +378,7 @@ void TexProjectClass::Set_Intensity(float intensity,bool immediate)
  * HISTORY:                                                                                    *
  *   1/4/00     gth : Created.                                                                 *
  *=============================================================================================*/
-float TexProjectClass::Get_Intensity(void)
+float TexProjectClass::Get_Intensity()
 {
 	return DesiredIntensity;
 }
@@ -398,7 +398,7 @@ float TexProjectClass::Get_Intensity(void)
  * HISTORY:                                                                                    *
  *   1/4/00     gth : Created.                                                                 *
  *=============================================================================================*/
-bool TexProjectClass::Is_Intensity_Zero(void)
+bool TexProjectClass::Is_Intensity_Zero()
 {
 	return ((Intensity == 0.0f) && (DesiredIntensity == 0.0f));
 }
@@ -439,7 +439,7 @@ void TexProjectClass::Set_Attenuation(float attenuation)
  * HISTORY:                                                                                    *
  *   1/4/00     gth : Created.                                                                 *
  *=============================================================================================*/
-float TexProjectClass::Get_Attenuation(void)
+float TexProjectClass::Get_Attenuation()
 {
 	return Attenuation;
 }
@@ -475,7 +475,7 @@ void TexProjectClass::Enable_Attenuation(bool onoff)
  * HISTORY:                                                                                    *
  *   1/4/00     gth : Created.                                                                 *
  *=============================================================================================*/
-bool TexProjectClass::Is_Attenuation_Enabled(void)
+bool TexProjectClass::Is_Attenuation_Enabled()
 {
 	return Get_Flag(ATTENUATE);
 }
@@ -538,7 +538,7 @@ bool TexProjectClass::Is_Depth_Gradient_Enabled(bool onoff)
  * HISTORY:                                                                                    *
  *   1/4/00     gth : Created.                                                                 *
  *=============================================================================================*/
-void TexProjectClass::Init_Multiplicative(void)
+void TexProjectClass::Init_Multiplicative()
 {
 	Set_Flag(ADDITIVE,false);
 
@@ -643,7 +643,7 @@ void TexProjectClass::Init_Multiplicative(void)
  * HISTORY:                                                                                    *
  *   1/11/00    gth : Created.                                                                 *
  *=============================================================================================*/
-void TexProjectClass::Init_Additive(void)
+void TexProjectClass::Init_Additive()
 {
 	Set_Flag(ADDITIVE,true);
 
@@ -753,7 +753,7 @@ void TexProjectClass::Set_Texture(TextureClass * texture)
  * HISTORY:                                                                                    *
  *   1/11/00    gth : Created.                                                                 *
  *=============================================================================================*/
-TextureClass * TexProjectClass::Get_Texture(void) const
+TextureClass * TexProjectClass::Get_Texture() const
 {
 	return MaterialPass->Get_Texture();
 }
@@ -771,7 +771,7 @@ TextureClass * TexProjectClass::Get_Texture(void) const
  * HISTORY:                                                                                    *
  *   1/11/00    gth : Created.                                                                 *
  *=============================================================================================*/
-TextureClass * TexProjectClass::Peek_Texture(void) const
+TextureClass * TexProjectClass::Peek_Texture() const
 {
 	return MaterialPass->Peek_Texture();
 }
@@ -789,7 +789,7 @@ TextureClass * TexProjectClass::Peek_Texture(void) const
  * HISTORY:                                                                                    *
  *   1/11/00    gth : Created.                                                                 *
  *=============================================================================================*/
-MaterialPassClass * TexProjectClass::Peek_Material_Pass(void)
+MaterialPassClass * TexProjectClass::Peek_Material_Pass()
 {
 	return MaterialPass;
 }
@@ -1194,7 +1194,7 @@ bool TexProjectClass::Compute_Texture
  * HISTORY:                                                                                    *
  *   4/17/2001  gth : Created.                                                                 *
  *=============================================================================================*/
-bool TexProjectClass::Needs_Render_Target(void)
+bool TexProjectClass::Needs_Render_Target()
 {
 	return Get_Flag(TEXTURE_DIRTY);
 }
@@ -1375,7 +1375,7 @@ void TexProjectClass::Pre_Render_Update(const Matrix3D & camera)
  * HISTORY:                                                                                    *
  *   1/11/00    gth : Created.                                                                 *
  *=============================================================================================*/
-void TexProjectClass::Update_WS_Bounding_Volume(void)
+void TexProjectClass::Update_WS_Bounding_Volume()
 {
 	ProjectorClass::Update_WS_Bounding_Volume();
 

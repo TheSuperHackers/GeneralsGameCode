@@ -165,7 +165,7 @@ Bool GetUnsignedIntFromRegistry(AsciiString path, AsciiString key, UnsignedInt& 
 	return getUnsignedIntFromRegistry(HKEY_CURRENT_USER, fullPath.str(), key.str(), val);
 }
 
-AsciiString GetRegistryLanguage(void)
+AsciiString GetRegistryLanguage()
 {
 	static Bool cached = FALSE;
 	// NOTE: static causes a memory leak, but we have to keep it because the value is cached.
@@ -180,21 +180,21 @@ AsciiString GetRegistryLanguage(void)
 	return val;
 }
 
-AsciiString GetRegistryGameName(void)
+AsciiString GetRegistryGameName()
 {
 	AsciiString val = "GeneralsMPTest";
 	GetStringFromRegistry("", "SKU", val);
 	return val;
 }
 
-UnsignedInt GetRegistryVersion(void)
+UnsignedInt GetRegistryVersion()
 {
 	UnsignedInt val = 65536;
 	GetUnsignedIntFromRegistry("", "Version", val);
 	return val;
 }
 
-UnsignedInt GetRegistryMapPackVersion(void)
+UnsignedInt GetRegistryMapPackVersion()
 {
 	UnsignedInt val = 65536;
 	GetUnsignedIntFromRegistry("", "MapPackVersion", val);

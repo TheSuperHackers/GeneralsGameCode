@@ -92,7 +92,7 @@ static const ModelConditionFlagType theWaitingToCloseFlags[DOOR_COUNT_MAX] =
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-ProductionUpdateModuleData::ProductionUpdateModuleData( void )
+ProductionUpdateModuleData::ProductionUpdateModuleData()
 {
 	// someday, might need separate times for each door. but not yet.
 	m_numDoorAnimations = 0;
@@ -147,7 +147,7 @@ ProductionUpdateModuleData::ProductionUpdateModuleData( void )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-ProductionEntry::ProductionEntry( void )
+ProductionEntry::ProductionEntry()
 {
 
 	m_type = PRODUCTION_INVALID;
@@ -164,7 +164,7 @@ ProductionEntry::ProductionEntry( void )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-ProductionEntry::~ProductionEntry( void )
+ProductionEntry::~ProductionEntry()
 {
 
 }
@@ -200,7 +200,7 @@ ProductionUpdate::ProductionUpdate( Thing *thing, const ModuleData* moduleData )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-ProductionUpdate::~ProductionUpdate( void )
+ProductionUpdate::~ProductionUpdate()
 {
 
 	// destroy any queued productions
@@ -602,7 +602,7 @@ void ProductionUpdate::updateDoors()
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime ProductionUpdate::update( void )
+UpdateSleepTime ProductionUpdate::update()
 {
 /// @todo srj use SLEEPY_UPDATE here
 	ProductionEntry *production = m_productionQueue;
@@ -876,7 +876,7 @@ UpdateSleepTime ProductionUpdate::update( void )
 			{
 
 				// there is no exit interface, this is an error
-				DEBUG_ASSERTCRASH( 0, ("Cannot create '%s', there is no ExitUpdate interface defined for producer object '%s'",
+				DEBUG_CRASH( ("Cannot create '%s', there is no ExitUpdate interface defined for producer object '%s'",
 															production->m_objectToProduce->getName().str(),
 															creationBuilding->getTemplate()->getName().str()) );
 
@@ -1134,7 +1134,7 @@ void ProductionUpdate::onDie( const DamageInfo *damageInfo )
 /** Cancel each of the production items in the queue.  By going through the actual cancel
 	* methods, the cost of each of those items will be refunded to the player */
 // ------------------------------------------------------------------------------------------------
-void ProductionUpdate::cancelAndRefundAllProduction( void )
+void ProductionUpdate::cancelAndRefundAllProduction()
 {
 	// Empirically, in release the code can loop forever.  So we limit to 100 passes. jba. [8/31/2003]
 	const Int productionLimit = 100;// With luck, we never queue up 100 units. [8/31/2003]
@@ -1392,7 +1392,7 @@ void ProductionUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void ProductionUpdate::loadPostProcess( void )
+void ProductionUpdate::loadPostProcess()
 {
 
 	// extend base class

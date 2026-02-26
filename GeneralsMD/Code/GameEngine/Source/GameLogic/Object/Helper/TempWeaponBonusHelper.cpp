@@ -50,7 +50,7 @@ TempWeaponBonusHelper::TempWeaponBonusHelper( Thing *thing, const ModuleData *mo
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-TempWeaponBonusHelper::~TempWeaponBonusHelper( void )
+TempWeaponBonusHelper::~TempWeaponBonusHelper()
 {
 
 }
@@ -141,7 +141,7 @@ void TempWeaponBonusHelper::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void TempWeaponBonusHelper::loadPostProcess( void )
+void TempWeaponBonusHelper::loadPostProcess()
 {
 
 	// object helper base class

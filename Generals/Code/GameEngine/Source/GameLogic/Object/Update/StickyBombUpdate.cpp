@@ -56,7 +56,7 @@ StickyBombUpdate::StickyBombUpdate( Thing *thing, const ModuleData *moduleData )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-StickyBombUpdate::~StickyBombUpdate( void )
+StickyBombUpdate::~StickyBombUpdate()
 {
 }
 
@@ -138,7 +138,7 @@ void StickyBombUpdate::init( const Object *target, const Object *bomber)
 }
 
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime StickyBombUpdate::update( void )
+UpdateSleepTime StickyBombUpdate::update()
 {
 	// Continually reset position of stickybomb to match the position of the target.
 	const Object *target = getTargetObject();
@@ -249,7 +249,7 @@ void StickyBombUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void StickyBombUpdate::loadPostProcess( void )
+void StickyBombUpdate::loadPostProcess()
 {
 
 	// extend base class

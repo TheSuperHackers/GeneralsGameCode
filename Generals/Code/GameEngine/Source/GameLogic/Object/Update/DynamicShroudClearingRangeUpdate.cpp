@@ -130,7 +130,7 @@ DynamicShroudClearingRangeUpdate::DynamicShroudClearingRangeUpdate( Thing *thing
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-DynamicShroudClearingRangeUpdate::~DynamicShroudClearingRangeUpdate( void )
+DynamicShroudClearingRangeUpdate::~DynamicShroudClearingRangeUpdate()
 {
 	killGridDecals();// just in case
 
@@ -152,7 +152,7 @@ void DynamicShroudClearingRangeUpdate::createGridDecals( const RadiusDecalTempla
 
 
 //-------------------------------------------------------------------------------------------------
-void DynamicShroudClearingRangeUpdate::animateGridDecals( void )
+void DynamicShroudClearingRangeUpdate::animateGridDecals()
 {
 
 	const Coord3D *ctr = getObject()->getPosition();
@@ -197,7 +197,7 @@ void DynamicShroudClearingRangeUpdate::killGridDecals()
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime DynamicShroudClearingRangeUpdate::update( void )
+UpdateSleepTime DynamicShroudClearingRangeUpdate::update()
 {
 	if (m_state == DSCRU_SLEEPING) {
 		return UPDATE_SLEEP_NONE;
@@ -383,7 +383,7 @@ void DynamicShroudClearingRangeUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void DynamicShroudClearingRangeUpdate::loadPostProcess( void )
+void DynamicShroudClearingRangeUpdate::loadPostProcess()
 {
 
 	// extend base class

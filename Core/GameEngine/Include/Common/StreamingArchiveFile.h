@@ -84,7 +84,7 @@ class StreamingArchiveFile : public RAMFile
 
 
 		virtual Bool	open( const Char *filename, Int access = NONE, size_t bufferSize = BUFFERSIZE ); ///< Open a file for access
-		virtual void	close( void );																			///< Close the file
+		virtual void	close();																			///< Close the file
 		virtual Int		read( void *buffer, Int bytes );										///< Read the specified number of bytes in to buffer: See File::read
 		virtual Int		write( const void *buffer, Int bytes );							///< Write the specified number of bytes from the buffer: See File::write
 		virtual Int		seek( Int new_pos, seekMode mode = CURRENT );				///< Set file position: See File::seek

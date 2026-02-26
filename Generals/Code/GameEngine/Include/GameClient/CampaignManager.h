@@ -69,8 +69,8 @@ class Mission : public MemoryPoolObject
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( Mission, "Mission" )
 public:
-	Mission( void );
-	//~Mission( void );
+	Mission();
+	//~Mission();
 
 public:
 	AsciiString m_name;
@@ -89,13 +89,13 @@ class Campaign : public MemoryPoolObject
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( Campaign, "Campaign" )
 public:
-	Campaign( void );
-	//~Campaign( void );
+	Campaign();
+	//~Campaign();
 
 	Mission *newMission( AsciiString name );
 	Mission *getNextMission( Mission *current);
 	Mission *getMission( AsciiString missionName);
-	AsciiString getFinalVictoryMovie( void );
+	AsciiString getFinalVictoryMovie();
 
 public:
 	typedef std::list< Mission* > MissionList;			///< list of Shell Menu schemes
@@ -111,30 +111,30 @@ public:
 class CampaignManager : public Snapshot
 {
 public:
-	CampaignManager( void );
-	~CampaignManager( void );
+	CampaignManager();
+	~CampaignManager();
 
 	// snapshot methods
 	virtual void crc( Xfer *xfer ) { }
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void ) { }
+	virtual void loadPostProcess() { }
 
-	void init( void );
-	Campaign *getCurrentCampaign( void );		///< Returns a point to the current Campaign
-	Mission *getCurrentMission( void );			///< Returns a point to the current mission
-	Mission *gotoNextMission( void );				///< Set the next mission as the current Mission, and returns a point to it
+	void init();
+	Campaign *getCurrentCampaign();		///< Returns a point to the current Campaign
+	Mission *getCurrentMission();			///< Returns a point to the current mission
+	Mission *gotoNextMission();				///< Set the next mission as the current Mission, and returns a point to it
 	void setCampaignAndMission( AsciiString campaign, AsciiString mission );		///< Sets the campaign and Mission we're on
 	void setCampaign( AsciiString campaign );																		///< sets the campaign and set's it's first mission
-	AsciiString getCurrentMap( void );			///< Get the map located in m_currentMission;
+	AsciiString getCurrentMap();			///< Get the map located in m_currentMission;
 	enum { INVALID_MISSION_NUMBER = -1 };
-	Int getCurrentMissionNumber( void );		///< get mission number for the currently loaded level if we are in a campaign
+	Int getCurrentMissionNumber();		///< get mission number for the currently loaded level if we are in a campaign
 
-	const FieldParse *getFieldParse( void ) const { return m_campaignFieldParseTable; }								///< returns the parsing fields
+	const FieldParse *getFieldParse() const { return m_campaignFieldParseTable; }								///< returns the parsing fields
 	static const FieldParse m_campaignFieldParseTable[];																				///< the parse table
 	static void parseMissionPart( INI* ini, void *instance, void *store, const void *userData );					///< Parse the Mission Part
 
 	Campaign *newCampaign(AsciiString name);
-	Bool isVictorious( void ) { return m_victorious; }
+	Bool isVictorious() { return m_victorious; }
 	void SetVictorious( Bool victory ) { m_victorious = victory;	}
 
 	void setRankPoints( Int rankPoints ) { m_currentRankPoints = rankPoints; }

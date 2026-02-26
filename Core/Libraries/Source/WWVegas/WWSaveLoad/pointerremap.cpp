@@ -42,25 +42,25 @@
 const int POINTER_TABLES_GROWTH_STEP = 4096;
 
 
-PointerRemapClass::PointerRemapClass(void)
+PointerRemapClass::PointerRemapClass()
 {
 	PointerPairTable.Set_Growth_Step(POINTER_TABLES_GROWTH_STEP);
 	PointerRequestTable.Set_Growth_Step(POINTER_TABLES_GROWTH_STEP);
 	RefCountRequestTable.Set_Growth_Step(POINTER_TABLES_GROWTH_STEP);
 }
 
-PointerRemapClass::~PointerRemapClass(void)
+PointerRemapClass::~PointerRemapClass()
 {
 }
 
-void PointerRemapClass::Reset(void)
+void PointerRemapClass::Reset()
 {
 	PointerPairTable.Delete_All();
 	PointerRequestTable.Delete_All();
 	RefCountRequestTable.Delete_All();
 }
 
-void PointerRemapClass::Process(void)
+void PointerRemapClass::Process()
 {
 	if ( PointerPairTable.Count() > 0 ) {
 		qsort(&PointerPairTable[0], PointerPairTable.Count(), sizeof(PointerPairTable[0]), ptr_pair_compare_function);

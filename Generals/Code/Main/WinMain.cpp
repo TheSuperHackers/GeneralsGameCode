@@ -906,7 +906,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 // CreateGameEngine ===========================================================
 /** Create the Win32 game engine we're going to use */
 //=============================================================================
-GameEngine *CreateGameEngine( void )
+GameEngine *CreateGameEngine()
 {
 	Win32GameEngine *engine;
 

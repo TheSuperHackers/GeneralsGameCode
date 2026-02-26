@@ -72,7 +72,7 @@ void AABoxClass::Transform(const Matrix3D & tm,const AABoxClass & in,AABoxClass 
 	tm.Transform_Center_Extent_AABox(in.Center,in.Extent,&(out->Center),&(out->Extent));
 }
 
-void MinMaxAABoxClass::Init_Empty(void)
+void MinMaxAABoxClass::Init_Empty()
 {
 	MinCorner.Set(FLT_MAX,FLT_MAX,FLT_MAX);
 	MaxCorner.Set(-FLT_MAX,-FLT_MAX,-FLT_MAX);

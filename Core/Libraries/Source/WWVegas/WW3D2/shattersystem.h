@@ -63,8 +63,8 @@ public:
 	** shutdown.  The BSP shatter planes are loaded up and initialized in Init
 	** and released in Shutdown.
 	*/
-	static void		Init(void);
-	static void		Shutdown(void);
+	static void		Init();
+	static void		Shutdown();
 
 	/*
 	** Pass in the mesh you want shattered and the scene that you want
@@ -79,14 +79,14 @@ public:
 	** Relese_Fragments - call this when you are done, it causes the ShatterSystem
 	**                    to release its references to the fragments.
 	*/
-	static int		Get_Fragment_Count(void);
+	static int		Get_Fragment_Count();
 	static RenderObjClass *	Get_Fragment(int fragment_index);
 	static RenderObjClass *	Peek_Fragment(int fragment_index);
-	static void		Release_Fragments(void);
+	static void		Release_Fragments();
 
 protected:
 
-	static void		Reset_Clip_Pools(void);
+	static void		Reset_Clip_Pools();
 	static void		Process_Clip_Pools(const Matrix3D &Mshatter_to_mesh,MeshClass * mesh,MeshMtlParamsClass & mtl_params);
 
 

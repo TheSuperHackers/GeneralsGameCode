@@ -214,7 +214,7 @@ void PathNode::append( PathNode *newNode )
 /**
  * Compute direction vector to next node
  */
-const Coord3D *PathNode::computeDirectionVector( void )
+const Coord3D *PathNode::computeDirectionVector()
 {
 	static Coord3D dir;
 
@@ -260,7 +260,7 @@ m_cpopValid(FALSE)
 	m_cpopOut.posOnPath.zero();
 }
 
-Path::~Path( void )
+Path::~Path()
 {
 	PathNode *node, *nextNode;
 
@@ -394,7 +394,7 @@ void Path::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void Path::loadPostProcess( void )
+void Path::loadPostProcess()
 {
 }
 
@@ -1157,7 +1157,7 @@ void Pathfinder::forceCleanCells()
 /**
  * Allocates a pool of pathfind cell infos.
  */
-void PathfindCellInfo::allocateCellInfos(void)
+void PathfindCellInfo::allocateCellInfos()
 {
 	releaseCellInfos();
 	s_infoArray = MSGNEW("PathfindCellInfo") PathfindCellInfo[CELL_INFOS_TO_ALLOCATE];	// pool[]ify
@@ -1173,7 +1173,7 @@ void PathfindCellInfo::allocateCellInfos(void)
 /**
  * Releases a pool of pathfind cell infos.
  */
-void PathfindCellInfo::releaseCellInfos(void)
+void PathfindCellInfo::releaseCellInfos()
 {
 	if (s_infoArray==nullptr) {
 		return; // haven't allocated any yet.
@@ -1239,7 +1239,7 @@ void PathfindCellInfo::releaseACellInfo(PathfindCellInfo *theInfo)
 /**
  * Constructor
  */
-PathfindCell::PathfindCell( void ) :m_info(nullptr)
+PathfindCell::PathfindCell() :m_info(nullptr)
 {
 	reset();
 }
@@ -1247,7 +1247,7 @@ PathfindCell::PathfindCell( void ) :m_info(nullptr)
 /**
  * Destructor
  */
-PathfindCell::~PathfindCell( void )
+PathfindCell::~PathfindCell()
 {
 	if (m_info) PathfindCellInfo::releaseACellInfo(m_info);
 	m_info = nullptr;
@@ -1261,7 +1261,7 @@ PathfindCell::~PathfindCell( void )
 /**
  * Reset the cell to default values
  */
-void PathfindCell::reset( )
+void PathfindCell::reset()
 {
 	m_type = PathfindCell::CELL_CLEAR;
 	m_flags = PathfindCell::NO_UNITS;
@@ -1312,7 +1312,7 @@ Bool PathfindCell::startPathfind( PathfindCell *goalCell  )
 /**
  * Set the blocked by ally flag on the pathfind cell info.
  */
-inline Bool PathfindCell::isBlockedByAlly(void) const
+inline Bool PathfindCell::isBlockedByAlly() const
 {
 #if RETAIL_COMPATIBLE_PATHFINDING_ALLOCATION
 	if (s_useFixedPathfinding) {
@@ -1365,7 +1365,7 @@ void PathfindCell::setParentCellHierarchical( PathfindCell* parent  )
 /**
  * Reset the parent cell.
  */
-void PathfindCell::clearParentCell( void  )
+void PathfindCell::clearParentCell(  )
 {
 	DEBUG_ASSERTCRASH(m_info, ("Has to have info."));
 	m_info->m_pathParent = nullptr;
@@ -1387,7 +1387,7 @@ Bool PathfindCell::allocateInfo( const ICoord2D &pos )
 /**
  * Releases an info record for a cell.
  */
-void PathfindCell::releaseInfo(void)
+void PathfindCell::releaseInfo()
 {
 	// TheSuperHackers @bugfix Mauller/SkyAero 05/06/2025 Parent cell links need clearing to prevent dangling pointers on starting points that can link them to an invalid parent cell.
 	// Parent cells are only cleared within Pathfinder::prependCells, so cells that do not make it onto the final path do not get their parent cell cleared.
@@ -1544,7 +1544,7 @@ void PathfindCell::setPosUnit(ObjectID unitID, const ICoord2D &pos )
 /**
  * Return the relevant obstacle ID.
  */
-inline ObjectID PathfindCell::getObstacleID(void) const
+inline ObjectID PathfindCell::getObstacleID() const
 {
 #if RETAIL_COMPATIBLE_PATHFINDING_ALLOCATION
 	if (s_useFixedPathfinding) {
@@ -1913,7 +1913,7 @@ inline Bool PathfindCell::isObstacleTransparent() const
 /**
  * return true if the given obstacle in the cell is a fence.
  */
-inline Bool PathfindCell::isObstacleFence(void) const
+inline Bool PathfindCell::isObstacleFence() const
 {
 #if RETAIL_COMPATIBLE_PATHFINDING_ALLOCATION
 	if (s_useFixedPathfinding) {
@@ -2234,7 +2234,7 @@ ZoneBlock::~ZoneBlock()
 	freeZones();
 }
 
-void ZoneBlock::freeZones(void)
+void ZoneBlock::freeZones()
 {
 	delete [] m_groundCliffZones;
 	m_groundCliffZones = nullptr;
@@ -2385,7 +2385,7 @@ zoneStorageType ZoneBlock::getEffectiveZone( LocomotorSurfaceTypeMask acceptable
 
 /* Allocate zone equivalency arrays large enough to hold m_maxZone entries.  If the arrays are already
 large enough, just return. */
-void ZoneBlock::allocateZones(void)
+void ZoneBlock::allocateZones()
 {
 	if (m_zonesAllocated>m_numZones && m_groundCliffZones!=nullptr) {
 		return;
@@ -2470,7 +2470,7 @@ void PathfindZoneManager::freeBlocks()
 
 /* Allocate zone equivalency arrays large enough to hold m_maxZone entries.  If the arrays are already
 large enough, just return. */
-void PathfindZoneManager::allocateZones(void)
+void PathfindZoneManager::allocateZones()
 {
 	if (m_zonesAllocated>m_maxZone && m_groundCliffZones!=nullptr) {
 		return;
@@ -2509,7 +2509,7 @@ void PathfindZoneManager::allocateBlocks(const IRegion2D &globalBounds)
 	}
 }
 
-void PathfindZoneManager::reset(void)  ///< Called when the map is reset.
+void PathfindZoneManager::reset()  ///< Called when the map is reset.
 {
 	freeZones();
 	freeBlocks();
@@ -3009,7 +3009,7 @@ void PathfindZoneManager::updateZonesForModify(PathfindCell **map, PathfindLayer
 //
 // Clear the passable flags.
 //
-void PathfindZoneManager::clearPassableFlags( )
+void PathfindZoneManager::clearPassableFlags()
 {	Int blockX;
 	Int blockY;
 	for (blockX = 0; blockX<m_zoneBlockExtent.x; blockX++) {
@@ -3022,7 +3022,7 @@ void PathfindZoneManager::clearPassableFlags( )
 //
 // Set the passable flags.
 //
-void PathfindZoneManager::setAllPassable( )
+void PathfindZoneManager::setAllPassable()
 {	Int blockX;
 	Int blockY;
 	for (blockX = 0; blockX<m_zoneBlockExtent.x; blockX++) {
@@ -3241,7 +3241,7 @@ PathfindLayer::~PathfindLayer()
 /**
  * Returns true if the layer is available for use.
  */
-void PathfindLayer::reset(void)
+void PathfindLayer::reset()
 {
 	m_bridge = nullptr;
 	if (m_layerCells) {
@@ -3273,7 +3273,7 @@ void PathfindLayer::reset(void)
 /**
  * Returns true if the layer is available for use.
  */
-Bool PathfindLayer::isUnused(void)
+Bool PathfindLayer::isUnused()
 {
 	// Special case - wall layer is built from not a bridge.  jba.
 	if (m_layer == LAYER_WALL && m_width>0) return false;
@@ -3288,7 +3288,7 @@ Bool PathfindLayer::isUnused(void)
  * Draws debug cell info.
  */
 #if defined(RTS_DEBUG)
-void PathfindLayer::doDebugIcons(void) {
+void PathfindLayer::doDebugIcons() {
 	if (isUnused()) return;
 	extern void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color);
 	// render AI debug information
@@ -3644,7 +3644,7 @@ Bool PathfindLayer::setDestroyed(Bool destroyed)
 /**
  * Copies m_zone into the zone for all the member cells.
  */
-void PathfindLayer::applyZone( void )
+void PathfindLayer::applyZone()
 {
 	Int i, j;
 	for (i=0; i<m_width; i++) {
@@ -3659,7 +3659,7 @@ void PathfindLayer::applyZone( void )
 /**
  * Return the bridge's object id.
  */
-ObjectID PathfindLayer::getBridgeID(void)
+ObjectID PathfindLayer::getBridgeID()
 {
 	return m_bridge->peekBridgeInfo()->bridgeObjectID;
 }
@@ -3717,7 +3717,7 @@ void PathfindLayer::classifyLayerMapCell( Int i, Int j , PathfindCell *cell, Bri
 	if (theBridge->isPointOnBridge(&pt) ) {
 		bridgeCount++;
 	}
-	cell->reset( );
+	cell->reset();
 	cell->setLayer(m_layer);
 	cell->setType(PathfindCell::CELL_IMPASSABLE);
 	if (bridgeCount == 4) {
@@ -3830,7 +3830,7 @@ void PathfindLayer::classifyWallMapCell( Int i, Int j , PathfindCell *cell, Obje
 	if (isPointOnWall(wallPieces, numPieces, &pt) ) {
 		bridgeCount++;
 	}
-	cell->reset( );
+	cell->reset();
 	cell->setLayer(m_layer);
 	cell->setType(PathfindCell::CELL_IMPASSABLE);
 	if (bridgeCount == 4) {
@@ -3845,19 +3845,19 @@ void PathfindLayer::classifyWallMapCell( Int i, Int j , PathfindCell *cell, Obje
 
 //----------------------- Pathfinder ---------------------------------------
 
-Pathfinder::Pathfinder( void ) :m_map(nullptr)
+Pathfinder::Pathfinder() :m_map(nullptr)
 {
 	debugPath = nullptr;
 	PathfindCellInfo::allocateCellInfos();
 	reset();
 }
 
-Pathfinder::~Pathfinder( void )
+Pathfinder::~Pathfinder()
 {
 	PathfindCellInfo::releaseCellInfos();
 }
 
-void Pathfinder::reset( void )
+void Pathfinder::reset()
 {
 	frameToShowObstacles = 0;
 	DEBUG_LOG(("Pathfind cell is %d bytes, PathfindCellInfo is %d bytes", sizeof(PathfindCell), sizeof(PathfindCellInfo)));
@@ -4471,7 +4471,7 @@ void Pathfinder::classifyMapCell( Int i, Int j , PathfindCell *cell)
 /**
  * Set up for a new map.
  */
-void Pathfinder::newMap( void )
+void Pathfinder::newMap()
 {
 	m_wallHeight = TheAI->getAiData()->m_wallHeight; // may be updated by map.ini.
 	Region3D terrainExtent;
@@ -4526,7 +4526,7 @@ void Pathfinder::newMap( void )
 /**
  * Classify all cells in grid as obstacles, etc.
  */
-void Pathfinder::classifyMap(void)
+void Pathfinder::classifyMap()
 {
 
 	Int i, j;
@@ -4607,9 +4607,9 @@ void Pathfinder::classifyMap(void)
 /**
  * Force pathfind map recomputation.
  */
-void Pathfinder::forceMapRecalculation( void )
+void Pathfinder::forceMapRecalculation()
 {
-	classifyMap( );
+	classifyMap();
 }
 
 /**
@@ -4733,7 +4733,7 @@ Bool Pathfinder::validMovementTerrain( PathfindLayerEnum layer, const Locomotor*
 //
 // Releases the cells on the open & closed lists.
 //
-void Pathfinder::cleanOpenAndClosedLists(void) {
+void Pathfinder::cleanOpenAndClosedLists() {
 	Int count = 0;
 	if (!m_openList.empty()) {
 		count += PathfindCell::releaseOpenList(m_openList);
@@ -5578,7 +5578,7 @@ Bool Pathfinder::queueForPath(ObjectID id)
 }
 
 #if defined(RTS_DEBUG)
-void Pathfinder::doDebugIcons(void) {
+void Pathfinder::doDebugIcons() {
 	const Int FRAMES_TO_SHOW_OBSTACLES = 100;
 	extern void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color);
 	// render AI debug information
@@ -5764,7 +5764,7 @@ Path *Pathfinder::getAircraftPath( const Object *obj, const Coord3D *to )
  * Process some path requests in the pathfind queue.
  */
 //DECLARE_PERF_TIMER(processPathfindQueue)
-void Pathfinder::processPathfindQueue(void)
+void Pathfinder::processPathfindQueue()
 {
 	//USE_PERF_TIMER(processPathfindQueue)
 	if (!m_isMapReady) {
@@ -5940,7 +5940,7 @@ struct ExamineCellsStruct
 				return 1; //abort.
 			}
 
-			UnsignedInt newCostSoFar = from->getCostSoFar( ) + 0.5f*COST_ORTHOGONAL;
+			UnsignedInt newCostSoFar = from->getCostSoFar() + 0.5f*COST_ORTHOGONAL;
 			if (to->getType() == PathfindCell::CELL_CLIFF ) {
 				return 1;
 			}
@@ -6811,7 +6811,7 @@ struct GroundCellsStruct
  				return 1;
 			}
 
-			UnsignedInt newCostSoFar = from->getCostSoFar( ) + 0.5f*COST_ORTHOGONAL;
+			UnsignedInt newCostSoFar = from->getCostSoFar() + 0.5f*COST_ORTHOGONAL;
 			to->setBlockedByAlly(false);
 
 			Int costRemaining = 0;
@@ -11054,7 +11054,7 @@ void Pathfinder::xfer( Xfer *xfer )
 }
 
 //-----------------------------------------------------------------------------
-void Pathfinder::loadPostProcess( void )
+void Pathfinder::loadPostProcess()
 {
 
 }

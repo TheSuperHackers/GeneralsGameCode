@@ -110,7 +110,7 @@ void AIDockMachine::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void AIDockMachine::loadPostProcess( void )
+void AIDockMachine::loadPostProcess()
 {
 	StateMachine::loadPostProcess();
 }
@@ -164,7 +164,7 @@ void AIDockApproachState::xfer( Xfer *xfer )
 /**
  * Approach our waiting spot next to the dock.
  */
-StateReturnType AIDockApproachState::onEnter( void )
+StateReturnType AIDockApproachState::onEnter()
 {
 	Object *goalObject = getMachineGoalObject();
 
@@ -203,7 +203,7 @@ StateReturnType AIDockApproachState::onEnter( void )
 }
 
 //----------------------------------------------------------------------------------------------
-StateReturnType AIDockApproachState::update( void )
+StateReturnType AIDockApproachState::update()
 {
 	Object *goalObject = getMachineGoalObject();
 
@@ -245,7 +245,7 @@ void AIDockApproachState::onExit( StateExitType status )
 /**
  * We have approached, now wait at our queue position until the dock says we can enter.
  */
-StateReturnType AIDockWaitForClearanceState::onEnter( void )
+StateReturnType AIDockWaitForClearanceState::onEnter()
 {
 	m_enterFrame = TheGameLogic->getFrame();
 	return STATE_CONTINUE;
@@ -255,7 +255,7 @@ StateReturnType AIDockWaitForClearanceState::onEnter( void )
  * We have approached, now wait at our queue position until the dock says we can enter.
  * @todo What if we are pushed off of our queue spot? We need to move back on... (MSB)
  */
-StateReturnType AIDockWaitForClearanceState::update( void )
+StateReturnType AIDockWaitForClearanceState::update()
 {
 	Object *goalObject = getMachineGoalObject();
 
@@ -320,7 +320,7 @@ void AIDockWaitForClearanceState::xfer(Xfer *xfer )
 /**
  * Advance to our next waiting spot next to the dock.
  */
-StateReturnType AIDockAdvancePositionState::onEnter( void )
+StateReturnType AIDockAdvancePositionState::onEnter()
 {
 	Object *goalObject = getMachineGoalObject();
 
@@ -359,7 +359,7 @@ StateReturnType AIDockAdvancePositionState::onEnter( void )
 }
 
 //----------------------------------------------------------------------------------------------
-StateReturnType AIDockAdvancePositionState::update( void )
+StateReturnType AIDockAdvancePositionState::update()
 {
 	Object *goalObject = getMachineGoalObject();
 
@@ -402,7 +402,7 @@ void AIDockAdvancePositionState::onExit( StateExitType status )
 /**
  * Move to the dock's entry position.
  */
-StateReturnType AIDockMoveToEntryState::onEnter( void )
+StateReturnType AIDockMoveToEntryState::onEnter()
 {
 	Object *goalObject = getMachineGoalObject();
 
@@ -437,7 +437,7 @@ StateReturnType AIDockMoveToEntryState::onEnter( void )
 }
 
 //----------------------------------------------------------------------------------------------
-StateReturnType AIDockMoveToEntryState::update( void )
+StateReturnType AIDockMoveToEntryState::update()
 {
 	// if we have nothing to dock with, fail
 	if (getMachineGoalObject() == nullptr)
@@ -482,7 +482,7 @@ void AIDockMoveToEntryState::onExit( StateExitType status )
 /**
  * Move to the dock's docking position.
  */
-StateReturnType AIDockMoveToDockState::onEnter( void )
+StateReturnType AIDockMoveToDockState::onEnter()
 {
 	Object *goalObject = getMachineGoalObject();
 
@@ -519,7 +519,7 @@ StateReturnType AIDockMoveToDockState::onEnter( void )
 }
 
 //----------------------------------------------------------------------------------------------
-StateReturnType AIDockMoveToDockState::update( void )
+StateReturnType AIDockMoveToDockState::update()
 {
 	Object *goalObject = getMachineGoalObject();
 
@@ -588,7 +588,7 @@ void AIDockProcessDockState::setNextDockActionFrame()
 
 //----------------------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------------------
-StateReturnType AIDockProcessDockState::onEnter( void )
+StateReturnType AIDockProcessDockState::onEnter()
 {
 	Object *goalObject = getMachineGoalObject();
 
@@ -610,7 +610,7 @@ StateReturnType AIDockProcessDockState::onEnter( void )
 /**
  * We are now docked. Invoke the dock's action() method until it returns false.
  */
-StateReturnType AIDockProcessDockState::update( void )
+StateReturnType AIDockProcessDockState::update()
 {
 	Object *goalObject = getMachineGoalObject();
 
@@ -705,7 +705,7 @@ void AIDockProcessDockState::onExit( StateExitType status )
 /**
  * Move to the dock's exit position.
  */
-StateReturnType AIDockMoveToExitState::onEnter( void )
+StateReturnType AIDockMoveToExitState::onEnter()
 {
 	Object *goalObject = getMachineGoalObject();
 
@@ -732,7 +732,7 @@ StateReturnType AIDockMoveToExitState::onEnter( void )
 }
 
 //----------------------------------------------------------------------------------------------
-StateReturnType AIDockMoveToExitState::update( void )
+StateReturnType AIDockMoveToExitState::update()
 {
 	// if we have nothing to dock with, fail
 	if (getMachineGoalObject() == nullptr)
@@ -770,7 +770,7 @@ void AIDockMoveToExitState::onExit( StateExitType status )
 /**
  * Move to the dock's rally position, if he wants me to.
  */
-StateReturnType AIDockMoveToRallyState::onEnter( void )
+StateReturnType AIDockMoveToRallyState::onEnter()
 {
 	Object *goalObject = getMachineGoalObject();
 
@@ -799,7 +799,7 @@ StateReturnType AIDockMoveToRallyState::onEnter( void )
 }
 
 //----------------------------------------------------------------------------------------------
-StateReturnType AIDockMoveToRallyState::update( void )
+StateReturnType AIDockMoveToRallyState::update()
 {
 	// This state is fine with the loss of the goal object after the move starts
 

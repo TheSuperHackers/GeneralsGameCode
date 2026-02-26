@@ -85,7 +85,7 @@ void ControlBar::populateBeacon( Object *beacon )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void ControlBar::updateContextBeacon( void )
+void ControlBar::updateContextBeacon()
 {
 
 }

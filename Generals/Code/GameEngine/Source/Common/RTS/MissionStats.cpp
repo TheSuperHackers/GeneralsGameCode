@@ -107,7 +107,7 @@ void MissionStats::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void MissionStats::loadPostProcess( void )
+void MissionStats::loadPostProcess()
 {
 
 }

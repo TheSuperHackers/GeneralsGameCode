@@ -148,7 +148,7 @@ void DX8WebBrowser::Shutdown()
 // * Argument:    	void
 // *
 // ******************************************************************************************
-void	DX8WebBrowser::Update(void)
+void	DX8WebBrowser::Update()
 {
 	if(pBrowser) pBrowser->D3DUpdate();
 };

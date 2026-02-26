@@ -39,7 +39,7 @@
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-SupplyCenterDockUpdateModuleData::SupplyCenterDockUpdateModuleData( void )
+SupplyCenterDockUpdateModuleData::SupplyCenterDockUpdateModuleData()
 {
 }
 
@@ -166,7 +166,7 @@ void SupplyCenterDockUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void SupplyCenterDockUpdate::loadPostProcess( void )
+void SupplyCenterDockUpdate::loadPostProcess()
 {
 
 	// extend base class

@@ -34,7 +34,7 @@
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-ObjectWeaponStatusHelper::~ObjectWeaponStatusHelper( void )
+ObjectWeaponStatusHelper::~ObjectWeaponStatusHelper()
 {
 
 }
@@ -71,7 +71,7 @@ void ObjectWeaponStatusHelper::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void ObjectWeaponStatusHelper::loadPostProcess( void )
+void ObjectWeaponStatusHelper::loadPostProcess()
 {
 
 	// object helper base class

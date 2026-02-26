@@ -102,7 +102,7 @@ void INI::parseHeaderTemplateDefinition( INI *ini )
 
 }
 
-HeaderTemplate::HeaderTemplate( void ) :
+HeaderTemplate::HeaderTemplate() :
 m_font(nullptr),
 m_point(0),
 m_bold(FALSE)
@@ -111,12 +111,12 @@ m_bold(FALSE)
 	m_name.clear();
 }
 
-HeaderTemplate::~HeaderTemplate( void ){}
+HeaderTemplate::~HeaderTemplate(){}
 
-HeaderTemplateManager::HeaderTemplateManager( void )
+HeaderTemplateManager::HeaderTemplateManager()
 {}
 
-HeaderTemplateManager::~HeaderTemplateManager( void )
+HeaderTemplateManager::~HeaderTemplateManager()
 {
 	HeaderTemplateListIt it = m_headerTemplateList.begin();
 	while(it != m_headerTemplateList.end())
@@ -128,7 +128,7 @@ HeaderTemplateManager::~HeaderTemplateManager( void )
 	}
 }
 
-void HeaderTemplateManager::init( void )
+void HeaderTemplateManager::init()
 {
 	{
 		AsciiString fname;
@@ -179,7 +179,7 @@ GameFont *HeaderTemplateManager::getFontFromTemplate( AsciiString name )
 	return ht->m_font;
 }
 
-HeaderTemplate *HeaderTemplateManager::getFirstHeader( void )
+HeaderTemplate *HeaderTemplateManager::getFirstHeader()
 {
 	HeaderTemplateListIt it = m_headerTemplateList.begin();
 	if( it == m_headerTemplateList.end())
@@ -206,7 +206,7 @@ HeaderTemplate *HeaderTemplateManager::getNextHeader( HeaderTemplate *ht )
 
 }
 
-void HeaderTemplateManager::onResolutionChanged( void )
+void HeaderTemplateManager::onResolutionChanged()
 {
 	populateGameFonts();
 }
@@ -214,7 +214,7 @@ void HeaderTemplateManager::onResolutionChanged( void )
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 
-void HeaderTemplateManager::populateGameFonts( void )
+void HeaderTemplateManager::populateGameFonts()
 {
 	HeaderTemplateListIt it = m_headerTemplateList.begin();
 	while(it != m_headerTemplateList.end())

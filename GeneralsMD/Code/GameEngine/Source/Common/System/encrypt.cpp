@@ -85,7 +85,7 @@ const char *EncryptString(const char *String)
 
 
 #ifdef UNIT_TEST
-void main(void)
+void main()
 {
 	char Input_String[9];
 	char *new_string;

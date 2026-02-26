@@ -51,8 +51,8 @@ class RandomClass {
 	public:
 		RandomClass(unsigned seed=0);
 
-		operator int(void) {return(operator()());};
-		int operator() (void);
+		operator int() {return(operator()());};
+		int operator() ();
 		int operator() (int minval, int maxval);
 
 		enum {
@@ -96,8 +96,8 @@ class Random2Class {
 	public:
 		Random2Class(unsigned seed=0);
 
-		operator int(void) {return(operator()());};
-		int operator() (void);
+		operator int() {return(operator()());};
+		int operator() ();
 		int operator() (int minval, int maxval);
 
 		enum {
@@ -132,8 +132,8 @@ class Random3Class {
 	public:
 		Random3Class(unsigned seed1=0, unsigned seed2=0);
 
-		operator int(void) {return(operator()());};
-		int operator() (void);
+		operator int() {return(operator()());};
+		int operator() ();
 		int operator() (int minval, int maxval);
 
 		enum {
@@ -172,8 +172,8 @@ class Random4Class {
 	public:
 		Random4Class(unsigned int seed=4357);
 
-		operator int(void) {return(operator()());};
-		int operator() (void);
+		operator int() {return(operator()());};
+		int operator() ();
 		int operator() (int minval, int maxval);
 		float Get_Float();
 

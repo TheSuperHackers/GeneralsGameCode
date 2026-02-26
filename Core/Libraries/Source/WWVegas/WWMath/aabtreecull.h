@@ -57,8 +57,8 @@ class AABTreeCullSystemClass : public CullSystemClass
 {
 public:
 
-	AABTreeCullSystemClass(void);
-	virtual ~AABTreeCullSystemClass(void);
+	AABTreeCullSystemClass();
+	virtual ~AABTreeCullSystemClass();
 
 	/*
 	** Re-partition the tree.  Two methods can be used to accomplish this.  The
@@ -66,7 +66,7 @@ public:
 	** re-partitions the tree based solely on a set of input "seed" boxes.  Each seed
 	** box will become a leaf; then the objects will be re-inserted in the new tree.
 	*/
-	void					Re_Partition(void);
+	void					Re_Partition();
 	void					Re_Partition(const AABoxClass & bounds,SimpleDynVecClass<AABoxClass> & boxes);
 
 	/*
@@ -77,7 +77,7 @@ public:
 	** visibility data for a level.  In some cases, we want to load geometry that has been edited back
 	** into the same AABTree without re-partitioning.
 	*/
-	void					Update_Bounding_Boxes(void);
+	void					Update_Bounding_Boxes();
 
 	/*
 	** Re-insert an object into the tree
@@ -87,9 +87,9 @@ public:
 	/*
 	** Statistics about the AAB-Tree
 	*/
-	int					Partition_Node_Count(void) const;
-	int					Partition_Tree_Depth(void) const;
-	int					Object_Count(void) const;
+	int					Partition_Node_Count() const;
+	int					Partition_Tree_Depth() const;
+	int					Object_Count() const;
 
 	/*
 	** Collect objects which overlap the given primitive
@@ -115,7 +115,7 @@ public:
 	/*
 	** Bounding box of the entire tree
 	*/
-	const AABoxClass & Get_Bounding_Box(void);
+	const AABoxClass & Get_Bounding_Box();
 	void					Get_Node_Bounds(int node_id,AABoxClass * set_bounds);
 
 	/*
@@ -129,8 +129,8 @@ public:
 		int				NodesRejected;
 	};
 
-	void					Reset_Statistics(void);
-	const StatsStruct & Get_Statistics(void);
+	void					Reset_Statistics();
+	const StatsStruct & Get_Statistics();
 
 protected:
 
@@ -138,13 +138,13 @@ protected:
 	** Internal stat tracking
 	*/
 #ifdef WWDEBUG
-	void	NODE_ACCEPTED(void)					{ Stats.NodesAccepted ++; }
-	void	NODE_TRIVIALLY_ACCEPTED(void)		{ Stats.NodesTriviallyAccepted ++; }
-	void	NODE_REJECTED(void)					{ Stats.NodesRejected ++; }
+	void	NODE_ACCEPTED()					{ Stats.NodesAccepted ++; }
+	void	NODE_TRIVIALLY_ACCEPTED()		{ Stats.NodesTriviallyAccepted ++; }
+	void	NODE_REJECTED()					{ Stats.NodesRejected ++; }
 #else
-	void	NODE_ACCEPTED(void)					{ }
-	void	NODE_TRIVIALLY_ACCEPTED(void)		{ }
-	void	NODE_REJECTED(void)					{ }
+	void	NODE_ACCEPTED()					{ }
+	void	NODE_TRIVIALLY_ACCEPTED()		{ }
+	void	NODE_REJECTED()					{ }
 #endif
 
 	/*
@@ -153,7 +153,7 @@ protected:
 	void					Add_Object_Internal(CullableClass * obj,int node_index = -1);
 	void					Remove_Object_Internal(CullableClass * obj);
 
-	void					Re_Index_Nodes(void);
+	void					Re_Index_Nodes();
 	void					Re_Index_Nodes_Recursive(AABTreeNodeClass * node,int & counter);
 
 	int					Partition_Node_Count_Recursive(AABTreeNodeClass * node) const;
@@ -199,20 +199,20 @@ class AABTreeIterator
 public:
 	AABTreeIterator(AABTreeCullSystemClass * tree);
 
-	void					Reset(void);
-	bool					Enter_Parent(void);
-	bool					Enter_Sibling(void);
-	bool					Has_Front_Child(void);
-	bool					Enter_Front_Child(void);
-	bool					Has_Back_Child(void);
-	bool					Enter_Back_Child(void);
+	void					Reset();
+	bool					Enter_Parent();
+	bool					Enter_Sibling();
+	bool					Has_Front_Child();
+	bool					Enter_Front_Child();
+	bool					Has_Back_Child();
+	bool					Enter_Back_Child();
 
-	int					Get_Current_Node_Index(void);
+	int					Get_Current_Node_Index();
 	void					Get_Current_Box(AABoxClass * set_box);
 
 private:
 
-	void					validate(void);
+	void					validate();
 
 	AABTreeCullSystemClass * Tree;
 	int					CurNodeIndex;
@@ -232,9 +232,9 @@ public:
 	virtual void		Add_Object(T * obj,int node_index=-1)	{ Add_Object_Internal(obj,node_index); }
 	virtual void		Remove_Object(T * obj)						{ Remove_Object_Internal(obj); }
 
-	T *					Get_First_Collected_Object(void)		{ return (T*)Get_First_Collected_Object_Internal(); }
+	T *					Get_First_Collected_Object()		{ return (T*)Get_First_Collected_Object_Internal(); }
 	T *					Get_Next_Collected_Object(T * obj)	{ return (T*)Get_Next_Collected_Object_Internal(obj); }
-	T *					Peek_First_Collected_Object(void)	{ return (T*)Peek_First_Collected_Object_Internal(); }
+	T *					Peek_First_Collected_Object()	{ return (T*)Peek_First_Collected_Object_Internal(); }
 	T *					Peek_Next_Collected_Object(T * obj)	{ return (T*)Peek_Next_Collected_Object_Internal(obj); }
 };
 
@@ -253,12 +253,12 @@ class AABTreeNodeClass : public AutoPoolClass<AABTreeNodeClass,256>
 
 public:
 
-	AABTreeNodeClass(void);
-	~AABTreeNodeClass(void);
+	AABTreeNodeClass();
+	~AABTreeNodeClass();
 
 	void						Add_Object(CullableClass * obj,bool update_bounds = true);
 	void						Remove_Object(CullableClass * obj);
-	int						Object_Count(void);
+	int						Object_Count();
 	CullableClass *		Peek_Object(int index);
 
 	uint32					Index;				// Index of this node
@@ -274,7 +274,7 @@ public:
 	*/
 	struct SplitChoiceStruct
 	{
-		SplitChoiceStruct(void) : Cost(FLT_MAX),FrontCount(0),BackCount(0),Plane(AAPlaneClass::XNORMAL,0.0f)
+		SplitChoiceStruct() : Cost(FLT_MAX),FrontCount(0),BackCount(0),Plane(AAPlaneClass::XNORMAL,0.0f)
 		{
 			FrontBox.Init_Empty();
 			BackBox.Init_Empty();
@@ -288,15 +288,15 @@ public:
 		AAPlaneClass		Plane;
 	};
 
-	void						Compute_Bounding_Box(void);
-	void						Compute_Local_Bounding_Box(void);
-	float						Compute_Volume(void);
+	void						Compute_Bounding_Box();
+	void						Compute_Local_Bounding_Box();
+	float						Compute_Volume();
 	void						Transfer_Objects(AABTreeNodeClass * dummy_node);
 
 	/*
 	** Partition the tree based on the objects contained.
 	*/
-	void						Partition(void);
+	void						Partition();
 	void						Split_Objects(	const SplitChoiceStruct & sc,
 													AABTreeNodeClass * front,
 													AABTreeNodeClass * back);

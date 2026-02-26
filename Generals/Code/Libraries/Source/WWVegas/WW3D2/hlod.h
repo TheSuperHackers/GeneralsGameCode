@@ -69,14 +69,14 @@ public:
 	HLodClass(const HModelDefClass & def);
 
 	HLodClass & operator = (const HLodClass &);
-	virtual ~HLodClass(void);
+	virtual ~HLodClass();
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface - Cloning and Identification
 	/////////////////////////////////////////////////////////////////////////////
-	virtual RenderObjClass *	Clone(void) const;
-	virtual int						Class_ID(void) const										{ return CLASSID_HLOD; }
-	virtual int						Get_Num_Polys(void) const;
+	virtual RenderObjClass *	Clone() const;
+	virtual int						Class_ID() const										{ return CLASSID_HLOD; }
+	virtual int						Get_Num_Polys() const;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// HLod Interface - Editing and information
@@ -84,24 +84,24 @@ public:
 	virtual void					Set_Max_Screen_Size(int lod_index, float size);
 	virtual float					Get_Max_Screen_Size(int lod_index) const;
 
-	virtual int						Get_Lod_Count(void) const;
+	virtual int						Get_Lod_Count() const;
 	virtual int						Get_Lod_Model_Count (int lod_index) const;
 	virtual RenderObjClass *	Peek_Lod_Model (int lod_index, int model_index) const;
 	virtual RenderObjClass *	Get_Lod_Model (int lod_index, int model_index) const;
 	virtual int						Get_Lod_Model_Bone (int lod_index, int model_index) const;
-	virtual int						Get_Additional_Model_Count(void) const;
+	virtual int						Get_Additional_Model_Count() const;
 	virtual RenderObjClass *	Peek_Additional_Model (int model_index) const;
 	virtual RenderObjClass *	Get_Additional_Model (int model_index) const;
 	virtual int						Get_Additional_Model_Bone (int model_index) const;
 	virtual void					Add_Lod_Model(int lod, RenderObjClass * robj, int boneindex);
 
-	virtual bool					Is_NULL_Lod_Included (void) const;
+	virtual bool					Is_NULL_Lod_Included () const;
 	virtual void					Include_NULL_Lod (bool include = true);
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Proxy interface
 	/////////////////////////////////////////////////////////////////////////////
-	virtual int						Get_Proxy_Count (void) const;
+	virtual int						Get_Proxy_Count () const;
 	virtual bool					Get_Proxy (int index, ProxyClass &proxy) const;
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -119,7 +119,7 @@ public:
 	virtual void					Notify_Added(SceneClass * scene);
 	virtual void					Notify_Removed(SceneClass * scene);
 
-	virtual int						Get_Num_Sub_Objects(void) const;
+	virtual int						Get_Num_Sub_Objects() const;
 	virtual RenderObjClass *	Get_Sub_Object(int index) const;
 	virtual int						Add_Sub_Object(RenderObjClass * subobj);
 	virtual int						Remove_Sub_Object(RenderObjClass * robj);
@@ -133,7 +133,7 @@ public:
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface - Hierarchical Animation
 	/////////////////////////////////////////////////////////////////////////////
-	virtual void					Set_Animation(void);
+	virtual void					Set_Animation();
 	virtual void					Set_Animation( HAnimClass * motion,
 															float frame, int anim_mode = ANIM_MODE_MANUAL);
 	virtual void					Set_Animation( HAnimClass * motion0,
@@ -156,24 +156,24 @@ public:
 	// Render Object Interface - Predictive LOD
 	/////////////////////////////////////////////////////////////////////////////
 	virtual void					Prepare_LOD(CameraClass &camera);
-   virtual void					Recalculate_Static_LOD_Factors(void);
-	virtual void					Increment_LOD(void);
-	virtual void					Decrement_LOD(void);
-	virtual float					Get_Cost(void) const;
-	virtual float					Get_Value(void) const;
-	virtual float					Get_Post_Increment_Value(void) const;
+   virtual void					Recalculate_Static_LOD_Factors();
+	virtual void					Increment_LOD();
+	virtual void					Decrement_LOD();
+	virtual float					Get_Cost() const;
+	virtual float					Get_Value() const;
+	virtual float					Get_Post_Increment_Value() const;
 	virtual void					Set_LOD_Level(int lod);
-	virtual int						Get_LOD_Level(void) const;
-	virtual int						Get_LOD_Count(void) const;
+	virtual int						Get_LOD_Level() const;
+	virtual int						Get_LOD_Count() const;
 	virtual void					Set_LOD_Bias(float bias);
 	virtual int						Calculate_Cost_Value_Arrays(float screen_area, float *values, float *costs) const;
-	virtual RenderObjClass *	Get_Current_LOD(void);
+	virtual RenderObjClass *	Get_Current_LOD();
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface - Bounding Volumes
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	virtual const SphereClass &	Get_Bounding_Sphere(void) const;
-	virtual const AABoxClass &		Get_Bounding_Box(void) const;
+	virtual const SphereClass &	Get_Bounding_Sphere() const;
+	virtual const AABoxClass &		Get_Bounding_Box() const;
 	virtual void						Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const;
 	virtual void						Get_Obj_Space_Bounding_Box(AABoxClass & box) const;
 
@@ -189,7 +189,7 @@ public:
 //   virtual void					Set_Texture_Reduction_Factor(float trf);
 	virtual void					Scale(float scale);
 	virtual void					Scale(float scalex, float scaley, float scalez)	{ }
-	virtual int						Get_Num_Snap_Points(void);
+	virtual int						Get_Num_Snap_Points();
 	virtual void					Get_Snap_Point(int index,Vector3 * set);
 	virtual void					Set_Hidden(int onoff);
 
@@ -198,11 +198,11 @@ public:
 
 protected:
 
-	HLodClass(void);
+	HLodClass();
 
-	void								Free(void);
-	virtual void					Update_Sub_Object_Transforms(void);
-	virtual void					Update_Obj_Space_Bounding_Volumes(void);
+	void								Free();
+	virtual void					Update_Sub_Object_Transforms();
+	virtual void					Update_Obj_Space_Bounding_Volumes();
 
 protected:
 
@@ -219,7 +219,7 @@ protected:
 	class ModelArrayClass : public DynamicVectorClass<ModelNodeClass>
 	{
 	public:
-		ModelArrayClass(void) : MaxScreenSize(NO_MAX_SCREEN_SIZE), NonPixelCost(0.0f),
+		ModelArrayClass() : MaxScreenSize(NO_MAX_SCREEN_SIZE), NonPixelCost(0.0f),
 			PixelCostPerArea(0.0f), BenefitFactor(0.0f) {}
 		float							MaxScreenSize;		// Maximum screen size for this LOD
 		float							NonPixelCost;		// Cost heuristics of LODS (w/o per-pixel cost)
@@ -266,7 +266,7 @@ protected:
 class HLodLoaderClass : public PrototypeLoaderClass
 {
 public:
-	virtual int						Chunk_Type (void)  { return W3D_CHUNK_HLOD; }
+	virtual int						Chunk_Type ()  { return W3D_CHUNK_HLOD; }
 	virtual PrototypeClass *	Load_W3D(ChunkLoadClass & cload);
 };
 
@@ -281,13 +281,13 @@ class HLodDefClass : public W3DMPO
 	W3DMPO_GLUE(HLodDefClass)
 public:
 
-	HLodDefClass(void);
+	HLodDefClass();
 	HLodDefClass(HLodClass &src_lod);
-	~HLodDefClass(void);
+	~HLodDefClass();
 
 	WW3DErrorType				Load_W3D(ChunkLoadClass & cload);
 	WW3DErrorType				Save(ChunkSaveClass & csave);
-	const char *				Get_Name(void) const { return Name; }
+	const char *				Get_Name() const { return Name; }
 	void							Initialize(HLodClass &src_lod);
 
 protected:
@@ -310,9 +310,9 @@ private:
 	class SubObjectArrayClass
 	{
 	public:
-		SubObjectArrayClass(void);
-		~SubObjectArrayClass(void);
-		void		Reset(void);
+		SubObjectArrayClass();
+		~SubObjectArrayClass();
+		void		Reset();
 		void		operator = (const SubObjectArrayClass & that);
 
 		bool		Load_W3D(ChunkLoadClass & cload);
@@ -331,7 +331,7 @@ private:
 	SubObjectArrayClass		Aggregates;
 	ProxyArrayClass *			ProxyArray;
 
-	void							Free(void);
+	void							Free();
 	bool							read_header(ChunkLoadClass & cload);
 	bool							read_proxy_array(ChunkLoadClass & cload);
 
@@ -348,15 +348,15 @@ class HLodPrototypeClass : public W3DMPO, public PrototypeClass
 public:
 	HLodPrototypeClass( HLodDefClass *def )					{ Definition = def; }
 
-	virtual const char *			Get_Name(void) const			{ return Definition->Get_Name(); }
-	virtual int								Get_Class_ID(void) const	{ return RenderObjClass::CLASSID_HLOD; }
-	virtual RenderObjClass *	Create(void);
+	virtual const char *			Get_Name() const			{ return Definition->Get_Name(); }
+	virtual int								Get_Class_ID() const	{ return RenderObjClass::CLASSID_HLOD; }
+	virtual RenderObjClass *	Create();
 	virtual void							DeleteSelf()							{ delete this; }
 
-	HLodDefClass *					Get_Definition(void) const	{ return Definition; }
+	HLodDefClass *					Get_Definition() const	{ return Definition; }
 
 protected:
-	virtual ~HLodPrototypeClass(void)							{ delete Definition; }
+	virtual ~HLodPrototypeClass()							{ delete Definition; }
 
 private:
 	HLodDefClass *					Definition;

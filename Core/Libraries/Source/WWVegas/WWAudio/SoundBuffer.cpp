@@ -66,7 +66,7 @@ static DynamicVectorClass<FileMappingClass> MappingList;
 //
 //	SoundBufferClass
 //
-SoundBufferClass::SoundBufferClass (void)
+SoundBufferClass::SoundBufferClass ()
 	: m_Buffer (nullptr),
 	  m_Length (0),
 	  m_Filename (nullptr),
@@ -84,7 +84,7 @@ SoundBufferClass::SoundBufferClass (void)
 //
 //	~SoundBufferClass
 //
-SoundBufferClass::~SoundBufferClass (void)
+SoundBufferClass::~SoundBufferClass ()
 {
 	SAFE_FREE (m_Filename);
 	Free_Buffer ();
@@ -97,7 +97,7 @@ SoundBufferClass::~SoundBufferClass (void)
 //	Free_Buffer
 //
 void
-SoundBufferClass::Free_Buffer (void)
+SoundBufferClass::Free_Buffer ()
 {
 	// Free the buffer's memory
 	delete [] m_Buffer;
@@ -284,7 +284,7 @@ SoundBufferClass::Load_From_Memory
 //
 //	StreamSoundBufferClass
 //
-StreamSoundBufferClass::StreamSoundBufferClass (void)	:
+StreamSoundBufferClass::StreamSoundBufferClass ()	:
 	  SoundBufferClass ()
 {
 	return ;
@@ -295,7 +295,7 @@ StreamSoundBufferClass::StreamSoundBufferClass (void)	:
 //
 //	~StreamSoundBufferClass
 //
-StreamSoundBufferClass::~StreamSoundBufferClass (void)
+StreamSoundBufferClass::~StreamSoundBufferClass ()
 {
 	return ;
 }
@@ -306,7 +306,7 @@ StreamSoundBufferClass::~StreamSoundBufferClass (void)
 //	Free_Buffer
 //
 void
-StreamSoundBufferClass::Free_Buffer (void)
+StreamSoundBufferClass::Free_Buffer ()
 {
 	return ;
 }

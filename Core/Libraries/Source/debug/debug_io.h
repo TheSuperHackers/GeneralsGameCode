@@ -57,7 +57,7 @@ protected:
 
 public:
   // interface only so no functionality here
-  explicit DebugIOInterface(void) {}
+  explicit DebugIOInterface() {}
 
   /// List of possible log string types
   enum StringType
@@ -129,7 +129,7 @@ public:
     This function gets called during an exception and should perform the
     absolute bare minimum (e.g. just flushing and closing the output file).
   */
-  virtual void EmergencyFlush(void)=0;
+  virtual void EmergencyFlush()=0;
 
   /**
     \brief I/O class specific command.
@@ -152,7 +152,7 @@ public:
 
     Use this function instead of just delete'ing the instance.
   */
-  virtual void Delete(void)=0;
+  virtual void Delete()=0;
 };
 
 /**
@@ -187,7 +187,7 @@ public:
   #define DEBUG_DECLARE_IO_INTERFACE(type) \
     public: \
       static bool __RegisterClassFactory; \
-      static DebugIOInterface *__ClassFactory(void) { return new type; }
+      static DebugIOInterface *__ClassFactory() { return new type; }
 
   #define DEBUG_IMPLEMENT_IO_INTERFACE(io_id,descr,type) \
     static bool type::__RegisterClassFactory=Debug::AddIOFactory(#io_id,descr,type::__ClassFactory);

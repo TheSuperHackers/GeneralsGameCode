@@ -72,14 +72,14 @@ public:
 		WATER_TYPE_3_GRIDMESH,		//3D Mesh based water
 	};
 
-	WaterRenderObjClass(void);
-	~WaterRenderObjClass(void);
+	WaterRenderObjClass();
+	~WaterRenderObjClass();
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface (W3D methods)
 	/////////////////////////////////////////////////////////////////////////////
-	virtual RenderObjClass *	Clone(void) const;
-	virtual int						Class_ID(void) const;
+	virtual RenderObjClass *	Clone() const;
+	virtual int						Class_ID() const;
 	virtual void					Render(RenderInfoClass & rinfo);
 /// @todo: Add methods for collision detection with water surface
 //	virtual Bool					Cast_Ray(RayCollisionTestClass & raytest);
@@ -91,22 +91,22 @@ public:
 	virtual void					Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const;
     virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & aabox) const;
 	// Get and set static sort level
-	virtual int		Get_Sort_Level(void) const		{ return m_sortLevel; }
+	virtual int		Get_Sort_Level() const		{ return m_sortLevel; }
   	virtual void	Set_Sort_Level(int level)		{ m_sortLevel = level;}
 
 	///allocate W3D resources needed to render water
-	void renderWater(void);				///<draw the water surface (flat)
+	void renderWater();				///<draw the water surface (flat)
 	Int init(Real waterLevel, Real dx, Real dy, SceneClass *parentScene, WaterType type);
-	void reset( void );  ///< reset any resources we need to
-	void load(void);	///< load/setup any map dependent features
-	void update( void ); ///< update phase of the water
+	void reset();  ///< reset any resources we need to
+	void load();	///< load/setup any map dependent features
+	void update(); ///< update phase of the water
 	void enableWaterGrid(Bool state);	///< used to active custom water for special maps. (i.e DAM).
-	void updateMapOverrides(void);	///< used to update any map specific map overrides for water appearance.
+	void updateMapOverrides();	///< used to update any map specific map overrides for water appearance.
 	void setTimeOfDay(TimeOfDay tod); ///<change sky/water for time of day
 	void toggleCloudLayer(Bool state)	{	m_useCloudLayer=state;}	///<enables/disables the cloud layer
 	void updateRenderTargetTextures(CameraClass *cam);	///< renders into any required textures.
-	void ReleaseResources(void);	///< Release all dx8 resources so the device can be reset.
-	void ReAcquireResources(void);  ///< Reacquire all resources after device reset.
+	void ReleaseResources();	///< Release all dx8 resources so the device can be reset.
+	void ReAcquireResources();  ///< Reacquire all resources after device reset.
 	Real getWaterHeight(Real x, Real y);	///<return water height at given point - for use by WB.
 	void setGridHeightClamps(Real minz, Real maxz);	///<set min/max height values alllowed in grid
 	void addVelocity( Real worldX, Real worldY, Real zVelocity, Real preferredHeight );	///< add velocity value
@@ -239,19 +239,19 @@ protected:
 	void drawRiverWater(PolygonTrigger *pTrig);
 	void drawTrapezoidWater(Vector3 points[4]);
 	void loadSetting ( Setting *skySetting, TimeOfDay timeOfDay );	///<init sky/water settings from GDF
-	void renderSky(void);	///<draw the sky layer (clouds, stars, etc.)
-	void testCurvedWater(void);	///<draw the sky layer (clouds, stars, etc.)
+	void renderSky();	///<draw the sky layer (clouds, stars, etc.)
+	void testCurvedWater();	///<draw the sky layer (clouds, stars, etc.)
 	void renderSkyBody(Matrix3D *mat);	///<draw the sky body (sun, moon, etc.)
-	void renderWaterMesh(void);			///<draw the water surface mesh (deformed 3d mesh).
+	void renderWaterMesh();			///<draw the water surface mesh (deformed 3d mesh).
 	HRESULT initBumpMap(LPDIRECT3DTEXTURE8 *pTex, TextureClass *pBumpSource);	///<copies data into bump-map format.
 	void renderMirror(CameraClass *cam);	///< Draw reflected scene into texture
 	void drawSea(RenderInfoClass & rinfo);	///< Draw the surface of the water
 	///bounding box of frustum clipped polygon plane
 	Bool getClippedWaterPlane(CameraClass *cam, AABoxClass *box);
 
-	void setupFlatWaterShader(void);
-	void setupJbaWaterShader(void);
-	void cleanupJbaWaterShader(void);
+	void setupFlatWaterShader();
+	void setupJbaWaterShader();
+	void cleanupJbaWaterShader();
 
 	//Methods used for GeForce3 specific water
 	HRESULT generateIndexBuffer(int sizeX, int sizeY);	///<Generate static index buufer
@@ -260,7 +260,7 @@ protected:
 	// snapshot methods for save/load
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
+	virtual void loadPostProcess();
 
 };
 

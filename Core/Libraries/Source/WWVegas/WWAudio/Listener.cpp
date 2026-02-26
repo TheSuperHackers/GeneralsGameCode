@@ -46,7 +46,7 @@
 //	Listener3DClass
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
-Listener3DClass::Listener3DClass (void)
+Listener3DClass::Listener3DClass ()
 {
 	return ;
 }
@@ -57,7 +57,7 @@ Listener3DClass::Listener3DClass (void)
 //	~Listener3DClass
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
-Listener3DClass::~Listener3DClass (void)
+Listener3DClass::~Listener3DClass ()
 {
 	Free_Miles_Handle ();
 	return ;
@@ -70,7 +70,7 @@ Listener3DClass::~Listener3DClass (void)
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
 void
-Listener3DClass::Initialize_Miles_Handle (void)
+Listener3DClass::Initialize_Miles_Handle ()
 {
 	MMSLockClass lock;
 
@@ -97,7 +97,7 @@ Listener3DClass::Initialize_Miles_Handle (void)
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
 void
-Listener3DClass::Allocate_Miles_Handle (void)
+Listener3DClass::Allocate_Miles_Handle ()
 {
 	return ;
 }
@@ -109,7 +109,7 @@ Listener3DClass::Allocate_Miles_Handle (void)
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
 void
-Listener3DClass::Free_Miles_Handle (void)
+Listener3DClass::Free_Miles_Handle ()
 {
 	return ;
 }
@@ -121,7 +121,7 @@ Listener3DClass::Free_Miles_Handle (void)
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
 void
-Listener3DClass::On_Added_To_Scene (void)
+Listener3DClass::On_Added_To_Scene ()
 {
 	Allocate_Miles_Handle ();
 	return ;
@@ -134,7 +134,7 @@ Listener3DClass::On_Added_To_Scene (void)
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
 void
-Listener3DClass::On_Removed_From_Scene (void)
+Listener3DClass::On_Removed_From_Scene ()
 {
 	Free_Miles_Handle ();
 	return ;

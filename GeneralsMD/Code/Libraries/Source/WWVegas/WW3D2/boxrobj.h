@@ -72,32 +72,32 @@ class BoxRenderObjClass : public RenderObjClass
 
 public:
 
-	BoxRenderObjClass(void);
+	BoxRenderObjClass();
 	BoxRenderObjClass(const W3dBoxStruct & def);
 	BoxRenderObjClass(const BoxRenderObjClass & src);
 	BoxRenderObjClass & operator = (const BoxRenderObjClass &);
 
-	virtual int							Get_Num_Polys(void) const;
-	virtual const char *				Get_Name(void) const;
+	virtual int							Get_Num_Polys() const;
+	virtual const char *				Get_Name() const;
 	virtual void						Set_Name(const char * name);
 	void									Set_Color(const Vector3 & color);
 	void									Set_Opacity(float opacity) { Opacity = opacity; }
 
-	static void							Init(void);
-	static void							Shutdown(void);
+	static void							Init();
+	static void							Shutdown();
 
 	static void							Set_Box_Display_Mask(int mask);
-	static int							Get_Box_Display_Mask(void);
+	static int							Get_Box_Display_Mask();
 
 	void									Set_Local_Center_Extent(const Vector3 & center,const Vector3 & extent);
 	void									Set_Local_Min_Max(const Vector3 & min,const Vector3 & max);
 
-	const Vector3 &					Get_Local_Center(void) { return ObjSpaceCenter; }
-	const Vector3 &					Get_Local_Extent(void) { return ObjSpaceExtent; }
+	const Vector3 &					Get_Local_Center() { return ObjSpaceCenter; }
+	const Vector3 &					Get_Local_Extent() { return ObjSpaceExtent; }
 
 protected:
 
-	virtual void						update_cached_box(void) = 0;
+	virtual void						update_cached_box() = 0;
 	void									render_box(RenderInfoClass & rinfo,const Vector3 & center,const Vector3 & extent);
 	void									vis_render_box(SpecialRenderInfoClass & rinfo,const Vector3 & center,const Vector3 & extent);
 
@@ -134,7 +134,7 @@ class AABoxRenderObjClass : public W3DMPO, public BoxRenderObjClass
 	W3DMPO_GLUE(AABoxRenderObjClass)
 public:
 
-	AABoxRenderObjClass(void);
+	AABoxRenderObjClass();
 	AABoxRenderObjClass(const W3dBoxStruct & def);
 	AABoxRenderObjClass(const AABoxRenderObjClass & src);
 	AABoxRenderObjClass(const AABoxClass & box);
@@ -143,8 +143,8 @@ public:
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface
 	/////////////////////////////////////////////////////////////////////////////
-	virtual RenderObjClass *	Clone(void) const;
-	virtual int						Class_ID(void) const;
+	virtual RenderObjClass *	Clone() const;
+	virtual int						Class_ID() const;
 	virtual void					Render(RenderInfoClass & rinfo);
 	virtual void					Special_Render(SpecialRenderInfoClass & rinfo);
 	virtual void 					Set_Transform(const Matrix3D &m);
@@ -160,17 +160,17 @@ public:
 	/////////////////////////////////////////////////////////////////////////////
 	// AABoxRenderObjClass Interface
 	/////////////////////////////////////////////////////////////////////////////
-	const AABoxClass &			Get_Box(void);
+	const AABoxClass &			Get_Box();
 
 protected:
 
-	virtual void					update_cached_box(void);
+	virtual void					update_cached_box();
 
 	AABoxClass						CachedBox;
 
 };
 
-inline const AABoxClass & AABoxRenderObjClass::Get_Box(void)
+inline const AABoxClass & AABoxRenderObjClass::Get_Box()
 {
 	Validate_Transform();
 	update_cached_box();
@@ -185,7 +185,7 @@ class OBBoxRenderObjClass : public W3DMPO, public BoxRenderObjClass
 	W3DMPO_GLUE(OBBoxRenderObjClass)
 public:
 
-	OBBoxRenderObjClass(void);
+	OBBoxRenderObjClass();
 	OBBoxRenderObjClass(const W3dBoxStruct & def);
 	OBBoxRenderObjClass(const OBBoxRenderObjClass & src);
 	OBBoxRenderObjClass(const OBBoxClass & box);
@@ -194,8 +194,8 @@ public:
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface
 	/////////////////////////////////////////////////////////////////////////////
-	virtual RenderObjClass *	Clone(void) const;
-	virtual int						Class_ID(void) const;
+	virtual RenderObjClass *	Clone() const;
+	virtual int						Class_ID() const;
 	virtual void					Render(RenderInfoClass & rinfo);
 	virtual void					Special_Render(SpecialRenderInfoClass & rinfo);
 	virtual void 					Set_Transform(const Matrix3D &m);
@@ -211,11 +211,11 @@ public:
 	/////////////////////////////////////////////////////////////////////////////
 	// OBBoxRenderObjClass Interface
 	/////////////////////////////////////////////////////////////////////////////
-	OBBoxClass &					Get_Box(void);
+	OBBoxClass &					Get_Box();
 
 protected:
 
-	virtual void					update_cached_box(void);
+	virtual void					update_cached_box();
 
 	OBBoxClass						CachedBox;
 
@@ -228,7 +228,7 @@ protected:
 class BoxLoaderClass : public PrototypeLoaderClass
 {
 public:
-	virtual int						Chunk_Type (void)  { return W3D_CHUNK_BOX; }
+	virtual int						Chunk_Type ()  { return W3D_CHUNK_BOX; }
 	virtual PrototypeClass *	Load_W3D(ChunkLoadClass & cload);
 };
 
@@ -242,9 +242,9 @@ class BoxPrototypeClass : public W3DMPO, public PrototypeClass
 	W3DMPO_GLUE(BoxPrototypeClass)
 public:
 	BoxPrototypeClass(W3dBoxStruct box);
-	virtual const char *				Get_Name(void) const;
-	virtual int									Get_Class_ID(void) const;
-	virtual RenderObjClass *		Create(void);
+	virtual const char *				Get_Name() const;
+	virtual int									Get_Class_ID() const;
+	virtual RenderObjClass *		Create();
 	virtual void								DeleteSelf() { delete this; }
 private:
 	W3dBoxStruct					Definition;

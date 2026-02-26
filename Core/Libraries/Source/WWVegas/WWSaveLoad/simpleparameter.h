@@ -68,11 +68,11 @@ public:
 	///////////////////////////////////////////////////////////////////////
 	//	Public methods
 	///////////////////////////////////////////////////////////////////////
-	const T &		Get_Value (void) const;
+	const T &		Get_Value () const;
 	void				Set_Value (const T &new_value);
 
 	// From Parameter class
-	ParameterClass::Type	Get_Type (void) const;
+	ParameterClass::Type	Get_Type () const;
 	void						Copy_Value (const ParameterClass &src);
 
 private:
@@ -114,7 +114,7 @@ SimpleParameterClass<T, type>::operator== (const ParameterClass &src)
 //	Get_Value
 //////////////////////////////////////////////////////////////////////////////////
 template <class T, ParameterClass::Type type> inline const T &
-SimpleParameterClass<T, type>::Get_Value (void) const
+SimpleParameterClass<T, type>::Get_Value () const
 {
 	return (*m_Data);
 }
@@ -134,7 +134,7 @@ SimpleParameterClass<T, type>::Set_Value (const T &new_value)
 //	Get_Type
 //////////////////////////////////////////////////////////////////////////////////
 template <class T, ParameterClass::Type type> inline ParameterClass::Type
-SimpleParameterClass<T, type>::Get_Type (void) const
+SimpleParameterClass<T, type>::Get_Type () const
 {
 	return type;
 }
@@ -188,8 +188,8 @@ public:
 	//	Public methods
 	///////////////////////////////////////////////////////////////////////
 	void				Set_Range (const T &min, const T &max)	{ m_Min = min; m_Max = max; }
-	const T &		Get_Min (void) const							{ return m_Min; }
-	const T &		Get_Max (void) const							{ return m_Max; }
+	const T &		Get_Min () const							{ return m_Min; }
+	const T &		Get_Max () const							{ return m_Max; }
 
 private:
 

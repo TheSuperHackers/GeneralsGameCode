@@ -62,8 +62,8 @@ class W3DFontLibrary : public FontLibrary
 
 public:
 
-	W3DFontLibrary( void ) { }
-	~W3DFontLibrary( void ) { }
+	W3DFontLibrary() { }
+	~W3DFontLibrary() { }
 
 protected:
 

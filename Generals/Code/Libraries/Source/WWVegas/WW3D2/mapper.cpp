@@ -223,7 +223,7 @@ void GridTextureMapperClass::Apply(int uv_array_index)
 	DX8Wrapper::Set_DX8_Texture_Stage_State(Stage, D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_COUNT2);
 }
 
-void GridTextureMapperClass::Reset(void)
+void GridTextureMapperClass::Reset()
 {
 	Remainder = 0;
 	CurrentFrame = Sign == -1 ? (1 << (GridWidthLog2 + GridWidthLog2)) - 1 : 0;
@@ -261,7 +261,7 @@ void GridTextureMapperClass::initialize(float fps, unsigned int gridwidth_log2)
 	Remainder = 0;
 }
 
-void GridTextureMapperClass::update_temporal_state(void)
+void GridTextureMapperClass::update_temporal_state()
 {
 	unsigned int now = WW3D::Get_Sync_Time();
 	unsigned int delta = now - LastUsedSyncTime;
@@ -475,7 +475,7 @@ void StepLinearOffsetTextureMapperClass::Apply(int uv_array_index)
 
 }
 
-void StepLinearOffsetTextureMapperClass::Reset(void)
+void StepLinearOffsetTextureMapperClass::Reset()
 {
 	LastUsedSyncTime = WW3D::Get_Sync_Time();
 	CurrentStep.Set(0.0f,0.0f);
@@ -553,7 +553,7 @@ void ZigZagLinearOffsetTextureMapperClass::Apply(int uv_array_index)
 
 }
 
-void ZigZagLinearOffsetTextureMapperClass::Reset(void)
+void ZigZagLinearOffsetTextureMapperClass::Reset()
 {
 	LastUsedSyncTime = WW3D::Get_Sync_Time();
 }
@@ -663,7 +663,7 @@ void EdgeMapperClass::Apply(int uv_array_index)
 
 }
 
-void EdgeMapperClass::Reset(void)
+void EdgeMapperClass::Reset()
 {
 	LastUsedSyncTime = WW3D::Get_Sync_Time();
 	VOffset = 0.0f;
@@ -948,7 +948,7 @@ void BumpEnvTextureMapperClass::Apply(int uv_array_index)
 	DX8Wrapper::Set_DX8_Texture_Stage_State(Stage,D3DTSS_BUMPENVMAT11, F2DW(c));
 }
 
-void RandomTextureMapperClass::Reset(void)
+void RandomTextureMapperClass::Reset()
 {
 	LastUsedSyncTime = WW3D::Get_Sync_Time();
 }

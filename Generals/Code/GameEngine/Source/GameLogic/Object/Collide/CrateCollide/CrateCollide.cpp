@@ -91,7 +91,7 @@ CrateCollide::CrateCollide( Thing *thing, const ModuleData* moduleData ) : Colli
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-CrateCollide::~CrateCollide( void )
+CrateCollide::~CrateCollide()
 {
 
 }
@@ -214,7 +214,7 @@ void CrateCollide::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void CrateCollide::loadPostProcess( void )
+void CrateCollide::loadPostProcess()
 {
 
 	// extend base class

@@ -337,7 +337,7 @@ DLOG( "My HResult is: " << Debug::HResult(SomeHRESULTValue) << "\n" );
     For the main thread this is already done, but for any additional
     threads being created this function must be called.
   */
-  static void InstallExceptionHandler(void);
+  static void InstallExceptionHandler();
 
   /** \internal
 
@@ -352,7 +352,7 @@ DLOG( "My HResult is: " << Debug::HResult(SomeHRESULTValue) << "\n" );
 
     \return true if next assert/log should be skipped, false otherwise
   */
-  static bool SkipNext(void);
+  static bool SkipNext();
 
   /** \internal
 
@@ -380,7 +380,7 @@ DLOG( "My HResult is: " << Debug::HResult(SomeHRESULTValue) << "\n" );
 
     \return false (always)
   */
-  bool AssertDone(void);
+  bool AssertDone();
 
   /** \internal
 
@@ -406,7 +406,7 @@ DLOG( "My HResult is: " << Debug::HResult(SomeHRESULTValue) << "\n" );
 
     \return false (always)
   */
-  bool CheckDone(void);
+  bool CheckDone();
 
   /** \internal
 
@@ -430,7 +430,7 @@ DLOG( "My HResult is: " << Debug::HResult(SomeHRESULTValue) << "\n" );
 
     \return false (always)
   */
-  bool LogDone(void);
+  bool LogDone();
 
   /** \internal
 
@@ -657,7 +657,7 @@ DLOG( "My HResult is: " << Debug::HResult(SomeHRESULTValue) << "\n" );
     \return true (so function can be used in static initializers)
   */
   static bool AddIOFactory(const char *io_id, const char *descr,
-                           DebugIOInterface* (*func)(void));
+                           DebugIOInterface* (*func)());
 
   /**
     \brief Adds a new command group.
@@ -700,7 +700,7 @@ DLOG( "My HResult is: " << Debug::HResult(SomeHRESULTValue) << "\n" );
 
     Scans I/O classes for new command input and processes it.
   */
-  static void Update(void);
+  static void Update();
 
   /** \internal
 
@@ -728,7 +728,7 @@ DLOG( "My HResult is: " << Debug::HResult(SomeHRESULTValue) << "\n" );
   /**
     \brief Write build information into log.
   */
-  void WriteBuildInfo(void);
+  void WriteBuildInfo();
 
 private:
 #if defined(__GNUC__) && defined(_WIN32)
@@ -749,7 +749,7 @@ private:
     initialization is rather performed by PreStaticInit() and
     PostStaticInit().
   */
-  Debug(void);
+  Debug();
 
   /** \internal
 
@@ -757,14 +757,14 @@ private:
     initialized. Code herein must be extremely careful because all
     global C++ instances are not initialized yet.
   */
-  static void PreStaticInit(void);
+  static void PreStaticInit();
 
   /** \internal
 
     This function gets called after all static C++ symbols have
     been initialized.
   */
-  static void PostStaticInit(void);
+  static void PostStaticInit();
 
   /** \internal
 
@@ -772,7 +772,7 @@ private:
     function for any cleanup purposes (not the destructor, it
     might get called too early).
   */
-  static void StaticExit(void);
+  static void StaticExit();
 
   /** \internal
 
@@ -827,7 +827,7 @@ private:
     const char *descr;
 
     /// factory function
-    DebugIOInterface* (*factory)(void);
+    DebugIOInterface* (*factory)();
 
     /// I/O interface (may be null)
     DebugIOInterface *io;
@@ -1161,7 +1161,7 @@ private:
 
     \return true if windowed, false if full screen
   */
-  bool IsWindowed(void);
+  bool IsWindowed();
 
   /// \internal name of current command group
   char curCommandGroup[100];
@@ -1228,6 +1228,6 @@ private:
   \return list of commands, separated by \\n
   \note This function is executed after all static variables have been initialized.
 */
-const char *DebugGetDefaultCommands(void);
+const char *DebugGetDefaultCommands();
 
 ///@} end of debug_fn group

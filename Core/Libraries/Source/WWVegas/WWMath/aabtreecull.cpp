@@ -111,7 +111,7 @@ static inline CullableClass * get_next_object(CullableClass * obj)
 ** AABTreeCullSystemClass Implementation
 **
 *************************************************************************/
-AABTreeCullSystemClass::AABTreeCullSystemClass(void) :
+AABTreeCullSystemClass::AABTreeCullSystemClass() :
 	ObjectCount(0),
 	NodeCount(0),
 	IndexedNodes(nullptr)
@@ -120,7 +120,7 @@ AABTreeCullSystemClass::AABTreeCullSystemClass(void) :
 	Re_Index_Nodes();
 }
 
-AABTreeCullSystemClass::~AABTreeCullSystemClass(void)
+AABTreeCullSystemClass::~AABTreeCullSystemClass()
 {
 	// Delete all links and release-ref all cullables:
 	int nidx;
@@ -225,19 +225,19 @@ void AABTreeCullSystemClass::Collect_Objects(const SphereClass & sphere)
 	Collect_Objects_Recursive(RootNode,sphere);
 }
 
-int AABTreeCullSystemClass::Partition_Node_Count(void) const
+int AABTreeCullSystemClass::Partition_Node_Count() const
 {
 	return Partition_Node_Count_Recursive(RootNode);
 }
 
-int AABTreeCullSystemClass::Partition_Tree_Depth(void) const
+int AABTreeCullSystemClass::Partition_Tree_Depth() const
 {
 	int get_max_depth = 0;
 	Partition_Tree_Depth_Recursive(RootNode,0,get_max_depth);
 	return get_max_depth;
 }
 
-int AABTreeCullSystemClass::Object_Count(void) const
+int AABTreeCullSystemClass::Object_Count() const
 {
 	return ObjectCount;
 }
@@ -316,7 +316,7 @@ void AABTreeCullSystemClass::Add_Loaded_Object(AABTreeNodeClass * node,CullableC
 	obj->Add_Ref();
 }
 
-void AABTreeCullSystemClass::Re_Partition(void)
+void AABTreeCullSystemClass::Re_Partition()
 {
 	/*
 	** transfer all objects to a temporary node
@@ -394,12 +394,12 @@ void AABTreeCullSystemClass::Re_Partition(const AABoxClass & bounds,SimpleDynVec
 	RootNode->Box.Extent.Set(FLT_MAX,FLT_MAX,FLT_MAX);
 }
 
-void AABTreeCullSystemClass::Update_Bounding_Boxes(void)
+void AABTreeCullSystemClass::Update_Bounding_Boxes()
 {
 	Update_Bounding_Boxes_Recursive(RootNode);
 }
 
-const AABoxClass & AABTreeCullSystemClass::Get_Bounding_Box(void)
+const AABoxClass & AABTreeCullSystemClass::Get_Bounding_Box()
 {
 	WWASSERT(RootNode);
 	return RootNode->Box;
@@ -414,7 +414,7 @@ void AABTreeCullSystemClass::Get_Node_Bounds(int node_id,AABoxClass * set_bounds
 	}
 }
 
-void AABTreeCullSystemClass::Reset_Statistics(void)
+void AABTreeCullSystemClass::Reset_Statistics()
 {
 	Stats.NodeCount = NodeCount;
 	Stats.NodesAccepted = 0;
@@ -422,7 +422,7 @@ void AABTreeCullSystemClass::Reset_Statistics(void)
 	Stats.NodesRejected = 0;
 }
 
-const AABTreeCullSystemClass::StatsStruct & AABTreeCullSystemClass::Get_Statistics(void)
+const AABTreeCullSystemClass::StatsStruct & AABTreeCullSystemClass::Get_Statistics()
 {
 	return Stats;
 }
@@ -879,7 +879,7 @@ void AABTreeCullSystemClass::Save_Object_Linkage(ChunkSaveClass & csave,Cullable
 }
 
 
-void AABTreeCullSystemClass::Re_Index_Nodes(void)
+void AABTreeCullSystemClass::Re_Index_Nodes()
 {
 	delete[] IndexedNodes;
 	IndexedNodes = nullptr;
@@ -915,7 +915,7 @@ void AABTreeCullSystemClass::Re_Index_Nodes_Recursive(AABTreeNodeClass * node,in
 ** AABTreeNodeClass Implementation
 **
 *************************************************************************/
-AABTreeNodeClass::AABTreeNodeClass(void) :
+AABTreeNodeClass::AABTreeNodeClass() :
 	Index(0),
 	Box(Vector3(0,0,0),Vector3(0,0,0)),
 	Parent(nullptr),
@@ -926,7 +926,7 @@ AABTreeNodeClass::AABTreeNodeClass(void) :
 {
 }
 
-AABTreeNodeClass::~AABTreeNodeClass(void)
+AABTreeNodeClass::~AABTreeNodeClass()
 {
 	// objects should be removed before deleting the partition tree
 	WWASSERT(Object == nullptr);
@@ -939,7 +939,7 @@ AABTreeNodeClass::~AABTreeNodeClass(void)
 	Back = nullptr;
 }
 
-void AABTreeNodeClass::Compute_Bounding_Box(void)
+void AABTreeNodeClass::Compute_Bounding_Box()
 {
 	/*
 	** make the children update their boxes first
@@ -955,7 +955,7 @@ void AABTreeNodeClass::Compute_Bounding_Box(void)
 	Compute_Local_Bounding_Box();
 }
 
-void AABTreeNodeClass::Compute_Local_Bounding_Box(void)
+void AABTreeNodeClass::Compute_Local_Bounding_Box()
 {
 	/*
 	** Now make sure we bound our children
@@ -983,7 +983,7 @@ void AABTreeNodeClass::Compute_Local_Bounding_Box(void)
 	Box.Init(box);
 }
 
-float AABTreeNodeClass::Compute_Volume(void)
+float AABTreeNodeClass::Compute_Volume()
 {
 	return Box.Volume();
 }
@@ -1059,7 +1059,7 @@ void AABTreeNodeClass::Transfer_Objects(AABTreeNodeClass * dummy_node)
 	}
 }
 
-int AABTreeNodeClass::Object_Count(void)
+int AABTreeNodeClass::Object_Count()
 {
 	CullableClass * obj = Object;
 	int count = 0;
@@ -1094,7 +1094,7 @@ CullableClass * AABTreeNodeClass::Peek_Object(int index)
 **
 ******************************************************************************************/
 
-void AABTreeNodeClass::Partition(void)
+void AABTreeNodeClass::Partition()
 {
 	/*
 	** if we're down to only 2 objects, we're done
@@ -1476,12 +1476,12 @@ AABTreeIterator::AABTreeIterator(AABTreeCullSystemClass * tree) :
 	WWASSERT(Tree != nullptr);
 }
 
-void AABTreeIterator::Reset(void)
+void AABTreeIterator::Reset()
 {
 	CurNodeIndex = 0;
 }
 
-bool AABTreeIterator::Enter_Parent(void)
+bool AABTreeIterator::Enter_Parent()
 {
 	validate();
 	if (CurNodeIndex != 0) {
@@ -1492,7 +1492,7 @@ bool AABTreeIterator::Enter_Parent(void)
 	}
 }
 
-bool AABTreeIterator::Enter_Sibling(void)
+bool AABTreeIterator::Enter_Sibling()
 {
 	validate();
 	if (CurNodeIndex != 0) {
@@ -1530,13 +1530,13 @@ bool AABTreeIterator::Enter_Sibling(void)
 	return false;
 }
 
-bool AABTreeIterator::Has_Front_Child(void)
+bool AABTreeIterator::Has_Front_Child()
 {
 	validate();
 	return (Tree->IndexedNodes[CurNodeIndex]->Front != nullptr);
 }
 
-bool AABTreeIterator::Enter_Front_Child(void)
+bool AABTreeIterator::Enter_Front_Child()
 {
 	validate();
 	if (Has_Front_Child()) {
@@ -1546,13 +1546,13 @@ bool AABTreeIterator::Enter_Front_Child(void)
 	return false;
 }
 
-bool AABTreeIterator::Has_Back_Child(void)
+bool AABTreeIterator::Has_Back_Child()
 {
 	validate();
 	return (Tree->IndexedNodes[CurNodeIndex]->Back != nullptr);
 }
 
-bool AABTreeIterator::Enter_Back_Child(void)
+bool AABTreeIterator::Enter_Back_Child()
 {
 	if (Has_Back_Child()) {
 		CurNodeIndex = Tree->IndexedNodes[CurNodeIndex]->Back->Index;
@@ -1561,7 +1561,7 @@ bool AABTreeIterator::Enter_Back_Child(void)
 	return false;
 }
 
-int AABTreeIterator::Get_Current_Node_Index(void)
+int AABTreeIterator::Get_Current_Node_Index()
 {
 	return CurNodeIndex;
 }
@@ -1571,7 +1571,7 @@ void AABTreeIterator::Get_Current_Box(AABoxClass * set_box)
 	Tree->Get_Node_Bounds(CurNodeIndex,set_box);
 }
 
-void AABTreeIterator::validate(void)
+void AABTreeIterator::validate()
 {
 	if ((CurNodeIndex < 0) || (CurNodeIndex >= Tree->NodeCount)) {
 		CurNodeIndex = 0;

@@ -39,7 +39,7 @@ class DelayedWeaponSetUpgradeUpdateModuleData: public UpdateModuleData
 
 public:
 
-	DelayedWeaponSetUpgradeUpdateModuleData( void );
+	DelayedWeaponSetUpgradeUpdateModuleData();
 
 	static void buildFieldParse(MultiIniFieldParse& p);
 

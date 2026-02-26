@@ -40,17 +40,17 @@ void SaveLoadStatus::Get_Status_Text(StringClass& text, int id)
 }
 
 static	int	status_count;
-void	SaveLoadStatus::Reset_Status_Count( void )
+void	SaveLoadStatus::Reset_Status_Count()
 {
 	status_count = 0;
 }
 
-void	SaveLoadStatus::Inc_Status_Count( void )
+void	SaveLoadStatus::Inc_Status_Count()
 {
 	status_count++;
 }
 
-int	SaveLoadStatus::Get_Status_Count( void )
+int	SaveLoadStatus::Get_Status_Count()
 {
 	return status_count;
 }

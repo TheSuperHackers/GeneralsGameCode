@@ -52,7 +52,7 @@
 #include "GameLogic/Object.h"
 #include "GameLogic/Module/BaikonurLaunchPower.h"
 
-BaikonurLaunchPowerModuleData::BaikonurLaunchPowerModuleData( void )
+BaikonurLaunchPowerModuleData::BaikonurLaunchPowerModuleData()
 {
 }
 
@@ -80,7 +80,7 @@ BaikonurLaunchPower::BaikonurLaunchPower( Thing *thing, const ModuleData *module
 }
 
 // ------------------------------------------------------------------------------------------------
-BaikonurLaunchPower::~BaikonurLaunchPower( void )
+BaikonurLaunchPower::~BaikonurLaunchPower()
 {
 
 }
@@ -153,7 +153,7 @@ void BaikonurLaunchPower::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void BaikonurLaunchPower::loadPostProcess( void )
+void BaikonurLaunchPower::loadPostProcess()
 {
 
 	// extend base class

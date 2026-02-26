@@ -88,13 +88,13 @@ protected:
 
 
 public:
-	TileData(void);
+	TileData();
 
 public:
-	UnsignedByte *getDataPtr(void) {return(m_tileData);};
-	static Int dataLen(void) {return(DATA_LEN_BYTES);};
+	UnsignedByte *getDataPtr() {return(m_tileData);};
+	static Int dataLen() {return(DATA_LEN_BYTES);};
 
-	void updateMips(void);
+	void updateMips();
 
 	Bool hasRGBDataForWidth(Int width);
 	UnsignedByte *getRGBDataForWidth(Int width);

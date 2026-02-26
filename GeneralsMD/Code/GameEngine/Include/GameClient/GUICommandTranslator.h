@@ -41,8 +41,8 @@ class GUICommandTranslator : public GameMessageTranslator
 
 public:
 
-	GUICommandTranslator( void );
-	~GUICommandTranslator( void );
+	GUICommandTranslator();
+	~GUICommandTranslator();
 
 	virtual GameMessageDisposition translateGameMessage( const GameMessage *msg );
 };

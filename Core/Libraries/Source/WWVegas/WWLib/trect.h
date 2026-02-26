@@ -75,21 +75,21 @@ class TRect
 		/*
 		**	Determine is rectangle is valid.
 		*/
-		bool Is_Valid(void) const {return(Width > 0 && Height > 0);}
+		bool Is_Valid() const {return(Width > 0 && Height > 0);}
 
 		/*
 		**	Returns size of rectangle if each discrete location within it is presumed
 		**	to be of size 1.
 		*/
-		int Size(void) const {return(int(Width) * int(Height));}
+		int Size() const {return(int(Width) * int(Height));}
 
 		/*
 		**	Fetch points of rectangle (used as a convenience for the programmer).
 		*/
-		TPoint2D<T> Top_Left(void) const {return(TPoint2D<T>(X, Y));}
-		TPoint2D<T> Top_Right(void) const {return(TPoint2D<T>(X + Width - 1, Y));}
-		TPoint2D<T> Bottom_Left(void) const {return(TPoint2D<T>(X, Y + Height - 1));}
-		TPoint2D<T> Bottom_Right(void) const {return(TPoint2D<T>(X + Width - 1, Y + Height - 1));}
+		TPoint2D<T> Top_Left() const {return(TPoint2D<T>(X, Y));}
+		TPoint2D<T> Top_Right() const {return(TPoint2D<T>(X + Width - 1, Y));}
+		TPoint2D<T> Bottom_Left() const {return(TPoint2D<T>(X, Y + Height - 1));}
+		TPoint2D<T> Bottom_Right() const {return(TPoint2D<T>(X + Width - 1, Y + Height - 1));}
 
 		/*
 		**	Determine if a point lies within the rectangle.

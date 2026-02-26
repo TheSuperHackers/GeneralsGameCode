@@ -82,7 +82,7 @@ static Real getDisplayHeightScaler()
 // ProcessAnimateWindowSlideFromRight PUBLIC FUNCTIONS ////////////////////////
 //-----------------------------------------------------------------------------
 
-ProcessAnimateWindowSlideFromRight::ProcessAnimateWindowSlideFromRight( void )
+ProcessAnimateWindowSlideFromRight::ProcessAnimateWindowSlideFromRight()
 {
 	m_maxVel.x = 0.0f; // top speed windows travel in x and y
 	m_maxVel.y = 0.0f;
@@ -93,7 +93,7 @@ ProcessAnimateWindowSlideFromRight::ProcessAnimateWindowSlideFromRight( void )
 }
 
 //-----------------------------------------------------------------------------
-ProcessAnimateWindowSlideFromRight::~ProcessAnimateWindowSlideFromRight( void ) { }
+ProcessAnimateWindowSlideFromRight::~ProcessAnimateWindowSlideFromRight() { }
 
 //-----------------------------------------------------------------------------
 void ProcessAnimateWindowSlideFromRight::initReverseAnimateWindow( wnd::AnimateWindow *animWin, UnsignedInt maxDelay )
@@ -273,7 +273,7 @@ Bool ProcessAnimateWindowSlideFromRight::reverseAnimateWindow( wnd::AnimateWindo
 // ProcessAnimateWindowSlideFromLeft PUBLIC FUNCTIONS ////////////////////////
 //-----------------------------------------------------------------------------
 
-ProcessAnimateWindowSlideFromLeft::ProcessAnimateWindowSlideFromLeft( void )
+ProcessAnimateWindowSlideFromLeft::ProcessAnimateWindowSlideFromLeft()
 {
 	m_maxVel.x = 0.0f; // top speed windows travel in x and y
 	m_maxVel.y = 0.0f;
@@ -283,7 +283,7 @@ ProcessAnimateWindowSlideFromLeft::ProcessAnimateWindowSlideFromLeft( void )
 	m_speedUpRatio = 2.0f - m_slowDownRatio;  // how fast the windows speed up
 }
 
-ProcessAnimateWindowSlideFromLeft::~ProcessAnimateWindowSlideFromLeft( void ) { }
+ProcessAnimateWindowSlideFromLeft::~ProcessAnimateWindowSlideFromLeft() { }
 
 void ProcessAnimateWindowSlideFromLeft::initReverseAnimateWindow( wnd::AnimateWindow *animWin, UnsignedInt maxDelay )
 {
@@ -456,7 +456,7 @@ Bool ProcessAnimateWindowSlideFromLeft::reverseAnimateWindow( wnd::AnimateWindow
 // ProcessAnimateWindowSlideFromTop PUBLIC FUNCTIONS ////////////////////////
 //-----------------------------------------------------------------------------
 
-ProcessAnimateWindowSlideFromTop::ProcessAnimateWindowSlideFromTop( void )
+ProcessAnimateWindowSlideFromTop::ProcessAnimateWindowSlideFromTop()
 {
 	m_maxVel.x = 0.0f; // top speed windows travel in x and y
 	m_maxVel.y = 0.0f;
@@ -466,7 +466,7 @@ ProcessAnimateWindowSlideFromTop::ProcessAnimateWindowSlideFromTop( void )
 	m_speedUpRatio = 2.0f - m_slowDownRatio;  // how fast the windows speed up
 }
 
-ProcessAnimateWindowSlideFromTop::~ProcessAnimateWindowSlideFromTop( void ) { }
+ProcessAnimateWindowSlideFromTop::~ProcessAnimateWindowSlideFromTop() { }
 
 void ProcessAnimateWindowSlideFromTop::initReverseAnimateWindow( wnd::AnimateWindow *animWin, UnsignedInt maxDelay )
 {
@@ -640,7 +640,7 @@ Bool ProcessAnimateWindowSlideFromTop::reverseAnimateWindow( wnd::AnimateWindow 
 // ProcessAnimateWindowSlideFromBottom PUBLIC FUNCTIONS ////////////////////////
 //-----------------------------------------------------------------------------
 
-ProcessAnimateWindowSlideFromBottom::ProcessAnimateWindowSlideFromBottom( void )
+ProcessAnimateWindowSlideFromBottom::ProcessAnimateWindowSlideFromBottom()
 {
 	m_maxVel.x = 0.0f; // top speed windows travel in x and y
 	m_maxVel.y = 0.0f;
@@ -650,7 +650,7 @@ ProcessAnimateWindowSlideFromBottom::ProcessAnimateWindowSlideFromBottom( void )
 	m_speedUpRatio = 2.0f - m_slowDownRatio;  // how fast the windows speed up
 }
 
-ProcessAnimateWindowSlideFromBottom::~ProcessAnimateWindowSlideFromBottom( void ) { }
+ProcessAnimateWindowSlideFromBottom::~ProcessAnimateWindowSlideFromBottom() { }
 
 void ProcessAnimateWindowSlideFromBottom::initReverseAnimateWindow( wnd::AnimateWindow *animWin, UnsignedInt maxDelay )
 {
@@ -826,12 +826,12 @@ Bool ProcessAnimateWindowSlideFromBottom::reverseAnimateWindow( wnd::AnimateWind
 // ProcessAnimateWindowSlideFromBottomTimed PUBLIC FUNCTIONS ////////////////////////
 //-----------------------------------------------------------------------------
 
-ProcessAnimateWindowSlideFromBottomTimed::ProcessAnimateWindowSlideFromBottomTimed( void )
+ProcessAnimateWindowSlideFromBottomTimed::ProcessAnimateWindowSlideFromBottomTimed()
 {
 	m_maxDuration = 1000;
 }
 
-ProcessAnimateWindowSlideFromBottomTimed::~ProcessAnimateWindowSlideFromBottomTimed( void ) { }
+ProcessAnimateWindowSlideFromBottomTimed::~ProcessAnimateWindowSlideFromBottomTimed() { }
 
 void ProcessAnimateWindowSlideFromBottomTimed::initReverseAnimateWindow( wnd::AnimateWindow *animWin, UnsignedInt maxDelay )
 {
@@ -981,14 +981,14 @@ Bool ProcessAnimateWindowSlideFromBottomTimed::reverseAnimateWindow( wnd::Animat
 // ProcessAnimateWindowSpiral PUBLIC FUNCTIONS ////////////////////////
 //-----------------------------------------------------------------------------
 
-ProcessAnimateWindowSpiral::ProcessAnimateWindowSpiral( void )
+ProcessAnimateWindowSpiral::ProcessAnimateWindowSpiral()
 {
 	m_maxR = TheDisplay->getWidth() / 2;
 	m_deltaTheta = .33f;
 }
 
 //-----------------------------------------------------------------------------
-ProcessAnimateWindowSpiral::~ProcessAnimateWindowSpiral( void ) { }
+ProcessAnimateWindowSpiral::~ProcessAnimateWindowSpiral() { }
 
 //-----------------------------------------------------------------------------
 void ProcessAnimateWindowSpiral::initReverseAnimateWindow( wnd::AnimateWindow *animWin, UnsignedInt maxDelay )
@@ -1159,7 +1159,7 @@ Bool ProcessAnimateWindowSpiral::reverseAnimateWindow( wnd::AnimateWindow *animW
 // ProcessAnimateWindowSlideFromTopFast PUBLIC FUNCTIONS ////////////////////////
 //-----------------------------------------------------------------------------
 
-ProcessAnimateWindowSlideFromTopFast::ProcessAnimateWindowSlideFromTopFast( void )
+ProcessAnimateWindowSlideFromTopFast::ProcessAnimateWindowSlideFromTopFast()
 {
 	m_maxVel.y =  60.0f;  // top speed windows travel in x and y
 	m_maxVel.x = 0.0f;
@@ -1170,7 +1170,7 @@ ProcessAnimateWindowSlideFromTopFast::ProcessAnimateWindowSlideFromTopFast( void
 
 }
 
-ProcessAnimateWindowSlideFromTopFast::~ProcessAnimateWindowSlideFromTopFast( void ) { }
+ProcessAnimateWindowSlideFromTopFast::~ProcessAnimateWindowSlideFromTopFast() { }
 
 void ProcessAnimateWindowSlideFromTopFast::initReverseAnimateWindow( wnd::AnimateWindow *animWin, UnsignedInt maxDelay )
 {
@@ -1342,7 +1342,7 @@ Bool ProcessAnimateWindowSlideFromTopFast::reverseAnimateWindow( wnd::AnimateWin
 // ProcessAnimateWindowSlideFromRightFast PUBLIC FUNCTIONS ////////////////////////
 //-----------------------------------------------------------------------------
 
-ProcessAnimateWindowSlideFromRightFast::ProcessAnimateWindowSlideFromRightFast( void )
+ProcessAnimateWindowSlideFromRightFast::ProcessAnimateWindowSlideFromRightFast()
 {
 	m_maxVel.x =  -80.0f;  // top speed windows travel in x and y
 	m_maxVel.y = 0.0f;
@@ -1354,7 +1354,7 @@ ProcessAnimateWindowSlideFromRightFast::ProcessAnimateWindowSlideFromRightFast( 
 }
 
 //-----------------------------------------------------------------------------
-ProcessAnimateWindowSlideFromRightFast::~ProcessAnimateWindowSlideFromRightFast( void ) { }
+ProcessAnimateWindowSlideFromRightFast::~ProcessAnimateWindowSlideFromRightFast() { }
 
 //-----------------------------------------------------------------------------
 void ProcessAnimateWindowSlideFromRightFast::initReverseAnimateWindow( wnd::AnimateWindow *animWin, UnsignedInt maxDelay )

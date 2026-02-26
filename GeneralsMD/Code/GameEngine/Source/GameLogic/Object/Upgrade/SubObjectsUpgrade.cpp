@@ -76,13 +76,13 @@ SubObjectsUpgrade::SubObjectsUpgrade( Thing *thing, const ModuleData* moduleData
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-SubObjectsUpgrade::~SubObjectsUpgrade( void )
+SubObjectsUpgrade::~SubObjectsUpgrade()
 {
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void SubObjectsUpgrade::upgradeImplementation( )
+void SubObjectsUpgrade::upgradeImplementation()
 {
 	const SubObjectsUpgradeModuleData *data = getSubObjectsUpgradeModuleData();
 	UpgradeMaskType activation, conflicting;
@@ -157,7 +157,7 @@ void SubObjectsUpgrade::xfer( Xfer *xfer )
 }
 
 //------------------------------------------------------------------------------------------------
-void SubObjectsUpgrade::loadPostProcess( void )
+void SubObjectsUpgrade::loadPostProcess()
 {
 
 	// extend base class

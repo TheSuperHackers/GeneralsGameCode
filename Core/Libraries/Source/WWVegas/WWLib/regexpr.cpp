@@ -50,19 +50,19 @@ extern "C" {
 
 struct RegularExpressionClass::DataStruct
 {
-	DataStruct (void)
+	DataStruct ()
 	:	IsValid(false)
 	{
 		// Blank out the expression structure.
 		memset(&CompiledExpr, 0, sizeof(CompiledExpr));
 	}
 
-	~DataStruct (void)
+	~DataStruct ()
 	{
 		ClearExpression();
 	}
 
-	void ClearExpression (void)
+	void ClearExpression ()
 	{
 		// If the expression was valid, let the gnu_regex library
 		// deallocate any memory it had allocated for it.
@@ -126,7 +126,7 @@ RegularExpressionClass::RegularExpressionClass (const RegularExpressionClass &co
 }
 
 
-RegularExpressionClass::~RegularExpressionClass (void)
+RegularExpressionClass::~RegularExpressionClass ()
 {
 	delete Data;
 	Data = 0;
@@ -164,7 +164,7 @@ bool RegularExpressionClass::Compile (const char *expression)
 }
 
 
-bool RegularExpressionClass::Is_Valid (void) const
+bool RegularExpressionClass::Is_Valid () const
 {
 	assert(Data);
 	return Data->IsValid;

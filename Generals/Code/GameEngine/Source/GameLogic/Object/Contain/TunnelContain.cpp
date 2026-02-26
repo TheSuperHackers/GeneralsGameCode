@@ -238,7 +238,7 @@ UnsignedInt TunnelContain::getHeroUnitsContained() const
 	return 0;
 }
 
-Int TunnelContain::getContainMax( void ) const
+Int TunnelContain::getContainMax() const
 {
 	Player *owningPlayer = getObject()->getControllingPlayer();
 	if( owningPlayer && owningPlayer->getTunnelSystem() )
@@ -258,7 +258,7 @@ const ContainedItemsList* TunnelContain::getContainedItemsList() const
 	return nullptr;
 }
 
-UnsignedInt TunnelContain::getFullTimeForHeal(void) const
+UnsignedInt TunnelContain::getFullTimeForHeal() const
 {
 	const TunnelContainModuleData* modData = getTunnelContainModuleData();
 	return modData->m_framesForFullHeal;
@@ -344,7 +344,7 @@ void TunnelContain::onDie( const DamageInfo * damageInfo )
 }
 
 //-------------------------------------------------------------------------------------------------
-void TunnelContain::onDelete( void )
+void TunnelContain::onDelete()
 {
 	// Being sold is a straight up delete.  no death
 
@@ -363,12 +363,12 @@ void TunnelContain::onDelete( void )
 }
 
 //-------------------------------------------------------------------------------------------------
-void TunnelContain::onCreate( void )
+void TunnelContain::onCreate()
 {
 }
 
 //-------------------------------------------------------------------------------------------------
-void TunnelContain::onBuildComplete( void )
+void TunnelContain::onBuildComplete()
 {
 	if( ! shouldDoOnBuildComplete() )
 		return;
@@ -423,7 +423,7 @@ void TunnelContain::orderAllPassengersToExit( CommandSourceType commandSource )
 // ------------------------------------------------------------------------------------------------
 /** Per frame update */
 // ------------------------------------------------------------------------------------------------
-UpdateSleepTime TunnelContain::update( void )
+UpdateSleepTime TunnelContain::update()
 {
 	// extending functionality to heal the units within the tunnel system
 	OpenContain::update();
@@ -506,7 +506,7 @@ void TunnelContain::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void TunnelContain::loadPostProcess( void )
+void TunnelContain::loadPostProcess()
 {
 
 	// extend base class

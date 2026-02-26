@@ -33,7 +33,7 @@
 #include <windows.h>
 #include <new>      // needed for placement new prototype
 
-DebugIONet::DebugIONet(void)
+DebugIONet::DebugIONet()
 {
 }
 
@@ -80,7 +80,7 @@ void DebugIONet::Write(StringType type, const char *src, const char *str)
     WriteFile(m_pipe,str,len,&dummy,nullptr);
 }
 
-void DebugIONet::EmergencyFlush(void)
+void DebugIONet::EmergencyFlush()
 {
 }
 
@@ -120,12 +120,12 @@ void DebugIONet::Execute(class Debug& dbg, const char *cmd, bool structuredCmd,
   }
 }
 
-DebugIOInterface *DebugIONet::Create(void)
+DebugIOInterface *DebugIONet::Create()
 {
   return new (DebugAllocMemory(sizeof(DebugIONet))) DebugIONet();
 }
 
-void DebugIONet::Delete(void)
+void DebugIONet::Delete()
 {
   this->~DebugIONet();
   DebugFreeMemory(this);

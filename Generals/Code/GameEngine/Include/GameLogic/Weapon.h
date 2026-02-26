@@ -350,11 +350,11 @@ public:
 	WeaponTemplate();
 	// virtual destructor declared by memory pool
 
-	void reset( void );
+	void reset();
 
 	void friend_setNextTemplate(WeaponTemplate *nextTemplate) { m_nextTemplate = nextTemplate; }
-	WeaponTemplate *friend_clearNextTemplate( void ) {	WeaponTemplate *ret = m_nextTemplate; m_nextTemplate = nullptr; return ret; }
-	Bool isOverride( void ) { return m_nextTemplate != nullptr; }
+	WeaponTemplate *friend_clearNextTemplate() {	WeaponTemplate *ret = m_nextTemplate; m_nextTemplate = nullptr; return ret; }
+	Bool isOverride() { return m_nextTemplate != nullptr; }
 
 	/// field table for loading the values from an INI
 	const FieldParse *getFieldParse() const { return TheWeaponTemplateFieldParseTable; }
@@ -570,7 +570,7 @@ protected:
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
+	virtual void loadPostProcess();
 
 public:
 
@@ -740,7 +740,7 @@ public:
 		with status as READY_TO_FIRE or OUT_OF_AMMO, but never RELOADING_CLIP!
 	*/
 	void setClipPercentFull(Real percent, Bool allowReduction);
-	UnsignedInt getSuspendFXFrame( void ) const { return m_suspendFXFrame; }
+	UnsignedInt getSuspendFXFrame() const { return m_suspendFXFrame; }
 
 protected:
 
@@ -839,7 +839,7 @@ protected:
 	WeaponTemplate *newOverride( WeaponTemplate *weaponTemplate );
 
 	void deleteAllDelayedDamage();
-	void resetWeaponTemplates( void );
+	void resetWeaponTemplates();
 	void setDelayedDamage(const WeaponTemplate *weapon, const Coord3D* pos, UnsignedInt whichFrame, ObjectID sourceID, ObjectID victimID, const WeaponBonus& bonus);
 
 private:

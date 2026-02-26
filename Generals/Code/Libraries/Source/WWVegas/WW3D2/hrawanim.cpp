@@ -117,7 +117,7 @@ NodeMotionStruct::~NodeMotionStruct()
  * HISTORY:                                                                                    *
  *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-HRawAnimClass::HRawAnimClass(void) :
+HRawAnimClass::HRawAnimClass() :
 	NumFrames(0),
 	NumNodes(0),
 	FrameRate(0),
@@ -140,7 +140,7 @@ HRawAnimClass::HRawAnimClass(void) :
  * HISTORY:                                                                                    *
  *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-HRawAnimClass::~HRawAnimClass(void)
+HRawAnimClass::~HRawAnimClass()
 {
 	Free();
 }
@@ -158,7 +158,7 @@ HRawAnimClass::~HRawAnimClass(void)
  * HISTORY:                                                                                    *
  *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-void HRawAnimClass::Free(void)
+void HRawAnimClass::Free()
 {
 	delete[] NodeMotion;
 	NodeMotion = nullptr;

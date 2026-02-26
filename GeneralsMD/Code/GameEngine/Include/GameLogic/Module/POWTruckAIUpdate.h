@@ -42,7 +42,7 @@ class POWTruckAIUpdateModuleData : public AIUpdateModuleData
 
 public:
 
-	POWTruckAIUpdateModuleData( void );
+	POWTruckAIUpdateModuleData();
 
 	static void buildFieldParse( MultiIniFieldParse &p );
 
@@ -69,7 +69,7 @@ class POWTruckAIUpdateInterface
 public:
 
 	virtual void setTask( POWTruckTask task, Object *taskObject = nullptr ) = 0;
-	virtual POWTruckTask getCurrentTask( void ) = 0;
+	virtual POWTruckTask getCurrentTask() = 0;
 	virtual void loadPrisoner( Object *prisoner ) = 0;
 	virtual void unloadPrisonersToPrison( Object *prison ) = 0;
 
@@ -92,12 +92,12 @@ public:
 	POWTruckAIUpdate( Thing *thing, const ModuleData *moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual void onDelete( void );
-	virtual UpdateSleepTime update( void );
+	virtual void onDelete();
+	virtual UpdateSleepTime update();
 
 	// Pow truck ai interface
-	virtual POWTruckAIUpdateInterface *getPOWTruckAIUpdateInterface( void ) { return this; }
-	virtual POWTruckTask getCurrentTask( void ) { return m_currentTask; }
+	virtual POWTruckAIUpdateInterface *getPOWTruckAIUpdateInterface() { return this; }
+	virtual POWTruckTask getCurrentTask() { return m_currentTask; }
 	virtual void loadPrisoner( Object *prisoner );
 	virtual void unloadPrisonersToPrison( Object *prison );
 
@@ -118,16 +118,16 @@ protected:
 	};
 	virtual void setAIMode( POWTruckAIMode mode );	///< put truck in automatic or manual mode
 
-	virtual void updateWaiting( void );
-	virtual void updateFindTarget( void );
-	virtual void updateCollectingTarget( void );
-	virtual void updateReturnPrisoners( void );
+	virtual void updateWaiting();
+	virtual void updateFindTarget();
+	virtual void updateCollectingTarget();
+	virtual void updateReturnPrisoners();
 
 	virtual Bool validateTarget( const Object *target );	///< is 'target' a valid object to collect
-	virtual void doReturnPrisoners( void );								///< initiate a return prisoners to base
+	virtual void doReturnPrisoners();								///< initiate a return prisoners to base
 	virtual void doReturnToPrison( Object *prison );			///< initiate a return to prison (no prisoner dump off)
-	virtual Object *findBestPrison( void );								///< find the best prison for us given our current position
-	virtual Object *findBestTarget( void );								///< find the best prisoner for us given our current situation
+	virtual Object *findBestPrison();								///< find the best prison for us given our current position
+	virtual Object *findBestTarget();								///< find the best prisoner for us given our current situation
 
 	// AIUpdateInterface implementations
 	virtual void privatePickUpPrisoner( Object *prisoner, CommandSourceType cmdSource );

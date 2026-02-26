@@ -77,7 +77,7 @@ public:
 	/*
 	** Constructors
 	*/
-	WWINLINE Matrix3x3(void) {};
+	WWINLINE Matrix3x3() {};
 	WWINLINE Matrix3x3(const Matrix3x3 & m);
 
 	WWINLINE explicit Matrix3x3(bool identity);
@@ -117,9 +117,9 @@ public:
 	/*
 	** Transpose and Inverse
 	*/
-	WWINLINE Matrix3x3	Transpose	(void) const;
-	WWINLINE Matrix3x3	Inverse		(void) const;
-	WWINLINE float		Determinant	(void) const;
+	WWINLINE Matrix3x3	Transpose	() const;
+	WWINLINE Matrix3x3	Inverse		() const;
+	WWINLINE float		Determinant	() const;
 
 	/*
 	** Assignment operators
@@ -133,7 +133,7 @@ public:
 	WWINLINE Matrix3x3 & operator *= (float d);
 	WWINLINE Matrix3x3 & operator /= (float d);
 
-	WWINLINE void	Make_Identity(void);
+	WWINLINE void	Make_Identity();
 
 	/*
 	** Automatically concatenate a rotation onto the current matrix
@@ -153,17 +153,17 @@ public:
 	** cannot be used to re-build a matrx.  Use the EulerAnglesClass
 	** to convert a matrix into a set of three Euler angles.
 	*/
-	float Get_X_Rotation(void) const;
-	float Get_Y_Rotation(void) const;
-	float Get_Z_Rotation(void) const;
+	float Get_X_Rotation() const;
+	float Get_Y_Rotation() const;
+	float Get_Z_Rotation() const;
 
 	/*
 	** These functions return a vector representing the direction an
    ** axis is pointing.
    */
-	WWINLINE Vector3 Get_X_Vector(void) const;
-	WWINLINE Vector3 Get_Y_Vector(void) const;
-	WWINLINE Vector3 Get_Z_Vector(void) const;
+	WWINLINE Vector3 Get_X_Vector() const;
+	WWINLINE Vector3 Get_Y_Vector() const;
+	WWINLINE Vector3 Get_Z_Vector() const;
 	WWINLINE void Get_X_Vector(Vector3 * set_x) const;
 	WWINLINE void Get_Y_Vector(Vector3 * set_y) const;
 	WWINLINE void Get_Z_Vector(Vector3 * set_z) const;
@@ -224,8 +224,8 @@ public:
 	/*
 	** Check whether a matrix is orthogonal, make it orthogonal
 	*/
-	int	Is_Orthogonal(void) const;
-	void	Re_Orthogonalize(void);
+	int	Is_Orthogonal() const;
+	void	Re_Orthogonalize();
 
 	/*
 	** Miscellaneous
@@ -317,7 +317,7 @@ WWINLINE void Matrix3x3::Set(const Vector3 & r0, const Vector3 & r1, const Vecto
 	Row[2] = r2;
 }
 
-WWINLINE void Matrix3x3::Make_Identity(void)
+WWINLINE void Matrix3x3::Make_Identity()
 {
 	Row[0].Set(1.0f,0.0f,0.0f);
 	Row[1].Set(0.0f,1.0f,0.0f);
@@ -477,7 +477,7 @@ WWINLINE Matrix3x3 Matrix3x3::Inverse() const    // Gauss-Jordan elimination wit
  * HISTORY:                                                                                    *
  *   1/7/20     DRM : Created.                                                                 *
  *=============================================================================================*/
-WWINLINE float Matrix3x3::Determinant(void) const
+WWINLINE float Matrix3x3::Determinant() const
 {
 	return   Row[0][0] * (Row[1][1] * Row[2][2] - Row[1][2] * Row[2][1])
 		    - Row[0][1] * (Row[1][0] * Row[2][2] - Row[1][2] * Row[2][0])
@@ -586,7 +586,7 @@ WWINLINE Matrix3x3& Matrix3x3::operator /= (float d)
  * HISTORY:                                                                                    *
  *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-WWINLINE float Matrix3x3::Get_X_Rotation(void) const
+WWINLINE float Matrix3x3::Get_X_Rotation() const
 {
 	Vector3 v = (*this) * Vector3(0.0,1.0,0.0);
 	return WWMath::Atan2(v[2], v[1]);
@@ -604,7 +604,7 @@ WWINLINE float Matrix3x3::Get_X_Rotation(void) const
  * HISTORY:                                                                                    *
  *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-WWINLINE float Matrix3x3::Get_Y_Rotation(void) const
+WWINLINE float Matrix3x3::Get_Y_Rotation() const
 {
 	Vector3 v = (*this) * Vector3(0.0,0.0,1.0);
 	return WWMath::Atan2(v[0],v[2]);
@@ -622,23 +622,23 @@ WWINLINE float Matrix3x3::Get_Y_Rotation(void) const
  * HISTORY:                                                                                    *
  *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-WWINLINE float Matrix3x3::Get_Z_Rotation(void) const
+WWINLINE float Matrix3x3::Get_Z_Rotation() const
 {
 	Vector3 v = (*this) * Vector3(1.0,0.0,0.0);
 	return WWMath::Atan2(v[1],v[0]);
 }
 
-WWINLINE Vector3 Matrix3x3::Get_X_Vector(void) const
+WWINLINE Vector3 Matrix3x3::Get_X_Vector() const
 {
    return Vector3(Row[0][0], Row[1][0], Row[2][0]);
 }
 
-WWINLINE Vector3 Matrix3x3::Get_Y_Vector(void) const
+WWINLINE Vector3 Matrix3x3::Get_Y_Vector() const
 {
    return Vector3(Row[0][1], Row[1][1], Row[2][1]);
 }
 
-WWINLINE Vector3 Matrix3x3::Get_Z_Vector(void) const
+WWINLINE Vector3 Matrix3x3::Get_Z_Vector() const
 {
    return Vector3(Row[0][2], Row[1][2], Row[2][2]);
 }

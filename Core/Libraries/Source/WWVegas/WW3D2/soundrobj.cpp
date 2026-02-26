@@ -58,7 +58,7 @@ SoundRenderObjLoaderClass		_SoundRenderObjLoader;
 //	SoundRenderObjClass
 //
 //////////////////////////////////////////////////////////////////////////////////
-SoundRenderObjClass::SoundRenderObjClass (void)
+SoundRenderObjClass::SoundRenderObjClass ()
 	:	Flags (FLAG_STOP_WHEN_HIDDEN),
 		Sound (nullptr),
 		IsInitialized (false)
@@ -87,7 +87,7 @@ SoundRenderObjClass::SoundRenderObjClass (const SoundRenderObjClass &src)
 //	~SoundRenderObjClass
 //
 //////////////////////////////////////////////////////////////////////////////////
-SoundRenderObjClass::~SoundRenderObjClass (void)
+SoundRenderObjClass::~SoundRenderObjClass ()
 {
 	//
 	//	Remove the old sound from the world (if necessary)
@@ -162,7 +162,7 @@ SoundRenderObjClass::Set_Sound (AudibleSoundDefinitionClass *definition)
 //
 //////////////////////////////////////////////////////////////////////////////////
 void
-SoundRenderObjClass::On_Frame_Update (void)
+SoundRenderObjClass::On_Frame_Update ()
 {
 	//
 	//	Stop the sound from playing (if necessary)
@@ -277,7 +277,7 @@ SoundRenderObjClass::Set_Force_Visible (int onoff)
 //
 //////////////////////////////////////////////////////////////////////////////////
 void
-SoundRenderObjClass::Update_On_Visibility (void)
+SoundRenderObjClass::Update_On_Visibility ()
 {
 	if (Sound == nullptr) {
 		return ;
@@ -325,7 +325,7 @@ SoundRenderObjClass::Update_On_Visibility (void)
 //
 //////////////////////////////////////////////////////////////////////////////////
 AudibleSoundClass *
-SoundRenderObjClass::Get_Sound (void) const
+SoundRenderObjClass::Get_Sound () const
 {
 	if (Sound != nullptr) {
 		Sound->Add_Ref ();
@@ -434,7 +434,7 @@ SoundRenderObjClass::Set_Position (const Vector3 &pos)
 //	SoundRenderObjDefClass
 //
 //////////////////////////////////////////////////////////////////////////////////
-SoundRenderObjDefClass::SoundRenderObjDefClass (void)
+SoundRenderObjDefClass::SoundRenderObjDefClass ()
 	:	Version (W3D_CURRENT_SOUNDROBJ_VERSION),
 		Flags (SoundRenderObjClass::FLAG_STOP_WHEN_HIDDEN)
 {
@@ -475,7 +475,7 @@ SoundRenderObjDefClass::SoundRenderObjDefClass (const SoundRenderObjDefClass &sr
 //	~SoundRenderObjDefClass
 //
 //////////////////////////////////////////////////////////////////////////////////
-SoundRenderObjDefClass::~SoundRenderObjDefClass (void)
+SoundRenderObjDefClass::~SoundRenderObjDefClass ()
 {
 	return ;
 }
@@ -502,7 +502,7 @@ SoundRenderObjDefClass::operator= (const SoundRenderObjDefClass &src)
 //
 //////////////////////////////////////////////////////////////////////////////////
 RenderObjClass *
-SoundRenderObjDefClass::Create (void)
+SoundRenderObjDefClass::Create ()
 {
 	//
 	//	Allocate and initialize a new instance

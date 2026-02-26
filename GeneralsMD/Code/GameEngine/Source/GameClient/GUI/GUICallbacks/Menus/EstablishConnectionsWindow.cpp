@@ -125,12 +125,12 @@ static void showGameSpyQMUnderlyingGUIElements( Bool show )
 	ShowUnderlyingGUIElements( show, qmlayoutFilename, qmparentName, qmgadgetsToHide, qmperPlayerGadgetsToHide );
 }
 
-static void InitEstablishConnectionsDialog( void ) {
+static void InitEstablishConnectionsDialog() {
 	buttonQuitID = TheNameKeyGenerator->nameToKey( "EstablishConnectionsScreen.wnd:ButtonQuit" );
 	buttonQuitWindow = TheWindowManager->winGetWindowFromId(nullptr, buttonQuitID);
 }
 
-void ShowEstablishConnectionsWindow( void ) {
+void ShowEstablishConnectionsWindow() {
 	if (establishConnectionsLayout == nullptr) {
 		establishConnectionsLayout = TheWindowManager->winCreateLayout( "Menus/EstablishConnectionsScreen.wnd" );
 		InitEstablishConnectionsDialog();
@@ -147,7 +147,7 @@ void ShowEstablishConnectionsWindow( void ) {
 	}
 }
 
-void HideEstablishConnectionsWindow( void ) {
+void HideEstablishConnectionsWindow() {
 	if (establishConnectionsLayout == nullptr) {
 //		establishConnectionsLayout = TheWindowManager->winCreateLayout( "Menus/EstablishConnectionsScreen.wnd" );
 //		InitEstablishConnectionsDialog();

@@ -1259,7 +1259,7 @@ void AcademyStats::xfer( Xfer *xfer )
 //------------------------------------------------------------------------------------------------
 // Load post process
 //------------------------------------------------------------------------------------------------
-void AcademyStats::loadPostProcess( void )
+void AcademyStats::loadPostProcess()
 {
 
 }

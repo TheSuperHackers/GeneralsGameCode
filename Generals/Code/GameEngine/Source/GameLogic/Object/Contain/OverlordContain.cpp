@@ -75,7 +75,7 @@ OverlordContain::OverlordContain( Thing *thing, const ModuleData *moduleData ) :
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-OverlordContain::~OverlordContain( void )
+OverlordContain::~OverlordContain()
 {
 
 }
@@ -150,12 +150,12 @@ void OverlordContain::onDie( const DamageInfo *damageInfo )
 }
 
 //-------------------------------------------------------------------------------------------------
-void OverlordContain::onDelete( void )
+void OverlordContain::onDelete()
 {
 	// Do you mean me the Overlord, or my behavior of passing stuff on to my passengers?
 	if( getRedirectedContain() == nullptr )
 	{
-		TransportContain::onDelete( );
+		TransportContain::onDelete();
 		return;
 	}
 
@@ -165,7 +165,7 @@ void OverlordContain::onDelete( void )
 	deactivateRedirectedContain();
 	removeAllContained();
 
-	TransportContain::onDelete( );
+	TransportContain::onDelete();
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -332,7 +332,7 @@ UnsignedInt OverlordContain::getContainCount() const
 
 	// Do you mean me the Overlord, or my behavior of passing stuff on to my passengers?
 	if( redir == nullptr )
-		return TransportContain::getContainCount( );
+		return TransportContain::getContainCount();
 
 	return redir->getContainCount();
 }
@@ -354,11 +354,11 @@ Bool OverlordContain::getContainerPipsToShow(Int& numTotal, Int& numFull)
 }
 
 //-------------------------------------------------------------------------------------------------
-Int OverlordContain::getContainMax( ) const
+Int OverlordContain::getContainMax() const
 {
 	// Do you mean me the Overlord, or my behavior of passing stuff on to my passengers?
 	if( getRedirectedContain() == nullptr )
-		return TransportContain::getContainMax( );
+		return TransportContain::getContainMax();
 
 	return getRedirectedContain()->getContainMax();
 }
@@ -368,7 +368,7 @@ const ContainedItemsList* OverlordContain::getContainedItemsList() const
 {
 	// Do you mean me the Overlord, or my behavior of passing stuff on to my passengers?
 	if( getRedirectedContain() == nullptr )
-		return TransportContain::getContainedItemsList( );
+		return TransportContain::getContainedItemsList();
 
 	return getRedirectedContain()->getContainedItemsList();
 }
@@ -492,7 +492,7 @@ void OverlordContain::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void OverlordContain::loadPostProcess( void )
+void OverlordContain::loadPostProcess()
 {
 
 	// extend base class

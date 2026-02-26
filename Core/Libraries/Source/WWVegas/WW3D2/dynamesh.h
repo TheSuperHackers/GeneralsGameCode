@@ -59,15 +59,15 @@ public:
 	DynamicMeshModel(unsigned int max_polys, unsigned int max_verts);
 	DynamicMeshModel(unsigned int max_polys, unsigned int max_verts, MaterialInfoClass *mat_info);
 	DynamicMeshModel(const DynamicMeshModel &src);
-	~DynamicMeshModel(void);
+	~DynamicMeshModel();
 
 	// Inherited from MeshGeometryClass
-	virtual void	Compute_Plane_Equations(void);
-	virtual void	Compute_Vertex_Normals(void);
+	virtual void	Compute_Plane_Equations();
+	virtual void	Compute_Vertex_Normals();
 	virtual void	Compute_Bounds(Vector3 * verts);
 
 	// Reset mesh (with existing max polygon and max vertex counts)
-	void	Reset(void);
+	void	Reset();
 
 	// Render mesh
 	void	Render(RenderInfoClass & rinfo);
@@ -87,15 +87,15 @@ public:
 	void			Set_Shader(int pidx, ShaderClass shader, int pass=0)  { MatDesc->Set_Shader(pidx, shader, pass); }
 	void			Set_Texture(int pidx, TextureClass * tex, int pass=0, int stage=0)  { MatDesc->Set_Texture(pidx, tex, pass, stage); }
 	void			Set_Pass_Count(int passes)	{ MatDesc->Set_Pass_Count(passes); }
-	int			Get_Pass_Count(void) const	{ return MatDesc->Get_Pass_Count(); }
+	int			Get_Pass_Count() const	{ return MatDesc->Get_Pass_Count(); }
 
 	// Create the array (if it doesn't exist), fill it with the supplied value.
 	void			Initialize_Texture_Array(int pass, int stage, TextureClass *texture = nullptr);
 	void			Initialize_Material_Array(int pass, VertexMaterialClass *vmat = nullptr);
 
 	// Accessors to material info:
-	MaterialInfoClass		*Peek_Material_Info(void)			{ return MatInfo; }
-	MaterialInfoClass		*Get_Material_Info(void)			{ if (MatInfo) MatInfo->Add_Ref(); return MatInfo;}
+	MaterialInfoClass		*Peek_Material_Info()			{ return MatInfo; }
+	MaterialInfoClass		*Get_Material_Info()			{ if (MatInfo) MatInfo->Add_Ref(); return MatInfo;}
 	void Set_Material_Info(MaterialInfoClass *mat_info)
 	{
 		if (MatInfo)
@@ -106,8 +106,8 @@ public:
 	}
 
 	// New geometry accessors (non-const)
-	TriIndex *	Get_Non_Const_Polygon_Array(void);
-	Vector3 *	Get_Non_Const_Vertex_Normal_Array(void);
+	TriIndex *	Get_Non_Const_Polygon_Array();
+	Vector3 *	Get_Non_Const_Vertex_Normal_Array();
 
 private:
 
@@ -135,26 +135,26 @@ public:
 	DynamicMeshClass( int max_poly, int max_vert);
 	DynamicMeshClass( int max_poly, int max_vert, MaterialInfoClass *mat_info);
 	DynamicMeshClass( const DynamicMeshClass & src);
-	virtual ~DynamicMeshClass( void);
+	virtual ~DynamicMeshClass();
 
 	// Inherited from RenderObjClass:
-	virtual RenderObjClass * 		Clone(void) const;
-	virtual int							Class_ID(void) const					{ return CLASSID_DYNAMESH; }
+	virtual RenderObjClass * 		Clone() const;
+	virtual int							Class_ID() const					{ return CLASSID_DYNAMESH; }
 	virtual void						Render(RenderInfoClass & rinfo);
 
-	virtual MaterialInfoClass		*Peek_Material_Info(void)			{ return Model->Peek_Material_Info(); }
-	virtual MaterialInfoClass		*Get_Material_Info(void)			{ return Model->Get_Material_Info(); }
+	virtual MaterialInfoClass		*Peek_Material_Info()			{ return Model->Peek_Material_Info(); }
+	virtual MaterialInfoClass		*Get_Material_Info()			{ return Model->Get_Material_Info(); }
 	virtual void Set_Material_Info(MaterialInfoClass *mat_info)		{ Model->Set_Material_Info(mat_info); }
 
 	// all render objects should be able to tell you how many polygons were
 	// used in the making of the render object.
-	virtual int Get_Num_Polys(void) const { return PolyCount; }
+	virtual int Get_Num_Polys() const { return PolyCount; }
 
 	// return the number of vertices used by this renderobject
-	virtual int Get_Num_Vertices(void) const { return VertCount; }
+	virtual int Get_Num_Vertices() const { return VertCount; }
 
 	// Get and set static sort level
-   virtual int		Get_Sort_Level(void) const		{ return SortLevel; }
+   virtual int		Get_Sort_Level() const		{ return SortLevel; }
   	virtual void	Set_Sort_Level(int level)		{ SortLevel = level; if(level != SORT_LEVEL_NONE) Disable_Sort();}
 
 	// object space bounding volumes
@@ -211,7 +211,7 @@ public:
 
 	// Reset all polys and verts. Call the other reset functions directly if you do not want all
 	// characteristics to be reset.
-	virtual void Reset( void )
+	virtual void Reset()
 	{
 		// Note that the active poly count has changed since the last render call by setting the dirty flag
 		Reset_Flags();
@@ -231,11 +231,11 @@ public:
 	void Resize(int max_polys, int max_verts);
 
 	// Triangle creation routines
-	void	Begin_Tri_Strip( void )	{ 	TriVertexCount = 0; TriMode = TRI_MODE_STRIPS; }
-	void	Begin_Tri_Fan( void )	{	TriVertexCount = 0; TriMode = TRI_MODE_FANS; FanVertex = VertCount; }
+	void	Begin_Tri_Strip()	{ 	TriVertexCount = 0; TriMode = TRI_MODE_STRIPS; }
+	void	Begin_Tri_Fan()	{	TriVertexCount = 0; TriMode = TRI_MODE_FANS; FanVertex = VertCount; }
 
 	// vertex creation routines
-	void	Begin_Vertex( void) {}
+	void	Begin_Vertex() {}
 
 	virtual void Location( float x, float y, float z);
 
@@ -313,7 +313,7 @@ public:
 		return Model->Get_UV_Array(uv_array_index)[index];
 	}
 
-	bool End_Vertex( void);
+	bool End_Vertex();
 
 	// vertex creation shortcut, performs a begin, projected, rotated, and end
 	bool Vertex(float x, float y, float z, float u, float v)
@@ -331,12 +331,12 @@ public:
 		return End_Vertex();
 	}
 
-	void End_Tri_Strip( void )
+	void End_Tri_Strip()
 	{
 		TriVertexCount = 0;
 	}
 
-	void End_Tri_Fan( void )
+	void End_Tri_Fan()
 	{
 		TriVertexCount = 0;
 	}
@@ -369,28 +369,28 @@ public:
 	** The following are a bunch of inlined functions for setting & clearing the mesh model's various flags
 	*/
 	// dirty flags
-	void Set_Dirty_Bounds(void)				{ Model->Set_Flag(MeshGeometryClass::DIRTY_BOUNDS, true); }
-	void Clear_Dirty_Bounds(void)				{ Model->Set_Flag(MeshGeometryClass::DIRTY_BOUNDS, false); }
-	void Set_Dirty_Planes(void)				{ Model->Set_Flag(MeshGeometryClass::DIRTY_PLANES, true); }
-	void Clear_Dirty_Planes(void)				{ Model->Set_Flag(MeshGeometryClass::DIRTY_PLANES, false); }
-	void Set_Dirty_Vertex_Normals(void) 	{ Model->Set_Flag(MeshGeometryClass::DIRTY_VNORMALS, true); }
-	void Clear_Dirty_Vertex_Normals(void)	{ Model->Set_Flag(MeshGeometryClass::DIRTY_VNORMALS, false); }
+	void Set_Dirty_Bounds()				{ Model->Set_Flag(MeshGeometryClass::DIRTY_BOUNDS, true); }
+	void Clear_Dirty_Bounds()				{ Model->Set_Flag(MeshGeometryClass::DIRTY_BOUNDS, false); }
+	void Set_Dirty_Planes()				{ Model->Set_Flag(MeshGeometryClass::DIRTY_PLANES, true); }
+	void Clear_Dirty_Planes()				{ Model->Set_Flag(MeshGeometryClass::DIRTY_PLANES, false); }
+	void Set_Dirty_Vertex_Normals() 	{ Model->Set_Flag(MeshGeometryClass::DIRTY_VNORMALS, true); }
+	void Clear_Dirty_Vertex_Normals()	{ Model->Set_Flag(MeshGeometryClass::DIRTY_VNORMALS, false); }
 
 	// control flags
-	void Disable_Sort(void)						{ Model->Set_Flag(MeshGeometryClass::SORT, false); }
-	void Enable_Sort(void)						{ Model->Set_Flag(MeshGeometryClass::SORT, true); }
-	bool Sort_Enabled(void)						{ return (Model->Get_Flag(MeshGeometryClass::SORT) != 0); }
+	void Disable_Sort()						{ Model->Set_Flag(MeshGeometryClass::SORT, false); }
+	void Enable_Sort()						{ Model->Set_Flag(MeshGeometryClass::SORT, true); }
+	bool Sort_Enabled()						{ return (Model->Get_Flag(MeshGeometryClass::SORT) != 0); }
 
-	void Disable_Bounding_Box(void)			{ Model->Set_Flag(MeshGeometryClass::DISABLE_BOUNDING_BOX, true); }
-	void Enable_Bounding_Box(void)			{ Model->Set_Flag(MeshGeometryClass::DISABLE_BOUNDING_BOX, false); }
-	bool Test_Bounding_Box(void)				{ return (Model->Get_Flag(MeshGeometryClass::DISABLE_BOUNDING_BOX) == 0); }
+	void Disable_Bounding_Box()			{ Model->Set_Flag(MeshGeometryClass::DISABLE_BOUNDING_BOX, true); }
+	void Enable_Bounding_Box()			{ Model->Set_Flag(MeshGeometryClass::DISABLE_BOUNDING_BOX, false); }
+	bool Test_Bounding_Box()				{ return (Model->Get_Flag(MeshGeometryClass::DISABLE_BOUNDING_BOX) == 0); }
 
-	void Disable_Bounding_Sphere(void)		{ Model->Set_Flag(MeshGeometryClass::DISABLE_BOUNDING_SPHERE, true); }
-	void Enable_Bounding_Sphere(void)		{ Model->Set_Flag(MeshGeometryClass::DISABLE_BOUNDING_SPHERE, false); }
-	bool Test_Bounding_Sphere(void)			{ return (Model->Get_Flag(MeshGeometryClass::DISABLE_BOUNDING_SPHERE) == 0); }
+	void Disable_Bounding_Sphere()		{ Model->Set_Flag(MeshGeometryClass::DISABLE_BOUNDING_SPHERE, true); }
+	void Enable_Bounding_Sphere()		{ Model->Set_Flag(MeshGeometryClass::DISABLE_BOUNDING_SPHERE, false); }
+	bool Test_Bounding_Sphere()			{ return (Model->Get_Flag(MeshGeometryClass::DISABLE_BOUNDING_SPHERE) == 0); }
 
 	// this is called by the Reset function
-	void Set_Dirty( void) { Set_Dirty_Bounds(); Set_Dirty_Planes(); Set_Dirty_Vertex_Normals(); }
+	void Set_Dirty() { Set_Dirty_Bounds(); Set_Dirty_Planes(); Set_Dirty_Vertex_Normals(); }
 
 	enum {
 		MAX_COLOR_ARRAYS = MeshMatDescClass::MAX_COLOR_ARRAYS,
@@ -400,14 +400,14 @@ public:
 	// USER BE WARNED: This hack is only here because DynamicMeshClass does not expose all of the
 	// features that DynamicMeshModel provides.  It may be dangerous to modify the model behind the
 	// DynamicMeshClass's back so use at your own risk!
-	DynamicMeshModel *		Peek_Model(void)	{ return Model; }
+	DynamicMeshModel *		Peek_Model()	{ return Model; }
 
 protected:
 
 	inline void	Switch_To_Multi_Vertex_Color(int color_array_index = 0);
 
 	// tells when the triangle needs to be back flipped
-	virtual bool	Flip_Face( void) { return (!(TriVertexCount & 1)); }
+	virtual bool	Flip_Face() { return (!(TriVertexCount & 1)); }
 
 	// Low-level mesh object
 	DynamicMeshModel *		Model;
@@ -440,7 +440,7 @@ protected:
 	char SortLevel;
 };
 
-inline Vector3 * DynamicMeshModel::Get_Non_Const_Vertex_Normal_Array(void)
+inline Vector3 * DynamicMeshModel::Get_Non_Const_Vertex_Normal_Array()
 {
 	if (Get_Flag(DIRTY_VNORMALS)) {
 		Compute_Vertex_Normals();
@@ -448,7 +448,7 @@ inline Vector3 * DynamicMeshModel::Get_Non_Const_Vertex_Normal_Array(void)
 	return get_vert_normals();
 }
 
-inline TriIndex * DynamicMeshModel::Get_Non_Const_Polygon_Array(void)
+inline TriIndex * DynamicMeshModel::Get_Non_Const_Polygon_Array()
 {
 	return get_polys();
 }
@@ -541,13 +541,13 @@ public:
 	// constructor and destructor
 	DynamicScreenMeshClass( int max_poly, int max_vert, float aspect = 1.0f ) : DynamicMeshClass( max_poly, max_vert), Aspect( aspect ) {}
 	DynamicScreenMeshClass( const DynamicScreenMeshClass & src) : DynamicMeshClass(src), Aspect(src.Aspect) {}
-	virtual ~DynamicScreenMeshClass( void) {}
+	virtual ~DynamicScreenMeshClass() {}
 
 	// function to clone a dynamic screen mesh class
-	virtual RenderObjClass * 		Clone(void) const	{ return NEW_REF( DynamicScreenMeshClass, (*this)); }
+	virtual RenderObjClass * 		Clone() const	{ return NEW_REF( DynamicScreenMeshClass, (*this)); }
 
 	// class id of this render object
-	virtual int	Class_ID(void) const	{ return CLASSID_DYNASCREENMESH; }
+	virtual int	Class_ID() const	{ return CLASSID_DYNASCREENMESH; }
 
 	// Remap locations to match a screen
 	virtual void Location( float x, float y, float z = 0.0f);
@@ -558,7 +558,7 @@ public:
 	// Set position
 	virtual void Set_Position(const Vector3 &v);
 
-	virtual void Reset( void);
+	virtual void Reset();
 
 	virtual void Set_Aspect(float aspect) { Aspect=aspect; };
 
@@ -570,5 +570,5 @@ protected:
 	float		Aspect;
 
 	// tells when the triangle needs to be back flipped
-	virtual	bool	Flip_Face( void) { return !DynamicMeshClass::Flip_Face(); }
+	virtual	bool	Flip_Face() { return !DynamicMeshClass::Flip_Face(); }
 };

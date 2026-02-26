@@ -40,7 +40,7 @@
 #include "Common/Player.h"
 #include "Common/PlayerTemplate.h"
 #include "Common/QuotedPrintable.h"
-#include "Common/UserPreferences.h"
+#include "Common/OptionPreferences.h"
 #include "GameClient/AnimateWindowManager.h"
 #include "GameClient/ClientInstance.h"
 #include "GameClient/GameText.h"
@@ -72,7 +72,7 @@ static Bool justEntered = FALSE;
 
 
 
-LANPreferences::LANPreferences( void )
+LANPreferences::LANPreferences()
 {
 	loadFromIniFile();
 }
@@ -93,7 +93,7 @@ Bool LANPreferences::loadFromIniFile()
 	return load("Network.ini");
 }
 
-UnicodeString LANPreferences::getUserName(void)
+UnicodeString LANPreferences::getUserName()
 {
 	UnicodeString ret;
 
@@ -123,7 +123,7 @@ UnicodeString LANPreferences::getUserName(void)
 	return ret;
 }
 
-Int LANPreferences::getPreferredColor(void)
+Int LANPreferences::getPreferredColor()
 {
 	Int ret;
 	LANPreferences::const_iterator it = find("Color");
@@ -139,7 +139,7 @@ Int LANPreferences::getPreferredColor(void)
 	return ret;
 }
 
-Int LANPreferences::getPreferredFaction(void)
+Int LANPreferences::getPreferredFaction()
 {
 	Int ret;
 	LANPreferences::const_iterator it = find("PlayerTemplate");
@@ -164,7 +164,7 @@ Int LANPreferences::getPreferredFaction(void)
 	return ret;
 }
 
-Bool LANPreferences::usesSystemMapDir(void)
+Bool LANPreferences::usesSystemMapDir()
 {
 	OptionPreferences::const_iterator it = find("UseSystemMapDir");
 	if (it == end())
@@ -176,7 +176,7 @@ Bool LANPreferences::usesSystemMapDir(void)
 	return FALSE;
 }
 
-AsciiString LANPreferences::getPreferredMap(void)
+AsciiString LANPreferences::getPreferredMap()
 {
 	AsciiString ret;
 	LANPreferences::const_iterator it = find("Map");
@@ -197,7 +197,7 @@ AsciiString LANPreferences::getPreferredMap(void)
 	return ret;
 }
 
-Int LANPreferences::getNumRemoteIPs(void)
+Int LANPreferences::getNumRemoteIPs()
 {
 	Int ret;
 	LANPreferences::const_iterator it = find("NumRemoteIPs");
@@ -245,7 +245,7 @@ UnicodeString LANPreferences::getRemoteIPEntry(Int i)
 
 static const char superweaponRestrictionKey[] = "SuperweaponRestrict";
 
-Bool LANPreferences::getSuperweaponRestricted(void) const
+Bool LANPreferences::getSuperweaponRestricted() const
 {
   LANPreferences::const_iterator it = find(superweaponRestrictionKey);
   if (it == end())
@@ -262,7 +262,7 @@ void LANPreferences::setSuperweaponRestricted( Bool superweaponRestricted )
 }
 
 static const char startingCashKey[] = "StartingCash";
-Money LANPreferences::getStartingCash(void) const
+Money LANPreferences::getStartingCash() const
 {
   LANPreferences::const_iterator it = find(startingCashKey);
   if (it == end())

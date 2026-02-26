@@ -347,7 +347,7 @@ bool DX8Wrapper::Init(void * hwnd, bool lite)
 	return(true);
 }
 
-void DX8Wrapper::Shutdown(void)
+void DX8Wrapper::Shutdown()
 {
 	if (D3DDevice) {
 
@@ -392,7 +392,7 @@ void DX8Wrapper::Shutdown(void)
 	IsInitted = false;		// 010803 srj
 }
 
-void DX8Wrapper::Do_Onetime_Device_Dependent_Inits(void)
+void DX8Wrapper::Do_Onetime_Device_Dependent_Inits()
 {
 	/*
 	** Set Global render states (some of which depend on caps)
@@ -415,7 +415,7 @@ void DX8Wrapper::Do_Onetime_Device_Dependent_Inits(void)
 }
 
 inline DWORD F2DW(float f) { return *((unsigned*)&f); }
-void DX8Wrapper::Set_Default_Global_Render_States(void)
+void DX8Wrapper::Set_Default_Global_Render_States()
 {
 	DX8_THREAD_ASSERT();
 	const D3DCAPS8 &caps = Get_Current_Caps()->Get_DX8_Caps();
@@ -438,7 +438,7 @@ void DX8Wrapper::Set_Default_Global_Render_States(void)
 }
 
 //MW: I added this for 'Generals'.
-bool DX8Wrapper::Validate_Device(void)
+bool DX8Wrapper::Validate_Device()
 {	DWORD numPasses=0;
 	HRESULT hRes;
 
@@ -447,7 +447,7 @@ bool DX8Wrapper::Validate_Device(void)
 	return (hRes == D3D_OK);
 }
 
-void DX8Wrapper::Invalidate_Cached_Render_States(void)
+void DX8Wrapper::Invalidate_Cached_Render_States()
 {
 	render_state_changed=0;
 
@@ -480,7 +480,7 @@ void DX8Wrapper::Invalidate_Cached_Render_States(void)
 	memset(&DX8Transforms, 0, sizeof(DX8Transforms));
 }
 
-void DX8Wrapper::Do_Onetime_Device_Dependent_Shutdowns(void)
+void DX8Wrapper::Do_Onetime_Device_Dependent_Shutdowns()
 {
 	/*
 	** Shutdown ww3d systems
@@ -511,7 +511,7 @@ void DX8Wrapper::Do_Onetime_Device_Dependent_Shutdowns(void)
 }
 
 
-bool DX8Wrapper::Create_Device(void)
+bool DX8Wrapper::Create_Device()
 {
 	WWASSERT(D3DDevice==nullptr);	// for now, once you've created a device, you're stuck with it!
 
@@ -643,7 +643,7 @@ bool DX8Wrapper::Reset_Device(bool reload_assets)
 	return false;
 }
 
-void DX8Wrapper::Release_Device(void)
+void DX8Wrapper::Release_Device()
 {
 	if (D3DDevice) {
 
@@ -755,7 +755,7 @@ void DX8Wrapper::Enumerate_Devices()
 	}
 }
 
-bool DX8Wrapper::Set_Any_Render_Device(void)
+bool DX8Wrapper::Set_Any_Render_Device()
 {
 	// Try windowed first
 	int dev_number = 0;
@@ -1058,13 +1058,13 @@ bool DX8Wrapper::Set_Render_Device(int dev, int width, int height, int bits, int
 	return ret;
 }
 
-bool DX8Wrapper::Set_Next_Render_Device(void)
+bool DX8Wrapper::Set_Next_Render_Device()
 {
 	int new_dev = (CurRenderDevice + 1) % _RenderDeviceNameTable.Count();
 	return Set_Render_Device(new_dev);
 }
 
-bool DX8Wrapper::Toggle_Windowed(void)
+bool DX8Wrapper::Toggle_Windowed()
 {
 #ifdef WW3D_DX8
 	// State OK?
@@ -1125,24 +1125,24 @@ void DX8Wrapper::Set_Swap_Interval(int swap)
 	Reset_Device();
 }
 
-int DX8Wrapper::Get_Swap_Interval(void)
+int DX8Wrapper::Get_Swap_Interval()
 {
 	return _PresentParameters.FullScreen_PresentationInterval;
 }
 
-bool DX8Wrapper::Has_Stencil(void)
+bool DX8Wrapper::Has_Stencil()
 {
 	bool has_stencil = (_PresentParameters.AutoDepthStencilFormat == D3DFMT_D24S8 ||
 						_PresentParameters.AutoDepthStencilFormat == D3DFMT_D24X4S4);
 	return has_stencil;
 }
 
-int DX8Wrapper::Get_Render_Device_Count(void)
+int DX8Wrapper::Get_Render_Device_Count()
 {
 	return _RenderDeviceNameTable.Count();
 
 }
-int DX8Wrapper::Get_Render_Device(void)
+int DX8Wrapper::Get_Render_Device()
 {
 	assert(IsInitted);
 	return CurRenderDevice;
@@ -1572,7 +1572,7 @@ unsigned DX8Wrapper::Get_Last_Frame_Render_State_Changes()	{ return last_frame_r
 unsigned DX8Wrapper::Get_Last_Frame_Texture_Stage_State_Changes()	{ return last_frame_texture_stage_state_changes; }
 unsigned DX8Wrapper::Get_Last_Frame_DX8_Calls()					{ return last_frame_number_of_DX8_calls; }
 unsigned DX8Wrapper::Get_Last_Frame_Draw_Calls()				{ return last_frame_draw_calls; }
-unsigned long DX8Wrapper::Get_FrameCount(void) {return FrameCount;}
+unsigned long DX8Wrapper::Get_FrameCount() {return FrameCount;}
 
 void DX8_Assert()
 {
@@ -1580,7 +1580,7 @@ void DX8_Assert()
 	DX8_THREAD_ASSERT();
 }
 
-void DX8Wrapper::Begin_Scene(void)
+void DX8Wrapper::Begin_Scene()
 {
 	DX8_THREAD_ASSERT();
 
@@ -1648,7 +1648,7 @@ void DX8Wrapper::End_Scene(bool flip_frames)
 }
 
 
-void DX8Wrapper::Flip_To_Primary(void)
+void DX8Wrapper::Flip_To_Primary()
 {
 	// If we are fullscreen and the current frame is odd then we need
 	// to force a page flip to ensure that the first buffer in the flipping
@@ -4260,7 +4260,7 @@ const char* DX8Wrapper::Get_DX8_Blend_Op_Name(unsigned value)
 // DX8Wrapper::getBackBufferFormat
 //============================================================================
 
-WW3DFormat	DX8Wrapper::getBackBufferFormat( void )
+WW3DFormat	DX8Wrapper::getBackBufferFormat()
 {
 	return D3DFormat_To_WW3DFormat( _PresentParameters.BackBufferFormat );
 }
