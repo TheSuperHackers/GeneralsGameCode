@@ -961,24 +961,6 @@ WindowMsgHandledType MainMenuInput( GameWindow *window, UnsignedInt msg,
 			{
 
 				DEBUG_LOG(("Mouse X:%d, Y:%d", mouse.x, mouse.y));
-				if(notShown)
-				{
-					initialGadgetDelay = 1;
-					dropDownWindows[DROPDOWN_MAIN]->winHide(FALSE);
-					TheTransitionHandler->setGroup("MainMenuFade", TRUE);
-					TheTransitionHandler->setGroup("MainMenuDefaultMenu");
-					TheMouse->setVisibility(TRUE);
-					notShown = FALSE;
-					return MSG_HANDLED;
-				}
-			}
-
-		}
-		break;
-		case GWM_CHAR:
-		{
-			if(notShown)
-			{
 				initialGadgetDelay = 1;
 				dropDownWindows[DROPDOWN_MAIN]->winHide(FALSE);
 				TheTransitionHandler->setGroup("MainMenuFade", TRUE);
@@ -987,6 +969,18 @@ WindowMsgHandledType MainMenuInput( GameWindow *window, UnsignedInt msg,
 				notShown = FALSE;
 				return MSG_HANDLED;
 			}
+
+		}
+		break;
+		case GWM_CHAR:
+		{
+			initialGadgetDelay = 1;
+			dropDownWindows[DROPDOWN_MAIN]->winHide(FALSE);
+			TheTransitionHandler->setGroup("MainMenuFade", TRUE);
+			TheTransitionHandler->setGroup("MainMenuDefaultMenu");
+			TheMouse->setVisibility(TRUE);
+			notShown = FALSE;
+			return MSG_HANDLED;
 
 		}
 
