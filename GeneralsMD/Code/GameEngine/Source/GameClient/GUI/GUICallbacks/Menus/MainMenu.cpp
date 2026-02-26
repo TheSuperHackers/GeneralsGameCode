@@ -932,13 +932,11 @@ void MainMenuUpdate( WindowLayout *layout, void *userData )
 WindowMsgHandledType MainMenuInput( GameWindow *window, UnsignedInt msg,
 																		WindowMsgData mData1, WindowMsgData mData2 )
 {
-
 	if(!notShown)
 		return MSG_IGNORED;
 
 	switch( msg )
 	{
-
 		// --------------------------------------------------------------------------------------------
 		case GWM_MOUSE_POS:
 		{
@@ -959,7 +957,6 @@ WindowMsgHandledType MainMenuInput( GameWindow *window, UnsignedInt msg,
 
 			if (doInitialize)
 			{
-
 				DEBUG_LOG(("Mouse X:%d, Y:%d", mouse.x, mouse.y));
 				initialGadgetDelay = 1;
 				dropDownWindows[DROPDOWN_MAIN]->winHide(FALSE);
@@ -970,8 +967,10 @@ WindowMsgHandledType MainMenuInput( GameWindow *window, UnsignedInt msg,
 				return MSG_HANDLED;
 			}
 
+			break;
 		}
-		break;
+
+		// --------------------------------------------------------------------------------------------
 		case GWM_CHAR:
 		{
 			initialGadgetDelay = 1;
@@ -981,15 +980,12 @@ WindowMsgHandledType MainMenuInput( GameWindow *window, UnsignedInt msg,
 			TheMouse->setVisibility(TRUE);
 			notShown = FALSE;
 			return MSG_HANDLED;
-
 		}
-
 	}
 
-
 	return MSG_IGNORED;
-
 }
+
 void PrintOffsetsFromControlBarParent( void );
 //-------------------------------------------------------------------------------------------------
 /** Main menu window system callback */
