@@ -172,6 +172,9 @@ public:
 	virtual void zoomCamera( Real finalZoom, Int milliseconds, Real easeIn=0.0f, Real easeOut=0.0f ) {};
 	virtual void pitchCamera( Real finalPitch, Int milliseconds, Real easeIn=0.0f, Real easeOut=0.0f ) {};
 
+	virtual Bool isDoingScriptedCamera() = 0;
+	virtual void stopDoingScriptedCamera() = 0;
+
 	virtual void setAngle( Real radians );															///< Rotate the view around the vertical axis to the given angle (yaw)
 	virtual Real getAngle() { return m_angle; }										///< Return current camera angle
 	virtual void setPitch( Real radians );															///< Rotate the view around the horizontal axis to the given angle (pitch)

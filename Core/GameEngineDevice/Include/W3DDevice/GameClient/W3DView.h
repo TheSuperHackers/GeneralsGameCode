@@ -128,6 +128,15 @@ typedef struct
 // ------------------------------------------------------------------------------------------------
 class W3DView : public View, public SubsystemInterface
 {
+	enum Scripted
+	{
+		Scripted_Rotate = 1<<0, // Set when rotating the camera
+		Scripted_Pitch = 1<<1, // Set when pitching the camera
+		Scripted_Zoom = 1<<2, // Set when zooming the camera
+		Scripted_CameraLock = 1<<3, // Set when following a unit via script
+		Scripted_MoveOnWaypointPath = 1<<4, // Set when moving camera along waypoint path
+	};
+	typedef UnsignedInt ScriptedState;
 
 public:
 	W3DView();
@@ -156,6 +165,9 @@ public:
 	virtual void scrollBy( Coord2D *delta );  ///< Shift the view by the given delta
 
 	virtual void forceRedraw();
+
+	virtual Bool isDoingScriptedCamera();
+	virtual void stopDoingScriptedCamera();
 
 	virtual void setAngle( Real radians );									///< Rotate the view around the vertical axis to the given angle (yaw)
 	virtual void setPitch( Real radians );									///< Rotate the view around the horizontal axis to the given angle (pitch)
@@ -246,21 +258,15 @@ private:
 	Real m_shakeIntensity;													///< the intensity of the oscillation
 	Vector3 m_shakerAngles;													//WST 11/12/2002 new multiple instance camera shaker system
 
-	TRotateCameraInfo	m_rcInfo;
-	Bool		m_doingRotateCamera;										///< True if we are doing a camera rotate.
+	ScriptedState m_scriptedState; ///< Flags for scripted camera movements. Use functions addScriptedState, removeScriptedState for write.
 
+	TRotateCameraInfo m_rcInfo;
 	TPitchCameraInfo m_pcInfo;
-	Bool m_doingPitchCamera;
 	TZoomCameraInfo m_zcInfo;
-	Bool m_doingZoomCamera;
-
-	Bool m_doingScriptedCameraLock;									///< True if we are following a unit via script
+	TMoveAlongWaypointPathInfo m_mcwpInfo;					///< Move camera along waypoint path info.
+	Bool m_CameraArrivedAtWaypointOnPathFlag;
 
 	Real		m_FXPitch;															///< Camera effects pitch.  0 = flat, infinite = look down, 1 = normal.
-
-	TMoveAlongWaypointPathInfo m_mcwpInfo;					///< Move camera along waypoint path info.
-	Bool	m_doingMoveCameraOnWaypointPath;				///< If true, moving camera along waypoint path.
-	Bool	m_CameraArrivedAtWaypointOnPathFlag;
 
 	Bool		m_freezeTimeForCameraMovement;
 	Int			m_timeMultiplier;												///< Time speedup multiplier.
@@ -283,6 +289,9 @@ private:
 	void buildCameraTransform(Matrix3D *transform); ///< calculate (but do not set) the transform matrix of m_3DCamera, based on m_pos & m_angle
 	void calcCameraAreaConstraints(); ///< Recalculates the camera area constraints
 	Bool isWithinCameraHeightConstraints() const;
+	Bool hasScriptedState(ScriptedState state) const;
+	void addScriptedState(ScriptedState state);
+	void removeScriptedState(ScriptedState state);
 	void moveAlongWaypointPath(Real milliseconds); ///< Move camera along path.
 	void getPickRay(const ICoord2D *screen, Vector3 *rayStart, Vector3 *rayEnd);	///<returns a line segment (ray) originating at the given screen position
 	void setupWaypointPath(Bool orient);					///< Calculates distances & angles for moving along a waypoint path.
