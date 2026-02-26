@@ -207,7 +207,7 @@ static void doSetRallyPoint( Object *obj, const Coord3D& pos )
 
 static Object * getSingleObjectFromSelection(const AIGroup *currentlySelectedGroup)
 {
-	if( currentlySelectedGroup )
+	if( currentlySelectedGroup && !currentlySelectedGroup->isEmpty() )
 	{
 		const VecObjectID& selectedObjects = currentlySelectedGroup->getAllIDs();
 		DEBUG_ASSERTCRASH(selectedObjects.size() == 1, ("Trying to get single object from multiple selection!"));
@@ -532,7 +532,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			Object *targetObject = findObjectByID( msg->getArgument( 0 )->objectID );
 
 			// issue command for either single object or for selected group
-			if( currentlySelectedGroup )
+			if( currentlySelectedGroup && targetObject )
 				currentlySelectedGroup->groupCombatDrop( targetObject,
 																								 *targetObject->getPosition(),
 																								 CMD_FROM_PLAYER );
