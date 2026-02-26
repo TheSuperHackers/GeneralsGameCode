@@ -957,7 +957,6 @@ WindowMsgHandledType MainMenuInput( GameWindow *window, UnsignedInt msg,
 
 			if (doInitialize)
 			{
-				DEBUG_LOG(("Mouse X:%d, Y:%d", mouse.x, mouse.y));
 				initialGadgetDelay = 1;
 				dropDownWindows[DROPDOWN_MAIN]->winHide(FALSE);
 				TheTransitionHandler->setGroup("MainMenuFade", TRUE);
