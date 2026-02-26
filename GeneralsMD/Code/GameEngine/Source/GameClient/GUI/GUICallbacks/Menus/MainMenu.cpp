@@ -942,17 +942,22 @@ WindowMsgHandledType MainMenuInput( GameWindow *window, UnsignedInt msg,
 		// --------------------------------------------------------------------------------------------
 		case GWM_MOUSE_POS:
 		{
-			ICoord2D mouse;
-			mouse.x = mData1 & 0xFFFF;
-			mouse.y = mData1 >> 16;
+			// TheSuperHackers @tweak 26/02/2026 Show mouse and menu immediately when shellmap is disabled.
+			Bool doInitialize = !TheGlobalData->m_shellMapOn;
 
-			// TheSuperHackers @tweak 20/08/2025 Show mouse and menu immediately when shellmap is disabled.
-			if (TheGlobalData->m_shellMapOn && mouse.x == 0 && mouse.y == 0)
-				break;
+			if (!doInitialize)
+			{
+				ICoord2D mouse;
+				mouse.x = mData1 & 0xFFFF;
+				mouse.y = mData1 >> 16;
 
-			static Int mousePosX = mouse.x;
-			static Int mousePosY = mouse.y;
-			if(abs(mouse.x - mousePosX) > 20 || abs(mouse.y - mousePosY) > 20)
+				static Int mousePosX = mouse.x;
+				static Int mousePosY = mouse.y;
+
+				doInitialize = abs(mouse.x - mousePosX) > 20 || abs(mouse.y - mousePosY) > 20;
+			}
+
+			if (doInitialize)
 			{
 
 				DEBUG_LOG(("Mouse X:%d, Y:%d", mouse.x, mouse.y));
