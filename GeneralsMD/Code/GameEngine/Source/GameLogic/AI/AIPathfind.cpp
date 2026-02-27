@@ -2746,12 +2746,14 @@ void PathfindZoneManager::calculateZones( PathfindCell **map, PathfindLayer laye
 						notTerrainOrCrusher = FALSE;
 					}
 
-					if (waterGround(r_thisCell,r_topCell))
-						applyZone(r_thisCell, r_topCell, m_groundWaterZones, m_maxZone);
-					else if (groundRubble(r_thisCell, r_topCell))
-						applyZone(r_thisCell, r_topCell, m_groundRubbleZones, m_maxZone);
-					else if (groundCliff(r_thisCell,r_topCell))
-						applyZone(r_thisCell, r_topCell, m_groundCliffZones, m_maxZone);
+					if (notTerrainOrCrusher) {
+						if (waterGround(r_thisCell, r_topCell))
+							applyZone(r_thisCell, r_topCell, m_groundWaterZones, m_maxZone);
+						else if (groundRubble(r_thisCell, r_topCell))
+							applyZone(r_thisCell, r_topCell, m_groundRubbleZones, m_maxZone);
+						else if (groundCliff(r_thisCell, r_topCell))
+							applyZone(r_thisCell, r_topCell, m_groundCliffZones, m_maxZone);
+					}
 
 				}
 
