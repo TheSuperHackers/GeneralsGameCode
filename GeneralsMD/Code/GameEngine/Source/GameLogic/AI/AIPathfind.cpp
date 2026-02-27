@@ -2619,11 +2619,9 @@ void PathfindZoneManager::calculateZones( PathfindCell **map, PathfindLayer laye
 	collapsedZones[0] = 0;
 
 	i = 1;
-	while ( i < totalZones )
-	{
+	while ( i < totalZones ) {
 		Int zone = zoneEquivalency[ i ];
-		if (zone == i)
-		{
+		if (zone == i) {
 			collapsedZones[ i ] = m_maxZone;
 			++m_maxZone;
 		}
@@ -2635,11 +2633,9 @@ void PathfindZoneManager::calculateZones( PathfindCell **map, PathfindLayer laye
 
 	// Now map the zones in the map back into the collapsed zones.
 	j=globalBounds.lo.y;
-	while( j<=globalBounds.hi.y )
-	{
+	while( j<=globalBounds.hi.y ) {
 		i=globalBounds.lo.x;
-		while( i<=globalBounds.hi.x )
-		{
+		while( i<=globalBounds.hi.x ) {
 			PathfindCell &cell = map[i][j];
 			cell.setZone(collapsedZones[cell.getZone()]);
 			++i;
@@ -2648,13 +2644,11 @@ void PathfindZoneManager::calculateZones( PathfindCell **map, PathfindLayer laye
 	}
 
 	i = 0;
-	while ( i <= LAYER_LAST )
-	{
+	while ( i <= LAYER_LAST ) {
 		PathfindLayer &r_thisLayer = layers[i];
 
 		Int zone = collapsedZones[r_thisLayer.getZone()];
-		if (zone == 0)
-		{
+		if (zone == 0) {
 			zone = m_maxZone;
 			m_maxZone++;
 		}
@@ -2662,8 +2656,7 @@ void PathfindZoneManager::calculateZones( PathfindCell **map, PathfindLayer laye
 		r_thisLayer.setZone( zone );
 		r_thisLayer.applyZone();
 
-		if (!r_thisLayer.isUnused() && !r_thisLayer.isDestroyed())
-		{
+		if (!r_thisLayer.isUnused() && !r_thisLayer.isDestroyed()) {
 			ICoord2D ndx;
 			r_thisLayer.getStartCellIndex(&ndx);
 			setBridge(ndx.x, ndx.y, true);
@@ -2676,10 +2669,8 @@ void PathfindZoneManager::calculateZones( PathfindCell **map, PathfindLayer laye
 
 	allocateZones();
 
-	for (xBlock=0; xBlock<xCount; xBlock++)
-	{
-		for (yBlock=0; yBlock<yCount; yBlock++)
-		{
+	for (xBlock=0; xBlock<xCount; xBlock++) {
+		for (yBlock=0; yBlock<yCount; yBlock++) {
 			IRegion2D bounds;
 			bounds.lo.x = globalBounds.lo.x + xBlock*ZONE_BLOCK_SIZE;
 			bounds.lo.y = globalBounds.lo.y + yBlock*ZONE_BLOCK_SIZE;
@@ -2697,52 +2688,43 @@ void PathfindZoneManager::calculateZones( PathfindCell **map, PathfindLayer laye
 	}
 
 	i = 0;
-	while ( i < m_zonesAllocated )
-	{
+	while ( i < m_zonesAllocated ) {
 		m_groundCliffZones[i] = m_groundWaterZones[i] = m_groundRubbleZones[i] = m_terrainZones[i] = m_crusherZones[i] = m_hierarchicalZones[i] = i;
 		i++;
 	}
 
 	REGISTER UnsignedInt maxZone = m_maxZone;
 	j=globalBounds.lo.y;
-	while( j <= globalBounds.hi.y )
-	{
+	while( j <= globalBounds.hi.y ) {
 		i=globalBounds.lo.x;
-		while( i <= globalBounds.hi.x )
-		{
+		while( i <= globalBounds.hi.x ) {
 			PathfindCell &r_thisCell = map[i][j];
 
 			if ( (r_thisCell.getConnectLayer() > LAYER_GROUND) &&
-				(r_thisCell.getType() == PathfindCell::CELL_CLEAR) )
-			{
+				(r_thisCell.getType() == PathfindCell::CELL_CLEAR) ) {
 				PathfindLayer *layer = layers + r_thisCell.getConnectLayer();
 				resolveZones(r_thisCell.getZone(), layer->getZone(), m_hierarchicalZones, maxZone);
 			}
 
-			if ( i > globalBounds.lo.x && r_thisCell.getZone() != map[i-1][j].getZone() )
-			{
+			if ( i > globalBounds.lo.x && r_thisCell.getZone() != map[i-1][j].getZone() ) {
 				const PathfindCell &r_leftCell = map[i-1][j];
 
 				if (r_thisCell.getType() == r_leftCell.getType())
 					applyZone(r_thisCell, r_leftCell, m_hierarchicalZones, maxZone);//if this is true, skip all the ones below
-				else
-				{
+				else {
 					Bool notTerrainOrCrusher = TRUE; // if this is false, skip the if-else-ladder below
 
-					if (terrain(r_thisCell, r_leftCell))
-					{
+					if (terrain(r_thisCell, r_leftCell)) {
 						applyZone(r_thisCell, r_leftCell, m_terrainZones, maxZone);
 						notTerrainOrCrusher = FALSE;
 					}
 
-					if (crusherGround(r_thisCell, r_leftCell))
-					{
+					if (crusherGround(r_thisCell, r_leftCell)) {
 						applyZone(r_thisCell, r_leftCell, m_crusherZones, maxZone);
 						notTerrainOrCrusher = FALSE;
 					}
 
-					if ( notTerrainOrCrusher )
-					{
+					if ( notTerrainOrCrusher ) {
 						if (waterGround(r_thisCell, r_leftCell))
 							applyZone(r_thisCell, r_leftCell, m_groundWaterZones, maxZone);
 						else if (groundRubble(r_thisCell, r_leftCell))
@@ -2755,24 +2737,20 @@ void PathfindZoneManager::calculateZones( PathfindCell **map, PathfindLayer laye
 
 			}
 
-			if (j>globalBounds.lo.y && r_thisCell.getZone()!=map[i][j-1].getZone())
-			{
+			if (j>globalBounds.lo.y && r_thisCell.getZone()!=map[i][j-1].getZone()) {
 				const PathfindCell &r_topCell = map[i][j-1];
 
 				if (r_thisCell.getType() == r_topCell.getType())
 					applyZone(r_thisCell, r_topCell, m_hierarchicalZones, maxZone);
-				else
-				{
+				else {
 					Bool notTerrainOrCrusher = TRUE; // if this is false, skip the if-else-ladder below
 
-					if (terrain(r_thisCell, r_topCell))
-					{
+					if (terrain(r_thisCell, r_topCell)) {
 						applyZone(r_thisCell, r_topCell, m_terrainZones, maxZone);
 						notTerrainOrCrusher = FALSE;
 					}
 
-					if (crusherGround(r_thisCell, r_topCell))
-					{
+					if (crusherGround(r_thisCell, r_topCell)) {
 						applyZone(r_thisCell, r_topCell, m_crusherZones, maxZone);
 						notTerrainOrCrusher = FALSE;
 					}
@@ -2798,8 +2776,8 @@ void PathfindZoneManager::calculateZones( PathfindCell **map, PathfindLayer laye
 	{
 		i = 1;
 		REGISTER Int zone;
-		while ( i < maxZone )
-		{		// Flatten hierarchical zones.
+		while ( i < maxZone ) {
+			// Flatten hierarchical zones.
 			zone = m_hierarchicalZones[i];
 			m_hierarchicalZones[i] = m_hierarchicalZones[ zone ];
 			++i;
@@ -2818,14 +2796,12 @@ void PathfindZoneManager::calculateZones( PathfindCell **map, PathfindLayer laye
 	QueryPerformanceCounter((LARGE_INTEGER *)&endTime64);
 	timeToUpdate = ((double)(endTime64-startTime64) / (double)(freq64));
 
-	if ( updateSamples < 400 )
-	{
+	if ( updateSamples < 400 ) {
 		averageTimeToUpdate = ((averageTimeToUpdate * updateSamples) + timeToUpdate) / (updateSamples + 1.0f);
 		updateSamples++;
 		DEBUG_LOG(("computing...: %f", averageTimeToUpdate));
 	}
-	else if ( updateSamples == 400 )
-	{
+	else if ( updateSamples == 400 ) {
 		DEBUG_LOG((" =============DONE============= Average time to calculate zones: %f", averageTimeToUpdate));
 		DEBUG_LOG(("                                           Percent of baseline : %f", averageTimeToUpdate/0.003335f));
 		updateSamples = 777;
