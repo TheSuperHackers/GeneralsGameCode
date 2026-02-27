@@ -941,9 +941,9 @@ WindowMsgHandledType MainMenuInput( GameWindow *window, UnsignedInt msg,
 		case GWM_MOUSE_POS:
 		{
 			// TheSuperHackers @tweak 26/02/2026 Show mouse and menu immediately when shellmap is disabled.
-			Bool doInitialize = !TheGlobalData->m_shellMapOn;
+			Bool doShow = !TheGlobalData->m_shellMapOn;
 
-			if (!doInitialize)
+			if (!doShow)
 			{
 				ICoord2D mouse;
 				mouse.x = mData1 & 0xFFFF;
@@ -952,10 +952,10 @@ WindowMsgHandledType MainMenuInput( GameWindow *window, UnsignedInt msg,
 				static Int mousePosX = mouse.x;
 				static Int mousePosY = mouse.y;
 
-				doInitialize = abs(mouse.x - mousePosX) > 20 || abs(mouse.y - mousePosY) > 20;
+				doShow = abs(mouse.x - mousePosX) > 20 || abs(mouse.y - mousePosY) > 20;
 			}
 
-			if (doInitialize)
+			if (doShow)
 			{
 				initialGadgetDelay = 1;
 				dropDownWindows[DROPDOWN_MAIN]->winHide(FALSE);
