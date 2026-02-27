@@ -1884,12 +1884,12 @@ void PartitionData::doCircleFill(
 
 static Bool doesCircleOverlapCell(Real centerX, Real centerY, Real radius, Real cellX, Real cellY, Real cellSize)
 {
-	Real closestX = maxReal(cellX, minReal(centerX, cellX + cellSize));
-	Real closestY = maxReal(cellY, minReal(centerY, cellY + cellSize));
+	Real closestX = std::max(cellX, std::min(centerX, cellX + cellSize));
+	Real closestY = std::max(cellY, std::min(centerY, cellY + cellSize));
 	Real distX = centerX - closestX;
 	Real distY = centerY - closestY;
 
-	return (distX * distX + distY * distY) < radius * radius;
+	return (sqr(distX) + sqr(distY)) < sqr(radius);
 }
 
 void PartitionData::doCircleFillPrecise(Real centerX, Real centerY, Real radius)
