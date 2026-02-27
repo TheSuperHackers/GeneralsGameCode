@@ -155,7 +155,7 @@ public:
 	void incrementRenderedObjectCount() { m_renderedObjectCount++; }
 	virtual void notifyTerrainObjectMoved(Object *obj) = 0;
 
-	virtual Bool isMovieAbortRequested();
+	static Bool isMovieAbortRequested();
 
 protected:
 

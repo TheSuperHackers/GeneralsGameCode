@@ -542,7 +542,7 @@ void SinglePlayerLoadScreen::init( GameInfo *game )
 		Int shiftedPercent = -FRAME_FUDGE_ADD + 1;
 		while (m_videoStream->frameIndex() < m_videoStream->frameCount() - 1 )
 		{
-			if (TheGameClient->isMovieAbortRequested())
+			if (GameClient::isMovieAbortRequested())
 			{
 				break;
 			}
@@ -628,7 +628,7 @@ void SinglePlayerLoadScreen::init( GameInfo *game )
 			fudgeFactor = 30 * ((currTime - begin)/ INT_TO_REAL(delay ));
 			GadgetProgressBarSetProgress(m_progressBar, fudgeFactor);
 
-			if (TheGameClient->isMovieAbortRequested())
+			if (GameClient::isMovieAbortRequested())
 			{
 				break;
 			}
@@ -1053,7 +1053,7 @@ void ChallengeLoadScreen::init( GameInfo *game )
 		Int shiftedPercent = -FRAME_FUDGE_ADD + 1;
 		while (m_videoStream->frameIndex() < m_videoStream->frameCount() - 1 )
 		{
-			if (TheGameClient->isMovieAbortRequested())
+			if (GameClient::isMovieAbortRequested())
 			{
 				break;
 			}
@@ -1100,7 +1100,7 @@ void ChallengeLoadScreen::init( GameInfo *game )
 		m_videoStream->frameGoto(m_videoStream->frameCount()); // zero based
 		while(!m_videoStream->isFrameReady())
 		{
-			if (TheGameClient->isMovieAbortRequested())
+			if (GameClient::isMovieAbortRequested())
 			{
 				break;
 			}
@@ -1122,7 +1122,7 @@ void ChallengeLoadScreen::init( GameInfo *game )
 			fudgeFactor = 30 * ((currTime - begin)/ INT_TO_REAL(delay ));
 			GadgetProgressBarSetProgress(m_progressBar, fudgeFactor);
 
-			if (TheGameClient->isMovieAbortRequested())
+			if (GameClient::isMovieAbortRequested())
 			{
 				break;
 			}

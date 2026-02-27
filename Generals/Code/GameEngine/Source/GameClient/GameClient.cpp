@@ -535,7 +535,7 @@ void GameClient::update()
 					Int beginTime = timeGetTime();
 					while(beginTime + 4000 > timeGetTime() )
 					{
-						if (TheGameClient->isMovieAbortRequested())
+						if (GameClient::isMovieAbortRequested())
 						{
 							break;
 						}
@@ -760,7 +760,6 @@ void GameClient::updateHeadless()
 	TheParticleSystemManager->reset();
 }
 
-// TheSuperHackers @feature Check if the user has requested to abort movie
 Bool GameClient::isMovieAbortRequested()
 {
 	// TheSuperHackers @feature User can skip video by pressing ESC

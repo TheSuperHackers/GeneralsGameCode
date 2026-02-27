@@ -150,7 +150,7 @@ public:
 	UnsignedInt getRenderedObjectCount() const { return m_renderedObjectCount; }
 	void incrementRenderedObjectCount() { m_renderedObjectCount++; }
 
-	virtual Bool isMovieAbortRequested();
+	static Bool isMovieAbortRequested();
 
 protected:
 

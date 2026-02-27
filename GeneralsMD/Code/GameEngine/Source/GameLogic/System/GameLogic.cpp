@@ -4188,7 +4188,9 @@ void GameLogic::quit(Bool toDesktop)
 {
 	if (isInGame())
 	{
-		if (isInMultiplayerGame() && !isInSkirmishGame() && TheGameInfo && !TheGameInfo->isSandbox())
+        const Bool isSandbox = TheGameInfo && TheGameInfo->isSandbox();
+
+        if (isInMultiplayerGame() && TheGameInfo && !isSandbox)
 		{
 			GameMessage *msg = TheMessageStream->appendMessage(GameMessage::MSG_SELF_DESTRUCT);
 			msg->appendBooleanArgument(TRUE);
@@ -4200,6 +4202,7 @@ void GameLogic::quit(Bool toDesktop)
 		}
 
 		setGamePaused(FALSE);
+
 		if (TheScriptEngine)
 		{
 			TheScriptEngine->forceUnfreezeTime();
