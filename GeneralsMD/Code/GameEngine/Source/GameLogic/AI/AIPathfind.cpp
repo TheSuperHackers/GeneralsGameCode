@@ -2687,7 +2687,6 @@ void PathfindZoneManager::calculateZones( PathfindCell **map, PathfindLayer laye
 		m_hierarchicalZones[i] = i;
 	}
 
-	REGISTER UnsignedInt maxZone = m_maxZone;
 	for( j=globalBounds.lo.y; j<=globalBounds.hi.y; j++ ) {
 		for( i=globalBounds.lo.x; i<=globalBounds.hi.x; i++ ) {
 			PathfindCell &r_thisCell = map[i][j];
@@ -2695,34 +2694,34 @@ void PathfindZoneManager::calculateZones( PathfindCell **map, PathfindLayer laye
 			if ( (r_thisCell.getConnectLayer() > LAYER_GROUND) &&
 				(r_thisCell.getType() == PathfindCell::CELL_CLEAR) ) {
 				PathfindLayer *layer = layers + r_thisCell.getConnectLayer();
-				resolveZones(r_thisCell.getZone(), layer->getZone(), m_hierarchicalZones, maxZone);
+				resolveZones(r_thisCell.getZone(), layer->getZone(), m_hierarchicalZones, m_maxZone);
 			}
 
 			if ( i > globalBounds.lo.x && r_thisCell.getZone() != map[i-1][j].getZone() ) {
 				const PathfindCell &r_leftCell = map[i-1][j];
 
 				if (r_thisCell.getType() == r_leftCell.getType())
-					applyZone(r_thisCell, r_leftCell, m_hierarchicalZones, maxZone);//if this is true, skip all the ones below
+					applyZone(r_thisCell, r_leftCell, m_hierarchicalZones, m_maxZone);//if this is true, skip all the ones below
 				else {
 					Bool notTerrainOrCrusher = TRUE; // if this is false, skip the if-else-ladder below
 
 					if (terrain(r_thisCell, r_leftCell)) {
-						applyZone(r_thisCell, r_leftCell, m_terrainZones, maxZone);
+						applyZone(r_thisCell, r_leftCell, m_terrainZones, m_maxZone);
 						notTerrainOrCrusher = FALSE;
 					}
 
 					if (crusherGround(r_thisCell, r_leftCell)) {
-						applyZone(r_thisCell, r_leftCell, m_crusherZones, maxZone);
+						applyZone(r_thisCell, r_leftCell, m_crusherZones, m_maxZone);
 						notTerrainOrCrusher = FALSE;
 					}
 
 					if ( notTerrainOrCrusher ) {
 						if (waterGround(r_thisCell, r_leftCell))
-							applyZone(r_thisCell, r_leftCell, m_groundWaterZones, maxZone);
+							applyZone(r_thisCell, r_leftCell, m_groundWaterZones, m_maxZone);
 						else if (groundRubble(r_thisCell, r_leftCell))
-							applyZone(r_thisCell, r_leftCell, m_groundRubbleZones, maxZone);
+							applyZone(r_thisCell, r_leftCell, m_groundRubbleZones, m_maxZone);
 						else if (groundCliff(r_thisCell, r_leftCell))
-							applyZone(r_thisCell, r_leftCell, m_groundCliffZones, maxZone);
+							applyZone(r_thisCell, r_leftCell, m_groundCliffZones, m_maxZone);
 					}
 
 				}
@@ -2733,26 +2732,26 @@ void PathfindZoneManager::calculateZones( PathfindCell **map, PathfindLayer laye
 				const PathfindCell &r_topCell = map[i][j-1];
 
 				if (r_thisCell.getType() == r_topCell.getType())
-					applyZone(r_thisCell, r_topCell, m_hierarchicalZones, maxZone);
+					applyZone(r_thisCell, r_topCell, m_hierarchicalZones, m_maxZone);
 				else {
 					Bool notTerrainOrCrusher = TRUE; // if this is false, skip the if-else-ladder below
 
 					if (terrain(r_thisCell, r_topCell)) {
-						applyZone(r_thisCell, r_topCell, m_terrainZones, maxZone);
+						applyZone(r_thisCell, r_topCell, m_terrainZones, m_maxZone);
 						notTerrainOrCrusher = FALSE;
 					}
 
 					if (crusherGround(r_thisCell, r_topCell)) {
-						applyZone(r_thisCell, r_topCell, m_crusherZones, maxZone);
+						applyZone(r_thisCell, r_topCell, m_crusherZones, m_maxZone);
 						notTerrainOrCrusher = FALSE;
 					}
 
 					if (waterGround(r_thisCell,r_topCell))
-						applyZone(r_thisCell, r_topCell, m_groundWaterZones, maxZone);
+						applyZone(r_thisCell, r_topCell, m_groundWaterZones, m_maxZone);
 					else if (groundRubble(r_thisCell, r_topCell))
-						applyZone(r_thisCell, r_topCell, m_groundRubbleZones, maxZone);
+						applyZone(r_thisCell, r_topCell, m_groundRubbleZones, m_maxZone);
 					else if (groundCliff(r_thisCell,r_topCell))
-						applyZone(r_thisCell, r_topCell, m_groundCliffZones, maxZone);
+						applyZone(r_thisCell, r_topCell, m_groundCliffZones, m_maxZone);
 
 				}
 
