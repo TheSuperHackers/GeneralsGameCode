@@ -2618,8 +2618,7 @@ void PathfindZoneManager::calculateZones( PathfindCell **map, PathfindLayer laye
 	Int collapsedZones[maxZones];
 	collapsedZones[0] = 0;
 
-	i = 1;
-	while ( i < totalZones ) {
+	for (i=1; i<totalZones; i++) {
 		Int zone = zoneEquivalency[ i ];
 		if (zone == i) {
 			collapsedZones[ i ] = m_maxZone;
@@ -2627,24 +2626,17 @@ void PathfindZoneManager::calculateZones( PathfindCell **map, PathfindLayer laye
 		}
 		else
 			collapsedZones[ i ] = collapsedZones[zone];
-
-		++i;
 	}
 
 	// Now map the zones in the map back into the collapsed zones.
-	j=globalBounds.lo.y;
-	while( j<=globalBounds.hi.y ) {
-		i=globalBounds.lo.x;
-		while( i<=globalBounds.hi.x ) {
+	for( j=globalBounds.lo.y; j<=globalBounds.hi.y; j++ ) {
+		for( i=globalBounds.lo.x; i<=globalBounds.hi.x; i++ ) {
 			PathfindCell &cell = map[i][j];
 			cell.setZone(collapsedZones[cell.getZone()]);
-			++i;
 		}
-		++j;
 	}
-
-	i = 0;
-	while ( i <= LAYER_LAST ) {
+	
+	for (i=0; i<=LAYER_LAST; i++) {
 		PathfindLayer &r_thisLayer = layers[i];
 
 		Int zone = collapsedZones[r_thisLayer.getZone()];
@@ -2663,8 +2655,6 @@ void PathfindZoneManager::calculateZones( PathfindCell **map, PathfindLayer laye
 			r_thisLayer.getEndCellIndex(&ndx);
 			setBridge(ndx.x, ndx.y, true);
 		}
-
-		++i;
 	}
 
 	allocateZones();
@@ -2687,17 +2677,19 @@ void PathfindZoneManager::calculateZones( PathfindCell **map, PathfindLayer laye
 		}
 	}
 
-	i = 0;
-	while ( i < m_zonesAllocated ) {
-		m_groundCliffZones[i] = m_groundWaterZones[i] = m_groundRubbleZones[i] = m_terrainZones[i] = m_crusherZones[i] = m_hierarchicalZones[i] = i;
-		i++;
+	// Determine water/ground equivalent zones, and ground/cliff equivalent zones.
+	for (i=0; i<m_zonesAllocated; i++) {
+		m_groundCliffZones[i] = i;
+		m_groundWaterZones[i] = i;
+		m_groundRubbleZones[i] = i;
+		m_terrainZones[i] = i;
+		m_crusherZones[i] = i;
+		m_hierarchicalZones[i] = i;
 	}
 
 	REGISTER UnsignedInt maxZone = m_maxZone;
-	j=globalBounds.lo.y;
-	while( j <= globalBounds.hi.y ) {
-		i=globalBounds.lo.x;
-		while( i <= globalBounds.hi.x ) {
+	for( j=globalBounds.lo.y; j<=globalBounds.hi.y; j++ ) {
+		for( i=globalBounds.lo.x; i<=globalBounds.hi.x; i++ ) {
 			PathfindCell &r_thisCell = map[i][j];
 
 			if ( (r_thisCell.getConnectLayer() > LAYER_GROUND) &&
@@ -2766,22 +2758,13 @@ void PathfindZoneManager::calculateZones( PathfindCell **map, PathfindLayer laye
 
 			}
 
-			++i;
 		}
-
-		++j;
 	}
 
 	//FLATTEN HIERARCHICAL ZONES
-	{
-		i = 1;
-		REGISTER Int zone;
-		while ( i < maxZone ) {
-			// Flatten hierarchical zones.
-			zone = m_hierarchicalZones[i];
-			m_hierarchicalZones[i] = m_hierarchicalZones[ zone ];
-			++i;
-		}
+	for (i=1; i<m_maxZone; i++) {
+		Int zone = m_hierarchicalZones[i];
+		m_hierarchicalZones[i] = m_hierarchicalZones[zone];
 	}
 
 	//THIS BLOCK IS 20%
