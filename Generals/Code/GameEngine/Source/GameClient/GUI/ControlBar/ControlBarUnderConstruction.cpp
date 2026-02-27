@@ -103,7 +103,7 @@ void ControlBar::populateUnderConstruction( Object *objectUnderConstruction )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void ControlBar::updateContextUnderConstruction( void )
+void ControlBar::updateContextUnderConstruction()
 {
 	Object *obj = m_currentSelectedDrawable->getObject();
 

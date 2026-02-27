@@ -1768,7 +1768,7 @@ Bool PhysicsBehavior::checkForOverlapCollision(Object *other)
 // ------------------------------------------------------------------------------------------------
 /** Test whether unit needs to die because of being on illegal cell, upside down, outside legal bounds **/
 // ------------------------------------------------------------------------------------------------
-void PhysicsBehavior::testStunnedUnitForDestruction(void)
+void PhysicsBehavior::testStunnedUnitForDestruction()
 {
 	// Only do test if unit is stunned
 	if (!getFlag(IS_STUNNED))
@@ -1905,7 +1905,7 @@ void PhysicsBehavior::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void PhysicsBehavior::loadPostProcess( void )
+void PhysicsBehavior::loadPostProcess()
 {
 
 	// extend base class

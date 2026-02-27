@@ -71,7 +71,7 @@ class WeatherSetting : public Overridable
 		static const FieldParse m_weatherSettingFieldParseTable[];		///< the parse table for INI definition
 
 		/// Get the INI parsing table for loading
-		const FieldParse *getFieldParse( void ) const { return m_weatherSettingFieldParseTable; }
+		const FieldParse *getFieldParse() const { return m_weatherSettingFieldParseTable; }
 };
 
 EMPTY_DTOR(WeatherSetting)
@@ -86,12 +86,12 @@ class SnowManager : public SubsystemInterface
 		 SNOW_NOISE_Y=64,			//dimensions table holding noise function used for initial snow positions.
 	  };
 
-	 SnowManager(void);
-	~SnowManager(void);
+	 SnowManager();
+	~SnowManager();
 
-	virtual void init( void );
-	virtual void reset( void );
-	virtual void updateIniSettings (void);
+	virtual void init();
+	virtual void reset();
+	virtual void updateIniSettings ();
 	void setVisible(Bool showWeather);	///<enable/disable rendering of weather - assuming it's available on map.
 
   protected :

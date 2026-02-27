@@ -72,7 +72,7 @@ Real ASin(Real x)
 }
 
 #ifdef REGENERATE_TRIG_TABLES
-void initTrig( void )
+void initTrig()
 {
 	static Byte inited = FALSE;
 	Real angle, r;

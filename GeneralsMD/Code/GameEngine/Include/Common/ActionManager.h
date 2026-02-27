@@ -60,12 +60,12 @@ class ActionManager : public SubsystemInterface
 
 public:
 
-	ActionManager( void );
-	virtual ~ActionManager( void );
+	ActionManager();
+	virtual ~ActionManager();
 
-	virtual void init( void ) { };							///< subsystem interface
-	virtual void reset( void ) { };							///< subsystem interface
-	virtual void update( void ) { };						///< subsystem interface
+	virtual void init() { };							///< subsystem interface
+	virtual void reset() { };							///< subsystem interface
+	virtual void update() { };						///< subsystem interface
 
 	//Single unit to unit check
 	Bool canGetRepairedAt( const Object *obj, const Object *repairDest, CommandSourceType commandSource );

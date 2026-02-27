@@ -105,20 +105,20 @@ public:
 	// Setup / Teardown functions
 	Network();
 	~Network();
-	void init( void );																				///< Initialize or re-initialize the instance
-	void reset( void );																				///< Reinitialize the network
-	void update( void );																			///< Process command list
-	void liteupdate( void );																	///< Do a lightweight update to send packets and pass messages.
-	Bool deinit( void );																			///< Shutdown connections, release memory
+	void init();																				///< Initialize or re-initialize the instance
+	void reset();																				///< Reinitialize the network
+	void update();																			///< Process command list
+	void liteupdate();																	///< Do a lightweight update to send packets and pass messages.
+	Bool deinit();																			///< Shutdown connections, release memory
 
 	void setLocalAddress(UnsignedInt ip, UnsignedInt port);
-	UnsignedInt getRunAhead(void) { return m_runAhead; }
-	UnsignedInt getFrameRate(void) { return m_frameRate; }
-	UnsignedInt getPacketArrivalCushion(void);								///< Returns the smallest packet arrival cushion since this was last called.
-	Bool isFrameDataReady( void );
+	UnsignedInt getRunAhead() { return m_runAhead; }
+	UnsignedInt getFrameRate() { return m_frameRate; }
+	UnsignedInt getPacketArrivalCushion();								///< Returns the smallest packet arrival cushion since this was last called.
+	Bool isFrameDataReady();
 	virtual Bool isStalling();
 	void parseUserList( const GameInfo *game );
-	void startGame(void);																			///< Sets the network game frame counter to -1
+	void startGame();																			///< Sets the network game frame counter to -1
 
 	void sendChat(UnicodeString text, Int playerMask);
 	void sendDisconnectChat(UnicodeString text);
@@ -126,27 +126,27 @@ public:
 	void sendFile(AsciiString path, UnsignedByte playerMask, UnsignedShort commandID);
 	UnsignedShort sendFileAnnounce(AsciiString path, UnsignedByte playerMask);
 	Int getFileTransferProgress(Int playerID, AsciiString path);
-	Bool areAllQueuesEmpty(void);
+	Bool areAllQueuesEmpty();
 
 	void quitGame();
 	virtual void selfDestructPlayer(Int index);
 
 
 	void voteForPlayerDisconnect(Int slot);
-	virtual Bool isPacketRouter( void );
+	virtual Bool isPacketRouter();
 
 	// Bandwidth metrics
-	Real getIncomingBytesPerSecond( void );
-	Real getIncomingPacketsPerSecond( void );
-	Real getOutgoingBytesPerSecond( void );
-	Real getOutgoingPacketsPerSecond( void );
-	Real getUnknownBytesPerSecond( void );
-	Real getUnknownPacketsPerSecond( void );
+	Real getIncomingBytesPerSecond();
+	Real getIncomingPacketsPerSecond();
+	Real getOutgoingBytesPerSecond();
+	Real getOutgoingPacketsPerSecond();
+	Real getUnknownBytesPerSecond();
+	Real getUnknownPacketsPerSecond();
 
 	// Multiplayer Load Progress Functions
 	void updateLoadProgress( Int percent );
-	void loadProgressComplete( void );
-	void sendTimeOutGameStart( void );
+	void loadProgressComplete();
+	void sendTimeOutGameStart();
 
 #if defined(RTS_DEBUG)
 	// Disconnect screen testing
@@ -154,9 +154,9 @@ public:
 #endif
 
 	// Exposing some info contained in the Connection Manager
-	UnsignedInt getLocalPlayerID( void );
+	UnsignedInt getLocalPlayerID();
 	UnicodeString getPlayerName(Int playerNum);
-	Int getNumPlayers(void );
+	Int getNumPlayers();
 
 	Int getAverageFPS() { return m_conMgr->getAverageFPS(); }
 	Int getSlotAverageFPS(Int slot);
@@ -164,8 +164,8 @@ public:
 	void attachTransport(Transport *transport);
 	void initTransport();
 
-	void setSawCRCMismatch( void );
-	Bool sawCRCMismatch( void ) { return m_sawCRCMismatch; }
+	void setSawCRCMismatch();
+	Bool sawCRCMismatch() { return m_sawCRCMismatch; }
 	Bool isPlayerConnected( Int playerID );
 
 	void notifyOthersOfCurrentFrame();														///< Tells all the other players what frame we are on.
@@ -289,7 +289,7 @@ Network::~Network()
 /**
  * This basically releases all the memory.
  */
-Bool Network::deinit( void )
+Bool Network::deinit()
 {
 	if (m_conMgr)
 	{
@@ -364,7 +364,7 @@ void Network::init()
 	return;
 }
 
-void Network::setSawCRCMismatch( void )
+void Network::setSawCRCMismatch()
 {
 	m_sawCRCMismatch = TRUE;
 
@@ -682,7 +682,7 @@ void Network::processDestroyPlayerCommand(NetDestroyPlayerCommandMsg *msg)
 /**
  * Service queues, process message stream, etc
  */
-void Network::update( void )
+void Network::update()
 {
 //
 // 1. Take Commands off TheCommandList, hand them off to the ConnectionManager.
@@ -823,7 +823,7 @@ Bool Network::isStalling()
 /**
  * returns the number of incoming bytes per second averaged over the last 30 sec.
  */
-Real Network::getIncomingBytesPerSecond( void )
+Real Network::getIncomingBytesPerSecond()
 {
 	if (m_conMgr)
 		return m_conMgr->getIncomingBytesPerSecond();
@@ -834,7 +834,7 @@ Real Network::getIncomingBytesPerSecond( void )
 /**
  * returns the number of incoming packets per second averaged over the last 30 sec.
  */
-Real Network::getIncomingPacketsPerSecond( void )
+Real Network::getIncomingPacketsPerSecond()
 {
 	if (m_conMgr)
 		return m_conMgr->getIncomingPacketsPerSecond();
@@ -845,7 +845,7 @@ Real Network::getIncomingPacketsPerSecond( void )
 /**
  * returns the number of outgoing bytes per second averaged over the last 30 sec.
  */
-Real Network::getOutgoingBytesPerSecond( void )
+Real Network::getOutgoingBytesPerSecond()
 {
 	if (m_conMgr)
 		return m_conMgr->getOutgoingBytesPerSecond();
@@ -856,7 +856,7 @@ Real Network::getOutgoingBytesPerSecond( void )
 /**
  * returns the number of outgoing packets per second averaged over the last 30 sec.
  */
-Real Network::getOutgoingPacketsPerSecond( void )
+Real Network::getOutgoingPacketsPerSecond()
 {
 	if (m_conMgr)
 		return m_conMgr->getOutgoingPacketsPerSecond();
@@ -867,7 +867,7 @@ Real Network::getOutgoingPacketsPerSecond( void )
 /**
  * returns the number of bytes received per second that are not from a generals client averaged over 30 sec.
  */
-Real Network::getUnknownBytesPerSecond( void )
+Real Network::getUnknownBytesPerSecond()
 {
 	if (m_conMgr)
 		return m_conMgr->getUnknownBytesPerSecond();
@@ -878,7 +878,7 @@ Real Network::getUnknownBytesPerSecond( void )
 /**
  * returns the number of packets received per second that are not from a generals client averaged over 30 sec.
  */
-Real Network::getUnknownPacketsPerSecond( void )
+Real Network::getUnknownPacketsPerSecond()
 {
 	if (m_conMgr)
 		return m_conMgr->getUnknownPacketsPerSecond();
@@ -889,7 +889,7 @@ Real Network::getUnknownPacketsPerSecond( void )
 /**
  * returns the smallest packet arrival cushion since this was last called.
  */
-UnsignedInt Network::getPacketArrivalCushion( void )
+UnsignedInt Network::getPacketArrivalCushion()
 {
 	if (m_conMgr)
 		return m_conMgr->getPacketArrivalCushion();
@@ -929,7 +929,7 @@ Int Network::getFileTransferProgress(Int playerID, AsciiString path)
 	return m_conMgr->getFileTransferProgress(playerID, path);
 }
 
-Bool Network::areAllQueuesEmpty(void)
+Bool Network::areAllQueuesEmpty()
 {
 	return m_conMgr->canILeave();
 }
@@ -959,7 +959,7 @@ void Network::selfDestructPlayer(Int index)
 }
 
 
-Bool Network::isPacketRouter( void )
+Bool Network::isPacketRouter()
 {
 	return m_conMgr && m_conMgr->isPacketRouter();
 }
@@ -980,14 +980,14 @@ void Network::updateLoadProgress( Int percent )
 	}
 }
 
-void Network::loadProgressComplete( void )
+void Network::loadProgressComplete()
 {
 	if (m_conMgr != nullptr) {
 		m_conMgr->loadProgressComplete();
 	}
 }
 
-void Network::sendTimeOutGameStart( void )
+void Network::sendTimeOutGameStart()
 {
 	if (m_conMgr != nullptr) {
 		m_conMgr->sendTimeOutGameStart();

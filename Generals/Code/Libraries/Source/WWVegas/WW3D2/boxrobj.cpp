@@ -179,7 +179,7 @@ static ShaderClass					_BoxShader;
  * HISTORY:                                                                                    *
  *   1/19/00    gth : Created.                                                                 *
  *=============================================================================================*/
-BoxRenderObjClass::BoxRenderObjClass(void)
+BoxRenderObjClass::BoxRenderObjClass()
 {
 	memset(Name,0,sizeof(Name));
 	Color.Set(1,1,1);
@@ -268,7 +268,7 @@ BoxRenderObjClass & BoxRenderObjClass::operator = (const BoxRenderObjClass & tha
  * HISTORY:                                                                                    *
  *   1/19/00    gth : Created.                                                                 *
  *=============================================================================================*/
-int BoxRenderObjClass::Get_Num_Polys(void) const
+int BoxRenderObjClass::Get_Num_Polys() const
 {
 	return 12;
 }
@@ -286,7 +286,7 @@ int BoxRenderObjClass::Get_Num_Polys(void) const
  * HISTORY:                                                                                    *
  *   1/19/00    gth : Created.                                                                 *
  *=============================================================================================*/
-const char * BoxRenderObjClass::Get_Name(void) const
+const char * BoxRenderObjClass::Get_Name() const
 {
 	return Name;
 }
@@ -344,7 +344,7 @@ void BoxRenderObjClass::Set_Color(const Vector3 & color)
  * HISTORY:                                                                                    *
  *   1/19/00    gth : Created.                                                                 *
  *=============================================================================================*/
-void BoxRenderObjClass::Init(void)
+void BoxRenderObjClass::Init()
 {
 	WWASSERT(IsInitted == false);
 
@@ -381,7 +381,7 @@ void BoxRenderObjClass::Init(void)
  * HISTORY:                                                                                    *
  *   1/19/00    gth : Created.                                                                 *
  *=============================================================================================*/
-void BoxRenderObjClass::Shutdown(void)
+void BoxRenderObjClass::Shutdown()
 {
 	WWASSERT(IsInitted == true);
 	REF_PTR_RELEASE(_BoxMaterial);
@@ -423,7 +423,7 @@ void BoxRenderObjClass::Set_Box_Display_Mask(int mask)
  * HISTORY:                                                                                    *
  *   1/19/00    gth : Created.                                                                 *
  *=============================================================================================*/
-int BoxRenderObjClass::Get_Box_Display_Mask(void)
+int BoxRenderObjClass::Get_Box_Display_Mask()
 {
 	return DisplayMask;
 }
@@ -566,7 +566,7 @@ void BoxRenderObjClass::vis_render_box(SpecialRenderInfoClass & rinfo,const Vect
  * HISTORY:                                                                                    *
  *   1/19/00    gth : Created.                                                                 *
  *=============================================================================================*/
-AABoxRenderObjClass::AABoxRenderObjClass(void)
+AABoxRenderObjClass::AABoxRenderObjClass()
 {
 	update_cached_box();
 }
@@ -664,7 +664,7 @@ AABoxRenderObjClass & AABoxRenderObjClass::operator = (const AABoxRenderObjClass
  * HISTORY:                                                                                    *
  *   1/19/00    gth : Created.                                                                 *
  *=============================================================================================*/
-RenderObjClass * AABoxRenderObjClass::Clone(void) const
+RenderObjClass * AABoxRenderObjClass::Clone() const
 {
 	return W3DNEW AABoxRenderObjClass(*this);
 }
@@ -682,7 +682,7 @@ RenderObjClass * AABoxRenderObjClass::Clone(void) const
  * HISTORY:                                                                                    *
  *   1/19/00    gth : Created.                                                                 *
  *=============================================================================================*/
-int AABoxRenderObjClass::Class_ID(void) const
+int AABoxRenderObjClass::Class_ID() const
 {
 	return RenderObjClass::CLASSID_AABOX;
 }
@@ -783,7 +783,7 @@ void AABoxRenderObjClass::Set_Position(const Vector3 &v)
  * HISTORY:                                                                                    *
  *   1/19/00    gth : Created.                                                                 *
  *=============================================================================================*/
-void AABoxRenderObjClass::update_cached_box(void)
+void AABoxRenderObjClass::update_cached_box()
 {
 	CachedBox.Center = Transform.Get_Translation() + ObjSpaceCenter;
 	CachedBox.Extent = ObjSpaceExtent;
@@ -945,7 +945,7 @@ void AABoxRenderObjClass::Get_Obj_Space_Bounding_Box(AABoxClass & box) const
  * HISTORY:                                                                                    *
  *   1/19/00    gth : Created.                                                                 *
  *=============================================================================================*/
-OBBoxRenderObjClass::OBBoxRenderObjClass(void)
+OBBoxRenderObjClass::OBBoxRenderObjClass()
 {
 	update_cached_box();
 }
@@ -1043,7 +1043,7 @@ OBBoxRenderObjClass & OBBoxRenderObjClass::operator = (const OBBoxRenderObjClass
  * HISTORY:                                                                                    *
  *   1/19/00    gth : Created.                                                                 *
  *=============================================================================================*/
-RenderObjClass * OBBoxRenderObjClass::Clone(void) const
+RenderObjClass * OBBoxRenderObjClass::Clone() const
 {
 	return W3DNEW OBBoxRenderObjClass(*this);
 }
@@ -1061,7 +1061,7 @@ RenderObjClass * OBBoxRenderObjClass::Clone(void) const
  * HISTORY:                                                                                    *
  *   1/19/00    gth : Created.                                                                 *
  *=============================================================================================*/
-int OBBoxRenderObjClass::Class_ID(void) const
+int OBBoxRenderObjClass::Class_ID() const
 {
 	return RenderObjClass::CLASSID_OBBOX;
 }
@@ -1158,7 +1158,7 @@ void OBBoxRenderObjClass::Set_Position(const Vector3 &v)
  * HISTORY:                                                                                    *
  *   1/19/00    gth : Created.                                                                 *
  *=============================================================================================*/
-void OBBoxRenderObjClass::update_cached_box(void)
+void OBBoxRenderObjClass::update_cached_box()
 {
 	Matrix3D::Transform_Vector(Transform,ObjSpaceCenter,&CachedBox.Center);
 	CachedBox.Extent.Set(ObjSpaceExtent);
@@ -1321,7 +1321,7 @@ void OBBoxRenderObjClass::Get_Obj_Space_Bounding_Box(AABoxClass & box) const
  * HISTORY:                                                                                    *
  *   1/19/00    gth : Created.                                                                 *
  *=============================================================================================*/
-OBBoxClass & OBBoxRenderObjClass::Get_Box(void)
+OBBoxClass & OBBoxRenderObjClass::Get_Box()
 {
 	Validate_Transform();
 	update_cached_box();
@@ -1346,12 +1346,12 @@ BoxPrototypeClass::BoxPrototypeClass(W3dBoxStruct box)
 	Definition = box;
 }
 
-const char * BoxPrototypeClass::Get_Name(void) const
+const char * BoxPrototypeClass::Get_Name() const
 {
 	return Definition.Name;
 }
 
-int BoxPrototypeClass::Get_Class_ID(void) const
+int BoxPrototypeClass::Get_Class_ID() const
 {
 	if (Definition.Attributes & W3D_BOX_ATTRIBUTE_ORIENTED) {
 		return RenderObjClass::CLASSID_OBBOX;
@@ -1360,7 +1360,7 @@ int BoxPrototypeClass::Get_Class_ID(void) const
 	}
 }
 
-RenderObjClass * BoxPrototypeClass::Create(void)
+RenderObjClass * BoxPrototypeClass::Create()
 {
 	if (Definition.Attributes & W3D_BOX_ATTRIBUTE_ORIENTED) {
 		return NEW_REF( OBBoxRenderObjClass, (Definition) );

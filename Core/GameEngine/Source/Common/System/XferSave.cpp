@@ -52,7 +52,7 @@ EMPTY_DTOR(XferBlockData)
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-XferSave::XferSave( void )
+XferSave::XferSave()
 {
 
 	m_xferMode = XFER_SAVE;
@@ -63,7 +63,7 @@ XferSave::XferSave( void )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-XferSave::~XferSave( void )
+XferSave::~XferSave()
 {
 
 	// warn the user if a file was left open
@@ -134,7 +134,7 @@ void XferSave::open( AsciiString identifier )
 //-------------------------------------------------------------------------------------------------
 /** Close our current file */
 //-------------------------------------------------------------------------------------------------
-void XferSave::close( void )
+void XferSave::close()
 {
 
 	// sanity, if we don't have an open file we can do nothing
@@ -162,7 +162,7 @@ void XferSave::close( void )
 	* location of this beginBlock.  The current file position will then return to the location
 	* at which endBlock was called */
 //-------------------------------------------------------------------------------------------------
-Int XferSave::beginBlock( void )
+Int XferSave::beginBlock()
 {
 
 	// sanity
@@ -207,7 +207,7 @@ Int XferSave::beginBlock( void )
 	* write the file difference from current position to the last begin position, and put
 	* current file position back to where it was */
 //-------------------------------------------------------------------------------------------------
-void XferSave::endBlock( void )
+void XferSave::endBlock()
 {
 
 	// sanity

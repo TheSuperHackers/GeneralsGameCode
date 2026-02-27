@@ -71,7 +71,7 @@ SabotageSuperweaponCrateCollide::SabotageSuperweaponCrateCollide( Thing *thing, 
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-SabotageSuperweaponCrateCollide::~SabotageSuperweaponCrateCollide( void )
+SabotageSuperweaponCrateCollide::~SabotageSuperweaponCrateCollide()
 {
 }
 
@@ -187,7 +187,7 @@ void SabotageSuperweaponCrateCollide::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void SabotageSuperweaponCrateCollide::loadPostProcess( void )
+void SabotageSuperweaponCrateCollide::loadPostProcess()
 {
 
 	// extend base class

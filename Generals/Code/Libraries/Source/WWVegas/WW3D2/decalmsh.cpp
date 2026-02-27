@@ -83,7 +83,7 @@
 class DecalPolyClass
 {
 public:
-	void Reset(void);
+	void Reset();
 	void Add_Vertex(const Vector3 & point,const Vector3 & normal);
 	void Clip(const PlaneClass & plane,DecalPolyClass & dest) const;
 
@@ -92,7 +92,7 @@ public:
 };
 
 
-void DecalPolyClass::Reset(void)
+void DecalPolyClass::Reset()
 {
 	Verts.Delete_All(false);
 	VertNorms.Delete_All(false);
@@ -215,7 +215,7 @@ DecalMeshClass::DecalMeshClass(MeshClass * parent,DecalSystemClass * system) :
  * HISTORY:                                                                                    *
  *   1/26/00    gth : Created.                                                                 *
  *=============================================================================================*/
-DecalMeshClass::~DecalMeshClass(void)
+DecalMeshClass::~DecalMeshClass()
 {
 }
 
@@ -255,7 +255,7 @@ RigidDecalMeshClass::RigidDecalMeshClass(MeshClass * parent, DecalSystemClass * 
  * HISTORY:                                                                                    *
  *   1/31/00    NH : Created.                                                                  *
  *=============================================================================================*/
-RigidDecalMeshClass::~RigidDecalMeshClass(void)
+RigidDecalMeshClass::~RigidDecalMeshClass()
 {
 	int i;
 
@@ -288,7 +288,7 @@ RigidDecalMeshClass::~RigidDecalMeshClass(void)
  * HISTORY:                                                                                    *
  *   1/26/00    gth : Created.                                                                 *
  *=============================================================================================*/
-void RigidDecalMeshClass::Render(void)
+void RigidDecalMeshClass::Render()
 {
 	if ((Decals.Count() == 0) || (WW3D::Are_Decals_Enabled() == false)) return;
 
@@ -737,7 +737,7 @@ SkinDecalMeshClass::SkinDecalMeshClass(MeshClass * parent, DecalSystemClass * sy
  * HISTORY:                                                                                    *
  *   1/31/00    NH : Created.                                                                  *
  *=============================================================================================*/
-SkinDecalMeshClass::~SkinDecalMeshClass(void)
+SkinDecalMeshClass::~SkinDecalMeshClass()
 {
 	int i;
 
@@ -770,7 +770,7 @@ SkinDecalMeshClass::~SkinDecalMeshClass(void)
  * HISTORY:                                                                                    *
  *   1/31/00    NH : Created.                                                                  *
  *=============================================================================================*/
-void SkinDecalMeshClass::Render(void)
+void SkinDecalMeshClass::Render()
 {
 	if ((Decals.Count() == 0) || (WW3D::Are_Decals_Enabled() == false)) return;
 

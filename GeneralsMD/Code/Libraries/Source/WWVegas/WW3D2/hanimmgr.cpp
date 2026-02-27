@@ -69,7 +69,7 @@
  * HISTORY:                                                                                    *
  *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-HAnimManagerClass::HAnimManagerClass(void)
+HAnimManagerClass::HAnimManagerClass()
 {
 	// Create the hash tables
 	AnimPtrTable = W3DNEW HashTableClass( 2048 );
@@ -89,7 +89,7 @@ HAnimManagerClass::HAnimManagerClass(void)
  * HISTORY:                                                                                    *
  *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-HAnimManagerClass::~HAnimManagerClass(void)
+HAnimManagerClass::~HAnimManagerClass()
 {
 	Free_All_Anims();
 	Reset_Missing();	// Jani: Deleting missing animations as well
@@ -318,7 +318,7 @@ HAnimClass * HAnimManagerClass::Get_Anim(const char * name)
  * HISTORY:                                                                                    *
  *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-void HAnimManagerClass::Free_All_Anims(void)
+void HAnimManagerClass::Free_All_Anims()
 {
 	// Make an iterator, and release all ptrs
 	HAnimManagerIterator it( *this );
@@ -433,7 +433,7 @@ bool	HAnimManagerClass::Is_Missing( const char * name )
 	return ( MissingAnimTable->Find( name ) != nullptr );
 }
 
-void	HAnimManagerClass::Reset_Missing( void )
+void	HAnimManagerClass::Reset_Missing()
 {
 	// Make an iterator, and release all ptrs
 	HashTableIteratorClass it( *MissingAnimTable );
@@ -450,7 +450,7 @@ void	HAnimManagerClass::Reset_Missing( void )
 /*
 ** Iterator converter from HashableClass to HAnimClass
 */
-HAnimClass * HAnimManagerIterator::Get_Current_Anim( void )
+HAnimClass * HAnimManagerIterator::Get_Current_Anim()
 {
 	return (HAnimClass *)Get_Current();
 }

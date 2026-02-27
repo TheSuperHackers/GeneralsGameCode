@@ -66,7 +66,7 @@ ParticleSystemManager *TheParticleSystemManager = nullptr;
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-ParticleInfo::ParticleInfo( void )
+ParticleInfo::ParticleInfo()
 {
 #if PARTICLE_USE_XY_ROTATION
 	m_angleX = 0.0f;
@@ -194,7 +194,7 @@ void ParticleInfo::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void ParticleInfo::loadPostProcess( void )
+void ParticleInfo::loadPostProcess()
 {
 
 }
@@ -222,7 +222,7 @@ static Real angleBetween(const Coord2D *vecA, const Coord2D *vecB);
 // ------------------------------------------------------------------------------------------------
 /** Compute alpha rate to get to next key on given frame */
 // ------------------------------------------------------------------------------------------------
-void Particle::computeAlphaRate( void )
+void Particle::computeAlphaRate()
 {
 	if (m_alphaKey[ m_alphaTargetKey ].frame == 0)
 	{
@@ -239,7 +239,7 @@ void Particle::computeAlphaRate( void )
 // ------------------------------------------------------------------------------------------------
 /** Compute color rate to get to next key on given frame */
 // ------------------------------------------------------------------------------------------------
-void Particle::computeColorRate( void )
+void Particle::computeColorRate()
 {
 	if (m_colorKey[ m_colorTargetKey ].frame == 0)
 	{
@@ -370,7 +370,7 @@ void Particle::applyForce( const Coord3D *force )
 // ------------------------------------------------------------------------------------------------
 /** Update the behavior of an individual particle */
 // ------------------------------------------------------------------------------------------------
-Bool Particle::update( void )
+Bool Particle::update()
 {
 	// integrate acceleration into velocity
 	m_vel.x += m_accel.x;
@@ -511,7 +511,7 @@ Bool Particle::update( void )
 // ------------------------------------------------------------------------------------------------
 /** Do wind motion as specified by the particle system template, if present */
 // ------------------------------------------------------------------------------------------------
-void Particle::doWindMotion( void )
+void Particle::doWindMotion()
 {
 
 	// get the angle of the wind
@@ -593,7 +593,7 @@ void Particle::doWindMotion( void )
 // ------------------------------------------------------------------------------------------------
 /** Get priority of a particle ... which is the priority of it's attached system */
 // ------------------------------------------------------------------------------------------------
-ParticlePriorityType Particle::getPriority( void )
+ParticlePriorityType Particle::getPriority()
 {
 	return m_system->getPriority();
 }
@@ -601,7 +601,7 @@ ParticlePriorityType Particle::getPriority( void )
 // ------------------------------------------------------------------------------------------------
 /** Return true if this particle is invisible */
 // ------------------------------------------------------------------------------------------------
-Bool Particle::isInvisible( void )
+Bool Particle::isInvisible()
 {
 	switch (m_system->getShaderType())
 	{
@@ -712,7 +712,7 @@ void Particle::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void Particle::loadPostProcess( void )
+void Particle::loadPostProcess()
 {
 
 	// call base class post process
@@ -1050,7 +1050,7 @@ void ParticleSystemInfo::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void ParticleSystemInfo::loadPostProcess( void )
+void ParticleSystemInfo::loadPostProcess()
 {
 
 }
@@ -1302,7 +1302,7 @@ void ParticleSystem::setSaveable(Bool b)
 // ------------------------------------------------------------------------------------------------
 /** (Re)start a stopped particle system */
 // ------------------------------------------------------------------------------------------------
-void ParticleSystem::start( void )
+void ParticleSystem::start()
 {
 	m_isStopped = false;
 }
@@ -1310,7 +1310,7 @@ void ParticleSystem::start( void )
 // ------------------------------------------------------------------------------------------------
 /** Stop a particle system from emitting */
 // ------------------------------------------------------------------------------------------------
-void ParticleSystem::stop( void )
+void ParticleSystem::stop()
 {
 	m_isStopped = true;
 }
@@ -1318,7 +1318,7 @@ void ParticleSystem::stop( void )
 // ------------------------------------------------------------------------------------------------
 /** Stop emitting, wait for all of our particles to die, then destroy self. */
 // ------------------------------------------------------------------------------------------------
-void ParticleSystem::destroy( void )
+void ParticleSystem::destroy()
 {
 	m_isDestroyed = true;
 	if( m_slaveSystem )
@@ -1414,7 +1414,7 @@ void ParticleSystem::attachToObject( const Object *obj )
 /** Compute a random point on a unit sphere
  * @todo The density of random points generated is not uniform within the sphere */
 // ------------------------------------------------------------------------------------------------
-const Coord3D *ParticleSystem::computePointOnUnitSphere( void )
+const Coord3D *ParticleSystem::computePointOnUnitSphere()
 {
 	static Coord3D point;
 
@@ -1591,7 +1591,7 @@ const Coord3D *ParticleSystem::computeParticleVelocity( const Coord3D *pos )
 // ------------------------------------------------------------------------------------------------
 /** Compute a position based on emission properties */
 // ------------------------------------------------------------------------------------------------
-const Coord3D *ParticleSystem::computeParticlePosition( void )
+const Coord3D *ParticleSystem::computeParticlePosition()
 {
 	static Coord3D newPos;
 
@@ -2150,7 +2150,7 @@ Bool ParticleSystem::update( Int localPlayerIndex  )
 // ------------------------------------------------------------------------------------------------
 /** Update the wind motion */
 // ------------------------------------------------------------------------------------------------
-void ParticleSystem::updateWindMotion( void )
+void ParticleSystem::updateWindMotion()
 {
 
 	switch( m_windMotion )
@@ -2586,7 +2586,7 @@ void ParticleSystem::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void ParticleSystem::loadPostProcess( void )
+void ParticleSystem::loadPostProcess()
 {
 
 	// call base class post process
@@ -2879,7 +2879,7 @@ ParticleSystem *ParticleSystemTemplate::createSlaveSystem( Bool createSlaves ) c
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-ParticleSystemManager::ParticleSystemManager( void )
+ParticleSystemManager::ParticleSystemManager()
 {
 
 	m_uniqueSystemID = INVALID_PARTICLE_SYSTEM_ID;
@@ -2918,7 +2918,7 @@ ParticleSystemManager::~ParticleSystemManager()
 // ------------------------------------------------------------------------------------------------
 /** Initialize the manager */
 // ------------------------------------------------------------------------------------------------
-void ParticleSystemManager::init( void )
+void ParticleSystemManager::init()
 {
 	/// Read INI data and build templates
 	INI ini;
@@ -2943,7 +2943,7 @@ void ParticleSystemManager::init( void )
 // ------------------------------------------------------------------------------------------------
 /** Reset the manager and all particle systems */
 // ------------------------------------------------------------------------------------------------
-void ParticleSystemManager::reset( void )
+void ParticleSystemManager::reset()
 {
 	while (!m_allParticleSystemList.empty())
 	{
@@ -2981,7 +2981,7 @@ void ParticleSystemManager::reset( void )
 /** Update all particle systems */
 // ------------------------------------------------------------------------------------------------
 //DECLARE_PERF_TIMER(ParticleSystemManager)
-void ParticleSystemManager::update( void )
+void ParticleSystemManager::update()
 {
 	if (m_lastLogicFrameUpdate == TheGameLogic->getFrame()) {
 		return;
@@ -3397,7 +3397,7 @@ void ParticleSystemManager::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void ParticleSystemManager::loadPostProcess( void )
+void ParticleSystemManager::loadPostProcess()
 {
 
 }

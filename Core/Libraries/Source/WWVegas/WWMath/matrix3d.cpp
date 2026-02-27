@@ -246,7 +246,7 @@ void Matrix3D::Set_Rotation(const Quaternion & q)
  * HISTORY:                                                                                    *
  *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-float Matrix3D::Get_X_Rotation(void) const
+float Matrix3D::Get_X_Rotation() const
 {
 	return WWMath::Atan2(Row[2][1], Row[1][1]);
 }
@@ -264,7 +264,7 @@ float Matrix3D::Get_X_Rotation(void) const
  * HISTORY:                                                                                    *
  *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-float Matrix3D::Get_Y_Rotation(void) const
+float Matrix3D::Get_Y_Rotation() const
 {
 	return WWMath::Atan2(Row[0][2], Row[2][2]);
 }
@@ -282,7 +282,7 @@ float Matrix3D::Get_Y_Rotation(void) const
  * HISTORY:                                                                                    *
  *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-float Matrix3D::Get_Z_Rotation(void) const
+float Matrix3D::Get_Z_Rotation() const
 {
 	return WWMath::Atan2(Row[1][0], Row[0][0]);
 }
@@ -1136,7 +1136,7 @@ void Matrix3D::Transform_Center_Extent_AABox
  * HISTORY:                                                                                    *
  *   9/16/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-int Matrix3D::Is_Orthogonal(void) const
+int Matrix3D::Is_Orthogonal() const
 {
 	Vector3 x(Row[0].X,Row[0].Y,Row[0].Z);
 	Vector3 y(Row[1].X,Row[1].Y,Row[1].Z);
@@ -1167,7 +1167,7 @@ int Matrix3D::Is_Orthogonal(void) const
  * HISTORY:                                                                                    *
  *   9/16/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-void Matrix3D::Re_Orthogonalize(void)
+void Matrix3D::Re_Orthogonalize()
 {
 	Vector3 x(Row[0][0],Row[0][1],Row[0][2]);
 	Vector3 y(Row[1][0],Row[1][1],Row[1][2]);

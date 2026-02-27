@@ -1734,7 +1734,7 @@ void PhysicsBehavior::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void PhysicsBehavior::loadPostProcess( void )
+void PhysicsBehavior::loadPostProcess()
 {
 
 	// extend base class

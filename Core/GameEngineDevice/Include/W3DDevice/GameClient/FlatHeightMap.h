@@ -49,28 +49,28 @@ class FlatHeightMapRenderObjClass : public BaseHeightMapRenderObjClass
 
 public:
 
-	FlatHeightMapRenderObjClass(void);
-	virtual ~FlatHeightMapRenderObjClass(void);
+	FlatHeightMapRenderObjClass();
+	virtual ~FlatHeightMapRenderObjClass();
 
 	// DX8_CleanupHook methods
-	virtual void ReleaseResources(void);	///< Release all dx8 resources so the device can be reset.
-	virtual void ReAcquireResources(void);  ///< Reacquire all resources after device reset.
+	virtual void ReleaseResources();	///< Release all dx8 resources so the device can be reset.
+	virtual void ReAcquireResources();  ///< Reacquire all resources after device reset.
 
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface (W3D methods)
 	/////////////////////////////////////////////////////////////////////////////
 	virtual void					Render(RenderInfoClass & rinfo);
-	virtual void					On_Frame_Update(void);
+	virtual void					On_Frame_Update();
 
 	///allocate resources needed to render heightmap
 	virtual int initHeightData(Int width, Int height, WorldHeightMap *pMap, RefRenderObjListIterator *pLightsIterator,Bool updateExtraPassTiles=TRUE);
-	virtual Int freeMapResources(void);	///< free resources used to render heightmap
+	virtual Int freeMapResources();	///< free resources used to render heightmap
 	virtual void updateCenter(CameraClass *camera, RefRenderObjListIterator *pLightsIterator);
  	virtual void adjustTerrainLOD(Int adj);
-	virtual void reset(void);
+	virtual void reset();
 	virtual void oversizeTerrain(Int tilesToOversize);
-	virtual void staticLightingChanged(void);
+	virtual void staticLightingChanged();
 	virtual void doPartialUpdate(const IRegion2D &partialRange, WorldHeightMap *htMap, RefRenderObjListIterator *pLightsIterator);
   virtual int updateBlock(Int x0, Int y0, Int x1, Int y1, WorldHeightMap *pMap, RefRenderObjListIterator *pLightsIterator){return 0;};
 
@@ -87,6 +87,6 @@ protected:
 	} m_updateState;
 
 protected:
-	void releaseTiles(void);
+	void releaseTiles();
 
 };

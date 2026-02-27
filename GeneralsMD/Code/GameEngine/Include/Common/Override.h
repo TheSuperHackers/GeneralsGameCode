@@ -59,12 +59,12 @@ template <class T> class OVERRIDE
 
 		// these are the methods which we can use to access data in a pointer. (Dereference*, ->, and cast
 		// to T*). They are all overloaded to recurse to the lowest override and use that.
-		__inline const T *operator->( void ) const;	// overload const ->
-		__inline const T *operator*( void ) const;		// overload const *(dereference operator)
-		__inline operator const T*( ) const;	// overload casting to (const T*)
+		__inline const T *operator->() const;	// overload const ->
+		__inline const T *operator*() const;		// overload const *(dereference operator)
+		__inline operator const T*() const;	// overload casting to (const T*)
 
 		// this is useful in case you want to get the pointer that this object is actually looking at.
-		__inline const T *getNonOverloadedPointer( void ) const;
+		__inline const T *getNonOverloadedPointer() const;
 
 	private:
 		// Because OVERRIDE is meant to live on the object and not in the store, it currently contains
@@ -122,14 +122,14 @@ const T *OVERRIDE<T>::operator*() const
 
 //-------------------------------------------------------------------------------------------------
 template <class T>
-const T *OVERRIDE<T>::getNonOverloadedPointer( void ) const
+const T *OVERRIDE<T>::getNonOverloadedPointer() const
 {
 	return (T*) m_overridable;
 }
 
 //-------------------------------------------------------------------------------------------------
 template <class T>
-OVERRIDE<T>::operator const T*( ) const
+OVERRIDE<T>::operator const T*() const
 {
 	return operator*();
 }

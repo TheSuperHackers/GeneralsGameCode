@@ -74,12 +74,12 @@
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 
-ScoreKeeper::ScoreKeeper( void )
+ScoreKeeper::ScoreKeeper()
 {
 	reset(0);
 }
 
-ScoreKeeper::~ScoreKeeper( void )
+ScoreKeeper::~ScoreKeeper()
 {
 
 }
@@ -333,7 +333,7 @@ void ScoreKeeper::addObjectLost( const Object *o )
 	}
 }
 
-Int ScoreKeeper::calculateScore( void )
+Int ScoreKeeper::calculateScore()
 {
 	Int score = 0;
 	score += m_totalUnitsBuilt * 100;
@@ -356,7 +356,7 @@ Int ScoreKeeper::calculateScore( void )
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 
-Int ScoreKeeper::getTotalBuildingsDestroyed( void )
+Int ScoreKeeper::getTotalBuildingsDestroyed()
 {
 	int count = 0;
 	for (int i = 0; i< MAX_PLAYER_COUNT; ++i)
@@ -374,7 +374,7 @@ Int ScoreKeeper::getTotalBuildingsDestroyed( void )
 	}
 	return count;
 }
-Int ScoreKeeper::getTotalUnitsDestroyed( void )
+Int ScoreKeeper::getTotalUnitsDestroyed()
 {
 	int count = 0;
 	for (int i = 0; i< MAX_PLAYER_COUNT; ++i)
@@ -559,7 +559,7 @@ void ScoreKeeper::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void ScoreKeeper::loadPostProcess( void )
+void ScoreKeeper::loadPostProcess()
 {
 
 }

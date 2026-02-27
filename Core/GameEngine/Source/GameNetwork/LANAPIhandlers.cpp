@@ -432,7 +432,7 @@ void LANAPI::handleJoinAccept( LANMessage *msg, UnsignedInt senderIP )
 
 			if (!m_currentGame)
 			{
-				DEBUG_ASSERTCRASH(false, ("Could not find game to join!"));
+				DEBUG_CRASH(("Could not find game to join!"));
 				OnGameJoin(RET_UNKNOWN, nullptr);
 			}
 			else
@@ -463,7 +463,7 @@ void LANAPI::handleJoinAccept( LANMessage *msg, UnsignedInt senderIP )
 				prefs.write();
 
 				OnGameJoin(RET_OK, m_currentGame);
-				//DEBUG_ASSERTCRASH(false, ("setting host to %ls@%ls", m_currentGame->getLANSlot(0)->getUser()->getLogin().str(),
+				//DEBUG_CRASH(("setting host to %ls@%ls", m_currentGame->getLANSlot(0)->getUser()->getLogin().str(),
 				//	m_currentGame->getLANSlot(0)->getUser()->getHost().str()));
 			}
 			m_pendingAction = ACT_NONE;

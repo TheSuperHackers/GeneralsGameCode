@@ -43,7 +43,7 @@
 //	SoundHandleClass
 //
 //////////////////////////////////////////////////////////////////////
-SoundHandleClass::SoundHandleClass (void)	:
+SoundHandleClass::SoundHandleClass ()	:
 	Buffer (nullptr)
 {
 	return ;
@@ -55,7 +55,7 @@ SoundHandleClass::SoundHandleClass (void)	:
 //	~SoundHandleClass
 //
 //////////////////////////////////////////////////////////////////////
-SoundHandleClass::~SoundHandleClass (void)
+SoundHandleClass::~SoundHandleClass ()
 {
 	//
 	//	Delay the release of the buffer (fixes a sync bug

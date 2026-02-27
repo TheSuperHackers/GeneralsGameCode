@@ -172,7 +172,7 @@ static void animSlideRight( ControlBarSchemeAnimation *anim );
 //-----------------------------------------------------------------------------
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-ControlBarSchemeImage::ControlBarSchemeImage( void )
+ControlBarSchemeImage::ControlBarSchemeImage()
 {
 	m_name.clear();
 	m_position.x = m_position.y = 0;
@@ -181,12 +181,12 @@ ControlBarSchemeImage::ControlBarSchemeImage( void )
 	m_layer = 0;
 }
 
-ControlBarSchemeImage::~ControlBarSchemeImage( void )
+ControlBarSchemeImage::~ControlBarSchemeImage()
 {
 	m_image = nullptr;
 }
 
-ControlBarSchemeAnimation::ControlBarSchemeAnimation( void )
+ControlBarSchemeAnimation::ControlBarSchemeAnimation()
 {
 	m_animDuration = 0;
 	m_finalPos.x = m_finalPos.y = 0;
@@ -197,13 +197,13 @@ ControlBarSchemeAnimation::ControlBarSchemeAnimation( void )
 	m_currentFrame = 0;
 }
 
-ControlBarSchemeAnimation::~ControlBarSchemeAnimation( void )
+ControlBarSchemeAnimation::~ControlBarSchemeAnimation()
 {
 	m_animImage = nullptr;
 }
 
 
-void ControlBarScheme::reset(void)
+void ControlBarScheme::reset()
 {
 	for (Int i = 0; i < MAX_CONTROL_BAR_SCHEME_IMAGE_LAYERS; i++)
 	{
@@ -270,12 +270,12 @@ void ControlBarScheme::reset(void)
 
 }
 
-ControlBarScheme::~ControlBarScheme(void)
+ControlBarScheme::~ControlBarScheme()
 {
 	reset();
 }
 
-ControlBarScheme::ControlBarScheme(void)
+ControlBarScheme::ControlBarScheme()
 {
 
 	m_animations.clear();
@@ -398,7 +398,7 @@ ControlBarScheme::ControlBarScheme(void)
 }
 
 
-void ControlBarScheme::init(void)
+void ControlBarScheme::init()
 {
 	if(TheControlBar)
 	{
@@ -658,7 +658,7 @@ void ControlBarScheme::addAnimation( ControlBarSchemeAnimation *schemeAnim )
 {
 	if( !schemeAnim )
 	{
-		DEBUG_ASSERTCRASH(FALSE,("Trying to add a null animation to the controlbarscheme"));
+		DEBUG_CRASH(("Trying to add a null animation to the controlbarscheme"));
 		return;
 	}
 	m_animations.push_back( schemeAnim );
@@ -671,13 +671,13 @@ void ControlBarScheme::addImage( ControlBarSchemeImage *schemeImage )
 {
 	if( !schemeImage )
 	{
-		DEBUG_ASSERTCRASH(FALSE,("Trying to add a null image to the controlbarscheme"));
+		DEBUG_CRASH(("Trying to add a null image to the controlbarscheme"));
 		return;
 	}
 
 	if(schemeImage->m_layer < 0 || schemeImage->m_layer >= MAX_CONTROL_BAR_SCHEME_IMAGE_LAYERS)
 	{
-		DEBUG_ASSERTCRASH(FALSE,("SchemeImage %s attempted to be added to layer %d which is not Between to %d, %d",
+		DEBUG_CRASH(("SchemeImage %s attempted to be added to layer %d which is not Between to %d, %d",
 								 schemeImage->m_name.str(), schemeImage->m_layer, 0, MAX_CONTROL_BAR_SCHEME_IMAGE_LAYERS));
 		// bring the foobar to the front so we make it obvious that something's wrong
 		schemeImage->m_layer = 0;
@@ -700,7 +700,7 @@ void ControlBarScheme::updateAnim (ControlBarSchemeAnimation * anim)
 		}
 		default:
 		{
-			DEBUG_ASSERTCRASH(FALSE,("We tried to animate but not animate function was found %d", anim->m_animType));
+			DEBUG_CRASH(("We tried to animate but not animate function was found %d", anim->m_animType));
 		}
 	}
 }
@@ -708,7 +708,7 @@ void ControlBarScheme::updateAnim (ControlBarSchemeAnimation * anim)
 //
 // Add an image to the proper layer list
 //-----------------------------------------------------------------------------
-void ControlBarScheme::update( void )
+void ControlBarScheme::update()
 {
 	ControlBarSchemeAnimationList::iterator it = m_animations.begin();
 
@@ -717,7 +717,7 @@ void ControlBarScheme::update( void )
 		ControlBarSchemeAnimation *anim = *it;
 		if( !anim )
 		{
-			DEBUG_ASSERTCRASH(FALSE,("THere's no Animation in the ControlBarSchemeAnimationList:m_animations"));
+			DEBUG_CRASH(("THere's no Animation in the ControlBarSchemeAnimationList:m_animations"));
 			return;
 		}
 		updateAnim( anim );
@@ -739,7 +739,7 @@ void ControlBarScheme::drawForeground( Coord2D multi, ICoord2D offset )
 			ControlBarSchemeImage *schemeImage = *it;
 			if( !schemeImage )
 			{
-				DEBUG_ASSERTCRASH(FALSE,("There is no ControlBarSchemeImage found in the m_layer list"));
+				DEBUG_CRASH(("There is no ControlBarSchemeImage found in the m_layer list"));
 				it++;
 				continue;
 			}
@@ -776,7 +776,7 @@ void ControlBarScheme::drawBackground( Coord2D multi, ICoord2D offset )
 			ControlBarSchemeImage *schemeImage = *it;
 			if( !schemeImage )
 			{
-				DEBUG_ASSERTCRASH(FALSE,("There is no ControlBarSchemeImage found in the m_layer list"));
+				DEBUG_CRASH(("There is no ControlBarSchemeImage found in the m_layer list"));
 				it++;
 				continue;
 			}
@@ -803,7 +803,7 @@ void ControlBarScheme::drawBackground( Coord2D multi, ICoord2D offset )
 //
 // Constructor for the manager
 //-----------------------------------------------------------------------------
-ControlBarSchemeManager::ControlBarSchemeManager( void )
+ControlBarSchemeManager::ControlBarSchemeManager()
 {
 	m_currentScheme = nullptr;
 	m_schemeList.clear();
@@ -813,7 +813,7 @@ ControlBarSchemeManager::ControlBarSchemeManager( void )
 //
 // Destructor for the Manager
 //-----------------------------------------------------------------------------
-ControlBarSchemeManager::~ControlBarSchemeManager( void )
+ControlBarSchemeManager::~ControlBarSchemeManager()
 {
 	ControlBarSchemeList::iterator it = m_schemeList.begin();
 
@@ -899,7 +899,7 @@ ControlBarScheme *ControlBarSchemeManager::newControlBarScheme( AsciiString name
 	ControlBarScheme *cbScheme = 	findControlBarScheme(name);
 	if(cbScheme)
 	{
-		DEBUG_ASSERTCRASH(false,("We're overwriting a previous control bar scheme %s",name.str()));
+		DEBUG_CRASH(("We're overwriting a previous control bar scheme %s",name.str()));
 		cbScheme->reset();
 		cbScheme->m_name.set( name );
 		cbScheme->m_name.toLower();
@@ -910,7 +910,7 @@ ControlBarScheme *ControlBarSchemeManager::newControlBarScheme( AsciiString name
 
 	if( !cbScheme  || name.isEmpty() )
 	{
-		DEBUG_ASSERTCRASH(FALSE,("Could not create controlbar %s", name.str()));
+		DEBUG_CRASH(("Could not create controlbar %s", name.str()));
 		return nullptr;
 	}
 
@@ -937,7 +937,7 @@ ControlBarScheme *ControlBarSchemeManager::findControlBarScheme( AsciiString nam
 		ControlBarScheme *CBScheme = *it;
 		if( !CBScheme )
 		{
-			DEBUG_ASSERTCRASH(FALSE,("There's no ControlBarScheme in the ControlBarSchemeList:m_schemeList"));
+			DEBUG_CRASH(("There's no ControlBarScheme in the ControlBarSchemeList:m_schemeList"));
 			return nullptr;
 		}
 		if(CBScheme->m_name.compareNoCase( name ) == 0)
@@ -957,7 +957,7 @@ void ControlBarSchemeManager::preloadAssets( TimeOfDay timeOfDay )
 		ControlBarScheme *CBScheme = *it;
 		if( !CBScheme )
 		{
-			DEBUG_ASSERTCRASH(FALSE,("There's no ControlBarScheme in the ControlBarSchemeList:m_schemeList"));
+			DEBUG_CRASH(("There's no ControlBarScheme in the ControlBarSchemeList:m_schemeList"));
 			continue;
 		}
 
@@ -992,7 +992,7 @@ void ControlBarSchemeManager::preloadAssets( TimeOfDay timeOfDay )
 //
 // Find a scheme based on name
 //-----------------------------------------------------------------------------
-void ControlBarSchemeManager::init( void )
+void ControlBarSchemeManager::init()
 {
 
 	INI ini;
@@ -1011,7 +1011,7 @@ void ControlBarSchemeManager::init( void )
 //	}
 	if( m_schemeList.empty() )
 	{
-		DEBUG_ASSERTCRASH(FALSE,("There's no ControlBarScheme in the ControlBarSchemeList:m_schemeList that was just read from the INI file"));
+		DEBUG_CRASH(("There's no ControlBarScheme in the ControlBarSchemeList:m_schemeList that was just read from the INI file"));
 		return;
 	}
 
@@ -1033,7 +1033,7 @@ void ControlBarSchemeManager::setControlBarScheme(AsciiString schemeName)
 	}
 	else
 	{
-		DEBUG_ASSERTCRASH(FALSE,("There's no ControlBarScheme in the ControlBarSchemeList:m_schemeList"));
+		DEBUG_CRASH(("There's no ControlBarScheme in the ControlBarSchemeList:m_schemeList"));
 		m_currentScheme = nullptr;
 	}
 	if(m_currentScheme)
@@ -1043,7 +1043,7 @@ void ControlBarSchemeManager::setControlBarScheme(AsciiString schemeName)
 //
 // Update calls all the animation update calls for the
 //-----------------------------------------------------------------------------
-void ControlBarSchemeManager::update( void )
+void ControlBarSchemeManager::update()
 {
 	if(m_currentScheme)
 		m_currentScheme->update();
@@ -1092,7 +1092,7 @@ void ControlBarSchemeManager::setControlBarSchemeByPlayerTemplate( const PlayerT
 		ControlBarScheme *CBScheme = *it;
 		if( !CBScheme )
 		{
-			DEBUG_ASSERTCRASH(FALSE,("There's no ControlBarScheme in the ControlBarSchemeList:m_schemeList"));
+			DEBUG_CRASH(("There's no ControlBarScheme in the ControlBarSchemeList:m_schemeList"));
 			it++;
 			continue;
 		}
@@ -1160,7 +1160,7 @@ void ControlBarSchemeManager::setControlBarSchemeByPlayer(Player *p)
 		ControlBarScheme *CBScheme = *it;
 		if( !CBScheme )
 		{
-			DEBUG_ASSERTCRASH(FALSE,("There's no ControlBarScheme in the ControlBarSchemeList:m_schemeList"));
+			DEBUG_CRASH(("There's no ControlBarScheme in the ControlBarSchemeList:m_schemeList"));
 			it++;
 			continue;
 		}

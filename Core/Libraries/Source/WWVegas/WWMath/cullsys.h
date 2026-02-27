@@ -55,10 +55,10 @@ class CullLinkClass
 {
 public:
 	WWINLINE CullLinkClass(CullSystemClass * system)								{ System = system; WWASSERT(System); }
-	virtual ~CullLinkClass(void)												{ WWASSERT(System == nullptr); }
+	virtual ~CullLinkClass()												{ WWASSERT(System == nullptr); }
 
 	WWINLINE void					Set_Culling_System(CullSystemClass * sys)		{ System = sys; }
-	WWINLINE CullSystemClass * Get_Culling_System(void)							{ return System; }
+	WWINLINE CullSystemClass * Get_Culling_System()							{ return System; }
 
 protected:
 	CullSystemClass * System;
@@ -75,8 +75,8 @@ class CullableClass : public RefCountClass
 {
 public:
 
-	CullableClass(void);
-	virtual ~CullableClass(void);
+	CullableClass();
+	virtual ~CullableClass();
 
 	/*
 	** Access to the culling box for this object.  When you set the cull box, you are
@@ -84,7 +84,7 @@ public:
 	** object will automatically be updated in whatever culling system it is currently
 	** contained in (if any)
 	*/
-	WWINLINE const AABoxClass & Get_Cull_Box(void) const							{ return CullBox; }
+	WWINLINE const AABoxClass & Get_Cull_Box() const							{ return CullBox; }
 	void								Set_Cull_Box(const AABoxClass & box,bool just_loaded = false);
 
 	/*
@@ -92,14 +92,14 @@ public:
 	** pointers.  *The average user should NEVER call these*
 	*/
 	void								Set_Culling_System(CullSystemClass * sys);
-	CullSystemClass *				Get_Culling_System(void) const;
+	CullSystemClass *				Get_Culling_System() const;
 	WWINLINE void					Set_Cull_Link(CullLinkClass * c)					{ CullLink = c; }
-	WWINLINE CullLinkClass *	Get_Cull_Link(void) const							{ return CullLink; }
+	WWINLINE CullLinkClass *	Get_Cull_Link() const							{ return CullLink; }
 
 private:
 
 	WWINLINE void					Set_Next_Collected(CullableClass * c)			{ NextCollected = c; }
-	WWINLINE CullableClass *	Get_Next_Collected(void)							{ return NextCollected; }
+	WWINLINE CullableClass *	Get_Next_Collected()							{ return NextCollected; }
 
 	/*
 	** Culling Data
@@ -145,8 +145,8 @@ class CullSystemClass
 {
 public:
 
-	CullSystemClass(void);
-	virtual ~CullSystemClass(void);
+	CullSystemClass();
+	virtual ~CullSystemClass();
 
 	/*
 	** Collect_Objects.  Updates the internal collection list with the
@@ -156,7 +156,7 @@ public:
 	** WARNING: Always call Reset_Collection if you want to start a
 	** fresh collection!
 	*/
-	void					Reset_Collection(void);
+	void					Reset_Collection();
 	virtual void		Collect_Objects(const Vector3 & point)					= 0;
 	virtual void		Collect_Objects(const AABoxClass & box)				= 0;
 	virtual void		Collect_Objects(const OBBoxClass & box)				= 0;
@@ -172,9 +172,9 @@ protected:
 	/*
 	** Iterate through the collected objects
 	*/
-	CullableClass *	Get_First_Collected_Object_Internal(void);
+	CullableClass *	Get_First_Collected_Object_Internal();
 	CullableClass *	Get_Next_Collected_Object_Internal(CullableClass * obj);
-	CullableClass *	Peek_First_Collected_Object_Internal(void);
+	CullableClass *	Peek_First_Collected_Object_Internal();
 	CullableClass *	Peek_Next_Collected_Object_Internal(CullableClass * obj);
 
 	/*

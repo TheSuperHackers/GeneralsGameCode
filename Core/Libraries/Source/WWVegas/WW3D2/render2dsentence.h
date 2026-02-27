@@ -75,7 +75,7 @@ class FontCharsClass : public W3DMPO, public RefCountClass
 	W3DMPO_GLUE(FontCharsClass)
 
 public:
-	FontCharsClass( void );
+	FontCharsClass();
 	~FontCharsClass();
 
 	// TR: Hack for unicode font support
@@ -84,13 +84,13 @@ public:
 
 	bool	Initialize_GDI_Font( const char *font_name, int point_size, bool is_bold );
 	bool	Is_Font( const char *font_name, int point_size, bool is_bold );
-	const char * Get_Name( void )			{ return Name; }
+	const char * Get_Name()			{ return Name; }
 
-	int	Get_Char_Height( void )			{ return CharHeight; }
+	int	Get_Char_Height()			{ return CharHeight; }
 	int	Get_Char_Width( WCHAR ch );
 	int	Get_Char_Spacing( WCHAR ch );
 
-	int Get_Extra_Overlap(void) {return PixelOverlap;}
+	int Get_Extra_Overlap() {return PixelOverlap;}
 
 	void	Blit_Char( WCHAR ch, uint16 *dest_ptr, int dest_stride, int x, int y );
 
@@ -100,13 +100,13 @@ private:
 	//	Private methods
 	//
 	bool							Create_GDI_Font( const char *font_name );
-	void							Free_GDI_Font( void );
+	void							Free_GDI_Font();
 	const FontCharsClassCharDataStruct *	Store_GDI_Char( WCHAR ch );
 	void							Update_Current_Buffer( int char_width );
 	const FontCharsClassCharDataStruct	*	Get_Char_Data( WCHAR ch );
 
 	void							Grow_Unicode_Array( WCHAR ch );
-	void							Free_Character_Arrays( void );
+	void							Free_Character_Arrays();
 
 	//
 	//	Private member data
@@ -139,14 +139,14 @@ private:
 class Render2DSentenceClass {
 public:
 	//Render2DSentenceClass( FontCharsClass * font );
-	Render2DSentenceClass( void );
+	Render2DSentenceClass();
 	~Render2DSentenceClass();
 
-	void				Render (void);
-	virtual	void	Reset (void);
-	void				Reset_Polys (void);
+	void				Render ();
+	virtual	void	Reset ();
+	void				Reset_Polys ();
 
-	FontCharsClass *	Peek_Font( void )						{ return Font; }
+	FontCharsClass *	Peek_Font()						{ return Font; }
 	void	Set_Font( FontCharsClass *font );
 
 	void	Set_Location( const Vector2 & loc );
@@ -165,21 +165,21 @@ public:
 	// Clipping support
 	//
 	void	Set_Clipping_Rect( const RectClass &rect )	{ ClipRect = rect; IsClippedEnabled = true; }
-	bool	Is_Clipping_Enabled( void ) const				{ return IsClippedEnabled; }
+	bool	Is_Clipping_Enabled() const				{ return IsClippedEnabled; }
 	void	Enable_Clipping( bool onoff )						{ IsClippedEnabled = onoff; }
 
 	//
 	//	Shader modification support
 	//
-	void			Make_Additive (void);
-	ShaderClass	Get_Shader (void) const						{ return Shader; }
+	void			Make_Additive ();
+	ShaderClass	Get_Shader () const						{ return Shader; }
 	void			Set_Shader (ShaderClass shader);
 
 //	void	Draw_Block( const RectClass & screen, unsigned long color = 0xFFFFFFFF );
 
-	const RectClass & Get_Draw_Extents( void )			{ return DrawExtents; }
-//	const RectClass & Get_Total_Extents( void )			{ return TotalExtents; }
-//	const Vector2 & Get_Cursor( void )						{ return Cursor; }
+	const RectClass & Get_Draw_Extents()			{ return DrawExtents; }
+//	const RectClass & Get_Total_Extents()			{ return TotalExtents; }
+//	const Vector2 & Get_Cursor()						{ return Cursor; }
 
 	Vector2	Get_Text_Extents( const WCHAR * text );
 	Vector2	Get_Formatted_Text_Extents( const WCHAR * text );
@@ -194,7 +194,7 @@ public:
 	//	Texture hint
 	//
 	void	Set_Texture_Size_Hint( int hint )				{ TextureSizeHint = hint; }
-	int	Get_Texture_Size_Hint( void ) const				{ return TextureSizeHint; }
+	int	Get_Texture_Size_Hint() const				{ return TextureSizeHint; }
 
 	void	Set_Mono_Spaced( bool onoff )						{ MonoSpaced = onoff; }
 
@@ -231,11 +231,11 @@ private:
 	//
 	//	Private methods
 	//
-	void	Reset_Sentence_Data (void);
-	void	Build_Textures (void);
-	void	Record_Sentence_Chunk (void);
+	void	Reset_Sentence_Data ();
+	void	Build_Textures ();
+	void	Record_Sentence_Chunk ();
 	void	Allocate_New_Surface (const WCHAR *text, bool justCalcExtents = false);
-	void	Release_Pending_Surfaces (void);
+	void	Release_Pending_Surfaces ();
 	void	Build_Sentence_Centered (const WCHAR *text, int *hkX, int *hkY);
 	Vector2	Build_Sentence_Not_Centered (const WCHAR *text, int *hkX, int *hkY,bool justCalcExtents = false );
 	//

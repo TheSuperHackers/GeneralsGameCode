@@ -63,8 +63,8 @@ public:
 	// virtual destructor prototype provided by memory pool declaration
 
 	/// the client update callback
-	virtual void clientUpdate( void );
-	void hideBeacon( void );
+	virtual void clientUpdate();
+	void hideBeacon();
 
 protected:
 

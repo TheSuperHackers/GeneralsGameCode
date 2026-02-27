@@ -77,7 +77,7 @@ enum
 //	SoundSceneClass
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
-SoundSceneClass::SoundSceneClass (void)
+SoundSceneClass::SoundSceneClass ()
 	:	m_Listener (nullptr),
 		m_2ndListener (nullptr),
 		m_MinExtents (-500, -500, -500),
@@ -99,7 +99,7 @@ SoundSceneClass::SoundSceneClass (void)
 //	~SoundSceneClass
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
-SoundSceneClass::~SoundSceneClass (void)
+SoundSceneClass::~SoundSceneClass ()
 {
 	REF_PTR_RELEASE (m_Listener);
 	REF_PTR_RELEASE (m_2ndListener);
@@ -1008,7 +1008,7 @@ SoundSceneClass::Update_Sound (SoundCullObjClass *sound_obj)
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
 void
-SoundSceneClass::Initialize (void)
+SoundSceneClass::Initialize ()
 {
 	m_Listener->Free_Miles_Handle ();
 	m_Listener->Allocate_Miles_Handle ();
@@ -1230,7 +1230,7 @@ SoundSceneClass::Load_Dynamic (ChunkLoadClass &cload)
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
 void
-SoundSceneClass::Flush_Scene (void)
+SoundSceneClass::Flush_Scene ()
 {
 	RefMultiListClass<SoundCullObjClass> temp_static;
 	RefMultiListClass<SoundCullObjClass> temp_dynamic;

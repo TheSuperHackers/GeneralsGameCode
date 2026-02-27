@@ -38,7 +38,7 @@
 #include "Common/GlobalData.h"
 #include "Common/NameKeyGenerator.h"
 #include "Common/RandomValue.h"
-#include "Common/UserPreferences.h"
+#include "Common/OptionPreferences.h"
 #include "Common/version.h"
 #include "Common/GameLOD.h"
 #include "GameClient/AnimateWindowManager.h"
@@ -97,7 +97,7 @@ static NameKeyType campaignID = NAMEKEY_INVALID;
 static GameWindow *buttonCampaign = nullptr;
 #ifdef TEST_COMPRESSION
 static GameWindow *buttonCompressTest = nullptr;
-void DoCompressTest( void );
+void DoCompressTest();
 #endif // TEST_COMPRESSION
 #endif
 
@@ -212,7 +212,7 @@ extern DisplaySettings oldDispSettings, newDispSettings;
 extern Bool dispChanged;
 //static time_t timeStarted = 0, currentTime = 0;
 
-void diffReverseSide( void );
+void diffReverseSide();
 void HandleCanceledDownload( Bool resetDropDown )
 {
 	buttonPushed = FALSE;
@@ -237,7 +237,7 @@ static void showSelectiveButtons( Int show )
 	buttonChinaLoadGame->winHide(!(show == SHOW_CHINA ));
 }
 
-static void quitCallback( void )
+static void quitCallback()
 {
 	buttonPushed = TRUE;
 	TheScriptEngine->signalUIInteract(TheShellHookNames[SHELL_SCRIPT_HOOK_MAIN_MENU_EXIT_SELECTED]);
@@ -298,7 +298,7 @@ void prepareCampaignGame(GameDifficulty diff)
 	setupGameStart(TheCampaignManager->getCurrentMap(), diff );
 }
 
-static void doGameStart( void )
+static void doGameStart()
 {
 	startGame = FALSE;
 
@@ -338,7 +338,7 @@ static void TimetToFileTime( time_t t, LPFILETIME pft )
 }
 */
 
-void initialHide( void )
+void initialHide()
 {
 GameWindow *win = nullptr;
 	win = TheWindowManager->winGetWindowFromId(parentMainMenu, TheNameKeyGenerator->nameToKey("MainMenu.wnd:WinFactionGLA"));
@@ -991,7 +991,7 @@ WindowMsgHandledType MainMenuInput( GameWindow *window, UnsignedInt msg,
 	return MSG_IGNORED;
 
 }
-void PrintOffsetsFromControlBarParent( void );
+void PrintOffsetsFromControlBarParent();
 //-------------------------------------------------------------------------------------------------
 /** Main menu window system callback */
 //-------------------------------------------------------------------------------------------------
@@ -1657,7 +1657,7 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 
 }
 
-void diffReverseSide( void )
+void diffReverseSide()
 {
 	switch (showSide) {
 	case SHOW_TRAINING:

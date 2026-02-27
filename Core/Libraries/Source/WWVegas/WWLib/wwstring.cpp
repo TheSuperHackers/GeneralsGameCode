@@ -191,7 +191,7 @@ StringClass::Uninitialised_Grow (int new_len)
 //
 ///////////////////////////////////////////////////////////////////
 void
-StringClass::Free_String (void)
+StringClass::Free_String ()
 {
 	if (m_Buffer != m_EmptyString) {
 
@@ -304,7 +304,7 @@ StringClass::Format (const TCHAR *format, ...)
 //
 ///////////////////////////////////////////////////////////////////
 void
-StringClass::Release_Resources (void)
+StringClass::Release_Resources ()
 {
 	Free_String();
 }

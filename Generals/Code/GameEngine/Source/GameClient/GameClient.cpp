@@ -229,7 +229,7 @@ GameClient::~GameClient()
 //-------------------------------------------------------------------------------------------------
 /** Initialize resources for the game client */
 //-------------------------------------------------------------------------------------------------
-void GameClient::init( void )
+void GameClient::init()
 {
 
 	setFrameRate(MSEC_PER_LOGICFRAME_REAL);		// from GameCommon.h... tell W3D what our expected framerate is
@@ -422,7 +422,7 @@ void GameClient::init( void )
 
 //-------------------------------------------------------------------------------------------------
 /** Reset the game client for a new game */
-void GameClient::reset( void )
+void GameClient::reset()
 {
 	Drawable *draw, *nextDraw;
 	m_drawableHash.clear();
@@ -460,7 +460,7 @@ void GameClient::reset( void )
 /** -----------------------------------------------------------------------------------------------
  * Return a new unique object id.
  */
-DrawableID GameClient::allocDrawableID( void )
+DrawableID GameClient::allocDrawableID()
 {
 	/// @todo Find unused value in current set
 	DrawableID ret = m_nextDrawableID;
@@ -487,7 +487,7 @@ void GameClient::registerDrawable( Drawable *draw )
  */
 DECLARE_PERF_TIMER(GameClient_update)
 DECLARE_PERF_TIMER(GameClient_draw)
-void GameClient::update( void )
+void GameClient::update()
 {
 	USE_PERF_TIMER(GameClient_update)
 	// create the FRAME_TICK message
@@ -780,7 +780,7 @@ void GameClient::iterateDrawablesInRegion( Region3D *region, GameClientFuncPtr u
 /**Helper function to update fake GLA structures to become visible to certain players.
 We should only call this during critical moments, such as changing teams, changing to
 observer, etc.*/
-void GameClient::updateFakeDrawables(void)
+void GameClient::updateFakeDrawables()
 {
 }
 
@@ -970,7 +970,7 @@ void GameClient::addTextBearingDrawable( Drawable *tbd )
 		m_textBearingDrawableList.push_back( tbd );
 }
 // ------------------------------------------------------------------------------------------------
-void GameClient::flushTextBearingDrawables( void )
+void GameClient::flushTextBearingDrawables()
 {
 
 	/////////////////////////////
@@ -1015,7 +1015,7 @@ void GameClient::removeFromRayEffects( Drawable *draw )
 }
 
 /** frees all shadow resources used by this module - used by Options screen.*/
-void GameClient::releaseShadows(void)
+void GameClient::releaseShadows()
 {
 	Drawable *draw;
 	for( draw = firstDrawable(); draw; draw = draw->getNextDrawable() )
@@ -1023,7 +1023,7 @@ void GameClient::releaseShadows(void)
 }
 
 /** create shadow resources if not already present. Used by Options screen.*/
-void GameClient::allocateShadows(void)
+void GameClient::allocateShadows()
 {
 	Drawable *draw;
 	for( draw = firstDrawable(); draw; draw = draw->getNextDrawable() )
@@ -1568,7 +1568,7 @@ void GameClient::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void GameClient::loadPostProcess( void )
+void GameClient::loadPostProcess()
 {
 
 	//

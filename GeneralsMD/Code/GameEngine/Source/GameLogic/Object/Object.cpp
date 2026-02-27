@@ -1936,7 +1936,7 @@ void Object::attemptHealing(Real amount, const Object* source)
 	}
 }
 
-ObjectID Object::getSoleHealingBenefactor( void ) const
+ObjectID Object::getSoleHealingBenefactor() const
 {
 	UnsignedInt now = TheGameLogic->getFrame();
 	if( now > m_soleHealingBenefactorExpirationFrame )
@@ -2050,26 +2050,26 @@ void Object::setCaptured(Bool isCaptured)
 
 
 //-------------------------------------------------------------------------------------------------
-Bool Object::isStructure(void) const
+Bool Object::isStructure() const
 {
 	return isKindOf(KINDOF_STRUCTURE);
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool Object::isFactionStructure(void) const
+Bool Object::isFactionStructure() const
 {
 	return isAnyKindOf( KINDOFMASK_FS );
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool Object::isNonFactionStructure(void) const
+Bool Object::isNonFactionStructure() const
 {
 	return isStructure() && !isFactionStructure();
 }
 
 //-------------------------------------------------------------------------------------------------
 // TheSuperHackers @performance bobtista 13/11/2025 Use cached hero count for O(1) lookup instead of O(n) iteration.
-Bool Object::isHero(void) const
+Bool Object::isHero() const
 {
 	ContainModuleInterface *contain = getContain();
 	if( contain )
@@ -2803,7 +2803,7 @@ void Object::setID( ObjectID id )
 }
 
 // ------------------------------------------------------------------------------------------------
-Real Object::calculateHeightAboveTerrain(void) const
+Real Object::calculateHeightAboveTerrain() const
 {
 	const Coord3D* pos = getPosition();
 	Real terrainZ = TheTerrainLogic->getLayerHeight( pos->x, pos->y, m_layer );
@@ -2829,7 +2829,7 @@ void Object::removeFromList(Object **pListHead)
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void Object::friend_prepareForMapBoundaryAdjust(void)
+void Object::friend_prepareForMapBoundaryAdjust()
 {
 	// NOTE - DO NOT remove from pathfind map. jba.
 	// NO NO. jba. TheAI->pathfinder()->removeObjectFromPathfindMap( this );
@@ -2851,7 +2851,7 @@ void Object::friend_prepareForMapBoundaryAdjust(void)
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void Object::friend_notifyOfNewMapBoundary(void)
+void Object::friend_notifyOfNewMapBoundary()
 {
 	ThePartitionManager->registerObject(this);
 	TheRadar->addObject(this);
@@ -3395,7 +3395,7 @@ void Object::maskObject( Bool mask )
 /*
  * returns true if the current locomotor is an airborne one
  */
-Bool Object::isUsingAirborneLocomotor( void ) const
+Bool Object::isUsingAirborneLocomotor() const
 {
 	return ( m_ai && m_ai->getCurLocomotor() && ((m_ai->getCurLocomotor()->getLegalSurfaces() & LOCOMOTORSURFACE_AIR) != 0) );
 }
@@ -3705,7 +3705,7 @@ void Object::updateObjValuesFromMapProperties(Dict* properties)
       {
         if ( audioToModify == nullptr )
         {
-          const AudioEventInfo * baseInfo = drawable->getBaseSoundAmbientInfo( );
+          const AudioEventInfo * baseInfo = drawable->getBaseSoundAmbientInfo();
           DEBUG_ASSERTCRASH( baseInfo != nullptr, ("getBaseSoundAmbientInfo() return null" ) );
           if ( baseInfo != nullptr )
           {
@@ -3781,7 +3781,7 @@ void Object::updateObjValuesFromMapProperties(Dict* properties)
       else
       {
         // Use default audio
-        const AudioEventInfo * baseInfo = drawable->getBaseSoundAmbientInfo( );
+        const AudioEventInfo * baseInfo = drawable->getBaseSoundAmbientInfo();
         if ( baseInfo != nullptr )
         {
           soundEnabled = baseInfo->isPermanentSound();
@@ -5909,7 +5909,7 @@ void Object::clearLeechRangeModeForAllWeapons()
 // ------------------------------------------------------------------------------------------------
 /** Search our update modules for a production update interface and return it if one is found */
 // ------------------------------------------------------------------------------------------------
-ProductionUpdateInterface* Object::getProductionUpdateInterface( void )
+ProductionUpdateInterface* Object::getProductionUpdateInterface()
 {
 	ProductionUpdateInterface *pui;
 
@@ -5929,7 +5929,7 @@ ProductionUpdateInterface* Object::getProductionUpdateInterface( void )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-DockUpdateInterface *Object::getDockUpdateInterface( void )
+DockUpdateInterface *Object::getDockUpdateInterface()
 {
 	DockUpdateInterface *dock = nullptr;
 
@@ -6346,7 +6346,7 @@ void Object::goInvulnerable( UnsignedInt time )
 // ------------------------------------------------------------------------------------------------
 /** Return the radar priority for this object type */
 // ------------------------------------------------------------------------------------------------
-RadarPriorityType Object::getRadarPriority( void ) const
+RadarPriorityType Object::getRadarPriority() const
 {
 	// first, get the priority at the thing template level
 	RadarPriorityType priority = getTemplate()->getDefaultRadarPriority();
@@ -6384,7 +6384,7 @@ RadarPriorityType Object::getRadarPriority( void ) const
 }
 
 // ------------------------------------------------------------------------------------------------
-AIGroup *Object::getGroup(void)
+AIGroup *Object::getGroup()
 {
 #if RETAIL_COMPATIBLE_AIGROUP
 	return m_group;
@@ -6408,7 +6408,7 @@ void Object::enterGroup( AIGroup *group )
 }
 
 //-------------------------------------------------------------------------------------------------
-void Object::leaveGroup( void )
+void Object::leaveGroup()
 {
 //	DEBUG_LOG(("***AIGROUP %x involved in leaveGroup on %x", m_group, this));
 	// if we are in a group, remove ourselves from it

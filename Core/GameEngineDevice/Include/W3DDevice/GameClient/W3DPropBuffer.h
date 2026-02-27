@@ -97,8 +97,8 @@ friend class BaseHeightMapRenderObjClass;
 
 public:
 
-	W3DPropBuffer(void);
-	~W3DPropBuffer(void);
+	W3DPropBuffer();
+	~W3DPropBuffer();
 	/// Add a prop at location.  Name is the w3d model name.
 	void addProp(Int id, Coord3D location, Real angle, Real scale, const AsciiString &modelName);
 	/// Remove a prop.
@@ -106,7 +106,7 @@ public:
 	/// Remove a prop.
 	Bool updatePropPosition(Int id, const Coord3D &location, Real angle, Real scale);
 	/// Let us know that the shroud has changed.
-	void notifyShroudChanged(void);
+	void notifyShroudChanged();
 
 	void removePropsForConstruction(
 		const Coord3D* pos,
@@ -117,17 +117,17 @@ public:
 	/// Add a type of prop.  Name is the w3d model name.
 	Int addPropType(const AsciiString &modelName);
 	/// Empties the prop buffer.
-	void clearAllProps(void);
+	void clearAllProps();
 	/// Draws the props.  Uses camera for culling.
 	void drawProps(RenderInfoClass &rinfo);
 	/// Called when the view changes, and sort key needs to be recalculated.
-	void doFullUpdate(void) {m_doCull = true;};
+	void doFullUpdate() {m_doCull = true;};
 
 protected:
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
+	virtual void loadPostProcess();
 
 protected:
 	enum { MAX_PROPS=4000};

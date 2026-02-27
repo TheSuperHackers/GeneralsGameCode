@@ -251,7 +251,7 @@ Bool ImagePacker::packImages( void )
 				char buffer[ _MAX_PATH ];
 
 				sprintf( buffer, "Unable to add image '%s' to a brand new page!\n", image->m_path );
-				DEBUG_ASSERTCRASH( 0, (buffer) );
+				DEBUG_CRASH( (buffer) );
 				MessageBox( nullptr, buffer, "Internal Error", MB_OK | MB_ICONERROR );
 				return FALSE;
 

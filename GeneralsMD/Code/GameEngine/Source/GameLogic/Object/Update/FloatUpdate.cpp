@@ -44,7 +44,7 @@
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-FloatUpdateModuleData::FloatUpdateModuleData( void )
+FloatUpdateModuleData::FloatUpdateModuleData()
 {
 
 	m_enabled = FALSE;
@@ -84,14 +84,14 @@ FloatUpdate::FloatUpdate( Thing *thing, const ModuleData *moduleData )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-FloatUpdate::~FloatUpdate( void )
+FloatUpdate::~FloatUpdate()
 {
 
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-UpdateSleepTime FloatUpdate::update( void )
+UpdateSleepTime FloatUpdate::update()
 {
 /// @todo srj use SLEEPY_UPDATE here
 
@@ -171,7 +171,7 @@ void FloatUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void FloatUpdate::loadPostProcess( void )
+void FloatUpdate::loadPostProcess()
 {
 
 	// extend base class

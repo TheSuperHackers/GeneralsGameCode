@@ -110,15 +110,15 @@ public:
 		Mesh->Add_Ref();
 	}
 
-	~PolyRenderTaskClass(void)
+	~PolyRenderTaskClass()
 	{
 		Mesh->Release_Ref();
 	}
 
-	DX8PolygonRendererClass *	Peek_Polygon_Renderer(void)							{ return Renderer; }
-	MeshClass *						Peek_Mesh(void)											{ return Mesh; }
+	DX8PolygonRendererClass *	Peek_Polygon_Renderer()							{ return Renderer; }
+	MeshClass *						Peek_Mesh()											{ return Mesh; }
 
-	PolyRenderTaskClass *		Get_Next_Visible(void)									{ return NextVisible; }
+	PolyRenderTaskClass *		Get_Next_Visible()									{ return NextVisible; }
 	void								Set_Next_Visible(PolyRenderTaskClass * prtc)		{ NextVisible = prtc; }
 
 protected:
@@ -152,16 +152,16 @@ public:
 		Mesh->Add_Ref();
 	}
 
-	~MatPassTaskClass(void)
+	~MatPassTaskClass()
 	{
 		MaterialPass->Release_Ref();
 		Mesh->Release_Ref();
 	}
 
-	MaterialPassClass *	Peek_Material_Pass(void)							{ return MaterialPass; }
-	MeshClass *				Peek_Mesh(void)										{ return Mesh; }
+	MaterialPassClass *	Peek_Material_Pass()							{ return MaterialPass; }
+	MeshClass *				Peek_Mesh()										{ return Mesh; }
 
-	MatPassTaskClass *	Get_Next_Visible(void)								{ return NextVisible; }
+	MatPassTaskClass *	Get_Next_Visible()								{ return NextVisible; }
 	void						Set_Next_Visible(MatPassTaskClass * mpr)		{ NextVisible = mpr; }
 
 private:
@@ -290,7 +290,7 @@ void DX8FVFCategoryContainer::Add_Visible_Material_Pass(MaterialPassClass * pass
 	AnythingToRender=true;
 }
 
-void DX8FVFCategoryContainer::Render_Procedural_Material_Passes(void)
+void DX8FVFCategoryContainer::Render_Procedural_Material_Passes()
 {
 	// additional passes
 	MatPassTaskClass * mpr = visible_matpass_head;
@@ -343,7 +343,7 @@ void DX8RigidFVFCategoryContainer::Add_Delayed_Visible_Material_Pass(MaterialPas
 	AnyDelayedPassesToRender=true;
 }
 
-void DX8RigidFVFCategoryContainer::Render_Delayed_Procedural_Material_Passes(void)
+void DX8RigidFVFCategoryContainer::Render_Delayed_Procedural_Material_Passes()
 {
 	if (!Any_Delayed_Passes_To_Render()) return;
 	AnyDelayedPassesToRender=false;
@@ -800,7 +800,7 @@ void DX8RigidFVFCategoryContainer::Log(bool only_visible)
 //
 // ----------------------------------------------------------------------------
 
-void DX8RigidFVFCategoryContainer::Render(void)
+void DX8RigidFVFCategoryContainer::Render()
 {
 	if (!Anything_To_Render()) return;
 	AnythingToRender=false;
@@ -1295,7 +1295,7 @@ void DX8SkinFVFCategoryContainer::Log(bool only_visible)
 
 // ----------------------------------------------------------------------------
 
-void DX8SkinFVFCategoryContainer::Render(void)
+void DX8SkinFVFCategoryContainer::Render()
 {
 	SNAPSHOT_SAY(("DX8SkinFVFCategoryContainer::Render()"));
 	if (!Anything_To_Render()) {
@@ -1686,7 +1686,7 @@ unsigned DX8TextureCategoryClass::Add_Mesh(
 
 // ----------------------------------------------------------------------------
 
-void DX8TextureCategoryClass::Render(void)
+void DX8TextureCategoryClass::Render()
 {
 	#ifdef WWDEBUG
 	if (!WW3D::Expose_Prelit()) {
@@ -1990,14 +1990,14 @@ DX8MeshRendererClass::~DX8MeshRendererClass()
 	Shutdown();
 }
 
-void DX8MeshRendererClass::Init(void)
+void DX8MeshRendererClass::Init()
 {
 	// DMS - Only allocate one if we have not already (leak fix)
 	if(!texture_category_container_list_skin)
 		texture_category_container_list_skin = W3DNEW FVFCategoryList;
 }
 
-void DX8MeshRendererClass::Shutdown(void)
+void DX8MeshRendererClass::Shutdown()
 {
 	camera = nullptr;
 	visible_decal_meshes = nullptr;
@@ -2177,7 +2177,7 @@ static void Render_FVF_Category_Container_List_Delayed_Passes(FVFCategoryList& l
 	}
 }
 
-void DX8MeshRendererClass::Flush(void)
+void DX8MeshRendererClass::Flush()
 {
 	int i;
 
@@ -2222,7 +2222,7 @@ void DX8MeshRendererClass::Add_To_Render_List(DecalMeshClass * decalmesh)
 	visible_decal_meshes = decalmesh;
 }
 
-void DX8MeshRendererClass::Render_Decal_Meshes(void)
+void DX8MeshRendererClass::Render_Decal_Meshes()
 {
 	DecalMeshClass * decal_mesh = visible_decal_meshes;
 	if (!decal_mesh) return;

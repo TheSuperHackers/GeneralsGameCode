@@ -60,7 +60,7 @@ HackInternetAIUpdate::HackInternetAIUpdate( Thing *thing, const ModuleData* modu
 }
 
 //-------------------------------------------------------------------------------------------------
-HackInternetAIUpdate::~HackInternetAIUpdate( void )
+HackInternetAIUpdate::~HackInternetAIUpdate()
 {
 }
 
@@ -98,7 +98,7 @@ Bool HackInternetAIUpdate::isHackingPackingOrUnpacking() const
 }
 
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime HackInternetAIUpdate::update( void )
+UpdateSleepTime HackInternetAIUpdate::update()
 {
 	// have to call our parent's isIdle, because we override it to never return true
 	// when we have a pending command...
@@ -226,7 +226,7 @@ void HackInternetAIUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void HackInternetAIUpdate::loadPostProcess( void )
+void HackInternetAIUpdate::loadPostProcess()
 {
  // extend base class
 	AIUpdateInterface::loadPostProcess();
@@ -276,7 +276,7 @@ void UnpackingState::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void UnpackingState::loadPostProcess( void )
+void UnpackingState::loadPostProcess()
 {
 }
 
@@ -365,7 +365,7 @@ void PackingState::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void PackingState::loadPostProcess( void )
+void PackingState::loadPostProcess()
 {
 }
 
@@ -441,7 +441,7 @@ void HackInternetState::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void HackInternetState::loadPostProcess( void )
+void HackInternetState::loadPostProcess()
 {
 }
 

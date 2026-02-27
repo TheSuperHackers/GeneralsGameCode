@@ -52,7 +52,7 @@ class Base64Pipe : public Pipe
 
 		Base64Pipe(CodeControl control) : Control(control), Counter(0) {}
 
-		virtual int Flush(void);
+		virtual int Flush();
 		virtual int Put(void const * source, int slen);
 
 	private:

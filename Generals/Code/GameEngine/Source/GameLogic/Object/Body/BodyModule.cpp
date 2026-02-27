@@ -67,7 +67,7 @@ void BodyModule::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void BodyModule::loadPostProcess( void )
+void BodyModule::loadPostProcess()
 {
 
 	// call base class

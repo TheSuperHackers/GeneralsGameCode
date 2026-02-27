@@ -60,15 +60,15 @@ class AABTreeBuilderClass
 {
 public:
 
-	AABTreeBuilderClass(void);
-	~AABTreeBuilderClass(void);
+	AABTreeBuilderClass();
+	~AABTreeBuilderClass();
 
 	void					Build_AABTree(int polycount,TriIndex * polys,int vertcount,Vector3 * verts);
 	void					Build_AABTree(int polycount,Vector3i* polys,int vertcount,Vector3 * verts);
 	void					Export(ChunkSaveClass & csave);
 
-	int					Node_Count(void);
-	int					Poly_Count(void);
+	int					Node_Count();
+	int					Poly_Count();
 
 	enum
 	{
@@ -86,8 +86,8 @@ private:
 	*/
 	struct CullNodeStruct
 	{
-		CullNodeStruct(void) : Index(0),Min(0,0,0),Max(0,0,0),Front(nullptr),Back(nullptr),PolyCount(0),PolyIndices(nullptr) {}
-		~CullNodeStruct(void)
+		CullNodeStruct() : Index(0),Min(0,0,0),Max(0,0,0),Front(nullptr),Back(nullptr),PolyCount(0),PolyIndices(nullptr) {}
+		~CullNodeStruct()
 		{
 			delete Front;
 			delete Back;
@@ -108,7 +108,7 @@ private:
 	*/
 	struct SplitChoiceStruct
 	{
-		SplitChoiceStruct(void) :
+		SplitChoiceStruct() :
 			Cost(FLT_MAX),
 			FrontCount(0),
 			BackCount(0),
@@ -132,7 +132,7 @@ private:
 
 	struct SplitArraysStruct
 	{
-		SplitArraysStruct(void) :
+		SplitArraysStruct() :
 			FrontCount(0),
 			BackCount(0),
 			FrontPolys(nullptr),

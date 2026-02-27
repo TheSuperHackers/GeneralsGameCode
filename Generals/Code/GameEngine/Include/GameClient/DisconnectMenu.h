@@ -42,7 +42,7 @@ public:
 
 	void showScreen();
 	void hideScreen();
-	Bool isScreenVisible( void ) { return m_menuState == DISCONNECTMENUSTATETYPE_SCREENON; }
+	Bool isScreenVisible() { return m_menuState == DISCONNECTMENUSTATETYPE_SCREENON; }
 
 	void showPlayerControls(Int slot);
 	void hidePlayerControls(Int slot);

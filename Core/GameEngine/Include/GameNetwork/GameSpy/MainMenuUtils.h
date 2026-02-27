@@ -29,11 +29,11 @@
 
 #pragma once
 
-void HTTPThinkWrapper( void );
-void StopAsyncDNSCheck( void );
-void StartPatchCheck( void );
-void CancelPatchCheckCallback( void );
-void StartDownloadingPatches( void );
+void HTTPThinkWrapper();
+void StopAsyncDNSCheck();
+void StartPatchCheck();
+void CancelPatchCheckCallback();
+void StartDownloadingPatches();
 void HandleCanceledDownload( Bool resetDropDown = TRUE );
 
 #if RTS_GENERALS
@@ -54,12 +54,12 @@ struct OverallStats
 };
 #endif
 
-void CheckOverallStats( void );
+void CheckOverallStats();
 #if RTS_GENERALS
 void HandleOverallStats( const OverallStats& USA, const OverallStats& China, const OverallStats& GLA );
 #else
 void HandleOverallStats( const char* szHTTPStats, unsigned len );
 #endif
 
-void CheckNumPlayersOnline( void );
+void CheckNumPlayersOnline();
 void HandleNumPlayersOnline( Int numPlayersOnline );

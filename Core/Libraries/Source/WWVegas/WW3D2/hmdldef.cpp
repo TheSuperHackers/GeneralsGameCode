@@ -55,7 +55,7 @@
  * HISTORY:                                                                                    *
  *   12/15/97   GTH : Created.                                                                 *
  *=============================================================================================*/
-HModelDefClass::HModelDefClass(void) :
+HModelDefClass::HModelDefClass() :
 	SubObjectCount(0),
 	SubObjects(nullptr),
 	SnapPoints(nullptr)
@@ -75,7 +75,7 @@ HModelDefClass::HModelDefClass(void) :
  * HISTORY:                                                                                    *
  *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-HModelDefClass::~HModelDefClass(void)
+HModelDefClass::~HModelDefClass()
 {
 	Free();
 }
@@ -92,7 +92,7 @@ HModelDefClass::~HModelDefClass(void)
  * HISTORY:                                                                                    *
  *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-void HModelDefClass::Free(void)
+void HModelDefClass::Free()
 {
 	delete[] SubObjects;
 	SubObjects = nullptr;

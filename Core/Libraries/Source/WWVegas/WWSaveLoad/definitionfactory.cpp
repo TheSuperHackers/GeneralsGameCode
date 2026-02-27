@@ -43,7 +43,7 @@
 //	DefinitionFactoryClass
 //
 /////////////////////////////////////////////////////////
-DefinitionFactoryClass::DefinitionFactoryClass (void)
+DefinitionFactoryClass::DefinitionFactoryClass ()
 	:	m_NextFactory (nullptr),
 		m_PrevFactory (nullptr)
 {
@@ -57,7 +57,7 @@ DefinitionFactoryClass::DefinitionFactoryClass (void)
 //	~DefinitionFactoryClass
 //
 /////////////////////////////////////////////////////////
-DefinitionFactoryClass::~DefinitionFactoryClass (void)
+DefinitionFactoryClass::~DefinitionFactoryClass ()
 {
 	DefinitionFactoryMgrClass::Unregister_Factory (this);
 	return ;

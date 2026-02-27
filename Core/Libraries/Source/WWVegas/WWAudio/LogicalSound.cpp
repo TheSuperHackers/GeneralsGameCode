@@ -70,7 +70,7 @@ enum
 //	LogicalSoundClass
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
-LogicalSoundClass::LogicalSoundClass (void)
+LogicalSoundClass::LogicalSoundClass ()
 	:	m_DropOffRadius (1),
 		m_TypeMask (0),
 		m_Position (0, 0, 0),
@@ -89,7 +89,7 @@ LogicalSoundClass::LogicalSoundClass (void)
 //	~LogicalSoundClass
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
-LogicalSoundClass::~LogicalSoundClass (void)
+LogicalSoundClass::~LogicalSoundClass ()
 {
 	return ;
 }
@@ -123,7 +123,7 @@ LogicalSoundClass::Add_To_Scene (bool /*start_playing*/)
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
 void
-LogicalSoundClass::Remove_From_Scene (void)
+LogicalSoundClass::Remove_From_Scene ()
 {
 	if (m_Scene != nullptr) {
 
@@ -181,7 +181,7 @@ LogicalSoundClass::On_Frame_Update (unsigned int milliseconds)
 //
 /////////////////////////////////////////////////////////////////////////////////
 const PersistFactoryClass &
-LogicalSoundClass::Get_Factory (void) const
+LogicalSoundClass::Get_Factory () const
 {
 	return _LogicalSoundPersistFactory;
 }

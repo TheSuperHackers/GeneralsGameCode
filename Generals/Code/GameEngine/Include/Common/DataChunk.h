@@ -94,14 +94,14 @@ class DataChunkTableOfContents
 	Mapping *findMapping( const AsciiString& name );			// return mapping data
 
 public:
-	DataChunkTableOfContents( void );
+	DataChunkTableOfContents();
 	~DataChunkTableOfContents();
 
 	UnsignedInt getID( const AsciiString& name );				// convert name to integer identifier
 	AsciiString getName( UnsignedInt id );	// convert integer identifier to name
 	UnsignedInt allocateID( const AsciiString& name );		// create new ID for given name or return existing mapping
 
-	Bool isOpenedForRead(void) {return m_headerOpened;};
+	Bool isOpenedForRead() {return m_headerOpened;};
 
 	void write(OutputStream &out);
 	void read(ChunkInputStream &in);
@@ -124,7 +124,7 @@ public:
 	~DataChunkOutput();
 
 	void openDataChunk( const char *name, DataChunkVersionType ver );
-	void closeDataChunk( void );
+	void closeDataChunk();
 
 	void writeReal(Real r);
 	void writeInt(Int i);
@@ -178,7 +178,7 @@ protected:
 	UserParser*								m_parserList;																		// list of all registered parsers for this input stream
 	InputChunk*								m_chunkStack;																		// current stack of open data chunks
 
-	void clearChunkStack( void );										// clear the stack
+	void clearChunkStack();										// clear the stack
 
 	void decrementDataLeft( int size );							// update data left in chunk(s)
 
@@ -203,29 +203,29 @@ public:
 																									// assumed to be at the start of chunk when called
 																									// can be called recursively
 
-	Bool isValidFileType(void);											///< Returns TRUE if it is our file format.
+	Bool isValidFileType();											///< Returns TRUE if it is our file format.
 	AsciiString openDataChunk(DataChunkVersionType *ver );
-	void closeDataChunk( void );										// close chunk and move to start of next chunk
+	void closeDataChunk();										// close chunk and move to start of next chunk
 
-	Bool atEndOfFile( void ) { return (m_file->eof()) ? true : false; }					// return true if at end of file
-	Bool atEndOfChunk( void );											// return true if all data has been read from this chunk
+	Bool atEndOfFile() { return (m_file->eof()) ? true : false; }					// return true if at end of file
+	Bool atEndOfChunk();											// return true if all data has been read from this chunk
 
-	void reset( void );															// reset to just-opened state
+	void reset();															// reset to just-opened state
 
-	AsciiString getChunkLabel( void );							// return label of current data chunk
-	DataChunkVersionType getChunkVersion( void );		// return version of current data chunk
-	unsigned int getChunkDataSize( void );					// return size of data stored in this chunk
-	unsigned int getChunkDataSizeLeft( void );			// return size of data left to read in this chunk
+	AsciiString getChunkLabel();							// return label of current data chunk
+	DataChunkVersionType getChunkVersion();		// return version of current data chunk
+	unsigned int getChunkDataSize();					// return size of data stored in this chunk
+	unsigned int getChunkDataSizeLeft();			// return size of data left to read in this chunk
 
 
-	Real readReal(void);
-	Int readInt(void);
-	Byte readByte(void);
+	Real readReal();
+	Int readInt();
+	Byte readByte();
 
-	AsciiString readAsciiString(void);
-	UnicodeString readUnicodeString(void);
-	Dict readDict(void);
+	AsciiString readAsciiString();
+	UnicodeString readUnicodeString();
+	Dict readDict();
 	void readArrayOfBytes(char *ptr, Int len);
 
-	NameKeyType readNameKey(void);
+	NameKeyType readNameKey();
 };

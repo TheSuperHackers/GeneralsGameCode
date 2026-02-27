@@ -59,7 +59,7 @@
 #include "Common/OSDisplay.h"
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
-#include "Common/UserPreferences.h"
+#include "Common/OptionPreferences.h"
 
 #include "GameClient/ControlBar.h"
 #include "GameClient/Drawable.h"
@@ -778,7 +778,7 @@ void AudioManager::setListenerPosition( const Coord3D *newListenerPos, const Coo
 }
 
 //-------------------------------------------------------------------------------------------------
-const Coord3D *AudioManager::getListenerPosition( void ) const
+const Coord3D *AudioManager::getListenerPosition() const
 {
 	return &m_listenerPosition;
 }
@@ -806,7 +806,7 @@ void AudioManager::appendAudioRequest( AudioRequest *m_request )
 
 //-------------------------------------------------------------------------------------------------
 // Remove all pending audio requests
-void AudioManager::removeAllAudioRequests( void )
+void AudioManager::removeAllAudioRequests()
 {
   std::list<AudioRequest*>::iterator it;
   for ( it = m_audioRequests.begin(); it != m_audioRequests.end(); it++ ) {
@@ -817,7 +817,7 @@ void AudioManager::removeAllAudioRequests( void )
 }
 
 //-------------------------------------------------------------------------------------------------
-void AudioManager::processRequestList( void )
+void AudioManager::processRequestList()
 {
 
 }
@@ -866,7 +866,7 @@ AudioEventInfo *AudioManager::findAudioEventInfo( AsciiString eventName ) const
 
 //-------------------------------------------------------------------------------------------------
 // Remove all AudioEventInfo's with the m_isLevelSpecific flag
-void AudioManager::removeLevelSpecificAudioEventInfos(void)
+void AudioManager::removeLevelSpecificAudioEventInfos()
 {
   AudioEventInfoHash::iterator it = m_allAudioEventInfo.begin();
 
@@ -887,31 +887,31 @@ void AudioManager::removeLevelSpecificAudioEventInfos(void)
 }
 
 //-------------------------------------------------------------------------------------------------
-const AudioSettings *AudioManager::getAudioSettings( void ) const
+const AudioSettings *AudioManager::getAudioSettings() const
 {
 	return m_audioSettings;
 }
 
 //-------------------------------------------------------------------------------------------------
-AudioSettings *AudioManager::friend_getAudioSettings( void )
+AudioSettings *AudioManager::friend_getAudioSettings()
 {
 	return m_audioSettings;
 }
 
 //-------------------------------------------------------------------------------------------------
-const MiscAudio *AudioManager::getMiscAudio( void ) const
+const MiscAudio *AudioManager::getMiscAudio() const
 {
 	return m_miscAudio;
 }
 
 //-------------------------------------------------------------------------------------------------
-MiscAudio *AudioManager::friend_getMiscAudio( void )
+MiscAudio *AudioManager::friend_getMiscAudio()
 {
 	return m_miscAudio;
 }
 
 //-------------------------------------------------------------------------------------------------
-const FieldParse *AudioManager::getFieldParseTable( void ) const
+const FieldParse *AudioManager::getFieldParseTable() const
 {
 	return audioSettingsFieldParseTable;
 }
@@ -943,7 +943,7 @@ Real AudioManager::getAudioLengthMS( const AudioEventRTS *event )
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool AudioManager::isMusicAlreadyLoaded(void) const
+Bool AudioManager::isMusicAlreadyLoaded() const
 {
 	const AudioEventInfo *musicToLoad = nullptr;
 	AudioEventInfoHash::const_iterator it;
@@ -1066,7 +1066,7 @@ Bool AudioManager::shouldPlayLocally(const AudioEventRTS *audioEvent)
 }
 
 //-------------------------------------------------------------------------------------------------
-AudioHandle AudioManager::allocateNewHandle( void )
+AudioHandle AudioManager::allocateNewHandle()
 {
 	// note, intenionally a post increment rather than a pre increment.
 	return theAudioHandlePool++;

@@ -67,13 +67,13 @@ static inline void decryptBuf( unsigned char *buf, Int len )
 
 //--------------------------------------------------------------------------
 
-Transport::Transport(void)
+Transport::Transport()
 {
 	m_winsockInit = false;
 	m_udpsock = nullptr;
 }
 
-Transport::~Transport(void)
+Transport::~Transport()
 {
 	reset();
 }
@@ -159,7 +159,7 @@ Bool Transport::init( UnsignedInt ip, UnsignedShort port )
 	return true;
 }
 
-void Transport::reset( void )
+void Transport::reset()
 {
 	delete m_udpsock;
 	m_udpsock = nullptr;
@@ -171,7 +171,7 @@ void Transport::reset( void )
 	}
 }
 
-Bool Transport::update( void )
+Bool Transport::update()
 {
 	Bool retval = TRUE;
 	if (doRecv() == FALSE && m_udpsock && m_udpsock->GetStatus() == UDP::ADDRNOTAVAIL)
@@ -441,7 +441,7 @@ Bool Transport::isGeneralsPacket( TransportMessage *msg )
 }
 
 // Statistics ---------------------------------------------------
-Real Transport::getIncomingBytesPerSecond( void )
+Real Transport::getIncomingBytesPerSecond()
 {
 	Real val = 0.0;
 	for (int i=0; i<MAX_TRANSPORT_STATISTICS_SECONDS; ++i)
@@ -452,7 +452,7 @@ Real Transport::getIncomingBytesPerSecond( void )
 	return val / (MAX_TRANSPORT_STATISTICS_SECONDS-1);
 }
 
-Real Transport::getIncomingPacketsPerSecond( void )
+Real Transport::getIncomingPacketsPerSecond()
 {
 	Real val = 0.0;
 	for (int i=0; i<MAX_TRANSPORT_STATISTICS_SECONDS; ++i)
@@ -463,7 +463,7 @@ Real Transport::getIncomingPacketsPerSecond( void )
 	return val / (MAX_TRANSPORT_STATISTICS_SECONDS-1);
 }
 
-Real Transport::getOutgoingBytesPerSecond( void )
+Real Transport::getOutgoingBytesPerSecond()
 {
 	Real val = 0.0;
 	for (int i=0; i<MAX_TRANSPORT_STATISTICS_SECONDS; ++i)
@@ -474,7 +474,7 @@ Real Transport::getOutgoingBytesPerSecond( void )
 	return val / (MAX_TRANSPORT_STATISTICS_SECONDS-1);
 }
 
-Real Transport::getOutgoingPacketsPerSecond( void )
+Real Transport::getOutgoingPacketsPerSecond()
 {
 	Real val = 0.0;
 	for (int i=0; i<MAX_TRANSPORT_STATISTICS_SECONDS; ++i)
@@ -485,7 +485,7 @@ Real Transport::getOutgoingPacketsPerSecond( void )
 	return val / (MAX_TRANSPORT_STATISTICS_SECONDS-1);
 }
 
-Real Transport::getUnknownBytesPerSecond( void )
+Real Transport::getUnknownBytesPerSecond()
 {
 	Real val = 0.0;
 	for (int i=0; i<MAX_TRANSPORT_STATISTICS_SECONDS; ++i)
@@ -496,7 +496,7 @@ Real Transport::getUnknownBytesPerSecond( void )
 	return val / (MAX_TRANSPORT_STATISTICS_SECONDS-1);
 }
 
-Real Transport::getUnknownPacketsPerSecond( void )
+Real Transport::getUnknownPacketsPerSecond()
 {
 	Real val = 0.0;
 	for (int i=0; i<MAX_TRANSPORT_STATISTICS_SECONDS; ++i)

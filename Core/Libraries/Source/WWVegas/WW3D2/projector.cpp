@@ -60,7 +60,7 @@
  *                                                                                             *
  * HISTORY:                                                                                    *
  *=============================================================================================*/
-ProjectorClass::ProjectorClass(void) :
+ProjectorClass::ProjectorClass() :
 	Transform(1),
 	Projection(1),
 	LocalBoundingVolume(Vector3(0,0,0),Vector3(1,1,1)),
@@ -81,7 +81,7 @@ ProjectorClass::ProjectorClass(void) :
  *                                                                                             *
  * HISTORY:                                                                                    *
  *=============================================================================================*/
-ProjectorClass::~ProjectorClass(void)
+ProjectorClass::~ProjectorClass()
 {
 	REF_PTR_RELEASE(Mapper);
 }
@@ -121,7 +121,7 @@ void ProjectorClass::Set_Transform(const Matrix3D & tm)
  * HISTORY:                                                                                    *
  *   1/11/00    gth : Created.                                                                 *
  *=============================================================================================*/
-const Matrix3D & ProjectorClass::Get_Transform(void) const
+const Matrix3D & ProjectorClass::Get_Transform() const
 {
 	return Transform;
 }
@@ -224,7 +224,7 @@ void ProjectorClass::Compute_Texture_Coordinate(const Vector3 & point,Vector3 * 
  * HISTORY:                                                                                    *
  *   1/11/00    gth : Created.                                                                 *
  *=============================================================================================*/
-void ProjectorClass::Update_WS_Bounding_Volume(void)
+void ProjectorClass::Update_WS_Bounding_Volume()
 {
 	/*
 	** Recompute our world-space bounding volume

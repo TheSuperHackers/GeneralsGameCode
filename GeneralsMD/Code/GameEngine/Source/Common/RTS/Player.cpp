@@ -110,7 +110,7 @@ class ClosestKindOfData
 {
 public:
 
-	ClosestKindOfData( void );
+	ClosestKindOfData();
 
 	//In
 	KindOfMaskType m_setKindOf;
@@ -124,7 +124,7 @@ public:
 };
 
 // ------------------------------------------------------------------------------------------------
-ClosestKindOfData::ClosestKindOfData( void )
+ClosestKindOfData::ClosestKindOfData()
 {
 	m_setKindOf.clear();
 	m_clearKindOf.clear();
@@ -202,14 +202,14 @@ void dumpBattlePlanBonuses(const BattlePlanBonuses *b, AsciiString name, const P
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-PlayerRelationMap::PlayerRelationMap( void )
+PlayerRelationMap::PlayerRelationMap()
 {
 
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-PlayerRelationMap::~PlayerRelationMap( void )
+PlayerRelationMap::~PlayerRelationMap()
 {
 
 	// make sure the data is cleared
@@ -289,7 +289,7 @@ void PlayerRelationMap::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void PlayerRelationMap::loadPostProcess( void )
+void PlayerRelationMap::loadPostProcess()
 {
 
 }
@@ -755,7 +755,7 @@ void Player::setPlayerType(PlayerType t, Bool skirmish)
 //=============================================================================
 // This is called from PlayerList->newGame()
 //
-void Player::setDefaultTeam(void) {
+void Player::setDefaultTeam() {
 	AsciiString tname;
 	tname.set("team");
 	tname.concat(m_playerName);
@@ -1146,7 +1146,7 @@ void Player::becomingLocalPlayer(Bool yes)
 //-------------------------------------------------------------------------------------------------
 /** Is this player a skirmish ai player? */
 //-------------------------------------------------------------------------------------------------
-Bool Player::isSkirmishAIPlayer( void )
+Bool Player::isSkirmishAIPlayer()
 {
 	return m_ai ? m_ai->isSkirmishAI() : false;
 }
@@ -1168,7 +1168,7 @@ Bool Player::computeSuperweaponTarget(const SpecialPowerTemplate *power, Coord3D
 //-------------------------------------------------------------------------------------------------
 /** Get this player's current enemy. NOTE - Can be nullptr. */
 //-------------------------------------------------------------------------------------------------
-Player  *Player::getCurrentEnemy( void )
+Player  *Player::getCurrentEnemy()
 {
 	return m_ai?m_ai->getAiEnemy():nullptr;
 }
@@ -1509,7 +1509,7 @@ Int Player::countReadyShortcutSpecialPowersOfType( SpecialPowerType spType )
 //-------------------------------------------------------------------------------------------------
 /** Difficulty level for this player */
 //-------------------------------------------------------------------------------------------------
-GameDifficulty Player::getPlayerDifficulty(void) const
+GameDifficulty Player::getPlayerDifficulty() const
 {
 	if (m_ai)
 	{
@@ -1577,11 +1577,11 @@ Bool Player::isSupplySourceSafe( Int minSupplies )
 //-------------------------------------------------------------------------------------------------
 /** Is a supply source attacked? */
 //-------------------------------------------------------------------------------------------------
-Bool Player::isSupplySourceAttacked( void )
+Bool Player::isSupplySourceAttacked()
 {
 	// ai query
 	if( m_ai )
-		return m_ai->isSupplySourceAttacked( );
+		return m_ai->isSupplySourceAttacked();
 	return false;
 }
 
@@ -1786,7 +1786,7 @@ void Player::countObjectsByThingTemplate(Int numTmplates, const ThingTemplate* c
 }
 
 //=============================================================================
-Int Player::countBuildings(void)
+Int Player::countBuildings()
 {
 	int retVal = 0;
 
@@ -1829,7 +1829,7 @@ Object *Player::findClosestByKindOf( Object *queryObject, KindOfMaskType setMask
 }
 
 //=============================================================================
-Bool Player::hasAnyBuildings(void) const
+Bool Player::hasAnyBuildings() const
 {
 	for (PlayerTeamList::const_iterator it = m_playerTeamPrototypes.begin();
 			 it != m_playerTeamPrototypes.end(); ++it)
@@ -1855,7 +1855,7 @@ Bool Player::hasAnyBuildings(KindOfMaskType kindOf) const
 }
 
 //=============================================================================
-Bool Player::hasAnyUnits(void) const
+Bool Player::hasAnyUnits() const
 {
 	for (PlayerTeamList::const_iterator it = m_playerTeamPrototypes.begin();
 			 it != m_playerTeamPrototypes.end(); ++it)
@@ -1868,7 +1868,7 @@ Bool Player::hasAnyUnits(void) const
 }
 
 //=============================================================================
-Bool Player::hasAnyObjects(void) const
+Bool Player::hasAnyObjects() const
 {
 	for (PlayerTeamList::const_iterator it = m_playerTeamPrototypes.begin();
 			 it != m_playerTeamPrototypes.end(); ++it)
@@ -1881,7 +1881,7 @@ Bool Player::hasAnyObjects(void) const
 }
 
 //=============================================================================
-Bool Player::hasAnyBuildFacility(void) const
+Bool Player::hasAnyBuildFacility() const
 {
 	for (PlayerTeamList::const_iterator it = m_playerTeamPrototypes.begin();
 			 it != m_playerTeamPrototypes.end(); ++it)
@@ -1893,7 +1893,7 @@ Bool Player::hasAnyBuildFacility(void) const
 }
 
 //=============================================================================
-void Player::updateTeamStates(void)
+void Player::updateTeamStates()
 {
 	for (PlayerTeamList::const_iterator it = m_playerTeamPrototypes.begin();
 			 it != m_playerTeamPrototypes.end(); ++it)
@@ -2017,7 +2017,7 @@ void Player::setUnitsShouldHunt(Bool unitsShouldHunt, CommandSourceType source)
 }
 
 //=============================================================================
-void Player::killPlayer(void)
+void Player::killPlayer()
 {
 	PlayerTeamList::iterator it = m_playerTeamPrototypes.begin();
 	for (; it != m_playerTeamPrototypes.end(); ++it) {
@@ -2961,7 +2961,7 @@ Bool Player::canAffordBuild( const ThingTemplate *whatToBuild ) const
 }
 
 //=================================================================================================
-void Player::deleteUpgradeList( void )
+void Player::deleteUpgradeList()
 {
 	Upgrade *next;
 
@@ -3140,7 +3140,7 @@ void Player::removeUpgrade( const UpgradeTemplate *upgradeTemplate )
 
 
 //-------------------------------------------------------------------------------------------------
-Bool Player::okToPlayRadarEdgeSound( void )
+Bool Player::okToPlayRadarEdgeSound()
 {
 	return (
 		! TheVictoryConditions->hasSinglePlayerBeenDefeated( this )
@@ -3859,7 +3859,7 @@ void Player::removeKindOfProductionCostChange(	KindOfMaskType kindOf, Real perce
 		}
 		++it;
 	}
-	DEBUG_ASSERTCRASH(FALSE, ("removeKindOfProductionCostChange was called with kindOf=%d and percent=%f. We could not find the entry in the list with these variables. CLH.",kindOf, percent));
+	DEBUG_CRASH(("removeKindOfProductionCostChange was called with kindOf=%d and percent=%f. We could not find the entry in the list with these variables. CLH.",kindOf, percent));
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -3932,25 +3932,25 @@ void Player::setUnitsVisionSpied( Bool setting, KindOfMaskType whichUnits, Playe
 }
 
 // ------------------------------------------------------------------------------------------------
-Bool Player::isPlayerObserver(void) const
+Bool Player::isPlayerObserver() const
 {
 	return m_observer;
 }
 
 // ------------------------------------------------------------------------------------------------
-Bool Player::isPlayerDead(void) const
+Bool Player::isPlayerDead() const
 {
 	return m_isPlayerDead;
 }
 
 // ------------------------------------------------------------------------------------------------
-Bool Player::isPlayerActive(void) const
+Bool Player::isPlayerActive() const
 {
 	return !m_observer && !m_isPlayerDead;
 }
 
 // ------------------------------------------------------------------------------------------------
-Bool Player::isPlayableSide( void ) const
+Bool Player::isPlayableSide() const
 {
 
 	return m_playerTemplate ? m_playerTemplate->isPlayableSide() : FALSE;
@@ -4539,7 +4539,7 @@ void Player::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void Player::loadPostProcess( void )
+void Player::loadPostProcess()
 {
 
 }

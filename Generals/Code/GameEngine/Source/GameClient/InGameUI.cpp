@@ -250,7 +250,7 @@ static Bool similarUnitSelection( Drawable *test, void *userData )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void showReplayControls( void )
+void showReplayControls()
 {
 	if (m_replayWindow)
 	{
@@ -261,7 +261,7 @@ void showReplayControls( void )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void hideReplayControls( void )
+void hideReplayControls()
 {
 	if (m_replayWindow)
 	{
@@ -271,7 +271,7 @@ void hideReplayControls( void )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void toggleReplayControls( void )
+void toggleReplayControls()
 {
 	if (m_replayWindow)
 	{
@@ -539,7 +539,7 @@ void InGameUI::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void InGameUI::loadPostProcess( void )
+void InGameUI::loadPostProcess()
 {
 
 }
@@ -729,7 +729,7 @@ void InGameUI::setSuperweaponDisplayEnabledByScript(Bool enable)
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-Bool InGameUI::getSuperweaponDisplayEnabledByScript(void) const
+Bool InGameUI::getSuperweaponDisplayEnabledByScript() const
 {
 	return !m_superweaponHiddenByScript;
 }
@@ -1275,7 +1275,7 @@ InGameUI::~InGameUI()
 //-------------------------------------------------------------------------------------------------
 /** Initialize the in game user interface */
 //-------------------------------------------------------------------------------------------------
-void InGameUI::init( void )
+void InGameUI::init()
 {
 	INI ini;
 	ini.loadFileDirectory( "Data\\INI\\InGameUI", INI_LOAD_OVERWRITE, nullptr );
@@ -1549,7 +1549,7 @@ void InGameUI::evaluateSoloNexus( Drawable *newlyAddedDrawable )
 }
 
 
-void InGameUI::handleBuildPlacements( void )
+void InGameUI::handleBuildPlacements()
 {
 
 	//
@@ -1750,7 +1750,7 @@ void InGameUI::handleBuildPlacements( void )
 //-------------------------------------------------------------------------------------------------
 /** Pre-draw phase of the in game ui */
 //-------------------------------------------------------------------------------------------------
-void InGameUI::preDraw( void )
+void InGameUI::preDraw()
 {
 
 	// handle any "icons" for the act of building things and placing them in the world
@@ -1771,7 +1771,7 @@ void InGameUI::preDraw( void )
 /** Update the in game user interface */
 //-------------------------------------------------------------------------------------------------
 //DECLARE_PERF_TIMER(InGameUI_update)
-void InGameUI::update( void )
+void InGameUI::update()
 {
 	//USE_PERF_TIMER(InGameUI_update)
 	Int i;
@@ -2084,7 +2084,7 @@ void InGameUI::unregisterWindowLayout( WindowLayout *layout )
 //-------------------------------------------------------------------------------------------------
 /** Reset the in game user interface */
 //-------------------------------------------------------------------------------------------------
-void InGameUI::reset( void )
+void InGameUI::reset()
 {
 	m_isQuitMenuVisible = FALSE;
 	m_inputEnabled = true;
@@ -2180,7 +2180,7 @@ void InGameUI::reset( void )
 //-------------------------------------------------------------------------------------------------
 /** Free any resources we used for our messages */
 //-------------------------------------------------------------------------------------------------
-void InGameUI::freeMessageResources( void )
+void InGameUI::freeMessageResources()
 {
 	Int i;
 
@@ -2203,7 +2203,7 @@ void InGameUI::freeMessageResources( void )
 
 }
 
-void InGameUI::freeCustomUiResources( void )
+void InGameUI::freeCustomUiResources()
 {
 	TheDisplayStringManager->freeDisplayString(m_networkLatencyString);
 	m_networkLatencyString = nullptr;
@@ -3013,7 +3013,7 @@ void InGameUI::createCommandHint( const GameMessage *msg )
 //-------------------------------------------------------------------------------------------------
 /// Get drawable ID under cursor
 //-------------------------------------------------------------------------------------------------
-DrawableID InGameUI::getMousedOverDrawableID( void ) const
+DrawableID InGameUI::getMousedOverDrawableID() const
 {
 
 	return m_mousedOverDrawableID;
@@ -3050,7 +3050,7 @@ void InGameUI::setScrolling( Bool isScrolling )
 //-------------------------------------------------------------------------------------------------
 /// are we scrolling?
 //-------------------------------------------------------------------------------------------------
-Bool InGameUI::isScrolling( void )
+Bool InGameUI::isScrolling()
 {
 	return m_isScrolling;
 }
@@ -3072,7 +3072,7 @@ void InGameUI::setSelecting( Bool isSelecting )
 //-------------------------------------------------------------------------------------------------
 /// are we selecting?
 //-------------------------------------------------------------------------------------------------
-Bool InGameUI::isSelecting( void )
+Bool InGameUI::isSelecting()
 {
 	return m_isSelecting;
 }
@@ -3088,7 +3088,7 @@ void InGameUI::setScrollAmount( Coord2D amt )
 //-------------------------------------------------------------------------------------------------
 /// get scroll amount
 //-------------------------------------------------------------------------------------------------
-Coord2D InGameUI::getScrollAmount( void )
+Coord2D InGameUI::getScrollAmount()
 {
 	return m_scrollAmt;
 }
@@ -3111,7 +3111,7 @@ void InGameUI::setGUICommand( const CommandButton *command )
 		if( BitIsSet( command->getOptions(), COMMAND_OPTION_NEED_TARGET ) == FALSE )
 		{
 
-			DEBUG_ASSERTCRASH( 0, ("setGUICommand: Command '%s' does not need additional user interaction",
+			DEBUG_CRASH( ("setGUICommand: Command '%s' does not need additional user interaction",
 														command->getName().str()) );
 			m_pendingGUICommand = nullptr;
 			m_mouseMode = MOUSEMODE_DEFAULT;
@@ -3157,7 +3157,7 @@ void InGameUI::setGUICommand( const CommandButton *command )
 //-------------------------------------------------------------------------------------------------
 /** Get the pending gui command */
 //-------------------------------------------------------------------------------------------------
-const CommandButton *InGameUI::getGUICommand( void ) const
+const CommandButton *InGameUI::getGUICommand() const
 {
 
 	return m_pendingGUICommand;
@@ -3167,7 +3167,7 @@ const CommandButton *InGameUI::getGUICommand( void ) const
 //-------------------------------------------------------------------------------------------------
 /** Destroy any drawables we have in our placement icon array and set to null */
 //-------------------------------------------------------------------------------------------------
-void InGameUI::destroyPlacementIcons( void )
+void InGameUI::destroyPlacementIcons()
 {
 	Int i;
 
@@ -3303,14 +3303,14 @@ void InGameUI::placeBuildAvailable( const ThingTemplate *build, Drawable *buildD
 //-------------------------------------------------------------------------------------------------
 /** Return the thing we're attempting to place */
 //-------------------------------------------------------------------------------------------------
-const ThingTemplate *InGameUI::getPendingPlaceType( void )
+const ThingTemplate *InGameUI::getPendingPlaceType()
 {
 	return m_pendingPlaceType;
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-ObjectID InGameUI::getPendingPlaceSourceObjectID( void )
+ObjectID InGameUI::getPendingPlaceSourceObjectID()
 {
 
 	return m_pendingPlaceSourceObjectID;
@@ -3351,7 +3351,7 @@ void InGameUI::setPlacementEnd( const ICoord2D *end )
 //-------------------------------------------------------------------------------------------------
 /** Is the angle selection interface for placing building at angles up? */
 //-------------------------------------------------------------------------------------------------
-Bool InGameUI::isPlacementAnchored( void )
+Bool InGameUI::isPlacementAnchored()
 {
 
 	return m_placeAnchorInProgress;
@@ -3374,7 +3374,7 @@ void InGameUI::getPlacementPoints( ICoord2D *start, ICoord2D *end )
 //-------------------------------------------------------------------------------------------------
 /** Return the angle of the drawable at the cursor if any */
 //-------------------------------------------------------------------------------------------------
-Real InGameUI::getPlacementAngle( void )
+Real InGameUI::getPlacementAngle()
 {
 
 	if( m_placeIcon[ 0 ] )
@@ -3499,7 +3499,7 @@ void InGameUI::deselectAllDrawables( Bool postMsg )
 //-------------------------------------------------------------------------------------------------
 /** Return the list of all the currently selected Drawable pointers. */
 //-------------------------------------------------------------------------------------------------
-const DrawableList *InGameUI::getAllSelectedDrawables( void ) const
+const DrawableList *InGameUI::getAllSelectedDrawables() const
 {
 	return &m_selectedDrawables;
 }
@@ -3507,7 +3507,7 @@ const DrawableList *InGameUI::getAllSelectedDrawables( void ) const
 //-------------------------------------------------------------------------------------------------
 /** Return the list of all the currently selected Drawable pointers. */
 //-------------------------------------------------------------------------------------------------
-const DrawableList *InGameUI::getAllSelectedLocalDrawables( void )
+const DrawableList *InGameUI::getAllSelectedLocalDrawables()
 {
 	m_selectedLocalDrawables.clear();
 	for (DrawableList::const_iterator it = m_selectedDrawables.begin(); it != m_selectedDrawables.end(); ++it)
@@ -3522,7 +3522,7 @@ const DrawableList *InGameUI::getAllSelectedLocalDrawables( void )
 //-------------------------------------------------------------------------------------------------
 /** Return pointer to the first selected drawable, if any */
 //-------------------------------------------------------------------------------------------------
-Drawable *InGameUI::getFirstSelectedDrawable( void )
+Drawable *InGameUI::getFirstSelectedDrawable()
 {
 
 	// sanity
@@ -3661,7 +3661,7 @@ void InGameUI::disregardDrawable( Drawable *draw )
 //-------------------------------------------------------------------------------------------------
 /** This is called after the WindowManager has drawn the menus. */
 //-------------------------------------------------------------------------------------------------
-void InGameUI::postWindowDraw( void )
+void InGameUI::postWindowDraw()
 {
 	Int hudOffsetX = 0;
 	Int hudOffsetY = 0;
@@ -3695,7 +3695,7 @@ void InGameUI::postWindowDraw( void )
 //-------------------------------------------------------------------------------------------------
 /** This is called after the UI has been drawn. */
 //-------------------------------------------------------------------------------------------------
-void InGameUI::postDraw( void )
+void InGameUI::postDraw()
 {
 
 	// render our display strings for the messages if on
@@ -4048,7 +4048,7 @@ void InGameUI::expireHint( HintType type, UnsignedInt hintIndex )
 //-------------------------------------------------------------------------------------------------
 /** Create the control user interface GUI */
 //-------------------------------------------------------------------------------------------------
-void InGameUI::createControlBar( void )
+void InGameUI::createControlBar()
 {
 
 	TheWindowManager->winCreateFromScript( "ControlBar.wnd" );
@@ -4065,7 +4065,7 @@ void InGameUI::createControlBar( void )
 //-------------------------------------------------------------------------------------------------
 /** Create the replay control GUI */
 //-------------------------------------------------------------------------------------------------
-void InGameUI::createReplayControl( void )
+void InGameUI::createReplayControl()
 {
 
 	m_replayWindow = TheWindowManager->winCreateFromScript( "ReplayControl.wnd" );
@@ -4109,7 +4109,7 @@ void InGameUI::playMovie( const AsciiString& movieName )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void InGameUI::stopMovie( void )
+void InGameUI::stopMovie()
 {
 	delete m_videoBuffer;
 	m_videoBuffer = nullptr;
@@ -4129,7 +4129,7 @@ void InGameUI::stopMovie( void )
 // ------------------------------------------------------------------------------------------------
 // InGameUI::videoBuffer
 // ------------------------------------------------------------------------------------------------
-VideoBuffer* InGameUI::videoBuffer( void )
+VideoBuffer* InGameUI::videoBuffer()
 {
 	return m_videoBuffer;
 }
@@ -4167,7 +4167,7 @@ void InGameUI::playCameoMovie( const AsciiString& movieName )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void InGameUI::stopCameoMovie( void )
+void InGameUI::stopCameoMovie()
 {
 //RightHUD
 	//GameWindow *window = TheWindowManager->winGetWindowFromId(nullptr,TheNameKeyGenerator->nameToKey( "ControlBar.wnd:CameoMovieWindow" ));
@@ -4190,7 +4190,7 @@ void InGameUI::stopCameoMovie( void )
 // ------------------------------------------------------------------------------------------------
 // InGameUI::videoBuffer
 // ------------------------------------------------------------------------------------------------
-VideoBuffer* InGameUI::cameoVideoBuffer( void )
+VideoBuffer* InGameUI::cameoVideoBuffer()
 {
 	return m_cameoVideoBuffer;
 }
@@ -4300,7 +4300,7 @@ void InGameUI::militarySubtitle( const AsciiString& label, Int duration )
 // ------------------------------------------------------------------------------------------------
 // InGameUI::removeMilitarySubtitle
 // ------------------------------------------------------------------------------------------------
-void InGameUI::removeMilitarySubtitle( void )
+void InGameUI::removeMilitarySubtitle()
 {
 	// sanity (is there really such a thing in this world?)
 	if(!m_militarySubtitle)
@@ -4978,7 +4978,7 @@ Int InGameUI::selectAllUnitsByTypeAcrossScreen(KindOfMaskType mustBeSet, KindOfM
 // ------------------------------------------------------------------------------------------------
 /** Selects matching units on the screen */
 // ------------------------------------------------------------------------------------------------
-Int InGameUI::selectMatchingAcrossScreen( void )
+Int InGameUI::selectMatchingAcrossScreen()
 {
 	/// When implementing this, obey TheInGameUI->getMaxSelectCount() if it is > 0
 
@@ -5219,7 +5219,7 @@ try_again:
 //-------------------------------------------------------------------------------------------------
 /** modify the position of our floating text */
 //-------------------------------------------------------------------------------------------------
-void InGameUI::updateFloatingText( void )
+void InGameUI::updateFloatingText()
 {
 	FloatingTextData *ftd;		// pointer to our floating point data
 	UnsignedInt currLogicFrame = TheGameLogic->getFrame();			// the current logic frame
@@ -5271,7 +5271,7 @@ void InGameUI::updateFloatingText( void )
 //-------------------------------------------------------------------------------------------------
 /** Iterates through and draws each floating text */
 //-------------------------------------------------------------------------------------------------
-void InGameUI::drawFloatingText( void )
+void InGameUI::drawFloatingText()
 {
 	FloatingTextData *ftd;
 	// loop through and draw all the texts
@@ -5309,7 +5309,7 @@ void InGameUI::drawFloatingText( void )
 //-------------------------------------------------------------------------------------------------
 /** ittereate through and clear out the list of floating text */
 //-------------------------------------------------------------------------------------------------
-void InGameUI::clearFloatingText( void )
+void InGameUI::clearFloatingText()
 {
 	FloatingTextData *ftd;
 	// loop through and draw all the texts
@@ -5375,7 +5375,7 @@ void InGameUI::popupMessage( const AsciiString& identifier, Int x, Int y, Int wi
 //-------------------------------------------------------------------------------------------------
 /** take care of the logic of clearing the popupMessageData */
 //-------------------------------------------------------------------------------------------------
-void InGameUI::clearPopupMessageData( void )
+void InGameUI::clearPopupMessageData()
 {
 	if(!m_popupMessageData)
 		return;
@@ -5400,7 +5400,7 @@ void InGameUI::clearPopupMessageData( void )
 //-------------------------------------------------------------------------------------------------
 /** Floating Text Constructor */
 //-------------------------------------------------------------------------------------------------
-FloatingTextData::FloatingTextData(void)
+FloatingTextData::FloatingTextData()
 {
 	m_color = 0;
 	m_frameCount = 0;
@@ -5413,7 +5413,7 @@ FloatingTextData::FloatingTextData(void)
 //-------------------------------------------------------------------------------------------------
 /** Floating Text Destructor */
 //-------------------------------------------------------------------------------------------------
-FloatingTextData::~FloatingTextData(void)
+FloatingTextData::~FloatingTextData()
 {
 	if(m_dString)
 		TheDisplayStringManager->freeDisplayString( m_dString );
@@ -5428,7 +5428,7 @@ FloatingTextData::~FloatingTextData(void)
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-WorldAnimationData::WorldAnimationData( void )
+WorldAnimationData::WorldAnimationData()
 {
 
 	m_anim = nullptr;
@@ -5477,7 +5477,7 @@ void InGameUI::addWorldAnimation( Anim2DTemplate *animTemplate,
 // ------------------------------------------------------------------------------------------------
 /** Delete all world animations */
 // ------------------------------------------------------------------------------------------------
-void InGameUI::clearWorldAnimations( void )
+void InGameUI::clearWorldAnimations()
 {
 	// iterate through all entries and delete the animation data
 	for( WorldAnimationListIterator it = m_worldAnimationList.begin();
@@ -5502,7 +5502,7 @@ static const UnsignedInt FRAMES_BEFORE_EXPIRE_TO_FADE = LOGICFRAMES_PER_SECOND *
 // ------------------------------------------------------------------------------------------------
 /** Update all world animations and draw the visible ones */
 // ------------------------------------------------------------------------------------------------
-void InGameUI::updateAndDrawWorldAnimations( void )
+void InGameUI::updateAndDrawWorldAnimations()
 {
 	// go through all animations
 	for( WorldAnimationListIterator it = m_worldAnimationList.begin();
@@ -5661,14 +5661,14 @@ void InGameUI::removeIdleWorker( Object *obj, Int playerNumber )
 	return;
 }
 
-void InGameUI::selectNextIdleWorker( void )
+void InGameUI::selectNextIdleWorker()
 {
 	Player* player = rts::getObservedOrLocalPlayer();
 	Int index = player->getPlayerIndex();
 
 	if(m_idleWorkers[index].empty())
 	{
-		DEBUG_ASSERTCRASH(FALSE, ("InGameUI::selectNextIdleWorker We're trying to select a worker when our list is empty for player %ls", player->getPlayerDisplayName().str()));
+		DEBUG_CRASH(("InGameUI::selectNextIdleWorker We're trying to select a worker when our list is empty for player %ls", player->getPlayerDisplayName().str()));
 		return;
 	}
 	Object *selectThisObject = nullptr;
@@ -5753,14 +5753,14 @@ ObjectPtrVector InGameUI::getUniqueIdleWorkers(const ObjectList& idleWorkers)
 	return uniqueIdleWorkers;
 }
 
-Int InGameUI::getIdleWorkerCount( void )
+Int InGameUI::getIdleWorkerCount()
 {
 	Player* player = rts::getObservedOrLocalPlayer();
 	Int index = player->getPlayerIndex();
 	return m_idleWorkers[index].size();
 }
 
-void InGameUI::showIdleWorkerLayout( void )
+void InGameUI::showIdleWorkerLayout()
 {
 	if (!m_idleWorkerWin)
 	{
@@ -5782,7 +5782,7 @@ void InGameUI::showIdleWorkerLayout( void )
 //		GadgetButtonSetText(m_idleWorkerWin, number);
 //	}
 }
-void InGameUI::hideIdleWorkerLayout( void )
+void InGameUI::hideIdleWorkerLayout()
 {
 	if(!m_idleWorkerWin)
 		return;
@@ -5791,7 +5791,7 @@ void InGameUI::hideIdleWorkerLayout( void )
 	m_currentIdleWorkerDisplay = -1;
 }
 
-void InGameUI::updateIdleWorker( void )
+void InGameUI::updateIdleWorker()
 {
 	Int idleCount = getIdleWorkerCount();
 
@@ -5802,7 +5802,7 @@ void InGameUI::updateIdleWorker( void )
 		hideIdleWorkerLayout();
 }
 
-void InGameUI::resetIdleWorker( void )
+void InGameUI::resetIdleWorker()
 {
 	if(m_idleWorkerWin)
 	{
@@ -5816,7 +5816,7 @@ void InGameUI::resetIdleWorker( void )
 
 }
 
-void InGameUI::recreateControlBar( void )
+void InGameUI::recreateControlBar()
 {
 	GameWindow *win = TheWindowManager->winGetWindowFromId(nullptr, TheNameKeyGenerator->nameToKey("ControlBar.wnd"));
 	deleteInstance(win);
@@ -5830,7 +5830,7 @@ void InGameUI::recreateControlBar( void )
 	TheControlBar->init();
 }
 
-void InGameUI::refreshCustomUiResources(void)
+void InGameUI::refreshCustomUiResources()
 {
 	refreshNetworkLatencyResources();
 	refreshRenderFpsResources();
@@ -5839,7 +5839,7 @@ void InGameUI::refreshCustomUiResources(void)
 	refreshPlayerInfoListResources();
 }
 
-void InGameUI::refreshNetworkLatencyResources(void)
+void InGameUI::refreshNetworkLatencyResources()
 {
 	if (!m_networkLatencyString)
 	{
@@ -5853,7 +5853,7 @@ void InGameUI::refreshNetworkLatencyResources(void)
 	m_networkLatencyString->setFont(latencyFont);
 }
 
-void InGameUI::refreshRenderFpsResources(void)
+void InGameUI::refreshRenderFpsResources()
 {
 	if (!m_renderFpsString)
 	{
@@ -5880,7 +5880,7 @@ void InGameUI::refreshRenderFpsResources(void)
 	}
 }
 
-void InGameUI::refreshSystemTimeResources(void)
+void InGameUI::refreshSystemTimeResources()
 {
 	if (!m_systemTimeString)
 	{
@@ -5893,7 +5893,7 @@ void InGameUI::refreshSystemTimeResources(void)
 	m_systemTimeString->setFont(systemTimeFont);
 }
 
-void InGameUI::refreshGameTimeResources(void)
+void InGameUI::refreshGameTimeResources()
 {
 	if (!m_gameTimeString)
 	{
@@ -5912,7 +5912,7 @@ void InGameUI::refreshGameTimeResources(void)
 	m_gameTimeFrameString->setFont(gameTimeFont);
 }
 
-void InGameUI::refreshPlayerInfoListResources(void)
+void InGameUI::refreshPlayerInfoListResources()
 {
 	m_playerInfoListPointSize = TheGlobalData->m_playerInfoListFontSize;
 	Int adjustedPlayerInfoListPointSize = TheGlobalLanguageData->adjustFontSize(m_playerInfoListPointSize);
@@ -5957,7 +5957,7 @@ WindowMsgHandledType IdleWorkerSystem( GameWindow *window, UnsignedInt msg,
 			static NameKeyType buttonSelectID = NAMEKEY( "IdleWorker.wnd:ButtonSelectNextIdleWorker" );
 			if (control && control->winGetWindowId() == buttonSelectID)
 			{
-				TheInGameUI->selectNextIdleWorker( );
+				TheInGameUI->selectNextIdleWorker();
 			}
 			break;
 

@@ -119,19 +119,19 @@ to be substituted to improve performance.*/
 class W3DShadowTextureManager
 {
 public:
-	W3DShadowTextureManager(void);
-	~W3DShadowTextureManager(void);
+	W3DShadowTextureManager();
+	~W3DShadowTextureManager();
 
 	int			 		createTexture(RenderObjClass *robj, const char *name);
 	W3DShadowTexture *		getTexture(const char * name);
 	W3DShadowTexture *		peekTexture(const char * name);
 	Bool					addTexture(W3DShadowTexture *new_texture);
-	void			 		freeAllTextures(void);
-	void					invalidateCachedLightPositions(void);
+	void			 		freeAllTextures();
+	void					invalidateCachedLightPositions();
 
 	void					registerMissing( const char * name );
 	Bool					isMissing( const char * name );
-	void					resetMissing( void );
+	void					resetMissing();
 
 private:
 
@@ -146,30 +146,30 @@ class W3DShadowTexture : public RefCountClass, public	HashableClass
 
 	public:
 
-		W3DShadowTexture( void )
+		W3DShadowTexture()
 		{	m_lastLightPosition.Set(0,0,0); m_lastObjectOrientation.Make_Identity();
 			m_shadowUV[0].Set(1.0f,0.0f,0.0f);	//u runs along world x axis
 			m_shadowUV[1].Set(0.0f,-1.0f,0.0f);	//v runs along world -y axis
 		}
-		~W3DShadowTexture( void ) { REF_PTR_RELEASE(m_texture);}
+		~W3DShadowTexture() { REF_PTR_RELEASE(m_texture);}
 
-		virtual	const char * Get_Key( void )	{ return m_namebuf;	}
+		virtual	const char * Get_Key()	{ return m_namebuf;	}
 
 		Int init (RenderObjClass *robj);
 
-		const char *		Get_Name(void) const	{ return m_namebuf;}
+		const char *		Get_Name() const	{ return m_namebuf;}
 		void				Set_Name(const char *name)
 		{
 			strlcpy(m_namebuf,name,sizeof(m_namebuf));
 		}
-		TextureClass	*getTexture(void)	{ return m_texture;}
+		TextureClass	*getTexture()	{ return m_texture;}
 		void					 setTexture(TextureClass *texture)	{m_texture = texture;}
 		void					 setLightPosHistory(Vector3 &pos) {m_lastLightPosition=pos;}	///<updates the last position of light
-		Vector3&			 getLightPosHistory(void) {return m_lastLightPosition;}
+		Vector3&			 getLightPosHistory() {return m_lastLightPosition;}
 		void					 setObjectOrientationHistory(Matrix3x3 &mat) {m_lastObjectOrientation=mat;}	///<updates the last position of light
-		Matrix3x3&			 getObjectOrientationHistory(void) {return m_lastObjectOrientation;}
-		SphereClass&	 getBoundingSphere(void)	{return m_areaEffectSphere;}
-		AABoxClass&		 getBoundingBox(void)		{return m_areaEffectBox;}
+		Matrix3x3&			 getObjectOrientationHistory() {return m_lastObjectOrientation;}
+		SphereClass&	 getBoundingSphere()	{return m_areaEffectSphere;}
+		AABoxClass&		 getBoundingBox()		{return m_areaEffectBox;}
 		void	 setBoundingSphere(SphereClass &sphere)	{m_areaEffectSphere=sphere;}
 		void	 setBoundingBox(AABoxClass &box)		{m_areaEffectBox=box;}
 		void	 updateBounds(Vector3 &lightPos, RenderObjClass *robj);	///<update extent of shadow
@@ -194,12 +194,12 @@ class W3DShadowTexture : public RefCountClass, public	HashableClass
 class W3DShadowTextureManagerIterator : public HashTableIteratorClass {
 public:
 	W3DShadowTextureManagerIterator( W3DShadowTextureManager & manager ) : HashTableIteratorClass( *manager.texturePtrTable ) {}
-	W3DShadowTexture * getCurrentTexture( void ) { 	return (W3DShadowTexture *)Get_Current();}
+	W3DShadowTexture * getCurrentTexture() { 	return (W3DShadowTexture *)Get_Current();}
 };
 
 
 /******************** Start of W3DProjectedShadowManager implementation ***********************/
-W3DProjectedShadowManager::W3DProjectedShadowManager(void)
+W3DProjectedShadowManager::W3DProjectedShadowManager()
 {
 	m_shadowList = nullptr;
 	m_decalList = nullptr;
@@ -214,7 +214,7 @@ W3DProjectedShadowManager::W3DProjectedShadowManager(void)
 	m_drawStartY = 0;
 }
 
-W3DProjectedShadowManager::~W3DProjectedShadowManager(void)
+W3DProjectedShadowManager::~W3DProjectedShadowManager()
 {
 
 	ReleaseResources();
@@ -230,7 +230,7 @@ W3DProjectedShadowManager::~W3DProjectedShadowManager(void)
 	DEBUG_ASSERTCRASH(m_decalList == nullptr, ("Destroy of non-empty projected decal list"));
 }
 
-void W3DProjectedShadowManager::reset( void )
+void W3DProjectedShadowManager::reset()
 {
 
 	DEBUG_ASSERTCRASH(m_shadowList == nullptr, ("Reset of non-empty projected shadow list"));
@@ -240,7 +240,7 @@ void W3DProjectedShadowManager::reset( void )
 
 }
 
-Bool W3DProjectedShadowManager::init( void )
+Bool W3DProjectedShadowManager::init()
 {
 	m_W3DShadowTextureManager = NEW W3DShadowTextureManager;
 	m_shadowCamera = NEW_REF( CameraClass, () );
@@ -251,7 +251,7 @@ Bool W3DProjectedShadowManager::init( void )
 }
 
 
-Bool W3DProjectedShadowManager::ReAcquireResources(void)
+Bool W3DProjectedShadowManager::ReAcquireResources()
 {
 	//grab assets which don't survive a device reset and need
 	//to be present for duration of game.
@@ -302,7 +302,7 @@ Bool W3DProjectedShadowManager::ReAcquireResources(void)
 	return TRUE;
 }
 
-void W3DProjectedShadowManager::ReleaseResources(void)
+void W3DProjectedShadowManager::ReleaseResources()
 {
 	invalidateCachedLightPositions();	//textures need to be updated
 	REF_PTR_RELEASE(m_dynamicRenderTarget);	//need to create a new render target
@@ -314,12 +314,12 @@ void W3DProjectedShadowManager::ReleaseResources(void)
 	shadowDecalVertexBufferD3D=nullptr;
 }
 
-void W3DProjectedShadowManager::invalidateCachedLightPositions(void)
+void W3DProjectedShadowManager::invalidateCachedLightPositions()
 {
 	m_W3DShadowTextureManager->invalidateCachedLightPositions();
 }
 
-void W3DProjectedShadowManager::updateRenderTargetTextures(void)
+void W3DProjectedShadowManager::updateRenderTargetTextures()
 {
 	///@todo: Don't update texture for shadows that can't be seen!!
 
@@ -776,7 +776,7 @@ void W3DProjectedShadowManager::flushDecals(W3DShadowTexture *texture, ShadowTyp
 }
 
 /*
-void testShadowDecal(void)
+void testShadowDecal()
 {
 	Shadow::ShadowTypeInfo decalInfo;
 	decalInfo.allowUpdates = FALSE;	//shadow image will never update
@@ -2018,7 +2018,7 @@ void W3DProjectedShadowManager::removeShadow (W3DProjectedShadow *shadow)
 	}
 }
 
-void W3DProjectedShadowManager::removeAllShadows(void)
+void W3DProjectedShadowManager::removeAllShadows()
 {
 
 	W3DProjectedShadow *cur_shadow=nullptr;
@@ -2071,7 +2071,7 @@ void W3DProjectedShadow::getRenderCost(RenderCost & rc) const
 }
 #endif
 
-W3DProjectedShadow::W3DProjectedShadow(void)
+W3DProjectedShadow::W3DProjectedShadow()
 {
 	m_diffuse=0xffffffff;
 	m_shadowProjector=nullptr;
@@ -2084,14 +2084,14 @@ W3DProjectedShadow::W3DProjectedShadow(void)
 		m_shadowTexture[i]=nullptr;
 }
 
-W3DProjectedShadow::~W3DProjectedShadow(void)
+W3DProjectedShadow::~W3DProjectedShadow()
 {
 	REF_PTR_RELEASE(m_shadowProjector);
 	for (Int i=0; i<MAX_SHADOW_LIGHTS; i++)
 		REF_PTR_RELEASE(m_shadowTexture[i]);
 }
 
-void W3DProjectedShadow::init(void)
+void W3DProjectedShadow::init()
 {
 
 	DEBUG_ASSERTCRASH(m_shadowProjector == nullptr, ("Init of existing shadow projector"));
@@ -2190,7 +2190,7 @@ void W3DProjectedShadow::updateProjectionParameters(const Matrix3D &cameraXform)
 		m_shadowProjector->Pre_Render_Update(cameraXform);
 }
 
-void W3DProjectedShadow::update(void)
+void W3DProjectedShadow::update()
 {
 	if (m_shadowTexture[0]->getLightPosHistory() != TheW3DShadowManager->getLightPosWorld(0))
 	{	//light has moved since last time this shadow was calculated. Need update
@@ -2296,14 +2296,14 @@ void W3DShadowTexture::updateBounds(Vector3 &lightPos, RenderObjClass *robj)
 		box.Translate(-objPos);	//translate box to object space.
 }
 
-W3DShadowTextureManager::W3DShadowTextureManager(void)
+W3DShadowTextureManager::W3DShadowTextureManager()
 {
 	// Create the hash tables
 	texturePtrTable = NEW HashTableClass( 2048 );
 	missingTextureTable = NEW HashTableClass( 2048 );
 }
 
-W3DShadowTextureManager::~W3DShadowTextureManager(void)
+W3DShadowTextureManager::~W3DShadowTextureManager()
 {
 	freeAllTextures();
 
@@ -2315,7 +2315,7 @@ W3DShadowTextureManager::~W3DShadowTextureManager(void)
 }
 
 /** Release all loaded textures */
-void W3DShadowTextureManager::freeAllTextures(void)
+void W3DShadowTextureManager::freeAllTextures()
 {
 	// Make an iterator, and release all ptrs
 	W3DShadowTextureManagerIterator it( *this );
@@ -2356,7 +2356,7 @@ Bool W3DShadowTextureManager::addTexture(W3DShadowTexture *newTexture)
 	return true;
 }
 
-void W3DShadowTextureManager::invalidateCachedLightPositions(void)
+void W3DShadowTextureManager::invalidateCachedLightPositions()
 {
 	// step through each of our shadow textures and update previous light position.
 	Vector3 idVec(0,0,0);
@@ -2376,9 +2376,9 @@ class MissingTextureClass : public HashableClass {
 
 public:
 	MissingTextureClass( const char * name ) : Name( name ) {}
-	virtual	~MissingTextureClass( void ) {}
+	virtual	~MissingTextureClass() {}
 
-	virtual	const char * Get_Key( void )	{ return Name;	}
+	virtual	const char * Get_Key()	{ return Name;	}
 
 private:
 	StringClass	Name;

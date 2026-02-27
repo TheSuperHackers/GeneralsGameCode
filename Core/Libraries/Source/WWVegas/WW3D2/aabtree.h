@@ -84,19 +84,19 @@ class AABTreeClass : public W3DMPO, public RefCountClass
 	W3DMPO_GLUE(AABTreeClass)
 public:
 
-	AABTreeClass(void);
+	AABTreeClass();
 	AABTreeClass(AABTreeBuilderClass * builder);
 	AABTreeClass(const AABTreeClass & that);
-	~AABTreeClass(void);
+	~AABTreeClass();
 
 	void						Load_W3D(ChunkLoadClass & cload);
 
 	// Uniformly scale the AABTree
 	void						Scale(float scale);
 
-	int						Get_Node_Count(void) { return NodeCount; }
-	int						Get_Poly_Count(void) { return PolyCount; }
-	int						Compute_Ram_Size(void);
+	int						Get_Node_Count() { return NodeCount; }
+	int						Get_Poly_Count() { return PolyCount; }
+	int						Compute_Ram_Size();
 	void						Generate_APT(const OBBoxClass & box,SimpleDynVecClass<uint32> & apt);
 	void						Generate_APT(const OBBoxClass & box,const Vector3 & viewdir,SimpleDynVecClass<uint32> & apt);
 
@@ -117,8 +117,8 @@ private:
 	void						Read_Nodes(ChunkLoadClass & cload);
 
 	void						Build_Tree_Recursive(AABTreeBuilderClass::CullNodeStruct * node,int &curpolyindex);
-	void						Reset(void);
-	void						Update_Bounding_Boxes(void);
+	void						Reset();
+	void						Update_Bounding_Boxes();
 	void						Update_Min_Max(int index,Vector3 & min,Vector3 & max);
 
 	/*
@@ -138,12 +138,12 @@ private:
 		uint32				BackOrPolyCount;
 
 		// accessors
-		inline bool			Is_Leaf(void);
+		inline bool			Is_Leaf();
 
-		inline int			Get_Back_Child(void);		// returns index of back child (only call for non-LEAFs!!!)
-		inline int			Get_Front_Child(void);		// returns index of front child (only call for non-LEAFs!!!)
-		inline int			Get_Poly0(void);				// returns index of first polygon (only call on LEAFs)
-		inline int			Get_Poly_Count(void);		// returns polygon count (only call on LEAFs)
+		inline int			Get_Back_Child();		// returns index of back child (only call for non-LEAFs!!!)
+		inline int			Get_Front_Child();		// returns index of front child (only call for non-LEAFs!!!)
+		inline int			Get_Poly0();				// returns index of first polygon (only call on LEAFs)
+		inline int			Get_Poly_Count();		// returns polygon count (only call on LEAFs)
 
 		// initialization
 		inline void			Set_Front_Child(uint32 index);
@@ -215,7 +215,7 @@ private:
 
 };
 
-inline int AABTreeClass::Compute_Ram_Size(void)
+inline int AABTreeClass::Compute_Ram_Size()
 {
 	return	NodeCount * sizeof(CullNodeStruct) +
 				PolyCount * sizeof(int) +
@@ -271,7 +271,7 @@ inline bool AABTreeClass::Intersect_OBBox(OBBoxIntersectionTestClass & boxtest)
 	return Intersect_OBBox_Recursive(&(Nodes[0]),boxtest);
 }
 
-inline void AABTreeClass::Update_Bounding_Boxes(void)
+inline void AABTreeClass::Update_Bounding_Boxes()
 {
 	WWASSERT(Nodes != nullptr);
 	Update_Bounding_Boxes_Recursive(&(Nodes[0]));
@@ -292,30 +292,30 @@ inline void AABTreeClass::Update_Bounding_Boxes(void)
 
 ***********************************************************************************************/
 
-inline bool AABTreeClass::CullNodeStruct::Is_Leaf(void)
+inline bool AABTreeClass::CullNodeStruct::Is_Leaf()
 {
 	return ((FrontOrPoly0 & AABTREE_LEAF_FLAG) != 0);
 }
 
-inline int AABTreeClass::CullNodeStruct::Get_Front_Child(void)
+inline int AABTreeClass::CullNodeStruct::Get_Front_Child()
 {
 	WWASSERT(!Is_Leaf());
 	return FrontOrPoly0;		// we shouldn't be calling this on a leaf and the leaf bit should be zero...
 }
 
-inline int AABTreeClass::CullNodeStruct::Get_Back_Child(void)
+inline int AABTreeClass::CullNodeStruct::Get_Back_Child()
 {
 	WWASSERT(!Is_Leaf());
 	return BackOrPolyCount;
 }
 
-inline int AABTreeClass::CullNodeStruct::Get_Poly0(void)
+inline int AABTreeClass::CullNodeStruct::Get_Poly0()
 {
 	WWASSERT(Is_Leaf());
 	return (FrontOrPoly0 & ~AABTREE_LEAF_FLAG);
 }
 
-inline int AABTreeClass::CullNodeStruct::Get_Poly_Count(void)
+inline int AABTreeClass::CullNodeStruct::Get_Poly_Count()
 {
 	WWASSERT(Is_Leaf());
 	return BackOrPolyCount;

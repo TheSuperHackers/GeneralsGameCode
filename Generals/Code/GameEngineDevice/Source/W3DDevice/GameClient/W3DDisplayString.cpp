@@ -74,7 +74,7 @@
 // W3DDisplayString::W3DDisplayString =========================================
 /** */
 //=============================================================================
-W3DDisplayString::W3DDisplayString( void )
+W3DDisplayString::W3DDisplayString()
 {
 
 	m_textChanged = FALSE;
@@ -100,7 +100,7 @@ W3DDisplayString::W3DDisplayString( void )
 // W3DDisplayString::~W3DDisplayString ========================================
 /** */
 //=============================================================================
-W3DDisplayString::~W3DDisplayString( void )
+W3DDisplayString::~W3DDisplayString()
 {
 
 }
@@ -110,7 +110,7 @@ W3DDisplayString::~W3DDisplayString( void )
 	* class so that we can write our own code here to to appropriate things
 	* on the changing of string data */
 //=============================================================================
-void W3DDisplayString::notifyTextChanged( void )
+void W3DDisplayString::notifyTextChanged()
 {
 
 	// extend functionality
@@ -344,7 +344,7 @@ void W3DDisplayString::setClipRegion( IRegion2D *region )
 // W3DDisplayString::computeExtents ===========================================
 /** Update the width and height of our string */
 //=============================================================================
-void W3DDisplayString::computeExtents( void )
+void W3DDisplayString::computeExtents()
 {
 	UnsignedInt len = getTextLength();
 

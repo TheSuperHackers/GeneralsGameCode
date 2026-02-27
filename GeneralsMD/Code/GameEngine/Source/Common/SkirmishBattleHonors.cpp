@@ -104,7 +104,7 @@ void SkirmishBattleHonors::setWins(Int val)
 	setInt("Wins", val);
 }
 
-Int SkirmishBattleHonors::getWins(void) const
+Int SkirmishBattleHonors::getWins() const
 {
 	return getInt("Wins", 0);
 }
@@ -114,7 +114,7 @@ void SkirmishBattleHonors::setLosses(Int val)
 	setInt("Losses", val);
 }
 
-Int SkirmishBattleHonors::getLosses(void) const
+Int SkirmishBattleHonors::getLosses() const
 {
 	return getInt("Losses", 0);
 }
@@ -124,7 +124,7 @@ void SkirmishBattleHonors::setWinStreak(Int val)
 	setInt("WinStreak", val);
 }
 
-Int SkirmishBattleHonors::getWinStreak(void) const
+Int SkirmishBattleHonors::getWinStreak() const
 {
 	return getInt("WinStreak", 0);
 }
@@ -134,7 +134,7 @@ void SkirmishBattleHonors::setBestWinStreak(Int val)
 	setInt("BestWinStreak", val);
 }
 
-Int SkirmishBattleHonors::getBestWinStreak(void) const
+Int SkirmishBattleHonors::getBestWinStreak() const
 {
 	return getInt("BestWinStreak", 0);
 }
@@ -144,37 +144,37 @@ void SkirmishBattleHonors::setChallengeMedals(Int val)
 	setInt("Challenge", val);
 }
 
-Int SkirmishBattleHonors::getChallengeMedals(void) const
+Int SkirmishBattleHonors::getChallengeMedals() const
 {
 	return getInt("Challenge", 0);
 }
 
-void SkirmishBattleHonors::setBuiltSCUD(void)
+void SkirmishBattleHonors::setBuiltSCUD()
 {
 	setBool("SCUD", TRUE);
 }
 
-Bool SkirmishBattleHonors::builtSCUD(void) const
+Bool SkirmishBattleHonors::builtSCUD() const
 {
 	return getBool("SCUD", FALSE);
 }
 
-void SkirmishBattleHonors::setBuiltParticleCannon(void)
+void SkirmishBattleHonors::setBuiltParticleCannon()
 {
 	setBool("PPC", TRUE);
 }
 
-Bool SkirmishBattleHonors::builtParticleCannon(void) const
+Bool SkirmishBattleHonors::builtParticleCannon() const
 {
 	return getBool("PPC", FALSE);
 }
 
-void SkirmishBattleHonors::setBuiltNuke(void)
+void SkirmishBattleHonors::setBuiltNuke()
 {
 	setBool("Nuke", TRUE);
 }
 
-Bool SkirmishBattleHonors::builtNuke(void) const
+Bool SkirmishBattleHonors::builtNuke() const
 {
 	return getBool("Nuke", FALSE);
 }
@@ -185,7 +185,7 @@ void SkirmishBattleHonors::setHonors(Int which)
 	setInt("Honors", honors | which);
 }
 
-Int SkirmishBattleHonors::getHonors(void) const
+Int SkirmishBattleHonors::getHonors() const
 {
 	return getInt("Honors", 0);
 }
@@ -209,7 +209,7 @@ void SkirmishBattleHonors::setLastGeneral(AsciiString val)
 	setAsciiString("LastHouse", val);
 }
 
-AsciiString SkirmishBattleHonors::getLastGeneral(void) const
+AsciiString SkirmishBattleHonors::getLastGeneral() const
 {
 	return getAsciiString("LastHouse", AsciiString::TheEmptyString);
 }
@@ -219,7 +219,7 @@ void SkirmishBattleHonors::setNumGamesLoyal(Int val)
 	setInt("LoyalGames", val);
 }
 
-Int SkirmishBattleHonors::getNumGamesLoyal(void) const
+Int SkirmishBattleHonors::getNumGamesLoyal() const
 {
 	return getInt("LoyalGames", 0);
 }

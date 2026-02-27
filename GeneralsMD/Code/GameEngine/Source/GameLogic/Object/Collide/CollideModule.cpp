@@ -62,7 +62,7 @@ void CollideModule::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void CollideModule::loadPostProcess( void )
+void CollideModule::loadPostProcess()
 {
 
 	// call base class

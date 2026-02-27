@@ -48,7 +48,7 @@ float _FastAsinTable[ARC_TABLE_SIZE];
 float _FastSinTable[SIN_TABLE_SIZE];
 float _FastInvSinTable[SIN_TABLE_SIZE];
 
-void		WWMath::Init(void)
+void		WWMath::Init()
 {
 	LookupTableMgrClass::Init();
 
@@ -71,12 +71,12 @@ void		WWMath::Init(void)
 	}
 }
 
-void		WWMath::Shutdown(void)
+void		WWMath::Shutdown()
 {
 	LookupTableMgrClass::Shutdown();
 }
 
-float		WWMath::Random_Float(void)
+float		WWMath::Random_Float()
 {
 	return ((float)(rand() & 0xFFF)) / (float)(0xFFF);
 }
@@ -85,7 +85,7 @@ float		WWMath::Random_Float(void)
 /*
 ** Force link some modules from this library.
 */
-void Do_Force_Links(void)
+void Do_Force_Links()
 {
 	FORCE_LINK(curve);
 	FORCE_LINK(hermitespline);

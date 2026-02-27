@@ -52,43 +52,43 @@ public:
 	Bool loadFromIniFile();
 
 	void setWins(Int val);
-	Int getWins(void) const;
+	Int getWins() const;
 
 	void setLosses(Int val);
-	Int getLosses(void) const;
+	Int getLosses() const;
 
 	void setWinStreak(Int val);
-	Int getWinStreak(void) const;
+	Int getWinStreak() const;
 
 	void setBestWinStreak(Int val);
-	Int getBestWinStreak(void) const;
+	Int getBestWinStreak() const;
 
 	void setChallengeMedals(Int val);
-	Int getChallengeMedals(void) const;
+	Int getChallengeMedals() const;
 
-	void setBuiltSCUD(void);
-	Bool builtSCUD(void) const;
+	void setBuiltSCUD();
+	Bool builtSCUD() const;
 
-	void setBuiltParticleCannon(void);
-	Bool builtParticleCannon(void) const;
+	void setBuiltParticleCannon();
+	Bool builtParticleCannon() const;
 
-	void setBuiltNuke(void);
-	Bool builtNuke(void) const;
+	void setBuiltNuke();
+	Bool builtNuke() const;
 
 	void setHonors(Int mask);
-	Int getHonors(void) const;
+	Int getHonors() const;
 
 	void setEnduranceMedal(AsciiString mapName, Int difficulty, int numAIs);
 	Int getEnduranceMedal(AsciiString mapName, Int difficulty) const;
 
 	void setLastGeneral(AsciiString val);
-	AsciiString getLastGeneral(void) const;
+	AsciiString getLastGeneral() const;
 
 	void setNumGamesLoyal(Int val);
-	Int getNumGamesLoyal(void) const;
+	Int getNumGamesLoyal() const;
 };
 
-void ResetBattleHonorInsertion(void);
+void ResetBattleHonorInsertion();
 void InsertBattleHonor(GameWindow *list, const Image *image, Bool enabled, Int itemData, Int& row, Int& column, UnicodeString text = UnicodeString::TheEmptyString);
 void BattleHonorTooltip(GameWindow *window,
 												WinInstanceData *instData,

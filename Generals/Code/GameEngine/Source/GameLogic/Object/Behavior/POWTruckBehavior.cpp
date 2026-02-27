@@ -45,7 +45,7 @@
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-POWTruckBehaviorModuleData::POWTruckBehaviorModuleData( void )
+POWTruckBehaviorModuleData::POWTruckBehaviorModuleData()
 {
 
 }
@@ -81,7 +81,7 @@ POWTruckBehavior::POWTruckBehavior( Thing *thing, const ModuleData *moduleData )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-POWTruckBehavior::~POWTruckBehavior( void )
+POWTruckBehavior::~POWTruckBehavior()
 {
 
 }
@@ -146,7 +146,7 @@ void POWTruckBehavior::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void POWTruckBehavior::loadPostProcess( void )
+void POWTruckBehavior::loadPostProcess()
 {
 
 	// extend base class

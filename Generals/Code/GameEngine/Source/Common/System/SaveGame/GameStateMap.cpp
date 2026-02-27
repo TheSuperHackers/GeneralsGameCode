@@ -48,14 +48,14 @@ GameStateMap *TheGameStateMap = nullptr;
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-GameStateMap::GameStateMap( void )
+GameStateMap::GameStateMap()
 {
 
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-GameStateMap::~GameStateMap( void )
+GameStateMap::~GameStateMap()
 {
 
 	//
@@ -435,7 +435,7 @@ void GameStateMap::xfer( Xfer *xfer )
 	* their own file so that those map files could be loaded as a part of the load game
 	* process */
 // ------------------------------------------------------------------------------------------------
-void GameStateMap::clearScratchPadMaps( void )
+void GameStateMap::clearScratchPadMaps()
 {
 
 	// remember the current directory

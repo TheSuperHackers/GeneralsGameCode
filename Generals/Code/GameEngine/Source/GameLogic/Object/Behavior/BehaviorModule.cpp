@@ -64,7 +64,7 @@ void BehaviorModule::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void BehaviorModule::loadPostProcess( void )
+void BehaviorModule::loadPostProcess()
 {
 
 	// call base class

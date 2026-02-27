@@ -39,7 +39,7 @@ void PopulateTeamComboBox(Int comboBox, GameWindow *comboArray[], GameInfo *myGa
 void PopulateStartingCashComboBox(GameWindow *comboBox, GameInfo *myGame);
 
 void EnableSlotListUpdates( Bool val );
-Bool AreSlotListUpdatesEnabled( void );
+Bool AreSlotListUpdatesEnabled();
 
 void UpdateSlotList( GameInfo *myGame, GameWindow *comboPlayer[],
 										GameWindow *comboColor[], GameWindow *comboPlayerTemplate[],

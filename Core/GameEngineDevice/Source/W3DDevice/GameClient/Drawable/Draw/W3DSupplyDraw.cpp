@@ -144,7 +144,7 @@ void W3DSupplyDraw::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void W3DSupplyDraw::loadPostProcess( void )
+void W3DSupplyDraw::loadPostProcess()
 {
 
 	// extend base class

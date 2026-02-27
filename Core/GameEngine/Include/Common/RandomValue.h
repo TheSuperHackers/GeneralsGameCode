@@ -30,9 +30,9 @@
 
 #include "Lib/BaseType.h"
 
-extern void InitRandom( void );
+extern void InitRandom();
 extern void InitRandom( UnsignedInt seed );
-extern UnsignedInt GetGameLogicRandomSeed( void );   ///< Get the seed (used for replays)
-extern UnsignedInt GetGameLogicRandomSeedCRC( void );///< Get the seed (used for CRCs)
+extern UnsignedInt GetGameLogicRandomSeed();   ///< Get the seed (used for replays)
+extern UnsignedInt GetGameLogicRandomSeedCRC();///< Get the seed (used for CRCs)
 
 //--------------------------------------------------------------------------------------------------------------

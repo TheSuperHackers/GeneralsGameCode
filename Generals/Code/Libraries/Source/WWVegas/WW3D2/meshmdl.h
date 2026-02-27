@@ -152,9 +152,9 @@ class MeshModelClass : public MeshGeometryClass
 
 public:
 
-	MeshModelClass(void);
+	MeshModelClass();
 	MeshModelClass(const MeshModelClass & that);
-	~MeshModelClass(void);
+	~MeshModelClass();
 
 	MeshModelClass & operator = (const MeshModelClass & that);
 	void							Reset(int polycount,int vertcount,int passcount);
@@ -166,10 +166,10 @@ public:
 	// material description.
 	/////////////////////////////////////////////////////////////////////////////////////
 	void							Set_Pass_Count(int passes)														{ CurMatDesc->Set_Pass_Count(passes); }
-	int							Get_Pass_Count(void) const														{ return CurMatDesc->Get_Pass_Count(); }
+	int							Get_Pass_Count() const														{ return CurMatDesc->Get_Pass_Count(); }
 
 	const Vector2 *			Get_UV_Array(int pass = 0, int stage = 0)									{ return CurMatDesc->Get_UV_Array(pass,stage); }
-	int							Get_UV_Array_Count(void)														{ return CurMatDesc->Get_UV_Array_Count(); }
+	int							Get_UV_Array_Count()														{ return CurMatDesc->Get_UV_Array_Count(); }
 	const Vector2 *			Get_UV_Array_By_Index(int index)												{ return CurMatDesc->Get_UV_Array_By_Index(index, false); }
 
 	unsigned *					Get_DCG_Array(int pass)															{ return CurMatDesc->Get_DCG_Array(pass); }
@@ -237,21 +237,21 @@ public:
 	// Some models will allow you to alternate between multiple material descriptions
 	/////////////////////////////////////////////////////////////////////////////////////
 	void							Enable_Alternate_Material_Description(bool onoff);
-	bool							Is_Alternate_Material_Description_Enabled(void);
+	bool							Is_Alternate_Material_Description_Enabled();
 
 	// Process texture reductions
-//	void							Process_Texture_Reduction(void);
+//	void							Process_Texture_Reduction();
 
 	// FVF category container will be null if the mesh hasn't been registered to the rendering system
 	DX8FVFCategoryContainer* Peek_FVF_Category_Container();
 
 	// Determine whether any rendering feature used by this mesh requires vertex normals
-	bool							Needs_Vertex_Normals(void);
+	bool							Needs_Vertex_Normals();
 
 	void							Init_For_NPatch_Rendering();
 	const GapFillerClass*	Get_Gap_Filler() const { return GapFiller; }
 
-	bool							Has_Polygon_Renderers(void) { return !PolygonRendererList.Is_Empty(); }
+	bool							Has_Polygon_Renderers() { return !PolygonRendererList.Is_Empty(); }
 
 protected:
 
@@ -314,12 +314,12 @@ protected:
 	WW3DErrorType read_prelit_material (ChunkLoadClass &cload, MeshLoadContextClass *context);
 
 	// post-processing
-	void post_process(void);
-	void post_process_fog(void);
+	void post_process();
+	void post_process_fog();
 
 	unsigned int get_sort_flags(int pass) const;
-	unsigned int get_sort_flags(void) const;
-	void compute_static_sort_levels(void);
+	unsigned int get_sort_flags() const;
+	void compute_static_sort_levels();
 
 	// mat info support
 	void install_materials(MeshLoadContextClass * loadinfo);

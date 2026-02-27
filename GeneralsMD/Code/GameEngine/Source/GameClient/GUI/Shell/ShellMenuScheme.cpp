@@ -100,18 +100,18 @@ void INI::parseShellMenuSchemeDefinition( INI *ini )
 
 }
 
-ShellMenuSchemeLine::ShellMenuSchemeLine( void )
+ShellMenuSchemeLine::ShellMenuSchemeLine()
 {
 	m_startPos.x = m_startPos.y = 0;
 	m_endPos.x = m_endPos.y = 0;
 	m_color = GAME_COLOR_UNDEFINED;
 	m_width = 1;
 }
-ShellMenuSchemeLine::~ShellMenuSchemeLine( void )
+ShellMenuSchemeLine::~ShellMenuSchemeLine()
 {
 }
 
-ShellMenuSchemeImage::ShellMenuSchemeImage( void )
+ShellMenuSchemeImage::ShellMenuSchemeImage()
 {
 	m_name.clear();
 	m_position.x = m_position.y = 0;
@@ -119,17 +119,17 @@ ShellMenuSchemeImage::ShellMenuSchemeImage( void )
 	m_image = nullptr;
 }
 
-ShellMenuSchemeImage::~ShellMenuSchemeImage( void )
+ShellMenuSchemeImage::~ShellMenuSchemeImage()
 {
 	m_image = nullptr;
 }
 
-ShellMenuScheme::ShellMenuScheme( void )
+ShellMenuScheme::ShellMenuScheme()
 {
 
 }
 
-ShellMenuScheme::~ShellMenuScheme( void )
+ShellMenuScheme::~ShellMenuScheme()
 {
 	ShellMenuSchemeImageListIt it = m_imageList.begin();
 	while(it != m_imageList.end())
@@ -167,7 +167,7 @@ void ShellMenuScheme::addImage( ShellMenuSchemeImage* schemeImage )
 	m_imageList.push_back( schemeImage );
 }
 
-void ShellMenuScheme::draw( void )
+void ShellMenuScheme::draw()
 {
 
 	ShellMenuSchemeImageListIt imageIt = m_imageList.begin();
@@ -198,12 +198,12 @@ void ShellMenuScheme::draw( void )
 
 }
 
-ShellMenuSchemeManager::ShellMenuSchemeManager( void )
+ShellMenuSchemeManager::ShellMenuSchemeManager()
 {
 	m_currentScheme = nullptr;
 }
 
-ShellMenuSchemeManager::~ShellMenuSchemeManager( void )
+ShellMenuSchemeManager::~ShellMenuSchemeManager()
 {
 	m_currentScheme = nullptr;
 
@@ -275,7 +275,7 @@ ShellMenuScheme *ShellMenuSchemeManager::newShellMenuScheme(AsciiString name)
 	return newScheme;
 }
 
-void ShellMenuSchemeManager::init( void )
+void ShellMenuSchemeManager::init()
 {
 	INI ini;
 	// Read from INI all the ControlBarSchemes
@@ -307,13 +307,13 @@ void ShellMenuSchemeManager::setShellMenuScheme( AsciiString name )
 	}
 }
 
-void ShellMenuSchemeManager::draw( void )
+void ShellMenuSchemeManager::draw()
 {
 	if(m_currentScheme)
 		m_currentScheme->draw();
 }
 
-void ShellMenuSchemeManager::update( void )
+void ShellMenuSchemeManager::update()
 {
 
 }

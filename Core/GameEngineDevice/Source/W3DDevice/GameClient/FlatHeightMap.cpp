@@ -121,7 +121,7 @@ const Int CELLS_PER_TILE = 16; // In order to be efficient in texture, needs to 
 //=============================================================================
 /** Frees the w3d resources used to draw the terrain. */
 //=============================================================================
-Int FlatHeightMapRenderObjClass::freeMapResources(void)
+Int FlatHeightMapRenderObjClass::freeMapResources()
 {
 	BaseHeightMapRenderObjClass::freeMapResources();
 
@@ -140,7 +140,7 @@ Int FlatHeightMapRenderObjClass::freeMapResources(void)
 //=============================================================================
 /** Destructor. Releases w3d assets. */
 //=============================================================================
-FlatHeightMapRenderObjClass::~FlatHeightMapRenderObjClass(void)
+FlatHeightMapRenderObjClass::~FlatHeightMapRenderObjClass()
 {
 	releaseTiles();
 	TheFlatHeightMap = nullptr;
@@ -151,7 +151,7 @@ FlatHeightMapRenderObjClass::~FlatHeightMapRenderObjClass(void)
 //=============================================================================
 /** Constructor. Mostly nulls out the member variables. */
 //=============================================================================
-FlatHeightMapRenderObjClass::FlatHeightMapRenderObjClass(void):
+FlatHeightMapRenderObjClass::FlatHeightMapRenderObjClass():
 m_tiles(nullptr),
 m_tilesWidth(0),
 m_tilesHeight(0),
@@ -178,7 +178,7 @@ void FlatHeightMapRenderObjClass::adjustTerrainLOD(Int adj)
 //=============================================================================
 /** Releases all w3d assets, to prepare for Reset device call. */
 //=============================================================================
-void FlatHeightMapRenderObjClass::ReleaseResources(void)
+void FlatHeightMapRenderObjClass::ReleaseResources()
 {
 	BaseHeightMapRenderObjClass::ReleaseResources();
 }
@@ -188,7 +188,7 @@ void FlatHeightMapRenderObjClass::ReleaseResources(void)
 //=============================================================================
 /** Reallocates all W3D assets after a reset.. */
 //=============================================================================
-void FlatHeightMapRenderObjClass::ReAcquireResources(void)
+void FlatHeightMapRenderObjClass::ReAcquireResources()
 {
 	if (m_map) {
 		Int width = (m_map->getXExtent()+CELLS_PER_TILE-2)/CELLS_PER_TILE;
@@ -228,7 +228,7 @@ void FlatHeightMapRenderObjClass::ReAcquireResources(void)
 //=============================================================================
 /** Updates the macro noise/lightmap texture (pass 3) */
 //=============================================================================
-void FlatHeightMapRenderObjClass::reset(void)
+void FlatHeightMapRenderObjClass::reset()
 {
 	BaseHeightMapRenderObjClass::reset();
 }
@@ -271,7 +271,7 @@ void FlatHeightMapRenderObjClass::doPartialUpdate(const IRegion2D &partialRange,
 //=============================================================================
 /** Releases tiles.*/
 //=============================================================================
-void FlatHeightMapRenderObjClass::releaseTiles(void)
+void FlatHeightMapRenderObjClass::releaseTiles()
 {
 	delete [] m_tiles;
 	m_tiles = nullptr;
@@ -344,7 +344,7 @@ Int FlatHeightMapRenderObjClass::initHeightData(Int x, Int y, WorldHeightMap *pM
 //=============================================================================
 /** Updates the diffuse color values in the vertices as affected by the dynamic lights.*/
 //=============================================================================
-void FlatHeightMapRenderObjClass::On_Frame_Update(void)
+void FlatHeightMapRenderObjClass::On_Frame_Update()
 {
 #ifdef DO_UNIT_TIMINGS
 #pragma MESSAGE("*** WARNING *** DOING DO_UNIT_TIMINGS!!!!")
@@ -375,7 +375,7 @@ void FlatHeightMapRenderObjClass::On_Frame_Update(void)
 //=============================================================================
 /** Notification that all lighting needs to be recalculated. */
 //=============================================================================
-void FlatHeightMapRenderObjClass::staticLightingChanged( void )
+void FlatHeightMapRenderObjClass::staticLightingChanged()
 {
 	BaseHeightMapRenderObjClass::staticLightingChanged();
 	if (m_map==nullptr) {

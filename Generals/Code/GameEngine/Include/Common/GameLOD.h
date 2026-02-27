@@ -161,30 +161,30 @@ struct BenchProfile
 class GameLODManager
 {
 public:
-	GameLODManager(void);
+	GameLODManager();
 	~GameLODManager();
 
 	const char *getStaticGameLODLevelName(StaticGameLODLevel level);
 	const char *getDynamicGameLODLevelName(DynamicGameLODLevel level);
-	StaticGameLODLevel getRecommendedStaticLODLevel(void);	///< calculate the optimal static LOD level for this system.
+	StaticGameLODLevel getRecommendedStaticLODLevel();	///< calculate the optimal static LOD level for this system.
 	Bool setStaticLODLevel(StaticGameLODLevel level);	///< set the current static LOD level.
-	StaticGameLODLevel getStaticLODLevel(void) { return m_currentStaticLOD;}
+	StaticGameLODLevel getStaticLODLevel() { return m_currentStaticLOD;}
 	DynamicGameLODLevel findDynamicLODLevel(Real averageFPS);	///<given an average fps, return the optimal dynamic LOD.
 	Bool setDynamicLODLevel(DynamicGameLODLevel level);	///< set the current dynamic LOD level.
-	DynamicGameLODLevel getDynamicLODLevel(void) { return m_currentDynamicLOD;}
-	void init(void);	///<initialize tables of preset LOD's.
+	DynamicGameLODLevel getDynamicLODLevel() { return m_currentDynamicLOD;}
+	void init();	///<initialize tables of preset LOD's.
 	Int getStaticGameLODIndex(AsciiString name);
 	Int getDynamicGameLODIndex(AsciiString name);
-	inline Bool isParticleSkipped(void);
-	inline Bool isDebrisSkipped(void);
-	inline Real getSlowDeathScale(void);
-	inline ParticlePriorityType getMinDynamicParticlePriority(void);		///<priority at which particles will still render at current FPS.
-	inline ParticlePriorityType	getMinDynamicParticleSkipPriority(void);	///<priority at which particles will never be skipped at any FPS.
-	Int getRecommendedTextureReduction(void);	///<return the optimal texture reduction for the system.
+	inline Bool isParticleSkipped();
+	inline Bool isDebrisSkipped();
+	inline Real getSlowDeathScale();
+	inline ParticlePriorityType getMinDynamicParticlePriority();		///<priority at which particles will still render at current FPS.
+	inline ParticlePriorityType	getMinDynamicParticleSkipPriority();	///<priority at which particles will never be skipped at any FPS.
+	Int getRecommendedTextureReduction();	///<return the optimal texture reduction for the system.
 	Int getLevelTextureReduction(StaticGameLODLevel level);	///<return texture reduction specified in INI for this game detail.
 	LODPresetInfo *newLODPreset(StaticGameLODLevel index);
-	BenchProfile *newBenchProfile(void);
-	Bool didMemPass( void );
+	BenchProfile *newBenchProfile();
+	Bool didMemPass();
 	void setReallyLowMHz(Int mhz) { m_reallyLowMHz = mhz; }
 	Bool isReallyLowMHz() const { return m_cpuFreq < m_reallyLowMHz; }
 
@@ -197,7 +197,7 @@ protected:
 	void initStaticLODLevels();
 	void applyStaticLODLevel(StaticGameLODLevel level);
 	void applyDynamicLODLevel(DynamicGameLODLevel level);
-	void refreshCustomStaticLODLevel(void);	///<grabs current globaldata values and makes them the custom detail setting.
+	void refreshCustomStaticLODLevel();	///<grabs current globaldata values and makes them the custom detail setting.
 	StaticGameLODLevel getRecommendedTextureLODLevel();
 
 	static const FieldParse m_staticGameLODFieldParseTable[];
@@ -227,27 +227,27 @@ protected:
 	Int m_reallyLowMHz;
 };
 
-Bool GameLODManager::isParticleSkipped(void)
+Bool GameLODManager::isParticleSkipped()
 {
 	return (++m_numParticleGenerations & m_dynamicParticleSkipMask) != m_dynamicParticleSkipMask;
 }
 
-Bool GameLODManager::isDebrisSkipped(void)
+Bool GameLODManager::isDebrisSkipped()
 {
 	return (++m_numDebrisGenerations & m_dynamicDebrisSkipMask) != m_dynamicDebrisSkipMask;
 }
 
-Real GameLODManager::getSlowDeathScale(void)
+Real GameLODManager::getSlowDeathScale()
 {
 	return m_slowDeathScale;
 }
 
-ParticlePriorityType GameLODManager::getMinDynamicParticlePriority(void)
+ParticlePriorityType GameLODManager::getMinDynamicParticlePriority()
 {
 	return m_minDynamicParticlePriority;
 }
 
-ParticlePriorityType GameLODManager::getMinDynamicParticleSkipPriority(void)
+ParticlePriorityType GameLODManager::getMinDynamicParticleSkipPriority()
 {
 	return m_minDynamicParticleSkipPriority;
 }

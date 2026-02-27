@@ -54,12 +54,12 @@ class WindowVideoManager;
 class LoadScreen
 {
 public:
-	LoadScreen( void );
-	virtual ~LoadScreen( void );
+	LoadScreen();
+	virtual ~LoadScreen();
 
 	virtual void init( GameInfo *game ) = 0;		///< Init the loadscreen
-	virtual void reset( void ) = 0;		///< Reset the system
-	virtual void update( void ) = 0;  ///< Update the state of the slider bars
+	virtual void reset() = 0;		///< Reset the system
+	virtual void update() = 0;  ///< Update the state of the slider bars
 	virtual void update( Int percent ); ///< Update the state of the slider bars
 	virtual void processProgress(Int playerId, Int percentage) = 0;
 	virtual void setProgressRange( Int min, Int max ) = 0;
@@ -77,12 +77,12 @@ private:
 class SinglePlayerLoadScreen : public LoadScreen
 {
 public:
-	SinglePlayerLoadScreen( void );
-	virtual ~SinglePlayerLoadScreen( void );
+	SinglePlayerLoadScreen();
+	virtual ~SinglePlayerLoadScreen();
 
 	virtual void init( GameInfo *game );		///< Init the loadscreen
-	virtual void reset( void );		///< Reset the system
-	virtual void update( void )
+	virtual void reset();		///< Reset the system
+	virtual void update()
 	{
 		DEBUG_CRASH(("Call update(Int) instead.  This update isn't supported"));
 	};
@@ -127,12 +127,12 @@ private:
 class ChallengeLoadScreen : public LoadScreen
 {
 public:
-	ChallengeLoadScreen( void );
-	virtual ~ChallengeLoadScreen( void );
+	ChallengeLoadScreen();
+	virtual ~ChallengeLoadScreen();
 
 	virtual void init( GameInfo *game );		///< Init the loadscreen
-	virtual void reset( void );		///< Reset the system
-	virtual void update( void )
+	virtual void reset();		///< Reset the system
+	virtual void update()
 	{
 		DEBUG_CRASH(("Call update(Int) instead.  This update isn't supported"));
 	};
@@ -199,12 +199,12 @@ private:
 class ShellGameLoadScreen : public LoadScreen
 {
 public:
-	ShellGameLoadScreen( void );
-	virtual ~ShellGameLoadScreen( void );
+	ShellGameLoadScreen();
+	virtual ~ShellGameLoadScreen();
 
 	virtual void init( GameInfo *game );		///< Init the loadscreen
-	virtual void reset( void );		///< Reset the system
-	virtual void update( void )
+	virtual void reset();		///< Reset the system
+	virtual void update()
 	{
 		DEBUG_CRASH(("Call update(Int) instead.  This update isn't supported"));
 	};
@@ -227,12 +227,12 @@ private:
 class MultiPlayerLoadScreen : public LoadScreen
 {
 public:
-	MultiPlayerLoadScreen( void );
-	virtual ~MultiPlayerLoadScreen( void );
+	MultiPlayerLoadScreen();
+	virtual ~MultiPlayerLoadScreen();
 
 	virtual void init( GameInfo *game );		///< Init the loadscreen
-	virtual void reset( void );		///< Reset the system
-	virtual void update( void )
+	virtual void reset();		///< Reset the system
+	virtual void update()
 	{
 		DEBUG_CRASH(("Call update(Int) instead.  This update isn't supported"));
 	};
@@ -258,12 +258,12 @@ private:
 class GameSpyLoadScreen : public LoadScreen
 {
 public:
-	GameSpyLoadScreen( void );
-	virtual ~GameSpyLoadScreen( void );
+	GameSpyLoadScreen();
+	virtual ~GameSpyLoadScreen();
 
 	virtual void init( GameInfo *game );		///< Init the loadscreen
-	virtual void reset( void );		///< Reset the system
-	virtual void update( void )
+	virtual void reset();		///< Reset the system
+	virtual void update()
 	{
 		DEBUG_CRASH(("Call update(Int) instead.  This update isn't supported"));
 	};
@@ -296,12 +296,12 @@ private:
 class MapTransferLoadScreen : public LoadScreen
 {
 public:
-	MapTransferLoadScreen( void );
-	virtual ~MapTransferLoadScreen( void );
+	MapTransferLoadScreen();
+	virtual ~MapTransferLoadScreen();
 
 	virtual void init( GameInfo *game );		///< Init the loadscreen
-	virtual void reset( void );							///< Reset the system
-	virtual void update( void )
+	virtual void reset();							///< Reset the system
+	virtual void update()
 	{
 		DEBUG_CRASH(("Call update(Int) instead.  This update isn't supported"));
 	};

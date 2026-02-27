@@ -35,7 +35,7 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-DelayedWeaponSetUpgradeUpdateModuleData::DelayedWeaponSetUpgradeUpdateModuleData( void )
+DelayedWeaponSetUpgradeUpdateModuleData::DelayedWeaponSetUpgradeUpdateModuleData()
 {
 }
 
@@ -70,14 +70,14 @@ DelayedWeaponSetUpgradeUpdate::DelayedWeaponSetUpgradeUpdate( Thing *thing, cons
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-DelayedWeaponSetUpgradeUpdate::~DelayedWeaponSetUpgradeUpdate( void )
+DelayedWeaponSetUpgradeUpdate::~DelayedWeaponSetUpgradeUpdate()
 {
 
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime DelayedWeaponSetUpgradeUpdate::update( void )
+UpdateSleepTime DelayedWeaponSetUpgradeUpdate::update()
 {
 	return UPDATE_SLEEP_NONE;
 }
@@ -125,7 +125,7 @@ void DelayedWeaponSetUpgradeUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void DelayedWeaponSetUpgradeUpdate::loadPostProcess( void )
+void DelayedWeaponSetUpgradeUpdate::loadPostProcess()
 {
 
 	// extend base class

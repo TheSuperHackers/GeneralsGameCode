@@ -107,17 +107,17 @@ public:
 	virtual void update() = 0;
 
 
-	virtual void draw( void ){DEBUG_CRASH(("Shouldn't call base class.  jba."));}
+	virtual void draw(){DEBUG_CRASH(("Shouldn't call base class.  jba."));}
 
 #ifdef DUMP_PERF_STATS
-	void UPDATE(void);
-	void DRAW(void);
-	Real getUpdateTime(void) {return m_curUpdateTime;}
-	Real getDrawTime(void) {return m_curDrawTime;}
-	Bool doDumpUpdate(void) {return m_dumpUpdate;}
-	Bool doDumpDraw(void) {return m_dumpDraw;}
-	static Real getTotalTime(void) {return s_msConsumed;}
-	static void clearTotalTime(void) {s_msConsumed = 0;}
+	void UPDATE();
+	void DRAW();
+	Real getUpdateTime() {return m_curUpdateTime;}
+	Real getDrawTime() {return m_curDrawTime;}
+	Bool doDumpUpdate() {return m_dumpUpdate;}
+	Bool doDumpDraw() {return m_dumpDraw;}
+	static Real getTotalTime() {return s_msConsumed;}
+	static void clearTotalTime() {s_msConsumed = 0;}
 protected:
 	static Real s_msConsumed;
 	Real m_startTimeConsumed;
@@ -128,13 +128,13 @@ protected:
 	Bool m_dumpUpdate;
 	Bool m_dumpDraw;
 #else
-	void UPDATE(void) {update();}
-	void DRAW(void) {draw();}
+	void UPDATE() {update();}
+	void DRAW() {draw();}
 #endif
 protected:
 	AsciiString m_name;
 public:
-	AsciiString getName(void) {return m_name;}
+	AsciiString getName() {return m_name;}
 	void setName(AsciiString name) {m_name = name;}
 
 };

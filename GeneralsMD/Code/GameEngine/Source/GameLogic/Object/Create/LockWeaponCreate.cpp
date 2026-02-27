@@ -70,7 +70,7 @@ LockWeaponCreate::LockWeaponCreate( Thing *thing, const ModuleData* moduleData )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-LockWeaponCreate::~LockWeaponCreate( void )
+LockWeaponCreate::~LockWeaponCreate()
 {
 
 }
@@ -78,13 +78,13 @@ LockWeaponCreate::~LockWeaponCreate( void )
 //-------------------------------------------------------------------------------------------------
 /** The create callback. */
 //-------------------------------------------------------------------------------------------------
-void LockWeaponCreate::onCreate( void )
+void LockWeaponCreate::onCreate()
 {
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void LockWeaponCreate::onBuildComplete( void )
+void LockWeaponCreate::onBuildComplete()
 {
 	CreateModule::onBuildComplete(); // extend
 
@@ -125,7 +125,7 @@ void LockWeaponCreate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void LockWeaponCreate::loadPostProcess( void )
+void LockWeaponCreate::loadPostProcess()
 {
 
 	// extend base class

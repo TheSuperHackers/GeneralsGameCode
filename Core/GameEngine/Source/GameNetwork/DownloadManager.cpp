@@ -71,15 +71,15 @@ DownloadManager::~DownloadManager()
 	}
 }
 
-void DownloadManager::init( void )
+void DownloadManager::init()
 {
 }
 
-void DownloadManager::reset( void )
+void DownloadManager::reset()
 {
 }
 
-HRESULT DownloadManager::update( void )
+HRESULT DownloadManager::update()
 {
 	return m_download->PumpMessages();
 }
@@ -103,7 +103,7 @@ void DownloadManager::queueFileForDownload( AsciiString server, AsciiString user
 	m_queuedDownloads.push_back(q);
 }
 
-HRESULT DownloadManager::downloadNextQueuedFile( void )
+HRESULT DownloadManager::downloadNextQueuedFile()
 {
 	QueuedDownload q;
 	std::list<QueuedDownload>::iterator it = m_queuedDownloads.begin();
@@ -121,7 +121,7 @@ HRESULT DownloadManager::downloadNextQueuedFile( void )
 	}
 }
 
-AsciiString DownloadManager::getLastLocalFile( void )
+AsciiString DownloadManager::getLastLocalFile()
 {
 	char buf[256] = "";
 	m_download->GetLastLocalFile(buf, 256);

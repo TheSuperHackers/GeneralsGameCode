@@ -49,4 +49,4 @@
 // Unfortunately, the asset manager can't be called directly from the gamelogic,
 // so this function is here. It should only be called by the particle editor,
 // @todo Remove this function when we are no longer editing particles.
-void ReloadAllTextures(void);
+void ReloadAllTextures();

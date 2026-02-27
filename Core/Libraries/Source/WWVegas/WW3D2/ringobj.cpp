@@ -109,21 +109,21 @@ friend class RingRenderObjClass;
 
 public:
 	// Constructor
-	RingMeshClass(void);
+	RingMeshClass();
 	RingMeshClass(float radius, int slices);
 	// Destructor
-	~RingMeshClass(void);
+	~RingMeshClass();
 
 	void Generate(float radius, int slices);
 
-	int	Get_Num_Polys(void) { return face_ct; };
+	int	Get_Num_Polys() { return face_ct; };
 
 	void	Scale (const Vector2 &inner_scale, const Vector2 &outer_scale);
 	void	Set_Tiling (int count);
 
 private:
 
-	void	Free(void);
+	void	Free();
 
 	float	Radius;
 	int	Slices;
@@ -165,7 +165,7 @@ float RingLODCosts[RING_NUM_LOD + 1];	// RING_NUM_LOD doesn't include the null L
  * HISTORY:                                                                                    *
  *   1/19/00    gth : Created.                                                                 *
  *=============================================================================================*/
-RingRenderObjClass::RingRenderObjClass(void)
+RingRenderObjClass::RingRenderObjClass()
 	:	anim_time (0.0F),
 		IsAnimating(false),
 		LODBias(1.0f),
@@ -364,7 +364,7 @@ RingRenderObjClass & RingRenderObjClass::operator = (const RingRenderObjClass & 
  * HISTORY:                                                                                    *
  *   03/08/00    pds : Created.                                                                *
  *=============================================================================================*/
-void RingRenderObjClass::Generate_Shared_Mesh_Arrays (void)
+void RingRenderObjClass::Generate_Shared_Mesh_Arrays ()
 {
 	// Generate shared Mesh Arrays
 	if (!Ring_Array_Valid) {
@@ -415,7 +415,7 @@ void RingRenderObjClass::calculate_value_array(float screen_area, float *values)
  * HISTORY:                                                                                    *
  *   03/08/00    pds : Created.                                                                *
  *=============================================================================================*/
-void RingRenderObjClass::Init_Material (void)
+void RingRenderObjClass::Init_Material ()
 {
 	REF_PTR_RELEASE (RingMaterial);
 
@@ -446,7 +446,7 @@ void RingRenderObjClass::Init_Material (void)
  * HISTORY:                                                                                    *
  *   1/19/00    gth : Created.                                                                 *
  *=============================================================================================*/
-int RingRenderObjClass::Get_Num_Polys(void) const
+int RingRenderObjClass::Get_Num_Polys() const
 {
 	return RingLODCosts[CurrentLOD];
 }
@@ -481,7 +481,7 @@ void RingRenderObjClass::Set_Texture(TextureClass *tf)
  * HISTORY:                                                                                    *
  *   1/19/00    gth : Created.                                                                 *
  *=============================================================================================*/
-const char * RingRenderObjClass::Get_Name(void) const
+const char * RingRenderObjClass::Get_Name() const
 {
 	return Name;
 }
@@ -632,7 +632,7 @@ void RingRenderObjClass::vis_render_ring(SpecialRenderInfoClass & rinfo,const Ve
  * HISTORY:                                                                                    *
  *   1/19/00    gth : Created.                                                                 *
  *=============================================================================================*/
-RenderObjClass * RingRenderObjClass::Clone(void) const
+RenderObjClass * RingRenderObjClass::Clone() const
 {
 	return W3DNEW RingRenderObjClass(*this);
 }
@@ -650,7 +650,7 @@ RenderObjClass * RingRenderObjClass::Clone(void) const
  * HISTORY:                                                                                    *
  *   1/19/00    gth : Created.                                                                 *
  *=============================================================================================*/
-int RingRenderObjClass::Class_ID(void) const
+int RingRenderObjClass::Class_ID() const
 {
 	return RenderObjClass::CLASSID_RING;
 }
@@ -749,7 +749,7 @@ void RingRenderObjClass::Render(RenderInfoClass & rinfo)
  * HISTORY:                                                                                    *
  *   3/13/2000    pds : Created.                                                               *
  *=============================================================================================*/
-Vector3 RingRenderObjClass::Get_Default_Color(void) const
+Vector3 RingRenderObjClass::Get_Default_Color() const
 {
 	Vector3 value;
 
@@ -775,7 +775,7 @@ Vector3 RingRenderObjClass::Get_Default_Color(void) const
  * HISTORY:                                                                                    *
  *   3/13/2000    pds : Created.                                                               *
  *=============================================================================================*/
-float RingRenderObjClass::Get_Default_Alpha(void) const
+float RingRenderObjClass::Get_Default_Alpha() const
 {
 	float  value;
 
@@ -801,7 +801,7 @@ float RingRenderObjClass::Get_Default_Alpha(void) const
  * HISTORY:                                                                                    *
  *   3/13/2000    pds : Created.                                                               *
  *=============================================================================================*/
-Vector2 RingRenderObjClass::Get_Default_Inner_Scale(void) const
+Vector2 RingRenderObjClass::Get_Default_Inner_Scale() const
 {
 	Vector2 value;
 
@@ -827,7 +827,7 @@ Vector2 RingRenderObjClass::Get_Default_Inner_Scale(void) const
  * HISTORY:                                                                                    *
  *   3/13/2000    pds : Created.                                                               *
  *=============================================================================================*/
-Vector2 RingRenderObjClass::Get_Default_Outer_Scale(void) const
+Vector2 RingRenderObjClass::Get_Default_Outer_Scale() const
 {
 	Vector2 value;
 
@@ -916,7 +916,7 @@ void RingRenderObjClass::Set_Position(const Vector3 &v)
  * HISTORY:                                                                                    *
  *   1/19/00    gth : Created.                                                                 *
  *=============================================================================================*/
-void RingRenderObjClass::update_cached_box(void)
+void RingRenderObjClass::update_cached_box()
 {
 	CachedBox.Center = Transform.Get_Translation() + ObjSpaceCenter;
 	CachedBox.Extent = ObjSpaceExtent;
@@ -972,27 +972,27 @@ void RingRenderObjClass::Prepare_LOD(CameraClass &camera)
 	PredictiveLODOptimizerClass::Add_Object(this);
 }
 
-void RingRenderObjClass::Increment_LOD(void)
+void RingRenderObjClass::Increment_LOD()
 {
 	if (CurrentLOD < RING_NUM_LOD) CurrentLOD++;
 }
 
-void RingRenderObjClass::Decrement_LOD(void)
+void RingRenderObjClass::Decrement_LOD()
 {
 	if (CurrentLOD > 0) CurrentLOD--;
 }
 
-float RingRenderObjClass::Get_Cost(void) const
+float RingRenderObjClass::Get_Cost() const
 {
 	return Get_Num_Polys();	// Currently cost == polys
 }
 
-float RingRenderObjClass::Get_Value(void) const
+float RingRenderObjClass::Get_Value() const
 {
 	return Value[CurrentLOD];
 }
 
-float RingRenderObjClass::Get_Post_Increment_Value(void) const
+float RingRenderObjClass::Get_Post_Increment_Value() const
 {
 	return Value[CurrentLOD + 1];
 }
@@ -1002,12 +1002,12 @@ void RingRenderObjClass::Set_LOD_Level(int lod)
 	CurrentLOD = Bound(lod, 0, RING_NUM_LOD);	// RING_NUM_LOD doesn't include the null LOD
 }
 
-int RingRenderObjClass::Get_LOD_Level(void) const
+int RingRenderObjClass::Get_LOD_Level() const
 {
 	return CurrentLOD;
 }
 
-int RingRenderObjClass::Get_LOD_Count(void) const
+int RingRenderObjClass::Get_LOD_Count() const
 {
 	return RING_NUM_LOD + 1;	// RING_NUM_LOD doesn't include the null LOD
 }
@@ -1112,7 +1112,7 @@ void RingRenderObjClass::Scale(float scalex, float scaley, float scalez)
  * HISTORY:                                                                                    *
  *   4/04/00    pds : Created.                                                                 *
  *=============================================================================================*/
-void RingRenderObjClass::Update_On_Visibility(void)
+void RingRenderObjClass::Update_On_Visibility()
 {
 	// Simply start or stop the animation based on
 	// the visibility state of the primitive.
@@ -1197,7 +1197,7 @@ PrototypeClass * RingLoaderClass::Load_W3D(ChunkLoadClass & cload)
 /*
 ** RingPrototypeClass Implementation
 */
-RingPrototypeClass::RingPrototypeClass (void)
+RingPrototypeClass::RingPrototypeClass ()
 {
 	::memset (&Definition, 0, sizeof (Definition));
 	return ;
@@ -1250,17 +1250,17 @@ RingPrototypeClass::RingPrototypeClass(RingRenderObjClass *ring)
 	return ;
 }
 
-RingPrototypeClass::~RingPrototypeClass (void)
+RingPrototypeClass::~RingPrototypeClass ()
 {
 	return ;
 }
 
-const char * RingPrototypeClass::Get_Name(void) const
+const char * RingPrototypeClass::Get_Name() const
 {
 	return Definition.Name;
 }
 
-int RingPrototypeClass::Get_Class_ID(void) const
+int RingPrototypeClass::Get_Class_ID() const
 {
 	return RenderObjClass::CLASSID_RING;
 }
@@ -1347,7 +1347,7 @@ bool RingPrototypeClass::Save (ChunkSaveClass &csave)
 	return true;
 }
 
-RenderObjClass * RingPrototypeClass::Create(void)
+RenderObjClass * RingPrototypeClass::Create()
 {
 	//
 	//	Create the new render object
@@ -1433,7 +1433,7 @@ OuterScale (1.0F, 1.0F)
  * HISTORY:                                                                                    *
  *   3/07/00    jga : Created.                                                                 *
  *=============================================================================================*/
-RingMeshClass::RingMeshClass(void):
+RingMeshClass::RingMeshClass():
 Radius(0.0f),
 Slices(0),
 Vertex_ct(0),			// 1 vertex minimum, for center
@@ -1609,7 +1609,7 @@ void RingMeshClass::Generate(float radius, int slices)
  * HISTORY:                                                                                    *
  *   3/07/00    jga : Created.                                                                 *
  *=============================================================================================*/
-RingMeshClass::~RingMeshClass(void)
+RingMeshClass::~RingMeshClass()
 {
 	Free();
 }
@@ -1626,7 +1626,7 @@ RingMeshClass::~RingMeshClass(void)
  * HISTORY:                                                                                    *
  *   3/07/00    jga : Created.                                                                 *
  *=============================================================================================*/
-void RingMeshClass::Free(void)
+void RingMeshClass::Free()
 {
 
 	delete vtx;

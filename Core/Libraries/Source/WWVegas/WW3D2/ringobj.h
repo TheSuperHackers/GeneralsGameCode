@@ -107,17 +107,17 @@ public:
 		USE_ANIMATION_LOOP= 0x00000002,
 	};
 
-	RingRenderObjClass(void);
+	RingRenderObjClass();
 	RingRenderObjClass(const W3dRingStruct & def);
 	RingRenderObjClass(const RingRenderObjClass & src);
 	RingRenderObjClass & operator = (const RingRenderObjClass &);
-	~RingRenderObjClass(void);
+	~RingRenderObjClass();
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface
 	/////////////////////////////////////////////////////////////////////////////
-	virtual RenderObjClass *	Clone(void) const;
-	virtual int						Class_ID(void) const;
+	virtual RenderObjClass *	Clone() const;
+	virtual int						Class_ID() const;
 	virtual void					Render(RenderInfoClass & rinfo);
 	virtual void					Special_Render(SpecialRenderInfoClass & rinfo);
 	virtual void 					Set_Transform(const Matrix3D &m);
@@ -126,14 +126,14 @@ public:
    virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & box) const;
 
 	virtual void					Prepare_LOD(CameraClass &camera);
-	virtual void					Increment_LOD(void);
-	virtual void					Decrement_LOD(void);
-	virtual float					Get_Cost(void) const;
-	virtual float					Get_Value(void) const;
-	virtual float					Get_Post_Increment_Value(void) const;
+	virtual void					Increment_LOD();
+	virtual void					Decrement_LOD();
+	virtual float					Get_Cost() const;
+	virtual float					Get_Value() const;
+	virtual float					Get_Post_Increment_Value() const;
 	virtual void					Set_LOD_Level(int lod);
-	virtual int						Get_LOD_Level(void) const;
-	virtual int						Get_LOD_Count(void) const;
+	virtual int						Get_LOD_Level() const;
+	virtual int						Get_LOD_Count() const;
 	virtual void					Set_LOD_Bias(float bias)	{ LODBias = MAX(bias, 0.0f); }
 	virtual int						Calculate_Cost_Value_Arrays(float screen_area, float *values, float *costs) const;
 
@@ -145,23 +145,23 @@ public:
 	virtual void					Set_Animation_Hidden(int onoff)	{ RenderObjClass::Set_Animation_Hidden (onoff); Update_On_Visibility (); }
 	virtual void					Set_Force_Visible(int onoff)		{ RenderObjClass::Set_Force_Visible (onoff); Update_On_Visibility (); }
 
-	const	AABoxClass	&			Get_Box(void);
+	const	AABoxClass	&			Get_Box();
 
-	virtual int				  		Get_Num_Polys(void) const;
-	virtual const char		  *Get_Name(void) const;
+	virtual int				  		Get_Num_Polys() const;
+	virtual const char		  *Get_Name() const;
 	virtual void					Set_Name(const char * name);
 
-	unsigned int					Get_Flags(void) {return Flags;}
+	unsigned int					Get_Flags() {return Flags;}
 	void								Set_Flags(unsigned int flags) { Flags = flags; }
 	void								Set_Flag(unsigned int flag, bool onoff) { Flags &= (~flag); if (onoff) Flags |= flag; }
 
 	// Animation access
-	bool								Is_Animating (void)		{ return IsAnimating; }
-	void								Start_Animating (void)	{ IsAnimating = true; anim_time = 0; }
-	void								Stop_Animating (void)	{ IsAnimating = false; anim_time = 0; }
+	bool								Is_Animating ()		{ return IsAnimating; }
+	void								Start_Animating ()	{ IsAnimating = true; anim_time = 0; }
+	void								Stop_Animating ()	{ IsAnimating = false; anim_time = 0; }
 
 	// Texture tiling access
-	int								Get_Texture_Tiling (void) const		{ return TextureTileCount; }
+	int								Get_Texture_Tiling () const		{ return TextureTileCount; }
 	void								Set_Texture_Tiling (int count)		{ TextureTileCount = count; }
 
 	// Current state access
@@ -170,19 +170,19 @@ public:
 	void								Set_Inner_Scale(const Vector2 & scale) { InnerScale = scale; }
 	void								Set_Outer_Scale(const Vector2 & scale) { OuterScale = scale; }
 
-	const Vector3 &				Get_Color(void) const			{ return Color; }
-	float								Get_Alpha(void) const			{ return Alpha; }
-	const Vector2 &				Get_Inner_Scale(void) const	{ return InnerScale; }
-	const Vector2 &				Get_Outer_Scale(void) const	{ return OuterScale; }
+	const Vector3 &				Get_Color() const			{ return Color; }
+	float								Get_Alpha() const			{ return Alpha; }
+	const Vector2 &				Get_Inner_Scale() const	{ return InnerScale; }
+	const Vector2 &				Get_Outer_Scale() const	{ return OuterScale; }
 
-	Vector3							Get_Default_Color(void) const;
-	float								Get_Default_Alpha(void) const;
-	Vector2							Get_Default_Inner_Scale(void) const;
-	Vector2							Get_Default_Outer_Scale(void) const;
+	Vector3							Get_Default_Color() const;
+	float								Get_Default_Alpha() const;
+	Vector2							Get_Default_Inner_Scale() const;
+	Vector2							Get_Default_Outer_Scale() const;
 
 	// Size/position methods
-	const Vector2 &				Get_Inner_Extent (void) const						{ return InnerExtent; }
-	const Vector2 &				Get_Outer_Extent (void) const						{ return OuterExtent; }
+	const Vector2 &				Get_Inner_Extent () const						{ return InnerExtent; }
+	const Vector2 &				Get_Outer_Extent () const						{ return OuterExtent; }
 	void								Set_Inner_Extent (const Vector2 &extent);
 	void								Set_Outer_Extent (const Vector2 &extent);
 	void								Set_Local_Center_Extent(const Vector3 & center,const Vector3 & extent);
@@ -190,27 +190,27 @@ public:
 
 	// Texture access
 	void							  	Set_Texture(TextureClass *tf);
-	TextureClass	*				Peek_Texture(void)					{ return RingTexture; }
-	ShaderClass &					Get_Shader(void)						{ return RingShader; }
+	TextureClass	*				Peek_Texture()					{ return RingTexture; }
+	ShaderClass &					Get_Shader()						{ return RingShader; }
 	void								Set_Shader(ShaderClass &shader)	{ RingShader = shader; }
 
 	// Animation Control
-	float								Get_Animation_Duration(void) const		{ return AnimDuration; }
+	float								Get_Animation_Duration() const		{ return AnimDuration; }
 	void								Set_Animation_Duration(float time)		{ AnimDuration = time; Restart_Animation(); }
-	void								Restart_Animation (void)					{ anim_time = 0; }
+	void								Restart_Animation ()					{ anim_time = 0; }
 
 	// Animatable channel access
-	RingColorChannelClass &			Get_Color_Channel (void)				{ return ColorChannel; }
-	const RingColorChannelClass &	Peek_Color_Channel (void)				{ return ColorChannel; }
+	RingColorChannelClass &			Get_Color_Channel ()				{ return ColorChannel; }
+	const RingColorChannelClass &	Peek_Color_Channel ()				{ return ColorChannel; }
 
-	RingAlphaChannelClass &			Get_Alpha_Channel (void)				{ return AlphaChannel; }
-	const RingAlphaChannelClass &	Peek_Alpha_Channel (void)				{ return AlphaChannel; }
+	RingAlphaChannelClass &			Get_Alpha_Channel ()				{ return AlphaChannel; }
+	const RingAlphaChannelClass &	Peek_Alpha_Channel ()				{ return AlphaChannel; }
 
-	RingScaleChannelClass &			Get_Inner_Scale_Channel (void)		{ return InnerScaleChannel; }
-	const RingScaleChannelClass &	Peek_Inner_Scale_Channel (void)		{ return InnerScaleChannel; }
+	RingScaleChannelClass &			Get_Inner_Scale_Channel ()		{ return InnerScaleChannel; }
+	const RingScaleChannelClass &	Peek_Inner_Scale_Channel ()		{ return InnerScaleChannel; }
 
-	RingScaleChannelClass &			Get_Outer_Scale_Channel (void)		{ return OuterScaleChannel; }
-	const RingScaleChannelClass &	Peek_Outer_Scale_Channel (void)		{ return OuterScaleChannel; }
+	RingScaleChannelClass &			Get_Outer_Scale_Channel ()		{ return OuterScaleChannel; }
+	const RingScaleChannelClass &	Peek_Outer_Scale_Channel ()		{ return OuterScaleChannel; }
 
 	void								Set_Color_Channel (const RingColorChannelClass &data)				{ ColorChannel = data; }
 	void								Set_Alpha_Channel (const RingAlphaChannelClass &data)				{ AlphaChannel = data; }
@@ -219,16 +219,16 @@ public:
 
 protected:
 
-	virtual void					update_cached_box(void);
-	void								Update_On_Visibility(void);
+	virtual void					update_cached_box();
+	void								Update_On_Visibility();
 
 	// Initialization stuff
-	void								Init_Material (void);
-	static void						Generate_Shared_Mesh_Arrays (void);
+	void								Init_Material ();
+	static void						Generate_Shared_Mesh_Arrays ();
 
 
 	// Animation Stuff
-	void								animate(void);		// animation update function
+	void								animate();		// animation update function
 	float								anim_time;			// what time in seconds are we in the animation
 	float								AnimDuration;
 	bool								IsAnimating;
@@ -304,7 +304,7 @@ inline void RingRenderObjClass::Set_Local_Min_Max(const Vector3 & min,const Vect
 	update_cached_box();
 }
 
-inline const AABoxClass & RingRenderObjClass::Get_Box(void)
+inline const AABoxClass & RingRenderObjClass::Get_Box()
 {
 	Validate_Transform();
 	update_cached_box();
@@ -317,7 +317,7 @@ inline const AABoxClass & RingRenderObjClass::Get_Box(void)
 class RingLoaderClass : public PrototypeLoaderClass
 {
 public:
-	virtual int						Chunk_Type (void)  { return W3D_CHUNK_RING; }
+	virtual int						Chunk_Type ()  { return W3D_CHUNK_RING; }
 	virtual PrototypeClass *	Load_W3D(ChunkLoadClass & cload);
 };
 
@@ -329,19 +329,19 @@ class RingPrototypeClass : public W3DMPO, public PrototypeClass
 	W3DMPO_GLUE(RingPrototypeClass)
 
 public:
-	RingPrototypeClass (void);
+	RingPrototypeClass ();
 	RingPrototypeClass (RingRenderObjClass *ring);
 
-	virtual const char *			Get_Name(void) const;
-	virtual int						Get_Class_ID(void) const;
-	virtual RenderObjClass *	Create(void);
+	virtual const char *			Get_Name() const;
+	virtual int						Get_Class_ID() const;
+	virtual RenderObjClass *	Create();
 	virtual void							DeleteSelf()										{ delete this; }
 
 	bool								Load (ChunkLoadClass &cload);
 	bool								Save (ChunkSaveClass &csave);
 
 protected:
-	~RingPrototypeClass (void);
+	~RingPrototypeClass ();
 
 private:
 	W3dRingStruct					Definition;

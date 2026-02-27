@@ -37,7 +37,7 @@ struct POINTVERTEX
     Vector3 v;	//center of particle.
 };
 
-W3DSnowManager::W3DSnowManager(void)
+W3DSnowManager::W3DSnowManager()
 {
 	m_indexBuffer=nullptr;
 	m_snowTexture=nullptr;
@@ -49,14 +49,14 @@ W3DSnowManager::~W3DSnowManager()
 	ReleaseResources();
 }
 
-void W3DSnowManager::init( void )
+void W3DSnowManager::init()
 {
 	SnowManager::init();
 	ReAcquireResources();
 }
 
 /** Releases all W3D/D3D assets before a reset.. */
-void W3DSnowManager::ReleaseResources(void)
+void W3DSnowManager::ReleaseResources()
 {
 	REF_PTR_RELEASE(m_snowTexture);
 
@@ -69,7 +69,7 @@ void W3DSnowManager::ReleaseResources(void)
 }
 
 /** (Re)allocates all W3D/D3D assets after a reset.. */
-Bool W3DSnowManager::ReAcquireResources(void)
+Bool W3DSnowManager::ReAcquireResources()
 {
 	ReleaseResources();
 
@@ -137,7 +137,7 @@ Bool W3DSnowManager::ReAcquireResources(void)
 	return TRUE;
 }
 
-void W3DSnowManager::updateIniSettings(void)
+void W3DSnowManager::updateIniSettings()
 {
 	//Call base class
 	SnowManager::updateIniSettings();
@@ -149,12 +149,12 @@ void W3DSnowManager::updateIniSettings(void)
 	}
 }
 
-void W3DSnowManager::reset( void )
+void W3DSnowManager::reset()
 {
 	SnowManager::reset();
 }
 
-void W3DSnowManager::update(void)
+void W3DSnowManager::update()
 {
 	// TheSuperHackers @tweak The snow render update is now decoupled from the logic step.
 	m_time += WW3D::Get_Logic_Frame_Time_Seconds();

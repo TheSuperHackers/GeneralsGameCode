@@ -62,5 +62,5 @@ public:
 	// For perf timers, so we can have separate ones for compression/decompression
 	static const char *getDecompressionNameByType( CompressionType compType );
 
-	static CompressionType getPreferredCompression( void );
+	static CompressionType getPreferredCompression();
 };

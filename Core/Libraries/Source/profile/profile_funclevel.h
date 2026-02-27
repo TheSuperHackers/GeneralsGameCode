@@ -54,7 +54,7 @@ public:
     friend Id;
 
   public:
-    IdList(void): m_ptr(0) {}
+    IdList(): m_ptr(0) {}
 
     /**
       \brief Enumerates the list of IDs.
@@ -81,7 +81,7 @@ public:
     friend Thread;
 
   public:
-    Id(void): m_funcPtr(0) {}
+    Id(): m_funcPtr(0) {}
 
     /// special 'frame' numbers
     enum
@@ -95,28 +95,28 @@ public:
 
       \return source file name, may be nullptr
     */
-    const char *GetSource(void) const;
+    const char *GetSource() const;
 
     /**
       \brief Returns the function name for this Id.
 
       \return function name, may be nullptr
     */
-    const char *GetFunction(void) const;
+    const char *GetFunction() const;
 
     /**
       \brief Returns function address.
 
       \return function address
     */
-    unsigned GetAddress(void) const;
+    unsigned GetAddress() const;
 
     /**
       \brief Returns the line number for this Id.
 
       \return line number, 0 if unknown
     */
-    unsigned GetLine(void) const;
+    unsigned GetLine() const;
 
     /**
       \brief Determine call counts.
@@ -162,7 +162,7 @@ public:
     friend ProfileFuncLevel;
 
   public:
-    Thread(void): m_threadID(0) {}
+    Thread(): m_threadID(0) {}
 
     /**
       \brief Enumerates the list of known function level profile values.
@@ -180,7 +180,7 @@ public:
 
       \return profile thread ID
     */
-    unsigned GetId(void) const
+    unsigned GetId() const
     {
       return unsigned(m_threadID);
     }
@@ -209,7 +209,7 @@ private:
     We can make this private as well so nobody accidentally tries to create
     another instance.
   */
-  ProfileFuncLevel(void);
+  ProfileFuncLevel();
 
   /**
     \brief The only function level profiler instance.

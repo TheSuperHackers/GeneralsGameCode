@@ -128,7 +128,7 @@ CameraShakeSystemClass::CameraShakerClass::CameraShakerClass
 	Phi.Z = WWMath::Random_Float(MIN_PHI,MAX_PHI);
 }
 
-CameraShakeSystemClass::CameraShakerClass::~CameraShakerClass(void)
+CameraShakeSystemClass::CameraShakerClass::~CameraShakerClass()
 {
 }
 
@@ -181,11 +181,11 @@ void CameraShakeSystemClass::CameraShakerClass::Compute_Rotations(const Vector3 
 ** CameraShakeSystemClass Implementation
 **
 ************************************************************************************************/
-CameraShakeSystemClass::CameraShakeSystemClass(void)
+CameraShakeSystemClass::CameraShakeSystemClass()
 {
 }
 
-CameraShakeSystemClass::~CameraShakeSystemClass(void)
+CameraShakeSystemClass::~CameraShakeSystemClass()
 {
 	/*
 	** delete all of the objects out of the list
@@ -218,7 +218,7 @@ void CameraShakeSystemClass::Add_Camera_Shake
 	CameraShakerList.Add(shaker);
 }
 
-bool CameraShakeSystemClass::IsCameraShaking(void)
+bool CameraShakeSystemClass::IsCameraShaking()
 {
 	/*
 	** Loop through to find if there is any active camera shakers

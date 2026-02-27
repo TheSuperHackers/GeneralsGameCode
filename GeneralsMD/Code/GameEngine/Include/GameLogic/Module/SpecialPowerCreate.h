@@ -48,7 +48,7 @@ public:
 	SpecialPowerCreate( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual void onCreate( void );
+	virtual void onCreate();
 	virtual void onBuildComplete();	///< This is called when you are a finished game object
 
 protected:

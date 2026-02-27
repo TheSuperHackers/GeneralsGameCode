@@ -62,7 +62,7 @@ class RenderObjectRecyclerClass
 {
 public:
 
-	void					Reset(void);
+	void					Reset();
 	RenderObjClass*	Get_Render_Object(const char * name,const Matrix3D & tm);
 	void					Return_Render_Object(RenderObjClass * obj);
 

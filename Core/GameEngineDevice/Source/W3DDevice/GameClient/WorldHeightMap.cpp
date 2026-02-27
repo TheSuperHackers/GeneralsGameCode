@@ -118,7 +118,7 @@ MapObject::MapObject(Coord3D loc, AsciiString name, Real angle, Int flags, const
 }
 
 
-MapObject::~MapObject(void)
+MapObject::~MapObject()
 {
 	setRenderObj(nullptr);
 	setShadowObj(nullptr);
@@ -137,7 +137,7 @@ MapObject::~MapObject(void)
 
 }
 
-MapObject *MapObject::duplicate(void)
+MapObject *MapObject::duplicate()
 {
 	MapObject *pObj = newInstance( MapObject)(m_location, m_objectName, m_angle, m_flags, &m_properties, m_thingTemplate);
 	pObj->setColor(getColor());
@@ -167,13 +167,13 @@ RenderObjClass* MapObject::getBridgeRenderObject( BridgeTowerType type )
 
 }
 
-void MapObject::validate(void)
+void MapObject::validate()
 {
 	verifyValidTeam();
 	verifyValidUniqueID();
 }
 
-void MapObject::verifyValidTeam(void)
+void MapObject::verifyValidTeam()
 {
 	// if this map object has a valid team, then do nothing.
 	// if it has an invalid team, the place it on the default neutral team, (by clearing the
@@ -206,7 +206,7 @@ void MapObject::verifyValidTeam(void)
 	}
 }
 
-void MapObject::verifyValidUniqueID(void)
+void MapObject::verifyValidUniqueID()
 {
 	Bool exists;
 	AsciiString uniqueID = getProperties()->getAsciiString(TheKey_uniqueID, &exists);
@@ -271,7 +271,7 @@ void MapObject::verifyValidUniqueID(void)
 	getProperties()->setAsciiString(TheKey_uniqueID, newID);
 }
 
-void MapObject::fastAssignAllUniqueIDs(void)
+void MapObject::fastAssignAllUniqueIDs()
 {
 	// here's what we do. Take all of them, push them onto a stack. Then, pop each one, setting its id.
 	// should be much faster than what we currently do.
@@ -355,7 +355,7 @@ void MapObject::setWaypointName(AsciiString n) { getProperties()->setAsciiString
 }
 
 //-------------------------------------------------------------------------------------------------
-const ThingTemplate *MapObject::getThingTemplate( void ) const
+const ThingTemplate *MapObject::getThingTemplate() const
 {
 	if (m_thingTemplate)
 		return (const ThingTemplate*) m_thingTemplate->getFinalOverride();
@@ -371,7 +371,7 @@ TileData *WorldHeightMap::m_alphaTiles[NUM_ALPHA_TILES]={0};
 //
 // WorldHeightMap destructor .
 //
-WorldHeightMap::~WorldHeightMap(void)
+WorldHeightMap::~WorldHeightMap()
 {
 	delete[](m_data);
 	m_data = nullptr;
@@ -413,7 +413,7 @@ WorldHeightMap::~WorldHeightMap(void)
 	REF_PTR_RELEASE(m_alphaEdgeTex);
 }
 
-void WorldHeightMap::freeListOfMapObjects(void)
+void WorldHeightMap::freeListOfMapObjects()
 {
 	if (MapObject::TheMapObjectListPtr)
 	{
@@ -574,7 +574,7 @@ void WorldHeightMap::setFlipState(Int xIndex, Int yIndex, Bool value)
 
 /** Clears all flip state bits.
 */
-void WorldHeightMap::clearFlipStates(void) {
+void WorldHeightMap::clearFlipStates() {
 	if (m_cellFlipState) {
 		memset(m_cellFlipState,0,m_flipStateWidth*m_height);	//clear all flags
 	}
@@ -602,7 +602,7 @@ void WorldHeightMap::setSeismicUpdateFlag(Int xIndex, Int yIndex, Bool value)
 		*curVal &= ~(1<<(xIndex&0x7));
 	}
 }
-void WorldHeightMap::clearSeismicUpdateFlags(void)
+void WorldHeightMap::clearSeismicUpdateFlags()
 {
 	if (m_seismicUpdateFlag) {
 		memset(m_seismicUpdateFlag,0,m_seismicUpdateWidth*m_height);	//clear all flags
@@ -2119,7 +2119,7 @@ void WorldHeightMap::setTextureLOD(Int lod)
 		m_terrainTex->setLOD(lod);
 }
 
-TextureClass *WorldHeightMap::getTerrainTexture(void)
+TextureClass *WorldHeightMap::getTerrainTexture()
 {
 	if (m_terrainTex == nullptr) {
 		Int edgeHeight;
@@ -2166,7 +2166,7 @@ TextureClass *WorldHeightMap::getTerrainTexture(void)
 	return m_terrainTex;
 }
 
-TextureClass *WorldHeightMap::getAlphaTerrainTexture(void)
+TextureClass *WorldHeightMap::getAlphaTerrainTexture()
 {
 	if (m_alphaTerrainTex == nullptr) {
 		getTerrainTexture();
@@ -2174,7 +2174,7 @@ TextureClass *WorldHeightMap::getAlphaTerrainTexture(void)
 	return m_alphaTerrainTex;
 }
 
-TextureClass *WorldHeightMap::getEdgeTerrainTexture(void)
+TextureClass *WorldHeightMap::getEdgeTerrainTexture()
 {
 	if (m_alphaEdgeTex == nullptr) {
 		getTerrainTexture();
@@ -2434,7 +2434,7 @@ UnsignedByte *WorldHeightMap::getRGBAlphaDataForWidth(Int width, TBlendTileInfo 
 	return m_alphaTiles[alphaTileNdx]->getRGBDataForWidth(width);
 }
 
-void WorldHeightMap::setupAlphaTiles(void)
+void WorldHeightMap::setupAlphaTiles()
 {
 	TBlendTileInfo blendInfo;
 	if (m_alphaTiles[0] != nullptr) return;

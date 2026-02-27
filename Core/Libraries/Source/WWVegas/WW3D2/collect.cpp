@@ -93,15 +93,15 @@ class CollectionDefClass
 {
 public:
 
-	CollectionDefClass(void);
-	~CollectionDefClass(void);
+	CollectionDefClass();
+	~CollectionDefClass();
 
-	const char *	Get_Name(void) const;
+	const char *	Get_Name() const;
 	WW3DErrorType	Load(ChunkLoadClass & cload);
 
 protected:
 
-	void				Free(void);
+	void				Free();
 
 	char								Name[W3D_NAME_LEN];
 	DynamicVectorClass<char *> ObjectNames;
@@ -123,15 +123,15 @@ class CollectionPrototypeClass : public W3DMPO, public PrototypeClass
 public:
 	CollectionPrototypeClass(CollectionDefClass * def)		{ ColDef = def; WWASSERT(ColDef); }
 
-	virtual const char *			Get_Name(void) const			{ return ColDef->Get_Name(); }
-	virtual int								Get_Class_ID(void) const	{ return RenderObjClass::CLASSID_COLLECTION; }
-	virtual RenderObjClass *	Create(void)							{ return NEW_REF( CollectionClass, (*ColDef)); }
+	virtual const char *			Get_Name() const			{ return ColDef->Get_Name(); }
+	virtual int								Get_Class_ID() const	{ return RenderObjClass::CLASSID_COLLECTION; }
+	virtual RenderObjClass *	Create()							{ return NEW_REF( CollectionClass, (*ColDef)); }
 	virtual void							DeleteSelf()							{ delete this; }
 
 	CollectionDefClass *			ColDef;
 
 protected:
-	virtual ~CollectionPrototypeClass(void)					{ delete ColDef; }
+	virtual ~CollectionPrototypeClass()					{ delete ColDef; }
 };
 
 
@@ -147,7 +147,7 @@ protected:
  * HISTORY:                                                                                    *
  *   23/8/00    GTH : Created.                                                                 *
  *=============================================================================================*/
-CollectionClass::CollectionClass(void) :
+CollectionClass::CollectionClass() :
 	SnapPoints(nullptr)
 {
 	Update_Obj_Space_Bounding_Volumes();
@@ -267,7 +267,7 @@ CollectionClass & CollectionClass::operator = (const CollectionClass & that)
  * HISTORY:                                                                                    *
  *   12/8/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-CollectionClass::~CollectionClass(void)
+CollectionClass::~CollectionClass()
 {
 	Free();
 }
@@ -285,7 +285,7 @@ CollectionClass::~CollectionClass(void)
  * HISTORY:                                                                                    *
  *   12/8/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-RenderObjClass * CollectionClass::Clone(void) const
+RenderObjClass * CollectionClass::Clone() const
 {
 	return NEW_REF( CollectionClass, (*this));
 }
@@ -303,7 +303,7 @@ RenderObjClass * CollectionClass::Clone(void) const
  * HISTORY:                                                                                    *
  *   12/8/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-void CollectionClass::Free(void)
+void CollectionClass::Free()
 {
 	for (int i=0; i<SubObjects.Count(); i++) {
 		SubObjects[i]->Set_Container(nullptr);
@@ -329,7 +329,7 @@ void CollectionClass::Free(void)
  * HISTORY:                                                                                    *
  *   12/8/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-int CollectionClass::Class_ID(void)	const
+int CollectionClass::Class_ID()	const
 {
 	return RenderObjClass::CLASSID_COLLECTION;
 }
@@ -347,7 +347,7 @@ int CollectionClass::Class_ID(void)	const
  * HISTORY:                                                                                    *
  *   12/8/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-int CollectionClass::Get_Num_Polys(void) const
+int CollectionClass::Get_Num_Polys() const
 {
 	int pcount = 0;
 	for (int i=0; i<SubObjects.Count(); i++) {
@@ -462,7 +462,7 @@ void CollectionClass::Set_Position(const Vector3 &v)
  * HISTORY:                                                                                    *
  *   12/8/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-int CollectionClass::Get_Num_Sub_Objects(void) const
+int CollectionClass::Get_Num_Sub_Objects() const
 {
 	return SubObjects.Count();
 }
@@ -717,7 +717,7 @@ void CollectionClass::Get_Obj_Space_Bounding_Box(AABoxClass & box) const
  * HISTORY:                                                                                    *
  *   12/8/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-int CollectionClass::Snap_Point_Count(void)
+int CollectionClass::Snap_Point_Count()
 {
 	if (SnapPoints) {
 		return SnapPoints->Count();
@@ -805,7 +805,7 @@ void CollectionClass::Scale(float scalex, float scaley, float scalez)
  * HISTORY:                                                                                    *
  *   12/8/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-void CollectionClass::Update_Obj_Space_Bounding_Volumes(void)
+void CollectionClass::Update_Obj_Space_Bounding_Volumes()
 {
 	int i;
 	if (SubObjects.Count() <= 0) {
@@ -857,7 +857,7 @@ void CollectionClass::Update_Obj_Space_Bounding_Volumes(void)
  * HISTORY:                                                                                    *
  *   12/8/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-void CollectionClass::Update_Sub_Object_Transforms(void)
+void CollectionClass::Update_Sub_Object_Transforms()
 {
 	RenderObjClass::Update_Sub_Object_Transforms();
 	for (int i=0; i<SubObjects.Count(); i++) {
@@ -909,7 +909,7 @@ bool CollectionClass::Get_Proxy (int index, ProxyClass &proxy) const
  * HISTORY:                                                                                    *
  *   4/28/99    PDS : Created.                                                                 *
  *=============================================================================================*/
-int CollectionClass::Get_Proxy_Count (void) const
+int CollectionClass::Get_Proxy_Count () const
 {
 	return ProxyList.Count ();
 }
@@ -927,7 +927,7 @@ int CollectionClass::Get_Proxy_Count (void) const
  * HISTORY:                                                                                    *
  *   12/8/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-CollectionDefClass::CollectionDefClass(void)
+CollectionDefClass::CollectionDefClass()
 {
 	SnapPoints = nullptr;
 }
@@ -945,7 +945,7 @@ CollectionDefClass::CollectionDefClass(void)
  * HISTORY:                                                                                    *
  *   12/8/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-CollectionDefClass::~CollectionDefClass(void)
+CollectionDefClass::~CollectionDefClass()
 {
 	Free();
 }
@@ -963,7 +963,7 @@ CollectionDefClass::~CollectionDefClass(void)
  * HISTORY:                                                                                    *
  *   12/8/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-void CollectionDefClass::Free(void)
+void CollectionDefClass::Free()
 {
 	for (int i=0; i<ObjectNames.Count(); i++) {
 		delete[] ObjectNames[i];
@@ -986,7 +986,7 @@ void CollectionDefClass::Free(void)
  * HISTORY:                                                                                    *
  *   12/8/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-const char * CollectionDefClass::Get_Name(void) const
+const char * CollectionDefClass::Get_Name() const
 {
 	return Name;
 }

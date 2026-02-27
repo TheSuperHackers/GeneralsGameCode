@@ -260,29 +260,29 @@ class Targa
 	{
 	public:
 		/* Constructor/destructor */
-		Targa(void);
+		Targa();
 		~Targa();
 
 		/* Function prototypes. */
 		long Open(const char* name, long mode);
-		void Close(void);
+		void Close();
 
 		long Load(const char* name, char* palette, char* image,bool invert_image=true);
 		long Load(const char* name, long flags, bool invert_image=true);
 		long Save(const char* name, long flags, bool addextension = false);
 
-		void XFlip(void);
-		void YFlip(void);
+		void XFlip();
+		void YFlip();
 
 		char* SetImage(char* buffer);
-		char* GetImage(void) const {return (mImage);}
+		char* GetImage() const {return (mImage);}
 
 		char* SetPalette(char* buffer);
-		char* GetPalette(void) const {return (mPalette);}
+		char* GetPalette() const {return (mPalette);}
 
-		bool IsCompressed(void);
+		bool IsCompressed();
 
-		TGA2Extension* GetExtension(void);
+		TGA2Extension* GetExtension();
 
 		TGAHeader Header;
 
@@ -300,14 +300,14 @@ class Targa
 
 	private:
 		// Utility functions
-		long DecodeImage(void);
-		long EncodeImage(void);
-		void InvertImage(void);
+		long DecodeImage();
+		long EncodeImage();
+		void InvertImage();
 
 		// These functions are for ease of ifdef'ing between standard io calls
 		// and FileClass.
-		void Clear_File(void);
-		bool Is_File_Open(void);
+		void Clear_File();
+		bool Is_File_Open();
 		bool File_Open_Read(const char* name);
 		bool File_Open_Write(const char* name);
 		bool File_Open_ReadWrite(const char* name);

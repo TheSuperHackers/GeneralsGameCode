@@ -299,7 +299,7 @@ AI *TheAI = nullptr;
 /**
  * Constructor for the AI system
  */
-AI::AI( void )
+AI::AI()
 {
 	m_aiData = NEW TAiData;
 	m_pathfinder = NEW Pathfinder;
@@ -309,7 +309,7 @@ AI::AI( void )
 /**
  * Initialize the AI system
  */
-void AI::init( void )
+void AI::init()
 {
 	m_nextGroupID = 0;
 }
@@ -317,7 +317,7 @@ void AI::init( void )
 /**
  * Reset the AI system in preparation for a new map
  */
-void AI::reset( void )
+void AI::reset()
 {
 	m_pathfinder->reset();
 	while (m_aiData && m_aiData->m_next) {
@@ -353,7 +353,7 @@ void AI::reset( void )
 /**
  * Update the AI system
  */
-void AI::update( void )
+void AI::update()
 {
 	// Do pathfinding.
 	m_pathfinder->processPathfindQueue();
@@ -382,7 +382,7 @@ AI::~AI()
 }
 
 
-void AI::newOverride(void)
+void AI::newOverride()
 {
 	TAiData *cur = m_aiData;
 	m_aiData = NEW TAiData;
@@ -442,7 +442,7 @@ void AI::parseAiDataDefinition( INI* ini )
 /**
  * Create a new AI Group
  */
-AIGroupPtr AI::createGroup( void )
+AIGroupPtr AI::createGroup()
 {
 	// create a new instance
 #if RETAIL_COMPATIBLE_AIGROUP
@@ -501,7 +501,7 @@ AIGroup *AI::findGroup( UnsignedInt id )
 /**
  * Get the next formation id.
  */
-FormationID AI::getNextFormationID(void )
+FormationID AI::getNextFormationID()
 {
 	FormationID nextVal = m_nextFormationID;
 	m_nextFormationID = (FormationID) (nextVal+1);
@@ -995,7 +995,7 @@ void TAiData::xfer( Xfer *xfer )
 }
 
 //-----------------------------------------------------------------------------
-void TAiData::loadPostProcess( void )
+void TAiData::loadPostProcess()
 {
 
 }
@@ -1041,7 +1041,7 @@ void AI::xfer( Xfer *xfer )
 }
 
 //-----------------------------------------------------------------------------
-void AI::loadPostProcess( void )
+void AI::loadPostProcess()
 {
 
 }

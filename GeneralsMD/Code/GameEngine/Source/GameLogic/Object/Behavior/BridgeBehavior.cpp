@@ -56,7 +56,7 @@
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-BridgeBehaviorModuleData::BridgeBehaviorModuleData( void )
+BridgeBehaviorModuleData::BridgeBehaviorModuleData()
 {
 
 	m_lateralScaffoldSpeed = 1.0f;
@@ -66,7 +66,7 @@ BridgeBehaviorModuleData::BridgeBehaviorModuleData( void )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-BridgeBehaviorModuleData::~BridgeBehaviorModuleData( void )
+BridgeBehaviorModuleData::~BridgeBehaviorModuleData()
 {
 
 	// clear the fx list
@@ -263,7 +263,7 @@ BridgeBehavior::BridgeBehavior( Thing *thing, const ModuleData *moduleData )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-BridgeBehavior::~BridgeBehavior( void )
+BridgeBehavior::~BridgeBehavior()
 {
 
 	//
@@ -312,7 +312,7 @@ BridgeBehavior::~BridgeBehavior( void )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void BridgeBehavior::onDelete( void )
+void BridgeBehavior::onDelete()
 {
 
 	// clear the list of scaffold objects
@@ -322,7 +322,7 @@ void BridgeBehavior::onDelete( void )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void BridgeBehavior::resolveFX( void )
+void BridgeBehavior::resolveFX()
 {
 	Object *us = getObject();
 	Bridge *bridge = TheTerrainLogic->findBridgeAt( us->getPosition() );
@@ -703,7 +703,7 @@ void BridgeBehavior::onBodyDamageStateChange( const DamageInfo* damageInfo,
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-UpdateSleepTime BridgeBehavior::update( void )
+UpdateSleepTime BridgeBehavior::update()
 {
 
 	// if we're dead, we need to possibly throw off some effects
@@ -867,7 +867,7 @@ void BridgeBehavior::onDie( const DamageInfo *damageInfo )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void BridgeBehavior::handleObjectsOnBridgeOnDie( void )
+void BridgeBehavior::handleObjectsOnBridgeOnDie()
 {
 	const Object *bridge = getObject();
 	const Coord3D *bridgePos = bridge->getPosition();
@@ -1019,7 +1019,7 @@ void BridgeBehavior::setScaffoldData( Object *obj,
 /** Start the bridge repair scaffolding.  If we already have scaffolding this call
 	* is ignored */
 // ------------------------------------------------------------------------------------------------
-void BridgeBehavior::createScaffolding( void )
+void BridgeBehavior::createScaffolding()
 {
 
 	// if we have scaffolding up already do nothing
@@ -1283,7 +1283,7 @@ void BridgeBehavior::createScaffolding( void )
 // ------------------------------------------------------------------------------------------------
 /** Remove the bridge scaffolding.  If we don't have any then this call is ignored */
 // ------------------------------------------------------------------------------------------------
-void BridgeBehavior::removeScaffolding( void )
+void BridgeBehavior::removeScaffolding()
 {
 
 	// if we have no scaffolding, do nothing
@@ -1335,7 +1335,7 @@ void BridgeBehavior::removeScaffolding( void )
 // ------------------------------------------------------------------------------------------------
 /** Is any of the scaffolding in motion */
 // ------------------------------------------------------------------------------------------------
-Bool BridgeBehavior::isScaffoldInMotion( void )
+Bool BridgeBehavior::isScaffoldInMotion()
 {
 	Object *obj;
 
@@ -1474,7 +1474,7 @@ void BridgeBehavior::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void BridgeBehavior::loadPostProcess( void )
+void BridgeBehavior::loadPostProcess()
 {
 
 	// extend base class

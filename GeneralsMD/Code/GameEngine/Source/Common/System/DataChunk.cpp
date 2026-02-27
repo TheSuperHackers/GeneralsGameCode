@@ -37,11 +37,11 @@
 // If verbose, lots of debug logging.
 #define not_VERBOSE
 
-CachedFileInputStream::CachedFileInputStream(void):m_buffer(nullptr),m_size(0)
+CachedFileInputStream::CachedFileInputStream():m_buffer(nullptr),m_size(0)
 {
 }
 
-CachedFileInputStream::~CachedFileInputStream(void)
+CachedFileInputStream::~CachedFileInputStream()
 {
 	delete[] m_buffer;
 	m_buffer=nullptr;
@@ -99,7 +99,7 @@ Bool CachedFileInputStream::open(AsciiString path)
 	return m_size != 0;
 }
 
-void CachedFileInputStream::close(void)
+void CachedFileInputStream::close()
 {
 	delete[] m_buffer;
 	m_buffer=nullptr;
@@ -123,7 +123,7 @@ Int CachedFileInputStream::read(void *pData, Int numBytes)
 	return 0;
 }
 
-UnsignedInt CachedFileInputStream::tell(void)
+UnsignedInt CachedFileInputStream::tell()
 {
 	return m_pos;
 }
@@ -138,7 +138,7 @@ Bool CachedFileInputStream::absoluteSeek(UnsignedInt pos)
 	return true;
 }
 
-Bool CachedFileInputStream::eof(void)
+Bool CachedFileInputStream::eof()
 {
 	return m_size==m_pos;
 }
@@ -154,11 +154,11 @@ void CachedFileInputStream::rewind()
 // FileInputStream - helper class.	Used to read in data using a FILE *
 //
 /*
-FileInputStream::FileInputStream(void):m_file(nullptr)
+FileInputStream::FileInputStream():m_file(nullptr)
 {
 }
 
-FileInputStream::~FileInputStream(void)
+FileInputStream::~FileInputStream()
 {
 	if (m_file != nullptr) {
 		m_file->close();
@@ -172,7 +172,7 @@ Bool FileInputStream::open(AsciiString path)
 	return m_file == nullptr?false:true;
 }
 
-void FileInputStream::close(void)
+void FileInputStream::close()
 {
 	if (m_file != nullptr) {
 		m_file->close();
@@ -189,7 +189,7 @@ Int FileInputStream::read(void *pData, Int numBytes)
 	return(bytesRead);
 }
 
-UnsignedInt FileInputStream::tell(void)
+UnsignedInt FileInputStream::tell()
 {
 	UnsignedInt pos = 0;
 	if (m_file != nullptr) {
@@ -206,7 +206,7 @@ Bool FileInputStream::absoluteSeek(UnsignedInt pos)
 	return(false);
 }
 
-Bool FileInputStream::eof(void)
+Bool FileInputStream::eof()
 {
 	if (m_file != nullptr) {
 		return (m_file->size() == m_file->position());
@@ -294,7 +294,7 @@ void DataChunkOutput::openDataChunk( const char *name, DataChunkVersionType ver 
 	::fwrite( (const char *)&dummy, sizeof(Int), 1, m_tmp_file  );
 }
 
-void DataChunkOutput::closeDataChunk( void )
+void DataChunkOutput::closeDataChunk()
 {
 	if (m_chunkStack == nullptr)
 	{
@@ -413,7 +413,7 @@ void DataChunkOutput::writeDict( const Dict& d )
 // DataChunkTableOfContents
 //----------------------------------------------------------------------
 
-DataChunkTableOfContents::DataChunkTableOfContents( void ) :
+DataChunkTableOfContents::DataChunkTableOfContents() :
 m_list(nullptr),
 m_nextID(1),
 m_listLength(0),
@@ -684,7 +684,7 @@ Bool DataChunkInput::parse( void *userData )
 }
 
 // clear the stack
-void DataChunkInput::clearChunkStack( void )
+void DataChunkInput::clearChunkStack()
 {
 	InputChunk *c, *next;
 
@@ -698,14 +698,14 @@ void DataChunkInput::clearChunkStack( void )
 }
 
 // reset the stream to just-opened state - ready to parse the first chunk
-void DataChunkInput::reset( void )
+void DataChunkInput::reset()
 {
 	clearChunkStack();
 	m_file->absoluteSeek( m_fileposOfFirstChunk );
 }
 
 // Checks if the file has our initial tag word.
-Bool DataChunkInput::isValidFileType(void)
+Bool DataChunkInput::isValidFileType()
 {
 	return m_contents.isOpenedForRead();
 }
@@ -745,7 +745,7 @@ AsciiString DataChunkInput::openDataChunk(DataChunkVersionType *ver )
 }
 
 // close chunk and move to start of next chunk
-void DataChunkInput::closeDataChunk( void )
+void DataChunkInput::closeDataChunk()
 {
 	if (m_chunkStack == nullptr)
 	{
@@ -769,7 +769,7 @@ void DataChunkInput::closeDataChunk( void )
 
 
 // return label of current data chunk
-AsciiString DataChunkInput::getChunkLabel( void )
+AsciiString DataChunkInput::getChunkLabel()
 {
 	if (m_chunkStack == nullptr)
 	{
@@ -782,7 +782,7 @@ AsciiString DataChunkInput::getChunkLabel( void )
 }
 
 // return version of current data chunk
-DataChunkVersionType DataChunkInput::getChunkVersion( void )
+DataChunkVersionType DataChunkInput::getChunkVersion()
 {
 	if (m_chunkStack == nullptr)
 	{
@@ -795,7 +795,7 @@ DataChunkVersionType DataChunkInput::getChunkVersion( void )
 }
 
 // return size of data stored in this chunk
-UnsignedInt DataChunkInput::getChunkDataSize( void )
+UnsignedInt DataChunkInput::getChunkDataSize()
 {
 	if (m_chunkStack == nullptr)
 	{
@@ -809,7 +809,7 @@ UnsignedInt DataChunkInput::getChunkDataSize( void )
 
 
 // return size of data left to read in this chunk
-UnsignedInt DataChunkInput::getChunkDataSizeLeft( void )
+UnsignedInt DataChunkInput::getChunkDataSizeLeft()
 {
 	if (m_chunkStack == nullptr)
 	{
@@ -821,7 +821,7 @@ UnsignedInt DataChunkInput::getChunkDataSizeLeft( void )
 	return m_chunkStack->dataLeft;
 }
 
-Bool DataChunkInput::atEndOfChunk( void )
+Bool DataChunkInput::atEndOfChunk()
 {
 	if (m_chunkStack)
 	{
@@ -848,7 +848,7 @@ void DataChunkInput::decrementDataLeft( Int size )
 	// The sizes of the parent chunks on the stack are adjusted in closeDataChunk.
 }
 
-Real DataChunkInput::readReal(void)
+Real DataChunkInput::readReal()
 {
 	Real r;
 	DEBUG_ASSERTCRASH(m_chunkStack->dataLeft>=sizeof(Real), ("Read past end of chunk."));
@@ -857,7 +857,7 @@ Real DataChunkInput::readReal(void)
 	return r;
 }
 
-Int DataChunkInput::readInt(void)
+Int DataChunkInput::readInt()
 {
 	Int i;
 	DEBUG_ASSERTCRASH(m_chunkStack->dataLeft>=sizeof(Int), ("Read past end of chunk."));
@@ -866,7 +866,7 @@ Int DataChunkInput::readInt(void)
 	return i;
 }
 
-Byte DataChunkInput::readByte(void)
+Byte DataChunkInput::readByte()
 {
 	Byte b;
 	DEBUG_ASSERTCRASH(m_chunkStack->dataLeft>=sizeof(Byte), ("Read past end of chunk."));
@@ -882,7 +882,7 @@ void DataChunkInput::readArrayOfBytes(char *ptr, Int len)
 	decrementDataLeft( len );
 }
 
-NameKeyType DataChunkInput::readNameKey(void)
+NameKeyType DataChunkInput::readNameKey()
 {
 		Int keyAndType = readInt();
 #ifdef DEBUG_CRASHING
@@ -941,7 +941,7 @@ Dict DataChunkInput::readDict()
 	return d;
 }
 
-AsciiString DataChunkInput::readAsciiString(void)
+AsciiString DataChunkInput::readAsciiString()
 {
 	UnsignedShort len;
 	DEBUG_ASSERTCRASH(m_chunkStack->dataLeft>=sizeof(UnsignedShort), ("Read past end of chunk."));
@@ -960,7 +960,7 @@ AsciiString DataChunkInput::readAsciiString(void)
 	return theString;
 }
 
-UnicodeString DataChunkInput::readUnicodeString(void)
+UnicodeString DataChunkInput::readUnicodeString()
 {
 	UnsignedShort len;
 	DEBUG_ASSERTCRASH(m_chunkStack->dataLeft>=sizeof(UnsignedShort), ("Read past end of chunk."));

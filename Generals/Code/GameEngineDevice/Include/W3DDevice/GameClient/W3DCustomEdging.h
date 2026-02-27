@@ -76,17 +76,17 @@ class W3DCustomEdging
 friend class HeightMapRenderObjClass;
 public:
 
-	W3DCustomEdging(void);
-	~W3DCustomEdging(void);
+	W3DCustomEdging();
+	~W3DCustomEdging();
 	void addEdging(Coord3D location, Real scale, Real angle, AsciiString name, Bool visibleInMirror);
 	/// Empties the tree buffer.
-	void clearAllEdging(void);
+	void clearAllEdging();
 	/// Draws the trees.  Uses camera for culling.
 	void drawEdging( WorldHeightMap *pMap, Int minX, Int maxX, Int minY, Int maxY,
 		TextureClass * terrainTexture, TextureClass * cloudTexture, TextureClass * noiseTexture );
 	/// Called when the view changes, and sort key needs to be recalculated.
 	/// Normally sortKey gets calculated when a tree becomes visible.
-	void doFullUpdate(void) {clearAllEdging();};
+	void doFullUpdate() {clearAllEdging();};
 protected:
 #define MAX_BLENDS 2000
 	enum { MAX_EDGE_VERTEX=4*MAX_BLENDS,
@@ -100,7 +100,7 @@ protected:
 	Bool		m_anythingChanged;	///< Set to true if visibility or sorting changed.
 	Bool		m_initialized;		///< True if the subsystem initialized.
 
-	void allocateEdgingBuffers(void);							 ///< Allocates the buffers.
-	void freeEdgingBuffers(void);									 ///< Frees the index and vertex buffers.
+	void allocateEdgingBuffers();							 ///< Allocates the buffers.
+	void freeEdgingBuffers();									 ///< Frees the index and vertex buffers.
 	void loadEdgingsInVertexAndIndexBuffers(WorldHeightMap *pMap, Int minX, Int maxX, Int minY, Int maxY);
 };

@@ -1082,7 +1082,7 @@ void ShaderClass::Invert_Backface_Culling(bool onoff)
  * HISTORY:                                                                                    *
  *   7/13/2001  hy : Created.                                                                  *
  *=============================================================================================*/
-ShaderClass::StaticSortCategoryType ShaderClass::Get_SS_Category(void) const
+ShaderClass::StaticSortCategoryType ShaderClass::Get_SS_Category() const
 {
 	// category: Opaque
 	if ( (ALPHATEST_DISABLE==Get_Alpha_Test()) && (DSTBLEND_ZERO==Get_Dst_Blend_Func()) )
@@ -1120,7 +1120,7 @@ ShaderClass::StaticSortCategoryType ShaderClass::Get_SS_Category(void) const
  * HISTORY:                                                                                    *
  *   8/27/2001  hy : Created.                                                                  *
  *=============================================================================================*/
-int ShaderClass::Guess_Sort_Level(void) const
+int ShaderClass::Guess_Sort_Level() const
 {
 	int sort_level;
 	StaticSortCategoryType scat=Get_SS_Category();
@@ -1156,7 +1156,7 @@ int ShaderClass::Guess_Sort_Level(void) const
  * HISTORY:                                                                                    *
  *   4/24/2001  gth : Created.                                                                 *
  *=============================================================================================*/
-bool ShaderClass::Is_Backface_Culling_Inverted(void)
+bool ShaderClass::Is_Backface_Culling_Inverted()
 {
 	return (_PolygonCullMode == D3DCULL_CCW);
 }

@@ -59,7 +59,7 @@ public:
 	Coord3DList m_supplyPositions;
 	Coord3DList m_techPositions;
 	static const FieldParse m_mapFieldParseTable[];		///< the parse table for INI definition
-	const FieldParse *getFieldParse( void ) const { return m_mapFieldParseTable; }
+	const FieldParse *getFieldParse() const { return m_mapFieldParseTable; }
 };
 
 

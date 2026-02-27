@@ -163,7 +163,7 @@ public:
 
 #ifdef STATE_MACHINE_DEBUG
 	virtual AsciiString getName() const {return m_name;}
-	std::vector<StateID> *getTransitions(void);
+	std::vector<StateID> *getTransitions();
 #endif
 
 	// for internal use by the StateMachine class ---------------------------------------------------------
@@ -310,7 +310,7 @@ public:
 	const Coord3D *getGoalPosition() const { return &m_goalPosition; }
 	Bool isGoalObjectDestroyed() const;  ///< Returns true if we had a goal object, but it has been destroyed.
 
-	virtual void halt(void); ///< Stops the state machine & disables it in preparation for deleting it.
+	virtual void halt(); ///< Stops the state machine & disables it in preparation for deleting it.
 
 	//
 	// The following methods are for internal use by the State class

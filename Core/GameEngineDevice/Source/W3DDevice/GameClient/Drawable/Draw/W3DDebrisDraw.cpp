@@ -64,7 +64,7 @@ W3DDebrisDraw::W3DDebrisDraw(Thing *thing, const ModuleData* moduleData) : DrawM
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-W3DDebrisDraw::~W3DDebrisDraw(void)
+W3DDebrisDraw::~W3DDebrisDraw()
 {
 	if (TheW3DShadowManager && m_shadow)
 	{
@@ -323,7 +323,7 @@ void W3DDebrisDraw::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void W3DDebrisDraw::loadPostProcess( void )
+void W3DDebrisDraw::loadPostProcess()
 {
 
 	// extend base class

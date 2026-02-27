@@ -140,7 +140,7 @@ public:
 	Bool allowedToStealth( Object *stealthOwner ) const;
   void receiveGrant( Bool active = TRUE, UnsignedInt frames = 0 );
 
-  Bool isGrantedBySpecialPower( void ) { return getStealthUpdateModuleData()->m_grantedBySpecialPower; }
+  Bool isGrantedBySpecialPower() { return getStealthUpdateModuleData()->m_grantedBySpecialPower; }
 	Bool isTemporaryGrant() { return m_framesGranted > 0; }
 
 protected:
@@ -148,7 +148,7 @@ protected:
 	StealthLookType calcStealthedStatusForPlayer(const Object* obj, const Player* player);
 	Bool canDisguise() const { return getStealthUpdateModuleData()->m_teamDisguised; }
 	Real getRevealDistanceFromTarget() const { return getStealthUpdateModuleData()->m_revealDistanceFromTarget; }
-	void hintDetectableWhileUnstealthed( void ) ;
+	void hintDetectableWhileUnstealthed() ;
 
 	void changeVisualDisguise();
 

@@ -63,7 +63,7 @@
  * HISTORY:                                                                                    *
  *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-HTreeManagerClass::HTreeManagerClass(void) :
+HTreeManagerClass::HTreeManagerClass() :
 	NumTrees(0)
 {
 	for (int treeidx=0; treeidx < MAX_TREES; treeidx++) {
@@ -83,7 +83,7 @@ HTreeManagerClass::HTreeManagerClass(void) :
  * HISTORY:                                                                                    *
  *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-HTreeManagerClass::~HTreeManagerClass(void)
+HTreeManagerClass::~HTreeManagerClass()
 {
 	Free();
 }
@@ -100,7 +100,7 @@ HTreeManagerClass::~HTreeManagerClass(void)
  * HISTORY:                                                                                    *
  *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-void HTreeManagerClass::Free(void)
+void HTreeManagerClass::Free()
 {
 	Free_All_Trees();
 }
@@ -117,7 +117,7 @@ void HTreeManagerClass::Free(void)
  * HISTORY:                                                                                    *
  *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-void HTreeManagerClass::Free_All_Trees(void)
+void HTreeManagerClass::Free_All_Trees()
 {
 	for (int treeidx=0; treeidx < MAX_TREES; treeidx++) {
 		delete TreePtr[treeidx];

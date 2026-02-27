@@ -42,7 +42,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 //-------------------------------------------------------------------------------------------------
-W3DDisplayStringManager::W3DDisplayStringManager( void )
+W3DDisplayStringManager::W3DDisplayStringManager()
 {
 	for (Int i = 0; i < MAX_GROUPS; ++i)
 	{
@@ -54,7 +54,7 @@ W3DDisplayStringManager::W3DDisplayStringManager( void )
 }
 
 //-------------------------------------------------------------------------------------------------
-W3DDisplayStringManager::~W3DDisplayStringManager( void )
+W3DDisplayStringManager::~W3DDisplayStringManager()
 {
 	for (Int i = 0; i < MAX_GROUPS; ++i)
 	{
@@ -71,7 +71,7 @@ W3DDisplayStringManager::~W3DDisplayStringManager( void )
 }
 
 //-------------------------------------------------------------------------------------------------
-void W3DDisplayStringManager::postProcessLoad( void )
+void W3DDisplayStringManager::postProcessLoad()
 {
 	// Get the font.
 	GameFont *font = TheFontLibrary->getFont(
@@ -108,7 +108,7 @@ void W3DDisplayStringManager::postProcessLoad( void )
 /** Allocate a new display string and tie it to the master list so we
 	* can keep track of it */
 //-------------------------------------------------------------------------------------------------
-DisplayString *W3DDisplayStringManager::newDisplayString( void )
+DisplayString *W3DDisplayStringManager::newDisplayString()
 {
 	DisplayString *newString = newInstance(W3DDisplayString);
 
@@ -171,7 +171,7 @@ void W3DDisplayStringManager::freeDisplayString( DisplayString *string )
 	* the DisplayString will have to rebuild the rendering data before
 	* the draw will work */
 //-------------------------------------------------------------------------------------------------
-void W3DDisplayStringManager::update( void )
+void W3DDisplayStringManager::update()
 {
 	// call base in case we add something later
 	DisplayStringManager::update();

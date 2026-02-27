@@ -56,28 +56,28 @@ class HeightMapRenderObjClass : public BaseHeightMapRenderObjClass
 
 public:
 
-	HeightMapRenderObjClass(void);
-	virtual ~HeightMapRenderObjClass(void);
+	HeightMapRenderObjClass();
+	virtual ~HeightMapRenderObjClass();
 
 	// DX8_CleanupHook methods
-	virtual void ReleaseResources(void);	///< Release all dx8 resources so the device can be reset.
-	virtual void ReAcquireResources(void);  ///< Reacquire all resources after device reset.
+	virtual void ReleaseResources();	///< Release all dx8 resources so the device can be reset.
+	virtual void ReAcquireResources();  ///< Reacquire all resources after device reset.
 
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface (W3D methods)
 	/////////////////////////////////////////////////////////////////////////////
 	virtual void					Render(RenderInfoClass & rinfo);
-	virtual void					On_Frame_Update(void);
+	virtual void					On_Frame_Update();
 
 	///allocate resources needed to render heightmap
 	virtual int initHeightData(Int width, Int height, WorldHeightMap *pMap, RefRenderObjListIterator *pLightsIterator, Bool updateExtraPassTiles=TRUE);
-	virtual Int freeMapResources(void);	///< free resources used to render heightmap
+	virtual Int freeMapResources();	///< free resources used to render heightmap
 	virtual void updateCenter(CameraClass *camera, RefRenderObjListIterator *pLightsIterator);
 
-	virtual void staticLightingChanged(void);
+	virtual void staticLightingChanged();
 	virtual	void adjustTerrainLOD(Int adj);
-	virtual void reset(void);
+	virtual void reset();
 	virtual void doPartialUpdate(const IRegion2D &partialRange, WorldHeightMap *htMap, RefRenderObjListIterator *pLightsIterator);
 
 	virtual void oversizeTerrain(Int tilesToOversize);
@@ -111,9 +111,9 @@ protected:
 	///update vertex buffer vertices inside given rectangle
 	Int updateVB(DX8VertexBufferClass	*pVB, VERTEX_FORMAT *data, Int x0, Int y0, Int x1, Int y1, Int originX, Int originY, WorldHeightMap *pMap, RefRenderObjListIterator *pLightsIterator);
 	///update vertex buffers associated with the given rectangle
-	void initDestAlphaLUT(void);	///<initialize water depth LUT stored in m_destAlphaTexture
+	void initDestAlphaLUT();	///<initialize water depth LUT stored in m_destAlphaTexture
 	void renderTerrainPass(CameraClass *pCamera);	///< renders additional terrain pass.
 	Int	getNumExtraBlendTiles(Bool visible) { return visible?m_numVisibleExtraBlendTiles:m_numExtraBlendTiles;}
-	void freeIndexVertexBuffers(void);
-	void renderExtraBlendTiles(void);	///< render 3-way blend tiles that have blend of 3 textures.
+	void freeIndexVertexBuffers();
+	void renderExtraBlendTiles();	///< render 3-way blend tiles that have blend of 3 textures.
 };

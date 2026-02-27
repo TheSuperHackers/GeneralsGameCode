@@ -74,7 +74,7 @@ StructureToppleUpdate::StructureToppleUpdate( Thing *thing, const ModuleData* mo
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-StructureToppleUpdate::~StructureToppleUpdate( void )
+StructureToppleUpdate::~StructureToppleUpdate()
 {
 }
 
@@ -198,7 +198,7 @@ void StructureToppleUpdate::onDie( const DamageInfo *damageInfo )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime StructureToppleUpdate::update( void )
+UpdateSleepTime StructureToppleUpdate::update()
 {
 	static const Real TOPPLE_ACCELERATION_FACTOR = 0.02f;
 
@@ -617,7 +617,7 @@ void StructureToppleUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void StructureToppleUpdate::loadPostProcess( void )
+void StructureToppleUpdate::loadPostProcess()
 {
 
 	// extend base class

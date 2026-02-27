@@ -598,16 +598,16 @@ public:
 
 	GameMessage( Type type );
 
-	GameMessage *next( void ) { return m_next; }		///< Return next message in the stream
-	GameMessage *prev( void ) { return m_prev; }		///< Return prev message in the stream
+	GameMessage *next() { return m_next; }		///< Return next message in the stream
+	GameMessage *prev() { return m_prev; }		///< Return prev message in the stream
 
-	Type getType( void ) const { return m_type; }					///< Return the message type
-	UnsignedByte getArgumentCount( void ) const { return m_argCount; }	///< Return the number of arguments for this msg
+	Type getType() const { return m_type; }					///< Return the message type
+	UnsignedByte getArgumentCount() const { return m_argCount; }	///< Return the number of arguments for this msg
 
-	const char *getCommandAsString( void ) const; ///< returns a string representation of the command type.
+	const char *getCommandAsString() const; ///< returns a string representation of the command type.
 	static const char *getCommandTypeAsString(GameMessage::Type t);
 
-	Int getPlayerIndex( void ) const { return m_playerIndex; }		///< Return the originating player
+	Int getPlayerIndex() const { return m_playerIndex; }		///< Return the originating player
 
 	// access methods for GameMessageArgumentType enum
 	void appendIntegerArgument( Int arg );
@@ -652,7 +652,7 @@ private:
 	GameMessageArgument *m_argList, *m_argTail;						///< This message's arguments
 
 	/// allocate a new argument, add it to list, return pointer to its data
-	GameMessageArgument *allocArg( void );
+	GameMessageArgument *allocArg();
 
 };
 
@@ -666,14 +666,14 @@ class GameMessageList : public SubsystemInterface
 
 public:
 
-	GameMessageList( void );
+	GameMessageList();
 	virtual ~GameMessageList();
 
-	virtual void init( void ) { };			///< Initialize system
-	virtual void reset( void ) { };			///< Reset system
-	virtual void update( void ) { };		///< Update system
+	virtual void init() { };			///< Initialize system
+	virtual void reset() { };			///< Reset system
+	virtual void update() { };		///< Update system
 
-	GameMessage *getFirstMessage( void ) { return m_firstMessage; }	///< Return the first message
+	GameMessage *getFirstMessage() { return m_firstMessage; }	///< Return the first message
 
 	virtual void appendMessage( GameMessage *msg );			///< Add message to end of the list
 	virtual void insertMessage( GameMessage *msg, GameMessage *messageToInsertAfter );	// Insert message after messageToInsertAfter.
@@ -713,19 +713,19 @@ class MessageStream : public GameMessageList
 
 public:
 
-	MessageStream( void );
+	MessageStream();
 	virtual ~MessageStream();
 
 	// Inherited Methods ----------------------------------------------------------------------------
-	virtual void init( void );
-	virtual void reset( void );
-	virtual void update( void );
+	virtual void init();
+	virtual void reset();
+	virtual void update();
 
 	virtual GameMessage *appendMessage( GameMessage::Type type );		///< Append a message to the end of the stream
 	virtual GameMessage *insertMessage( GameMessage::Type type, GameMessage *messageToInsertAfter );	// Insert message after messageToInsertAfter.
 
 	// Methods NOT Inherited ------------------------------------------------------------------------
-	void propagateMessages( void );													///< Propagate messages through attached translators
+	void propagateMessages();													///< Propagate messages through attached translators
 
 	/**
 		Attach a translator function to the stream at a priority value. Lower priorities are executed first.
@@ -769,18 +769,18 @@ protected:
 class CommandList : public GameMessageList
 {
 public:
-	CommandList( void );
+	CommandList();
 	virtual ~CommandList();
 
-	virtual void init( void );			///< Init command list
-	virtual void reset( void );			///< Destroy all messages and reset list to empty
-	virtual void update( void );		///< Update hook
+	virtual void init();			///< Init command list
+	virtual void reset();			///< Destroy all messages and reset list to empty
+	virtual void update();		///< Update hook
 
 	void appendMessageList( GameMessage *list );			///< Adds messages to the end of the command list
 
 protected:
 
-	void destroyAllMessages( void );		///< The meat of a reset and a shutdown
+	void destroyAllMessages();		///< The meat of a reset and a shutdown
 
 };
 

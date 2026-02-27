@@ -87,9 +87,9 @@ class SoundSceneObjClass : public MultiListObjectClass, public PersistClass, pub
 		//////////////////////////////////////////////////////////////////////
 		//	Public constructors/destructors
 		//////////////////////////////////////////////////////////////////////
-		SoundSceneObjClass (void);
+		SoundSceneObjClass ();
 		SoundSceneObjClass (const SoundSceneObjClass &src);
-		virtual ~SoundSceneObjClass (void);
+		virtual ~SoundSceneObjClass ();
 
 		//////////////////////////////////////////////////////////////////////
 		//	Public operators
@@ -103,16 +103,16 @@ class SoundSceneObjClass : public MultiListObjectClass, public PersistClass, pub
 		//////////////////////////////////////////////////////////////////////
 		//	Conversion methods
 		//////////////////////////////////////////////////////////////////////
-		virtual Sound3DClass *			As_Sound3DClass (void) 			{ return nullptr; }
-		virtual SoundPseudo3DClass *	As_SoundPseudo3DClass (void) 	{ return nullptr; }
-		virtual FilteredSoundClass *	As_FilteredSoundClass (void) 	{ return nullptr; }
-		virtual Listener3DClass *		As_Listener3DClass (void) 		{ return nullptr; }
-		virtual AudibleSoundClass *	As_AudibleSoundClass(void) 	{ return nullptr; }
+		virtual Sound3DClass *			As_Sound3DClass () 			{ return nullptr; }
+		virtual SoundPseudo3DClass *	As_SoundPseudo3DClass () 	{ return nullptr; }
+		virtual FilteredSoundClass *	As_FilteredSoundClass () 	{ return nullptr; }
+		virtual Listener3DClass *		As_Listener3DClass () 		{ return nullptr; }
+		virtual AudibleSoundClass *	As_AudibleSoundClass() 	{ return nullptr; }
 
 		//////////////////////////////////////////////////////////////////////
 		//	Identification methods
 		//////////////////////////////////////////////////////////////////////
-		virtual uint32			Get_ID (void) const	{ return m_ID; }
+		virtual uint32			Get_ID () const	{ return m_ID; }
 		virtual void			Set_ID (uint32 id);
 
 		//////////////////////////////////////////////////////////////////////
@@ -130,40 +130,40 @@ class SoundSceneObjClass : public MultiListObjectClass, public PersistClass, pub
 		//	Position/direction methods
 		//////////////////////////////////////////////////////////////////////
 		virtual void			Set_Position (const Vector3 &position)	= 0;
-		virtual Vector3		Get_Position (void) const = 0;
+		virtual Vector3		Get_Position () const = 0;
 
 		virtual void			Set_Listener_Transform (const Matrix3D &tm) {};
 		virtual void			Set_Transform (const Matrix3D &transform) = 0;
-		virtual Matrix3D		Get_Transform (void) const = 0;
+		virtual Matrix3D		Get_Transform () const = 0;
 
 		//////////////////////////////////////////////////////////////////////
 		//	Culling methods
 		//////////////////////////////////////////////////////////////////////
 		virtual void			Cull_Sound (bool culled = true)	= 0;
-		virtual bool			Is_Sound_Culled (void) const		= 0;
+		virtual bool			Is_Sound_Culled () const		= 0;
 
 		//////////////////////////////////////////////////////////////////////
 		//	User data methods
 		//////////////////////////////////////////////////////////////////////
 		virtual void			Set_User_Data (RefCountClass *user_obj = nullptr, uint32 user = 0)	{ REF_PTR_SET (m_UserObj, user_obj); m_UserData = user; }
-		virtual uint32			Get_User_Data (void) const														{ return m_UserData; }
-		virtual RefCountClass *Peek_User_Obj (void) const													{ return m_UserObj; }
+		virtual uint32			Get_User_Data () const														{ return m_UserData; }
+		virtual RefCountClass *Peek_User_Obj () const													{ return m_UserObj; }
 
 		//////////////////////////////////////////////////////////////////////
 		//	Attached object methods
 		//////////////////////////////////////////////////////////////////////
 		virtual void				Attach_To_Object (RenderObjClass *render_obj, int bone_index = -1);
 		virtual void				Attach_To_Object (RenderObjClass *render_obj, const char *bone_name);
-		virtual RenderObjClass *Peek_Parent_Object (void)			{ return m_AttachedObject; }
-		virtual int					Get_Parent_Bone (void)				{ return m_AttachedBone; }
-		virtual void				Apply_Auto_Position (void);
+		virtual RenderObjClass *Peek_Parent_Object ()			{ return m_AttachedObject; }
+		virtual int					Get_Parent_Bone ()				{ return m_AttachedBone; }
+		virtual void				Apply_Auto_Position ();
 
 		//////////////////////////////////////////////////////////////////////
 		//	Scene integration
 		//////////////////////////////////////////////////////////////////////
 		virtual void			Add_To_Scene (bool start_playing = true) = 0;
-		virtual void			Remove_From_Scene (void) = 0;
-		virtual bool			Is_In_Scene (void) const			{ return m_Scene != nullptr; }
+		virtual void			Remove_From_Scene () = 0;
+		virtual bool			Is_In_Scene () const			{ return m_Scene != nullptr; }
 
 		//////////////////////////////////////////////////////////////////////
 		//	Attenuation settings
@@ -173,7 +173,7 @@ class SoundSceneObjClass : public MultiListObjectClass, public PersistClass, pub
 		//	This is the distance where the sound can not be heard any longer.  (its vol is 0)
 		//
 		virtual void			Set_DropOff_Radius (float radius = 1) = 0;
-		virtual float			Get_DropOff_Radius (void) const = 0;
+		virtual float			Get_DropOff_Radius () const = 0;
 
 		//////////////////////////////////////////////////////////////////////
 		//	From PersistClass
@@ -186,7 +186,7 @@ class SoundSceneObjClass : public MultiListObjectClass, public PersistClass, pub
 		//////////////////////////////////////////////////////////////////////
 		//	Handle information
 		//////////////////////////////////////////////////////////////////////
-		virtual SoundCullObjClass *	Peek_Cullable_Wrapper (void) const					{ return m_PhysWrapper; }
+		virtual SoundCullObjClass *	Peek_Cullable_Wrapper () const					{ return m_PhysWrapper; }
 		virtual void						Set_Cullable_Wrapper (SoundCullObjClass *obj)	{ m_PhysWrapper = obj; }
 
 		//////////////////////////////////////////////////////////////////////

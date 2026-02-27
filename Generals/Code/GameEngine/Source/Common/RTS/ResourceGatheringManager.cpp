@@ -284,7 +284,7 @@ void ResourceGatheringManager::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void ResourceGatheringManager::loadPostProcess( void )
+void ResourceGatheringManager::loadPostProcess()
 {
 
 }

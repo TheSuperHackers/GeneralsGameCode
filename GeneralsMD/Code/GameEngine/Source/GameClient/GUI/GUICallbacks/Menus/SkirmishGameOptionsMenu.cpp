@@ -147,8 +147,8 @@ static Int	initialGadgetDelay = 2;
 static Bool justEntered = FALSE;
 static Bool buttonPushed = FALSE;
 static Bool stillNeedsToSetOptions = FALSE;
-void skirmishUpdateSlotList( void );
-static void populateSkirmishBattleHonors( void );
+void skirmishUpdateSlotList();
+static void populateSkirmishBattleHonors();
 enum{ GREATER_NO_FPS_LIMIT = 60};
 Bool doUpdateSlotList = TRUE;
 
@@ -167,7 +167,7 @@ static Int getNextSelectablePlayer(Int start)
 	return -1;
 }
 
-SkirmishPreferences::SkirmishPreferences( void )
+SkirmishPreferences::SkirmishPreferences()
 {
 	loadFromIniFile();
 }
@@ -188,17 +188,17 @@ Bool SkirmishPreferences::loadFromIniFile()
 	return load("Skirmish.ini");
 }
 
-AsciiString SkirmishPreferences::getSlotList(void)
+AsciiString SkirmishPreferences::getSlotList()
 {
 	return getAsciiString("SlotList", AsciiString::TheEmptyString);
 }
 
-void SkirmishPreferences::setSlotList(void)
+void SkirmishPreferences::setSlotList()
 {
 	setAsciiString("SlotList", GameInfoToAsciiString(TheSkirmishGameInfo));
 }
 
-UnicodeString SkirmishPreferences::getUserName(void)
+UnicodeString SkirmishPreferences::getUserName()
 {
 	UnicodeString ret;
 	SkirmishPreferences::const_iterator it = find("UserName");
@@ -221,7 +221,7 @@ UnicodeString SkirmishPreferences::getUserName(void)
 	return ret;
 }
 
-Int SkirmishPreferences::getPreferredColor(void)
+Int SkirmishPreferences::getPreferredColor()
 {
 	Int ret;
 	SkirmishPreferences::const_iterator it = find("Color");
@@ -237,7 +237,7 @@ Int SkirmishPreferences::getPreferredColor(void)
 	return ret;
 }
 
-Int SkirmishPreferences::getPreferredFaction(void)
+Int SkirmishPreferences::getPreferredFaction()
 {
 	Int ret;
 	SkirmishPreferences::const_iterator it = find("PlayerTemplate");
@@ -262,9 +262,9 @@ Int SkirmishPreferences::getPreferredFaction(void)
 	return ret;
 }
 
-Bool SkirmishPreferences::usesSystemMapDir(void)
+Bool SkirmishPreferences::usesSystemMapDir()
 {
-	OptionPreferences::const_iterator it = find("UseSystemMapDir");
+	SkirmishPreferences::const_iterator it = find("UseSystemMapDir");
 	if (it == end())
 		return TRUE;
 
@@ -274,7 +274,7 @@ Bool SkirmishPreferences::usesSystemMapDir(void)
 	return FALSE;
 }
 
-AsciiString SkirmishPreferences::getPreferredMap(void)
+AsciiString SkirmishPreferences::getPreferredMap()
 {
 	AsciiString ret;
 	SkirmishPreferences::const_iterator it = find("Map");
@@ -297,7 +297,7 @@ AsciiString SkirmishPreferences::getPreferredMap(void)
 
 static const char superweaponRestrictionKey[] = "SuperweaponRestrict";
 
-Bool SkirmishPreferences::getSuperweaponRestricted(void) const
+Bool SkirmishPreferences::getSuperweaponRestricted() const
 {
   const_iterator it = find(superweaponRestrictionKey);
   if (it == end())
@@ -314,7 +314,7 @@ void SkirmishPreferences::setSuperweaponRestricted( Bool superweaponRestricted )
 }
 
 static const char startingCashKey[] = "StartingCash";
-Money SkirmishPreferences::getStartingCash(void) const
+Money SkirmishPreferences::getStartingCash() const
 {
   const_iterator it = find(startingCashKey);
   if (it == end())
@@ -339,7 +339,7 @@ void SkirmishPreferences::setStartingCash( const Money & startingCash )
 
 
 
-Bool SkirmishPreferences::write(void)
+Bool SkirmishPreferences::write()
 {
 	if (!TheSkirmishGameInfo)
 		return FALSE;
@@ -415,7 +415,7 @@ void setFPSTextBox( Int sliderPos )
 	GadgetStaticTextSetText(staticTextGameSpeed, text);
 }
 
-void reallyDoStart( void )
+void reallyDoStart()
 {
 	if (TheGameLogic->isInGame())
 		TheGameLogic->clearGameData(FALSE);
@@ -462,7 +462,7 @@ void reallyDoStart( void )
 }
 
 Bool sandboxOk = FALSE;
-static void startPressed(void)
+static void startPressed()
 {
 
 	BOOL isReady = FALSE;
@@ -750,7 +750,7 @@ void positionStartSpots( AsciiString mapName, GameWindow *buttonMapStartPosition
 			}
 			else
 			{
-				DEBUG_ASSERTCRASH(FALSE,("positionStartSpots:: someone messed with the map cash.  We couldn't find waypoint <%s> in map <%s>", waypointName.str(),lowerMap.str()));
+				DEBUG_CRASH(("positionStartSpots:: someone messed with the map cash.  We couldn't find waypoint <%s> in map <%s>", waypointName.str(),lowerMap.str()));
 			}
 		}
 		// hide the rest
@@ -1020,7 +1020,7 @@ static void handleLimitSuperweaponsClick()
 //-------------------------------------------------------------------------------------------------
 /** Initialize the Gadgets Options Menu */
 //-------------------------------------------------------------------------------------------------
-void InitSkirmishGameGadgets( void )
+void InitSkirmishGameGadgets()
 {
 	//Initialize the gadget IDs
 	parentSkirmishGameOptionsID = TheNameKeyGenerator->nameToKey( "SkirmishGameOptionsMenu.wnd:SkirmishGameOptionsMenuParent" );
@@ -1145,7 +1145,7 @@ void InitSkirmishGameGadgets( void )
 	populateSkirmishBattleHonors();
 }
 
-void skirmishUpdateSlotList( void )
+void skirmishUpdateSlotList()
 {
   if(doUpdateSlotList)
   {
@@ -1166,8 +1166,8 @@ void skirmishUpdateSlotList( void )
     doUpdateSlotList = TRUE;
   }
 }
-void updateSkirmishGameOptions( void );
-void skirmishPositionStartSpots( void )
+void updateSkirmishGameOptions();
+void skirmishPositionStartSpots()
 {
 	positionStartSpots( TheSkirmishGameInfo, buttonMapStartPosition, windowMap);
 
@@ -1176,7 +1176,7 @@ void skirmishPositionStartSpots( void )
 //-------------------------------------------------------------------------------------------------
 /** Init TextEntryMapDisplay */
 //-------------------------------------------------------------------------------------------------
-void initSkirmishGameOptions( void )
+void initSkirmishGameOptions()
 {
 
 }
@@ -1204,7 +1204,7 @@ static const char *perPlayerGadgetsToHide[] =
 //-------------------------------------------------------------------------------------------------
 /** Update options on screen */
 //-------------------------------------------------------------------------------------------------
-void updateSkirmishGameOptions( void )
+void updateSkirmishGameOptions()
 {
 	Bool isSkirmish = TRUE;
 	const MapMetaData *md = TheMapCache->findMap(TheSkirmishGameInfo->getMap());
@@ -1748,7 +1748,7 @@ WindowMsgHandledType SkirmishGameOptionsMenuSystem( GameWindow *window, Unsigned
 	return MSG_HANDLED;
 }
 
-void populateSkirmishBattleHonors(void)
+void populateSkirmishBattleHonors()
 {
 	GameWindow *list = TheWindowManager->winGetWindowFromId(nullptr, NAMEKEY("SkirmishGameOptionsMenu.wnd:ListboxInfo"));
 	if (!list)

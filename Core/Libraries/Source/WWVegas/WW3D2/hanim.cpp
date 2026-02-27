@@ -55,7 +55,7 @@
 */
 
 
-NamedPivotMapClass::~NamedPivotMapClass(void)
+NamedPivotMapClass::~NamedPivotMapClass()
 {
 }
 
@@ -140,7 +140,7 @@ void HAnimComboDataClass::Copy(const HAnimComboDataClass *src)
 	}
 }
 
-HAnimComboDataClass::~HAnimComboDataClass(void)
+HAnimComboDataClass::~HAnimComboDataClass()
 {
 	if(HAnim)
 		HAnim->Release_Ref();
@@ -148,7 +148,7 @@ HAnimComboDataClass::~HAnimComboDataClass(void)
 		PivotMap->Release_Ref();
 }
 
-void HAnimComboDataClass::Clear(void)
+void HAnimComboDataClass::Clear()
 {
 	if ( HAnim != nullptr ) {
 		HAnim->Release_Ref();
@@ -195,7 +195,7 @@ void HAnimComboDataClass::Set_Pivot_Map(PivotMapClass *map)
 **	This function will replace the current pivot map (if any) with another pivot map that is
 ** set to 1 for only those pivot indices that actually have data.
 */
-void HAnimComboDataClass::Build_Active_Pivot_Map(void)
+void HAnimComboDataClass::Build_Active_Pivot_Map()
 {
 	if ( PivotMap != nullptr ) {
 		PivotMap->Release_Ref();
@@ -227,7 +227,7 @@ void HAnimComboDataClass::Build_Active_Pivot_Map(void)
 **
 */
 
-HAnimComboClass::HAnimComboClass(void)
+HAnimComboClass::HAnimComboClass()
 {}
 
 HAnimComboClass::HAnimComboClass( int num_animations )
@@ -240,13 +240,13 @@ HAnimComboClass::HAnimComboClass( int num_animations )
 }
 
 
-HAnimComboClass::~HAnimComboClass(void)
+HAnimComboClass::~HAnimComboClass()
 {
 	Reset();
 }
 
 
-void	HAnimComboClass::Clear( void )
+void	HAnimComboClass::Clear()
 {
 	int numAnimations = HAnimComboData.Count();
 	while ( numAnimations-- ) {
@@ -256,7 +256,7 @@ void	HAnimComboClass::Clear( void )
 	}
 }
 
-void	HAnimComboClass::Reset( void )
+void	HAnimComboClass::Reset()
 {
 	int numAnimations = HAnimComboData.Count();
 	while ( numAnimations-- ) {
@@ -268,7 +268,7 @@ void	HAnimComboClass::Reset( void )
 	HAnimComboData.Reset_Active();
 }
 
-bool	HAnimComboClass::Normalize_Weights(void)
+bool	HAnimComboClass::Normalize_Weights()
 {
 	// NOTE: This can only work if either no anims have pivot weight maps (in which case we will
 	// adjust the anim weights to ensure normalization), or else if all do (in which case we will

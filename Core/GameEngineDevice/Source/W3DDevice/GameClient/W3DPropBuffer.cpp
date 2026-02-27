@@ -99,7 +99,7 @@ void W3DPropBuffer::cull(CameraClass * camera)
 //=============================================================================
 /** Destructor. Releases w3d assets. */
 //=============================================================================
-W3DPropBuffer::~W3DPropBuffer(void)
+W3DPropBuffer::~W3DPropBuffer()
 {
 	clearAllProps();
 	REF_PTR_RELEASE(m_light);
@@ -112,7 +112,7 @@ W3DPropBuffer::~W3DPropBuffer(void)
 /** Constructor. Sets m_initialized to true if it finds the w3d models it needs
 for the props. */
 //=============================================================================
-W3DPropBuffer::W3DPropBuffer(void)
+W3DPropBuffer::W3DPropBuffer()
 {
 	m_initialized = false;
 	m_numProps = 0;
@@ -131,7 +131,7 @@ W3DPropBuffer::W3DPropBuffer(void)
 //=============================================================================
 /** Removes all props. */
 //=============================================================================
-void W3DPropBuffer::clearAllProps(void)
+void W3DPropBuffer::clearAllProps()
 {
 	Int i;
 	for (i=0; i<m_numPropTypes; i++) {
@@ -413,7 +413,7 @@ void W3DPropBuffer::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void W3DPropBuffer::loadPostProcess( void )
+void W3DPropBuffer::loadPostProcess()
 {
 	// empty. jba [8/11/2003]
 }

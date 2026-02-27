@@ -61,21 +61,21 @@ class DirectInputMouse : public Mouse
 
 public:
 
-	DirectInputMouse( void );
-	virtual ~DirectInputMouse( void );
+	DirectInputMouse();
+	virtual ~DirectInputMouse();
 
 	// extended methods from base class
-	virtual void init( void );		///< initialize the direct input mouse, extending functionality
-	virtual void reset( void );		///< reset system
-	virtual void update( void );  ///< update the mouse data, extending functionality
+	virtual void init();		///< initialize the direct input mouse, extending functionality
+	virtual void reset();		///< reset system
+	virtual void update();  ///< update the mouse data, extending functionality
 	virtual void setPosition( Int x, Int y );  ///< set position for mouse
 
-	virtual void setMouseLimits( void );  ///< update the limit extents the mouse can move in
+	virtual void setMouseLimits();  ///< update the limit extents the mouse can move in
 
 	virtual void setCursor( MouseCursor cursor );  ///< set mouse cursor
 
-	virtual void capture( void );  ///< capture the mouse
-	virtual void releaseCapture( void );  ///< release mouse capture
+	virtual void capture();  ///< capture the mouse
+	virtual void releaseCapture();  ///< release mouse capture
 
 protected:
 
@@ -83,8 +83,8 @@ protected:
 	virtual UnsignedByte getMouseEvent( MouseIO *result, Bool flush );
 
 	// new internal methods for our direct input implementation
-	void openMouse( void );  ///< create the direct input mouse
-	void closeMouse( void );  ///< close and release mouse resources
+	void openMouse();  ///< create the direct input mouse
+	void closeMouse();  ///< close and release mouse resources
 	/// map direct input mouse data to our own format
 	void mapDirectInputMouse( MouseIO *mouse, DIDEVICEOBJECTDATA *mdat );
 

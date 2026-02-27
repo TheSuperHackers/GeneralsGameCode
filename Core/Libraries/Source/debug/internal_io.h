@@ -58,15 +58,15 @@ class DebugIOCon: public DebugIOInterface
   unsigned m_inputRead;
 
 public:
-  explicit DebugIOCon(void);
+  explicit DebugIOCon();
   virtual ~DebugIOCon();
   virtual int Read(char *buf, int maxchar);
   virtual void Write(StringType type, const char *src, const char *str);
-  virtual void EmergencyFlush(void) {}
+  virtual void EmergencyFlush() {}
   virtual void Execute(class Debug& dbg, const char *cmd, bool structuredCmd,
                        unsigned argn, const char * const * argv);
-  static DebugIOInterface *Create(void);
-  virtual void Delete(void);
+  static DebugIOInterface *Create();
+  virtual void Delete();
 };
 
 /// \internal \brief con flat I/O class
@@ -137,7 +137,7 @@ class DebugIOFlat: public DebugIOInterface
 
       \return name of output stream
     */
-    const char *GetFilename(void) { return m_fileName; }
+    const char *GetFilename() { return m_fileName; }
 
     /**
       \brief Writes data to the output stream.
@@ -149,7 +149,7 @@ class DebugIOFlat: public DebugIOInterface
     /**
       \brief Flushes all buffered data.
     */
-    void Flush(void);
+    void Flush();
   };
 
   /// \brief a single split structure
@@ -209,15 +209,15 @@ class DebugIOFlat: public DebugIOInterface
   static void ExpandMagic(const char *src, const char *splitName, char *buf);
 
 public:
-  explicit DebugIOFlat(void);
+  explicit DebugIOFlat();
   virtual ~DebugIOFlat();
   virtual int Read(char *buf, int maxchar) { return 0; }
   virtual void Write(StringType type, const char *src, const char *str);
-  virtual void EmergencyFlush(void);
+  virtual void EmergencyFlush();
   virtual void Execute(class Debug& dbg, const char *cmd, bool structuredCmd,
                        unsigned argn, const char * const * argv);
-  static DebugIOInterface *Create(void);
-  virtual void Delete(void);
+  static DebugIOInterface *Create();
+  virtual void Delete();
 };
 
 /// \internal \brief net debug I/O class
@@ -227,27 +227,27 @@ class DebugIONet: public DebugIOInterface
   HANDLE m_pipe;
 
 public:
-  explicit DebugIONet(void);
+  explicit DebugIONet();
   virtual ~DebugIONet();
   virtual int Read(char *buf, int maxchar);
   virtual void Write(StringType type, const char *src, const char *str);
-  virtual void EmergencyFlush(void);
+  virtual void EmergencyFlush();
   virtual void Execute(class Debug& dbg, const char *cmd, bool structuredCmd,
                        unsigned argn, const char * const * argv);
-  static DebugIOInterface *Create(void);
-  virtual void Delete(void);
+  static DebugIOInterface *Create();
+  virtual void Delete();
 };
 
 /// \internal \brief ods debug I/O class
 class DebugIOOds: public DebugIOInterface
 {
 public:
-  explicit DebugIOOds(void) {}
+  explicit DebugIOOds() {}
   virtual int Read(char *buf, int maxchar) { return 0; }
   virtual void Write(StringType type, const char *src, const char *str);
-  virtual void EmergencyFlush(void) {}
+  virtual void EmergencyFlush() {}
   virtual void Execute(class Debug& dbg, const char *cmd, bool structuredCmd,
                        unsigned argn, const char * const * argv) {}
-  static DebugIOInterface *Create(void);
-  virtual void Delete(void);
+  static DebugIOInterface *Create();
+  virtual void Delete();
 };

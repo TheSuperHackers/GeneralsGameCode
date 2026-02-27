@@ -190,7 +190,7 @@ void WebBrowser::reset()
 {
 }
 
-void WebBrowser::update( void )
+void WebBrowser::update()
 {
 }
 

@@ -86,9 +86,9 @@ public:
 	virtual Bool isRiderChangeContain() const { return TRUE; }
 	virtual const Object *friend_getRider() const;
 
-	virtual Int getContainMax( void ) const;
+	virtual Int getContainMax() const;
 
-	virtual Int getExtraSlotsInUse( void ) { return m_extraSlotsInUse; }///< Transports have the ability to carry guys how take up more than spot.
+	virtual Int getExtraSlotsInUse() { return m_extraSlotsInUse; }///< Transports have the ability to carry guys how take up more than spot.
 
 	virtual Bool isExitBusy() const;	///< Contain style exiters are getting the ability to space out exits, so ask this before reserveDoor as a kind of no-commitment check.
 	virtual ExitDoorType reserveDoorForExit( const ThingTemplate* objType, Object *specificObject );

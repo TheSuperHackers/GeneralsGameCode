@@ -85,7 +85,7 @@ GameFileClass::GameFileClass( char const *filename )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-GameFileClass::GameFileClass( void )
+GameFileClass::GameFileClass()
 {
 
 	m_fileExists = FALSE;
@@ -107,7 +107,7 @@ GameFileClass::~GameFileClass()
 //-------------------------------------------------------------------------------------------------
 /** Gets the file name */
 //-------------------------------------------------------------------------------------------------
-char const * GameFileClass::File_Name( void ) const
+char const * GameFileClass::File_Name() const
 {
 
 	return m_filename;
@@ -332,7 +332,7 @@ bool GameFileClass::Is_Available( int forced )
 //-------------------------------------------------------------------------------------------------
 /** Is the file open. */
 //-------------------------------------------------------------------------------------------------
-bool GameFileClass::Is_Open(void) const
+bool GameFileClass::Is_Open() const
 {
 	return m_theFile != nullptr;
 }
@@ -396,7 +396,7 @@ int GameFileClass::Seek(int pos, int dir)
 //-------------------------------------------------------------------------------------------------
 /** Size. */
 //-------------------------------------------------------------------------------------------------
-int GameFileClass::Size(void)
+int GameFileClass::Size()
 {
 	if (m_theFile) {
 		return m_theFile->size();
@@ -417,7 +417,7 @@ int GameFileClass::Write(void const *buffer, Int len)
 //-------------------------------------------------------------------------------------------------
 /** Close. */
 //-------------------------------------------------------------------------------------------------
-void GameFileClass::Close(void)
+void GameFileClass::Close()
 {
 	if (m_theFile) {
 		m_theFile->close();
@@ -435,7 +435,7 @@ extern W3DFileSystem *TheW3DFileSystem = nullptr;
 /** Constructor.  Creating an instance of this class overrides the default
 W3D file factory.  */
 //-------------------------------------------------------------------------------------------------
-W3DFileSystem::W3DFileSystem(void)
+W3DFileSystem::W3DFileSystem()
 {
 	_TheFileFactory = this; // override the w3d file factory.
 
@@ -448,7 +448,7 @@ W3DFileSystem::W3DFileSystem(void)
 /** Destructor.  This removes the W3D file factory, so shouldn't be done until
 after W3D is shutdown.  */
 //-------------------------------------------------------------------------------------------------
-W3DFileSystem::~W3DFileSystem(void)
+W3DFileSystem::~W3DFileSystem()
 {
 	_TheFileFactory = nullptr; // remove the w3d file factory.
 }

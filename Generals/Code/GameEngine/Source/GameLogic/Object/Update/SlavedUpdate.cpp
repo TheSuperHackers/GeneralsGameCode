@@ -68,7 +68,7 @@ SlavedUpdate::SlavedUpdate( Thing *thing, const ModuleData* moduleData ) : Updat
 }
 
 //-------------------------------------------------------------------------------------------------
-SlavedUpdate::~SlavedUpdate( void )
+SlavedUpdate::~SlavedUpdate()
 {
 }
 
@@ -107,7 +107,7 @@ void SlavedUpdate::onSlaverDamage( const DamageInfo *info )
 
 
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime SlavedUpdate::update( void )
+UpdateSleepTime SlavedUpdate::update()
 {
 /// @todo srj use SLEEPY_UPDATE here
 	if( m_framesToWait > 0 )
@@ -773,7 +773,7 @@ void SlavedUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void SlavedUpdate::loadPostProcess( void )
+void SlavedUpdate::loadPostProcess()
 {
 
 	// extend base class

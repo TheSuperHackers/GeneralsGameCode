@@ -40,7 +40,7 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-TransitionDamageFXModuleData::TransitionDamageFXModuleData( void )
+TransitionDamageFXModuleData::TransitionDamageFXModuleData()
 {
 	Int i, j;
 
@@ -230,7 +230,7 @@ TransitionDamageFX::TransitionDamageFX( Thing *thing, const ModuleData* moduleDa
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-TransitionDamageFX::~TransitionDamageFX( void )
+TransitionDamageFX::~TransitionDamageFX()
 {
 
 }
@@ -238,7 +238,7 @@ TransitionDamageFX::~TransitionDamageFX( void )
 /*
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void TransitionDamageFX::onDelete( void )
+void TransitionDamageFX::onDelete()
 {
 
 	//
@@ -457,7 +457,7 @@ void TransitionDamageFX::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void TransitionDamageFX::loadPostProcess( void )
+void TransitionDamageFX::loadPostProcess()
 {
 
 	// extend base class

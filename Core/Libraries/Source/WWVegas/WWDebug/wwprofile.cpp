@@ -74,7 +74,7 @@ unsigned WWProfile_Get_System_Time()
 	return TIMEGETTIME();
 }
 
-WWINLINE double WWProfile_Get_Inv_Processor_Ticks_Per_Second(void)
+WWINLINE double WWProfile_Get_Inv_Processor_Ticks_Per_Second()
 {
 #ifdef WIN32
 	return CPUDetectClass::Get_Inv_Processor_Ticks_Per_Second();
@@ -167,7 +167,7 @@ WWProfileHierarchyNodeClass::WWProfileHierarchyNodeClass( unsigned id, WWProfile
  * HISTORY:                                                                                    *
  *   9/24/2000  gth : Created.                                                                 *
  *=============================================================================================*/
-WWProfileHierarchyNodeClass::~WWProfileHierarchyNodeClass( void )
+WWProfileHierarchyNodeClass::~WWProfileHierarchyNodeClass()
 {
 	delete Child;
 	delete Sibling;
@@ -278,7 +278,7 @@ WWProfileHierarchyNodeClass * WWProfileHierarchyNodeClass::Get_Sub_Node( const c
  * HISTORY:                                                                                    *
  *   9/24/2000  gth : Created.                                                                 *
  *=============================================================================================*/
-void	WWProfileHierarchyNodeClass::Reset( void )
+void	WWProfileHierarchyNodeClass::Reset()
 {
 	TotalCalls = 0;
 	TotalTime = 0.0f;
@@ -304,7 +304,7 @@ void	WWProfileHierarchyNodeClass::Reset( void )
  * HISTORY:                                                                                    *
  *   9/24/2000  gth : Created.                                                                 *
  *=============================================================================================*/
-void	WWProfileHierarchyNodeClass::Call( void )
+void	WWProfileHierarchyNodeClass::Call()
 {
 	TotalCalls++;
 	if (RecursionCounter++ == 0) {
@@ -325,7 +325,7 @@ void	WWProfileHierarchyNodeClass::Call( void )
  * HISTORY:                                                                                    *
  *   9/24/2000  gth : Created.                                                                 *
  *=============================================================================================*/
-bool	WWProfileHierarchyNodeClass::Return( void )
+bool	WWProfileHierarchyNodeClass::Return()
 {
 	if (--RecursionCounter == 0) {
 		if ( TotalCalls != 0 ) {
@@ -413,7 +413,7 @@ void	WWProfileManager::Start_Root_Profile( const char * name )
  * HISTORY:                                                                                    *
  *   9/24/2000  gth : Created.                                                                 *
  *=============================================================================================*/
-void	WWProfileManager::Stop_Profile( void )
+void	WWProfileManager::Stop_Profile()
 {
 	if (::GetCurrentThreadId() != ThreadID) {
 		return;
@@ -426,7 +426,7 @@ void	WWProfileManager::Stop_Profile( void )
 	}
 }
 
-void	WWProfileManager::Stop_Root_Profile( void )
+void	WWProfileManager::Stop_Root_Profile()
 {
 	if (::GetCurrentThreadId() != ThreadID) {
 		return;
@@ -455,7 +455,7 @@ void	WWProfileManager::Stop_Root_Profile( void )
  * HISTORY:                                                                                    *
  *   9/24/2000  gth : Created.                                                                 *
  *=============================================================================================*/
-void	WWProfileManager::Reset( void )
+void	WWProfileManager::Reset()
 {
 	ThreadID = ::GetCurrentThreadId();
 
@@ -477,7 +477,7 @@ void	WWProfileManager::Reset( void )
  * HISTORY:                                                                                    *
  *   9/24/2000  gth : Created.                                                                 *
  *=============================================================================================*/
-void WWProfileManager::Increment_Frame_Counter( void )
+void WWProfileManager::Increment_Frame_Counter()
 {
 	if (ProfileCollecting) {
 		float time=Get_Time_Since_Reset();
@@ -506,7 +506,7 @@ void WWProfileManager::Increment_Frame_Counter( void )
  * HISTORY:                                                                                    *
  *   9/24/2000  gth : Created.                                                                 *
  *=============================================================================================*/
-float WWProfileManager::Get_Time_Since_Reset( void )
+float WWProfileManager::Get_Time_Since_Reset()
 {
 	__int64 time;
 	WWProfile_Get_Ticks(&time);
@@ -528,7 +528,7 @@ float WWProfileManager::Get_Time_Since_Reset( void )
  * HISTORY:                                                                                    *
  *   9/24/2000  gth : Created.                                                                 *
  *=============================================================================================*/
-WWProfileIterator *	WWProfileManager::Get_Iterator( void )
+WWProfileIterator *	WWProfileManager::Get_Iterator()
 {
 	return W3DNEW WWProfileIterator( &Root );
 }
@@ -854,7 +854,7 @@ void WWProfileManager::Load_Profile_Log(const char* filename, WWProfileHierarchy
  * HISTORY:                                                                                    *
  *   9/24/2000  gth : Created.                                                                 *
  *=============================================================================================*/
-WWProfileInOrderIterator * WWProfileManager::Get_In_Order_Iterator( void )
+WWProfileInOrderIterator * WWProfileManager::Get_In_Order_Iterator()
 {
 	return W3DNEW WWProfileInOrderIterator;
 }
@@ -889,23 +889,23 @@ WWProfileIterator::WWProfileIterator( WWProfileHierarchyNodeClass * start )
 	CurrentChild = CurrentParent->Get_Child();
 }
 
-void	WWProfileIterator::First(void)
+void	WWProfileIterator::First()
 {
 	CurrentChild = CurrentParent->Get_Child();
 }
 
 
-void	WWProfileIterator::Next(void)
+void	WWProfileIterator::Next()
 {
 	CurrentChild = CurrentChild->Get_Sibling();
 }
 
-bool	WWProfileIterator::Is_Done(void)
+bool	WWProfileIterator::Is_Done()
 {
 	return CurrentChild == nullptr;
 }
 
-void	WWProfileIterator::Enter_Child( void )
+void	WWProfileIterator::Enter_Child()
 {
 	CurrentParent = CurrentChild;
 	CurrentChild = CurrentParent->Get_Child();
@@ -925,7 +925,7 @@ void	WWProfileIterator::Enter_Child( int index )
 	}
 }
 
-void	WWProfileIterator::Enter_Parent( void )
+void	WWProfileIterator::Enter_Parent()
 {
 	if ( CurrentParent->Get_Parent() != nullptr ) {
 		CurrentParent = CurrentParent->Get_Parent();
@@ -939,17 +939,17 @@ void	WWProfileIterator::Enter_Parent( void )
 **
 ***************************************************************************************************/
 
-WWProfileInOrderIterator::WWProfileInOrderIterator( void )
+WWProfileInOrderIterator::WWProfileInOrderIterator()
 {
 	CurrentNode = &WWProfileManager::Root;
 }
 
-void	WWProfileInOrderIterator::First(void)
+void	WWProfileInOrderIterator::First()
 {
 	CurrentNode = &WWProfileManager::Root;
 }
 
-void	WWProfileInOrderIterator::Next(void)
+void	WWProfileInOrderIterator::Next()
 {
 	if ( CurrentNode->Get_Child() ) {				// If I have a child, go to child
 		CurrentNode = CurrentNode->Get_Child();
@@ -972,7 +972,7 @@ void	WWProfileInOrderIterator::Next(void)
 	}
 }
 
-bool	WWProfileInOrderIterator::Is_Done(void)
+bool	WWProfileInOrderIterator::Is_Done()
 {
 	return CurrentNode == nullptr;
 }
@@ -986,7 +986,7 @@ WWTimeItClass::WWTimeItClass( const char * name )
 	WWProfile_Get_Ticks( &Time );
 }
 
-WWTimeItClass::~WWTimeItClass( void )
+WWTimeItClass::~WWTimeItClass()
 {
 	__int64 End;
 	WWProfile_Get_Ticks( &End );
@@ -1008,7 +1008,7 @@ WWMeasureItClass::WWMeasureItClass( float * p_result )
 	WWProfile_Get_Ticks( &Time );
 }
 
-WWMeasureItClass::~WWMeasureItClass( void )
+WWMeasureItClass::~WWMeasureItClass()
 {
 	__int64 End;
 	WWProfile_Get_Ticks( &End );
@@ -1115,7 +1115,7 @@ WWProfileHierarchyInfoClass::WWProfileHierarchyInfoClass( const char * name, WWP
  * HISTORY:                                                                                    *
  *   9/24/2000  gth : Created.                                                                 *
  *=============================================================================================*/
-WWProfileHierarchyInfoClass::~WWProfileHierarchyInfoClass( void )
+WWProfileHierarchyInfoClass::~WWProfileHierarchyInfoClass()
 {
 	delete Child;
 	delete Sibling;

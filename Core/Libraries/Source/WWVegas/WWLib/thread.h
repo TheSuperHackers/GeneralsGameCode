@@ -68,7 +68,7 @@ public:
 	bool Is_Running();
 
 	// Gets the name of the thread.
-	const char *Get_Name(void) {return(ThreadName);};
+	const char *Get_Name() {return(ThreadName);};
 
 	// Get info about a registered thread by it's index.
 	static int Get_Thread_By_Index(int index, char *name_ptr = nullptr);

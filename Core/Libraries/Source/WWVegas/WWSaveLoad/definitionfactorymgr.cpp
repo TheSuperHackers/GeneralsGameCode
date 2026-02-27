@@ -176,7 +176,7 @@ DefinitionFactoryMgrClass::Get_Next
 //
 ////////////////////////////////////////////////////////////////////////////
 DefinitionFactoryClass *
-DefinitionFactoryMgrClass::Get_First (void)
+DefinitionFactoryMgrClass::Get_First ()
 {
 	return _FactoryListHead;
 }

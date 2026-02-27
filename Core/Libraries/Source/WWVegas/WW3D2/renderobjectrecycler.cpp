@@ -60,7 +60,7 @@
  * HISTORY:                                                                                    *
  *   4/25/2001  gth : Created.                                                                 *
  *=============================================================================================*/
-void RenderObjectRecyclerClass::Reset(void)
+void RenderObjectRecyclerClass::Reset()
 {
 	InactiveModels.Reset_List();
 }

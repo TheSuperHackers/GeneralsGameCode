@@ -50,22 +50,22 @@ void ProfileHighLevel::Id::SetMax(double max)
     m_idPtr->Maximum(max);
 }
 
-const char *ProfileHighLevel::Id::GetName(void) const
+const char *ProfileHighLevel::Id::GetName() const
 {
   return m_idPtr?m_idPtr->GetName():nullptr;
 }
 
-const char *ProfileHighLevel::Id::GetDescr(void) const
+const char *ProfileHighLevel::Id::GetDescr() const
 {
   return m_idPtr?m_idPtr->GetDescr():nullptr;
 }
 
-const char *ProfileHighLevel::Id::GetUnit(void) const
+const char *ProfileHighLevel::Id::GetUnit() const
 {
   return m_idPtr?m_idPtr->GetUnit():nullptr;
 }
 
-const char *ProfileHighLevel::Id::GetCurrentValue(void) const
+const char *ProfileHighLevel::Id::GetCurrentValue() const
 {
   return m_idPtr?m_idPtr->AsString(m_idPtr->GetCurrentValue()):nullptr;
 }
@@ -78,7 +78,7 @@ const char *ProfileHighLevel::Id::GetValue(unsigned frame) const
   return m_idPtr->AsString(v);
 }
 
-const char *ProfileHighLevel::Id::GetTotalValue(void) const
+const char *ProfileHighLevel::Id::GetTotalValue() const
 {
   return m_idPtr?m_idPtr->AsString(m_idPtr->GetTotalValue()):nullptr;
 }
@@ -214,7 +214,7 @@ const char *ProfileId::AsString(double v) const
   return ret;
 }
 
-int ProfileId::FrameStart(void)
+int ProfileId::FrameStart()
 {
   ProfileFastCS::Lock lock(cs);
 
@@ -281,7 +281,7 @@ void ProfileId::FrameEnd(int which, int mixIndex)
   }
 }
 
-void ProfileId::Shutdown(void)
+void ProfileId::Shutdown()
 {
   if (frameRecordMask)
   {
@@ -335,7 +335,7 @@ bool ProfileHighLevel::FindProfile(const char *name, Id &id)
   return false;
 }
 
-ProfileHighLevel::ProfileHighLevel(void)
+ProfileHighLevel::ProfileHighLevel()
 {
 }
 

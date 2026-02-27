@@ -50,7 +50,7 @@ SpecialAbility::SpecialAbility( Thing *thing, const ModuleData *moduleData )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-SpecialAbility::~SpecialAbility( void )
+SpecialAbility::~SpecialAbility()
 {
 
 }
@@ -128,7 +128,7 @@ void SpecialAbility::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void SpecialAbility::loadPostProcess( void )
+void SpecialAbility::loadPostProcess()
 {
 
 	// extend base class

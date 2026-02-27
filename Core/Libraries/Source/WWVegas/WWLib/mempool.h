@@ -73,13 +73,13 @@ class ObjectPoolClass
 {
 public:
 
-	ObjectPoolClass(void);
-	~ObjectPoolClass(void);
+	ObjectPoolClass();
+	~ObjectPoolClass();
 
-	T *		Allocate_Object(void);
+	T *		Allocate_Object();
 	void		Free_Object(T * obj);
 
-	T *		Allocate_Object_Memory(void);
+	T *		Allocate_Object_Memory();
 	void		Free_Object_Memory(T * obj);
 
 protected:
@@ -121,7 +121,7 @@ protected:
 ** ListNode.cpp:
 ** DEFINE_AUTO_POOL(ListNodeClass);
 **
-** function do_stuff(void) {
+** function do_stuff() {
 **		ListNodeClass * node = new ListNodeClass;
 **		delete node;
 ** }
@@ -175,7 +175,7 @@ ObjectPoolClass<T,BLOCKSIZE> AutoPoolClass<T,BLOCKSIZE>::Allocator = {}
  * HISTORY:                                                                                    *
  *=============================================================================================*/
 template<class T,int BLOCK_SIZE>
-ObjectPoolClass<T,BLOCK_SIZE>::ObjectPoolClass(void) :
+ObjectPoolClass<T,BLOCK_SIZE>::ObjectPoolClass() :
 	FreeListHead(nullptr),
 	BlockListHead(nullptr),
 	FreeObjectCount(0),
@@ -197,7 +197,7 @@ ObjectPoolClass<T,BLOCK_SIZE>::ObjectPoolClass(void) :
  * HISTORY:                                                                                    *
  *=============================================================================================*/
 template<class T,int BLOCK_SIZE>
-ObjectPoolClass<T,BLOCK_SIZE>::~ObjectPoolClass(void)
+ObjectPoolClass<T,BLOCK_SIZE>::~ObjectPoolClass()
 {
 	// assert that the user gave back all of the memory he was using
 	WWASSERT(FreeObjectCount == TotalObjectCount);
@@ -230,7 +230,7 @@ ObjectPoolClass<T,BLOCK_SIZE>::~ObjectPoolClass(void)
  *   7/29/99    GTH : Created.                                                                 *
  *=============================================================================================*/
 template<class T,int BLOCK_SIZE>
-T * ObjectPoolClass<T,BLOCK_SIZE>::Allocate_Object(void)
+T * ObjectPoolClass<T,BLOCK_SIZE>::Allocate_Object()
 {
 	// allocate memory for the object
 	T * obj = Allocate_Object_Memory();
@@ -274,7 +274,7 @@ void ObjectPoolClass<T,BLOCK_SIZE>::Free_Object(T * obj)
  *   7/29/99    GTH : Created.                                                                 *
  *=============================================================================================*/
 template<class T,int BLOCK_SIZE>
-T * ObjectPoolClass<T,BLOCK_SIZE>::Allocate_Object_Memory(void)
+T * ObjectPoolClass<T,BLOCK_SIZE>::Allocate_Object_Memory()
 {
 	FastCriticalSectionClass::LockClass lock(ObjectPoolCS);
 

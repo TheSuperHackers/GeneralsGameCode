@@ -35,7 +35,7 @@ void GPRecvBuddyMessageCallback(GPConnection * pconnection, GPRecvBuddyMessageAr
 void GPRecvBuddyStatusCallback(GPConnection * connection, GPRecvBuddyStatusArg * arg, void * param);
 void GPErrorCallback(GPConnection * pconnection, GPErrorArg * arg, void * param);
 void GPConnectCallback(GPConnection * pconnection, GPConnectResponseArg * arg, void * param);
-void GameSpyUpdateBuddyOverlay(void);
+void GameSpyUpdateBuddyOverlay();
 
 extern GPConnection *TheGPConnection;
 

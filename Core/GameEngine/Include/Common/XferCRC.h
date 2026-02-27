@@ -42,20 +42,20 @@ class XferCRC : public Xfer
 
 public:
 
-	XferCRC( void );
-	virtual ~XferCRC( void );
+	XferCRC();
+	virtual ~XferCRC();
 
 	// Xfer methods
 	virtual void open( AsciiString identifier );		///< start a CRC session with this xfer instance
-	virtual void close( void );											///< stop CRC session
-	virtual Int beginBlock( void );									///< start block event
-	virtual void endBlock( void );									///< end block event
+	virtual void close();											///< stop CRC session
+	virtual Int beginBlock();									///< start block event
+	virtual void endBlock();									///< end block event
 	virtual void skip( Int dataSize );							///< skip xfer event
 
 	virtual void xferSnapshot( Snapshot *snapshot );		///< entry point for xfering a snapshot
 
 	// Xfer CRC methods
-	virtual UnsignedInt getCRC( void );										///< get computed CRC in network byte order
+	virtual UnsignedInt getCRC();										///< get computed CRC in network byte order
 
 protected:
 
