@@ -1300,7 +1300,6 @@ Bool RecorderClass::playbackFile(AsciiString filename)
 		if( maxFPS != 0 )
 			msg->appendIntegerArgument(maxFPS);
 		TheCommandList->appendMessage( msg );
-		//InitGameLogicRandom( m_gameInfo.getSeed());
 		InitRandom( m_gameInfo.getSeed() );
 	}
 
