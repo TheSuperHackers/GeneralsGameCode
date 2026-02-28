@@ -194,22 +194,22 @@ public:
 	virtual void setOkToAdjustHeight( Bool val ) { m_okToAdjustHeight = val; }	///< Set this to adjust camera height
 
 	// TheSuperHackers @info Functions to call for user camera controls, not by the scripted camera.
-	Bool userSetPosition(const Coord3D *pos);
-	Bool userSetAngle(Real radians);
-	Bool userSetAngleToDefault();
-	Bool userSetPitch(Real radians);
-	Bool userSetPitchToDefault();
-	Bool userZoom(Real height);
-	Bool userSetZoom(Real z);
-	Bool userSetZoomToDefault();
-	Bool userSetFieldOfView(Real angle);
-	Bool userLookAt(const Coord3D *o);
-	Bool userScrollBy(const Coord2D *delta);
-	Bool userSetLocation(const ViewLocation *location);
-	Bool userSetCameraLock(ObjectID id);
-	Bool userSetCameraLockDrawable(Drawable *drawable);
+	Bool userSetPosition(const Coord3D *pos)             { return doUserAction(&View::setPosition, pos); }
+	Bool userSetAngle(Real radians)                      { return doUserAction(&View::setAngle, radians); }
+	Bool userSetAngleToDefault()                         { return doUserAction(&View::setAngleToDefault); }
+	Bool userSetPitch(Real radians)                      { return doUserAction(&View::setPitch, radians); }
+	Bool userSetPitchToDefault()                         { return doUserAction(&View::setPitchToDefault); }
+	Bool userZoom(Real height)                           { return doUserAction(&View::zoom, height); }
+	Bool userSetZoom(Real z)                             { return doUserAction(&View::setZoom, z); }
+	Bool userSetZoomToDefault()                          { return doUserAction(&View::setZoomToDefault); }
+	Bool userSetFieldOfView(Real angle)                  { return doUserAction(&View::setFieldOfView, angle); }
+	Bool userLookAt(const Coord3D *o)                    { return doUserAction(&View::lookAt, o); }
+	Bool userScrollBy(const Coord2D *delta)              { return doUserAction(&View::scrollBy, delta); }
+	Bool userSetLocation(const ViewLocation *location)   { return doUserAction(&View::setLocation, location); }
+	Bool userSetCameraLock(ObjectID id)                  { return doUserAction(&View::setCameraLock, id); }
+	Bool userSetCameraLockDrawable(Drawable *drawable)   { return doUserAction(&View::setCameraLockDrawable, drawable); }
 
-	void lockUserControlUntilFrame(UnsignedInt frame); ///< Locks the user control over camera until the given frame is reached.
+	void lockUserControlUntilFrame(UnsignedInt frame) { m_userControlLockedUntilFrame = frame; } ///< Locks the user control over camera until the given frame is reached.
 	Bool isUserControlLocked() const;
 
 	// for debugging
@@ -265,6 +265,30 @@ protected:
 	virtual View *getNextView() { return m_next; }				///< Return next view in the set
 
 	virtual void setUserControlled(Bool value) { m_isUserControlled = value; }
+
+private:
+
+	template<typename Function>
+	Bool doUserAction(Function function)
+	{
+		if (isUserControlLocked())
+			return false;
+		stopDoingScriptedCamera();
+		setUserControlled(true);
+		(this->*function)();
+		return true;
+	}
+
+	template<typename Function, typename Arg1>
+	Bool doUserAction(Function function, Arg1 arg1)
+	{
+		if (isUserControlLocked())
+			return false;
+		stopDoingScriptedCamera();
+		setUserControlled(true);
+		(this->*function)(arg1);
+		return true;
+	}
 
 protected:
 
