@@ -162,7 +162,7 @@ public:
 	virtual void setHeight( Int height );
 	virtual void setOrigin( Int x, Int y);			///< Sets location of top-left view corner on display
 
-	virtual void scrollBy( Coord2D *delta );  ///< Shift the view by the given delta
+	virtual void scrollBy( const Coord2D *delta );  ///< Shift the view by the given delta
 
 	virtual void forceRedraw();
 
@@ -289,6 +289,7 @@ private:
 	void buildCameraTransform(Matrix3D *transform); ///< calculate (but do not set) the transform matrix of m_3DCamera, based on m_pos & m_angle
 	void calcCameraAreaConstraints(); ///< Recalculates the camera area constraints
 	Bool isWithinCameraHeightConstraints() const;
+	virtual void setUserControlled(Bool value);
 	Bool hasScriptedState(ScriptedState state) const;
 	void addScriptedState(ScriptedState state);
 	void removeScriptedState(ScriptedState state);

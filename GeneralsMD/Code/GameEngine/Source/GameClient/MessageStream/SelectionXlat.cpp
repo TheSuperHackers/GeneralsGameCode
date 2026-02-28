@@ -1103,7 +1103,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 							{
 								// if there's someone in the group, center the camera on them.
 								Drawable* drawable = objlist[numObjs - 1]->getDrawable();
-								TheTacticalView->lookAt( drawable->getPosition() );
+								TheTacticalView->userLookAt( drawable->getPosition() );
 								performSelection = !TheInGameUI->areAllObjectsSelected( objlist );
 							}
 						}
@@ -1179,7 +1179,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 							if (numObjs > 0)
 							{
 								// if there's someone in the group, center the camera on them.
-								TheTacticalView->lookAt( objlist[numObjs-1]->getDrawable()->getPosition() );
+								TheTacticalView->userLookAt( objlist[numObjs-1]->getDrawable()->getPosition() );
 							}
 						}
 					}
@@ -1255,7 +1255,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 						if (numObjs > 0)
 						{
 							// if there's someone in the group, center the camera on them.
-							TheTacticalView->lookAt( objlist[ numObjs-1 ]->getDrawable()->getPosition() );
+							TheTacticalView->userLookAt( objlist[ numObjs-1 ]->getDrawable()->getPosition() );
 						}
 					}
 				}

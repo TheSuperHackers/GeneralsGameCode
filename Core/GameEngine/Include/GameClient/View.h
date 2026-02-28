@@ -105,7 +105,7 @@ public:
 	virtual UnsignedInt getID() { return m_id; }
 
 	virtual void setZoomLimited( Bool limit ) { m_zoomLimited = limit; }			///< limit the zoom height
-	virtual Bool isZoomLimited() { return m_zoomLimited; }							///< get status of zoom limit
+	virtual Bool isZoomLimited() const { return m_zoomLimited; }							///< get status of zoom limit
 
 	/// pick drawable given the screen pixel coords.  If force attack, picks bridges as well.
 	virtual Drawable *pickDrawable( const ICoord2D *screen, Bool forceAttack, PickType pickType ) = 0;
@@ -128,12 +128,11 @@ public:
 	virtual void setOrigin( Int x, Int y) { m_originX=x; m_originY=y;}				///< Sets location of top-left view corner on display
 	virtual void getOrigin( Int *x, Int *y) { *x=m_originX; *y=m_originY;}			///< Return location of top-left view corner on display
 
-	virtual void lockViewUntilFrame(UnsignedInt frame); ///< Locks the current view until the given frame is reached.
 	virtual void forceRedraw() = 0;
 
 	virtual void lookAt( const Coord3D *o );														///< Center the view on the given coordinate
 	virtual void initHeightForMap() {};														///<  Init the camera height for the map at the current position.
-	virtual void scrollBy( Coord2D *delta );														///< Shift the view by the given delta
+	virtual void scrollBy( const Coord2D *delta );														///< Shift the view by the given delta
 
 	virtual void moveCameraTo(const Coord3D *o, Int frames, Int shutter, Bool orient, Real easeIn=0.0f, Real easeOut=0.0f) { lookAt( o ); }
 	virtual void moveCameraAlongWaypointPath(Waypoint *way, Int frames, Int shutter, Bool orient, Real easeIn=0.0f, Real easeOut=0.0f) { }
@@ -194,6 +193,25 @@ public:
 	virtual void setZoomToDefault() { m_zoom  = 1.0f; } ///< Set zoom to default value
 	virtual void setOkToAdjustHeight( Bool val ) { m_okToAdjustHeight = val; }	///< Set this to adjust camera height
 
+	// TheSuperHackers @info Functions to call for user camera controls, not by the scripted camera.
+	Bool userSetPosition(const Coord3D *pos);
+	Bool userSetAngle(Real radians);
+	Bool userSetAngleToDefault();
+	Bool userSetPitch(Real radians);
+	Bool userSetPitchToDefault();
+	Bool userZoom(Real height);
+	Bool userSetZoom(Real z);
+	Bool userSetZoomToDefault();
+	Bool userSetFieldOfView(Real angle);
+	Bool userLookAt(const Coord3D *o);
+	Bool userScrollBy(const Coord2D *delta);
+	Bool userSetLocation(const ViewLocation *location);
+	Bool userSetCameraLock(ObjectID id);
+	Bool userSetCameraLockDrawable(Drawable *drawable);
+
+	void lockUserControlUntilFrame(UnsignedInt frame); ///< Locks the user control over camera until the given frame is reached.
+	Bool isUserControlLocked() const;
+
 	// for debugging
 	virtual Real getTerrainHeightAtPivot() { return m_terrainHeightAtPivot; }
 	virtual Real getCurrentHeightAboveGround() { return m_currentHeightAboveGround; }
@@ -246,6 +264,8 @@ protected:
 	virtual View *prependViewToList( View *list );							///< Prepend this view to the given list, return the new list
 	virtual View *getNextView() { return m_next; }				///< Return next view in the set
 
+	virtual void setUserControlled(Bool value) { m_isUserControlled = value; }
+
 protected:
 
 	View *m_next;																								///< List links used by the Display class
@@ -253,7 +273,8 @@ protected:
 	UnsignedInt m_id;																						///< The ID of this view
 	static UnsignedInt m_idNext;																///< Used for allocating view ID's for all views
 
-	UnsignedInt m_viewLockedUntilFrame;
+	UnsignedInt m_userControlLockedUntilFrame;									///< Locks the user control over camera until the given frame is reached
+	Bool m_isUserControlled;																		///< True if the user moved the camera last, false if the scripted camera moved the camera last
 
 	Coord3D m_pos;																							///< Pivot of the camera, in world coordinates // TheSuperHackers @todo Make this Coord2D or use the Z component
 	Int m_width, m_height;																			///< Dimensions of the view

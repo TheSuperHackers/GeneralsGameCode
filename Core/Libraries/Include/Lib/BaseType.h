@@ -211,6 +211,7 @@ struct Coord2D
 	Real x, y;
 
 	Real length() const { return (Real)sqrt( x*x + y*y ); }
+	Real lengthSqr() const { return x*x + y*y; }
 
 	void normalize()
 	{

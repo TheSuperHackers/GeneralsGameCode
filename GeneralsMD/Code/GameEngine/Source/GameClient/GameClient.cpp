@@ -611,8 +611,7 @@ void GameClient::update()
     Drawable *draw = TheInGameUI->getFirstSelectedDrawable();
     if ( draw )
     {
-      const Coord3D *pos = draw->getPosition();
-      TheTacticalView->lookAt( pos );
+      TheTacticalView->userLookAt( draw->getPosition() );
     }
     else
       TheInGameUI->setCameraTrackingDrawable( FALSE );

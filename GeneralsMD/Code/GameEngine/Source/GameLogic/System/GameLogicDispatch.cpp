@@ -1894,13 +1894,20 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 					const Real pitch = msg->getArgument( 2 )->real;
 					const Real zoom = msg->getArgument( 3 )->real;
 
-					TheTacticalView->setPosition(&pos);
-					TheTacticalView->setAngle(angle);
-					TheTacticalView->setPitch(pitch);
-					TheTacticalView->setZoom(zoom);
+					// TheSuperHackers @info Definitely call in user mode to ensure the camera operates with auto-zoom
+					// over terrain elevations, because the Replay Camera does not store the absolute camera location,
+					// but key parameters relative to the terrain height at the camera pivot.
+					TheTacticalView->userSetPosition(&pos);
+					TheTacticalView->userSetAngle(angle);
+					TheTacticalView->userSetPitch(pitch);
+					TheTacticalView->userSetZoom(zoom);
+
+					// TheSuperHackers @fix Make sure there is no scrolling ever.
+					const Coord2D scroll = {0, 0};
+					TheTacticalView->userScrollBy(&scroll);
 
 					// TheSuperHackers @fix xezon 18/09/2025 Lock the new location to avoid user input from changing the camera in this frame.
-					TheTacticalView->lockViewUntilFrame( getFrame() + 1 );
+					TheTacticalView->lockUserControlUntilFrame( getFrame() + 1 );
 
 					if (!TheLookAtTranslator->hasMouseMovedRecently())
 					{

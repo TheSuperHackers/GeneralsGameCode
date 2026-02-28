@@ -2097,20 +2097,20 @@ void InGameUI::update()
 
 		if( m_cameraRotatingLeft && !m_cameraRotatingRight )
 		{
-			TheTacticalView->setAngle( TheTacticalView->getAngle() - rotateAngle );
+			TheTacticalView->userSetAngle( TheTacticalView->getAngle() - rotateAngle );
 		}
 		else if( m_cameraRotatingRight && !m_cameraRotatingLeft )
 		{
-			TheTacticalView->setAngle( TheTacticalView->getAngle() + rotateAngle );
+			TheTacticalView->userSetAngle( TheTacticalView->getAngle() + rotateAngle );
 		}
 
 		if( m_cameraZoomingIn && !m_cameraZoomingOut )
 		{
-			TheTacticalView->zoom( -zoomHeight );
+			TheTacticalView->userZoom( -zoomHeight );
 		}
 		else if( m_cameraZoomingOut && !m_cameraZoomingIn )
 		{
-			TheTacticalView->zoom( +zoomHeight );
+			TheTacticalView->userZoom( +zoomHeight );
 		}
 	}
 
@@ -3115,8 +3115,8 @@ void InGameUI::setScrolling( Bool isScrolling )
 		setMouseCursor( Mouse::SCROLL );
 
 		// break any camera locks
-		TheTacticalView->setCameraLock( INVALID_ID );
-		TheTacticalView->setCameraLockDrawable( nullptr );
+		TheTacticalView->userSetCameraLock( INVALID_ID );
+		TheTacticalView->userSetCameraLockDrawable( nullptr );
 	}
 	else
 	{
@@ -5904,7 +5904,7 @@ void InGameUI::selectNextIdleWorker()
 				}*/
 
 		// center on the unit
-		TheTacticalView->lookAt(selectThisObject->getPosition());
+		TheTacticalView->userLookAt(selectThisObject->getPosition());
 	}
 }
 
