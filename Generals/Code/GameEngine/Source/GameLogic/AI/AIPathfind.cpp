@@ -2606,30 +2606,35 @@ void PathfindZoneManager::calculateZones( PathfindCell **map, PathfindLayer laye
 #endif
 #endif
 	// Now map the zones in the map back into the collapsed zones.
-	for( j=globalBounds.lo.y; j<=globalBounds.hi.y; j++ )	{
-		for( i=globalBounds.lo.x; i<=globalBounds.hi.x; i++ )	{
-			map[i][j].setZone(collapsedZones[map[i][j].getZone()]);
+	for( j=globalBounds.lo.y; j<=globalBounds.hi.y; j++ ) {
+		for( i=globalBounds.lo.x; i<=globalBounds.hi.x; i++ ) {
+			PathfindCell &cell = map[i][j];
+			cell.setZone(collapsedZones[cell.getZone()]);
 			if (map[i][j].getZone()==0) {
 				DEBUG_CRASH(("Zone not set cell %d, %d", i, j));
 			}
 		}
 	}
 	for (i=0; i<=LAYER_LAST; i++) {
-		Int zone = collapsedZones[layers[i].getZone()];
+		PathfindLayer &r_thisLayer = layers[i];
+
+		Int zone = collapsedZones[r_thisLayer.getZone()];
 		if (zone == 0) {
 			zone = m_maxZone;
 			m_maxZone++;
 		}
-		layers[i].setZone( zone );
+
+		r_thisLayer.setZone( zone );
 		if (!layers[i].isUnused() && !layers[i].isDestroyed() && layers[i].getZone()==0) {
 			DEBUG_CRASH(("Zone not set Layer %d", i));
 		}
-		layers[i].applyZone();
-		if (!layers[i].isUnused() && !layers[i].isDestroyed()) {
+		r_thisLayer.applyZone();
+
+		if (!r_thisLayer.isUnused() && !r_thisLayer.isDestroyed()) {
 			ICoord2D ndx;
-			layers[i].getStartCellIndex(&ndx);
+			r_thisLayer.getStartCellIndex(&ndx);
 			setBridge(ndx.x, ndx.y, true);
-			layers[i].getEndCellIndex(&ndx);
+			r_thisLayer.getEndCellIndex(&ndx);
 			setBridge(ndx.x, ndx.y, true);
 		}
 	}
@@ -2675,64 +2680,72 @@ void PathfindZoneManager::calculateZones( PathfindCell **map, PathfindLayer laye
 		m_hierarchicalZones[i] = i;
 	}
 
-	for( j=globalBounds.lo.y; j<=globalBounds.hi.y; j++ )	{
-		for( i=globalBounds.lo.x; i<=globalBounds.hi.x; i++ )	{
-			if ( (map[i][j].getConnectLayer() > LAYER_GROUND) &&
-				(map[i][j].getType() == PathfindCell::CELL_CLEAR) ) {
-				PathfindLayer *layer = layers + map[i][j].getConnectLayer();
-				resolveZones(map[i][j].getZone(), layer->getZone(), m_hierarchicalZones, m_maxZone);
+	for( j=globalBounds.lo.y; j<=globalBounds.hi.y; j++ ) {
+		for( i=globalBounds.lo.x; i<=globalBounds.hi.x; i++ ) {
+			PathfindCell &r_thisCell = map[i][j];
+
+			if ( (r_thisCell.getConnectLayer() > LAYER_GROUND) &&
+				(r_thisCell.getType() == PathfindCell::CELL_CLEAR) ) {
+				PathfindLayer *layer = layers + r_thisCell.getConnectLayer();
+				resolveZones(r_thisCell.getZone(), layer->getZone(), m_hierarchicalZones, m_maxZone);
 			}
-			if (i>globalBounds.lo.x && map[i][j].getZone()!=map[i-1][j].getZone()) {
-				if (map[i][j].getType() == map[i-1][j].getType()) {
-					applyZone(map[i][j], map[i-1][j], m_hierarchicalZones, m_maxZone);
+
+			if ( i > globalBounds.lo.x && r_thisCell.getZone() != map[i-1][j].getZone() ) {
+				const PathfindCell &r_leftCell = map[i-1][j];
+
+				if (r_thisCell.getType() == r_leftCell.getType()) {
+					applyZone(r_thisCell, r_leftCell, m_hierarchicalZones, m_maxZone);
 				}
-				if (waterGround(map[i][j], map[i-1][j])) {
-					applyZone(map[i][j], map[i-1][j], m_groundWaterZones, m_maxZone);
+				if (waterGround(r_thisCell, r_leftCell)) {
+					applyZone(r_thisCell, r_leftCell, m_groundWaterZones, m_maxZone);
 				}
-				if (groundRubble(map[i][j], map[i-1][j])) {
-					Int zone1 = map[i][j].getZone();
-					Int zone2 = map[i-1][j].getZone();
+				if (groundRubble(r_thisCell, r_leftCell)) {
+					Int zone1 = r_thisCell.getZone();
+					Int zone2 = r_leftCell.getZone();
 					if (m_terrainZones[zone1] != m_terrainZones[zone2]) {
 						//DEBUG_LOG(("Matching terrain zone %d to %d.", zone1, zone2));
 					}
-					applyZone(map[i][j], map[i-1][j], m_groundRubbleZones, m_maxZone);
+					applyZone(r_thisCell, r_leftCell, m_groundRubbleZones, m_maxZone);
 				}
-				if (groundCliff(map[i][j], map[i-1][j])) {
-					applyZone(map[i][j], map[i-1][j], m_groundCliffZones, m_maxZone);
+				if (groundCliff(r_thisCell, r_leftCell)) {
+					applyZone(r_thisCell, r_leftCell, m_groundCliffZones, m_maxZone);
 				}
-				if (terrain(map[i][j], map[i-1][j])) {
-					applyZone(map[i][j], map[i-1][j], m_terrainZones, m_maxZone);
+				if (terrain(r_thisCell, r_leftCell)) {
+					applyZone(r_thisCell, r_leftCell, m_terrainZones, m_maxZone);
 				}
-				if (crusherGround(map[i][j], map[i-1][j])) {
-					applyZone(map[i][j], map[i-1][j], m_crusherZones, m_maxZone);
+				if (crusherGround(r_thisCell, r_leftCell)) {
+					applyZone(r_thisCell, r_leftCell, m_crusherZones, m_maxZone);
 				}
 			}
-			if (j>globalBounds.lo.y && map[i][j].getZone()!=map[i][j-1].getZone()) {
-				if (map[i][j].getType() == map[i][j-1].getType()) {
-					applyZone(map[i][j], map[i][j-1], m_hierarchicalZones, m_maxZone);
+
+			if (j>globalBounds.lo.y && r_thisCell.getZone()!=map[i][j-1].getZone()) {
+				const PathfindCell &r_topCell = map[i][j-1];
+
+				if (r_thisCell.getType() == r_topCell.getType()) {
+					applyZone(r_thisCell, r_topCell, m_hierarchicalZones, m_maxZone);
 				}
-				if (waterGround(map[i][j],map[i][j-1])) {
-					applyZone(map[i][j], map[i][j-1], m_groundWaterZones, m_maxZone);
+				if (waterGround(r_thisCell, r_topCell)) {
+					applyZone(r_thisCell, r_topCell, m_groundWaterZones, m_maxZone);
 				}
-				if (groundRubble(map[i][j], map[i][j-1])) {
-					Int zone1 = map[i][j].getZone();
-					Int zone2 = map[i][j-1].getZone();
+				if (groundRubble(r_thisCell, r_topCell)) {
+					Int zone1 = r_thisCell.getZone();
+					Int zone2 = r_topCell.getZone();
 					if (m_terrainZones[zone1] != m_terrainZones[zone2]) {
 						//DEBUG_LOG(("Matching terrain zone %d to %d.", zone1, zone2));
 					}
-					applyZone(map[i][j], map[i][j-1], m_groundRubbleZones, m_maxZone);
+					applyZone(r_thisCell, r_topCell, m_groundRubbleZones, m_maxZone);
 				}
-				if (groundCliff(map[i][j],map[i][j-1])) {
-					applyZone(map[i][j], map[i][j-1], m_groundCliffZones, m_maxZone);
+				if (groundCliff(r_thisCell, r_topCell)) {
+					applyZone(r_thisCell, r_topCell, m_groundCliffZones, m_maxZone);
 				}
-				if (terrain(map[i][j], map[i][j-1])) {
-					applyZone(map[i][j], map[i][j-1], m_terrainZones, m_maxZone);
+				if (terrain(r_thisCell, r_topCell)) {
+					applyZone(r_thisCell, r_topCell, m_terrainZones, m_maxZone);
 				}
-				if (crusherGround(map[i][j], map[i][j-1])) {
-					applyZone(map[i][j], map[i][j-1], m_crusherZones, m_maxZone);
+				if (crusherGround(r_thisCell, r_topCell)) {
+					applyZone(r_thisCell, r_topCell, m_crusherZones, m_maxZone);
 				}
 			}
-			DEBUG_ASSERTCRASH(map[i][j].getZone() != 0, ("Cleared the zone."));
+			DEBUG_ASSERTCRASH(r_thisCell.getZone() != 0, ("Cleared the zone."));
 		}
 	}
 
