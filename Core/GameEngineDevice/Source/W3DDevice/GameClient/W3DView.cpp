@@ -624,7 +624,7 @@ void W3DView::init()
 
 	m_cameraAreaConstraintsValid = false;
 
-	m_scrollAmountCutoff = TheGlobalData->m_scrollAmountCutoff;
+	m_scrollAmountCutoffSqr = sqr(TheGlobalData->m_scrollAmountCutoff);
 
 	m_recalcCamera = true;
 }
@@ -1330,7 +1330,7 @@ void W3DView::update()
 
 		const Real scrollLenSqr = m_scrollAmount.lengthSqr();
 		const Bool isScrolling = scrollLenSqr > FLT_EPSILON;
-		const Bool isScrollingTooFast = scrollLenSqr >= m_scrollAmountCutoff;
+		const Bool isScrollingTooFast = scrollLenSqr >= m_scrollAmountCutoffSqr;
 		const Bool isWithinHeightConstraints = isWithinCameraHeightConstraints();
 
 		// if scrolling, only adjust if we're too close or too far

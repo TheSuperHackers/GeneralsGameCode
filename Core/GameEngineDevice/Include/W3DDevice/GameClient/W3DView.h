@@ -277,7 +277,7 @@ private:
 	Coord3D m_cameraOffset;													///< offset for camera from view center
 	Coord3D m_previousLookAtPosition;													///< offset for camera from view center
 	Coord2D m_scrollAmount;													///< scroll speed
-	Real m_scrollAmountCutoff;											///< scroll speed at which we do not adjust height
+	Real m_scrollAmountCutoffSqr;										///< scroll speed at which we do not adjust height
 
 	Real m_groundLevel;															///< height of ground.
 
