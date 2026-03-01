@@ -429,8 +429,8 @@ void W3DSmudgeManager::render(RenderInfoClass &rinfo)
 		return;	//nothing to render.
 	}
 
-		//Copy the area of backbuffer occupied by smudges into an alternate buffer.
-		background->Copy(0,0,0,0,surface_desc.Width,surface_desc.Height,backBuffer);
+	//Copy the area of backbuffer occupied by smudges into an alternate buffer.
+	background->Copy(0,0,0,0,surface_desc.Width,surface_desc.Height,backBuffer);
 
 	REF_PTR_RELEASE(background);
 	REF_PTR_RELEASE(backBuffer);
