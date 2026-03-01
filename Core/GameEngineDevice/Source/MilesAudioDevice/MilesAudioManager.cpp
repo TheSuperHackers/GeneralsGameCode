@@ -2712,7 +2712,7 @@ Real MilesAudioManager::getEffectiveVolume(AudioEventRTS *event) const
 				else if( audioSettings->m_use3DSoundRangeVolumeFade && objDistance > objMinDistance )
 				{
 					Real attenuation = (objDistance - objMinDistance) / (objMaxDistance - objMinDistance);
-					attenuation = std::pow(attenuation, audioSettings->m_3DSoundRangeVolumeFadeExponent);
+					attenuation = pow(attenuation, audioSettings->m_3DSoundRangeVolumeFadeExponent);
 					volume *= 1.0f - attenuation;
 				}
 			}
