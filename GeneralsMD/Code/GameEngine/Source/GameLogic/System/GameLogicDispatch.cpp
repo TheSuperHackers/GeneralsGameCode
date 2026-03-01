@@ -419,6 +419,18 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 		//---------------------------------------------------------------------------------------------
 		case GameMessage::MSG_NEW_GAME:
 		{
+#if !RETAIL_COMPATIBLE_CRC
+			// TheSuperHackers @fix stephanmeesters 11/03/2026
+			// Make sure we're ready to start a new game. This prevents an issue where an infinite disconnect screen
+			// ("DC bug") can be triggered in an online match.
+			if ( isInGame() || isClearingGameData() || isLoadingMap() )
+			{
+				DEBUG_CRASH( ("Called MSG_NEW_GAME while game is not ready (inGame=%d, clearingData=%d, loadingMap=%d)",
+					isInGame(), isClearingGameData(), isLoadingMap()) );
+				break;
+			}
+#endif
+
 			//DEBUG_ASSERTCRASH(msg->getArgumentCount() == 1 || msg->getArgumentCount() == 2, ("%d arguments to MSG_NEW_GAME", msg->getArgumentCount()));
 			GameMode gameMode = (GameMode)msg->getArgument( 0 )->integer;
 			Int rankPoints = 0;
