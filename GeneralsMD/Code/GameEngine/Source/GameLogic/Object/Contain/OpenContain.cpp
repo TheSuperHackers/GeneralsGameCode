@@ -1528,14 +1528,6 @@ void OpenContain::processDamageToContained(Real percentDamage)
 
 		DEBUG_ASSERTCRASH( object, ("Contain list must not contain null element") );
 
-		// TheSuperHackers @bugfix Stubbjax 02/02/2026 If the parent container kills its occupants
-		// on death, then those occupants also kill their occupants, and so on.
-		if (killContained)
-		{
-			if (object->getContain())
-				object->getContain()->processDamageToContained(percentDamage);
-		}
-
 		// Calculate the damage to be inflicted on each unit.
 		Real damage = object->getBodyModule()->getMaxHealth() * percentDamage;
 
