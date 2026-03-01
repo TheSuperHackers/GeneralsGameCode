@@ -680,6 +680,14 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			Object* source = findObjectByID(sourceID);
 			if (source != nullptr)
 			{
+				// TheSuperHackers @fix stephanmeesters 01/03/2026 Validate the origin of the source object
+				Player *player = ThePlayerList->getNthPlayer(msg->getPlayerIndex());
+				if ( player && source->getControllingPlayer() != player )
+				{
+					DEBUG_CRASH( ("MSG_DO_SPECIAL_POWER: Player at index '%d' doesn't control the object with sourceID '%d'.", player->getPlayerIndex(), (Int)sourceID) );
+					break;
+				}
+
 				AIGroupPtr theGroup = TheAI->createGroup();
 				theGroup->add(source);
 				theGroup->groupDoSpecialPower( specialPowerID, options );
@@ -725,6 +733,14 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			Object* source = findObjectByID(sourceID);
 			if (source != nullptr)
 			{
+				// TheSuperHackers @fix stephanmeesters 01/03/2026 Validate the origin of the source object
+				Player *player = ThePlayerList->getNthPlayer(msg->getPlayerIndex());
+				if ( player && source->getControllingPlayer() != player )
+				{
+					DEBUG_CRASH( ("MSG_DO_SPECIAL_POWER_AT_LOCATION: Player at index '%d' doesn't control the object with sourceID '%d'.", player->getPlayerIndex(), (Int)sourceID) );
+					break;
+				}
+				
 				AIGroupPtr theGroup = TheAI->createGroup();
 				theGroup->add(source);
 				theGroup->groupDoSpecialPowerAtLocation( specialPowerID, &targetCoord, angle, objectInWay, options );
@@ -768,6 +784,14 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			Object* source = findObjectByID(sourceID);
 			if (source != nullptr)
 			{
+				// TheSuperHackers @fix stephanmeesters 01/03/2026 Validate the origin of the source object
+				Player *player = ThePlayerList->getNthPlayer(msg->getPlayerIndex());
+				if ( player && source->getControllingPlayer() != player )
+				{
+					DEBUG_CRASH( ("MSG_DO_SPECIAL_POWER_AT_OBJECT: Player at index '%d' doesn't control the object with sourceID '%d'.", player->getPlayerIndex(), (Int)sourceID) );
+					break;
+				}
+				
 				AIGroupPtr theGroup = TheAI->createGroup();
 				theGroup->add(source);
 				theGroup->groupDoSpecialPowerAtObject( specialPowerID, target, options );
@@ -1211,6 +1235,14 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			Object* source = findObjectByID(sourceID);
 			if (source != nullptr)
 			{
+				// TheSuperHackers @fix stephanmeesters 01/03/2026 Validate the origin of the source object
+				Player *player = ThePlayerList->getNthPlayer(msg->getPlayerIndex());
+				if ( player && source->getControllingPlayer() != player )
+				{
+					DEBUG_CRASH( ("MSG_DO_SPECIAL_POWER_OVERRIDE_DESTINATION: Player at index '%d' doesn't control the object with sourceID '%d'.", player->getPlayerIndex(), (Int)sourceID) );
+					break;
+				}
+				
 				AIGroupPtr theGroup = TheAI->createGroup();
 				theGroup->add(source);
 				theGroup->groupOverrideSpecialPowerDestination( spType, loc, CMD_FROM_PLAYER );
