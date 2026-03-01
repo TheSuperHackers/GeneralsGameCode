@@ -173,13 +173,12 @@ Int ScreenDefaultFilter::init()
 
 Bool ScreenDefaultFilter::preRender(Bool &skipRender, CustomScenePassModes &scenePassMode)
 {
-	//Right now this filter is only used for smudges, so don't bother if none are present.
-	if (TheSmudgeManager)
-	{	if (((W3DSmudgeManager *)TheSmudgeManager)->getSmudgeCountLastFrame() == 0)
-			return FALSE;
-	}
-	W3DShaderManager::startRenderToTexture();
-	return true;
+	// TheSuperHackers @bugfix Disable RTT redirection for the default filter.
+	// When MSAA is forced by Nvidia driver profile, the D3D8 API reports MultiSampleType=NONE
+	// and SetRenderTarget returns S_OK, but the depth buffer is actually multisampled internally.
+	// Rendering to a non-MSAA texture with this hidden-MSAA depth buffer corrupts depth testing,
+	// producing a black screen. The smudge system has its own Copy path that works without RTT.
+	return FALSE;
 }
 
 Bool ScreenDefaultFilter::postRender(FilterModes mode, Coord2D &scrollDelta,Bool &doExtraRender)
@@ -2605,8 +2604,18 @@ void W3DShaderManager::init()
 		HRESULT hr=DX8Wrapper::_Get_D3D_Device8()->GetRenderTarget(&m_oldRenderSurface);
 
 		m_oldRenderSurface->GetDesc(&desc);
-
-		hr=DX8Wrapper::_Get_D3D_Device8()->CreateTexture(desc.Width,desc.Height,1,D3DUSAGE_RENDERTARGET,desc.Format,D3DPOOL_DEFAULT,&m_renderTexture);
+		
+		// TheSuperHackers @bugfix Redirecting rendering to a non-multisampled texture
+		// while using a multisampled depth buffer is an API violation in DX8.
+		if (desc.MultiSampleType == D3DMULTISAMPLE_NONE)
+		{
+			hr=DX8Wrapper::_Get_D3D_Device8()->CreateTexture(desc.Width,desc.Height,1,D3DUSAGE_RENDERTARGET,desc.Format,D3DPOOL_DEFAULT,&m_renderTexture);
+		}
+		else
+		{
+			// Force failure path to avoid MSAA mismatch
+			hr = E_FAIL;
+		}
 
 		if (hr != S_OK)
 		{
@@ -2831,9 +2840,20 @@ void W3DShaderManager::startRenderToTexture()
 
 	if (m_renderingToTexture || m_newRenderSurface==nullptr || m_oldDepthSurface==nullptr) return;
 	HRESULT hr = DX8Wrapper::_Get_D3D_Device8()->SetRenderTarget(m_newRenderSurface,m_oldDepthSurface);
-	DEBUG_ASSERTCRASH(hr==S_OK, ("Set target failed unexpectedly."));
+
+	// TheSuperHackers @bugfix If SetRenderTarget fails (e.g. due to MSAA forced by driver
+	// profile causing a depth buffer mismatch that D3DSURFACE_DESC doesn't report), permanently
+	// disable RTT to prevent repeated failures and accidental backbuffer clears.
 	if (hr != S_OK)
+	{
+		// Permanently disable RTT
+		if (m_newRenderSurface) { m_newRenderSurface->Release(); m_newRenderSurface = nullptr; }
+		if (m_renderTexture) { m_renderTexture->Release(); m_renderTexture = nullptr; }
+		if (m_oldRenderSurface) { m_oldRenderSurface->Release(); m_oldRenderSurface = nullptr; }
+		if (m_oldDepthSurface) { m_oldDepthSurface->Release(); m_oldDepthSurface = nullptr; }
 		return;
+	}
+
 	m_renderingToTexture = true;
 	if (TheGlobalData->m_showSoftWaterEdge)
 	{	//Soft water edges use frame buffer destination alpha so we must clear it to a known value.

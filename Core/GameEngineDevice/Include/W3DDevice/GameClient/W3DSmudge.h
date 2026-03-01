@@ -55,9 +55,7 @@ private:
 	ShareBufferClass<unsigned int> *m_RGBABuffer;		///< array of particle color and alpha
 	ShareBufferClass<float> *m_sizeBuffer;			///< array of particle sizes
 
-#ifdef USE_COPY_RECTS
 	TextureClass *m_backgroundTexture;
-#endif
 	DX8IndexBufferClass	*m_indexBuffer;
 	Int m_backBufferWidth;
 	Int m_backBufferHeight;
