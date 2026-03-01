@@ -32,15 +32,15 @@
 
 enum { MAX_HW_PROVIDERS = 4 };
 
-// TheSuperHackers @tweak xezon 23/07/2025 Adds setting to modify the volume of money deposit and withdraw sounds
-
 struct AudioSettings
 {
 	AudioSettings()
+		: m_use3DSoundRangeVolumeFade(true) // Enabled by default because it prevents audio cut off at the max range of 3D sounds
+		, m_3DSoundRangeVolumeFadeExponent(4.0f) // Exponent of 4 gives a nice balance between loud sounds and graceful fade
 #if RTS_GENERALS
-		: m_defaultMoneyTransactionVolume(1.0f)
+		, m_defaultMoneyTransactionVolume(1.0f)
 #elif RTS_ZEROHOUR
-		: m_defaultMoneyTransactionVolume(0.0f) // Uses zero volume by default because originally the money sounds did not work in Zero Hour
+		, m_defaultMoneyTransactionVolume(0.0f) // Uses zero volume by default because originally the money sounds did not work in Zero Hour
 #endif
 	{
 	}
@@ -58,6 +58,9 @@ struct AudioSettings
 	Int m_sampleCount2D;
 	Int m_sampleCount3D;
 	Int m_streamCount;
+	Bool m_use3DSoundRangeVolumeFade; // TheSuperHackers @feature Enables 3D sound range volume fade as originally intended
+	Real m_3DSoundRangeVolumeFadeExponent; // TheSuperHackers @feature Sets 3D sound range volume fade exponent for non-linear fade.
+	                                       // The higher the exponent, the sharper the decline at the max range.
 	Int m_globalMinRange;
 	Int m_globalMaxRange;
 	Int m_drawableAmbientFrames;
@@ -83,7 +86,7 @@ struct AudioSettings
 	Real m_preferred3DSoundVolume;
 	Real m_preferredSpeechVolume;
 	Real m_preferredMusicVolume;
-	Real m_preferredMoneyTransactionVolume;
+	Real m_preferredMoneyTransactionVolume; // TheSuperHackers @feature Modifies the volume of money deposit and withdraw sounds
 
 	//The desired altitude of the microphone to improve panning relative to terrain.
 	Real m_microphoneDesiredHeightAboveTerrain;
