@@ -880,6 +880,10 @@ void OpenContain::onDie( const DamageInfo * damageInfo )
 	if (!getOpenContainModuleData()->m_dieMuxData.isDieApplicable(getObject(), damageInfo))
 		return;
 
+#if !RETAIL_COMPATIBLE_CRC
+	killRidersWhoAreNotFreeToExit();
+#endif
+
 	//Check to see if we are going to inflict damage on contained units.
 	if( getDamagePercentageToUnits() > 0 )
 	{
@@ -887,7 +891,9 @@ void OpenContain::onDie( const DamageInfo * damageInfo )
 		processDamageToContained(getDamagePercentageToUnits());
 	}
 
+#if RETAIL_COMPATIBLE_CRC
 	killRidersWhoAreNotFreeToExit();
+#endif
 
 	// Leaving this commented out to show it can't work.  We are about to die, so they will have zero
 	// chance to hit an exitState::Update.  At least we would clean them up in onDelete.
