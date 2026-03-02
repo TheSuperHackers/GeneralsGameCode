@@ -64,7 +64,7 @@ public:
 	virtual ~W3DTreeDrawModuleData() override;
 	static void buildFieldParse(MultiIniFieldParse& p);
 	// ugh, hack
-	virtual const W3DTreeDrawModuleData* getAsW3DTreeDrawModuleData() const { return this; }
+	virtual const W3DTreeDrawModuleData* getAsW3DTreeDrawModuleData() const override { return this; }
 };
 
 //-------------------------------------------------------------------------------------------------

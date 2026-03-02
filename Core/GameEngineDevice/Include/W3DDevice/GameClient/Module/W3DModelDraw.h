@@ -408,7 +408,7 @@ public:
 	virtual void setPauseAnimation(Bool pauseAnim) override;
 
 	//Kris: Manually set a drawable's current animation to specific frame.
-	virtual void setAnimationFrame( int frame );
+	virtual void setAnimationFrame( int frame ) override;
 
 	virtual void updateSubObjects() override;
 	virtual void showSubObject( const AsciiString& name, Bool show ) override;
