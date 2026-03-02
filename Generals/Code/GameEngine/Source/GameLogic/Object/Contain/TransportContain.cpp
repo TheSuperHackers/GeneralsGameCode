@@ -434,12 +434,7 @@ void TransportContain::killRidersWhoAreNotFreeToExit()
 			if (d->m_destroyRidersWhoAreNotFreeToExit)
 				TheGameLogic->destroyObject(obj);
 			else
-#if RETAIL_COMPATIBLE_CRC
 				obj->kill();
-#else
-				// TheSuperHackers @info Burned death prevents infantry corpses dropping out of the container.
-				obj->kill(DAMAGE_UNRESISTABLE, d->m_isBurnedDeathToUnits ? DEATH_BURNED : DEATH_NORMAL);
-#endif
 		}
 	}
 }
