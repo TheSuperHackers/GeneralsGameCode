@@ -26,7 +26,7 @@
 
 #include <math.h>
 
-static void appendMatrixCrc(XferCRC &xfer)
+static void appendSimulationMathCrc(XferCRC &xfer)
 {
     Matrix3D matrix;
     Matrix3D factorsMatrix;
@@ -63,7 +63,7 @@ UnsignedInt SimulationMathCrc::calculate()
 
 	setFPMode();
 
-    appendMatrixCrc(xfer);
+    appendSimulationMathCrc(xfer);
 
     _fpreset();
 
