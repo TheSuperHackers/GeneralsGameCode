@@ -76,6 +76,20 @@
 //-------------------------------------------------------------------------------------------------
 
 
+static inline Bool IS_IMPASSABLE(PathfindCell::CellType type) {
+	// Return true if cell is impassable to ground units. jba. [8/18/2003]
+	if (type==PathfindCell::CELL_IMPASSABLE) {
+		return true;
+	}
+	if (type==PathfindCell::CELL_OBSTACLE) {
+		return true;
+	}
+	if (type==PathfindCell::CELL_BRIDGE_IMPASSABLE) {
+		return true;
+	}
+	return false;
+}
+
 
 struct TCheckMovementInfo
 {
@@ -3088,6 +3102,9 @@ void PathfindLayer::doDebugIcons() {
 					}	else if (cell->getType() == PathfindCell::CELL_IMPASSABLE) {
 							color.red = color.green = color.blue = 1;
 							empty = false;
+					}	else if (cell->getType() == PathfindCell::CELL_BRIDGE_IMPASSABLE) {
+							color.blue = color.red = 1;
+							empty = false;
 					}	else if (cell->getType() == PathfindCell::CELL_CLIFF) {
 							color.red = 1;
 							empty = false;
@@ -4388,6 +4405,7 @@ Locomotor* Pathfinder::chooseBestLocomotorForPosition(PathfindLayerEnum layer, L
 			return LOCOMOTORSURFACE_RUBBLE | LOCOMOTORSURFACE_AIR;
 
 		case PathfindCell::CELL_OBSTACLE:
+		case PathfindCell::CELL_BRIDGE_IMPASSABLE:
 		case PathfindCell::CELL_IMPASSABLE:
 			return LOCOMOTORSURFACE_AIR;
 
@@ -5309,6 +5327,10 @@ void Pathfinder::doDebugIcons() {
 					{
 						case PathfindCell::CELL_CLIFF:
 							color.red = 1;
+							empty = false;
+							break;
+						case PathfindCell::CELL_BRIDGE_IMPASSABLE:
+							color.blue = color.red = 1;
 							empty = false;
 							break;
 						case PathfindCell::CELL_IMPASSABLE:

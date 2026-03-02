@@ -281,9 +281,9 @@ public:
 		CELL_WATER		= 0x01,									///< water area
 		CELL_CLIFF		= 0x02,									///< steep altitude change
 		CELL_RUBBLE		= 0x03,									///< Cell is occupied by rubble.
-		CELL_OBSTACLE	= 0x04,									///< impassable area
-		CELL_unused		= 0x08,									///< Unused.
-		CELL_IMPASSABLE = 0x0B								///< Just plain impassable except for aircraft.
+		CELL_OBSTACLE	= 0x04,									///< Occupied by a structure
+		CELL_BRIDGE_IMPASSABLE = 0x05,				///< Piece of a bridge that is impassable.
+		CELL_IMPASSABLE = 0x06								///< Just plain impassable except for aircraft.
 	};
 
 	enum CellFlags
