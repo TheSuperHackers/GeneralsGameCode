@@ -2303,7 +2303,7 @@ void ZoneBlock::blockCalculateZones(PathfindCell **map, PathfindLayer layers[], 
 zoneStorageType ZoneBlock::getEffectiveZone( LocomotorSurfaceTypeMask acceptableSurfaces,
 																					 Bool crusher, zoneStorageType zone) const
 {
-	DEBUG_ASSERTCRASH(zone, ("Zone not set"));
+
 	if (acceptableSurfaces&LOCOMOTORSURFACE_AIR) return 1; // air is all zone 1.
 
 	if ( (acceptableSurfaces&LOCOMOTORSURFACE_GROUND) &&
@@ -2581,9 +2581,6 @@ void PathfindZoneManager::calculateZones( PathfindCell **map, PathfindLayer laye
 	}
 
 	Int totalZones = m_maxZone;
-	if (totalZones>maxZones/2) {
-		DEBUG_LOG(("Max zones %d", m_maxZone));
-	}
 
 	// Collapse the zones into a 1,2,3... sequence, removing collapsed zones.
 	m_maxZone = 1;
@@ -2598,21 +2595,12 @@ void PathfindZoneManager::calculateZones( PathfindCell **map, PathfindLayer laye
 			collapsedZones[i] = collapsedZones[zone];
 		}
 	}
-#ifdef DEBUG_QPF
-#if defined(DEBUG_LOGGING)
-	QueryPerformanceCounter((LARGE_INTEGER *)&endTime64);
-	timeToUpdate = ((double)(endTime64-startTime64) / (double)(freq64));
-	DEBUG_LOG(("Time to calculate first %f", timeToUpdate));
-#endif
-#endif
+
 	// Now map the zones in the map back into the collapsed zones.
 	for( j=globalBounds.lo.y; j<=globalBounds.hi.y; j++ ) {
 		for( i=globalBounds.lo.x; i<=globalBounds.hi.x; i++ ) {
 			PathfindCell &cell = map[i][j];
 			cell.setZone(collapsedZones[cell.getZone()]);
-			if (map[i][j].getZone()==0) {
-				DEBUG_CRASH(("Zone not set cell %d, %d", i, j));
-			}
 		}
 	}
 	for (i=0; i<=LAYER_LAST; i++) {
@@ -2625,9 +2613,6 @@ void PathfindZoneManager::calculateZones( PathfindCell **map, PathfindLayer laye
 		}
 
 		r_thisLayer.setZone( zone );
-		if (!layers[i].isUnused() && !layers[i].isDestroyed() && layers[i].getZone()==0) {
-			DEBUG_CRASH(("Zone not set Layer %d", i));
-		}
 		r_thisLayer.applyZone();
 
 		if (!r_thisLayer.isUnused() && !r_thisLayer.isDestroyed()) {
@@ -2640,7 +2625,7 @@ void PathfindZoneManager::calculateZones( PathfindCell **map, PathfindLayer laye
 	}
 
 	allocateZones();
-	DEBUG_ASSERTCRASH(xBlock==m_zoneBlockExtent.x && yBlock==m_zoneBlockExtent.y, ("Inconsistent allocation - SERIOUS ERROR. jba"));
+
 	for (xBlock=0; xBlock<xCount; xBlock++) {
 		for (yBlock=0; yBlock<yCount; yBlock++) {
 			IRegion2D bounds;
@@ -2661,14 +2646,6 @@ void PathfindZoneManager::calculateZones( PathfindCell **map, PathfindLayer laye
 			m_zoneBlocks[xBlock][yBlock].blockCalculateZones(map, layers, bounds);
 		}
 	}
-
-#ifdef DEBUG_QPF
-#if defined(DEBUG_LOGGING)
-	QueryPerformanceCounter((LARGE_INTEGER *)&endTime64);
-	timeToUpdate = ((double)(endTime64-startTime64) / (double)(freq64));
-	DEBUG_LOG(("Time to calculate second %f", timeToUpdate));
-#endif
-#endif
 
 	// Determine water/ground equivalent zones, and ground/cliff equivalent zones.
 	for (i=0; i<m_zonesAllocated; i++) {
@@ -2700,11 +2677,6 @@ void PathfindZoneManager::calculateZones( PathfindCell **map, PathfindLayer laye
 					applyZone(r_thisCell, r_leftCell, m_groundWaterZones, m_maxZone);
 				}
 				if (groundRubble(r_thisCell, r_leftCell)) {
-					Int zone1 = r_thisCell.getZone();
-					Int zone2 = r_leftCell.getZone();
-					if (m_terrainZones[zone1] != m_terrainZones[zone2]) {
-						//DEBUG_LOG(("Matching terrain zone %d to %d.", zone1, zone2));
-					}
 					applyZone(r_thisCell, r_leftCell, m_groundRubbleZones, m_maxZone);
 				}
 				if (groundCliff(r_thisCell, r_leftCell)) {
@@ -2728,11 +2700,6 @@ void PathfindZoneManager::calculateZones( PathfindCell **map, PathfindLayer laye
 					applyZone(r_thisCell, r_topCell, m_groundWaterZones, m_maxZone);
 				}
 				if (groundRubble(r_thisCell, r_topCell)) {
-					Int zone1 = r_thisCell.getZone();
-					Int zone2 = r_topCell.getZone();
-					if (m_terrainZones[zone1] != m_terrainZones[zone2]) {
-						//DEBUG_LOG(("Matching terrain zone %d to %d.", zone1, zone2));
-					}
 					applyZone(r_thisCell, r_topCell, m_groundRubbleZones, m_maxZone);
 				}
 				if (groundCliff(r_thisCell, r_topCell)) {
@@ -2749,9 +2716,6 @@ void PathfindZoneManager::calculateZones( PathfindCell **map, PathfindLayer laye
 		}
 	}
 
-	if (m_maxZone >= m_zonesAllocated) {
-		RELEASE_CRASH("Pathfind allocation error - fatal. see jba.");
-	}
 	for (i=1; i<m_maxZone; i++) {
 		// Flatten hierarchical zones.
 		Int zone = m_hierarchicalZones[i];
@@ -9182,7 +9146,6 @@ void Pathfinder::updateGoal( Object *obj, const Coord3D *newGoalPos, PathfindLay
 
 	PathfindLayerEnum originalLayer = obj->getDestinationLayer();
 
-	//DEBUG_LOG(("Object Goal layer is %d", layer));
 	Bool layerChanged = originalLayer != layer;
 
 	Bool doGround=false;
@@ -10257,9 +10220,7 @@ Path *Pathfinder::findAttackPath( const Object *obj, const LocomotorSet& locomot
 	#endif
 				if (show)
 					debugShowSearch(true);
-	#if defined(RTS_DEBUG)
-				//DEBUG_LOG(("Attack path took %d cells, %f sec", cellCount, (::GetTickCount()-startTimeMS)/1000.0f));
-	#endif
+
 				// construct and return path
 				Path *path = buildActualPath( obj, locomotorSet.getValidSurfaces(), obj->getPosition(), parentCell, centerInCell, false);
 #if RETAIL_COMPATIBLE_PATHFINDING
