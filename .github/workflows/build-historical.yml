@@ -136,7 +136,7 @@ jobs:
 
       - name: Cache VC6 Installation
         id: cache-vc6
-        uses: actions/cache@v4
+        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
         with:
           path: C:\VC6
           key: vc6-permanent-cache-v2

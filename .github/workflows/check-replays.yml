@@ -43,7 +43,7 @@ jobs:
 
       - name: Cache Game Data
         id: cache-gamedata
-        uses: actions/cache@v4
+        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
         with:
           path: ${{ env.GAME_PATH }}
           key: gamedata-permanent-cache-v4
