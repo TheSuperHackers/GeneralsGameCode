@@ -561,6 +561,7 @@ public:
 	static void Invalidate_Cached_Render_States();
 
 	static void Set_Draw_Polygon_Low_Bound_Limit(unsigned n) { DrawPolygonLowBoundLimit=n; }
+	static void Set_MultiSample_Type(D3DMULTISAMPLE_TYPE type) { MultiSampleType = type; }
 
 protected:
 
@@ -635,8 +636,9 @@ protected:
 	static int								ResolutionHeight;
 	static int								BitDepth;
 	static int								TextureBitDepth;
-	static bool								IsWindowed;
-	static D3DFORMAT					DisplayFormat;
+	static bool 							IsWindowed;
+	static D3DMULTISAMPLE_TYPE				MultiSampleType;
+	static D3DFORMAT						DisplayFormat;
 
 	static D3DMATRIX						old_world;
 	static D3DMATRIX						old_view;

@@ -400,6 +400,7 @@ public:
 	Bool m_languageFilterPref;        ///< Bool if user wants to filter language
 	Bool m_loadScreenDemo;						///< Bool if true, run the loadscreen demo movie
 	Bool m_disableRender;							///< if true, no rendering!
+	Bool m_anisotropicFiltering;			///< if true, enable anisotropic filtering
 
 	Bool m_saveCameraInReplay;
 	Bool m_useCameraInReplay;

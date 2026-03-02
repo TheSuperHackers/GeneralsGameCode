@@ -88,11 +88,13 @@ static void drawFramerateBar();
 #include "WW3D2/part_emt.h"
 #include "WW3D2/part_ldr.h"
 #include "WW3D2/dx8caps.h"
+#include "WW3D2/dx8wrapper.h"
 #include "WW3D2/ww3dformat.h"
 #include "WW3D2/agg_def.h"
 #include "WW3D2/render2dsentence.h"
 #include "WW3D2/sortingrenderer.h"
 #include "WW3D2/textureloader.h"
+#include "WW3D2/texturefilter.h"
 #include "WW3D2/dx8webbrowser.h"
 #include "WW3D2/mesh.h"
 #include "WW3D2/hlod.h"
@@ -708,6 +710,16 @@ void W3DDisplay::init()
 		WW3D::Set_Screen_UV_Bias( TRUE );  ///< this makes text look good :)
 		WW3D::Set_Texture_Bitdepth(32);
 
+		D3DMULTISAMPLE_TYPE msType = D3DMULTISAMPLE_NONE;
+		switch (TheGlobalData->m_antiAliasBoxValue)
+		{
+		case 1: msType = D3DMULTISAMPLE_2_SAMPLES; break;
+		case 2: msType = D3DMULTISAMPLE_4_SAMPLES; break;
+		case 3: msType = D3DMULTISAMPLE_8_SAMPLES; break;
+		default: msType = D3DMULTISAMPLE_NONE; break;
+		}
+		DX8Wrapper::Set_MultiSample_Type(msType);
+
 		setWindowed( TheGlobalData->m_windowed );
 
 		// create a 2D renderer helper
@@ -780,6 +792,11 @@ void W3DDisplay::init()
 			throw ERROR_INVALID_D3D;	//failed to initialize.  User probably doesn't have DX 8.1
 			DEBUG_CRASH( ("Unable to set render device") );
 			return;
+		}
+
+		if (TheGlobalData->m_anisotropicFiltering)
+		{
+			WW3D::Set_Texture_Filter(TextureFilterClass::TEXTURE_FILTER_ANISOTROPIC);
 		}
 
 		//Check if level was never set and default to setting most suitable for system.
