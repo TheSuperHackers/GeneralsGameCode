@@ -2516,7 +2516,7 @@ void PathfindZoneManager::reset()  ///< Called when the map is reset.
 }
 
 
-void PathfindZoneManager::markZonesDirty( Bool insert )  ///< Called when the zones need to be recalculated.
+void PathfindZoneManager::markZonesDirty()  ///< Called when the zones need to be recalculated.
 {
 
 	if (TheGameLogic->getFrame()<2) {
@@ -4059,7 +4059,7 @@ void Pathfinder::classifyFence( Object *obj, Bool insert )
  		}
  	}
 	if (didAnything) {
-		m_zoneManager.markZonesDirty( insert );
+		m_zoneManager.markZonesDirty();
 		m_zoneManager.updateZonesForModify(m_map, m_layers, cellBounds, m_extent);
 	}
 }
@@ -4163,7 +4163,7 @@ void Pathfinder::internal_classifyObjectFootprint( Object *obj, Bool insert )
 	{
 		case GEOMETRY_BOX:
 		{
-			m_zoneManager.markZonesDirty( insert );
+			m_zoneManager.markZonesDirty();
 
 			Real angle = obj->getOrientation();
 
@@ -4222,7 +4222,7 @@ void Pathfinder::internal_classifyObjectFootprint( Object *obj, Bool insert )
 		case GEOMETRY_SPHERE:	// not quite right, but close enough
 		case GEOMETRY_CYLINDER:
 		{
-			m_zoneManager.markZonesDirty( insert );
+			m_zoneManager.markZonesDirty();
 			// fill in all cells that overlap as obstacle cells
 			/// @todo This is a very inefficient circle-rasterizer
 			ICoord2D topLeft, bottomRight;
@@ -9485,7 +9485,7 @@ void Pathfinder::changeBridgeState( PathfindLayerEnum layer, Bool repaired)
 {
 	if (m_layers[layer].isUnused()) return;
 	if (m_layers[layer].setDestroyed(!repaired)) {
-		m_zoneManager.markZonesDirty( repaired );
+		m_zoneManager.markZonesDirty();
 	}
 }
 
