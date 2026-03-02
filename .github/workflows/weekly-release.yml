@@ -154,7 +154,7 @@ jobs:
 
       # Generals vc6
       - name: Download Generals VC6 Artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # v8.0.0
         with:
           name: Generals-vc6-weekly+t
           path: generals-vc6-artifacts
@@ -165,7 +165,7 @@ jobs:
 
       # GeneralsMD vc6
       - name: Download GeneralsMD VC6 Artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # v8.0.0
         with:
           name: GeneralsMD-vc6-weekly+t
           path: generalsmd-vc6-artifacts

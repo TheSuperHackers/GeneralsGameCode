@@ -218,14 +218,14 @@ jobs:
     steps:
       - name: Download Generals Artifact
         if: ${{ github.event.inputs.game == 'Generals' || github.event.inputs.game == 'Both' }}
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # v8.0.0
         with:
           name: Generals-vc6-${{ needs.prepare.outputs.short_sha }}
           path: generals-artifacts
 
       - name: Download GeneralsMD Artifact
         if: ${{ github.event.inputs.game == 'GeneralsMD' || github.event.inputs.game == 'Both' }}
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # v8.0.0
         with:
           name: GeneralsMD-vc6-${{ needs.prepare.outputs.short_sha }}
           path: generalsmd-artifacts
