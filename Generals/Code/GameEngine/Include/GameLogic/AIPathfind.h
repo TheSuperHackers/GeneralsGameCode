@@ -36,9 +36,9 @@
 
 class Bridge;
 class Object;
-class PathfindCell;
-class PathfindZoneManager;
 class Weapon;
+class PathfindZoneManager;
+class PathfindCell;
 
 // How close is close enough when moving.
 
@@ -356,13 +356,13 @@ public:
 	inline UnsignedInt getCostSoFar() const {return m_info->m_costSoFar;}
 	inline UnsignedInt getTotalCost() const {return m_info->m_totalCost;}
 
-	inline void setCostSoFar(UnsignedInt cost) {m_info->m_costSoFar = cost;}
-	inline void setTotalCost(UnsignedInt cost) {m_info->m_totalCost = cost;}
+	inline void setCostSoFar(UnsignedInt cost) { if( m_info ) m_info->m_costSoFar = cost;}
+	inline void setTotalCost(UnsignedInt cost) { if( m_info ) m_info->m_totalCost = cost;}
 
 	void setParentCell(PathfindCell* parent);
 	void clearParentCell();
 	void setParentCellHierarchical(PathfindCell* parent);
-	inline PathfindCell* getParentCell() const {return m_info->m_pathParent?m_info->m_pathParent->m_cell: nullptr;}
+	inline PathfindCell* getParentCell() const {return m_info ? m_info->m_pathParent ? m_info->m_pathParent->m_cell : nullptr : nullptr;}
 
 	Bool startPathfind( PathfindCell *goalCell );
 	Bool getPinched() const {return m_pinched;}
@@ -590,7 +590,7 @@ public:
 	virtual Path *findPath( Object *obj, const LocomotorSet& locomotorSet, const Coord3D *from,
 		const Coord3D *to )=0;	///< Find a short, valid path between given locations
 	/** Find a short, valid path to a location NEAR the to location.
-		This succeds when the destination is unreachable (like inside a building).
+		This succeeds when the destination is unreachable (like inside a building).
 		If the destination is unreachable, it will adjust the to point.  */
 	virtual Path *findClosestPath( Object *obj, const LocomotorSet& locomotorSet, const Coord3D *from,
 		Coord3D *to, Bool blocked, Real pathCostMultiplier, Bool moveAllies )=0;
@@ -619,7 +619,7 @@ class Pathfinder : PathfindServicesInterface, public Snapshot
 private:
 	virtual Path *findPath( Object *obj, const LocomotorSet& locomotorSet, const Coord3D *from, const Coord3D *to);	///< Find a short, valid path between given locations
 	/** Find a short, valid path to a location NEAR the to location.
-		This succeds when the destination is unreachable (like inside a building).
+		This succeeds when the destination is unreachable (like inside a building).
 		If the destination is unreachable, it will adjust the to point.  */
 	virtual Path *findClosestPath( Object *obj, const LocomotorSet& locomotorSet, const Coord3D *from,
 		Coord3D *to, Bool blocked, Real pathCostMultiplier, Bool moveAllies );

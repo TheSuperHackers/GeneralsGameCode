@@ -1957,7 +1957,11 @@ UnsignedInt PathfindCell::costToGoal( PathfindCell *goal )
 
 UnsignedInt PathfindCell::costToHierGoal( PathfindCell *goal )
 {
-	DEBUG_ASSERTCRASH(m_info, ("Has to have info."));
+	if( !m_info )
+	{
+		DEBUG_CRASH( ("Has to have info.") );
+		return 100000; //...patch hack 1.01
+	}
 	Int dx = m_info->m_pos.x - goal->getXIndex();
 	Int dy = m_info->m_pos.y - goal->getYIndex();
 	Int cost = REAL_TO_INT_FLOOR(COST_ORTHOGONAL*sqrt(dx*dx + dy*dy) + 0.5f);
