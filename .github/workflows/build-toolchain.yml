@@ -101,7 +101,7 @@ jobs:
 
       - name: Set Up VC2022 Environment
         if: startsWith(inputs.preset, 'win32')
-        uses: ilammy/msvc-dev-cmd@v1
+        uses: ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756 # v1.13.0
         with:
           arch: x86
 
@@ -139,7 +139,7 @@ jobs:
             vcpkg-bincache-v2-${{ runner.os }}-
 
       - name: Setup vcpkg
-        uses: lukka/run-vcpkg@v11
+        uses: lukka/run-vcpkg@5e0cab206a5ea620130caf672fce3e4a6b5666a1 # v11.5
         with:
           runVcpkgInstall: false
           doNotCache: true
