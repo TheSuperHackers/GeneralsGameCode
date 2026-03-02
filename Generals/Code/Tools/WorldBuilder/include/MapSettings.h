@@ -41,7 +41,7 @@ public:
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(MapSettings)
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
 // Implementation
@@ -51,8 +51,8 @@ protected:
 	//{{AFX_MSG(MapSettings)
 	afx_msg void OnChangeMapTimeofday();
 	afx_msg void OnChangeMapWeather();
-	virtual BOOL OnInitDialog();
-	virtual void OnOK();
+	virtual BOOL OnInitDialog() override;
+	virtual void OnOK() override;
 	afx_msg void OnChangeMapTitle();
 	afx_msg void OnChangeMapCompression();
 	//}}AFX_MSG
