@@ -118,7 +118,6 @@ set(GAMEENGINE_SRC
 #    Include/Common/StatsCollector.h
     Include/Common/STLTypedefs.h
     Include/Common/StreamingArchiveFile.h
-    Include/Common/SimulationMathCrc.h
     Include/Common/SubsystemInterface.h
 #    Include/Common/SystemInfo.h
 #    Include/Common/Team.h
@@ -142,6 +141,7 @@ set(GAMEENGINE_SRC
     Include/Common/XferDeepCRC.h
     Include/Common/XferLoad.h
     Include/Common/XferSave.h
+    Include/Common/Diagnostic/SimulationMathCrc.h
 #    Include/GameClient/Anim2D.h
 #    Include/GameClient/AnimateWindowManager.h
 #    Include/GameClient/CampaignManager.h
@@ -682,7 +682,7 @@ set(GAMEENGINE_SRC
     Source/Common/System/XferCRC.cpp
     Source/Common/System/XferLoad.cpp
     Source/Common/System/XferSave.cpp
-    Source/Common/System/SimulationMathCrc.cpp
+    Source/Common/Diagnostic/SimulationMathCrc.cpp
 #    Source/Common/TerrainTypes.cpp
 #    Source/Common/Thing/DrawModule.cpp
 #    Source/Common/Thing/Module.cpp

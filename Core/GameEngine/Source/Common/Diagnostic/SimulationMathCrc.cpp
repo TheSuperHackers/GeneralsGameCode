@@ -18,7 +18,7 @@
 
 #include "PreRTS.h"
 
-#include "Common/SimulationMathCrc.h"
+#include "Common/Diagnostic/SimulationMathCrc.h"
 #include "Common/XferCRC.h"
 #include "WWMath/matrix3d.h"
 #include "WWMath/wwmath.h"
