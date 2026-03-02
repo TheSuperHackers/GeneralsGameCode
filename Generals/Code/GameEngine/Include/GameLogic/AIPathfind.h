@@ -301,8 +301,8 @@ public:
 	PathfindCell();
 	~PathfindCell();
 
-	void setTypeAsObstacle( Object *obstacle, Bool isFence, const ICoord2D &pos );				///< flag this cell as an obstacle, from the given one
-	void removeObstacle( Object *obstacle );				///< flag this cell as an obstacle, from the given one
+	Bool setTypeAsObstacle( Object *obstacle, Bool isFence, const ICoord2D &pos );				///< flag this cell as an obstacle, from the given one
+	Bool removeObstacle( Object *obstacle );				///< unflag this cell as an obstacle, from the given one
 	void setType( CellType type );	///< set the cell type
 	CellType getType() const { return (CellType)m_type; }				///< get the cell type
 	CellFlags getFlags() const { return (CellFlags)m_flags; }				///< get the cell type

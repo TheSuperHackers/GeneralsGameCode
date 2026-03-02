@@ -1545,11 +1545,12 @@ inline ObjectID PathfindCell::getObstacleID() const
 
 /**
  * Flag this cell as an obstacle, from the given one.
+ * Return true if cell was flagged.
  */
-void PathfindCell::setTypeAsObstacle( Object *obstacle, Bool isFence, const ICoord2D &pos )
+Bool PathfindCell::setTypeAsObstacle( Object *obstacle, Bool isFence, const ICoord2D &pos )
 {
 	if (m_type!=PathfindCell::CELL_CLEAR && m_type != PathfindCell::CELL_IMPASSABLE) {
-		return;
+		return false;
 	}
 
 	Bool isRubble = false;
@@ -1565,7 +1566,7 @@ void PathfindCell::setTypeAsObstacle( Object *obstacle, Bool isFence, const ICoo
 		m_obstacleIsTransparent = false;
 #if RETAIL_COMPATIBLE_PATHFINDING_ALLOCATION
 		if (s_useFixedPathfinding) {
-			return;
+			return true;
 		}
 
 		if (m_info) {
@@ -1573,7 +1574,7 @@ void PathfindCell::setTypeAsObstacle( Object *obstacle, Bool isFence, const ICoo
 			releaseInfo();
 		}
 #endif
-		return;
+		return true;
 	}
 
 	m_type = PathfindCell::CELL_OBSTACLE;
@@ -1584,21 +1585,21 @@ void PathfindCell::setTypeAsObstacle( Object *obstacle, Bool isFence, const ICoo
 	// TheSuperHackers @info In retail mode we need to track orphaned cells set as obstacles so we can cleanup and failover properly
 	// So we always make sure to set and clear the local obstacle data on the PathfindCell regardless of retail compat or not
 	if (s_useFixedPathfinding) {
-		return;
+		return true;
 	}
 
 	if (!m_info) {
 		m_info = PathfindCellInfo::getACellInfo(this, pos);
 		if (!m_info) {
 			DEBUG_CRASH(("Not enough PathFindCellInfos in pool."));
-			return;
+			return false;
 		}
 	}
 	m_info->m_obstacleID = obstacle->getID();
 	m_info->m_obstacleIsFence = isFence;
 	m_info->m_obstacleIsTransparent = obstacle->isKindOf(KINDOF_CAN_SEE_THROUGH_STRUCTURE);
 #endif
-	return;
+	return true;
 }
 
 /**
@@ -1632,36 +1633,37 @@ void PathfindCell::setType( CellType type )
 
 /**
  * Unflag this cell as an obstacle, from the given one.
+ * Return true if this cell was previously flagged as an obstacle by this object.
  */
-void PathfindCell::removeObstacle( Object *obstacle )
+Bool PathfindCell::removeObstacle( Object *obstacle )
 {
 	if (m_type == PathfindCell::CELL_RUBBLE) {
 		m_type = PathfindCell::CELL_CLEAR;
 	}
 #if RETAIL_COMPATIBLE_PATHFINDING_ALLOCATION
 	if (s_useFixedPathfinding) {
-		if (m_obstacleID != obstacle->getID()) return;
+		if (m_obstacleID != obstacle->getID()) return false;
 		m_type = PathfindCell::CELL_CLEAR;
 		m_obstacleID = INVALID_ID;
 		m_obstacleIsFence = false;
 		m_obstacleIsTransparent = false;
-		return;
+		return true;
 	}
 
-	if (!m_info) return;
-	if (m_info->m_obstacleID != obstacle->getID()) return;
+	if (!m_info) return false;
+	if (m_info->m_obstacleID != obstacle->getID()) return false;
 	m_type = PathfindCell::CELL_CLEAR;
 	m_info->m_obstacleID = INVALID_ID;
 	releaseInfo();
 
 #else
-	if (m_obstacleID != obstacle->getID()) return;
+	if (m_obstacleID != obstacle->getID()) return false;
 	m_type = PathfindCell::CELL_CLEAR;
 #endif
 	m_obstacleID = INVALID_ID;
 	m_obstacleIsFence = false;
 	m_obstacleIsTransparent = false;
-	return;
+	return true;
 }
 
 /// put self on "open" list in ascending cost order, return new list
