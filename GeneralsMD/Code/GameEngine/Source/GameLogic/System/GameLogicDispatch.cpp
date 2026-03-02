@@ -350,8 +350,11 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 #endif
 
 	Player *thisPlayer = ThePlayerList->getNthPlayer( msg->getPlayerIndex() );
-	DEBUG_ASSERTCRASH( thisPlayer, ("logicMessageDispatcher: Processing message from unknown player (player index '%d')",
-																	msg->getPlayerIndex()) );
+	if (thisPlayer == nullptr)
+	{
+		DEBUG_CRASH(("logicMessageDispatcher: Processing message from unknown player (player index '%d')", msg->getPlayerIndex()));
+		return;
+	}
 
 	AIGroupPtr currentlySelectedGroup = nullptr;
 
@@ -2041,7 +2044,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			ScienceType science = (ScienceType)msg->getArgument( 0 )->integer;
 
 			// sanity
-			if( science == SCIENCE_INVALID || thisPlayer == nullptr )
+			if( science == SCIENCE_INVALID )
 				break;
 
 			thisPlayer->attemptToPurchaseScience(science);
