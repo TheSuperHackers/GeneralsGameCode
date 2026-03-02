@@ -1586,13 +1586,6 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 		case GameMessage::MSG_CREATE_SELECTED_GROUP:
 		{
 			Bool createNewGroup = msg->getArgument( 0 )->boolean;
-			Player *player = ThePlayerList->getNthPlayer(msg->getPlayerIndex());
-
-			if (player == nullptr) {
-				DEBUG_CRASH(("GameLogicDispatch - MSG_CREATE_SELECTED_GROUP had an invalid player number"));
-				break;
-			}
-
 			Bool firstObject = TRUE;
 
 			for (Int i = 1; i < msg->getArgumentCount(); ++i) {
@@ -1601,7 +1594,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 					continue;
 				}
 
-				selectObject(obj, createNewGroup && firstObject, player->getPlayerMask());
+				selectObject(obj, createNewGroup && firstObject, thisPlayer->getPlayerMask());
 				firstObject = FALSE;
 			}
 
@@ -1612,13 +1605,6 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 		//---------------------------------------------------------------------------------------------
 		case GameMessage::MSG_REMOVE_FROM_SELECTED_GROUP:
 		{
-			Player *player = ThePlayerList->getNthPlayer(msg->getPlayerIndex());
-
-			if (player == nullptr) {
-				DEBUG_CRASH(("GameLogicDispatch - MSG_CREATE_SELECTED_GROUP had an invalid player number"));
-				break;
-			}
-
 			for (Int i = 0; i < msg->getArgumentCount(); ++i) {
 				ObjectID objID = msg->getArgument(i)->objectID;
 				Object *objToRemove = findObjectByID(objID);
@@ -1626,7 +1612,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 					continue;
 				}
 
-				deselectObject(objToRemove, player->getPlayerMask());
+				deselectObject(objToRemove, thisPlayer->getPlayerMask());
 			}
 
 			break;
@@ -1636,11 +1622,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 		//---------------------------------------------------------------------------------------------
 		case GameMessage::MSG_DESTROY_SELECTED_GROUP:
 		{
-			Player *player = ThePlayerList->getNthPlayer(msg->getPlayerIndex());
-			if (player != nullptr)
-			{
-				player->setCurrentlySelectedAIGroup(nullptr);
-			}
+			thisPlayer->setCurrentlySelectedAIGroup(nullptr);
 
 			break;
 
@@ -1929,13 +1911,9 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 		case GameMessage::MSG_CREATE_TEAM8:
 		case GameMessage::MSG_CREATE_TEAM9:
 		{
-			Int playerIndex = msg->getPlayerIndex();
-			Player *player = ThePlayerList->getNthPlayer(playerIndex);
-			DEBUG_ASSERTCRASH(player != nullptr, ("Could not find player for create team message"));
-
 			// TheSuperHackers @tweak Stubbjax 17/08/2025 The local player processes this message in CommandXlat for immediate assignment.
-			if (player && !player->isLocalPlayer())
-				player->processCreateTeamGameMessage(msg->getType() - GameMessage::MSG_CREATE_TEAM0, msg);
+			if (!thisPlayer->isLocalPlayer())
+				thisPlayer->processCreateTeamGameMessage(msg->getType() - GameMessage::MSG_CREATE_TEAM0, msg);
 
 			break;
 		}
@@ -1951,16 +1929,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 		case GameMessage::MSG_SELECT_TEAM8:
 		case GameMessage::MSG_SELECT_TEAM9:
 		{
-			Int playerIndex = msg->getPlayerIndex();
-			Player *player = ThePlayerList->getNthPlayer(playerIndex);
-			DEBUG_ASSERTCRASH(player != nullptr, ("Could not find player for select team message"));
-
-			if (player == nullptr)
-			{
-				break;
-			}
-
-			player->processSelectTeamGameMessage(msg->getType() - GameMessage::MSG_SELECT_TEAM0, msg);
+			thisPlayer->processSelectTeamGameMessage(msg->getType() - GameMessage::MSG_SELECT_TEAM0, msg);
 			break;
 		}
 
@@ -1975,16 +1944,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 		case GameMessage::MSG_ADD_TEAM8:
 		case GameMessage::MSG_ADD_TEAM9:
 		{
-			Int playerIndex = msg->getPlayerIndex();
-			Player *player = ThePlayerList->getNthPlayer(playerIndex);
-			DEBUG_ASSERTCRASH(player != nullptr, ("Could not find player for add team message"));
-
-			if (player == nullptr)
-			{
-				break;
-			}
-
-			player->processAddTeamGameMessage(msg->getType() - GameMessage::MSG_ADD_TEAM0, msg);
+			thisPlayer->processAddTeamGameMessage(msg->getType() - GameMessage::MSG_ADD_TEAM0, msg);
 			break;
 		}
 
