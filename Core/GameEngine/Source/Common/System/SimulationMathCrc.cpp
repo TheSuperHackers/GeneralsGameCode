@@ -61,7 +61,7 @@ UnsignedInt SimulationMathCrc::calculate()
     XferCRC xfer;
     xfer.open("SimulationMathCrc");
 
-	setFPMode();
+    setFPMode();
 
     appendSimulationMathCrc(xfer);
 
