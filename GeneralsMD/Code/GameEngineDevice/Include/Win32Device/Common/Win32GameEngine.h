@@ -77,7 +77,7 @@ protected:
 	virtual NetworkInterface *createNetwork();				///< Factory for the network
 	virtual Radar *createRadar();											///< Factory for radar
 	virtual WebBrowser *createWebBrowser();						///< Factory for embedded browser
-	virtual AudioManager *createAudioManager(Bool headless);				///< Factory for audio device
+	virtual AudioManager *createAudioManager(Bool dummy);				///< Factory for audio device
 	virtual ParticleSystemManager* createParticleSystemManager();
 
 
@@ -98,4 +98,4 @@ inline ParticleSystemManager* Win32GameEngine::createParticleSystemManager() { r
 inline NetworkInterface *Win32GameEngine::createNetwork() { return NetworkInterface::createNetwork(); }
 inline Radar *Win32GameEngine::createRadar() { return NEW W3DRadar; }
 inline WebBrowser *Win32GameEngine::createWebBrowser() { return NEW CComObject<W3DWebBrowser>; }
-inline AudioManager *Win32GameEngine::createAudioManager(Bool headless) { return headless ? NEW MilesAudioManagerDummy : NEW MilesAudioManager; }
+inline AudioManager *Win32GameEngine::createAudioManager(Bool dummy) { return dummy ? NEW MilesAudioManagerDummy : NEW MilesAudioManager; }
