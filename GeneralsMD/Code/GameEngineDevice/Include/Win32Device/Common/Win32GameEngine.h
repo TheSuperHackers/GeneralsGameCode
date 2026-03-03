@@ -59,27 +59,27 @@ class Win32GameEngine : public GameEngine
 public:
 
 	Win32GameEngine();
-	virtual ~Win32GameEngine();
+	virtual ~Win32GameEngine() override;
 
-	virtual void init();															///< initialization
-	virtual void reset();															///< reset engine
-	virtual void update();														///< update the game engine
-	virtual void serviceWindowsOS();									///< allow windows maintenance in background
+	virtual void init() override;															///< initialization
+	virtual void reset() override;															///< reset engine
+	virtual void update() override;														///< update the game engine
+	virtual void serviceWindowsOS() override;									///< allow windows maintenance in background
 
 protected:
 
-	virtual GameLogic *createGameLogic();							///< factory for game logic
- 	virtual GameClient *createGameClient();						///< factory for game client
-	virtual ModuleFactory *createModuleFactory();			///< factory for creating modules
-	virtual ThingFactory *createThingFactory();				///< factory for the thing factory
-	virtual FunctionLexicon *createFunctionLexicon(); ///< factory for function lexicon
-	virtual LocalFileSystem *createLocalFileSystem(); ///< factory for local file system
-	virtual ArchiveFileSystem *createArchiveFileSystem();	///< factory for archive file system
+	virtual GameLogic *createGameLogic() override;							///< factory for game logic
+ 	virtual GameClient *createGameClient() override;						///< factory for game client
+	virtual ModuleFactory *createModuleFactory() override;			///< factory for creating modules
+	virtual ThingFactory *createThingFactory() override;				///< factory for the thing factory
+	virtual FunctionLexicon *createFunctionLexicon() override; ///< factory for function lexicon
+	virtual LocalFileSystem *createLocalFileSystem() override; ///< factory for local file system
+	virtual ArchiveFileSystem *createArchiveFileSystem() override;	///< factory for archive file system
 	virtual NetworkInterface *createNetwork();				///< Factory for the network
-	virtual Radar *createRadar();											///< Factory for radar
-	virtual WebBrowser *createWebBrowser();						///< Factory for embedded browser
-	virtual AudioManager *createAudioManager();				///< Factory for audio device
-	virtual ParticleSystemManager* createParticleSystemManager(Bool dummy);
+	virtual Radar *createRadar() override;											///< Factory for radar
+	virtual WebBrowser *createWebBrowser() override;						///< Factory for embedded browser
+	virtual AudioManager *createAudioManager() override;				///< Factory for audio device
+	virtual ParticleSystemManager* createParticleSystemManager(Bool dummy) override;
 
 
 protected:
