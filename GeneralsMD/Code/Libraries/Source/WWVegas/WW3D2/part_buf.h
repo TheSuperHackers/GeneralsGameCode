@@ -94,23 +94,23 @@ class ParticleBufferClass : public RenderObjClass
 
 		ParticleBufferClass(const ParticleBufferClass & src);
 		ParticleBufferClass & operator = (const ParticleBufferClass &);
-		virtual ~ParticleBufferClass();
+		virtual ~ParticleBufferClass() override;
 
 		/*
 		** RenderObjClass Interface:
 		*/
-		virtual RenderObjClass * Clone() const;
-		virtual int Class_ID() const { return CLASSID_PARTICLEBUFFER; }
+		virtual RenderObjClass * Clone() const override;
+		virtual int Class_ID() const override { return CLASSID_PARTICLEBUFFER; }
 
-		virtual int Get_Num_Polys() const;
+		virtual int Get_Num_Polys() const override;
 		int			Get_Particle_Count() const;
 
 		// Update particle state and draw the particles.
-		virtual void Render(RenderInfoClass & rinfo);
+		virtual void Render(RenderInfoClass & rinfo) override;
 
 		// Scales the size of the individual particles but doesn't affect their
 		// position (and therefore the size of the particle system as a whole)
-		virtual void Scale(float scale);
+		virtual void Scale(float scale) override;
 
 		// The particle buffer never receives a Set_Transform/Position call,
 		// even though its bounding volume changes. Since bounding volume
@@ -118,29 +118,29 @@ class ParticleBufferClass : public RenderObjClass
 		// the cached bounding volumes will not be invalidated unless we do
 		// it elsewhere (such as here). We also need to call the particle
 		// emitter's Emit() function (done here to avoid order dependence).
-		virtual void On_Frame_Update();
+		virtual void On_Frame_Update() override;
 
-		virtual void Notify_Added(SceneClass * scene);
-		virtual void Notify_Removed(SceneClass * scene);
+		virtual void Notify_Added(SceneClass * scene) override;
+		virtual void Notify_Removed(SceneClass * scene) override;
 
-		virtual void Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const;
-		virtual void Get_Obj_Space_Bounding_Box(AABoxClass & box) const;
+		virtual void Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const override;
+		virtual void Get_Obj_Space_Bounding_Box(AABoxClass & box) const override;
 
 		/////////////////////////////////////////////////////////////////////////////
 		// Render Object Interface - Predictive LOD
 		/////////////////////////////////////////////////////////////////////////////
 
-		virtual void	Prepare_LOD(CameraClass &camera);
-		virtual void	Increment_LOD();
-		virtual void	Decrement_LOD();
-		virtual float	Get_Cost() const;
-		virtual float	Get_Value() const;
-		virtual float	Get_Post_Increment_Value() const;
-		virtual void	Set_LOD_Level(int lod);
-		virtual int		Get_LOD_Level() const;
-		virtual int		Get_LOD_Count() const;
-		virtual void	Set_LOD_Bias(float bias)	{ LodBias = MAX(bias, 0.0f); }
-		virtual int		Calculate_Cost_Value_Arrays(float screen_area, float *values, float *costs) const;
+		virtual void	Prepare_LOD(CameraClass &camera) override;
+		virtual void	Increment_LOD() override;
+		virtual void	Decrement_LOD() override;
+		virtual float	Get_Cost() const override;
+		virtual float	Get_Value() const override;
+		virtual float	Get_Post_Increment_Value() const override;
+		virtual void	Set_LOD_Level(int lod) override;
+		virtual int		Get_LOD_Level() const override;
+		virtual int		Get_LOD_Count() const override;
+		virtual void	Set_LOD_Bias(float bias) override	{ LodBias = MAX(bias, 0.0f); }
+		virtual int		Calculate_Cost_Value_Arrays(float screen_area, float *values, float *costs) const override;
 
 		/*
 		** These members are not part of the RenderObjClass Interface:
@@ -163,7 +163,7 @@ class ParticleBufferClass : public RenderObjClass
 		void Set_Emitter(ParticleEmitterClass *emitter);
 
 		// from RenderObj...
-      virtual bool	Is_Complete()		{ return IsEmitterDead && !NonNewNum && !NewNum; }
+      virtual bool	Is_Complete() override { return IsEmitterDead && !NonNewNum && !NewNum; }
 
 		// This adds an uninitialized NewParticleStuct to the new particle
 		// buffer and returns its address so the particle emitter can
@@ -232,7 +232,7 @@ class ParticleBufferClass : public RenderObjClass
 
 	protected:
 
-		virtual void			Update_Cached_Bounding_Volumes() const;
+		virtual void			Update_Cached_Bounding_Volumes() const override;
 
 		// render the particle system as a collection of particles
 		void						Render_Particles(RenderInfoClass & rinfo);
