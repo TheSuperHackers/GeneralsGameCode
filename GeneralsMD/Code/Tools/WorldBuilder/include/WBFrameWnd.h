@@ -42,13 +42,13 @@ public:
 	virtual BOOL LoadFrame(UINT nIDResource,
 				DWORD dwDefaultStyle = WS_OVERLAPPEDWINDOW | FWS_ADDTOTITLE,
 				CWnd* pParentWnd = nullptr,
-				CCreateContext* pContext = nullptr);
+				CCreateContext* pContext = nullptr) override;
 	// ClassWizard generated virtual function overrides
 	//}}AFX_VIRTUAL
 
 // Implementation
 protected:
-	virtual ~CWBFrameWnd();
+	virtual ~CWBFrameWnd() override;
 
 	// Generated message map functions
 	//{{AFX_MSG(CWBFrameWnd)
@@ -71,14 +71,14 @@ public:
 	virtual BOOL LoadFrame(UINT nIDResource,
 				DWORD dwDefaultStyle = WS_OVERLAPPEDWINDOW | FWS_ADDTOTITLE,
 				CWnd* pParentWnd = nullptr,
-				CCreateContext* pContext = nullptr);
+				CCreateContext* pContext = nullptr) override;
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CWB3dFrameWnd)
 	public:
 	//}}AFX_VIRTUAL
 // Implementation
 protected:
-	virtual ~CWB3dFrameWnd();
+	virtual ~CWB3dFrameWnd() override;
 	// Generated message map functions
 	//{{AFX_MSG(CWB3dFrameWnd)
 	afx_msg void OnMove(int x, int y);

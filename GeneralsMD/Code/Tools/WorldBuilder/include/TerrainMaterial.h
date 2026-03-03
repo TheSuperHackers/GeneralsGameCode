@@ -45,10 +45,10 @@ public:
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(TerrainMaterial)
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	virtual void OnOK(){return;};  ///< Modeless dialogs don't OK, so eat this for modeless.
-	virtual void OnCancel(){return;}; ///< Modeless dialogs don't close on ESC, so eat this for modeless.
-	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult);
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
+	virtual void OnOK() override {return;};  ///< Modeless dialogs don't OK, so eat this for modeless.
+	virtual void OnCancel() override {return;}; ///< Modeless dialogs don't close on ESC, so eat this for modeless.
+	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult) override;
 	//}}AFX_VIRTUAL
 
 // Implementation
@@ -56,7 +56,7 @@ protected:
 	enum {MIN_TILE_SIZE=2, MAX_TILE_SIZE = 100};
 	// Generated message map functions
 	//{{AFX_MSG(TerrainMaterial)
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	afx_msg void OnSwapTextures();
 	afx_msg void OnChangeSizeEdit();
 	afx_msg void OnImpassable();
@@ -102,9 +102,9 @@ public:
 	Bool setTerrainTreeViewSelection(HTREEITEM parent, Int selection);
 
 	// Popup slider interface.
-	virtual void GetPopSliderInfo(const long sliderID, long *pMin, long *pMax, long *pLineSize, long *pInitial);
-	virtual void PopSliderChanged(const long sliderID, long theVal);
-	virtual void PopSliderFinished(const long sliderID, long theVal);
+	virtual void GetPopSliderInfo(const long sliderID, long *pMin, long *pMax, long *pLineSize, long *pInitial) override;
+	virtual void PopSliderChanged(const long sliderID, long theVal) override;
+	virtual void PopSliderFinished(const long sliderID, long theVal) override;
 };
 
 //{{AFX_INSERT_LOCATION}}

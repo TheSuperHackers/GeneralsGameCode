@@ -25,7 +25,7 @@ class ImpassableOptions : public CDialog
 
 	public:
 		ImpassableOptions(CWnd* pParent = nullptr, Real defaultSlope = 45.0f);
-		virtual ~ImpassableOptions();
+		virtual ~ImpassableOptions() override;
 		Real GetSlopeToShow() const { return m_slopeToShow; }
 		Real GetDefaultSlope() const { return m_defaultSlopeToShow; }
 		void SetDefaultSlopeToShow(Real slopeToShow) { m_slopeToShow = slopeToShow; }
@@ -38,7 +38,7 @@ class ImpassableOptions : public CDialog
 		Bool ValidateSlope();	// Returns TRUE if it was valid, FALSE if it had to adjust it.
 
 	protected:
-		virtual BOOL OnInitDialog();
+		virtual BOOL OnInitDialog() override;
 		afx_msg void OnAngleChange();
 		afx_msg void OnPreview();
 		DECLARE_MESSAGE_MAP()
