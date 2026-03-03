@@ -233,7 +233,7 @@ public:
 	virtual Real getPitch( void ) override { return 0; }							///< Return current camera pitch
 	virtual void setAngleToDefault( void ) override {}											///< Set the view angle back to default
 	virtual void setPitchToDefault( void ) override {}											///< Set the view pitch back to default
-	virtual void getPosition(Coord3D *pos) override {}											///< Return camera position
+	virtual void getPosition(Coord3D *pos) {}											///< Return camera position
 
 	virtual Real getHeightAboveGround() override { return 1; }
 	virtual void setHeightAboveGround(Real z) override { }
