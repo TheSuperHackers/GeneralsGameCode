@@ -8131,8 +8131,9 @@ struct TightenPathStruct
 	PathfindLayerEnum layer;
 	Int		radius;
 	Bool	center;
-	Bool	foundDest;
-	Coord3D destPos;
+	Bool	foundNewDest;
+	Coord3D orgDestPos;
+	Coord3D newDestPos;
 };
 
 
@@ -8145,17 +8146,21 @@ struct TightenPathStruct
 	}
 
 	// TheSuperHackers @bugfix Caball009 27/02/2026 This was originally uninitialized.
-	// The uninitialized values that retail uses here are usually close to zero as long as foundDest == false, otherwise it uses the values of destPos.
-	Coord3D pos = d->destPos;
-	if (!d->foundDest)
+	// The uninitialized values that retail uses here are usually close to zero as long as foundNewDest == false, otherwise it uses the values of newDestPos.
+#if RETAIL_COMPATIBLE_CRC
+	Coord3D pos = d->newDestPos;
+	if (!d->foundNewDest)
 		pos.zero();
+#else
+	Coord3D pos = d->orgDestPos;
+#endif
 
 	if (!TheAI->pathfinder()->checkForAdjust(d->obj, *d->locomotorSet, true, to_x, to_y, to->getLayer(), d->radius, d->center, &pos, nullptr))
 	{
 		return 0; // failure
 	}
-	d->foundDest = true;
-	d->destPos = pos;
+	d->foundNewDest = true;
+	d->newDestPos = pos;
 
 	return 0; // success but continue
 }
@@ -8170,10 +8175,11 @@ void Pathfinder::tightenPath(Object *obj, const LocomotorSet& locomotorSet, Coor
 	info.layer = TheTerrainLogic->getLayerForDestination(from);
 	info.obj = obj;
 	info.locomotorSet = &locomotorSet;
-	info.foundDest = false;
+	info.foundNewDest = false;
+	info.orgDestPos = *to;
 	iterateCellsAlongLine(*from, *to, info.layer, tightenPathCallback, &info);
-	if (info.foundDest) {
-		*from = info.destPos;
+	if (info.foundNewDest) {
+		*from = info.newDestPos;
 	}
 }
 
