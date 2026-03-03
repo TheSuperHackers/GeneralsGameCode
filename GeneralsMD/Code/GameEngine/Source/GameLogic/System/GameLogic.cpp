@@ -1115,6 +1115,7 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 	}
 	catch (QuitGameException&)
 	{
+		// TheSuperHackers @info The application is cleanly aborting the loading process
 	}
 }
 
