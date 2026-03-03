@@ -102,7 +102,7 @@ class W3DVolumetricShadow	: public Shadow
 
 	protected:
 
-		virtual void release()	{TheW3DVolumetricShadowManager->removeShadow(this);}	///<release shadow from manager
+		virtual void release() override	{TheW3DVolumetricShadowManager->removeShadow(this);}	///<release shadow from manager
 
 		#if defined(RTS_DEBUG)
 		virtual void getRenderCost(RenderCost & rc) const;

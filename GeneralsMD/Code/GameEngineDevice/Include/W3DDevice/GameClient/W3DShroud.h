@@ -43,8 +43,8 @@ class W3DShroudMaterialPassClass : public MaterialPassClass
 {
 public:
 	W3DShroudMaterialPassClass() : m_isTransparentObjectPass(FALSE) {}
-	virtual void	Install_Materials() const;
-	virtual void	UnInstall_Materials() const;
+	virtual void	Install_Materials() const override;
+	virtual void	UnInstall_Materials() const override;
 	void enableTransparentObjectPass(Bool enable) {m_isTransparentObjectPass = enable;}
 protected:
 	//customized version to deal with transparent (alpha-tested) polys.
@@ -60,8 +60,8 @@ class W3DMaskMaterialPassClass : public MaterialPassClass
 {
 public:
 	W3DMaskMaterialPassClass() : m_texture(nullptr), m_allowUninstall(TRUE) {}
-	virtual void	Install_Materials() const;
-	virtual void	UnInstall_Materials() const;
+	virtual void	Install_Materials() const override;
+	virtual void	UnInstall_Materials() const override;
 	void	setTexture(TextureClass *texture)	{m_texture=texture;}
 	void	setAllowUninstall(Bool state)	{ m_allowUninstall = state;}
 
