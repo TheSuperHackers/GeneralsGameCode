@@ -604,29 +604,27 @@ Bool W3DTerrainVisual::load( AsciiString filename )
 
 	RefRenderObjListIterator *it = W3DDisplay::m_3DScene ? W3DDisplay::m_3DScene->createLightsIterator() : nullptr;
 	// apply the heightmap to the terrain render object
+
 #ifdef DO_SEISMIC_SIMULATIONS
-	WorldHeightMap* heightMap = m_clientHeightMap;
+	if (TheGlobalData->m_renderAllTerrain) {
+		m_clientHeightMap->setDrawWidth(m_clientHeightMap->getXExtent());
+		m_clientHeightMap->setDrawHeight(m_clientHeightMap->getYExtent());
+	}
+	m_terrainRenderObject->initHeightData( m_clientHeightMap->getDrawWidth(),
+																				 m_clientHeightMap->getDrawHeight(),
+																				 m_clientHeightMap,
+																				 it);
 #else
-	WorldHeightMap* heightMap = m_logicHeightMap;
+	if (TheGlobalData->m_renderAllTerrain) {
+		m_logicHeightMap->setDrawWidth(m_logicHeightMap->getXExtent());
+		m_logicHeightMap->setDrawHeight(m_logicHeightMap->getYExtent());
+	}
+	m_terrainRenderObject->initHeightData( m_logicHeightMap->getDrawWidth(),
+																				 m_logicHeightMap->getDrawHeight(),
+																				 m_logicHeightMap,
+																				 it);
 #endif
 
-	const Bool isRenderAllTerrain = TheGlobalData->m_renderAllTerrain;
-
-	Int xExt, yExt;
-
-	if (isRenderAllTerrain) {
-		xExt = heightMap->getXExtent();
-		yExt = heightMap->getYExtent();
-
-		// TheSuperHackers @feature explicitly draw boundaries to match full extent
-		heightMap->setDrawWidth(xExt);
-		heightMap->setDrawHeight(yExt);
-	} else {
-		xExt = heightMap->getDrawWidth();
-		yExt = heightMap->getDrawHeight();
-	}
-
-	m_terrainRenderObject->initHeightData(xExt, yExt, heightMap, it);
 
 	if (it) {
 	 W3DDisplay::m_3DScene->destroyLightsIterator(it);

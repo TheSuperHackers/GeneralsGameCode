@@ -1246,6 +1246,7 @@ void GlobalData::parseGameDataDefinition( INI* ini )
 
 	TheWritableGlobalData->m_xResolution = xres;
 	TheWritableGlobalData->m_yResolution = yres;
+	TheWritableGlobalData->m_renderAllTerrain = optionPref.getBool("RenderAllTerrain", TheWritableGlobalData->m_renderAllTerrain);
 }
 
 void GlobalData::parseCustomDefinition()
