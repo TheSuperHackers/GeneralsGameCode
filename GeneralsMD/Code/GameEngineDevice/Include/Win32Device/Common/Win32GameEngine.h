@@ -75,7 +75,7 @@ protected:
 	virtual LocalFileSystem *createLocalFileSystem(); ///< factory for local file system
 	virtual ArchiveFileSystem *createArchiveFileSystem();	///< factory for archive file system
 	virtual NetworkInterface *createNetwork();				///< Factory for the network
-	virtual Radar *createRadar();											///< Factory for radar
+	virtual Radar *createRadar(Bool dummy);											///< Factory for radar
 	virtual WebBrowser *createWebBrowser();						///< Factory for embedded browser
 	virtual AudioManager *createAudioManager(Bool dummy);				///< Factory for audio device
 	virtual ParticleSystemManager* createParticleSystemManager();
@@ -96,6 +96,6 @@ inline ArchiveFileSystem *Win32GameEngine::createArchiveFileSystem() { return NE
 inline ParticleSystemManager* Win32GameEngine::createParticleSystemManager() { return NEW W3DParticleSystemManager; }
 
 inline NetworkInterface *Win32GameEngine::createNetwork() { return NetworkInterface::createNetwork(); }
-inline Radar *Win32GameEngine::createRadar() { return NEW W3DRadar; }
+inline Radar *Win32GameEngine::createRadar(Bool dummy) { return dummy ? static_cast<Radar*>(NEW RadarDummy) : NEW W3DRadar; }
 inline WebBrowser *Win32GameEngine::createWebBrowser() { return NEW CComObject<W3DWebBrowser>; }
 inline AudioManager *Win32GameEngine::createAudioManager(Bool dummy) { return dummy ? NEW MilesAudioManagerDummy : NEW MilesAudioManager; }
