@@ -975,7 +975,15 @@ void GameLogic::startNewGame( Bool saveGame )
 {
 	try
 	{
+		tryStartNewGame(saveGame);
+	}
+	catch (QuitGameException&)
+	{
+	}
+}
 
+void GameLogic::tryStartNewGame( Bool saveGame )
+{
 	#ifdef DUMP_PERF_STATS
 	__int64 startTime64;
 	__int64 endTime64,freq64;
@@ -2075,13 +2083,8 @@ void GameLogic::startNewGame( Bool saveGame )
   {
 		TheInGameUI->messageNoFormat( TheGameText->FETCH_OR_SUBSTITUTE( "GUI:FastForwardInstructions", L"Press F to toggle Fast Forward" ) );
   }
-
-	}
-	catch (QuitGameException&)
-	{
-		// TheSuperHackers @info The application is cleanly aborting the loading process
-	}
 }
+
 
 //-----------------------------------------------------------------------------------------
 static void findAndSelectCommandCenter(Object *obj, void* alreadyFound)

@@ -158,6 +158,7 @@ public:
 
 	// super hack
 	void startNewGame( Bool loadSaveGame );
+	void tryStartNewGame( Bool loadSaveGame );
 	void loadMapINI( AsciiString mapName );
 
 	void updateLoadProgress( Int progress );
