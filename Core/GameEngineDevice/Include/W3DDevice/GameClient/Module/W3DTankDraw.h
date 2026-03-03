@@ -49,7 +49,7 @@ public:
 	Real m_treadDriveSpeedFraction;	///<fraction of locomotor speed below which treads stop animating.
 
 	W3DTankDrawModuleData();
-	~W3DTankDrawModuleData();
+	virtual ~W3DTankDrawModuleData() override;
 	static void buildFieldParse(MultiIniFieldParse& p);
 };
 
@@ -65,12 +65,12 @@ public:
 	W3DTankDraw( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual void setHidden(Bool h);
-	virtual void doDrawModule(const Matrix3D* transformMtx);
-	virtual void setFullyObscuredByShroud(Bool fullyObscured);
+	virtual void setHidden(Bool h) override;
+	virtual void doDrawModule(const Matrix3D* transformMtx) override;
+	virtual void setFullyObscuredByShroud(Bool fullyObscured) override;
 
 protected:
-	virtual void onRenderObjRecreated();
+	virtual void onRenderObjRecreated() override;
 
 protected:
 
