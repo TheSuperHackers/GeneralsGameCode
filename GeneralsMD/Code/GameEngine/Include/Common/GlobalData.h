@@ -81,11 +81,11 @@ class GlobalData : public SubsystemInterface
 public:
 
 	GlobalData();
-	virtual ~GlobalData();
+	virtual ~GlobalData() override;
 
-	virtual void init();
-	virtual void reset();
-	virtual void update() { }
+	virtual void init() override;
+	virtual void reset() override;
+	virtual void update() override { }
 
 	Bool setTimeOfDay( TimeOfDay tod );		///< Use this function to set the Time of day;
 

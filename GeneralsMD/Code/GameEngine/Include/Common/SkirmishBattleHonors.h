@@ -47,7 +47,7 @@ class SkirmishBattleHonors : public UserPreferences
 {
 public:
 	SkirmishBattleHonors();
-	virtual ~SkirmishBattleHonors();
+	virtual ~SkirmishBattleHonors() override;
 
 	Bool loadFromIniFile();
 

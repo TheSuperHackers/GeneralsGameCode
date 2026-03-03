@@ -71,11 +71,11 @@ public:
 public:
 
 	FunctionLexicon();
-	virtual ~FunctionLexicon();
+	virtual ~FunctionLexicon() override;
 
-	virtual void init();
-	virtual void reset();
-	virtual void update();
+	virtual void init() override;
+	virtual void reset() override;
+	virtual void update() override;
 
 	/// validate the tables and make sure all entries are unique
 	Bool validate();

@@ -293,13 +293,13 @@ class SupplyTruckBusyState :  public State
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(SupplyTruckBusyState, "SupplyTruckBusyState")
 protected:
 	// snapshot interface STUBBED.
-	virtual void crc( Xfer *xfer ){};
-	virtual void xfer( Xfer *xfer ){};
-	virtual void loadPostProcess(){};
+	virtual void crc( Xfer *xfer ) override {};
+	virtual void xfer( Xfer *xfer ) override {};
+	virtual void loadPostProcess() override {};
 
 public:
 	SupplyTruckBusyState( StateMachine *machine ) : State( machine, "SupplyTruckBusyState" ) { }
-	virtual StateReturnType onEnter()
+	virtual StateReturnType onEnter() override
 	{
 		if( getMachineOwner() && getMachineOwner()->getAI() )
 		{
@@ -317,11 +317,11 @@ TheInGameUI->DEBUG_addFloatingText("entering busy state", getMachineOwner()->get
 #endif
 		return STATE_CONTINUE;
 	}
-	virtual StateReturnType update()
+	virtual StateReturnType update() override
 	{
 		return STATE_CONTINUE;
 	}
-	virtual void onExit(StateExitType status)
+	virtual void onExit(StateExitType status) override
 	{
 #ifdef DEBUG_SUPPLY_STATE
 TheInGameUI->DEBUG_addFloatingText("exiting busy state", getMachineOwner()->getPosition(), GameMakeColor(255, 0, 0, 255));
@@ -337,18 +337,18 @@ class SupplyTruckIdleState :  public State
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(SupplyTruckIdleState, "SupplyTruckIdleState")
 protected:
 	// snapshot interface STUBBED.
-	virtual void crc( Xfer *xfer ){};
-	virtual void xfer( Xfer *xfer ){};
-	virtual void loadPostProcess(){};
+	virtual void crc( Xfer *xfer ) override {};
+	virtual void xfer( Xfer *xfer ) override {};
+	virtual void loadPostProcess() override {};
 
 public:
 	SupplyTruckIdleState( StateMachine *machine ) : State( machine, "SupplyTruckIdleState" ) { }
-	virtual StateReturnType onEnter();
-	virtual StateReturnType update()
+	virtual StateReturnType onEnter() override;
+	virtual StateReturnType update() override
 	{
 		return STATE_CONTINUE;
 	}
-	virtual void onExit(StateExitType status)
+	virtual void onExit(StateExitType status) override
 	{
 #ifdef DEBUG_SUPPLY_STATE
 TheInGameUI->DEBUG_addFloatingText("exiting idle state", getMachineOwner()->getPosition(), GameMakeColor(255, 0, 0, 255));

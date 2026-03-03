@@ -37,7 +37,7 @@ class CommandTranslator : public GameMessageTranslator
 public:
 
 	CommandTranslator();
-	~CommandTranslator();
+	virtual ~CommandTranslator() override;
 
 	enum CommandEvaluateType { DO_COMMAND, DO_HINT, EVALUATE_ONLY };
 
@@ -65,7 +65,7 @@ private:
 	GameMessage::Type issueFireWeaponCommand( const CommandButton *command, CommandEvaluateType commandType, Drawable *target, const Coord3D *pos );
 	GameMessage::Type issueCombatDropCommand( const CommandButton *command, CommandEvaluateType commandType, Drawable *target, const Coord3D *pos );
 
-	virtual GameMessageDisposition translateGameMessage(const GameMessage *msg);
+	virtual GameMessageDisposition translateGameMessage(const GameMessage *msg) override;
 };
 
 
