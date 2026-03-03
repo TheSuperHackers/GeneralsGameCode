@@ -364,8 +364,8 @@ private:
 
 public:
 	MetaEventTranslator();
-	~MetaEventTranslator();
-	virtual GameMessageDisposition translateGameMessage(const GameMessage *msg);
+	virtual ~MetaEventTranslator() override;
+	virtual GameMessageDisposition translateGameMessage(const GameMessage *msg) override;
 };
 
 //-----------------------------------------------------------------------------
@@ -383,11 +383,11 @@ protected:
 public:
 
 	MetaMap();
-	~MetaMap();
+	virtual ~MetaMap() override;
 
-	void init() { }
-	void reset() { }
-	void update() { }
+	virtual void init() override { }
+	virtual void reset() override { }
+	virtual void update() override { }
 
 	static void parseMetaMap(INI* ini);
 

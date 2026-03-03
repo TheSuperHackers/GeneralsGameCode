@@ -121,11 +121,11 @@ class ImageCollection : public SubsystemInterface
 public:
 
 	ImageCollection();
-	virtual ~ImageCollection();
+	virtual ~ImageCollection() override;
 
-	virtual void init() { };				///< initialize system
-	virtual void reset() { };				///< reset system
-	virtual void update() { };			///< update system
+	virtual void init() override { };				///< initialize system
+	virtual void reset() override { };				///< reset system
+	virtual void update() override { };			///< update system
 
 	void load( Int textureSize );												 ///< load images
 
