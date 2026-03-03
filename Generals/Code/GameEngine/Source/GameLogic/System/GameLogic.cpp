@@ -3640,12 +3640,19 @@ void GameLogic::quit(Bool toDesktop)
 {
 	if (isInGame())
 	{
-        const Bool isSandbox = TheGameInfo && TheGameInfo->isSandbox();
-
-        if (isInMultiplayerGame() && TheGameInfo && !isSandbox)
+		if (isInInteractiveGame())
 		{
-			GameMessage *msg = TheMessageStream->appendMessage(GameMessage::MSG_SELF_DESTRUCT);
-			msg->appendBooleanArgument(TRUE);
+			if (!TheInGameUI->isQuitMenuVisible())
+			{
+				ToggleQuitMenu();
+				return;
+			}
+			
+			if (isInMultiplayerGame() && TheGameInfo && !TheGameInfo->isSandbox())
+			{
+				GameMessage *msg = TheMessageStream->appendMessage(GameMessage::MSG_SELF_DESTRUCT);
+				msg->appendBooleanArgument(TRUE);
+			}
 		}
 
 		if (TheRecorder && TheRecorder->getMode() == RECORDERMODETYPE_RECORD)

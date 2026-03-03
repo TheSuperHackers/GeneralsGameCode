@@ -137,9 +137,9 @@ void destroyQuitMenu()
  */
 static void exitQuitMenu()
 {
+	TheGameLogic->quit(FALSE);
   // destroy the quit menu
 	destroyQuitMenu();
-	TheGameLogic->quit(FALSE);
 }
 static void noExitQuitMenu()
 {
@@ -148,9 +148,9 @@ static void noExitQuitMenu()
 
 static void quitToDesktopQuitMenu()
 {
+	TheGameLogic->quit(TRUE);
   // destroy the quit menu
 	destroyQuitMenu();
-	TheGameLogic->quit(TRUE);
 }
 
 static void surrenderQuitMenu()
