@@ -60,7 +60,7 @@ class LookupTableClass : public RefCountClass, public MultiListObjectClass
 public:
 
 	LookupTableClass(int sample_count = 256);
-	virtual ~LookupTableClass();
+	virtual ~LookupTableClass() override;
 
 	void								Init(const char * name,Curve1DClass * curve);
 	float								Get_Value(float input);

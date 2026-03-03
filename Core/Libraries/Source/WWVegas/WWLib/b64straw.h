@@ -51,7 +51,7 @@ class Base64Straw : public Straw
 		} CodeControl;
 
 		Base64Straw(CodeControl control) : Control(control), Counter(0) {}
-		virtual int Get(void * source, int slen);
+		virtual int Get(void * source, int slen) override;
 
 	private:
 
