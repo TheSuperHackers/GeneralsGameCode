@@ -43,7 +43,7 @@ class TerrainTextureClass : public TextureClass
 {
 	W3DMPO_GLUE(TerrainTextureClass)
 protected:
-	virtual void Apply(unsigned int stage);
+	virtual void Apply(unsigned int stage) override;
 
 public:
 		/// Create texture for a height map.
@@ -64,7 +64,7 @@ class AlphaTerrainTextureClass : public TextureClass
 {
 	W3DMPO_GLUE(AlphaTerrainTextureClass)
 protected:
-		virtual void Apply(unsigned int stage);
+		virtual void Apply(unsigned int stage) override;
 public:
 		// Create texture for a height map.
 		AlphaTerrainTextureClass(TextureClass *pBaseTex );
@@ -80,7 +80,7 @@ class AlphaEdgeTextureClass : public TextureClass
 {
 	W3DMPO_GLUE(AlphaEdgeTextureClass)
 protected:
-	virtual void Apply(unsigned int stage);
+	virtual void Apply(unsigned int stage) override;
 	int update256(WorldHeightMap *htMap);///< Sets the pixels, and returns the actual height of the texture.
 
 public:
@@ -97,7 +97,7 @@ class LightMapTerrainTextureClass : public TextureClass
 {
 	W3DMPO_GLUE(LightMapTerrainTextureClass)
 protected:
-		virtual void Apply(unsigned int stage);
+		virtual void Apply(unsigned int stage) override;
 
 public:
 		// Create texture from a height map.
@@ -110,7 +110,7 @@ class ScorchTextureClass : public TextureClass
 {
 	W3DMPO_GLUE(ScorchTextureClass)
 protected:
-		virtual void Apply(unsigned int stage);
+		virtual void Apply(unsigned int stage) override;
 
 public:
 		// Create texture.
@@ -123,7 +123,7 @@ class CloudMapTerrainTextureClass : public TextureClass
 {
 	W3DMPO_GLUE(CloudMapTerrainTextureClass)
 protected:
-		virtual void Apply(unsigned int stage);
+		virtual void Apply(unsigned int stage) override;
 
 protected:
 		float m_xSlidePerSecond ;	 ///< How far the clouds move per second.

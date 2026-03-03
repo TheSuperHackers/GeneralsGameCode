@@ -36,15 +36,15 @@ class StdBIGFile : public ArchiveFile
 {
 	public:
 		StdBIGFile(AsciiString name, AsciiString path);
-		virtual ~StdBIGFile();
+		virtual ~StdBIGFile() override;
 
-		virtual Bool					getFileInfo(const AsciiString& filename, FileInfo *fileInfo) const;	///< fill in the fileInfo struct with info about the requested file.
-		virtual File*					openFile( const Char *filename, Int access = 0 );///< Open the specified file within the BIG file
-		virtual void					closeAllFiles();									///< Close all file opened in this BIG file
-		virtual AsciiString		getName();												///< Returns the name of the BIG file
-		virtual AsciiString		getPath();												///< Returns full path and name of BIG file
-		virtual void					setSearchPriority( Int new_priority );	///< Set this BIG file's search priority
-		virtual void					close();													///< Close this BIG file
+		virtual Bool					getFileInfo(const AsciiString& filename, FileInfo *fileInfo) const override;	///< fill in the fileInfo struct with info about the requested file.
+		virtual File*					openFile( const Char *filename, Int access = 0 ) override;///< Open the specified file within the BIG file
+		virtual void					closeAllFiles() override;									///< Close all file opened in this BIG file
+		virtual AsciiString		getName() override;												///< Returns the name of the BIG file
+		virtual AsciiString		getPath() override;												///< Returns full path and name of BIG file
+		virtual void					setSearchPriority( Int new_priority ) override;	///< Set this BIG file's search priority
+		virtual void					close() override;													///< Close this BIG file
 
 	protected:
 

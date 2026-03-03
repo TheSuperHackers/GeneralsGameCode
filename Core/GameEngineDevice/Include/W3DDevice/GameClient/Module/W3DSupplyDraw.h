@@ -39,7 +39,7 @@ public:
 	AsciiString m_supplyBonePrefix;
 
 	W3DSupplyDrawModuleData();
-	~W3DSupplyDrawModuleData();
+	virtual ~W3DSupplyDrawModuleData() override;
 	static void buildFieldParse(MultiIniFieldParse& p);
 };
 
@@ -55,8 +55,8 @@ public:
 	W3DSupplyDraw( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual void updateDrawModuleSupplyStatus( Int maxSupply, Int currentSupply ); ///< This will do visual feedback on Supplies carried
-	virtual void reactToGeometryChange() { }
+	virtual void updateDrawModuleSupplyStatus( Int maxSupply, Int currentSupply ) override; ///< This will do visual feedback on Supplies carried
+	virtual void reactToGeometryChange() override { }
 
 protected:
 	Int m_totalBones;

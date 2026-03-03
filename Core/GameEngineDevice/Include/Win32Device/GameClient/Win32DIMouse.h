@@ -62,25 +62,25 @@ class DirectInputMouse : public Mouse
 public:
 
 	DirectInputMouse();
-	virtual ~DirectInputMouse();
+	virtual ~DirectInputMouse() override;
 
 	// extended methods from base class
-	virtual void init();		///< initialize the direct input mouse, extending functionality
-	virtual void reset();		///< reset system
-	virtual void update();  ///< update the mouse data, extending functionality
-	virtual void setPosition( Int x, Int y );  ///< set position for mouse
+	virtual void init() override;		///< initialize the direct input mouse, extending functionality
+	virtual void reset() override;		///< reset system
+	virtual void update() override;  ///< update the mouse data, extending functionality
+	virtual void setPosition( Int x, Int y ) override;  ///< set position for mouse
 
-	virtual void setMouseLimits();  ///< update the limit extents the mouse can move in
+	virtual void setMouseLimits() override;  ///< update the limit extents the mouse can move in
 
-	virtual void setCursor( MouseCursor cursor );  ///< set mouse cursor
+	virtual void setCursor( MouseCursor cursor ) override;  ///< set mouse cursor
 
-	virtual void capture();  ///< capture the mouse
-	virtual void releaseCapture();  ///< release mouse capture
+	virtual void capture() override;  ///< capture the mouse
+	virtual void releaseCapture() override;  ///< release mouse capture
 
 protected:
 
 	/// device implementation to get mouse event
-	virtual UnsignedByte getMouseEvent( MouseIO *result, Bool flush );
+	virtual UnsignedByte getMouseEvent( MouseIO *result, Bool flush ) override;
 
 	// new internal methods for our direct input implementation
 	void openMouse();  ///< create the direct input mouse
