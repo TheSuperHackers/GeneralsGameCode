@@ -8145,12 +8145,11 @@ struct TightenPathStruct
 		return 0; // failure
 	}
 
-	// TheSuperHackers @bugfix Caball009 27/02/2026 This was originally uninitialized.
-	// The uninitialized values that retail uses here are usually close to zero as long as foundNewDest == false, otherwise it uses the values of newDestPos.
 #if RETAIL_COMPATIBLE_CRC
+	// TheSuperHackers @bugfix Caball009 27/02/2026 This was originally uninitialized.
+	// The uninitialized values that retail uses here are usually close to zero as long as foundNewDest == false, otherwise it uses the new values of newDestPos.
+	// newDestPos is zero initialized by the caller, so there is no need to check foundNewDest here.
 	Coord3D pos = d->newDestPos;
-	if (!d->foundNewDest)
-		pos.zero();
 #else
 	Coord3D pos = d->orgDestPos;
 #endif
@@ -8177,6 +8176,9 @@ void Pathfinder::tightenPath(Object *obj, const LocomotorSet& locomotorSet, Coor
 	info.locomotorSet = &locomotorSet;
 	info.foundNewDest = false;
 	info.orgDestPos = *to;
+#if RETAIL_COMPATIBLE_CRC
+	info.newDestPos.zero();
+#endif
 	iterateCellsAlongLine(*from, *to, info.layer, tightenPathCallback, &info);
 	if (info.foundNewDest) {
 		*from = info.newDestPos;
