@@ -192,11 +192,11 @@ class FXListStore : public SubsystemInterface
 public:
 
 	FXListStore();
-	~FXListStore();
+	virtual ~FXListStore() override;
 
-	void init() { }
-	void reset() { }
-	void update() { }
+	virtual void init() override { }
+	virtual void reset() override { }
+	virtual void update() override { }
 
 	/**
 		return the FXList with the given namekey.

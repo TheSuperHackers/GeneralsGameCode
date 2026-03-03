@@ -148,8 +148,8 @@ typedef SeismicSimulationList::iterator SeismicSimulationListIt;
 
 class DomeStyleSeismicFilter : public SeismicSimulationFilterBase
 {
-  virtual SeismicSimStatusCode filterCallback( WorldHeightMapInterfaceClass *heightMap, const SeismicSimulationNode *node );
-  virtual Real applyGravityCallback( Real velocityIn );
+  virtual SeismicSimStatusCode filterCallback( WorldHeightMapInterfaceClass *heightMap, const SeismicSimulationNode *node ) override;
+  virtual Real applyGravityCallback( Real velocityIn ) override;
 };
 
 
@@ -203,11 +203,11 @@ public:
 	enum {NumSkyboxTextures = 5};
 
 	TerrainVisual();
-	virtual ~TerrainVisual();
+	virtual ~TerrainVisual() override;
 
-	virtual void init();
-	virtual void reset();
-	virtual void update();
+	virtual void init() override;
+	virtual void reset() override;
+	virtual void update() override;
 
 	virtual Bool load( AsciiString filename );
 
@@ -298,9 +298,9 @@ public:
 protected:
 
 	// snapshot methods
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 	AsciiString m_filenameString;							///< file with terrain data
 

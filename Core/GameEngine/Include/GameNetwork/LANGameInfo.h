@@ -82,7 +82,7 @@ public:
 	void setSlot( Int slotNum, LANGameSlot slotInfo );	///< Set the slot state (human, open, AI, etc)
 	LANGameSlot* getLANSlot( Int slotNum );							///< Get the slot
 	const LANGameSlot* getConstLANSlot( Int slotNum ) const;							///< Get the slot
-	virtual Int getLocalSlotNum() const;												///< Get the local slot number, or -1 if we're not present
+	virtual Int getLocalSlotNum() const override;												///< Get the local slot number, or -1 if we're not present
 	Int getSlotNum( UnicodeString userName );						///< Get the slot number corresponding to a specific user, or -1 if he's not present
 
 	UnsignedInt getLastHeard() { return m_lastHeard; }
@@ -98,7 +98,7 @@ public:
 	UnicodeString getName() { return m_gameName; }					///< Get the Name of the Game
 
 	// Convenience functions that interface with the LANPlayer held in the slot list
-	virtual void resetAccepted();														///< Reset the accepted flag on all players
+	virtual void resetAccepted() override;														///< Reset the accepted flag on all players
 	Bool amIHost();																///< Convenience function - is the local player the game host?
 
 	/// Get the IP of selected player or return 0

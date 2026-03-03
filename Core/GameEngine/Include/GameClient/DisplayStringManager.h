@@ -41,11 +41,11 @@ class DisplayStringManager : public SubsystemInterface
 public:
 
 	DisplayStringManager();
-	virtual ~DisplayStringManager();
+	virtual ~DisplayStringManager() override;
 
-	virtual void init() {}			///< initialize the factory
-	virtual void reset() {}			///< reset system
-	virtual void update() {};		///< update anything we need to in our strings
+	virtual void init() override {}			///< initialize the factory
+	virtual void reset() override {}			///< reset system
+	virtual void update() override {};		///< update anything we need to in our strings
 
 	virtual DisplayString *newDisplayString() = 0;  ///< allocate new display string
 	virtual void freeDisplayString( DisplayString *string ) = 0;  ///< free string

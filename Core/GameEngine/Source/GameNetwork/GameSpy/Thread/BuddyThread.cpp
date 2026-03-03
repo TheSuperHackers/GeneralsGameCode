@@ -49,21 +49,21 @@ class BuddyThreadClass;
 class GameSpyBuddyMessageQueue : public GameSpyBuddyMessageQueueInterface
 {
 public:
-	virtual ~GameSpyBuddyMessageQueue();
+	virtual ~GameSpyBuddyMessageQueue() override;
 	GameSpyBuddyMessageQueue();
-	virtual void startThread();
-	virtual void endThread();
-	virtual Bool isThreadRunning();
-	virtual Bool isConnected();
-	virtual Bool isConnecting();
+	virtual void startThread() override;
+	virtual void endThread() override;
+	virtual Bool isThreadRunning() override;
+	virtual Bool isConnected() override;
+	virtual Bool isConnecting() override;
 
-	virtual void addRequest( const BuddyRequest& req );
-	virtual Bool getRequest( BuddyRequest& req );
+	virtual void addRequest( const BuddyRequest& req ) override;
+	virtual Bool getRequest( BuddyRequest& req ) override;
 
-	virtual void addResponse( const BuddyResponse& resp );
-	virtual Bool getResponse( BuddyResponse& resp );
+	virtual void addResponse( const BuddyResponse& resp ) override;
+	virtual Bool getResponse( BuddyResponse& resp ) override;
 
-	virtual GPProfile getLocalProfileID();
+	virtual GPProfile getLocalProfileID() override;
 
 	BuddyThreadClass* getThread();
 
@@ -91,7 +91,7 @@ class BuddyThreadClass : public ThreadClass
 public:
 	BuddyThreadClass() : ThreadClass() { m_isNewAccount = m_isdeleting = m_isConnecting = m_isConnected = false; m_profileID = 0; m_lastErrorCode = 0; }
 
-	void Thread_Function();
+	virtual void Thread_Function() override;
 
 	void errorCallback( GPConnection *con, GPErrorArg *arg );
 	void messageCallback( GPConnection *con, GPRecvBuddyMessageArg *arg );

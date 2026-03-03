@@ -142,11 +142,11 @@ class FileSystem : public SubsystemInterface
 
 public:
 	FileSystem();
-	virtual	~FileSystem();
+	virtual ~FileSystem() override;
 
-	void init();
-	void reset();
-	void update();
+	virtual void init() override;
+	virtual void reset() override;
+	virtual void update() override;
 
 	File* openFile( const Char *filename, Int access = File::NONE, size_t bufferSize = File::BUFFERSIZE, FileInstance instance = 0 ); ///< opens a File interface to the specified file
 	Bool doesFileExist(const Char *filename, FileInstance instance = 0) const; ///< returns TRUE if the file exists.  filename should have no directory.

@@ -44,20 +44,20 @@ class XferDeepCRC : public XferCRC
 public:
 
 	XferDeepCRC();
-	virtual ~XferDeepCRC();
+	virtual ~XferDeepCRC() override;
 
 	// Xfer methods
-	virtual void open( AsciiString identifier );		///< start a CRC session with this xfer instance
-	virtual void close();											///< stop CRC session
+	virtual void open( AsciiString identifier ) override;		///< start a CRC session with this xfer instance
+	virtual void close() override;											///< stop CRC session
 
 	// xfer methods
-	virtual void xferMarkerLabel( AsciiString asciiStringData );  ///< xfer ascii string (need our own)
-	virtual void xferAsciiString( AsciiString *asciiStringData );  ///< xfer ascii string (need our own)
-	virtual void xferUnicodeString( UnicodeString *unicodeStringData );	///< xfer unicode string (need our own);
+	virtual void xferMarkerLabel( AsciiString asciiStringData ) override;  ///< xfer ascii string (need our own)
+	virtual void xferAsciiString( AsciiString *asciiStringData ) override;  ///< xfer ascii string (need our own)
+	virtual void xferUnicodeString( UnicodeString *unicodeStringData ) override;	///< xfer unicode string (need our own);
 
 protected:
 
-	virtual void xferImplementation( void *data, Int dataSize );
+	virtual void xferImplementation( void *data, Int dataSize ) override;
 
 	FILE * m_fileFP;																			///< pointer to file
 };

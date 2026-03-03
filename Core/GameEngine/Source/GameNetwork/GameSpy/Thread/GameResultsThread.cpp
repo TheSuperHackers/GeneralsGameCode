@@ -47,24 +47,24 @@ class GameResultsThreadClass;
 class GameResultsQueue : public GameResultsInterface
 {
 public:
-	virtual ~GameResultsQueue();
+	virtual ~GameResultsQueue() override;
 	GameResultsQueue();
 
-	virtual void init() {}
-	virtual void reset() {}
-	virtual void update() {}
+	virtual void init() override {}
+	virtual void reset() override {}
+	virtual void update() override {}
 
-	virtual void startThreads();
-	virtual void endThreads();
-	virtual Bool areThreadsRunning();
+	virtual void startThreads() override;
+	virtual void endThreads() override;
+	virtual Bool areThreadsRunning() override;
 
-	virtual void addRequest( const GameResultsRequest& req );
-	virtual Bool getRequest( GameResultsRequest& resp );
+	virtual void addRequest( const GameResultsRequest& req ) override;
+	virtual Bool getRequest( GameResultsRequest& resp ) override;
 
-	virtual void addResponse( const GameResultsResponse& resp );
-	virtual Bool getResponse( GameResultsResponse& resp );
+	virtual void addResponse( const GameResultsResponse& resp ) override;
+	virtual Bool getResponse( GameResultsResponse& resp ) override;
 
-	virtual Bool areGameResultsBeingSent();
+	virtual Bool areGameResultsBeingSent() override;
 
 private:
 	MutexClass m_requestMutex;
@@ -92,7 +92,7 @@ class GameResultsThreadClass : public ThreadClass
 public:
 	GameResultsThreadClass() : ThreadClass() {}
 
-	void Thread_Function();
+	virtual void Thread_Function() override;
 
 private:
 	Int sendGameResults( UnsignedInt IP, UnsignedShort port, const std::string& results );

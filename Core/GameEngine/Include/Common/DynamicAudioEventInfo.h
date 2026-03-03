@@ -51,9 +51,9 @@ class DynamicAudioEventInfo : public AudioEventInfo
     explicit DynamicAudioEventInfo( const AudioEventInfo & baseInfo );
 
     // DynamicAudioEventInfo interfacing function overrides
-    virtual Bool isLevelSpecific() const;
-    virtual DynamicAudioEventInfo * getDynamicAudioEventInfo();
-    virtual const DynamicAudioEventInfo * getDynamicAudioEventInfo() const;
+    virtual Bool isLevelSpecific() const override;
+    virtual DynamicAudioEventInfo * getDynamicAudioEventInfo() override;
+    virtual const DynamicAudioEventInfo * getDynamicAudioEventInfo() const override;
 
     // Change various fields from their default (INI) values
     void overrideAudioName( const AsciiString & newName );
