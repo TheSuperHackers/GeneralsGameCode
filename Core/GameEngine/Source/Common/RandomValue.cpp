@@ -308,6 +308,30 @@ DEBUG_LOG(( "%d: GetGameLogicRandomValue = %d (%d - %d), %s line %d",
 }
 
 //
+// Real valued random value
+//
+Real GetGameLogicRandomValueReal( Real lo, Real hi, const char *file, int line )
+{
+	Real delta = hi - lo;
+	Real rval;
+
+	if (delta <= 0.0f)
+		return hi;
+
+	rval = ((Real)(randomValue(theGameLogicSeed)) * theMultFactor ) * delta + lo;
+
+	DEBUG_ASSERTCRASH( rval >= lo && rval <= hi, ("Bad random val"));
+/**/
+#ifdef DEBUG_RANDOM_LOGIC
+DEBUG_LOG(( "%d: GetGameLogicRandomValueReal = %f, %s line %d",
+					TheGameLogic->getFrame(), rval, file, line ));
+#endif
+/**/
+
+	return rval;
+}
+
+//
 // TheSuperHackers @info This function does not change the seed values with retail compatibility disabled.
 // Consecutive calls always return the same value for the same combination of min / max values, assuming the seed values haven't changed in between.
 // The intended use case for this function are randomized values that are desirable to be synchronized across clients,
@@ -334,30 +358,6 @@ Int GetGameLogicRandomValueUnchanged( int lo, int hi, const char *file, int line
 	DEBUG_LOG(( "%d: GetGameLogicRandomValueUnchanged = %d (%d - %d), %s line %d",
 		TheGameLogic->getFrame(), rval, lo, hi, file, line ));
 #endif
-
-	return rval;
-}
-
-//
-// Real valued random value
-//
-Real GetGameLogicRandomValueReal( Real lo, Real hi, const char *file, int line )
-{
-	Real delta = hi - lo;
-	Real rval;
-
-	if (delta <= 0.0f)
-		return hi;
-
-	rval = ((Real)(randomValue(theGameLogicSeed)) * theMultFactor ) * delta + lo;
-
-	DEBUG_ASSERTCRASH( rval >= lo && rval <= hi, ("Bad random val"));
-/**/
-#ifdef DEBUG_RANDOM_LOGIC
-DEBUG_LOG(( "%d: GetGameLogicRandomValueReal = %f, %s line %d",
-					TheGameLogic->getFrame(), rval, file, line ));
-#endif
-/**/
 
 	return rval;
 }
