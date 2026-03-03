@@ -1186,9 +1186,7 @@ Bool Radar::tryEvent( RadarEventType event, const Coord3D *pos )
 		{
 
 			// get distance from our new event location to this event location in 2D
-			const Real dx = m_event[i].worldLoc.x - pos->x;
-			const Real dy = m_event[i].worldLoc.y - pos->y;
-			const Real distSquared = dx * dx + dy * dy;
+      const Real distSquared = sqr(m_event[ i ].worldLoc.x - pos->x) + sqr(m_event[ i ].worldLoc.y - pos->y);
 
 			if( distSquared <= closeEnoughDistanceSq )
 			{
