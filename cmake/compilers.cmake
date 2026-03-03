@@ -49,6 +49,8 @@ if (NOT IS_VS6_BUILD)
         add_compile_options(/MP)
         # Enforce strict __cplusplus version
         add_compile_options(/Zc:__cplusplus)
+    else()
+        add_compile_options(-Wsuggest-override)
     endif()
 else()
     if(RTS_BUILD_OPTION_VC6_FULL_DEBUG)
