@@ -96,7 +96,7 @@ public:
 	NeutronMissileSlowDeathBehavior( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual UpdateSleepTime update();				 ///< the update call
+	virtual UpdateSleepTime update() override;				 ///< the update call
 
 protected:
 

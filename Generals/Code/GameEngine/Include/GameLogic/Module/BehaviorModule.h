@@ -151,49 +151,49 @@ public:
 	static Int getInterfaceMask() { return 0; }
 	static ModuleType getModuleType() { return MODULETYPE_BEHAVIOR; }
 
-	virtual BodyModuleInterface* getBody() { return nullptr; }
-	virtual CollideModuleInterface* getCollide() { return nullptr; }
-	virtual ContainModuleInterface* getContain() { return nullptr; }
-	virtual CreateModuleInterface* getCreate() { return nullptr; }
-	virtual DamageModuleInterface* getDamage() { return nullptr; }
-	virtual DestroyModuleInterface* getDestroy() { return nullptr; }
-	virtual DieModuleInterface* getDie() { return nullptr; }
-	virtual SpecialPowerModuleInterface* getSpecialPower() { return nullptr; }
-	virtual UpdateModuleInterface* getUpdate() { return nullptr; }
-	virtual UpgradeModuleInterface* getUpgrade() { return nullptr; }
+	virtual BodyModuleInterface* getBody() override { return nullptr; }
+	virtual CollideModuleInterface* getCollide() override { return nullptr; }
+	virtual ContainModuleInterface* getContain() override { return nullptr; }
+	virtual CreateModuleInterface* getCreate() override { return nullptr; }
+	virtual DamageModuleInterface* getDamage() override { return nullptr; }
+	virtual DestroyModuleInterface* getDestroy() override { return nullptr; }
+	virtual DieModuleInterface* getDie() override { return nullptr; }
+	virtual SpecialPowerModuleInterface* getSpecialPower() override { return nullptr; }
+	virtual UpdateModuleInterface* getUpdate() override { return nullptr; }
+	virtual UpgradeModuleInterface* getUpgrade() override { return nullptr; }
 	virtual StealthUpdate* getStealth() { return nullptr; }
 
-	virtual ParkingPlaceBehaviorInterface* getParkingPlaceBehaviorInterface() { return nullptr; }
-	virtual RebuildHoleBehaviorInterface* getRebuildHoleBehaviorInterface() { return nullptr; }
-	virtual BridgeBehaviorInterface* getBridgeBehaviorInterface() { return nullptr; }
-	virtual BridgeTowerBehaviorInterface* getBridgeTowerBehaviorInterface() { return nullptr; }
-	virtual BridgeScaffoldBehaviorInterface* getBridgeScaffoldBehaviorInterface() { return nullptr; }
-	virtual OverchargeBehaviorInterface* getOverchargeBehaviorInterface() { return nullptr; }
-	virtual TransportPassengerInterface* getTransportPassengerInterface() { return nullptr; }
-	virtual CaveInterface* getCaveInterface() { return nullptr; }
-	virtual LandMineInterface* getLandMineInterface() { return nullptr; }
-	virtual DieModuleInterface* getEjectPilotDieInterface() { return nullptr; }
+	virtual ParkingPlaceBehaviorInterface* getParkingPlaceBehaviorInterface() override { return nullptr; }
+	virtual RebuildHoleBehaviorInterface* getRebuildHoleBehaviorInterface() override { return nullptr; }
+	virtual BridgeBehaviorInterface* getBridgeBehaviorInterface() override { return nullptr; }
+	virtual BridgeTowerBehaviorInterface* getBridgeTowerBehaviorInterface() override { return nullptr; }
+	virtual BridgeScaffoldBehaviorInterface* getBridgeScaffoldBehaviorInterface() override { return nullptr; }
+	virtual OverchargeBehaviorInterface* getOverchargeBehaviorInterface() override { return nullptr; }
+	virtual TransportPassengerInterface* getTransportPassengerInterface() override { return nullptr; }
+	virtual CaveInterface* getCaveInterface() override { return nullptr; }
+	virtual LandMineInterface* getLandMineInterface() override { return nullptr; }
+	virtual DieModuleInterface* getEjectPilotDieInterface() override { return nullptr; }
 	// interface acquisition (moved from UpdateModule)
-	virtual ProjectileUpdateInterface* getProjectileUpdateInterface() { return nullptr; }
-	virtual AIUpdateInterface* getAIUpdateInterface() { return nullptr; }
-	virtual ExitInterface* getUpdateExitInterface() { return nullptr; }
-	virtual DelayedUpgradeUpdateInterface* getDelayedUpgradeUpdateInterface() { return nullptr; }
-	virtual DockUpdateInterface* getDockUpdateInterface() { return nullptr; }
-	virtual RailedTransportDockUpdateInterface *getRailedTransportDockUpdateInterface() { return nullptr; }
-	virtual SlowDeathBehaviorInterface* getSlowDeathBehaviorInterface() { return nullptr; }
-	virtual SpecialPowerUpdateInterface* getSpecialPowerUpdateInterface() { return nullptr; }
-	virtual SlavedUpdateInterface* getSlavedUpdateInterface() { return nullptr; }
-	virtual ProductionUpdateInterface* getProductionUpdateInterface() { return nullptr; }
-	virtual HordeUpdateInterface* getHordeUpdateInterface() { return nullptr; }
-	virtual PowerPlantUpdateInterface* getPowerPlantUpdateInterface() { return nullptr; }
-	virtual SpawnBehaviorInterface* getSpawnBehaviorInterface() { return nullptr; }
+	virtual ProjectileUpdateInterface* getProjectileUpdateInterface() override { return nullptr; }
+	virtual AIUpdateInterface* getAIUpdateInterface() override { return nullptr; }
+	virtual ExitInterface* getUpdateExitInterface() override { return nullptr; }
+	virtual DelayedUpgradeUpdateInterface* getDelayedUpgradeUpdateInterface() override { return nullptr; }
+	virtual DockUpdateInterface* getDockUpdateInterface() override { return nullptr; }
+	virtual RailedTransportDockUpdateInterface *getRailedTransportDockUpdateInterface() override { return nullptr; }
+	virtual SlowDeathBehaviorInterface* getSlowDeathBehaviorInterface() override { return nullptr; }
+	virtual SpecialPowerUpdateInterface* getSpecialPowerUpdateInterface() override { return nullptr; }
+	virtual SlavedUpdateInterface* getSlavedUpdateInterface() override { return nullptr; }
+	virtual ProductionUpdateInterface* getProductionUpdateInterface() override { return nullptr; }
+	virtual HordeUpdateInterface* getHordeUpdateInterface() override { return nullptr; }
+	virtual PowerPlantUpdateInterface* getPowerPlantUpdateInterface() override { return nullptr; }
+	virtual SpawnBehaviorInterface* getSpawnBehaviorInterface() override { return nullptr; }
 
 protected:
 
 	// snapshot methods
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 };
 inline BehaviorModule::BehaviorModule( Thing *thing, const ModuleData* moduleData ) : ObjectModule( thing, moduleData ) { }

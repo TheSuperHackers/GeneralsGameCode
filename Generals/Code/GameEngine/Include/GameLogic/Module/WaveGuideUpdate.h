@@ -77,7 +77,7 @@ public:
   WaveGuideUpdate( Thing *thing, const ModuleData *moduleData );
 	// virtual destructor prototype provided by MemoryPoolObject
 
-	virtual UpdateSleepTime update();		///< the update implementation
+	virtual UpdateSleepTime update() override;		///< the update implementation
 
 protected:
 

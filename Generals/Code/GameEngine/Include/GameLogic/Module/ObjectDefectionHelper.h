@@ -68,10 +68,10 @@ public:
 	}
 	// virtual destructor prototype provided by memory pool object
 
-	virtual UpdateSleepTime update();
+	virtual UpdateSleepTime update() override;
 
 	// Disabled conditions to process -- defection helper must ignore all disabled types.
-	virtual DisabledMaskType getDisabledTypesToProcess() const { return DISABLEDMASK_ALL; }
+	virtual DisabledMaskType getDisabledTypesToProcess() const override { return DISABLEDMASK_ALL; }
 
 	// specific to this class.
 	void startDefectionTimer(UnsignedInt numFrames, Bool withDefectorFX = TRUE);

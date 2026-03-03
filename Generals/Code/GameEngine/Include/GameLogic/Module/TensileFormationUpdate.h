@@ -63,7 +63,7 @@ public:
 	// virtual destructor prototype provided by memory pool declaration
 
 	void setEnabled( Bool enabled ) { m_enabled = enabled; }  ///< enable/disable formation
-	virtual UpdateSleepTime update();	///< Deciding whether or not to make new guys
+	virtual UpdateSleepTime update() override;	///< Deciding whether or not to make new guys
 
 protected:
 

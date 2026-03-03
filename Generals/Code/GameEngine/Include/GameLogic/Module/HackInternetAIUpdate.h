@@ -48,15 +48,15 @@ public:
 	{
 		m_framesRemaining = 0;
 	}
-	virtual StateReturnType update();
-	virtual StateReturnType onEnter();
-	virtual void onExit( StateExitType status );
+	virtual StateReturnType update() override;
+	virtual StateReturnType onEnter() override;
+	virtual void onExit( StateExitType status ) override;
 
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 private:
 	UnsignedInt m_framesRemaining; //frames till next cash update
@@ -72,14 +72,14 @@ public:
 	{
 		m_framesRemaining = 0;
 	}
-	virtual StateReturnType update();
-	virtual StateReturnType onEnter();
-	virtual void onExit( StateExitType status );
+	virtual StateReturnType update() override;
+	virtual StateReturnType onEnter() override;
+	virtual void onExit( StateExitType status ) override;
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 private:
 	UnsignedInt m_framesRemaining; //frames till packing animation complete
@@ -95,14 +95,14 @@ public:
 	{
 		m_framesRemaining = 0;
 	}
-	virtual StateReturnType update();
-	virtual StateReturnType onEnter();
-	virtual void onExit( StateExitType status );
+	virtual StateReturnType update() override;
+	virtual StateReturnType onEnter() override;
+	virtual void onExit( StateExitType status ) override;
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 private:
 	UnsignedInt m_framesRemaining; //frames till unpacking animation complete
@@ -186,7 +186,7 @@ public:
 	HackInternetAIUpdate( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
- 	virtual void aiDoCommand(const AICommandParms* parms);
+ 	virtual void aiDoCommand(const AICommandParms* parms) override;
 
 	Real getPackUnpackVariationFactor() const { return getHackInternetAIUpdateModuleData()->m_packUnpackVariationFactor; }
 	UnsignedInt getUnpackTime()					const;
@@ -199,19 +199,19 @@ public:
 	UnsignedInt getXpPerCashUpdate()		const { return getHackInternetAIUpdateModuleData()->m_xpPerCashUpdate; }
 
 	void hackInternet();
-	virtual UpdateSleepTime update();
+	virtual UpdateSleepTime update() override;
 
-	virtual Bool isIdle() const;
+	virtual Bool isIdle() const override;
 
-	virtual HackInternetAIInterface* getHackInternetAIInterface() { return this; }
-	virtual const HackInternetAIInterface* getHackInternetAIInterface() const { return this; }
+	virtual HackInternetAIInterface* getHackInternetAIInterface() override { return this; }
+	virtual const HackInternetAIInterface* getHackInternetAIInterface() const override { return this; }
 
-	virtual Bool isHacking() const;
-	virtual Bool isHackingPackingOrUnpacking() const;
+	virtual Bool isHacking() const override;
+	virtual Bool isHackingPackingOrUnpacking() const override;
 
 protected:
 
-	virtual AIStateMachine* makeStateMachine();
+	virtual AIStateMachine* makeStateMachine() override;
 
 	AICommandParmsStorage		m_pendingCommand;
 	Bool m_hasPendingCommand;

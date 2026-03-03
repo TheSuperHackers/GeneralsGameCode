@@ -64,7 +64,7 @@ public:
 	OCLUpdate( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual UpdateSleepTime update();
+	virtual UpdateSleepTime update() override;
 
 	Real getCountdownPercent() const; ///< goes from 0% to 100%
 	UnsignedInt getRemainingFrames() const; ///< For feedback display

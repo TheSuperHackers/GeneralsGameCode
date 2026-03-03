@@ -76,7 +76,7 @@ public:
 	void extendRadar();									 ///< extend the radar from this object
 	Bool isRadarActive() { return m_radarActive; }
 
-	virtual UpdateSleepTime update(); ///< Here's the actual work of Upgrading
+	virtual UpdateSleepTime update() override; ///< Here's the actual work of Upgrading
 
 protected:
 

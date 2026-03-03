@@ -103,7 +103,7 @@ public:
 
 	UnsignedInt getDieFrame() { return m_dieFrame; }
 
-	virtual UpdateSleepTime update();
+	virtual UpdateSleepTime update() override;
 	void doDisableAttack();
 
 protected:

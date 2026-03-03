@@ -52,6 +52,6 @@ public:
 	ObjectRepulsorHelper( Thing *thing, const ModuleData *modData ) : ObjectHelper( thing, modData ) { }
 	// virtual destructor prototype provided by memory pool object
 
-	virtual UpdateSleepTime update();
+	virtual UpdateSleepTime update() override;
 
 };

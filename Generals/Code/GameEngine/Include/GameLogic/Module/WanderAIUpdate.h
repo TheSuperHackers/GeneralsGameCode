@@ -47,7 +47,7 @@ class WanderAIUpdate : public AIUpdateInterface
 		for an example.)
 	*/
 
-	virtual UpdateSleepTime update();
+	virtual UpdateSleepTime update() override;
 
 public:
 
@@ -57,6 +57,6 @@ public:
 
 protected:
 
-	virtual AIStateMachine* makeStateMachine();
+	virtual AIStateMachine* makeStateMachine() override;
 
 };

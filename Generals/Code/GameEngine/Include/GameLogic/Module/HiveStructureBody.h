@@ -76,5 +76,5 @@ public:
 
 protected:
 
-	virtual void attemptDamage( DamageInfo *damageInfo );		///< try to damage this object
+	virtual void attemptDamage( DamageInfo *damageInfo ) override;		///< try to damage this object
 };
