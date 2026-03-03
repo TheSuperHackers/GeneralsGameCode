@@ -56,7 +56,7 @@ public:
 
 // Implementation
 public:
-	virtual ~WBPopupSliderButton();
+	virtual ~WBPopupSliderButton() override;
 
 	// Generated message map functions
 protected:
@@ -113,12 +113,12 @@ public:
 	public:
 	virtual BOOL Create(const RECT& rect, CWnd* pParentWnd);
 	protected:
-	virtual void PostNcDestroy();
+	virtual void PostNcDestroy() override;
 	//}}AFX_VIRTUAL
 
 // Implementation
 public:
-	virtual ~PopupSlider();
+	virtual ~PopupSlider() override;
 
 	// Generated message map functions
 protected:

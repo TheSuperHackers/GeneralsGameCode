@@ -49,7 +49,7 @@ public:
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(AddPlayerDialog)
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
 // Implementation
@@ -57,9 +57,9 @@ protected:
 
 	// Generated message map functions
 	//{{AFX_MSG(AddPlayerDialog)
-	virtual void OnOK();
-	virtual void OnCancel();
-	virtual BOOL OnInitDialog();
+	virtual void OnOK() override;
+	virtual void OnCancel() override;
+	virtual BOOL OnInitDialog() override;
 	afx_msg void OnEditchangeCombo1();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()

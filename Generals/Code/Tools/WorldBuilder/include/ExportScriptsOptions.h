@@ -41,7 +41,7 @@ public:
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(ExportScriptsOptions)
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
 // Implementation
@@ -61,8 +61,8 @@ protected:
 
 	// Generated message map functions
 	//{{AFX_MSG(ExportScriptsOptions)
-	virtual void OnOK();
-	virtual BOOL OnInitDialog();
+	virtual void OnOK() override;
+	virtual BOOL OnInitDialog() override;
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };
