@@ -29,6 +29,7 @@ set(GAMEENGINE_SRC
 #    Include/Common/DamageFX.h
 #    Include/Common/DataChunk.h
     Include/Common/Debug.h
+    Include/Common/Diagnostic/SimulationMathCrc.h
 #    Include/Common/Dict.h
 #    Include/Common/Directory.h
 #    Include/Common/DisabledTypes.h
@@ -141,7 +142,6 @@ set(GAMEENGINE_SRC
     Include/Common/XferDeepCRC.h
     Include/Common/XferLoad.h
     Include/Common/XferSave.h
-    Include/Common/Diagnostic/SimulationMathCrc.h
 #    Include/GameClient/Anim2D.h
 #    Include/GameClient/AnimateWindowManager.h
 #    Include/GameClient/CampaignManager.h
@@ -574,6 +574,7 @@ set(GAMEENGINE_SRC
     Source/Common/crc.cpp
     Source/Common/CRCDebug.cpp
 #    Source/Common/DamageFX.cpp
+    Source/Common/Diagnostic/SimulationMathCrc.cpp
 #    Source/Common/Dict.cpp
 #    Source/Common/DiscreteCircle.cpp
     Source/Common/FramePacer.cpp
@@ -682,7 +683,6 @@ set(GAMEENGINE_SRC
     Source/Common/System/XferCRC.cpp
     Source/Common/System/XferLoad.cpp
     Source/Common/System/XferSave.cpp
-    Source/Common/Diagnostic/SimulationMathCrc.cpp
 #    Source/Common/TerrainTypes.cpp
 #    Source/Common/Thing/DrawModule.cpp
 #    Source/Common/Thing/Module.cpp

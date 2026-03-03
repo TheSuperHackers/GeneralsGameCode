@@ -40,13 +40,13 @@ static void appendSimulationMathCrc(XferCRC &xfer)
         WWMath::Sin(0.7f) * log10f(2.3f),
         WWMath::Cos(1.1f) * powf(1.1f, 2.0f),
         tanf(0.3f),
-        asinf(0.9673022627830505),
-        acosf(0.9673022627830505),
-        atanf(0.9673022627830505) * powf(1.1f, 2.0f),
+        asinf(0.967302263f),
+        acosf(0.967302263f),
+        atanf(0.967302263f) * powf(1.1f, 2.0f),
         atan2f(0.4f, 1.3f),
         sinhf(0.2f),
         coshf(0.4f) * tanhf(0.5f),
-        sqrtf(55788.84375),
+        sqrtf(55788.84375f),
         expf(0.1f) * log10f(2.3f),
         logf(1.4f));
 
