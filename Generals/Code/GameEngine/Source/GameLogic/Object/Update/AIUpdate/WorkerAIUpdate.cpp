@@ -696,6 +696,14 @@ void WorkerAIUpdate::cancelTask( DozerTask task )
 
 }
 
+void WorkerAIUpdate::cancelAllTasks()
+{
+	for (UnsignedInt task = DOZER_TASK_FIRST; task < DOZER_NUM_TASKS; ++task)
+		internalCancelTask((DozerTask)task);
+
+	m_dozerMachine->resetToDefaultState();
+}
+
 //-------------------------------------------------------------------------------------------------
 /** Attempt to resume the previous task */
 //-------------------------------------------------------------------------------------------------
