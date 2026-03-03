@@ -137,21 +137,21 @@ public:
 	static Int getInterfaceMask() { return UpdateModule::getInterfaceMask() | (MODULEINTERFACE_DIE); }
 
 	// BehaviorModule
-	virtual DieModuleInterface* getDie() { return this; }
+	virtual DieModuleInterface* getDie() override { return this; }
 
 	// UpdateModuleInterface
-	virtual UpdateSleepTime update();
-	virtual SlowDeathBehaviorInterface* getSlowDeathBehaviorInterface() { return this; }
+	virtual UpdateSleepTime update() override;
+	virtual SlowDeathBehaviorInterface* getSlowDeathBehaviorInterface() override { return this; }
 	// Disabled conditions to process -- all
-	virtual DisabledMaskType getDisabledTypesToProcess() const { return DISABLEDMASK_ALL; }
+	virtual DisabledMaskType getDisabledTypesToProcess() const override { return DISABLEDMASK_ALL; }
 
 	// DieModuleInterface
-	virtual void onDie( const DamageInfo *damageInfo );
+	virtual void onDie( const DamageInfo *damageInfo ) override;
 
 	// SlowDeathBehaviorInterface
-	virtual void beginSlowDeath( const DamageInfo *damageInfo );
-	virtual Int getProbabilityModifier( const DamageInfo *damageInfo ) const;
-	virtual Bool isDieApplicable(const DamageInfo *damageInfo) const { return getSlowDeathBehaviorModuleData()->m_dieMuxData.isDieApplicable(getObject(), damageInfo); }
+	virtual void beginSlowDeath( const DamageInfo *damageInfo ) override;
+	virtual Int getProbabilityModifier( const DamageInfo *damageInfo ) const override;
+	virtual Bool isDieApplicable(const DamageInfo *damageInfo) const override { return getSlowDeathBehaviorModuleData()->m_dieMuxData.isDieApplicable(getObject(), damageInfo); }
 
 protected:
 

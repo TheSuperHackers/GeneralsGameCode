@@ -70,7 +70,7 @@ public:
 
   void SetTargetPosition( const Coord3D& target );
 
-	virtual UpdateSleepTime update();
+	virtual UpdateSleepTime update() override;
 
 protected:
 

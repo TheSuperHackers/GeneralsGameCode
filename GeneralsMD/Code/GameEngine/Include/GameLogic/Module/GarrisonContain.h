@@ -105,54 +105,54 @@ public:
 	GarrisonContain( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual UpdateSleepTime update();						///< called once per frame
+	virtual UpdateSleepTime update() override;						///< called once per frame
 
-	virtual Bool isValidContainerFor( const Object* obj, Bool checkCapacity) const; // Garrison has an extra check forbidding any containment if ReallyDamaged
-	virtual Bool isGarrisonable() const { return true; }	///< can this unit be Garrisoned? (ick)
-	virtual Bool isBustable() const { return TRUE; }	///< can this container get busted by a bunkerbuster
-	virtual Bool isImmuneToClearBuildingAttacks() const { return getGarrisonContainModuleData()->m_immuneToClearBuildingAttacks; }
-	virtual Bool isHealContain() const { return false; } ///< true when container only contains units while healing (not a transport!)
-	virtual Bool isTunnelContain() const { return FALSE; }
-	virtual Bool isPassengerAllowedToFire(  ObjectID id = INVALID_ID  ) const;	///< Hey, can I shoot out of this container?
-  virtual Bool isEnclosingContainerFor( const Object *obj ) const { return getGarrisonContainModuleData()->m_isEnclosingContainer; }
-  virtual Bool isSpecialOverlordStyleContainer() const {return FALSE;}
+	virtual Bool isValidContainerFor( const Object* obj, Bool checkCapacity) const override; // Garrison has an extra check forbidding any containment if ReallyDamaged
+	virtual Bool isGarrisonable() const override { return true; }	///< can this unit be Garrisoned? (ick)
+	virtual Bool isBustable() const override { return TRUE; }	///< can this container get busted by a bunkerbuster
+	virtual Bool isImmuneToClearBuildingAttacks() const override { return getGarrisonContainModuleData()->m_immuneToClearBuildingAttacks; }
+	virtual Bool isHealContain() const override { return false; } ///< true when container only contains units while healing (not a transport!)
+	virtual Bool isTunnelContain() const override { return FALSE; }
+	virtual Bool isPassengerAllowedToFire(  ObjectID id = INVALID_ID  ) const override;	///< Hey, can I shoot out of this container?
+  virtual Bool isEnclosingContainerFor( const Object *obj ) const override { return getGarrisonContainModuleData()->m_isEnclosingContainer; }
+  virtual Bool isSpecialOverlordStyleContainer() const override {return FALSE;}
 
-	virtual void removeAllContained( Bool exposeStealthUnits );	///< remove all contents of this open container
+	virtual void removeAllContained( Bool exposeStealthUnits ) override;	///< remove all contents of this open container
 
-	virtual void exitObjectViaDoor( Object *exitObj, ExitDoorType exitDoor );	///< exit one of our content items from us
-	virtual void exitObjectByBudding( Object *newObj, Object *budHost ) { return; };
-	virtual void onContaining( Object *obj, Bool wasSelected );				///< object now contains 'obj'
-	virtual void onRemoving( Object *obj );					///< object no longer contains 'obj'
-  virtual void onSelling();
+	virtual void exitObjectViaDoor( Object *exitObj, ExitDoorType exitDoor ) override;	///< exit one of our content items from us
+	virtual void exitObjectByBudding( Object *newObj, Object *budHost ) override { return; };
+	virtual void onContaining( Object *obj, Bool wasSelected ) override;				///< object now contains 'obj'
+	virtual void onRemoving( Object *obj ) override;					///< object no longer contains 'obj'
+  virtual void onSelling() override;
 
 
 	// A Garrison Contain must eject all passengers when it crosses the ReallyDamaged threshold.
 	virtual void onBodyDamageStateChange( const DamageInfo* damageInfo,
 																				BodyDamageType oldState,
-																				BodyDamageType newState);  ///< Die Interface state change callback
+																				BodyDamageType newState) override;  ///< Die Interface state change callback
 
 	/**
 		return the player that *appears* to control this unit, given an observing player.
 		if null, use getObject()->getControllingPlayer() instead.
 	*/
-	virtual const Player* getApparentControllingPlayer( const Player* observingPlayer ) const;
-	virtual void recalcApparentControllingPlayer();
-	virtual Bool isDisplayedOnControlBar() const {return TRUE;}///< Does this container display its contents on the ControlBar?
+	virtual const Player* getApparentControllingPlayer( const Player* observingPlayer ) const override;
+	virtual void recalcApparentControllingPlayer() override;
+	virtual Bool isDisplayedOnControlBar() const override {return TRUE;}///< Does this container display its contents on the ControlBar?
 
-  virtual void onDamage( DamageInfo *info );
+  virtual void onDamage( DamageInfo *info ) override;
 
-  virtual void setEvacDisposition( EvacDisposition disp ) { m_evacDisposition = disp; };
+  virtual void setEvacDisposition( EvacDisposition disp ) override { m_evacDisposition = disp; };
 
 protected:
 
-	virtual void redeployOccupants();				///< redeploy the occupants of us at all available garrison points
-	virtual void onObjectCreated();
+	virtual void redeployOccupants() override;				///< redeploy the occupants of us at all available garrison points
+	virtual void onObjectCreated() override;
 
 	void validateRallyPoint();							///< validate (if necessary) and pick (if possible) an exit rally point
 
-	virtual Bool calcBestGarrisonPosition( Coord3D *sourcePos, const Coord3D *targetPos );
-	virtual Bool attemptBestFirePointPosition( Object *source, Weapon *weapon, Object *victim );
-	virtual Bool attemptBestFirePointPosition( Object *source, Weapon *weapon, const Coord3D *targetPos );
+	virtual Bool calcBestGarrisonPosition( Coord3D *sourcePos, const Coord3D *targetPos ) override;
+	virtual Bool attemptBestFirePointPosition( Object *source, Weapon *weapon, Object *victim ) override;
+	virtual Bool attemptBestFirePointPosition( Object *source, Weapon *weapon, const Coord3D *targetPos ) override;
 
 	void updateEffects();										///< do any effects needed per frame
 	void loadGarrisonPoints();							///< load garrison point position data and save for later

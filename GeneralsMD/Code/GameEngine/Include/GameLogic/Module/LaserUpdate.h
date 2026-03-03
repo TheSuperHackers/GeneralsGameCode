@@ -109,7 +109,7 @@ public:
 	void setDirty( Bool dirty ) { m_dirty = dirty; }
 	Bool isDirty() const { return m_dirty; }
 
-	virtual void clientUpdate();
+	virtual void clientUpdate() override;
 
 protected:
 

@@ -72,53 +72,53 @@ public:
 	ActiveBody( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual void onDelete();
+	virtual void onDelete() override;
 
-	virtual void attemptDamage( DamageInfo *damageInfo );		///< try to damage this object
-	virtual Real estimateDamage( DamageInfoInput& damageInfo ) const;
-	virtual void attemptHealing( DamageInfo *damageInfo );		///< try to heal this object
-	virtual Real getHealth() const;													///< get current health
-	virtual BodyDamageType getDamageState() const;
-	virtual void setDamageState( BodyDamageType newState );	///< control damage state directly.  Will adjust hitpoints.
-	virtual void setAflame( Bool setting );///< This is a major change like a damage state.
-	virtual UnsignedInt getSubdualDamageHealRate() const;
-	virtual Real getSubdualDamageHealAmount() const;
-	virtual Bool hasAnySubdualDamage() const;
-	virtual Real getCurrentSubdualDamageAmount() const { return m_currentSubdualDamage; }
+	virtual void attemptDamage( DamageInfo *damageInfo ) override;		///< try to damage this object
+	virtual Real estimateDamage( DamageInfoInput& damageInfo ) const override;
+	virtual void attemptHealing( DamageInfo *damageInfo ) override;		///< try to heal this object
+	virtual Real getHealth() const override;													///< get current health
+	virtual BodyDamageType getDamageState() const override;
+	virtual void setDamageState( BodyDamageType newState ) override;	///< control damage state directly.  Will adjust hitpoints.
+	virtual void setAflame( Bool setting ) override;///< This is a major change like a damage state.
+	virtual UnsignedInt getSubdualDamageHealRate() const override;
+	virtual Real getSubdualDamageHealAmount() const override;
+	virtual Bool hasAnySubdualDamage() const override;
+	virtual Real getCurrentSubdualDamageAmount() const override { return m_currentSubdualDamage; }
 
-	virtual const DamageInfo *getLastDamageInfo() const { return &m_lastDamageInfo; }	///< return info on last damage dealt to this object
-	virtual UnsignedInt getLastDamageTimestamp() const { return m_lastDamageTimestamp; }	///< return frame of last damage dealt
-	virtual UnsignedInt getLastHealingTimestamp() const { return m_lastHealingTimestamp; }	///< return frame of last damage dealt
-	virtual ObjectID getClearableLastAttacker() const { return (m_lastDamageCleared ? INVALID_ID : m_lastDamageInfo.in.m_sourceID); }
-	virtual void clearLastAttacker() { m_lastDamageCleared = true; }
+	virtual const DamageInfo *getLastDamageInfo() const override { return &m_lastDamageInfo; }	///< return info on last damage dealt to this object
+	virtual UnsignedInt getLastDamageTimestamp() const override { return m_lastDamageTimestamp; }	///< return frame of last damage dealt
+	virtual UnsignedInt getLastHealingTimestamp() const override { return m_lastHealingTimestamp; }	///< return frame of last damage dealt
+	virtual ObjectID getClearableLastAttacker() const override { return (m_lastDamageCleared ? INVALID_ID : m_lastDamageInfo.in.m_sourceID); }
+	virtual void clearLastAttacker() override { m_lastDamageCleared = true; }
 
-	void onVeterancyLevelChanged( VeterancyLevel oldLevel, VeterancyLevel newLevel, Bool provideFeedback = TRUE );
+	virtual void onVeterancyLevelChanged( VeterancyLevel oldLevel, VeterancyLevel newLevel, Bool provideFeedback = TRUE ) override;
 
-	virtual void setArmorSetFlag(ArmorSetType ast) { m_curArmorSetFlags.set(ast, 1); }
-	virtual void clearArmorSetFlag(ArmorSetType ast) { m_curArmorSetFlags.set(ast, 0); }
-	virtual Bool testArmorSetFlag(ArmorSetType ast) { return m_curArmorSetFlags.test(ast); }
+	virtual void setArmorSetFlag(ArmorSetType ast) override { m_curArmorSetFlags.set(ast, 1); }
+	virtual void clearArmorSetFlag(ArmorSetType ast) override { m_curArmorSetFlags.set(ast, 0); }
+	virtual Bool testArmorSetFlag(ArmorSetType ast) override { return m_curArmorSetFlags.test(ast); }
 
-	virtual void setInitialHealth(Int initialPercent); ///< Sets the initial load health %.
-	virtual void setMaxHealth( Real maxHealth, MaxHealthChangeType healthChangeType = SAME_CURRENTHEALTH ); ///< Sets the initial max health
+	virtual void setInitialHealth(Int initialPercent) override; ///< Sets the initial load health %.
+	virtual void setMaxHealth( Real maxHealth, MaxHealthChangeType healthChangeType = SAME_CURRENTHEALTH ) override; ///< Sets the initial max health
 
-	virtual Bool getFrontCrushed() const { return m_frontCrushed; }
-	virtual Bool getBackCrushed() const { return m_backCrushed; }
+	virtual Bool getFrontCrushed() const override { return m_frontCrushed; }
+	virtual Bool getBackCrushed() const override { return m_backCrushed; }
 
-	virtual void setFrontCrushed(Bool v) { m_frontCrushed = v; }
-	virtual void setBackCrushed(Bool v) { m_backCrushed = v; }
+	virtual void setFrontCrushed(Bool v) override { m_frontCrushed = v; }
+	virtual void setBackCrushed(Bool v) override { m_backCrushed = v; }
 
-	virtual Real getMaxHealth() const;  ///< return max health
-	virtual Real getInitialHealth() const;  // return initial health
+	virtual Real getMaxHealth() const override;  ///< return max health
+	virtual Real getInitialHealth() const override;  // return initial health
 
-	virtual Real getPreviousHealth() const { return m_prevHealth; }
+	virtual Real getPreviousHealth() const override { return m_prevHealth; }
 
-	virtual void setIndestructible( Bool indestructible );
-	virtual Bool isIndestructible() const { return m_indestructible; }
+	virtual void setIndestructible( Bool indestructible ) override;
+	virtual Bool isIndestructible() const override { return m_indestructible; }
 
-	virtual void internalChangeHealth( Real delta );								///< change health
+	virtual void internalChangeHealth( Real delta ) override;								///< change health
 
-	virtual void evaluateVisualCondition();
-	virtual void updateBodyParticleSystems();// made public for topple anf building collapse updates -ML
+	virtual void evaluateVisualCondition() override;
+	virtual void updateBodyParticleSystems() override;// made public for topple anf building collapse updates -ML
 
 	// Subdual Damage
 	virtual Bool isSubdued() const;

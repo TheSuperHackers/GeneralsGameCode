@@ -219,9 +219,9 @@ public:
 //	virtual SleepyUpdatePhase getUpdatePhase() const { return PHASE_FINAL; }
 
 	// PhysicsBehavior methods
-	virtual void onCollide( Object *other, const Coord3D *loc, const Coord3D *normal );
-	virtual Bool isRailroad() const ;
-	virtual UpdateSleepTime update();
+	virtual void onCollide( Object *other, const Coord3D *loc, const Coord3D *normal ) override;
+	virtual Bool isRailroad() const override;
+	virtual UpdateSleepTime update() override;
 
 
 	// TRAINY METHODS

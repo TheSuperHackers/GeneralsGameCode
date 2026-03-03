@@ -80,11 +80,11 @@ public:
 	// virtual destructor prototype provided by memory pool declaration
 
 	static Int getInterfaceMask() { return UpdateModule::getInterfaceMask() | MODULEINTERFACE_DIE; }
-	virtual DieModuleInterface* getDie() { return this; }
+	virtual DieModuleInterface* getDie() override { return this; }
 
 
-	virtual UpdateSleepTime update();
-	virtual void onDie( const DamageInfo *damageInfo );
+	virtual UpdateSleepTime update() override;
+	virtual void onDie( const DamageInfo *damageInfo ) override;
 
 
 private:

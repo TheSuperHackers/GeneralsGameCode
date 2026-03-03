@@ -48,7 +48,7 @@ public:
 	{
 		m_crateNameList.clear();
 	}
-	~CreateCrateDieModuleData()
+	virtual ~CreateCrateDieModuleData() override
 	{
 		m_crateNameList.clear();
 	}
@@ -81,7 +81,7 @@ public:
 	CreateCrateDie( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual void onDie( const DamageInfo *damageInfo );
+	virtual void onDie( const DamageInfo *damageInfo ) override;
 
 private:
 	Bool testCreationChance( CrateTemplate const *currentCrateData );

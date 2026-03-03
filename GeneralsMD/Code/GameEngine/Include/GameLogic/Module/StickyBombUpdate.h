@@ -78,9 +78,9 @@ public:
 	StickyBombUpdate( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual void onObjectCreated();
+	virtual void onObjectCreated() override;
 
-	virtual UpdateSleepTime update();							///< called once per frame
+	virtual UpdateSleepTime update() override;							///< called once per frame
 
 	void initStickyBomb( Object *object, const Object *bomber, const Coord3D *specificPos = nullptr );
 	void detonate();

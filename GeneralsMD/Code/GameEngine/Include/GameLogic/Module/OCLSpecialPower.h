@@ -92,12 +92,12 @@ public:
 	OCLSpecialPower( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool object
 
-	virtual void doSpecialPower( UnsignedInt commandOptions );
-	virtual void doSpecialPowerAtObject( Object *obj, UnsignedInt commandOptions );
-	virtual void doSpecialPowerAtLocation( const Coord3D *loc, Real angle, UnsignedInt commandOptions );
+	virtual void doSpecialPower( UnsignedInt commandOptions ) override;
+	virtual void doSpecialPowerAtObject( Object *obj, UnsignedInt commandOptions ) override;
+	virtual void doSpecialPowerAtLocation( const Coord3D *loc, Real angle, UnsignedInt commandOptions ) override;
 
 	//If the special power launches a construction site, we need to know the final product for placement purposes.
-	virtual const ThingTemplate* getReferenceThingTemplate() const;
+	virtual const ThingTemplate* getReferenceThingTemplate() const override;
 
 protected:
 

@@ -57,7 +57,7 @@ public:
 	InternetHackContain( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual void onContaining( Object *obj, Bool wasSelected );		///< object now contains 'obj'
+	virtual void onContaining( Object *obj, Bool wasSelected ) override;		///< object now contains 'obj'
 
 protected:
 

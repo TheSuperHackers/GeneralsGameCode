@@ -74,32 +74,32 @@ class JetAIUpdate : public AIUpdateInterface
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( JetAIUpdate, "JetAIUpdate" )
 	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( JetAIUpdate, JetAIUpdateModuleData )
 
-	virtual UpdateSleepTime update();
+	virtual UpdateSleepTime update() override;
 
 public:
 
 	JetAIUpdate( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual void onObjectCreated();
-	virtual void onDelete();
+	virtual void onObjectCreated() override;
+	virtual void onDelete() override;
 
-	virtual JetAIUpdate* getJetAIUpdate() { return this; }
-	virtual const JetAIUpdate* getJetAIUpdate() const { return this; }
+	virtual JetAIUpdate* getJetAIUpdate() override { return this; }
+	virtual const JetAIUpdate* getJetAIUpdate() const override { return this; }
 
- 	virtual void aiDoCommand(const AICommandParms* parms);
-	virtual Bool chooseLocomotorSet(LocomotorSetType wst);
-	virtual void setLocomotorGoalNone();
-	virtual Bool isIdle() const;
-	virtual Bool isTaxiingToParking() const; //only applies to jets interacting with runways.
+ 	virtual void aiDoCommand(const AICommandParms* parms) override;
+	virtual Bool chooseLocomotorSet(LocomotorSetType wst) override;
+	virtual void setLocomotorGoalNone() override;
+	virtual Bool isIdle() const override;
+	virtual Bool isTaxiingToParking() const override; //only applies to jets interacting with runways.
 	virtual Bool isReloading() const;
 
-	virtual Bool isAllowedToMoveAwayFromUnit() const;
-	virtual Bool getSneakyTargetingOffset(Coord3D* offset) const;
-	virtual void addTargeter(ObjectID id, Bool add);
-	virtual Bool isTemporarilyPreventingAimSuccess() const;
-	virtual Bool isDoingGroundMovement() const;
-	virtual void notifyVictimIsDead();
+	virtual Bool isAllowedToMoveAwayFromUnit() const override;
+	virtual Bool getSneakyTargetingOffset(Coord3D* offset) const override;
+	virtual void addTargeter(ObjectID id, Bool add) override;
+	virtual Bool isTemporarilyPreventingAimSuccess() const override;
+	virtual Bool isDoingGroundMovement() const override;
+	virtual void notifyVictimIsDead() override;
 	virtual Bool isOutOfSpecialReloadAmmo() const;
 
 	const Coord3D* friend_getProducerLocation() const { return &m_producerLocation; }
@@ -129,17 +129,17 @@ public:
 
 protected:
 
-	virtual AIStateMachine* makeStateMachine();
+	virtual AIStateMachine* makeStateMachine() override;
 
 	virtual void privateFollowPath( std::vector<Coord3D>* path, Object *ignoreObject, CommandSourceType cmdSource, Bool exitProduction );///< follow the path defined by the given array of points
-	virtual void privateFollowPathAppend( const Coord3D *pos, CommandSourceType cmdSource );
-	virtual void privateEnter( Object *obj, CommandSourceType cmdSource );							///< enter the given object
-	virtual void privateGetRepaired( Object *repairDepot, CommandSourceType cmdSource );///< get repaired at repair depot
+	virtual void privateFollowPathAppend( const Coord3D *pos, CommandSourceType cmdSource ) override;
+	virtual void privateEnter( Object *obj, CommandSourceType cmdSource ) override;							///< enter the given object
+	virtual void privateGetRepaired( Object *repairDepot, CommandSourceType cmdSource ) override;///< get repaired at repair depot
 
 	void pruneDeadTargeters();
 	void positionLockon();
 
-	virtual Bool getTreatAsAircraftForLocoDistToGoal() const;
+	virtual Bool getTreatAsAircraftForLocoDistToGoal() const override;
 	Bool isParkedAt(const Object* obj) const;
 
 private:
