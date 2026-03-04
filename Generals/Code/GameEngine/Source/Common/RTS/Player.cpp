@@ -1772,6 +1772,10 @@ void Player::transferAssetsFromThat(Player *that)
 	{
 		that->iterateObjects(cancelUpgradeInProduction, (void*)upgradeTemplate);
 	}
+
+	// TheSuperHackers @bugfix Stubbjax 03/02/2026 Ensure the in-progress upgrade mask is copied from 'that'
+	// player to 'this' player to prevent duplicate player upgrades being purchased.
+	m_upgradesInProgress.set(that->m_upgradesInProgress);
 #endif
 
 	std::list<Object *> objsToTransfer;
