@@ -2922,7 +2922,7 @@ Bool Player::doesObjectQualifyForBattlePlan( Object *obj ) const
 
 //-------------------------------------------------------------------------------------------------
 // note, bonus is an in-out parm.
-void Player::changeBattlePlan( BattlePlanStatus plan, Int delta, BattlePlanBonusesData *bonus )
+void Player::changeBattlePlan( BattlePlanStatus plan, Int delta, const BattlePlanBonusesData *bonus )
 {
 	DUMPBATTLEPLANBONUSES(bonus, this, nullptr);
 	Bool addBonus = false;
@@ -2976,26 +2976,24 @@ void Player::changeBattlePlan( BattlePlanStatus plan, Int delta, BattlePlanBonus
 	else if( removeBonus )
 	{
 		//First, inverse the bonuses
-		BattlePlanBonuses* invertedBonus = newInstance(BattlePlanBonuses);
-		*invertedBonus = *bonus;
+		BattlePlanBonusesData invertedBonus = *bonus;
 
-		invertedBonus->m_armorScalar				= 1.0f / __max( bonus->m_armorScalar, 0.01f );
-		invertedBonus->m_sightRangeScalar		= 1.0f / __max( bonus->m_sightRangeScalar, 0.01f );
-		if( invertedBonus->m_bombardment > 0 )
+		invertedBonus.m_armorScalar				= 1.0f / __max( bonus->m_armorScalar, 0.01f );
+		invertedBonus.m_sightRangeScalar		= 1.0f / __max( bonus->m_sightRangeScalar, 0.01f );
+		if( invertedBonus.m_bombardment > 0 )
 		{
-			invertedBonus->m_bombardment			= -1;
+			invertedBonus.m_bombardment			= -1;
 		}
-		if( invertedBonus->m_holdTheLine > 0 )
+		if( invertedBonus.m_holdTheLine > 0 )
 		{
-			invertedBonus->m_holdTheLine			= -1;
+			invertedBonus.m_holdTheLine			= -1;
 		}
-		if( invertedBonus->m_searchAndDestroy > 0 )
+		if( invertedBonus.m_searchAndDestroy > 0 )
 		{
-			invertedBonus->m_searchAndDestroy	= -1;
+			invertedBonus.m_searchAndDestroy	= -1;
 		}
 
-		applyBattlePlanBonusesForPlayerObjects( invertedBonus );
-		deleteInstance(invertedBonus);
+		applyBattlePlanBonusesForPlayerObjects( &invertedBonus );
 	}
 }
 
