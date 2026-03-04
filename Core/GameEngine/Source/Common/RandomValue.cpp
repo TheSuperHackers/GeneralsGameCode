@@ -72,11 +72,11 @@ UnsignedInt GetGameLogicRandomSeed()
 UnsignedInt GetGameLogicRandomSeedCRC()
 {
 	CRC c;
-	c.computeCRC(theGameLogicSeed, 6*sizeof(UnsignedInt));
+	c.computeCRC(theGameLogicSeed, sizeof(theGameLogicSeed));
 	return c.get();
 }
 
-static void seedRandom(UnsignedInt SEED, UnsignedInt *seed)
+static void seedRandom(UnsignedInt SEED, UnsignedInt (&seed)[6])
 {
 	UnsignedInt ax;
 
@@ -104,7 +104,7 @@ void InitRandom()
 	seedRandom(0, theGameLogicSeed);
 	theGameLogicBaseSeed = 0;
 #else
-	time_t seconds = time( nullptr );
+	const time_t seconds = time( nullptr );
 
 	seedRandom(seconds, theGameAudioSeed);
 	seedRandom(seconds, theGameClientSeed);
@@ -133,7 +133,7 @@ void InitRandom( UnsignedInt seed )
 // A carry occurred if the sum is less than one of the inputs. This is addition, so carry can never be more than one.
 #define ADC(SUM, A, B, C) SUM = (A) + (B) + (C); C = ((SUM < (A)) || (SUM < (B)))
 
-static UnsignedInt randomValue(UnsignedInt *seed)
+static UnsignedInt randomValue(UnsignedInt (&seed)[6])
 {
 	UnsignedInt ax;
 	UnsignedInt c = 0;
