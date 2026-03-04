@@ -707,7 +707,9 @@ void Player::update()
 				GameMessage *msg = TheMessageStream->appendMessage( GameMessage::MSG_ENABLE_RETALIATION_MODE );
 				if( msg )
 				{
+#if RETAIL_COMPATIBLE_CRC
 					msg->appendIntegerArgument( getPlayerIndex() );
+#endif
 					msg->appendBooleanArgument( TheGlobalData->m_clientRetaliationModeEnabled );
 				}
 			}
