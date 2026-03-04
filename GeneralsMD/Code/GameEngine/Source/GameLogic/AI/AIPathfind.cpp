@@ -2533,12 +2533,6 @@ void PathfindZoneManager::markZonesDirty()  ///< Called when the zones need to b
  * If you are a multiple terrain vehicle, like amphibious transport, the lookup is a little more
  * complicated.
  */
-
-#define dont_forceRefreshCalling
-#ifdef forceRefreshCalling
-static  Bool  s_stopForceCalling = FALSE;
-#endif
-
 void PathfindZoneManager::calculateZones( PathfindCell **map, PathfindLayer layers[], const IRegion2D &globalBounds )
 {
 
@@ -2789,9 +2783,6 @@ void PathfindZoneManager::calculateZones( PathfindCell **map, PathfindLayer laye
 		DEBUG_LOG((" =============DONE============= Average time to calculate zones: %f", averageTimeToUpdate));
 		DEBUG_LOG(("                                           Percent of baseline : %f", averageTimeToUpdate/0.003335f));
 		updateSamples = 777;
-#ifdef forceRefreshCalling
-		s_stopForceCalling = TRUE;
-#endif
 	}
 
 #endif
@@ -5741,13 +5732,7 @@ void Pathfinder::processPathfindQueue()
 #endif
 #endif
 
-	if (
-#ifdef forceRefreshCalling
-#pragma message("AHHHH!, forced calls to pathzonerefresh still in code...  notify M Lorenzen")
-    s_stopForceCalling==FALSE ||
-#endif
-    m_zoneManager.needToCalculateZones())
-  {
+	if (m_zoneManager.needToCalculateZones()) {
 		m_zoneManager.calculateZones(m_map, m_layers, m_extent);
 		return;
 	}
