@@ -65,6 +65,18 @@ static UnsignedInt theGameLogicSeed[6] =
     0xf22d0e56L, 0x883126e9L, 0xc624dd2fL, 0x702c49cL, 0x9e353f7dL, 0x6fdf3b64L
 };
 
+UnsignedInt GetGameLogicRandomSeed()
+{
+	return theGameLogicBaseSeed;
+}
+
+UnsignedInt GetGameLogicRandomSeedCRC()
+{
+	CRC c;
+	c.computeCRC(theGameLogicSeed, 6*sizeof(UnsignedInt));
+	return c.get();
+}
+
 // Add with carry. SUM is replaced with A + B + C, C is replaced with 1  if there was a carry, 0 if there wasn't. A carry occurred if the sum is  less than one of the inputs. This is addition, so carry can never be  more than one.
 #define ADC(SUM, A, B, C)   SUM = (A) + (B) + (C); C = ((SUM < (A)) || (SUM < (B)))
 
@@ -128,18 +140,6 @@ static void seedRandom(UnsignedInt SEED, UnsignedInt *seed)
 	seed[4] = ax;                   /* mov     seed+16,eax                  */
 	ax += 0x6fdf3b64 - 0x9e353f7d;  /* add     eax,06fdf3b64h-09e353f7dh    */
 	seed[5] = ax;                   /* mov     seed+20,eax                  */
-}
-
-UnsignedInt GetGameLogicRandomSeed()
-{
-	return theGameLogicBaseSeed;
-}
-
-UnsignedInt GetGameLogicRandomSeedCRC()
-{
-	CRC c;
-	c.computeCRC(theGameLogicSeed, 6*sizeof(UnsignedInt));
-	return c.get();
 }
 
 void InitRandom()
