@@ -3651,7 +3651,7 @@ void Player::applyBattlePlanBonusesForPlayerObjects( const BattlePlanBonusesData
 	newBonus.m_armorScalar = bonus->m_armorScalar;
 	newBonus.m_sightRangeScalar = bonus->m_sightRangeScalar;
 
-	iterateObjects(localApplyBattlePlanBonusesToObject, (void*)&newBonus);
+	iterateObjects(localApplyBattlePlanBonusesToObject, &newBonus);
 #endif
 }
 
