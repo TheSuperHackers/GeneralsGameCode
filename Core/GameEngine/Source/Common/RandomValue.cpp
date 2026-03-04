@@ -130,12 +130,6 @@ static void seedRandom(UnsignedInt SEED, UnsignedInt *seed)
 	seed[5] = ax;                   /* mov     seed+20,eax                  */
 }
 
-//
-// It is necessary to separate the GameClient and GameLogic usage of random
-// values to ensure that the GameLogic remains deterministic, regardless
-// of the effects displayed on the GameClient.
-//
-
 UnsignedInt GetGameLogicRandomSeed()
 {
 	return theGameLogicBaseSeed;
@@ -176,6 +170,12 @@ void InitRandom( UnsignedInt seed )
 DEBUG_LOG(( "InitRandom %08lx",seed));
 #endif
 }
+
+//
+// It is necessary to separate the GameClient and GameLogic usage of random
+// values to ensure that the GameLogic remains deterministic, regardless
+// of the effects displayed on the GameClient.
+//
 
 //
 // Integer random value
