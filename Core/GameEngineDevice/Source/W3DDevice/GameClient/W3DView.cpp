@@ -247,10 +247,8 @@ void W3DView::setOrigin( Int x, Int y)
 /** @todo This is inefficient. We should construct the matrix directly using vectors. */
 //-------------------------------------------------------------------------------------------------
 #define MIN_CAPPED_ZOOM (0.5f) //WST 10.19.2002. JSC integrated 5/20/03.
-void W3DView::buildCameraTransform( Matrix3D *transform )
+void W3DView::buildCameraPosition( Vector3& sourcePos, Vector3& targetPos )
 {
-	Vector3 sourcePos, targetPos;
-
 	Real groundLevel = m_groundLevel; // 93.0f;
 
 	Real zoom = getZoom();
@@ -361,7 +359,10 @@ void W3DView::buildCameraTransform( Matrix3D *transform )
 		}
 #endif
 	}
+}
 
+void W3DView::buildCameraTransform( Matrix3D *transform, const Vector3 &sourcePos, const Vector3 &targetPos )
+{
 	//m_3DCamera->Set_View_Plane(DEG_TO_RADF(50.0f));
 	//DEBUG_LOG(("zoom %f, SourceZ %f, posZ %f, groundLevel %f CamOffZ %f",
 	//			zoom, sourcePos.Z, pos.z, groundLevel,m_cameraOffset.z));
@@ -438,8 +439,6 @@ Note the following restrictions on camera constraints!
 */
 void W3DView::calcCameraAreaConstraints()
 {
-//	const Matrix3D& cameraTransform = m_3DCamera->Get_Transform();
-
 //	DEBUG_LOG(("*** rebuilding cam constraints"));
 
 	// ok, now check to ensure that we can't see outside the map region,
@@ -449,36 +448,7 @@ void W3DView::calcCameraAreaConstraints()
 		Region3D mapRegion;
 		TheTerrainLogic->getExtent( &mapRegion );
 
-		Real maxEdgeZ = m_groundLevel;
-		Coord3D center, bottom;
-		ICoord2D screen;
-
-		//Pick at the center
-		screen.x=0.5f*getWidth()+m_originX;
-		screen.y=0.5f*getHeight()+m_originY;
-
-		Vector3 rayStart,rayEnd;
-
-		getPickRay(&screen,&rayStart,&rayEnd);
-
-		center.x = Vector3::Find_X_At_Z(maxEdgeZ, rayStart, rayEnd);
-		center.y = Vector3::Find_Y_At_Z(maxEdgeZ, rayStart, rayEnd);
-		center.z = maxEdgeZ;
-
-		screen.y = m_originY+ 0.95f*getHeight();
- 		getPickRay(&screen,&rayStart,&rayEnd);
- 		bottom.x = Vector3::Find_X_At_Z(maxEdgeZ, rayStart, rayEnd);
-		bottom.y = Vector3::Find_Y_At_Z(maxEdgeZ, rayStart, rayEnd);
-		bottom.z = maxEdgeZ;
-		center.x -= bottom.x;
-		center.y -= bottom.y;
-
-		Real offset = center.length();
-
-		if (TheGlobalData->m_debugAI) {
-			offset = -1000; // push out the constraints so we can look at staging areas.
-		}
-
+		Real offset = calcCameraAreaOffset(m_groundLevel);
 		m_cameraAreaConstraints.lo.x = mapRegion.lo.x + offset;
 		m_cameraAreaConstraints.hi.x = mapRegion.hi.x - offset;
 		m_cameraAreaConstraints.lo.y = mapRegion.lo.y + offset;
@@ -486,6 +456,41 @@ void W3DView::calcCameraAreaConstraints()
 
 		m_cameraAreaConstraintsValid = true;
 	}
+}
+
+//-------------------------------------------------------------------------------------------------
+Real W3DView::calcCameraAreaOffset(Real maxEdgeZ)
+{
+	Coord3D center, bottom;
+	ICoord2D screen;
+
+	//Pick at the center
+	screen.x=0.5f*getWidth()+m_originX;
+	screen.y=0.5f*getHeight()+m_originY;
+
+	Vector3 rayStart,rayEnd;
+
+	getPickRay(&screen,&rayStart,&rayEnd);
+
+	center.x = Vector3::Find_X_At_Z(maxEdgeZ, rayStart, rayEnd);
+	center.y = Vector3::Find_Y_At_Z(maxEdgeZ, rayStart, rayEnd);
+	center.z = maxEdgeZ;
+
+	screen.y = m_originY+ 0.95f*getHeight();
+ 	getPickRay(&screen,&rayStart,&rayEnd);
+ 	bottom.x = Vector3::Find_X_At_Z(maxEdgeZ, rayStart, rayEnd);
+	bottom.y = Vector3::Find_Y_At_Z(maxEdgeZ, rayStart, rayEnd);
+	bottom.z = maxEdgeZ;
+	center.x -= bottom.x;
+	center.y -= bottom.y;
+
+	Real offset = center.length();
+
+	if (TheGlobalData->m_debugAI) {
+		offset = -1000; // push out the constraints so we can look at staging areas.
+	}
+
+	return offset;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -528,7 +533,6 @@ void W3DView::setCameraTransform()
 		return;
 
 	m_cameraHasMovedSinceRequest = true;
-	Matrix3D cameraTransform;
 
 	Real farZ = 1200.0f;
 
@@ -553,7 +557,11 @@ void W3DView::setCameraTransform()
 	{
 		if (!m_cameraAreaConstraintsValid)
 		{
-			buildCameraTransform(&cameraTransform);
+			Vector3 sourcePos;
+			Vector3 targetPos;
+			buildCameraPosition(sourcePos, targetPos);
+			Matrix3D cameraTransform;
+			buildCameraTransform(&cameraTransform, sourcePos, targetPos);
 			m_3DCamera->Set_Transform( cameraTransform );
 			calcCameraAreaConstraints();
 		}
@@ -577,7 +585,11 @@ void W3DView::setCameraTransform()
 #endif
 
 	// rebuild it (even if we just did it due to camera constraints)
-	buildCameraTransform( &cameraTransform );
+	Vector3 sourcePos;
+	Vector3 targetPos;
+	buildCameraPosition(sourcePos, targetPos);
+	Matrix3D cameraTransform;
+	buildCameraTransform(&cameraTransform, sourcePos, targetPos);
 	m_3DCamera->Set_Transform( cameraTransform );
 
 	if (TheTerrainRenderObject)
