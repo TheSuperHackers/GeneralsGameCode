@@ -43,7 +43,7 @@
 //#define DEBUG_RANDOM_LOGIC
 //#define DETERMINISTIC       // to allow repetition for debugging
 
-static const Real theMultFactor = 1.0f / (powf(2, 8 * sizeof(UnsignedInt)) - 1.0f);
+static const Real theMultFactor = 1.0f / static_cast<float>(UINT_MAX);
 
 // Initial seed values.
 static UnsignedInt theGameAudioSeed[6] =
