@@ -683,7 +683,10 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 				// TheSuperHackers @fix stephanmeesters 01/03/2026 Validate the origin of the source object
 				if ( source->getControllingPlayer() != thisPlayer )
 				{
-					DEBUG_CRASH( ("MSG_DO_SPECIAL_POWER: Player at index '%d' doesn't control the object with sourceID '%d'.", thisPlayer->getPlayerIndex(), (Int)sourceID) );
+					DEBUG_CRASH( ("MSG_DO_SPECIAL_POWER: Player '%ls' attempted to control the object '%s' owned by player '%ls'.",
+						 thisPlayer->getPlayerDisplayName().str(),
+						 source->getTemplate()->getName().str(),
+						 source->getControllingPlayer()->getPlayerDisplayName().str()) );
 					break;
 				}
 
@@ -735,7 +738,10 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 				// TheSuperHackers @fix stephanmeesters 01/03/2026 Validate the origin of the source object
 				if ( source->getControllingPlayer() != thisPlayer )
 				{
-					DEBUG_CRASH( ("MSG_DO_SPECIAL_POWER_AT_LOCATION: Player at index '%d' doesn't control the object with sourceID '%d'.", thisPlayer->getPlayerIndex(), (Int)sourceID) );
+					DEBUG_CRASH( ("MSG_DO_SPECIAL_POWER_AT_LOCATION: Player '%ls' attempted to control the object '%s' owned by player '%ls'.",
+						 thisPlayer->getPlayerDisplayName().str(),
+						 source->getTemplate()->getName().str(),
+						 source->getControllingPlayer()->getPlayerDisplayName().str()) );
 					break;
 				}
 				
@@ -785,7 +791,10 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 				// TheSuperHackers @fix stephanmeesters 01/03/2026 Validate the origin of the source object
 				if ( source->getControllingPlayer() != thisPlayer )
 				{
-					DEBUG_CRASH( ("MSG_DO_SPECIAL_POWER_AT_OBJECT: Player at index '%d' doesn't control the object with sourceID '%d'.", thisPlayer->getPlayerIndex(), (Int)sourceID) );
+					DEBUG_CRASH( ("MSG_DO_SPECIAL_POWER_AT_OBJECT: Player '%ls' attempted to control the object '%s' owned by player '%ls'.",
+						 thisPlayer->getPlayerDisplayName().str(),
+						 source->getTemplate()->getName().str(),
+						 source->getControllingPlayer()->getPlayerDisplayName().str()) );
 					break;
 				}
 				
@@ -1235,7 +1244,10 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 				// TheSuperHackers @fix stephanmeesters 01/03/2026 Validate the origin of the source object
 				if ( source->getControllingPlayer() != thisPlayer )
 				{
-					DEBUG_CRASH( ("MSG_DO_SPECIAL_POWER_OVERRIDE_DESTINATION: Player at index '%d' doesn't control the object with sourceID '%d'.", thisPlayer->getPlayerIndex(), (Int)sourceID) );
+					DEBUG_CRASH( ("MSG_DO_SPECIAL_POWER_OVERRIDE_DESTINATION: Player '%ls' attempted to control the object '%s' owned by player '%ls'.",
+						 thisPlayer->getPlayerDisplayName().str(),
+						 source->getTemplate()->getName().str(),
+						 source->getControllingPlayer()->getPlayerDisplayName().str()) );
 					break;
 				}
 				
