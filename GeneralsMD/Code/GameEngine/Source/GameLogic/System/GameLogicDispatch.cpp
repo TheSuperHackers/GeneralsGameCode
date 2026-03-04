@@ -632,15 +632,9 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 
 		case GameMessage::MSG_ENABLE_RETALIATION_MODE:
 		{
-			//Logically turns on or off retaliation mode for a specified player.
-			Int playerIndex = msg->getArgument( 0 )->integer;
+			// TheSuperHackers @info The first argument is unused.
 			Bool enableRetaliation = msg->getArgument( 1 )->boolean;
-
-			Player *player = ThePlayerList->getNthPlayer( playerIndex );
-			if( player )
-			{
-				player->setLogicalRetaliationModeEnabled( enableRetaliation );
-			}
+			thisPlayer->setLogicalRetaliationModeEnabled( enableRetaliation );
 			break;
 		}
 
