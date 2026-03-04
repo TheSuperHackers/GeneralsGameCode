@@ -483,7 +483,6 @@ struct TCheckMovementInfo;
 class ZoneBlock
 {
 public:
-
 	ZoneBlock();
 	~ZoneBlock();  // not virtual, please don't override without making virtual.  jba.
 
@@ -507,7 +506,6 @@ protected:
 	zoneStorageType m_firstZone; // First zone in this block.
 	UnsignedShort m_numZones;	 // Number of zones in this block.  If == 1, there is only one zone, and
 														 // no zone equivalency arrays will be allocated.
-
 
 	UnsignedShort m_zonesAllocated;
 	zoneStorageType *m_groundCliffZones;
@@ -541,12 +539,10 @@ public:
 
 	Bool needToCalculateZones() const {return m_nextFrameToCalculateZones <= TheGameLogic->getFrame() ;} ///< Returns true if the zones need to be recalculated.
 	void markZonesDirty() ; ///< Called when the zones need to be recalculated.
- 	void updateZonesForModify( PathfindCell **map,  PathfindLayer layers[], const IRegion2D &structureBounds, const IRegion2D &globalBounds ) ; ///< Called to recalculate an area when a structure has been removed.
+	void updateZonesForModify( PathfindCell **map,  PathfindLayer layers[], const IRegion2D &structureBounds, const IRegion2D &globalBounds ) ; ///< Called to recalculate an area when a structure has been removed.
 	void calculateZones(	PathfindCell **map, PathfindLayer layers[], const IRegion2D &bounds);	///< Does zone calculations.
 	zoneStorageType getEffectiveZone(LocomotorSurfaceTypeMask acceptableSurfaces, Bool crusher, zoneStorageType zone) const;
 	zoneStorageType getEffectiveTerrainZone(zoneStorageType zone) const;
-
-	zoneStorageType getNextZone();
 
 	void getExtent(ICoord2D &extent) const {extent = m_zoneBlockExtent;}
 
@@ -575,7 +571,7 @@ private:
 	ICoord2D			m_zoneBlockExtent;				///< Zone block extents. Not the same scale as the pathfind extents.
 
 	UnsignedShort m_maxZone;								///< Max zone used.
-	UnsignedInt		m_nextFrameToCalculateZones;		///< WHen should I recalculate, next?.
+	UnsignedInt		m_nextFrameToCalculateZones;		///< When should I recalculate, next?.
 	UnsignedShort m_zonesAllocated;
 	zoneStorageType *m_groundCliffZones;
 	zoneStorageType *m_groundWaterZones;
