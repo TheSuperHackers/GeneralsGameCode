@@ -37,6 +37,7 @@
 #undef DEBUG_RANDOM_AUDIO
 #undef DEBUG_RANDOM_CLIENT
 #undef DEBUG_RANDOM_LOGIC
+#undef DETERMINISTIC
 
 //#define DEBUG_RANDOM_AUDIO
 //#define DEBUG_RANDOM_CLIENT
@@ -114,6 +115,10 @@ void InitRandom()
 
 void InitRandom( UnsignedInt seed )
 {
+#ifdef DETERMINISTIC
+	seed = 0;
+#endif
+
 	seedRandom(seed, theGameAudioSeed);
 	seedRandom(seed, theGameClientSeed);
 	seedRandom(seed, theGameLogicSeed);
