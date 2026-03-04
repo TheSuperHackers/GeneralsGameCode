@@ -409,6 +409,31 @@ def main():
     #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/SelectionInfo.cpp", Game.CORE, "GameEngine/Source/GameClient/SelectionInfo.cpp")
     #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/Statistics.cpp", Game.CORE, "GameEngine/Source/GameClient/Statistics.cpp")
 
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/INI/INIAiData.cpp", Game.CORE, "GameEngine/Source/Common/INI/INIAiData.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/INI/INIAnimation.cpp", Game.CORE, "GameEngine/Source/Common/INI/INIAnimation.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/INI/INICommandButton.cpp", Game.CORE, "GameEngine/Source/Common/INI/INICommandButton.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/INI/INICommandSet.cpp", Game.CORE, "GameEngine/Source/Common/INI/INICommandSet.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/INI/INIControlBarScheme.cpp", Game.CORE, "GameEngine/Source/Common/INI/INIControlBarScheme.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/INI/INICrate.cpp", Game.CORE, "GameEngine/Source/Common/INI/INICrate.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/INI/INIDamageFX.cpp", Game.CORE, "GameEngine/Source/Common/INI/INIDamageFX.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/INI/INIDrawGroupInfo.cpp", Game.CORE, "GameEngine/Source/Common/INI/INIDrawGroupInfo.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/INI/INIGameData.cpp", Game.CORE, "GameEngine/Source/Common/INI/INIGameData.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/INI/INIMapCache.cpp", Game.CORE, "GameEngine/Source/Common/INI/INIMapCache.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/INI/INIMapData.cpp", Game.CORE, "GameEngine/Source/Common/INI/INIMapData.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/INI/INIMappedImage.cpp", Game.CORE, "GameEngine/Source/Common/INI/INIMappedImage.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/INI/INIModel.cpp", Game.CORE, "GameEngine/Source/Common/INI/INIModel.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/INI/INIMultiplayer.cpp", Game.CORE, "GameEngine/Source/Common/INI/INIMultiplayer.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/INI/INIObject.cpp", Game.CORE, "GameEngine/Source/Common/INI/INIObject.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/INI/INIParticleSys.cpp", Game.CORE, "GameEngine/Source/Common/INI/INIParticleSys.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/INI/INISpecialPower.cpp", Game.CORE, "GameEngine/Source/Common/INI/INISpecialPower.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/INI/INITerrain.cpp", Game.CORE, "GameEngine/Source/Common/INI/INITerrain.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/INI/INITerrainBridge.cpp", Game.CORE, "GameEngine/Source/Common/INI/INITerrainBridge.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/INI/INITerrainRoad.cpp", Game.CORE, "GameEngine/Source/Common/INI/INITerrainRoad.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/INI/INIUpgrade.cpp", Game.CORE, "GameEngine/Source/Common/INI/INIUpgrade.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/INI/INIWater.cpp", Game.CORE, "GameEngine/Source/Common/INI/INIWater.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/INI/INIWeapon.cpp", Game.CORE, "GameEngine/Source/Common/INI/INIWeapon.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/INI/INIWebpageURL.cpp", Game.CORE, "GameEngine/Source/Common/INI/INIWebpageURL.cpp")
+
     return
 
 

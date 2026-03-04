@@ -532,33 +532,33 @@ set(GAMEENGINE_SRC
     Source/Common/GameMain.cpp
     Source/Common/GlobalData.cpp
 #    Source/Common/INI/INI.cpp
-    Source/Common/INI/INIAiData.cpp
-    Source/Common/INI/INIAnimation.cpp
+#    Source/Common/INI/INIAiData.cpp
+#    Source/Common/INI/INIAnimation.cpp
 #    Source/Common/INI/INIAudioEventInfo.cpp
-    Source/Common/INI/INICommandButton.cpp
-    Source/Common/INI/INICommandSet.cpp
-    Source/Common/INI/INIControlBarScheme.cpp
-    Source/Common/INI/INICrate.cpp
-    Source/Common/INI/INIDamageFX.cpp
-    Source/Common/INI/INIDrawGroupInfo.cpp
-    Source/Common/INI/INIGameData.cpp
-    Source/Common/INI/INIMapCache.cpp
-    Source/Common/INI/INIMapData.cpp
-    Source/Common/INI/INIMappedImage.cpp
+#    Source/Common/INI/INICommandButton.cpp
+#    Source/Common/INI/INICommandSet.cpp
+#    Source/Common/INI/INIControlBarScheme.cpp
+#    Source/Common/INI/INICrate.cpp
+#    Source/Common/INI/INIDamageFX.cpp
+#    Source/Common/INI/INIDrawGroupInfo.cpp
+#    Source/Common/INI/INIGameData.cpp
+#    Source/Common/INI/INIMapCache.cpp
+#    Source/Common/INI/INIMapData.cpp
+#    Source/Common/INI/INIMappedImage.cpp
 #    Source/Common/INI/INIMiscAudio.cpp
-    Source/Common/INI/INIModel.cpp
-    Source/Common/INI/INIMultiplayer.cpp
-    Source/Common/INI/INIObject.cpp
-    Source/Common/INI/INIParticleSys.cpp
-    Source/Common/INI/INISpecialPower.cpp
-    Source/Common/INI/INITerrain.cpp
-    Source/Common/INI/INITerrainBridge.cpp
-    Source/Common/INI/INITerrainRoad.cpp
-    Source/Common/INI/INIUpgrade.cpp
+#    Source/Common/INI/INIModel.cpp
+#    Source/Common/INI/INIMultiplayer.cpp
+#    Source/Common/INI/INIObject.cpp
+#    Source/Common/INI/INIParticleSys.cpp
+#    Source/Common/INI/INISpecialPower.cpp
+#    Source/Common/INI/INITerrain.cpp
+#    Source/Common/INI/INITerrainBridge.cpp
+#    Source/Common/INI/INITerrainRoad.cpp
+#    Source/Common/INI/INIUpgrade.cpp
 #    Source/Common/INI/INIVideo.cpp
-    Source/Common/INI/INIWater.cpp
-    Source/Common/INI/INIWeapon.cpp
-    Source/Common/INI/INIWebpageURL.cpp
+#    Source/Common/INI/INIWater.cpp
+#    Source/Common/INI/INIWeapon.cpp
+#    Source/Common/INI/INIWebpageURL.cpp
     Source/Common/Language.cpp
     Source/Common/MessageStream.cpp
     Source/Common/MiniLog.cpp
