@@ -3412,7 +3412,6 @@ Bool Player::doesObjectQualifyForBattlePlan( Object *obj ) const
 }
 
 //-------------------------------------------------------------------------------------------------
-// note, bonus is an in-out parm.
 void Player::changeBattlePlan( BattlePlanStatus plan, Int delta, const BattlePlanBonusesData *bonus )
 {
 	DUMPBATTLEPLANBONUSES(bonus, this, nullptr);
