@@ -185,7 +185,7 @@ public:
 	virtual void stepView() override {}; ///< Update view for every fixed time step
 
 	virtual void setZoomLimited( Bool limit ) override {}			///< limit the zoom height
-	virtual Bool isZoomLimited( void ) override { return TRUE; }							///< get status of zoom limit
+	virtual Bool isZoomLimited( void ) const override { return TRUE; }							///< get status of zoom limit
 
 	virtual void setWidth( Int width ) override { m_width = width; }
 	virtual Int getWidth( void ) override { return m_width; }
