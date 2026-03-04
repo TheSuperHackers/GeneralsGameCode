@@ -24,6 +24,8 @@ add_feature_info(AddressSanitizer RTS_BUILD_OPTION_ASAN "Building with address s
 add_feature_info(Vc6FullDebug RTS_BUILD_OPTION_VC6_FULL_DEBUG "Building VC6 with full debug info")
 add_feature_info(FFmpegSupport RTS_BUILD_OPTION_FFMPEG "Building with FFmpeg support")
 
+set(RTS_BUILD_OUTPUT_SUFFIX "" CACHE STRING "Suffix appended to output names of installable targets")
+
 if(RTS_BUILD_ZEROHOUR)
     option(RTS_BUILD_ZEROHOUR_TOOLS "Build tools for Zero Hour" ON)
     option(RTS_BUILD_ZEROHOUR_EXTRAS "Build extra tools/tests for Zero Hour" OFF)
