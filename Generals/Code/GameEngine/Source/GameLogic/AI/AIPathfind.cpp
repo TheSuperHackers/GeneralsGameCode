@@ -3322,6 +3322,10 @@ void PathfindLayer::doDebugIcons() {
 		if (m_layer == LAYER_WALL) {
 			bridgeHeight = TheAI->pathfinder()->getWallHeight();
 		}
+		static Int flash = 0;
+		flash--;
+		if (flash<1) flash = 20;
+		if (flash < 10) return;
 		Bool showCells = TheGlobalData->m_debugAI==AI_DEBUG_CELLS;
 		// show the pathfind grid
 		for( int j=0; j<m_height; j++ )
@@ -3333,8 +3337,8 @@ void PathfindLayer::doDebugIcons() {
 				topLeftCorner.x = (Real)(i+m_xOrigin) * PATHFIND_CELL_SIZE_F;
 
 				color.red = color.green = color.blue = 0;
-				Bool empty = true;
-
+				Bool empty = false;
+				Real size = 0.4f;
 				const PathfindCell *cell = &m_layerCells[i][j];
 				if (cell)
 				{
@@ -3344,6 +3348,7 @@ void PathfindLayer::doDebugIcons() {
 							empty = false;
 					}	else if (cell->getType() == PathfindCell::CELL_IMPASSABLE) {
 							color.red = color.green = color.blue = 1;
+							size = 0.2f;
 							empty = false;
 					}	else if (cell->getType() == PathfindCell::CELL_BRIDGE_IMPASSABLE) {
 							color.blue = color.red = 1;
@@ -3351,6 +3356,8 @@ void PathfindLayer::doDebugIcons() {
 					}	else if (cell->getType() == PathfindCell::CELL_CLIFF) {
 							color.red = 1;
 							empty = false;
+					}	else {
+							size = 0.2f;
 					}
 				}
 				if (showCells) {
@@ -3376,7 +3383,7 @@ void PathfindLayer::doDebugIcons() {
 					loc.x = topLeftCorner.x + PATHFIND_CELL_SIZE_F/2.0f;
 					loc.y = topLeftCorner.y + PATHFIND_CELL_SIZE_F/2.0f;
 					loc.z = bridgeHeight;
-					addIcon(&loc, PATHFIND_CELL_SIZE_F*0.8f, 99, color);
+					addIcon(&loc, PATHFIND_CELL_SIZE_F*size, 99, color);
 				}
 			}
 		}
