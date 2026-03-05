@@ -83,11 +83,6 @@ void W3DSmudgeManager::ReAcquireResources()
 	surface->Get_Description(surface_desc);
 	REF_PTR_RELEASE(surface);
 
-	// TheSuperHackers @bugfix Use backbuffer dimensions instead of tactical view dimensions.
-	// With forced MSAA, SurfaceClass::Copy uses CopyRects with NULL rects for whole-surface resolve.
-	// This requires the destination surface to match the source surface dimensions exactly.
-	// Using TheTacticalView dimensions caused a size mismatch, forcing a fallback to
-	// D3DXLoadSurfaceFromSurface which cannot read from MSAA surfaces.
 	m_backgroundTexture = MSGNEW("TextureClass") TextureClass(surface_desc.Width,surface_desc.Height,surface_desc.Format,MIP_LEVELS_1,TextureClass::POOL_DEFAULT, true);
 
 	m_backBufferWidth = surface_desc.Width;
@@ -210,8 +205,7 @@ Bool W3DSmudgeManager::testHardwareSupport()
 		IDirect3DTexture8 *backTexture=W3DShaderManager::getRenderTexture();
 		if (!backTexture || !W3DShaderManager::isRenderingToTexture())
 		{
-			// TheSuperHackers @bugfix When RTT is disabled globally (e.g. due to forced MSAA),
-			// if the Copy path is still available, accept that as hardware support.
+			// TheSuperHackers @bugfix When RTT is disabled globally accept the Copy path as hardware support
 			if (m_backgroundTexture)
 			{
 				m_hardwareSupportStatus = SMUDGE_SUPPORT_YES;
@@ -313,7 +307,17 @@ void W3DSmudgeManager::render(RenderInfoClass &rinfo)
 		return;
 
 	SurfaceClass *backBuffer = DX8Wrapper::_Get_DX8_Back_Buffer();
-	if (!backBuffer) return;
+
+	if (!backBuffer)
+		return;
+
+	SurfaceClass *background=m_backgroundTexture ? m_backgroundTexture->Get_Surface_Level() : nullptr;
+
+	if (!background)
+	{
+		REF_PTR_RELEASE(backBuffer);
+		return;
+	}
 
 	SurfaceClass::SurfaceDescription surface_desc;
 	backBuffer->Get_Description(surface_desc);
@@ -338,14 +342,6 @@ void W3DSmudgeManager::render(RenderInfoClass &rinfo)
 
 	camera.Get_View_Matrix(&view);
 	camera.Get_Projection_Matrix(&proj);
-
-	SurfaceClass *background=m_backgroundTexture ? m_backgroundTexture->Get_Surface_Level() : nullptr;
-
-	if (!background)
-	{
-		REF_PTR_RELEASE(backBuffer);
-		return;
-	}
 
 	Real texClampX = (Real)TheTacticalView->getWidth()/(Real)surface_desc.Width;
 	Real texClampY = (Real)TheTacticalView->getHeight()/(Real)surface_desc.Height;

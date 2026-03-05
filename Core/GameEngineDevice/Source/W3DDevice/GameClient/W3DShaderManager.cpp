@@ -173,11 +173,10 @@ Int ScreenDefaultFilter::init()
 
 Bool ScreenDefaultFilter::preRender(Bool &skipRender, CustomScenePassModes &scenePassMode)
 {
-	// TheSuperHackers @bugfix Disable RTT redirection for the default filter.
-	// When MSAA is forced by Nvidia driver profile, the D3D8 API reports MultiSampleType=NONE
-	// and SetRenderTarget returns S_OK, but the depth buffer is actually multisampled internally.
-	// Rendering to a non-MSAA texture with this hidden-MSAA depth buffer corrupts depth testing,
-	// producing a black screen. The smudge system has its own Copy path that works without RTT.
+	// TheSuperHackers @bugfix Disable Render To Texture redirection for the default filter
+	// When MSAA is forced by Nvidia driver profile depth buffer is multisampled internally
+	// Rendering to non-MSAA texture with this depth buffer corrupts depth testing producing black screen
+	// The smudge system has its own Copy path that works without Render To Texture
 	return FALSE;
 }
 
