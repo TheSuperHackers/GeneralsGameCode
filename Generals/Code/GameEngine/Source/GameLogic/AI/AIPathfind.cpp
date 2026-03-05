@@ -3577,7 +3577,11 @@ void PathfindLayer::classifyCells()
 						groundCell->setConnectLayer(LAYER_INVALID); // disconnect it.
 					}
 				}
+#if RTS_GENERALS && RETAIL_COMPATIBLE_PATHFINDING
 				cell->setType(PathfindCell::CELL_IMPASSABLE);
+#else
+				cell->setType(PathfindCell::CELL_BRIDGE_IMPASSABLE);
+#endif
 			}
 		}
 	}
@@ -3742,7 +3746,11 @@ void PathfindLayer::classifyLayerMapCell( Int i, Int j , PathfindCell *cell, Bri
 		cell->setType(PathfindCell::CELL_CLEAR);
 	} else {
 		if (bridgeCount!=0) {
+#if RTS_GENERALS && RETAIL_COMPATIBLE_PATHFINDING
 			cell->setType(PathfindCell::CELL_CLIFF); // it's off the bridge.
+#else
+			cell->setType(PathfindCell::CELL_BRIDGE_IMPASSABLE); // it's off the bridge.
+#endif
 		}
 
 		// check against the end lines.
@@ -3753,6 +3761,7 @@ void PathfindLayer::classifyLayerMapCell( Int i, Int j , PathfindCell *cell, Bri
 		cellBounds.hi.x = bottomRightCorner.x;
 		cellBounds.hi.y = bottomRightCorner.y;
 
+#if RTS_GENERALS && RETAIL_COMPATIBLE_PATHFINDING
 		if (m_bridge->isCellOnEnd(&cellBounds)) {
 			cell->setType(PathfindCell::CELL_CLEAR);
 		}
@@ -3766,6 +3775,21 @@ void PathfindLayer::classifyLayerMapCell( Int i, Int j , PathfindCell *cell, Bri
 				groundCell->setConnectLayer(cell->getLayer());
 			}
 		}
+#else
+		if (m_bridge->isCellOnSide(&cellBounds)) {
+			cell->setType(PathfindCell::CELL_BRIDGE_IMPASSABLE);
+		} else {
+			if (m_bridge->isCellOnEnd(&cellBounds)) {
+				cell->setType(PathfindCell::CELL_CLEAR);
+			}
+			if (m_bridge->isCellEntryPoint(&cellBounds)) {
+				cell->setType(PathfindCell::CELL_CLEAR);
+				cell->setConnectLayer(LAYER_GROUND);
+				PathfindCell *groundCell = TheAI->pathfinder()->getCell(LAYER_GROUND, i, j );
+				groundCell->setConnectLayer(cell->getLayer());
+			}
+		}
+#endif
 	}
 	Coord3D center = topLeftCorner;
 	center.x += PATHFIND_CELL_SIZE/2;
@@ -3778,7 +3802,11 @@ void PathfindLayer::classifyLayerMapCell( Int i, Int j , PathfindCell *cell, Bri
 			if (groundHeight+LAYER_Z_CLOSE_ENOUGH_F > bridgeHeight) {
 				PathfindCell *groundCell = TheAI->pathfinder()->getCell(LAYER_GROUND,i, j);
 				if (!(groundCell->getType()==PathfindCell::CELL_OBSTACLE)) {
+#if RTS_GENERALS && RETAIL_COMPATIBLE_PATHFINDING
 					groundCell->setType(PathfindCell::CELL_IMPASSABLE);
+#else
+					groundCell->setType(PathfindCell::CELL_BRIDGE_IMPASSABLE);
+#endif
 				}
 			}
 		}
@@ -3855,7 +3883,11 @@ void PathfindLayer::classifyWallMapCell( Int i, Int j , PathfindCell *cell, Obje
 		cell->setType(PathfindCell::CELL_CLEAR);
 	} else {
 		if (bridgeCount!=0) {
+#if RTS_GENERALS && RETAIL_COMPATIBLE_PATHFINDING
 			cell->setType(PathfindCell::CELL_CLIFF); // it's off the bridge.
+#else
+			cell->setType(PathfindCell::CELL_BRIDGE_IMPASSABLE); // it's off the bridge.
+#endif
 		}
 
 	}
@@ -4045,7 +4077,9 @@ void Pathfinder::updateLayer(Object *obj, PathfindLayerEnum layer)
  */
 void Pathfinder::classifyFence( Object *obj, Bool insert )
 {
+#if RTS_GENERALS && RETAIL_COMPATIBLE_PATHFINDING
 	m_zoneManager.markZonesDirty();
+#endif
 
 	const Coord3D *pos = obj->getPosition();
   Real angle = obj->getOrientation();
@@ -4069,6 +4103,25 @@ void Pathfinder::classifyFence( Object *obj, Bool insert )
  	Real tl_x = pos->x - fenceOffset*c - halfsizeY*s;
  	Real tl_y = pos->y + halfsizeY*c - fenceOffset*s;
 
+#if !(RTS_GENERALS && RETAIL_COMPATIBLE_PATHFINDING)
+	IRegion2D cellBounds;
+	cellBounds.lo.x = REAL_TO_INT_FLOOR((pos->x + 0.5f)/PATHFIND_CELL_SIZE_F);
+	cellBounds.lo.y = REAL_TO_INT_FLOOR((pos->y + 0.5f)/PATHFIND_CELL_SIZE_F);
+	// TheSuperHackers @fix Mauller 16/06/2025 Fixes uninitialized variables.
+#if RETAIL_COMPATIBLE_CRC
+	//CRCDEBUG_LOG(("Pathfinder::classifyFence - (%d,%d)", cellBounds.hi.x, cellBounds.hi.y));
+
+	// In retail, the values in the stack often look like this. We set them
+	// to reduce the likelihood of mismatch.
+	cellBounds.hi.x = 253961804;
+	cellBounds.hi.y = 4202797;
+#else
+	cellBounds.hi.x = REAL_TO_INT_CEIL((pos->x + 0.5f)/PATHFIND_CELL_SIZE_F);
+	cellBounds.hi.y = REAL_TO_INT_CEIL((pos->y + 0.5f)/PATHFIND_CELL_SIZE_F);
+#endif
+	Bool didAnything = false;
+#endif // !(RTS_GENERALS && RETAIL_COMPATIBLE_PATHFINDING)
+
  	for (Int iy = 0; iy < numStepsY; ++iy, tl_x += ydx, tl_y += ydy)
  	{
  		Real x = tl_x;
@@ -4079,6 +4132,7 @@ void Pathfinder::classifyFence( Object *obj, Bool insert )
  			Int cy = REAL_TO_INT_FLOOR((y + 0.5f)/PATHFIND_CELL_SIZE_F);
  			if (cx >= 0 && cy >= 0 && cx < m_extent.hi.x && cy < m_extent.hi.y)
  			{
+#if RTS_GENERALS && RETAIL_COMPATIBLE_PATHFINDING
  				if (insert) {
  					ICoord2D pos;
  					pos.x = cx;
@@ -4087,9 +4141,36 @@ void Pathfinder::classifyFence( Object *obj, Bool insert )
  				}
  				else
  					m_map[cx][cy].removeObstacle(obj);
+#else
+ 				if (insert) {
+ 					ICoord2D pos;
+ 					pos.x = cx;
+ 					pos.y = cy;
+					if (m_map[cx][cy].setTypeAsObstacle( obj, true, pos )) {
+						didAnything = true;
+ 						m_map[cx][cy].setZone(PathfindZoneManager::UNINITIALIZED_ZONE);
+					}
+ 				}
+				else {
+					if (m_map[cx][cy].removeObstacle(obj)) {
+						didAnything = true;
+ 						m_map[cx][cy].setZone(PathfindZoneManager::UNINITIALIZED_ZONE);
+					}
+				}
+				if (cellBounds.lo.x>cx) cellBounds.lo.x = cx;
+ 				if (cellBounds.lo.y>cy) cellBounds.lo.y = cy;
+ 				if (cellBounds.hi.x<cx) cellBounds.hi.x = cx;
+ 				if (cellBounds.hi.y<cy) cellBounds.hi.y = cy;
+#endif
  			}
  		}
  	}
+#if !(RTS_GENERALS && RETAIL_COMPATIBLE_PATHFINDING)
+	if (didAnything) {
+		m_zoneManager.markZonesDirty();
+		m_zoneManager.updateZonesForModify(m_map, m_layers, cellBounds, m_extent);
+	}
+#endif
 }
 
 /**
@@ -4124,6 +4205,12 @@ void Pathfinder::classifyObjectFootprint( Object *obj, Bool insert )
 		// Just in case, remove the object.  Remove checks that the object has been added before
 		// removing, so it's safer to just remove it, as by the time some units "die", they've become
 		// lifeless immobile husks of debris, but we still need to remove them.  jba.
+
+#if !RTS_GENERALS
+    if ( obj->isKindOf( KINDOF_BLAST_CRATER ) ) // since these footprints are permanent, never remove them
+      return;
+#endif
+
 		removeUnitFromPathfindMap(obj);
 		if (obj->isKindOf(KINDOF_WALK_ON_TOP_OF_WALL)) {
 			if (!m_layers[LAYER_WALL].isUnused()) {
@@ -4167,20 +4254,35 @@ void Pathfinder::classifyObjectFootprint( Object *obj, Bool insert )
 		return;
 	}
 
+#if RTS_GENERALS
 	if (obj->getHeightAboveTerrain() > PATHFIND_CELL_SIZE_F) {
 		return; // Don't add bounds that are up in the air.
 	}
+#else
+	if (obj->getHeightAboveTerrain() > PATHFIND_CELL_SIZE_F && ( ! obj->isKindOf( KINDOF_BLAST_CRATER ) ) )
+  {
+		return; // Don't add bounds that are up in the air.... unless a blast crater wants to do just that
+	}
+#endif
 	internal_classifyObjectFootprint(obj, insert);
 }
 
 void Pathfinder::internal_classifyObjectFootprint( Object *obj, Bool insert )
 {
+	const Coord3D *pos = obj->getPosition();
+
+#if !(RTS_GENERALS && RETAIL_COMPATIBLE_PATHFINDING)
+	IRegion2D cellBounds;
+	cellBounds.lo.x = REAL_TO_INT_FLOOR((pos->x + 0.5f)/PATHFIND_CELL_SIZE_F);
+	cellBounds.lo.y = REAL_TO_INT_FLOOR((pos->y + 0.5f)/PATHFIND_CELL_SIZE_F);
+	cellBounds.hi = cellBounds.lo;
+#endif
+
 	switch(obj->getGeometryInfo().getGeomType())
 	{
 		case GEOMETRY_BOX:
 		{
 			m_zoneManager.markZonesDirty();
-			const Coord3D *pos = obj->getPosition();
 			Real angle = obj->getOrientation();
 
 			Real halfsizeX = obj->getGeometryInfo().getMajorRadius();
@@ -4210,6 +4312,7 @@ void Pathfinder::internal_classifyObjectFootprint( Object *obj, Bool insert )
 					Int cx = REAL_TO_INT_FLOOR((x + 0.5f)/PATHFIND_CELL_SIZE_F);
 					Int cy = REAL_TO_INT_FLOOR((y + 0.5f)/PATHFIND_CELL_SIZE_F);
 
+#if RTS_GENERALS && RETAIL_COMPATIBLE_PATHFINDING
 					if (cx >= 0 && cy >= 0 && cx < m_extent.hi.x && cy < m_extent.hi.y)
 					{
 						if (insert) {
@@ -4221,6 +4324,28 @@ void Pathfinder::internal_classifyObjectFootprint( Object *obj, Bool insert )
 						else
 							m_map[cx][cy].removeObstacle(obj);
 					}
+#else
+					if (cx >= 0 && cy >= 0 && cx < m_extent.hi.x && cy < m_extent.hi.y)
+					{
+						if (insert) {
+							ICoord2D pos;
+							pos.x = cx;
+							pos.y = cy;
+							if (m_map[cx][cy].setTypeAsObstacle( obj, false, pos )) {
+ 								m_map[cx][cy].setZone(PathfindZoneManager::UNINITIALIZED_ZONE);
+							}
+						}
+						else {
+							if (m_map[cx][cy].removeObstacle(obj)) {
+ 								m_map[cx][cy].setZone(PathfindZoneManager::UNINITIALIZED_ZONE);
+							}
+						}
+ 						if (cellBounds.lo.x>cx) cellBounds.lo.x = cx;
+ 						if (cellBounds.lo.y>cy) cellBounds.lo.y = cy;
+ 						if (cellBounds.hi.x<cx) cellBounds.hi.x = cx;
+ 						if (cellBounds.hi.y<cy) cellBounds.hi.y = cy;
+					}
+#endif
 				}
 			}
 		}
@@ -4234,7 +4359,6 @@ void Pathfinder::internal_classifyObjectFootprint( Object *obj, Bool insert )
 			/// @todo This is a very inefficient circle-rasterizer
 			ICoord2D topLeft, bottomRight;
 			Coord2D center, delta;
-			const Coord3D *pos = obj->getPosition();
 			Real radius = obj->getGeometryInfo().getMajorRadius();
 			Real r2, size;
 
@@ -4259,6 +4383,7 @@ void Pathfinder::internal_classifyObjectFootprint( Object *obj, Bool insert )
 
 					if (delta.x*delta.x + delta.y*delta.y <= r2)
 					{
+#if RTS_GENERALS && RETAIL_COMPATIBLE_PATHFINDING
 						if (i >= 0 && j >= 0 && i < m_extent.hi.x && j < m_extent.hi.y)
 						{
 							if (insert)	{
@@ -4270,20 +4395,54 @@ void Pathfinder::internal_classifyObjectFootprint( Object *obj, Bool insert )
 							else
 								m_map[i][j].removeObstacle( obj );
 						}
+#else
+						if (i >= 0 && j >= 0 && i < m_extent.hi.x && j < m_extent.hi.y)
+						{
+							if (insert) {
+								ICoord2D pos;
+								pos.x = i;
+								pos.y = j;
+								if (m_map[i][j].setTypeAsObstacle( obj, false, pos )) {
+ 									m_map[i][j].setZone(PathfindZoneManager::UNINITIALIZED_ZONE);
+								}
+							}
+							else {
+								if (m_map[i][j].removeObstacle(obj)) {
+ 									m_map[i][j].setZone(PathfindZoneManager::UNINITIALIZED_ZONE);
+								}
+							}
+ 							if (cellBounds.lo.x>i) cellBounds.lo.x = i;
+ 							if (cellBounds.lo.y>j) cellBounds.lo.y = j;
+ 							if (cellBounds.hi.x<i) cellBounds.hi.x = i;
+ 							if (cellBounds.hi.y<j) cellBounds.hi.y = j;
+						}
+#endif
 					}
 				}
 			}
 		}
 		break;
 	}
+
+#if RTS_GENERALS && RETAIL_COMPATIBLE_PATHFINDING
 	Region2D bounds;
-	Int i, j;
 	obj->getGeometryInfo().get2DBounds(*obj->getPosition(), obj->getOrientation(), bounds);
 	IRegion2D cellBounds;
 	cellBounds.lo.x = REAL_TO_INT_FLOOR(bounds.lo.x/PATHFIND_CELL_SIZE_F)-1;
 	cellBounds.lo.y = REAL_TO_INT_FLOOR(bounds.lo.y/PATHFIND_CELL_SIZE_F)-1;
 	cellBounds.hi.x = REAL_TO_INT_CEIL(bounds.hi.x/PATHFIND_CELL_SIZE_F)+1;
 	cellBounds.hi.y = REAL_TO_INT_CEIL(bounds.hi.y/PATHFIND_CELL_SIZE_F)+1;
+#else
+	m_zoneManager.updateZonesForModify(m_map, m_layers, cellBounds, m_extent);
+
+	cellBounds.lo.x -= 2;
+	cellBounds.lo.y -= 2;
+	cellBounds.hi.x += 2;
+	cellBounds.hi.y += 2;
+#endif
+
+	Int i, j;
+
 	if (cellBounds.lo.x < m_extent.lo.x) {
 		cellBounds.lo.x = m_extent.lo.x;
 	}
@@ -4796,6 +4955,12 @@ Bool Pathfinder::checkDestination(const Object *obj, Int cellX, Int cellY, Pathf
 				return false;
 			}
 
+#if !(RTS_GENERALS && RETAIL_COMPATIBLE_PATHFINDING)
+			if (IS_IMPASSABLE(cell->getType())) {
+				return false;
+			}
+#endif
+
 			if (cell->getFlags() == PathfindCell::NO_UNITS) {
 				continue;  // Nobody is here, so it's ok.
 			}
@@ -4926,9 +5091,11 @@ Bool Pathfinder::checkForMovement(const Object *obj, TCheckMovementInfo &info)
 				if (!unit->getAIUpdateInterface()) {
 					return false; // can't path through not-idle units.
 				}
+#if RTS_GENERALS && RETAIL_COMPATIBLE_PATHFINDING
 				if (!unit->getAIUpdateInterface()->isIdle()) {
 					return false; // can't path through not-idle units.
 				}
+#endif
 				Bool found = false;
 				Int k;
 				for (k=0; k<numAlly; k++) {
