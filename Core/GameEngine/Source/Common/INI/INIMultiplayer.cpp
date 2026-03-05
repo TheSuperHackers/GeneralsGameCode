@@ -78,7 +78,6 @@ void INI::parseMultiplayerColorDefinition( INI* ini )
 	multiplayerColorDefinition->setNightColor(multiplayerColorDefinition->getRGBNightValue());
 }
 
-#if defined(RTS_ZEROHOUR)
 namespace
 {
 	struct MultiplayerStartingMoneySettings
@@ -94,12 +93,10 @@ namespace
 		{ nullptr, nullptr, nullptr, 0 }
 	};
 }
-#endif
 
 
 void INI::parseMultiplayerStartingMoneyChoiceDefinition( INI* ini )
 {
-#if defined(RTS_ZEROHOUR)
 	DEBUG_ASSERTCRASH( ini->getLoadType() != INI_LOAD_CREATE_OVERRIDES, ("Overrides not supported for MultiplayerStartingMoneyChoice") );
 
 	// Temporary data store.
@@ -109,8 +106,4 @@ void INI::parseMultiplayerStartingMoneyChoiceDefinition( INI* ini )
 	ini->initFromINI( &settings, startingMoneyFieldParseTable );
 
 	TheMultiplayerSettings->addStartingMoneyChoice( settings.money, settings.isDefault );
-#else
-	// Generals does not support MultiplayerStartingMoneyChoice.
-	(void)ini;
-#endif
 }
