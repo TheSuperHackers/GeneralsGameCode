@@ -634,9 +634,9 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 		{
 #if RETAIL_COMPATIBLE_CRC
 			// TheSuperHackers @info The first argument is unused.
-			Bool enableRetaliation = msg->getArgument( 1 )->boolean;
+			const Bool enableRetaliation = msg->getArgument( 1 )->boolean;
 #else
-			Bool enableRetaliation = msg->getArgument( 0 )->boolean;
+			const Bool enableRetaliation = msg->getArgument( 0 )->boolean;
 #endif
 			thisPlayer->setLogicalRetaliationModeEnabled( enableRetaliation );
 			break;
