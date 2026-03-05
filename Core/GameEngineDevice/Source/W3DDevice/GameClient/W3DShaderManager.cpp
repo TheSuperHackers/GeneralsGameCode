@@ -2618,24 +2618,20 @@ void W3DShaderManager::init()
 
 		if (hr != S_OK)
 		{
-			if (m_oldRenderSurface) m_oldRenderSurface->Release();
-			m_oldRenderSurface = nullptr;
+			SAFE_RELEASE(m_oldRenderSurface);
 			m_renderTexture = nullptr;
 		} else {
 			hr = m_renderTexture->GetSurfaceLevel(0, &m_newRenderSurface);
 			if (hr != S_OK)
 			{
-				if (m_renderTexture) m_renderTexture->Release();
-				m_renderTexture = nullptr;
+				SAFE_RELEASE(m_renderTexture);
 				m_newRenderSurface = nullptr;
 			}	else {
 				hr = DX8Wrapper::_Get_D3D_Device8()->GetDepthStencilSurface(&m_oldDepthSurface);
 				if (hr != S_OK)
 				{
-					if (m_newRenderSurface) m_newRenderSurface->Release();
-					if (m_renderTexture) m_renderTexture->Release();
-					m_renderTexture = nullptr;
-					m_newRenderSurface = nullptr;
+					SAFE_RELEASE(m_newRenderSurface);
+					SAFE_RELEASE(m_renderTexture);
 					m_oldDepthSurface = nullptr;
 				}
 			}
@@ -2673,14 +2669,10 @@ void W3DShaderManager::init()
 //=============================================================================
 void W3DShaderManager::shutdown()
 {
-	if (m_newRenderSurface) m_newRenderSurface->Release();
-	if (m_renderTexture) m_renderTexture->Release();
-	if (m_oldRenderSurface) m_oldRenderSurface->Release();
-	if (m_oldDepthSurface) m_oldDepthSurface->Release();
-	m_renderTexture = nullptr;
-	m_newRenderSurface = nullptr;
-	m_oldDepthSurface = nullptr;
-	m_oldRenderSurface = nullptr;
+	SAFE_RELEASE(m_newRenderSurface);
+	SAFE_RELEASE(m_renderTexture);
+	SAFE_RELEASE(m_oldRenderSurface);
+	SAFE_RELEASE(m_oldDepthSurface);
 	m_currentShader = ST_INVALID;
 	m_currentFilter = FT_NULL_FILTER;
 	//release any assets associated with a shader (vertex/pixel shaders, textures, etc.)
@@ -2846,10 +2838,10 @@ void W3DShaderManager::startRenderToTexture()
 	if (hr != S_OK)
 	{
 		// Permanently disable RTT
-		if (m_newRenderSurface) { m_newRenderSurface->Release(); m_newRenderSurface = nullptr; }
-		if (m_renderTexture) { m_renderTexture->Release(); m_renderTexture = nullptr; }
-		if (m_oldRenderSurface) { m_oldRenderSurface->Release(); m_oldRenderSurface = nullptr; }
-		if (m_oldDepthSurface) { m_oldDepthSurface->Release(); m_oldDepthSurface = nullptr; }
+		SAFE_RELEASE(m_newRenderSurface);
+		SAFE_RELEASE(m_renderTexture);
+		SAFE_RELEASE(m_oldRenderSurface);
+		SAFE_RELEASE(m_oldDepthSurface);
 		return;
 	}
 

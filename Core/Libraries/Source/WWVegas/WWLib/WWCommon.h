@@ -23,6 +23,7 @@
 #include "stringex.h"
 #include <Utility/stdio_adapter.h>
 
+#define SAFE_RELEASE(p) { if(p) { (p)->Release(); (p)=nullptr; } }
 
 // This macro serves as a general way to determine the number of elements within an array.
 #ifndef ARRAY_SIZE
