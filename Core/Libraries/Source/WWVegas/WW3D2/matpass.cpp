@@ -69,7 +69,7 @@ bool MaterialPassClass::EnablePerPolygonCulling = true;
  * HISTORY:                                                                                    *
  *   2/26/2001  gth : Created.                                                                 *
  *=============================================================================================*/
-MaterialPassClass::MaterialPassClass(void) :
+MaterialPassClass::MaterialPassClass() :
 	Shader(0),
 	Material(nullptr),
 	CullVolume(nullptr),
@@ -93,7 +93,7 @@ MaterialPassClass::MaterialPassClass(void) :
  *   12/9/99    gth : Created.                                                                 *
  *	  06/27/02   kjm : Changes to max texture stage caps															*
  *=============================================================================================*/
-MaterialPassClass::~MaterialPassClass(void)
+MaterialPassClass::~MaterialPassClass()
 {
 	for (int i=0; i<MAX_TEX_STAGES; i++) {
 		REF_PTR_RELEASE(Texture[i]);
@@ -115,7 +115,7 @@ MaterialPassClass::~MaterialPassClass(void)
  *   12/9/99    gth : Created.                                                                 *
  *   2/26/2001  gth : Changed to Install_Materials                                             *
  *=============================================================================================*/
-void MaterialPassClass::Install_Materials(void) const
+void MaterialPassClass::Install_Materials() const
 {
 	DX8Wrapper::Set_Material(Peek_Material());
 	DX8Wrapper::Set_Shader(Peek_Shader());
@@ -225,7 +225,7 @@ TextureClass * MaterialPassClass::Get_Texture(int stage) const
  * HISTORY:                                                                                    *
  *   12/9/99    gth : Created.                                                                 *
  *=============================================================================================*/
-VertexMaterialClass * MaterialPassClass::Get_Material(void) const
+VertexMaterialClass * MaterialPassClass::Get_Material() const
 {
 	if (Material) {
 		Material->Add_Ref();

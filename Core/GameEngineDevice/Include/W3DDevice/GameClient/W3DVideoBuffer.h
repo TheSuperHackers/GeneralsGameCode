@@ -80,12 +80,12 @@ class W3DVideoBuffer : public VideoBuffer
 		virtual ~W3DVideoBuffer();
 
 		virtual	Bool		allocate( UnsignedInt width, UnsignedInt height); ///< Allocates buffer
-		virtual void		free( void);					///< Free buffer
-		virtual	void*		lock( void );					///< Returns memory pointer to start of buffer
-		virtual void		unlock( void );				///< Release buffer
-		virtual Bool		valid( void );				///< Is the buffer valid to use
+		virtual void		free();					///< Free buffer
+		virtual	void*		lock();					///< Returns memory pointer to start of buffer
+		virtual void		unlock();				///< Release buffer
+		virtual Bool		valid();				///< Is the buffer valid to use
 
-		TextureClass		*texture( void );			///< Returns texture object
+		TextureClass		*texture();			///< Returns texture object
 
 		static WW3DFormat TypeToW3DFormat( VideoBuffer::Type format );
 		static VideoBuffer::Type W3DFormatToType( WW3DFormat w3dFormat );
@@ -96,4 +96,4 @@ class W3DVideoBuffer : public VideoBuffer
 //           Inlining
 //----------------------------------------------------------------------------
 
-inline TextureClass* W3DVideoBuffer::texture( void ) { return m_texture; }
+inline TextureClass* W3DVideoBuffer::texture() { return m_texture; }

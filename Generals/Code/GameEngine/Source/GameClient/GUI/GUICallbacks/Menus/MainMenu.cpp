@@ -38,7 +38,7 @@
 #include "Common/GlobalData.h"
 #include "Common/NameKeyGenerator.h"
 #include "Common/RandomValue.h"
-#include "Common/UserPreferences.h"
+#include "Common/OptionPreferences.h"
 #include "Common/version.h"
 #include "GameClient/AnimateWindowManager.h"
 #include "GameClient/ExtendedMessageBox.h"
@@ -94,7 +94,7 @@ static NameKeyType campaignID = NAMEKEY_INVALID;
 static GameWindow *buttonCampaign = nullptr;
 #ifdef TEST_COMPRESSION
 static GameWindow *buttonCompressTest = nullptr;
-void DoCompressTest( void );
+void DoCompressTest();
 #endif // TEST_COMPRESSION
 #endif
 
@@ -204,7 +204,7 @@ extern DisplaySettings oldDispSettings, newDispSettings;
 extern Bool dispChanged;
 //static time_t timeStarted = 0, currentTime = 0;
 
-void diffReverseSide( void );
+void diffReverseSide();
 void HandleCanceledDownload( Bool resetDropDown )
 {
 	buttonPushed = FALSE;
@@ -229,7 +229,7 @@ static void showSelectiveButtons( Int show )
 	buttonChinaLoadGame->winHide(!(show == SHOW_CHINA ));
 }
 
-static void quitCallback( void )
+static void quitCallback()
 {
 	buttonPushed = TRUE;
 	TheScriptEngine->signalUIInteract(TheShellHookNames[SHELL_SCRIPT_HOOK_MAIN_MENU_EXIT_SELECTED]);
@@ -263,7 +263,7 @@ void prepareCampaignGame(GameDifficulty diff)
 	setupGameStart(TheCampaignManager->getCurrentMap(), diff );
 }
 
-static void doGameStart( void )
+static void doGameStart()
 {
 	startGame = FALSE;
 
@@ -303,7 +303,7 @@ static void TimetToFileTime( time_t t, LPFILETIME pft )
 }
 */
 
-void initialHide( void )
+void initialHide()
 {
 GameWindow *win = nullptr;
 	win = TheWindowManager->winGetWindowFromId(parentMainMenu, TheNameKeyGenerator->nameToKey("MainMenu.wnd:WinFactionGLA"));
@@ -895,47 +895,30 @@ void MainMenuUpdate( WindowLayout *layout, void *userData )
 WindowMsgHandledType MainMenuInput( GameWindow *window, UnsignedInt msg,
 																		WindowMsgData mData1, WindowMsgData mData2 )
 {
-
 	if(!notShown)
 		return MSG_IGNORED;
 
 	switch( msg )
 	{
-
 		// --------------------------------------------------------------------------------------------
 		case GWM_MOUSE_POS:
 		{
-			ICoord2D mouse;
-			mouse.x = mData1 & 0xFFFF;
-			mouse.y = mData1 >> 16;
+			// TheSuperHackers @tweak 26/02/2026 Show mouse and menu immediately when shellmap is disabled.
+			Bool doShow = !TheGlobalData->m_shellMapOn;
 
-			// TheSuperHackers @tweak 20/08/2025 Show mouse and menu immediately when shellmap is disabled.
-			if (TheGlobalData->m_shellMapOn && mouse.x == 0 && mouse.y == 0)
-				break;
-
-			static Int mousePosX = mouse.x;
-			static Int mousePosY = mouse.y;
-			if(abs(mouse.x - mousePosX) > 20 || abs(mouse.y - mousePosY) > 20)
+			if (!doShow)
 			{
+				ICoord2D mouse;
+				mouse.x = mData1 & 0xFFFF;
+				mouse.y = mData1 >> 16;
 
-				DEBUG_LOG(("Mouse X:%d, Y:%d", mouse.x, mouse.y));
-				if(notShown)
-				{
-					initialGadgetDelay = 1;
-					dropDownWindows[DROPDOWN_MAIN]->winHide(FALSE);
-					TheTransitionHandler->setGroup("MainMenuFade", TRUE);
-					TheTransitionHandler->setGroup("MainMenuDefaultMenu");
-					TheMouse->setVisibility(TRUE);
-					notShown = FALSE;
-					return MSG_HANDLED;
-				}
+				static Int mousePosX = mouse.x;
+				static Int mousePosY = mouse.y;
+
+				doShow = abs(mouse.x - mousePosX) > 20 || abs(mouse.y - mousePosY) > 20;
 			}
 
-		}
-		break;
-		case GWM_CHAR:
-		{
-			if(notShown)
+			if (doShow)
 			{
 				initialGadgetDelay = 1;
 				dropDownWindows[DROPDOWN_MAIN]->winHide(FALSE);
@@ -946,15 +929,26 @@ WindowMsgHandledType MainMenuInput( GameWindow *window, UnsignedInt msg,
 				return MSG_HANDLED;
 			}
 
+			break;
 		}
 
+		// --------------------------------------------------------------------------------------------
+		case GWM_CHAR:
+		{
+			initialGadgetDelay = 1;
+			dropDownWindows[DROPDOWN_MAIN]->winHide(FALSE);
+			TheTransitionHandler->setGroup("MainMenuFade", TRUE);
+			TheTransitionHandler->setGroup("MainMenuDefaultMenu");
+			TheMouse->setVisibility(TRUE);
+			notShown = FALSE;
+			return MSG_HANDLED;
+		}
 	}
 
-
 	return MSG_IGNORED;
-
 }
-void PrintOffsetsFromControlBarParent( void );
+
+void PrintOffsetsFromControlBarParent();
 //-------------------------------------------------------------------------------------------------
 /** Main menu window system callback */
 //-------------------------------------------------------------------------------------------------
@@ -1542,7 +1536,7 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 
 }
 
-void diffReverseSide( void )
+void diffReverseSide()
 {
 	switch (showSide) {
 	case SHOW_TRAINING:

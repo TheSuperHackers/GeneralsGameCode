@@ -49,7 +49,7 @@ ConvertToCarBombCrateCollide::ConvertToCarBombCrateCollide( Thing *thing, const 
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-ConvertToCarBombCrateCollide::~ConvertToCarBombCrateCollide( void )
+ConvertToCarBombCrateCollide::~ConvertToCarBombCrateCollide()
 {
 
 }
@@ -181,7 +181,7 @@ void ConvertToCarBombCrateCollide::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void ConvertToCarBombCrateCollide::loadPostProcess( void )
+void ConvertToCarBombCrateCollide::loadPostProcess()
 {
 
 	// extend base class

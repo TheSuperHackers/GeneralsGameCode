@@ -942,7 +942,7 @@ void findCommandCenterOrMostExpensiveBuilding(Object* obj, void* vccl)
 	ccl->atLeastOne = true;
 }
 
-static void viewCommandCenter( void )
+static void viewCommandCenter()
 {
 	Player* localPlayer = rts::getObservedOrLocalPlayer();
 	if (!localPlayer->isPlayerActive())
@@ -952,7 +952,7 @@ static void viewCommandCenter( void )
 	localPlayer->iterateObjects(findCommandCenterOrMostExpensiveBuilding, &ccl);
 
 	if (ccl.atLeastOne) {
-		TheTacticalView->lookAt(&ccl.loc);
+		TheTacticalView->userLookAt(&ccl.loc);
 	} else {
 		// @todo. Find their starting position and look at that instead?
 	}
@@ -984,7 +984,7 @@ void amIAHero(Object* obj, void* heroHolder)
 
 
 
-static Object *iNeedAHero( void )
+static Object *iNeedAHero()
 {
 	Player* localPlayer = rts::getObservedOrLocalPlayer();
 	if (!localPlayer->isPlayerActive())
@@ -1132,7 +1132,7 @@ GameMessage::Type CommandTranslator::issueAttackCommand( Drawable *target,
 				msgType = GameMessage::MSG_DO_ATTACK_OBJECT;
 				break;
 			default:
-				DEBUG_ASSERTCRASH( 0, ("issueAttackCommand was passed in a GUICommandType type that isn't supported yet...") );
+				DEBUG_CRASH( ("issueAttackCommand was passed in a GUICommandType type that isn't supported yet...") );
 				return msgType;
 		}
 
@@ -2553,7 +2553,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 						TheInGameUI->selectDrawable( temp );
 
 						// center on the unit
-						TheTacticalView->lookAt(temp->getPosition());
+						TheTacticalView->userLookAt(temp->getPosition());
 						break;
 					}
 				}
@@ -2614,7 +2614,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 						TheInGameUI->selectDrawable( newDrawable );
 
 						// center on the unit
-						TheTacticalView->lookAt(newDrawable->getPosition());
+						TheTacticalView->userLookAt(newDrawable->getPosition());
 					}
 				}
 			}
@@ -2659,7 +2659,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 						TheInGameUI->selectDrawable( temp );
 
 						// center on the unit
-						TheTacticalView->lookAt(temp->getPosition());
+						TheTacticalView->userLookAt(temp->getPosition());
 						break;
 					}
 				}
@@ -2730,7 +2730,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 						TheInGameUI->selectDrawable( newDrawable );
 
 						// center on the unit
-						TheTacticalView->lookAt(newDrawable->getPosition());
+						TheTacticalView->userLookAt(newDrawable->getPosition());
 					}
 				}
 			}
@@ -2782,7 +2782,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 						TheAudio->addAudioEvent( &soundEvent );
 
 						// center on the unit
-						TheTacticalView->lookAt(temp->getPosition());
+						TheTacticalView->userLookAt(temp->getPosition());
 						break;
 					}
 				}
@@ -2841,7 +2841,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 						TheInGameUI->selectDrawable( newDrawable );
 
 						// center on the unit
-						TheTacticalView->lookAt(newDrawable->getPosition());
+						TheTacticalView->userLookAt(newDrawable->getPosition());
 					}
 				}
 			}
@@ -2886,7 +2886,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 						TheInGameUI->selectDrawable( temp );
 
 						// center on the unit
-						TheTacticalView->lookAt(temp->getPosition());
+						TheTacticalView->userLookAt(temp->getPosition());
 						break;
 					}
 				}
@@ -2958,7 +2958,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 						TheInGameUI->selectDrawable( newDrawable );
 
 						// center on the unit
-						TheTacticalView->lookAt(newDrawable->getPosition());
+						TheTacticalView->userLookAt(newDrawable->getPosition());
 					}
 				}
 			}
@@ -3008,7 +3008,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 			TheInGameUI->selectDrawable( heroDraw );
 
 			// center on the unit
-			TheTacticalView->lookAt(heroDraw->getPosition());
+			TheTacticalView->userLookAt(heroDraw->getPosition());
 
 			disp = DESTROY_MESSAGE;
 			break;
@@ -3026,7 +3026,9 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 			Coord3D lastEvent;
 
 			if( TheRadar->getLastEventLoc( &lastEvent ) )
-				TheTacticalView->lookAt( &lastEvent );
+			{
+				TheTacticalView->userLookAt( &lastEvent );
+			}
 
 			disp = DESTROY_MESSAGE;
 			break;
@@ -3163,7 +3165,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_DEPLOY:
 			#ifdef RTS_DEBUG
-			DEBUG_ASSERTCRASH(FALSE, ("unimplemented meta command MSG_META_DEPLOY !"));
+			DEBUG_CRASH(("unimplemented meta command MSG_META_DEPLOY !"));
 			#endif
 			/// @todo srj implement me
 			disp = DESTROY_MESSAGE;
@@ -3172,7 +3174,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_FOLLOW:
 			#ifdef RTS_DEBUG
-			DEBUG_ASSERTCRASH(FALSE, ("unimplemented meta command MSG_META_FOLLOW !"));
+			DEBUG_CRASH(("unimplemented meta command MSG_META_FOLLOW !"));
 			#endif
 			/// @todo srj implement me
 			disp = DESTROY_MESSAGE;
@@ -3405,7 +3407,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_TOGGLE_ATTACKMOVE:
-			TheInGameUI->toggleAttackMoveToMode( );
+			TheInGameUI->toggleAttackMoveToMode();
 			break;
 
 		case GameMessage::MSG_META_BEGIN_CAMERA_ROTATE_LEFT:
@@ -4668,8 +4670,8 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 			{
 				d = nullptr;
 			}
-			TheTacticalView->setCameraLock(id);
-			TheTacticalView->setCameraLockDrawable(d);
+			TheTacticalView->userSetCameraLock(id);
+			TheTacticalView->userSetCameraLockDrawable(d);
 			disp = DESTROY_MESSAGE;
 			break;
 		}

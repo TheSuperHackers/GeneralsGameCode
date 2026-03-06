@@ -53,9 +53,9 @@ class LZOPipe : public Pipe
 		} CompControl;
 
 		LZOPipe(CompControl, int blocksize=1024*8);
-		virtual ~LZOPipe(void);
+		virtual ~LZOPipe();
 
-		virtual int Flush(void);
+		virtual int Flush();
 		virtual int Put(void const * source, int slen);
 
 	private:

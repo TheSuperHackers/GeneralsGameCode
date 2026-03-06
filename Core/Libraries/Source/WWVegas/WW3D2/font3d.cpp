@@ -69,7 +69,7 @@ Font3DDataClass::Font3DDataClass( const char *filename )
  * Font3DDataClass::~Font3DDataClass -- destructor																	  *
  *                                                                                             *
  ***********************************************************************************************/
-Font3DDataClass::~Font3DDataClass(void)
+Font3DDataClass::~Font3DDataClass()
 {
 	free(Name);
 	Name = nullptr;
@@ -365,7 +365,7 @@ Font3DInstanceClass::Font3DInstanceClass( const char *filename )
  * Font3DInstanceClass::~Font3DInstanceClass -- destructor																	  *
  *                                                                                             *
  ***********************************************************************************************/
-Font3DInstanceClass::~Font3DInstanceClass(void)
+Font3DInstanceClass::~Font3DInstanceClass()
 {
 	REF_PTR_RELEASE(FontData);
 }
@@ -373,7 +373,7 @@ Font3DInstanceClass::~Font3DInstanceClass(void)
 /*
 **
 */
-void	Font3DInstanceClass::Set_Mono_Spaced( void )
+void	Font3DInstanceClass::Set_Mono_Spaced()
 {
 	MonoSpacing = FontData->Char_Width('W') + 1;
 	Build_Cached_Tables();

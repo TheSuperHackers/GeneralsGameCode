@@ -78,7 +78,7 @@ enum
 //
 ///////////////////////////////////////////////////////////////////////
 uint32
-StaticAudioSaveLoadClass::Chunk_ID (void) const
+StaticAudioSaveLoadClass::Chunk_ID () const
 {
 	return CHUNKID_STATIC_SAVELOAD;
 }
@@ -90,7 +90,7 @@ StaticAudioSaveLoadClass::Chunk_ID (void) const
 //
 ///////////////////////////////////////////////////////////////////////
 bool
-StaticAudioSaveLoadClass::Contains_Data (void) const
+StaticAudioSaveLoadClass::Contains_Data () const
 {
 	return true;
 }
@@ -170,7 +170,7 @@ StaticAudioSaveLoadClass::Load (ChunkLoadClass &cload)
 //
 ///////////////////////////////////////////////////////////////////////
 uint32
-DynamicAudioSaveLoadClass::Chunk_ID (void) const
+DynamicAudioSaveLoadClass::Chunk_ID () const
 {
 	return CHUNKID_DYNAMIC_SAVELOAD;
 }
@@ -182,7 +182,7 @@ DynamicAudioSaveLoadClass::Chunk_ID (void) const
 //
 ///////////////////////////////////////////////////////////////////////
 bool
-DynamicAudioSaveLoadClass::Contains_Data (void) const
+DynamicAudioSaveLoadClass::Contains_Data () const
 {
 	return true;
 }

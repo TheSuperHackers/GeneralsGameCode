@@ -49,8 +49,8 @@ public:
 	PreorderCreate( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual void onCreate( void );
-	virtual void onBuildComplete( void );
+	virtual void onCreate();
+	virtual void onBuildComplete();
 
 protected:
 

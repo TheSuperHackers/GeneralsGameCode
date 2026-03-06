@@ -76,7 +76,7 @@ static GameWindow * progressBarMunkee = nullptr;
 
 static GameWindow *parent = nullptr;
 
-static void closeDownloadWindow( void )
+static void closeDownloadWindow()
 {
 	DEBUG_ASSERTCRASH(parent, ("No Parent"));
 	if (!parent)
@@ -96,13 +96,13 @@ static void closeDownloadWindow( void )
 		TheWindowManager->winSetFocus( mainWin );
 }
 
-static void errorCallback( void )
+static void errorCallback()
 {
 	HandleCanceledDownload();
 	closeDownloadWindow();
 }
 
-static void successQuitCallback( void )
+static void successQuitCallback()
 {
 	TheGameEngine->setQuitting( TRUE );
 	closeDownloadWindow();
@@ -112,7 +112,7 @@ static void successQuitCallback( void )
 		TheGameLogic->exitGame();
 }
 
-static void successNoQuitCallback( void )
+static void successNoQuitCallback()
 {
 	HandleCanceledDownload();
 	closeDownloadWindow();

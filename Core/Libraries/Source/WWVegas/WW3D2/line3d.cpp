@@ -215,7 +215,7 @@ Line3DClass & Line3DClass::operator = (const Line3DClass & that)
  *   04/21/1998 NH  : Ported to SR 1.3.                                   *
  *	  02/16/2001 HY  : Ported to DX8													  *
  *========================================================================*/
-Line3DClass::~Line3DClass(void)
+Line3DClass::~Line3DClass()
 {
 }
 
@@ -232,7 +232,7 @@ Line3DClass::~Line3DClass(void)
  * HISTORY:                                                               *
  *   01/15/1998 NH  : Created.                                            *
  *========================================================================*/
-RenderObjClass * Line3DClass::Clone(void) const
+RenderObjClass * Line3DClass::Clone() const
 {
 	return NEW_REF( Line3DClass, (*this));
 }
@@ -507,7 +507,7 @@ void Line3DClass::Set_Opacity(float opacity)
 /*
 **
 */
-int Line3DClass::Get_Num_Polys(void) const
+int Line3DClass::Get_Num_Polys() const
 {
 	return 12;
 }

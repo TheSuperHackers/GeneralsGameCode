@@ -49,8 +49,8 @@ public:
 							float znear,
 							float zfar );
 
-	const Vector3 &	Get_Bound_Min(void) const		{ return BoundMin; }
-	const Vector3 &	Get_Bound_Max(void) const		{ return BoundMax; }
+	const Vector3 &	Get_Bound_Min() const		{ return BoundMin; }
+	const Vector3 &	Get_Bound_Max() const		{ return BoundMax; }
 
 public:
 

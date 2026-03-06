@@ -30,19 +30,19 @@
 #include "../../debug/debug.h"
 #include <stdio.h>
 
-const char *DebugGetDefaultCommands(void)
+const char *DebugGetDefaultCommands()
 {
   return "!debug.io con add\ndebug.add l + *\nprofile.result";
 }
 
 extern int q;
 
-void calcThis(void)
+void calcThis()
 {
   q++;
 }
 
-void calcThat(void)
+void calcThat()
 {
   calcThis();
   q--;
@@ -65,20 +65,20 @@ void recursion2(int level)
   recursion(level);
 }
 
-void recursionShell(void)
+void recursionShell()
 {
   ProfileHighLevel::Block b("Test block");
   recursion(0);
 }
 
-void showResults(void)
+void showResults()
 {
   ProfileHighLevel::Id id;
   for (unsigned index=0;ProfileHighLevel::EnumProfile(index,id);index++)
     printf("%-16s%-6s %s\n",id.GetName(),id.GetTotalValue(),id.GetUnit());
 }
 
-void main(void)
+void main()
 {
   for (int k=0;k<100;k++)
     if (k%2&&k>80)

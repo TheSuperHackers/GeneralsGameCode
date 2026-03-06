@@ -103,7 +103,7 @@ static NameKeyType s_replayObserverNameKey = NAMEKEY_INVALID;
 //-----------------------------------------------------------------------------
 
 
-void ControlBar::initObserverControls( void )
+void ControlBar::initObserverControls()
 {
 	ObserverPlayerInfoWindow = TheWindowManager->winGetWindowFromId(nullptr, TheNameKeyGenerator->nameToKey("ControlBar.wnd:ObserverPlayerInfoWindow"));
 	ObserverPlayerListWindow = TheWindowManager->winGetWindowFromId(nullptr, TheNameKeyGenerator->nameToKey("ControlBar.wnd:ObserverPlayerListWindow"));
@@ -247,7 +247,7 @@ WindowMsgHandledType ControlBarObserverSystem( GameWindow *window, UnsignedInt m
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 
-void ControlBar::populateObserverList( void )
+void ControlBar::populateObserverList()
 {
 	Int currentButton = 0, i;
 	if(TheRecorder->isMultiplayer())
@@ -332,7 +332,7 @@ void ControlBar::populateObserverList( void )
 	}
 }
 
-void ControlBar::populateObserverInfoWindow ( void )
+void ControlBar::populateObserverInfoWindow ()
 {
 	if(ObserverPlayerInfoWindow->winIsHidden())
 		return;

@@ -73,7 +73,7 @@ class NeutronMissileSlowDeathBehaviorModuleData : public SlowDeathBehaviorModule
 
 public:
 
-	NeutronMissileSlowDeathBehaviorModuleData( void );
+	NeutronMissileSlowDeathBehaviorModuleData();
 
 	static void buildFieldParse(MultiIniFieldParse& p);
 
@@ -96,7 +96,7 @@ public:
 	NeutronMissileSlowDeathBehavior( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual UpdateSleepTime update( void );				 ///< the update call
+	virtual UpdateSleepTime update();				 ///< the update call
 
 protected:
 

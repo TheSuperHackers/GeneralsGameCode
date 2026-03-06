@@ -135,7 +135,7 @@ ScriptConditions::~ScriptConditions()
 //-------------------------------------------------------------------------------------------------
 /** Init */
 //-------------------------------------------------------------------------------------------------
-void ScriptConditions::init( void )
+void ScriptConditions::init()
 {
 
 	reset();
@@ -145,7 +145,7 @@ void ScriptConditions::init( void )
 //-------------------------------------------------------------------------------------------------
 /** Reset */
 //-------------------------------------------------------------------------------------------------
-void ScriptConditions::reset( void )
+void ScriptConditions::reset()
 {
 
 	deleteInstance(s_transportStatuses);
@@ -156,7 +156,7 @@ void ScriptConditions::reset( void )
 //-------------------------------------------------------------------------------------------------
 /** Update */
 //-------------------------------------------------------------------------------------------------
-void ScriptConditions::update( void )
+void ScriptConditions::update()
 {
 
 	// Empty for now. jba
@@ -1749,7 +1749,7 @@ Bool ScriptConditions::evaluateTeamExitedAreaPartially(Parameter *pTeamParm, Par
 //-------------------------------------------------------------------------------------------------
 /** evaluateMultiplayerAlliedVictory */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateMultiplayerAlliedVictory(void)
+Bool ScriptConditions::evaluateMultiplayerAlliedVictory()
 {
 	return TheVictoryConditions->isLocalAlliedVictory();
 }
@@ -1757,7 +1757,7 @@ Bool ScriptConditions::evaluateMultiplayerAlliedVictory(void)
 //-------------------------------------------------------------------------------------------------
 /** evaluateMultiplayerAlliedDefeat */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateMultiplayerAlliedDefeat(void)
+Bool ScriptConditions::evaluateMultiplayerAlliedDefeat()
 {
 	return TheVictoryConditions->isLocalAlliedDefeat();
 }
@@ -1765,7 +1765,7 @@ Bool ScriptConditions::evaluateMultiplayerAlliedDefeat(void)
 //-------------------------------------------------------------------------------------------------
 /** evaluateMultiplayerPlayerDefeat */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateMultiplayerPlayerDefeat(void)
+Bool ScriptConditions::evaluateMultiplayerPlayerDefeat()
 {
 	return TheVictoryConditions->isLocalDefeat() && !TheVictoryConditions->isLocalAlliedDefeat();
 }
@@ -2592,7 +2592,7 @@ Bool ScriptConditions::evaluateSkirmishSupplySourceAttacked(Parameter *pSkirmish
 	if (!player) {
 		return FALSE;
 	}
-	return player->isSupplySourceAttacked( );
+	return player->isSupplySourceAttacked();
 }
 
 //-------------------------------------------------------------------------------------------------

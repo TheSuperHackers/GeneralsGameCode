@@ -39,7 +39,7 @@
 #include "saveload.h"
 
 
-SaveLoadSubSystemClass::SaveLoadSubSystemClass(void) :
+SaveLoadSubSystemClass::SaveLoadSubSystemClass() :
 	NextSubSystem(nullptr)
 {
 	// All Sub-Systems are automatically registered with the SaveLoadSystem
@@ -47,7 +47,7 @@ SaveLoadSubSystemClass::SaveLoadSubSystemClass(void) :
 	return ;
 }
 
-SaveLoadSubSystemClass::~SaveLoadSubSystemClass (void)
+SaveLoadSubSystemClass::~SaveLoadSubSystemClass ()
 {
 	SaveLoadSystemClass::Unregister_Sub_System (this);
 	return ;

@@ -73,7 +73,7 @@ public:
 	void setCommandButton(const AsciiString& buttonName);
 
 protected:
-	Object* scanClosestTarget(void);
+	Object* scanClosestTarget();
 	UpdateSleepTime huntSpecialPower(AIUpdateInterface *ai);
 	UpdateSleepTime huntWeapon(AIUpdateInterface *ai);
 

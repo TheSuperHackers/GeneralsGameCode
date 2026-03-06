@@ -63,7 +63,7 @@ W3DTerrainLogic::~W3DTerrainLogic()
 //-------------------------------------------------------------------------------------------------
 /** Device DEPENDENT implementation init details for logical terrain */
 //-------------------------------------------------------------------------------------------------
-void W3DTerrainLogic::init( void )
+void W3DTerrainLogic::init()
 {
 
 	// enhancing functionality
@@ -78,7 +78,7 @@ void W3DTerrainLogic::init( void )
 //-------------------------------------------------------------------------------------------------
 /** Reset */
 //-------------------------------------------------------------------------------------------------
-void W3DTerrainLogic::reset( void )
+void W3DTerrainLogic::reset()
 {
 	TerrainLogic::reset();
 	m_mapDX = 0;
@@ -101,7 +101,7 @@ void W3DTerrainLogic::newMap( Bool saveGame )
 //-------------------------------------------------------------------------------------------------
 /** Update */
 //-------------------------------------------------------------------------------------------------
-void W3DTerrainLogic::update( void )
+void W3DTerrainLogic::update()
 {
 	TerrainLogic::update();
 }
@@ -376,7 +376,7 @@ void W3DTerrainLogic::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void W3DTerrainLogic::loadPostProcess( void )
+void W3DTerrainLogic::loadPostProcess()
 {
 
 	// extend base class

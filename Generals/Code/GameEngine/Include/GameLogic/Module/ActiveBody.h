@@ -68,7 +68,7 @@ public:
 	ActiveBody( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual void onDelete( void );
+	virtual void onDelete();
 
 	virtual void attemptDamage( DamageInfo *damageInfo );		///< try to damage this object
 	virtual Real estimateDamage( DamageInfoInput& damageInfo ) const;
@@ -102,12 +102,12 @@ public:
 	virtual Real getInitialHealth() const;  // return initial health
 
 	virtual void setIndestructible( Bool indestructible );
-	virtual Bool isIndestructible( void ) const { return m_indestructible; }
+	virtual Bool isIndestructible() const { return m_indestructible; }
 
 	virtual void internalChangeHealth( Real delta );								///< change health
 
 	virtual void evaluateVisualCondition();
-	virtual void updateBodyParticleSystems( void );// made public for topple anf building collapse updates -ML
+	virtual void updateBodyParticleSystems();// made public for topple anf building collapse updates -ML
 
 protected:
 
@@ -117,7 +117,7 @@ protected:
 	void createParticleSystems( const AsciiString &boneBaseName,
 															const ParticleSystemTemplate *systemTemplate,
 															Int maxSystems );
-	void deleteAllParticleSystems( void );
+	void deleteAllParticleSystems();
 	void setCorrectDamageState();
 
 private:

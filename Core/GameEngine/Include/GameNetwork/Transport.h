@@ -47,11 +47,11 @@ public:
 
 	Bool init( AsciiString ip, UnsignedShort port );
 	Bool init( UnsignedInt ip, UnsignedShort port );
-	void reset( void );
-	Bool update( void );									///< Call this once a GameEngine tick, regardless of whether the frame advances.
+	void reset();
+	Bool update();									///< Call this once a GameEngine tick, regardless of whether the frame advances.
 
-	Bool doRecv( void );		///< call this to service the receive packets
-	Bool doSend( void );		///< call this to service the send queue.
+	Bool doRecv();		///< call this to service the receive packets
+	Bool doSend();		///< call this to service the send queue.
 
 	Bool queueSend(UnsignedInt addr, UnsignedShort port, const UnsignedByte *buf, Int len /*,
 		NetMessageFlags flags, Int id */);				///< Queue a packet for sending to the specified address and port.  This will be sent on the next update() call.
@@ -63,12 +63,12 @@ public:
 	void setPacketLoss( Bool val ) { m_usePacketLoss = val; }
 
 	// Bandwidth metrics
-	Real getIncomingBytesPerSecond( void );
-	Real getIncomingPacketsPerSecond( void );
-	Real getOutgoingBytesPerSecond( void );
-	Real getOutgoingPacketsPerSecond( void );
-	Real getUnknownBytesPerSecond( void );
-	Real getUnknownPacketsPerSecond( void );
+	Real getIncomingBytesPerSecond();
+	Real getIncomingPacketsPerSecond();
+	Real getOutgoingBytesPerSecond();
+	Real getOutgoingPacketsPerSecond();
+	Real getUnknownBytesPerSecond();
+	Real getUnknownPacketsPerSecond();
 
 	TransportMessage m_outBuffer[MAX_MESSAGES];
 	TransportMessage m_inBuffer[MAX_MESSAGES];

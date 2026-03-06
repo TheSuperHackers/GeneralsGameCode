@@ -49,7 +49,7 @@ StructureBody::StructureBody( Thing *thing, const ModuleData* moduleData )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-StructureBody::~StructureBody( void )
+StructureBody::~StructureBody()
 {
 
 }
@@ -99,7 +99,7 @@ void StructureBody::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void StructureBody::loadPostProcess( void )
+void StructureBody::loadPostProcess()
 {
 
 	// extend base class

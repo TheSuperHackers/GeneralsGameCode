@@ -49,8 +49,8 @@ class StaticSortListClass
 	public:
 		///////////////////////////////////////////////////////////////////////////////////
 		// Construction.
-		StaticSortListClass(void) {}
-		virtual ~StaticSortListClass(void) {}
+		StaticSortListClass() {}
+		virtual ~StaticSortListClass() {}
 
 		virtual void 	Add_To_List(RenderObjClass * robj, unsigned int sort_level) = 0;
 		virtual void 	Render_And_Clear(RenderInfoClass & rinfo) = 0;
@@ -63,15 +63,15 @@ class DefaultStaticSortListClass : public StaticSortListClass
 	public:
 		///////////////////////////////////////////////////////////////////////////////////
 		// Construction.
-		DefaultStaticSortListClass(void);
-		virtual ~DefaultStaticSortListClass(void);
+		DefaultStaticSortListClass();
+		virtual ~DefaultStaticSortListClass();
 
 		virtual void 	Add_To_List(RenderObjClass * robj, unsigned int sort_level);
 		virtual void 	Render_And_Clear(RenderInfoClass & rinfo);
 
 
-		unsigned int 	Get_Min_Sort(void) const 			{return MinSort;};
-		unsigned int 	Get_Max_Sort(void) const 			{return MaxSort;};
+		unsigned int 	Get_Min_Sort() const 			{return MinSort;};
+		unsigned int 	Get_Max_Sort() const 			{return MaxSort;};
 
 		void				Set_Min_Sort(unsigned int value)	{MinSort = (value > MAX_SORT_LEVEL) ? MAX_SORT_LEVEL : value;}
 		void				Set_Max_Sort(unsigned int value)	{MaxSort = (value > MAX_SORT_LEVEL) ? MAX_SORT_LEVEL : value;}

@@ -124,7 +124,7 @@ unsigned long Get_CPU_Clock(unsigned long & high)
 static unsigned long TSC_Low;
 static unsigned long TSC_High;
 
-void RDTSC(void)
+void RDTSC()
 {
     auto TSC = _rdtsc();
     TSC_Low = TSC & 0xFFFFFFFF;
@@ -132,7 +132,7 @@ void RDTSC(void)
 }
 
 
-int Get_RDTSC_CPU_Speed(void)
+int Get_RDTSC_CPU_Speed()
 {
 	LARGE_INTEGER t0,t1;
 	DWORD	freq=0;						// Most current freq. calc.

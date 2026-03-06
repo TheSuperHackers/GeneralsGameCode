@@ -40,11 +40,11 @@ public:
 	EnumeratedIP() { m_IPstring = ""; m_next = nullptr; m_IP = 0; }
 
 	// Access functions
-	AsciiString getIPstring( void ) { return m_IPstring; }
+	AsciiString getIPstring() { return m_IPstring; }
 	void setIPstring( AsciiString name ) { m_IPstring = name; }
-	UnsignedInt getIP( void ) { return m_IP; }
+	UnsignedInt getIP() { return m_IP; }
 	void setIP( UnsignedInt IP ) { m_IP = IP; }
-	EnumeratedIP *getNext( void ) { return m_next; }
+	EnumeratedIP *getNext() { return m_next; }
 	void setNext( EnumeratedIP *next ) { m_next = next; }
 
 protected:
@@ -66,8 +66,8 @@ public:
 	IPEnumeration();
 	~IPEnumeration();
 
-	EnumeratedIP * getAddresses( void );		///< Return a linked list of local IP addresses
-	AsciiString getMachineName( void );			///< Return the Network Neighborhood machine name
+	EnumeratedIP * getAddresses();		///< Return a linked list of local IP addresses
+	AsciiString getMachineName();			///< Return the Network Neighborhood machine name
 
 protected:
 	void addNewIP( UnsignedByte a, UnsignedByte b, UnsignedByte c, UnsignedByte d );

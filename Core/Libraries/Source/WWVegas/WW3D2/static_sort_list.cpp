@@ -47,7 +47,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Initialization Functions ////////////////////////////////////////////////////////////////////////
 
-DefaultStaticSortListClass::DefaultStaticSortListClass(void) :
+DefaultStaticSortListClass::DefaultStaticSortListClass() :
 	StaticSortListClass(),
 	SortLists(),
 	MinSort(1),
@@ -55,7 +55,7 @@ DefaultStaticSortListClass::DefaultStaticSortListClass(void) :
 {
 }
 
-DefaultStaticSortListClass::~DefaultStaticSortListClass(void)
+DefaultStaticSortListClass::~DefaultStaticSortListClass()
 {
 }
 

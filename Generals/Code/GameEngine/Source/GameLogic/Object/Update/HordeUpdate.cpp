@@ -234,7 +234,7 @@ void HordeUpdate::onDrawableBoundToObject()
 }
 
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime HordeUpdate::update( void )
+UpdateSleepTime HordeUpdate::update()
 {
 
 
@@ -397,7 +397,7 @@ void HordeUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void HordeUpdate::loadPostProcess( void )
+void HordeUpdate::loadPostProcess()
 {
 
 	// extend base class

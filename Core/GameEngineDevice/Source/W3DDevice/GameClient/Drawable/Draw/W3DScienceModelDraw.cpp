@@ -127,7 +127,7 @@ void W3DScienceModelDraw::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void W3DScienceModelDraw::loadPostProcess( void )
+void W3DScienceModelDraw::loadPostProcess()
 {
 
 	// extend base class

@@ -248,7 +248,7 @@ class HashNodeClass : public DataNode<HashNodeClass<T,U> *>, public U
 
 	private:
 		// Not something the casual user can call.
-		void Unlink(void) {
+		void Unlink() {
 			DataNode<HashNodeClass<T,U> *>::Unlink();
 		}
 
@@ -343,7 +343,7 @@ class HashListClass : protected HashNodeFriendClass<T,U>
 		bool Remove(unsigned key);
 
 		// Removes all nodes in list.
-		void Delete(void) {while (First()->Is_Valid()) Remove(First());}
+		void Delete() {while (First()->Is_Valid()) Remove(First());}
 
 		// Move contents of one list to another (this becomes empty).
 		void Move_To(HashListClass<T,U> *newlist);

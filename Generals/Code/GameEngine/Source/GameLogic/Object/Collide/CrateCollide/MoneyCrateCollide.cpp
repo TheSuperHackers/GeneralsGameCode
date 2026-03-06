@@ -45,7 +45,7 @@ MoneyCrateCollide::MoneyCrateCollide( Thing *thing, const ModuleData* moduleData
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-MoneyCrateCollide::~MoneyCrateCollide( void )
+MoneyCrateCollide::~MoneyCrateCollide()
 {
 
 }
@@ -98,7 +98,7 @@ void MoneyCrateCollide::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void MoneyCrateCollide::loadPostProcess( void )
+void MoneyCrateCollide::loadPostProcess()
 {
 
 	// extend base class

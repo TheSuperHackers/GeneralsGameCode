@@ -31,7 +31,7 @@ extern "C" {
 
 /* Information Functions */
 
-CODEXABOUT *GCALL HUFF_about(void);
+CODEXABOUT *GCALL HUFF_about();
 bool        GCALL HUFF_is(const void *compresseddata);
 
 /* Decode Functions */

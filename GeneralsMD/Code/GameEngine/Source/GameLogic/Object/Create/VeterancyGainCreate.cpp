@@ -69,7 +69,7 @@ VeterancyGainCreate::VeterancyGainCreate( Thing *thing, const ModuleData* module
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-VeterancyGainCreate::~VeterancyGainCreate( void )
+VeterancyGainCreate::~VeterancyGainCreate()
 {
 
 }
@@ -77,7 +77,7 @@ VeterancyGainCreate::~VeterancyGainCreate( void )
 //-------------------------------------------------------------------------------------------------
 /** The create callback. */
 //-------------------------------------------------------------------------------------------------
-void VeterancyGainCreate::onCreate( void )
+void VeterancyGainCreate::onCreate()
 {
 
 	// When produced normally, this Object will ask the Player if the correct Science is known for it
@@ -130,7 +130,7 @@ void VeterancyGainCreate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void VeterancyGainCreate::loadPostProcess( void )
+void VeterancyGainCreate::loadPostProcess()
 {
 
 	// extend base class

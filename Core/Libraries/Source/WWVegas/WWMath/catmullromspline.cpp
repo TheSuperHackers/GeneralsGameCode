@@ -86,7 +86,7 @@ enum
  * HISTORY:                                                                                    *
  *   3/7/2000   gth : Created.                                                                 *
  *=============================================================================================*/
-void CatmullRomSpline3DClass::Update_Tangents(void)
+void CatmullRomSpline3DClass::Update_Tangents()
 {
 	if (Keys.Count() < 2) {
 		for (int i=0; i<Keys.Count(); i++) {
@@ -155,7 +155,7 @@ void CatmullRomSpline3DClass::Update_Tangents(void)
  * HISTORY:                                                                                    *
  *   3/7/2000   gth : Created.                                                                 *
  *=============================================================================================*/
-const PersistFactoryClass & CatmullRomSpline3DClass::Get_Factory(void) const
+const PersistFactoryClass & CatmullRomSpline3DClass::Get_Factory() const
 {
 	return _CatmullRomSpline3DFactory;
 }
@@ -232,7 +232,7 @@ bool CatmullRomSpline3DClass::Load(ChunkLoadClass &cload)
  * HISTORY:                                                                                    *
  *   3/7/2000   gth : Created.                                                                 *
  *=============================================================================================*/
-void CatmullRomSpline1DClass::Update_Tangents(void)
+void CatmullRomSpline1DClass::Update_Tangents()
 {
 	if (Keys.Count() < 2) {
 		for (int i=0; i<Keys.Count(); i++) {
@@ -294,7 +294,7 @@ void CatmullRomSpline1DClass::Update_Tangents(void)
  * HISTORY:                                                                                    *
  *   3/7/2000   gth : Created.                                                                 *
  *=============================================================================================*/
-const PersistFactoryClass & CatmullRomSpline1DClass::Get_Factory(void) const
+const PersistFactoryClass & CatmullRomSpline1DClass::Get_Factory() const
 {
 	return _CatmullRomSpline1DFactory;
 }

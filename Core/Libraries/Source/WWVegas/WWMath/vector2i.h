@@ -45,7 +45,7 @@ public:
 	int		I;
 	int		J;
 
-	WWINLINE Vector2i(void);
+	WWINLINE Vector2i();
 	WWINLINE Vector2i(int i,int j);
 
 	WWINLINE void Set(int i, int j);
@@ -59,7 +59,7 @@ public:
 };
 
 
-WWINLINE Vector2i::Vector2i(void)
+WWINLINE Vector2i::Vector2i()
 {
 }
 

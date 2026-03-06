@@ -62,8 +62,8 @@ struct EdgeStruct;
 class IDBufferClass
 {
 public:
-	IDBufferClass(void);
-	~IDBufferClass(void);
+	IDBufferClass();
+	~IDBufferClass();
 
 	/*
 	** State interface
@@ -73,29 +73,29 @@ public:
 
 	void						Set_Backface_ID(uint32 id)		{ BackfaceID = id; }
 	void						Set_Frontface_ID(uint32 id)	{ FrontfaceID = id; }
-	uint32					Get_Backface_ID(void)			{ return BackfaceID; }
-	uint32					Get_Frontface_ID(void)			{ return FrontfaceID; }
+	uint32					Get_Backface_ID()			{ return BackfaceID; }
+	uint32					Get_Frontface_ID()			{ return FrontfaceID; }
 
 	void						Enable_Two_Sided_Rendering(bool onoff)		{ TwoSidedRenderingEnabled = onoff; }
-	bool						Is_Two_Sided_Rendering_Enabled(void)		{ return TwoSidedRenderingEnabled; }
+	bool						Is_Two_Sided_Rendering_Enabled()		{ return TwoSidedRenderingEnabled; }
 
 	enum ModeType { OCCLUDER_MODE = 0, NON_OCCLUDER_MODE };
 	void						Set_Render_Mode(ModeType mode) { RenderMode = mode; }
-	ModeType					Get_Render_Mode(void)			{ return RenderMode; }
+	ModeType					Get_Render_Mode()			{ return RenderMode; }
 
-	void						Reset_Pixel_Counter(void)		{ PixelCounter = 0; }
-	int						Get_Pixel_Counter(void)			{ return PixelCounter; }
+	void						Reset_Pixel_Counter()		{ PixelCounter = 0; }
+	int						Get_Pixel_Counter()			{ return PixelCounter; }
 
 	/*
 	** Rendering interface
 	*/
-	void						Clear(void);
+	void						Clear();
 	bool						Render_Triangle(const Vector3 & p0,const Vector3 & p1,const Vector3 & p2);
 	const uint32 *			Get_Pixel_Row(int y,int min_x,int max_x);
 
 protected:
-	void						Reset(void);
-	void						Allocate_Buffers(void);
+	void						Reset();
+	void						Allocate_Buffers();
 	bool						Is_Backfacing(const Vector3 & p0,const Vector3 & p1,const Vector3 & p2);
 	int						Render_Occluder_Scanline(GradientsStruct & grads,EdgeStruct * left,EdgeStruct * right);
 	int						Render_Non_Occluder_Scanline(GradientsStruct & grads,EdgeStruct * left,EdgeStruct * right);
@@ -150,28 +150,28 @@ class VisRasterizerClass
 {
 public:
 
-	VisRasterizerClass(void);
-	~VisRasterizerClass(void);
+	VisRasterizerClass();
+	~VisRasterizerClass();
 
 	/*
 	** ID Buffer Interface
 	*/
 	void					Set_Render_Mode(IDBufferClass::ModeType mode) { IDBuffer.Set_Render_Mode(mode); }
-	IDBufferClass::ModeType	Get_Render_Mode(void)	{ return IDBuffer.Get_Render_Mode(); }
+	IDBufferClass::ModeType	Get_Render_Mode()	{ return IDBuffer.Get_Render_Mode(); }
 
 	void					Set_Backface_ID(uint32 id)		{ IDBuffer.Set_Backface_ID(id); }
 	void					Set_Frontface_ID(uint32 id)	{ IDBuffer.Set_Frontface_ID(id); }
-	uint32				Get_Backface_ID(void)			{ return IDBuffer.Get_Backface_ID(); }
-	uint32				Get_Frontface_ID(void)			{ return IDBuffer.Get_Frontface_ID(); }
+	uint32				Get_Backface_ID()			{ return IDBuffer.Get_Backface_ID(); }
+	uint32				Get_Frontface_ID()			{ return IDBuffer.Get_Frontface_ID(); }
 
 	void					Enable_Two_Sided_Rendering(bool onoff)		{ IDBuffer.Enable_Two_Sided_Rendering(onoff); }
-	bool					Is_Two_Sided_Rendering_Enabled(void)		{ return IDBuffer.Is_Two_Sided_Rendering_Enabled(); }
+	bool					Is_Two_Sided_Rendering_Enabled()		{ return IDBuffer.Is_Two_Sided_Rendering_Enabled(); }
 
 	void					Set_Resolution(int width,int height);
 	void					Get_Resolution(int * set_width,int * set_height);
 
-	void					Reset_Pixel_Counter(void)		{ IDBuffer.Reset_Pixel_Counter(); }
-	int					Get_Pixel_Counter(void)			{ return IDBuffer.Get_Pixel_Counter(); }
+	void					Reset_Pixel_Counter()		{ IDBuffer.Reset_Pixel_Counter(); }
+	int					Get_Pixel_Counter()			{ return IDBuffer.Get_Pixel_Counter(); }
 
 	/*
 	** Rendering Interface
@@ -179,18 +179,18 @@ public:
 	void					Set_Model_Transform(const Matrix3D & model);
 	void					Set_Camera(CameraClass * camera);
 
-	const Matrix3D &	Get_Model_Transform(void);
-	CameraClass *		Get_Camera(void);
-	CameraClass *		Peek_Camera(void);
+	const Matrix3D &	Get_Model_Transform();
+	CameraClass *		Get_Camera();
+	CameraClass *		Peek_Camera();
 
-	void					Clear(void)							{ IDBuffer.Clear(); }
+	void					Clear()							{ IDBuffer.Clear(); }
 	bool					Render_Triangles(const Vector3 * verts,int vcount,const TriIndex * tris, int tcount,const AABoxClass & bounds);
 	const uint32 *		Get_Pixel_Row(int y,int min_x,int max_x) { return IDBuffer.Get_Pixel_Row(y,min_x,max_x); }
 
 protected:
 
-	void					Update_MV_Transform(void);
-	const Matrix3D &	Get_MV_Transform(void);
+	void					Update_MV_Transform();
+	const Matrix3D &	Get_MV_Transform();
 	Vector3 *			Get_Temp_Vertex_Buffer(int count);
 	bool					Render_Triangles_Clip(const Vector3 * verts,int vcount,const TriIndex * tris, int tcount);
 	bool					Render_Triangles_No_Clip(const Vector3 * verts,int vcount,const TriIndex * tris, int tcount);

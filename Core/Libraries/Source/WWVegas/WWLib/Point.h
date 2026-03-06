@@ -48,7 +48,7 @@ template<class T> class TRect;
 template<class T>
 class TPoint2D {
 	public:
-		TPoint2D(void) {}		// Default constructor does nothing by design.
+		TPoint2D() {}		// Default constructor does nothing by design.
 		TPoint2D(T x, T y) : X(x), Y(y) {}
 
 		// Equality comparison operators.
@@ -73,11 +73,11 @@ class TPoint2D {
 		TPoint2D<T> const Cross_Product(TPoint2D<T> const & rvalue) const {return(TPoint2D<T>(Y - rvalue.Y, rvalue.X - X));}
 
 		// Negation operator -- simple and effective
-		TPoint2D<T> const operator - (void) const {return(TPoint2D<T>(-X, -Y));}
+		TPoint2D<T> const operator - () const {return(TPoint2D<T>(-X, -Y));}
 
 		// Vector support functions.
-		T Length(void) const {return(T(sqrt(X*X + Y*Y)));}
-		TPoint2D<T> const Normalize(void) const {
+		T Length() const {return(T(sqrt(X*X + Y*Y)));}
+		TPoint2D<T> const Normalize() const {
 			double len = sqrt(X*X + Y*Y);
 			if (len != 0.0) {
 				return(TPoint2D<T>((T)((double)X / len), (T)((double)Y / len)));
@@ -130,7 +130,7 @@ class TPoint3D : public TPoint2D<T> {
 		using BASECLASS::Y;
 
 	public:
-		TPoint3D(void) {}		// Default constructor does nothing by design.
+		TPoint3D() {}		// Default constructor does nothing by design.
 		TPoint3D(T x, T y, T z) : TPoint2D<T>(x, y), Z(z) {}
 		TPoint3D(BASECLASS const & rvalue) : TPoint2D<T>(rvalue), Z(0) {}
 
@@ -160,11 +160,11 @@ class TPoint3D : public TPoint2D<T> {
 		TPoint3D<T> const Cross_Product(TPoint3D<T> const & rvalue) const {return TPoint3D<T>(Y * rvalue.Z - Z * rvalue.Y, Z * rvalue.X - X * rvalue.Z, X * rvalue.Y - Y * rvalue.X);}
 
 		// Negation operator -- simple and effective
-		TPoint3D<T> const operator - (void) const {return(TPoint3D<T>(-X, -Y, -Z));}
+		TPoint3D<T> const operator - () const {return(TPoint3D<T>(-X, -Y, -Z));}
 
 		// Vector support functions.
-		T Length(void) const {return(T(sqrt(X*X + Y*Y + Z*Z)));}
-		TPoint3D<T> const Normalize(void) const {
+		T Length() const {return(T(sqrt(X*X + Y*Y + Z*Z)));}
+		TPoint3D<T> const Normalize() const {
 			double len = sqrt(X*X + Y*Y + Z*Z);
 			if (len != 0.0) {
 				return(TPoint3D<T>(X / len, Y / len, Z / len));

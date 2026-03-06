@@ -93,7 +93,7 @@ class RefCountClass
 {
 public:
 
-	RefCountClass(void)
+	RefCountClass()
 		: NumRefs(1)
 #ifdef RTS_DEBUG
 		, ActiveRefNode(this)
@@ -127,16 +127,16 @@ public:
 	** to this object.
 	*/
 #ifdef RTS_DEBUG
-	void Add_Ref(void) const;
+	void Add_Ref() const;
 #else
-	void Add_Ref(void) const							{ NumRefs++; }
+	void Add_Ref() const							{ NumRefs++; }
 #endif
 
 	/*
 	** Release_Ref, call this function when you no longer need the pointer
 	** to this object.
 	*/
-	void Release_Ref(void) const
+	void Release_Ref() const
 	{
 #ifdef RTS_DEBUG
 		Dec_Total_Refs(this);
@@ -151,28 +151,28 @@ public:
 	/*
 	** Check the number of references to this object.
 	*/
-	int					Num_Refs(void) const						{ return NumRefs; }
+	int					Num_Refs() const						{ return NumRefs; }
 
 	/*
 	** Delete_This - this function will be called when the object is being
 	** destroyed as a result of its last reference being released.  Its
 	** job is to actually destroy the object.
 	*/
-	virtual void		Delete_This(void)							{ delete this; }
+	virtual void		Delete_This()							{ delete this; }
 
 	/*
 	** Total_Refs - This static function can be used to get the total number
 	** of references that have been made.  Once you've released all of your
 	** objects, it should go to zero.
 	*/
-	static int			Total_Refs(void)							{ return TotalRefs; }
+	static int			Total_Refs()							{ return TotalRefs; }
 
 protected:
 
 	/*
 	** Destructor, user should not have access to this...
 	*/
-	virtual ~RefCountClass(void)
+	virtual ~RefCountClass()
 	{
 #ifdef RTS_DEBUG
 		Remove_Active_Ref(this);
@@ -259,12 +259,12 @@ class RefCountValue
 {
 public:
 
-	RefCountValue(void)
+	RefCountValue()
 		: NumRefs(1)
 	{
 	}
 
-	~RefCountValue(void)
+	~RefCountValue()
 	{
 		WWASSERT(NumRefs == IntegerType(0));
 	}
@@ -278,7 +278,7 @@ public:
 	/*
 	** Add_Ref, call this function if you are going to keep a pointer to this object.
 	*/
-	void Add_Ref(void) const
+	void Add_Ref() const
 	{
 		WWASSERT(NumRefs != ~IntegerType(0));
 		++NumRefs;
@@ -304,7 +304,7 @@ public:
 	/*
 	** Check the number of references to this object.
 	*/
-	IntegerType Num_Refs(void) const
+	IntegerType Num_Refs() const
 	{
 		return NumRefs;
 	}

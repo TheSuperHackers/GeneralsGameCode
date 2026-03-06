@@ -56,12 +56,12 @@
 class WorldInfoClass
 {
 	public:
-		WorldInfoClass(void)				{ }
-		virtual ~WorldInfoClass(void)	{ }
+		WorldInfoClass()				{ }
+		virtual ~WorldInfoClass()	{ }
 
 		// Public methods
 		virtual Vector3	Get_Shared_Vertex_Normal (Vector3 pos, int smgroup) = 0;
-		virtual bool		Are_Meshes_Smoothed (void) const { return true; }
+		virtual bool		Are_Meshes_Smoothed () const { return true; }
 };
 
 /*
@@ -102,7 +102,7 @@ public:
 	** Constructor, Destructor
 	*/
 	MeshBuilderClass(int pass_count=1,int face_count_guess=255,int face_count_growth_rate=64);
-	~MeshBuilderClass(void);
+	~MeshBuilderClass();
 
 	/*
 	** VertClass.  The MeshBuilder deals with vertices in this format.
@@ -110,8 +110,8 @@ public:
 	class VertClass
 	{
 	public:
-		VertClass(void)		{ Reset(); }
-		void						Reset(void);
+		VertClass()		{ Reset(); }
+		void						Reset();
 
 	public:
 
@@ -150,8 +150,8 @@ public:
 	class FaceClass
 	{
 	public:
-		FaceClass(void)		{ Reset(); }
-		void						Reset(void);									// reset this face
+		FaceClass()		{ Reset(); }
+		void						Reset();									// reset this face
 
 	public:
 		VertClass				Verts[3];										// array of 3 verts
@@ -167,10 +167,10 @@ public:
 		Vector3					Normal;		 		// set by builder: Face normal
 		float32					Dist;			 		// set by builder: Plane distance
 
-		void						Compute_Plane(void);
+		void						Compute_Plane();
 		bool						operator != (const FaceClass & that)		{ return !(*this == that); }
 		bool						operator == (const FaceClass & /*that*/)	{ return false; }
-		bool						Is_Degenerate(void);
+		bool						Is_Degenerate();
 
 		friend class MeshBuilderClass;
 	};
@@ -201,9 +201,9 @@ public:
 	** 2. Loop through the verts, looking at each one using Get_Vertex
 	** 3. Loop through the faces, looking at each one using Get_Face
 	*/
-	int							Get_Pass_Count(void) const;
-	int							Get_Vertex_Count(void) const;
-	int							Get_Face_Count(void) const;
+	int							Get_Pass_Count() const;
+	int							Get_Vertex_Count() const;
+	int							Get_Face_Count() const;
 	const VertClass &			Get_Vertex(int index) const;
 	const FaceClass &			Get_Face(int index) const;
 
@@ -230,7 +230,7 @@ public:
 	** World information management.  Used to give the mesh builder information
 	** about the world outside of its mesh.
 	*/
-	WorldInfoClass *			Peek_World_Info(void) const						{ return WorldInfo; }
+	WorldInfoClass *			Peek_World_Info() const						{ return WorldInfo; }
 	void							Set_World_Info(WorldInfoClass *world_info)	{ WorldInfo = world_info; }
 
 	/*
@@ -239,7 +239,7 @@ public:
 	*/
 	struct MeshStatsStruct
 	{
-		void		Reset(void);
+		void		Reset();
 
 		bool		HasTexture[MAX_PASSES][MAX_STAGES];				// has at least one texture in given pass/stage
 		bool		HasShader[MAX_PASSES];								// has at least one shader in given pass
@@ -261,20 +261,20 @@ public:
 		float		AvgStripLength;										// average strip length
 	};
 
-	const MeshStatsStruct & Get_Mesh_Stats(void) const;
+	const MeshStatsStruct & Get_Mesh_Stats() const;
 
 private:
 
-	void							Free(void);
-	void							Compute_Mesh_Stats(void);
+	void							Free();
+	void							Compute_Mesh_Stats();
 	void							Optimize_Mesh(bool compute_normals);
-	void							Strip_Optimize_Mesh(void);
-	void							Remove_Degenerate_Faces(void);
-	void							Compute_Face_Normals(void);
-	bool							Verify_Face_Normals(void);
-	void							Compute_Vertex_Normals(void);
-	void							Grow_Face_Array(void);
-	void							Sort_Vertices(void);
+	void							Strip_Optimize_Mesh();
+	void							Remove_Degenerate_Faces();
+	void							Compute_Face_Normals();
+	bool							Verify_Face_Normals();
+	void							Compute_Vertex_Normals();
+	void							Grow_Face_Array();
+	void							Sort_Vertices();
 
 	/*
 	** Winged edge stuff is used by the strip optimize function
@@ -323,18 +323,18 @@ inline void	MeshBuilderClass::Set_Polygon_Ordering_Channel(int pass,int texstage
 	PolyOrderStage = texstage;
 }
 
-inline int MeshBuilderClass::Get_Pass_Count(void) const
+inline int MeshBuilderClass::Get_Pass_Count() const
 {
 	return PassCount;
 }
 
-inline int MeshBuilderClass::Get_Vertex_Count(void) const
+inline int MeshBuilderClass::Get_Vertex_Count() const
 {
 	assert(State == STATE_MESH_PROCESSED);
 	return VertCount;
 }
 
-inline int MeshBuilderClass::Get_Face_Count(void) const
+inline int MeshBuilderClass::Get_Face_Count() const
 {
 	assert(State == STATE_MESH_PROCESSED);
 	return FaceCount;
@@ -372,7 +372,7 @@ inline MeshBuilderClass::FaceClass & MeshBuilderClass::Get_Face(int index)
 	return Faces[index];
 }
 
-inline const MeshBuilderClass::MeshStatsStruct & MeshBuilderClass::Get_Mesh_Stats(void) const
+inline const MeshBuilderClass::MeshStatsStruct & MeshBuilderClass::Get_Mesh_Stats() const
 {
 	assert(State == STATE_MESH_PROCESSED);
 	return Stats;

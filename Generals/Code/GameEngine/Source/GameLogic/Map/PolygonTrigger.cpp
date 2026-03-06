@@ -64,7 +64,7 @@ m_riverStart(0)
 /**
  PolygonTrigger - Destructor - note - if linked, deletes linked items.
 */
-PolygonTrigger::~PolygonTrigger(void)
+PolygonTrigger::~PolygonTrigger()
 {
 	delete [] m_points;
 	m_points = nullptr;
@@ -87,7 +87,7 @@ PolygonTrigger::~PolygonTrigger(void)
  NOTE: It is expected that this will only get called in the editor, as in the game
  the poly triggers don't change.
 */
-void PolygonTrigger::reallocate(void)
+void PolygonTrigger::reallocate()
 {
 	DEBUG_ASSERTCRASH(m_numPoints <= m_sizePoints, ("Invalid m_numPoints."));
 	if (m_numPoints == m_sizePoints) {
@@ -254,7 +254,7 @@ void PolygonTrigger::WritePolygonTriggersDataChunk(DataChunkOutput &chunkWriter)
 /**
  PolygonTrigger::updateBounds - Updates the bounds.
 */
-void PolygonTrigger::updateBounds(void)	const
+void PolygonTrigger::updateBounds()	const
 {
 	const Int BIG_INT=0x7ffff0;
 	m_bounds.lo.x = m_bounds.lo.y = BIG_INT;
@@ -315,7 +315,7 @@ void PolygonTrigger::removePolygonTrigger(PolygonTrigger *pTrigger)
 /**
  PolygonTrigger::deleteTriggers Deletes list of triggers.
 */
-void PolygonTrigger::deleteTriggers(void)
+void PolygonTrigger::deleteTriggers()
 {
 	PolygonTrigger *pList = ThePolygonTriggerListPtr;
 	ThePolygonTriggerListPtr = nullptr;
@@ -417,7 +417,7 @@ void PolygonTrigger::getCenterPoint(Coord3D* pOutCoord)	const
 	(*pOutCoord).z = TheTerrainLogic->getGroundHeight(pOutCoord->x, pOutCoord->y);
 }
 
-Real PolygonTrigger::getRadius(void)	const
+Real PolygonTrigger::getRadius()	const
 {
 	if (m_boundsNeedsUpdate) {
 		updateBounds();
@@ -468,7 +468,7 @@ Bool PolygonTrigger::pointInTrigger(ICoord3D &point) const
 }
 
 // ------------------------------------------------------------------------------------------------
-const WaterHandle* PolygonTrigger::getWaterHandle(void)	const
+const WaterHandle* PolygonTrigger::getWaterHandle()	const
 {
 
 	if( isWaterArea() )
@@ -478,7 +478,7 @@ const WaterHandle* PolygonTrigger::getWaterHandle(void)	const
 
 }
 
-Bool PolygonTrigger::isValid(void) const
+Bool PolygonTrigger::isValid() const
 {
 	if (m_numPoints == 0) {
 		return FALSE;
@@ -538,7 +538,7 @@ void PolygonTrigger::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void PolygonTrigger::loadPostProcess( void )
+void PolygonTrigger::loadPostProcess()
 {
 
 }

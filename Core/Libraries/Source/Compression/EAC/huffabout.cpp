@@ -64,7 +64,7 @@
 /*  Information Functions                                       */
 /****************************************************************/
 
-CODEXABOUT *GCALL HUFF_about(void)
+CODEXABOUT *GCALL HUFF_about()
 {
     CODEXABOUT *info;
 

@@ -74,7 +74,7 @@ UnsignedByte * TileData::getRGBDataForWidth(Int width)
 	return(m_tileData);
 }
 
-void TileData::updateMips(void)
+void TileData::updateMips()
 {
 	doMip(m_tileData, TILE_PIXEL_EXTENT, m_tileDataMip32);
 	doMip(m_tileDataMip32, TILE_PIXEL_EXTENT_MIP1, m_tileDataMip16);

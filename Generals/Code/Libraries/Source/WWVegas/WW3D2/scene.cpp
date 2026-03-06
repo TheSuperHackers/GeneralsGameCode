@@ -92,10 +92,10 @@ enum
 class SimpleSceneIterator : public SceneIterator
 {
 public:
-	virtual void					First(void);
-	virtual void					Next(void);
-	virtual bool					Is_Done(void);
-	virtual RenderObjClass *	Current_Item(void);
+	virtual void					First();
+	virtual void					Next();
+	virtual bool					Is_Done();
+	virtual RenderObjClass *	Current_Item();
 
 protected:
 
@@ -121,7 +121,7 @@ protected:
  * HISTORY:                                                                                    *
  *   12/10/98   GTH : Created.                                                                 *
  *=============================================================================================*/
-SceneClass::SceneClass(void) :
+SceneClass::SceneClass() :
 	AmbientLight(0.5f,0.5f,0.5f),
 	PolyRenderMode(FILL),
 	ExtraPassPolyRenderMode(EXTRA_PASS_DISABLE),
@@ -145,7 +145,7 @@ SceneClass::SceneClass(void) :
  * HISTORY:                                                                                    *
  *   12/10/98   GTH : Created.                                                                 *
  *=============================================================================================*/
-SceneClass::~SceneClass(void)
+SceneClass::~SceneClass()
 {
 }
 
@@ -310,7 +310,7 @@ void SceneClass::Load(ChunkLoadClass & cload)
  *   3/24/98    GTH : Created.                                                                 *
  *   9/10/99    GTH : Created.                                                                 *
  *=============================================================================================*/
-SimpleSceneClass::SimpleSceneClass(void) :
+SimpleSceneClass::SimpleSceneClass() :
    Visibility_Checked(false)
 {
 
@@ -328,7 +328,7 @@ SimpleSceneClass::SimpleSceneClass(void) :
  * HISTORY:                                                                                    *
  *   3/24/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-SimpleSceneClass::~SimpleSceneClass(void)
+SimpleSceneClass::~SimpleSceneClass()
 {
 	Remove_All_Render_Objects();
 }
@@ -348,7 +348,7 @@ SimpleSceneClass::~SimpleSceneClass(void)
  * HISTORY:                                                                                    *
  *   8/27/2001  hy : Created.                                                                  *
  *=============================================================================================*/
-void SimpleSceneClass::Remove_All_Render_Objects(void)
+void SimpleSceneClass::Remove_All_Render_Objects()
 {
 	RenderObjClass * obj;
 	while ( ( obj = RenderList.Remove_Head() ) != nullptr ) {
@@ -641,22 +641,22 @@ SimpleSceneIterator::SimpleSceneIterator(RefRenderObjListClass * list,bool onlyv
 	OnlyVis = onlyvis;
 }
 
-void SimpleSceneIterator::First(void)
+void SimpleSceneIterator::First()
 {
 	RobjIterator.First();
 }
 
-void SimpleSceneIterator::Next(void)
+void SimpleSceneIterator::Next()
 {
 	RobjIterator.Next();
 }
 
-bool SimpleSceneIterator::Is_Done(void)
+bool SimpleSceneIterator::Is_Done()
 {
 	return RobjIterator.Is_Done();
 }
 
-RenderObjClass * SimpleSceneIterator::Current_Item(void)
+RenderObjClass * SimpleSceneIterator::Current_Item()
 {
 	return RobjIterator.Peek_Obj();
 }

@@ -100,32 +100,32 @@ class TexProjectClass : public ProjectorClass, public CullableClass, public Mult
 {
 public:
 
-	TexProjectClass(void);
-	virtual ~TexProjectClass(void);
+	TexProjectClass();
+	virtual ~TexProjectClass();
 
 	/*
 	** Material settings
 	*/
 	void						Set_Texture_Size(int size);
-	int						Get_Texture_Size(void);
-	void						Init_Multiplicative(void);
-	void						Init_Additive(void);
+	int						Get_Texture_Size();
+	void						Init_Multiplicative();
+	void						Init_Additive();
 	void						Set_Intensity(float intensity,bool immediate = false);	// 1.0 = on 100%, 0.0 = 'off'
-	float						Get_Intensity(void);
-	bool						Is_Intensity_Zero(void);
+	float						Get_Intensity();
+	bool						Is_Intensity_Zero();
 	void						Set_Attenuation(float attenuation);								// 1.0 = on, 0.0 = off
-	float						Get_Attenuation(void);
+	float						Get_Attenuation();
 	void						Enable_Attenuation(bool onoff);
-	bool						Is_Attenuation_Enabled(void);
-	MaterialPassClass *	Peek_Material_Pass(void);
+	bool						Is_Attenuation_Enabled();
+	MaterialPassClass *	Peek_Material_Pass();
 
 	/*
 	** Options
 	*/
 	void						Enable_Affect_Dynamic_Objects(bool onoff)				{ Set_Flag(AFFECT_DYNAMIC_OBJS,onoff); }
-	bool						Is_Affect_Dynamic_Objects_Enabled(void)				{ return Get_Flag(AFFECT_DYNAMIC_OBJS); }
+	bool						Is_Affect_Dynamic_Objects_Enabled()				{ return Get_Flag(AFFECT_DYNAMIC_OBJS); }
 	void						Enable_Affect_Static_Objects(bool onoff)				{ Set_Flag(AFFECT_STATIC_OBJS,onoff); }
-	bool						Is_Affect_Static_Objects_Enabled(void)					{ return Get_Flag(AFFECT_STATIC_OBJS); }
+	bool						Is_Affect_Static_Objects_Enabled()					{ return Get_Flag(AFFECT_STATIC_OBJS); }
 	void						Enable_Depth_Gradient(bool onoff);
 	bool						Is_Depth_Gradient_Enabled(bool onoff);
 
@@ -139,8 +139,8 @@ public:
 	virtual void			Set_Ortho_Projection(float xmin,float xmax,float ymin,float ymax,float znear,float zfar);
 
 	void						Set_Texture(TextureClass * texture);
-	TextureClass *			Get_Texture(void) const;
-	TextureClass *			Peek_Texture(void) const;
+	TextureClass *			Get_Texture() const;
+	TextureClass *			Peek_Texture() const;
 
 
 	void						Set_DepthStencilBuffer(ZTextureClass* ztex);
@@ -157,7 +157,7 @@ public:
 	bool						Compute_Ortho_Projection(RenderObjClass * obj,const Vector3 & lightdir,float znear=-1.0f,float zfar=-1.0f);
 	bool						Compute_Ortho_Projection(const AABoxClass & obj_box,const Matrix3D & tm,const Vector3 & lightdir,float znear=-1.0f,float zfar=-1.0f);
 
-	bool						Needs_Render_Target(void);
+	bool						Needs_Render_Target();
 	void						Set_Render_Target(TextureClass* render_target, ZTextureClass* ztarget=nullptr);
 	TextureClass*			Peek_Render_Target(TextureClass** rtarget=nullptr, ZTextureClass** ztarget=nullptr);
 
@@ -175,13 +175,13 @@ public:
 	** the projection...
 	** (gth) feels kludgy, this got a little messy when I moved this code into WW3D from WWPhys
 	*/
-	virtual void *			Get_Projection_Object_ID(void) const { return nullptr; }
+	virtual void *			Get_Projection_Object_ID() const { return nullptr; }
 
 protected:
 
 	void						Set_Flag(uint32 flag,bool onoff);
 	bool						Get_Flag(uint32 flag) const;
-	virtual void			Update_WS_Bounding_Volume(void);
+	virtual void			Update_WS_Bounding_Volume();
 	void						Configure_Camera(CameraClass & camera);
 
 	enum FlagsType

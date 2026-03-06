@@ -45,11 +45,11 @@ class WaterSetting
 
 public:
 
-	WaterSetting( void );
-	virtual ~WaterSetting( void );
+	WaterSetting();
+	virtual ~WaterSetting();
 
 	/// Get the INI parsing table for loading
-	const FieldParse *getFieldParse( void ) { return m_waterSettingFieldParseTable; }
+	const FieldParse *getFieldParse() { return m_waterSettingFieldParseTable; }
 
 	static const FieldParse m_waterSettingFieldParseTable[];		///< the parse table for INI definition
 	AsciiString m_skyTextureFile;
@@ -113,7 +113,7 @@ class WaterTransparencySetting : public Overridable
 		static const FieldParse m_waterTransparencySettingFieldParseTable[];		///< the parse table for INI definition
 
 		/// Get the INI parsing table for loading
-		const FieldParse *getFieldParse( void ) const { return m_waterTransparencySettingFieldParseTable; }
+		const FieldParse *getFieldParse() const { return m_waterTransparencySettingFieldParseTable; }
 };
 
 EMPTY_DTOR(WaterTransparencySetting)

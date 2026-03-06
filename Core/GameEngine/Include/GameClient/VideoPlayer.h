@@ -118,20 +118,20 @@ class VideoBuffer
 		virtual ~VideoBuffer() {};
 
 		virtual	Bool		allocate( UnsignedInt width, UnsignedInt Height ) = 0; ///< Allocate buffer
-		virtual void		free( void ) = 0;			///< Free the buffer
-		virtual	void*		lock( void ) = 0;			///< Returns memory pointer to start of buffer
-		virtual void		unlock( void ) = 0;		///< Release buffer
-		virtual Bool		valid( void ) = 0;		///< Is the buffer valid to use
+		virtual void		free() = 0;			///< Free the buffer
+		virtual	void*		lock() = 0;			///< Returns memory pointer to start of buffer
+		virtual void		unlock() = 0;		///< Release buffer
+		virtual Bool		valid() = 0;		///< Is the buffer valid to use
 
-		UnsignedInt			xPos( void ) { return m_xPos;};///< X pixel offset to draw into
-		UnsignedInt			yPos( void ) { return m_yPos;};///< Y pixel offset to draw into
+		UnsignedInt			xPos() { return m_xPos;};///< X pixel offset to draw into
+		UnsignedInt			yPos() { return m_yPos;};///< Y pixel offset to draw into
 		void		setPos( UnsignedInt x, UnsignedInt y ) { m_xPos = x; m_yPos = y;};	///< Set the x and y buffer offset
-		UnsignedInt			width( void ) { return m_width;};		///< Returns pixel width of visible texture
-		UnsignedInt			height( void ) { return m_height;};	///< Returns pixel height of visible texture
-		UnsignedInt			textureWidth( void ) { return m_textureWidth;};		///< Returns pixel width of texture
-		UnsignedInt			textureHeight( void ) { return m_textureHeight;};	///< Returns pixel height of texture
-		UnsignedInt			pitch( void ) { return m_pitch;};		///< Returns buffer pitch in bytes
-		Type		format( void ) { return m_format;};	///< Returns buffer pixel format
+		UnsignedInt			width() { return m_width;};		///< Returns pixel width of visible texture
+		UnsignedInt			height() { return m_height;};	///< Returns pixel height of visible texture
+		UnsignedInt			textureWidth() { return m_textureWidth;};		///< Returns pixel width of texture
+		UnsignedInt			textureHeight() { return m_textureHeight;};	///< Returns pixel height of texture
+		UnsignedInt			pitch() { return m_pitch;};		///< Returns buffer pitch in bytes
+		Type		format() { return m_format;};	///< Returns buffer pixel format
 
 		RectClass				Rect( Real x1, Real y1, Real x2, Real y2 );
 
@@ -157,19 +157,19 @@ class VideoStreamInterface
 	public:
 
 
-		virtual	VideoStreamInterface* next( void ) = 0;		///< Returns next open stream
-		virtual void update( void ) = 0;									///< Update stream
-		virtual void close( void ) = 0;										///< Close and free stream
+		virtual	VideoStreamInterface* next() = 0;		///< Returns next open stream
+		virtual void update() = 0;									///< Update stream
+		virtual void close() = 0;										///< Close and free stream
 
-		virtual Bool	isFrameReady( void ) = 0;						///< Is the frame ready to be displayed
-		virtual void	frameDecompress( void ) = 0;				///< Render current frame in to buffer
+		virtual Bool	isFrameReady() = 0;						///< Is the frame ready to be displayed
+		virtual void	frameDecompress() = 0;				///< Render current frame in to buffer
 		virtual void	frameRender( VideoBuffer *buffer ) = 0; ///< Render current frame in to buffer
-		virtual void	frameNext( void ) = 0;							///< Advance to next frame
-		virtual Int		frameIndex( void ) = 0;							///< Returns zero based index of current frame
-		virtual Int		frameCount( void ) = 0;							///< Returns the total number of frames in the stream
+		virtual void	frameNext() = 0;							///< Advance to next frame
+		virtual Int		frameIndex() = 0;							///< Returns zero based index of current frame
+		virtual Int		frameCount() = 0;							///< Returns the total number of frames in the stream
 		virtual void	frameGoto( Int index ) = 0;					///< Go to the spcified frame index
-		virtual Int		height( void ) = 0;									///< Return the height of the video
-		virtual Int		width( void ) = 0;									///< Return the width of the video
+		virtual Int		height() = 0;									///< Return the height of the video
+		virtual Int		width() = 0;									///< Return the width of the video
 
 };
 
@@ -193,19 +193,19 @@ class VideoStream : public VideoStreamInterface
 
 	public:
 
- 		virtual	VideoStreamInterface* next( void );				///< Returns next open stream
-		virtual void update( void );											///< Update stream
-		virtual void close( void );												///< Close and free stream
+ 		virtual	VideoStreamInterface* next();				///< Returns next open stream
+		virtual void update();											///< Update stream
+		virtual void close();												///< Close and free stream
 
-		virtual Bool	isFrameReady( void );								///< Is the frame ready to be displayed
-		virtual void	frameDecompress( void );						///< Render current frame in to buffer
+		virtual Bool	isFrameReady();								///< Is the frame ready to be displayed
+		virtual void	frameDecompress();						///< Render current frame in to buffer
 		virtual void	frameRender( VideoBuffer *buffer ); ///< Render current frame in to buffer
-		virtual void	frameNext( void );									///< Advance to next frame
-		virtual Int		frameIndex( void );									///< Returns zero based index of current frame
-		virtual Int		frameCount( void );									///< Returns the total number of frames in the stream
+		virtual void	frameNext();									///< Advance to next frame
+		virtual Int		frameIndex();									///< Returns zero based index of current frame
+		virtual Int		frameCount();									///< Returns the total number of frames in the stream
 		virtual void	frameGoto( Int index );							///< Go to the spcified frame index
-		virtual Int		height( void );											///< Return the height of the video
-		virtual Int		width( void );											///< Return the width of the video
+		virtual Int		height();											///< Return the height of the video
+		virtual Int		width();											///< Return the width of the video
 
 
 };
@@ -223,31 +223,31 @@ class VideoPlayerInterface : public SubsystemInterface
 
 	public:
 
-		virtual void	init( void ) = 0;														///< Initialize video playback
-		virtual void	reset( void ) = 0;													///< Reset video playback
-		virtual void	update( void ) = 0;													///< Services all video tasks. Should be called frequently
+		virtual void	init() = 0;														///< Initialize video playback
+		virtual void	reset() = 0;													///< Reset video playback
+		virtual void	update() = 0;													///< Services all video tasks. Should be called frequently
 
-		virtual void	deinit( void ) = 0;													///< Close down player
+		virtual void	deinit() = 0;													///< Close down player
 
 		virtual				~VideoPlayerInterface() {};
 
 		// service
-		virtual void	loseFocus( void ) = 0;											///< Should be called when application loses focus
-		virtual void	regainFocus( void ) = 0;										///< Should be called when application regains focus
+		virtual void	loseFocus() = 0;											///< Should be called when application loses focus
+		virtual void	regainFocus() = 0;										///< Should be called when application regains focus
 
 		virtual VideoStreamInterface*	open( AsciiString movieTitle ) = 0;	///< Open video file for playback
 		virtual VideoStreamInterface*	load( AsciiString movieTitle ) = 0;	///< Load video file in to memory for playback
 
-		virtual VideoStreamInterface* firstStream( void ) = 0;		///< Return the first open/loaded video stream
+		virtual VideoStreamInterface* firstStream() = 0;		///< Return the first open/loaded video stream
 
-		virtual void	closeAllStreams( void ) = 0;								///< Close all open streams
+		virtual void	closeAllStreams() = 0;								///< Close all open streams
 		virtual void	addVideo( Video* videoToAdd ) = 0;					///< Add a video to the list of videos we can play
 		virtual void	removeVideo( Video* videoToRemove ) = 0;		///< Remove a video to the list of videos we can play
-		virtual Int getNumVideos( void ) = 0;											///< Retrieve info about the number of videos currently listed
+		virtual Int getNumVideos() = 0;											///< Retrieve info about the number of videos currently listed
 		virtual const Video* getVideo( AsciiString movieTitle ) = 0;	///< Retrieve info about a movie based on internal name
 		virtual const Video* getVideo( Int index ) = 0;						///< Retrieve info about a movie based on index
 
-		virtual const FieldParse *getFieldParse( void ) const = 0;		///< Return the field parse info
+		virtual const FieldParse *getFieldParse() const = 0;		///< Return the field parse info
 
 		virtual void notifyVideoPlayerOfNewProvider( Bool nowHasValid ) = 0;		///< Notify the video player that they can now ask for an audio handle, or they need to give theirs up.
 };
@@ -271,31 +271,31 @@ class VideoPlayer : public VideoPlayerInterface
 	public:
 
 		// subsytem requirements
-		virtual void	init( void );														///< Initialize video playback code
-		virtual void	reset( void );													///< Reset video playback
-		virtual void	update( void );													///< Services all audio tasks. Should be called frequently
+		virtual void	init();														///< Initialize video playback code
+		virtual void	reset();													///< Reset video playback
+		virtual void	update();													///< Services all audio tasks. Should be called frequently
 
-		virtual void	deinit( void );													///< Close down player
+		virtual void	deinit();													///< Close down player
 
 
 		VideoPlayer();
 		~VideoPlayer();
 
 		// service
-		virtual void	loseFocus( void );											///< Should be called when application loses focus
-		virtual void	regainFocus( void );										///< Should be called when application regains focus
+		virtual void	loseFocus();											///< Should be called when application loses focus
+		virtual void	regainFocus();										///< Should be called when application regains focus
 
 		virtual VideoStreamInterface*	open( AsciiString movieTitle );	///< Open video file for playback
 		virtual VideoStreamInterface*	load( AsciiString movieTitle );	///< Load video file in to memory for playback
-		virtual VideoStreamInterface* firstStream( void );		///< Return the first open/loaded video stream
-		virtual void	closeAllStreams( void );								///< Close all open streams
+		virtual VideoStreamInterface* firstStream();		///< Return the first open/loaded video stream
+		virtual void	closeAllStreams();								///< Close all open streams
 
 		virtual void	addVideo( Video* videoToAdd );					///< Add a video to the list of videos we can play
 		virtual void	removeVideo( Video* videoToRemove );		///< Remove a video to the list of videos we can play
-		virtual Int getNumVideos( void );											///< Retrieve info about the number of videos currently listed
+		virtual Int getNumVideos();											///< Retrieve info about the number of videos currently listed
 		virtual const Video* getVideo( AsciiString movieTitle );	///< Retrieve info about a movie based on internal name
 		virtual const Video* getVideo( Int index );						///< Retrieve info about a movie based on index
-		virtual const FieldParse *getFieldParse( void ) const { return m_videoFieldParseTable; }		///< Return the field parse info
+		virtual const FieldParse *getFieldParse() const { return m_videoFieldParseTable; }		///< Return the field parse info
 
 		virtual void notifyVideoPlayerOfNewProvider( Bool nowHasValid ) { }
 

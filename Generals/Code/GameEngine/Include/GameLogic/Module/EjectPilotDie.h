@@ -66,6 +66,6 @@ public:
 	static void ejectPilot(const ObjectCreationList* ocl, const Object* dyingObject, const Object* damageDealer);
 
 	virtual void onDie( const DamageInfo *damageInfo );
-	virtual DieModuleInterface* getEjectPilotDieInterface( void ) {return this; }
+	virtual DieModuleInterface* getEjectPilotDieInterface() {return this; }
 
 };

@@ -340,7 +340,7 @@ void QueueProductionExitUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void QueueProductionExitUpdate::loadPostProcess( void )
+void QueueProductionExitUpdate::loadPostProcess()
 {
 
 	// extend base class

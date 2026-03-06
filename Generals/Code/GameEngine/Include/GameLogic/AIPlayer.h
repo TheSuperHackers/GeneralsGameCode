@@ -52,7 +52,7 @@ public:
 
 	WorkOrder():m_thing(nullptr), m_factoryID(INVALID_ID), m_isResourceGatherer(false), m_numCompleted(0), m_numRequired(1), m_next(nullptr) {};
 
-	Bool isWaitingToBuild( void );		///< return true if nothing is yet building this unit
+	Bool isWaitingToBuild();		///< return true if nothing is yet building this unit
 	void validateFactory( Player *thisPlayer );			///< verify factoryID still refers to an active object
 
 public:
@@ -70,11 +70,11 @@ protected:
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
+	virtual void loadPostProcess();
 
 };
 
-inline Bool WorkOrder::isWaitingToBuild( void )
+inline Bool WorkOrder::isWaitingToBuild()
 {
 	if (m_factoryID!=INVALID_ID)
 		return false;
@@ -101,7 +101,7 @@ protected:
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
+	virtual void loadPostProcess();
 
 public:
 
@@ -118,13 +118,13 @@ public:
 	{
 	}
 
-	Bool isAllBuilt( void );				///< Returns true if the team is finished building.
-	Bool isBuildTimeExpired( void );///< Returns true if the team has run out of build time.
-	Bool isMinimumBuilt( void );		///< Returns true if the team has started building at least the minimum number of units.
-	Bool includesADozer( void );		///< Returns true if the team includes a dozer unit.
-	Bool areBuildsComplete( void );	///< Returns true if all units in factories have finished building.
-	void disband( void );						///< Disbands the team (moves units into the default team).
-	void stopQueueing(void) {m_stopQueueing=true;} ///< Stops building new units, just finishes current.
+	Bool isAllBuilt();				///< Returns true if the team is finished building.
+	Bool isBuildTimeExpired();///< Returns true if the team has run out of build time.
+	Bool isMinimumBuilt();		///< Returns true if the team has started building at least the minimum number of units.
+	Bool includesADozer();		///< Returns true if the team includes a dozer unit.
+	Bool areBuildsComplete();	///< Returns true if all units in factories have finished building.
+	void disband();						///< Disbands the team (moves units into the default team).
+	void stopQueueing() {m_stopQueueing=true;} ///< Stops building new units, just finishes current.
 
 public:
 
@@ -178,8 +178,8 @@ public: // AIPlayer interface, may be overridden by AISkirmishPlayer.  jba.
 
 	virtual void recruitSpecificAITeam(TeamPrototype *teamProto, Real recruitRadius); ///< Builds this team immediately.
 
-	virtual Bool isSkirmishAI(void) {return false;}
-	virtual Player *getAiEnemy(void) {return nullptr;}	///< Solo AI attacks based on scripting.  Only skirmish auto-acquires an enemy at this point.  jba.
+	virtual Bool isSkirmishAI() {return false;}
+	virtual Player *getAiEnemy() {return nullptr;}	///< Solo AI attacks based on scripting.  Only skirmish auto-acquires an enemy at this point.  jba.
 	virtual Bool checkBridges(Object *unit, Waypoint *way) {return false;}
 	virtual void repairStructure(ObjectID structure);
 
@@ -188,7 +188,7 @@ public: // AIPlayer interface, may be overridden by AISkirmishPlayer.  jba.
 public:
 	Bool getBaseCenter(Coord3D *pos) const {*pos = m_baseCenter; return m_baseCenterSet;}
 	/// Difficulty level for this player.
-	GameDifficulty getAIDifficulty(void) const;
+	GameDifficulty getAIDifficulty() const;
 	void setAIDifficulty(GameDifficulty difficulty) {m_difficulty = difficulty;}
 	void buildBySupplies(Int minimumCash, const AsciiString &thingName ); ///< Builds a building by supplies.
 	void buildUpgrade(const AsciiString &upgrade ); ///< Builds an upgrade.
@@ -197,7 +197,7 @@ public:
 	/// Is the nearest supply source safe?
  	Bool isSupplySourceSafe( Int minSupplies );
 	/// Is a supply source attacked?
-	Bool isSupplySourceAttacked( void );
+	Bool isSupplySourceAttacked();
 
 	Bool isLocationSafe( const Coord3D *pos, const ThingTemplate *tthing);
 
@@ -211,21 +211,21 @@ protected:
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
+	virtual void loadPostProcess();
 
-	virtual void doBaseBuilding(void);
-	virtual void checkReadyTeams(void);
-	virtual void checkQueuedTeams(void);
-	virtual void doTeamBuilding(void);
-	virtual void doUpgradesAndSkills(void);
+	virtual void doBaseBuilding();
+	virtual void checkReadyTeams();
+	virtual void checkQueuedTeams();
+	virtual void doTeamBuilding();
+	virtual void doUpgradesAndSkills();
 	virtual Object *findDozer(const Coord3D *pos);
-	virtual void queueDozer(void);
-	virtual Bool selectTeamToBuild( void );			///< determine the next team to build
+	virtual void queueDozer();
+	virtual Bool selectTeamToBuild();			///< determine the next team to build
 	virtual Bool selectTeamToReinforce( Int minPriority );			///< determine the next team to reinforce
 	virtual Bool startTraining( WorkOrder *order, Bool busyOK, AsciiString teamName);	///< find a production building that can handle the order, and start building
 	virtual Bool isAGoodIdeaToBuildTeam( TeamPrototype *proto );		///< return true if team should be built
-	virtual void processBaseBuilding( void );		///< do base-building behaviors
-	virtual void processTeamBuilding( void );		///< do team-building behaviors
+	virtual void processBaseBuilding();		///< do base-building behaviors
+	virtual void processTeamBuilding();		///< do team-building behaviors
  	static Int getPlayerSuperweaponValue(Coord3D *center, Int playerNdx, Real radius);
 // End of aiplayer interface.
 
@@ -238,14 +238,14 @@ protected:
 	Bool isPossibleToBuildTeam( TeamPrototype *proto, Bool requireIdleFactory, Bool &needMoney );		///< return true if team can be considered for building
 	Object *buildStructureNow(const ThingTemplate *bldgPlan, BuildListInfo *info );		///< Build a base buiding.
 	Object *buildStructureWithDozer(const ThingTemplate *bldgPlan, BuildListInfo *info );		///< Build a base buiding.
-	void clearTeamsInQueue( void );			///< Delete all teams in the build queue.
+	void clearTeamsInQueue();			///< Delete all teams in the build queue.
 	void computeCenterAndRadiusOfBase(Coord3D *center, Real *radius);
 	Object *findFactory(const ThingTemplate *thing, Bool busyOK); ///< Find a factory to build a unit.  If force is true, may return a busy factory.
-	void queueUnits( void );						///< Check the team build list, & queue up units at any idle factories.
+	void queueUnits();						///< Check the team build list, & queue up units at any idle factories.
 	void checkForSupplyCenter( BuildListInfo *info, Object *bldg);
- 	void queueSupplyTruck(void);
-	void updateBridgeRepair(void);
-	Bool dozerInQueue(void);
+ 	void queueSupplyTruck();
+	void updateBridgeRepair();
+	Bool dozerInQueue();
 	Object *findSupplyCenter(Int minSupplies);
 	static void getPlayerStructureBounds(Region2D *bounds, Int playerNdx);
 

@@ -487,7 +487,7 @@ DX8Caps::DX8Caps(
 
 //Don't really need this but I added this function to free static variables so
 //they don't show up in our memory manager as a leak. -MW 7-22-03
-void DX8Caps::Shutdown(void)
+void DX8Caps::Shutdown()
 {
 	CapsWorkString.Release_Resources();
 }

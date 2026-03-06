@@ -143,7 +143,7 @@ void W3DOverlordTankDraw::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void W3DOverlordTankDraw::loadPostProcess( void )
+void W3DOverlordTankDraw::loadPostProcess()
 {
 
 	// extend base class

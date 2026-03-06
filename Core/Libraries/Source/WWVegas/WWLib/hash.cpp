@@ -53,14 +53,14 @@ HashTableClass::HashTableClass( int size ) :
 	Reset();
 }
 
-HashTableClass::~HashTableClass( void )
+HashTableClass::~HashTableClass()
 {
 	// If we need to, free the hash table
 	delete [] HashTable;
 	HashTable = nullptr;
 }
 
-void	HashTableClass::Reset( void )
+void	HashTableClass::Reset()
 {
 	for ( int i = 0; i < HashTableSize; i++ ) {
 		HashTable[i] = nullptr;
@@ -128,7 +128,7 @@ int	HashTableClass::Hash( const char * key )
 /*
 **
 */
-void	HashTableIteratorClass::First(void)
+void	HashTableIteratorClass::First()
 {
 	Index = 0;
 	NextEntry = Table.HashTable[ Index ];
@@ -136,7 +136,7 @@ void	HashTableIteratorClass::First(void)
 	Next();		// Accept the next we found, and go to the next next
 }
 
-void	HashTableIteratorClass::Next(void)
+void	HashTableIteratorClass::Next()
 {
 	CurrentEntry = NextEntry;
 	if ( NextEntry != nullptr ) {
@@ -145,7 +145,7 @@ void	HashTableIteratorClass::Next(void)
 	}
 }
 
-void	HashTableIteratorClass::Advance_Next(void)
+void	HashTableIteratorClass::Advance_Next()
 {
 	while ( NextEntry == nullptr ) {
 		Index++;

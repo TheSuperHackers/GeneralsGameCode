@@ -46,7 +46,7 @@ void GPRecvBuddyMessageCallback(GPConnection * pconnection, GPRecvBuddyMessageAr
 	//printf("MESSAGE (%d): %s: %s\n", msgCount,whois, arg->message);
 }
 
-static void buddyTryReconnect( void )
+static void buddyTryReconnect()
 {
 	TheGameSpyChat->reconnectProfile();
 }

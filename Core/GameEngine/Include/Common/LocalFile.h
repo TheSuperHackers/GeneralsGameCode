@@ -92,7 +92,7 @@ class LocalFile : public File
 
 
 		virtual Bool	open( const Char *filename, Int access = NONE, size_t bufferSize = BUFFERSIZE ); ///< Open a file for access
-		virtual void	close( void );																			///< Close the file
+		virtual void	close();																			///< Close the file
 		virtual Int		read( void *buffer, Int bytes );										///< Read the specified number of bytes in to buffer: See File::read
 		virtual Int		readChar();																///< Read a character from the file
 		virtual Int		readWideChar();															///< Read a wide character from the file

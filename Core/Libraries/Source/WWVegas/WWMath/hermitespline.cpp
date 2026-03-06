@@ -189,7 +189,7 @@ void HermiteSpline3DClass::Remove_Key(int i)
 	TangentsDirty = true;
 }
 
-void HermiteSpline3DClass::Clear_Keys(void)
+void HermiteSpline3DClass::Clear_Keys()
 {
 	Tangents.Clear();
 	Curve3DClass::Clear_Keys();
@@ -212,7 +212,7 @@ void HermiteSpline3DClass::Get_Tangents(int i,Vector3 * set_in,Vector3 * set_out
 	*set_out = Tangents[i].OutTangent;
 }
 
-const PersistFactoryClass & HermiteSpline3DClass::Get_Factory(void) const
+const PersistFactoryClass & HermiteSpline3DClass::Get_Factory() const
 {
 	return _HermiteSpline3DFactory;
 }
@@ -351,7 +351,7 @@ void HermiteSpline1DClass::Remove_Key(int i)
 	TangentsDirty = true;
 }
 
-void HermiteSpline1DClass::Clear_Keys(void)
+void HermiteSpline1DClass::Clear_Keys()
 {
 	Tangents.Clear();
 	Curve1DClass::Clear_Keys();
@@ -374,7 +374,7 @@ void HermiteSpline1DClass::Get_Tangents(int i,float * set_in,float * set_out)
 	*set_out = Tangents[i].OutTangent;
 }
 
-const PersistFactoryClass & HermiteSpline1DClass::Get_Factory(void) const
+const PersistFactoryClass & HermiteSpline1DClass::Get_Factory() const
 {
 	return _HermiteSpline1DFactory;
 }

@@ -224,7 +224,7 @@ void SupplyCenterProductionExitUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void SupplyCenterProductionExitUpdate::loadPostProcess( void )
+void SupplyCenterProductionExitUpdate::loadPostProcess()
 {
 
 	// extend base class

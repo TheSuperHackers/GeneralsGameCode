@@ -56,11 +56,11 @@ class HeapNodeClass
 {
 	public:
 
-		virtual uint32		Get_Heap_Location (void) const = 0;
+		virtual uint32		Get_Heap_Location () const = 0;
 		virtual void		Set_Heap_Location (uint32 location) = 0;
 
 		// This is pure virtual so that any type of key can be used as long as it uses the comparison operators.
-		virtual Key_Type	Heap_Key (void) const = 0;
+		virtual Key_Type	Heap_Key () const = 0;
 
 };
 
@@ -101,7 +101,7 @@ class BinaryHeapClass
 		}
 
 		// Reset all entries in the array to null
-		void Flush_Array (void)
+		void Flush_Array ()
 		{
 			::memset (Elements, nullptr, sizeof (HeapNodeClass<Key_Type> *) * Max_Number_Of_Elements);
 			Number_Of_Elements = 0;
@@ -124,7 +124,7 @@ class BinaryHeapClass
 			return ;
 		}
 
-		void Release_Array (void)
+		void Release_Array ()
 		{
 			if (Own_Array) {
 				delete [] Elements;
@@ -144,7 +144,7 @@ class BinaryHeapClass
 		}
 
 		// Return the maximum number of elements.
-		unsigned int Get_Max_Number_Of_Elements (void)
+		unsigned int Get_Max_Number_Of_Elements ()
 		{
 			return (Max_Number_Of_Elements);
 		}
@@ -199,7 +199,7 @@ class BinaryHeapClass
 		}
 
 		// Take the smallest element out of the tree and reorder
-		HeapNodeClass<Key_Type>* Remove_Min (void)
+		HeapNodeClass<Key_Type>* Remove_Min ()
 		{
 			unsigned int	child;
 			HeapNodeClass<Key_Type>*  	last_element;

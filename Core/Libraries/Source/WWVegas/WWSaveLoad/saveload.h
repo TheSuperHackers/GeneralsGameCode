@@ -141,7 +141,7 @@ public:
 	*/
 	static bool		Save (ChunkSaveClass &csave, SaveLoadSubSystemClass & subsystem);
 	static bool		Load (ChunkLoadClass &cload,bool auto_post_load = true);
-	static bool		Post_Load_Processing (void(*network_callback)(void));
+	static bool		Post_Load_Processing (void(*network_callback)());
 	/*
 	** Look up the persist factory for a given chunk id
 	*/

@@ -57,7 +57,7 @@ class BaikonurLaunchPowerModuleData : public SpecialPowerModuleData
 
 public:
 
-	BaikonurLaunchPowerModuleData( void );
+	BaikonurLaunchPowerModuleData();
 
 	static void buildFieldParse( MultiIniFieldParse& p );
 

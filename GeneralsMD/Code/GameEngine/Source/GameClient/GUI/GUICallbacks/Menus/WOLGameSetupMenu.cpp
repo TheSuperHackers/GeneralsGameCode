@@ -32,8 +32,9 @@
 
 #include "Common/GameEngine.h"
 #include "Common/GameState.h"
-#include "GameClient/GameText.h"
 #include "Common/MultiplayerSettings.h"
+#include "Common/OptionPreferences.h"
+#include "GameClient/GameText.h"
 #include "Common/PlayerTemplate.h"
 #include "Common/CustomMatchPreferences.h"
 #include "GameClient/AnimateWindowManager.h"
@@ -65,7 +66,7 @@
 #include "GameNetwork/GUIUtil.h"
 #include "GameNetwork/GameSpy/GSConfig.h"
 
-void WOLDisplaySlotList( void );
+void WOLDisplaySlotList();
 
 
 extern std::list<PeerResponse> TheLobbyQueuedUTMs;
@@ -232,7 +233,7 @@ static const Image *pingImages[3] = { nullptr, nullptr, nullptr };
 
 WindowLayout *WOLMapSelectLayout = nullptr;
 
-void PopBackToLobby( void )
+void PopBackToLobby()
 {
 	// delete TheNAT, its no good for us anymore.
 	delete TheNAT;
@@ -256,7 +257,7 @@ void PopBackToLobby( void )
 void updateMapStartSpots( GameInfo *myGame, GameWindow *buttonMapStartPositions[], Bool onLoadScreen = FALSE );
 void positionStartSpots( GameInfo *myGame, GameWindow *buttonMapStartPositions[], GameWindow *mapWindow);
 void positionStartSpots(AsciiString mapName, GameWindow *buttonMapStartPositions[], GameWindow *mapWindow);
-void WOLPositionStartSpots( void )
+void WOLPositionStartSpots()
 {
 	GameWindow *win = windowMap;
 	if (WOLMapSelectLayout != nullptr) {
@@ -299,7 +300,7 @@ void WOLPositionStartSpots( void )
 		positionStartSpots( TheGameSpyInfo->getCurrentStagingRoom(), buttonMapStartPosition, win);
 	}
 }
-static void savePlayerInfo( void )
+static void savePlayerInfo()
 {
 	if (TheGameSpyGame)
 	{
@@ -799,7 +800,7 @@ static void handleLimitSuperweaponsClick()
 }
 
 
-static void StartPressed(void)
+static void StartPressed()
 {
 	Bool isReady = TRUE;
 	Bool allHaveMap = TRUE;
@@ -952,7 +953,7 @@ static void StartPressed(void)
 //-------------------------------------------------------------------------------------------------
 /** Update options on screen */
 //-------------------------------------------------------------------------------------------------
-void WOLDisplayGameOptions( void )
+void WOLDisplayGameOptions()
 {
 	GameSpyStagingRoom *theGame = TheGameSpyInfo->getCurrentStagingRoom();
 	if (!parentWOLGameSetup || !theGame)
@@ -1032,7 +1033,7 @@ void WOLDisplayGameOptions( void )
 //  -----------------------------------------------------------------------------------------
 // The Bad munkee slot list displaying function
 //-------------------------------------------------------------------------------------------------
-void WOLDisplaySlotList( void )
+void WOLDisplaySlotList()
 {
 	if (!parentWOLGameSetup || !TheGameSpyInfo->getCurrentStagingRoom())
 		return;
@@ -1088,7 +1089,7 @@ void WOLDisplaySlotList( void )
 //-------------------------------------------------------------------------------------------------
 /** Initialize the Gadgets Options Menu */
 //-------------------------------------------------------------------------------------------------
-void InitWOLGameGadgets( void )
+void InitWOLGameGadgets()
 {
 	GameSpyStagingRoom *theGameInfo = TheGameSpyInfo->getCurrentStagingRoom();
 	pingImages[0] = TheMappedImageCollection->findImageByName("Ping03");
@@ -1266,7 +1267,7 @@ void InitWOLGameGadgets( void )
 		//GadgetButtonSetEnabledColor(buttonAccept[0], GameSpyColor[GSCOLOR_ACCEPT_TRUE]);
 }
 
-void DeinitWOLGameGadgets( void )
+void DeinitWOLGameGadgets()
 {
 	parentWOLGameSetup = nullptr;
 	buttonEmote = nullptr;
@@ -2474,7 +2475,7 @@ WindowMsgHandledType WOLGameSetupMenuInput( GameWindow *window, UnsignedInt msg,
 
 // Slash commands -------------------------------------------------------------------------
 extern "C" {
-int getQR2HostingStatus(void);
+int getQR2HostingStatus();
 }
 extern int isThreadHosting;
 

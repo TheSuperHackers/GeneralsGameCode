@@ -186,7 +186,7 @@ void LightEnvironmentClass::InputLightStruct::Init_From_Directional_Light
 }
 
 
-float LightEnvironmentClass::InputLightStruct::Contribution(void)
+float LightEnvironmentClass::InputLightStruct::Contribution()
 {
 	return Diffuse.Length2();
 }
@@ -221,7 +221,7 @@ void LightEnvironmentClass::OutputLightStruct::Init
 **
 ************************************************************************************************/
 
-LightEnvironmentClass::LightEnvironmentClass(void) :
+LightEnvironmentClass::LightEnvironmentClass() :
 	LightCount(0),
 	ObjectCenter(0,0,0),
 	OutputAmbient(0,0,0),
@@ -231,7 +231,7 @@ LightEnvironmentClass::LightEnvironmentClass(void) :
 }
 
 
-LightEnvironmentClass::~LightEnvironmentClass(void)
+LightEnvironmentClass::~LightEnvironmentClass()
 {
 }
 
@@ -330,7 +330,7 @@ void LightEnvironmentClass::Set_Lighting_LOD_Cutoff(float inten)
 	_LightingLODCutoff2 = _LightingLODCutoff * _LightingLODCutoff;
 }
 
-float LightEnvironmentClass::Get_Lighting_LOD_Cutoff(void)
+float LightEnvironmentClass::Get_Lighting_LOD_Cutoff()
 {
 	return _LightingLODCutoff;
 }
@@ -342,7 +342,7 @@ float LightEnvironmentClass::Get_Lighting_LOD_Cutoff(void)
 ** list is already full, it preempts the last and weakest light in that list.
 **
 ************************************************************************************************/
-void LightEnvironmentClass::Add_Fill_Light(void)
+void LightEnvironmentClass::Add_Fill_Light()
 {
 	// Don't add black (or almost black) lights!
 	if (FillLight.Diffuse[0]<0.05f && FillLight.Diffuse[1]<0.05f && FillLight.Diffuse[2]<0.05f) {
@@ -378,7 +378,7 @@ void LightEnvironmentClass::Add_Fill_Light(void)
 ** This final light is used to support the top 3 lights by providing a calculated fill to augment the lights.
 **
 ************************************************************************************************/
-void LightEnvironmentClass::Calculate_Fill_Light(void)
+void LightEnvironmentClass::Calculate_Fill_Light()
 {
 	// Early exit if we have no lights at all or if the fill light intensity is zero
 	if (LightCount == 0 || FillIntensity == 0.0f) return;

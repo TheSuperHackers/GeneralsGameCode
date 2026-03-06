@@ -591,7 +591,7 @@ void GadgetButtonSetText( GameWindow *g, UnicodeString text )
 
 }
 
-PushButtonData * getNewPushButtonData( void )
+PushButtonData * getNewPushButtonData()
 {
 	PushButtonData *p = NEW PushButtonData;
 	if(!p)

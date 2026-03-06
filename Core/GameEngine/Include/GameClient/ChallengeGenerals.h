@@ -76,12 +76,12 @@ private:
 
 
 public:
-	GeneralPersona( void ) :
+	GeneralPersona() :
 		m_imageBioPortraitSmall(nullptr),
 		m_imageBioPortraitLarge(nullptr)
 	{
 	}
-//	~GeneralPersona( void );
+//	~GeneralPersona();
 
 	Bool isStartingEnabled() const { return m_bStartsEnabled; }
 	const AsciiString& getBioName() const { return m_strBioName; }
@@ -128,21 +128,21 @@ private:
 	static void parseGeneralPersona( INI* ini, void *instance, void *store, const void *userData );
 
 public:
-	ChallengeGenerals( void );
-	~ChallengeGenerals( void );
+	ChallengeGenerals();
+	~ChallengeGenerals();
 
-	void init( void );
+	void init();
 	const GeneralPersona* getChallengeGenerals() const { return m_position; }
-	const FieldParse* getFieldParse( void ) const { return s_fieldParseTable; }	// for INI file parsing
+	const FieldParse* getFieldParse() const { return s_fieldParseTable; }	// for INI file parsing
 	const GeneralPersona* getPlayerGeneralByCampaignName( AsciiString name ) const;
 	const GeneralPersona* getGeneralByGeneralName( AsciiString name ) const;
 	const GeneralPersona* getGeneralByTemplateName( AsciiString name ) const;
 
 	void setCurrentPlayerTemplateNum( Int playerTemplateNum) { m_PlayerTemplateNum = playerTemplateNum; }
-	Int getCurrentPlayerTemplateNum( void ) { return m_PlayerTemplateNum; }
+	Int getCurrentPlayerTemplateNum() { return m_PlayerTemplateNum; }
 
 	void setCurrentDifficulty( GameDifficulty diff ) { m_currentDifficulty = diff; }
-	GameDifficulty getCurrentDifficulty( void ) { return m_currentDifficulty; }
+	GameDifficulty getCurrentDifficulty() { return m_currentDifficulty; }
 protected:
 	static const FieldParse s_fieldParseTable[];
 
@@ -152,4 +152,4 @@ protected:
 
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
 extern ChallengeGenerals *TheChallengeGenerals;
-extern ChallengeGenerals *createChallengeGenerals( void );
+extern ChallengeGenerals *createChallengeGenerals();

@@ -237,7 +237,7 @@ void GetAdditionalDisconnectsFromUserFile(PSPlayerStats *stats)
 }
 
 // default values
-RankPoints::RankPoints(void)
+RankPoints::RankPoints()
 {
 	m_ranks[RANK_PRIVATE]							= 0;
 	m_ranks[RANK_CORPORAL]						= TheGameSpyConfig->getPointsForRank(RANK_CORPORAL); // 5
@@ -463,7 +463,7 @@ void BattleHonorTooltip(GameWindow *window,
 }
 
 static Int rowsToSkip = 0;
-void ResetBattleHonorInsertion(void)
+void ResetBattleHonorInsertion()
 {
 	rowsToSkip = 0;
 }
@@ -1102,7 +1102,7 @@ void PopulatePlayerInfoWindows( AsciiString parentWindowName )
 
 
 
-void HandlePersistentStorageResponses( void )
+void HandlePersistentStorageResponses()
 {
 	if (TheGameSpyPSMessageQueue)
 	{
@@ -1408,7 +1408,7 @@ WindowMsgHandledType GameSpyPlayerInfoOverlayInput( GameWindow *window, Unsigned
 
 	return MSG_IGNORED;
 }
-static void messageBoxYes( void );
+static void messageBoxYes();
 //-------------------------------------------------------------------------------------------------
 /** Overlay window system callback */
 //-------------------------------------------------------------------------------------------------
@@ -1525,7 +1525,7 @@ WindowMsgHandledType GameSpyPlayerInfoOverlaySystem( GameWindow *window, Unsigne
 	return MSG_HANDLED;
 }
 
-static void messageBoxYes( void )
+static void messageBoxYes()
 {
 	BuddyRequest breq;
 	breq.buddyRequestType = BuddyRequest::BUDDYREQUEST_DELETEACCT;

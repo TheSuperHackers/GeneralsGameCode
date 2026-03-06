@@ -50,14 +50,14 @@ public:
 
 	friend class SmudgeManager;
 
-	SmudgeSet( void );
+	SmudgeSet();
 	virtual ~SmudgeSet();
-	void reset(void);
+	void reset();
 
-	Smudge *addSmudgeToSet(void);
+	Smudge *addSmudgeToSet();
 	void removeSmudgeFromSet ( Smudge &mySmudge);
-	DLListClass<Smudge> &getUsedSmudgeList( void ) { return m_usedSmudgeList;}
-	Int getUsedSmudgeCount(void) { return m_usedSmudgeCount; }	///<active smudges that need rendering.
+	DLListClass<Smudge> &getUsedSmudgeList() { return m_usedSmudgeList;}
+	Int getUsedSmudgeCount() { return m_usedSmudgeCount; }	///<active smudges that need rendering.
 
 private:
 	DLListClass<Smudge> m_usedSmudgeList;	///<list of smudges in this set.
@@ -68,19 +68,19 @@ private:
 class SmudgeManager
 {
 public:
-	SmudgeManager( void );
+	SmudgeManager();
 	virtual ~SmudgeManager();
 
-	virtual void init(void);
-	virtual void reset (void);
-	virtual void ReleaseResources(void) {}
-	virtual void ReAcquireResources(void) {}
+	virtual void init();
+	virtual void reset ();
+	virtual void ReleaseResources() {}
+	virtual void ReAcquireResources() {}
 
-	SmudgeSet *addSmudgeSet(void);
+	SmudgeSet *addSmudgeSet();
 	void removeSmudgeSet(SmudgeSet &mySmudge);
-	Int getSmudgeCountLastFrame(void) {return m_smudgeCountLastFrame;} ///<return number of smudges submitted last frame.
+	Int getSmudgeCountLastFrame() {return m_smudgeCountLastFrame;} ///<return number of smudges submitted last frame.
 	void setSmudgeCountLastFrame(Int count) { m_smudgeCountLastFrame = count;}
-	Bool getHardwareSupport(void) { return m_hardwareSupportStatus != SMUDGE_SUPPORT_NO;}
+	Bool getHardwareSupport() { return m_hardwareSupportStatus != SMUDGE_SUPPORT_NO;}
 
 protected:
 

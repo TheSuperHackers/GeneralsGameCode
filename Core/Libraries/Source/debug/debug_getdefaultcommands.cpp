@@ -29,7 +29,7 @@
 
 // this function has its own file so that it can be 'overridden'
 // by another program using the Debug module
-const char *DebugGetDefaultCommands(void)
+const char *DebugGetDefaultCommands()
 {
   return "!debug.io flat add";
 }

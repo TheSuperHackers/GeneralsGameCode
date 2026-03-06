@@ -65,7 +65,7 @@ ConvertToHijackedVehicleCrateCollide::ConvertToHijackedVehicleCrateCollide( Thin
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-ConvertToHijackedVehicleCrateCollide::~ConvertToHijackedVehicleCrateCollide( void )
+ConvertToHijackedVehicleCrateCollide::~ConvertToHijackedVehicleCrateCollide()
 {
 }
 
@@ -162,10 +162,7 @@ Bool ConvertToHijackedVehicleCrateCollide::executeCrateBehavior( Object *other )
 	DozerAIInterface * dozerAI = targetAI->getDozerAIInterface();
 	if ( dozerAI )
 	{
-		for (UnsignedInt task = DOZER_TASK_FIRST; task < DOZER_NUM_TASKS; ++task)
-		{
-			dozerAI->cancelTask( (DozerTask)task );
-		}
+		dozerAI->cancelAllTasks();
 	}
 
 	AudioEventRTS hijackEvent( "HijackDriver", obj->getID() );
@@ -274,7 +271,7 @@ void ConvertToHijackedVehicleCrateCollide::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void ConvertToHijackedVehicleCrateCollide::loadPostProcess( void )
+void ConvertToHijackedVehicleCrateCollide::loadPostProcess()
 {
 
 	// extend base class

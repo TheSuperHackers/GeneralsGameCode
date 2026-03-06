@@ -36,7 +36,7 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-ActiveShroudUpgradeModuleData::ActiveShroudUpgradeModuleData( void )
+ActiveShroudUpgradeModuleData::ActiveShroudUpgradeModuleData()
 {
 
 	m_newShroudRange = 0.0f;
@@ -72,14 +72,14 @@ ActiveShroudUpgrade::ActiveShroudUpgrade( Thing *thing, const ModuleData* module
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-ActiveShroudUpgrade::~ActiveShroudUpgrade( void )
+ActiveShroudUpgrade::~ActiveShroudUpgrade()
 {
 
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void ActiveShroudUpgrade::upgradeImplementation( void )
+void ActiveShroudUpgrade::upgradeImplementation()
 {
 	// Set my object's ability to actively shroud.
 	if( getActiveShroudUpgradeModuleData() )
@@ -121,7 +121,7 @@ void ActiveShroudUpgrade::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void ActiveShroudUpgrade::loadPostProcess( void )
+void ActiveShroudUpgrade::loadPostProcess()
 {
 
 	// extend base class

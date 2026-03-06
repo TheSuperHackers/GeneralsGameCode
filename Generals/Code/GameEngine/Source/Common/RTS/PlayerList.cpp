@@ -274,7 +274,7 @@ void PlayerList::teamAboutToBeDeleted(Team* team)
 }
 
 //=============================================================================
-void PlayerList::updateTeamStates(void)
+void PlayerList::updateTeamStates()
 {
 	// Clear team flags for all players.
 	for( Int i = 0; i < MAX_PLAYER_COUNT; i++ )
@@ -477,7 +477,7 @@ void PlayerList::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void PlayerList::loadPostProcess( void )
+void PlayerList::loadPostProcess()
 {
 
 }

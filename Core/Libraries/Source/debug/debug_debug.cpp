@@ -77,7 +77,7 @@ unsigned Debug::curStackFrame;
 
 // this constructor is empty on purpose because all construction
 // work is done in PreStaticInit (and some in PostStaticInit)
-Debug::Debug(void)
+Debug::Debug()
 {
   // do not put any code in here (but it's good for keeping module global todo's)
   /// @todo what about frame based logging?
@@ -85,7 +85,7 @@ Debug::Debug(void)
   ///       make it possible to enable/disable categories by adding category to log ID
 }
 
-void Debug::PreStaticInit(void)
+void Debug::PreStaticInit()
 {
   // do not change any member variables that have constructors
   // because they are not constructed yet!
@@ -121,7 +121,7 @@ void Debug::PreStaticInit(void)
   SetUnhandledExceptionFilter(DebugExceptionhandler::ExceptionFilter);
 }
 
-void Debug::PostStaticInit(void)
+void Debug::PostStaticInit()
 {
   InstallExceptionHandler();
 
@@ -214,7 +214,7 @@ void Debug::PostStaticInit(void)
   }
 }
 
-void Debug::StaticExit(void)
+void Debug::StaticExit()
 {
   // yes, we do leave memory 'leaks' but Win32 will take care of these
 
@@ -284,7 +284,7 @@ static LONG WINAPI LocalVectoredExceptionHandler(struct _EXCEPTION_POINTERS *pEx
 }
 #endif
 
-void Debug::InstallExceptionHandler(void)
+void Debug::InstallExceptionHandler()
 {
 #if defined(_MSC_VER)
   _set_se_translator(LocalSETranslator);
@@ -296,7 +296,7 @@ void Debug::InstallExceptionHandler(void)
 #endif
 }
 
-bool Debug::SkipNext(void)
+bool Debug::SkipNext()
 {
   // this is typically set while an assertion
   // is running
@@ -370,7 +370,7 @@ Debug& Debug::AssertBegin(const char *file, int line, const char *expr)
   return Instance;
 }
 
-bool Debug::AssertDone(void)
+bool Debug::AssertDone()
 {
   --disableAssertsEtc;
 
@@ -505,7 +505,7 @@ Debug& Debug::CheckBegin(const char *file, int line, const char *expr)
   return Instance;
 }
 
-bool Debug::CheckDone(void)
+bool Debug::CheckDone()
 {
   --disableAssertsEtc;
 
@@ -590,7 +590,7 @@ Debug& Debug::LogBegin(const char *fileOrGroup)
   return Instance;
 }
 
-bool Debug::LogDone(void)
+bool Debug::LogDone()
 {
   --disableAssertsEtc;
 
@@ -1068,7 +1068,7 @@ void Debug::RemoveHResultTranslator(HResultTranslator func, void *user)
     }
 }
 
-bool Debug::AddIOFactory(const char *io_id, const char *descr, DebugIOInterface* (*func)(void))
+bool Debug::AddIOFactory(const char *io_id, const char *descr, DebugIOInterface* (*func)())
 {
   // bail out if invalid parameters passed in
   if (!io_id||!func)
@@ -1153,7 +1153,7 @@ void Debug::Command(const char *cmd)
   Instance.ExecCommand(cmd,cmd+strlen(cmd));
 }
 
-void Debug::Update(void)
+void Debug::Update()
 {
   // check all existing IO interfaces
   for (IOFactoryListEntry *cur=Instance.firstIOFactory;cur;cur=cur->next)
@@ -1489,7 +1489,7 @@ void Debug::SetBuildInfo(const char *version,
     strlcpy(Instance.m_buildDate,buildDate,sizeof(Instance.m_buildDate));
 }
 
-void Debug::WriteBuildInfo(void)
+void Debug::WriteBuildInfo()
 {
   operator<<("Version:");
   if (*m_version)
@@ -1653,7 +1653,7 @@ static BOOL CALLBACK EnumThreadWndProc(HWND hwnd, LPARAM lParam)
   return FALSE;
 }
 
-bool Debug::IsWindowed(void)
+bool Debug::IsWindowed()
 {
   // use cached result if possible
   if (m_isWindowed)
@@ -1679,7 +1679,7 @@ bool Debug::IsWindowed(void)
 // And finally for a little list of C/C++ runtime replacement functions.
 
 // Abort process due to fatal heap error
-void __cdecl _heap_abort(void)
+void __cdecl _heap_abort()
 {
   DCRASH_RELEASE("Fatal heap error.");
 }

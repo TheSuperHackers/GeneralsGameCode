@@ -55,8 +55,8 @@
 class GenericList;
 class GenericNode {
 	public:
-		GenericNode(void) : NextNode(nullptr), PrevNode(nullptr) {}
-		virtual ~GenericNode(void) {Unlink();}
+		GenericNode() : NextNode(nullptr), PrevNode(nullptr) {}
+		virtual ~GenericNode() {Unlink();}
 		GenericNode(GenericNode & node) {node.Link(this);}
 		GenericNode & operator = (GenericNode & node) {
 			if (&node != this) {
@@ -65,7 +65,7 @@ class GenericNode {
 			return(*this);
 		}
 
-		void Unlink(void) {
+		void Unlink() {
 			// note that this means that the special generic node at the head
 			// and tail of the list can not be unlinked.  This is done because
 			// the user should never unlink them -- it will destroy the list in
@@ -78,7 +78,7 @@ class GenericNode {
 			}
 		}
 
-		GenericList * Main_List(void) const {
+		GenericList * Main_List() const {
 			GenericNode const * node = this;
 			while (node->PrevNode) {
 				node = PrevNode;
@@ -94,15 +94,15 @@ class GenericNode {
 			NextNode = node;
 		}
 
-		GenericNode * Next(void) const {return(NextNode);}
-		GenericNode * Next_Valid(void) const {
+		GenericNode * Next() const {return(NextNode);}
+		GenericNode * Next_Valid() const {
 			return ((NextNode && NextNode->NextNode) ? NextNode : (GenericNode *)nullptr);
 		}
-		GenericNode * Prev(void) const {return(PrevNode);}
-		GenericNode * Prev_Valid(void) const {
+		GenericNode * Prev() const {return(PrevNode);}
+		GenericNode * Prev_Valid() const {
 			return ((PrevNode && PrevNode->PrevNode) ? PrevNode : (GenericNode *)nullptr);
 		}
-		bool Is_Valid(void) const {return(this != (GenericNode *)nullptr && NextNode != (GenericNode *)nullptr && PrevNode != (GenericNode *)nullptr);}
+		bool Is_Valid() const {return(this != (GenericNode *)nullptr && NextNode != (GenericNode *)nullptr && PrevNode != (GenericNode *)nullptr);}
 
 	protected:
 		GenericNode * NextNode;
@@ -116,37 +116,37 @@ class GenericNode {
 */
 class GenericList {
 	public:
-		GenericList(void) {
+		GenericList() {
 			FirstNode.Link(&LastNode);
 		}
 
 
-		virtual ~GenericList(void) {
+		virtual ~GenericList() {
 			while (FirstNode.Next()->Is_Valid()) {
 				FirstNode.Next()->Unlink();
 			}
 		}
 
-		GenericNode * First(void) const {return(FirstNode.Next());}
-		GenericNode * First_Valid(void) const
+		GenericNode * First() const {return(FirstNode.Next());}
+		GenericNode * First_Valid() const
 		{
 			GenericNode *node = FirstNode.Next();
 			return (node->Next() ? node : (GenericNode *)nullptr);
 		}
 
-		GenericNode * Last(void) const {return(LastNode.Prev());}
-		GenericNode * Last_Valid(void) const
+		GenericNode * Last() const {return(LastNode.Prev());}
+		GenericNode * Last_Valid() const
 		{
 			GenericNode *node = LastNode.Prev();
 			return (node->Prev() ? node : (GenericNode *)nullptr);
 		}
 
-		bool Is_Empty(void) const {return(!FirstNode.Next()->Is_Valid());}
+		bool Is_Empty() const {return(!FirstNode.Next()->Is_Valid());}
 		void Add_Head(GenericNode * node) {FirstNode.Link(node);}
 		void Add_Tail(GenericNode * node) {LastNode.Prev()->Link(node);}
-//		void Delete(void) {while (FirstNode.Next()->Is_Valid()) delete FirstNode.Next();}
+//		void Delete() {while (FirstNode.Next()->Is_Valid()) delete FirstNode.Next();}
 
-		int Get_Valid_Count(void) const
+		int Get_Valid_Count() const
 		{
 			GenericNode * node = First_Valid();
 			int counter = 0;
@@ -180,12 +180,12 @@ template<class T> class List;
 template<class T>
 class Node : public GenericNode {
 	public:
-		List<T> * Main_List(void) const {return((List<T> *)GenericNode::Main_List());}
-		T Next(void) const {return((T)GenericNode::Next());}
-		T Next_Valid(void) const {return((T)GenericNode::Next_Valid());}
-		T Prev(void) const {return((T)GenericNode::Prev());}
-		T Prev_Valid(void) const {return((T)GenericNode::Prev_Valid());}
-		bool Is_Valid(void) const {return(GenericNode::Is_Valid());}
+		List<T> * Main_List() const {return((List<T> *)GenericNode::Main_List());}
+		T Next() const {return((T)GenericNode::Next());}
+		T Next_Valid() const {return((T)GenericNode::Next_Valid());}
+		T Prev() const {return((T)GenericNode::Prev());}
+		T Prev_Valid() const {return((T)GenericNode::Prev_Valid());}
+		bool Is_Valid() const {return(GenericNode::Is_Valid());}
 };
 
 
@@ -196,13 +196,13 @@ class Node : public GenericNode {
 template<class T>
 class List : public GenericList {
 	public:
-		List(void) {};
+		List() {};
 
-		T First(void) const {return((T)GenericList::First());}
-		T First_Valid(void) const {return((T)GenericList::First_Valid());}
-		T Last(void) const {return((T)GenericList::Last());}
-		T Last_Valid(void) const {return((T)GenericList::Last_Valid());}
-		void Delete(void) {while (First()->Is_Valid()) delete First();}
+		T First() const {return((T)GenericList::First());}
+		T First_Valid() const {return((T)GenericList::First_Valid());}
+		T Last() const {return((T)GenericList::Last());}
+		T Last_Valid() const {return((T)GenericList::Last_Valid());}
+		void Delete() {while (First()->Is_Valid()) delete First();}
 
 	private:
 		List(List<T> const & rvalue);
@@ -226,10 +226,10 @@ public:
 	void Set(T value) { Value = value; };
 	T Get() const { return Value; };
 
-	DataNode<T> * Next(void) const { return (DataNode<T> *)GenericNode::Next(); }
-	DataNode<T> * Next_Valid(void) const { return (DataNode<T> *)GenericNode::Next_Valid(); }
-	DataNode<T> * Prev(void) const { return (DataNode<T> *)GenericNode::Prev(); }
-	DataNode<T> * Prev_Valid(void) const { return (DataNode<T> *)GenericNode::Prev_Valid(); }
+	DataNode<T> * Next() const { return (DataNode<T> *)GenericNode::Next(); }
+	DataNode<T> * Next_Valid() const { return (DataNode<T> *)GenericNode::Next_Valid(); }
+	DataNode<T> * Prev() const { return (DataNode<T> *)GenericNode::Prev(); }
+	DataNode<T> * Prev_Valid() const { return (DataNode<T> *)GenericNode::Prev_Valid(); }
 };
 
 

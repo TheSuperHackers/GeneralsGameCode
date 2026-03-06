@@ -118,7 +118,7 @@ CreditsLine::~CreditsLine()
 }
 
 
-CreditsManager::CreditsManager(void)
+CreditsManager::CreditsManager()
 {
 	m_scrollRate = 1; // in pixels
 	m_scrollRatePerFrames = 1;
@@ -131,7 +131,7 @@ CreditsManager::CreditsManager(void)
 	m_normalFontHeight = 10;
 }
 
-CreditsManager::~CreditsManager(void)
+CreditsManager::~CreditsManager()
 {
 
 	m_displayedCreditLineList.clear();
@@ -144,14 +144,14 @@ CreditsManager::~CreditsManager(void)
 	}
 }
 
-void CreditsManager::init(void )
+void CreditsManager::init()
 {
 	m_isFinished = FALSE;
 	m_creditLineListIt = m_creditLineList.begin();
 	m_framesSinceStarted = 0;
 }
 
-void CreditsManager::load(void )
+void CreditsManager::load()
 {
 	INI ini;
 	// Read from INI all the ControlBarSchemes
@@ -169,7 +169,7 @@ void CreditsManager::load(void )
 	m_normalFontHeight = font ? font->height : 0;
 }
 
-void CreditsManager::reset( void )
+void CreditsManager::reset()
 {
 	m_displayedCreditLineList.clear();
 	m_isFinished = FALSE;
@@ -178,7 +178,7 @@ void CreditsManager::reset( void )
 
 }
 
-void CreditsManager::update( void )
+void CreditsManager::update()
 {
 	if(m_isFinished)
 		return;
@@ -346,7 +346,7 @@ void CreditsManager::update( void )
 
 }
 
-void CreditsManager::draw( void )
+void CreditsManager::draw()
 {
 	CreditsLineList::iterator drawIt = m_displayedCreditLineList.begin();
 	while (drawIt != m_displayedCreditLineList.end())
@@ -401,7 +401,7 @@ void CreditsManager::draw( void )
 		drawIt++;
 	}
 }
-void CreditsManager::addBlank( void )
+void CreditsManager::addBlank()
 {
 	CreditsLine *cLine = new CreditsLine;
 	cLine->m_style = CREDIT_STYLE_BLANK;
@@ -460,7 +460,7 @@ void CreditsManager::addText( AsciiString text )
 			}
 			break;
 		default:
-			DEBUG_ASSERTCRASH( FALSE, ("CreditsManager::addText we tried to add a credit text with the wrong style before it.  Style is %d", m_currentStyle) );
+			DEBUG_CRASH( ("CreditsManager::addText we tried to add a credit text with the wrong style before it.  Style is %d", m_currentStyle) );
 			delete cLine;
 	}
 

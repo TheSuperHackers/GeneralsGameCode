@@ -63,7 +63,7 @@ public:
 	virtual Bool isImmuneToClearBuildingAttacks() const { return true; }
 
 	virtual void onDie( const DamageInfo *damageInfo );  ///< the die callback
-	virtual void onDelete( void );	///< Last possible moment cleanup
+	virtual void onDelete();	///< Last possible moment cleanup
 	virtual void onCapture( Player *oldOwner, Player *newOwner ); // Our main guy goes with us, but our redirected contain needs to do his thing too
 
 	// Contain stuff we need to override to redirect on a condition
@@ -82,7 +82,7 @@ public:
 	// contain list access
 	virtual void iterateContained( ContainIterateFunc func, void *userData, Bool reverse );
 	virtual UnsignedInt getContainCount() const;
-	virtual Int getContainMax( void ) const;
+	virtual Int getContainMax() const;
 	virtual const ContainedItemsList* getContainedItemsList() const;
 
 	// Friend for our Draw module only.

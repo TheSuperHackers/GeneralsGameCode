@@ -53,7 +53,7 @@
 class StateVectorClass : public DynamicVectorClass<float>
 {
 public:
-	void Reset(void) { ActiveCount = 0; }
+	void Reset() { ActiveCount = 0; }
 	void Resize(int size) { if (size > VectorMax) { DynamicVectorClass<float>::Resize(size); } }
 };
 

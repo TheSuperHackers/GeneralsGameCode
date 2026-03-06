@@ -62,7 +62,7 @@ struct WinTimeStamp
 class WaypointMap : public std::map<AsciiString, Coord3D>
 {
 public:
-	void update( void );	///< returns the number of multiplayer start spots found
+	void update();	///< returns the number of multiplayer start spots found
 	Int m_numStartSpots;
 };
 
@@ -104,7 +104,7 @@ public:
 		, m_doLoadUserMapCacheINI(TRUE)
 	{}
 
-	void updateCache( void );
+	void updateCache();
 
 	AsciiString getMapDir() const;
 	AsciiString getUserMapDir() const;

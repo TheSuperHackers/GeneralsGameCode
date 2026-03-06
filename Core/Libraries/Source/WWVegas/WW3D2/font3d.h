@@ -103,7 +103,7 @@ public:
 	/*
 	** access texture material
 	*/
-	TextureClass *	Peek_Texture( void )								{ return Texture; }
+	TextureClass *	Peek_Texture()								{ return Texture; }
 
 private:
 	/*
@@ -154,13 +154,13 @@ public:
 	/*
 	** access texture material
 	*/
-	TextureClass *Peek_Texture( void ) { return FontData->Peek_Texture(); }
+	TextureClass *Peek_Texture() { return FontData->Peek_Texture(); }
 
 	/*
 	** The non-scaled monospace char width in pixels ( set to 0 for proportional spaced font )
 	*/
-	void	Set_Mono_Spaced( void );
-	void	Set_Proportional( void )	{ MonoSpacing = 0;  Build_Cached_Tables(); }
+	void	Set_Mono_Spaced();
+	void	Set_Proportional()	{ MonoSpacing = 0;  Build_Cached_Tables(); }
 
 
 	/*
@@ -175,7 +175,7 @@ public:
 	*/
 	float	Char_Width( WCHAR ch ) const		{ return ScaledWidthTable[ch&0xFF]; }
 	float	Char_Spacing( WCHAR ch ) const	{ return ScaledSpacingTable[ch&0xFF]; }
-	float	Char_Height( void ) const			{ return ScaledHeight; }
+	float	Char_Height() const			{ return ScaledHeight; }
 
 
 	/*

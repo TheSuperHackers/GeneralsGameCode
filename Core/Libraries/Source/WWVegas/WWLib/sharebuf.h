@@ -51,14 +51,14 @@ class ShareBufferClass : public W3DMPO, public RefCountClass
 	public:
 		ShareBufferClass(int count, const char* msg);
 		ShareBufferClass(const ShareBufferClass & that);
-		~ShareBufferClass(void);
+		~ShareBufferClass();
 
 		// Get the internal pointer to the array
 		// CAUTION! This pointer is not refcounted so only use it in a context
 		// where you are keeping a reference to the enclosing ShareBufferClass
 		// to avoid the possibility of a dangling pointer.
-		T *			Get_Array(void)	{ return Array; }
-		int			Get_Count(void)	{ return Count; }
+		T *			Get_Array()	{ return Array; }
+		int			Get_Count()	{ return Count; }
 
 		// Access to the elements in the array
 		void			Set_Element(int index, const T & thing);
@@ -70,7 +70,7 @@ class ShareBufferClass : public W3DMPO, public RefCountClass
 		// virtual function table pointers.  Not a good idea to memset 0 over the top of
 		// an array of objects but useful if you are creating an array of some basic type
 		// like pointers or ints...
-		void			Clear(void);
+		void			Clear();
 
 	protected:
 
@@ -110,7 +110,7 @@ ShareBufferClass<T>::ShareBufferClass(const ShareBufferClass<T> & that) :
 }
 
 template <class T>
-ShareBufferClass<T>::~ShareBufferClass(void)
+ShareBufferClass<T>::~ShareBufferClass()
 {
 	delete[] Array;
 	Array = nullptr;
@@ -137,7 +137,7 @@ T& ShareBufferClass<T>::Get_Element(int index)
 }
 
 template<class T>
-void ShareBufferClass<T>::Clear(void)
+void ShareBufferClass<T>::Clear()
 {
 	memset(Array,0,Count * sizeof(T));
 }

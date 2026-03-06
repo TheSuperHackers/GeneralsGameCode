@@ -115,14 +115,14 @@ static FunctionLexicon::TableEntry layoutInitTable [] =
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-W3DFunctionLexicon::W3DFunctionLexicon( void )
+W3DFunctionLexicon::W3DFunctionLexicon()
 {
 
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-W3DFunctionLexicon::~W3DFunctionLexicon( void )
+W3DFunctionLexicon::~W3DFunctionLexicon()
 {
 
 }
@@ -131,7 +131,7 @@ W3DFunctionLexicon::~W3DFunctionLexicon( void )
 /** Initialize the function table specific for our implementations of
 	* the w3d device */
 //-------------------------------------------------------------------------------------------------
-void W3DFunctionLexicon::init( void )
+void W3DFunctionLexicon::init()
 {
 
 	// extend functionality
@@ -146,7 +146,7 @@ void W3DFunctionLexicon::init( void )
 //-------------------------------------------------------------------------------------------------
 /** Reset */
 //-------------------------------------------------------------------------------------------------
-void W3DFunctionLexicon::reset( void )
+void W3DFunctionLexicon::reset()
 {
 
 	// Pay attention to the order of what happens in the base class as you reset
@@ -159,7 +159,7 @@ void W3DFunctionLexicon::reset( void )
 //-------------------------------------------------------------------------------------------------
 /** Update */
 //-------------------------------------------------------------------------------------------------
-void W3DFunctionLexicon::update( void )
+void W3DFunctionLexicon::update()
 {
 
 	// extend?

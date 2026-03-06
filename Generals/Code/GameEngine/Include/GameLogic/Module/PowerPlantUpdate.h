@@ -39,7 +39,7 @@ class PowerPlantUpdateModuleData : public UpdateModuleData
 
 public:
 
-	PowerPlantUpdateModuleData( void );
+	PowerPlantUpdateModuleData();
 
 	static void buildFieldParse(MultiIniFieldParse& p)
 	{
@@ -89,7 +89,7 @@ public:
 	virtual PowerPlantUpdateInterface* getPowerPlantUpdateInterface() { return this; }
 
 	void extendRods( Bool extend );									 ///< extend the rods from this object
-	virtual UpdateSleepTime update( void ); ///< Here's the actual work of Upgrading
+	virtual UpdateSleepTime update(); ///< Here's the actual work of Upgrading
 
 protected:
 

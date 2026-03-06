@@ -52,35 +52,35 @@ public:
 
     \return first profile ID
   */
-  static ProfileId *GetFirst(void) { return first; }
+  static ProfileId *GetFirst() { return first; }
 
   /**
     Retrieves next profile ID.
 
     \return next profile ID, nullptr if none
   */
-  ProfileId *GetNext(void) const { return m_next; }
+  ProfileId *GetNext() const { return m_next; }
 
   /**
     Retrieves name of the profile ID.
 
     \return profile ID name
   */
-  const char *GetName(void) const { return m_name; }
+  const char *GetName() const { return m_name; }
 
   /**
     Retrieves unit name of the profile ID.
 
     \return profile ID unit name
   */
-  const char *GetUnit(void) const { return m_unit?m_unit:""; }
+  const char *GetUnit() const { return m_unit?m_unit:""; }
 
   /**
     Retrieves description of the profile ID.
 
     \return profile description
   */
-  const char *GetDescr(void) const { return m_descr?m_descr:""; }
+  const char *GetDescr() const { return m_descr?m_descr:""; }
 
   /**
     Increments the profile value.
@@ -101,7 +101,7 @@ public:
 
     \return current value
   */
-  double GetCurrentValue(void)
+  double GetCurrentValue()
   {
     double help=m_curVal;
     m_curVal=0.;
@@ -113,7 +113,7 @@ public:
 
     \return total value
   */
-  double GetTotalValue(void) const
+  double GetTotalValue() const
   {
     return m_totalVal;
   }
@@ -145,12 +145,12 @@ public:
   /**
     Shutdown function.
   */
-  static void Shutdown(void);
+  static void Shutdown();
 
   /**
     Starts frame based profiling, starts a new frame.
   */
-  static int FrameStart(void);
+  static int FrameStart();
 
   /**
     Ends frame based profiling.
@@ -160,7 +160,7 @@ public:
   /**
     Clears all total values.
   */
-  static void ClearTotals(void)
+  static void ClearTotals()
   {
     for (ProfileId *cur=first;cur;cur=cur->m_next)
       cur->m_totalVal=0.;

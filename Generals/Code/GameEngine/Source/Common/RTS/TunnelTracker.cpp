@@ -134,7 +134,7 @@ void TunnelTracker::updateNemesis(const Object *target)
 }
 
 // ------------------------------------------------------------------------
-Object *TunnelTracker::getCurNemesis(void)
+Object *TunnelTracker::getCurNemesis()
 {
 	if (m_curNemesisID == INVALID_ID) {
 		return nullptr;
@@ -431,7 +431,7 @@ void TunnelTracker::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void TunnelTracker::loadPostProcess( void )
+void TunnelTracker::loadPostProcess()
 {
 
 	// sanity, the contain list should be empty until we post process the id list

@@ -143,7 +143,7 @@ void W3DOverlordTruckDraw::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void W3DOverlordTruckDraw::loadPostProcess( void )
+void W3DOverlordTruckDraw::loadPostProcess()
 {
 
 	// extend base class

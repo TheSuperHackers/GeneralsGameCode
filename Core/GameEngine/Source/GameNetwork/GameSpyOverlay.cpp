@@ -40,8 +40,8 @@
 //#include "GameNetwork/GameSpy/PeerDefs.h"
 #include "GameNetwork/GameSpy/BuddyThread.h"
 
-void deleteNotificationBox( void );
-static void raiseOverlays( void );
+void deleteNotificationBox();
+static void raiseOverlays();
 
 // Message boxes -------------------------------------
 static GameWindow *messageBoxWindow = nullptr;
@@ -52,7 +52,7 @@ static Bool reOpenPlayerInfoFlag = FALSE;
 	* messageBoxOK is called when a message box is destroyed
 	* by way of an OK button, so we can clear our pointers to it.
 	*/
-static void messageBoxOK( void )
+static void messageBoxOK()
 {
 	DEBUG_ASSERTCRASH(messageBoxWindow, ("Message box window went away without being there in the first place!"));
 	messageBoxWindow = nullptr;
@@ -67,7 +67,7 @@ static void messageBoxOK( void )
 	* messageBoxCancel is called when a message box is destroyed
 	* by way of a Cancel button, so we can clear our pointers to it.
 	*/
-static void messageBoxCancel( void )
+static void messageBoxCancel()
 {
 	DEBUG_ASSERTCRASH(messageBoxWindow, ("Message box window went away without being there in the first place!"));
 	messageBoxWindow = nullptr;
@@ -83,7 +83,7 @@ static void messageBoxCancel( void )
 	* one is present.  This is usually done when putting up a
 	* second messageBox.
 	*/
-void ClearGSMessageBoxes( void )
+void ClearGSMessageBoxes()
 {
 	if (messageBoxWindow)
 	{
@@ -141,7 +141,7 @@ void GSMessageBoxYesNo(UnicodeString title, UnicodeString message, GameWinMsgBox
 	* If the screen transitions underneath the dialog box, we
 	* need to raise it to keep it visible.
 	*/
-void RaiseGSMessageBox( void )
+void RaiseGSMessageBox()
 {
 	raiseOverlays();
 
@@ -183,7 +183,7 @@ static WindowLayout *overlayLayouts[GSOVERLAY_MAX] =
 	nullptr,
 };
 
-static void buddyTryReconnect( void )
+static void buddyTryReconnect()
 {
 	BuddyRequest req;
 	req.buddyRequestType = BuddyRequest::BUDDYREQUEST_RELOGIN;
@@ -285,7 +285,7 @@ void GameSpyToggleOverlay( GSOverlayType overlay )
 		GameSpyOpenOverlay(overlay);
 }
 
-void raiseOverlays( void )
+void raiseOverlays()
 {
 	for (int i=0; i<GSOVERLAY_MAX; ++i)
 	{
@@ -296,7 +296,7 @@ void raiseOverlays( void )
 	}
 }
 
-void GameSpyCloseAllOverlays( void )
+void GameSpyCloseAllOverlays()
 {
 	for (int i=0; i<GSOVERLAY_MAX; ++i)
 	{
@@ -307,7 +307,7 @@ void GameSpyCloseAllOverlays( void )
 	deleteNotificationBox();
 }
 
-void GameSpyUpdateOverlays( void )
+void GameSpyUpdateOverlays()
 {
 	for (int i=0; i<GSOVERLAY_MAX; ++i)
 	{
@@ -318,11 +318,11 @@ void GameSpyUpdateOverlays( void )
 	}
 }
 
-void ReOpenPlayerInfo( void )
+void ReOpenPlayerInfo()
 {
 	reOpenPlayerInfoFlag = TRUE;
 }
-void CheckReOpenPlayerInfo(void )
+void CheckReOpenPlayerInfo()
 {
 	if(!reOpenPlayerInfoFlag)
 		return;

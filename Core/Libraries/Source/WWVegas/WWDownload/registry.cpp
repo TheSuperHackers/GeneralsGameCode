@@ -120,12 +120,12 @@ bool GetStringFromRegistry(std::string path, std::string key, std::string& val)
 #endif
 
 	fullPath.append(path);
-	if (getStringFromRegistry(HKEY_LOCAL_MACHINE, fullPath.c_str(), key.c_str(), val))
+	if (getStringFromRegistry(HKEY_CURRENT_USER, fullPath.c_str(), key.c_str(), val))
 	{
 		return true;
 	}
 
-	return getStringFromRegistry(HKEY_CURRENT_USER, fullPath.c_str(), key.c_str(), val);
+	return getStringFromRegistry(HKEY_LOCAL_MACHINE, fullPath.c_str(), key.c_str(), val);
 }
 
 bool GetUnsignedIntFromRegistry(std::string path, std::string key, unsigned int& val)
@@ -137,12 +137,12 @@ bool GetUnsignedIntFromRegistry(std::string path, std::string key, unsigned int&
 #endif
 
 	fullPath.append(path);
-	if (getUnsignedIntFromRegistry(HKEY_LOCAL_MACHINE, fullPath.c_str(), key.c_str(), val))
+	if (getUnsignedIntFromRegistry(HKEY_CURRENT_USER, fullPath.c_str(), key.c_str(), val))
 	{
 		return true;
 	}
 
-	return getUnsignedIntFromRegistry(HKEY_CURRENT_USER, fullPath.c_str(), key.c_str(), val);
+	return getUnsignedIntFromRegistry(HKEY_LOCAL_MACHINE, fullPath.c_str(), key.c_str(), val);
 }
 
 bool SetStringInRegistry( std::string path, std::string key, std::string val)
@@ -154,9 +154,8 @@ bool SetStringInRegistry( std::string path, std::string key, std::string val)
 #endif
 	fullPath.append(path);
 
-	if (setStringInRegistry( HKEY_LOCAL_MACHINE, fullPath, key, val))
-		return true;
-
+	// TheSuperHackers @fix bobtista 12/02/2026 Always write to HKCU. Per-user settings belong
+	// in HKEY_CURRENT_USER and writes there should always succeed without admin privileges.
 	return setStringInRegistry( HKEY_CURRENT_USER, fullPath, key, val );
 }
 
@@ -169,9 +168,8 @@ bool SetUnsignedIntInRegistry( std::string path, std::string key, unsigned int v
 #endif
 	fullPath.append(path);
 
-	if (setUnsignedIntInRegistry( HKEY_LOCAL_MACHINE, fullPath, key, val))
-		return true;
-
+	// TheSuperHackers @fix bobtista 12/02/2026 Always write to HKCU. Per-user settings belong
+	// in HKEY_CURRENT_USER and writes there should always succeed without admin privileges.
 	return setUnsignedIntInRegistry( HKEY_CURRENT_USER, fullPath, key, val );
 }
 

@@ -78,6 +78,6 @@ protected:
 	UnsignedInt m_enemyScanDelay;
 	Bool m_enemyNear;
 
-	void checkForEnemies( void );
+	void checkForEnemies();
 
 };

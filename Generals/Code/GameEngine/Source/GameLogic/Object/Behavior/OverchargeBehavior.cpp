@@ -46,7 +46,7 @@
 
 //-------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-OverchargeBehaviorModuleData::OverchargeBehaviorModuleData( void )
+OverchargeBehaviorModuleData::OverchargeBehaviorModuleData()
 {
 
 	m_healthPercentToDrainPerSecond = 0.0f;
@@ -91,14 +91,14 @@ OverchargeBehavior::OverchargeBehavior( Thing *thing, const ModuleData* moduleDa
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-OverchargeBehavior::~OverchargeBehavior( void )
+OverchargeBehavior::~OverchargeBehavior()
 {
 
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime OverchargeBehavior::update( void )
+UpdateSleepTime OverchargeBehavior::update()
 {
 
 	// if the overcharge is active we need to take away some life
@@ -158,7 +158,7 @@ void OverchargeBehavior::onDamage( DamageInfo *damageInfo )
 // ------------------------------------------------------------------------------------------------
 /** Flip the state of our 'overcharge-ness' */
 // ------------------------------------------------------------------------------------------------
-void OverchargeBehavior::toggle( void )
+void OverchargeBehavior::toggle()
 {
 
 	// just toggle using enable()
@@ -237,7 +237,7 @@ void OverchargeBehavior::enable( Bool enable )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void OverchargeBehavior::onDelete( void )
+void OverchargeBehavior::onDelete()
 {
 
 	// if we haven't been upgraded there is nothing to clean up
@@ -310,7 +310,7 @@ void OverchargeBehavior::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void OverchargeBehavior::loadPostProcess( void )
+void OverchargeBehavior::loadPostProcess()
 {
 
 	// extend base class

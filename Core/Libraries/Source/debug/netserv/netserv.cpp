@@ -37,7 +37,7 @@
 static char m_input[256];
 static unsigned m_inputUsed;
 
-static void InitConsole(void)
+static void InitConsole()
 {
   AllocConsole();
 
@@ -62,7 +62,7 @@ static void InitConsole(void)
   SetConsoleCursorInfo(h,&ci);
 }
 
-static char *InputConsole(void)
+static char *InputConsole()
 {
   // update our input buffer
   HANDLE h=GetStdHandle(STD_INPUT_HANDLE);
@@ -157,7 +157,7 @@ class Pipe
   char *m_str;
 
 public:
-  Pipe(void):
+  Pipe():
     m_pipe(INVALID_HANDLE_VALUE),
     m_src(nullptr), m_str(nullptr), m_stringType(0)
   {
@@ -184,7 +184,7 @@ public:
     return m_pipe!=INVALID_HANDLE_VALUE;
   }
 
-  bool Connected(void)
+  bool Connected()
   {
     if (!m_connected)
     {
@@ -213,7 +213,7 @@ public:
     }
   }
 
-  const char *Read(void)
+  const char *Read()
   {
     DWORD read;
     switch(m_state)

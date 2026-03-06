@@ -54,9 +54,9 @@ public:
 	virtual ~DownloadManager();
 
 public:
-	void init( void );
-	HRESULT update( void );
-	void reset( void );
+	void init();
+	HRESULT update();
+	void reset();
 
 	virtual HRESULT OnError( Int error );
 	virtual HRESULT OnEnd();
@@ -65,18 +65,18 @@ public:
 	virtual HRESULT OnStatusUpdate( Int status );
 
 	virtual HRESULT downloadFile( AsciiString server, AsciiString username, AsciiString password, AsciiString file, AsciiString localfile, AsciiString regkey, Bool tryResume );
-	AsciiString getLastLocalFile( void );
+	AsciiString getLastLocalFile();
 
-	Bool isDone( void ) { return m_sawEnd || m_wasError; }
-	Bool isOk( void ) { return m_sawEnd; }
-	Bool wasError( void ) { return m_wasError; }
+	Bool isDone() { return m_sawEnd || m_wasError; }
+	Bool isOk() { return m_sawEnd; }
+	Bool wasError() { return m_wasError; }
 
-	UnicodeString getStatusString( void ) { return m_statusString; }
-	UnicodeString getErrorString( void ) { return m_errorString; }
+	UnicodeString getStatusString() { return m_statusString; }
+	UnicodeString getErrorString() { return m_errorString; }
 
 	void queueFileForDownload( AsciiString server, AsciiString username, AsciiString password, AsciiString file, AsciiString localfile, AsciiString regkey, Bool tryResume );
-	Bool isFileQueuedForDownload( void ) { return !m_queuedDownloads.empty(); }
-	HRESULT downloadNextQueuedFile( void );
+	Bool isFileQueuedForDownload() { return !m_queuedDownloads.empty(); }
+	HRESULT downloadNextQueuedFile();
 
 private:
 	Bool m_winsockInit;

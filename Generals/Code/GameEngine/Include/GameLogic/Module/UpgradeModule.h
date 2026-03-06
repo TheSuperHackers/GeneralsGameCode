@@ -116,7 +116,7 @@ public:
 protected:
 
 	void setUpgradeExecuted(Bool e) { m_upgradeExecuted = e; }
-	virtual void upgradeImplementation( ) = 0; ///< Here's the actual work of Upgrading
+	virtual void upgradeImplementation() = 0; ///< Here's the actual work of Upgrading
 	virtual void getUpgradeActivationMasks(UpgradeMaskType& activation, UpgradeMaskType& conflicting) const = 0; ///< Here's the actual work of Upgrading
 	virtual void performUpgradeFX() = 0;	///< perform the associated fx list
 	virtual Bool requiresAllActivationUpgrades() const = 0;
@@ -137,7 +137,7 @@ protected:
 	//
 	virtual void upgradeMuxCRC( Xfer *xfer );
 	virtual void upgradeMuxXfer( Xfer *xfer);
-	virtual void upgradeMuxLoadPostProcess( void );
+	virtual void upgradeMuxLoadPostProcess();
 
 private:
 	Bool m_upgradeExecuted;				///< Upgrade only executes once

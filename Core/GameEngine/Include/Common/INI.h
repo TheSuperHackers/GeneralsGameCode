@@ -248,14 +248,14 @@ public:
 	static void parseWindowTransitions( INI* ini );
 	static void parseChallengeModeDefinition( INI* ini );
 
-	AsciiString getFilename( void ) const { return m_filename; }
-	INILoadType getLoadType( void ) const { return m_loadType; }
-	UnsignedInt getLineNum( void ) const { return m_lineNum; }
-	const char *getSeps( void ) const { return m_seps; }
-	const char *getSepsPercent( void ) const { return m_sepsPercent; }
-	const char *getSepsColon( void ) const { return m_sepsColon; }
-	const char *getSepsQuote( void ) { return m_sepsQuote; }
-	Bool isEOF( void ) const { return m_endOfFile; }
+	AsciiString getFilename() const { return m_filename; }
+	INILoadType getLoadType() const { return m_loadType; }
+	UnsignedInt getLineNum() const { return m_lineNum; }
+	const char *getSeps() const { return m_seps; }
+	const char *getSepsPercent() const { return m_sepsPercent; }
+	const char *getSepsColon() const { return m_sepsColon; }
+	const char *getSepsQuote() { return m_sepsQuote; }
+	Bool isEOF() const { return m_endOfFile; }
 
 	void initFromINI( void *what, const FieldParse* parseTable );
 	void initFromINIMulti( void *what, const MultiIniFieldParse& parseTableList );
@@ -393,7 +393,7 @@ protected:
 	void prepFile( AsciiString filename, INILoadType loadType );
 	void unPrepFile();
 
-	void readLine( void );
+	void readLine();
 
 	char* m_readBuffer;                       ///< internal read buffer
 	unsigned m_readBufferNext;                ///< next char in read buffer

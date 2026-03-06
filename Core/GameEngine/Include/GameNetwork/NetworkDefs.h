@@ -47,6 +47,16 @@ enum ConnectionNumbers CPP_11(: Int)
 	MAX_PLAYER = 7,			// The index of the highest possible player number.  This is 0 based, so the most players allowed in a game is MAX_PLAYER+1.
 };
 
+#pragma pack(push, 1)
+struct TransportMessageHeader
+{
+	UnsignedInt crc;											///< packet-level CRC (must be first in packet)
+	UnsignedShort magic;									///< Magic number identifying Generals packets
+	//	Int id;
+	//	NetMessageFlags flags;
+};
+#pragma pack(pop)
+
 static constexpr const Int MAX_SLOTS = MAX_PLAYER+1;
 
 // TheSuperHackers @info As we are not detecting for network fragmentation and dynamically adjusting payload sizes, we set an 1100 bytes UDP payload as a safe upper limit for various networks
@@ -86,16 +96,6 @@ struct CommandPacket
 #pragma pack(pop)
 
 #define MAX_TRANSPORT_STATISTICS_SECONDS 30
-
-#pragma pack(push, 1)
-struct TransportMessageHeader
-{
-	UnsignedInt crc;											///< packet-level CRC (must be first in packet)
-	UnsignedShort magic;									///< Magic number identifying Generals packets
-//	Int id;
-//	NetMessageFlags flags;
-};
-#pragma pack(pop)
 
 /**
  * Transport message - encapsulating info kept by the transport layer about each

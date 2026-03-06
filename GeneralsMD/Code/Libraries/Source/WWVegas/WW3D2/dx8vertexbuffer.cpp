@@ -903,7 +903,7 @@ void DynamicVBAccessClass::_Reset(bool frame_changed)
 	if (frame_changed) _DynamicDX8VertexBufferOffset=0;
 }
 
-unsigned short DynamicVBAccessClass::Get_Default_Vertex_Count(void)
+unsigned short DynamicVBAccessClass::Get_Default_Vertex_Count()
 {
 	return _DynamicDX8VertexBufferSize;
 }

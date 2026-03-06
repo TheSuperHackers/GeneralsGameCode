@@ -44,7 +44,7 @@ class DemoralizeSpecialPowerModuleData : public SpecialPowerModuleData
 
 public:
 
-	DemoralizeSpecialPowerModuleData( void );
+	DemoralizeSpecialPowerModuleData();
 
 	static void buildFieldParse( MultiIniFieldParse& p );
 

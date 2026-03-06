@@ -243,7 +243,7 @@ void Win32Mouse::translateEvent( UnsignedInt eventIndex, MouseIO *result )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-Win32Mouse::Win32Mouse( void )
+Win32Mouse::Win32Mouse()
 {
 
 	// zero our event list
@@ -261,7 +261,7 @@ Win32Mouse::Win32Mouse( void )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-Win32Mouse::~Win32Mouse( void )
+Win32Mouse::~Win32Mouse()
 {
 
 	// remove our global reference that was for the WndProc() only
@@ -272,7 +272,7 @@ Win32Mouse::~Win32Mouse( void )
 //-------------------------------------------------------------------------------------------------
 /** Initialize our device */
 //-------------------------------------------------------------------------------------------------
-void Win32Mouse::init( void )
+void Win32Mouse::init()
 {
 
 	// extending functionality
@@ -290,7 +290,7 @@ void Win32Mouse::init( void )
 //-------------------------------------------------------------------------------------------------
 /** Reset */
 //-------------------------------------------------------------------------------------------------
-void Win32Mouse::reset( void )
+void Win32Mouse::reset()
 {
 
 	// extend
@@ -301,7 +301,7 @@ void Win32Mouse::reset( void )
 //-------------------------------------------------------------------------------------------------
 /** Update, called once per frame */
 //-------------------------------------------------------------------------------------------------
-void Win32Mouse::update( void )
+void Win32Mouse::update()
 {
 
 	// extend
@@ -363,7 +363,7 @@ void Win32Mouse::regainFocus()
 
 /**Preload all the cursors we may need during the game.  This must be done before the D3D device
 is created to avoid cursor corruption on buggy ATI Radeon cards. */
-void Win32Mouse::initCursorResources(void)
+void Win32Mouse::initCursorResources()
 {
 	for (Int cursor=FIRST_CURSOR; cursor<NUM_MOUSE_CURSORS; cursor++)
 	{
@@ -431,7 +431,7 @@ void Win32Mouse::setCursor( MouseCursor cursor )
 //-------------------------------------------------------------------------------------------------
 /** Capture the mouse to our application */
 //-------------------------------------------------------------------------------------------------
-void Win32Mouse::capture( void )
+void Win32Mouse::capture()
 {
 
 	RECT rect;
@@ -463,7 +463,7 @@ void Win32Mouse::capture( void )
 //-------------------------------------------------------------------------------------------------
 /** Release the mouse capture for our app window */
 //-------------------------------------------------------------------------------------------------
-void Win32Mouse::releaseCapture( void )
+void Win32Mouse::releaseCapture()
 {
 
 	if (::ClipCursor(nullptr))

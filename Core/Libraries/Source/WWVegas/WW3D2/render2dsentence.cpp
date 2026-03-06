@@ -53,7 +53,7 @@
 //	Render2DSentenceClass
 //
 ////////////////////////////////////////////////////////////////////////////////////
-Render2DSentenceClass::Render2DSentenceClass (void) :
+Render2DSentenceClass::Render2DSentenceClass () :
 	Font (nullptr),
 	Location (0.0F,0.0F),
 	Cursor (0.0F,0.0F),
@@ -84,7 +84,7 @@ Render2DSentenceClass::Render2DSentenceClass (void) :
 //	~Render2DSentenceClass
 //
 ////////////////////////////////////////////////////////////////////////////////////
-Render2DSentenceClass::~Render2DSentenceClass (void)
+Render2DSentenceClass::~Render2DSentenceClass ()
 {
 	REF_PTR_RELEASE (Font);
 	Reset ();
@@ -112,7 +112,7 @@ Render2DSentenceClass::Set_Font (FontCharsClass *font)
 //
 ////////////////////////////////////////////////////////////////////////////////////
 void
-Render2DSentenceClass::Reset_Polys (void)
+Render2DSentenceClass::Reset_Polys ()
 {
 	for (int index = 0; index < Renderers.Count (); index ++) {
 		Renderers[index].Renderer->Reset ();
@@ -128,7 +128,7 @@ Render2DSentenceClass::Reset_Polys (void)
 //
 ////////////////////////////////////////////////////////////////////////////////////
 void
-Render2DSentenceClass::Reset (void)
+Render2DSentenceClass::Reset ()
 {
 	//
 	//	Make sure we unlock the current surface (if necessary)
@@ -167,7 +167,7 @@ Render2DSentenceClass::Reset (void)
 //
 ////////////////////////////////////////////////////////////////////////////////////
 void
-Render2DSentenceClass::Make_Additive (void)
+Render2DSentenceClass::Make_Additive ()
 {
 	Shader.Set_Dst_Blend_Func (ShaderClass::DSTBLEND_ONE);
 	Shader.Set_Src_Blend_Func (ShaderClass::SRCBLEND_ONE);
@@ -207,7 +207,7 @@ Render2DSentenceClass::Set_Shader (ShaderClass shader)
 //
 ////////////////////////////////////////////////////////////////////////////////////
 void
-Render2DSentenceClass::Render (void)
+Render2DSentenceClass::Render ()
 {
 	//
 	//	Build any textures that are pending
@@ -296,7 +296,7 @@ Render2DSentenceClass::Get_Formatted_Text_Extents (const WCHAR *text)
 //
 ////////////////////////////////////////////////////////////////////////////////////
 void
-Render2DSentenceClass::Reset_Sentence_Data (void)
+Render2DSentenceClass::Reset_Sentence_Data ()
 {
 	//
 	//	Release our hold on each texture used in the sentence
@@ -318,7 +318,7 @@ Render2DSentenceClass::Reset_Sentence_Data (void)
 //
 ////////////////////////////////////////////////////////////////////////////////////
 void
-Render2DSentenceClass::Release_Pending_Surfaces (void)
+Render2DSentenceClass::Release_Pending_Surfaces ()
 {
 	//
 	//	Release our hold on each pending surface
@@ -339,7 +339,7 @@ Render2DSentenceClass::Release_Pending_Surfaces (void)
 //
 ////////////////////////////////////////////////////////////////////////////////////
 void
-Render2DSentenceClass::Build_Textures (void)
+Render2DSentenceClass::Build_Textures ()
 {
 	WWMEMLOG(MEM_TEXTURE);
 
@@ -583,7 +583,7 @@ Render2DSentenceClass::Draw_Sentence (uint32 color)
 //
 ////////////////////////////////////////////////////////////////////////////////////
 void
-Render2DSentenceClass::Record_Sentence_Chunk (void)
+Render2DSentenceClass::Record_Sentence_Chunk ()
 {
 	//
 	//	Do we have anything to store?
@@ -1185,7 +1185,7 @@ Render2DSentenceClass::Build_Sentence (const WCHAR *text, int *hkX, int *hkY)
 //	FontCharsClass
 //
 ////////////////////////////////////////////////////////////////////////////////////
-FontCharsClass::FontCharsClass (void) :
+FontCharsClass::FontCharsClass () :
 	OldGDIFont(	nullptr ),
 	OldGDIBitmap( nullptr ),
 	GDIFont( nullptr ),
@@ -1211,7 +1211,7 @@ FontCharsClass::FontCharsClass (void) :
 //	~FontCharsClass
 //
 ////////////////////////////////////////////////////////////////////////////////////
-FontCharsClass::~FontCharsClass (void)
+FontCharsClass::~FontCharsClass ()
 {
 	while ( BufferList.Count() ) {
 		delete BufferList[0];
@@ -1608,7 +1608,7 @@ FontCharsClass::Create_GDI_Font (const char *font_name)
 //
 ////////////////////////////////////////////////////////////////////////////////////
 void
-FontCharsClass::Free_GDI_Font (void)
+FontCharsClass::Free_GDI_Font ()
 {
 	//
 	//	Select the old font back into the DC and delete
@@ -1753,7 +1753,7 @@ FontCharsClass::Grow_Unicode_Array (WCHAR ch)
 //
 ////////////////////////////////////////////////////////////////////////////////////
 void
-FontCharsClass::Free_Character_Arrays (void)
+FontCharsClass::Free_Character_Arrays ()
 {
 	if ( UnicodeCharArray != nullptr ) {
 

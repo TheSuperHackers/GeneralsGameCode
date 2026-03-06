@@ -168,7 +168,7 @@ void DebugIOFlat::OutputStream::InternalWrite(const char *src, unsigned len)
   }
 }
 
-void DebugIOFlat::OutputStream::Flush(void)
+void DebugIOFlat::OutputStream::Flush()
 {
   if (!m_limitedFileSize)
   {
@@ -282,7 +282,7 @@ void DebugIOFlat::ExpandMagic(const char *src, const char *splitName, char *buf)
   strcpy(dst,".log");
 }
 
-DebugIOFlat::DebugIOFlat(void):
+DebugIOFlat::DebugIOFlat():
   m_firstStream(nullptr), m_firstSplit(nullptr),
   m_lastStreamPtr(&m_firstStream), m_lastSplitPtr(&m_firstSplit)
 {
@@ -324,7 +324,7 @@ void DebugIOFlat::Write(StringType type, const char *src, const char *str)
     m_firstStream->stream->Write(str);
 }
 
-void DebugIOFlat::EmergencyFlush(void)
+void DebugIOFlat::EmergencyFlush()
 {
   for (StreamListEntry *cur=m_firstStream;cur;cur=cur->next)
     cur->stream->Flush();
@@ -537,12 +537,12 @@ void DebugIOFlat::Execute(class Debug& dbg, const char *cmd, bool structuredCmd,
   }
 }
 
-DebugIOInterface *DebugIOFlat::Create(void)
+DebugIOInterface *DebugIOFlat::Create()
 {
   return new (DebugAllocMemory(sizeof(DebugIOFlat))) DebugIOFlat();
 }
 
-void DebugIOFlat::Delete(void)
+void DebugIOFlat::Delete()
 {
   this->~DebugIOFlat();
   DebugFreeMemory(this);

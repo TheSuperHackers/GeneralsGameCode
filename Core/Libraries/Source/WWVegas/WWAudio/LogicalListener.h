@@ -52,8 +52,8 @@ class LogicalListenerClass : public SoundSceneObjClass
 		//////////////////////////////////////////////////////////////////////
 		//	Public constructors/destructors
 		//////////////////////////////////////////////////////////////////////
-		LogicalListenerClass (void);
-		virtual ~LogicalListenerClass (void);
+		LogicalListenerClass ();
+		virtual ~LogicalListenerClass ();
 
 		//////////////////////////////////////////////////////////////////////
 		//	Public methods
@@ -63,28 +63,28 @@ class LogicalListenerClass : public SoundSceneObjClass
 		//	LogicalSoundClass specific
 		//////////////////////////////////////////////////////////////////////
 		virtual void			Set_Type_Mask (uint32 mask = 0)	{ m_TypeMask = mask; }
-		virtual uint32			Get_Type_Mask (void) const			{ return m_TypeMask; }
+		virtual uint32			Get_Type_Mask () const			{ return m_TypeMask; }
 
 		//////////////////////////////////////////////////////////////////////
 		//	Position/direction methods
 		//////////////////////////////////////////////////////////////////////
 		virtual void			Set_Position (const Vector3 &position)		{ m_Position = position; }
-		virtual Vector3			Get_Position (void) const						{ return m_Position; }
+		virtual Vector3			Get_Position () const						{ return m_Position; }
 
 		virtual void			Set_Transform (const Matrix3D &transform) { m_Position = transform.Get_Translation (); }
-		virtual Matrix3D		Get_Transform (void) const						{ Matrix3D tm(1); tm.Set_Translation (m_Position); return tm; }
+		virtual Matrix3D		Get_Transform () const						{ Matrix3D tm(1); tm.Set_Translation (m_Position); return tm; }
 
 		//////////////////////////////////////////////////////////////////////
 		//	Culling methods (not used for listeners)
 		//////////////////////////////////////////////////////////////////////
 		virtual void			Cull_Sound (bool culled = true)	{ };
-		virtual bool			Is_Sound_Culled (void) const		{ return false; };
+		virtual bool			Is_Sound_Culled () const		{ return false; };
 
 		//////////////////////////////////////////////////////////////////////
 		//	Scene integration
 		//////////////////////////////////////////////////////////////////////
 		virtual void			Add_To_Scene (bool /*start_playing*/ = true);
-		virtual void			Remove_From_Scene (void);
+		virtual void			Remove_From_Scene ();
 
 		//////////////////////////////////////////////////////////////////////
 		//	Attenuation settings
@@ -94,33 +94,33 @@ class LogicalListenerClass : public SoundSceneObjClass
 		//	This is the distance where the listener can no longer hear sounds.
 		//
 		virtual void			Set_Scale (float scale = 1.0F)	{ m_Scale = scale; }
-		virtual float			Get_Scale (void) const				{ return m_Scale; }
-		virtual float			Get_Effective_Scale (void) const	{ return m_Scale * m_GlobalScale; }
+		virtual float			Get_Scale () const				{ return m_Scale; }
+		virtual float			Get_Effective_Scale () const	{ return m_Scale * m_GlobalScale; }
 
-		static float			Get_Global_Scale (void)				{ return m_GlobalScale; }
+		static float			Get_Global_Scale ()				{ return m_GlobalScale; }
 		static void				Set_Global_Scale (float scale)	{ m_GlobalScale = scale; }
 
 		virtual void			Set_DropOff_Radius (float radius = 1)	{}
-		virtual float			Get_DropOff_Radius (void) const			{ return 1.0F; }
+		virtual float			Get_DropOff_Radius () const			{ return 1.0F; }
 
 		//////////////////////////////////////////////////////////////////////
 		//	From PersistClass
 		//////////////////////////////////////////////////////////////////////
 		bool									Save (ChunkSaveClass &csave);
 		bool									Load (ChunkLoadClass &cload);
-		const PersistFactoryClass &	Get_Factory (void) const;
+		const PersistFactoryClass &	Get_Factory () const;
 
 
 		//////////////////////////////////////////////////////////////////////
 		//	Timestamp
 		//////////////////////////////////////////////////////////////////////
-		uint32					Get_Timestamp (void) const		{ return m_Timestamp; }
+		uint32					Get_Timestamp () const		{ return m_Timestamp; }
 		void					Set_Timestamp (int timestamp)	{ m_Timestamp = timestamp; }
 
-		static uint32			Get_New_Timestamp (void)		{ return m_NewestTimestamp ++; }
-		static uint32			Get_Newest_Timestamp (void)		{ return m_NewestTimestamp - 1; }
+		static uint32			Get_New_Timestamp ()		{ return m_NewestTimestamp ++; }
+		static uint32			Get_Newest_Timestamp ()		{ return m_NewestTimestamp - 1; }
 
-		static uint32			Get_Oldest_Timestamp (void)				{ return m_OldestTimestamp; }
+		static uint32			Get_Oldest_Timestamp ()				{ return m_OldestTimestamp; }
 		static void				Set_Oldest_Timestamp (uint32 timestamp)	{ WWASSERT (m_OldestTimestamp < timestamp); m_OldestTimestamp = timestamp; }
 
 	protected:

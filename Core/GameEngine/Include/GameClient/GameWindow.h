@@ -79,7 +79,7 @@ typedef UnsignedInt WindowMsgData;
 enum WindowMsgHandledType CPP_11(: Int) { MSG_IGNORED, MSG_HANDLED };
 
 // callback types -------------------------------------------------------------
-typedef void (*GameWinMsgBoxFunc)( void ); //used for the Message box callbacks.
+typedef void (*GameWinMsgBoxFunc)(); //used for the Message box callbacks.
 typedef void (*GameWinDrawFunc)( GameWindow *,
 																 WinInstanceData * );
 typedef void (*GameWinTooltipFunc)( GameWindow *,
@@ -233,33 +233,33 @@ friend class GameWindowManager;
 
 public:
 
-	GameWindow( void );
+	GameWindow();
 	// already defined by MPO.
-	// virtual ~GameWindow( void );
+	// virtual ~GameWindow();
 
 	/// draw border for this window only, NO child windows or anything
-	virtual void winDrawBorder( void ) = 0;
+	virtual void winDrawBorder() = 0;
 
 	void linkTransitionWindow( TransitionWindow* transitionWindow );
 	void unlinkTransitionWindow( TransitionWindow* transitionWindow );
 
 	Int winSetWindowId( Int id );  ///< set id for this window
-	Int winGetWindowId( void );  ///< return window id for this window
+	Int winGetWindowId();  ///< return window id for this window
 	Int winSetSize( Int width, Int height );  ///< set size
 	Int winGetSize( Int *width, Int *height );  ///< return size
-	Int winActivate( void );  ///< pop window to top of list and activate
-	Int winBringToTop( void );  ///< bring this window to the top of the win list
+	Int winActivate();  ///< pop window to top of list and activate
+	Int winBringToTop();  ///< bring this window to the top of the win list
 	Int winEnable( Bool enable );  /**< enable/disable a window, a disbled
 																 window can be seen but accepts no input */
-  Bool winGetEnabled( void ); ///< Is window enabled?
+  Bool winGetEnabled(); ///< Is window enabled?
 	Int winHide( Bool hide );  ///< hide/unhide a window
-	Bool winIsHidden( void );  ///< is this window hidden/
+	Bool winIsHidden();  ///< is this window hidden/
 	UnsignedInt winSetStatus( UnsignedInt status );  ///< set status bits
 	UnsignedInt winClearStatus( UnsignedInt status );  ///< clear status bits
-	UnsignedInt winGetStatus( void );  ///< get status bits
-	UnsignedInt winGetStyle( void );  ///< get style bits
-	Int winNextTab( void );  ///< advance focus to next window
-	Int winPrevTab( void );  ///< change focus to previous window
+	UnsignedInt winGetStatus();  ///< get status bits
+	UnsignedInt winGetStyle();  ///< get style bits
+	Int winNextTab();  ///< advance focus to next window
+	Int winPrevTab();  ///< change focus to previous window
 	Int winSetPosition( Int x, Int y );  ///< set window position
 	Int winGetPosition( Int *x, Int *y );  ///< get window position
 	Int winGetScreenPosition( Int *x, Int *y );  ///< get screen coordinates
@@ -292,7 +292,7 @@ public:
 
 	// --------------------------------------------------------------------------
 	// draw methods and data
-	Int winDrawWindow( void );  ///< draws the default background
+	Int winDrawWindow();  ///< draws the default background
 	void winSetDrawOffset( Int x, Int y );  ///< set offset for drawing background image data
 	void winGetDrawOffset( Int *x, Int *y );  ///< get draw offset
 	void winSetHiliteState( Bool state );  ///< set hilite state
@@ -303,48 +303,48 @@ public:
 	//-----------------------------------------------------------------------------
 	// text methods
 	virtual Int winSetText( UnicodeString newText );  ///< set text string
-	UnicodeString winGetText( void );  ///< get text string
+	UnicodeString winGetText();  ///< get text string
 	Int winGetTextLength(); ///< get number of chars in text string
-	GameFont *winGetFont( void );  ///< get the font being used by this window
+	GameFont *winGetFont();  ///< get the font being used by this window
 	virtual void winSetFont( GameFont *font );  ///< set font for window
 	void winSetEnabledTextColors( Color color, Color borderColor );
 	void winSetDisabledTextColors( Color color, Color borderColor );
 	void winSetIMECompositeTextColors( Color color, Color borderColor );
 	void winSetHiliteTextColors( Color color, Color borderColor );
-	Color winGetEnabledTextColor( void );
-	Color winGetEnabledTextBorderColor( void );
-	Color winGetDisabledTextColor( void );
-	Color winGetDisabledTextBorderColor( void );
-	Color winGetIMECompositeTextColor( void );
-	Color winGetIMECompositeBorderColor( void );
-	Color winGetHiliteTextColor( void );
-	Color winGetHiliteTextBorderColor( void );
+	Color winGetEnabledTextColor();
+	Color winGetEnabledTextBorderColor();
+	Color winGetDisabledTextColor();
+	Color winGetDisabledTextBorderColor();
+	Color winGetIMECompositeTextColor();
+	Color winGetIMECompositeBorderColor();
+	Color winGetHiliteTextColor();
+	Color winGetHiliteTextBorderColor();
 
 	// window instance data
 	Int winSetInstanceData( WinInstanceData *data );  ///< copy over instance data
-	WinInstanceData *winGetInstanceData( void );  ///< get instance data
-	virtual void *winGetUserData( void );  ///< get the window user data
+	WinInstanceData *winGetInstanceData();  ///< get instance data
+	virtual void *winGetUserData();  ///< get the window user data
 	void winSetUserData( void *userData );  ///< set the user data
 
 	// hierarchy methods
 	Int winSetParent( GameWindow *parent );  ///< set parent
-	GameWindow *winGetParent( void );  ///< get parent
+	GameWindow *winGetParent();  ///< get parent
 	Bool winIsChild( GameWindow *child );  ///< verifies parent
-	GameWindow *winGetChild( void );  ///< get the child window
+	GameWindow *winGetChild();  ///< get the child window
 	Int winSetOwner( GameWindow *owner );  ///< set owner
-	GameWindow *winGetOwner( void );  ///< get window's owner
+	GameWindow *winGetOwner();  ///< get window's owner
 	void winSetNext( GameWindow *next );  ///< set next pointer
 	void winSetPrev( GameWindow *prev );  ///< set prev pointer
-	GameWindow *winGetNext( void );  ///< get next window in window list
-	GameWindow *winGetPrev( void );  ///< get previous window in window list
+	GameWindow *winGetNext();  ///< get next window in window list
+	GameWindow *winGetPrev();  ///< get previous window in window list
 
 	// these are for interacting with a group of windows as a shell "screen"
 	void winSetNextInLayout( GameWindow *next );  ///< set next in layout
 	void winSetPrevInLayout( GameWindow *prev );  ///< set prev in layout
 	void winSetLayout( WindowLayout *layout );  ///< set layout
-	WindowLayout *winGetLayout( void );  ///< get layout layout
-	GameWindow *winGetNextInLayout( void );  ///< get next window in layout
-	GameWindow *winGetPrevInLayout( void );  ///< get prev window in layout
+	WindowLayout *winGetLayout();  ///< get layout layout
+	GameWindow *winGetNextInLayout();  ///< get next window in layout
+	GameWindow *winGetPrevInLayout();  ///< get prev window in layout
 
 	// setting the callbacks ----------------------------------------------------
 	Int winSetSystemFunc( GameWinSystemFunc system );  ///< set system
@@ -368,29 +368,29 @@ public:
 	GameWindow *winPointInAnyChild( Int x, Int y, Bool ignoreHidden, Bool ignoreEnableCheck = FALSE );
 
   // get the callbacks for a window -------------------------------------------
-	GameWinInputFunc		winGetInputFunc( void );
-	GameWinSystemFunc		winGetSystemFunc( void );
-	GameWinDrawFunc			winGetDrawFunc( void );
-	GameWinTooltipFunc	winGetTooltipFunc( void );
+	GameWinInputFunc		winGetInputFunc();
+	GameWinSystemFunc		winGetSystemFunc();
+	GameWinDrawFunc			winGetDrawFunc();
+	GameWinTooltipFunc	winGetTooltipFunc();
 
 	// editor access only -------------------------------------------------------
 	void winSetEditData( GameWindowEditData *editData );
-	GameWindowEditData *winGetEditData( void );
+	GameWindowEditData *winGetEditData();
 
 protected:
 
 	/// 'images' should be taken care of when we hide ourselves or are destroyed
-	void freeImages( void ) { }
-	Bool isEnabled( void );  ///< see if we and our parents are enabled
+	void freeImages() { }
+	Bool isEnabled();  ///< see if we and our parents are enabled
 
-	void unlinkFromTransitionWindows( void );
+	void unlinkFromTransitionWindows();
 
-	void normalizeWindowRegion( void );  ///< put UL corner in window region.lo
+	void normalizeWindowRegion();  ///< put UL corner in window region.lo
 
-	GameWindow *findFirstLeaf( void );  ///< return first leaf of branch
-	GameWindow *findLastLeaf( void );  ///< return last leaf of branch
-	GameWindow *findPrevLeaf( void );  ///< return prev leav in tree
-	GameWindow *findNextLeaf( void );  ///< return next leaf in tree
+	GameWindow *findFirstLeaf();  ///< return first leaf of branch
+	GameWindow *findLastLeaf();  ///< return last leaf of branch
+	GameWindow *findPrevLeaf();  ///< return prev leav in tree
+	GameWindow *findNextLeaf();  ///< return next leaf in tree
 
 	// **************************************************************************
 
@@ -439,7 +439,7 @@ class GameWindowDummy : public GameWindow
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(GameWindowDummy, "GameWindowDummy")
 public:
 	virtual void winDrawBorder() {}
-	virtual void* winGetUserData(void) { return nullptr; }
+	virtual void* winGetUserData() { return nullptr; }
 };
 
 // ModalWindow ----------------------------------------------------------------

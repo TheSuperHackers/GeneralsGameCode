@@ -43,7 +43,7 @@
 //	Sound3DHandleClass
 //
 //////////////////////////////////////////////////////////////////////
-Sound3DHandleClass::Sound3DHandleClass (void)	:
+Sound3DHandleClass::Sound3DHandleClass ()	:
 	SampleHandle ((H3DSAMPLE)INVALID_MILES_HANDLE)
 {
 	return ;
@@ -55,7 +55,7 @@ Sound3DHandleClass::Sound3DHandleClass (void)	:
 //	~Sound3DHandleClass
 //
 //////////////////////////////////////////////////////////////////////
-Sound3DHandleClass::~Sound3DHandleClass (void)
+Sound3DHandleClass::~Sound3DHandleClass ()
 {
 	return ;
 }
@@ -102,7 +102,7 @@ Sound3DHandleClass::Initialize (SoundBufferClass *buffer)
 //
 //////////////////////////////////////////////////////////////////////
 void
-Sound3DHandleClass::Start_Sample (void)
+Sound3DHandleClass::Start_Sample ()
 {
 	if (SampleHandle != (H3DSAMPLE)INVALID_MILES_HANDLE) {
 		::AIL_start_3D_sample (SampleHandle);
@@ -117,7 +117,7 @@ Sound3DHandleClass::Start_Sample (void)
 //
 //////////////////////////////////////////////////////////////////////
 void
-Sound3DHandleClass::Stop_Sample (void)
+Sound3DHandleClass::Stop_Sample ()
 {
 	if (SampleHandle != (H3DSAMPLE)INVALID_MILES_HANDLE) {
 		::AIL_stop_3D_sample (SampleHandle);
@@ -133,7 +133,7 @@ Sound3DHandleClass::Stop_Sample (void)
 //
 //////////////////////////////////////////////////////////////////////
 void
-Sound3DHandleClass::Resume_Sample (void)
+Sound3DHandleClass::Resume_Sample ()
 {
 	if (SampleHandle != (H3DSAMPLE)INVALID_MILES_HANDLE) {
 		::AIL_resume_3D_sample (SampleHandle);
@@ -148,7 +148,7 @@ Sound3DHandleClass::Resume_Sample (void)
 //
 //////////////////////////////////////////////////////////////////////
 void
-Sound3DHandleClass::End_Sample (void)
+Sound3DHandleClass::End_Sample ()
 {
 	if (SampleHandle != (H3DSAMPLE)INVALID_MILES_HANDLE) {
 		::AIL_end_3D_sample (SampleHandle);
@@ -176,7 +176,7 @@ Sound3DHandleClass::Set_Sample_Pan (S32 /*pan*/)
 //
 //////////////////////////////////////////////////////////////////////
 S32
-Sound3DHandleClass::Get_Sample_Pan (void)
+Sound3DHandleClass::Get_Sample_Pan ()
 {
 	return 64;
 }
@@ -204,7 +204,7 @@ Sound3DHandleClass::Set_Sample_Volume (S32 volume)
 //
 //////////////////////////////////////////////////////////////////////
 S32
-Sound3DHandleClass::Get_Sample_Volume (void)
+Sound3DHandleClass::Get_Sample_Volume ()
 {
 	S32 retval = 0;
 
@@ -238,7 +238,7 @@ Sound3DHandleClass::Set_Sample_Loop_Count (U32 count)
 //
 //////////////////////////////////////////////////////////////////////
 U32
-Sound3DHandleClass::Get_Sample_Loop_Count (void)
+Sound3DHandleClass::Get_Sample_Loop_Count ()
 {
 	U32 retval = 0;
 
@@ -340,7 +340,7 @@ Sound3DHandleClass::Get_Sample_User_Data (S32 i)
 //
 //////////////////////////////////////////////////////////////////////
 S32
-Sound3DHandleClass::Get_Sample_Playback_Rate (void)
+Sound3DHandleClass::Get_Sample_Playback_Rate ()
 {
 	S32 retval = 0;
 

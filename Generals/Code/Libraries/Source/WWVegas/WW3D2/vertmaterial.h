@@ -99,12 +99,12 @@ public:
 	};
 
 
-	VertexMaterialClass(void);
+	VertexMaterialClass();
 	VertexMaterialClass(const VertexMaterialClass & src);
-	~VertexMaterialClass(void);
+	~VertexMaterialClass();
 
 	VertexMaterialClass &	operator = (const VertexMaterialClass &src);
-	VertexMaterialClass *	Clone(void) { VertexMaterialClass * mat = NEW_REF (VertexMaterialClass,()); *mat = *this; return mat;}
+	VertexMaterialClass *	Clone() { VertexMaterialClass * mat = NEW_REF (VertexMaterialClass,()); *mat = *this; return mat;}
 
 	/*
 	** Name Access
@@ -114,7 +114,7 @@ public:
 		Name = name;
 	}
 
-	const char *		Get_Name(void) const
+	const char *		Get_Name() const
 	{
 		return Name;
 	}
@@ -136,10 +136,10 @@ public:
 	/*
 	** Basic material properties
 	*/
-	float			Get_Shininess(void) const;
+	float			Get_Shininess() const;
 	void			Set_Shininess(float shin);
 
-	float			Get_Opacity(void) const;
+	float			Get_Opacity() const;
 	void			Set_Opacity(float o);
 
 	void			Get_Ambient(Vector3 * set_color) const;
@@ -168,13 +168,13 @@ public:
 	** vertex material is ignored.
 	*/
 	void					Set_Ambient_Color_Source(ColorSourceType src);
-	ColorSourceType	Get_Ambient_Color_Source(void);
+	ColorSourceType	Get_Ambient_Color_Source();
 
 	void					Set_Emissive_Color_Source(ColorSourceType src);
-	ColorSourceType	Get_Emissive_Color_Source(void);
+	ColorSourceType	Get_Emissive_Color_Source();
 
 	void					Set_Diffuse_Color_Source(ColorSourceType src);
-	ColorSourceType	Get_Diffuse_Color_Source(void);
+	ColorSourceType	Get_Diffuse_Color_Source();
 
 	/*
 	** UV source control.  The DX8 FVF can support up to 8 uv-arrays.  The vertex
@@ -190,7 +190,7 @@ public:
 	inline void							Set_Mapper(TextureMapperClass *mapper,int stage=0);
 	inline TextureMapperClass *	Get_Mapper(int stage=0);
 	inline TextureMapperClass *	Peek_Mapper(int stage=0);
-	inline void							Reset_Mappers(void);
+	inline void							Reset_Mappers();
 
 	/*
 	** Loading and saving to W3D files
@@ -203,7 +203,7 @@ public:
 	/*
 	** CRC, used by the loading code to build a list of the unique materials
 	*/
-	unsigned long Get_CRC(void) const
+	unsigned long Get_CRC() const
 	{
 		if (CRCDirty) {
 			CRC=Compute_CRC();
@@ -216,12 +216,12 @@ public:
 	/*
 	** Test whether this material is using any mappers which require vertex normals
 	*/
-	bool					Do_Mappers_Need_Normals(void) const;
+	bool					Do_Mappers_Need_Normals() const;
 
 	/*
 	** Test whether this material is using any mappers which are time-variant
 	*/
-	bool					Are_Mappers_Time_Variant(void) const;
+	bool					Are_Mappers_Time_Variant() const;
 
 	// Infrastructure to support presets
 	static void Init();
@@ -255,12 +255,12 @@ private:
 	/*
 	** Apply the render states to D3D
 	*/
-	void					Apply(void) const;
+	void					Apply() const;
 	/*
 	** Apply the render states corresponding to a null vertex material to D3D
 	*/
-	static void			Apply_Null(void);
-	unsigned long		Compute_CRC(void) const;
+	static void			Apply_Null();
+	unsigned long		Compute_CRC() const;
 
 	static VertexMaterialClass *Presets[PRESET_COUNT];
 };
@@ -284,7 +284,7 @@ inline TextureMapperClass * VertexMaterialClass::Peek_Mapper(int stage)
 	return Mapper[stage];
 }
 
-inline void VertexMaterialClass::Reset_Mappers(void)
+inline void VertexMaterialClass::Reset_Mappers()
 {
 	for (int stage = 0; stage < MeshBuilderClass::MAX_STAGES; stage++) {
 		if (Mapper[stage]) {
@@ -293,7 +293,7 @@ inline void VertexMaterialClass::Reset_Mappers(void)
 	}
 }
 
-inline bool VertexMaterialClass::Do_Mappers_Need_Normals(void) const
+inline bool VertexMaterialClass::Do_Mappers_Need_Normals() const
 {
 	for (int stage = 0; stage < MeshBuilderClass::MAX_STAGES; stage++) {
 		if (Mapper[stage] && (Mapper[stage]->Needs_Normals())) return true;
@@ -301,7 +301,7 @@ inline bool VertexMaterialClass::Do_Mappers_Need_Normals(void) const
 	return false;
 }
 
-inline bool VertexMaterialClass::Are_Mappers_Time_Variant(void) const
+inline bool VertexMaterialClass::Are_Mappers_Time_Variant() const
 {
 	for (int stage = 0; stage < MeshBuilderClass::MAX_STAGES; stage++) {
 		if (Mapper[stage] && (Mapper[stage]->Is_Time_Variant())) return true;

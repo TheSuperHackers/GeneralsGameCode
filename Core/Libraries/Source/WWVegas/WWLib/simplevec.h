@@ -69,15 +69,15 @@ template <class T> class SimpleVecClass
 public:
 
 	SimpleVecClass(int size = 0);
-	virtual ~SimpleVecClass(void);
+	virtual ~SimpleVecClass();
 
 	T & operator[](int index)					{ assert(index < VectorMax); return(Vector[index]); }
 	T const & operator[](int index) const	{ assert(index < VectorMax); return(Vector[index]); }
 
-	int				Length(void) const		{ return VectorMax; }
+	int				Length() const		{ return VectorMax; }
 	virtual bool	Resize(int newsize);
 	virtual bool	Uninitialised_Grow(int newsize);
-	void				Zero_Memory(void)			{ if (Vector != nullptr) { memset(Vector,0,VectorMax * sizeof(T)); } }
+	void				Zero_Memory()			{ if (Vector != nullptr) { memset(Vector,0,VectorMax * sizeof(T)); } }
 
 protected:
 
@@ -122,7 +122,7 @@ inline SimpleVecClass<T>::SimpleVecClass(int size) :
  *   1/25/00    gth : Created.                                                                 *
  *=============================================================================================*/
 template<class T>
-inline SimpleVecClass<T>::~SimpleVecClass(void)
+inline SimpleVecClass<T>::~SimpleVecClass()
 {
 	delete[] Vector;
 	Vector = nullptr;
@@ -252,10 +252,10 @@ protected:
 public:
 
 	SimpleDynVecClass(int size = 0);
-	virtual ~SimpleDynVecClass(void);
+	virtual ~SimpleDynVecClass();
 
 	// Array-like access (does not grow)
-	int				Count(void) const						{ return(ActiveCount); }
+	int				Count() const						{ return(ActiveCount); }
 	T &				operator[](int index)				{ assert(index < ActiveCount); return(Vector[index]); }
 	T const &		operator[](int index) const		{ assert(index < ActiveCount); return(Vector[index]); }
 
@@ -277,7 +277,7 @@ public:
 protected:
 
 	bool				Grow(int new_size_hint);
-	bool				Shrink(void);
+	bool				Shrink();
 
 	int				Find_Index(T const & object);
 
@@ -318,7 +318,7 @@ inline SimpleDynVecClass<T>::SimpleDynVecClass(int size) :
  *   1/25/00    gth : Created.                                                                 *
  *=============================================================================================*/
 template<class T>
-inline SimpleDynVecClass<T>::~SimpleDynVecClass(void)
+inline SimpleDynVecClass<T>::~SimpleDynVecClass()
 {
 	delete[] Vector;
 	Vector = nullptr;
@@ -591,7 +591,7 @@ inline bool SimpleDynVecClass<T>::Grow(int new_size_hint)
  *   1/25/00    gth : Created.                                                                 *
  *=============================================================================================*/
 template<class T>
-inline bool SimpleDynVecClass<T>::Shrink(void)
+inline bool SimpleDynVecClass<T>::Shrink()
 {
 	/*
 	** Shrink the array if it is wasting more than 25%

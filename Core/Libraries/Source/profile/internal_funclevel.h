@@ -74,10 +74,10 @@ public:
     void _Insert(unsigned at, unsigned val, int countAdd);
 
   public:
-    UnsignedMap(void);
+    UnsignedMap();
     ~UnsignedMap();
 
-    void Clear(void);
+    void Clear();
     void Insert(unsigned val, int countAdd);
     unsigned Enumerate(int index);
     unsigned GetCount(int index);
@@ -136,7 +136,7 @@ public:
     List *root,**tail;
 
   public:
-    ProfileMap(void);
+    ProfileMap();
     ~ProfileMap();
 
     Profile *Find(int frame);
@@ -181,7 +181,7 @@ public:
     }
   };
 
-  ProfileFuncLevelTracer(void);
+  ProfileFuncLevelTracer();
   ~ProfileFuncLevelTracer();
 
   /**
@@ -206,12 +206,12 @@ public:
   /**
     Shutdown function.
   */
-  static void Shutdown(void);
+  static void Shutdown();
 
   /**
     Starts frame based profiling, starts a new frame.
   */
-  static int FrameStart(void);
+  static int FrameStart();
 
   /**
     Ends frame based profiling.
@@ -221,14 +221,14 @@ public:
   /**
     Clears all total values.
   */
-  static void ClearTotals(void);
+  static void ClearTotals();
 
   /**
     Retrieves the first function level tracer.
 
     \return first function level tracer
   */
-  static ProfileFuncLevelTracer *GetFirst(void)
+  static ProfileFuncLevelTracer *GetFirst()
   {
     return head;
   }
@@ -238,7 +238,7 @@ public:
 
     \return next function level tracer, nullptr if none
   */
-  ProfileFuncLevelTracer *GetNext(void)
+  ProfileFuncLevelTracer *GetNext()
   {
     return next;
   }
@@ -295,7 +295,7 @@ private:
     Entry *hash[HASH_SIZE];
 
   public:
-    FunctionMap(void);
+    FunctionMap();
     ~FunctionMap();
 
     Function *Find(unsigned addr);

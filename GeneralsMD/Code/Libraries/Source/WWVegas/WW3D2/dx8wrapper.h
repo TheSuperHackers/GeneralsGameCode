@@ -151,7 +151,7 @@ public:
 	int  m_debugLinesToShow;
 	int	 m_sleepTime;
 public:
-	DX8_Stats::DX8_Stats(void) {
+	DX8_Stats::DX8_Stats() {
 		m_disableConsole = m_showingStats = m_disableTerrain = m_disableWater = m_disableOverhead = m_disableObjects = false;
 		m_sleepTime = 0;
 		m_debugLinesToShow = -1; // -1 means show all expected lines of output
@@ -166,8 +166,8 @@ public:
 class DX8_CleanupHook
 {
 public:
-	virtual void ReleaseResources(void)=0;
-	virtual void ReAcquireResources(void)=0;
+	virtual void ReleaseResources()=0;
+	virtual void ReAcquireResources()=0;
 };
 
 
@@ -250,30 +250,30 @@ public:
 #endif
 
 	static bool Init(void * hwnd, bool lite = false);
-	static void Shutdown(void);
+	static void Shutdown();
 
 	static void SetCleanupHook(DX8_CleanupHook *pCleanupHook) {m_pCleanupHook = pCleanupHook;};
 	/*
 	** Some WW3D sub-systems need to be initialized after the device is created and shutdown
 	** before the device is released.
 	*/
-	static void	Do_Onetime_Device_Dependent_Inits(void);
-	static void Do_Onetime_Device_Dependent_Shutdowns(void);
+	static void	Do_Onetime_Device_Dependent_Inits();
+	static void Do_Onetime_Device_Dependent_Shutdowns();
 
 	static bool Is_Device_Lost() { return IsDeviceLost; }
-	static bool Is_Initted(void) { return IsInitted; }
+	static bool Is_Initted() { return IsInitted; }
 
-	static bool Has_Stencil (void);
+	static bool Has_Stencil ();
 	static void Get_Format_Name(unsigned int format, StringClass *tex_format);
 
 	/*
 	** Rendering
 	*/
-	static void Begin_Scene(void);
+	static void Begin_Scene();
 	static void End_Scene(bool flip_frame = true);
 
 	// Flip until the primary buffer is visible.
-	static void Flip_To_Primary(void);
+	static void Flip_To_Primary();
 
 	static void Clear(bool clear_color, bool clear_z_stencil, const Vector3 &color, float dest_alpha=0.0f, float z=1.0f, unsigned int stencil=0);
 
@@ -323,7 +323,7 @@ public:
 	static WWINLINE const D3DLIGHT8& Peek_Light(unsigned index);
 	static WWINLINE bool Is_Light_Enabled(unsigned index);
 
-	static bool Validate_Device(void);
+	static bool Validate_Device();
 
 	// Deferred
 
@@ -436,7 +436,7 @@ public:
 	static unsigned Get_Last_Frame_DX8_Calls();
 	static unsigned Get_Last_Frame_Draw_Calls();
 
-	static unsigned long Get_FrameCount(void);
+	static unsigned long Get_FrameCount();
 
 	// Needed by shader class
 	static bool						Get_Fog_Enable() { return FogEnable; }
@@ -483,7 +483,7 @@ public:
 	static void					Set_Render_Target (IDirect3DSurface8* render_target, IDirect3DSurface8* dpeth_buffer);
 
 	static void					Set_Render_Target (IDirect3DSwapChain8 *swap_chain);
-	static bool					Is_Render_To_Texture(void) { return IsRenderToTexture; }
+	static bool					Is_Render_To_Texture() { return IsRenderToTexture; }
 
 	// for depth map support KJM V
 	static void Create_Render_Target
@@ -523,7 +523,7 @@ public:
 	static IDirect3DDevice8* _Get_D3D_Device8() { return D3DDevice; }
 	static IDirect3D8* _Get_D3D8() { return D3DInterface; }
 	/// Returns the display format - added by TR for video playback - not part of W3D
-	static WW3DFormat	getBackBufferFormat( void );
+	static WW3DFormat	getBackBufferFormat();
 	static bool Reset_Device(bool reload_assets=true);
 
 	static const DX8Caps*	Get_Current_Caps() { WWASSERT(CurrentCaps); return CurrentCaps; }
@@ -558,49 +558,49 @@ public:
 	static const char* Get_DX8_Debug_Monitor_Token_Name(unsigned value);
 	static const char* Get_DX8_Blend_Op_Name(unsigned value);
 
-	static void Invalidate_Cached_Render_States(void);
+	static void Invalidate_Cached_Render_States();
 
 	static void Set_Draw_Polygon_Low_Bound_Limit(unsigned n) { DrawPolygonLowBoundLimit=n; }
 
 protected:
 
-	static bool	Create_Device(void);
-	static void Release_Device(void);
+	static bool	Create_Device();
+	static void Release_Device();
 
 	static void Reset_Statistics();
 	static void Enumerate_Devices();
-	static void Set_Default_Global_Render_States(void);
+	static void Set_Default_Global_Render_States();
 
 	/*
 	** Device Selection Code.
 	** For backward compatibility, the public interface for these functions is in the ww3d.
 	** header file.  These functions are protected so that we aren't exposing two interfaces.
 	*/
-	static bool Set_Any_Render_Device(void);
+	static bool Set_Any_Render_Device();
 	static bool	Set_Render_Device(const char * dev_name,int width=-1,int height=-1,int bits=-1,int windowed=-1,bool resize_window=false);
 	static bool	Set_Render_Device(int dev=-1,int resx=-1,int resy=-1,int bits=-1,int windowed=-1,bool resize_window = false, bool reset_device = false, bool restore_assets=true);
-	static bool Set_Next_Render_Device(void);
-	static bool Toggle_Windowed(void);
+	static bool Set_Next_Render_Device();
+	static bool Toggle_Windowed();
 
-	static int	Get_Render_Device_Count(void);
-	static int	Get_Render_Device(void);
+	static int	Get_Render_Device_Count();
+	static int	Get_Render_Device();
 	static const RenderDeviceDescClass & Get_Render_Device_Desc(int deviceidx);
 	static const char * Get_Render_Device_Name(int device_index);
 	static bool Set_Device_Resolution(int width=-1,int height=-1,int bits=-1,int windowed=-1, bool resize_window=false);
 	static void Get_Device_Resolution(int & set_w,int & set_h,int & set_bits,bool & set_windowed);
 	static void Get_Render_Target_Resolution(int & set_w,int & set_h,int & set_bits,bool & set_windowed);
-	static int	Get_Device_Resolution_Width(void) { return ResolutionWidth; }
-	static int	Get_Device_Resolution_Height(void) { return ResolutionHeight; }
+	static int	Get_Device_Resolution_Width() { return ResolutionWidth; }
+	static int	Get_Device_Resolution_Height() { return ResolutionHeight; }
 
 	static bool Registry_Save_Render_Device( const char *sub_key, int device, int width, int height, int depth, bool windowed, int texture_depth);
 	static bool Registry_Load_Render_Device( const char * sub_key, char *device, int device_len, int &width, int &height, int &depth, int &windowed, int &texture_depth);
-	static bool Is_Windowed(void) { return IsWindowed; }
+	static bool Is_Windowed() { return IsWindowed; }
 
 	static void	Set_Texture_Bitdepth(int depth)	{ WWASSERT(depth==16 || depth==32); TextureBitDepth = depth; }
-	static int	Get_Texture_Bitdepth(void)			{ return TextureBitDepth; }
+	static int	Get_Texture_Bitdepth()			{ return TextureBitDepth; }
 
 	static void	Set_Swap_Interval(int swap);
-	static int	Get_Swap_Interval(void);
+	static int	Get_Swap_Interval();
 	static void Set_Polygon_Mode(int mode);
 
 	/*

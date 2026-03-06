@@ -420,7 +420,7 @@ WindowMsgHandledType GadgetTextEntrySystem( GameWindow *window, UnsignedInt msg,
 	* support in this product */
 /*
 // used to create interface to IME
-BoolCode InitializeEntryGadget( void )
+BoolCode InitializeEntryGadget()
 {
 	ourIME = NEW TbIME;
 
@@ -430,7 +430,7 @@ BoolCode InitializeEntryGadget( void )
 }
 
 // used to destroy interface to IME
-BoolCode ShutdownEntryGadget( void )
+BoolCode ShutdownEntryGadget()
 {
 	delete ourIME;
 	ourIME = nullptr;

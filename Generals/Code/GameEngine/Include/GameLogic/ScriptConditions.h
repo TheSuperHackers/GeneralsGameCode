@@ -45,9 +45,9 @@ public:
 
 	virtual ~ScriptConditionsInterface() { };
 
-	virtual void init( void ) = 0;		///< Init
-	virtual void reset( void ) = 0;		///< Reset
-	virtual void update( void ) = 0;	///< Update
+	virtual void init() = 0;		///< Init
+	virtual void reset() = 0;		///< Reset
+	virtual void update() = 0;	///< Update
 
 	virtual Bool evaluateCondition( Condition *pCondition ) = 0; ///< evaluate a a script condition.
 
@@ -72,9 +72,9 @@ public:
 
 public:
 
-	virtual void init( void );		///< Init
-	virtual void reset( void );		///< Reset
-	virtual void update( void );	///< Update
+	virtual void init();		///< Init
+	virtual void reset();		///< Reset
+	virtual void update();	///< Update
 
 	Bool evaluateCondition( Condition *pCondition );
 
@@ -113,9 +113,9 @@ protected:
 	Bool evaluateTeamCreated(Parameter* pTeamParm);		///< Implemented as evaluateTeamExists(...)
 	Bool evaluateNamedOwnedByPlayer(Parameter *pUnitParm, Parameter *pPlayerParm);
 	Bool evaluateTeamOwnedByPlayer(Parameter *pTeamParm, Parameter *pPlayerParm);
-	Bool evaluateMultiplayerAlliedVictory(void);
-	Bool evaluateMultiplayerAlliedDefeat(void);
-	Bool evaluateMultiplayerPlayerDefeat(void);
+	Bool evaluateMultiplayerAlliedVictory();
+	Bool evaluateMultiplayerAlliedDefeat();
+	Bool evaluateMultiplayerPlayerDefeat();
 	Bool evaluateNamedAttackedByType(Parameter *pUnitParm, Parameter *pTypeParm);
 	Bool evaluateTeamAttackedByType(Parameter *pTeamParm, Parameter *pTypeParm);
 	Bool evaluateNamedAttackedByPlayer(Parameter *pUnitParm, Parameter *pPlayerParm);

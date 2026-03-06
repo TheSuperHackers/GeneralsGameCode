@@ -47,7 +47,7 @@ VeterancyCrateCollide::VeterancyCrateCollide( Thing *thing, const ModuleData* mo
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-VeterancyCrateCollide::~VeterancyCrateCollide( void )
+VeterancyCrateCollide::~VeterancyCrateCollide()
 {
 
 }
@@ -201,7 +201,7 @@ void VeterancyCrateCollide::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void VeterancyCrateCollide::loadPostProcess( void )
+void VeterancyCrateCollide::loadPostProcess()
 {
 
 	// extend base class

@@ -83,7 +83,7 @@ public:
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-TensileFormationUpdateModuleData::TensileFormationUpdateModuleData( void )
+TensileFormationUpdateModuleData::TensileFormationUpdateModuleData()
 {
 
 	m_enabled = FALSE;
@@ -153,14 +153,14 @@ TensileFormationUpdate::TensileFormationUpdate( Thing *thing, const ModuleData *
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-TensileFormationUpdate::~TensileFormationUpdate( void )
+TensileFormationUpdate::~TensileFormationUpdate()
 {
 
 }
 
 
 
-void TensileFormationUpdate::initLinks( void )
+void TensileFormationUpdate::initLinks()
 {
 
 	m_linksInited = TRUE;
@@ -214,7 +214,7 @@ void TensileFormationUpdate::initLinks( void )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-UpdateSleepTime TensileFormationUpdate::update( void )
+UpdateSleepTime TensileFormationUpdate::update()
 {
 
 	if ( ! m_linksInited )
@@ -466,7 +466,7 @@ void TensileFormationUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void TensileFormationUpdate::loadPostProcess( void )
+void TensileFormationUpdate::loadPostProcess()
 {
 
 	// extend base class

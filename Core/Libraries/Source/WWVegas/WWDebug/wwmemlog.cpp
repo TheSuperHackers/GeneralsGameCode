@@ -129,13 +129,13 @@ static const char *const _MemoryCategoryNames[] =
 class MemoryCounterClass
 {
 public:
-	MemoryCounterClass(void) : CurrentAllocation(0), PeakAllocation(0) { }
+	MemoryCounterClass() : CurrentAllocation(0), PeakAllocation(0) { }
 
 	void		Memory_Allocated(int size)						{ CurrentAllocation+=size; PeakAllocation = MAX(PeakAllocation,CurrentAllocation); }
 	void		Memory_Released(int size)						{ CurrentAllocation-=size; }
 
-	int		Get_Current_Allocated_Memory(void)			{ return CurrentAllocation; }
-	int		Get_Peak_Allocated_Memory(void)				{ return PeakAllocation; }
+	int		Get_Current_Allocated_Memory()			{ return CurrentAllocation; }
+	int		Get_Peak_Allocated_Memory()				{ return PeakAllocation; }
 
 protected:
 	int		CurrentAllocation;
@@ -154,7 +154,7 @@ const int MAX_CATEGORY_STACK_DEPTH = 1024;
 class ActiveCategoryStackClass : public VectorClass<int>
 {
 public:
-	ActiveCategoryStackClass(void) :
+	ActiveCategoryStackClass() :
 		VectorClass<int>(MAX_CATEGORY_STACK_DEPTH),
 		ThreadID(-1),
 		Count(0)
@@ -162,7 +162,7 @@ public:
 
 																				// If object was created but not Init'd, ThreadID will be -1 and Count == 0
 																				// If object was created and Init'd, ThreadID will not be -1.  We expect Count to return to 1 after all Pop's
-	~ActiveCategoryStackClass(void)									{ WWASSERT((ThreadID == -1 && Count == 0) || (ThreadID != -1 && Count == 1)); }
+	~ActiveCategoryStackClass()									{ WWASSERT((ThreadID == -1 && Count == 0) || (ThreadID != -1 && Count == 1)); }
 
 	ActiveCategoryStackClass & operator = (const ActiveCategoryStackClass & that);
 
@@ -171,11 +171,11 @@ public:
 
 	void		Init(int thread_id)										{ ThreadID = thread_id; Count = 0; Push(MEM_UNKNOWN); }
 	void		Set_Thread_ID(int id)									{ WWASSERT(ThreadID != -1); ThreadID = id; }
-	int		Get_Thread_ID(void)										{ return ThreadID; }
+	int		Get_Thread_ID()										{ return ThreadID; }
 
 	void		Push(int active_category)								{ WWASSERT(ThreadID != -1); (*this)[Count] = active_category; Count++; }
-	void		Pop(void)													{ WWASSERT(ThreadID != -1) ; Count--; }
-	int		Current(void)												{ WWASSERT(ThreadID != -1); return (*this)[Count-1]; }
+	void		Pop()													{ WWASSERT(ThreadID != -1) ; Count--; }
+	int		Current()												{ WWASSERT(ThreadID != -1); return (*this)[Count-1]; }
 
 protected:
 
@@ -197,15 +197,15 @@ class ActiveCategoryClass : public VectorClass<ActiveCategoryStackClass>
 {
 public:
 
-	ActiveCategoryClass(void) : VectorClass<ActiveCategoryStackClass>(MAX_CATEGORY_STACKS), Count(0) { Get_Active_Stack().Push(MEM_STATICALLOCATION); }
+	ActiveCategoryClass() : VectorClass<ActiveCategoryStackClass>(MAX_CATEGORY_STACKS), Count(0) { Get_Active_Stack().Push(MEM_STATICALLOCATION); }
 
 	void		Push(int active_category)	{ Get_Active_Stack().Push(active_category); }
-	void		Pop(void)						{ Get_Active_Stack().Pop(); }
-	int		Current(void)					{ return Get_Active_Stack().Current(); }
+	void		Pop()						{ Get_Active_Stack().Pop(); }
+	int		Current()					{ return Get_Active_Stack().Current(); }
 
 protected:
 
-	ActiveCategoryStackClass & Get_Active_Stack(void);
+	ActiveCategoryStackClass & Get_Active_Stack();
 
 	int		Count;
 };
@@ -230,7 +230,7 @@ public:
 	void				Register_Memory_Released(int category,int size);
 
 	void				Push_Active_Category(int category);
-	void				Pop_Active_Category(void);
+	void				Pop_Active_Category();
 
 	void				Init();
 
@@ -268,7 +268,7 @@ volatile unsigned					_MemLogSemaphore = 0;
 /*
 ** Use this code to get access to the mutex...
 */
-WWINLINE void * Get_Mem_Log_Mutex(void)
+WWINLINE void * Get_Mem_Log_Mutex()
 {
 #if MEMLOG_USE_MUTEX
 
@@ -295,7 +295,7 @@ WWINLINE void * Get_Mem_Log_Mutex(void)
 #endif
 }
 
-WWINLINE void Lock_Mem_Log_Mutex(void)
+WWINLINE void Lock_Mem_Log_Mutex()
 {
 #if MEMLOG_USE_MUTEX
 
@@ -338,7 +338,7 @@ WWINLINE void Lock_Mem_Log_Mutex(void)
 #endif
 }
 
-WWINLINE void Unlock_Mem_Log_Mutex(void)
+WWINLINE void Unlock_Mem_Log_Mutex()
 {
 #if MEMLOG_USE_MUTEX
 
@@ -366,8 +366,8 @@ WWINLINE void Unlock_Mem_Log_Mutex(void)
 class MemLogMutexLockClass
 {
 public:
-	MemLogMutexLockClass(void) { Lock_Mem_Log_Mutex(); }
-	~MemLogMutexLockClass(void) { Unlock_Mem_Log_Mutex(); }
+	MemLogMutexLockClass() { Lock_Mem_Log_Mutex(); }
+	~MemLogMutexLockClass() { Unlock_Mem_Log_Mutex(); }
 };
 
 
@@ -394,7 +394,7 @@ ActiveCategoryStackClass::operator = (const ActiveCategoryStackClass & that)
 ** ActiveCategoryClass Implementation
 **
 ***************************************************************************************************/
-ActiveCategoryStackClass & ActiveCategoryClass::Get_Active_Stack(void)
+ActiveCategoryStackClass & ActiveCategoryClass::Get_Active_Stack()
 {
 	int current_thread = ::GetCurrentThreadId();
 
@@ -469,7 +469,7 @@ void MemLogClass::Push_Active_Category(int category)
 	_ActiveCategoryTracker.Push(category);
 }
 
-void MemLogClass::Pop_Active_Category(void)
+void MemLogClass::Pop_Active_Category()
 {
 	MemLogMutexLockClass lock;
 	_ActiveCategoryTracker.Pop();
@@ -483,7 +483,7 @@ void MemLogClass::Pop_Active_Category(void)
 **
 ***************************************************************************************************/
 
-int WWMemoryLogClass::Get_Category_Count(void)
+int WWMemoryLogClass::Get_Category_Count()
 {
 	return MEM_COUNT;
 }
@@ -510,7 +510,7 @@ void WWMemoryLogClass::Push_Active_Category(int category)
 #endif //(DISABLE_MEMLOG == 0)
 }
 
-void WWMemoryLogClass::Pop_Active_Category(void)
+void WWMemoryLogClass::Pop_Active_Category()
 {
 #if (DISABLE_MEMLOG == 0)
 	Get_Log()->Pop_Active_Category();
@@ -528,14 +528,14 @@ void WWMemoryLogClass::Register_Memory_Released(int category,int size)
 }
 
 
-static void _MemLogCleanup(void)
+static void _MemLogCleanup()
 {
 	delete _TheMemLog;
 	_TheMemLog = nullptr;
 }
 
 
-MemLogClass * WWMemoryLogClass::Get_Log(void)
+MemLogClass * WWMemoryLogClass::Get_Log()
 {
 	MemLogMutexLockClass lock;
 
@@ -576,7 +576,7 @@ MemLogClass * WWMemoryLogClass::Get_Log(void)
  * HISTORY:                                                                                    *
  *   6/13/2001 8:55PM ST : Created                                                             *
  *=============================================================================================*/
-void WWMemoryLogClass::Release_Log(void)
+void WWMemoryLogClass::Release_Log()
 {
 	MemLogMutexLockClass lock;
 
@@ -617,7 +617,7 @@ struct MemoryLogStruct
 		Size(size)
 	{}
 
-	bool		Is_Valid_Memory_Log(void)	{ return ((Key0 == WWMEMLOG_KEY0) && (Key1 == WWMEMLOG_KEY1)); }
+	bool		Is_Valid_Memory_Log()	{ return ((Key0 == WWMEMLOG_KEY0) && (Key1 == WWMEMLOG_KEY1)); }
 
 	int		Key0;				// if this is not equal to WWMEMLOG_KEY0 then we don't have a valid log
 	int		Key1;				// should be equal to WWMEMLOG_KEY1

@@ -155,7 +155,7 @@ FlightDeckBehavior::FlightDeckBehavior( Thing *thing, const ModuleData* moduleDa
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-FlightDeckBehavior::~FlightDeckBehavior( void )
+FlightDeckBehavior::~FlightDeckBehavior()
 {
 }
 
@@ -1721,7 +1721,7 @@ void FlightDeckBehavior::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void FlightDeckBehavior::loadPostProcess( void )
+void FlightDeckBehavior::loadPostProcess()
 {
 
 

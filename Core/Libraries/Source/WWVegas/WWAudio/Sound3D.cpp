@@ -77,7 +77,7 @@ enum
 //	Sound3DClass
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
-Sound3DClass::Sound3DClass (void)
+Sound3DClass::Sound3DClass ()
 	: m_bAutoCalcVel (true),
 	  m_CurrentVelocity (0, 0, 0),
 	  m_MaxVolRadius (0),
@@ -113,7 +113,7 @@ Sound3DClass::Sound3DClass (const Sound3DClass &src)
 //	~Sound3DClass
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
-Sound3DClass::~Sound3DClass (void)
+Sound3DClass::~Sound3DClass ()
 {
  	Free_Miles_Handle ();
 	return ;
@@ -280,7 +280,7 @@ Sound3DClass::Set_Listener_Transform (const Matrix3D &tm)
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
 void
-Sound3DClass::Update_Miles_Transform (void)
+Sound3DClass::Update_Miles_Transform ()
 {
 	//
 	// Do we have a valid miles handle?
@@ -458,7 +458,7 @@ Sound3DClass::Set_Max_Vol_Radius (float radius)
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
 void
-Sound3DClass::Initialize_Miles_Handle (void)
+Sound3DClass::Initialize_Miles_Handle ()
 {
 	MMSLockClass lock;
 
@@ -545,7 +545,7 @@ Sound3DClass::Initialize_Miles_Handle (void)
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
 void
-Sound3DClass::Allocate_Miles_Handle (void)
+Sound3DClass::Allocate_Miles_Handle ()
 {
 	//MMSLockClass lock;
 
@@ -590,7 +590,7 @@ Sound3DClass::Add_To_Scene (bool start_playing)
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
 void
-Sound3DClass::Remove_From_Scene (void)
+Sound3DClass::Remove_From_Scene ()
 {
 	if (m_Scene != nullptr) {
 
@@ -615,7 +615,7 @@ Sound3DClass::Remove_From_Scene (void)
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
 void
-Sound3DClass::On_Loop_End (void)
+Sound3DClass::On_Loop_End ()
 {
 	// Allow the base class to process this message
 	AudibleSoundClass::On_Loop_End ();
@@ -628,7 +628,7 @@ Sound3DClass::On_Loop_End (void)
 //
 /////////////////////////////////////////////////////////////////////////////////
 const PersistFactoryClass &
-Sound3DClass::Get_Factory (void) const
+Sound3DClass::Get_Factory () const
 {
 	return _Sound3DPersistFactory;
 }

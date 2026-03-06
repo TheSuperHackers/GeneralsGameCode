@@ -92,7 +92,7 @@ LZOPipe::LZOPipe(CompControl control, int blocksize) :
  * HISTORY:                                                                                    *
  *   07/04/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-LZOPipe::~LZOPipe(void)
+LZOPipe::~LZOPipe()
 {
 	delete [] Buffer;
 	Buffer = nullptr;
@@ -262,7 +262,7 @@ int LZOPipe::Put(void const * source, int slen)
  * HISTORY:                                                                                    *
  *   07/04/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-int LZOPipe::Flush(void)
+int LZOPipe::Flush()
 {
 	assert(Buffer != nullptr);
 

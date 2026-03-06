@@ -68,7 +68,7 @@ template<typename T> class Signaler
 		void Connect(Signaler<T>& source)
 			{mConnection = &source;}
 
-		void Disconnect(void)
+		void Disconnect()
 			{if (mConnection) {mConnection->SignalDropped(*this);} mConnection = nullptr;}
 
 		// Prevent copy and assignment

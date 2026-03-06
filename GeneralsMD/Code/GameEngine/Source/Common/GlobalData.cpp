@@ -47,7 +47,7 @@
 #include "Common/GameAudio.h"
 #include "Common/INI.h"
 #include "Common/Registry.h"
-#include "Common/UserPreferences.h"
+#include "Common/OptionPreferences.h"
 #include "Common/version.h"
 
 #include "GameLogic/AI.h"
@@ -1073,7 +1073,7 @@ GlobalData::GlobalData()
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-GlobalData::~GlobalData( void )
+GlobalData::~GlobalData()
 {
 	DEBUG_ASSERTCRASH( TheWritableGlobalData->m_next == nullptr, ("~GlobalData: theOriginal is not original") );
 
@@ -1111,31 +1111,31 @@ Bool GlobalData::setTimeOfDay( TimeOfDay tod )
 	* initial values of the newly created instance will be a copy of the current
 	* data (or the most recently created override) */
 //-------------------------------------------------------------------------------------------------
-GlobalData *GlobalData::newOverride( void )
+GlobalData *GlobalData::newOverride()
 {
 	// TheSuperHackers @info This copy is not implemented in VS6 builds
-	GlobalData *override = NEW GlobalData;
+	GlobalData *overrideData = NEW GlobalData;
 
 	// copy the data from the latest override (TheWritableGlobalData) to the newly created instance
 	DEBUG_ASSERTCRASH( TheWritableGlobalData, ("GlobalData::newOverride() - no existing data") );
-	*override = *TheWritableGlobalData;
+	*overrideData = *TheWritableGlobalData;
 
 	//
 	// link the override to the previously created one, the link order is important here
 	// for the reset function, if you change the way things are linked
 	// for overrides make sure you update the reset function
 	//
-	override->m_next = TheWritableGlobalData;
+	overrideData->m_next = TheWritableGlobalData;
 
 	// set this new instance as the 'most current override' where we will access all data from
-	TheWritableGlobalData = override;
+	TheWritableGlobalData = overrideData;
 
-	return override;
+	return overrideData;
 
 }
 
 //-------------------------------------------------------------------------------------------------
-void GlobalData::init( void )
+void GlobalData::init()
 {
 	m_exeCRC = generateExeCRC();
 }
@@ -1144,7 +1144,7 @@ void GlobalData::init( void )
 /** Reset, remove any override data instances and return to just the initial one
 	*/
 //-------------------------------------------------------------------------------------------------
-void GlobalData::reset( void )
+void GlobalData::reset()
 {
 	DEBUG_ASSERTCRASH(this == TheWritableGlobalData, ("calling reset on wrong GlobalData"));
 

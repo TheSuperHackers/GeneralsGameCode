@@ -47,7 +47,7 @@ public:
 	// virtual destructor prototype provided by memory pool declaration
 
 	/// the client update callback
-	virtual void clientUpdate( void );
+	virtual void clientUpdate();
 
 
 protected:

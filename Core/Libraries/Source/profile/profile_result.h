@@ -47,15 +47,15 @@ public:
 
     This function is called on program exit.
   */
-  virtual void WriteResults(void)=0;
+  virtual void WriteResults()=0;
 
   /**
     \brief Destroys the current result function.
 
     Use this function instead of just delete'ing the instance.
   */
-  virtual void Delete(void)=0;
+  virtual void Delete()=0;
 
 protected:
-  ProfileResultInterface(void) {}
+  ProfileResultInterface() {}
 };

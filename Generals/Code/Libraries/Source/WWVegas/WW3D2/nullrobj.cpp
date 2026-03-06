@@ -60,12 +60,12 @@ Null3DObjClass & Null3DObjClass::operator = (const Null3DObjClass & that)
 	RenderObjClass::operator = (that); return *this;
 }
 
-int Null3DObjClass::Class_ID(void) const
+int Null3DObjClass::Class_ID() const
 {
 	return CLASSID_NULL;
 }
 
-RenderObjClass * Null3DObjClass::Clone(void) const
+RenderObjClass * Null3DObjClass::Clone() const
 {
 	return NEW_REF( Null3DObjClass, (*this));
 }
@@ -90,7 +90,7 @@ void Null3DObjClass::Get_Obj_Space_Bounding_Box(AABoxClass & box) const
 ** NullPrototypeClass
 */
 
-NullPrototypeClass::NullPrototypeClass (void)
+NullPrototypeClass::NullPrototypeClass ()
 {
 	// Note that the other members of the definition are uninitialized..
 	// So don't rely on them if the name is "NULL".

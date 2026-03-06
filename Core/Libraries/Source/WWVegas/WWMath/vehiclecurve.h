@@ -56,7 +56,7 @@ public:
 	///////////////////////////////////////////////////////////////////////////
 	//	Public constructors/destructors
 	///////////////////////////////////////////////////////////////////////////
-	VehicleCurveClass (void)
+	VehicleCurveClass ()
 		:	m_IsDirty (true),
 			m_Radius (0),
 			m_LastTime (0),
@@ -91,18 +91,18 @@ public:
 	void			Set_Key (int i,const Vector3 & point);
 	int			Add_Key (const Vector3 & point,float t);
 	void			Remove_Key (int i);
-	void			Clear_Keys (void);
+	void			Clear_Keys ();
 
 	//
 	//	Vehicle curve specific
 	//
 	float			Get_Current_Sharpness (Vector3 *position) const	{ *position = m_SharpnessPos; return m_Sharpness; }
-	float			Get_Last_Eval_Time (void) const						{ return m_LastTime; }
+	float			Get_Last_Eval_Time () const						{ return m_LastTime; }
 
 	//
 	// Save-load support
 	//
-	virtual const PersistFactoryClass &	Get_Factory(void) const;
+	virtual const PersistFactoryClass &	Get_Factory() const;
 	virtual bool								Save(ChunkSaveClass &csave);
 	virtual bool								Load(ChunkLoadClass &cload);
 
@@ -111,7 +111,7 @@ protected:
 	///////////////////////////////////////////////////////////////////////////
 	//	Protected methods
 	///////////////////////////////////////////////////////////////////////////
-	void			Update_Arc_List (void);
+	void			Update_Arc_List ();
 	void			Load_Variables (ChunkLoadClass &cload);
 
 
@@ -128,7 +128,7 @@ protected:
 		float		angle_in_delta;
 		float		angle_out_delta;
 
-		_ArcInfoStruct (void)
+		_ArcInfoStruct ()
 			:	center (0, 0, 0),
 				point_in (0, 0, 0),
 				point_out (0, 0, 0),
@@ -192,7 +192,7 @@ VehicleCurveClass::Remove_Key (int i)
 //	Clear_Keys
 ///////////////////////////////////////////////////////////////////////////
 inline void
-VehicleCurveClass::Clear_Keys (void)
+VehicleCurveClass::Clear_Keys ()
 {
 	m_IsDirty = true;
 	Curve3DClass::Clear_Keys ();

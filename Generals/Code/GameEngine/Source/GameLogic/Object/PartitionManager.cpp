@@ -371,6 +371,8 @@ static Bool distCalcProc_BoundaryAndBoundary_2D(const Coord3D *posA, const Objec
 static Bool distCalcProc_CenterAndCenter_3D(const Coord3D *posA, const Object *objA, const Coord3D *posB, const Object *objB, Real& abDistSqr, Coord3D& abVec, Real maxDistSqr);
 static Bool distCalcProc_BoundaryAndBoundary_3D(const Coord3D *posA, const Object *objA, const Coord3D *posB, const Object *objB, Real& abDistSqr, Coord3D& abVec, Real maxDistSqr);
 
+static Bool doesCircleOverlapCell(Real centerX, Real centerY, Real radius, Real cellX, Real cellY, Real cellSize);
+
 //-----------------------------------------------------------------------------
 inline void projectCoord3D(Coord3D *coord, const Coord3D *unitDir, Real dist)
 {
@@ -1526,7 +1528,7 @@ void PartitionCell::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void PartitionCell::loadPostProcess( void )
+void PartitionCell::loadPostProcess()
 {
 
 }
@@ -1878,6 +1880,43 @@ void PartitionData::doCircleFill(
 	}
 }
 
+static Bool doesCircleOverlapCell(Real centerX, Real centerY, Real radius, Real cellX, Real cellY, Real cellSize)
+{
+	Real closestX = std::max(cellX, std::min(centerX, cellX + cellSize));
+	Real closestY = std::max(cellY, std::min(centerY, cellY + cellSize));
+	Real distX = centerX - closestX;
+	Real distY = centerY - closestY;
+
+	return (sqr(distX) + sqr(distY)) < sqr(radius);
+}
+
+void PartitionData::doCircleFillPrecise(Real centerX, Real centerY, Real radius)
+{
+	Int minCellX, minCellY, maxCellX, maxCellY;
+	ThePartitionManager->worldToCell(centerX - radius, centerY - radius, &minCellX, &minCellY);
+	ThePartitionManager->worldToCell(centerX + radius, centerY + radius, &maxCellX, &maxCellY);
+
+	Real cellSize = ThePartitionManager->getCellSize();
+
+	for (Int x = minCellX; x <= maxCellX; ++x)
+	{
+		for (Int y = minCellY; y <= maxCellY; ++y)
+		{
+			Real cellWorldX = x * cellSize;
+			Real cellWorldY = y * cellSize;
+
+			if (doesCircleOverlapCell(centerX, centerY, radius, cellWorldX, cellWorldY, cellSize))
+			{
+				PartitionCell* cell = ThePartitionManager->getCellAt(x, y);
+				if (cell)
+				{
+					addSubPixToCoverage(cell);
+				}
+			}
+		}
+	}
+}
+
 // -----------------------------------------------------------------------------
 void PartitionData::doSmallFill(
 	Real centerX,
@@ -2079,7 +2118,13 @@ void PartitionData::updateCellsTouched()
 			case GEOMETRY_SPHERE:
 			case GEOMETRY_CYLINDER:
 			{
+#if RETAIL_COMPATIBLE_CRC || RETAIL_COMPATIBLE_CIRCLE_FILL_ALGORITHM
 				doCircleFill(pos.x, pos.y, majorRadius);
+#else
+				// TheSuperHackers @bugfix Stubbjax 29/01/2026 Use precise circle fill to improve
+				// collision accuracy, most notably for objects with geometry radii >= 20 and < 40.
+				doCircleFillPrecise(pos.x, pos.y, majorRadius);
+#endif
 				break;
 			}
 
@@ -2332,7 +2377,7 @@ void PartitionData::attachToGhostObject(GhostObject* object)
 }
 
 //-----------------------------------------------------------------------------
-void PartitionData::detachFromGhostObject(void)
+void PartitionData::detachFromGhostObject()
 {
 	// this is a little hokey... if we are in the midst of processing the contact
 	// list, we have to ensure that any potential collisions get removed from that
@@ -4719,7 +4764,7 @@ void PartitionManager::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void PartitionManager::loadPostProcess( void )
+void PartitionManager::loadPostProcess()
 {
 
 }

@@ -38,7 +38,7 @@ class RegularExpressionClass
 public:
 	RegularExpressionClass (const char *expression=0);
 	RegularExpressionClass (const RegularExpressionClass &copy);
-	~RegularExpressionClass (void);
+	~RegularExpressionClass ();
 
 	// Before you try to match a string against this regular expression,
 	// you must first compile the expression. This has the logical effect
@@ -55,7 +55,7 @@ public:
 	// this object. If you passed a regular expression string into this
 	// object's constructor, make sure you check Is_Valid before calling
 	// Match().
-	bool Is_Valid (void) const;
+	bool Is_Valid () const;
 
 	// Tests if 'string' matches this regular expression.
 	bool Match (const char *string) const;

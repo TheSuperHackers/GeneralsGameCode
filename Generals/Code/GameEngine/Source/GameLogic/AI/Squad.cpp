@@ -82,7 +82,7 @@ void Squad::clearSquad() {
 }
 
 // getAllObjects //////////////////////////////////////////////////////////////////////////////////
-const VecObjectPtr& Squad::getAllObjects(void) // Not a const function cause we clear away dead object here too
+const VecObjectPtr& Squad::getAllObjects() // Not a const function cause we clear away dead object here too
 {
 	// prunes all null objects
 	m_objectsCached.clear();
@@ -100,7 +100,7 @@ const VecObjectPtr& Squad::getAllObjects(void) // Not a const function cause we 
 }
 
 // getLiveObjects /////////////////////////////////////////////////////////////////////////////////
-const VecObjectPtr& Squad::getLiveObjects(void)
+const VecObjectPtr& Squad::getLiveObjects()
 {
 	// first get all the objects.
 	// cheat, since we are a member function, and just use m_objectsCached
@@ -117,7 +117,7 @@ const VecObjectPtr& Squad::getLiveObjects(void)
 }
 
 // getSizeOfGroup /////////////////////////////////////////////////////////////////////////////////
-Int Squad::getSizeOfGroup(void) const
+Int Squad::getSizeOfGroup() const
 {
 	return m_objectIDs.size();
 }
@@ -260,7 +260,7 @@ void Squad::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void Squad::loadPostProcess( void )
+void Squad::loadPostProcess()
 {
 
 }

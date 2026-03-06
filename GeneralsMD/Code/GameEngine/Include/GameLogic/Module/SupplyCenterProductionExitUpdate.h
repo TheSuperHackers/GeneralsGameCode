@@ -84,7 +84,7 @@ public:
 	virtual void exitObjectByBudding( Object *newObj, Object *budHost ) { return; }
 
 	virtual void setRallyPoint( const Coord3D *pos );			///< define a "rally point" for units to move towards
-	virtual const Coord3D *getRallyPoint( void ) const;			///< define a "rally point" for units to move towards
+	virtual const Coord3D *getRallyPoint() const;			///< define a "rally point" for units to move towards
 	virtual Bool getExitPosition( Coord3D& exitPosition ) const;					///< access to the "Door" position of the production object
 	virtual Bool getNaturalRallyPoint( Coord3D& rallyPoint, Bool offset = TRUE ) const;			///< get the natural "rally point" for units to move towards
 
@@ -104,7 +104,7 @@ inline void SupplyCenterProductionExitUpdate::setRallyPoint( const Coord3D *pos 
 	m_rallyPointExists = true;
 }
 
-inline const Coord3D *SupplyCenterProductionExitUpdate::getRallyPoint( void ) const
+inline const Coord3D *SupplyCenterProductionExitUpdate::getRallyPoint() const
 {
 	if (m_rallyPointExists)
 		return &m_rallyPoint;

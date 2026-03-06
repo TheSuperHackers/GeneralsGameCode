@@ -71,7 +71,7 @@ AssistedTargetingUpdate::AssistedTargetingUpdate( Thing *thing, const ModuleData
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-AssistedTargetingUpdate::~AssistedTargetingUpdate( void )
+AssistedTargetingUpdate::~AssistedTargetingUpdate()
 {
 }
 
@@ -137,7 +137,7 @@ void AssistedTargetingUpdate::makeFeedbackLaser( const ThingTemplate *laserTempl
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime AssistedTargetingUpdate::update( void )
+UpdateSleepTime AssistedTargetingUpdate::update()
 {
 
   const AssistedTargetingUpdateModuleData *d = getAssistedTargetingUpdateModuleData();
@@ -183,7 +183,7 @@ void AssistedTargetingUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void AssistedTargetingUpdate::loadPostProcess( void )
+void AssistedTargetingUpdate::loadPostProcess()
 {
   const AssistedTargetingUpdateModuleData *d = getAssistedTargetingUpdateModuleData();
 

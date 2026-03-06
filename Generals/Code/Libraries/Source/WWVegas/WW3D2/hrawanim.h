@@ -81,14 +81,14 @@ public:
 		LOAD_ERROR
 	};
 
-	HRawAnimClass(void);
-	~HRawAnimClass(void);
+	HRawAnimClass();
+	~HRawAnimClass();
 
 	int							Load_W3D(ChunkLoadClass & cload);
 
-	const char *				Get_Name(void) const { return Name; }
-	const char *				Get_HName(void) const { return HierarchyName; }
-	int							Get_Num_Frames(void) { return NumFrames; }
+	const char *				Get_Name() const { return Name; }
+	const char *				Get_HName() const { return HierarchyName; }
+	int							Get_Num_Frames() { return NumFrames; }
 	float							Get_Frame_Rate() { return FrameRate; }
 	float							Get_Total_Time() { return (float)NumFrames / FrameRate; }
 
@@ -98,7 +98,7 @@ public:
 	bool							Get_Visibility(int pividx,float frame);
 
 	bool							Is_Node_Motion_Present(int pividx);
-	int							Get_Num_Pivots(void) const { return NumNodes; }
+	int							Get_Num_Pivots() const { return NumNodes; }
 
 	// Methods that test the presence of a certain motion channel.
 	bool							Has_X_Translation (int pividx);
@@ -106,8 +106,8 @@ public:
 	bool							Has_Z_Translation (int pividx);
 	bool							Has_Rotation (int pividx);
 	bool							Has_Visibility (int pividx);
-	NodeMotionStruct				*Get_Node_Motion_Array(void) {return NodeMotion;}
-	virtual int					Class_ID(void)	const															{ return CLASSID_HRAWANIM; }
+	NodeMotionStruct				*Get_Node_Motion_Array() {return NodeMotion;}
+	virtual int					Class_ID()	const															{ return CLASSID_HRAWANIM; }
 
 private:
 
@@ -120,7 +120,7 @@ private:
 
 	NodeMotionStruct *		NodeMotion;
 
-	void Free(void);
+	void Free();
 	bool read_channel(ChunkLoadClass & cload,MotionChannelClass * * newchan,bool pre30);
 	void add_channel(MotionChannelClass * newchan);
 

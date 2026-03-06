@@ -45,7 +45,7 @@
 //-------------------------------------------------------------------------------------------------
 /** Create a dynamic light for the search light */
 //-------------------------------------------------------------------------------------------------
-W3DDynamicLight *W3DPoliceCarDraw::createDynamicLight( void )
+W3DDynamicLight *W3DPoliceCarDraw::createDynamicLight()
 {
 	W3DDynamicLight *light = nullptr;
 
@@ -82,7 +82,7 @@ W3DPoliceCarDraw::W3DPoliceCarDraw( Thing *thing, const ModuleData* moduleData )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-W3DPoliceCarDraw::~W3DPoliceCarDraw( void )
+W3DPoliceCarDraw::~W3DPoliceCarDraw()
 {
 
 	// disable the light ... the scene will re-use it later
@@ -191,7 +191,7 @@ void W3DPoliceCarDraw::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void W3DPoliceCarDraw::loadPostProcess( void )
+void W3DPoliceCarDraw::loadPostProcess()
 {
 
 	// extend base class

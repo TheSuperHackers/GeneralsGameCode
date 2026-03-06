@@ -75,7 +75,7 @@ public:
 	Bool playbackFile(AsciiString filename);					///< Starts playback of the specified file.
 	Bool replayMatchesGameVersion(AsciiString filename); ///< Returns true if the playback is a valid playback file for this version.
 	static Bool replayMatchesGameVersion(const ReplayHeader& header); ///< Returns true if the playback is a valid playback file for this version.
-	AsciiString getCurrentReplayFilename( void );			///< valid during playback only
+	AsciiString getCurrentReplayFilename();			///< valid during playback only
 	UnsignedInt getPlaybackFrameCount() const { return m_playbackFrameCount; }			///< valid during playback only
 	void stopPlayback();															///< Stops playback.  Its fine to call this even if not playing back a file.
 	Bool simulateReplay(AsciiString filename);
@@ -122,16 +122,16 @@ public:
 	static AsciiString getReplayExtention();					///< Returns the file extention for replay files.
 	static AsciiString getLastReplayFileName();				///< Returns the filename used for the default replay.
 
-	GameInfo *getGameInfo( void ) { return &m_gameInfo; }	///< Returns the slot list for playback game start
+	GameInfo *getGameInfo() { return &m_gameInfo; }	///< Returns the slot list for playback game start
 
-	Bool isMultiplayer( void );												///< is this a multiplayer game (record OR playback)?
+	Bool isMultiplayer();												///< is this a multiplayer game (record OR playback)?
 
-	Int getGameMode( void ) { return m_originalGameMode; }
+	Int getGameMode() { return m_originalGameMode; }
 
 	void logPlayerDisconnect(UnicodeString player, Int slot);
-	void logCRCMismatch( void );
+	void logCRCMismatch();
 	Bool sawCRCMismatch() const;
-	void cleanUpReplayFile( void );										///< after a crash, send replay/debug info to a central repository
+	void cleanUpReplayFile();										///< after a crash, send replay/debug info to a central repository
 
 	void setArchiveEnabled(Bool enable) { m_archiveReplays = enable; } ///< Enable or disable replay archiving.
 	void stopRecording();															///< Stop recording and close m_file.
@@ -141,7 +141,7 @@ protected:
 	void archiveReplay(AsciiString fileName);					///< Move the specified replay file to the archive directory.
 
 	void logGameStart(AsciiString options);
-	void logGameEnd( void );
+	void logGameEnd();
 
 	AsciiString readAsciiString();										///< Read the next string from m_file using ascii characters.
 	UnicodeString readUnicodeString();								///< Read the next string from m_file using unicode characters.

@@ -33,7 +33,7 @@
 #include "Common/GameEngine.h"
 #include "Common/MessageStream.h"
 #include "Common/RandomValue.h"
-#include "Common/UserPreferences.h"
+#include "Common/OptionPreferences.h"
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/ScriptEngine.h"
 #include "GameClient/AnimateWindowManager.h"
@@ -64,7 +64,7 @@ static void setupGameStart(AsciiString mapName)
 	TheShell->reverseAnimatewindow();
 }
 
-static void doGameStart( void )
+static void doGameStart()
 {
 	startGame = false;
 
@@ -77,14 +77,7 @@ static void doGameStart( void )
 	msg->appendIntegerArgument(s_AIDiff);
 	msg->appendIntegerArgument(0);
 
-	/// @todo: when Campaign & skirmish are separated, make campaign have fixed seed and skirmish random.
 	InitRandom(0);
-	/*
-	if (TheGlobalData->m_fixedSeed >= 0)
-		InitGameLogicRandom(TheGlobalData->m_fixedSeed);
-	else
-		InitGameLogicRandom(GameClientRandomValue(0, INT_MAX - 1));
-	*/
 
 	isShuttingDown = true;
 }
@@ -106,7 +99,7 @@ static void shutdownComplete( WindowLayout *layout )
 
 }
 
-void SetDifficultyRadioButton( void )
+void SetDifficultyRadioButton()
 {
 	NameKeyType parentID = TheNameKeyGenerator->nameToKey( "MapSelectMenu.wnd:MapSelectMenuParent" );
 	GameWindow *parent = TheWindowManager->winGetWindowFromId( nullptr, parentID );

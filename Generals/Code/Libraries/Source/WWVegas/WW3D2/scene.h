@@ -56,15 +56,15 @@ class SceneIterator
 {
 public:
 
-	virtual							~SceneIterator(void) { };
-	virtual void					First(void) = 0;
-	virtual void					Next(void) = 0;
-	virtual bool					Is_Done(void) = 0;
-	virtual RenderObjClass *	Current_Item(void) = 0;
+	virtual							~SceneIterator() { };
+	virtual void					First() = 0;
+	virtual void					Next() = 0;
+	virtual bool					Is_Done() = 0;
+	virtual RenderObjClass *	Current_Item() = 0;
 
 protected:
 
-	SceneIterator(void) { };
+	SceneIterator() { };
 };
 
 
@@ -87,8 +87,8 @@ protected:
 class SceneClass : public RefCountClass
 {
 public:
-	SceneClass(void);
-	virtual ~SceneClass(void);
+	SceneClass();
+	virtual ~SceneClass();
 
 	///////////////////////////////////////////////////////////////////////////////////
 	// RTTI information.
@@ -100,7 +100,7 @@ public:
 
 		SCENE_ID_LAST = 0x0000FFFF,
 	};
-	virtual int					Get_Scene_ID(void) const	{	return SCENE_ID_SCENE;	}
+	virtual int					Get_Scene_ID() const	{	return SCENE_ID_SCENE;	}
 
 
 	virtual void				Add_Render_Object(RenderObjClass * obj);
@@ -110,16 +110,16 @@ public:
 	virtual void				Destroy_Iterator(SceneIterator * it)					= 0;
 
 	virtual void				Set_Ambient_Light(const Vector3 & color)				{ AmbientLight = color; }
-	virtual const Vector3 &	Get_Ambient_Light(void)										{ return AmbientLight; }
+	virtual const Vector3 &	Get_Ambient_Light()										{ return AmbientLight; }
 
 	///////////////////////////////////////////////////////////////////////////////////
 	//	Fog methods
 	///////////////////////////////////////////////////////////////////////////////////
 	virtual void				Set_Fog_Enable(bool set)									{ FogEnabled = set; }
-	virtual bool				Get_Fog_Enable(void)											{ return FogEnabled; }
+	virtual bool				Get_Fog_Enable()											{ return FogEnabled; }
 
 	virtual void				Set_Fog_Color(const Vector3 & color)					{ FogColor = color; }
-	virtual const Vector3 &	Get_Fog_Color(void)											{ return FogColor; }
+	virtual const Vector3 &	Get_Fog_Color()											{ return FogColor; }
 
 	virtual void				Set_Fog_Range( float start, float end )				{ FogStart = start; FogEnd = end; }
 	virtual void				Get_Fog_Range( float * start, float * end )			{ *start = FogStart; *end = FogEnd; }
@@ -135,7 +135,7 @@ public:
 	};
 
 	void							Set_Polygon_Mode(PolyRenderType mode)					{ PolyRenderMode = mode; }
-	PolyRenderType				Get_Polygon_Mode(void)										{ return PolyRenderMode; }
+	PolyRenderType				Get_Polygon_Mode()										{ return PolyRenderMode; }
 
 	///////////////////////////////////////////////////////////////////////////////////
 	//	Second pass render mode is a debug feature which renders the whole scene twice.
@@ -148,7 +148,7 @@ public:
 	};
 
 	void							Set_Extra_Pass_Polygon_Mode(ExtraPassPolyRenderType mode)		{ ExtraPassPolyRenderMode = mode; }
-	ExtraPassPolyRenderType Get_Extra_Pass_Polygon_Mode(void)										{ return ExtraPassPolyRenderMode; }
+	ExtraPassPolyRenderType Get_Extra_Pass_Polygon_Mode()										{ return ExtraPassPolyRenderMode; }
 
 	///////////////////////////////////////////////////////////////////////////////////
 	//	Object processing registration
@@ -217,15 +217,15 @@ class SimpleSceneClass : public SceneClass
 {
 public:
 
-	SimpleSceneClass(void);
-	virtual ~SimpleSceneClass(void);
+	SimpleSceneClass();
+	virtual ~SimpleSceneClass();
 
-	virtual int	Get_Scene_ID(void)	{	return SCENE_ID_SIMPLE;	}
+	virtual int	Get_Scene_ID()	{	return SCENE_ID_SIMPLE;	}
 
 	virtual void Add_Render_Object(RenderObjClass * obj);
 	virtual void Remove_Render_Object(RenderObjClass * obj);
 
-	virtual void Remove_All_Render_Objects(void);
+	virtual void Remove_All_Render_Objects();
 
 	virtual void Register(RenderObjClass * obj,RegType for_what);
 	virtual void Unregister(RenderObjClass * obj,RegType for_what);
