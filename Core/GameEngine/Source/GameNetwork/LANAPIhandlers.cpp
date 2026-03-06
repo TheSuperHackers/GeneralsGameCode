@@ -101,12 +101,15 @@ Bool LANAPI::getProductInfoStrings(WideChar(&input)[201], UnicodeString*(&output
 
 		if (nullTerminated)
 		{
+			if (i == ARRAY_SIZE(output) - 1)
+				return TRUE;
+
 			for (size_t j = i + 1; j < ARRAY_SIZE(output); ++j)
 			{
 				output[j]->clear();
 			}
 
-			return TRUE;
+			break;
 		}
 	}
 
