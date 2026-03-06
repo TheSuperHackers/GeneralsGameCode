@@ -290,7 +290,7 @@ struct LANMessage
 		struct
 		{
 			UnsignedInt flags;
-			UnsignedInt launchTime;
+			UnsignedInt upTime;
 			UnsignedInt exeCRC;
 			UnsignedInt iniCRC;
 			UnsignedInt fpMathCRC;

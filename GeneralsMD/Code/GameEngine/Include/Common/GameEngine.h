@@ -76,6 +76,7 @@ public:
 	virtual void setIsActive(Bool isActive) { m_isActive = isActive; };
 
 	UnsignedInt getLaunchTime() const; ///< returns the system time when the game engine was created
+	UnsignedInt getUpTime() const; ///< returns the period of time the game engine has been running
 
 protected:
 

@@ -61,7 +61,7 @@ public:
 	{
 		ProductInfo() :
 			flags(0),
-			launchTime(0),
+			upTime(0),
 			exeCRC(0),
 			iniCRC(0),
 			fpMathCRC(0)
@@ -75,7 +75,7 @@ public:
 		};
 
 		UnsignedInt flags;
-		UnsignedInt launchTime;
+		UnsignedInt upTime;
 		UnsignedInt exeCRC;
 		UnsignedInt iniCRC;
 		UnsignedInt fpMathCRC;

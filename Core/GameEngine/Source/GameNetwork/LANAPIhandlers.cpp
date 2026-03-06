@@ -124,7 +124,7 @@ void LANAPI::setProductInfoFromLocalData(GameSlot &slot)
 {
 	GameSlot::ProductInfo productInfo;
 	productInfo.flags = buildProductInfoFlags();
-	productInfo.launchTime = TheGameEngine->getLaunchTime();
+	productInfo.upTime = TheGameEngine->getUpTime();
 	productInfo.exeCRC = TheGlobalData->m_exeCRC;
 	productInfo.iniCRC = TheGlobalData->m_iniCRC;
 	productInfo.fpMathCRC = SimulationMathCrc::calculate();
@@ -140,7 +140,7 @@ void LANAPI::setProductInfoFromMessage(GameSlot &slot, LANMessage *msg)
 {
 	GameSlot::ProductInfo productInfo;
 	productInfo.flags = msg->ProductInfo.flags;
-	productInfo.launchTime = msg->ProductInfo.launchTime;
+	productInfo.upTime = msg->ProductInfo.upTime;
 	productInfo.exeCRC = msg->ProductInfo.exeCRC;
 	productInfo.iniCRC = msg->ProductInfo.iniCRC;
 	productInfo.fpMathCRC = msg->ProductInfo.fpMathCRC;
@@ -160,7 +160,6 @@ void LANAPI::setProductInfoFromMessage(GameSlot &slot, LANMessage *msg)
 LANMessage LANAPI::buildProductInfoMessage()
 {
 	LANMessage msg;
-	msg.ProductInfo.launchTime = TheGameEngine->getLaunchTime();
 	msg.ProductInfo.exeCRC = TheGlobalData->m_exeCRC;
 	msg.ProductInfo.iniCRC = TheGlobalData->m_iniCRC;
 	msg.ProductInfo.fpMathCRC = SimulationMathCrc::calculate();
@@ -182,6 +181,7 @@ void LANAPI::sendProductInfoMessage(LANMessage::Type messageType, UnsignedInt se
 	fillInLANMessage(&m_productInfoMessage);
 	m_productInfoMessage.messageType = messageType;
 	m_productInfoMessage.ProductInfo.flags = buildProductInfoFlags();
+	m_productInfoMessage.ProductInfo.upTime = TheGameEngine->getUpTime();
 
 	if (senderIP != 0)
 	{
