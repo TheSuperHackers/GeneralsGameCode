@@ -31,6 +31,7 @@
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/crc.h"
+#include "Common/Diagnostic/SimulationMathCrc.h"
 #include "Common/GameEngine.h"
 #include "Common/GameState.h"
 #include "Common/Registry.h"
@@ -126,7 +127,7 @@ void LANAPI::setProductInfoFromLocalData(GameSlot &slot)
 	productInfo.launchTime = TheGameEngine->getLaunchTime();
 	productInfo.exeCRC = TheGlobalData->m_exeCRC;
 	productInfo.iniCRC = TheGlobalData->m_iniCRC;
-	productInfo.fpMathCRC = 0; // needs to be replaced with SimulationMathCrc::calculate() from #2100
+	productInfo.fpMathCRC = SimulationMathCrc::calculate();
 	productInfo.productTitle = TheVersion->getUnicodeProductTitle();
 	productInfo.productVersion = TheVersion->getUnicodeProductVersion();
 	productInfo.productAuthor = TheVersion->getUnicodeProductAuthor();
@@ -162,7 +163,7 @@ LANMessage LANAPI::buildProductInfoMessage()
 	msg.ProductInfo.launchTime = TheGameEngine->getLaunchTime();
 	msg.ProductInfo.exeCRC = TheGlobalData->m_exeCRC;
 	msg.ProductInfo.iniCRC = TheGlobalData->m_iniCRC;
-	msg.ProductInfo.fpMathCRC = 0; // needs to be replaced with SimulationMathCrc::calculate() from #2100
+	msg.ProductInfo.fpMathCRC = SimulationMathCrc::calculate();
 
 	const UnicodeString strings[] =
 	{
