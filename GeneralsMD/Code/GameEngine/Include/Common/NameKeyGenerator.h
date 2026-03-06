@@ -121,10 +121,6 @@ private:
 		SOCKET_COUNT = 45007
 	};
 
-	NameKeyType nameToKeyImpl(const AsciiString& name);
-	NameKeyType nameToLowercaseKeyImpl(const AsciiString& name);
-	NameKeyType nameToKeyImpl(const char* name);
-	NameKeyType nameToLowercaseKeyImpl(const char *name);
 	NameKeyType createNameKey(UnsignedInt hash, const AsciiString& name);
 
 	void freeSockets();

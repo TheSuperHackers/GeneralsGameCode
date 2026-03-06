@@ -147,30 +147,6 @@ void NameKeyGenerator::verifyNameKeyID(UnsignedInt expectedNextID) const
 //-------------------------------------------------------------------------------------------------
 NameKeyType NameKeyGenerator::nameToKey(const AsciiString& name)
 {
-	return nameToKeyImpl(name);
-}
-
-//-------------------------------------------------------------------------------------------------
-NameKeyType NameKeyGenerator::nameToLowercaseKey(const AsciiString& name)
-{
-	return nameToLowercaseKeyImpl(name);
-}
-
-//-------------------------------------------------------------------------------------------------
-NameKeyType NameKeyGenerator::nameToKey(const char* name)
-{
-	return nameToKeyImpl(name);
-}
-
-//-------------------------------------------------------------------------------------------------
-NameKeyType NameKeyGenerator::nameToLowercaseKey(const char *name)
-{
-	return nameToLowercaseKeyImpl(name);
-}
-
-//-------------------------------------------------------------------------------------------------
-NameKeyType NameKeyGenerator::nameToKeyImpl(const AsciiString& name)
-{
 	const UnsignedInt hash = calcHashForString(name.str()) % SOCKET_COUNT;
 
 	// do we have it already?
@@ -186,7 +162,7 @@ NameKeyType NameKeyGenerator::nameToKeyImpl(const AsciiString& name)
 }
 
 //-------------------------------------------------------------------------------------------------
-NameKeyType NameKeyGenerator::nameToLowercaseKeyImpl(const AsciiString& name)
+NameKeyType NameKeyGenerator::nameToLowercaseKey(const AsciiString& name)
 {
 	const UnsignedInt hash = calcHashForLowercaseString(name.str()) % SOCKET_COUNT;
 
@@ -203,7 +179,7 @@ NameKeyType NameKeyGenerator::nameToLowercaseKeyImpl(const AsciiString& name)
 }
 
 //-------------------------------------------------------------------------------------------------
-NameKeyType NameKeyGenerator::nameToKeyImpl(const char* name)
+NameKeyType NameKeyGenerator::nameToKey(const char* name)
 {
 	const UnsignedInt hash = calcHashForString(name) % SOCKET_COUNT;
 
@@ -220,7 +196,7 @@ NameKeyType NameKeyGenerator::nameToKeyImpl(const char* name)
 }
 
 //-------------------------------------------------------------------------------------------------
-NameKeyType NameKeyGenerator::nameToLowercaseKeyImpl(const char* name)
+NameKeyType NameKeyGenerator::nameToLowercaseKey(const char *name)
 {
 	const UnsignedInt hash = calcHashForLowercaseString(name) % SOCKET_COUNT;
 
