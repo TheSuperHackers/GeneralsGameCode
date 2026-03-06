@@ -90,8 +90,7 @@ Bool LANAPI::getProductInfoStrings(WideChar(&input)[201], UnicodeString*(&output
 	// null terminate the input buffer to prevent potential out-of-bound reads
 	input[ARRAY_SIZE(input) - 1] = '\0';
 
-	size_t inputIndex = 0;
-	for (size_t i = 0; i < ARRAY_SIZE(output); ++i)
+	for (size_t i = 0, inputIndex = 0; i < ARRAY_SIZE(output); ++i)
 	{
 		Bool nullTerminated = FALSE;
 		const size_t length = etx_strlen_t(input + inputIndex, nullTerminated);
@@ -106,11 +105,11 @@ Bool LANAPI::getProductInfoStrings(WideChar(&input)[201], UnicodeString*(&output
 				output[j]->clear();
 			}
 
-			break;
+			return TRUE;
 		}
 	}
 
-	return inputIndex <= ARRAY_SIZE(input);
+	return FALSE;
 }
 
 UnsignedInt LANAPI::buildProductInfoFlags()
