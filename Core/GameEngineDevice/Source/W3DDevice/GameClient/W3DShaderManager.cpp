@@ -2602,6 +2602,9 @@ void W3DShaderManager::init()
 		//Some of our effects require an offscreen render target, so try creating it here.
 		HRESULT hr=DX8Wrapper::_Get_D3D_Device8()->GetRenderTarget(&m_oldRenderSurface);
 
+		if (hr != S_OK || !m_oldRenderSurface)
+			return;
+
 		m_oldRenderSurface->GetDesc(&desc);
 		
 		// TheSuperHackers @bugfix Redirecting rendering to a non-multisampled texture
