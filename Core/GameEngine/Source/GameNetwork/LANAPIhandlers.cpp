@@ -55,12 +55,11 @@ Bool LANAPI::setProductInfoStrings(const UnicodeString(&input)[4], WideChar(&out
 {
 	// concatenate strings separated by end of text characters
 
-	size_t outputIndex = 0;
-	for (size_t i = 0; i < ARRAY_SIZE(input); ++i)
+	for (size_t i = 0, outputIndex = 0; i < ARRAY_SIZE(input); ++i)
 	{
 		outputIndex += wcslcpy(output + outputIndex, input[i].str(), ARRAY_SIZE(output) - outputIndex);
 		if (outputIndex >= ARRAY_SIZE(output))
-			break;
+			return FALSE;
 
 		if (i == ARRAY_SIZE(input) - 1)
 			break;
@@ -68,17 +67,7 @@ Bool LANAPI::setProductInfoStrings(const UnicodeString(&input)[4], WideChar(&out
 		output[outputIndex++] = '\3';
 	}
 
-	// null terminate the output buffer to signal the end of the last input string
-	if (outputIndex < ARRAY_SIZE(output))
-	{
-		output[outputIndex++] = '\0';
-		return TRUE;
-	}
-	else
-	{
-		output[ARRAY_SIZE(output) - 1] = '\0';
-		return FALSE;
-	}
+	return TRUE;
 }
 
 Bool LANAPI::getProductInfoStrings(WideChar(&input)[201], UnicodeString*(&output)[4])
