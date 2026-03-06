@@ -131,9 +131,9 @@ AsciiString NameKeyGenerator::keyToName(NameKeyType key)
 // That means that we still need to hash 3 dummy strings to keep the name key IDs synchronized with retail.
 void NameKeyGenerator::syncNameKeyID()
 {
-	nameToKey("Data\\English\\Language9x.ini");
-	nameToKey("Data\\Audio\\Tracks\\English\\GLA_02.mp3");
-	nameToKey("Data\\Audio\\Tracks\\GLA_02.mp3");
+	nameToLowercaseKey("Data\\English\\Language9x.ini");
+	nameToLowercaseKey("Data\\Audio\\Tracks\\English\\GLA_02.mp3");
+	nameToLowercaseKey("Data\\Audio\\Tracks\\GLA_02.mp3");
 }
 #endif
 void NameKeyGenerator::verifyNameKeyID(UnsignedInt expectedNextID) const
