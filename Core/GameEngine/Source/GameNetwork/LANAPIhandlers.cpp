@@ -156,7 +156,7 @@ void LANAPI::setProductInfoFromMessage(GameSlot &slot, LANMessage *msg)
 	slot.setProductInfo(productInfo);
 }
 
-LANMessage LANAPI::createProductInfoMessage()
+LANMessage LANAPI::buildProductInfoMessage()
 {
 	LANMessage msg;
 	msg.ProductInfo.launchTime = TheGameEngine->getLaunchTime();

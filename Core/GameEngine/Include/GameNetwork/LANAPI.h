@@ -449,7 +449,7 @@ protected:
 	void handleGameOptions( LANMessage *msg, UnsignedInt senderIP );
 	void handleInActive( LANMessage *msg, UnsignedInt senderIP );
 
-	static LANMessage createProductInfoMessage();
+	static LANMessage buildProductInfoMessage();
 	void sendProductInfoMessage(LANMessage::Type messageType, UnsignedInt senderIP);
 	void handleGameProductInfoRequest(LANMessage *msg, UnsignedInt senderIP);
 	void handleGameProductInfoResponse(LANMessage *msg, UnsignedInt senderIP);

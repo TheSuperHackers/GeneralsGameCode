@@ -87,7 +87,7 @@ LANAPI::LANAPI() : m_transport(nullptr)
 	m_lastUpdate = 0;
 	m_transport = new Transport;
 	m_isActive = TRUE;
-	m_productInfoMessage = createProductInfoMessage();
+	m_productInfoMessage = buildProductInfoMessage();
 }
 
 LANAPI::~LANAPI()
