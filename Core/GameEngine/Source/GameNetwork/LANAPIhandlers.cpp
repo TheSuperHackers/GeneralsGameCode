@@ -43,12 +43,25 @@
 #include "GameClient/MapUtil.h"
 #include "GameLogic/GameLogic.h"
 
-template <typename T> size_t etx_strlen_t(const T* str)
+template <typename T> size_t etx_strlen_t(const T* str, Bool& nullTerminated)
 {
 	const T* begin = str;
-	while (*str != '\0' && *str != '\3')
+	while (true)
+	{
+		if (*str == '\0')
+		{
+			nullTerminated = TRUE;
+			return static_cast<size_t>(str - begin);
+		}
+
+		if (*str == '\3')
+		{
+			nullTerminated = FALSE;
+			return static_cast<size_t>(str - begin);
+		}
+
 		++str;
-	return static_cast<size_t>(str - begin);
+	}
 }
 
 Bool LANAPI::setProductInfoStrings(const UnicodeString(&input)[4], WideChar(&output)[201])
@@ -80,11 +93,13 @@ Bool LANAPI::getProductInfoStrings(WideChar(&input)[201], UnicodeString*(&output
 	size_t inputIndex = 0;
 	for (size_t i = 0; i < ARRAY_SIZE(output); ++i)
 	{
-		const size_t length = etx_strlen_t(input + inputIndex);
+		Bool nullTerminated = FALSE;
+		const size_t length = etx_strlen_t(input + inputIndex, nullTerminated);
 		output[i]->set(input + inputIndex, length);
 
 		inputIndex += length + 1;
-		if (inputIndex >= ARRAY_SIZE(input))
+
+		if (nullTerminated)
 		{
 			for (size_t j = i + 1; j < ARRAY_SIZE(output); ++j)
 			{
