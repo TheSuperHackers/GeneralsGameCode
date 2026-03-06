@@ -509,7 +509,8 @@ void GameEngine::init()
 
 
 #if RETAIL_COMPATIBLE_CRC
-		if (xferCRC.getCRC() == 0xA1E7F8E6) TheNameKeyGenerator->verifyNameKeyID(1);
+		if (xferCRC.getCRC() == 0xA1E7F8E6)
+			TheNameKeyGenerator->verifyNameKeyID(1);
 #endif
 
 		initSubsystem(TheScienceStore,"TheScienceStore", MSGNEW("GameEngineSubsystem") ScienceStore(), &xferCRC, "Data\\INI\\Default\\Science", "Data\\INI\\Science");
@@ -587,7 +588,8 @@ void GameEngine::init()
 
 
 #if RETAIL_COMPATIBLE_CRC
-		if (xferCRC.getCRC() == 0x6209AF6E) TheNameKeyGenerator->verifyNameKeyID(2265);
+		if (xferCRC.getCRC() == 0x6209AF6E)
+			TheNameKeyGenerator->verifyNameKeyID(2265);
 #endif
 
 		initSubsystem(TheUpgradeCenter,"TheUpgradeCenter", MSGNEW("GameEngineSubsystem") UpgradeCenter, &xferCRC, "Data\\INI\\Default\\Upgrade", "Data\\INI\\Upgrade");
