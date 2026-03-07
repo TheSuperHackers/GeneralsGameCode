@@ -5534,7 +5534,11 @@ Bool Pathfinder::checkForPossible(Bool isCrusher, Int fromZone,  Bool center, co
 {
 	PathfindCell *goalCell = getCell(layer, cellX, cellY);
 	if (!goalCell) return false;
+#if RTS_GENERALS && RETAIL_COMPATIBLE_PATHFINDING
+	if (goalCell->getType() == PathfindCell::CELL_OBSTACLE) return false;
+#else
 	if (IS_IMPASSABLE(goalCell->getType())) return false;
+#endif
 	Int zone2 =  m_zoneManager.getEffectiveZone(locomotorSet.getValidSurfaces(), isCrusher, goalCell->getZone());
 	if (startingInObstacle) {
 		zone2 = m_zoneManager.getEffectiveTerrainZone(zone2);
@@ -5946,8 +5950,8 @@ void Pathfinder::processPathfindQueue()
 			m_queuePRHead = 0;
 		}
 	}
-	if (pathsFound>0) {
 #ifdef DEBUG_QPF
+	if (pathsFound>0) {
 #ifdef DEBUG_LOGGING
 		QueryPerformanceCounter((LARGE_INTEGER *)&endTime64);
 		timeToUpdate = ((double)(endTime64-startTime64) / (double)(freq64));
@@ -5957,8 +5961,8 @@ void Pathfinder::processPathfindQueue()
 			DEBUG_LOG(("time %f (%f)", timeToUpdate, (::GetTickCount()-startTimeMS)/1000.0f));
 		}
 #endif
+	}	
 #endif
-	}
 #if defined(RTS_DEBUG)
 	doDebugIcons();
 #endif
@@ -6277,7 +6281,11 @@ Int Pathfinder::examineNeighboringCells(PathfindCell *parentCell, PathfindCell *
 
 			newCell->setBlockedByAlly(false);
 			if (info.allyFixedCount>0) {
+#if RTS_GENERALS && RETAIL_COMPATIBLE_PATHFINDING
+				newCostSoFar += 3*COST_DIAGONAL*info.allyFixedCount;
+#else
 				newCostSoFar += 3*COST_DIAGONAL;
+#endif
 				if (!canPathThroughUnits)
 					newCell->setBlockedByAlly(true);
 			}
@@ -6793,6 +6801,7 @@ Path *Pathfinder::buildHierarchicalPath( const Coord3D *fromPos, PathfindCell *g
 
 	prependCells(path, fromPos, goalCell, true);
 
+#if !(RTS_GENERALS && RETAIL_COMPATIBLE_PATHFINDING)
 	// Expand the hierarchical path around the starting point. jba [8/24/2003]
 	// This allows the unit to get around friendly units that may be near it.
 	Coord3D pos = *path->getFirstNode()->getPosition();
@@ -6811,6 +6820,7 @@ Path *Pathfinder::buildHierarchicalPath( const Coord3D *fromPos, PathfindCell *g
 			m_zoneManager.setPassable(i, j, true);
 		}
 	}
+#endif
 
 #if defined(RTS_DEBUG)
 	if (TheGlobalData->m_debugAI==AI_DEBUG_PATHS)
