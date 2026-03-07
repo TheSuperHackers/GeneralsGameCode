@@ -6878,6 +6878,14 @@ struct MADStruct
 			return 0;  // Only move allies.
 		}
 		if (otherObj && otherObj->getAI() && !otherObj->getAI()->isMoving()) {
+#if !(RTS_GENERALS && RETAIL_COMPATIBLE_PATHFINDING)
+			//Kris: Patch 1.01 November 3, 2003
+			//Black Lotus exploit fix -- moving while hacking.
+			if( otherObj->testStatus( OBJECT_STATUS_IS_USING_ABILITY ) || otherObj->getAI()->isBusy() )
+			{
+				return 0; // Packing or unpacking objects for example
+			}
+#endif
 			//DEBUG_LOG(("Moving ally"));
 			otherObj->getAI()->aiMoveAwayFromUnit(d->obj, CMD_FROM_AI);
 		}
@@ -7354,11 +7362,27 @@ void Pathfinder::processHierarchicalCell( const ICoord2D &scanCell, const ICoord
 		scanCell.y<m_extent.lo.y || scanCell.y>m_extent.hi.y) {
 		return;
 	}
+#if !(RTS_GENERALS && RETAIL_COMPATIBLE_PATHFINDING)
+	if (parentZone == PathfindZoneManager::UNINITIALIZED_ZONE) {
+		return;
+	}
+#endif
 	if (parentZone == m_zoneManager.getBlockZone(LOCOMOTORSURFACE_GROUND,
 		crusher, scanCell.x, scanCell.y, m_map)) {
 		PathfindCell *newCell = getCell(LAYER_GROUND, scanCell.x, scanCell.y);
+#if RTS_GENERALS && RETAIL_COMPATIBLE_PATHFINDING
 		if (newCell->hasInfo() && (newCell->getOpen() || newCell->getClosed())) return; // already looked at this one.
-	  ICoord2D adjacentCell = scanCell;
+#else
+		if( !newCell->hasInfo() )
+		{
+ 			return;
+		}
+
+		if( newCell->getOpen() || newCell->getClosed() )
+			return; // already looked at this one.
+#endif
+
+		ICoord2D adjacentCell = scanCell;
 		//DEBUG_ASSERTCRASH(parentZone==newCell->getZone(), ("Different zones?"));
 		if (parentZone!=newCell->getZone()) return;
 		adjacentCell.x += delta.x;
@@ -7407,21 +7431,25 @@ void Pathfinder::processHierarchicalCell( const ICoord2D &scanCell, const ICoord
 		}
 
 		adjNewCell->allocateInfo(adjacentCell);
-		cellCount++;
-		Int curCost = adjNewCell->costToHierGoal(parentCell);
-		Int remCost = adjNewCell->costToHierGoal(goalCell);
-		if (adjNewCell->getPinched() || newCell->getPinched()) {
-			curCost += 2*COST_ORTHOGONAL;
-		}	else {
-			examinedZones[numExZones] = newZone;
-			numExZones++;
-		}
+		if( adjNewCell->hasInfo() )
+		{
 
-		adjNewCell->setCostSoFar(parentCell->getCostSoFar() + curCost);
-		adjNewCell->setTotalCost(adjNewCell->getCostSoFar()+remCost);
-		adjNewCell->setParentCellHierarchical(parentCell);
-		// insert newCell in open list such that open list is sorted, smallest total path cost first
-		adjNewCell->putOnSortedOpenList( m_openList );
+			cellCount++;
+			Int curCost = adjNewCell->costToHierGoal(parentCell);
+			Int remCost = adjNewCell->costToHierGoal(goalCell);
+			if (adjNewCell->getPinched() || newCell->getPinched()) {
+				curCost += 2*COST_ORTHOGONAL;
+			}	else {
+				examinedZones[numExZones] = newZone;
+				numExZones++;
+			}
+
+			adjNewCell->setCostSoFar(parentCell->getCostSoFar() + curCost);
+			adjNewCell->setTotalCost(adjNewCell->getCostSoFar()+remCost);
+			adjNewCell->setParentCellHierarchical(parentCell);
+			// insert newCell in open list such that open list is sorted, smallest total path cost first
+			adjNewCell->putOnSortedOpenList( m_openList );
+		}
 
 	}
 }
@@ -8618,7 +8646,11 @@ Path *Pathfinder::findClosestPath( Object *obj, const LocomotorSet& locomotorSet
 			PathfindCell *ignoreCell = getClippedCell(goalObj->getLayer(), goalObj->getPosition());
 			if ( (goalCell->getObstacleID()==ignoreCell->getObstacleID()) && (goalCell->getObstacleID() != INVALID_ID) ) {
 				Object* newObstacle = TheGameLogic->findObjectByID(goalCell->getObstacleID());
+#if RTS_GENERALS && RETAIL_COMPATIBLE_PATHFINDING
 				if (newObstacle != nullptr && newObstacle->isKindOf(KINDOF_AIRFIELD))
+#else
+				if (newObstacle != nullptr && newObstacle->isKindOf(KINDOF_FS_AIRFIELD))
+#endif
 				{
 					m_ignoreObstacleID = goalCell->getObstacleID();
 					goalOnObstacle = true;
@@ -8711,6 +8743,7 @@ Path *Pathfinder::findClosestPath( Object *obj, const LocomotorSet& locomotorSet
 	// Continue search until "open" list is empty, or
 	// until goal is found.
 	//
+	Bool foundGoal = false;
 	while( !m_openList.empty() )
 	{
 		Real dx;
@@ -8726,7 +8759,13 @@ Path *Pathfinder::findClosestPath( Object *obj, const LocomotorSet& locomotorSet
 			if (!goalOnObstacle) {
 				// See if the goal is a valid destination.  If not, accept closest cell.
 				if (closesetCell!=nullptr && !canPathThroughUnits && !checkDestination(obj, parentCell->getXIndex(), parentCell->getYIndex(), parentCell->getLayer(), radius, centerInCell)) {
+#if RTS_GENERALS && RETAIL_COMPATIBLE_PATHFINDING
 					break;
+#else
+					foundGoal = true;
+					// Continue processing the open list to find a possibly closer cell. jba. [8/25/2003]
+					continue;
+#endif
 				}
 			}
 
@@ -8807,12 +8846,12 @@ Path *Pathfinder::findClosestPath( Object *obj, const LocomotorSet& locomotorSet
 				continue;
 			}
 		}
-
-		// Check to see if we can change layers in this cell.
-		checkChangeLayers(parentCell);
-
-
-		count += examineNeighboringCells(parentCell, goalCell, locomotorSet, isHuman, centerInCell, radius, startCellNdx, obj, NO_ATTACK);
+		// If we haven't already found the goal cell, continue examining. [8/25/2003]
+		if (!foundGoal) {
+			// Check to see if we can change layers in this cell.
+			checkChangeLayers(parentCell);
+			count += examineNeighboringCells(parentCell, goalCell, locomotorSet, isHuman, centerInCell, radius, startCellNdx, obj, NO_ATTACK);
+		}
 	}
 
 	if (closesetCell) {
@@ -9692,8 +9731,16 @@ void Pathfinder::updateGoal( Object *obj, const Coord3D *newGoalPos, PathfindLay
 	AIUpdateInterface *ai = obj->getAIUpdateInterface();
 	if (!ai) return; // only consider ai objects.
 	if (!ai->isDoingGroundMovement()) {
-		updateAircraftGoal(obj, newGoalPos);
-		return;
+#if RTS_GENERALS && RETAIL_COMPATIBLE_PATHFINDING
+		Bool isUnmannedHelicopter = false;
+#else
+		// exception:sniped choppers are on ground
+		Bool isUnmannedHelicopter = ( obj->isKindOf( KINDOF_PRODUCED_AT_HELIPAD ) && obj->isDisabledByType( DISABLED_UNMANNED  ) ) ;
+#endif
+		if (!isUnmannedHelicopter) {
+			updateAircraftGoal(obj, newGoalPos);
+			return;
+		}
 	}
 
 	PathfindLayerEnum originalLayer = obj->getDestinationLayer();
