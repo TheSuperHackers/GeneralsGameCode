@@ -11,7 +11,6 @@ target_link_libraries(g_generals PRIVATE
     binkstub
     comctl32
     d3d8
-    d3dx8
     dinput8
     dxguid
     g_gameengine
@@ -21,6 +20,7 @@ target_link_libraries(g_generals PRIVATE
     milesstub
     vfw32
     winmm
+    d3dx8
 )
 
 # TODO Originally referred to build host and user, replace with git info perhaps?
@@ -90,4 +90,9 @@ endif()
 # This creates generalsv.exe.debug (similar to MSVC .pdb files)
 if(MINGW AND COMMAND add_debug_strip_target)
     add_debug_strip_target(g_generals)
+endif()
+
+# Verify no D3DX8 DLL dependency when NO_D3DX is enabled
+if(MINGW AND COMMAND add_no_d3dx_verification)
+    add_no_d3dx_verification(g_generals)
 endif()
