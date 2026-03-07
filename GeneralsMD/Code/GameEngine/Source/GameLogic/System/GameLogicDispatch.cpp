@@ -410,7 +410,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 	if (commandName.isNotEmpty() /*&& msg->getType() != GameMessage::MSG_FRAME_TICK*/)
 	{
 		DEBUG_LOG(("Frame %d: GameLogic::logicMessageDispatcher() saw a %s from player %d (%ls)", getFrame(), commandName.str(),
-			msg->getPlayerIndex(), thisPlayer->getPlayerDisplayName().str()));
+			thisPlayer->getPlayerIndex(), thisPlayer->getPlayerDisplayName().str()));
 	}
 #endif
 #endif // DEBUG_LOGGING
@@ -1987,11 +1987,10 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 #endif
 				}
 
-				//UnsignedInt oldCRC = m_cachedCRCs[msg->getPlayerIndex()];
 				UnsignedInt newCRC = msg->getArgument(0)->integer;
 				//DEBUG_LOG(("Received CRC of %8.8X from %ls on frame %d", newCRC,
 					//thisPlayer->getPlayerDisplayName().str(), m_frame));
-				m_cachedCRCs[thisPlayer->getPlayerIndex()] = newCRC; // to mask problem: = (oldCRC < newCRC)?newCRC:oldCRC;
+				m_cachedCRCs[thisPlayer->getPlayerIndex()] = newCRC;
 			}
 			else if (TheRecorder && TheRecorder->isPlaybackMode())
 			{
