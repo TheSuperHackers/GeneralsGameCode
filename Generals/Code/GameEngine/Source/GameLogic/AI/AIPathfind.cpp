@@ -10180,6 +10180,18 @@ if (g_UT_startTiming) return false;
 					continue;
 				}
 
+#if !(RTS_GENERALS && RETAIL_COMPATIBLE_PATHFINDING)
+				if (otherObj->getAI()->isAttacking()) {
+					continue; // Don't move units that are attacking. [8/14/2003]
+				}
+
+				//Kris: Patch 1.01 November 3, 2003
+				//Black Lotus exploit fix -- moving while hacking.
+				if( otherObj->testStatus( OBJECT_STATUS_IS_USING_ABILITY ) || otherObj->getAI()->isBusy() ) {
+					continue; // Packing or unpacking objects for example
+				}
+#endif
+
 				//DEBUG_LOG(("Moving ally"));
 				otherObj->getAI()->aiMoveAwayFromUnit(obj, CMD_FROM_AI);
 			}
@@ -10820,6 +10832,68 @@ Path *Pathfinder::findAttackPath( const Object *obj, const LocomotorSet& locomot
 				if (show)
 					debugShowSearch(true);
 
+#if !(RTS_GENERALS && RETAIL_COMPATIBLE_PATHFINDING)
+				// put parent cell onto closed list - its evaluation is finished
+				parentCell->putOnClosedList( m_closedList );
+
+				if (obj->isKindOf(KINDOF_VEHICLE)) {
+					// Strip backwards.
+					PathfindCell *lastBlocked = nullptr;
+					PathfindCell *cur = parentCell;
+					Bool useLargeRadius = false;
+					Int cellLimit = 12; // Magic number, yes I know - jba.   It is about 4 * size of an average vehicle width (3 cells) [8/15/2003]
+					while (cur) {
+						cellLimit--;
+						if (cellLimit<0) {
+							break;
+						}
+						TCheckMovementInfo info;
+						info.cell.x = cur->getXIndex();
+						info.cell.y = cur->getYIndex();
+						info.layer = cur->getLayer();
+						if (useLargeRadius) {
+							info.centerInCell = centerInCell;
+							info.radius = radius;
+						} else {
+							info.centerInCell = true;
+							info.radius = 0;
+						}
+						info.considerTransient = false;
+						info.acceptableSurfaces = locomotorSet.getValidSurfaces();
+						PathfindCell	*cell = getCell(info.layer,info.cell.x,info.cell.y);
+						Bool unitIdle = false;
+						if (cell) {
+							ObjectID posUnit = cell->getPosUnit();
+							Object *unit = TheGameLogic->findObjectByID(posUnit);
+							if (unit && unit->getAI() && unit->getAI()->isIdle()) {
+								unitIdle = true;
+							}
+						}
+						Bool checkMovement = checkForMovement(obj, info);
+						Bool blockedByEnemy = info.enemyFixed;
+						Bool blockedByAllies = info.allyFixedCount || info.allyGoal;
+						if (unitIdle) {
+							// If the unit present is idle, it doesn't block allies. [8/18/2003]
+							blockedByAllies = false;
+						}
+
+
+						if (!checkMovement || blockedByEnemy || blockedByAllies) {
+							lastBlocked = cur;
+							useLargeRadius = true;
+						} else {
+							useLargeRadius = false;
+						}
+						cur = cur->getParentCell();
+					}
+					if (lastBlocked) {
+						parentCell = lastBlocked;
+						if (lastBlocked->getParentCell()) {
+							parentCell = lastBlocked->getParentCell();
+						}
+					}
+				}
+#endif
 				// construct and return path
 				Path *path = buildActualPath( obj, locomotorSet.getValidSurfaces(), obj->getPosition(), parentCell, centerInCell, false);
 #if RETAIL_COMPATIBLE_PATHFINDING

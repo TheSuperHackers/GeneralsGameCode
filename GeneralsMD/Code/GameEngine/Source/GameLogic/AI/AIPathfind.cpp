@@ -10180,6 +10180,7 @@ if (g_UT_startTiming) return false;
 					continue;
 				}
 
+#if !(RTS_GENERALS && RETAIL_COMPATIBLE_PATHFINDING)
 				if (otherObj->getAI()->isAttacking()) {
 					continue; // Don't move units that are attacking. [8/14/2003]
 				}
@@ -10189,6 +10190,7 @@ if (g_UT_startTiming) return false;
 				if( otherObj->testStatus( OBJECT_STATUS_IS_USING_ABILITY ) || otherObj->getAI()->isBusy() ) {
 					continue; // Packing or unpacking objects for example
 				}
+#endif
 
 				//DEBUG_LOG(("Moving ally"));
 				otherObj->getAI()->aiMoveAwayFromUnit(obj, CMD_FROM_AI);
@@ -10830,9 +10832,10 @@ Path *Pathfinder::findAttackPath( const Object *obj, const LocomotorSet& locomot
 				if (show)
 					debugShowSearch(true);
 
+#if !(RTS_GENERALS && RETAIL_COMPATIBLE_PATHFINDING)
 				// put parent cell onto closed list - its evaluation is finished
 				parentCell->putOnClosedList( m_closedList );
-				// construct and return path
+
 				if (obj->isKindOf(KINDOF_VEHICLE)) {
 					// Strip backwards.
 					PathfindCell *lastBlocked = nullptr;
@@ -10890,6 +10893,8 @@ Path *Pathfinder::findAttackPath( const Object *obj, const LocomotorSet& locomot
 						}
 					}
 				}
+#endif
+				// construct and return path
 				Path *path = buildActualPath( obj, locomotorSet.getValidSurfaces(), obj->getPosition(), parentCell, centerInCell, false);
 #if RETAIL_COMPATIBLE_PATHFINDING
 				if (!s_useFixedPathfinding) {
