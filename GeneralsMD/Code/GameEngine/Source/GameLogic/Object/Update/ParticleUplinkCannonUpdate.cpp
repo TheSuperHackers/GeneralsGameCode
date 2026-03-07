@@ -648,6 +648,10 @@ UpdateSleepTime ParticleUplinkCannonUpdate::update()
 					templateLaserRadius = update->getTemplateLaserRadius();
 					visualLaserRadius = update->getCurrentLaserRadius();
 				}
+				// TheSuperHackers @fix anchor positional audio 500 units above the ground target
+				Coord3D audioPos = m_currentTargetPosition;
+				audioPos.z += 500.0f;
+				beam->setPosition( &audioPos );
 			}
 			// TheSuperHackers @refactor helmutbuhler/xezon 17/05/2025
 			// Originally the damageRadius was calculated with a value updated by LaserUpdate::clientUpdate.
@@ -1047,6 +1051,10 @@ void ParticleUplinkCannonUpdate::createOrbitToTargetLaser( UnsignedInt growthFra
 					orbitPosition.z += ORBITAL_BEAM_Z_OFFSET;
 					update->initLaser( nullptr, nullptr, &orbitPosition, &m_initialTargetPosition, "", growthFrames );
 				}
+				// TheSuperHackers @fix anchor positional audio 500 units above the ground target
+				Coord3D audioPos = m_initialTargetPosition;
+				audioPos.z += 500.0f;
+				beam->setPosition( &audioPos );
 			}
 		}
 		if( m_annihilationSound.getEventName().isNotEmpty() )
