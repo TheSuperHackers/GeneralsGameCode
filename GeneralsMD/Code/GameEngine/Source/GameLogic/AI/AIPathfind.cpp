@@ -8109,11 +8109,13 @@ Bool Pathfinder::clientSafeQuickDoesPathExist( const LocomotorSet& locomotorSet,
 
 	if (parentCell->getType() == PathfindCell::CELL_OBSTACLE) {
 		doingTerrainZone = true;
+#if !(RTS_GENERALS && RETAIL_COMPATIBLE_PATHFINDING)
 		if (zone1 == PathfindZoneManager::UNINITIALIZED_ZONE) {
 			// We are in a building that just got placed, and zones haven't been updated yet. [8/8/2003]
 			// It is better to return a false positive than a false negative. jba.
 			return true;
 		}
+#endif
 	}
 	zone2 =  m_zoneManager.getEffectiveZone(locomotorSet.getValidSurfaces(), false, goalCell->getZone());
 	if (goalCell->getType() == PathfindCell::CELL_OBSTACLE) {

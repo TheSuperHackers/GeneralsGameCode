@@ -605,7 +605,7 @@ Object *AIPlayer::buildStructureWithDozer(const ThingTemplate *bldgPlan, BuildLi
 	}
 
 	TheTerrainVisual->removeAllBibs();	// isLocationLegalToBuild adds bib feedback, turn it off.  jba.
-	if (!TheAI->pathfinder()->quickDoesPathExist(dozer->getAI()->getLocomotorSet(),
+	if (!TheAI->pathfinder()->clientSafeQuickDoesPathExist(dozer->getAI()->getLocomotorSet(),
 		dozer->getPosition(), &pos)) {
 		AsciiString bldgName = bldgPlan->getName();
 		bldgName.concat(" - Dozer unable to reach building.  Teleporting.");
