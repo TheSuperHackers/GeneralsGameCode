@@ -195,15 +195,6 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Cache MinGW-w64 Dependencies
-        id: cache-mingw-deps
-        uses: actions/cache@v4
-        with:
-          path: |
-            /usr/lib/gcc/i686-w64-mingw32
-            /usr/i686-w64-mingw32
-          key: mingw-w64-deps-${{ runner.os }}-v1
-
       - name: Install MinGW-w64 Toolchain
         run: |
           sudo apt-get update
@@ -291,15 +282,6 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-
-      - name: Cache MinGW-w64 Dependencies
-        id: cache-mingw-deps
-        uses: actions/cache@v4
-        with:
-          path: |
-            /usr/lib/gcc/i686-w64-mingw32
-            /usr/i686-w64-mingw32
-          key: mingw-w64-deps-${{ runner.os }}-v1
 
       - name: Install MinGW-w64 Toolchain
         run: |
