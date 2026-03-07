@@ -68,6 +68,8 @@
 #include <d3d8.h>
 #include <limits.h>
 #include <float.h>
+#include <string.h>
+#include <string>
 
 //-----------------------------------------------------------------------------
 // D3DX Constants
@@ -725,11 +727,16 @@ inline HRESULT D3DXAssembleShader(
     if (ppCompilationErrors)
         *ppCompilationErrors = nullptr;
     
-    // Identify which shader is being assembled by matching key strings
-    // This is safe because the game only assembles these specific shaders
+    // Ensure null-terminated copy for safe string operations.
+    // D3DX8 API allows non-null-terminated input bounded by SrcDataLen,
+    // matching Wine's D3DAssemble implementation which also null-terminates.
+    std::string srcStr(pSrcData, SrcDataLen);
+    const char* src = srcStr.c_str();
+    
+    // Identify which shader is being assembled by matching key strings.
     
     // Shader 1: River water (has "+mul r0.a, r0, t3" - co-issued instruction)
-    if (strstr(pSrcData, "+mul r0.a") != nullptr)
+    if (strstr(src, "+mul r0.a") != nullptr)
     {
         *ppCompiledShader = new D3DXShaderBuffer(
             D3DXCompat_Shaders::shader1_bytecode,
@@ -738,7 +745,7 @@ inline HRESULT D3DXAssembleShader(
     }
     
     // Shader 2: Water with env mapping (has "texbem")
-    if (strstr(pSrcData, "texbem") != nullptr)
+    if (strstr(src, "texbem") != nullptr)
     {
         *ppCompiledShader = new D3DXShaderBuffer(
             D3DXCompat_Shaders::shader2_bytecode,
@@ -747,7 +754,7 @@ inline HRESULT D3DXAssembleShader(
     }
     
     // Shader 3: Trapezoid water (has "mad" instruction)
-    if (strstr(pSrcData, "mad") != nullptr)
+    if (strstr(src, "mad") != nullptr)
     {
         *ppCompiledShader = new D3DXShaderBuffer(
             D3DXCompat_Shaders::shader3_bytecode,
@@ -755,8 +762,8 @@ inline HRESULT D3DXAssembleShader(
         return S_OK;
     }
     
-    // Unknown shader - return error
-    // The game will handle this gracefully and use fallback rendering
+    // Unknown shader - return error.
+    // The game will handle this gracefully and use fallback rendering.
     return E_FAIL;
 }
 
