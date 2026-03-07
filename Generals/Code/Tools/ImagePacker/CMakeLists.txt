@@ -1,5 +1,5 @@
 add_executable(g_imagepacker WIN32)
-set_target_properties(g_imagepacker PROPERTIES OUTPUT_NAME imagepacker)
+set_target_properties(g_imagepacker PROPERTIES OUTPUT_NAME "imagepacker${RTS_BUILD_OUTPUT_SUFFIX}")
 
 target_link_libraries(g_imagepacker PRIVATE
     corei_imagepacker

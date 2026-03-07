@@ -13,7 +13,7 @@ set(WDUMP_SRC
 )
 
 add_executable(z_wdump WIN32)
-set_target_properties(z_wdump PROPERTIES OUTPUT_NAME wdump)
+set_target_properties(z_wdump PROPERTIES OUTPUT_NAME "wdump${RTS_BUILD_OUTPUT_SUFFIX}")
 
 target_sources(z_wdump PRIVATE ${WDUMP_SRC})
 

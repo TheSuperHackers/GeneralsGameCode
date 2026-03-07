@@ -435,10 +435,10 @@ UnsignedShort OptionPreferences::getFirewallPortOverride()
 		return TheGlobalData->m_firewallPortOverride;
 	}
 
-	Int override = atoi(it->second.str());
-	if (override < 0 || override > 65535)
-		override = 0;
-	return override;
+	Int portOverride = atoi(it->second.str());
+	if (portOverride < 0 || portOverride > 65535)
+		portOverride = 0;
+	return portOverride;
 }
 
 Bool OptionPreferences::getFirewallNeedToRefresh()

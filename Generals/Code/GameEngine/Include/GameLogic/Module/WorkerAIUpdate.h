@@ -155,6 +155,7 @@ public:
 	// task actions
 	virtual void newTask( DozerTask task, Object* target );	///< set a desire to do the requrested task
 	virtual void cancelTask( DozerTask task );						///< cancel this task from the queue, if it's the current task the dozer will stop working on it
+	virtual void cancelAllTasks();												///< cancel all tasks from the queue, if it's the current task the dozer will stop working on it
 	virtual void resumePreviousTask();									///< resume the previous task if there was one
 
 	// internal methods to manage behavior from within the dozer state machine

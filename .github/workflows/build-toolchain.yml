@@ -112,20 +112,13 @@ jobs:
         run: |
           $baseline = (Get-Content vcpkg.json | ConvertFrom-Json)."builtin-baseline"
 
-          $msvc = $env:VCToolsVersion
-          if (-not $msvc) { $msvc = "unknown" }
-
-          # Reduce churn: keep major.minor (e.g. 14.44)
-          $msvcMajorMinor = ($msvc -split '\.')[0..1] -join '.'
-
           $triplet = "x86-windows"
           if ("${{ inputs.preset }}" -like "x64*") { $triplet = "x64-windows" }
 
           "baseline=$baseline" >> $env:GITHUB_OUTPUT
-          "msvc=$msvcMajorMinor" >> $env:GITHUB_OUTPUT
           "triplet=$triplet" >> $env:GITHUB_OUTPUT
 
-          Write-Host "vcpkg cache key parts: baseline=$baseline, msvc=$msvcMajorMinor, triplet=$triplet"
+          Write-Host "vcpkg cache key parts: baseline=$baseline, triplet=$triplet"
 
       - name: Restore vcpkg binary cache
         if: startsWith(inputs.preset, 'win32')
@@ -133,10 +126,10 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: ${{ github.workspace }}\vcpkg-bincache
-          key: vcpkg-bincache-v2-${{ runner.os }}-msvc${{ steps.vcpkg_key.outputs.msvc }}-baseline${{ steps.vcpkg_key.outputs.baseline }}-${{ steps.vcpkg_key.outputs.triplet }}
+          key: vcpkg-bincache-v3-${{ runner.os }}-baseline${{ steps.vcpkg_key.outputs.baseline }}-${{ steps.vcpkg_key.outputs.triplet }}-${{ hashFiles('triplets/*.cmake') }}
           restore-keys: |
-            vcpkg-bincache-v2-${{ runner.os }}-msvc${{ steps.vcpkg_key.outputs.msvc }}-baseline${{ steps.vcpkg_key.outputs.baseline }}-
-            vcpkg-bincache-v2-${{ runner.os }}-
+            vcpkg-bincache-v3-${{ runner.os }}-baseline${{ steps.vcpkg_key.outputs.baseline }}-
+            vcpkg-bincache-v3-${{ runner.os }}-
 
       - name: Setup vcpkg
         uses: lukka/run-vcpkg@v11
@@ -157,6 +150,8 @@ jobs:
 
           "VCPKG_DEFAULT_BINARY_CACHE=$cacheDir" >> $env:GITHUB_ENV
           "VCPKG_BINARY_SOURCES=$env:VCPKG_BINARY_SOURCES" >> $env:GITHUB_ENV
+          "VCPKG_OVERLAY_TRIPLETS=${{ github.workspace }}\triplets" >> $env:GITHUB_ENV
+          "VCPKG_INSTALL_OPTIONS=--x-abi-tools-use-exact-versions" >> $env:GITHUB_ENV
 
       - name: Configure ${{ inputs.game }} with CMake Using ${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }} Preset
         shell: pwsh
@@ -186,7 +181,7 @@ jobs:
         uses: actions/cache/save@v4
         with:
           path: ${{ github.workspace }}\vcpkg-bincache
-          key: vcpkg-bincache-v2-${{ runner.os }}-msvc${{ steps.vcpkg_key.outputs.msvc }}-baseline${{ steps.vcpkg_key.outputs.baseline }}-${{ steps.vcpkg_key.outputs.triplet }}
+          key: vcpkg-bincache-v3-${{ runner.os }}-baseline${{ steps.vcpkg_key.outputs.baseline }}-${{ steps.vcpkg_key.outputs.triplet }}-${{ hashFiles('triplets/*.cmake') }}
 
       - name: Collect ${{ inputs.game }} ${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }} Artifact
         shell: pwsh

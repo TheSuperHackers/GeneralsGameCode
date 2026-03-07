@@ -263,7 +263,7 @@ WindowMsgHandledType LeftHUDInput( GameWindow *window, UnsignedInt msg,
 					||	(! TheGlobalData->m_useAlternateMouse && msg == GWM_RIGHT_DOWN)
 					||	(TheGlobalData->m_useAlternateMouse && msg == GWM_LEFT_DOWN)	)
 				{
-					TheTacticalView->lookAt( &world );
+					TheTacticalView->userLookAt( &world );
 					break;
 				}
 

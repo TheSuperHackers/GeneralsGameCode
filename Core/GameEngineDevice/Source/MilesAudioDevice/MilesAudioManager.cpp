@@ -2690,10 +2690,12 @@ Real MilesAudioManager::getEffectiveVolume(AudioEventRTS *event) const
 				Real objMinDistance;
 				Real objMaxDistance;
 
+				const AudioSettings *audioSettings = TheAudio->getAudioSettings();
+
 				if (event->getAudioEventInfo()->m_type & ST_GLOBAL)
 				{
-					objMinDistance = TheAudio->getAudioSettings()->m_globalMinRange;
-					objMaxDistance = TheAudio->getAudioSettings()->m_globalMaxRange;
+					objMinDistance = audioSettings->m_globalMinRange;
+					objMaxDistance = audioSettings->m_globalMaxRange;
 				}
 				else
 				{
@@ -2701,19 +2703,18 @@ Real MilesAudioManager::getEffectiveVolume(AudioEventRTS *event) const
 					objMaxDistance = event->getAudioEventInfo()->m_maxDistance;
 				}
 
-				Real objDistance = distance.length();
-				if( objDistance > objMinDistance )
-				{
-					volume *= 1 / (objDistance / objMinDistance);
-				}
+				const Real objDistance = distance.length();
+
 				if( objDistance >= objMaxDistance )
 				{
 					volume = 0.0f;
 				}
-				//else if( objDistance > objMinDistance )
-				//{
-				//	volume *= 1.0f - (objDistance - objMinDistance) / (objMaxDistance - objMinDistance);
-				//}
+				else if( audioSettings->m_use3DSoundRangeVolumeFade && objDistance > objMinDistance )
+				{
+					Real attenuation = (objDistance - objMinDistance) / (objMaxDistance - objMinDistance);
+					attenuation = pow(attenuation, audioSettings->m_3DSoundRangeVolumeFadeExponent);
+					volume *= 1.0f - attenuation;
+				}
 			}
 		}
 		else

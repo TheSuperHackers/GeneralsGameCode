@@ -162,7 +162,7 @@ public:
 	virtual void setHeight( Int height );
 	virtual void setOrigin( Int x, Int y);			///< Sets location of top-left view corner on display
 
-	virtual void scrollBy( Coord2D *delta );  ///< Shift the view by the given delta
+	virtual void scrollBy( const Coord2D *delta );  ///< Shift the view by the given delta
 
 	virtual void forceRedraw();
 
@@ -277,7 +277,7 @@ private:
 	Coord3D m_cameraOffset;													///< offset for camera from view center
 	Coord3D m_previousLookAtPosition;													///< offset for camera from view center
 	Coord2D m_scrollAmount;													///< scroll speed
-	Real m_scrollAmountCutoff;											///< scroll speed at which we do not adjust height
+	Real m_scrollAmountCutoffSqr;										///< scroll speed at which we do not adjust height
 
 	Real m_groundLevel;															///< height of ground.
 
@@ -286,9 +286,12 @@ private:
 	Bool m_recalcCamera; ///< Recalculates the camera transform in the next render update
 
 	void setCameraTransform(); ///< set the transform matrix of m_3DCamera, based on m_pos & m_angle
-	void buildCameraTransform(Matrix3D *transform); ///< calculate (but do not set) the transform matrix of m_3DCamera, based on m_pos & m_angle
+	void buildCameraPosition(Vector3 &sourcePos, Vector3 &targetPos);
+	void buildCameraTransform(Matrix3D *transform, const Vector3 &sourcePos, const Vector3 &targetPos); ///< calculate (but do not set) the transform matrix of m_3DCamera, based on m_pos & m_angle
 	void calcCameraAreaConstraints(); ///< Recalculates the camera area constraints
+	Real calcCameraAreaOffset(Real maxEdgeZ);
 	Bool isWithinCameraHeightConstraints() const;
+	virtual void setUserControlled(Bool value);
 	Bool hasScriptedState(ScriptedState state) const;
 	void addScriptedState(ScriptedState state);
 	void removeScriptedState(ScriptedState state);

@@ -247,10 +247,8 @@ void W3DView::setOrigin( Int x, Int y)
 /** @todo This is inefficient. We should construct the matrix directly using vectors. */
 //-------------------------------------------------------------------------------------------------
 #define MIN_CAPPED_ZOOM (0.5f) //WST 10.19.2002. JSC integrated 5/20/03.
-void W3DView::buildCameraTransform( Matrix3D *transform )
+void W3DView::buildCameraPosition( Vector3& sourcePos, Vector3& targetPos )
 {
-	Vector3 sourcePos, targetPos;
-
 	Real groundLevel = m_groundLevel; // 93.0f;
 
 	Real zoom = getZoom();
@@ -361,7 +359,10 @@ void W3DView::buildCameraTransform( Matrix3D *transform )
 		}
 #endif
 	}
+}
 
+void W3DView::buildCameraTransform( Matrix3D *transform, const Vector3 &sourcePos, const Vector3 &targetPos )
+{
 	//m_3DCamera->Set_View_Plane(DEG_TO_RADF(50.0f));
 	//DEBUG_LOG(("zoom %f, SourceZ %f, posZ %f, groundLevel %f CamOffZ %f",
 	//			zoom, sourcePos.Z, pos.z, groundLevel,m_cameraOffset.z));
@@ -438,8 +439,6 @@ Note the following restrictions on camera constraints!
 */
 void W3DView::calcCameraAreaConstraints()
 {
-//	const Matrix3D& cameraTransform = m_3DCamera->Get_Transform();
-
 //	DEBUG_LOG(("*** rebuilding cam constraints"));
 
 	// ok, now check to ensure that we can't see outside the map region,
@@ -449,36 +448,7 @@ void W3DView::calcCameraAreaConstraints()
 		Region3D mapRegion;
 		TheTerrainLogic->getExtent( &mapRegion );
 
-		Real maxEdgeZ = m_groundLevel;
-		Coord3D center, bottom;
-		ICoord2D screen;
-
-		//Pick at the center
-		screen.x=0.5f*getWidth()+m_originX;
-		screen.y=0.5f*getHeight()+m_originY;
-
-		Vector3 rayStart,rayEnd;
-
-		getPickRay(&screen,&rayStart,&rayEnd);
-
-		center.x = Vector3::Find_X_At_Z(maxEdgeZ, rayStart, rayEnd);
-		center.y = Vector3::Find_Y_At_Z(maxEdgeZ, rayStart, rayEnd);
-		center.z = maxEdgeZ;
-
-		screen.y = m_originY+ 0.95f*getHeight();
- 		getPickRay(&screen,&rayStart,&rayEnd);
- 		bottom.x = Vector3::Find_X_At_Z(maxEdgeZ, rayStart, rayEnd);
-		bottom.y = Vector3::Find_Y_At_Z(maxEdgeZ, rayStart, rayEnd);
-		bottom.z = maxEdgeZ;
-		center.x -= bottom.x;
-		center.y -= bottom.y;
-
-		Real offset = center.length();
-
-		if (TheGlobalData->m_debugAI) {
-			offset = -1000; // push out the constraints so we can look at staging areas.
-		}
-
+		Real offset = calcCameraAreaOffset(m_groundLevel);
 		m_cameraAreaConstraints.lo.x = mapRegion.lo.x + offset;
 		m_cameraAreaConstraints.hi.x = mapRegion.hi.x - offset;
 		m_cameraAreaConstraints.lo.y = mapRegion.lo.y + offset;
@@ -486,6 +456,41 @@ void W3DView::calcCameraAreaConstraints()
 
 		m_cameraAreaConstraintsValid = true;
 	}
+}
+
+//-------------------------------------------------------------------------------------------------
+Real W3DView::calcCameraAreaOffset(Real maxEdgeZ)
+{
+	Coord3D center, bottom;
+	ICoord2D screen;
+
+	//Pick at the center
+	screen.x=0.5f*getWidth()+m_originX;
+	screen.y=0.5f*getHeight()+m_originY;
+
+	Vector3 rayStart,rayEnd;
+
+	getPickRay(&screen,&rayStart,&rayEnd);
+
+	center.x = Vector3::Find_X_At_Z(maxEdgeZ, rayStart, rayEnd);
+	center.y = Vector3::Find_Y_At_Z(maxEdgeZ, rayStart, rayEnd);
+	center.z = maxEdgeZ;
+
+	screen.y = m_originY+ 0.95f*getHeight();
+ 	getPickRay(&screen,&rayStart,&rayEnd);
+ 	bottom.x = Vector3::Find_X_At_Z(maxEdgeZ, rayStart, rayEnd);
+	bottom.y = Vector3::Find_Y_At_Z(maxEdgeZ, rayStart, rayEnd);
+	bottom.z = maxEdgeZ;
+	center.x -= bottom.x;
+	center.y -= bottom.y;
+
+	Real offset = center.length();
+
+	if (TheGlobalData->m_debugAI) {
+		offset = -1000; // push out the constraints so we can look at staging areas.
+	}
+
+	return offset;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -527,11 +532,7 @@ void W3DView::setCameraTransform()
 	if (TheGlobalData->m_headless)
 		return;
 
-	if (m_viewLockedUntilFrame > TheGameClient->getFrame())
-		return;
-
 	m_cameraHasMovedSinceRequest = true;
-	Matrix3D cameraTransform;
 
 	Real farZ = 1200.0f;
 
@@ -556,7 +557,11 @@ void W3DView::setCameraTransform()
 	{
 		if (!m_cameraAreaConstraintsValid)
 		{
-			buildCameraTransform(&cameraTransform);
+			Vector3 sourcePos;
+			Vector3 targetPos;
+			buildCameraPosition(sourcePos, targetPos);
+			Matrix3D cameraTransform;
+			buildCameraTransform(&cameraTransform, sourcePos, targetPos);
 			m_3DCamera->Set_Transform( cameraTransform );
 			calcCameraAreaConstraints();
 		}
@@ -580,7 +585,11 @@ void W3DView::setCameraTransform()
 #endif
 
 	// rebuild it (even if we just did it due to camera constraints)
-	buildCameraTransform( &cameraTransform );
+	Vector3 sourcePos;
+	Vector3 targetPos;
+	buildCameraPosition(sourcePos, targetPos);
+	Matrix3D cameraTransform;
+	buildCameraTransform(&cameraTransform, sourcePos, targetPos);
 	m_3DCamera->Set_Transform( cameraTransform );
 
 	if (TheTerrainRenderObject)
@@ -627,7 +636,7 @@ void W3DView::init()
 
 	m_cameraAreaConstraintsValid = false;
 
-	m_scrollAmountCutoff = TheGlobalData->m_scrollAmountCutoff;
+	m_scrollAmountCutoffSqr = sqr(TheGlobalData->m_scrollAmountCutoff);
 
 	m_recalcCamera = true;
 }
@@ -650,10 +659,15 @@ void W3DView::reset()
 	// Just in case...
 	setTimeMultiplier(1); // Set time rate back to 1.
 
+	stopDoingScriptedCamera();
+	setUserControlled(true);
+
+	// Just move the camera to zero. It'll get repositioned at the beginning of the next game anyways.
 	Coord3D arbitraryPos = { 0, 0, 0 };
-	// Just move the camera to 0, 0, 0. It'll get repositioned at the beginning of the next game
-	// anyways.
-	resetCamera(&arbitraryPos, 1, 0.0f, 0.0f);
+	setPosition(&arbitraryPos);
+	setAngleToDefault();
+	setPitchToDefault();
+	setZoomToDefault();
 
 	setViewFilter(FT_VIEW_DEFAULT);
 
@@ -1281,6 +1295,12 @@ void W3DView::update()
 			didScriptedMovement = true; // don't mess up the scripted movement
 		}
 	}
+
+	if (!m_isUserControlled)
+	{
+		didScriptedMovement = true;
+	}
+
 	//
 	// Process camera shake
 	//
@@ -1320,8 +1340,9 @@ void W3DView::update()
 			m_heightAboveGround = m_currentHeightAboveGround;
 		}
 
-		const Bool isScrolling = TheInGameUI && TheInGameUI->isScrolling();
-		const Bool isScrollingTooFast = m_scrollAmount.length() >= m_scrollAmountCutoff;
+		const Real scrollLenSqr = m_scrollAmount.lengthSqr();
+		const Bool isScrolling = scrollLenSqr > FLT_EPSILON;
+		const Bool isScrollingTooFast = scrollLenSqr >= m_scrollAmountCutoffSqr;
 		const Bool isWithinHeightConstraints = isWithinCameraHeightConstraints();
 
 		// if scrolling, only adjust if we're too close or too far
@@ -1766,9 +1787,8 @@ void W3DView::setSnapMode( CameraLockType lockType, Real lockDist )
 // TheSuperHackers @bugfix Now rotates the view plane on the Z axis only to properly discard the
 // camera pitch. The aspect ratio also no longer modifies the vertical scroll speed.
 //-------------------------------------------------------------------------------------------------
-void W3DView::scrollBy( Coord2D *delta )
+void W3DView::scrollBy( const Coord2D *delta )
 {
-	// if we haven't moved, ignore
 	if( delta && (delta->x != 0 || delta->y != 0) )
 	{
 		constexpr const Real SCROLL_RESOLUTION = 250.0f;
@@ -1808,7 +1828,11 @@ void W3DView::scrollBy( Coord2D *delta )
 		removeScriptedState(Scripted_Rotate);
 		m_recalcCamera = true;
 	}
-
+	else
+	{
+		m_scrollAmount.x = 0;
+		m_scrollAmount.y = 0;
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1902,7 +1926,8 @@ void W3DView::setHeightAboveGround(Real z)
 // the camera height.
 void W3DView::setZoom(Real z)
 {
-	View::setZoom(z);
+	m_heightAboveGround = m_maxHeightAboveGround * z;
+	m_zoom = z;
 
 	stopDoingScriptedCamera();
 	m_CameraArrivedAtWaypointOnPathFlag = false;
@@ -2247,7 +2272,6 @@ void W3DView::screenToTerrain( const ICoord2D *screen, Coord3D *world )
 void W3DView::lookAt( const Coord3D *o )
 {
 	Coord3D pos = *o;
-
 
 // no, don't call the super-lookAt, since it will munge our coords
 // as for a 2d view. just call setPosition.
@@ -3034,6 +3058,15 @@ void W3DView::pitchCameraOneFrame()
 	}
 }
 
+//-------------------------------------------------------------------------------------------------
+void W3DView::setUserControlled(Bool value)
+{
+	if (m_isUserControlled != value)
+	{
+		m_isUserControlled = value;
+	}
+}
+
 // ------------------------------------------------------------------------------------------------
 Bool W3DView::isDoingScriptedCamera()
 {
@@ -3056,6 +3089,7 @@ Bool W3DView::hasScriptedState(ScriptedState state) const
 void W3DView::addScriptedState(ScriptedState state)
 {
 	m_scriptedState |= state;
+	setUserControlled(false);
 }
 
 // ------------------------------------------------------------------------------------------------

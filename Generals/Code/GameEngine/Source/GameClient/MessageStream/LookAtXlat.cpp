@@ -315,9 +315,9 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 			// if middle button is "clicked", reset to "home" orientation
 			if (!didMove && elapsedMsec < CLICK_DURATION_MSEC)
 			{
-				TheTacticalView->setAngleToDefault();
-				TheTacticalView->setPitchToDefault();
-				TheTacticalView->setZoomToDefault();
+				TheTacticalView->userSetAngleToDefault();
+				TheTacticalView->userSetPitchToDefault();
+				TheTacticalView->userSetZoomToDefault();
 			}
 
 			break;
@@ -374,7 +374,7 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 					targetAngle = WWMath::Round(targetAngle / snapRadians) * snapRadians;
 				}
 
-				TheTacticalView->setAngle(targetAngle);
+				TheTacticalView->userSetAngle(targetAngle);
 				m_anchor = msg->getArgument( 0 )->pixel;
 			}
 
@@ -383,7 +383,7 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 			{
 				constexpr const Real Scale = 0.01f;
 				const Real angle = Scale * (m_currentPos.y - m_anchor.y);
-				TheTacticalView->setPitch( TheTacticalView->getPitch() + angle );
+				TheTacticalView->userSetPitch( TheTacticalView->getPitch() + angle );
 				m_anchor = msg->getArgument( 0 )->pixel;
 			}
 
@@ -393,7 +393,7 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 			{
 				constexpr const Real Scale = 0.01f;
 				const Real angle = Scale * (m_currentPos.y - m_anchor.y);
-				TheTacticalView->setFieldOfView( TheTacticalView->getFieldOfView() + angle );
+				TheTacticalView->userSetFieldOfView( TheTacticalView->getFieldOfView() + angle );
 				m_anchor = msg->getArgument( 0 )->pixel;
 			}
 #endif
@@ -407,7 +407,7 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 
 			const Int spin = msg->getArgument( 1 )->integer;
 			const Real zoom = -spin * View::ZoomHeightPerSecond;
-			TheTacticalView->zoom(zoom);
+			TheTacticalView->userZoom(zoom);
 
 			break;
 		}
@@ -431,6 +431,7 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 			{
 				// If we've been forced to stop scrolling (script action?)
 				TheInGameUI->setScrollAmount(offset);
+				TheTacticalView->scrollBy(&offset);
 				stopScrolling();
 			}
 			else if (m_isScrolling)
@@ -515,12 +516,13 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 				}
 
 				TheInGameUI->setScrollAmount(offset);
-				TheTacticalView->scrollBy( &offset );
+				TheTacticalView->userScrollBy( &offset );
 			}
 			else
 			{
 				//not scrolling so reset amount
 				TheInGameUI->setScrollAmount(offset);
+				TheTacticalView->scrollBy(&offset);
 			}
 
 			//if (TheGlobalData->m_saveCameraInReplay /*&& TheRecorder->getMode() != RECORDERMODETYPE_PLAYBACK *//**/&& (TheGameLogic->isInSinglePlayerGame() || TheGameLogic->isInSkirmishGame())/**/)
@@ -638,7 +640,7 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 			Int slot = t - GameMessage::MSG_META_VIEW_VIEW1 + 1;
 			if ( slot > 0 && slot <= MAX_VIEW_LOCS )
 			{
-				TheTacticalView->setLocation( &m_viewLocation[slot-1] );
+				TheTacticalView->userSetLocation( &m_viewLocation[slot-1] );
 			}
 			disp = DESTROY_MESSAGE;
 			break;
@@ -690,7 +692,7 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 
 						if (doLock)
 						{
-							TheTacticalView->setCameraLock( d->getObject()->getID() );
+							TheTacticalView->userSetCameraLock( d->getObject()->getID() );
 							m_lastPlaneID = d->getID();
 							done = true;
 							break;

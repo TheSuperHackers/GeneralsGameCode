@@ -30,8 +30,9 @@
 
 #include "Common/GameEngine.h"
 #include "Common/Xfer.h"
-#include "GameClient/View.h"
 #include "GameClient/Drawable.h"
+#include "GameClient/GameClient.h"
+#include "GameClient/View.h"
 
 UnsignedInt View::m_idNext = 1;
 
@@ -41,7 +42,8 @@ View *TheTacticalView = nullptr;
 
 View::View()
 {
-	m_viewLockedUntilFrame = 0u;
+	m_userControlLockedUntilFrame = 0u;
+	m_isUserControlled = true;
 	m_currentHeightAboveGround = 0.0f;
 	m_defaultAngle = 0.0f;
 	m_defaultPitch = 0.0f;
@@ -109,7 +111,8 @@ void View::reset()
 	// Only fixing the reported bug.  Who knows what side effects resetting the rest could have.
 	m_zoomLimited = TRUE;
 
-	m_viewLockedUntilFrame = 0u;
+	m_userControlLockedUntilFrame = 0u;
+	m_isUserControlled = true;
 }
 
 /**
@@ -124,11 +127,6 @@ View *View::prependViewToList( View *list )
 void View::zoom( Real height )
 {
 	setHeightAboveGround(getHeightAboveGround() + height);
-}
-
-void View::lockViewUntilFrame(UnsignedInt frame)
-{
-	m_viewLockedUntilFrame = frame;
 }
 
 /**
@@ -147,7 +145,7 @@ void View::lookAt( const Coord3D *o )
 /**
  * Shift the view by the given delta.
  */
-void View::scrollBy( Coord2D *delta )
+void View::scrollBy( const Coord2D *delta )
 {
 	// update view's world position
 	m_pos.x += delta->x;
@@ -226,6 +224,11 @@ void View::setLocation( const ViewLocation *location )
 		forceRedraw();
 	}
 
+}
+
+Bool View::isUserControlLocked() const
+{
+	return m_userControlLockedUntilFrame > TheGameClient->getFrame();
 }
 
 //-------------------------------------------------------------------------------------------------

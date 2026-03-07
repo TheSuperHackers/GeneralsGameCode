@@ -123,7 +123,7 @@ class DebrisDrawInterface
 {
 public:
 	virtual void setModelName(AsciiString name, Color color, ShadowType t) = 0;
-	virtual void setAnimNames(AsciiString initial, AsciiString flying, AsciiString final, const FXList* finalFX) = 0;
+	virtual void setAnimNames(AsciiString initial, AsciiString flying, AsciiString finalAnim, const FXList* finalFX) = 0;
 };
 
 //-------------------------------------------------------------------------------------------------
