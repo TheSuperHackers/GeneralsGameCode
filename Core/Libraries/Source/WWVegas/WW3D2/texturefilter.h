@@ -84,9 +84,19 @@ public:
 
 	enum TextureFilterMode
 	{
+		TEXTURE_FILTER_NONE,
+		TEXTURE_FILTER_POINT,
 		TEXTURE_FILTER_BILINEAR,
 		TEXTURE_FILTER_TRILINEAR,
 		TEXTURE_FILTER_ANISOTROPIC
+	};
+
+	enum AnisotropicFilterMode
+	{
+		TEXTURE_FILTER_ANISOTROPIC_2X = 2,
+		TEXTURE_FILTER_ANISOTROPIC_4X = 4,
+		TEXTURE_FILTER_ANISOTROPIC_8X = 8,
+		TEXTURE_FILTER_ANISOTROPIC_16X = 16
 	};
 
 	enum TxtAddrMode
@@ -113,8 +123,9 @@ public:
 	void Set_U_Addr_Mode(TxtAddrMode mode) { UAddressMode=mode; }
 	void Set_V_Addr_Mode(TxtAddrMode mode) { VAddressMode=mode; }
 
-	// This needs to be called after device has been created
+	// These need to be called after device has been created
 	static void _Init_Filters(TextureFilterMode texture_filter);
+	static void _Set_Max_Anisotropy(AnisotropicFilterMode mode);
 
 	static void _Set_Default_Min_Filter(FilterType filter);
 	static void _Set_Default_Mag_Filter(FilterType filter);
