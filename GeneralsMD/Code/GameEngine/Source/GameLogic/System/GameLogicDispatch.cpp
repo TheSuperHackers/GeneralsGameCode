@@ -633,12 +633,25 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 		case GameMessage::MSG_ENABLE_RETALIATION_MODE:
 		{
 #if RETAIL_COMPATIBLE_CRC
-			// TheSuperHackers @info The first argument is unused.
+			//Logically turns on or off retaliation mode for a specified player.
+			const Int playerIndex = msg->getArgument( 0 )->integer;
 			const Bool enableRetaliation = msg->getArgument( 1 )->boolean;
+
+			Player *player = ThePlayerList->getNthPlayer( playerIndex );
+			if( player )
+			{
+				DEBUG_ASSERTCRASH(player == thisPlayer,
+					("Retaliation mode of player '%ls' was illegally set by player '%ls'. Before: '%d', after: '%d'.",
+						player->getPlayerDisplayName().str(), thisPlayer->getPlayerDisplayName().str(),
+						player->isLogicalRetaliationModeEnabled(), enableRetaliation) );
+
+				player->setLogicalRetaliationModeEnabled( enableRetaliation );
+			}
 #else
+			// TheSuperHackers @fix stephanmeesters 08/03/2026 Ensure that players can only set their own retaliation mode.
 			const Bool enableRetaliation = msg->getArgument( 0 )->boolean;
-#endif
 			thisPlayer->setLogicalRetaliationModeEnabled( enableRetaliation );
+#endif
 			break;
 		}
 
