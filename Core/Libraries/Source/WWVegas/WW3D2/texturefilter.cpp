@@ -196,9 +196,8 @@ void TextureFilterClass::_Init_Filters(TextureFilterMode filter_type)
 			_MinTextureFilters[0][FILTER_TYPE_BEST]=D3DTEXF_ANISOTROPIC;
 			_MagTextureFilters[0][FILTER_TYPE_BEST]=D3DTEXF_ANISOTROPIC;
 
-			// Set the Anisotropic filtering level for all stages
-			for (int stage = 0; stage < MAX_TEXTURE_STAGES; ++stage)
-				DX8Wrapper::Set_DX8_Texture_Stage_State(stage, D3DTSS_MAXANISOTROPY, 2);
+			// Set the Anisotropic filtering level for all stages - 2X by default
+			_Set_Max_Anisotropy(TEXTURE_FILTER_ANISOTROPIC_2X);
 		}
 		else {
 			_MinTextureFilters[0][FILTER_TYPE_BEST]=D3DTEXF_POINT;
@@ -267,6 +266,16 @@ void TextureFilterClass::Set_Mip_Mapping(FilterType mipmap)
 //		return;
 //	}
 	MipMapFilter=mipmap;
+}
+
+//**********************************************************************************************
+//! Set anisotropic filter level
+/*!
+*/
+void TextureFilterClass::_Set_Max_Anisotropy(AnisotropicFilterMode mode)
+{
+	for (int stage = 0; stage < MAX_TEXTURE_STAGES; ++stage)
+		DX8Wrapper::Set_DX8_Texture_Stage_State(stage, D3DTSS_MAXANISOTROPY, mode);
 }
 
 //**********************************************************************************************
