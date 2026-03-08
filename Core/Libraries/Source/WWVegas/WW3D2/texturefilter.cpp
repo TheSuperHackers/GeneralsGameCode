@@ -104,33 +104,18 @@ void TextureFilterClass::_Init_Filters(TextureFilterMode filter_type)
 {
 	const D3DCAPS8& dx8caps=DX8Wrapper::Get_Current_Caps()->Get_DX8_Caps();
 
-#ifndef _XBOX
-   	_MinTextureFilters[0][FILTER_TYPE_NONE]=D3DTEXF_POINT;
-   	_MagTextureFilters[0][FILTER_TYPE_NONE]=D3DTEXF_POINT;
-   	_MipMapFilters[0][FILTER_TYPE_NONE]=D3DTEXF_NONE;
+	_MinTextureFilters[0][FILTER_TYPE_NONE]=D3DTEXF_POINT;
+	_MagTextureFilters[0][FILTER_TYPE_NONE]=D3DTEXF_POINT;
+	_MipMapFilters[0][FILTER_TYPE_NONE]=D3DTEXF_NONE;
 
-   	_MinTextureFilters[0][FILTER_TYPE_FAST]=D3DTEXF_LINEAR;
-   	_MagTextureFilters[0][FILTER_TYPE_FAST]=D3DTEXF_LINEAR;
-   	_MipMapFilters[0][FILTER_TYPE_FAST]=D3DTEXF_POINT;
+	_MinTextureFilters[0][FILTER_TYPE_FAST]=D3DTEXF_LINEAR;
+	_MagTextureFilters[0][FILTER_TYPE_FAST]=D3DTEXF_LINEAR;
+	_MipMapFilters[0][FILTER_TYPE_FAST]=D3DTEXF_POINT;
 
-   	_MagTextureFilters[0][FILTER_TYPE_BEST]=D3DTEXF_POINT;
-   	_MinTextureFilters[0][FILTER_TYPE_BEST]=D3DTEXF_POINT;
-   	_MipMapFilters[0][FILTER_TYPE_BEST]=D3DTEXF_POINT;
-#else
-	_MinTextureFilters[0][FILTER_TYPE_NONE]=D3DTEXF_ANISOTROPIC;
-	_MagTextureFilters[0][FILTER_TYPE_NONE]=D3DTEXF_ANISOTROPIC;
-	_MipMapFilters[0][FILTER_TYPE_NONE]=D3DTEXF_LINEAR;
+	_MagTextureFilters[0][FILTER_TYPE_BEST]=D3DTEXF_POINT;
+	_MinTextureFilters[0][FILTER_TYPE_BEST]=D3DTEXF_POINT;
+	_MipMapFilters[0][FILTER_TYPE_BEST]=D3DTEXF_POINT;
 
-	_MinTextureFilters[0][FILTER_TYPE_FAST]=D3DTEXF_ANISOTROPIC;
-	_MagTextureFilters[0][FILTER_TYPE_FAST]=D3DTEXF_ANISOTROPIC;
-	_MipMapFilters[0][FILTER_TYPE_FAST]=D3DTEXF_LINEAR;
-
-	_MagTextureFilters[0][FILTER_TYPE_BEST]=D3DTEXF_ANISOTROPIC;
-	_MinTextureFilters[0][FILTER_TYPE_BEST]=D3DTEXF_ANISOTROPIC;
-	_MipMapFilters[0][FILTER_TYPE_BEST]=D3DTEXF_LINEAR;
-#endif
-
-#ifndef _XBOX
 	if (dx8caps.TextureFilterCaps&D3DPTFILTERCAPS_MAGFLINEAR) _MagTextureFilters[0][FILTER_TYPE_BEST]=D3DTEXF_LINEAR;
 	if (dx8caps.TextureFilterCaps&D3DPTFILTERCAPS_MINFLINEAR) _MinTextureFilters[0][FILTER_TYPE_BEST]=D3DTEXF_LINEAR;
 
@@ -144,23 +129,10 @@ void TextureFilterClass::_Init_Filters(TextureFilterMode filter_type)
 	if (filter_type==TEXTURE_FILTER_ANISOTROPIC || filter_type==TEXTURE_FILTER_TRILINEAR) {
 		if (dx8caps.TextureFilterCaps&D3DPTFILTERCAPS_MIPFLINEAR) _MipMapFilters[0][FILTER_TYPE_BEST]=D3DTEXF_LINEAR;
 	}
-#endif
 
 	// For stages above zero, set best filter to the same as the stage zero, except if anisotropic
 	int i=1;
 	for (;i<MAX_TEXTURE_STAGES;++i) {
-/*		_MinTextureFilters[i][FILTER_TYPE_NONE]=D3DTEXF_POINT;
-		_MagTextureFilters[i][FILTER_TYPE_NONE]=D3DTEXF_POINT;
-		_MipMapFilters[i][FILTER_TYPE_NONE]=D3DTEXF_NONE;
-
-		_MinTextureFilters[i][FILTER_TYPE_FAST]=D3DTEXF_LINEAR;
-		_MagTextureFilters[i][FILTER_TYPE_FAST]=D3DTEXF_LINEAR;
-		_MipMapFilters[i][FILTER_TYPE_FAST]=D3DTEXF_POINT;
-
-		_MagTextureFilters[i][FILTER_TYPE_BEST]=D3DTEXF_LINEAR;
-		_MinTextureFilters[i][FILTER_TYPE_BEST]=D3DTEXF_LINEAR;
-		_MipMapFilters[i][FILTER_TYPE_BEST]=D3DTEXF_POINT;
-*/
 		_MinTextureFilters[i][FILTER_TYPE_NONE]=_MinTextureFilters[i-1][FILTER_TYPE_NONE];
 		_MagTextureFilters[i][FILTER_TYPE_NONE]=_MagTextureFilters[i-1][FILTER_TYPE_NONE];
 		_MipMapFilters[i][FILTER_TYPE_NONE]=_MipMapFilters[i-1][FILTER_TYPE_NONE];
