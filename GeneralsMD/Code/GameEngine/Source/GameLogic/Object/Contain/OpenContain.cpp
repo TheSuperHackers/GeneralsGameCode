@@ -1469,7 +1469,7 @@ void OpenContain::processDamageToContained(Real percentDamage)
 	if( items )
 	{
 		ContainedItemsList::const_iterator it = items->begin();
-		const size_t listSize = items->size();
+		size_t listSize = items->size();
 
 		while( it != items->end() )
 		{
@@ -1501,8 +1501,13 @@ void OpenContain::processDamageToContained(Real percentDamage)
 			// GLA Battle Bus with at least 2 half damaged GLA Terrorists inside.
 			if (listSize != items->size())
 			{
-				DEBUG_ASSERTCRASH( listSize == 0, ("List is expected empty") );
-				break;
+				DEBUG_ASSERTCRASH(std::find(items->begin(), items->end(), object) == items->end(), ("Current object was expected to be deleted"));
+
+				// TheSuperHackers @bugfix Caball009 11/03/2026 After Object::attemptDamage,
+				// the iterator may or may not be invalidated and the list may or may not be empty.
+				// Set the iterator to the beginning of the list.
+				it = items->begin();
+				listSize = items->size();
 			}
 		}
 	}
