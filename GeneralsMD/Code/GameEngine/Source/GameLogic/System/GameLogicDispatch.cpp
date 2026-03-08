@@ -680,6 +680,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			Object* source = findObjectByID(sourceID);
 			if (source != nullptr)
 			{
+#if !RETAIL_COMPATIBLE_CRC
 				// TheSuperHackers @fix stephanmeesters 01/03/2026 Validate the origin of the source object
 				if ( source->getControllingPlayer() != thisPlayer )
 				{
@@ -689,6 +690,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 						 source->getControllingPlayer()->getPlayerDisplayName().str()) );
 					break;
 				}
+#endif
 
 				AIGroupPtr theGroup = TheAI->createGroup();
 				theGroup->add(source);
@@ -735,6 +737,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			Object* source = findObjectByID(sourceID);
 			if (source != nullptr)
 			{
+#if !RETAIL_COMPATIBLE_CRC
 				// TheSuperHackers @fix stephanmeesters 01/03/2026 Validate the origin of the source object
 				if ( source->getControllingPlayer() != thisPlayer )
 				{
@@ -744,7 +747,8 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 						 source->getControllingPlayer()->getPlayerDisplayName().str()) );
 					break;
 				}
-				
+#endif
+
 				AIGroupPtr theGroup = TheAI->createGroup();
 				theGroup->add(source);
 				theGroup->groupDoSpecialPowerAtLocation( specialPowerID, &targetCoord, angle, objectInWay, options );
@@ -788,6 +792,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			Object* source = findObjectByID(sourceID);
 			if (source != nullptr)
 			{
+#if !RETAIL_COMPATIBLE_CRC
 				// TheSuperHackers @fix stephanmeesters 01/03/2026 Validate the origin of the source object
 				if ( source->getControllingPlayer() != thisPlayer )
 				{
@@ -797,7 +802,8 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 						 source->getControllingPlayer()->getPlayerDisplayName().str()) );
 					break;
 				}
-				
+#endif
+
 				AIGroupPtr theGroup = TheAI->createGroup();
 				theGroup->add(source);
 				theGroup->groupDoSpecialPowerAtObject( specialPowerID, target, options );
@@ -1241,6 +1247,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			Object* source = findObjectByID(sourceID);
 			if (source != nullptr)
 			{
+#if !RETAIL_COMPATIBLE_CRC
 				// TheSuperHackers @fix stephanmeesters 01/03/2026 Validate the origin of the source object
 				if ( source->getControllingPlayer() != thisPlayer )
 				{
@@ -1250,7 +1257,8 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 						 source->getControllingPlayer()->getPlayerDisplayName().str()) );
 					break;
 				}
-				
+#endif
+
 				AIGroupPtr theGroup = TheAI->createGroup();
 				theGroup->add(source);
 				theGroup->groupOverrideSpecialPowerDestination( spType, loc, CMD_FROM_PLAYER );
