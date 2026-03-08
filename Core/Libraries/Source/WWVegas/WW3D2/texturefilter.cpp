@@ -124,6 +124,11 @@ void TextureFilterClass::_Init_Filters(TextureFilterMode filter_type)
 	BOOL FilterSupported = false;
 	switch (filter_type) {
 
+	default:
+		// TheSuperHackers @info if we have an invalid filter_type, set the filtering to none
+		DEBUG_CRASH(("Invalid filter type passed into TextureFilterClass::_Init_Filters()"));
+		FALLTHROUGH;
+
 	case TEXTURE_FILTER_NONE:
 
 		_MinTextureFilters[0][FILTER_TYPE_FAST]=D3DTEXF_POINT;
