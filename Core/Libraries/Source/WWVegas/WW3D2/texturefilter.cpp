@@ -104,17 +104,20 @@ void TextureFilterClass::_Init_Filters(TextureFilterMode filter_type)
 {
 	const D3DCAPS8& dx8caps=DX8Wrapper::Get_Current_Caps()->Get_DX8_Caps();
 
+	// TheSuperHackers @info Init zero stage filter defaults, point filtering is the lowest type for non mip filtering
 	_MinTextureFilters[0][FILTER_TYPE_NONE]=D3DTEXF_POINT;
 	_MagTextureFilters[0][FILTER_TYPE_NONE]=D3DTEXF_POINT;
 	_MipMapFilters[0][FILTER_TYPE_NONE]=D3DTEXF_NONE;
 
+	// Bilinear
 	_MinTextureFilters[0][FILTER_TYPE_FAST]=D3DTEXF_LINEAR;
 	_MagTextureFilters[0][FILTER_TYPE_FAST]=D3DTEXF_LINEAR;
 	_MipMapFilters[0][FILTER_TYPE_FAST]=D3DTEXF_POINT;
 
-	_MagTextureFilters[0][FILTER_TYPE_BEST]=D3DTEXF_POINT;
-	_MinTextureFilters[0][FILTER_TYPE_BEST]=D3DTEXF_POINT;
-	_MipMapFilters[0][FILTER_TYPE_BEST]=D3DTEXF_POINT;
+	// Anisotropic - MipMap interlayer filtering only goes up to linear
+	_MinTextureFilters[0][FILTER_TYPE_BEST]=D3DTEXF_ANISOTROPIC;
+	_MagTextureFilters[0][FILTER_TYPE_BEST]=D3DTEXF_ANISOTROPIC;
+	_MipMapFilters[0][FILTER_TYPE_BEST]=D3DTEXF_LINEAR;
 
 	if (dx8caps.TextureFilterCaps&D3DPTFILTERCAPS_MAGFLINEAR) _MagTextureFilters[0][FILTER_TYPE_BEST]=D3DTEXF_LINEAR;
 	if (dx8caps.TextureFilterCaps&D3DPTFILTERCAPS_MINFLINEAR) _MinTextureFilters[0][FILTER_TYPE_BEST]=D3DTEXF_LINEAR;
