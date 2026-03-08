@@ -576,7 +576,6 @@ UpdateSleepTime ParticleUplinkCannonUpdate::update()
 					templateLaserRadius = update->getTemplateLaserRadius();
 					visualLaserRadius = update->getCurrentLaserRadius();
 				}
-				// TheSuperHackers @fix The positional audio is now decoupled from the beam origin.
 				Coord3D audioPos = m_currentTargetPosition;
 				audioPos.z += ORBITAL_BEAM_AUDIO_Z_OFFSET;
 				beam->setPosition( &audioPos );
@@ -969,7 +968,6 @@ void ParticleUplinkCannonUpdate::createOrbitToTargetLaser( UnsignedInt growthFra
 					orbitPosition.z += ORBITAL_BEAM_Z_OFFSET;
 					update->initLaser( nullptr, &orbitPosition, &m_initialTargetPosition, growthFrames );
 				}
-				// TheSuperHackers @fix The positional audio is now decoupled from the beam origin.
 				Coord3D audioPos = m_initialTargetPosition;
 				audioPos.z += ORBITAL_BEAM_AUDIO_Z_OFFSET;
 				beam->setPosition( &audioPos );
