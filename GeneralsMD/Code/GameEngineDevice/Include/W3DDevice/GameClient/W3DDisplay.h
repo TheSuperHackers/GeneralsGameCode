@@ -120,7 +120,7 @@ public:
 
 	virtual VideoBuffer*	createVideoBuffer() ;							///< Create a video buffer that can be used for this display
 
-	virtual void takeScreenShot();						//save screenshot to file
+	virtual void takeScreenShot(ScreenshotFormat format);	//save screenshot in specified format
 	virtual void toggleMovieCapture();			//enable AVI or frame capture mode.
 
 	virtual void toggleLetterBox();	///<enabled letter-boxed display
