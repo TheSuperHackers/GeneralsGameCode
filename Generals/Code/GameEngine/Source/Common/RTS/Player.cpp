@@ -3152,7 +3152,16 @@ void Player::applyBattlePlanBonusesForPlayerObjects( const BattlePlanBonusesData
 	}
 
 	DUMPBATTLEPLANBONUSES(m_battlePlanBonuses, this, nullptr);
+#if RETAIL_COMPATIBLE_CRC
 	iterateObjects( localApplyBattlePlanBonusesToObject, const_cast<BattlePlanBonusesData *>(bonus) );
+#else
+	// TheSuperHackers @bugfix Stubbjax 05/02/2026 Apply all bonuses the player has rather than just the most recent.
+	BattlePlanBonusesData newBonus = *m_battlePlanBonuses;
+	newBonus.m_armorScalar = bonus->m_armorScalar;
+	newBonus.m_sightRangeScalar = bonus->m_sightRangeScalar;
+
+	iterateObjects(localApplyBattlePlanBonusesToObject, &newBonus);
+#endif
 }
 
 
