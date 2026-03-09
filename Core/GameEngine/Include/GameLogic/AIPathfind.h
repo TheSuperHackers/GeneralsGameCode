@@ -331,6 +331,9 @@ public:
 	void forwardInsertionSortRetailCompatible(PathfindCellList& list);
 #endif
 
+	// Forward insertion sort, in ascending cost order
+	void forwardInsertionSort(PathfindCellList& list);
+
 	/// put self on "open" list in ascending cost order
 	void putOnSortedOpenList( PathfindCellList &list );
 

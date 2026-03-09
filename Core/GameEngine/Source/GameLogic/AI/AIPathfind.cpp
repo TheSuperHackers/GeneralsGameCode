@@ -1680,6 +1680,7 @@ Bool PathfindCell::removeObstacle( Object *obstacle )
 	return true;
 }
 
+#if RETAIL_COMPATIBLE_PATHFINDING
 // Retail compatible insertion sort
 void PathfindCell::forwardInsertionSortRetailCompatible(PathfindCellList& list)
 {
@@ -1731,11 +1732,60 @@ void PathfindCell::forwardInsertionSortRetailCompatible(PathfindCellList& list)
 		m_info->m_nextOpen = nullptr;
 	}
 }
+#endif
+
+// Forward insertion sort, returns early if the list is being initialised or we are prepending the list
+void PathfindCell::forwardInsertionSort(PathfindCellList& list)
+{
+	DEBUG_ASSERTCRASH(m_info, ("Has to have info."));
+	DEBUG_ASSERTCRASH(m_info->m_closed == FALSE && m_info->m_open == FALSE, ("Serious error - Invalid flags. jba"));
+
+	// mark the new cell as being on the open list
+	m_info->m_open = true;
+	m_info->m_closed = false;
+
+	if (list.m_head == nullptr) {
+		m_info->m_prevOpen = nullptr;
+		m_info->m_nextOpen = nullptr;
+		list.m_head = this;
+		return;
+	}
+
+	// If the node needs inserting before the current list head
+	if (m_info->m_totalCost < list.m_head->m_info->m_totalCost) {
+		m_info->m_prevOpen = nullptr;
+		list.m_head->m_info->m_prevOpen = this->m_info;
+		m_info->m_nextOpen = list.m_head->m_info;
+		list.m_head = this;
+		return;
+	}
+
+	// Traverse the list to find correct position
+	PathfindCell* current = list.m_head;
+	while (current->m_info->m_nextOpen && current->m_info->m_nextOpen->m_totalCost <= m_info->m_totalCost) {
+		current = current->getNextOpen();
+	}
+
+	// Insert the new node in the correct position
+	m_info->m_nextOpen = current->m_info->m_nextOpen;
+	if (current->m_info->m_nextOpen != nullptr) {
+		current->m_info->m_nextOpen->m_prevOpen = this->m_info;
+	}
+	current->m_info->m_nextOpen = this->m_info;
+	m_info->m_prevOpen = current->m_info;
+}
 
 /// put self on "open" list in ascending cost order, return new list
 void PathfindCell::putOnSortedOpenList( PathfindCellList &list )
 {
+#if RETAIL_COMPATIBLE_PATHFINDING
+	if (!s_useFixedPathfinding) {
 		forwardInsertionSortRetailCompatible(list);
+		return;
+	}
+#endif
+
+	forwardInsertionSort(list);
 }
 
 /// remove self from "open" list
