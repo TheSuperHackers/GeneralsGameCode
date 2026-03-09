@@ -587,6 +587,22 @@ void AIDockProcessDockState::setNextDockActionFrame()
 }
 
 //----------------------------------------------------------------------------------------------
+// TheSuperHackers @bugfix bobtista 31/01/2026 Serialize m_nextDockActionFrame for deterministic
+// checkpoint replays. Without this, units may complete dock actions at different frames after load.
+//----------------------------------------------------------------------------------------------
+void AIDockProcessDockState::xfer( Xfer *xfer )
+{
+	XferVersion currentVersion = 2;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
+
+	if (version >= 2)
+	{
+		xfer->xferUnsignedInt(&m_nextDockActionFrame);
+	}
+}
+
+//----------------------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------------------
 StateReturnType AIDockProcessDockState::onEnter()
 {

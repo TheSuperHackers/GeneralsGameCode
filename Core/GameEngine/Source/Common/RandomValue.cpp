@@ -182,6 +182,40 @@ static UnsignedInt randomValue(UnsignedInt (&seed)[6])
 // of the effects displayed on the GameClient.
 //
 
+UnsignedInt GetGameLogicRandomSeed( void )
+{
+	return theGameLogicBaseSeed;
+}
+
+UnsignedInt GetGameLogicRandomSeedCRC( void )
+{
+	CRC c;
+	c.computeCRC(theGameLogicSeed, 6*sizeof(UnsignedInt));
+	return c.get();
+}
+
+// TheSuperHackers @info bobtista 19/01/2026
+// Get the full RNG state for serialization in checkpoints.
+void GetGameLogicRandomState( UnsignedInt* state, UnsignedInt* baseSeed )
+{
+	for (int i = 0; i < 6; ++i)
+	{
+		state[i] = theGameLogicSeed[i];
+	}
+	*baseSeed = theGameLogicBaseSeed;
+}
+
+// TheSuperHackers @info bobtista 19/01/2026
+// Restore the full RNG state after loading a checkpoint.
+void SetGameLogicRandomState( const UnsignedInt* state, UnsignedInt baseSeed )
+{
+	for (int i = 0; i < 6; ++i)
+	{
+		theGameLogicSeed[i] = state[i];
+	}
+	theGameLogicBaseSeed = baseSeed;
+}
+
 //
 // Integer random value
 //

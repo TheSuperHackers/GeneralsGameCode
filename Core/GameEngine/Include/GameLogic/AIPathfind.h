@@ -175,6 +175,11 @@ public:
 	/// Given a location, return closest location on path, and along-path dist to end as function result
 	void markOptimized() {m_isOptimized = true;}
 
+	/// TheSuperHackers @bugfix bobtista 31/01/2026 Invalidate CPOP cache after checkpoint load.
+	/// This forces computePointOnPath() to search from the beginning of the path and find the
+	/// segment closest to the unit's current position, rather than using a stale cached segment.
+	void invalidateCpopCache(void) {m_cpopValid = false; m_cpopRecentStart = nullptr;}
+
 protected:
 	// snapshot interface
 	virtual void crc( Xfer *xfer );
@@ -304,9 +309,11 @@ public:
 
 	Bool setTypeAsObstacle( Object *obstacle, Bool isFence, const ICoord2D &pos );				///< flag this cell as an obstacle, from the given one
 	Bool removeObstacle( Object *obstacle );				///< unflag this cell as an obstacle, from the given one
+	void resetForCheckpointLoad( void );				///< reset cell type and obstacle info, but preserve flags and zone
 	void setType( CellType type );	///< set the cell type
 	CellType getType() const { return (CellType)m_type; }				///< get the cell type
 	CellFlags getFlags() const { return (CellFlags)m_flags; }				///< get the cell type
+	void setFlags( CellFlags flags ) { m_flags = flags; }				///< set the cell flags (TheSuperHackers @bobtista 29/01/2026)
 	Bool isAircraftGoal() const {return m_aircraftGoal != 0;}
 
 	Bool isObstaclePresent( ObjectID objID ) const;					///< return true if the given object ID is registered as an obstacle in this cell
@@ -417,6 +424,7 @@ typedef PathfindCell *PathfindCellP;
  */
 class PathfindLayer
 {
+	friend class Pathfinder;  ///< TheSuperHackers @info bobtista 21/01/2026 Allows Pathfinder::xfer to serialize layer state
 public:
 	PathfindLayer();
 	~PathfindLayer();
@@ -527,6 +535,7 @@ typedef ZoneBlock *ZoneBlockP;
  */
 class PathfindZoneManager
 {
+	friend class Pathfinder;  ///< TheSuperHackers @info bobtista 20/01/2026 Allows Pathfinder::xfer to serialize zone state
 public:
 	enum {INITIAL_ZONES = 256};
 	enum {ZONE_BLOCK_SIZE = 10};	// Zones are calculated in blocks of 20x20.  This way, the raw zone numbers can be used to

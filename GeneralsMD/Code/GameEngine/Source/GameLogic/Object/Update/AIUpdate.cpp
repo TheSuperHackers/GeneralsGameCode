@@ -400,6 +400,21 @@ void AIUpdateInterface::doPathfind( PathfindServicesInterface *pathfinder )
 	}
 	//CRCDEBUG_LOG(("AIUpdateInterface::doPathfind() for object %d", getObject()->getID()));
 	m_waitingForPath = FALSE;
+	// TheSuperHackers @debug bobtista 23/01/2026 Log pathfind parameters for checkpoint debugging
+#ifdef DEBUG_LOGGING
+	{
+		Int frame = TheGameLogic->getFrame();
+		if (false && frame >= 2444 && frame <= 2448) // TheSuperHackers @debug disabled
+		{
+			const Coord3D *pos = getObject()->getPosition();
+			DEBUG_LOG(("Pathfind[%d] doPathfind obj %u: pos=(%.6f,%.6f,%.6f) dest=(%.6f,%.6f,%.6f) isSafe=%d isApproach=%d isAttack=%d",
+				frame, getObject()->getID(),
+				pos->x, pos->y, pos->z,
+				m_requestedDestination.x, m_requestedDestination.y, m_requestedDestination.z,
+				m_isSafePath, m_isApproachPath, m_isAttackPath));
+		}
+	}
+#endif
 	if (m_isSafePath) {
 		destroyPath();
 		Coord3D pos1, pos2;
@@ -478,7 +493,6 @@ will be processed when we get to the front of the pathfind queue. jba */
 //-------------------------------------------------------------------------------------------------
 void AIUpdateInterface::requestPath( Coord3D *destination, Bool isFinalGoal )
 {
-
 	if (m_locomotorSet.getValidSurfaces() == 0) {
 		DEBUG_CRASH(("Attempting to path immobile unit."));
 	}
@@ -5087,6 +5101,9 @@ void AIUpdateInterface::xfer( Xfer *xfer )
 	xfer->xferCoord3D(&m_locationToGuard);
 
 	xfer->xferObjectID(&m_objectToGuard);
+	// TheSuperHackers @bugfix bobtista 21/01/2026 Serialize m_guardMode to preserve guard behavior
+	// after loading a checkpoint. Without this, guards would revert to GUARDMODE_NORMAL.
+	xfer->xferUser(&m_guardMode, sizeof(m_guardMode));
 
 	AsciiString triggerName;
 	if (m_areaToGuard) triggerName = m_areaToGuard->getTriggerName();
@@ -5145,21 +5162,34 @@ void AIUpdateInterface::xfer( Xfer *xfer )
 	xfer->xferCoord3D(&m_requestedDestination);
 	xfer->xferCoord3D(&m_requestedDestination2);
 
-	// Not needed - we will recompute paths on load.
-	//xfer->xferUnsignedInt(&m_pathTimestamp);
+	// TheSuperHackers @bugfix bobtista 20/01/2026 Serialize m_pathTimestamp to prevent path recomputation
+	// timing differences after loading a checkpoint. Without this, units might recompute paths at
+	// different frames than in the original replay, causing simulation divergence.
+	xfer->xferUnsignedInt(&m_pathTimestamp);
 
 	xfer->xferObjectID(&m_ignoreObstacleID);
 	xfer->xferReal(&m_pathExtraDistance);
 	xfer->xferICoord2D(&m_pathfindGoalCell);
 	xfer->xferICoord2D(&m_pathfindCurCell);
 
-	// Not needed - jba.
-	//Int					m_blockedFrames;						///< Number of frames we've been blocked.
-	//Real				m_curMaxBlockedSpeed;				///< Max speed we can have and not run into blocking things.
-	//Bool				m_isBlocked;
-	//Bool				m_isBlockedAndStuck;				///< True if we are stuck & need to recompute path.
-	//Bool				m_isInUpdate;
-	//Bool				m_fixLocoInPostProcess;
+	// TheSuperHackers @bugfix bobtista 20/01/2026 Serialize blocked state to prevent movement behavior
+	// differences after loading a checkpoint. These fields affect path recomputation decisions.
+	xfer->xferInt(&m_blockedFrames);
+	xfer->xferReal(&m_curMaxBlockedSpeed);
+	xfer->xferBool(&m_isBlocked);
+	xfer->xferBool(&m_isBlockedAndStuck);
+	// TheSuperHackers @bugfix bobtista 21/01/2026 Serialize additional movement-related fields
+	// m_bumpSpeedLimit affects max speed after bumping a unit
+	xfer->xferReal(&m_bumpSpeedLimit);
+	// m_nextGoalPathIndex determines which waypoint in a path we're heading to
+	xfer->xferInt(&m_nextGoalPathIndex);
+	// m_isMoving affects state transitions
+	xfer->xferBool(&m_isMoving);
+	// m_retryPath affects pathfinding retry logic
+	xfer->xferBool(&m_retryPath);
+	// m_allowedToChase affects whether unit can pursue targets
+	xfer->xferBool(&m_allowedToChase);
+	// m_isInUpdate and m_fixLocoInPostProcess are transient and don't need serialization
 
 	xfer->xferUnsignedInt(&m_ignoreCollisionsUntil);
 	xfer->xferUnsignedInt(&m_queueForPathFrame);
@@ -5288,6 +5318,20 @@ void AIUpdateInterface::loadPostProcess()
 {
 	UpdateModule::loadPostProcess();
 
+	// TheSuperHackers @bugfix bobtista 21/01/2026 Clear waiting for path flag if path already exists.
+	// After checkpoint load, the path is restored but m_waitingForPath may still be TRUE from when
+	// the checkpoint was saved. This would cause doPathfind() to recompute and destroy the restored path.
+	// TheSuperHackers @bugfix bobtista 31/01/2026 Also reset CPOP cache to recalculate from current position.
+	// The restored path may have a stale m_cpopRecentStart pointing to a waypoint the unit has passed.
+	if (m_path != nullptr)
+	{
+		if (m_waitingForPath)
+		{
+			m_waitingForPath = FALSE;
+		}
+		m_path->invalidateCpopCache();
+	}
+
 	if (m_fixLocoInPostProcess && m_curLocomotorSet!=LOCOMOTORSET_INVALID)
 	{
 		m_fixLocoInPostProcess = FALSE;
@@ -5298,23 +5342,10 @@ void AIUpdateInterface::loadPostProcess()
 		chooseLocomotorSet(lst);
 	}
 
-	if (!isMoving()) {
-		m_pathfindGoalCell.x = -1;
-		m_pathfindGoalCell.y = -1;
-		TheAI->pathfinder()->updateGoal(getObject(), getObject()->getPosition(), getObject()->getLayer());
-		m_pathfindCurCell.x = -1;
-		m_pathfindCurCell.y = -1;
-		TheAI->pathfinder()->updatePos(getObject(), getObject()->getPosition());
-	}	else {
-		if (m_pathfindGoalCell.x >= 0 && m_pathfindGoalCell.y >= 0) {
-			Coord3D goalPos;
-			goalPos.x = m_pathfindGoalCell.x * PATHFIND_CELL_SIZE_F + PATHFIND_CELL_SIZE_F*0.5f;
-			goalPos.y = m_pathfindGoalCell.y * PATHFIND_CELL_SIZE_F + PATHFIND_CELL_SIZE_F*0.5f;
-			m_pathfindGoalCell.x = -1;
-			m_pathfindGoalCell.y = -1;
-			TheAI->pathfinder()->updateGoal(getObject(), &goalPos, getObject()->getLayer());
-		}
-	}
+	// TheSuperHackers @info bobtista 29/01/2026 PathfindCell flags and unit IDs are now serialized
+	// directly in Pathfinder::xfer(). We no longer need to call updateGoal/updatePos here because
+	// the cell state is restored from the checkpoint. Calling them here would overwrite the
+	// serialized state and could produce different flags due to order differences.
 
 }
 

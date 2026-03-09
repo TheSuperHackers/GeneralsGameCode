@@ -837,11 +837,20 @@ void DozerActionStateMachine::crc( Xfer *xfer )
 void DozerActionStateMachine::xfer( Xfer *xfer )
 {
   // version
-  XferVersion currentVersion = 1;
+  // TheSuperHackers @bugfix bobtista 28/01/2026 Bump version to 2 to add base class serialization.
+  XferVersion currentVersion = 2;
   XferVersion version = currentVersion;
   xfer->xferVersion( &version, currentVersion );
 
 	xfer->xferUser(&m_task, sizeof(m_task));
+
+	// TheSuperHackers @bugfix bobtista 28/01/2026 Call base class xfer to serialize current state.
+	// Without this, the inner state machine resets to default state after checkpoint load,
+	// causing weapon set changes to happen one frame later than expected.
+	if (version >= 2)
+	{
+		StateMachine::xfer(xfer);
+	}
 }
 
 // ------------------------------------------------------------------------------------------------

@@ -150,10 +150,18 @@ void TurretStateMachine::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void TurretStateMachine::xfer( Xfer *xfer )
 {
-	XferVersion cv = 1;
+	// TheSuperHackers @bugfix bobtista 28/01/2026 Bump version to 2 to add base class serialization.
+	XferVersion cv = 2;
 	XferVersion v = cv;
 	xfer->xferVersion( &v, cv );
 
+	// TheSuperHackers @bugfix bobtista 28/01/2026 Call base class xfer to serialize current state.
+	// Without this, the turret state machine resets to default state after checkpoint load,
+	// causing incorrect turret behavior.
+	if (v >= 2)
+	{
+		StateMachine::xfer(xfer);
+	}
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -161,6 +169,7 @@ void TurretStateMachine::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void TurretStateMachine::loadPostProcess()
 {
+	StateMachine::loadPostProcess();
 }
 
 //----------------------------------------------------------------------------------------------------------

@@ -284,7 +284,7 @@ void Path::crc( Xfer *xfer )
 void Path::xfer( Xfer *xfer )
 {
   // version
-  XferVersion currentVersion = 1;
+  XferVersion currentVersion = 2;
   XferVersion version = currentVersion;
   xfer->xferVersion( &version, currentVersion );
 
@@ -317,7 +317,11 @@ void Path::xfer( Xfer *xfer )
 		}
 		DEBUG_ASSERTCRASH(count==0, ("Wrong data count"));
 	} else {
-		m_cpopValid = FALSE;
+		// TheSuperHackers @info bobtista 20/01/2026 Cache invalidation moved to version < 2
+		if ( version < 2 )
+		{
+			m_cpopValid = FALSE;
+		}
 		while (count) {
 			Int nodeId;
 			xfer->xferInt(&nodeId);
@@ -359,6 +363,43 @@ void Path::xfer( Xfer *xfer )
 	UnsignedInt obsolete2;
 	xfer->xferUnsignedInt(&obsolete2);
 	xfer->xferBool(&m_blockedByAlly);
+
+	// TheSuperHackers @fix bobtista 20/01/2026
+	// Serialize path cache state to ensure consistent behavior after checkpoint load.
+	// Without this, path computation may iterate differently causing CRC divergence.
+	if ( version >= 2 )
+	{
+		xfer->xferBool(&m_cpopValid);
+		xfer->xferInt(&m_cpopCountdown);
+		xfer->xferCoord3D(&m_cpopIn);
+		xfer->xferReal(&m_cpopOut.distAlongPath);
+		xfer->xferCoord3D(&m_cpopOut.posOnPath);
+		xfer->xferUser(&m_cpopOut.layer, sizeof(m_cpopOut.layer));
+
+		// Save/restore m_cpopRecentStart as node ID
+		Int recentStartId = -1;
+		if ( xfer->getXferMode() == XFER_SAVE )
+		{
+			if ( m_cpopRecentStart )
+			{
+				recentStartId = m_cpopRecentStart->m_id;
+			}
+		}
+		xfer->xferInt(&recentStartId);
+		if ( xfer->getXferMode() == XFER_LOAD )
+		{
+			m_cpopRecentStart = nullptr;
+			if ( recentStartId > 0 )
+			{
+				PathNode *searchNode = m_path;
+				while ( searchNode && searchNode->m_id != recentStartId )
+				{
+					searchNode = searchNode->getNext();
+				}
+				m_cpopRecentStart = searchNode;
+			}
+		}
+	}
 
 
 #if defined(RTS_DEBUG)
@@ -781,7 +822,6 @@ void Path::computePointOnPath(
 	{
 		out = m_cpopOut;
 		m_cpopCountdown--;
-		CRCDEBUG_LOG(("Path::computePointOnPath() end because we're really close"));
 		return;
 	}
 	m_cpopCountdown = MAX_CPOP;
@@ -1280,6 +1320,33 @@ void PathfindCell::reset()
 	m_connectsToLayer = LAYER_INVALID;
 	m_layer = LAYER_GROUND;
 
+}
+
+/**
+ * Reset cell type and obstacle info for checkpoint load.
+ * Preserves m_flags (unit tracking), m_zone (serialized), and m_aircraftGoal (serialized).
+ * TheSuperHackers @bobtista 28/01/2026
+ */
+void PathfindCell::resetForCheckpointLoad( void )
+{
+	// Clear obstacle info, but preserve unit position/goal info and aircraft goals
+	// which were serialized and loaded in Pathfinder::xfer().
+	if (m_info) {
+		m_info->m_obstacleID = INVALID_ID;
+		m_info->m_obstacleIsFence = false;
+		m_info->m_obstacleIsTransparent = false;
+		// Only release m_info if there's no unit data or aircraft goal to preserve
+		if (m_info->m_posUnitID == INVALID_ID && m_info->m_goalUnitID == INVALID_ID &&
+			m_info->m_goalAircraftID == INVALID_ID) {
+			PathfindCellInfo::releaseACellInfo(m_info);
+			m_info = nullptr;
+		}
+	}
+	// Now safe to set type to CELL_CLEAR
+	m_type = PathfindCell::CELL_CLEAR;
+	m_pinched = false;
+	// Note: m_flags, m_zone, and m_aircraftGoal are intentionally NOT cleared
+	// as they were serialized and loaded in Pathfinder::xfer()
 }
 
 /**
@@ -2254,16 +2321,37 @@ void ZoneBlock::blockCalculateZones(PathfindCell **map, PathfindLayer layers[], 
 {
 	Int i, j;
 	m_cellOrigin = bounds.lo;
-	UnsignedInt minZone = map[bounds.lo.x][bounds.lo.y].getZone();
-	UnsignedInt maxZone = minZone;
+
+	// TheSuperHackers @fix bobtista 21/01/2026
+	// During checkpoint load, some cells may have zone 0 (UNINITIALIZED_ZONE) which is
+	// valid for cells under objects. We skip zone-0 cells when calculating min/max zones
+	// to avoid including them in the zone range. This allows blockCalculateZones() to work
+	// correctly after checkpoint loading where serialized zones include zone-0 cells.
+	UnsignedInt minZone = 0;
+	UnsignedInt maxZone = 0;
+	Bool foundValidZone = FALSE;
 
 	for( j=bounds.lo.y; j<=bounds.hi.y; j++ )	{
 		for( i=bounds.lo.x; i<=bounds.hi.x; i++ )	{
 			PathfindCell *cell = &map[i][j];
 			zoneStorageType zone = cell->getZone();
-			if (minZone>zone) minZone=zone;
-			if (maxZone<zone) maxZone=zone;
+			// Skip zone 0 (cells under objects or uninitialized cells)
+			if (zone == 0) continue;
+			if (!foundValidZone) {
+				minZone = zone;
+				maxZone = zone;
+				foundValidZone = TRUE;
+			} else {
+				if (minZone>zone) minZone=zone;
+				if (maxZone<zone) maxZone=zone;
+			}
 		}
+	}
+
+	// If no valid zones found, treat block as single zone
+	if (!foundValidZone) {
+		minZone = 1;
+		maxZone = 1;
 	}
 	m_firstZone = minZone;
 	m_numZones = 1 + maxZone - minZone;
@@ -2282,36 +2370,46 @@ void ZoneBlock::blockCalculateZones(PathfindCell **map, PathfindLayer layers[], 
 
 	for( j=bounds.lo.y; j<=bounds.hi.y; j++ )	{
 		for( i=bounds.lo.x; i<=bounds.hi.x; i++ )	{
-			if (i>bounds.lo.x && map[i][j].getZone()!=map[i-1][j].getZone()) {
+			// TheSuperHackers @fix bobtista 21/01/2026
+			// Skip zone-0 cells (cells under objects or uninitialized) when building zone equivalencies.
+			// These cells are not pathable anyway, so they don't need to be included in zone connectivity.
+			zoneStorageType thisZone = map[i][j].getZone();
+			if (thisZone == 0) continue;
 
-				if (waterGround(map[i][j], map[i-1][j])) {
-					applyBlockZone(map[i][j], map[i-1][j], m_groundWaterZones, m_firstZone, m_numZones);
-				}
-				if (groundRubble(map[i][j], map[i-1][j])) {
-					applyBlockZone(map[i][j], map[i-1][j], m_groundRubbleZones, m_firstZone, m_numZones);
-				}
-				if (groundCliff(map[i][j], map[i-1][j])) {
-					applyBlockZone(map[i][j], map[i-1][j], m_groundCliffZones, m_firstZone, m_numZones);
-				}
-				if (crusherGround(map[i][j], map[i-1][j])) {
-					applyBlockZone(map[i][j], map[i-1][j], m_crusherZones, m_firstZone, m_numZones);
-				}
-			}
-			if (j>bounds.lo.y && map[i][j].getZone()!=map[i][j-1].getZone()) {
-				if (waterGround(map[i][j],map[i][j-1])) {
-					applyBlockZone(map[i][j], map[i][j-1], m_groundWaterZones, m_firstZone, m_numZones);
-				}
-				if (groundRubble(map[i][j], map[i][j-1])) {
-					applyBlockZone(map[i][j], map[i][j-1], m_groundRubbleZones, m_firstZone, m_numZones);
-				}
-				if (groundCliff(map[i][j],map[i][j-1])) {
-					applyBlockZone(map[i][j], map[i][j-1], m_groundCliffZones, m_firstZone, m_numZones);
-				}
-				if (crusherGround(map[i][j], map[i][j-1])) {
-					applyBlockZone(map[i][j], map[i][j-1], m_crusherZones, m_firstZone, m_numZones);
+			if (i>bounds.lo.x) {
+				zoneStorageType leftZone = map[i-1][j].getZone();
+				if (leftZone != 0 && thisZone != leftZone) {
+					if (waterGround(map[i][j], map[i-1][j])) {
+						applyBlockZone(map[i][j], map[i-1][j], m_groundWaterZones, m_firstZone, m_numZones);
+					}
+					if (groundRubble(map[i][j], map[i-1][j])) {
+						applyBlockZone(map[i][j], map[i-1][j], m_groundRubbleZones, m_firstZone, m_numZones);
+					}
+					if (groundCliff(map[i][j], map[i-1][j])) {
+						applyBlockZone(map[i][j], map[i-1][j], m_groundCliffZones, m_firstZone, m_numZones);
+					}
+					if (crusherGround(map[i][j], map[i-1][j])) {
+						applyBlockZone(map[i][j], map[i-1][j], m_crusherZones, m_firstZone, m_numZones);
+					}
 				}
 			}
-			DEBUG_ASSERTCRASH(map[i][j].getZone() != 0, ("Cleared the zone."));
+			if (j>bounds.lo.y) {
+				zoneStorageType topZone = map[i][j-1].getZone();
+				if (topZone != 0 && thisZone != topZone) {
+					if (waterGround(map[i][j],map[i][j-1])) {
+						applyBlockZone(map[i][j], map[i][j-1], m_groundWaterZones, m_firstZone, m_numZones);
+					}
+					if (groundRubble(map[i][j], map[i][j-1])) {
+						applyBlockZone(map[i][j], map[i][j-1], m_groundRubbleZones, m_firstZone, m_numZones);
+					}
+					if (groundCliff(map[i][j],map[i][j-1])) {
+						applyBlockZone(map[i][j], map[i][j-1], m_groundCliffZones, m_firstZone, m_numZones);
+					}
+					if (crusherGround(map[i][j], map[i][j-1])) {
+						applyBlockZone(map[i][j], map[i][j-1], m_crusherZones, m_firstZone, m_numZones);
+					}
+				}
+			}
 		}
 	}
 
@@ -4884,6 +4982,16 @@ void Pathfinder::cleanOpenAndClosedLists() {
 #endif
 
 	m_cumulativeCellsAllocated += count;
+#ifdef DEBUG_LOGGING
+	{
+		Int frame = TheGameLogic ? TheGameLogic->getFrame() : 0;
+		if (false && count > 0 && frame >= 2444 && frame <= 2448) // TheSuperHackers @debug disabled
+		{
+			DEBUG_LOG(("cleanOpenAndClosedLists[%d]: added %d cells, total now %d",
+				frame, count, m_cumulativeCellsAllocated));
+		}
+	}
+#endif
 }
 
 
@@ -4946,6 +5054,7 @@ Bool Pathfinder::checkDestination(const Object *obj, Int cellX, Int cellY, Pathf
 				if (cell->getGoalAircraft() == objID) {
 					continue;
 				}
+				// Another aircraft has a goal on this cell - blocked
 				return false;
 			}
 
@@ -5852,6 +5961,7 @@ Path *Pathfinder::getAircraftPath( const Object *obj, const Coord3D *to )
 	Coord3D pos = *obj->getPosition();
 	pos.z = to->z;
 	thePath->prependNode( &pos, LAYER_GROUND );
+
 	Int limit = 20;
 	PathNode *curNode = thePath->getFirstNode();
 	while (curNode && curNode->getNext()) {
@@ -5874,6 +5984,17 @@ Path *Pathfinder::getAircraftPath( const Object *obj, const Coord3D *to )
 		curNode = curNode->getNext();
 		limit--;
 		if (limit<0) break;
+	}
+
+	// TheSuperHackers @fix bobtista 30/01/2026 Assign positive m_id values to all path nodes.
+	// This ensures optimized links can be properly serialized and restored on checkpoint load.
+	// Without this, aircraft path nodes have m_id=-1 and the optimized link restoration fails
+	// because Path::xfer only restores links for optID > 0.
+	Int nodeId = 1;
+	curNode = thePath->getFirstNode();
+	while (curNode) {
+		curNode->m_id = nodeId++;
+		curNode = curNode->getNext();
 	}
 
 	curNode = thePath->getFirstNode();
@@ -5932,14 +6053,44 @@ void Pathfinder::processPathfindQueue()
 #ifdef DEBUG_QPF
 	Int pathsFound = 0;
 #endif
+
+	// TheSuperHackers @debug bobtista 23/01/2026 Log pathfind queue processing for checkpoint debugging
+	Int frame = TheGameLogic->getFrame();
+	Bool logPathfindDetail = false; // (frame >= 2444 && frame <= 2448); // TheSuperHackers @debug
+	if (logPathfindDetail)
+	{
+		DEBUG_LOG(("Pathfind[%d] START: head=%d tail=%d queueSize=%d",
+			frame, m_queuePRHead, m_queuePRTail,
+			(m_queuePRTail >= m_queuePRHead) ? (m_queuePRTail - m_queuePRHead) : (PATHFIND_QUEUE_LEN - m_queuePRHead + m_queuePRTail)));
+	}
+
 	while (m_cumulativeCellsAllocated < PATHFIND_CELLS_PER_FRAME &&
 		m_queuePRTail!=m_queuePRHead) {
-		Object *obj = TheGameLogic->findObjectByID(m_queuedPathfindRequests[m_queuePRHead]);
+		ObjectID processedId = m_queuedPathfindRequests[m_queuePRHead];
+		Object *obj = TheGameLogic->findObjectByID(processedId);
 		m_queuedPathfindRequests[m_queuePRHead] = INVALID_ID;
 		if (obj) {
 			AIUpdateInterface *ai = obj->getAIUpdateInterface();
 			if (ai) {
+	#ifdef DEBUG_LOGGING
+				Int cellsBefore = m_cumulativeCellsAllocated;
+				if (logPathfindDetail)
+				{
+					const Coord3D *pos = obj->getPosition();
+					DEBUG_LOG(("Pathfind[%d] obj %u (%s) pos=(%.6f,%.6f,%.6f)",
+						frame, processedId, obj->getTemplate()->getName().str(),
+						pos ? pos->x : 0, pos ? pos->y : 0, pos ? pos->z : 0));
+				}
+#endif
 				ai->doPathfind(this);
+#ifdef DEBUG_LOGGING
+				if (logPathfindDetail)
+				{
+					DEBUG_LOG(("Pathfind[%d] Processed obj %u (%s): cells %d -> %d (delta=%d)",
+						frame, processedId, obj->getTemplate()->getName().str(),
+						cellsBefore, m_cumulativeCellsAllocated, m_cumulativeCellsAllocated - cellsBefore));
+				}
+#endif
 #ifdef DEBUG_QPF
 				pathsFound++;
 #endif
@@ -6366,6 +6517,7 @@ Path *Pathfinder::findPath( Object *obj, const LocomotorSet& locomotorSet, const
 
 	m_zoneManager.clearPassableFlags();
 	Path *hPat = findHierarchicalPath(isHuman, locomotorSet, from, rawTo, false);
+	CRCDEBUG_LOG(("Pathfinder::findPath() for obj %d, hPat=%s", obj ? obj->getID() : 0, hPat ? "found" : "null"));
 	if (hPat) {
 		deleteInstance(hPat);
 	}	else {
@@ -6374,6 +6526,15 @@ Path *Pathfinder::findPath( Object *obj, const LocomotorSet& locomotorSet, const
 
 	Path *pat = internalFindPath(obj, locomotorSet, from, rawTo);
 	if (pat!=nullptr) {
+		Int nodeCount = 0;
+		Bool hasElevatedNodes = FALSE;
+		PathNode *node = pat->getFirstNode();
+		while (node) {
+			nodeCount++;
+			if (node->getPosition()->z > 10.0f) hasElevatedNodes = TRUE;
+			node = node->getNext();
+		}
+		CRCDEBUG_LOG(("Pathfinder::findPath() result for obj %d: %d nodes, elevated=%d", obj ? obj->getID() : 0, nodeCount, hasElevatedNodes));
 		return pat;
 	}
 
@@ -7539,8 +7700,12 @@ Path *Pathfinder::internal_findHierarchicalPath( Bool isHuman, const LocomotorSu
 
 	Int zone1, zone2;
 	// m_isCrusher = false;
-	zone1 = m_zoneManager.getEffectiveZone(locomotorSurface, false, parentCell->getZone());
-	zone2 =  m_zoneManager.getEffectiveZone(locomotorSurface, false, goalCell->getZone());
+	zoneStorageType parentRawZone = parentCell->getZone();
+	zoneStorageType goalRawZone = goalCell->getZone();
+	zone1 = m_zoneManager.getEffectiveZone(locomotorSurface, false, parentRawZone);
+	zone2 =  m_zoneManager.getEffectiveZone(locomotorSurface, false, goalRawZone);
+
+	CRCDEBUG_LOG(("internal_findHierarchicalPath: parentZone=%d->%d, goalZone=%d->%d", parentRawZone, zone1, goalRawZone, zone2));
 
 	if ( zone1 != zone2) {
 		goalCell->releaseInfo();
@@ -7568,6 +7733,15 @@ Path *Pathfinder::internal_findHierarchicalPath( Bool isHuman, const LocomotorSu
 		goalBlockNdx.x = -1;
 		goalBlockNdx.y = -1;
 	}
+
+#ifdef DEBUG_LOGGING
+	zoneStorageType startBlockZone = m_zoneManager.getBlockZone(locomotorSurface,
+		crusher, parentCell->getXIndex(), parentCell->getYIndex(), m_map);
+	CRCDEBUG_LOG(("internal_findHierarchicalPath: startCell(%d,%d) type=%d zone=%d, goalCell(%d,%d) type=%d zone=%d",
+		parentCell->getXIndex(), parentCell->getYIndex(), parentCell->getType(), parentRawZone,
+		goalCell->getXIndex(), goalCell->getYIndex(), goalCell->getType(), goalRawZone));
+	CRCDEBUG_LOG(("internal_findHierarchicalPath: startBlockZone=%d, goalBlockZone=%d", startBlockZone, goalBlockZone));
+#endif
 
 	// initialize "open" list to contain start cell
 #if RETAIL_COMPATIBLE_PATHFINDING
@@ -11168,58 +11342,372 @@ Path *Pathfinder::findSafePath( const Object *obj, const LocomotorSet& locomotor
 //-----------------------------------------------------------------------------
 void Pathfinder::crc( Xfer *xfer )
 {
+	// TheSuperHackers @debug bobtista 23/01/2026 Log pathfinder state for debugging divergence
+	Int frame = TheGameLogic->getFrame();
+	Bool logDetail = false; // (frame == 2446); // TheSuperHackers @debug
+	XferCRC *xferCRC = logDetail ? static_cast<XferCRC *>(xfer) : nullptr;
+
 	CRCDEBUG_LOG(("Pathfinder::crc() on frame %d", TheGameLogic->getFrame()));
 	CRCDEBUG_LOG(("beginning CRC: %8.8X", ((XferCRC *)xfer)->getCRC()));
 
+	if (logDetail)
+		DEBUG_LOG(("Pathfinder[%d] starting CRC: 0x%08X", frame, xferCRC->getCRC()));
+
 	xfer->xferUser( &m_extent, sizeof(IRegion2D) );
 	CRCDEBUG_LOG(("m_extent: %8.8X", ((XferCRC *)xfer)->getCRC()));
+	if (logDetail)
+		DEBUG_LOG(("Pathfinder[%d] after m_extent(%d,%d,%d,%d): 0x%08X", frame, m_extent.lo.x, m_extent.lo.y, m_extent.hi.x, m_extent.hi.y, xferCRC->getCRC()));
 
 	xfer->xferBool( &m_isMapReady );
 	CRCDEBUG_LOG(("m_isMapReady: %8.8X", ((XferCRC *)xfer)->getCRC()));
+	if (logDetail)
+		DEBUG_LOG(("Pathfinder[%d] after m_isMapReady(%d): 0x%08X", frame, m_isMapReady, xferCRC->getCRC()));
+
 	xfer->xferBool( &m_isTunneling );
 	CRCDEBUG_LOG(("m_isTunneling: %8.8X", ((XferCRC *)xfer)->getCRC()));
+	if (logDetail)
+		DEBUG_LOG(("Pathfinder[%d] after m_isTunneling(%d): 0x%08X", frame, m_isTunneling, xferCRC->getCRC()));
 
 	Int obsolete1 = 0;
 	xfer->xferInt( &obsolete1 );
+	if (logDetail)
+		DEBUG_LOG(("Pathfinder[%d] after obsolete1: 0x%08X", frame, xferCRC->getCRC()));
 
 	xfer->xferUser(&m_ignoreObstacleID, sizeof(ObjectID));
 	CRCDEBUG_LOG(("m_ignoreObstacleID: %8.8X", ((XferCRC *)xfer)->getCRC()));
+	if (logDetail)
+		DEBUG_LOG(("Pathfinder[%d] after m_ignoreObstacleID(%u): 0x%08X", frame, m_ignoreObstacleID, xferCRC->getCRC()));
 
 	xfer->xferUser(m_queuedPathfindRequests, sizeof(ObjectID)*PATHFIND_QUEUE_LEN);
 	CRCDEBUG_LOG(("m_queuedPathfindRequests: %8.8X", ((XferCRC *)xfer)->getCRC()));
+	if (logDetail)
+		DEBUG_LOG(("Pathfinder[%d] after queue array: 0x%08X", frame, xferCRC->getCRC()));
 	xfer->xferInt(&m_queuePRHead);
 	CRCDEBUG_LOG(("m_queuePRHead: %8.8X", ((XferCRC *)xfer)->getCRC()));
+	if (logDetail)
+		DEBUG_LOG(("Pathfinder[%d] after m_queuePRHead(%d): 0x%08X", frame, m_queuePRHead, xferCRC->getCRC()));
 	xfer->xferInt(&m_queuePRTail);
 	CRCDEBUG_LOG(("m_queuePRTail: %8.8X", ((XferCRC *)xfer)->getCRC()));
+	if (logDetail)
+		DEBUG_LOG(("Pathfinder[%d] after m_queuePRTail(%d): 0x%08X", frame, m_queuePRTail, xferCRC->getCRC()));
 
 	xfer->xferInt(&m_numWallPieces);
 	CRCDEBUG_LOG(("m_numWallPieces: %8.8X", ((XferCRC *)xfer)->getCRC()));
+	if (logDetail)
+		DEBUG_LOG(("Pathfinder[%d] after m_numWallPieces(%d): 0x%08X", frame, m_numWallPieces, xferCRC->getCRC()));
+	// TheSuperHackers @bugfix bobtista 22/01/2026 Fix out-of-bounds array access - was using MAX_WALL_PIECES instead of i
 	for (Int i=0; i<MAX_WALL_PIECES; ++i)
 	{
-		xfer->xferObjectID(&m_wallPieces[MAX_WALL_PIECES]);
+		xfer->xferObjectID(&m_wallPieces[i]);
 	}
 	CRCDEBUG_LOG(("m_wallPieces: %8.8X", ((XferCRC *)xfer)->getCRC()));
+	if (logDetail)
+		DEBUG_LOG(("Pathfinder[%d] after m_wallPieces: 0x%08X", frame, xferCRC->getCRC()));
 
 	xfer->xferReal(&m_wallHeight);
 	CRCDEBUG_LOG(("m_wallHeight: %8.8X", ((XferCRC *)xfer)->getCRC()));
+	if (logDetail)
+		DEBUG_LOG(("Pathfinder[%d] after m_wallHeight(%f): 0x%08X", frame, m_wallHeight, xferCRC->getCRC()));
 	xfer->xferInt(&m_cumulativeCellsAllocated);
 	CRCDEBUG_LOG(("m_cumulativeCellsAllocated: %8.8X", ((XferCRC *)xfer)->getCRC()));
+	if (logDetail)
+		DEBUG_LOG(("Pathfinder[%d] after m_cumulativeCellsAllocated(%d): 0x%08X", frame, m_cumulativeCellsAllocated, xferCRC->getCRC()));
 
 }
 
 //-----------------------------------------------------------------------------
 void Pathfinder::xfer( Xfer *xfer )
 {
-
-	// version
-	XferVersion currentVersion = 1;
+	// TheSuperHackers @info bobtista 21/01/2026
+	// Version 2 serializes all pathfinder state needed for checkpoint CRC matching:
+	// - Queue state (used in CRC calculation)
+	// - Extent, map ready state, tunneling, obstacle ID, wall pieces
+	// - Zone manager arrays (for hierarchical pathfinding)
+	// - Layer destroyed state (bridges)
+	// - Per-cell zones (for exact zone lookup restoration)
+	XferVersion currentVersion = 2;
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
+
+	// Serialize pathfinder queue state (included in CRC calculation)
+	xfer->xferInt( &m_queuePRHead );
+	xfer->xferInt( &m_queuePRTail );
+	for ( Int i = 0; i < PATHFIND_QUEUE_LEN; ++i )
+	{
+		xfer->xferObjectID( &m_queuedPathfindRequests[i] );
+	}
+
+	// Serialize pathfinder state
+	xfer->xferUser( &m_extent, sizeof(IRegion2D) );
+	xfer->xferBool( &m_isMapReady );
+	xfer->xferBool( &m_isTunneling );
+	xfer->xferUser( &m_ignoreObstacleID, sizeof(ObjectID) );
+	xfer->xferInt( &m_numWallPieces );
+	for ( Int i = 0; i < MAX_WALL_PIECES; ++i )
+	{
+		xfer->xferObjectID( &m_wallPieces[i] );
+	}
+	xfer->xferReal( &m_wallHeight );
+	xfer->xferInt( &m_cumulativeCellsAllocated );
+
+	// Serialize zone manager state for deterministic pathfinding
+	xfer->xferUnsignedShort( &m_zoneManager.m_maxZone );
+	xfer->xferUnsignedInt( &m_zoneManager.m_nextFrameToCalculateZones );
+
+	// Track whether zone arrays are present (they may not be calculated yet)
+	Bool hasZoneArrays = ( m_zoneManager.m_zonesAllocated > 0 && m_zoneManager.m_groundCliffZones != nullptr );
+	xfer->xferBool( &hasZoneArrays );
+
+	if ( hasZoneArrays )
+	{
+		UnsignedShort zonesAllocated = m_zoneManager.m_zonesAllocated;
+		xfer->xferUnsignedShort( &zonesAllocated );
+
+		// Allocate zone arrays on load
+		if ( xfer->getXferMode() == XFER_LOAD )
+		{
+			m_zoneManager.freeZones();
+			m_zoneManager.m_zonesAllocated = zonesAllocated;
+			m_zoneManager.m_groundCliffZones = MSGNEW("PathfindZoneInfo") zoneStorageType[zonesAllocated];
+			m_zoneManager.m_groundWaterZones = MSGNEW("PathfindZoneInfo") zoneStorageType[zonesAllocated];
+			m_zoneManager.m_groundRubbleZones = MSGNEW("PathfindZoneInfo") zoneStorageType[zonesAllocated];
+			m_zoneManager.m_terrainZones = MSGNEW("PathfindZoneInfo") zoneStorageType[zonesAllocated];
+			m_zoneManager.m_crusherZones = MSGNEW("PathfindZoneInfo") zoneStorageType[zonesAllocated];
+			m_zoneManager.m_hierarchicalZones = MSGNEW("PathfindZoneInfo") zoneStorageType[zonesAllocated];
+		}
+
+		// Serialize zone arrays
+		for ( UnsignedShort i = 0; i < m_zoneManager.m_zonesAllocated; ++i )
+		{
+			xfer->xferUnsignedShort( &m_zoneManager.m_groundCliffZones[i] );
+			xfer->xferUnsignedShort( &m_zoneManager.m_groundWaterZones[i] );
+			xfer->xferUnsignedShort( &m_zoneManager.m_groundRubbleZones[i] );
+			xfer->xferUnsignedShort( &m_zoneManager.m_terrainZones[i] );
+			xfer->xferUnsignedShort( &m_zoneManager.m_crusherZones[i] );
+			xfer->xferUnsignedShort( &m_zoneManager.m_hierarchicalZones[i] );
+		}
+	}
+
+	// Serialize layer destroyed state (bridges can be destroyed during gameplay)
+	for ( Int i = 0; i <= LAYER_LAST; ++i )
+	{
+		xfer->xferBool( &m_layers[i].m_destroyed );
+	}
+
+	// Serialize per-cell zone values for exact zone lookup restoration
+	Bool hasPerCellZones = ( m_map != nullptr && m_isMapReady );
+	xfer->xferBool( &hasPerCellZones );
+
+	if ( hasPerCellZones )
+	{
+		for ( Int j = m_extent.lo.y; j <= m_extent.hi.y; ++j )
+		{
+			for ( Int i = m_extent.lo.x; i <= m_extent.hi.x; ++i )
+			{
+				zoneStorageType zone = m_map[i][j].getZone();
+				xfer->xferUnsignedShort( &zone );
+				if ( xfer->getXferMode() == XFER_LOAD && m_map != nullptr )
+				{
+					m_map[i][j].setZone( zone );
+				}
+
+				// TheSuperHackers @bugfix bobtista 29/01/2026
+				// Serialize per-cell unit tracking state for checkpoint determinism.
+				// The m_flags and associated unit IDs determine how pathfinding treats cells
+				// with units (as obstacles, goals, etc). These must be serialized because
+				// the order of updateGoal/updatePos calls during loadPostProcess differs
+				// from the runtime order, producing different flag values.
+				UnsignedByte flags = m_map[i][j].getFlags();
+				xfer->xferUnsignedByte( &flags );
+
+				ObjectID posUnitID = m_map[i][j].getPosUnit();
+				ObjectID goalUnitID = m_map[i][j].getGoalUnit();
+				xfer->xferObjectID( &posUnitID );
+				xfer->xferObjectID( &goalUnitID );
+
+				// TheSuperHackers @bugfix bobtista 30/01/2026
+				// Serialize aircraft goal state for checkpoint determinism.
+				// Aircraft (like Chinooks) set goal cells which are checked by adjustDestination().
+				// Without this, the spiral search finds different cells after checkpoint load.
+				Bool aircraftGoal = m_map[i][j].isAircraftGoal();
+				ObjectID goalAircraftID = m_map[i][j].getGoalAircraft();
+
+
+				xfer->xferBool( &aircraftGoal );
+				xfer->xferObjectID( &goalAircraftID );
+
+				if ( xfer->getXferMode() == XFER_LOAD && m_map != nullptr )
+				{
+					ICoord2D pos;
+					pos.x = i;
+					pos.y = j;
+
+					// If there are any unit IDs or aircraft goals, allocate info and set them
+					if ( posUnitID != INVALID_ID || goalUnitID != INVALID_ID || goalAircraftID != INVALID_ID )
+					{
+						m_map[i][j].allocateInfo( pos );
+						if ( m_map[i][j].hasInfo() )
+						{
+							// Directly set the unit IDs via the setters
+							if ( posUnitID != INVALID_ID )
+							{
+								m_map[i][j].setPosUnit( posUnitID, pos );
+							}
+							if ( goalUnitID != INVALID_ID )
+							{
+								m_map[i][j].setGoalUnit( goalUnitID, pos );
+							}
+							if ( goalAircraftID != INVALID_ID )
+							{
+								m_map[i][j].setGoalAircraft( goalAircraftID, pos );
+							}
+						}
+					}
+					// Set flags after setting unit IDs (setters modify flags)
+					m_map[i][j].setFlags( (PathfindCell::CellFlags)flags );
+
+				}
+			}
+		}
+	}
 
 }
 
 //-----------------------------------------------------------------------------
 void Pathfinder::loadPostProcess()
 {
+	// TheSuperHackers @fix bobtista 21/01/2026
+	// After checkpoint load, we need to ensure the pathfind cell state is consistent.
+	// Layer destroyed states and per-cell zones are restored from xfer().
+	//
+	// We need to:
+	// 1. Classify terrain cells (set types based on terrain, cliff expansion)
+	// 2. Rebuild zone blocks from serialized per-cell zones
+	// 3. Add object footprints
+	//
+	// IMPORTANT: We must NOT call calculateZones() because that would overwrite
+	// the serialized per-cell zone values with newly computed ones.
 
+	if ( m_map == nullptr || !m_isMapReady )
+	{
+		return;
+	}
+
+	Int i, j;
+
+	// Step 1: Reset cell types for terrain reclassification, but preserve:
+	// - m_zone: serialized and needs to be kept
+	// - m_flags: unit tracking set by AIUpdateInterface::loadPostProcess() which ran before us
+	// We use resetForCheckpointLoad() which clears type and obstacle info while preserving flags and zone.
+	for( j=m_extent.lo.y; j<=m_extent.hi.y; j++ )
+	{
+		for( i=m_extent.lo.x; i<=m_extent.hi.x; i++ )
+		{
+			m_map[i][j].resetForCheckpointLoad();
+		}
+	}
+
+	// Step 2: Classify terrain cells (same as classifyMap but WITHOUT calculateZones)
+	for( j=m_extent.lo.y; j<=m_extent.hi.y; j++ )
+	{
+		for( i=m_extent.lo.x; i<=m_extent.hi.x; i++ )
+		{
+			classifyMapCell( i, j, &m_map[i][j]);
+		}
+	}
+
+	// Step 3: Cliff expansion - mark cells near cliffs as pinched
+	for( j=m_extent.lo.y; j<=m_extent.hi.y; j++ )
+	{
+		for( i=m_extent.lo.x; i<=m_extent.hi.x; i++ )
+		{
+			if (m_map[i][j].getType() & PathfindCell::CELL_CLIFF) {
+				Int k, l;
+				for (k=i-1; k<i+2; k++) {
+					if (k<m_extent.lo.x || k> m_extent.hi.x) continue;
+					for (l=j-1; l<j+2; l++) {
+						if (l<m_extent.lo.y || l> m_extent.hi.y) continue;
+						if (m_map[k][l].getType() == PathfindCell::CELL_CLEAR) {
+							m_map[k][l].setPinched(true);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// Step 4: Convert pinched cells to cliff
+	for( j=m_extent.lo.y; j<=m_extent.hi.y; j++ )
+	{
+		for( i=m_extent.lo.x; i<=m_extent.hi.x; i++ )
+		{
+			if (m_map[i][j].getPinched()) {
+				if (m_map[i][j].getType()==PathfindCell::CELL_CLEAR) {
+					m_map[i][j].setType(PathfindCell::CELL_CLIFF);
+				}
+			}
+		}
+	}
+
+	// Step 5: Add second border of pinched cells to cliffs
+	for( j=m_extent.lo.y; j<=m_extent.hi.y; j++ )
+	{
+		for( i=m_extent.lo.x; i<=m_extent.hi.x; i++ )
+		{
+			if (m_map[i][j].getType() & PathfindCell::CELL_CLIFF) {
+				Int k, l;
+				for (k=i-1; k<i+2; k++) {
+					if (k<m_extent.lo.x || k> m_extent.hi.x) continue;
+					for (l=j-1; l<j+2; l++) {
+						if (l<m_extent.lo.y || l> m_extent.hi.y) continue;
+						if (m_map[k][l].getType() == PathfindCell::CELL_CLEAR) {
+							m_map[k][l].setPinched(true);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// Step 6: Classify layer cells (bridges, etc.)
+	for (i=0; i<LAYER_LAST; i++) {
+		if (!m_layers[i].isUnused()) {
+			m_layers[i].classifyCells();
+		}
+	}
+	if (!m_layers[LAYER_WALL].isUnused()) {
+		m_layers[LAYER_WALL].classifyWallCells(m_wallPieces, m_numWallPieces);
+	}
+
+	// Step 7: Build ZoneBlock equivalencies from the restored per-cell zones.
+	// We can NOT call calculateZones() because it clears all zone values before recomputing.
+	// Instead, call blockCalculateZones() directly for each zone block to build the equivalency
+	// arrays from the existing serialized per-cell zones.
+	// TheSuperHackers @bugfix bobtista 22/01/2026 Build zone equivalencies without reassigning zones.
+	{
+		const Int zoneBlockSize = PathfindZoneManager::ZONE_BLOCK_SIZE;
+		Int xCount = (m_extent.hi.x-m_extent.lo.x+1+zoneBlockSize-1)/zoneBlockSize;
+		Int yCount = (m_extent.hi.y-m_extent.lo.y+1+zoneBlockSize-1)/zoneBlockSize;
+		for (Int xBlock = 0; xBlock<xCount; xBlock++) {
+			for (Int yBlock=0; yBlock<yCount; yBlock++) {
+				IRegion2D bounds;
+				bounds.lo.x = m_extent.lo.x + xBlock*zoneBlockSize;
+				bounds.lo.y = m_extent.lo.y + yBlock*zoneBlockSize;
+				bounds.hi.x = bounds.lo.x + zoneBlockSize - 1;
+				bounds.hi.y = bounds.lo.y + zoneBlockSize - 1;
+				if (bounds.hi.x > m_extent.hi.x) bounds.hi.x = m_extent.hi.x;
+				if (bounds.hi.y > m_extent.hi.y) bounds.hi.y = m_extent.hi.y;
+				m_zoneManager.m_zoneBlocks[xBlock][yBlock].blockCalculateZones(m_map, m_layers, bounds);
+			}
+		}
+	}
+
+	// Step 8: Add footprints for all loaded objects
+	Object *obj;
+	for( obj = TheGameLogic->getFirstObject(); obj; obj = obj->getNextObject() )
+	{
+		classifyObjectFootprint(obj, true);
+	}
+	// Note: m_flags (unit tracking) was preserved in Step 1 and set up by AIUpdateInterface::loadPostProcess()
+	// which ran before this function. No need to restore it here.
 }

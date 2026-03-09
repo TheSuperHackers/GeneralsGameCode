@@ -564,7 +564,8 @@ void DockUpdate::xfer( Xfer *xfer )
 {
 
 	// version
-	XferVersion currentVersion = 1;
+	// TheSuperHackers @fix bobtista 30/01/2026 Added m_numberApproachPositionBones serialization in v2
+	XferVersion currentVersion = 2;
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
@@ -585,6 +586,14 @@ void DockUpdate::xfer( Xfer *xfer )
 
 	// positions loaded
 	xfer->xferBool( &m_positionsLoaded );
+
+	// TheSuperHackers @fix bobtista 30/01/2026 Serialize m_numberApproachPositionBones to ensure
+	// consistent approach position calculation after checkpoint load. Without this, the bias towards
+	// caller position code path would differ between fresh and checkpoint runs.
+	if (version >= 2)
+	{
+		xfer->xferInt( &m_numberApproachPositionBones );
+	}
 
 	// approach positions
 	Int vectorSize = m_approachPositions.size();
@@ -614,9 +623,11 @@ void DockUpdate::xfer( Xfer *xfer )
 	m_approachPositionReached.resize(vectorSize);
 	for( vectorIndex = 0; vectorIndex < vectorSize; ++vectorIndex )
 	{
-		// Vector of Bool gets packed as bitfield internally
-		Bool unpack = m_approachPositionReached[vectorIndex];
-		xfer->xferBool( &unpack );
+		// TheSuperHackers @fix bobtista 29/01/2026 std::vector<bool> returns a proxy object, not a real reference.
+		// Must write back after xferBool to ensure value is actually stored in the vector on load.
+		Bool temp = m_approachPositionReached[vectorIndex];
+		xfer->xferBool( &temp );
+		m_approachPositionReached[vectorIndex] = temp;
 	}
 
 	// active docker

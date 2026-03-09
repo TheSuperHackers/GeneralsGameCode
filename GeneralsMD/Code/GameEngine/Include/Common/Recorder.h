@@ -25,9 +25,11 @@
 #pragma once
 
 #include "Common/MessageStream.h"
+#include "Common/Snapshot.h"
 #include "GameNetwork/GameInfo.h"
 
 class File;
+class Xfer;
 
 /**
   * The ReplayGameInfo class holds information about the replay game and
@@ -55,7 +57,7 @@ enum RecorderModeType CPP_11(: Int) {
 
 class CRCInfo;
 
-class RecorderClass : public SubsystemInterface {
+class RecorderClass : public SubsystemInterface, public Snapshot {
 public:
 	struct ReplayHeader;
 
@@ -66,6 +68,14 @@ public:
 	void init();																			///< Initialize TheRecorder.
 	void reset();																			///< Reset the state of TheRecorder.
 	void update();																		///< General purpose update function.
+
+protected:
+	virtual void crc( Xfer *xfer );
+	virtual void xfer( Xfer *xfer );
+	virtual void loadPostProcess( void );
+	void preloadNextCRCFromReplay( void );  ///< Scans replay file to pre-populate CRC queue after checkpoint load
+
+public:
 
 	// Methods dealing with recording.
 	void updateRecord();															///< The update function for recording.
@@ -119,6 +129,7 @@ public:
 
 	static AsciiString getReplayDir();								///< Returns the directory that holds the replay files.
 	static AsciiString getReplayArchiveDir();					///< Returns the directory that holds the archived replay files.
+	static AsciiString getReplayCheckpointDir();			///< Returns the directory that holds replay checkpoint files.
 	static AsciiString getReplayExtention();					///< Returns the file extention for replay files.
 	static AsciiString getLastReplayFileName();				///< Returns the filename used for the default replay.
 
@@ -135,6 +146,7 @@ public:
 
 	void setArchiveEnabled(Bool enable) { m_archiveReplays = enable; } ///< Enable or disable replay archiving.
 	void stopRecording();															///< Stop recording and close m_file.
+	Bool initializeReplayForCheckpointLoad(const AsciiString &replayFilename);	///< Initialize replay state before loading a checkpoint.
 protected:
 	void startRecording(GameDifficulty diff, Int originalGameMode, Int rankPoints, Int maxFPS);					///< Start recording to m_file.
 	void writeToFile(GameMessage *msg);								///< Write this GameMessage to m_file.
@@ -149,6 +161,9 @@ protected:
 	void appendNextCommand();													///< Read the next GameMessage and append it to TheCommandList.
 	void writeArgument(GameMessageArgumentDataType type, const GameMessageArgumentType arg);
 	void readArgument(GameMessageArgumentDataType type, GameMessage *msg);
+
+	Bool reopenReplayFileAtPosition( Int position );
+	void xferCRCInfo( Xfer *xfer );
 
 	struct CullBadCommandsResult
 	{
@@ -174,6 +189,9 @@ protected:
 	Int m_originalGameMode; // valid in replays
 
 	UnsignedInt m_nextFrame;												///< The Frame that the next message is to be executed on.  This can be -1.
+
+	Bool m_checkpointLoadInProgress;									///< Set to TRUE during replay checkpoint loading to preserve mode across reset.
+	UnsignedInt m_preloadedCRCValue;									///< CRC value preloaded after checkpoint load, 0 if none pending
 };
 
 extern RecorderClass *TheRecorder;
