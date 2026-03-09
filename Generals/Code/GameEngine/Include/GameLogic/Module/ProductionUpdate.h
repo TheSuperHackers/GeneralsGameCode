@@ -189,43 +189,43 @@ public:
 	static Int getInterfaceMask() { return UpdateModule::getInterfaceMask() | (MODULEINTERFACE_DIE); }
 
 	// Disabled conditions to process (AI will still process held status)
-	virtual DisabledMaskType getDisabledTypesToProcess() const { return getProductionUpdateModuleData()->m_disabledTypesToProcess; }
+	virtual DisabledMaskType getDisabledTypesToProcess() const override { return getProductionUpdateModuleData()->m_disabledTypesToProcess; }
 
-	virtual ProductionUpdateInterface* getProductionUpdateInterface() { return this; }
-	virtual DieModuleInterface* getDie() { return this; }
+	virtual ProductionUpdateInterface* getProductionUpdateInterface() override { return this; }
+	virtual DieModuleInterface* getDie() override { return this; }
 	static ProductionUpdateInterface *getProductionUpdateInterfaceFromObject( Object *obj );
 
-	virtual CanMakeType canQueueCreateUnit( const ThingTemplate *unitType ) const;
-	virtual CanMakeType canQueueUpgrade( const UpgradeTemplate *upgrade ) const;
+	virtual CanMakeType canQueueCreateUnit( const ThingTemplate *unitType ) const override;
+	virtual CanMakeType canQueueUpgrade( const UpgradeTemplate *upgrade ) const override;
 
 	/** this method is used to request a unique ID to assign to the production of a single
 	unit.  It is unique to all units that can be created from this source object, but is
 	not unique among multiple source objects */
-	virtual ProductionID requestUniqueUnitID() { ProductionID tmp = m_uniqueID; m_uniqueID = (ProductionID)(m_uniqueID+1); return tmp; }
+	virtual ProductionID requestUniqueUnitID() override { ProductionID tmp = m_uniqueID; m_uniqueID = (ProductionID)(m_uniqueID+1); return tmp; }
 
-	virtual Bool queueUpgrade( const UpgradeTemplate *upgrade );				///< queue upgrade "research"
-	virtual void cancelUpgrade( const UpgradeTemplate *upgrade );				///< cancel upgrade "research"
-	virtual Bool isUpgradeInQueue( const UpgradeTemplate *upgrade ) const;		///< is the upgrade in our production queue already
-	virtual UnsignedInt countUnitTypeInQueue( const ThingTemplate *unitType ) const;  ///< count number of units with matching unit type in the production queue
+	virtual Bool queueUpgrade( const UpgradeTemplate *upgrade ) override;				///< queue upgrade "research"
+	virtual void cancelUpgrade( const UpgradeTemplate *upgrade ) override;				///< cancel upgrade "research"
+	virtual Bool isUpgradeInQueue( const UpgradeTemplate *upgrade ) const override;		///< is the upgrade in our production queue already
+	virtual UnsignedInt countUnitTypeInQueue( const ThingTemplate *unitType ) const override;  ///< count number of units with matching unit type in the production queue
 
-	virtual Bool queueCreateUnit( const ThingTemplate *unitType, ProductionID productionID );					///< queue unit to be produced
-	virtual void cancelUnitCreate( ProductionID productionID );		      ///< cancel construction of unit with matching production ID
-	virtual void cancelAllUnitsOfType( const ThingTemplate *unitType);	///< cancel all production of type unitType
+	virtual Bool queueCreateUnit( const ThingTemplate *unitType, ProductionID productionID ) override;					///< queue unit to be produced
+	virtual void cancelUnitCreate( ProductionID productionID ) override;		      ///< cancel construction of unit with matching production ID
+	virtual void cancelAllUnitsOfType( const ThingTemplate *unitType) override;	///< cancel all production of type unitType
 
-	virtual void cancelAndRefundAllProduction();									///< cancel and refund anything in the production queue
+	virtual void cancelAndRefundAllProduction() override;									///< cancel and refund anything in the production queue
 
-	virtual UnsignedInt getProductionCount() const { return m_productionCount; }    ///< return # of things in the production queue
+	virtual UnsignedInt getProductionCount() const override { return m_productionCount; }    ///< return # of things in the production queue
 
 	// walking the production list from outside
-	virtual const ProductionEntry *firstProduction() const { return m_productionQueue; }
-	virtual const ProductionEntry *nextProduction( const ProductionEntry *p ) const { return p ? p->m_next : nullptr; }
+	virtual const ProductionEntry *firstProduction() const override { return m_productionQueue; }
+	virtual const ProductionEntry *nextProduction( const ProductionEntry *p ) const override { return p ? p->m_next : nullptr; }
 
-	virtual void setHoldDoorOpen(ExitDoorType exitDoor, Bool holdIt);
+	virtual void setHoldDoorOpen(ExitDoorType exitDoor, Bool holdIt) override;
 
-	virtual UpdateSleepTime update();					///< the update
+	virtual UpdateSleepTime update() override;					///< the update
 
 	// DieModuleInterface
-	virtual void onDie( const DamageInfo *damageInfo );
+	virtual void onDie( const DamageInfo *damageInfo ) override;
 
 protected:
 

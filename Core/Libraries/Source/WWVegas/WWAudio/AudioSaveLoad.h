@@ -59,24 +59,24 @@ public:
 	//	Public constructors/destructors
 	//////////////////////////////////////////////////////////////
 	StaticAudioSaveLoadClass ()				{ }
-	virtual ~StaticAudioSaveLoadClass ()	{ }
+	virtual ~StaticAudioSaveLoadClass () override { }
 
 	//////////////////////////////////////////////////////////////
 	//	Public methods
 	//////////////////////////////////////////////////////////////
 
 	// From SaveLoadSubSystemClass
-	virtual uint32				Chunk_ID () const;
+	virtual uint32				Chunk_ID () const override;
 
 protected:
 
 	//////////////////////////////////////////////////////////////
 	//	Protected methods
 	//////////////////////////////////////////////////////////////
-	virtual bool				Contains_Data() const;
-	virtual bool				Save (ChunkSaveClass &csave);
-	virtual bool				Load (ChunkLoadClass &cload);
-	virtual const char*		Name() const { return "StaticAudioSaveLoadClass"; }
+	virtual bool				Contains_Data() const override;
+	virtual bool				Save (ChunkSaveClass &csave) override;
+	virtual bool				Load (ChunkLoadClass &cload) override;
+	virtual const char*		Name() const override { return "StaticAudioSaveLoadClass"; }
 };
 
 
@@ -93,24 +93,24 @@ public:
 	//	Public constructors/destructors
 	//////////////////////////////////////////////////////////////
 	DynamicAudioSaveLoadClass ()				{ }
-	virtual ~DynamicAudioSaveLoadClass ()	{ }
+	virtual ~DynamicAudioSaveLoadClass () override { }
 
 	//////////////////////////////////////////////////////////////
 	//	Public methods
 	//////////////////////////////////////////////////////////////
 
 	// From SaveLoadSubSystemClass
-	virtual uint32				Chunk_ID () const;
+	virtual uint32				Chunk_ID () const override;
 
 protected:
 
 	//////////////////////////////////////////////////////////////
 	//	Protected methods
 	//////////////////////////////////////////////////////////////
-	virtual bool				Contains_Data() const;
-	virtual bool				Save (ChunkSaveClass &csave);
-	virtual bool				Load (ChunkLoadClass &cload);
-	virtual const char*		Name() const { return "DynamicAudioSaveLoadClass"; }
+	virtual bool				Contains_Data() const override;
+	virtual bool				Save (ChunkSaveClass &csave) override;
+	virtual bool				Load (ChunkLoadClass &cload) override;
+	virtual const char*		Name() const override { return "DynamicAudioSaveLoadClass"; }
 
 	//bool							Save_Micro_Chunks (ChunkSaveClass &csave);
 	//bool							Load_Micro_Chunks (ChunkLoadClass &cload);

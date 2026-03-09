@@ -52,7 +52,7 @@ public:
 	//	Public constructors/destructors
 	///////////////////////////////////////////////////////////////////
 	SoundStreamHandleClass  ();
-	~SoundStreamHandleClass ();
+	~SoundStreamHandleClass () override;
 
 	///////////////////////////////////////////////////////////////////
 	//	Public methods
@@ -61,35 +61,35 @@ public:
 	//
 	//	RTTI
 	//
-	SoundStreamHandleClass *	As_SoundStreamHandleClass ()	{ return this; }
+	SoundStreamHandleClass *	As_SoundStreamHandleClass () override { return this; }
 
 	//
 	//	Handle access
 	//
-	HSAMPLE						Get_HSAMPLE ()		{ return SampleHandle; }
-	HSTREAM						Get_HSTREAM ()		{ return StreamHandle; }
+	HSAMPLE						Get_HSAMPLE () override { return SampleHandle; }
+	HSTREAM						Get_HSTREAM () override { return StreamHandle; }
 
 	//
 	//	Inherited
 	//
-	void							Set_Miles_Handle (uint32 handle);
-	void							Initialize (SoundBufferClass *buffer);
-	void							Start_Sample ();
-	void							Stop_Sample ();
-	void							Resume_Sample ();
-	void							End_Sample ();
-	void							Set_Sample_Pan (S32 pan);
-	S32							Get_Sample_Pan ();
-	void							Set_Sample_Volume (S32 volume);
-	S32							Get_Sample_Volume ();
-	void							Set_Sample_Loop_Count (U32 count);
-	U32							Get_Sample_Loop_Count ();
-	void							Set_Sample_MS_Position (U32 ms);
-	void							Get_Sample_MS_Position (S32 *len, S32 *pos);
-	void							Set_Sample_User_Data (S32 i, void *val);
-	void *							Get_Sample_User_Data (S32 i);
-	S32							Get_Sample_Playback_Rate ();
-	void							Set_Sample_Playback_Rate (S32 rate);
+	void							Set_Miles_Handle (uint32 handle) override;
+	void							Initialize (SoundBufferClass *buffer) override;
+	void							Start_Sample () override;
+	void							Stop_Sample () override;
+	void							Resume_Sample () override;
+	void							End_Sample () override;
+	void							Set_Sample_Pan (S32 pan) override;
+	S32							Get_Sample_Pan () override;
+	void							Set_Sample_Volume (S32 volume) override;
+	S32							Get_Sample_Volume () override;
+	void							Set_Sample_Loop_Count (U32 count) override;
+	U32							Get_Sample_Loop_Count () override;
+	void							Set_Sample_MS_Position (U32 ms) override;
+	void							Get_Sample_MS_Position (S32 *len, S32 *pos) override;
+	void							Set_Sample_User_Data (S32 i, void *val) override;
+	void *							Get_Sample_User_Data (S32 i) override;
+	S32							Get_Sample_Playback_Rate () override;
+	void							Set_Sample_Playback_Rate (S32 rate) override;
 
 protected:
 

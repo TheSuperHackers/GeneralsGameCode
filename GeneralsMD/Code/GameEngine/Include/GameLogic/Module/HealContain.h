@@ -61,9 +61,9 @@ public:
 	HealContain( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual UpdateSleepTime update();												///< called once per frame
-	virtual Bool isHealContain() const { return true; } ///< true when container only contains units while healing (not a transport!)
-	virtual Bool isTunnelContain() const { return FALSE; }
+	virtual UpdateSleepTime update() override;												///< called once per frame
+	virtual Bool isHealContain() const override { return true; } ///< true when container only contains units while healing (not a transport!)
+	virtual Bool isTunnelContain() const override { return FALSE; }
 
 protected:
 

@@ -78,7 +78,7 @@ CWdumpApp theApp;
 // private class declaration of a CCommandLineInfo class that knows about our special options
 class CWDumpCommandLineInfo : public CCommandLineInfo
 {
-	virtual void ParseParam(const TCHAR* pszParam,BOOL bFlag,BOOL bLast)
+	virtual void ParseParam(const TCHAR* pszParam,BOOL bFlag,BOOL bLast) override
 	{
 		if (bFlag)
 		{
@@ -223,7 +223,7 @@ public:
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CAboutDlg)
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
 // Implementation

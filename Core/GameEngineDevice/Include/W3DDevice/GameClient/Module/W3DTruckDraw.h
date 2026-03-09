@@ -71,7 +71,7 @@ public:
 	Real				m_powerslideRotationAddition;
 
 	W3DTruckDrawModuleData();
-	~W3DTruckDrawModuleData();
+	virtual ~W3DTruckDrawModuleData() override;
 	static void buildFieldParse(MultiIniFieldParse& p);
 };
 
@@ -87,13 +87,13 @@ public:
 	W3DTruckDraw( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual void setHidden(Bool h);
-	virtual void doDrawModule(const Matrix3D* transformMtx);
-	virtual void setFullyObscuredByShroud(Bool fullyObscured);
-	virtual void reactToGeometryChange() { }
+	virtual void setHidden(Bool h) override;
+	virtual void doDrawModule(const Matrix3D* transformMtx) override;
+	virtual void setFullyObscuredByShroud(Bool fullyObscured) override;
+	virtual void reactToGeometryChange() override { }
 
 protected:
-	virtual void onRenderObjRecreated();
+	virtual void onRenderObjRecreated() override;
 
 protected:
 	Bool						m_effectsInitialized;

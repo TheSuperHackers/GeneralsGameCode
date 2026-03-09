@@ -81,7 +81,7 @@ public:
 	void addArgument(const GameMessageArgumentDataType type, GameMessageArgumentType arg);
 	void setGameMessageType(GameMessage::Type type);
 
-	virtual size_t getPackedByteCount() const;
+	virtual size_t getPackedByteCount() const override;
 
 protected:
 	Int m_numArgs;
@@ -107,9 +107,9 @@ public:
 	void setCommandID(UnsignedShort commandID);
 	UnsignedByte getOriginalPlayerID();
 	void setOriginalPlayerID(UnsignedByte originalPlayerID);
-	virtual Int getSortNumber();
+	virtual Int getSortNumber() override;
 
-	virtual size_t getPackedByteCount() const;
+	virtual size_t getPackedByteCount() const override;
 
 protected:
 	UnsignedShort m_commandID;
@@ -133,9 +133,9 @@ public:
 	void setCommandID(UnsignedShort commandID);
 	UnsignedByte getOriginalPlayerID();
 	void setOriginalPlayerID(UnsignedByte originalPlayerID);
-	virtual Int getSortNumber();
+	virtual Int getSortNumber() override;
 
-	virtual size_t getPackedByteCount() const;
+	virtual size_t getPackedByteCount() const override;
 
 protected:
 	UnsignedShort m_commandID;
@@ -159,9 +159,9 @@ public:
 	void setCommandID(UnsignedShort commandID);
 	UnsignedByte getOriginalPlayerID();
 	void setOriginalPlayerID(UnsignedByte originalPlayerID);
-	virtual Int getSortNumber();
+	virtual Int getSortNumber() override;
 
-	virtual size_t getPackedByteCount() const;
+	virtual size_t getPackedByteCount() const override;
 
 protected:
 	UnsignedShort m_commandID;
@@ -179,7 +179,7 @@ public:
 	void setCommandCount(UnsignedShort commandCount);
 	UnsignedShort getCommandCount();
 
-	virtual size_t getPackedByteCount() const;
+	virtual size_t getPackedByteCount() const override;
 
 protected:
 	UnsignedShort m_commandCount;
@@ -196,7 +196,7 @@ public:
 	UnsignedByte getLeavingPlayerID();
 	void setLeavingPlayerID(UnsignedByte id);
 
-	virtual size_t getPackedByteCount() const;
+	virtual size_t getPackedByteCount() const override;
 
 protected:
 	UnsignedByte m_leavingPlayerID;
@@ -215,7 +215,7 @@ public:
 	Int  getAverageFps();
 	void setAverageFps(Int fps);
 
-	virtual size_t getPackedByteCount() const;
+	virtual size_t getPackedByteCount() const override;
 
 protected:
 	Real m_averageLatency;
@@ -236,7 +236,7 @@ public:
 	UnsignedByte getFrameRate();
 	void setFrameRate(UnsignedByte frameRate);
 
-	virtual size_t getPackedByteCount() const;
+	virtual size_t getPackedByteCount() const override;
 
 protected:
 	UnsignedShort m_runAhead;
@@ -254,7 +254,7 @@ public:
 	UnsignedInt getPlayerIndex();
 	void setPlayerIndex(UnsignedInt playerIndex);
 
-	virtual size_t getPackedByteCount() const;
+	virtual size_t getPackedByteCount() const override;
 
 protected:
 	UnsignedInt m_playerIndex;
@@ -268,7 +268,7 @@ public:
 	NetKeepAliveCommandMsg();
 	//virtual ~NetKeepAliveCommandMsg();
 
-	virtual size_t getPackedByteCount() const;
+	virtual size_t getPackedByteCount() const override;
 };
 
 //-----------------------------------------------------------------------------
@@ -279,7 +279,7 @@ public:
 	NetDisconnectKeepAliveCommandMsg();
 	//virtual ~NetDisconnectKeepAliveCommandMsg();
 
-	virtual size_t getPackedByteCount() const;
+	virtual size_t getPackedByteCount() const override;
 };
 
 //-----------------------------------------------------------------------------
@@ -296,7 +296,7 @@ public:
 	UnsignedInt getDisconnectFrame();
 	void setDisconnectFrame(UnsignedInt frame);
 
-	virtual size_t getPackedByteCount() const;
+	virtual size_t getPackedByteCount() const override;
 
 protected:
 	UnsignedByte m_disconnectSlot;
@@ -311,7 +311,7 @@ public:
 	NetPacketRouterQueryCommandMsg();
 	//virtual ~NetPacketRouterQueryCommandMsg();
 
-	virtual size_t getPackedByteCount() const;
+	virtual size_t getPackedByteCount() const override;
 };
 
 //-----------------------------------------------------------------------------
@@ -322,7 +322,7 @@ public:
 	NetPacketRouterAckCommandMsg();
 	//virtual ~NetPacketRouterAckCommandMsg();
 
-	virtual size_t getPackedByteCount() const;
+	virtual size_t getPackedByteCount() const override;
 };
 
 //-----------------------------------------------------------------------------
@@ -336,7 +336,7 @@ public:
 	UnicodeString getText();
 	void setText(UnicodeString text);
 
-	virtual size_t getPackedByteCount() const;
+	virtual size_t getPackedByteCount() const override;
 
 protected:
 	UnicodeString m_text;
@@ -356,7 +356,7 @@ public:
 	Int getPlayerMask();
 	void setPlayerMask( Int playerMask );
 
-	virtual size_t getPackedByteCount() const;
+	virtual size_t getPackedByteCount() const override;
 
 protected:
 	UnicodeString m_text;
@@ -377,7 +377,7 @@ public:
 	UnsignedInt getVoteFrame();
 	void setVoteFrame(UnsignedInt voteFrame);
 
-	virtual size_t getPackedByteCount() const;
+	virtual size_t getPackedByteCount() const override;
 
 protected:
 	UnsignedByte m_slot;
@@ -395,7 +395,7 @@ public:
 	UnsignedByte getPercentage();
 	void setPercentage( UnsignedByte percent );
 
-	virtual size_t getPackedByteCount() const;
+	virtual size_t getPackedByteCount() const override;
 
 protected:
 	UnsignedByte m_percent;
@@ -412,7 +412,7 @@ public:
 	UnsignedByte * getData();
 	void setData(UnsignedByte *data, UnsignedInt dataLength);
 
-	virtual size_t getPackedByteCount() const;
+	virtual size_t getPackedByteCount() const override;
 
 	UnsignedInt getChunkNumber();
 	void setChunkNumber(UnsignedInt chunkNumber);
@@ -461,7 +461,7 @@ public:
 	UnsignedByte * getFileData();
 	void setFileData(UnsignedByte *data, UnsignedInt dataLength);
 
-	virtual size_t getPackedByteCount() const;
+	virtual size_t getPackedByteCount() const override;
 
 protected:
 	AsciiString m_portableFilename;
@@ -490,7 +490,7 @@ public:
 	UnsignedByte getPlayerMask();
 	void setPlayerMask(UnsignedByte playerMask);
 
-	virtual size_t getPackedByteCount() const;
+	virtual size_t getPackedByteCount() const override;
 
 protected:
 	AsciiString m_portableFilename;
@@ -512,7 +512,7 @@ public:
 	Int getProgress();
 	void setProgress(Int val);
 
-	virtual size_t getPackedByteCount() const;
+	virtual size_t getPackedByteCount() const override;
 
 protected:
 	UnsignedShort m_fileID;
@@ -529,7 +529,7 @@ public:
 	UnsignedInt getDisconnectFrame();
 	void setDisconnectFrame(UnsignedInt disconnectFrame);
 
-	virtual size_t getPackedByteCount() const;
+	virtual size_t getPackedByteCount() const override;
 
 protected:
 	UnsignedInt m_disconnectFrame;
@@ -545,7 +545,7 @@ public:
 	UnsignedInt getNewFrame();
 	void setNewFrame(UnsignedInt newFrame);
 
-	virtual size_t getPackedByteCount() const;
+	virtual size_t getPackedByteCount() const override;
 
 protected:
 	UnsignedInt m_newFrame;
@@ -561,7 +561,7 @@ public:
 	UnsignedInt getFrameToResend();
 	void setFrameToResend(UnsignedInt frame);
 
-	virtual size_t getPackedByteCount() const;
+	virtual size_t getPackedByteCount() const override;
 
 protected:
 	UnsignedInt m_frameToResend;
@@ -574,7 +574,7 @@ public:
 	NetLoadCompleteCommandMsg();
 	//virtual ~NetLoadCompleteCommandMsg();
 
-	virtual size_t getPackedByteCount() const;
+	virtual size_t getPackedByteCount() const override;
 };
 
 class NetTimeOutGameStartCommandMsg : public NetCommandMsg
@@ -584,5 +584,5 @@ public:
 	NetTimeOutGameStartCommandMsg();
 	//virtual ~NetTimeOutGameStartCommandMsg();
 
-	virtual size_t getPackedByteCount() const;
+	virtual size_t getPackedByteCount() const override;
 };

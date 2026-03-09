@@ -205,11 +205,11 @@ class PlayerTemplateStore : public SubsystemInterface
 public:
 
 	PlayerTemplateStore();
-	~PlayerTemplateStore();
+	virtual ~PlayerTemplateStore() override;
 
-	virtual void init();
-	virtual void reset();
-	virtual void update();
+	virtual void init() override;
+	virtual void reset() override;
+	virtual void update() override;
 
 	static void parsePlayerTemplateDefinition( INI* ini );
 

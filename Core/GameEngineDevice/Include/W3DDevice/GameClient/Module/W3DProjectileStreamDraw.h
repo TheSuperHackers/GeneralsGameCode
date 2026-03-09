@@ -49,7 +49,7 @@ public:
 	Int m_maxSegments;
 
 	W3DProjectileStreamDrawModuleData();
-	~W3DProjectileStreamDrawModuleData();
+	virtual ~W3DProjectileStreamDrawModuleData() override;
 	static void buildFieldParse(MultiIniFieldParse& p);
 };
 
@@ -65,13 +65,13 @@ public:
 	W3DProjectileStreamDraw( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual void doDrawModule(const Matrix3D* transformMtx);
-	virtual void releaseShadows() {};	///< we don't care about preserving temporary shadows.
-	virtual void allocateShadows() {};	///< we don't care about preserving temporary shadows.
-	virtual void setShadowsEnabled(Bool ) { }
-	virtual void setFullyObscuredByShroud(Bool);
-	virtual void reactToTransformChange(const Matrix3D* oldMtx, const Coord3D* oldPos, Real oldAngle) { }
-	virtual void reactToGeometryChange() { }
+	virtual void doDrawModule(const Matrix3D* transformMtx) override;
+	virtual void releaseShadows() override {};	///< we don't care about preserving temporary shadows.
+	virtual void allocateShadows() override {};	///< we don't care about preserving temporary shadows.
+	virtual void setShadowsEnabled(Bool ) override { }
+	virtual void setFullyObscuredByShroud(Bool) override;
+	virtual void reactToTransformChange(const Matrix3D* oldMtx, const Coord3D* oldPos, Real oldAngle) override { }
+	virtual void reactToGeometryChange() override { }
 
 protected:
 	void makeOrUpdateLine( Vector3 *points, UnsignedInt pointCount, Int lineIndex );

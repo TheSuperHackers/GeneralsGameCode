@@ -82,24 +82,24 @@ public:
 	RebuildHoleBehavior( Thing *thing, const ModuleData *moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual RebuildHoleBehaviorInterface* getRebuildHoleBehaviorInterface() { return this; }
+	virtual RebuildHoleBehaviorInterface* getRebuildHoleBehaviorInterface() override { return this; }
 
 	static Int getInterfaceMask() { return UpdateModule::getInterfaceMask() | (MODULEINTERFACE_DIE); }
 
 	// BehaviorModule
-	virtual DieModuleInterface* getDie() { return this; }
+	virtual DieModuleInterface* getDie() override { return this; }
 
 	// UpdateModuleInterface
-	virtual UpdateSleepTime update();
+	virtual UpdateSleepTime update() override;
 
 	// DieModuleInterface
-	virtual void onDie( const DamageInfo *damageInfo );
+	virtual void onDie( const DamageInfo *damageInfo ) override;
 
 	// RebuildHole specific methods
-	virtual void startRebuildProcess( const ThingTemplate *rebuild, ObjectID spawnerID );
-	virtual ObjectID getSpawnerID() { return m_spawnerObjectID; }
-	virtual ObjectID getReconstructedBuildingID() { return m_reconstructingID; }
-	virtual const ThingTemplate* getRebuildTemplate() const { return m_rebuildTemplate; }
+	virtual void startRebuildProcess( const ThingTemplate *rebuild, ObjectID spawnerID ) override;
+	virtual ObjectID getSpawnerID() override { return m_spawnerObjectID; }
+	virtual ObjectID getReconstructedBuildingID() override { return m_reconstructingID; }
+	virtual const ThingTemplate* getRebuildTemplate() const override { return m_rebuildTemplate; }
 	void transferBombs( Object *reconstruction );
 
 	// interface acquisition

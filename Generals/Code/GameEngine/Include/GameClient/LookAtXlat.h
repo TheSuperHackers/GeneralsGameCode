@@ -46,9 +46,9 @@ class LookAtTranslator : public GameMessageTranslator
 {
 public:
 	LookAtTranslator();
-	~LookAtTranslator();
+	virtual ~LookAtTranslator() override;
 
-	virtual GameMessageDisposition translateGameMessage(const GameMessage *msg);
+	virtual GameMessageDisposition translateGameMessage(const GameMessage *msg) override;
 	virtual const ICoord2D* getRMBScrollAnchor(); // get m_anchor ICoord2D if we're RMB scrolling
 	Bool hasMouseMovedRecently();
 	void setCurrentPos( const ICoord2D& pos );

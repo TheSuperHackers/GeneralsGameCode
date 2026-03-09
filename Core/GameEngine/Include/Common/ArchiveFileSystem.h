@@ -124,12 +124,12 @@ class ArchiveFileSystem : public SubsystemInterface
 {
 public:
 	ArchiveFileSystem();
-	virtual ~ArchiveFileSystem();
+	virtual ~ArchiveFileSystem() override;
 
-	virtual void init() = 0;
-	virtual void update() = 0;
-	virtual void reset() = 0;
-	virtual void postProcessLoad() = 0;
+	virtual void init() override = 0;
+	virtual void update() override = 0;
+	virtual void reset() override = 0;
+	virtual void postProcessLoad() override = 0;
 
 	// ArchiveFile operations
 	virtual ArchiveFile*	openArchiveFile( const Char *filename ) = 0;		///< Create new or return existing Archive file from file name

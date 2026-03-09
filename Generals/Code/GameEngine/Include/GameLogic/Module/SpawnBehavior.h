@@ -131,35 +131,35 @@ public:
 
 	// module methods
 	static Int getInterfaceMask() { return (MODULEINTERFACE_UPDATE) | (MODULEINTERFACE_DIE) | (MODULEINTERFACE_DAMAGE); }
-	virtual void onDelete();
-	virtual UpdateModuleInterface *getUpdate() { return this; }
-	virtual DieModuleInterface *getDie() { return this; }
-	virtual DamageModuleInterface *getDamage() { return this; }
-	virtual SpawnBehaviorInterface* getSpawnBehaviorInterface() { return this; }
+	virtual void onDelete() override;
+	virtual UpdateModuleInterface *getUpdate() override { return this; }
+	virtual DieModuleInterface *getDie() override { return this; }
+	virtual DamageModuleInterface *getDamage() override { return this; }
+	virtual SpawnBehaviorInterface* getSpawnBehaviorInterface() override { return this; }
 
 	// update methods
-	virtual UpdateSleepTime update();
+	virtual UpdateSleepTime update() override;
 
 	// die methods
-	virtual void onDie( const DamageInfo *damageInfo );
+	virtual void onDie( const DamageInfo *damageInfo ) override;
 
 	// damage methods
-	virtual void onDamage( DamageInfo *damageInfo );
-	virtual void onHealing( DamageInfo *damageInfo ) { }
+	virtual void onDamage( DamageInfo *damageInfo ) override;
+	virtual void onHealing( DamageInfo *damageInfo ) override { }
 	virtual void onBodyDamageStateChange( const DamageInfo* damageInfo,
 																				BodyDamageType oldState,
-																				BodyDamageType newState) { }
+																				BodyDamageType newState) override { }
 
 	// SpawnBehaviorInterface methods
-	virtual Bool maySpawnSelfTaskAI( Real maxSelfTaskersRatio );
-	virtual void onSpawnDeath( ObjectID deadSpawn, DamageInfo *damageInfo );	///< Something we spawned and set up to tell us it died just died.
-	virtual Object* getClosestSlave( const Coord3D *pos );
-	virtual void orderSlavesToAttackTarget( Object *target, Int maxShotsToFire, CommandSourceType cmdSource );
-	virtual void orderSlavesToAttackPosition( const Coord3D *pos, Int maxShotsToFire, CommandSourceType cmdSource );
-	virtual CanAttackResult getCanAnySlavesAttackSpecificTarget( AbleToAttackType attackType, const Object *target, CommandSourceType cmdSource );
-	virtual CanAttackResult getCanAnySlavesUseWeaponAgainstTarget( AbleToAttackType attackType, const Object *victim, const Coord3D *pos, CommandSourceType cmdSource );
-	virtual Bool canAnySlavesAttack();
-	virtual void orderSlavesToGoIdle( CommandSourceType cmdSource );
+	virtual Bool maySpawnSelfTaskAI( Real maxSelfTaskersRatio ) override;
+	virtual void onSpawnDeath( ObjectID deadSpawn, DamageInfo *damageInfo ) override;	///< Something we spawned and set up to tell us it died just died.
+	virtual Object* getClosestSlave( const Coord3D *pos ) override;
+	virtual void orderSlavesToAttackTarget( Object *target, Int maxShotsToFire, CommandSourceType cmdSource ) override;
+	virtual void orderSlavesToAttackPosition( const Coord3D *pos, Int maxShotsToFire, CommandSourceType cmdSource ) override;
+	virtual CanAttackResult getCanAnySlavesAttackSpecificTarget( AbleToAttackType attackType, const Object *target, CommandSourceType cmdSource ) override;
+	virtual CanAttackResult getCanAnySlavesUseWeaponAgainstTarget( AbleToAttackType attackType, const Object *victim, const Coord3D *pos, CommandSourceType cmdSource ) override;
+	virtual Bool canAnySlavesAttack() override;
+	virtual void orderSlavesToGoIdle( CommandSourceType cmdSource ) override;
 
 	// **********************************************************************************************
 	// our own methods

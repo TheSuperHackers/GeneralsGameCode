@@ -113,11 +113,11 @@ public:
 	CashBountyPower( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype defined by MemoryPoolObject
 
-	virtual void onObjectCreated();
+	virtual void onObjectCreated() override;
 
 	//virtual void onBuildComplete();	///< This is called when you are a finished game object
-	virtual void onSpecialPowerCreation();	///< This is called when you are a finished game object
-	virtual void doSpecialPower( UnsignedInt commandOptions ) { return; }
+	virtual void onSpecialPowerCreation() override;	///< This is called when you are a finished game object
+	virtual void doSpecialPower( UnsignedInt commandOptions ) override { return; }
 
 protected:
 

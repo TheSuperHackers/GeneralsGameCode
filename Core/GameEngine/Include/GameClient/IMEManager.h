@@ -72,7 +72,7 @@ class IMEManagerInterface : public SubsystemInterface
 
 	public:
 
-		virtual ~IMEManagerInterface() {};
+		virtual ~IMEManagerInterface() override {};
 
 		virtual void					attach( GameWindow *window ) = 0;		///< attach IME to specified window
 		virtual void					detach() = 0;								///< detach IME from current window

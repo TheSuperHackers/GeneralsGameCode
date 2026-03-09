@@ -199,9 +199,9 @@ public:
 #endif
 
 	AIUpdateModuleData();
-	virtual ~AIUpdateModuleData();
+	virtual ~AIUpdateModuleData() override;
 
-	virtual Bool isAiModuleData() const { return true; }
+	virtual Bool isAiModuleData() const override { return true; }
 
 	const LocomotorTemplateVector* findLocomotorTemplateVector(LocomotorSetType t) const;
 	static void buildFieldParse(MultiIniFieldParse& p);
@@ -291,10 +291,10 @@ public:
 	AIUpdateInterface( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual AIUpdateInterface* getAIUpdateInterface() { return this; }
+	virtual AIUpdateInterface* getAIUpdateInterface() override { return this; }
 
 	// Disabled conditions to process (AI will still process held status)
-	virtual DisabledMaskType getDisabledTypesToProcess() const { return MAKE_DISABLED_MASK( DISABLED_HELD ); }
+	virtual DisabledMaskType getDisabledTypesToProcess() const override { return MAKE_DISABLED_MASK( DISABLED_HELD ); }
 
 	// Some very specific, complex behaviors are used by more than one AIUpdate.  Here are their interfaces.
 	virtual DozerAIInterface* getDozerAIInterface() {return nullptr;}
@@ -337,10 +337,10 @@ public:
 	//Definition of busy -- when explicitly in the busy state. Moving or attacking is not considered busy!
 	virtual Bool isBusy() const;
 
-	virtual void onObjectCreated();
+	virtual void onObjectCreated() override;
 	virtual void doQuickExit( std::vector<Coord3D>* path );			///< get out of this Object
 
-	virtual void aiDoCommand(const AICommandParms* parms);
+	virtual void aiDoCommand(const AICommandParms* parms) override;
 
 	virtual const Coord3D *getGuardLocation() const { return &m_locationToGuard;	}
 	virtual ObjectID getGuardObject() const { return m_objectToGuard; }
@@ -511,7 +511,7 @@ public:
 	Bool hasHigherPathPriority(AIUpdateInterface *otherAI) const;
 	void setFinalPosition(const Coord3D *pos) { m_finalPosition = *pos; m_doFinalPosition = false;}
 
-	virtual UpdateSleepTime update();	///< update this object's AI
+	virtual UpdateSleepTime update() override;	///< update this object's AI
 
 	/// if we are attacking "fromID", stop that and attack "toID" instead
 	void transferAttack(ObjectID fromID, ObjectID toID);
@@ -589,7 +589,7 @@ protected:
 		interesting oscillations can occur in some situations, with friction being applied
 		either before or after the locomotive force, making for huge stuttery messes. (srj)
 	*/
-	virtual SleepyUpdatePhase getUpdatePhase() const { return PHASE_INITIAL; }
+	virtual SleepyUpdatePhase getUpdatePhase() const override { return PHASE_INITIAL; }
 
 	void setGoalPositionClipped(const Coord3D* in, CommandSourceType cmdSource);
 

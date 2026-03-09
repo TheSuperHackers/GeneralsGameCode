@@ -65,7 +65,7 @@ public:
 	AssistedTargetingUpdate( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual UpdateSleepTime update();
+	virtual UpdateSleepTime update() override;
 
 	Bool isFreeToAssist() const;
 	void assistAttack( const Object *requestingObject, Object *victimObject );

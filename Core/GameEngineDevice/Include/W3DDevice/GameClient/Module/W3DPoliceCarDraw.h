@@ -49,7 +49,7 @@ public:
 	W3DPoliceCarDraw( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual void doDrawModule(const Matrix3D* transformMtx);
+	virtual void doDrawModule(const Matrix3D* transformMtx) override;
 
 protected:
 

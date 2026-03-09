@@ -78,21 +78,21 @@ class SinglePlayerLoadScreen : public LoadScreen
 {
 public:
 	SinglePlayerLoadScreen();
-	virtual ~SinglePlayerLoadScreen();
+	virtual ~SinglePlayerLoadScreen() override;
 
-	virtual void init( GameInfo *game );		///< Init the loadscreen
-	virtual void reset();		///< Reset the system
+	virtual void init( GameInfo *game ) override;		///< Init the loadscreen
+	virtual void reset() override;		///< Reset the system
 	virtual void update()
 	{
 		DEBUG_CRASH(("Call update(Int) instead.  This update isn't supported"));
 	};
-	virtual void update(Int percent);		 ///< Update the state of the progress bar
-	virtual void processProgress(Int playerId, Int percentage)
+	virtual void update(Int percent) override;		 ///< Update the state of the progress bar
+	virtual void processProgress(Int playerId, Int percentage) override
 	{
 		DEBUG_CRASH(("We Got to a single player load screen throw the Network..."));
 	}
 
-	virtual void setProgressRange( Int min, Int max );
+	virtual void setProgressRange( Int min, Int max ) override;
 
 private:
 	GameWindow *m_progressBar;				///< Pointer to the Progress Bar on the window
@@ -128,21 +128,21 @@ class ChallengeLoadScreen : public LoadScreen
 {
 public:
 	ChallengeLoadScreen();
-	virtual ~ChallengeLoadScreen();
+	virtual ~ChallengeLoadScreen() override;
 
-	virtual void init( GameInfo *game );		///< Init the loadscreen
-	virtual void reset();		///< Reset the system
+	virtual void init( GameInfo *game ) override;		///< Init the loadscreen
+	virtual void reset() override;		///< Reset the system
 	virtual void update()
 	{
 		DEBUG_CRASH(("Call update(Int) instead.  This update isn't supported"));
 	};
-	virtual void update(Int percent);		 ///< Update the state of the progress bar
-	virtual void processProgress(Int playerId, Int percentage)
+	virtual void update(Int percent) override;		 ///< Update the state of the progress bar
+	virtual void processProgress(Int playerId, Int percentage) override
 	{
 		DEBUG_CRASH(("We Got to a single player load screen throw the Network..."));
 	}
 
-	virtual void setProgressRange( Int min, Int max );
+	virtual void setProgressRange( Int min, Int max ) override;
 
 private:
 	GameWindow *m_progressBar;				///< Pointer to the Progress Bar on the window
@@ -200,20 +200,20 @@ class ShellGameLoadScreen : public LoadScreen
 {
 public:
 	ShellGameLoadScreen();
-	virtual ~ShellGameLoadScreen();
+	virtual ~ShellGameLoadScreen() override;
 
-	virtual void init( GameInfo *game );		///< Init the loadscreen
-	virtual void reset();		///< Reset the system
+	virtual void init( GameInfo *game ) override;		///< Init the loadscreen
+	virtual void reset() override;		///< Reset the system
 	virtual void update()
 	{
 		DEBUG_CRASH(("Call update(Int) instead.  This update isn't supported"));
 	};
-	virtual void update(Int percent);		 ///< Update the state of the progress bar
-	virtual void processProgress(Int playerId, Int percentage)
+	virtual void update(Int percent) override;		 ///< Update the state of the progress bar
+	virtual void processProgress(Int playerId, Int percentage) override
 	{
 		DEBUG_CRASH(("We Got to a single player load screen throw the Network..."));
 	}
-	virtual void setProgressRange( Int min, Int max ) { }
+	virtual void setProgressRange( Int min, Int max ) override { }
 
 private:
 	GameWindow *m_progressBar	;				///< Pointer to the Progress Bar on the window
@@ -228,17 +228,17 @@ class MultiPlayerLoadScreen : public LoadScreen
 {
 public:
 	MultiPlayerLoadScreen();
-	virtual ~MultiPlayerLoadScreen();
+	virtual ~MultiPlayerLoadScreen() override;
 
-	virtual void init( GameInfo *game );		///< Init the loadscreen
-	virtual void reset();		///< Reset the system
+	virtual void init( GameInfo *game ) override;		///< Init the loadscreen
+	virtual void reset() override;		///< Reset the system
 	virtual void update()
 	{
 		DEBUG_CRASH(("Call update(Int) instead.  This update isn't supported"));
 	};
-	virtual void update(Int percent);		 ///< Update the state of the progress bar
-	void processProgress(Int playerId, Int percentage);
-	virtual void setProgressRange( Int min, Int max ) { }
+	virtual void update(Int percent) override;		 ///< Update the state of the progress bar
+	virtual void processProgress(Int playerId, Int percentage) override;
+	virtual void setProgressRange( Int min, Int max ) override { }
 private:
 	GameWindow *m_progressBars[MAX_SLOTS];	///< pointer array to all the progress bars on the window
 	GameWindow *m_playerNames[MAX_SLOTS];		///< pointer array to all the static text player names on the window
@@ -259,17 +259,17 @@ class GameSpyLoadScreen : public LoadScreen
 {
 public:
 	GameSpyLoadScreen();
-	virtual ~GameSpyLoadScreen();
+	virtual ~GameSpyLoadScreen() override;
 
-	virtual void init( GameInfo *game );		///< Init the loadscreen
-	virtual void reset();		///< Reset the system
+	virtual void init( GameInfo *game ) override;		///< Init the loadscreen
+	virtual void reset() override;		///< Reset the system
 	virtual void update()
 	{
 		DEBUG_CRASH(("Call update(Int) instead.  This update isn't supported"));
 	};
-	virtual void update(Int percent);		 ///< Update the state of the progress bar
-	void processProgress(Int playerId, Int percentage);
-	virtual void setProgressRange( Int min, Int max ) { }
+	virtual void update(Int percent) override;		 ///< Update the state of the progress bar
+	virtual void processProgress(Int playerId, Int percentage) override;
+	virtual void setProgressRange( Int min, Int max ) override { }
 private:
 	GameWindow *m_progressBars[MAX_SLOTS];	///< pointer array to all the progress bars on the window
 	GameWindow *m_playerNames[MAX_SLOTS];		///< pointer array to all the static text player names on the window
@@ -297,21 +297,21 @@ class MapTransferLoadScreen : public LoadScreen
 {
 public:
 	MapTransferLoadScreen();
-	virtual ~MapTransferLoadScreen();
+	virtual ~MapTransferLoadScreen() override;
 
-	virtual void init( GameInfo *game );		///< Init the loadscreen
-	virtual void reset();							///< Reset the system
+	virtual void init( GameInfo *game ) override;		///< Init the loadscreen
+	virtual void reset() override;							///< Reset the system
 	virtual void update()
 	{
 		DEBUG_CRASH(("Call update(Int) instead.  This update isn't supported"));
 	};
-	virtual void update(Int percent);				///< Update the state of the progress bar
-	virtual void processProgress(Int playerId, Int percentage)
+	virtual void update(Int percent) override;				///< Update the state of the progress bar
+	virtual void processProgress(Int playerId, Int percentage) override
 	{
 		DEBUG_CRASH(("Call processProgress(Int, Int, AsciiString) instead."));
 	}
 	void processProgress(Int playerId, Int percentage, AsciiString stateStr);
-	virtual void setProgressRange( Int min, Int max ) { }
+	virtual void setProgressRange( Int min, Int max ) override { }
 	void processTimeout(Int secondsLeft);
 	void setCurrentFilename(AsciiString filename);
 private:

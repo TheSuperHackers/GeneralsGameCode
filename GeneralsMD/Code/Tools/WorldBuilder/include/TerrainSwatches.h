@@ -44,7 +44,7 @@ public:
 
 // Implementation
 public:
-	virtual ~TerrainSwatches();
+	virtual ~TerrainSwatches() override;
 
 	// Generated message map functions
 protected:

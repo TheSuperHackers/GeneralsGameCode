@@ -46,16 +46,16 @@ class GUIEditWindowManager : public W3DGameWindowManager
 public:
 
 	GUIEditWindowManager( void );
-	virtual ~GUIEditWindowManager( void );
+	virtual ~GUIEditWindowManager( void ) override;
 
-	virtual void init( void );  ///< initialize system
+	virtual void init( void ) override;  ///< initialize system
 
-	virtual Int winDestroy( GameWindow *window );  ///< destroy this window
+	virtual Int winDestroy( GameWindow *window ) override;  ///< destroy this window
 	/// create a new window by setting up parameters and callbacks
 	virtual GameWindow *winCreate( GameWindow *parent, UnsignedInt status,
 																 Int x, Int y, Int width, Int height,
 																 GameWinSystemFunc system,
-																 WinInstanceData *instData = nullptr );
+																 WinInstanceData *instData = nullptr ) override;
 
 	// **************************************************************************
 	// GUIEdit specific methods *************************************************

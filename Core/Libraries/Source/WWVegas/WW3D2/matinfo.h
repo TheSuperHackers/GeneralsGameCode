@@ -70,7 +70,7 @@ public:
 
 	MaterialInfoClass();
 	MaterialInfoClass(const MaterialInfoClass & src);
-	~MaterialInfoClass();
+	~MaterialInfoClass() override;
 	MaterialInfoClass * Clone() const;
 
 	void							Reset()									{ Free(); }

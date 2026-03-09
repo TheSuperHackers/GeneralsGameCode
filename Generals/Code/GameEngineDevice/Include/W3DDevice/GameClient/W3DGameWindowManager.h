@@ -45,35 +45,35 @@ class W3DGameWindowManager : public GameWindowManager
 public:
 
 	W3DGameWindowManager();
-	virtual ~W3DGameWindowManager();
+	virtual ~W3DGameWindowManager() override;
 
-	virtual void init();  ///< initialize the singlegon
+	virtual void init() override;  ///< initialize the singlegon
 
-	virtual GameWindow *allocateNewWindow();  ///< allocate a new game window
-	virtual GameWinDrawFunc getDefaultDraw();  ///< return default draw func to use
+	virtual GameWindow *allocateNewWindow() override;  ///< allocate a new game window
+	virtual GameWinDrawFunc getDefaultDraw() override;  ///< return default draw func to use
 
-	virtual GameWinDrawFunc getPushButtonImageDrawFunc();
-	virtual GameWinDrawFunc getPushButtonDrawFunc();
-	virtual GameWinDrawFunc getCheckBoxImageDrawFunc();
-	virtual GameWinDrawFunc getCheckBoxDrawFunc();
-	virtual GameWinDrawFunc getRadioButtonImageDrawFunc();
-	virtual GameWinDrawFunc getRadioButtonDrawFunc();
-	virtual GameWinDrawFunc getTabControlImageDrawFunc();
-	virtual GameWinDrawFunc getTabControlDrawFunc();
-	virtual GameWinDrawFunc getListBoxImageDrawFunc();
-	virtual GameWinDrawFunc getListBoxDrawFunc();
-	virtual GameWinDrawFunc getComboBoxImageDrawFunc();
-	virtual GameWinDrawFunc getComboBoxDrawFunc();
-	virtual GameWinDrawFunc getHorizontalSliderImageDrawFunc();
-	virtual GameWinDrawFunc getHorizontalSliderDrawFunc();
-	virtual GameWinDrawFunc getVerticalSliderImageDrawFunc();
-	virtual GameWinDrawFunc getVerticalSliderDrawFunc();
-	virtual GameWinDrawFunc getProgressBarImageDrawFunc();
-	virtual GameWinDrawFunc getProgressBarDrawFunc();
-	virtual GameWinDrawFunc getStaticTextImageDrawFunc();
-	virtual GameWinDrawFunc getStaticTextDrawFunc();
-	virtual GameWinDrawFunc getTextEntryImageDrawFunc();
-	virtual GameWinDrawFunc getTextEntryDrawFunc();
+	virtual GameWinDrawFunc getPushButtonImageDrawFunc() override;
+	virtual GameWinDrawFunc getPushButtonDrawFunc() override;
+	virtual GameWinDrawFunc getCheckBoxImageDrawFunc() override;
+	virtual GameWinDrawFunc getCheckBoxDrawFunc() override;
+	virtual GameWinDrawFunc getRadioButtonImageDrawFunc() override;
+	virtual GameWinDrawFunc getRadioButtonDrawFunc() override;
+	virtual GameWinDrawFunc getTabControlImageDrawFunc() override;
+	virtual GameWinDrawFunc getTabControlDrawFunc() override;
+	virtual GameWinDrawFunc getListBoxImageDrawFunc() override;
+	virtual GameWinDrawFunc getListBoxDrawFunc() override;
+	virtual GameWinDrawFunc getComboBoxImageDrawFunc() override;
+	virtual GameWinDrawFunc getComboBoxDrawFunc() override;
+	virtual GameWinDrawFunc getHorizontalSliderImageDrawFunc() override;
+	virtual GameWinDrawFunc getHorizontalSliderDrawFunc() override;
+	virtual GameWinDrawFunc getVerticalSliderImageDrawFunc() override;
+	virtual GameWinDrawFunc getVerticalSliderDrawFunc() override;
+	virtual GameWinDrawFunc getProgressBarImageDrawFunc() override;
+	virtual GameWinDrawFunc getProgressBarDrawFunc() override;
+	virtual GameWinDrawFunc getStaticTextImageDrawFunc() override;
+	virtual GameWinDrawFunc getStaticTextDrawFunc() override;
+	virtual GameWinDrawFunc getTextEntryImageDrawFunc() override;
+	virtual GameWinDrawFunc getTextEntryDrawFunc() override;
 
 protected:
 

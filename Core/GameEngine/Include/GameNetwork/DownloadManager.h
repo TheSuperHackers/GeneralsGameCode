@@ -58,11 +58,11 @@ public:
 	HRESULT update();
 	void reset();
 
-	virtual HRESULT OnError( Int error );
-	virtual HRESULT OnEnd();
-	virtual HRESULT OnQueryResume();
-	virtual HRESULT OnProgressUpdate( Int bytesread, Int totalsize, Int timetaken, Int timeleft );
-	virtual HRESULT OnStatusUpdate( Int status );
+	virtual HRESULT OnError( Int error ) override;
+	virtual HRESULT OnEnd() override;
+	virtual HRESULT OnQueryResume() override;
+	virtual HRESULT OnProgressUpdate( Int bytesread, Int totalsize, Int timetaken, Int timeleft ) override;
+	virtual HRESULT OnStatusUpdate( Int status ) override;
 
 	virtual HRESULT downloadFile( AsciiString server, AsciiString username, AsciiString password, AsciiString file, AsciiString localfile, AsciiString regkey, Bool tryResume );
 	AsciiString getLastLocalFile();

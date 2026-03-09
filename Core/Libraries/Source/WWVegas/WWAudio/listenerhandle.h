@@ -52,7 +52,7 @@ public:
 	//	Public constructors/destructors
 	///////////////////////////////////////////////////////////////////
 	ListenerHandleClass  ();
-	~ListenerHandleClass ();
+	~ListenerHandleClass () override;
 
 	///////////////////////////////////////////////////////////////////
 	//	Public methods
@@ -61,26 +61,26 @@ public:
 	//
 	//	RTTI
 	//
-	ListenerHandleClass *	As_ListenerHandleClass ()		{ return this; }
+	ListenerHandleClass *	As_ListenerHandleClass () override { return this; }
 
 	//
 	//	Inherited
 	//
-	void							Initialize (SoundBufferClass *buffer);
-	void							Start_Sample ()									{ }
-	void							Stop_Sample ()									{ }
-	void							Resume_Sample ()									{ }
-	void							End_Sample ()										{ }
-	void							Set_Sample_Volume (S32 volume)					{ }
-	S32							Get_Sample_Volume ()							{ return 0; }
-	void							Set_Sample_Pan (S32 pan)							{ }
-	S32							Get_Sample_Pan ()								{ return 64; }
-	void							Set_Sample_Loop_Count (U32 count)				{ }
-	U32							Get_Sample_Loop_Count ()						{ return 0; }
-	void							Set_Sample_MS_Position (U32 ms)					{ }
-	void							Get_Sample_MS_Position (S32 *len, S32 *pos)	{ }
-	S32							Get_Sample_Playback_Rate ()					{ return 0; }
-	void							Set_Sample_Playback_Rate (S32 rate)				{ }
+	void							Initialize (SoundBufferClass *buffer) override;
+	void							Start_Sample () override { }
+	void							Stop_Sample () override { }
+	void							Resume_Sample () override { }
+	void							End_Sample () override { }
+	void							Set_Sample_Volume (S32 volume) override { }
+	S32							Get_Sample_Volume () override { return 0; }
+	void							Set_Sample_Pan (S32 pan) override { }
+	S32							Get_Sample_Pan () override { return 64; }
+	void							Set_Sample_Loop_Count (U32 count) override { }
+	U32							Get_Sample_Loop_Count () override { return 0; }
+	void							Set_Sample_MS_Position (U32 ms) override { }
+	void							Get_Sample_MS_Position (S32 *len, S32 *pos) override { }
+	S32							Get_Sample_Playback_Rate () override { return 0; }
+	void							Set_Sample_Playback_Rate (S32 rate) override { }
 
 protected:
 

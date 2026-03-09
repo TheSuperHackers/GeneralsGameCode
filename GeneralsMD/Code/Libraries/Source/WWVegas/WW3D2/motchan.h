@@ -64,7 +64,7 @@ public:
 	void Get_Vector(int frame,float * setvec) const;
 
 	MotionChannelClass();
-	~MotionChannelClass();
+	~MotionChannelClass() override;
 
 	bool	Load_W3D(ChunkLoadClass & cload);
 	WWINLINE int Get_Type() const { return Type; }
@@ -159,7 +159,7 @@ class BitChannelClass : public W3DMPO
 public:
 
 	BitChannelClass();
-	~BitChannelClass();
+	~BitChannelClass() override;
 
 	bool	Load_W3D(ChunkLoadClass & cload);
 	WWINLINE int	Get_Type() const { return Type; }
@@ -215,7 +215,7 @@ class TimeCodedMotionChannelClass : public W3DMPO
 public:
 
 	TimeCodedMotionChannelClass();
-	~TimeCodedMotionChannelClass();
+	~TimeCodedMotionChannelClass() override;
 
 	bool	Load_W3D(ChunkLoadClass & cload);
 	int	Get_Type() { return Type; }
@@ -253,7 +253,7 @@ class AdaptiveDeltaMotionChannelClass : public W3DMPO
 public:
 
 	AdaptiveDeltaMotionChannelClass();
-	~AdaptiveDeltaMotionChannelClass();
+	~AdaptiveDeltaMotionChannelClass() override;
 
 	bool	Load_W3D(ChunkLoadClass & cload);
 	int	Get_Type() { return Type; }
@@ -302,7 +302,7 @@ class TimeCodedBitChannelClass : public W3DMPO
 public:
 
 	TimeCodedBitChannelClass();
-	~TimeCodedBitChannelClass();
+	~TimeCodedBitChannelClass() override;
 
 	bool	Load_W3D(ChunkLoadClass & cload);
 	int	Get_Type() { return Type; }

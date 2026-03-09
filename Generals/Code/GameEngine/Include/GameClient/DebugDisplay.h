@@ -110,18 +110,18 @@ class DebugDisplay : public DebugDisplayInterface
 	public:
 
 		DebugDisplay();
-		virtual ~DebugDisplay() {};
+		virtual ~DebugDisplay() override {};
 
-		virtual void	printf( const Char *format, ...);			///< Print formatted text at current cursor position
-		virtual void	setCursorPos( Int x, Int y );		///< Set new cursor position
-		virtual Int		getCursorXPos();					///< Get current X position of cursor
-		virtual Int		getCursorYPos();					///< Get current Y position of cursor
-		virtual Int		getWidth();								///< Get character width of display
-		virtual Int		getHeight();							///< Get character height of display
-		virtual void	setTextColor( Color color );		///< set text color
-		virtual void	setRightMargin( Int rightPos );	///< set right margin position
-		virtual void	setLeftMargin( Int leftPos );		///< set left margin position
-		virtual void	reset();									///< Reset back to default settings
+		virtual void	printf( const Char *format, ...) override;			///< Print formatted text at current cursor position
+		virtual void	setCursorPos( Int x, Int y ) override;		///< Set new cursor position
+		virtual Int		getCursorXPos() override;					///< Get current X position of cursor
+		virtual Int		getCursorYPos() override;					///< Get current Y position of cursor
+		virtual Int		getWidth() override;								///< Get character width of display
+		virtual Int		getHeight() override;							///< Get character height of display
+		virtual void	setTextColor( Color color ) override;		///< set text color
+		virtual void	setRightMargin( Int rightPos ) override;	///< set right margin position
+		virtual void	setLeftMargin( Int leftPos ) override;		///< set left margin position
+		virtual void	reset() override;									///< Reset back to default settings
 
 	protected:
 

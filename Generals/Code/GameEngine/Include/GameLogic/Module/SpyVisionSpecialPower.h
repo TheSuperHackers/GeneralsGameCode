@@ -65,7 +65,7 @@ public:
 	SpyVisionSpecialPower( Thing *thing, const ModuleData *moduleData );
 	// virtual destructor prototype provided by memory pool object
 
-	virtual void doSpecialPower( UnsignedInt commandOptions );
+	virtual void doSpecialPower( UnsignedInt commandOptions ) override;
 
 protected:
 

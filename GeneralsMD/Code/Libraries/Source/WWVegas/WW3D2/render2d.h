@@ -96,7 +96,7 @@ class Render2DClass : public W3DMPO
 	W3DMPO_GLUE(Render2DClass)
 public:
 	Render2DClass( TextureClass* tex = nullptr );
-	virtual ~Render2DClass();
+	virtual ~Render2DClass() override;
 
 	virtual	void	Reset();
 	void	Render();
@@ -198,9 +198,9 @@ protected:
 class Render2DTextClass : public Render2DClass {
 public:
 	Render2DTextClass(Font3DInstanceClass *font=nullptr);
-	~Render2DTextClass();
+	virtual ~Render2DTextClass() override;
 
-	virtual	void	Reset();
+	virtual	void	Reset() override;
 
 	Font3DInstanceClass *	Peek_Font()				{ return Font; }
 	void	Set_Font( Font3DInstanceClass *font );

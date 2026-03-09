@@ -89,7 +89,7 @@ class SoundSceneObjClass : public MultiListObjectClass, public PersistClass, pub
 		//////////////////////////////////////////////////////////////////////
 		SoundSceneObjClass ();
 		SoundSceneObjClass (const SoundSceneObjClass &src);
-		virtual ~SoundSceneObjClass ();
+		virtual ~SoundSceneObjClass () override;
 
 		//////////////////////////////////////////////////////////////////////
 		//	Public operators
@@ -178,8 +178,8 @@ class SoundSceneObjClass : public MultiListObjectClass, public PersistClass, pub
 		//////////////////////////////////////////////////////////////////////
 		//	From PersistClass
 		//////////////////////////////////////////////////////////////////////
-		bool						Save (ChunkSaveClass &csave);
-		bool						Load (ChunkLoadClass &cload);
+		virtual bool						Save (ChunkSaveClass &csave) override;
+		virtual bool						Load (ChunkLoadClass &cload) override;
 
 	protected:
 

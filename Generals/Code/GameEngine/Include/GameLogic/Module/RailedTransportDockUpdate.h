@@ -78,20 +78,20 @@ public:
 	// virtual destructor prototype provided by memory pool declaration
 
 	// module interfaces
-	virtual RailedTransportDockUpdateInterface *getRailedTransportDockUpdateInterface() { return this; }
+	virtual RailedTransportDockUpdateInterface *getRailedTransportDockUpdateInterface() override { return this; }
 
 	// update module methods
-	virtual UpdateSleepTime update();
+	virtual UpdateSleepTime update() override;
 
 	// dock methods
-	virtual DockUpdateInterface* getDockUpdateInterface() { return this; }
-	virtual Bool action( Object* docker, Object *drone = nullptr );
-	virtual Bool isClearToEnter( Object const* docker ) const;
+	virtual DockUpdateInterface* getDockUpdateInterface() override { return this; }
+	virtual Bool action( Object* docker, Object *drone = nullptr ) override;
+	virtual Bool isClearToEnter( Object const* docker ) const override;
 
 	// our own methods
-	virtual Bool isLoadingOrUnloading();
-	virtual void unloadAll();
-	virtual void unloadSingleObject( Object *obj );
+	virtual Bool isLoadingOrUnloading() override;
+	virtual void unloadAll() override;
+	virtual void unloadSingleObject( Object *obj ) override;
 
 protected:
 

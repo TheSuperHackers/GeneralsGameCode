@@ -51,7 +51,7 @@ public:
 
 	Curve3DClass();
 	Curve3DClass(const Curve3DClass & that);
-	virtual ~Curve3DClass();
+	virtual ~Curve3DClass() override;
 	Curve3DClass & operator = (const Curve3DClass & that);
 
 	virtual void		Evaluate(float time,Vector3 * set_val) = 0;
@@ -67,8 +67,8 @@ public:
 	float					Get_End_Time();
 
 	// persistent object support
-	virtual bool		Save (ChunkSaveClass &csave);
-	virtual bool		Load (ChunkLoadClass &cload);
+	virtual bool		Save (ChunkSaveClass &csave) override;
+	virtual bool		Load (ChunkLoadClass &cload) override;
 
 protected:
 
@@ -91,12 +91,12 @@ protected:
 class LinearCurve3DClass : public Curve3DClass
 {
 public:
-	virtual void		Evaluate(float time,Vector3 * set_val);
+	virtual void		Evaluate(float time,Vector3 * set_val) override;
 
 	// persistent object support
-	virtual const PersistFactoryClass &	Get_Factory() const;
-	virtual bool								Save(ChunkSaveClass &csave);
-	virtual bool								Load(ChunkLoadClass &cload);
+	virtual const PersistFactoryClass &	Get_Factory() const override;
+	virtual bool								Save(ChunkSaveClass &csave) override;
+	virtual bool								Load(ChunkLoadClass &cload) override;
 };
 
 
@@ -109,7 +109,7 @@ public:
 
 	Curve1DClass();
 	Curve1DClass(const Curve1DClass & that);
-	virtual ~Curve1DClass();
+	virtual ~Curve1DClass() override;
 	Curve1DClass & operator = (const Curve1DClass & that);
 
 	virtual void		Evaluate(float time,float * set_val) = 0;
@@ -125,8 +125,8 @@ public:
 	float					Get_End_Time();
 
 	// persistent object support
-	virtual bool		Save (ChunkSaveClass &csave);
-	virtual bool		Load (ChunkLoadClass &cload);
+	virtual bool		Save (ChunkSaveClass &csave) override;
+	virtual bool		Load (ChunkLoadClass &cload) override;
 
 protected:
 
@@ -150,10 +150,10 @@ protected:
 class LinearCurve1DClass : public Curve1DClass
 {
 public:
-	virtual void		Evaluate(float time,float * set_val);
+	virtual void		Evaluate(float time,float * set_val) override;
 
 	// persistent object support
-	virtual const PersistFactoryClass &	Get_Factory() const;
-	virtual bool								Save(ChunkSaveClass &csave);
-	virtual bool								Load(ChunkLoadClass &cload);
+	virtual const PersistFactoryClass &	Get_Factory() const override;
+	virtual bool								Save(ChunkSaveClass &csave) override;
+	virtual bool								Load(ChunkLoadClass &cload) override;
 };

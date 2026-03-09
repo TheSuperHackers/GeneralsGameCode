@@ -63,18 +63,18 @@ public:
 	// virtual destructor prototype defined by MemoryPoolObject
 
 	//SpecialPowerUpdateInterface virtual implementations
-	virtual Bool doesSpecialPowerUpdatePassScienceTest() const;
-	virtual ScienceType getExtraRequiredScience() const { return SCIENCE_INVALID; } //Does this object have more than one special power module with the same spTemplate?
+	virtual Bool doesSpecialPowerUpdatePassScienceTest() const override;
+	virtual ScienceType getExtraRequiredScience() const override { return SCIENCE_INVALID; } //Does this object have more than one special power module with the same spTemplate?
 
 	//SpecialPowerUpdateInterface PURE virtual implementations
-	virtual Bool initiateIntentToDoSpecialPower(const SpecialPowerTemplate *specialPowerTemplate, const Object *targetObj, const Coord3D *targetPos, const Waypoint *way, UnsignedInt commandOptions ) = 0;
-	virtual Bool isSpecialAbility() const = 0;
-	virtual Bool isSpecialPower() const = 0;
-	virtual Bool isActive() const = 0;
-	virtual CommandOption getCommandOption() const = 0;
-	virtual Bool doesSpecialPowerHaveOverridableDestinationActive() const = 0; //Is it active now?
-	virtual Bool doesSpecialPowerHaveOverridableDestination() const = 0;	//Does it have it, even if it's not active?
-	virtual void setSpecialPowerOverridableDestination( const Coord3D *loc ) = 0;
-	virtual Bool isPowerCurrentlyInUse( const CommandButton *command = nullptr ) const = 0;
+	virtual Bool initiateIntentToDoSpecialPower(const SpecialPowerTemplate *specialPowerTemplate, const Object *targetObj, const Coord3D *targetPos, const Waypoint *way, UnsignedInt commandOptions ) override = 0;
+	virtual Bool isSpecialAbility() const override = 0;
+	virtual Bool isSpecialPower() const override = 0;
+	virtual Bool isActive() const override = 0;
+	virtual CommandOption getCommandOption() const override = 0;
+	virtual Bool doesSpecialPowerHaveOverridableDestinationActive() const override = 0; //Is it active now?
+	virtual Bool doesSpecialPowerHaveOverridableDestination() const override = 0;	//Does it have it, even if it's not active?
+	virtual void setSpecialPowerOverridableDestination( const Coord3D *loc ) override = 0;
+	virtual Bool isPowerCurrentlyInUse( const CommandButton *command = nullptr ) const override = 0;
 
 };

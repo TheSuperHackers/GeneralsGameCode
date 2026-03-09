@@ -83,11 +83,11 @@ class NameKeyGenerator : public SubsystemInterface
 public:
 
 	NameKeyGenerator();
-	virtual ~NameKeyGenerator();
+	virtual ~NameKeyGenerator() override;
 
-	virtual void init();
-	virtual void reset();
-	virtual void update() { }
+	virtual void init() override;
+	virtual void reset() override;
+	virtual void update() override { }
 
 	/// Given a string, convert into a unique integer key.
 	NameKeyType nameToKey(const AsciiString& name);

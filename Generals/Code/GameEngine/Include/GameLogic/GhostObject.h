@@ -56,9 +56,9 @@ public:
 	const Coord3D *getParentPosition() const {return &m_parentPosition;}
 
 protected:
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 	Object *m_parentObject;		///< object which we are ghosting
 	GeometryType m_parentGeometryType;
@@ -89,9 +89,9 @@ public:
 	inline Bool trackAllPlayers() const; ///< returns whether the ghost object status is tracked for all players or for the local player only
 
 protected:
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 	Int m_localPlayer;
 	Bool m_lockGhostObjects;

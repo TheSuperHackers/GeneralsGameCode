@@ -79,7 +79,7 @@ public:
 
 	HTreeClass();
 	HTreeClass(const HTreeClass & src);
-	~HTreeClass();
+	~HTreeClass() override;
 
 	int					Load_W3D(ChunkLoadClass & cload);
 	void					Init_Default();

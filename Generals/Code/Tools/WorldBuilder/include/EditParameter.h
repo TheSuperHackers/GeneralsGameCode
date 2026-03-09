@@ -44,7 +44,7 @@ public:
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(EditParameter)
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
 // Implementation
@@ -115,9 +115,9 @@ protected:
 	//{{AFX_MSG(EditParameter)
 	afx_msg void OnChangeEdit();
 	afx_msg void OnEditchangeCombo();
-	virtual BOOL OnInitDialog();
-	virtual void OnOK();
-	virtual void OnCancel();
+	virtual BOOL OnInitDialog() override;
+	virtual void OnOK() override;
+	virtual void OnCancel() override;
 	afx_msg void OnPreviewSound();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()

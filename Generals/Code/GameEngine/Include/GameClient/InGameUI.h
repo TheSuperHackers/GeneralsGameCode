@@ -347,12 +347,12 @@ public:  // ********************************************************************
 	};
 
 	InGameUI();
-	virtual ~InGameUI();
+	virtual ~InGameUI() override;
 
 	// Inherited from subsystem interface -----------------------------------------------------------
-	virtual	void init();															///< Initialize the in-game user interface
-	virtual void update();														///< Update the UI by calling preDraw(), draw(), and postDraw()
-	virtual void reset();															///< Reset
+	virtual	void init() override;															///< Initialize the in-game user interface
+	virtual void update() override;														///< Update the UI by calling preDraw(), draw(), and postDraw()
+	virtual void reset() override;															///< Reset
 	//-----------------------------------------------------------------------------------------------
 
 	// interface for the popup messages
@@ -455,7 +455,7 @@ public:  // ********************************************************************
 	virtual void disregardDrawable( Drawable *draw );				///< Drawable is being destroyed, clean up any UI elements associated with it
 
 	virtual void preDraw();														///< Logic which needs to occur before the UI renders
-	virtual void draw() = 0;													///< Render the in-game user interface
+	virtual void draw() override = 0;													///< Render the in-game user interface
 	virtual void postDraw();													///< Logic which needs to occur after the UI renders
 	virtual void postWindowDraw();											///< Logic which needs to occur after the WindowManager has repainted the menus
 
@@ -600,9 +600,9 @@ public:
 
 protected:
 	// snapshot methods
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 protected:
 
