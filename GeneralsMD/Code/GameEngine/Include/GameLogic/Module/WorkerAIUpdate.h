@@ -180,6 +180,7 @@ public:
 
 // Supply truck stuff
 	virtual Int getNumberBoxes() const override { return m_numberBoxes; }
+	virtual Int getMaxBoxes() const override { return getWorkerAIUpdateModuleData()->m_maxBoxesData; }
 	virtual Bool loseOneBox() override;
 	virtual Bool gainOneBox( Int remainingStock ) override;
 

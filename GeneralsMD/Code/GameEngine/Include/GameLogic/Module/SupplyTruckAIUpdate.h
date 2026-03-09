@@ -161,6 +161,7 @@ class SupplyTruckAIInterface
 	// who look this up by name.
 public:
 	virtual Int getNumberBoxes() const = 0;
+	virtual Int getMaxBoxes() const = 0;
 	virtual Bool loseOneBox() = 0;
 	virtual Bool gainOneBox( Int remainingStock ) = 0;
 
@@ -197,6 +198,7 @@ public:
 	virtual const SupplyTruckAIInterface* getSupplyTruckAIInterface() const override {return this;}
 
 	virtual Int getNumberBoxes() const override { return m_numberBoxes; }
+	virtual Int getMaxBoxes() const override { return getSupplyTruckAIUpdateModuleData()->m_maxBoxesData; }
 	virtual Bool loseOneBox() override;
 	virtual Bool gainOneBox( Int remainingStock ) override;
 
