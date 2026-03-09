@@ -7,6 +7,7 @@ fix
 feat
 perf
 refactor
+revert
 style
 test
 tweak
