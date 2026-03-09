@@ -326,6 +326,11 @@ public:
 
 	UnsignedInt costSoFar( PathfindCell *parent );
 
+#if RETAIL_COMPATIBLE_PATHFINDING
+	// Forward insertion sort that is 100% retail compatible
+	void forwardInsertionSortRetailCompatible(PathfindCellList& list);
+#endif
+
 	/// put self on "open" list in ascending cost order
 	void putOnSortedOpenList( PathfindCellList &list );
 

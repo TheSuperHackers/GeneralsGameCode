@@ -1680,8 +1680,8 @@ Bool PathfindCell::removeObstacle( Object *obstacle )
 	return true;
 }
 
-/// put self on "open" list in ascending cost order, return new list
-void PathfindCell::putOnSortedOpenList( PathfindCellList &list )
+// Retail compatible insertion sort
+void PathfindCell::forwardInsertionSortRetailCompatible(PathfindCellList& list)
 {
 	DEBUG_ASSERTCRASH(m_info, ("Has to have info."));
 	DEBUG_ASSERTCRASH(m_info->m_closed == FALSE && m_info->m_open == FALSE, ("Serious error - Invalid flags. jba"));
@@ -1701,18 +1701,10 @@ void PathfindCell::putOnSortedOpenList( PathfindCellList &list )
 	// insertion sort
 	PathfindCell* currentCell = list.m_head;
 	PathfindCell* previousCell = nullptr;
-#if RETAIL_COMPATIBLE_PATHFINDING
-	// TheSuperHackers @bugfix In the retail compatible pathfinding, on rare occasions, we get stuck in an infinite loop
-	// External code should pickup on the bad behaviour and cleanup properly, but we need to explicitly break out here
-	// The fixed pathfinding does not have this issue due to the proper cleanup of pathfindCells and their pathfindCellInfos
 	UnsignedInt cellCount = 0;
 	while (currentCell && cellCount < PATHFIND_CELLS_PER_FRAME && currentCell->m_info->m_totalCost <= m_info->m_totalCost)
 	{
 		cellCount++;
-#else
-	while (currentCell && currentCell->m_info->m_totalCost <= m_info->m_totalCost)
-	{
-#endif
 		previousCell = currentCell;
 		currentCell = currentCell->getNextOpen();
 	}
@@ -1738,6 +1730,12 @@ void PathfindCell::putOnSortedOpenList( PathfindCellList &list )
 		m_info->m_prevOpen = previousCell->m_info;
 		m_info->m_nextOpen = nullptr;
 	}
+}
+
+/// put self on "open" list in ascending cost order, return new list
+void PathfindCell::putOnSortedOpenList( PathfindCellList &list )
+{
+		forwardInsertionSortRetailCompatible(list);
 }
 
 /// remove self from "open" list
