@@ -20,6 +20,7 @@
 // not const -- we might override from INI
 static PoolSizeRec PoolSizes[] =
 {
+	{ "ArmorTemplatePool", 64, 8 },
 	{ "PartitionContactListNode", 2048, 512 },
 	{ "BattleshipUpdate", 32, 32 },
 	{ "FlyToDestAndDestroyUpdate", 32, 32 },
