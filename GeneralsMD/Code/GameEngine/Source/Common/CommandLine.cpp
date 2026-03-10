@@ -417,6 +417,13 @@ Int parseHeadless(char *args[], int num)
 	return 1;
 }
 
+// TheSuperHackers @feature bill-rich 11/03/2026
+Int parseExportStats(char *args[], int num)
+{
+	TheWritableGlobalData->m_exportStats = TRUE;
+	return 1;
+}
+
 Int parseReplay(char *args[], int num)
 {
 	if (num > 1)
@@ -1148,6 +1155,10 @@ static CommandLineParam paramsForStartup[] =
 	// (If you have 4 cores, call it with -jobs 4)
 	// If you do not call this, all replays will be simulated in sequence in the same process.
 	{ "-jobs", parseJobs },
+
+	// TheSuperHackers @feature bill-rich 11/03/2026
+	// Export game stats as JSON alongside replay file.
+	{ "-exportStats", parseExportStats },
 };
 
 // These Params are parsed during Engine Init before INI data is loaded

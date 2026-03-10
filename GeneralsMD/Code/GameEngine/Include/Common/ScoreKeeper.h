@@ -96,6 +96,15 @@ public:
 	// for battle honor calculation.  done once at the end of each online game
 	Int getTotalUnitsBuilt( KindOfMaskType validMask, KindOfMaskType invalidMask );
 
+	// TheSuperHackers @feature bill-rich 10/03/2026 Public accessors for game stats export.
+	typedef std::map<const ThingTemplate *, Int> ObjectCountMap;
+	Int getUnitsDestroyedByPlayer( Int idx ) const { return m_totalUnitsDestroyed[idx]; }
+	Int getBuildingsDestroyedByPlayer( Int idx ) const { return m_totalBuildingsDestroyed[idx]; }
+	const ObjectCountMap& getObjectsBuilt() const { return m_objectsBuilt; }
+	const ObjectCountMap* getObjectsDestroyedArray() const { return m_objectsDestroyed; }
+	const ObjectCountMap& getObjectsLost() const { return m_objectsLost; }
+	const ObjectCountMap& getObjectsCaptured() const { return m_objectsCaptured; }
+
 protected:
 
 	// snapshot methods
@@ -119,7 +128,6 @@ private:
 
 	Int m_myPlayerIdx;								///< We need to not score kills on ourselves... so we need to know who we are
 
-	typedef std::map<const ThingTemplate *, Int> ObjectCountMap;
 	typedef ObjectCountMap::iterator ObjectCountMapIt;
 	ObjectCountMap m_objectsBuilt;			///< How many and what kinds of objects did we build
 	ObjectCountMap m_objectsDestroyed[MAX_PLAYER_COUNT];		///< How many and what kinds and who's did we kill

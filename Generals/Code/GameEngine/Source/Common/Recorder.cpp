@@ -47,6 +47,8 @@
 #include "Common/CRCDebug.h"
 #include "Common/OptionPreferences.h"
 #include "Common/version.h"
+// TheSuperHackers @feature bill-rich 10/03/2026 Export game stats as JSON alongside replay file.
+#include "Common/StatsExporter.h"
 
 constexpr const char s_genrep[] = "GENREP";
 constexpr const UnsignedInt replayBufferBytes = 8192;
@@ -731,6 +733,9 @@ void RecorderClass::stopRecording() {
 		if (m_archiveReplays)
 			archiveReplay(m_fileName);
 	}
+	// TheSuperHackers @feature bill-rich 10/03/2026 Export game stats as JSON alongside replay file.
+	if (TheGlobalData->m_exportStats && !m_fileName.isEmpty())
+		ExportGameStatsJSON(getReplayDir(), m_fileName);
 	m_fileName.clear();
 }
 
