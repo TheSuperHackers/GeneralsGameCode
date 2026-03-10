@@ -66,7 +66,7 @@ public:
 	// virtual destructor prototype provided by memory pool declaration
 
 	static Int getInterfaceMask() { return (MODULEINTERFACE_DAMAGE) | (MODULEINTERFACE_DIE); }
-	BridgeTowerBehaviorInterface* getBridgeTowerBehaviorInterface() override { return this; }
+	virtual BridgeTowerBehaviorInterface* getBridgeTowerBehaviorInterface() override { return this; }
 
 	virtual void setBridge( Object *bridge ) override;
 	virtual ObjectID getBridgeID() override;

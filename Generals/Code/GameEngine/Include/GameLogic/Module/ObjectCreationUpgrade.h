@@ -66,7 +66,7 @@ public:
 	ObjectCreationUpgrade( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype defined by MemoryPoolObject
 
-	void onDelete() override;																///< we have some work to do when this module goes away
+	virtual void onDelete() override;																///< we have some work to do when this module goes away
 
 protected:
 

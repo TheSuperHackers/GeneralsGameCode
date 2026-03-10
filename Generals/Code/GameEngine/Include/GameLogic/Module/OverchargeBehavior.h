@@ -103,8 +103,8 @@ public:
 	virtual void enable( Bool enable ) override;			///< turn overcharge on/off
 	virtual Bool isOverchargeActive() override { return m_overchargeActive; }
 
-	void onDelete() override;																///< we have some work to do when this module goes away
-	void onCapture( Player *oldOwner, Player *newOwner ) override;	///< object containing upgrade has changed teams
+	virtual void onDelete() override;																///< we have some work to do when this module goes away
+	virtual void onCapture( Player *oldOwner, Player *newOwner ) override;	///< object containing upgrade has changed teams
 
 protected:
 

@@ -79,7 +79,7 @@ public:
 	// module methods
 	static Int getInterfaceMask() { return UpdateModule::getInterfaceMask() | (MODULEINTERFACE_DIE); }
 	virtual void onDelete() override;
-	void onObjectCreated() override;
+	virtual void onObjectCreated() override;
 
 	// update module methods
 	virtual UpdateSleepTime update() override;

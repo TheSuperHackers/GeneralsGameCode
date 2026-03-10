@@ -102,28 +102,28 @@ public:
 	// BehaviorModule
 	virtual SpecialPowerModuleInterface* getSpecialPower() override { return this; }
 
-	Bool isModuleForPower( const SpecialPowerTemplate *specialPowerTemplate ) const override;	///< is this module for the specified special power
-	Bool isReady() const override; 						///< is this special power available now
+	virtual Bool isModuleForPower( const SpecialPowerTemplate *specialPowerTemplate ) const override;	///< is this module for the specified special power
+	virtual Bool isReady() const override; 						///< is this special power available now
 //  This is the althernate way to one-at-a-time BlackLotus' specials; we'll keep it commented her until Dustin decides, or until 12/10/02
 //	Bool isBusy() const { return FALSE; }
 
-	Real getPercentReady() const override;		///< get the percent ready (1.0 = ready now, 0.5 = half charged up etc.)
+	virtual Real getPercentReady() const override;		///< get the percent ready (1.0 = ready now, 0.5 = half charged up etc.)
 
-	UnsignedInt getReadyFrame() const override;		///< get the frame at which we are ready
-	AsciiString getPowerName() const override;
+	virtual UnsignedInt getReadyFrame() const override;		///< get the frame at which we are ready
+	virtual AsciiString getPowerName() const override;
 	void syncReadyFrameToStatusQuo();
 
-	const SpecialPowerTemplate* getSpecialPowerTemplate() const override;
-	ScienceType getRequiredScience() const override;
+	virtual const SpecialPowerTemplate* getSpecialPowerTemplate() const override;
+	virtual ScienceType getRequiredScience() const override;
 
-	void onSpecialPowerCreation() override;	// called by a create module to start our countdown
+	virtual void onSpecialPowerCreation() override;	// called by a create module to start our countdown
 	//
 	// The following methods are for use by the scripting engine ONLY
 	//
 
-	void setReadyFrame( UnsignedInt frame ) override { m_availableOnFrame = frame; }
+	virtual void setReadyFrame( UnsignedInt frame ) override { m_availableOnFrame = frame; }
 	UnsignedInt getReadyFrame() { return m_availableOnFrame; }// USED BY PLAYER TO KEEP RECHARGE TIMERS IN SYNC
-	void pauseCountdown( Bool pause ) override;
+	virtual void pauseCountdown( Bool pause ) override;
 
 	//
 	// the following methods should be *EXTENDED* for any special power module implementations

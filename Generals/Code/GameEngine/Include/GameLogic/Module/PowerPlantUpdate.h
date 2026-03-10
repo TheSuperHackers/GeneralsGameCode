@@ -88,7 +88,7 @@ public:
 	// interface housekeeping
 	virtual PowerPlantUpdateInterface* getPowerPlantUpdateInterface() override { return this; }
 
-	void extendRods( Bool extend ) override;									 ///< extend the rods from this object
+	virtual void extendRods( Bool extend ) override;									 ///< extend the rods from this object
 	virtual UpdateSleepTime update() override; ///< Here's the actual work of Upgrading
 
 protected:

@@ -95,7 +95,7 @@ class BridgeBehaviorModuleData : public BehaviorModuleData
 public:
 
 	BridgeBehaviorModuleData();
-	~BridgeBehaviorModuleData() override;
+	virtual ~BridgeBehaviorModuleData() override;
 
 	static void buildFieldParse( MultiIniFieldParse &p );
 
