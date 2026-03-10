@@ -172,7 +172,7 @@ public:
 	virtual UpdateModuleInterface* getUpdate() override { return this; }
 
 	// UpdateModuleInterface
-	virtual UpdateSleepTime update() override = 0;
+	virtual UpdateSleepTime update() = 0;
 
 	virtual DisabledMaskType getDisabledTypesToProcess() const override
 	{

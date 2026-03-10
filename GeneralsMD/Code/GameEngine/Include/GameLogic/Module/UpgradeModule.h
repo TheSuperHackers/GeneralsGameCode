@@ -131,7 +131,7 @@ protected:
 	virtual void getUpgradeActivationMasks(UpgradeMaskType& activation, UpgradeMaskType& conflicting) const = 0; ///< Here's the actual work of Upgrading
 	virtual void performUpgradeFX() = 0;	///< perform the associated fx list
 	virtual Bool requiresAllActivationUpgrades() const = 0;
-	virtual Bool isSubObjectsUpgrade() override = 0;
+	virtual Bool isSubObjectsUpgrade() = 0;
 	virtual void processUpgradeRemoval() = 0;
 
 	void giveSelfUpgrade();

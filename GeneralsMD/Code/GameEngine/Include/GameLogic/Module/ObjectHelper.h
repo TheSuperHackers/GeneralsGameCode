@@ -55,7 +55,7 @@ public:
 	}
 
 	// inherited from UpdateModuleInterface
-	virtual UpdateSleepTime update() override = 0;
+	virtual UpdateSleepTime update() = 0;
 
 	// custom to this class.
 	void sleepUntil(UnsignedInt when);
