@@ -121,7 +121,7 @@ class	SimpleFileFactoryClass : public FileFactoryClass {
 
 public:
 	SimpleFileFactoryClass();
-	~SimpleFileFactoryClass() override {}
+	virtual ~SimpleFileFactoryClass() override {}
 
 	virtual FileClass *	Get_File( char const *filename ) override;
 	virtual void			Return_File( FileClass *file ) override;

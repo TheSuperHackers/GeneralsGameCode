@@ -111,7 +111,7 @@ public:
 	RingRenderObjClass(const W3dRingStruct & def);
 	RingRenderObjClass(const RingRenderObjClass & src);
 	RingRenderObjClass & operator = (const RingRenderObjClass &);
-	~RingRenderObjClass() override;
+	virtual ~RingRenderObjClass() override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface
@@ -341,7 +341,7 @@ public:
 	bool								Save (ChunkSaveClass &csave);
 
 protected:
-	~RingPrototypeClass () override;
+	virtual ~RingPrototypeClass () override;
 
 private:
 	W3dRingStruct					Definition;

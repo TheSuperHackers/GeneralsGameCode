@@ -45,7 +45,7 @@
 class CatmullRomSpline3DClass : public HermiteSpline3DClass
 {
 public:
-	void					Update_Tangents() override;
+	virtual void					Update_Tangents() override;
 
 	// save-load support
 	virtual const PersistFactoryClass &	Get_Factory() const override;
@@ -61,7 +61,7 @@ public:
 class CatmullRomSpline1DClass : public HermiteSpline1DClass
 {
 public:
-	void					Update_Tangents() override;
+	virtual void					Update_Tangents() override;
 
 	// save-load support
 	virtual const PersistFactoryClass &	Get_Factory() const override;

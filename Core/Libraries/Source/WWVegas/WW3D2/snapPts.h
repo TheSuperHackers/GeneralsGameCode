@@ -52,6 +52,6 @@ public:
 
 protected:
 
-	~SnapPointsClass() override {}
+	virtual ~SnapPointsClass() override {}
 
 };

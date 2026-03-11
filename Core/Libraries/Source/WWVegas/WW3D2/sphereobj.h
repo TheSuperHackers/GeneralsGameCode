@@ -238,7 +238,7 @@ public:
 	SphereRenderObjClass(const W3dSphereStruct & def);
 	SphereRenderObjClass(const SphereRenderObjClass & src);
 	SphereRenderObjClass & operator = (const SphereRenderObjClass &);
-	~SphereRenderObjClass() override;
+	virtual ~SphereRenderObjClass() override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface
@@ -451,7 +451,7 @@ public:
 	bool								Save (ChunkSaveClass &csave);
 
 protected:
-	~SpherePrototypeClass () override;
+	virtual ~SpherePrototypeClass () override;
 
 private:
 	W3dSphereStruct				Definition;

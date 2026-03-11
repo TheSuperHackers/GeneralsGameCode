@@ -116,7 +116,7 @@ public:
 protected:
 
 	void								Free();
-	void								Update_Sub_Object_Transforms() override;
+	virtual void								Update_Sub_Object_Transforms() override;
 
 	DynamicVectorClass <ProxyClass>			ProxyList;
 	DynamicVectorClass <RenderObjClass *>	SubObjects;

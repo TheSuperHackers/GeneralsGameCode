@@ -148,7 +148,7 @@ class Sound3DClass : public AudibleSoundClass
 		virtual float			Get_DropOff_Radius ()  {return(m_DropOffRadius);}
 
 		// From PersistClass
-		const PersistFactoryClass &	Get_Factory () const override;
+		virtual const PersistFactoryClass &	Get_Factory () const override;
 
 		//
 		//	From PersistClass

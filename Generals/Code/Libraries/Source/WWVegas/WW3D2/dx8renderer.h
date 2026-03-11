@@ -242,7 +242,7 @@ public:
 	virtual void Log(bool only_visible) override;
 	virtual bool Check_If_Mesh_Fits(MeshModelClass* mmc) override;
 
-	void Render() override;	// Generic render function
+	virtual void Render() override;	// Generic render function
 
 protected:
 
@@ -262,10 +262,10 @@ public:
 	DX8SkinFVFCategoryContainer(bool sorting);
 	virtual ~DX8SkinFVFCategoryContainer() override;
 
-	void Render() override;
-	void Add_Mesh(MeshModelClass* mmc) override;
-	void Log(bool only_visible) override;
-	bool Check_If_Mesh_Fits(MeshModelClass* mmc) override;
+	virtual void Render() override;
+	virtual void Add_Mesh(MeshModelClass* mmc) override;
+	virtual void Log(bool only_visible) override;
+	virtual bool Check_If_Mesh_Fits(MeshModelClass* mmc) override;
 
 	void Add_Visible_Skin(MeshClass * mesh);
 

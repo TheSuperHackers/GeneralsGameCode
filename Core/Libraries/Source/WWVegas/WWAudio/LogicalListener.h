@@ -106,9 +106,9 @@ class LogicalListenerClass : public SoundSceneObjClass
 		//////////////////////////////////////////////////////////////////////
 		//	From PersistClass
 		//////////////////////////////////////////////////////////////////////
-		bool									Save (ChunkSaveClass &csave) override;
-		bool									Load (ChunkLoadClass &cload) override;
-		const PersistFactoryClass &	Get_Factory () const override;
+		virtual bool									Save (ChunkSaveClass &csave) override;
+		virtual bool									Load (ChunkLoadClass &cload) override;
+		virtual const PersistFactoryClass &	Get_Factory () const override;
 
 
 		//////////////////////////////////////////////////////////////////////

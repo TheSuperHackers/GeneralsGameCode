@@ -153,7 +153,7 @@ protected:
 	ShareBufferClass<Vector3> *			PointLoc;	// World/cameraspace point locs
 	ShareBufferClass<Vector4> *			PointDiffuse; // (null if not used) RGBA values
 	ShareBufferClass<unsigned int> *		APT;			// (null if not used) active point table
-	ShareBufferClass<float> *				PointSize;	// (null if not used) size override table
+	virtual ShareBufferClass<float> *				PointSize;	// (null if not used) size override table
 	ShareBufferClass<unsigned char> *	PointOrientation; // (null if not used) orientation indices
 	ShareBufferClass<unsigned char> *	PointFrame; // (null if not used) frame indices
 	int											PointCount;	// Active (if APT) or total point count

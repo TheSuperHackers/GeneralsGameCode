@@ -87,11 +87,11 @@ public:
 	//
 	//	From Curve3DClass
 	//
-	void			Evaluate (float time, Vector3 *set_val) override;
-	void			Set_Key (int i,const Vector3 & point) override;
-	int			Add_Key (const Vector3 & point,float t) override;
-	void			Remove_Key (int i) override;
-	void			Clear_Keys () override;
+	virtual void			Evaluate (float time, Vector3 *set_val) override;
+	virtual void			Set_Key (int i,const Vector3 & point) override;
+	virtual int			Add_Key (const Vector3 & point,float t) override;
+	virtual void			Remove_Key (int i) override;
+	virtual void			Clear_Keys () override;
 
 	//
 	//	Vehicle curve specific

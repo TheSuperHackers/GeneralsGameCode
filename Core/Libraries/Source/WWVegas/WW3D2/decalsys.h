@@ -173,7 +173,7 @@ public:
 protected:
 
 	DecalGeneratorClass(uint32 id,DecalSystemClass * system);
-	~DecalGeneratorClass() override;
+	virtual ~DecalGeneratorClass() override;
 
 	/*
 	** Logical Decal ID, DecalSystem that this generator is tied to

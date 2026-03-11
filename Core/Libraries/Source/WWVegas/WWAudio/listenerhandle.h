@@ -52,7 +52,7 @@ public:
 	//	Public constructors/destructors
 	///////////////////////////////////////////////////////////////////
 	ListenerHandleClass  ();
-	~ListenerHandleClass () override;
+	virtual ~ListenerHandleClass () override;
 
 	///////////////////////////////////////////////////////////////////
 	//	Public methods
@@ -61,26 +61,26 @@ public:
 	//
 	//	RTTI
 	//
-	ListenerHandleClass *	As_ListenerHandleClass () override { return this; }
+	virtual ListenerHandleClass *	As_ListenerHandleClass () override { return this; }
 
 	//
 	//	Inherited
 	//
-	void							Initialize (SoundBufferClass *buffer) override;
-	void							Start_Sample () override { }
-	void							Stop_Sample () override { }
-	void							Resume_Sample () override { }
-	void							End_Sample () override { }
-	void							Set_Sample_Volume (S32 volume) override { }
-	S32							Get_Sample_Volume () override { return 0; }
-	void							Set_Sample_Pan (S32 pan) override { }
-	S32							Get_Sample_Pan () override { return 64; }
-	void							Set_Sample_Loop_Count (U32 count) override { }
-	U32							Get_Sample_Loop_Count () override { return 0; }
-	void							Set_Sample_MS_Position (U32 ms) override { }
-	void							Get_Sample_MS_Position (S32 *len, S32 *pos) override { }
-	S32							Get_Sample_Playback_Rate () override { return 0; }
-	void							Set_Sample_Playback_Rate (S32 rate) override { }
+	virtual void							Initialize (SoundBufferClass *buffer) override;
+	virtual void							Start_Sample () override { }
+	virtual void							Stop_Sample () override { }
+	virtual void							Resume_Sample () override { }
+	virtual void							End_Sample () override { }
+	virtual void							Set_Sample_Volume (S32 volume) override { }
+	virtual S32							Get_Sample_Volume () override { return 0; }
+	virtual void							Set_Sample_Pan (S32 pan) override { }
+	virtual S32							Get_Sample_Pan () override { return 64; }
+	virtual void							Set_Sample_Loop_Count (U32 count) override { }
+	virtual U32							Get_Sample_Loop_Count () override { return 0; }
+	virtual void							Set_Sample_MS_Position (U32 ms) override { }
+	virtual void							Get_Sample_MS_Position (S32 *len, S32 *pos) override { }
+	virtual S32							Get_Sample_Playback_Rate () override { return 0; }
+	virtual void							Set_Sample_Playback_Rate (S32 rate) override { }
 
 protected:
 

@@ -61,7 +61,7 @@ public:
 	** Constructor and Destructor
 	*/
 	TextDrawClass( int max_chars );
-	~TextDrawClass() override;
+	virtual ~TextDrawClass() override;
 
 	// Set Coordinate Range
 	void	Set_Coordinate_Ranges(	const Vector2 & param_ul, const Vector2 & param_lr,

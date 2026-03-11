@@ -59,7 +59,7 @@ public:
 	DynamicMeshModel(unsigned int max_polys, unsigned int max_verts);
 	DynamicMeshModel(unsigned int max_polys, unsigned int max_verts, MaterialInfoClass *mat_info);
 	DynamicMeshModel(const DynamicMeshModel &src);
-	~DynamicMeshModel() override;
+	virtual ~DynamicMeshModel() override;
 
 	// Inherited from MeshGeometryClass
 	virtual void	Compute_Plane_Equations();

@@ -53,7 +53,7 @@ public:
 	virtual void		Set_TCB_Params(int i,float tension,float continuity,float bias);
 	virtual void		Get_TCB_Params(int i,float *tension,float *continuity,float *bias);
 
-	void					Update_Tangents() override;
+	virtual void					Update_Tangents() override;
 
 	// save-load support
 	virtual const PersistFactoryClass &	Get_Factory() const override;

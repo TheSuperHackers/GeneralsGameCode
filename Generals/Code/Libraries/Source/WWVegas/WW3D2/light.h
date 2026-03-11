@@ -69,7 +69,7 @@ public:
 	LightClass(const LightClass & src);
 	LightClass & operator = (const LightClass &);
 	virtual ~LightClass() override;
-	RenderObjClass *		Clone() const override;
+	virtual RenderObjClass *		Clone() const override;
 	virtual int				Class_ID() const override { return CLASSID_LIGHT; }
 
 	/////////////////////////////////////////////////////////////////////////////

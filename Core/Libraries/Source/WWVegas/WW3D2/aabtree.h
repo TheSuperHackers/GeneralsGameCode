@@ -87,7 +87,7 @@ public:
 	AABTreeClass();
 	AABTreeClass(AABTreeBuilderClass * builder);
 	AABTreeClass(const AABTreeClass & that);
-	~AABTreeClass() override;
+	virtual ~AABTreeClass() override;
 
 	void						Load_W3D(ChunkLoadClass & cload);
 

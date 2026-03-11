@@ -127,7 +127,7 @@ class SoundPseudo3DClass : public Sound3DClass
 		virtual void			Update_Pseudo_Pan ();
 
 		// From PersistClass
-		const PersistFactoryClass &	Get_Factory () const override;
+		virtual const PersistFactoryClass &	Get_Factory () const override;
 
 	protected:
 

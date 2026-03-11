@@ -78,7 +78,7 @@ class FilteredSoundClass : public SoundPseudo3DClass
 		virtual void				Update_Volume () override;
 
 		// From PersistClass
-		const PersistFactoryClass &	Get_Factory () const override;
+		virtual const PersistFactoryClass &	Get_Factory () const override;
 
 	protected:
 

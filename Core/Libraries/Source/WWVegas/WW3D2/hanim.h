@@ -135,7 +135,7 @@ public:
 class NamedPivotMapClass : public PivotMapClass
 {
 public:
-	~NamedPivotMapClass() override;
+	virtual ~NamedPivotMapClass() override;
 
 	virtual NamedPivotMapClass * As_Named_Pivot_Map() override { return this; }
 

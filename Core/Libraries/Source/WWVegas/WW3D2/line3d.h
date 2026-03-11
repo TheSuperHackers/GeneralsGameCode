@@ -96,8 +96,8 @@ class Line3DClass : public W3DMPO, public RenderObjClass
 		void Set_Opacity(float opacity);
 
 		// For non-opaque lines, allow them to render last.
-		void							Set_Sort_Level(int level) override { SortLevel = level; }
-		int							Get_Sort_Level() const override { return SortLevel; }
+		virtual void							Set_Sort_Level(int level) override { SortLevel = level; }
+		virtual int							Get_Sort_Level() const override { return SortLevel; }
 
 	protected:
 

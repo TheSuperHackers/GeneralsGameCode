@@ -72,8 +72,8 @@ public:
 	void				Set_Value (const T &new_value);
 
 	// From Parameter class
-	ParameterClass::Type	Get_Type () const override;
-	void						Copy_Value (const ParameterClass &src) override;
+	virtual ParameterClass::Type	Get_Type () const override;
+	virtual void						Copy_Value (const ParameterClass &src) override;
 
 private:
 

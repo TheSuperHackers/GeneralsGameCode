@@ -67,15 +67,15 @@ public:
 	//
 	// Type identification
 	//
-	uint32								Get_Class_ID () const override { return CLASSID_TWIDDLERS; }
-	PersistClass *						Create () const override;
+	virtual uint32								Get_Class_ID () const override { return CLASSID_TWIDDLERS; }
+	virtual PersistClass *						Create () const override;
 
 	//
 	// From PersistClass
 	//
-	bool									Save (ChunkSaveClass &csave) override;
-	bool									Load (ChunkLoadClass &cload) override;
-	const PersistFactoryClass &	Get_Factory () const override;
+	virtual bool									Save (ChunkSaveClass &csave) override;
+	virtual bool									Load (ChunkLoadClass &cload) override;
+	virtual const PersistFactoryClass &	Get_Factory () const override;
 
 	//
 	//	Twiddler specific

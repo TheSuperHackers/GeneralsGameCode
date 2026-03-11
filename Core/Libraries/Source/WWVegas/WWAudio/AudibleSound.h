@@ -287,9 +287,9 @@ class AudibleSoundClass : public SoundSceneObjClass
 		//////////////////////////////////////////////////////////////////////
 		//	From PersistClass
 		//////////////////////////////////////////////////////////////////////
-		const PersistFactoryClass &	Get_Factory () const override;
-		bool									Save (ChunkSaveClass &csave) override;
-		bool									Load (ChunkLoadClass &cload) override;
+		virtual const PersistFactoryClass &	Get_Factory () const override;
+		virtual bool									Save (ChunkSaveClass &csave) override;
+		virtual bool									Load (ChunkLoadClass &cload) override;
 
 	protected:
 

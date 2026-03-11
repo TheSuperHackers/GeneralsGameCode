@@ -85,7 +85,7 @@ class GridCullSystemClass : public CullSystemClass
 public:
 
 	GridCullSystemClass();
-	~GridCullSystemClass() override;
+	virtual ~GridCullSystemClass() override;
 
 	virtual void		Collect_Objects(const Vector3 & point) override;
 	virtual void		Collect_Objects(const AABoxClass & box) override;
