@@ -78,7 +78,7 @@ public:
 	virtual ExitDoorType reserveDoorForExit( const ThingTemplate* objType, Object *specificObject ) override;
 	virtual void exitObjectViaDoor( Object *newObj, ExitDoorType exitDoor ) override;
 	virtual void unreserveDoorForExit( ExitDoorType exitDoor ) override;
-	virtual void setRallyPoint( const Coord3D * ) override{}
+	virtual void setRallyPoint( const Coord3D * ) override {}
 	virtual const Coord3D *getRallyPoint() const override { return nullptr; }
 	virtual void exitObjectByBudding( Object *newObj, Object *budHost ) override { return; }
 

@@ -60,9 +60,9 @@ class SupplyTruckWantsToPickUpOrDeliverBoxesState :  public State
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(SupplyTruckWantsToPickUpOrDeliverBoxesState, "SupplyTruckWantsToPickUpOrDeliverBoxesState")
 protected:
 	// snapshot interface STUBBED.
-	virtual void crc( Xfer *xfer ) override{};
-	virtual void xfer( Xfer *xfer ) override{XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
-	virtual void loadPostProcess() override{};
+	virtual void crc( Xfer *xfer ) override {};
+	virtual void xfer( Xfer *xfer ) override {XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
+	virtual void loadPostProcess() override {};
 
 public:
 	SupplyTruckWantsToPickUpOrDeliverBoxesState( StateMachine *machine ) : State( machine, "SupplyTruckWantsToPickUpOrDeliverBoxesState" ) {}
@@ -78,12 +78,12 @@ class RegroupingState :  public State
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(RegroupingState, "RegroupingState")
 protected:
 	// snapshot interface STUBBED.
-	virtual void crc( Xfer *xfer ) override{};
-	virtual void xfer( Xfer *xfer ) override{XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
-	virtual void loadPostProcess() override{};
+	virtual void crc( Xfer *xfer ) override {};
+	virtual void xfer( Xfer *xfer ) override {XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
+	virtual void loadPostProcess() override {};
 public:
 	RegroupingState( StateMachine *machine ) : State( machine, "RegroupingState" ) {}
-	virtual StateReturnType update() override{ return STATE_CONTINUE;}// Nothing to do but wait for a transition
+	virtual StateReturnType update() override { return STATE_CONTINUE;}// Nothing to do but wait for a transition
 	virtual StateReturnType onEnter() override;// Will tell me to aiMove back to base.
 	virtual void onExit(StateExitType status) override;
 };
@@ -95,9 +95,9 @@ class DockingState :  public State
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(DockingState, "DockingState")
 protected:
 	// snapshot interface STUBBED.
-	virtual void crc( Xfer *xfer ) override{};
-	virtual void xfer( Xfer *xfer ) override{XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
-	virtual void loadPostProcess() override{};
+	virtual void crc( Xfer *xfer ) override {};
+	virtual void xfer( Xfer *xfer ) override {XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
+	virtual void loadPostProcess() override {};
 public:
 	DockingState( StateMachine *machine ) :State( machine, "DockingState" ) {}
 	virtual StateReturnType update() override;

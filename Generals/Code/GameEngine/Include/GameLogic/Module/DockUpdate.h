@@ -122,7 +122,7 @@ public:
 
 	virtual Bool isAllowPassthroughType() override;	///< Not all docks allow you to path through them in your AIDock machine
 
-	virtual Bool isRallyPointAfterDockType() override{return FALSE;} ///< A minority of docks want to give you a final command to their rally point
+	virtual Bool isRallyPointAfterDockType() override {return FALSE;} ///< A minority of docks want to give you a final command to their rally point
 
 	virtual void setDockCrippled( Bool setting ) override; ///< Game Logic can set me as inoperative.  I get to decide what that means.
 
