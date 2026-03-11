@@ -2109,6 +2109,11 @@ UpdateSleepTime JetAIUpdate::update()
 		if (m_attackLocoExpireFrame != 0 && now >= m_attackLocoExpireFrame)
 		{
 			m_attackLocoExpireFrame = 0;
+#if !RETAIL_COMPATIBLE_CRC
+			// TheSuperHackers @bugfix arcticdolphin 04/03/2026 Reset locomotor when attack locomotor timer expires.
+			// Relevant for the Supersonic Mode of the USA Aurora.
+			chooseLocomotorSet(LOCOMOTORSET_NORMAL);
+#endif
 		}
 		if (m_attackersMissExpireFrame != 0 && now >= m_attackersMissExpireFrame)
 		{

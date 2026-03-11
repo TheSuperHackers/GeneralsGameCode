@@ -1735,10 +1735,10 @@ Bool WorldHeightMap::getUVForTileIndex(Int ndx, Short tileNdx, float U[4], float
 			}
 		}
 
-// TheSuperHackers @bugfix xezon 11/12/2025 Disables the old uv adjustment for cliffs,
-// because it produces bad uv tiles on steep terrain and is also not helping performance.
-// @todo Delete this code when we are certain we never need this again.
-//#define DO_OLD_UV
+// TheSuperHackers @info xezon 11/12/2025 The old uv adjustment for cliffs produces bad uv tiles on steep terrain
+// and is also not helping performance. But we cannot just remove it, because it is required to render smooth
+// steep diagonal slopes.
+#define DO_OLD_UV
 #ifdef DO_OLD_UV
 // old uv adjustment for cliffs
 		static Real STRETCH_LIMIT = 1.5f;	 // If it is stretching less than this, don't adjust.

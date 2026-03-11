@@ -74,6 +74,7 @@
 #include "GameLogic/Module/DeletionUpdate.h"
 #include "GameLogic/Module/DestroyModule.h"
 #include "GameLogic/Module/DieModule.h"
+#include "GameLogic/Module/DozerAIUpdate.h"
 #include "GameLogic/Module/ObjectDefectionHelper.h"
 #include "GameLogic/Module/ObjectRepulsorHelper.h"
 #include "GameLogic/Module/ObjectSMCHelper.h"
@@ -4052,10 +4053,7 @@ void Object::onCapture( Player *oldOwner, Player *newOwner )
 			DozerAIInterface* dozerAI = getAIUpdateInterface()->getDozerAIInterface();
 			if (dozerAI)
 			{
-				for (UnsignedInt task = DOZER_TASK_FIRST; task < DOZER_NUM_TASKS; ++task)
-				{
-					dozerAI->cancelTask((DozerTask)task);
-				}
+				dozerAI->cancelAllTasks();
 			}
 		}
 #endif

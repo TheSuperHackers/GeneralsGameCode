@@ -286,8 +286,10 @@ private:
 	Bool m_recalcCamera; ///< Recalculates the camera transform in the next render update
 
 	void setCameraTransform(); ///< set the transform matrix of m_3DCamera, based on m_pos & m_angle
-	void buildCameraTransform(Matrix3D *transform); ///< calculate (but do not set) the transform matrix of m_3DCamera, based on m_pos & m_angle
+	void buildCameraPosition(Vector3 &sourcePos, Vector3 &targetPos);
+	void buildCameraTransform(Matrix3D *transform, const Vector3 &sourcePos, const Vector3 &targetPos); ///< calculate (but do not set) the transform matrix of m_3DCamera, based on m_pos & m_angle
 	void calcCameraAreaConstraints(); ///< Recalculates the camera area constraints
+	Real calcCameraAreaOffset(Real maxEdgeZ);
 	Bool isWithinCameraHeightConstraints() const;
 	virtual void setUserControlled(Bool value);
 	Bool hasScriptedState(ScriptedState state) const;

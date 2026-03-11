@@ -148,7 +148,7 @@ void W3DDebrisDraw::setModelName(AsciiString name, Color color, ShadowType t)
 }
 
 //-------------------------------------------------------------------------------------------------
-void W3DDebrisDraw::setAnimNames(AsciiString initial, AsciiString flying, AsciiString final, const FXList* finalFX)
+void W3DDebrisDraw::setAnimNames(AsciiString initial, AsciiString flying, AsciiString finalAnim, const FXList* finalFX)
 {
 	int i;
 	for (i = 0; i < STATECOUNT; ++i)
@@ -159,23 +159,23 @@ void W3DDebrisDraw::setAnimNames(AsciiString initial, AsciiString flying, AsciiS
 
 	m_anims[INITIAL] = initial.isEmpty() ? nullptr : W3DDisplay::m_assetManager->Get_HAnim(initial.str());
 	m_anims[FLYING] = flying.isEmpty() ? nullptr : W3DDisplay::m_assetManager->Get_HAnim(flying.str());
-	if (stricmp(final.str(), "STOP") == 0)
+	if (stricmp(finalAnim.str(), "STOP") == 0)
 	{
 		m_finalStop = true;
-		final = flying;
+		finalAnim = flying;
 	}
 	else
 	{
 		m_finalStop = false;
 	}
-	m_anims[FINAL] = final.isEmpty() ? nullptr : W3DDisplay::m_assetManager->Get_HAnim(final.str());
+	m_anims[FINAL] = finalAnim.isEmpty() ? nullptr : W3DDisplay::m_assetManager->Get_HAnim(finalAnim.str());
 	m_state = 0;
 	m_frames = 0;
 	m_fxFinal = finalFX;
 
 	m_animInitial = initial;
 	m_animFlying = flying;
-	m_animFinal = final;
+	m_animFinal = finalAnim;
 
 }
 

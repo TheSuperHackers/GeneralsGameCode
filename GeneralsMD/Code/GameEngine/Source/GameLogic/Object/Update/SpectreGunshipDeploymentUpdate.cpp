@@ -235,8 +235,8 @@ Bool SpectreGunshipDeploymentUpdate::initiateIntentToDoSpecialPower(const Specia
 	  }
 
     // MAKE THE GUNSHIP SELECTED
-
-    TheGameLogic->selectObject( newGunship, TRUE, getObject()->getControllingPlayer()->getPlayerMask(), TRUE );
+    // TheSuperHackers @bugfix arcticdolphin 04/03/2026 Only select the gunship on the local client that controls the unit.
+    TheGameLogic->selectObject( newGunship, TRUE, getObject()->getControllingPlayer()->getPlayerMask(), newGunship->isLocallyControlled() );
 
 
   }

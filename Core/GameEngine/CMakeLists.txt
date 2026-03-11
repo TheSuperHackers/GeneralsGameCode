@@ -28,6 +28,7 @@ set(GAMEENGINE_SRC
 #    Include/Common/DamageFX.h
 #    Include/Common/DataChunk.h
     Include/Common/Debug.h
+    Include/Common/Diagnostic/SimulationMathCrc.h
 #    Include/Common/Dict.h
 #    Include/Common/Directory.h
 #    Include/Common/DisabledTypes.h
@@ -238,7 +239,7 @@ set(GAMEENGINE_SRC
 #    Include/GameLogic/AIDock.h
 #    Include/GameLogic/AIGuard.h
 #    Include/GameLogic/AIGuardRetaliate.h
-#    Include/GameLogic/AIPathfind.h
+    Include/GameLogic/AIPathfind.h
 #    Include/GameLogic/AIPlayer.h
 #    Include/GameLogic/AISkirmishPlayer.h
 #    Include/GameLogic/AIStateMachine.h
@@ -572,6 +573,7 @@ set(GAMEENGINE_SRC
     Source/Common/crc.cpp
     Source/Common/CRCDebug.cpp
 #    Source/Common/DamageFX.cpp
+    Source/Common/Diagnostic/SimulationMathCrc.cpp
 #    Source/Common/Dict.cpp
 #    Source/Common/DiscreteCircle.cpp
     Source/Common/FramePacer.cpp
@@ -841,7 +843,7 @@ set(GAMEENGINE_SRC
 #    Source/GameLogic/AI/AIGroup.cpp
 #    Source/GameLogic/AI/AIGuard.cpp
 #    Source/GameLogic/AI/AIGuardRetaliate.cpp
-#    Source/GameLogic/AI/AIPathfind.cpp
+    Source/GameLogic/AI/AIPathfind.cpp
 #    Source/GameLogic/AI/AIPlayer.cpp
 #    Source/GameLogic/AI/AISkirmishPlayer.cpp
 #    Source/GameLogic/AI/AIStates.cpp

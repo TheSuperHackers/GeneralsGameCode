@@ -36,7 +36,7 @@ set(GUIEDIT_SRC
 )
 
 add_executable(g_guiedit WIN32)
-set_target_properties(g_guiedit PROPERTIES OUTPUT_NAME guiedit)
+set_target_properties(g_guiedit PROPERTIES OUTPUT_NAME "guiedit${RTS_BUILD_OUTPUT_SUFFIX}")
 
 target_sources(g_guiedit PRIVATE ${GUIEDIT_SRC})
 

@@ -1,5 +1,5 @@
 add_executable(z_imagepacker WIN32)
-set_target_properties(z_imagepacker PROPERTIES OUTPUT_NAME imagepacker)
+set_target_properties(z_imagepacker PROPERTIES OUTPUT_NAME "imagepacker${RTS_BUILD_OUTPUT_SUFFIX}")
 
 target_link_libraries(z_imagepacker PRIVATE
     corei_imagepacker

@@ -433,6 +433,8 @@ def main():
     #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/INI/INIWater.cpp", Game.CORE, "GameEngine/Source/Common/INI/INIWater.cpp")
     #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/INI/INIWeapon.cpp", Game.CORE, "GameEngine/Source/Common/INI/INIWeapon.cpp")
     #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/INI/INIWebpageURL.cpp", Game.CORE, "GameEngine/Source/Common/INI/INIWebpageURL.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameLogic/AI/AIPathfind.cpp", Game.CORE, "GameEngine/Source/GameLogic/AI/AIPathfind.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameLogic/AIPathfind.h", Game.CORE, "GameEngine/Include/GameLogic/AIPathfind.h")
 
     return
 
