@@ -100,7 +100,7 @@ public:
 	void setNATBehavior( FirewallHelperClass::FirewallBehaviorType NATBehavior) { m_NATBehavior = NATBehavior; }
 	FirewallHelperClass::FirewallBehaviorType getNATBehavior() const { return m_NATBehavior; }
 
-	void saveOffOriginalInfo();
+	Bool saveOffOriginalInfo();
 	Int getOriginalPlayerTemplate() const	{ return m_origPlayerTemplate; }
 	Int getOriginalColor() const						{ return m_origColor; }
 	Int getOriginalStartPos() const				{ return m_origStartPos; }
@@ -130,6 +130,7 @@ protected:
 	Bool m_isAccepted;
 	Bool m_hasMap;
 	Bool m_isMuted;
+	Bool m_saveOffOriginalInfo;
 	Int m_color;																			///< color, or -1 for random
 	Int m_startPos;																		///< start position, or -1 for random
 	Int m_playerTemplate;															///< PlayerTemplate
