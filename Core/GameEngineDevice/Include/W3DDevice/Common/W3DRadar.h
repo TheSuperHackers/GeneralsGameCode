@@ -51,7 +51,7 @@ class W3DRadar : public Radar
 public:
 
 	W3DRadar();
-	~W3DRadar() override;
+	virtual ~W3DRadar() override;
 
 	virtual void xfer( Xfer *xfer ) override;
 

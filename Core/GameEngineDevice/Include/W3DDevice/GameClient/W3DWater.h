@@ -73,7 +73,7 @@ public:
 	};
 
 	WaterRenderObjClass();
-	~WaterRenderObjClass() override;
+	virtual ~WaterRenderObjClass() override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface (W3D methods)

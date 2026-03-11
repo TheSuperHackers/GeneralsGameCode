@@ -42,8 +42,8 @@ public:
 	virtual void reset () override;
 
 	void render (RenderInfoClass &rinfo);
-	void ReleaseResources() override;
-	void ReAcquireResources() override;
+	virtual void ReleaseResources() override;
+	virtual void ReAcquireResources() override;
 
 private:
 	Bool testHardwareSupport();		///<test if video card supports the effect.

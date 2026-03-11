@@ -53,7 +53,7 @@ class TerrainTracksRenderObjClass : public W3DMPO, public RenderObjClass
 public:
 
 	TerrainTracksRenderObjClass();
-	~TerrainTracksRenderObjClass() override;
+	virtual ~TerrainTracksRenderObjClass() override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface (W3D methods)

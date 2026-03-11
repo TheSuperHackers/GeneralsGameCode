@@ -51,7 +51,7 @@ class W3DProjectedShadowManager	: public ProjectedShadowManager
 */
 	public:
 		W3DProjectedShadowManager();
-		~W3DProjectedShadowManager() override;
+		virtual ~W3DProjectedShadowManager() override;
 		Bool init();					///<allocate one-time shadow assets for length of entire game.
 		void reset();					///<free all existing shadows - ready for next map.
 		void shutdown();			///<free all assets prior to shutdown of entire game.

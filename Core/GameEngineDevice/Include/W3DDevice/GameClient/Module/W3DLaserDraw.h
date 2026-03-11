@@ -83,7 +83,7 @@ public:
 	virtual void reactToTransformChange(const Matrix3D* oldMtx, const Coord3D* oldPos, Real oldAngle) override { }
 	virtual void reactToGeometryChange() override { }
 	virtual Bool isLaser() const override { return true; }
-	Real getLaserTemplateWidth() const override;
+	virtual Real getLaserTemplateWidth() const override;
 
 	virtual LaserDrawInterface* getLaserDrawInterface() override { return this; }
 	virtual const LaserDrawInterface* getLaserDrawInterface() const override { return this; }

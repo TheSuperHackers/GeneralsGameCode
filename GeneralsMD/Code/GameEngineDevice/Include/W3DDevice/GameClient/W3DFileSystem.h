@@ -84,7 +84,7 @@ protected:
 class	W3DFileSystem : public FileFactoryClass {
 public:
 	W3DFileSystem();
-	~W3DFileSystem() override;
+	virtual ~W3DFileSystem() override;
 
 	virtual FileClass * Get_File( char const *filename ) override;
 	virtual void Return_File( FileClass *file ) override;
