@@ -93,7 +93,7 @@ inline ThingFactory *Win32GameEngine::createThingFactory() { return NEW W3DThing
 inline FunctionLexicon *Win32GameEngine::createFunctionLexicon() { return NEW W3DFunctionLexicon; }
 inline LocalFileSystem *Win32GameEngine::createLocalFileSystem() { return NEW Win32LocalFileSystem; }
 inline ArchiveFileSystem *Win32GameEngine::createArchiveFileSystem() { return NEW Win32BIGFileSystem; }
-inline ParticleSystemManager* Win32GameEngine::createParticleSystemManager() { return NEW W3DParticleSystemManager; }
+inline ParticleSystemManager* Win32GameEngine::createParticleSystemManager() { return TheGlobalData->m_headless ? NEW ParticleSystemManagerDummy : NEW W3DParticleSystemManager; }
 
 inline NetworkInterface *Win32GameEngine::createNetwork() { return NetworkInterface::createNetwork(); }
 inline Radar *Win32GameEngine::createRadar() { return NEW W3DRadar; }

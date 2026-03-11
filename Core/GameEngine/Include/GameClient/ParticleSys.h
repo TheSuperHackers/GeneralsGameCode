@@ -840,14 +840,14 @@ private:
 class ParticleSystemManagerDummy : public ParticleSystemManager
 {
 public:
-	virtual Int getOnScreenParticleCount( void ) { return 0; }
-	virtual void doParticles(RenderInfoClass &rinfo) {}
-	virtual void queueParticleRender() {}
+	Int getOnScreenParticleCount( void ) override { return 0; }
+	void doParticles(RenderInfoClass &rinfo) override {}
+	void queueParticleRender() override {}
 
 protected:
-	virtual void crc( Xfer *xfer ) {}
-	virtual void xfer( Xfer *xfer ) {}
-	virtual void loadPostProcess( void ) {}
+	void crc( Xfer *xfer ) override {}
+	void xfer( Xfer *xfer ) override {}
+	void loadPostProcess( void ) override {}
 };
 
 /// The particle system manager singleton
