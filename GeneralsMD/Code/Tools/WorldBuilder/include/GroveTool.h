@@ -46,11 +46,11 @@ protected:
 	void _plantGroveInBox(CPoint tl, CPoint br, WbView* pView);
 
 	void addObj(Coord3D *pos, AsciiString name);
-	void activate() override;
+	virtual void activate() override;
 
 public:
 	GroveTool(void);
-	~GroveTool(void) override;
+	virtual ~GroveTool(void) override;
 
 public:
 	/// Perform tool on mouse down.

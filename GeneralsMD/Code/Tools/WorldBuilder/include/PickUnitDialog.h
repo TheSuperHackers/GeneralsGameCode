@@ -48,7 +48,7 @@ protected:
 public:
 	PickUnitDialog(CWnd* pParent = nullptr);   // standard constructor
 	PickUnitDialog(UINT id, CWnd* pParent = nullptr);   // standard constructor
-	~PickUnitDialog(void) override;   ///< standard destructor
+	virtual ~PickUnitDialog(void) override;   ///< standard destructor
 
 // Dialog Data
 	//{{AFX_DATA(PickUnitDialog)

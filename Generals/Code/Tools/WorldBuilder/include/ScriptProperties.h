@@ -31,7 +31,7 @@ class ScriptProperties : public CPropertyPage
 // Construction
 public:
 	ScriptProperties();
-	~ScriptProperties() override;
+	virtual ~ScriptProperties() override;
 
 // Dialog Data
 	//{{AFX_DATA(ScriptProperties)

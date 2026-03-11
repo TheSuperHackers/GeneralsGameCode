@@ -34,7 +34,7 @@ class CFixTeamOwnerDialog : public CDialog
 
 	protected:
 		virtual BOOL OnInitDialog() override;
-		afx_msg void OnOK() override;
+		virtual afx_msg void OnOK() override;
 		DECLARE_MESSAGE_MAP()
 
 	protected:

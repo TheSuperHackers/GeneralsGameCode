@@ -33,7 +33,7 @@ class AutoEdgeOutTool : public Tool
 {
 public:
 	AutoEdgeOutTool(void);
-	~AutoEdgeOutTool(void) override;
+	virtual ~AutoEdgeOutTool(void) override;
 
 public:
 	/// Perform tool on mouse down.

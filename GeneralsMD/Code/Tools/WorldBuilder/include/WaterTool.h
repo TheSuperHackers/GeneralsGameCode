@@ -36,7 +36,7 @@ class WaterTool : public PolygonTool
 {
 public:
 	WaterTool(void);
-	~WaterTool(void) override;
+	virtual ~WaterTool(void) override;
 
 protected:
 	static Bool		m_water_isActive;

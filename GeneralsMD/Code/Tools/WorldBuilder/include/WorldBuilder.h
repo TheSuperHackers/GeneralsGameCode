@@ -72,7 +72,7 @@ class CWorldBuilderApp : public CWinApp
 {
 public:
 	CWorldBuilderApp();
-	~CWorldBuilderApp() override;
+	virtual ~CWorldBuilderApp() override;
 
 // Overrides
 	// ClassWizard generated virtual function overrides

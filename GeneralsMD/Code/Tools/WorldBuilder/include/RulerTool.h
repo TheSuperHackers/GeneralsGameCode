@@ -35,7 +35,7 @@ protected:
 
 public:
 	RulerTool(void);
-	~RulerTool(void) override;
+	virtual ~RulerTool(void) override;
 
 public:
 	/// Clear the selection on activate or deactivate.

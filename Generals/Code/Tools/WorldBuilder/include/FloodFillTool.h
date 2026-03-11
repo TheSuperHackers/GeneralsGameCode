@@ -32,7 +32,7 @@ class FloodFillTool : public Tool
 {
 public:
 	FloodFillTool(void);
-	~FloodFillTool(void) override;
+	virtual ~FloodFillTool(void) override;
 
 protected:
 	Int			m_textureClassToDraw; ///< The texture to fill with.  Foreground for mousedDown, background for mouseDownRt.

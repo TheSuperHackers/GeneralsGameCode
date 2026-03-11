@@ -34,7 +34,7 @@ class ScriptConditionsDlg : public CPropertyPage
 // Construction
 public:
 	ScriptConditionsDlg();
-	~ScriptConditionsDlg() override;
+	virtual ~ScriptConditionsDlg() override;
 
 // Dialog Data
 	//{{AFX_DATA(ScriptConditionsDlg)

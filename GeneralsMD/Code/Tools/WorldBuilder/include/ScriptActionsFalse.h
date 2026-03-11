@@ -33,7 +33,7 @@ class ScriptActionsFalse : public CPropertyPage
 // Construction
 public:
 	ScriptActionsFalse();
-	~ScriptActionsFalse() override;
+	virtual ~ScriptActionsFalse() override;
 
 // Dialog Data
 	//{{AFX_DATA(ScriptActionsFalse)

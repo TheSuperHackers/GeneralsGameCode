@@ -62,7 +62,7 @@ class ScriptDialog : public CDialog
 // Construction
 public:
 	ScriptDialog(CWnd* pParent = nullptr);   // standard constructor
-	~ScriptDialog() override;   //  destructor
+	virtual ~ScriptDialog() override;   //  destructor
 
 // Dialog Data
 	//{{AFX_DATA(ScriptDialog)

@@ -42,7 +42,7 @@ protected:
 
 public:
 	BrushTool(void);
-	~BrushTool(void) override;
+	virtual ~BrushTool(void) override;
 
 public:
 	static Int getWidth(void) {return m_brushWidth;};  ///<Returns width.

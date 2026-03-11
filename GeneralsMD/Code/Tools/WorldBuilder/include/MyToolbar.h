@@ -37,7 +37,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 public:
-	~CellSizeToolBar(void) override;
+	virtual ~CellSizeToolBar(void) override;
 	void SetupSlider(void);
 	static void CellSizeChanged(Int cellSize);
 

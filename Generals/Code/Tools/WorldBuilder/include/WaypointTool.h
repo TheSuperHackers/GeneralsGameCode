@@ -34,7 +34,7 @@ class WaypointTool : public Tool
 {
 public:
 	WaypointTool(void);
-	~WaypointTool(void) override;
+	virtual ~WaypointTool(void) override;
 
 protected:
 	Int m_downWaypointID;

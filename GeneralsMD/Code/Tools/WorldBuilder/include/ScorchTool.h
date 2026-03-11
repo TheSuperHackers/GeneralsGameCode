@@ -32,7 +32,7 @@ class ScorchTool : public Tool
 {
 public:
 	ScorchTool(void);
-	~ScorchTool(void) override;
+	virtual ~ScorchTool(void) override;
 
 protected:
 	Coord3D m_mouseDownPt;

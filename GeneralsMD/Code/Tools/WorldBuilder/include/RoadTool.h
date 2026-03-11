@@ -43,7 +43,7 @@ private:
 
 public:
 	RoadTool(void);
-	~RoadTool(void) override;
+	virtual ~RoadTool(void) override;
 
 public:
 	static Bool snap(Coord3D *pLoc, Bool skipLast);

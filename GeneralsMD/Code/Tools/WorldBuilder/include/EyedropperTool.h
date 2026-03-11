@@ -33,7 +33,7 @@ class EyedropperTool : public Tool
 {
 public:
 	EyedropperTool(void);
-	~EyedropperTool(void) override;
+	virtual ~EyedropperTool(void) override;
 
 public:
 	/// Perform tool on mouse down.
