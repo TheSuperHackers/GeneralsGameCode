@@ -1773,6 +1773,7 @@ void PathfindCell::forwardInsertionSort(PathfindCellList& list)
 		m_info->m_prevOpen = nullptr;
 		m_info->m_nextOpen = nullptr;
 		list.m_head = this;
+		list.m_tail = this;
 		return;
 	}
 
@@ -1796,8 +1797,58 @@ void PathfindCell::forwardInsertionSort(PathfindCellList& list)
 	if (current->m_info->m_nextOpen != nullptr) {
 		current->m_info->m_nextOpen->m_prevOpen = this->m_info;
 	}
+	else {
+		list.m_tail = this;
+	}
+
 	current->m_info->m_nextOpen = this->m_info;
 	m_info->m_prevOpen = current->m_info;
+}
+
+// Reverse insertion sort, returns early if the list is being initialised or we are appending the list
+void PathfindCell::reverseInsertionSort(PathfindCellList& list)
+{
+	DEBUG_ASSERTCRASH(m_info, ("Has to have info."));
+	DEBUG_ASSERTCRASH(m_info->m_closed == FALSE && m_info->m_open == FALSE, ("Serious error - Invalid flags. jba"));
+
+	// mark the new cell as being on the open list
+	m_info->m_open = true;
+	m_info->m_closed = false;
+
+	if (list.m_tail == nullptr) {
+		m_info->m_prevOpen = nullptr;
+		m_info->m_nextOpen = nullptr;
+		list.m_tail = this;
+		list.m_head = this;
+		return;
+	}
+
+	// If the node needs inserting after the current list tail
+	if (m_info->m_totalCost >= list.m_tail->m_info->m_totalCost) {
+		m_info->m_prevOpen = list.m_tail->m_info;
+		list.m_tail->m_info->m_nextOpen = this->m_info;
+		m_info->m_nextOpen = nullptr;
+		list.m_tail = this;
+		return;
+	}
+
+	// Traverse the list to find correct position
+	PathfindCell* current = list.m_tail;
+	while (current->m_info->m_prevOpen && current->m_info->m_prevOpen->m_totalCost > m_info->m_totalCost) {
+		current = current->getPrevOpen();
+	}
+
+	// Insert the new node in the correct position
+	m_info->m_prevOpen = current->m_info->m_prevOpen;
+	if (current->m_info->m_prevOpen != nullptr) {
+		current->m_info->m_prevOpen->m_nextOpen = this->m_info;
+	}
+	else {
+		list.m_head = this;
+	}
+
+	current->m_info->m_prevOpen = this->m_info;
+	m_info->m_nextOpen = current->m_info;
 }
 
 /// put self on "open" list in ascending cost order, return new list
@@ -1810,7 +1861,12 @@ void PathfindCell::putOnSortedOpenList( PathfindCellList &list )
 	}
 #endif
 
-	forwardInsertionSort(list);
+	if (list.canReverseSort(*this)) {
+		reverseInsertionSort(list);
+	}
+	else {
+		forwardInsertionSort(list);
+	}
 }
 
 /// remove self from "open" list
@@ -1820,6 +1876,9 @@ void PathfindCell::removeFromOpenList( PathfindCellList &list )
 	DEBUG_ASSERTCRASH(m_info->m_closed==FALSE && m_info->m_open==TRUE, ("Serious error - Invalid flags. jba"));
 	if (m_info->m_nextOpen)
 		m_info->m_nextOpen->m_prevOpen = m_info->m_prevOpen;
+	else {
+		list.m_tail = getPrevOpen();
+	}
 
 	if (m_info->m_prevOpen)
 		m_info->m_prevOpen->m_nextOpen = m_info->m_nextOpen;
@@ -1858,6 +1917,7 @@ Int PathfindCell::releaseOpenList( PathfindCellList &list )
 			list.m_head = curInfo->m_nextOpen->m_cell;
 		} else {
 			list.m_head = nullptr;
+			list.m_tail = nullptr;
 		}
 		DEBUG_ASSERTCRASH(cur == curInfo->m_cell, ("Bad backpointer in PathfindCellInfo"));
 		curInfo->m_nextOpen = nullptr;
@@ -1893,6 +1953,7 @@ Int PathfindCell::releaseClosedList( PathfindCellList &list )
 			list.m_head = curInfo->m_nextOpen->m_cell;
 		} else {
 			list.m_head = nullptr;
+			list.m_tail = nullptr;
 		}
 		DEBUG_ASSERTCRASH(cur == curInfo->m_cell, ("Bad backpointer in PathfindCellInfo"));
 		curInfo->m_nextOpen = nullptr;

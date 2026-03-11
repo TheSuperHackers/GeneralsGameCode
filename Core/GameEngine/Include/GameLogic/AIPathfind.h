@@ -337,6 +337,9 @@ public:
 	// Forward insertion sort, in ascending cost order
 	void forwardInsertionSort(PathfindCellList& list);
 
+	// Reverse insertion sort, in ascending cost order
+	void reverseInsertionSort(PathfindCellList& list);
+
 	/// put self on "open" list in ascending cost order
 	void putOnSortedOpenList( PathfindCellList &list );
 
