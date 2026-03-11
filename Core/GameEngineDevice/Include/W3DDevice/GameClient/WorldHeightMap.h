@@ -221,7 +221,7 @@ protected:
 
 public: // constructors/destructors
 	WorldHeightMap(ChunkInputStream *pFile, Bool bHMapOnly=false);	// read from file.
-	~WorldHeightMap() override;			// destroy.
+	virtual ~WorldHeightMap() override;			// destroy.
 
 public:  // Boundary info
 	const VecICoord2D& getAllBoundaries() const { return m_boundaries; }

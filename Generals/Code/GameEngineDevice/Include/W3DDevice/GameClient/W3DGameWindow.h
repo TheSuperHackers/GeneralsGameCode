@@ -69,7 +69,7 @@ public:
 	//~W3DGameWindow();
 
 	/// draw borders for this window only, NO child windows or anything else
-	void winDrawBorder() override;
+	virtual void winDrawBorder() override;
 
 	Int winSetPosition( Int x, Int y );  ///< set window position
 	virtual Int winSetText( UnicodeString newText ) override;  ///< set text string

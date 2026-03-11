@@ -56,7 +56,7 @@ class W3DDisplay : public Display
 
 public:
 	W3DDisplay();
-	~W3DDisplay() override;
+	virtual ~W3DDisplay() override;
 
 	virtual void init() override;  ///< initialize or re-initialize the system
  	virtual void reset() override;																///< Reset system

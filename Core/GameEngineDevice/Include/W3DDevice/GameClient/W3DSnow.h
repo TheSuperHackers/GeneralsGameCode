@@ -32,7 +32,7 @@ class W3DSnowManager : public SnowManager
   public :
 
 	W3DSnowManager();
-	~W3DSnowManager() override;
+	virtual ~W3DSnowManager() override;
 
 	virtual void init() override;
 	virtual void reset() override;

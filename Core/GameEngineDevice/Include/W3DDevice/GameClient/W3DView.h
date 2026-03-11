@@ -140,7 +140,7 @@ class W3DView : public View, public SubsystemInterface
 
 public:
 	W3DView();
-	~W3DView() override;
+	virtual ~W3DView() override;
 
 	virtual void init() override;  ///< init/re-init the W3DView
 	virtual void reset() override;

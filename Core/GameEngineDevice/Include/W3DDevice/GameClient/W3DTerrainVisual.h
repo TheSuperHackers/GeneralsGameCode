@@ -55,10 +55,10 @@ public:
 
 	virtual Bool load( AsciiString filename ) override;
 
-	void getTerrainColorAt( Real x, Real y, RGBColor *pColor ) override;
+	virtual void getTerrainColorAt( Real x, Real y, RGBColor *pColor ) override;
 
 	/// get the terrain tile type at the world location in the (x,y) plane ignoring Z
-	TerrainType *getTerrainTile( Real x, Real y ) override;
+	virtual TerrainType *getTerrainTile( Real x, Real y ) override;
 
 	/** intersect the ray with the terrain, if a hit occurs TRUE is returned
 	and the result point on the terrain is returned in "result" */
@@ -95,14 +95,14 @@ public:
 	virtual void setShoreLineDetail() override;
 
 	/// Add a bib at location.
-	void addFactionBib(Object *factionBuilding, Bool highlight, Real extra = 0) override;
+	virtual void addFactionBib(Object *factionBuilding, Bool highlight, Real extra = 0) override;
 	/// Remove a bib.
-	void removeFactionBib(Object *factionBuilding) override;
+	virtual void removeFactionBib(Object *factionBuilding) override;
 
 	/// Add a bib at location.
-	void addFactionBibDrawable(Drawable *factionBuilding, Bool highlight, Real extra = 0) override;
+	virtual void addFactionBibDrawable(Drawable *factionBuilding, Bool highlight, Real extra = 0) override;
 	/// Remove a bib.
-	void removeFactionBibDrawable(Drawable *factionBuilding) override;
+	virtual void removeFactionBibDrawable(Drawable *factionBuilding) override;
 
 	virtual void removeAllBibs() override;
 	virtual void removeBibHighlighting() override;
@@ -131,8 +131,8 @@ public:
 #ifdef DO_SEISMIC_SIMULATIONS
   virtual void addSeismicSimulation( const SeismicSimulationNode& sim );
 #endif
-  WorldHeightMap* getLogicHeightMap() override {return m_logicHeightMap;};
-  WorldHeightMap* getClientHeightMap() override
+  virtual WorldHeightMap* getLogicHeightMap() override {return m_logicHeightMap;};
+  virtual WorldHeightMap* getClientHeightMap() override
   {
 #ifdef DO_SEISMIC_SIMULATIONS
     return m_clientHeightMap;

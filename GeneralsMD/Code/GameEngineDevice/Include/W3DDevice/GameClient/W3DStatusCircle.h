@@ -46,7 +46,7 @@ public:
 	W3DStatusCircle();
 	W3DStatusCircle(const W3DStatusCircle & src);
 	W3DStatusCircle & operator = (const W3DStatusCircle &);
-	~W3DStatusCircle() override;
+	virtual ~W3DStatusCircle() override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface

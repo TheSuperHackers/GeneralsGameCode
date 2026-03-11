@@ -63,7 +63,7 @@ protected:
 
 public:
 	W3DDynamicLight();
-	~W3DDynamicLight() override;
+	virtual ~W3DDynamicLight() override;
 
 public:
 	virtual void					On_Frame_Update() override;

@@ -63,7 +63,7 @@ class W3DFontLibrary : public FontLibrary
 public:
 
 	W3DFontLibrary() { }
-	~W3DFontLibrary() override { }
+	virtual ~W3DFontLibrary() override { }
 
 protected:
 
