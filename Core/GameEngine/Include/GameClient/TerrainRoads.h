@@ -199,7 +199,7 @@ class TerrainRoadCollection : public SubsystemInterface
 public:
 
 	TerrainRoadCollection();
-	~TerrainRoadCollection() override;
+	virtual ~TerrainRoadCollection() override;
 
 	virtual void init() override { }
 	virtual void reset() override { }

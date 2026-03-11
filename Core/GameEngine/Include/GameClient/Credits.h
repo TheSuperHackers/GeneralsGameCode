@@ -111,13 +111,13 @@ class CreditsManager: public SubsystemInterface
 {
 public:
 	CreditsManager();
-	~CreditsManager() override;
+	virtual ~CreditsManager() override;
 
-	void init() override;
+	virtual void init() override;
 	void load();
-	void reset() override;
-	void update() override;
-	void draw() override;
+	virtual void reset() override;
+	virtual void update() override;
+	virtual void draw() override;
 
 	const FieldParse *getFieldParse() const { return m_creditsFieldParseTable; }								///< returns the parsing fields
 	static const FieldParse m_creditsFieldParseTable[];																				///< the parse table

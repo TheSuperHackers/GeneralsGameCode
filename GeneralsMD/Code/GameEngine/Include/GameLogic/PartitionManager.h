@@ -316,9 +316,9 @@ public:
 	~PartitionCell();
 
 	// --------------- inherited from Snapshot interface --------------
-	void crc( Xfer *xfer ) override;
-	void xfer( Xfer *xfer ) override;
-	void loadPostProcess() override;
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 	Int getCoiCount() const { return m_coiCount; }		///< return number of COIs touching this cell.
 	Int getCellX() const { return m_cellX; }
@@ -1322,9 +1322,9 @@ public:
 	// ----------------------------------------------------------------
 
 	// --------------- inherited from Snapshot interface --------------
-	void crc( Xfer *xfer ) override;
-	void xfer( Xfer *xfer ) override;
-	void loadPostProcess() override;
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 	Bool getUpdatedSinceLastReset() const { return m_updatedSinceLastReset; }
 
@@ -1490,7 +1490,7 @@ public:
 	}
 
 	/**
-		Reveals the map for the given player, but does not override Shroud generation.  (Script)
+		virtual Reveals the map for the given player, but does not override Shroud generation.  (Script)
 		*/
 	void revealMapForPlayer( Int playerIndex );
 

@@ -57,7 +57,7 @@ class RayEffectSystem : public SubsystemInterface
 public:
 
 	RayEffectSystem();
-	~RayEffectSystem() override;
+	virtual ~RayEffectSystem() override;
 
 	virtual void init() override;
 	virtual void reset() override;

@@ -656,13 +656,13 @@ class GameWindowTransitionsHandler: public SubsystemInterface
 {
 public:
 	GameWindowTransitionsHandler();
-	~GameWindowTransitionsHandler() override;
+	virtual ~GameWindowTransitionsHandler() override;
 
-	void init() override;
+	virtual void init() override;
 	void load();
-	void reset() override;
-	void update() override;
-	void draw() override;
+	virtual void reset() override;
+	virtual void update() override;
+	virtual void draw() override;
 	Bool isFinished();
 	const FieldParse *getFieldParse() const { return m_gameWindowTransitionsFieldParseTable; }								///< returns the parsing fields
 	static const FieldParse m_gameWindowTransitionsFieldParseTable[];																				///< the parse table

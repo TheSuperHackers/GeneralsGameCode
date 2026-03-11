@@ -647,9 +647,9 @@ public:
 	void reset();														///< Reset system in preparation for new map
 
 	// --------------- inherited from Snapshot interface --------------
-	void crc( Xfer *xfer ) override;
-	void xfer( Xfer *xfer ) override;
-	void loadPostProcess() override;
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 	Bool clientSafeQuickDoesPathExist( const LocomotorSet& locomotorSet, const Coord3D *from, const Coord3D *to );  ///< Can we build any path at all between the locations	(terrain & buildings check - fast)
 	Bool clientSafeQuickDoesPathExistForUI( const LocomotorSet& locomotorSet, const Coord3D *from, const Coord3D *to );  ///< Can we build any path at all between the locations	(terrain only - fast)

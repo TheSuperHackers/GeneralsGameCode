@@ -163,7 +163,7 @@ class AnimateWindowManager : public SubsystemInterface
 {
 public:
 	AnimateWindowManager();
-	~AnimateWindowManager() override;
+	virtual ~AnimateWindowManager() override;
 
 	// Inhertited from subsystem ====================================================================
 	virtual void init() override;

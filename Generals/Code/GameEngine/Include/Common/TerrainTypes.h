@@ -213,7 +213,7 @@ class TerrainTypeCollection : public SubsystemInterface
 public:
 
 	TerrainTypeCollection();
-	~TerrainTypeCollection() override;
+	virtual ~TerrainTypeCollection() override;
 
 	virtual void init() override { }
 	virtual void reset() override { }

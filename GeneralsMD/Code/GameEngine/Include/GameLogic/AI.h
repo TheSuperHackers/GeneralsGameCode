@@ -147,9 +147,9 @@ public:
 	void addFactionBuildList(AISideBuildList *buildList);
 
 	// --------------- inherited from Snapshot interface --------------
-	void crc( Xfer *xfer ) override;
-	void xfer( Xfer *xfer ) override;
-	void loadPostProcess() override;
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 	Real m_structureSeconds;		// Try to build a structure every N seconds.
 	Real m_teamSeconds;					// Try to build a team every N seconds.
@@ -247,7 +247,7 @@ class AI : public SubsystemInterface, public Snapshot
 {
 public:
 	AI();
-	~AI() override;
+	virtual ~AI() override;
 
 	virtual void init() override;						///< initialize AI to default values
 	virtual void reset() override;						///< reset the AI system to prepare for a new map
@@ -271,9 +271,9 @@ public:
 	Object *findClosestAlly( const Object *me, Real range, UnsignedInt qualifiers);
 
 	// --------------- inherited from Snapshot interface --------------
-	void crc( Xfer *xfer ) override;
-	void xfer( Xfer *xfer ) override;
-	void loadPostProcess() override;
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 	// AI Groups -----------------------------------------------------------------------------------------------
 	AIGroupPtr createGroup(); ///< instantiate a new AI Group
@@ -891,9 +891,9 @@ private:
 public:
 
 	// --------------- inherited from Snapshot interface --------------
-	void crc( Xfer *xfer ) override;
-	void xfer( Xfer *xfer ) override;
-	void loadPostProcess() override;
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 #if !RETAIL_COMPATIBLE_AIGROUP
 	void Add_Ref() const { m_refCount.Add_Ref(); }

@@ -79,9 +79,9 @@ class WebBrowser :
 		public SubsystemInterface
 	{
 	public:
-		void init() override;
-		void reset() override;
-		void update() override;
+		virtual void init() override;
+		virtual void reset() override;
+		virtual void update() override;
 
 		// Create an instance of the embedded browser for Dune Emperor.
 		virtual Bool createBrowserWindow(const char *tag, GameWindow *win) = 0;

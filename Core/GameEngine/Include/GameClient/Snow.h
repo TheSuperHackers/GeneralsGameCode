@@ -87,7 +87,7 @@ class SnowManager : public SubsystemInterface
 	  };
 
 	 SnowManager();
-	~SnowManager() override;
+	virtual ~SnowManager() override;
 
 	virtual void init() override;
 	virtual void reset() override;

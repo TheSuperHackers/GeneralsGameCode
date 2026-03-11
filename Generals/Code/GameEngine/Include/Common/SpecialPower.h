@@ -154,7 +154,7 @@ class SpecialPowerStore : public SubsystemInterface
 public:
 
 	SpecialPowerStore();
-	~SpecialPowerStore() override;
+	virtual ~SpecialPowerStore() override;
 
 	virtual void init() override { };
 	virtual void update() override { };

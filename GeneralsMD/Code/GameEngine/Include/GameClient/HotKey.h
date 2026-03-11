@@ -85,7 +85,7 @@ class HotKeyManager : public SubsystemInterface
 {
 public:
 	HotKeyManager();
-	~HotKeyManager() override;
+	virtual ~HotKeyManager() override;
 	// Inherited from subsystem interface -----------------------------------------------------------
 	virtual	void init() override;															///< Initialize the Hotkey system
 	virtual void update() override {}														///< A No-op for us

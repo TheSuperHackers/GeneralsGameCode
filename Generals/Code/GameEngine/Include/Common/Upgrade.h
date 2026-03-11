@@ -230,9 +230,9 @@ public:
 	UpgradeCenter();
 	virtual ~UpgradeCenter() override;
 
-	void init() override;												///< subsystem interface
-	void reset() override;												///< subsystem interface
-	void update() override { }										///< subsystem interface
+	virtual void init() override;												///< subsystem interface
+	virtual void reset() override;												///< subsystem interface
+	virtual void update() override { }										///< subsystem interface
 
 	UpgradeTemplate *firstUpgradeTemplate(); ///< return the first upgrade template
 	const UpgradeTemplate *findUpgradeByKey( NameKeyType key ) const; ///< find upgrade by name key

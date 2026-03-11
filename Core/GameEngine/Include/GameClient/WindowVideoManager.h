@@ -120,7 +120,7 @@ class WindowVideoManager : public SubsystemInterface
 {
 public:
 	WindowVideoManager();
-	~WindowVideoManager() override;
+	virtual ~WindowVideoManager() override;
 
 	// Inhertited from subsystem ====================================================================
 	virtual void init() override;

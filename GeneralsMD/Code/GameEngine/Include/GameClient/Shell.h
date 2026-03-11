@@ -114,7 +114,7 @@ class Shell : public SubsystemInterface
 public:
 
 	Shell();
-	~Shell() override;
+	virtual ~Shell() override;
 
 	// Inhertited from subsystem ====================================================================
 	virtual void init() override;
