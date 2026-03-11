@@ -430,7 +430,7 @@ void GameEngine::init()
 		updateWindowTitle();
 
 #if RETAIL_COMPATIBLE_CRC
-		if (xferCRC.getCRC() == 0x4163872E)
+		if (xferCRC.getCRC() == 0x2E876341)
 			TheNameKeyGenerator->verifyNameKeyID(1);
 #endif
 
@@ -467,8 +467,8 @@ void GameEngine::init()
 		initSubsystem(TheThingFactory,"TheThingFactory", createThingFactory(), &xferCRC, "Data\\INI\\Default\\Object", "Data\\INI\\Object");
 
 #if RETAIL_COMPATIBLE_CRC
-		if (xferCRC.getCRC() == 0x134EA7D9)
-			TheNameKeyGenerator->verifyNameKeyID(1587);
+		if (xferCRC.getCRC() == 0xD9A74E13)
+			TheNameKeyGenerator->verifyNameKeyID(1586);
 #endif
 
 		initSubsystem(TheUpgradeCenter,"TheUpgradeCenter", MSGNEW("GameEngineSubsystem") UpgradeCenter, &xferCRC, "Data\\INI\\Default\\Upgrade", "Data\\INI\\Upgrade");
