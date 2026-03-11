@@ -109,7 +109,7 @@ public:
 	void doCatchUpLogic( Coord3D *pinnedPosition );
 
 	void setMobState( MobStates state ) { m_mobState = state; };
-	MobStates getMobState( void ) { return m_mobState; };
+	MobStates getMobState() { return m_mobState; };
 
 
 	virtual UpdateSleepTime update();	///< Deciding whether or not to make new guys

@@ -40,18 +40,18 @@ class DisplayStringManager : public SubsystemInterface
 
 public:
 
-	DisplayStringManager( void );
-	virtual ~DisplayStringManager( void );
+	DisplayStringManager();
+	virtual ~DisplayStringManager();
 
-	virtual void init( void ) {}			///< initialize the factory
-	virtual void reset( void ) {}			///< reset system
-	virtual void update( void ) {};		///< update anything we need to in our strings
+	virtual void init() {}			///< initialize the factory
+	virtual void reset() {}			///< reset system
+	virtual void update() {};		///< update anything we need to in our strings
 
-	virtual DisplayString *newDisplayString( void ) = 0;  ///< allocate new display string
+	virtual DisplayString *newDisplayString() = 0;  ///< allocate new display string
 	virtual void freeDisplayString( DisplayString *string ) = 0;  ///< free string
 
 	virtual DisplayString *getGroupNumeralString( Int numeral ) = 0;
-	virtual DisplayString *getFormationLetterString( void ) = 0;
+	virtual DisplayString *getFormationLetterString() = 0;
 protected:
 
 	void link( DisplayString *string );  ///< link display string to list

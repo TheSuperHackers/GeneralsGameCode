@@ -73,20 +73,20 @@ TextDrawClass::TextDrawClass( int max_chars ) :
 
 /***********************************************************************************************
  *                                                                                             *
- * TextDrawClass::~TextDrawClass( void ) -- Destructor													  *
+ * TextDrawClass::~TextDrawClass() -- Destructor													  *
  *                                                                                             *
  ***********************************************************************************************/
-TextDrawClass::~TextDrawClass( void )
+TextDrawClass::~TextDrawClass()
 {
 	DefaultVertexMaterial->Release_Ref();
 }
 
 /***********************************************************************************************
  *                                                                                             *
- * TextDrawClass::Reset( void ) -- Flush the mesh
+ * TextDrawClass::Reset() -- Flush the mesh
  *                                                                                             *
  ***********************************************************************************************/
-void TextDrawClass::Reset( void )
+void TextDrawClass::Reset()
 {
 	Reset_Flags();
 	Reset_Mesh_Counters();

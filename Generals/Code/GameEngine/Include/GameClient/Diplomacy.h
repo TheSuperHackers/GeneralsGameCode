@@ -28,8 +28,8 @@
 
 #pragma once
 
-void PopulateInGameDiplomacyPopup( void );
+void PopulateInGameDiplomacyPopup();
 void UpdateDiplomacyBriefingText(AsciiString newText, Bool clear);
 
 typedef std::list<AsciiString> BriefingList;
-BriefingList* GetBriefingTextList(void);
+BriefingList* GetBriefingTextList();

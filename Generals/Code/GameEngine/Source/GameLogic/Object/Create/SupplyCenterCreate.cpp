@@ -45,18 +45,18 @@ SupplyCenterCreate::SupplyCenterCreate( Thing *thing, const ModuleData* moduleDa
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-SupplyCenterCreate::~SupplyCenterCreate( void )
+SupplyCenterCreate::~SupplyCenterCreate()
 {
 
 }
 
 //-------------------------------------------------------------------------------------------------
-void SupplyCenterCreate::onCreate( void )
+void SupplyCenterCreate::onCreate()
 {
 }
 
 //-------------------------------------------------------------------------------------------------
-void SupplyCenterCreate::onBuildComplete( void )
+void SupplyCenterCreate::onBuildComplete()
 {
 	if( ! shouldDoOnBuildComplete() )
 		return;
@@ -110,7 +110,7 @@ void SupplyCenterCreate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void SupplyCenterCreate::loadPostProcess( void )
+void SupplyCenterCreate::loadPostProcess()
 {
 
 	// extend base class

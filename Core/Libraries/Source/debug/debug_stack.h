@@ -38,7 +38,7 @@ class DebugStackwalk
   DebugStackwalk& operator=(DebugStackwalk&);
 
   // private so that only Debug can create and destroy us
-  DebugStackwalk(void);
+  DebugStackwalk();
   ~DebugStackwalk();
 
 public:
@@ -59,7 +59,7 @@ public:
     unsigned m_addr[MAX_ADDR];
 
   public:
-    explicit Signature(void): m_numAddr(0) {}
+    explicit Signature(): m_numAddr(0) {}
     Signature(const Signature &src);
     Signature& operator=(const Signature& src);
 
@@ -68,7 +68,7 @@ public:
 
       \return number of addresses in this signature
     */
-    unsigned Size(void) const { return m_numAddr; }
+    unsigned Size() const { return m_numAddr; }
 
     /**
       \brief Get a single address from the signature.
@@ -138,14 +138,14 @@ public:
 
     \return dbghelp.dll DLL handle
   */
-  static void *GetDbghelpHandle(void);
+  static void *GetDbghelpHandle();
 
   /** \internal
     \brief Checks if dbghelp.dll version is old.
 
     \return true if old version, false if not
   */
-  static bool IsOldDbghelp(void);
+  static bool IsOldDbghelp();
 
   /**
     \brief Walks the stack from the given address.

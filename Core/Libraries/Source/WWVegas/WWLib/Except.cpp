@@ -85,8 +85,8 @@ static char ExceptionText [65536];
 bool SymbolsAvailable = false;
 HINSTANCE ImageHelp = (HINSTANCE) -1;
 
-void (*AppCallback)(void) = nullptr;
-char *(*AppVersionCallback)(void) = nullptr;
+void (*AppCallback)() = nullptr;
+char *(*AppVersionCallback)() = nullptr;
 
 /*
 ** Flag to indicate we should exit when an exception occurs.
@@ -167,7 +167,7 @@ static char const *const ImagehelpFunctionNames[] =
  * HISTORY:                                                                                    *
  *   8/22/00 11:42AM ST : Created                                                              *
  *=============================================================================================*/
-int __cdecl _purecall(void)
+int __cdecl _purecall()
 {
 	int return_code = 0;
 
@@ -198,7 +198,7 @@ int __cdecl _purecall(void)
  * HISTORY:                                                                                    *
  *   8/14/98 11:11AM ST : Created                                                              *
  *=============================================================================================*/
-char const * Last_Error_Text(void)
+char const * Last_Error_Text()
 {
 	static char message_buffer[256];
 	FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, nullptr, GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), &message_buffer[0], 256, nullptr);
@@ -954,7 +954,7 @@ bool Register_Thread_Handle(unsigned long thread_id, HANDLE thread_handle)
  * HISTORY:                                                                                    *
  *   2/6/2002 9:43PM ST : Created                                                              *
  *=============================================================================================*/
-int Get_Num_Threads(void)
+int Get_Num_Threads()
 {
 	return(ThreadList.Count());
 }
@@ -1025,7 +1025,7 @@ void Unregister_Thread_ID(unsigned long thread_id, char *thread_name)
  * HISTORY:                                                                                    *
  *   12/6/2001 12:20PM ST : Created                                                            *
  *=============================================================================================*/
-unsigned long Get_Main_Thread_ID(void)
+unsigned long Get_Main_Thread_ID()
 {
 	for (int i=0 ; i<ThreadList.Count() ; i++) {
 		if (ThreadList[i]->Main) {
@@ -1054,7 +1054,7 @@ unsigned long Get_Main_Thread_ID(void)
  * HISTORY:                                                                                    *
  *   6/12/2001 4:27PM ST : Created                                                             *
  *=============================================================================================*/
-void Load_Image_Helper(void)
+void Load_Image_Helper()
 {
 	/*
 	** If this is the first time through then fix up the imagehelp function pointers since imagehlp.dll
@@ -1293,12 +1293,12 @@ here:
 
 
 
-void Register_Application_Exception_Callback(void (*app_callback)(void))
+void Register_Application_Exception_Callback(void (*app_callback)())
 {
 	AppCallback = app_callback;
 }
 
-void Register_Application_Version_Callback(char *(*app_ver_callback)(void))
+void Register_Application_Version_Callback(char *(*app_ver_callback)())
 {
 	AppVersionCallback = app_ver_callback;
 }
@@ -1310,7 +1310,7 @@ void Set_Exit_On_Exception(bool set)
 	ExitOnException = true;
 }
 
-bool Is_Trying_To_Exit(void)
+bool Is_Trying_To_Exit()
 {
 	return(TryingToExit);
 }

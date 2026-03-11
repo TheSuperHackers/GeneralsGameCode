@@ -80,12 +80,12 @@ static Bool justEntered = FALSE;
 static GameWindow *buttonAnalyzeReplay = nullptr;
 #endif
 
-void deleteReplay( void );
-void copyReplay( void );
+void deleteReplay();
+void copyReplay();
 static Bool callCopy = FALSE;
 static Bool callDelete = FALSE;
-void deleteReplayFlag( void ) { callDelete = TRUE;}
-void copyReplayFlag( void ) { callCopy = TRUE;}
+void deleteReplayFlag() { callDelete = TRUE;}
+void copyReplayFlag() { callCopy = TRUE;}
 
 UnicodeString GetReplayFilenameFromListbox(GameWindow *listbox, Int index)
 {
@@ -548,7 +548,7 @@ WindowMsgHandledType ReplayMenuInput( GameWindow *window, UnsignedInt msg,
 
 }
 
-void reallyLoadReplay(void)
+void reallyLoadReplay()
 {
 	UnicodeString filename;
 	Int selected;
@@ -763,7 +763,7 @@ WindowMsgHandledType ReplayMenuSystem( GameWindow *window, UnsignedInt msg,
 	return MSG_HANDLED;
 }
 
-void deleteReplay( void )
+void deleteReplay()
 {
 	callDelete = FALSE;
 	Int selected;
@@ -792,7 +792,7 @@ void deleteReplay( void )
 }
 
 
-void copyReplay( void )
+void copyReplay()
 {
 	callCopy = FALSE;
 	Int selected;

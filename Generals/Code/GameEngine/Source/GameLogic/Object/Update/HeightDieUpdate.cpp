@@ -45,7 +45,7 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-HeightDieUpdateModuleData::HeightDieUpdateModuleData( void )
+HeightDieUpdateModuleData::HeightDieUpdateModuleData()
 {
 
 	m_targetHeightAboveTerrain = 0.0f;
@@ -101,14 +101,14 @@ HeightDieUpdate::HeightDieUpdate( Thing *thing, const ModuleData* moduleData )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-HeightDieUpdate::~HeightDieUpdate( void )
+HeightDieUpdate::~HeightDieUpdate()
 {
 
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime HeightDieUpdate::update( void )
+UpdateSleepTime HeightDieUpdate::update()
 {
 	UnsignedInt now = TheGameLogic->getFrame();
 	if( m_earliestDeathFrame == UINT_MAX )
@@ -312,7 +312,7 @@ void HeightDieUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void HeightDieUpdate::loadPostProcess( void )
+void HeightDieUpdate::loadPostProcess()
 {
 
 	// extend base class

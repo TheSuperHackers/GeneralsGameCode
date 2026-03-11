@@ -107,7 +107,7 @@ struct EvaSideSounds
 	std::vector<AsciiString> m_soundNames;
 
 	static const FieldParse s_evaSideSounds[];		///< the parse table for INI definition
-	const FieldParse *getFieldParse( void ) const { return s_evaSideSounds; }
+	const FieldParse *getFieldParse() const { return s_evaSideSounds; }
 };
 
 //------------------------------------------------------------------------------------ EvaCheckInfo
@@ -125,7 +125,7 @@ public:
 	EvaCheckInfo();
 
 	static const FieldParse s_evaEventInfo[];		///< the parse table for INI definition
-	const FieldParse *getFieldParse( void ) const { return s_evaEventInfo; }
+	const FieldParse *getFieldParse() const { return s_evaEventInfo; }
 };
 EMPTY_DTOR(EvaCheckInfo)
 

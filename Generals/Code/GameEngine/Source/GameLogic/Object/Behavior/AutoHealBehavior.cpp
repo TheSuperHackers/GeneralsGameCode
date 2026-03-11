@@ -118,7 +118,7 @@ AutoHealBehavior::AutoHealBehavior( Thing *thing, const ModuleData* moduleData )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-AutoHealBehavior::~AutoHealBehavior( void )
+AutoHealBehavior::~AutoHealBehavior()
 {
 
 	if( m_radiusParticleSystemID != INVALID_PARTICLE_SYSTEM_ID )
@@ -170,7 +170,7 @@ void AutoHealBehavior::onDamage( DamageInfo *damageInfo )
 //-------------------------------------------------------------------------------------------------
 /** The update callback. */
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime AutoHealBehavior::update( void )
+UpdateSleepTime AutoHealBehavior::update()
 {
 	if (m_stopped)
 		return UPDATE_SLEEP_FOREVER;
@@ -349,7 +349,7 @@ void AutoHealBehavior::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void AutoHealBehavior::loadPostProcess( void )
+void AutoHealBehavior::loadPostProcess()
 {
 
 	// extend base class

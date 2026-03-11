@@ -366,11 +366,11 @@ class GameSpyPeerMessageQueueInterface
 {
 public:
 	virtual ~GameSpyPeerMessageQueueInterface() {}
-	virtual void startThread( void ) = 0;
-	virtual void endThread( void ) = 0;
-	virtual Bool isThreadRunning( void ) = 0;
-	virtual Bool isConnected( void ) = 0;
-	virtual Bool isConnecting( void ) = 0;
+	virtual void startThread() = 0;
+	virtual void endThread() = 0;
+	virtual Bool isThreadRunning() = 0;
+	virtual Bool isConnected() = 0;
+	virtual Bool isConnecting() = 0;
 
 	virtual void addRequest( const PeerRequest& req ) = 0;
 	virtual Bool getRequest( PeerRequest& req ) = 0;
@@ -378,9 +378,9 @@ public:
 	virtual void addResponse( const PeerResponse& resp ) = 0;
 	virtual Bool getResponse( PeerResponse& resp ) = 0;
 
-	virtual SerialAuthResult getSerialAuthResult( void ) = 0;
+	virtual SerialAuthResult getSerialAuthResult() = 0;
 
-	static GameSpyPeerMessageQueueInterface* createNewMessageQueue( void );
+	static GameSpyPeerMessageQueueInterface* createNewMessageQueue();
 };
 
 extern GameSpyPeerMessageQueueInterface *TheGameSpyPeerMessageQueue;

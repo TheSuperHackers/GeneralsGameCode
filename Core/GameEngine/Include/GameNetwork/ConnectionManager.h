@@ -68,7 +68,7 @@ public:
 	void sendLocalGameMessage(GameMessage *msg, UnsignedInt frame);
 	void sendCommand(NetCommandMsg *msg);
 	Bool allCommandsReady(UnsignedInt frame, Bool justTesting = FALSE);
-	void handleAllCommandsReady(void);
+	void handleAllCommandsReady();
 	NetCommandList *getFrameCommandList(UnsignedInt frame);
 //	void AddConnection(User *user, UnsignedInt slot);
 	void determineRouterFallbackPlan();
@@ -83,7 +83,7 @@ public:
 	void sendFile(AsciiString path, UnsignedByte playerMask, UnsignedShort commandID);
 	UnsignedShort sendFileAnnounce(AsciiString path, UnsignedByte playerMask);
 	Int getFileTransferProgress(Int playerID, AsciiString path);
-	Bool areAllQueuesEmpty(void);
+	Bool areAllQueuesEmpty();
 
 	UnsignedInt getLocalPlayerID();
 	UnicodeString getPlayerName(Int playerNum);
@@ -105,13 +105,13 @@ public:
 	Bool canILeave();																///< Returns true if the local player is allowed to leave.
 
 	// Bandwidth metrics
-	Real getIncomingBytesPerSecond( void );
-	Real getIncomingPacketsPerSecond( void );
-	Real getOutgoingBytesPerSecond( void );
-	Real getOutgoingPacketsPerSecond( void );
-	Real getUnknownBytesPerSecond( void );
-	Real getUnknownPacketsPerSecond( void );
-	UnsignedInt getPacketArrivalCushion( void );
+	Real getIncomingBytesPerSecond();
+	Real getIncomingPacketsPerSecond();
+	Real getOutgoingBytesPerSecond();
+	Real getOutgoingPacketsPerSecond();
+	Real getUnknownBytesPerSecond();
+	Real getUnknownPacketsPerSecond();
+	UnsignedInt getPacketArrivalCushion();
 
 	UnsignedInt getMinimumCushion();
 
@@ -120,10 +120,10 @@ public:
 	void processChat(NetChatCommandMsg *msg); // this actually needs to be public because it is frame-synchronized
 
 	void updateLoadProgress( Int progress );
-	void loadProgressComplete( void );
-	void sendTimeOutGameStart( void );
+	void loadProgressComplete();
+	void sendTimeOutGameStart();
 
-	Bool isPacketRouter( void );
+	Bool isPacketRouter();
 
 	Bool isPlayerConnected( Int playerID );
 
@@ -134,7 +134,7 @@ public:
 
 	UnsignedInt getNextPacketRouterSlot(UnsignedInt playerID); ///< returns the packet router player that comes after the given player.
 
-	Int getAverageFPS( void );
+	Int getAverageFPS();
 	Int getSlotAverageFPS(Int slot);
 
 #if defined(RTS_DEBUG)

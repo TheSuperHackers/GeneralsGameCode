@@ -153,7 +153,7 @@ static DynamicVectorClass<Vector3>	_TempVertexBuffer;
  * HISTORY:                                                                                    *
  *   1/6/98     GTH : Created.                                                                 *
  *=============================================================================================*/
-MeshClass::MeshClass(void) :
+MeshClass::MeshClass() :
 	Model(nullptr),
 	DecalMesh(nullptr),
 	LightEnvironment(nullptr),
@@ -235,7 +235,7 @@ MeshClass & MeshClass::operator = (const MeshClass & that)
  * HISTORY:                                                                                    *
  *   1/6/98     GTH : Created.                                                                 *
  *=============================================================================================*/
-MeshClass::~MeshClass(void)
+MeshClass::~MeshClass()
 {
 	Free();
 }
@@ -275,7 +275,7 @@ bool MeshClass::Contains(const Vector3 &point)
  * HISTORY:                                                                                    *
  *   1/6/98     GTH : Created.                                                                 *
  *=============================================================================================*/
-void MeshClass::Free(void)
+void MeshClass::Free()
 {
 	REF_PTR_RELEASE(Model);
 	REF_PTR_RELEASE(DecalMesh);
@@ -294,7 +294,7 @@ void MeshClass::Free(void)
  * HISTORY:                                                                                    *
  *   1/6/98     GTH : Created.                                                                 *
  *=============================================================================================*/
-RenderObjClass * MeshClass::Clone(void) const
+RenderObjClass * MeshClass::Clone() const
 {
 	return NEW_REF( MeshClass, (*this));
 }
@@ -312,7 +312,7 @@ RenderObjClass * MeshClass::Clone(void) const
  * HISTORY:                                                                                    *
  *   5/15/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-const char * MeshClass::Get_Name(void) const
+const char * MeshClass::Get_Name() const
 {
 	return Model->Get_Name();
 }
@@ -347,7 +347,7 @@ void MeshClass::Set_Name(const char * name)
  * HISTORY:                                                                                    *
  *   5/15/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-uint32 MeshClass::Get_W3D_Flags(void)
+uint32 MeshClass::Get_W3D_Flags()
 {
 	return Model->W3dAttributes;
 }
@@ -365,7 +365,7 @@ uint32 MeshClass::Get_W3D_Flags(void)
  * HISTORY:                                                                                    *
  *   5/15/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-const char * MeshClass::Get_User_Text(void) const
+const char * MeshClass::Get_User_Text() const
 {
 	return Model->Get_User_Text();
 }
@@ -383,7 +383,7 @@ const char * MeshClass::Get_User_Text(void) const
  * HISTORY:                                                                                    *
  *   5/20/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-MaterialInfoClass * MeshClass::Get_Material_Info(void)
+MaterialInfoClass * MeshClass::Get_Material_Info()
 {
 	if (Model) {
 		if (Model->MatInfo) {
@@ -407,7 +407,7 @@ MaterialInfoClass * MeshClass::Get_Material_Info(void)
  * HISTORY:                                                                                    *
  *   2/4/99     GTH : Created.                                                                 *
  *=============================================================================================*/
-MeshModelClass * MeshClass::Get_Model(void)
+MeshModelClass * MeshClass::Get_Model()
 {
 	if (Model != nullptr) {
 		Model->Add_Ref();
@@ -633,7 +633,7 @@ void MeshClass::Delete_Decal(uint32 decal_id)
  * HISTORY:                                                                                    *
  *   1/6/98     GTH : Created.                                                                 *
  *=============================================================================================*/
-int MeshClass::Get_Num_Polys(void) const
+int MeshClass::Get_Num_Polys() const
 {
 	if (Model) {
 		return Model->Get_Polygon_Count();
@@ -1397,7 +1397,7 @@ void MeshClass::Get_Obj_Space_Bounding_Box(AABoxClass & box) const
  * HISTORY:                                                                                    *
  *   6/18/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-void MeshClass::Generate_Culling_Tree(void)
+void MeshClass::Generate_Culling_Tree()
 {
 	Model->Generate_Culling_Tree();
 }
@@ -1464,7 +1464,7 @@ void MeshClass::Add_Dependencies_To_List
  * HISTORY:                                                                                    *
  *   5/14/2001    NH : Created.                                                                *
  *=============================================================================================*/
-void MeshClass::Update_Cached_Bounding_Volumes(void) const
+void MeshClass::Update_Cached_Bounding_Volumes() const
 {
 	Get_Obj_Space_Bounding_Sphere(CachedBoundingSphere);
 
@@ -1513,7 +1513,7 @@ void Set_MeshModel_Flag(RenderObjClass *robj, int flag, int onoff)
 	}
 }
 
-int MeshClass::Get_Sort_Level(void) const
+int MeshClass::Get_Sort_Level() const
 {
 	if (Model) {
 		return (Model->Get_Sort_Level());
@@ -1528,7 +1528,7 @@ void MeshClass::Set_Sort_Level(int level)
 	}
 }
 
-int MeshClass::Get_Draw_Call_Count(void) const
+int MeshClass::Get_Draw_Call_Count() const
 {
 	if (Model != nullptr) {
 		// Prefer to return the number of polygon renderers

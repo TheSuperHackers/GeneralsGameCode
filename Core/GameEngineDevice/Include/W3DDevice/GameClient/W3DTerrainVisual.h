@@ -49,9 +49,9 @@ public:
 	W3DTerrainVisual();
 	virtual ~W3DTerrainVisual();
 
-	virtual void init( void );
-	virtual void reset( void );
-	virtual void update( void );
+	virtual void init();
+	virtual void reset();
+	virtual void update();
 
 	virtual Bool load( AsciiString filename );
 
@@ -91,8 +91,8 @@ public:
 																 Real velocity, Real preferredHeight );
 	virtual Bool getWaterGridHeight( Real worldX, Real worldY, Real *height);
 
-	virtual void setTerrainTracksDetail(void);
-	virtual void setShoreLineDetail(void);
+	virtual void setTerrainTracksDetail();
+	virtual void setShoreLineDetail();
 
 	/// Add a bib at location.
 	void addFactionBib(Object *factionBuilding, Bool highlight, Real extra = 0);
@@ -104,8 +104,8 @@ public:
 	/// Remove a bib.
 	void removeFactionBibDrawable(Drawable *factionBuilding);
 
-	virtual void removeAllBibs(void);
-	virtual void removeBibHighlighting(void);
+	virtual void removeAllBibs();
+	virtual void removeBibHighlighting();
 
 	virtual void addProp(const ThingTemplate *tt, const Coord3D *pos, Real angle);
 
@@ -131,8 +131,8 @@ public:
 #ifdef DO_SEISMIC_SIMULATIONS
   virtual void addSeismicSimulation( const SeismicSimulationNode& sim );
 #endif
-  WorldHeightMap* getLogicHeightMap( void ) {return m_logicHeightMap;};
-  WorldHeightMap* getClientHeightMap( void )
+  WorldHeightMap* getLogicHeightMap() {return m_logicHeightMap;};
+  WorldHeightMap* getClientHeightMap()
   {
 #ifdef DO_SEISMIC_SIMULATIONS
     return m_clientHeightMap;
@@ -149,15 +149,15 @@ protected:
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
+	virtual void loadPostProcess();
 
 #ifdef DO_SEISMIC_SIMULATIONS
   ////////////////////////////////////////////////////
   ////////////////////////////////////////////////////
   ////////////////////////////////////////////////////
-  virtual void handleSeismicSimulations( void );
+  virtual void handleSeismicSimulations();
   SeismicSimulationList m_seismicSimulationList;
-  virtual void updateSeismicSimulations( void ); /// walk the SeismicSimulationList and, well, do it.
+  virtual void updateSeismicSimulations(); /// walk the SeismicSimulationList and, well, do it.
 
   ////////////////////////////////////////////////////
   ////////////////////////////////////////////////////

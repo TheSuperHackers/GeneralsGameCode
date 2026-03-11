@@ -125,7 +125,7 @@ FFmpegVideoPlayer::~FFmpegVideoPlayer()
 // FFmpegVideoPlayer::init
 //============================================================================
 
-void	FFmpegVideoPlayer::init( void )
+void	FFmpegVideoPlayer::init()
 {
 	// Need to load the stuff from the ini file.
 	VideoPlayer::init();
@@ -137,7 +137,7 @@ void	FFmpegVideoPlayer::init( void )
 // FFmpegVideoPlayer::deinit
 //============================================================================
 
-void FFmpegVideoPlayer::deinit( void )
+void FFmpegVideoPlayer::deinit()
 {
 	TheAudio->releaseHandleForBink();
 	VideoPlayer::deinit();
@@ -147,7 +147,7 @@ void FFmpegVideoPlayer::deinit( void )
 // FFmpegVideoPlayer::reset
 //============================================================================
 
-void	FFmpegVideoPlayer::reset( void )
+void	FFmpegVideoPlayer::reset()
 {
 	VideoPlayer::reset();
 }
@@ -156,7 +156,7 @@ void	FFmpegVideoPlayer::reset( void )
 // FFmpegVideoPlayer::update
 //============================================================================
 
-void	FFmpegVideoPlayer::update( void )
+void	FFmpegVideoPlayer::update()
 {
 	VideoPlayer::update();
 
@@ -166,7 +166,7 @@ void	FFmpegVideoPlayer::update( void )
 // FFmpegVideoPlayer::loseFocus
 //============================================================================
 
-void	FFmpegVideoPlayer::loseFocus( void )
+void	FFmpegVideoPlayer::loseFocus()
 {
 	VideoPlayer::loseFocus();
 }
@@ -175,7 +175,7 @@ void	FFmpegVideoPlayer::loseFocus( void )
 // FFmpegVideoPlayer::regainFocus
 //============================================================================
 
-void	FFmpegVideoPlayer::regainFocus( void )
+void	FFmpegVideoPlayer::regainFocus()
 {
 	VideoPlayer::regainFocus();
 }
@@ -392,7 +392,7 @@ void FFmpegVideoStream::onFrame(AVFrame *frame, int stream_idx, int stream_type,
 // FFmpegVideoStream::update
 //============================================================================
 
-void FFmpegVideoStream::update( void )
+void FFmpegVideoStream::update()
 {
 #ifdef RTS_USE_OPENAL
 	// Start audio playback
@@ -406,7 +406,7 @@ void FFmpegVideoStream::update( void )
 // FFmpegVideoStream::isFrameReady
 //============================================================================
 
-Bool FFmpegVideoStream::isFrameReady( void )
+Bool FFmpegVideoStream::isFrameReady()
 {
 	uint64_t time = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 	bool ready = (time - m_startTime) >= m_ffmpegFile->getFrameTime() * frameIndex();
@@ -419,7 +419,7 @@ Bool FFmpegVideoStream::isFrameReady( void )
 // FFmpegVideoStream::frameDecompress
 //============================================================================
 
-void FFmpegVideoStream::frameDecompress( void )
+void FFmpegVideoStream::frameDecompress()
 {
 	//BinkDoFrame( m_handle );
 }
@@ -491,7 +491,7 @@ void FFmpegVideoStream::frameRender( VideoBuffer *buffer )
 // FFmpegVideoStream::frameNext
 //============================================================================
 
-void FFmpegVideoStream::frameNext( void )
+void FFmpegVideoStream::frameNext()
 {
 	m_gotFrame = false;
 	// Decode until we have our next video frame
@@ -503,7 +503,7 @@ void FFmpegVideoStream::frameNext( void )
 // FFmpegVideoStream::frameIndex
 //============================================================================
 
-Int FFmpegVideoStream::frameIndex( void )
+Int FFmpegVideoStream::frameIndex()
 {
 	return m_ffmpegFile->getCurrentFrame();
 }
@@ -512,7 +512,7 @@ Int FFmpegVideoStream::frameIndex( void )
 // FFmpegVideoStream::totalFrames
 //============================================================================
 
-Int	FFmpegVideoStream::frameCount( void )
+Int	FFmpegVideoStream::frameCount()
 {
 	return m_ffmpegFile->getNumFrames();
 }
@@ -530,7 +530,7 @@ void FFmpegVideoStream::frameGoto( Int index )
 // VideoStream::height
 //============================================================================
 
-Int		FFmpegVideoStream::height( void )
+Int		FFmpegVideoStream::height()
 {
 	return m_ffmpegFile->getHeight();
 }
@@ -539,7 +539,7 @@ Int		FFmpegVideoStream::height( void )
 // VideoStream::width
 //============================================================================
 
-Int		FFmpegVideoStream::width( void )
+Int		FFmpegVideoStream::width()
 {
 	return m_ffmpegFile->getWidth();
 }

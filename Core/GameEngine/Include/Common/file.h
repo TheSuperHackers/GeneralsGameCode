@@ -138,7 +138,7 @@ class File : public MemoryPoolObject
 
 						Bool	eof();
 		virtual Bool	open( const Char *filename, Int access = NONE, size_t bufferSize = BUFFERSIZE ); ///< Open a file for access
-		virtual void	close( void );																			///< Close the file !!! File object no longer valid after this call !!!
+		virtual void	close();																			///< Close the file !!! File object no longer valid after this call !!!
 
 		virtual Int		read( void *buffer, Int bytes ) = 0 ;						/**< Read the specified number of bytes from the file in to the
 																																			  *  memory pointed at by buffer. Returns the number of bytes read.
@@ -190,15 +190,15 @@ class File : public MemoryPoolObject
 		virtual Bool	scanString(AsciiString &newString) = 0;							///< read a string from the current file position.
 
 		virtual Bool	print ( const Char *format, ...);										///< Prints formatted string to text file
-		virtual Int		size( void );																				///< Returns the size of the file
-		virtual Int		position( void );																		///< Returns the current read/write position
+		virtual Int		size();																				///< Returns the size of the file
+		virtual Int		position();																		///< Returns the current read/write position
 
 
 		void					setName( const char *name );												///< Set the name of the file
-		const char*		getName( void ) const;															///< Returns a pointer to the name of the file
-		Int						getAccess( void ) const;														///< Returns file's access flags
+		const char*		getName() const;															///< Returns a pointer to the name of the file
+		Int						getAccess() const;														///< Returns file's access flags
 
-		void					deleteOnClose ( void );															///< Causes the File object to delete itself when it closes
+		void					deleteOnClose ();															///< Causes the File object to delete itself when it closes
 
 		/**
 			Allocate a buffer large enough to hold entire file, read
@@ -218,7 +218,7 @@ class File : public MemoryPoolObject
 //           Inlining
 //----------------------------------------------------------------------------
 
-inline const char* File::getName( void ) const { return m_nameStr.str(); }
+inline const char* File::getName() const { return m_nameStr.str(); }
 inline void File::setName( const char *name ) { m_nameStr.set(name); }
-inline Int File::getAccess( void ) const { return m_access; }
-inline void File::deleteOnClose( void ) { m_deleteOnClose = TRUE; }
+inline Int File::getAccess() const { return m_access; }
+inline void File::deleteOnClose() { m_deleteOnClose = TRUE; }

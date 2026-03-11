@@ -594,7 +594,7 @@ void GeometryInfo::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void GeometryInfo::loadPostProcess( void )
+void GeometryInfo::loadPostProcess()
 {
 
 }

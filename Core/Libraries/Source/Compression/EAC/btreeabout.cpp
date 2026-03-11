@@ -81,7 +81,7 @@
 /*  Information Functions                                       */
 /****************************************************************/
 
-CODEXABOUT *GCALL BTREE_about(void)
+CODEXABOUT *GCALL BTREE_about()
 {
     CODEXABOUT* info;
 

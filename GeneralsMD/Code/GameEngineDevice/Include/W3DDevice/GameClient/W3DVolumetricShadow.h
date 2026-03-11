@@ -51,32 +51,32 @@ class W3DVolumetricShadowManager
 
 public:
 
-	W3DVolumetricShadowManager( void );
-	~W3DVolumetricShadowManager( void );
-	Bool init( void );	///<initialize resources used by manager, must have valid D3D device.
+	W3DVolumetricShadowManager();
+	~W3DVolumetricShadowManager();
+	Bool init();	///<initialize resources used by manager, must have valid D3D device.
 	// shadow list management
-	void reset( void );
+	void reset();
 	W3DVolumetricShadow* addShadow( RenderObjClass *robj, Shadow::ShadowTypeInfo *shadowInfo, Drawable *draw);	///< adds shadow caster to rendering system.
 	void removeShadow(W3DVolumetricShadow *shadow);	///< removed shadow from rendering system and frees its resources.
-	void removeAllShadows(void); ///< Remove all shadows.
+	void removeAllShadows(); ///< Remove all shadows.
 	/// queues up a dynamic shadow caster for rendering - only used internally by shadow system.
 	void addDynamicShadowTask(W3DVolumetricShadowRenderTask *task)
 	{	W3DBufferManager::W3DRenderTask *oldTask=m_dynamicShadowVolumesToRender;
 		m_dynamicShadowVolumesToRender=task;
 		m_dynamicShadowVolumesToRender->m_nextTask=oldTask;
 	}
-	void invalidateCachedLightPositions(void);	///<forces shadow volumes to update regardless of last lightposition
-	void loadTerrainShadows(void);
+	void invalidateCachedLightPositions();	///<forces shadow volumes to update regardless of last lightposition
+	void loadTerrainShadows();
 
 	// rendering
 	void renderShadows( Bool forceStencilFill );
-	void ReleaseResources(void);
-	Bool ReAcquireResources(void);
+	void ReleaseResources();
+	Bool ReAcquireResources();
 
 protected:
 
 		// to render the stencil buffer polygon to the screen
-		void renderStencilShadows( void );
+		void renderStencilShadows();
 
 		W3DVolumetricShadow *m_shadowList;
 		W3DVolumetricShadowRenderTask *m_dynamicShadowVolumesToRender;
@@ -97,12 +97,12 @@ class W3DVolumetricShadow	: public Shadow
 
 	public:
 
-		W3DVolumetricShadow( void );
-		~W3DVolumetricShadow( void );
+		W3DVolumetricShadow();
+		~W3DVolumetricShadow();
 
 	protected:
 
-		virtual void release(void)	{TheW3DVolumetricShadowManager->removeShadow(this);}	///<release shadow from manager
+		virtual void release()	{TheW3DVolumetricShadowManager->removeShadow(this);}	///<release shadow from manager
 
 		#if defined(RTS_DEBUG)
 		virtual void getRenderCost(RenderCost & rc) const;
@@ -111,9 +111,9 @@ class W3DVolumetricShadow	: public Shadow
 		// tie in geometry and transformation for this shadow
 		void SetGeometry( W3DShadowGeometry *geometry );
 		void setShadowLengthScale(Real value) {m_shadowLengthScale = value;}
-		void updateOptimalExtrusionPadding(void);	///<for immobile objects, figure out the length of extrusion needed to hit ground - expensive!
+		void updateOptimalExtrusionPadding();	///<for immobile objects, figure out the length of extrusion needed to hit ground - expensive!
 		void setOptimalExtrusionPadding(Real value)	{m_extraExtrusionPadding=value;}
-		const W3DShadowGeometry *getGeometry(void) {return m_geometry;}
+		const W3DShadowGeometry *getGeometry() {return m_geometry;}
 
 		void setRenderObject( RenderObjClass	*robj) {assert(m_robj==nullptr); m_robj=robj;}
  		void setRenderObjExtent ( Real extent) { m_robjExtent = extent; }

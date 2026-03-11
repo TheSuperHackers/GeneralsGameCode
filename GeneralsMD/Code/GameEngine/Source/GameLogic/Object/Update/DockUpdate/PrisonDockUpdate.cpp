@@ -49,7 +49,7 @@ PrisonDockUpdate::PrisonDockUpdate( Thing *thing, const ModuleData* moduleData )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-PrisonDockUpdate::~PrisonDockUpdate( void )
+PrisonDockUpdate::~PrisonDockUpdate()
 {
 
 }
@@ -118,7 +118,7 @@ void PrisonDockUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void PrisonDockUpdate::loadPostProcess( void )
+void PrisonDockUpdate::loadPostProcess()
 {
 
 	// extend base class

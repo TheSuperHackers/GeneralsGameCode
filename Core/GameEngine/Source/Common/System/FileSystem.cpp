@@ -138,7 +138,7 @@ FileSystem::~FileSystem()
 // FileSystem::init
 //============================================================================
 
-void		FileSystem::init( void )
+void		FileSystem::init()
 {
 	TheLocalFileSystem->init();
 	TheArchiveFileSystem->init();
@@ -148,7 +148,7 @@ void		FileSystem::init( void )
 // FileSystem::update
 //============================================================================
 
-void		FileSystem::update( void )
+void		FileSystem::update()
 {
 	USE_PERF_TIMER(FileSystem)
 	TheLocalFileSystem->update();
@@ -159,7 +159,7 @@ void		FileSystem::update( void )
 // FileSystem::reset
 //============================================================================
 
-void		FileSystem::reset( void )
+void		FileSystem::reset()
 {
 	USE_PERF_TIMER(FileSystem)
 	TheLocalFileSystem->reset();

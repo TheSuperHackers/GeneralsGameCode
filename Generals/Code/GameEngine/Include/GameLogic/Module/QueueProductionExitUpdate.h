@@ -93,7 +93,7 @@ public:
 	virtual void unreserveDoorForExit( ExitDoorType exitDoor );
 
 	virtual void setRallyPoint( const Coord3D *pos );			///< define a "rally point" for units to move towards
-	virtual const Coord3D *getRallyPoint( void ) const;			///< define a "rally point" for units to move towards
+	virtual const Coord3D *getRallyPoint() const;			///< define a "rally point" for units to move towards
 	virtual Bool getExitPosition( Coord3D& exitPosition ) const;					///< access to the "Door" position of the production object
 	virtual Bool getNaturalRallyPoint( Coord3D& rallyPoint, Bool offset = TRUE ) const;			///< get the natural "rally point" for units to move towards
 
@@ -116,7 +116,7 @@ inline void QueueProductionExitUpdate::setRallyPoint( const Coord3D *pos )
 	m_rallyPointExists = true;
 }
 
-inline const Coord3D *QueueProductionExitUpdate::getRallyPoint( void )  const
+inline const Coord3D *QueueProductionExitUpdate::getRallyPoint()  const
 {
 	if (m_rallyPointExists)
 		return &m_rallyPoint;

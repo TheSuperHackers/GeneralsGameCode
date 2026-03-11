@@ -67,7 +67,7 @@ const char *EMITTER_TYPE_NAMES[EMITTER_TYPEID_COUNT] =
 //
 //	ParticleEmitterDefClass
 //
-ParticleEmitterDefClass::ParticleEmitterDefClass (void)
+ParticleEmitterDefClass::ParticleEmitterDefClass ()
 	:	m_pName (nullptr),
 		m_Version (0L),
 		m_pUserString (nullptr),
@@ -125,7 +125,7 @@ ParticleEmitterDefClass::ParticleEmitterDefClass (const ParticleEmitterDefClass 
 //
 //	~ParticleEmitterDefClass
 //
-ParticleEmitterDefClass::~ParticleEmitterDefClass (void)
+ParticleEmitterDefClass::~ParticleEmitterDefClass ()
 {
 	// Free the name buffer if necessary
 	if (m_pName != nullptr) {
@@ -201,7 +201,7 @@ ParticleEmitterDefClass::operator= (const ParticleEmitterDefClass &src)
 //	Free_Props
 //
 void
-ParticleEmitterDefClass::Free_Props (void)
+ParticleEmitterDefClass::Free_Props ()
 {
 	m_ColorKeyframes.NumKeyFrames = 0;
 	m_OpacityKeyframes.NumKeyFrames = 0;
@@ -313,7 +313,7 @@ ParticleEmitterDefClass::Set_Texture_Filename (const char *pname)
 //	Normalize_Filename
 //
 void
-ParticleEmitterDefClass::Normalize_Filename (void)
+ParticleEmitterDefClass::Normalize_Filename ()
 {
 	TCHAR path[MAX_PATH];
 	::lstrcpy (path, m_Info.TextureFilename);
@@ -412,7 +412,7 @@ ParticleEmitterDefClass::Load_W3D (ChunkLoadClass &chunk_load)
 //	Initialize_To_Ver2
 //
 void
-ParticleEmitterDefClass::Initialize_To_Ver2 (void)
+ParticleEmitterDefClass::Initialize_To_Ver2 ()
 {
 	::memset (&m_Info, 0, sizeof (m_Info));
 	::memset (&m_InfoV2, 0, sizeof (m_InfoV2));
@@ -446,7 +446,7 @@ ParticleEmitterDefClass::Initialize_To_Ver2 (void)
 //	Convert_To_Ver2
 //
 void
-ParticleEmitterDefClass::Convert_To_Ver2 (void)
+ParticleEmitterDefClass::Convert_To_Ver2 ()
 {
 	if (m_Version < 0x00020000) {
 		m_InfoV2.BurstSize = 1;
@@ -1839,7 +1839,7 @@ ParticleEmitterDefClass::Get_Blur_Time_Keyframes (ParticlePropertyStruct<float> 
 //	Create
 //
 RenderObjClass *
-ParticleEmitterPrototypeClass::Create (void)
+ParticleEmitterPrototypeClass::Create ()
 {
 	return ParticleEmitterClass::Create_From_Definition (*m_pDefinition);
 }

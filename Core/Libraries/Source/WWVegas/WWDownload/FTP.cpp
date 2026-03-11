@@ -116,7 +116,7 @@ bool Prepare_Directories(const char *rootdir, const char *filename);
 // This is here as a hack...
 // Some firewalls break the TCP stack so non-blocking sockets don't work right...
 //
-static bool Use_Non_Blocking_Mode(void)
+static bool Use_Non_Blocking_Mode()
 {
 	HKEY regKey;
 	LONG regRetval;
@@ -202,7 +202,7 @@ Cftp::~Cftp()
 	}
 }
 
-void Cftp::CloseSockets(void)
+void Cftp::CloseSockets()
 {
 
 	if( m_iDataSocket )
@@ -219,7 +219,7 @@ void Cftp::CloseSockets(void)
 
 }
 
-void Cftp::ZeroStuff(void)
+void Cftp::ZeroStuff()
 {
 	m_iBytesRead = 0;
 	m_iFileSize = 0;
@@ -571,7 +571,7 @@ HRESULT  Cftp::LoginToServer( LPCSTR szUserName, LPCSTR szPassword )
 ***************************************************************************/
 
 
-HRESULT  Cftp::LogoffFromServer( void )
+HRESULT  Cftp::LogoffFromServer()
 {
 	char command[ 256 ];
 	int iReply, iRetCode;
@@ -1086,7 +1086,7 @@ unsigned long MyIPAddress( int sockfd )
 ***************************************************************************/
 
 
-int Cftp::SendNewPort( void )
+int Cftp::SendNewPort()
 {
 	unsigned long uTemp;
 	char command[ 256 ];

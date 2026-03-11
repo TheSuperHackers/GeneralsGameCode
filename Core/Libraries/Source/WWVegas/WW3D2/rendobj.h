@@ -136,8 +136,8 @@ template<class T> class DynamicVectorClass;
 class RenderHookClass
 {
 public:
-	RenderHookClass(void) { }
-	virtual ~RenderHookClass(void) { }
+	RenderHookClass() { }
+	virtual ~RenderHookClass() { }
 	virtual bool Pre_Render(RenderObjClass *robj, RenderInfoClass &rinfo) = 0;
 	virtual void Post_Render(RenderObjClass *robj, RenderInfoClass &rinfo) = 0;
 private:
@@ -162,7 +162,7 @@ public:
  	//all instances of a model - typically material settings like alpha, texture
  	//animation, texture uv scrolling, etc.  Added for 'Generals' -MW
  	struct Material_Override
- 	{	Material_Override(void)	: Struct_ID(USER_DATA_MATERIAL_OVERRIDE),customUVOffset(0,0) {}
+ 	{	Material_Override()	: Struct_ID(USER_DATA_MATERIAL_OVERRIDE),customUVOffset(0,0) {}
 
  		int Struct_ID;	//ID used to identify this structure from a pointer to it.
  		Vector2 customUVOffset;
@@ -215,22 +215,22 @@ public:
 		CLASSID_LAST		= 0x0000FFFF
 	};
 
-	RenderObjClass(void);
+	RenderObjClass();
 	RenderObjClass(const RenderObjClass & src);
 	RenderObjClass & operator = (const RenderObjClass &);
-	virtual ~RenderObjClass(void)																					{ if (RenderHook) delete RenderHook; }
+	virtual ~RenderObjClass()																					{ if (RenderHook) delete RenderHook; }
 
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface - Cloning and Identification
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	virtual RenderObjClass *	Clone(void) const																= 0;
-	virtual int						Class_ID(void)	const															{ return CLASSID_UNKNOWN; }
-	virtual const char *			Get_Name(void) const															{ return "UNNAMED"; }
+	virtual RenderObjClass *	Clone() const																= 0;
+	virtual int						Class_ID()	const															{ return CLASSID_UNKNOWN; }
+	virtual const char *			Get_Name() const															{ return "UNNAMED"; }
 	virtual void					Set_Name(const char * name)												{ }
-	virtual const char *			Get_Base_Model_Name (void) const											{ return nullptr; }
+	virtual const char *			Get_Base_Model_Name () const											{ return nullptr; }
 	virtual void					Set_Base_Model_Name (const char *name)									{ }
-	virtual int						Get_Num_Polys(void) const													{ return 0; }
+	virtual int						Get_Num_Polys() const													{ return 0; }
 
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -247,7 +247,7 @@ public:
 	virtual void					Render(RenderInfoClass & rinfo)											= 0;
 	virtual void					Special_Render(SpecialRenderInfoClass & rinfo)						{ }
 	virtual void					On_Frame_Update() 														{ }
-	virtual void					Restart(void)																	{ }
+	virtual void					Restart()																	{ }
 
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -258,34 +258,34 @@ public:
 	// as small as possible
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	virtual void					Add(SceneClass * scene);
-	virtual bool					Remove(void);
-	virtual SceneClass *			Get_Scene(void);
-	virtual SceneClass *			Peek_Scene(void)																{ return Scene; }
+	virtual bool					Remove();
+	virtual SceneClass *			Get_Scene();
+	virtual SceneClass *			Peek_Scene()																{ return Scene; }
 	virtual void					Set_Container(RenderObjClass * con);
-	virtual void					Validate_Transform(void) const;
+	virtual void					Validate_Transform() const;
 
 #define GET_CONTAINER_INLINE
 #ifdef GET_CONTAINER_INLINE
 	// srj sez: this is called a ton and never overridden, so inline it
-	RenderObjClass *	Get_Container(void) const { return Container; }
+	RenderObjClass *	Get_Container() const { return Container; }
 #else
-	virtual RenderObjClass *	Get_Container(void) const;
+	virtual RenderObjClass *	Get_Container() const;
 #endif
 
 	virtual void 					Set_Transform(const Matrix3D &m);
 	virtual void 					Set_Position(const Vector3 &v);
-	const Matrix3D &				Get_Transform(void) const;
+	const Matrix3D &				Get_Transform() const;
 	const Matrix3D &				Get_Transform(bool& is_transform_identity) const;
-	const Matrix3D &				Get_Transform_No_Validity_Check(void) const;
+	const Matrix3D &				Get_Transform_No_Validity_Check() const;
 	const Matrix3D &				Get_Transform_No_Validity_Check(bool& is_transform_identity) const;
 	bool								Is_Transform_Identity() const;
 	bool								Is_Transform_Identity_No_Validity_Check() const;
-	Vector3							Get_Position(void) const;
+	Vector3							Get_Position() const;
 
 	virtual void					Notify_Added(SceneClass * scene);
 	virtual void					Notify_Removed(SceneClass * scene);
 
-	virtual int						Get_Num_Sub_Objects(void) const											{ return 0; }
+	virtual int						Get_Num_Sub_Objects() const											{ return 0; }
 	virtual RenderObjClass *	Get_Sub_Object(int index) const											{ return nullptr; }
 	virtual int						Add_Sub_Object(RenderObjClass * subobj)								{ return 0; }
 	virtual int						Remove_Sub_Object(RenderObjClass * robj)								{ return 0; }
@@ -301,7 +301,7 @@ public:
 	virtual int						Remove_Sub_Objects_From_Bone(const char * bname);
 
 	// This is public only so objects can recursively call this on their sub-objects
-	virtual void					Update_Sub_Object_Transforms(void);
+	virtual void					Update_Sub_Object_Transforms();
 
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -319,7 +319,7 @@ public:
 		ANIM_MODE_COUNT
 	};
 
-	virtual void					Set_Animation( void )														{ }
+	virtual void					Set_Animation()														{ }
 	virtual void					Set_Animation( HAnimClass * motion,
 															float frame, int anim_mode = ANIM_MODE_MANUAL)	{ }
 	virtual void					Set_Animation( HAnimClass * motion0,
@@ -329,8 +329,8 @@ public:
 															float percentage)											{ }
 	virtual void					Set_Animation( HAnimComboClass * anim_combo)							{ }
 
-	virtual HAnimClass *			Peek_Animation( void )														{ return nullptr; }
-	virtual int						Get_Num_Bones(void)															{ return 0; }
+	virtual HAnimClass *			Peek_Animation()														{ return nullptr; }
+	virtual int						Get_Num_Bones()															{ return 0; }
 	virtual const char *			Get_Bone_Name(int bone_index)												{ return nullptr; }
 	virtual int						Get_Bone_Index(const char * bonename)									{ return 0; }
 	virtual const Matrix3D &	Get_Bone_Transform(const char * bonename)    						{ return Get_Transform(); }
@@ -341,7 +341,7 @@ public:
 	virtual void					Release_Bone(int bindex)													{ }
 	virtual bool					Is_Bone_Captured(int bindex) const										{ return false; }
 	virtual void					Control_Bone(int bindex,const Matrix3D & objtm,bool world_space_translation = false)						{ }
-	virtual const HTreeClass *	Get_HTree(void) const														{ return nullptr; }
+	virtual const HTreeClass *	Get_HTree() const														{ return nullptr; }
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface - Collision Detection
@@ -368,11 +368,11 @@ public:
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface - Bounding Volumes
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	virtual const SphereClass & Get_Bounding_Sphere(void) const;
-	virtual const AABoxClass &	Get_Bounding_Box(void) const;
+	virtual const SphereClass & Get_Bounding_Sphere() const;
+	virtual const AABoxClass &	Get_Bounding_Box() const;
 	virtual void		 			Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const;
 	virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & box) const;
-   virtual void               Update_Obj_Space_Bounding_Volumes(void)								{ };
+   virtual void               Update_Obj_Space_Bounding_Volumes()								{ };
 
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -386,18 +386,18 @@ public:
 	static const float	AT_MAX_LOD;
 
 	virtual void	Prepare_LOD(CameraClass &camera);
-   virtual void   Recalculate_Static_LOD_Factors(void)													{ }
-	virtual void	Increment_LOD(void)																			{ }
-	virtual void	Decrement_LOD(void)																			{ }
-	virtual float	Get_Cost(void) const;
-	virtual float	Get_Value(void) const																		{ return AT_MIN_LOD; }
-	virtual float	Get_Post_Increment_Value(void) const													{ return AT_MAX_LOD; }
+   virtual void   Recalculate_Static_LOD_Factors()													{ }
+	virtual void	Increment_LOD()																			{ }
+	virtual void	Decrement_LOD()																			{ }
+	virtual float	Get_Cost() const;
+	virtual float	Get_Value() const																		{ return AT_MIN_LOD; }
+	virtual float	Get_Post_Increment_Value() const													{ return AT_MAX_LOD; }
 	virtual void	Set_LOD_Level(int lod)																		{ }
-	virtual int		Get_LOD_Level(void) const																	{ return 0; }
-	virtual int		Get_LOD_Count(void) const																	{ return 1; }
+	virtual int		Get_LOD_Level() const																	{ return 0; }
+	virtual int		Get_LOD_Count() const																	{ return 1; }
 	virtual void	Set_LOD_Bias(float bias)																	{ }
 	virtual int	Calculate_Cost_Value_Arrays(float screen_area, float *values, float *costs) const;
-	virtual RenderObjClass *	Get_Current_LOD(void)														{ Add_Ref(); return this; }
+	virtual RenderObjClass *	Get_Current_LOD()														{ Add_Ref(); return this; }
 
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -422,10 +422,10 @@ public:
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface - Attributes, Options, Properties, etc
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	virtual MaterialInfoClass * Get_Material_Info(void) 													{ return nullptr; }
+	virtual MaterialInfoClass * Get_Material_Info() 													{ return nullptr; }
 	virtual void					Set_User_Data(void *value, bool recursive = false)					{ User_Data = value; };
 	virtual void *					Get_User_Data()																{ return User_Data; };
-	virtual int						Get_Num_Snap_Points(void)													{ return 0; }
+	virtual int						Get_Num_Snap_Points()													{ return 0; }
 	virtual void					Get_Snap_Point(int index,Vector3 * set)								{ }
 //	virtual float					Calculate_Texture_Reduction_Factor(float norm_screensize);
 //	virtual void					Set_Texture_Reduction_Factor(float trf);
@@ -433,50 +433,50 @@ public:
 	virtual void					Scale(float scale) 															{ };
 	virtual void					Scale(float scalex, float scaley, float scalez)						{ };
  	virtual void					Set_ObjectScale(float scale) { ObjectScale=scale;}	//set's a scale factor that's factored into transform matrix.									{ScaleFactor=scale; };
-	float							Get_ObjectScale( void ) const { return ObjectScale; };
+	float							Get_ObjectScale() const { return ObjectScale; };
  	void							Set_ObjectColor(unsigned int color) { ObjectColor=color;}	//the color that was used to modify the asset for player team color (for Generals). -MW
-	unsigned int					Get_ObjectColor( void ) const { return ObjectColor; };
+	unsigned int					Get_ObjectColor() const { return ObjectColor; };
 
-   virtual int						Get_Sort_Level(void) const													{ return 0; /* SORT_LEVEL_NONE */ }
+   virtual int						Get_Sort_Level() const													{ return 0; /* SORT_LEVEL_NONE */ }
    virtual void					Set_Sort_Level(int level)													{ }
 
-	virtual int						Is_Really_Visible(void)														{ return ((Bits & IS_REALLY_VISIBLE) == IS_REALLY_VISIBLE); }
-	virtual int						Is_Not_Hidden_At_All(void)													{ return ((Bits & IS_NOT_HIDDEN_AT_ALL) == IS_NOT_HIDDEN_AT_ALL); }
-	virtual int						Is_Visible(void) const														{ return (Bits & IS_VISIBLE); }
+	virtual int						Is_Really_Visible()														{ return ((Bits & IS_REALLY_VISIBLE) == IS_REALLY_VISIBLE); }
+	virtual int						Is_Not_Hidden_At_All()													{ return ((Bits & IS_NOT_HIDDEN_AT_ALL) == IS_NOT_HIDDEN_AT_ALL); }
+	virtual int						Is_Visible() const														{ return (Bits & IS_VISIBLE); }
 	virtual void					Set_Visible(int onoff)														{ if (onoff) { Bits |= IS_VISIBLE; } else { Bits &= ~IS_VISIBLE; } }
 
 // The cheatSpy has been put on ice until later... perhaps the next patch? - M Lorenzen
-  //	virtual int						Is_VisibleWithCheatSpy(void) const								{ return ((Bits&=~0x80) & (IS_VISIBLE); }
+  //	virtual int						Is_VisibleWithCheatSpy() const								{ return ((Bits&=~0x80) & (IS_VISIBLE); }
 //	virtual void					Set_VisibleWithCheatSpy(int onoff)								{ if (onoff) { Bits |= IS_VISIBLE|0x80; } else { Bits &= ~IS_VISIBLE; } }
 
-	virtual int						Is_Hidden(void) const														{ return !(Bits & IS_NOT_HIDDEN); }
+	virtual int						Is_Hidden() const														{ return !(Bits & IS_NOT_HIDDEN); }
 	virtual void					Set_Hidden(int onoff)														{ if (onoff) { Bits &= ~IS_NOT_HIDDEN; } else { Bits |= IS_NOT_HIDDEN; } }
-	virtual int						Is_Animation_Hidden(void) const											{ return !(Bits & IS_NOT_ANIMATION_HIDDEN); }
+	virtual int						Is_Animation_Hidden() const											{ return !(Bits & IS_NOT_ANIMATION_HIDDEN); }
 	virtual void					Set_Animation_Hidden(int onoff)											{ if (onoff) { Bits &= ~IS_NOT_ANIMATION_HIDDEN; } else { Bits |= IS_NOT_ANIMATION_HIDDEN; } }
-	virtual int						Is_Force_Visible(void) const												{ return Bits & IS_FORCE_VISIBLE; }
+	virtual int						Is_Force_Visible() const												{ return Bits & IS_FORCE_VISIBLE; }
 	virtual void					Set_Force_Visible(int onoff)          									{ if (onoff) { Bits |= IS_FORCE_VISIBLE; } else { Bits &= ~IS_FORCE_VISIBLE; } }
 
-	virtual int						Is_Translucent(void) const													{ return Bits & IS_TRANSLUCENT; }
+	virtual int						Is_Translucent() const													{ return Bits & IS_TRANSLUCENT; }
 	virtual void					Set_Translucent(int onoff)													{ if (onoff) { Bits |= IS_TRANSLUCENT; } else { Bits &= ~IS_TRANSLUCENT; } }
-	virtual int						Is_Alpha(void) const													{ return Bits & IS_ALPHA; }
+	virtual int						Is_Alpha() const													{ return Bits & IS_ALPHA; }
 	virtual void					Set_Alpha(int onoff)													{ if (onoff) { Bits |= IS_ALPHA; } else { Bits &= ~IS_ALPHA; } }
-	virtual int						Is_Additive(void) const													{ return Bits & IS_ADDITIVE; }
+	virtual int						Is_Additive() const													{ return Bits & IS_ADDITIVE; }
 	virtual void					Set_Additive(int onoff)													{ if (onoff) { Bits |= IS_ADDITIVE; } else { Bits &= ~IS_ADDITIVE; } }
-	virtual int						Get_Collision_Type(void) const											{ return (Bits & COLL_TYPE_MASK); }
+	virtual int						Get_Collision_Type() const											{ return (Bits & COLL_TYPE_MASK); }
 	virtual void					Set_Collision_Type(int type)												{ Bits &= ~COLL_TYPE_MASK; Bits |= (type & COLL_TYPE_MASK) | COLL_TYPE_ALL; }
-   virtual bool					Is_Complete(void)																{ return false; }
-	virtual bool					Is_In_Scene(void)																{ return Scene != nullptr; }
-	virtual float					Get_Native_Screen_Size(void) const										{ return NativeScreenSize; }
+   virtual bool					Is_Complete()																{ return false; }
+	virtual bool					Is_In_Scene()																{ return Scene != nullptr; }
+	virtual float					Get_Native_Screen_Size() const										{ return NativeScreenSize; }
 	virtual void					Set_Native_Screen_Size(float screensize)								{ NativeScreenSize = screensize; }
 
 	void								Set_Sub_Objects_Match_LOD(int onoff)									{ if (onoff) { Bits |= SUBOBJS_MATCH_LOD; } else { Bits &= ~SUBOBJS_MATCH_LOD; } }
-	int								Is_Sub_Objects_Match_LOD_Enabled(void)									{ return Bits & SUBOBJS_MATCH_LOD; }
+	int								Is_Sub_Objects_Match_LOD_Enabled()									{ return Bits & SUBOBJS_MATCH_LOD; }
 
 	void								Set_Sub_Object_Transforms_Dirty(bool onoff)							{ if (onoff) { Bits |= SUBOBJ_TRANSFORMS_DIRTY; } else { Bits &= ~SUBOBJ_TRANSFORMS_DIRTY; } }
-	bool								Are_Sub_Object_Transforms_Dirty(void)									{ return (Bits & SUBOBJ_TRANSFORMS_DIRTY) != 0; }
+	bool								Are_Sub_Object_Transforms_Dirty()									{ return (Bits & SUBOBJ_TRANSFORMS_DIRTY) != 0; }
 
 	void								Set_Ignore_LOD_Cost(bool onoff)											{ if (onoff) { Bits |= IGNORE_LOD_COST; } else { Bits &= ~IGNORE_LOD_COST; } }
-	bool								Is_Ignoring_LOD_Cost(void)													{ return (Bits & IGNORE_LOD_COST) != 0; }
+	bool								Is_Ignoring_LOD_Cost()													{ return (Bits & IGNORE_LOD_COST) != 0; }
 
 	void								Set_Is_Self_Shadowed()														{ Bits|=IS_SELF_SHADOWED; }
 	void								Unset_Is_Self_Shadowed()													{ Bits&=~IS_SELF_SHADOWED; }
@@ -485,24 +485,24 @@ public:
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Persistent object save-load interface
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	virtual const PersistFactoryClass &	Get_Factory (void) const;
+	virtual const PersistFactoryClass &	Get_Factory () const;
 	virtual bool					Save (ChunkSaveClass &csave);
 	virtual bool					Load (ChunkLoadClass &cload);
 
 	// Application-specific render hook:
-	RenderHookClass *				Get_Render_Hook(void) { return RenderHook; }
+	RenderHookClass *				Get_Render_Hook() { return RenderHook; }
 	void								Set_Render_Hook(RenderHookClass *hook) { if (RenderHook) delete RenderHook; RenderHook = hook; }
 
 protected:
 
 	virtual void					Add_Dependencies_To_List (DynamicVectorClass<StringClass> &file_list, bool textures_only = false);
 
-	virtual void					Update_Cached_Bounding_Volumes(void) const;
-	virtual void					Update_Sub_Object_Bits(void);
+	virtual void					Update_Cached_Bounding_Volumes() const;
+	virtual void					Update_Sub_Object_Bits();
 
-	bool								Bounding_Volumes_Valid(void) const										{ return (Bits & BOUNDING_VOLUMES_VALID) != 0; }
-	void								Invalidate_Cached_Bounding_Volumes(void) const						{ Bits &= ~BOUNDING_VOLUMES_VALID; }
-	void								Validate_Cached_Bounding_Volumes(void)	const							{ Bits |= BOUNDING_VOLUMES_VALID; }
+	bool								Bounding_Volumes_Valid() const										{ return (Bits & BOUNDING_VOLUMES_VALID) != 0; }
+	void								Invalidate_Cached_Bounding_Volumes() const						{ Bits &= ~BOUNDING_VOLUMES_VALID; }
+	void								Validate_Cached_Bounding_Volumes()	const							{ Bits |= BOUNDING_VOLUMES_VALID; }
 
 	enum
 	{
@@ -545,7 +545,7 @@ protected:
 	friend class RenderObjProxyClass;
 };
 
-WWINLINE const SphereClass & RenderObjClass::Get_Bounding_Sphere(void) const
+WWINLINE const SphereClass & RenderObjClass::Get_Bounding_Sphere() const
 {
 	if (!(Bits & BOUNDING_VOLUMES_VALID)) {
 		Update_Cached_Bounding_Volumes();
@@ -553,7 +553,7 @@ WWINLINE const SphereClass & RenderObjClass::Get_Bounding_Sphere(void) const
 	return CachedBoundingSphere;
 }
 
-WWINLINE const AABoxClass & RenderObjClass::Get_Bounding_Box(void) const
+WWINLINE const AABoxClass & RenderObjClass::Get_Bounding_Box() const
 {
 	if (!(Bits & BOUNDING_VOLUMES_VALID)) {
 		Update_Cached_Bounding_Volumes();
@@ -595,7 +595,7 @@ WWINLINE float Bound_Degrees(float angle)
  * HISTORY:                                                                                    *
  *   2/25/99    GTH : Created.                                                                 *
  *=============================================================================================*/
-WWINLINE const Matrix3D & RenderObjClass::Get_Transform(void) const
+WWINLINE const Matrix3D & RenderObjClass::Get_Transform() const
 {
 	Validate_Transform();
 	return Transform;
@@ -615,7 +615,7 @@ WWINLINE bool RenderObjClass::Is_Transform_Identity() const
 }
 
 // Warning: Be sure to call this function only if the transform is known to be valid!
-WWINLINE const Matrix3D & RenderObjClass::Get_Transform_No_Validity_Check(void) const
+WWINLINE const Matrix3D & RenderObjClass::Get_Transform_No_Validity_Check() const
 {
 	return Transform;
 }

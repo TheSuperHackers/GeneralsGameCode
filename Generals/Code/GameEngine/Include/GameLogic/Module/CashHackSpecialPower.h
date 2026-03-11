@@ -57,7 +57,7 @@ public:
 	std::vector<Upgrades> m_upgrades;
 	Int m_defaultAmountToSteal;					///< the amount of money that we will steal
 
-	CashHackSpecialPowerModuleData( void );
+	CashHackSpecialPowerModuleData();
 	static void buildFieldParse( MultiIniFieldParse& p );
 };
 

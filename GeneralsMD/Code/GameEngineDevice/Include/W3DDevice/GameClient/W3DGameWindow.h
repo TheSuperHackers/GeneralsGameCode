@@ -64,12 +64,12 @@ class W3DGameWindow : public GameWindow
 
 public:
 
-	W3DGameWindow( void );
+	W3DGameWindow();
 	// already defined by MPO.
-	//~W3DGameWindow( void );
+	//~W3DGameWindow();
 
 	/// draw borders for this window only, NO child windows or anything else
-	void winDrawBorder( void );
+	void winDrawBorder();
 
 	Int winSetPosition( Int x, Int y );  ///< set window position
 	Int winSetText( UnicodeString newText );  ///< set text string

@@ -112,7 +112,7 @@ static void printReturnCode( char *label, HRESULT hr )
 //-------------------------------------------------------------------------------------------------
 /** create our interface to the direct input keybard */
 //-------------------------------------------------------------------------------------------------
-void DirectInputKeyboard::openKeyboard( void )
+void DirectInputKeyboard::openKeyboard()
 {
   HRESULT hr;
 
@@ -214,7 +214,7 @@ void DirectInputKeyboard::openKeyboard( void )
 //-------------------------------------------------------------------------------------------------
 /** close the direct input keyboard */
 //-------------------------------------------------------------------------------------------------
-void DirectInputKeyboard::closeKeyboard( void )
+void DirectInputKeyboard::closeKeyboard()
 {
 
 	if( m_pKeyboardDevice )
@@ -342,7 +342,7 @@ void DirectInputKeyboard::getKey( KeyboardIO *key )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-DirectInputKeyboard::DirectInputKeyboard( void )
+DirectInputKeyboard::DirectInputKeyboard()
 {
 
 	m_pDirectInput = nullptr;
@@ -362,7 +362,7 @@ DirectInputKeyboard::DirectInputKeyboard( void )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-DirectInputKeyboard::~DirectInputKeyboard( void )
+DirectInputKeyboard::~DirectInputKeyboard()
 {
 
 	// close keyboard and release all resource
@@ -373,7 +373,7 @@ DirectInputKeyboard::~DirectInputKeyboard( void )
 //-------------------------------------------------------------------------------------------------
 /** initialize the keyboard */
 //-------------------------------------------------------------------------------------------------
-void DirectInputKeyboard::init( void )
+void DirectInputKeyboard::init()
 {
 
 	// extending functionality
@@ -387,7 +387,7 @@ void DirectInputKeyboard::init( void )
 //-------------------------------------------------------------------------------------------------
 /** Reset keyboard system */
 //-------------------------------------------------------------------------------------------------
-void DirectInputKeyboard::reset( void )
+void DirectInputKeyboard::reset()
 {
 
 	// extend functionality
@@ -398,7 +398,7 @@ void DirectInputKeyboard::reset( void )
 //-------------------------------------------------------------------------------------------------
 /** called once per frame to update the keyboard state */
 //-------------------------------------------------------------------------------------------------
-void DirectInputKeyboard::update( void )
+void DirectInputKeyboard::update()
 {
 
 	// extending functionality
@@ -421,7 +421,7 @@ void DirectInputKeyboard::update( void )
 //-------------------------------------------------------------------------------------------------
 /** Return TRUE if the caps lock key is down/hilighted */
 //-------------------------------------------------------------------------------------------------
-Bool DirectInputKeyboard::getCapsState( void )
+Bool DirectInputKeyboard::getCapsState()
 {
 
 	return BitIsSet( GetKeyState( VK_CAPITAL ), 0X01);

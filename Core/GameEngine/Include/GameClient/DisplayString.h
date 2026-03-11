@@ -74,17 +74,17 @@ public:
 
 	friend DisplayStringManager;
 
-	DisplayString( void );
-	// virtual ~DisplayString( void );  // destructor defined by memory pool
+	DisplayString();
+	// virtual ~DisplayString();  // destructor defined by memory pool
 
 	virtual void setText( UnicodeString text );		///< set text for this string
-	virtual UnicodeString getText( void );				///< get text for this string
-	virtual Int getTextLength( void );				///< return number of chars in string
-	virtual void notifyTextChanged( void );		///< called when text has changed
-	virtual void reset( void );								///< reset all contents of string
+	virtual UnicodeString getText();				///< get text for this string
+	virtual Int getTextLength();				///< return number of chars in string
+	virtual void notifyTextChanged();		///< called when text has changed
+	virtual void reset();								///< reset all contents of string
 
 	virtual void setFont( GameFont *font );		///< set a font for display
-	virtual GameFont *getFont( void );				///< return font in string
+	virtual GameFont *getFont();				///< return font in string
 	virtual void setWordWrap( Int wordWrap ) = 0;	///< Set the width that we want to start wrapping text
 	virtual void setWordWrapCentered( Bool isCentered ) = 0; ///< If this is set to true, the text on a new line is centered
 	virtual void draw( Int x, Int y, Color color, Color dropColor ) = 0;  ///< render text
@@ -96,13 +96,13 @@ public:
 
 	virtual void setClipRegion( IRegion2D *region );  ///< clip text in this region
 
-	virtual void removeLastChar( void );			///< remove the last character
+	virtual void removeLastChar();			///< remove the last character
 	virtual void truncateBy(const Int charCount);	///< remove the last charCount characters
 	virtual void truncateTo(const Int maxLength);	///< remove characters, if needed, until the string is maxLength long excluding null terminator
 
 	virtual void appendChar( WideChar c );		///< append character to end
 
-	DisplayString *next( void );							///< return next string
+	DisplayString *next();							///< return next string
 
 protected:
 
@@ -117,12 +117,12 @@ protected:
 ///////////////////////////////////////////////////////////////////////////////
 // INLINING ///////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-inline UnicodeString DisplayString::getText( void ) { return m_textString; }
-inline Int DisplayString::getTextLength( void ) { return m_textString.getLength(); }
+inline UnicodeString DisplayString::getText() { return m_textString; }
+inline Int DisplayString::getTextLength() { return m_textString.getLength(); }
 inline void DisplayString::setFont( GameFont *font ) { m_font = font; }
-inline GameFont *DisplayString::getFont( void ) { return m_font; }
+inline GameFont *DisplayString::getFont() { return m_font; }
 inline void DisplayString::setClipRegion( IRegion2D *region ) {}
-inline void DisplayString::notifyTextChanged( void ) {}
-inline DisplayString *DisplayString::next( void ) { return m_next; }
+inline void DisplayString::notifyTextChanged() {}
+inline DisplayString *DisplayString::next() { return m_next; }
 
 // EXTERNALS //////////////////////////////////////////////////////////////////

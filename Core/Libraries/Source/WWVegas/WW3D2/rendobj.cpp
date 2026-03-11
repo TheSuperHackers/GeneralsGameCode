@@ -161,7 +161,7 @@ static inline bool Check_Is_Transform_Identity(const Matrix3D& m)
  * HISTORY:                                                                                    *
  *   11/04/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-RenderObjClass::RenderObjClass(void) :
+RenderObjClass::RenderObjClass() :
 	Bits(DEFAULT_BITS),
 	Transform(1),
 	NativeScreenSize(WW3D::Get_Default_Native_Screen_Size()),
@@ -352,7 +352,7 @@ float RenderObjClass::Get_Screen_Size(CameraClass &camera)
  * HISTORY:                                                                                    *
  *   3/4/99     GTH : Created.                                                                 *
  *=============================================================================================*/
-SceneClass * RenderObjClass::Get_Scene(void)
+SceneClass * RenderObjClass::Get_Scene()
 {
 	if (Scene != nullptr) {
 		Scene->Add_Ref();
@@ -396,7 +396,7 @@ void RenderObjClass::Set_Container(RenderObjClass * con)
  * HISTORY:                                                                                    *
  *   3/4/99     GTH : Created.                                                                 *
  *=============================================================================================*/
-RenderObjClass * RenderObjClass::Get_Container(void) const
+RenderObjClass * RenderObjClass::Get_Container() const
 {
 	return Container;
 }
@@ -455,7 +455,7 @@ void RenderObjClass::Set_Position(const Vector3 &v)
  * HISTORY:                                                                                    *
  *   6/15/99    GTH : Created.                                                                 *
  *=============================================================================================*/
-void RenderObjClass::Validate_Transform(void) const
+void RenderObjClass::Validate_Transform() const
 {
 	/*
 	** Recurse up the tree to see if any of my parents are saying that their sub-object
@@ -499,7 +499,7 @@ void RenderObjClass::Validate_Transform(void) const
  * HISTORY:                                                                                    *
  *   2/25/99    GTH : Created.                                                                 *
  *=============================================================================================*/
-Vector3 RenderObjClass::Get_Position(void) const
+Vector3 RenderObjClass::Get_Position() const
 {
 	Validate_Transform();
 	return Transform.Get_Translation();
@@ -666,7 +666,7 @@ void RenderObjClass::Prepare_LOD(CameraClass &camera)
  * HISTORY:                                                                                    *
  *   3/11/99    NH : Created.                                                                  *
  *=============================================================================================*/
-float RenderObjClass::Get_Cost(void) const
+float RenderObjClass::Get_Cost() const
 {
 	int polycount = Get_Num_Polys();
 	// If polycount is zero set Cost to a small nonzero amount to avoid divisions by zero.
@@ -721,7 +721,7 @@ int RenderObjClass::Calculate_Cost_Value_Arrays(float screen_area, float *values
  * HISTORY:                                                                                    *
  *   2/25/99    GTH : Created.                                                                 *
  *=============================================================================================*/
-void RenderObjClass::Update_Sub_Object_Bits(void)
+void RenderObjClass::Update_Sub_Object_Bits()
 {
 	// this doesn't do anything for non-composite objects
 	if (Get_Num_Sub_Objects() == 0) return;
@@ -768,7 +768,7 @@ void RenderObjClass::Update_Sub_Object_Bits(void)
  * HISTORY:                                                                                    *
  *   2/25/99    GTH : Created.                                                                 *
  *=============================================================================================*/
-void RenderObjClass::Update_Sub_Object_Transforms(void)
+void RenderObjClass::Update_Sub_Object_Transforms()
 {
 }
 
@@ -807,7 +807,7 @@ void RenderObjClass::Add(SceneClass * scene)
  *   11/04/1997 GH  : Created.                                                                 *
  *   2/25/99    GTH : moved to the base RenderObjClass                                         *
  *=============================================================================================*/
-bool RenderObjClass::Remove(void)
+bool RenderObjClass::Remove()
 {
 	// All render objects have their scene pointers set.  To check if this is a "top level"
 	// object, (i.e. directly in the scene) you see if its Container pointer is null.
@@ -896,7 +896,7 @@ void RenderObjClass::Notify_Removed(SceneClass * scene)
  * HISTORY:                                                                                    *
  *   11/7/97    GTH : Created.                                                                 *
  *=============================================================================================*/
-void RenderObjClass::Update_Cached_Bounding_Volumes(void) const
+void RenderObjClass::Update_Cached_Bounding_Volumes() const
 {
 	Get_Obj_Space_Bounding_Box(CachedBoundingBox);
 	Get_Obj_Space_Bounding_Sphere(CachedBoundingSphere);
@@ -1194,7 +1194,7 @@ void RenderObjClass::Add_Dependencies_To_List
 
 class RenderObjPersistFactoryClass : public PersistFactoryClass
 {
-	virtual uint32				Chunk_ID(void) const;
+	virtual uint32				Chunk_ID() const;
 	virtual PersistClass *	Load(ChunkLoadClass & cload) const;
 	virtual void				Save(ChunkSaveClass & csave,PersistClass * obj)	const;
 
@@ -1209,7 +1209,7 @@ class RenderObjPersistFactoryClass : public PersistFactoryClass
 
 static RenderObjPersistFactoryClass _RenderObjPersistFactory;
 
-uint32 RenderObjPersistFactoryClass::Chunk_ID(void) const
+uint32 RenderObjPersistFactoryClass::Chunk_ID() const
 {
 	return WW3D_PERSIST_CHUNKID_RENDEROBJ;
 }
@@ -1292,7 +1292,7 @@ void RenderObjPersistFactoryClass::Save(ChunkSaveClass & csave,PersistClass * ob
 /*
 ** RenderObj save-load.
 */
-const PersistFactoryClass & RenderObjClass::Get_Factory (void) const
+const PersistFactoryClass & RenderObjClass::Get_Factory () const
 {
 	return _RenderObjPersistFactory;
 }

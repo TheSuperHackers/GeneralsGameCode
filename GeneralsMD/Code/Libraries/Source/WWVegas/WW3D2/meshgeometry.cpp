@@ -124,7 +124,7 @@ static SimpleVecClass<Vector3> _VNormArray(1024);
  * HISTORY:                                                                                    *
  *   11/9/2000  gth : Created.                                                                 *
  *=============================================================================================*/
-MeshGeometryClass::MeshGeometryClass(void) :
+MeshGeometryClass::MeshGeometryClass() :
 	MeshName(nullptr),
 	UserText(nullptr),
 	Flags(0),
@@ -246,7 +246,7 @@ MeshGeometryClass & MeshGeometryClass::operator = (const MeshGeometryClass & tha
  * HISTORY:                                                                                    *
  *   11/9/2000  gth : Created.                                                                 *
  *=============================================================================================*/
-MeshGeometryClass::~MeshGeometryClass(void)
+MeshGeometryClass::~MeshGeometryClass()
 {
 	Reset_Geometry(0,0);
 }
@@ -318,7 +318,7 @@ void MeshGeometryClass::Reset_Geometry(int polycount,int vertcount)
  * HISTORY:                                                                                    *
  *   11/9/2000  gth : Created.                                                                 *
  *=============================================================================================*/
-const char * MeshGeometryClass::Get_Name(void) const
+const char * MeshGeometryClass::Get_Name() const
 {
 	if (MeshName) {
 		return MeshName->Get_Array();
@@ -363,7 +363,7 @@ void MeshGeometryClass::Set_Name(const char * newname)
  * HISTORY:                                                                                    *
  *   11/9/2000  gth : Created.                                                                 *
  *=============================================================================================*/
-const char * MeshGeometryClass::Get_User_Text(void)
+const char * MeshGeometryClass::Get_User_Text()
 {
 	if (UserText) {
 		return UserText->Get_Array();
@@ -1414,7 +1414,7 @@ void MeshGeometryClass::Compute_Bounds(Vector3 * verts)
  * HISTORY:                                                                                    *
  *   6/14/2001  gth : Created.                                                                 *
  *=============================================================================================*/
-Vector3 * MeshGeometryClass::get_vert_normals(void)
+Vector3 * MeshGeometryClass::get_vert_normals()
 {
 #if (OPTIMIZE_VNORM_RAM)
 	_VNormArray.Uninitialised_Grow(VertexCount);
@@ -1438,7 +1438,7 @@ Vector3 * MeshGeometryClass::get_vert_normals(void)
  * HISTORY:                                                                                    *
  *   6/14/2001  gth : Created.                                                                 *
  *=============================================================================================*/
-const Vector3 * MeshGeometryClass::Get_Vertex_Normal_Array(void)
+const Vector3 * MeshGeometryClass::Get_Vertex_Normal_Array()
 {
 #if (OPTIMIZE_VNORM_RAM)
 	Compute_Vertex_Normals(get_vert_normals());
@@ -1545,7 +1545,7 @@ void MeshGeometryClass::Compute_Plane(int pidx,PlaneClass * set_plane) const
  * HISTORY:                                                                                    *
  *   11/9/2000  gth : Created.                                                                 *
  *=============================================================================================*/
-void MeshGeometryClass::Generate_Culling_Tree(void)
+void MeshGeometryClass::Generate_Culling_Tree()
 {
 	WWMEMLOG(MEM_CULLINGDATA);
 	{

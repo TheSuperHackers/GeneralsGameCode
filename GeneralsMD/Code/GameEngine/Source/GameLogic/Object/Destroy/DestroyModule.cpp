@@ -42,7 +42,7 @@ DestroyModule::DestroyModule( Thing *thing, const ModuleData* moduleData )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-DestroyModule::~DestroyModule( void )
+DestroyModule::~DestroyModule()
 {
 
 }
@@ -79,7 +79,7 @@ void DestroyModule::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void DestroyModule::loadPostProcess( void )
+void DestroyModule::loadPostProcess()
 {
 
 	// extend base class

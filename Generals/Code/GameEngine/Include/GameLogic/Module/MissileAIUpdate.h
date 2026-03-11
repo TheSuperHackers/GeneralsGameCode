@@ -96,7 +96,7 @@ public:
 	virtual Bool processCollision(PhysicsBehavior *physics, Object *other); ///< Returns true if the physics collide should apply the force.  Normally not.  jba.
 
 	virtual UpdateSleepTime update();
-	virtual void onDelete( void );
+	virtual void onDelete();
 
 protected:
 

@@ -57,7 +57,7 @@
  * HISTORY:                                                                                    *
  *   10/28/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-DamageClass::DamageClass(void):
+DamageClass::DamageClass():
 	DamageIndex(0),
 	NumMaterials(0),
 	NumVerts(0),
@@ -80,7 +80,7 @@ DamageClass::DamageClass(void):
  * HISTORY:                                                                                    *
  *   10/28/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-DamageClass::~DamageClass(void)
+DamageClass::~DamageClass()
 {
 	delete [] Verts;
 	Verts = nullptr;

@@ -60,7 +60,7 @@ enum { MUZZLE_FLASH_LIFETIME = LOGICFRAMES_PER_SECOND / 7 };
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-GarrisonContainModuleData::GarrisonContainModuleData( void )
+GarrisonContainModuleData::GarrisonContainModuleData()
 {
 
 	//
@@ -230,7 +230,7 @@ TheInGameUI->message( msg );
 /** Given the current state of the structure, return the condition index we are to use
 	* from the garrison point position arrays */
 // ------------------------------------------------------------------------------------------------
-Int GarrisonContain::findConditionIndex( void )
+Int GarrisonContain::findConditionIndex()
 {
 	BodyModuleInterface *body = getObject()->getBodyModule();
 	BodyDamageType bodyDamage = body->getDamageState();
@@ -504,7 +504,7 @@ GarrisonContain::GarrisonContain( Thing *thing, const ModuleData *moduleData ) :
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-GarrisonContain::~GarrisonContain( void )
+GarrisonContain::~GarrisonContain()
 {
 
 }
@@ -549,7 +549,7 @@ Bool GarrisonContain::isValidContainerFor(const Object* obj, Bool checkCapacity)
 /** Any objects that are sitting at the garrison points which no longer have targets need
 	* to be moved to the center of the building and taken off the garrison point */
 // ------------------------------------------------------------------------------------------------
-void GarrisonContain::removeInvalidObjectsFromGarrisonPoints( void )
+void GarrisonContain::removeInvalidObjectsFromGarrisonPoints()
 {
 	Object *obj;
 
@@ -594,7 +594,7 @@ void GarrisonContain::removeInvalidObjectsFromGarrisonPoints( void )
 /** Are there any objects in the center that have now obtained targets and need to move to
 	* a garrison point */
 	// ------------------------------------------------------------------------------------------------
-void GarrisonContain::addValidObjectsToGarrisonPoints( void )
+void GarrisonContain::addValidObjectsToGarrisonPoints()
 {
 	const ContainedItemsList& containList = getContainList();
 
@@ -631,7 +631,7 @@ void GarrisonContain::addValidObjectsToGarrisonPoints( void )
 	* points that are available if they are closer.  We will also track our targets position
 	* and orient any effect stuff we need to (gun barrel / muzzle flash) */
 // ------------------------------------------------------------------------------------------------
-void GarrisonContain::trackTargets( void )
+void GarrisonContain::trackTargets()
 {
 	Int conditionIndex = findConditionIndex();
 	const ContainedItemsList& containList = getContainList();
@@ -726,7 +726,7 @@ void GarrisonContain::trackTargets( void )
 	* which could shuffle the garrison point positions but that shouldn't logically change
 	* when an object was placed at the point */
 // ------------------------------------------------------------------------------------------------
-void GarrisonContain::redeployOccupants( void )
+void GarrisonContain::redeployOccupants()
 {
 	GarrisonPointData garrisonPointDataCopy[ MAX_GARRISON_POINTS ];
 	Int i;
@@ -763,7 +763,7 @@ void GarrisonContain::redeployOccupants( void )
 // ------------------------------------------------------------------------------------------------
 /** Do any effects during an update cycle that we need to */
 // ------------------------------------------------------------------------------------------------
-void GarrisonContain::updateEffects( void )
+void GarrisonContain::updateEffects()
 {
 	UnsignedInt currentFrame = TheGameLogic->getFrame();
 	const ContainedItemsList& containList = getContainList();
@@ -829,7 +829,7 @@ void GarrisonContain::updateEffects( void )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime GarrisonContain::update( void )
+UpdateSleepTime GarrisonContain::update()
 {
 	const GarrisonContainModuleData *modData = getGarrisonContainModuleData();
 
@@ -902,7 +902,7 @@ UpdateSleepTime GarrisonContain::update( void )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void GarrisonContain::healObjects( void )
+void GarrisonContain::healObjects()
 {
 	const GarrisonContainModuleData *modData = getGarrisonContainModuleData();
 
@@ -979,7 +979,7 @@ const Player* GarrisonContain::getApparentControllingPlayer( const Player* obser
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void GarrisonContain::recalcApparentControllingPlayer( void )
+void GarrisonContain::recalcApparentControllingPlayer()
 {
 	//Record original team first time through.
 	if( m_originalTeam == nullptr )
@@ -1066,7 +1066,7 @@ void GarrisonContain::recalcApparentControllingPlayer( void )
 // ------------------------------------------------------------------------------------------------
 /** Load the garrison point position data and save for use later */
 // ------------------------------------------------------------------------------------------------
-void GarrisonContain::loadGarrisonPoints( void )
+void GarrisonContain::loadGarrisonPoints()
 {
 	const GarrisonContainModuleData *modData = getGarrisonContainModuleData();
 
@@ -1167,7 +1167,7 @@ void GarrisonContain::loadGarrisonPoints( void )
 /** Validate any exit rally point that has been chosen (if any).  If it's not valid,
 	* try to find a new one */
 // ------------------------------------------------------------------------------------------------
-void GarrisonContain::validateRallyPoint( void )
+void GarrisonContain::validateRallyPoint()
 {
 
 	// if we have a rally point already picked, make sure it's valid
@@ -1392,7 +1392,7 @@ Bool GarrisonContain::isPassengerAllowedToFire() const
 // ------------------------------------------------------------------------------------------------
 /** A Mobile garrison keeps its occupants with it when it moves */
 //-------------------------------------------------------------------------------------------------
-void GarrisonContain::moveObjectsWithMe( void )
+void GarrisonContain::moveObjectsWithMe()
 {
 	const GarrisonContainModuleData *modData = getGarrisonContainModuleData();
 
@@ -1590,7 +1590,7 @@ void GarrisonContain::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void GarrisonContain::loadPostProcess( void )
+void GarrisonContain::loadPostProcess()
 {
 
 	// extend base class

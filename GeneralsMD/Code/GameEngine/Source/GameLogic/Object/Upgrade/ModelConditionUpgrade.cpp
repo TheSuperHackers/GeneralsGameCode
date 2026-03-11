@@ -62,13 +62,13 @@ ModelConditionUpgrade::ModelConditionUpgrade( Thing *thing, const ModuleData* mo
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-ModelConditionUpgrade::~ModelConditionUpgrade( void )
+ModelConditionUpgrade::~ModelConditionUpgrade()
 {
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void ModelConditionUpgrade::upgradeImplementation( )
+void ModelConditionUpgrade::upgradeImplementation()
 {
 	const ModelConditionUpgradeModuleData *data = getModelConditionUpgradeModuleData();
 
@@ -110,7 +110,7 @@ void ModelConditionUpgrade::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void ModelConditionUpgrade::loadPostProcess( void )
+void ModelConditionUpgrade::loadPostProcess()
 {
 
 	// extend base class

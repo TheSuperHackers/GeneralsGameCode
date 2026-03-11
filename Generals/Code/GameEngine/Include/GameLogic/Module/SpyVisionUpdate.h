@@ -59,8 +59,8 @@ public:
 	SpyVisionUpdate( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual void onDelete( void );
-	virtual UpdateSleepTime update( void );
+	virtual void onDelete();
+	virtual UpdateSleepTime update();
 
 	void activateSpyVision( UnsignedInt duration );
 

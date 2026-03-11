@@ -41,7 +41,7 @@
 //	TextFileClass
 //
 ///////////////////////////////////////////////////////////////////////////////
-TextFileClass::TextFileClass (void)
+TextFileClass::TextFileClass ()
 {
 	return ;
 }
@@ -64,7 +64,7 @@ TextFileClass::TextFileClass (char const *filename)
 //	~TextFileClass
 //
 ///////////////////////////////////////////////////////////////////////////////
-TextFileClass::~TextFileClass (void)
+TextFileClass::~TextFileClass ()
 {
 	return ;
 }

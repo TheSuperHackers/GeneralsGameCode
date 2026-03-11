@@ -165,7 +165,7 @@ void LightEnvironmentClass::InputLightStruct::Init_From_Directional_Light
 }
 
 
-float LightEnvironmentClass::InputLightStruct::Contribution(void)
+float LightEnvironmentClass::InputLightStruct::Contribution()
 {
 	return Diffuse.Length2();
 }
@@ -195,7 +195,7 @@ void LightEnvironmentClass::OutputLightStruct::Init
 **
 ************************************************************************************************/
 
-LightEnvironmentClass::LightEnvironmentClass(void) :
+LightEnvironmentClass::LightEnvironmentClass() :
 	LightCount(0),
 	ObjectCenter(0,0,0),
 	OutputAmbient(0,0,0)
@@ -203,7 +203,7 @@ LightEnvironmentClass::LightEnvironmentClass(void) :
 }
 
 
-LightEnvironmentClass::~LightEnvironmentClass(void)
+LightEnvironmentClass::~LightEnvironmentClass()
 {
 }
 
@@ -269,7 +269,7 @@ void LightEnvironmentClass::Set_Lighting_LOD_Cutoff(float inten)
 	_LightingLODCutoff2 = _LightingLODCutoff * _LightingLODCutoff;
 }
 
-float LightEnvironmentClass::Get_Lighting_LOD_Cutoff(void)
+float LightEnvironmentClass::Get_Lighting_LOD_Cutoff()
 {
 	return _LightingLODCutoff;
 }

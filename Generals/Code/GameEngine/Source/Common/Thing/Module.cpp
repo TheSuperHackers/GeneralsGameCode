@@ -97,7 +97,7 @@ void Module::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** load post process */
 // ------------------------------------------------------------------------------------------------
-void Module::loadPostProcess( void )
+void Module::loadPostProcess()
 {
 
 }
@@ -120,7 +120,7 @@ ObjectModule::ObjectModule( Thing *thing, const ModuleData* moduleData ) : Modul
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-ObjectModule::~ObjectModule( void )
+ObjectModule::~ObjectModule()
 {
 
 }
@@ -157,7 +157,7 @@ void ObjectModule::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** load post process */
 // ------------------------------------------------------------------------------------------------
-void ObjectModule::loadPostProcess( void )
+void ObjectModule::loadPostProcess()
 {
 
 	// extend base class
@@ -183,7 +183,7 @@ DrawableModule::DrawableModule( Thing *thing, const ModuleData* moduleData ) : M
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-DrawableModule::~DrawableModule( void )
+DrawableModule::~DrawableModule()
 {
 
 }
@@ -220,7 +220,7 @@ void DrawableModule::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** load post process */
 // ------------------------------------------------------------------------------------------------
-void DrawableModule::loadPostProcess( void )
+void DrawableModule::loadPostProcess()
 {
 
 	// extend base class

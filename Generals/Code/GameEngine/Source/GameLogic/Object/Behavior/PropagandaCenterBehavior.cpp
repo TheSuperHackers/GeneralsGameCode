@@ -46,7 +46,7 @@
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-PropagandaCenterBehaviorModuleData::PropagandaCenterBehaviorModuleData( void )
+PropagandaCenterBehaviorModuleData::PropagandaCenterBehaviorModuleData()
 {
 
 	m_brainwashDuration = 0;
@@ -88,14 +88,14 @@ PropagandaCenterBehavior::PropagandaCenterBehavior( Thing *thing, const ModuleDa
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-PropagandaCenterBehavior::~PropagandaCenterBehavior( void )
+PropagandaCenterBehavior::~PropagandaCenterBehavior()
 {
 
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void PropagandaCenterBehavior::onDelete( void )
+void PropagandaCenterBehavior::onDelete()
 {
 
 	// extend functionality
@@ -130,7 +130,7 @@ void PropagandaCenterBehavior::onDelete( void )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-UpdateSleepTime PropagandaCenterBehavior::update( void )
+UpdateSleepTime PropagandaCenterBehavior::update()
 {
 	Object *us = getObject();
 	const PropagandaCenterBehaviorModuleData *modData = getPropagandaCenterBehaviorModuleData();
@@ -271,7 +271,7 @@ void PropagandaCenterBehavior::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void PropagandaCenterBehavior::loadPostProcess( void )
+void PropagandaCenterBehavior::loadPostProcess()
 {
 
 	// extend base class

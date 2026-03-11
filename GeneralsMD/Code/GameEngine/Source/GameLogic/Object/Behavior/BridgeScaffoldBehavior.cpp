@@ -53,7 +53,7 @@ BridgeScaffoldBehavior::BridgeScaffoldBehavior( Thing *thing, const ModuleData *
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-BridgeScaffoldBehavior::~BridgeScaffoldBehavior( void )
+BridgeScaffoldBehavior::~BridgeScaffoldBehavior()
 {
 
 }
@@ -108,7 +108,7 @@ void BridgeScaffoldBehavior::setMotion( ScaffoldTargetMotion targetMotion )
 // ------------------------------------------------------------------------------------------------
 /** Whatever our current state of motion is, reverse it */
 // ------------------------------------------------------------------------------------------------
-void BridgeScaffoldBehavior::reverseMotion( void )
+void BridgeScaffoldBehavior::reverseMotion()
 {
 
 	switch( m_targetMotion )
@@ -141,7 +141,7 @@ void BridgeScaffoldBehavior::reverseMotion( void )
 // ------------------------------------------------------------------------------------------------
 /** The update method */
 // ------------------------------------------------------------------------------------------------
-UpdateSleepTime BridgeScaffoldBehavior::update( void )
+UpdateSleepTime BridgeScaffoldBehavior::update()
 {
 
 	// do nothing if we're not in motion
@@ -357,7 +357,7 @@ void BridgeScaffoldBehavior::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void BridgeScaffoldBehavior::loadPostProcess( void )
+void BridgeScaffoldBehavior::loadPostProcess()
 {
 
 	// extend base class

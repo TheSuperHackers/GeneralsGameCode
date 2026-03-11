@@ -102,7 +102,7 @@ DynamicMeshModel::DynamicMeshModel(const DynamicMeshModel &src) :
 	remapper.Remap_Mesh(src.MatDesc, MatDesc);
 }
 
-DynamicMeshModel::~DynamicMeshModel(void)
+DynamicMeshModel::~DynamicMeshModel()
 {
 	delete MatDesc;
 	MatDesc = nullptr;
@@ -110,7 +110,7 @@ DynamicMeshModel::~DynamicMeshModel(void)
 	REF_PTR_RELEASE(MatInfo);
 }
 
-void DynamicMeshModel::Compute_Plane_Equations(void)
+void DynamicMeshModel::Compute_Plane_Equations()
 {
 	// Make sure the arrays are allocated before we do this
 	get_vert_normals();
@@ -129,7 +129,7 @@ void DynamicMeshModel::Compute_Plane_Equations(void)
 	VertexCount = old_vert_count;
 }
 
-void DynamicMeshModel::Compute_Vertex_Normals(void)
+void DynamicMeshModel::Compute_Vertex_Normals()
 {
 	// Make sure the arrays are allocated before we do this
 	Vector3 * vnorms = get_vert_normals();
@@ -163,7 +163,7 @@ void DynamicMeshModel::Compute_Bounds(Vector3 * verts)
 	VertexCount = old_vert_count;
 }
 
-void DynamicMeshModel::Reset(void)
+void DynamicMeshModel::Reset()
 {
 	Set_Counts(0, 0);
 	int polycount = Get_Polygon_Count();
@@ -617,7 +617,7 @@ DynamicMeshClass::~DynamicMeshClass()
 	REF_PTR_RELEASE(Model);
 }
 
-RenderObjClass * DynamicMeshClass::Clone(void) const
+RenderObjClass * DynamicMeshClass::Clone() const
 {
 	return NEW_REF(DynamicMeshClass, (*this));
 }
@@ -822,7 +822,7 @@ void DynamicScreenMeshClass::Set_Position(const Vector3 &v)
 	DynamicMeshClass::Set_Position(Vector3(v.X * 2, -(v.Y * 2 * Aspect), 0));
 }
 
-void DynamicScreenMeshClass::Reset( void )
+void DynamicScreenMeshClass::Reset()
 {
 	Reset_Flags();
 	Reset_Mesh_Counters();

@@ -57,7 +57,7 @@ class CRCEngine {
 		};
 
 		// Fetches CRC value.
-		long operator() (void) const {return(Value());};
+		long operator() () const {return(Value());};
 
 		// Submits one byte sized datum to the CRC accumulator.
 		void operator() (char datum);
@@ -66,15 +66,15 @@ class CRCEngine {
 		long operator() (void const * buffer, int length);
 
 		// Implicit conversion operator so this object appears like a 'long integer'.
-		operator long(void) const {return(Value());};
+		operator long() const {return(Value());};
 
 	protected:
 
-		bool Buffer_Needs_Data(void) const {
+		bool Buffer_Needs_Data() const {
 			return(Index != 0);
 		};
 
-		long Value(void) const {
+		long Value() const {
 			if (Buffer_Needs_Data()) {
 				return(_lrotl(CRC, 1) + StagingBuffer.Composite);
 			}

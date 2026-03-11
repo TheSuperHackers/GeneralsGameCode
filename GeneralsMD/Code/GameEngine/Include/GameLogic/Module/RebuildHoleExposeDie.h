@@ -43,7 +43,7 @@ class RebuildHoleExposeDieModuleData : public DieModuleData
 
 public:
 
-	RebuildHoleExposeDieModuleData( void );
+	RebuildHoleExposeDieModuleData();
 
 	static void buildFieldParse( MultiIniFieldParse &p );
 

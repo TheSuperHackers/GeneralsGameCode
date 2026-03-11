@@ -49,14 +49,14 @@ PowerPlantUpgrade::PowerPlantUpgrade( Thing *thing, const ModuleData* moduleData
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-PowerPlantUpgrade::~PowerPlantUpgrade( void )
+PowerPlantUpgrade::~PowerPlantUpgrade()
 {
 
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void PowerPlantUpgrade::onDelete( void )
+void PowerPlantUpgrade::onDelete()
 {
 
 	// if we haven't been upgraded there is nothing to clean up
@@ -107,7 +107,7 @@ void PowerPlantUpgrade::onCapture( Player *oldOwner, Player *newOwner )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void PowerPlantUpgrade::upgradeImplementation( void )
+void PowerPlantUpgrade::upgradeImplementation()
 {
 
 	Player *player = getObject()->getControllingPlayer();
@@ -159,7 +159,7 @@ void PowerPlantUpgrade::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void PowerPlantUpgrade::loadPostProcess( void )
+void PowerPlantUpgrade::loadPostProcess()
 {
 
 	// extend base class

@@ -82,6 +82,6 @@ protected:
 	Real m_maxMinorRadius;
 
 	UnsignedInt m_enemyScanDelay;
-	void checkForAlliesAndEnemies( void );
+	void checkForAlliesAndEnemies();
 
 };

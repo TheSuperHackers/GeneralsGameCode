@@ -144,7 +144,7 @@ bool ChunkSaveClass::Begin_Chunk(uint32 id)
  * HISTORY:                                                                                    *
  *   07/17/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-bool ChunkSaveClass::End_Chunk(void)
+bool ChunkSaveClass::End_Chunk()
 {
 	// If the user didn't close his micro chunks bad things are gonna happen
 	assert(!InMicroChunk);
@@ -229,7 +229,7 @@ bool ChunkSaveClass::Begin_Micro_Chunk(uint32 id)
  * HISTORY:                                                                                    *
  *   9/3/99     GTH : Created.                                                                 *
  *=============================================================================================*/
-bool ChunkSaveClass::End_Micro_Chunk(void)
+bool ChunkSaveClass::End_Micro_Chunk()
 {
 	assert(InMicroChunk);
 
@@ -366,7 +366,7 @@ uint32 ChunkSaveClass::Write(const IOQuaternionStruct & q)
  * HISTORY:                                                                                    *
  *   07/17/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-int ChunkSaveClass::Cur_Chunk_Depth(void)
+int ChunkSaveClass::Cur_Chunk_Depth()
 {
 	return StackIndex;
 }

@@ -112,19 +112,19 @@ static_assert(ARRAY_SIZE(TransitionStyleNames) == MAX_TRANSITION_WINDOW_STYLES +
 class Transition
 {
 public:
-	Transition ( void );
-	virtual ~Transition( void );
+	Transition ();
+	virtual ~Transition();
 
 	virtual void init( GameWindow *win ) = 0;
 	virtual void update( Int frame ) = 0;
-	virtual void reverse( void ) = 0;
-	virtual void draw( void ) = 0;
+	virtual void reverse() = 0;
+	virtual void draw() = 0;
 
-	virtual void skip( void ) = 0;
+	virtual void skip() = 0;
 
 	void unlinkGameWindow(GameWindow* win) { if ( m_win == win ) m_win = nullptr; }
-	Bool isFinished( void ) { return m_isFinished;	}
-	Int getFrameLength( void ){ return m_frameLength;	}
+	Bool isFinished() { return m_isFinished;	}
+	Int getFrameLength(){ return m_frameLength;	}
 protected:
 
 	Int m_frameLength;	// how many frames does this thing take.
@@ -138,15 +138,15 @@ protected:
 class TextOnFrameTransition : public Transition
 {
 public:
-	TextOnFrameTransition ( void );
-	virtual ~TextOnFrameTransition( void );
+	TextOnFrameTransition ();
+	virtual ~TextOnFrameTransition();
 
 	virtual void init( GameWindow *win );
 	virtual void update( Int frame );
-	virtual void reverse( void );
-	virtual void draw( void );
+	virtual void reverse();
+	virtual void draw();
 
-	virtual void skip( void );
+	virtual void skip();
 
 protected:
 	enum{
@@ -160,15 +160,15 @@ protected:
 class ReverseSoundTransition : public Transition
 {
 public:
-	ReverseSoundTransition ( void );
-	virtual ~ReverseSoundTransition( void );
+	ReverseSoundTransition ();
+	virtual ~ReverseSoundTransition();
 
 	virtual void init( GameWindow *win );
 	virtual void update( Int frame );
-	virtual void reverse( void );
-	virtual void draw( void );
+	virtual void reverse();
+	virtual void draw();
 
-	virtual void skip( void );
+	virtual void skip();
 
 protected:
 	enum{
@@ -183,15 +183,15 @@ protected:
 class FullFadeTransition : public Transition
 {
 public:
-	FullFadeTransition ( void );
-	virtual ~FullFadeTransition( void );
+	FullFadeTransition ();
+	virtual ~FullFadeTransition();
 
 	virtual void init( GameWindow *win );
 	virtual void update( Int frame );
-	virtual void reverse( void );
-	virtual void draw( void );
+	virtual void reverse();
+	virtual void draw();
 
-	virtual void skip( void );
+	virtual void skip();
 
 protected:
 	enum{
@@ -208,15 +208,15 @@ protected:
 class ControlBarArrowTransition : public Transition
 {
 public:
-	ControlBarArrowTransition ( void );
-	virtual ~ControlBarArrowTransition( void );
+	ControlBarArrowTransition ();
+	virtual ~ControlBarArrowTransition();
 
 	virtual void init( GameWindow *win );
 	virtual void update( Int frame );
-	virtual void reverse( void );
-	virtual void draw( void );
+	virtual void reverse();
+	virtual void draw();
 
-	virtual void skip( void );
+	virtual void skip();
 
 protected:
 	enum{
@@ -237,15 +237,15 @@ protected:
 class ScreenFadeTransition : public Transition
 {
 public:
-	ScreenFadeTransition ( void );
-	virtual ~ScreenFadeTransition( void );
+	ScreenFadeTransition ();
+	virtual ~ScreenFadeTransition();
 
 	virtual void init( GameWindow *win );
 	virtual void update( Int frame );
-	virtual void reverse( void );
-	virtual void draw( void );
+	virtual void reverse();
+	virtual void draw();
 
-	virtual void skip( void );
+	virtual void skip();
 
 protected:
 	enum{
@@ -262,15 +262,15 @@ protected:
 class CountUpTransition : public Transition
 {
 public:
-	CountUpTransition ( void );
-	virtual ~CountUpTransition( void );
+	CountUpTransition ();
+	virtual ~CountUpTransition();
 
 	virtual void init( GameWindow *win );
 	virtual void update( Int frame );
-	virtual void reverse( void );
-	virtual void draw( void );
+	virtual void reverse();
+	virtual void draw();
 
-	virtual void skip( void );
+	virtual void skip();
 
 protected:
 	enum{
@@ -296,15 +296,15 @@ protected:
 class TextTypeTransition : public Transition
 {
 public:
-	TextTypeTransition ( void );
-	virtual ~TextTypeTransition( void );
+	TextTypeTransition ();
+	virtual ~TextTypeTransition();
 
 	virtual void init( GameWindow *win );
 	virtual void update( Int frame );
-	virtual void reverse( void );
-	virtual void draw( void );
+	virtual void reverse();
+	virtual void draw();
 
-	virtual void skip( void );
+	virtual void skip();
 
 protected:
 	enum{
@@ -323,15 +323,15 @@ protected:
 class MainMenuScaleUpTransition : public Transition
 {
 public:
-	MainMenuScaleUpTransition ( void );
-	virtual ~MainMenuScaleUpTransition( void );
+	MainMenuScaleUpTransition ();
+	virtual ~MainMenuScaleUpTransition();
 
 	virtual void init( GameWindow *win );
 	virtual void update( Int frame );
-	virtual void reverse( void );
-	virtual void draw( void );
+	virtual void reverse();
+	virtual void draw();
 
-	virtual void skip( void );
+	virtual void skip();
 
 protected:
 	enum{
@@ -353,15 +353,15 @@ protected:
 class MainMenuMediumScaleUpTransition : public Transition
 {
 public:
-	MainMenuMediumScaleUpTransition ( void );
-	virtual ~MainMenuMediumScaleUpTransition( void );
+	MainMenuMediumScaleUpTransition ();
+	virtual ~MainMenuMediumScaleUpTransition();
 
 	virtual void init( GameWindow *win );
 	virtual void update( Int frame );
-	virtual void reverse( void );
-	virtual void draw( void );
+	virtual void reverse();
+	virtual void draw();
 
-	virtual void skip( void );
+	virtual void skip();
 
 protected:
 	enum{
@@ -381,15 +381,15 @@ protected:
 class MainMenuSmallScaleDownTransition : public Transition
 {
 public:
-	MainMenuSmallScaleDownTransition ( void );
-	virtual ~MainMenuSmallScaleDownTransition( void );
+	MainMenuSmallScaleDownTransition ();
+	virtual ~MainMenuSmallScaleDownTransition();
 
 	virtual void init( GameWindow *win );
 	virtual void update( Int frame );
-	virtual void reverse( void );
-	virtual void draw( void );
+	virtual void reverse();
+	virtual void draw();
 
-	virtual void skip( void );
+	virtual void skip();
 
 protected:
 	enum{
@@ -414,15 +414,15 @@ protected:
 class ScaleUpTransition : public Transition
 {
 public:
-	ScaleUpTransition ( void );
-	virtual ~ScaleUpTransition( void );
+	ScaleUpTransition ();
+	virtual ~ScaleUpTransition();
 
 	virtual void init( GameWindow *win );
 	virtual void update( Int frame );
-	virtual void reverse( void );
-	virtual void draw( void );
+	virtual void reverse();
+	virtual void draw();
 
-	virtual void skip( void );
+	virtual void skip();
 
 protected:
 	enum{
@@ -459,15 +459,15 @@ protected:
 class ScoreScaleUpTransition : public Transition
 {
 public:
-	ScoreScaleUpTransition ( void );
-	virtual ~ScoreScaleUpTransition( void );
+	ScoreScaleUpTransition ();
+	virtual ~ScoreScaleUpTransition();
 
 	virtual void init( GameWindow *win );
 	virtual void update( Int frame );
-	virtual void reverse( void );
-	virtual void draw( void );
+	virtual void reverse();
+	virtual void draw();
 
-	virtual void skip( void );
+	virtual void skip();
 
 protected:
 	enum{
@@ -493,15 +493,15 @@ protected:
 class FadeTransition : public Transition
 {
 public:
-	FadeTransition ( void );
-	virtual ~FadeTransition( void );
+	FadeTransition ();
+	virtual ~FadeTransition();
 
 	virtual void init( GameWindow *win );
 	virtual void update( Int frame );
-	virtual void reverse( void );
-	virtual void draw( void );
+	virtual void reverse();
+	virtual void draw();
 
-	virtual void skip( void );
+	virtual void skip();
 
 protected:
 	enum{
@@ -528,15 +528,15 @@ protected:
 class FlashTransition : public Transition
 {
 public:
-	FlashTransition ( void );
-	virtual ~FlashTransition( void );
+	FlashTransition ();
+	virtual ~FlashTransition();
 
 	virtual void init( GameWindow *win );
 	virtual void update( Int frame );
-	virtual void reverse( void );
-	virtual void draw( void );
+	virtual void reverse();
+	virtual void draw();
 
-	virtual void skip( void );
+	virtual void skip();
 
 protected:
 	enum{
@@ -559,15 +559,15 @@ protected:
 class ButtonFlashTransition : public Transition
 {
 public:
-	ButtonFlashTransition ( void );
-	virtual ~ButtonFlashTransition( void );
+	ButtonFlashTransition ();
+	virtual ~ButtonFlashTransition();
 
 	virtual void init( GameWindow *win );
 	virtual void update( Int frame );
-	virtual void reverse( void );
-	virtual void draw( void );
+	virtual void reverse();
+	virtual void draw();
 
-	virtual void skip( void );
+	virtual void skip();
 
 protected:
 	enum{
@@ -598,16 +598,16 @@ protected:
 class TransitionWindow
 {
 public:
-	TransitionWindow( void );
-	~TransitionWindow( void );
+	TransitionWindow();
+	~TransitionWindow();
 
-	Bool init( void );
+	Bool init();
 	void update( Int frame );
-	Bool isFinished( void );
+	Bool isFinished();
 	void reverse( Int totalFrames );
-	Int  getTotalFrames( void );
-	void skip( void );
-	void draw( void );
+	Int  getTotalFrames();
+	void skip();
+	void draw();
 
 	void unlinkGameWindow( GameWindow* win );
 
@@ -627,21 +627,21 @@ public:
 class TransitionGroup
 {
 public:
-	TransitionGroup( void );
-	~TransitionGroup( void );
+	TransitionGroup();
+	~TransitionGroup();
 
-	void init( void );
-	void update( void );
-	Bool isFinished( void );
-	void reverse( void );
-	void draw( void );
+	void init();
+	void update();
+	Bool isFinished();
+	void reverse();
+	void draw();
 
-	void skip ( void );
-	AsciiString getName( void ) { return m_name; }
+	void skip ();
+	AsciiString getName() { return m_name; }
 	void setName( AsciiString name){ m_name = name;	}
 	void addWindow( TransitionWindow *transWin );
-	Bool isReversed( void );
-	Bool isFireOnce( void ) { return m_fireOnce; }
+	Bool isReversed();
+	Bool isFireOnce() { return m_fireOnce; }
 	Bool m_fireOnce;
 private:
 	typedef std::list<TransitionWindow *> TransitionWindowList;
@@ -655,15 +655,15 @@ private:
 class GameWindowTransitionsHandler: public SubsystemInterface
 {
 public:
-	GameWindowTransitionsHandler(void);
-	~GameWindowTransitionsHandler( void );
+	GameWindowTransitionsHandler();
+	~GameWindowTransitionsHandler();
 
-	void init(void );
-	void load(void );
-	void reset( void );
-	void update( void );
-	void draw( void );
-	Bool isFinished( void );
+	void init();
+	void load();
+	void reset();
+	void update();
+	void draw();
+	Bool isFinished();
 	const FieldParse *getFieldParse() const { return m_gameWindowTransitionsFieldParseTable; }								///< returns the parsing fields
 	static const FieldParse m_gameWindowTransitionsFieldParseTable[];																				///< the parse table
 	static void parseWindow( INI* ini, void *instance, void *store, const void *userData );

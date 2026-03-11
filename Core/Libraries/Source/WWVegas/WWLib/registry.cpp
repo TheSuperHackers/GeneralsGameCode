@@ -83,7 +83,7 @@ RegistryClass::RegistryClass( const char * sub_key, bool create ) :
 	}
 }
 
-RegistryClass::~RegistryClass( void )
+RegistryClass::~RegistryClass()
 {
 	if ( IsValid ) {
 		if (::RegCloseKey( (HKEY)Key ) != ERROR_SUCCESS) {		// Close the reg key
@@ -273,7 +273,7 @@ void	RegistryClass::Delete_Value( const char * name)
 	return ;
 }
 
-void	RegistryClass::Deleta_All_Values( void )
+void	RegistryClass::Deleta_All_Values()
 {
 	if (IsLocked) {
 		return;

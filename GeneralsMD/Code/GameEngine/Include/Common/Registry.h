@@ -44,7 +44,7 @@ Bool GetStringFromRegistry(AsciiString path, AsciiString key, AsciiString& val);
 	*/
 Bool GetUnsignedIntFromRegistry(AsciiString path, AsciiString key, UnsignedInt& val);
 
-AsciiString GetRegistryLanguage(void); // convenience function
-AsciiString GetRegistryGameName(void); // convenience function
-UnsignedInt GetRegistryVersion(void); // convenience function
-UnsignedInt GetRegistryMapPackVersion(void); // convenience function
+AsciiString GetRegistryLanguage(); // convenience function
+AsciiString GetRegistryGameName(); // convenience function
+UnsignedInt GetRegistryVersion(); // convenience function
+UnsignedInt GetRegistryMapPackVersion(); // convenience function

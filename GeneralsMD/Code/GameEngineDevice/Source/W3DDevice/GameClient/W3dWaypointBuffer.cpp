@@ -95,7 +95,7 @@
 /** Constructor. Sets m_initialized to true if it finds the w3d models it needs
 for the bibs. */
 //=============================================================================
-W3DWaypointBuffer::W3DWaypointBuffer(void)
+W3DWaypointBuffer::W3DWaypointBuffer()
 {
 	m_waypointNodeRobj = WW3DAssetManager::Get_Instance()->Create_Render_Obj( "SCMNode" );
 	m_line = new SegmentedLineClass;
@@ -111,7 +111,7 @@ W3DWaypointBuffer::W3DWaypointBuffer(void)
 //=============================================================================
 /** Destructor. Releases w3d assets. */
 //=============================================================================
-W3DWaypointBuffer::~W3DWaypointBuffer(void)
+W3DWaypointBuffer::~W3DWaypointBuffer()
 {
 	REF_PTR_RELEASE( m_waypointNodeRobj );
 	REF_PTR_RELEASE( m_texture );
@@ -128,7 +128,7 @@ void W3DWaypointBuffer::freeWaypointBuffers()
 }
 
 
-void W3DWaypointBuffer::setDefaultLineStyle( void )
+void W3DWaypointBuffer::setDefaultLineStyle()
 {
 	if( m_texture )
 	{

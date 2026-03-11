@@ -28,6 +28,7 @@ set(GAMEENGINE_SRC
 #    Include/Common/DamageFX.h
 #    Include/Common/DataChunk.h
     Include/Common/Debug.h
+    Include/Common/Diagnostic/SimulationMathCrc.h
 #    Include/Common/Dict.h
 #    Include/Common/Directory.h
 #    Include/Common/DisabledTypes.h
@@ -82,6 +83,7 @@ set(GAMEENGINE_SRC
 #    Include/Common/MultiplayerSettings.h
 #    Include/Common/NameKeyGenerator.h
     Include/Common/ObjectStatusTypes.h
+    Include/Common/OptionPreferences.h
 #    Include/Common/OSDisplay.h
 #    Include/Common/Overridable.h
 #    Include/Common/Override.h
@@ -571,6 +573,7 @@ set(GAMEENGINE_SRC
     Source/Common/crc.cpp
     Source/Common/CRCDebug.cpp
 #    Source/Common/DamageFX.cpp
+    Source/Common/Diagnostic/SimulationMathCrc.cpp
 #    Source/Common/Dict.cpp
 #    Source/Common/DiscreteCircle.cpp
     Source/Common/FramePacer.cpp
@@ -613,6 +616,7 @@ set(GAMEENGINE_SRC
 #    Source/Common/MiniLog.cpp
 #    Source/Common/MultiplayerSettings.cpp
 #    Source/Common/NameKeyGenerator.cpp
+    Source/Common/OptionPreferences.cpp
 #    Source/Common/PartitionSolver.cpp
 #    Source/Common/PerfTimer.cpp
     Source/Common/RandomValue.cpp

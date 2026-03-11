@@ -81,7 +81,7 @@ public:
 		MusicTrack();
 		// virtual destructor prototype defined by memory pool object
 
-		const FieldParse *getFieldParse( void ) const { return m_musicTrackFieldParseTable; }
+		const FieldParse *getFieldParse() const { return m_musicTrackFieldParseTable; }
 
 		Int					index;									///< Track index
 		AsciiString name;										///< Logical name of track

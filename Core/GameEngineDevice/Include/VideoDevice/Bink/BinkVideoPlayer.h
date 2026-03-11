@@ -76,17 +76,17 @@ class BinkVideoStream : public VideoStream
 
 	public:
 
-		virtual void update( void );											///< Update bink stream
+		virtual void update();											///< Update bink stream
 
-		virtual Bool	isFrameReady( void );								///< Is the frame ready to be displayed
-		virtual void	frameDecompress( void );						///< Render current frame in to buffer
+		virtual Bool	isFrameReady();								///< Is the frame ready to be displayed
+		virtual void	frameDecompress();						///< Render current frame in to buffer
 		virtual void	frameRender( VideoBuffer *buffer ); ///< Render current frame in to buffer
-		virtual void	frameNext( void );									///< Advance to next frame
-		virtual Int		frameIndex( void );									///< Returns zero based index of current frame
-		virtual Int		frameCount( void );									///< Returns the total number of frames in the stream
+		virtual void	frameNext();									///< Advance to next frame
+		virtual Int		frameIndex();									///< Returns zero based index of current frame
+		virtual Int		frameCount();									///< Returns the total number of frames in the stream
 		virtual void	frameGoto( Int index );							///< Go to the spcified frame index
-		virtual Int		height( void );											///< Return the height of the video
-		virtual Int		width( void );											///< Return the width of the video
+		virtual Int		height();											///< Return the height of the video
+		virtual Int		width();											///< Return the width of the video
 
 
 };
@@ -109,25 +109,25 @@ class BinkVideoPlayer : public VideoPlayer
 	public:
 
 		// subsytem requirements
-		virtual void	init( void );														///< Initialize video playback code
-		virtual void	reset( void );													///< Reset video playback
-		virtual void	update( void );													///< Services all audio tasks. Should be called frequently
+		virtual void	init();														///< Initialize video playback code
+		virtual void	reset();													///< Reset video playback
+		virtual void	update();													///< Services all audio tasks. Should be called frequently
 
-		virtual void	deinit( void );													///< Close down player
+		virtual void	deinit();													///< Close down player
 
 
 		BinkVideoPlayer();
 		~BinkVideoPlayer();
 
 		// service
-		virtual void	loseFocus( void );											///< Should be called when application loses focus
-		virtual void	regainFocus( void );										///< Should be called when application regains focus
+		virtual void	loseFocus();											///< Should be called when application loses focus
+		virtual void	regainFocus();										///< Should be called when application regains focus
 
 		virtual VideoStreamInterface*	open( AsciiString movieTitle );	///< Open video file for playback
 		virtual VideoStreamInterface*	load( AsciiString movieTitle );	///< Load video file in to memory for playback
 
 		virtual void notifyVideoPlayerOfNewProvider( Bool nowHasValid );
-		virtual void initializeBinkWithMiles( void );
+		virtual void initializeBinkWithMiles();
 };
 
 

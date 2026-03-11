@@ -88,7 +88,7 @@ protected:
                           DWORD dwParam2 );
 
     HRESULT AddWaveHeader( LPWAVEHDR pwh );
-    void    RemoveWaveHeaders( void );
+    void    RemoveWaveHeaders();
 
     CRITICAL_SECTION    m_CriSec;
     WAVEHDR_LIST       *m_whdrHead;

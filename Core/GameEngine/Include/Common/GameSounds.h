@@ -54,29 +54,29 @@ class SoundManager : public SubsystemInterface
 		SoundManager();
 		virtual ~SoundManager();
 
-		virtual void init( void );										///< Initializes the sounds system
+		virtual void init();										///< Initializes the sounds system
 		virtual void postProcessLoad();
-		virtual void update( void );									///< Services sounds tasks. Called by AudioInterface
-		virtual void reset( void );										///< Reset the sounds system
+		virtual void update();									///< Services sounds tasks. Called by AudioInterface
+		virtual void reset();										///< Reset the sounds system
 
-		virtual void loseFocus( void );								///< Called when application loses focus
-		virtual void regainFocus( void );							///< Called when application regains focus
+		virtual void loseFocus();								///< Called when application loses focus
+		virtual void regainFocus();							///< Called when application regains focus
 
 		virtual void setListenerPosition( const Coord3D *position );	///< Set the listener position for map3DSound() calculations
 		virtual void setViewRadius( Real viewRadius );///< Sets the radius of the view from the center of the screen in world coordinate units
 		virtual void setCameraAudibleDistance( Real audibleDistance );
-		virtual Real getCameraAudibleDistance( void );
+		virtual Real getCameraAudibleDistance();
 
 		virtual void addAudioEvent(AudioEventRTS *&eventToAdd);	// pre-copied
 
-		virtual void notifyOf2DSampleStart( void );
-		virtual void notifyOf3DSampleStart( void );
+		virtual void notifyOf2DSampleStart();
+		virtual void notifyOf3DSampleStart();
 
-		virtual void notifyOf2DSampleCompletion( void );
-		virtual void notifyOf3DSampleCompletion( void );
+		virtual void notifyOf2DSampleCompletion();
+		virtual void notifyOf3DSampleCompletion();
 
-		virtual Int getAvailableSamples( void );
-		virtual Int getAvailable3DSamples( void );
+		virtual Int getAvailableSamples();
+		virtual Int getAvailable3DSamples();
 
 		// empty string means that this sound wasn't found or some error occurred. CHECK FOR EMPTY STRING.
 		virtual AsciiString getFilenameForPlayFromAudioEvent( const AudioEventRTS *eventToGetFrom );

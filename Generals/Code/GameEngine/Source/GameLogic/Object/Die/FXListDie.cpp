@@ -49,7 +49,7 @@ FXListDie::FXListDie( Thing *thing, const ModuleData* moduleData ) : DieModule( 
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-FXListDie::~FXListDie( void )
+FXListDie::~FXListDie()
 {
 
 }
@@ -109,7 +109,7 @@ void FXListDie::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void FXListDie::loadPostProcess( void )
+void FXListDie::loadPostProcess()
 {
 
 	// extend base class

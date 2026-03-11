@@ -36,7 +36,7 @@ class DebugExceptionhandler
   DebugExceptionhandler& operator=(const DebugExceptionhandler&);
 
   // nobody can instantiate us
-  DebugExceptionhandler(void);
+  DebugExceptionhandler();
 
   /** \internal
 

@@ -272,7 +272,7 @@ void W3DCustomEdging::loadEdgingsInVertexAndIndexBuffers(WorldHeightMap *pMap, I
 //=============================================================================
 /** Destructor. Releases w3d assets. */
 //=============================================================================
-W3DCustomEdging::~W3DCustomEdging(void)
+W3DCustomEdging::~W3DCustomEdging()
 {
 	freeEdgingBuffers();
 }
@@ -283,7 +283,7 @@ W3DCustomEdging::~W3DCustomEdging(void)
 /** Constructor. Sets m_initialized to true if it finds the w3d models it needs
 for the trees. */
 //=============================================================================
-W3DCustomEdging::W3DCustomEdging(void)
+W3DCustomEdging::W3DCustomEdging()
 {
 	m_initialized = false;
 	m_vertexEdging = nullptr;
@@ -299,7 +299,7 @@ W3DCustomEdging::W3DCustomEdging(void)
 //=============================================================================
 /** Frees the index and vertex buffers. */
 //=============================================================================
-void W3DCustomEdging::freeEdgingBuffers(void)
+void W3DCustomEdging::freeEdgingBuffers()
 {
 	REF_PTR_RELEASE(m_vertexEdging);
 	REF_PTR_RELEASE(m_indexEdging);
@@ -310,7 +310,7 @@ void W3DCustomEdging::freeEdgingBuffers(void)
 //=============================================================================
 /** Allocates the index and vertex buffers. */
 //=============================================================================
-void W3DCustomEdging::allocateEdgingBuffers(void)
+void W3DCustomEdging::allocateEdgingBuffers()
 {
 	m_vertexEdging=NEW_REF(DX8VertexBufferClass,(DX8_FVF_XYZDUV2,MAX_EDGE_VERTEX+4,DX8VertexBufferClass::USAGE_DYNAMIC));
 	m_indexEdging=NEW_REF(DX8IndexBufferClass,(2*MAX_EDGE_INDEX+4, DX8IndexBufferClass::USAGE_DYNAMIC));
@@ -324,7 +324,7 @@ void W3DCustomEdging::allocateEdgingBuffers(void)
 //=============================================================================
 /** Removes all trees. */
 //=============================================================================
-void W3DCustomEdging::clearAllEdging(void)
+void W3DCustomEdging::clearAllEdging()
 {
 	m_curNumEdgingVertices=0;
 	m_curNumEdgingIndices=0;

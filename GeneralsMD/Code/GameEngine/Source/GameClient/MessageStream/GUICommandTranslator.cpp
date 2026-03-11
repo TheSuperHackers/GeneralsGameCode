@@ -191,7 +191,7 @@ static CommandStatus doFireWeaponCommand( const CommandButton *command, const IC
 
 		//This could be legit now -- think of firing a self destruct weapon
 		//-----------------------------------------------------------------
-		//DEBUG_ASSERTCRASH( 0, ("doFireWeaponCommand: Command options say it doesn't need additional user input '%s'",
+		//DEBUG_CRASH( ("doFireWeaponCommand: Command options say it doesn't need additional user input '%s'",
 		//											command->m_name.str()) );
 		//return COMMAND_COMPLETE;
 

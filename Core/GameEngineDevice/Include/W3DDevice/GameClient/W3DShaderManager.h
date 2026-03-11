@@ -75,14 +75,14 @@ public:
 	};
 
 
-	W3DShaderManager(void);	///<constructor
-	static void init( void );	///<determine optimal shaders for current device.
-	static void shutdown(void);	///<release resources used by shaders
+	W3DShaderManager();	///<constructor
+	static void init();	///<determine optimal shaders for current device.
+	static void shutdown();	///<release resources used by shaders
 	static void updateCloud();	///<update the cloud position once every render frame.
 
-	static ChipsetType getChipset(void);	///<return current device chipset.
-	static GraphicsVenderID getCurrentVendor(void) {return m_currentVendor;}	///<return current card vendor.
-	static __int64 getCurrentDriverVersion(void) {return m_driverVersion; }	///<return current driver version.
+	static ChipsetType getChipset();	///<return current device chipset.
+	static GraphicsVenderID getCurrentVendor() {return m_currentVendor;}	///<return current card vendor.
+	static __int64 getCurrentDriverVersion() {return m_driverVersion; }	///<return current driver version.
 	static Int getShaderPasses(ShaderTypes shader);	///<rendering passes required for shader
 	static Int setShader(ShaderTypes shader, Int pass);	///<enable specific shader pass.
 	static Int setShroudTex(Int stage);	///<Set shroud in a texture stage.
@@ -92,13 +92,13 @@ public:
 	///Return current texture available to shaders.
 	static TextureClass *getShaderTexture(Int stage) { return m_Textures[stage];}	///<returns currently selected texture for given stage
 	///Return last activated shader.
-	static ShaderTypes getCurrentShader(void) {return m_currentShader;}
+	static ShaderTypes getCurrentShader() {return m_currentShader;}
 	/// Loads a .vso file and creates a vertex shader for it
 	static HRESULT LoadAndCreateD3DShader(const char* strFilePath, const DWORD* pDeclaration, DWORD Usage, Bool ShaderType, DWORD* pHandle);
 
 	static Bool testMinimumRequirements(ChipsetType *videoChipType, CpuType *cpuType, Int *cpuFreq, MemValueType *numRAM, Real *intBenchIndex, Real *floatBenchIndex, Real *memBenchIndex);
-	static StaticGameLODLevel getGPUPerformanceIndex(void);
-	static Real GetCPUBenchTime(void);
+	static StaticGameLODLevel getGPUPerformanceIndex();
+	static Real GetCPUBenchTime();
 
 	// Filter methods
 	static Bool filterPreRender(FilterTypes filter, Bool &skipRender, CustomScenePassModes &scenePassMode); ///< Set up at start of render.  Only applies to screen filter shaders.
@@ -106,11 +106,11 @@ public:
 	static Bool filterSetup(FilterTypes filter, FilterModes mode);
 
 	// Support routines for filter methods.
-	static Bool canRenderToTexture(void) { return (m_oldRenderSurface && m_newRenderSurface);}
-	static void startRenderToTexture(void); ///< Sets render target to texture.
-	static IDirect3DTexture8 * endRenderToTexture(void); ///< Ends render to texture, & returns texture.
-	static IDirect3DTexture8 * getRenderTexture(void);	///< returns last used render target texture
-	static Bool isRenderingToTexture(void) {return m_renderingToTexture; }
+	static Bool canRenderToTexture() { return (m_oldRenderSurface && m_newRenderSurface);}
+	static void startRenderToTexture(); ///< Sets render target to texture.
+	static IDirect3DTexture8 * endRenderToTexture(); ///< Ends render to texture, & returns texture.
+	static IDirect3DTexture8 * getRenderTexture();	///< returns last used render target texture
+	static Bool isRenderingToTexture() {return m_renderingToTexture; }
 	static void drawViewport(Int color);	///<draws 2 triangles covering the current tactical viewport
 
 
@@ -136,15 +136,15 @@ protected:
 class W3DFilterInterface
 {
 public:
-	virtual Int init(void) = 0;			///<perform any one time initialization and validation
-	virtual Int shutdown(void) { return TRUE;};			///<release resources used by shader
+	virtual Int init() = 0;			///<perform any one time initialization and validation
+	virtual Int shutdown() { return TRUE;};			///<release resources used by shader
 	virtual Bool preRender(Bool &skipRender, CustomScenePassModes &scenePassMode) {skipRender=false; return false;} ///< Set up at start of render.  Only applies to screen filter shaders.
 	virtual Bool postRender(FilterModes mode, Coord2D &scrollDelta, Bool &doExtraRender){return false;} ///< Called after render.  Only applies to screen filter shaders.
 	virtual Bool setup(FilterModes mode){return false;} ///< Called when the filter is started, one time before the first prerender.
 protected:
 	virtual Int set(FilterModes mode) = 0;		///<setup shader for the specified rendering pass.
 	 ///do any custom resetting necessary to bring W3D in sync.
-	virtual void reset(void) = 0;
+	virtual void reset() = 0;
 };
 
 
@@ -154,9 +154,9 @@ class ScreenMotionBlurFilter : public W3DFilterInterface
 {
 public:
 	virtual Int set(FilterModes mode);		///<setup shader for the specified rendering pass.
-	virtual Int init(void);			///<perform any one time initialization and validation
-	virtual void reset(void);		///<do any custom resetting necessary to bring W3D in sync.
-	virtual Int shutdown(void);		///<release resources used by shader
+	virtual Int init();			///<perform any one time initialization and validation
+	virtual void reset();		///<do any custom resetting necessary to bring W3D in sync.
+	virtual Int shutdown();		///<release resources used by shader
 	virtual Bool preRender(Bool &skipRender, CustomScenePassModes &scenePassMode); ///< Set up at start of render.  Only applies to screen filter shaders.
 	virtual Bool postRender(FilterModes mode, Coord2D &scrollDelta, Bool &doExtraRender); ///< Called after render.  Only applies to screen filter shaders.
 	virtual Bool setup(FilterModes mode); ///< Called when the filter is started, one time before the first prerender.
@@ -189,8 +189,8 @@ class ScreenBWFilter : public W3DFilterInterface
 {
 	DWORD	m_dwBWPixelShader;		///<D3D handle to pixel shader which tints texture to black & white.
 public:
-	virtual Int init(void);			///<perform any one time initialization and validation
-	virtual Int shutdown(void);		///<release resources used by shader
+	virtual Int init();			///<perform any one time initialization and validation
+	virtual Int shutdown();		///<release resources used by shader
 	virtual Bool preRender(Bool &skipRender, CustomScenePassModes &scenePassMode); ///< Set up at start of render.  Only applies to screen filter shaders.
 	virtual Bool postRender(FilterModes mode, Coord2D &scrollDelta,Bool &doExtraRender); ///< Called after render.  Only applies to screen filter shaders.
 	virtual Bool setup(FilterModes mode){return true;} ///< Called when the filter is started, one time before the first prerender.
@@ -202,7 +202,7 @@ public:
 	}
 protected:
 	virtual Int set(FilterModes mode);		///<setup shader for the specified rendering pass.
-	virtual void reset(void);		///<do any custom resetting necessary to bring W3D in sync.
+	virtual void reset();		///<do any custom resetting necessary to bring W3D in sync.
 	static Int m_fadeFrames;
 	static Int m_fadeDirection;
 	static Int m_curFadeFrame;
@@ -212,14 +212,14 @@ protected:
 class ScreenBWFilterDOT3 : public ScreenBWFilter
 {
 public:
-	virtual Int init(void);			///<perform any one time initialization and validation
-	virtual Int shutdown(void);		///<release resources used by shader
+	virtual Int init();			///<perform any one time initialization and validation
+	virtual Int shutdown();		///<release resources used by shader
 	virtual Bool preRender(Bool &skipRender, CustomScenePassModes &scenePassMode); ///< Set up at start of render.  Only applies to screen filter shaders.
 	virtual Bool postRender(FilterModes mode, Coord2D &scrollDelta,Bool &doExtraRender); ///< Called after render.  Only applies to screen filter shaders.
 	virtual Bool setup(FilterModes mode){return true;} ///< Called when the filter is started, one time before the first prerender.
 protected:
 	virtual Int set(FilterModes mode);		///<setup shader for the specified rendering pass.
-	virtual void reset(void);		///<do any custom resetting necessary to bring W3D in sync.
+	virtual void reset();		///<do any custom resetting necessary to bring W3D in sync.
 };
 
 /*=========  ScreenCrossFadeFilter	=============================================================*/
@@ -227,8 +227,8 @@ protected:
 class ScreenCrossFadeFilter : public W3DFilterInterface
 {
 public:
-	virtual Int init(void);			///<perform any one time initialization and validation
-	virtual Int shutdown(void);		///<release resources used by shader
+	virtual Int init();			///<perform any one time initialization and validation
+	virtual Int shutdown();		///<release resources used by shader
 	virtual Bool preRender(Bool &skipRender, CustomScenePassModes &scenePassMode); ///< Set up at start of render.  Only applies to screen filter shaders.
 	virtual Bool postRender(FilterModes mode, Coord2D &scrollDelta,Bool &doExtraRender); ///< Called after render.  Only applies to screen filter shaders.
 	virtual Bool setup(FilterModes mode){return true;} ///< Called when the filter is started, one time before the first prerender.
@@ -238,12 +238,12 @@ public:
 		m_fadeFrames = fadeFrames;
 		m_fadeDirection = direction;
 	}
-	static Real getCurrentFadeValue(void)	{ return m_curFadeValue;}
-	static TextureClass *getCurrentMaskTexture(void) { return m_fadePatternTexture;}
+	static Real getCurrentFadeValue()	{ return m_curFadeValue;}
+	static TextureClass *getCurrentMaskTexture() { return m_fadePatternTexture;}
 protected:
 	virtual Int set(FilterModes mode);		///<setup shader for the specified rendering pass.
-	virtual void reset(void);		///<do any custom resetting necessary to bring W3D in sync.
-	Bool updateFadeLevel(void);		///<updated current state of fade and return true if not finished.
+	virtual void reset();		///<do any custom resetting necessary to bring W3D in sync.
+	Bool updateFadeLevel();		///<updated current state of fade and return true if not finished.
 	static Int m_fadeFrames;
 	static Int m_fadeDirection;
 	static Int m_curFadeFrame;

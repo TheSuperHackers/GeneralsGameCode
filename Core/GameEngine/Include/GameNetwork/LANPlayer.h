@@ -38,19 +38,19 @@ public:
 	LANPlayer() { m_name = m_login = m_host = L""; m_lastHeard = 0; m_next = nullptr; m_IP = 0; }
 
 	// Access functions
-	UnicodeString getName( void ) { return m_name; }
+	UnicodeString getName() { return m_name; }
 	void setName( UnicodeString name ) { m_name = name; }
-	UnicodeString getLogin( void ) { return m_login; }
+	UnicodeString getLogin() { return m_login; }
 	void setLogin( UnicodeString name ) { m_login = name; }
 	void setLogin( AsciiString name ) { m_login.translate(name); }
-	UnicodeString getHost( void ) { return m_host; }
+	UnicodeString getHost() { return m_host; }
 	void setHost( UnicodeString name ) { m_host = name; }
 	void setHost( AsciiString name ) { m_host.translate(name); }
-	UnsignedInt getLastHeard( void ) { return m_lastHeard; }
+	UnsignedInt getLastHeard() { return m_lastHeard; }
 	void setLastHeard( UnsignedInt lastHeard ) { m_lastHeard = lastHeard; }
-	LANPlayer *getNext( void ) { return m_next; }
+	LANPlayer *getNext() { return m_next; }
 	void setNext( LANPlayer *next ) { m_next = next; }
-	UnsignedInt getIP( void ) { return m_IP; }
+	UnsignedInt getIP() { return m_IP; }
 	void setIP( UnsignedInt IP ) { m_IP = IP; }
 
 protected:

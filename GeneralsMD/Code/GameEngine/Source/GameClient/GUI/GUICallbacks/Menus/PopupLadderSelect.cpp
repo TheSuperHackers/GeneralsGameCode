@@ -102,8 +102,8 @@ static GameWindow *badPasswordParent = nullptr;
 
 static void updateLadderDetails( Int ladderID, GameWindow *staticTextLadderName, GameWindow *listboxLadderDetails );
 
-void PopulateQMLadderComboBox( void );
-void PopulateCustomLadderComboBox( void );
+void PopulateQMLadderComboBox();
+void PopulateCustomLadderComboBox();
 
 void PopulateQMLadderListBox( GameWindow *win );
 void PopulateCustomLadderListBox( GameWindow *win );
@@ -113,14 +113,14 @@ void HandleCustomLadderSelection(Int ladderID);
 
 void CustomMatchHideHostPopup(Bool hide);
 
-static void populateLadderComboBox( void )
+static void populateLadderComboBox()
 {
 	// only one of these will do any work...
 	PopulateQMLadderComboBox();
 	PopulateCustomLadderComboBox();
 }
 
-static void populateLadderListBox( void )
+static void populateLadderListBox()
 {
 	// only one of these will do any work...
 	PopulateQMLadderListBox(listboxLadderSelect);
@@ -319,7 +319,7 @@ WindowMsgHandledType PopupLadderSelectInput( GameWindow *window, UnsignedInt msg
 }
 
 static Int ladderIndex = 0;
-void ladderSelectedCallback(void)
+void ladderSelectedCallback()
 {
 	handleLadderSelection( ladderIndex );
 

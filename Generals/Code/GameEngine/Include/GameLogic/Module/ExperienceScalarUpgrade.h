@@ -42,7 +42,7 @@ class ExperienceScalarUpgradeModuleData: public UpgradeModuleData
 
 public:
 
-	ExperienceScalarUpgradeModuleData( void );
+	ExperienceScalarUpgradeModuleData();
 
 	static void buildFieldParse(MultiIniFieldParse& p);
 
@@ -65,7 +65,7 @@ public:
 
 protected:
 
-	virtual void upgradeImplementation( ); ///< Here's the actual work of Upgrading
+	virtual void upgradeImplementation(); ///< Here's the actual work of Upgrading
 	virtual Bool isSubObjectsUpgrade() { return false; }
 
 };

@@ -83,7 +83,7 @@ HashTemplateClass<StringClass, DynamicVectorClass<DefinitionClass*>*>* Definitio
 //	DefinitionMgrClass
 //
 //////////////////////////////////////////////////////////////////////////////////
-DefinitionMgrClass::DefinitionMgrClass (void)
+DefinitionMgrClass::DefinitionMgrClass ()
 {
 	return ;
 }
@@ -94,7 +94,7 @@ DefinitionMgrClass::DefinitionMgrClass (void)
 //	~DefinitionMgrClass
 //
 //////////////////////////////////////////////////////////////////////////////////
-DefinitionMgrClass::~DefinitionMgrClass (void)
+DefinitionMgrClass::~DefinitionMgrClass ()
 {
 	Free_Definitions ();
 	return ;
@@ -315,7 +315,7 @@ DefinitionMgrClass::Find_Typed_Definition (const char *name, uint32 class_id, bo
 //
 //////////////////////////////////////////////////////////////////////////////////
 void
-DefinitionMgrClass::List_Available_Definitions (void)
+DefinitionMgrClass::List_Available_Definitions ()
 {
 	//
 	//	Loop through all the definitions and print the definition name
@@ -463,7 +463,7 @@ DefinitionMgrClass::Get_Next (DefinitionClass *curr_def)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-DefinitionMgrClass::Free_Definitions (void)
+DefinitionMgrClass::Free_Definitions ()
 {
 	// Clear the hash table
 	if (DefinitionHash) {
@@ -502,7 +502,7 @@ DefinitionMgrClass::Free_Definitions (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-DefinitionMgrClass::Prepare_Definition_Array (void)
+DefinitionMgrClass::Prepare_Definition_Array ()
 {
 	if (_DefinitionCount + 1 > _MaxDefinitionCount) {
 

@@ -39,7 +39,7 @@ class HealContainModuleData : public OpenContainModuleData
 
 public:
 
-	HealContainModuleData( void );
+	HealContainModuleData();
 
 	static void buildFieldParse(MultiIniFieldParse& p);
 

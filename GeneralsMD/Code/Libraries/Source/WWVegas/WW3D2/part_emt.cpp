@@ -170,7 +170,7 @@ ParticleEmitterClass & ParticleEmitterClass::operator = (const ParticleEmitterCl
 }
 
 
-ParticleEmitterClass::~ParticleEmitterClass(void)
+ParticleEmitterClass::~ParticleEmitterClass()
 {
 	Buffer->Emitter_Is_Dead();
 	Buffer->Release_Ref();
@@ -298,12 +298,12 @@ ParticleEmitterClass::Create_From_Definition (const ParticleEmitterDefClass &def
 	return pemitter;
 }
 
-RenderObjClass * ParticleEmitterClass::Clone(void) const
+RenderObjClass * ParticleEmitterClass::Clone() const
 {
 	return W3DNEW ParticleEmitterClass(*this);
 }
 
-void ParticleEmitterClass::Restart(void)
+void ParticleEmitterClass::Restart()
 {
 	// calling Start will cause all internal counters to reset
 	Start();
@@ -345,7 +345,7 @@ void ParticleEmitterClass::Scale(float scale)
 
 // Put particle buffer in scene if this is the first time (clunky code
 // - hopefully can be rewritten more cleanly in future)...
-void ParticleEmitterClass::On_Frame_Update(void)
+void ParticleEmitterClass::On_Frame_Update()
 {
 	WWPROFILE("ParticleEmitterClass::On_Frame_Update");
 	if (Active && !IsComplete) {
@@ -382,7 +382,7 @@ void ParticleEmitterClass::On_Frame_Update(void)
 	}
 }
 
-void ParticleEmitterClass::Reset(void)
+void ParticleEmitterClass::Reset()
 {
 	// Note:  This flag needs to be set first thing, otherwise
 	// getting the transform will result in an 'update_x' call
@@ -402,7 +402,7 @@ void ParticleEmitterClass::Reset(void)
 	IsComplete = false;
 }
 
-void ParticleEmitterClass::Start(void)
+void ParticleEmitterClass::Start()
 {
 	// Note:  This flag needs to be set first thing, otherwise
 	// getting the transform will result in an 'update_x' call
@@ -428,13 +428,13 @@ void ParticleEmitterClass::Start(void)
 }
 
 
-void ParticleEmitterClass::Stop(void)
+void ParticleEmitterClass::Stop()
 {
 	Active = false;
 }
 
 
-bool ParticleEmitterClass::Is_Stopped(void)
+bool ParticleEmitterClass::Is_Stopped()
 {
 	return (Active == false);
 }
@@ -458,7 +458,7 @@ void ParticleEmitterClass::Set_Velocity_Randomizer(Vector3Randomizer *rand)
 }
 
 
-Vector3Randomizer *ParticleEmitterClass::Get_Creation_Volume (void) const
+Vector3Randomizer *ParticleEmitterClass::Get_Creation_Volume () const
 {
 	Vector3Randomizer *randomizer = nullptr;
 	if (PosRand != nullptr) {
@@ -469,7 +469,7 @@ Vector3Randomizer *ParticleEmitterClass::Get_Creation_Volume (void) const
 }
 
 
-Vector3Randomizer *ParticleEmitterClass::Get_Velocity_Random (void) const
+Vector3Randomizer *ParticleEmitterClass::Get_Velocity_Random () const
 {
 	Vector3Randomizer *randomizer = nullptr;
 	if (VelRand != nullptr) {
@@ -499,7 +499,7 @@ void ParticleEmitterClass::Set_Velocity_Inheritance_Factor(float inh_factor)
 
 // Emit particles (put in particle buffer). This is called by the particle
 // buffer On_Frame_Update() function to avoid order dependence.
-void ParticleEmitterClass::Emit(void)
+void ParticleEmitterClass::Emit()
 {
 	WWPROFILE("PartlicleEmitter::Emit");
 #ifdef WWDEBUG
@@ -531,7 +531,7 @@ void ParticleEmitterClass::Emit(void)
 // Collision sphere is a point - emitter emits also when not visible, so this
 // is only important to avoid affecting the collision spheres of composite
 // objects into which the emitter is inserted.
-void ParticleEmitterClass::Update_Cached_Bounding_Volumes(void) const
+void ParticleEmitterClass::Update_Cached_Bounding_Volumes() const
 {
 	CachedBoundingSphere.Init(Get_Position(),0.0);
 	CachedBoundingBox.Center = Get_Position();
@@ -694,7 +694,7 @@ void ParticleEmitterClass::Initialize_Particle(NewParticleStruct * newpart,
 
 
 ParticleEmitterDefClass *
-ParticleEmitterClass::Build_Definition (void) const
+ParticleEmitterClass::Build_Definition () const
 {
 	// Allocate a new emitter definition object
 	ParticleEmitterDefClass *pdefinition = W3DNEW ParticleEmitterDefClass;
@@ -848,7 +848,7 @@ ParticleEmitterClass::Set_Name (const char *pname)
 
 
 void
-ParticleEmitterClass::Update_On_Visibility(void)
+ParticleEmitterClass::Update_On_Visibility()
 {
 	// Simply start or stop the emission based on
 	// the visibility state of the emitter.

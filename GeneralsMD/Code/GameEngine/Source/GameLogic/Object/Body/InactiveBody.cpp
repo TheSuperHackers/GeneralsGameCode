@@ -51,7 +51,7 @@ InactiveBody::InactiveBody( Thing *thing, const ModuleData* moduleData )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-InactiveBody::~InactiveBody( void )
+InactiveBody::~InactiveBody()
 {
 
 }
@@ -194,7 +194,7 @@ void InactiveBody::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void InactiveBody::loadPostProcess( void )
+void InactiveBody::loadPostProcess()
 {
 
 	// extend base class

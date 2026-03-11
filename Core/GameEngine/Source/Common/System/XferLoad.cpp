@@ -36,7 +36,7 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-XferLoad::XferLoad( void )
+XferLoad::XferLoad()
 {
 
 	m_xferMode = XFER_LOAD;
@@ -46,7 +46,7 @@ XferLoad::XferLoad( void )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-XferLoad::~XferLoad( void )
+XferLoad::~XferLoad()
 {
 
 	// warn the user if a file was left open
@@ -94,7 +94,7 @@ void XferLoad::open( AsciiString identifier )
 //-------------------------------------------------------------------------------------------------
 /** Close our current file */
 //-------------------------------------------------------------------------------------------------
-void XferLoad::close( void )
+void XferLoad::close()
 {
 
 	// sanity, if we don't have an open file we can do nothing
@@ -118,7 +118,7 @@ void XferLoad::close( void )
 //-------------------------------------------------------------------------------------------------
 /** Read a block size descriptor from the file at the current position */
 //-------------------------------------------------------------------------------------------------
-Int XferLoad::beginBlock( void )
+Int XferLoad::beginBlock()
 {
 
 	// sanity
@@ -143,7 +143,7 @@ Int XferLoad::beginBlock( void )
 // ------------------------------------------------------------------------------------------------
 /** End block ... this does nothing when reading */
 // ------------------------------------------------------------------------------------------------
-void XferLoad::endBlock( void )
+void XferLoad::endBlock()
 {
 
 }

@@ -69,7 +69,7 @@ public:
 	//	Initialization and shutdown
 	//
 	static void		Initialize (const char *ini_filename = nullptr);
-	static void		Shutdown (void);
+	static void		Shutdown ();
 
 	//
 	//	Sound playback

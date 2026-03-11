@@ -40,7 +40,7 @@ class TechBuildingBehaviorModuleData : public UpdateModuleData
 
 public:
 
-	TechBuildingBehaviorModuleData( void );
+	TechBuildingBehaviorModuleData();
 
 	static void buildFieldParse( MultiIniFieldParse &p );
 
@@ -68,10 +68,10 @@ public:
 	static Int getInterfaceMask() { return UpdateModule::getInterfaceMask() | (MODULEINTERFACE_DIE); }
 
 	// update methods
-	virtual UpdateSleepTime update( void );
+	virtual UpdateSleepTime update();
 
 	// die methods
-	virtual DieModuleInterface *getDie( void ) { return this; }
+	virtual DieModuleInterface *getDie() { return this; }
 	virtual void onDie( const DamageInfo *damageInfo );
 
 protected:

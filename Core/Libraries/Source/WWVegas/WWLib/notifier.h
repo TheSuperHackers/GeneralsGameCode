@@ -162,7 +162,7 @@ template<typename Event> class Notifier
 				}
 			}
 
-		virtual bool HasObservers(void) const
+		virtual bool HasObservers() const
 			{return !mObservers.empty();}
 
 	private:
@@ -207,7 +207,7 @@ class TypedEvent
 		inline V& operator()()
 			{return mValue;}
 
-		inline V& Subject(void)
+		inline V& Subject()
 			{return mValue;}
 
 	protected:
@@ -222,7 +222,7 @@ class TypedEventPtr
 				mSubject(subject)
 			{}
 
-		inline O* Subject(void)
+		inline O* Subject()
 			{return mSubject;}
 
 		inline O* operator()()
@@ -237,7 +237,7 @@ class TypedActionPtr :
 		public TypedEventPtr<A, O>
 	{
 	public:
-		A GetAction(void) const
+		A GetAction() const
 			{return mAction;}
 
 		TypedActionPtr(A action, O* data) :
@@ -261,10 +261,10 @@ class TypedEventPair
 				mItemB(itemB)
 			{}
 
-		inline A GetItemA(void)
+		inline A GetItemA()
 			{return mItemA;}
 
-		inline B GetItemB(void)
+		inline B GetItemB()
 			{return mItemB;}
 
 	protected:

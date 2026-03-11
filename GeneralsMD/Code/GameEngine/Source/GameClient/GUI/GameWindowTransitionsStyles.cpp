@@ -69,18 +69,18 @@ static void drawTypeText( GameWindow *window, DisplayString *str);
 //-----------------------------------------------------------------------------
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-Transition::Transition ( void )
+Transition::Transition ()
 {
 
 }
 
-Transition::~Transition( void )
+Transition::~Transition()
 {
 
 }
 //-----------------------------------------------------------------------------
 
-FlashTransition::FlashTransition ( void )
+FlashTransition::FlashTransition ()
 {
 	m_frameLength = FLASHTRANSITION_END;
 	m_win = nullptr;
@@ -88,7 +88,7 @@ FlashTransition::FlashTransition ( void )
 	m_isForward = TRUE;
 }
 
-FlashTransition::~FlashTransition( void )
+FlashTransition::~FlashTransition()
 {
 	m_win = nullptr;
 }
@@ -113,7 +113,7 @@ void FlashTransition::update( Int frame )
 	m_drawState = -1;
 	if(frame < FLASHTRANSITION_START || frame > FLASHTRANSITION_END)
 	{
-		DEBUG_ASSERTCRASH(FALSE, ("FlashTransition::update - Frame is out of the range the this update can handle %d", frame));
+		DEBUG_CRASH(("FlashTransition::update - Frame is out of the range the this update can handle %d", frame));
 		return;
 	}
 	switch (frame) {
@@ -172,14 +172,14 @@ void FlashTransition::update( Int frame )
 
 }
 
-void FlashTransition::reverse( void )
+void FlashTransition::reverse()
 {
 	m_isFinished = FALSE;
 	m_isForward = FALSE;
 
 }
 
-void FlashTransition::draw( void )
+void FlashTransition::draw()
 {
 	switch (m_drawState)
 	{
@@ -228,7 +228,7 @@ void FlashTransition::draw( void )
 	}
 }
 
-void FlashTransition::skip( void )
+void FlashTransition::skip()
 {
 	update(FLASHTRANSITION_END);
 }
@@ -236,7 +236,7 @@ void FlashTransition::skip( void )
 //-----------------------------------------------------------------------------
 
 
-ButtonFlashTransition::ButtonFlashTransition ( void )
+ButtonFlashTransition::ButtonFlashTransition ()
 {
 	m_frameLength = BUTTONFLASHTRANSITION_END;
 	m_win = nullptr;
@@ -244,7 +244,7 @@ ButtonFlashTransition::ButtonFlashTransition ( void )
 	m_isForward = TRUE;
 }
 
-ButtonFlashTransition::~ButtonFlashTransition( void )
+ButtonFlashTransition::~ButtonFlashTransition()
 {
 	m_win = nullptr;
 }
@@ -269,7 +269,7 @@ void ButtonFlashTransition::update( Int frame )
 	m_drawState = -1;
 	if(frame < BUTTONFLASHTRANSITION_START || frame > BUTTONFLASHTRANSITION_END)
 	{
-		DEBUG_ASSERTCRASH(FALSE, ("ButtonFlashTransition::update - Frame is out of the range the this update can handle %d", frame));
+		DEBUG_CRASH(("ButtonFlashTransition::update - Frame is out of the range the this update can handle %d", frame));
 		return;
 	}
 	switch (frame) {
@@ -489,14 +489,14 @@ void ButtonFlashTransition::update( Int frame )
 
 }
 
-void ButtonFlashTransition::reverse( void )
+void ButtonFlashTransition::reverse()
 {
 	m_isFinished = FALSE;
 	m_isForward = FALSE;
 
 }
 
-void ButtonFlashTransition::draw( void )
+void ButtonFlashTransition::draw()
 {
 	switch (m_drawState)
 	{
@@ -602,7 +602,7 @@ void ButtonFlashTransition::draw( void )
 	}
 }
 
-void ButtonFlashTransition::skip( void )
+void ButtonFlashTransition::skip()
 {
 	update(BUTTONFLASHTRANSITION_END);
 }
@@ -610,7 +610,7 @@ void ButtonFlashTransition::skip( void )
 
 //-----------------------------------------------------------------------------
 
-FadeTransition::FadeTransition ( void )
+FadeTransition::FadeTransition ()
 {
 	m_frameLength = FADETRANSITION_END;
 	m_win = nullptr;
@@ -618,7 +618,7 @@ FadeTransition::FadeTransition ( void )
 	m_isForward = TRUE;
 }
 
-FadeTransition::~FadeTransition( void )
+FadeTransition::~FadeTransition()
 {
 	m_win = nullptr;
 }
@@ -642,7 +642,7 @@ void FadeTransition::update( Int frame )
 	m_drawState = -1;
 	if(frame < FADETRANSITION_START || frame > FADETRANSITION_END)
 	{
-		DEBUG_ASSERTCRASH(FALSE, ("FadeTransition::update - Frame is out of the range the this update can handle %d", frame));
+		DEBUG_CRASH(("FadeTransition::update - Frame is out of the range the this update can handle %d", frame));
 		return;
 	}
 	switch (frame) {
@@ -678,14 +678,14 @@ void FadeTransition::update( Int frame )
 	}
 }
 
-void FadeTransition::reverse( void )
+void FadeTransition::reverse()
 {
 	m_isFinished = FALSE;
 	m_isForward = FALSE;
 
 }
 
-void FadeTransition::draw( void )
+void FadeTransition::draw()
 {
 	if(!m_win)
 		return;
@@ -741,13 +741,13 @@ void FadeTransition::draw( void )
 	}
 }
 
-void FadeTransition::skip( void )
+void FadeTransition::skip()
 {
 	update(FADETRANSITION_END);
 }
 //-----------------------------------------------------------------------------
 
-ScaleUpTransition::ScaleUpTransition ( void )
+ScaleUpTransition::ScaleUpTransition ()
 {
 	m_frameLength = SCALEUPTRANSITION_END;
 	m_win = nullptr;
@@ -755,7 +755,7 @@ ScaleUpTransition::ScaleUpTransition ( void )
 	m_isForward = TRUE;
 }
 
-ScaleUpTransition::~ScaleUpTransition( void )
+ScaleUpTransition::~ScaleUpTransition()
 {
 	m_win = nullptr;
 }
@@ -785,7 +785,7 @@ void ScaleUpTransition::update( Int frame )
 	m_drawState = -1;
 	if(frame < SCALEUPTRANSITION_START || frame > SCALEUPTRANSITION_END)
 	{
-		DEBUG_ASSERTCRASH(FALSE, ("ScaleUpTransition::update - Frame is out of the range the this update can handle %d", frame));
+		DEBUG_CRASH(("ScaleUpTransition::update - Frame is out of the range the this update can handle %d", frame));
 		return;
 	}
 	switch (frame) {
@@ -842,14 +842,14 @@ void ScaleUpTransition::update( Int frame )
 	}
 }
 
-void ScaleUpTransition::reverse( void )
+void ScaleUpTransition::reverse()
 {
 	m_isFinished = FALSE;
 	m_isForward = FALSE;
 
 }
 
-void ScaleUpTransition::draw( void )
+void ScaleUpTransition::draw()
 {
 	if(!m_win)
 		return;
@@ -863,14 +863,14 @@ void ScaleUpTransition::draw( void )
 	TheDisplay->drawImage(image, x,y, x1, y1);
 }
 
-void ScaleUpTransition::skip( void )
+void ScaleUpTransition::skip()
 {
 	update(SCALEUPTRANSITION_END);
 }
 
 //-----------------------------------------------------------------------------
 
-ScoreScaleUpTransition::ScoreScaleUpTransition ( void )
+ScoreScaleUpTransition::ScoreScaleUpTransition ()
 {
 	m_frameLength = SCORESCALEUPTRANSITION_END;
 	m_win = nullptr;
@@ -878,7 +878,7 @@ ScoreScaleUpTransition::ScoreScaleUpTransition ( void )
 	m_isForward = TRUE;
 }
 
-ScoreScaleUpTransition::~ScoreScaleUpTransition( void )
+ScoreScaleUpTransition::~ScoreScaleUpTransition()
 {
 	m_win = nullptr;
 }
@@ -908,7 +908,7 @@ void ScoreScaleUpTransition::update( Int frame )
 	m_drawState = -1;
 	if(frame < SCORESCALEUPTRANSITION_START || frame > SCORESCALEUPTRANSITION_END)
 	{
-		DEBUG_ASSERTCRASH(FALSE, ("ScoreScaleUpTransition::update - Frame is out of the range the this update can handle %d", frame));
+		DEBUG_CRASH(("ScoreScaleUpTransition::update - Frame is out of the range the this update can handle %d", frame));
 		return;
 	}
 	switch (frame) {
@@ -965,14 +965,14 @@ void ScoreScaleUpTransition::update( Int frame )
 	}
 }
 
-void ScoreScaleUpTransition::reverse( void )
+void ScoreScaleUpTransition::reverse()
 {
 	m_isFinished = FALSE;
 	m_isForward = FALSE;
 
 }
 
-void ScoreScaleUpTransition::draw( void )
+void ScoreScaleUpTransition::draw()
 {
 	if(!m_win)
 		return;
@@ -986,14 +986,14 @@ void ScoreScaleUpTransition::draw( void )
 	TheDisplay->drawImage(image, x,y, x1, y1);
 }
 
-void ScoreScaleUpTransition::skip( void )
+void ScoreScaleUpTransition::skip()
 {
 	update(SCORESCALEUPTRANSITION_END);
 }
 
 //-----------------------------------------------------------------------------
 
-MainMenuScaleUpTransition::MainMenuScaleUpTransition ( void )
+MainMenuScaleUpTransition::MainMenuScaleUpTransition ()
 {
 	m_frameLength = MAINMENUSCALEUPTRANSITION_END;
 	m_win = nullptr;
@@ -1001,7 +1001,7 @@ MainMenuScaleUpTransition::MainMenuScaleUpTransition ( void )
 	m_isForward = TRUE;
 }
 
-MainMenuScaleUpTransition::~MainMenuScaleUpTransition( void )
+MainMenuScaleUpTransition::~MainMenuScaleUpTransition()
 {
 	m_win = nullptr;
 }
@@ -1039,7 +1039,7 @@ void MainMenuScaleUpTransition::update( Int frame )
 	m_drawState = -1;
 	if(frame < MAINMENUSCALEUPTRANSITION_START || frame > MAINMENUSCALEUPTRANSITION_END)
 	{
-		DEBUG_ASSERTCRASH(FALSE, ("MainMenuScaleUpTransition::update - Frame is out of the range the this update can handle %d", frame));
+		DEBUG_CRASH(("MainMenuScaleUpTransition::update - Frame is out of the range the this update can handle %d", frame));
 		return;
 	}
 	switch (frame) {
@@ -1082,14 +1082,14 @@ void MainMenuScaleUpTransition::update( Int frame )
 
 }
 
-void MainMenuScaleUpTransition::reverse( void )
+void MainMenuScaleUpTransition::reverse()
 {
 	m_isFinished = FALSE;
 	m_isForward = FALSE;
 
 }
 
-void MainMenuScaleUpTransition::draw( void )
+void MainMenuScaleUpTransition::draw()
 {
 	if(!m_win)
 		return;
@@ -1103,14 +1103,14 @@ void MainMenuScaleUpTransition::draw( void )
 	TheDisplay->drawImage(image, x,y, x1, y1);
 }
 
-void MainMenuScaleUpTransition::skip( void )
+void MainMenuScaleUpTransition::skip()
 {
 	update(MAINMENUSCALEUPTRANSITION_END);
 }
 
 //-----------------------------------------------------------------------------
 
-MainMenuMediumScaleUpTransition::MainMenuMediumScaleUpTransition ( void )
+MainMenuMediumScaleUpTransition::MainMenuMediumScaleUpTransition ()
 {
 	m_frameLength = MAINMENUMEDIUMSCALEUPTRANSITION_END;
 	m_win = nullptr;
@@ -1118,7 +1118,7 @@ MainMenuMediumScaleUpTransition::MainMenuMediumScaleUpTransition ( void )
 	m_isForward = TRUE;
 }
 
-MainMenuMediumScaleUpTransition::~MainMenuMediumScaleUpTransition( void )
+MainMenuMediumScaleUpTransition::~MainMenuMediumScaleUpTransition()
 {
 	m_win = nullptr;
 }
@@ -1158,7 +1158,7 @@ void MainMenuMediumScaleUpTransition::update( Int frame )
 	m_drawState = -1;
 	if(frame < MAINMENUMEDIUMSCALEUPTRANSITION_START || frame > MAINMENUMEDIUMSCALEUPTRANSITION_END)
 	{
-		DEBUG_ASSERTCRASH(FALSE, ("MainMenuMediumScaleUpTransition::update - Frame is out of the range the this update can handle %d", frame));
+		DEBUG_CRASH(("MainMenuMediumScaleUpTransition::update - Frame is out of the range the this update can handle %d", frame));
 		return;
 	}
 	switch (frame) {
@@ -1200,7 +1200,7 @@ void MainMenuMediumScaleUpTransition::update( Int frame )
 	}
 }
 
-void MainMenuMediumScaleUpTransition::reverse( void )
+void MainMenuMediumScaleUpTransition::reverse()
 {
 	m_isFinished = FALSE;
 	m_isForward = FALSE;
@@ -1209,7 +1209,7 @@ void MainMenuMediumScaleUpTransition::reverse( void )
 
 }
 
-void MainMenuMediumScaleUpTransition::draw( void )
+void MainMenuMediumScaleUpTransition::draw()
 {
 	if(!m_win)
 		return;
@@ -1223,13 +1223,13 @@ void MainMenuMediumScaleUpTransition::draw( void )
 	TheDisplay->drawImage(image, x,y, x1, y1);
 }
 
-void MainMenuMediumScaleUpTransition::skip( void )
+void MainMenuMediumScaleUpTransition::skip()
 {
 	update(MAINMENUMEDIUMSCALEUPTRANSITION_END);
 }
 //-----------------------------------------------------------------------------
 
-MainMenuSmallScaleDownTransition::MainMenuSmallScaleDownTransition ( void )
+MainMenuSmallScaleDownTransition::MainMenuSmallScaleDownTransition ()
 {
 	m_frameLength = MAINMENUSMALLSCALEDOWNTRANSITION_END;
 	m_win = nullptr;
@@ -1237,7 +1237,7 @@ MainMenuSmallScaleDownTransition::MainMenuSmallScaleDownTransition ( void )
 	m_isForward = TRUE;
 }
 
-MainMenuSmallScaleDownTransition::~MainMenuSmallScaleDownTransition( void )
+MainMenuSmallScaleDownTransition::~MainMenuSmallScaleDownTransition()
 {
 	m_win = nullptr;
 }
@@ -1277,7 +1277,7 @@ void MainMenuSmallScaleDownTransition::update( Int frame )
 	m_drawState = -1;
 	if(frame < MAINMENUSMALLSCALEDOWNTRANSITION_START || frame > MAINMENUSMALLSCALEDOWNTRANSITION_END)
 	{
-		DEBUG_ASSERTCRASH(FALSE, ("MainMenuSmallScaleDownTransition::update - Frame is out of the range the this update can handle %d", frame));
+		DEBUG_CRASH(("MainMenuSmallScaleDownTransition::update - Frame is out of the range the this update can handle %d", frame));
 		return;
 	}
 	switch (frame) {
@@ -1313,14 +1313,14 @@ void MainMenuSmallScaleDownTransition::update( Int frame )
 	}
 }
 
-void MainMenuSmallScaleDownTransition::reverse( void )
+void MainMenuSmallScaleDownTransition::reverse()
 {
 	m_isFinished = FALSE;
 	m_isForward = FALSE;
 
 }
 
-void MainMenuSmallScaleDownTransition::draw( void )
+void MainMenuSmallScaleDownTransition::draw()
 {
 	if(!m_win)
 		return;
@@ -1334,7 +1334,7 @@ void MainMenuSmallScaleDownTransition::draw( void )
 	TheDisplay->drawImage(image, x,y, x1, y1);
 }
 
-void MainMenuSmallScaleDownTransition::skip( void )
+void MainMenuSmallScaleDownTransition::skip()
 {
 	update(MAINMENUSMALLSCALEDOWNTRANSITION_END);
 }
@@ -1342,7 +1342,7 @@ void MainMenuSmallScaleDownTransition::skip( void )
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 
-TextTypeTransition::TextTypeTransition ( void )
+TextTypeTransition::TextTypeTransition ()
 {
 	m_frameLength = TEXTTYPETRANSITION_END;
 	m_win = nullptr;
@@ -1351,7 +1351,7 @@ TextTypeTransition::TextTypeTransition ( void )
 	m_dStr = nullptr;
 }
 
-TextTypeTransition::~TextTypeTransition( void )
+TextTypeTransition::~TextTypeTransition()
 {
 	m_win = nullptr;
 	if(m_dStr)
@@ -1382,7 +1382,7 @@ void TextTypeTransition::update( Int frame )
 	m_drawState = -1;
 	if(frame < TEXTTYPETRANSITION_START || frame > TEXTTYPETRANSITION_END)
 	{
-		DEBUG_ASSERTCRASH(FALSE, ("TextTypeTransition::update - Frame is out of the range the this update can handle %d", frame));
+		DEBUG_CRASH(("TextTypeTransition::update - Frame is out of the range the this update can handle %d", frame));
 		return;
 	}
 	switch (frame) {
@@ -1429,7 +1429,7 @@ void TextTypeTransition::update( Int frame )
 	}
 }
 
-void TextTypeTransition::reverse( void )
+void TextTypeTransition::reverse()
 {
 	m_isFinished = FALSE;
 	m_isForward = FALSE;
@@ -1437,7 +1437,7 @@ void TextTypeTransition::reverse( void )
 	m_partialText = m_fullText;
 }
 
-void TextTypeTransition::draw( void )
+void TextTypeTransition::draw()
 {
 	if(m_drawState > TEXTTYPETRANSITION_START && m_drawState < m_frameLength)
 	{
@@ -1446,7 +1446,7 @@ void TextTypeTransition::draw( void )
 	}
 }
 
-void TextTypeTransition::skip( void )
+void TextTypeTransition::skip()
 {
 	update(TEXTTYPETRANSITION_END);
 }
@@ -1454,7 +1454,7 @@ void TextTypeTransition::skip( void )
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 
-CountUpTransition::CountUpTransition ( void )
+CountUpTransition::CountUpTransition ()
 {
 	m_frameLength = COUNTUPTRANSITION_END;
 	m_win = nullptr;
@@ -1463,7 +1463,7 @@ CountUpTransition::CountUpTransition ( void )
 
 }
 
-CountUpTransition::~CountUpTransition( void )
+CountUpTransition::~CountUpTransition()
 {
 	m_win = nullptr;
 }
@@ -1521,7 +1521,7 @@ void CountUpTransition::update( Int frame )
 	m_drawState = -1;
 	if(frame < COUNTUPTRANSITION_START || frame > COUNTUPTRANSITION_END)
 	{
-		DEBUG_ASSERTCRASH(FALSE, ("CountUpTransition::update - Frame is out of the range the this update can handle %d", frame));
+		DEBUG_CRASH(("CountUpTransition::update - Frame is out of the range the this update can handle %d", frame));
 		return;
 	}
 	switch (frame) {
@@ -1577,7 +1577,7 @@ void CountUpTransition::update( Int frame )
 	}
 }
 
-void CountUpTransition::reverse( void )
+void CountUpTransition::reverse()
 {
 	if( m_win->winIsHidden() )
 	{
@@ -1591,11 +1591,11 @@ void CountUpTransition::reverse( void )
 
 }
 
-void CountUpTransition::draw( void )
+void CountUpTransition::draw()
 {
 }
 
-void CountUpTransition::skip( void )
+void CountUpTransition::skip()
 {
 	if (!m_isFinished)
 		update(COUNTUPTRANSITION_END);
@@ -1603,7 +1603,7 @@ void CountUpTransition::skip( void )
 
 //-----------------------------------------------------------------------------
 
-ScreenFadeTransition::ScreenFadeTransition ( void )
+ScreenFadeTransition::ScreenFadeTransition ()
 {
 	m_frameLength = SCREENFADETRANSITION_END;
 	m_win = nullptr;
@@ -1612,7 +1612,7 @@ ScreenFadeTransition::ScreenFadeTransition ( void )
 
 }
 
-ScreenFadeTransition::~ScreenFadeTransition( void )
+ScreenFadeTransition::~ScreenFadeTransition()
 {
 	m_win = nullptr;
 
@@ -1638,7 +1638,7 @@ void ScreenFadeTransition::update( Int frame )
 	m_drawState = -1;
 	if(frame < SCREENFADETRANSITION_START || frame > SCREENFADETRANSITION_END)
 	{
-		DEBUG_ASSERTCRASH(FALSE, ("ScreenFadeTransition::update - Frame is out of the range the this update can handle %d", frame));
+		DEBUG_CRASH(("ScreenFadeTransition::update - Frame is out of the range the this update can handle %d", frame));
 		return;
 	}
 	switch (frame) {
@@ -1655,13 +1655,13 @@ void ScreenFadeTransition::update( Int frame )
 	m_drawState = frame;
 }
 
-void ScreenFadeTransition::reverse( void )
+void ScreenFadeTransition::reverse()
 {
 	m_isFinished = FALSE;
 	m_isForward = FALSE;
 }
 
-void ScreenFadeTransition::draw( void )
+void ScreenFadeTransition::draw()
 {
 	Int alpha = m_percent*255 *m_drawState;
 	if(alpha > 255)
@@ -1670,7 +1670,7 @@ void ScreenFadeTransition::draw( void )
 
 }
 
-void ScreenFadeTransition::skip( void )
+void ScreenFadeTransition::skip()
 {
 	update(SCREENFADETRANSITION_END);
 }
@@ -1678,7 +1678,7 @@ void ScreenFadeTransition::skip( void )
 
 //-----------------------------------------------------------------------------
 
-ControlBarArrowTransition::ControlBarArrowTransition ( void )
+ControlBarArrowTransition::ControlBarArrowTransition ()
 {
 	m_frameLength = CONTROLBARARROWTRANSITION_END;
 	m_win = nullptr;
@@ -1688,7 +1688,7 @@ ControlBarArrowTransition::ControlBarArrowTransition ( void )
 
 }
 
-ControlBarArrowTransition::~ControlBarArrowTransition( void )
+ControlBarArrowTransition::~ControlBarArrowTransition()
 {
 	m_win = nullptr;
 	m_arrowImage = nullptr;
@@ -1731,7 +1731,7 @@ void ControlBarArrowTransition::update( Int frame )
 	m_drawState = -1;
 	if(frame < CONTROLBARARROWTRANSITION_START || frame > CONTROLBARARROWTRANSITION_END)
 	{
-		DEBUG_ASSERTCRASH(FALSE, ("ControlBarArrowTransition::update - Frame is out of the range the this update can handle %d", frame));
+		DEBUG_CRASH(("ControlBarArrowTransition::update - Frame is out of the range the this update can handle %d", frame));
 		return;
 	}
 	switch (frame) {
@@ -1748,13 +1748,13 @@ void ControlBarArrowTransition::update( Int frame )
 	m_drawState = frame;
 }
 
-void ControlBarArrowTransition::reverse( void )
+void ControlBarArrowTransition::reverse()
 {
 	m_isFinished = FALSE;
 	m_isForward = FALSE;
 }
 
-void ControlBarArrowTransition::draw( void )
+void ControlBarArrowTransition::draw()
 {
 	if(m_drawState < CONTROLBARARROWTRANSITION_START)
 		return;
@@ -1776,7 +1776,7 @@ void ControlBarArrowTransition::draw( void )
 
 }
 
-void ControlBarArrowTransition::skip( void )
+void ControlBarArrowTransition::skip()
 {
 	update(CONTROLBARARROWTRANSITION_END);
 }
@@ -1787,7 +1787,7 @@ void ControlBarArrowTransition::skip( void )
 
 //-----------------------------------------------------------------------------
 
-FullFadeTransition::FullFadeTransition ( void )
+FullFadeTransition::FullFadeTransition ()
 {
 	m_frameLength = FULLFADETRANSITION_END;
 	m_win = nullptr;
@@ -1796,7 +1796,7 @@ FullFadeTransition::FullFadeTransition ( void )
 
 }
 
-FullFadeTransition::~FullFadeTransition( void )
+FullFadeTransition::~FullFadeTransition()
 {
 	m_win = nullptr;
 
@@ -1826,7 +1826,7 @@ void FullFadeTransition::update( Int frame )
 	m_drawState = -1;
 	if(frame < FULLFADETRANSITION_START || frame > FULLFADETRANSITION_END)
 	{
-		DEBUG_ASSERTCRASH(FALSE, ("FullFadeTransition::update - Frame is out of the range the this update can handle %d", frame));
+		DEBUG_CRASH(("FullFadeTransition::update - Frame is out of the range the this update can handle %d", frame));
 		return;
 	}
 	switch (frame) {
@@ -1860,13 +1860,13 @@ void FullFadeTransition::update( Int frame )
 	m_drawState = frame;
 }
 
-void FullFadeTransition::reverse( void )
+void FullFadeTransition::reverse()
 {
 	m_isFinished = FALSE;
 	m_isForward = FALSE;
 }
 
-void FullFadeTransition::draw( void )
+void FullFadeTransition::draw()
 {
 	Int alpha;
 	if(m_drawState > (FULLFADETRANSITION_END/2))
@@ -1879,7 +1879,7 @@ void FullFadeTransition::draw( void )
 	TheDisplay->drawOpenRect(m_pos.x, m_pos.y, m_size.x, m_size.y , 1.0f, GameMakeColor(60,60,180,alpha));
 }
 
-void FullFadeTransition::skip( void )
+void FullFadeTransition::skip()
 {
 	update(FULLFADETRANSITION_END);
 }
@@ -1887,7 +1887,7 @@ void FullFadeTransition::skip( void )
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 
-TextOnFrameTransition::TextOnFrameTransition ( void )
+TextOnFrameTransition::TextOnFrameTransition ()
 {
 	m_frameLength = TEXTONFRAMETRANSITION_END;
 	m_win = nullptr;
@@ -1895,7 +1895,7 @@ TextOnFrameTransition::TextOnFrameTransition ( void )
 
 }
 
-TextOnFrameTransition::~TextOnFrameTransition( void )
+TextOnFrameTransition::~TextOnFrameTransition()
 {
 	m_win = nullptr;
 
@@ -1927,7 +1927,7 @@ void TextOnFrameTransition::update( Int frame )
 {
 	if(frame < TEXTONFRAMETRANSITION_START || frame > TEXTONFRAMETRANSITION_END)
 	{
-		DEBUG_ASSERTCRASH(FALSE, ("TextOnFrameTransition::update - Frame is out of the range the this update can handle %d", frame));
+		DEBUG_CRASH(("TextOnFrameTransition::update - Frame is out of the range the this update can handle %d", frame));
 		return;
 	}
 	switch (frame) {
@@ -1953,7 +1953,7 @@ void TextOnFrameTransition::update( Int frame )
 	}
 }
 
-void TextOnFrameTransition::reverse( void )
+void TextOnFrameTransition::reverse()
 {
 	m_isFinished = FALSE;
 	m_isForward = FALSE;
@@ -1964,11 +1964,11 @@ void TextOnFrameTransition::reverse( void )
 	}
 }
 
-void TextOnFrameTransition::draw( void )
+void TextOnFrameTransition::draw()
 {
 }
 
-void TextOnFrameTransition::skip( void )
+void TextOnFrameTransition::skip()
 {
 	if (!m_isFinished)
 		update(TEXTONFRAMETRANSITION_END);
@@ -1977,7 +1977,7 @@ void TextOnFrameTransition::skip( void )
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 
-ReverseSoundTransition::ReverseSoundTransition ( void )
+ReverseSoundTransition::ReverseSoundTransition ()
 {
 	m_frameLength = REVERSESOUNDTRANSITION_END;
 	m_win = nullptr;
@@ -1985,7 +1985,7 @@ ReverseSoundTransition::ReverseSoundTransition ( void )
 
 }
 
-ReverseSoundTransition::~ReverseSoundTransition( void )
+ReverseSoundTransition::~ReverseSoundTransition()
 {
 	m_win = nullptr;
 
@@ -2001,7 +2001,7 @@ void ReverseSoundTransition::update( Int frame )
 {
 	if(frame < REVERSESOUNDTRANSITION_START || frame > REVERSESOUNDTRANSITION_END)
 	{
-		DEBUG_ASSERTCRASH(FALSE, ("ReverseSoundTransition::update - Frame is out of the range the this update can handle %d", frame));
+		DEBUG_CRASH(("ReverseSoundTransition::update - Frame is out of the range the this update can handle %d", frame));
 		return;
 	}
 	switch (frame) {
@@ -2037,17 +2037,17 @@ void ReverseSoundTransition::update( Int frame )
 	}
 }
 
-void ReverseSoundTransition::reverse( void )
+void ReverseSoundTransition::reverse()
 {
 	m_isFinished = FALSE;
 	m_isForward = FALSE;
 }
 
-void ReverseSoundTransition::draw( void )
+void ReverseSoundTransition::draw()
 {
 }
 
-void ReverseSoundTransition::skip( void )
+void ReverseSoundTransition::skip()
 {
 	if (!m_isFinished)
 		update(REVERSESOUNDTRANSITION_END);

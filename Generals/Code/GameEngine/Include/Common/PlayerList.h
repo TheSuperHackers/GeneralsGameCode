@@ -80,12 +80,12 @@ public:
 	~PlayerList();
 
 	// subsystem methods
-	virtual void init( void );
-	virtual void reset( void );
-	virtual void update( void );
+	virtual void init();
+	virtual void reset();
+	virtual void update();
 
-	virtual void newGame( void ); // called during GameLogic::startNewGame()
-	virtual void newMap( void );	 // Called after a new map is loaded.
+	virtual void newGame(); // called during GameLogic::startNewGame()
+	virtual void newMap();	 // Called after a new map is loaded.
 
 	void teamAboutToBeDeleted(Team* team);
 
@@ -141,7 +141,7 @@ public:
 	/**
 		a convenience routine to quickly clear the entered/exited flags on all teams.
 	*/
-	void updateTeamStates(void);
+	void updateTeamStates();
 
 	/**
 		a convenience routine to return the players who srcPlayer considers to have one of the
@@ -155,7 +155,7 @@ protected:
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
+	virtual void loadPostProcess();
 
 private:
 

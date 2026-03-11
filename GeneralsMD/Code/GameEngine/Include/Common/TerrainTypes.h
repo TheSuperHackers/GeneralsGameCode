@@ -148,26 +148,26 @@ class TerrainType : public MemoryPoolObject
 
 public:
 
-	TerrainType( void );
+	TerrainType();
 	// destructor prototype defined by memory pool glue
 
 	/// get the name for this terrain
-	AsciiString getName( void ) { return m_name; }
+	AsciiString getName() { return m_name; }
 
 	/// get whether this terrain is blend edge terrain.
-	Bool isBlendEdge( void ) { return m_blendEdgeTexture; }
+	Bool isBlendEdge() { return m_blendEdgeTexture; }
 
 	/// get the type of this terrain
-	TerrainClass getClass( void ) { return m_class; }
+	TerrainClass getClass() { return m_class; }
 
 	/// get the construction restrictions
-	Bool getRestrictConstruction( void ) { return m_restrictConstruction; }
+	Bool getRestrictConstruction() { return m_restrictConstruction; }
 
 	/// get the texture file for this terrain
-	AsciiString getTexture( void ) { return m_texture; }
+	AsciiString getTexture() { return m_texture; }
 
 	/// get next terrain in list, only for use by the terrain collection
-	TerrainType *friend_getNext( void ) { return m_next; }
+	TerrainType *friend_getNext() { return m_next; }
 
 	/// set the name for this terrain, for use by terrain collection only
 	void friend_setName( AsciiString name ) { m_name = name; }
@@ -188,7 +188,7 @@ public:
 	void friend_setBlendEdge( Bool isBlend ) { m_blendEdgeTexture = isBlend; }
 
 	/// get the parsing table for INI
-	const FieldParse *getFieldParse( void ) { return m_terrainTypeFieldParseTable; }
+	const FieldParse *getFieldParse() { return m_terrainTypeFieldParseTable; }
 
 protected:
 
@@ -212,8 +212,8 @@ class TerrainTypeCollection : public SubsystemInterface
 
 public:
 
-	TerrainTypeCollection( void );
-	~TerrainTypeCollection( void );
+	TerrainTypeCollection();
+	~TerrainTypeCollection();
 
 	void init() { }
 	void reset() { }
@@ -223,7 +223,7 @@ public:
 	TerrainType *newTerrain( AsciiString name );			///< allocate a new terrain
 
 	/// get first terrain in list
-	TerrainType *firstTerrain( void ) { return m_terrainList; }
+	TerrainType *firstTerrain() { return m_terrainList; }
 
 	/// get next terrain in list
 	TerrainType *nextTerrain( TerrainType *terrainType ) { return terrainType->friend_getNext(); }

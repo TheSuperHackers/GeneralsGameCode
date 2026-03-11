@@ -56,7 +56,7 @@
 #include "Common/INI.h"
 #include "Common/Registry.h"
 #include "Common/FileSystem.h"
-#include "Common/UserPreferences.h"
+#include "Common/OptionPreferences.h"
 
 #include "GameClient/Display.h"
 #include "GameClient/GlobalLanguage.h"
@@ -162,7 +162,7 @@ void GlobalLanguage::init()
 		AsciiString font = *it;
 		if(AddFontResource(font.str()) == 0)
 		{
-			DEBUG_ASSERTCRASH(FALSE,("GlobalLanguage::init Failed to add font %s", font.str()));
+			DEBUG_CRASH(("GlobalLanguage::init Failed to add font %s", font.str()));
 		}
 		else
 		{
@@ -296,7 +296,7 @@ void GlobalLanguage::parseCustomDefinition()
 	}
 }
 
-FontDesc::FontDesc(void)
+FontDesc::FontDesc()
 {
 	name = "Arial Unicode MS";
 	size = 12;

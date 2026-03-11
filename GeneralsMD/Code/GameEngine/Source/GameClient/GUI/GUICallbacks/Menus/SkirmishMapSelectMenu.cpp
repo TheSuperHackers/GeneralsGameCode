@@ -125,8 +125,8 @@ static void mapListTooltipFunc(GameWindow *window,
 
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////////////////////////
 void positionStartSpots( AsciiString mapName, GameWindow *buttonMapStartPositions[], GameWindow *mapWindow);
-void skirmishPositionStartSpots( void );
-void skirmishUpdateSlotList( void );
+void skirmishPositionStartSpots();
+void skirmishUpdateSlotList();
 void showSkirmishGameOptionsUnderlyingGUIElements( Bool show )
 {
 	NameKeyType parentID = TheNameKeyGenerator->nameToKey( "SkirmishGameOptionsMenu.wnd:SkirmishGameOptionsMenuParent" );

@@ -47,7 +47,7 @@ Keyboard *TheKeyboard = nullptr;
 /** Given the state of the device, create messages from the input and
 	* place them on the message stream */
 //-------------------------------------------------------------------------------------------------
-void Keyboard::createStreamMessages( void )
+void Keyboard::createStreamMessages()
 {
 
 	// sanity
@@ -99,7 +99,7 @@ void Keyboard::createStreamMessages( void )
 //-------------------------------------------------------------------------------------------------
 /** update all our key state data */
 //-------------------------------------------------------------------------------------------------
-void Keyboard::updateKeys( void )
+void Keyboard::updateKeys()
 {
 	Int index = 0;
 
@@ -202,7 +202,7 @@ void Keyboard::updateKeys( void )
 //-------------------------------------------------------------------------------------------------
 /** check key repeat timing, TRUE is returned if repeat is occurring */
 //-------------------------------------------------------------------------------------------------
-Bool Keyboard::checkKeyRepeat( void )
+Bool Keyboard::checkKeyRepeat()
 {
 	Bool retVal = FALSE;
 	Int index = 0;
@@ -262,7 +262,7 @@ Bool Keyboard::checkKeyRepeat( void )
 //-------------------------------------------------------------------------------------------------
 /** Initialize the keyboard key-names array */
 //-------------------------------------------------------------------------------------------------
-void Keyboard::initKeyNames( void )
+void Keyboard::initKeyNames()
 {
 	Int i;
 
@@ -694,7 +694,7 @@ void Keyboard::initKeyNames( void )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-Keyboard::Keyboard( void )
+Keyboard::Keyboard()
 {
 
 	memset( m_keys, 0, sizeof( m_keys ) );
@@ -708,7 +708,7 @@ Keyboard::Keyboard( void )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-Keyboard::~Keyboard( void )
+Keyboard::~Keyboard()
 {
 
 }
@@ -716,7 +716,7 @@ Keyboard::~Keyboard( void )
 //-------------------------------------------------------------------------------------------------
 /** Initialize the keyboard */
 //-------------------------------------------------------------------------------------------------
-void Keyboard::init( void )
+void Keyboard::init()
 {
 
 	// initialize the key names
@@ -727,7 +727,7 @@ void Keyboard::init( void )
 //-------------------------------------------------------------------------------------------------
 /** Reset keyboard system */
 //-------------------------------------------------------------------------------------------------
-void Keyboard::reset( void )
+void Keyboard::reset()
 {
 
 }
@@ -735,7 +735,7 @@ void Keyboard::reset( void )
 //-------------------------------------------------------------------------------------------------
 /** Called once per frame to gather key data input */
 //-------------------------------------------------------------------------------------------------
-void Keyboard::update( void )
+void Keyboard::update()
 {
 
 	// update the key data
@@ -747,7 +747,7 @@ void Keyboard::update( void )
 /** Reset the state data for the keys, we likely want to do this when
 	* we once again gain focus to our app from something like an alt tab */
 //-------------------------------------------------------------------------------------------------
-void Keyboard::resetKeys( void )
+void Keyboard::resetKeys()
 {
 
 	// TheSuperHackers @fix Caball009 13/12/2025 Fix bug where game remains in waypoint mode
@@ -786,7 +786,7 @@ void Keyboard::refreshAltKeys() const
 //-------------------------------------------------------------------------------------------------
 /** get the first key in our current state of the keyboard */
 //-------------------------------------------------------------------------------------------------
-KeyboardIO *Keyboard::getFirstKey( void )
+KeyboardIO *Keyboard::getFirstKey()
 {
 	return &m_keys[ 0 ];
 }

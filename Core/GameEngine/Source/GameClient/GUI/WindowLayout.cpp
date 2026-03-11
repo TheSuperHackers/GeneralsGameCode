@@ -37,7 +37,7 @@
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////////////////////////
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-WindowLayout::WindowLayout( void )
+WindowLayout::WindowLayout()
 {
 	m_filenameString.set("EmptyLayout");
 
@@ -55,7 +55,7 @@ WindowLayout::WindowLayout( void )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-WindowLayout::~WindowLayout( void )
+WindowLayout::~WindowLayout()
 {
 
 	//
@@ -165,7 +165,7 @@ void WindowLayout::removeWindow( GameWindow *window )
 //-------------------------------------------------------------------------------------------------
 /** Destroy all the windows in a layout */
 //-------------------------------------------------------------------------------------------------
-void WindowLayout::destroyWindows( void )
+void WindowLayout::destroyWindows()
 {
 	GameWindow *window;
 
@@ -254,7 +254,7 @@ Bool WindowLayout::load( AsciiString filename )
 //-------------------------------------------------------------------------------------------------
 /** Bring all windows in this layout forward */
 //-------------------------------------------------------------------------------------------------
-void WindowLayout::bringForward( void )
+void WindowLayout::bringForward()
 {
 
 	//

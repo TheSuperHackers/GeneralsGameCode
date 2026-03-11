@@ -83,7 +83,7 @@ void TCBSpline3DClass::Remove_Key(int i)
 	Params.Delete(i);
 }
 
-void TCBSpline3DClass::Clear_Keys(void)
+void TCBSpline3DClass::Clear_Keys()
 {
 	HermiteSpline3DClass::Clear_Keys();
 	Params.Clear();
@@ -106,7 +106,7 @@ void TCBSpline3DClass::Get_TCB_Params(int i,float *tension,float *continuity,flo
 	if (bias) *bias = Params[i].Bias;
 }
 
-void TCBSpline3DClass::Update_Tangents(void)
+void TCBSpline3DClass::Update_Tangents()
 {
 	if (Keys.Count() < 2) {
 		for (int i=0; i<Keys.Count(); i++) {
@@ -190,7 +190,7 @@ void TCBSpline3DClass::Update_Tangents(void)
 	TangentsDirty = false;
 }
 
-const PersistFactoryClass & TCBSpline3DClass::Get_Factory(void) const
+const PersistFactoryClass & TCBSpline3DClass::Get_Factory() const
 {
 	return _TCBSpline3DFactory;
 }

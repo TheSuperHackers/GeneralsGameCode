@@ -206,7 +206,7 @@ public:
 
 
 	DX8Caps(IDirect3D8* direct3d, IDirect3DDevice8* D3DDevice,WW3DFormat display_format, const D3DADAPTER_IDENTIFIER8& adapter_id);
-	static void Shutdown(void);
+	static void Shutdown();
 
 	void Compute_Caps(WW3DFormat display_format, const D3DADAPTER_IDENTIFIER8& adapter_id);
 	bool Support_TnL() const { return SupportTnL; };

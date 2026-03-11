@@ -46,7 +46,7 @@ public:
 	int		J;
 	int		K;
 
-	WWINLINE Vector3i(void);
+	WWINLINE Vector3i();
 	WWINLINE Vector3i(int i,int j,int k);
 
 	WWINLINE bool			operator== (const Vector3i & v) const;
@@ -56,7 +56,7 @@ public:
 };
 
 
-WWINLINE Vector3i::Vector3i(void)
+WWINLINE Vector3i::Vector3i()
 {
 }
 
@@ -95,7 +95,7 @@ public:
 	unsigned short J;
 	unsigned short K;
 
-	WWINLINE Vector3i16(void);
+	WWINLINE Vector3i16();
 	WWINLINE Vector3i16(unsigned short i,unsigned short j,unsigned short k);
 
 	WWINLINE bool			operator== (const Vector3i & v) const;
@@ -105,7 +105,7 @@ public:
 };
 
 
-WWINLINE Vector3i16::Vector3i16(void)
+WWINLINE Vector3i16::Vector3i16()
 {
 }
 

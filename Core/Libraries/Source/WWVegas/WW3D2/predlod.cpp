@@ -57,15 +57,15 @@
 
 class LODHeapNode {
 	public:
-		LODHeapNode(void)												{ Item = nullptr; }
+		LODHeapNode()												{ Item = nullptr; }
 		LODHeapNode (float key)										{ Item = nullptr; Key = key; }
 		LODHeapNode (RenderObjClass * item, float key)		{ Item = item; Key = key; }
 
-		~LODHeapNode(void)											{ }
+		~LODHeapNode()											{ }
 
-		RenderObjClass *	Get_Item(void)							{ return(Item); }
+		RenderObjClass *	Get_Item()							{ return(Item); }
 
-		float						Get_Key(void)						{ return(Key); }
+		float						Get_Key()						{ return(Key); }
 		void						Set_Key(float key)				{ Key = key; }
 
 		int operator <		(const LODHeapNode& node)	{ return(Key < node.Key); }
@@ -97,11 +97,11 @@ class LODHeap {
 			for (index = Num/2; index >= 1; index--) Downheap(index);
 		}
 
-		~LODHeap(void) {
+		~LODHeap() {
 //			delete []Nodes;
 		}
 
-		LODHeapNode	*Top(void) {
+		LODHeapNode	*Top() {
 			return &(Nodes[1]);
 		}
 
@@ -129,7 +129,7 @@ class LODHeap {
 		}
 
 	private:
-		LODHeap(void) {}	// Just to ensure the default constructor is not used.
+		LODHeap() {}	// Just to ensure the default constructor is not used.
 
 		// The node and key arrays have one extra entry because entry [0] is
 		// reserved for various uses.
@@ -194,7 +194,7 @@ int					PredictiveLODOptimizerClass::VisibleObjArraySize;
  * HISTORY:                                                               *
  *   03/12/1999 NH  : Created.                                            *
  *========================================================================*/
-void PredictiveLODOptimizerClass::Clear(void)
+void PredictiveLODOptimizerClass::Clear()
 {
 	if (ObjectArray) {
 		// Release refs to all objects in the list:
@@ -377,7 +377,7 @@ void PredictiveLODOptimizerClass::Optimize_LODs(float max_cost)
  * HISTORY:                                                               *
  *   03/12/1999 NH  : Created.                                            *
  *========================================================================*/
-void PredictiveLODOptimizerClass::Free(void)
+void PredictiveLODOptimizerClass::Free()
 {
 	Clear();
 

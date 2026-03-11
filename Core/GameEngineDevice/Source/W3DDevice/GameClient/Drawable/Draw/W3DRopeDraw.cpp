@@ -287,7 +287,7 @@ void W3DRopeDraw::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void W3DRopeDraw::loadPostProcess( void )
+void W3DRopeDraw::loadPostProcess()
 {
 
 	// extend base class

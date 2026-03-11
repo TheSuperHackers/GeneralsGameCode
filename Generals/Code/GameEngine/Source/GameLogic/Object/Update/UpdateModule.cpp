@@ -183,7 +183,7 @@ void UpdateModule::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void UpdateModule::loadPostProcess( void )
+void UpdateModule::loadPostProcess()
 {
 
 	// extned base class

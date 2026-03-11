@@ -54,7 +54,7 @@ public:
 
 	Real m_cleanupMoveRange;
 
-	CleanupAreaPowerModuleData( void );
+	CleanupAreaPowerModuleData();
 	static void buildFieldParse(MultiIniFieldParse& p);
 };
 

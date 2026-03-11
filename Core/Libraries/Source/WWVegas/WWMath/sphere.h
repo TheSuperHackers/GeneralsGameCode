@@ -65,7 +65,7 @@
 class SphereClass
 {
 public:
-	SphereClass(void) { };
+	SphereClass() { };
 	SphereClass(const Vector3 & center,float radius) { Init(center,radius); }
 	SphereClass(const Matrix3D& mtx,const Vector3 & center,float radius) { Init(mtx,center,radius); }
 	inline SphereClass(const Vector3 & center,const SphereClass & s0);
@@ -76,7 +76,7 @@ public:
 	inline void Re_Center(const Vector3 & center);
 	inline void Add_Sphere(const SphereClass & s);
 	inline void Transform(const Matrix3D & tm);
-	inline float Volume(void) const;
+	inline float Volume() const;
 
 	inline SphereClass & operator += (const SphereClass & s);
 	inline SphereClass & operator *= (const Matrix3D & m);
@@ -368,7 +368,7 @@ inline void SphereClass::Transform(const Matrix3D & tm)
  * HISTORY:                                                                                    *
  *   3/22/99    GTH : Created.                                                                 *
  *=============================================================================================*/
-inline float SphereClass::Volume(void) const
+inline float SphereClass::Volume() const
 {
 	return (4.0 / 3.0) * WWMATH_PI * (Radius * Radius * Radius);
 }

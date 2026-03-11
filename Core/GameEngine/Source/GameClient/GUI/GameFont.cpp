@@ -105,7 +105,7 @@ void FontLibrary::unlinkFont( GameFont *font )
 //-------------------------------------------------------------------------------------------------
 /** Delete all font data, DO NOT throw an exception ... the destructor uses this */
 //-------------------------------------------------------------------------------------------------
-void FontLibrary::deleteAllFonts( void )
+void FontLibrary::deleteAllFonts()
 {
 	GameFont *font;
 
@@ -135,7 +135,7 @@ void FontLibrary::deleteAllFonts( void )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-FontLibrary::FontLibrary( void )
+FontLibrary::FontLibrary()
 {
 
 	m_fontList = nullptr;
@@ -145,7 +145,7 @@ FontLibrary::FontLibrary( void )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-FontLibrary::~FontLibrary( void )
+FontLibrary::~FontLibrary()
 {
 
 	// delete all font data
@@ -156,7 +156,7 @@ FontLibrary::~FontLibrary( void )
 //-------------------------------------------------------------------------------------------------
 /** Initialize what we need to in the font library */
 //-------------------------------------------------------------------------------------------------
-void FontLibrary::init( void )
+void FontLibrary::init()
 {
 
 }
@@ -164,7 +164,7 @@ void FontLibrary::init( void )
 //-------------------------------------------------------------------------------------------------
 /** Reset the fonts for this font library */
 //-------------------------------------------------------------------------------------------------
-void FontLibrary::reset( void )
+void FontLibrary::reset()
 {
 
 	// delete all font data

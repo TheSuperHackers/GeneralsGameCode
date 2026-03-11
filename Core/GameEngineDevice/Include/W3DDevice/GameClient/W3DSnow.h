@@ -31,19 +31,19 @@ class W3DSnowManager : public SnowManager
 {
   public :
 
-	W3DSnowManager(void);
-	~W3DSnowManager(void);
+	W3DSnowManager();
+	~W3DSnowManager();
 
-	virtual void init( void );
-	virtual void reset( void );
-	virtual void update ( void);
-	virtual void updateIniSettings(void);
+	virtual void init();
+	virtual void reset();
+	virtual void update ();
+	virtual void updateIniSettings();
 
 	void	render(RenderInfoClass &rinfo);
 	void	renderAsQuads(RenderInfoClass &rinfo, Int cubeOriginX, Int cubeOriginY, Int cubeDimX, Int cubeDimY);
 	void	renderSubBox(RenderInfoClass &rinfo, Int originX, Int originY, Int cubeDimX, Int cubeDimY );
-	void	ReleaseResources(void);
-	Bool	ReAcquireResources(void);
+	void	ReleaseResources();
+	Bool	ReAcquireResources();
 
  private:
 	DX8IndexBufferClass	*m_indexBuffer;

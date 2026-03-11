@@ -80,7 +80,7 @@ typedef struct
 
 typedef struct QFUNCTIONS
 {
-    CODEXABOUT * (GCALL * CODEX_about)(void);
+    CODEXABOUT * (GCALL * CODEX_about)();
     bool         (GCALL * CODEX_is)(const void *compressed);
     int          (GCALL * CODEX_size)(const void *compressed);
     int          (GCALL * CODEX_decode)(void *dest, const void *source, int *sourcesizeptr);
@@ -97,7 +97,7 @@ extern struct QFUNCTIONS qfunctions[];
 
 /* Information Functions */
 
-CODEXABOUT *GCALL CODEX_about(void);
+CODEXABOUT *GCALL CODEX_about();
 bool        GCALL CODEX_is(const void *source);
 int         GCALL CODEX_size(const void *source);
 

@@ -69,7 +69,7 @@ public:
 	// virtual destructor prototype provided by memory pool declaration
 
 	void setConstructorObject( Object *obj );
-	ObjectID getConstructorObjectID( void ) { return m_constructorObjectID; }
+	ObjectID getConstructorObjectID() { return m_constructorObjectID; }
 
 protected:
 

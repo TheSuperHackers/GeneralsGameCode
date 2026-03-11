@@ -78,7 +78,7 @@ public:
 
 
 	virtual void onDie( const DamageInfo *damageInfo );  ///< the die callback
-	virtual void onDelete( void );	///< Last possible moment cleanup
+	virtual void onDelete();	///< Last possible moment cleanup
 	virtual void onCapture( Player *oldOwner, Player *newOwner ); // Our main guy goes with us, but our redirected contain needs to do his thing too
 	virtual void onObjectCreated();
 
@@ -94,12 +94,12 @@ public:
 	virtual Bool isEnclosingContainerFor( const Object *obj ) const;	///< Does this type of Contain Visibly enclose its contents?
 	virtual Bool isDisplayedOnControlBar() const ;///< Does this container display its contents on the ControlBar?
 	virtual Bool isKickOutOnCapture();// The bunker may want to, but we certainly don't
-	virtual void killAllContained( void );				///< kill all objects inside.  For us, this does not mean our rider
+	virtual void killAllContained();				///< kill all objects inside.  For us, this does not mean our rider
 
 	// contain list access
 	virtual void iterateContained( ContainIterateFunc func, void *userData, Bool reverse );
 	virtual UnsignedInt getContainCount() const;
-	virtual Int getContainMax( void ) const;
+	virtual Int getContainMax() const;
 	virtual const ContainedItemsList* getContainedItemsList() const;
 
 	// Friend for our Draw module only.

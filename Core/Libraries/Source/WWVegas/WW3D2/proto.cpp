@@ -63,24 +63,24 @@ PrimitivePrototypeClass::PrimitivePrototypeClass(RenderObjClass * proto)
 	assert(Proto);
 	Proto->Add_Ref();
 }
-PrimitivePrototypeClass::~PrimitivePrototypeClass(void)
+PrimitivePrototypeClass::~PrimitivePrototypeClass()
 {
 	if (Proto) {
 		Proto->Release_Ref();
 	}
 }
 
-const char * PrimitivePrototypeClass::Get_Name(void) const
+const char * PrimitivePrototypeClass::Get_Name() const
 {
 	return Proto->Get_Name();
 }
 
-int PrimitivePrototypeClass::Get_Class_ID(void) const
+int PrimitivePrototypeClass::Get_Class_ID() const
 {
 	return Proto->Class_ID();
 }
 
-RenderObjClass * PrimitivePrototypeClass::Create(void)
+RenderObjClass * PrimitivePrototypeClass::Create()
 {
 	return (RenderObjClass *)( SET_REF_OWNER( Proto->Clone() ) );
 }
@@ -92,15 +92,15 @@ class HModelPrototypeClass : public W3DMPO, public PrototypeClass
 public:
 	HModelPrototypeClass(HModelDefClass * def)				{ HModelDef = def; assert(HModelDef); }
 
-	virtual const char *			Get_Name(void)	const			{ return HModelDef->Get_Name(); }
-	virtual int								Get_Class_ID(void) const	{ return RenderObjClass::CLASSID_HLOD; }
-	virtual RenderObjClass *	Create(void)					{ return NEW_REF( HLodClass, (*HModelDef) ); }
+	virtual const char *			Get_Name()	const			{ return HModelDef->Get_Name(); }
+	virtual int								Get_Class_ID() const	{ return RenderObjClass::CLASSID_HLOD; }
+	virtual RenderObjClass *	Create()					{ return NEW_REF( HLodClass, (*HModelDef) ); }
 	virtual void							DeleteSelf()										{ delete this; }
 
 	HModelDefClass *				HModelDef;
 
 protected:
-	virtual ~HModelPrototypeClass(void)							{ delete HModelDef; }
+	virtual ~HModelPrototypeClass()							{ delete HModelDef; }
 
 };
 

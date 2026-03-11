@@ -151,15 +151,15 @@ class MilesAudioManager : public AudioManager
 		virtual ~MilesAudioManager();
 
 
-		virtual void nextMusicTrack( void );
-		virtual void prevMusicTrack( void );
-		virtual Bool isMusicPlaying( void ) const;
+		virtual void nextMusicTrack();
+		virtual void prevMusicTrack();
+		virtual Bool isMusicPlaying() const;
 		virtual Bool hasMusicTrackCompleted( const AsciiString& trackName, Int numberOfTimes ) const;
-		virtual AsciiString getMusicTrackName( void ) const;
+		virtual AsciiString getMusicTrackName() const;
 
-		virtual void openDevice( void );
-		virtual void closeDevice( void );
-		virtual void *getDevice( void ) { return m_digitalHandle; }
+		virtual void openDevice();
+		virtual void closeDevice();
+		virtual void *getDevice() { return m_digitalHandle; }
 
 		virtual void stopAudio( AudioAffect which );
 		virtual void pauseAudio( AudioAffect which );
@@ -175,23 +175,23 @@ class MilesAudioManager : public AudioManager
 		virtual void notifyOfAudioCompletion( UnsignedInt audioCompleted, UnsignedInt flags );
 		virtual PlayingAudio *findPlayingAudioFrom( UnsignedInt audioCompleted, UnsignedInt flags );
 
-		virtual UnsignedInt getProviderCount( void ) const;
+		virtual UnsignedInt getProviderCount() const;
 		virtual AsciiString getProviderName( UnsignedInt providerNum ) const;
 		virtual UnsignedInt getProviderIndex( AsciiString providerName ) const;
 		virtual void selectProvider( UnsignedInt providerNdx );
-		virtual void unselectProvider( void );
-		virtual UnsignedInt getSelectedProvider( void ) const;
+		virtual void unselectProvider();
+		virtual UnsignedInt getSelectedProvider() const;
 		virtual void setSpeakerType( UnsignedInt speakerType );
-		virtual UnsignedInt getSpeakerType( void );
+		virtual UnsignedInt getSpeakerType();
 
- 		virtual void *getHandleForBink( void );
- 		virtual void releaseHandleForBink( void );
+ 		virtual void *getHandleForBink();
+ 		virtual void releaseHandleForBink();
 
 		virtual void friend_forcePlayAudioEventRTS(const AudioEventRTS* eventToPlay);
 
-		virtual UnsignedInt getNum2DSamples( void ) const;
-		virtual UnsignedInt getNum3DSamples( void ) const;
-		virtual UnsignedInt getNumStreams( void ) const;
+		virtual UnsignedInt getNum2DSamples() const;
+		virtual UnsignedInt getNum3DSamples() const;
+		virtual UnsignedInt getNumStreams() const;
 
 		virtual Bool doesViolateLimit( AudioEventRTS *event ) const;
 		virtual Bool isPlayingLowerPriority( AudioEventRTS *event ) const;
@@ -205,10 +205,10 @@ class MilesAudioManager : public AudioManager
 		virtual void removePlayingAudio( AsciiString eventName );
 		virtual void removeAllDisabledAudio();
 
-		virtual void processRequestList( void );
-		virtual void processPlayingList( void );
-		virtual void processFadingList( void );
-		virtual void processStoppedList( void );
+		virtual void processRequestList();
+		virtual void processPlayingList();
+		virtual void processFadingList();
+		virtual void processStoppedList();
 
 		Bool shouldProcessRequestThisFrame( AudioRequest *req ) const;
 		void adjustRequest( AudioRequest *req );
@@ -225,12 +225,12 @@ class MilesAudioManager : public AudioManager
 		virtual void closeAnySamplesUsingFile( const void *fileToClose );
 
 
-    virtual Bool has3DSensitiveStreamsPlaying( void ) const;
+    virtual Bool has3DSensitiveStreamsPlaying() const;
 
 
 	protected:
 		// 3-D functions
-		virtual void setDeviceListenerPosition( void );
+		virtual void setDeviceListenerPosition();
 		const Coord3D *getCurrentPositionFromEvent( AudioEventRTS *event );
 		Bool isOnScreen( const Coord3D *pos ) const;
 		Real getEffectiveVolume(AudioEventRTS *event) const;
@@ -244,11 +244,11 @@ class MilesAudioManager : public AudioManager
 		void *playSample3D( AudioEventRTS *event, H3DSAMPLE sample3D );
 
 	protected:
-		void buildProviderList( void );
-		void createListener( void );
-		void initDelayFilter( void );
-		Bool isValidProvider( void );
-		void initSamplePools( void );
+		void buildProviderList();
+		void createListener();
+		void initDelayFilter();
+		Bool isValidProvider();
+		void initSamplePools();
 		void processRequest( AudioRequest *req );
 
 		void playAudioEvent( AudioEventRTS *event );
@@ -258,19 +258,19 @@ class MilesAudioManager : public AudioManager
 		void *loadFileForRead( AudioEventRTS *eventToLoadFrom );
 		void closeFile( void *fileRead );
 
-		PlayingAudio *allocatePlayingAudio( void );
+		PlayingAudio *allocatePlayingAudio();
 		void releaseMilesHandles( PlayingAudio *release );
 		void releasePlayingAudio( PlayingAudio *release );
 
-		void stopAllAudioImmediately( void );
-		void freeAllMilesHandles( void );
+		void stopAllAudioImmediately();
+		void freeAllMilesHandles();
 
 		HSAMPLE getFirst2DSample( AudioEventRTS *event );
 		H3DSAMPLE getFirst3DSample( AudioEventRTS *event );
 
 		void adjustPlayingVolume( PlayingAudio *audio );
 
-		void stopAllSpeech( void );
+		void stopAllSpeech();
 
 	protected:
 		void initFilters( HSAMPLE sample, AudioEventRTS *eventInfo );

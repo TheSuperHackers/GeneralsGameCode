@@ -62,7 +62,7 @@ void DamageModule::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void DamageModule::loadPostProcess( void )
+void DamageModule::loadPostProcess()
 {
 
 	// call base class

@@ -86,18 +86,18 @@ class TextureMapperClass : public W3DMPO, public RefCountClass
 		TextureMapperClass(unsigned int stage=0);
 		TextureMapperClass(const TextureMapperClass & src) : Stage(src.Stage) { }
 
-		virtual ~TextureMapperClass(void) { }
+		virtual ~TextureMapperClass() { }
 
-		virtual int								Mapper_ID(void) const { return MAPPER_ID_UNKNOWN;}
+		virtual int								Mapper_ID() const { return MAPPER_ID_UNKNOWN;}
 
-		virtual TextureMapperClass *		Clone(void) const = 0;
+		virtual TextureMapperClass *		Clone() const = 0;
 
-		virtual bool							Is_Time_Variant(void) { return false; }
+		virtual bool							Is_Time_Variant() { return false; }
 		virtual void							Apply(int uv_array_index) = 0;
-		virtual void							Reset(void) { }
-		virtual bool							Needs_Normals(void) { return false; }
+		virtual void							Reset() { }
+		virtual bool							Needs_Normals() { return false; }
 		void										Set_Stage(int stage) { Stage = stage; }
-		int										Get_Stage(void) const { return Stage; }
+		int										Get_Stage() const { return Stage; }
 
 		// This is called by Apply(). It should not be called externally except
 		// in unusual circumstances.
@@ -119,9 +119,9 @@ public:
 	ScaleTextureMapperClass(const INIClass &ini, const char *section, unsigned int stage);
 	ScaleTextureMapperClass(const ScaleTextureMapperClass & src);
 
-	virtual int	Mapper_ID(void) const { return MAPPER_ID_SCALE;}
+	virtual int	Mapper_ID() const { return MAPPER_ID_SCALE;}
 
-	virtual TextureMapperClass *Clone(void) const { return NEW_REF( ScaleTextureMapperClass, (*this)); }
+	virtual TextureMapperClass *Clone() const { return NEW_REF( ScaleTextureMapperClass, (*this)); }
 
 	virtual void Apply(int uv_array_index);
 	virtual void Calculate_Texture_Matrix(Matrix4x4 &tex_matrix);
@@ -143,13 +143,13 @@ public:
 	LinearOffsetTextureMapperClass(const INIClass &ini, const char *section, unsigned int stage);
 	LinearOffsetTextureMapperClass(const LinearOffsetTextureMapperClass & src);
 
-	virtual int	Mapper_ID(void) const { return MAPPER_ID_LINEAR_OFFSET;}
+	virtual int	Mapper_ID() const { return MAPPER_ID_LINEAR_OFFSET;}
 
-	virtual TextureMapperClass *Clone(void) const { return NEW_REF( LinearOffsetTextureMapperClass, (*this)); }
+	virtual TextureMapperClass *Clone() const { return NEW_REF( LinearOffsetTextureMapperClass, (*this)); }
 
-	virtual bool Is_Time_Variant(void) { return true; }
+	virtual bool Is_Time_Variant() { return true; }
 
-	virtual void Reset(void);
+	virtual void Reset();
 	virtual void Calculate_Texture_Matrix(Matrix4x4 &tex_matrix);
 
 	void Set_Current_UV_Offset(const Vector2 &cur)  {
@@ -185,13 +185,13 @@ public:
 	GridTextureMapperClass(const INIClass &ini, const char *section, unsigned int stage);
 	GridTextureMapperClass(const GridTextureMapperClass & src);
 
-	virtual int	Mapper_ID(void) const { return MAPPER_ID_GRID;}
+	virtual int	Mapper_ID() const { return MAPPER_ID_GRID;}
 
-	virtual TextureMapperClass *Clone(void) const { return NEW_REF( GridTextureMapperClass, (*this)); }
+	virtual TextureMapperClass *Clone() const { return NEW_REF( GridTextureMapperClass, (*this)); }
 
-	virtual bool Is_Time_Variant(void) { return true; }
+	virtual bool Is_Time_Variant() { return true; }
 	virtual void Apply(int uv_array_index);
-	virtual void Reset(void);
+	virtual void Reset();
 	virtual void Calculate_Texture_Matrix(Matrix4x4 &tex_matrix);
 
 	void Set_Frame(unsigned int frame) { CurrentFrame=frame; }
@@ -200,7 +200,7 @@ public:
 protected:
 	// Utility functions
 	void initialize(float fps, unsigned int gridwidth_log2);
-	void update_temporal_state(void);
+	void update_temporal_state();
 	void calculate_uv_offset(float * u_offset, float * v_offset);
 
 	// Constant properties
@@ -229,12 +229,12 @@ public:
 	RotateTextureMapperClass(const INIClass &ini, const char *section, unsigned int stage);
 	RotateTextureMapperClass(const RotateTextureMapperClass & src);
 
-	virtual int	Mapper_ID(void) const { return MAPPER_ID_ROTATE;}
+	virtual int	Mapper_ID() const { return MAPPER_ID_ROTATE;}
 
-	virtual TextureMapperClass *Clone(void) const { return NEW_REF( RotateTextureMapperClass, (*this)); }
+	virtual TextureMapperClass *Clone() const { return NEW_REF( RotateTextureMapperClass, (*this)); }
 
-	virtual bool Is_Time_Variant(void) { return true; }
-	virtual void Reset(void);
+	virtual bool Is_Time_Variant() { return true; }
+	virtual void Reset();
 	virtual void Calculate_Texture_Matrix(Matrix4x4 &tex_matrix);
 
 private:
@@ -256,12 +256,12 @@ public:
 	SineLinearOffsetTextureMapperClass(const INIClass &ini, const char *section, unsigned int stage);
 	SineLinearOffsetTextureMapperClass(const SineLinearOffsetTextureMapperClass & src);
 
-	virtual int	Mapper_ID(void) const { return MAPPER_ID_SINE_LINEAR_OFFSET;}
+	virtual int	Mapper_ID() const { return MAPPER_ID_SINE_LINEAR_OFFSET;}
 
-	virtual TextureMapperClass *Clone(void) const { return NEW_REF( SineLinearOffsetTextureMapperClass, (*this)); }
+	virtual TextureMapperClass *Clone() const { return NEW_REF( SineLinearOffsetTextureMapperClass, (*this)); }
 
-	virtual bool Is_Time_Variant(void) { return true; }
-	virtual void Reset(void);
+	virtual bool Is_Time_Variant() { return true; }
+	virtual void Reset();
 	virtual void Calculate_Texture_Matrix(Matrix4x4 &tex_matrix);
 
 private:
@@ -284,12 +284,12 @@ public:
 	StepLinearOffsetTextureMapperClass(const INIClass &ini, const char *section, unsigned int stage);
 	StepLinearOffsetTextureMapperClass(const StepLinearOffsetTextureMapperClass & src);
 
-	virtual int	Mapper_ID(void) const { return MAPPER_ID_STEP_LINEAR_OFFSET;}
+	virtual int	Mapper_ID() const { return MAPPER_ID_STEP_LINEAR_OFFSET;}
 
-	virtual TextureMapperClass *Clone(void) const { return NEW_REF( StepLinearOffsetTextureMapperClass, (*this)); }
+	virtual TextureMapperClass *Clone() const { return NEW_REF( StepLinearOffsetTextureMapperClass, (*this)); }
 
-	virtual bool Is_Time_Variant(void) { return true; }
-	virtual void Reset(void);
+	virtual bool Is_Time_Variant() { return true; }
+	virtual void Reset();
 	virtual void Calculate_Texture_Matrix(Matrix4x4 &tex_matrix);
 
 private:
@@ -313,12 +313,12 @@ public:
 	ZigZagLinearOffsetTextureMapperClass(const INIClass &ini, const char *section, unsigned int stage);
 	ZigZagLinearOffsetTextureMapperClass(const ZigZagLinearOffsetTextureMapperClass & src);
 
-	virtual int	Mapper_ID(void) const { return MAPPER_ID_ZIGZAG_LINEAR_OFFSET;}
+	virtual int	Mapper_ID() const { return MAPPER_ID_ZIGZAG_LINEAR_OFFSET;}
 
-	virtual TextureMapperClass *Clone(void) const { return NEW_REF( ZigZagLinearOffsetTextureMapperClass, (*this)); }
+	virtual TextureMapperClass *Clone() const { return NEW_REF( ZigZagLinearOffsetTextureMapperClass, (*this)); }
 
-	virtual bool Is_Time_Variant(void) { return true; }
-	virtual void Reset(void);
+	virtual bool Is_Time_Variant() { return true; }
+	virtual void Reset();
 	virtual void Calculate_Texture_Matrix(Matrix4x4 &tex_matrix);
 
 private:
@@ -342,10 +342,10 @@ class ClassicEnvironmentMapperClass : public TextureMapperClass
 public:
 	ClassicEnvironmentMapperClass(unsigned int stage) : TextureMapperClass(stage) { }
 	ClassicEnvironmentMapperClass(const ClassicEnvironmentMapperClass & src) : TextureMapperClass(src) { }
-	virtual int	Mapper_ID(void) const { return MAPPER_ID_CLASSIC_ENVIRONMENT;}
+	virtual int	Mapper_ID() const { return MAPPER_ID_CLASSIC_ENVIRONMENT;}
 	virtual TextureMapperClass* Clone() const { return NEW_REF( ClassicEnvironmentMapperClass, (*this)); }
 	virtual void Apply(int uv_array_index);
-	virtual bool Needs_Normals(void) { return true; }
+	virtual bool Needs_Normals() { return true; }
 	virtual void Calculate_Texture_Matrix(Matrix4x4 &tex_matrix);
 };
 
@@ -355,10 +355,10 @@ class EnvironmentMapperClass : public TextureMapperClass
 public:
 	EnvironmentMapperClass(unsigned int stage) : TextureMapperClass(stage) { }
 	EnvironmentMapperClass(const EnvironmentMapperClass & src) : TextureMapperClass(src) { }
-	virtual int	Mapper_ID(void) const { return MAPPER_ID_ENVIRONMENT;}
+	virtual int	Mapper_ID() const { return MAPPER_ID_ENVIRONMENT;}
 	virtual TextureMapperClass* Clone() const { return NEW_REF( EnvironmentMapperClass, (*this)); }
 	virtual void Apply(int uv_array_index);
-	virtual bool Needs_Normals(void) { return true; }
+	virtual bool Needs_Normals() { return true; }
 	virtual void Calculate_Texture_Matrix(Matrix4x4 &tex_matrix);
 };
 
@@ -369,12 +369,12 @@ public:
 	EdgeMapperClass(unsigned int stage);
 	EdgeMapperClass(const INIClass &ini, const char *section, unsigned int stage);
 	EdgeMapperClass(const EdgeMapperClass & src);
-	virtual int	Mapper_ID(void) const { return MAPPER_ID_EDGE;}
+	virtual int	Mapper_ID() const { return MAPPER_ID_EDGE;}
 	virtual TextureMapperClass* Clone() const { return NEW_REF( EdgeMapperClass, (*this)); }
 	virtual void Apply(int uv_array_index);
-	virtual void Reset(void);
-	virtual bool Is_Time_Variant(void) { return true; }
-	virtual bool Needs_Normals(void) { return true; }
+	virtual void Reset();
+	virtual bool Is_Time_Variant() { return true; }
+	virtual bool Needs_Normals() { return true; }
 	virtual void Calculate_Texture_Matrix(Matrix4x4 &tex_matrix);
 
 protected:
@@ -390,7 +390,7 @@ public:
 	WSEnvMapperClass(AxisType axis, unsigned int stage) : TextureMapperClass(stage), Axis(axis) { }
 	WSEnvMapperClass(const WSEnvMapperClass & src) : TextureMapperClass(src), Axis(src.Axis) { }
 	WSEnvMapperClass(const INIClass &ini, const char *section, unsigned int stage);
-	virtual bool Needs_Normals(void) { return true; }
+	virtual bool Needs_Normals() { return true; }
 	virtual void Calculate_Texture_Matrix(Matrix4x4 &tex_matrix);
 protected:
 	AxisType		Axis;
@@ -403,7 +403,7 @@ public:
 	WSClassicEnvironmentMapperClass(AxisType axis, unsigned int stage) : WSEnvMapperClass(axis, stage) { }
 	WSClassicEnvironmentMapperClass(const WSClassicEnvironmentMapperClass & src) : WSEnvMapperClass(src) { }
 	WSClassicEnvironmentMapperClass(const INIClass &ini, const char *section, unsigned int stage) : WSEnvMapperClass(ini, section, stage) { }
-	virtual int	Mapper_ID(void) const { return MAPPER_ID_WS_CLASSIC_ENVIRONMENT;}
+	virtual int	Mapper_ID() const { return MAPPER_ID_WS_CLASSIC_ENVIRONMENT;}
 	virtual TextureMapperClass* Clone() const { return NEW_REF( WSClassicEnvironmentMapperClass, (*this)); }
 	virtual void Apply(int uv_array_index);
 };
@@ -415,7 +415,7 @@ public:
 	WSEnvironmentMapperClass(AxisType axis, unsigned int stage) : WSEnvMapperClass(axis, stage) { }
 	WSEnvironmentMapperClass(const WSClassicEnvironmentMapperClass & src) : WSEnvMapperClass(src) { }
 	WSEnvironmentMapperClass(const INIClass &ini, const char *section, unsigned int stage) : WSEnvMapperClass(ini, section, stage) { }
-	virtual int	Mapper_ID(void) const { return MAPPER_ID_WS_ENVIRONMENT;}
+	virtual int	Mapper_ID() const { return MAPPER_ID_WS_ENVIRONMENT;}
 	virtual TextureMapperClass* Clone() const { return NEW_REF( WSEnvironmentMapperClass, (*this)); }
 	virtual void Apply(int uv_array_index);
 };
@@ -427,10 +427,10 @@ public:
 	GridClassicEnvironmentMapperClass(float fps, unsigned int gridwidth_log2, unsigned int last_frame, unsigned int offset, unsigned int stage) : GridTextureMapperClass(fps, gridwidth_log2, last_frame, offset, stage) { }
 	GridClassicEnvironmentMapperClass(const INIClass &ini, const char *section, unsigned int stage) : GridTextureMapperClass(ini, section, stage) { }
 	GridClassicEnvironmentMapperClass(const GridTextureMapperClass & src) : GridTextureMapperClass(src) { }
-	virtual int	Mapper_ID(void) const { return MAPPER_ID_GRID_CLASSIC_ENVIRONMENT;}
+	virtual int	Mapper_ID() const { return MAPPER_ID_GRID_CLASSIC_ENVIRONMENT;}
 	virtual TextureMapperClass* Clone() const { return NEW_REF( GridClassicEnvironmentMapperClass, (*this)); }
 	virtual void Apply(int uv_array_index);
-	virtual bool Needs_Normals(void) { return true; }
+	virtual bool Needs_Normals() { return true; }
 	virtual void Calculate_Texture_Matrix(Matrix4x4 &tex_matrix);
 };
 
@@ -441,10 +441,10 @@ public:
 	GridEnvironmentMapperClass(float fps, unsigned int gridwidth_log2, unsigned int last_frame, unsigned int offset, unsigned int stage) : GridTextureMapperClass(fps, gridwidth_log2, last_frame, offset, stage) { }
 	GridEnvironmentMapperClass(const INIClass &ini, const char *section, unsigned int stage) : GridTextureMapperClass(ini, section, stage) { }
 	GridEnvironmentMapperClass(const GridTextureMapperClass & src) : GridTextureMapperClass(src) { }
-	virtual int	Mapper_ID(void) const { return MAPPER_ID_GRID_ENVIRONMENT;}
+	virtual int	Mapper_ID() const { return MAPPER_ID_GRID_ENVIRONMENT;}
 	virtual TextureMapperClass* Clone() const { return NEW_REF( GridEnvironmentMapperClass, (*this)); }
 	virtual void Apply(int uv_array_index);
-	virtual bool Needs_Normals(void) { return true; }
+	virtual bool Needs_Normals() { return true; }
 	virtual void Calculate_Texture_Matrix(Matrix4x4 &tex_matrix);
 };
 
@@ -462,7 +462,7 @@ public:
 		const Vector2 &scale, unsigned int stage) : LinearOffsetTextureMapperClass(offset_per_sec, start_offset, clamp_fix, scale, stage) { }
 	ScreenMapperClass(const INIClass &ini, const char *section, unsigned int stage) : LinearOffsetTextureMapperClass(ini, section, stage) { }
 	ScreenMapperClass(const ScreenMapperClass & src) : LinearOffsetTextureMapperClass(src) { }
-	virtual int	Mapper_ID(void) const { return MAPPER_ID_SCREEN;}
+	virtual int	Mapper_ID() const { return MAPPER_ID_SCREEN;}
 	virtual TextureMapperClass* Clone() const { return NEW_REF( ScreenMapperClass, (*this)); }
 	virtual void Apply(int uv_array_index);
 	virtual void Calculate_Texture_Matrix(Matrix4x4 &tex_matrix);
@@ -480,16 +480,16 @@ public:
 	RandomTextureMapperClass(const INIClass &ini, const char *section, unsigned int stage);
 	RandomTextureMapperClass(const RandomTextureMapperClass & src);
 
-	virtual int	Mapper_ID(void) const { return MAPPER_ID_RANDOM;}
+	virtual int	Mapper_ID() const { return MAPPER_ID_RANDOM;}
 
-	virtual TextureMapperClass *Clone(void) const { return NEW_REF( RandomTextureMapperClass, (*this)); }
+	virtual TextureMapperClass *Clone() const { return NEW_REF( RandomTextureMapperClass, (*this)); }
 
-	virtual bool Is_Time_Variant(void) { return true; }
-	virtual void Reset(void);
+	virtual bool Is_Time_Variant() { return true; }
+	virtual void Reset();
 	virtual void Calculate_Texture_Matrix(Matrix4x4 &tex_matrix);
 
 protected:
-	void randomize(void);
+	void randomize();
 	float FPMS;									// frames per millisecond
 	float Remainder;							// remaining time
 	float CurrentAngle;
@@ -512,9 +512,9 @@ public:
 	BumpEnvTextureMapperClass(INIClass &ini, const char *section, unsigned int stage);
 	BumpEnvTextureMapperClass(const BumpEnvTextureMapperClass & src);
 
-	virtual int	Mapper_ID(void) const { return MAPPER_ID_BUMPENV;}
+	virtual int	Mapper_ID() const { return MAPPER_ID_BUMPENV;}
 
-	virtual TextureMapperClass *Clone(void) const { return NEW_REF( BumpEnvTextureMapperClass, (*this)); }
+	virtual TextureMapperClass *Clone() const { return NEW_REF( BumpEnvTextureMapperClass, (*this)); }
 
 	virtual void Apply(int uv_array_index);
 
@@ -534,7 +534,7 @@ public:
 	GridWSEnvMapperClass(const GridWSEnvMapperClass & src);
 	GridWSEnvMapperClass(const INIClass &ini, const char *section, unsigned int stage);
 	virtual void Calculate_Texture_Matrix(Matrix4x4 &tex_matrix);
-	virtual bool Needs_Normals(void) { return true; }
+	virtual bool Needs_Normals() { return true; }
 protected:
 	AxisType		Axis;
 };
@@ -545,7 +545,7 @@ public:
 	GridWSClassicEnvironmentMapperClass(float fps, unsigned int gridwidth_log2, unsigned int last_frame, unsigned int offset, AxisType axis, unsigned int stage);
 	GridWSClassicEnvironmentMapperClass(const INIClass &ini, const char *section, unsigned int stage);
 	GridWSClassicEnvironmentMapperClass(const GridWSEnvMapperClass & src);
-	virtual int	Mapper_ID(void) const { return MAPPER_ID_GRID_WS_CLASSIC_ENVIRONMENT;}
+	virtual int	Mapper_ID() const { return MAPPER_ID_GRID_WS_CLASSIC_ENVIRONMENT;}
 	virtual TextureMapperClass* Clone() const { return NEW_REF( GridWSClassicEnvironmentMapperClass, (*this)); }
 	virtual void Apply(int uv_array_index);
 };
@@ -556,7 +556,7 @@ public:
 	GridWSEnvironmentMapperClass(float fps, unsigned int gridwidth_log2, unsigned int last_frame, unsigned int offset, AxisType axis, unsigned int stage);
 	GridWSEnvironmentMapperClass(const INIClass &ini, const char *section, unsigned int stage);
 	GridWSEnvironmentMapperClass(const GridWSEnvMapperClass & src);
-	virtual int	Mapper_ID(void) const { return MAPPER_ID_GRID_WS_ENVIRONMENT;}
+	virtual int	Mapper_ID() const { return MAPPER_ID_GRID_WS_ENVIRONMENT;}
 	virtual TextureMapperClass* Clone() const { return NEW_REF( GridWSEnvironmentMapperClass, (*this)); }
 	virtual void Apply(int uv_array_index);
 };

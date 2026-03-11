@@ -90,8 +90,8 @@ inline void CLEAR_UPGRADE_MASK( UpgradeMaskType& m )
 
 inline void SET_ALL_UPGRADE_MASK_BITS( UpgradeMaskType& m )
 {
-	m.clear( );
-	m.flip( );
+	m.clear();
+	m.flip();
 }
 
 inline void FLIP_UPGRADE_MASK( UpgradeMaskType& m )
@@ -115,24 +115,24 @@ public:
 	// virtual destructor prototypes provided by memory pool object
 
 	/// get the upgrade template for this instance
-	const UpgradeTemplate *getTemplate( void ) const { return m_template; }
+	const UpgradeTemplate *getTemplate() const { return m_template; }
 
 	// status access
-	UpgradeStatusType getStatus( void ) const { return m_status; }						///< get status
+	UpgradeStatusType getStatus() const { return m_status; }						///< get status
 	void setStatus( UpgradeStatusType status ) { m_status = status; }		///< set the status
 
 	// friend access methods
 	void friend_setNext( Upgrade *next ) { m_next = next; }
 	void friend_setPrev( Upgrade *prev ) { m_prev = prev; }
-	Upgrade *friend_getNext( void ) { return m_next; }
-	Upgrade *friend_getPrev( void ) { return m_prev; }
+	Upgrade *friend_getNext() { return m_next; }
+	Upgrade *friend_getPrev() { return m_prev; }
 
 protected:
 
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
+	virtual void loadPostProcess();
 
 	const UpgradeTemplate *m_template;	///< template this upgrade instance is based on
 	UpgradeStatusType m_status;							///< status of upgrade
@@ -162,7 +162,7 @@ class UpgradeTemplate : public MemoryPoolObject
 
 public:
 
-	UpgradeTemplate( void );
+	UpgradeTemplate();
 	// virtual destructor defined by memory pool object
 
 	Int calcTimeToBuild( Player *player ) const;			///< time in logic frames it will take this player to "build" this UpgradeTemplate
@@ -170,12 +170,12 @@ public:
 
 	// field access
 	void setUpgradeName( const AsciiString& name ) { m_name = name; }
-	const AsciiString& getUpgradeName( void ) const { return m_name; }
+	const AsciiString& getUpgradeName() const { return m_name; }
 	void setUpgradeNameKey( NameKeyType key ) { m_nameKey = key; }
-	NameKeyType getUpgradeNameKey( void ) const { return m_nameKey; }
-	const AsciiString& getDisplayNameLabel( void ) const { return m_displayNameLabel; }
+	NameKeyType getUpgradeNameKey() const { return m_nameKey; }
+	const AsciiString& getDisplayNameLabel() const { return m_displayNameLabel; }
 	const UpgradeMaskType& getUpgradeMask() const { return m_upgradeMask; }
-	UpgradeType getUpgradeType( void ) const { return m_type; }
+	UpgradeType getUpgradeType() const { return m_type; }
 	const AudioEventRTS* getResearchCompleteSound() const { return &m_researchSound; }
 	const AudioEventRTS* getUnitSpecificSound() const { return &m_unitSpecificSound; }
 
@@ -189,10 +189,10 @@ public:
 	// friend access methods for the UpgradeCenter ONLY
 	void friend_setNext( UpgradeTemplate *next ) { m_next = next; }
 	void friend_setPrev( UpgradeTemplate *prev ) { m_prev = prev; }
-	UpgradeTemplate *friend_getNext( void ) { return m_next; }
-	UpgradeTemplate *friend_getPrev( void ) { return m_prev; }
-	const UpgradeTemplate *friend_getNext( void ) const { return m_next; }
-	const UpgradeTemplate *friend_getPrev( void ) const { return m_prev; }
+	UpgradeTemplate *friend_getNext() { return m_next; }
+	UpgradeTemplate *friend_getPrev() { return m_prev; }
+	const UpgradeTemplate *friend_getNext() const { return m_next; }
+	const UpgradeTemplate *friend_getPrev() const { return m_prev; }
 	void friend_setUpgradeMask( UpgradeMaskType mask ) { m_upgradeMask = mask; }
 	void friend_makeVeterancyUpgrade(VeterancyLevel v);
 
@@ -227,14 +227,14 @@ class UpgradeCenter : public SubsystemInterface
 
 public:
 
-	UpgradeCenter( void );
-	virtual ~UpgradeCenter( void );
+	UpgradeCenter();
+	virtual ~UpgradeCenter();
 
-	void init( void );												///< subsystem interface
-	void reset( void );												///< subsystem interface
-	void update( void ) { }										///< subsystem interface
+	void init();												///< subsystem interface
+	void reset();												///< subsystem interface
+	void update() { }										///< subsystem interface
 
-	UpgradeTemplate *firstUpgradeTemplate( void ); ///< return the first upgrade template
+	UpgradeTemplate *firstUpgradeTemplate(); ///< return the first upgrade template
 	const UpgradeTemplate *findUpgradeByKey( NameKeyType key ) const; ///< find upgrade by name key
 	const UpgradeTemplate *findUpgrade( const AsciiString& name ) const; ///< find and return upgrade by name
 	const UpgradeTemplate *findUpgrade( const char* name ) const; ///< find and return upgrade by name
@@ -244,7 +244,7 @@ public:
 
 	/// does this player have all the necessary things to make this upgrade
 	Bool canAffordUpgrade( Player *player, const UpgradeTemplate *upgradeTemplate, Bool displayReason = FALSE ) const;
-	std::vector<AsciiString> getUpgradeNames( void ) const;	// For WorldBuilder only!!!
+	std::vector<AsciiString> getUpgradeNames() const;	// For WorldBuilder only!!!
 
 	static void parseUpgradeDefinition( INI *ini );
 

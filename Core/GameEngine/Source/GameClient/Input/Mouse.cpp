@@ -34,7 +34,7 @@
 #include "Common/GameEngine.h"
 #include "Common/GlobalData.h"
 #include "Common/INI.h"
-#include "Common/UserPreferences.h"
+#include "Common/OptionPreferences.h"
 
 #include "GameClient/Display.h"
 #include "GameClient/DisplayStringManager.h"
@@ -149,7 +149,7 @@ void Mouse::moveMouse( Int x, Int y, Int relOrAbs )
 //-------------------------------------------------------------------------------------------------
 /** Get the current information for the mouse from the device */
 //-------------------------------------------------------------------------------------------------
-void Mouse::updateMouseData( )
+void Mouse::updateMouseData()
 {
 	static Bool busy = FALSE;
 	Int index = 0;
@@ -354,7 +354,7 @@ void Mouse::processMouseEvent( Int index )
 //-------------------------------------------------------------------------------------------------
 /** Check for mouse drag */
 //-------------------------------------------------------------------------------------------------
-void Mouse::checkForDrag( void )
+void Mouse::checkForDrag()
 {
 
 	if( m_currMouse.leftState &&
@@ -410,7 +410,7 @@ Bool Mouse::isClick(const ICoord2D *anchor, const ICoord2D *dest, UnsignedInt pr
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-CursorInfo::CursorInfo( void )
+CursorInfo::CursorInfo()
 {
 
 	cursorName.clear();
@@ -434,7 +434,7 @@ CursorInfo::CursorInfo( void )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-Mouse::Mouse( void )
+Mouse::Mouse()
 {
 	static_assert(ARRAY_SIZE(CursorCaptureBlockReasonNames) == CursorCaptureBlockReason_Count, "Incorrect array size");
 	static_assert(ARRAY_SIZE(RedrawModeName) == RM_MAX, "Incorrect array size");
@@ -529,7 +529,7 @@ Mouse::Mouse( void )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-Mouse::~Mouse( void )
+Mouse::~Mouse()
 {
 	if(m_tooltipDisplayString)
 		TheDisplayStringManager->freeDisplayString(m_tooltipDisplayString);
@@ -543,7 +543,7 @@ Mouse::~Mouse( void )
 
 /**Had to move this out of main init() because I need this data to properly initialize
 the Win32 version of the mouse (by preloading resources before D3D device is created).*/
-void Mouse::parseIni(void)
+void Mouse::parseIni()
 {
 	INI ini;
 	ini.loadFileDirectory( "Data\\INI\\Mouse", INI_LOAD_OVERWRITE, nullptr );
@@ -552,7 +552,7 @@ void Mouse::parseIni(void)
 //-------------------------------------------------------------------------------------------------
 /** Initialize the mouse */
 //-------------------------------------------------------------------------------------------------
-void Mouse::init( void )
+void Mouse::init()
 {
 	if (TheGlobalData && TheGlobalData->m_winCursors)
 		m_currentRedrawMode = RM_WINDOWS;
@@ -587,7 +587,7 @@ void Mouse::init( void )
 //-------------------------------------------------------------------------------------------------
 /** Tell mouse system display resolution changed. */
 //-------------------------------------------------------------------------------------------------
-void Mouse::onResolutionChanged( void )
+void Mouse::onResolutionChanged()
 {
 	if(m_tooltipDisplayString)
 		TheDisplayStringManager->freeDisplayString(m_tooltipDisplayString);
@@ -636,7 +636,7 @@ void Mouse::onGamePaused(Bool paused)
 //-------------------------------------------------------------------------------------------------
 /** Reset mouse system */
 //-------------------------------------------------------------------------------------------------
-void Mouse::reset( void )
+void Mouse::reset()
 {
 
 	///@ todo Write Mouse::reset() if there needs to be anything here
@@ -652,11 +652,11 @@ void Mouse::reset( void )
 //-------------------------------------------------------------------------------------------------
 /** Update the states of the mouse position and buttons */
 //-------------------------------------------------------------------------------------------------
-void Mouse::update( void )
+void Mouse::update()
 {
 
 	// update the mouse data
-	updateMouseData( );
+	updateMouseData();
 
 }
 
@@ -666,7 +666,7 @@ void Mouse::update( void )
 	* NOTE that the click messages replace up messages in the mouse, so we
 	* are going to propagate those click messages in addition to up messages */
 //-------------------------------------------------------------------------------------------------
-void Mouse::createStreamMessages( void )
+void Mouse::createStreamMessages()
 {
 
 	// sanity
@@ -953,7 +953,7 @@ void Mouse::setPosition( Int x, Int y )
 	* the operating system.  For system specific limits and windows etc,
 	* just override this function in the device implementation of the mouse */
 //-------------------------------------------------------------------------------------------------
-void Mouse::setMouseLimits( void )
+void Mouse::setMouseLimits()
 {
 
 	m_minX = 0;
@@ -1120,14 +1120,14 @@ void Mouse::onCursorCaptured( Bool captured )
 //-------------------------------------------------------------------------------------------------
 /** Draw the mouse */
 //-------------------------------------------------------------------------------------------------
-void Mouse::draw( void )
+void Mouse::draw()
 {
 
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void Mouse::resetTooltipDelay( void )
+void Mouse::resetTooltipDelay()
 {
 	m_stillTime = timeGetTime();
 	m_displayTooltip = FALSE;
@@ -1136,7 +1136,7 @@ void Mouse::resetTooltipDelay( void )
 //-------------------------------------------------------------------------------------------------
 /** Draw the mouse tooltip if one is set */
 //-------------------------------------------------------------------------------------------------
-void Mouse::drawTooltip( void )
+void Mouse::drawTooltip()
 {
 	if (TheScriptEngine->getFade()!=ScriptEngine::FADE_NONE) {
 		return;
@@ -1201,7 +1201,7 @@ void Mouse::drawTooltip( void )
 // ------------------------------------------------------------------------------------------------
 /** Draw the cursor text at the mouse position.  Note that this is *NOT* the tooltip text */
 // ------------------------------------------------------------------------------------------------
-void Mouse::drawCursorText( void )
+void Mouse::drawCursorText()
 {
 
 	// sanity

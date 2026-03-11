@@ -76,8 +76,8 @@ public:
 	Directory(const AsciiString& dirPath);
 	~Directory() {}
 
-	FileInfoSet* getFiles( void );
-	FileInfoSet* getSubdirs( void );
+	FileInfoSet* getFiles();
+	FileInfoSet* getSubdirs();
 
 protected:
 	AsciiString m_dirPath;

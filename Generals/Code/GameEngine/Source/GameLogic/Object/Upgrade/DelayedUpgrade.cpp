@@ -44,13 +44,13 @@ DelayedUpgrade::DelayedUpgrade( Thing *thing, const ModuleData* moduleData ) : U
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-DelayedUpgrade::~DelayedUpgrade( void )
+DelayedUpgrade::~DelayedUpgrade()
 {
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void DelayedUpgrade::upgradeImplementation( )
+void DelayedUpgrade::upgradeImplementation()
 {
 	UnsignedInt delay = getDelayedUpgradeModuleData()->m_delayTime;
 	DelayedUpgradeUpdateInterface *upgradeUpdate = nullptr;
@@ -105,7 +105,7 @@ void DelayedUpgrade::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void DelayedUpgrade::loadPostProcess( void )
+void DelayedUpgrade::loadPostProcess()
 {
 
 	// extend base class

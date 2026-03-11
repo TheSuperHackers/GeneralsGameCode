@@ -31,7 +31,7 @@ extern "C" {
 
 /* Information Functions */
 
-CODEXABOUT *GCALL REF_about(void);
+CODEXABOUT *GCALL REF_about();
 bool        GCALL REF_is(const void *compresseddata);
 
 /* Decode Functions */

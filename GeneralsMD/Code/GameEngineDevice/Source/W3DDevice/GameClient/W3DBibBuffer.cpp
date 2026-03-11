@@ -83,7 +83,7 @@ static ShaderClass detailAlphaShader(SC_ALPHA_DETAIL);
 //=============================================================================
 /** Loads the bibs into the vertex buffer for drawing. */
 //=============================================================================
-void W3DBibBuffer::loadBibsInVertexAndIndexBuffers(void)
+void W3DBibBuffer::loadBibsInVertexAndIndexBuffers()
 {
 	if (!m_indexBib || !m_vertexBib || !m_initialized) {
 		return;
@@ -205,7 +205,7 @@ void W3DBibBuffer::loadBibsInVertexAndIndexBuffers(void)
 //=============================================================================
 /** Destructor. Releases w3d assets. */
 //=============================================================================
-W3DBibBuffer::~W3DBibBuffer(void)
+W3DBibBuffer::~W3DBibBuffer()
 {
 	freeBibBuffers();
 	REF_PTR_RELEASE(m_bibTexture);
@@ -218,7 +218,7 @@ W3DBibBuffer::~W3DBibBuffer(void)
 /** Constructor. Sets m_initialized to true if it finds the w3d models it needs
 for the bibs. */
 //=============================================================================
-W3DBibBuffer::W3DBibBuffer(void)
+W3DBibBuffer::W3DBibBuffer()
 {
 	m_initialized = false;
 	m_vertexBib = nullptr;
@@ -246,7 +246,7 @@ W3DBibBuffer::W3DBibBuffer(void)
 //=============================================================================
 /** Frees the index and vertex buffers. */
 //=============================================================================
-void W3DBibBuffer::freeBibBuffers(void)
+void W3DBibBuffer::freeBibBuffers()
 {
 	REF_PTR_RELEASE(m_vertexBib);
 	REF_PTR_RELEASE(m_indexBib);
@@ -257,7 +257,7 @@ void W3DBibBuffer::freeBibBuffers(void)
 //=============================================================================
 /** Allocates the index and vertex buffers. */
 //=============================================================================
-void W3DBibBuffer::allocateBibBuffers(void)
+void W3DBibBuffer::allocateBibBuffers()
 {
 	m_vertexBib=NEW_REF(DX8VertexBufferClass,(DX8_FVF_XYZDUV1,m_vertexBibSize+4,DX8VertexBufferClass::USAGE_DYNAMIC));
 	m_indexBib=NEW_REF(DX8IndexBufferClass,(m_indexBibSize+4, DX8IndexBufferClass::USAGE_DYNAMIC));
@@ -270,7 +270,7 @@ void W3DBibBuffer::allocateBibBuffers(void)
 //=============================================================================
 /** Removes all bibs. */
 //=============================================================================
-void W3DBibBuffer::clearAllBibs(void)
+void W3DBibBuffer::clearAllBibs()
 {
 	m_numBibs=0;
 	m_anythingChanged = true;
@@ -289,7 +289,7 @@ void W3DBibBuffer::clearAllBibs(void)
 //=============================================================================
 /** Clears highlighting flag.   */
 //=============================================================================
-void W3DBibBuffer::removeHighlighting(void)
+void W3DBibBuffer::removeHighlighting()
 {
 	Int bibIndex;
 	for (bibIndex=0; bibIndex<m_numBibs; bibIndex++) {

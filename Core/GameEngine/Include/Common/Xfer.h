@@ -116,20 +116,20 @@ class Xfer
 
 public:
 
-	Xfer( void );
-	virtual ~Xfer( void );
+	Xfer();
+	virtual ~Xfer();
 
-	virtual XferMode getXferMode( void ) { return m_xferMode; }
-	AsciiString getIdentifier( void ) { return m_identifier; }
+	virtual XferMode getXferMode() { return m_xferMode; }
+	AsciiString getIdentifier() { return m_identifier; }
 
 	// xfer management
 	virtual void setOptions( UnsignedInt options ) { BitSet( m_options, options ); }
 	virtual void clearOptions( UnsignedInt options ) { BitClear( m_options, options ); }
-	virtual UnsignedInt getOptions( void ) { return m_options; }
+	virtual UnsignedInt getOptions() { return m_options; }
 	virtual void open( AsciiString identifier ) = 0;		///< xfer open event
-	virtual void close( void ) = 0;											///< xfer close event
-	virtual Int beginBlock( void ) = 0;									///< xfer begin block event
-	virtual void endBlock( void ) = 0;									///< xfer end block event
+	virtual void close() = 0;											///< xfer close event
+	virtual Int beginBlock() = 0;									///< xfer begin block event
+	virtual void endBlock() = 0;									///< xfer end block event
 	virtual void skip( Int dataSize ) = 0;							///< xfer skip data
 
 	virtual void xferSnapshot( Snapshot *snapshot ) = 0;		///< entry point for xfering a snapshot

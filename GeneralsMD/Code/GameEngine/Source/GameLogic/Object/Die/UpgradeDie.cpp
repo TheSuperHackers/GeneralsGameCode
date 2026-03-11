@@ -48,7 +48,7 @@ UpgradeDie::UpgradeDie( Thing *thing, const ModuleData* moduleData ) : DieModule
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UpgradeDie::~UpgradeDie( void )
+UpgradeDie::~UpgradeDie()
 {
 }
 
@@ -76,7 +76,7 @@ void UpgradeDie::onDie( const DamageInfo *damageInfo )
 			}
 			else
 			{
-				DEBUG_ASSERTCRASH( 0, ("Object %s just died, but is trying to free upgrade %s in it's producer %s%s",
+				DEBUG_CRASH( ("Object %s just died, but is trying to free upgrade %s in it's producer %s%s",
 					getObject()->getTemplate()->getName().str(),
 					getUpgradeDieModuleData()->m_upgradeName.str(),
 					producer->getTemplate()->getName().str(),
@@ -118,7 +118,7 @@ void UpgradeDie::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void UpgradeDie::loadPostProcess( void )
+void UpgradeDie::loadPostProcess()
 {
 
 	// extend base class

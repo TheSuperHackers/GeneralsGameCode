@@ -39,12 +39,12 @@ class W3DFunctionLexicon : public FunctionLexicon
 
 public:
 
-	W3DFunctionLexicon( void );
-	virtual ~W3DFunctionLexicon( void );
+	W3DFunctionLexicon();
+	virtual ~W3DFunctionLexicon();
 
-	virtual void init( void );
-	virtual void reset( void );
-	virtual void update( void );
+	virtual void init();
+	virtual void reset();
+	virtual void update();
 
 protected:
 

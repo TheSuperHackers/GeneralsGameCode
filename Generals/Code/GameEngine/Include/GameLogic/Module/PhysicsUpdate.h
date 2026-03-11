@@ -142,7 +142,7 @@ public:
 
 	Bool isMotive() const;
 
-	PhysicsTurningType getTurning(void) const { return m_turning; }		///< 0 = not turning, -1 = turn negative, 1 = turn positive.
+	PhysicsTurningType getTurning() const { return m_turning; }		///< 0 = not turning, -1 = turn negative, 1 = turn positive.
 	void setTurning(PhysicsTurningType turning) { m_turning = turning; }
 
 	/** This is a force scrub for velocity when ai objects are colliding. */

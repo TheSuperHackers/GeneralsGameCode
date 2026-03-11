@@ -69,14 +69,14 @@ class DirectInputKeyboard : public Keyboard
 
 public:
 
-	DirectInputKeyboard( void );
-	virtual ~DirectInputKeyboard( void );
+	DirectInputKeyboard();
+	virtual ~DirectInputKeyboard();
 
 	// extend methods from the base class
-	virtual void init( void );		///< initialize the keyboard, extending init functionality
-	virtual void reset( void );		///< Reset the keyboard system
-	virtual void update( void );  ///< update call, extending update functionality
-	virtual Bool getCapsState( void );		///< get state of caps lock key, return TRUE if down
+	virtual void init();		///< initialize the keyboard, extending init functionality
+	virtual void reset();		///< Reset the keyboard system
+	virtual void update();  ///< update call, extending update functionality
+	virtual Bool getCapsState();		///< get state of caps lock key, return TRUE if down
 
 protected:
 
@@ -86,8 +86,8 @@ protected:
 	//-----------------------------------------------------------------------------------------------
 
 	// new methods to this derived class
-	void openKeyboard( void );  ///< create direct input keyboard
-	void closeKeyboard( void );  ///< release direct input keyboard
+	void openKeyboard();  ///< create direct input keyboard
+	void closeKeyboard();  ///< release direct input keyboard
 
 	// direct input data members
 	LPDIRECTINPUT8 m_pDirectInput;  ///< pointer to direct input interface

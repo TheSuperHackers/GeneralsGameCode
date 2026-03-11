@@ -173,7 +173,7 @@ Animatable3DObjClass::Animatable3DObjClass(const Animatable3DObjClass & src) :
  * HISTORY:                                                                                    *
  *   12/8/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-Animatable3DObjClass::~Animatable3DObjClass(void)
+Animatable3DObjClass::~Animatable3DObjClass()
 {
 	Release();
 
@@ -235,7 +235,7 @@ Animatable3DObjClass & Animatable3DObjClass::operator = (const Animatable3DObjCl
  * HISTORY:                                                                                    *
  *   12/8/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-void Animatable3DObjClass::Release( void )
+void Animatable3DObjClass::Release()
 {
 	switch (CurMotionMode) {
 
@@ -376,7 +376,7 @@ void Animatable3DObjClass::Set_Position(const Vector3 &v)
  * HISTORY:                                                                                    *
  *   3/2/99     GTH : Created.                                                                 *
  *=============================================================================================*/
-int Animatable3DObjClass::Get_Num_Bones(void)
+int Animatable3DObjClass::Get_Num_Bones()
 {
 	if (HTree) {
 		return HTree->Num_Pivots();
@@ -443,7 +443,7 @@ int Animatable3DObjClass::Get_Bone_Index(const char * bonename)
  * HISTORY:                                                                                    *
  *   12/8/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-void Animatable3DObjClass::Set_Animation(void)
+void Animatable3DObjClass::Set_Animation()
 {
 	Release();
 	CurMotionMode = BASE_POSE;
@@ -601,7 +601,7 @@ void Animatable3DObjClass::Set_Animation
  * HISTORY:                                                                                    *
  *   12/8/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-HAnimClass *	Animatable3DObjClass::Peek_Animation( void )
+HAnimClass *	Animatable3DObjClass::Peek_Animation()
 {
 	if ( CurMotionMode == SINGLE_ANIM ) {
 		return ModeAnim.Motion;
@@ -771,7 +771,7 @@ void Animatable3DObjClass::Control_Bone(int bindex,const Matrix3D & objtm,bool w
  * HISTORY:                                                                                    *
  *   12/8/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-void Animatable3DObjClass::Update_Sub_Object_Transforms(void)
+void Animatable3DObjClass::Update_Sub_Object_Transforms()
 {
 	/*
 	** The RenderObj implementation will cause our 'container'
@@ -1044,7 +1044,7 @@ float Animatable3DObjClass::Compute_Current_Frame(float *newDirection) const
  * HISTORY:                                                                                    *
  *   10/26/99    BMG : Created.                                                                 *
  *=============================================================================================*/
-void Animatable3DObjClass::Single_Anim_Progress (void)
+void Animatable3DObjClass::Single_Anim_Progress ()
 {
 	//
 	//	Update the current frame (only works in "SINGLE_ANIM" mode!)
@@ -1072,7 +1072,7 @@ void Animatable3DObjClass::Single_Anim_Progress (void)
  * HISTORY:                                                                                    *
  *   4/13/99    BMG : Created.                                                                 *
  *=============================================================================================*/
-bool	Animatable3DObjClass::Is_Animation_Complete( void ) const
+bool	Animatable3DObjClass::Is_Animation_Complete() const
 {
 	if (CurMotionMode == SINGLE_ANIM) {
 

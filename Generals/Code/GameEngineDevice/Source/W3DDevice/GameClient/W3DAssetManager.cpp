@@ -99,13 +99,13 @@ class W3DPrototypeClass : public MemoryPoolObject, public PrototypeClass
 public:
 	W3DPrototypeClass(RenderObjClass * proto, const AsciiString& name);
 
-	virtual const char*					Get_Name(void) const			{ return Name.str(); }
-	virtual int									Get_Class_ID(void) const	{ return Proto->Class_ID(); }
-	virtual RenderObjClass *		Create(void);
+	virtual const char*					Get_Name() const			{ return Name.str(); }
+	virtual int									Get_Class_ID() const	{ return Proto->Class_ID(); }
+	virtual RenderObjClass *		Create();
 	virtual void								DeleteSelf()							{	deleteInstance(this); }
 
 protected:
-	//virtual ~W3DPrototypeClass(void);
+	//virtual ~W3DPrototypeClass();
 
 private:
 	RenderObjClass *					Proto;
@@ -122,7 +122,7 @@ W3DPrototypeClass::W3DPrototypeClass(RenderObjClass * proto, const AsciiString& 
 }
 
 //---------------------------------------------------------------------
-W3DPrototypeClass::~W3DPrototypeClass(void)
+W3DPrototypeClass::~W3DPrototypeClass()
 {
 	if (Proto) {
 		Proto->Release_Ref();
@@ -131,7 +131,7 @@ W3DPrototypeClass::~W3DPrototypeClass(void)
 }
 
 //---------------------------------------------------------------------
-RenderObjClass * W3DPrototypeClass::Create(void)
+RenderObjClass * W3DPrototypeClass::Create()
 {
 	return (RenderObjClass *)( SET_REF_OWNER( Proto->Clone() ) );
 }
@@ -141,12 +141,12 @@ RenderObjClass * W3DPrototypeClass::Create(void)
 //---------------------------------------------------------------------
 
 //---------------------------------------------------------------------
-W3DAssetManager::W3DAssetManager(void)
+W3DAssetManager::W3DAssetManager()
 {
 }
 
 //---------------------------------------------------------------------
-W3DAssetManager::~W3DAssetManager(void)
+W3DAssetManager::~W3DAssetManager()
 {
 }
 
@@ -1117,7 +1117,7 @@ void W3DAssetManager::Make_Mesh_Unique(RenderObjClass *robj, Bool geometry, Bool
 //---------------------------------------------------------------------
 /**Report prototypes that have all assets with reference count
 equal to 1*/
-void W3DAssetManager::Report_Used_Prototypes(void)
+void W3DAssetManager::Report_Used_Prototypes()
 {
 	int count = Prototypes.Count();
 	while (count-- > 0) {
@@ -1133,7 +1133,7 @@ void W3DAssetManager::Report_Used_Prototypes(void)
 //---------------------------------------------------------------------
 /**Report any assets with reference counts > 1.  This means they are still
 referenced by something besides the asset manager.*/
-void W3DAssetManager::Report_Used_Assets(void)
+void W3DAssetManager::Report_Used_Assets()
 {
 	Report_Used_Prototypes();
 
@@ -1147,7 +1147,7 @@ void W3DAssetManager::Report_Used_Assets(void)
 }
 
 //---------------------------------------------------------------------
-void W3DAssetManager::Report_Used_FontChars(void)
+void W3DAssetManager::Report_Used_FontChars()
 {
 	Int count=FontCharsList.Count();
 
@@ -1164,7 +1164,7 @@ void W3DAssetManager::Report_Used_FontChars(void)
 
 //---------------------------------------------------------------------
 /**Report all textures with refcounts >= 1*/
-void W3DAssetManager::Report_Used_Textures(void)
+void W3DAssetManager::Report_Used_Textures()
 {
 	/*
 	** for each texture in the list, get it, check it's refcount, and and release ref it if the
@@ -1202,7 +1202,7 @@ void W3DAssetManager::Report_Used_Textures(void)
 
 //---------------------------------------------------------------------
 /**Report all used fonts*/
-void W3DAssetManager::Report_Used_Font3DDatas( void )
+void W3DAssetManager::Report_Used_Font3DDatas()
 {
 	/*
 	** for each font data in the list, get it, check it's refcount, and and release ref it if the

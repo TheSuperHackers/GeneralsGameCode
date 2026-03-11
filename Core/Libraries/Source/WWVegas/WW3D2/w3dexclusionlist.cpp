@@ -50,7 +50,7 @@ W3DExclusionListClass::W3DExclusionListClass(const DynamicVectorClass<StringClas
 	}
 }
 
-W3DExclusionListClass::~W3DExclusionListClass(void)
+W3DExclusionListClass::~W3DExclusionListClass()
 {
 	NameHash.Remove_All();
 }

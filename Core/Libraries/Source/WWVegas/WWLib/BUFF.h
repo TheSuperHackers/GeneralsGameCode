@@ -56,16 +56,16 @@ class Buffer {
 		Buffer(void const * ptr, long size=0);
 		Buffer(long size);
 		Buffer(Buffer const & buffer);
-		~Buffer(void);
+		~Buffer();
 
 		Buffer & operator = (Buffer const & buffer);
-		operator void * (void) const {return(BufferPtr);}
-		operator char * (void) const {return((char *)BufferPtr);}
+		operator void * () const {return(BufferPtr);}
+		operator char * () const {return((char *)BufferPtr);}
 
-		void Reset(void);
-		void * Get_Buffer(void) const {return(BufferPtr);}
-		long Get_Size(void) const {return(Size);}
-		bool Is_Valid(void) const {return(BufferPtr != 0);}
+		void Reset();
+		void * Get_Buffer() const {return(BufferPtr);}
+		long Get_Size() const {return(Size);}
+		bool Is_Valid() const {return(BufferPtr != 0);}
 
 	protected:
 

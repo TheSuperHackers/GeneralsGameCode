@@ -37,14 +37,14 @@ class WaterTracksObj
 
 public:
 
-	WaterTracksObj(void);
-	~WaterTracksObj(void);
+	WaterTracksObj();
+	~WaterTracksObj();
 
-	virtual void					Render(void) {};	///<draw this object
+	virtual void					Render() {};	///<draw this object
 	virtual void					Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const;	///<bounding sphere of this object
     virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & aabox) const;		///<bounding box of this object
 
-	Int freeWaterTracksResources(void);	///<free W3D assets used for this track
+	Int freeWaterTracksResources();	///<free W3D assets used for this track
 	void init( Real width, Real length, const Vector2 &start, const Vector2 &end, const Char *texturename, Int waveTimeOffset);	///<allocate W3D resources and set size
 	void init( Real width, const Vector2 &start, const Vector2 &end, const Char *texturename);	///<allocate W3D resources and set size
 	Int	update(Int msElapsed);	///< update animation state
@@ -104,23 +104,23 @@ class WaterTracksRenderSystem
 
 public:
 
-	WaterTracksRenderSystem( void );
-	~WaterTracksRenderSystem( void );
+	WaterTracksRenderSystem();
+	~WaterTracksRenderSystem();
 
-	void ReleaseResources(void);	///< Release all dx8 resources so the device can be reset.
-	void ReAcquireResources(void);  ///< Reacquire all resources after device reset.
+	void ReleaseResources();	///< Release all dx8 resources so the device can be reset.
+	void ReAcquireResources();  ///< Reacquire all resources after device reset.
 
 	void flush (RenderInfoClass & rinfo);	///<draw all tracks that were requested for rendering.
-	void update(void);	///<update the state of all edges (fade alpha, remove old, etc.)
+	void update();	///<update the state of all edges (fade alpha, remove old, etc.)
 
-	void init(void);	///< pre-allocate track objects
-	void shutdown( void );		///< release all pre-allocated track objects, called by destructor
-	void reset(void);			///< free all map dependent items.
+	void init();	///< pre-allocate track objects
+	void shutdown();		///< release all pre-allocated track objects, called by destructor
+	void reset();			///< free all map dependent items.
 
 	WaterTracksObj *bindTrack(waveType type);	///<track object to be controlled by owner
 	void unbindTrack( WaterTracksObj *mod );	///<releases control of track object
-	void saveTracks(void);									///<save all used tracks to disk
-	void loadTracks(void);									///<load tracks from disk
+	void saveTracks();									///<save all used tracks to disk
+	void loadTracks();									///<load tracks from disk
 	WaterTracksObj *findTrack(Vector2 &start, Vector2 &end, waveType type);
 
 protected:

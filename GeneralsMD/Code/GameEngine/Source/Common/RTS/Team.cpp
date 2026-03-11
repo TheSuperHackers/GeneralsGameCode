@@ -59,14 +59,14 @@ TeamFactory *TheTeamFactory = nullptr;
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-TeamRelationMap::TeamRelationMap( void )
+TeamRelationMap::TeamRelationMap()
 {
 
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-TeamRelationMap::~TeamRelationMap( void )
+TeamRelationMap::~TeamRelationMap()
 {
 
 	// maek sure the data is clear
@@ -145,7 +145,7 @@ void TeamRelationMap::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void TeamRelationMap::loadPostProcess( void )
+void TeamRelationMap::loadPostProcess()
 {
 
 }
@@ -182,13 +182,13 @@ TeamFactory::~TeamFactory()
 }
 
 // ------------------------------------------------------------------------
-void TeamFactory::init( void )
+void TeamFactory::init()
 {
 	clear();
 }
 
 // ------------------------------------------------------------------------
-void TeamFactory::reset( void )
+void TeamFactory::reset()
 {
 	m_uniqueTeamPrototypeID = TEAM_PROTOTYPE_ID_INVALID;
 	m_uniqueTeamID = TEAM_ID_INVALID;
@@ -196,7 +196,7 @@ void TeamFactory::reset( void )
 }
 
 // ------------------------------------------------------------------------
-void TeamFactory::update( void )
+void TeamFactory::update()
 {
 }
 
@@ -550,7 +550,7 @@ fclose( fp );
 // ------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------
-void TeamFactory::loadPostProcess( void )
+void TeamFactory::loadPostProcess()
 {
 
 	// set the next unique team and prototype ID to just over the highest one in use
@@ -789,7 +789,7 @@ void TeamTemplateInfo::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------
-void TeamTemplateInfo::loadPostProcess( void )
+void TeamTemplateInfo::loadPostProcess()
 {
 
 }
@@ -940,20 +940,20 @@ Script *TeamPrototype::getGenericScript(Int scriptToRetrieve)
 
 // ------------------------------------------------------------------------
 // Make a team more likely to be selected by the ai for building due to success.
-void TeamPrototype::increaseAIPriorityForSuccess(void) const
+void TeamPrototype::increaseAIPriorityForSuccess() const
 {
 	m_teamTemplate.m_productionPriority += m_teamTemplate.m_productionPrioritySuccessIncrease;
 }
 
 // ------------------------------------------------------------------------
 // Make a team more likely to be selected by the ai for building due to success.
-void TeamPrototype::decreaseAIPriorityForFailure(void) const
+void TeamPrototype::decreaseAIPriorityForFailure() const
 {
 	m_teamTemplate.m_productionPriority -= m_teamTemplate.m_productionPriorityFailureDecrease;
 }
 
 // ------------------------------------------------------------------------
-Int TeamPrototype::countBuildings(void)
+Int TeamPrototype::countBuildings()
 {
 	int retVal = 0;
 	for (DLINK_ITERATOR<Team> iter = iterate_TeamInstanceList(); !iter.done(); iter.advance()) {
@@ -973,7 +973,7 @@ Int TeamPrototype::countObjects(KindOfMaskType setMask, KindOfMaskType clearMask
 }
 
 // ------------------------------------------------------------------------
-void TeamPrototype::healAllObjects(void)
+void TeamPrototype::healAllObjects()
 {
 	for (DLINK_ITERATOR<Team> iter = iterate_TeamInstanceList(); !iter.done(); iter.advance())
 	{
@@ -994,7 +994,7 @@ void TeamPrototype::iterateObjects( ObjectIterateFunc func, void *userData )
 /**
  * Count the number of teams that have been instanced by this prototype
  */
-Int TeamPrototype::countTeamInstances( void )
+Int TeamPrototype::countTeamInstances()
 {
 	Int count = 0;
 	for (DLINK_ITERATOR<Team> iter = iterate_TeamInstanceList(); !iter.done(); iter.advance())
@@ -1045,7 +1045,7 @@ Bool TeamPrototype::hasAnyObjects() const
 }
 
 // ------------------------------------------------------------------------
-void TeamPrototype::updateState(void)
+void TeamPrototype::updateState()
 {
 	for (DLINK_ITERATOR<Team> iter = iterate_TeamInstanceList(); !iter.done(); iter.advance())
 	{
@@ -1118,7 +1118,7 @@ void TeamPrototype::moveTeamTo(Coord3D destination)
 }
 
 // ------------------------------------------------------------------------
-Bool TeamPrototype::evaluateProductionCondition(void)
+Bool TeamPrototype::evaluateProductionCondition()
 {
 	if (m_productionConditionAlwaysFalse) {
 		// Set if we don't have a script.
@@ -1288,7 +1288,7 @@ void TeamPrototype::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------
-void TeamPrototype::loadPostProcess( void )
+void TeamPrototype::loadPostProcess()
 {
 
 }
@@ -1513,7 +1513,7 @@ void Team::setTeamTargetObject(const Object *target)
 }
 
 // ------------------------------------------------------------------------
-Object *Team::getTeamTargetObject(void)
+Object *Team::getTeamTargetObject()
 {
 	if (m_commonAttackTarget == INVALID_ID) {
 		return nullptr;
@@ -1639,7 +1639,7 @@ void Team::countObjectsByThingTemplate(Int numTmplates, const ThingTemplate* con
 }
 
 // ------------------------------------------------------------------------
-Int Team::countBuildings(void)
+Int Team::countBuildings()
 {
 	int retVal = 0;
 	for (DLINK_ITERATOR<Object> iter = iterate_TeamMemberList(); !iter.done(); iter.advance()) {
@@ -1671,7 +1671,7 @@ Int Team::countObjects(KindOfMaskType setMask, KindOfMaskType clearMask)
 }
 
 // ------------------------------------------------------------------------
-void Team::healAllObjects(void)
+void Team::healAllObjects()
 {
 	for (DLINK_ITERATOR<Object> iter = iterate_TeamMemberList(); !iter.done(); iter.advance())
 	{
@@ -1802,7 +1802,7 @@ Bool Team::hasAnyObjects() const
 
 // ------------------------------------------------------------------------
 /** Clears m_enteredExited, checks & clears m_created. */
-void Team::updateState(void)
+void Team::updateState()
 {
 	m_enteredOrExited = false;
 	if (!m_active) {
@@ -1918,7 +1918,7 @@ void Team::updateState(void)
 }
 
 // ------------------------------------------------------------------------
-void Team::notifyTeamOfObjectDeath( void )
+void Team::notifyTeamOfObjectDeath()
 {
 	const TeamTemplateInfo *pInfo = m_proto->getTemplateInfo();
 	if (!pInfo) {
@@ -2225,7 +2225,7 @@ Bool Team::someInsideSomeOutside(PolygonTrigger *pTrigger, UnsignedInt whichToCo
 	return anyConsidered && anyInside && anyOutside;
 }
 
-const Coord3D* Team::getEstimateTeamPosition(void) const
+const Coord3D* Team::getEstimateTeamPosition() const
 {
 	// this doesn't actually calculate the team position, but rather estimates it by
 	// returning the position of the first member of the team
@@ -2398,7 +2398,7 @@ Object *Team::tryToRecruit(const ThingTemplate *tTemplate, const Coord3D *teamHo
 }
 
 // ------------------------------------------------------------------------
-void Team::evacuateTeam(void)
+void Team::evacuateTeam()
 {
 	std::list<Object *> objectsToProcess;
 
@@ -2433,7 +2433,7 @@ void Team::evacuateTeam(void)
 }
 
 // ------------------------------------------------------------------------
-void Team::killTeam(void)
+void Team::killTeam()
 {
 	std::list<Object *> objectsToProcess;
 
@@ -2527,7 +2527,7 @@ Bool Team::hasAnyBuildFacility() const
 
 // ------------------------------------------------------------------------
 //DECLARE_PERF_TIMER(updateGenericScripts)
-void Team::updateGenericScripts(void)
+void Team::updateGenericScripts()
 {
 	//USE_PERF_TIMER(updateGenericScripts)
 	for (Int i = 0; i < MAX_GENERIC_SCRIPTS; ++i) {
@@ -2700,7 +2700,7 @@ void Team::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void Team::loadPostProcess( void )
+void Team::loadPostProcess()
 {
 
 	//

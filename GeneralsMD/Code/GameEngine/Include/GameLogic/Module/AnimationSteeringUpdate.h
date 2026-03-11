@@ -41,7 +41,7 @@ class AnimationSteeringUpdateModuleData : public UpdateModuleData
 
 public:
 
-	AnimationSteeringUpdateModuleData( void );
+	AnimationSteeringUpdateModuleData();
 
 	static void buildFieldParse(MultiIniFieldParse& p)
 	{
@@ -73,7 +73,7 @@ public:
 	AnimationSteeringUpdate( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype defined by MemoryPoolObject
 
-	virtual UpdateSleepTime update( void ); ///< Here's the actual work of Upgrading
+	virtual UpdateSleepTime update(); ///< Here's the actual work of Upgrading
 
 protected:
 

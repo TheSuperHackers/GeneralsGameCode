@@ -83,15 +83,15 @@
 class W3DShaderInterface
 {
 public:
-	Int getNumPasses(void) {return m_numPasses;};	///<return number of passes needed for this shader
+	Int getNumPasses() {return m_numPasses;};	///<return number of passes needed for this shader
 	virtual Int set(Int pass) {return TRUE;};		///<setup shader for the specified rendering pass.
 	 ///do any custom resetting necessary to bring W3D in sync.
-	virtual void reset(void) {
+	virtual void reset() {
 		ShaderClass::Invalidate();
 		DX8Wrapper::_Get_D3D_Device8()->SetTexture(0, nullptr);
 		DX8Wrapper::_Get_D3D_Device8()->SetTexture(1, nullptr);};
-	virtual Int init(void) = 0;			///<perform any one time initialization and validation
-	virtual Int shutdown(void) { return TRUE;};			///<release resources used by shader
+	virtual Int init() = 0;			///<perform any one time initialization and validation
+	virtual Int shutdown() { return TRUE;};			///<release resources used by shader
 protected:
 	Int m_numPasses;						///<number of passes to complete shader
 };
@@ -120,13 +120,13 @@ IDirect3DSurface8 *W3DShaderManager::m_oldDepthSurface=nullptr;	///<previous dep
 class ScreenDefaultFilter : public W3DFilterInterface
 {
 public:
-	virtual Int init(void);			///<perform any one time initialization and validation
+	virtual Int init();			///<perform any one time initialization and validation
 	virtual Bool preRender(Bool &skipRender, CustomScenePassModes &scenePassMode); ///< Set up at start of render.  Only applies to screen filter shaders.
 	virtual Bool postRender(FilterModes mode, Coord2D &scrollDelta,Bool &doExtraRender); ///< Called after render.  Only applies to screen filter shaders.
 	virtual Bool setup(FilterModes mode){return true;} ///< Called when the filter is started, one time before the first prerender.
 protected:
 	virtual Int set(FilterModes mode);		///<setup shader for the specified rendering pass.
-	virtual void reset(void);		///<do any custom resetting necessary to bring W3D in sync.
+	virtual void reset();		///<do any custom resetting necessary to bring W3D in sync.
 };
 
 ScreenDefaultFilter screenDefaultFilter;
@@ -140,7 +140,7 @@ W3DFilterInterface *ScreenDefaultFilterList[]=
 	nullptr
 };
 
-Int ScreenDefaultFilter::init(void)
+Int ScreenDefaultFilter::init()
 {
 	if (!W3DShaderManager::canRenderToTexture()) {
 		// Have to be able to render to texture.
@@ -248,7 +248,7 @@ Int ScreenDefaultFilter::set(FilterModes mode)
 	return true;
 }
 
-void ScreenDefaultFilter::reset(void)
+void ScreenDefaultFilter::reset()
 {
 	DX8Wrapper::_Get_D3D_Device8()->SetTexture(0,nullptr);	//previously rendered frame inside this texture
 	DX8Wrapper::Invalidate_Cached_Render_States();
@@ -273,7 +273,7 @@ W3DFilterInterface *ScreenBWFilterList[]=
 	nullptr
 };
 
-Int ScreenBWFilter::init(void)
+Int ScreenBWFilter::init()
 {
 	Int res;
 	HRESULT hr;
@@ -466,14 +466,14 @@ Int ScreenBWFilter::set(FilterModes mode)
 	return false;
 }
 
-void ScreenBWFilter::reset(void)
+void ScreenBWFilter::reset()
 {
 	DX8Wrapper::_Get_D3D_Device8()->SetTexture(0,nullptr);	//previously rendered frame inside this texture
 	DX8Wrapper::_Get_D3D_Device8()->SetPixelShader(0);	//turn off pixel shader
 	DX8Wrapper::Invalidate_Cached_Render_States();
 }
 
-Int ScreenBWFilter::shutdown(void)
+Int ScreenBWFilter::shutdown()
 {
 	if (m_dwBWPixelShader)
 		DX8Wrapper::_Get_D3D_Device8()->DeletePixelShader(m_dwBWPixelShader);
@@ -484,7 +484,7 @@ Int ScreenBWFilter::shutdown(void)
 }
 
 /**Alternate version of the above filter which does not require pixel shaders - good for older cards*/
-Int ScreenBWFilterDOT3::init(void)
+Int ScreenBWFilterDOT3::init()
 {
 	Int res;
 
@@ -650,13 +650,13 @@ Int ScreenBWFilterDOT3::set(FilterModes mode)
 	return false;
 }
 
-void ScreenBWFilterDOT3::reset(void)
+void ScreenBWFilterDOT3::reset()
 {
 	DX8Wrapper::_Get_D3D_Device8()->SetTexture(0,nullptr);	//previously rendered frame inside this texture
 	DX8Wrapper::Invalidate_Cached_Render_States();
 }
 
-Int ScreenBWFilterDOT3::shutdown(void)
+Int ScreenBWFilterDOT3::shutdown()
 {
 	return TRUE;
 }
@@ -681,7 +681,7 @@ W3DFilterInterface *ScreenCrossFadeFilterList[]=
 	nullptr
 };
 
-Int ScreenCrossFadeFilter::init(void)
+Int ScreenCrossFadeFilter::init()
 {
 	if (!TheDisplay)
 		return FALSE;	//effect is useless without a view so no point initializing for the WB, etc.
@@ -705,7 +705,7 @@ Int ScreenCrossFadeFilter::init(void)
 	return TRUE;
 }
 
-Bool ScreenCrossFadeFilter::updateFadeLevel(void)
+Bool ScreenCrossFadeFilter::updateFadeLevel()
 {
 	if (m_fadeDirection > 0)
 	{	//turning effect on
@@ -887,7 +887,7 @@ Int ScreenCrossFadeFilter::set(FilterModes mode)
 	return false;
 }
 
-void ScreenCrossFadeFilter::reset(void)
+void ScreenCrossFadeFilter::reset()
 {
 	DX8Wrapper::Set_DX8_Texture_Stage_State( 1, D3DTSS_COLOROP,   D3DTOP_DISABLE );
 	DX8Wrapper::Set_DX8_Texture_Stage_State( 1, D3DTSS_ALPHAOP,   D3DTOP_DISABLE );
@@ -895,7 +895,7 @@ void ScreenCrossFadeFilter::reset(void)
 	DX8Wrapper::Invalidate_Cached_Render_States();
 }
 
-Int ScreenCrossFadeFilter::shutdown(void)
+Int ScreenCrossFadeFilter::shutdown()
 {
 	REF_PTR_RELEASE(m_fadePatternTexture);
 
@@ -924,7 +924,7 @@ W3DFilterInterface *ScreenMotionBlurFilterList[]=
 	nullptr
 };
 
-Int ScreenMotionBlurFilter::init(void)
+Int ScreenMotionBlurFilter::init()
 {
 	if (!W3DShaderManager::canRenderToTexture()) {
 		// Have to be able to render to texture.
@@ -1159,13 +1159,13 @@ Int ScreenMotionBlurFilter::set(FilterModes mode)
 	return TRUE;
 }
 
-void ScreenMotionBlurFilter::reset(void)
+void ScreenMotionBlurFilter::reset()
 {
 	DX8Wrapper::_Get_D3D_Device8()->SetTexture(0,nullptr);	//previously rendered frame inside this texture
 	DX8Wrapper::Invalidate_Cached_Render_States();
 }
 
-Int ScreenMotionBlurFilter::shutdown(void)
+Int ScreenMotionBlurFilter::shutdown()
 {
 	return TRUE;
 }
@@ -1178,8 +1178,8 @@ Int ScreenMotionBlurFilter::shutdown(void)
 class ShroudTextureShader : public W3DShaderInterface
 {
 	virtual Int set(Int pass);		///<setup shader for the specified rendering pass.
-	virtual Int init(void);			///<perform any one time initialization and validation
-	virtual void reset(void);		///<do any custom resetting necessary to bring W3D in sync.
+	virtual Int init();			///<perform any one time initialization and validation
+	virtual void reset();		///<do any custom resetting necessary to bring W3D in sync.
 	Int m_stageOfSet;
 } shroudTextureShader;
 
@@ -1192,7 +1192,7 @@ W3DShaderInterface *ShroudShaderList[]=
 
 //#define SHROUD_STRETCH_FACTOR	(1.0f/MAP_XY_FACTOR)	//1 texel per heightmap cell width
 
-Int ShroudTextureShader::init(void)
+Int ShroudTextureShader::init()
 {
 	W3DShaders[W3DShaderManager::ST_SHROUD_TEXTURE]=&shroudTextureShader;
 	W3DShadersPassCount[W3DShaderManager::ST_SHROUD_TEXTURE]=1;
@@ -1266,7 +1266,7 @@ Int ShroudTextureShader::set(Int stage)
 	return TRUE;
 }
 
-void ShroudTextureShader::reset(void)
+void ShroudTextureShader::reset()
 {
 	DX8Wrapper::Set_Texture(m_stageOfSet,nullptr);
 	DX8Wrapper::Set_DX8_Render_State(D3DRS_ZFUNC,D3DCMP_LESSEQUAL);
@@ -1278,8 +1278,8 @@ void ShroudTextureShader::reset(void)
 class FlatShroudTextureShader : public W3DShaderInterface
 {
 	virtual Int set(Int pass);		///<setup shader for the specified rendering pass.
-	virtual Int init(void);			///<perform any one time initialization and validation
-	virtual void reset(void);		///<do any custom resetting necessary to bring W3D in sync.
+	virtual Int init();			///<perform any one time initialization and validation
+	virtual void reset();		///<do any custom resetting necessary to bring W3D in sync.
 	Int m_stageOfSet;
 } flatShroudTextureShader;
 
@@ -1292,7 +1292,7 @@ W3DShaderInterface *FlatShroudShaderList[]=
 
 //#define SHROUD_STRETCH_FACTOR	(1.0f/MAP_XY_FACTOR)	//1 texel per heightmap cell width
 
-Int FlatShroudTextureShader::init(void)
+Int FlatShroudTextureShader::init()
 {
 	W3DShaders[W3DShaderManager::ST_FLAT_SHROUD_TEXTURE]=&flatShroudTextureShader;
 	W3DShadersPassCount[W3DShaderManager::ST_FLAT_SHROUD_TEXTURE]=1;
@@ -1358,7 +1358,7 @@ Int FlatShroudTextureShader::set(Int stage)
 	return TRUE;
 }
 
-void FlatShroudTextureShader::reset(void)
+void FlatShroudTextureShader::reset()
 {
 	if (m_stageOfSet < MAX_TEXTURE_STAGES)
 		DX8Wrapper::Set_Texture(m_stageOfSet,nullptr);
@@ -1371,8 +1371,8 @@ void FlatShroudTextureShader::reset(void)
 class MaskTextureShader : public W3DShaderInterface
 {
 	virtual Int set(Int pass);		///<setup shader for the specified rendering pass.
-	virtual Int init(void);			///<perform any one time initialization and validation
-	virtual void reset(void);		///<do any custom resetting necessary to bring W3D in sync.
+	virtual Int init();			///<perform any one time initialization and validation
+	virtual void reset();		///<do any custom resetting necessary to bring W3D in sync.
 } maskTextureShader;
 
 ///List of different shroud shader implementations in order of preference
@@ -1382,7 +1382,7 @@ W3DShaderInterface *MaskShaderList[]=
 	nullptr
 };
 
-Int MaskTextureShader::init(void)
+Int MaskTextureShader::init()
 {
 	W3DShaders[W3DShaderManager::ST_MASK_TEXTURE]=&maskTextureShader;
 	W3DShadersPassCount[W3DShaderManager::ST_MASK_TEXTURE]=1;
@@ -1466,7 +1466,7 @@ Int MaskTextureShader::set(Int pass)
 	return TRUE;
 }
 
-void MaskTextureShader::reset(void)
+void MaskTextureShader::reset()
 {
 	DX8Wrapper::Set_Texture(0,nullptr);
 	DX8Wrapper::Set_DX8_Texture_Stage_State(0,  D3DTSS_TEXCOORDINDEX, 0);
@@ -1487,8 +1487,8 @@ public:
 	float m_yOffset;
 
 	virtual Int set(Int pass);		///<setup shader for the specified rendering pass.
-	virtual Int init(void);			///<perform any one time initialization and validation
-	virtual void reset(void);		///<do any custom resetting necessary to bring W3D in sync.
+	virtual Int init();			///<perform any one time initialization and validation
+	virtual void reset();		///<do any custom resetting necessary to bring W3D in sync.
 
 	void updateCloud();
 	void updateNoise1 (D3DXMATRIX *destMatrix,D3DXMATRIX *curViewInverse, Bool doUpdate=true);	///<generate the uv coordinates for Noise1 (i.e clouds)
@@ -1500,8 +1500,8 @@ class FlatTerrainShader2Stage : public W3DShaderInterface
 {
 public:
 	virtual Int set(Int pass);		///<setup shader for the specified rendering pass.
-	virtual Int init(void);			///<perform any one time initialization and validation
-	virtual void reset(void);		///<do any custom resetting necessary to bring W3D in sync.
+	virtual Int init();			///<perform any one time initialization and validation
+	virtual void reset();		///<do any custom resetting necessary to bring W3D in sync.
 } flatTerrainShader2Stage;
 
 ///regular terrain shader that should work on all multi-texture video cards (slowest version)
@@ -1513,17 +1513,17 @@ public:
 	DWORD					m_dwBaseNoise2PixelShader;	///<handle to terrain/double noise D3D pixel shader
 	DWORD					m_dwBase0PixelShader;	///<handle to terrain only pixel shader
 	virtual Int set(Int pass);		///<setup shader for the specified rendering pass.
-	virtual Int init(void);			///<perform any one time initialization and validation
-	virtual void reset(void);		///<do any custom resetting necessary to bring W3D in sync.
-	virtual Int shutdown(void);			///<release resources used by shader
+	virtual Int init();			///<perform any one time initialization and validation
+	virtual void reset();		///<do any custom resetting necessary to bring W3D in sync.
+	virtual Int shutdown();			///<release resources used by shader
 } flatTerrainShaderPixelShader;
 
 ///8 stage terrain shader which only works on certain Nvidia cards.
 class TerrainShader8Stage : public W3DShaderInterface
 {
 	virtual Int set(Int pass);		///<setup shader for the specified rendering pass.
-	virtual void reset(void);		///<do any custom resetting necessary to bring W3D in sync.
-	virtual Int init(void);			///<perform any one time initialization and validation
+	virtual void reset();		///<do any custom resetting necessary to bring W3D in sync.
+	virtual Int init();			///<perform any one time initialization and validation
 } terrainShader8Stage;
 
 //Offsets into constant register pool used by vertex shader
@@ -1537,9 +1537,9 @@ class TerrainShaderPixelShader : public W3DShaderInterface
 	DWORD					m_dwBaseNoise2PixelShader;	///<handle to terrain/double noise D3D pixel shader
 
 	virtual Int set(Int pass);		///<setup shader for the specified rendering pass.
-	virtual void reset(void);		///<do any custom resetting necessary to bring W3D in sync.
-	virtual Int init(void);			///<perform any one time initialization and validation
-	virtual Int shutdown(void);			///<release resources used by shader
+	virtual void reset();		///<do any custom resetting necessary to bring W3D in sync.
+	virtual Int init();			///<perform any one time initialization and validation
+	virtual Int shutdown();			///<release resources used by shader
 } terrainShaderPixelShader;
 
 ///List of different terrain shader implementations in order of preference
@@ -1559,7 +1559,7 @@ W3DShaderInterface *FlatTerrainShaderList[]=
 	nullptr
 };
 
-Int TerrainShader2Stage::init( void )
+Int TerrainShader2Stage::init()
 {
 	//initialize settings for uv animated clouds
 	m_xSlidePerSecond = -0.02f;
@@ -1581,7 +1581,7 @@ Int TerrainShader2Stage::init( void )
 	return TRUE;
 }
 
-void TerrainShader2Stage::reset(void)
+void TerrainShader2Stage::reset()
 {
 	ShaderClass::Invalidate();
 
@@ -1776,7 +1776,7 @@ Int TerrainShader2Stage::set(Int pass)
 	return TRUE;
 }
 
-Int TerrainShader8Stage::init( void )
+Int TerrainShader8Stage::init()
 {
 	ChipsetType res;
 
@@ -1914,7 +1914,7 @@ Int TerrainShader8Stage::set(Int pass)
 	return TRUE;
 }
 
-void TerrainShader8Stage::reset(void)
+void TerrainShader8Stage::reset()
 {
 	DX8Wrapper::Set_DX8_Texture_Stage_State( 2, D3DTSS_COLOROP, D3DTOP_DISABLE);
 	DX8Wrapper::Set_DX8_Texture_Stage_State( 2, D3DTSS_ALPHAOP, D3DTOP_DISABLE);
@@ -1928,7 +1928,7 @@ void TerrainShader8Stage::reset(void)
 	DX8Wrapper::Invalidate_Cached_Render_States();
 }
 
-Int TerrainShaderPixelShader::shutdown(void)
+Int TerrainShaderPixelShader::shutdown()
 {
 	if (m_dwBasePixelShader)
 		DX8Wrapper::_Get_D3D_Device8()->DeletePixelShader(m_dwBasePixelShader);
@@ -1946,7 +1946,7 @@ Int TerrainShaderPixelShader::shutdown(void)
 	return TRUE;
 }
 
-Int TerrainShaderPixelShader::init( void )
+Int TerrainShaderPixelShader::init()
 {
 	Int res;
 #ifdef DISABLE_PIXEL_SHADERS
@@ -2104,7 +2104,7 @@ Int TerrainShaderPixelShader::set(Int pass)
 	return TRUE;
 }
 
-void TerrainShaderPixelShader::reset(void)
+void TerrainShaderPixelShader::reset()
 {
 	DX8Wrapper::_Get_D3D_Device8()->SetTexture(2,nullptr);	//release reference to any texture
 	DX8Wrapper::_Get_D3D_Device8()->SetTexture(3,nullptr);	//release reference to any texture
@@ -2134,8 +2134,8 @@ void TerrainShaderPixelShader::reset(void)
 class CloudTextureShader : public W3DShaderInterface
 {
 	virtual Int set(Int stage);		///<setup shader for the specified rendering pass.
-	virtual Int init(void);			///<perform any one time initialization and validation
-	virtual void reset(void);		///<do any custom resetting necessary to bring W3D in sync.
+	virtual Int init();			///<perform any one time initialization and validation
+	virtual void reset();		///<do any custom resetting necessary to bring W3D in sync.
 	Int m_stageOfSet;
 } cloudTextureShader;
 
@@ -2146,7 +2146,7 @@ W3DShaderInterface *CloudShaderList[]=
 	nullptr
 };
 
-Int CloudTextureShader::init(void)
+Int CloudTextureShader::init()
 {
 	W3DShaders[W3DShaderManager::ST_CLOUD_TEXTURE]=&cloudTextureShader;
 	W3DShadersPassCount[W3DShaderManager::ST_CLOUD_TEXTURE]=1;
@@ -2189,7 +2189,7 @@ Int CloudTextureShader::set(Int stage)
 	return TRUE;
 }
 
-void CloudTextureShader::reset(void)
+void CloudTextureShader::reset()
 {
 	//Free reference to texture
 	DX8Wrapper::_Get_D3D_Device8()->SetTexture(m_stageOfSet, nullptr);
@@ -2209,17 +2209,17 @@ class RoadShaderPixelShader : public W3DShaderInterface
 	DWORD					m_dwBaseNoise2PixelShader;	///<handle to road/double noise D3D pixel shader
 
 	virtual Int set(Int pass);		///<setup shader for the specified rendering pass.
-	virtual void reset(void);		///<do any custom resetting necessary to bring W3D in sync.
-	virtual Int init(void);			///<perform any one time initialization and validation
-	virtual Int shutdown(void);			///<release resources used by shader
+	virtual void reset();		///<do any custom resetting necessary to bring W3D in sync.
+	virtual Int init();			///<perform any one time initialization and validation
+	virtual Int shutdown();			///<release resources used by shader
 } roadShaderPixelShader;
 
 class RoadShader2Stage : public W3DShaderInterface
 {	friend class RoadShaderPixelShader;	//pixel shader version uses some of the same features.
 
 	virtual Int set(Int pass);		///<setup shader for the specified rendering pass.
-	virtual Int init(void);			///<perform any one time initialization and validation
-	virtual void reset(void);
+	virtual Int init();			///<perform any one time initialization and validation
+	virtual void reset();
 } roadShader2Stage;
 
 ///List of different terrain shader implementations in order of preference
@@ -2230,7 +2230,7 @@ W3DShaderInterface *RoadShaderList[]=
 	nullptr
 };
 
-Int RoadShaderPixelShader::shutdown(void)
+Int RoadShaderPixelShader::shutdown()
 {
 	if (m_dwBaseNoise2PixelShader)
 		DX8Wrapper::_Get_D3D_Device8()->DeletePixelShader(m_dwBaseNoise2PixelShader);
@@ -2240,7 +2240,7 @@ Int RoadShaderPixelShader::shutdown(void)
 	return TRUE;
 }
 
-Int RoadShaderPixelShader::init( void )
+Int RoadShaderPixelShader::init()
 {
 	Int res;
 
@@ -2342,7 +2342,7 @@ Int RoadShaderPixelShader::set(Int pass)
 	return TRUE;
 }
 
-void RoadShaderPixelShader::reset(void)
+void RoadShaderPixelShader::reset()
 {
 
 	DX8Wrapper::_Get_D3D_Device8()->SetPixelShader(0);	//turn off pixel shader
@@ -2363,7 +2363,7 @@ void RoadShaderPixelShader::reset(void)
 	DX8Wrapper::Invalidate_Cached_Render_States();
 }
 
-Int RoadShader2Stage::init( void )
+Int RoadShader2Stage::init()
 {
 	//no special device validation needed - anything in our min spec should handle this.
 	W3DShaders[W3DShaderManager::ST_ROAD_BASE]=&roadShader2Stage;
@@ -2521,7 +2521,7 @@ Int RoadShader2Stage::set(Int pass)
 	return TRUE;
 }
 
-void RoadShader2Stage::reset(void)
+void RoadShader2Stage::reset()
 {
 	ShaderClass::Invalidate();
 
@@ -2562,7 +2562,7 @@ W3DFilterInterface **MasterFilterList[]=
 // W3DShaderManager::W3DShaderManager =========================================
 /** Constructor - just clears some variables */
 //=============================================================================
-W3DShaderManager::W3DShaderManager(void)
+W3DShaderManager::W3DShaderManager()
 {
 	m_currentShader = ST_INVALID;
 	m_currentFilter = FT_NULL_FILTER;
@@ -2589,7 +2589,7 @@ W3DShaderManager::W3DShaderManager(void)
 // W3DShaderManager::init =======================================================
 /** Walk through all shaders and find versions suitable for current hardware */
 //=============================================================================
-void W3DShaderManager::init(void)
+void W3DShaderManager::init()
 {
 	int i,j;
 
@@ -2663,7 +2663,7 @@ void W3DShaderManager::init(void)
 // W3DShaderManager::shutdown =======================================================
 /** Any shaders which allocate resources will be allowed to free them */
 //=============================================================================
-void W3DShaderManager::shutdown(void)
+void W3DShaderManager::shutdown()
 {
 	if (m_newRenderSurface) m_newRenderSurface->Release();
 	if (m_renderTexture) m_renderTexture->Release();
@@ -2825,7 +2825,7 @@ void W3DShaderManager::drawViewport(Int color)
 /** Starts rendering to a texture.
  */
 //=============================================================================
-void W3DShaderManager::startRenderToTexture(void)
+void W3DShaderManager::startRenderToTexture()
 {
 	DEBUG_ASSERTCRASH(!m_renderingToTexture, ("Already rendering to texture - cannot nest calls."));
 
@@ -2862,7 +2862,7 @@ void W3DShaderManager::startRenderToTexture(void)
 /** Ends rendering to a texture.
  */
 //=============================================================================
-IDirect3DTexture8 *W3DShaderManager::endRenderToTexture(void)
+IDirect3DTexture8 *W3DShaderManager::endRenderToTexture()
 {
 	DEBUG_ASSERTCRASH(m_renderingToTexture, ("Not rendering to texture."));
 	if (!m_renderingToTexture) return nullptr;
@@ -2887,7 +2887,7 @@ IDirect3DTexture8 *W3DShaderManager::endRenderToTexture(void)
 /**Returns texture containing the image that was last rendered using any of the effects requiring render target
 textures.  Used mostly for cross-fading effects that need an unmodified version of the view before the effect
 was applied.  NOTE: This texture does not survive device reset.. so quit effect on reset!*/
-IDirect3DTexture8 *W3DShaderManager::getRenderTexture(void)
+IDirect3DTexture8 *W3DShaderManager::getRenderTexture()
 {
 	return m_renderTexture;
 }
@@ -2904,7 +2904,7 @@ enum GraphicsVenderID CPP_11(: Int)
 	for coding around specific driver bugs.
  */
 //=============================================================================
-ChipsetType W3DShaderManager::getChipset( void )
+ChipsetType W3DShaderManager::getChipset()
 {
 	//check if globaldata has an override for current chipset
 	if (TheGlobalData && TheGlobalData->m_chipSetType != DC_UNKNOWN)
@@ -3112,7 +3112,7 @@ Bool W3DShaderManager::testMinimumRequirements(ChipsetType *videoChipType, CpuTy
 }
 
 /**Try to guess how well the video card will handle the game assuming very fast CPU*/
-StaticGameLODLevel W3DShaderManager::getGPUPerformanceIndex(void)
+StaticGameLODLevel W3DShaderManager::getGPUPerformanceIndex()
 {
 	ChipsetType	chipType;
 	StaticGameLODLevel detailSetting=STATIC_GAME_LOD_LOW;	//assume lowest settings for now.
@@ -3138,7 +3138,7 @@ void add(float *sum,float *addend)
 }
 
 /**Returns seconds needed to run the test*/
-Real W3DShaderManager::GetCPUBenchTime(void)
+Real W3DShaderManager::GetCPUBenchTime()
 {
 	float ztot, yran, ymult, ymod, x, y, z, pi, prod;
     long int low, ixran, itot, j, iprod;
@@ -3236,7 +3236,7 @@ Int W3DShaderManager::setShroudTex(Int stage)
 
 
 
-Int FlatTerrainShader2Stage::init( void )
+Int FlatTerrainShader2Stage::init()
 {
 	//no special device validation needed - anything in our min spec should handle this.
 
@@ -3252,7 +3252,7 @@ Int FlatTerrainShader2Stage::init( void )
 	return TRUE;
 }
 
-void FlatTerrainShader2Stage::reset(void)
+void FlatTerrainShader2Stage::reset()
 {
 	ShaderClass::Invalidate();
 
@@ -3458,7 +3458,7 @@ Int FlatTerrainShader2Stage::set(Int pass)
 
 
 
-Int FlatTerrainShaderPixelShader::shutdown(void)
+Int FlatTerrainShaderPixelShader::shutdown()
 {
 	if (m_dwBasePixelShader)
 		DX8Wrapper::_Get_D3D_Device8()->DeletePixelShader(m_dwBasePixelShader);
@@ -3480,7 +3480,7 @@ Int FlatTerrainShaderPixelShader::shutdown(void)
 	return TRUE;
 }
 
-Int FlatTerrainShaderPixelShader::init( void )
+Int FlatTerrainShaderPixelShader::init()
 {
 	Int res;
 
@@ -3692,7 +3692,7 @@ Int FlatTerrainShaderPixelShader::set(Int pass)
 	return TRUE;
 }
 
-void FlatTerrainShaderPixelShader::reset(void)
+void FlatTerrainShaderPixelShader::reset()
 {
 	DX8Wrapper::_Get_D3D_Device8()->SetTexture(2,nullptr);	//release reference to any texture
 	DX8Wrapper::_Get_D3D_Device8()->SetTexture(3,nullptr);	//release reference to any texture

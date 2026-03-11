@@ -43,16 +43,16 @@ class W3DStatusCircle : public RenderObjClass
 
 public:
 
-	W3DStatusCircle(void);
+	W3DStatusCircle();
 	W3DStatusCircle(const W3DStatusCircle & src);
 	W3DStatusCircle & operator = (const W3DStatusCircle &);
-	~W3DStatusCircle(void);
+	~W3DStatusCircle();
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface
 	/////////////////////////////////////////////////////////////////////////////
-	virtual RenderObjClass *	Clone(void) const;
-	virtual int						Class_ID(void) const;
+	virtual RenderObjClass *	Clone() const;
+	virtual int						Class_ID() const;
 	virtual void					Render(RenderInfoClass & rinfo);
 //	virtual void					Special_Render(SpecialRenderInfoClass & rinfo);
 //	virtual void 					Set_Transform(const Matrix3D &m);
@@ -68,16 +68,16 @@ public:
     virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & aabox) const;
 
 
-//	virtual int					 	Get_Num_Polys(void) const;
-//	virtual const char *		 	Get_Name(void) const;
+//	virtual int					 	Get_Num_Polys() const;
+//	virtual const char *		 	Get_Name() const;
 //	virtual void				 	Set_Name(const char * name);
 
-//	unsigned int					Get_Flags(void)  { return Flags; }
+//	unsigned int					Get_Flags()  { return Flags; }
 //	void								Set_Flags(unsigned int flags) { Flags = flags; }
 //	void								Set_Flag(unsigned int flag, Bool onoff) { Flags &= (~flag); if (onoff) Flags |= flag; }
 
-	int updateBlock(void);
-	Int freeMapResources(void);
+	int updateBlock();
+	Int freeMapResources();
 	void static setColor(Int r, Int g, Int b) {m_needUpdate = true; m_diffuse = (b) + (g<<8) + (r<<16);};
 protected:
 	Int	m_numTriangles;	//dimensions of list
@@ -90,7 +90,7 @@ protected:
 	DX8VertexBufferClass	*m_vertexBufferCircle;	//collection of vertexes that make the circle.
 	DX8VertexBufferClass	*m_vertexBufferScreen;	//2 triangle quad that covers the screen.
 
-	int initData(void);
-	Int updateCircleVB(void);
+	int initData();
+	Int updateCircleVB();
 	Int updateScreenVB(Int diffuse);
 };

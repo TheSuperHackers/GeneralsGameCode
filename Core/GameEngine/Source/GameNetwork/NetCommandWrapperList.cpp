@@ -63,7 +63,7 @@ Bool NetCommandWrapperListNode::isComplete() {
 	return m_numChunksPresent == m_numChunks;
 }
 
-Int NetCommandWrapperListNode::getPercentComplete(void) {
+Int NetCommandWrapperListNode::getPercentComplete() {
 	if (isComplete())
 		return 100;
 	else

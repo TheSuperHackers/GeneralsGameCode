@@ -93,7 +93,7 @@ public:
 	virtual void reactToGeometryChange() { }
 
 protected:
-	virtual void onRenderObjRecreated(void);
+	virtual void onRenderObjRecreated();
 
 protected:
 	Bool						m_effectsInitialized;
@@ -133,8 +133,8 @@ protected:
 
 	RenderObjClass *m_prevRenderObj;
 
-	void createWheelEmitters( void ); ///< Create particle effects for wheels.
-	void tossWheelEmitters( void ); ///< Destroy particle effects for wheels.
+	void createWheelEmitters(); ///< Create particle effects for wheels.
+	void tossWheelEmitters(); ///< Destroy particle effects for wheels.
 	void enableWheelEmitters( Bool enable ); ///< Start or stop creating effects from the wheels.
-	void updateBones( void );
+	void updateBones();
 };

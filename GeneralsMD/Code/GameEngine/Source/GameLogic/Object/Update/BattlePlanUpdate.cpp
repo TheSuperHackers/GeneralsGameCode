@@ -143,15 +143,9 @@ BattlePlanUpdate::BattlePlanUpdate( Thing *thing, const ModuleData* moduleData )
 	m_invalidSettings				= false;
 	m_centeringTurret				= false;
 
-	//Default the bonuses to no change.
 	m_bonuses = newInstance(BattlePlanBonuses);
-	m_bonuses->m_armorScalar					= 1.0f;
-	m_bonuses->m_sightRangeScalar		= 1.0f;
-	m_bonuses->m_bombardment					= 0;
-	m_bonuses->m_searchAndDestroy		= 0;
-	m_bonuses->m_holdTheLine					= 0;
-	m_bonuses->m_validKindOf					= data->m_validMemberKindOf;
-	m_bonuses->m_invalidKindOf				= data->m_invalidMemberKindOf;
+	m_bonuses->m_validKindOf = data->m_validMemberKindOf;
+	m_bonuses->m_invalidKindOf = data->m_invalidMemberKindOf;
 
 	m_visionObjectID = INVALID_ID;
 
@@ -160,7 +154,7 @@ BattlePlanUpdate::BattlePlanUpdate( Thing *thing, const ModuleData* moduleData )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-BattlePlanUpdate::~BattlePlanUpdate( void )
+BattlePlanUpdate::~BattlePlanUpdate()
 {
 	TheAudio->removeAudioEvent( m_bombardmentUnpack.getPlayingHandle() );
 	TheAudio->removeAudioEvent( m_bombardmentPack.getPlayingHandle() );
@@ -927,7 +921,7 @@ void BattlePlanUpdate::xfer( Xfer *xfer )
 }
 
 //------------------------------------------------------------------------------------------------
-void BattlePlanUpdate::loadPostProcess( void )
+void BattlePlanUpdate::loadPostProcess()
 {
 
 	// extend base class

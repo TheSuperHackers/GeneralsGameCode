@@ -74,7 +74,7 @@ class SurfaceClass : public W3DMPO, public RefCountClass
 		// Create the surface from a D3D pointer
 		SurfaceClass(IDirect3DSurface8 *d3d_surface);
 
-		~SurfaceClass(void);
+		~SurfaceClass();
 
 		// Get surface description
 		void Get_Description(SurfaceDescription &surface_desc);
@@ -85,7 +85,7 @@ class SurfaceClass : public W3DMPO, public RefCountClass
 		// Lock / unlock the surface
 		LockedSurfacePtr Lock(int *pitch);
 		LockedSurfacePtr Lock(int *pitch, const Vector2i &min, const Vector2i &max);
-		void Unlock(void);
+		void Unlock();
 
 		// HY -- The following functions are support functions for font3d
 		// zaps the surface memory to zero
@@ -120,11 +120,11 @@ class SurfaceClass : public W3DMPO, public RefCountClass
 		unsigned char *CreateCopy(int *width,int *height,int*size,bool flip=false);
 
 			// For use by TextureClass:
-		IDirect3DSurface8 *Peek_D3D_Surface(void) { return D3DSurface; }
+		IDirect3DSurface8 *Peek_D3D_Surface() { return D3DSurface; }
 
 		// Attaching and detaching a surface pointer
 		void	Attach (IDirect3DSurface8 *surface);
-		void	Detach (void);
+		void	Detach ();
 
 		// draws a horizontal line
 		void Draw_H_Line(const unsigned int y, const unsigned int x1, const unsigned int x2,
@@ -139,7 +139,7 @@ class SurfaceClass : public W3DMPO, public RefCountClass
 
 		void Hue_Shift(const Vector3 &hsv_shift);
 
-		bool Is_Monochrome(void);
+		bool Is_Monochrome();
 
 		WW3DFormat Get_Surface_Format() const { return SurfaceFormat; }
 

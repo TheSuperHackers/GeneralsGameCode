@@ -97,7 +97,7 @@ DebugIcon	*W3DDebugIcons::m_debugIcons = nullptr;
 Int				 W3DDebugIcons::m_numDebugIcons = 0;
 Int				 W3DDebugIcons::m_maxDebugIcons = 0;
 
-W3DDebugIcons::~W3DDebugIcons(void)
+W3DDebugIcons::~W3DDebugIcons()
 {
 	REF_PTR_RELEASE(m_vertexMaterialClass);
 	delete[] m_debugIcons;
@@ -149,18 +149,18 @@ void W3DDebugIcons::Get_Obj_Space_Bounding_Box(AABoxClass & box) const
 	box.Init(minPt,maxPt);
 }
 
-Int W3DDebugIcons::Class_ID(void) const
+Int W3DDebugIcons::Class_ID() const
 {
 	return RenderObjClass::CLASSID_UNKNOWN;
 }
 
-RenderObjClass * W3DDebugIcons::Clone(void) const
+RenderObjClass * W3DDebugIcons::Clone() const
 {
 	return NEW W3DDebugIcons(*this);	// poolify
 }
 
 
-void W3DDebugIcons::allocateIconsArray(void)
+void W3DDebugIcons::allocateIconsArray()
 {
 	DEBUG_ASSERTCRASH(m_debugIcons == nullptr, ("debugIcons array already allocated!"));
 	m_debugIcons = NEW DebugIcon[m_maxDebugIcons];
@@ -168,7 +168,7 @@ void W3DDebugIcons::allocateIconsArray(void)
 }
 
 
-void W3DDebugIcons::compressIconsArray(void)
+void W3DDebugIcons::compressIconsArray()
 {
 	if (m_debugIcons && m_numDebugIcons > 0) {
 		Int newNum = 0;

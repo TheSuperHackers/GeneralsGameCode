@@ -29,7 +29,7 @@
 
 #include "W3DDevice/GameClient/W3DDynamicLight.h"
 
-W3DDynamicLight::W3DDynamicLight(void):
+W3DDynamicLight::W3DDynamicLight():
 LightClass(LightClass::POINT)
 {
 
@@ -38,11 +38,11 @@ LightClass(LightClass::POINT)
 
 }
 
-W3DDynamicLight::~W3DDynamicLight(void)
+W3DDynamicLight::~W3DDynamicLight()
 {
 }
 
-void W3DDynamicLight::On_Frame_Update(void)
+void W3DDynamicLight::On_Frame_Update()
 {
 	if (!m_enabled) {
 		return;

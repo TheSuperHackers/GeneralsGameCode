@@ -48,15 +48,15 @@ public:
 
 	virtual int			Add_Key(const Vector3 & point,float t);
 	virtual void		Remove_Key(int i);
-	virtual void		Clear_Keys(void);
+	virtual void		Clear_Keys();
 
 	virtual void		Set_Tightness(int i,float tightness);
 	virtual float		Get_Tightness(int i);
 
-	virtual void		Update_Tangents(void);
+	virtual void		Update_Tangents();
 
 	// save-load support
-	virtual const PersistFactoryClass &	Get_Factory(void) const;
+	virtual const PersistFactoryClass &	Get_Factory() const;
 	virtual bool								Save(ChunkSaveClass &csave);
 	virtual bool								Load(ChunkLoadClass &cload);
 
@@ -76,15 +76,15 @@ public:
 
 	virtual int			Add_Key(float point,float t);
 	virtual void		Remove_Key(int i);
-	virtual void		Clear_Keys(void);
+	virtual void		Clear_Keys();
 
 	virtual void		Set_Tightness(int i,float tightness);
 	virtual float		Get_Tightness(int i);
 
-	virtual void		Update_Tangents(void);
+	virtual void		Update_Tangents();
 
 	// save-load support
-	virtual const PersistFactoryClass &	Get_Factory(void) const;
+	virtual const PersistFactoryClass &	Get_Factory() const;
 	virtual bool								Save(ChunkSaveClass &csave);
 	virtual bool								Load(ChunkLoadClass &cload);
 

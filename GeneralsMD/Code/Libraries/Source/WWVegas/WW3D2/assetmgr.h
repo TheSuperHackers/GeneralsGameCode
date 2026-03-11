@@ -81,15 +81,15 @@ class AssetIterator
 
 public:
 
-	virtual							~AssetIterator(void) { };
-	virtual void					First(void) { Index = 0; }
-	virtual void					Next(void)	{ Index ++; }
-	virtual bool					Is_Done(void) = 0;
-	virtual const char *			Current_Item_Name(void) = 0;
+	virtual							~AssetIterator() { };
+	virtual void					First() { Index = 0; }
+	virtual void					Next()	{ Index ++; }
+	virtual bool					Is_Done() = 0;
+	virtual const char *			Current_Item_Name() = 0;
 
 protected:
 
-	AssetIterator(void)			{ Index = 0; }
+	AssetIterator()			{ Index = 0; }
 	int								Index;
 };
 
@@ -101,7 +101,7 @@ protected:
 class RenderObjIterator : public AssetIterator
 {
 public:
-	virtual int						Current_Item_Class_ID(void) = 0;
+	virtual int						Current_Item_Class_ID() = 0;
 };
 
 
@@ -187,8 +187,8 @@ public:
 	/*
 	** Constructor and destructor
 	*/
-	WW3DAssetManager(void);
-	virtual ~WW3DAssetManager(void);
+	WW3DAssetManager();
+	virtual ~WW3DAssetManager();
 
 	/*
 	** Access to the single instance of a WW3DAssetManager.  The user
@@ -200,8 +200,8 @@ public:
 	** use a line of code like this:
 	**	WW3DAssetManager::Get_Instance();
 	*/
-	static WW3DAssetManager *		Get_Instance(void) { return TheInstance; }
-	static void							Delete_This(void) { delete TheInstance; TheInstance=nullptr; }
+	static WW3DAssetManager *		Get_Instance() { return TheInstance; }
+	static void							Delete_This() { delete TheInstance; TheInstance=nullptr; }
 
 	/*
 	** Load data from any type of w3d file
@@ -212,12 +212,12 @@ public:
 	/*
 	** Get rid of all of the currently loaded assets
 	*/
-	virtual void						Free_Assets(void);
+	virtual void						Free_Assets();
 
 	/*
 	**	Release any assets that only the asset manager has a reference to.
 	*/
-	virtual void						Release_Unused_Assets(void);
+	virtual void						Release_Unused_Assets();
 
 	/*
 	** Release assets not in the given exclusion list.
@@ -240,21 +240,21 @@ public:
 	** sub-categories of render objects.  NOTE! the user is responsible
 	** for releasing the iterator when finished with it!
 	*/
-	virtual RenderObjIterator *	Create_Render_Obj_Iterator(void);
+	virtual RenderObjIterator *	Create_Render_Obj_Iterator();
 	virtual void						Release_Render_Obj_Iterator(RenderObjIterator *);
 
 	/*
 	** Access to HAnims, Used by Animatable3DObj's
 	** TODO: make HAnims accessible from the HMODELS (or Animatable3DObj...)
 	*/
-	virtual AssetIterator *			Create_HAnim_Iterator(void);
+	virtual AssetIterator *			Create_HAnim_Iterator();
 	virtual HAnimClass *				Get_HAnim(const char * name);
 	virtual bool						Add_Anim (HAnimClass *new_anim) { return HAnimManager.Add_Anim (new_anim); }
 
 	/*
 	** Access to textures
 	*/
-//	virtual AssetIterator *			Create_Texture_Iterator(void);
+//	virtual AssetIterator *			Create_Texture_Iterator();
 
 	HashTemplateClass<StringClass,TextureClass*>& Texture_Hash() { return TextureHash; }
 
@@ -270,8 +270,8 @@ public:
 		bool allow_reduction=true
 	);
 
-	virtual void						Release_All_Textures(void);
-	virtual void						Release_Unused_Textures(void);
+	virtual void						Release_All_Textures();
+	virtual void						Release_Unused_Textures();
 	virtual void						Release_Texture(TextureClass *);
 	virtual void						Load_Procedural_Textures();
 	virtual MetalMapManagerClass* Peek_Metal_Map_Manager() { return MetalManager; }
@@ -290,7 +290,7 @@ public:
 	/*
 	** Access to HTrees, Used by Animatable3DObj's
 	*/
-	virtual AssetIterator *			Create_HTree_Iterator(void);
+	virtual AssetIterator *			Create_HTree_Iterator();
 	virtual HTreeClass *				Get_HTree(const char * name);
 
 	/*
@@ -312,13 +312,13 @@ public:
 	/*
 	** Load on Demand
 	*/
-	bool	Get_WW3D_Load_On_Demand( void )			{ return WW3D_Load_On_Demand; }
+	bool	Get_WW3D_Load_On_Demand()			{ return WW3D_Load_On_Demand; }
 	void	Set_WW3D_Load_On_Demand( bool on_off )	{ WW3D_Load_On_Demand = on_off; }
 
 	/*
 	** Add fog to objects on load
 	*/
-	bool	Get_Activate_Fog_On_Load( void )				{ return Activate_Fog_On_Load; }
+	bool	Get_Activate_Fog_On_Load()				{ return Activate_Fog_On_Load; }
 	void	Set_Activate_Fog_On_Load( bool on_off )	{ Activate_Fog_On_Load = on_off; }
 
 	// Log texture statistics
@@ -329,16 +329,16 @@ protected:
 	/*
 	** Access to Font3DData. (These are privately managed/accessed)
 	*/
-	virtual AssetIterator *			Create_Font3DData_Iterator(void);
+	virtual AssetIterator *			Create_Font3DData_Iterator();
 	virtual void						Add_Font3DData(Font3DDataClass * font);
 	virtual void						Remove_Font3DData(Font3DDataClass * font);
 	virtual Font3DDataClass *		Get_Font3DData(const char * name);
-	virtual void						Release_All_Font3DDatas( void);
-	virtual void						Release_Unused_Font3DDatas( void);
+	virtual void						Release_All_Font3DDatas();
+	virtual void						Release_Unused_Font3DDatas();
 
-	virtual void						Release_All_FontChars( void );
+	virtual void						Release_All_FontChars();
 
-	void									Free(void);
+	void									Free();
 
 	PrototypeLoaderClass *			Find_Prototype_Loader(int chunk_id);
 	bool									Load_Prototype(ChunkLoadClass & cload);

@@ -73,7 +73,7 @@ uint32 DecalSystemClass::DecalIDGenerator = 0;
  *                                                                                             *
  * HISTORY:                                                                                    *
  *=============================================================================================*/
-DecalSystemClass::DecalSystemClass(void)
+DecalSystemClass::DecalSystemClass()
 {
 }
 
@@ -89,7 +89,7 @@ DecalSystemClass::DecalSystemClass(void)
  *                                                                                             *
  * HISTORY:                                                                                    *
  *=============================================================================================*/
-DecalSystemClass::~DecalSystemClass(void)
+DecalSystemClass::~DecalSystemClass()
 {
 }
 
@@ -106,7 +106,7 @@ DecalSystemClass::~DecalSystemClass(void)
  * HISTORY:                                                                                    *
  *   1/26/00    gth : Created.                                                                 *
  *=============================================================================================*/
-DecalGeneratorClass * DecalSystemClass::Lock_Decal_Generator(void)
+DecalGeneratorClass * DecalSystemClass::Lock_Decal_Generator()
 {
 	DecalGeneratorClass * gen = W3DNEW DecalGeneratorClass(Generate_Decal_Id(), this);
 	return gen;
@@ -147,7 +147,7 @@ void DecalSystemClass::Unlock_Decal_Generator(DecalGeneratorClass * generator)
  * HISTORY:                                                                                    *
  *   1/26/00    gth : Created.                                                                 *
  *=============================================================================================*/
-uint32 DecalSystemClass::Generate_Unique_Global_Decal_Id(void)
+uint32 DecalSystemClass::Generate_Unique_Global_Decal_Id()
 {
 	return DecalIDGenerator++;
 }
@@ -195,7 +195,7 @@ DecalGeneratorClass::DecalGeneratorClass(uint32 id,DecalSystemClass * system) :
  * HISTORY:                                                                                    *
  *   1/26/00    gth : Created.                                                                 *
  *=============================================================================================*/
-DecalGeneratorClass::~DecalGeneratorClass(void)
+DecalGeneratorClass::~DecalGeneratorClass()
 {
 	REF_PTR_RELEASE(Material);
 }
@@ -237,7 +237,7 @@ void DecalGeneratorClass::Add_Mesh(RenderObjClass * mesh)
  * HISTORY:                                                                                    *
  *   1/26/00    gth : Created.                                                                 *
  *=============================================================================================*/
-NonRefRenderObjListClass & DecalGeneratorClass::Get_Mesh_List(void)
+NonRefRenderObjListClass & DecalGeneratorClass::Get_Mesh_List()
 {
 	return MeshList;
 }
@@ -327,7 +327,7 @@ MultiFixedPoolDecalSystemClass::MultiFixedPoolDecalSystemClass(const MultiFixedP
 	}
 }
 
-MultiFixedPoolDecalSystemClass::~MultiFixedPoolDecalSystemClass(void)
+MultiFixedPoolDecalSystemClass::~MultiFixedPoolDecalSystemClass()
 {
 	delete [] Pools;
 	Pools = nullptr;
@@ -335,7 +335,7 @@ MultiFixedPoolDecalSystemClass::~MultiFixedPoolDecalSystemClass(void)
 
 // This clears the slot in addition to locking the generator, thus preventing any decal id
 // collisions (since any decal previously in that slot will have the same id as the new one).
-DecalGeneratorClass * MultiFixedPoolDecalSystemClass::Lock_Decal_Generator(void)
+DecalGeneratorClass * MultiFixedPoolDecalSystemClass::Lock_Decal_Generator()
 {
 	Clear_Decal_Slot(Generator_PoolID, Generator_SlotID);
 	return DecalSystemClass::Lock_Decal_Generator();
@@ -379,7 +379,7 @@ void MultiFixedPoolDecalSystemClass::Clear_Pool(uint32 pool_id)
 }
 
 // And this one removes all decals in the system.
-void MultiFixedPoolDecalSystemClass::Clear_All_Decals(void)
+void MultiFixedPoolDecalSystemClass::Clear_All_Decals()
 {
 	for (uint32 pool_id = 0; pool_id < PoolCount; pool_id++) {
 		LogicalDecalPoolClass & pool = Pools[pool_id];
@@ -414,11 +414,11 @@ MultiFixedPoolDecalSystemClass::LogicalDecalClass & MultiFixedPoolDecalSystemCla
 ** MultiFixedPoolDecalSystemClass::LogicalDecalClass implementation
 */
 
-MultiFixedPoolDecalSystemClass::LogicalDecalClass::LogicalDecalClass(void)
+MultiFixedPoolDecalSystemClass::LogicalDecalClass::LogicalDecalClass()
 {
 }
 
-MultiFixedPoolDecalSystemClass::LogicalDecalClass::~LogicalDecalClass(void)
+MultiFixedPoolDecalSystemClass::LogicalDecalClass::~LogicalDecalClass()
 {
 	// We don't need to do anything here since the mesh list will get removed automatically and
 	// the decals themselves don't neccessarily need to be removed because the logical decal is.
@@ -460,13 +460,13 @@ void MultiFixedPoolDecalSystemClass::LogicalDecalClass::Clear(uint32 decal_id)
 ** MultiFixedPoolDecalSystemClass::LogicalDecalPoolClass implementation
 */
 
-MultiFixedPoolDecalSystemClass::LogicalDecalPoolClass::LogicalDecalPoolClass(void) :
+MultiFixedPoolDecalSystemClass::LogicalDecalPoolClass::LogicalDecalPoolClass() :
 	Array(nullptr),
 	Size(0)
 {
 }
 
-MultiFixedPoolDecalSystemClass::LogicalDecalPoolClass::~LogicalDecalPoolClass(void)
+MultiFixedPoolDecalSystemClass::LogicalDecalPoolClass::~LogicalDecalPoolClass()
 {
 	delete [] Array;
 	Array = nullptr;

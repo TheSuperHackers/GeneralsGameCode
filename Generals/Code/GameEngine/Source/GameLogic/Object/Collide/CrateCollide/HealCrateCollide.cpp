@@ -45,7 +45,7 @@ HealCrateCollide::HealCrateCollide( Thing *thing, const ModuleData* moduleData )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-HealCrateCollide::~HealCrateCollide( void )
+HealCrateCollide::~HealCrateCollide()
 {
 
 }
@@ -96,7 +96,7 @@ void HealCrateCollide::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void HealCrateCollide::loadPostProcess( void )
+void HealCrateCollide::loadPostProcess()
 {
 
 	// extend base class

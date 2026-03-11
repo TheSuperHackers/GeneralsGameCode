@@ -38,7 +38,7 @@
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-SpyVisionSpecialPowerModuleData::SpyVisionSpecialPowerModuleData( void )
+SpyVisionSpecialPowerModuleData::SpyVisionSpecialPowerModuleData()
 {
 
 	m_baseDurationInFrames = 0;
@@ -78,7 +78,7 @@ SpyVisionSpecialPower::SpyVisionSpecialPower( Thing *thing, const ModuleData *mo
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-SpyVisionSpecialPower::~SpyVisionSpecialPower( void )
+SpyVisionSpecialPower::~SpyVisionSpecialPower()
 {
 
 }
@@ -158,7 +158,7 @@ void SpyVisionSpecialPower::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void SpyVisionSpecialPower::loadPostProcess( void )
+void SpyVisionSpecialPower::loadPostProcess()
 {
 
 	// extend base class

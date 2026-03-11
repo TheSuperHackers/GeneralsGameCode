@@ -79,7 +79,7 @@ const float COINCIDENCE_EPSILON = 0.001f;
  *                                                                                             *
  * HISTORY:                                                                                    *
  *=============================================================================================*/
-AABTreeBuilderClass::AABTreeBuilderClass(void) :
+AABTreeBuilderClass::AABTreeBuilderClass() :
 	Root(nullptr),
 	CurPolyIndex(0),
 	PolyCount(0),
@@ -102,7 +102,7 @@ AABTreeBuilderClass::AABTreeBuilderClass(void) :
  * HISTORY:                                                                                    *
  *   5/19/2000  gth : Created.                                                                 *
  *=============================================================================================*/
-AABTreeBuilderClass::~AABTreeBuilderClass(void)
+AABTreeBuilderClass::~AABTreeBuilderClass()
 {
 	Reset();
 }
@@ -120,7 +120,7 @@ AABTreeBuilderClass::~AABTreeBuilderClass(void)
  * HISTORY:                                                                                    *
  *   5/19/2000  gth : Created.                                                                 *
  *=============================================================================================*/
-void AABTreeBuilderClass::Reset(void)
+void AABTreeBuilderClass::Reset()
 {
 	delete Root;
 	Root = nullptr;
@@ -659,7 +659,7 @@ int AABTreeBuilderClass::Assign_Index(CullNodeStruct * node,int index)
  * HISTORY:                                                                                    *
  *   6/19/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-int AABTreeBuilderClass::Node_Count(void)
+int AABTreeBuilderClass::Node_Count()
 {
 	if (Root) {
 		return Node_Count_Recursive(Root,0);
@@ -681,7 +681,7 @@ int AABTreeBuilderClass::Node_Count(void)
  * HISTORY:                                                                                    *
  *   10/23/98   GTH : Created.                                                                 *
  *=============================================================================================*/
-int AABTreeBuilderClass::Poly_Count(void)
+int AABTreeBuilderClass::Poly_Count()
 {
 	return PolyCount;
 }

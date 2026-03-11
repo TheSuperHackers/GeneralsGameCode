@@ -57,7 +57,7 @@ class CacheStraw : public Straw
 		int Index;
 		int Length;
 
-		bool Is_Valid(void) {return(BufferPtr.Is_Valid());}
+		bool Is_Valid() {return(BufferPtr.Is_Valid());}
 		CacheStraw(CacheStraw & rvalue);
 		CacheStraw & operator = (CacheStraw const & pipe);
 };

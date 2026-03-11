@@ -37,7 +37,7 @@
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-RepairDockUpdateModuleData::RepairDockUpdateModuleData( void )
+RepairDockUpdateModuleData::RepairDockUpdateModuleData()
 {
 
 	m_framesForFullHeal = 1.0f;  // 1 frame, instant heal by default (keeps away from divide by 0's)
@@ -78,7 +78,7 @@ RepairDockUpdate::RepairDockUpdate( Thing *thing, const ModuleData* moduleData )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-RepairDockUpdate::~RepairDockUpdate( void )
+RepairDockUpdate::~RepairDockUpdate()
 {
 
 }
@@ -191,7 +191,7 @@ void RepairDockUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void RepairDockUpdate::loadPostProcess( void )
+void RepairDockUpdate::loadPostProcess()
 {
 
 	// extend base class

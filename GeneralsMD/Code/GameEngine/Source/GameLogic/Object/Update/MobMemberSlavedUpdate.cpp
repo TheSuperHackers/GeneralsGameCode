@@ -87,7 +87,7 @@ MobMemberSlavedUpdate::MobMemberSlavedUpdate( Thing *thing, const ModuleData* mo
 }
 
 //-------------------------------------------------------------------------------------------------
-MobMemberSlavedUpdate::~MobMemberSlavedUpdate( void )
+MobMemberSlavedUpdate::~MobMemberSlavedUpdate()
 {
 }
 
@@ -123,7 +123,7 @@ void MobMemberSlavedUpdate::onSlaverDamage( const DamageInfo *info )
 
 
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime MobMemberSlavedUpdate::update( void )
+UpdateSleepTime MobMemberSlavedUpdate::update()
 {
 /// @todo srj use SLEEPY_UPDATE here
 
@@ -454,7 +454,7 @@ void MobMemberSlavedUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void MobMemberSlavedUpdate::loadPostProcess( void )
+void MobMemberSlavedUpdate::loadPostProcess()
 {
 
 	// extend base class
