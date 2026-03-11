@@ -1236,6 +1236,19 @@ void PathfindCellInfo::releaseACellInfo(PathfindCellInfo *theInfo)
 //-----------------------------------------------------------------------------------
 
 /**
+ *
+*/
+Bool PathfindCellList::canReverseSort(PathfindCell& currentCell) const
+{
+	if (m_head && m_tail)
+		return m_head->getTotalCostDif(currentCell) > m_tail->getTotalCostDif(currentCell);
+
+	return false;
+}
+
+//-----------------------------------------------------------------------------------
+
+/**
  * Constructor
  */
 PathfindCell::PathfindCell() :m_info(nullptr)
@@ -1336,6 +1349,18 @@ inline void PathfindCell::setBlockedByAlly(Bool blocked)
 #else
 	m_blockedByAlly = (blocked != 0);
 #endif
+}
+
+/**
+ * Determine absolute total path cost difference between two cells.
+ * Returns UINT_MAX if used with an uninitialised cell, so will be sorted as maximally dissimilar.
+ */
+inline UnsignedInt PathfindCell::getTotalCostDif(PathfindCell& other) const
+{
+	if (m_info && other.m_info)
+		return abs(m_info->m_totalCost - other.m_info->m_totalCost);
+
+	return UINT_MAX;
 }
 
 /**
