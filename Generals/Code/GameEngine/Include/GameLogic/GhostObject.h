@@ -114,12 +114,12 @@ inline Bool GhostObjectManager::trackAllPlayers() const
 class GhostObjectManagerDummy : public GhostObjectManager
 {
 public:
-	virtual void reset(void) {}
-	virtual GhostObject *addGhostObject(Object *object, PartitionData *pd) { return nullptr; }
-	virtual void removeGhostObject(GhostObject *mod) {}
-	virtual void updateOrphanedObjects(int *playerIndexList, int playerIndexCount) {}
-	virtual void releasePartitionData(void) {}
-	virtual void restorePartitionData(void) {}
+	virtual void reset() override {}
+	virtual GhostObject *addGhostObject(Object *object, PartitionData *pd) override { return nullptr; }
+	virtual void removeGhostObject(GhostObject *mod) override {}
+	virtual void updateOrphanedObjects(int *playerIndexList, int playerIndexCount) override {}
+	virtual void releasePartitionData() override {}
+	virtual void restorePartitionData() override {}
 };
 
 // the singleton
