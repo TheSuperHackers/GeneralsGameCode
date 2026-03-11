@@ -511,8 +511,21 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 		{
 			Object *obj = findObjectByID( msg->getArgument( 0 )->objectID );
 			Coord3D dest = msg->getArgument( 1 )->location;
+
 			if (obj)
 			{
+#if !RETAIL_COMPATIBLE_CRC
+				// TheSuperHackers @fix stephanmeesters 11/03/2026 Validate the owner of the source object
+				if ( obj->getControllingPlayer() != thisPlayer )
+				{
+					DEBUG_CRASH( ("MSG_SET_RALLY_POINT: Player '%ls' attempted to set the rally point of object '%s' owned by player '%ls'.",
+						 thisPlayer->getPlayerDisplayName().str(),
+						 obj->getTemplate()->getName().str(),
+						 obj->getControllingPlayer()->getPlayerDisplayName().str()) );
+					break;
+				}
+#endif
+
 				doSetRallyPoint( obj, dest );
 			}
 
