@@ -35,7 +35,7 @@ class RoadOptions : public COptionsPanel
 public:
 	RoadOptions(CWnd* pParent = nullptr);   ///< standard constructor
 
-	~RoadOptions(void) override;   ///< standard destructor
+	virtual ~RoadOptions(void) override;   ///< standard destructor
 	enum { NAME_MAX_LEN = 64 };
 // Dialog Data
 	//{{AFX_DATA(RoadOptions)

@@ -42,7 +42,7 @@ protected:
 
 public:
 	FenceTool(void);
-	~FenceTool(void) override;
+	virtual ~FenceTool(void) override;
 
 protected:
 	void updateMapObjectList(Coord3D downPt, Coord3D curPt, WbView* pView, CWorldBuilderDoc *pDoc, Bool checkPlayers);

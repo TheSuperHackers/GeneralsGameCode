@@ -41,7 +41,7 @@ protected:
 	static Int m_radius;
 public:
 	FeatherTool(void);
-	~FeatherTool(void) override;
+	virtual ~FeatherTool(void) override;
 
 	static void setFeather(Int feather);
 	static void setRate(Int rate);

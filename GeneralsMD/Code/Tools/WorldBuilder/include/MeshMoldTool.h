@@ -42,7 +42,7 @@ protected:
 
 public:
 	MeshMoldTool(void);
-	~MeshMoldTool(void) override;
+	virtual ~MeshMoldTool(void) override;
 protected:
 	static void applyMesh(CWorldBuilderDoc *pDoc);  ///< Apply the mesh to copy of terrain.
 

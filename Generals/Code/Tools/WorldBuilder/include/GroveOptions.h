@@ -46,7 +46,7 @@ class GroveOptions : public COptionsPanel
 
 	public:
 		GroveOptions(CWnd* pParent = nullptr);
-		~GroveOptions() override;
+		virtual ~GroveOptions() override;
 		void makeMain(void);
 
 		virtual BOOL OnInitDialog() override;

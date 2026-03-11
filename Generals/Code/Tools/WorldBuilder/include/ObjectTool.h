@@ -37,7 +37,7 @@ protected:
 
 public:
 	ObjectTool(void);
-	~ObjectTool(void) override;
+	virtual ~ObjectTool(void) override;
 
 public:
 	static Real calcAngle(Coord3D downPt, Coord3D curPt, WbView* pView);

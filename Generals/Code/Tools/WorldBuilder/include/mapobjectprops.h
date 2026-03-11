@@ -42,7 +42,7 @@ class MapObjectProps : public COptionsPanel, public PopupSliderOwner
 // Construction
 public:
 	MapObjectProps(Dict* dictToEdit = nullptr, const char* title = nullptr, CWnd* pParent = nullptr);   // standard constructor
-	~MapObjectProps() override;
+	virtual ~MapObjectProps() override;
 	void makeMain();
 
 // Dialog Data

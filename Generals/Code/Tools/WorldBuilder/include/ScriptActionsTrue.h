@@ -33,7 +33,7 @@ class ScriptActionsTrue : public CPropertyPage
 // Construction
 public:
 	ScriptActionsTrue();
-	~ScriptActionsTrue() override;
+	virtual ~ScriptActionsTrue() override;
 
 // Dialog Data
 	//{{AFX_DATA(ScriptActionsTrue)

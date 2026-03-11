@@ -48,7 +48,7 @@ public:
 	DrawObject(void);
 	DrawObject(const DrawObject & src);
 	DrawObject & operator = (const DrawObject &);
-	~DrawObject(void) override;
+	virtual ~DrawObject(void) override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface

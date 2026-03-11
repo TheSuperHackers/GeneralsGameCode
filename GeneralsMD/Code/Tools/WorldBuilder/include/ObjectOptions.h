@@ -35,7 +35,7 @@ class ObjectOptions : public COptionsPanel
 public:
 	ObjectOptions(CWnd* pParent = nullptr);   ///< standard constructor
 
-	~ObjectOptions(void) override;   ///< standard destructor
+	virtual ~ObjectOptions(void) override;   ///< standard destructor
 	enum { NAME_MAX_LEN = 64 };
 // Dialog Data
 	//{{AFX_DATA(ObjectOptions)

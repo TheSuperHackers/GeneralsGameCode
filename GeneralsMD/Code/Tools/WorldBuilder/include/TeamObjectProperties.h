@@ -36,7 +36,7 @@ class TeamObjectProperties : public CPropertyPage
 // Construction
 public:
 	TeamObjectProperties(Dict* dictToEdit = nullptr);
-	~TeamObjectProperties() override;
+	virtual ~TeamObjectProperties() override;
 
 // Dialog Data
 	//{{AFX_DATA(MapObjectProps)

@@ -36,7 +36,7 @@ protected:
 
 public:
 	TileTool(void);
-	~TileTool(void) override;
+	virtual ~TileTool(void) override;
 
 public:
 	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;

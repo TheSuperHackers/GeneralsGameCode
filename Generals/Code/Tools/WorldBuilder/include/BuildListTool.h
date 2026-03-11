@@ -56,7 +56,7 @@ protected:
 
 public:
 	BuildListTool(void);
-	~BuildListTool(void) override;
+	virtual ~BuildListTool(void) override;
 
 private:
 	void createWindow(void);

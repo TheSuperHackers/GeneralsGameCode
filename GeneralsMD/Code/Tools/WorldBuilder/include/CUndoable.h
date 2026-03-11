@@ -42,7 +42,7 @@ protected:
 public:
 		Undoable(void);
 
-		~Undoable(void) override;
+		virtual ~Undoable(void) override;
 
 public:
 	virtual void Do(void)=0; ///< pure virtual.
@@ -77,7 +77,7 @@ public:
 		WBDocUndoable(CWorldBuilderDoc *pDoc, WorldHeightMapEdit *pNewHtMap, Coord3D *pObjOffset = nullptr);
 
 		// destructor.
-		~WBDocUndoable(void) override;
+		virtual ~WBDocUndoable(void) override;
 		virtual void Do(void) override;
 		virtual void Undo(void) override;
 		virtual void Redo(void) override;
@@ -99,7 +99,7 @@ public:
 		AddObjectUndoable(CWorldBuilderDoc *pDoc, MapObject *pObjectToAdd);
 
 		// destructor.
-		~AddObjectUndoable(void) override;
+		virtual ~AddObjectUndoable(void) override;
 		virtual void Do(void) override;
 		virtual void Undo(void) override;
 };
@@ -146,7 +146,7 @@ protected:
 public:
 		ModifyObjectUndoable(CWorldBuilderDoc *pDoc);
 		// destructor.
-		~ModifyObjectUndoable(void) override;
+		virtual ~ModifyObjectUndoable(void) override;
 
 		virtual void Do(void) override;
 		virtual void Undo(void) override;
@@ -188,7 +188,7 @@ protected:
 public:
 		ModifyFlagsUndoable(CWorldBuilderDoc *pDoc, Int flagMask, Int flagValue);
 		// destructor.
-		~ModifyFlagsUndoable(void) override;
+		virtual ~ModifyFlagsUndoable(void) override;
 
 		virtual void Do(void) override;
 		virtual void Undo(void) override;
@@ -205,7 +205,7 @@ protected:
 public:
 
 	SidesListUndoable(const SidesList& newSL, CWorldBuilderDoc *pDoc);
-	~SidesListUndoable(void) override;
+	virtual ~SidesListUndoable(void) override;
 
 	virtual void Do(void) override;
 	virtual void Undo(void) override;
@@ -231,7 +231,7 @@ public:
 	// if you want to substitute the entire contents of the new dict, pass NAMEKEY_INVALID.
 	DictItemUndoable(Dict **d, Dict data, NameKeyType key, Int dictsToModify = 1, CWorldBuilderDoc *pDoc = nullptr, Bool inval = false);
 	// destructor.
-	~DictItemUndoable(void) override;
+	virtual ~DictItemUndoable(void) override;
 
 	virtual void Do(void) override;
 	virtual void Undo(void) override;
@@ -267,7 +267,7 @@ public:
 		DeleteObjectUndoable(CWorldBuilderDoc *pDoc);
 
 		// destructor.
-		~DeleteObjectUndoable(void) override;
+		virtual ~DeleteObjectUndoable(void) override;
 		virtual void Do(void) override;
 		virtual void Undo(void) override;
 };
@@ -282,7 +282,7 @@ protected:
 public:
 		AddPolygonUndoable( PolygonTrigger *pTrig);
 		// destructor.
-		~AddPolygonUndoable(void) override;
+		virtual ~AddPolygonUndoable(void) override;
 		virtual void Do(void) override;
 		virtual void Undo(void) override;
 };
@@ -297,7 +297,7 @@ protected:
 public:
 		AddPolygonPointUndoable(PolygonTrigger *pTrig, ICoord3D pt);
 		// destructor.
-		~AddPolygonPointUndoable(void) override;
+		virtual ~AddPolygonPointUndoable(void) override;
 		virtual void Do(void) override;
 		virtual void Undo(void) override;
 };
@@ -314,7 +314,7 @@ protected:
 public:
 		ModifyPolygonPointUndoable(PolygonTrigger *pTrig, Int ndx);
 		// destructor.
-		~ModifyPolygonPointUndoable(void) override;
+		virtual ~ModifyPolygonPointUndoable(void) override;
 		virtual void Do(void) override;
 		virtual void Undo(void) override;
 };
@@ -330,7 +330,7 @@ protected:
 public:
 		MovePolygonUndoable(PolygonTrigger *pTrig);
 		// destructor.
-		~MovePolygonUndoable(void) override;
+		virtual ~MovePolygonUndoable(void) override;
 		virtual void Do(void) override;
 		virtual void Undo(void) override;
 
@@ -349,7 +349,7 @@ protected:
 public:
 		InsertPolygonPointUndoable(PolygonTrigger *pTrig, ICoord3D pt, Int ndx);
 		// destructor.
-		~InsertPolygonPointUndoable(void) override;
+		virtual ~InsertPolygonPointUndoable(void) override;
 		virtual void Do(void) override;
 		virtual void Undo(void) override;
 };
@@ -365,7 +365,7 @@ protected:
 public:
 		DeletePolygonPointUndoable(PolygonTrigger *pTrig, Int ndx);
 		// destructor.
-		~DeletePolygonPointUndoable(void) override;
+		virtual ~DeletePolygonPointUndoable(void) override;
 		virtual void Do(void) override;
 		virtual void Undo(void) override;
 };
@@ -380,7 +380,7 @@ protected:
 public:
 		DeletePolygonUndoable(PolygonTrigger *pTrig);
 		// destructor.
-		~DeletePolygonUndoable(void) override;
+		virtual ~DeletePolygonUndoable(void) override;
 		virtual void Do(void) override;
 		virtual void Undo(void) override;
 };
@@ -397,7 +397,7 @@ protected:
 public:
 		MultipleUndoable();
     // destructor.
-    ~MultipleUndoable(void) override;
+    virtual ~MultipleUndoable(void) override;
 
     /** Add other undoables in the order you would want them UNdone; e.g. in the reverse order you want them done
       * The MultipleUndoable object will then own the pointers.

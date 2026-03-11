@@ -36,7 +36,7 @@ class PolygonTool : public Tool
 {
 public:
 	PolygonTool(void);
-	~PolygonTool(void) override;
+	virtual ~PolygonTool(void) override;
 
 protected:
 	Coord3D m_poly_mouseDownPt;

@@ -58,7 +58,7 @@ protected:
 
 public:
 	PointerTool(void);
-	~PointerTool(void) override;
+	virtual ~PointerTool(void) override;
 
 public:
 	/// Clear the selection on activate or deactivate.

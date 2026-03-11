@@ -32,7 +32,7 @@ class BorderTool : public Tool
 
 	public:
 		BorderTool();
-		~BorderTool() override;
+		virtual ~BorderTool() override;
 
 		Int getToolID(void) {return m_toolID;}
 		virtual void setCursor(void) override;

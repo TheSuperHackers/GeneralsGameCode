@@ -109,7 +109,7 @@ public:
 	virtual void createLightPulse( const Coord3D *pos, const RGBColor *color, Real innerRadius, Real attenuationWidth,
 																 UnsignedInt increaseFrameTime, UnsignedInt decayFrameTime ) override {}
 	virtual void setShroudLevel(Int x, Int y, CellShroudStatus setting) override {}
-	void setBorderShroudLevel(UnsignedByte level) override {}
+	virtual void setBorderShroudLevel(UnsignedByte level) override {}
 	virtual void clearShroud() override {}
 	virtual void preloadModelAssets( AsciiString model ) override {}
 	virtual void preloadTextureAssets( AsciiString texture ) override {}

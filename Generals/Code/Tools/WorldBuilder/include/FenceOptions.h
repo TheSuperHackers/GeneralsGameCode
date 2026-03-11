@@ -35,7 +35,7 @@ class FenceOptions : public COptionsPanel
 public:
 	FenceOptions(CWnd* pParent = nullptr);   ///< standard constructor
 
-	~FenceOptions(void) override;   ///< standard destructor
+	virtual ~FenceOptions(void) override;   ///< standard destructor
 	enum { NAME_MAX_LEN = 64 };
 // Dialog Data
 	//{{AFX_DATA(FenceOptions)

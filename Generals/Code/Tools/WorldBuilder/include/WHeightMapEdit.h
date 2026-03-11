@@ -98,7 +98,7 @@ public: // construction
 	WorldHeightMapEdit(Int xExtent, Int yExtent, UnsignedByte initialHeight, Int border); ///< create.
 	WorldHeightMapEdit(WorldHeightMapEdit *pThis);								///< duplicate.
 	WorldHeightMapEdit(ChunkInputStream *pStrm);											///< read from file.
-	~WorldHeightMapEdit(void) override;													    ///< destroy.
+	virtual ~WorldHeightMapEdit(void) override;													    ///< destroy.
 
 	void saveToFile(DataChunkOutput &chunkWriter);
 	WorldHeightMapEdit *duplicate(void);

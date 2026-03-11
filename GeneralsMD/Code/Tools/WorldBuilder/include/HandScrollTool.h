@@ -31,7 +31,7 @@ class HandScrollTool : public Tool
 {
 public:
 	HandScrollTool(void);
-	~HandScrollTool(void) override;
+	virtual ~HandScrollTool(void) override;
 
 protected:
 	enum {HYSTERESIS = 3};

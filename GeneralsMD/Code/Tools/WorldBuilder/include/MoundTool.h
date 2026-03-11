@@ -42,7 +42,7 @@ protected:
 
 public:
 	MoundTool(void);
-	~MoundTool(void) override;
+	virtual ~MoundTool(void) override;
 
 public:
 	static Int getMoundHeight(void) {return m_moundHeight;};

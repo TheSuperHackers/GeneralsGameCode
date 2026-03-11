@@ -36,7 +36,7 @@ class BuildList : public COptionsPanel, public PopupSliderOwner
 public:
  	BuildList(CWnd* pParent = nullptr);   ///< standard constructor
 
-	~BuildList(void) override;   ///< standard destructor
+	virtual ~BuildList(void) override;   ///< standard destructor
 	enum { NAME_MAX_LEN = 64 };
 // Dialog Data
 	//{{AFX_DATA(BuildList)

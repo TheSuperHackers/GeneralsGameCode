@@ -36,7 +36,7 @@ protected:
 
 public:
 	BlendEdgeTool(void);
-	~BlendEdgeTool(void) override;
+	virtual ~BlendEdgeTool(void) override;
 
 public:
 	/// Perform tool on mouse down.
