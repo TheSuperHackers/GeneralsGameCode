@@ -223,9 +223,9 @@ class VideoPlayerInterface : public SubsystemInterface
 
 	public:
 
-		virtual void	init() override = 0;														///< Initialize video playback
-		virtual void	reset() override = 0;													///< Reset video playback
-		virtual void	update() override = 0;													///< Services all video tasks. Should be called frequently
+		virtual void	init() = 0;														///< Initialize video playback
+		virtual void	reset() = 0;													///< Reset video playback
+		virtual void	update() = 0;													///< Services all video tasks. Should be called frequently
 
 		virtual void	deinit() = 0;													///< Close down player
 

@@ -51,9 +51,9 @@ class VictoryConditionsInterface : public SubsystemInterface
 public:
 	VictoryConditionsInterface() { m_victoryConditions = 0; }
 
-	virtual void init() override = 0;
-	virtual void reset() override = 0;
-	virtual void update() override = 0;
+	virtual void init() = 0;
+	virtual void reset() = 0;
+	virtual void update() = 0;
 
 	void setVictoryConditions( Int victoryConditions ) { m_victoryConditions = victoryConditions; }
 	Int getVictoryConditions() { return m_victoryConditions; }

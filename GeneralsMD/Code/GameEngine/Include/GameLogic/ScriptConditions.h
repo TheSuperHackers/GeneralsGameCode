@@ -45,9 +45,9 @@ public:
 
 	virtual ~ScriptConditionsInterface() override { };
 
-	virtual void init() override = 0;		///< Init
-	virtual void reset() override = 0;		///< Reset
-	virtual void update() override = 0;	///< Update
+	virtual void init() = 0;		///< Init
+	virtual void reset() = 0;		///< Reset
+	virtual void update() = 0;	///< Update
 
 	virtual Bool evaluateCondition( Condition *pCondition ) = 0; ///< evaluate a a script condition.
 

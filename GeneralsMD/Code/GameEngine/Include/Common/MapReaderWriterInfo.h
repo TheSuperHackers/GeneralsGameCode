@@ -72,7 +72,7 @@ public:
 variety of sources, such as FILE* or CFile. */
 class ChunkInputStream : public InputStream{
 public:
-	virtual Int read(void *pData, Int numBytes) override = 0;
+	virtual Int read(void *pData, Int numBytes) = 0;
 	virtual UnsignedInt tell() = 0;
 	virtual Bool absoluteSeek(UnsignedInt pos) = 0;
 	virtual Bool eof() = 0;

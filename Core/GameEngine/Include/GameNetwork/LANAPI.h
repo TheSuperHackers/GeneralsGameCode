@@ -60,9 +60,9 @@ public:
 
 	virtual ~LANAPIInterface() override { };
 
-	virtual void init() override = 0;															///< Initialize or re-initialize the instance
-	virtual void reset() override = 0;															///< reset the logic system
-	virtual void update() override = 0;														///< update the world
+	virtual void init() = 0;															///< Initialize or re-initialize the instance
+	virtual void reset() = 0;															///< reset the logic system
+	virtual void update() = 0;														///< update the world
 
 	virtual void setIsActive(Bool isActive ) = 0;								///< Tell TheLAN whether or not the app is active.
 

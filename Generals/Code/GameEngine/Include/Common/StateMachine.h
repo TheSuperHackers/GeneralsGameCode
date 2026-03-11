@@ -185,9 +185,9 @@ protected:
 	// Essentially all the member data gets set up on creation and shouldn't change.
 	// So none of it needs to be saved, and it nicely forces all user states to
 	// remember to implement crc, xfer & loadPostProcess.  jba
-	virtual void crc( Xfer *xfer ) override =0;
-	virtual void xfer( Xfer *xfer ) override =0;
-	virtual void loadPostProcess() override =0;
+	virtual void crc( Xfer *xfer ) =0;
+	virtual void xfer( Xfer *xfer ) =0;
+	virtual void loadPostProcess() =0;
 
 private:
 
