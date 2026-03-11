@@ -452,27 +452,41 @@ void OpenContain::killAllContained()
 	// This scenario can happen if the killed occupant(s) apply deadly damage on death
 	// to the host container, which then attempts to remove all remaining occupants
 	// on the death of the host container. This is reproducible by shooting with
-	// Neutron Shells on a GLA Technical containing GLA Terrorists.
+	// Neutron Shells on a GLA Technical containing GLA Toxin Terrorists
+	// with the Chem_SuicideWeapon upgrade, which is automatically granted by the GLA Toxin Command Center.
 
-	ContainedItemsList list;
-	list.swap(m_containList);
-	m_containListSize = 0;
-
-	ContainedItemsList::iterator it = list.begin();
-
-	while ( it != list.end() )
+	ContainedItemsList::iterator it = m_containList.begin();
+	while ( it != m_containList.end() )
 	{
-		Object *rider = *it++;
+		Object *rider = *it;
 
 		DEBUG_ASSERTCRASH( rider, ("Contain list must not contain null element"));
 		if ( rider )
 		{
+			// TheSuperHackers @bugfix Caball009 11/03/2026 The contain list must be updated while iterating over it.
+			// Swapping the list with a temporary one for safety reasons causes the GLA Demolition Suicide upgrade to apply damage to civilian buildings
+			// for all garrisoned units instead of the last one that's killed by Neutron Shells.
+			m_containList.erase(it);
+			--m_containListSize;
+
 			onRemoving( rider );
 			rider->onRemovedFrom( getObject() );
 			rider->kill();
+
+			// After Object::kill, the iterator may or may not be invalidated and the list may or may not be empty.
+			// Set the iterator to the beginning of the list.
+			it = m_containList.begin();
+		}
+		else
+		{
+			++it;
 		}
 	}
 
+	DEBUG_ASSERTCRASH(m_containList.empty(), ("killAllContained should have emptied the contain list"));
+
+	m_containList.clear();
+	m_containListSize = 0;
 }
 
 //--------------------------------------------------------------------------------------------------------
