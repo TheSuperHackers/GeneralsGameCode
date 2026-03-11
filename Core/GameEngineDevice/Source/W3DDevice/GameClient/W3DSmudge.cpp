@@ -205,7 +205,8 @@ Bool W3DSmudgeManager::testHardwareSupport()
 		IDirect3DTexture8 *backTexture=W3DShaderManager::getRenderTexture();
 		if (!backTexture || !W3DShaderManager::isRenderingToTexture())
 		{
-			// TheSuperHackers @bugfix When RTT is disabled globally accept the Copy path as hardware support
+			// TheSuperHackers @bugfix When Render-To-Texture is disabled globally, we fallback
+			// to copying the backbuffer to a texture.
 			if (m_backgroundTexture)
 			{
 				m_hardwareSupportStatus = SMUDGE_SUPPORT_YES;

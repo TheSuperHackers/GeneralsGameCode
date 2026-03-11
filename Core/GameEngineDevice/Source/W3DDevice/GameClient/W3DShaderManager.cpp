@@ -174,9 +174,9 @@ Int ScreenDefaultFilter::init()
 Bool ScreenDefaultFilter::preRender(Bool &skipRender, CustomScenePassModes &scenePassMode)
 {
 	// TheSuperHackers @bugfix Disable Render To Texture redirection for the default filter
-	// When MSAA is forced by Nvidia driver profile depth buffer is multisampled internally
+	// When MSAA is forced by Nvidia driver profile depth buffer is multisampled internally.
 	// Rendering to non-MSAA texture with this depth buffer corrupts depth testing producing black screen
-	// The smudge system has its own Copy path that works without Render To Texture
+	// The smudge system has its own Copy path that works without Render To Texture.
 	return FALSE;
 }
 
