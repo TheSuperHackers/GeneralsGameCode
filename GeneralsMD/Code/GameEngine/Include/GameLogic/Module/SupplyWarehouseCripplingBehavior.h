@@ -72,7 +72,7 @@ public:
 
 	// DamageModuleInterface
 	virtual void onDamage( DamageInfo *damageInfo ) override;
-	virtual void onHealing( DamageInfo *damageInfo ) override{}
+	virtual void onHealing( DamageInfo *damageInfo ) override {}
 	virtual void onBodyDamageStateChange(const DamageInfo* damageInfo, BodyDamageType oldState, BodyDamageType newState) override;
 
 	// UpdateInterface

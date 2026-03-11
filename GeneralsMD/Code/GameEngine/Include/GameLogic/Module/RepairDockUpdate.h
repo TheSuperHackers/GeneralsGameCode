@@ -65,7 +65,7 @@ public:
 
 	virtual Bool action( Object *docker, Object *drone = nullptr ) override;	///< for me this means do some repair
 
-	virtual Bool isRallyPointAfterDockType() override{return TRUE;} ///< A minority of docks want to give you a final command to their rally point
+	virtual Bool isRallyPointAfterDockType() override {return TRUE;} ///< A minority of docks want to give you a final command to their rally point
 
 protected:
 

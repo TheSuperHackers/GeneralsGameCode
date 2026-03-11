@@ -61,9 +61,9 @@ public:
 	virtual StateReturnType onEnter() override;
 protected:
 	// snapshot interface	STUBBED - no member vars to save. jba.
-	virtual void crc( Xfer *xfer ) override{};
-	virtual void xfer( Xfer *xfer ) override{XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
-	virtual void loadPostProcess() override{};
+	virtual void crc( Xfer *xfer ) override {};
+	virtual void xfer( Xfer *xfer ) override {XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
+	virtual void loadPostProcess() override {};
 };
 EMPTY_DTOR(ApproachState)
 
@@ -144,9 +144,9 @@ public:
 	virtual StateReturnType onEnter() override;
 protected:
 	// snapshot interface	STUBBED - no member vars to save. jba.
-	virtual void crc( Xfer *xfer ) override{};
-	virtual void xfer( Xfer *xfer ) override{XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
-	virtual void loadPostProcess() override{};
+	virtual void crc( Xfer *xfer ) override {};
+	virtual void xfer( Xfer *xfer ) override {XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
+	virtual void loadPostProcess() override {};
 
   Coord3D facingDirectionUponDelivery;
 };
@@ -159,13 +159,13 @@ class CleanUpState :  public State
 	//Made it off map, delete ourselves
 public:
 	CleanUpState( StateMachine *machine ) :State( machine, "CleanUpState" ) {}
-	virtual StateReturnType update() override{return STATE_CONTINUE;}
+	virtual StateReturnType update() override {return STATE_CONTINUE;}
 	virtual StateReturnType onEnter() override;
 protected:
 	// snapshot interface	STUBBED - no member vars to save. jba.
-	virtual void crc( Xfer *xfer ) override{};
-	virtual void xfer( Xfer *xfer ) override{XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
-	virtual void loadPostProcess() override{};
+	virtual void crc( Xfer *xfer ) override {};
+	virtual void xfer( Xfer *xfer ) override {XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
+	virtual void loadPostProcess() override {};
 };
 EMPTY_DTOR(CleanUpState)
 

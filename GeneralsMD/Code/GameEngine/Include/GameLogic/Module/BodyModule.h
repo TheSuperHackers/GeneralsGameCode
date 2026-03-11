@@ -246,7 +246,7 @@ public:
 
 	virtual UnsignedInt getSubdualDamageHealRate() const override {return 0;}
 	virtual Real getSubdualDamageHealAmount() const override {return 0.0f;}
-	virtual Bool hasAnySubdualDamage() const override{return FALSE;}
+	virtual Bool hasAnySubdualDamage() const override {return FALSE;}
 	virtual Real getCurrentSubdualDamageAmount() const override { return 0.0f; }
 
 	virtual Real getInitialHealth() const override {return 0.0f;}  // return initial health

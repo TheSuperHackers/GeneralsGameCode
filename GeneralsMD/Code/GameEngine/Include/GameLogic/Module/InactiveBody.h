@@ -53,13 +53,13 @@ public:
 	virtual Real getHealth() const override;													///< get current health
 	virtual BodyDamageType getDamageState() const override;
 	virtual void setDamageState( BodyDamageType newState ) override;	///< control damage state directly.  Will adjust hitpoints.
-	virtual void setAflame( Bool setting ) override{}///< This is a major change like a damage state.
+	virtual void setAflame( Bool setting ) override {}///< This is a major change like a damage state.
 
 	virtual void onVeterancyLevelChanged( VeterancyLevel oldLevel, VeterancyLevel newLevel, Bool provideFeedback ) override { /* nothing */ }
 
 	virtual void setArmorSetFlag(ArmorSetType ast) override { /* nothing */ }
 	virtual void clearArmorSetFlag(ArmorSetType ast) override { /* nothing */ }
-	virtual Bool testArmorSetFlag(ArmorSetType ast) override{ return FALSE; }
+	virtual Bool testArmorSetFlag(ArmorSetType ast) override { return FALSE; }
 
 	virtual void internalChangeHealth( Real delta ) override;
 
