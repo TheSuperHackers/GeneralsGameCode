@@ -33,6 +33,8 @@
 #pragma once
 
 #include "Common/GameEngine.h"
+#include "Common/GlobalData.h"
+#include "GameClient/ParticleSys.h"
 #include "GameLogic/GameLogic.h"
 #include "GameNetwork/NetworkInterface.h"
 #include "MilesAudioDevice/MilesAudioManager.h"
