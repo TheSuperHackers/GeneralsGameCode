@@ -254,16 +254,23 @@ class PathfindCellList
 	friend class PathfindCell;
 
 public:
-	PathfindCellList() : m_head(nullptr) {}
+	PathfindCellList() : m_head(nullptr), m_tail(nullptr) {}
 
-	void reset(PathfindCell* newHead = nullptr) { m_head = newHead; }
+#if RETAIL_COMPATIBLE_PATHFINDING
+	void reset(PathfindCell* newHead = nullptr) { m_head = newHead; m_tail = nullptr; }
+#else
+	void reset() { m_head = nullptr; m_tail = nullptr; }
+#endif
 
 	PathfindCell* getHead() const { return m_head; }
 
 	Bool empty() const { return m_head == nullptr; }
 
+	Bool canReverseSort(PathfindCell& currentCell) const;
+
 private:
 	PathfindCell* m_head;
+	PathfindCell* m_tail;
 };
 
 /**
@@ -353,6 +360,7 @@ public:
 	static Int releaseOpenList( PathfindCellList &list );
 
 	inline PathfindCell *getNextOpen() {return m_info->m_nextOpen?m_info->m_nextOpen->m_cell: nullptr;}
+	inline PathfindCell *getPrevOpen() {return m_info->m_prevOpen?m_info->m_prevOpen->m_cell: nullptr;}
 
 	inline UnsignedShort getXIndex() const {return m_info->m_pos.x;}
 	inline UnsignedShort getYIndex() const {return m_info->m_pos.y;}
@@ -364,6 +372,8 @@ public:
 	inline Bool getClosed() const {return m_info->m_closed;}
 	inline UnsignedInt getCostSoFar() const {return m_info->m_costSoFar;}
 	inline UnsignedInt getTotalCost() const {return m_info->m_totalCost;}
+
+	inline UnsignedInt getTotalCostDifference(PathfindCell& other) const;
 
 	inline void setCostSoFar(UnsignedInt cost) { if( m_info ) m_info->m_costSoFar = cost;}
 	inline void setTotalCost(UnsignedInt cost) { if( m_info ) m_info->m_totalCost = cost;}
