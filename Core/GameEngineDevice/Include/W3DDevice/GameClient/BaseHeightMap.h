@@ -105,7 +105,7 @@ public:
 	/////////////////////////////////////////////////////////////////////////////
 	virtual RenderObjClass *	Clone() const override;
 	virtual int						Class_ID() const override;
-	virtual void					Render(RenderInfoClass & rinfo) override = 0;
+	virtual void					Render(RenderInfoClass & rinfo) = 0;
 	virtual bool					Cast_Ray(RayCollisionTestClass & raytest) override; // This CANNOT be Bool, as it will not inherit properly if you make Bool == Int
 	virtual void					Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const override;
 	virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & aabox) const override;
