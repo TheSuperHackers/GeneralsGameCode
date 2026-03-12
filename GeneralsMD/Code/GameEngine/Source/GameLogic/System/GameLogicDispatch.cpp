@@ -422,7 +422,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 #if !RETAIL_COMPATIBLE_CRC
 			// TheSuperHackers @fix stephanmeesters 11/03/2026
 			// Make sure we're ready to start a new game. This prevents an issue where an infinite disconnect screen
-			// ("DC bug") can be triggered in an online match.
+			// can be force-triggered in an online match by using cheats.
 			if ( isInGame() || isClearingGameData() || isLoadingMap() )
 			{
 				DEBUG_CRASH( ("Called MSG_NEW_GAME while game is not ready (inGame=%d, clearingData=%d, loadingMap=%d)",
