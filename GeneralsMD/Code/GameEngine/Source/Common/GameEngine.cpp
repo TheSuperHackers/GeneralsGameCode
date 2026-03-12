@@ -250,6 +250,7 @@ GameEngine::GameEngine()
 	m_logicTimeAccumulator = 0.0f;
 	m_quitting = FALSE;
 	m_isActive = FALSE;
+	m_launchTime = ::timeGetTime();
 
 	_Module.Init(nullptr, ApplicationHInstance, nullptr);
 }
@@ -1041,6 +1042,18 @@ FileSystem *GameEngine::createFileSystem()
 Bool GameEngine::isMultiplayerSession()
 {
 	return TheRecorder->isMultiplayer();
+}
+
+//-------------------------------------------------------------------------------------------------
+UnsignedInt GameEngine::getLaunchTime() const
+{
+	return m_launchTime;
+}
+
+//-------------------------------------------------------------------------------------------------
+UnsignedInt GameEngine::getUpTime() const
+{
+	return ::timeGetTime() - m_launchTime;
 }
 
 //-------------------------------------------------------------------------------------------------
