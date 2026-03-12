@@ -248,6 +248,8 @@ void GameLogic::clearGameData( Bool showScoreScreen )
 		return;
 	}
 
+	setClearingGameData( TRUE );
+
 //	m_background = TheWindowManager->winCreateLayout("Menus/BlankWindow.wnd");
 //	DEBUG_ASSERTCRASH(m_background,("We Couldn't Load Menus/BlankWindow.wnd"));
 //	m_background->hide(FALSE);
@@ -292,6 +294,8 @@ void GameLogic::clearGameData( Bool showScoreScreen )
 		m_background = nullptr;
 	}
 
+	setClearingGameData( FALSE );
+
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -299,7 +303,9 @@ void GameLogic::clearGameData( Bool showScoreScreen )
 // ------------------------------------------------------------------------------------------------
 void GameLogic::prepareNewGame( GameMode gameMode, GameDifficulty diff, Int rankPoints )
 {
-	setGameLoading(TRUE);
+	//Kris: Commented this out, but leaving it around incase it bites us later. I cleaned up the
+	//      nomenclature. Look for setLoadingMap() and setLoadingSave()
+	//setGameLoading(TRUE);
 
 	TheScriptEngine->setGlobalDifficulty(diff);
 

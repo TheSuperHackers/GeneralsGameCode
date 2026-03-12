@@ -247,6 +247,10 @@ GameLogic::GameLogic()
 #ifdef DUMP_PERF_STATS
 	m_overallFailedPathfinds = 0;
 #endif
+
+	m_loadingMap = FALSE;
+	m_loadingSave = FALSE;
+	m_clearingGameData = FALSE;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -933,11 +937,6 @@ void GameLogic::deleteLoadScreen()
 
 }
 
-void GameLogic::setGameLoading( Bool loading )
-{
-	m_loadingScene = loading;
-}
-
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 void GameLogic::updateDisplayBusyState()
@@ -964,7 +963,7 @@ void GameLogic::setGameMode( GameMode mode )
 /** Entry point for starting a new game, the engine is already in clean state at this
 	* point and ready to load up with all the data */
 // ------------------------------------------------------------------------------------------------
-void GameLogic::startNewGame( Bool saveGame )
+void GameLogic::startNewGame( Bool loadingSaveGame )
 {
 
 	#ifdef DUMP_PERF_STATS
@@ -984,7 +983,9 @@ void GameLogic::startNewGame( Bool saveGame )
 	CRCDebugStartNewGame();
 #endif
 
-	if( saveGame == FALSE )
+	setLoadingMap( TRUE );
+
+	if( loadingSaveGame == FALSE )
 	{
 
 		// record pristine map name when we're loading from the map (not a save game)
@@ -1015,7 +1016,7 @@ void GameLogic::startNewGame( Bool saveGame )
 					deleteInstance(m_background);
 					m_background = nullptr;
 				}
-				m_loadScreen = getLoadScreen( saveGame );
+				m_loadScreen = getLoadScreen( loadingSaveGame );
 				if(m_loadScreen)
 				{
 					TheWritableGlobalData->m_loadScreenRender = TRUE;	///< mark it so only a few select things are rendered during load
@@ -1038,7 +1039,7 @@ void GameLogic::startNewGame( Bool saveGame )
 	// for save games, we read this value out of the save game file and it is important
 	// that we preserve it as we load and execute the game
 	//
-	if( saveGame == FALSE )
+	if( loadingSaveGame == FALSE )
 		m_nextObjID = (ObjectID)1;
 
 	TheWritableGlobalData->m_loadScreenRender = TRUE;	///< mark it so only a few select things are rendered during load
@@ -1079,7 +1080,7 @@ void GameLogic::startNewGame( Bool saveGame )
 		for (Int i=0; i<MAX_SLOTS; ++i)
 		{
 			GameSlot *slot = TheGameInfo->getSlot(i);
-			if (!saveGame) {
+			if (!loadingSaveGame) {
 				slot->saveOffOriginalInfo();
 			}
 			if (slot->isAI())
@@ -1104,7 +1105,7 @@ void GameLogic::startNewGame( Bool saveGame )
 	// Get the m_loadScreen for this kind of game
 	if(!m_loadScreen && !(TheRecorder && TheRecorder->getMode() == RECORDERMODETYPE_SIMULATION_PLAYBACK))
 	{
-		m_loadScreen = getLoadScreen( saveGame );
+		m_loadScreen = getLoadScreen( loadingSaveGame );
 		if(m_loadScreen && !TheGlobalData->m_headless)
 		{
 			TheMouse->setVisibility(FALSE);
@@ -1510,7 +1511,7 @@ void GameLogic::startNewGame( Bool saveGame )
 	updateLoadProgress(LOAD_PROGRESS_POST_GHOST_OBJECT_MANAGER_RESET);
 
 	// update the terrain logic now that all is loaded
-	TheTerrainLogic->newMap( saveGame );
+	TheTerrainLogic->newMap( loadingSaveGame );
 
 	// update the loadscreen
 	updateLoadProgress(LOAD_PROGRESS_POST_TERRAIN_LOGIC_NEW_MAP);
@@ -1613,7 +1614,7 @@ void GameLogic::startNewGame( Bool saveGame )
 	DEBUG_LOG(("%s", Buf));
 	#endif
 
-	if( saveGame == FALSE )
+	if( loadingSaveGame == FALSE )
 	{
 		Int progressCount = LOAD_PROGRESS_LOOP_ALL_THE_FREAKN_OBJECTS;
 		Int timer = timeGetTime();
@@ -1716,7 +1717,7 @@ void GameLogic::startNewGame( Bool saveGame )
 	#endif
 
 	// place initial network buildings/units
-	if (TheGameInfo && !saveGame)
+	if (TheGameInfo && !loadingSaveGame)
 	{
 		Int progressCount = LOAD_PROGRESS_LOOP_INITIAL_NETWORK_BUILDINGS;
 		for (int i=0; i<MAX_SLOTS; ++i)
@@ -1852,11 +1853,11 @@ void GameLogic::startNewGame( Bool saveGame )
 
 
 	// final step, run newMap for all players
-	if( saveGame == FALSE )
+	if( loadingSaveGame == FALSE )
 		ThePlayerList->newMap();
 
 	// reset all the skill points in a single player game
-	if(saveGame == FALSE && isInSinglePlayerGame())
+	if(loadingSaveGame == FALSE && isInSinglePlayerGame())
 	{
 		for (Int i=0; i<MAX_PLAYER_COUNT; ++i)
 		{
@@ -1889,7 +1890,7 @@ void GameLogic::startNewGame( Bool saveGame )
 	}
 
 	// if we're in a load game, don't fade yet
-	if(saveGame == FALSE && TheTransitionHandler != nullptr && m_loadScreen)
+	if(loadingSaveGame == FALSE && TheTransitionHandler != nullptr && m_loadScreen)
 	{
 		TheTransitionHandler->setGroup("FadeWholeScreen");
 		while(!TheTransitionHandler->isFinished())
@@ -1915,7 +1916,7 @@ void GameLogic::startNewGame( Bool saveGame )
 		// have more work to do and the load screen will be deleted elsewhere after
 		// we're all done with the load game progress
 		//
-		if( saveGame == FALSE )
+		if( loadingSaveGame == FALSE )
 */
 			deleteLoadScreen();
 
@@ -2048,7 +2049,8 @@ void GameLogic::startNewGame( Bool saveGame )
 	}
 
 	//ReAllows quit menu to work during loading scene
-	setGameLoading(FALSE);
+	//setGameLoading(FALSE);
+	setLoadingMap( FALSE );
 
 #ifdef DUMP_PERF_STATS
 	GetPrecisionTimer(&endTime64);
