@@ -130,7 +130,7 @@ BinkVideoPlayer::~BinkVideoPlayer()
 // BinkVideoPlayer::init
 //============================================================================
 
-void	BinkVideoPlayer::init( void )
+void	BinkVideoPlayer::init()
 {
 	// Need to load the stuff from the ini file.
 	VideoPlayer::init();
@@ -142,7 +142,7 @@ void	BinkVideoPlayer::init( void )
 // BinkVideoPlayer::deinit
 //============================================================================
 
-void BinkVideoPlayer::deinit( void )
+void BinkVideoPlayer::deinit()
 {
 	TheAudio->releaseHandleForBink();
 	VideoPlayer::deinit();
@@ -152,7 +152,7 @@ void BinkVideoPlayer::deinit( void )
 // BinkVideoPlayer::reset
 //============================================================================
 
-void	BinkVideoPlayer::reset( void )
+void	BinkVideoPlayer::reset()
 {
 	VideoPlayer::reset();
 }
@@ -161,7 +161,7 @@ void	BinkVideoPlayer::reset( void )
 // BinkVideoPlayer::update
 //============================================================================
 
-void	BinkVideoPlayer::update( void )
+void	BinkVideoPlayer::update()
 {
 	VideoPlayer::update();
 
@@ -171,7 +171,7 @@ void	BinkVideoPlayer::update( void )
 // BinkVideoPlayer::loseFocus
 //============================================================================
 
-void	BinkVideoPlayer::loseFocus( void )
+void	BinkVideoPlayer::loseFocus()
 {
 	VideoPlayer::loseFocus();
 }
@@ -180,7 +180,7 @@ void	BinkVideoPlayer::loseFocus( void )
 // BinkVideoPlayer::regainFocus
 //============================================================================
 
-void	BinkVideoPlayer::regainFocus( void )
+void	BinkVideoPlayer::regainFocus()
 {
 	VideoPlayer::regainFocus();
 }
@@ -234,7 +234,7 @@ VideoStreamInterface*	BinkVideoPlayer::open( AsciiString movieTitle )
 		if (TheGlobalData->m_modDir.isNotEmpty())
 		{
 			char filePath[ _MAX_PATH ];
-			sprintf( filePath, "%s%s\\%s.%s", TheGlobalData->m_modDir.str(), VIDEO_PATH, pVideo->m_filename.str(), VIDEO_EXT );
+			snprintf( filePath, ARRAY_SIZE(filePath), "%s%s\\%s.%s", TheGlobalData->m_modDir.str(), VIDEO_PATH, pVideo->m_filename.str(), VIDEO_EXT );
 			HBINK handle = BinkOpen(filePath , BINKPRELOADALL );
 			DEBUG_ASSERTLOG(!handle, ("opened bink file %s", filePath));
 			if (handle)
@@ -244,13 +244,13 @@ VideoStreamInterface*	BinkVideoPlayer::open( AsciiString movieTitle )
 		}
 
 		char localizedFilePath[ _MAX_PATH ];
-		sprintf( localizedFilePath, VIDEO_LANG_PATH_FORMAT, GetRegistryLanguage().str(), pVideo->m_filename.str(), VIDEO_EXT );
+		snprintf( localizedFilePath, ARRAY_SIZE(localizedFilePath), VIDEO_LANG_PATH_FORMAT, GetRegistryLanguage().str(), pVideo->m_filename.str(), VIDEO_EXT );
 		HBINK handle = BinkOpen(localizedFilePath , BINKPRELOADALL );
 		DEBUG_ASSERTLOG(!handle, ("opened localized bink file %s", localizedFilePath));
 		if (!handle)
 		{
 			char filePath[ _MAX_PATH ];
-			sprintf( filePath, "%s\\%s.%s", VIDEO_PATH, pVideo->m_filename.str(), VIDEO_EXT );
+			snprintf( filePath, ARRAY_SIZE(filePath), "%s\\%s.%s", VIDEO_PATH, pVideo->m_filename.str(), VIDEO_EXT );
 			handle = BinkOpen(filePath , BINKPRELOADALL );
 			DEBUG_ASSERTLOG(!handle, ("opened bink file %s", localizedFilePath));
 		}
@@ -327,7 +327,7 @@ BinkVideoStream::~BinkVideoStream()
 // BinkVideoStream::update
 //============================================================================
 
-void BinkVideoStream::update( void )
+void BinkVideoStream::update()
 {
 	BinkWait( m_handle );
 }
@@ -336,7 +336,7 @@ void BinkVideoStream::update( void )
 // BinkVideoStream::isFrameReady
 //============================================================================
 
-Bool BinkVideoStream::isFrameReady( void )
+Bool BinkVideoStream::isFrameReady()
 {
 	return !BinkWait( m_handle );
 }
@@ -345,7 +345,7 @@ Bool BinkVideoStream::isFrameReady( void )
 // BinkVideoStream::frameDecompress
 //============================================================================
 
-void BinkVideoStream::frameDecompress( void )
+void BinkVideoStream::frameDecompress()
 {
 		BinkDoFrame( m_handle );
 }
@@ -399,7 +399,7 @@ void BinkVideoStream::frameRender( VideoBuffer *buffer )
 // BinkVideoStream::frameNext
 //============================================================================
 
-void BinkVideoStream::frameNext( void )
+void BinkVideoStream::frameNext()
 {
 	BinkNextFrame( m_handle );
 }
@@ -408,7 +408,7 @@ void BinkVideoStream::frameNext( void )
 // BinkVideoStream::frameIndex
 //============================================================================
 
-Int BinkVideoStream::frameIndex( void )
+Int BinkVideoStream::frameIndex()
 {
 	return m_handle->FrameNum - 1;
 }
@@ -417,7 +417,7 @@ Int BinkVideoStream::frameIndex( void )
 // BinkVideoStream::totalFrames
 //============================================================================
 
-Int	BinkVideoStream::frameCount( void )
+Int	BinkVideoStream::frameCount()
 {
 	return m_handle->Frames;
 }
@@ -435,7 +435,7 @@ void BinkVideoStream::frameGoto( Int index )
 // VideoStream::height
 //============================================================================
 
-Int		BinkVideoStream::height( void )
+Int		BinkVideoStream::height()
 {
 	return m_handle->Height;
 }
@@ -444,7 +444,7 @@ Int		BinkVideoStream::height( void )
 // VideoStream::width
 //============================================================================
 
-Int		BinkVideoStream::width( void )
+Int		BinkVideoStream::width()
 {
 	return m_handle->Width;
 }

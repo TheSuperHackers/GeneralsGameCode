@@ -91,7 +91,7 @@ void ShowInGameChat( Bool immediate )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void ResetInGameChat( void )
+void ResetInGameChat()
 {
 	if(chatWindow)
 		TheWindowManager->winDestroy( chatWindow );
@@ -155,7 +155,7 @@ Bool IsInGameChatActive() {
 
 // Slash commands -------------------------------------------------------------------------
 extern "C" {
-int getQR2HostingStatus(void);
+int getQR2HostingStatus();
 }
 extern int isThreadHosting;
 

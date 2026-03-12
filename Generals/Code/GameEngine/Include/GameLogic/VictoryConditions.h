@@ -51,28 +51,28 @@ class VictoryConditionsInterface : public SubsystemInterface
 public:
 	VictoryConditionsInterface() { m_victoryConditions = 0; }
 
-	virtual void init( void ) = 0;
-	virtual void reset( void ) = 0;
-	virtual void update( void ) = 0;
+	virtual void init() = 0;
+	virtual void reset() = 0;
+	virtual void update() = 0;
 
 	void setVictoryConditions( Int victoryConditions ) { m_victoryConditions = victoryConditions; }
-	Int getVictoryConditions( void ) { return m_victoryConditions; }
+	Int getVictoryConditions() { return m_victoryConditions; }
 
 	virtual Bool hasAchievedVictory(Player *player) = 0;					///< has a specific player and his allies won?
 	virtual Bool hasBeenDefeated(Player *player) = 0;							///< has a specific player and his allies lost?
 	virtual Bool hasSinglePlayerBeenDefeated(Player *player) = 0;	///< has a specific player lost?
 
-	virtual void cachePlayerPtrs( void ) = 0;											///< players have been created - cache the ones of interest
+	virtual void cachePlayerPtrs() = 0;											///< players have been created - cache the ones of interest
 
-	virtual Bool isLocalAlliedVictory( void ) = 0;								///< convenience function
-	virtual Bool isLocalAlliedDefeat( void ) = 0;									///< convenience function
-	virtual Bool isLocalDefeat( void ) = 0;												///< convenience function
-	virtual Bool amIObserver( void ) = 0;													///< Am I an observer?( need this for scripts )
-	virtual UnsignedInt getEndFrame( void ) = 0;									///< on which frame was the game effectively over?
+	virtual Bool isLocalAlliedVictory() = 0;								///< convenience function
+	virtual Bool isLocalAlliedDefeat() = 0;									///< convenience function
+	virtual Bool isLocalDefeat() = 0;												///< convenience function
+	virtual Bool amIObserver() = 0;													///< Am I an observer?( need this for scripts )
+	virtual UnsignedInt getEndFrame() = 0;									///< on which frame was the game effectively over?
 protected:
 	Int m_victoryConditions;
 };
 
-VictoryConditionsInterface * createVictoryConditions( void );
+VictoryConditionsInterface * createVictoryConditions();
 
 extern VictoryConditionsInterface *TheVictoryConditions;

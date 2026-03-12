@@ -51,40 +51,40 @@ class GameSpyChatInterface : public SubsystemInterface
 public:
 	virtual ~GameSpyChatInterface() { };
 
-	virtual void init( void ) = 0;
-	virtual void reset( void ) = 0;
-	virtual void update( void ) = 0;
+	virtual void init() = 0;
+	virtual void reset() = 0;
+	virtual void update() = 0;
 
-	virtual Bool isConnected( void ) = 0;
+	virtual Bool isConnected() = 0;
 	virtual void login(AsciiString loginName, AsciiString password = AsciiString::TheEmptyString, AsciiString email = AsciiString::TheEmptyString) = 0;
-	virtual void reconnectProfile( void ) = 0;
-	virtual void disconnectFromChat( void ) = 0;
+	virtual void reconnectProfile() = 0;
+	virtual void disconnectFromChat() = 0;
 
 	virtual void UTMRoom( RoomType roomType, const char *key, const char *val, Bool authenticate = FALSE ) = 0;
 	virtual void UTMPlayer( const char *name, const char *key, const char *val, Bool authenticate = FALSE ) = 0;
-	virtual void startGame( void ) = 0;
+	virtual void startGame() = 0;
 	virtual void leaveRoom( RoomType roomType ) = 0;
 	virtual void setReady( Bool ready ) = 0;
 	virtual void enumPlayers( RoomType roomType, peerEnumPlayersCallback callback, void *userData ) = 0;
 	virtual void startListingGames( peerListingGamesCallback callback ) = 0;
-	virtual void stopListingGames( void ) = 0;
+	virtual void stopListingGames() = 0;
 
 	virtual void joinGroupRoom( Int ID ) = 0;
 	virtual void joinStagingRoom( GServer server, AsciiString password ) = 0;
 	virtual void createStagingRoom( AsciiString gameName, AsciiString password, Int maxPlayers ) = 0;
-	virtual void joinBestGroupRoom( void ) = 0;
+	virtual void joinBestGroupRoom() = 0;
 
-	inline PEER getPeer( void )									{ return m_peer; }
-	inline AsciiString getLoginName( void )			{ return m_loginName; }
-	inline AsciiString getPassword( void )			{ return m_password; }
-	inline GroupRoomMap* getGroupRooms( void )	{ return &m_groupRooms; }
-	inline Int getCurrentGroupRoomID( void )		{ return m_currentGroupRoomID; }
-	inline Bool getUsingProfile( void )					{ return m_usingProfiles; }
-	inline Int getProfileID( void )							{ return m_profileID; }
+	inline PEER getPeer()									{ return m_peer; }
+	inline AsciiString getLoginName()			{ return m_loginName; }
+	inline AsciiString getPassword()			{ return m_password; }
+	inline GroupRoomMap* getGroupRooms()	{ return &m_groupRooms; }
+	inline Int getCurrentGroupRoomID()		{ return m_currentGroupRoomID; }
+	inline Bool getUsingProfile()					{ return m_usingProfiles; }
+	inline Int getProfileID()							{ return m_profileID; }
 
 	inline void setCurrentGroupRoomID( Int ID )	{ m_currentGroupRoomID = ID; }
-	void clearGroupRoomList(void);
-	inline Int getNumGroupRooms( void )					{ return m_groupRooms.size(); }
+	void clearGroupRoomList();
+	inline Int getNumGroupRooms()					{ return m_groupRooms.size(); }
 
 
 protected:
@@ -100,7 +100,7 @@ protected:
 	Int m_currentGroupRoomID;
 };
 
-GameSpyChatInterface *createGameSpyChat( void );
+GameSpyChatInterface *createGameSpyChat();
 
 extern GameSpyChatInterface *TheGameSpyChat;
 

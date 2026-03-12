@@ -101,7 +101,7 @@ static GameWindow *checkBoxLimitArmies = nullptr;
 static GameWindow *checkBoxUseStats = nullptr;
 
 
-void createGame( void );
+void createGame();
 
 //-----------------------------------------------------------------------------
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
@@ -244,7 +244,7 @@ void PopulateCustomLadderListBox( GameWindow *win )
 	isPopulatingLadderBox = false;
 }
 
-void PopulateCustomLadderComboBox( void )
+void PopulateCustomLadderComboBox()
 {
 	if (!parentPopup || !comboBoxLadderName)
 		return;
@@ -562,7 +562,7 @@ WindowMsgHandledType PopupHostGameSystem( GameWindow *window, UnsignedInt msg, W
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 
-void createGame( void )
+void createGame()
 {
 	TheGameSpyInfo->setCurrentGroupRoom(0);
 	PeerRequest req;

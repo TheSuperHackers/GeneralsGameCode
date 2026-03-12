@@ -62,7 +62,7 @@ MatBufferClass::MatBufferClass(const MatBufferClass & that) :
 	}
 }
 
-MatBufferClass::~MatBufferClass(void)
+MatBufferClass::~MatBufferClass()
 {
 	for (int i=0; i<Count; i++) {
 		REF_PTR_RELEASE(Array[i]);
@@ -106,7 +106,7 @@ TexBufferClass::TexBufferClass(const TexBufferClass & that) :
 	}
 }
 
-TexBufferClass::~TexBufferClass(void)
+TexBufferClass::~TexBufferClass()
 {
 	for (int i=0;i<Count;i++) {
 		REF_PTR_RELEASE(Array[i]);
@@ -158,7 +158,7 @@ bool UVBufferClass::Is_Equal_To(const UVBufferClass & that)
 }
 
 
-void UVBufferClass::Update_CRC(void)
+void UVBufferClass::Update_CRC()
 {
 	CRC = CRC_Memory((unsigned char *)Get_Array(),Get_Count() * sizeof(Vector2));
 }
@@ -174,7 +174,7 @@ void UVBufferClass::Update_CRC(void)
 **************************************************************************************************/
 ShaderClass MeshMatDescClass::NullShader(0);	// Used to mark no shader data
 
-MeshMatDescClass::MeshMatDescClass(void) :
+MeshMatDescClass::MeshMatDescClass() :
 	PassCount(1),
 	VertexCount(0),
 	PolyCount(0)
@@ -291,7 +291,7 @@ MeshMatDescClass::operator = (const MeshMatDescClass & that)
 	return *this;
 }
 
-MeshMatDescClass::~MeshMatDescClass(void)
+MeshMatDescClass::~MeshMatDescClass()
 {
 	Reset(0,0,0);
 }
@@ -435,7 +435,7 @@ void MeshMatDescClass::Init_Alternate(MeshMatDescClass & default_materials,MeshM
 	}
 }
 
-bool MeshMatDescClass::Is_Empty(void)
+bool MeshMatDescClass::Is_Empty()
 {
 	for (int array=0; array<MAX_COLOR_ARRAYS; array++) {
 		if (ColorArray[array] != nullptr) return false;
@@ -923,7 +923,7 @@ void MeshMatDescClass::Configure_Material(VertexMaterialClass * mtl,int pass,boo
 	}
 }
 
-bool MeshMatDescClass::Do_Mappers_Need_Normals(void)
+bool MeshMatDescClass::Do_Mappers_Need_Normals()
 {
 	if (DX8Wrapper::Get_Current_Caps()->Support_NPatches() && WW3D::Get_NPatches_Level()>1) return true;
 

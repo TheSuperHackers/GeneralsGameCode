@@ -57,7 +57,7 @@ public:
 
 	InitialRoster		m_initialRoster;
 
-	GarrisonContainModuleData( void );
+	GarrisonContainModuleData();
 
 	static void buildFieldParse(MultiIniFieldParse& p)
 	{
@@ -105,7 +105,7 @@ public:
 	GarrisonContain( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual UpdateSleepTime update( void );						///< called once per frame
+	virtual UpdateSleepTime update();						///< called once per frame
 
 	virtual Bool isValidContainerFor( const Object* obj, Bool checkCapacity) const; // Garrison has an extra check forbidding any containment if ReallyDamaged
 	virtual Bool isGarrisonable() const { return true; }	///< can this unit be Garrisoned? (ick)
@@ -123,7 +123,7 @@ public:
 	virtual void exitObjectByBudding( Object *newObj, Object *budHost ) { return; };
 	virtual void onContaining( Object *obj, Bool wasSelected );				///< object now contains 'obj'
 	virtual void onRemoving( Object *obj );					///< object no longer contains 'obj'
-  virtual void onSelling( void );
+  virtual void onSelling();
 
 
 	// A Garrison Contain must eject all passengers when it crosses the ReallyDamaged threshold.
@@ -136,7 +136,7 @@ public:
 		if null, use getObject()->getControllingPlayer() instead.
 	*/
 	virtual const Player* getApparentControllingPlayer( const Player* observingPlayer ) const;
-	virtual void recalcApparentControllingPlayer( void );
+	virtual void recalcApparentControllingPlayer();
 	virtual Bool isDisplayedOnControlBar() const {return TRUE;}///< Does this container display its contents on the ControlBar?
 
   virtual void onDamage( DamageInfo *info );
@@ -145,40 +145,40 @@ public:
 
 protected:
 
-	virtual void redeployOccupants( void );				///< redeploy the occupants of us at all available garrison points
+	virtual void redeployOccupants();				///< redeploy the occupants of us at all available garrison points
 	virtual void onObjectCreated();
 
-	void validateRallyPoint( void );							///< validate (if necessary) and pick (if possible) an exit rally point
+	void validateRallyPoint();							///< validate (if necessary) and pick (if possible) an exit rally point
 
 	virtual Bool calcBestGarrisonPosition( Coord3D *sourcePos, const Coord3D *targetPos );
 	virtual Bool attemptBestFirePointPosition( Object *source, Weapon *weapon, Object *victim );
 	virtual Bool attemptBestFirePointPosition( Object *source, Weapon *weapon, const Coord3D *targetPos );
 
-	void updateEffects( void );										///< do any effects needed per frame
-	void loadGarrisonPoints( void );							///< load garrison point position data and save for later
+	void updateEffects();										///< do any effects needed per frame
+	void loadGarrisonPoints();							///< load garrison point position data and save for later
 	void putObjectAtBestGarrisonPoint( Object *obj, Object *target, const Coord3D *targetPos );	///< place object at position of the best garrison point to use for its target
 	void putObjectAtGarrisonPoint( Object *obj, ObjectID targetID, Int conditionIndex, Int index );					///< place object at the specified garrison point index
 	enum { SEARCH_FOR_REMOVE = -1 };
 	void removeObjectFromGarrisonPoint( Object *obj, Int index = SEARCH_FOR_REMOVE );///< remove object from the garrison point placement
-	void addValidObjectsToGarrisonPoints( void );			///< add any objects with targets to a garrison point
-	void removeInvalidObjectsFromGarrisonPoints( void );	///< remove objects with invalid targets from valid points
-	void trackTargets( void );										///< keep attackers at the closest garrison point to their active target
+	void addValidObjectsToGarrisonPoints();			///< add any objects with targets to a garrison point
+	void removeInvalidObjectsFromGarrisonPoints();	///< remove objects with invalid targets from valid points
+	void trackTargets();										///< keep attackers at the closest garrison point to their active target
 
-  void matchObjectsToGarrisonPoints( void );                ///< Every frame, and whenever anyone enters or leaves
-  void positionObjectsAtStationGarrisonPoints( void );  ///< enforce that everybody stays at their pre-assigned space
-  void loadStationGarrisonPoints( void );
+  void matchObjectsToGarrisonPoints();                ///< Every frame, and whenever anyone enters or leaves
+  void positionObjectsAtStationGarrisonPoints();  ///< enforce that everybody stays at their pre-assigned space
+  void loadStationGarrisonPoints();
   Bool pickAStationForMe( const Object *pbj );
   void removeObjectFromStationPoint( const Object *obj );
 
 	enum { GARRISON_INDEX_INVALID = -1 };
-	Int findConditionIndex( void );										///< find the condition index to use given the current object body state
+	Int findConditionIndex();										///< find the condition index to use given the current object body state
 	Int getObjectGarrisonPointIndex( Object *obj );		///< get the garrison point index object is at (if present)
 	Int findClosestFreeGarrisonPointIndex( Int conditionIndex,
 																				 const Coord3D *targetPos );  ///< find closest free garrison point to the target location
 
-	void healObjects( void );	///< heal all the objects within me
+	void healObjects();	///< heal all the objects within me
 	void healSingleObject( Object *obj, Real frames );	///< heal just one of the objects within me
-	void moveObjectsWithMe( void );				///< translates all the garrisoned object to this->getObject()->getPosition()
+	void moveObjectsWithMe();				///< translates all the garrisoned object to this->getObject()->getPosition()
 
 private:
 

@@ -46,7 +46,7 @@ KeepObjectDie::KeepObjectDie( Thing *thing, const ModuleData* moduleData ) : Die
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-KeepObjectDie::~KeepObjectDie( void )
+KeepObjectDie::~KeepObjectDie()
 {
 }
 
@@ -93,7 +93,7 @@ void KeepObjectDie::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void KeepObjectDie::loadPostProcess( void )
+void KeepObjectDie::loadPostProcess()
 {
 
 	// extend base class

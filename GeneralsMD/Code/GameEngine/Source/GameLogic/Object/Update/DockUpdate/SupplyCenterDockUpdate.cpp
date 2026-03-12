@@ -41,7 +41,7 @@
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-SupplyCenterDockUpdateModuleData::SupplyCenterDockUpdateModuleData( void )
+SupplyCenterDockUpdateModuleData::SupplyCenterDockUpdateModuleData()
 {
 	m_grantTemporaryStealthFrames = 0;
 }
@@ -198,7 +198,7 @@ void SupplyCenterDockUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void SupplyCenterDockUpdate::loadPostProcess( void )
+void SupplyCenterDockUpdate::loadPostProcess()
 {
 
 	// extend base class

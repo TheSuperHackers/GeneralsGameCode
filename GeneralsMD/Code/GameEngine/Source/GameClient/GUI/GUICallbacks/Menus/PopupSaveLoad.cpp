@@ -97,7 +97,7 @@ extern Bool ReplayWasPressed;
 /** Given the current layout and selection in the game listbox, update the main save/load
 	* menu buttons to be enabled or disabled */
 // ------------------------------------------------------------------------------------------------
-static void updateMenuActions( void )
+static void updateMenuActions()
 {
 
 	// for loading only, disable the save button, otherwise enable it
@@ -383,7 +383,7 @@ static AvailableGameInfo *getSelectedSaveFileInfo( GameWindow *window )
 
 // ---------------------------------------------------con------------------------------------------
 // ------------------------------------------------------------------------------------------------				// close the save/load menu
-static void doLoadGame( void )
+static void doLoadGame()
 {
 
 	// get listbox of games

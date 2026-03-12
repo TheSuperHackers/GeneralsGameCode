@@ -78,32 +78,32 @@ class RawFileClass : public FileClass
 		int Rights;
 
 		RawFileClass(char const *filename);
-		RawFileClass(void);
+		RawFileClass();
 		RawFileClass (RawFileClass const & f);
 		RawFileClass & operator = (RawFileClass const & f);
-		virtual ~RawFileClass(void);
+		virtual ~RawFileClass();
 
-		virtual char const * File_Name(void) const;
+		virtual char const * File_Name() const;
 		virtual char const * Set_Name(char const *filename);
-		virtual int Create(void);
-		virtual int Delete(void);
+		virtual int Create();
+		virtual int Delete();
 		virtual bool Is_Available(int forced=false);
-		virtual bool Is_Open(void) const;
+		virtual bool Is_Open() const;
 		virtual int Open(char const *filename, int rights=READ);
 		virtual int Open(int rights=READ);
 		virtual int Read(void *buffer, int size);
 		virtual int Seek(int pos, int dir=SEEK_CUR);
-		virtual int Size(void);
+		virtual int Size();
 		virtual int Write(void const *buffer, int size);
-		virtual void Close(void);
-		virtual unsigned long Get_Date_Time(void);
+		virtual void Close();
+		virtual unsigned long Get_Date_Time();
 		virtual bool Set_Date_Time(unsigned long datetime);
 		virtual void Error(int error, int canretry = false, char const * filename=nullptr);
 		virtual void Bias(int start, int length=-1);
-		virtual void * Get_File_Handle(void) { return Handle; }
+		virtual void * Get_File_Handle() { return Handle; }
 
 		virtual void	Attach (void *handle, int rights=READ);
-		virtual void	Detach (void);
+		virtual void	Detach ();
 
 		/*
 		**	These bias values enable a sub-portion of a file to appear as if it
@@ -119,10 +119,10 @@ class RawFileClass : public FileClass
 		**	This function returns the largest size a low level DOS read or write may
 		**	perform. Larger file transfers are performed in chunks of this size or less.
 		*/
-		int Transfer_Block_Size(void);
+		int Transfer_Block_Size();
 
 		int Raw_Seek(int pos, int dir=SEEK_CUR);
-		void Reset(void);
+		void Reset();
 
 	private:
 

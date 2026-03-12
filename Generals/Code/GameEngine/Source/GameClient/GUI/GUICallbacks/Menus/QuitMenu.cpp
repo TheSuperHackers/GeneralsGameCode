@@ -79,7 +79,7 @@ static NameKeyType buttonReturn = NAMEKEY_INVALID;
 static NameKeyType buttonOptions = NAMEKEY_INVALID;
 static NameKeyType buttonSaveLoad = NAMEKEY_INVALID;
 
-static void initGadgetsFullQuit( void )
+static void initGadgetsFullQuit()
 {
 	buttonExit = TheNameKeyGenerator->nameToKey( "QuitMenu.wnd:ButtonExit" );
 	buttonRestart = TheNameKeyGenerator->nameToKey( "QuitMenu.wnd:ButtonRestart" );
@@ -93,7 +93,7 @@ static void initGadgetsFullQuit( void )
 	buttonExitWin = TheWindowManager->winGetWindowFromId( nullptr, buttonExit );
 }
 
-static void initGadgetsNoSaveQuit( void )
+static void initGadgetsNoSaveQuit()
 {
 	buttonExit = TheNameKeyGenerator->nameToKey( "QuitNoSave.wnd:ButtonExit" );
 	buttonRestart = TheNameKeyGenerator->nameToKey( "QuitNoSave.wnd:ButtonRestart" );
@@ -200,6 +200,11 @@ static void restartMissionMenu()
 	Int gameMode = TheGameLogic->getGameMode();
 	AsciiString mapName = TheGlobalData->m_mapName;
 
+	// TheSuperHackers @bugfix Caball009 07/02/2026 Reuse the previous seed value for the new skirmish match to prevent mismatches.
+	// Campaign, challenge, and skirmish single-player scenarios all use GAME_SINGLE_PLAYER and are expected to use 0 as seed value.
+	DEBUG_ASSERTCRASH((TheSkirmishGameInfo != nullptr) == (gameMode == GAME_SKIRMISH), ("Unexpected game mode on map / mission restart"));
+	const Int seed = TheSkirmishGameInfo ? TheSkirmishGameInfo->getSeed() : 0;
+
 	//
 	// if the map name was from a save game it will have "Save/" at the front of it,
 	// we want to go back to the original pristine map string for the map name when restarting
@@ -238,11 +243,8 @@ static void restartMissionMenu()
 																																		TheScriptEngine->getGlobalDifficulty(),
 																																		rankPointsStartedWith)
 							);
-		//if (TheGlobalData->m_fixedSeed >= 0)
-			//InitRandom(TheGlobalData->m_fixedSeed);
-			InitRandom(0);
-		//else
-		//	InitGameLogicRandom(GameClientRandomValue(0, INT_MAX - 1));
+
+		InitRandom(seed);
 	}
 	//TheTransitionHandler->remove("QuitFull"); //KRISMORNESS ADD
 	//quitMenuLayout = nullptr; //KRISMORNESS ADD
@@ -253,7 +255,7 @@ static void restartMissionMenu()
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void HideQuitMenu( void )
+void HideQuitMenu()
 {
 	// Note: This is called as a safety a lot, without checking for the prescence of the quit menu.
 	// So don't do anything that counts on that menu actually being here.
@@ -371,7 +373,7 @@ void ToggleQuitMenu()
 		// load the quit menu from the layout file if needed
 		if( quitMenuLayout == nullptr )
 		{
-			DEBUG_ASSERTCRASH(FALSE, ("Could not load a quit menu layout"));
+			DEBUG_CRASH(("Could not load a quit menu layout"));
 			isVisible = FALSE;
 			TheInGameUI->setQuitMenuVisible(FALSE);
 			return;

@@ -198,7 +198,7 @@ Buffer & Buffer::operator = (Buffer const & buffer)
  * HISTORY:                                                                                    *
  *   07/29/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-Buffer::~Buffer(void)
+Buffer::~Buffer()
 {
 	Reset();
 }
@@ -221,7 +221,7 @@ Buffer::~Buffer(void)
  * HISTORY:                                                                                    *
  *   09/07/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-void Buffer::Reset(void)
+void Buffer::Reset()
 {
 	if (IsAllocated) {
 		// GeneralsX @bugfix felipe 24/02/2026 Cast to char* before delete[] to avoid UB on void* (allocated as new char[])

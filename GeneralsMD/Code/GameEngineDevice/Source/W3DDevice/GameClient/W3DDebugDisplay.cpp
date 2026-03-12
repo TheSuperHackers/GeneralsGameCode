@@ -122,7 +122,7 @@ W3DDebugDisplay::~W3DDebugDisplay()
 // W3DDebugDisplay::init
 //============================================================================
 
-void W3DDebugDisplay::init( void )
+void W3DDebugDisplay::init()
 {
 	m_displayString = TheDisplayStringManager->newDisplayString();
 }

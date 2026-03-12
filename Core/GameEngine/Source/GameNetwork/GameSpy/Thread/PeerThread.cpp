@@ -32,7 +32,7 @@
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Registry.h"
-#include "Common/UserPreferences.h"
+#include "Common/OptionPreferences.h"
 #include "Common/version.h"
 #include "GameNetwork/IPEnumeration.h"
 #include "GameNetwork/GameSpy/BuddyThread.h"
@@ -136,11 +136,11 @@ class GameSpyPeerMessageQueue : public GameSpyPeerMessageQueueInterface
 public:
 	virtual ~GameSpyPeerMessageQueue();
 	GameSpyPeerMessageQueue();
-	virtual void startThread( void );
-	virtual void endThread( void );
-	virtual Bool isThreadRunning( void );
-	virtual Bool isConnected( void );
-	virtual Bool isConnecting( void );
+	virtual void startThread();
+	virtual void endThread();
+	virtual Bool isThreadRunning();
+	virtual Bool isConnected();
+	virtual Bool isConnecting();
 
 	virtual void addRequest( const PeerRequest& req );
 	virtual Bool getRequest( PeerRequest& req );
@@ -148,10 +148,10 @@ public:
 	virtual void addResponse( const PeerResponse& resp );
 	virtual Bool getResponse( PeerResponse& resp );
 
-	virtual SerialAuthResult getSerialAuthResult( void ) { return m_serialAuth; }
+	virtual SerialAuthResult getSerialAuthResult() { return m_serialAuth; }
 	void setSerialAuthResult( SerialAuthResult result ) { m_serialAuth = result; }
 
-	PeerThreadClass* getThread( void );
+	PeerThreadClass* getThread();
 
 private:
 	MutexClass m_requestMutex;
@@ -163,7 +163,7 @@ private:
 	SerialAuthResult m_serialAuth;
 };
 
-GameSpyPeerMessageQueueInterface* GameSpyPeerMessageQueueInterface::createNewMessageQueue( void )
+GameSpyPeerMessageQueueInterface* GameSpyPeerMessageQueueInterface::createNewMessageQueue()
 {
 	return NEW GameSpyPeerMessageQueue;
 }
@@ -208,56 +208,56 @@ public:
 
 	void Thread_Function();
 
-	void markAsDisconnected( void ) { m_isConnecting = m_isConnected = false; }
+	void markAsDisconnected() { m_isConnecting = m_isConnected = false; }
 
 	void connectCallback( PEER peer, PEERBool success );
 	void nickErrorCallback( PEER peer, Int type, const char *nick );
 
-	Bool isConnecting( void ) { return m_isConnecting; }
-	Bool isConnected( void ) { return m_isConnected; }
+	Bool isConnecting() { return m_isConnecting; }
+	Bool isConnected() { return m_isConnected; }
 
 	Int addServerToMap( SBServer server );
 	Int removeServerFromMap( SBServer server );
-	void clearServers( void );
+	void clearServers();
 	SBServer findServerByID( Int id );
 	Int findServer( SBServer server );
 
 	// get info about the game we are hosting
-	Bool isHosting( void ) { return m_isHosting; }
+	Bool isHosting() { return m_isHosting; }
 	void stopHostingAlready(PEER peer);
-	Bool hasPassword( void ) { return m_hasPassword; }
-	Bool allowObservers( void ) { return m_allowObservers; }
-  Bool useStats(void) const { return m_useStats; }
-	std::string getMapName( void ) { return m_mapName; }
-	UnsignedInt exeCRC( void ) { return m_exeCRC; }
-	UnsignedInt iniCRC( void ) { return m_iniCRC; }
-	UnsignedInt gameVersion( void ) { return m_gameVersion; }
-	std::wstring getLocalStagingServerName( void ) { return m_localStagingServerName; }
-	Int getLocalRoomID( void ) { return m_localRoomID; }
-	std::string ladderIP( void ) { return m_ladderIP; }
-	UnsignedShort ladderPort( void ) { return m_ladderPort; }
-	std::string pingStr( void ) { return m_pingStr; }
+	Bool hasPassword() { return m_hasPassword; }
+	Bool allowObservers() { return m_allowObservers; }
+  Bool useStats() const { return m_useStats; }
+	std::string getMapName() { return m_mapName; }
+	UnsignedInt exeCRC() { return m_exeCRC; }
+	UnsignedInt iniCRC() { return m_iniCRC; }
+	UnsignedInt gameVersion() { return m_gameVersion; }
+	std::wstring getLocalStagingServerName() { return m_localStagingServerName; }
+	Int getLocalRoomID() { return m_localRoomID; }
+	std::string ladderIP() { return m_ladderIP; }
+	UnsignedShort ladderPort() { return m_ladderPort; }
+	std::string pingStr() { return m_pingStr; }
 	std::string getPlayerName(Int idx) { return m_playerNames[idx]; }
 	Int getPlayerWins(Int idx) { return m_playerWins[idx]; }
 	Int getPlayerLosses(Int idx) { return m_playerLosses[idx]; }
 	Int getPlayerProfileID(Int idx) { return m_playerProfileID[idx]; }
 	Int getPlayerFaction(Int idx) { return m_playerFactions[idx]; }
 	Int getPlayerColor(Int idx) { return m_playerColors[idx]; }
-	Int getNumPlayers(void) { return m_numPlayers; }
-	Int getMaxPlayers(void) { return m_maxPlayers; }
-	Int getNumObservers(void) { return m_numObservers; }
+	Int getNumPlayers() { return m_numPlayers; }
+	Int getMaxPlayers() { return m_maxPlayers; }
+	Int getNumObservers() { return m_numObservers; }
 
 	void roomJoined( Bool val ) { m_roomJoined = val; }
 	void setQMGroupRoom( Int groupID ) { m_qmGroupRoom = groupID; }
-	void sawEndOfEnumPlayers( void ) { m_sawEndOfEnumPlayers = true; }
+	void sawEndOfEnumPlayers() { m_sawEndOfEnumPlayers = true; }
 	void sawMatchbot( std::string bot ) { m_sawMatchbot = true; m_matchbotName = bot; }
-	QMStatus getQMStatus( void ) { return m_qmStatus; }
+	QMStatus getQMStatus() { return m_qmStatus; }
 	void handleQMMatch(PEER peer, Int mapIndex, Int seed, char *playerName[MAX_SLOTS], char *playerIP[MAX_SLOTS], char *playerSide[MAX_SLOTS], char *playerColor[MAX_SLOTS], char *playerNAT[MAX_SLOTS]);
-	std::string getQMBotName( void ) { return m_matchbotName; }
-	Int getQMGroupRoom( void ) { return m_qmGroupRoom; }
-	Int getQMLadder( void ) { return m_qmInfo.QM.ladderID; }
+	std::string getQMBotName() { return m_matchbotName; }
+	Int getQMGroupRoom() { return m_qmGroupRoom; }
+	Int getQMLadder() { return m_qmInfo.QM.ladderID; }
 
-	Int getCurrentGroupRoom(void) { return m_groupRoomID; }
+	Int getCurrentGroupRoom() { return m_groupRoomID; }
 
 #ifdef USE_BROADCAST_KEYS
 	void pushStatsToRoom(PEER peer);
@@ -428,7 +428,7 @@ Int PeerThreadClass::removeServerFromMap( SBServer server )
 	return 0;
 }
 
-void PeerThreadClass::clearServers( void )
+void PeerThreadClass::clearServers()
 {
 	m_stagingServers.clear();
 }
@@ -540,7 +540,7 @@ GameSpyPeerMessageQueue::~GameSpyPeerMessageQueue()
 	endThread();
 }
 
-void GameSpyPeerMessageQueue::startThread( void )
+void GameSpyPeerMessageQueue::startThread()
 {
 	if (!m_thread)
 	{
@@ -556,23 +556,23 @@ void GameSpyPeerMessageQueue::startThread( void )
 	}
 }
 
-void GameSpyPeerMessageQueue::endThread( void )
+void GameSpyPeerMessageQueue::endThread()
 {
 	delete m_thread;
 	m_thread = nullptr;
 }
 
-Bool GameSpyPeerMessageQueue::isThreadRunning( void )
+Bool GameSpyPeerMessageQueue::isThreadRunning()
 {
 	return (m_thread) ? m_thread->Is_Running() : false;
 }
 
-Bool GameSpyPeerMessageQueue::isConnected( void )
+Bool GameSpyPeerMessageQueue::isConnected()
 {
 	return (m_thread) ? m_thread->isConnected() : false;
 }
 
-Bool GameSpyPeerMessageQueue::isConnecting( void )
+Bool GameSpyPeerMessageQueue::isConnecting()
 {
 	return (m_thread) ? m_thread->isConnecting() : false;
 }
@@ -626,7 +626,7 @@ Bool GameSpyPeerMessageQueue::getResponse( PeerResponse& resp )
 	return true;
 }
 
-PeerThreadClass* GameSpyPeerMessageQueue::getThread( void )
+PeerThreadClass* GameSpyPeerMessageQueue::getThread()
 {
 	return m_thread;
 }
@@ -670,22 +670,22 @@ static void updateBuddyStatus( GameSpyBuddyStatus status, Int groupRoom = 0, std
 		case BUDDY_LOBBY:
 			req.arg.status.status = GP_CHATTING;
 			strcpy(req.arg.status.statusString, "Chatting");
-			sprintf(req.arg.status.locationString, "%d", groupRoom);
+			snprintf(req.arg.status.locationString, ARRAY_SIZE(req.arg.status.locationString), "%d", groupRoom);
 			break;
 		case BUDDY_STAGING:
 			req.arg.status.status = GP_STAGING;
 			strcpy(req.arg.status.statusString, "Staging");
-			sprintf(req.arg.status.locationString, "%s", gameName.c_str());
+			strlcpy(req.arg.status.locationString, gameName.c_str(), ARRAY_SIZE(req.arg.status.locationString));
 			break;
 		case BUDDY_LOADING:
 			req.arg.status.status = GP_PLAYING;
 			strcpy(req.arg.status.statusString, "Loading");
-			sprintf(req.arg.status.locationString, "%s", gameName.c_str());
+			strlcpy(req.arg.status.locationString, gameName.c_str(), ARRAY_SIZE(req.arg.status.locationString));
 			break;
 		case BUDDY_PLAYING:
 			req.arg.status.status = GP_PLAYING;
 			strcpy(req.arg.status.statusString, "Playing");
-			sprintf(req.arg.status.locationString, "%s", gameName.c_str());
+			strlcpy(req.arg.status.locationString, gameName.c_str(), ARRAY_SIZE(req.arg.status.locationString));
 			break;
 		case BUDDY_MATCHING:
 			req.arg.status.status = GP_ONLINE;

@@ -47,7 +47,7 @@ enum { UNLOAD_ALL = -1 };
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-RailedTransportDockUpdateModuleData::RailedTransportDockUpdateModuleData( void )
+RailedTransportDockUpdateModuleData::RailedTransportDockUpdateModuleData()
 {
 
 	m_pullInsideDurationInFrames = 0;
@@ -94,14 +94,14 @@ RailedTransportDockUpdate::RailedTransportDockUpdate( Thing *thing, const Module
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-RailedTransportDockUpdate::~RailedTransportDockUpdate( void )
+RailedTransportDockUpdate::~RailedTransportDockUpdate()
 {
 
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-UpdateSleepTime RailedTransportDockUpdate::update( void )
+UpdateSleepTime RailedTransportDockUpdate::update()
 {
 
 	// extend functionality
@@ -196,7 +196,7 @@ Bool RailedTransportDockUpdate::isClearToEnter( Object const *docker ) const
 // ------------------------------------------------------------------------------------------------
 /** Is anything currently loading or unloading */
 // ------------------------------------------------------------------------------------------------
-Bool RailedTransportDockUpdate::isLoadingOrUnloading( void )
+Bool RailedTransportDockUpdate::isLoadingOrUnloading()
 {
 
 	if( m_unloadingObjectID != INVALID_ID || m_dockingObjectID != INVALID_ID )
@@ -209,7 +209,7 @@ Bool RailedTransportDockUpdate::isLoadingOrUnloading( void )
 // ------------------------------------------------------------------------------------------------
 /** Start the unload process */
 // ------------------------------------------------------------------------------------------------
-void RailedTransportDockUpdate::unloadAll( void )
+void RailedTransportDockUpdate::unloadAll()
 {
 
 	// sanity, if we're already unloading, ignore this command and just allow us to finish
@@ -242,7 +242,7 @@ void RailedTransportDockUpdate::unloadSingleObject( Object *obj )
 /** If we have an object recorded as currently docking with us, pull that object inside
 	* and when it is inside, contain it */
 // ------------------------------------------------------------------------------------------------
-void RailedTransportDockUpdate::doPullInDocking( void )
+void RailedTransportDockUpdate::doPullInDocking()
 {
 
 	//
@@ -329,7 +329,7 @@ void RailedTransportDockUpdate::doPullInDocking( void )
 // ------------------------------------------------------------------------------------------------
 /** If we have an object recorded as being pushed out of us then do that here */
 // ------------------------------------------------------------------------------------------------
-void RailedTransportDockUpdate::doPushOutDocking( void )
+void RailedTransportDockUpdate::doPushOutDocking()
 {
 
 	if( m_unloadingObjectID )
@@ -444,7 +444,7 @@ static void getFirstContain( Object *obj, void *userData )
 // ------------------------------------------------------------------------------------------------
 /** Start the next object contained by us as "unloading and coming out" */
 // ------------------------------------------------------------------------------------------------
-void RailedTransportDockUpdate::unloadNext( void )
+void RailedTransportDockUpdate::unloadNext()
 {
 	Object *us = getObject();
 
@@ -561,7 +561,7 @@ void RailedTransportDockUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void RailedTransportDockUpdate::loadPostProcess( void )
+void RailedTransportDockUpdate::loadPostProcess()
 {
 
 	// extend base class

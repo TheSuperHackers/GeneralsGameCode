@@ -67,13 +67,13 @@ static inline void decryptBuf( unsigned char *buf, Int len )
 
 //--------------------------------------------------------------------------
 
-Transport::Transport(void)
+Transport::Transport()
 {
 	m_winsockInit = false;
 	m_udpsock = nullptr;
 }
 
-Transport::~Transport(void)
+Transport::~Transport()
 {
 	reset();
 }
@@ -159,7 +159,7 @@ Bool Transport::init( UnsignedInt ip, UnsignedShort port )
 	return true;
 }
 
-void Transport::reset( void )
+void Transport::reset()
 {
 	delete m_udpsock;
 	m_udpsock = nullptr;
@@ -171,7 +171,7 @@ void Transport::reset( void )
 	}
 }
 
-Bool Transport::update( void )
+Bool Transport::update()
 {
 	Bool retval = TRUE;
 	if (doRecv() == FALSE && m_udpsock && m_udpsock->GetStatus() == UDP::ADDRNOTAVAIL)
@@ -217,6 +217,10 @@ Bool Transport::doSend() {
 		if (m_outBuffer[i].length != 0)
 		{
 			int bytesSent = 0;
+			// TheSuperHackers @info The handling of data sizing of the payload within a UDP packet is confusing due to the current networking implementation
+			// The max game packet size needs to be smaller than max udp payload by sizeof(TransportMessageHeader)
+			// But the max network message size needs to include the bytes of the transport message header and equal the max udp payload
+			// Therefore, transmitted data needs to add the extra bytes of the network header to the payloads length
 			int bytesToSend = m_outBuffer[i].length + sizeof(TransportMessageHeader);
 			// Send this message
 			if ((bytesSent = m_udpsock->Write((unsigned char *)(&m_outBuffer[i]), bytesToSend, m_outBuffer[i].addr, m_outBuffer[i].port)) > 0)
@@ -281,12 +285,15 @@ Bool Transport::doRecv()
 #if defined(RTS_DEBUG)
 	UnsignedInt now = timeGetTime();
 #endif
-
+	// TheSuperHackers @info The handling of data sizing of the payload within a UDP packet is confusing due to the current networking implementation
+	// The max game packet size needs to be smaller than max udp payload by sizeof(TransportMessageHeader)
+	// But the max network message size needs to include the bytes of the transport message header and equal the max udp payload
+	// Therefore, when receiving data we use the max udp payload size to receive the game packet payload and network header
 	TransportMessage incomingMessage;
 	unsigned char *buf = (unsigned char *)&incomingMessage;
-	int len = MAX_MESSAGE_LEN;
+	int len = MAX_NETWORK_MESSAGE_LEN;
 //	DEBUG_LOG(("Transport::doRecv - checking"));
-	while ( (len=m_udpsock->Read(buf, MAX_MESSAGE_LEN, &from)) > 0 )
+	while ( (len=m_udpsock->Read(buf, MAX_NETWORK_MESSAGE_LEN, &from)) > 0 )
 	{
 #if defined(RTS_DEBUG)
 		// Packet loss simulation
@@ -418,7 +425,7 @@ Bool Transport::isGeneralsPacket( TransportMessage *msg )
 	if (!msg)
 		return false;
 
-	if (msg->length < 0 || msg->length > MAX_MESSAGE_LEN)
+	if (msg->length < 0 || msg->length > MAX_NETWORK_MESSAGE_LEN)
 		return false;
 
 	CRC crc;
@@ -435,7 +442,7 @@ Bool Transport::isGeneralsPacket( TransportMessage *msg )
 }
 
 // Statistics ---------------------------------------------------
-Real Transport::getIncomingBytesPerSecond( void )
+Real Transport::getIncomingBytesPerSecond()
 {
 	Real val = 0.0;
 	for (int i=0; i<MAX_TRANSPORT_STATISTICS_SECONDS; ++i)
@@ -446,7 +453,7 @@ Real Transport::getIncomingBytesPerSecond( void )
 	return val / (MAX_TRANSPORT_STATISTICS_SECONDS-1);
 }
 
-Real Transport::getIncomingPacketsPerSecond( void )
+Real Transport::getIncomingPacketsPerSecond()
 {
 	Real val = 0.0;
 	for (int i=0; i<MAX_TRANSPORT_STATISTICS_SECONDS; ++i)
@@ -457,7 +464,7 @@ Real Transport::getIncomingPacketsPerSecond( void )
 	return val / (MAX_TRANSPORT_STATISTICS_SECONDS-1);
 }
 
-Real Transport::getOutgoingBytesPerSecond( void )
+Real Transport::getOutgoingBytesPerSecond()
 {
 	Real val = 0.0;
 	for (int i=0; i<MAX_TRANSPORT_STATISTICS_SECONDS; ++i)
@@ -468,7 +475,7 @@ Real Transport::getOutgoingBytesPerSecond( void )
 	return val / (MAX_TRANSPORT_STATISTICS_SECONDS-1);
 }
 
-Real Transport::getOutgoingPacketsPerSecond( void )
+Real Transport::getOutgoingPacketsPerSecond()
 {
 	Real val = 0.0;
 	for (int i=0; i<MAX_TRANSPORT_STATISTICS_SECONDS; ++i)
@@ -479,7 +486,7 @@ Real Transport::getOutgoingPacketsPerSecond( void )
 	return val / (MAX_TRANSPORT_STATISTICS_SECONDS-1);
 }
 
-Real Transport::getUnknownBytesPerSecond( void )
+Real Transport::getUnknownBytesPerSecond()
 {
 	Real val = 0.0;
 	for (int i=0; i<MAX_TRANSPORT_STATISTICS_SECONDS; ++i)
@@ -490,7 +497,7 @@ Real Transport::getUnknownBytesPerSecond( void )
 	return val / (MAX_TRANSPORT_STATISTICS_SECONDS-1);
 }
 
-Real Transport::getUnknownPacketsPerSecond( void )
+Real Transport::getUnknownPacketsPerSecond()
 {
 	Real val = 0.0;
 	for (int i=0; i<MAX_TRANSPORT_STATISTICS_SECONDS; ++i)

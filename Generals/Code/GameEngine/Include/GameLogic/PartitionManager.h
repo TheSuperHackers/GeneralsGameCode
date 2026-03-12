@@ -121,7 +121,7 @@ const Real RANDOM_START_ANGLE = -99999.9f;			///< no start angle (an unlikely nu
 
 struct FindPositionOptions
 {
-	FindPositionOptions( void )
+	FindPositionOptions()
 	{
 		flags									= FPF_NONE;
 		minRadius							= 0.0f;
@@ -317,7 +317,7 @@ public:
 	// --------------- inherited from Snapshot interface --------------
 	void crc( Xfer *xfer );
 	void xfer( Xfer *xfer );
-	void loadPostProcess( void );
+	void loadPostProcess();
 
 	Int getCoiCount() const { return m_coiCount; }		///< return number of COIs touching this cell.
 	Int getCellX() const { return m_cellX; }
@@ -464,6 +464,11 @@ private:
 	);
 
 	/**
+		A more advanced implementation of doCircleFill that is 100% accurate.
+	*/
+	void doCircleFillPrecise(Real centerX, Real centerY, Real radius);
+
+	/**
 		fill in the pixels covered by the given rectangular shape with the given
 		center, dimensions, and rotation.
 	*/
@@ -488,14 +493,14 @@ public:
 	PartitionData();
 
 	void attachToObject( Object* object );
-	void detachFromObject( void );
+	void detachFromObject();
 	void attachToGhostObject(GhostObject* object);
-	void detachFromGhostObject(void);
+	void detachFromGhostObject();
 
 	void setNext( PartitionData *next ) { m_next = next; }			///< set next pointer
-	PartitionData *getNext( void ) { return m_next; }						///< get the next pointer
+	PartitionData *getNext() { return m_next; }						///< get the next pointer
 	void setPrev( PartitionData *prev ) { m_prev = prev; }			///< set the prev pointer
-	PartitionData *getPrev( void ) { return m_prev; }						///< get the prev pointer
+	PartitionData *getPrev() { return m_prev; }						///< get the prev pointer
 
 	/// mark the given module as being "dirty", needing recalcing during next update phase.
 	// if needToUpdateCells is true, we'll recalc the partition cells it touches and do collision testing.
@@ -872,7 +877,7 @@ public:
 class PartitionFilterAlive : public PartitionFilter
 {
 public:
-	PartitionFilterAlive(void) { }
+	PartitionFilterAlive() { }
 protected:
 	virtual Bool allow(Object *objOther);
 #if defined(RTS_DEBUG)
@@ -1233,7 +1238,7 @@ protected:
 		Coord3D *closestVecArg
 	);
 
-	void shutdown( void );
+	void shutdown();
 
 	/// used to validate the positions for findPositionAround family of methods
 	Bool tryPosition( const Coord3D *center, Real dist, Real angle,
@@ -1270,21 +1275,21 @@ protected:
 
 public:
 
-	PartitionManager( void );
-	virtual ~PartitionManager( void );
+	PartitionManager();
+	virtual ~PartitionManager();
 
 	// --------------- inherited from Subsystem interface -------------
-	virtual void init( void );			///< initialize
-	virtual void reset( void );			///< system reset
-	virtual void update( void );		///< system update
+	virtual void init();			///< initialize
+	virtual void reset();			///< system reset
+	virtual void update();		///< system update
 	// ----------------------------------------------------------------
 
 	// --------------- inherited from Snapshot interface --------------
 	void crc( Xfer *xfer );
 	void xfer( Xfer *xfer );
-	void loadPostProcess( void );
+	void loadPostProcess();
 
-	Bool getUpdatedSinceLastReset( void ) const { return m_updatedSinceLastReset; }
+	Bool getUpdatedSinceLastReset() const { return m_updatedSinceLastReset; }
 
 	void registerObject( Object *object );				///< add thing to system
 	void unRegisterObject( Object *object );			///< remove thing from system

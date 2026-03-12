@@ -121,7 +121,7 @@ GridLinkClass::GridLinkClass(GridCullSystemClass * system) :
 {
 }
 
-GridLinkClass::~GridLinkClass(void)
+GridLinkClass::~GridLinkClass()
 {
 }
 
@@ -148,7 +148,7 @@ GridLinkClass::~GridLinkClass(void)
  * HISTORY:                                                                                    *
  *   4/27/2000  gth : Created.                                                                 *
  *=============================================================================================*/
-GridCullSystemClass::GridCullSystemClass(void) :
+GridCullSystemClass::GridCullSystemClass() :
 	MinCellSize(10,10,10),
 	MaxObjExtent(15),
 	Origin(-100,-100,-100),
@@ -176,7 +176,7 @@ GridCullSystemClass::GridCullSystemClass(void) :
  * HISTORY:                                                                                    *
  *   4/27/2000  gth : Created.                                                                 *
  *=============================================================================================*/
-GridCullSystemClass::~GridCullSystemClass(void)
+GridCullSystemClass::~GridCullSystemClass()
 {
 	delete Cells;
 	Cells = nullptr;
@@ -500,7 +500,7 @@ void GridCullSystemClass::Re_Partition(const Vector3 & input_min,const Vector3 &
  * HISTORY:                                                                                    *
  *   4/27/2000  gth : Created.                                                                 *
  *=============================================================================================*/
-void GridCullSystemClass::Collect_And_Unlink_All(void)
+void GridCullSystemClass::Collect_And_Unlink_All()
 {
 	Reset_Collection();
 
@@ -706,7 +706,7 @@ void GridCullSystemClass::Save(ChunkSaveClass & csave)
  * HISTORY:                                                                                    *
  *   4/27/2000  gth : Created.                                                                 *
  *=============================================================================================*/
-void GridCullSystemClass::Reset_Statistics(void)
+void GridCullSystemClass::Reset_Statistics()
 {
 	// number of (virtual) nodes = 2n-1
 	Stats.NodeCount = 2 * (CellCount[0] * CellCount[1] * CellCount[2]) - 1;
@@ -728,7 +728,7 @@ void GridCullSystemClass::Reset_Statistics(void)
  * HISTORY:                                                                                    *
  *   4/27/2000  gth : Created.                                                                 *
  *=============================================================================================*/
-const GridCullSystemClass::StatsStruct & GridCullSystemClass::Get_Statistics(void)
+const GridCullSystemClass::StatsStruct & GridCullSystemClass::Get_Statistics()
 {
 	return Stats;
 }

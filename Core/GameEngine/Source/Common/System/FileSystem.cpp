@@ -138,7 +138,7 @@ FileSystem::~FileSystem()
 // FileSystem::init
 //============================================================================
 
-void		FileSystem::init( void )
+void		FileSystem::init()
 {
 	TheLocalFileSystem->init();
 	TheArchiveFileSystem->init();
@@ -148,7 +148,7 @@ void		FileSystem::init( void )
 // FileSystem::update
 //============================================================================
 
-void		FileSystem::update( void )
+void		FileSystem::update()
 {
 	USE_PERF_TIMER(FileSystem)
 	TheLocalFileSystem->update();
@@ -159,7 +159,7 @@ void		FileSystem::update( void )
 // FileSystem::reset
 //============================================================================
 
-void		FileSystem::reset( void )
+void		FileSystem::reset()
 {
 	USE_PERF_TIMER(FileSystem)
 	TheLocalFileSystem->reset();
@@ -327,33 +327,6 @@ Bool FileSystem::createDirectory(AsciiString directory)
 		return TheLocalFileSystem->createDirectory(directory);
 	}
 	return FALSE;
-}
-
-//============================================================================
-// FileSystem::areMusicFilesOnCD
-// Stub for CD removal - always return TRUE (music files are local)
-//============================================================================
-Bool FileSystem::areMusicFilesOnCD()
-{
-	return TRUE;  // Music files are always "available" (loaded locally)
-}
-
-//============================================================================
-// FileSystem::loadMusicFilesFromCD
-// Stub for CD removal - no-op (music files already loaded from local BIGs)
-//============================================================================
-void FileSystem::loadMusicFilesFromCD()
-{
-	// No-op: Music files are loaded from local filesystem, not CD
-}
-
-//============================================================================
-// FileSystem::unloadMusicFilesFromCD
-// Stub for CD removal - no-op (music files managed by ArchiveFileSystem)
-//============================================================================
-void FileSystem::unloadMusicFilesFromCD()
-{
-	// No-op: Music file lifecycle managed by ArchiveFileSystem
 }
 
 //============================================================================

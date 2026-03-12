@@ -122,7 +122,7 @@ public:
 public:
 	virtual void crc( Xfer *xfer ) {}
 	virtual void xfer( Xfer *xfer ) {}
-	virtual void loadPostProcess( void ) {}
+	virtual void loadPostProcess() {}
 
 private:
 	NameKeyType m_moduleTagNameKey;		///< module tag key, unique among all modules for an object instance
@@ -140,7 +140,7 @@ public: \
 protected: \
 	virtual void crc( Xfer *xfer ); \
 	virtual void xfer( Xfer *xfer ); \
-	virtual void loadPostProcess( void );
+	virtual void loadPostProcess();
 
 // ------------------------------------------------------------------------------------------------
 // For the creation of abstract module classes
@@ -149,7 +149,7 @@ protected: \
 protected: \
 	virtual void crc( Xfer *xfer ); \
 	virtual void xfer( Xfer *xfer ); \
-	virtual void loadPostProcess( void );
+	virtual void loadPostProcess();
 
 //-------------------------------------------------------------------------------------------------
 // only use this macro for an ABC. for a real class, use MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA.
@@ -210,7 +210,7 @@ public:
 
 	/** onDelete() will be called on all modules contained by an object or drawable before
 	the actual deletion of each of those modules happens */
-	virtual void onDelete( void ) { }
+	virtual void onDelete() { }
 
 protected:
 
@@ -218,7 +218,7 @@ protected:
 
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
+	virtual void loadPostProcess();
 
 private:
 	const ModuleData* m_moduleData;
@@ -257,7 +257,7 @@ protected:
 
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
+	virtual void loadPostProcess();
 
 private:
 
@@ -300,7 +300,7 @@ protected:
 
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
+	virtual void loadPostProcess();
 
 private:
 

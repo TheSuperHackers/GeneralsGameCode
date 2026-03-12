@@ -524,7 +524,7 @@ Bool TexturePage::addImageData( Byte *destBuffer,
 		char buffer[ _MAX_PATH + 32 ];
 
 		sprintf( buffer, "Error loading source file '%s'\n", image->m_path );
-		DEBUG_ASSERTCRASH( 0, (buffer) );
+		DEBUG_CRASH( (buffer) );
 		MessageBox( nullptr, buffer, "Cannot Load Source File", MB_OK | MB_ICONERROR );
 		return FALSE;
 

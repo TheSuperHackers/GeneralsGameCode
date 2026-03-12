@@ -64,9 +64,9 @@
 	void dumpMatrix3D(const Matrix3D *m, AsciiString name, AsciiString fname, Int line);
 	void dumpReal(Real r, AsciiString name, AsciiString fname, Int line);
 
-	void outputCRCDebugLines( void );
-	void CRCDebugStartNewGame( void );
-	void outputCRCDumpLines( void );
+	void outputCRCDebugLines();
+	void CRCDebugStartNewGame();
+	void outputCRCDumpLines();
 
 	void addCRCDebugLine(const char *fmt, ...);
 	void addCRCDebugLineNoCounter(const char *fmt, ...);

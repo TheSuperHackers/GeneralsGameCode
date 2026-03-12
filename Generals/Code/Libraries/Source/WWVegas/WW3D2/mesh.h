@@ -70,19 +70,19 @@ class MeshClass : public W3DMPO, public RenderObjClass
 	W3DMPO_GLUE(MeshClass)
 public:
 
-	MeshClass(void);
+	MeshClass();
 	MeshClass(const MeshClass & src);
 	MeshClass & operator = (const MeshClass &);
-	virtual ~MeshClass(void);
+	virtual ~MeshClass();
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface
 	/////////////////////////////////////////////////////////////////////////////
-	virtual RenderObjClass *	Clone(void) const;
-	virtual int						Class_ID(void) const { return CLASSID_MESH; }
-	virtual const char *			Get_Name(void) const;
+	virtual RenderObjClass *	Clone() const;
+	virtual int						Class_ID() const { return CLASSID_MESH; }
+	virtual const char *			Get_Name() const;
 	virtual void					Set_Name(const char * name);
-	virtual int						Get_Num_Polys(void) const;
+	virtual int						Get_Num_Polys() const;
 	virtual void					Render(RenderInfoClass & rinfo);
 	void								Render_Material_Pass(MaterialPassClass * pass,IndexBufferClass * ib);
 	virtual void					Special_Render(SpecialRenderInfoClass & rinfo);
@@ -107,9 +107,9 @@ public:
 	/////////////////////////////////////////////////////////////////////////////
 	virtual void					Scale(float scale);
 	virtual void					Scale(float scalex, float scaley, float scalez);
-	virtual MaterialInfoClass * Get_Material_Info(void);
+	virtual MaterialInfoClass * Get_Material_Info();
 
-   virtual int						Get_Sort_Level(void) const;
+   virtual int						Get_Sort_Level() const;
    virtual void					Set_Sort_Level(int level);
 
 
@@ -124,12 +124,12 @@ public:
 	/////////////////////////////////////////////////////////////////////////////
 	WW3DErrorType					Init(const MeshBuilderClass & builder,MaterialInfoClass * matinfo,const char * name,const char * hmodelname);
 	WW3DErrorType					Load_W3D(ChunkLoadClass & cload);
-	void								Generate_Culling_Tree(void);
-	MeshModelClass *				Get_Model(void);
-	MeshModelClass *				Peek_Model(void);
-	uint32							Get_W3D_Flags(void);
-	const char *					Get_User_Text(void) const;
-	int								Get_Draw_Call_Count(void) const;
+	void								Generate_Culling_Tree();
+	MeshModelClass *				Get_Model();
+	MeshModelClass *				Peek_Model();
+	uint32							Get_W3D_Flags();
+	const char *					Get_User_Text() const;
+	int								Get_Draw_Call_Count() const;
 
 	bool								Contains(const Vector3 &point);
 
@@ -142,14 +142,14 @@ public:
 	void								Get_Deformed_Vertices(Vector3 *dst_vert);
 
 	void								Set_Lighting_Environment(LightEnvironmentClass * light_env) { if (light_env) {m_localLightEnv=*light_env;LightEnvironment = &m_localLightEnv;} else {LightEnvironment = nullptr;} }
-	LightEnvironmentClass *		Get_Lighting_Environment(void) { return LightEnvironment; }
-	float	Get_Alpha_Override(void) { return m_alphaOverride;}
+	LightEnvironmentClass *		Get_Lighting_Environment() { return LightEnvironment; }
+	float	Get_Alpha_Override() { return m_alphaOverride;}
 
 	void								Set_Next_Visible_Skin(MeshClass * next_visible) { NextVisibleSkin = next_visible; }
-	MeshClass *						Peek_Next_Visible_Skin(void) { return NextVisibleSkin; }
+	MeshClass *						Peek_Next_Visible_Skin() { return NextVisibleSkin; }
 
 	void								Set_Base_Vertex_Offset(int base) { BaseVertexOffset = base; }
-	int								Get_Base_Vertex_Offset(void) { return BaseVertexOffset; }
+	int								Get_Base_Vertex_Offset() { return BaseVertexOffset; }
 
 	// Do old .w3d mesh files get fog turned on or off?
 	static bool						Legacy_Meshes_Fogged;
@@ -167,9 +167,9 @@ protected:
 
 	virtual void					Add_Dependencies_To_List (DynamicVectorClass<StringClass> &file_list, bool textures_only = false);
 
-	virtual void					Update_Cached_Bounding_Volumes(void) const;
+	virtual void					Update_Cached_Bounding_Volumes() const;
 
-	void								Free(void);
+	void								Free();
 
 	void								install_materials(MeshLoadInfoClass * loadinfo);
 	void								clone_materials(const MeshClass & srcmesh);
@@ -191,7 +191,7 @@ protected:
 	friend class MeshBuilderClass;
 };
 
-inline MeshModelClass * MeshClass::Peek_Model(void)
+inline MeshModelClass * MeshClass::Peek_Model()
 {
 	return Model;
 }

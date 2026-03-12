@@ -161,7 +161,7 @@ class W3DTreeBuffer : public Snapshot
 			/// Create texture.
 			W3DTreeTextureClass(unsigned width, unsigned height);
 
-			// just use default destructor. ~TerrainTextureClass(void);
+			// just use default destructor. ~TerrainTextureClass();
 	public:
 		int update(W3DTreeBuffer *buffer); ///< Sets the pixels, and returns the actual height of the texture.
 		void setLOD(Int LOD) const;
@@ -169,8 +169,8 @@ class W3DTreeBuffer : public Snapshot
 
 public:
 
-	W3DTreeBuffer(void);
-	~W3DTreeBuffer(void);
+	W3DTreeBuffer();
+	~W3DTreeBuffer();
 	/// Add a tree at location.  Name is the w3d model name.
 	void addTree(DrawableID id, Coord3D location, Real scale, Real angle,
 								Real randomScaleAmount, const W3DTreeDrawModuleData *data);
@@ -193,21 +193,21 @@ public:
 
 	void setTextureLOD(Int lod);	///<used to adjust maximum mip level sent to hardware.
 	/// Empties the tree buffer.
-	void clearAllTrees(void);
+	void clearAllTrees();
 	/// Empties the tree buffer.
 	void setBounds(const Region2D &bounds) {m_bounds = bounds;}
 	/// Draws the trees.  Uses camera for culling.
 	void drawTrees(CameraClass * camera, RefRenderObjListIterator *pDynamicLightsIterator);
 	/// Called when the view changes, and sort key needs to be recalculated.
 	/// Normally sortKey gets calculated when a tree becomes visible.
-	void doFullUpdate(void) {m_updateAllKeys = true;};
-	void setIsTerrain(void) {m_isTerrainPass = true;}; ///< Terrain calls this to tell trees to draw.
-	Bool needToDraw(void) {return m_isTerrainPass;};
+	void doFullUpdate() {m_updateAllKeys = true;};
+	void setIsTerrain() {m_isTerrainPass = true;}; ///< Terrain calls this to tell trees to draw.
+	Bool needToDraw() {return m_isTerrainPass;};
 
-	Int getNumTiles(void) {return m_numTiles;}
+	Int getNumTiles() {return m_numTiles;}
 	TileData *getSourceTile(Int ndx) {return m_sourceTiles[ndx];}
-	void allocateTreeBuffers(void);							 ///< Allocates the buffers.
-	void freeTreeBuffers(void);									 ///< Frees the index and vertex buffers.
+	void allocateTreeBuffers();							 ///< Allocates the buffers.
+	void freeTreeBuffers();									 ///< Frees the index and vertex buffers.
 
 private:
 	enum { MAX_TREE_VERTEX=30000,
@@ -260,13 +260,13 @@ protected:
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
+	virtual void loadPostProcess();
 
 protected:
 	/// Updates the sway offsets.
 	void updateSway(const BreezeInfo& info);
 	void loadTreesInVertexAndIndexBuffers(RefRenderObjListIterator *pDynamicLightsIterator); ///< Fills the index and vertex buffers for drawing.
-	void updateVertexBuffer(void); ///< Fills the index and vertex buffers for drawing.
+	void updateVertexBuffer(); ///< Fills the index and vertex buffers for drawing.
 	void cull(const CameraClass * camera);						 ///< Culls the trees.
 	UnsignedInt  doLighting(const Vector3 *normal,
 		const GlobalData::TerrainLighting	*objectLighting,
@@ -274,7 +274,7 @@ protected:
 #if 0 // sort is no longer used and messes up the order. jba [6/6/2003]
 	void sort( Int iterations );								 ///< Performs partial bubble sort.
 #endif
-	void updateTexture(void);
+	void updateTexture();
 
 	Int  getPartitionBucket(const Coord3D &pos) const;
 

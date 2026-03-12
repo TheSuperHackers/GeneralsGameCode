@@ -232,7 +232,7 @@ void SpawnPointProductionExitUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void SpawnPointProductionExitUpdate::loadPostProcess( void )
+void SpawnPointProductionExitUpdate::loadPostProcess()
 {
 
 	// extend base class

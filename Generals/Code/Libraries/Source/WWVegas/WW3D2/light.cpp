@@ -207,7 +207,7 @@ LightClass & LightClass::operator = (const LightClass & that)
  * HISTORY:                                                                                    *
  *   3/21/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-LightClass::~LightClass(void)
+LightClass::~LightClass()
 {
 }
 
@@ -224,7 +224,7 @@ LightClass::~LightClass(void)
  * HISTORY:                                                                                    *
  *   3/21/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-RenderObjClass * LightClass::Clone(void) const
+RenderObjClass * LightClass::Clone() const
 {
 	return W3DNEW LightClass(*this);
 }
@@ -501,7 +501,7 @@ WW3DErrorType LightClass::Save_W3D(ChunkSaveClass & csave)
  * HISTORY:                                                                                    *
  *   9/23/99    GTH : Created.                                                                 *
  *=============================================================================================*/
-const PersistFactoryClass & LightClass::Get_Factory (void) const
+const PersistFactoryClass & LightClass::Get_Factory () const
 {
 	return _LightFactory;
 }

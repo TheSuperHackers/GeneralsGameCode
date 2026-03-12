@@ -180,7 +180,7 @@ static Waypoint * findNamedWaypoint(AsciiString name)
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void setFPMode( void )
+void setFPMode()
 {
   // Set floating point round mode to CHOP, which only comes
   // into play when precision is exceeded.  This is necessary
@@ -205,7 +205,7 @@ void setFPMode( void )
 // ------------------------------------------------------------------------------------------------
 /** GameLogic class constructor */
 // ------------------------------------------------------------------------------------------------
-GameLogic::GameLogic( void )
+GameLogic::GameLogic()
 {
 	m_background = nullptr;
 	m_CRC = 0;
@@ -251,7 +251,7 @@ GameLogic::GameLogic( void )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-Bool GameLogic::isInSinglePlayerGame( void )
+Bool GameLogic::isInSinglePlayerGame()
 {
 	return (m_gameMode == GAME_SINGLE_PLAYER ||
 		(TheRecorder && TheRecorder->isPlaybackMode() && TheRecorder->getGameMode() == GAME_SINGLE_PLAYER));
@@ -335,7 +335,7 @@ GameLogic::~GameLogic()
 // ------------------------------------------------------------------------------------------------
 /** (re)initialize the instance. */
 // ------------------------------------------------------------------------------------------------
-void GameLogic::init( void )
+void GameLogic::init()
 {
 
 	setFPMode();
@@ -374,7 +374,7 @@ void GameLogic::init( void )
 //-------------------------------------------------------------------------------------------------
 /** Reset the game logic systems */
 //-------------------------------------------------------------------------------------------------
-void GameLogic::reset( void )
+void GameLogic::reset()
 {
 	m_thingTemplateBuildableOverrides.clear();
 	m_controlBarOverrides.clear();
@@ -925,7 +925,7 @@ void GameLogic::updateLoadProgress( Int progress )
 // ------------------------------------------------------------------------------------------------
 /** Delete the load screen */
 // ------------------------------------------------------------------------------------------------
-void GameLogic::deleteLoadScreen( void )
+void GameLogic::deleteLoadScreen()
 {
 
 	delete m_loadScreen;
@@ -1570,7 +1570,7 @@ void GameLogic::startNewGame( Bool saveGame )
 
 	// tell the AI about it
 	// Note that it is important that the pathfinder be called before the map objects are loaded.
-	TheAI->pathfinder()->newMap( );
+	TheAI->pathfinder()->newMap();
 
 	// update the loadscreen
 	updateLoadProgress(LOAD_PROGRESS_POST_PATHFINDER_NEW_MAP);
@@ -2042,7 +2042,8 @@ void GameLogic::startNewGame( Bool saveGame )
 		req.buddyRequestType = BuddyRequest::BUDDYREQUEST_SETSTATUS;
 		req.arg.status.status = GP_PLAYING;
 		strcpy(req.arg.status.statusString, "Playing");
-		sprintf(req.arg.status.locationString, "%s", WideCharStringToMultiByte(TheGameSpyGame->getGameName().str()).c_str());
+		strlcpy(req.arg.status.locationString, WideCharStringToMultiByte(TheGameSpyGame->getGameName().str()).c_str(),
+			ARRAY_SIZE(req.arg.status.locationString));
 		TheGameSpyBuddyMessageQueue->addRequest(req);
 	}
 
@@ -2124,7 +2125,7 @@ void GameLogic::loadMapINI( AsciiString mapName )
 
 
 	char fullFledgeFilename[_MAX_PATH];
-	sprintf(fullFledgeFilename, "%s\\map.ini", filename);
+	snprintf(fullFledgeFilename, ARRAY_SIZE(fullFledgeFilename), "%s\\map.ini", filename);
 	if (TheFileSystem->doesFileExist(fullFledgeFilename)) {
 		DEBUG_LOG(("Loading map.ini"));
 		INI ini;
@@ -2134,7 +2135,7 @@ void GameLogic::loadMapINI( AsciiString mapName )
 	// TheSuperHackers @todo Implement ini load directory for map folder.
 	// Requires adjustments in map transfer.
 
-	sprintf(fullFledgeFilename, "%s\\solo.ini", filename);
+	snprintf(fullFledgeFilename, ARRAY_SIZE(fullFledgeFilename), "%s\\solo.ini", filename);
 	if (TheFileSystem->doesFileExist(fullFledgeFilename)) {
 		DEBUG_LOG(("Loading solo.ini"));
 		INI ini;
@@ -2144,7 +2145,7 @@ void GameLogic::loadMapINI( AsciiString mapName )
 	// No error here. There could've just *not* been a map.ini file.
 
 	// now look for a string file
-	sprintf(fullFledgeFilename, "%s\\map.str", filename);
+	snprintf(fullFledgeFilename, ARRAY_SIZE(fullFledgeFilename), "%s\\map.str", filename);
 
 	if (TheFileSystem->doesFileExist(fullFledgeFilename)) {
 		TheGameText->initMapStringFile(fullFledgeFilename);
@@ -2154,7 +2155,7 @@ void GameLogic::loadMapINI( AsciiString mapName )
 	if (TheDisplay)
 	{
 		const char* ASSET_USAGE_FILE_NAME = "AssetUsage.txt";
-		sprintf(fullFledgeFilename, "%s\\%s", filename, ASSET_USAGE_FILE_NAME);
+		snprintf(fullFledgeFilename, ARRAY_SIZE(fullFledgeFilename), "%s\\%s", filename, ASSET_USAGE_FILE_NAME);
 		// note: call this EVEN IF THE FILE IN QUESTION DOES NOT EXIST.
 		TheDisplay->doSmartAssetPurgeAndPreload(fullFledgeFilename);
 	}
@@ -2168,7 +2169,7 @@ void GameLogic::loadMapINI( AsciiString mapName )
  * same at the start of the update as it is at the end of the update. */
 // ------------------------------------------------------------------------------------------------
 //DECLARE_PERF_TIMER(processDestroyList)
-void GameLogic::processDestroyList( void )
+void GameLogic::processDestroyList()
 {
 	//USE_PERF_TIMER(processDestroyList)
 
@@ -2473,10 +2474,10 @@ void GameLogic::eraseSleepyUpdate(Int i)
 	// swap with the final item, toss the final item, then rebalance
 	m_sleepyUpdates[i]->friend_setIndexInLogic(-1);
 
-	Int final = m_sleepyUpdates.size() - 1;
-	if (i < final)
+	Int last = m_sleepyUpdates.size() - 1;
+	if (i < last)
 	{
-		m_sleepyUpdates[i] = m_sleepyUpdates[final];
+		m_sleepyUpdates[i] = m_sleepyUpdates[last];
 		m_sleepyUpdates[i]->friend_setIndexInLogic(i);
 		m_sleepyUpdates.pop_back();
 		rebalanceSleepyUpdate(i);
@@ -2755,7 +2756,7 @@ void GameLogic::friend_awakenUpdateModule(Object* obj, UpdateModulePtr u, Unsign
 // ------------------------------------------------------------------------------------------------
 #ifdef DO_UNIT_TIMINGS
 	enum {TIME_FRAMES=100};
-static void unitTimings(void)
+static void unitTimings()
 {
 	static Int settleFrames = 0;
 	static Int timeFrames = 0;
@@ -3077,7 +3078,7 @@ extern __int64 Total_Load_3D_Assets;
 // ------------------------------------------------------------------------------------------------
 /** Update all objects in the world by invoking their update() methods. */
 // ------------------------------------------------------------------------------------------------
-void GameLogic::update( void )
+void GameLogic::update()
 {
 	USE_PERF_TIMER(GameLogic_update)
 
@@ -3316,7 +3317,7 @@ void GameLogic::preUpdate()
 // ------------------------------------------------------------------------------------------------
 /** Return the first object in the world list */
 // ------------------------------------------------------------------------------------------------
-Object *GameLogic::getFirstObject( void )
+Object *GameLogic::getFirstObject()
 {
 	return m_objList;
 }
@@ -3324,7 +3325,7 @@ Object *GameLogic::getFirstObject( void )
 // ------------------------------------------------------------------------------------------------
 /** Return a new unique object id. */
 // ------------------------------------------------------------------------------------------------
-ObjectID GameLogic::allocateObjectID( void )
+ObjectID GameLogic::allocateObjectID()
 {
 	/// @todo Find unused value in current object set
 	ObjectID ret = m_nextObjID;
@@ -3666,7 +3667,7 @@ void GameLogic::sendObjectDestroyed( Object *obj )
 // ------------------------------------------------------------------------------------------------
 /** Return if the game is paused or not */
 // ------------------------------------------------------------------------------------------------
-Bool GameLogic::isGamePaused( void )
+Bool GameLogic::isGamePaused()
 {
 	return m_gamePaused;
 }
@@ -3834,7 +3835,7 @@ void GameLogic::processProgressComplete(Int playerId)
 {
 	if(playerId < 0 || playerId >= MAX_SLOTS)
 	{
-		DEBUG_ASSERTCRASH(FALSE,("GameLogic::processProgressComplete, Invalid playerid was passed in %d", playerId));
+		DEBUG_CRASH(("GameLogic::processProgressComplete, Invalid playerid was passed in %d", playerId));
 		return;
 	}
 	if(m_progressComplete[playerId] == TRUE)
@@ -3850,7 +3851,7 @@ void GameLogic::processProgressComplete(Int playerId)
 // ------------------------------------------------------------------------------------------------
 /// @TODO: Add check to account for timeouts
 // ------------------------------------------------------------------------------------------------
-Bool GameLogic::isProgressComplete( void )
+Bool GameLogic::isProgressComplete()
 {
 	//If we're not in a network game, always return true
 	if(!isInMultiplayerGame() || !TheNetwork || m_forceGameStartByTimeOut)
@@ -3876,7 +3877,7 @@ void GameLogic::lastHeardFrom( Int playerId )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void GameLogic::testTimeOut( void )
+void GameLogic::testTimeOut()
 {
 	// if everyone is loaded, lets just load the game like normal.
 	if(isProgressComplete())
@@ -3898,7 +3899,7 @@ void GameLogic::testTimeOut( void )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void GameLogic::timeOutGameStart( void )
+void GameLogic::timeOutGameStart()
 {
 	DEBUG_LOG(("We got the Force TimeOut Start Message"));
 	m_forceGameStartByTimeOut = TRUE;
@@ -3906,7 +3907,7 @@ void GameLogic::timeOutGameStart( void )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void GameLogic::initTimeOutValues( void )
+void GameLogic::initTimeOutValues()
 {
 	if (!TheNetwork)
 		return;
@@ -3919,7 +3920,7 @@ void GameLogic::initTimeOutValues( void )
 // ------------------------------------------------------------------------------------------------
 /** returns the total number of objects in the world */
 // ------------------------------------------------------------------------------------------------
-UnsignedInt GameLogic::getObjectCount( void )
+UnsignedInt GameLogic::getObjectCount()
 {
 	UnsignedInt totalObjects = 0;
 	Object *obj;
@@ -3932,14 +3933,14 @@ UnsignedInt GameLogic::getObjectCount( void )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-GhostObjectManager *GameLogic::createGhostObjectManager(void)
+GhostObjectManager *GameLogic::createGhostObjectManager()
 {
 	return NEW GhostObjectManager;
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-TerrainLogic *GameLogic::createTerrainLogic( void )
+TerrainLogic *GameLogic::createTerrainLogic()
 {
 	return NEW TerrainLogic;
 }
@@ -4164,7 +4165,7 @@ void GameLogic::xferObjectTOC( Xfer *xfer )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void GameLogic::prepareLogicForObjectLoad( void )
+void GameLogic::prepareLogicForObjectLoad()
 {
 
 	//
@@ -4243,13 +4244,14 @@ void GameLogic::prepareLogicForObjectLoad( void )
 	*		 this version breaks compatibility with previous versions. (CBD)
 	* 5: Added xfering the BuildAssistant's sell list.
 	* 9: Added m_rankPointsToAddAtGameStart, or else on a load game, your RestartGame button will forget your exp
+	* 10: TheSuperHackers @tweak Save objects in reverse order so they load in correct order. Reverse object list for old saves.
 	*/
 // ------------------------------------------------------------------------------------------------
 void GameLogic::xfer( Xfer *xfer )
 {
 
 	// version
-	const XferVersion currentVersion = 9;
+	const XferVersion currentVersion = 10;
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
@@ -4283,7 +4285,13 @@ void GameLogic::xfer( Xfer *xfer )
 	if( xfer->getXferMode() == XFER_SAVE )
 	{
 
+		// TheSuperHackers @fix bobtista 27/01/2026 Save objects in reverse order (newest first)
+		// so they load in the correct order (oldest objects at head of list).
+		Object *lastObj = nullptr;
 		for( obj = getFirstObject(); obj; obj = obj->getNextObject() )
+			lastObj = obj;
+
+		for( obj = lastObj; obj; obj = obj->getPrevObject() )
 		{
 
 			// get the object TOC entry for this template
@@ -4364,6 +4372,25 @@ void GameLogic::xfer( Xfer *xfer )
 			if( obj->isKindOf( KINDOF_WALK_ON_TOP_OF_WALL ) )
 				TheAI->pathfinder()->addWallPiece( obj );
 
+		}
+
+		// TheSuperHackers @fix bobtista 27/01/2026 Reverse object list for old saves.
+		// Old saves stored objects oldest-first, which results in reversed order when loaded
+		// since objects are prepended during creation. Version 10+ saves in reverse order.
+		if ( version <= 9 )
+		{
+			Object *prev = nullptr;
+			Object *current = m_objList;
+			Object *next = nullptr;
+			while ( current != nullptr )
+			{
+				next = current->getNextObject();
+				current->friend_setNextObject( prev );
+				current->friend_setPrevObject( next );
+				prev = current;
+				current = next;
+			}
+			m_objList = prev;
 		}
 
 	}
@@ -4567,7 +4594,7 @@ void GameLogic::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process entry point */
 // ------------------------------------------------------------------------------------------------
-void GameLogic::loadPostProcess( void )
+void GameLogic::loadPostProcess()
 {
 
 	//

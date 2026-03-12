@@ -35,8 +35,8 @@ enum LocaleType CPP_11(: Int)
     LOC_MAX = 37
 };
 
-void HandlePersistentStorageResponses(void);
-void UpdateLocalPlayerStats(void);
+void HandlePersistentStorageResponses();
+void UpdateLocalPlayerStats();
 
 void SetLookAtPlayer( Int id, AsciiString nick );
 void PopulatePlayerInfoWindows( AsciiString parentWindowName );

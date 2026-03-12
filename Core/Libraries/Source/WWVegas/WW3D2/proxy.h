@@ -52,7 +52,7 @@ public:
 	///////////////////////////////////////////////////////////
 	//	Public constructors/destructors
 	///////////////////////////////////////////////////////////
-	ProxyClass (void) { }
+	ProxyClass () { }
 	ProxyClass (const char *name, const Matrix3D &tm) :
 		Name (name),
 		Transform (tm) { }
@@ -70,10 +70,10 @@ public:
 	//
 	//	Accessors
 	//
-	const char *			Get_Name (void) const					{ return Name; }
+	const char *			Get_Name () const					{ return Name; }
 	void						Set_Name (const char *name)			{ Name = name; }
 
-	const Matrix3D &		Get_Transform (void) const				{ return Transform; }
+	const Matrix3D &		Get_Transform () const				{ return Transform; }
 	void						Set_Transform (const Matrix3D &tm)	{ Transform = tm; }
 
 private:

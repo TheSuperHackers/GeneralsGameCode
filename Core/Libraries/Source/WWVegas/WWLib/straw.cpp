@@ -58,7 +58,7 @@
  * HISTORY:                                                                                    *
  *   07/03/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-Straw::~Straw(void)
+Straw::~Straw()
 {
 	if (ChainTo != nullptr) {
 		ChainTo->ChainFrom = ChainFrom;

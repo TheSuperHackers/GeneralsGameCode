@@ -50,6 +50,7 @@ CrateCollideModuleData::CrateCollideModuleData()
 	m_executeAnimationFades = TRUE;
 	m_isBuildingPickup = FALSE;
 	m_isHumanOnlyPickup = FALSE;
+	m_allowMultiPickup = (PRESERVE_RETAIL_BEHAVIOR != 0);
 	m_executeFX = nullptr;
 	m_pickupScience = SCIENCE_INVALID;
 	m_executionAnimationTemplate = AsciiString::TheEmptyString;
@@ -68,6 +69,7 @@ void CrateCollideModuleData::buildFieldParse(MultiIniFieldParse& p)
 		{ "ForbidOwnerPlayer", INI::parseBool,	nullptr,	offsetof( CrateCollideModuleData, m_isForbidOwnerPlayer ) },
 		{ "BuildingPickup", INI::parseBool,	nullptr,	offsetof( CrateCollideModuleData, m_isBuildingPickup ) },
 		{ "HumanOnly", INI::parseBool,	nullptr,	offsetof( CrateCollideModuleData, m_isHumanOnlyPickup ) },
+		{ "AllowMultiPickup", INI::parseBool,	nullptr,	offsetof( CrateCollideModuleData, m_allowMultiPickup ) },
 		{ "PickupScience", INI::parseScience,	nullptr,	offsetof( CrateCollideModuleData, m_pickupScience ) },
 		{ "ExecuteFX", INI::parseFXList, nullptr, offsetof( CrateCollideModuleData, m_executeFX ) },
 		{ "ExecuteAnimation", INI::parseAsciiString, nullptr, offsetof( CrateCollideModuleData, m_executionAnimationTemplate ) },
@@ -89,7 +91,7 @@ CrateCollide::CrateCollide( Thing *thing, const ModuleData* moduleData ) : Colli
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-CrateCollide::~CrateCollide( void )
+CrateCollide::~CrateCollide()
 {
 
 }
@@ -162,6 +164,12 @@ Bool CrateCollide::isValidToExecute( const Object *other ) const
 	if( getObject()->isAboveTerrain() && !validBuildingAttempt )
 		return FALSE;
 
+	// TheSuperHackers @bugfix Stubbjax 09/02/2026 Prevent the crate from being collected multiple times in a single frame.
+#if !RETAIL_COMPATIBLE_CRC
+	if (getObject()->isDestroyed() && !md->m_allowMultiPickup)
+		return FALSE;
+#endif
+
 	if( md->m_isForbidOwnerPlayer  &&  (getObject()->getControllingPlayer() == other->getControllingPlayer()) )
 		return FALSE; // Design has decreed this to not be picked up by the dead guy's team.
 
@@ -206,7 +214,7 @@ void CrateCollide::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void CrateCollide::loadPostProcess( void )
+void CrateCollide::loadPostProcess()
 {
 
 	// extend base class

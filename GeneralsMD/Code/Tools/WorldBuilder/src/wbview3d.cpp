@@ -29,6 +29,7 @@
 #include "intersec.h"
 #include "W3DDevice/GameClient/W3DAssetManager.h"
 #include "W3DDevice/GameClient/Module/W3DModelDraw.h"
+#include "W3DDevice/GameClient/Module/W3DTreeDraw.h"
 #include "agg_def.h"
 #include "part_ldr.h"
 #include "hanim.h"
@@ -195,6 +196,9 @@ public:
 	virtual void getOrigin( Int *x, Int *y) { *x=m_originX; *y=m_originY;}			///< Return location of top-left view corner on display
 
 	virtual void forceRedraw() { }
+
+	virtual Bool isDoingScriptedCamera() { return false; }
+	virtual void stopDoingScriptedCamera() {}
 
 	virtual void lookAt( const Coord3D *o ){};														///< Center the view on the given coordinate
 	virtual void initHeightForMap( void ) {};														///<  Init the camera height for the map at the current position.
@@ -1117,6 +1121,14 @@ AsciiString WbView3d::getBestModelName(const ThingTemplate* tt, const ModelCondi
 			if (md)
 			{
 				return md->getBestModelNameForWB(c);
+			}
+
+			// TheSuperHackers @bugfix ViTeXFTW 15/02/2026 Fix tree objects not showing a preview in
+			// WB object placer. The W3DTreeDraw module stores its model name differently from W3DModelDraw.
+			const W3DTreeDrawModuleData* treeData = mdd ? mdd->getAsW3DTreeDrawModuleData() : nullptr;
+			if (treeData)
+			{
+				return treeData->m_modelName;
 			}
 		}
 	}

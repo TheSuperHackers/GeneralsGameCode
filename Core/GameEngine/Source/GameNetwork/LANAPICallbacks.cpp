@@ -183,7 +183,7 @@ void LANAPI::OnGameStartTimer( Int seconds )
 	OnChat(L"SYSTEM", m_localIP, text, LANCHAT_SYSTEM);
 }
 
-void LANAPI::OnGameStart( void )
+void LANAPI::OnGameStart()
 {
 	//DEBUG_LOG(("Map is '%s', preview is '%s'", m_currentGame->getMap().str(), GetPreviewFromMap(m_currentGame->getMap()).str()));
 	//DEBUG_LOG(("Map is '%s', INI is '%s'", m_currentGame->getMap().str(), GetINIFromMap(m_currentGame->getMap()).str()));
@@ -257,9 +257,9 @@ void LANAPI::OnGameStart( void )
 
 		TheWritableGlobalData->m_useFpsLimit = false;
 
-		// Set the random seed
-		InitGameLogicRandom( m_currentGame->getSeed() );
-		DEBUG_LOG(("InitGameLogicRandom( %d )", m_currentGame->getSeed()));
+		// Set the seeds
+		InitRandom( m_currentGame->getSeed() );
+		DEBUG_LOG(("InitRandom( %d )", m_currentGame->getSeed()));
 	}
 }
 
@@ -533,7 +533,7 @@ void LANAPI::OnGameJoin( ReturnType ret, LANGameInfo *theGame )
 	}
 }
 
-void LANAPI::OnHostLeave( void )
+void LANAPI::OnHostLeave()
 {
 	DEBUG_ASSERTCRASH(!m_inLobby && m_currentGame, ("Game info is gone!"));
 	if (m_inLobby || !m_currentGame)
@@ -552,7 +552,7 @@ void LANAPI::OnPlayerLeave( UnicodeString player )
 	if (m_name.compare(player) == 0)
 	{
 		// We're leaving.  Save options and Pop the shell up a screen.
-		//DEBUG_ASSERTCRASH(false, ("Slot is %d", m_currentGame->getLocalSlotNum()));
+		//DEBUG_CRASH(("Slot is %d", m_currentGame->getLocalSlotNum()));
 		if (m_currentGame && m_currentGame->isInGame() && m_currentGame->getLocalSlotNum() >= 0)
 		{
 			LANPreferences pref;
@@ -601,7 +601,7 @@ void LANAPI::OnGameCreate( ReturnType ret )
 		TheShell->push( "Menus/LanGameOptionsMenu.wnd" );
 
 		RequestLobbyLeave( false );
-		//RequestGameAnnounce( ); // can't do this here, since we don't have a map set
+		//RequestGameAnnounce(); // can't do this here, since we don't have a map set
 	}
 	else
 	{

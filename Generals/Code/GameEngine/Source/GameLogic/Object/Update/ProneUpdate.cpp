@@ -67,7 +67,7 @@ ProneUpdate::ProneUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateM
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-ProneUpdate::~ProneUpdate( void )
+ProneUpdate::~ProneUpdate()
 {
 
 }
@@ -75,7 +75,7 @@ ProneUpdate::~ProneUpdate( void )
 //-------------------------------------------------------------------------------------------------
 /** The update callback. */
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime ProneUpdate::update( void )
+UpdateSleepTime ProneUpdate::update()
 {
 /// @todo srj use SLEEPY_UPDATE here
 	if( m_proneFrames > 0 )
@@ -153,7 +153,7 @@ void ProneUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void ProneUpdate::loadPostProcess( void )
+void ProneUpdate::loadPostProcess()
 {
 
 	// extend base class

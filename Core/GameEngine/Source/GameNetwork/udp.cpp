@@ -307,7 +307,7 @@ Int UDP::Read(unsigned char *msg,UnsignedInt len,sockaddr_in *from)
 }
 
 
-void UDP::ClearStatus(void)
+void UDP::ClearStatus()
 {
   #ifndef _WIN32
   errno=0;
@@ -316,7 +316,7 @@ void UDP::ClearStatus(void)
 	m_lastError = 0;
 }
 
-UDP::sockStat UDP::GetStatus(void)
+UDP::sockStat UDP::GetStatus()
 {
 	Int status = m_lastError;
  #ifdef _WIN32
@@ -503,7 +503,7 @@ Int UDP::SetOutputBuffer(UnsignedInt bytes)
 
 // Get the system buffer sizes
 
-int UDP::GetInputBuffer(void)
+int UDP::GetInputBuffer()
 {
    int retval,arg=0;
    // GeneralsX @bugfix BenderAI 13/02/2026 Use socklen_t for POSIX socket functions (fighter19 pattern)
@@ -515,7 +515,7 @@ int UDP::GetInputBuffer(void)
 }
 
 
-int UDP::GetOutputBuffer(void)
+int UDP::GetOutputBuffer()
 {
    int retval,arg=0;
    // GeneralsX @bugfix BenderAI 13/02/2026 Use socklen_t for POSIX socket functions (fighter19 pattern)

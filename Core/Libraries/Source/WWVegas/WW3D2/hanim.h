@@ -74,16 +74,16 @@ public:
 		CLASSID_LASTANIM		= 0x0000FFFF
 	};
 
-	HAnimClass(void)	:
+	HAnimClass()	:
 		EmbeddedSoundBoneIndex (EMBEDDED_SOUND_BONE_INDEX_NOT_SET)	{ }
-	virtual ~HAnimClass(void)		{ }
+	virtual ~HAnimClass()		{ }
 
-	virtual const char *		Get_Name(void) const = 0;
-	virtual const char *		Get_HName(void) const = 0;
+	virtual const char *		Get_Name() const = 0;
+	virtual const char *		Get_HName() const = 0;
 
-	virtual const char *		Get_Key( void )						{ return Get_Name(); }
+	virtual const char *		Get_Key()						{ return Get_Name(); }
 
-	virtual int					Get_Num_Frames(void) = 0;
+	virtual int					Get_Num_Frames() = 0;
 	virtual float				Get_Frame_Rate() = 0;
 	virtual float				Get_Total_Time() = 0;
 
@@ -93,7 +93,7 @@ public:
 	virtual void				Get_Transform(Matrix3D&, int pividx, float frame) const = 0;
 	virtual bool				Get_Visibility(int pividx,float frame) = 0;
 
-	virtual int					Get_Num_Pivots(void) const = 0;
+	virtual int					Get_Num_Pivots() const = 0;
 	virtual bool				Is_Node_Motion_Present(int pividx) = 0;
 
 	// Methods that test the presence of a certain motion channel.
@@ -102,10 +102,10 @@ public:
 	virtual bool				Has_Z_Translation (int pividx)	{ return true; }
 	virtual bool				Has_Rotation (int pividx)			{ return true; }
 	virtual bool				Has_Visibility (int pividx)		{ return true; }
-	virtual int					Class_ID(void)	const															{ return CLASSID_UNKNOWNANIM; }
+	virtual int					Class_ID()	const															{ return CLASSID_UNKNOWNANIM; }
 
 	// Animated sound-triggering support
-	virtual bool				Has_Embedded_Sounds (void) const			{ if (EmbeddedSoundBoneIndex < 0) return false; return true;}
+	virtual bool				Has_Embedded_Sounds () const			{ if (EmbeddedSoundBoneIndex < 0) return false; return true;}
 	virtual void				Set_Embedded_Sound_Bone_Index (int bone)	{ EmbeddedSoundBoneIndex = bone; }
 	virtual int					Get_Embedded_Sound_Bone_Index() {return EmbeddedSoundBoneIndex;}
 
@@ -135,7 +135,7 @@ public:
 class NamedPivotMapClass : public PivotMapClass
 {
 public:
-	~NamedPivotMapClass(void);
+	~NamedPivotMapClass();
 
 	virtual NamedPivotMapClass * As_Named_Pivot_Map() { return this; }
 
@@ -173,11 +173,11 @@ class HAnimComboDataClass : public AutoPoolClass<HAnimComboDataClass,256> {
 	public:
 		HAnimComboDataClass(bool shared = false);
 		HAnimComboDataClass(const HAnimComboDataClass &);
-		~HAnimComboDataClass(void);
+		~HAnimComboDataClass();
 
 		void Copy(const HAnimComboDataClass *);
 
-		void Clear(void);
+		void Clear();
 		void Set_HAnim(HAnimClass *motion);
 		void Give_HAnim(HAnimClass *motion) { if(HAnim) HAnim->Release_Ref(); HAnim = motion; }	// used for giving this object the reference
 
@@ -187,16 +187,16 @@ class HAnimComboDataClass : public AutoPoolClass<HAnimComboDataClass,256> {
 		void Set_Pivot_Map(PivotMapClass *map);
 
 
-		HAnimClass * Peek_HAnim(void)				const { return HAnim; }	// note: does not add reference
-		HAnimClass * Get_HAnim(void)				const { if(HAnim) HAnim->Add_Ref(); return HAnim; }	// note: does not add reference
-		float Get_Frame(void)						const { return Frame; }
-		float Get_Prev_Frame(void)					const { return PrevFrame; }
-		float Get_Weight(void)						const { return Weight; }
-		PivotMapClass * Peek_Pivot_Map(void)	const { return PivotMap; }
-		PivotMapClass * Get_Pivot_Map(void)		const { if(PivotMap) PivotMap->Add_Ref(); return PivotMap; }
-		bool Is_Shared(void)							const { return Shared; }
+		HAnimClass * Peek_HAnim()				const { return HAnim; }	// note: does not add reference
+		HAnimClass * Get_HAnim()				const { if(HAnim) HAnim->Add_Ref(); return HAnim; }	// note: does not add reference
+		float Get_Frame()						const { return Frame; }
+		float Get_Prev_Frame()					const { return PrevFrame; }
+		float Get_Weight()						const { return Weight; }
+		PivotMapClass * Peek_Pivot_Map()	const { return PivotMap; }
+		PivotMapClass * Get_Pivot_Map()		const { if(PivotMap) PivotMap->Add_Ref(); return PivotMap; }
+		bool Is_Shared()							const { return Shared; }
 
-		void Build_Active_Pivot_Map(void);
+		void Build_Active_Pivot_Map();
 
 	private:
 
@@ -215,16 +215,16 @@ class HAnimComboClass {
 
 public:
 
-	HAnimComboClass(void);
+	HAnimComboClass();
 	HAnimComboClass( int num_animations ); // allocates specified number of channels and sets then all to not-shared
-	~HAnimComboClass(void);
+	~HAnimComboClass();
 
-	void	Clear( void );		// zeros all data
+	void	Clear();		// zeros all data
 
-	void	Reset( void );		// empties the dynamic vector
+	void	Reset();		// empties the dynamic vector
 
- 	bool	Normalize_Weights(void);	// Normalizes all weights (returns true if succeeded)
-	int	Get_Num_Anims( void ) { return HAnimComboData.Count(); }
+ 	bool	Normalize_Weights();	// Normalizes all weights (returns true if succeeded)
+	int	Get_Num_Anims() { return HAnimComboData.Count(); }
 
 	void	Set_Motion( int indx, HAnimClass *motion );
 	HAnimClass *Get_Motion( int indx );

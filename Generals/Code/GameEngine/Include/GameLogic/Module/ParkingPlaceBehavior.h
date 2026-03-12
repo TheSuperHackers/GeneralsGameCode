@@ -98,7 +98,7 @@ public:
 	static Int getInterfaceMask() { return UpdateModule::getInterfaceMask() | (MODULEINTERFACE_DIE); }
 
 	// BehaviorModule
-	virtual DieModuleInterface *getDie( void ) { return this; }
+	virtual DieModuleInterface *getDie() { return this; }
 	virtual ParkingPlaceBehaviorInterface* getParkingPlaceBehaviorInterface() { return this; }
 	virtual ExitInterface* getUpdateExitInterface() { return this; }
 
@@ -112,7 +112,7 @@ public:
 	virtual Bool getExitPosition( Coord3D& rallyPoint ) const;
 	virtual Bool getNaturalRallyPoint( Coord3D& rallyPoint, Bool offset = TRUE ) const;
 	virtual void setRallyPoint( const Coord3D *pos );			///< define a "rally point" for units to move towards
-	virtual const Coord3D *getRallyPoint( void ) const;			///< define a "rally point" for units to move towards
+	virtual const Coord3D *getRallyPoint() const;			///< define a "rally point" for units to move towards
 
 	// UpdateModule
 	virtual UpdateSleepTime update();

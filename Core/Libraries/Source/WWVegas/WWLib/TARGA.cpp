@@ -92,7 +92,7 @@
 * SYNOPSIS
 *     Targa()
 *
-*     void Targa(void);
+*     void Targa();
 *
 * FUNCTION
 *     Initialize the targa class instance.
@@ -105,7 +105,7 @@
 *
 ****************************************************************************/
 
-Targa::Targa(void)
+Targa::Targa()
 	{
 	mImage = nullptr;
 	mPalette = nullptr;
@@ -125,7 +125,7 @@ Targa::Targa(void)
 * SYNOPSIS
 *     ~Targa()
 *
-*     void ~Targa(void);
+*     void ~Targa();
 *
 * FUNCTION
 *
@@ -137,7 +137,7 @@ Targa::Targa(void)
 *
 ****************************************************************************/
 
-Targa::~Targa(void)
+Targa::~Targa()
 {
 	/* Close the file if has been left open. */
 	Close();
@@ -303,7 +303,7 @@ long Targa::Open(const char* name, long mode)
 * SYNOPSIS
 *     Close()
 *
-*     void Close(void);
+*     void Close();
 *
 * FUNCTION
 *     Close the Targa image file and free its handle.
@@ -316,7 +316,7 @@ long Targa::Open(const char* name, long mode)
 *
 ****************************************************************************/
 
-void Targa::Close(void)
+void Targa::Close()
 {
 #ifdef TGA_USES_WWLIB_FILE_CLASSES
 	if (TGAFile) {
@@ -779,7 +779,7 @@ long Targa::Save(const char* name, long flags, bool addextension)
 *
 ****************************************************************************/
 
-void Targa::XFlip(void)
+void Targa::XFlip()
 	{
 	char *ptr,*ptr1;
 	long  x,y,d;
@@ -878,7 +878,7 @@ static __forceinline void _swapBytes(char *p1, char *p2, unsigned count)
 #endif
 }
 
-void Targa::YFlip(void)
+void Targa::YFlip()
 {
   /* old code left in for reference...
 	char *ptr,*ptr1;
@@ -1004,7 +1004,7 @@ char *Targa::SetPalette(char *buffer)
 }
 
 
-bool Targa::IsCompressed(void)
+bool Targa::IsCompressed()
 	{
 	if (Header.ImageType > 8)
 		return true;
@@ -1021,7 +1021,7 @@ bool Targa::IsCompressed(void)
 * SYNOPSIS
 *     Ext = GetExtension()
 *
-*     TGA2Extension *GetExtension(void);
+*     TGA2Extension *GetExtension();
 *
 * FUNCTION
 *     Retrieve a pointer to the Targa 2.0 extension data area. If the file
@@ -1035,7 +1035,7 @@ bool Targa::IsCompressed(void)
 *
 ****************************************************************************/
 
-TGA2Extension *Targa::GetExtension(void)
+TGA2Extension *Targa::GetExtension()
 	{
 	if (mFlags & TGAF_TGA2)
 		return (&mExtension);
@@ -1144,7 +1144,7 @@ long Targa::DecodeImage()
 * SYNOPSIS
 *     EncodeImage()
 *
-*     void EncodeImage(void);
+*     void EncodeImage();
 *
 * FUNCTION
 *     Encode the image data using the RLE algorithm outlined in the TARGA
@@ -1289,7 +1289,7 @@ long Targa::EncodeImage()
 * SYNOPSIS
 *     InvertImage()
 *
-*     void InvertImage(void);
+*     void InvertImage();
 *
 * FUNCTION
 *
@@ -1301,7 +1301,7 @@ long Targa::EncodeImage()
 *
 ****************************************************************************/
 
-void Targa::InvertImage(void)
+void Targa::InvertImage()
 	{
 	char *buffer;
 	long depth;
@@ -1341,7 +1341,7 @@ void Targa::InvertImage(void)
 /*
 ** These functions are just for ease of ifdef'ing between standard io calls and FileClass.
 */
-void Targa::Clear_File(void)
+void Targa::Clear_File()
 {
 #ifdef TGA_USES_WWLIB_FILE_CLASSES
 	TGAFile = nullptr;
@@ -1349,7 +1349,7 @@ void Targa::Clear_File(void)
 	mFH = -1;
 #endif
 }
-bool Targa::Is_File_Open(void)
+bool Targa::Is_File_Open()
 {
 #ifdef TGA_USES_WWLIB_FILE_CLASSES
 	return (TGAFile != nullptr);

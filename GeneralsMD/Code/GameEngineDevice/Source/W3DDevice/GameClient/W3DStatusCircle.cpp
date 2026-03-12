@@ -69,12 +69,12 @@ static ShaderClass detailOpaqueShader(SC_ALPHA);
 Bool W3DStatusCircle::m_needUpdate;
 Int W3DStatusCircle::m_diffuse=255; // blue.
 
-W3DStatusCircle::~W3DStatusCircle(void)
+W3DStatusCircle::~W3DStatusCircle()
 {
 	freeMapResources();
 }
 
-W3DStatusCircle::W3DStatusCircle(void)
+W3DStatusCircle::W3DStatusCircle()
 {
 	m_indexBuffer=nullptr;
 	m_vertexMaterialClass=nullptr;
@@ -118,18 +118,18 @@ void W3DStatusCircle::Get_Obj_Space_Bounding_Box(AABoxClass & box) const
 	box.Init(minPt,maxPt);
 }
 
-Int W3DStatusCircle::Class_ID(void) const
+Int W3DStatusCircle::Class_ID() const
 {
 	return RenderObjClass::CLASSID_UNKNOWN;
 }
 
-RenderObjClass * W3DStatusCircle::Clone(void) const
+RenderObjClass * W3DStatusCircle::Clone() const
 {
 	return NEW W3DStatusCircle(*this);
 }
 
 
-Int W3DStatusCircle::freeMapResources(void)
+Int W3DStatusCircle::freeMapResources()
 {
 
 	REF_PTR_RELEASE(m_indexBuffer);
@@ -142,7 +142,7 @@ Int W3DStatusCircle::freeMapResources(void)
 #define NUM_TRI 20
 //Allocate a heightmap of x by y vertices.
 //data must be an array matching this size.
-Int W3DStatusCircle::initData(void)
+Int W3DStatusCircle::initData()
 {
 	Int i;
 
@@ -180,7 +180,7 @@ Int W3DStatusCircle::initData(void)
 
 /** updateCircleVB puts a circle with a team color vertex buffer. */
 
-Int W3DStatusCircle::updateCircleVB(void)
+Int W3DStatusCircle::updateCircleVB()
 {
 	Int i, k;
 	Real shade;

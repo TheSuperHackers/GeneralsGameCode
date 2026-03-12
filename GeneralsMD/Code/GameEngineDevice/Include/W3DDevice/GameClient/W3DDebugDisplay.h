@@ -74,7 +74,7 @@ class W3DDebugDisplay : public DebugDisplay
 		W3DDebugDisplay();
 		virtual ~W3DDebugDisplay();
 
-		void init( void );																						///< Initialized the display
+		void init();																						///< Initialized the display
 		void setFont( GameFont *font );																///< Set the font to render with
 		void setFontWidth( Int width ) { m_fontWidth = width; };			///< Set the font width
 		void setFontHeight( Int height ) { m_fontHeight = height; };		///< Set the font height

@@ -50,7 +50,7 @@
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-JetSlowDeathBehaviorModuleData::JetSlowDeathBehaviorModuleData( void )
+JetSlowDeathBehaviorModuleData::JetSlowDeathBehaviorModuleData()
 {
 
 	m_fxOnGroundDeath = nullptr;
@@ -137,7 +137,7 @@ JetSlowDeathBehavior::JetSlowDeathBehavior( Thing *thing, const ModuleData *modu
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-JetSlowDeathBehavior::~JetSlowDeathBehavior( void )
+JetSlowDeathBehavior::~JetSlowDeathBehavior()
 {
 
 }
@@ -216,7 +216,7 @@ void JetSlowDeathBehavior::beginSlowDeath( const DamageInfo *damageInfo )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-UpdateSleepTime JetSlowDeathBehavior::update( void )
+UpdateSleepTime JetSlowDeathBehavior::update()
 {
 
 	// extend functionality of base class
@@ -377,7 +377,7 @@ void JetSlowDeathBehavior::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void JetSlowDeathBehavior::loadPostProcess( void )
+void JetSlowDeathBehavior::loadPostProcess()
 {
 
 	// extend base class

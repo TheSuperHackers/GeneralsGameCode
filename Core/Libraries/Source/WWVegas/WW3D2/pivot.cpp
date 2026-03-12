@@ -54,7 +54,7 @@
  * HISTORY:                                                                                    *
  *   07/24/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-PivotClass::PivotClass(void) :
+PivotClass::PivotClass() :
 	Parent(nullptr),
 	BaseTransform(1),
 	Transform(1),
@@ -133,7 +133,7 @@ PivotClass& PivotClass::operator=(const PivotClass& that)
 	return *this;
 }
 
-void PivotClass::Capture_Update(void)
+void PivotClass::Capture_Update()
 {
 #ifdef LAZY_CAP_MTX_ALLOC
 	if (!CapTransformPtr)

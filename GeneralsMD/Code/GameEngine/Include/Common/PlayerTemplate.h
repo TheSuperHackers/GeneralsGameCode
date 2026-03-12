@@ -92,7 +92,7 @@ public:
 
 	const RGBColor* getPreferredColor() const { return &m_preferredColor; }
 
-	AsciiString getStartingBuilding( void ) const { return m_startingBuilding; }
+	AsciiString getStartingBuilding() const { return m_startingBuilding; }
 	AsciiString getStartingUnit( Int i ) const;
 
 	const ProductionChangeMap& getProductionCostChanges() const { return m_productionCostChanges; }
@@ -101,20 +101,20 @@ public:
 	Bool isObserver() const { return m_observer; }
 	Bool isPlayableSide() const { return m_playableSide; }
 
-	AsciiString getScoreScreen (void ) const { return m_scoreScreenImage;	}
-	AsciiString getLoadScreen (void ) const { return m_loadScreenImage;	}
-	AsciiString getBeaconTemplate( void ) const { return m_beaconTemplate; }
+	AsciiString getScoreScreen () const { return m_scoreScreenImage;	}
+	AsciiString getLoadScreen () const { return m_loadScreenImage;	}
+	AsciiString getBeaconTemplate() const { return m_beaconTemplate; }
 
-	const Image *getHeadWaterMarkImage( void ) const;
-	const Image *getFlagWaterMarkImage( void ) const;
-	const Image *getEnabledImage( void ) const;
-	//const Image *getDisabledImage( void ) const;
-	//const Image *getHiliteImage( void ) const;
-	//const Image *getPushedImage( void ) const;
-	const Image *getSideIconImage( void ) const;
-	const Image *getGeneralImage( void ) const;
+	const Image *getHeadWaterMarkImage() const;
+	const Image *getFlagWaterMarkImage() const;
+	const Image *getEnabledImage() const;
+	//const Image *getDisabledImage() const;
+	//const Image *getHiliteImage() const;
+	//const Image *getPushedImage() const;
+	const Image *getSideIconImage() const;
+	const Image *getGeneralImage() const;
 	const AsciiString getTooltip() const { return m_tooltip; }
-	const AsciiString getGeneralFeatures( void ) const { return m_strGeneralFeatures; }
+	const AsciiString getGeneralFeatures() const { return m_strGeneralFeatures; }
 
 	AsciiString getMedallionNormal() const { return m_strMedallionNormal; }
 	AsciiString getMedallionHilite() const { return m_strMedallionHilite; }
@@ -122,18 +122,18 @@ public:
 
 	const ScienceVec& getIntrinsicSciences() const { return m_intrinsicSciences; }
 	Int getIntrinsicSciencePurchasePoints() const { return m_intrinsicSPP; }
-	AsciiString getPurchaseScienceCommandSetRank1( void ) const {return m_purchaseScienceCommandSetRank1;	}
-	AsciiString getPurchaseScienceCommandSetRank3( void ) const {return m_purchaseScienceCommandSetRank3;	}
-	AsciiString getPurchaseScienceCommandSetRank8( void ) const {return m_purchaseScienceCommandSetRank8;	}
+	AsciiString getPurchaseScienceCommandSetRank1() const {return m_purchaseScienceCommandSetRank1;	}
+	AsciiString getPurchaseScienceCommandSetRank3() const {return m_purchaseScienceCommandSetRank3;	}
+	AsciiString getPurchaseScienceCommandSetRank8() const {return m_purchaseScienceCommandSetRank8;	}
 
-	AsciiString getSpecialPowerShortcutCommandSet( void ) const {return m_specialPowerShortcutCommandSet;	}
-	AsciiString getSpecialPowerShortcutWinName( void ) const {return m_specialPowerShortcutWinName;	}
-	Int getSpecialPowerShortcutButtonCount( void ) const {return m_specialPowerShortcutButtonCount;	}
+	AsciiString getSpecialPowerShortcutCommandSet() const {return m_specialPowerShortcutCommandSet;	}
+	AsciiString getSpecialPowerShortcutWinName() const {return m_specialPowerShortcutWinName;	}
+	Int getSpecialPowerShortcutButtonCount() const {return m_specialPowerShortcutButtonCount;	}
 
-	AsciiString getLoadScreenMusic( void ) const {return m_loadScreenMusic;	}
+	AsciiString getLoadScreenMusic() const {return m_loadScreenMusic;	}
 	AsciiString getScoreScreenMusic() const { return m_scoreScreenMusic; }
 
-  Bool isOldFaction( void ) const { return m_oldFaction; }
+  Bool isOldFaction() const { return m_oldFaction; }
 
 	static const FieldParse* getFieldParse();
 

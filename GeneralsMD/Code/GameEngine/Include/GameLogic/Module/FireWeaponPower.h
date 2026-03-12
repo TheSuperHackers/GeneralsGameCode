@@ -56,7 +56,7 @@ class FireWeaponPowerModuleData : public SpecialPowerModuleData
 
 public:
 
-	FireWeaponPowerModuleData( void );
+	FireWeaponPowerModuleData();
 
 	static void buildFieldParse( MultiIniFieldParse& p );
 

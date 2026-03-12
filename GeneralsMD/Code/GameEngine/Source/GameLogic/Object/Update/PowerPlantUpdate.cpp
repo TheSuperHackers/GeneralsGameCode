@@ -41,7 +41,7 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-PowerPlantUpdateModuleData::PowerPlantUpdateModuleData( void )
+PowerPlantUpdateModuleData::PowerPlantUpdateModuleData()
 {
 
 	m_rodsExtendTime = 0;
@@ -65,7 +65,7 @@ PowerPlantUpdate::PowerPlantUpdate( Thing *thing, const ModuleData *moduleData )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-PowerPlantUpdate::~PowerPlantUpdate( void )
+PowerPlantUpdate::~PowerPlantUpdate()
 {
 
 }
@@ -105,7 +105,7 @@ void PowerPlantUpdate::extendRods( Bool extend )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime PowerPlantUpdate::update( void )
+UpdateSleepTime PowerPlantUpdate::update()
 {
 	// remove the extending condition and set the extended condition
 	Drawable *draw = getObject()->getDrawable();
@@ -152,7 +152,7 @@ void PowerPlantUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void PowerPlantUpdate::loadPostProcess( void )
+void PowerPlantUpdate::loadPostProcess()
 {
 
 	// extend base class

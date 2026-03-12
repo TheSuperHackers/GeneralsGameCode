@@ -166,6 +166,10 @@ public:
 
 	Object* getNextObject() { return m_next; }
 	const Object* getNextObject() const { return m_next; }
+	Object* getPrevObject() { return m_prev; }
+	const Object* getPrevObject() const { return m_prev; }
+	void friend_setNextObject(Object* obj) { m_next = obj; }
+	void friend_setPrevObject(Object* obj) { m_prev = obj; }
 
 	void updateObjValuesFromMapProperties(Dict* properties);			///< Brings in properties set in the editor.
 
@@ -181,8 +185,8 @@ public:
 	void setBuilder( const Object *obj );
 
 	void enterGroup( AIGroup *group );							///< become a member of the AIGroup
-	void leaveGroup( void );												///< leave our current AIGroup
-	AIGroup *getGroup(void);
+	void leaveGroup();												///< leave our current AIGroup
+	AIGroup *getGroup();
 
 	// physical properties
 	Bool isMobile() const;																	///< returns true if object is currently able to move
@@ -193,7 +197,7 @@ public:
 	// cannot set velocity, since this is calculated from position every frame
 	Bool isDestroyed() const { return m_status.test( OBJECT_STATUS_DESTROYED ); }		///< Returns TRUE if object has been destroyed
 	Bool isAirborneTarget() const { return m_status.test( OBJECT_STATUS_AIRBORNE_TARGET ); }	///< Our locomotor will control marking us as a valid target for anti air weapons or not
-	Bool isUsingAirborneLocomotor( void ) const;										///< returns true if the current locomotor is an airborne one
+	Bool isUsingAirborneLocomotor() const;										///< returns true if the current locomotor is an airborne one
 
 	/// central place for us to put any additional capture logic
 	void onCapture( Player *oldOwner, Player *newOwner );
@@ -205,7 +209,7 @@ public:
 	void attemptDamage( DamageInfo *damageInfo );			///< damage object as specified by the info
 	void attemptHealing(Real amount, const Object* source);		///< heal object as specified by the info
 	Bool attemptHealingFromSoleBenefactor ( Real amount, const Object* source, UnsignedInt duration );///< for the non-stacking healers like ambulance and propaganda
-	ObjectID getSoleHealingBenefactor( void ) const;
+	ObjectID getSoleHealingBenefactor() const;
 
 	Real estimateDamage( DamageInfoInput& damageInfo ) const;
 	void kill();																			///< do max health amount of kill damage to object
@@ -244,7 +248,7 @@ public:
 	Bool isLocallyViewed() const;
 	Bool isNeutralControlled() const;
 
-	Bool getIsUndetectedDefector(void) const { return BitIsSet(m_privateStatus, UNDETECTED_DEFECTOR); }
+	Bool getIsUndetectedDefector() const { return BitIsSet(m_privateStatus, UNDETECTED_DEFECTOR); }
 	void friend_setUndetectedDefector(Bool status);
 
 	inline Bool isOffMap() const { return BitIsSet(m_privateStatus, OFF_MAP); }
@@ -294,13 +298,13 @@ public:
 	// Find us our production update interface if we have one.  This method exists simply
 	// because we do this in a lot of places in the code and I want a convenient way to get this (CBD)
 	//
-	ProductionUpdateInterface* getProductionUpdateInterface( void );
+	ProductionUpdateInterface* getProductionUpdateInterface();
 
 	//
 	// Find us our dock update interface if we have one.  Again, this method exists simple
 	// because we want to do this in a lot of places throughout the code
 	//
-	DockUpdateInterface *getDockUpdateInterface( void );
+	DockUpdateInterface *getDockUpdateInterface();
 
 	// Ditto for special powers -- Kris
 	SpecialPowerModuleInterface* findSpecialPowerModuleInterface( SpecialPowerType type ) const;
@@ -341,7 +345,7 @@ public:
 
 	// User specified formation.
 	void setFormationID(enum FormationID id) {m_formationID = id;}
-	enum FormationID getFormationID(void) const {return m_formationID;}
+	enum FormationID getFormationID() const {return m_formationID;}
 	void setFormationOffset(const Coord2D& offset) {m_formationOffset = offset;}
 	void getFormationOffset(Coord2D* offset) const {*offset = m_formationOffset;}
 
@@ -404,8 +408,8 @@ public:
 
 
 	// Both of these calls are intended to only be used by TerrainLogic, specifically setActiveBoundary()
-	void friend_prepareForMapBoundaryAdjust(void);
-	void friend_notifyOfNewMapBoundary(void);
+	void friend_prepareForMapBoundaryAdjust();
+	void friend_notifyOfNewMapBoundary();
 
 	// data for the radar
 	void friend_setRadarData( RadarObject *rd ) { m_radarData = rd; }
@@ -572,18 +576,18 @@ public:
 	virtual void reactToTurretChange( WhichTurretType turret, Real oldRotation, Real oldPitch );
 
 	// Convenience function for checking certain kindof bits
-	Bool isStructure(void) const;
+	Bool isStructure() const;
 
 	// Convenience function for checking certain kindof bits
-	Bool isFactionStructure(void) const;
+	Bool isFactionStructure() const;
 
 	// Convenience function for checking certain kindof bits
-	Bool isNonFactionStructure(void) const;
+	Bool isNonFactionStructure() const;
 
 	Bool getReceivingDifficultyBonus() const { return m_isReceivingDifficultyBonus; }
 	void setReceivingDifficultyBonus(Bool receive);
 
-	inline UnsignedInt getSafeOcclusionFrame(void) { return m_safeOcclusionFrame; }	//< this is an object specific frame at which it's safe to enable building occlusion.
+	inline UnsignedInt getSafeOcclusionFrame() { return m_safeOcclusionFrame; }	//< this is an object specific frame at which it's safe to enable building occlusion.
 	inline void	setSafeOcclusionFrame(UnsignedInt frame) { m_safeOcclusionFrame = frame;}
 
 	// All of our cheating for radars and power go here.
@@ -622,10 +626,10 @@ protected:
 	virtual Object *asObjectMeth() { return this; }
 	virtual const Object *asObjectMeth() const { return this; }
 
-	virtual Real calculateHeightAboveTerrain(void) const;		// Calculates the actual height above terrain.  Doesn't use cache.
+	virtual Real calculateHeightAboveTerrain() const;		// Calculates the actual height above terrain.  Doesn't use cache.
 
-	void updateTriggerAreaFlags(void);
-	void setTriggerAreaFlagsForChangeInPosition(void);
+	void updateTriggerAreaFlags();
+	void setTriggerAreaFlagsForChangeInPosition();
 
 	/// Look and unlook are protected.  They should be called from Object::reasonToLook.  Like Capture, or death.
 	void look();

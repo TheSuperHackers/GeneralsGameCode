@@ -70,7 +70,7 @@ class RenderInfoClass
 {
 public:
 	RenderInfoClass(CameraClass & cam);
-	~RenderInfoClass(void);
+	~RenderInfoClass();
 
 	enum RINFO_OVERRIDE_FLAGS {
 		RINFO_OVERRIDE_DEFAULT						= 0x0000,	// No overrides
@@ -81,14 +81,14 @@ public:
 	};
 
 	void								Push_Material_Pass(MaterialPassClass * matpass);
-	void								Pop_Material_Pass(void);
+	void								Pop_Material_Pass();
 
-	int								Additional_Pass_Count(void);
+	int								Additional_Pass_Count();
 	MaterialPassClass *			Peek_Additional_Pass(int i);
 
 	void								Push_Override_Flags(RINFO_OVERRIDE_FLAGS flg);	// Saves current override flags on stack and installs a new one
-	void								Pop_Override_Flags(void);								// Restores previous override flags from stack
-	RINFO_OVERRIDE_FLAGS &		Current_Override_Flags(void);							// Access to current override flags
+	void								Pop_Override_Flags();								// Restores previous override flags from stack
+	RINFO_OVERRIDE_FLAGS &		Current_Override_Flags();							// Access to current override flags
 
 	CameraClass &					Camera;
 
@@ -131,7 +131,7 @@ class SpecialRenderInfoClass : public RenderInfoClass
 
 public:
 	SpecialRenderInfoClass(CameraClass & cam,int render_type);
-	~SpecialRenderInfoClass(void);
+	~SpecialRenderInfoClass();
 
 	// The following fields are only used by the Special_Render function.
 	// this is basically just a place to stick whatever information you need.

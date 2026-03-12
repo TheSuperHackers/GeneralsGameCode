@@ -43,7 +43,7 @@ void INI::parseMultiplayerSettingsDefinition( INI* ini )
 		//
 		if( ini->getLoadType() == INI_LOAD_CREATE_OVERRIDES )
 		{
-			DEBUG_ASSERTCRASH(false, ("Creating an override of MultiplayerSettings!"));
+			DEBUG_CRASH(("Creating an override of MultiplayerSettings!"));
 		}
 	}
 	else

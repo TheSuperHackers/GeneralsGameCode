@@ -21,7 +21,6 @@
 
 #include "StdAfx.h"
 #include "WorldBuilder.h"
-#include "euladialog.h"
 #include "MainFrm.h"
 #include "OpenMap.h"
 #include "SplashScreen.h"
@@ -40,7 +39,6 @@
 #include "Common/FileSystem.h"
 #include "Common/ArchiveFileSystem.h"
 #include "Common/LocalFileSystem.h"
-#include "Common/CDManager.h"
 #include "Common/Debug.h"
 #include "Common/StackDump.h"
 #include "Common/GameMemory.h"
@@ -273,12 +271,6 @@ static LONG WINAPI UnHandledExceptionFilter(struct _EXCEPTION_POINTERS* e_info)
 
 BOOL CWorldBuilderApp::InitInstance()
 {
-	EulaDialog eulaDialog;
-	if( eulaDialog.DoModal() == IDCANCEL )
-	{
-		return FALSE;
-	}
-
 	// initialization
 	SetUnhandledExceptionFilter(UnHandledExceptionFilter);
 
@@ -374,9 +366,6 @@ BOOL CWorldBuilderApp::InitInstance()
 	WorldHeightMapEdit::init();
 
 	initSubsystem(TheScriptEngine, (ScriptEngine*)(new ScriptEngine()));
-
-	// need this before TheAudio in case we're running off of CD - TheAudio can try to open Music.big on the CD...
-	initSubsystem(TheCDManager, CreateCDManager(), nullptr);
 	initSubsystem(TheAudio, (AudioManager*)new MilesAudioManager());
 	if (!TheAudio->isMusicAlreadyLoaded())
 		return FALSE;

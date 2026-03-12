@@ -57,12 +57,12 @@ class PredictiveLODOptimizerClass {
 
 	public:
 
-		static void		Clear(void);
+		static void		Clear();
 		static void		Add_Object(RenderObjClass *robj);
 		static void		Add_Cost(float cost)								{ TotalCost += cost; }
 		static void		Optimize_LODs(float max_cost);
-		static float	Get_Total_Cost(void)								{ return TotalCost; }
-		static void		Free(void);	// frees all memory
+		static float	Get_Total_Cost()								{ return TotalCost; }
+		static void		Free();	// frees all memory
 
 	private:
 		static void		AllocVisibleObjArrays(int num_objects);

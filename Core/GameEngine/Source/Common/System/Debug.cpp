@@ -142,8 +142,8 @@ const char *TheDebugLevels[DEBUG_LEVEL_MAX] = {
 // ----------------------------------------------------------------------------
 // PRIVATE PROTOTYPES
 // ----------------------------------------------------------------------------
-static const char *getCurrentTimeString(void);
-static const char *getCurrentTickString(void);
+static const char *getCurrentTimeString();
+static const char *getCurrentTickString();
 static void prepBuffer(char *buffer);
 #ifdef DEBUG_LOGGING
 static void doLogOutput(const char *buffer);
@@ -196,7 +196,7 @@ int MessageBoxWrapper( LPCSTR lpText, LPCSTR lpCaption, UINT uType )
 	Return the current time in string form
 */
 // ----------------------------------------------------------------------------
-static const char *getCurrentTimeString(void)
+static const char *getCurrentTimeString()
 {
 	time_t aclock;
 	time(&aclock);
@@ -210,7 +210,7 @@ static const char *getCurrentTimeString(void)
 	Return the current TickCount in string form
 */
 // ----------------------------------------------------------------------------
-static const char *getCurrentTickString(void)
+static const char *getCurrentTickString()
 {
 	static char TheTickString[32];
 	snprintf(TheTickString, ARRAY_SIZE(TheTickString), "(T=%08lx)", ::GetTickCount());

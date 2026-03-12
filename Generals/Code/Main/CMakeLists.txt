@@ -3,9 +3,9 @@ add_executable(g_generals WIN32)
 # Use a binary name that doesn't conflict with original game.
 # GeneralsX @build BenderAI 15/02/2026 Linux branding update
 if("${CMAKE_SYSTEM}" MATCHES "Windows")
-    set_target_properties(g_generals PROPERTIES OUTPUT_NAME generalsv)
+    set_target_properties(g_generals PROPERTIES OUTPUT_NAME "generalsv${RTS_BUILD_OUTPUT_SUFFIX}")
 else()
-    # Linux: Use GeneralsX branding
+    # GeneralsX @build BenderAI 15/02/2026 Linux branding update
     set_target_properties(g_generals PROPERTIES OUTPUT_NAME GeneralsX)
 endif()
 
@@ -89,7 +89,7 @@ if(MSVC)
 endif()
 
 # Strip debug symbols to separate file for MinGW Release builds
-# This creates generalsv.exe.debug (similar to MSVC .pdb files)
+# This creates generalsv${RTS_BUILD_OUTPUT_SUFFIX}.exe.debug (similar to MSVC .pdb files)
 if(MINGW AND COMMAND add_debug_strip_target)
     add_debug_strip_target(g_generals)
 endif()

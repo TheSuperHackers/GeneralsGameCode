@@ -111,7 +111,7 @@ DebugDisplay::DebugDisplay()
 // DebugDisplay::reset
 //============================================================================
 
-void DebugDisplay::reset( void )
+void DebugDisplay::reset()
 {
 	setCursorPos( 0, 0 );
 	setTextColor( WHITE );
@@ -132,7 +132,7 @@ void	DebugDisplay::setCursorPos( Int x, Int y )
 // DebugDisplay::getCursorXPos
 //============================================================================
 
-Int		DebugDisplay::getCursorXPos( void )
+Int		DebugDisplay::getCursorXPos()
 {
 	return m_xPos;
 }
@@ -141,7 +141,7 @@ Int		DebugDisplay::getCursorXPos( void )
 // DebugDisplay::getCursorYPos
 //============================================================================
 
-Int		DebugDisplay::getCursorYPos( void )
+Int		DebugDisplay::getCursorYPos()
 {
 	return m_yPos;
 }
@@ -150,7 +150,7 @@ Int		DebugDisplay::getCursorYPos( void )
 // DebugDisplay::getWidth
 //============================================================================
 
-Int		DebugDisplay::getWidth( void )
+Int		DebugDisplay::getWidth()
 {
 	return m_width;
 }
@@ -159,7 +159,7 @@ Int		DebugDisplay::getWidth( void )
 // DebugDisplay::getHeight
 //============================================================================
 
-Int		DebugDisplay::getHeight( void )
+Int		DebugDisplay::getHeight()
 {
 	return m_height;
 }

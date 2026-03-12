@@ -222,7 +222,7 @@ public:
 		MASK_POSTDETAILALPHAFUNC= (7<<24)			// mask for post detail alpha function setting
 	};
 
-	ShaderClass(void)
+	ShaderClass()
 	{	Reset(); }
 
 	ShaderClass(const ShaderClass & s)
@@ -234,10 +234,10 @@ public:
 	bool operator == (const ShaderClass & s) { return ShaderBits == s.ShaderBits; }
 	bool operator != (const ShaderClass & s) { return ShaderBits != s.ShaderBits; }
 
-	unsigned int Get_Bits(void) const
+	unsigned int Get_Bits() const
 	{	return ShaderBits; }
 
-	int Uses_Alpha(void) const
+	int Uses_Alpha() const
 	{
 		// check if alpha test is enabled
 		if (Get_Alpha_Test() != ALPHATEST_DISABLE)
@@ -252,47 +252,47 @@ public:
 		return (src == SRCBLEND_SRC_ALPHA || src == SRCBLEND_ONE_MINUS_SRC_ALPHA);
 	}
 
-	int	Uses_Fog(void) const
+	int	Uses_Fog() const
 	{
 		return (Get_Fog_Func() != FOG_DISABLE);
 	}
 
-	int	Uses_Primary_Gradient(void) const
+	int	Uses_Primary_Gradient() const
 	{
 		return (Get_Primary_Gradient() != GRADIENT_DISABLE);
 	}
 
-	int	Uses_Secondary_Gradient(void) const
+	int	Uses_Secondary_Gradient() const
 	{
 		return (Get_Secondary_Gradient() != SECONDARY_GRADIENT_DISABLE);
 	}
 
-	int	Uses_Texture(void) const
+	int	Uses_Texture() const
 	{ return (Get_Texturing() != TEXTURING_DISABLE); }
 
-	int	Uses_Post_Detail_Texture(void) const
+	int	Uses_Post_Detail_Texture() const
 	{
 		if (Get_Texturing() == TEXTURING_DISABLE)
 		return false;
 		return ((Get_Post_Detail_Color_Func() != DETAILCOLOR_DISABLE) || (Get_Post_Detail_Alpha_Func() != DETAILALPHA_DISABLE));
 	}
 
-	inline void	Reset(void);
+	inline void	Reset();
 
-	DepthCompareType		Get_Depth_Compare(void)	const								{ return (DepthCompareType)(ShaderBits&MASK_DEPTHCOMPARE>>SHIFT_DEPTHCOMPARE); }
-	DepthMaskType			Get_Depth_Mask(void) const									{ return (DepthMaskType)((ShaderBits&MASK_DEPTHMASK)>>SHIFT_DEPTHMASK); }
-	ColorMaskType			Get_Color_Mask(void) const									{ return (ColorMaskType)((ShaderBits&MASK_COLORMASK)>>SHIFT_COLORMASK); }
-	DetailAlphaFuncType	Get_Post_Detail_Alpha_Func(void) const					{ return (DetailAlphaFuncType)((ShaderBits&MASK_POSTDETAILALPHAFUNC)>>SHIFT_POSTDETAILALPHAFUNC); }
-	DetailColorFuncType	Get_Post_Detail_Color_Func(void) const					{ return (DetailColorFuncType)((ShaderBits&MASK_POSTDETAILCOLORFUNC)>>SHIFT_POSTDETAILCOLORFUNC); }
-	AlphaTestType			Get_Alpha_Test(void) const									{ return (AlphaTestType)((ShaderBits&MASK_ALPHATEST)>>SHIFT_ALPHATEST); }
-	CullModeType			Get_Cull_Mode(void) const									{ return (CullModeType)((ShaderBits&MASK_CULLMODE)>>SHIFT_CULLMODE); }
-	DstBlendFuncType		Get_Dst_Blend_Func(void) const							{ return (DstBlendFuncType)((ShaderBits&MASK_DSTBLEND)>>SHIFT_DSTBLEND); }
-	FogFuncType			Get_Fog_Func(void) const									{ return (FogFuncType)((ShaderBits&MASK_FOG)>>SHIFT_FOG); }
-	PriGradientType		Get_Primary_Gradient(void) const							{ return (PriGradientType)((ShaderBits&MASK_PRIGRADIENT)>>SHIFT_PRIGRADIENT); }
-	SecGradientType		Get_Secondary_Gradient(void) const						{ return (SecGradientType)((ShaderBits&MASK_SECGRADIENT)>>SHIFT_SECGRADIENT); }
-	SrcBlendFuncType		Get_Src_Blend_Func(void) const							{ return (SrcBlendFuncType)((ShaderBits&MASK_SRCBLEND)>>SHIFT_SRCBLEND); }
-	TexturingType			Get_Texturing(void) const									{ return (TexturingType)((ShaderBits&MASK_TEXTURING)>>SHIFT_TEXTURING); }
-	NPatchEnableType		Get_NPatch_Enable(void) const								{ return (NPatchEnableType)((ShaderBits&MASK_NPATCHENABLE)>>SHIFT_NPATCHENABLE); }
+	DepthCompareType		Get_Depth_Compare()	const								{ return (DepthCompareType)(ShaderBits&MASK_DEPTHCOMPARE>>SHIFT_DEPTHCOMPARE); }
+	DepthMaskType			Get_Depth_Mask() const									{ return (DepthMaskType)((ShaderBits&MASK_DEPTHMASK)>>SHIFT_DEPTHMASK); }
+	ColorMaskType			Get_Color_Mask() const									{ return (ColorMaskType)((ShaderBits&MASK_COLORMASK)>>SHIFT_COLORMASK); }
+	DetailAlphaFuncType	Get_Post_Detail_Alpha_Func() const					{ return (DetailAlphaFuncType)((ShaderBits&MASK_POSTDETAILALPHAFUNC)>>SHIFT_POSTDETAILALPHAFUNC); }
+	DetailColorFuncType	Get_Post_Detail_Color_Func() const					{ return (DetailColorFuncType)((ShaderBits&MASK_POSTDETAILCOLORFUNC)>>SHIFT_POSTDETAILCOLORFUNC); }
+	AlphaTestType			Get_Alpha_Test() const									{ return (AlphaTestType)((ShaderBits&MASK_ALPHATEST)>>SHIFT_ALPHATEST); }
+	CullModeType			Get_Cull_Mode() const									{ return (CullModeType)((ShaderBits&MASK_CULLMODE)>>SHIFT_CULLMODE); }
+	DstBlendFuncType		Get_Dst_Blend_Func() const							{ return (DstBlendFuncType)((ShaderBits&MASK_DSTBLEND)>>SHIFT_DSTBLEND); }
+	FogFuncType			Get_Fog_Func() const									{ return (FogFuncType)((ShaderBits&MASK_FOG)>>SHIFT_FOG); }
+	PriGradientType		Get_Primary_Gradient() const							{ return (PriGradientType)((ShaderBits&MASK_PRIGRADIENT)>>SHIFT_PRIGRADIENT); }
+	SecGradientType		Get_Secondary_Gradient() const						{ return (SecGradientType)((ShaderBits&MASK_SECGRADIENT)>>SHIFT_SECGRADIENT); }
+	SrcBlendFuncType		Get_Src_Blend_Func() const							{ return (SrcBlendFuncType)((ShaderBits&MASK_SRCBLEND)>>SHIFT_SRCBLEND); }
+	TexturingType			Get_Texturing() const									{ return (TexturingType)((ShaderBits&MASK_TEXTURING)>>SHIFT_TEXTURING); }
+	NPatchEnableType		Get_NPatch_Enable() const								{ return (NPatchEnableType)((ShaderBits&MASK_NPATCHENABLE)>>SHIFT_NPATCHENABLE); }
 
 	void	Set_Depth_Compare(DepthCompareType x)					{ ShaderBits&=~MASK_DEPTHCOMPARE;ShaderBits|=(x<<SHIFT_DEPTHCOMPARE);	}
 	void	Set_Depth_Mask(DepthMaskType x)							{ ShaderBits&=~MASK_DEPTHMASK; ShaderBits|=(x<<SHIFT_DEPTHMASK);	}
@@ -313,8 +313,8 @@ public:
 	void	Enable_Fog (const char *source);
 
 	// helper function for static sort system
-	StaticSortCategoryType	Get_SS_Category(void) const;
-	int							Guess_Sort_Level(void) const;
+	StaticSortCategoryType	Get_SS_Category() const;
+	int							Guess_Sort_Level() const;
 
 	// DX 8 state management routines
 	static void	Invalidate() { ShaderDirty=true; }
@@ -326,7 +326,7 @@ public:
 	// to work, you will have to ww3d::Flush all rendering before changing the setting back.
 	// NORMAL USERS SHOULD NEVER CALL THESE FUNCTIONS!
 	static void				Invert_Backface_Culling(bool onoff);
-	static bool				Is_Backface_Culling_Inverted(void);
+	static bool				Is_Backface_Culling_Inverted();
 
 	const StringClass& Get_Description(StringClass& str) const;
 

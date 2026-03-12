@@ -84,7 +84,7 @@ void CreateLANGameInfoWindow( GameWindow *sizeAndPosWin )
 
 }
 
-void DestroyGameInfoWindow(void)
+void DestroyGameInfoWindow()
 {
 	if (gameInfoWindowLayout)
 	{

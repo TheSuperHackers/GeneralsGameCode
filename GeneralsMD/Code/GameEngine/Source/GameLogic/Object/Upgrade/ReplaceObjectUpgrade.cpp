@@ -62,13 +62,13 @@ ReplaceObjectUpgrade::ReplaceObjectUpgrade( Thing *thing, const ModuleData* modu
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-ReplaceObjectUpgrade::~ReplaceObjectUpgrade( void )
+ReplaceObjectUpgrade::~ReplaceObjectUpgrade()
 {
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void ReplaceObjectUpgrade::upgradeImplementation( )
+void ReplaceObjectUpgrade::upgradeImplementation()
 {
 	const ReplaceObjectUpgradeModuleData *data = getReplaceObjectUpgradeModuleData();
 	const ThingTemplate* replacementTemplate = TheThingFactory->findTemplate(data->m_replaceObjectName);
@@ -171,7 +171,7 @@ void ReplaceObjectUpgrade::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void ReplaceObjectUpgrade::loadPostProcess( void )
+void ReplaceObjectUpgrade::loadPostProcess()
 {
 
 	// extend base class

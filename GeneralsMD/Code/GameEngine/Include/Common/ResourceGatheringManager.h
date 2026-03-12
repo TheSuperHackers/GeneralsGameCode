@@ -58,7 +58,7 @@ protected:
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
+	virtual void loadPostProcess();
 
 private:
 	/// @todo Make sure the allocator for std::list<> is a good one.  Otherwise override it.

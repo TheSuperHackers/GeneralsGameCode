@@ -39,7 +39,7 @@
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-ObjectDefectionHelper::~ObjectDefectionHelper( void )
+ObjectDefectionHelper::~ObjectDefectionHelper()
 {
 }
 
@@ -80,7 +80,7 @@ UpdateSleepTime ObjectDefectionHelper::update()
 	{
 		// PLEASE NOTE:
 		// checking the is_attacking statusbit above, only handles weapon related attacks...
-		// I also set m_undetectedDefector = FALSE in the groupDoSpecialPower[...]( ) functions;
+		// I also set m_undetectedDefector = FALSE in the groupDoSpecialPower[...]() functions;
 		obj->friend_setUndetectedDefector(FALSE);
 		return UPDATE_SLEEP_FOREVER;	// hey, we're done.
 	}
@@ -171,7 +171,7 @@ void ObjectDefectionHelper::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void ObjectDefectionHelper::loadPostProcess( void )
+void ObjectDefectionHelper::loadPostProcess()
 {
 
 	// object helper base class

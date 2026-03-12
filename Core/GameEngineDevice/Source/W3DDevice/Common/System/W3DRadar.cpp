@@ -106,7 +106,7 @@ static WW3DFormat findFormat(const WW3DFormat formats[])
 	* be supported by the hardware.  The "more preferred" formats appear at the top of
 	* the format tables in order from most preferred to least preferred */
 //-------------------------------------------------------------------------------------------------
-void W3DRadar::initializeTextureFormats( void )
+void W3DRadar::initializeTextureFormats()
 {
 	const WW3DFormat terrainFormats[] =
 	{
@@ -143,7 +143,7 @@ void W3DRadar::initializeTextureFormats( void )
 //-------------------------------------------------------------------------------------------------
 /** Delete resources used specifically in this W3D radar implementation */
 //-------------------------------------------------------------------------------------------------
-void W3DRadar::deleteResources( void )
+void W3DRadar::deleteResources()
 {
 
 	//
@@ -184,7 +184,7 @@ void W3DRadar::deleteResources( void )
 //-------------------------------------------------------------------------------------------------
 /** Reconstruct the view box given the current camera settings */
 //-------------------------------------------------------------------------------------------------
-void W3DRadar::reconstructViewBox( void )
+void W3DRadar::reconstructViewBox()
 {
 	Coord3D world[ 4 ];
 	ICoord2D radar[ 4 ];
@@ -610,12 +610,17 @@ void W3DRadar::drawEvents( Int pixelX, Int pixelY, Int width, Int height )
 void W3DRadar::drawIcons( Int pixelX, Int pixelY, Int width, Int height )
 {
 	Player *player = rts::getObservedOrLocalPlayer();
-	for (RadarObject *heroObj = m_localHeroObjectList; heroObj; heroObj = heroObj->friend_getNext())
+	for (RadarObject *heroObj = m_localObjectList; heroObj; heroObj = heroObj->friend_getNext())
 	{
-		if (canRenderObject(heroObj, player))
-		{
-			drawHeroIcon(pixelX, pixelY, width, height, heroObj->friend_getObject()->getPosition());
-		}
+		const Object *obj = heroObj->friend_getObject();
+
+		if (!obj->isHero())
+			continue;
+
+		if (!canRenderObject(heroObj, player))
+			continue;
+
+		drawHeroIcon(pixelX, pixelY, width, height, obj->getPosition());
 	}
 }
 
@@ -631,7 +636,6 @@ void W3DRadar::updateObjectTexture(TextureClass *texture)
 	// rebuild the object overlay
 	renderObjectList( m_objectList, texture );
 	renderObjectList( m_localObjectList, texture );
-	renderObjectList( m_localHeroObjectList, texture );
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -847,7 +851,7 @@ void W3DRadar::interpolateColorForHeight( RGBColor *color,
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-W3DRadar::W3DRadar( void )
+W3DRadar::W3DRadar()
 {
 
 	m_terrainTextureFormat = WW3D_FORMAT_UNKNOWN;
@@ -884,7 +888,7 @@ W3DRadar::W3DRadar( void )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-W3DRadar::~W3DRadar( void )
+W3DRadar::~W3DRadar()
 {
 
 	// delete resources used for the W3D radar
@@ -902,7 +906,7 @@ void W3DRadar::xfer( Xfer *xfer )
 //-------------------------------------------------------------------------------------------------
 /** Radar initialization */
 //-------------------------------------------------------------------------------------------------
-void W3DRadar::init( void )
+void W3DRadar::init()
 {
 	ICoord2D size;
 	Region2D uv;
@@ -993,7 +997,7 @@ void W3DRadar::init( void )
 //-------------------------------------------------------------------------------------------------
 /** Reset the radar to the initial empty state ready for new data */
 //-------------------------------------------------------------------------------------------------
-void W3DRadar::reset( void )
+void W3DRadar::reset()
 {
 
 	// extending functionality, call base class
@@ -1025,7 +1029,7 @@ void W3DRadar::reset( void )
 //-------------------------------------------------------------------------------------------------
 /** Update */
 //-------------------------------------------------------------------------------------------------
-void W3DRadar::update( void )
+void W3DRadar::update()
 {
 
 	// extend base class

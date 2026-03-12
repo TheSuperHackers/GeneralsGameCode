@@ -50,7 +50,7 @@ void ProfileCmdInterface::AddResultFunction(ProfileResultInterface* (*func)(int,
   resIf[numResIf-1].arg=arg;
 }
 
-void ProfileCmdInterface::RunResultFunctions(void)
+void ProfileCmdInterface::RunResultFunctions()
 {
   // no result functions registered?
   if (!numResFunc)

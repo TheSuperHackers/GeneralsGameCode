@@ -84,8 +84,8 @@ class SoundSceneClass
 		//////////////////////////////////////////////////////////////////////
 		//	Public constructors/destructors
 		//////////////////////////////////////////////////////////////////////
-		SoundSceneClass (void);
-		virtual ~SoundSceneClass (void);
+		SoundSceneClass ();
+		virtual ~SoundSceneClass ();
 
 		//////////////////////////////////////////////////////////////////////
 		//	Partition methods
@@ -103,18 +103,18 @@ class SoundSceneClass
 		virtual void			Attach_Listener_To_Obj (RenderObjClass *render_obj, int bone_index = -1) { m_Listener->Attach_To_Object (render_obj, bone_index); }
 
 		virtual void			Set_Listener_Position (const Vector3 &pos)			{ m_Listener->Set_Position (pos); }
-		virtual Vector3		Get_Listener_Position (void) const						{ return m_Listener->Get_Position (); }
+		virtual Vector3		Get_Listener_Position () const						{ return m_Listener->Get_Position (); }
 
 		virtual void			Set_Listener_Transform (const Matrix3D &transform)	{ m_Listener->Set_Transform (transform); }
-		virtual Matrix3D		Get_Listener_Transform (void) const						{ return m_Listener->Get_Transform (); }
+		virtual Matrix3D		Get_Listener_Transform () const						{ return m_Listener->Get_Transform (); }
 
-		virtual Listener3DClass *Peek_2nd_Listener (void) const						{ return m_2ndListener; }
+		virtual Listener3DClass *Peek_2nd_Listener () const						{ return m_2ndListener; }
 		virtual void			Set_2nd_Listener (Listener3DClass *listener);
 
 		//////////////////////////////////////////////////////////////////////
 		//	Sound insertion
 		//////////////////////////////////////////////////////////////////////
-		virtual void			Flush_Scene (void);
+		virtual void			Flush_Scene ();
 		virtual void			Update_Sound (SoundCullObjClass *sound_obj);
 
 		//
@@ -147,7 +147,7 @@ class SoundSceneClass
 		bool						Save_Dynamic (ChunkSaveClass &csave);
 		bool						Load_Dynamic (ChunkLoadClass &cload);
 
-		bool						Is_Batch_Mode (void) const			{ return m_IsBatchMode; }
+		bool						Is_Batch_Mode () const			{ return m_IsBatchMode; }
 		void						Set_Batch_Mode (bool batch_mode)	{ m_IsBatchMode = batch_mode; }
 
 		//////////////////////////////////////////////////////////////////////
@@ -161,7 +161,7 @@ class SoundSceneClass
 		//	Protected methods
 		//////////////////////////////////////////////////////////////////////
 		virtual void			On_Frame_Update (unsigned int milliseconds);
-		virtual void			Initialize (void);
+		virtual void			Initialize ();
 
 		virtual bool			Is_Logical_Sound_In_Scene (LogicalSoundClass *sound_obj, bool single_shot = false);
 
@@ -176,7 +176,7 @@ class SoundSceneClass
 		class AudibleInfoClass : public MultiListObjectClass, public AutoPoolClass<AudibleInfoClass, 64>
 		{
 		public:
-			AudibleInfoClass (void)
+			AudibleInfoClass ()
 				:	sound_obj (nullptr),
 					distance2 (0) { }
 

@@ -126,19 +126,19 @@ public:
 	ArchiveFileSystem();
 	virtual ~ArchiveFileSystem();
 
-	virtual void init( void ) = 0;
-	virtual void update( void ) = 0;
-	virtual void reset( void ) = 0;
-	virtual void postProcessLoad( void ) = 0;
+	virtual void init() = 0;
+	virtual void update() = 0;
+	virtual void reset() = 0;
+	virtual void postProcessLoad() = 0;
 
 	// ArchiveFile operations
 	virtual ArchiveFile*	openArchiveFile( const Char *filename ) = 0;		///< Create new or return existing Archive file from file name
 	virtual void					closeArchiveFile( const Char *filename ) = 0;		///< Close the one specified big file.
-	virtual void					closeAllArchiveFiles( void ) = 0;								///< Close all Archive files currently open
+	virtual void					closeAllArchiveFiles() = 0;								///< Close all Archive files currently open
 
 	// File operations
 	virtual File*					openFile( const Char *filename, Int access = 0, FileInstance instance = 0);	///< Search Archive files for specified file name and open it if found
-	virtual void					closeAllFiles( void ) = 0;									///< Close all files associated with Archive files
+	virtual void					closeAllFiles() = 0;									///< Close all files associated with Archive files
 	virtual Bool					doesFileExist(const Char *filename, FileInstance instance = 0) const;	///< return true if that file exists in an archive file somewhere.
 
 	void					getFileListInDirectory(const AsciiString& currentDirectory, const AsciiString& originalDirectory, const AsciiString& searchName, FilenameList &filenameList, Bool searchSubdirectories) const; ///< search the given directory for files matching the searchName (egs. *.ini, *.rep).  Possibly search subdirectories.  Scans each Archive file.
@@ -149,7 +149,7 @@ public:
 	// Unprotected this for copy-protection routines
 	ArchiveFile* getArchiveFile(const AsciiString& filename, FileInstance instance = 0) const;
 
-	void loadMods( void );
+	void loadMods();
 
 	ArchivedDirectoryInfo* friend_getArchivedDirectoryInfo(const Char* directory);
 

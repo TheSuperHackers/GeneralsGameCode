@@ -64,7 +64,7 @@
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-OpenContainModuleData::OpenContainModuleData( void )
+OpenContainModuleData::OpenContainModuleData()
 {
 
 	m_containMax = CONTAIN_MAX_UNKNOWN;  // means we don't care, infinite, unassigned, whatever
@@ -130,7 +130,6 @@ OpenContain::OpenContain( Thing *thing, const ModuleData* moduleData ) : UpdateM
 	m_containListSize = 0;
 	m_stealthUnitsContained = 0;
 	m_heroUnitsContained = 0;
-	m_xferVersion = 1;
 	m_doorCloseCountdown = 0;
 
 	m_rallyPoint.zero();
@@ -155,7 +154,7 @@ OpenContain::OpenContain( Thing *thing, const ModuleData* moduleData ) : UpdateM
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-Int OpenContain::getContainMax( void ) const
+Int OpenContain::getContainMax() const
 {
 	const OpenContainModuleData *modData = getOpenContainModuleData();
 
@@ -191,7 +190,7 @@ void OpenContain::containReactToTransformChange()
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime OpenContain::update( void )
+UpdateSleepTime OpenContain::update()
 {
 	m_playerEnteredMask = 0;
 
@@ -291,6 +290,12 @@ void OpenContain::addToContain( Object *rider )
 
 	// sanity
 	if( rider == nullptr )
+		return;
+
+	// TheSuperHackers @bugfix Stubbjax 06/02/2026 Ensure the rider is not destroyed to prevent a
+	// likely crash if it enters the container on the same frame. If this occurs with an unpatched
+	// client present in a match, the game has a small chance to mismatch.
+	if (rider->isDestroyed())
 		return;
 
 	Drawable *riderDraw = rider->getDrawable();
@@ -440,7 +445,7 @@ void OpenContain::removeAllContained( Bool exposeStealthUnits )
 //-------------------------------------------------------------------------------------------------
 /** Kill all contained objects in the contained list */
 //-------------------------------------------------------------------------------------------------
-void OpenContain::killAllContained( void )
+void OpenContain::killAllContained()
 {
 	// TheSuperHackers @bugfix xezon 23/05/2025 Empty m_containList straight away
 	// to prevent a potential child call to catastrophically modify the m_containList as well.
@@ -856,7 +861,7 @@ void OpenContain::onCollide( Object *other, const Coord3D *loc, const Coord3D *n
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void OpenContain::onDelete( void )	///< Last possible moment cleanup
+void OpenContain::onDelete()	///< Last possible moment cleanup
 {
 	// This uses my literal list, and not the gettor, because we don't want to get redirected some place fancy.
 	for(ContainedItemsList::iterator it = m_containList.begin(); it != m_containList.end(); )
@@ -1185,7 +1190,7 @@ Bool OpenContain::isPassengerAllowedToFire( ObjectID id ) const
 	* to a new damage state, we will want to redeploy all our occupants to be at new fire
 	* points that are reflected in the new artwork */
 //-------------------------------------------------------------------------------------------------
-void OpenContain::monitorConditionChanges( void )
+void OpenContain::monitorConditionChanges()
 {
 	Drawable *draw = getObject()->getDrawable();
 	Bool stateChanged = false;
@@ -1211,7 +1216,7 @@ void OpenContain::monitorConditionChanges( void )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void OpenContain::redeployOccupants( void )
+void OpenContain::redeployOccupants()
 {
 
 	//
@@ -1359,7 +1364,7 @@ void OpenContain::pruneDeadWanters()
 }
 
 //-------------------------------------------------------------------------------------------------
-void OpenContain::markAllPassengersDetected( )
+void OpenContain::markAllPassengersDetected()
 {
 	for( ContainedItemsList::iterator it = m_containList.begin(); it != m_containList.end(); )
 	{
@@ -1573,7 +1578,7 @@ WeaponBonusConditionFlags OpenContain::getWeaponBonusPassedToPassengers() const
 }
 
 //-------------------------------------------------------------------------------------------------
-Real OpenContain::getDamagePercentageToUnits( void )
+Real OpenContain::getDamagePercentageToUnits()
 {
 	return getOpenContainModuleData()->m_damagePercentageToUnits;
 }
@@ -1599,7 +1604,7 @@ void OpenContain::setRallyPoint( const Coord3D *pos )
 }
 
 //-------------------------------------------------------------------------------------------------
-const Coord3D *OpenContain::getRallyPoint( void ) const
+const Coord3D *OpenContain::getRallyPoint() const
 {
 	if (m_rallyPointExists)
 		return &m_rallyPoint;
@@ -1646,7 +1651,7 @@ void testForAttackingProc( Object *obj, void *userData )
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool OpenContain::isAnyRiderAttacking( void ) const
+Bool OpenContain::isAnyRiderAttacking() const
 {
   Bool wellIsHe = FALSE;
 
@@ -1681,21 +1686,15 @@ void OpenContain::crc( Xfer *xfer )
 	* Version Info:
 	* 1: Initial version
 	* 2: Added m_passengerAllowedToFire
-	* 3: TheSuperHackers @tweak Serialize hero units contained count
 	*/
 // ------------------------------------------------------------------------------------------------
 void OpenContain::xfer( Xfer *xfer )
 {
 
 	// version
-#if RETAIL_COMPATIBLE_XFER_SAVE
 	XferVersion currentVersion = 2;
-#else
-	XferVersion currentVersion = 3;
-#endif
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
-	m_xferVersion = version;
 
 	// extend base class
 	UpdateModule::xfer( xfer );
@@ -1769,18 +1768,12 @@ void OpenContain::xfer( Xfer *xfer )
 	xfer->xferUnsignedInt( &m_lastLoadSoundFrame );
 
 	// stealth units contained
-	xfer->xferUnsignedInt( &m_stealthUnitsContained );
-
-	// hero units contained
-	if (version >= 3)
-	{
-		xfer->xferUnsignedInt( &m_heroUnitsContained );
-	}
+	xfer->xferUnsignedInt( &m_stealthUnitsContained ); // TheSuperHackers @todo This is redundant information in xfer. Remove it.
 
 	// door close countdown
 	xfer->xferUnsignedInt( &m_doorCloseCountdown );
 
-	// conditionstate
+	// condition state
 	m_conditionState.xfer( xfer );
 
 	// fire points
@@ -1870,7 +1863,7 @@ void OpenContain::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void OpenContain::loadPostProcess( void )
+void OpenContain::loadPostProcess()
 {
 	Object *us = getObject();
 
@@ -1887,6 +1880,9 @@ void OpenContain::loadPostProcess( void )
 	}
 
 	// turn the contained id list into actual object pointers in the contain list
+	m_containListSize = 0;
+	m_stealthUnitsContained = 0;
+	m_heroUnitsContained = 0;
 	Object *obj;
 	std::list<ObjectID>::const_iterator idIt;
 	for( idIt = m_xferContainIDList.begin(); idIt != m_xferContainIDList.end(); ++idIt )
@@ -1905,7 +1901,7 @@ void OpenContain::loadPostProcess( void )
 		}
 
 		// put object on list
-		m_containList.push_back( obj );
+		addToContainList( obj );
 
 		// remove this object from the world if we need to
 		if( isEnclosingContainerFor( obj ) )
@@ -1914,19 +1910,6 @@ void OpenContain::loadPostProcess( void )
 		// record in the object who we are contained by
 		obj->friend_setContainedBy( us );
 
-	}
-
-	if (m_xferVersion < 3)
-	{
-		// Restore hero count by iterating hero objects for old save versions
-		m_heroUnitsContained = 0;
-		for( ContainedItemsList::const_iterator it = m_containList.begin(); it != m_containList.end(); ++it )
-		{
-			if( (*it)->isKindOf( KINDOF_HERO ) )
-			{
-				m_heroUnitsContained++;
-			}
-		}
 	}
 
 	// sanity

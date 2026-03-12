@@ -25,10 +25,16 @@ The repository is significantly behind upstream `TheSuperHackers`. The purpose o
 3. If the remote does not exist, create it using `git@github.com:TheSuperHackers/GeneralsGameCode.git`.
 4. Fetch `thesuperhackers`.
 5. Merge `thesuperhackers/main` into the new branch.
-6. Resolve all conflicts by following the merge instructions below exactly.
-7. Ensure the repository remains buildable and configurable after conflict resolution.
-8. Commit the final merge result.
-9. Push the branch `thesuperhackers-sync-MM-DD-YYYY` to origin.
+6. Create a detailed conflict resolution plan based on the merge result and the critical merge instructions below. Document this plan clearly before starting to resolve conflicts.
+  - The document must include a list of the most important conflicts, the reasoning behind how they will be resolved, and any special considerations or constraints that will be applied during resolution.
+  - For large or complex conflicts, outline the specific steps that will be taken to analyze and resolve them, including any reference materials or repository documentation that will be consulted.
+  - The plan should also identify any areas of the codebase that are expected to be particularly risky or contentious during the merge, and how those risks will be mitigated.
+  - The upstream could be moved into a unified `Core/` directory, we need to follow the upstream structure but also preserve the cross-platform architecture of `GeneralsX`, so careful analysis will be required to reconcile these changes.
+  - Split the plan into sections if necessary to cover different subsystems or types of conflicts (for example: build system conflicts, platform abstraction conflicts, gameplay code conflicts, etc.).
+8. Load the plan into working memory and execute it step by step, documenting the outcome of each major decision and conflict resolution in detail.
+9. Ensure the repository remains buildable and configurable after conflict resolution.
+10. Commit the final merge result.
+11. Push the branch `thesuperhackers-sync-MM-DD-YYYY` to origin.
 
 ## Critical Merge Instructions
 
@@ -61,6 +67,8 @@ Prioritize verifying:
 - Linux configure/build flow
 - any touched deployment or run scripts
 - core runtime paths affected by the merge
+
+Note: validate one platform's configure/build flow fully before moving to the next. Do not attempt to validate all platforms in parallel
 
 If a full validation cannot be completed, state exactly what was not run and why.
 

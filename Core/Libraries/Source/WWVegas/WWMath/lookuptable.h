@@ -60,12 +60,12 @@ class LookupTableClass : public RefCountClass, public MultiListObjectClass
 public:
 
 	LookupTableClass(int sample_count = 256);
-	virtual ~LookupTableClass(void);
+	virtual ~LookupTableClass();
 
 	void								Init(const char * name,Curve1DClass * curve);
 	float								Get_Value(float input);
 	float								Get_Value_Quick(float input);
-	const char *					Get_Name(void)							{ return Name; }
+	const char *					Get_Name()							{ return Name; }
 protected:
 
 	StringClass						Name;				// name of this table, if it came from a file, this is also the filename
@@ -125,12 +125,12 @@ inline float LookupTableClass::Get_Value_Quick(float input)
 class LookupTableMgrClass
 {
 public:
-	LookupTableMgrClass(void);
-	~LookupTableMgrClass(void);
+	LookupTableMgrClass();
+	~LookupTableMgrClass();
 
 	// init and shutdown are automatically called from WWMath::Init, WWMath::Shutdown...
-	static void					Init(void);
-	static void					Shutdown(void);
+	static void					Init();
+	static void					Shutdown();
 
 	static bool					Add_Table(LookupTableClass * table);
 	static bool					Remove_Table(LookupTableClass * table);
@@ -146,7 +146,7 @@ public:
 																Vector2 *			set_min = nullptr,
 																Vector2 *			set_max = nullptr	);
 
-	static void					Reset(void);
+	static void					Reset();
 
 protected:
 

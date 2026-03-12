@@ -67,19 +67,19 @@ class SList {
 		// constructor correctly if it is not defined within the class
 		// definition.
 		//
-		SList(void)
+		SList()
 		{
 			HeadNode = nullptr;
 			TailNode = nullptr;
 		};
 
-		virtual ~SList(void) { Remove_All(); };
+		virtual ~SList() { Remove_All(); };
 
 		//
 		// Returns the current head of the list.  Used to walk the list.
 		//
-		SLNode<T> *Head(void) const;
-		SLNode<T> *Tail(void) const;
+		SLNode<T> *Head() const;
+		SLNode<T> *Tail() const;
 
 		SLNode<T> *Find_Node(T * data) const;
 
@@ -88,10 +88,10 @@ class SList {
 		virtual bool Add_Tail(T *data);           // Add   object to tail of list
 		virtual bool Add_Tail(SList<T>& list);    // Add a list  to tail of list
 
-		virtual T *Remove_Head(void);             // Remove head node  from list
-		virtual T *Remove_Tail(void);             // Remove tail node  from list
+		virtual T *Remove_Head();             // Remove head node  from list
+		virtual T *Remove_Tail();             // Remove tail node  from list
 		virtual bool Remove(T *element);          // remove an individual element
-		virtual void Remove_All(void);            // Remove all  nodes from list
+		virtual void Remove_All();            // Remove all  nodes from list
 
 		// Insert before oldnode, if oldnode is null then before head node
 		virtual bool Insert_Before(T *newnode, T *oldnode =   nullptr);
@@ -102,8 +102,8 @@ class SList {
 		virtual bool Insert_After(T   *newnode, T *oldnode = nullptr);
 
 		// Could possibly implement an InsertAfter that operates on a whole list
-		virtual bool Is_Empty(void)   const;      // True if list is empty
-		virtual long Get_Count(void) const;    // Returns number of nodes in list
+		virtual bool Is_Empty()   const;      // True if list is empty
+		virtual long Get_Count() const;    // Returns number of nodes in list
 };
 
 
@@ -210,7 +210,7 @@ bool SList<T>::Insert_After(T *newnode, T *oldnode)
  *   03/11/1997 PWG : Created.                                            *
  *========================================================================*/
 template<class T>
-void SList<T>::Remove_All(void)
+void SList<T>::Remove_All()
 {
 	SLNode<T> *next;
 	for (SLNode<T> *cur = HeadNode; cur; cur = next) {
@@ -276,7 +276,7 @@ bool SList<T>::Remove(T *element)
  *   03/11/1997 PWG : Created.                                            *
  *========================================================================*/
 template<class T>
-T *SList<T>::Remove_Head(void)
+T *SList<T>::Remove_Head()
 {
 	if (HeadNode == nullptr)      // Should make an assertion here instead!
 		return ((T* )nullptr);
@@ -314,7 +314,7 @@ T *SList<T>::Remove_Head(void)
  *   03/11/1997 PWG : Created.                                            *
  *========================================================================*/
 template<class T>
-T *SList<T>::Remove_Tail(void)
+T *SList<T>::Remove_Tail()
 {
 	if (HeadNode == nullptr)     // Should make an assertion here instead!
 		return ((T *)nullptr);
@@ -337,7 +337,7 @@ T *SList<T>::Remove_Tail(void)
  *   03/11/1997 PWG : Created.                                            *
  *========================================================================*/
 template<class T>
-inline long SList<T>::Get_Count(void) const
+inline long SList<T>::Get_Count() const
 {
 	long count = 0;
 	for (SLNode<T> *cur = HeadNode; cur; cur = cur->Next())
@@ -359,7 +359,7 @@ inline long SList<T>::Get_Count(void) const
  *   03/11/1997 PWG : Created.                                            *
  *========================================================================*/
 template<class T>
-inline SLNode<T> *SList<T>::Head(void) const
+inline SLNode<T> *SList<T>::Head() const
 {
 	return(HeadNode);
 }
@@ -377,7 +377,7 @@ inline SLNode<T> *SList<T>::Head(void) const
  *   03/11/1997 PWG : Created.                                            *
  *========================================================================*/
 template<class T>
-inline SLNode<T> *SList<T>::Tail(void) const
+inline SLNode<T> *SList<T>::Tail() const
 {
 	return(TailNode);
 }
@@ -395,7 +395,7 @@ inline SLNode<T> *SList<T>::Tail(void) const
  *   03/11/1997 PWG : Created.                                            *
  *========================================================================*/
 template<class T>
-inline bool SList<T>::Is_Empty(void) const
+inline bool SList<T>::Is_Empty() const
 {
 	return( HeadNode == nullptr ? true : false);
 }

@@ -112,7 +112,7 @@ void W3DDependencyModelDraw::doDrawModule(const Matrix3D* transformMtx)
 }
 
 //-------------------------------------------------------------------------------------------------
-void W3DDependencyModelDraw::notifyDrawModuleDependencyCleared( )
+void W3DDependencyModelDraw::notifyDrawModuleDependencyCleared()
 {
 	m_dependencyCleared = TRUE;
 }
@@ -186,7 +186,7 @@ void W3DDependencyModelDraw::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void W3DDependencyModelDraw::loadPostProcess( void )
+void W3DDependencyModelDraw::loadPostProcess()
 {
 
 	// extend base class

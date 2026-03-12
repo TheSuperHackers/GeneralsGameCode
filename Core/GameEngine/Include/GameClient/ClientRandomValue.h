@@ -74,10 +74,10 @@ public:
 	/// define the range of random values, and the distribution of values
 	void setRange( Real low, Real high, DistributionType type = UNIFORM );
 
-	Real getValue( void ) const;														///< return a value from the random distribution
-	Real getMinimumValue( void ) const { return m_low; }
-	Real getMaximumValue( void ) const { return m_high; }
-	DistributionType getDistributionType( void ) const { return m_type; }
+	Real getValue() const;														///< return a value from the random distribution
+	Real getMinimumValue() const { return m_low; }
+	Real getMaximumValue() const { return m_high; }
+	DistributionType getDistributionType() const { return m_type; }
 protected:
 	DistributionType m_type;																		///< the kind of random distribution
 	Real m_low, m_high;																					///< the range of random values

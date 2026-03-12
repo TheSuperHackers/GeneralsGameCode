@@ -91,7 +91,7 @@ SpawnBehavior::SpawnBehavior( Thing *thing, const ModuleData* moduleData )
 }
 
 //-------------------------------------------------------------------------------------------------
-SpawnBehavior::~SpawnBehavior( void )
+SpawnBehavior::~SpawnBehavior()
 {
 	m_replacementTimes.clear();
 }
@@ -189,7 +189,7 @@ void SpawnBehavior::onDie( const DamageInfo *damageInfo )
 }
 
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime SpawnBehavior::update( void )
+UpdateSleepTime SpawnBehavior::update()
 {
 /// @todo srj use SLEEPY_UPDATE here
 
@@ -512,7 +512,7 @@ class OrphanData
 
 public:
 
-	OrphanData( void );
+	OrphanData();
 
 	const ThingTemplate *m_matchTemplate;
 	Object *m_source;
@@ -524,7 +524,7 @@ public:
 #define BIG_DISTANCE 99999999.9f
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-OrphanData::OrphanData( void )
+OrphanData::OrphanData()
 {
 
 	m_matchTemplate = nullptr;
@@ -560,7 +560,7 @@ static void findClosestOrphan( Object *obj, void *userData )
 }
 
 // ------------------------------------------------------------------------------------------------
-Object *SpawnBehavior::reclaimOrphanSpawn( void )
+Object *SpawnBehavior::reclaimOrphanSpawn()
 {
 	Player *player = getObject()->getControllingPlayer();
 	const SpawnBehaviorModuleData *md = getSpawnBehaviorModuleData();
@@ -852,7 +852,7 @@ Bool SpawnBehavior::shouldTryToSpawn()
 //* as an average position of all the spawn.
 //********************************************************************
 
-void SpawnBehavior::computeAggregateStates(void)
+void SpawnBehavior::computeAggregateStates()
 {
 	if ( ! m_aggregateHealth ) // sanity
 		return;
@@ -1069,6 +1069,7 @@ void SpawnBehavior::crc( Xfer *xfer )
 	* Version Info:
 	* 1: Initial version
 	* 2: Added m_initialBurstTimesInited to the save. jba.
+	* 3: TheSuperHackers @bugfix Stubbjax 16/02/2026 Added m_initialBurstCountdown.
 */
 // ------------------------------------------------------------------------------------------------
 void SpawnBehavior::xfer( Xfer *xfer )
@@ -1076,7 +1077,11 @@ void SpawnBehavior::xfer( Xfer *xfer )
 	AsciiString name;
 
 	// version
+#if RETAIL_COMPATIBLE_XFER_SAVE
 	XferVersion currentVersion = 2;
+#else
+	XferVersion currentVersion = 3;
+#endif
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
@@ -1086,6 +1091,10 @@ void SpawnBehavior::xfer( Xfer *xfer )
 
 	if (version >= 2) {
 		xfer->xferBool(&m_initialBurstTimesInited);
+	}
+
+	if (version >= 3) {
+		xfer->xferUnsignedInt(&m_initialBurstCountdown);
 	}
 
 	// spawn template
@@ -1145,7 +1154,7 @@ void SpawnBehavior::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void SpawnBehavior::loadPostProcess( void )
+void SpawnBehavior::loadPostProcess()
 {
 
 	// extend base class

@@ -420,7 +420,7 @@ WindowMsgHandledType GadgetTextEntrySystem( GameWindow *window, UnsignedInt msg,
 	* support in this product */
 /*
 // used to create interface to IME
-BoolCode InitializeEntryGadget( void )
+BoolCode InitializeEntryGadget()
 {
 	ourIME = NEW TbIME;
 
@@ -430,7 +430,7 @@ BoolCode InitializeEntryGadget( void )
 }
 
 // used to destroy interface to IME
-BoolCode ShutdownEntryGadget( void )
+BoolCode ShutdownEntryGadget()
 {
 	delete ourIME;
 	ourIME = nullptr;
@@ -581,4 +581,18 @@ UnicodeString GadgetTextEntryGetText( GameWindow *textentry )
 	TheWindowManager->winSendSystemMsg( textentry, GEM_GET_TEXT, 0, (WindowMsgData)&result );
 	return result;
 
+}
+
+//=============================================================================
+void GadgetTextEntrySetMaxLen( GameWindow *g, Short length )
+{
+	if( g == nullptr )
+		return;
+
+	EntryData *data = static_cast<EntryData *>( g->winGetUserData() );
+
+	if( length > ENTRY_TEXT_LEN )
+		length = ENTRY_TEXT_LEN;
+
+	data->maxTextLen = length;
 }

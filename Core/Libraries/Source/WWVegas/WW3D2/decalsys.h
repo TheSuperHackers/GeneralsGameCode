@@ -80,8 +80,8 @@ class DecalMeshClass;
 class DecalSystemClass
 {
 public:
-	DecalSystemClass(void);
-	virtual ~DecalSystemClass(void);
+	DecalSystemClass();
+	virtual ~DecalSystemClass();
 
 	/*
 	**	Create and release DecalGenerators.  Note that this is the point at which the
@@ -90,7 +90,7 @@ public:
 	** want to track them (e.g. if you want to cap the maximum number of active decals and
 	** kill the old ones...)
 	*/
-	virtual DecalGeneratorClass *		Lock_Decal_Generator(void);
+	virtual DecalGeneratorClass *		Lock_Decal_Generator();
 	virtual void							Unlock_Decal_Generator(DecalGeneratorClass * generator);
 
 	/*
@@ -105,14 +105,14 @@ protected:
 	** This generates the decal ID when a generator is created. This decal system reroutes this
 	** to Generate_Unique_Global_Decal_Id(), but other decal systems may use a different method.
 	*/
-	virtual uint32							Generate_Decal_Id(void) { return Generate_Unique_Global_Decal_Id(); }
+	virtual uint32							Generate_Decal_Id() { return Generate_Unique_Global_Decal_Id(); }
 
 	/*
 	** Unique ID generation for decals.  Not all decal systems have to use
 	** this method of generating ids.  Some may wish to assign the id as the
 	** array index of the logical id or use some other aritrary method.
 	*/
-	static uint32							Generate_Unique_Global_Decal_Id(void);
+	static uint32							Generate_Unique_Global_Decal_Id();
 
 	static uint32							DecalIDGenerator;
 };
@@ -133,14 +133,14 @@ public:
 	** we can come back to those meshes and remove the decals if we want to.
 	*/
 	void								Add_Mesh(RenderObjClass * mesh);
-	NonRefRenderObjListClass &	Get_Mesh_List(void);
+	NonRefRenderObjListClass &	Get_Mesh_List();
 
 	/*
 	** Decal generator parameters.
 	** see ProjectorClass for control over the coordinate system, projection, etc
 	*/
-	uint32							Get_Decal_ID(void)								{ return DecalID; }
-	DecalSystemClass *			Peek_Decal_System(void)							{ return System; }
+	uint32							Get_Decal_ID()								{ return DecalID; }
+	DecalSystemClass *			Peek_Decal_System()							{ return System; }
 
 	/*
 	** Backface rejection thresh-hold.  The dot-product between the projection vector and
@@ -148,7 +148,7 @@ public:
 	** is accepted into the decal.  Set it to -1 if you want to accept all polygons.
 	*/
 	void								Set_Backface_Threshhold(float val)			{ BackfaceVal = val; }
-	float								Get_Backface_Threshhold(void)					{ return BackfaceVal; }
+	float								Get_Backface_Threshhold()					{ return BackfaceVal; }
 
 	/*
 	** Normally, decals are not generated on translucent meshes.  This is due to the "floating
@@ -156,13 +156,13 @@ public:
 	** through the following interface.
 	*/
 	void								Apply_To_Translucent_Meshes(bool onoff)	{ ApplyToTranslucentMeshes = onoff; }
-	bool								Is_Applied_To_Translucent_Meshes(void)		{ return ApplyToTranslucentMeshes; }
+	bool								Is_Applied_To_Translucent_Meshes()		{ return ApplyToTranslucentMeshes; }
 
 	/*
 	** Material parameters: just grab a pointer the material pass and modify it.
 	** Remember to release your ref to it when you are done.
 	*/
-	MaterialPassClass *			Get_Material(void)								{ WWASSERT(Material != nullptr); Material->Add_Ref(); return Material; }
+	MaterialPassClass *			Get_Material()								{ WWASSERT(Material != nullptr); Material->Add_Ref(); return Material; }
 
 	/*
 	** Decal generation support.  Call Set_Mesh_Transform for the mesh you want to add
@@ -173,7 +173,7 @@ public:
 protected:
 
 	DecalGeneratorClass(uint32 id,DecalSystemClass * system);
-	~DecalGeneratorClass(void);
+	~DecalGeneratorClass();
 
 	/*
 	** Logical Decal ID, DecalSystem that this generator is tied to
@@ -215,11 +215,11 @@ public:
 
 	MultiFixedPoolDecalSystemClass(uint32 num_pools, const uint32 *pool_sizes);
 	MultiFixedPoolDecalSystemClass(const MultiFixedPoolDecalSystemClass & that);
-	virtual ~MultiFixedPoolDecalSystemClass(void);
+	virtual ~MultiFixedPoolDecalSystemClass();
 
 	// This clears the slot in addition to locking the generator, thus preventing any decal id
 	// collisions (since any decal previously in that slot will have the same id as the new one).
-	virtual DecalGeneratorClass *			Lock_Decal_Generator(void);
+	virtual DecalGeneratorClass *			Lock_Decal_Generator();
 
 	// This will register the decal in the system in the appropriate pool and slot (determined by
 	// the generator's pool and slot ids), removing any decal which may have been there before.
@@ -237,7 +237,7 @@ public:
 	void											Clear_Pool(uint32 pool_id);
 
 	// And this one removes all decals in the system.
-	void											Clear_All_Decals(void);
+	void											Clear_All_Decals();
 
 protected:
 
@@ -247,7 +247,7 @@ protected:
 	** can set them before calling Lock_Decal_Generator() (which is where this function is called).
 	** We do it this way to avoid needing to override Lock_Decal_Generator().
 	*/
-	virtual	uint32	Generate_Decal_Id(void) { return encode_decal_id(Generator_PoolID, Generator_SlotID); }
+	virtual	uint32	Generate_Decal_Id() { return encode_decal_id(Generator_PoolID, Generator_SlotID); }
 	uint32	Generator_PoolID;		// These should be set before calling Lock_Decal_Generator()
 	uint32	Generator_SlotID;		// These should be set before calling Lock_Decal_Generator()
 
@@ -268,8 +268,8 @@ protected:
 	class LogicalDecalClass
 	{
 	public:
-		LogicalDecalClass(void);
-		~LogicalDecalClass(void);
+		LogicalDecalClass();
+		~LogicalDecalClass();
 
 		void											Set(DecalGeneratorClass * generator);
 
@@ -282,8 +282,8 @@ protected:
 	class LogicalDecalPoolClass
 	{
 	public:
-		LogicalDecalPoolClass(void);
-		~LogicalDecalPoolClass(void);
+		LogicalDecalPoolClass();
+		~LogicalDecalPoolClass();
 
 		void Initialize(uint32 size);
 

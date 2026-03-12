@@ -73,8 +73,8 @@ public:
 
 	void clearCommandsExceptFrom( Int playerIndex );
 
-	void setQuitting( void );
-	Bool isQuitting( void ) { return m_isQuitting; }
+	void setQuitting();
+	Bool isQuitting() { return m_isQuitting; }
 
 #if defined(RTS_DEBUG)
 	void debugPrintCommands();

@@ -106,6 +106,13 @@ public:
 	// Get a string out of the INI. Store it into a NameKeyType
 	static void parseStringAsNameKeyType( INI *ini, void *instance, void *store, const void* userData );
 
+#if RETAIL_COMPATIBLE_CRC
+#if RTS_ZEROHOUR
+	void syncNameKeyID();
+#endif
+	void verifyNameKeyID(UnsignedInt expectedNextID) const;
+#endif
+
 private:
 
 	enum
@@ -114,14 +121,6 @@ private:
 		SOCKET_COUNT = 45007
 	};
 
-#if RTS_ZEROHOUR && RETAIL_COMPATIBLE_CRC
-	Bool addReservedKey();
-#endif
-
-	NameKeyType nameToKeyImpl(const AsciiString& name);
-	NameKeyType nameToLowercaseKeyImpl(const AsciiString& name);
-	NameKeyType nameToKeyImpl(const char* name);
-	NameKeyType nameToLowercaseKeyImpl(const char *name);
 	NameKeyType createNameKey(UnsignedInt hash, const AsciiString& name);
 
 	void freeSockets();

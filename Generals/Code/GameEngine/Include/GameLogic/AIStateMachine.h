@@ -152,10 +152,10 @@ public:
 	void setGoalSquad( const Squad *squad );
 	void setGoalAIGroup( const AIGroup *group );
 
-	Squad *getGoalSquad(void);
+	Squad *getGoalSquad();
 
 	StateReturnType setTemporaryState( StateID newStateID, Int frameLimitCoount );			///< change the temporary state of the machine, and number of frames limit.
-	StateID getTemporaryState(void) const {return m_temporaryState?m_temporaryState->getID():INVALID_STATE_ID;}
+	StateID getTemporaryState() const {return m_temporaryState?m_temporaryState->getID():INVALID_STATE_ID;}
 
 public:	// overrides.
 	virtual StateReturnType updateStateMachine();				///< run one step of the machine
@@ -222,7 +222,7 @@ public:
 		LOOK_FOR_TARGETS,
 		DO_NOT_LOOK_FOR_TARGETS
 	};
-	virtual Bool isIdle(void) const { return true; }
+	virtual Bool isIdle() const { return true; }
 	AIIdleState( StateMachine *machine, AIIdleTargetingType shouldLookForTargets);
 	virtual StateReturnType onEnter();
 	virtual StateReturnType update();
@@ -339,7 +339,7 @@ public:
 	virtual StateReturnType onEnter() { return STATE_CONTINUE; }
 	virtual void onExit( StateExitType status ) { }
 	virtual StateReturnType update() { return STATE_CONTINUE; }
-	virtual Bool isBusy(void) const { return true; }
+	virtual Bool isBusy() const { return true; }
 protected:
 	// snapshot interface STUBBED.
 	virtual void crc( Xfer *xfer ){};
@@ -468,7 +468,7 @@ private:
 
 	enum { MIN_RECOMPUTE_TIME = 10 };
 
-	StateReturnType updateInternal( void );
+	StateReturnType updateInternal();
 
 	Coord3D				m_prevVictimPos;									///< Where we think our victim is
 	UnsignedInt		m_approachTimestamp;							///< When we last computed an approach goal
@@ -516,7 +516,7 @@ private:
 
 	enum { MIN_RECOMPUTE_TIME = 10 };
 
-	StateReturnType updateInternal( void );
+	StateReturnType updateInternal();
 
 	Coord3D				m_prevVictimPos;									///< Where we think our victim is
 	UnsignedInt		m_approachTimestamp;							///< When we last computed an approach goal
@@ -634,9 +634,9 @@ protected:
 
 protected:
 	void computeGoal(Bool useGroupOffsets);
-	Real calcExtraPathDistance(void);
-	const Waypoint *getNextWaypoint(void);
-	Bool hasNextWaypoint(void);
+	Real calcExtraPathDistance();
+	const Waypoint *getNextWaypoint();
+	Bool hasNextWaypoint();
 };
 EMPTY_DTOR(AIFollowWaypointPathState)
 
@@ -1017,10 +1017,10 @@ public:
 			State( machine , "AIAttackSquadState") {	}
 	//~AIAttackSquadState();
 
-	virtual StateReturnType onEnter( void );
+	virtual StateReturnType onEnter();
 	virtual void onExit( StateExitType status );
-	virtual StateReturnType update( void );
-	Object *chooseVictim(void);
+	virtual StateReturnType update();
+	Object *chooseVictim();
 #ifdef STATE_MACHINE_DEBUG
 	virtual AsciiString getName() const ;
 #endif

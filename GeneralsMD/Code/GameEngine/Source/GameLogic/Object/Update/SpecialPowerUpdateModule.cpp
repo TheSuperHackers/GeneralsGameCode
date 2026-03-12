@@ -107,7 +107,7 @@ void SpecialPowerUpdateModule::xfer( Xfer *xfer )
 //------------------------------------------------------------------------------------------------
 /** Load post process */
 //------------------------------------------------------------------------------------------------
-void SpecialPowerUpdateModule::loadPostProcess( void )
+void SpecialPowerUpdateModule::loadPostProcess()
 {
 
 	// extend base class

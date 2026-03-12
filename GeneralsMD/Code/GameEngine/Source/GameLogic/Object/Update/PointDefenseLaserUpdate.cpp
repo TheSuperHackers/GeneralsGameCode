@@ -87,7 +87,7 @@ PointDefenseLaserUpdate::PointDefenseLaserUpdate( Thing *thing, const ModuleData
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-PointDefenseLaserUpdate::~PointDefenseLaserUpdate( void )
+PointDefenseLaserUpdate::~PointDefenseLaserUpdate()
 {
 
 }
@@ -412,7 +412,7 @@ void PointDefenseLaserUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void PointDefenseLaserUpdate::loadPostProcess( void )
+void PointDefenseLaserUpdate::loadPostProcess()
 {
 
 	// extend base class

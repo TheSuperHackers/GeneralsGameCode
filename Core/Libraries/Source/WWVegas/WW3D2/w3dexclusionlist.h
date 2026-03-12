@@ -59,7 +59,7 @@ class W3DExclusionListClass
 {
 public:
 	W3DExclusionListClass(const DynamicVectorClass<StringClass> & names);
-	~W3DExclusionListClass(void);
+	~W3DExclusionListClass();
 
 	bool	Is_Excluded(PrototypeClass * proto) const;
 	bool	Is_Excluded(HTreeClass * htree) const;

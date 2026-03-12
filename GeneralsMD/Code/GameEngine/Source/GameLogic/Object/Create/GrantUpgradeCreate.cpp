@@ -71,7 +71,7 @@ GrantUpgradeCreate::GrantUpgradeCreate( Thing *thing, const ModuleData* moduleDa
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-GrantUpgradeCreate::~GrantUpgradeCreate( void )
+GrantUpgradeCreate::~GrantUpgradeCreate()
 {
 
 }
@@ -79,7 +79,7 @@ GrantUpgradeCreate::~GrantUpgradeCreate( void )
 //-------------------------------------------------------------------------------------------------
 /** The create callback. */
 //-------------------------------------------------------------------------------------------------
-void GrantUpgradeCreate::onCreate( void )
+void GrantUpgradeCreate::onCreate()
 {
 
 	ObjectStatusMaskType exemptStatus = getGrantUpgradeCreateModuleData()->m_exemptStatus;
@@ -91,7 +91,7 @@ void GrantUpgradeCreate::onCreate( void )
 			const UpgradeTemplate *upgradeTemplate = TheUpgradeCenter->findUpgrade( getGrantUpgradeCreateModuleData()->m_upgradeName );
 			if( !upgradeTemplate )
 			{
-				DEBUG_ASSERTCRASH( 0, ("GrantUpdateCreate for %s can't find upgrade template %s.", getObject()->getName().str(), getGrantUpgradeCreateModuleData()->m_upgradeName.str() ) );
+				DEBUG_CRASH( ("GrantUpdateCreate for %s can't find upgrade template %s.", getObject()->getName().str(), getGrantUpgradeCreateModuleData()->m_upgradeName.str() ) );
 				return;
 			}
 
@@ -114,7 +114,7 @@ void GrantUpgradeCreate::onCreate( void )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void GrantUpgradeCreate::onBuildComplete( void )
+void GrantUpgradeCreate::onBuildComplete()
 {
 	if( ! shouldDoOnBuildComplete() )
 		return;
@@ -124,7 +124,7 @@ void GrantUpgradeCreate::onBuildComplete( void )
 	const UpgradeTemplate *upgradeTemplate = TheUpgradeCenter->findUpgrade( getGrantUpgradeCreateModuleData()->m_upgradeName );
 	if( !upgradeTemplate )
 	{
-		DEBUG_ASSERTCRASH( 0, ("GrantUpdateCreate for %s can't find upgrade template %s.", getObject()->getName().str(), getGrantUpgradeCreateModuleData()->m_upgradeName.str() ) );
+		DEBUG_CRASH( ("GrantUpdateCreate for %s can't find upgrade template %s.", getObject()->getName().str(), getGrantUpgradeCreateModuleData()->m_upgradeName.str() ) );
 		return;
 	}
 
@@ -172,7 +172,7 @@ void GrantUpgradeCreate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void GrantUpgradeCreate::loadPostProcess( void )
+void GrantUpgradeCreate::loadPostProcess()
 {
 
 	// extend base class

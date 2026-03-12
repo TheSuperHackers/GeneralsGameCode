@@ -137,7 +137,7 @@ std::list<PeerResponse> TheLobbyQueuedUTMs;
 
 // Slash commands -------------------------------------------------------------------------
 extern "C" {
-int getQR2HostingStatus(void);
+int getQR2HostingStatus();
 }
 extern int isThreadHosting;
 
@@ -484,7 +484,7 @@ static Int insertPlayerInListbox(const PlayerInfo& info, Color color)
 }
 
 
-void PopulateLobbyPlayerListbox(void)
+void PopulateLobbyPlayerListbox()
 {
 
 	if (!listboxLobbyPlayers)

@@ -71,7 +71,7 @@ public:
 	/*
 	** Constructors
 	*/
-	Matrix4x4(void) {};
+	Matrix4x4() {};
 	Matrix4x4(const Matrix4x4 & m);
 
 	WWINLINE explicit Matrix4x4(bool identity);
@@ -83,7 +83,7 @@ public:
 										float m31,float m32,float m33,float m34,
 										float m41,float m42,float m43,float m44 );
 
-	WWINLINE void		Make_Identity(void);
+	WWINLINE void		Make_Identity();
 	WWINLINE void		Init(const Matrix3D & m);
 	WWINLINE void		Init(const Matrix3x3 & m);
 	WWINLINE void		Init(const Vector4 & v0, const Vector4 & v1, const Vector4 & v2, const Vector4 & v3);
@@ -109,9 +109,9 @@ public:
 	/*
 	** Transpose and Inverse
 	*/
-	WWINLINE Matrix4x4 Transpose(void) const;
+	WWINLINE Matrix4x4 Transpose() const;
 	static WWINLINE Matrix4x4* Inverse(Matrix4x4* out, float* detOut, const Matrix4x4* m);
-	WWINLINE Matrix4x4 Inverse(void) const;
+	WWINLINE Matrix4x4 Inverse() const;
 
 	/*
 	** Assignment operators
@@ -289,7 +289,7 @@ WWINLINE Matrix4x4::Matrix4x4(float m11,float m12,float m13,float m14, float m21
  * HISTORY:                                                                                    *
  *   11/5/99    gth : Created.                                                                 *
  *=============================================================================================*/
-WWINLINE void Matrix4x4::Make_Identity(void)
+WWINLINE void Matrix4x4::Make_Identity()
 {
 	Row[0].Set(1.0,0.0,0.0,0.0);
 	Row[1].Set(0.0,1.0,0.0,0.0);

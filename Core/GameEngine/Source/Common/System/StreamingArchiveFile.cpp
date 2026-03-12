@@ -207,7 +207,7 @@ Bool StreamingArchiveFile::openFromArchive(File *archiveFile, const AsciiString&
 	*/
 //=================================================================
 
-void StreamingArchiveFile::close( void )
+void StreamingArchiveFile::close()
 {
 	File::close();
 }

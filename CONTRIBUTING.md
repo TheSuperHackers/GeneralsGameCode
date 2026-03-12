@@ -83,7 +83,7 @@ Optionally, the pull request number can be appended to the comment. This can onl
 
 ### Pull request documentation
 
-The title of a new Pull Request, and/or commit(s) within, begins with a [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) tag. The tag is followed by a concise and descriptive sentence about the change and/or commit, beginning with an upper case letter and ending without a dot. The sentence ideally begins with a word that describes the action that the change takes, for example `fix *this*`, `change *that*`, `add *those*`, `refactor *thing*`.
+The title of a new Pull Request, and/or commit(s) within, begins with a [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) tag. The tag is followed by a concise and descriptive sentence about the change and/or commit, beginning with an upper case letter and ending without a dot. The sentence ideally begins with a word that describes the action that the change takes, for example `Fix *this*`, `Change *that*`, `Add *those*`, `Refactor *thing*`.
 
 Allowed (extended) commit title types are:
 ```
@@ -96,6 +96,7 @@ fix:
 feat:
 perf:
 refactor:
+revert:
 style:
 test:
 tweak:
@@ -106,7 +107,7 @@ For the optional scope behind the type pick a suitable word that describes the o
 
 Good:
 ```
-bugfix(system): fix uninitialized memory access in Get_OS_Info
+bugfix(system): Fix uninitialized memory access in Get_OS_Info
 ```
 
 Bad:

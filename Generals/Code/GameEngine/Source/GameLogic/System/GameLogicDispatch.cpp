@@ -149,7 +149,7 @@ static void doSetRallyPoint( Object *obj, const Coord3D& pos )
 	NameKeyType key = NAMEKEY( "BasicHumanLocomotor" );
 	LocomotorSet locomotorSet;
 	locomotorSet.addLocomotor( TheLocomotorStore->findLocomotorTemplate( key ) );
-	if( TheAI->pathfinder()->quickDoesPathExist( locomotorSet, obj->getPosition(), &pos ) == FALSE )
+	if( TheAI->pathfinder()->clientSafeQuickDoesPathExist( locomotorSet, obj->getPosition(), &pos ) == FALSE )
 	{
 
 		// user feedback
@@ -207,7 +207,7 @@ static void doSetRallyPoint( Object *obj, const Coord3D& pos )
 
 static Object * getSingleObjectFromSelection(const AIGroup *currentlySelectedGroup)
 {
-	if( currentlySelectedGroup )
+	if( currentlySelectedGroup && !currentlySelectedGroup->isEmpty() )
 	{
 		const VecObjectID& selectedObjects = currentlySelectedGroup->getAllIDs();
 		DEBUG_ASSERTCRASH(selectedObjects.size() == 1, ("Trying to get single object from multiple selection!"));
@@ -219,7 +219,7 @@ static Object * getSingleObjectFromSelection(const AIGroup *currentlySelectedGro
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void GameLogic::closeWindows( void )
+void GameLogic::closeWindows()
 {
 	HideDiplomacy();
 	ResetDiplomacy();
@@ -265,7 +265,7 @@ void GameLogic::clearGameData( Bool showScoreScreen )
 		TheShell->push("Menus/ScoreScreen.wnd");
 		TheShell->showShell(FALSE); // by passing in false, we don't want to run the Init on the shell screen we just pushed on
 
-		void FixupScoreScreenMovieWindow( void );
+		void FixupScoreScreenMovieWindow();
 		FixupScoreScreenMovieWindow();
 	}
 
@@ -532,7 +532,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			Object *targetObject = findObjectByID( msg->getArgument( 0 )->objectID );
 
 			// issue command for either single object or for selected group
-			if( currentlySelectedGroup )
+			if( currentlySelectedGroup && targetObject )
 				currentlySelectedGroup->groupCombatDrop( targetObject,
 																								 *targetObject->getPosition(),
 																								 CMD_FROM_PLAYER );
@@ -1353,7 +1353,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			if( pu == nullptr )
 			{
 
-				DEBUG_ASSERTCRASH( 0, ("MSG_QUEUE_UNIT_CREATE: Producer '%s' doesn't have a unit production interface",
+				DEBUG_CRASH( ("MSG_QUEUE_UNIT_CREATE: Producer '%s' doesn't have a unit production interface",
 															producer->getTemplate()->getName().str()) );
 				break;
 
@@ -1861,18 +1861,25 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			{
 				if (TheTacticalView->isCameraMovementFinished())
 				{
-					ViewLocation loc;
-					Coord3D pos;
-					Real pitch, angle, zoom;
-					pos = msg->getArgument( 0 )->location;
-					angle = msg->getArgument( 1 )->real;
-					pitch = msg->getArgument( 2 )->real;
-					zoom = msg->getArgument( 3 )->real;
-					loc.init(pos.x, pos.y, pos.z, angle, pitch, zoom);
-					TheTacticalView->setLocation( &loc );
+					const Coord3D pos = msg->getArgument( 0 )->location;
+					const Real angle = msg->getArgument( 1 )->real;
+					const Real pitch = msg->getArgument( 2 )->real;
+					const Real zoom = msg->getArgument( 3 )->real;
+
+					// TheSuperHackers @info Definitely call in user mode to ensure the camera operates with auto-zoom
+					// over terrain elevations, because the Replay Camera does not store the absolute camera location,
+					// but key parameters relative to the terrain height at the camera pivot.
+					TheTacticalView->userSetPosition(&pos);
+					TheTacticalView->userSetAngle(angle);
+					TheTacticalView->userSetPitch(pitch);
+					TheTacticalView->userSetZoom(zoom);
+
+					// TheSuperHackers @fix Make sure there is no scrolling ever.
+					const Coord2D scroll = {0, 0};
+					TheTacticalView->userScrollBy(&scroll);
 
 					// TheSuperHackers @fix xezon 18/09/2025 Lock the new location to avoid user input from changing the camera in this frame.
-					TheTacticalView->lockViewUntilFrame( getFrame() + 1 );
+					TheTacticalView->lockUserControlUntilFrame( getFrame() + 1 );
 
 					if (!TheLookAtTranslator->hasMouseMovedRecently())
 					{

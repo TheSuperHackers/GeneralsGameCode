@@ -65,7 +65,7 @@ BuildAssistant *TheBuildAssistant = nullptr;
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-ObjectSellInfo::ObjectSellInfo( void )
+ObjectSellInfo::ObjectSellInfo()
 {
 
 	m_id = INVALID_ID;
@@ -75,7 +75,7 @@ ObjectSellInfo::ObjectSellInfo( void )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-ObjectSellInfo::~ObjectSellInfo( void )
+ObjectSellInfo::~ObjectSellInfo()
 {
 
 }
@@ -104,7 +104,7 @@ static Bool isDozer( Object *obj )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-BuildAssistant::BuildAssistant( void )
+BuildAssistant::BuildAssistant()
 {
 
 	m_buildPositions = nullptr;
@@ -114,7 +114,7 @@ BuildAssistant::BuildAssistant( void )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-BuildAssistant::~BuildAssistant( void )
+BuildAssistant::~BuildAssistant()
 {
 
 	delete [] m_buildPositions;
@@ -125,7 +125,7 @@ BuildAssistant::~BuildAssistant( void )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void BuildAssistant::init( void )
+void BuildAssistant::init()
 {
 
 	//
@@ -139,7 +139,7 @@ void BuildAssistant::init( void )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void BuildAssistant::reset( void )
+void BuildAssistant::reset()
 {
 
 	// clear all our data from the sell list
@@ -166,7 +166,7 @@ static const Real TOTAL_FRAMES_TO_SELL_OBJECT = static_cast<float>(LOGICFRAMES_P
 //-------------------------------------------------------------------------------------------------
 /** Update phase for the build assistant */
 //-------------------------------------------------------------------------------------------------
-void BuildAssistant::update( void )
+void BuildAssistant::update()
 {
 	ObjectSellInfo *sellInfo;
 	Object *obj;
@@ -583,7 +583,7 @@ void BuildAssistant::iterateFootprint( const ThingTemplate *build,
 	else
 	{
 
-		DEBUG_ASSERTCRASH( 0, ("iterateFootprint: Undefined geometry '%d' for '%s'",
+		DEBUG_CRASH( ("iterateFootprint: Undefined geometry '%d' for '%s'",
 											     build->getTemplateGeometryInfo().getGeomType(), build->getName().str()) );
 		return;
 
@@ -1379,7 +1379,7 @@ Bool BuildAssistant::isRemovableForConstruction( Object *obj )
 		return TRUE;
 
 	// Rubble, scrap & dead units can be cleared.
-	if( obj->isEffectivelyDead( ) )
+	if( obj->isEffectivelyDead() )
 		return TRUE;
 
 	// not removable

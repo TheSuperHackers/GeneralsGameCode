@@ -95,7 +95,7 @@ static GameWindow *windowSortBuddies = nullptr;
 
 static GameSortType theGameSortType = GAMESORT_ALPHA_ASCENDING;
 static Bool sortBuddies = TRUE;
-static void showSortIcons(void)
+static void showSortIcons()
 {
 	if (windowSortAlpha && windowSortPing)
 	{
@@ -348,27 +348,27 @@ static void gameTooltip(GameWindow *window,
 
 static Bool isSmall = TRUE;
 
-GameWindow *GetGameListBox( void )
+GameWindow *GetGameListBox()
 {
 	return listboxLobbyGamesLarge;
 }
 
-GameWindow *GetGameInfoListBox( void )
+GameWindow *GetGameInfoListBox()
 {
 	return nullptr;
 }
 
-NameKeyType GetGameListBoxID( void )
+NameKeyType GetGameListBoxID()
 {
 	return listboxLobbyGamesLargeID;
 }
 
-NameKeyType GetGameInfoListBoxID( void )
+NameKeyType GetGameInfoListBoxID()
 {
 	return NAMEKEY_INVALID;
 }
 
-void GrabWindowInfo( void )
+void GrabWindowInfo()
 {
 	isSmall = TRUE;
 	parentID = NAMEKEY( "WOLCustomLobby.wnd:WOLLobbyMenuParent" );
@@ -415,7 +415,7 @@ void GrabWindowInfo( void )
 	showSortIcons();
 }
 
-void ReleaseWindowInfo( void )
+void ReleaseWindowInfo()
 {
 	isSmall = TRUE;
 	parent = nullptr;
@@ -435,7 +435,7 @@ void ReleaseWindowInfo( void )
 
 typedef std::set<GameSpyStagingRoom *> BuddyGameSet;
 static BuddyGameSet *theBuddyGames = nullptr;
-static void populateBuddyGames(void)
+static void populateBuddyGames()
 {
 	BuddyInfoMap *m = TheGameSpyInfo->getBuddyMap();
 	theBuddyGames = NEW BuddyGameSet;
@@ -464,7 +464,7 @@ static void populateBuddyGames(void)
 	}
 }
 
-static void clearBuddyGames(void)
+static void clearBuddyGames()
 {
 	delete theBuddyGames;
 	theBuddyGames = nullptr;
@@ -853,7 +853,7 @@ void RefreshGameInfoListBox( GameWindow *mainWin, GameWindow *win )
 
 }
 
-void RefreshGameListBoxes( void )
+void RefreshGameListBoxes()
 {
 	GameWindow *main = GetGameListBox();
 	GameWindow *info = GetGameInfoListBox();
@@ -866,7 +866,7 @@ void RefreshGameListBoxes( void )
 	}
 }
 
-void ToggleGameListType( void )
+void ToggleGameListType()
 {
 	isSmall = !isSmall;
 	if(isSmall)

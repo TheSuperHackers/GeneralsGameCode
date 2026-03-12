@@ -22,7 +22,7 @@ if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")
         DebugWindow.rc
         DebugWindow.def
     )
-    set_target_properties(core_debugwindow PROPERTIES OUTPUT_NAME DebugWindow)
+    set_target_properties(core_debugwindow PROPERTIES OUTPUT_NAME "DebugWindow${RTS_BUILD_OUTPUT_SUFFIX}")
 else()
-    set_target_properties(core_debugwindow PROPERTIES OUTPUT_NAME debugwindow)
+    set_target_properties(core_debugwindow PROPERTIES OUTPUT_NAME "debugwindow${RTS_BUILD_OUTPUT_SUFFIX}")
 endif()

@@ -75,7 +75,6 @@
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/ScriptEngine.h"
 #include "GameLogic/VictoryConditions.h"
-#include "GameClient/CDCheck.h"
 #include "GameClient/Display.h"
 #include "GameClient/GUICallbacks.h"
 #include "GameClient/WindowLayout.h"
@@ -148,19 +147,19 @@ std::string LastReplayFileName;
 static Bool canSaveReplay = FALSE;
 extern void PopupReplayUpdate(WindowLayout *layout, void *userData);
 
-void initSinglePlayer( void );
-void finishSinglePlayerInit( void );
+void initSinglePlayer();
+void finishSinglePlayerInit();
 static Bool s_needToFinishSinglePlayerInit = FALSE;
 static Bool buttonIsFinishCampaign = FALSE;
 static WindowLayout *s_blankLayout = nullptr;
 
-void initSkirmish( void );
-void initLANMultiPlayer(void);
-void initInternetMultiPlayer(void);
-void initReplayMultiPlayer(void);
-void initReplaySinglePlayer(void);
-void grabMultiPlayerInfo( void );
-void grabSinglePlayerInfo( void );
+void initSkirmish();
+void initLANMultiPlayer();
+void initInternetMultiPlayer();
+void initReplayMultiPlayer();
+void initReplaySinglePlayer();
+void grabMultiPlayerInfo();
+void grabSinglePlayerInfo();
 void hideWindows( Int pos );
 void ScoreScreenEnableControls(Bool enable);
 void setObserverWindows( Player *player, Int i );
@@ -191,7 +190,7 @@ void populateSideInfo( UnicodeString side,ScoreGather *sg, Int pos, Color color)
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 
-void startNextCampaignGame(void)
+void startNextCampaignGame()
 {
 	TheShell->popImmediate();
 	TheShell->hideShell();
@@ -381,7 +380,7 @@ void ScoreScreenInit( WindowLayout *layout, void *userData )
 
 }
 
-void FixupScoreScreenMovieWindow( void )
+void FixupScoreScreenMovieWindow()
 {
 	if (s_blankLayout)
 	{
@@ -574,7 +573,7 @@ WindowMsgHandledType ScoreScreenSystem( GameWindow *window, UnsignedInt msg,
 						}
 						else
 						{
-							CheckForCDAtGameStart( startNextCampaignGame );
+							startNextCampaignGame();
 						}
 					}
 				}
@@ -680,7 +679,7 @@ WindowMsgHandledType ScoreScreenSystem( GameWindow *window, UnsignedInt msg,
 
 /** Special Init path for making this a single player Score Screen */
 //-------------------------------------------------------------------------------------------------
-void initSkirmish( void )
+void initSkirmish()
 {
 	screenType = SCORESCREEN_SKIRMISH;
 	grabMultiPlayerInfo();
@@ -782,7 +781,7 @@ void PlayMovieAndBlock(AsciiString movieTitle)
 	setFPMode();
 }
 
-void initSinglePlayer( void )
+void initSinglePlayer()
 {
 	screenType = SCORESCREEN_SINGLEPLAYER;
 	TheCampaignManager->setRankPoints(ThePlayerList->getLocalPlayer()->getSkillPoints());
@@ -812,7 +811,7 @@ void displayChallengeWinLoss( const Image *imageGeneral, const UnicodeString str
 	GadgetStaticTextSetText(challengeRemarks, strRemarks);
 }
 
-void finishSinglePlayerInit( void )
+void finishSinglePlayerInit()
 {
 	if(TheCampaignManager->isVictorious())
 	{
@@ -997,7 +996,7 @@ void finishSinglePlayerInit( void )
 
 /** Special Init path for making this a single player replay Score Screen */
 //-------------------------------------------------------------------------------------------------
-void initReplaySinglePlayer( void )
+void initReplaySinglePlayer()
 {
 	screenType = SCORESCREEN_REPLAY;
 	grabSinglePlayerInfo();
@@ -1026,7 +1025,7 @@ void initReplaySinglePlayer( void )
 
 /** Special Init path for making this a Multiplayer Score Screen(LAN) */
 //-------------------------------------------------------------------------------------------------
-void initLANMultiPlayer(void)
+void initLANMultiPlayer()
 {
 	screenType = SCORESCREEN_LAN;
 	grabMultiPlayerInfo();
@@ -1055,7 +1054,7 @@ void initLANMultiPlayer(void)
 
 /** Special Init path for making this a Multiplayer Score Screen(Internet) */
 //-------------------------------------------------------------------------------------------------
-void initInternetMultiPlayer(void)
+void initInternetMultiPlayer()
 {
 	screenType = SCORESCREEN_INTERNET;
 	grabMultiPlayerInfo();
@@ -1098,7 +1097,7 @@ void initInternetMultiPlayer(void)
 
 /** Special Init path for making this a Multiplayer Score Screen(Replay) */
 //-------------------------------------------------------------------------------------------------
-void initReplayMultiPlayer(void)
+void initReplayMultiPlayer()
 {
 	screenType = SCORESCREEN_REPLAY;
 	grabMultiPlayerInfo();
@@ -1425,7 +1424,7 @@ void populatePlayerInfo( Player *player, Int pos)
 	ScoreKeeper *scoreKpr = player->getScoreKeeper();
 	if(!scoreKpr)
 	{
-		DEBUG_ASSERTCRASH(FALSE,("Player %s does not have a scoreKeeper", player->getPlayerDisplayName().str()));
+		DEBUG_CRASH(("Player %s does not have a scoreKeeper", player->getPlayerDisplayName().str()));
 		return;
 	}
 	AsciiString winName;
@@ -1860,18 +1859,42 @@ winName.format("ScoreScreen.wnd:StaticTextScore%d", pos);
 					if (TheNetwork->sawCRCMismatch())
 					{
 						++stats.desyncs[ptIdx];
+
+						stats.lossesInARow = 0;
+						stats.desyncsInARow++;
+						stats.disconsInARow = 0;
+						stats.winsInARow = 0;
+						stats.maxDesyncsInARow = max(stats.desyncsInARow, stats.maxDesyncsInARow);
 					}
 					else if (gameEndedInDisconnect)
 					{
 						++stats.discons[ptIdx];
+
+						stats.lossesInARow = 0;
+						stats.desyncsInARow = 0;
+						stats.disconsInARow++;
+						stats.winsInARow = 0;
+						stats.maxDisconsInARow = max(stats.disconsInARow, stats.maxDisconsInARow);
 					}
-					else if (TheVictoryConditions->isLocalAlliedDefeat() || !TheVictoryConditions->getEndFrame())
+					else if (TheVictoryConditions->isLocalAlliedVictory())
 					{
-						++stats.losses[ptIdx];
+						++stats.wins[ptIdx];
+
+						stats.lossesInARow = 0;
+						stats.desyncsInARow = 0;
+						stats.disconsInARow = 0;
+						stats.winsInARow++;
+						stats.maxWinsInARow = max(stats.winsInARow, stats.maxWinsInARow);
 					}
 					else
 					{
-						++stats.wins[ptIdx];
+						++stats.losses[ptIdx];
+
+						stats.lossesInARow++;
+						stats.desyncsInARow = 0;
+						stats.disconsInARow = 0;
+						stats.winsInARow = 0;
+						stats.maxLossesInARow = max(stats.lossesInARow, stats.maxLossesInARow);
 					}
 
 					ScoreKeeper *s = player->getScoreKeeper();
@@ -1886,39 +1909,6 @@ winName.format("ScoreScreen.wnd:StaticTextScore%d", pos);
 					else
 					{
 						stats.customGames[ptIdx]++;
-					}
-
-					if (TheNetwork->sawCRCMismatch())
-					{
-						stats.lossesInARow = 0;
-						stats.desyncsInARow++;
-						stats.disconsInARow = 0;
-						stats.winsInARow = 0;
-						stats.maxDesyncsInARow = max(stats.desyncsInARow, stats.maxDesyncsInARow);
-					}
-					else if (gameEndedInDisconnect)
-					{
-						stats.lossesInARow = 0;
-						stats.desyncsInARow = 0;
-						stats.disconsInARow++;
-						stats.winsInARow = 0;
-						stats.maxDisconsInARow = max(stats.disconsInARow, stats.maxDisconsInARow);
-					}
-					else if (TheVictoryConditions->isLocalAlliedVictory())
-					{
-						stats.lossesInARow = 0;
-						stats.desyncsInARow = 0;
-						stats.disconsInARow = 0;
-						stats.winsInARow++;
-						stats.maxWinsInARow = max(stats.winsInARow, stats.maxWinsInARow);
-					}
-					else
-					{
-						stats.lossesInARow++;
-						stats.desyncsInARow = 0;
-						stats.disconsInARow = 0;
-						stats.winsInARow = 0;
-						stats.maxLossesInARow = max(stats.lossesInARow, stats.maxLossesInARow);
 					}
 
 					stats.earnings[ptIdx] += s->getTotalMoneyEarned();
@@ -2045,7 +2035,7 @@ winName.format("ScoreScreen.wnd:StaticTextScore%d", pos);
 /** We Grab information about the players differently in Multiplayer.  We only want the players
 		listed in the slots */
 //-------------------------------------------------------------------------------------------------
-void grabMultiPlayerInfo( void )
+void grabMultiPlayerInfo()
 {
 	typedef std::map<Int, Player *> ScoreMap;
 	typedef ScoreMap::iterator ScoreMapIt;
@@ -2116,7 +2106,7 @@ enum
 };
 /**	Grab the single player info */
 //-------------------------------------------------------------------------------------------------
-void grabSinglePlayerInfo( void )
+void grabSinglePlayerInfo()
 {
 	Int playerCount = 0;
 	Player *player, *localPlayer;

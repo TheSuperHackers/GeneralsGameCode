@@ -167,7 +167,7 @@ void	RefCountClass::Inc_Total_Refs(const RefCountClass * obj)
 //					This is used for debugging, please do not deleted.
 RefCountClass* BreakOnReference = 0;
 
-void RefCountClass::Add_Ref(void) const
+void RefCountClass::Add_Ref() const
 {
 	NumRefs++;
 

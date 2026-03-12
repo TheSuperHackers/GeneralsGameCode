@@ -92,7 +92,7 @@ LZOStraw::LZOStraw(CompControl control, int blocksize) :
  * HISTORY:                                                                                    *
  *   07/04/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-LZOStraw::~LZOStraw(void)
+LZOStraw::~LZOStraw()
 {
 	delete [] Buffer;
 	Buffer = nullptr;

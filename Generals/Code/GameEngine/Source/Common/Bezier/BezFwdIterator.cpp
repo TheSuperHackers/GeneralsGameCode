@@ -46,7 +46,7 @@ BezFwdIterator::BezFwdIterator(Int stepsDesired, const BezierSegment *bezSeg)
 }
 
 //-------------------------------------------------------------------------------------------------
-void BezFwdIterator::start(void)
+void BezFwdIterator::start()
 {
 	mStep = 0;
 
@@ -97,19 +97,19 @@ void BezFwdIterator::start(void)
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool BezFwdIterator::done(void)
+Bool BezFwdIterator::done()
 {
 	return (mStep >= mStepsDesired);
 }
 
 //-------------------------------------------------------------------------------------------------
-const Coord3D& BezFwdIterator::getCurrent(void) const
+const Coord3D& BezFwdIterator::getCurrent() const
 {
 	return mCurrPoint;
 }
 
 //-------------------------------------------------------------------------------------------------
-void BezFwdIterator::next(void)
+void BezFwdIterator::next()
 {
 	mCurrPoint.add(&mDq);
 	mDq.add(&mDDq);

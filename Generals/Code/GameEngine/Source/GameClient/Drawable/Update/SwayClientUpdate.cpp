@@ -66,7 +66,7 @@ SwayClientUpdate::SwayClientUpdate( Thing *thing, const ModuleData* moduleData )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-SwayClientUpdate::~SwayClientUpdate( void )
+SwayClientUpdate::~SwayClientUpdate()
 {
 
 }
@@ -94,7 +94,7 @@ void SwayClientUpdate::updateSway()
 //-------------------------------------------------------------------------------------------------
 /** The client update callback. */
 //-------------------------------------------------------------------------------------------------
-void SwayClientUpdate::clientUpdate( void )
+void SwayClientUpdate::clientUpdate()
 {
 	if( !m_swaying )
 		return;
@@ -193,7 +193,7 @@ void SwayClientUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void SwayClientUpdate::loadPostProcess( void )
+void SwayClientUpdate::loadPostProcess()
 {
 
 	// extend base class

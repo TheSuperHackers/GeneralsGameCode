@@ -78,7 +78,7 @@ class MeshMtlParamsClass
 {
 public:
 	MeshMtlParamsClass(MeshModelClass * model);
-	~MeshMtlParamsClass(void);
+	~MeshMtlParamsClass();
 
 	int							PassCount;
 
@@ -102,7 +102,7 @@ class VertexClass
 {
 public:
 
-	VertexClass(void);
+	VertexClass();
 	VertexClass(const VertexClass & that);
 	VertexClass &		operator = (const VertexClass & that);
 
@@ -130,7 +130,7 @@ public:
 
 	enum { BPT_POLY_MAX_VERTS = 24 };
 
-	PolygonClass(void);
+	PolygonClass();
 	PolygonClass(const PolygonClass & that);
 	PolygonClass(const VertexClass * points, int num);
 	PolygonClass &				operator = (const PolygonClass & that);
@@ -139,20 +139,20 @@ public:
 	const VertexClass &		operator[] (int i) const { return Verts[i]; }
 	VertexClass &				operator[] (int i) { return Verts[i]; }
 
-	int							Get_Vertex_Count(void) const			{ return NumVerts; }
-	int							Get_Material_ID(void) const			{ return MaterialId; }
-	const PlaneClass &		Get_Plane(void) const					{ return Plane; }
+	int							Get_Vertex_Count() const			{ return NumVerts; }
+	int							Get_Material_ID() const			{ return MaterialId; }
+	const PlaneClass &		Get_Plane() const					{ return Plane; }
 
 	void							Set_Vertex_Count(int count)			{ NumVerts = count; }
 	void							Set_Material_Id(int id)					{ MaterialId = id; }
 	void							Set_Plane(const PlaneClass & plane)	{ Plane = plane; }
 
 	// Operations
-	void							Compute_Plane(void);
+	void							Compute_Plane();
 	int							Which_Side(const PlaneClass & plane) const;
 	void							Split(const PlaneClass & plane,PolygonClass & front,PolygonClass & back) const;
-	bool							Is_Degenerate(void);
-	bool							Salvage_Degenerate(void);
+	bool							Is_Degenerate();
+	bool							Salvage_Degenerate();
 
 public:
 
@@ -181,11 +181,11 @@ class BSPClass
 {
 public:
 	BSPClass(HTreeClass * tree,int bone_index,int & leaf_index);
-	~BSPClass(void);
+	~BSPClass();
 
-	const PlaneClass &	Get_Plane(void)			{ return Plane; }
-	BSPClass *				Get_Front_Child(void)	{ return Front; }
-	BSPClass *				Get_Back_Child(void)		{ return Back; }
+	const PlaneClass &	Get_Plane()			{ return Plane; }
+	BSPClass *				Get_Front_Child()	{ return Front; }
+	BSPClass *				Get_Back_Child()		{ return Back; }
 
 	void						Clip_Polygon(const PolygonClass & poly);
 
@@ -261,7 +261,7 @@ MeshMtlParamsClass::MeshMtlParamsClass(MeshModelClass * model)
 	}
 }
 
-MeshMtlParamsClass::~MeshMtlParamsClass(void)
+MeshMtlParamsClass::~MeshMtlParamsClass()
 {
 }
 
@@ -271,7 +271,7 @@ MeshMtlParamsClass::~MeshMtlParamsClass(void)
 ** VertexClass Implementation
 **
 ***********************************************************************************************/
-VertexClass::VertexClass(void) :
+VertexClass::VertexClass() :
 	Position(0,0,0),
 	Normal(0,0,1),
 	PassCount(0)
@@ -389,7 +389,7 @@ void VertexClass::Intersect_Plane
 ** PolygonClass Implementation
 **
 ***********************************************************************************************/
-PolygonClass::PolygonClass(void) :
+PolygonClass::PolygonClass() :
 	NumVerts(0)
 {
 }
@@ -423,7 +423,7 @@ PolygonClass & PolygonClass::operator = (const PolygonClass & that)
 	return * this;
 }
 
-void PolygonClass::Compute_Plane(void)
+void PolygonClass::Compute_Plane()
 {
 	double nx = 0;
 	double ny = 0;
@@ -615,7 +615,7 @@ void PolygonClass::Split(const PlaneClass & plane,PolygonClass & front,PolygonCl
 }
 
 
-bool PolygonClass::Is_Degenerate(void)
+bool PolygonClass::Is_Degenerate()
 {
 	int i,j;
 
@@ -652,7 +652,7 @@ bool PolygonClass::Is_Degenerate(void)
 	return false;
 }
 
-bool PolygonClass::Salvage_Degenerate(void)
+bool PolygonClass::Salvage_Degenerate()
 {
 	/*
 	** About all we can do is combine sequential vertices which are co-incident
@@ -726,7 +726,7 @@ BSPClass::BSPClass(HTreeClass * tree,int bone_index,int & leaf_index) :
 	}
 }
 
-BSPClass::~BSPClass(void)
+BSPClass::~BSPClass()
 {
 	delete Front;
 	delete Back;
@@ -794,7 +794,7 @@ void BSPClass::Clip_Polygon(const PolygonClass & polygon)
 ** Vshatter = Mscale-to-unit * Mworld-shatterview * Mobj-world * Vobj
 **
 ***********************************************************************************************/
-void ShatterSystem::Init(void)
+void ShatterSystem::Init()
 {
 	/*
 	** Resize the Mesh Fragment pointer array to handle the maximum number
@@ -831,7 +831,7 @@ void ShatterSystem::Init(void)
 	}
 }
 
-void ShatterSystem::Shutdown(void)
+void ShatterSystem::Shutdown()
 {
 	/*
 	** Release all mesh fragments
@@ -1039,7 +1039,7 @@ void ShatterSystem::Shatter_Mesh(MeshClass * mesh,const Vector3 & point,const Ve
 	REF_PTR_RELEASE(model);
 }
 
-int ShatterSystem::Get_Fragment_Count(void)
+int ShatterSystem::Get_Fragment_Count()
 {
 	return MeshFragments.Count();
 }
@@ -1057,7 +1057,7 @@ RenderObjClass * ShatterSystem::Peek_Fragment(int fragment_index)
 	return MeshFragments[fragment_index];
 }
 
-void ShatterSystem::Release_Fragments(void)
+void ShatterSystem::Release_Fragments()
 {
 	// release any ref's to render objects
 	for (int i=0; i<MeshFragments.Count(); i++) {
@@ -1068,7 +1068,7 @@ void ShatterSystem::Release_Fragments(void)
 	MeshFragments.Delete_All(false);
 }
 
-void ShatterSystem::Reset_Clip_Pools(void)
+void ShatterSystem::Reset_Clip_Pools()
 {
 	for (int i=0; i<MAX_MESH_FRAGMENTS; i++) {
 		// reset array but don't resize

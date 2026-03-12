@@ -98,12 +98,12 @@
 
 #include "W3DDevice/GameClient/CameraShakeSystem.h"
 
-constexpr const Real NearZ = MAP_XY_FACTOR; ///< Set the near to MAP_XY_FACTOR. Improves z buffer resolution.
-
 // 30 fps
 Real TheW3DFrameLengthInMsec = MSEC_PER_LOGICFRAME_REAL; // default is 33msec/frame == 30fps. but we may change it depending on sys config.
 static const Int MAX_REQUEST_CACHE_SIZE = 40;	// Any size larger than 10, or examine code below for changes. jkmcd.
 static const Real DRAWABLE_OVERSCAN = 75.0f;  ///< 3D world coords of how much to overscan in the 3D screen region
+
+constexpr const Real NearZ = MAP_XY_FACTOR; ///< Set the near to MAP_XY_FACTOR. Improves z buffer resolution.
 
 //=================================================================================================
 inline Real minf(Real a, Real b) { if (a < b) return a; else return b; }
@@ -159,12 +159,15 @@ W3DView::W3DView()
 	m_locationRequests.reserve(MAX_REQUEST_CACHE_SIZE + 10);	// This prevents the vector from ever re-allocating
 
 	//Enhancements from CNC3 WST 4/15/2003. JSC Integrated 5/20/03.
+	m_scriptedState = 0;
 	m_CameraArrivedAtWaypointOnPathFlag = false;	// Scripts for polling camera reached targets
 	m_isCameraSlaved = false;						// This is for 3DSMax camera playback
 	m_useRealZoomCam = false;						// true;	//WST 10/18/2002
 	m_shakerAngles.X =0.0f;							// Proper camera shake generator & sources
 	m_shakerAngles.Y =0.0f;
 	m_shakerAngles.Z =0.0f;
+
+	m_recalcCamera = false;
 
 }
 
@@ -191,6 +194,11 @@ void W3DView::setHeight(Int height)
  	m_3DCamera->Get_Viewport(vMin,vMax);
  	vMax.Y=(Real)(m_originY+height)/(Real)TheDisplay->getHeight();
  	m_3DCamera->Set_Viewport(vMin,vMax);
+
+	// TheSuperHackers @bugfix Now recalculates the camera constraints because
+	// showing or hiding the control bar will change the viewable area.
+	m_cameraAreaConstraintsValid = false;
+	m_recalcCamera = true;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -210,6 +218,9 @@ void W3DView::setWidth(Int width)
 	//we want to maintain the same scale, so we'll need to adjust the fov.
 	//default W3D fov for full-screen is 50 degrees.
 	m_3DCamera->Set_View_Plane((Real)width/(Real)TheDisplay->getWidth()*DEG_TO_RADF(50.0f),-1);
+
+	m_cameraAreaConstraintsValid = false;
+	m_recalcCamera = true;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -236,10 +247,8 @@ void W3DView::setOrigin( Int x, Int y)
 /** @todo This is inefficient. We should construct the matrix directly using vectors. */
 //-------------------------------------------------------------------------------------------------
 #define MIN_CAPPED_ZOOM (0.5f) //WST 10.19.2002. JSC integrated 5/20/03.
-void W3DView::buildCameraTransform( Matrix3D *transform )
+void W3DView::buildCameraPosition( Vector3& sourcePos, Vector3& targetPos )
 {
-	Vector3 sourcePos, targetPos;
-
 	Real groundLevel = m_groundLevel; // 93.0f;
 
 	Real zoom = getZoom();
@@ -286,8 +295,8 @@ void W3DView::buildCameraTransform( Matrix3D *transform )
 	// construct a matrix to rotate around the up vector by the given angle
 	const Matrix3D angleTransform( Vector3( 0.0f, 0.0f, 1.0f ), angle );
 
-	// construct a matrix to rotate around the horizontal vector by the given angle
-	const Matrix3D pitchTransform( Vector3( 1.0f, 0.0f, 0.0f ), pitch );
+	// construct a matrix to rotate around the left vector by the given angle
+	const Matrix3D pitchTransform( Vector3( -1.0f, 0.0f, 0.0f ), pitch );
 
 	// rotate camera position (pitch, then angle)
 #ifdef ALLOW_TEMPORARIES
@@ -350,7 +359,10 @@ void W3DView::buildCameraTransform( Matrix3D *transform )
 		}
 #endif
 	}
+}
 
+void W3DView::buildCameraTransform( Matrix3D *transform, const Vector3 &sourcePos, const Vector3 &targetPos )
+{
 	//m_3DCamera->Set_View_Plane(DEG_TO_RADF(50.0f));
 	//DEBUG_LOG(("zoom %f, SourceZ %f, posZ %f, groundLevel %f CamOffZ %f",
 	//			zoom, sourcePos.Z, pos.z, groundLevel,m_cameraOffset.z));
@@ -427,8 +439,6 @@ Note the following restrictions on camera constraints!
 */
 void W3DView::calcCameraAreaConstraints()
 {
-//	const Matrix3D& cameraTransform = m_3DCamera->Get_Transform();
-
 //	DEBUG_LOG(("*** rebuilding cam constraints"));
 
 	// ok, now check to ensure that we can't see outside the map region,
@@ -438,36 +448,7 @@ void W3DView::calcCameraAreaConstraints()
 		Region3D mapRegion;
 		TheTerrainLogic->getExtent( &mapRegion );
 
-		Real maxEdgeZ = m_groundLevel;
-		Coord3D center, bottom;
-		ICoord2D screen;
-
-		//Pick at the center
-		screen.x=0.5f*getWidth()+m_originX;
-		screen.y=0.5f*getHeight()+m_originY;
-
-		Vector3 rayStart,rayEnd;
-
-		getPickRay(&screen,&rayStart,&rayEnd);
-
-		center.x = Vector3::Find_X_At_Z(maxEdgeZ, rayStart, rayEnd);
-		center.y = Vector3::Find_Y_At_Z(maxEdgeZ, rayStart, rayEnd);
-		center.z = maxEdgeZ;
-
-		screen.y = m_originY+ 0.95f*getHeight();
- 		getPickRay(&screen,&rayStart,&rayEnd);
- 		bottom.x = Vector3::Find_X_At_Z(maxEdgeZ, rayStart, rayEnd);
-		bottom.y = Vector3::Find_Y_At_Z(maxEdgeZ, rayStart, rayEnd);
-		bottom.z = maxEdgeZ;
-		center.x -= bottom.x;
-		center.y -= bottom.y;
-
-		Real offset = center.length();
-
-		if (TheGlobalData->m_debugAI) {
-			offset = -1000; // push out the constraints so we can look at staging areas.
-		}
-
+		Real offset = calcCameraAreaOffset(m_groundLevel);
 		m_cameraAreaConstraints.lo.x = mapRegion.lo.x + offset;
 		m_cameraAreaConstraints.hi.x = mapRegion.hi.x - offset;
 		m_cameraAreaConstraints.lo.y = mapRegion.lo.y + offset;
@@ -475,6 +456,41 @@ void W3DView::calcCameraAreaConstraints()
 
 		m_cameraAreaConstraintsValid = true;
 	}
+}
+
+//-------------------------------------------------------------------------------------------------
+Real W3DView::calcCameraAreaOffset(Real maxEdgeZ)
+{
+	Coord3D center, bottom;
+	ICoord2D screen;
+
+	//Pick at the center
+	screen.x=0.5f*getWidth()+m_originX;
+	screen.y=0.5f*getHeight()+m_originY;
+
+	Vector3 rayStart,rayEnd;
+
+	getPickRay(&screen,&rayStart,&rayEnd);
+
+	center.x = Vector3::Find_X_At_Z(maxEdgeZ, rayStart, rayEnd);
+	center.y = Vector3::Find_Y_At_Z(maxEdgeZ, rayStart, rayEnd);
+	center.z = maxEdgeZ;
+
+	screen.y = m_originY+ 0.95f*getHeight();
+ 	getPickRay(&screen,&rayStart,&rayEnd);
+ 	bottom.x = Vector3::Find_X_At_Z(maxEdgeZ, rayStart, rayEnd);
+	bottom.y = Vector3::Find_Y_At_Z(maxEdgeZ, rayStart, rayEnd);
+	bottom.z = maxEdgeZ;
+	center.x -= bottom.x;
+	center.y -= bottom.y;
+
+	Real offset = center.length();
+
+	if (TheGlobalData->m_debugAI) {
+		offset = -1000; // push out the constraints so we can look at staging areas.
+	}
+
+	return offset;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -511,16 +527,12 @@ void W3DView::getPickRay(const ICoord2D *screen, Vector3 *rayStart, Vector3 *ray
 //-------------------------------------------------------------------------------------------------
 /** set the transform matrix of m_3DCamera, based on m_pos & m_angle */
 //-------------------------------------------------------------------------------------------------
-void W3DView::setCameraTransform( void )
+void W3DView::setCameraTransform()
 {
 	if (TheGlobalData->m_headless)
 		return;
 
-	if (m_viewLockedUntilFrame > TheGameClient->getFrame())
-		return;
-
 	m_cameraHasMovedSinceRequest = true;
-	Matrix3D cameraTransform;
 
 	Real farZ = 1200.0f;
 
@@ -545,7 +557,11 @@ void W3DView::setCameraTransform( void )
 	{
 		if (!m_cameraAreaConstraintsValid)
 		{
-			buildCameraTransform(&cameraTransform);
+			Vector3 sourcePos;
+			Vector3 targetPos;
+			buildCameraPosition(sourcePos, targetPos);
+			Matrix3D cameraTransform;
+			buildCameraTransform(&cameraTransform, sourcePos, targetPos);
 			m_3DCamera->Set_Transform( cameraTransform );
 			calcCameraAreaConstraints();
 		}
@@ -569,7 +585,11 @@ void W3DView::setCameraTransform( void )
 #endif
 
 	// rebuild it (even if we just did it due to camera constraints)
-	buildCameraTransform( &cameraTransform );
+	Vector3 sourcePos;
+	Vector3 targetPos;
+	buildCameraPosition(sourcePos, targetPos);
+	Matrix3D cameraTransform;
+	buildCameraTransform(&cameraTransform, sourcePos, targetPos);
 	m_3DCamera->Set_Transform( cameraTransform );
 
 	if (TheTerrainRenderObject)
@@ -587,7 +607,7 @@ void W3DView::setCameraTransform( void )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void W3DView::init( void )
+void W3DView::init()
 {
 	// extend View functionality
 	View::init();
@@ -606,9 +626,6 @@ void W3DView::init( void )
 	// create our 3D camera
 	m_3DCamera = NEW_REF( CameraClass, () );
 
-
-	setCameraTransform();
-
 	// create our 2D camera for the GUI overlay
 	m_2DCamera = NEW_REF( CameraClass, () );
 	m_2DCamera->Set_Position( Vector3( 0, 0, 1 ) );
@@ -619,8 +636,9 @@ void W3DView::init( void )
 
 	m_cameraAreaConstraintsValid = false;
 
-	m_scrollAmountCutoff = TheGlobalData->m_scrollAmountCutoff;
+	m_scrollAmountCutoffSqr = sqr(TheGlobalData->m_scrollAmountCutoff);
 
+	m_recalcCamera = true;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -634,17 +652,22 @@ const Coord3D& W3DView::get3DCameraPosition() const
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void W3DView::reset( void )
+void W3DView::reset()
 {
 	View::reset();
 
 	// Just in case...
 	setTimeMultiplier(1); // Set time rate back to 1.
 
+	stopDoingScriptedCamera();
+	setUserControlled(true);
+
+	// Just move the camera to zero. It'll get repositioned at the beginning of the next game anyways.
 	Coord3D arbitraryPos = { 0, 0, 0 };
-	// Just move the camera to 0, 0, 0. It'll get repositioned at the beginning of the next game
-	// anyways.
-	resetCamera(&arbitraryPos, 1, 0.0f, 0.0f);
+	setPosition(&arbitraryPos);
+	setAngleToDefault();
+	setPitchToDefault();
+	setZoomToDefault();
 
 	setViewFilter(FT_VIEW_DEFAULT);
 
@@ -987,7 +1010,7 @@ static void drawablePostDraw( Drawable *draw, void *userData )
 //-------------------------------------------------------------------------------------------------
 // Display AI debug visuals
 //-------------------------------------------------------------------------------------------------
-static void renderAIDebug( void )
+static void renderAIDebug()
 {
 }
 
@@ -997,28 +1020,31 @@ Bool W3DView::updateCameraMovements()
 {
 	Bool didUpdate = false;
 
-	if (m_doingZoomCamera)
+	if (hasScriptedState(Scripted_Zoom))
 	{
 		zoomCameraOneFrame();
 		didUpdate = true;
 	}
-	if (m_doingPitchCamera)
+	if (hasScriptedState(Scripted_Pitch))
 	{
 		pitchCameraOneFrame();
 		didUpdate = true;
 	}
-	if (m_doingRotateCamera) {
+	if (hasScriptedState(Scripted_Rotate))
+	{
 		m_previousLookAtPosition = *getPosition();
 		rotateCameraOneFrame();
 		didUpdate = true;
-	} else if (m_doingMoveCameraOnWaypointPath) {
+	}
+	else if (hasScriptedState(Scripted_MoveOnWaypointPath))
+	{
 		m_previousLookAtPosition = *getPosition();
 		// TheSuperHackers @tweak The scripted camera movement is now decoupled from the render update.
 		// The scripted camera will still move when the time is frozen, but not when the game is halted.
 		moveAlongWaypointPath(TheFramePacer->getLogicTimeStepMilliseconds(FramePacer::IgnoreFrozenTime));
 		didUpdate = true;
 	}
-	if (m_doingScriptedCameraLock)
+	if (hasScriptedState(Scripted_CameraLock))
 	{
 		didUpdate = true;
 	}
@@ -1034,7 +1060,7 @@ Bool W3DView::updateCameraMovements()
    (which update before the main rendering loop) could get a correct version of the scene.
    Without this change, the reflections were always 1 frame behind the non-reflected view.
 */
-void W3DView::updateView(void)
+void W3DView::updateView()
 {
 	UPDATE();
 }
@@ -1069,10 +1095,9 @@ void W3DView::stepView()
 }
 
 //DECLARE_PERF_TIMER(W3DView_updateView)
-void W3DView::update(void)
+void W3DView::update()
 {
 	//USE_PERF_TIMER(W3DView_updateView)
-	Bool recalcCamera = false;
 	Bool didScriptedMovement = false;
 
 #ifdef LOG_FRAME_TIMES
@@ -1102,7 +1127,7 @@ void W3DView::update(void)
 	}
 	if (cameraLock != INVALID_ID)
 	{
-		m_doingMoveCameraOnWaypointPath = false;
+		removeScriptedState(Scripted_MoveOnWaypointPath);
 		m_CameraArrivedAtWaypointOnPathFlag = false;
 
 		Object* cameraLockObj = TheGameLogic->findObjectByID(cameraLock);
@@ -1175,8 +1200,6 @@ void W3DView::update(void)
 						Matrix3D camXForm;
 						camXForm.Look_At(camtran,objPos,0);
 						m_3DCamera->Set_Transform(camXForm);
-
-						recalcCamera = false;	//we already did it
 					}
 				}
 			}
@@ -1235,22 +1258,21 @@ void W3DView::update(void)
 					if (cameraLockObj->isUsingAirborneLocomotor() && cameraLockObj->isAboveTerrainOrWater())
 					{
 						Matrix3D camXForm;
-						Real oldZRot = m_angle;
 						Real idealZRot = cameraLockObj->getOrientation() - M_PI_2;
-						normAngle(oldZRot);
-						normAngle(idealZRot);
-						Real diff = idealZRot - oldZRot;
-						normAngle(diff);
 
 						if (m_snapImmediate)
 						{
-							m_angle = idealZRot;
+							View::setAngle(idealZRot);
 						}
 						else
 						{
-							m_angle += diff * 0.1f;
+							normAngle(idealZRot);
+							Real oldZRot = m_angle;
+							normAngle(oldZRot);
+							Real diffRot = idealZRot - oldZRot;
+							normAngle(diffRot);
+							View::setAngle(m_angle + diffRot * 0.1f);
 						}
-						normAngle(m_angle);
 					}
 				}
 				if (m_snapImmediate)
@@ -1258,7 +1280,7 @@ void W3DView::update(void)
 
 				m_groundLevel = objpos.z;
 				didScriptedMovement = true;
-				recalcCamera = true;
+				m_recalcCamera = true;
 			}
 		}
 	}
@@ -1267,25 +1289,31 @@ void W3DView::update(void)
 		// If we aren't frozen for debug, allow the camera to follow scripted movements.
 		if (updateCameraMovements()) {
 			didScriptedMovement = true;
-			recalcCamera = true;
+			m_recalcCamera = true;
 		}
 	} else {
-		if (m_doingRotateCamera || m_doingMoveCameraOnWaypointPath || m_doingPitchCamera || m_doingZoomCamera || m_doingScriptedCameraLock) {
+		if (isDoingScriptedCamera()) {
 			didScriptedMovement = true; // don't mess up the scripted movement
 		}
 	}
+
+	if (!m_isUserControlled)
+	{
+		didScriptedMovement = true;
+	}
+
 	//
 	// Process camera shake
 	//
 	if (m_shakeIntensity > 0.01f)
 	{
-		recalcCamera = true;
+		m_recalcCamera = true;
 	}
 
 	//Process New C3 Camera Shaker system
 	if (CameraShakerSystem.IsCameraShaking())
 	{
-		recalcCamera = true;
+		m_recalcCamera = true;
 	}
 
 	/*
@@ -1307,16 +1335,15 @@ void W3DView::update(void)
 		Real desiredHeight = (m_terrainHeightAtPivot + m_heightAboveGround);
 		Real desiredZoom = desiredHeight / m_cameraOffset.z;
 
-  	if (didScriptedMovement)
-  	{
-  		// if we are in a scripted camera movement, take its height above ground as our desired height.
-  		m_heightAboveGround = m_currentHeightAboveGround;
-			//DEBUG_LOG(("Frame %d: height above ground: %g %g %g %g", TheGameLogic->getFrame(), m_heightAboveGround,
-			//	m_cameraOffset.z, m_zoom, m_terrainHeightUnderCamera));
-  	}
+		if (didScriptedMovement)
+		{
+			// if we are in a scripted camera movement, take its height above ground as our desired height.
+			m_heightAboveGround = m_currentHeightAboveGround;
+		}
 
-		const Bool isScrolling = TheInGameUI && TheInGameUI->isScrolling();
-		const Bool isScrollingTooFast = m_scrollAmount.length() >= m_scrollAmountCutoff;
+		const Real scrollLenSqr = m_scrollAmount.lengthSqr();
+		const Bool isScrolling = scrollLenSqr > FLT_EPSILON;
+		const Bool isScrollingTooFast = scrollLenSqr >= m_scrollAmountCutoffSqr;
 		const Bool isWithinHeightConstraints = isWithinCameraHeightConstraints();
 
 		// if scrolling, only adjust if we're too close or too far
@@ -1332,7 +1359,7 @@ void W3DView::update(void)
 			if (fabs(zoomAdj) >= 0.0001f)
 			{
 				m_zoom += zoomAdj;
-				recalcCamera = true;
+				m_recalcCamera = true;
 			}
 		}
 	}
@@ -1342,8 +1369,10 @@ void W3DView::update(void)
 	}
 
 	// (gth) C&C3 if m_isCameraSlaved then force the camera to update each frame
-	if (recalcCamera || m_isCameraSlaved) {
+	if (m_recalcCamera || m_isCameraSlaved)
+	{
 		setCameraTransform();
+		m_recalcCamera = false;
 	}
 
 #ifdef DO_SEISMIC_SIMULATIONS
@@ -1480,13 +1509,13 @@ void W3DView::calcDeltaScroll(Coord2D &screenDelta)
 /** Draw member for the W3D window, this will literally draw the window
   * for this view */
 //-------------------------------------------------------------------------------------------------
-void W3DView::drawView( void )
+void W3DView::drawView()
 {
 	DRAW();
 }
 
 //DECLARE_PERF_TIMER(W3DView_drawView)
-void W3DView::draw( void )
+void W3DView::draw()
 {
 	//USE_PERF_TIMER(W3DView_drawView)
 	Bool skipRender = false;
@@ -1741,7 +1770,7 @@ void W3DView::setCameraLock(ObjectID id)
 		return;
 	}
 	View::setCameraLock(id);
-	m_doingScriptedCameraLock = FALSE;
+	removeScriptedState(Scripted_CameraLock);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1749,7 +1778,7 @@ void W3DView::setCameraLock(ObjectID id)
 void W3DView::setSnapMode( CameraLockType lockType, Real lockDist )
 {
 	View::setSnapMode(lockType, lockDist);
-	m_doingScriptedCameraLock = TRUE;
+	addScriptedState(Scripted_CameraLock);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1759,9 +1788,8 @@ void W3DView::setSnapMode( CameraLockType lockType, Real lockDist )
 // TheSuperHackers @bugfix Now rotates the view plane on the Z axis only to properly discard the
 // camera pitch. The aspect ratio also no longer modifies the vertical scroll speed.
 //-------------------------------------------------------------------------------------------------
-void W3DView::scrollBy( Coord2D *delta )
+void W3DView::scrollBy( const Coord2D *delta )
 {
-	// if we haven't moved, ignore
 	if( delta && (delta->x != 0 || delta->y != 0) )
 	{
 		constexpr const Real SCROLL_RESOLUTION = 250.0f;
@@ -1798,80 +1826,73 @@ void W3DView::scrollBy( Coord2D *delta )
 
 		//m_cameraConstraintValid = false;	// pos change does NOT invalidate cam constraints
 
-		m_doingRotateCamera = false;
-		// set new camera position
-		setCameraTransform();
-
+		removeScriptedState(Scripted_Rotate);
+		m_recalcCamera = true;
 	}
-
+	else
+	{
+		m_scrollAmount.x = 0;
+		m_scrollAmount.y = 0;
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 void W3DView::forceRedraw()
 {
-	// set the camera
-	setCameraTransform();
+	m_cameraAreaConstraintsValid = false;
+	m_recalcCamera = true;
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Rotate the view around the up axis to the given angle. */
 //-------------------------------------------------------------------------------------------------
-void W3DView::setAngle( Real angle )
+void W3DView::setAngle( Real radians )
 {
-	// Normalize to +-PI.
-	normAngle(angle);
-	// call our base class, we are adding functionality
-	View::setAngle( angle );
+	View::setAngle( radians );
 
-	m_doingMoveCameraOnWaypointPath = false;
+	stopDoingScriptedCamera();
 	m_CameraArrivedAtWaypointOnPathFlag = false;
-
-	m_doingRotateCamera = false;
-	m_doingPitchCamera = false;
-	m_doingZoomCamera = false;
-	m_doingScriptedCameraLock = false;
-	// set the camera
-	setCameraTransform();
+	m_recalcCamera = true;
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Rotate the view around the horizontal (X) axis to the given angle. */
 //-------------------------------------------------------------------------------------------------
-void W3DView::setPitch( Real angle )
+void W3DView::setPitch( Real radians )
 {
-	// call our base class, we are extending functionality
-	View::setPitch( angle );
+	View::setPitch( radians );
 
-	m_doingMoveCameraOnWaypointPath = false;
-	m_doingRotateCamera = false;
-	m_doingPitchCamera = false;
-	m_doingZoomCamera = false;
-	m_doingScriptedCameraLock = false;
-	// set the camera
-	setCameraTransform();
+	stopDoingScriptedCamera();
+	// TheSuperHackers @fix Now recalculates the camera constraints because
+	// the camera pitch can change the camera distance towards the map border.
+	m_cameraAreaConstraintsValid = false;
+	m_recalcCamera = true;
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Set the view angle back to default */
 //-------------------------------------------------------------------------------------------------
-void W3DView::setAngleToDefault( void )
+void W3DView::setAngleToDefault()
 {
 	View::setAngleToDefault();
 
-	setCameraTransform();
+	m_recalcCamera = true;
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Set the view pitch back to default */
 //-------------------------------------------------------------------------------------------------
-void W3DView::setPitchToDefault( void )
+void W3DView::setPitchToDefault()
 {
 	View::setPitchToDefault();
 
 	m_FXPitch = 1.0f;
 
-	setCameraTransform();
+	// TheSuperHackers @fix Now recalculates the camera constraints because
+	// the camera pitch can change the camera distance towards the map border.
+	m_cameraAreaConstraintsValid = false;
+	m_recalcCamera = true;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1892,14 +1913,10 @@ void W3DView::setHeightAboveGround(Real z)
 {
 	View::setHeightAboveGround(z);
 
-	m_doingMoveCameraOnWaypointPath = false;
+	stopDoingScriptedCamera();
 	m_CameraArrivedAtWaypointOnPathFlag = false;
-	m_doingRotateCamera = false;
-	m_doingPitchCamera = false;
-	m_doingZoomCamera = false;
-	m_doingScriptedCameraLock = false;
 	m_cameraAreaConstraintsValid = false;
-	setCameraTransform();
+	m_recalcCamera = true;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1910,21 +1927,18 @@ void W3DView::setHeightAboveGround(Real z)
 // the camera height.
 void W3DView::setZoom(Real z)
 {
-	View::setZoom(z);
+	m_heightAboveGround = m_maxHeightAboveGround * z;
+	m_zoom = z;
 
-	m_doingMoveCameraOnWaypointPath = false;
+	stopDoingScriptedCamera();
 	m_CameraArrivedAtWaypointOnPathFlag = false;
-	m_doingRotateCamera = false;
-	m_doingPitchCamera = false;
-	m_doingZoomCamera = false;
-	m_doingScriptedCameraLock = false;
 	m_cameraAreaConstraintsValid = false;
-	setCameraTransform();
+	m_recalcCamera = true;
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void W3DView::setZoomToDefault( void )
+void W3DView::setZoomToDefault()
 {
 	// default zoom has to be max, otherwise players will just zoom to max always
 
@@ -1940,14 +1954,10 @@ void W3DView::setZoomToDefault( void )
 	m_zoom = desiredZoom;
 	m_heightAboveGround = m_maxHeightAboveGround;
 
-	m_doingMoveCameraOnWaypointPath = false;
+	stopDoingScriptedCamera();
 	m_CameraArrivedAtWaypointOnPathFlag = false;
-	m_doingRotateCamera = false;
-	m_doingPitchCamera = false;
-	m_doingZoomCamera = false;
-	m_doingScriptedCameraLock = false;
 	m_cameraAreaConstraintsValid = false;
-	setCameraTransform();
+	m_recalcCamera = true;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1960,7 +1970,8 @@ void W3DView::setFieldOfView( Real angle )
 #if defined(RTS_DEBUG)
 	// this is only for testing, and recalculating the
 	// camera every frame is wasteful
-	setCameraTransform();
+	m_cameraAreaConstraintsValid = false;
+	m_recalcCamera = true;
 #endif
 }
 
@@ -2263,7 +2274,6 @@ void W3DView::lookAt( const Coord3D *o )
 {
 	Coord3D pos = *o;
 
-
 // no, don't call the super-lookAt, since it will munge our coords
 // as for a 2d view. just call setPosition.
 //View::lookAt(&pos);
@@ -2298,18 +2308,16 @@ void W3DView::lookAt( const Coord3D *o )
 	}
 	pos.z = 0;
 	setPosition(&pos);
-	m_doingRotateCamera = false;
-	m_doingMoveCameraOnWaypointPath = false;
+
+	removeScriptedState(Scripted_Rotate | Scripted_CameraLock | Scripted_MoveOnWaypointPath);
 	m_CameraArrivedAtWaypointOnPathFlag = false;
-	m_doingScriptedCameraLock = false;
 
-	setCameraTransform();
-
+	m_recalcCamera = true;
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void W3DView::initHeightForMap( void )
+void W3DView::initHeightForMap()
 {
 	m_groundLevel = TheTerrainLogic->getGroundHeight(m_pos.x, m_pos.y);
 	const Real MAX_GROUND_LEVEL = 120.0; // jba - starting ground level can't exceed this height.
@@ -2321,8 +2329,7 @@ void W3DView::initHeightForMap( void )
 	m_cameraOffset.y = -(m_cameraOffset.z / tan(TheGlobalData->m_cameraPitch * (PI / 180.0)));
 	m_cameraOffset.x = -(m_cameraOffset.y * tan(TheGlobalData->m_cameraYaw * (PI / 180.0)));
 	m_cameraAreaConstraintsValid = false;	// possible ground level change invalidates camera constraints
-	setCameraTransform();
-
+	m_recalcCamera = true;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -2354,7 +2361,7 @@ void W3DView::moveCameraTo(const Coord3D *o, Int milliseconds, Int shutter, Bool
 	if (m_mcwpInfo.totalTimeMilliseconds==1) {
 		// do it instantly.
 		moveAlongWaypointPath(1);
-		m_doingMoveCameraOnWaypointPath = true;
+		addScriptedState(Scripted_MoveOnWaypointPath);
 		m_CameraArrivedAtWaypointOnPathFlag = false;
 	}
 }
@@ -2373,14 +2380,14 @@ void W3DView::rotateCamera(Real rotations, Int milliseconds, Real easeIn, Real e
 		m_rcInfo.numFrames = 1;
 	}
 	m_rcInfo.curFrame = 0;
-	m_doingRotateCamera = true;
+	addScriptedState(Scripted_Rotate);
 	m_rcInfo.angle.startAngle = m_angle;
 	m_rcInfo.angle.endAngle = m_angle + 2*PI*rotations;
 	m_rcInfo.startTimeMultiplier = m_timeMultiplier;
 	m_rcInfo.endTimeMultiplier = m_timeMultiplier;
 	m_rcInfo.ease.setEaseTimes(easeIn/milliseconds, easeOut/milliseconds);
 
-	m_doingMoveCameraOnWaypointPath = false;
+	removeScriptedState(Scripted_MoveOnWaypointPath);
 	m_CameraArrivedAtWaypointOnPathFlag = false;
 }
 
@@ -2402,13 +2409,13 @@ void W3DView::rotateCameraTowardObject(ObjectID id, Int milliseconds, Int holdMi
 		m_rcInfo.numFrames = 1;
 	}
 	m_rcInfo.curFrame = 0;
-	m_doingRotateCamera = true;
+	addScriptedState(Scripted_Rotate);
 	m_rcInfo.target.targetObjectID = id;
 	m_rcInfo.startTimeMultiplier = m_timeMultiplier;
 	m_rcInfo.endTimeMultiplier = m_timeMultiplier;
 	m_rcInfo.ease.setEaseTimes(easeIn/milliseconds, easeOut/milliseconds);
 
-	m_doingMoveCameraOnWaypointPath = false;
+	removeScriptedState(Scripted_MoveOnWaypointPath);
 	m_CameraArrivedAtWaypointOnPathFlag = false;
 }
 
@@ -2446,7 +2453,7 @@ void W3DView::rotateCameraTowardPosition(const Coord3D *pLoc, Int milliseconds, 
 	}
 
 	m_rcInfo.curFrame = 0;
-	m_doingRotateCamera = true;
+	addScriptedState(Scripted_Rotate);
 	m_rcInfo.angle.startAngle = m_angle;
 	// TheSuperHackers @todo Investigate if the non Generals code is correct for Zero Hour.
 	// It certainly is incorrect for Generals: Seen in GLA mission 1 opening cut scene.
@@ -2459,7 +2466,7 @@ void W3DView::rotateCameraTowardPosition(const Coord3D *pLoc, Int milliseconds, 
 	m_rcInfo.endTimeMultiplier = m_timeMultiplier;
 	m_rcInfo.ease.setEaseTimes(easeIn/milliseconds, easeOut/milliseconds);
 
-	m_doingMoveCameraOnWaypointPath = false;
+	removeScriptedState(Scripted_MoveOnWaypointPath);
 	m_CameraArrivedAtWaypointOnPathFlag = false;
 }
 
@@ -2473,7 +2480,7 @@ void W3DView::zoomCamera( Real finalZoom, Int milliseconds, Real easeIn, Real ea
 		m_zcInfo.numFrames = 1;
 	}
 	m_zcInfo.curFrame = 0;
-	m_doingZoomCamera = TRUE;
+	addScriptedState(Scripted_Zoom);
 	m_zcInfo.startZoom = m_zoom;
 	m_zcInfo.endZoom = finalZoom;
 	m_zcInfo.ease.setEaseTimes(easeIn/milliseconds, easeOut/milliseconds);
@@ -2489,7 +2496,7 @@ void W3DView::pitchCamera( Real finalPitch, Int milliseconds, Real easeIn, Real 
 		m_pcInfo.numFrames = 1;
 	}
 	m_pcInfo.curFrame = 0;
-	m_doingPitchCamera = TRUE;
+	addScriptedState(Scripted_Pitch);
 	m_pcInfo.startPitch = m_FXPitch;
 	m_pcInfo.endPitch = finalPitch;
 	m_pcInfo.ease.setEaseTimes(easeIn/milliseconds, easeOut/milliseconds);
@@ -2500,8 +2507,7 @@ void W3DView::pitchCamera( Real finalPitch, Int milliseconds, Real easeIn, Real 
 //-------------------------------------------------------------------------------------------------
 void W3DView::cameraModFinalZoom( Real finalZoom, Real easeIn, Real easeOut )
 {
-
-	if (m_doingRotateCamera)
+	if (hasScriptedState(Scripted_Rotate))
 	{
 		Real terrainHeightMax = getHeightAroundPos(m_pos.x, m_pos.y);
 		Real maxHeight = (terrainHeightMax + m_maxHeightAboveGround);
@@ -2510,7 +2516,7 @@ void W3DView::cameraModFinalZoom( Real finalZoom, Real easeIn, Real easeOut )
 		Real time = (m_rcInfo.numFrames + m_rcInfo.numHoldFrames - m_rcInfo.curFrame)*TheW3DFrameLengthInMsec;
 		zoomCamera( finalZoom*maxZoom, time, time*easeIn, time*easeOut );
 	}
-	if (m_doingMoveCameraOnWaypointPath)
+	if (hasScriptedState(Scripted_MoveOnWaypointPath))
 	{
 		Coord3D pos = m_mcwpInfo.waypoints[m_mcwpInfo.numWaypoints];
 		Real terrainHeightMax = getHeightAroundPos(pos.x, pos.y);
@@ -2525,16 +2531,18 @@ void W3DView::cameraModFinalZoom( Real finalZoom, Real easeIn, Real easeOut )
 //-------------------------------------------------------------------------------------------------
 /** Sets the final zoom for a camera movement. */
 //-------------------------------------------------------------------------------------------------
-void W3DView::cameraModFreezeAngle(void)
+void W3DView::cameraModFreezeAngle()
 {
-	if (m_doingRotateCamera) {
+	if (hasScriptedState(Scripted_Rotate))
+	{
 		if (m_rcInfo.trackObject) {
 			m_rcInfo.target.targetObjectID = INVALID_ID;
 		} else {
 			m_rcInfo.angle.startAngle = m_rcInfo.angle.endAngle = m_angle; // Silly, but consistent.
 		}
 	}
-	if (m_doingMoveCameraOnWaypointPath) {
+	if (hasScriptedState(Scripted_MoveOnWaypointPath))
+	{
 		Int i;
 //		Real curDistance = 0;
 		for (i=0; i<m_mcwpInfo.numWaypoints; i++) {
@@ -2548,10 +2556,12 @@ void W3DView::cameraModFreezeAngle(void)
 // ------------------------------------------------------------------------------------------------
 void W3DView::cameraModLookToward(Coord3D *pLoc)
 {
-	if (m_doingRotateCamera) {
+	if (hasScriptedState(Scripted_Rotate))
+	{
 		return; // Doesn't apply to rotate about a point.
 	}
-	if (m_doingMoveCameraOnWaypointPath) {
+	if (hasScriptedState(Scripted_MoveOnWaypointPath))
+	{
 		Int i;
 //		Real curDistance = 0;
 		for (i=2; i<=m_mcwpInfo.numWaypoints; i++) {
@@ -2589,7 +2599,7 @@ void W3DView::cameraModLookToward(Coord3D *pLoc)
 		if (m_mcwpInfo.totalTimeMilliseconds==1) {
 			// do it instantly.
 			moveAlongWaypointPath(1);
-			m_doingMoveCameraOnWaypointPath = true;
+			addScriptedState(Scripted_MoveOnWaypointPath);
 			m_CameraArrivedAtWaypointOnPathFlag = false;
 		}
 	}
@@ -2600,10 +2610,12 @@ void W3DView::cameraModLookToward(Coord3D *pLoc)
 // ------------------------------------------------------------------------------------------------
 void W3DView::cameraModFinalMoveTo(Coord3D *pLoc)
 {
-	if (m_doingRotateCamera) {
+	if (hasScriptedState(Scripted_Rotate))
+	{
 		return; // Doesn't apply to rotate about a point.
 	}
-	if (m_doingMoveCameraOnWaypointPath) {
+	if (hasScriptedState(Scripted_MoveOnWaypointPath))
+	{
 		Int i;
 		Coord3D start, delta;
 		start = m_mcwpInfo.waypoints[m_mcwpInfo.numWaypoints];
@@ -2623,10 +2635,12 @@ void W3DView::cameraModFinalMoveTo(Coord3D *pLoc)
 // ------------------------------------------------------------------------------------------------
 void W3DView::cameraModFinalLookToward(Coord3D *pLoc)
 {
-	if (m_doingRotateCamera) {
+	if (hasScriptedState(Scripted_Rotate))
+	{
 		return; // Doesn't apply to rotate about a point.
 	}
-	if (m_doingMoveCameraOnWaypointPath) {
+	if (hasScriptedState(Scripted_MoveOnWaypointPath))
+	{
 		Int i;
 		Int min = m_mcwpInfo.numWaypoints-1;
 		if (min<2) min=2;
@@ -2679,13 +2693,20 @@ void W3DView::cameraModFinalLookToward(Coord3D *pLoc)
 // ------------------------------------------------------------------------------------------------
 void W3DView::cameraModFinalTimeMultiplier(Int finalMultiplier)
 {
-	if (m_doingZoomCamera)
+	if (hasScriptedState(Scripted_Zoom))
+	{
 		m_zcInfo.endTimeMultiplier = finalMultiplier;
-	if (m_doingPitchCamera)
+	}
+	if (hasScriptedState(Scripted_Pitch))
+	{
 		m_pcInfo.endTimeMultiplier = finalMultiplier;
-	if (m_doingRotateCamera) {
+	}
+	if (hasScriptedState(Scripted_Rotate))
+	{
 		m_rcInfo.endTimeMultiplier = finalMultiplier;
-	} else if (m_doingMoveCameraOnWaypointPath) {
+	}
+	else if (hasScriptedState(Scripted_MoveOnWaypointPath))
+	{
 		Int i;
 		Real curDistance = 0;
 		for (i=0; i<m_mcwpInfo.numWaypoints; i++) {
@@ -2694,7 +2715,9 @@ void W3DView::cameraModFinalTimeMultiplier(Int finalMultiplier)
 			Real factor1 = 1.0-factor2;
 			m_mcwpInfo.timeMultiplier[i+1] = REAL_TO_INT_FLOOR(0.5+m_mcwpInfo.timeMultiplier[i+1]*factor1 + finalMultiplier*factor2);
 		}
-	} else {
+	}
+	else
+	{
 		// If we aren't doing a camera movement, just set the time.
 		m_timeMultiplier = finalMultiplier;
 	}
@@ -2712,12 +2735,15 @@ void W3DView::cameraModRollingAverage(Int framesToAverage)
 // ------------------------------------------------------------------------------------------------
 /** Sets the final pitch for a camera movement. */
 // ------------------------------------------------------------------------------------------------
-void W3DView::cameraModFinalPitch(Real finalPitch, Real easeIn, Real easeOut) {
-	if (m_doingRotateCamera) {
+void W3DView::cameraModFinalPitch(Real finalPitch, Real easeIn, Real easeOut)
+{
+	if (hasScriptedState(Scripted_Rotate))
+	{
 		Real time = (m_rcInfo.numFrames + m_rcInfo.numHoldFrames - m_rcInfo.curFrame)*TheW3DFrameLengthInMsec;
 		pitchCamera( finalPitch, time, time*easeIn, time*easeOut );
 	}
-	if (m_doingMoveCameraOnWaypointPath) {
+	if (hasScriptedState(Scripted_MoveOnWaypointPath))
+	{
 		Real time = m_mcwpInfo.totalTimeMilliseconds - m_mcwpInfo.elapsedTimeMilliseconds;
 		pitchCamera( finalPitch, time, time*easeIn, time*easeOut );
 	}
@@ -2731,7 +2757,7 @@ void W3DView::resetCamera(const Coord3D *location, Int milliseconds, Real easeIn
 	moveCameraTo(location, milliseconds, 0, false, easeIn, easeOut);
 	m_mcwpInfo.cameraAngle[2] = 0.0f; // default angle.
 	// m_mcwpInfo.cameraAngle[2] = m_defaultAngle;
-	m_angle = m_mcwpInfo.cameraAngle[0];
+	View::setAngle(m_mcwpInfo.cameraAngle[0]);
 
 	// terrain height + desired height offset == cameraOffset * actual zoom
 	// find best approximation of max terrain height we can see
@@ -2746,7 +2772,7 @@ void W3DView::resetCamera(const Coord3D *location, Int milliseconds, Real easeIn
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-Bool W3DView::isCameraMovementFinished(void)
+Bool W3DView::isCameraMovementFinished()
 {
 	if (m_viewFilter == FT_VIEW_MOTION_BLUR_FILTER) {
 		// Several of the motion blur effects are similar to camera movements.
@@ -2759,11 +2785,12 @@ Bool W3DView::isCameraMovementFinished(void)
 			return true;
 		}
 	}
-	return !m_doingMoveCameraOnWaypointPath && !m_doingRotateCamera && !m_doingPitchCamera && !m_doingZoomCamera;
+
+	return !hasScriptedState(Scripted_Rotate | Scripted_Pitch | Scripted_Zoom | Scripted_MoveOnWaypointPath);
 }
 
 
-Bool W3DView::isCameraMovementAtWaypointAlongPath(void)
+Bool W3DView::isCameraMovementAtWaypointAlongPath()
 {
 	Bool returnValue = m_CameraArrivedAtWaypointOnPathFlag;
 	m_CameraArrivedAtWaypointOnPathFlag = false;
@@ -2824,14 +2851,14 @@ void W3DView::setupWaypointPath(Bool orient)
 	Real angle = getAngle();
 	for (i=1; i<m_mcwpInfo.numWaypoints; i++) {
 		Vector2 dir(m_mcwpInfo.waypoints[i+1].x-m_mcwpInfo.waypoints[i].x, m_mcwpInfo.waypoints[i+1].y-m_mcwpInfo.waypoints[i].y);
-		m_mcwpInfo.waySegLength[i] = dir.Length();
+		const Real dirLength = dir.Length();
+		m_mcwpInfo.waySegLength[i] = dirLength;
 		m_mcwpInfo.totalDistance += m_mcwpInfo.waySegLength[i];
-		if (orient) {
-			angle = WWMath::Acos(dir.X/m_mcwpInfo.waySegLength[i]);
+		if (orient && dirLength >= 0.1f) {
+			angle = WWMath::Acos(dir.X/dirLength);
 			if (dir.Y<0.0f) {
 				angle = -angle;
 			}
-
 			// Default camera is rotated 90 degrees, so match.
 			angle -= PI/2;
 			normAngle(angle);
@@ -2879,9 +2906,17 @@ void W3DView::setupWaypointPath(Bool orient)
 	m_mcwpInfo.waypoints[0].x -= cur.x-prev.x;
 	m_mcwpInfo.waypoints[0].y -= cur.y-prev.y;
 
-	m_doingMoveCameraOnWaypointPath = m_mcwpInfo.numWaypoints>1;
+	if (m_mcwpInfo.numWaypoints>1)
+	{
+		addScriptedState(Scripted_MoveOnWaypointPath);
+	}
+	else
+	{
+		removeScriptedState(Scripted_MoveOnWaypointPath);
+	}
+
 	m_CameraArrivedAtWaypointOnPathFlag = false;
-	m_doingRotateCamera = false;
+	removeScriptedState(Scripted_Rotate);
 
 	m_mcwpInfo.elapsedTimeMilliseconds = 0;
 	m_mcwpInfo.curShutter = m_mcwpInfo.shutter;
@@ -2905,12 +2940,12 @@ static Real makeQuadraticS(Real t)
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void W3DView::rotateCameraOneFrame(void)
+void W3DView::rotateCameraOneFrame()
 {
 	m_rcInfo.curFrame++;
 	if (TheGlobalData->m_disableCameraMovement) {
 		if (m_rcInfo.curFrame >= m_rcInfo.numFrames + m_rcInfo.numHoldFrames) {
-			m_doingRotateCamera = false;
+			removeScriptedState(Scripted_Rotate);
 			m_freezeTimeForCameraMovement = false;
 		}
 		return;
@@ -2945,13 +2980,12 @@ void W3DView::rotateCameraOneFrame(void)
 					Real angleDiff = angle - m_angle;
 					normAngle(angleDiff);
 					angleDiff *= factor;
-					m_angle += angleDiff;
-					normAngle(m_angle);
+					View::setAngle(m_angle + angleDiff);
 					m_timeMultiplier = m_rcInfo.startTimeMultiplier + REAL_TO_INT_FLOOR(0.5 + (m_rcInfo.endTimeMultiplier-m_rcInfo.startTimeMultiplier)*factor);
 				}
 				else
 				{
-					m_angle = angle;
+					View::setAngle(angle);
 				}
 			}
 		}
@@ -2959,30 +2993,30 @@ void W3DView::rotateCameraOneFrame(void)
 	else if (m_rcInfo.curFrame <= m_rcInfo.numFrames)
 	{
 		Real factor = m_rcInfo.ease(((Real)m_rcInfo.curFrame)/m_rcInfo.numFrames);
-		m_angle = WWMath::Lerp(m_rcInfo.angle.startAngle, m_rcInfo.angle.endAngle, factor);
-		normAngle(m_angle);
+		Real angle = WWMath::Lerp(m_rcInfo.angle.startAngle, m_rcInfo.angle.endAngle, factor);
+		View::setAngle(angle);
 		m_timeMultiplier = m_rcInfo.startTimeMultiplier + REAL_TO_INT_FLOOR(0.5 + (m_rcInfo.endTimeMultiplier-m_rcInfo.startTimeMultiplier)*factor);
 	}
 
 
 	if (m_rcInfo.curFrame >= m_rcInfo.numFrames + m_rcInfo.numHoldFrames) {
-		m_doingRotateCamera = false;
+		removeScriptedState(Scripted_Rotate);
 		m_freezeTimeForCameraMovement = false;
 		if (! m_rcInfo.trackObject)
 		{
-			m_angle = m_rcInfo.angle.endAngle;
+			View::setAngle(m_rcInfo.angle.endAngle);
 		}
 	}
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void W3DView::zoomCameraOneFrame(void)
+void W3DView::zoomCameraOneFrame()
 {
 	m_zcInfo.curFrame++;
 	if (TheGlobalData->m_disableCameraMovement) {
 		if (m_zcInfo.curFrame >= m_zcInfo.numFrames) {
-			m_doingZoomCamera = false;
+			removeScriptedState(Scripted_Zoom);
 		}
 		return;
 	}
@@ -2994,7 +3028,7 @@ void W3DView::zoomCameraOneFrame(void)
 	}
 
 	if (m_zcInfo.curFrame >= m_zcInfo.numFrames) {
-		m_doingZoomCamera = false;
+		removeScriptedState(Scripted_Zoom);
 		m_zoom = m_zcInfo.endZoom;
 	}
 
@@ -3003,12 +3037,12 @@ void W3DView::zoomCameraOneFrame(void)
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void W3DView::pitchCameraOneFrame(void)
+void W3DView::pitchCameraOneFrame()
 {
 	m_pcInfo.curFrame++;
 	if (TheGlobalData->m_disableCameraMovement) {
 		if (m_pcInfo.curFrame >= m_pcInfo.numFrames) {
-			m_doingPitchCamera = false;
+			removeScriptedState(Scripted_Pitch);
 		}
 		return;
 	}
@@ -3020,9 +3054,49 @@ void W3DView::pitchCameraOneFrame(void)
 	}
 
 	if (m_pcInfo.curFrame >= m_pcInfo.numFrames) {
-		m_doingPitchCamera = false;
+		removeScriptedState(Scripted_Pitch);
 		m_FXPitch = m_pcInfo.endPitch;
 	}
+}
+
+//-------------------------------------------------------------------------------------------------
+void W3DView::setUserControlled(Bool value)
+{
+	if (m_isUserControlled != value)
+	{
+		m_isUserControlled = value;
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
+Bool W3DView::isDoingScriptedCamera()
+{
+	return m_scriptedState != 0;
+}
+
+// ------------------------------------------------------------------------------------------------
+void W3DView::stopDoingScriptedCamera()
+{
+	m_scriptedState = 0;
+}
+
+// ------------------------------------------------------------------------------------------------
+Bool W3DView::hasScriptedState(ScriptedState state) const
+{
+	return (m_scriptedState & state) != 0;
+}
+
+// ------------------------------------------------------------------------------------------------
+void W3DView::addScriptedState(ScriptedState state)
+{
+	m_scriptedState |= state;
+	setUserControlled(false);
+}
+
+// ------------------------------------------------------------------------------------------------
+void W3DView::removeScriptedState(ScriptedState state)
+{
+	m_scriptedState &= ~state;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -3032,17 +3106,17 @@ void W3DView::moveAlongWaypointPath(Real milliseconds)
 	m_mcwpInfo.elapsedTimeMilliseconds += milliseconds;
 	if (TheGlobalData->m_disableCameraMovement) {
 		if (m_mcwpInfo.elapsedTimeMilliseconds>m_mcwpInfo.totalTimeMilliseconds) {
-			m_doingMoveCameraOnWaypointPath = false;
+			removeScriptedState(Scripted_MoveOnWaypointPath);
 			m_freezeTimeForCameraMovement = false;
 		}
 		return;
 	}
 	if (m_mcwpInfo.elapsedTimeMilliseconds>m_mcwpInfo.totalTimeMilliseconds) {
-		m_doingMoveCameraOnWaypointPath = false;
+		removeScriptedState(Scripted_MoveOnWaypointPath);
 		m_CameraArrivedAtWaypointOnPathFlag = false;
 
 		m_freezeTimeForCameraMovement = false;
-		m_angle = m_mcwpInfo.cameraAngle[m_mcwpInfo.numWaypoints];
+		View::setAngle(m_mcwpInfo.cameraAngle[m_mcwpInfo.numWaypoints]);
 
 		m_groundLevel = m_mcwpInfo.groundHeight[m_mcwpInfo.numWaypoints];
 		/////////////////////m_cameraOffset.z = m_groundLevel+TheGlobalData->m_cameraHeight;
@@ -3073,7 +3147,7 @@ void W3DView::moveAlongWaypointPath(Real milliseconds)
 	while (m_mcwpInfo.curSegDistance >= m_mcwpInfo.waySegLength[m_mcwpInfo.curSegment])
 #endif
 	{
-		if ( m_doingMoveCameraOnWaypointPath )
+		if (hasScriptedState(Scripted_MoveOnWaypointPath))
 		{
 			//WWDEBUG_SAY(( "MBL TEST: Camera waypoint along path reached!" ));
 			m_CameraArrivedAtWaypointOnPathFlag = true;
@@ -3113,8 +3187,7 @@ void W3DView::moveAlongWaypointPath(Real milliseconds)
 	if (fabs(deltaAngle) > PI/10) {
 		DEBUG_LOG(("Huh."));
 	}
-	m_angle += avgFactor*(deltaAngle);
-	normAngle(m_angle);
+	View::setAngle(m_angle + (avgFactor*deltaAngle));
 
 	Real timeMultiplier = m_mcwpInfo.timeMultiplier[m_mcwpInfo.curSegment]*factor1 +
 			m_mcwpInfo.timeMultiplier[m_mcwpInfo.curSegment+1]*factor2;
@@ -3264,12 +3337,12 @@ void W3DView::cameraEnableSlaveMode(const AsciiString & objectName, const AsciiS
 	m_cameraSlaveObjectBoneName = boneName;
 }
 
-void W3DView::cameraDisableSlaveMode(void)
+void W3DView::cameraDisableSlaveMode()
 {
 	m_isCameraSlaved = false;
 }
 
-void W3DView::cameraEnableRealZoomMode(void) //WST added 10/18/2002
+void W3DView::cameraEnableRealZoomMode() //WST added 10/18/2002
 {
 	m_useRealZoomCam = true;
 	m_FXPitch = 1.0f;	//Reset to default
@@ -3277,13 +3350,13 @@ void W3DView::cameraEnableRealZoomMode(void) //WST added 10/18/2002
 	updateView();
 }
 
-void W3DView::cameraDisableRealZoomMode(void) //WST added 10/18/2002
+void W3DView::cameraDisableRealZoomMode() //WST added 10/18/2002
 {
 	m_useRealZoomCam = false;
 	m_FXPitch = 1.0f;	//Reset to default
 	//m_zoom = 1.0f;
 	m_FOV = DEG_TO_RADF(50.0f);
-	setCameraTransform();
+	m_recalcCamera = true;
 	updateView();
 }
 

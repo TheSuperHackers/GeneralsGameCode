@@ -70,7 +70,7 @@ AggregateLoaderClass	_AggregateLoader;
 //
 //	AggregateDefClass
 //
-AggregateDefClass::AggregateDefClass (void)
+AggregateDefClass::AggregateDefClass ()
 	: m_pName (nullptr)
 {
 	// Set our member data to default settings
@@ -120,7 +120,7 @@ AggregateDefClass::AggregateDefClass (RenderObjClass &base_model)
 //
 //	~AggregateDefClass
 //
-AggregateDefClass::~AggregateDefClass (void)
+AggregateDefClass::~AggregateDefClass ()
 {
 	// Free the name buffer if necessary
 	if (m_pName != nullptr) {
@@ -183,7 +183,7 @@ AggregateDefClass::operator= (const AggregateDefClass &src)
 //	Free_Subobject_List
 //
 void
-AggregateDefClass::Free_Subobject_List (void)
+AggregateDefClass::Free_Subobject_List ()
 {
 	// Delete all the stucture pointers contained in the subobject list
 	for (int index = 0; index < m_SubobjectList.Count (); index ++) {
@@ -202,7 +202,7 @@ AggregateDefClass::Free_Subobject_List (void)
 //	Create
 //
 RenderObjClass *
-AggregateDefClass::Create (void)
+AggregateDefClass::Create ()
 {
 	// Attempt to create an instance of the hierarchy
 	RenderObjClass *pmodel = Create_Render_Object (m_Info.BaseModelName);

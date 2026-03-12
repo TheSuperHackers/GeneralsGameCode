@@ -71,7 +71,7 @@ public:
 
 #if defined(RTS_DEBUG) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
   Bool m_HandOfGodSelectionMode;
-  Bool isHandOfGodSelectionMode( void) { return m_HandOfGodSelectionMode; };
+  Bool isHandOfGodSelectionMode() { return m_HandOfGodSelectionMode; };
 #endif
 
 };

@@ -65,7 +65,7 @@ void DrawModule::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void DrawModule::loadPostProcess( void )
+void DrawModule::loadPostProcess()
 {
 
 	// extend base class

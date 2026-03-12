@@ -47,17 +47,17 @@
 
 
 
-TimeCodedMorphKeysClass::TimeCodedMorphKeysClass(void)
+TimeCodedMorphKeysClass::TimeCodedMorphKeysClass()
 	:	CachedIdx (0)
 {
 }
 
-TimeCodedMorphKeysClass::~TimeCodedMorphKeysClass(void)
+TimeCodedMorphKeysClass::~TimeCodedMorphKeysClass()
 {
 	Free();
 }
 
-void TimeCodedMorphKeysClass::Free(void)
+void TimeCodedMorphKeysClass::Free()
 {
 	Keys.Delete_All ();
 	CachedIdx = 0;
@@ -190,7 +190,7 @@ uint32 TimeCodedMorphKeysClass::binary_search_index(float req_frame)
 **
 *********************************************************************************************/
 
-HMorphAnimClass::HMorphAnimClass(void) :
+HMorphAnimClass::HMorphAnimClass() :
 	FrameCount(0),
 	FrameRate(0.0f),
 	ChannelCount(0),
@@ -204,12 +204,12 @@ HMorphAnimClass::HMorphAnimClass(void) :
 	memset(HierarchyName,0,sizeof(HierarchyName));
 }
 
-HMorphAnimClass::~HMorphAnimClass(void)
+HMorphAnimClass::~HMorphAnimClass()
 {
 	Free();
 }
 
-void HMorphAnimClass::Free(void)
+void HMorphAnimClass::Free()
 {
 	if (PoseData != nullptr) {
 		for (int i=0; i<ChannelCount; i++) {
@@ -447,7 +447,7 @@ bool HMorphAnimClass::Import(const char *hierarchy_name, TextFileClass &text_des
 	return retval;
 }
 
-void HMorphAnimClass::Resolve_Pivot_Channels(void)
+void HMorphAnimClass::Resolve_Pivot_Channels()
 {
 	WWASSERT (PivotChannel != nullptr);
 
@@ -496,7 +496,7 @@ void HMorphAnimClass::Set_Name(const char * name)
 	return ;
 }
 
-void HMorphAnimClass::Free_Morph(void)
+void HMorphAnimClass::Free_Morph()
 {
 	Free();
 }
@@ -728,7 +728,7 @@ void HMorphAnimClass::Insert_Morph_Key(const int channel, uint32 morph_frame, ui
 	FrameCount = WWMath::Max(morph_frame,FrameCount);
 }
 
-void HMorphAnimClass::Release_Keys(void)
+void HMorphAnimClass::Release_Keys()
 {
 	for(int i=0;i<ChannelCount;i++)
 		MorphKeyData[i].Free();

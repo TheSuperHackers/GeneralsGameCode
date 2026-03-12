@@ -68,7 +68,7 @@ FireWeaponWhenDeadBehavior::FireWeaponWhenDeadBehavior( Thing *thing, const Modu
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-FireWeaponWhenDeadBehavior::~FireWeaponWhenDeadBehavior( void )
+FireWeaponWhenDeadBehavior::~FireWeaponWhenDeadBehavior()
 {
 }
 
@@ -150,7 +150,7 @@ void FireWeaponWhenDeadBehavior::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void FireWeaponWhenDeadBehavior::loadPostProcess( void )
+void FireWeaponWhenDeadBehavior::loadPostProcess()
 {
 
 	// extend base class

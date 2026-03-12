@@ -75,6 +75,7 @@
 #include "GameLogic/Module/DeletionUpdate.h"
 #include "GameLogic/Module/DestroyModule.h"
 #include "GameLogic/Module/DieModule.h"
+#include "GameLogic/Module/DozerAIUpdate.h"
 #include "GameLogic/Module/ObjectDefectionHelper.h"
 #include "GameLogic/Module/ObjectRepulsorHelper.h"
 #include "GameLogic/Module/ObjectSMCHelper.h"
@@ -1730,7 +1731,7 @@ void Object::attemptHealing(Real amount, const Object* source)
 	}
 }
 
-ObjectID Object::getSoleHealingBenefactor( void ) const
+ObjectID Object::getSoleHealingBenefactor() const
 {
 	UnsignedInt now = TheGameLogic->getFrame();
 	if( now > m_soleHealingBenefactorExpirationFrame )
@@ -1843,13 +1844,13 @@ void Object::setCaptured(Bool isCaptured)
 
 
 //-------------------------------------------------------------------------------------------------
-Bool Object::isStructure(void) const
+Bool Object::isStructure() const
 {
 	return isKindOf(KINDOF_STRUCTURE);
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool Object::isFactionStructure(void) const
+Bool Object::isFactionStructure() const
 {
 	KindOfMaskType bits;
 	bits.set(KINDOF_FS_POWER);
@@ -1861,7 +1862,7 @@ Bool Object::isFactionStructure(void) const
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool Object::isNonFactionStructure(void) const
+Bool Object::isNonFactionStructure() const
 {
 	return isStructure() && !isFactionStructure();
 }
@@ -2510,7 +2511,7 @@ void Object::setID( ObjectID id )
 }
 
 // ------------------------------------------------------------------------------------------------
-Real Object::calculateHeightAboveTerrain(void) const
+Real Object::calculateHeightAboveTerrain() const
 {
 	const Coord3D* pos = getPosition();
 	Real terrainZ = TheTerrainLogic->getLayerHeight( pos->x, pos->y, m_layer );
@@ -2536,7 +2537,7 @@ void Object::removeFromList(Object **pListHead)
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void Object::friend_prepareForMapBoundaryAdjust(void)
+void Object::friend_prepareForMapBoundaryAdjust()
 {
 	// NOTE - DO NOT remove from pathfind map. jba.
 	// NO NO. jba. TheAI->pathfinder()->removeObjectFromPathfindMap( this );
@@ -2557,7 +2558,7 @@ void Object::friend_prepareForMapBoundaryAdjust(void)
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void Object::friend_notifyOfNewMapBoundary(void)
+void Object::friend_notifyOfNewMapBoundary()
 {
 	ThePartitionManager->registerObject(this);
 	TheRadar->addObject(this);
@@ -3051,7 +3052,7 @@ void Object::maskObject( Bool mask )
 /*
  * returns true if the current locomotor is an airborne one
  */
-Bool Object::isUsingAirborneLocomotor( void ) const
+Bool Object::isUsingAirborneLocomotor() const
 {
 	return ( m_ai && m_ai->getCurLocomotor() && ((m_ai->getCurLocomotor()->getLegalSurfaces() & LOCOMOTORSURFACE_AIR) != 0) );
 }
@@ -3471,7 +3472,7 @@ void Object::crc( Xfer *xfer )
 #if RETAIL_COMPATIBLE_CRC
 		tmp.format("m_objectUpgradesCompleted: %I64X, ", m_objectUpgradesCompleted);
 #else
-		tmp.format("m_objectUpgradesCompleted: %s, ", m_objectUpgradesCompleted.toHexString().c_str());
+		tmp.format("m_objectUpgradesCompleted: %s, ", m_objectUpgradesCompleted.toHexString().str());
 #endif
 		logString.concat(tmp);
 	}
@@ -4047,7 +4048,15 @@ void Object::onCapture( Player *oldOwner, Player *newOwner )
 		getAIUpdateInterface()->aiIdle(CMD_FROM_AI);
 #else
 		if (oldOwner->getRelationship(newOwner->getDefaultTeam()) != ALLIES)
+		{
 			getAIUpdateInterface()->aiIdle(CMD_FROM_AI);
+
+			DozerAIInterface* dozerAI = getAIUpdateInterface()->getDozerAIInterface();
+			if (dozerAI)
+			{
+				dozerAI->cancelAllTasks();
+			}
+		}
 #endif
 	}
 
@@ -5058,7 +5067,7 @@ void Object::clearLeechRangeModeForAllWeapons()
 // ------------------------------------------------------------------------------------------------
 /** Search our update modules for a production update interface and return it if one is found */
 // ------------------------------------------------------------------------------------------------
-ProductionUpdateInterface* Object::getProductionUpdateInterface( void )
+ProductionUpdateInterface* Object::getProductionUpdateInterface()
 {
 	ProductionUpdateInterface *pui;
 
@@ -5078,7 +5087,7 @@ ProductionUpdateInterface* Object::getProductionUpdateInterface( void )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-DockUpdateInterface *Object::getDockUpdateInterface( void )
+DockUpdateInterface *Object::getDockUpdateInterface()
 {
 	DockUpdateInterface *dock = nullptr;
 
@@ -5480,7 +5489,7 @@ void Object::goInvulnerable( UnsignedInt time )
 // ------------------------------------------------------------------------------------------------
 /** Return the radar priority for this object type */
 // ------------------------------------------------------------------------------------------------
-RadarPriorityType Object::getRadarPriority( void ) const
+RadarPriorityType Object::getRadarPriority() const
 {
 	// first, get the priority at the thing template level
 	RadarPriorityType priority = getTemplate()->getDefaultRadarPriority();
@@ -5518,7 +5527,7 @@ RadarPriorityType Object::getRadarPriority( void ) const
 }
 
 // ------------------------------------------------------------------------------------------------
-AIGroup *Object::getGroup(void)
+AIGroup *Object::getGroup()
 {
 #if RETAIL_COMPATIBLE_AIGROUP
 	return m_group;
@@ -5542,7 +5551,7 @@ void Object::enterGroup( AIGroup *group )
 }
 
 //-------------------------------------------------------------------------------------------------
-void Object::leaveGroup( void )
+void Object::leaveGroup()
 {
 //	DEBUG_LOG(("***AIGROUP %x involved in leaveGroup on %x", m_group, this));
 	// if we are in a group, remove ourselves from it

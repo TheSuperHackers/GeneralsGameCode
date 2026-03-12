@@ -103,13 +103,13 @@ public:
 	// Names
 	void	Set_Texture_Name(const char * name);
 	void	Set_Full_Path(const char * path)			{ FullPath = path; }
-	const StringClass& Get_Texture_Name(void) const		{ return Name; }
-	const StringClass& Get_Full_Path(void) const			{ if (FullPath.Is_Empty ()) return Name; return FullPath; }
+	const StringClass& Get_Texture_Name() const		{ return Name; }
+	const StringClass& Get_Full_Path() const			{ if (FullPath.Is_Empty ()) return Name; return FullPath; }
 
 	unsigned Get_ID() const { return texture_id; }	// Each textrure has a unique id
 
 	// The number of Mip levels in the texture
-	unsigned int Get_Mip_Level_Count(void) const
+	unsigned int Get_Mip_Level_Count() const
 	{
 		return MipLevelCount;
 	}
@@ -130,7 +130,7 @@ public:
 	int Get_Inactivation_Time() const { return InactivationTime; }
 
 	// Texture priority affects texture management and caching.
-	unsigned int Get_Priority(void);
+	unsigned int Get_Priority();
 	unsigned int Set_Priority(unsigned int priority);	// Returns previous priority
 
 	// Debug utility functions for returning the texture memory usage

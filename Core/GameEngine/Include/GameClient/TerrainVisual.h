@@ -205,9 +205,9 @@ public:
 	TerrainVisual();
 	virtual ~TerrainVisual();
 
-	virtual void init( void );
-	virtual void reset( void );
-	virtual void update( void );
+	virtual void init();
+	virtual void reset();
+	virtual void update();
 
 	virtual Bool load( AsciiString filename );
 
@@ -247,8 +247,8 @@ public:
 	virtual Bool getWaterGridHeight( Real worldX, Real worldY, Real *height) = 0;
 
 	/// set detail of terrain tracks.
-	virtual void setTerrainTracksDetail(void)=0;
-	virtual void setShoreLineDetail(void)=0;
+	virtual void setTerrainTracksDetail()=0;
+	virtual void setShoreLineDetail()=0;
 
 	/// Add a bib for an object at location.
 	virtual void addFactionBib(Object *factionBuilding, Bool highlight, Real extra = 0)=0;
@@ -260,8 +260,8 @@ public:
 	/// Remove a bib.
 	virtual void removeFactionBibDrawable(Drawable *factionBuilding)=0;
 
-	virtual void removeAllBibs(void)=0;
-	virtual void removeBibHighlighting(void)=0;
+	virtual void removeAllBibs()=0;
+	virtual void removeBibHighlighting()=0;
 
 	virtual void removeTreesAndPropsForConstruction(
 		const Coord3D* pos,
@@ -282,11 +282,11 @@ public:
   ////////////////////////////////////////////////////
   ////////////////////////////////////////////////////
 #ifdef DO_SEISMIC_SIMULATIONS
-  virtual void updateSeismicSimulations( void ) = 0; /// walk the SeismicSimulationList and, well, do it.
+  virtual void updateSeismicSimulations() = 0; /// walk the SeismicSimulationList and, well, do it.
   virtual void addSeismicSimulation( const SeismicSimulationNode& sim ) = 0;
 #endif
-  virtual WorldHeightMap* getLogicHeightMap( void ) {return nullptr;};
-  virtual WorldHeightMap* getClientHeightMap( void ) {return nullptr;};
+  virtual WorldHeightMap* getLogicHeightMap() {return nullptr;};
+  virtual WorldHeightMap* getClientHeightMap() {return nullptr;};
   ////////////////////////////////////////////////////
   ////////////////////////////////////////////////////
   ////////////////////////////////////////////////////
@@ -300,7 +300,7 @@ protected:
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
+	virtual void loadPostProcess();
 
 	AsciiString m_filenameString;							///< file with terrain data
 

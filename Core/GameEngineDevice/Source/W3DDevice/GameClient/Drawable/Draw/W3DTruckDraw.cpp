@@ -121,12 +121,12 @@ m_midMidRightTireBone(0), m_midMidLeftTireBone(0), m_prevRenderObj(nullptr)
 //-------------------------------------------------------------------------------------------------
 W3DTruckDraw::~W3DTruckDraw()
 {
-	tossEmitters();
+	tossWheelEmitters();
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void W3DTruckDraw::tossEmitters()
+void W3DTruckDraw::tossWheelEmitters()
 {
 	for (size_t i = 0; i < ARRAY_SIZE(m_truckEffectIDs); ++i)
 	{
@@ -145,19 +145,16 @@ void W3DTruckDraw::setFullyObscuredByShroud(Bool fullyObscured)
 	if (fullyObscured != getFullyObscuredByShroud())
 	{
 		if (fullyObscured)
-			tossEmitters();
+			tossWheelEmitters();
 		else
-			createEmitters();
+			createWheelEmitters();
 	}
 	W3DModelDraw::setFullyObscuredByShroud(fullyObscured);
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-/**
- * Start creating debris from the tank treads
- */
-void W3DTruckDraw::createEmitters( void )
+void W3DTruckDraw::createWheelEmitters()
 {
 	if (getDrawable()->isDrawableEffectivelyHidden())
 		return;
@@ -195,16 +192,13 @@ void W3DTruckDraw::createEmitters( void )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-/**
- * Stop creating debris from the tank treads
- */
-void W3DTruckDraw::enableEmitters( Bool enable  )
+void W3DTruckDraw::enableWheelEmitters( Bool enable )
 {
 	// don't check... if we are hidden the first time thru, then we'll never create the emitters.
 	// eg, if we are loading a game and the unit is in a tunnel, he'll never get emitteres even when he exits.
 	//if (!m_effectsInitialized)
 	{
-		createEmitters();
+		createWheelEmitters();
 		m_effectsInitialized=true;
 	}
 
@@ -231,7 +225,7 @@ void W3DTruckDraw::enableEmitters( Bool enable  )
 	}
 }
 //-------------------------------------------------------------------------------------------------
-void W3DTruckDraw::updateBones( void )
+void W3DTruckDraw::updateBones()
 {
 	if( getW3DTruckDrawModuleData() )
 	{
@@ -325,12 +319,12 @@ void W3DTruckDraw::setHidden(Bool h)
 	W3DModelDraw::setHidden(h);
 	if (h)
 	{
-		enableEmitters(false);
+		enableWheelEmitters(false);
 	}
 }
 
 //-------------------------------------------------------------------------------------------------
-void W3DTruckDraw::onRenderObjRecreated(void)
+void W3DTruckDraw::onRenderObjRecreated()
 {
 	//DEBUG_LOG(("Old obj %x, newObj %x, new bones %d, old bones %d",
 	//	m_prevRenderObj, getRenderObject(), getRenderObject()->Get_Num_Bones(),
@@ -543,7 +537,7 @@ void W3DTruckDraw::doDrawModule(const Matrix3D* transformMtx)
 	Bool wasPowersliding = m_isPowersliding;
 	m_isPowersliding = false;
 	if (physics->isMotive() && !obj->isSignificantlyAboveTerrain()) {
-		enableEmitters(true);
+		enableWheelEmitters(true);
 		Coord3D accel = *physics->getAcceleration();
 		accel.z = 0; // ignore gravitational force.
 		Bool accelerating = accel.length()>ACCEL_THRESHOLD;
@@ -585,7 +579,7 @@ void W3DTruckDraw::doDrawModule(const Matrix3D* transformMtx)
 		}
 	}
 	else
-		enableEmitters(false);
+		enableWheelEmitters(false);
 
 	m_wasAirborne = obj->isSignificantlyAboveTerrain();
 
@@ -633,13 +627,13 @@ void W3DTruckDraw::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void W3DTruckDraw::loadPostProcess( void )
+void W3DTruckDraw::loadPostProcess()
 {
 
 	// extend base class
 	W3DModelDraw::loadPostProcess();
 
-	// toss any existing ones (no need to re-create; we'll do that on demand)
-	tossEmitters();
+	// toss any existing wheel emitters (no need to re-create; we'll do that on demand)
+	tossWheelEmitters();
 
 }

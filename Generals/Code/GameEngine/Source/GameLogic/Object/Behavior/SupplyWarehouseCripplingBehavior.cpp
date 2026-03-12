@@ -71,7 +71,7 @@ SupplyWarehouseCripplingBehavior::SupplyWarehouseCripplingBehavior( Thing *thing
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-SupplyWarehouseCripplingBehavior::~SupplyWarehouseCripplingBehavior( void )
+SupplyWarehouseCripplingBehavior::~SupplyWarehouseCripplingBehavior()
 {
 }
 
@@ -175,7 +175,7 @@ void SupplyWarehouseCripplingBehavior::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void SupplyWarehouseCripplingBehavior::loadPostProcess( void )
+void SupplyWarehouseCripplingBehavior::loadPostProcess()
 {
 
 	// extend base class

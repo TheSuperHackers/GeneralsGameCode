@@ -89,7 +89,7 @@ FlammableUpdate::FlammableUpdate( Thing *thing, const ModuleData* moduleData ) :
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-FlammableUpdate::~FlammableUpdate( void )
+FlammableUpdate::~FlammableUpdate()
 {
 	stopBurningSound();
 }
@@ -108,7 +108,7 @@ void FlammableUpdate::onDamage( DamageInfo *damageInfo )
 			m_flameDamageLimit = getFlammableUpdateModuleData()->m_flameDamageLimitData;
 		}
 		m_lastFlameDamageDealt = now;
-#if RETAIL_COMPATIBLE_CRC
+#if RETAIL_COMPATIBLE_CRC || PRESERVE_RETAIL_BEHAVIOR
 		m_flameSource = getObject()->getID();
 #else
 		// TheSuperHackers @bugfix Stubbjax 03/09/2025 Allow flame damage to award xp to the flame source.
@@ -130,7 +130,7 @@ void FlammableUpdate::onDamage( DamageInfo *damageInfo )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime FlammableUpdate::update( void )
+UpdateSleepTime FlammableUpdate::update()
 {
 	Object *me = getObject();
 	DEBUG_ASSERTCRASH(m_status == FS_AFLAME, ("hmm, should be aflame"));
@@ -331,7 +331,7 @@ void FlammableUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void FlammableUpdate::loadPostProcess( void )
+void FlammableUpdate::loadPostProcess()
 {
 
 	// extend base class

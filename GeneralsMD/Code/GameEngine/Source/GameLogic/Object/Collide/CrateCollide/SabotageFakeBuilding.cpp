@@ -66,7 +66,7 @@ SabotageFakeBuildingCrateCollide::SabotageFakeBuildingCrateCollide( Thing *thing
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-SabotageFakeBuildingCrateCollide::~SabotageFakeBuildingCrateCollide( void )
+SabotageFakeBuildingCrateCollide::~SabotageFakeBuildingCrateCollide()
 {
 }
 
@@ -182,7 +182,7 @@ void SabotageFakeBuildingCrateCollide::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void SabotageFakeBuildingCrateCollide::loadPostProcess( void )
+void SabotageFakeBuildingCrateCollide::loadPostProcess()
 {
 
 	// extend base class

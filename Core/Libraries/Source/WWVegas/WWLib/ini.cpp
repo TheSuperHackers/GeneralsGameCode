@@ -129,7 +129,7 @@ bool INIClass::KeepBlankEntries = false;
 const int INIClass::MAX_LINE_LENGTH = 4096;
 
 
-INIEntry::~INIEntry(void)
+INIEntry::~INIEntry()
 {
 	free(Entry);
 	Entry = nullptr;
@@ -137,26 +137,26 @@ INIEntry::~INIEntry(void)
 	Value = nullptr;
 }
 
-INISection::~INISection(void)
+INISection::~INISection()
 {
 	free(Section);
 	Section = nullptr;
 	EntryList.Delete();
 }
 
-bool INIClass::Is_Loaded(void) const
+bool INIClass::Is_Loaded() const
 {
 	return(!SectionList->Is_Empty());
 }
 
-void INIClass::Initialize(void)
+void INIClass::Initialize()
 {
 	SectionList = W3DNEW List<INISection *> ();
 	SectionIndex = W3DNEW IndexClass<int, INISection *> ();
 	Filename = nstrdup("<unknown>");
 }
 
-void INIClass::Shutdown(void)
+void INIClass::Shutdown()
 {
 	delete SectionList;
 	delete SectionIndex;
@@ -175,7 +175,7 @@ void INIClass::Shutdown(void)
  *                                                                                             *
  * HISTORY:                                                                                    *
  *=============================================================================================*/
-INIClass::INIClass(void)
+INIClass::INIClass()
 :	Filename(nullptr)
 {
 	Initialize();
@@ -244,7 +244,7 @@ INIClass::INIClass(const char *filename)
  * HISTORY:                                                                                    *
  *   07/02/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-INIClass::~INIClass(void)
+INIClass::~INIClass()
 {
 	Clear();
 	Shutdown();
@@ -322,7 +322,7 @@ bool INIClass::Clear(char const * section, char const * entry)
  * HISTORY:                                                                                    *
  *   9/7/2001   AJA:  Created.                                                                 *
  *=============================================================================================*/
-const char * INIClass::Get_Filename (void) const
+const char * INIClass::Get_Filename () const
 {
 	return Filename;
 }
@@ -755,7 +755,7 @@ INISection * INIClass::Find_Section(char const * section) const
  *   07/02/1996 JLB : Created.                                                                 *
  *   11/02/1996 JLB : Uses index manager.                                                      *
  *=============================================================================================*/
-int INIClass::Section_Count(void) const
+int INIClass::Section_Count() const
 {
 	return(SectionIndex->Count());
 }
@@ -874,7 +874,7 @@ unsigned INIClass::Enumerate_Entries(const char *Section, const char * Entry_Pre
 	char entry[256];
 	do
 	{
-		sprintf(entry, "%s%d", Entry_Prefix, count);
+		snprintf(entry, ARRAY_SIZE(entry), "%s%d", Entry_Prefix, count);
 		present = Is_Present(Section, entry);
 		if(present)
 			count++;

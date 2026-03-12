@@ -58,7 +58,7 @@ class BufferStraw : public Straw
 //		void const * BufferPtr;
 //		int Length;
 
-		bool Is_Valid(void) {return(BufferPtr.Is_Valid());}
+		bool Is_Valid() {return(BufferPtr.Is_Valid());}
 		BufferStraw(BufferStraw & rvalue);
 		BufferStraw & operator = (BufferStraw const & pipe);
 };
@@ -72,14 +72,14 @@ class FileStraw : public Straw
 	public:
 		FileStraw(FileClass * file) : File(file), HasOpened(false) {}
 		FileStraw(FileClass & file) : File(&file), HasOpened(false) {}
-		virtual ~FileStraw(void);
+		virtual ~FileStraw();
 		virtual int Get(void * source, int slen);
 
 	private:
 		FileClass * File;
 		bool HasOpened;
 
-		bool Valid_File(void) {return(File != nullptr);}
+		bool Valid_File() {return(File != nullptr);}
 		FileStraw(FileStraw & rvalue);
 		FileStraw & operator = (FileStraw const & pipe);
 };

@@ -296,7 +296,7 @@ error:
 	*/
 //=================================================================
 
-void LocalFile::close( void )
+void LocalFile::close()
 {
 	closeFile();
 	File::close();
@@ -366,7 +366,7 @@ Int LocalFile::read( void *buffer, Int bytes )
 // LocalFile::readChar
 //=================================================================
 
-Int LocalFile::readChar( )
+Int LocalFile::readChar()
 {
 	Char character = '\0';
 
@@ -382,7 +382,7 @@ Int LocalFile::readChar( )
 // LocalFile::readWideChar
 //=================================================================
 
-Int LocalFile::readWideChar( )
+Int LocalFile::readWideChar()
 {
 	WideChar character = L'\0';
 

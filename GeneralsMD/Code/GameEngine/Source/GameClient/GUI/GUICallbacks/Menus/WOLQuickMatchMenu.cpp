@@ -35,6 +35,7 @@
 #include "Common/QuickmatchPreferences.h"
 #include "Common/LadderPreferences.h"
 #include "Common/MultiplayerSettings.h"
+#include "Common/OptionPreferences.h"
 #include "Common/PlayerTemplate.h"
 #include "GameClient/AnimateWindowManager.h"
 #include "GameClient/WindowLayout.h"
@@ -136,9 +137,9 @@ static Int maxPingEntries = 0;
 static Int maxPoints= 100;
 static Int minPoints = 0;
 
-static const LadderInfo * getLadderInfo( void );
+static const LadderInfo * getLadderInfo();
 
-static Bool isInfoShown(void)
+static Bool isInfoShown()
 {
 	static NameKeyType parentStatsID = NAMEKEY("WOLQuickMatchMenu.wnd:ParentStats");
 	GameWindow *parentStats = TheWindowManager->winGetWindowFromId( parentWOLQuickMatch, parentStatsID );
@@ -224,7 +225,7 @@ static Int MAX_DISCONNECTS[MAX_DISCONNECTS_COUNT] = {MAX_DISCONNECTS_ANY, MAX_DI
 																											MAX_DISCONNECTS_50};
 
 
-void UpdateStartButton(void)
+void UpdateStartButton()
 {
 	if (!comboBoxLadder || !buttonStart || !listboxMapSelect)
 		return;
@@ -477,7 +478,7 @@ void PopulateQMLadderListBox( GameWindow *win )
 	isPopulatingLadderBox = false;
 }
 
-static const LadderInfo * getLadderInfo( void )
+static const LadderInfo * getLadderInfo()
 {
 	Int index;
 	Int selected;
@@ -488,7 +489,7 @@ static const LadderInfo * getLadderInfo( void )
 	return li;
 }
 
-void PopulateQMLadderComboBox( void )
+void PopulateQMLadderComboBox()
 {
 	if (!parentWOLQuickMatch || !comboBoxLadder)
 		return;
@@ -611,7 +612,7 @@ static void populateQuickMatchMapSelectListbox( QuickMatchPreferences& pref )
 	}
 }
 
-static void saveQuickMatchOptions( void )
+static void saveQuickMatchOptions()
 {
 	if(isInInit)
 		return;

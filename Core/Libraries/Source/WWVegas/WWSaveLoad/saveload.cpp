@@ -118,7 +118,7 @@ bool SaveLoadSystemClass::Load (ChunkLoadClass &cload,bool auto_post_load)
 		}                                               \
 	}                                                  \
 
-bool SaveLoadSystemClass::Post_Load_Processing (void(*network_callback)(void))
+bool SaveLoadSystemClass::Post_Load_Processing (void(*network_callback)())
 {
 	unsigned long time = TIMEGETTIME();
 
@@ -302,7 +302,7 @@ void SaveLoadSystemClass::Unlink_Factory(PersistFactoryClass * fact)
 	fact->NextFactory = nullptr;
 }
 
-void Force_Link_WWSaveLoad (void)
+void Force_Link_WWSaveLoad ()
 {
 	FORCE_LINK( Twiddler );
 	return ;

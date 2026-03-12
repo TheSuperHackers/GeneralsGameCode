@@ -58,7 +58,7 @@ public:
     return true;
   }
 
-  virtual void Delete(void) { delete this; }
+  virtual void Delete() { delete this; }
 };
 
 DEBUG_CREATE_COMMAND_GROUP(test,TestCmdInterface)

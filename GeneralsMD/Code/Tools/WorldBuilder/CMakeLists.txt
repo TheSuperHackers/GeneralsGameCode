@@ -22,7 +22,6 @@ set(WORLDBUILDER_SRC
     "src/EditGroup.cpp"
     "src/EditObjectParameter.cpp"
     "src/EditParameter.cpp"
-    "src/EulaDialog.cpp"
     "src/ExportScriptsOptions.cpp"
     "src/EyedropperTool.cpp"
     "src/FeatherOptions.cpp"
@@ -122,7 +121,6 @@ set(WORLDBUILDER_SRC
     "include/EditGroup.h"
     "include/EditObjectParameter.h"
     "include/EditParameter.h"
-    "include/euladialog.h"
     "include/ExportScriptsOptions.h"
     "include/EyedropperTool.h"
     "include/FeatherOptions.h"
@@ -234,7 +232,7 @@ if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")
     target_link_options(z_worldbuilder PRIVATE /NODEFAULTLIB:libci.lib /NODEFAULTLIB:libc.lib)
     target_compile_definitions(z_worldbuilder PRIVATE _AFXDLL)
     target_sources(z_worldbuilder PRIVATE res/WorldBuilder.rc)
-    set_target_properties(z_worldbuilder PROPERTIES OUTPUT_NAME WorldBuilderZH)
+    set_target_properties(z_worldbuilder PROPERTIES OUTPUT_NAME "WorldBuilderZH${RTS_BUILD_OUTPUT_SUFFIX}")
 else()
-    set_target_properties(z_worldbuilder PROPERTIES OUTPUT_NAME worldbuilderzh)
+    set_target_properties(z_worldbuilder PROPERTIES OUTPUT_NAME "worldbuilderzh${RTS_BUILD_OUTPUT_SUFFIX}")
 endif()

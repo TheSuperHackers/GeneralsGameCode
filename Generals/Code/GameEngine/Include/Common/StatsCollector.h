@@ -65,32 +65,32 @@ class GameMessage;
 class StatsCollector
 {
 public:
-	StatsCollector( void );
-	~StatsCollector( void );
+	StatsCollector();
+	~StatsCollector();
 
-	void reset( void );							///< Resets all values and writes the file header
+	void reset();							///< Resets all values and writes the file header
 
 	void collectMsgStats( const GameMessage *msg );			///< collects Msg Stats if
-	void collectUnitCountStats( void );									///< cycle through all units and takes count
-	void incrementScrollMoveCount( void );
-	void incrementBuildCount( void );
-	void incrementAttackCount( void );
-	void incrementMoveCount( void );
-	void startScrollTime( void );		///< Start our logging on the amount of time we're scrolling
-	void endScrollTime( void );			///< end our logging on the amount of time we're scrolling
+	void collectUnitCountStats();									///< cycle through all units and takes count
+	void incrementScrollMoveCount();
+	void incrementBuildCount();
+	void incrementAttackCount();
+	void incrementMoveCount();
+	void startScrollTime();		///< Start our logging on the amount of time we're scrolling
+	void endScrollTime();			///< end our logging on the amount of time we're scrolling
 
-	void update( void );						///< called once a frame to see if we should poll this frame
+	void update();						///< called once a frame to see if we should poll this frame
 
-	void writeFileEnd(void);				///< Write the end of the file
+	void writeFileEnd();				///< Write the end of the file
 private:
 
-	void createFileName( void );		///< Create a snazzy filename
+	void createFileName();		///< Create a snazzy filename
 	AsciiString m_statsFileName;		///< store the snazzy filename
 
-	void writeInitialFileInfo(void );		///< write the header file info
-	void writeStatInfo( void );					///< write the stats we're keeping track of
+	void writeInitialFileInfo();		///< write the header file info
+	void writeStatInfo();					///< write the stats we're keeping track of
 
-	void zeroOutStats( void );			///< zero out the stats
+	void zeroOutStats();			///< zero out the stats
 	UnsignedInt m_buildCommands;		///< count of the build commands the local player issued
 	UnsignedInt m_moveCommands;			///< count of the move commands
 	UnsignedInt m_attackCommands;		///< attack commands

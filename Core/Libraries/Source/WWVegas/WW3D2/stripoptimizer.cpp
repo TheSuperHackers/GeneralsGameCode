@@ -386,10 +386,10 @@ struct Vector3i
 
 struct Edge
 {
-				Edge		(void)					{}
+				Edge		()					{}
 				Edge		(int v0, int v1)		{ v[0] = v0; v[1] = v1;								}
 	bool		operator==	(const Edge& s) const	{ return v[0]==s.v[0] && v[1] == s.v[1];			}
-	void		sort		(void)					{ if (v[0]>v[1]) swap(v[0],v[1]);					}
+	void		sort		()					{ if (v[0]>v[1]) swap(v[0],v[1]);					}
 
 	int			v[2];						// edge
 };
@@ -405,7 +405,7 @@ struct Edge
 
 struct Triangle
 {
-	Triangle (void)
+	Triangle ()
 	{
 		m_neighbors[0] = nullptr;
 		m_neighbors[1] = nullptr;
@@ -425,7 +425,7 @@ struct Triangle
 	Triangle*	m_next;						// next triangle in same bin
 	int			m_bin;						// current bin (-1 == not in any bin)
 
-	int			getConnectivity (void) const	{ int cnt = 0; if (m_neighbors[0]) cnt++; if (m_neighbors[1]) cnt++; if (m_neighbors[2]) cnt++; return cnt;}
+	int			getConnectivity () const	{ int cnt = 0; if (m_neighbors[0]) cnt++; if (m_neighbors[1]) cnt++; if (m_neighbors[2]) cnt++; return cnt;}
 	const Edge	getEdge			(int i) const	{ WWASSERT(i>=0 && i<3); return Edge(m_vertices[i],i==2?m_vertices[0]:m_vertices[i+1]); }
 
 };
@@ -443,9 +443,9 @@ class TriangleQueue
 {
 public:
 					TriangleQueue			(Triangle* tris, int N);
-					~TriangleQueue			(void);
+					~TriangleQueue			();
 	void			removeTriangle			(Triangle* t);
-	Triangle*		getTop					(void) const;
+	Triangle*		getTop					() const;
 	int				getVertexConnectivity	(int i)  const;
 private:
 					TriangleQueue			(const TriangleQueue&);
@@ -470,7 +470,7 @@ class Stripify
 public:
 	static int*			stripify	(const Vector3i* tris, int N);
 private:
-						Stripify							(void);	// not permitted
+						Stripify							();	// not permitted
 						Stripify	(const Stripify&);
 	Stripify&			operator=	(const Stripify&);
 
@@ -502,7 +502,7 @@ namespace Strip
  *
  *****************************************************************************/
 
-inline Triangle* TriangleQueue::getTop	(void) const
+inline Triangle* TriangleQueue::getTop	() const
 {
 	for (int i = 0; i < 4; i++)
 	if (m_bin[i])

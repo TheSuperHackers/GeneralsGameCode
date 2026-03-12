@@ -39,6 +39,8 @@
 #include "WW3D2/part_emt.h"
 
 //-------------------------------------------------------------------------------------------------
+// TheSuperHackers @fix xezon 01/02/2026 The Tread Effects are now usable in W3DTankTruckDraw.
+//-------------------------------------------------------------------------------------------------
 class W3DTankTruckDrawModuleData : public W3DModelDrawModuleData
 {
 public:
@@ -90,7 +92,7 @@ public:
 	virtual void reactToGeometryChange() { }
 
 protected:
-	virtual void onRenderObjRecreated(void);
+	virtual void onRenderObjRecreated();
 
 protected:
 	Bool						m_effectsInitialized;
@@ -139,12 +141,15 @@ protected:
 
 	RenderObjClass *m_prevRenderObj;
 
-	void createEmitters( void );					///< Create particle effects.
-	void tossEmitters( void );					///< Create particle effects.
-	void enableEmitters( Bool enable );						///< stop creating debris from the tank treads
-	void updateBones( void );
+	void createTreadEmitters(); ///< Create particle effects for treads.
+	void tossTreadEmitters(); ///< Destroy particle effects for treads.
 
-	void stopMoveDebris( void );												///< stop creating debris from the tank treads
-	void updateTreadObjects(void);												///< update pointers to sub-objects like treads.
-	void updateTreadPositions(Real uvDelta);									///< update uv coordinates on each tread
+	void createWheelEmitters(); ///< Create particle effects for wheels.
+	void tossWheelEmitters(); ///< Destroy particle effects for wheels.
+	void enableWheelEmitters( Bool enable ); ///< Start or stop creating effects from the wheels.
+	void updateBones();
+
+	void stopMoveDebris(); ///< Stop creating debris from the tank treads.
+	void updateTreadObjects(); ///< Update pointers to sub-objects like treads.
+	void updateTreadPositions(Real uvDelta); ///< Update uv coordinates on each tread.
 };

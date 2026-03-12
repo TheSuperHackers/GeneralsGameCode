@@ -66,7 +66,7 @@ PartitionSolver::PartitionSolver(const EntriesVec& elements, const SpacesVec& sp
 	m_currentSolutionLeftovers = 0;
 }
 
-void PartitionSolver::solve(void)
+void PartitionSolver::solve()
 {
 	m_bestSolution.clear();
 	m_currentSolution.clear();
@@ -117,7 +117,7 @@ void PartitionSolver::solve(void)
 	}
 }
 
-const SolutionVec& PartitionSolver::getSolution( void ) const
+const SolutionVec& PartitionSolver::getSolution() const
 {
 	return m_bestSolution;
 }

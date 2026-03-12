@@ -763,12 +763,12 @@ void ModelConditionInfo::validateWeaponBarrelInfo() const
 
 				if (!recoilBoneName.isEmpty())
 				{
-					sprintf(buffer, "%s%02d", recoilBoneName.str(), i);
+					snprintf(buffer, ARRAY_SIZE(buffer), "%s%02d", recoilBoneName.str(), i);
 					findPristineBone(NAMEKEY(buffer), &info.m_recoilBone);
 				}
 				if (!mfName.isEmpty())
 				{
-					sprintf(buffer, "%s%02d", mfName.str(), i);
+					snprintf(buffer, ARRAY_SIZE(buffer), "%s%02d", mfName.str(), i);
 					findPristineBone(NAMEKEY(buffer), &info.m_muzzleFlashBone);
 #if defined(RTS_DEBUG) || defined(DEBUG_CRASHING)
 					if (info.m_muzzleFlashBone)
@@ -777,7 +777,7 @@ void ModelConditionInfo::validateWeaponBarrelInfo() const
 				}
 				if (!fxBoneName.isEmpty())
 				{
-					sprintf(buffer, "%s%02d", fxBoneName.str(), i);
+					snprintf(buffer, ARRAY_SIZE(buffer), "%s%02d", fxBoneName.str(), i);
 					findPristineBone(NAMEKEY(buffer), &info.m_fxBone);
 					// special case: if we have multiple muzzleflashes, but only one fxbone, use that fxbone for everything.
 					if (info.m_fxBone == 0 && info.m_muzzleFlashBone != 0)
@@ -787,7 +787,7 @@ void ModelConditionInfo::validateWeaponBarrelInfo() const
 				Int plbBoneIndex = 0;
 				if (!plbName.isEmpty())
 				{
-					sprintf(buffer, "%s%02d", plbName.str(), i);
+					snprintf(buffer, ARRAY_SIZE(buffer), "%s%02d", plbName.str(), i);
 					const Matrix3D* mtx = findPristineBone(NAMEKEY(buffer), &plbBoneIndex);
 					if (mtx != nullptr)
 						info.m_projectileOffsetMtx = *mtx;
@@ -1784,7 +1784,7 @@ W3DModelDraw::W3DModelDraw(Thing *thing, const ModuleData* moduleData) : DrawMod
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void W3DModelDraw::onDrawableBoundToObject(void)
+void W3DModelDraw::onDrawableBoundToObject()
 {
 	getW3DModelDrawModuleData()->validateStuffForTimeAndWeather(getDrawable(),
 											TheGlobalData->m_timeOfDay == TIME_OF_DAY_NIGHT,
@@ -1793,7 +1793,7 @@ void W3DModelDraw::onDrawableBoundToObject(void)
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-W3DModelDraw::~W3DModelDraw(void)
+W3DModelDraw::~W3DModelDraw()
 {
 	if (m_trackRenderObject && TheTerrainTracksRenderObjClassSystem)
 	{
@@ -1847,7 +1847,7 @@ void W3DModelDraw::setHidden(Bool hidden)
 }
 
 /**Free all data used by this model's shadow.  This is used to dynamically enable/disable shadows by the options screen*/
-void W3DModelDraw::releaseShadows(void)	///< frees all shadow resources used by this module - used by Options screen.
+void W3DModelDraw::releaseShadows()	///< frees all shadow resources used by this module - used by Options screen.
 {
 	if (m_shadow)
 		m_shadow->release();
@@ -1855,7 +1855,7 @@ void W3DModelDraw::releaseShadows(void)	///< frees all shadow resources used by 
 }
 
 /** Create shadow resources if not already present. This is used to dynamically enable/disable shadows by the options screen*/
-void W3DModelDraw::allocateShadows(void)
+void W3DModelDraw::allocateShadows()
 {
 	const ThingTemplate *tmplate=getDrawable()->getTemplate();
 
@@ -3444,7 +3444,7 @@ Int W3DModelDraw::getPristineBonePositionsForConditionState(
 		if (i == 0)
 			strlcpy(buffer, boneNamePrefix, ARRAY_SIZE(buffer));
 		else
-			sprintf(buffer, "%s%02d", boneNamePrefix, i);
+			snprintf(buffer, ARRAY_SIZE(buffer), "%s%02d", boneNamePrefix, i);
 
 		for (char *c = buffer; c && *c; ++c)
 		{
@@ -3601,7 +3601,7 @@ Int W3DModelDraw::getCurrentBonePositions(
 		if (i == 0)
 			strlcpy(buffer, boneNamePrefix, ARRAY_SIZE(buffer));
 		else
-			sprintf(buffer, "%s%02d", boneNamePrefix, i);
+			snprintf(buffer, ARRAY_SIZE(buffer), "%s%02d", boneNamePrefix, i);
 
 		Int boneIndex = m_renderObject->Get_Bone_Index(buffer);
 		if (boneIndex == 0)
@@ -3856,7 +3856,7 @@ void W3DModelDraw::setPauseAnimation(Bool pauseAnim)
 //-------------------------------------------------------------------------------------------------
 #ifdef ALLOW_ANIM_INQUIRIES
 // srj sez: not sure if this is a good idea, for net sync reasons...
-Real W3DModelDraw::getAnimationScrubScalar( void ) const
+Real W3DModelDraw::getAnimationScrubScalar() const
 {
 	return getCurAnimDistanceCovered();
 }
@@ -4254,7 +4254,7 @@ void W3DModelDraw::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void W3DModelDraw::loadPostProcess( void )
+void W3DModelDraw::loadPostProcess()
 {
 
 	// extend base class
@@ -4313,7 +4313,7 @@ void W3DModelDrawModuleData::xfer( Xfer *x )
 }
 
 // ------------------------------------------------------------------------------------------------
-void W3DModelDrawModuleData::loadPostProcess( void )
+void W3DModelDrawModuleData::loadPostProcess()
 {
 }
 

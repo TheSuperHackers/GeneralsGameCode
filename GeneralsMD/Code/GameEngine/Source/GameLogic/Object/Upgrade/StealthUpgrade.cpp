@@ -43,12 +43,12 @@ StealthUpgrade::StealthUpgrade( Thing *thing, const ModuleData* moduleData ) : U
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-StealthUpgrade::~StealthUpgrade( void )
+StealthUpgrade::~StealthUpgrade()
 {
 }
 
 //-------------------------------------------------------------------------------------------------
-void StealthUpgrade::upgradeImplementation( )
+void StealthUpgrade::upgradeImplementation()
 {
 	// The logic that does the stealthupdate will notice this and start stealthing
 	Object *me = getObject();
@@ -97,7 +97,7 @@ void StealthUpgrade::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void StealthUpgrade::loadPostProcess( void )
+void StealthUpgrade::loadPostProcess()
 {
 
 	// extend base class

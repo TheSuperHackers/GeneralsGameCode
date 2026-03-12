@@ -31,22 +31,22 @@
 
 int test,divByZero;
 
-void func1(void)
+void func1()
 {
   test/=divByZero;
 }
 
-void func2(void)
+void func2()
 {
   func1();
 }
 
-void func3(void)
+void func3()
 {
   func2();
 }
 
-void main(void)
+void main()
 {
   try
   {

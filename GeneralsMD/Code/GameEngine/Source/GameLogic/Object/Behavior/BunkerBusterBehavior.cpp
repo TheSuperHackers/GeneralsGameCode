@@ -49,7 +49,7 @@ static DomeStyleSeismicFilter bunkerBusterHeavingEarthSeismicFilter;
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-BunkerBusterBehaviorModuleData::BunkerBusterBehaviorModuleData( void )
+BunkerBusterBehaviorModuleData::BunkerBusterBehaviorModuleData()
 {
 
 	m_upgradeRequired = nullptr;
@@ -107,14 +107,14 @@ BunkerBusterBehavior::BunkerBusterBehavior( Thing *thing, const ModuleData *modD
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-BunkerBusterBehavior::~BunkerBusterBehavior( void )
+BunkerBusterBehavior::~BunkerBusterBehavior()
 {
 
 }
 
 
 
-void BunkerBusterBehavior::onObjectCreated( void )
+void BunkerBusterBehavior::onObjectCreated()
 {
 	const BunkerBusterBehaviorModuleData *modData = getBunkerBusterBehaviorModuleData();
 
@@ -127,7 +127,7 @@ void BunkerBusterBehavior::onObjectCreated( void )
 // ------------------------------------------------------------------------------------------------
 /** The update callback */
 // ------------------------------------------------------------------------------------------------
-UpdateSleepTime BunkerBusterBehavior::update( void )
+UpdateSleepTime BunkerBusterBehavior::update()
 {
   const BunkerBusterBehaviorModuleData *modData = getBunkerBusterBehaviorModuleData();
   AIUpdateInterface *ai = getObject()->getAI();
@@ -165,6 +165,13 @@ UpdateSleepTime BunkerBusterBehavior::update( void )
 // ------------------------------------------------------------------------------------------------
 void BunkerBusterBehavior::onDie( const DamageInfo *damageInfo )
 {
+#if !RETAIL_COMPATIBLE_CRC
+  // TheSuperHackers @bugfix Stubbjax 17/02/2026 Only bust the bunker if the missile kills itself
+  // by reaching its destination and not when killed via external sources such as a zap from a PDL.
+  if (!getObject()->testStatus(OBJECT_STATUS_MISSILE_KILLING_SELF))
+    return;
+#endif
+
   // do what we came here to do!
   bustTheBunker();
 }
@@ -176,7 +183,7 @@ void BunkerBusterBehavior::onDie( const DamageInfo *damageInfo )
 // ------------------------------------------------------------------------------------------------
 /** The bunker-busting effect callback */
 // ------------------------------------------------------------------------------------------------
-void BunkerBusterBehavior::bustTheBunker( void )
+void BunkerBusterBehavior::bustTheBunker()
 {
 	const BunkerBusterBehaviorModuleData *modData = getBunkerBusterBehaviorModuleData();
 
@@ -283,7 +290,7 @@ void BunkerBusterBehavior::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void BunkerBusterBehavior::loadPostProcess( void )
+void BunkerBusterBehavior::loadPostProcess()
 {
 
 	// extend base class

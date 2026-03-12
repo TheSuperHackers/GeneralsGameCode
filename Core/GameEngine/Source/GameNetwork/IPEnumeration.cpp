@@ -28,13 +28,13 @@
 #include "GameNetwork/networkutil.h"
 #include "GameClient/ClientInstance.h"
 
-IPEnumeration::IPEnumeration( void )
+IPEnumeration::IPEnumeration()
 {
 	m_IPlist = nullptr;
 	m_isWinsockInitialized = false;
 }
 
-IPEnumeration::~IPEnumeration( void )
+IPEnumeration::~IPEnumeration()
 {
 	if (m_isWinsockInitialized)
 	{
@@ -51,7 +51,7 @@ IPEnumeration::~IPEnumeration( void )
 	}
 }
 
-EnumeratedIP * IPEnumeration::getAddresses( void )
+EnumeratedIP * IPEnumeration::getAddresses()
 {
 	if (m_IPlist)
 		return m_IPlist;
@@ -163,7 +163,7 @@ void IPEnumeration::addNewIP( UnsignedByte a, UnsignedByte b, UnsignedByte c, Un
 	}
 }
 
-AsciiString IPEnumeration::getMachineName( void )
+AsciiString IPEnumeration::getMachineName()
 {
 	if (!m_isWinsockInitialized)
 	{

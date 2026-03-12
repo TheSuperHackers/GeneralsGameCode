@@ -1882,6 +1882,11 @@ UpdateSleepTime JetAIUpdate::update()
 		if (m_attackLocoExpireFrame != 0 && now >= m_attackLocoExpireFrame)
 		{
 			m_attackLocoExpireFrame = 0;
+#if !RETAIL_COMPATIBLE_CRC
+			// TheSuperHackers @bugfix arcticdolphin 04/03/2026 Reset locomotor when attack locomotor timer expires.
+			// Relevant for the Supersonic Mode of the USA Aurora.
+			chooseLocomotorSet(LOCOMOTORSET_NORMAL);
+#endif
 		}
 		if (m_attackersMissExpireFrame != 0 && now >= m_attackersMissExpireFrame)
 		{
@@ -2147,7 +2152,7 @@ Bool JetAIUpdate::isAllowedToMoveAwayFromUnit() const
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool JetAIUpdate::isDoingGroundMovement(void) const
+Bool JetAIUpdate::isDoingGroundMovement() const
 {
 	// srj per jba: Air units should never be doing ground movement, even when taxiing...
 	// (exception: see getTreatAsAircraftForLocoDistToGoal)
@@ -2503,7 +2508,7 @@ void JetAIUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void JetAIUpdate::loadPostProcess( void )
+void JetAIUpdate::loadPostProcess()
 {
 	//When drawables are created, so are their ambient sounds. After loading, only turn off the
 	//ambient sound if the engine is off.

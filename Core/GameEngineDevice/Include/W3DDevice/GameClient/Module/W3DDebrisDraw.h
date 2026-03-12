@@ -57,15 +57,15 @@ public:
 	virtual void doDrawModule(const Matrix3D* transformMtx);
 
 	virtual void setShadowsEnabled(Bool enable);
-	virtual void releaseShadows(void) {};	///< we don't care about preserving temporary shadows.
-	virtual void allocateShadows(void) {};	///< we don't care about preserving temporary shadows.
+	virtual void releaseShadows() {};	///< we don't care about preserving temporary shadows.
+	virtual void allocateShadows() {};	///< we don't care about preserving temporary shadows.
 
 	virtual void setFullyObscuredByShroud(Bool fullyObscured);
 	virtual void reactToTransformChange(const Matrix3D* oldMtx, const Coord3D* oldPos, Real oldAngle);
 	virtual void reactToGeometryChange() { }
 
 	virtual void setModelName(AsciiString name, Color color, ShadowType t);
-	virtual void setAnimNames(AsciiString initial, AsciiString flying, AsciiString final, const FXList* finalFX);
+	virtual void setAnimNames(AsciiString initial, AsciiString flying, AsciiString finalAnim, const FXList* finalFX);
 
 	virtual DebrisDrawInterface* getDebrisDrawInterface() { return this; }
 	virtual const DebrisDrawInterface* getDebrisDrawInterface() const { return this; }

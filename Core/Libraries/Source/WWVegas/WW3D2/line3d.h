@@ -62,11 +62,11 @@ class Line3DClass : public W3DMPO, public RenderObjClass
 			float r, float g, float b, float opacity = 1.0f);
 		Line3DClass(const Line3DClass & src);
 		Line3DClass & operator = (const Line3DClass & that);
-		virtual ~Line3DClass(void);
-		virtual RenderObjClass * Clone(void) const;
+		virtual ~Line3DClass();
+		virtual RenderObjClass * Clone() const;
 
 		// class id of this render object
-		virtual int Class_ID(void) const { return CLASSID_LINE3D; }
+		virtual int Class_ID() const { return CLASSID_LINE3D; }
 
 		virtual void		Render(RenderInfoClass & rfinfo);
 
@@ -75,7 +75,7 @@ class Line3DClass : public W3DMPO, public RenderObjClass
 		virtual void		Scale(float scalex, float scaley, float scalez);
 
 		// returns the number of polygons in the render object
-		virtual int Get_Num_Polys(void) const;
+		virtual int Get_Num_Polys() const;
 
       // Get the object space bounding volumes
       virtual void	Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const;
@@ -97,7 +97,7 @@ class Line3DClass : public W3DMPO, public RenderObjClass
 
 		// For non-opaque lines, allow them to render last.
 		void							Set_Sort_Level(int level)									{ SortLevel = level; }
-		int							Get_Sort_Level(void) const									{ return SortLevel; }
+		int							Get_Sort_Level() const									{ return SortLevel; }
 
 	protected:
 

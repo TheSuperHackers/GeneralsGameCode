@@ -100,25 +100,25 @@ public:
 
 public:
 	/// Enumerate all waypoints using getNext.
-	Waypoint *getNext(void) const {return m_pNext; }
+	Waypoint *getNext() const {return m_pNext; }
 	/// Enumerate the directed links from a waypoint using this,a nd getLink.
-	Int getNumLinks(void) const {return m_numLinks; }
+	Int getNumLinks() const {return m_numLinks; }
 	/// Get the n'th directed link.  (May be nullptr).
 	Waypoint *getLink(Int ndx) const {if (ndx>=0 && ndx <= MAX_LINKS) return m_links[ndx]; return nullptr; }
 	/// Get the waypoint's name.
-	AsciiString getName(void) const {return m_name; }
+	AsciiString getName() const {return m_name; }
 	/// Get the integer id.
-	WaypointID getID(void) const {return m_id; }
+	WaypointID getID() const {return m_id; }
 	/// Get the waypoint's position
-	const Coord3D *getLocation( void ) const { return &m_location;  }
+	const Coord3D *getLocation() const { return &m_location;  }
 	/// Get the waypoint's first path label
-	AsciiString getPathLabel1( void ) const { return m_pathLabel1;  }
+	AsciiString getPathLabel1() const { return m_pathLabel1;  }
 	/// Get the waypoint's second path label
-	AsciiString getPathLabel2( void ) const { return m_pathLabel2;  }
+	AsciiString getPathLabel2() const { return m_pathLabel2;  }
 	/// Get the waypoint's third path label
-	AsciiString getPathLabel3( void ) const { return m_pathLabel3;  }
+	AsciiString getPathLabel3() const { return m_pathLabel3;  }
 	/// Get bi-directionality.
-	Bool getBiDirectional( void ) const { return m_biDirectional; }
+	Bool getBiDirectional() const { return m_biDirectional; }
 
 	void setLocationZ(Real z) { m_location.z = z; }
 };
@@ -183,9 +183,9 @@ public:
 
 public:
 	/// return the bridge template name
-	AsciiString getBridgeTemplateName( void ) { return m_templateName; }
+	AsciiString getBridgeTemplateName() { return m_templateName; }
 	/// Enumerate all bridges using getNext;
-	Bridge	*getNext(void) {return m_next; }
+	Bridge	*getNext() {return m_next; }
 	/// Get the height for an object on bridge.  Note - assumes object is on bridge. Use isPointOnBridge to check.
 	Real getBridgeHeight(const Coord3D *pLoc, Coord3D* normal);
 	/// Get the bridges logical info.
@@ -193,11 +193,11 @@ public:
 	/// See if the point is on the bridge.
 	Bool isPointOnBridge(const Coord3D *pLoc);
 	Drawable *pickBridge(const Vector3 &from, const Vector3 &to, Vector3 *pos);
-	void updateDamageState(void); ///< Updates a bridge's damage info.
-	const BridgeInfo *peekBridgeInfo(void) const {return &m_bridgeInfo;}
-	PathfindLayerEnum getLayer(void) const {return m_layer;}
+	void updateDamageState(); ///< Updates a bridge's damage info.
+	const BridgeInfo *peekBridgeInfo() const {return &m_bridgeInfo;}
+	PathfindLayerEnum getLayer() const {return m_layer;}
 	void setLayer(PathfindLayerEnum layer) {m_layer = layer;}
-	const Region2D *getBounds(void) const {return &m_bounds;}
+	const Region2D *getBounds() const {return &m_bounds;}
 	Bool isCellOnEnd(const Region2D *cell);	 // Is pathfind cell on the sides of the bridge
 	Bool isCellOnSide(const Region2D *cell); // Is pathfind cell on the end of the bridge
 	Bool isCellEntryPoint(const Region2D *cell); // Is pathfind cell an entry point to the bridge
@@ -220,9 +220,9 @@ public:
 	TerrainLogic();
 	virtual ~TerrainLogic();
 
-	virtual void init( void );		///< Init
-	virtual void reset( void );		///< Reset
-	virtual void update( void );	///< Update
+	virtual void init();		///< Init
+	virtual void reset();		///< Reset
+	virtual void update();	///< Update
 
 	virtual Bool loadMap( AsciiString filename, Bool query );
 	virtual void newMap( Bool saveGame );	///< Initialize the logic for new map.
@@ -236,7 +236,7 @@ public:
 	virtual Coord3D findFarthestEdgePoint( const Coord3D *farthestFrom ) const ;
 	virtual Bool isClearLineOfSight(const Coord3D& pos, const Coord3D& posOther) const;
 
-	virtual AsciiString getSourceFilename( void ) { return m_filenameString; }
+	virtual AsciiString getSourceFilename() { return m_filenameString; }
 
 	virtual PathfindLayerEnum alignOnTerrain( Real angle, const Coord3D& pos, Bool stickToGround, Matrix3D& mtx);
 
@@ -254,7 +254,7 @@ public:
 																					Real transitionTimeInSeconds,
 																					Real damageAmount );///< change water height over time
 
-	virtual Waypoint *getFirstWaypoint(void) { return m_waypointListHead; }
+	virtual Waypoint *getFirstWaypoint() { return m_waypointListHead; }
 
 	/// Return the waypoint with the given name
 	virtual Waypoint *getWaypointByName( AsciiString name );
@@ -272,7 +272,7 @@ public:
 	virtual PolygonTrigger *getTriggerAreaByName( AsciiString name );
 
 	///Gets the first bridge.  Traverse all bridges using bridge->getNext();
-	virtual Bridge *getFirstBridge(void) const { return m_bridgeListHead; }
+	virtual Bridge *getFirstBridge() const { return m_bridgeListHead; }
 
 	/// Find the bridge at a location.  null means no bridge.
 	virtual Bridge *findBridgeAt(const Coord3D *pLoc) const;
@@ -292,9 +292,9 @@ public:
 	virtual void addLandmarkBridgeToLogic(Object *bridgeObj); ///< Adds a bridge's logical info.
 	virtual void deleteBridge( Bridge *bridge );	///< remove a bridge
 
-	virtual void updateBridgeDamageStates(void); ///< Updates bridge's damage info.
+	virtual void updateBridgeDamageStates(); ///< Updates bridge's damage info.
 
-	Bool anyBridgesDamageStatesChanged(void) {return m_bridgeDamageStatesChanged; } ///< Bridge damage states updated.
+	Bool anyBridgesDamageStatesChanged() {return m_bridgeDamageStatesChanged; } ///< Bridge damage states updated.
 	Bool isBridgeRepaired(const Object *bridge); ///< Is bridge repaired?
 	Bool isBridgeBroken(const Object *bridge); ///< Is bridge Broken?
 	void getBridgeAttackPoints(const Object *bridge, TBridgeAttackInfo *info); ///< Get bridge attack points.
@@ -308,7 +308,7 @@ public:
 	void enableWaterGrid( Bool enable );			///< enable/disable the water grid
 
 	// This is stuff to get the currently active boundary information
-	Int getActiveBoundary(void) { return m_activeBoundary; }
+	Int getActiveBoundary() { return m_activeBoundary; }
 	void setActiveBoundary(Int newActiveBoundary);
 
   void flattenTerrain(Object *obj);  ///< Flatten the terrain under a building.
@@ -318,7 +318,7 @@ protected:
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
+	virtual void loadPostProcess();
 
 	/// Chunk parser callback.
  	static Bool parseWaypointDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData);
@@ -329,9 +329,9 @@ protected:
 	/// Add a directed link between waypoints.
 	void addWaypointLink(Int id1, Int id2);
 	/// Deletes all waypoints.
-	void deleteWaypoints(void);
+	void deleteWaypoints();
 	/// Deletes all bridges.
-	void deleteBridges(void);
+	void deleteBridges();
 
 	/// find the axis aligned region bounding the water table
 	void findAxisAlignedBoundingRect( const WaterHandle *waterHandle, Region3D *region );

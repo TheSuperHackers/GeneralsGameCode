@@ -83,7 +83,7 @@ PilotFindVehicleUpdate::PilotFindVehicleUpdate( Thing *thing, const ModuleData* 
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-PilotFindVehicleUpdate::~PilotFindVehicleUpdate( void )
+PilotFindVehicleUpdate::~PilotFindVehicleUpdate()
 {
 
 }
@@ -216,7 +216,7 @@ void PilotFindVehicleUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void PilotFindVehicleUpdate::loadPostProcess( void )
+void PilotFindVehicleUpdate::loadPostProcess()
 {
 
 	// extend base class

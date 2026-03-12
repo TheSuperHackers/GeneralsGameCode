@@ -70,8 +70,8 @@ class W3DWaypointBuffer
 	friend class HeightMapRenderObjClass;
 public:
 
-	W3DWaypointBuffer(void);
-	~W3DWaypointBuffer(void);
+	W3DWaypointBuffer();
+	~W3DWaypointBuffer();
 
 	void drawWaypoints(RenderInfoClass &rinfo);
 	void freeWaypointBuffers();

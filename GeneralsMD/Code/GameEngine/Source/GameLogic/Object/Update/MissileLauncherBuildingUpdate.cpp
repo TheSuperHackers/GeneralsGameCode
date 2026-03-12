@@ -54,7 +54,7 @@ MissileLauncherBuildingUpdate::MissileLauncherBuildingUpdate( Thing *thing, cons
 }
 
 //-------------------------------------------------------------------------------------------------
-MissileLauncherBuildingUpdate::~MissileLauncherBuildingUpdate( void )
+MissileLauncherBuildingUpdate::~MissileLauncherBuildingUpdate()
 {
 	if (m_openIdleAudio.isCurrentlyPlaying())
 	{
@@ -234,7 +234,7 @@ Bool MissileLauncherBuildingUpdate::isPowerCurrentlyInUse( const CommandButton *
 }
 
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime MissileLauncherBuildingUpdate::update( void )
+UpdateSleepTime MissileLauncherBuildingUpdate::update()
 {
 	const MissileLauncherBuildingUpdateModuleData* d = getMissileLauncherBuildingUpdateModuleData();
 
@@ -330,7 +330,7 @@ void MissileLauncherBuildingUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void MissileLauncherBuildingUpdate::loadPostProcess( void )
+void MissileLauncherBuildingUpdate::loadPostProcess()
 {
 
 	// extend base class

@@ -51,7 +51,7 @@ DEFINE_AUTO_POOL(MultiListNodeClass, 256);
 
 ***********************************************************************************************/
 
-MultiListObjectClass::~MultiListObjectClass(void)
+MultiListObjectClass::~MultiListObjectClass()
 {
 	while (ListNode) {
 		ListNode->List->Internal_Remove(this);
@@ -67,7 +67,7 @@ MultiListObjectClass::~MultiListObjectClass(void)
 
 ***********************************************************************************************/
 
-GenericMultiListClass::~GenericMultiListClass(void)
+GenericMultiListClass::~GenericMultiListClass()
 {
 	assert(Is_Empty());
 }
@@ -84,7 +84,7 @@ bool GenericMultiListClass::Contains(MultiListObjectClass * obj)
 	return false;
 }
 
-int GenericMultiListClass::Count(void)
+int GenericMultiListClass::Count()
 {
 	int counter = 0;
 	GenericMultiListIterator it(this);
@@ -224,7 +224,7 @@ bool GenericMultiListClass::Internal_Remove(MultiListObjectClass *obj)
 	return true;
 }
 
-MultiListObjectClass * GenericMultiListClass::Internal_Remove_List_Head(void)
+MultiListObjectClass * GenericMultiListClass::Internal_Remove_List_Head()
 {
 	if (Head.Next == &Head) {
 		return nullptr;					// no more objects

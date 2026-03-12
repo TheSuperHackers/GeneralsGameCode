@@ -48,7 +48,7 @@ public:
 	SupplyWarehouseCreate( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual void onCreate( void );
+	virtual void onCreate();
 
 protected:
 

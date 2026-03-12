@@ -54,7 +54,7 @@ void EnableSlotListUpdates( Bool val )
 	winInitialized = val;
 }
 
-Bool AreSlotListUpdatesEnabled( void )
+Bool AreSlotListUpdatesEnabled()
 {
 	return winInitialized;
 }

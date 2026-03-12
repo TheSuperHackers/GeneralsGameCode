@@ -42,7 +42,7 @@ public:
 	void copyChunkData(NetWrapperCommandMsg *msg);
 	UnsignedByte * getRawData();
 
-	Int getPercentComplete(void);
+	Int getPercentComplete();
 
 	NetCommandWrapperListNode *m_next;
 

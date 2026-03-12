@@ -83,7 +83,7 @@ void CreateModule::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void CreateModule::loadPostProcess( void )
+void CreateModule::loadPostProcess()
 {
 
 	// extend base class

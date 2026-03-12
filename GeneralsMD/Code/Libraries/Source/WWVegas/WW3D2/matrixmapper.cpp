@@ -353,7 +353,7 @@ CompositeMatrixMapperClass::CompositeMatrixMapperClass(const CompositeMatrixMapp
  * HISTORY:                                                                                    *
  *   11/05/01     NH : Created.                                                                *
  *=============================================================================================*/
-CompositeMatrixMapperClass::~CompositeMatrixMapperClass(void)
+CompositeMatrixMapperClass::~CompositeMatrixMapperClass()
 {
 	if (InternalMapper) {
 		InternalMapper->Release_Ref();

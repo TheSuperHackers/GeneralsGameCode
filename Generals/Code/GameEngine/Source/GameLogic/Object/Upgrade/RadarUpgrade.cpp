@@ -62,14 +62,14 @@ RadarUpgrade::RadarUpgrade( Thing *thing, const ModuleData* moduleData ) :
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-RadarUpgrade::~RadarUpgrade( void )
+RadarUpgrade::~RadarUpgrade()
 {
 
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void RadarUpgrade::onDelete( void )
+void RadarUpgrade::onDelete()
 {
 	const RadarUpgradeModuleData *md = getRadarUpgradeModuleData();
 
@@ -125,7 +125,7 @@ void RadarUpgrade::onCapture( Player *oldOwner, Player *newOwner )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void RadarUpgrade::upgradeImplementation( void )
+void RadarUpgrade::upgradeImplementation()
 {
 	const RadarUpgradeModuleData *md = getRadarUpgradeModuleData();
 
@@ -174,7 +174,7 @@ void RadarUpgrade::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void RadarUpgrade::loadPostProcess( void )
+void RadarUpgrade::loadPostProcess()
 {
 
 	// extend base class

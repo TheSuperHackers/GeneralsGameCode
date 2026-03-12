@@ -86,7 +86,7 @@ class ProfileFastCS
 	}
 
 public:
-	ProfileFastCS(void):
+	ProfileFastCS():
     m_Flag(0)
   {
   }
@@ -108,7 +108,7 @@ public:
 	}
 
 public:
-	ProfileFastCS(void) {}
+	ProfileFastCS() {}
 
 #endif
 

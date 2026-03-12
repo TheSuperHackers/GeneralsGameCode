@@ -48,15 +48,15 @@ class SpecialPowerModuleInterface
 public:
 
 	virtual Bool isModuleForPower( const SpecialPowerTemplate *specialPowerTemplate ) const = 0;
-	virtual Bool isReady( void ) const = 0;
+	virtual Bool isReady() const = 0;
 //  This is the althernate way to one-at-a-time BlackLotus' specials; we'll keep it commented her until Dustin decides, or until 12/10/02
-//	virtual Bool isBusy( void ) const = 0;
-	virtual Real getPercentReady( void ) const = 0;
-	virtual UnsignedInt getReadyFrame( void ) const = 0;
-	virtual AsciiString getPowerName( void ) const = 0;
-	virtual const SpecialPowerTemplate* getSpecialPowerTemplate( void ) const = 0;
-	virtual ScienceType getRequiredScience( void ) const = 0;
-	virtual void onSpecialPowerCreation( void ) = 0;
+//	virtual Bool isBusy() const = 0;
+	virtual Real getPercentReady() const = 0;
+	virtual UnsignedInt getReadyFrame() const = 0;
+	virtual AsciiString getPowerName() const = 0;
+	virtual const SpecialPowerTemplate* getSpecialPowerTemplate() const = 0;
+	virtual ScienceType getRequiredScience() const = 0;
+	virtual void onSpecialPowerCreation() = 0;
 	virtual void setReadyFrame( UnsignedInt frame ) = 0;
 	virtual void pauseCountdown( Bool pause ) = 0;
 	virtual void doSpecialPower( UnsignedInt commandOptions ) = 0;
@@ -103,26 +103,26 @@ public:
 	virtual SpecialPowerModuleInterface* getSpecialPower() { return this; }
 
 	Bool isModuleForPower( const SpecialPowerTemplate *specialPowerTemplate ) const;	///< is this module for the specified special power
-	Bool isReady( void ) const; 						///< is this special power available now
+	Bool isReady() const; 						///< is this special power available now
 //  This is the althernate way to one-at-a-time BlackLotus' specials; we'll keep it commented her until Dustin decides, or until 12/10/02
-//	Bool isBusy( void ) const { return FALSE; }
+//	Bool isBusy() const { return FALSE; }
 
-	Real getPercentReady( void ) const;		///< get the percent ready (1.0 = ready now, 0.5 = half charged up etc.)
+	Real getPercentReady() const;		///< get the percent ready (1.0 = ready now, 0.5 = half charged up etc.)
 
-	UnsignedInt getReadyFrame( void ) const;		///< get the frame at which we are ready
-	AsciiString getPowerName( void ) const;
-	void syncReadyFrameToStatusQuo( void );
+	UnsignedInt getReadyFrame() const;		///< get the frame at which we are ready
+	AsciiString getPowerName() const;
+	void syncReadyFrameToStatusQuo();
 
-	const SpecialPowerTemplate* getSpecialPowerTemplate( void ) const;
-	ScienceType getRequiredScience( void ) const;
+	const SpecialPowerTemplate* getSpecialPowerTemplate() const;
+	ScienceType getRequiredScience() const;
 
-	void onSpecialPowerCreation( void );	// called by a create module to start our countdown
+	void onSpecialPowerCreation();	// called by a create module to start our countdown
 	//
 	// The following methods are for use by the scripting engine ONLY
 	//
 
 	void setReadyFrame( UnsignedInt frame ) { m_availableOnFrame = frame; }
-	UnsignedInt getReadyFrame( void ) { return m_availableOnFrame; }// USED BY PLAYER TO KEEP RECHARGE TIMERS IN SYNC
+	UnsignedInt getReadyFrame() { return m_availableOnFrame; }// USED BY PLAYER TO KEEP RECHARGE TIMERS IN SYNC
 	void pauseCountdown( Bool pause );
 
 	//
@@ -157,7 +157,7 @@ protected:
 	Bool initiateIntentToDoSpecialPower( const Object *targetObj, const Coord3D *targetPos, const Waypoint *way, UnsignedInt commandOptions );
 	void triggerSpecialPower( const Coord3D *location );
 	void createViewObject( const Coord3D *location );
-	void resolveSpecialPower( void );
+	void resolveSpecialPower();
 	void aboutToDoSpecialPower( const Coord3D *location );
 
 	UnsignedInt m_availableOnFrame;			///< on this frame, this special power is available

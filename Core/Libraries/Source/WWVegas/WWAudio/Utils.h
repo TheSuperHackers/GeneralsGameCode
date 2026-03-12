@@ -64,8 +64,8 @@
 class MMSLockClass
 {
 	public:
-		MMSLockClass (void) { ::AIL_lock (); }
-		~MMSLockClass (void) { ::AIL_unlock (); }
+		MMSLockClass () { ::AIL_lock (); }
+		~MMSLockClass () { ::AIL_unlock (); }
 
 
 	static CRITICAL_SECTION _MSSLockCriticalSection;

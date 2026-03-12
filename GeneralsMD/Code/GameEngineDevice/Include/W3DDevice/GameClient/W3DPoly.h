@@ -57,7 +57,7 @@
 class ClipPolyClass
 {
 public:
-	void Reset(void);
+	void Reset();
 	void Add_Vertex(const Vector3 & point);
 	void Clip(const PlaneClass & plane,ClipPolyClass & dest) const;
 

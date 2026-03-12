@@ -62,7 +62,7 @@ class CriticalSection
 		}
 
 	public:	// Use these when entering/exiting a critical section.
-		void enter( void )
+		void enter()
 		{
 			#ifdef PERF_TIMERS
 			AutoPerfGather a(TheCritSecPerfGather);
@@ -70,7 +70,7 @@ class CriticalSection
 			EnterCriticalSection( &m_windowsCriticalSection );
 		}
 
-		void exit( void )
+		void exit()
 		{
 			#ifdef PERF_TIMERS
 			AutoPerfGather a(TheCritSecPerfGather);
@@ -91,7 +91,7 @@ class ScopedCriticalSection
 				m_cs->enter();
 		}
 
-		virtual ~ScopedCriticalSection( )
+		virtual ~ScopedCriticalSection()
 		{
 			if (m_cs)
 				m_cs->exit();

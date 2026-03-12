@@ -51,13 +51,13 @@ class Overridable : public MemoryPoolObject
 
 		// return a constant version of m_nextOverride, which can be null if there is no
 		// override
-		const Overridable *getNextOverride( void ) const
+		const Overridable *getNextOverride() const
 		{
 			return m_nextOverride;
 		}
 
 		// recursively ask if there is a next override, and if not, return this.
-		const Overridable *getFinalOverride( void ) const
+		const Overridable *getFinalOverride() const
 		{
 			if (m_nextOverride)
 				return m_nextOverride->getFinalOverride();
@@ -72,13 +72,13 @@ class Overridable : public MemoryPoolObject
 		}
 
 		// useful for the LocomotorStore to cleanup overrides.
-		Overridable *friend_getNextOverride( void )
+		Overridable *friend_getNextOverride()
 		{
 			return m_nextOverride;
 		}
 
 		// useful for the LocomotorStore to create an override dangling off the final override.
-		Overridable *friend_getFinalOverride( void )
+		Overridable *friend_getFinalOverride()
 		{
 			if (m_nextOverride)
 				return m_nextOverride->friend_getFinalOverride();
@@ -86,7 +86,7 @@ class Overridable : public MemoryPoolObject
 		}
 
 		// useful for the LocomotorStore to create an override dangling off the final override.
-		const Overridable *friend_getFinalOverride( void ) const
+		const Overridable *friend_getFinalOverride() const
 		{
 			if (m_nextOverride)
 				return m_nextOverride->friend_getFinalOverride();
@@ -94,14 +94,14 @@ class Overridable : public MemoryPoolObject
 		}
 
 		// used by ini-parsing functions to mark specific Overridables as overrides
-		void markAsOverride( void )
+		void markAsOverride()
 		{
 			m_isOverride = true;
 		}
 
 		// used in factory reset() calls at the end of a game to clean up overrides.  Can return nullptr
 		// if the first Overridable is itself an override
-		Overridable *deleteOverrides( void )
+		Overridable *deleteOverrides()
 		{
 			if ( m_isOverride )
 			{

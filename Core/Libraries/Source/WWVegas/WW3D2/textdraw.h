@@ -68,12 +68,12 @@ public:
 											const Vector2 & dest_ul, const Vector2 & dest_lr );
 
 	// Reset all polys and verts
-	virtual	void Reset( void );
+	virtual	void Reset();
 
 	/*
 	** class id of this render object
 	*/
-	virtual int	Class_ID(void) const	{ return CLASSID_TEXTDRAW; }
+	virtual int	Class_ID() const	{ return CLASSID_TEXTDRAW; }
 
 	/*
 	**

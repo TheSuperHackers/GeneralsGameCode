@@ -84,7 +84,7 @@ AutoFindHealingUpdate::AutoFindHealingUpdate( Thing *thing, const ModuleData* mo
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-AutoFindHealingUpdate::~AutoFindHealingUpdate( void )
+AutoFindHealingUpdate::~AutoFindHealingUpdate()
 {
 
 }
@@ -219,7 +219,7 @@ void AutoFindHealingUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void AutoFindHealingUpdate::loadPostProcess( void )
+void AutoFindHealingUpdate::loadPostProcess()
 {
 
 	// extend base class

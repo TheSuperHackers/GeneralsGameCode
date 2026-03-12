@@ -55,10 +55,10 @@ class PersistFactoryClass
 {
 public:
 
-	PersistFactoryClass(void);
-	virtual ~PersistFactoryClass(void);
+	PersistFactoryClass();
+	virtual ~PersistFactoryClass();
 
-	virtual uint32				Chunk_ID(void) const												= 0;
+	virtual uint32				Chunk_ID() const												= 0;
 	virtual PersistClass *	Load(ChunkLoadClass & cload) const	 						= 0;
 	virtual void				Save(ChunkSaveClass & csave,PersistClass * obj)	const	= 0;
 
@@ -81,7 +81,7 @@ template <class T,int CHUNKID> class SimplePersistFactoryClass : public PersistF
 {
 public:
 
-	virtual uint32				Chunk_ID(void) const										{ return CHUNKID; }
+	virtual uint32				Chunk_ID() const										{ return CHUNKID; }
 	virtual PersistClass *	Load(ChunkLoadClass & cload) const;
 	virtual void				Save(ChunkSaveClass & csave,PersistClass * obj) const;
 

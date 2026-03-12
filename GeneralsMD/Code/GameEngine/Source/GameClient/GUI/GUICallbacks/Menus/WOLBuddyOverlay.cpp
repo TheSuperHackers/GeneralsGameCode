@@ -101,16 +101,16 @@ static UnsignedInt noticeExpires = 0;
 enum { NOTIFICATION_EXPIRES = 3000 };
 
 void setUnignoreText( WindowLayout *layout, AsciiString nick, GPProfile id);
-void refreshIgnoreList( void );
+void refreshIgnoreList();
 void showNotificationBox( AsciiString nick, UnicodeString message);
-void deleteNotificationBox( void );
+void deleteNotificationBox();
 static Bool lastNotificationWasStatus = FALSE;
 static Int numOnlineInNotification = 0;
 
 class BuddyControls
 {
 public:
-	BuddyControls(void );
+	BuddyControls();
 	GameWindow *listboxChat;
 	NameKeyType listboxChatID;
 
@@ -123,7 +123,7 @@ public:
 };
 
 static BuddyControls buddyControls;
-BuddyControls::BuddyControls(	void )
+BuddyControls::BuddyControls(	)
 {
 	listboxChat = nullptr;
 	listboxChatID = NAMEKEY_INVALID;
@@ -188,7 +188,7 @@ void InitBuddyControls(Int type)
 	case BUDDY_WINDOW_WELCOME_SCREEN:
 		break;
 	default:
-		DEBUG_ASSERTCRASH(FALSE, ("Well, you really shouldn't have gotten here, if you really care about GUI Bugs, search for this string, you you don't care, call chris (who probably doesn't care either"));
+		DEBUG_CRASH(("Well, you really shouldn't have gotten here, if you really care about GUI Bugs, search for this string, you you don't care, call chris (who probably doesn't care either"));
 	}
 
 }
@@ -379,7 +379,7 @@ void insertChat( BuddyMessage msg )
 	}
 }
 
-void updateBuddyInfo( void )
+void updateBuddyInfo()
 {
 	if (!TheGameSpyBuddyMessageQueue->isConnected())
 	{
@@ -489,7 +489,7 @@ void updateBuddyInfo( void )
 	GadgetListBoxSetTopVisibleEntry(buddyControls.listboxBuddies, visiblePos);
 }
 
-void HandleBuddyResponses( void )
+void HandleBuddyResponses()
 {
 	if (TheGameSpyBuddyMessageQueue)
 	{
@@ -685,7 +685,7 @@ void showNotificationBox( AsciiString nick, UnicodeString message)
 
 }
 
-void deleteNotificationBox( void )
+void deleteNotificationBox()
 {
 	lastNotificationWasStatus = FALSE;
 	numOnlineInNotification = 0;
@@ -697,7 +697,7 @@ void deleteNotificationBox( void )
 	}
 }
 
-void PopulateOldBuddyMessages(void)
+void PopulateOldBuddyMessages()
 {
 	// show previous messages
 	BuddyMessageList *messages = TheGameSpyInfo->getBuddyMessages();
@@ -1406,7 +1406,7 @@ void setUnignoreText( WindowLayout *layout, AsciiString nick, GPProfile id)
 	}
 }
 
-void refreshIgnoreList( void )
+void refreshIgnoreList()
 {
 
 

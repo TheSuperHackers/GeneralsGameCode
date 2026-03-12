@@ -66,7 +66,7 @@ UndeadBody::UndeadBody( Thing *thing, const ModuleData* moduleData )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UndeadBody::~UndeadBody( void )
+UndeadBody::~UndeadBody()
 {
 
 }
@@ -81,7 +81,7 @@ void UndeadBody::attemptDamage( DamageInfo *damageInfo )
 
 	if( damageInfo->in.m_damageType != DAMAGE_UNRESISTABLE
 			&& !m_isSecondLife
-#if RETAIL_COMPATIBLE_CRC
+#if RETAIL_COMPATIBLE_CRC || PRESERVE_RETAIL_BEHAVIOR
 			&& damageInfo->in.m_amount >= getHealth()
 #else
 			// TheSuperHackers @bugfix Stubbjax 20/09/2025 Battle Buses now correctly apply damage modifiers when calculating lethal damage
@@ -184,7 +184,7 @@ void UndeadBody::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void UndeadBody::loadPostProcess( void )
+void UndeadBody::loadPostProcess()
 {
 
 	// extend base class

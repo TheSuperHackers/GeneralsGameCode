@@ -43,7 +43,7 @@ int		BufferedFileClass::_DesiredBufferSize	=	1024*16;
 /***********************************************************************************************
  * BufferedFileClass::BufferedFileClass -- Default constructor for a file object.              *
  *=============================================================================================*/
-BufferedFileClass::BufferedFileClass(void) :
+BufferedFileClass::BufferedFileClass() :
 	RawFileClass(),
 	Buffer( nullptr ),
 	BufferSize( 0 ),
@@ -67,7 +67,7 @@ BufferedFileClass::BufferedFileClass(char const * filename) :
 /***********************************************************************************************
  * BufferedFileClass::~BufferedFileClass -- Default deconstructor for a file object.                     *
  *=============================================================================================*/
-BufferedFileClass::~BufferedFileClass(void)
+BufferedFileClass::~BufferedFileClass()
 {
 	Reset_Buffer();
 }
@@ -75,7 +75,7 @@ BufferedFileClass::~BufferedFileClass(void)
 /***********************************************************************************************
  * BufferedFileClass::Close -- Perform a closure of the file.                                       *
  *=============================================================================================*/
-void BufferedFileClass::Close(void)
+void BufferedFileClass::Close()
 {
 	BASECLASS::Close();
 
@@ -239,7 +239,7 @@ int BufferedFileClass::Seek(int pos, int dir)
 /*
 **
 */
-void	BufferedFileClass::Reset_Buffer( void )
+void	BufferedFileClass::Reset_Buffer()
 {
 	delete [] Buffer;
 	Buffer = nullptr;

@@ -46,14 +46,14 @@ class XferSave : public Xfer
 
 public:
 
-	XferSave( void );
-	virtual ~XferSave( void );
+	XferSave();
+	virtual ~XferSave();
 
 	// Xfer methods
 	virtual void open( AsciiString identifier );		///< open file for writing
-	virtual void close( void );											///< close file
-	virtual Int beginBlock( void );									///< write placeholder block size
-	virtual void endBlock( void );									///< backup to last begin block and write size
+	virtual void close();											///< close file
+	virtual Int beginBlock();									///< write placeholder block size
+	virtual void endBlock();									///< backup to last begin block and write size
 	virtual void skip( Int dataSize );							///< skipping during a write is a no-op
 
 	virtual void xferSnapshot( Snapshot *snapshot );		///< entry point for xfering a snapshot

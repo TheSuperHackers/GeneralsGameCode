@@ -79,7 +79,7 @@ static const Int MAX_SAVE_FILE_NUMBER  =  99999999;
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-SaveGameInfo::SaveGameInfo( void )
+SaveGameInfo::SaveGameInfo()
 {
 
 	date.day					= 0;
@@ -97,7 +97,7 @@ SaveGameInfo::SaveGameInfo( void )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-SaveGameInfo::~SaveGameInfo( void )
+SaveGameInfo::~SaveGameInfo()
 {
 
 }
@@ -206,10 +206,8 @@ GameState::SnapshotBlock *GameState::findBlockInfoByToken( AsciiString token, Sn
 
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// GeneralsX @TheSuperHackers @build BenderAI 11/02/2026 Cross-platform date formatting (Windows locale vs POSIX strftime)
+// TheSuperHackers @tweak Use the user's default locale instead of the system default to match Windows regional settings.
+// This allows regional formats such as Europe (English) to use 24-hour and DD/MM/YYYY formats in-game.
 UnicodeString getUnicodeDateBuffer(SYSTEMTIME timeVal)
 {
 	// setup date buffer for local region date format
@@ -223,7 +221,7 @@ UnicodeString getUnicodeDateBuffer(SYSTEMTIME timeVal)
 		if (osvi.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS)
 		{
 			char dateBuffer[ DATE_BUFFER_SIZE ];
-			GetDateFormat( LOCALE_SYSTEM_DEFAULT,
+			GetDateFormat( LOCALE_USER_DEFAULT,
 										 DATE_SHORTDATE,
 										 &timeVal,
 										 nullptr,
@@ -233,7 +231,7 @@ UnicodeString getUnicodeDateBuffer(SYSTEMTIME timeVal)
 		}
 	}
 	wchar_t dateBuffer[ DATE_BUFFER_SIZE ];
-	GetDateFormatW( LOCALE_SYSTEM_DEFAULT,
+	GetDateFormatW( LOCALE_USER_DEFAULT,
 								 DATE_SHORTDATE,
 								 &timeVal,
 								 nullptr,
@@ -264,11 +262,11 @@ UnicodeString getUnicodeTimeBuffer(SYSTEMTIME timeVal)
 		if (osvi.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS)
 		{
 			char timeBuffer[ DATE_BUFFER_SIZE ];
-			GetTimeFormat( LOCALE_SYSTEM_DEFAULT,
-									 TIME_NOSECONDS|TIME_FORCE24HOURFORMAT|TIME_NOTIMEMARKER,
-									 &timeVal,
-									 nullptr,
-									 timeBuffer, sizeof(timeBuffer) );
+			GetTimeFormat( LOCALE_USER_DEFAULT,
+										 TIME_NOSECONDS|TIME_FORCE24HOURFORMAT|TIME_NOTIMEMARKER,
+										 &timeVal,
+										 nullptr,
+										 timeBuffer, sizeof(timeBuffer) );
 			displayTimeBuffer.translate(timeBuffer);
 			return displayTimeBuffer;
 		}
@@ -276,12 +274,12 @@ UnicodeString getUnicodeTimeBuffer(SYSTEMTIME timeVal)
 	// setup time buffer for local region time format
 	#define TIME_BUFFER_SIZE 256
 	wchar_t timeBuffer[ TIME_BUFFER_SIZE ];
-	GetTimeFormatW( LOCALE_SYSTEM_DEFAULT,
-							 TIME_NOSECONDS,
-							 &timeVal,
-							 nullptr,
-							 timeBuffer,
-							 ARRAY_SIZE(timeBuffer) );
+	GetTimeFormatW( LOCALE_USER_DEFAULT,
+								 TIME_NOSECONDS,
+								 &timeVal,
+								 nullptr,
+								 timeBuffer,
+								 ARRAY_SIZE(timeBuffer) );
 	displayTimeBuffer.set(timeBuffer);
 	return displayTimeBuffer;
 #else
@@ -295,7 +293,7 @@ UnicodeString getUnicodeTimeBuffer(SYSTEMTIME timeVal)
 }
 
 // ------------------------------------------------------------------------------------------------
-GameState::GameState( void )
+GameState::GameState()
 {
 
 	m_availableGames = nullptr;
@@ -305,7 +303,7 @@ GameState::GameState( void )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-GameState::~GameState( void )
+GameState::~GameState()
 {
 
 	// clear our snapshot block list
@@ -323,7 +321,7 @@ GameState::~GameState( void )
 // ------------------------------------------------------------------------------------------------
 /** Init the game state subsystem */
 // ------------------------------------------------------------------------------------------------
-void GameState::init( void )
+void GameState::init()
 {
 
 	// add all the snapshot objects to our list of data blocks for save game files
@@ -360,7 +358,7 @@ void GameState::init( void )
 // ------------------------------------------------------------------------------------------------
 /** Reset */
 // ------------------------------------------------------------------------------------------------a
-void GameState::reset( void )
+void GameState::reset()
 {
 
 	// clear the post process snapshot list
@@ -376,7 +374,7 @@ void GameState::reset( void )
 // ------------------------------------------------------------------------------------------------
 /** Clear any available games entries */
 // ------------------------------------------------------------------------------------------------
-void GameState::clearAvailableGames( void )
+void GameState::clearAvailableGames()
 {
 	AvailableGameInfo *gameInfo;
 
@@ -643,7 +641,7 @@ SaveCode GameState::saveGame( AsciiString filename, UnicodeString desc,
 // ------------------------------------------------------------------------------------------------
 /** A mission save */
 // ------------------------------------------------------------------------------------------------
-SaveCode GameState::missionSave( void )
+SaveCode GameState::missionSave()
 {
 
 	// get campaign
@@ -1584,7 +1582,7 @@ void GameState::addPostProcessSnapshot( Snapshot *snapshot )
 // ------------------------------------------------------------------------------------------------
 /** Post process entry point after all game data has been xferd from disk */
 // ------------------------------------------------------------------------------------------------
-void GameState::gameStatePostProcessLoad( void )
+void GameState::gameStatePostProcessLoad()
 {
 
 	// post process each snapshot that registered with us

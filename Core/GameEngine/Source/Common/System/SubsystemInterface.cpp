@@ -63,7 +63,7 @@ SubsystemInterface::~SubsystemInterface()
 
 #ifdef DUMP_PERF_STATS
 static const Real MIN_TIME_THRESHOLD = 0.0002f; // .2 msec. [8/13/2003]
-void SubsystemInterface::UPDATE(void)
+void SubsystemInterface::UPDATE()
 {
 	__int64 startTime64;
 	__int64 endTime64,freq64;
@@ -89,7 +89,7 @@ void SubsystemInterface::UPDATE(void)
 	}
 
 }
-void SubsystemInterface::DRAW(void)
+void SubsystemInterface::DRAW()
 {
 	__int64 startTime64;
 	__int64 endTime64,freq64;

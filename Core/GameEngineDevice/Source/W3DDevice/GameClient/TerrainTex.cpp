@@ -1029,7 +1029,7 @@ void CloudMapTerrainTextureClass::Apply(unsigned int stage)
 /** Cleans up any custom settings to the texturing pipeline that may not be
 understood by w3d. */
 //=============================================================================
-void CloudMapTerrainTextureClass::restore(void)
+void CloudMapTerrainTextureClass::restore()
 {
 	DX8Wrapper::Set_DX8_Texture_Stage_State( 0, D3DTSS_COLORARG1, D3DTA_TEXTURE );
 	DX8Wrapper::Set_DX8_Texture_Stage_State( 0, D3DTSS_COLORARG2, D3DTA_DIFFUSE );

@@ -31,7 +31,7 @@
 
 unsigned divByNull;
 
-void main(void)
+void main()
 {
   // switch to debug group
   Debug::Command("debug.");

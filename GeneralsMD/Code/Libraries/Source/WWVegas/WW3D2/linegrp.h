@@ -65,8 +65,8 @@ public:
 		PRISM
 	};
 
-	LineGroupClass(void);
-	virtual ~LineGroupClass(void);
+	LineGroupClass();
+	virtual ~LineGroupClass();
 
 	// LineGroupClass interface:
 	void						Set_Arrays(
@@ -80,25 +80,25 @@ public:
 									int active_line_count = -1
 									);
 	void						Set_Line_Size(float size);
-	float						Get_Line_Size(void);
+	float						Get_Line_Size();
 	void						Set_Line_Color(const Vector3 &color);
-	Vector3					Get_Line_Color(void);
+	Vector3					Get_Line_Color();
 	void						Set_Tail_Diffuse(const Vector4 &tdiffuse);
-	Vector4					Get_Tail_Diffuse(void);
+	Vector4					Get_Tail_Diffuse();
 	void						Set_Line_Alpha(float alpha);
-	float						Get_Line_Alpha(void);
+	float						Get_Line_Alpha();
 	void						Set_Line_UCoord(float ucoord);
-	float						Get_Line_UCoord(void);
+	float						Get_Line_UCoord();
 	void						Set_Flag(FlagsType flag, bool on);
 	int						Get_Flag(FlagsType flag);
 	void						Set_Texture(TextureClass* texture);
-	TextureClass * 		Get_Texture(void);
-	TextureClass * 		Peek_Texture(void);
+	TextureClass * 		Get_Texture();
+	TextureClass * 		Peek_Texture();
 	void						Set_Shader(const ShaderClass &shader);
-	ShaderClass				Get_Shader(void);
+	ShaderClass				Get_Shader();
 	void						Set_Line_Mode(LineModeType linemode);
-	LineModeType			Get_Line_Mode(void);
-	int						Get_Polygon_Count(void);
+	LineModeType			Get_Line_Mode();
+	int						Get_Polygon_Count();
 
 	void						Render(RenderInfoClass &rinfo);
 

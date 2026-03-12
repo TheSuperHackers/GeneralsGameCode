@@ -38,13 +38,13 @@
 #include "persistfactory.h"
 #include "saveload.h"
 
-PersistFactoryClass::PersistFactoryClass(void) :
+PersistFactoryClass::PersistFactoryClass() :
 	NextFactory(nullptr)
 {
 	SaveLoadSystemClass::Register_Persist_Factory(this);
 }
 
-PersistFactoryClass::~PersistFactoryClass(void)
+PersistFactoryClass::~PersistFactoryClass()
 {
 	SaveLoadSystemClass::Unregister_Persist_Factory(this);
 }

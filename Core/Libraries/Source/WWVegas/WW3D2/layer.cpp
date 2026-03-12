@@ -62,7 +62,7 @@
  * HISTORY:                                                                                    *
  *   3/27/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-LayerClass::LayerClass(void) :
+LayerClass::LayerClass() :
 	Scene(nullptr),
 	Camera(nullptr),
 	Clear(false),
@@ -128,7 +128,7 @@ LayerClass::LayerClass
  * HISTORY:                                                                                    *
  *   3/27/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-LayerClass::~LayerClass(void)
+LayerClass::~LayerClass()
 {
 	if (Scene) {
 		Scene->Release_Ref();
@@ -177,7 +177,7 @@ void LayerClass::Set_Scene(SceneClass * scene)
  * HISTORY:                                                                                    *
  *   3/27/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-SceneClass * LayerClass::Get_Scene(void) const
+SceneClass * LayerClass::Get_Scene() const
 {
 	if (Scene) {
 		Scene->Add_Ref();
@@ -198,7 +198,7 @@ SceneClass * LayerClass::Get_Scene(void) const
  * HISTORY:                                                                                    *
  *   3/8/99    NH : Created.                                                                   *
  *=============================================================================================*/
-SceneClass * LayerClass::Peek_Scene(void) const
+SceneClass * LayerClass::Peek_Scene() const
 {
 	return Scene;
 }
@@ -240,7 +240,7 @@ void LayerClass::Set_Camera(CameraClass * cam)
  * HISTORY:                                                                                    *
  *   3/27/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-CameraClass * LayerClass::Get_Camera(void) const
+CameraClass * LayerClass::Get_Camera() const
 {
 	if (Camera) {
 		Camera->Add_Ref();
@@ -261,7 +261,7 @@ CameraClass * LayerClass::Get_Camera(void) const
  * HISTORY:                                                                                    *
  *   08/14/2001 SKB : Created.                                                                 *
  *=============================================================================================*/
-CameraClass * LayerClass::Peek_Camera(void) const
+CameraClass * LayerClass::Peek_Camera() const
 {
 	return Camera;
 }

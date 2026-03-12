@@ -141,7 +141,7 @@ int Base64Pipe::Put(void const * source, int slen)
  * HISTORY:                                                                                    *
  *   07/03/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-int Base64Pipe::Flush(void)
+int Base64Pipe::Flush()
 {
 	int len = 0;
 

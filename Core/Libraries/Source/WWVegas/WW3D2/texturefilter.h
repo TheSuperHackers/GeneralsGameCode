@@ -100,16 +100,16 @@ public:
 	void Apply(unsigned int stage);
 
 	// Filter and MIPmap settings:
-	FilterType Get_Min_Filter(void) const { return TextureMinFilter; }
-	FilterType Get_Mag_Filter(void) const { return TextureMagFilter; }
-	FilterType Get_Mip_Mapping(void) const { return MipMapFilter; }
+	FilterType Get_Min_Filter() const { return TextureMinFilter; }
+	FilterType Get_Mag_Filter() const { return TextureMagFilter; }
+	FilterType Get_Mip_Mapping() const { return MipMapFilter; }
 	void Set_Min_Filter(FilterType filter) { TextureMinFilter=filter; }
 	void Set_Mag_Filter(FilterType filter) { TextureMagFilter=filter; }
 	void Set_Mip_Mapping(FilterType mipmap);
 
 	// Texture address mode
-	TxtAddrMode Get_U_Addr_Mode(void) const { return UAddressMode; }
-	TxtAddrMode Get_V_Addr_Mode(void) const { return VAddressMode; }
+	TxtAddrMode Get_U_Addr_Mode() const { return UAddressMode; }
+	TxtAddrMode Get_V_Addr_Mode() const { return VAddressMode; }
 	void Set_U_Addr_Mode(TxtAddrMode mode) { UAddressMode=mode; }
 	void Set_V_Addr_Mode(TxtAddrMode mode) { VAddressMode=mode; }
 

@@ -344,7 +344,7 @@ static Int addImageEntry( const Image *image, Color color, Int row, Int column, 
 
 	if( column >= list->columns  || row >= list->listLength )
 	{
-		DEBUG_ASSERTCRASH(false, ("Tried to add Image to Listbox at invalid position"));
+		DEBUG_CRASH(("Tried to add Image to Listbox at invalid position"));
 		return -1;
 	}
 
@@ -447,7 +447,7 @@ static Int addEntry( UnicodeString *string, Int color, Int row, Int column, Game
 	// make sure our params are good
 	if( column >= list->columns  || row >= list->listLength )
 	{
-		DEBUG_ASSERTCRASH(false, ("Tried to add text to Listbox at invalid position"));
+		DEBUG_CRASH(("Tried to add text to Listbox at invalid position"));
 		return -1;
 	}
 

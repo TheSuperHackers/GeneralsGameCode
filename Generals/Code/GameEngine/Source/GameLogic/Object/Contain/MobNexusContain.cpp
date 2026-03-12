@@ -105,7 +105,7 @@ void MobNexusContainModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-Int MobNexusContain::getContainMax( void ) const
+Int MobNexusContain::getContainMax() const
 {
 	if (getMobNexusContainModuleData())
 		return getMobNexusContainModuleData()->m_slotCapacity;
@@ -124,7 +124,7 @@ MobNexusContain::MobNexusContain( Thing *thing, const ModuleData *moduleData ) :
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-MobNexusContain::~MobNexusContain( void )
+MobNexusContain::~MobNexusContain()
 {
 
 }
@@ -488,7 +488,7 @@ void MobNexusContain::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void MobNexusContain::loadPostProcess( void )
+void MobNexusContain::loadPostProcess()
 {
 
 	// extend base class

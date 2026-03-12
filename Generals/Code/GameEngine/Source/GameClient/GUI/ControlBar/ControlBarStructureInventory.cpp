@@ -187,7 +187,7 @@ void ControlBar::populateStructureInventory( Object *building )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void ControlBar::updateContextStructureInventory( void )
+void ControlBar::updateContextStructureInventory()
 {
 	Object *source = m_currentSelectedDrawable->getObject();
 

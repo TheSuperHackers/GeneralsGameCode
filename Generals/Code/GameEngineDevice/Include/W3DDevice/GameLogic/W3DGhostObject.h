@@ -53,13 +53,13 @@ public:
 protected:
 	virtual void crc( Xfer *xfer);
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
-	void removeParentObject(void);
-	void restoreParentObject(void);	///< restore the original non-ghosted object to scene.
+	virtual void loadPostProcess();
+	void removeParentObject();
+	void restoreParentObject();	///< restore the original non-ghosted object to scene.
 	Bool addToScene(int playerIndex);
 	Bool removeFromScene(int playerIndex);
 	ObjectShroudStatus getShroudStatus(int playerIndex);	///< used to get the partition manager to update ghost objects without parent objects.
-	void freeAllSnapShots(void);				///< used to free all snapshots from all players.
+	void freeAllSnapShots();				///< used to free all snapshots from all players.
 
 	W3DRenderObjectSnapshot *m_parentSnapshots[MAX_PLAYER_COUNT];
 	DrawableInfo	m_drawableInfo;
@@ -74,18 +74,18 @@ class W3DGhostObjectManager : public GhostObjectManager
 public:
 	W3DGhostObjectManager();
 	virtual ~W3DGhostObjectManager();
-	virtual void reset(void);
+	virtual void reset();
 	virtual GhostObject *addGhostObject(Object *object, PartitionData *pd);
 	virtual void removeGhostObject(GhostObject *mod);
 	virtual void setLocalPlayerIndex(int playerIndex);
 	virtual void updateOrphanedObjects(int *playerIndexList, int playerIndexCount);
-	virtual void releasePartitionData(void);
-	virtual void restorePartitionData(void);
+	virtual void releasePartitionData();
+	virtual void restorePartitionData();
 
 protected:
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
+	virtual void loadPostProcess();
 
 	///@todo this list should really be part of the device independent base class (CBD 12-3-2002)
 	W3DGhostObject	*m_freeModules;

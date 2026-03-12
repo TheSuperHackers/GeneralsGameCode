@@ -86,14 +86,21 @@ Each issue file should contain:
 
 ---
 
-**Generated**: 2026-02-20  
-**Phase**: 1 (Linux Graphics Port)
+**Generated**: 2026-03-12  
+**Phase**: Known issues backlog and GitHub issue drafting
 
 ## Issue Index
 
 | ID | Title | Severity | Status | Component |
 |----|-------|----------|--------|-----------|
-| [ISSUE-001](ISSUE-001_shell_map_unit_immortality.md) | Shell Map Units Immortal Under Bombardment | Medium | OPEN | Gameplay |
-| [ISSUE-002](ISSUE-002_skirmish_instant_victory.md) | Skirmish vs CPU Ends Immediately with Victory Screen | Critical | OPEN | Gameplay |
-| [ISSUE-003](ISSUE-003_mouse_cursor_invisible.md) | Mouse Cursor Not Visible In-Game | Medium | OPEN | Platform / Graphics |
-| [ISSUE-004](ISSUE-004_generals_challenge_segfault.md) | Generals Challenge Mode Crashes with Segfault | High | OPEN | Platform / Video |
+| [ISSUE-001](ISSUE-001_SOLVED_shell_map_unit_immortality.md) | Shell Map Units Immortal Under Bombardment | Medium | OPEN | Gameplay |
+| [ISSUE-002](ISSUE-002_skirmish_instant_victory.md) | Skirmish vs CPU Ends Immediately with Victory Screen | Critical | INVESTIGATING | Gameplay |
+| [ISSUE-003](ISSUE-003_SOLVED_mouse_cursor_invisible.md) | Mouse Cursor Not Visible In-Game | Medium | OPEN | Platform / Graphics |
+| [ISSUE-004](ISSUE-004_SOLVED_generals_challenge_segfault.md) | Generals Challenge Mode Crashes with Segfault | High | RESOLVED | Platform / Video |
+| [ISSUE-005](ISSUE-005_shadow_rendering_incorrect.md) | Building and Unit Shadows Render Incorrectly | Medium | OPEN | Graphics |
+| [ISSUE-006](ISSUE-006_stealth_units_visible.md) | Stealth Units and GLA Stealth Buildings Render as Visible | High | OPEN | Graphics |
+| [ISSUE-007](ISSUE-007_openal_long_voice_lines_and_sfx.md) | Long Voice Lines and Some Sound Effects Do Not Play Correctly | Medium | OPEN | Audio |
+| [ISSUE-008](ISSUE-008_macos_gatekeeper_blocks_unsigned_build.md) | macOS Gatekeeper Blocks Unsigned Build | High | OPEN | Platform |
+| [ISSUE-009](ISSUE-009_macos_terrain_textures_missing.md) | macOS Terrain Textures Missing or Failing to Load | Critical | OPEN | Graphics |
+| [ISSUE-010](ISSUE-010_registry_ini_replacement.md) | Replace Null Registry Stubs with Cross-Platform registry.ini Backend | High | OPEN | Platform |
+| [ISSUE-011](ISSUE-011_replay_menu_loading_screen_segfault.md) | Replay Menu Loading Screen Crashes with SIGSEGV | High | INVESTIGATING | Gameplay / Platform |

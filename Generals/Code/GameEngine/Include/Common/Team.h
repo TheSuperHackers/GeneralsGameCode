@@ -51,7 +51,7 @@ class TeamRelationMap : public MemoryPoolObject,
 
 public:
 
-	TeamRelationMap( void );
+	TeamRelationMap();
 	// virtual destructor provided by memory pool object
 
 	/** @todo I'm just wrapping this up in a nice snapshot object, we really should isolate
@@ -62,7 +62,7 @@ protected:
 
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
+	virtual void loadPostProcess();
 
 };
 
@@ -170,7 +170,7 @@ protected:
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
+	virtual void loadPostProcess();
 
 };
 
@@ -235,7 +235,7 @@ protected:
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
+	virtual void loadPostProcess();
 
 public:
 
@@ -243,7 +243,7 @@ public:
 	// ~Team();
 
 	/// return the prototype used to create this team
-	const TeamPrototype *getPrototype( void ) { return m_proto; }
+	const TeamPrototype *getPrototype() { return m_proto; }
 
 	void setID( TeamID id ) { m_id = id; }
 	TeamID getID() const { return m_id; }
@@ -266,7 +266,7 @@ public:
 	/**
 		Get the team's state
 	*/
-	const AsciiString& getState(void) const {return m_state;}
+	const AsciiString& getState() const {return m_state;}
 
 	/**
 		fill pAIGroup (which must be NONNULL) with the members of this team as a Group.
@@ -301,40 +301,40 @@ public:
 	/**
 		Set the team's target object.
 	*/
-	Object *getTeamTargetObject(void);
+	Object *getTeamTargetObject();
 
 	/**
 		Set the team as active.  A team is considered created when set active.
 	*/
-	void setActive(void) {if (!m_active) { m_created = true;m_active = true;}}
+	void setActive() {if (!m_active) { m_created = true;m_active = true;}}
 
 	/**
 		Is this team active?
 	*/
-	Bool isActive(void) {return m_active;}
+	Bool isActive() {return m_active;}
 
 	/**
 		Is this team just createc?  (stays true one logic frame.)
 	*/
-	Bool isCreated(void) {return m_created;}
+	Bool isCreated() {return m_created;}
 
 	/**
 		Note that a team member entered or exited a trigger area.
 	*/
-	void setEnteredExited(void) {m_enteredOrExited = true;}
+	void setEnteredExited() {m_enteredOrExited = true;}
 
 	/**
 		Did a team member enter or exit a trigger area.
 	*/
-	Bool didEnterOrExit(void) {return m_enteredOrExited;}
+	Bool didEnterOrExit() {return m_enteredOrExited;}
 
 	/**
 		Clear the flag that a team member entered or exited a trigger area.
 		Also checks and executes any onCreate scripts, and clears the created flag.
 	*/
-	void updateState(void);
+	void updateState();
 
-	void notifyTeamOfObjectDeath( void );
+	void notifyTeamOfObjectDeath();
 
 	Bool didAllEnter(PolygonTrigger *pTrigger, UnsignedInt whichToConsider) const;					///< All members entered the area
 	Bool didPartialEnter(PolygonTrigger *pTrigger, UnsignedInt whichToConsider) const;			///< One member entered the area
@@ -397,7 +397,7 @@ public:
 	/**
 		returns the number of buildings on this team, by checking each things' template kindof against KINDOF_STRUCTURE
 	*/
-	Int countBuildings(void);
+	Int countBuildings();
 
 	/**
 		simply returns the number of objects on this team with a specific KindOfMaskType
@@ -417,7 +417,7 @@ public:
 	/**
 		a convenience routine to quickly check if any buildings are owned.
 	*/
-	Bool hasAnyBuildings(void) const;
+	Bool hasAnyBuildings() const;
 
 	/**
 		a convenience routine to quickly check if any buildings with a specific KindOfType flag are owned.
@@ -427,17 +427,17 @@ public:
 	/**
 		a convenience routine to quickly check if any units are owned.
 	*/
-	Bool hasAnyUnits(void) const;
+	Bool hasAnyUnits() const;
 
 	/**
 		a convenience routine to quickly check if any objects are owned.
 	*/
-	Bool hasAnyObjects(void) const;
+	Bool hasAnyObjects() const;
 
 	/**
 		a convenience routine to quickly check if all the units are idle.
 	*/
-	Bool isIdle(void) const;
+	Bool isIdle() const;
 
 	/**
 		a convenience routine to quickly check if any objects are in a trigger area.
@@ -447,7 +447,7 @@ public:
 	/**
 		a convenience routine to quickly check if any buildfacilities are owned.
 	*/
-	Bool hasAnyBuildFacility(void) const;
+	Bool hasAnyBuildFacility() const;
 
 	/**
 		Move team to destination.
@@ -471,7 +471,7 @@ public:
 		a convenience routine used to estimate the team's position by just returning the position
 		of the first member of the team
 		*/
-	const Coord3D* getEstimateTeamPosition(void);
+	const Coord3D* getEstimateTeamPosition();
 
 	/**
 		a convenience routine to move a team's units to another team.
@@ -481,24 +481,24 @@ public:
 	/**
 		a function to kill all members of a team
 	*/
-	void killTeam(void);
+	void killTeam();
 
 	/**
 		a function to make all containers on a team to dump contents
 	*/
-	void evacuateTeam(void);
+	void evacuateTeam();
 
 	/**
 		the current waypoint for a team following a waypoint path.
 	*/
-	const Waypoint *getCurrentWaypoint(void) {return m_currentWaypoint;}
+	const Waypoint *getCurrentWaypoint() {return m_currentWaypoint;}
 	void setCurrentWaypoint(const Waypoint *way) {m_currentWaypoint = way;}
 
 	/**
 		Update the generic scripts, allow them to see if they should run, etc.
 	*/
 
-	void updateGenericScripts(void);
+	void updateGenericScripts();
 
 };
 
@@ -528,7 +528,7 @@ public:
 	TeamPrototypeID getID() const { return m_id; }
 	const AsciiString& getName() const { return m_name; }
 	Bool getIsSingleton() const { return (m_flags & TEAM_SINGLETON) != 0; }
-	const TeamTemplateInfo *getTemplateInfo(void) const {return &m_teamTemplate;}
+	const TeamTemplateInfo *getTemplateInfo() const {return &m_teamTemplate;}
 	/**
 		return the team's owner (backtracking up if necessary)
 	*/
@@ -547,7 +547,7 @@ public:
 	/**
 		Evaluate team's production condition.
 	*/
-	Bool evaluateProductionCondition(void);
+	Bool evaluateProductionCondition();
 
 	/**
 		count for all the team instances belonging to this prototype.
@@ -557,7 +557,7 @@ public:
 	/**
 		count the buildings owned by this Team template
 	*/
-	Int countBuildings(void);
+	Int countBuildings();
 
 	/**
 		simply returns the number of objects on this team with a specific KindOfMaskType
@@ -575,17 +575,17 @@ public:
 	void iterateObjects( ObjectIterateFunc func, void *userData );
 
 	/// count the number of teams that have been instanced by this prototype
-	Int countTeamInstances( void );
+	Int countTeamInstances();
 
 	/**
 		Checks & clears the flags that a team member entered or exited a trigger area, or was created.
 	*/
-	void updateState(void);
+	void updateState();
 
 	/**
 		a convenience routine to quickly check if any buildings are owned.
 	*/
-	Bool hasAnyBuildings(void) const;
+	Bool hasAnyBuildings() const;
 
 	/**
 		a convenience routine to quickly check if any buildings with a specific KindOfType flag are owned.
@@ -595,17 +595,17 @@ public:
 	/**
 		a convenience routine to quickly check if any units are owned.
 	*/
-	Bool hasAnyUnits(void) const;
+	Bool hasAnyUnits() const;
 
 	/**
 		a convenience routine to quickly check if any objects are owned.
 	*/
-	Bool hasAnyObjects(void) const;
+	Bool hasAnyObjects() const;
 
 	/**
 		a convenience routine to quickly check if any buildfacilities are owned.
 	*/
-	Bool hasAnyBuildFacility(void) const;
+	Bool hasAnyBuildFacility() const;
 
 	/**
 		a convenience routine to quickly destroy a team.
@@ -625,19 +625,19 @@ public:
 	Script *getGenericScript(Int scriptToRetrieve);
 
 	// Make a team more likely to be selected by the ai for building due to success.
-	void increaseAIPriorityForSuccess(void) const;
+	void increaseAIPriorityForSuccess() const;
 	// Make a team less likely to be selected by the ai for building due to failure.
-	void decreaseAIPriorityForFailure(void) const;
+	void decreaseAIPriorityForFailure() const;
 
 	void setAttackPriorityName(const AsciiString &name) { m_attackPriorityName = name;}
-	AsciiString getAttackPriorityName(void) const { return m_attackPriorityName;}
+	AsciiString getAttackPriorityName() const { return m_attackPriorityName;}
 
 protected:
 
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
+	virtual void loadPostProcess();
 
 private:
 
@@ -683,9 +683,9 @@ public:
 	~TeamFactory();
 
 	// subsystem methods
-	virtual void init( void );
-	virtual void reset( void );
-	virtual void update( void );
+	virtual void init();
+	virtual void reset();
+	virtual void update();
 
 	void clear();
 	void initFromSides(SidesList *sides);
@@ -729,7 +729,7 @@ protected:
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
+	virtual void loadPostProcess();
 
 private:
 
@@ -745,7 +745,7 @@ extern TeamFactory *TheTeamFactory;
 
 
 // inline function ------------------------------------------------------------------------
-const AsciiString& Team::getName(void) const
+const AsciiString& Team::getName() const
 {
 	return m_proto->getName();
 }
