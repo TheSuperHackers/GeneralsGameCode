@@ -185,9 +185,9 @@ protected:
 	// Essentially all the member data gets set up on creation and shouldn't change.
 	// So none of it needs to be saved, and it nicely forces all user states to
 	// remember to implement crc, xfer & loadPostProcess.  jba
-	virtual void crc( Xfer *xfer ) =0;
-	virtual void xfer( Xfer *xfer ) =0;
-	virtual void loadPostProcess() =0;
+	virtual void crc( Xfer *xfer )=0;
+	virtual void xfer( Xfer *xfer )=0;
+	virtual void loadPostProcess()=0;
 
 private:
 
@@ -406,9 +406,9 @@ public:
 	virtual StateReturnType update() override { return STATE_SUCCESS; }
 protected:
 	// snapshot interface STUBBED.
-	virtual void crc( Xfer *xfer ) override{};
-	virtual void xfer( Xfer *xfer ) override{XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
-	virtual void loadPostProcess() override{};
+	virtual void crc( Xfer *xfer ) override {};
+	virtual void xfer( Xfer *xfer ) override {XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
+	virtual void loadPostProcess() override {};
 
 };
 EMPTY_DTOR(SuccessState)
@@ -426,9 +426,9 @@ public:
 	virtual StateReturnType update() override { return STATE_FAILURE; }
 protected:
 	// snapshot interface STUBBED.
-	virtual void crc( Xfer *xfer ) override{};
-	virtual void xfer( Xfer *xfer ) override{XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
-	virtual void loadPostProcess() override{};
+	virtual void crc( Xfer *xfer ) override {};
+	virtual void xfer( Xfer *xfer ) override {XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
+	virtual void loadPostProcess() override {};
 };
 EMPTY_DTOR(FailureState)
 
@@ -446,9 +446,9 @@ public:
 	virtual StateReturnType update() override { return STATE_CONTINUE; }
 protected:
 	// snapshot interface STUBBED.
-	virtual void crc( Xfer *xfer ) override{};
-	virtual void xfer( Xfer *xfer ) override{XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
-	virtual void loadPostProcess() override{};
+	virtual void crc( Xfer *xfer ) override {};
+	virtual void xfer( Xfer *xfer ) override {XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
+	virtual void loadPostProcess() override {};
 };
 EMPTY_DTOR(ContinueState)
 
@@ -466,9 +466,9 @@ public:
 	virtual StateReturnType update() override { return STATE_SLEEP_FOREVER; }
 protected:
 	// snapshot interface STUBBED.
-	virtual void crc( Xfer *xfer ) override{};
-	virtual void xfer( Xfer *xfer ) override{XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
-	virtual void loadPostProcess() override{};
+	virtual void crc( Xfer *xfer ) override {};
+	virtual void xfer( Xfer *xfer ) override {XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
+	virtual void loadPostProcess() override {};
 };
 EMPTY_DTOR(SleepState)
 

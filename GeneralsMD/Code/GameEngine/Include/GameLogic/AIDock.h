@@ -87,9 +87,9 @@ public:
 	virtual StateReturnType update() override;
 protected:
 	// snapshot interface STUBBED.
-	virtual void crc( Xfer *xfer ) override{};
+	virtual void crc( Xfer *xfer ) override {};
 	virtual void xfer( Xfer *xfer ) override;
-	virtual void loadPostProcess() override{};
+	virtual void loadPostProcess() override {};
 };
 EMPTY_DTOR(AIDockApproachState)
 
@@ -106,9 +106,9 @@ protected:
 	UnsignedInt m_enterFrame;
 protected:
 	// snapshot interface STUBBED.
-	virtual void crc( Xfer *xfer ) override{};
+	virtual void crc( Xfer *xfer ) override {};
 	virtual void xfer( Xfer *xfer ) override;
-	virtual void loadPostProcess() override{};
+	virtual void loadPostProcess() override {};
 };
 EMPTY_DTOR(AIDockWaitForClearanceState)
 
@@ -177,9 +177,9 @@ public:
 
 protected:
 	// snapshot interface STUBBED.
-	virtual void crc( Xfer *xfer ) override{};
-	virtual void xfer( Xfer *xfer ) override{XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
-	virtual void loadPostProcess() override{};
+	virtual void crc( Xfer *xfer ) override {};
+	virtual void xfer( Xfer *xfer ) override {XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
+	virtual void loadPostProcess() override {};
 
 private:
 	ObjectID m_droneID;			///< If I have a drone, the drone will get repaired too.

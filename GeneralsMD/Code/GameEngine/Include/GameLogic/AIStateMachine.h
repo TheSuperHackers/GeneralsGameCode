@@ -345,9 +345,9 @@ public:
 	virtual Bool isBusy() const override { return true; }
 protected:
 	// snapshot interface STUBBED.
-	virtual void crc( Xfer *xfer ) override{};
-	virtual void xfer( Xfer *xfer ) override{XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
-	virtual void loadPostProcess() override{};
+	virtual void crc( Xfer *xfer ) override {};
+	virtual void xfer( Xfer *xfer ) override {XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
+	virtual void loadPostProcess() override {};
 
 };
 EMPTY_DTOR(AIBusyState)
@@ -926,9 +926,9 @@ public:
 	virtual StateReturnType update() override;
 protected:
 	// snapshot interface STUBBED.
-	virtual void crc( Xfer *xfer ) override{};
-	virtual void xfer( Xfer *xfer ) override{XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
-	virtual void loadPostProcess() override{};
+	virtual void crc( Xfer *xfer ) override {};
+	virtual void xfer( Xfer *xfer ) override {XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
+	virtual void loadPostProcess() override {};
 };
 EMPTY_DTOR(AIWaitState)
 
@@ -959,9 +959,9 @@ public:
 	virtual StateReturnType onEnter() override;
 protected:
 	// snapshot interface STUBBED.
-	virtual void crc( Xfer *xfer ) override{};
-	virtual void xfer( Xfer *xfer ) override{XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
-	virtual void loadPostProcess() override{};
+	virtual void crc( Xfer *xfer ) override {};
+	virtual void xfer( Xfer *xfer ) override {XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
+	virtual void loadPostProcess() override {};
 private:
 	NotifyWeaponFiredInterface *const m_att;		// this is NOT owned by us and should not be freed
 };
@@ -1058,9 +1058,9 @@ public:
 	virtual void onExit( StateExitType status ) override;
 protected:
 	// snapshot interface STUBBED.
-	virtual void crc( Xfer *xfer ) override{};
-	virtual void xfer( Xfer *xfer ) override{XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
-	virtual void loadPostProcess() override{};
+	virtual void crc( Xfer *xfer ) override {};
+	virtual void xfer( Xfer *xfer ) override {XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
+	virtual void loadPostProcess() override {};
 };
 EMPTY_DTOR(AIDeadState)
 
