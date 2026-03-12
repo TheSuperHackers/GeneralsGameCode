@@ -244,6 +244,7 @@ GameLogic::GameLogic()
 	m_logicTimeScaleEnabledMemory = FALSE;
 	m_loadScreen = nullptr;
 	m_forceGameStartByTimeOut = FALSE;
+	m_quitToDesktopAfterMatch = FALSE;
 #ifdef DUMP_PERF_STATS
 	m_overallFailedPathfinds = 0;
 #endif
@@ -911,6 +912,8 @@ static void populateRandomStartPosition( GameInfo *game )
 	}
 }
 
+struct QuitGameException {};
+
 // ------------------------------------------------------------------------------------------------
 /** Update the load screen progress */
 // ------------------------------------------------------------------------------------------------
@@ -920,6 +923,10 @@ void GameLogic::updateLoadProgress( Int progress )
 	if( m_loadScreen )
 		m_loadScreen->update( progress );
 
+	if (TheGameEngine->getQuitting() || m_quitToDesktopAfterMatch)
+	{
+		throw QuitGameException();
+	}
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -966,7 +973,18 @@ void GameLogic::setGameMode( GameMode mode )
 // ------------------------------------------------------------------------------------------------
 void GameLogic::startNewGame( Bool saveGame )
 {
+	try
+	{
+		tryStartNewGame(saveGame);
+	}
+	catch (QuitGameException&)
+	{
+		// TheSuperHackers @info The application is cleanly aborting the loading process
+	}
+}
 
+void GameLogic::tryStartNewGame( Bool saveGame )
+{
 	#ifdef DUMP_PERF_STATS
 	__int64 startTime64;
 	__int64 endTime64,freq64;
@@ -2066,8 +2084,6 @@ void GameLogic::startNewGame( Bool saveGame )
   {
 		TheInGameUI->messageNoFormat( TheGameText->FETCH_OR_SUBSTITUTE( "GUI:FastForwardInstructions", L"Press F to toggle Fast Forward" ) );
   }
-
-
 }
 
 //-----------------------------------------------------------------------------------------
@@ -3617,6 +3633,71 @@ void GameLogic::exitGame()
 	TheScriptEngine->doUnfreezeTime();
 
 	TheMessageStream->appendMessage(GameMessage::MSG_CLEAR_GAME_DATA);
+}
+
+// ------------------------------------------------------------------------------------------------
+void GameLogic::quit(Bool toDesktop)
+{
+	if (isInGame())
+	{
+		if (isInInteractiveGame())
+		{
+			if (!TheInGameUI->isQuitMenuVisible())
+			{
+				ToggleQuitMenu();
+				return;
+			}
+			
+			if (isInMultiplayerGame() && TheGameInfo && !TheGameInfo->isSandbox())
+			{
+				GameMessage *msg = TheMessageStream->appendMessage(GameMessage::MSG_SELF_DESTRUCT);
+				msg->appendBooleanArgument(TRUE);
+			}
+		}
+
+		if (TheRecorder && TheRecorder->getMode() == RECORDERMODETYPE_RECORD)
+		{
+			TheRecorder->stopRecording();
+		}
+
+		setGamePaused(FALSE);
+
+		if (TheScriptEngine)
+		{
+			TheScriptEngine->forceUnfreezeTime();
+			TheScriptEngine->doUnfreezeTime();
+		}
+
+		if (toDesktop)
+		{
+			if (isInMultiplayerGame())
+			{
+				m_quitToDesktopAfterMatch = TRUE;
+				exitGame();
+			}
+			else
+			{
+				clearGameData();
+			}
+		}
+		else
+		{
+			exitGame();
+		}
+	}
+
+	if (toDesktop)
+	{
+		if (!isInMultiplayerGame())
+		{
+			TheGameEngine->setQuitting(TRUE);
+		}
+	}
+
+	if (TheInGameUI)
+	{
+		TheInGameUI->setClientQuiet(TRUE);
+	}
 }
 
 // ------------------------------------------------------------------------------------------------

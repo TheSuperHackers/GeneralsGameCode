@@ -535,6 +535,11 @@ void GameClient::update()
 					Int beginTime = timeGetTime();
 					while(beginTime + 4000 > timeGetTime() )
 					{
+						if (GameClient::isMovieAbortRequested())
+						{
+							break;
+						}
+
 						TheWindowManager->update();
 						// redraw all views, update the GUI
 						TheDisplay->draw();
@@ -750,6 +755,32 @@ void GameClient::updateHeadless()
 	// during GameLogic and only cleaned up during rendering. update() lets particles finish
 	// their lifecycle naturally instead of abruptly removing them with reset().
 	TheParticleSystemManager->update();
+}
+
+Bool GameClient::isMovieAbortRequested()
+{
+	// TheSuperHackers @feature User can skip video by pressing ESC
+	if (TheKeyboard)
+	{
+		TheKeyboard->UPDATE();
+		KeyboardIO *io = TheKeyboard->findKey(KEY_ESC, KeyboardIO::STATUS_UNUSED);
+		if (io && BitIsSet(io->state, KEY_STATE_DOWN))
+		{
+			io->setUsed();
+			return TRUE;
+		}
+	}
+
+	// TheSuperHackers @feature Service OS for Window Close / Alt-F4 events
+	TheGameEngine->serviceWindowsOS();
+	TheMessageStream->propagateMessages();
+	
+	if (TheGameEngine->getQuitting() || (TheGameLogic && TheGameLogic->m_quitToDesktopAfterMatch))
+	{
+		return TRUE;
+	}
+
+	return FALSE;
 }
 
 /** -----------------------------------------------------------------------------------------------

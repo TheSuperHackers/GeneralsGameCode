@@ -3699,27 +3699,15 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 			break;
 
 		}
-
-
-#if defined(RTS_DEBUG)
-		//------------------------------------------------------------------------- BEGIN DEMO MESSAGES
-		//------------------------------------------------------------------------- BEGIN DEMO MESSAGES
-		//------------------------------------------------------------------------- BEGIN DEMO MESSAGES
-		//------------------------------------------------------------------------------- DEMO MESSAGES
-		//-----------------------------------------------------------------------------------------
+		
 		case GameMessage::MSG_META_DEMO_INSTANT_QUIT:
-			if (TheGameLogic->isInGame())
-			{
-				if (TheRecorder->getMode() == RECORDERMODETYPE_RECORD)
-				{
-					TheRecorder->stopRecording();
-				}
-				TheGameLogic->clearGameData();
-			}
-			TheGameEngine->setQuitting(TRUE);
+		{
+			TheGameLogic->quit(TRUE);
 			disp = DESTROY_MESSAGE;
 			break;
+		}
 
+#if defined(RTS_DEBUG)
 		//------------------------------------------------------------------------------- DEMO MESSAGES
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_DEMO_SWITCH_TEAMS:
@@ -5055,6 +5043,7 @@ static Bool isSystemMessage( const GameMessage *msg )
 		case GameMessage::MSG_LOGIC_CRC:
 		case GameMessage::MSG_SET_REPLAY_CAMERA:
 		case GameMessage::MSG_FRAME_TICK:
+		case GameMessage::MSG_META_DEMO_INSTANT_QUIT:
 			return TRUE;
 	}
 	return FALSE;

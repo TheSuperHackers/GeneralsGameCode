@@ -137,23 +137,9 @@ void destroyQuitMenu()
  */
 static void exitQuitMenu()
 {
+	TheGameLogic->quit(FALSE);
   // destroy the quit menu
 	destroyQuitMenu();
-
-	// clear out all the game data
-	if ( TheGameLogic->isInMultiplayerGame() && !TheGameLogic->isInSkirmishGame() && !TheGameInfo->isSandbox() )
-	{
-		GameMessage *msg = TheMessageStream->appendMessage(GameMessage::MSG_SELF_DESTRUCT);
-		msg->appendBooleanArgument(TRUE);
-	}
-	TheGameLogic->exitGame();
-	// TheGameLogic->clearGameData();
-	// display the menu on top of the shell stack
-  // TheShell->showShell();
-
-	// this will trigger an exit
-  // TheGameEngine->setQuitting( TRUE );
-	TheInGameUI->setClientQuiet( TRUE );
 }
 static void noExitQuitMenu()
 {
@@ -162,20 +148,9 @@ static void noExitQuitMenu()
 
 static void quitToDesktopQuitMenu()
 {
+	TheGameLogic->quit(TRUE);
   // destroy the quit menu
 	destroyQuitMenu();
-
-	if (TheGameLogic->isInGame())
-	{
-		if (TheRecorder->getMode() == RECORDERMODETYPE_RECORD)
-		{
-			TheRecorder->stopRecording();
-		}
-		TheGameLogic->clearGameData();
-	}
-	TheGameEngine->setQuitting(TRUE);
-	TheInGameUI->setClientQuiet( TRUE );
-
 }
 
 static void surrenderQuitMenu()

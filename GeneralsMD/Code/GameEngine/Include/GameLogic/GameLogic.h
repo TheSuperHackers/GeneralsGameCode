@@ -158,6 +158,7 @@ public:
 
 	// super hack
 	void startNewGame( Bool loadSaveGame );
+	void tryStartNewGame( Bool loadSaveGame );
 	void loadMapINI( AsciiString mapName );
 
 	void updateLoadProgress( Int progress );
@@ -211,6 +212,7 @@ public:
 	UnsignedInt getFrameObjectsChangedTriggerAreas() {return m_frameObjectsChangedTriggerAreas;}
 
 	void exitGame();
+	void quit(Bool toDesktop);
 	void clearGameData(Bool showScoreScreen = TRUE);														///< Clear the game data
 	void closeWindows();
 
@@ -260,6 +262,8 @@ public:
 
 	// this should be called only by UpdateModule, thanks.
 	void friend_awakenUpdateModule(Object* obj, UpdateModulePtr update, UnsignedInt whenToWakeUp);
+
+	Bool m_quitToDesktopAfterMatch;
 
 protected:
 

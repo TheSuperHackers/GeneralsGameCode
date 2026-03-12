@@ -277,6 +277,7 @@ public:
 		MSG_META_TOGGLE_PAUSE_ALT,									///< TheSuperHackers @feature Toggle game pause (alternative mapping)
 		MSG_META_STEP_FRAME,												///< TheSuperHackers @feature Step one frame
 		MSG_META_STEP_FRAME_ALT,										///< TheSuperHackers @feature Step one frame (alternative mapping)
+		MSG_META_DEMO_INSTANT_QUIT,									///< bail out of game immediately
 
 
 		// META items that are really for debug/demo/development use only...
@@ -289,7 +290,6 @@ public:
 		MSG_META_DEMO_LOD_INCREASE,                 ///< increase LOD by 1
 		MSG_META_DEMO_TOGGLE_ZOOM_LOCK,							///< Toggle the camera zoom lock on/off
 		MSG_META_DEMO_PLAY_CAMEO_MOVIE,							///< Play a movie in the cameo spot
-		MSG_META_DEMO_INSTANT_QUIT,									///< bail out of game immediately
 		MSG_META_DEMO_TOGGLE_SPECIAL_POWER_DELAYS,	///< Toggle special power delays on/off
 		MSG_META_DEMO_BATTLE_CRY,										///< battle cry
 		MSG_META_DEMO_SWITCH_TEAMS,									///< switch local control to another team
