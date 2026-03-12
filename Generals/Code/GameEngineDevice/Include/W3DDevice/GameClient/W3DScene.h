@@ -95,7 +95,7 @@ public:
 	virtual void init() override {}
 	virtual void update() override {}
 	virtual void draw() override;
-	virtual void reset() override{}
+	virtual void reset() override {}
 	void doRender(CameraClass * cam);
 
 protected:
@@ -155,7 +155,7 @@ public:
 	virtual void init() override {}
 	virtual void update() override {}
 	virtual void draw() override;
-	virtual void reset() override{}
+	virtual void reset() override {}
 	void doRender(CameraClass * cam);
 
 protected:
