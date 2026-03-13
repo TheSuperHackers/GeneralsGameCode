@@ -1032,6 +1032,20 @@ UpdateSleepTime ChinookAIUpdate::update()
 			// we're completely healed, so take off again
 			pp->setHealee(getObject(), false);
 			setMyState(TAKING_OFF, nullptr, nullptr, CMD_FROM_AI);
+
+#if !RETAIL_COMPATIBLE_CRC
+			// TheSuperHackers @bugfix arcticdolphin 02/03/2026 Move healed Chinook to rally point if present.
+			if (Object *airfield = TheGameLogic->findObjectByID( m_airfieldForHealing ))
+			{
+				if (ExitInterface *exitInterface = airfield->getObjectExitInterface())
+				{
+					if (const Coord3D *rallyPoint = exitInterface->getRallyPoint())
+					{
+						aiMoveToPosition( rallyPoint, CMD_FROM_AI );
+					}
+				}
+			}
+#endif
 		}
 		else
 		{
