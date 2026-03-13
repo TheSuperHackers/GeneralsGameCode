@@ -1776,6 +1776,20 @@ UpdateSleepTime JetAIUpdate::update()
 				getStateMachine()->clear();
 				setLastCommandSource( CMD_FROM_AI );
 				getStateMachine()->setState( TAKING_OFF_AWAIT_CLEARANCE );
+
+#if !RETAIL_COMPATIBLE_CRC
+				// TheSuperHackers @bugfix arcticdolphin 02/03/2026 Move healed helicopter to rally point if present.
+				if (Object *airfield = TheGameLogic->findObjectByID( jet->getProducerID() ))
+				{
+					if (ExitInterface *exitInterface = airfield->getObjectExitInterface())
+					{
+						if (const Coord3D *rallyPoint = exitInterface->getRallyPoint())
+						{
+							aiMoveToPosition( rallyPoint, CMD_FROM_AI );
+						}
+					}
+				}
+#endif
 			}
 			else
 			{
