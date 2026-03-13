@@ -158,7 +158,7 @@ public:
 	virtual UnsignedInt countUnitTypeInQueue( const ThingTemplate *unitType ) const = 0;
 
 	virtual Bool queueCreateUnit( const ThingTemplate *unitType, ProductionID productionID ) = 0;
-	virtual void cancelUnitCreate( ProductionID productionID ) = 0;
+	virtual void cancelUnitCreate( ProductionID productionID, Bool forceCancel = FALSE ) = 0;
 	virtual void cancelAllUnitsOfType( const ThingTemplate *unitType) = 0;
 
 	virtual void cancelAndRefundAllProduction() = 0;
@@ -214,7 +214,7 @@ public:
 	virtual UnsignedInt countUnitTypeInQueue( const ThingTemplate *unitType ) const;  ///< count number of units with matching unit type in the production queue
 
 	virtual Bool queueCreateUnit( const ThingTemplate *unitType, ProductionID productionID );					///< queue unit to be produced
-	virtual void cancelUnitCreate( ProductionID productionID );		      ///< cancel construction of unit with matching production ID
+	virtual void cancelUnitCreate( ProductionID productionID, Bool forceCancel = FALSE );	      ///< cancel construction of unit with matching production ID
 	virtual void cancelAllUnitsOfType( const ThingTemplate *unitType);	///< cancel all production of type unitType
 
 	virtual void cancelAndRefundAllProduction();									///< cancel and refund anything in the production queue

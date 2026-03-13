@@ -457,7 +457,7 @@ Bool ProductionUpdate::queueCreateUnit( const ThingTemplate *unitType, Productio
 //-------------------------------------------------------------------------------------------------
 /** Cancel the construction of the unit with the matching production ID */
 //-------------------------------------------------------------------------------------------------
-void ProductionUpdate::cancelUnitCreate( ProductionID productionID )
+void ProductionUpdate::cancelUnitCreate( ProductionID productionID, Bool forceCancel )
 {
 
 	// search for the production entry in our queue
@@ -469,8 +469,16 @@ void ProductionUpdate::cancelUnitCreate( ProductionID productionID )
 		if( production->m_productionID == productionID )
 		{
 
-			// give the player the cost of the object back
 			Player *player = getObject()->getControllingPlayer();
+#if !RETAIL_COMPATIBLE_CRC
+			// TheSuperHackers @bugfix arcticdolphin 08/03/2026 Prevent cancel once units are produced to avoid free unit exploit
+			if( !forceCancel && production->getProductionQuantityRemaining() < production->getProductionQuantity() )
+			{
+				return;
+			}
+#endif
+
+			// give the player the cost of the object back
 			Money *money = player->getMoney();
 			money->deposit( production->m_objectToProduce->calcCostToBuild( player ), TRUE, FALSE );
 
@@ -692,10 +700,17 @@ UpdateSleepTime ProductionUpdate::update()
 		// Don't cancel dozers in the queue.  jba.
 		if (!production->getProductionObject()->isKindOf(KINDOF_DOZER))
 		{
-
+#if RETAIL_COMPATIBLE_CRC
 			cancelUnitCreate(production->getProductionID());
 			return UPDATE_SLEEP_NONE;
-
+#else
+			// TheSuperHackers @bugfix arcticdolphin 13/03/2026 Let partial production finish naturally when script-disallowed.
+			if( production->getProductionQuantityRemaining() == production->getProductionQuantity() )
+			{
+				cancelUnitCreate(production->getProductionID());
+				return UPDATE_SLEEP_NONE;
+			}
+#endif
 		}
 
 	}
@@ -1140,7 +1155,7 @@ void ProductionUpdate::cancelAndRefundAllProduction()
     if( m_productionQueue )
     {
       if( m_productionQueue->getProductionType() == PRODUCTION_UNIT )
-        cancelUnitCreate( m_productionQueue->getProductionID() );
+        cancelUnitCreate( m_productionQueue->getProductionID(), TRUE );
       else if( m_productionQueue->getProductionType() == PRODUCTION_UPGRADE )
         cancelUpgrade( m_productionQueue->getProductionUpgrade() );
       else
