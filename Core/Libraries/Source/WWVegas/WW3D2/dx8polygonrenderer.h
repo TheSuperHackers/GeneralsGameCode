@@ -76,7 +76,7 @@ public:
 		bool strip,
 		unsigned pass);
 	DX8PolygonRendererClass(const DX8PolygonRendererClass& src,MeshModelClass* mmc_);
-	~DX8PolygonRendererClass();
+	virtual ~DX8PolygonRendererClass() override;
 
 	void								Render(/*const Matrix3D & tm,*/int base_vertex_offset);
 	void								Render_Sorted(/*const Matrix3D & tm,*/int base_vertex_offset,const SphereClass & bounding_sphere);

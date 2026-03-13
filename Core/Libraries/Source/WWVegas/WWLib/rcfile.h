@@ -53,23 +53,23 @@ class ResourceFileClass : public FileClass
 	public:
 
 		ResourceFileClass(HMODULE hmodule, char const *filename);
-		virtual ~ResourceFileClass();
+		virtual ~ResourceFileClass() override;
 
-		virtual char const * File_Name() const					{ return ResourceName; }
-		virtual char const * Set_Name(char const *filename);
-		virtual int Create()											{ return false; }
-		virtual int Delete()											{ return false; }
-		virtual bool Is_Available(int /*forced=false*/)				{ return Is_Open (); }
-		virtual bool Is_Open() const									{ return (FileBytes != nullptr); }
+		virtual char const * File_Name() const override { return ResourceName; }
+		virtual char const * Set_Name(char const *filename) override;
+		virtual int Create() override { return false; }
+		virtual int Delete() override { return false; }
+		virtual bool Is_Available(int /*forced=false*/) override				{ return Is_Open (); }
+		virtual bool Is_Open() const override { return (FileBytes != nullptr); }
 
-		virtual int Open(char const * /*fname*/, int /*rights=READ*/)	{ return Is_Open(); }
-		virtual int Open(int /*rights=READ*/)							{ return Is_Open(); }
+		virtual int Open(char const * /*fname*/, int /*rights=READ*/) override	{ return Is_Open(); }
+		virtual int Open(int /*rights=READ*/) override							{ return Is_Open(); }
 
-		virtual int Read(void *buffer, int size);
-		virtual int Seek(int pos, int dir=SEEK_CUR);
-		virtual int Size();
-		virtual int Write(void const * /*buffer*/, int /*size*/)	{ return 0; }
-		virtual void Close()											{ }
+		virtual int Read(void *buffer, int size) override;
+		virtual int Seek(int pos, int dir=SEEK_CUR) override;
+		virtual int Size() override;
+		virtual int Write(void const * /*buffer*/, int /*size*/) override { return 0; }
+		virtual void Close() override { }
 		virtual void Error(int error, int canretry = false, char const * filename=nullptr);
 		virtual void Bias(int start, int length=-1) {}
 

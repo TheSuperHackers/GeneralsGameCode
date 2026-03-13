@@ -60,7 +60,7 @@ public:
 	TextFileClass ();
 	TextFileClass (char const *filename);
 	TextFileClass (const TextFileClass &src);
-	virtual ~TextFileClass ();
+	virtual ~TextFileClass () override;
 
 	/////////////////////////////////////////////////////////////////
 	//	Public operators

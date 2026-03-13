@@ -73,7 +73,7 @@ public:
 	** and Destructor
 	*/
 	Font3DDataClass( const char *filename );
-	~Font3DDataClass();
+	virtual ~Font3DDataClass() override;
 
 	// the name of the font data (used for name matching and the like.)
 	char		*Name;
@@ -149,7 +149,7 @@ public:
 	** and Destructor
 	*/
 	Font3DInstanceClass( const char *filename );
-	~Font3DInstanceClass();
+	virtual ~Font3DInstanceClass() override;
 
 	/*
 	** access texture material

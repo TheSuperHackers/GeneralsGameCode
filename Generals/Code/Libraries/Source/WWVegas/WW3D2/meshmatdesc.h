@@ -72,7 +72,7 @@ public:
 
 	MeshMatDescClass();
 	MeshMatDescClass(const MeshMatDescClass & that);
-	~MeshMatDescClass();
+	virtual ~MeshMatDescClass() override;
 	void							Reset(int polycount,int vertcount,int passcount);
 	MeshMatDescClass &		operator = (const MeshMatDescClass & that);
 
@@ -234,7 +234,7 @@ class MatBufferClass : public ShareBufferClass < VertexMaterialClass * >
 public:
 	MatBufferClass(int count, const char* msg) : ShareBufferClass<VertexMaterialClass *>(count, msg) { Clear(); }
 	MatBufferClass(const MatBufferClass & that);
-	~MatBufferClass();
+	virtual ~MatBufferClass() override;
 
 	void							Set_Element(int index,VertexMaterialClass * mat);
 	VertexMaterialClass *	Get_Element(int index);
@@ -256,7 +256,7 @@ class TexBufferClass : public ShareBufferClass < TextureClass * >
 public:
 	TexBufferClass(int count, const char* msg) : ShareBufferClass<TextureClass *>(count, msg) { Clear(); }
 	TexBufferClass(const TexBufferClass & that);
-	~TexBufferClass();
+	virtual ~TexBufferClass() override;
 
 	void				Set_Element(int index,TextureClass * mat);
 	TextureClass *	Get_Element(int index);

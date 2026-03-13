@@ -88,7 +88,7 @@ class DX8TextureCategoryClass : public MultiListObjectClass
 public:
 
 	DX8TextureCategoryClass(DX8FVFCategoryContainer* container,TextureClass** textures, ShaderClass shd, VertexMaterialClass* mat,int pass);
-	~DX8TextureCategoryClass();
+	virtual ~DX8TextureCategoryClass() override;
 
 	void									Add_Render_Task(DX8PolygonRendererClass * p_renderer,MeshClass * p_mesh);
 
@@ -178,7 +178,7 @@ protected:
 public:
 
 	DX8FVFCategoryContainer(unsigned FVF,bool sorting);
-	virtual ~DX8FVFCategoryContainer();
+	virtual ~DX8FVFCategoryContainer() override;
 
 	static unsigned Define_FVF(MeshModelClass* mmc,bool enable_lighting);
 	bool Is_Sorting() const { return sorting; }
@@ -235,20 +235,20 @@ class DX8RigidFVFCategoryContainer : public DX8FVFCategoryContainer
 {
 public:
 	DX8RigidFVFCategoryContainer(unsigned FVF,bool sorting);
-	~DX8RigidFVFCategoryContainer();
+	virtual ~DX8RigidFVFCategoryContainer() override;
 
-	void Add_Mesh(MeshModelClass* mmc);
-	void Log(bool only_visible);
-	bool Check_If_Mesh_Fits(MeshModelClass* mmc);
+	virtual void Add_Mesh(MeshModelClass* mmc) override;
+	virtual void Log(bool only_visible) override;
+	virtual bool Check_If_Mesh_Fits(MeshModelClass* mmc) override;
 
-	void Render();	// Generic render function
+	virtual void Render() override;	// Generic render function
 
 	/*
 	** This method adds a material pass which must be rendered after all of the other rendering is complete.
 	** This is needed whenever a mesh turns off its base passes and renders a translucent pass on its geometry.
 	*/
-	virtual void Add_Delayed_Visible_Material_Pass(MaterialPassClass * pass, MeshClass * mesh);
-	virtual void Render_Delayed_Procedural_Material_Passes();
+	virtual void Add_Delayed_Visible_Material_Pass(MaterialPassClass * pass, MeshClass * mesh) override;
+	virtual void Render_Delayed_Procedural_Material_Passes() override;
 
 protected:
 
@@ -270,12 +270,12 @@ class DX8SkinFVFCategoryContainer: public DX8FVFCategoryContainer
 {
 public:
 	DX8SkinFVFCategoryContainer(bool sorting);
-	~DX8SkinFVFCategoryContainer();
+	virtual ~DX8SkinFVFCategoryContainer() override;
 
-	void Render();
-	void Add_Mesh(MeshModelClass* mmc);
-	void Log(bool only_visible);
-	bool Check_If_Mesh_Fits(MeshModelClass* mmc);
+	virtual void Render() override;
+	virtual void Add_Mesh(MeshModelClass* mmc) override;
+	virtual void Log(bool only_visible) override;
+	virtual bool Check_If_Mesh_Fits(MeshModelClass* mmc) override;
 
 	void Add_Visible_Skin(MeshClass * mesh);
 
@@ -283,8 +283,8 @@ public:
 	** Since skins are already rendered after the rigid meshes, the Add_Delayed_Material_Pass function simply
 	** routes into the Add_Visible_Material_Pass method and no extra overhead is added.
 	*/
-	virtual void Add_Delayed_Visible_Material_Pass(MaterialPassClass * pass, MeshClass * mesh) { Add_Visible_Material_Pass(pass,mesh); }
-	virtual void Render_Delayed_Procedural_Material_Passes() { }
+	virtual void Add_Delayed_Visible_Material_Pass(MaterialPassClass * pass, MeshClass * mesh) override { Add_Visible_Material_Pass(pass,mesh); }
+	virtual void Render_Delayed_Procedural_Material_Passes() override { }
 
 private:
 

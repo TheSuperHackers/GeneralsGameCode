@@ -101,7 +101,7 @@ public:
 
 	VertexMaterialClass();
 	VertexMaterialClass(const VertexMaterialClass & src);
-	~VertexMaterialClass();
+	virtual ~VertexMaterialClass() override;
 
 	VertexMaterialClass &	operator = (const VertexMaterialClass &src);
 	VertexMaterialClass *	Clone() { VertexMaterialClass * mat = NEW_REF (VertexMaterialClass,()); *mat = *this; return mat;}

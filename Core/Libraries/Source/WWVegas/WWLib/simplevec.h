@@ -252,7 +252,7 @@ protected:
 public:
 
 	SimpleDynVecClass(int size = 0);
-	virtual ~SimpleDynVecClass();
+	virtual ~SimpleDynVecClass() override;
 
 	// Array-like access (does not grow)
 	int				Count() const						{ return(ActiveCount); }
@@ -260,7 +260,7 @@ public:
 	T const &		operator[](int index) const		{ assert(index < ActiveCount); return(Vector[index]); }
 
 	// Change maximum size of vector
-	virtual bool	Resize(int newsize);
+	virtual bool	Resize(int newsize) override;
 
 	// Add object to vector (growing as necessary).
 	bool				Add(T const & object,int new_size_hint = 0);

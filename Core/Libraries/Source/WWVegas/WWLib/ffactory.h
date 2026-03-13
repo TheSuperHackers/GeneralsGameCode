@@ -121,10 +121,10 @@ class	SimpleFileFactoryClass : public FileFactoryClass {
 
 public:
 	SimpleFileFactoryClass();
-	~SimpleFileFactoryClass()	{}
+	virtual ~SimpleFileFactoryClass() override {}
 
-	virtual FileClass *	Get_File( char const *filename );
-	virtual void			Return_File( FileClass *file );
+	virtual FileClass *	Get_File( char const *filename ) override;
+	virtual void			Return_File( FileClass *file ) override;
 
 	// sub_directory may be a semicolon separated search path.  New files will always
 	//   go in the last dir in the path.

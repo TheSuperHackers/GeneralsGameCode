@@ -86,7 +86,7 @@ class DX8TextureCategoryClass : public MultiListObjectClass
 public:
 
 	DX8TextureCategoryClass(DX8FVFCategoryContainer* container,TextureClass** textures, ShaderClass shd, VertexMaterialClass* mat,int pass);
-	~DX8TextureCategoryClass();
+	virtual ~DX8TextureCategoryClass() override;
 
 	void									Add_Render_Task(DX8PolygonRendererClass * p_renderer,MeshClass * p_mesh);
 
@@ -172,7 +172,7 @@ protected:
 public:
 
 	DX8FVFCategoryContainer(unsigned FVF,bool sorting);
-	virtual ~DX8FVFCategoryContainer();
+	virtual ~DX8FVFCategoryContainer() override;
 
 	static unsigned Define_FVF(MeshModelClass* mmc,bool enable_lighting);
 	bool Is_Sorting() const { return sorting; }
@@ -236,13 +236,13 @@ class DX8RigidFVFCategoryContainer : public DX8FVFCategoryContainer
 {
 public:
 	DX8RigidFVFCategoryContainer(unsigned FVF,bool sorting);
-	~DX8RigidFVFCategoryContainer();
+	virtual ~DX8RigidFVFCategoryContainer() override;
 
-	void Add_Mesh(MeshModelClass* mmc);
-	void Log(bool only_visible);
-	bool Check_If_Mesh_Fits(MeshModelClass* mmc);
+	virtual void Add_Mesh(MeshModelClass* mmc) override;
+	virtual void Log(bool only_visible) override;
+	virtual bool Check_If_Mesh_Fits(MeshModelClass* mmc) override;
 
-	void Render();	// Generic render function
+	virtual void Render() override;	// Generic render function
 
 protected:
 
@@ -260,12 +260,12 @@ class DX8SkinFVFCategoryContainer: public DX8FVFCategoryContainer
 {
 public:
 	DX8SkinFVFCategoryContainer(bool sorting);
-	~DX8SkinFVFCategoryContainer();
+	virtual ~DX8SkinFVFCategoryContainer() override;
 
-	void Render();
-	void Add_Mesh(MeshModelClass* mmc);
-	void Log(bool only_visible);
-	bool Check_If_Mesh_Fits(MeshModelClass* mmc);
+	virtual void Render() override;
+	virtual void Add_Mesh(MeshModelClass* mmc) override;
+	virtual void Log(bool only_visible) override;
+	virtual bool Check_If_Mesh_Fits(MeshModelClass* mmc) override;
 
 	void Add_Visible_Skin(MeshClass * mesh);
 

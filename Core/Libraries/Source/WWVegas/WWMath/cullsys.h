@@ -76,7 +76,7 @@ class CullableClass : public RefCountClass
 public:
 
 	CullableClass();
-	virtual ~CullableClass();
+	virtual ~CullableClass() override;
 
 	/*
 	** Access to the culling box for this object.  When you set the cull box, you are

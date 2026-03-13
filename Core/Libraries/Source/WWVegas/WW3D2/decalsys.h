@@ -173,7 +173,7 @@ public:
 protected:
 
 	DecalGeneratorClass(uint32 id,DecalSystemClass * system);
-	~DecalGeneratorClass();
+	virtual ~DecalGeneratorClass() override;
 
 	/*
 	** Logical Decal ID, DecalSystem that this generator is tied to
@@ -215,19 +215,19 @@ public:
 
 	MultiFixedPoolDecalSystemClass(uint32 num_pools, const uint32 *pool_sizes);
 	MultiFixedPoolDecalSystemClass(const MultiFixedPoolDecalSystemClass & that);
-	virtual ~MultiFixedPoolDecalSystemClass();
+	virtual ~MultiFixedPoolDecalSystemClass() override;
 
 	// This clears the slot in addition to locking the generator, thus preventing any decal id
 	// collisions (since any decal previously in that slot will have the same id as the new one).
-	virtual DecalGeneratorClass *			Lock_Decal_Generator();
+	virtual DecalGeneratorClass *			Lock_Decal_Generator() override;
 
 	// This will register the decal in the system in the appropriate pool and slot (determined by
 	// the generator's pool and slot ids), removing any decal which may have been there before.
-	virtual void								Unlock_Decal_Generator(DecalGeneratorClass * generator);
+	virtual void								Unlock_Decal_Generator(DecalGeneratorClass * generator) override;
 
 	// This notifies the system that a mesh which has decals on it was destroyed - therefore we
 	// need to remove the mesh from our list to avoid dangling pointers.
-	virtual void								Decal_Mesh_Destroyed(uint32 id,DecalMeshClass * mesh);
+	virtual void								Decal_Mesh_Destroyed(uint32 id,DecalMeshClass * mesh) override;
 
 	// Not part of the DecalSystemClass interface - this function removes any decal currently in
 	// the given slot in the given pool.
@@ -247,7 +247,7 @@ protected:
 	** can set them before calling Lock_Decal_Generator() (which is where this function is called).
 	** We do it this way to avoid needing to override Lock_Decal_Generator().
 	*/
-	virtual	uint32	Generate_Decal_Id() { return encode_decal_id(Generator_PoolID, Generator_SlotID); }
+	virtual	uint32	Generate_Decal_Id() override { return encode_decal_id(Generator_PoolID, Generator_SlotID); }
 	uint32	Generator_PoolID;		// These should be set before calling Lock_Decal_Generator()
 	uint32	Generator_SlotID;		// These should be set before calling Lock_Decal_Generator()
 

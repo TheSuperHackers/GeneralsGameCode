@@ -61,19 +61,19 @@ public:
 	** Constructor and Destructor
 	*/
 	TextDrawClass( int max_chars );
-	~TextDrawClass();
+	virtual ~TextDrawClass() override;
 
 	// Set Coordinate Range
 	void	Set_Coordinate_Ranges(	const Vector2 & param_ul, const Vector2 & param_lr,
 											const Vector2 & dest_ul, const Vector2 & dest_lr );
 
 	// Reset all polys and verts
-	virtual	void Reset();
+	virtual	void Reset() override;
 
 	/*
 	** class id of this render object
 	*/
-	virtual int	Class_ID() const	{ return CLASSID_TEXTDRAW; }
+	virtual int	Class_ID() const override { return CLASSID_TEXTDRAW; }
 
 	/*
 	**

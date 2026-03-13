@@ -90,7 +90,7 @@ class DLNodeClass : public W3DMPO
 	DLListClass<T>* list;
 public:
 	DLNodeClass() : succ(0), pred(0), list(0) {}
-	~DLNodeClass() { Remove(); }
+	virtual ~DLNodeClass() override { Remove(); }
 
 	void Insert_Before(DLNodeClass<T>* n)
 	{
