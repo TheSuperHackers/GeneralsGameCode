@@ -1027,7 +1027,6 @@ bool DX8Wrapper::Set_Render_Device(int dev, int width, int height, int bits, int
 	_PresentParameters.BackBufferHeight = ResolutionHeight;
 	_PresentParameters.BackBufferCount = IsWindowed ? 1 : 2;
 
-	_PresentParameters.MultiSampleType = MultiSampleAntiAliasing;
 	//I changed this to discard all the time (even when full-screen) since that the most efficient. 07-16-03 MW:
 	_PresentParameters.SwapEffect = D3DSWAPEFFECT_DISCARD;//IsWindowed ? D3DSWAPEFFECT_DISCARD : D3DSWAPEFFECT_FLIP;		// Shouldn't this be D3DSWAPEFFECT_FLIP?
 	_PresentParameters.hDeviceWindow = _Hwnd;
@@ -1101,7 +1100,7 @@ bool DX8Wrapper::Set_Render_Device(int dev, int width, int height, int bits, int
 	}
 
 	/*
-	** Time to actually create the device.
+	** Set default for depth stencil format if auto Z buffer failed.
 	*/
 	if (_PresentParameters.AutoDepthStencilFormat==D3DFMT_UNKNOWN) {
 		if (BitDepth==32) {
@@ -1112,6 +1111,40 @@ bool DX8Wrapper::Set_Render_Device(int dev, int width, int height, int bits, int
 		}
 	}
 
+	/*
+	** Check the devices support for the requested MSAA mode then setup the multi sample type
+	*/
+	if (MultiSampleAntiAliasing > D3DMULTISAMPLE_NONE) {
+
+		HRESULT hrBack = D3DInterface->CheckDeviceMultiSampleType(
+			CurRenderDevice,
+			D3DDEVTYPE_HAL,
+			_PresentParameters.BackBufferFormat,
+			IsWindowed,
+			MultiSampleAntiAliasing
+		);
+
+		HRESULT hrDepth = D3DInterface->CheckDeviceMultiSampleType(
+			CurRenderDevice,
+			D3DDEVTYPE_HAL,
+			_PresentParameters.AutoDepthStencilFormat,
+			IsWindowed,
+			MultiSampleAntiAliasing
+		);
+
+		if (FAILED(hrBack) || FAILED(hrDepth)) {
+			// IF we fail then disable MSAA entirely.
+			// External code needs to retrieve the configured MSAA mode after device creation
+			WWDEBUG_SAY(("Requested MSAA Mode Not Supported"));
+			MultiSampleAntiAliasing = D3DMULTISAMPLE_NONE;
+		}
+	}
+
+	_PresentParameters.MultiSampleType = MultiSampleAntiAliasing;
+
+	/*
+	** Time to actually create the device.
+	*/
 	StringClass displayFormat;
 	StringClass backbufferFormat;
 
