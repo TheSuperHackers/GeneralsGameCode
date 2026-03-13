@@ -128,8 +128,8 @@ struct TWheelInfo
 	Real m_rearLeftHeightOffset;
 	Real m_rearRightHeightOffset;
 	Real m_wheelAngle;								///< Wheel angle.  0 = straight, >0 left, <0 right.
-	Int	 m_framesAirborneCounter;			///< Counter.
-	Int	 m_framesAirborne;						///< How many frames it was in the air.
+	Real m_framesAirborneCounter;			///< Counter (in 30fps-equivalent frames).
+	Real m_framesAirborne;						///< How long it was in the air (in 30fps-equivalent frames).
 };
 
 //-----------------------------------------------------------------------------
@@ -626,7 +626,13 @@ protected:
 		Real m_totalYaw;						///< Current total yaw for this frame
 		Real m_totalZ;
 
-		PhysicsXformInfo() : m_totalPitch(0), m_totalRoll(0), m_totalYaw(0), m_totalZ(0) { }
+		Real m_prevTotalPitch;
+		Real m_prevTotalRoll;
+		Real m_prevTotalYaw;
+		Real m_prevTotalZ;
+
+		PhysicsXformInfo() : m_totalPitch(0), m_totalRoll(0), m_totalYaw(0), m_totalZ(0),
+			m_prevTotalPitch(0), m_prevTotalRoll(0), m_prevTotalYaw(0), m_prevTotalZ(0) { }
 	};
 
 	Bool calcPhysicsXform(PhysicsXformInfo& info);
@@ -691,7 +697,7 @@ private:
 		FADING_OUT
 	};
 	FadingMode		m_fadeMode;
-	UnsignedInt		m_timeElapsedFade;			///< for how many frames have i been fading
+	Real			m_timeElapsedFade;			///< for how long have i been fading (in 30fps-equivalent frames)
 	UnsignedInt		m_timeToFade;						///< how slowly am I fading
 
 	UnsignedInt		m_shroudClearFrame;						///< Last frame the local player saw this drawable "OBJECTSHROUD_CLEAR"
