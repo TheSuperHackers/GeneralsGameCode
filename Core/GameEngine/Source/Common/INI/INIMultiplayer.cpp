@@ -80,30 +80,30 @@ void INI::parseMultiplayerColorDefinition( INI* ini )
 
 namespace
 {
-  struct MultiplayerStartingMoneySettings
-  {
-    Money money;
-    Bool  isDefault;
-  };
+	struct MultiplayerStartingMoneySettings
+	{
+		Money money;
+		Bool isDefault;
+	};
 
-  const FieldParse startingMoneyFieldParseTable[] =
-  {
-    { "Value",			  Money::parseMoneyAmount,	nullptr,	offsetof( MultiplayerStartingMoneySettings, money ) },
-    { "Default",	   	INI::parseBool,         	nullptr,	offsetof( MultiplayerStartingMoneySettings, isDefault ) },
-    { nullptr,	nullptr,	nullptr,	0 }
-  };
+	const FieldParse startingMoneyFieldParseTable[] =
+	{
+		{ "Value", Money::parseMoneyAmount, nullptr, offsetof( MultiplayerStartingMoneySettings, money ) },
+		{ "Default", INI::parseBool, nullptr, offsetof( MultiplayerStartingMoneySettings, isDefault ) },
+		{ nullptr, nullptr, nullptr, 0 }
+	};
 }
 
 
 void INI::parseMultiplayerStartingMoneyChoiceDefinition( INI* ini )
 {
-  DEBUG_ASSERTCRASH( ini->getLoadType() != INI_LOAD_CREATE_OVERRIDES, ("Overrides not supported for MultiplayerStartingMoneyChoice") );
+	DEBUG_ASSERTCRASH( ini->getLoadType() != INI_LOAD_CREATE_OVERRIDES, ("Overrides not supported for MultiplayerStartingMoneyChoice") );
 
-  // Temporary data store
-  MultiplayerStartingMoneySettings settings;
-  settings.isDefault = false;
+	// Temporary data store.
+	MultiplayerStartingMoneySettings settings;
+	settings.isDefault = false;
 
-  ini->initFromINI( &settings, startingMoneyFieldParseTable );
+	ini->initFromINI( &settings, startingMoneyFieldParseTable );
 
-  TheMultiplayerSettings->addStartingMoneyChoice( settings.money, settings.isDefault );
+	TheMultiplayerSettings->addStartingMoneyChoice( settings.money, settings.isDefault );
 }
