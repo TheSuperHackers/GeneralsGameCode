@@ -168,6 +168,8 @@ static WWINLINE bool			Is_Valid_Double(double x);
 
 static WWINLINE float Normalize_Angle(float angle); // Normalizes the angle to the range -PI..PI
 
+static WWINLINE int				Div_Ceil(const int num, const int den);
+
 };
 
 WWINLINE float WWMath::Sign(float val)
@@ -653,4 +655,14 @@ WWINLINE float WWMath::Inv_Sqrt(float val)
 WWINLINE float WWMath::Normalize_Angle(float angle)
 {
 	return angle - (WWMATH_TWO_PI * Floor((angle + WWMATH_PI) / WWMATH_TWO_PI));
+}
+
+// ----------------------------------------------------------------------------
+// Ceil rounded int division
+// Rounding away from 0 for positive values, towards 0 for negative values
+// ----------------------------------------------------------------------------
+WWINLINE int WWMath::Div_Ceil(const int num, const int den)
+{
+	const div_t res = ::div(num, den);
+	return (res.rem != 0 && res.quot >= 0) ? res.quot + 1 : res.quot;
 }

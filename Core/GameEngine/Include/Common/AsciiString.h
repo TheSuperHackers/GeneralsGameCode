@@ -377,6 +377,19 @@ public:
 	AsciiString& operator=(const AsciiString& stringSrc);	///< the same as set()
 	AsciiString& operator=(const char* s);				///< the same as set()
 
+	const Char& operator[](Int index) const
+	{
+		DEBUG_ASSERTCRASH(index >= 0 && index < getLength(), ("bad index in AsciiString::operator[]"));
+		return peek()[index];
+	}
+
+	Char& operator[](Int index)
+	{
+		DEBUG_ASSERTCRASH(index >= 0 && index < getLength(), ("bad index in AsciiString::operator[]"));
+		ensureUniqueBufferOfSize(m_data->m_numCharsAllocated, true, NULL, NULL);
+		return peek()[index];
+	}
+
 	void debugIgnoreLeaks();
 
 };
