@@ -32,7 +32,6 @@
 #include "Common/Thing.h"
 #include "Common/ThingFactory.h"
 #include "Common/GameAudio.h"
-#include "Common/GameState.h"
 #include "Common/GlobalData.h"
 #include "Common/ThingTemplate.h"
 #include "Common/Xfer.h"
@@ -120,12 +119,6 @@ m_prevRenderObj(nullptr)
 
 	m_treadCount=0;
 
-	// TheSuperHackers @bugfix stephanmeesters 20/02/2026
-	// If loading from savegame, delay non-saveable emitter creation until postProcess.
-	if (TheGameState == nullptr || TheGameState->isInLoadGame() == FALSE)
-	{
-		createTreadEmitters();
-	}
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -509,6 +502,9 @@ void W3DTankTruckDraw::doDrawModule(const Matrix3D* transformMtx)
 	Object *obj = getDrawable()->getObject();
 	if (obj == nullptr)
 		return;
+
+	// TheSuperHackers @bugfix stephanmeesters 14/03/2026 Delay emitter creation until draw
+	createTreadEmitters();
 
 	if (getRenderObject()==nullptr) return;
 	if (getRenderObject() != m_prevRenderObj) {

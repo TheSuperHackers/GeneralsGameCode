@@ -34,7 +34,6 @@
 #include "Common/ThingTemplate.h"
 #include "Common/INI.h"
 #include "Common/Player.h"
-#include "Common/GameState.h"
 #include "Common/Xfer.h"
 #include "GameClient/ParticleSys.h"
 #include "GameClient/Anim2D.h"
@@ -95,13 +94,6 @@ AutoHealBehavior::AutoHealBehavior( Thing *thing, const ModuleData* moduleData )
 	m_radiusParticleSystemID = INVALID_PARTICLE_SYSTEM_ID;
 	m_soonestHealFrame = 0;
 	m_stopped = false;
-
-	// TheSuperHackers @bugfix stephanmeesters 20/02/2026
-	// If loading from savegame, delay non-saveable emitter creation until postProcess.
-	if (TheGameState == nullptr || TheGameState->isInLoadGame() == FALSE)
-	{
-		createEmitters();
-	}
 
 	if (d->m_initiallyActive)
 	{
@@ -175,6 +167,9 @@ UpdateSleepTime AutoHealBehavior::update()
 {
 	if (m_stopped)
 		return UPDATE_SLEEP_FOREVER;
+
+	// TheSuperHackers @bugfix stephanmeesters 14/03/2026 Delay emitter creation until update
+	createEmitters();
 
 	Object *obj = getObject();
 	const AutoHealBehaviorModuleData *d = getAutoHealBehaviorModuleData();

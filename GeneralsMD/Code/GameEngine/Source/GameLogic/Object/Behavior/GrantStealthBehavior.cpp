@@ -33,7 +33,6 @@
 #include "Common/ThingTemplate.h"
 #include "Common/INI.h"
 #include "Common/Player.h"
-#include "Common/GameState.h"
 #include "Common/Xfer.h"
 #include "GameClient/ParticleSys.h"
 #include "GameClient/Anim2D.h"
@@ -97,14 +96,7 @@ GrantStealthBehavior::GrantStealthBehavior( Thing *thing, const ModuleData* modu
 
   m_currentScanRadius = d->m_startRadius;
 
-	// TheSuperHackers @bugfix stephanmeesters 20/02/2026
-	// If loading from savegame, delay non-saveable emitter creation until postProcess.
-	if ( TheGameState == nullptr || TheGameState->isInLoadGame() == FALSE )
-	{
-		createEmitters();
-	}
-
-		setWakeFrame( getObject(), UPDATE_SLEEP_NONE );
+	setWakeFrame( getObject(), UPDATE_SLEEP_NONE );
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -129,6 +121,9 @@ UpdateSleepTime GrantStealthBehavior::update()
 
 	if ( self->isEffectivelyDead())
 		return UPDATE_SLEEP_FOREVER;
+
+	// TheSuperHackers @bugfix stephanmeesters 14/03/2026 Delay emitter creation until update
+	createEmitters();
 
 	const GrantStealthBehaviorModuleData *d = getGrantStealthBehaviorModuleData();
 	// setup scan filters
