@@ -207,8 +207,8 @@ public:
 	virtual void moveCameraAlongWaypointPath(Waypoint *way, Int frames, Int shutter,
 														Bool orient) {};
 	virtual Bool isCameraMovementFinished(void) override {return true;};
- 	virtual void resetCamera(const Coord3D *location, Int frames) {}; ///< Move camera to location, and reset to default angle & zoom.
- 	virtual void rotateCamera(Real rotations, Int frames) {}; ///< Rotate camera about current viewpoint.
+	virtual void resetCamera(const Coord3D *location, Int frames) {}; ///< Move camera to location, and reset to default angle & zoom.
+	virtual void rotateCamera(Real rotations, Int frames) {}; ///< Rotate camera about current viewpoint.
 	virtual void rotateCameraTowardObject(ObjectID id, Int milliseconds, Int holdMilliseconds) {};	///< Rotate camera to face an object, and hold on it
 	virtual void cameraModFinalZoom(Real finalZoom){};			 ///< Final zoom for current camera movement.
 	virtual void cameraModRollingAverage(Int framesToAverage) override {}; ///< Number of frames to average movement for current camera movement.
