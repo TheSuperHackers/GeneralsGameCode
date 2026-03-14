@@ -42,7 +42,7 @@ class CustomMatchPreferences : public UserPreferences
 {
 public:
 	CustomMatchPreferences();
-	virtual ~CustomMatchPreferences();
+	virtual ~CustomMatchPreferences() override;
 
 	void setLastLadder(const AsciiString& addr, UnsignedShort port);
 	AsciiString getLastLadderAddr();

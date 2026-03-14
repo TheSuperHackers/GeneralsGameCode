@@ -62,15 +62,15 @@ public:
 	AIDockMachine( Object *owner );
 
 	static Bool ableToAdvance( State *thisState, void* userData ); // Condition for scooting forward in line while waiting
-	virtual void halt(); ///< Stops the state machine & disables it in preparation for deleting it.
+	virtual void halt() override; ///< Stops the state machine & disables it in preparation for deleting it.
 
 	Int m_approachPosition;	///< The Approach Position I am holding, to make scoot forward checks quicker.
 
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 };
 
@@ -82,14 +82,14 @@ class AIDockApproachState : public AIInternalMoveToState
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIDockApproachState, "AIDockApproachState")
 public:
 	AIDockApproachState( StateMachine *machine ) : AIInternalMoveToState( machine, "AIDockApproachState" ) { }
-	virtual StateReturnType onEnter();
-	virtual void onExit( StateExitType status );
-	virtual StateReturnType update();
+	virtual StateReturnType onEnter() override;
+	virtual void onExit( StateExitType status ) override;
+	virtual StateReturnType update() override;
 protected:
 	// snapshot interface STUBBED.
-	virtual void crc( Xfer *xfer ){};
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess(){};
+	virtual void crc( Xfer *xfer ) override {};
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override {};
 };
 EMPTY_DTOR(AIDockApproachState)
 
@@ -99,16 +99,16 @@ class AIDockWaitForClearanceState : public State
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIDockWaitForClearanceState, "AIDockWaitForClearanceState")
 public:
 	AIDockWaitForClearanceState( StateMachine *machine ) : State( machine, "AIDockWaitForClearanceState" ), m_enterFrame(0) { }
-	virtual StateReturnType onEnter();
-	virtual StateReturnType update();
-	virtual void onExit( StateExitType status );
+	virtual StateReturnType onEnter() override;
+	virtual StateReturnType update() override;
+	virtual void onExit( StateExitType status ) override;
 protected:
 	UnsignedInt m_enterFrame;
 protected:
 	// snapshot interface STUBBED.
-	virtual void crc( Xfer *xfer ){};
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess(){};
+	virtual void crc( Xfer *xfer ) override {};
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override {};
 };
 EMPTY_DTOR(AIDockWaitForClearanceState)
 
@@ -118,9 +118,9 @@ class AIDockAdvancePositionState : public AIInternalMoveToState
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIDockAdvancePositionState, "AIDockAdvancePositionState")
 public:
 	AIDockAdvancePositionState( StateMachine *machine ) : AIInternalMoveToState( machine, "AIDockApproachState" ) { }
-	virtual StateReturnType onEnter();
-	virtual void onExit( StateExitType status );
-	virtual StateReturnType update();
+	virtual StateReturnType onEnter() override;
+	virtual void onExit( StateExitType status ) override;
+	virtual StateReturnType update() override;
 };
 EMPTY_DTOR(AIDockAdvancePositionState)
 
@@ -130,9 +130,9 @@ class AIDockMoveToEntryState : public AIInternalMoveToState
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIDockMoveToEntryState, "AIDockMoveToEntryState")
 public:
 	AIDockMoveToEntryState( StateMachine *machine ) : AIInternalMoveToState( machine, "AIDockMoveToEntryState" ) { }
-	virtual StateReturnType onEnter();
-	virtual void onExit( StateExitType status );
-	virtual StateReturnType update();
+	virtual StateReturnType onEnter() override;
+	virtual void onExit( StateExitType status ) override;
+	virtual StateReturnType update() override;
 };
 EMPTY_DTOR(AIDockMoveToEntryState)
 
@@ -142,9 +142,9 @@ class AIDockMoveToDockState : public AIInternalMoveToState
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIDockMoveToDockState, "AIDockMoveToDockState")
 public:
 	AIDockMoveToDockState( StateMachine *machine ) : AIInternalMoveToState( machine, "AIDockMoveToDockState" ) { }
-	virtual StateReturnType onEnter();
-	virtual void onExit( StateExitType status );
-	virtual StateReturnType update();
+	virtual StateReturnType onEnter() override;
+	virtual void onExit( StateExitType status ) override;
+	virtual StateReturnType update() override;
 };
 EMPTY_DTOR(AIDockMoveToDockState)
 
@@ -154,9 +154,9 @@ class AIDockMoveToRallyState : public AIInternalMoveToState
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIDockMoveToRallyState, "AIDockMoveToRallyState")
 public:
 	AIDockMoveToRallyState( StateMachine *machine ) : AIInternalMoveToState( machine, "AIDockMoveToRallyState" ) { }
-	virtual StateReturnType onEnter();
-	virtual void onExit( StateExitType status );
-	virtual StateReturnType update();
+	virtual StateReturnType onEnter() override;
+	virtual void onExit( StateExitType status ) override;
+	virtual StateReturnType update() override;
 };
 EMPTY_DTOR(AIDockMoveToRallyState)
 
@@ -166,9 +166,9 @@ class AIDockProcessDockState : public State
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIDockProcessDockState, "AIDockProcessDockState")
 public:
 	AIDockProcessDockState( StateMachine *machine );
-	virtual StateReturnType onEnter();
-	virtual void onExit( StateExitType status );
-	virtual StateReturnType update();
+	virtual StateReturnType onEnter() override;
+	virtual void onExit( StateExitType status ) override;
+	virtual StateReturnType update() override;
 
 	void setNextDockActionFrame();//This puts a delay between callings of Action to tweak the speed of docking.
 	UnsignedInt m_nextDockActionFrame;// In the unlikely event of saving a game in the middle of docking, you may
@@ -177,9 +177,9 @@ public:
 
 protected:
 	// snapshot interface STUBBED.
-	virtual void crc( Xfer *xfer ){};
-	virtual void xfer( Xfer *xfer ){XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
-	virtual void loadPostProcess(){};
+	virtual void crc( Xfer *xfer ) override {};
+	virtual void xfer( Xfer *xfer ) override {XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
+	virtual void loadPostProcess() override {};
 
 private:
 	ObjectID m_droneID;			///< If I have a drone, the drone will get repaired too.
@@ -193,9 +193,9 @@ class AIDockMoveToExitState : public AIInternalMoveToState
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIDockMoveToExitState, "AIDockMoveToExitState")
 public:
 	AIDockMoveToExitState( StateMachine *machine ) : AIInternalMoveToState( machine, "AIDockMoveToExitState" ) { }
-	virtual StateReturnType onEnter();
-	virtual void onExit( StateExitType status );
-	virtual StateReturnType update();
+	virtual StateReturnType onEnter() override;
+	virtual void onExit( StateExitType status ) override;
+	virtual StateReturnType update() override;
 };
 EMPTY_DTOR(AIDockMoveToExitState)
 

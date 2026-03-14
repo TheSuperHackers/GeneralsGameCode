@@ -104,49 +104,49 @@ public:
 	//---------------------------------------------------------------------------------------
 	// Setup / Teardown functions
 	Network();
-	~Network();
-	void init();																				///< Initialize or re-initialize the instance
-	void reset();																				///< Reinitialize the network
-	void update();																			///< Process command list
-	void liteupdate();																	///< Do a lightweight update to send packets and pass messages.
+	~Network() override;
+	void init() override;																				///< Initialize or re-initialize the instance
+	void reset() override;																				///< Reinitialize the network
+	void update() override;																			///< Process command list
+	void liteupdate() override;																	///< Do a lightweight update to send packets and pass messages.
 	Bool deinit();																			///< Shutdown connections, release memory
 
-	void setLocalAddress(UnsignedInt ip, UnsignedInt port);
-	UnsignedInt getRunAhead() { return m_runAhead; }
-	UnsignedInt getFrameRate() { return m_frameRate; }
-	UnsignedInt getPacketArrivalCushion();								///< Returns the smallest packet arrival cushion since this was last called.
-	Bool isFrameDataReady();
-	virtual Bool isStalling();
-	void parseUserList( const GameInfo *game );
-	void startGame();																			///< Sets the network game frame counter to -1
+	void setLocalAddress(UnsignedInt ip, UnsignedInt port) override;
+	UnsignedInt getRunAhead() override { return m_runAhead; }
+	UnsignedInt getFrameRate() override { return m_frameRate; }
+	UnsignedInt getPacketArrivalCushion() override;								///< Returns the smallest packet arrival cushion since this was last called.
+	Bool isFrameDataReady() override;
+	virtual Bool isStalling() override;
+	void parseUserList( const GameInfo *game ) override;
+	void startGame() override;																			///< Sets the network game frame counter to -1
 
-	void sendChat(UnicodeString text, Int playerMask);
-	void sendDisconnectChat(UnicodeString text);
+	virtual void sendChat(UnicodeString text, Int playerMask) override;
+	virtual void sendDisconnectChat(UnicodeString text) override;
 
-	void sendFile(AsciiString path, UnsignedByte playerMask, UnsignedShort commandID);
-	UnsignedShort sendFileAnnounce(AsciiString path, UnsignedByte playerMask);
-	Int getFileTransferProgress(Int playerID, AsciiString path);
-	Bool areAllQueuesEmpty();
+	void sendFile(AsciiString path, UnsignedByte playerMask, UnsignedShort commandID) override;
+	UnsignedShort sendFileAnnounce(AsciiString path, UnsignedByte playerMask) override;
+	Int getFileTransferProgress(Int playerID, AsciiString path) override;
+	Bool areAllQueuesEmpty() override;
 
-	void quitGame();
-	virtual void selfDestructPlayer(Int index);
+	virtual void quitGame() override;
+	virtual void selfDestructPlayer(Int index) override;
 
 
-	void voteForPlayerDisconnect(Int slot);
-	virtual Bool isPacketRouter();
+	void voteForPlayerDisconnect(Int slot) override;
+	virtual Bool isPacketRouter() override;
 
 	// Bandwidth metrics
-	Real getIncomingBytesPerSecond();
-	Real getIncomingPacketsPerSecond();
-	Real getOutgoingBytesPerSecond();
-	Real getOutgoingPacketsPerSecond();
-	Real getUnknownBytesPerSecond();
-	Real getUnknownPacketsPerSecond();
+	Real getIncomingBytesPerSecond() override;
+	Real getIncomingPacketsPerSecond() override;
+	Real getOutgoingBytesPerSecond() override;
+	Real getOutgoingPacketsPerSecond() override;
+	Real getUnknownBytesPerSecond() override;
+	Real getUnknownPacketsPerSecond() override;
 
 	// Multiplayer Load Progress Functions
-	void updateLoadProgress( Int percent );
-	void loadProgressComplete();
-	void sendTimeOutGameStart();
+	void updateLoadProgress( Int percent ) override;
+	void loadProgressComplete() override;
+	void sendTimeOutGameStart() override;
 
 #if defined(RTS_DEBUG)
 	// Disconnect screen testing
@@ -154,29 +154,29 @@ public:
 #endif
 
 	// Exposing some info contained in the Connection Manager
-	UnsignedInt getLocalPlayerID();
-	UnicodeString getPlayerName(Int playerNum);
-	Int getNumPlayers();
+	UnsignedInt getLocalPlayerID() override;
+	UnicodeString getPlayerName(Int playerNum) override;
+	Int getNumPlayers() override;
 
-	Int getAverageFPS() { return m_conMgr->getAverageFPS(); }
-	Int getSlotAverageFPS(Int slot);
+	virtual Int getAverageFPS() override { return m_conMgr->getAverageFPS(); }
+	virtual Int getSlotAverageFPS(Int slot) override;
 
-	void attachTransport(Transport *transport);
-	void initTransport();
+	virtual void attachTransport(Transport *transport) override;
+	virtual void initTransport() override;
 
-	void setSawCRCMismatch();
-	Bool sawCRCMismatch() { return m_sawCRCMismatch; }
-	Bool isPlayerConnected( Int playerID );
+	void setSawCRCMismatch() override;
+	Bool sawCRCMismatch() override { return m_sawCRCMismatch; }
+	Bool isPlayerConnected( Int playerID ) override;
 
-	void notifyOthersOfCurrentFrame();														///< Tells all the other players what frame we are on.
-	void notifyOthersOfNewFrame(UnsignedInt frame);								///< Tells all the other players that we are on a new frame.
+	virtual void notifyOthersOfCurrentFrame() override;														///< Tells all the other players what frame we are on.
+	virtual void notifyOthersOfNewFrame(UnsignedInt frame) override;								///< Tells all the other players that we are on a new frame.
 
-	Int  getExecutionFrame();																			///< Returns the next valid frame for simultaneous command execution.
+	virtual Int  getExecutionFrame() override;																			///< Returns the next valid frame for simultaneous command execution.
 
 	// For disconnect blame assignment
-	UnsignedInt getPingFrame();
-	Int getPingsSent();
-	Int getPingsReceived();
+	virtual UnsignedInt getPingFrame() override;
+	virtual Int getPingsSent() override;
+	virtual Int getPingsReceived() override;
 
 protected:
 	void GetCommandsFromCommandList();														///< Remove commands from TheCommandList and put them on the Network command list.

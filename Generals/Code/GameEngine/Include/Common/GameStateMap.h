@@ -45,17 +45,17 @@ class GameStateMap : public SubsystemInterface,
 public:
 
 	GameStateMap();
-	virtual ~GameStateMap();
+	virtual ~GameStateMap() override;
 
 	// subsystem interface methods
-	virtual void init() { }
-	virtual void reset() { }
-	virtual void update() { }
+	virtual void init() override { }
+	virtual void reset() override { }
+	virtual void update() override { }
 
 	// snapshot methods
-	virtual void crc( Xfer *xfer ) { }
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess() { }
+	virtual void crc( Xfer *xfer ) override { }
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override { }
 
 	void clearScratchPadMaps();		///< clear any scratch pad maps from the save directory
 

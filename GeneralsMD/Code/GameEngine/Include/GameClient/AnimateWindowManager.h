@@ -163,12 +163,12 @@ class AnimateWindowManager : public SubsystemInterface
 {
 public:
 	AnimateWindowManager();
-	~AnimateWindowManager();
+	virtual ~AnimateWindowManager() override;
 
 	// Inhertited from subsystem ====================================================================
-	virtual void init();
-	virtual void reset();
-	virtual void update();
+	virtual void init() override;
+	virtual void reset() override;
+	virtual void update() override;
 	//===============================================================================================
 
 	void registerGameWindow(GameWindow *win, AnimTypes animType, Bool needsToFinish, UnsignedInt ms = 0, UnsignedInt delayMs = 0);			// Registers a new window to animate.

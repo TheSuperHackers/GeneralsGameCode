@@ -55,11 +55,11 @@ class GameEngine : public SubsystemInterface
 public:
 
 	GameEngine();
-	virtual ~GameEngine();
+	virtual ~GameEngine() override;
 
-	virtual void init();								///< Init engine by creating client and logic
-	virtual void reset();								///< reset system to starting state
-	virtual void update();							///< per frame update
+	virtual void init() override;								///< Init engine by creating client and logic
+	virtual void reset() override;								///< reset system to starting state
+	virtual void update() override;							///< per frame update
 
 	virtual void execute();											/**< The "main loop" of the game engine.
 																								 It will not return until the game exits. */

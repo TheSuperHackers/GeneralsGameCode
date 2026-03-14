@@ -52,7 +52,7 @@ class NetworkInterface : public SubsystemInterface
 protected:
 
 public:
-	virtual ~NetworkInterface() { };
+	virtual ~NetworkInterface() override { };
 
 	static NetworkInterface * createNetwork();
 

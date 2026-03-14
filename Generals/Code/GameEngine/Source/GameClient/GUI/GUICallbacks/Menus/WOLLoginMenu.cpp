@@ -88,12 +88,12 @@ class GameSpyLoginPreferences : public UserPreferences
 {
 public:
 	GameSpyLoginPreferences();
-	virtual ~GameSpyLoginPreferences();
+	virtual ~GameSpyLoginPreferences() override;
 
 	Bool loadFromIniFile();
 
-	virtual Bool load(AsciiString fname);
-	virtual Bool write();
+	virtual Bool load(AsciiString fname) override;
+	virtual Bool write() override;
 
 	AsciiString getPasswordForEmail( AsciiString email );
 	AsciiString getDateForEmail( AsciiString email, AsciiString &month, AsciiString &date, AsciiString &year  );

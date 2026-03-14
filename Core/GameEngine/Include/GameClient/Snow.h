@@ -87,10 +87,10 @@ class SnowManager : public SubsystemInterface
 	  };
 
 	 SnowManager();
-	~SnowManager();
+	virtual ~SnowManager() override;
 
-	virtual void init();
-	virtual void reset();
+	virtual void init() override;
+	virtual void reset() override;
 	virtual void updateIniSettings ();
 	void setVisible(Bool showWeather);	///<enable/disable rendering of weather - assuming it's available on map.
 

@@ -34,7 +34,7 @@
 class LocalFileSystem : public SubsystemInterface
 {
 public:
-	virtual ~LocalFileSystem() {}
+	virtual ~LocalFileSystem() override {}
 
 	virtual void init() = 0;
 	virtual void reset() = 0;

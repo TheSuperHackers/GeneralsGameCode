@@ -46,7 +46,7 @@ class ScriptActionsInterface : public SubsystemInterface
 
 public:
 
-	virtual ~ScriptActionsInterface() { };
+	virtual ~ScriptActionsInterface() override { };
 
 	virtual void init() = 0;		///< Init
 	virtual void reset() = 0;		///< Reset
@@ -71,17 +71,17 @@ class ScriptActions : public ScriptActionsInterface
 
 public:
 	ScriptActions();
-	~ScriptActions();
+	virtual ~ScriptActions() override;
 
 public:
-	virtual void init();		///< Init
-	virtual void reset();		///< Reset
-	virtual void update();	///< Update
+	virtual void init() override;		///< Init
+	virtual void reset() override;		///< Reset
+	virtual void update() override;	///< Update
 
-	void executeAction( ScriptAction *pAction );
-	void closeWindows( Bool suppressNewWindows );
+	virtual void executeAction( ScriptAction *pAction ) override;
+	virtual void closeWindows( Bool suppressNewWindows ) override;
 
-	void doEnableOrDisableObjectDifficultyBonuses(Bool enableBonuses);
+	virtual void doEnableOrDisableObjectDifficultyBonuses(Bool enableBonuses) override;
 
 protected:
 

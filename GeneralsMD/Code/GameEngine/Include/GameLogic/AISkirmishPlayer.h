@@ -45,56 +45,56 @@ class AISkirmishPlayer : public AIPlayer
 public:	 // AISkirmish specific methods.
 
 	AISkirmishPlayer( Player *p );							///< constructor
-	virtual Bool computeSuperweaponTarget(const SpecialPowerTemplate *power, Coord3D *pos, Int playerNdx, Real weaponRadius); ///< Calculates best pos for weapon given radius.
+	virtual Bool computeSuperweaponTarget(const SpecialPowerTemplate *power, Coord3D *pos, Int playerNdx, Real weaponRadius) override; ///< Calculates best pos for weapon given radius.
 
 public:	// AIPlayer interface methods.
 
-	virtual void update();											///< simulates the behavior of a player
+	virtual void update() override;											///< simulates the behavior of a player
 
-	virtual void newMap();											///< New map loaded call.
+	virtual void newMap() override;											///< New map loaded call.
 
 	/// Invoked when a unit I am training comes into existence
-	virtual void onUnitProduced( Object *factory, Object *unit );
+	virtual void onUnitProduced( Object *factory, Object *unit ) override;
 
-	virtual void buildSpecificAITeam(TeamPrototype *teamProto, Bool priorityBuild); ///< Builds this team immediately.
+	virtual void buildSpecificAITeam(TeamPrototype *teamProto, Bool priorityBuild) override; ///< Builds this team immediately.
 
-	virtual void buildSpecificAIBuilding(const AsciiString &thingName); ///< Builds this building as soon as possible.
+	virtual void buildSpecificAIBuilding(const AsciiString &thingName) override; ///< Builds this building as soon as possible.
 
-	virtual void buildAIBaseDefense(Bool flank); ///< Builds base defense on front or flank of base.
+	virtual void buildAIBaseDefense(Bool flank) override; ///< Builds base defense on front or flank of base.
 
-	virtual void buildAIBaseDefenseStructure(const AsciiString &thingName, Bool flank); ///< Builds base defense on front or flank of base.
+	virtual void buildAIBaseDefenseStructure(const AsciiString &thingName, Bool flank) override; ///< Builds base defense on front or flank of base.
 
-	virtual void recruitSpecificAITeam(TeamPrototype *teamProto, Real recruitRadius); ///< Builds this team immediately.
+	virtual void recruitSpecificAITeam(TeamPrototype *teamProto, Real recruitRadius) override; ///< Builds this team immediately.
 
-	virtual Bool isSkirmishAI() {return true;}
+	virtual Bool isSkirmishAI() override {return true;}
 
-	virtual Bool checkBridges(Object *unit, Waypoint *way);
+	virtual Bool checkBridges(Object *unit, Waypoint *way) override;
 
-	virtual Player *getAiEnemy();	///< Solo AI attacks based on scripting.  Only skirmish auto-acquires an enemy at this point.  jba.
+	virtual Player *getAiEnemy() override;	///< Solo AI attacks based on scripting.  Only skirmish auto-acquires an enemy at this point.  jba.
 
 protected:
 
 	// snapshot methods
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
-	virtual void doBaseBuilding();
-	virtual void checkReadyTeams();
-	virtual void checkQueuedTeams();
-	virtual void doTeamBuilding();
-	virtual Object *findDozer(const Coord3D *pos);
-	virtual void queueDozer();
+	virtual void doBaseBuilding() override;
+	virtual void checkReadyTeams() override;
+	virtual void checkQueuedTeams() override;
+	virtual void doTeamBuilding() override;
+	virtual Object *findDozer(const Coord3D *pos) override;
+	virtual void queueDozer() override;
 
 protected:
 
-	virtual Bool selectTeamToBuild();			///< determine the next team to build
-	virtual Bool selectTeamToReinforce( Int minPriority );			///< determine the next team to reinforce
-	virtual Bool startTraining( WorkOrder *order, Bool busyOK, AsciiString teamName);	///< find a production building that can handle the order, and start building
+	virtual Bool selectTeamToBuild() override;			///< determine the next team to build
+	virtual Bool selectTeamToReinforce( Int minPriority ) override;			///< determine the next team to reinforce
+	virtual Bool startTraining( WorkOrder *order, Bool busyOK, AsciiString teamName) override;	///< find a production building that can handle the order, and start building
 
-	virtual Bool isAGoodIdeaToBuildTeam( TeamPrototype *proto );		///< return true if team should be built
-	virtual void processBaseBuilding();		///< do base-building behaviors
-	virtual void processTeamBuilding();		///< do team-building behaviors
+	virtual Bool isAGoodIdeaToBuildTeam( TeamPrototype *proto ) override;		///< return true if team should be built
+	virtual void processBaseBuilding() override;		///< do base-building behaviors
+	virtual void processTeamBuilding() override;		///< do team-building behaviors
 
 protected:
 	void adjustBuildList(BuildListInfo *list);

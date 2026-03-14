@@ -96,7 +96,7 @@ private:
 
 public:
 	GameSpyStagingRoom();
-	virtual void reset();
+	virtual void reset() override;
 
 	void cleanUpSlotPointers();
 	void setID(Int id) { m_id = id; }
@@ -131,7 +131,7 @@ public:
 	AsciiString getPingString() const { return m_pingStr; }
 	Int getPingAsInt() const { return m_pingInt; }
 
-	virtual Bool amIHost() const;															///< Convenience function - is the local player the game host?
+	virtual Bool amIHost() const override;															///< Convenience function - is the local player the game host?
 
 	GameSpyGameSlot *getGameSpySlot( Int index );
 
@@ -141,11 +141,11 @@ public:
 	Bool isQMGame() { return m_isQM; }
 
 	virtual void init();
-	virtual void resetAccepted();															///< Reset the accepted flag on all players
+	virtual void resetAccepted() override;															///< Reset the accepted flag on all players
 
-	virtual void startGame(Int gameID);														///< Mark our game as started and record the game ID.
+	virtual void startGame(Int gameID) override;														///< Mark our game as started and record the game ID.
 	void launchGame();																			///< NAT negotiation has finished - really start
-	virtual Int getLocalSlotNum() const;										///< Get the local slot number, or -1 if we're not present
+	virtual Int getLocalSlotNum() const override;										///< Get the local slot number, or -1 if we're not present
 
 	void setGameName( UnicodeString name ) { m_gameName = name; }
 	UnicodeString getGameName() const { return m_gameName; }

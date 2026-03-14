@@ -568,9 +568,9 @@ private:
 protected:
 
 	// snapshot methods
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 public:
 
@@ -804,12 +804,12 @@ class WeaponStore : public SubsystemInterface
 public:
 
 	WeaponStore();
-	~WeaponStore();
+	virtual ~WeaponStore() override;
 
-	void init() { };
-	void postProcessLoad();
-	void reset();
-	void update();
+	virtual void init() override { };
+	virtual void postProcessLoad() override;
+	virtual void reset() override;
+	virtual void update() override;
 
 	/**
 		Find the WeaponTemplate with the given name. If no such WeaponTemplate exists, return null.

@@ -43,23 +43,23 @@ class XferCRC : public Xfer
 public:
 
 	XferCRC();
-	virtual ~XferCRC();
+	virtual ~XferCRC() override;
 
 	// Xfer methods
-	virtual void open( AsciiString identifier );		///< start a CRC session with this xfer instance
-	virtual void close();											///< stop CRC session
-	virtual Int beginBlock();									///< start block event
-	virtual void endBlock();									///< end block event
-	virtual void skip( Int dataSize );							///< skip xfer event
+	virtual void open( AsciiString identifier ) override;		///< start a CRC session with this xfer instance
+	virtual void close() override;											///< stop CRC session
+	virtual Int beginBlock() override;									///< start block event
+	virtual void endBlock() override;									///< end block event
+	virtual void skip( Int dataSize ) override;							///< skip xfer event
 
-	virtual void xferSnapshot( Snapshot *snapshot );		///< entry point for xfering a snapshot
+	virtual void xferSnapshot( Snapshot *snapshot ) override;		///< entry point for xfering a snapshot
 
 	// Xfer CRC methods
 	virtual UnsignedInt getCRC();										///< get computed CRC in network byte order
 
 protected:
 
-	virtual void xferImplementation( void *data, Int dataSize );
+	virtual void xferImplementation( void *data, Int dataSize ) override;
 
 	inline void addCRC( UnsignedInt val );								///< CRC a 4-byte block
 

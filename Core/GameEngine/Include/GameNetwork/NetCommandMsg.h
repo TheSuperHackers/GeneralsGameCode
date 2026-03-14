@@ -77,22 +77,22 @@ protected:
 template<typename NetPacketType, typename SmallNetPacketType>
 class NetCommandMsgT : public NetCommandMsg
 {
-	virtual size_t getSizeForNetPacket() const
+	virtual size_t getSizeForNetPacket() const override
 	{
 		return NetPacketType::getSize(*this);
 	}
 
-	virtual size_t copyBytesForNetPacket(UnsignedByte* buffer, const NetCommandRef& ref) const
+	virtual size_t copyBytesForNetPacket(UnsignedByte* buffer, const NetCommandRef& ref) const override
 	{
 		return NetPacketType::copyBytes(buffer, ref);
 	}
 
-	virtual size_t getSizeForSmallNetPacket(const Select* select = nullptr) const
+	virtual size_t getSizeForSmallNetPacket(const Select* select = nullptr) const override
 	{
 		return SmallNetPacketType::getSize(*this, select);
 	}
 
-	virtual size_t copyBytesForSmallNetPacket(UnsignedByte* buffer, const NetCommandRef& ref, const Select* select = nullptr) const
+	virtual size_t copyBytesForSmallNetPacket(UnsignedByte* buffer, const NetCommandRef& ref, const Select* select = nullptr) const override
 	{
 		return SmallNetPacketType::copyBytes(buffer, ref, select);
 	}
@@ -114,7 +114,7 @@ public:
 	void addArgument(const GameMessageArgumentDataType type, GameMessageArgumentType arg);
 	void setGameMessageType(GameMessage::Type type);
 
-	virtual Select getSmallNetPacketSelect() const;
+	virtual Select getSmallNetPacketSelect() const override;
 
 protected:
 	Int m_numArgs;
@@ -146,9 +146,9 @@ public:
 	void setCommandID(UnsignedShort commandID);
 	UnsignedByte getOriginalPlayerID() const;
 	void setOriginalPlayerID(UnsignedByte originalPlayerID);
-	virtual Int getSortNumber() const;
+	virtual Int getSortNumber() const override;
 
-	virtual Select getSmallNetPacketSelect() const;
+	virtual Select getSmallNetPacketSelect() const override;
 
 protected:
 	UnsignedShort m_commandID;
@@ -208,7 +208,7 @@ public:
 	void setCommandCount(UnsignedShort commandCount);
 	UnsignedShort getCommandCount() const;
 
-	virtual Select getSmallNetPacketSelect() const;
+	virtual Select getSmallNetPacketSelect() const override;
 
 protected:
 	UnsignedShort m_commandCount;
@@ -225,7 +225,7 @@ public:
 	UnsignedByte getLeavingPlayerID() const;
 	void setLeavingPlayerID(UnsignedByte id);
 
-	virtual Select getSmallNetPacketSelect() const;
+	virtual Select getSmallNetPacketSelect() const override;
 
 protected:
 	UnsignedByte m_leavingPlayerID;
@@ -244,7 +244,7 @@ public:
 	Int  getAverageFps() const;
 	void setAverageFps(Int fps);
 
-	virtual Select getSmallNetPacketSelect() const;
+	virtual Select getSmallNetPacketSelect() const override;
 
 protected:
 	Real m_averageLatency;
@@ -265,7 +265,7 @@ public:
 	UnsignedByte getFrameRate() const;
 	void setFrameRate(UnsignedByte frameRate);
 
-	virtual Select getSmallNetPacketSelect() const;
+	virtual Select getSmallNetPacketSelect() const override;
 
 protected:
 	UnsignedShort m_runAhead;
@@ -283,7 +283,7 @@ public:
 	UnsignedInt getPlayerIndex() const;
 	void setPlayerIndex(UnsignedInt playerIndex);
 
-	virtual Select getSmallNetPacketSelect() const;
+	virtual Select getSmallNetPacketSelect() const override;
 
 protected:
 	UnsignedInt m_playerIndex;
@@ -297,7 +297,7 @@ public:
 	NetKeepAliveCommandMsg();
 	//virtual ~NetKeepAliveCommandMsg();
 
-	virtual Select getSmallNetPacketSelect() const;
+	virtual Select getSmallNetPacketSelect() const override;
 };
 
 //-----------------------------------------------------------------------------
@@ -308,7 +308,7 @@ public:
 	NetDisconnectKeepAliveCommandMsg();
 	//virtual ~NetDisconnectKeepAliveCommandMsg();
 
-	virtual Select getSmallNetPacketSelect() const;
+	virtual Select getSmallNetPacketSelect() const override;
 };
 
 //-----------------------------------------------------------------------------
@@ -325,7 +325,7 @@ public:
 	UnsignedInt getDisconnectFrame() const;
 	void setDisconnectFrame(UnsignedInt frame);
 
-	virtual Select getSmallNetPacketSelect() const;
+	virtual Select getSmallNetPacketSelect() const override;
 
 protected:
 	UnsignedByte m_disconnectSlot;
@@ -340,7 +340,7 @@ public:
 	NetPacketRouterQueryCommandMsg();
 	//virtual ~NetPacketRouterQueryCommandMsg();
 
-	virtual Select getSmallNetPacketSelect() const;
+	virtual Select getSmallNetPacketSelect() const override;
 };
 
 //-----------------------------------------------------------------------------
@@ -351,7 +351,7 @@ public:
 	NetPacketRouterAckCommandMsg();
 	//virtual ~NetPacketRouterAckCommandMsg();
 
-	virtual Select getSmallNetPacketSelect() const;
+	virtual Select getSmallNetPacketSelect() const override;
 };
 
 //-----------------------------------------------------------------------------
@@ -365,7 +365,7 @@ public:
 	UnicodeString getText() const;
 	void setText(UnicodeString text);
 
-	virtual Select getSmallNetPacketSelect() const;
+	virtual Select getSmallNetPacketSelect() const override;
 
 protected:
 	UnicodeString m_text;
@@ -385,7 +385,7 @@ public:
 	Int getPlayerMask() const;
 	void setPlayerMask( Int playerMask );
 
-	virtual Select getSmallNetPacketSelect() const;
+	virtual Select getSmallNetPacketSelect() const override;
 
 protected:
 	UnicodeString m_text;
@@ -406,7 +406,7 @@ public:
 	UnsignedInt getVoteFrame() const;
 	void setVoteFrame(UnsignedInt voteFrame);
 
-	virtual Select getSmallNetPacketSelect() const;
+	virtual Select getSmallNetPacketSelect() const override;
 
 protected:
 	UnsignedByte m_slot;
@@ -424,7 +424,7 @@ public:
 	UnsignedByte getPercentage() const;
 	void setPercentage( UnsignedByte percent );
 
-	virtual Select getSmallNetPacketSelect() const;
+	virtual Select getSmallNetPacketSelect() const override;
 
 protected:
 	UnsignedByte m_percent;
@@ -459,7 +459,7 @@ public:
 	UnsignedShort getWrappedCommandID() const;
 	void setWrappedCommandID(UnsignedShort wrappedCommandID);
 
-	virtual Select getSmallNetPacketSelect() const;
+	virtual Select getSmallNetPacketSelect() const override;
 
 private:
 	UnsignedByte *m_data;
@@ -492,7 +492,7 @@ public:
 	UnsignedByte * getFileData();
 	void setFileData(UnsignedByte *data, UnsignedInt dataLength);
 
-	virtual Select getSmallNetPacketSelect() const;
+	virtual Select getSmallNetPacketSelect() const override;
 
 protected:
 	AsciiString m_portableFilename;
@@ -521,7 +521,7 @@ public:
 	UnsignedByte getPlayerMask() const;
 	void setPlayerMask(UnsignedByte playerMask);
 
-	virtual Select getSmallNetPacketSelect() const;
+	virtual Select getSmallNetPacketSelect() const override;
 
 protected:
 	AsciiString m_portableFilename;
@@ -543,7 +543,7 @@ public:
 	Int getProgress() const;
 	void setProgress(Int val);
 
-	virtual Select getSmallNetPacketSelect() const;
+	virtual Select getSmallNetPacketSelect() const override;
 
 protected:
 	UnsignedShort m_fileID;
@@ -560,7 +560,7 @@ public:
 	UnsignedInt getDisconnectFrame() const;
 	void setDisconnectFrame(UnsignedInt disconnectFrame);
 
-	virtual Select getSmallNetPacketSelect() const;
+	virtual Select getSmallNetPacketSelect() const override;
 
 protected:
 	UnsignedInt m_disconnectFrame;
@@ -576,7 +576,7 @@ public:
 	UnsignedInt getNewFrame() const;
 	void setNewFrame(UnsignedInt newFrame);
 
-	virtual Select getSmallNetPacketSelect() const;
+	virtual Select getSmallNetPacketSelect() const override;
 
 protected:
 	UnsignedInt m_newFrame;
@@ -592,7 +592,7 @@ public:
 	UnsignedInt getFrameToResend() const;
 	void setFrameToResend(UnsignedInt frame);
 
-	virtual Select getSmallNetPacketSelect() const;
+	virtual Select getSmallNetPacketSelect() const override;
 
 protected:
 	UnsignedInt m_frameToResend;
@@ -605,7 +605,7 @@ public:
 	NetLoadCompleteCommandMsg();
 	//virtual ~NetLoadCompleteCommandMsg();
 
-	virtual Select getSmallNetPacketSelect() const;
+	virtual Select getSmallNetPacketSelect() const override;
 };
 
 class NetTimeOutGameStartCommandMsg : public NetCommandMsgT<NetPacketTimeOutGameStartCommand, SmallNetPacketTimeOutGameStartCommand>
@@ -615,5 +615,5 @@ public:
 	NetTimeOutGameStartCommandMsg();
 	//virtual ~NetTimeOutGameStartCommandMsg();
 
-	virtual Select getSmallNetPacketSelect() const;
+	virtual Select getSmallNetPacketSelect() const override;
 };

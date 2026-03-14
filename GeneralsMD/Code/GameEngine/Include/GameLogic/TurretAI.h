@@ -73,18 +73,18 @@ public:
 
 	TurretAI* getTurretAI() const { return m_turretAI; }
 
-	virtual void clear();
-	virtual StateReturnType resetToDefaultState();
-	virtual StateReturnType setState( StateID newStateID );
+	virtual void clear() override;
+	virtual StateReturnType resetToDefaultState() override;
+	virtual StateReturnType setState( StateID newStateID ) override;
 
 private:
 	TurretAI* m_turretAI;
 
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 };
 
 //-----------------------------------------------------------------------------------------------------------
@@ -103,14 +103,14 @@ class TurretAIIdleState : public TurretState
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(TurretAIIdleState, "TurretAIIdleState")
 public:
 	TurretAIIdleState( TurretStateMachine* machine ) : TurretState( machine, "TurretAIIdleState"), m_nextIdleScan(0) { }
-	virtual StateReturnType onEnter();
-	virtual StateReturnType update();
+	virtual StateReturnType onEnter() override;
+	virtual StateReturnType update() override;
 
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 private:
 	void resetIdleScan();
 	UnsignedInt m_nextIdleScan;
@@ -123,15 +123,15 @@ class TurretAIIdleScanState : public TurretState
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(TurretAIIdleScanState, "TurretAIIdleScanState")
 public:
 	TurretAIIdleScanState( TurretStateMachine* machine ) : TurretState( machine, "TurretAIIdleScanState"), m_desiredAngle(0) { }
-	virtual StateReturnType onEnter();
-	virtual void onExit( StateExitType status );
-	virtual StateReturnType update();
+	virtual StateReturnType onEnter() override;
+	virtual void onExit( StateExitType status ) override;
+	virtual StateReturnType update() override;
 
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 private:
 	Real m_desiredAngle;
 };
@@ -153,14 +153,14 @@ public:
 	{
 
 	}
-	virtual StateReturnType onEnter();
-	virtual void onExit( StateExitType status );
-	virtual StateReturnType update();
+	virtual StateReturnType onEnter() override;
+	virtual void onExit( StateExitType status ) override;
+	virtual StateReturnType update() override;
 protected:
 	// snapshot interface	STUBBED - no member vars to save. jba.
-	virtual void crc( Xfer *xfer ){};
-	virtual void xfer( Xfer *xfer ){XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
-	virtual void loadPostProcess(){};
+	virtual void crc( Xfer *xfer ) override {};
+	virtual void xfer( Xfer *xfer ) override {XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
+	virtual void loadPostProcess() override {};
 };
 EMPTY_DTOR(TurretAIAimTurretState)
 
@@ -173,14 +173,14 @@ class TurretAIRecenterTurretState : public TurretState
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(TurretAIRecenterTurretState, "TurretAIRecenterTurretState")
 public:
 	TurretAIRecenterTurretState( TurretStateMachine* machine ) : TurretState( machine, "TurretAIRecenterTurretState" ) { }
-	virtual StateReturnType onEnter();
-	virtual void onExit( StateExitType status );
-	virtual StateReturnType update();
+	virtual StateReturnType onEnter() override;
+	virtual void onExit( StateExitType status ) override;
+	virtual StateReturnType update() override;
 protected:
 	// snapshot interface	STUBBED - no member vars to save. jba.
-	virtual void crc( Xfer *xfer ){};
-	virtual void xfer( Xfer *xfer ){XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
-	virtual void loadPostProcess(){};
+	virtual void crc( Xfer *xfer ) override {};
+	virtual void xfer( Xfer *xfer ) override {XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
+	virtual void loadPostProcess() override {};
 };
 EMPTY_DTOR(TurretAIRecenterTurretState)
 
@@ -198,14 +198,14 @@ public:
 	{
 		m_timestamp = 0;
 	}
-	virtual StateReturnType onEnter();
-	virtual void onExit( StateExitType status );
-	virtual StateReturnType update();
+	virtual StateReturnType onEnter() override;
+	virtual void onExit( StateExitType status ) override;
+	virtual StateReturnType update() override;
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 };
 EMPTY_DTOR(TurretAIHoldTurretState)
 
@@ -286,7 +286,7 @@ public:
 
 	Bool isOwnersCurWeaponOnTurret() const;
 	Bool isWeaponSlotOnTurret(WeaponSlotType wslot) const;
-	Bool isAttackingObject() const { return m_target == TARGET_OBJECT; }
+	virtual Bool isAttackingObject() const override { return m_target == TARGET_OBJECT; }
 	Bool isForceAttacking() const { return m_isForceAttacking; }
 
 	// this will cause the turret to continuously track the given victim.
@@ -307,10 +307,10 @@ public:
 
 	UpdateSleepTime updateTurretAI();			///< implement this module's behavior
 
-	virtual void notifyFired();
-	virtual void notifyNewVictimChosen(Object* victim);
-	virtual const Coord3D* getOriginalVictimPos() const { return nullptr; }	// yes, we return nullptr here
-	virtual Bool isWeaponSlotOkToFire(WeaponSlotType wslot) const;
+	virtual void notifyFired() override;
+	virtual void notifyNewVictimChosen(Object* victim) override;
+	virtual const Coord3D* getOriginalVictimPos() const override { return nullptr; }	// yes, we return nullptr here
+	virtual Bool isWeaponSlotOkToFire(WeaponSlotType wslot) const override;
 
 	// these are only for use by the state machines... don't call them otherwise, please
 	Bool friend_turnTowardsAngle(Real desiredAngle, Real rateModifier, Real relThresh);
@@ -332,9 +332,9 @@ public:
 
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 private:
 

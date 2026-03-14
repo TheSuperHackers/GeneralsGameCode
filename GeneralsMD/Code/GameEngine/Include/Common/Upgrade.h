@@ -131,9 +131,9 @@ public:
 protected:
 
 	// snapshot methods
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 	const UpgradeTemplate *m_template;	///< template this upgrade instance is based on
 	UpgradeStatusType m_status;							///< status of upgrade
@@ -231,11 +231,11 @@ class UpgradeCenter : public SubsystemInterface
 public:
 
 	UpgradeCenter();
-	virtual ~UpgradeCenter();
+	virtual ~UpgradeCenter() override;
 
-	void init();												///< subsystem interface
-	void reset();												///< subsystem interface
-	void update() { }										///< subsystem interface
+	virtual void init() override;												///< subsystem interface
+	virtual void reset() override;												///< subsystem interface
+	virtual void update() override { }										///< subsystem interface
 
 	UpgradeTemplate *firstUpgradeTemplate(); ///< return the first upgrade template
 	const UpgradeTemplate *findUpgradeByKey( NameKeyType key ) const; ///< find upgrade by name key

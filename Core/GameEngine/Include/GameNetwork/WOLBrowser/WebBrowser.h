@@ -79,9 +79,9 @@ class WebBrowser :
 		public SubsystemInterface
 	{
 	public:
-		void init();
-		void reset();
-		void update();
+		virtual void init() override;
+		virtual void reset() override;
+		virtual void update() override;
 
 		// Create an instance of the embedded browser for Dune Emperor.
 		virtual Bool createBrowserWindow(const char *tag, GameWindow *win) = 0;
@@ -93,7 +93,7 @@ class WebBrowser :
 	protected:
 		// Protected to prevent direct construction via new, use CreateInstance() instead.
 		WebBrowser();
-		virtual ~WebBrowser();
+		virtual ~WebBrowser() override;
 
 		// Protected to prevent copy and assignment
 		WebBrowser(const WebBrowser&);
