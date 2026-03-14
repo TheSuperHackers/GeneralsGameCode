@@ -8,6 +8,18 @@ option(RTS_BUILD_OPTION_DEBUG "Build code with the \"Debug\" configuration." OFF
 option(RTS_BUILD_OPTION_ASAN "Build code with Address Sanitizer." OFF)
 option(RTS_BUILD_OPTION_VC6_FULL_DEBUG "Build VC6 with full debug info." OFF)
 option(RTS_BUILD_OPTION_FFMPEG "Enable FFmpeg support" OFF)
+option(RTS_BUILD_OPTION_RETAIL_COMPATIBLE_CRC "Build with CRC compatible with retail Generals 1.08, Zero Hour 1.04" ON)
+option(RTS_BUILD_OPTION_PRESERVE_RETAIL_BEHAVIOR "Retain behavior present in retail Generals 1.08 and Zero Hour 1.04" ON)
+option(RTS_BUILD_OPTION_RETAIL_COMPATIBLE_XFER_SAVE "Build with Xfer Save compatible with retail Generals 1.08, Zero Hour 1.04" ON)
+option(RTS_BUILD_OPTION_RETAIL_COMPATIBLE_PATHFINDING "Use retail compatible pathfinding with fixed pathfinding fallback" ON)
+option(RTS_BUILD_OPTION_RETAIL_COMPATIBLE_PATHFINDING_ALLOCATION "Use retail compatible pathfinding memory allocation" ON)
+option(RTS_BUILD_OPTION_RETAIL_COMPATIBLE_NETWORKING "Use retail compatible networking" ON)
+option(RTS_BUILD_OPTION_RETAIL_COMPATIBLE_AIGROUP "Build with AIGroup logic CRC compatible with retail Generals 1.08, Zero Hour 1.04" ON)
+option(RTS_BUILD_OPTION_ENABLE_GAMETEXT_SUBSTITUTES "Provide substitute texts when labels and strings are missing in STR or CSF translation file" ON)
+option(RTS_BUILD_OPTION_ENABLE_CONFIGURABLE_SHROUD "Enable configurable shroud in GlobalData" ON)
+option(RTS_BUILD_OPTION_ENABLE_FILESYSTEM_EXISTENCE_CACHE "Enable cache for local file existence" ON)
+option(RTS_BUILD_OPTION_PRIORITIZE_TEXTURES_BY_SIZE "Enable prioritization of textures by size" ON)
+option(RTS_BUILD_OPTION_ENABLE_GUI_HACKS "Overwrite window settings until wnd data files are adapted or fixed" ON)
 
 if(NOT RTS_BUILD_ZEROHOUR AND NOT RTS_BUILD_GENERALS)
     set(RTS_BUILD_ZEROHOUR TRUE)
@@ -23,6 +35,18 @@ add_feature_info(DebugBuild RTS_BUILD_OPTION_DEBUG "Building as a \"Debug\" buil
 add_feature_info(AddressSanitizer RTS_BUILD_OPTION_ASAN "Building with address sanitizer")
 add_feature_info(Vc6FullDebug RTS_BUILD_OPTION_VC6_FULL_DEBUG "Building VC6 with full debug info")
 add_feature_info(FFmpegSupport RTS_BUILD_OPTION_FFMPEG "Building with FFmpeg support")
+add_feature_info(RetailCompatibleCRC RTS_BUILD_OPTION_RETAIL_COMPATIBLE_CRC "Building with CRC compatible with retail")
+add_feature_info(PreserveRetailBehavior RTS_BUILD_OPTION_PRESERVE_RETAIL_BEHAVIOR "Retaining retail behavior")
+add_feature_info(RetailCompatibleXferSave RTS_BUILD_OPTION_RETAIL_COMPATIBLE_XFER_SAVE "Building with Xfer Save compatible with retail")
+add_feature_info(RetailCompatiblePathfinding RTS_BUILD_OPTION_RETAIL_COMPATIBLE_PATHFINDING "Building with retail compatible pathfinding")
+add_feature_info(RetailCompatiblePathfindingAllocation RTS_BUILD_OPTION_RETAIL_COMPATIBLE_PATHFINDING_ALLOCATION "Building with retail compatible pathfinding allocation")
+add_feature_info(RetailCompatibleNetworking RTS_BUILD_OPTION_RETAIL_COMPATIBLE_NETWORKING "Building with retail compatible networking")
+add_feature_info(RetailCompatibleAIGroup RTS_BUILD_OPTION_RETAIL_COMPATIBLE_AIGROUP "Building with AIGroup logic compatible with retail")
+add_feature_info(EnableGametextSubstitutes RTS_BUILD_OPTION_ENABLE_GAMETEXT_SUBSTITUTES "Building with gametext substitutes")
+add_feature_info(EnableConfigurableShroud RTS_BUILD_OPTION_ENABLE_CONFIGURABLE_SHROUD "Building with configurable shroud")
+add_feature_info(EnableFilesystemExistenceCache RTS_BUILD_OPTION_ENABLE_FILESYSTEM_EXISTENCE_CACHE "Building with filesystem existence cache")
+add_feature_info(PrioritizeTexturesBySize RTS_BUILD_OPTION_PRIORITIZE_TEXTURES_BY_SIZE "Building with texture prioritization by size")
+add_feature_info(EnableGuiHacks RTS_BUILD_OPTION_ENABLE_GUI_HACKS "Building with GUI hacks")
 
 set(RTS_BUILD_OUTPUT_SUFFIX "" CACHE STRING "Suffix appended to output names of installable targets")
 
@@ -74,4 +98,52 @@ endif()
 
 if(RTS_BUILD_OPTION_PROFILE)
     target_compile_definitions(core_config INTERFACE RTS_PROFILE)
+endif()
+
+if(NOT RTS_BUILD_OPTION_RETAIL_COMPATIBLE_CRC)
+    target_compile_definitions(core_config INTERFACE RETAIL_COMPATIBLE_CRC=0)
+endif()
+
+if(NOT RTS_BUILD_OPTION_PRESERVE_RETAIL_BEHAVIOR)
+    target_compile_definitions(core_config INTERFACE PRESERVE_RETAIL_BEHAVIOR=0)
+endif()
+
+if(NOT RTS_BUILD_OPTION_RETAIL_COMPATIBLE_XFER_SAVE)
+    target_compile_definitions(core_config INTERFACE RETAIL_COMPATIBLE_XFER_SAVE=0)
+endif()
+
+if(NOT RTS_BUILD_OPTION_RETAIL_COMPATIBLE_PATHFINDING)
+    target_compile_definitions(core_config INTERFACE RETAIL_COMPATIBLE_PATHFINDING=0)
+endif()
+
+if(NOT RTS_BUILD_OPTION_RETAIL_COMPATIBLE_PATHFINDING_ALLOCATION)
+    target_compile_definitions(core_config INTERFACE RETAIL_COMPATIBLE_PATHFINDING_ALLOCATION=0)
+endif()
+
+if(NOT RTS_BUILD_OPTION_RETAIL_COMPATIBLE_NETWORKING)
+    target_compile_definitions(core_config INTERFACE RETAIL_COMPATIBLE_NETWORKING=0)
+endif()
+
+if(NOT RTS_BUILD_OPTION_RETAIL_COMPATIBLE_AIGROUP)
+    target_compile_definitions(core_config INTERFACE RETAIL_COMPATIBLE_AIGROUP=0)
+endif()
+
+if(NOT RTS_BUILD_OPTION_ENABLE_GAMETEXT_SUBSTITUTES)
+    target_compile_definitions(core_config INTERFACE ENABLE_GAMETEXT_SUBSTITUTES=0)
+endif()
+
+if(NOT RTS_BUILD_OPTION_ENABLE_CONFIGURABLE_SHROUD)
+    target_compile_definitions(core_config INTERFACE ENABLE_CONFIGURABLE_SHROUD=0)
+endif()
+
+if(NOT RTS_BUILD_OPTION_ENABLE_FILESYSTEM_EXISTENCE_CACHE)
+    target_compile_definitions(core_config INTERFACE ENABLE_FILESYSTEM_EXISTENCE_CACHE=0)
+endif()
+
+if(NOT RTS_BUILD_OPTION_PRIORITIZE_TEXTURES_BY_SIZE)
+    target_compile_definitions(core_config INTERFACE PRIORITIZE_TEXTURES_BY_SIZE=0)
+endif()
+
+if(NOT RTS_BUILD_OPTION_ENABLE_GUI_HACKS)
+    target_compile_definitions(core_config INTERFACE ENABLE_GUI_HACKS=0)
 endif()
