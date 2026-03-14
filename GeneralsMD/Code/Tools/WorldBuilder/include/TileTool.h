@@ -57,7 +57,7 @@ protected:
 	static Int m_currentWidth;
 
 public:
- 	virtual void activate() override; ///< Become the current tool.
+	virtual void activate() override; ///< Become the current tool.
 
 public:
 	BigTileTool(void);
