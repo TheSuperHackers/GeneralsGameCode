@@ -103,7 +103,8 @@ static NameKeyType buttonHostID = NAMEKEY_INVALID;
 static NameKeyType buttonRefreshID = NAMEKEY_INVALID;
 static NameKeyType buttonJoinID = NAMEKEY_INVALID;
 static NameKeyType buttonBuddyID = NAMEKEY_INVALID;
-static NameKeyType buttonEmoteID = NAMEKEY_INVALID;
+// TheSuperHackers @tweak arcticdolphin 08/03/2026 Renamed from buttonEmote to buttonChat to reflect chat button purpose
+static NameKeyType buttonChatID = NAMEKEY_INVALID;
 static NameKeyType textEntryChatID = NAMEKEY_INVALID;
 static NameKeyType listboxLobbyPlayersID = NAMEKEY_INVALID;
 static NameKeyType listboxLobbyChatID = NAMEKEY_INVALID;
@@ -117,7 +118,8 @@ static GameWindow *buttonHost = nullptr;
 static GameWindow *buttonRefresh = nullptr;
 static GameWindow *buttonJoin = nullptr;
 static GameWindow *buttonBuddy = nullptr;
-static GameWindow *buttonEmote = nullptr;
+// TheSuperHackers @tweak arcticdolphin 08/03/2026 Renamed from buttonEmote to buttonChat to reflect chat button purpose
+static GameWindow *buttonChat = nullptr;
 static GameWindow *textEntryChat = nullptr;
 static GameWindow *listboxLobbyPlayers = nullptr;
 static GameWindow *listboxLobbyChat = nullptr;
@@ -641,8 +643,9 @@ void WOLLobbyMenuInit( WindowLayout *layout, void *userData )
 	buttonBuddyID = TheNameKeyGenerator->nameToKey("WOLCustomLobby.wnd:ButtonBuddy");
 	buttonBuddy = TheWindowManager->winGetWindowFromId(parent, buttonBuddyID);
 
-	buttonEmoteID = TheNameKeyGenerator->nameToKey("WOLCustomLobby.wnd:ButtonEmote");
-	buttonEmote = TheWindowManager->winGetWindowFromId(parent, buttonEmoteID);
+	// TheSuperHackers @tweak arcticdolphin 08/03/2026 Renamed from buttonEmote to buttonChat to reflect chat button purpose
+	buttonChatID = TheNameKeyGenerator->nameToKey("WOLCustomLobby.wnd:ButtonEmote"); // TODO Rename ButtonEmote to ButtonChat in .wnd file
+	buttonChat = TheWindowManager->winGetWindowFromId(parent, buttonChatID);
 
 	textEntryChatID = TheNameKeyGenerator->nameToKey("WOLCustomLobby.wnd:TextEntryChat");
 	textEntryChat = TheWindowManager->winGetWindowFromId(parent, textEntryChatID);
@@ -1639,7 +1642,8 @@ WindowMsgHandledType WOLLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 				{
 					ToggleGameListType();
 				}
-				else if ( controlID == buttonEmoteID )
+				// TheSuperHackers @tweak arcticdolphin 08/03/2026 Renamed from buttonEmote to buttonChat to reflect chat button purpose
+				else if ( controlID == buttonChatID )
 				{
 				// read the user's input and clear the entry box
 					UnicodeString txtInput;

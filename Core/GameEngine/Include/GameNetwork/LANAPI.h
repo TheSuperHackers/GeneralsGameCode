@@ -108,6 +108,8 @@ public:
 		RET_UNKNOWN,				// Default message for oddity
 	};
 	UnicodeString getErrorStringFromReturnType( ReturnType ret );
+	// TheSuperHackers @feature arcticdolphin 08/03/2026 Adds processChatMessage to handle /me slash command in LAN chat, consistent with WOL
+	void processChatMessage( const UnicodeString &message );
 
 	// On functions are (generally) the result of network traffic
 	virtual void OnGameList( LANGameInfo *gameList ) = 0;																							///< List of games

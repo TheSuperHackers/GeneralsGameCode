@@ -93,6 +93,29 @@ UnicodeString LANAPIInterface::getErrorStringFromReturnType( ReturnType ret )
 	}
 }
 
+// TheSuperHackers @feature arcticdolphin 08/03/2026 Adds processChatMessage to handle /me slash command in LAN chat, consistent with WOL
+void LANAPIInterface::processChatMessage( const UnicodeString &message )
+{
+	AsciiString ascii;
+	ascii.translate(message);
+
+	if (!ascii.isEmpty() && ascii.getCharAt(0) == '/')
+	{
+		AsciiString remainder = ascii.str() + 1;
+		AsciiString token;
+		remainder.nextToken(&token);
+		token.toLower();
+
+		if (token == "me" && message.getLength() > 4)
+		{
+			RequestChat(UnicodeString(message.str() + 4), LANCHAT_EMOTE);
+			return;
+		}
+	}
+
+	RequestChat(message, LANCHAT_NORMAL);
+}
+
 // On functions are (generally) the result of network traffic
 
 void LANAPI::OnAccept( UnsignedInt playerIP, Bool status )
