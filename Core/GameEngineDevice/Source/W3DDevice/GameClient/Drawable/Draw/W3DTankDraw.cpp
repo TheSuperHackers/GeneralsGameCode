@@ -106,7 +106,6 @@ W3DTankDraw::W3DTankDraw( Thing *thing, const ModuleData* moduleData )
 	m_lastDirection.y=0.0f;
 	m_lastDirection.z=0.0f;
 
-	createTreadEmitters();
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -126,27 +125,33 @@ void W3DTankDraw::tossTreadEmitters()
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
+static ParticleSystemID createParticleSystem( const AsciiString &name, const Drawable *drawable )
+{
+	const ParticleSystemTemplate *sysTemplate = TheParticleSystemManager->findTemplate(name);
+	ParticleSystem *particleSys = TheParticleSystemManager->createParticleSystem( sysTemplate );
+	if (!particleSys)
+		return INVALID_PARTICLE_SYSTEM_ID;
+
+	particleSys->attachToDrawable(drawable);
+	// important: mark it as do-not-save, since we'll just re-create it when we reload.
+	particleSys->setSaveable(FALSE);
+	// they come into being stopped.
+	particleSys->stop();
+
+	return particleSys->getSystemID();
+}
+
 void W3DTankDraw::createTreadEmitters()
 {
-	const AsciiString *treadDebrisNames[2];
-	static_assert(ARRAY_SIZE(treadDebrisNames) == ARRAY_SIZE(m_treadDebrisIDs), "Array size must match");
-	treadDebrisNames[0] = &getW3DTankDrawModuleData()->m_treadDebrisNameLeft;
-	treadDebrisNames[1] = &getW3DTankDrawModuleData()->m_treadDebrisNameRight;
-
-	for (size_t i = 0; i < ARRAY_SIZE(m_treadDebrisIDs); ++i)
+	if (getW3DTankDrawModuleData())
 	{
-		if (m_treadDebrisIDs[i] == INVALID_PARTICLE_SYSTEM_ID)
+		if (m_treadDebrisIDs[0] == INVALID_PARTICLE_SYSTEM_ID)
 		{
-			if (const ParticleSystemTemplate *sysTemplate = TheParticleSystemManager->findTemplate(*treadDebrisNames[i]))
-			{
-				ParticleSystem *particleSys = TheParticleSystemManager->createParticleSystem( sysTemplate );
-				particleSys->attachToDrawable(getDrawable());
-				// important: mark it as do-not-save, since we'll just re-create it when we reload.
-				particleSys->setSaveable(FALSE);
-				// they come into being stopped.
-				particleSys->stop();
-				m_treadDebrisIDs[i] = particleSys->getSystemID();
-			}
+			m_treadDebrisIDs[0] = createParticleSystem(getW3DTankDrawModuleData()->m_treadDebrisNameLeft, getDrawable());
+		}
+		if (m_treadDebrisIDs[1] == INVALID_PARTICLE_SYSTEM_ID)
+		{
+			m_treadDebrisIDs[1] = createParticleSystem(getW3DTankDrawModuleData()->m_treadDebrisNameRight, getDrawable());
 		}
 	}
 }
@@ -310,6 +315,9 @@ void W3DTankDraw::doDrawModule(const Matrix3D* transformMtx)
 	if (obj == nullptr)
 		return;
 
+	// TheSuperHackers @bugfix stephanmeesters 14/03/2026 Delay emitter creation until draw
+	createTreadEmitters();
+
 	// get object physics state
 	PhysicsBehavior *physics = obj->getPhysics();
 	if (physics == nullptr)
@@ -435,8 +443,6 @@ void W3DTankDraw::loadPostProcess()
 	// extend base class
 	W3DModelDraw::loadPostProcess();
 
-	// toss any existing tread emitters and re-create 'em (since this module expects 'em to always be around)
-	tossTreadEmitters();
 	createTreadEmitters();
 
 }
