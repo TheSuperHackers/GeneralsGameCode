@@ -17,25 +17,25 @@
 */
 
 /* $Header: /Commando/Code/Tools/max2w3d/util.cpp 28    10/27/00 4:12p Greg_h $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando Tools - W3D export                                  * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/Tools/max2w3d/util.cpp                       $* 
- *                                                                                             * 
- *                      $Author:: Greg_h                                                      $* 
- *                                                                                             * 
- *                     $Modtime:: 10/27/00 1:13p                                              $* 
- *                                                                                             * 
- *                    $Revision:: 28                                                          $* 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
- *   Cleanup_Orthogonal_Matrix -- removes very small numbers from the matrix                   * 
- *   Set_W3D_Name -- set a W3D name                                                            * 
- *   Split_Node_Name -- break a node name into the base and extension                          * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando Tools - W3D export                                  *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/Tools/max2w3d/util.cpp                       $*
+ *                                                                                             *
+ *                      $Author:: Greg_h                                                      $*
+ *                                                                                             *
+ *                     $Modtime:: 10/27/00 1:13p                                              $*
+ *                                                                                             *
+ *                    $Revision:: 28                                                          $*
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
+ *   Cleanup_Orthogonal_Matrix -- removes very small numbers from the matrix                   *
+ *   Set_W3D_Name -- set a W3D name                                                            *
+ *   Split_Node_Name -- break a node name into the base and extension                          *
  *   Is_Max_Tri_Mesh -- Is this node a triangle mesh?                                          *
  *    -- checks if the node is the origin of a model                                           *
  *    -- Checks if the node is the origin for the base obect (non-LOD'd).                      *
@@ -57,24 +57,24 @@ static char _string[256];
 
 static int get_geometry_type(INode * node)
 {
-	assert(node != NULL);
+	assert(node != nullptr);
 	return W3DAppData2Struct::Get_App_Data(node)->Get_Geometry_Type();
 
 	//return (get_w3d_bits(node) & GEO_TYPE_MASK);
 }
 
 
-/*********************************************************************************************** 
- * Cleanup_Orthogonal_Matrix -- removes very small numbers from the matrix                     * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   10/26/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * Cleanup_Orthogonal_Matrix -- removes very small numbers from the matrix                     *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 Matrix3	Cleanup_Orthogonal_Matrix(Matrix3 & mat)
 {
@@ -82,7 +82,7 @@ Matrix3	Cleanup_Orthogonal_Matrix(Matrix3 & mat)
 
 	for (int j=0; j<3; j++) {
 		Point3 row = newmat.GetRow(j);
-	
+
 		if (fabs(row.x) < EPSILON) row.x = 0.0f;
 		if (fabs(row.y) < EPSILON) row.y = 0.0f;
 		if (fabs(row.z) < EPSILON) row.z = 0.0f;
@@ -95,17 +95,17 @@ Matrix3	Cleanup_Orthogonal_Matrix(Matrix3 & mat)
 	return newmat;
 }
 
-/*********************************************************************************************** 
- * Set_W3D_Name -- set a W3D name                                                              * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   10/26/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * Set_W3D_Name -- set a W3D name                                                              *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   10/26/1997 GH  : Created.                                                                 *
  *   9/13/1999  AJA : Strip off the trailing ".digits" since this is a convention we've set in *
  *                    MAX to help artists manage LODs.                                         *
  *=============================================================================================*/
@@ -127,17 +127,17 @@ void Set_W3D_Name(char * set_name,const char * src)
 	strupr(set_name);
 }
 
-/*********************************************************************************************** 
- * Split_Node_Name -- break a node name into the base and extension                            * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   10/26/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * Split_Node_Name -- break a node name into the base and extension                            *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 void Split_Node_Name(const char * name,char * set_base,char * set_exten,int * set_exten_index)
 {
@@ -151,10 +151,10 @@ void Split_Node_Name(const char * name,char * set_base,char * set_exten,int * se
 	assert(strlen(name) < MAX_NODE_NAME_LEN);
 
 	// Initialize
-	if (set_base != NULL) set_base[0] = 0;
-	if (set_exten != NULL) set_exten[0] = 0;
-	if (set_exten_index != NULL) *set_exten_index = 0;
-		
+	if (set_base != nullptr) set_base[0] = 0;
+	if (set_exten != nullptr) set_exten[0] = 0;
+	if (set_exten_index != nullptr) *set_exten_index = 0;
+
 	// Get the base name
 	strncpy(buf,name,MAX_NODE_NAME_LEN);
 	ptr = buf;
@@ -166,20 +166,20 @@ void Split_Node_Name(const char * name,char * set_base,char * set_exten,int * se
 
 		// copy what we have so far into set_base
 		*ptr = 0;
-		if (set_base != NULL) strncpy(set_base,buf,MAX_NODE_NAME_LEN);	
+		if (set_base != nullptr) strncpy(set_base,buf,MAX_NODE_NAME_LEN);
 
 		// copy the rest back into the extension
 		ptr++;
-		if (set_exten != NULL) strncpy(set_exten,ptr,MAX_NODE_NAME_LEN);
+		if (set_exten != nullptr) strncpy(set_exten,ptr,MAX_NODE_NAME_LEN);
 
 		// now get the extension index
 		ptr++;
-		if (set_exten_index != NULL) *set_exten_index = atoi(ptr);
+		if (set_exten_index != nullptr) *set_exten_index = atoi(ptr);
 
 	} else {
 
 		// no extension, just copy the base name
-		if (set_base != NULL) strncpy(set_base,buf,MAX_NODE_NAME_LEN);
+		if (set_base != nullptr) strncpy(set_base,buf,MAX_NODE_NAME_LEN);
 		return;
 	}
 }
@@ -187,7 +187,7 @@ void Split_Node_Name(const char * name,char * set_base,char * set_exten,int * se
 
 bool Append_Lod_Character (char *meshname, int lod_level, INodeListClass *origin_list)
 {
-	if (meshname == NULL || lod_level < 0)
+	if (meshname == nullptr || lod_level < 0)
 		return false;
 
 	if (!origin_list)
@@ -200,7 +200,7 @@ bool Append_Lod_Character (char *meshname, int lod_level, INodeListClass *origin
 	** If there is, we will append the current LOD level digit to the name.
 	** If there is not, the name will not be modified.
 	*/
-	INode *conflict = NULL, *cur_origin = NULL;
+	INode *conflict = nullptr, *cur_origin = nullptr;
 	int i, lod;
 	for (i = 0; i < num_lods; i++)
 	{
@@ -253,10 +253,10 @@ void Create_Full_Path(char *full_path, const char *curr, const char *rel_path)
 	// Copy current dir to full path. If it doesn't end with a slash, add one.
 	strcpy(full_path, curr);
 	int curr_len = strlen(curr);
-	char *full_p = full_path + curr_len;	// Point at the terminating NULL
+	char *full_p = full_path + curr_len;	// Point at the terminating nullptr
 	if (curr_len == 0 ||(*(full_p - 1) != '/' && *(full_p - 1) != '\\')) {
 		*full_p = '\\';
-		*(++full_p) = '\000';	// Point at the terminating NULL
+		*(++full_p) = '\000';	// Point at the terminating nullptr
 	}
 
 	// Scan "..\"s at the beginning of the rel path, scan backwards on the
@@ -312,7 +312,7 @@ void Create_Relative_Path(char *rel_path,	const char *curr, const char *full_pat
 		goto end;
 	}
 
-	// The first different character for each string can be: a NULL, a slash,
+	// The first different character for each string can be: a nullptr, a slash,
 	// or an ordinary character.
 	PathCharType full_type, curr_type;
 	if (*full_p == '\000') {
@@ -333,14 +333,14 @@ void Create_Relative_Path(char *rel_path,	const char *curr, const char *full_pat
 			curr_type = PLAIN_CHAR;
 		}
 	}
-	// If the last fullpath char is a NULL or both are slashes, we have an
+	// If the last fullpath char is a nullptr or both are slashes, we have an
 	// error - return full path
 	if (full_type == NULL_CHAR || (full_type == SLASH_CHAR && curr_type == SLASH_CHAR)) {
 		strcpy(rel_path, up_full);
 		goto end;
 	}
 
-	// If the current path has ended (last char is a NULL) and the full path's
+	// If the current path has ended (last char is a nullptr) and the full path's
 	// last char is a slash, then just copy the remainder of the full path
 	// (w/o the slash) to the relative path, and exit.
 	if (curr_type == NULL_CHAR && full_type == SLASH_CHAR) {
@@ -351,7 +351,7 @@ void Create_Relative_Path(char *rel_path,	const char *curr, const char *full_pat
 
 	// If one of following holds:
 	// 1) One of the last chars is a slash and the other is a plain char
-	// 2) The current path has ended (last char is NULL) and the last char
+	// 2) The current path has ended (last char is nullptr) and the last char
 	//    of the full path is a plain char
 	// 3) The last char of both are plain chars and the previous char is not a
 	//    slash
@@ -410,7 +410,7 @@ end:
 bool Is_Full_Path(char * path)
 {
 	// first scan for a drive letter (scan for a colon)
-	if (strchr(path,':') != NULL) {
+	if (strchr(path,':') != nullptr) {
 		return true;
 	}
 
@@ -438,12 +438,12 @@ bool Is_Full_Path(char * path)
  * HISTORY:                                                                                    *
  *   2/2/98     GTH : Created.                                                                 *
  *=============================================================================================*/
-bool Is_Max_Tri_Mesh(INode * node) 
+bool Is_Max_Tri_Mesh(INode * node)
 {
 	Object *obj = node->EvalWorldState(0).obj;
-	
+
 	if (obj && obj->CanConvertToType(Class_ID(TRIOBJ_CLASS_ID, 0))) {
-		return true;	
+		return true;
 	}
 	return false;
 }
@@ -452,7 +452,7 @@ bool Is_Max_Tri_Mesh(INode * node)
 
 bool Is_Damage_Root(INode *node)
 {
-	if (node == NULL)
+	if (node == nullptr)
 		return false;
 
 	// Is the node's parent the scene root?
@@ -584,11 +584,11 @@ int Get_Damage_State(INode *node)
 INode *Find_Named_Node(char *nodename, INode *root)
 {
 	if (!root || !nodename)
-		return NULL;
+		return nullptr;
 
 	// Perform a breadth-first search of the tree for a node
 	// of the given name.
-	INode	*child = NULL;
+	INode	*child = nullptr;
 	int	i;
 	char	cur_name[W3D_NAME_LEN];
 
@@ -617,6 +617,6 @@ INode *Find_Named_Node(char *nodename, INode *root)
 	}
 
 	// Didn't find the node anywhere.
-	return NULL;
+	return nullptr;
 }
 

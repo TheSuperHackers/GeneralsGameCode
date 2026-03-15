@@ -34,13 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef VECTOR2I_H
-#define VECTOR2I_H
 
 #include "always.h"
 
@@ -51,9 +45,9 @@ public:
 	int		I;
 	int		J;
 
-	WWINLINE Vector2i(void);
+	WWINLINE Vector2i();
 	WWINLINE Vector2i(int i,int j);
-	
+
 	WWINLINE void Set(int i, int j);
 
 	WWINLINE void Swap(Vector2i & other);
@@ -65,33 +59,33 @@ public:
 };
 
 
-WWINLINE Vector2i::Vector2i(void)
+WWINLINE Vector2i::Vector2i()
 {
 }
 
-WWINLINE Vector2i::Vector2i(int i,int j) 
-{ 
-	I = i; J = j; 
+WWINLINE Vector2i::Vector2i(int i,int j)
+{
+	I = i; J = j;
 }
 
 WWINLINE bool Vector2i::operator == (const Vector2i & v) const
-{ 
-	return (I == v.I && J == v.J );	
+{
+	return (I == v.I && J == v.J );
 }
 
 WWINLINE bool Vector2i::operator !=	(const Vector2i& v) const
-{ 
-	return !(I == v.I && J == v.J);	
+{
+	return !(I == v.I && J == v.J);
 }
 
-WWINLINE const int& Vector2i::operator[] (int n) const				
-{ 
-	return ((int*)this)[n]; 
+WWINLINE const int& Vector2i::operator[] (int n) const
+{
+	return ((int*)this)[n];
 }
 
 WWINLINE int& Vector2i::operator[] (int n)
-{ 
-	return ((int*)this)[n]; 
+{
+	return ((int*)this)[n];
 }
 
 WWINLINE void Vector2i::Set(int i, int j) { I = i; J = j; }
@@ -108,6 +102,3 @@ WWINLINE void Vector2i::Swap(Vector2i & other)
 	other.J ^= J;
 	J ^= other.J;
 }
-
-
-#endif

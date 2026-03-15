@@ -1,14 +1,11 @@
 add_executable(z_w3dview WIN32)
 
 target_link_libraries(z_w3dview PRIVATE
-    core_config
-    core_utility
     core_wwstub # avoid linking GameEngine
     corei_w3dview # this interface gets the source files for the tool
     d3d8
     d3d8lib
     d3dx8
-    dbghelplib
     imm32
     milesstub
     Version
@@ -16,11 +13,12 @@ target_link_libraries(z_w3dview PRIVATE
     winmm
     z_wwaudio
     z_wwvegas
+    zi_always
 )
 
 if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")
     target_compile_definitions(z_w3dview PRIVATE _AFXDLL)
-    set_target_properties(z_w3dview PROPERTIES OUTPUT_NAME W3DViewZH)
+    set_target_properties(z_w3dview PROPERTIES OUTPUT_NAME "W3DViewZH${RTS_BUILD_OUTPUT_SUFFIX}")
 else()
-    set_target_properties(z_w3dview PROPERTIES OUTPUT_NAME w3dviewzh)
+    set_target_properties(z_w3dview PROPERTIES OUTPUT_NAME "w3dviewzh${RTS_BUILD_OUTPUT_SUFFIX}")
 endif()

@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Xfer.h"
 #include "GameLogic/Module/StealthUpgrade.h"
@@ -43,17 +43,17 @@ StealthUpgrade::StealthUpgrade( Thing *thing, const ModuleData* moduleData ) : U
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-StealthUpgrade::~StealthUpgrade( void )
+StealthUpgrade::~StealthUpgrade()
 {
 }
 
 //-------------------------------------------------------------------------------------------------
-void StealthUpgrade::upgradeImplementation( )
+void StealthUpgrade::upgradeImplementation()
 {
 	// The logic that does the stealthupdate will notice this and start stealthing
 	Object *me = getObject();
 	me->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_CAN_STEALTH ) );
-	
+
 	//Grant stealth to spawns if applicable.
 	if( me->isKindOf( KINDOF_SPAWNS_ARE_THE_WEAPONS ) )
 	{
@@ -74,7 +74,7 @@ void StealthUpgrade::crc( Xfer *xfer )
 	// extend base class
 	UpgradeModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -92,15 +92,15 @@ void StealthUpgrade::xfer( Xfer *xfer )
 	// extend base class
 	UpgradeModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void StealthUpgrade::loadPostProcess( void )
+void StealthUpgrade::loadPostProcess()
 {
 
 	// extend base class
 	UpgradeModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

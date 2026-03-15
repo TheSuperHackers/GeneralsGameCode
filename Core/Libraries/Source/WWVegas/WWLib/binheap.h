@@ -34,8 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#ifndef BINARY_HEAP_CLASS_H
-#define BINARY_HEAP_CLASS_H
+#pragma once
 
 /*=============================================================================================*/
 // Includes.
@@ -57,16 +56,16 @@ class HeapNodeClass
 {
 	public:
 
-		virtual uint32		Get_Heap_Location (void) const = 0;
+		virtual uint32		Get_Heap_Location () const = 0;
 		virtual void		Set_Heap_Location (uint32 location) = 0;
 
 		// This is pure virtual so that any type of key can be used as long as it uses the comparison operators.
-		virtual Key_Type	Heap_Key (void) const = 0;
-		
+		virtual Key_Type	Heap_Key () const = 0;
+
 };
 
 // WARNING!
-// To reduce the number of compares, element [0] is a sentinel.  It's key value must be the smallest or NULL.
+// To reduce the number of compares, element [0] is a sentinel.  It's key value must be the smallest or null.
 // Keeps track of pointers to objects.
 template <class Key_Type>
 class BinaryHeapClass
@@ -89,7 +88,7 @@ class BinaryHeapClass
 		BinaryHeapClass(unsigned int max_number_of_elements)
 			:	Max_Number_Of_Elements (max_number_of_elements),
 				Number_Of_Elements (0),
-				Elements (NULL),
+				Elements (nullptr),
 				Own_Array (false)
 		{
 			Resize_Array (max_number_of_elements);
@@ -101,35 +100,35 @@ class BinaryHeapClass
 			Release_Array ();
 		}
 
-		// Reset all entries in the array to NULL
-		void Flush_Array (void)
+		// Reset all entries in the array to null
+		void Flush_Array ()
 		{
-			::memset (Elements, NULL, sizeof (HeapNodeClass<Key_Type> *) * Max_Number_Of_Elements);
+			::memset (Elements, nullptr, sizeof (HeapNodeClass<Key_Type> *) * Max_Number_Of_Elements);
 			Number_Of_Elements = 0;
 		}
-		
+
 		// Reallocate an array large enough to hold the elements
 		void Resize_Array (unsigned int new_size)
 		{
 			// Start fresh
 			Release_Array ();
-			
+
 			// Reallocate
 			Elements						= W3DNEWARRAY HeapNodeClass<Key_Type> *[new_size];
 			Max_Number_Of_Elements	= new_size;
 			Number_Of_Elements		= 0;
 			Own_Array					= true;
-			
-			// Initialize to NULL
-			::memset (Elements, NULL, sizeof (HeapNodeClass<Key_Type> *) * new_size);
+
+			// Initialize to null
+			::memset (Elements, nullptr, sizeof (HeapNodeClass<Key_Type> *) * new_size);
 			return ;
 		}
 
-		void Release_Array (void)
+		void Release_Array ()
 		{
 			if (Own_Array) {
 				delete [] Elements;
-				Elements = NULL;
+				Elements = nullptr;
 				Number_Of_Elements = 0;
 				Max_Number_Of_Elements = 0;
 			}
@@ -145,7 +144,7 @@ class BinaryHeapClass
 		}
 
 		// Return the maximum number of elements.
-		unsigned int Get_Max_Number_Of_Elements (void)
+		unsigned int Get_Max_Number_Of_Elements ()
 		{
 			return (Max_Number_Of_Elements);
 		}
@@ -177,8 +176,8 @@ class BinaryHeapClass
 			Elements[i] = node;
 			Elements[i]->Set_Heap_Location(i);
 		}
-		
-		// Move the element up in the tree if necessary.  Use this if the key value becomes smaller when it is 
+
+		// Move the element up in the tree if necessary.  Use this if the key value becomes smaller when it is
 		// already in the heap.
 		void Percolate_Up(unsigned int location)
 		{
@@ -200,14 +199,14 @@ class BinaryHeapClass
 		}
 
 		// Take the smallest element out of the tree and reorder
-		HeapNodeClass<Key_Type>* Remove_Min (void)
+		HeapNodeClass<Key_Type>* Remove_Min ()
 		{
 			unsigned int	child;
 			HeapNodeClass<Key_Type>*  	last_element;
 			HeapNodeClass<Key_Type>* 	min_element;
 
 			if (Number_Of_Elements == 0) {
-				return NULL;
+				return nullptr;
 			}
 
 			assert(Number_Of_Elements > 0);
@@ -215,7 +214,7 @@ class BinaryHeapClass
 
 			// The smallest element is always at this position.
 			min_element = Elements[1];
-			if (min_element != NULL) {
+			if (min_element != nullptr) {
 				min_element->Set_Heap_Location (0);
 			}
 
@@ -239,7 +238,7 @@ class BinaryHeapClass
 					Elements[i] = Elements[child];
 					Elements[i]->Set_Heap_Location(i);
 				}
-				else 
+				else
 				{
 					break;
 				}
@@ -314,6 +313,3 @@ class BinaryHeapClass
 		// binary tree.
 		bool								Own_Array;
 };
-
-
-#endif //BINARY_HEAP_CLASS_H

@@ -24,12 +24,12 @@
 
 // FILE: W3DMOTD.cpp //////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -45,7 +45,6 @@
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 #include <stdlib.h>
-#include <stdio.h>
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "Common/NameKeyGenerator.h"
@@ -83,19 +82,19 @@ static NameKeyType closeButtonID = NAMEKEY_INVALID;
 WindowMsgHandledType MOTDSystem( GameWindow *window, UnsignedInt msg,
 								 WindowMsgData mData1, WindowMsgData mData2 )
 {
-	switch( msg ) 
+	switch( msg )
 	{
 
 		// ------------------------------------------------------------------------
 		case GWM_CREATE:
 		{
-			
+
 			// load id's needed
 			closeButtonID = TheNameKeyGenerator->nameToKey( "MOTD.wnd:CloseMOTD" );
 
 			break;
 
-		}  // end create
+		}
 
 		// ------------------------------------------------------------------------
 		case GWM_DESTROY:
@@ -103,7 +102,7 @@ WindowMsgHandledType MOTDSystem( GameWindow *window, UnsignedInt msg,
 
 			break;
 
-		}  // end case
+		}
 
 		// ------------------------------------------------------------------------
 		case GBM_SELECTED:
@@ -111,19 +110,19 @@ WindowMsgHandledType MOTDSystem( GameWindow *window, UnsignedInt msg,
 			GameWindow *control = (GameWindow *)mData1;
 			Int controlID = control->winGetWindowId();
 
-			if( controlID == closeButtonID )					
+			if( controlID == closeButtonID )
 				window->winHide( !window->winIsHidden() );
 
 			break;
 
-		}  // end selected
+		}
 
 		default:
 			return MSG_IGNORED;
-	}  // end switch
+	}
 
 	return MSG_HANDLED;
-	
-}  // end MOTDSystem
+
+}
 
 

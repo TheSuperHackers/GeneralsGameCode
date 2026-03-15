@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/ThingTemplate.h"
 #include "Common/Upgrade.h"
@@ -48,7 +48,7 @@ UpgradeDie::UpgradeDie( Thing *thing, const ModuleData* moduleData ) : DieModule
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UpgradeDie::~UpgradeDie( void )
+UpgradeDie::~UpgradeDie()
 {
 }
 
@@ -76,10 +76,10 @@ void UpgradeDie::onDie( const DamageInfo *damageInfo )
 			}
 			else
 			{
-				DEBUG_ASSERTCRASH( 0, ("Object %s just died, but is trying to free upgrade %s in it's producer %s%s",
+				DEBUG_CRASH( ("Object %s just died, but is trying to free upgrade %s in it's producer %s%s",
 					getObject()->getTemplate()->getName().str(),
 					getUpgradeDieModuleData()->m_upgradeName.str(),
-					producer->getTemplate()->getName().str(), 
+					producer->getTemplate()->getName().str(),
 					", which the producer doesn't have. This is used in cases where the producer builds an upgrade that can die... like ranger building scout drones.") );
 			}
 		}
@@ -95,7 +95,7 @@ void UpgradeDie::crc( Xfer *xfer )
 	// extend base class
 	DieModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -113,15 +113,15 @@ void UpgradeDie::xfer( Xfer *xfer )
 	// extend base class
 	DieModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void UpgradeDie::loadPostProcess( void )
+void UpgradeDie::loadPostProcess()
 {
 
 	// extend base class
 	DieModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

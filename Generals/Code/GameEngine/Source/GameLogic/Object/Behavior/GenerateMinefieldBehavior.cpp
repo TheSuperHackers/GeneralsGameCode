@@ -24,12 +24,12 @@
 
 // FILE: GenerateMinefieldBehavior.cpp ///////////////////////////////////////////////////////////////////////
 // Author:
-// Desc:  
+// Desc:
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 #define DEFINE_SLOWDEATHPHASE_NAMES
 
 #include "Common/GlobalData.h"
@@ -52,19 +52,13 @@
 #include "GameLogic/ObjectCreationList.h"
 #include "GameLogic/PartitionManager.h"
 #include "GameLogic/Weapon.h"
-#include "GameClient/Drawable.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 GenerateMinefieldBehaviorModuleData::GenerateMinefieldBehaviorModuleData()
 {
 	m_mineName.clear();
-	m_genFX = NULL;
+	m_genFX = nullptr;
 	m_distanceAroundObject = TheGlobalData->m_standardMinefieldDistance;
 	m_minesPerSquareFoot = TheGlobalData->m_standardMinefieldDensity;
 	m_onDeath = false;
@@ -77,23 +71,23 @@ GenerateMinefieldBehaviorModuleData::GenerateMinefieldBehaviorModuleData()
 }
 
 //-------------------------------------------------------------------------------------------------
-/*static*/ void GenerateMinefieldBehaviorModuleData::buildFieldParse(MultiIniFieldParse& p) 
+/*static*/ void GenerateMinefieldBehaviorModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
-		{ "MineName", INI::parseAsciiString,	NULL, offsetof( GenerateMinefieldBehaviorModuleData, m_mineName ) },
-		{ "GenerationFX", INI::parseFXList,	NULL, offsetof( GenerateMinefieldBehaviorModuleData, m_genFX ) },
-		{ "DistanceAroundObject", INI::parseReal, NULL, offsetof( GenerateMinefieldBehaviorModuleData, m_distanceAroundObject ) },
-		{ "MinesPerSquareFoot", INI::parseReal, NULL, offsetof( GenerateMinefieldBehaviorModuleData, m_minesPerSquareFoot ) },
-		{ "GenerateOnlyOnDeath", INI::parseBool, NULL, offsetof(GenerateMinefieldBehaviorModuleData, m_onDeath) },
-		{ "BorderOnly", INI::parseBool, NULL, offsetof(GenerateMinefieldBehaviorModuleData, m_borderOnly) },
-		{ "SmartBorder", INI::parseBool, NULL, offsetof(GenerateMinefieldBehaviorModuleData, m_smartBorder) },
-		{ "SmartBorderSkipInterior", INI::parseBool, NULL, offsetof(GenerateMinefieldBehaviorModuleData, m_smartBorderSkipInterior) },
-		{ "AlwaysCircular", INI::parseBool, NULL, offsetof(GenerateMinefieldBehaviorModuleData, m_alwaysCircular) },
-		{ "RandomJitter", INI::parsePercentToReal, NULL, offsetof(GenerateMinefieldBehaviorModuleData, m_randomJitter) },
-		{ "SkipIfThisMuchUnderStructure", INI::parsePercentToReal, NULL, offsetof(GenerateMinefieldBehaviorModuleData, m_skipIfThisMuchUnderStructure) },
-		{ 0, 0, 0, 0 }
+		{ "MineName", INI::parseAsciiString,	nullptr, offsetof( GenerateMinefieldBehaviorModuleData, m_mineName ) },
+		{ "GenerationFX", INI::parseFXList,	nullptr, offsetof( GenerateMinefieldBehaviorModuleData, m_genFX ) },
+		{ "DistanceAroundObject", INI::parseReal, nullptr, offsetof( GenerateMinefieldBehaviorModuleData, m_distanceAroundObject ) },
+		{ "MinesPerSquareFoot", INI::parseReal, nullptr, offsetof( GenerateMinefieldBehaviorModuleData, m_minesPerSquareFoot ) },
+		{ "GenerateOnlyOnDeath", INI::parseBool, nullptr, offsetof(GenerateMinefieldBehaviorModuleData, m_onDeath) },
+		{ "BorderOnly", INI::parseBool, nullptr, offsetof(GenerateMinefieldBehaviorModuleData, m_borderOnly) },
+		{ "SmartBorder", INI::parseBool, nullptr, offsetof(GenerateMinefieldBehaviorModuleData, m_smartBorder) },
+		{ "SmartBorderSkipInterior", INI::parseBool, nullptr, offsetof(GenerateMinefieldBehaviorModuleData, m_smartBorderSkipInterior) },
+		{ "AlwaysCircular", INI::parseBool, nullptr, offsetof(GenerateMinefieldBehaviorModuleData, m_alwaysCircular) },
+		{ "RandomJitter", INI::parsePercentToReal, nullptr, offsetof(GenerateMinefieldBehaviorModuleData, m_randomJitter) },
+		{ "SkipIfThisMuchUnderStructure", INI::parsePercentToReal, nullptr, offsetof(GenerateMinefieldBehaviorModuleData, m_skipIfThisMuchUnderStructure) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 
   BehaviorModuleData::buildFieldParse(p);
@@ -112,7 +106,7 @@ GenerateMinefieldBehavior::GenerateMinefieldBehavior( Thing *thing, const Module
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-GenerateMinefieldBehavior::~GenerateMinefieldBehavior( void )
+GenerateMinefieldBehavior::~GenerateMinefieldBehavior()
 {
 }
 
@@ -189,10 +183,10 @@ Object* GenerateMinefieldBehavior::placeMineAt(const Coord3D& pt, const ThingTem
 	PathfindLayerEnum layer = TheTerrainLogic->getHighestLayerForDestination(&tmp);
 
 	if (layer == LAYER_GROUND && TheTerrainLogic->isUnderwater(pt.x, pt.y))
-		return NULL;
+		return nullptr;
 
 	if (layer == LAYER_GROUND && TheTerrainLogic->isCliffCell(pt.x, pt.y))
-		return NULL;
+		return nullptr;
 
 	Real orient = GameLogicRandomValueReal(-PI, PI);
 
@@ -207,7 +201,7 @@ Object* GenerateMinefieldBehavior::placeMineAt(const Coord3D& pt, const ThingTem
 	for (Object* them = iter->first(); them; them = iter->next())
 	{
 		if (them->isKindOf(KINDOF_STRUCTURE))
-			return NULL;
+			return nullptr;
 	}
 
 	Object* mine = TheThingFactory->newObject(mineTemplate, team);
@@ -254,7 +248,7 @@ void GenerateMinefieldBehavior::placeMinesAlongLine(const Coord3D& posStart, con
 		pt.z = TheTerrainLogic->getGroundHeight( pt.x, pt.y );
 		offsetBySmallRandomAmount(pt, mineJitter);
 		placeMineAt(pt, mineTemplate, team, obj);
-	} 
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -315,7 +309,7 @@ void GenerateMinefieldBehavior::placeMinesAroundCircle(const Coord3D& pos, Real 
 		pt.z = TheTerrainLogic->getGroundHeight( pt.x, pt.y );
 		offsetBySmallRandomAmount(pt, mineJitter);
 		placeMineAt(pt, mineTemplate, team, obj);
-	} 
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -338,7 +332,7 @@ void GenerateMinefieldBehavior::placeMinesInFootprint(const GeometryInfo& geom, 
 	{
 		Coord3D pt;
 		Int maxRetry = 100;
-		do 
+		do
 		{
 			geom.makeRandomOffsetWithinFootprint(pt);
 			pt.x += target->x;
@@ -371,7 +365,7 @@ void GenerateMinefieldBehavior::placeMines()
 	const ThingTemplate* mineTemplate = TheThingFactory->findTemplate(d->m_mineName);
 	if (!mineTemplate)
 	{
-		DEBUG_CRASH(("mine %s not found\n",d->m_mineName.str()));
+		DEBUG_CRASH(("mine %s not found",d->m_mineName.str()));
 		return;
 	}
 
@@ -446,7 +440,7 @@ void GenerateMinefieldBehavior::crc( Xfer *xfer )
 	// extend base class
 	UpgradeMux::upgradeMuxCRC( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -472,12 +466,12 @@ void GenerateMinefieldBehavior::xfer( Xfer *xfer )
 	xfer->xferBool( &m_hasTarget );
 	xfer->xferCoord3D( &m_target );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void GenerateMinefieldBehavior::loadPostProcess( void )
+void GenerateMinefieldBehavior::loadPostProcess()
 {
 
 	// extend base class
@@ -486,4 +480,4 @@ void GenerateMinefieldBehavior::loadPostProcess( void )
 	// extend base class
 	UpgradeMux::upgradeMuxLoadPostProcess();
 
-}  // end loadPostProcess
+}

@@ -32,19 +32,22 @@
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
+#include "Common/GlobalData.h"
+
 #define DEFINE_TERRAIN_LOD_NAMES
 #define DEFINE_TIME_OF_DAY_NAMES
 #define DEFINE_WEATHER_NAMES
 #define DEFINE_BODYDAMAGETYPE_NAMES
 #define DEFINE_PANNING_NAMES
 
+#include "Common/AddonCompat.h"
 #include "Common/crc.h"
 #include "Common/file.h"
 #include "Common/FileSystem.h"
 #include "Common/GameAudio.h"
 #include "Common/INI.h"
 #include "Common/Registry.h"
-#include "Common/UserPreferences.h"
+#include "Common/OptionPreferences.h"
 #include "Common/version.h"
 
 #include "GameLogic/AI.h"
@@ -57,472 +60,483 @@
 #include "GameNetwork/FirewallHelper.h"
 
 // PUBLIC DATA ////////////////////////////////////////////////////////////////////////////////////
-GlobalData* TheWritableGlobalData = NULL;				///< The global data singleton
+GlobalData* TheWritableGlobalData = nullptr;				///< The global data singleton
 
 //-------------------------------------------------------------------------------------------------
-GlobalData* GlobalData::m_theOriginal = NULL;
+GlobalData* GlobalData::m_theOriginal = nullptr;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-/*static*/ const FieldParse GlobalData::s_GlobalDataFieldParseTable[] = 
+/*static*/ const FieldParse GlobalData::s_GlobalDataFieldParseTable[] =
 {
-	{ "Windowed",									INI::parseBool,				NULL,			offsetof( GlobalData, m_windowed ) },
-	{ "XResolution",							INI::parseInt,				NULL,			offsetof( GlobalData, m_xResolution ) },
-	{ "YResolution",							INI::parseInt,				NULL,			offsetof( GlobalData, m_yResolution ) },
-	{ "MapName",									INI::parseAsciiString,NULL,			offsetof( GlobalData, m_mapName ) },
-	{ "MoveHintName",							INI::parseAsciiString,NULL,			offsetof( GlobalData, m_moveHintName ) },
-	{ "UseTrees",									INI::parseBool,				NULL,			offsetof( GlobalData, m_useTrees ) },
-	{ "UseFPSLimit",							INI::parseBool,				NULL,			offsetof( GlobalData, m_useFpsLimit ) },
-	{ "DumpAssetUsage",						INI::parseBool,				NULL,			offsetof( GlobalData, m_dumpAssetUsage ) },
-	{ "FramesPerSecondLimit",			INI::parseInt,				NULL,			offsetof( GlobalData, m_framesPerSecondLimit ) },
-	{ "ChipsetType",							INI::parseInt,				NULL,			offsetof( GlobalData, m_chipSetType ) },
-	{ "MaxShellScreens",					INI::parseInt,				NULL,			offsetof( GlobalData, m_maxShellScreens ) },
-	{ "UseCloudMap",							INI::parseBool,				NULL,			offsetof( GlobalData, m_useCloudMap ) },
-	{ "UseLightMap",							INI::parseBool,				NULL,			offsetof( GlobalData, m_useLightMap ) },
-	{ "BilinearTerrainTex",				INI::parseBool,				NULL,			offsetof( GlobalData, m_bilinearTerrainTex ) },
-	{ "TrilinearTerrainTex",			INI::parseBool,				NULL,			offsetof( GlobalData, m_trilinearTerrainTex ) },
-	{ "MultiPassTerrain",					INI::parseBool,				NULL,			offsetof( GlobalData, m_multiPassTerrain ) },
-	{ "AdjustCliffTextures",			INI::parseBool,				NULL,			offsetof( GlobalData, m_adjustCliffTextures ) },
-	{ "Use3WayTerrainBlends",			INI::parseInt,				NULL,			offsetof( GlobalData, m_use3WayTerrainBlends ) },
-	{ "StretchTerrain",						INI::parseBool,				NULL,			offsetof( GlobalData, m_stretchTerrain ) },
-	{ "UseHalfHeightMap",					INI::parseBool,				NULL,			offsetof( GlobalData, m_useHalfHeightMap ) },
-	
-	
-	{ "DrawEntireTerrain",					INI::parseBool,				NULL,			offsetof( GlobalData, m_drawEntireTerrain ) },
+	{ "Windowed",									INI::parseBool,				nullptr,			offsetof( GlobalData, m_windowed ) },
+	{ "XResolution",							INI::parseInt,				nullptr,			offsetof( GlobalData, m_xResolution ) },
+	{ "YResolution",							INI::parseInt,				nullptr,			offsetof( GlobalData, m_yResolution ) },
+	{ "MapName",									INI::parseAsciiString,nullptr,			offsetof( GlobalData, m_mapName ) },
+	{ "MoveHintName",							INI::parseAsciiString,nullptr,			offsetof( GlobalData, m_moveHintName ) },
+	{ "UseTrees",									INI::parseBool,				nullptr,			offsetof( GlobalData, m_useTrees ) },
+	{ "UseFPSLimit",							INI::parseBool,				nullptr,			offsetof( GlobalData, m_useFpsLimit ) },
+	{ "DumpAssetUsage",						INI::parseBool,				nullptr,			offsetof( GlobalData, m_dumpAssetUsage ) },
+	{ "FramesPerSecondLimit",			INI::parseInt,				nullptr,			offsetof( GlobalData, m_framesPerSecondLimit ) },
+	{ "ChipsetType",							INI::parseInt,				nullptr,			offsetof( GlobalData, m_chipSetType ) },
+	{ "MaxShellScreens",					INI::parseInt,				nullptr,			offsetof( GlobalData, m_maxShellScreens ) },
+	{ "UseCloudMap",							INI::parseBool,				nullptr,			offsetof( GlobalData, m_useCloudMap ) },
+	{ "UseLightMap",							INI::parseBool,				nullptr,			offsetof( GlobalData, m_useLightMap ) },
+	{ "BilinearTerrainTex",				INI::parseBool,				nullptr,			offsetof( GlobalData, m_bilinearTerrainTex ) },
+	{ "TrilinearTerrainTex",			INI::parseBool,				nullptr,			offsetof( GlobalData, m_trilinearTerrainTex ) },
+	{ "MultiPassTerrain",					INI::parseBool,				nullptr,			offsetof( GlobalData, m_multiPassTerrain ) },
+	{ "AdjustCliffTextures",			INI::parseBool,				nullptr,			offsetof( GlobalData, m_adjustCliffTextures ) },
+	{ "Use3WayTerrainBlends",			INI::parseInt,				nullptr,			offsetof( GlobalData, m_use3WayTerrainBlends ) },
+	{ "StretchTerrain",						INI::parseBool,				nullptr,			offsetof( GlobalData, m_stretchTerrain ) },
+	{ "UseHalfHeightMap",					INI::parseBool,				nullptr,			offsetof( GlobalData, m_useHalfHeightMap ) },
+
+
+	{ "DrawEntireTerrain",					INI::parseBool,				nullptr,			offsetof( GlobalData, m_drawEntireTerrain ) },
 	{ "TerrainLOD",									INI::parseIndexList,	TerrainLODNames,	offsetof( GlobalData, m_terrainLOD ) },
-	{ "TerrainLODTargetTimeMS",			INI::parseInt,				NULL,			offsetof( GlobalData, m_terrainLODTargetTimeMS ) },
-	{ "RightMouseAlwaysScrolls",		INI::parseBool,				NULL,			offsetof( GlobalData, m_rightMouseAlwaysScrolls ) },
-	{ "UseWaterPlane",							INI::parseBool,				NULL,			offsetof( GlobalData, m_useWaterPlane ) },
-	{ "UseCloudPlane",							INI::parseBool,				NULL,			offsetof( GlobalData, m_useCloudPlane ) },
-	{ "DownwindAngle",							INI::parseReal,				NULL,			offsetof( GlobalData, m_downwindAngle ) },
-	{ "UseShadowVolumes",						INI::parseBool,				NULL,			offsetof( GlobalData, m_useShadowVolumes ) },
-	{ "UseShadowDecals",						INI::parseBool,				NULL,			offsetof( GlobalData, m_useShadowDecals ) },
-	{ "TextureReductionFactor",			INI::parseInt,				NULL,			offsetof( GlobalData, m_textureReductionFactor ) },
-	{ "UseBehindBuildingMarker",		INI::parseBool,				NULL,			offsetof( GlobalData, m_enableBehindBuildingMarkers ) },
-	{ "WaterPositionX",							INI::parseReal,				NULL,			offsetof( GlobalData, m_waterPositionX ) },
-	{ "WaterPositionY",							INI::parseReal,				NULL,			offsetof( GlobalData, m_waterPositionY ) },
-	{ "WaterPositionZ",							INI::parseReal,				NULL,			offsetof( GlobalData, m_waterPositionZ ) },
-	{ "WaterExtentX",								INI::parseReal,				NULL,			offsetof( GlobalData, m_waterExtentX ) },
-	{ "WaterExtentY",								INI::parseReal,				NULL,			offsetof( GlobalData, m_waterExtentY ) },
-	{ "WaterType",									INI::parseInt,				NULL,			offsetof( GlobalData, m_waterType ) },
-	{ "FeatherWater",						  	INI::parseInt,				NULL,			offsetof( GlobalData, m_featherWater ) },
-	{ "ShowSoftWaterEdge",					INI::parseBool,				NULL,			offsetof( GlobalData, m_showSoftWaterEdge ) },
+	{ "TerrainLODTargetTimeMS",			INI::parseInt,				nullptr,			offsetof( GlobalData, m_terrainLODTargetTimeMS ) },
+	{ "RightMouseAlwaysScrolls",		INI::parseBool,				nullptr,			offsetof( GlobalData, m_rightMouseAlwaysScrolls ) },
+	{ "UseWaterPlane",							INI::parseBool,				nullptr,			offsetof( GlobalData, m_useWaterPlane ) },
+	{ "UseCloudPlane",							INI::parseBool,				nullptr,			offsetof( GlobalData, m_useCloudPlane ) },
+	{ "DownwindAngle",							INI::parseReal,				nullptr,			offsetof( GlobalData, m_downwindAngle ) },
+	{ "UseShadowVolumes",						INI::parseBool,				nullptr,			offsetof( GlobalData, m_useShadowVolumes ) },
+	{ "UseShadowDecals",						INI::parseBool,				nullptr,			offsetof( GlobalData, m_useShadowDecals ) },
+	{ "TextureReductionFactor",			INI::parseInt,				nullptr,			offsetof( GlobalData, m_textureReductionFactor ) },
+	{ "UseBehindBuildingMarker",		INI::parseBool,				nullptr,			offsetof( GlobalData, m_enableBehindBuildingMarkers ) },
+	{ "WaterPositionX",							INI::parseReal,				nullptr,			offsetof( GlobalData, m_waterPositionX ) },
+	{ "WaterPositionY",							INI::parseReal,				nullptr,			offsetof( GlobalData, m_waterPositionY ) },
+	{ "WaterPositionZ",							INI::parseReal,				nullptr,			offsetof( GlobalData, m_waterPositionZ ) },
+	{ "WaterExtentX",								INI::parseReal,				nullptr,			offsetof( GlobalData, m_waterExtentX ) },
+	{ "WaterExtentY",								INI::parseReal,				nullptr,			offsetof( GlobalData, m_waterExtentY ) },
+	{ "WaterType",									INI::parseInt,				nullptr,			offsetof( GlobalData, m_waterType ) },
+	{ "FeatherWater",						  	INI::parseInt,				nullptr,			offsetof( GlobalData, m_featherWater ) },
+	{ "ShowSoftWaterEdge",					INI::parseBool,				nullptr,			offsetof( GlobalData, m_showSoftWaterEdge ) },
 
 	// nasty ick, we need to save this data with a map and not hard code INI values
-	{ "VertexWaterAvailableMaps1",		INI::parseAsciiString,	NULL,		offsetof( GlobalData, m_vertexWaterAvailableMaps[ 0 ] ) },
-	{ "VertexWaterHeightClampLow1",		INI::parseReal,					NULL,		offsetof( GlobalData, m_vertexWaterHeightClampLow[ 0 ] ) },
-	{ "VertexWaterHeightClampHi1",		INI::parseReal,					NULL,		offsetof( GlobalData, m_vertexWaterHeightClampHi[ 0 ] ) },
-	{ "VertexWaterAngle1",						INI::parseAngleReal,		NULL,		offsetof( GlobalData, m_vertexWaterAngle[ 0 ] ) },
-	{ "VertexWaterXPosition1",				INI::parseReal,					NULL,		offsetof( GlobalData, m_vertexWaterXPosition[ 0 ] ) },
-	{ "VertexWaterYPosition1",				INI::parseReal,					NULL,		offsetof( GlobalData, m_vertexWaterYPosition[ 0 ] ) },
-	{ "VertexWaterZPosition1",				INI::parseReal,					NULL,		offsetof( GlobalData, m_vertexWaterZPosition[ 0 ] ) },
-	{ "VertexWaterXGridCells1",				INI::parseInt,					NULL,		offsetof( GlobalData, m_vertexWaterXGridCells[ 0 ] ) },
-	{ "VertexWaterYGridCells1",				INI::parseInt,					NULL,		offsetof( GlobalData, m_vertexWaterYGridCells[ 0 ] ) },
-	{ "VertexWaterGridSize1",					INI::parseReal,					NULL,		offsetof( GlobalData, m_vertexWaterGridSize[ 0 ] ) },
-	{ "VertexWaterAttenuationA1",			INI::parseReal,					NULL,		offsetof( GlobalData, m_vertexWaterAttenuationA[ 0 ] ) },
-	{ "VertexWaterAttenuationB1",			INI::parseReal,					NULL,		offsetof( GlobalData, m_vertexWaterAttenuationB[ 0 ] ) },
-	{ "VertexWaterAttenuationC1",			INI::parseReal,					NULL,		offsetof( GlobalData, m_vertexWaterAttenuationC[ 0 ] ) },
-	{ "VertexWaterAttenuationRange1",	INI::parseReal,					NULL,		offsetof( GlobalData, m_vertexWaterAttenuationRange[ 0 ] ) },
+	{ "VertexWaterAvailableMaps1",		INI::parseAsciiString,	nullptr,		offsetof( GlobalData, m_vertexWaterAvailableMaps[ 0 ] ) },
+	{ "VertexWaterHeightClampLow1",		INI::parseReal,					nullptr,		offsetof( GlobalData, m_vertexWaterHeightClampLow[ 0 ] ) },
+	{ "VertexWaterHeightClampHi1",		INI::parseReal,					nullptr,		offsetof( GlobalData, m_vertexWaterHeightClampHi[ 0 ] ) },
+	{ "VertexWaterAngle1",						INI::parseAngleReal,		nullptr,		offsetof( GlobalData, m_vertexWaterAngle[ 0 ] ) },
+	{ "VertexWaterXPosition1",				INI::parseReal,					nullptr,		offsetof( GlobalData, m_vertexWaterXPosition[ 0 ] ) },
+	{ "VertexWaterYPosition1",				INI::parseReal,					nullptr,		offsetof( GlobalData, m_vertexWaterYPosition[ 0 ] ) },
+	{ "VertexWaterZPosition1",				INI::parseReal,					nullptr,		offsetof( GlobalData, m_vertexWaterZPosition[ 0 ] ) },
+	{ "VertexWaterXGridCells1",				INI::parseInt,					nullptr,		offsetof( GlobalData, m_vertexWaterXGridCells[ 0 ] ) },
+	{ "VertexWaterYGridCells1",				INI::parseInt,					nullptr,		offsetof( GlobalData, m_vertexWaterYGridCells[ 0 ] ) },
+	{ "VertexWaterGridSize1",					INI::parseReal,					nullptr,		offsetof( GlobalData, m_vertexWaterGridSize[ 0 ] ) },
+	{ "VertexWaterAttenuationA1",			INI::parseReal,					nullptr,		offsetof( GlobalData, m_vertexWaterAttenuationA[ 0 ] ) },
+	{ "VertexWaterAttenuationB1",			INI::parseReal,					nullptr,		offsetof( GlobalData, m_vertexWaterAttenuationB[ 0 ] ) },
+	{ "VertexWaterAttenuationC1",			INI::parseReal,					nullptr,		offsetof( GlobalData, m_vertexWaterAttenuationC[ 0 ] ) },
+	{ "VertexWaterAttenuationRange1",	INI::parseReal,					nullptr,		offsetof( GlobalData, m_vertexWaterAttenuationRange[ 0 ] ) },
 
 	// nasty ick, we need to save this data with a map and not hard code INI values
-	{ "VertexWaterAvailableMaps2",		INI::parseAsciiString,	NULL,		offsetof( GlobalData, m_vertexWaterAvailableMaps[ 1 ] ) },
-	{ "VertexWaterHeightClampLow2",		INI::parseReal,					NULL,		offsetof( GlobalData, m_vertexWaterHeightClampLow[ 1 ] ) },
-	{ "VertexWaterHeightClampHi2",		INI::parseReal,					NULL,		offsetof( GlobalData, m_vertexWaterHeightClampHi[ 1 ] ) },
-	{ "VertexWaterAngle2",						INI::parseAngleReal,		NULL,		offsetof( GlobalData, m_vertexWaterAngle[ 1 ] ) },
-	{ "VertexWaterXPosition2",				INI::parseReal,					NULL,		offsetof( GlobalData, m_vertexWaterXPosition[ 1 ] ) },
-	{ "VertexWaterYPosition2",				INI::parseReal,					NULL,		offsetof( GlobalData, m_vertexWaterYPosition[ 1 ] ) },
-	{ "VertexWaterZPosition2",				INI::parseReal,					NULL,		offsetof( GlobalData, m_vertexWaterZPosition[ 1 ] ) },
-	{ "VertexWaterXGridCells2",				INI::parseInt,					NULL,		offsetof( GlobalData, m_vertexWaterXGridCells[ 1 ] ) },
-	{ "VertexWaterYGridCells2",				INI::parseInt,					NULL,		offsetof( GlobalData, m_vertexWaterYGridCells[ 1 ] ) },
-	{ "VertexWaterGridSize2",					INI::parseReal,					NULL,		offsetof( GlobalData, m_vertexWaterGridSize[ 1 ] ) },
-	{ "VertexWaterAttenuationA2",			INI::parseReal,					NULL,		offsetof( GlobalData, m_vertexWaterAttenuationA[ 1 ] ) },
-	{ "VertexWaterAttenuationB2",			INI::parseReal,					NULL,		offsetof( GlobalData, m_vertexWaterAttenuationB[ 1 ] ) },
-	{ "VertexWaterAttenuationC2",			INI::parseReal,					NULL,		offsetof( GlobalData, m_vertexWaterAttenuationC[ 1 ] ) },
-	{ "VertexWaterAttenuationRange2",	INI::parseReal,					NULL,		offsetof( GlobalData, m_vertexWaterAttenuationRange[ 1 ] ) },
+	{ "VertexWaterAvailableMaps2",		INI::parseAsciiString,	nullptr,		offsetof( GlobalData, m_vertexWaterAvailableMaps[ 1 ] ) },
+	{ "VertexWaterHeightClampLow2",		INI::parseReal,					nullptr,		offsetof( GlobalData, m_vertexWaterHeightClampLow[ 1 ] ) },
+	{ "VertexWaterHeightClampHi2",		INI::parseReal,					nullptr,		offsetof( GlobalData, m_vertexWaterHeightClampHi[ 1 ] ) },
+	{ "VertexWaterAngle2",						INI::parseAngleReal,		nullptr,		offsetof( GlobalData, m_vertexWaterAngle[ 1 ] ) },
+	{ "VertexWaterXPosition2",				INI::parseReal,					nullptr,		offsetof( GlobalData, m_vertexWaterXPosition[ 1 ] ) },
+	{ "VertexWaterYPosition2",				INI::parseReal,					nullptr,		offsetof( GlobalData, m_vertexWaterYPosition[ 1 ] ) },
+	{ "VertexWaterZPosition2",				INI::parseReal,					nullptr,		offsetof( GlobalData, m_vertexWaterZPosition[ 1 ] ) },
+	{ "VertexWaterXGridCells2",				INI::parseInt,					nullptr,		offsetof( GlobalData, m_vertexWaterXGridCells[ 1 ] ) },
+	{ "VertexWaterYGridCells2",				INI::parseInt,					nullptr,		offsetof( GlobalData, m_vertexWaterYGridCells[ 1 ] ) },
+	{ "VertexWaterGridSize2",					INI::parseReal,					nullptr,		offsetof( GlobalData, m_vertexWaterGridSize[ 1 ] ) },
+	{ "VertexWaterAttenuationA2",			INI::parseReal,					nullptr,		offsetof( GlobalData, m_vertexWaterAttenuationA[ 1 ] ) },
+	{ "VertexWaterAttenuationB2",			INI::parseReal,					nullptr,		offsetof( GlobalData, m_vertexWaterAttenuationB[ 1 ] ) },
+	{ "VertexWaterAttenuationC2",			INI::parseReal,					nullptr,		offsetof( GlobalData, m_vertexWaterAttenuationC[ 1 ] ) },
+	{ "VertexWaterAttenuationRange2",	INI::parseReal,					nullptr,		offsetof( GlobalData, m_vertexWaterAttenuationRange[ 1 ] ) },
 
 	// nasty ick, we need to save this data with a map and not hard code INI values
-	{ "VertexWaterAvailableMaps3",		INI::parseAsciiString,	NULL,		offsetof( GlobalData, m_vertexWaterAvailableMaps[ 2 ] ) },
-	{ "VertexWaterHeightClampLow3",		INI::parseReal,					NULL,		offsetof( GlobalData, m_vertexWaterHeightClampLow[ 2 ] ) },
-	{ "VertexWaterHeightClampHi3",		INI::parseReal,					NULL,		offsetof( GlobalData, m_vertexWaterHeightClampHi[ 2 ] ) },
-	{ "VertexWaterAngle3",						INI::parseAngleReal,		NULL,		offsetof( GlobalData, m_vertexWaterAngle[ 2 ] ) },
-	{ "VertexWaterXPosition3",				INI::parseReal,					NULL,		offsetof( GlobalData, m_vertexWaterXPosition[ 2 ] ) },
-	{ "VertexWaterYPosition3",				INI::parseReal,					NULL,		offsetof( GlobalData, m_vertexWaterYPosition[ 2 ] ) },
-	{ "VertexWaterZPosition3",				INI::parseReal,					NULL,		offsetof( GlobalData, m_vertexWaterZPosition[ 2 ] ) },
-	{ "VertexWaterXGridCells3",				INI::parseInt,					NULL,		offsetof( GlobalData, m_vertexWaterXGridCells[ 2 ] ) },
-	{ "VertexWaterYGridCells3",				INI::parseInt,					NULL,		offsetof( GlobalData, m_vertexWaterYGridCells[ 2 ] ) },
-	{ "VertexWaterGridSize3",					INI::parseReal,					NULL,		offsetof( GlobalData, m_vertexWaterGridSize[ 2 ] ) },
-	{ "VertexWaterAttenuationA3",			INI::parseReal,					NULL,		offsetof( GlobalData, m_vertexWaterAttenuationA[ 2 ] ) },
-	{ "VertexWaterAttenuationB3",			INI::parseReal,					NULL,		offsetof( GlobalData, m_vertexWaterAttenuationB[ 2 ] ) },
-	{ "VertexWaterAttenuationC3",			INI::parseReal,					NULL,		offsetof( GlobalData, m_vertexWaterAttenuationC[ 2 ] ) },
-	{ "VertexWaterAttenuationRange3",	INI::parseReal,					NULL,		offsetof( GlobalData, m_vertexWaterAttenuationRange[ 2 ] ) },
+	{ "VertexWaterAvailableMaps3",		INI::parseAsciiString,	nullptr,		offsetof( GlobalData, m_vertexWaterAvailableMaps[ 2 ] ) },
+	{ "VertexWaterHeightClampLow3",		INI::parseReal,					nullptr,		offsetof( GlobalData, m_vertexWaterHeightClampLow[ 2 ] ) },
+	{ "VertexWaterHeightClampHi3",		INI::parseReal,					nullptr,		offsetof( GlobalData, m_vertexWaterHeightClampHi[ 2 ] ) },
+	{ "VertexWaterAngle3",						INI::parseAngleReal,		nullptr,		offsetof( GlobalData, m_vertexWaterAngle[ 2 ] ) },
+	{ "VertexWaterXPosition3",				INI::parseReal,					nullptr,		offsetof( GlobalData, m_vertexWaterXPosition[ 2 ] ) },
+	{ "VertexWaterYPosition3",				INI::parseReal,					nullptr,		offsetof( GlobalData, m_vertexWaterYPosition[ 2 ] ) },
+	{ "VertexWaterZPosition3",				INI::parseReal,					nullptr,		offsetof( GlobalData, m_vertexWaterZPosition[ 2 ] ) },
+	{ "VertexWaterXGridCells3",				INI::parseInt,					nullptr,		offsetof( GlobalData, m_vertexWaterXGridCells[ 2 ] ) },
+	{ "VertexWaterYGridCells3",				INI::parseInt,					nullptr,		offsetof( GlobalData, m_vertexWaterYGridCells[ 2 ] ) },
+	{ "VertexWaterGridSize3",					INI::parseReal,					nullptr,		offsetof( GlobalData, m_vertexWaterGridSize[ 2 ] ) },
+	{ "VertexWaterAttenuationA3",			INI::parseReal,					nullptr,		offsetof( GlobalData, m_vertexWaterAttenuationA[ 2 ] ) },
+	{ "VertexWaterAttenuationB3",			INI::parseReal,					nullptr,		offsetof( GlobalData, m_vertexWaterAttenuationB[ 2 ] ) },
+	{ "VertexWaterAttenuationC3",			INI::parseReal,					nullptr,		offsetof( GlobalData, m_vertexWaterAttenuationC[ 2 ] ) },
+	{ "VertexWaterAttenuationRange3",	INI::parseReal,					nullptr,		offsetof( GlobalData, m_vertexWaterAttenuationRange[ 2 ] ) },
 
 	// nasty ick, we need to save this data with a map and not hard code INI values
-	{ "VertexWaterAvailableMaps4",		INI::parseAsciiString,	NULL,		offsetof( GlobalData, m_vertexWaterAvailableMaps[ 3 ] ) },
-	{ "VertexWaterHeightClampLow4",		INI::parseReal,					NULL,		offsetof( GlobalData, m_vertexWaterHeightClampLow[ 3 ] ) },
-	{ "VertexWaterHeightClampHi4",		INI::parseReal,					NULL,		offsetof( GlobalData, m_vertexWaterHeightClampHi[ 3 ] ) },
-	{ "VertexWaterAngle4",						INI::parseAngleReal,		NULL,		offsetof( GlobalData, m_vertexWaterAngle[ 3 ] ) },
-	{ "VertexWaterXPosition4",				INI::parseReal,					NULL,		offsetof( GlobalData, m_vertexWaterXPosition[ 3 ] ) },
-	{ "VertexWaterYPosition4",				INI::parseReal,					NULL,		offsetof( GlobalData, m_vertexWaterYPosition[ 3 ] ) },
-	{ "VertexWaterZPosition4",				INI::parseReal,					NULL,		offsetof( GlobalData, m_vertexWaterZPosition[ 3 ] ) },
-	{ "VertexWaterXGridCells4",				INI::parseInt,					NULL,		offsetof( GlobalData, m_vertexWaterXGridCells[ 3 ] ) },
-	{ "VertexWaterYGridCells4",				INI::parseInt,					NULL,		offsetof( GlobalData, m_vertexWaterYGridCells[ 3 ] ) },
-	{ "VertexWaterGridSize4",					INI::parseReal,					NULL,		offsetof( GlobalData, m_vertexWaterGridSize[ 3 ] ) },
-	{ "VertexWaterAttenuationA4",			INI::parseReal,					NULL,		offsetof( GlobalData, m_vertexWaterAttenuationA[ 3 ] ) },
-	{ "VertexWaterAttenuationB4",			INI::parseReal,					NULL,		offsetof( GlobalData, m_vertexWaterAttenuationB[ 3 ] ) },
-	{ "VertexWaterAttenuationC4",			INI::parseReal,					NULL,		offsetof( GlobalData, m_vertexWaterAttenuationC[ 3 ] ) },
-	{ "VertexWaterAttenuationRange4",	INI::parseReal,					NULL,		offsetof( GlobalData, m_vertexWaterAttenuationRange[ 3 ] ) },
+	{ "VertexWaterAvailableMaps4",		INI::parseAsciiString,	nullptr,		offsetof( GlobalData, m_vertexWaterAvailableMaps[ 3 ] ) },
+	{ "VertexWaterHeightClampLow4",		INI::parseReal,					nullptr,		offsetof( GlobalData, m_vertexWaterHeightClampLow[ 3 ] ) },
+	{ "VertexWaterHeightClampHi4",		INI::parseReal,					nullptr,		offsetof( GlobalData, m_vertexWaterHeightClampHi[ 3 ] ) },
+	{ "VertexWaterAngle4",						INI::parseAngleReal,		nullptr,		offsetof( GlobalData, m_vertexWaterAngle[ 3 ] ) },
+	{ "VertexWaterXPosition4",				INI::parseReal,					nullptr,		offsetof( GlobalData, m_vertexWaterXPosition[ 3 ] ) },
+	{ "VertexWaterYPosition4",				INI::parseReal,					nullptr,		offsetof( GlobalData, m_vertexWaterYPosition[ 3 ] ) },
+	{ "VertexWaterZPosition4",				INI::parseReal,					nullptr,		offsetof( GlobalData, m_vertexWaterZPosition[ 3 ] ) },
+	{ "VertexWaterXGridCells4",				INI::parseInt,					nullptr,		offsetof( GlobalData, m_vertexWaterXGridCells[ 3 ] ) },
+	{ "VertexWaterYGridCells4",				INI::parseInt,					nullptr,		offsetof( GlobalData, m_vertexWaterYGridCells[ 3 ] ) },
+	{ "VertexWaterGridSize4",					INI::parseReal,					nullptr,		offsetof( GlobalData, m_vertexWaterGridSize[ 3 ] ) },
+	{ "VertexWaterAttenuationA4",			INI::parseReal,					nullptr,		offsetof( GlobalData, m_vertexWaterAttenuationA[ 3 ] ) },
+	{ "VertexWaterAttenuationB4",			INI::parseReal,					nullptr,		offsetof( GlobalData, m_vertexWaterAttenuationB[ 3 ] ) },
+	{ "VertexWaterAttenuationC4",			INI::parseReal,					nullptr,		offsetof( GlobalData, m_vertexWaterAttenuationC[ 3 ] ) },
+	{ "VertexWaterAttenuationRange4",	INI::parseReal,					nullptr,		offsetof( GlobalData, m_vertexWaterAttenuationRange[ 3 ] ) },
 
-	{ "SkyBoxPositionZ",				INI::parseReal,				NULL,			offsetof( GlobalData, m_skyBoxPositionZ ) },
-	{ "SkyBoxScale",				INI::parseReal,				NULL,			offsetof( GlobalData, m_skyBoxScale ) },
-	{ "DrawSkyBox",				INI::parseBool,				NULL,			offsetof( GlobalData, m_drawSkyBox ) },
-	{ "CameraPitch",								INI::parseReal,				NULL,			offsetof( GlobalData, m_cameraPitch ) },
-	{ "CameraYaw",									INI::parseReal,				NULL,			offsetof( GlobalData, m_cameraYaw ) },
-	{ "CameraHeight",								INI::parseReal,				NULL,			offsetof( GlobalData, m_cameraHeight ) },
-	{ "MaxCameraHeight",						INI::parseReal,				NULL,			offsetof( GlobalData, m_maxCameraHeight ) },
-	{ "MinCameraHeight",						INI::parseReal,				NULL,			offsetof( GlobalData, m_minCameraHeight ) },
-	{ "TerrainHeightAtEdgeOfMap",					INI::parseReal,				NULL,			offsetof( GlobalData, m_terrainHeightAtEdgeOfMap ) },
-	{ "UnitDamagedThreshold",				INI::parseReal,				NULL,			offsetof( GlobalData, m_unitDamagedThresh ) },
-	{ "UnitReallyDamagedThreshold",	INI::parseReal,				NULL,			offsetof( GlobalData, m_unitReallyDamagedThresh ) },
-	{ "GroundStiffness",					INI::parseReal,				NULL,				offsetof( GlobalData, m_groundStiffness ) },
-	{ "StructureStiffness",					INI::parseReal,				NULL,				offsetof( GlobalData, m_structureStiffness ) },
-	{ "Gravity",									INI::parseAccelerationReal,				NULL,				offsetof( GlobalData, m_gravity ) },
-	{ "StealthFriendlyOpacity",		INI::parsePercentToReal,				NULL,				offsetof( GlobalData, m_stealthFriendlyOpacity ) },
-	{ "DefaultOcclusionDelay",				INI::parseDurationUnsignedInt,				NULL,			offsetof( GlobalData, m_defaultOcclusionDelay ) },
-	
-	{ "PartitionCellSize",				INI::parseReal,				NULL,			offsetof( GlobalData, m_partitionCellSize ) },
+	{ "SkyBoxPositionZ",				INI::parseReal,				nullptr,			offsetof( GlobalData, m_skyBoxPositionZ ) },
+	{ "SkyBoxScale",				INI::parseReal,				nullptr,			offsetof( GlobalData, m_skyBoxScale ) },
+	{ "DrawSkyBox",				INI::parseBool,				nullptr,			offsetof( GlobalData, m_drawSkyBox ) },
+	{ "ViewportHeightScale", INI::parseReal, nullptr, offsetof( GlobalData, m_viewportHeightScale ) },
+	{ "CameraPitch",								INI::parseReal,				nullptr,			offsetof( GlobalData, m_cameraPitch ) },
+	{ "CameraYaw",									INI::parseReal,				nullptr,			offsetof( GlobalData, m_cameraYaw ) },
+	{ "CameraHeight",								INI::parseReal,				nullptr,			offsetof( GlobalData, m_cameraHeight ) },
+	{ "MaxCameraHeight",						INI::parseReal,				nullptr,			offsetof( GlobalData, m_maxCameraHeight ) },
+	{ "MinCameraHeight",						INI::parseReal,				nullptr,			offsetof( GlobalData, m_minCameraHeight ) },
+	{ "TerrainHeightAtEdgeOfMap",					INI::parseReal,				nullptr,			offsetof( GlobalData, m_terrainHeightAtEdgeOfMap ) },
+	{ "UnitDamagedThreshold",				INI::parseReal,				nullptr,			offsetof( GlobalData, m_unitDamagedThresh ) },
+	{ "UnitReallyDamagedThreshold",	INI::parseReal,				nullptr,			offsetof( GlobalData, m_unitReallyDamagedThresh ) },
+	{ "GroundStiffness",					INI::parseReal,				nullptr,				offsetof( GlobalData, m_groundStiffness ) },
+	{ "StructureStiffness",					INI::parseReal,				nullptr,				offsetof( GlobalData, m_structureStiffness ) },
+	{ "Gravity",									INI::parseAccelerationReal,				nullptr,				offsetof( GlobalData, m_gravity ) },
+	{ "StealthFriendlyOpacity",		INI::parsePercentToReal,				nullptr,				offsetof( GlobalData, m_stealthFriendlyOpacity ) },
+	{ "DefaultOcclusionDelay",				INI::parseDurationUnsignedInt,				nullptr,			offsetof( GlobalData, m_defaultOcclusionDelay ) },
 
-	{ "AmmoPipScaleFactor",				INI::parseReal,				NULL,			offsetof( GlobalData, m_ammoPipScaleFactor ) },
-	{ "ContainerPipScaleFactor",	INI::parseReal,				NULL,			offsetof( GlobalData, m_containerPipScaleFactor ) },
-	{ "AmmoPipWorldOffset",						INI::parseCoord3D,				NULL,			offsetof( GlobalData, m_ammoPipWorldOffset ) },
-	{ "ContainerPipWorldOffset",				INI::parseCoord3D,				NULL,			offsetof( GlobalData, m_containerPipWorldOffset ) },
-	{ "AmmoPipScreenOffset",						INI::parseCoord2D,				NULL,			offsetof( GlobalData, m_ammoPipScreenOffset ) },
-	{ "ContainerPipScreenOffset",				INI::parseCoord2D,				NULL,			offsetof( GlobalData, m_containerPipScreenOffset ) },
+	{ "PartitionCellSize",				INI::parseReal,				nullptr,			offsetof( GlobalData, m_partitionCellSize ) },
 
-	{ "HistoricDamageLimit",				INI::parseDurationUnsignedInt,				NULL,			offsetof( GlobalData, m_historicDamageLimit ) },
+	{ "AmmoPipScaleFactor",				INI::parseReal,				nullptr,			offsetof( GlobalData, m_ammoPipScaleFactor ) },
+	{ "ContainerPipScaleFactor",	INI::parseReal,				nullptr,			offsetof( GlobalData, m_containerPipScaleFactor ) },
+	{ "AmmoPipWorldOffset",						INI::parseCoord3D,				nullptr,			offsetof( GlobalData, m_ammoPipWorldOffset ) },
+	{ "ContainerPipWorldOffset",				INI::parseCoord3D,				nullptr,			offsetof( GlobalData, m_containerPipWorldOffset ) },
+	{ "AmmoPipScreenOffset",						INI::parseCoord2D,				nullptr,			offsetof( GlobalData, m_ammoPipScreenOffset ) },
+	{ "ContainerPipScreenOffset",				INI::parseCoord2D,				nullptr,			offsetof( GlobalData, m_containerPipScreenOffset ) },
 
-	{ "MaxTerrainTracks",					INI::parseInt,				NULL,			offsetof( GlobalData, m_maxTerrainTracks ) },
+	{ "HistoricDamageLimit",				INI::parseDurationUnsignedInt,				nullptr,			offsetof( GlobalData, m_historicDamageLimit ) },
+
+	{ "MaxTerrainTracks",					INI::parseInt,				nullptr,			offsetof( GlobalData, m_maxTerrainTracks ) },
 	{ "TimeOfDay",								INI::parseIndexList,	TimeOfDayNames,			offsetof( GlobalData, m_timeOfDay ) },
 	{ "Weather",									INI::parseIndexList,	WeatherNames,			offsetof( GlobalData, m_weather ) },
-	{ "MakeTrackMarks",						INI::parseBool,				NULL,			offsetof( GlobalData, m_makeTrackMarks ) },
-	{ "HideGarrisonFlags",						INI::parseBool,				NULL,			offsetof( GlobalData, m_hideGarrisonFlags ) },
-	{ "ForceModelsToFollowTimeOfDay",						INI::parseBool,				NULL,			offsetof( GlobalData, m_forceModelsToFollowTimeOfDay ) },
-	{ "ForceModelsToFollowWeather",						INI::parseBool,				NULL,			offsetof( GlobalData, m_forceModelsToFollowWeather ) },
+	{ "MakeTrackMarks",						INI::parseBool,				nullptr,			offsetof( GlobalData, m_makeTrackMarks ) },
+	{ "HideGarrisonFlags",						INI::parseBool,				nullptr,			offsetof( GlobalData, m_hideGarrisonFlags ) },
+	{ "ForceModelsToFollowTimeOfDay",						INI::parseBool,				nullptr,			offsetof( GlobalData, m_forceModelsToFollowTimeOfDay ) },
+	{ "ForceModelsToFollowWeather",						INI::parseBool,				nullptr,			offsetof( GlobalData, m_forceModelsToFollowWeather ) },
 
-	{ "LevelGainAnimationName",		INI::parseAsciiString,	NULL,	offsetof( GlobalData, m_levelGainAnimationName ) },
-	{ "LevelGainAnimationTime",		INI::parseReal,					NULL, offsetof( GlobalData, m_levelGainAnimationDisplayTimeInSeconds ) },
-	{ "LevelGainAnimationZRise",	INI::parseReal,					NULL, offsetof( GlobalData, m_levelGainAnimationZRisePerSecond ) },
+	{ "LevelGainAnimationName",		INI::parseAsciiString,	nullptr,	offsetof( GlobalData, m_levelGainAnimationName ) },
+	{ "LevelGainAnimationTime",		INI::parseReal,					nullptr, offsetof( GlobalData, m_levelGainAnimationDisplayTimeInSeconds ) },
+	{ "LevelGainAnimationZRise",	INI::parseReal,					nullptr, offsetof( GlobalData, m_levelGainAnimationZRisePerSecond ) },
 
-	{ "GetHealedAnimationName",		INI::parseAsciiString,	NULL,	offsetof( GlobalData, m_getHealedAnimationName ) },
-	{ "GetHealedAnimationTime",		INI::parseReal,					NULL, offsetof( GlobalData, m_getHealedAnimationDisplayTimeInSeconds ) },
-	{ "GetHealedAnimationZRise",	INI::parseReal,					NULL, offsetof( GlobalData, m_getHealedAnimationZRisePerSecond ) },
+	{ "GetHealedAnimationName",		INI::parseAsciiString,	nullptr,	offsetof( GlobalData, m_getHealedAnimationName ) },
+	{ "GetHealedAnimationTime",		INI::parseReal,					nullptr, offsetof( GlobalData, m_getHealedAnimationDisplayTimeInSeconds ) },
+	{ "GetHealedAnimationZRise",	INI::parseReal,					nullptr, offsetof( GlobalData, m_getHealedAnimationZRisePerSecond ) },
 
-	{ "TerrainLightingMorningAmbient",			INI::parseRGBColor,			NULL,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_MORNING ][0].ambient ) },
-	{ "TerrainLightingMorningDiffuse",			INI::parseRGBColor,			NULL,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_MORNING ][0].diffuse ) },
-	{ "TerrainLightingMorningLightPos",		INI::parseCoord3D,			NULL,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_MORNING ][0].lightPos ) },
-	{ "TerrainLightingAfternoonAmbient",		INI::parseRGBColor,			NULL,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_AFTERNOON ][0].ambient ) },
-	{ "TerrainLightingAfternoonDiffuse",		INI::parseRGBColor,			NULL,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_AFTERNOON ][0].diffuse ) },
-	{ "TerrainLightingAfternoonLightPos",	INI::parseCoord3D,			NULL,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_AFTERNOON ][0].lightPos ) },
-	{ "TerrainLightingEveningAmbient",			INI::parseRGBColor,			NULL,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_EVENING ][0].ambient ) },
-	{ "TerrainLightingEveningDiffuse",			INI::parseRGBColor,			NULL,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_EVENING ][0].diffuse ) },
-	{ "TerrainLightingEveningLightPos",		INI::parseCoord3D,			NULL,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_EVENING ][0].lightPos ) },
-	{ "TerrainLightingNightAmbient",				INI::parseRGBColor,			NULL,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_NIGHT ][0].ambient ) },
-	{ "TerrainLightingNightDiffuse",				INI::parseRGBColor,			NULL,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_NIGHT ][0].diffuse ) },
-	{ "TerrainLightingNightLightPos",			INI::parseCoord3D,			NULL,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_NIGHT ][0].lightPos ) },
+	{ "TerrainLightingMorningAmbient",			INI::parseRGBColor,			nullptr,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_MORNING ][0].ambient ) },
+	{ "TerrainLightingMorningDiffuse",			INI::parseRGBColor,			nullptr,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_MORNING ][0].diffuse ) },
+	{ "TerrainLightingMorningLightPos",		INI::parseCoord3D,			nullptr,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_MORNING ][0].lightPos ) },
+	{ "TerrainLightingAfternoonAmbient",		INI::parseRGBColor,			nullptr,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_AFTERNOON ][0].ambient ) },
+	{ "TerrainLightingAfternoonDiffuse",		INI::parseRGBColor,			nullptr,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_AFTERNOON ][0].diffuse ) },
+	{ "TerrainLightingAfternoonLightPos",	INI::parseCoord3D,			nullptr,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_AFTERNOON ][0].lightPos ) },
+	{ "TerrainLightingEveningAmbient",			INI::parseRGBColor,			nullptr,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_EVENING ][0].ambient ) },
+	{ "TerrainLightingEveningDiffuse",			INI::parseRGBColor,			nullptr,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_EVENING ][0].diffuse ) },
+	{ "TerrainLightingEveningLightPos",		INI::parseCoord3D,			nullptr,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_EVENING ][0].lightPos ) },
+	{ "TerrainLightingNightAmbient",				INI::parseRGBColor,			nullptr,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_NIGHT ][0].ambient ) },
+	{ "TerrainLightingNightDiffuse",				INI::parseRGBColor,			nullptr,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_NIGHT ][0].diffuse ) },
+	{ "TerrainLightingNightLightPos",			INI::parseCoord3D,			nullptr,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_NIGHT ][0].lightPos ) },
 
-	{ "TerrainObjectsLightingMorningAmbient",			INI::parseRGBColor,			NULL,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_MORNING ][0].ambient ) },
-	{ "TerrainObjectsLightingMorningDiffuse",			INI::parseRGBColor,			NULL,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_MORNING ][0].diffuse ) },
-	{ "TerrainObjectsLightingMorningLightPos",		INI::parseCoord3D,			NULL,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_MORNING ][0].lightPos ) },
-	{ "TerrainObjectsLightingAfternoonAmbient",		INI::parseRGBColor,			NULL,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_AFTERNOON ][0].ambient ) },
-	{ "TerrainObjectsLightingAfternoonDiffuse",		INI::parseRGBColor,			NULL,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_AFTERNOON ][0].diffuse ) },
-	{ "TerrainObjectsLightingAfternoonLightPos",	INI::parseCoord3D,			NULL,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_AFTERNOON ][0].lightPos ) },
-	{ "TerrainObjectsLightingEveningAmbient",			INI::parseRGBColor,			NULL,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_EVENING ][0].ambient ) },
-	{ "TerrainObjectsLightingEveningDiffuse",			INI::parseRGBColor,			NULL,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_EVENING ][0].diffuse ) },
-	{ "TerrainObjectsLightingEveningLightPos",		INI::parseCoord3D,			NULL,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_EVENING ][0].lightPos ) },
-	{ "TerrainObjectsLightingNightAmbient",				INI::parseRGBColor,			NULL,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_NIGHT ][0].ambient ) },
-	{ "TerrainObjectsLightingNightDiffuse",				INI::parseRGBColor,			NULL,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_NIGHT ][0].diffuse ) },
-	{ "TerrainObjectsLightingNightLightPos",			INI::parseCoord3D,			NULL,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_NIGHT ][0].lightPos ) },
+	{ "TerrainObjectsLightingMorningAmbient",			INI::parseRGBColor,			nullptr,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_MORNING ][0].ambient ) },
+	{ "TerrainObjectsLightingMorningDiffuse",			INI::parseRGBColor,			nullptr,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_MORNING ][0].diffuse ) },
+	{ "TerrainObjectsLightingMorningLightPos",		INI::parseCoord3D,			nullptr,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_MORNING ][0].lightPos ) },
+	{ "TerrainObjectsLightingAfternoonAmbient",		INI::parseRGBColor,			nullptr,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_AFTERNOON ][0].ambient ) },
+	{ "TerrainObjectsLightingAfternoonDiffuse",		INI::parseRGBColor,			nullptr,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_AFTERNOON ][0].diffuse ) },
+	{ "TerrainObjectsLightingAfternoonLightPos",	INI::parseCoord3D,			nullptr,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_AFTERNOON ][0].lightPos ) },
+	{ "TerrainObjectsLightingEveningAmbient",			INI::parseRGBColor,			nullptr,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_EVENING ][0].ambient ) },
+	{ "TerrainObjectsLightingEveningDiffuse",			INI::parseRGBColor,			nullptr,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_EVENING ][0].diffuse ) },
+	{ "TerrainObjectsLightingEveningLightPos",		INI::parseCoord3D,			nullptr,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_EVENING ][0].lightPos ) },
+	{ "TerrainObjectsLightingNightAmbient",				INI::parseRGBColor,			nullptr,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_NIGHT ][0].ambient ) },
+	{ "TerrainObjectsLightingNightDiffuse",				INI::parseRGBColor,			nullptr,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_NIGHT ][0].diffuse ) },
+	{ "TerrainObjectsLightingNightLightPos",			INI::parseCoord3D,			nullptr,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_NIGHT ][0].lightPos ) },
 
-	//Secondary global light	
-	{ "TerrainLightingMorningAmbient2",			INI::parseRGBColor,			NULL,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_MORNING ][1].ambient ) },
-	{ "TerrainLightingMorningDiffuse2",			INI::parseRGBColor,			NULL,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_MORNING ][1].diffuse ) },
-	{ "TerrainLightingMorningLightPos2",		INI::parseCoord3D,			NULL,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_MORNING ][1].lightPos ) },
-	{ "TerrainLightingAfternoonAmbient2",		INI::parseRGBColor,			NULL,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_AFTERNOON ][1].ambient ) },
-	{ "TerrainLightingAfternoonDiffuse2",		INI::parseRGBColor,			NULL,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_AFTERNOON ][1].diffuse ) },
-	{ "TerrainLightingAfternoonLightPos2",	INI::parseCoord3D,			NULL,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_AFTERNOON ][1].lightPos ) },
-	{ "TerrainLightingEveningAmbient2",			INI::parseRGBColor,			NULL,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_EVENING ][1].ambient ) },
-	{ "TerrainLightingEveningDiffuse2",			INI::parseRGBColor,			NULL,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_EVENING ][1].diffuse ) },
-	{ "TerrainLightingEveningLightPos2",		INI::parseCoord3D,			NULL,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_EVENING ][1].lightPos ) },
-	{ "TerrainLightingNightAmbient2",				INI::parseRGBColor,			NULL,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_NIGHT ][1].ambient ) },
-	{ "TerrainLightingNightDiffuse2",				INI::parseRGBColor,			NULL,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_NIGHT ][1].diffuse ) },
-	{ "TerrainLightingNightLightPos2",			INI::parseCoord3D,			NULL,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_NIGHT ][1].lightPos ) },
+	//Secondary global light
+	{ "TerrainLightingMorningAmbient2",			INI::parseRGBColor,			nullptr,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_MORNING ][1].ambient ) },
+	{ "TerrainLightingMorningDiffuse2",			INI::parseRGBColor,			nullptr,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_MORNING ][1].diffuse ) },
+	{ "TerrainLightingMorningLightPos2",		INI::parseCoord3D,			nullptr,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_MORNING ][1].lightPos ) },
+	{ "TerrainLightingAfternoonAmbient2",		INI::parseRGBColor,			nullptr,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_AFTERNOON ][1].ambient ) },
+	{ "TerrainLightingAfternoonDiffuse2",		INI::parseRGBColor,			nullptr,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_AFTERNOON ][1].diffuse ) },
+	{ "TerrainLightingAfternoonLightPos2",	INI::parseCoord3D,			nullptr,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_AFTERNOON ][1].lightPos ) },
+	{ "TerrainLightingEveningAmbient2",			INI::parseRGBColor,			nullptr,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_EVENING ][1].ambient ) },
+	{ "TerrainLightingEveningDiffuse2",			INI::parseRGBColor,			nullptr,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_EVENING ][1].diffuse ) },
+	{ "TerrainLightingEveningLightPos2",		INI::parseCoord3D,			nullptr,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_EVENING ][1].lightPos ) },
+	{ "TerrainLightingNightAmbient2",				INI::parseRGBColor,			nullptr,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_NIGHT ][1].ambient ) },
+	{ "TerrainLightingNightDiffuse2",				INI::parseRGBColor,			nullptr,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_NIGHT ][1].diffuse ) },
+	{ "TerrainLightingNightLightPos2",			INI::parseCoord3D,			nullptr,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_NIGHT ][1].lightPos ) },
 
-	{ "TerrainObjectsLightingMorningAmbient2",			INI::parseRGBColor,			NULL,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_MORNING ][1].ambient ) },
-	{ "TerrainObjectsLightingMorningDiffuse2",			INI::parseRGBColor,			NULL,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_MORNING ][1].diffuse ) },
-	{ "TerrainObjectsLightingMorningLightPos2",		INI::parseCoord3D,			NULL,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_MORNING ][1].lightPos ) },
-	{ "TerrainObjectsLightingAfternoonAmbient2",		INI::parseRGBColor,			NULL,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_AFTERNOON ][1].ambient ) },
-	{ "TerrainObjectsLightingAfternoonDiffuse2",		INI::parseRGBColor,			NULL,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_AFTERNOON ][1].diffuse ) },
-	{ "TerrainObjectsLightingAfternoonLightPos2",	INI::parseCoord3D,			NULL,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_AFTERNOON ][1].lightPos ) },
-	{ "TerrainObjectsLightingEveningAmbient2",			INI::parseRGBColor,			NULL,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_EVENING ][1].ambient ) },
-	{ "TerrainObjectsLightingEveningDiffuse2",			INI::parseRGBColor,			NULL,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_EVENING ][1].diffuse ) },
-	{ "TerrainObjectsLightingEveningLightPos2",		INI::parseCoord3D,			NULL,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_EVENING ][1].lightPos ) },
-	{ "TerrainObjectsLightingNightAmbient2",				INI::parseRGBColor,			NULL,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_NIGHT ][1].ambient ) },
-	{ "TerrainObjectsLightingNightDiffuse2",				INI::parseRGBColor,			NULL,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_NIGHT ][1].diffuse ) },
-	{ "TerrainObjectsLightingNightLightPos2",			INI::parseCoord3D,			NULL,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_NIGHT ][1].lightPos ) },
+	{ "TerrainObjectsLightingMorningAmbient2",			INI::parseRGBColor,			nullptr,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_MORNING ][1].ambient ) },
+	{ "TerrainObjectsLightingMorningDiffuse2",			INI::parseRGBColor,			nullptr,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_MORNING ][1].diffuse ) },
+	{ "TerrainObjectsLightingMorningLightPos2",		INI::parseCoord3D,			nullptr,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_MORNING ][1].lightPos ) },
+	{ "TerrainObjectsLightingAfternoonAmbient2",		INI::parseRGBColor,			nullptr,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_AFTERNOON ][1].ambient ) },
+	{ "TerrainObjectsLightingAfternoonDiffuse2",		INI::parseRGBColor,			nullptr,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_AFTERNOON ][1].diffuse ) },
+	{ "TerrainObjectsLightingAfternoonLightPos2",	INI::parseCoord3D,			nullptr,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_AFTERNOON ][1].lightPos ) },
+	{ "TerrainObjectsLightingEveningAmbient2",			INI::parseRGBColor,			nullptr,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_EVENING ][1].ambient ) },
+	{ "TerrainObjectsLightingEveningDiffuse2",			INI::parseRGBColor,			nullptr,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_EVENING ][1].diffuse ) },
+	{ "TerrainObjectsLightingEveningLightPos2",		INI::parseCoord3D,			nullptr,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_EVENING ][1].lightPos ) },
+	{ "TerrainObjectsLightingNightAmbient2",				INI::parseRGBColor,			nullptr,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_NIGHT ][1].ambient ) },
+	{ "TerrainObjectsLightingNightDiffuse2",				INI::parseRGBColor,			nullptr,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_NIGHT ][1].diffuse ) },
+	{ "TerrainObjectsLightingNightLightPos2",			INI::parseCoord3D,			nullptr,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_NIGHT ][1].lightPos ) },
 
 	//Third global light
-	{ "TerrainLightingMorningAmbient3",			INI::parseRGBColor,			NULL,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_MORNING ][2].ambient ) },
-	{ "TerrainLightingMorningDiffuse3",			INI::parseRGBColor,			NULL,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_MORNING ][2].diffuse ) },
-	{ "TerrainLightingMorningLightPos3",		INI::parseCoord3D,			NULL,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_MORNING ][2].lightPos ) },
-	{ "TerrainLightingAfternoonAmbient3",		INI::parseRGBColor,			NULL,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_AFTERNOON ][2].ambient ) },
-	{ "TerrainLightingAfternoonDiffuse3",		INI::parseRGBColor,			NULL,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_AFTERNOON ][2].diffuse ) },
-	{ "TerrainLightingAfternoonLightPos3",	INI::parseCoord3D,			NULL,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_AFTERNOON ][2].lightPos ) },
-	{ "TerrainLightingEveningAmbient3",			INI::parseRGBColor,			NULL,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_EVENING ][2].ambient ) },
-	{ "TerrainLightingEveningDiffuse3",			INI::parseRGBColor,			NULL,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_EVENING ][2].diffuse ) },
-	{ "TerrainLightingEveningLightPos3",		INI::parseCoord3D,			NULL,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_EVENING ][2].lightPos ) },
-	{ "TerrainLightingNightAmbient3",				INI::parseRGBColor,			NULL,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_NIGHT ][2].ambient ) },
-	{ "TerrainLightingNightDiffuse3",				INI::parseRGBColor,			NULL,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_NIGHT ][2].diffuse ) },
-	{ "TerrainLightingNightLightPos3",			INI::parseCoord3D,			NULL,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_NIGHT ][2].lightPos ) },
+	{ "TerrainLightingMorningAmbient3",			INI::parseRGBColor,			nullptr,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_MORNING ][2].ambient ) },
+	{ "TerrainLightingMorningDiffuse3",			INI::parseRGBColor,			nullptr,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_MORNING ][2].diffuse ) },
+	{ "TerrainLightingMorningLightPos3",		INI::parseCoord3D,			nullptr,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_MORNING ][2].lightPos ) },
+	{ "TerrainLightingAfternoonAmbient3",		INI::parseRGBColor,			nullptr,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_AFTERNOON ][2].ambient ) },
+	{ "TerrainLightingAfternoonDiffuse3",		INI::parseRGBColor,			nullptr,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_AFTERNOON ][2].diffuse ) },
+	{ "TerrainLightingAfternoonLightPos3",	INI::parseCoord3D,			nullptr,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_AFTERNOON ][2].lightPos ) },
+	{ "TerrainLightingEveningAmbient3",			INI::parseRGBColor,			nullptr,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_EVENING ][2].ambient ) },
+	{ "TerrainLightingEveningDiffuse3",			INI::parseRGBColor,			nullptr,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_EVENING ][2].diffuse ) },
+	{ "TerrainLightingEveningLightPos3",		INI::parseCoord3D,			nullptr,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_EVENING ][2].lightPos ) },
+	{ "TerrainLightingNightAmbient3",				INI::parseRGBColor,			nullptr,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_NIGHT ][2].ambient ) },
+	{ "TerrainLightingNightDiffuse3",				INI::parseRGBColor,			nullptr,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_NIGHT ][2].diffuse ) },
+	{ "TerrainLightingNightLightPos3",			INI::parseCoord3D,			nullptr,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_NIGHT ][2].lightPos ) },
 
-	{ "TerrainObjectsLightingMorningAmbient3",			INI::parseRGBColor,			NULL,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_MORNING ][2].ambient ) },
-	{ "TerrainObjectsLightingMorningDiffuse3",			INI::parseRGBColor,			NULL,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_MORNING ][2].diffuse ) },
-	{ "TerrainObjectsLightingMorningLightPos3",		INI::parseCoord3D,			NULL,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_MORNING ][2].lightPos ) },
-	{ "TerrainObjectsLightingAfternoonAmbient3",		INI::parseRGBColor,			NULL,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_AFTERNOON ][2].ambient ) },
-	{ "TerrainObjectsLightingAfternoonDiffuse3",		INI::parseRGBColor,			NULL,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_AFTERNOON ][2].diffuse ) },
-	{ "TerrainObjectsLightingAfternoonLightPos3",	INI::parseCoord3D,			NULL,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_AFTERNOON ][2].lightPos ) },
-	{ "TerrainObjectsLightingEveningAmbient3",			INI::parseRGBColor,			NULL,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_EVENING ][2].ambient ) },
-	{ "TerrainObjectsLightingEveningDiffuse3",			INI::parseRGBColor,			NULL,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_EVENING ][2].diffuse ) },
-	{ "TerrainObjectsLightingEveningLightPos3",		INI::parseCoord3D,			NULL,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_EVENING ][2].lightPos ) },
-	{ "TerrainObjectsLightingNightAmbient3",				INI::parseRGBColor,			NULL,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_NIGHT ][2].ambient ) },
-	{ "TerrainObjectsLightingNightDiffuse3",				INI::parseRGBColor,			NULL,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_NIGHT ][2].diffuse ) },
-	{ "TerrainObjectsLightingNightLightPos3",			INI::parseCoord3D,			NULL,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_NIGHT ][2].lightPos ) },
+	{ "TerrainObjectsLightingMorningAmbient3",			INI::parseRGBColor,			nullptr,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_MORNING ][2].ambient ) },
+	{ "TerrainObjectsLightingMorningDiffuse3",			INI::parseRGBColor,			nullptr,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_MORNING ][2].diffuse ) },
+	{ "TerrainObjectsLightingMorningLightPos3",		INI::parseCoord3D,			nullptr,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_MORNING ][2].lightPos ) },
+	{ "TerrainObjectsLightingAfternoonAmbient3",		INI::parseRGBColor,			nullptr,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_AFTERNOON ][2].ambient ) },
+	{ "TerrainObjectsLightingAfternoonDiffuse3",		INI::parseRGBColor,			nullptr,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_AFTERNOON ][2].diffuse ) },
+	{ "TerrainObjectsLightingAfternoonLightPos3",	INI::parseCoord3D,			nullptr,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_AFTERNOON ][2].lightPos ) },
+	{ "TerrainObjectsLightingEveningAmbient3",			INI::parseRGBColor,			nullptr,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_EVENING ][2].ambient ) },
+	{ "TerrainObjectsLightingEveningDiffuse3",			INI::parseRGBColor,			nullptr,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_EVENING ][2].diffuse ) },
+	{ "TerrainObjectsLightingEveningLightPos3",		INI::parseCoord3D,			nullptr,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_EVENING ][2].lightPos ) },
+	{ "TerrainObjectsLightingNightAmbient3",				INI::parseRGBColor,			nullptr,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_NIGHT ][2].ambient ) },
+	{ "TerrainObjectsLightingNightDiffuse3",				INI::parseRGBColor,			nullptr,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_NIGHT ][2].diffuse ) },
+	{ "TerrainObjectsLightingNightLightPos3",			INI::parseCoord3D,			nullptr,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_NIGHT ][2].lightPos ) },
 
-	
-	{ "NumberGlobalLights",								INI::parseInt,				NULL,			offsetof( GlobalData, m_numGlobalLights)},
-	{ "InfantryLightMorningScale",				INI::parseReal,			NULL,			offsetof( GlobalData, m_infantryLightScale[TIME_OF_DAY_MORNING] ) },
-	{ "InfantryLightAfternoonScale",				INI::parseReal,			NULL,			offsetof( GlobalData, m_infantryLightScale[TIME_OF_DAY_AFTERNOON] ) },
-	{ "InfantryLightEveningScale",				INI::parseReal,			NULL,			offsetof( GlobalData, m_infantryLightScale[TIME_OF_DAY_EVENING] ) },
-	{ "InfantryLightNightScale",				INI::parseReal,			NULL,			offsetof( GlobalData, m_infantryLightScale[TIME_OF_DAY_NIGHT] ) },
 
-	{ "MaxTranslucentObjects",						INI::parseInt,				NULL,			offsetof( GlobalData, m_maxVisibleTranslucentObjects) },
-	{ "OccludedColorLuminanceScale",				INI::parseReal,				NULL,			offsetof( GlobalData, m_occludedLuminanceScale) },
+	{ "NumberGlobalLights",								INI::parseInt,				nullptr,			offsetof( GlobalData, m_numGlobalLights)},
+	{ "InfantryLightMorningScale",				INI::parseReal,			nullptr,			offsetof( GlobalData, m_infantryLightScale[TIME_OF_DAY_MORNING] ) },
+	{ "InfantryLightAfternoonScale",				INI::parseReal,			nullptr,			offsetof( GlobalData, m_infantryLightScale[TIME_OF_DAY_AFTERNOON] ) },
+	{ "InfantryLightEveningScale",				INI::parseReal,			nullptr,			offsetof( GlobalData, m_infantryLightScale[TIME_OF_DAY_EVENING] ) },
+	{ "InfantryLightNightScale",				INI::parseReal,			nullptr,			offsetof( GlobalData, m_infantryLightScale[TIME_OF_DAY_NIGHT] ) },
 
-/* These are internal use only, they do not need file definitons 
-	{ "TerrainAmbientRGB",				INI::parseRGBColor,		NULL,			offsetof( GlobalData, m_terrainAmbient ) },
-	{ "TerrainDiffuseRGB",				INI::parseRGBColor,		NULL,			offsetof( GlobalData, m_terrainDiffuse ) },
-	{ "TerrainLightPos",					INI::parseCoord3D,		NULL,			offsetof( GlobalData, m_terrainLightPos ) },
+	{ "MaxTranslucentObjects",						INI::parseInt,				nullptr,			offsetof( GlobalData, m_maxVisibleTranslucentObjects) },
+	{ "OccludedColorLuminanceScale",				INI::parseReal,				nullptr,			offsetof( GlobalData, m_occludedLuminanceScale) },
+
+/* These are internal use only, they do not need file definitions
+	{ "TerrainAmbientRGB",				INI::parseRGBColor,		nullptr,			offsetof( GlobalData, m_terrainAmbient ) },
+	{ "TerrainDiffuseRGB",				INI::parseRGBColor,		nullptr,			offsetof( GlobalData, m_terrainDiffuse ) },
+	{ "TerrainLightPos",					INI::parseCoord3D,		nullptr,			offsetof( GlobalData, m_terrainLightPos ) },
 */
-	{ "MaxRoadSegments",						INI::parseInt,				NULL,			offsetof( GlobalData, m_maxRoadSegments ) },
-	{ "MaxRoadVertex",							INI::parseInt,				NULL,			offsetof( GlobalData, m_maxRoadVertex ) },
-	{ "MaxRoadIndex",								INI::parseInt,				NULL,			offsetof( GlobalData, m_maxRoadIndex ) },
-	{ "MaxRoadTypes",								INI::parseInt,				NULL,			offsetof( GlobalData, m_maxRoadTypes ) },
+	{ "MaxRoadSegments",						INI::parseInt,				nullptr,			offsetof( GlobalData, m_maxRoadSegments ) },
+	{ "MaxRoadVertex",							INI::parseInt,				nullptr,			offsetof( GlobalData, m_maxRoadVertex ) },
+	{ "MaxRoadIndex",								INI::parseInt,				nullptr,			offsetof( GlobalData, m_maxRoadIndex ) },
+	{ "MaxRoadTypes",								INI::parseInt,				nullptr,			offsetof( GlobalData, m_maxRoadTypes ) },
 
-	{ "ValuePerSupplyBox",					INI::parseInt,				NULL,			offsetof( GlobalData, m_baseValuePerSupplyBox ) },
-	
-	{ "AudioOn",										INI::parseBool,				NULL,			offsetof( GlobalData, m_audioOn ) },
-	{ "MusicOn",										INI::parseBool,				NULL,			offsetof( GlobalData, m_musicOn ) },
-	{ "SoundsOn",										INI::parseBool,				NULL,			offsetof( GlobalData, m_soundsOn ) },
-	{ "Sounds3DOn",									INI::parseBool,				NULL,			offsetof( GlobalData, m_sounds3DOn ) },
-	{ "SpeechOn",										INI::parseBool,				NULL,			offsetof( GlobalData, m_speechOn ) },
-	{ "VideoOn",										INI::parseBool,				NULL,			offsetof( GlobalData, m_videoOn ) },
-	{ "DisableCameraMovements",			INI::parseBool,				NULL,			offsetof( GlobalData, m_disableCameraMovement ) },
+	{ "ValuePerSupplyBox",					INI::parseInt,				nullptr,			offsetof( GlobalData, m_baseValuePerSupplyBox ) },
 
-/* These are internal use only, they do not need file definitons 		
+	{ "AudioOn",										INI::parseBool,				nullptr,			offsetof( GlobalData, m_audioOn ) },
+	{ "MusicOn",										INI::parseBool,				nullptr,			offsetof( GlobalData, m_musicOn ) },
+	{ "SoundsOn",										INI::parseBool,				nullptr,			offsetof( GlobalData, m_soundsOn ) },
+	{ "Sounds3DOn",									INI::parseBool,				nullptr,			offsetof( GlobalData, m_sounds3DOn ) },
+	{ "SpeechOn",										INI::parseBool,				nullptr,			offsetof( GlobalData, m_speechOn ) },
+	{ "VideoOn",										INI::parseBool,				nullptr,			offsetof( GlobalData, m_videoOn ) },
+	{ "DisableCameraMovements",			INI::parseBool,				nullptr,			offsetof( GlobalData, m_disableCameraMovement ) },
+
+/* These are internal use only, they do not need file definitions
 	/// @todo remove this hack
-	{ "InGame",											INI::parseBool,				NULL,			offsetof( GlobalData, m_inGame ) },
+	{ "InGame",											INI::parseBool,				nullptr,			offsetof( GlobalData, m_inGame ) },
 */
 
-	{ "DebugAI",										INI::parseBool,				NULL,			offsetof( GlobalData, m_debugAI ) },
-	{ "DebugAIObstacles",						INI::parseBool,				NULL,			offsetof( GlobalData, m_debugAIObstacles ) },
-	{ "ShowClientPhysics",				INI::parseBool,				NULL,			offsetof( GlobalData, m_showClientPhysics ) },
-	{ "ShowTerrainNormals",				INI::parseBool,				NULL,			offsetof( GlobalData, m_showTerrainNormals ) },
-	{ "ShowObjectHealth",						INI::parseBool,				NULL,			offsetof( GlobalData, m_showObjectHealth ) },
+	{ "DebugAI",										INI::parseBool,				nullptr,			offsetof( GlobalData, m_debugAI ) },
+	{ "DebugAIObstacles",						INI::parseBool,				nullptr,			offsetof( GlobalData, m_debugAIObstacles ) },
+	{ "ShowClientPhysics",				INI::parseBool,				nullptr,			offsetof( GlobalData, m_showClientPhysics ) },
+	{ "ShowTerrainNormals",				INI::parseBool,				nullptr,			offsetof( GlobalData, m_showTerrainNormals ) },
+	{ "ShowObjectHealth",						INI::parseBool,				nullptr,			offsetof( GlobalData, m_showObjectHealth ) },
 
-	{ "ParticleScale",										INI::parseReal,					NULL,	 offsetof( GlobalData, m_particleScale ) },
-	{ "AutoFireParticleSmallPrefix",			INI::parseAsciiString,  NULL,  offsetof( GlobalData, m_autoFireParticleSmallPrefix ) },
-	{ "AutoFireParticleSmallSystem",			INI::parseAsciiString,  NULL,  offsetof( GlobalData, m_autoFireParticleSmallSystem ) },
-	{ "AutoFireParticleSmallMax",					INI::parseInt,					NULL,	 offsetof( GlobalData, m_autoFireParticleSmallMax ) },
-	{ "AutoFireParticleMediumPrefix",			INI::parseAsciiString,  NULL,  offsetof( GlobalData, m_autoFireParticleMediumPrefix ) },
-	{ "AutoFireParticleMediumSystem",			INI::parseAsciiString,  NULL,  offsetof( GlobalData, m_autoFireParticleMediumSystem ) },
-	{ "AutoFireParticleMediumMax",				INI::parseInt,					NULL,	 offsetof( GlobalData, m_autoFireParticleMediumMax ) },
-	{ "AutoFireParticleLargePrefix",			INI::parseAsciiString,  NULL,  offsetof( GlobalData, m_autoFireParticleLargePrefix ) },
-	{ "AutoFireParticleLargeSystem",			INI::parseAsciiString,  NULL,  offsetof( GlobalData, m_autoFireParticleLargeSystem ) },
-	{ "AutoFireParticleLargeMax",					INI::parseInt,					NULL,	 offsetof( GlobalData, m_autoFireParticleLargeMax ) },
-	{ "AutoSmokeParticleSmallPrefix",			INI::parseAsciiString,  NULL,  offsetof( GlobalData, m_autoSmokeParticleSmallPrefix ) },
-	{ "AutoSmokeParticleSmallSystem",			INI::parseAsciiString,  NULL,  offsetof( GlobalData, m_autoSmokeParticleSmallSystem ) },
-	{ "AutoSmokeParticleSmallMax",				INI::parseInt,					NULL,	 offsetof( GlobalData, m_autoSmokeParticleSmallMax ) },
-	{ "AutoSmokeParticleMediumPrefix",		INI::parseAsciiString,  NULL,  offsetof( GlobalData, m_autoSmokeParticleMediumPrefix ) },
-	{ "AutoSmokeParticleMediumSystem",		INI::parseAsciiString,  NULL,  offsetof( GlobalData, m_autoSmokeParticleMediumSystem ) },
-	{ "AutoSmokeParticleMediumMax",				INI::parseInt,					NULL,	 offsetof( GlobalData, m_autoSmokeParticleMediumMax ) },
-	{ "AutoSmokeParticleLargePrefix",			INI::parseAsciiString,  NULL,  offsetof( GlobalData, m_autoSmokeParticleLargePrefix ) },
-	{ "AutoSmokeParticleLargeSystem",			INI::parseAsciiString,  NULL,  offsetof( GlobalData, m_autoSmokeParticleLargeSystem ) },
-	{ "AutoSmokeParticleLargeMax",				INI::parseInt,					NULL,	 offsetof( GlobalData, m_autoSmokeParticleLargeMax ) },
-	{ "AutoAflameParticlePrefix",					INI::parseAsciiString,  NULL,  offsetof( GlobalData, m_autoAflameParticlePrefix ) },
-	{ "AutoAflameParticleSystem",					INI::parseAsciiString,  NULL,  offsetof( GlobalData, m_autoAflameParticleSystem ) },
-	{ "AutoAflameParticleMax",						INI::parseInt,					NULL,	 offsetof( GlobalData, m_autoAflameParticleMax ) },
+	{ "ParticleScale",										INI::parseReal,					nullptr,	 offsetof( GlobalData, m_particleScale ) },
+	{ "AutoFireParticleSmallPrefix",			INI::parseAsciiString,  nullptr,  offsetof( GlobalData, m_autoFireParticleSmallPrefix ) },
+	{ "AutoFireParticleSmallSystem",			INI::parseAsciiString,  nullptr,  offsetof( GlobalData, m_autoFireParticleSmallSystem ) },
+	{ "AutoFireParticleSmallMax",					INI::parseInt,					nullptr,	 offsetof( GlobalData, m_autoFireParticleSmallMax ) },
+	{ "AutoFireParticleMediumPrefix",			INI::parseAsciiString,  nullptr,  offsetof( GlobalData, m_autoFireParticleMediumPrefix ) },
+	{ "AutoFireParticleMediumSystem",			INI::parseAsciiString,  nullptr,  offsetof( GlobalData, m_autoFireParticleMediumSystem ) },
+	{ "AutoFireParticleMediumMax",				INI::parseInt,					nullptr,	 offsetof( GlobalData, m_autoFireParticleMediumMax ) },
+	{ "AutoFireParticleLargePrefix",			INI::parseAsciiString,  nullptr,  offsetof( GlobalData, m_autoFireParticleLargePrefix ) },
+	{ "AutoFireParticleLargeSystem",			INI::parseAsciiString,  nullptr,  offsetof( GlobalData, m_autoFireParticleLargeSystem ) },
+	{ "AutoFireParticleLargeMax",					INI::parseInt,					nullptr,	 offsetof( GlobalData, m_autoFireParticleLargeMax ) },
+	{ "AutoSmokeParticleSmallPrefix",			INI::parseAsciiString,  nullptr,  offsetof( GlobalData, m_autoSmokeParticleSmallPrefix ) },
+	{ "AutoSmokeParticleSmallSystem",			INI::parseAsciiString,  nullptr,  offsetof( GlobalData, m_autoSmokeParticleSmallSystem ) },
+	{ "AutoSmokeParticleSmallMax",				INI::parseInt,					nullptr,	 offsetof( GlobalData, m_autoSmokeParticleSmallMax ) },
+	{ "AutoSmokeParticleMediumPrefix",		INI::parseAsciiString,  nullptr,  offsetof( GlobalData, m_autoSmokeParticleMediumPrefix ) },
+	{ "AutoSmokeParticleMediumSystem",		INI::parseAsciiString,  nullptr,  offsetof( GlobalData, m_autoSmokeParticleMediumSystem ) },
+	{ "AutoSmokeParticleMediumMax",				INI::parseInt,					nullptr,	 offsetof( GlobalData, m_autoSmokeParticleMediumMax ) },
+	{ "AutoSmokeParticleLargePrefix",			INI::parseAsciiString,  nullptr,  offsetof( GlobalData, m_autoSmokeParticleLargePrefix ) },
+	{ "AutoSmokeParticleLargeSystem",			INI::parseAsciiString,  nullptr,  offsetof( GlobalData, m_autoSmokeParticleLargeSystem ) },
+	{ "AutoSmokeParticleLargeMax",				INI::parseInt,					nullptr,	 offsetof( GlobalData, m_autoSmokeParticleLargeMax ) },
+	{ "AutoAflameParticlePrefix",					INI::parseAsciiString,  nullptr,  offsetof( GlobalData, m_autoAflameParticlePrefix ) },
+	{ "AutoAflameParticleSystem",					INI::parseAsciiString,  nullptr,  offsetof( GlobalData, m_autoAflameParticleSystem ) },
+	{ "AutoAflameParticleMax",						INI::parseInt,					nullptr,	 offsetof( GlobalData, m_autoAflameParticleMax ) },
 
-/* These are internal use only, they do not need file definitons 	
-	{ "LatencyAverage",							INI::parseInt,				NULL,			offsetof( GlobalData, m_latencyAverage ) },
-	{ "LatencyAmplitude",						INI::parseInt,				NULL,			offsetof( GlobalData, m_latencyAmplitude ) },
-	{ "LatencyPeriod",							INI::parseInt,				NULL,			offsetof( GlobalData, m_latencyPeriod ) },
-	{ "LatencyNoise",								INI::parseInt,				NULL,			offsetof( GlobalData, m_latencyNoise ) },
-	{ "PacketLoss",									INI::parseInt,				NULL,			offsetof( GlobalData, m_packetLoss ) },
+/* These are internal use only, they do not need file definitions
+	{ "LatencyAverage",							INI::parseInt,				nullptr,			offsetof( GlobalData, m_latencyAverage ) },
+	{ "LatencyAmplitude",						INI::parseInt,				nullptr,			offsetof( GlobalData, m_latencyAmplitude ) },
+	{ "LatencyPeriod",							INI::parseInt,				nullptr,			offsetof( GlobalData, m_latencyPeriod ) },
+	{ "LatencyNoise",								INI::parseInt,				nullptr,			offsetof( GlobalData, m_latencyNoise ) },
+	{ "PacketLoss",									INI::parseInt,				nullptr,			offsetof( GlobalData, m_packetLoss ) },
 */
 
-	{ "BuildSpeed",									INI::parseReal,				NULL,			offsetof( GlobalData, m_BuildSpeed ) },
-	{ "MinDistFromEdgeOfMapForBuild",	 INI::parseReal,				NULL,			offsetof( GlobalData, m_MinDistFromEdgeOfMapForBuild ) },
-	{ "SupplyBuildBorder",	 INI::parseReal,				NULL,			offsetof( GlobalData, m_SupplyBuildBorder ) },
-	{ "AllowedHeightVariationForBuilding", INI::parseReal,NULL,			offsetof( GlobalData, m_allowedHeightVariationForBuilding ) },
-	{ "MinLowEnergyProductionSpeed",INI::parseReal,				NULL,			offsetof( GlobalData, m_MinLowEnergyProductionSpeed ) },
-	{ "MaxLowEnergyProductionSpeed",INI::parseReal,				NULL,			offsetof( GlobalData, m_MaxLowEnergyProductionSpeed ) },
-	{ "LowEnergyPenaltyModifier",		INI::parseReal,				NULL,			offsetof( GlobalData, m_LowEnergyPenaltyModifier ) },
-	{ "MultipleFactory",						INI::parseReal,				NULL,			offsetof( GlobalData, m_MultipleFactory ) },
-	{ "RefundPercent",							INI::parsePercentToReal,			NULL,			offsetof( GlobalData, m_RefundPercent ) },
+	{ "BuildSpeed",									INI::parseReal,				nullptr,			offsetof( GlobalData, m_BuildSpeed ) },
+	{ "MinDistFromEdgeOfMapForBuild",	 INI::parseReal,				nullptr,			offsetof( GlobalData, m_MinDistFromEdgeOfMapForBuild ) },
+	{ "SupplyBuildBorder",	 INI::parseReal,				nullptr,			offsetof( GlobalData, m_SupplyBuildBorder ) },
+	{ "AllowedHeightVariationForBuilding", INI::parseReal,nullptr,			offsetof( GlobalData, m_allowedHeightVariationForBuilding ) },
+	{ "MinLowEnergyProductionSpeed",INI::parseReal,				nullptr,			offsetof( GlobalData, m_MinLowEnergyProductionSpeed ) },
+	{ "MaxLowEnergyProductionSpeed",INI::parseReal,				nullptr,			offsetof( GlobalData, m_MaxLowEnergyProductionSpeed ) },
+	{ "LowEnergyPenaltyModifier",		INI::parseReal,				nullptr,			offsetof( GlobalData, m_LowEnergyPenaltyModifier ) },
+	{ "MultipleFactory",						INI::parseReal,				nullptr,			offsetof( GlobalData, m_MultipleFactory ) },
+	{ "RefundPercent",							INI::parsePercentToReal,			nullptr,			offsetof( GlobalData, m_RefundPercent ) },
 
-	{ "CommandCenterHealRange",			INI::parseReal,				NULL,			offsetof( GlobalData, m_commandCenterHealRange ) },
-	{ "CommandCenterHealAmount",		INI::parseReal,				NULL,			offsetof( GlobalData, m_commandCenterHealAmount ) },
+	{ "CommandCenterHealRange",			INI::parseReal,				nullptr,			offsetof( GlobalData, m_commandCenterHealRange ) },
+	{ "CommandCenterHealAmount",		INI::parseReal,				nullptr,			offsetof( GlobalData, m_commandCenterHealAmount ) },
 
-	{ "StandardMinefieldDensity",		INI::parseReal,				NULL,			offsetof( GlobalData, m_standardMinefieldDensity ) },
-	{ "StandardMinefieldDistance",		INI::parseReal,				NULL,			offsetof( GlobalData, m_standardMinefieldDistance ) },
+	{ "StandardMinefieldDensity",		INI::parseReal,				nullptr,			offsetof( GlobalData, m_standardMinefieldDensity ) },
+	{ "StandardMinefieldDistance",		INI::parseReal,				nullptr,			offsetof( GlobalData, m_standardMinefieldDistance ) },
 
-	{ "MaxLineBuildObjects",				INI::parseInt,				NULL,			offsetof( GlobalData, m_maxLineBuildObjects ) },
-	{ "MaxTunnelCapacity",					INI::parseInt,				NULL,			offsetof( GlobalData, m_maxTunnelCapacity ) },
+	{ "MaxLineBuildObjects",				INI::parseInt,				nullptr,			offsetof( GlobalData, m_maxLineBuildObjects ) },
+	{ "MaxTunnelCapacity",					INI::parseInt,				nullptr,			offsetof( GlobalData, m_maxTunnelCapacity ) },
 
-	{ "MaxParticleCount",						INI::parseInt,				NULL,			offsetof( GlobalData, m_maxParticleCount ) },
-	{ "MaxFieldParticleCount",						INI::parseInt,				NULL,			offsetof( GlobalData, m_maxFieldParticleCount ) },
-	{ "HorizontalScrollSpeedFactor",INI::parseReal,				NULL,			offsetof( GlobalData, m_horizontalScrollSpeedFactor ) },
-	{ "VerticalScrollSpeedFactor",	INI::parseReal,				NULL,			offsetof( GlobalData, m_verticalScrollSpeedFactor ) },
-	{ "ScrollAmountCutoff",					INI::parseReal,				NULL,			offsetof( GlobalData, m_scrollAmountCutoff ) },
-	{ "CameraAdjustSpeed",					INI::parseReal,				NULL,			offsetof( GlobalData, m_cameraAdjustSpeed ) },
-	{ "EnforceMaxCameraHeight",			INI::parseBool,				NULL,			offsetof( GlobalData, m_enforceMaxCameraHeight ) },
-	{ "KeyboardScrollSpeedFactor",	INI::parseReal,				NULL,			offsetof( GlobalData, m_keyboardScrollFactor ) },
-	{ "KeyboardDefaultScrollSpeedFactor",	INI::parseReal,				NULL,			offsetof( GlobalData, m_keyboardDefaultScrollFactor ) },
+	{ "MaxParticleCount",						INI::parseInt,				nullptr,			offsetof( GlobalData, m_maxParticleCount ) },
+	{ "MaxFieldParticleCount",						INI::parseInt,				nullptr,			offsetof( GlobalData, m_maxFieldParticleCount ) },
+	{ "HorizontalScrollSpeedFactor",INI::parseReal,				nullptr,			offsetof( GlobalData, m_horizontalScrollSpeedFactor ) },
+	{ "VerticalScrollSpeedFactor",	INI::parseReal,				nullptr,			offsetof( GlobalData, m_verticalScrollSpeedFactor ) },
+	{ "ScrollAmountCutoff",					INI::parseReal,				nullptr,			offsetof( GlobalData, m_scrollAmountCutoff ) },
+	{ "CameraAdjustSpeed",					INI::parseReal,				nullptr,			offsetof( GlobalData, m_cameraAdjustSpeed ) },
+	{ "EnforceMaxCameraHeight",			INI::parseBool,				nullptr,			offsetof( GlobalData, m_enforceMaxCameraHeight ) },
+	{ "KeyboardScrollSpeedFactor",	INI::parseReal,				nullptr,			offsetof( GlobalData, m_keyboardScrollFactor ) },
+	{ "KeyboardDefaultScrollSpeedFactor",	INI::parseReal,				nullptr,			offsetof( GlobalData, m_keyboardDefaultScrollFactor ) },
+	{ "KeyboardCameraRotateSpeed", INI::parseReal, nullptr, offsetof( GlobalData, m_keyboardCameraRotateSpeed ) },
 	{ "MovementPenaltyDamageState",	INI::parseIndexList,	TheBodyDamageTypeNames,	 offsetof( GlobalData, m_movementPenaltyDamageState ) },
 
 // you cannot set this; it always has a value of 100%.
-//{ "HealthBonus_Regular",				INI::parsePercentToReal, NULL,	offsetof( GlobalData, m_healthBonus[LEVEL_REGULAR]) },
-	{ "HealthBonus_Veteran",				INI::parsePercentToReal, NULL,	offsetof( GlobalData, m_healthBonus[LEVEL_VETERAN]) },
-	{ "HealthBonus_Elite",					INI::parsePercentToReal, NULL,	offsetof( GlobalData, m_healthBonus[LEVEL_ELITE]) },
-	{ "HealthBonus_Heroic",					INI::parsePercentToReal, NULL,	offsetof( GlobalData, m_healthBonus[LEVEL_HEROIC]) },
+//{ "HealthBonus_Regular",				INI::parsePercentToReal, nullptr,	offsetof( GlobalData, m_healthBonus[LEVEL_REGULAR]) },
+	{ "HealthBonus_Veteran",				INI::parsePercentToReal, nullptr,	offsetof( GlobalData, m_healthBonus[LEVEL_VETERAN]) },
+	{ "HealthBonus_Elite",					INI::parsePercentToReal, nullptr,	offsetof( GlobalData, m_healthBonus[LEVEL_ELITE]) },
+	{ "HealthBonus_Heroic",					INI::parsePercentToReal, nullptr,	offsetof( GlobalData, m_healthBonus[LEVEL_HEROIC]) },
 
-	{ "HumanSoloPlayerHealthBonus_Easy",					INI::parsePercentToReal,			NULL,			offsetof( GlobalData, m_soloPlayerHealthBonusForDifficulty[PLAYER_HUMAN][DIFFICULTY_EASY] ) },
-	{ "HumanSoloPlayerHealthBonus_Normal",				INI::parsePercentToReal,			NULL,			offsetof( GlobalData, m_soloPlayerHealthBonusForDifficulty[PLAYER_HUMAN][DIFFICULTY_NORMAL] ) },
-	{ "HumanSoloPlayerHealthBonus_Hard",				INI::parsePercentToReal,			NULL,			offsetof( GlobalData, m_soloPlayerHealthBonusForDifficulty[PLAYER_HUMAN][DIFFICULTY_HARD] ) },
+	{ "HumanSoloPlayerHealthBonus_Easy",					INI::parsePercentToReal,			nullptr,			offsetof( GlobalData, m_soloPlayerHealthBonusForDifficulty[PLAYER_HUMAN][DIFFICULTY_EASY] ) },
+	{ "HumanSoloPlayerHealthBonus_Normal",				INI::parsePercentToReal,			nullptr,			offsetof( GlobalData, m_soloPlayerHealthBonusForDifficulty[PLAYER_HUMAN][DIFFICULTY_NORMAL] ) },
+	{ "HumanSoloPlayerHealthBonus_Hard",				INI::parsePercentToReal,			nullptr,			offsetof( GlobalData, m_soloPlayerHealthBonusForDifficulty[PLAYER_HUMAN][DIFFICULTY_HARD] ) },
 
-	{ "AISoloPlayerHealthBonus_Easy",					INI::parsePercentToReal,			NULL,			offsetof( GlobalData, m_soloPlayerHealthBonusForDifficulty[PLAYER_COMPUTER][DIFFICULTY_EASY] ) },
-	{ "AISoloPlayerHealthBonus_Normal",				INI::parsePercentToReal,			NULL,			offsetof( GlobalData, m_soloPlayerHealthBonusForDifficulty[PLAYER_COMPUTER][DIFFICULTY_NORMAL] ) },
-	{ "AISoloPlayerHealthBonus_Hard",				INI::parsePercentToReal,			NULL,			offsetof( GlobalData, m_soloPlayerHealthBonusForDifficulty[PLAYER_COMPUTER][DIFFICULTY_HARD] ) },
+	{ "AISoloPlayerHealthBonus_Easy",					INI::parsePercentToReal,			nullptr,			offsetof( GlobalData, m_soloPlayerHealthBonusForDifficulty[PLAYER_COMPUTER][DIFFICULTY_EASY] ) },
+	{ "AISoloPlayerHealthBonus_Normal",				INI::parsePercentToReal,			nullptr,			offsetof( GlobalData, m_soloPlayerHealthBonusForDifficulty[PLAYER_COMPUTER][DIFFICULTY_NORMAL] ) },
+	{ "AISoloPlayerHealthBonus_Hard",				INI::parsePercentToReal,			nullptr,			offsetof( GlobalData, m_soloPlayerHealthBonusForDifficulty[PLAYER_COMPUTER][DIFFICULTY_HARD] ) },
 
-	{ "WeaponBonus",								WeaponBonusSet::parseWeaponBonusSetPtr,	NULL,	offsetof( GlobalData, m_weaponBonusSet ) },
+	{ "WeaponBonus",								WeaponBonusSet::parseWeaponBonusSetPtr,	nullptr,	offsetof( GlobalData, m_weaponBonusSet ) },
 
-	{ "DefaultStructureRubbleHeight",	INI::parseReal,			NULL,			offsetof( GlobalData, m_defaultStructureRubbleHeight ) },
+	{ "DefaultStructureRubbleHeight",	INI::parseReal,			nullptr,			offsetof( GlobalData, m_defaultStructureRubbleHeight ) },
 
-	{ "FixedSeed",									INI::parseInt,				NULL,			offsetof( GlobalData, m_fixedSeed ) },
+	{ "FixedSeed",									INI::parseInt,				nullptr,			offsetof( GlobalData, m_fixedSeed ) },
 
-	{ "ShellMapName",								INI::parseAsciiString,NULL,			offsetof( GlobalData, m_shellMapName ) },
-	{ "ShellMapOn",									INI::parseBool,				NULL,			offsetof( GlobalData, m_shellMapOn ) },
-	{	"PlayIntro",									INI::parseBool,				NULL,			offsetof( GlobalData, m_playIntro ) },
+	{ "ShellMapName",								INI::parseAsciiString,nullptr,			offsetof( GlobalData, m_shellMapName ) },
+	{ "ShellMapOn",									INI::parseBool,				nullptr,			offsetof( GlobalData, m_shellMapOn ) },
+	{	"PlayIntro",									INI::parseBool,				nullptr,			offsetof( GlobalData, m_playIntro ) },
 
-	{ "FirewallBehavior",						INI::parseInt,				NULL,			offsetof( GlobalData, m_firewallBehavior ) },
-	{ "FirewallPortOverride",				INI::parseInt,				NULL,			offsetof( GlobalData, m_firewallPortOverride ) },
-	{	"FirewallPortAllocationDelta",INI::parseInt,				NULL,			offsetof( GlobalData, m_firewallPortAllocationDelta) },
+	{ "FirewallBehavior",						INI::parseInt,				nullptr,			offsetof( GlobalData, m_firewallBehavior ) },
+	{ "FirewallPortOverride",				INI::parseInt,				nullptr,			offsetof( GlobalData, m_firewallPortOverride ) },
+	{	"FirewallPortAllocationDelta",INI::parseInt,				nullptr,			offsetof( GlobalData, m_firewallPortAllocationDelta) },
 
-	{	"GroupSelectMinSelectSize",		INI::parseInt,				NULL,			offsetof( GlobalData, m_groupSelectMinSelectSize ) },
-	{	"GroupSelectVolumeBase",			INI::parseReal,				NULL,			offsetof( GlobalData, m_groupSelectVolumeBase ) },
-	{	"GroupSelectVolumeIncrement",	INI::parseReal,				NULL,			offsetof( GlobalData, m_groupSelectVolumeIncrement ) },
-	{	"MaxUnitSelectSounds",				INI::parseInt,				NULL,			offsetof( GlobalData, m_maxUnitSelectSounds ) },
+	{	"GroupSelectMinSelectSize",		INI::parseInt,				nullptr,			offsetof( GlobalData, m_groupSelectMinSelectSize ) },
+	{	"GroupSelectVolumeBase",			INI::parseReal,				nullptr,			offsetof( GlobalData, m_groupSelectVolumeBase ) },
+	{	"GroupSelectVolumeIncrement",	INI::parseReal,				nullptr,			offsetof( GlobalData, m_groupSelectVolumeIncrement ) },
+	{	"MaxUnitSelectSounds",				INI::parseInt,				nullptr,			offsetof( GlobalData, m_maxUnitSelectSounds ) },
 
-	{	"SelectionFlashSaturationFactor",	INI::parseReal,		NULL,			offsetof( GlobalData, m_selectionFlashSaturationFactor ) },
-	{	"SelectionFlashHouseColor",	      INI::parseBool,		NULL,			offsetof( GlobalData, m_selectionFlashHouseColor ) },
+	{	"SelectionFlashSaturationFactor",	INI::parseReal,		nullptr,			offsetof( GlobalData, m_selectionFlashSaturationFactor ) },
+	{	"SelectionFlashHouseColor",	      INI::parseBool,		nullptr,			offsetof( GlobalData, m_selectionFlashHouseColor ) },
 
-	{	"CameraAudibleRadius",				INI::parseReal,				NULL,			offsetof( GlobalData, m_cameraAudibleRadius ) },
-	{ "GroupMoveClickToGatherAreaFactor", INI::parseReal,	NULL,			offsetof( GlobalData, m_groupMoveClickToGatherFactor ) },
-	{ "ShakeSubtleIntensity",				INI::parseReal,				NULL,			offsetof( GlobalData, m_shakeSubtleIntensity ) },
-	{ "ShakeNormalIntensity",				INI::parseReal,				NULL,			offsetof( GlobalData, m_shakeNormalIntensity ) },
-	{ "ShakeStrongIntensity",				INI::parseReal,				NULL,			offsetof( GlobalData, m_shakeStrongIntensity ) },
-	{ "ShakeSevereIntensity",				INI::parseReal,				NULL,			offsetof( GlobalData, m_shakeSevereIntensity ) },
-	{ "ShakeCineExtremeIntensity",	INI::parseReal,				NULL,			offsetof( GlobalData, m_shakeCineExtremeIntensity ) },
-	{ "ShakeCineInsaneIntensity",		INI::parseReal,				NULL,			offsetof( GlobalData, m_shakeCineInsaneIntensity ) },
-	{ "MaxShakeIntensity",					INI::parseReal,				NULL,			offsetof( GlobalData, m_maxShakeIntensity ) },
-	{ "MaxShakeRange",							INI::parseReal,				NULL,			offsetof( GlobalData, m_maxShakeRange) },
-	{ "SellPercentage",							INI::parsePercentToReal,	NULL,			offsetof( GlobalData, m_sellPercentage ) },
-	{ "BaseRegenHealthPercentPerSecond", INI::parsePercentToReal, NULL,	offsetof( GlobalData, m_baseRegenHealthPercentPerSecond ) },
-	{ "BaseRegenDelay",							INI::parseDurationUnsignedInt, NULL,offsetof( GlobalData, m_baseRegenDelay ) },
+	{	"CameraAudibleRadius",				INI::parseReal,				nullptr,			offsetof( GlobalData, m_cameraAudibleRadius ) },
+	{ "GroupMoveClickToGatherAreaFactor", INI::parseReal,	nullptr,			offsetof( GlobalData, m_groupMoveClickToGatherFactor ) },
+
+#if !PRESERVE_RETAIL_BEHAVIOR
+	{ "AllowMoneyPerMinuteForPlayer",	INI::parseBool,			nullptr,			offsetof( GlobalData, m_allowMoneyPerMinuteForPlayer ) },
+#endif
+
+	{ "ShakeSubtleIntensity",				INI::parseReal,				nullptr,			offsetof( GlobalData, m_shakeSubtleIntensity ) },
+	{ "ShakeNormalIntensity",				INI::parseReal,				nullptr,			offsetof( GlobalData, m_shakeNormalIntensity ) },
+	{ "ShakeStrongIntensity",				INI::parseReal,				nullptr,			offsetof( GlobalData, m_shakeStrongIntensity ) },
+	{ "ShakeSevereIntensity",				INI::parseReal,				nullptr,			offsetof( GlobalData, m_shakeSevereIntensity ) },
+	{ "ShakeCineExtremeIntensity",	INI::parseReal,				nullptr,			offsetof( GlobalData, m_shakeCineExtremeIntensity ) },
+	{ "ShakeCineInsaneIntensity",		INI::parseReal,				nullptr,			offsetof( GlobalData, m_shakeCineInsaneIntensity ) },
+	{ "MaxShakeIntensity",					INI::parseReal,				nullptr,			offsetof( GlobalData, m_maxShakeIntensity ) },
+	{ "MaxShakeRange",							INI::parseReal,				nullptr,			offsetof( GlobalData, m_maxShakeRange) },
+	{ "SellPercentage",							INI::parsePercentToReal,	nullptr,			offsetof( GlobalData, m_sellPercentage ) },
+	{ "BaseRegenHealthPercentPerSecond", INI::parsePercentToReal, nullptr,	offsetof( GlobalData, m_baseRegenHealthPercentPerSecond ) },
+	{ "BaseRegenDelay",							INI::parseDurationUnsignedInt, nullptr,offsetof( GlobalData, m_baseRegenDelay ) },
 
 #ifdef ALLOW_SURRENDER
-	{ "PrisonBountyMultiplier",			INI::parseReal,				NULL,			offsetof( GlobalData, m_prisonBountyMultiplier ) },
-	{ "PrisonBountyTextColor",			INI::parseColorInt,		NULL,			offsetof( GlobalData, m_prisonBountyTextColor ) },
+	{ "PrisonBountyMultiplier",			INI::parseReal,				nullptr,			offsetof( GlobalData, m_prisonBountyMultiplier ) },
+	{ "PrisonBountyTextColor",			INI::parseColorInt,		nullptr,			offsetof( GlobalData, m_prisonBountyTextColor ) },
 #endif
 
-	{ "SpecialPowerViewObject",			INI::parseAsciiString,	NULL,			offsetof( GlobalData, m_specialPowerViewObjectName ) },
+	{ "SpecialPowerViewObject",			INI::parseAsciiString,	nullptr,			offsetof( GlobalData, m_specialPowerViewObjectName ) },
 
-	{ "StandardPublicBone", INI::parseAsciiStringVectorAppend, NULL, offsetof(GlobalData, m_standardPublicBones) },
-	{ "ShowMetrics",								INI::parseBool,				   NULL,		offsetof( GlobalData, m_showMetrics ) },
-  { "DefaultStartingCash",				Money::parseMoneyAmount, NULL,		offsetof( GlobalData, m_defaultStartingCash ) },
+	// TheSuperHackers @feature Customize the opacity (0..1) and shadows of build preview objects. Shadows are enabled by default.
+	// Note that disabling shadows loses a fair bit of contrast visually and warrants raising the opacity.
+	{ "ObjectPlacementOpacity", INI::parseReal, nullptr, offsetof( GlobalData, m_objectPlacementOpacity ) },
+	{ "ObjectPlacementShadows", INI::parseBool, nullptr, offsetof( GlobalData, m_objectPlacementShadows ) },
+
+	{ "StandardPublicBone", INI::parseAsciiStringVectorAppend, nullptr, offsetof(GlobalData, m_standardPublicBones) },
+	{ "ShowMetrics",								INI::parseBool,				   nullptr,		offsetof( GlobalData, m_showMetrics ) },
+  { "DefaultStartingCash",				Money::parseMoneyAmount, nullptr,		offsetof( GlobalData, m_defaultStartingCash ) },
 
 // NOTE: m_doubleClickTimeMS is still in use, but we disallow setting it from the GameData.ini file. It is now set in the constructor according to the windows parameter.
-//	{ "DoubleClickTimeMS",									INI::parseUnsignedInt,			NULL, offsetof( GlobalData, m_doubleClickTimeMS ) },
-	
-	{ "ShroudColor",		INI::parseRGBColor,						NULL,	offsetof( GlobalData, m_shroudColor) },
-	{ "ClearAlpha",			INI::parseUnsignedByte,				NULL,	offsetof( GlobalData, m_clearAlpha) },
-	{ "FogAlpha",				INI::parseUnsignedByte,				NULL,	offsetof( GlobalData, m_fogAlpha) },
-	{ "ShroudAlpha",		INI::parseUnsignedByte,				NULL,	offsetof( GlobalData, m_shroudAlpha) },
+//	{ "DoubleClickTimeMS",									INI::parseUnsignedInt,			nullptr, offsetof( GlobalData, m_doubleClickTimeMS ) },
 
-	{ "HotKeyTextColor",										INI::parseColorInt,					NULL,	offsetof( GlobalData, m_hotKeyTextColor ) },
+	{ "ShroudColor",		INI::parseRGBColor,						nullptr,	offsetof( GlobalData, m_shroudColor) },
+	{ "ClearAlpha",			INI::parseUnsignedByte,				nullptr,	offsetof( GlobalData, m_clearAlpha) },
+	{ "FogAlpha",				INI::parseUnsignedByte,				nullptr,	offsetof( GlobalData, m_fogAlpha) },
+	{ "ShroudAlpha",		INI::parseUnsignedByte,				nullptr,	offsetof( GlobalData, m_shroudAlpha) },
 
-	{ "PowerBarBase",												INI::parseInt,							NULL,	offsetof( GlobalData, m_powerBarBase) },
-	{ "PowerBarIntervals",									INI::parseReal,							NULL,	offsetof( GlobalData, m_powerBarIntervals) },
-	{ "PowerBarYellowRange",								INI::parseInt,							NULL,	offsetof( GlobalData, m_powerBarYellowRange) },
-	{ "UnlookPersistDuration",							INI::parseDurationUnsignedInt, NULL, offsetof( GlobalData, m_unlookPersistDuration) },
+	{ "HotKeyTextColor",										INI::parseColorInt,					nullptr,	offsetof( GlobalData, m_hotKeyTextColor ) },
 
-	{ "NetworkFPSHistoryLength", INI::parseInt, NULL, offsetof(GlobalData, m_networkFPSHistoryLength) },
-	{ "NetworkLatencyHistoryLength", INI::parseInt, NULL, offsetof(GlobalData, m_networkLatencyHistoryLength) },
-	{ "NetworkRunAheadMetricsTime", INI::parseInt, NULL, offsetof(GlobalData, m_networkRunAheadMetricsTime) },
-	{ "NetworkCushionHistoryLength", INI::parseInt, NULL, offsetof(GlobalData, m_networkCushionHistoryLength) },
-	{ "NetworkRunAheadSlack", INI::parseInt, NULL, offsetof(GlobalData, m_networkRunAheadSlack) },
-	{ "NetworkKeepAliveDelay", INI::parseInt, NULL, offsetof(GlobalData, m_networkKeepAliveDelay) },
-	{ "NetworkDisconnectTime", INI::parseInt, NULL, offsetof(GlobalData, m_networkDisconnectTime) },
-	{ "NetworkPlayerTimeoutTime", INI::parseInt, NULL, offsetof(GlobalData, m_networkPlayerTimeoutTime) },
-	{ "NetworkDisconnectScreenNotifyTime", INI::parseInt, NULL, offsetof(GlobalData, m_networkDisconnectScreenNotifyTime) },
-	
-	{ "KeyboardCameraRotateSpeed", INI::parseReal, NULL, offsetof( GlobalData, m_keyboardCameraRotateSpeed ) },
-	{ "PlayStats",									INI::parseInt,				NULL,			offsetof( GlobalData, m_playStats ) },
+	{ "PowerBarBase",												INI::parseInt,							nullptr,	offsetof( GlobalData, m_powerBarBase) },
+	{ "PowerBarIntervals",									INI::parseReal,							nullptr,	offsetof( GlobalData, m_powerBarIntervals) },
+	{ "PowerBarYellowRange",								INI::parseInt,							nullptr,	offsetof( GlobalData, m_powerBarYellowRange) },
+	{ "UnlookPersistDuration",							INI::parseDurationUnsignedInt, nullptr, offsetof( GlobalData, m_unlookPersistDuration) },
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
-	{ "DisableCameraFade",			INI::parseBool,				NULL,			offsetof( GlobalData, m_disableCameraFade ) },
-	{ "DisableScriptedInputDisabling",			INI::parseBool,		NULL,			offsetof( GlobalData, m_disableScriptedInputDisabling ) },
-	{ "DisableMilitaryCaption",			INI::parseBool,				NULL,			offsetof( GlobalData, m_disableMilitaryCaption ) },
-	{ "BenchmarkTimer",			INI::parseInt,				NULL,			offsetof( GlobalData, m_benchmarkTimer ) },
-	{ "CheckMemoryLeaks", INI::parseBool, NULL, offsetof(GlobalData, m_checkForLeaks) },
-	{ "Wireframe",								INI::parseBool,				NULL,			offsetof( GlobalData, m_wireframe ) },
-	{ "StateMachineDebug",				INI::parseBool,				NULL,			offsetof( GlobalData, m_stateMachineDebug ) },
-	{ "UseCameraConstraints",				INI::parseBool,				NULL,			offsetof( GlobalData, m_useCameraConstraints ) },
-	{ "ShroudOn",										INI::parseBool,				NULL,			offsetof( GlobalData, m_shroudOn ) },
-	{ "FogOfWarOn",										INI::parseBool,				NULL,			offsetof( GlobalData, m_fogOfWarOn ) },
-	{ "ShowCollisionExtents",				INI::parseBool,				NULL,			offsetof( GlobalData, m_showCollisionExtents ) },
-  { "ShowAudioLocations",  				INI::parseBool,				NULL,			offsetof( GlobalData, m_showAudioLocations ) },
-	{ "DebugProjectileTileWidth",		INI::parseReal,				NULL,			offsetof( GlobalData, m_debugProjectileTileWidth) },
-	{ "DebugProjectileTileDuration",INI::parseInt,				NULL,			offsetof( GlobalData, m_debugProjectileTileDuration) },
-	{ "DebugProjectileTileColor",		INI::parseRGBColor,		NULL,			offsetof( GlobalData, m_debugProjectileTileColor) },
-	{ "DebugVisibilityTileCount",		INI::parseInt,				NULL,			offsetof( GlobalData, m_debugVisibilityTileCount) },
-	{ "DebugVisibilityTileWidth",		INI::parseReal,				NULL,			offsetof( GlobalData, m_debugVisibilityTileWidth) },
-	{ "DebugVisibilityTileDuration",INI::parseInt,				NULL,			offsetof( GlobalData, m_debugVisibilityTileDuration) },
-	{ "DebugVisibilityTileTargettableColor",INI::parseRGBColor, NULL,	offsetof( GlobalData, m_debugVisibilityTargettableColor) },
-	{ "DebugVisibilityTileDeshroudColor",		INI::parseRGBColor,	NULL,	offsetof( GlobalData, m_debugVisibilityDeshroudColor) },
-	{ "DebugVisibilityTileGapColor",				INI::parseRGBColor,	NULL,	offsetof( GlobalData, m_debugVisibilityGapColor) },
-	{ "DebugThreatMapTileDuration",					INI::parseInt,							NULL,	offsetof( GlobalData, m_debugThreatMapTileDuration) },
-	{ "MaxDebugThreatMapValue",							INI::parseUnsignedInt,			NULL,	offsetof( GlobalData, m_maxDebugThreat) },
-	{ "DebugCashValueMapTileDuration",			INI::parseInt,							NULL,	offsetof( GlobalData, m_debugCashValueMapTileDuration) },
-	{ "MaxDebugCashValueMapValue",					INI::parseUnsignedInt,			NULL,	offsetof( GlobalData, m_maxDebugValue) },
-	{ "VTune", INI::parseBool,	NULL,			offsetof( GlobalData, m_vTune ) },
-	{ "SaveStats",									INI::parseBool,				NULL,			offsetof( GlobalData, m_saveStats ) },
-	{ "UseLocalMOTD",								INI::parseBool,				NULL,			offsetof( GlobalData, m_useLocalMOTD ) },
-	{ "BaseStatsDir",								INI::parseAsciiString,NULL,			offsetof( GlobalData, m_baseStatsDir ) },
-	{ "LocalMOTDPath",							INI::parseAsciiString,NULL,			offsetof( GlobalData, m_MOTDPath ) },
-	{ "ExtraLogging",								INI::parseBool,				NULL,			offsetof( GlobalData, m_extraLogging ) },
+	{ "NetworkFPSHistoryLength", INI::parseInt, nullptr, offsetof(GlobalData, m_networkFPSHistoryLength) },
+	{ "NetworkLatencyHistoryLength", INI::parseInt, nullptr, offsetof(GlobalData, m_networkLatencyHistoryLength) },
+	{ "NetworkRunAheadMetricsTime", INI::parseInt, nullptr, offsetof(GlobalData, m_networkRunAheadMetricsTime) },
+	{ "NetworkCushionHistoryLength", INI::parseInt, nullptr, offsetof(GlobalData, m_networkCushionHistoryLength) },
+	{ "NetworkRunAheadSlack", INI::parseInt, nullptr, offsetof(GlobalData, m_networkRunAheadSlack) },
+	{ "NetworkKeepAliveDelay", INI::parseInt, nullptr, offsetof(GlobalData, m_networkKeepAliveDelay) },
+	{ "NetworkDisconnectTime", INI::parseInt, nullptr, offsetof(GlobalData, m_networkDisconnectTime) },
+	{ "NetworkPlayerTimeoutTime", INI::parseInt, nullptr, offsetof(GlobalData, m_networkPlayerTimeoutTime) },
+	{ "NetworkDisconnectScreenNotifyTime", INI::parseInt, nullptr, offsetof(GlobalData, m_networkDisconnectScreenNotifyTime) },
+
+	{ "PlayStats",									INI::parseInt,				nullptr,			offsetof( GlobalData, m_playStats ) },
+
+#if defined(RTS_DEBUG)
+	{ "DisableCameraFade",			INI::parseBool,				nullptr,			offsetof( GlobalData, m_disableCameraFade ) },
+	{ "DisableScriptedInputDisabling",			INI::parseBool,		nullptr,			offsetof( GlobalData, m_disableScriptedInputDisabling ) },
+	{ "DisableMilitaryCaption",			INI::parseBool,				nullptr,			offsetof( GlobalData, m_disableMilitaryCaption ) },
+	{ "BenchmarkTimer",			INI::parseInt,				nullptr,			offsetof( GlobalData, m_benchmarkTimer ) },
+	{ "CheckMemoryLeaks", INI::parseBool, nullptr, offsetof(GlobalData, m_checkForLeaks) },
+	{ "Wireframe",								INI::parseBool,				nullptr,			offsetof( GlobalData, m_wireframe ) },
+	{ "StateMachineDebug",				INI::parseBool,				nullptr,			offsetof( GlobalData, m_stateMachineDebug ) },
+	{ "UseCameraConstraints",				INI::parseBool,				nullptr,			offsetof( GlobalData, m_useCameraConstraints ) },
+	{ "ShroudOn",										INI::parseBool,				nullptr,			offsetof( GlobalData, m_shroudOn ) },
+	{ "FogOfWarOn",										INI::parseBool,				nullptr,			offsetof( GlobalData, m_fogOfWarOn ) },
+	{ "ShowCollisionExtents",				INI::parseBool,				nullptr,			offsetof( GlobalData, m_showCollisionExtents ) },
+  { "ShowAudioLocations",  				INI::parseBool,				nullptr,			offsetof( GlobalData, m_showAudioLocations ) },
+	{ "DebugProjectileTileWidth",		INI::parseReal,				nullptr,			offsetof( GlobalData, m_debugProjectileTileWidth) },
+	{ "DebugProjectileTileDuration",INI::parseInt,				nullptr,			offsetof( GlobalData, m_debugProjectileTileDuration) },
+	{ "DebugProjectileTileColor",		INI::parseRGBColor,		nullptr,			offsetof( GlobalData, m_debugProjectileTileColor) },
+	{ "DebugVisibilityTileCount",		INI::parseInt,				nullptr,			offsetof( GlobalData, m_debugVisibilityTileCount) },
+	{ "DebugVisibilityTileWidth",		INI::parseReal,				nullptr,			offsetof( GlobalData, m_debugVisibilityTileWidth) },
+	{ "DebugVisibilityTileDuration",INI::parseInt,				nullptr,			offsetof( GlobalData, m_debugVisibilityTileDuration) },
+	{ "DebugVisibilityTileTargettableColor",INI::parseRGBColor, nullptr,	offsetof( GlobalData, m_debugVisibilityTargettableColor) },
+	{ "DebugVisibilityTileDeshroudColor",		INI::parseRGBColor,	nullptr,	offsetof( GlobalData, m_debugVisibilityDeshroudColor) },
+	{ "DebugVisibilityTileGapColor",				INI::parseRGBColor,	nullptr,	offsetof( GlobalData, m_debugVisibilityGapColor) },
+	{ "DebugThreatMapTileDuration",					INI::parseInt,							nullptr,	offsetof( GlobalData, m_debugThreatMapTileDuration) },
+	{ "MaxDebugThreatMapValue",							INI::parseUnsignedInt,			nullptr,	offsetof( GlobalData, m_maxDebugThreat) },
+	{ "DebugCashValueMapTileDuration",			INI::parseInt,							nullptr,	offsetof( GlobalData, m_debugCashValueMapTileDuration) },
+	{ "MaxDebugCashValueMapValue",					INI::parseUnsignedInt,			nullptr,	offsetof( GlobalData, m_maxDebugValue) },
+	{ "VTune", INI::parseBool,	nullptr,			offsetof( GlobalData, m_vTune ) },
+	{ "SaveStats",									INI::parseBool,				nullptr,			offsetof( GlobalData, m_saveStats ) },
+	{ "UseLocalMOTD",								INI::parseBool,				nullptr,			offsetof( GlobalData, m_useLocalMOTD ) },
+	{ "BaseStatsDir",								INI::parseAsciiString,nullptr,			offsetof( GlobalData, m_baseStatsDir ) },
+	{ "LocalMOTDPath",							INI::parseAsciiString,nullptr,			offsetof( GlobalData, m_MOTDPath ) },
+	{ "ExtraLogging",								INI::parseBool,				nullptr,			offsetof( GlobalData, m_extraLogging ) },
 #endif
 
-	{ NULL,					NULL,						NULL,						0 }  // keep this last
+	{ nullptr,					nullptr,						nullptr,						0 }
 
 };
 
@@ -534,25 +548,28 @@ GlobalData::GlobalData()
 	Int i, j;
 
 	//
-	// we have now instanced a global data instance, if theOriginal is NULL, this is
-	// *the* very first instance and it shall be recorded.  This way, when we load 
+	// we have now instanced a global data instance, if theOriginal is null, this is
+	// *the* very first instance and it shall be recorded.  This way, when we load
 	// overrides of the global data, we can revert to the common, original data
 	// in m_theOriginal
 	//
-	if( m_theOriginal == NULL )
+	if( m_theOriginal == nullptr )
 		m_theOriginal = this;
-	m_next = NULL;
+	m_next = nullptr;
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+#if defined(RTS_DEBUG) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 	m_specialPowerUsesDelay = TRUE;
 #endif
   m_TiVOFastMode = FALSE;
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG) || ENABLE_CONFIGURABLE_SHROUD
+	m_shroudOn = TRUE;
+#endif
+
+#if defined(RTS_DEBUG)
 	m_wireframe = 0;
 	m_stateMachineDebug = FALSE;
 	m_useCameraConstraints = TRUE;
-	m_shroudOn = TRUE;
 	m_fogOfWarOn = FALSE;
 	m_jabberOn = FALSE;
 	m_munkeeOn = FALSE;
@@ -564,17 +581,17 @@ GlobalData::GlobalData()
 	m_debugVisibilityTileDuration = LOGICFRAMES_PER_SECOND;
 	m_debugProjectilePath = FALSE;
 	m_debugProjectileTileWidth = 10;
-	m_debugProjectileTileDuration = LOGICFRAMES_PER_SECOND;  // Changed By Sadullah Nader
+	m_debugProjectileTileDuration = LOGICFRAMES_PER_SECOND;
 	m_debugThreatMap = FALSE;
 	m_maxDebugThreat = 5000;
-	m_debugThreatMapTileDuration = LOGICFRAMES_PER_SECOND;  // Changed By Sadullah Nader
+	m_debugThreatMapTileDuration = LOGICFRAMES_PER_SECOND;
 	m_debugCashValueMap = FALSE;
 	m_maxDebugValue = 10000;
-	m_debugCashValueMapTileDuration = LOGICFRAMES_PER_SECOND; // Changed By Sadullah Nader
+	m_debugCashValueMapTileDuration = LOGICFRAMES_PER_SECOND;
 	m_vTune = false;
 	m_checkForLeaks = TRUE;
 	m_benchmarkTimer = -1;
-  
+
 
 	m_allowUnselectableSelection = FALSE;
 	m_disableCameraFade = false;
@@ -615,8 +632,8 @@ GlobalData::GlobalData()
 	m_chipSetType = 0;
 	m_headless = FALSE;
 	m_windowed = 0;
-	m_xResolution = 800;
-	m_yResolution = 600;
+	m_xResolution = DEFAULT_DISPLAY_WIDTH;
+	m_yResolution = DEFAULT_DISPLAY_HEIGHT;
 	m_maxShellScreens = 0;
 	m_useCloudMap = FALSE;
 	m_use3WayTerrainBlends = 1;
@@ -652,7 +669,7 @@ GlobalData::GlobalData()
 	m_waterPositionX = 0.0f;
 	m_waterPositionY = 0.0f;
 	m_waterPositionZ = 0.0f;
-	m_waterExtentX = 0.0f;	
+	m_waterExtentX = 0.0f;
 	m_waterExtentY = 0.0f;
 	m_waterType = 0;
 	m_featherWater = FALSE;
@@ -678,10 +695,8 @@ GlobalData::GlobalData()
 		m_vertexWaterAttenuationB[ i ] = 0.0f;
 		m_vertexWaterAttenuationC[ i ] = 0.0f;
 		m_vertexWaterAttenuationRange[ i ] = 0.0f;
-		//Added By Sadullah Nader
-		//Initializations missing and needed
 		m_vertexWaterAvailableMaps[i].clear();
-	}  // end for i
+	}
 
 	m_skyBoxPositionZ = 0.0f;
 	m_drawSkyBox = FALSE;
@@ -752,7 +767,7 @@ GlobalData::GlobalData()
 
 	for (j=TIME_OF_DAY_FIRST; j<TIME_OF_DAY_COUNT; j++)
 		m_infantryLightScale[j] = 1.5f;
-	
+
 	m_scriptOverrideInfantryLightScale = -1.0f;
 
 	m_numGlobalLights = 3;
@@ -778,7 +793,7 @@ GlobalData::GlobalData()
 
 	m_useFX = TRUE;
 
-//	m_inGame = FALSE;	
+//	m_inGame = FALSE;
 
 	m_noDraw = 0;
 	m_particleScale = 1.0f;
@@ -790,9 +805,7 @@ GlobalData::GlobalData()
 	m_autoSmokeParticleMediumMax = 0;
 	m_autoSmokeParticleLargeMax = 0;
 	m_autoAflameParticleMax = 0;
-  
-	// Added By Sadullah Nader
-	// Initializations missing and needed
+
 	m_autoFireParticleSmallPrefix.clear();
 	m_autoFireParticleMediumPrefix.clear();
 	m_autoFireParticleLargePrefix.clear();
@@ -815,8 +828,6 @@ GlobalData::GlobalData()
 	m_drawEntireTerrain = FALSE;
 	m_maxParticleCount = 0;
 	m_maxFieldParticleCount = 30;
-	
-	// End Add
 
 	m_debugAI = AI_DEBUG_NONE;
 	m_debugSupplyCenterPlacement = FALSE;
@@ -826,6 +837,8 @@ GlobalData::GlobalData()
 	m_showObjectHealth = FALSE;
 
 	m_particleEdit = FALSE;
+
+	m_viewportHeightScale = 0.80f; // Default value for the original Control Bar.
 
 	m_cameraPitch = 0.0f;
 	m_cameraYaw = 0.0f;
@@ -867,7 +880,10 @@ GlobalData::GlobalData()
 
 	m_standardMinefieldDensity = 0.01f;
 	m_standardMinefieldDistance = 40.0f;
-	
+
+	m_objectPlacementOpacity = 0.45f;
+	m_objectPlacementShadows = TRUE;
+
 	m_groupSelectMinSelectSize = 5;
 	m_groupSelectVolumeBase = 0.5f;
 	m_groupSelectVolumeIncrement = 0.02f;
@@ -924,10 +940,19 @@ GlobalData::GlobalData()
 	m_firewallPortAllocationDelta = 0;
 	m_loadScreenDemo = FALSE;
 	m_disableRender = false;
-	
+
 	m_saveCameraInReplay = FALSE;
 	m_useCameraInReplay = FALSE;
+	m_enablePlayerObserver = FALSE;
 
+	m_networkLatencyFontSize = 8;
+	m_renderFpsFontSize = 8;
+	m_systemTimeFontSize = 8;
+	m_gameTimeFontSize = 8;
+	m_playerInfoListFontSize = 8;
+
+	m_showMoneyPerMinute = FALSE;
+	m_allowMoneyPerMinuteForPlayer = FALSE;
 
 	m_debugShowGraphicalFramerate = FALSE;
 
@@ -957,6 +982,9 @@ GlobalData::GlobalData()
 	m_initialFile.clear();
 	m_pendingFile.clear();
 
+	m_simulateReplays.clear();
+	m_simulateReplayJobs = SIMULATE_REPLAYS_SEQUENTIAL;
+
 	for (i = LEVEL_FIRST; i <= LEVEL_LAST; ++i)
 		m_healthBonus[i] = 1.0f;
 
@@ -978,109 +1006,40 @@ GlobalData::GlobalData()
 	m_afterIntro = FALSE;
 	m_allowExitOutOfMovies = FALSE;
 	m_loadScreenRender = FALSE;
-  m_musicVolumeFactor = 0.5f;
- 	m_SFXVolumeFactor = 0.5f;
-  m_voiceVolumeFactor = 0.5f;
-  m_3DSoundPref = false;
 
 	m_keyboardDefaultScrollFactor = m_keyboardScrollFactor = 0.5f;
+	m_drawScrollAnchor = FALSE;
+	m_moveScrollAnchor = FALSE;
 	m_scrollAmountCutoff = 10.0f;
 	m_cameraAdjustSpeed = 0.1f;
 	m_enforceMaxCameraHeight = TRUE;
-	
+
 	m_animateWindows = TRUE;
-	
+
 	m_iniCRC = 0;
 	m_exeCRC = 0;
-	
-	// lets CRC the executable!  Whee!
-	const Int blockSize = 65536;
-	CRC exeCRC;
-	File *fp;
-	// TheSuperHackers @tweak SkyAero/xezon 27/05/2025
-	// Simulate the EXE's CRC value to force Network and Replay compatibility with another build.
-#if (defined(_MSC_VER) && _MSC_VER < 1300) && RETAIL_COMPATIBLE_CRC
 
-#define GENERALSMD_104_CD_EXE_CRC    0x4f6c5afe
-#define GENERALSMD_104_STEAM_EXE_CRC 0xcb430f5f
-#define GENERALSMD_104_EAAPP_EXE_CRC 0x488d90f9
-
-	exeCRC.set(GENERALSMD_104_CD_EXE_CRC);
-	DEBUG_LOG(("Fake EXE CRC is 0x%8.8X\n", exeCRC.get()));
-
-#else
-	{
-		Char buffer[ _MAX_PATH ];
-		GetModuleFileName( NULL, buffer, sizeof( buffer ) );
-		fp = TheFileSystem->openFile(buffer, File::READ | File::BINARY);
-		if (fp != NULL) {
-			unsigned char crcBlock[blockSize];
-			Int amtRead = 0;
-			while ( (amtRead=fp->read(crcBlock, blockSize)) > 0 )
-			{
-				exeCRC.computeCRC(crcBlock, amtRead);
-			}
-			DEBUG_LOG(("EXE CRC is 0x%8.8X\n", exeCRC.get()));
-			fp->close();
-			fp = NULL;
-		}
-	}
-#endif
-
-	UnsignedInt version = 0;
-	if (TheVersion)
-	{
-		version = TheVersion->getVersionNumber();
-		exeCRC.computeCRC( &version, sizeof(UnsignedInt) );
-	}
-	// Add in MP scripts to the EXE CRC, since the game will go out of sync if they change
-	fp = TheFileSystem->openFile("Data\\Scripts\\SkirmishScripts.scb", File::READ | File::BINARY);
-	if (fp != NULL) {
-		unsigned char crcBlock[blockSize];
-		Int amtRead = 0;
-		while ( (amtRead=fp->read(crcBlock, blockSize)) > 0 )
-		{
-			exeCRC.computeCRC(crcBlock, amtRead);
-		}
-		fp->close();
-		fp = NULL;
-	}
-	fp = TheFileSystem->openFile("Data\\Scripts\\MultiplayerScripts.scb", File::READ | File::BINARY);
-	if (fp != NULL) {
-		unsigned char crcBlock[blockSize];
-		Int amtRead = 0;
-		while ( (amtRead=fp->read(crcBlock, blockSize)) > 0 )
-		{
-			exeCRC.computeCRC(crcBlock, amtRead);
-		}
-		fp->close();
-		fp = NULL;
-	}
-
-	m_exeCRC = exeCRC.get();
-	DEBUG_LOG(("EXE+Version(%d.%d)+SCB CRC is 0x%8.8X\n", version >> 16, version & 0xffff, m_exeCRC));
-	
 	m_movementPenaltyDamageState = BODY_REALLYDAMAGED;
-	
+
 	m_shouldUpdateTGAToDDS = FALSE;
-	
+
 	// Default DoubleClickTime to System double click time.
 	m_doubleClickTimeMS = GetDoubleClickTime(); // Note: This is actual MS, not frames.
-	
+
 #ifdef DUMP_PERF_STATS
 	m_dumpPerformanceStatistics = FALSE;
   m_dumpStatsAtInterval = FALSE;
-  m_statsInterval = 30;      
+  m_statsInterval = 30;
 #endif
 
 	m_forceBenchmark = FALSE;	///<forces running of CPU detection benchmark, even on known cpu's.
 
 	m_keyboardCameraRotateSpeed = 0.1f;
 
-  // Set user data directory based on registry settings instead of INI parameters. This allows us to 
+  // Set user data directory based on registry settings instead of INI parameters. This allows us to
   // localize the leaf name.
   char temp[_MAX_PATH + 1];
-  if (::SHGetSpecialFolderPath(NULL, temp, CSIDL_PERSONAL, true))
+  if (::SHGetSpecialFolderPath(nullptr, temp, CSIDL_PERSONAL, true))
   {
     AsciiString myDocumentsDirectory = temp;
 
@@ -1088,7 +1047,7 @@ GlobalData::GlobalData()
       myDocumentsDirectory.concat( '\\' );
 
     AsciiString leafName;
-    
+
     if ( !GetStringFromRegistry( "", "UserDataLeafName", leafName ) )
     {
       // Use something, anything
@@ -1100,33 +1059,32 @@ GlobalData::GlobalData()
     if (myDocumentsDirectory.getCharAt( myDocumentsDirectory.getLength() - 1) != '\\')
       myDocumentsDirectory.concat( '\\' );
 
-    CreateDirectory(myDocumentsDirectory.str(), NULL);
+    CreateDirectory(myDocumentsDirectory.str(), nullptr);
     m_userDataDir = myDocumentsDirectory;
   }
-	
+
 	//-allAdvice feature
 	//m_allAdvice = FALSE;
 
 	m_clientRetaliationModeEnabled = TRUE; //On by default.
 
-}  // end GlobalData
+}
 
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-GlobalData::~GlobalData( void )
+GlobalData::~GlobalData()
 {
-	DEBUG_ASSERTCRASH( TheWritableGlobalData->m_next == NULL, ("~GlobalData: theOriginal is not original\n") );
+	DEBUG_ASSERTCRASH( TheWritableGlobalData->m_next == nullptr, ("~GlobalData: theOriginal is not original") );
 
-	if (m_weaponBonusSet)
-		deleteInstance(m_weaponBonusSet);
+	deleteInstance(m_weaponBonusSet);
 
 	if( m_theOriginal == this )	{
-		m_theOriginal = NULL;
-		TheWritableGlobalData = NULL;
+		m_theOriginal = nullptr;
+		TheWritableGlobalData = nullptr;
 	}
 
-}  // end ~GlobalData
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -1153,40 +1111,40 @@ Bool GlobalData::setTimeOfDay( TimeOfDay tod )
 	* initial values of the newly created instance will be a copy of the current
 	* data (or the most recently created override) */
 //-------------------------------------------------------------------------------------------------
-GlobalData *GlobalData::newOverride( void )
+GlobalData *GlobalData::newOverride()
 {
 	// TheSuperHackers @info This copy is not implemented in VS6 builds
-	GlobalData *override = NEW GlobalData;
+	GlobalData *overrideData = NEW GlobalData;
 
 	// copy the data from the latest override (TheWritableGlobalData) to the newly created instance
-	DEBUG_ASSERTCRASH( TheWritableGlobalData, ("GlobalData::newOverride() - no existing data\n") );
-	*override = *TheWritableGlobalData;
+	DEBUG_ASSERTCRASH( TheWritableGlobalData, ("GlobalData::newOverride() - no existing data") );
+	*overrideData = *TheWritableGlobalData;
 
 	//
 	// link the override to the previously created one, the link order is important here
 	// for the reset function, if you change the way things are linked
 	// for overrides make sure you update the reset function
 	//
-	override->m_next = TheWritableGlobalData;
+	overrideData->m_next = TheWritableGlobalData;
 
 	// set this new instance as the 'most current override' where we will access all data from
-	TheWritableGlobalData = override;
+	TheWritableGlobalData = overrideData;
 
-	return override;
+	return overrideData;
 
-}  // end newOveride
+}
 
 //-------------------------------------------------------------------------------------------------
-void GlobalData::init( void )
+void GlobalData::init()
 {
-	// nothing
+	m_exeCRC = generateExeCRC();
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Reset, remove any override data instances and return to just the initial one
 	*/
 //-------------------------------------------------------------------------------------------------
-void GlobalData::reset( void )
+void GlobalData::reset()
 {
 	DEBUG_ASSERTCRASH(this == TheWritableGlobalData, ("calling reset on wrong GlobalData"));
 
@@ -1198,7 +1156,7 @@ void GlobalData::reset( void )
 	{
 
 		// get next instance
-		GlobalData* next = TheWritableGlobalData->m_next;
+		GlobalData* next = m_next;
 
 		// delete the head of the global data list (the latest override)
 		delete TheWritableGlobalData;
@@ -1206,16 +1164,16 @@ void GlobalData::reset( void )
 		// set next as top
 		TheWritableGlobalData = next;
 
-	}  // end while
+	}
 
 	//
 	// we now have the one single global data in TheWritableGlobalData singleton, lets sanity check
 	// some of all that
 	//
-	DEBUG_ASSERTCRASH( TheWritableGlobalData->m_next == NULL, ("ResetGlobalData: theOriginal is not original\n") );
-	DEBUG_ASSERTCRASH( TheWritableGlobalData == GlobalData::m_theOriginal, ("ResetGlobalData: oops\n") );
+	DEBUG_ASSERTCRASH( TheWritableGlobalData->m_next == nullptr, ("ResetGlobalData: theOriginal is not original") );
+	DEBUG_ASSERTCRASH( TheWritableGlobalData == GlobalData::m_theOriginal, ("ResetGlobalData: oops") );
 
-}  // end ResetGlobalData
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Parse GameData entry */
@@ -1225,21 +1183,21 @@ void GlobalData::parseGameDataDefinition( INI* ini )
 	if( TheWritableGlobalData && ini->getLoadType() != INI_LOAD_MULTIFILE)
 	{
 
-		// 
+		//
 		// if the type of loading we're doing creates override data, we need to
 		// be loading into a new override item
 		//
 		if( ini->getLoadType() == INI_LOAD_CREATE_OVERRIDES )
 			TheWritableGlobalData->newOverride();
 
-	}  // end if
+	}
 	else if (!TheWritableGlobalData)
 	{
 
 		// we don't have any global data instance at all yet, create one
 		TheWritableGlobalData = NEW GlobalData;
 
-	}  // end else
+	}
 	// If we're multifile, then continue loading stuff into the Global Data as normal.
 
 	// parse the ini weapon definition
@@ -1252,15 +1210,25 @@ void GlobalData::parseGameDataDefinition( INI* ini )
 	TheWritableGlobalData->m_clientRetaliationModeEnabled = optionPref.getRetaliationModeEnabled();
 	TheWritableGlobalData->m_doubleClickAttackMove = optionPref.getDoubleClickAttackMoveEnabled();
 	TheWritableGlobalData->m_keyboardScrollFactor = optionPref.getScrollFactor();
+	TheWritableGlobalData->m_drawScrollAnchor = optionPref.getDrawScrollAnchor();
+	TheWritableGlobalData->m_moveScrollAnchor = optionPref.getMoveScrollAnchor();
 	TheWritableGlobalData->m_defaultIP = optionPref.getLANIPAddress();
 	TheWritableGlobalData->m_firewallSendDelay = optionPref.getSendDelay();
 	TheWritableGlobalData->m_firewallBehavior = optionPref.getFirewallBehavior();
 	TheWritableGlobalData->m_firewallPortAllocationDelta = optionPref.getFirewallPortAllocationDelta();
 	TheWritableGlobalData->m_firewallPortOverride = optionPref.getFirewallPortOverride();
-	
+
 	TheWritableGlobalData->m_saveCameraInReplay = optionPref.saveCameraInReplays();
 	TheWritableGlobalData->m_useCameraInReplay = optionPref.useCameraInReplays();
-	
+	TheWritableGlobalData->m_enablePlayerObserver = optionPref.getPlayerObserverEnabled();
+
+	TheWritableGlobalData->m_networkLatencyFontSize = optionPref.getNetworkLatencyFontSize();
+	TheWritableGlobalData->m_renderFpsFontSize = optionPref.getRenderFpsFontSize();
+	TheWritableGlobalData->m_systemTimeFontSize = optionPref.getSystemTimeFontSize();
+	TheWritableGlobalData->m_gameTimeFontSize = optionPref.getGameTimeFontSize();
+	TheWritableGlobalData->m_playerInfoListFontSize = optionPref.getPlayerInfoListFontSize();
+	TheWritableGlobalData->m_showMoneyPerMinute = optionPref.getShowMoneyPerMinute();
+
 	Int val=optionPref.getGammaValue();
 	//generate a value between 0.6 and 2.0.
 	if (val < 50)
@@ -1281,3 +1249,87 @@ void GlobalData::parseGameDataDefinition( INI* ini )
 	TheWritableGlobalData->m_yResolution = yres;
 }
 
+void GlobalData::parseCustomDefinition()
+{
+	if (addon::HasFullviewportDat())
+	{
+		// TheSuperHackers @tweak xezon 03/08/2025 Force full viewport for 'Control Bar Pro' Addons like GenTool did it.
+		m_viewportHeightScale = 1.0f;
+	}
+}
+
+UnsignedInt GlobalData::generateExeCRC()
+{
+	DEBUG_ASSERTCRASH(TheFileSystem != nullptr, ("TheFileSystem is null"));
+
+	// lets CRC the executable!  Whee!
+	const Int blockSize = 65536;
+	CRC exeCRC;
+	File *fp;
+	// TheSuperHackers @tweak SkyAero/xezon 27/05/2025
+	// Simulate the EXE's CRC value to force Network and Replay compatibility with another build.
+#if (defined(_MSC_VER) && _MSC_VER < 1300) && RETAIL_COMPATIBLE_CRC
+
+#define GENERALSMD_104_CD_EXE_CRC    0x3b6fb2cfu
+#define GENERALSMD_104_STEAM_EXE_CRC 0xf6a4221bu
+#define GENERALSMD_104_EAAPP_EXE_CRC 0xc4181eb9u
+
+	exeCRC.set(GENERALSMD_104_CD_EXE_CRC);
+	DEBUG_LOG(("Fake EXE CRC is 0x%8.8X", exeCRC.get()));
+
+#else
+	{
+		Char buffer[ _MAX_PATH ];
+		GetModuleFileName( nullptr, buffer, sizeof( buffer ) );
+		fp = TheFileSystem->openFile(buffer, File::READ | File::BINARY);
+		if (fp != nullptr) {
+			unsigned char crcBlock[blockSize];
+			Int amtRead = 0;
+			while ( (amtRead=fp->read(crcBlock, blockSize)) > 0 )
+			{
+				exeCRC.computeCRC(crcBlock, amtRead);
+			}
+			DEBUG_LOG(("EXE CRC is 0x%8.8X", exeCRC.get()));
+			fp->close();
+			fp = nullptr;
+		}
+		else {
+			DEBUG_CRASH(("Executable file has failed to open"));
+		}
+	}
+#endif
+
+	UnsignedInt version = 0;
+	if (TheVersion)
+	{
+		version = TheVersion->getVersionNumber();
+		exeCRC.computeCRC( &version, sizeof(UnsignedInt) );
+	}
+	// Add in MP scripts to the EXE CRC, since the game will go out of sync if they change
+	fp = TheFileSystem->openFile("Data\\Scripts\\SkirmishScripts.scb", File::READ | File::BINARY);
+	if (fp != nullptr) {
+		unsigned char crcBlock[blockSize];
+		Int amtRead = 0;
+		while ( (amtRead=fp->read(crcBlock, blockSize)) > 0 )
+		{
+			exeCRC.computeCRC(crcBlock, amtRead);
+		}
+		fp->close();
+		fp = nullptr;
+	}
+	fp = TheFileSystem->openFile("Data\\Scripts\\MultiplayerScripts.scb", File::READ | File::BINARY);
+	if (fp != nullptr) {
+		unsigned char crcBlock[blockSize];
+		Int amtRead = 0;
+		while ( (amtRead=fp->read(crcBlock, blockSize)) > 0 )
+		{
+			exeCRC.computeCRC(crcBlock, amtRead);
+		}
+		fp->close();
+		fp = nullptr;
+	}
+
+	DEBUG_LOG(("EXE+Version(%d.%d)+SCB CRC is 0x%8.8X", version >> 16, version & 0xffff, exeCRC.get()));
+
+	return exeCRC.get();
+}

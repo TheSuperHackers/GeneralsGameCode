@@ -1,33 +1,28 @@
 # z stands for Zero Hour, i stands for Interface
-add_library(zi_gameengine INTERFACE)
 add_library(zi_gameengine_include INTERFACE)
-add_library(zi_gameenginedevice_include INTERFACE)
-add_library(zi_libraries_include INTERFACE)
 add_library(zi_libraries_source_wwvegas INTERFACE)
-add_library(zi_libraries_source_wwvegas_ww3d2 INTERFACE)
-add_library(zi_libraries_source_wwvegas_wwmath INTERFACE)
-add_library(zi_libraries_source_wwvegas_wwsaveload INTERFACE)
 add_library(zi_main INTERFACE)
 add_library(zi_always INTERFACE)
+add_library(zi_always_no_pch INTERFACE) # Use this for Shared Libs with MFC AFX
 
-target_include_directories(zi_gameengine INTERFACE "GameEngine")
 target_include_directories(zi_gameengine_include INTERFACE "GameEngine/Include")
-target_include_directories(zi_gameenginedevice_include INTERFACE "GameEngineDevice/Source")
-target_include_directories(zi_libraries_include INTERFACE "Libraries/Include")
 target_include_directories(zi_libraries_source_wwvegas INTERFACE "Libraries/Source/WWVegas")
-target_include_directories(zi_libraries_source_wwvegas_ww3d2 INTERFACE "Libraries/Source/WWVegas/WW3D2")
-target_include_directories(zi_libraries_source_wwvegas_wwmath INTERFACE "Libraries/Source/WWVegas/WWMath")
-target_include_directories(zi_libraries_source_wwvegas_wwsaveload INTERFACE "Libraries/Source/WWVegas/WWSaveLoad")
 target_include_directories(zi_main INTERFACE "Main")
 
 target_compile_definitions(zi_always INTERFACE
     RTS_ZEROHOUR=1
 )
+target_compile_definitions(zi_always_no_pch INTERFACE
+    RTS_ZEROHOUR=1
+)
+target_link_libraries(zi_gameengine_include INTERFACE
+    corei_gameengine_include
+)
 target_link_libraries(zi_always INTERFACE
-    core_utility
-    zi_libraries_include
-    # Must stay below so headers from game are included first
-    corei_libraries_include
+    corei_always # Must stay below so headers from game are included first
+)
+target_link_libraries(zi_always_no_pch INTERFACE
+    corei_always_no_pch # Must stay below so headers from game are included first
 )
 
 # Contains internal libraries

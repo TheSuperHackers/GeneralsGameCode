@@ -31,10 +31,6 @@
 
 #pragma once
 
-#ifndef GETCD_H
-#define GETCD_H
-
-
 extern const char *	_CD_Volume_Label[];
 extern int		_Num_Volumes;
 
@@ -197,7 +193,7 @@ struct	StopType {
 #define MAX_CD_DRIVES	26
 #define NO_CD_DRIVE		-1
 
-class	GetCDClass 
+class	GetCDClass
 {
 	public:
 		GetCDClass	( void );							// This is the default constructor
@@ -277,7 +273,7 @@ inline int GetCDClass::Get_Next_CD_Drive(void)
  *==================================================================================*/
 
 #ifdef NOT_FOR_WIN95
-class RedBookClass : public GetCDClass 
+class RedBookClass : public GetCDClass
 {
 	public:
 
@@ -318,6 +314,3 @@ extern GetCDClass		CDList;
 // Functions
 //-----------------------------------------------------------------------------
 bool  CD_Volume_Verification ( int cd_drive, char *volume_label, char *volume_to_find );
-
-
-#endif // PLAYCD_H

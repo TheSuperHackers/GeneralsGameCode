@@ -35,7 +35,7 @@ static char THIS_FILE[] = __FILE__;
 // VerifyDlg dialog
 
 
-VerifyDlg::VerifyDlg( BabylonText *ntext, LangID langid,  const char *path, CWnd* pParent /*=NULL*/)
+VerifyDlg::VerifyDlg( BabylonText *ntext, LangID langid,  const char *path, CWnd* pParent /*=nullptr*/)
 	: CDialog(VerifyDlg::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(VerifyDlg)
@@ -71,12 +71,12 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // VerifyDlg message handlers
 
-BOOL VerifyDlg::OnInitDialog() 
+BOOL VerifyDlg::OnInitDialog()
 {
 	//long total;
 	CDialog::OnInitDialog();
 	RECT rect;
-	
+
 	// TODO: Add extra initialization here
 
 	this->GetWindowRect ( &rect );
@@ -118,45 +118,45 @@ BOOL VerifyDlg::OnInitDialog()
 		HDLSDEVICE dls;
 
 		AIL_quick_handles ( &dig, &mdi, &dls );
-		stream = AIL_open_stream ( dig, wavefile, 0 ); 
+		stream = AIL_open_stream ( dig, wavefile, 0 );
 		if ( stream )
 		{
-			timer = SetTimer( TIMERID, 300, NULL );
-			AIL_stream_ms_position ( stream, &total, NULL );
+			timer = SetTimer( TIMERID, 300, nullptr );
+			AIL_stream_ms_position ( stream, &total, nullptr );
 			slider->SetRange ( 0, total );
 		}
 #endif
 
 	PostMessage ( WM_COMMAND, MAKEWPARAM ( IDC_PLAY, BN_CLICKED ));
-	
+
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void VerifyDlg::OnNomatch() 
+void VerifyDlg::OnNomatch()
 {
 	// TODO: Add your control notification handler code here
 		CloseAudio ();
 		this->EndDialog ( IDSKIP );
 }
 
-void VerifyDlg::OnMatch() 
+void VerifyDlg::OnMatch()
 {
 	// TODO: Add your control notification handler code here
 	CloseAudio ();
 	CDialog::OnOK();
-	
+
 }
 
-void VerifyDlg::OnCancel() 
+void VerifyDlg::OnCancel()
 {
 	// TODO: Add extra cleanup here
-	
+
 	CloseAudio ();
 	CDialog::OnCancel();
 }
 
-void VerifyDlg::OnStop() 
+void VerifyDlg::OnStop()
 {
 	// TODO: Add your control notification handler code here
 	#if 0
@@ -168,7 +168,7 @@ void VerifyDlg::OnStop()
 		#endif
 }
 
-void VerifyDlg::OnPlay() 
+void VerifyDlg::OnPlay()
 {
 	// TODO: Add your control notification handler code here
 	#if 0
@@ -186,7 +186,7 @@ void VerifyDlg::OnPlay()
 	#endif
 }
 
-void VerifyDlg::OnPause() 
+void VerifyDlg::OnPause()
 {
 	// TODO: Add your control notification handler code here
 	#if 0
@@ -202,7 +202,7 @@ void VerifyDlg::OnPause()
 		}
 	}
 	#endif
-	
+
 }
 
 void VerifyDlg::CloseAudio ( void )
@@ -211,12 +211,12 @@ void VerifyDlg::CloseAudio ( void )
 	if ( stream )
 	{
 		AIL_close_stream ( stream );
-		stream = NULL;
+		stream = nullptr;
 	}
 	#endif
 }
 
-void VerifyDlg::OnTimer(UINT nIDEvent) 
+void VerifyDlg::OnTimer(UINT nIDEvent)
 {
 	// TODO: Add your message handler code here and/or call default
 	if ( nIDEvent == TIMERID )
@@ -225,7 +225,7 @@ void VerifyDlg::OnTimer(UINT nIDEvent)
 		if ( stream )
 		{
 			long current;
-			AIL_stream_ms_position ( stream, NULL, &current );
+			AIL_stream_ms_position ( stream, nullptr, &current );
 			slider->SetPos ( current );
 		}
 	#endif

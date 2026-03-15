@@ -16,37 +16,36 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*********************************************************************************************** 
- ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Command & Conquer                                            * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/wwlib/bufffile.cpp                           $* 
- *                                                                                             * 
+/***********************************************************************************************
+ ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Command & Conquer                                            *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/wwlib/bufffile.cpp                           $*
+ *                                                                                             *
  *                      $Author:: Jani_p                                                      $*
- *                                                                                             * 
+ *                                                                                             *
  *                     $Modtime:: 9/13/01 7:15p                                               $*
- *                                                                                             * 
+ *                                                                                             *
  *                    $Revision:: 4                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------* 
+ *---------------------------------------------------------------------------------------------*
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
 #include	"always.h"
 #include	"bufffile.h"
 #include	"wwdebug.h"
-#include	<string.h>
 
-int		BufferedFileClass::_DesiredBufferSize	=	1024*16;	
+int		BufferedFileClass::_DesiredBufferSize	=	1024*16;
 
 /***********************************************************************************************
  * BufferedFileClass::BufferedFileClass -- Default constructor for a file object.              *
  *=============================================================================================*/
-BufferedFileClass::BufferedFileClass(void) :
+BufferedFileClass::BufferedFileClass() :
 	RawFileClass(),
-	Buffer( NULL ),
+	Buffer( nullptr ),
 	BufferSize( 0 ),
 	BufferAvailable( 0 ),
 	BufferOffset( 0 )
@@ -58,7 +57,7 @@ BufferedFileClass::BufferedFileClass(void) :
  *=============================================================================================*/
 BufferedFileClass::BufferedFileClass(char const * filename) :
 	RawFileClass( filename ),
-	Buffer( NULL ),
+	Buffer( nullptr ),
 	BufferSize( 0 ),
 	BufferAvailable( 0 ),
 	BufferOffset( 0 )
@@ -68,7 +67,7 @@ BufferedFileClass::BufferedFileClass(char const * filename) :
 /***********************************************************************************************
  * BufferedFileClass::~BufferedFileClass -- Default deconstructor for a file object.                     *
  *=============================================================================================*/
-BufferedFileClass::~BufferedFileClass(void)
+BufferedFileClass::~BufferedFileClass()
 {
 	Reset_Buffer();
 }
@@ -76,7 +75,7 @@ BufferedFileClass::~BufferedFileClass(void)
 /***********************************************************************************************
  * BufferedFileClass::Close -- Perform a closure of the file.                                       *
  *=============================================================================================*/
-void BufferedFileClass::Close(void)
+void BufferedFileClass::Close()
 {
 	BASECLASS::Close();
 
@@ -92,10 +91,10 @@ void BufferedFileClass::Close(void)
  *    the file. This condition can result in fewer bytes being read than requested. Determine  *
  *    this by examining the return value.                                                      *
  *                                                                                             *
- * INPUT:   buffer   -- Pointer to the buffer to read data into. If NULL is passed, no read    *
+ * INPUT:   buffer   -- Pointer to the buffer to read data into. If nullptr is passed, no read    *
  *                      is performed.                                                          *
  *                                                                                             *
- *          size     -- The number of bytes to read. If NULL is passed, then no read is        *
+ *          size     -- The number of bytes to read. If nullptr is passed, then no read is        *
  *                      performed.                                                             *
  *                                                                                             *
  * OUTPUT:  Returns with the number of bytes read into the buffer. If this number is less      *
@@ -240,13 +239,11 @@ int BufferedFileClass::Seek(int pos, int dir)
 /*
 **
 */
-void	BufferedFileClass::Reset_Buffer( void )
+void	BufferedFileClass::Reset_Buffer()
 {
-	if ( Buffer != NULL ) {
-		delete [] Buffer;
-		Buffer = NULL;
-		BufferSize = 0;
-		BufferAvailable = 0;
-		BufferOffset = 0;
-	}
+	delete [] Buffer;
+	Buffer = nullptr;
+	BufferSize = 0;
+	BufferAvailable = 0;
+	BufferOffset = 0;
 }

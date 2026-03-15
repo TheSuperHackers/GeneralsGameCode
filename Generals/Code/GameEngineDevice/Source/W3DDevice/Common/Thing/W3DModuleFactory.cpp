@@ -48,7 +48,7 @@
 //-------------------------------------------------------------------------------------------------
 /** Initialize method */
 //-------------------------------------------------------------------------------------------------
-void W3DModuleFactory::init( void )
+void W3DModuleFactory::init()
 {
 
 	// extending functionality
@@ -71,4 +71,4 @@ void W3DModuleFactory::init( void )
 	addModule( W3DTracerDraw );
 	addModule( W3DTankTruckDraw );
 
-}  // end init
+}

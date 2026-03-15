@@ -28,8 +28,9 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
+#include "Common/GameUtility.h"
 #include "Common/Xfer.h"
 #include "Common/DrawModule.h"
 #include "GameClient/Drawable.h"
@@ -52,13 +53,13 @@ LaserUpdateModuleData::LaserUpdateModuleData()
 {
 	ModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
-		{ "MuzzleParticleSystem",		INI::parseAsciiString,	NULL, offsetof( LaserUpdateModuleData, m_particleSystemName ) },
-		{ "TargetParticleSystem",		INI::parseAsciiString,  NULL, offsetof( LaserUpdateModuleData, m_targetParticleSystemName ) },
-		{ "ParentFireBoneName",			INI::parseAsciiString,  NULL, offsetof( LaserUpdateModuleData, m_parentFireBoneName ) },
-		{ "ParentFireBoneOnTurret",	INI::parseAsciiString,  NULL, offsetof( LaserUpdateModuleData, m_parentFireBoneOnTurret ) },
-		{ 0, 0, 0, 0 }
+		{ "MuzzleParticleSystem",		INI::parseAsciiString,	nullptr, offsetof( LaserUpdateModuleData, m_particleSystemName ) },
+		{ "TargetParticleSystem",		INI::parseAsciiString,  nullptr, offsetof( LaserUpdateModuleData, m_targetParticleSystemName ) },
+		{ "ParentFireBoneName",			INI::parseAsciiString,  nullptr, offsetof( LaserUpdateModuleData, m_parentFireBoneName ) },
+		{ "ParentFireBoneOnTurret",	INI::parseAsciiString,  nullptr, offsetof( LaserUpdateModuleData, m_parentFireBoneOnTurret ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 	p.add(dataFieldParse);
 }
@@ -81,19 +82,16 @@ LaserRadiusUpdate::LaserRadiusUpdate()
 //-------------------------------------------------------------------------------------------------
 LaserUpdate::LaserUpdate( Thing *thing, const ModuleData* moduleData ) : ClientUpdateModule( thing, moduleData )
 {
-	//Added By Sadullah Nader
-	//Initialization missing and needed
 	m_dirty = FALSE;
 	m_endPos.zero();
 	m_startPos.zero();
-	//
 	m_particleSystemID = INVALID_PARTICLE_SYSTEM_ID;
 	m_targetParticleSystemID = INVALID_PARTICLE_SYSTEM_ID;
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-LaserUpdate::~LaserUpdate( void )
+LaserUpdate::~LaserUpdate()
 {
 
 	if( m_particleSystemID )
@@ -106,7 +104,7 @@ LaserUpdate::~LaserUpdate( void )
 //-------------------------------------------------------------------------------------------------
 /** The update callback. */
 //-------------------------------------------------------------------------------------------------
-void LaserUpdate::clientUpdate( void )
+void LaserUpdate::clientUpdate()
 {
 	m_dirty |= m_laserRadius.updateRadius();
 }
@@ -212,21 +210,21 @@ void LaserUpdate::initLaser( const Object *parent, const Coord3D *startPos, cons
 		// Override startPos with the logic bone position
 		if( data->m_parentFireBoneOnTurret )
 		{
-			if( !parent->getSingleLogicalBonePositionOnTurret( TURRET_MAIN, data->m_parentFireBoneName.str(), &m_startPos, NULL ) )
+			if( !parent->getSingleLogicalBonePositionOnTurret( TURRET_MAIN, data->m_parentFireBoneName.str(), &m_startPos, nullptr ) )
 			{
 				// failed to find the required bone, so just die
 				TheGameClient->destroyDrawable( getDrawable() );
 				return;
-			}				
+			}
 		}
 		else
 		{
-			if( !parent->getSingleLogicalBonePosition( data->m_parentFireBoneName.str(), &m_startPos, NULL ) )
+			if( !parent->getSingleLogicalBonePosition( data->m_parentFireBoneName.str(), &m_startPos, nullptr ) )
 			{
 				// failed to find the required bone, so just die
 				TheGameClient->destroyDrawable( getDrawable() );
 				return;
-			}				
+			}
 		}
 	}
 	else if( startPos )
@@ -242,9 +240,9 @@ void LaserUpdate::initLaser( const Object *parent, const Coord3D *startPos, cons
 	}
 
 	//Compute endPos
-	if( endPos != NULL )
+	if( endPos != nullptr )
 	{
-		// just use what they gave, no override here 
+		// just use what they gave, no override here
 		m_endPos = *endPos;
 	}
 	else
@@ -323,7 +321,7 @@ void LaserUpdate::initLaser( const Object *parent, const Coord3D *startPos, cons
 Real LaserUpdate::getTemplateLaserRadius() const
 {
 	const Drawable *draw = getDrawable();
-	const LaserDrawInterface* ldi = NULL;
+	const LaserDrawInterface* ldi = nullptr;
 	for( const DrawModule** d = draw->getDrawModules(); *d; ++d )
 	{
 		ldi = (*d)->getLaserDrawInterface();
@@ -331,7 +329,7 @@ Real LaserUpdate::getTemplateLaserRadius() const
 		{
 			//***NOTE***
 			//While it appears the logic is accessing client data, it is actually accessing template module
-			//data from the client. This value is INI constant thus can't change. It's grouped with other 
+			//data from the client. This value is INI constant thus can't change. It's grouped with other
 			//laser defining attributes and having it there makes it easier for artists.
 			return ldi->getLaserTemplateWidth();
 		}
@@ -354,7 +352,7 @@ void LaserUpdate::crc( Xfer *xfer )
 	// extend base class
 	ClientUpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -389,15 +387,15 @@ void LaserUpdate::xfer( Xfer *xfer )
 
 	m_laserRadius.xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void LaserUpdate::loadPostProcess( void )
+void LaserUpdate::loadPostProcess()
 {
 
 	// extend base class
 	ClientUpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

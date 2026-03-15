@@ -27,10 +27,8 @@
 // Desc:	 Directory info class
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 #if (0)
-#pragma once
 
-#ifndef __DIRECTORY_H__
-#define __DIRECTORY_H__
+#pragma once
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/AsciiString.h"
@@ -78,8 +76,8 @@ public:
 	Directory(const AsciiString& dirPath);
 	~Directory() {}
 
-	FileInfoSet* getFiles( void );
-	FileInfoSet* getSubdirs( void );
+	FileInfoSet* getFiles();
+	FileInfoSet* getSubdirs();
 
 protected:
 	AsciiString m_dirPath;
@@ -89,7 +87,5 @@ protected:
 };
 
 //-------------------------------------------------------------------------------------------------
-
-#endif // __DIRECTORY_H__
 
 #endif

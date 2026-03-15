@@ -16,27 +16,25 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando / G 3D engine                                       * 
- *                                                                                             * 
- *                    File Name : MeshDeformPanel.H                                            * 
- *                                                                                             * 
- *                   Programmer : Patrick Smith                                                * 
- *                                                                                             * 
- *                   Start Date : 04/22/99                                                     * 
- *                                                                                             * 
- *                  Last Update : 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando / G 3D engine                                       *
+ *                                                                                             *
+ *                    File Name : MeshDeformPanel.h                                            *
+ *                                                                                             *
+ *                   Programmer : Patrick Smith                                                *
+ *                                                                                             *
+ *                   Start Date : 04/22/99                                                     *
+ *                                                                                             *
+ *                  Last Update :
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef __MESH_DEFORM_PANEL_H
-#define __MESH_DEFORM_PANEL_H
+#pragma once
 
 #include <max.h>
 #include "resource.h"
@@ -52,22 +50,22 @@ class MeshDeformClass;
 class MeshDeformPanelClass
 {
 	public:
-		
+
 		//////////////////////////////////////////////////////////////////////
 		//	Public constructors/destructors
 		//////////////////////////////////////////////////////////////////////
 		MeshDeformPanelClass (HWND hwnd)
 			:	m_hWnd (hwnd),
-				m_pColorSwatch (NULL),
-				m_pMaxSetsSpin (NULL),
-				m_pMeshDeformer (NULL),
-				m_pLockSetsButton (NULL),
-				m_pMaxSetsEdit (NULL)				{ }
+				m_pColorSwatch (nullptr),
+				m_pMaxSetsSpin (nullptr),
+				m_pMeshDeformer (nullptr),
+				m_pLockSetsButton (nullptr),
+				m_pMaxSetsEdit (nullptr)				{ }
 		virtual ~MeshDeformPanelClass (void)	{ }
 
 		//////////////////////////////////////////////////////////////////////
 		// Public methods
-		//////////////////////////////////////////////////////////////////////		
+		//////////////////////////////////////////////////////////////////////
 
 		// Inline accessors
 		IColorSwatch *				Get_Color_Swatch (void) const			{ return m_pColorSwatch; }
@@ -96,10 +94,10 @@ class MeshDeformPanelClass
 
 		//////////////////////////////////////////////////////////////////////
 		// Protected methods
-		//////////////////////////////////////////////////////////////////////		
+		//////////////////////////////////////////////////////////////////////
 		BOOL							On_Message (UINT message, WPARAM wparam, LPARAM lparam);
 		void							On_Command (WPARAM wparam, LPARAM lparam);
-	
+
 	private:
 
 		//////////////////////////////////////////////////////////////////////
@@ -112,6 +110,3 @@ class MeshDeformPanelClass
 		ICustButton *				m_pLockSetsButton;
 		MeshDeformClass *			m_pMeshDeformer;
 };
-
-
-#endif //__MESH_DEFORM_PANEL_H

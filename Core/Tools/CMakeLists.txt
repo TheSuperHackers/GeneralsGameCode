@@ -3,6 +3,7 @@
 # Build useful tool binaries.
 if(RTS_BUILD_CORE_TOOLS)
     add_subdirectory(DebugWindow)
+    add_subdirectory(ParticleEditor)
 endif()
 
 # Build less useful tool/test binaries.

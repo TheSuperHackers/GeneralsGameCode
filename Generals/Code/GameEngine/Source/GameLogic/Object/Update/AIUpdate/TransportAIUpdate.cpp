@@ -23,10 +23,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // TransportAIUpdate.cpp //////////
-// Needs to check legality of evacuate, and may move to a place that is better to evacuate at 
+// Needs to check legality of evacuate, and may move to a place that is better to evacuate at
 // Author: Graham Smallwood, July 2002
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/RandomValue.h"
 #include "GameLogic/Module/TransportAIUpdate.h"
@@ -36,11 +36,6 @@
 
 
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 
 //-------------------------------------------------------------------------------------------------
@@ -55,7 +50,7 @@ TransportAIUpdate::TransportAIUpdate( Thing *thing, const ModuleData* moduleData
 }
 
 //-------------------------------------------------------------------------------------------------
-TransportAIUpdate::~TransportAIUpdate( void )
+TransportAIUpdate::~TransportAIUpdate()
 {
 
 }
@@ -67,10 +62,10 @@ TransportAIUpdate::~TransportAIUpdate( void )
 void TransportAIUpdate::privateAttackObject( Object *victim, Int maxShotsToFire, CommandSourceType cmdSource )
 {
 	ContainModuleInterface* contain = getObject()->getContain();
-	if( contain != NULL  &&  contain->isPassengerAllowedToFire() )
+	if( contain != nullptr  &&  contain->isPassengerAllowedToFire() )
 	{
-		// As an extension of the normal attack, I may want to tell my passengers to attack 
-		// too, but only if this is a direct command.  (As opposed to a passive aquire)
+		// As an extension of the normal attack, I may want to tell my passengers to attack
+		// too, but only if this is a direct command.  (As opposed to a passive acquire)
 		if( cmdSource == CMD_FROM_PLAYER  ||  cmdSource == CMD_FROM_SCRIPT )
 		{
 			const ContainedItemsList *passengerList = contain->getContainedItemsList();
@@ -86,12 +81,12 @@ void TransportAIUpdate::privateAttackObject( Object *victim, Int maxShotsToFire,
 				// If I am an overlord with a gattling upgrade, I do not tell it to fire if it is disabled
 				if ( passenger->isKindOf( KINDOF_PORTABLE_STRUCTURE ) )
 				{
-					if( passenger->isDisabledByType( DISABLED_HACKED ) 
-						|| passenger->isDisabledByType( DISABLED_EMP ) 
+					if( passenger->isDisabledByType( DISABLED_HACKED )
+						|| passenger->isDisabledByType( DISABLED_EMP )
 						|| passenger->isDisabledByType( DISABLED_PARALYZED) )
 						continue;
 				}
-				
+
 				AIUpdateInterface *passengerAI = passenger->getAIUpdateInterface();
 				if( passengerAI )
 				{
@@ -111,10 +106,10 @@ void TransportAIUpdate::privateAttackObject( Object *victim, Int maxShotsToFire,
 void TransportAIUpdate::privateForceAttackObject( Object *victim, Int maxShotsToFire, CommandSourceType cmdSource )
 {
 	ContainModuleInterface* contain = getObject()->getContain();
-	if( contain != NULL  &&  contain->isPassengerAllowedToFire() )
+	if( contain != nullptr  &&  contain->isPassengerAllowedToFire() )
 	{
-		// As an extension of the normal attack, I may want to tell my passengers to attack 
-		// too, but only if this is a direct command.  (As opposed to a passive aquire)
+		// As an extension of the normal attack, I may want to tell my passengers to attack
+		// too, but only if this is a direct command.  (As opposed to a passive acquire)
 		if( cmdSource == CMD_FROM_PLAYER  ||  cmdSource == CMD_FROM_SCRIPT )
 		{
 			const ContainedItemsList *passengerList = contain->getContainedItemsList();
@@ -130,12 +125,12 @@ void TransportAIUpdate::privateForceAttackObject( Object *victim, Int maxShotsTo
 				// If I am an overlord with a gattling upgrade, I do not tell it to fire if it is disabled
 				if ( passenger->isKindOf( KINDOF_PORTABLE_STRUCTURE ) )
 				{
-					if( passenger->isDisabledByType( DISABLED_HACKED ) 
-						|| passenger->isDisabledByType( DISABLED_EMP ) 
+					if( passenger->isDisabledByType( DISABLED_HACKED )
+						|| passenger->isDisabledByType( DISABLED_EMP )
 						|| passenger->isDisabledByType( DISABLED_PARALYZED) )
 						continue;
 				}
-				
+
 				AIUpdateInterface *passengerAI = passenger->getAIUpdateInterface();
 				if( passengerAI )
 				{
@@ -155,10 +150,10 @@ void TransportAIUpdate::privateForceAttackObject( Object *victim, Int maxShotsTo
 void TransportAIUpdate::privateAttackPosition( const Coord3D *pos, Int maxShotsToFire, CommandSourceType cmdSource )
 {
 	ContainModuleInterface* contain = getObject()->getContain();
-	if( contain != NULL  &&  contain->isPassengerAllowedToFire() )
+	if( contain != nullptr  &&  contain->isPassengerAllowedToFire() )
 	{
-		// As an extension of the normal attack, I may want to tell my passengers to attack 
-		// too, but only if this is a direct command.  (As opposed to a passive aquire)
+		// As an extension of the normal attack, I may want to tell my passengers to attack
+		// too, but only if this is a direct command.  (As opposed to a passive acquire)
 		if( cmdSource == CMD_FROM_PLAYER  ||  cmdSource == CMD_FROM_SCRIPT )
 		{
 			const ContainedItemsList *passengerList = contain->getContainedItemsList();
@@ -174,8 +169,8 @@ void TransportAIUpdate::privateAttackPosition( const Coord3D *pos, Int maxShotsT
 				// If I am an overlord with a gattling upgrade, I do not tell it ti fire if it is disabled
 				if ( passenger->isKindOf( KINDOF_PORTABLE_STRUCTURE ) )
 				{
-					if( passenger->isDisabledByType( DISABLED_HACKED ) 
-						|| passenger->isDisabledByType( DISABLED_EMP) 
+					if( passenger->isDisabledByType( DISABLED_HACKED )
+						|| passenger->isDisabledByType( DISABLED_EMP)
 						|| passenger->isDisabledByType( DISABLED_PARALYZED) )
 						continue;
 				}
@@ -193,10 +188,10 @@ void TransportAIUpdate::privateAttackPosition( const Coord3D *pos, Int maxShotsT
 }
 
 //-------------------------------------------------------------------------------------------------
-AIFreeToExitType TransportAIUpdate::getAiFreeToExit(const Object* exiter) const 
-{ 
+AIFreeToExitType TransportAIUpdate::getAiFreeToExit(const Object* exiter) const
+{
 	// Transports have a speed at which you can exit.
-	return FREE_TO_EXIT; 
+	return FREE_TO_EXIT;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -206,7 +201,7 @@ void TransportAIUpdate::crc( Xfer *xfer )
 {
 	// extend base class
 	AIUpdateInterface::crc(xfer);
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -218,17 +213,17 @@ void TransportAIUpdate::xfer( Xfer *xfer )
   XferVersion currentVersion = 1;
   XferVersion version = currentVersion;
   xfer->xferVersion( &version, currentVersion );
- 
+
  // extend base class
 	AIUpdateInterface::xfer(xfer);
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void TransportAIUpdate::loadPostProcess( void )
+void TransportAIUpdate::loadPostProcess()
 {
  // extend base class
 	AIUpdateInterface::loadPostProcess();
-}  // end loadPostProcess
+}

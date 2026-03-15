@@ -16,12 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef BITMAPHANDLER_H
-#define BITMAPHANDLER_H
 
 #include "always.h"
 #include "ww3dformat.h"
@@ -95,7 +90,7 @@ public:
 		unsigned bgra4);
 
 	static void Create_Mipmap_B8G8R8A8(
-		unsigned char* dest_surface, 
+		unsigned char* dest_surface,
 		unsigned dest_surface_pitch,
 		unsigned char* src_surface,
 		unsigned src_surface_pitch,
@@ -116,7 +111,7 @@ public:
 		const Vector3& hsv_shift=Vector3(0.0f,0.0f,0.0f));
 
 	static void Copy_Image(
-		unsigned char* dest_surface, 
+		unsigned char* dest_surface,
 		unsigned dest_surface_width,
 		unsigned dest_surface_height,
 		unsigned dest_surface_pitch,
@@ -199,7 +194,7 @@ WWINLINE void BitmapHandlerClass::Read_B8G8R8A8(
 		break;
 	case WW3D_FORMAT_L8:
 		{
-			unsigned char tmp=*src_ptr++;			
+			unsigned char tmp=*src_ptr++;
 			*argb++=tmp;
 			*argb++=tmp;
 			*argb++=tmp;
@@ -479,6 +474,3 @@ WWINLINE unsigned BitmapHandlerClass::Combine_A8R8G8B8(
 	bgra1+=bgra3;
 	return bgra1;
 }
-
-
-#endif

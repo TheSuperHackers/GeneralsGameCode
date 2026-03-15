@@ -48,7 +48,7 @@
 /*
 ** ViewerSceneIterator
 ** This iterator is used by the ViewerSceneClass to allow
-** the user to iterate through its render objects. 
+** the user to iterate through its render objects.
 */
 class ViewerSceneIterator : public SceneIterator
 {
@@ -62,7 +62,7 @@ protected:
 
 	ViewerSceneIterator(RefRenderObjListClass * renderlist);
 
-	RefRenderObjListIterator	RobjIterator;	
+	RefRenderObjListIterator	RobjIterator;
 
 	friend class ViewerSceneClass;
 };
@@ -105,7 +105,7 @@ RenderObjClass * ViewerSceneIterator::Current_Item(void)
 //
 //	Visibility_Check
 //
-//	Note: We overide this method to remove the LOD preparation.  We
+//	Note: We override this method to remove the LOD preparation.  We
 // need to be able to specify an LOD and not have it switch on us.
 //
 ////////////////////////////////////////////////////////////////////////
@@ -127,7 +127,7 @@ ViewerSceneClass::Visibility_Check (CameraClass *camera)
 		}
 
 		int lod_level = robj->Get_LOD_Level ();
-					
+
 		// Prepare visible objects for LOD:
 		if (robj->Is_Really_Visible()) {
 			robj->Prepare_LOD(*camera);
@@ -150,13 +150,13 @@ ViewerSceneClass::Add_To_Lineup (RenderObjClass *obj)
 	assert(obj);
 
 	// If this is an insignificant object (ie. we don't need to
-	// rearrange existing objects to accomodate it), don't bother
+	// rearrange existing objects to accommodate it), don't bother
 	// adding it to the lineup. Ex: Adding a light to the lineup
 	// is pretty silly.
 	if (!Can_Line_Up(obj))
 		return;
 
-	
+
 	// We will add this object to the scene next to any
 	// existing objects. It will be placed at (0, Y, 0)
 	// where Y is a value to be calculated such that the
@@ -216,7 +216,7 @@ ViewerSceneClass::Clear_Lineup (void)
 {
 	// Remove every object in the lineup from the scene,
 	// and remove each object from the line up list.
-	RenderObjClass *obj = NULL;
+	RenderObjClass *obj = nullptr;
 	while (obj = LineUpList.Remove_Head())
 		Remove_Render_Object(obj);
 }
@@ -333,7 +333,7 @@ void	ViewerSceneClass::Customized_Render(RenderInfoClass & rinfo)
       // set the visibility bit in all render objects in all layers.
 	   Visibility_Check(&rinfo.Camera);
    }
-   Visibility_Checked = false;	
+   Visibility_Checked = false;
 
 	// Install the vertex processors.  Derived scenes may want to use some
 	// form of spatial subdivision to only insert the needed vps...
@@ -353,7 +353,7 @@ void	ViewerSceneClass::Customized_Render(RenderInfoClass & rinfo)
 
 	for (it.First(&LightList); !it.Is_Done(); it.Next()) {
 		lenv.Add_Light(*(LightClass*)it.Peek_Obj());
-	}	
+	}
 	lenv.Pre_Render_Update(rinfo.Camera.Get_Transform());
 
 	rinfo.light_environment=&lenv;

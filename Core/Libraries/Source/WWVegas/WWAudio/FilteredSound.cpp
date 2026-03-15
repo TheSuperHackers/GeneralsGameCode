@@ -56,9 +56,9 @@ SimplePersistFactoryClass<FilteredSoundClass, CHUNKID_FILTERED_SOUND> _FilteredS
 //	FilteredSoundClass
 //
 /////////////////////////////////////////////////////////////////////////////////
-FilteredSoundClass::FilteredSoundClass (void)
-	:	m_hFilter (INVALID_MILES_HANDLE)
-{	
+FilteredSoundClass::FilteredSoundClass ()
+	:	m_hFilter ((HPROVIDER)INVALID_MILES_HANDLE)
+{
 	return ;
 }
 
@@ -69,7 +69,7 @@ FilteredSoundClass::FilteredSoundClass (void)
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
 FilteredSoundClass::FilteredSoundClass (const FilteredSoundClass &src)
-	:	m_hFilter (INVALID_MILES_HANDLE),
+	:	m_hFilter ((HPROVIDER)INVALID_MILES_HANDLE),
 		SoundPseudo3DClass (src)
 {
 	(*this) = src;
@@ -82,8 +82,8 @@ FilteredSoundClass::FilteredSoundClass (const FilteredSoundClass &src)
 //	~FilteredSoundClass
 //
 /////////////////////////////////////////////////////////////////////////////////
-FilteredSoundClass::~FilteredSoundClass (void)
-{	
+FilteredSoundClass::~FilteredSoundClass ()
+{
 	return ;
 }
 
@@ -108,13 +108,13 @@ FilteredSoundClass::operator= (const FilteredSoundClass &src)
 //
 /////////////////////////////////////////////////////////////////////////////////
 void
-FilteredSoundClass::Initialize_Miles_Handle (void)
+FilteredSoundClass::Initialize_Miles_Handle ()
 {
 	SoundPseudo3DClass::Initialize_Miles_Handle ();
 	m_hFilter = WWAudioClass::Get_Instance ()->Get_Reverb_Filter ();
-	if ((m_SoundHandle != NULL) &&
-		 (m_hFilter != INVALID_MILES_HANDLE)) {
-		
+	if ((m_SoundHandle != nullptr) &&
+		 (m_hFilter != (HPROVIDER)INVALID_MILES_HANDLE)) {
+
 		//
 		//	Pass the filter onto the sample
 		//
@@ -138,7 +138,7 @@ FilteredSoundClass::Initialize_Miles_Handle (void)
 														"Reverb decay time",
 														&reverb_decay);
 	}
-	
+
 	Update_Volume ();
 	return ;
 }
@@ -150,14 +150,14 @@ FilteredSoundClass::Initialize_Miles_Handle (void)
 //
 /////////////////////////////////////////////////////////////////////////////////
 void
-FilteredSoundClass::Update_Volume (void)
+FilteredSoundClass::Update_Volume ()
 {
-	if (m_SoundHandle != NULL) {
+	if (m_SoundHandle != nullptr) {
 
 		// Determine the listener's position and the sound's position
 		SoundSceneClass *scene = WWAudioClass::Get_Instance ()->Get_Sound_Scene ();
 		Listener3DClass *listener = scene->Peek_2nd_Listener ();
-		if (listener != NULL) {
+		if (listener != nullptr) {
 			Vector3 listener_pos = listener->Get_Position ();
 			Vector3 sound_pos = m_Transform.Get_Translation ();
 
@@ -177,7 +177,7 @@ FilteredSoundClass::Update_Volume (void)
 //
 /////////////////////////////////////////////////////////////////////////////////
 const PersistFactoryClass &
-FilteredSoundClass::Get_Factory (void) const
+FilteredSoundClass::Get_Factory () const
 {
 	return _FilteredSoundPersistFactory;
 }

@@ -20,9 +20,7 @@
 
 #include "DrawObject.h"
 
-#include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <assetmgr.h>
 #include <texture.h>
 #include <tri.h>
@@ -106,7 +104,7 @@ Coord3D	DrawObject::m_rampEndPoint;
 Real DrawObject::m_rampWidth = 0.0f;
 
 
-Bool DrawObject::m_dragWaypointFeedback = false; 
+Bool DrawObject::m_dragWaypointFeedback = false;
 Coord3D DrawObject::m_dragWayStart;
 Coord3D DrawObject::m_dragWayEnd;
 
@@ -138,22 +136,22 @@ DrawObject::~DrawObject(void)
 DrawObject::DrawObject(void) :
 	m_drawObjects(true),
 	m_drawPolygonAreas(true),
-	m_indexBuffer(NULL),
-	m_vertexMaterialClass(NULL),
-	m_vertexBufferTile1(NULL),
-	m_vertexBufferTile2(NULL),
-	m_vertexBufferWater(NULL),
-	m_vertexFeedback(NULL),
-	m_indexFeedback(NULL),
-	m_indexWater(NULL),
-	m_moldMesh(NULL)
+	m_indexBuffer(nullptr),
+	m_vertexMaterialClass(nullptr),
+	m_vertexBufferTile1(nullptr),
+	m_vertexBufferTile2(nullptr),
+	m_vertexBufferWater(nullptr),
+	m_vertexFeedback(nullptr),
+	m_indexFeedback(nullptr),
+	m_indexWater(nullptr),
+	m_moldMesh(nullptr)
 
 {
 	m_feedbackPoint.x = 20;
 	m_feedbackPoint.y = 20;
 	initData();
 	m_waterDrawObject = new WaterRenderObjClass;
-	m_waterDrawObject->init(0, 0, 0, NULL, WaterRenderObjClass::WATER_TYPE_0_TRANSLUCENT);
+	m_waterDrawObject->init(0, 0, 0, nullptr, WaterRenderObjClass::WATER_TYPE_0_TRANSLUCENT);
 	TheWaterRenderObj=m_waterDrawObject;
 }
 
@@ -161,7 +159,7 @@ DrawObject::DrawObject(void) :
 Bool DrawObject::Cast_Ray(RayCollisionTestClass & raytest)
 {
 
-	return false;	
+	return false;
 
 }
 
@@ -182,7 +180,7 @@ void DrawObject::Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const
 {
 	Vector3	ObjSpaceCenter(TheGlobalData->m_waterExtentX,TheGlobalData->m_waterExtentY,50*MAP_XY_FACTOR);
 	float length = ObjSpaceCenter.Length();
-	
+
 	sphere.Init(ObjSpaceCenter, length);
 }
 
@@ -213,17 +211,17 @@ Int DrawObject::freeMapResources(void)
 	REF_PTR_RELEASE(m_vertexBufferWater);
 	REF_PTR_RELEASE(m_vertexMaterialClass);
 	REF_PTR_RELEASE(m_vertexFeedback);
-	REF_PTR_RELEASE(m_indexFeedback);	
-	REF_PTR_RELEASE(m_indexWater);	
+	REF_PTR_RELEASE(m_indexFeedback);
+	REF_PTR_RELEASE(m_indexWater);
 	REF_PTR_RELEASE(m_moldMesh);
 	REF_PTR_RELEASE(m_waterDrawObject);
-	TheWaterRenderObj = NULL;
+	TheWaterRenderObj = nullptr;
 
 	return 0;
 }
 
 // Total number of triangles
-#define NUM_TRI 26	 
+#define NUM_TRI 26
 // Number of triangles in the arrow.
 #define NUM_ARROW_TRI 4
 // Number of triangles in the selection pyramid.
@@ -233,7 +231,7 @@ Int DrawObject::freeMapResources(void)
 
 
 Int DrawObject::initData(void)
-{	
+{
 	Int i;
 
 	freeMapResources();	//free old data and ib/vb
@@ -244,7 +242,7 @@ Int DrawObject::initData(void)
 	// Fill up the IB
 	DX8IndexBufferClass::WriteLockClass lockIdxBuffer(m_indexBuffer);
 	UnsignedShort *ib=lockIdxBuffer.Get_Index_Array();
-		
+
 	for (i=0; i<3*m_numTriangles; i+=3)
 	{
 		ib[0]=i;
@@ -264,10 +262,10 @@ Int DrawObject::initData(void)
 	m_vertexMaterialClass=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
 
 	//use a multi-texture shader: (text1*diffuse)*text2.
-	m_shaderClass = ShaderClass::ShaderClass(SC_OPAQUE);//_PresetOpaque2DShader;//ShaderClass(SC_OPAQUE); //_PresetOpaqueShader;
+	m_shaderClass = ShaderClass(SC_OPAQUE);//_PresetOpaque2DShader;//ShaderClass(SC_OPAQUE); //_PresetOpaqueShader;
 
 	m_shaderClass = ShaderClass::_PresetOpaque2DShader;
-	updateForWater();			 
+	updateForWater();
 	updateVB(m_vertexBufferTile1, 255<<8, true, false);
 
 	return 0;
@@ -284,11 +282,11 @@ void DrawObject::updateMeshVB(void)
 		REF_PTR_RELEASE(m_moldMesh);
 		m_curMeshModelName = MeshMoldOptions::getModelName();
 	}
-	if (m_moldMesh == NULL) {
+	if (m_moldMesh == nullptr) {
  		WW3DAssetManager *pMgr = W3DAssetManager::Get_Instance();
 		pMgr->Set_WW3D_Load_On_Demand(false);	 // We don't want it fishing for these assets in the game assets.
 		m_moldMesh = (MeshClass*)pMgr->Create_Render_Obj(m_curMeshModelName.str());
-		if (m_moldMesh == NULL) {
+		if (m_moldMesh == nullptr) {
 			// Try loading the mold asset.
 			AsciiString path("data\\editor\\molds\\");
 			path.concat(m_curMeshModelName);
@@ -301,7 +299,7 @@ void DrawObject::updateMeshVB(void)
 		}
 		pMgr->Set_WW3D_Load_On_Demand(true);
 	}
-	if (m_moldMesh == NULL) {
+	if (m_moldMesh == nullptr) {
 		return;
 	}
 
@@ -316,7 +314,7 @@ void DrawObject::updateMeshVB(void)
 	VertexFormatXYZDUV1 *vb = (VertexFormatXYZDUV1*)lockVtxBuffer.Get_Vertex_Array();
 	VertexFormatXYZDUV1 *curVb = vb;
 
-	if (m_moldMesh == NULL) {
+	if (m_moldMesh == nullptr) {
 		return;
 	}
 	Int i;
@@ -331,7 +329,7 @@ void DrawObject::updateMeshVB(void)
 	}
 
 #if 0	//this wasn't being used (see below) so I commented it out. -MW
-	Vector3 lightRay=Normalize(Vector3(-TheGlobalData->m_terrainLightPos[0].x, 
+	Vector3 lightRay=Normalize(Vector3(-TheGlobalData->m_terrainLightPos[0].x,
 		-TheGlobalData->m_terrainLightPos[0].y, -TheGlobalData->m_terrainLightPos[0].z));
 #endif
 
@@ -347,7 +345,7 @@ void DrawObject::updateMeshVB(void)
 		curVb->x = vLoc.X;
 		curVb->y = vLoc.Y;
 		curVb->z = vLoc.Z;
-		
+
 		VertexFormatXYZDUV2 vb;
 		vb.x = vLoc.X;
 		vb.y = vLoc.Y;
@@ -355,8 +353,8 @@ void DrawObject::updateMeshVB(void)
 
 #if 1
 		curVb->diffuse = 0x0000ffff | (theAlpha << 24);		// bright cyan.
-#else 
-		TheTerrainRenderObject->doTheLight(&vb, &lightRay, (Vector3 *)(&pNormal[i]), NULL, 1.0f);
+#else
+		TheTerrainRenderObject->doTheLight(&vb, &lightRay, (Vector3 *)(&pNormal[i]), nullptr, 1.0f);
 		vb.diffuse &= 0x0000ffff;
 		curVb->diffuse = vb.diffuse | (theAlpha << 24);
 #endif
@@ -450,45 +448,45 @@ void DrawObject::updateRampVB(void)
 	Int numVertex = widthVerts * lengthVerts;
 
 /*
-	Generate the rectangle via the function BuildRectFromSegmentAndWidth(...). 
-	Note that for the rectangular case, this is easy, as we simply step along the line at 
-	pre-determined step sizes, with no additional calculation. (IE, we can simply perform 
-	linear interpolation.) However, with the curved case, we will need to recalculate the 
-	value every step along the way. 
- 
- 
+	Generate the rectangle via the function BuildRectFromSegmentAndWidth(...).
+	Note that for the rectangular case, this is easy, as we simply step along the line at
+	pre-determined step sizes, with no additional calculation. (IE, we can simply perform
+	linear interpolation.) However, with the curved case, we will need to recalculate the
+	value every step along the way.
+
+
 	Ultimately, what I'd like to do is to precompute what the terrain is actually going to
 	do, and then use the faux-adjusted vertices, but this is much easier to start from. jkmcd
 */
 	Coord3D coordBL, coordTL, coordBR, coordTR;
-	BuildRectFromSegmentAndWidth(&m_rampStartPoint, &m_rampEndPoint, m_rampWidth, 
+	BuildRectFromSegmentAndWidth(&m_rampStartPoint, &m_rampEndPoint, m_rampWidth,
 															 &coordBL, &coordTL, &coordBR, &coordTR);
 
 	Vector3 bl(coordBL.x, coordBL.y, coordBL.z);
 	Vector3 tl(coordTL.x, coordTL.y, coordTL.z);
 	Vector3 br(coordBR.x, coordBR.y, coordBR.z);
 	Vector3 tr(coordTR.x, coordTR.y, coordTR.z);
-	
+
 	for (i = 0; i < numVertex; i++) {
 		curVb->u1 = INT_TO_REAL(i % widthVerts) / widthVerts;
 		curVb->v1 = INT_TO_REAL(i / lengthVerts) / lengthVerts;
 
 		curVb->diffuse = curVb->diffuse = 0x0000ffff | (theAlpha << 24);		// bright cyan.
-		
+
 		Vector3 vLoc;
-		vLoc.X = (br.X - bl.X) * INT_TO_REAL(i % widthVerts) / (widthVerts  - 1) + 
+		vLoc.X = (br.X - bl.X) * INT_TO_REAL(i % widthVerts) / (widthVerts  - 1) +
 						 (tl.X - bl.X) * INT_TO_REAL(i / lengthVerts) / (lengthVerts - 1) + bl.X;
-		
-		vLoc.Y = (br.Y - bl.Y) * INT_TO_REAL(i % widthVerts) / (widthVerts - 1) + 
+
+		vLoc.Y = (br.Y - bl.Y) * INT_TO_REAL(i % widthVerts) / (widthVerts - 1) +
 						 (tl.Y - bl.Y) * INT_TO_REAL(i / lengthVerts) / (lengthVerts - 1) + bl.Y;
 
-		vLoc.Z = (br.Z - bl.Z) * INT_TO_REAL(i % widthVerts) / (widthVerts - 1) + 
+		vLoc.Z = (br.Z - bl.Z) * INT_TO_REAL(i % widthVerts) / (widthVerts - 1) +
 						 (tl.Z - bl.Z) * INT_TO_REAL(i / lengthVerts) / (lengthVerts - 1) + bl.Z;
 
 		curVb->x = vLoc.X;
 		curVb->y = vLoc.Y;
 		curVb->z = vLoc.Z;
-		
+
 		curVb++;
 		m_feedbackVertexCount++;
 	}
@@ -499,13 +497,13 @@ void DrawObject::updateRampVB(void)
 			(*curIb++) = i * lengthVerts + j;
 			(*curIb++) = (i + 1) * lengthVerts + j;
 			(*curIb++) = (i + 1) * lengthVerts + j + 1;
-			
+
 			(*curIb++) = i * lengthVerts + j;
 			(*curIb++) = (i + 1) * lengthVerts + j + 1;
 			(*curIb++) = (i) * lengthVerts + j + 1;
 			m_feedbackIndexCount += 6;
 		}
-				
+
 	}
 #if 0
 	// Put in the "center anchor"
@@ -579,33 +577,33 @@ void DrawObject::updateBoundaryVB(void)
 				startPt.x = startPt.y = 0;
 				startPt.x *= MAP_XY_FACTOR;
 				startPt.y *= MAP_XY_FACTOR;
-				startPt.z = TheTerrainRenderObject->getHeightMapHeight(startPt.x, startPt.y, NULL);
+				startPt.z = TheTerrainRenderObject->getHeightMapHeight(startPt.x, startPt.y, nullptr);
 				endPt.x = 0;
 				endPt.y = curBoundary.y;
 				endPt.x *= MAP_XY_FACTOR;
 				endPt.y *= MAP_XY_FACTOR;
-				endPt.z = TheTerrainRenderObject->getHeightMapHeight(endPt.x, endPt.y, NULL);
+				endPt.z = TheTerrainRenderObject->getHeightMapHeight(endPt.x, endPt.y, nullptr);
 			} else if (j == 1) {
 				startPt = endPt;
 				endPt.x = curBoundary.x;
 				endPt.y = curBoundary.y;
 				endPt.x *= MAP_XY_FACTOR;
 				endPt.y *= MAP_XY_FACTOR;
-				endPt.z = TheTerrainRenderObject->getHeightMapHeight(endPt.x, endPt.y, NULL);
+				endPt.z = TheTerrainRenderObject->getHeightMapHeight(endPt.x, endPt.y, nullptr);
 			} else if (j == 2) {
 				startPt = endPt;
 				endPt.x = curBoundary.x;
 				endPt.y = 0;
 				endPt.x *= MAP_XY_FACTOR;
 				endPt.y *= MAP_XY_FACTOR;
-				endPt.z = TheTerrainRenderObject->getHeightMapHeight(endPt.x, endPt.y, NULL);
+				endPt.z = TheTerrainRenderObject->getHeightMapHeight(endPt.x, endPt.y, nullptr);
 			} else if (j == 3) {
 				startPt = endPt;
 				endPt.x = 0;
 				endPt.y = 0;
 				endPt.x *= MAP_XY_FACTOR;
 				endPt.y *= MAP_XY_FACTOR;
-				endPt.z = TheTerrainRenderObject->getHeightMapHeight(endPt.x, endPt.y, NULL);
+				endPt.z = TheTerrainRenderObject->getHeightMapHeight(endPt.x, endPt.y, nullptr);
 			}
 
 			if ((m_feedbackVertexCount + 8) > NUM_FEEDBACK_VERTEX) {
@@ -745,7 +743,7 @@ void DrawObject::updateAmbientSoundVB(void)
 		}
 
 		Coord3D startPt = *mo->getLocation();
-		startPt.z = TheTerrainRenderObject->getHeightMapHeight(startPt.x, startPt.y, NULL);
+		startPt.z = TheTerrainRenderObject->getHeightMapHeight(startPt.x, startPt.y, nullptr);
 
 		if (m_feedbackVertexCount + 6 > NUM_FEEDBACK_VERTEX) {
 			return;
@@ -906,8 +904,8 @@ void DrawObject::updateWaypointVB(void)
 				normal *= 0.5f;
 				// Rotate the normal 90 degrees.
 				normal.Rotate_Z(PI/2);
-				loc1.z = TheTerrainRenderObject->getHeightMapHeight(loc1.x, loc1.y, NULL);
-				loc2.z = TheTerrainRenderObject->getHeightMapHeight(loc2.x, loc2.y, NULL);
+				loc1.z = TheTerrainRenderObject->getHeightMapHeight(loc1.x, loc1.y, nullptr);
+				loc2.z = TheTerrainRenderObject->getHeightMapHeight(loc2.x, loc2.y, nullptr);
 
 				if (m_feedbackVertexCount+9>= NUM_FEEDBACK_VERTEX) {
 					return;
@@ -1092,7 +1090,7 @@ void DrawObject::updatePolygonVB(PolygonTrigger *pTrig, Bool selected, Bool isOp
 		ICoord3D iLoc = *pTrig->getPoint(i);
 		loc1.x = iLoc.x;
 		loc1.y = iLoc.y;
-		loc1.z = TheTerrainRenderObject->getHeightMapHeight(loc1.x, loc1.y, NULL);
+		loc1.z = TheTerrainRenderObject->getHeightMapHeight(loc1.x, loc1.y, nullptr);
 		if (i<pTrig->getNumPoints()-1) {
 			iLoc = *pTrig->getPoint(i+1);
 		} else {
@@ -1101,7 +1099,7 @@ void DrawObject::updatePolygonVB(PolygonTrigger *pTrig, Bool selected, Bool isOp
 		}
 		loc2.x = iLoc.x;
 		loc2.y = iLoc.y;
-		loc2.z = TheTerrainRenderObject->getHeightMapHeight(loc2.x, loc2.y, NULL);
+		loc2.z = TheTerrainRenderObject->getHeightMapHeight(loc2.x, loc2.y, nullptr);
 		Vector3 normal(loc2.x-loc1.x, loc2.y-loc1.y, loc2.z-loc1.z);
 		normal.Normalize();
 		normal *= 0.5f;
@@ -1121,7 +1119,7 @@ void DrawObject::updatePolygonVB(PolygonTrigger *pTrig, Bool selected, Bool isOp
 		curVb->x = loc1.x+normal.X;
 		curVb->y = loc1.y+normal.Y;
 		curVb->z = loc1.z;
-		curVb->diffuse = diffuse;  
+		curVb->diffuse = diffuse;
 		curVb++;
 		m_feedbackVertexCount++;
 		curVb->u1 = 0;
@@ -1129,7 +1127,7 @@ void DrawObject::updatePolygonVB(PolygonTrigger *pTrig, Bool selected, Bool isOp
 		curVb->x = loc1.x-normal.X;
 		curVb->y = loc1.y-normal.Y;
 		curVb->z = loc1.z;
-		curVb->diffuse = diffuse;  
+		curVb->diffuse = diffuse;
 		curVb++;
 		m_feedbackVertexCount++;
 		curVb->u1 = 0;
@@ -1137,7 +1135,7 @@ void DrawObject::updatePolygonVB(PolygonTrigger *pTrig, Bool selected, Bool isOp
 		curVb->x = loc2.x+normal.X;
 		curVb->y = loc2.y+normal.Y;
 		curVb->z = loc2.z;
-		curVb->diffuse = diffuse; 
+		curVb->diffuse = diffuse;
 		curVb++;
 		m_feedbackVertexCount++;
 		curVb->u1 = 0;
@@ -1231,15 +1229,15 @@ void DrawObject::updateFeedbackVB(void)
 					curVb->diffuse = 0;
 				}
 			}
-			Real X, Y, theZ; 
+			Real X, Y, theZ;
 			if (doubleResolution) {
-				X = ADJUST_FROM_INDEX_TO_REAL(i)/2.0f + ADJUST_FROM_INDEX_TO_REAL(2*offset+m_cellCenter.x)  / 2.0; 
+				X = ADJUST_FROM_INDEX_TO_REAL(i)/2.0f + ADJUST_FROM_INDEX_TO_REAL(2*offset+m_cellCenter.x)  / 2.0;
 				Y = ADJUST_FROM_INDEX_TO_REAL(j)/2.0f + ADJUST_FROM_INDEX_TO_REAL(2*offset+m_cellCenter.y)  / 2.0;
-				theZ = TheTerrainRenderObject->getHeightMapHeight(X, Y, NULL);
+				theZ = TheTerrainRenderObject->getHeightMapHeight(X, Y, nullptr);
 			} else {
-				X = ADJUST_FROM_INDEX_TO_REAL(i); 
+				X = ADJUST_FROM_INDEX_TO_REAL(i);
 				Y = ADJUST_FROM_INDEX_TO_REAL(j);
-				theZ = TheTerrainRenderObject->getHeightMapHeight(X, Y, NULL);
+				theZ = TheTerrainRenderObject->getHeightMapHeight(X, Y, nullptr);
 			}
 			curVb->u1 = 0;
 			curVb->v1 = 0;
@@ -1249,7 +1247,7 @@ void DrawObject::updateFeedbackVB(void)
 			curVb++;
 			m_feedbackVertexCount++;
 		}
-	} 
+	}
 	Int yOffset = maxX-minX;
 	Int halfWidth = yOffset/2;
 	for (j=0; j<maxY-minY-1; j++) {
@@ -1282,7 +1280,7 @@ void DrawObject::updateFeedbackVB(void)
 
 
 /** Calculate the sign of the cross product.  If the tails of the vectors are both placed
-at 0,0, then the cross product can be interpreted as -1 means v2 is to the right of v1, 
+at 0,0, then the cross product can be interpreted as -1 means v2 is to the right of v1,
 1 means v2 is to the left of v1, and 0 means v2 is parallel to v1. */
 
 static Int xpSign(const ICoord3D &v1, const ICoord3D &v2) {
@@ -1299,8 +1297,8 @@ void DrawObject::updateForWater(void)
 {
 }
 
-/* This is a code snippet that starts to attempt to solve the concave area problem, 
-but doesn't, really.  
+/* This is a code snippet that starts to attempt to solve the concave area problem,
+but doesn't, really.
 				const Int maxPoints = 256;
 				Bool pointFlags[256];
 				Int numPoints = pTrig->getNumPoints();
@@ -1374,15 +1372,15 @@ Int DrawObject::updateVB(DX8VertexBufferClass	*pVB, Int color, Bool doArrow, Boo
 	g *= factor;
 	b *= factor;
 	const Int theAlpha = 127;
-	static const Int highlightColors[NUM_HIGHLIGHT] = { ((255<<8) + (255<<16)) , 
+	static const Int highlightColors[NUM_HIGHLIGHT] = { ((255<<8) + (255<<16)) ,
 				((255<<16)), (255<<8) };
 	Int diffuse =  b + (g<<8) + (r<<16) + (theAlpha<<24);	 // b g<<8 r<<16 a<<24.
 	if (pVB )
 	{
-		
+
 		DX8VertexBufferClass::WriteLockClass lockVtxBuffer(pVB);
 		VertexFormatXYZDUV1 *vb = (VertexFormatXYZDUV1*)lockVtxBuffer.Get_Vertex_Array();
-		
+
 		const Real theZ = 0.0f;
 		Real theRadius = THE_RADIUS;
 		Real halfLineWidth = 0.03f*MAP_XY_FACTOR;
@@ -1417,7 +1415,7 @@ Int DrawObject::updateVB(DX8VertexBufferClass	*pVB, Int color, Bool doArrow, Boo
 					Real angle = curAngle+deltaAngle;
 					if (i==limit-1) {
 						angle = 0;
-					} 
+					}
 					Vector3 vec(theRadius/10,0,theZ);
 					vec.Rotate_Z(angle);
 					vb->x=	vec.X;
@@ -1434,7 +1432,7 @@ Int DrawObject::updateVB(DX8VertexBufferClass	*pVB, Int color, Bool doArrow, Boo
 				vb++;
 			}
 			curAngle += deltaAngle;
-			
+
 		}
 		if (!doArrow) {
 			theRadius /= 20;
@@ -1442,7 +1440,7 @@ Int DrawObject::updateVB(DX8VertexBufferClass	*pVB, Int color, Bool doArrow, Boo
 		}
 		/* Now do the arrow. */
 		for (k=0; k<3; k++) {
-			vb->x=	(k&1)?2*theRadius:0.0f;	 
+			vb->x=	(k&1)?2*theRadius:0.0f;
 			vb->y=	-halfLineWidth + ((k&2)?2*halfLineWidth:0);
 			vb->z=  theZ;
 			vb->diffuse=highlightColors[curHighlight] + (theAlpha<<24);
@@ -1452,7 +1450,7 @@ Int DrawObject::updateVB(DX8VertexBufferClass	*pVB, Int color, Bool doArrow, Boo
 			vb++;
 		}
 		for (k=0; k<3; k++) {
-			vb->x=	(k&1)?0.0f:2*theRadius;	 
+			vb->x=	(k&1)?0.0f:2*theRadius;
 			vb->y=	halfLineWidth - ((k&2)?2*halfLineWidth:0);
 			vb->z=  theZ;
 			vb->diffuse=highlightColors[curHighlight] + (theAlpha<<24);
@@ -1516,7 +1514,7 @@ Int DrawObject::updateVB(DX8VertexBufferClass	*pVB, Int color, Bool doArrow, Boo
 					Real angle = curAngle+deltaAngle;
 					if (i==limit-1) {
 						angle = 0;
-					} 
+					}
 					Vector3 vec(theRadius,0,theZ);
 					vec.Rotate_Z(angle);
 					vb->x=	vec.X;
@@ -1533,13 +1531,13 @@ Int DrawObject::updateVB(DX8VertexBufferClass	*pVB, Int color, Bool doArrow, Boo
 				vb++;
 			}
 			curAngle += deltaAngle;
-			
+
 		}
 #if 0
 		// Now do the highlight triangle.  This is in yellow.
 		for (k=0; k<3; k++) {
-			vb->x = k==0?theRadius:0;	 
-			vb->y = k==1?theRadius:0;	 
+			vb->x = k==0?theRadius:0;
+			vb->y = k==1?theRadius:0;
 			vb->z=  k==2?theZ+SELECT_PYRAMID_HEIGHT:theZ;
 			vb->diffuse= highlightColors[curHighlight] + (theAlpha<<24);	 // b g<<8 r<<16 a<<24.
 			vb->u1=0;
@@ -1548,8 +1546,8 @@ Int DrawObject::updateVB(DX8VertexBufferClass	*pVB, Int color, Bool doArrow, Boo
 			vb++;
 		}
 		for (k=0; k<3; k++) {
-			vb->x = k==1?-theRadius:0;	 
-			vb->y = k==0?theRadius:0;	 
+			vb->x = k==1?-theRadius:0;
+			vb->y = k==0?theRadius:0;
 			vb->z=  k==2?theZ+SELECT_PYRAMID_HEIGHT:theZ;
 			vb->diffuse= highlightColors[curHighlight] + (theAlpha<<24);	 // b g<<8 r<<16 a<<24.
 			vb->u1=0;
@@ -1559,8 +1557,8 @@ Int DrawObject::updateVB(DX8VertexBufferClass	*pVB, Int color, Bool doArrow, Boo
 		}
 
 		for (k=0; k<3; k++) {
-			vb->x = k==1?theRadius:0;	 
-			vb->y = k==0?-theRadius:0;	 
+			vb->x = k==1?theRadius:0;
+			vb->y = k==0?-theRadius:0;
 			vb->z=  k==2?theZ+SELECT_PYRAMID_HEIGHT:theZ;
 			vb->diffuse= highlightColors[curHighlight] + (theAlpha<<24);	 // b g<<8 r<<16 a<<24.
 			vb->u1=0;
@@ -1569,8 +1567,8 @@ Int DrawObject::updateVB(DX8VertexBufferClass	*pVB, Int color, Bool doArrow, Boo
 			vb++;
 		}
 		for (k=0; k<3; k++) {
-			vb->x = k==0?-theRadius:0;	 
-			vb->y = k==1?-theRadius:0;	 
+			vb->x = k==0?-theRadius:0;
+			vb->y = k==1?-theRadius:0;
 			vb->z=  k==2?theZ+SELECT_PYRAMID_HEIGHT:theZ;
 			vb->diffuse= highlightColors[curHighlight] + (theAlpha<<24);	 // b g<<8 r<<16 a<<24.
 			vb->u1=0;
@@ -1585,7 +1583,7 @@ Int DrawObject::updateVB(DX8VertexBufferClass	*pVB, Int color, Bool doArrow, Boo
 }
 
 /** Tells drawobject where the tool is located, so it can draw feedback. */
-void DrawObject::setFeedbackPos(Coord3D pos) 
+void DrawObject::setFeedbackPos(Coord3D pos)
 {
 	m_feedbackPoint = pos;
 	// center on half pixel for even widths.
@@ -1600,7 +1598,7 @@ void DrawObject::setFeedbackPos(Coord3D pos)
 	if (ndx.x != m_cellCenter.x || ndx.y != m_cellCenter.y) {
 		m_cellCenter = ndx;
 		if (m_toolWantsFeedback && !m_disableFeedback) {
-			WbView3d *pView = pDoc->Get3DView();		
+			WbView3d *pView = pDoc->Get3DView();
 			if (pView) {
 				pView->Invalidate(false);
 			}
@@ -1610,23 +1608,17 @@ void DrawObject::setFeedbackPos(Coord3D pos)
 
 void DrawObject::setRampFeedbackParms(const Coord3D *start, const Coord3D *end, Real rampWidth)
 {
-	DEBUG_ASSERTCRASH(start && end, ("Parameter passed into setRampFeedbackParms was NULL. Not allowed"));
+	DEBUG_ASSERTCRASH(start && end, ("Parameter passed into setRampFeedbackParms was null. Not allowed"));
 	if (!(start && end)) {
 		return;
 	}
-	
+
 	m_rampStartPoint = *start;
 	m_rampEndPoint = *end;
 	m_rampWidth = rampWidth;
-	
+
 }
 
-
-// This routine fails to draw poly triggers in some cases when optimized.
-// So just shut it off for now.  The failure case was new doc, add a poly trigger.
-// Adding any other object fixed the problem.	jba
-
-#pragma optimize("", off)
 
 /** Render draws into the current 3d context. */
 void DrawObject::Render(RenderInfoClass & rinfo)
@@ -1635,7 +1627,7 @@ void DrawObject::Render(RenderInfoClass & rinfo)
 
 	DX8Wrapper::Set_Material(m_vertexMaterialClass);
 	DX8Wrapper::Set_Shader(m_shaderClass);
-	DX8Wrapper::Set_Texture(0, NULL);
+	DX8Wrapper::Set_Texture(0, nullptr);
 	DX8Wrapper::Apply_Render_State_Changes();
 	Int count=0;
 	Int i;
@@ -1656,15 +1648,15 @@ void DrawObject::Render(RenderInfoClass & rinfo)
 
 			Coord3D loc = *pMapObj->getLocation();
 			if (TheTerrainRenderObject) {
-				loc.z += TheTerrainRenderObject->getHeightMapHeight(loc.x, loc.y, NULL);
+				loc.z += TheTerrainRenderObject->getHeightMapHeight(loc.x, loc.y, nullptr);
 			}
 			// Cull.
-			SphereClass bounds(Vector3(loc.x, loc.y, loc.z), THE_RADIUS); 
+			SphereClass bounds(Vector3(loc.x, loc.y, loc.z), THE_RADIUS);
 			if (rinfo.Camera.Cull_Sphere(bounds)) {
 				continue;
 			}
 			Bool doArrow = true;
-			if (pMapObj->getFlag(FLAG_ROAD_FLAGS) || pMapObj->getFlag(FLAG_BRIDGE_FLAGS) || pMapObj->isWaypoint()) 
+			if (pMapObj->getFlag(FLAG_ROAD_FLAGS) || pMapObj->getFlag(FLAG_BRIDGE_FLAGS) || pMapObj->isWaypoint())
 			{
 				doArrow = false;
 			}
@@ -1717,8 +1709,8 @@ void DrawObject::Render(RenderInfoClass & rinfo)
 		}
 	}
 
-	DX8Wrapper::Set_Vertex_Buffer(NULL);	//release reference to vertex buffer
-	DX8Wrapper::Set_Index_Buffer(NULL,0);	//release reference to vertex buffer
+	DX8Wrapper::Set_Vertex_Buffer(nullptr);	//release reference to vertex buffer
+	DX8Wrapper::Set_Index_Buffer(nullptr,0);	//release reference to vertex buffer
 
 	if (m_drawPolygonAreas) {
 		Int selected;
@@ -1734,8 +1726,8 @@ void DrawObject::Render(RenderInfoClass & rinfo)
 					Coord3D loc;
 					loc.x = iLoc.x;
 					loc.y = iLoc.y;
-					loc.z = TheTerrainRenderObject->getHeightMapHeight(loc.x, loc.y, NULL);
-					SphereClass bounds(Vector3(loc.x, loc.y, loc.z), THE_RADIUS); 
+					loc.z = TheTerrainRenderObject->getHeightMapHeight(loc.x, loc.y, nullptr);
+					SphereClass bounds(Vector3(loc.x, loc.y, loc.z), THE_RADIUS);
 					if (rinfo.Camera.Cull_Sphere(bounds)) {
 						continue;
 					}
@@ -1783,18 +1775,18 @@ void DrawObject::Render(RenderInfoClass & rinfo)
 		}
 	}
 
-	DX8Wrapper::Set_Vertex_Buffer(NULL);	//release reference to vertex buffer
-	DX8Wrapper::Set_Index_Buffer(NULL,0);	//release reference to vertex buffer
+	DX8Wrapper::Set_Vertex_Buffer(nullptr);	//release reference to vertex buffer
+	DX8Wrapper::Set_Index_Buffer(nullptr,0);	//release reference to vertex buffer
 
  	if (BuildListTool::isActive()) for (i=0; i<TheSidesList->getNumSides(); i++) {
-		SidesInfo *pSide = TheSidesList->getSideInfo(i); 
+		SidesInfo *pSide = TheSidesList->getSideInfo(i);
 		for (BuildListInfo *pBuild = pSide->getBuildList(); pBuild; pBuild = pBuild->getNext()) {
 			Coord3D loc = *pBuild->getLocation();
 			if (TheTerrainRenderObject) {
-				loc.z += TheTerrainRenderObject->getHeightMapHeight(loc.x, loc.y, NULL);
+				loc.z += TheTerrainRenderObject->getHeightMapHeight(loc.x, loc.y, nullptr);
 			}
 			// Cull.
-			SphereClass bounds(Vector3(loc.x, loc.y, loc.z), THE_RADIUS); 
+			SphereClass bounds(Vector3(loc.x, loc.y, loc.z), THE_RADIUS);
 			if (rinfo.Camera.Cull_Sphere(bounds)) {
 				continue;
 			}
@@ -1823,7 +1815,7 @@ void DrawObject::Render(RenderInfoClass & rinfo)
 				polyCountA -= NUM_ARROW_TRI+NUM_SELECT_TRI;
 			}
 
-#if 1	
+#if 1
 			DX8Wrapper::Set_Index_Buffer(m_indexBuffer,0);
 			DX8Wrapper::Set_Transform(D3DTS_WORLD,tmXX);
 			DX8Wrapper::Draw_Triangles(	0,polyCountA, 0,	(m_numTriangles*3));
@@ -1831,8 +1823,8 @@ void DrawObject::Render(RenderInfoClass & rinfo)
 		}
 	}
 
-	DX8Wrapper::Set_Vertex_Buffer(NULL);	//release reference to vertex buffer
-	DX8Wrapper::Set_Index_Buffer(NULL,0);	//release reference to vertex buffer
+	DX8Wrapper::Set_Vertex_Buffer(nullptr);	//release reference to vertex buffer
+	DX8Wrapper::Set_Index_Buffer(nullptr,0);	//release reference to vertex buffer
 
 	Matrix3D tmReset(Transform);
 	DX8Wrapper::Set_Transform(D3DTS_WORLD,tmReset);
@@ -1849,8 +1841,8 @@ void DrawObject::Render(RenderInfoClass & rinfo)
 		}
 	}
 
-	DX8Wrapper::Set_Vertex_Buffer(NULL);	//release reference to vertex buffer
-	DX8Wrapper::Set_Index_Buffer(NULL,0);	//release reference to vertex buffer
+	DX8Wrapper::Set_Vertex_Buffer(nullptr);	//release reference to vertex buffer
+	DX8Wrapper::Set_Index_Buffer(nullptr,0);	//release reference to vertex buffer
 
 #if 1
 	if (m_meshFeedback) {
@@ -1873,8 +1865,8 @@ void DrawObject::Render(RenderInfoClass & rinfo)
 	}
 #endif
 
-	DX8Wrapper::Set_Vertex_Buffer(NULL);	//release reference to vertex buffer
-	DX8Wrapper::Set_Index_Buffer(NULL,0);	//release reference to vertex buffer
+	DX8Wrapper::Set_Vertex_Buffer(nullptr);	//release reference to vertex buffer
+	DX8Wrapper::Set_Index_Buffer(nullptr,0);	//release reference to vertex buffer
 
 #if 1
 	if (m_rampFeedback) {
@@ -1890,8 +1882,8 @@ void DrawObject::Render(RenderInfoClass & rinfo)
 	}
 #endif
 
-	DX8Wrapper::Set_Vertex_Buffer(NULL);	//release reference to vertex buffer
-	DX8Wrapper::Set_Index_Buffer(NULL,0);	//release reference to vertex buffer
+	DX8Wrapper::Set_Vertex_Buffer(nullptr);	//release reference to vertex buffer
+	DX8Wrapper::Set_Index_Buffer(nullptr,0);	//release reference to vertex buffer
 
 #if 1
 	if (m_boundaryFeedback) {
@@ -1908,8 +1900,8 @@ void DrawObject::Render(RenderInfoClass & rinfo)
 	}
 #endif
 
-	DX8Wrapper::Set_Vertex_Buffer(NULL);	//release reference to vertex buffer
-	DX8Wrapper::Set_Index_Buffer(NULL,0);	//release reference to vertex buffer
+	DX8Wrapper::Set_Vertex_Buffer(nullptr);	//release reference to vertex buffer
+	DX8Wrapper::Set_Index_Buffer(nullptr,0);	//release reference to vertex buffer
 
 
 	if (m_ambientSoundFeedback) {
@@ -1933,14 +1925,14 @@ void DrawObject::Render(RenderInfoClass & rinfo)
 	}
 
 }
-#pragma optimize("", on)
 
-void BuildRectFromSegmentAndWidth(const Coord3D* start, const Coord3D* end, Real width, 
+
+void BuildRectFromSegmentAndWidth(const Coord3D* start, const Coord3D* end, Real width,
 																	Coord3D* outBL, Coord3D* outTL, Coord3D* outBR, Coord3D* outTR)
 {
 /*
-	Here's how we're generating the surface to render: 
- 		1) Assign longSeg to be the segment from rampStartPoint to rampStopPoint 
+	Here's how we're generating the surface to render:
+ 		1) Assign longSeg to be the segment from rampStartPoint to rampStopPoint
  		2) Cross product with the segment (0, 0, 1)
  		3) Normalize to get the unit vector (which is in the XY plane.)
  		4) Multiply the unit vector by the ramp width / 2
@@ -1953,7 +1945,7 @@ void BuildRectFromSegmentAndWidth(const Coord3D* start, const Coord3D* end, Real
 		return;
 	}
 
-	// 1) 
+	// 1)
 	Vector3 longSeg;
 	if (start->length() > end->length()) {
 		longSeg.X = end->x - start->x;
@@ -1974,7 +1966,7 @@ void BuildRectFromSegmentAndWidth(const Coord3D* start, const Coord3D* end, Real
 	// 3)
 	unitVec.Normalize();
 
-	// 4) 
+	// 4)
 	unitVec.Scale(Vector3(width, width, width));
 
 	Coord3D bl = { start->x + unitVec.X, start->y + unitVec.Y, start->z + unitVec.Z };

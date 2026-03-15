@@ -34,8 +34,7 @@
 *
 ******************************************************************************/
 
-#ifndef USTRING_H
-#define USTRING_H
+#pragma once
 
 #include "UTypes.h"
 #include "RefCounted.h"
@@ -75,11 +74,11 @@ class UString
 		Int CompareNoCase(const WChar* ws) const;
 		Int CompareNoCase(const UString& s) const;
 
-		//! Find the first occurance of character
+		//! Find the first occurrence of character
 		Int Find(Char c) const;
 		Int Find(WChar wc) const;
 
-		//! Find the last occurance of a character
+		//! Find the last occurrence of a character
 		Int FindLast(Char c) const;
 		Int FindLast(WChar c) const;
 
@@ -99,10 +98,10 @@ class UString
 
 		//! Convert string to uppercase
 		void ToUpper(void);
-		
+
 		//! Convert string to lowercase
 		void ToLower(void);
-		
+
 		//! Reverse characters of string
 		void Reverse(void);
 
@@ -137,7 +136,7 @@ class UString
 		bool Resize(UInt size);
 
 		const WChar* Get(void) const
-			{return (mData != NULL) ? mData : L"";}
+			{return (mData != nullptr) ? mData : L"";}
 
 		//! Assignment operator
 		UString operator=(const Char* s)
@@ -145,7 +144,7 @@ class UString
 
 		UString operator=(const WChar* ws)
 			{Copy(ws); return *this;};
-		
+
 		UString operator=(const UString& s)
 			{Copy(s); return *this;};
 
@@ -183,7 +182,7 @@ class UString
 
 		bool operator!=(const WChar* ws)
 			{return (Compare(ws) != 0);}
-		
+
 		bool operator!=(const UString& s)
 			{return (Compare(s) != 0);}
 
@@ -235,5 +234,3 @@ class UString
 		WChar* mData;
 		UInt mCapacity;
 	};
-
-#endif // USTRING_H

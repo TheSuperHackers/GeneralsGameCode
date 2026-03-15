@@ -39,7 +39,7 @@
 W3DWebBrowser::W3DWebBrowser() : WebBrowser() {
 }
 
-Bool W3DWebBrowser::createBrowserWindow(const char *tag, GameWindow *win) 
+Bool W3DWebBrowser::createBrowserWindow(const char *tag, GameWindow *win)
 {
 
 	WinInstanceData *winData = win->winGetInstanceData();
@@ -52,8 +52,8 @@ Bool W3DWebBrowser::createBrowserWindow(const char *tag, GameWindow *win)
 
 	WebBrowserURL *url = findURL( AsciiString(tag) );
 
-	if (url == NULL) {
-		DEBUG_LOG(("W3DWebBrowser::createBrowserWindow - couldn't find URL for page %s\n", tag));
+	if (url == nullptr) {
+		DEBUG_LOG(("W3DWebBrowser::createBrowserWindow - couldn't find URL for page %s", tag));
 		return FALSE;
 	}
 
@@ -62,7 +62,7 @@ Bool W3DWebBrowser::createBrowserWindow(const char *tag, GameWindow *win)
 #else
 	CComQIPtr<IDispatch> idisp(m_dispatch);
 #endif
-	if (m_dispatch == NULL)
+	if (m_dispatch == nullptr)
 	{
 		return FALSE;
 	}
@@ -72,7 +72,7 @@ Bool W3DWebBrowser::createBrowserWindow(const char *tag, GameWindow *win)
 	return TRUE;
 }
 
-void W3DWebBrowser::closeBrowserWindow(GameWindow *win) 
+void W3DWebBrowser::closeBrowserWindow(GameWindow *win)
 {
 	DX8WebBrowser::DestroyBrowser(win->winGetInstanceData()->m_decoratedNameString.str());
 }

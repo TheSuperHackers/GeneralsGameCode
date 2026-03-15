@@ -25,16 +25,13 @@
 // FILE: W3DGameLogic.h ///////////////////////////////////////////////////////
 //
 // W3D game logic class, there shouldn't be a lot of new functionality
-// in this class, but there are certain things that need to have close 
+// in this class, but there are certain things that need to have close
 // knowledge of each other like ther logical and visual terrain
 //
 // Author: Colin Day, April 2001
 ///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __W3DGAMELOGIC_H_
-#define __W3DGAMELOGIC_H_
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
@@ -61,9 +58,7 @@ public:
 protected:
 
 	/// factory for TheTerrainLogic, called from init()
-	virtual TerrainLogic *createTerrainLogic( void ) { return NEW W3DTerrainLogic; };
-	virtual GhostObjectManager *createGhostObjectManager(void) { return NEW W3DGhostObjectManager; }
+	virtual TerrainLogic *createTerrainLogic() { return NEW W3DTerrainLogic; };
+	virtual GhostObjectManager *createGhostObjectManager() { return NEW W3DGhostObjectManager; }
 
-};  // end class W3DGameLogic
-
-#endif  // end __W3DGAMELOGIC_H_
+};

@@ -63,7 +63,7 @@ DefinitionClass::Save (ChunkSaveClass &csave)
 {
 	bool retval = true;
 
-	csave.Begin_Chunk (CHUNKID_VARIABLES);	
+	csave.Begin_Chunk (CHUNKID_VARIABLES);
 	retval &= Save_Variables (csave);
 	csave.End_Chunk ();
 
@@ -83,7 +83,7 @@ DefinitionClass::Load (ChunkLoadClass &cload)
 
 	while (cload.Open_Chunk ()) {
 		switch (cload.Cur_Chunk_ID ()) {
-			
+
 			case CHUNKID_VARIABLES:
 				Load_Variables (cload);
 				break;
@@ -127,7 +127,7 @@ DefinitionClass::Load_Variables (ChunkLoadClass &cload)
 	//
 	while (cload.Open_Micro_Chunk ()) {
 		switch (cload.Cur_Micro_Chunk_ID ()) {
-			
+
 			READ_MICRO_CHUNK (cload, VARID_INSTANCEID, m_ID)
 			READ_MICRO_CHUNK_WWSTRING (cload, VARID_NAME, m_Name)
 		}

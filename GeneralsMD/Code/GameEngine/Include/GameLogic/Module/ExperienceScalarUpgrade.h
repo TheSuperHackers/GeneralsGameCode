@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __EXPERIENCE_SCALAR_UPGRADE_H_
-#define __EXPERIENCE_SCALAR_UPGRADE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpgradeModule.h"
 
@@ -45,7 +42,7 @@ class ExperienceScalarUpgradeModuleData: public UpgradeModuleData
 
 public:
 
-	ExperienceScalarUpgradeModuleData( void );
+	ExperienceScalarUpgradeModuleData();
 
 	static void buildFieldParse(MultiIniFieldParse& p);
 
@@ -68,11 +65,7 @@ public:
 
 protected:
 
-	virtual void upgradeImplementation( ); ///< Here's the actual work of Upgrading
-	virtual Bool isSubObjectsUpgrade() { return false; }
+	virtual void upgradeImplementation() override; ///< Here's the actual work of Upgrading
+	virtual Bool isSubObjectsUpgrade() override { return false; }
 
 };
-
-
-#endif // __DEFAULTDIE_H_
-

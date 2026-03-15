@@ -34,16 +34,10 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef LAYER_H
-#define LAYER_H
 
 #include "always.h"
-#include "LISTNODE.H"
+#include "LISTNODE.h"
 #include "vector3.h"
 
 class SceneClass;
@@ -57,10 +51,10 @@ class LayerClass : public LayerNodeClass
 
 public:
 
-	LayerClass(void);
-	LayerClass(SceneClass * s,CameraClass * c,bool clear = false,bool clearz = false,const Vector3 & color = Vector3(0,0,0)); 
+	LayerClass();
+	LayerClass(SceneClass * s,CameraClass * c,bool clear = false,bool clearz = false,const Vector3 & color = Vector3(0,0,0));
 	LayerClass(const LayerClass & src);
-	~LayerClass(void);
+	~LayerClass();
 
 
 	/*
@@ -68,11 +62,11 @@ public:
 	** objects properly.
 	*/
 	void						Set_Scene(SceneClass * scene);
-	SceneClass *			Get_Scene(void) const;
-	SceneClass *			Peek_Scene(void) const;
+	SceneClass *			Get_Scene() const;
+	SceneClass *			Peek_Scene() const;
 	void						Set_Camera(CameraClass * cam);
-	CameraClass *			Get_Camera(void) const;
-	CameraClass *			Peek_Camera(void) const;
+	CameraClass *			Get_Camera() const;
+	CameraClass *			Peek_Camera() const;
 
 
 	// [SKB: Aug 14 2001 @ 1:53pm] :
@@ -93,8 +87,3 @@ public:
 };
 
 typedef List<LayerClass *> LayerListClass;
-
-
-#endif //LAYER_H
-
-

@@ -20,8 +20,7 @@
 // Platform independent thread creation (Win32 & POSIX)
 //
 
-#ifndef THREADFAC_HEADER
-#define THREADFAC_HEADER
+#pragma once
 
 #ifdef _WIN32
   #include <process.h>
@@ -52,7 +51,7 @@
   #else  // UNIX
     static void *threadFuncLauncher(void *temp);
   #endif
- 
+
   // Fake entry point for classes
   #ifdef _WIN32
     static unsigned __stdcall threadClassLauncher(void *temp);
@@ -75,7 +74,7 @@ class ThreadFactory
 {
  public:
   static bit8    startThread(void (*start_func)(void *), void *data);
-  static bit8    startThread(Runnable &runable, void *data, bit8 destroy=FALSE);
+  static bit8    startThread(Runnable &runnable, void *data, bit8 destroy=FALSE);
 };
 
 
@@ -97,7 +96,7 @@ class Runnable
 
    // So do the threadClassLaunchers
    #ifdef _WIN32
-      friend static unsigned __stdcall threadClassLauncher(void *temp);
+     friend unsigned __stdcall threadClassLauncher(void *temp);
    #else  // UNIX
      friend void *threadClassLauncher(void *temp);
    #endif
@@ -120,5 +119,3 @@ class Runnable
    static int       ThreadCount_;
    static CritSec   CritSec_;           // to protect ThreadCount_
 };
-
-#endif

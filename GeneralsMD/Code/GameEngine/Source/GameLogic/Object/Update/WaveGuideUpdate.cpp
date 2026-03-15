@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Radar.h"
 #include "Common/ThingFactory.h"
@@ -56,14 +56,11 @@
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-WaveGuideUpdateModuleData::WaveGuideUpdateModuleData( void )
+WaveGuideUpdateModuleData::WaveGuideUpdateModuleData()
 {
-	//Added By Sadullah Nader
-	//Initialization(s) inserted
 	m_bridgeParticleAngleFudge = 0.0f;
 	m_randomSplashSoundFrequency = 0;
 	m_waveDelay = 0.0f;
-	//
 	m_ySize = 0.0f;
 	m_linearWaveSpacing = 0.0f;
 	m_waveBendMagnitude = 0.0f;
@@ -74,7 +71,7 @@ WaveGuideUpdateModuleData::WaveGuideUpdateModuleData( void )
 	m_damageAmount = 0.0f;
 	m_toppleForce = 0.0f;
 
-}  // end WaveGuideUpdateModuleData
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -83,30 +80,30 @@ WaveGuideUpdateModuleData::WaveGuideUpdateModuleData( void )
 
   UpdateModuleData::buildFieldParse( p );
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 
-		{ "WaveDelay", INI::parseDurationReal, NULL, offsetof( WaveGuideUpdateModuleData, m_waveDelay ) },	
-		{ "YSize", INI::parseReal, NULL, offsetof( WaveGuideUpdateModuleData, m_ySize ) },
-		{ "LinearWaveSpacing", INI::parseReal, NULL, offsetof( WaveGuideUpdateModuleData, m_linearWaveSpacing ) },
-		{ "WaveBendMagnitude", INI::parseReal, NULL, offsetof( WaveGuideUpdateModuleData, m_waveBendMagnitude ) },
-		{ "WaterVelocity", INI::parseVelocityReal, NULL, offsetof( WaveGuideUpdateModuleData, m_waterVelocity ) },
-		{ "PreferredHeight", INI::parseReal, NULL, offsetof( WaveGuideUpdateModuleData, m_preferredHeight ) },
-		{ "ShorelineEffectDistance", INI::parseReal, NULL, offsetof( WaveGuideUpdateModuleData, m_shorelineEffectDistance ) },
-		{ "DamageRadius", INI::parseReal, NULL, offsetof( WaveGuideUpdateModuleData, m_damageRadius ) },
-		{ "DamageAmount", INI::parseReal, NULL, offsetof( WaveGuideUpdateModuleData, m_damageAmount ) },
-		{ "ToppleForce", INI::parseReal, NULL, offsetof( WaveGuideUpdateModuleData, m_toppleForce ) },
-		{ "RandomSplashSound", INI::parseAudioEventRTS, NULL, offsetof( WaveGuideUpdateModuleData, m_randomSplashSound ) },
-		{ "RandomSplashSoundFrequency", INI::parseInt, NULL, offsetof( WaveGuideUpdateModuleData, m_randomSplashSoundFrequency ) },
-		{ "BridgeParticle",	INI::parseParticleSystemTemplate, NULL, offsetof( WaveGuideUpdateModuleData, m_bridgeParticle ) },
-		{ "BridgeParticleAngleFudge", INI::parseAngleReal, NULL, offsetof( WaveGuideUpdateModuleData, m_bridgeParticleAngleFudge ) },
-		{ "LoopingSound", INI::parseAudioEventRTS, NULL, offsetof( WaveGuideUpdateModuleData, m_loopingSound ) },
-		{ 0, 0, 0, 0 }
+		{ "WaveDelay", INI::parseDurationReal, nullptr, offsetof( WaveGuideUpdateModuleData, m_waveDelay ) },
+		{ "YSize", INI::parseReal, nullptr, offsetof( WaveGuideUpdateModuleData, m_ySize ) },
+		{ "LinearWaveSpacing", INI::parseReal, nullptr, offsetof( WaveGuideUpdateModuleData, m_linearWaveSpacing ) },
+		{ "WaveBendMagnitude", INI::parseReal, nullptr, offsetof( WaveGuideUpdateModuleData, m_waveBendMagnitude ) },
+		{ "WaterVelocity", INI::parseVelocityReal, nullptr, offsetof( WaveGuideUpdateModuleData, m_waterVelocity ) },
+		{ "PreferredHeight", INI::parseReal, nullptr, offsetof( WaveGuideUpdateModuleData, m_preferredHeight ) },
+		{ "ShorelineEffectDistance", INI::parseReal, nullptr, offsetof( WaveGuideUpdateModuleData, m_shorelineEffectDistance ) },
+		{ "DamageRadius", INI::parseReal, nullptr, offsetof( WaveGuideUpdateModuleData, m_damageRadius ) },
+		{ "DamageAmount", INI::parseReal, nullptr, offsetof( WaveGuideUpdateModuleData, m_damageAmount ) },
+		{ "ToppleForce", INI::parseReal, nullptr, offsetof( WaveGuideUpdateModuleData, m_toppleForce ) },
+		{ "RandomSplashSound", INI::parseAudioEventRTS, nullptr, offsetof( WaveGuideUpdateModuleData, m_randomSplashSound ) },
+		{ "RandomSplashSoundFrequency", INI::parseInt, nullptr, offsetof( WaveGuideUpdateModuleData, m_randomSplashSoundFrequency ) },
+		{ "BridgeParticle",	INI::parseParticleSystemTemplate, nullptr, offsetof( WaveGuideUpdateModuleData, m_bridgeParticle ) },
+		{ "BridgeParticleAngleFudge", INI::parseAngleReal, nullptr, offsetof( WaveGuideUpdateModuleData, m_bridgeParticleAngleFudge ) },
+		{ "LoopingSound", INI::parseAudioEventRTS, nullptr, offsetof( WaveGuideUpdateModuleData, m_loopingSound ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 
   p.add(dataFieldParse);
 
-}  // end buildFieldParse
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -138,22 +135,22 @@ WaveGuideUpdate::WaveGuideUpdate( Thing *thing, const ModuleData *moduleData )
 		for( Int j = 0; j < MAX_SHAPE_EFFECTS; j++ )
 			m_shapeEffects[ i ][ j ] = INVALID_PARTICLE_SYSTEM_ID;
 
-	}  // end for i
+	}
 
-}  // end WaveGuideUpdate
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-WaveGuideUpdate::~WaveGuideUpdate( void )
+WaveGuideUpdate::~WaveGuideUpdate()
 {
 
-}  // end ~WaveGuideUpdate
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Start the waveguide moving along its waypoint path, bringing water destruction and havok
 	* upon the land */
 // ------------------------------------------------------------------------------------------------
-Bool WaveGuideUpdate::startMoving( void )
+Bool WaveGuideUpdate::startMoving()
 {
 	Object *waveGuide = getObject();
 	Waypoint *waypoint;
@@ -174,15 +171,15 @@ Bool WaveGuideUpdate::startMoving( void )
 		Waypoint *verify = waypoint;
 		while( verify )
 		{
-		
+
 			// can't have more than one link
 			if( verify->getNumLinks() > 1 )
 			{
 
-				DEBUG_CRASH(( "WaveGuideUpdate::startMoving - The waypoint path cannot have multiple link choices at any node\n" ));
+				DEBUG_CRASH(( "WaveGuideUpdate::startMoving - The waypoint path cannot have multiple link choices at any node" ));
 				return FALSE;
 
-			}  // end if
+			}
 
 			// set our destination location to this waypoint position
 			m_finalDestination = *verify->getLocation();
@@ -190,18 +187,18 @@ Bool WaveGuideUpdate::startMoving( void )
 			// on to the next
 			verify = verify->getLink( 0 );
 
-		}  // end while
+		}
 
 		// there must be at least one link
 		Waypoint *next = waypoint->getLink( 0 );
-		if( next == NULL )
+		if( next == nullptr )
 		{
 
-			DEBUG_CRASH(( "WaveGuideUpdate:startMoving - There must be a linked waypoint path to follow\n" ));
+			DEBUG_CRASH(( "WaveGuideUpdate:startMoving - There must be a linked waypoint path to follow" ));
 			return FALSE;
 
-		}  // end if
-				
+		}
+
 		// get vector from next waypoint to first waypoint
 		Coord2D v;
 		v.x = next->getLocation()->x - waypoint->getLocation()->x;
@@ -234,18 +231,18 @@ Bool WaveGuideUpdate::startMoving( void )
 			//
 			ai->setPathExtraDistance( PATH_EXTRA_DISTANCE );
 
-		}  // end if
+		}
 
-	}  // endif
+	}
 
 	return TRUE;  // all is well
 
-}  // end startMoving
+}
 
 // ------------------------------------------------------------------------------------------------
 /** The wave guide has started moving ... this is called once */
 // ------------------------------------------------------------------------------------------------
-Bool WaveGuideUpdate::initWaveGuide( void )
+Bool WaveGuideUpdate::initWaveGuide()
 {
 
 	// start the waveguide movement
@@ -273,7 +270,7 @@ Bool WaveGuideUpdate::initWaveGuide( void )
 			particleSys->attachToObject( getObject() );
 			m_shapeEffects[ i ][ 0 ] = particleSys->getSystemID();
 
-		}  // end if
+		}
 
 		// create spray 2 effect
 		particleSys = TheParticleSystemManager->createParticleSystem( wave2 );
@@ -284,7 +281,7 @@ Bool WaveGuideUpdate::initWaveGuide( void )
 			particleSys->attachToObject( getObject() );
 			m_shapeEffects[ i ][ 1 ] = particleSys->getSystemID();
 
-		}  // end if
+		}
 
 		// create spray 3 every few points across the wave
 		if( i % 5  == 0 )
@@ -298,19 +295,19 @@ Bool WaveGuideUpdate::initWaveGuide( void )
 				particleSys->attachToObject( getObject() );
 				m_shapeEffects[ i ][ 2 ] = particleSys->getSystemID();
 
-			}  // end if
+			}
 
-		}  // end if
+		}
 
-	}  // end if
+	}
 
 	return TRUE;  // all is well
 
-}  // end initWaveGuide
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void WaveGuideUpdate::computeWaveShapePoints( void )
+void WaveGuideUpdate::computeWaveShapePoints()
 {
 
 	// get the module data
@@ -342,15 +339,15 @@ void WaveGuideUpdate::computeWaveShapePoints( void )
 		m_shapePoints[ m_shapePointCount ].z = 0.0f;
 		m_shapePointCount++;
 
-	}  // end for width
+	}
 
-}  // end computeWaveShapePoints
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Given the current position and orientation of the wave guide, transform all the wave
-	* shape points so we can quickly access them for mutliple reasons */
+	* shape points so we can quickly access them for multiple reasons */
 // ------------------------------------------------------------------------------------------------
-void WaveGuideUpdate::transformWaveShape( void )
+void WaveGuideUpdate::transformWaveShape()
 {
 	Int i;
 	Object *waveGuide = getObject();
@@ -365,17 +362,17 @@ void WaveGuideUpdate::transformWaveShape( void )
 		m_transformedShapePoints[ i ].z = TheTerrainLogic->getGroundHeight( m_transformedShapePoints[ i ].x,
 																																	m_transformedShapePoints[ i ].y );
 
-	}  // end for i
+	}
 
-}  // end transformWaveShape
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Update phase for the effects that make up the front shape of the wave */
 // ------------------------------------------------------------------------------------------------
-void WaveGuideUpdate::doShapeEffects( void )
+void WaveGuideUpdate::doShapeEffects()
 {
 	const WaveGuideUpdateModuleData *modData = getWaveGuideUpdateModuleData();
-	
+
 	//
 	// the particle systems that make up the wave shape need to maintain a position that is
 	// just above the ground
@@ -406,20 +403,20 @@ void WaveGuideUpdate::doShapeEffects( void )
 					pos.z = m_transformedShapePoints[ i ].z;
 					particleSys->setPosition( &pos );
 
-				}  // end if
+				}
 
-			}  // end if
+			}
 
-		}  // end for j
+		}
 
-	}  // end for i
+	}
 
-}  // end doShapeEffects
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Given all our sample points, make the wave go */
 // ------------------------------------------------------------------------------------------------
-void WaveGuideUpdate::doWaterMotion( void )
+void WaveGuideUpdate::doWaterMotion()
 {
 //	Object *waveGuide = getObject();
 
@@ -435,19 +432,19 @@ void WaveGuideUpdate::doWaterMotion( void )
 		// push up the water here
 		TheTerrainVisual->addWaterVelocity( m_transformedShapePoints[ i ].x,
 																				m_transformedShapePoints[ i ].y,
-																				modData->m_waterVelocity, 
+																				modData->m_waterVelocity,
 																				modData->m_preferredHeight );
 
 
-	}  // end for i
+	}
 
-}  // end doWaterMotion
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Any points in our wave that are on the shoreline that are close enough to the effect
 	* points for the shore will do those effects */
 // ------------------------------------------------------------------------------------------------
-void WaveGuideUpdate::doShoreEffects( void )
+void WaveGuideUpdate::doShoreEffects()
 {
 
 	// this is expensive to do *all* the time
@@ -476,7 +473,7 @@ void WaveGuideUpdate::doShoreEffects( void )
 		// transform the point
 		waveGuide->transformPoint( &effectPoints[ i ], &effectPoints[ i ] );
 
-	}  // end for i
+	}
 
 	//
 	// go across the shape of our wave ... when we detect a transition from underground to
@@ -507,18 +504,18 @@ void WaveGuideUpdate::doShoreEffects( void )
 			//
 			if( underWater == TRUE && i != 0 )
 			{
-				Coord3D *prevPoint = &effectPoints[ i - 1 ];  // the prev point is actuall on the water so we'll use it
-						
+				Coord3D *prevPoint = &effectPoints[ i - 1 ];  // the prev point is actually on the water so we'll use it
+
 				particleSystem = TheParticleSystemManager->createParticleSystem( right );
 				if( particleSystem )
 					particleSystem->setPosition( prevPoint );
 
-			}  // end if
+			}
 
 			// we are now 'above'
 			underWater = FALSE;
 
-		}  // end if
+		}
 		else
 		{
 
@@ -533,21 +530,21 @@ void WaveGuideUpdate::doShoreEffects( void )
 				if( particleSystem )
 					particleSystem->setPosition( point );
 
-			}  // end if
+			}
 
 			// we are now 'under'
 			underWater = TRUE;
 
-		}  // end else
+		}
 
-	}  // end for i
+	}
 
-}  // end doShoreEffects
+}
 
 // ------------------------------------------------------------------------------------------------
-/** Do damage to things that have fallen victim in the path of this enourmous wave */
+/** Do damage to things that have fallen victim in the path of this enormous wave */
 // ------------------------------------------------------------------------------------------------
-void WaveGuideUpdate::doDamage( void )
+void WaveGuideUpdate::doDamage()
 {
 	Object *waveGuide = getObject();
 	const WaveGuideUpdateModuleData *modData = getWaveGuideUpdateModuleData();
@@ -561,9 +558,9 @@ void WaveGuideUpdate::doDamage( void )
 
 		// scan objects around us and do damage to objects we have "passed over" and are behind us
 		ObjectIterator *iter = ThePartitionManager->iterateObjectsInRange( &m_transformedShapePoints[ i ],
-																																			 modData->m_damageRadius, 
-																																			 FROM_CENTER_2D, 
-																																			 NULL );
+																																			 modData->m_damageRadius,
+																																			 FROM_CENTER_2D,
+																																			 nullptr );
 		MemoryPoolObjectHolder hold( iter );
 		Object *obj;
 		const Coord3D *objPos;
@@ -573,7 +570,7 @@ void WaveGuideUpdate::doDamage( void )
 		{
 
 			// ignore all waveguide types
-			if( obj->isKindOf( KINDOF_WAVEGUIDE ) )	
+			if( obj->isKindOf( KINDOF_WAVEGUIDE ) )
 				continue;
 
 			//
@@ -589,7 +586,7 @@ void WaveGuideUpdate::doDamage( void )
 			//
 			// only damage objects that are below the preferred height of the wave doing the damage,
 			// bridges are an exception as their object is raised above the ground, but we'll
-			// say the water is destroying the foundation of it 
+			// say the water is destroying the foundation of it
 			//
 			if( objPos->z > modData->m_preferredHeight && obj->isKindOf( KINDOF_BRIDGE ) == FALSE )
 				continue;
@@ -599,7 +596,7 @@ void WaveGuideUpdate::doDamage( void )
 			v.y = objPos->y - m_transformedShapePoints[ i ].y;
 			v.z = 0.0f;		// forget Z, this is really a top down 2D calculation
 			v.normalize();
-			
+
 			//
 			// get the cosine of the angle between the our forward direction and the vector to the obj
 			// otherwise known as a dot product
@@ -638,7 +635,7 @@ void WaveGuideUpdate::doDamage( void )
 						particleSystem->setPosition( &pos );
 						particleSystem->attachToObject( waveGuide );
 
-					}  // end if
+					}
 
 					// this object is now wet
 					obj->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_WET ) );
@@ -648,7 +645,7 @@ void WaveGuideUpdate::doDamage( void )
 					toppleVector.x = obj->getPosition()->x - m_transformedShapePoints[ i ].x;
 					toppleVector.y = obj->getPosition()->y - m_transformedShapePoints[ i ].y;
 					toppleVector.z = 0;
-					obj->topple( &toppleVector, modData->m_toppleForce, TOPPLE_OPTIONS_NO_BOUNCE | 
+					obj->topple( &toppleVector, modData->m_toppleForce, TOPPLE_OPTIONS_NO_BOUNCE |
 																															TOPPLE_OPTIONS_NO_FX );
 
 					// do a lot of water damage
@@ -660,8 +657,8 @@ void WaveGuideUpdate::doDamage( void )
 					obj->attemptDamage( &damageInfo );
 
 					//
-					// set flooded condition for model and turn off shadows cause we're inside water, 
-					// note that we want to do this after we damage the object so that we switch 
+					// set flooded condition for model and turn off shadows cause we're inside water,
+					// note that we want to do this after we damage the object so that we switch
 					// off the shadows on the new model data loaded after damage is dealt
 					//
 					Drawable *draw = obj->getDrawable();
@@ -671,7 +668,7 @@ void WaveGuideUpdate::doDamage( void )
 						draw->setModelConditionState( MODELCONDITION_FLOODED );
 						draw->setShadowsEnabled( FALSE );
 
-					}  // end if
+					}
 
 					//
 					// Temp demo hack, replace bridges destroyed with the special destroyed bridge art
@@ -679,7 +676,7 @@ void WaveGuideUpdate::doDamage( void )
 					if( obj->isKindOf( KINDOF_BRIDGE ) )
 					{
 						const ThingTemplate* ttn = TheThingFactory->findTemplate("WaterWaveBridge");
-						Object *newBridge = TheThingFactory->newObject( ttn, NULL );
+						Object *newBridge = TheThingFactory->newObject( ttn, nullptr );
 
 						if( newBridge )
 						{
@@ -700,7 +697,7 @@ void WaveGuideUpdate::doDamage( void )
 								v.y = bridgeInfo.to.y - bridgeInfo.from.y;
 								angle = v.toAngle();
 
-							}  // end if
+							}
 
 							// put new bridge looking object in the world
 							newBridge->setPosition( obj->getPosition() );
@@ -718,7 +715,7 @@ void WaveGuideUpdate::doDamage( void )
 								z.z = 1.0f;
 
 								//
-								// angle is rotated, becuase we computed from 'from' and 'to' points of
+								// angle is rotated, because we computed from 'from' and 'to' points of
 								// the bridge going *across* the valley, not pointing *down* it
 								//
 								u.x = Cos( angle + modData->m_bridgeParticleAngleFudge );
@@ -734,28 +731,28 @@ void WaveGuideUpdate::doDamage( void )
 
 								particleSystem->setLocalTransform( &transform );
 
-							}  // end if
+							}
 
 							// destroy the old bridge and bridge object
 							TheTerrainLogic->deleteBridge( oldBridge );
 
-						}  // end if
+						}
 
-					}  // end if
+					}
 
-				}  // end if
+				}
 
-			}  // end if
+			}
 
-		}  // end for obj
+		}
 
-	}  // end for i
+	}
 
-}  // end doDamage
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-UpdateSleepTime WaveGuideUpdate::update( void )
+UpdateSleepTime WaveGuideUpdate::update()
 {
 /// @todo srj use SLEEPY_UPDATE here
 	Object *waveGuide = getObject();
@@ -797,14 +794,14 @@ UpdateSleepTime WaveGuideUpdate::update( void )
 			TheGameLogic->destroyObject( getObject() );
 			return UPDATE_SLEEP_NONE;
 
-		}  // end if
+		}
 
 		// we are now in motion
 		m_initialized = TRUE;
 
-	}  // end if
+	}
 
-	// every half second we try to play a random spash sound
+	// every half second we try to play a random splash sound
 	if( TheGameLogic->getFrame() - m_splashSoundFrame > LOGICFRAMES_PER_SECOND / 2.0f )
 	{
 
@@ -812,13 +809,13 @@ UpdateSleepTime WaveGuideUpdate::update( void )
 		m_splashSoundFrame = TheGameLogic->getFrame();
 
 		// pick a random number and play according to frequency
-		if( GameLogicRandomValue( 1, 100 ) > modData->m_randomSplashSoundFrequency )  
+		if( GameLogicRandomValue( 1, 100 ) > modData->m_randomSplashSoundFrequency )
 		{
 			AudioEventRTS randomSplash(modData->m_randomSplashSound);
 			randomSplash.setObjectID(waveGuide->getID());
 			TheAudio->addAudioEvent(&randomSplash);
-		}  // end if
-	}  // end if
+		}
+	}
 
 	//
 	// transform the wave shape points once for the current position ... we have this array
@@ -837,7 +834,7 @@ UpdateSleepTime WaveGuideUpdate::update( void )
 		static const ParticleSystemTemplate *waveSplash = TheParticleSystemManager->findTemplate( "WaveSplash01" );
 		ParticleSystem *particleSys;
 
-		// create spash effect
+		// create splash effect
 		particleSys = TheParticleSystemManager->createParticleSystem( waveSplash );
 		if( particleSys )
 			particleSys->setLocalTransform( waveGuide->getTransformMatrix() );
@@ -850,7 +847,7 @@ UpdateSleepTime WaveGuideUpdate::update( void )
 
 		return UPDATE_SLEEP_NONE;
 
-	}  // end if
+	}
 
 	// do wavefront effects
 	doShapeEffects();
@@ -866,7 +863,7 @@ UpdateSleepTime WaveGuideUpdate::update( void )
 
 	return UPDATE_SLEEP_NONE;
 
-}  // end update
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -877,7 +874,7 @@ void WaveGuideUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -901,17 +898,17 @@ void WaveGuideUpdate::xfer( Xfer *xfer )
 	// need disable
 	xfer->xferBool( &m_needDisable );
 
-	// initialized 
+	// initialized
 	xfer->xferBool( &m_initialized );
 
 	// shape points
 	xfer->xferUser( m_shapePoints, sizeof( Coord3D ) * MAX_WAVEGUIDE_SHAPE_POINTS );
-		
+
 	// transformed shape points
 	xfer->xferUser( &m_transformedShapePoints, sizeof( Coord3D ) * MAX_WAVEGUIDE_SHAPE_POINTS );
 
 	// particle shape effects
-	xfer->xferUser( m_shapeEffects, sizeof( ParticleSystemID ) * MAX_WAVEGUIDE_SHAPE_POINTS * MAX_SHAPE_EFFECTS );	
+	xfer->xferUser( m_shapeEffects, sizeof( ParticleSystemID ) * MAX_WAVEGUIDE_SHAPE_POINTS * MAX_SHAPE_EFFECTS );
 
 	// shape point count
 	xfer->xferInt( &m_shapePointCount );
@@ -922,15 +919,15 @@ void WaveGuideUpdate::xfer( Xfer *xfer )
 	// final destination
 	xfer->xferCoord3D( &m_finalDestination );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void WaveGuideUpdate::loadPostProcess( void )
+void WaveGuideUpdate::loadPostProcess()
 {
 
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

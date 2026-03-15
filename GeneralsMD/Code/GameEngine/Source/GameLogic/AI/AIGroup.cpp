@@ -25,7 +25,7 @@
 // AIGroup.cpp
 // Encapsulation of a simple group of AI agents
 // Author: Michael S. Booth, January 2002
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 
 #include "Common/ActionManager.h"
@@ -56,11 +56,6 @@
 #include "GameLogic/Module/SpecialPowerUpdateModule.h"
 #include "GameLogic/ObjectIter.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 /**
  * NOTE: Only AI objects (ie: having an AIUpdate module) can be in
@@ -73,16 +68,16 @@
 /**
  * Constructor
  */
-AIGroup::AIGroup( void )
+AIGroup::AIGroup()
 {
-//	DEBUG_LOG(("***AIGROUP %x is being constructed.\n", this));
-	m_groundPath = NULL;
+//	DEBUG_LOG(("***AIGROUP %x is being constructed.", this));
+	m_groundPath = nullptr;
 	m_speed = 0.0f;
 	m_dirty = false;
 	m_id = TheAI->getNextGroupID();
 	m_memberListSize = 0;
 	m_memberList.clear();
-	//DEBUG_LOG(( "AIGroup #%d created\n", m_id ));
+	//DEBUG_LOG(( "AIGroup #%d created", m_id ));
 }
 
 /**
@@ -90,8 +85,11 @@ AIGroup::AIGroup( void )
  */
 AIGroup::~AIGroup()
 {
-//	DEBUG_LOG(("***AIGROUP %x is being destructed.\n", this));
+//	DEBUG_LOG(("***AIGROUP %x is being destructed.", this));
 	// disassociate each member from the group
+
+#if RETAIL_COMPATIBLE_AIGROUP
+
 	std::list<Object *>::iterator i;
 	for( i = m_memberList.begin(); i != m_memberList.end(); /* empty */ )
 	{
@@ -99,24 +97,30 @@ AIGroup::~AIGroup()
 		if (member)
 		{
 			member->leaveGroup();
-			i = m_memberList.begin();	// jump back to the beginning, cause ai->leaveGroup will remove this element. 
+			i = m_memberList.begin();	// jump back to the beginning, cause ai->leaveGroup will remove this element.
 		}
 		else
 		{
 			i = m_memberList.erase(i);
 		}
 	}
-	if (m_groundPath) {
-		deleteInstance(m_groundPath);
-		m_groundPath = NULL;
-	}
-	//DEBUG_LOG(( "AIGroup #%d destroyed\n", m_id ));
+
+#else
+
+	removeAll();
+
+#endif
+
+	deleteInstance(m_groundPath);
+	m_groundPath = nullptr;
+
+	//DEBUG_LOG(( "AIGroup #%d destroyed", m_id ));
 }
 
 /**
  * Return this group's unique ID
  */
-UnsignedInt AIGroup::getID( void )
+UnsignedInt AIGroup::getID()
 {
 	return m_id;
 }
@@ -124,12 +128,12 @@ UnsignedInt AIGroup::getID( void )
 /**
  * Return the group IDs for every member in this group
  */
-const VecObjectID& AIGroup::getAllIDs( void ) const
+const VecObjectID& AIGroup::getAllIDs() const
 {
 	m_lastRequestedIDList.clear();
 	for (std::list<Object *>::const_iterator cit = m_memberList.begin(); cit != m_memberList.end(); ++cit)
 	{
-		if ((*cit) == NULL)
+		if ((*cit) == nullptr)
 			continue;
 
 		m_lastRequestedIDList.push_back((*cit)->getID());
@@ -142,7 +146,7 @@ const VecObjectID& AIGroup::getAllIDs( void ) const
 /**
  * Return the speed of the group's slowest member
  */
-Real AIGroup::getSpeed( void )
+Real AIGroup::getSpeed()
 {
 	if (m_dirty)
 		recompute();
@@ -169,14 +173,14 @@ Bool AIGroup::isMember( Object *obj )
  */
 void AIGroup::add( Object *obj )
 {
-//	DEBUG_LOG(("***AIGROUP %x is adding Object %x (%s).\n", this, obj, obj->getTemplate()->getName().str()));
-	DEBUG_ASSERTCRASH(obj != NULL, ("trying to add null obj to AIGroup"));
-	if (obj == NULL)
+//	DEBUG_LOG(("***AIGROUP %x is adding Object %x (%s).", this, obj, obj->getTemplate()->getName().str()));
+	DEBUG_ASSERTCRASH(obj != nullptr, ("trying to add null obj to AIGroup"));
+	if (obj == nullptr)
 		return;
 
 	AIUpdateInterface *ai = obj->getAIUpdateInterface();
 
-	//If this object doesn't have an AIUpdateInterface, then 
+	//If this object doesn't have an AIUpdateInterface, then
 	//don't add it to the group UNLESS it is a structure! Structures
 	//with AIUpdateInterfaces also issue similar commands, but those
 	//commands don't need AI updates... they are instant commands like
@@ -184,7 +188,7 @@ void AIGroup::add( Object *obj )
 	KindOfMaskType validNonAIKindofs;
 	validNonAIKindofs.set(KINDOF_STRUCTURE);
 	validNonAIKindofs.set(KINDOF_ALWAYS_SELECTABLE);
-	if( ai == NULL && !obj->isAnyKindOf( validNonAIKindofs ) )
+	if( ai == nullptr && !obj->isAnyKindOf( validNonAIKindofs ) )
 	{
 		return;
 	}
@@ -192,7 +196,7 @@ void AIGroup::add( Object *obj )
 	// add to group's list of objects
 	m_memberList.push_back( obj );
 	++m_memberListSize;
-//	DEBUG_LOG(("***AIGROUP %x has size %u now.\n", this, m_memberListSize));
+//	DEBUG_LOG(("***AIGROUP %x has size %u now.", this, m_memberListSize));
 
 	obj->enterGroup( this );
 
@@ -205,7 +209,12 @@ void AIGroup::add( Object *obj )
  */
 Bool AIGroup::remove( Object *obj )
 {
-//	DEBUG_LOG(("***AIGROUP %x is removing Object %x (%s).\n", this, obj, obj->getTemplate()->getName().str()));
+#if !RETAIL_COMPATIBLE_AIGROUP
+	// Defer deletion until the end of this function.
+	AIGroupPtr refThis = AIGroupPtr::Create_AddRef(this);
+#endif
+
+//	DEBUG_LOG(("***AIGROUP %x is removing Object %x (%s).", this, obj, obj->getTemplate()->getName().str()));
 	std::list<Object *>::iterator i = std::find( m_memberList.begin(), m_memberList.end(), obj );
 
 	// make sure object is actually in the group
@@ -215,7 +224,7 @@ Bool AIGroup::remove( Object *obj )
 	// remove it
 	m_memberList.erase( i );
 	--m_memberListSize;
-//	DEBUG_LOG(("***AIGROUP %x has size %u now.\n", this, m_memberListSize));
+//	DEBUG_LOG(("***AIGROUP %x has size %u now.", this, m_memberListSize));
 
 	// tell object to forget about group
 	obj->leaveGroup();
@@ -223,13 +232,40 @@ Bool AIGroup::remove( Object *obj )
 	// list has changed, properties need recomputation
 	m_dirty = true;
 
-	// if the group is empty, no-one is using it any longer, so destroy it
 	if (isEmpty()) {
+#if RETAIL_COMPATIBLE_AIGROUP
+		// if the group is empty, no-one is using it any longer, so destroy it
 		TheAI->destroyGroup( this );
+#endif
 		return TRUE;
 	}
 
 	return FALSE;
+}
+
+/**
+ * Remove all objects from group
+ */
+void AIGroup::removeAll()
+{
+#if !RETAIL_COMPATIBLE_AIGROUP
+	// Defer deletion until the end of this function.
+	AIGroupPtr refThis = AIGroupPtr::Create_AddRef(this);
+#endif
+
+	std::list<Object *> memberList;
+	memberList.swap(m_memberList);
+	m_memberListSize = 0;
+
+	std::list<Object *>::iterator i;
+	for ( i = memberList.begin(); i != memberList.end(); ++i )
+	{
+		Object *member = *i;
+		if (member)
+			member->leaveGroup();
+	}
+
+	m_dirty = true;
 }
 
 /**
@@ -295,8 +331,8 @@ Bool AIGroup::getCenter( Coord3D *center )
 
 	std::list<Object *>::iterator i;
 	for( i = m_memberList.begin(); i != m_memberList.end(); ++i )
-	{													 
-		if( (*i)->isDisabledByType( DISABLED_HELD) ) 
+	{
+		if( (*i)->isDisabledByType( DISABLED_HELD) )
 		{
 			continue; // don't bother counting riders in the center calculation.
 		}
@@ -316,13 +352,13 @@ Bool AIGroup::getCenter( Coord3D *center )
 		/*
 			if there are no AIs (eg, the team consists of a faction bldg), we can get here.
 
-			This was originally used to offset the centers of objects moving (still used for that) and non-ais can't move.  
+			This was originally used to offset the centers of objects moving (still used for that) and non-ais can't move.
 			So if you have a mix of ai's & not ai's, you want just the ais.
 			But it seems reasonable that if there are no ai's, it returns the center of the other stuff.  Cause they won't be moving anyway.
 		*/
 		for( i = m_memberList.begin(); i != m_memberList.end(); ++i )
 		{
-			if( (*i)->isDisabledByType( DISABLED_HELD) ) 
+			if( (*i)->isDisabledByType( DISABLED_HELD) )
 			{
 				continue; // don't bother counting riders in the center calculation.
 			}
@@ -356,7 +392,7 @@ Bool AIGroup::getMinMaxAndCenter( Coord2D *min, Coord2D *max, Coord3D *center )
 	FormationID id= NO_FORMATION_ID;
 	for( i = m_memberList.begin(); i != m_memberList.end(); ++i )
 	{
-		if( (*i)->isDisabledByType( DISABLED_HELD) ) 
+		if( (*i)->isDisabledByType( DISABLED_HELD) )
 		{
 			continue; // don't bother counting riders in the center calculation.
 		}
@@ -375,7 +411,7 @@ Bool AIGroup::getMinMaxAndCenter( Coord2D *min, Coord2D *max, Coord3D *center )
 			max->y = max->y < objPos->y ? objPos->y : max->y;
 			FormationID curID = (*i)->getFormationID() ;
 			if (count==0) {
-				id = curID;	
+				id = curID;
 			} else {
 				if (id == NO_FORMATION_ID) {
 					id = NO_FORMATION_ID;
@@ -399,7 +435,7 @@ Bool AIGroup::getMinMaxAndCenter( Coord2D *min, Coord2D *max, Coord3D *center )
  * Compute the speed of the team (its slowest member's speed),
  * and find the leader (closest to center of group).
  */
-void AIGroup::recompute( void )
+void AIGroup::recompute()
 {
 	Real closeDist = 999999999.9f;
 	Real dx, dy, dist;
@@ -408,10 +444,8 @@ void AIGroup::recompute( void )
 
 	getCenter( &center );
 
-	if (m_groundPath) {
-		deleteInstance(m_groundPath);
-		m_groundPath = NULL;
-	}
+	deleteInstance(m_groundPath);
+	m_groundPath = nullptr;
 
 	m_speed = 9999999999.9f;
 
@@ -422,7 +456,7 @@ void AIGroup::recompute( void )
 		if ((*i)->isKindOf(KINDOF_IMMOBILE))
 			continue;
 
-		if( (*i)->isDisabledByType( DISABLED_HELD) ) 
+		if( (*i)->isDisabledByType( DISABLED_HELD) )
 		{
 			continue; // don't bother counting riders in the max speed calculation.
 		}
@@ -460,7 +494,7 @@ void AIGroup::recompute( void )
 /**
  * Return the number of objects in the group
  */
-Int AIGroup::getCount( void )
+Int AIGroup::getCount()
 {
 	return m_memberListSize;
 }
@@ -468,7 +502,7 @@ Int AIGroup::getCount( void )
 /**
  * Returns true if the group has no members
  */
-Bool AIGroup::isEmpty( void )
+Bool AIGroup::isEmpty() const
 {
 	return m_memberList.empty();
 }
@@ -477,7 +511,7 @@ Bool AIGroup::isEmpty( void )
  * Given a destination location, compute the destination position for
  * this object such that it keeps its relative position with the group.
  */
-void AIGroup::computeIndividualDestination( Coord3D *dest, const Coord3D *groupDest, 
+void AIGroup::computeIndividualDestination( Coord3D *dest, const Coord3D *groupDest,
 																					 Object *obj, const Coord3D *center, Bool isFormation )
 {
 	Coord2D v;
@@ -507,7 +541,7 @@ void AIGroup::computeIndividualDestination( Coord3D *dest, const Coord3D *groupD
 	AIUpdateInterface *ai = obj->getAIUpdateInterface();
 	if (ai && ai->isDoingGroundMovement()) {
 		if (isFormation) {
-			TheAI->pathfinder()->adjustDestination(obj, ai->getLocomotorSet(), dest, NULL);
+			TheAI->pathfinder()->adjustDestination(obj, ai->getLocomotorSet(), dest, nullptr);
 		}	else {
 			TheAI->pathfinder()->adjustDestination(obj, ai->getLocomotorSet(), dest, groupDest);
 		}
@@ -546,23 +580,23 @@ Bool AIGroup::friend_computeGroundPath( const Coord3D *pos, CommandSourceType cm
 	Real distSqr = 4*sqr(TheAI->getAiData()->m_distanceRequiresGroup);
 
 	Int numInfantry = 0;
-	Int numVehicles = 0; 
-	Object *centerVehicle = NULL;
+	Int numVehicles = 0;
+	Object *centerVehicle = nullptr;
 	Real distSqrCenterVeh = distSqr*10;
 	for( i = m_memberList.begin(); i != m_memberList.end(); ++i )
 	{
 		Object *obj = (*i);
 		TheAI->pathfinder()->removeGoal(obj);
-		if (obj->isDisabledByType( DISABLED_HELD ) ) 
+		if (obj->isDisabledByType( DISABLED_HELD ) )
 		{
 			continue; // don't bother telling the occupants to move.
 		}
-		if( obj->getAI()==NULL )
-		{	
+		if( obj->getAI()==nullptr )
+		{
 			continue;
-		}	 
+		}
 		if( obj->isKindOf( KINDOF_INFANTRY ) )
-		{	
+		{
  			numInfantry++;
 		} else if (obj->isKindOf( KINDOF_VEHICLE)) {
 			if (obj->isKindOf(KINDOF_AIRCRAFT)) {
@@ -584,13 +618,13 @@ Bool AIGroup::friend_computeGroundPath( const Coord3D *pos, CommandSourceType cm
 		// find object closest to the center.
 		dx = unitPos.x-center.x;
 		dy = unitPos.y-center.y;
- 		if (centerVehicle==NULL || dx*dx+dy*dy<distSqrCenterVeh) {
+ 		if (centerVehicle==nullptr || dx*dx+dy*dy<distSqrCenterVeh) {
 			centerVehicle = (*i);
 			distSqrCenterVeh = dx*dx+dy*dy;
 		}
 	}
 
-	if(centerVehicle==NULL) return false;
+	if(centerVehicle==nullptr) return false;
 	center = *centerVehicle->getPosition();
 
 	dx = max.x - min.x;
@@ -613,7 +647,7 @@ Bool AIGroup::friend_computeGroundPath( const Coord3D *pos, CommandSourceType cm
 
 	if (!closeEnough) {
 		Bool isPassable = true;
-		// see if all units have an unobstructed path to the center.  
+		// see if all units have an unobstructed path to the center.
 		// If so, then they are close enough.
 		for( i = m_memberList.begin(); i != m_memberList.end(); ++i )
 		{
@@ -624,8 +658,8 @@ Bool AIGroup::friend_computeGroundPath( const Coord3D *pos, CommandSourceType cm
 			AIUpdateInterface *ai = (*i)->getAIUpdateInterface();
 			if (ai)
 			{
-				if (!TheAI->pathfinder()->isLinePassable(obj, 
-								ai->getLocomotorSet().getValidSurfaces(), obj->getLayer(), *obj->getPosition(), 
+				if (!TheAI->pathfinder()->isLinePassable(obj,
+								ai->getLocomotorSet().getValidSurfaces(), obj->getLayer(), *obj->getPosition(),
 								center, false, true)) {
 					isPassable = false;
 				}
@@ -634,14 +668,14 @@ Bool AIGroup::friend_computeGroundPath( const Coord3D *pos, CommandSourceType cm
 		if (isPassable) closeEnough = true;
 	}
 	if (!closeEnough) return false;
-	
+
 	m_groundPath = TheAI->pathfinder()->findGroundPath(&center, pos, PATH_DIAMETER_IN_CELLS, false);
-	return m_groundPath!=NULL;
+	return m_groundPath!=nullptr;
 
 }
 
 static void clampToMap(Coord3D *dest, PlayerType pt)
-// Clamps to the player's current visible map area. jba. [8/28/2003] 
+// Clamps to the player's current visible map area. jba. [8/28/2003]
 {
 	Region3D extent;
 	if (pt==PLAYER_COMPUTER) {
@@ -657,7 +691,7 @@ static void clampToMap(Coord3D *dest, PlayerType pt)
 	extent.lo.x += PATHFIND_CELL_SIZE_F;
 	extent.lo.y += PATHFIND_CELL_SIZE_F;
 	if (!extent.isInRegionNoZ(dest)) {
-		// clamp to in region. [8/28/2003]	
+		// clamp to in region. [8/28/2003]
 		if (dest->x < extent.lo.x) {
 			dest->x = extent.lo.x;
 		}
@@ -683,7 +717,7 @@ static void clampToMap(Coord3D *dest, PlayerType pt)
 Bool AIGroup::friend_moveInfantryToPos( const Coord3D *pos, CommandSourceType cmdSource )
 
 {
-	if (m_groundPath==NULL) return false;
+	if (m_groundPath==nullptr) return false;
 
 	Int numColumns = 3;
 	Int halfNumColumns = numColumns/2;
@@ -694,10 +728,10 @@ Bool AIGroup::friend_moveInfantryToPos( const Coord3D *pos, CommandSourceType cm
 	// Get the start & end vectors for the path.
 	Coord3D startPoint = *m_groundPath->getFirstNode()->getPosition();
 	Real farEnoughSqr = sqr(PATH_DIAMETER_IN_CELLS*PATHFIND_CELL_SIZE_F);
-	PathNode *startNode = NULL;
+	PathNode *startNode = nullptr;
 	PathNode *node;
 	for (node = m_groundPath->getFirstNode(); node; node=node->getNextOptimized()) {
-		dx = node->getPosition()->x - startPoint.x;	
+		dx = node->getPosition()->x - startPoint.x;
 		dy = node->getPosition()->y - startPoint.y;
 		if (dx*dx+dy*dy>farEnoughSqr) {
 			startNode = node;
@@ -705,20 +739,20 @@ Bool AIGroup::friend_moveInfantryToPos( const Coord3D *pos, CommandSourceType cm
 		}
 	}
 	Coord3D endPoint = *m_groundPath->getLastNode()->getPosition();
-	PathNode *endNode = NULL;		
+	PathNode *endNode = nullptr;
 	for (node = m_groundPath->getFirstNode(); node; node=node->getNextOptimized()) {
-		Real dx = node->getPosition()->x - endPoint.x;	
+		Real dx = node->getPosition()->x - endPoint.x;
 		Real dy = node->getPosition()->y - endPoint.y;
 		if (dx*dx+dy*dy>farEnoughSqr) {
 			endNode = node;
 		}
 	}
-	if (startNode==NULL || endNode==NULL) {
+	if (startNode==nullptr || endNode==nullptr) {
 		deleteInstance(m_groundPath);
-		m_groundPath = NULL;
+		m_groundPath = nullptr;
 		return false;
 	}
-	
+
 	Coord2D startVector;
 	startVector.x = startNode->getPosition()->x - startPoint.x;
 	startVector.y = startNode->getPosition()->y - startPoint.y;
@@ -750,23 +784,23 @@ Bool AIGroup::friend_moveInfantryToPos( const Coord3D *pos, CommandSourceType cm
 	iterHolder2.hold(iter2);
 	std::list<Object *>::iterator i;
 	PlayerType controllingPlayerType = PLAYER_COMPUTER;
-	for( i = m_memberList.begin(); i != m_memberList.end(); ++i )	
+	for( i = m_memberList.begin(); i != m_memberList.end(); ++i )
 	{
-		if ((*i)->isDisabledByType( DISABLED_HELD ) ) 
+		if ((*i)->isDisabledByType( DISABLED_HELD ) )
 		{
 			continue; // don't bother telling the occupants to move.
 		}
 		if( !(*i)->isKindOf( KINDOF_INFANTRY ) )
-		{	
+		{
 			continue;
 		}
-		if( (*i)->getAI()==NULL )
-		{	
+		if( (*i)->getAI()==nullptr )
+		{
 			continue;
 		}
 		if ( (*i)->isKindOf( KINDOF_MOB_NEXUS ) )
 		{
-			return FALSE;// means I did NOT do a column group pathfind, 
+			return FALSE;// means I did NOT do a column group pathfind,
 			//so the nexus will have a far-away goal position for the mobsters to aim at
 		}
 		if ((*i)->getControllingPlayer()) {
@@ -800,7 +834,7 @@ Bool AIGroup::friend_moveInfantryToPos( const Coord3D *pos, CommandSourceType cm
 
 	Object *theUnit;
 	if (useEndVector) {
-		// resort unsing the end vector.
+		// resort using the end vector.
 		startVector = endVector;
 		startVectorNormal =	endVectorNormal;
 		for (theUnit = iter->first(); theUnit; theUnit = iter->next()) iter2->insert(theUnit);
@@ -857,8 +891,8 @@ Bool AIGroup::friend_moveInfantryToPos( const Coord3D *pos, CommandSourceType cm
 	iter2->sort(ITER_SORTED_FAR_TO_NEAR);
 	// Even out columns by priority.
 	Int group;
-	Int column3[3] = {0,0,0};	
-	Int column5[5] = {0,0,0,0,0};	
+	Int column3[3] = {0,0,0};
+	Int column5[5] = {0,0,0,0,0};
 	for (group = LOCO_MOVES_FRONT; group>=LOCO_MOVES_BACK; group--) {
 		for (theUnit = iter2->first(); theUnit; theUnit = iter2->next())
 		{
@@ -937,16 +971,16 @@ Bool AIGroup::friend_moveInfantryToPos( const Coord3D *pos, CommandSourceType cm
 		while (node) {
 			Coord3D dest = *node->getPosition();
 			PathNode *tmpNode;
-			PathNode *nextNode=NULL;
+			PathNode *nextNode=nullptr;
 			for (tmpNode = node->getNextOptimized(); tmpNode; tmpNode=tmpNode->getNextOptimized()) {
-				Real dx = tmpNode->getPosition()->x - dest.x;	
+				Real dx = tmpNode->getPosition()->x - dest.x;
 				Real dy = tmpNode->getPosition()->y - dest.y;
 				if (dx*dx+dy*dy>farEnoughSqr) {
 					nextNode = tmpNode;
 					break;
 				}
 			}
-			if (nextNode==NULL) break;
+			if (nextNode==nullptr) break;
 			Coord2D cornerVectorNormal;
 			cornerVectorNormal.y = nextNode->getPosition()->x - previousNode->getPosition()->x;
 			cornerVectorNormal.x = -(nextNode->getPosition()->y - previousNode->getPosition()->y);
@@ -980,7 +1014,7 @@ Bool AIGroup::friend_moveInfantryToPos( const Coord3D *pos, CommandSourceType cm
 			node=node->getNextOptimized();
 
 			for (tmpNode = previousNode->getNextOptimized(); tmpNode && tmpNode!=node; tmpNode=tmpNode->getNextOptimized()) {
-				Real dx = tmpNode->getPosition()->x - node->getPosition()->x;	
+				Real dx = tmpNode->getPosition()->x - node->getPosition()->x;
 				Real dy = tmpNode->getPosition()->y - node->getPosition()->y;
 				if (dx*dx+dy*dy>farEnoughSqr) {
 					previousNode = tmpNode;
@@ -1012,7 +1046,7 @@ Bool AIGroup::friend_moveInfantryToPos( const Coord3D *pos, CommandSourceType cm
 		dest.y -= factor*offset*endVector.y;
 		dest.z = TheTerrainLogic->getLayerHeight( dest.x, dest.y, layer );
 
-		while (path.size()>0) {
+		while (!path.empty()) {
 			Coord2D curVector;
 			prevPos = path[path.size()-1];
 			curVector.x = dest.x-prevPos.x;
@@ -1026,10 +1060,10 @@ Bool AIGroup::friend_moveInfantryToPos( const Coord3D *pos, CommandSourceType cm
 			}
 		}
 		clampToMap(&dest, controllingPlayerType);
-		TheAI->pathfinder()->adjustDestination(theUnit, ai->getLocomotorSet(), &dest, NULL);
+		TheAI->pathfinder()->adjustDestination(theUnit, ai->getLocomotorSet(), &dest, nullptr);
 		TheAI->pathfinder()->updateGoal(theUnit, &dest, LAYER_GROUND);
 		path.push_back(dest);
-		ai->aiFollowPath( &path, NULL, cmdSource );
+		ai->aiFollowPath( &path, nullptr, cmdSource );
 	}
 	return true;
 }
@@ -1044,16 +1078,16 @@ void AIGroup::friend_moveFormationToPos( const Coord3D *pos, CommandSourceType c
 	if (!getCenter( &center )) return;
 
 
-	PathNode *startNode = NULL;
-	PathNode *endNode = NULL;
+	PathNode *startNode = nullptr;
+	PathNode *endNode = nullptr;
 	Coord3D endPoint = *pos;
-	if (m_groundPath) {	
+	if (m_groundPath) {
 		// Get the start & end vectors for the path.
 		Coord3D startPoint = *m_groundPath->getFirstNode()->getPosition();
 		Real farEnoughSqr = sqr(PATH_DIAMETER_IN_CELLS*PATHFIND_CELL_SIZE_F);
 		PathNode *node;
 		for (node = m_groundPath->getFirstNode(); node; node=node->getNextOptimized()) {
-			dx = node->getPosition()->x - startPoint.x;	
+			dx = node->getPosition()->x - startPoint.x;
 			dy = node->getPosition()->y - startPoint.y;
 			if (dx*dx+dy*dy>farEnoughSqr) {
 				startNode = node;
@@ -1062,7 +1096,7 @@ void AIGroup::friend_moveFormationToPos( const Coord3D *pos, CommandSourceType c
 		}
 		endPoint = *m_groundPath->getLastNode()->getPosition();
 		for (node = m_groundPath->getFirstNode(); node; node=node->getNextOptimized()) {
-			dx = node->getPosition()->x - endPoint.x;	
+			dx = node->getPosition()->x - endPoint.x;
 			dy = node->getPosition()->y - endPoint.y;
 			if (dx*dx+dy*dy>farEnoughSqr) {
 				endNode = node;
@@ -1071,30 +1105,30 @@ void AIGroup::friend_moveFormationToPos( const Coord3D *pos, CommandSourceType c
 		PathNode *tmpNode = endNode;
 		while (tmpNode) {
 			if (tmpNode == startNode) {
-				endNode = NULL;
+				endNode = nullptr;
 			}
 			tmpNode = tmpNode->getNextOptimized();
 		}
-		if (startNode==NULL || endNode==NULL) {
+		if (startNode==nullptr || endNode==nullptr) {
 			deleteInstance(m_groundPath);
-			m_groundPath = NULL;
-			startNode = NULL;
-			endNode = NULL;
+			m_groundPath = nullptr;
+			startNode = nullptr;
+			endNode = nullptr;
 		}
 	}
 
-	
+
 	// Move.
 	std::list<Object *>::iterator i;
-	for( i = m_memberList.begin(); i != m_memberList.end(); ++i )	
+	for( i = m_memberList.begin(); i != m_memberList.end(); ++i )
 	{
-		if ((*i)->isDisabledByType( DISABLED_HELD ) ) 
+		if ((*i)->isDisabledByType( DISABLED_HELD ) )
 		{
 			continue; // don't bother telling the occupants to move.
 		}
 		Object *theUnit = (*i);
 		AIUpdateInterface *ai = theUnit->getAIUpdateInterface();
-		if (ai == NULL)
+		if (ai == nullptr)
 		{
 			continue;
 		}
@@ -1125,10 +1159,10 @@ void AIGroup::friend_moveFormationToPos( const Coord3D *pos, CommandSourceType c
 			dest.x += offset.x;
 			dest.y += offset.y;
 
-			TheAI->pathfinder()->adjustDestination(theUnit, ai->getLocomotorSet(), &dest, NULL);
+			TheAI->pathfinder()->adjustDestination(theUnit, ai->getLocomotorSet(), &dest, nullptr);
 			TheAI->pathfinder()->updateGoal(theUnit, &dest, LAYER_GROUND);
 			path.push_back(dest);
-			ai->aiFollowPath( &path, NULL, cmdSource );
+			ai->aiFollowPath( &path, nullptr, cmdSource );
 		}	else {
 			Coord3D dest = endPoint;
 			dest.x += offset.x;
@@ -1149,7 +1183,7 @@ Bool AIGroup::friend_moveVehicleToPos( const Coord3D *pos, CommandSourceType cmd
 
 {
 
-	if (m_groundPath==NULL) return false;
+	if (m_groundPath==nullptr) return false;
 
 	Real dx, dy;
 	Coord3D center;
@@ -1165,10 +1199,10 @@ Bool AIGroup::friend_moveVehicleToPos( const Coord3D *pos, CommandSourceType cmd
 	// Get the start & end vectors for the path.
 	Coord3D startPoint = *m_groundPath->getFirstNode()->getPosition();
 	Real farEnoughSqr = sqr(PATH_DIAMETER_IN_CELLS*PATHFIND_CELL_SIZE_F);
-	PathNode *startNode = NULL;
+	PathNode *startNode = nullptr;
 	PathNode *node;
 	for (node = m_groundPath->getFirstNode(); node; node=node->getNextOptimized()) {
-		Real dx = node->getPosition()->x - startPoint.x;	
+		Real dx = node->getPosition()->x - startPoint.x;
 		Real dy = node->getPosition()->y - startPoint.y;
 		if (dx*dx+dy*dy>farEnoughSqr) {
 			startNode = node;
@@ -1176,23 +1210,23 @@ Bool AIGroup::friend_moveVehicleToPos( const Coord3D *pos, CommandSourceType cmd
 		}
 	}
 	Coord3D endPoint = *m_groundPath->getLastNode()->getPosition();
-	PathNode *endNode = NULL;		
+	PathNode *endNode = nullptr;
 	for (node = m_groundPath->getFirstNode(); node; node=node->getNextOptimized()) {
-		Real dx = node->getPosition()->x - endPoint.x;	
+		Real dx = node->getPosition()->x - endPoint.x;
 		Real dy = node->getPosition()->y - endPoint.y;
 		if (dx*dx+dy*dy>farEnoughSqr) {
 			endNode = node;
 		}
 	}
 	if (endNode == m_groundPath->getFirstNode()) {
-		endNode = NULL;
+		endNode = nullptr;
 	}
-	if (startNode==NULL || endNode==NULL) {
+	if (startNode==nullptr || endNode==nullptr) {
 		deleteInstance(m_groundPath);
-		m_groundPath = NULL;
+		m_groundPath = nullptr;
 		return false;
 	}
-	
+
 	Coord2D startVector;
 	startVector.x = startNode->getPosition()->x - startPoint.x;
 	startVector.y = startNode->getPosition()->y - startPoint.y;
@@ -1224,24 +1258,24 @@ Bool AIGroup::friend_moveVehicleToPos( const Coord3D *pos, CommandSourceType cmd
 	iterHolder2.hold(iter2);
 	PlayerType controllingPlayerType = PLAYER_COMPUTER;
 	std::list<Object *>::iterator i;
-	for( i = m_memberList.begin(); i != m_memberList.end(); ++i )	
+	for( i = m_memberList.begin(); i != m_memberList.end(); ++i )
 	{
-		if ((*i)->isDisabledByType( DISABLED_HELD ) ) 
+		if ((*i)->isDisabledByType( DISABLED_HELD ) )
 		{
 			continue; // don't bother telling the occupants to move.
 		}
 		if( !(*i)->isKindOf( KINDOF_VEHICLE ) )
-		{	
+		{
 			continue;
 		}
-		if( (*i)->getAI()==NULL )
-		{	
+		if( (*i)->getAI()==nullptr )
+		{
 			continue;
 		}
 		if( !(*i)->getAI()->isDoingGroundMovement() )
-		{	
+		{
 			continue;
-		}	 
+		}
 		if ((*i)->getControllingPlayer()) {
 			controllingPlayerType = (*i)->getControllingPlayer()->getPlayerType();
 		}
@@ -1274,7 +1308,7 @@ Bool AIGroup::friend_moveVehicleToPos( const Coord3D *pos, CommandSourceType cmd
 
 	Object *theUnit;
 	if (useEndVector) {
-		// resort unsing the end vector.
+		// resort using the end vector.
 		startVector = endVector;
 		startVectorNormal =	endVectorNormal;
 		for (theUnit = iter->first(); theUnit; theUnit = iter->next()) iter2->insert(theUnit);
@@ -1324,7 +1358,7 @@ Bool AIGroup::friend_moveVehicleToPos( const Coord3D *pos, CommandSourceType cmd
 				adjust = -200*PATHFIND_CELL_SIZE_F;
 			}
 		}
-#endif 
+#endif
 		iter2->insert(theUnit, adjust + dx*startVector.x + dy*startVector.y);
 		curIndex++;
 
@@ -1333,8 +1367,8 @@ Bool AIGroup::friend_moveVehicleToPos( const Coord3D *pos, CommandSourceType cmd
 	iter2->sort(ITER_SORTED_FAR_TO_NEAR);
 	// Even out columns by priority.
 	Int group;
-	Int column2[3] = {0,0,0};	
-	Int column3[3] = {0,0,0};	
+	Int column2[3] = {0,0,0};
+	Int column3[3] = {0,0,0};
 	for (group = LOCO_MOVES_FRONT; group>=LOCO_MOVES_BACK; group--) {
 		for (theUnit = iter2->first(); theUnit; theUnit = iter2->next())
 		{
@@ -1345,8 +1379,8 @@ Bool AIGroup::friend_moveVehicleToPos( const Coord3D *pos, CommandSourceType cmd
 			if (ai->getCurLocomotor()) {
 				movePriority = ai->getCurLocomotor()->getMovePriority();
 			}
-			if (group!=movePriority) continue;	
-#endif 
+			if (group!=movePriority) continue;
+#endif
 			Int threeColumnDelta = tmp>>16;
 			Int columnDelta = (Short)(tmp & 0xFFFF);
 
@@ -1418,16 +1452,16 @@ Bool AIGroup::friend_moveVehicleToPos( const Coord3D *pos, CommandSourceType cmd
 		while (node) {
 			Coord3D dest = *node->getPosition();
 			PathNode *tmpNode;
-			PathNode *nextNode=NULL;
+			PathNode *nextNode=nullptr;
 			for (tmpNode = node->getNextOptimized(); tmpNode; tmpNode=tmpNode->getNextOptimized()) {
-				Real dx = tmpNode->getPosition()->x - dest.x;	
+				Real dx = tmpNode->getPosition()->x - dest.x;
 				Real dy = tmpNode->getPosition()->y - dest.y;
 				if (dx*dx+dy*dy>farEnoughSqr) {
 					nextNode = tmpNode;
 					break;
 				}
 			}
-			if (nextNode==NULL) break;
+			if (nextNode==nullptr) break;
 			Coord2D cornerVectorNormal;
 			cornerVectorNormal.y = nextNode->getPosition()->x - previousNode->getPosition()->x;
 			cornerVectorNormal.x = -(nextNode->getPosition()->y - previousNode->getPosition()->y);
@@ -1461,7 +1495,7 @@ Bool AIGroup::friend_moveVehicleToPos( const Coord3D *pos, CommandSourceType cmd
 			node=node->getNextOptimized();
 
 			for (tmpNode = previousNode->getNextOptimized(); tmpNode && tmpNode!=node; tmpNode=tmpNode->getNextOptimized()) {
-				Real dx = tmpNode->getPosition()->x - node->getPosition()->x;	
+				Real dx = tmpNode->getPosition()->x - node->getPosition()->x;
 				Real dy = tmpNode->getPosition()->y - node->getPosition()->y;
 				if (dx*dx+dy*dy>farEnoughSqr) {
 					previousNode = tmpNode;
@@ -1495,7 +1529,7 @@ Bool AIGroup::friend_moveVehicleToPos( const Coord3D *pos, CommandSourceType cmd
 		dest.y -= factor*offset*endVector.y;
 		dest.z = TheTerrainLogic->getLayerHeight( dest.x, dest.y, layer );
 
-		while (path.size()>0) {
+		while (!path.empty()) {
 			Coord2D curVector;
 			prevPos = path[path.size()-1];
 			curVector.x = dest.x-prevPos.x;
@@ -1509,10 +1543,10 @@ Bool AIGroup::friend_moveVehicleToPos( const Coord3D *pos, CommandSourceType cmd
 			}
 		}
 		clampToMap(&dest, controllingPlayerType);
-		TheAI->pathfinder()->adjustDestination(theUnit, ai->getLocomotorSet(), &dest, NULL);
+		TheAI->pathfinder()->adjustDestination(theUnit, ai->getLocomotorSet(), &dest, nullptr);
 		TheAI->pathfinder()->updateGoal(theUnit, &dest, LAYER_GROUND);
 		path.push_back(dest);
-		ai->aiFollowPath( &path, NULL, cmdSource );
+		ai->aiFollowPath( &path, nullptr, cmdSource );
 	}
 	return true;
 }
@@ -1527,7 +1561,7 @@ void clampWaypointPosition( Coord3D &position, Int margin )
 {
 	Region3D mapExtent;
 	TheTerrainLogic->getExtent(&mapExtent);
-  
+
   // trim some fat off of all sides,
   mapExtent.hi.x -= margin;
   mapExtent.hi.y -= margin;
@@ -1570,7 +1604,7 @@ void AIGroup::groupMoveToPosition( const Coord3D *p_posIn, Bool addWaypoint, Com
 	Bool tightenGroup = FALSE;
 
 	Bool isFormation = getMinMaxAndCenter( &min, &max, &center );
-	if (addWaypoint) 
+	if (addWaypoint)
   {
     isFormation = false;
   }
@@ -1597,7 +1631,7 @@ void AIGroup::groupMoveToPosition( const Coord3D *p_posIn, Bool addWaypoint, Com
 
   Real extraMargin = 0.0f;
 
-	for( i = m_memberList.begin(); i != m_memberList.end(); ++i )	
+	for( i = m_memberList.begin(); i != m_memberList.end(); ++i )
 	{
     const Object *groupMember = (*i);
 
@@ -1616,12 +1650,12 @@ void AIGroup::groupMoveToPosition( const Coord3D *p_posIn, Bool addWaypoint, Com
 
       extraMargin = MAX( extraMargin, STD_AIRCRAFT_EXTRA_MARGIN );
 		}
-	} 
-  
+	}
+
   Int margin = STD_WAYPOINT_CLAMP_MARGIN + extraMargin;
   clampWaypointPosition( position, margin );
 
-  
+
 
 
 	if (tightenGroup)
@@ -1648,35 +1682,35 @@ void AIGroup::groupMoveToPosition( const Coord3D *p_posIn, Bool addWaypoint, Com
 	MemoryPoolObjectHolder iterHolder;
 	SimpleObjectIterator *iter = newInstance(SimpleObjectIterator);
 	iterHolder.hold(iter);
-	for( i = m_memberList.begin(); i != m_memberList.end(); ++i )	
+	for( i = m_memberList.begin(); i != m_memberList.end(); ++i )
 	{
 		Real dx, dy;
-		if ((*i)->isDisabledByType( DISABLED_HELD ) ) 
+		if ((*i)->isDisabledByType( DISABLED_HELD ) )
 		{
 			continue; // don't bother telling the occupants to move.
 		}
 		if( (*i)->isKindOf( KINDOF_IMMOBILE ) )
-		{	
+		{
 			continue;
 		}
-		if( (*i)->getAI()==NULL )
-		{	
+		if( (*i)->getAI()==nullptr )
+		{
 			continue;
 		}
 		if ((*i)->isKindOf(KINDOF_INFANTRY) && didInfantry) {
 			continue;
 		}
-		if ((*i)->isKindOf(KINDOF_VEHICLE) && didVehicles) 
+		if ((*i)->isKindOf(KINDOF_VEHICLE) && didVehicles)
 		{
 			if( (*i)->getAI()->isDoingGroundMovement() )
-			{	
+			{
 				Object *obj = (*i);
 				if( !obj->isKindOf( KINDOF_CLIFF_JUMPER ) )
 				{
 					//Not a cliff-jumper-offer unit.
 					continue;
 				}
-			}	 
+			}
 		}
 		Coord3D unitPos = *((*i)->getPosition());
 		TheAI->pathfinder()->removeGoal(*i);
@@ -1695,7 +1729,7 @@ void AIGroup::groupMoveToPosition( const Coord3D *p_posIn, Bool addWaypoint, Com
 				adjust = 200*200*PATHFIND_CELL_SIZE_F*PATHFIND_CELL_SIZE_F;
 			}
 		}
-#endif 
+#endif
 		iter->insert((*i), adjust + dx*dx+dy*dy);
 	}
 
@@ -1716,7 +1750,7 @@ void AIGroup::groupMoveToPosition( const Coord3D *p_posIn, Bool addWaypoint, Com
 				goalPos.x -= v.x;
 				goalPos.y -= v.y;
 			}	else {
-				center = *theUnit->getPosition();	
+				center = *theUnit->getPosition();
 			}
 			firstUnit = false;
 		}
@@ -1782,19 +1816,19 @@ void AIGroup::groupScatter( CommandSourceType cmdSource )
 	MemoryPoolObjectHolder iterHolder;
 	SimpleObjectIterator *iter = newInstance(SimpleObjectIterator);
 	iterHolder.hold(iter);
-	for( i = m_memberList.begin(); i != m_memberList.end(); ++i )	
+	for( i = m_memberList.begin(); i != m_memberList.end(); ++i )
 	{
 		Real dx, dy;
-		if ((*i)->isDisabledByType( DISABLED_HELD ) ) 
+		if ((*i)->isDisabledByType( DISABLED_HELD ) )
 		{
 			continue; // don't bother telling the occupants to move.
 		}
 		if( (*i)->isKindOf( KINDOF_IMMOBILE ) )
-		{	
+		{
 			continue;
 		}
-		if( (*i)->getAI()==NULL )
-		{	
+		if( (*i)->getAI()==nullptr )
+		{
 			continue;
 		}
 		Coord3D unitPos = *((*i)->getPosition());
@@ -1829,7 +1863,7 @@ void getHelicopterOffset( Coord3D& posOut, Int idx )
 {
   if (idx == 0)
     return;
-  
+
   Real assumedHeliDiameter = 70.0f;
   Real radius = assumedHeliDiameter;
   Real circumference = radius * CIRCLE;
@@ -1859,7 +1893,7 @@ void getHelicopterOffset( Coord3D& posOut, Int idx )
  * Move to given position(s), tightening the formation
  */
 void AIGroup::groupTightenToPosition( const Coord3D *pos, Bool addWaypoint, CommandSourceType cmdSource )
-{		
+{
 	//Kris: Disabled (because its not used to make a logical difference)
 	//Bool outsideOfBounds = true;
 	Coord3D center;
@@ -1883,16 +1917,16 @@ void AIGroup::groupTightenToPosition( const Coord3D *pos, Bool addWaypoint, Comm
 	for( i = m_memberList.begin(); i != m_memberList.end(); ++i )	{
 		Real dx, dy;
 		Coord3D unitPos = *((*i)->getPosition());
-		if ((*i)->isDisabledByType( DISABLED_HELD ) ) 
+		if ((*i)->isDisabledByType( DISABLED_HELD ) )
 		{
 			continue; // don't bother telling the occupants to move.
 		}
 		if( (*i)->isKindOf( KINDOF_IMMOBILE ) )
-		{	
+		{
 			continue;
 		}
-		if( (*i)->getAI()==NULL )
-		{	
+		if( (*i)->getAI()==nullptr )
+		{
 			continue;
 		}
 		dx = unitPos.x - pos->x;
@@ -2062,7 +2096,7 @@ void AIGroup::groupIdle(CommandSourceType cmdSource)
 	for( i = m_memberList.begin(); i != m_memberList.end(); ++i )
 	{
 		Object *obj = *i;
-		
+
 		AIUpdateInterface *ai = obj->getAIUpdateInterface();
 		if (ai)
 		{
@@ -2141,10 +2175,14 @@ void AIGroup::groupAttackObjectPrivate( Bool forced, Object *victim, Int maxShot
 	for( i = m_memberList.begin(); i != m_memberList.end(); ++i )	{
 		Real dx, dy;
 		Coord3D unitPos = *((*i)->getPosition());
-		if ((*i)->isDisabledByType( DISABLED_HELD ) ) 
+#if RETAIL_COMPATIBLE_CRC
+		// TheSuperHackers @bugfix Stubbjax 03/08/2025 This logic block erroneously prevents the
+		// occupants of DISABLED_HELD units (e.g. undead Battle Buses) from responding to attack commands.
+		if ((*i)->isDisabledByType( DISABLED_HELD ) )
 		{
 			continue; // don't bother telling the occupants to move.
 		}
+#endif
 		dx = unitPos.x - victimPos.x;
 		dy = unitPos.y - victimPos.y;
 		iter->insert((*i), dx*dx+dy*dy);
@@ -2155,7 +2193,7 @@ void AIGroup::groupAttackObjectPrivate( Bool forced, Object *victim, Int maxShot
 	Object *theUnit;
 	for (theUnit = iter->first(); theUnit; theUnit = iter->next())
 	{
-		//Determine if this object is a garrisoned container capable of firing! 
+		//Determine if this object is a garrisoned container capable of firing!
 		//If so, order everyone inside to attack as well!
 		ContainModuleInterface *contain = theUnit->getContain();
 		if( contain && contain->isPassengerAllowedToFire() )
@@ -2182,7 +2220,7 @@ void AIGroup::groupAttackObjectPrivate( Bool forced, Object *victim, Int maxShot
 				}
 			}
 		}
-		
+
 		//Do a check to see if we have a hive object that has slaved objects.
 		SpawnBehaviorInterface *spawnInterface = theUnit->getSpawnBehaviorInterface();
 		if( spawnInterface && !spawnInterface->doSlavesHaveFreedom() )
@@ -2237,13 +2275,13 @@ void AIGroup::groupAttackPosition( const Coord3D *pos, Int maxShotsToFire, Comma
 	{
 		if( !pos )
 		{
-			//If you specify a NULL position, it means you are attacking your own location.
+			//If you specify a nullptr position, it means you are attacking your own location.
 			attackPos.set( (*i)->getPosition() );
 		}
 
 		//This code allows garrisoned buildings to force attack a ground position
 		//-----------------------------------------------------------------------
-		//Determine if this object is a garrisoned container capable of firing! 
+		//Determine if this object is a garrisoned container capable of firing!
 		//If so, order everyone inside to attack as well!
 		ContainModuleInterface *contain = (*i)->getContain();
 		if( contain && contain->isPassengerAllowedToFire() )
@@ -2255,7 +2293,7 @@ void AIGroup::groupAttackPosition( const Coord3D *pos, Int maxShotsToFire, Comma
 				for( ContainedItemsList::const_iterator it = items->begin(); it != items->end(); ++it )
 				{
 					Object* garrisonedMember = *it;
-					CanAttackResult result = garrisonedMember->getAbleToUseWeaponAgainstTarget( ATTACK_NEW_TARGET, NULL, &attackPos, cmdSource ) ;
+					CanAttackResult result = garrisonedMember->getAbleToUseWeaponAgainstTarget( ATTACK_NEW_TARGET, nullptr, &attackPos, cmdSource ) ;
 					if( result == ATTACKRESULT_POSSIBLE || result == ATTACKRESULT_POSSIBLE_AFTER_MOVING )
 					{
 						AIUpdateInterface *memberAI = garrisonedMember->getAI();
@@ -2483,9 +2521,9 @@ void AIGroup::groupExecuteRailedTransport( CommandSourceType cmdSource )
 		if( ai )
 			ai->aiExecuteRailedTransport( cmdSource );
 
-	}  // end for i
+	}
 
-}  // end groupExecuteRailedTransport
+}
 
 ///< life altering state change, if this AI can do it
 void AIGroup::groupGoProne( const DamageInfo *damageInfo, CommandSourceType cmdSource )
@@ -2569,7 +2607,7 @@ void AIGroup::groupAttackArea( const PolygonTrigger *areaToGuard, CommandSourceT
 	if (!areaToGuard) {
 		return;
 	}
-	
+
 	std::list<Object *>::iterator i;
 	for( i = m_memberList.begin(); i != m_memberList.end(); ++i )
 	{
@@ -2680,7 +2718,7 @@ void AIGroup::groupDoSpecialPower( UnsignedInt specialPowerID, UnsignedInt comma
  */
 void AIGroup::groupDoSpecialPowerAtLocation( UnsignedInt specialPowerID, const Coord3D *location, Real angle, const Object *objectInWay, UnsignedInt commandOptions )
 {
-  
+
 
 	//This one requires a position
 	std::list<Object *>::iterator i;
@@ -2696,7 +2734,7 @@ void AIGroup::groupDoSpecialPowerAtLocation( UnsignedInt specialPowerID, const C
          // and, of course, their slowdeath behavior calls deselect(), which naturally
          // destroys the AIGroup list, in order to keep the selection sync'ed with the group.
          // M Lorenzen... 8/23/03
-    
+
     const SpecialPowerTemplate *spTemplate = TheSpecialPowerStore->findSpecialPowerTemplateByID( specialPowerID );
 		if( spTemplate )
 		{
@@ -2791,32 +2829,35 @@ void AIGroup::groupCheer( CommandSourceType cmdSource )
 }
 
 /**
-	* Sell all things in the group ... if possible 
+	* Sell all things in the group ... if possible
 	*/
 void AIGroup::groupSell( CommandSourceType cmdSource )
 {
-	std::list<Object *>::iterator i, thisIterator;
-	Object *obj;
+#if !RETAIL_COMPATIBLE_AIGROUP
+	// Defer deletion until the end of this function.
+	AIGroupPtr refThis = AIGroupPtr::Create_AddRef(this);
+#endif
 
+	std::list<Object *>::iterator i;
+	std::vector<Object *> groupObjectsCopy;
+	groupObjectsCopy.reserve(m_memberListSize);
+
+	// TheSuperHackers @bugfix Mauller 26/06/2025 when sellObject is called, the member list objects in this AIGroup get removed from it. This happens within the Object::deselectObject() function.
+	// This deletes the local AIGroup object from under the call to groupSell, therefore we need to make a local copy of the objects that need selling.
 	for( i = m_memberList.begin(); i != m_memberList.end(); /*empty*/ )
 	{
+		groupObjectsCopy.push_back( *i++ );
+	}
 
-		// work off of 'thisIterator' as we may change the contents of this list
-		thisIterator = i;
-		++i;
-
-		// get object
-		obj = *thisIterator;
-
-		// try to sell object
-		TheBuildAssistant->sellObject( obj );
-
-	}  // end for, i
+	for( size_t j = 0; j < groupObjectsCopy.size(); ++j )
+	{
+		TheBuildAssistant->sellObject( groupObjectsCopy[j] );
+	}
 
 }
 
 /**
-	* Tell all things in the group to toggle overcharge ... if possible 
+	* Tell all things in the group to toggle overcharge ... if possible
 	*/
 void AIGroup::groupToggleOvercharge( CommandSourceType cmdSource )
 {
@@ -2837,9 +2878,9 @@ void AIGroup::groupToggleOvercharge( CommandSourceType cmdSource )
 			if( obi )
 				obi->toggle();
 
-		}  // end for
+		}
 
-	}  // end for, i
+	}
 
 }
 
@@ -2857,12 +2898,12 @@ void AIGroup::groupPickUpPrisoner( Object *prisoner, enum CommandSourceType cmdS
 
 		// get object
 		obj = *i;
-		
+
 		AIUpdateInterface *ai = obj->getAIUpdateInterface();
 		if( ai )
 			ai->aiPickUpPrisoner( prisoner, cmdSource );
 
-	}  // end for, i
+	}
 
 }
 #endif
@@ -2881,12 +2922,12 @@ void AIGroup::groupReturnToPrison( Object *prison, enum CommandSourceType cmdSou
 
 		// get object
 		obj = *i;
-		
+
 		AIUpdateInterface *ai = obj->getAIUpdateInterface();
 		if( ai )
 			ai->aiReturnPrisoners( prison, cmdSource );
 
-	}  // end for, i
+	}
 }
 #endif
 
@@ -2909,12 +2950,12 @@ void AIGroup::groupCombatDrop( Object *target, const Coord3D &pos, CommandSource
 		if( ai )
 			ai->aiCombatDrop( target, pos, cmdSource );
 
-	}  // end for, i
+	}
 
 }
 
 //-------------------------------------------------------------------------------------
-// Used by scripts to issue a command button order - Note that it's possible that some 
+// Used by scripts to issue a command button order - Note that it's possible that some
 // commands are not AI commands!
 //-------------------------------------------------------------------------------------
 void AIGroup::groupDoCommandButton( const CommandButton *commandButton, CommandSourceType cmdSource )
@@ -2927,14 +2968,14 @@ void AIGroup::groupDoCommandButton( const CommandButton *commandButton, CommandS
 
 		// get object
 		source = *i;
-		
+
 		source->doCommandButton( commandButton, cmdSource );
-	}  // end for, i
+	}
 }
 
 
 //-------------------------------------------------------------------------------------
-// Used by scripts to issue a command button order - Note that it's possible that some 
+// Used by scripts to issue a command button order - Note that it's possible that some
 // commands are not AI commands!
 //-------------------------------------------------------------------------------------
 void AIGroup::groupDoCommandButtonAtPosition( const CommandButton *commandButton, const Coord3D *pos, CommandSourceType cmdSource )
@@ -2947,13 +2988,13 @@ void AIGroup::groupDoCommandButtonAtPosition( const CommandButton *commandButton
 
 		// get object
 		source = *i;
-		
+
 		source->doCommandButtonAtPosition( commandButton, pos, cmdSource );
-	}  // end for, i
+	}
 }
 
 //-------------------------------------------------------------------------------------
-// Used by scripts to issue a command button order - Note that it's possible that some 
+// Used by scripts to issue a command button order - Note that it's possible that some
 // commands are not AI commands!
 //-------------------------------------------------------------------------------------
 void AIGroup::groupDoCommandButtonUsingWaypoints( const CommandButton *commandButton, const Waypoint *way, CommandSourceType cmdSource )
@@ -2966,13 +3007,13 @@ void AIGroup::groupDoCommandButtonUsingWaypoints( const CommandButton *commandBu
 
 		// get object
 		source = *i;
-		
+
 		source->doCommandButtonUsingWaypoints( commandButton, way, cmdSource );
-	}  // end for, i
+	}
 }
 
 //-------------------------------------------------------------------------------------
-// Used by scripts to issue a command button order - Note that it's possible that some 
+// Used by scripts to issue a command button order - Note that it's possible that some
 // commands are not AI commands!
 //-------------------------------------------------------------------------------------
 void AIGroup::groupDoCommandButtonAtObject( const CommandButton *commandButton, Object *obj, CommandSourceType cmdSource )
@@ -2985,9 +3026,9 @@ void AIGroup::groupDoCommandButtonAtObject( const CommandButton *commandButton, 
 
 		// get object
 		source = *i;
-		
+
 		source->doCommandButtonAtObject( commandButton, obj, cmdSource );
-	}  // end for, i
+	}
 }
 
 
@@ -3010,7 +3051,7 @@ void AIGroup::setAttitude( AttitudeType tude )
 /**
  * Get the current behavior modifier state
  */
-AttitudeType AIGroup::getAttitude( void ) const
+AttitudeType AIGroup::getAttitude() const
 {
 	return ATTITUDE_PASSIVE;
 }
@@ -3092,27 +3133,27 @@ void AIGroup::queueUpgrade( const UpgradeTemplate *upgrade )
 			if( thisMember->hasUpgrade( upgrade )  || !thisMember->affectedByUpgrade( upgrade ) )
 				continue;
 		}
-		
+
 		// Ever think to check if this thing can actually build the upgrade to "stop cheaters"?
 		if( !thisMember->canProduceUpgrade(upgrade) )
 			continue;// They have faked their button; go out of sync. (Cheater will execute it, non cheater will not execute it.)
 
 		// producer must have a production update
 		ProductionUpdateInterface *pu = thisMember->getProductionUpdateInterface();
-		if( pu == NULL )
+		if( pu == nullptr )
 			continue;
 
 		if ( pu->canQueueUpgrade( upgrade ) == CANMAKE_QUEUE_FULL )
 			continue;//So we don't charge them for something that we can't build... happy happy
 
-		
+
 		// queue the upgrade "research"
 		pu->queueUpgrade( upgrade );
 	}
 }
 
 //------------------------------------------------------------------------------------------------------------
-Bool AIGroup::isIdle( void ) const
+Bool AIGroup::isIdle() const
 {
 	Bool isIdle = true;
 	std::list<Object *>::const_iterator i;
@@ -3143,20 +3184,20 @@ Bool AIGroup::isIdle( void ) const
 //------------------------------------------------------------------------------------------------------------
 //Definition of busy -- when explicitly in the busy state. Moving or attacking is not considered busy!
 //------------------------------------------------------------------------------------------------------------
-Bool AIGroup::isBusy( void ) const
+Bool AIGroup::isBusy() const
 {
 	Bool isBusy = true;
 	std::list<Object *>::const_iterator i;
 	for( i = m_memberList.begin(); i != m_memberList.end(); ++i )
 	{
 		Object *obj = *i;
-		if( !obj ) 
+		if( !obj )
 		{
 			continue;
 		}
 
 		const AIUpdateInterface *ai = obj->getAIUpdateInterface();
-		if( !ai ) 
+		if( !ai )
 		{
 			continue;
 		}
@@ -3177,7 +3218,7 @@ Bool AIGroup::isBusy( void ) const
 //------------------------------------------------------------------------------------------------------------
 // return true iff all group members are dead
 //------------------------------------------------------------------------------------------------------------
-Bool AIGroup::isGroupAiDead( void ) const
+Bool AIGroup::isGroupAiDead() const
 {
 	Bool isDead = true;
 	std::list<Object *>::const_iterator i;
@@ -3210,7 +3251,7 @@ Object *AIGroup::getSpecialPowerSourceObject( UnsignedInt specialPowerID )
 				return object;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 // Returns an object that has a command button for the GUI command type.
@@ -3218,7 +3259,7 @@ Object *AIGroup::getSpecialPowerSourceObject( UnsignedInt specialPowerID )
 Object *AIGroup::getCommandButtonSourceObject( GUICommandType type )
 {
 	std::list<Object *>::iterator it;
-	
+
 	for( it = m_memberList.begin(); it != m_memberList.end(); ++it )
 	{
 		Object *object = (*it);
@@ -3241,7 +3282,7 @@ Object *AIGroup::getCommandButtonSourceObject( GUICommandType type )
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -3286,24 +3327,24 @@ void AIGroup::crc( Xfer *xfer )
 		if (*it)
 			id = (*it)->getID();
 		xfer->xferUser(&id, sizeof(ObjectID));
-		CRCGEN_LOG(("CRC after AI AIGroup m_memberList for frame %d is 0x%8.8X\n", TheGameLogic->getFrame(), ((XferCRC *)xfer)->getCRC()));
+		CRCGEN_LOG(("CRC after AI AIGroup m_memberList for frame %d is 0x%8.8X", TheGameLogic->getFrame(), ((XferCRC *)xfer)->getCRC()));
 	}
 
 	xfer->xferUnsignedInt( &m_memberListSize );
-	CRCGEN_LOG(("CRC after AI AIGroup m_memberListSize for frame %d is 0x%8.8X\n", TheGameLogic->getFrame(), ((XferCRC *)xfer)->getCRC()));
+	CRCGEN_LOG(("CRC after AI AIGroup m_memberListSize for frame %d is 0x%8.8X", TheGameLogic->getFrame(), ((XferCRC *)xfer)->getCRC()));
 
 	id = INVALID_ID;	// Used to be leader id, unused now. jba.
 	xfer->xferObjectID( &id );
-	CRCGEN_LOG(("CRC after AI AIGroup m_leader for frame %d is 0x%8.8X\n", TheGameLogic->getFrame(), ((XferCRC *)xfer)->getCRC()));
+	CRCGEN_LOG(("CRC after AI AIGroup m_leader for frame %d is 0x%8.8X", TheGameLogic->getFrame(), ((XferCRC *)xfer)->getCRC()));
 	xfer->xferReal( &m_speed );
-	CRCGEN_LOG(("CRC after AI AIGroup m_speed for frame %d is 0x%8.8X\n", TheGameLogic->getFrame(), ((XferCRC *)xfer)->getCRC()));
+	CRCGEN_LOG(("CRC after AI AIGroup m_speed for frame %d is 0x%8.8X", TheGameLogic->getFrame(), ((XferCRC *)xfer)->getCRC()));
 	xfer->xferBool( &m_dirty );
-	CRCGEN_LOG(("CRC after AI AIGroup m_dirty for frame %d is 0x%8.8X\n", TheGameLogic->getFrame(), ((XferCRC *)xfer)->getCRC()));
+	CRCGEN_LOG(("CRC after AI AIGroup m_dirty for frame %d is 0x%8.8X", TheGameLogic->getFrame(), ((XferCRC *)xfer)->getCRC()));
 
 	xfer->xferUnsignedInt( &m_id );
-	CRCGEN_LOG(("CRC after AI AIGroup m_id (%d) for frame %d is 0x%8.8X\n", m_id, TheGameLogic->getFrame(), ((XferCRC *)xfer)->getCRC()));
+	CRCGEN_LOG(("CRC after AI AIGroup m_id (%d) for frame %d is 0x%8.8X", m_id, TheGameLogic->getFrame(), ((XferCRC *)xfer)->getCRC()));
 
-}  // end crc
+}
 
 //-----------------------------------------------------------------------------
 void AIGroup::xfer( Xfer *xfer )
@@ -3314,10 +3355,10 @@ void AIGroup::xfer( Xfer *xfer )
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
-}  // end xfer
+}
 
 //-----------------------------------------------------------------------------
-void AIGroup::loadPostProcess( void )
+void AIGroup::loadPostProcess()
 {
 
-}  // end loadPostProcess
+}

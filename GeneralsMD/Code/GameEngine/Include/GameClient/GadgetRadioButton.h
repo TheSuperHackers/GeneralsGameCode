@@ -24,12 +24,12 @@
 
 // FILE: GadgetRadioButton.h //////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -63,9 +63,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __GADGETRADIOBUTTON_H_
-#define __GADGETRADIOBUTTON_H_
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
@@ -147,6 +144,3 @@ inline const Image *GadgetRadioGetSelectedCheckedBoxImage( GameWindow *g )						
 
 
 // EXTERNALS //////////////////////////////////////////////////////////////////
-
-#endif // __GADGETRADIOBUTTON_H_
-

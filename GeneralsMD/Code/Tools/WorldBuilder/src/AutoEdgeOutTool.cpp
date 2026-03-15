@@ -20,7 +20,7 @@
 // Texture tiling tool for worldbuilder.
 // Author: John Ahlquist, April 2001
 
-#include "StdAfx.h" 
+#include "StdAfx.h"
 #include "resource.h"
 
 #include "AutoEdgeOutTool.h"
@@ -34,17 +34,17 @@
 //
 /// Constructor
 AutoEdgeOutTool::AutoEdgeOutTool(void) :
-	Tool(ID_AUTO_EDGE_OUT_TOOL, IDC_AUTO_EDGE_OUT) 
+	Tool(ID_AUTO_EDGE_OUT_TOOL, IDC_AUTO_EDGE_OUT)
 {
 }
-	
+
 /// Destructor
-AutoEdgeOutTool::~AutoEdgeOutTool(void) 
+AutoEdgeOutTool::~AutoEdgeOutTool(void)
 {
 }
 
 /// Shows the brush options panel.
-void AutoEdgeOutTool::activate() 
+void AutoEdgeOutTool::activate()
 {
 	Tool::activate();
 	CMainFrame::GetMainFrame()->showOptionsDialog(IDD_BLEND_MATERIAL);
@@ -53,7 +53,7 @@ void AutoEdgeOutTool::activate()
 
 /** Execute the tool on mouse down - Create a copy of the height map
 * to edit, blend the edges, and give the undoable command to the doc. */
-void AutoEdgeOutTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) 
+void AutoEdgeOutTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
 {
 	if (m != TRACK_L) return;
 

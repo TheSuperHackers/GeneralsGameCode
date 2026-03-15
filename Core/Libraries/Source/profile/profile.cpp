@@ -26,13 +26,15 @@
 //
 // Profile module main code
 //////////////////////////////////////////////////////////////////////////////
-#include "_pch.h"
+
+#include "profile.h"
+#include "internal.h"
 #include <new>
 #include "mmsystem.h"
 
 // yuk, I'm doing this so weird because the destructor
 // of cmd must never be called...
-static ProfileCmdInterface &cmd=*(ProfileCmdInterface *)new 
+static ProfileCmdInterface &cmd=*(ProfileCmdInterface *)new
                   (ProfileAllocMemory(sizeof(ProfileCmdInterface))) ProfileCmdInterface();
 
 // we have this here so that our command interface will always
@@ -49,15 +51,15 @@ void *ProfileAllocMemory(unsigned numBytes)
 
 void *ProfileReAllocMemory(void *oldPtr, unsigned newSize)
 {
-  // Windows doesn't like ReAlloc with NULL handle/ptr...
+  // Windows doesn't like ReAlloc with null handle/ptr...
   if (!oldPtr)
-    return newSize?ProfileAllocMemory(newSize):0;
+    return newSize?ProfileAllocMemory(newSize):nullptr;
 
   // Shrinking to 0 size is basically freeing memory
   if (!newSize)
   {
     GlobalFree((HGLOBAL)oldPtr);
-    return 0;
+    return nullptr;
   }
 
   // now try GlobalReAlloc first
@@ -85,7 +87,7 @@ void ProfileFreeMemory(void *ptr)
 
 //////////////////////////////////////////////////////////////////////////////
 
-static _int64 GetClockCyclesFast(void)
+static _int64 GetClockCyclesFast()
 {
   // this is where we're adding our internal result functions
   Profile::AddResultFunction(ProfileResultFileCSV::Create,
@@ -94,9 +96,9 @@ static _int64 GetClockCyclesFast(void)
   Profile::AddResultFunction(ProfileResultFileCSV::Create,
                               "file_dot",
                               "[ file [ frame_name [ fold_threshold ] ] ]");
-  
+
   // this must not take a very huge CPU hit...
-  
+
   // measure clock cycles 3 times for 20 msec each
   // then take the 2 counts that are closest, average
   _int64 n[3];
@@ -165,7 +167,7 @@ void Profile::StartRange(const char *range)
   // known name?
   unsigned k=0;
   for (;k<m_names;++k)
-    if (!strcmp(range,m_frameNames[k].name))
+    if (strcmp(range,m_frameNames[k].name) == 0)
       break;
   if (k==m_names)
   {
@@ -220,7 +222,7 @@ void Profile::AppendRange(const char *range)
   // known name?
   unsigned k=0;
   for (;k<m_names;++k)
-    if (!strcmp(range,m_frameNames[k].name))
+    if (strcmp(range,m_frameNames[k].name) == 0)
       break;
   if (k==m_names)
   {
@@ -271,7 +273,7 @@ void Profile::StopRange(const char *range)
   // known name?
   unsigned k=0;
   for (;k<m_names;++k)
-    if (!strcmp(range,m_frameNames[k].name))
+    if (strcmp(range,m_frameNames[k].name) == 0)
       break;
   DFAIL_IF(k==m_names) return;
   DFAIL_IF(!m_frameNames[k].isRecording) return;
@@ -307,7 +309,7 @@ void Profile::StopRange(const char *range)
   }
 }
 
-bool Profile::IsEnabled(void)
+bool Profile::IsEnabled()
 {
   for (unsigned k=0;k<m_names;++k)
     if (m_frameNames[k].isRecording)
@@ -315,17 +317,17 @@ bool Profile::IsEnabled(void)
   return false;
 }
 
-unsigned Profile::GetFrameCount(void)
+unsigned Profile::GetFrameCount()
 {
   return m_rec;
 }
 
 const char *Profile::GetFrameName(unsigned frame)
 {
-  return frame>=m_rec?NULL:m_recNames[frame];
+  return frame>=m_rec?nullptr:m_recNames[frame];
 }
 
-void Profile::ClearTotals(void)
+void Profile::ClearTotals()
 {
 #ifdef RTS_PROFILE
   ProfileFuncLevelTracer::ClearTotals();
@@ -333,7 +335,7 @@ void Profile::ClearTotals(void)
   ProfileId::ClearTotals();
 }
 
-_int64 Profile::GetClockCyclesPerSecond(void)
+_int64 Profile::GetClockCyclesPerSecond()
 {
   return m_clockCycles;
 }
@@ -358,7 +360,7 @@ bool Profile::SimpleMatch(const char *str, const char *pattern)
           return true;
       return *str==*pattern;
     }
-    else 
+    else
     {
       if (*str++!=*pattern++)
         return false;
@@ -368,7 +370,7 @@ bool Profile::SimpleMatch(const char *str, const char *pattern)
   return *str==*pattern;
 }
 
-static void ProfileShutdown(void)
+static void ProfileShutdown()
 {
 #ifdef RTS_PROFILE
   ProfileFuncLevelTracer::Shutdown();

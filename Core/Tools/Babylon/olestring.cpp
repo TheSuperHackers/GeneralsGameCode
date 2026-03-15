@@ -62,8 +62,8 @@ template <typename text>int IsFormatTypeChar ( text ch )
 
 OLEString::OLEString ( void )
 {
-	ole = NULL;
-	sb = NULL;
+	ole = nullptr;
+	sb = nullptr;
 	len = 0;
 
 	Unlock ();
@@ -75,8 +75,8 @@ OLEString::~OLEString ( )
 {
 	delete [] ole;
 	delete [] sb;
-	ole = NULL;
-	sb = NULL;
+	ole = nullptr;
+	sb = nullptr;
 	len = 0;
 
 }
@@ -88,9 +88,9 @@ void OLEString::Set ( OLECHAR *new_ole )
 	{
 		delete [] ole;
 		delete [] sb;
-		ole = NULL;
-		sb = NULL;
-		
+		ole = nullptr;
+		sb = nullptr;
+
 		len = wcslen ( new_ole );
 		{
 			ole = new OLECHAR[len+1];
@@ -109,11 +109,11 @@ void OLEString::Set ( const char *new_sb )
 	{
 		delete [] ole;
 		delete [] sb;
-		ole = NULL;
-		sb = NULL;
-		
+		ole = nullptr;
+		sb = nullptr;
+
 		len = strlen ( new_sb );
-		
+
 		{
 			ole = new OLECHAR[len+1];
 			swprintf ( ole, L"%S", new_sb );
@@ -207,7 +207,7 @@ void OLEString::FormatMetaString ( void )
 
 	Set ( string );
 	delete [] string;
-	string = NULL;
+	string = nullptr;
 }
 
 template <typename text> void StripSpaces ( text *string )
@@ -236,7 +236,7 @@ template <typename text> void StripSpaces ( text *string )
 					str--;
 				}
 
-				skipall = TRUE;		// skip all spaces 
+				skipall = TRUE;		// skip all spaces
 				last = *str++ = ch;
 				continue;
 		}
@@ -287,7 +287,7 @@ template <typename text> void StripSpacesFromMetaString ( text *string )
 						str--;
 					}
 
-					skipall = TRUE;		// skip all spaces 
+					skipall = TRUE;		// skip all spaces
 					*str++ = '\\';
 					ptr++;
 					last = *str++ = esc;
@@ -403,11 +403,11 @@ template <typename text> int SameFormat ( text *string1, text *string2 )
 			{
 				return FALSE;
 			}
-		
+
 			string1++;
 			string2++;
 		}
-		
+
 	}
 	return TRUE;
 }

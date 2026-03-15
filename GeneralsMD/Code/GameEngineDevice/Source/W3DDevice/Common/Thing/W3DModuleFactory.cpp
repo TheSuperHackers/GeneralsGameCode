@@ -52,7 +52,7 @@
 //-------------------------------------------------------------------------------------------------
 /** Initialize method */
 //-------------------------------------------------------------------------------------------------
-void W3DModuleFactory::init( void )
+void W3DModuleFactory::init()
 {
 
 	// extending functionality
@@ -79,4 +79,4 @@ void W3DModuleFactory::init( void )
 	addModule( W3DTreeDraw );
 	addModule( W3DPropDraw );
 
-}  // end init
+}

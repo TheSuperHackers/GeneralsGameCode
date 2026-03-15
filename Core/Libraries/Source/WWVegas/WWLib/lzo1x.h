@@ -16,22 +16,22 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*********************************************************************************************** 
- ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Command & Conquer                                            * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Library/lzo1x.h                                   $* 
- *                                                                                             * 
+/***********************************************************************************************
+ ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Command & Conquer                                            *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Library/lzo1x.h                                   $*
+ *                                                                                             *
  *                      $Author:: Greg_h                                                      $*
- *                                                                                             * 
+ *                                                                                             *
  *                     $Modtime:: 7/22/97 11:37a                                              $*
- *                                                                                             * 
+ *                                                                                             *
  *                    $Revision:: 1                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 /* lzo1x.h -- public interface of the LZO1X compression algorithm
@@ -59,9 +59,7 @@
    markus.oberhumer@jk.uni-linz.ac.at
  */
 
-
-#ifndef __LZO1X_H
-#define __LZO1X_H
+#pragma once
 
 #include	"lzoconf.h"
 
@@ -75,7 +73,7 @@
 ************************************************************************/
 
 /* Memory required for the wrkmem parameter.
- * When the required size is 0, you can also pass a NULL pointer.
+ * When the required size is 0, you can also pass a nullptr pointer.
  */
 
 #define LZO1X_MEM_COMPRESS      ((lzo_uint) (16384L * sizeof(lzo_byte *)))
@@ -120,8 +118,6 @@ lzo1x_999_compress      ( const lzo_byte *src, lzo_uint  src_len,
 //#ifdef __cplusplus
 //} /* extern "C" */
 //#endif
-
-#endif /* already included */
 
 /*
 vi:ts=4

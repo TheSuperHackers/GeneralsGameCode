@@ -72,10 +72,10 @@ static BOOL CALLBACK _gen_names_dialog_proc(HWND Hwnd,UINT message,WPARAM wParam
  * HISTORY:                                                                                    *
  *=============================================================================================*/
 GenNamesDialogClass::GenNamesDialogClass(Interface * maxinterface) :
-	Hwnd(NULL),
-	Options(NULL),
+	Hwnd(nullptr),
+	Options(nullptr),
 	MaxInterface(maxinterface),
-	NameIndexSpin(NULL)
+	NameIndexSpin(nullptr)
 {
 }
 
@@ -157,14 +157,14 @@ bool GenNamesDialogClass::Ok_To_Exit(void)
 		// just check that the user entered a name
 		char buf[W3D_NAME_LEN];
 		GetWindowText(GetDlgItem(Hwnd,IDC_BASE_NAME_EDIT),buf,sizeof(buf));
-		
+
 		if (strlen(buf) == 0) {
 			MessageBox(Hwnd,"Please enter a root name to use.\n","Error",MB_OK);
 			return false;
 		} else {
 			return true;
 		}
-	} 
+	}
 
 	return true;
 }
@@ -241,7 +241,7 @@ bool GenNamesDialogClass::Dialog_Proc(HWND hWnd,UINT message,WPARAM wParam,LPARA
 				IDC_NAME_INDEX_EDIT,
 				MIN_NAME_INDEX,MAX_NAME_INDEX,INITIAL_NAME_INDEX
 			);
-			
+
 			// limit the base name edit box to 10 characters
 			SendDlgItemMessage(Hwnd,IDC_BASE_NAME_EDIT,EM_LIMITTEXT,MAX_ROOT_NAME_LEN,0);
 
@@ -251,14 +251,14 @@ bool GenNamesDialogClass::Dialog_Proc(HWND hWnd,UINT message,WPARAM wParam,LPARA
 
 			// set initial name to root of the filename
 			char buf[_MAX_FNAME];
-			_splitpath(MaxInterface->GetCurFileName(),NULL,NULL,buf,NULL);
+			_splitpath(MaxInterface->GetCurFileName(),nullptr,nullptr,buf,nullptr);
 			buf[MAX_ROOT_NAME_LEN+1] = 0;
 			SetWindowText(GetDlgItem(Hwnd,IDC_BASE_NAME_EDIT),buf);
 
 			// init radio buttons
 			CheckDlgButton(Hwnd,IDC_AFFECT_ALL_RADIO,BST_UNCHECKED);
 			CheckDlgButton(Hwnd,IDC_AFFECT_SELECTED_RADIO,BST_CHECKED);
-		
+
 			// init the check boxes
 			CheckDlgButton(Hwnd,IDC_ASSIGN_NAMES_CHECK,BST_CHECKED);
 			CheckDlgButton(Hwnd,IDC_ASSIGN_PREFIX_CHECK,BST_UNCHECKED);
@@ -283,13 +283,13 @@ bool GenNamesDialogClass::Dialog_Proc(HWND hWnd,UINT message,WPARAM wParam,LPARA
 						Options->AssignSuffix = (IsDlgButtonChecked(Hwnd,IDC_ASSIGN_SUFFIX_CHECK) == BST_CHECKED);
 						Options->AssignCollisionBits = (IsDlgButtonChecked(Hwnd,IDC_ASSIGN_COLLISION_BITS_CHECK) == BST_CHECKED);
 						Options->OnlyAffectSelected = (IsDlgButtonChecked(Hwnd,IDC_AFFECT_SELECTED_RADIO) == BST_CHECKED);
-						
+
 						// naming options
 						Options->NameIndex = NameIndexSpin->GetIVal();
 						GetWindowText(GetDlgItem(Hwnd,IDC_BASE_NAME_EDIT),Options->RootName,sizeof(Options->RootName));
 						GetWindowText(GetDlgItem(Hwnd,IDC_PREFIX_EDIT),Options->PrefixName,sizeof(Options->PrefixName));
 						GetWindowText(GetDlgItem(Hwnd,IDC_SUFFIX_EDIT),Options->SuffixName,sizeof(Options->SuffixName));
-						
+
 						// collision options
 						Options->PhysicalCollision = (IsDlgButtonChecked(Hwnd,IDC_COLLISION_PHYSICAL) == BST_CHECKED);
 						Options->ProjectileCollision = (IsDlgButtonChecked(Hwnd,IDC_COLLISION_PROJECTILE) == BST_CHECKED);
@@ -340,7 +340,7 @@ bool GenNamesDialogClass::Dialog_Proc(HWND hWnd,UINT message,WPARAM wParam,LPARA
  *=============================================================================================*/
 static BOOL CALLBACK _gen_names_dialog_proc(HWND hwnd,UINT message,WPARAM wparam,LPARAM lparam)
 {
-	static GenNamesDialogClass * dialog = NULL;
+	static GenNamesDialogClass * dialog = nullptr;
 
 	if (message == WM_INITDIALOG) {
 		dialog = (GenNamesDialogClass *)lparam;

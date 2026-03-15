@@ -17,30 +17,25 @@
 */
 
 /* $Header: /Commando/Code/ww3d2/pivot.h 1     1/22/01 3:36p Greg_h $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando / G 3D Library                                      * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/ww3d2/pivot.h                                $* 
- *                                                                                             * 
- *                       Author:: Greg_h                                                       * 
- *                                                                                             * 
- *                     $Modtime:: 1/08/01 10:04a                                              $* 
- *                                                                                             * 
- *                    $Revision:: 1                                                           $* 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando / G 3D Library                                      *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/ww3d2/pivot.h                                $*
+ *                                                                                             *
+ *                       Author:: Greg_h                                                       *
+ *                                                                                             *
+ *                     $Modtime:: 1/08/01 10:04a                                              $*
+ *                                                                                             *
+ *                    $Revision:: 1                                                           $*
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef PIVOT_H
-#define PIVOT_H
 
 #include "always.h"
 #include "vector3.h"
@@ -53,9 +48,9 @@
 
 	PivotClass
 
-	Each node of the hierarchy tree is represented by a 
+	Each node of the hierarchy tree is represented by a
 	PivotClass.
-	
+
 */
 
 //#define LAZY_CAP_MTX_ALLOC
@@ -64,23 +59,22 @@ struct PivotClass
 {
 public:
 
-	PivotClass(void);
+	PivotClass();
 	PivotClass(const PivotClass& that);
 	PivotClass& operator=(const PivotClass& that);
 
-	~PivotClass(void) 
+	~PivotClass()
 	{
 #ifdef LAZY_CAP_MTX_ALLOC
-		if (CapTransformPtr)
-			delete CapTransformPtr;
+		delete CapTransformPtr;
 #endif
 	}
 
-	void Capture_Update(void);
+	void Capture_Update();
 	bool Is_Captured() const
 	{
 #ifdef LAZY_CAP_MTX_ALLOC
-		return CapTransformPtr != NULL;
+		return CapTransformPtr != nullptr;
 #else
 		return IsCaptured;
 #endif
@@ -108,7 +102,3 @@ public:
 #endif
 
 };
-
-
-
-#endif

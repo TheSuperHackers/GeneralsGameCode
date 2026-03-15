@@ -24,12 +24,12 @@
 
 // FILE: W3DCustomEdging.h //////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -44,11 +44,8 @@
 
 #pragma once
 
-#ifndef __W3DCUSTOM_EDGING_H_
-#define __W3DCUSTOM_EDGING_H_
-
 //-----------------------------------------------------------------------------
-//           Includes                                                      
+//           Includes
 //-----------------------------------------------------------------------------
 #include "always.h"
 #include "rendobj.h"
@@ -74,38 +71,36 @@ class WorldHeightMap;
 // W3DCustomEdging: Draw buffer for the trees.
 //
 //
-class W3DCustomEdging 
-{	
+class W3DCustomEdging
+{
 friend class HeightMapRenderObjClass;
 public:
 
-	W3DCustomEdging(void);
-	~W3DCustomEdging(void);
+	W3DCustomEdging();
+	~W3DCustomEdging();
 	void addEdging(Coord3D location, Real scale, Real angle, AsciiString name, Bool visibleInMirror);
 	/// Empties the tree buffer.
-	void clearAllEdging(void);
+	void clearAllEdging();
 	/// Draws the trees.  Uses camera for culling.
-	void drawEdging( WorldHeightMap *pMap, Int minX, Int maxX, Int minY, Int maxY, 
+	void drawEdging( WorldHeightMap *pMap, Int minX, Int maxX, Int minY, Int maxY,
 		TextureClass * terrainTexture, TextureClass * cloudTexture, TextureClass * noiseTexture );
 	/// Called when the view changes, and sort key needs to be recalculated.
 	/// Normally sortKey gets calculated when a tree becomes visible.
-	void doFullUpdate(void) {clearAllEdging();};
+	void doFullUpdate() {clearAllEdging();};
 protected:
 #define MAX_BLENDS 2000
-	enum { MAX_EDGE_VERTEX=4*MAX_BLENDS, 
+	enum { MAX_EDGE_VERTEX=4*MAX_BLENDS,
 					MAX_EDGE_INDEX=6*MAX_BLENDS};
 	DX8VertexBufferClass	*m_vertexEdging;	///<Edging vertex buffer.
 	DX8IndexBufferClass			*m_indexEdging;	///<indices defining a triangles for the tree drawing.
 	Int			m_curNumEdgingVertices; ///<Number of vertices used in m_vertexEdging.
 	Int			m_curNumEdgingIndices;	///<Number of indices used in b_indexEdging;
-	Int			m_curEdgingIndexOffset;	///<First index to draw at.  We draw the trees backwards by filling up the index buffer backwards, 
+	Int			m_curEdgingIndexOffset;	///<First index to draw at.  We draw the trees backwards by filling up the index buffer backwards,
 																// so any trees that don't fit are far away from the camera.
 	Bool		m_anythingChanged;	///< Set to true if visibility or sorting changed.
 	Bool		m_initialized;		///< True if the subsystem initialized.
 
-	void allocateEdgingBuffers(void);							 ///< Allocates the buffers.
-	void freeEdgingBuffers(void);									 ///< Frees the index and vertex buffers.
+	void allocateEdgingBuffers();							 ///< Allocates the buffers.
+	void freeEdgingBuffers();									 ///< Frees the index and vertex buffers.
 	void loadEdgingsInVertexAndIndexBuffers(WorldHeightMap *pMap, Int minX, Int maxX, Int minY, Int maxY);
 };
-
-#endif  // end __W3DCUSTOM_EDGING_H_

@@ -23,11 +23,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // This file contains all the header files that shouldn't change frequently.
-// Be careful what you stick in here, because putting files that change often in here will 
+// Be careful what you stick in here, because putting files that change often in here will
 // tend to cheese people's goats.
 
-#ifndef __PRERTS_H__
-#define __PRERTS_H__
+#pragma once
 
 //-----------------------------------------------------------------------------
 // srj sez: this must come first, first, first.
@@ -36,11 +35,15 @@
 class STLSpecialAlloc;
 
 
-// We actually don't use Windows for much other than timeGetTime, but it was included in 40 
+// We actually don't use Windows for much other than timeGetTime, but it was included in 40
 // different .cpp files, so I bit the bullet and included it here.
 // PLEASE DO NOT ABUSE WINDOWS OR IT WILL BE REMOVED ENTIRELY. :-)
-//--------------------------------------------------------------------------------- System Includes 
+//--------------------------------------------------------------------------------- System Includes
 #define WIN32_LEAN_AND_MEAN
+// TheSuperHackers @build JohnsterID 05/01/2026 Add ATL compatibility for MinGW-w64 builds
+#if defined(__GNUC__) && defined(_WIN32)
+    #include <Utility/atl_compat.h>
+#endif
 #include <atlbase.h>
 #include <windows.h>
 
@@ -69,9 +72,7 @@ class STLSpecialAlloc;
 #include <snmp.h>
 #include <stdarg.h>
 #include <stddef.h>
-#include <Utility/stdio_adapter.h>
 #include <stdlib.h>
-#include <string.h>
 #include <sys/stat.h>
 #include <sys/timeb.h>
 #include <sys/types.h>
@@ -111,7 +112,6 @@ class STLSpecialAlloc;
 #include "Common/SubsystemInterface.h"
 
 #include "Common/GameCommon.h"
-#include "Common/GameDefines.h"
 #include "Common/GameMemory.h"
 #include "Common/GameType.h"
 #include "Common/GlobalData.h"
@@ -128,4 +128,6 @@ class STLSpecialAlloc;
 #include "Common/Thing.h"
 #include "Common/UnicodeString.h"
 
-#endif /* __PRERTS_H__ */
+#if defined(__GNUC__) && defined(_WIN32)
+    #pragma GCC diagnostic pop
+#endif

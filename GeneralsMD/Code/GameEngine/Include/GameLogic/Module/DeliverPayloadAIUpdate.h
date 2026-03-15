@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifndef _DELIVER_PAYLOAD_AI_UPDATE_H_
-#define _DELIVER_PAYLOAD_AI_UPDATE_H_
-
 #include "Common/StateMachine.h"
 #include "GameLogic/Module/AIUpdate.h"
 #include "GameClient/RadiusDecal.h"
@@ -48,47 +45,47 @@ public:
 
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 };
 
 //-------------------------------------------------------------------------------------------------
 class ApproachState :  public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ApproachState, "ApproachState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ApproachState, "ApproachState")
 	//Approaching the drop zone
 public:
 	ApproachState( StateMachine *machine ) :State( machine, "ApproachState" ) {}
-	virtual StateReturnType update();
-	virtual StateReturnType onEnter();
+	virtual StateReturnType update() override;
+	virtual StateReturnType onEnter() override;
 protected:
 	// snapshot interface	STUBBED - no member vars to save. jba.
-	virtual void crc( Xfer *xfer ){};
-	virtual void xfer( Xfer *xfer ){XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
-	virtual void loadPostProcess(){};
+	virtual void crc( Xfer *xfer ) override {};
+	virtual void xfer( Xfer *xfer ) override {XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
+	virtual void loadPostProcess() override {};
 };
 EMPTY_DTOR(ApproachState)
 
 //-------------------------------------------------------------------------------------------------
 class DeliveringState :  public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(DeliveringState, "DeliveringState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(DeliveringState, "DeliveringState")
 	// Kickin' stuff out the door
 public:
-	DeliveringState( StateMachine *machine ) :State( machine, "DeliveringState" ) 
-	{ 
-		m_dropDelayLeft = 0; 
-		m_didOpen = false; 
+	DeliveringState( StateMachine *machine ) :State( machine, "DeliveringState" )
+	{
+		m_dropDelayLeft = 0;
+		m_didOpen = false;
 	}
-	virtual StateReturnType update();
-	virtual StateReturnType onEnter();
-	virtual void onExit( StateExitType status );
+	virtual StateReturnType update() override;
+	virtual StateReturnType onEnter() override;
+	virtual void onExit( StateExitType status ) override;
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 private:
 	UnsignedInt m_dropDelayLeft;
@@ -99,18 +96,18 @@ EMPTY_DTOR(DeliveringState)
 //-------------------------------------------------------------------------------------------------
 class ConsiderNewApproachState :  public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ConsiderNewApproachState, "ConsiderNewApproachState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ConsiderNewApproachState, "ConsiderNewApproachState")
 	//Should I try again?  Has own data to keep track.
 public:
 	ConsiderNewApproachState( StateMachine *machine ) : State( machine, "ConsiderNewApproachState" ), m_numberEntriesToState(0) { }
-	virtual StateReturnType update();
-	virtual StateReturnType onEnter();
-	virtual void onExit( StateExitType status );
+	virtual StateReturnType update() override;
+	virtual StateReturnType onEnter() override;
+	virtual void onExit( StateExitType status ) override;
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 private:
 	Int m_numberEntriesToState;
@@ -120,16 +117,16 @@ EMPTY_DTOR(ConsiderNewApproachState)
 //-------------------------------------------------------------------------------------------------
 class RecoverFromOffMapState :  public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(RecoverFromOffMapState, "RecoverFromOffMapState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(RecoverFromOffMapState, "RecoverFromOffMapState")
 public:
 	RecoverFromOffMapState( StateMachine *machine ) : State( machine, "RecoverFromOffMapState" ), m_reEntryFrame(0) { }
-	virtual StateReturnType update();
-	virtual StateReturnType onEnter();
+	virtual StateReturnType update() override;
+	virtual StateReturnType onEnter() override;
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 private:
 	UnsignedInt m_reEntryFrame;
@@ -139,18 +136,18 @@ EMPTY_DTOR(RecoverFromOffMapState)
 //-------------------------------------------------------------------------------------------------
 class HeadOffMapState :  public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(HeadOffMapState, "HeadOffMapState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(HeadOffMapState, "HeadOffMapState")
 	//I'm outta here
 public:
   HeadOffMapState( StateMachine *machine ) :State( machine, "HeadOffMapState" ) { facingDirectionUponDelivery.zero(); }
-	virtual StateReturnType update();
-	virtual StateReturnType onEnter();
+	virtual StateReturnType update() override;
+	virtual StateReturnType onEnter() override;
 protected:
 	// snapshot interface	STUBBED - no member vars to save. jba.
-	virtual void crc( Xfer *xfer ){};
-	virtual void xfer( Xfer *xfer ){XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
-	virtual void loadPostProcess(){};
-  
+	virtual void crc( Xfer *xfer ) override {};
+	virtual void xfer( Xfer *xfer ) override {XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
+	virtual void loadPostProcess() override {};
+
   Coord3D facingDirectionUponDelivery;
 };
 EMPTY_DTOR(HeadOffMapState)
@@ -158,17 +155,17 @@ EMPTY_DTOR(HeadOffMapState)
 //-------------------------------------------------------------------------------------------------
 class CleanUpState :  public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(CleanUpState, "CleanUpState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(CleanUpState, "CleanUpState")
 	//Made it off map, delete ourselves
 public:
 	CleanUpState( StateMachine *machine ) :State( machine, "CleanUpState" ) {}
-	virtual StateReturnType update(){return STATE_CONTINUE;}
-	virtual StateReturnType onEnter();
+	virtual StateReturnType update() override {return STATE_CONTINUE;}
+	virtual StateReturnType onEnter() override;
 protected:
 	// snapshot interface	STUBBED - no member vars to save. jba.
-	virtual void crc( Xfer *xfer ){};
-	virtual void xfer( Xfer *xfer ){XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
-	virtual void loadPostProcess(){};
+	virtual void crc( Xfer *xfer ) override {};
+	virtual void xfer( Xfer *xfer ) override {XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
+	virtual void loadPostProcess() override {};
 };
 EMPTY_DTOR(CleanUpState)
 
@@ -207,33 +204,29 @@ public:
 		m_dropOffset.zero();
 		m_dropVariance.zero();
 		m_deliveryDecalRadius = 0;
-		// Added By Sadullah Nader
-		// Initialization missing and needed
-
 		m_putInContainerName.clear();
-		// End Add
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     AIUpdateModuleData::buildFieldParse(p);
 
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
-			//These values represent script only reinforcements using deliverPayloadViaModuleData()! 
+			//These values represent script only reinforcements using deliverPayloadViaModuleData()!
 			//***********************************************************************************
 			//DO NOT ADD DATA HERE UNLESS YOU ARE SUPPORTING SCRIPTED TEAM REINFORCEMENT DELIVERY
 			//THESE DATA VALUES ARE SPECIFIED ONLY BY FACTIONUNIT.INI
 			//***********************************************************************************
-			{ "DoorDelay",								INI::parseDurationUnsignedInt,	NULL, offsetof( DeliverPayloadAIUpdateModuleData, m_doorDelay ) },
-			{ "PutInContainer",						INI::parseAsciiString,					NULL, offsetof( DeliverPayloadAIUpdateModuleData, m_putInContainerName ) },
-			{ "DeliveryDistance",					INI::parseReal,									NULL, offsetof( DeliverPayloadAIUpdateModuleData, m_maxDistanceToTarget ) },
-			{ "MaxAttempts",							INI::parseInt,									NULL, offsetof( DeliverPayloadAIUpdateModuleData, m_maxNumberAttempts ) },
-			{ "DropDelay",								INI::parseDurationUnsignedInt,	NULL, offsetof( DeliverPayloadAIUpdateModuleData, m_dropDelay ) },
-			{ "DropOffset",								INI::parseCoord3D,							NULL, offsetof( DeliverPayloadAIUpdateModuleData, m_dropOffset ) },
-			{ "DropVariance",							INI::parseCoord3D,							NULL, offsetof( DeliverPayloadAIUpdateModuleData, m_dropVariance ) },
-			{ "DeliveryDecal",						RadiusDecalTemplate::parseRadiusDecalTemplate,	NULL, offsetof( DeliverPayloadAIUpdateModuleData, m_deliveryDecalTemplate ) },
-			{ "DeliveryDecalRadius",			INI::parseReal,									NULL,	offsetof( DeliverPayloadAIUpdateModuleData, m_deliveryDecalRadius ) },
+			{ "DoorDelay",								INI::parseDurationUnsignedInt,	nullptr, offsetof( DeliverPayloadAIUpdateModuleData, m_doorDelay ) },
+			{ "PutInContainer",						INI::parseAsciiString,					nullptr, offsetof( DeliverPayloadAIUpdateModuleData, m_putInContainerName ) },
+			{ "DeliveryDistance",					INI::parseReal,									nullptr, offsetof( DeliverPayloadAIUpdateModuleData, m_maxDistanceToTarget ) },
+			{ "MaxAttempts",							INI::parseInt,									nullptr, offsetof( DeliverPayloadAIUpdateModuleData, m_maxNumberAttempts ) },
+			{ "DropDelay",								INI::parseDurationUnsignedInt,	nullptr, offsetof( DeliverPayloadAIUpdateModuleData, m_dropDelay ) },
+			{ "DropOffset",								INI::parseCoord3D,							nullptr, offsetof( DeliverPayloadAIUpdateModuleData, m_dropOffset ) },
+			{ "DropVariance",							INI::parseCoord3D,							nullptr, offsetof( DeliverPayloadAIUpdateModuleData, m_dropVariance ) },
+			{ "DeliveryDecal",						RadiusDecalTemplate::parseRadiusDecalTemplate,	nullptr, offsetof( DeliverPayloadAIUpdateModuleData, m_deliveryDecalTemplate ) },
+			{ "DeliveryDecalRadius",			INI::parseReal,									nullptr,	offsetof( DeliverPayloadAIUpdateModuleData, m_deliveryDecalRadius ) },
 			{ 0, 0, 0, 0 }
 		};
     p.add(dataFieldParse);
@@ -293,19 +286,14 @@ public:
 		m_inheritTransportVelocity = false;
 		m_isParachuteDirectly = FALSE;
 		m_exitPitchRate = 0.0f;
-		m_strafeFX = NULL;
+		m_strafeFX = nullptr;
 		m_strafeLength = 0.0f;
-		m_visiblePayloadWeaponTemplate = NULL;
+		m_visiblePayloadWeaponTemplate = nullptr;
 		m_selfDestructObject = FALSE;
 		m_deliveryDecalRadius = 0;
-		// Added By Sadullah Nader
-		// Initialization missing and needed  
-		
 		m_visibleDropBoneName.clear();
 		m_visiblePayloadTemplateName.clear();
 		m_visibleSubObjectName.clear();
-		
-		// End Add
 	}
 
 	static const FieldParse* getFieldParse();
@@ -323,12 +311,12 @@ public:
 	DeliverPayloadAIUpdate( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual AIFreeToExitType getAiFreeToExit(const Object* exiter) const;
+	virtual AIFreeToExitType getAiFreeToExit(const Object* exiter) const override;
 
 	const Coord3D* getTargetPos() const { return &m_targetPos; }
 	const Coord3D* getMoveToPos() const { return &m_moveToPos; }
 	UnsignedInt getDoorDelay() const { return getDeliverPayloadAIUpdateModuleData()->m_doorDelay; }
-	Bool isDeliveringPayload() const { return m_deliverPayloadStateMachine != NULL; }
+	Bool isDeliveringPayload() const { return m_deliverPayloadStateMachine != nullptr; }
 	const ThingTemplate* getPutInContainerTemplateViaModuleData() const;
 
 	Real getAllowedDistanceToTarget() const { return m_data.m_distToTarget; }
@@ -350,7 +338,7 @@ public:
 
 	const DeliverPayloadData* getData() { return &m_data; }
 
-	virtual UpdateSleepTime update();
+	virtual UpdateSleepTime update() override;
 
 	void killDeliveryDecal();
 
@@ -359,8 +347,8 @@ public:
 
 protected:
 
-	virtual AIStateMachine* makeStateMachine();
-	virtual Bool isAllowedToRespondToAiCommands(const AICommandParms* parms) const;
+	virtual AIStateMachine* makeStateMachine() override;
+	virtual Bool isAllowedToRespondToAiCommands(const AICommandParms* parms) const override;
 
 	DeliverPayloadStateMachine*		m_deliverPayloadStateMachine;	///< Controls my special logic
 	Coord3D												m_targetPos;									///< Where I plan to deliver my little friends, if obj is null
@@ -383,6 +371,3 @@ protected:
 
 
 };
-
-#endif
-

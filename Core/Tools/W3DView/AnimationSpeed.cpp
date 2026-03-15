@@ -87,7 +87,7 @@ END_MESSAGE_MAP()
 //  OnInitDialog
 //
 BOOL
-CAnimationSpeed::OnInitDialog (void) 
+CAnimationSpeed::OnInitDialog (void)
 {
 	// Allow the base class to process this message
     CDialog::OnInitDialog ();
@@ -128,10 +128,10 @@ CAnimationSpeed::OnInitDialog (void)
             m_iInitialPercent = int(animationSpeed*100.00F);
         }
     }
-	
+
     // Set the range of the slider control
     m_speedSlider.SetRange (1, 200);
-    
+
     // Set the initial pos of the slider control
     m_speedSlider.SetPos (m_iInitialPercent);
     return TRUE;
@@ -163,7 +163,7 @@ CAnimationSpeed::OnHScroll
             pCGraphicView->SetAnimationSpeed (((float)m_iInitialPercent) / (100.00F));
         }
     }
-	
+
 	// Allow the base class to process this message
     CDialog::OnHScroll (nSBCode, nPos, pScrollBar);
     return ;
@@ -197,7 +197,7 @@ CAnimationSpeed::OnBlend (void)
         pCDoc->SetAnimationBlend (SendDlgItemMessage (IDC_BLEND, BM_GETCHECK));
     }
 
-    return ;	
+    return ;
 }
 
 void CAnimationSpeed::
@@ -227,7 +227,7 @@ OnCompressq(){
 
 void CAnimationSpeed::
 On16bit(){
-/*	
+/*
 CW3DViewDoc *pCDoc = ::GetCurrentDocument ();
 	pCDoc->SetChannelQnBytes(2);
 	QnBytes = 2;

@@ -16,22 +16,22 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*********************************************************************************************** 
- ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Command & Conquer                                            * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Library/LZOPIPE.CPP                               $* 
- *                                                                                             * 
+/***********************************************************************************************
+ ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Command & Conquer                                            *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Library/LZOPIPE.cpp                               $*
+ *                                                                                             *
  *                      $Author:: Greg_h                                                      $*
- *                                                                                             * 
+ *                                                                                             *
  *                     $Modtime:: 7/22/97 11:37a                                              $*
- *                                                                                             * 
+ *                                                                                             *
  *                    $Revision:: 1                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  *   LZWPipe::Flush -- Flushes any partially accumulated block.                                *
  *   LZWPipe::LZWPipe -- Constructor for the LZO processor pipe.                               *
  *   LZWPipe::Put -- Send some data through the LZO processor pipe.                            *
@@ -40,7 +40,7 @@
 
 
 #include	"always.h"
-#include	"BUFF.H"
+#include "BUFF.h"
 #include	"lzo.h"
 #include	"lzopipe.h"
 #include	<assert.h>
@@ -67,8 +67,8 @@
 LZOPipe::LZOPipe(CompControl control, int blocksize) :
 		Control(control),
 		Counter(0),
-		Buffer(NULL),
-		Buffer2(NULL),
+		Buffer(nullptr),
+		Buffer2(nullptr),
 		BlockSize(blocksize)
 {
 	SafetyMargin = BlockSize;
@@ -92,13 +92,13 @@ LZOPipe::LZOPipe(CompControl control, int blocksize) :
  * HISTORY:                                                                                    *
  *   07/04/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-LZOPipe::~LZOPipe(void)
+LZOPipe::~LZOPipe()
 {
 	delete [] Buffer;
-	Buffer = NULL;
+	Buffer = nullptr;
 
 	delete [] Buffer2;
-	Buffer2 = NULL;
+	Buffer2 = nullptr;
 }
 
 
@@ -123,11 +123,11 @@ LZOPipe::~LZOPipe(void)
  *=============================================================================================*/
 int LZOPipe::Put(void const * source, int slen)
 {
-	if (source == NULL || slen < 1) {
+	if (source == nullptr || slen < 1) {
 		return(Pipe::Put(source, slen));
 	}
 
-	assert(Buffer != NULL);
+	assert(Buffer != nullptr);
 
 	int total = 0;
 
@@ -177,7 +177,7 @@ int LZOPipe::Put(void const * source, int slen)
 				*/
 				if (Counter == BlockHeader.CompCount) {
 					unsigned int length = sizeof (Buffer2);
-					lzo1x_decompress ((unsigned char*)Buffer, BlockHeader.CompCount, (unsigned char*)Buffer2, &length, NULL);
+					lzo1x_decompress ((unsigned char*)Buffer, BlockHeader.CompCount, (unsigned char*)Buffer2, &length, nullptr);
 					total += Pipe::Put(Buffer2, BlockHeader.UncompCount);
 					Counter = 0;
 					BlockHeader.CompCount = 0xFFFF;
@@ -262,9 +262,9 @@ int LZOPipe::Put(void const * source, int slen)
  * HISTORY:                                                                                    *
  *   07/04/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-int LZOPipe::Flush(void)
+int LZOPipe::Flush()
 {
-	assert(Buffer != NULL);
+	assert(Buffer != nullptr);
 
 	int total = 0;
 

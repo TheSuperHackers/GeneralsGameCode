@@ -16,18 +16,14 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#if !defined(AFX_DATATREEVIEW_H__2BB39E40_5D3A_11D2_9FC6_00104B791122__INCLUDED_)
-#define AFX_DATATREEVIEW_H__2BB39E40_5D3A_11D2_9FC6_00104B791122__INCLUDED_
-
-#if _MSC_VER >= 1000
 #pragma once
-#endif // _MSC_VER >= 1000
+
 // DataTreeView.h : header file
 //
 
-#include "AfxCView.H"
+#include "AfxCView.h"
 #include "AssetTypes.h"
-#include "Vector.H"
+#include "Vector.h"
 
 // Forward declarations
 class RenderObjClass;
@@ -83,7 +79,7 @@ protected:
 		/////////////////////////////////////////////////////////////////////
 		//	Public methods
 		/////////////////////////////////////////////////////////////////////
-		
+
 		//
 		//	Asset insertion methods
 		//
@@ -108,7 +104,7 @@ protected:
 		//
 		//	Display methods
 		//
-		void					Display_Asset (HTREEITEM htree_item = NULL);
+		void					Display_Asset (HTREEITEM htree_item = nullptr);
 		void					Select_Next (void);
 		void					Select_Prev (void);
 		void					Reload_Lightmap_Models (void);
@@ -117,7 +113,7 @@ protected:
 		// Information methods
 		//
 		RenderObjClass *	Get_Current_Render_Obj (void) const;
-		AssetInfoClass *	Get_Current_Asset_Info (void) const;		
+		AssetInfoClass *	Get_Current_Asset_Info (void) const;
 		LPCTSTR				GetCurrentSelectionName (void);
 		ASSET_TYPE			GetCurrentSelectionType (void);
 		HTREEITEM			FindChildItem (HTREEITEM hParentItem, LPCTSTR pszChildItemName);
@@ -125,25 +121,25 @@ protected:
 		HTREEITEM			FindFirstChildItemBasedOnHierarchyName (HTREEITEM hParentItem, LPCTSTR pszHierarchyName);
 		HTREEITEM			FindSiblingItemBasedOnHierarchyName (HTREEITEM hCurrentItem, LPCTSTR pszHierarchyName);
 		void					Build_Render_Object_List (DynamicVectorClass <CString> &asset_list, HTREEITEM hparent = TVI_ROOT);
-		
+
 		//
 		//	Initialization methods
 		//
 		void					CreateRootNodes (void);
 
 	protected:
-		
+
 		///////////////////////////////////////////////////////////////////////
 		//	Protected methods
 		///////////////////////////////////////////////////////////////////////
 		ASSET_TYPE			Determine_Tree_Location (RenderObjClass &render_obj, HTREEITEM &hroot, int &icon_index);
 		void					Determine_Tree_Location (ASSET_TYPE type, HTREEITEM &hroot, int &icon_index);
 		RenderObjClass *	Create_Render_Obj_To_Display (HTREEITEM htree_item);
-		void					Add_Emitters_To_Menu (HMENU hmenu, RenderObjClass &render_obj);		
+		void					Add_Emitters_To_Menu (HMENU hmenu, RenderObjClass &render_obj);
 		void					Free_Child_Models (HTREEITEM parent_item);
 
 	private:
-		
+
 		///////////////////////////////////////////////////////
 		//
 		//	Private member data
@@ -175,6 +171,3 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Developer Studio will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_DATATREEVIEW_H__2BB39E40_5D3A_11D2_9FC6_00104B791122__INCLUDED_)
-

@@ -23,12 +23,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 //----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //----------------------------------------------------------------------------
 //
 // Project:   Generals
@@ -42,57 +42,57 @@
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-//         Includes                                                      
+//         Includes
 //----------------------------------------------------------------------------
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "GameClient/DebugDisplay.h"
 
 //----------------------------------------------------------------------------
-//         Externals                                                     
+//         Externals
 //----------------------------------------------------------------------------
 
 
 
 //----------------------------------------------------------------------------
-//         Defines                                                         
+//         Defines
 //----------------------------------------------------------------------------
 
 
 
 //----------------------------------------------------------------------------
-//         Private Types                                                     
+//         Private Types
 //----------------------------------------------------------------------------
 
 
 
 //----------------------------------------------------------------------------
-//         Private Data                                                     
+//         Private Data
 //----------------------------------------------------------------------------
 
 
 
 //----------------------------------------------------------------------------
-//         Public Data                                                      
+//         Public Data
 //----------------------------------------------------------------------------
 
 
 
 //----------------------------------------------------------------------------
-//         Private Prototypes                                               
+//         Private Prototypes
 //----------------------------------------------------------------------------
 
 
 
 //----------------------------------------------------------------------------
-//         Private Functions                                               
+//         Private Functions
 //----------------------------------------------------------------------------
 
 
 
 //----------------------------------------------------------------------------
-//         Public Functions                                                
+//         Public Functions
 //----------------------------------------------------------------------------
 
 
@@ -111,7 +111,7 @@ DebugDisplay::DebugDisplay()
 // DebugDisplay::reset
 //============================================================================
 
-void DebugDisplay::reset( void )
+void DebugDisplay::reset()
 {
 	setCursorPos( 0, 0 );
 	setTextColor( WHITE );
@@ -132,7 +132,7 @@ void	DebugDisplay::setCursorPos( Int x, Int y )
 // DebugDisplay::getCursorXPos
 //============================================================================
 
-Int		DebugDisplay::getCursorXPos( void )
+Int		DebugDisplay::getCursorXPos()
 {
 	return m_xPos;
 }
@@ -141,7 +141,7 @@ Int		DebugDisplay::getCursorXPos( void )
 // DebugDisplay::getCursorYPos
 //============================================================================
 
-Int		DebugDisplay::getCursorYPos( void )
+Int		DebugDisplay::getCursorYPos()
 {
 	return m_yPos;
 }
@@ -150,7 +150,7 @@ Int		DebugDisplay::getCursorYPos( void )
 // DebugDisplay::getWidth
 //============================================================================
 
-Int		DebugDisplay::getWidth( void )
+Int		DebugDisplay::getWidth()
 {
 	return m_width;
 }
@@ -159,7 +159,7 @@ Int		DebugDisplay::getWidth( void )
 // DebugDisplay::getHeight
 //============================================================================
 
-Int		DebugDisplay::getHeight( void )
+Int		DebugDisplay::getHeight()
 {
 	return m_height;
 }
@@ -171,7 +171,7 @@ Int		DebugDisplay::getHeight( void )
 void	DebugDisplay::setTextColor( Color color )
 {
 	m_textColor = color;
-}	
+}
 
 //============================================================================
 // DebugDisplay::setRightMargin
@@ -214,7 +214,7 @@ void	DebugDisplay::printf( const Char *format, ...)
 	DEBUG_ASSERTCRASH( result < sizeof(text), ("text overflow in DebugDisplay::printf() - string too long"));
 
 	// find every line and print it
-	Char *ptr = text;;
+	Char *ptr = text;
 	Char *lineStart = ptr;
 	Int lineLen = 0;
 	Char ch;

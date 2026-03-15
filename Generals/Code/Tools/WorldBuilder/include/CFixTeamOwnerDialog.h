@@ -26,7 +26,7 @@ class CFixTeamOwnerDialog : public CDialog
 {
 	public:
 		enum { IDD = IDD_CHANGE_TEAM_OWNER };
-		CFixTeamOwnerDialog( TeamsInfo *ti, SidesList *sideList, UINT nIDTemplate = CFixTeamOwnerDialog::IDD,  CWnd* pParentWnd = NULL );
+		CFixTeamOwnerDialog( TeamsInfo *ti, SidesList *sideList, UINT nIDTemplate = CFixTeamOwnerDialog::IDD,  CWnd* pParentWnd = nullptr );
 		AsciiString getSelectedOwner();
 		Bool pickedValidTeam() { return m_pickedValidTeam; }
 

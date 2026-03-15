@@ -16,24 +16,26 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*************************************************************************** 
- *                                                                         * 
- *                 Project Name : Westwood Auto Registration App           * 
- *                                                                         * 
- *                    File Name : FIELD.H                                  * 
- *                                                                         * 
- *                   Programmer : Philip W. Gorrow                         * 
- *                                                                         * 
- *                   Start Date : 04/22/96                                 * 
- *                                                                         * 
- *                  Last Update : April 22, 1996 [PWG]                     * 
- *                                                                         * 
+/***************************************************************************
+ *                                                                         *
+ *                 Project Name : Westwood Auto Registration App           *
+ *                                                                         *
+ *                    File Name : FIELD.h                                  *
+ *                                                                         *
+ *                   Programmer : Philip W. Gorrow                         *
+ *                                                                         *
+ *                   Start Date : 04/22/96                                 *
+ *                                                                         *
+ *                  Last Update : April 22, 1996 [PWG]                     *
+ *                                                                         *
  * This module takes care of maintaining the field list used to process    *
  * packets.                                                                *
- *                                                                         * 
- *-------------------------------------------------------------------------* 
- * Functions:                                                              * 
+ *                                                                         *
+ *-------------------------------------------------------------------------*
+ * Functions:                                                              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
+#pragma once
 
 #define FIELD_HEADER_SIZE	(sizeof(FieldClass) - (sizeof(void *) * 2))
 

@@ -24,12 +24,9 @@
 
 // FILE:		DumbProjectileBehavior.h
 // Author:	Steven Johnson, July 2002
-// Desc:		
+// Desc:
 
 #pragma once
-
-#ifndef _DumbProjectileBehavior_H_
-#define _DumbProjectileBehavior_H_
 
 #include "Common/GameType.h"
 #include "Common/GlobalData.h"
@@ -86,17 +83,17 @@ public:
 	// virtual destructor provided by memory pool object
 
 	// UpdateModuleInterface
-	virtual UpdateSleepTime update();
-	virtual ProjectileUpdateInterface* getProjectileUpdateInterface() { return this; }
+	virtual UpdateSleepTime update() override;
+	virtual ProjectileUpdateInterface* getProjectileUpdateInterface() override { return this; }
 
 	// ProjectileUpdateInterface
-	virtual void projectileLaunchAtObjectOrPosition(const Object *victim, const Coord3D* victimPos, const Object *launcher, WeaponSlotType wslot, Int specificBarrelToUse, const WeaponTemplate* detWeap, const ParticleSystemTemplate* exhaustSysOverride);
-	virtual void projectileFireAtObjectOrPosition( const Object *victim, const Coord3D *victimPos, const WeaponTemplate *detWeap, const ParticleSystemTemplate* exhaustSysOverride );
-	virtual Bool projectileHandleCollision( Object *other );
-	virtual Bool projectileIsArmed() const { return true; }
-	virtual ObjectID projectileGetLauncherID() const { return m_launcherID; }
-	virtual void setFramesTillCountermeasureDiversionOccurs( UnsignedInt frames ) {}
-	virtual void projectileNowJammed() {}
+	virtual void projectileLaunchAtObjectOrPosition(const Object *victim, const Coord3D* victimPos, const Object *launcher, WeaponSlotType wslot, Int specificBarrelToUse, const WeaponTemplate* detWeap, const ParticleSystemTemplate* exhaustSysOverride) override;
+	virtual void projectileFireAtObjectOrPosition( const Object *victim, const Coord3D *victimPos, const WeaponTemplate *detWeap, const ParticleSystemTemplate* exhaustSysOverride ) override;
+	virtual Bool projectileHandleCollision( Object *other ) override;
+	virtual Bool projectileIsArmed() const override { return true; }
+	virtual ObjectID projectileGetLauncherID() const override { return m_launcherID; }
+	virtual void setFramesTillCountermeasureDiversionOccurs( UnsignedInt frames ) override {}
+	virtual void projectileNowJammed() override {}
 
 protected:
 
@@ -116,15 +113,12 @@ private:
 	Int										m_flightPathSegments;			///< number of segments in the flightpath (in case we must regen it)
 	Int										m_currentFlightPathStep;	///< Our current index in the flight path vector.  Quicker than popping off.
 	WeaponBonusConditionFlags		m_extraBonusFlags;
-  
-  Bool                  m_hasDetonated;           ///< 
+
+  Bool                  m_hasDetonated;           ///<
 
 	Bool calcFlightPath(Bool recalcNumSegments);
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	void displayFlightPath();	///< Uses little debug icons in worldspace to show the path chosen when it is decided upon
 #endif
 
 };
-
-#endif // _DumbProjectileBehavior_H_
-

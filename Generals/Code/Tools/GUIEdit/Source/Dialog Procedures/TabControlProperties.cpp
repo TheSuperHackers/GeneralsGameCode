@@ -23,12 +23,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    GUIEdit
@@ -44,7 +44,6 @@
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 #include <stdlib.h>
-#include <stdio.h>
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "Common/NameKeyGenerator.h"
@@ -105,7 +104,7 @@ static LRESULT CALLBACK tabControlPropertiesCallback( HWND hWndDialog,
 	// are designed to have controls doing the same functionality
 	// and names
 	//
-	if( HandleCommonDialogMessages( hWndDialog, message, 
+	if( HandleCommonDialogMessages( hWndDialog, message,
 																	wParam, lParam, &returnCode ) == TRUE )
 		return returnCode;
 
@@ -118,7 +117,7 @@ static LRESULT CALLBACK tabControlPropertiesCallback( HWND hWndDialog,
 //			Int notifyCode = HIWORD( wParam );  // notification code
 			Int controlID = LOWORD( wParam );  // control ID
 //			HWND hWndControl = (HWND)lParam;  // control window handle
- 
+
       switch( controlID )
       {
 
@@ -182,7 +181,7 @@ static LRESULT CALLBACK tabControlPropertiesCallback( HWND hWndDialog,
 						GadgetTabControlSetEnabledBorderColorBackground( tabControl, info->borderColor );
 
 
-					
+
 						info = GetStateInfo( TC_TAB_0_DISABLED );
 						GadgetTabControlSetDisabledImageTabZero( tabControl, info->image );
 						GadgetTabControlSetDisabledColorTabZero( tabControl, info->color );
@@ -229,7 +228,7 @@ static LRESULT CALLBACK tabControlPropertiesCallback( HWND hWndDialog,
 						GadgetTabControlSetDisabledBorderColorBackground( tabControl, info->borderColor );
 
 
-						
+
 
 						info = GetStateInfo( TC_TAB_0_HILITE );
 						GadgetTabControlSetHiliteImageTabZero( tabControl, info->image );
@@ -276,14 +275,14 @@ static LRESULT CALLBACK tabControlPropertiesCallback( HWND hWndDialog,
 						GadgetTabControlSetHiliteColorBackground( tabControl, info->color );
 						GadgetTabControlSetHiliteBorderColorBackground( tabControl, info->borderColor );
 
-					
+
 						TabControlData *tabData = (TabControlData *)tabControl->winGetUserData();
 
-						tabData->tabWidth = GetDlgItemInt( hWndDialog, TAB_WIDTH, NULL, FALSE );
-						tabData->tabHeight = GetDlgItemInt(hWndDialog, TAB_HEIGHT, NULL, FALSE );
-						tabData->tabCount = GetDlgItemInt(hWndDialog, TAB_COUNT, NULL, FALSE );
-						tabData->paneBorder = GetDlgItemInt(hWndDialog, BORDER_WIDTH, NULL, FALSE );
-						tabData->activeTab = GetDlgItemInt(hWndDialog, ACTIVE_TAB, NULL, FALSE );
+						tabData->tabWidth = GetDlgItemInt( hWndDialog, TAB_WIDTH, nullptr, FALSE );
+						tabData->tabHeight = GetDlgItemInt(hWndDialog, TAB_HEIGHT, nullptr, FALSE );
+						tabData->tabCount = GetDlgItemInt(hWndDialog, TAB_COUNT, nullptr, FALSE );
+						tabData->paneBorder = GetDlgItemInt(hWndDialog, BORDER_WIDTH, nullptr, FALSE );
+						tabData->activeTab = GetDlgItemInt(hWndDialog, ACTIVE_TAB, nullptr, FALSE );
 
 						if( IsDlgButtonChecked( hWndDialog, DISABLE_TAB_0 ) )
 							tabData->subPaneDisabled[0] = TRUE;
@@ -343,12 +342,12 @@ static LRESULT CALLBACK tabControlPropertiesCallback( HWND hWndDialog,
 						GadgetTabControlShowSubPane( tabControl, tabData->activeTab );
 						GadgetTabControlUpdatePaneNames( tabControl );
 
-					}  // end if
+					}
 
           DestroyWindow( hWndDialog );
           break;
 
-				}  // end OK
+				}
 
 				// --------------------------------------------------------------------
         case IDCANCEL:
@@ -357,13 +356,13 @@ static LRESULT CALLBACK tabControlPropertiesCallback( HWND hWndDialog,
           DestroyWindow( hWndDialog );
           break;
 
-				}  // end cancel
+				}
 
-      }  // end switch( LOWORD( wParam ) )
+      }
 
       return 0;
 
-    } // end of WM_COMMAND
+    }
 
 		// ------------------------------------------------------------------------
     case WM_CLOSE:
@@ -372,15 +371,15 @@ static LRESULT CALLBACK tabControlPropertiesCallback( HWND hWndDialog,
       DestroyWindow( hWndDialog );
       return 0;
 
-		}  // end close
+		}
 
 		// ------------------------------------------------------------------------
 		default:
 			return 0;
 
-  }  // end of switch
+  }
 
-}  // end tabControlPropertiesCallback
+}
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -399,8 +398,8 @@ HWND InitTabControlPropertiesDialog( GameWindow *tabControl )
 												 (LPCTSTR)TAB_CONTROL_PROPERTIES_DIALOG,
 												 TheEditor->getWindowHandle(),
 												 (DLGPROC)tabControlPropertiesCallback );
-	if( dialog == NULL )
-		return NULL;
+	if( dialog == nullptr )
+		return nullptr;
 
 	// do the common initialization
 	CommonDialogInitialize( tabControl, dialog );
@@ -458,7 +457,7 @@ HWND InitTabControlPropertiesDialog( GameWindow *tabControl )
 	StoreImageAndColor( TAB_CONTROL_ENABLED, image, color, borderColor );
 
 
-	
+
 	image = GadgetTabControlGetDisabledImageTabZero( tabControl );
 	color = GadgetTabControlGetDisabledColorTabZero( tabControl );
 	borderColor = GadgetTabControlGetDisabledBorderColorTabZero( tabControl );
@@ -505,7 +504,7 @@ HWND InitTabControlPropertiesDialog( GameWindow *tabControl )
 	StoreImageAndColor( TAB_CONTROL_DISABLED, image, color, borderColor );
 
 
-	
+
 	image = GadgetTabControlGetHiliteImageTabZero( tabControl );
 	color = GadgetTabControlGetHiliteColorTabZero( tabControl );
 	borderColor = GadgetTabControlGetHiliteBorderColorTabZero( tabControl );
@@ -616,7 +615,7 @@ HWND InitTabControlPropertiesDialog( GameWindow *tabControl )
 
 	return dialog;
 
-}  // end InitTabControlPropertiesDialog
+}
 
 
 

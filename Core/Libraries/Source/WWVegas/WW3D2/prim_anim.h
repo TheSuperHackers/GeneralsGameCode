@@ -34,13 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef __PRIM_ANIM_H
-#define __PRIM_ANIM_H
-
 
 #include "simplevec.h"
 #include "chunkio.h"
@@ -55,7 +49,7 @@ class ChunkLoadClass;
 //
 //	PrimitiveAnimationChannelClass
 //
-//	This template class provides animated 'channels' of data for the 
+//	This template class provides animated 'channels' of data for the
 // RingRenderObjClass and SphereRenderObjClass objects.
 //
 /////////////////////////////////////////////////////////////////////
@@ -67,9 +61,9 @@ public:
 	/////////////////////////////////////////////////////////
 	//	Public constructors/destructors
 	/////////////////////////////////////////////////////////
-	PrimitiveAnimationChannelClass (void)
+	PrimitiveAnimationChannelClass ()
 		:	m_LastIndex (0)									{ }
-	virtual ~PrimitiveAnimationChannelClass (void)	{ Reset (); }
+	virtual ~PrimitiveAnimationChannelClass ()	{ Reset (); }
 
 	/////////////////////////////////////////////////////////
 	//	Public data types
@@ -77,16 +71,16 @@ public:
 	class KeyClass
 	{
 	public:
-		KeyClass (void)
+		KeyClass ()
 			:	m_Time (0) {}
 
 		KeyClass (const T &value, float time)
 			:	m_Value (value),
 				m_Time (time) {}
 
-		float			Get_Time (void) const		{ return m_Time; }
-		const T &	Get_Value (void) const		{ return m_Value; }
-		T &			Get_Value (void)				{ return m_Value; }
+		float			Get_Time () const		{ return m_Time; }
+		const T &	Get_Value () const		{ return m_Value; }
+		T &			Get_Value ()				{ return m_Value; }
 
 		float			Set_Time (float time)		{ m_Time = time; }
 		void			Set_Value (const T &value)	{ m_Value = value; }
@@ -101,21 +95,21 @@ public:
 	/////////////////////////////////////////////////////////
 	const PrimitiveAnimationChannelClass<T> &operator= (const PrimitiveAnimationChannelClass<T> &src);
 	const KeyClass &		operator[] (int index)	{ return Get_Key (index); }
-	
+
 	/////////////////////////////////////////////////////////
 	//	Public methods
 	/////////////////////////////////////////////////////////
 	virtual T				Evaluate (float time) = 0;
 
-	int						Get_Key_Count (void) const;
+	int						Get_Key_Count () const;
 	const KeyClass &		Get_Key (int index) const;
 	void						Set_Key (int index, const T &value, float time);
 	void						Set_Key_Value (int index, const T &value);
 	void						Add_Key (const T &value, float time);
 	void						Insert_Key (int index, const T &value, float time);
 	void						Delete_Key (int index);
-	void						Reset (void);
-	
+	void						Reset ();
+
 	virtual void			Save (ChunkSaveClass &csave);
 	virtual void			Load (ChunkLoadClass &cload);
 
@@ -163,7 +157,7 @@ class LERPAnimationChannelClass : public PrimitiveAnimationChannelClass<T>
 	using PrimitiveAnimationChannelClass<T>::m_Data;
 	using PrimitiveAnimationChannelClass<T>::m_LastIndex;
 public:
-	using PrimitiveAnimationChannelClass<T>::KeyClass;
+	using typename PrimitiveAnimationChannelClass<T>::KeyClass;
 
 public:
 
@@ -178,7 +172,7 @@ public:
 //	Set_Key
 /////////////////////////////////////////////////////////
 template<class T>
-int PrimitiveAnimationChannelClass<T>::Get_Key_Count (void) const
+int PrimitiveAnimationChannelClass<T>::Get_Key_Count () const
 {
 	return m_Data.Count ();
 }
@@ -187,7 +181,7 @@ int PrimitiveAnimationChannelClass<T>::Get_Key_Count (void) const
 //	Set_Key_Value
 /////////////////////////////////////////////////////////
 template<class T>
-typename const PrimitiveAnimationChannelClass<T>::KeyClass &PrimitiveAnimationChannelClass<T>::Get_Key (int index) const
+const typename PrimitiveAnimationChannelClass<T>::KeyClass &PrimitiveAnimationChannelClass<T>::Get_Key (int index) const
 {
 	return m_Data[index];
 }
@@ -247,7 +241,7 @@ void PrimitiveAnimationChannelClass<T>::Delete_Key (int index)
 //	Reset
 /////////////////////////////////////////////////////////
 template<class T>
-void PrimitiveAnimationChannelClass<T>::Reset (void)
+void PrimitiveAnimationChannelClass<T>::Reset ()
 {
 	m_Data.Delete_All ();
 	m_LastIndex = 0;
@@ -265,7 +259,7 @@ PrimitiveAnimationChannelClass<T>::operator= (const PrimitiveAnimationChannelCla
 	//
 	//	Copy the data array
 	//
-	for (int index = 0; index < src.Get_Key_Count (); index ++) {		
+	for (int index = 0; index < src.Get_Key_Count (); index ++) {
 		m_Data.Add (src.Get_Key (index));
 	}
 
@@ -280,7 +274,7 @@ template<class T> void
 PrimitiveAnimationChannelClass<T>::Save (ChunkSaveClass &csave)
 {
 	csave.Begin_Chunk (CHUNKID_VARIABLES);
-		
+
 		//
 		//	Save each key
 		//
@@ -304,7 +298,7 @@ PrimitiveAnimationChannelClass<T>::Load (ChunkLoadClass &cload)
 
 	while (cload.Open_Chunk ()) {
 		switch (cload.Cur_Chunk_ID ()) {
-			
+
 			case CHUNKID_VARIABLES:
 				Load_Variables (cload);
 				break;
@@ -327,7 +321,7 @@ PrimitiveAnimationChannelClass<T>::Load_Variables (ChunkLoadClass &cload)
 	//
 	while (cload.Open_Micro_Chunk ()) {
 		switch (cload.Cur_Micro_Chunk_ID ()) {
-			
+
 			case VARID_KEY:
 			{
 				KeyClass value;
@@ -339,7 +333,7 @@ PrimitiveAnimationChannelClass<T>::Load_Variables (ChunkLoadClass &cload)
 
 		cload.Close_Micro_Chunk ();
 	}
-	
+
 	return ;
 }
 
@@ -387,5 +381,3 @@ LERPAnimationChannelClass<T>::Evaluate (float time)
 
 	return value;
 }
-
-#endif //__PRIM_ANIM_H

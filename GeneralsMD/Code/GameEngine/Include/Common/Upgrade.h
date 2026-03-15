@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __UPGRADE_H_
-#define __UPGRADE_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "Common/AudioEventRTS.h"
 #include "Common/INI.h"
@@ -54,8 +51,10 @@ enum UpgradeStatusType CPP_11(: Int)
 	UPGRADE_STATUS_COMPLETE
 };
 
-//The maximum number of upgrades. 
-#define UPGRADE_MAX_COUNT 128
+//The maximum number of upgrades.
+// TheSuperHackers @tweak Stubbjax 22/01/2026 Increases max upgrade count from 128 to allow for more upgrades.
+// A value of 512 was chosen to allow room for plenty of upgrades while also conserving memory.
+#define UPGRADE_MAX_COUNT 512
 
 typedef BitFlags<UPGRADE_MAX_COUNT>	UpgradeMaskType;
 
@@ -65,13 +64,13 @@ typedef BitFlags<UPGRADE_MAX_COUNT>	UpgradeMaskType;
 #define MAKE_UPGRADE_MASK4(k,a,b,c) UpgradeMaskType(UpgradeMaskType::kInit, (k), (a), (b), (c))
 #define MAKE_UPGRADE_MASK5(k,a,b,c,d) UpgradeMaskType(UpgradeMaskType::kInit, (k), (a), (b), (c), (d))
 
-inline Bool TEST_UPGRADE_MASK( const UpgradeMaskType& m, Int index ) 
-{ 
-	return m.test( index ); 
+inline Bool TEST_UPGRADE_MASK( const UpgradeMaskType& m, Int index )
+{
+	return m.test( index );
 }
 
-inline Bool TEST_UPGRADE_MASK_ANY( const UpgradeMaskType& m, const UpgradeMaskType& mask ) 
-{ 
+inline Bool TEST_UPGRADE_MASK_ANY( const UpgradeMaskType& m, const UpgradeMaskType& mask )
+{
 	return m.anyIntersectionWith( mask );
 }
 
@@ -80,20 +79,20 @@ inline Bool TEST_UPGRADE_MASK_MULTI( const UpgradeMaskType& m, const UpgradeMask
 	return m.testSetAndClear( mustBeSet, mustBeClear );
 }
 
-inline Bool UPGRADE_MASK_ANY_SET( const UpgradeMaskType& m) 
-{ 
-	return m.any(); 
+inline Bool UPGRADE_MASK_ANY_SET( const UpgradeMaskType& m)
+{
+	return m.any();
 }
 
-inline void CLEAR_UPGRADE_MASK( UpgradeMaskType& m ) 
-{ 
-	m.clear(); 
+inline void CLEAR_UPGRADE_MASK( UpgradeMaskType& m )
+{
+	m.clear();
 }
 
 inline void SET_ALL_UPGRADE_MASK_BITS( UpgradeMaskType& m )
 {
-	m.clear( );
-	m.flip( );
+	m.clear();
+	m.flip();
 }
 
 inline void FLIP_UPGRADE_MASK( UpgradeMaskType& m )
@@ -117,24 +116,24 @@ public:
 	// virtual destructor prototypes provided by memory pool object
 
 	/// get the upgrade template for this instance
-	const UpgradeTemplate *getTemplate( void ) const { return m_template; }
+	const UpgradeTemplate *getTemplate() const { return m_template; }
 
 	// status access
-	UpgradeStatusType getStatus( void ) const { return m_status; }						///< get status
+	UpgradeStatusType getStatus() const { return m_status; }						///< get status
 	void setStatus( UpgradeStatusType status ) { m_status = status; }		///< set the status
 
 	// friend access methods
 	void friend_setNext( Upgrade *next ) { m_next = next; }
 	void friend_setPrev( Upgrade *prev ) { m_prev = prev; }
-	Upgrade *friend_getNext( void ) { return m_next; }
-	Upgrade *friend_getPrev( void ) { return m_prev; }
+	Upgrade *friend_getNext() { return m_next; }
+	Upgrade *friend_getPrev() { return m_prev; }
 
 protected:
 
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
+	virtual void loadPostProcess();
 
 	const UpgradeTemplate *m_template;	///< template this upgrade instance is based on
 	UpgradeStatusType m_status;							///< status of upgrade
@@ -150,9 +149,9 @@ enum UpgradeType CPP_11(: Int)
 	UPGRADE_TYPE_PLAYER = 0,						// upgrade applies to a player as a whole
 	UPGRADE_TYPE_OBJECT,								// upgrade applies to an object instance only
 
-	NUM_UPGRADE_TYPES,		// keep this last
+	NUM_UPGRADE_TYPES
 };
-extern const char *TheUpgradeTypeNames[]; //Change above, change this!
+extern const char *const TheUpgradeTypeNames[]; //Change above, change this!
 
 //-------------------------------------------------------------------------------------------------
 /** A single upgrade template definition */
@@ -164,7 +163,7 @@ class UpgradeTemplate : public MemoryPoolObject
 
 public:
 
-	UpgradeTemplate( void );
+	UpgradeTemplate();
 	// virtual destructor defined by memory pool object
 
 	Int calcTimeToBuild( Player *player ) const;			///< time in logic frames it will take this player to "build" this UpgradeTemplate
@@ -172,12 +171,12 @@ public:
 
 	// field access
 	void setUpgradeName( const AsciiString& name ) { m_name = name; }
-	const AsciiString& getUpgradeName( void ) const { return m_name; }
+	const AsciiString& getUpgradeName() const { return m_name; }
 	void setUpgradeNameKey( NameKeyType key ) { m_nameKey = key; }
-	NameKeyType getUpgradeNameKey( void ) const { return m_nameKey; }
-	const AsciiString& getDisplayNameLabel( void ) const { return m_displayNameLabel; }
-	UpgradeMaskType getUpgradeMask() const { return m_upgradeMask; }
-	UpgradeType getUpgradeType( void ) const { return m_type; }
+	NameKeyType getUpgradeNameKey() const { return m_nameKey; }
+	const AsciiString& getDisplayNameLabel() const { return m_displayNameLabel; }
+	const UpgradeMaskType& getUpgradeMask() const { return m_upgradeMask; }
+	UpgradeType getUpgradeType() const { return m_type; }
 	const AudioEventRTS* getResearchCompleteSound() const { return &m_researchSound; }
 	const AudioEventRTS* getUnitSpecificSound() const { return &m_unitSpecificSound; }
 	AcademyClassificationType getAcademyClassificationType() const { return m_academyClassificationType; }
@@ -192,10 +191,10 @@ public:
 	// friend access methods for the UpgradeCenter ONLY
 	void friend_setNext( UpgradeTemplate *next ) { m_next = next; }
 	void friend_setPrev( UpgradeTemplate *prev ) { m_prev = prev; }
-	UpgradeTemplate *friend_getNext( void ) { return m_next; }
-	UpgradeTemplate *friend_getPrev( void ) { return m_prev; }
-	const UpgradeTemplate *friend_getNext( void ) const { return m_next; }
-	const UpgradeTemplate *friend_getPrev( void ) const { return m_prev; }
+	UpgradeTemplate *friend_getNext() { return m_next; }
+	UpgradeTemplate *friend_getPrev() { return m_prev; }
+	const UpgradeTemplate *friend_getNext() const { return m_next; }
+	const UpgradeTemplate *friend_getPrev() const { return m_prev; }
 	void friend_setUpgradeMask( UpgradeMaskType mask ) { m_upgradeMask = mask; }
 	void friend_makeVeterancyUpgrade(VeterancyLevel v);
 
@@ -206,7 +205,7 @@ protected:
 	NameKeyType m_nameKey;							///< name key
 	AsciiString m_displayNameLabel;			///< String manager label for UI display name
 	Real m_buildTime;										///< database # for how long it takes to "build" this
-	Int m_cost;													///< cost for production 
+	Int m_cost;													///< cost for production
 	UpgradeMaskType m_upgradeMask;			///< Unique bitmask for this upgrade template
 	AudioEventRTS	m_researchSound;			///< Sound played when upgrade researched.
 	AudioEventRTS	m_unitSpecificSound;	///< Secondary sound played when upgrade researched.
@@ -231,23 +230,24 @@ class UpgradeCenter : public SubsystemInterface
 
 public:
 
-	UpgradeCenter( void );
-	virtual ~UpgradeCenter( void );
+	UpgradeCenter();
+	virtual ~UpgradeCenter();
 
-	void init( void );												///< subsystem interface
-	void reset( void );												///< subsystem interface
-	void update( void ) { }										///< subsystem interface
+	void init();												///< subsystem interface
+	void reset();												///< subsystem interface
+	void update() { }										///< subsystem interface
 
-	UpgradeTemplate *firstUpgradeTemplate( void );	///< return the first upgrade template
-	const UpgradeTemplate *findUpgradeByKey( NameKeyType key ) const;		///< find upgrade by name key
-	const UpgradeTemplate *findUpgrade( const AsciiString& name ) const;				///< find and return upgrade by name
-	const UpgradeTemplate *findVeterancyUpgrade(VeterancyLevel level) const;				///< find and return upgrade by name
+	UpgradeTemplate *firstUpgradeTemplate(); ///< return the first upgrade template
+	const UpgradeTemplate *findUpgradeByKey( NameKeyType key ) const; ///< find upgrade by name key
+	const UpgradeTemplate *findUpgrade( const AsciiString& name ) const; ///< find and return upgrade by name
+	const UpgradeTemplate *findUpgrade( const char* name ) const; ///< find and return upgrade by name
+	const UpgradeTemplate *findVeterancyUpgrade(VeterancyLevel level) const; ///< find and return upgrade by veterancy level
 
 	UpgradeTemplate *newUpgrade( const AsciiString& name );				///< allocate, link, and return new upgrade
 
 	/// does this player have all the necessary things to make this upgrade
 	Bool canAffordUpgrade( Player *player, const UpgradeTemplate *upgradeTemplate, Bool displayReason = FALSE ) const;
-	std::vector<AsciiString> getUpgradeNames( void ) const;	// For WorldBuilder only!!!
+	std::vector<AsciiString> getUpgradeNames() const;	// For WorldBuilder only!!!
 
 	static void parseUpgradeDefinition( INI *ini );
 
@@ -266,5 +266,3 @@ protected:
 
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
 extern UpgradeCenter *TheUpgradeCenter;
-
-#endif  // end __UPGRADE_H_

@@ -24,12 +24,12 @@
 
 // FILE: W3DPoly.h /////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -38,15 +38,12 @@
 //
 // Created:    Mark Wilczynski, Jan 2002
 //
-// Desc:       Generic Polgon operations.
+// Desc:       Generic Polygon operations.
 //
 //-----------------------------------------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __W3DPOLY_H_
-#define __W3DPOLY_H_
 
 #include "vector3.h"
 #include "plane.h"
@@ -60,11 +57,9 @@
 class ClipPolyClass
 {
 public:
-	void Reset(void);
+	void Reset();
 	void Add_Vertex(const Vector3 & point);
 	void Clip(const PlaneClass & plane,ClipPolyClass & dest) const;
 
 	SimpleDynVecClass<Vector3> Verts;
 };
-
-#endif //__W3DPOLY_H_

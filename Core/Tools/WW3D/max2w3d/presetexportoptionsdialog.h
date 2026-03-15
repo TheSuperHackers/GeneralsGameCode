@@ -36,9 +36,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef __PRESET_EXPORT_OPTIONS_DIALOG_H
-#define __PRESET_EXPORT_OPTIONS_DIALOG_H
+#pragma once
 
 #include <windows.h>
 #include <max.h>
@@ -57,14 +55,14 @@ public:
 	//////////////////////////////////////////////////////////////////
 	//	Public constructors/destructors
 	//////////////////////////////////////////////////////////////////
-	PresetExportOptionsDialogClass (Interface *maxinterface, HWND parent_wnd = NULL);
+	PresetExportOptionsDialogClass (Interface *maxinterface, HWND parent_wnd = nullptr);
 	~PresetExportOptionsDialogClass (void);
 
 
 	//////////////////////////////////////////////////////////////////
 	//	Public methods
-	//////////////////////////////////////////////////////////////////		
-	
+	//////////////////////////////////////////////////////////////////
+
 	void			Set_Options (W3dExportOptionsStruct *options)	{ Options = options; ::memcpy (&OrigOptions, Options, sizeof (OrigOptions)); }
 	int			Do_Modal (void);
 
@@ -73,7 +71,7 @@ private:
 	//////////////////////////////////////////////////////////////////
 	//	Private data types
 	//////////////////////////////////////////////////////////////////
-	
+
 	enum
 	{
 		PANE_HLOD			= 0,
@@ -91,7 +89,7 @@ private:
 	//////////////////////////////////////////////////////////////////
 	static BOOL CALLBACK	Real_Message_Proc (HWND wnd, UINT message, WPARAM wparam, LPARAM lparam);
 	static BOOL CALLBACK	Settings_Pane_Message_Proc (HWND wnd, UINT message, WPARAM wparam, LPARAM lparam);
-	
+
 	//////////////////////////////////////////////////////////////////
 	//	Private methods
 	//////////////////////////////////////////////////////////////////
@@ -118,7 +116,3 @@ private:
 	HWND								PaneWnds[PANE_MAX];
 	int								CurrentPane;
 };
-
-
-#endif //__PRESET_EXPORT_OPTIONS_DIALOG_H
-

@@ -24,21 +24,18 @@
 
 // GameClient/Eva.cpp /////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "GameClient/ControlBar.h"
 #include "GameClient/Eva.h"
 
+#include "Common/GameUtility.h"
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
 #include "GameLogic/GameLogic.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
-const char *TheEvaMessageNames[] = 
+const char *const TheEvaMessageNames[] =
 {
 	"LOWPOWER",
 	"INSUFFICIENTFUNDS",
@@ -93,16 +90,15 @@ const char *TheEvaMessageNames[] =
   "SUPERWEAPONLAUNCHED_OWN_SNEAK_ATTACK",
   "SUPERWEAPONLAUNCHED_ALLY_SNEAK_ATTACK",
   "SUPERWEAPONLAUNCHED_ENEMY_SNEAK_ATTACK",
-	
+
 	//****************************************************************************
 	//Kris: Don't forget to add another handler below -- it's ghey-ly implemented.
 	//****************************************************************************
-
-	"EVA_INVALID",
 };
+static_assert(ARRAY_SIZE(TheEvaMessageNames) == EVA_COUNT, "Incorrect array size");
 
 //-------------------------------------------------------------------------------------------------
-const ShouldPlayFunc Eva::s_shouldPlayFuncs[] = 
+const ShouldPlayFunc Eva::s_shouldPlayFuncs[] =
 {
 	Eva::shouldPlayLowPower,
 	Eva::shouldPlayGenericHandler,
@@ -121,9 +117,9 @@ const ShouldPlayFunc Eva::s_shouldPlayFuncs[] =
 	Eva::shouldPlayGenericHandler,
 	Eva::shouldPlayGenericHandler,
 	Eva::shouldPlayGenericHandler,
-	Eva::shouldPlayGenericHandler,	
-	Eva::shouldPlayGenericHandler,	
-	Eva::shouldPlayGenericHandler,	
+	Eva::shouldPlayGenericHandler,
+	Eva::shouldPlayGenericHandler,
+	Eva::shouldPlayGenericHandler,
   Eva::shouldPlayGenericHandler,
   Eva::shouldPlayGenericHandler,
   Eva::shouldPlayGenericHandler,
@@ -157,7 +153,6 @@ const ShouldPlayFunc Eva::s_shouldPlayFuncs[] =
   Eva::shouldPlayGenericHandler,
   Eva::shouldPlayGenericHandler,
   Eva::shouldPlayGenericHandler,
-	NULL,
 };
 
 
@@ -168,8 +163,8 @@ void INI::parseEvaEvent( INI* ini )
 
 	// read the name
 	const char* c = ini->getNextToken();
-	name.set( c );	
-	
+	name.set( c );
+
 	EvaCheckInfo *check = TheEva->newEvaCheckInfo( name );
 	if (!check) {
 		// could be null because it already exists.
@@ -195,9 +190,9 @@ static void parseSideSoundsList( INI *ini, void *instance, void *store, const vo
 //----------------------------------------------------------------------------------- EvaSideSounds
 const FieldParse EvaSideSounds::s_evaSideSounds[] =
 {
-	{ "Side",									INI::parseAsciiString,					NULL,			offsetof( EvaSideSounds, m_side) },
-	{ "Sounds",								INI::parseSoundsList,						NULL,			offsetof( EvaSideSounds, m_soundNames) },
-	{ 0, 0, 0, 0 },
+	{ "Side",									INI::parseAsciiString,					nullptr,			offsetof( EvaSideSounds, m_side) },
+	{ "Sounds",								INI::parseSoundsList,						nullptr,			offsetof( EvaSideSounds, m_soundNames) },
+	{ nullptr, nullptr, nullptr, 0 },
 };
 
 //------------------------------------------------------------------------------------ EvaCheckInfo
@@ -208,33 +203,33 @@ EvaCheckInfo::EvaCheckInfo() :
 	m_framesToExpire(150) // 5 seconds at 30 fps
 {
 
-	
+
 }
 
 //-------------------------------------------------------------------------------------------------
-const FieldParse EvaCheckInfo::s_evaEventInfo[] = 
+const FieldParse EvaCheckInfo::s_evaEventInfo[] =
 {
-	{ "Priority",							INI::parseUnsignedInt,					NULL,			offsetof( EvaCheckInfo, m_priority ) },
-	{ "TimeBetweenChecksMS",	INI::parseDurationUnsignedInt,	NULL,			offsetof( EvaCheckInfo, m_framesBetweenChecks ) },
-	{ "ExpirationTimeMS",			INI::parseDurationUnsignedInt,	NULL,			offsetof( EvaCheckInfo, m_framesToExpire) },
-	{ "SideSounds",						parseSideSoundsList,						NULL,			offsetof( EvaCheckInfo, m_evaSideSounds ) },
-	{ 0, 0, 0, 0 },
+	{ "Priority",							INI::parseUnsignedInt,					nullptr,			offsetof( EvaCheckInfo, m_priority ) },
+	{ "TimeBetweenChecksMS",	INI::parseDurationUnsignedInt,	nullptr,			offsetof( EvaCheckInfo, m_framesBetweenChecks ) },
+	{ "ExpirationTimeMS",			INI::parseDurationUnsignedInt,	nullptr,			offsetof( EvaCheckInfo, m_framesToExpire) },
+	{ "SideSounds",						parseSideSoundsList,						nullptr,			offsetof( EvaCheckInfo, m_evaSideSounds ) },
+	{ nullptr, nullptr, nullptr, 0 },
 
 };
 
 //-------------------------------------------------------------------------------------------------
-EvaCheck::EvaCheck() : 
-	m_evaInfo(NULL), 
+EvaCheck::EvaCheck() :
+	m_evaInfo(nullptr),
 	m_triggeredOnFrame(TRIGGEREDON_NOT),
-	m_timeForNextCheck(NEXT_CHECK_NOW), 
+	m_timeForNextCheck(NEXT_CHECK_NOW),
 	m_alreadyPlayed(FALSE)
 {
 
 }
 
 //-------------------------------------------------------------------------------------------------
-Eva::Eva() : 
-	m_localPlayer(NULL),
+Eva::Eva() :
+	m_localPlayer(nullptr),
 	m_previousBuildingCount(0),
 	m_previousUnitCount(0),
 	m_enabled(TRUE)
@@ -250,8 +245,7 @@ Eva::~Eva()
 {
 	EvaCheckInfoPtrVecIt it;
 	for (it = m_allCheckInfos.begin(); it != m_allCheckInfos.end(); ++it) {
-		if (*it)
-			deleteInstance(*it);
+		deleteInstance(*it);
 	}
 }
 
@@ -260,7 +254,7 @@ void Eva::init()
 {
 	// parse the INI here, etc.
 	INI ini;
-	ini.load( AsciiString( "Data\\INI\\Eva.ini" ), INI_LOAD_OVERWRITE, NULL);
+	ini.loadFileDirectory( "Data\\INI\\Eva", INI_LOAD_OVERWRITE, nullptr);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -278,7 +272,7 @@ void Eva::reset()
 	// remove all things flagged as "need to play"
 	for (Int i = 0; i < EVA_COUNT; ++i) {
 		m_shouldPlay[i] = FALSE;
-	}	
+	}
 
 	// If we were previously disabled, re-enable ourselves.
 	m_enabled = TRUE;
@@ -291,7 +285,7 @@ void Eva::update()
 		return;
 	}
 
-	m_localPlayer = ThePlayerList->getLocalPlayer();
+	m_localPlayer = rts::getObservedOrLocalPlayer();
 	UnsignedInt frame = TheGameLogic->getFrame();
 
 	// Don't update for the first few frames. This way, we don't have to deal with our initial power
@@ -308,8 +302,8 @@ void Eva::update()
 		}
 	}
 
-	processPlayingMessages(frame);	
-	m_localPlayer = NULL;
+	processPlayingMessages(frame);
+	m_localPlayer = nullptr;
 
 	// Reset all of the flags that have been set to true that haven't actually been probed, because
 	// they will need to trigger again to be valid messages.
@@ -321,10 +315,6 @@ void Eva::update()
 //-------------------------------------------------------------------------------------------------
 EvaMessage Eva::nameToMessage(const AsciiString& name)
 {
-  DEBUG_ASSERTCRASH( ELEMENTS_OF( TheEvaMessageNames ) == EVA_COUNT + 1, ("TheEvaMessageNames out of sync" ) );
-  DEBUG_ASSERTCRASH( stricmp( TheEvaMessageNames[ EVA_COUNT ], "EVA_INVALID" ) == 0, ("TheEvaMessageNames out of sync" ) );
-  DEBUG_ASSERTCRASH( stricmp( TheEvaMessageNames[ EVA_COUNT - 1], "EVA_INVALID" ) != 0, ("TheEvaMessageNames out of sync" ) );
-
 	for (Int i = EVA_FIRST; i < EVA_COUNT; ++i) {
 		if (name.compareNoCase(TheEvaMessageNames[i]) == 0) {
 			return (EvaMessage) i;
@@ -338,10 +328,6 @@ EvaMessage Eva::nameToMessage(const AsciiString& name)
 //-------------------------------------------------------------------------------------------------
 AsciiString Eva::messageToName(EvaMessage message)
 {
-  DEBUG_ASSERTCRASH( ELEMENTS_OF( TheEvaMessageNames ) == EVA_COUNT + 1, ("TheEvaMessageNames out of sync" ) );
-  DEBUG_ASSERTCRASH( stricmp( TheEvaMessageNames[ EVA_COUNT ], "EVA_INVALID" ) == 0, ("TheEvaMessageNames out of sync" ) );
-  DEBUG_ASSERTCRASH( stricmp( TheEvaMessageNames[ EVA_COUNT - 1], "EVA_INVALID" ) != 0, ("TheEvaMessageNames out of sync" ) );
-
   if (message >= EVA_FIRST && message < EVA_COUNT)
 		return TheEvaMessageNames[message];
 
@@ -358,7 +344,7 @@ EvaCheckInfo *Eva::newEvaCheckInfo(AsciiString name)
 	EvaCheckInfoPtrVecIt it;
 	for (it = m_allCheckInfos.begin(); it != m_allCheckInfos.end(); ++it) {
 		if (*it && (*it)->m_message == mesg)
-			return NULL;
+			return nullptr;
 	}
 
 	EvaCheckInfo *checkInfo = newInstance(EvaCheckInfo);
@@ -379,15 +365,15 @@ const EvaCheckInfo *Eva::getEvaCheckInfo(AsciiString name)
 			return *it;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------
 void Eva::setShouldPlay(EvaMessage messageToPlay)
 {
 	m_shouldPlay[messageToPlay] = TRUE;
-  
-  // DEBUG_LOG( ( "Eva message %s play requested\n", messageToName( messageToPlay).str() ) );
+
+  // DEBUG_LOG( ( "Eva message %s play requested", messageToName( messageToPlay).str() ) );
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -397,7 +383,7 @@ void Eva::setEvaEnabled(Bool enabled)
 	for (Int i = EVA_FIRST; i < EVA_COUNT; ++i) {
 		m_shouldPlay[i] = FALSE;
 	}
-	m_enabled = enabled; 
+	m_enabled = enabled;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -416,13 +402,11 @@ Bool Eva::isTimeForCheck(EvaMessage messageToTest, UnsignedInt currentFrame) con
 //-------------------------------------------------------------------------------------------------
 Bool Eva::messageShouldPlay(EvaMessage messageToTest, UnsignedInt currentFrame) const
 {
-	if (m_localPlayer == NULL) {
+	if (m_localPlayer == nullptr) {
 		return FALSE;
 	}
 
-  DEBUG_ASSERTCRASH( ELEMENTS_OF( s_shouldPlayFuncs ) == EVA_COUNT + 1, ("Eva::s_shouldPlayFuncs out of sync" ) );
-  DEBUG_ASSERTCRASH( s_shouldPlayFuncs[ EVA_COUNT ] == NULL, ("Eva::s_shouldPlayFuncs out of sync" ) );
-  DEBUG_ASSERTCRASH( s_shouldPlayFuncs[ EVA_COUNT - 1] != NULL, ("Eva::s_shouldPlayFuncs out of sync" ) );
+	static_assert(ARRAY_SIZE(s_shouldPlayFuncs) == EVA_COUNT, "Incorrect array size");
 
 	m_messageBeingTested = messageToTest;
 	return s_shouldPlayFuncs[messageToTest](m_localPlayer);
@@ -520,7 +504,7 @@ void Eva::processPlayingMessages(UnsignedInt currentFrame)
 	}
 
 	// We've got a winner!
-	AsciiString side = ThePlayerList->getLocalPlayer()->getSide();
+	AsciiString side = rts::getObservedOrLocalPlayer()->getSide();
 	Int numSides = storedIt->m_evaInfo->m_evaSideSounds.size();
 
   // clear it. If we can't find the side we want, don't play anything
@@ -529,7 +513,7 @@ void Eva::processPlayingMessages(UnsignedInt currentFrame)
 	for (Int i = 0; i < numSides; ++i) {
 		if (side.compareNoCase(storedIt->m_evaInfo->m_evaSideSounds[i].m_side) == 0) {
 			// Its this one.
-			if (storedIt->m_evaInfo->m_evaSideSounds[i].m_soundNames.size() > 0) {
+			if (!storedIt->m_evaInfo->m_evaSideSounds[i].m_soundNames.empty()) {
 				Int soundToPlay = GameClientRandomValue(0, storedIt->m_evaInfo->m_evaSideSounds[i].m_soundNames.size() - 1);
 				m_evaSpeech.setEventName(storedIt->m_evaInfo->m_evaSideSounds[i].m_soundNames[soundToPlay]);
 			}
@@ -540,7 +524,7 @@ void Eva::processPlayingMessages(UnsignedInt currentFrame)
 	// Update the entry
 	storedIt->m_alreadyPlayed = true;
 	storedIt->m_timeForNextCheck = currentFrame + storedIt->m_evaInfo->m_framesBetweenChecks;
-	
+
 	// Now that we correctly filter messages, we need to set the player index for who should hear the
 	// sound to the local player.
 	m_evaSpeech.setPlayerIndex(m_localPlayer->getPlayerIndex());
@@ -554,7 +538,7 @@ void Eva::processPlayingMessages(UnsignedInt currentFrame)
 /*static*/void Eva::parseEvaMessageFromIni( INI * ini, void *instance, void *store, const void* userData )
 {
   const char *token = ini->getNextToken();
-   
+
   EvaMessage message = nameToMessage( token );
   if ( message == EVA_Invalid )
   {
@@ -566,5 +550,5 @@ void Eva::processPlayingMessages(UnsignedInt currentFrame)
 }
 
 //-------------------------------------------------------------------------------------------------
-Eva *TheEva = NULL;
+Eva *TheEva = nullptr;
 

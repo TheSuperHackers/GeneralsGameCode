@@ -25,7 +25,7 @@
 // DeliverPayloadAIUpdate.cpp ////////////
 // Author: Graham Smallwood, March 2002
 // Desc:   State machine that controls the approach and deployment of airborne cargo
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #define DEFINE_WEAPONSLOTTYPE_NAMES
 
@@ -49,53 +49,48 @@
 #include "GameLogic/Weapon.h"
 #include "GameLogic/WeaponSet.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 const FieldParse* DeliverPayloadData::getFieldParse()
 {
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 
-		{ "DeliveryDistance",								INI::parseReal,								NULL, offsetof( DeliverPayloadData, m_distToTarget) },
-		{ "PreOpenDistance",								INI::parseReal,								NULL, offsetof( DeliverPayloadData, m_preOpenDistance) },
-		{ "MaxAttempts",										INI::parseInt,								NULL, offsetof( DeliverPayloadData, m_maxAttempts) },
+		{ "DeliveryDistance",								INI::parseReal,								nullptr, offsetof( DeliverPayloadData, m_distToTarget) },
+		{ "PreOpenDistance",								INI::parseReal,								nullptr, offsetof( DeliverPayloadData, m_preOpenDistance) },
+		{ "MaxAttempts",										INI::parseInt,								nullptr, offsetof( DeliverPayloadData, m_maxAttempts) },
 
 		//Drop information
-		{ "DropDelay",											INI::parseDurationUnsignedInt,NULL, offsetof( DeliverPayloadData, m_dropDelay ) },
-		{ "DropOffset",											INI::parseCoord3D,						NULL, offsetof( DeliverPayloadData, m_dropOffset ) },
-		{ "DropVariance",										INI::parseCoord3D,						NULL, offsetof( DeliverPayloadData, m_dropVariance ) },
-		{ "InheritTransportVelocity",				INI::parseBool,								NULL, offsetof( DeliverPayloadData, m_inheritTransportVelocity ) },
-		{ "ExitPitchRate",									INI::parseAngularVelocityReal,NULL, offsetof( DeliverPayloadData, m_exitPitchRate ) },
-		{ "ParachuteDirectly",							INI::parseBool,								NULL, offsetof( DeliverPayloadData, m_isParachuteDirectly) },
+		{ "DropDelay",											INI::parseDurationUnsignedInt,nullptr, offsetof( DeliverPayloadData, m_dropDelay ) },
+		{ "DropOffset",											INI::parseCoord3D,						nullptr, offsetof( DeliverPayloadData, m_dropOffset ) },
+		{ "DropVariance",										INI::parseCoord3D,						nullptr, offsetof( DeliverPayloadData, m_dropVariance ) },
+		{ "InheritTransportVelocity",				INI::parseBool,								nullptr, offsetof( DeliverPayloadData, m_inheritTransportVelocity ) },
+		{ "ExitPitchRate",									INI::parseAngularVelocityReal,nullptr, offsetof( DeliverPayloadData, m_exitPitchRate ) },
+		{ "ParachuteDirectly",							INI::parseBool,								nullptr, offsetof( DeliverPayloadData, m_isParachuteDirectly) },
 
 		//Visible payload information (payload assumed to be show visibly and it's created only when dropped)
-		{ "VisibleItemsDroppedPerInterval",	INI::parseInt,								NULL, offsetof( DeliverPayloadData, m_visibleItemsDroppedPerInterval ) },
-		{ "VisibleDropBoneBaseName",				INI::parseAsciiString,				NULL, offsetof( DeliverPayloadData, m_visibleDropBoneName ) },
-		{ "VisibleSubObjectBaseName",				INI::parseAsciiString,				NULL, offsetof( DeliverPayloadData, m_visibleSubObjectName ) },
-		{ "VisibleNumBones",								INI::parseInt,								NULL, offsetof( DeliverPayloadData, m_visibleNumBones ) },
-		{ "VisiblePayloadTemplateName",			INI::parseAsciiString,				NULL, offsetof( DeliverPayloadData, m_visiblePayloadTemplateName ) },
-		{ "VisiblePayloadWeaponTemplate",		INI::parseWeaponTemplate,			NULL, offsetof( DeliverPayloadData, m_visiblePayloadWeaponTemplate ) },
-		{ "SelfDestructObject",		          INI::parseBool,		           	NULL, offsetof( DeliverPayloadData, m_selfDestructObject ) },
-		
-		//Weapon based payload 
-		{ "FireWeapon",											INI::parseBool,								NULL, offsetof( DeliverPayloadData, m_fireWeapon ) },
-		
+		{ "VisibleItemsDroppedPerInterval",	INI::parseInt,								nullptr, offsetof( DeliverPayloadData, m_visibleItemsDroppedPerInterval ) },
+		{ "VisibleDropBoneBaseName",				INI::parseAsciiString,				nullptr, offsetof( DeliverPayloadData, m_visibleDropBoneName ) },
+		{ "VisibleSubObjectBaseName",				INI::parseAsciiString,				nullptr, offsetof( DeliverPayloadData, m_visibleSubObjectName ) },
+		{ "VisibleNumBones",								INI::parseInt,								nullptr, offsetof( DeliverPayloadData, m_visibleNumBones ) },
+		{ "VisiblePayloadTemplateName",			INI::parseAsciiString,				nullptr, offsetof( DeliverPayloadData, m_visiblePayloadTemplateName ) },
+		{ "VisiblePayloadWeaponTemplate",		INI::parseWeaponTemplate,			nullptr, offsetof( DeliverPayloadData, m_visiblePayloadWeaponTemplate ) },
+		{ "SelfDestructObject",		          INI::parseBool,		           	nullptr, offsetof( DeliverPayloadData, m_selfDestructObject ) },
+
+		//Weapon based payload
+		{ "FireWeapon",											INI::parseBool,								nullptr, offsetof( DeliverPayloadData, m_fireWeapon ) },
+
 		//Specify an additional weaponslot to be fired while strafing
-		{ "DiveStartDistance",							INI::parseReal,								NULL, offsetof( DeliverPayloadData, m_diveStartDistance ) },
-		{ "DiveEndDistance",								INI::parseReal,								NULL, offsetof( DeliverPayloadData, m_diveEndDistance ) },
+		{ "DiveStartDistance",							INI::parseReal,								nullptr, offsetof( DeliverPayloadData, m_diveStartDistance ) },
+		{ "DiveEndDistance",								INI::parseReal,								nullptr, offsetof( DeliverPayloadData, m_diveEndDistance ) },
 		{ "StrafingWeaponSlot",							INI::parseLookupList,					TheWeaponSlotTypeNamesLookupList, offsetof( DeliverPayloadData, m_strafingWeaponSlot ) },
-		{ "StrafeWeaponFX",									INI::parseFXList,							NULL, offsetof( DeliverPayloadData, m_strafeFX ) },
-		{ "StrafeLength",										INI::parseReal,								NULL, offsetof( DeliverPayloadData, m_strafeLength ) },
+		{ "StrafeWeaponFX",									INI::parseFXList,							nullptr, offsetof( DeliverPayloadData, m_strafeFX ) },
+		{ "StrafeLength",										INI::parseReal,								nullptr, offsetof( DeliverPayloadData, m_strafeLength ) },
 
-		{ "DeliveryDecal",									RadiusDecalTemplate::parseRadiusDecalTemplate,	NULL, offsetof( DeliverPayloadData, m_deliveryDecalTemplate ) },
-		{ "DeliveryDecalRadius",						INI::parseReal, NULL, offsetof(DeliverPayloadData, m_deliveryDecalRadius) },
+		{ "DeliveryDecal",									RadiusDecalTemplate::parseRadiusDecalTemplate,	nullptr, offsetof( DeliverPayloadData, m_deliveryDecalTemplate ) },
+		{ "DeliveryDecalRadius",						INI::parseReal, nullptr, offsetof(DeliverPayloadData, m_deliveryDecalRadius) },
 
-		{ 0, 0, 0, 0 }
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 	return dataFieldParse;
 }
@@ -114,40 +109,31 @@ AIStateMachine* DeliverPayloadAIUpdate::makeStateMachine()
 //-------------------------------------------------------------------------------------------------
 DeliverPayloadAIUpdate::DeliverPayloadAIUpdate( Thing *thing, const ModuleData* moduleData ) : AIUpdateInterface( thing, moduleData )
 {
-	m_deliverPayloadStateMachine = NULL;
+	m_deliverPayloadStateMachine = nullptr;
 	m_targetPos.zero();
 	m_moveToPos.zero();
 	m_visibleItemsDelivered = 0;
 	m_deliveryDecal.clear();
 	m_previousDistanceSqr = 0;
-
 	m_freeToExit = FALSE;
 	m_acceptingCommands = TRUE;
-
-	// Added By Sadullah Nader
-	// Initialization missing and needed
-	
 	m_diveState = DIVESTATE_PREDIVE;
-	
-	// End Add
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
-DeliverPayloadAIUpdate::~DeliverPayloadAIUpdate( void )
+DeliverPayloadAIUpdate::~DeliverPayloadAIUpdate()
 {
 	m_deliveryDecal.clear();
-
-	if (m_deliverPayloadStateMachine)
-		deleteInstance(m_deliverPayloadStateMachine);
-} 
+	deleteInstance(m_deliverPayloadStateMachine);
+}
 
 //-------------------------------------------------------------------------------------------------
-AIFreeToExitType DeliverPayloadAIUpdate::getAiFreeToExit(const Object* exiter) const 
-{ 
+AIFreeToExitType DeliverPayloadAIUpdate::getAiFreeToExit(const Object* exiter) const
+{
 	if( getObject()->isEffectivelyDead() )
 		return NOT_FREE_TO_EXIT;
-	
-	return m_freeToExit ? FREE_TO_EXIT : NOT_FREE_TO_EXIT; 
+
+	return m_freeToExit ? FREE_TO_EXIT : NOT_FREE_TO_EXIT;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -168,7 +154,7 @@ Bool DeliverPayloadAIUpdate::isAllowedToRespondToAiCommands(const AICommandParms
 }
 
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime DeliverPayloadAIUpdate::update( void )
+UpdateSleepTime DeliverPayloadAIUpdate::update()
 {
 	m_deliveryDecal.update();
 
@@ -189,14 +175,14 @@ UpdateSleepTime DeliverPayloadAIUpdate::update( void )
 				getObject()->getAIUpdateInterface()->getCurLocomotor()->setUsePreciseZPos( true );
 
 				AudioEventRTS soundDive = *(getObject()->getTemplate()->getPerUnitSound("StartDive"));
-				if( soundDive.getEventName().isNotEmpty() ) 
+				if( soundDive.getEventName().isNotEmpty() )
 				{
 					soundDive.setPosition( getObject()->getPosition() );
 					TheAudio->addAudioEvent( &soundDive );
 				}
 			}
 		}
-		else 
+		else
 		{
 			//Check to see when we shall end diving
 			Real endDiveDistanceSquared = sqr( getData()->m_diveEndDistance );
@@ -219,7 +205,7 @@ UpdateSleepTime DeliverPayloadAIUpdate::update( void )
 					Real currentDistance = sqrt( currentDistanceSquared );
 
 					Real diveRatio = (startDiveDistance - currentDistance) / (startDiveDistance - endDiveDistance);
-					
+
 					Coord3D velocity = *getObject()->getPhysics()->getVelocity();
 					velocity.z = 0.0f;
 					velocity.normalize();
@@ -251,7 +237,7 @@ UpdateSleepTime DeliverPayloadAIUpdate::update( void )
 //-------------------------------------------------------------------------------------------------
 void DeliverPayloadAIUpdate::deliverPayload(
 	const Coord3D *moveToPos,
-	const Coord3D *targetPos, 
+	const Coord3D *targetPos,
 	const DeliverPayloadData *data
 )
 {
@@ -259,17 +245,16 @@ void DeliverPayloadAIUpdate::deliverPayload(
 	//****************************************************
 	//THIS GETS CALLED VIA OBJECT CREATION LISTS ONLY!!!
 	//****************************************************
-	
-	if (m_deliverPayloadStateMachine)
-		deleteInstance(m_deliverPayloadStateMachine);
-	m_deliverPayloadStateMachine = NULL;
+
+	deleteInstance(m_deliverPayloadStateMachine);
+	m_deliverPayloadStateMachine = nullptr;
 
 	m_moveToPos = *moveToPos;
 	m_targetPos = *targetPos;
 	m_data			= *data;
-	
+
 	m_deliveryDecal.clear();
-	m_data.m_deliveryDecalTemplate.createRadiusDecal(*targetPos, 
+	m_data.m_deliveryDecalTemplate.createRadiusDecal(*targetPos,
 		m_data.m_deliveryDecalRadius, getObject()->getControllingPlayer(), m_deliveryDecal);
 
 	if( m_data.m_diveStartDistance <= 0.0f )
@@ -335,7 +320,7 @@ void DeliverPayloadAIUpdate::deliverPayloadViaModuleData( const Coord3D *moveToP
 const ThingTemplate* DeliverPayloadAIUpdate::getPutInContainerTemplateViaModuleData() const
 {
 	AsciiString name = getDeliverPayloadAIUpdateModuleData()->m_putInContainerName;
-	return name.isEmpty() ? NULL : TheThingFactory->findTemplate( name );
+	return name.isEmpty() ? nullptr : TheThingFactory->findTemplate( name );
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -349,11 +334,11 @@ Real DeliverPayloadAIUpdate::calcMinTurnRadius(Real* timeToTravelThatDist) const
 
 	/*
 		our minimum circumference will be like so:
-		
+
 		Real minTurnCircum = maxSpeed * (2*PI / maxTurnRate);
 
 		so therefore our minimum turn radius is:
-		
+
 		Real minTurnRadius = minTurnCircum / 2*PI;
 
 		so we just eliminate the middleman:
@@ -368,10 +353,10 @@ Real DeliverPayloadAIUpdate::calcMinTurnRadius(Real* timeToTravelThatDist) const
 
 
 //-------------------------------------------------------------------------------------------------
-Bool DeliverPayloadAIUpdate::isCloseEnoughToTarget() 
+Bool DeliverPayloadAIUpdate::isCloseEnoughToTarget()
 {
 	// In addition to testing distance, it is also sensitive to being in/outward bound
-////The new getPreOpenDistance() allows the deliver state to fire early, but only if inbound, 
+////The new getPreOpenDistance() allows the deliver state to fire early, but only if inbound,
 ////so the doors can open and payload can get ready...
 
 	Real allowedDistanceSqr = sqr( getAllowedDistanceToTarget() );
@@ -382,7 +367,7 @@ Bool DeliverPayloadAIUpdate::isCloseEnoughToTarget()
 	if ( inBound )
 		allowedDistanceSqr = sqr(getAllowedDistanceToTarget() + getPreOpenDistance());
 
-	//DEBUG_LOG(("Dist to target is %f (allowed %f)\n",sqrt(currentDistanceSqr),sqrt(allowedDistanceSqr)));
+	//DEBUG_LOG(("Dist to target is %f (allowed %f)",sqrt(currentDistanceSqr),sqrt(allowedDistanceSqr)));
 
 
 	if ( allowedDistanceSqr > currentDistanceSqr )
@@ -411,7 +396,7 @@ void DeliverPayloadAIUpdate::crc( Xfer *xfer )
 {
  // extend base class
 	AIUpdateInterface::crc(xfer);
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -424,7 +409,7 @@ void DeliverPayloadAIUpdate::xfer( Xfer *xfer )
   const XferVersion currentVersion = 3;
   XferVersion version = currentVersion;
   xfer->xferVersion( &version, currentVersion );
- 
+
  // extend base class
 	AIUpdateInterface::xfer(xfer);
 
@@ -435,8 +420,8 @@ void DeliverPayloadAIUpdate::xfer( Xfer *xfer )
 
 	DeliverPayloadData data = m_data;
 
-	xfer->xferAsciiString(&data.m_visibleDropBoneName);	
-	xfer->xferAsciiString(&data.m_visibleSubObjectName);	
+	xfer->xferAsciiString(&data.m_visibleDropBoneName);
+	xfer->xferAsciiString(&data.m_visibleSubObjectName);
 	xfer->xferAsciiString(&data.m_visiblePayloadTemplateName);
   xfer->xferReal(&data.m_distToTarget);
 	xfer->xferInt(&data.m_maxAttempts);
@@ -445,23 +430,23 @@ void DeliverPayloadAIUpdate::xfer( Xfer *xfer )
 	xfer->xferUnsignedInt(&data.m_dropDelay);
 	xfer->xferBool(&data.m_fireWeapon);
 	xfer->xferBool(&data.m_selfDestructObject);
-	xfer->xferInt(&data.m_visibleNumBones);						
+	xfer->xferInt(&data.m_visibleNumBones);
 	xfer->xferReal(&data.m_diveStartDistance);
 	xfer->xferReal(&data.m_diveEndDistance);
 	xfer->xferUser(&data.m_strafingWeaponSlot, sizeof(data.m_strafingWeaponSlot));
 	xfer->xferInt(&data.m_visibleItemsDroppedPerInterval);
 	xfer->xferBool(&data.m_inheritTransportVelocity);
-	xfer->xferBool(&data.m_isParachuteDirectly);		
+	xfer->xferBool(&data.m_isParachuteDirectly);
 	xfer->xferReal(&data.m_exitPitchRate);
 	// const FXList					*m_strafeFX;
 	xfer->xferReal(&data.m_strafeLength);
 	AsciiString weaponTemplateName;
-	if (data.m_visiblePayloadWeaponTemplate) 
+	if (data.m_visiblePayloadWeaponTemplate)
 	{
 		weaponTemplateName = data.m_visiblePayloadWeaponTemplate->getName();
 	}
 	xfer->xferAsciiString(&weaponTemplateName);
-	if( xfer->getXferMode() == XFER_LOAD && weaponTemplateName.isNotEmpty()) 
+	if( xfer->getXferMode() == XFER_LOAD && weaponTemplateName.isNotEmpty())
 	{
 		data.m_visiblePayloadWeaponTemplate = TheWeaponStore->findWeaponTemplate(weaponTemplateName);
 	}
@@ -469,9 +454,9 @@ void DeliverPayloadAIUpdate::xfer( Xfer *xfer )
 	xfer->xferReal(&data.m_deliveryDecalRadius);
 	 *((DeliverPayloadData*)&m_data) = data;
 
-	Bool hasStateMachine = m_deliverPayloadStateMachine!=NULL;
+	Bool hasStateMachine = m_deliverPayloadStateMachine!=nullptr;
 	xfer->xferBool(&hasStateMachine);
-	if (hasStateMachine && m_deliverPayloadStateMachine==NULL) 
+	if (hasStateMachine && m_deliverPayloadStateMachine==nullptr)
 	{
 		m_deliverPayloadStateMachine = newInstance(DeliverPayloadStateMachine)( getObject() );
 	}
@@ -479,7 +464,7 @@ void DeliverPayloadAIUpdate::xfer( Xfer *xfer )
 	{
 		xfer->xferSnapshot(m_deliverPayloadStateMachine);
 	}
-	
+
 	m_deliveryDecal.xferRadiusDecal(xfer);
 
 	if (version >= 2)
@@ -492,16 +477,16 @@ void DeliverPayloadAIUpdate::xfer( Xfer *xfer )
 	}
 
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void DeliverPayloadAIUpdate::loadPostProcess( void )
+void DeliverPayloadAIUpdate::loadPostProcess()
 {
  // extend base class
 	AIUpdateInterface::loadPostProcess();
-}  // end loadPostProcess
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -512,10 +497,10 @@ DeliverPayloadStateMachine::DeliverPayloadStateMachine( Object *owner ) : StateM
 {
 //	DeliverPayloadAIUpdate *ai = (DeliverPayloadAIUpdate*)owner->getAIUpdateInterface();
 
-	static const StateConditionInfo considerConditions[] = 
+	static const StateConditionInfo considerConditions[] =
 	{
-		StateConditionInfo(DeliverPayloadStateMachine::isOffMap, RECOVER_FROM_OFF_MAP, NULL),
-		StateConditionInfo(NULL, NULL, NULL)	// keep last
+		StateConditionInfo(DeliverPayloadStateMachine::isOffMap, RECOVER_FROM_OFF_MAP, nullptr),
+		StateConditionInfo(nullptr, INVALID_STATE_ID, nullptr)
 	};
 
 	// order matters: first state is the default state.
@@ -538,27 +523,27 @@ DeliverPayloadStateMachine::~DeliverPayloadStateMachine()
 void DeliverPayloadStateMachine::crc( Xfer *xfer )
 {
 	StateMachine::crc(xfer);
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
 // ------------------------------------------------------------------------------------------------
 void DeliverPayloadStateMachine::xfer( Xfer *xfer )
 {
-	XferVersion cv = 1;	
-	XferVersion v = cv; 
+	XferVersion cv = 1;
+	XferVersion v = cv;
 	xfer->xferVersion( &v, cv );
 
 	StateMachine::xfer(xfer);
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void DeliverPayloadStateMachine::loadPostProcess( void )
+void DeliverPayloadStateMachine::loadPostProcess()
 {
 	StateMachine::loadPostProcess();
-}  // end loadPostProcess
+}
 
 //-------------------------------------------------------------------------------------------------
 /*static*/ Bool DeliverPayloadStateMachine::isOffMap( State *thisState, void* userData )
@@ -630,7 +615,7 @@ StateReturnType ApproachState::update()
 // ------------------------------------------------------------------------------------------------
 void DeliveringState::crc( Xfer *xfer )
 {
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
@@ -644,14 +629,14 @@ void DeliveringState::xfer( Xfer *xfer )
 
 	xfer->xferUnsignedInt(&m_dropDelayLeft);
 	xfer->xferBool(&m_didOpen);
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void DeliveringState::loadPostProcess( void )
+void DeliveringState::loadPostProcess()
 {
-}  // end loadPostProcess
+}
 
 
 //-------------------------------------------------------------------------------------------------
@@ -695,7 +680,7 @@ StateReturnType DeliveringState::update() // Kick a dude out every so often
 	if (!ai->isCloseEnoughToTarget())
 		return STATE_FAILURE;
 
-	const ContainedItemsList* items = owner->getContain() ? owner->getContain()->getContainedItemsList() : NULL;
+	const ContainedItemsList* items = owner->getContain() ? owner->getContain()->getContainedItemsList() : nullptr;
 	if( (!items || !items->size()) && ai->getVisibleItemsDelivered() == ai->getData()->m_visibleNumBones )
 	{
 		//We are out of payload to drop AND our visible payload is empty. It's possible for deliverers to
@@ -722,7 +707,7 @@ StateReturnType DeliveringState::update() // Kick a dude out every so often
 			AIUpdateInterface* itemAI = item->getAIUpdateInterface();
 			if (itemAI)
 			{
-				itemAI->aiExit(NULL, CMD_FROM_AI);
+				itemAI->aiExit(nullptr, CMD_FROM_AI);
 			}
 			Coord3D pos = *item->getPosition();
 
@@ -748,7 +733,7 @@ StateReturnType DeliveringState::update() // Kick a dude out every so often
 				// This will most likely be ignored, as the item is still in the transport, and therefore Held.
 				itemAI->aiMoveToPosition( ai->getMoveToPos(), CMD_FROM_AI );
 			}
-			
+
 			/// @todo srj -- urg. icky.
 			static NameKeyType key_GenerateMinefieldBehavior = NAMEKEY("GenerateMinefieldBehavior");
 			GenerateMinefieldBehavior* mfb = (GenerateMinefieldBehavior *)item->findUpdateModule(key_GenerateMinefieldBehavior);
@@ -790,7 +775,7 @@ StateReturnType DeliveringState::update() // Kick a dude out every so often
 				{
 					const ThingTemplate* thing = TheThingFactory->findTemplate( ai->getData()->m_visiblePayloadTemplateName.str() );
 					Object *payload = TheThingFactory->newObject( thing, owner->getControllingPlayer()->getDefaultTeam() );
-					
+
 					if( payload )
 					{
 						payload->setProducer( owner );
@@ -800,9 +785,9 @@ StateReturnType DeliveringState::update() // Kick a dude out every so often
 							Coord3D pos;
 							AsciiString bone;
 							bone.format( "%s%02d", ai->getData()->m_visibleDropBoneName.str(), ai->getVisibleItemsDelivered() + 1 );
-							if( draw->getPristineBonePositions( ai->getData()->m_visibleDropBoneName.str(), ai->getVisibleItemsDelivered() + 1, &pos, NULL, 1 ) > 0 )
+							if( draw->getPristineBonePositions( ai->getData()->m_visibleDropBoneName.str(), ai->getVisibleItemsDelivered() + 1, &pos, nullptr, 1 ) > 0 )
 							{
-								draw->convertBonePosToWorldPos( &pos, NULL, &pos, NULL );
+								draw->convertBonePosToWorldPos( &pos, nullptr, &pos, nullptr );
 								payload->setPosition( &pos );
 							}
 							else
@@ -836,16 +821,16 @@ StateReturnType DeliveringState::update() // Kick a dude out every so often
 							ProjectileUpdateInterface* pui = (*u)->getProjectileUpdateInterface();
 							if( pui  )
 							{
-								//Missile! 
+								//Missile!
 								const WeaponTemplate *weaponTemplate = ai->getData()->m_visiblePayloadWeaponTemplate;
 								if( !weaponTemplate )
 								{
-									DEBUG_ASSERTCRASH( 0, ("%s tried to fire missile %s via DeliverPayload, and is missing required weapon template in ObjectCreationList.ini entry.",
+									DEBUG_CRASH( ("%s tried to fire missile %s via DeliverPayload, and is missing required weapon template in ObjectCreationList.ini entry.",
 																				owner->getTemplate()->getName().str(), payload->getTemplate()->getName().str() ) );
 									break;
 								}
 								VeterancyLevel v = owner->getVeterancyLevel();
-								pui->projectileFireAtObjectOrPosition( NULL, ai->getTargetPos(), weaponTemplate, weaponTemplate->getProjectileExhaust(v) );
+								pui->projectileFireAtObjectOrPosition( nullptr, ai->getTargetPos(), weaponTemplate, weaponTemplate->getProjectileExhaust(v) );
 								projectileFired = true;
 								//damageInfo.in.m_sourceID = pui->projectileGetLauncherID();
 								break;
@@ -873,7 +858,7 @@ StateReturnType DeliveringState::update() // Kick a dude out every so often
 					}
 				}
 			}
-			
+
 			//Update the counters
 			attemptDrops--;
 			ai->setVisibleItemsDelivered( ai->getVisibleItemsDelivered() + 1 );
@@ -909,7 +894,7 @@ void DeliveringState::onExit( StateExitType ) // Close the doors
 // ------------------------------------------------------------------------------------------------
 void ConsiderNewApproachState::crc( Xfer *xfer )
 {
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
@@ -922,14 +907,14 @@ void ConsiderNewApproachState::xfer( Xfer *xfer )
   xfer->xferVersion( &version, currentVersion );
 
 	xfer->xferInt(&m_numberEntriesToState);
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void ConsiderNewApproachState::loadPostProcess( void )
+void ConsiderNewApproachState::loadPostProcess()
 {
-}  // end loadPostProcess
+}
 
 
 //-------------------------------------------------------------------------------------------------
@@ -944,10 +929,10 @@ StateReturnType ConsiderNewApproachState::onEnter() // Increment local counter o
 
 	++m_numberEntriesToState;
 
-	DEBUG_LOG(("Considering approach #%d...\n",m_numberEntriesToState));
+	DEBUG_LOG(("Considering approach #%d...",m_numberEntriesToState));
 	if( m_numberEntriesToState > ai->getMaxNumberAttempts() )
 	{
-		DEBUG_LOG(("Too many approaches! Time to give up.\n"));
+		DEBUG_LOG(("Too many approaches! Time to give up."));
 		return STATE_FAILURE;
 	}
 
@@ -956,7 +941,7 @@ StateReturnType ConsiderNewApproachState::onEnter() // Increment local counter o
 	// based on loco values, move off far enough so we can turn, then head back. (if we just say
 	// "head back directly", the code will just keep turning in circles, not realizing that our
 	// turning radius is too large for that ever to work.)
-	Real minTurnRadius = ai->calcMinTurnRadius(NULL);
+	Real minTurnRadius = ai->calcMinTurnRadius(nullptr);
 
 	// how far is "far enough"? we must be at least 2*radius dist away from our target.
 	// (we add a little fudge since we may not be able to travel our max speed while
@@ -1021,7 +1006,7 @@ void ConsiderNewApproachState::onExit( StateExitType status )
 // ------------------------------------------------------------------------------------------------
 void RecoverFromOffMapState::crc( Xfer *xfer )
 {
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
@@ -1034,14 +1019,14 @@ void RecoverFromOffMapState::xfer( Xfer *xfer )
   xfer->xferVersion( &version, currentVersion );
 
 	xfer->xferUnsignedInt(&m_reEntryFrame);
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void RecoverFromOffMapState::loadPostProcess( void )
+void RecoverFromOffMapState::loadPostProcess()
 {
-}  // end loadPostProcess
+}
 
 
 //-------------------------------------------------------------------------------------------------

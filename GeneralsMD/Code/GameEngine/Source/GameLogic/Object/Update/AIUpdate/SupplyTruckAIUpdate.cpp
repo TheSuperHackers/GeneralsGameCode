@@ -26,7 +26,7 @@
 // Author: Graham Smallwood, February 2002
 // Desc:   State machine that controls when and with who a Truck docks
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Player.h"
 #include "Common/ResourceGatheringManager.h"
@@ -41,13 +41,8 @@
 #include "GameClient/Drawable.h"
 #include "GameClient/InGameUI.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 #define NO_DEBUG_SUPPLY_STATE
 #endif
 
@@ -79,27 +74,27 @@ AIStateMachine* SupplyTruckAIUpdate::makeStateMachine()
 //-------------------------------------------------------------------------------------------------
 SupplyTruckAIUpdate::SupplyTruckAIUpdate( Thing *thing, const ModuleData* moduleData ) : AIUpdateInterface( thing, moduleData )
 {
-	m_supplyTruckStateMachine = NULL;
+	m_supplyTruckStateMachine = nullptr;
 	m_preferredDock = INVALID_ID;
 	m_numberBoxes = 0;
 	m_forcePending = FALSE;
 	m_forcedBusyPending = FALSE;
 	m_supplyTruckStateMachine = newInstance(SupplyTruckStateMachine)( getObject() );
 	m_supplyTruckStateMachine->initDefaultState();
-	
+
 	m_suppliesDepletedVoice = getSupplyTruckAIUpdateModuleData()->m_suppliesDepletedVoice;
 
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
-SupplyTruckAIUpdate::~SupplyTruckAIUpdate( void )
+SupplyTruckAIUpdate::~SupplyTruckAIUpdate()
 {
 	deleteInstance(m_supplyTruckStateMachine);
-} 
+}
 
 
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime SupplyTruckAIUpdate::update( void )
+UpdateSleepTime SupplyTruckAIUpdate::update()
 {
 
 	StateReturnType stRet = m_supplyTruckStateMachine->updateStateMachine();
@@ -131,8 +126,8 @@ Bool SupplyTruckAIUpdate::isCurrentlyFerryingSupplies() const
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool SupplyTruckAIUpdate::isAvailableForSupplying() const 
-{ 
+Bool SupplyTruckAIUpdate::isAvailableForSupplying() const
+{
 	return true;
 }
 
@@ -160,18 +155,18 @@ Bool SupplyTruckAIUpdate::gainOneBox( Int remainingStock )
 	++m_numberBoxes;
 
 
-	//if I just took the last box, 
+	//if I just took the last box,
 	//i will announce that this supply source is now empty
 	if (remainingStock == 0)
 	{
 		Object* bestWarehouse = getObject()->getControllingPlayer()->getResourceGatheringManager()->findBestSupplyWarehouse( getObject() );
-		
+
 		Bool playDepleted = FALSE;
 		if ( bestWarehouse )
 		{
 			//figure out whether the best one is considerably far from the previous one (current position)
 			Coord3D delta = *getObject()->getPosition();
-			delta.sub( bestWarehouse->getPosition() ); 
+			delta.sub( bestWarehouse->getPosition() );
 			if ( delta.length() > getWarehouseScanDistance()/4)
 			playDepleted = TRUE;
 		}
@@ -256,7 +251,7 @@ void SupplyTruckAIUpdate::crc( Xfer *xfer )
 {
 	// extend base class
 	AIUpdateInterface::crc(xfer);
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -268,7 +263,7 @@ void SupplyTruckAIUpdate::xfer( Xfer *xfer )
   XferVersion currentVersion = 1;
   XferVersion version = currentVersion;
   xfer->xferVersion( &version, currentVersion );
- 
+
  // extend base class
 	AIUpdateInterface::xfer(xfer);
 
@@ -277,16 +272,16 @@ void SupplyTruckAIUpdate::xfer( Xfer *xfer )
 	xfer->xferInt(&m_numberBoxes);
 	xfer->xferBool(&m_forcePending);
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void SupplyTruckAIUpdate::loadPostProcess( void )
+void SupplyTruckAIUpdate::loadPostProcess()
 {
  // extend base class
 	AIUpdateInterface::loadPostProcess();
-}  // end loadPostProcess
+}
 
 //----------------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------------
@@ -295,7 +290,7 @@ void SupplyTruckAIUpdate::loadPostProcess( void )
 
 class SupplyTruckBusyState :  public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(SupplyTruckBusyState, "SupplyTruckBusyState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(SupplyTruckBusyState, "SupplyTruckBusyState")
 protected:
 	// snapshot interface STUBBED.
 	virtual void crc( Xfer *xfer ){};
@@ -304,8 +299,8 @@ protected:
 
 public:
 	SupplyTruckBusyState( StateMachine *machine ) : State( machine, "SupplyTruckBusyState" ) { }
-	virtual StateReturnType onEnter() 
-	{ 
+	virtual StateReturnType onEnter()
+	{
 		if( getMachineOwner() && getMachineOwner()->getAI() )
 		{
 			// Have to check, since constructor sets a state.  Phhbbt. Constructor = set up, init = do first thing.
@@ -320,11 +315,11 @@ public:
 #ifdef DEBUG_SUPPLY_STATE
 TheInGameUI->DEBUG_addFloatingText("entering busy state", getMachineOwner()->getPosition(), GameMakeColor(255, 0, 0, 255));
 #endif
-		return STATE_CONTINUE; 
-	}	
-	virtual StateReturnType update() 
-	{ 
-		return STATE_CONTINUE; 
+		return STATE_CONTINUE;
+	}
+	virtual StateReturnType update()
+	{
+		return STATE_CONTINUE;
 	}
 	virtual void onExit(StateExitType status)
 	{
@@ -339,7 +334,7 @@ EMPTY_DTOR(SupplyTruckBusyState)
 //-----------------------------------------------------------------------------------------------------------
 class SupplyTruckIdleState :  public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(SupplyTruckIdleState, "SupplyTruckIdleState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(SupplyTruckIdleState, "SupplyTruckIdleState")
 protected:
 	// snapshot interface STUBBED.
 	virtual void crc( Xfer *xfer ){};
@@ -349,9 +344,9 @@ protected:
 public:
 	SupplyTruckIdleState( StateMachine *machine ) : State( machine, "SupplyTruckIdleState" ) { }
 	virtual StateReturnType onEnter();
-	virtual StateReturnType update() 
-	{ 
-		return STATE_CONTINUE; 
+	virtual StateReturnType update()
+	{
+		return STATE_CONTINUE;
 	}
 	virtual void onExit(StateExitType status)
 	{
@@ -363,16 +358,16 @@ TheInGameUI->DEBUG_addFloatingText("exiting idle state", getMachineOwner()->getP
 };
 EMPTY_DTOR(SupplyTruckIdleState)
 
-StateReturnType SupplyTruckIdleState::onEnter() 
-{ 
+StateReturnType SupplyTruckIdleState::onEnter()
+{
 #ifdef DEBUG_SUPPLY_STATE
 TheInGameUI->DEBUG_addFloatingText("entering idle state", getMachineOwner()->getPosition(), GameMakeColor(255, 0, 0, 255));
 #endif
- 
+
  	Object *owner = getMachineOwner();
- 	if (owner != NULL) {
+ 	if (owner != nullptr) {
  		AIUpdateInterface * ownerAI = owner->getAIUpdateInterface();
- 		if (ownerAI != NULL) {
+ 		if (ownerAI != nullptr) {
  			// This is to get idle workers to always show up on the
  			// "idle worker button."
  			// Basically if you have a worker interface, and we are entering
@@ -380,14 +375,14 @@ TheInGameUI->DEBUG_addFloatingText("entering idle state", getMachineOwner()->get
  			// know so it can decide which idle state it wants us to actually
  			// be in from its perspective.
  			WorkerAIInterface *workerAI = ownerAI->getWorkerAIInterface();
- 			if (workerAI != NULL) {
+ 			if (workerAI != nullptr) {
  				workerAI->exitingSupplyTruckState();
  			}
  		}
  	}
 
-	return STATE_CONTINUE; 
-}	
+	return STATE_CONTINUE;
+}
 
 
 //-------------------------------------------------------------------------------------------------
@@ -397,41 +392,41 @@ TheInGameUI->DEBUG_addFloatingText("entering idle state", getMachineOwner()->get
 //-------------------------------------------------------------------------------------------------
 SupplyTruckStateMachine::SupplyTruckStateMachine( Object *owner ) : StateMachine( owner, "SupplyTruckStateMachine" )
 {
-	static const StateConditionInfo busyConditions[] = 
+	static const StateConditionInfo busyConditions[] =
 	{
-		StateConditionInfo(ownerIdle, ST_IDLE, NULL),
-		StateConditionInfo(ownerDocking, ST_DOCKING, NULL),
-		StateConditionInfo(NULL, NULL, NULL)	// keep last
+		StateConditionInfo(ownerIdle, ST_IDLE, nullptr),
+		StateConditionInfo(ownerDocking, ST_DOCKING, nullptr),
+		StateConditionInfo(nullptr, INVALID_STATE_ID, nullptr)
 	};
 
-	static const StateConditionInfo idleConditions[] = 
+	static const StateConditionInfo idleConditions[] =
 	{
-		StateConditionInfo(isForcedIntoBusyState, ST_BUSY, NULL),
-		StateConditionInfo(isForcedIntoWantingState, ST_WANTING, NULL),
-		StateConditionInfo(ownerDocking, ST_DOCKING, NULL),
-		StateConditionInfo(ownerNotDockingOrIdle, ST_BUSY, NULL),
-		StateConditionInfo(NULL, NULL, NULL)	// keep last
+		StateConditionInfo(isForcedIntoBusyState, ST_BUSY, nullptr),
+		StateConditionInfo(isForcedIntoWantingState, ST_WANTING, nullptr),
+		StateConditionInfo(ownerDocking, ST_DOCKING, nullptr),
+		StateConditionInfo(ownerNotDockingOrIdle, ST_BUSY, nullptr),
+		StateConditionInfo(nullptr, INVALID_STATE_ID, nullptr)
 	};
 
-	static const StateConditionInfo wantingConditions[] = 
+	static const StateConditionInfo wantingConditions[] =
 	{
-		StateConditionInfo(ownerDocking, ST_DOCKING, NULL),
-		StateConditionInfo(ownerNotDockingOrIdle, ST_BUSY, NULL),
-		StateConditionInfo(NULL, NULL, NULL)	// keep last
+		StateConditionInfo(ownerDocking, ST_DOCKING, nullptr),
+		StateConditionInfo(ownerNotDockingOrIdle, ST_BUSY, nullptr),
+		StateConditionInfo(nullptr, INVALID_STATE_ID, nullptr)
 	};
 
-	static const StateConditionInfo regroupingConditions[] = 
+	static const StateConditionInfo regroupingConditions[] =
 	{
-		StateConditionInfo(ownerPlayerCommanded, ST_BUSY, NULL),
-		StateConditionInfo(NULL, NULL, NULL)	// keep last
+		StateConditionInfo(ownerPlayerCommanded, ST_BUSY, nullptr),
+		StateConditionInfo(nullptr, INVALID_STATE_ID, nullptr)
 	};
 
-	static const StateConditionInfo dockingConditions[] = 
+	static const StateConditionInfo dockingConditions[] =
 	{
-		StateConditionInfo(isForcedIntoBusyState, ST_BUSY, NULL),
-		StateConditionInfo(ownerAvailableForSupplying, ST_WANTING, NULL),
-		StateConditionInfo(ownerNotDockingOrIdle, ST_BUSY, NULL),
-		StateConditionInfo(NULL, NULL, NULL)	// keep last
+		StateConditionInfo(isForcedIntoBusyState, ST_BUSY, nullptr),
+		StateConditionInfo(ownerAvailableForSupplying, ST_WANTING, nullptr),
+		StateConditionInfo(ownerNotDockingOrIdle, ST_BUSY, nullptr),
+		StateConditionInfo(nullptr, INVALID_STATE_ID, nullptr)
 	};
 
 	// order matters: first state is the default state.
@@ -453,27 +448,27 @@ SupplyTruckStateMachine::~SupplyTruckStateMachine()
 void SupplyTruckStateMachine::crc( Xfer *xfer )
 {
 	StateMachine::crc(xfer);
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
 // ------------------------------------------------------------------------------------------------
 void SupplyTruckStateMachine::xfer( Xfer *xfer )
 {
-	XferVersion cv = 1;	
-	XferVersion v = cv; 
+	XferVersion cv = 1;
+	XferVersion v = cv;
 	xfer->xferVersion( &v, cv );
 
 	StateMachine::xfer(xfer);
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void SupplyTruckStateMachine::loadPostProcess( void )
+void SupplyTruckStateMachine::loadPostProcess()
 {
 	StateMachine::loadPostProcess();
-}  // end loadPostProcess
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -560,7 +555,7 @@ StateReturnType RegroupingState::onEnter()
 TheInGameUI->DEBUG_addFloatingText("entering regrouping state", getMachineOwner()->getPosition(), GameMakeColor(255, 0, 0, 255));
 #endif
 	// I have failed to find a dock, so my first choice is to go hang out at a Supply Center (I may have
-	// failed to find a Warehouse).  My second choices is to go to a ConYard.  My last choice is just to 
+	// failed to find a Warehouse).  My second choices is to go to a ConYard.  My last choice is just to
 	// go to a friendly building.
 
 	Object* owner = getMachineOwner();
@@ -569,15 +564,15 @@ TheInGameUI->DEBUG_addFloatingText("entering regrouping state", getMachineOwner(
 	if( !ownerPlayer || !ownerAI )
 		return STATE_FAILURE;
 
-	ownerAI->ignoreObstacle( NULL );
+	ownerAI->ignoreObstacle( nullptr );
 	SupplyTruckAIInterface *update = owner->getAIUpdateInterface()->getSupplyTruckAIInterface();
 	if( !update )
 	{
 		return STATE_FAILURE;
 	}
 
-	Object *destinationObject = NULL;
-	
+	Object *destinationObject = nullptr;
+
 	KindOfMaskType kindof;
 	KindOfMaskType kindofnot;
 	kindof.set(KINDOF_CASH_GENERATOR);
@@ -605,7 +600,7 @@ TheInGameUI->DEBUG_addFloatingText("entering regrouping state", getMachineOwner(
 
 	if( ThePartitionManager->getDistanceSquared(owner, destinationObject, FROM_BOUNDINGSPHERE_2D) < REGROUP_SUCCESS_DISTANCE_SQUARED )
 		return STATE_CONTINUE; // Don't say Success so we don't spin the machine.  After one update we'll go back.
-	
+
 	Coord3D destination;
 	FindPositionOptions fpOptions;
 	fpOptions.minRadius = 0.0f;

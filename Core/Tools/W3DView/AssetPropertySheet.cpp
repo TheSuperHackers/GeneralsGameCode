@@ -50,7 +50,7 @@ CAssetPropertySheet::CAssetPropertySheet
     ASSERT (m_pCPropertyPage);
 
     m_psh.dwFlags |= PSH_NOAPPLYNOW;
-    
+
     // Add this page to the property sheet
     AddPage (m_pCPropertyPage);
     return ;

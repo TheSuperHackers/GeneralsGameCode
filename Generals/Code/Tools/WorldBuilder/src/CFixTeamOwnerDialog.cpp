@@ -21,7 +21,6 @@
 #include "CFixTeamOwnerDialog.h"
 #include "GameLogic/SidesList.h"
 #include "Common/WellKnownKeys.h"
-#include "GameLogic/SidesList.h"
 
 static const char* NEUTRAL_NAME_STR = "(neutral)";
 
@@ -88,7 +87,7 @@ void CFixTeamOwnerDialog::OnOK()
 	CListBox *pList = (CListBox*) GetDlgItem(IDC_VALIDTEAMLIST);
 	int curSel = pList->GetCurSel();
 
-	if (curSel < 0) { 
+	if (curSel < 0) {
 		return;
 	}
 

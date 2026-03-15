@@ -30,14 +30,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-
-#ifndef __SCREENCURSOR_H
-#define __SCREENCURSOR_H
 
 #include "resource.h"
 #include "rendobj.h"
@@ -54,7 +47,7 @@ class VertexMaterialClass;
 class ScreenCursorClass : public RenderObjClass
 {
 	public:
-		
+
 		////////////////////////////////////////////////////////////////////////
 		//	Public constructors/destructors
 		////////////////////////////////////////////////////////////////////////
@@ -111,6 +104,3 @@ class ScreenCursorClass : public RenderObjClass
 		int 						m_Width;
 		int						m_Height;
 };
-
-
-#endif //__SCREENCURSOR_H

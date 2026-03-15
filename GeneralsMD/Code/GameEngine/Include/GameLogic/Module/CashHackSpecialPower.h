@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __CASHHACKSPECIALPOWER_H_
-#define __CASHHACKSPECIALPOWER_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/SpecialPowerModule.h"
 
@@ -60,7 +57,7 @@ public:
 	std::vector<Upgrades> m_upgrades;
 	Int m_defaultAmountToSteal;					///< the amount of money that we will steal
 
-	CashHackSpecialPowerModuleData( void );
+	CashHackSpecialPowerModuleData();
 	static void buildFieldParse( MultiIniFieldParse& p );
 };
 
@@ -77,14 +74,11 @@ public:
 	CashHackSpecialPower( Thing *thing, const ModuleData *moduleData );
 	// virtual destructor provided by memory pool object
 
-	virtual void doSpecialPowerAtObject( Object *obj, UnsignedInt commandOptions );
-	virtual void doSpecialPowerAtLocation( const Coord3D *loc, Real angle, UnsignedInt commandOptions );
+	virtual void doSpecialPowerAtObject( Object *obj, UnsignedInt commandOptions ) override;
+	virtual void doSpecialPowerAtLocation( const Coord3D *loc, Real angle, UnsignedInt commandOptions ) override;
 
 protected:
 
 	Int findAmountToSteal() const;
 
 };
-
-#endif  // end __CASHHACKSPECIALPOWER_H_
-

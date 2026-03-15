@@ -30,9 +30,6 @@
 
 #pragma once
 
-#ifndef __SPECIALPOWER_H_
-#define __SPECIALPOWER_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "Common/AudioEventRTS.h"
 #include "Common/GameMemory.h"
@@ -56,25 +53,25 @@ struct FieldParse;
 
 #define MAKE_SPECIALPOWER_MASK(k) SpecialPowerMaskType(SpecialPowerMaskType::kInit, (k))
 
-inline Bool TEST_SPECIALPOWERMASK(const SpecialPowerMaskType& m, SpecialPowerType t) 
-{ 
-	return m.test(t); 
+inline Bool TEST_SPECIALPOWERMASK(const SpecialPowerMaskType& m, SpecialPowerType t)
+{
+	return m.test(t);
 }
-inline Bool TEST_SPECIALPOWERMASK_ANY(const SpecialPowerMaskType& m, const SpecialPowerMaskType& mask) 
-{ 
+inline Bool TEST_SPECIALPOWERMASK_ANY(const SpecialPowerMaskType& m, const SpecialPowerMaskType& mask)
+{
 	return m.anyIntersectionWith(mask);
 }
 inline Bool TEST_SPECIALPOWERMASK_MULTI(const SpecialPowerMaskType& m, const SpecialPowerMaskType& mustBeSet, const SpecialPowerMaskType& mustBeClear)
 {
 	return m.testSetAndClear(mustBeSet, mustBeClear);
 }
-inline Bool SPECIALPOWERMASK_ANY_SET(const SpecialPowerMaskType& m) 
-{ 
-	return m.any(); 
+inline Bool SPECIALPOWERMASK_ANY_SET(const SpecialPowerMaskType& m)
+{
+	return m.any();
 }
-inline void CLEAR_SPECIALPOWERMASK(SpecialPowerMaskType& m) 
-{ 
-	m.clear(); 
+inline void CLEAR_SPECIALPOWERMASK(SpecialPowerMaskType& m)
+{
+	m.clear();
 }
 inline void SET_SPECIALPOWERMASK( SpecialPowerMaskType& m, SpecialPowerType t, Int val = 1 )
 {
@@ -102,7 +99,7 @@ public:
   SpecialPowerTemplate();
 	// virtual destructor prototype provided by MemoryPoolObject
 
-	static const FieldParse* getFieldParse( void ) { return m_specialPowerFieldParse; }
+	static const FieldParse* getFieldParse() { return m_specialPowerFieldParse; }
 
 	void friend_setNameAndID(const AsciiString& name, UnsignedInt id)
 	{
@@ -110,22 +107,22 @@ public:
 		m_id = id;
 	}
 
-	AsciiString getName( void ) const { return getFO()->m_name; }
-	UnsignedInt getID( void ) const { return getFO()->m_id; }
-	SpecialPowerType getSpecialPowerType( void ) const { return getFO()->m_type; }
-	UnsignedInt getReloadTime( void ) const { return getFO()->m_reloadTime; }
-	ScienceType getRequiredScience( void ) const { return getFO()->m_requiredScience; }
-	const AudioEventRTS *getInitiateSound( void ) const { return &getFO()->m_initiateSound; }
-	const AudioEventRTS *getInitiateAtTargetSound( void ) const { return &getFO()->m_initiateAtLocationSound; }
-	Bool hasPublicTimer( void ) const { return getFO()->m_publicTimer; }
-	Bool isSharedNSync( void ) const { return getFO()->m_sharedNSync; }
-	UnsignedInt getDetectionTime( void ) const { return getFO()->m_detectionTime; }
-	UnsignedInt getViewObjectDuration( void ) const { return getFO()->m_viewObjectDuration; }
-	Real getViewObjectRange( void ) const { return getFO()->m_viewObjectRange; }
+	AsciiString getName() const { return getFO()->m_name; }
+	UnsignedInt getID() const { return getFO()->m_id; }
+	SpecialPowerType getSpecialPowerType() const { return getFO()->m_type; }
+	UnsignedInt getReloadTime() const { return getFO()->m_reloadTime; }
+	ScienceType getRequiredScience() const { return getFO()->m_requiredScience; }
+	const AudioEventRTS *getInitiateSound() const { return &getFO()->m_initiateSound; }
+	const AudioEventRTS *getInitiateAtTargetSound() const { return &getFO()->m_initiateAtLocationSound; }
+	Bool hasPublicTimer() const { return getFO()->m_publicTimer; }
+	Bool isSharedNSync() const { return getFO()->m_sharedNSync; }
+	UnsignedInt getDetectionTime() const { return getFO()->m_detectionTime; }
+	UnsignedInt getViewObjectDuration() const { return getFO()->m_viewObjectDuration; }
+	Real getViewObjectRange() const { return getFO()->m_viewObjectRange; }
 	Real getRadiusCursorRadius() const { return getFO()->m_radiusCursorRadius; }
 	Bool isShortcutPower() const { return getFO()->m_shortcutPower; }
 
-private: 
+private:
 
 	const SpecialPowerTemplate* getFO() const { return (const SpecialPowerTemplate*)friend_getFinalOverride(); }
 
@@ -136,7 +133,7 @@ private:
 	ScienceType				m_requiredScience;		///< science required (if any) to actually execute this power
 	AudioEventRTS			m_initiateSound;			///< sound to play when initiated
 	AudioEventRTS			m_initiateAtLocationSound;		///< sound to play at target location (if any)
-	UnsignedInt				m_detectionTime;			///< (frames) after using infiltration power (defection, etc.), 
+	UnsignedInt				m_detectionTime;			///< (frames) after using infiltration power (defection, etc.),
 																					///< how long it takes for ex comrades to realize it on their own
 	UnsignedInt				m_viewObjectDuration;	///< Lifetime of a looking object we slap down so you can watch the effect
 	Real							m_viewObjectRange;		///< And how far that object can see.
@@ -156,12 +153,12 @@ class SpecialPowerStore : public SubsystemInterface
 
 public:
 
-	SpecialPowerStore( void );
-	~SpecialPowerStore( void );
+	SpecialPowerStore();
+	~SpecialPowerStore();
 
-	virtual void init( void ) { };
-	virtual void update( void ) { };
-	virtual void reset( void );
+	virtual void init() { };
+	virtual void update() { };
+	virtual void reset();
 
 	const SpecialPowerTemplate *findSpecialPowerTemplate( AsciiString name ) { return findSpecialPowerTemplatePrivate(name); }
 	const SpecialPowerTemplate *findSpecialPowerTemplateByID( UnsignedInt id );
@@ -170,7 +167,7 @@ public:
 	/// does the object (and therefore the player) meet all the requirements to use this power
 	Bool canUseSpecialPower( Object *obj, const SpecialPowerTemplate *specialPowerTemplate );
 
-	Int getNumSpecialPowers( void ); // for WorldBuilder
+	Int getNumSpecialPowers(); // for WorldBuilder
 
 	static void parseSpecialPowerDefinition( INI *ini );
 
@@ -188,5 +185,3 @@ protected:
 
 // EXTERNAL ///////////////////////////////////////////////////////////////////////////////////////
 extern SpecialPowerStore *TheSpecialPowerStore;
-
-#endif  // end __SPECIALPOWER_H_

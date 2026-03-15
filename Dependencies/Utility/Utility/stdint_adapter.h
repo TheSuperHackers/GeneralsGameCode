@@ -26,7 +26,7 @@
 #else
   typedef int intptr_t;
   typedef unsigned int uintptr_t;
-#endif 
+#endif
 
 /* 7.18.1.1  Exact-width integer types */
 typedef signed char int8_t;

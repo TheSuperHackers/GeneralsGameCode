@@ -31,3 +31,4 @@ typedef WCHAR* LPWSTR;
 #define CP_ACP 0
 #define MultiByteToWideChar(cp, flags, mbstr, cb, wcstr, cch) mbstowcs(wcstr, mbstr, cch)
 #define WideCharToMultiByte(cp, flags, wcstr, cch, mbstr, cb, defchar, used) wcstombs(mbstr, wcstr, cb)
+

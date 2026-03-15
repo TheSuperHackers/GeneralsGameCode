@@ -16,36 +16,30 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*************************************************************************** 
- ***    C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S     *** 
- *************************************************************************** 
- *                                                                         * 
- *                 Project Name : Commando	                              * 
- *                                                                         * 
- *                     $Archive:: /Commando/Code/ww3d2/classid.h          $* 
- *                                                                         * 
- *                      $Author:: Jani_p                                  $* 
- *                                                                         * 
- *                     $Modtime:: 3/29/01 1:13a                           $* 
- *                                                                         * 
- *                    $Revision:: 2                                       $* 
- *                                                                         * 
+/***************************************************************************
+ ***    C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S     ***
+ ***************************************************************************
+ *                                                                         *
+ *                 Project Name : Commando	                              *
+ *                                                                         *
+ *                     $Archive:: /Commando/Code/ww3d2/classid.h          $*
+ *                                                                         *
+ *                      $Author:: Jani_p                                  $*
+ *                                                                         *
+ *                     $Modtime:: 3/29/01 1:13a                           $*
+ *                                                                         *
+ *                    $Revision:: 2                                       $*
+ *                                                                         *
  *-------------------------------------------------------------------------*/
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef CLASSID_H
-#define CLASSID_H
 
 #include "always.h"
 
 /*
 ** enum of all the WW3D class IDs.
 */
-enum 
+enum
 {
 	ID_INDIRECT_TEXTURE_CLASS = 0x10000,	// IndirectTextureClass					"texture.h"
 	ID_VARIABLE_TEXTURE_CLASS,					// VariableTextureClass					"texture.h"
@@ -60,6 +54,3 @@ enum
 	ID_STREAMING_TEXTURE_CLASS,				// StreamingTextureClass				"texture.h"
 	ID_STREAMING_TEXTURE_INSTANCE_CLASS,	// StreamingTextureInstanceClass		"texture.h"
 };
-
-
-#endif

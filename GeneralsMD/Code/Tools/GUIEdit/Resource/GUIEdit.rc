@@ -258,7 +258,7 @@ BEGIN
     LTEXT           "Name length + layout filename length (.wnd) must not exceed 'X' characters",
                     STATIC_NAME_MAX,199,160,244,12,SS_CENTERIMAGE
     GROUPBOX        "Window Status",IDC_STATIC,4,108,144,70
-    CONTROL         "Dragable",CHECK_DRAGABLE,"Button",BS_AUTOCHECKBOX | 
+    CONTROL         "Dragable",CHECK_DRAGGABLE,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,8,120,45,10
     CONTROL         "Enabled",CHECK_ENABLED,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,8,132,42,10
@@ -360,7 +360,7 @@ BEGIN
                     STATIC_NAME_MAX,200,135,244,12,SS_CENTERIMAGE
     GROUPBOX        "Window Status",IDC_STATIC,152,4,108,100
     GROUPBOX        "Images and Colors",IDC_STATIC,268,4,192,100
-    CONTROL         "Dragable",CHECK_DRAGABLE,"Button",BS_AUTOCHECKBOX | 
+    CONTROL         "Dragable",CHECK_DRAGGABLE,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,160,17,45,10
     CONTROL         "Enabled",CHECK_ENABLED,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,160,31,42,10
@@ -441,7 +441,7 @@ BEGIN
                     STATIC_NAME_MAX,200,135,244,12,SS_CENTERIMAGE
     GROUPBOX        "Window Status",IDC_STATIC,152,4,108,100
     GROUPBOX        "Images and Colors",IDC_STATIC,268,4,192,100
-    CONTROL         "Dragable",CHECK_DRAGABLE,"Button",BS_AUTOCHECKBOX | 
+    CONTROL         "Dragable",CHECK_DRAGGABLE,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,160,20,45,10
     CONTROL         "Enabled",CHECK_ENABLED,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,160,40,42,10
@@ -493,7 +493,7 @@ BEGIN
     PUSHBUTTON      "Cancel",IDCANCEL,395,166,50,14
     GROUPBOX        "Window Status",IDC_STATIC,152,4,108,100
     GROUPBOX        "Images and Colors",IDC_STATIC,268,4,192,100
-    CONTROL         "Dragable",CHECK_DRAGABLE,"Button",BS_AUTOCHECKBOX | 
+    CONTROL         "Dragable",CHECK_DRAGGABLE,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,160,20,45,10
     CONTROL         "Enabled",CHECK_ENABLED,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,160,40,42,10
@@ -575,7 +575,7 @@ BEGIN
     LTEXT           "Name length + layout filename length (.wnd) must not exceed 'X' characters",
                     STATIC_NAME_MAX,160,159,244,12,SS_CENTERIMAGE
     GROUPBOX        "Window Status",IDC_STATIC,112,4,108,124
-    CONTROL         "Dragable",CHECK_DRAGABLE,"Button",BS_AUTOCHECKBOX | 
+    CONTROL         "Dragable",CHECK_DRAGGABLE,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,120,20,45,10
     CONTROL         "Enabled",CHECK_ENABLED,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,120,40,42,10
@@ -663,7 +663,7 @@ BEGIN
                     STATIC_NAME_MAX,200,158,244,12,SS_CENTERIMAGE
     GROUPBOX        "Window Status",IDC_STATIC,152,4,108,100
     GROUPBOX        "Images and Colors",IDC_STATIC,269,7,192,124
-    CONTROL         "Dragable",CHECK_DRAGABLE,"Button",BS_AUTOCHECKBOX | 
+    CONTROL         "Dragable",CHECK_DRAGGABLE,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,160,20,45,10
     CONTROL         "Enabled",CHECK_ENABLED,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,160,40,42,10
@@ -742,7 +742,7 @@ BEGIN
                     STATIC_NAME_MAX,200,135,244,12,SS_CENTERIMAGE
     GROUPBOX        "Window Status",IDC_STATIC,152,4,108,100
     GROUPBOX        "Images and Colors",IDC_STATIC,268,4,192,100
-    CONTROL         "Dragable",CHECK_DRAGABLE,"Button",BS_AUTOCHECKBOX | 
+    CONTROL         "Dragable",CHECK_DRAGGABLE,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,160,20,45,10
     CONTROL         "Enabled",CHECK_ENABLED,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,160,40,42,10
@@ -817,7 +817,7 @@ BEGIN
                     STATIC_NAME_MAX,200,135,244,12,SS_CENTERIMAGE
     GROUPBOX        "Window Status",IDC_STATIC,152,4,108,100
     GROUPBOX        "Images and Colors",IDC_STATIC,268,4,192,100
-    CONTROL         "Dragable",CHECK_DRAGABLE,"Button",BS_AUTOCHECKBOX | 
+    CONTROL         "Dragable",CHECK_DRAGGABLE,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,160,20,45,10
     CONTROL         "Enabled",CHECK_ENABLED,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,160,40,42,10
@@ -902,7 +902,7 @@ BEGIN
     LTEXT           "Display Font",IDC_STATIC,14,146,128,8
     GROUPBOX        "Window Status",IDC_STATIC,152,4,108,100
     GROUPBOX        "Images and Colors",IDC_STATIC,268,4,192,100
-    CONTROL         "Dragable",CHECK_DRAGABLE,"Button",BS_AUTOCHECKBOX | 
+    CONTROL         "Dragable",CHECK_DRAGGABLE,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,160,20,45,10
     CONTROL         "Enabled",CHECK_ENABLED,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,160,40,42,10
@@ -1068,7 +1068,7 @@ BEGIN
                     STATIC_NAME_MAX,200,135,244,12,SS_CENTERIMAGE
     GROUPBOX        "Window Status",IDC_STATIC,152,4,108,100
     GROUPBOX        "Images and Colors",IDC_STATIC,268,4,192,100
-    CONTROL         "Dragable",CHECK_DRAGABLE,"Button",BS_AUTOCHECKBOX | 
+    CONTROL         "Dragable",CHECK_DRAGGABLE,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,160,20,45,10
     CONTROL         "Enabled",CHECK_ENABLED,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,160,40,42,10
@@ -1178,7 +1178,7 @@ BEGIN
     GROUPBOX        "Combo Box Data",IDC_STATIC,4,4,144,233
     LTEXT           "Display Font",IDC_STATIC,12,152,128,8
     GROUPBOX        "Window Status",IDC_STATIC,152,4,108,100
-    CONTROL         "Dragable",CHECK_DRAGABLE,"Button",BS_AUTOCHECKBOX | 
+    CONTROL         "Dragable",CHECK_DRAGGABLE,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,160,20,45,10
     CONTROL         "Enabled",CHECK_ENABLED,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,160,40,42,10

@@ -26,8 +26,8 @@
  *                                                                                             *
  *              Original Author:: Hector Yee                                                   *
  *                                                                                             *
- *                       Author : Kenny Mitchell                                               * 
- *                                                                                             * 
+ *                       Author : Kenny Mitchell                                               *
+ *                                                                                             *
  *                     $Modtime:: 06/27/02 1:27p                                              $*
  *                                                                                             *
  *                    $Revision:: 31                                                          $*
@@ -50,11 +50,12 @@ static StringClass CapsWorkString;
 
 enum {
 	VENDOR_ID_NVIDIA=0x10de,
-	VENROD_ID_ATI=0x1002
+	VENROD_ID_ATI=0x1002,
+	VENDOR_ID_VMWARE=0x15AD,
 };
 
 
-static const char* VendorNames[]={
+static const char* const VendorNames[]={
 	"Unknown",
 	"NVidia",
 	"ATI",
@@ -65,8 +66,10 @@ static const char* VendorNames[]={
 	"3Dfx",
 	"3DLabs",
 	"CirrusLogic",
-	"Rendition"
+	"Rendition",
+	"VMware",
 };
+static_assert(ARRAY_SIZE(VendorNames) == DX8Caps::VENDOR_COUNT, "Incorrect array size");
 
 DX8Caps::VendorIdType DX8Caps::Define_Vendor(unsigned vendor_id)
 {
@@ -84,6 +87,7 @@ DX8Caps::VendorIdType DX8Caps::Define_Vendor(unsigned vendor_id)
 	case 0x1142: // Alliance based reference cards
 	case 0x109D: // Macronix based reference cards
 	case 0x121A: return VENDOR_3DFX;
+	case 0x15AD: return VENDOR_VMWARE;
 	default:
 		return VENDOR_UNKNOWN;
 	}
@@ -259,11 +263,11 @@ DX8Caps::DeviceTypeATI DX8Caps::Get_ATI_Device(unsigned device_id)
 	case 0x4C45:
 	case 0x4C46: return DEVICE_ATI_RAGE_128_MOBILITY_M3;
 
-	case 0x5041: 
-	case 0x5042: 
-	case 0x5043: 
-	case 0x5044: 
-	case 0x5045: 
+	case 0x5041:
+	case 0x5042:
+	case 0x5043:
+	case 0x5044:
+	case 0x5045:
 	case 0x5046: return DEVICE_ATI_RAGE_128_PRO_GL;
 
 	case 0x5047:
@@ -299,10 +303,10 @@ DX8Caps::DeviceTypeATI DX8Caps::Get_ATI_Device(unsigned device_id)
 
 	case 0x5157: return DEVICE_ATI_R7500;
 
-	case 0x5245: 
-	case 0x5246: 
-	case 0x534B: 
-	case 0x534C: 
+	case 0x5245:
+	case 0x5246:
+	case 0x534B:
+	case 0x534C:
 	case 0x534D: return DEVICE_ATI_RAGE_128_GL;
 
 	case 0x524B:
@@ -438,7 +442,7 @@ DX8Caps::DeviceTypeMatrox DX8Caps::Get_Matrox_Device(unsigned device_id)
 	default: return DEVICE_MATROX_UNKNOWN;
 	}
 }
- 
+
 DX8Caps::DeviceTypePowerVR DX8Caps::Get_PowerVR_Device(unsigned device_id)
 {
 	switch (device_id) {
@@ -469,8 +473,8 @@ DX8Caps::DeviceTypeIntel DX8Caps::Get_Intel_Device(unsigned device_id)
 
 DX8Caps::DX8Caps(
 	IDirect3D8* direct3d,
-	IDirect3DDevice8* D3DDevice, 
-	WW3DFormat display_format, 
+	IDirect3DDevice8* D3DDevice,
+	WW3DFormat display_format,
 	const D3DADAPTER_IDENTIFIER8& adapter_id)
 	:
 	Direct3D(direct3d),
@@ -483,7 +487,7 @@ DX8Caps::DX8Caps(
 
 //Don't really need this but I added this function to free static variables so
 //they don't show up in our memory manager as a leak. -MW 7-22-03
-void DX8Caps::Shutdown(void)
+void DX8Caps::Shutdown()
 {
 	CapsWorkString.Release_Resources();
 }
@@ -503,9 +507,9 @@ void DX8Caps::Init_Caps(IDirect3DDevice8* D3DDevice)
 		SupportTnL=true;
 
 		D3DDevice->SetRenderState(D3DRS_SOFTWAREVERTEXPROCESSING,FALSE);
-		DX8CALL(GetDeviceCaps(&hwVPCaps));	
+		DX8CALL(GetDeviceCaps(&hwVPCaps));
 	} else {
-		SupportTnL=false;			
+		SupportTnL=false;
 	}
 }
 
@@ -526,7 +530,7 @@ void DX8Caps::Compute_Caps(WW3DFormat display_format, const D3DADAPTER_IDENTIFIE
 		SupportNPatches=false;
 	}
 
-	if ((caps.TextureOpCaps&D3DTEXOPCAPS_DOTPRODUCT3)==D3DTEXOPCAPS_DOTPRODUCT3) 
+	if ((caps.TextureOpCaps&D3DTEXOPCAPS_DOTPRODUCT3)==D3DTEXOPCAPS_DOTPRODUCT3)
 	{
 		SupportDot3=true;
 	} else {
@@ -534,10 +538,13 @@ void DX8Caps::Compute_Caps(WW3DFormat display_format, const D3DADAPTER_IDENTIFIE
 	}
 
 	supportGamma=((swVPCaps.Caps2&D3DCAPS2_FULLSCREENGAMMA)==D3DCAPS2_FULLSCREENGAMMA);
+	SupportPointSprites = (caps.MaxPointSize > 1.0f);
 
 	MaxTexturesPerPass=MAX_TEXTURE_STAGES;
 
 	Check_Texture_Format_Support(display_format,caps);
+	Check_Render_To_Texture_Support(display_format,caps);
+	Check_Depth_Stencil_Support(display_format,caps);
 	Check_Texture_Compression_Support(caps);
 	Check_Bumpmap_Support(caps);
 	Check_Shader_Support(caps);
@@ -633,9 +640,9 @@ void DX8Caps::Check_Render_To_Texture_Support(WW3DFormat display_format,const D3
 */
 void DX8Caps::Check_Depth_Stencil_Support(WW3DFormat display_format, const D3DCAPS8& caps)
 {
-	if (display_format==WW3D_FORMAT_UNKNOWN) 
+	if (display_format==WW3D_FORMAT_UNKNOWN)
 	{
-		for (unsigned i=0;i<WW3D_ZFORMAT_COUNT;++i) 
+		for (unsigned i=0;i<WW3D_ZFORMAT_COUNT;++i)
 		{
 			SupportDepthStencilFormat[i]=false;
 		}
@@ -643,14 +650,14 @@ void DX8Caps::Check_Depth_Stencil_Support(WW3DFormat display_format, const D3DCA
 	}
 
 	D3DFORMAT d3d_display_format=WW3DFormat_To_D3DFormat(display_format);
-	
-	for (unsigned i=0;i<WW3D_ZFORMAT_COUNT;++i) 
+
+	for (unsigned i=0;i<WW3D_ZFORMAT_COUNT;++i)
 	{
-		if (i==WW3D_ZFORMAT_UNKNOWN) 
+		if (i==WW3D_ZFORMAT_UNKNOWN)
 		{
 			SupportDepthStencilFormat[i]=false;
 		}
-		else 
+		else
 		{
 			WW3DZFormat format=(WW3DZFormat)i;
 			SupportDepthStencilFormat[i]=SUCCEEDED
@@ -698,6 +705,12 @@ void DX8Caps::Vendor_Specific_Hacks(const D3DADAPTER_IDENTIFIER8& adapter_id)
 			SupportTextureFormat[WW3D_FORMAT_DXT3]|
 			SupportTextureFormat[WW3D_FORMAT_DXT4]|
 			SupportTextureFormat[WW3D_FORMAT_DXT5];
+	}
+
+	if (adapter_id.VendorId==VENDOR_ID_VMWARE) {
+		// TheSuperHackers @bugfix Stubbjax 15/01/2026 Disable DOT3 support for VMWare's virtual GPU.
+		// The D3DTA_ALPHAREPLICATE modifier fails when passed to a D3DTOP_MULTIPLYADD operation.
+		SupportDot3 = false;
 	}
 
 //	SupportDXTC=false;

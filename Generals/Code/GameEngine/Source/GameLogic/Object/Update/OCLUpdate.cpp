@@ -44,22 +44,22 @@ OCLUpdateModuleData::OCLUpdateModuleData()
 {
 	m_minDelay = 0;
 	m_maxDelay = 0;
-	m_ocl = NULL;
+	m_ocl = nullptr;
 	m_isCreateAtEdge = FALSE;
 }
 
 //-------------------------------------------------------------------------------------------------
-/*static*/ void OCLUpdateModuleData::buildFieldParse(MultiIniFieldParse& p) 
+/*static*/ void OCLUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   UpdateModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
-		{ "OCL",					INI::parseObjectCreationList,		NULL, offsetof( OCLUpdateModuleData, m_ocl ) },
-		{ "MinDelay",			INI::parseDurationUnsignedInt,	NULL, offsetof( OCLUpdateModuleData, m_minDelay ) },
-		{ "MaxDelay",			INI::parseDurationUnsignedInt,	NULL, offsetof( OCLUpdateModuleData, m_maxDelay ) },
-		{ "CreateAtEdge",	INI::parseBool,									NULL, offsetof( OCLUpdateModuleData, m_isCreateAtEdge ) },
-		{ 0, 0, 0, 0 }
+		{ "OCL",					INI::parseObjectCreationList,		nullptr, offsetof( OCLUpdateModuleData, m_ocl ) },
+		{ "MinDelay",			INI::parseDurationUnsignedInt,	nullptr, offsetof( OCLUpdateModuleData, m_minDelay ) },
+		{ "MaxDelay",			INI::parseDurationUnsignedInt,	nullptr, offsetof( OCLUpdateModuleData, m_maxDelay ) },
+		{ "CreateAtEdge",	INI::parseBool,									nullptr, offsetof( OCLUpdateModuleData, m_isCreateAtEdge ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   p.add(dataFieldParse);
 }
@@ -74,14 +74,25 @@ OCLUpdate::OCLUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModul
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-OCLUpdate::~OCLUpdate( void )
+OCLUpdate::~OCLUpdate()
 {
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime OCLUpdate::update( void )
+UpdateSleepTime OCLUpdate::update()
 {
+#if !RETAIL_COMPATIBLE_CRC
+	// TheSuperHackers @bugfix dizzyj/Caball009/Mauller 14/07/2025 prevent triggering supply drop when subdued while under construction
+	// When the construction is finished, we allow the timer to be initialized and then start shifting the timer while subdued
+	if ( m_timerStartedFrame > 0 && getObject()->isDisabled() )
+	{
+		m_nextCreationFrame++;
+		m_timerStartedFrame++;
+		return UPDATE_SLEEP_NONE;
+	}
+#endif
+
 /// @todo srj use SLEEPY_UPDATE here
 	if( shouldCreate() )
 	{
@@ -122,7 +133,7 @@ Bool OCLUpdate::shouldCreate()
 // ------------------------------------------------------------------------------------------------
 void OCLUpdate::setNextCreationFrame()
 {
-	UnsignedInt delay = GameLogicRandomValue( getOCLUpdateModuleData()->m_minDelay, 
+	UnsignedInt delay = GameLogicRandomValue( getOCLUpdateModuleData()->m_minDelay,
 																						getOCLUpdateModuleData()->m_maxDelay );
 	m_timerStartedFrame = TheGameLogic->getFrame();
 	m_nextCreationFrame = m_timerStartedFrame + delay;
@@ -156,7 +167,7 @@ void OCLUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -180,15 +191,15 @@ void OCLUpdate::xfer( Xfer *xfer )
 	// timer stated frame
 	xfer->xferUnsignedInt( &m_timerStartedFrame );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void OCLUpdate::loadPostProcess( void )
+void OCLUpdate::loadPostProcess()
 {
 
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

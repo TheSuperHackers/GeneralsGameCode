@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __RAILED_TRANSPORT_CONTAIN_H_
-#define __RAILED_TRANSPORT_CONTAIN_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/TransportContain.h"
 
@@ -48,14 +45,12 @@ public:
 	RailedTransportContain( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual void onRemoving( Object *obj );			///< object no longer contains 'obj'
-	virtual void exitObjectViaDoor( Object *newObj, ExitDoorType exitDoor );
-	virtual void exitObjectByBudding( Object *newObj, Object *budHost ) { return; };
+	virtual void onRemoving( Object *obj ) override;			///< object no longer contains 'obj'
+	virtual void exitObjectViaDoor( Object *newObj, ExitDoorType exitDoor ) override;
+	virtual void exitObjectByBudding( Object *newObj, Object *budHost ) override { return; };
 
 protected:
 
-	virtual Bool isSpecificRiderFreeToExit( Object *obj );
+	virtual Bool isSpecificRiderFreeToExit( Object *obj ) override;
 
 };
-
-#endif  // end __RAILED_TRANSPORT_CONTAIN_H_

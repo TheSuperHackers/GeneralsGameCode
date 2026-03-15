@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __SPECIAL_POWER_UPDATE_MODULE_H
-#define __SPECIAL_POWER_UPDATE_MODULE_H
-
 #include "Common/Module.h"
 #include "Common/GameType.h"
 
@@ -50,7 +47,7 @@ public:
 	virtual Bool doesSpecialPowerHaveOverridableDestinationActive() const = 0; //Is it active now?
 	virtual Bool doesSpecialPowerHaveOverridableDestination() const = 0;	//Does it have it, even if it's not active?
 	virtual void setSpecialPowerOverridableDestination( const Coord3D *loc ) = 0;
-	virtual Bool isPowerCurrentlyInUse( const CommandButton *command = NULL ) const = 0;
+	virtual Bool isPowerCurrentlyInUse( const CommandButton *command = nullptr ) const = 0;
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -66,8 +63,8 @@ public:
 	// virtual destructor prototype defined by MemoryPoolObject
 
 	//SpecialPowerUpdateInterface virtual implementations
-	virtual Bool doesSpecialPowerUpdatePassScienceTest() const;
-	virtual ScienceType getExtraRequiredScience() const { return SCIENCE_INVALID; } //Does this object have more than one special power module with the same spTemplate?
+	virtual Bool doesSpecialPowerUpdatePassScienceTest() const override;
+	virtual ScienceType getExtraRequiredScience() const override { return SCIENCE_INVALID; } //Does this object have more than one special power module with the same spTemplate?
 
 	//SpecialPowerUpdateInterface PURE virtual implementations
 	virtual Bool initiateIntentToDoSpecialPower(const SpecialPowerTemplate *specialPowerTemplate, const Object *targetObj, const Coord3D *targetPos, const Waypoint *way, UnsignedInt commandOptions ) = 0;
@@ -78,8 +75,6 @@ public:
 	virtual Bool doesSpecialPowerHaveOverridableDestinationActive() const = 0; //Is it active now?
 	virtual Bool doesSpecialPowerHaveOverridableDestination() const = 0;	//Does it have it, even if it's not active?
 	virtual void setSpecialPowerOverridableDestination( const Coord3D *loc ) = 0;
-	virtual Bool isPowerCurrentlyInUse( const CommandButton *command = NULL ) const = 0;
+	virtual Bool isPowerCurrentlyInUse( const CommandButton *command = nullptr ) const = 0;
 
 };
-
-#endif

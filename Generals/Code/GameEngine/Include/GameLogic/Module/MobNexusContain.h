@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __MOBNEXUSCONTAIN_H_
-#define __MOBNEXUSCONTAIN_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/OpenContain.h"
 
@@ -62,7 +59,7 @@ public:
 };
 
 //-------------------------------------------------------------------------------------------------
-class MobNexusContain : public OpenContain, 
+class MobNexusContain : public OpenContain,
 												public TransportPassengerInterface // lorenzen add a MobMemberInterface
 {
 
@@ -76,33 +73,30 @@ public:
 																																								// lorenzen add a MobMemberInterface
 																																								// lorenzen add a MobMemberInterface
 																																								// lorenzen add a MobMemberInterface
-	virtual TransportPassengerInterface* getTransportPassengerInterface() { return this; }// lorenzen add a MobMemberInterface
+	virtual TransportPassengerInterface* getTransportPassengerInterface() override { return this; }// lorenzen add a MobMemberInterface
 																																								// lorenzen add a MobMemberInterface
 																																								// lorenzen add a MobMemberInterface
 																																								// lorenzen add a MobMemberInterface
-	virtual Bool isValidContainerFor( const Object* obj, Bool checkCapacity) const;
+	virtual Bool isValidContainerFor( const Object* obj, Bool checkCapacity) const override;
 
-	virtual void onContaining( Object *obj );		///< object now contains 'obj'
-	virtual void onRemoving( Object *obj );			///< object no longer contains 'obj'
-	virtual UpdateSleepTime update();							///< called once per frame
+	virtual void onContaining( Object *obj ) override;		///< object now contains 'obj'
+	virtual void onRemoving( Object *obj ) override;			///< object no longer contains 'obj'
+	virtual UpdateSleepTime update() override;							///< called once per frame
 
-	virtual Int getContainMax( void ) const;
+	virtual Int getContainMax() const override;
 
-	virtual void onObjectCreated();
-	virtual Int getExtraSlotsInUse( void ) { return m_extraSlotsInUse; }
+	virtual void onObjectCreated() override;
+	virtual Int getExtraSlotsInUse() override { return m_extraSlotsInUse; }
 
-	virtual ExitDoorType reserveDoorForExit( const ThingTemplate* objType, Object *specificObject );					///< All types can answer if they are free to exit or not, and you can ask about a specific guy or just exit anything in general
-	virtual void unreserveDoorForExit( ExitDoorType exitDoor );
+	virtual ExitDoorType reserveDoorForExit( const ThingTemplate* objType, Object *specificObject ) override;					///< All types can answer if they are free to exit or not, and you can ask about a specific guy or just exit anything in general
+	virtual void unreserveDoorForExit( ExitDoorType exitDoor ) override;
 
-	virtual Bool tryToEvacuate( Bool exposeStealthedUnits ); ///< Will try to kick everybody out with game checks, and will return whether anyone made it
+	virtual Bool tryToEvacuate( Bool exposeStealthedUnits ) override; ///< Will try to kick everybody out with game checks, and will return whether anyone made it
 
 protected:
 
 private:
-	
+
 	Int m_extraSlotsInUse;
 
 };
-
-#endif // __MOBNEXUSCONTAIN_H_
-

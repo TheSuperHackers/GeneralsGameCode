@@ -16,29 +16,23 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*************************************************************************** 
- ***    C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S     *** 
- *************************************************************************** 
- *                                                                         * 
- *                 Project Name : Commando	                              * 
- *                                                                         * 
- *                     $Archive:: /Commando/Code/ww3d2/textdraw.h         $* 
- *                                                                         * 
- *                      $Author:: Greg_h                                  $* 
- *                                                                         * 
- *                     $Modtime:: 3/15/01 3:41p                           $* 
- *                                                                         * 
- *                    $Revision:: 4                                       $* 
- *                                                                         * 
+/***************************************************************************
+ ***    C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S     ***
+ ***************************************************************************
+ *                                                                         *
+ *                 Project Name : Commando	                              *
+ *                                                                         *
+ *                     $Archive:: /Commando/Code/ww3d2/textdraw.h         $*
+ *                                                                         *
+ *                      $Author:: Greg_h                                  $*
+ *                                                                         *
+ *                     $Modtime:: 3/15/01 3:41p                           $*
+ *                                                                         *
+ *                    $Revision:: 4                                       $*
+ *                                                                         *
  *-------------------------------------------------------------------------*/
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef TEXTDRAW_H
-#define TEXTDRAW_H
 
 #include "always.h"
 #include "dynamesh.h"
@@ -53,8 +47,8 @@ class	Font3DInstanceClass;
 ** TextDrawClass
 **
 ** This class provides a simple method to draw 2D text into a scene.
-** Both strings and individual characters can be drawn to any normalized 
-** screen coordinates ( 0.. 1 ), or any scale/offset. 
+** Both strings and individual characters can be drawn to any normalized
+** screen coordinates ( 0.. 1 ), or any scale/offset.
 **  This class uses a dynamic mesh for all polygon and vertex management
 **
 *******************************************************************/
@@ -70,16 +64,16 @@ public:
 	~TextDrawClass();
 
 	// Set Coordinate Range
-	void	Set_Coordinate_Ranges(	const Vector2 & param_ul, const Vector2 & param_lr, 
+	void	Set_Coordinate_Ranges(	const Vector2 & param_ul, const Vector2 & param_lr,
 											const Vector2 & dest_ul, const Vector2 & dest_lr );
 
 	// Reset all polys and verts
-	virtual	void Reset( void );
+	virtual	void Reset();
 
 	/*
 	** class id of this render object
 	*/
-	virtual int	Class_ID(void) const	{ return CLASSID_TEXTDRAW; }
+	virtual int	Class_ID() const	{ return CLASSID_TEXTDRAW; }
 
 	/*
 	**
@@ -116,5 +110,3 @@ private:
 	Vector2					TranslateOffset;
 	Vector2					PixelSize;
 };
-
-#endif	// TEXTDRAW_H

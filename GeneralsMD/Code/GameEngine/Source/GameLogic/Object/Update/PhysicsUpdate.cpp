@@ -22,11 +22,11 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-// PhysicsBehavior.cpp 
+// PhysicsBehavior.cpp
 // Simple rigid body physics
 // Author: Michael S. Booth, November 2001
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 // please talk to MDC (x36804) before taking this out
 #define NO_DEBUG_CRC
@@ -71,11 +71,6 @@ const Int MOTIVE_FRAMES = LOGICFRAMES_PER_SECOND / 3;
 
 #define SLEEPY_PHYSICS
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 static Real angleBetweenVectors(const Coord3D& inCurDir, const Coord3D& inGoalDir)
@@ -107,7 +102,7 @@ static Real heightToSpeed(Real height)
 	// don't bother trying to remember how far we've fallen; instead,
 	// back-calc it from our speed & gravity... v = sqrt(2*g*h)
 	return sqrt(fabs(2.0f * TheGlobalData->m_gravity * height));
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 PhysicsBehaviorModuleData::PhysicsBehaviorModuleData()
@@ -117,7 +112,7 @@ PhysicsBehaviorModuleData::PhysicsBehaviorModuleData()
 	m_shockMaxYaw = DEFAULT_SHOCK_YAW;
 	m_shockMaxPitch = DEFAULT_SHOCK_PITCH;
 	m_shockMaxRoll = DEFAULT_SHOCK_ROLL;
-	
+
 	m_forwardFriction = DEFAULT_FORWARD_FRICTION;
 	m_lateralFriction = DEFAULT_LATERAL_FRICTION;
 	m_ZFriction = DEFAULT_Z_FRICTION;
@@ -132,7 +127,7 @@ PhysicsBehaviorModuleData::PhysicsBehaviorModuleData()
 		thru some bizarre editing mishap, we have been double-apply pitch/roll/yaw rates
 		to objects for, well, a long time, it looks like. I have corrected that problem
 		in the name of efficiency, but to maintain the same visual appearance without having
-		to edit every freaking INI in the world at this point, I am just multiplying 
+		to edit every freaking INI in the world at this point, I am just multiplying
 		all the results by a factor so that the effect is the same (but with less execution time).
 		I have put this factor into INI in the unlikely event we ever need to change it,
 		but defaulting it to 2 is, in fact, the right thing for now... (srj)
@@ -150,7 +145,7 @@ static void parseHeightToSpeed( INI* ini, void * /*instance*/, void *store, cons
 	// back-calc it from our speed & gravity... v = sqrt(2*g*h)
 	Real height = INI::scanReal(ini->getNextToken());
 	*(Real *)store = heightToSpeed(height);
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 static void parseFrictionPerSec( INI* ini, void * /*instance*/, void *store, const void* /*userData*/ )
@@ -158,40 +153,40 @@ static void parseFrictionPerSec( INI* ini, void * /*instance*/, void *store, con
 	Real fricPerSec = INI::scanReal(ini->getNextToken());
 	Real fricPerFrame = fricPerSec * SECONDS_PER_LOGICFRAME_REAL;
 	*(Real *)store = fricPerFrame;
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
-/*static*/ void PhysicsBehaviorModuleData::buildFieldParse(MultiIniFieldParse& p) 
+/*static*/ void PhysicsBehaviorModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   UpdateModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
-		{ "Mass",								INI::parsePositiveNonZeroReal,		NULL, offsetof( PhysicsBehaviorModuleData, m_mass ) },
+		{ "Mass",								INI::parsePositiveNonZeroReal,		nullptr, offsetof( PhysicsBehaviorModuleData, m_mass ) },
 
-		{ "ShockResistance",		INI::parsePositiveNonZeroReal,		NULL, offsetof( PhysicsBehaviorModuleData, m_shockResistance ) },
-		{ "ShockMaxYaw",				INI::parsePositiveNonZeroReal,		NULL, offsetof( PhysicsBehaviorModuleData, m_shockMaxYaw ) },
-		{ "ShockMaxPitch",			INI::parsePositiveNonZeroReal,		NULL, offsetof( PhysicsBehaviorModuleData, m_shockMaxPitch ) },
-		{ "ShockMaxRoll",				INI::parsePositiveNonZeroReal,		NULL, offsetof( PhysicsBehaviorModuleData, m_shockMaxRoll ) },
+		{ "ShockResistance",		INI::parsePositiveNonZeroReal,		nullptr, offsetof( PhysicsBehaviorModuleData, m_shockResistance ) },
+		{ "ShockMaxYaw",				INI::parsePositiveNonZeroReal,		nullptr, offsetof( PhysicsBehaviorModuleData, m_shockMaxYaw ) },
+		{ "ShockMaxPitch",			INI::parsePositiveNonZeroReal,		nullptr, offsetof( PhysicsBehaviorModuleData, m_shockMaxPitch ) },
+		{ "ShockMaxRoll",				INI::parsePositiveNonZeroReal,		nullptr, offsetof( PhysicsBehaviorModuleData, m_shockMaxRoll ) },
 
-		{ "ForwardFriction",			parseFrictionPerSec,		NULL, offsetof( PhysicsBehaviorModuleData, m_forwardFriction ) },
-		{ "LateralFriction",			parseFrictionPerSec,		NULL, offsetof( PhysicsBehaviorModuleData, m_lateralFriction ) },
-		{ "ZFriction",						parseFrictionPerSec,		NULL, offsetof( PhysicsBehaviorModuleData, m_ZFriction ) },
-		{ "AerodynamicFriction",	parseFrictionPerSec,		NULL, offsetof( PhysicsBehaviorModuleData, m_aerodynamicFriction ) },
+		{ "ForwardFriction",			parseFrictionPerSec,		nullptr, offsetof( PhysicsBehaviorModuleData, m_forwardFriction ) },
+		{ "LateralFriction",			parseFrictionPerSec,		nullptr, offsetof( PhysicsBehaviorModuleData, m_lateralFriction ) },
+		{ "ZFriction",						parseFrictionPerSec,		nullptr, offsetof( PhysicsBehaviorModuleData, m_ZFriction ) },
+		{ "AerodynamicFriction",	parseFrictionPerSec,		nullptr, offsetof( PhysicsBehaviorModuleData, m_aerodynamicFriction ) },
 
-		{ "CenterOfMassOffset",	INI::parseReal,		NULL, offsetof( PhysicsBehaviorModuleData, m_centerOfMassOffset ) },
-		{ "AllowBouncing",			INI::parseBool,		NULL, offsetof( PhysicsBehaviorModuleData, m_allowBouncing ) },
-		{ "AllowCollideForce",	INI::parseBool,		NULL, offsetof( PhysicsBehaviorModuleData, m_allowCollideForce ) },
-		{ "KillWhenRestingOnGround", INI::parseBool, NULL, offsetof( PhysicsBehaviorModuleData, m_killWhenRestingOnGround) },
+		{ "CenterOfMassOffset",	INI::parseReal,		nullptr, offsetof( PhysicsBehaviorModuleData, m_centerOfMassOffset ) },
+		{ "AllowBouncing",			INI::parseBool,		nullptr, offsetof( PhysicsBehaviorModuleData, m_allowBouncing ) },
+		{ "AllowCollideForce",	INI::parseBool,		nullptr, offsetof( PhysicsBehaviorModuleData, m_allowCollideForce ) },
+		{ "KillWhenRestingOnGround", INI::parseBool, nullptr, offsetof( PhysicsBehaviorModuleData, m_killWhenRestingOnGround) },
 
-		{ "MinFallHeightForDamage",			parseHeightToSpeed,		NULL, offsetof( PhysicsBehaviorModuleData, m_minFallSpeedForDamage) },
-		{ "FallHeightDamageFactor",			INI::parseReal,		NULL, offsetof( PhysicsBehaviorModuleData, m_fallHeightDamageFactor) },
-		{ "PitchRollYawFactor",			INI::parseReal,		NULL, offsetof( PhysicsBehaviorModuleData, m_pitchRollYawFactor) },
+		{ "MinFallHeightForDamage",			parseHeightToSpeed,		nullptr, offsetof( PhysicsBehaviorModuleData, m_minFallSpeedForDamage) },
+		{ "FallHeightDamageFactor",			INI::parseReal,		nullptr, offsetof( PhysicsBehaviorModuleData, m_fallHeightDamageFactor) },
+		{ "PitchRollYawFactor",			INI::parseReal,		nullptr, offsetof( PhysicsBehaviorModuleData, m_pitchRollYawFactor) },
 
-		{ "VehicleCrashesIntoBuildingWeaponTemplate", INI::parseWeaponTemplate, NULL, offsetof(PhysicsBehaviorModuleData, m_vehicleCrashesIntoBuildingWeaponTemplate) },
-		{ "VehicleCrashesIntoNonBuildingWeaponTemplate", INI::parseWeaponTemplate, NULL, offsetof(PhysicsBehaviorModuleData, m_vehicleCrashesIntoNonBuildingWeaponTemplate) },
+		{ "VehicleCrashesIntoBuildingWeaponTemplate", INI::parseWeaponTemplate, nullptr, offsetof(PhysicsBehaviorModuleData, m_vehicleCrashesIntoBuildingWeaponTemplate) },
+		{ "VehicleCrashesIntoNonBuildingWeaponTemplate", INI::parseWeaponTemplate, nullptr, offsetof(PhysicsBehaviorModuleData, m_vehicleCrashesIntoNonBuildingWeaponTemplate) },
 
-		{ 0, 0, 0, 0 }
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   p.add(dataFieldParse);
 }
@@ -228,8 +223,8 @@ PhysicsBehavior::PhysicsBehavior( Thing *thing, const ModuleData* moduleData ) :
 	setAllowBouncing(getPhysicsBehaviorModuleData()->m_allowBouncing);
 	setAllowCollideForce(getPhysicsBehaviorModuleData()->m_allowCollideForce);
 
-	m_pui = NULL;
-	m_bounceSound = NULL;
+	m_pui = nullptr;
+	m_bounceSound = nullptr;
 
 #ifdef SLEEPY_PHYSICS
 	setWakeFrame(getObject(), UPDATE_SLEEP_NONE);
@@ -240,15 +235,15 @@ PhysicsBehavior::PhysicsBehavior( Thing *thing, const ModuleData* moduleData ) :
 static ProjectileUpdateInterface* getPui(Object* obj)
 {
 	if (!obj->isKindOf(KINDOF_PROJECTILE))
-		return NULL;
+		return nullptr;
 
-	ProjectileUpdateInterface* objPui = NULL;
+	ProjectileUpdateInterface* objPui = nullptr;
 	for (BehaviorModule** u = obj->getBehaviorModules(); *u; ++u)
 	{
-		if ((objPui = (*u)->getProjectileUpdateInterface()) != NULL)
+		if ((objPui = (*u)->getProjectileUpdateInterface()) != nullptr)
 			return objPui;
 	}
-	return NULL;
+	return nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -260,17 +255,14 @@ void PhysicsBehavior::onObjectCreated()
 //-------------------------------------------------------------------------------------------------
 PhysicsBehavior::~PhysicsBehavior()
 {
-	if (m_bounceSound)
-	{
-		deleteInstance(m_bounceSound);
-		m_bounceSound = NULL;
-	}
+	deleteInstance(m_bounceSound);
+	m_bounceSound = nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------
 void PhysicsBehavior::setIgnoreCollisionsWith(const Object* obj)
 {
-	m_ignoreCollisionsWith = obj ? obj->getID() : INVALID_ID; 
+	m_ignoreCollisionsWith = obj ? obj->getID() : INVALID_ID;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -321,14 +313,17 @@ Real PhysicsBehavior::getZFriction() const
  */
 void PhysicsBehavior::applyForce( const Coord3D *force )
 {
-	DEBUG_ASSERTCRASH(!(_isnan(force->x) || _isnan(force->y) || _isnan(force->z)), ("PhysicsBehavior::applyForce force NAN!\n"));
+// TheSuperHackers @info helmutbuhler 06/05/2025 This debug mutates the code to become CRC incompatible
+#if defined(RTS_DEBUG) || !RETAIL_COMPATIBLE_CRC
+	DEBUG_ASSERTCRASH(!(_isnan(force->x) || _isnan(force->y) || _isnan(force->z)), ("PhysicsBehavior::applyForce force NAN!"));
+#endif
 	if (_isnan(force->x) || _isnan(force->y) || _isnan(force->z)) {
 		return;
 	}
 	// F = ma  -->  a = F/m  (divide force by mass)
 	Real mass = getMass();
 	Coord3D modForce = *force;
-	if (isMotive()) 
+	if (isMotive())
 	{
 		const Coord3D *dir = getObject()->getUnitDirectionVector2D();
 		// Only accept the lateral acceleration.
@@ -342,8 +337,8 @@ void PhysicsBehavior::applyForce( const Coord3D *force )
 	m_accel.y += modForce.y * massInv;
 	m_accel.z += modForce.z * massInv;
 
-	//DEBUG_ASSERTCRASH(!(_isnan(m_accel.x) || _isnan(m_accel.y) || _isnan(m_accel.z)), ("PhysicsBehavior::applyForce accel NAN!\n"));
-	//DEBUG_ASSERTCRASH(!(_isnan(m_vel.x) || _isnan(m_vel.y) || _isnan(m_vel.z)), ("PhysicsBehavior::applyForce vel NAN!\n"));
+	//DEBUG_ASSERTCRASH(!(_isnan(m_accel.x) || _isnan(m_accel.y) || _isnan(m_accel.z)), ("PhysicsBehavior::applyForce accel NAN!"));
+	//DEBUG_ASSERTCRASH(!(_isnan(m_vel.x) || _isnan(m_vel.y) || _isnan(m_vel.z)), ("PhysicsBehavior::applyForce vel NAN!"));
 	//DEBUG_ASSERTCRASH(fabs(force->z) < 3, ("unlikely z-force"));
 #ifdef SLEEPY_PHYSICS
 	if (getFlag(IS_IN_UPDATE))
@@ -410,9 +405,9 @@ void PhysicsBehavior::applyRandomRotation()
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool PhysicsBehavior::isMotive() const 
-{ 
-	return m_motiveForceExpires > TheGameLogic->getFrame(); 
+Bool PhysicsBehavior::isMotive() const
+{
+	return m_motiveForceExpires > TheGameLogic->getFrame();
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -451,11 +446,11 @@ void PhysicsBehavior::applyGravitationalForces()
 void PhysicsBehavior::applyFrictionalForces()
 {
 	//Are we a plane that is taxiing on a deck with a height offset?
-	Bool deckTaxiing = getObject()->testStatus( OBJECT_STATUS_DECK_HEIGHT_OFFSET ) 
-										 && getObject()->getAI() 
+	Bool deckTaxiing = getObject()->testStatus( OBJECT_STATUS_DECK_HEIGHT_OFFSET )
+										 && getObject()->getAI()
 										 && getObject()->getAI()->getCurLocomotorSetType() == LOCOMOTORSET_TAXIING;
 
-	if (getFlag(APPLY_FRICTION2D_WHEN_AIRBORNE) || !getObject()->isSignificantlyAboveTerrain() || deckTaxiing ) 
+	if (getFlag(APPLY_FRICTION2D_WHEN_AIRBORNE) || !getObject()->isSignificantlyAboveTerrain() || deckTaxiing )
 	{
 		applyYPRDamping(1.0f - DEFAULT_LATERAL_FRICTION);
 
@@ -568,23 +563,23 @@ inline Bool isZero3D(const Coord3D& v)
 }
 
 //-------------------------------------------------------------------------------------------------
-void PhysicsBehavior::setPitchRate(Real pitch) 
-{ 
+void PhysicsBehavior::setPitchRate(Real pitch)
+{
 	m_pitchRate = pitch;
 	setFlag(HAS_PITCHROLLYAW, (m_pitchRate != 0.0f || m_rollRate != 0.0f || m_yawRate != 0.0f));
 }
 
 //-------------------------------------------------------------------------------------------------
-void PhysicsBehavior::setRollRate(Real roll) 
-{ 
+void PhysicsBehavior::setRollRate(Real roll)
+{
 	m_rollRate = roll;
 	setFlag(HAS_PITCHROLLYAW, (m_pitchRate != 0.0f || m_rollRate != 0.0f || m_yawRate != 0.0f));
 }
 
 //-------------------------------------------------------------------------------------------------
-void PhysicsBehavior::setYawRate(Real yaw) 
-{ 
-	m_yawRate = yaw; 
+void PhysicsBehavior::setYawRate(Real yaw)
+{
+	m_yawRate = yaw;
 	setFlag(HAS_PITCHROLLYAW, (m_pitchRate != 0.0f || m_rollRate != 0.0f || m_yawRate != 0.0f));
 }
 
@@ -598,22 +593,19 @@ void PhysicsBehavior::applyYPRDamping(Real factor)
 }
 
 //-------------------------------------------------------------------------------------------------
-void PhysicsBehavior::setBounceSound(const AudioEventRTS* bounceSound) 
-{ 
+void PhysicsBehavior::setBounceSound(const AudioEventRTS* bounceSound)
+{
 	if (bounceSound)
 	{
-		if (m_bounceSound == NULL)
+		if (m_bounceSound == nullptr)
 			m_bounceSound = newInstance(DynamicAudioEventRTS);
 
-		m_bounceSound->m_event = *bounceSound; 
+		m_bounceSound->m_event = *bounceSound;
 	}
 	else
 	{
-		if (m_bounceSound)
-		{
-			deleteInstance(m_bounceSound);
-			m_bounceSound = NULL;
-		}
+		deleteInstance(m_bounceSound);
+		m_bounceSound = nullptr;
 	}
 }
 
@@ -670,7 +662,7 @@ UpdateSleepTime PhysicsBehavior::update()
 		Real oldPosZ = mtx.Get_Z_Translation();
 
 		// integrate velocity into position
-		if (obj->testStatus(OBJECT_STATUS_BRAKING)) 
+		if (obj->testStatus(OBJECT_STATUS_BRAKING))
 		{
 			// Don't update position if the locomotor is braking.
 			if (!obj->isKindOf(KINDOF_PROJECTILE))
@@ -678,8 +670,8 @@ UpdateSleepTime PhysicsBehavior::update()
 				// Things other than projectiles don't cheat in z.  jba.
 				mtx.Adjust_Z_Translation(m_vel.z);
 			}
-		}	
-		else 
+		}
+		else
 		{
 			mtx.Adjust_X_Translation(m_vel.x);
 			mtx.Adjust_Y_Translation(m_vel.y);
@@ -695,8 +687,8 @@ UpdateSleepTime PhysicsBehavior::update()
 		// Check when to clear the stunned status
 		if (getIsStunned())
 		{
-			if ( (fabs(m_vel.x) < STUN_RELIEF_EPSILON && 
-				    fabs(m_vel.y) < STUN_RELIEF_EPSILON && 
+			if ( (fabs(m_vel.x) < STUN_RELIEF_EPSILON &&
+				    fabs(m_vel.y) < STUN_RELIEF_EPSILON &&
 				    fabs(m_vel.z) < STUN_RELIEF_EPSILON)
           ||
            obj->isSignificantlyAboveTerrain() == FALSE )
@@ -712,7 +704,7 @@ UpdateSleepTime PhysicsBehavior::update()
 
 			/*
 				You may be tempted to do something like this:
-				
+
 					Real rollAngle = -mtx.Get_X_Rotation();
 					Real pitchAngle = mtx.Get_Y_Rotation();
 					Real yawAngle = mtx.Get_Z_Rotation();
@@ -720,7 +712,7 @@ UpdateSleepTime PhysicsBehavior::update()
 
 				You must resist this temptation, because your code will be wrong!
 
-				The problem is that you can't use these calls to later reconstruct 
+				The problem is that you can't use these calls to later reconstruct
 				the matrix... because doing such a thing is highly order-dependent,
 				and furthermore, you'd have to use Euler angles (Not the Get_?_Rotation
 				calls) to be able to reconstruct 'em, and that's too slow to do for
@@ -729,7 +721,7 @@ UpdateSleepTime PhysicsBehavior::update()
 				The one exception is that it is OK to use Get_Z_Rotation() to get
 				the yaw angle.
 			*/
-			
+
 			// only update the position if we are not HELD
 			// (otherwise, slowdeath sinking into ground won't work)
 			Real yawRateToUse = m_yawRate * d->m_pitchRollYawFactor;
@@ -763,7 +755,7 @@ UpdateSleepTime PhysicsBehavior::update()
 		Real groundZ = TheTerrainLogic->getLayerHeight(mtx.Get_X_Translation(), mtx.Get_Y_Translation(), obj->getLayer());
 		if( obj->getStatusBits().test( OBJECT_STATUS_DECK_HEIGHT_OFFSET ) )
 		{
-			groundZ += obj->getCarrierDeckHeight(); 
+			groundZ += obj->getCarrierDeckHeight();
 		}
 		gotBounceForce = handleBounce(oldPosZ, mtx.Get_Z_Translation(), groundZ, &bounceForce);
 
@@ -771,36 +763,36 @@ UpdateSleepTime PhysicsBehavior::update()
 		activeVelZ = m_vel.z;
 		if (mtx.Get_Z_Translation() <= groundZ)
 		{
-			// Note - when vehicles are going down a slope, they will maintain a small negative 
+			// Note - when vehicles are going down a slope, they will maintain a small negative
 			// z velocity as they go down.  So don't slam it to 0 if they aren't slamming into the
 			// ground.
 			Real dz = groundZ - mtx.Get_Z_Translation();  // Our excess z velocity.
 			m_vel.z += dz;							// Remove the excess z velocity.
 			if (m_vel.z > 0.0f)
-				m_vel.z = 0.0f;	
+				m_vel.z = 0.0f;
 
 			m_velMag = INVALID_VEL_MAG;
-			
+
 			mtx.Set_Z_Translation(groundZ);
 
 			// this flag is ALWAYS cleared once we hit the ground.
 			setFlag(ALLOW_TO_FALL, false);
 
-			// When a stunned object hits the ground the first time, chage it's model state from stunned flailing to just stunned.
+			// When a stunned object hits the ground the first time, change it's model state from stunned flailing to just stunned.
 			if (getFlag(IS_STUNNED))
 			{
 				obj->clearModelConditionState(MODELCONDITION_STUNNED_FLAILING);
 				obj->setModelConditionState(MODELCONDITION_STUNNED);
 			}
 		}
-		else if (mtx.Get_Z_Translation() > groundZ) 
+		else if (mtx.Get_Z_Translation() > groundZ)
 		{
 			if (getFlag(IS_IN_FREEFALL))
 			{
 				obj->setDisabled(DISABLED_FREEFALL);
 				obj->setModelConditionState(MODELCONDITION_FREEFALL);
 			}
-			else if (getFlag(STICK_TO_GROUND) && !getFlag(ALLOW_TO_FALL)) 
+			else if (getFlag(STICK_TO_GROUND) && !getFlag(ALLOW_TO_FALL))
 			{
 				mtx.Set_Z_Translation(groundZ);
 			}
@@ -819,11 +811,11 @@ UpdateSleepTime PhysicsBehavior::update()
 			// Set the result of the after bounce matrix as the object's final matrix
 			obj->setTransformMatrix(&afterBounceMatrix);
 		}
-		else 
+		else
 		{
 			obj->setTransformMatrix(&mtx);
 		}
-	} // if not held
+	}
 
 	// reset the acceleration for accumulation next frame
 	m_accel.zero();
@@ -839,9 +831,9 @@ UpdateSleepTime PhysicsBehavior::update()
 
 	Bool airborneAtEnd = obj->isAboveTerrain();
 
-	// it's not good enough to check for airborne being different between 
+	// it's not good enough to check for airborne being different between
 	// the start and end of this func... we have to compare since last frame,
-	// since (if we're held by a parachute, for instance) we might have been 
+	// since (if we're held by a parachute, for instance) we might have been
 	// moved by other bits of code!
 	if (getFlag(WAS_AIRBORNE_LAST_FRAME) && !airborneAtEnd && !getFlag(IMMUNE_TO_FALLING_DAMAGE))
 	{
@@ -852,7 +844,7 @@ UpdateSleepTime PhysicsBehavior::update()
 		Coord3D normal;
 		normal.x = normal.y = 0.0f;
 		normal.z = -1.0f;
-		obj->onCollide(NULL, obj->getPosition(), &normal);
+		obj->onCollide(nullptr, obj->getPosition(), &normal);
 
 		//
 		// don't bother trying to remember how far we've fallen; instead,
@@ -863,26 +855,26 @@ UpdateSleepTime PhysicsBehavior::update()
 		// even bother doing this check here.
 		//
 		Real netSpeed = -activeVelZ - d->m_minFallSpeedForDamage;
-		
-		if (netSpeed > 0.0f && m_pui == NULL)
+
+		if (netSpeed > 0.0f && m_pui == nullptr)
 		{
 			// only apply force if it's a pretty steep fall, so that things
 			// going down hills don't injure themselves (unless the hill is really steep)
 			const Real MIN_ANGLE_TAN = 3.0f;	//	roughly 71 degrees
 			const Real TINY_DELTA = 0.01f;
-			if ((fabs(m_vel.x) <= TINY_DELTA || fabs(activeVelZ / m_vel.x) >= MIN_ANGLE_TAN) && 
+			if ((fabs(m_vel.x) <= TINY_DELTA || fabs(activeVelZ / m_vel.x) >= MIN_ANGLE_TAN) &&
 				(fabs(m_vel.y) <= TINY_DELTA || fabs(activeVelZ / m_vel.y) >= MIN_ANGLE_TAN))
 			{
 				Real damageAmt = netSpeed * getMass() * d->m_fallHeightDamageFactor;
 
 				DamageInfo damageInfo;
 				damageInfo.in.m_damageType = DAMAGE_FALLING;
-				damageInfo.in.m_deathType = DEATH_SPLATTED;	
+				damageInfo.in.m_deathType = DEATH_SPLATTED;
 				damageInfo.in.m_sourceID = obj->getID();
-				damageInfo.in.m_amount = damageAmt;	
+				damageInfo.in.m_amount = damageAmt;
         damageInfo.in.m_shockWaveAmount = 0.0f;
 				obj->attemptDamage( &damageInfo );
-				//DEBUG_LOG(("Dealing %f (%f %f) points of falling damage to %s!\n",damageAmt,damageInfo.out.m_actualDamageDealt, damageInfo.out.m_actualDamageClipped,obj->getTemplate()->getName().str()));
+				//DEBUG_LOG(("Dealing %f (%f %f) points of falling damage to %s!",damageAmt,damageInfo.out.m_actualDamageDealt, damageInfo.out.m_actualDamageClipped,obj->getTemplate()->getName().str()));
 
 				// if this killed us, add SPLATTED to get a cool death.
 				if (obj->isEffectivelyDead())
@@ -927,7 +919,7 @@ UpdateSleepTime PhysicsBehavior::update()
 UpdateSleepTime PhysicsBehavior::calcSleepTime() const
 {
 #ifdef SLEEPY_PHYSICS
-	if (isZero3D(m_vel) 
+	if (isZero3D(m_vel)
 			&& isZero3D(m_accel)
 			&& !getFlag(HAS_PITCHROLLYAW)
 			&& !isMotive()
@@ -957,7 +949,7 @@ Real PhysicsBehavior::getVelocityMagnitude() const
 
 //-------------------------------------------------------------------------------------------------
 /**
- * Return the current velocity magnitude in the forward direction.  
+ * Return the current velocity magnitude in the forward direction.
  * If velocity is opposite facing vector, the returned value will be negative.
  */
 Real PhysicsBehavior::getForwardSpeed2D() const
@@ -971,7 +963,7 @@ Real PhysicsBehavior::getForwardSpeed2D() const
 
 	Real speedSquared = vx*vx + vy*vy;
 //	DEBUG_ASSERTCRASH( speedSquared != 0, ("zero speedSquared will overflow sqrtf()!") );// lorenzen... sanity check
-	
+
 	Real speed = (Real)sqrtf( speedSquared );
 
 	if (dot >= 0.0f)
@@ -982,7 +974,7 @@ Real PhysicsBehavior::getForwardSpeed2D() const
 
 //-------------------------------------------------------------------------------------------------
 /**
- * Return the current velocity magnitude in the forward direction.  
+ * Return the current velocity magnitude in the forward direction.
  * If velocity is opposite facing vector, the returned value will be negative.
  */
 Real PhysicsBehavior::getForwardSpeed3D() const
@@ -1005,26 +997,26 @@ Real PhysicsBehavior::getForwardSpeed3D() const
 
 //-------------------------------------------------------------------------------------------------
 Bool PhysicsBehavior::isCurrentlyOverlapped(Object *obj) const
-{ 
-	return obj != NULL && obj->getID() == m_currentOverlap;
+{
+	return obj != nullptr && obj->getID() == m_currentOverlap;
 }
 
 //-------------------------------------------------------------------------------------------------
 Bool PhysicsBehavior::wasPreviouslyOverlapped(Object *obj) const
-{ 
-	return obj != NULL && obj->getID() == m_previousOverlap;
+{
+	return obj != nullptr && obj->getID() == m_previousOverlap;
 }
 
 //-------------------------------------------------------------------------------------------------
-void PhysicsBehavior::scrubVelocityZ( Real desiredVelocity ) 
-{ 	 
-	if (fabs(desiredVelocity) < 0.001f) 
+void PhysicsBehavior::scrubVelocityZ( Real desiredVelocity )
+{
+	if (fabs(desiredVelocity) < 0.001f)
 	{
-		m_vel.z = 0; 
-	} 
-	else 
+		m_vel.z = 0;
+	}
+	else
 	{
-		if ((desiredVelocity < 0 && m_vel.z < desiredVelocity) || (desiredVelocity > 0 && m_vel.z > desiredVelocity)) 
+		if ((desiredVelocity < 0 && m_vel.z < desiredVelocity) || (desiredVelocity > 0 && m_vel.z > desiredVelocity))
 		{
 			m_vel.z = desiredVelocity;
 		}
@@ -1033,30 +1025,30 @@ void PhysicsBehavior::scrubVelocityZ( Real desiredVelocity )
 }
 
 //-------------------------------------------------------------------------------------------------
-void PhysicsBehavior::scrubVelocity2D( Real desiredVelocity ) 
-{ 	 
-	if (desiredVelocity < 0.001f) 
+void PhysicsBehavior::scrubVelocity2D( Real desiredVelocity )
+{
+	if (desiredVelocity < 0.001f)
 	{
-		m_vel.x = 0; 
+		m_vel.x = 0;
 		m_vel.y = 0;
-	} 
-	else 
+	}
+	else
 	{
 		Real curVelocity = sqrtf(m_vel.x*m_vel.x + m_vel.y*m_vel.y);
-		if (desiredVelocity > curVelocity) 
+		if (desiredVelocity > curVelocity)
 		{
 			return;
 		}
 		desiredVelocity /= curVelocity;
 		m_vel.x *= desiredVelocity;
-		m_vel.y *= desiredVelocity;	 
+		m_vel.y *= desiredVelocity;
 	}
 	m_velMag = INVALID_VEL_MAG;
 }
 
 //-------------------------------------------------------------------------------------------------
-void PhysicsBehavior::addOverlap(Object *obj) 
-{ 
+void PhysicsBehavior::addOverlap(Object *obj)
+{
 	if (obj && !isCurrentlyOverlapped(obj))
 	{
 		m_currentOverlap = obj->getID();
@@ -1066,15 +1058,17 @@ void PhysicsBehavior::addOverlap(Object *obj)
 //-------------------------------------------------------------------------------------------------
 void PhysicsBehavior::transferVelocityTo(PhysicsBehavior* that) const
 {
-	if (that != NULL)
+	if (that != nullptr)
+	{
 		that->m_vel.add(&m_vel);
-	that->m_velMag = INVALID_VEL_MAG;
+		that->m_velMag = INVALID_VEL_MAG;
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
-void PhysicsBehavior::addVelocityTo( const Coord3D *vel) 
+void PhysicsBehavior::addVelocityTo( const Coord3D *vel)
 {
-	if (vel != NULL)
+	if (vel != nullptr)
 		m_vel.add( vel );
 }
 
@@ -1094,7 +1088,7 @@ void PhysicsBehavior::setAngles( Real yaw, Real pitch, Real roll )
 }
 
 //-------------------------------------------------------------------------------------------------
-Real PhysicsBehavior::getMass() const 
+Real PhysicsBehavior::getMass() const
 {
 	Real mass = m_mass;
 	ContainModuleInterface* contain = getObject()->getContain();
@@ -1152,9 +1146,9 @@ void PhysicsBehavior::doBounceSound(const Coord3D& prevPos)
 }
 
 //-------------------------------------------------------------------------------------------------
-/** 
+/**
  * Resolve the collision between getObject() and other by computing
- * the amount the objects have overlapd, and applying proportional forces to 
+ * the amount the objects have overlapd, and applying proportional forces to
  * push them apart.
  * Note that this call only applies forces to our object, not to "other".  Since the
  * forces should be equal and opposite, this could be optimized.
@@ -1165,7 +1159,7 @@ void PhysicsBehavior::doBounceSound(const Coord3D& prevPos)
 void PhysicsBehavior::onCollide( Object *other, const Coord3D *loc, const Coord3D *normal )
 {
 	//USE_PERF_TIMER(PhysicsBehavioronCollide)
-	if (m_pui != NULL)
+	if (m_pui != nullptr)
 	{
 		// projectiles always get a chance to handle their own collisions, and not go thru here
 		if (m_pui->projectileHandleCollision(other))
@@ -1177,7 +1171,7 @@ void PhysicsBehavior::onCollide( Object *other, const Coord3D *loc, const Coord3
 	Object* objContainedBy = obj->getContainedBy();
 
 	// Note that other == null means "collide with ground"
-	if (other == NULL)
+	if (other == nullptr)
 	{
 		// if we are in a container, tell the container we collided with the ground.
 		// (handy for parachutes.)
@@ -1202,9 +1196,9 @@ void PhysicsBehavior::onCollide( Object *other, const Coord3D *loc, const Coord3
 		return;
 	}
 
-	// ignore collisions with our "ignore" thingie, if any (and vice versa)
+	// ignore collisions with our "ignore" thingy, if any (and vice versa)
 	AIUpdateInterface* ai = obj->getAIUpdateInterface();
-	if (ai != NULL  && ai->getIgnoredObstacleID() == other->getID())
+	if (ai != nullptr  && ai->getIgnoredObstacleID() == other->getID())
 	{
 /// @todo srj -- what the hell is this code doing here? ack!
 		//Before we return, check for a very special case of an infantry colliding with an unmanned vehicle.
@@ -1218,7 +1212,7 @@ void PhysicsBehavior::onCollide( Object *other, const Coord3D *loc, const Coord3
 			//We need to be able to test whether an object on a team has been captured, so set here that this object
 			//was captured.
 			other->setCaptured(true);
-			
+
 			other->defect( obj->getTeam(), 0 );
 			//other->setTeam( obj->getTeam() );
 
@@ -1232,7 +1226,7 @@ void PhysicsBehavior::onCollide( Object *other, const Coord3D *loc, const Coord3
 	}
 
 	AIUpdateInterface* aiOther = other->getAIUpdateInterface();
-	if (aiOther != NULL  && aiOther->getIgnoredObstacleID() == obj->getID())
+	if (aiOther != nullptr  && aiOther->getIgnoredObstacleID() == obj->getID())
 	{
 		return;
 	}
@@ -1276,7 +1270,7 @@ void PhysicsBehavior::onCollide( Object *other, const Coord3D *loc, const Coord3
 	if (immobile)
 		mass = 999999.0f;
 
-	if (ai) 
+	if (ai)
 	{
 		// AI objects move under their own initiative, not by getting bounced.  jba.
 		// unless they are dead & colliding with something immobile. (srj)
@@ -1284,7 +1278,7 @@ void PhysicsBehavior::onCollide( Object *other, const Coord3D *loc, const Coord3
 		if (!((obj->isEffectivelyDead() || obj->testStatus(OBJECT_STATUS_PARACHUTING)) && otherImmobile))
 		{
 			Bool doForce = ai->processCollision(this, other);
-			if (!doForce) 
+			if (!doForce)
 				return;
 		}
 
@@ -1321,8 +1315,8 @@ void PhysicsBehavior::onCollide( Object *other, const Coord3D *loc, const Coord3
 		// We don't overlap at all.  How did we get here?
 		return;
 	}
-	
-	
+
+
 	m_lastCollidee = other->getID();
 
 	Real dist = sqrtf(distSqr);
@@ -1344,9 +1338,9 @@ void PhysicsBehavior::onCollide( Object *other, const Coord3D *loc, const Coord3
 				// don't let us intersect buildings. cheat. applying a force won't work
 				// cuz we are usually braking. jam it.
 				Object* objToBounce = obj;
-				while (objToBounce->getContainedBy() != NULL)
+				while (objToBounce->getContainedBy() != nullptr)
 					objToBounce = objToBounce->getContainedBy();
-				
+
 				Real bounceOutDist = usRadius * 0.1f;
 				Coord3D tmp = *objToBounce->getPosition();
 				tmp.x -= bounceOutDist * delta.x / dist;
@@ -1367,15 +1361,15 @@ void PhysicsBehavior::onCollide( Object *other, const Coord3D *loc, const Coord3
 			if (stiffness < MIN_STIFF) stiffness = MIN_STIFF;
 			if (stiffness > MAX_STIFF) stiffness = MAX_STIFF;
 			// huh huh, he said "stiff"
-			
+
 			Real mag = getVelocityMagnitude();
 			const Real MINBOUNCESPEED = 1.0f/(LOGICFRAMES_PER_SECOND*5.0f);
-			if (mag < MINBOUNCESPEED) 
+			if (mag < MINBOUNCESPEED)
 				mag = MINBOUNCESPEED;
 			factor = -mag * getMass() * stiffness;
-			
+
 			// if we are moving down, we may want to blow ourselves into smithereens....
-			if (delta.z < 0.0f && 
+			if (delta.z < 0.0f &&
 					obj->getPosition()->z >= TheGlobalData->m_defaultStructureRubbleHeight)
 			{
 				if (other->isKindOf(KINDOF_STRUCTURE))
@@ -1400,16 +1394,16 @@ void PhysicsBehavior::onCollide( Object *other, const Coord3D *loc, const Coord3
 
 			// nuke the velocity. why? very simple: we want to ignore the previous vel in favor of
 			// this. in theory, we could be clever and calculate the right force to apply to achieve this,
-			// but then if we were still colliding next frame, we'd get a sudden 'aceleration' of bounce
+			// but then if we were still colliding next frame, we'd get a sudden 'acceleration' of bounce
 			// that would look freakish. so cheat.
 			m_vel.x = 0;
-			m_vel.y = 0;	 
-			m_vel.z = 0;	 
+			m_vel.y = 0;
+			m_vel.z = 0;
 			m_velMag = INVALID_VEL_MAG;
 		}
 		else
 		{
-			if (overlap > 5.0f) 
+			if (overlap > 5.0f)
 				overlap = 5.0f;
 			factor = -overlap;
 		}
@@ -1417,7 +1411,7 @@ void PhysicsBehavior::onCollide( Object *other, const Coord3D *loc, const Coord3
 		force.x = factor * delta.x / dist;
 		force.y = factor * delta.y / dist;
 		force.z = factor * delta.z / dist;	// will be zero for 2d case.
-		DEBUG_ASSERTCRASH(!(_isnan(force.x) || _isnan(force.y) || _isnan(force.z)), ("PhysicsBehavior::onCollide force NAN!\n"));
+		DEBUG_ASSERTCRASH(!(_isnan(force.x) || _isnan(force.y) || _isnan(force.z)), ("PhysicsBehavior::onCollide force NAN!"));
 
 		applyForce( &force );
 	}
@@ -1447,7 +1441,7 @@ static Bool perpsLogicallyEqual( Real perpOne, Real perpTwo )
 //-------------------------------------------------------------------------------------------------
 Bool PhysicsBehavior::checkForOverlapCollision(Object *other)
 {
-	//This is the most Supreme Truth... that unless I am moving right now, I may not crush anyhing!
+	//This is the most Supreme Truth... that unless I am moving right now, I may not crush anything!
 	if ( isVerySmall3D( *getVelocity() ) )
 		return false;
 
@@ -1462,7 +1456,7 @@ Bool PhysicsBehavior::checkForOverlapCollision(Object *other)
 	if( selfCrushingOther && selfBeingCrushed )
 	{
 		//Is it possible to crush and be crushed at the same time?
-		DEBUG_CRASH( ("%s (Crusher:%d, Crushable:%d) is attempting to crush %s (Crusher:%d, Crushable:%d) but it is reciprocating -- shouldn't be possible!", 
+		DEBUG_CRASH( ("%s (Crusher:%d, Crushable:%d) is attempting to crush %s (Crusher:%d, Crushable:%d) but it is reciprocating -- shouldn't be possible!",
 			crusherMe->getTemplate()->getName().str(), crusherMe->getCrusherLevel(), crusherMe->getCrushableLevel(),
 			crusheeOther->getTemplate()->getName().str(), crusheeOther->getCrusherLevel(), crusheeOther->getCrushableLevel() ) );
 		return false;
@@ -1477,7 +1471,7 @@ Bool PhysicsBehavior::checkForOverlapCollision(Object *other)
 
 	// grab physics modules if there
 	PhysicsBehavior *crusherPhysics = this;
-	if( crusherPhysics == NULL )
+	if( crusherPhysics == nullptr )
 	{
 		return false;
 	}
@@ -1530,7 +1524,7 @@ Bool PhysicsBehavior::checkForOverlapCollision(Object *other)
 			// Degenerate case; there is only one point to consider.
 			if( frontCrushed )
 				crushTarget = BACK_END_CRUSH;
-			else 
+			else
 				crushTarget = FRONT_END_CRUSH;
 		}
 		else
@@ -1606,8 +1600,8 @@ Bool PhysicsBehavior::checkForOverlapCollision(Object *other)
 			// Now find the shortest.  Use the straightline distance to crush point as tie breaker
 			if( (frontPerpLength <= centerPerpLength)  && (frontPerpLength <= backPerpLength) )
 			{
-				if( perpsLogicallyEqual(frontPerpLength, centerPerpLength) 
-					|| perpsLogicallyEqual(frontPerpLength, backPerpLength) 
+				if( perpsLogicallyEqual(frontPerpLength, centerPerpLength)
+					|| perpsLogicallyEqual(frontPerpLength, backPerpLength)
 					)
 				{
 					Real frontVectorLength = frontVector.length();
@@ -1635,8 +1629,8 @@ Bool PhysicsBehavior::checkForOverlapCollision(Object *other)
 			}
 			else if( (backPerpLength <= centerPerpLength)  && (backPerpLength <= frontPerpLength) )
 			{
-				if( perpsLogicallyEqual(backPerpLength, centerPerpLength) 
-					|| perpsLogicallyEqual(backPerpLength, frontPerpLength) 
+				if( perpsLogicallyEqual(backPerpLength, centerPerpLength)
+					|| perpsLogicallyEqual(backPerpLength, frontPerpLength)
 					)
 				{
 					Real backVectorLength = backVector.length();
@@ -1665,7 +1659,7 @@ Bool PhysicsBehavior::checkForOverlapCollision(Object *other)
 			else // centerperp is shortest
 			{
 				if( perpsLogicallyEqual(centerPerpLength, backPerpLength)
-					|| perpsLogicallyEqual(centerPerpLength, frontPerpLength) 
+					|| perpsLogicallyEqual(centerPerpLength, frontPerpLength)
 					)
 				{
 					Real centerVectorLength = centerVector.length();
@@ -1718,7 +1712,7 @@ Bool PhysicsBehavior::checkForOverlapCollision(Object *other)
 		}
 		else if( crushTarget == FRONT_END_CRUSH )
 		{
-			// Check the front point.  
+			// Check the front point.
 			comparisonCoord = *crusheePos;
 			comparisonCoord.x += crushPointOffset.x;
 			comparisonCoord.y += crushPointOffset.y;
@@ -1766,7 +1760,7 @@ Bool PhysicsBehavior::checkForOverlapCollision(Object *other)
 			crusheeOther->attemptDamage( &damageInfo );
 		}
 
-	} // if crushable
+	}
 
 	return true;
 }
@@ -1774,10 +1768,10 @@ Bool PhysicsBehavior::checkForOverlapCollision(Object *other)
 // ------------------------------------------------------------------------------------------------
 /** Test whether unit needs to die because of being on illegal cell, upside down, outside legal bounds **/
 // ------------------------------------------------------------------------------------------------
-void PhysicsBehavior::testStunnedUnitForDestruction(void)
+void PhysicsBehavior::testStunnedUnitForDestruction()
 {
 	// Only do test if unit is stunned
-	if (!getFlag(IS_STUNNED)) 
+	if (!getFlag(IS_STUNNED))
 		return;
 
 	// Grab the object
@@ -1785,14 +1779,14 @@ void PhysicsBehavior::testStunnedUnitForDestruction(void)
 	const Coord3D *pos = obj->getPosition();
 
 	// If a stunned object is upside down when it hits the ground, kill it
-	if(obj->getTransformMatrix()->Get_Z_Vector().Z < 0.0f) 
+	if(obj->getTransformMatrix()->Get_Z_Vector().Z < 0.0f)
 	{
 		obj->kill();
 		return;
 	}
 
 	// Check if unit has exited playable area. If so, kill it
-  if (obj->isOffMap()) 
+  if (obj->isOffMap())
 	{
      obj->kill();
 		 return;
@@ -1807,11 +1801,11 @@ void PhysicsBehavior::testStunnedUnitForDestruction(void)
 	{
 		obj->kill();
 		return;
-	} 
+	}
 
 	// Check for object being stuck on water. If so kill it
 	if (TheTerrainLogic->isUnderwater(pos->x, pos->y) && !aiInt->hasLocomotorForSurface(LOCOMOTORSURFACE_WATER))
-	{	
+	{
 		obj->kill();
 		return;
 	}
@@ -1826,7 +1820,7 @@ void PhysicsBehavior::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -1849,7 +1843,7 @@ void PhysicsBehavior::xfer( Xfer *xfer )
 
 	// roll rate
 	xfer->xferReal( &m_rollRate );
-	
+
 	// pitch rate
 	xfer->xferReal( &m_pitchRate );
 
@@ -1906,15 +1900,15 @@ void PhysicsBehavior::xfer( Xfer *xfer )
 	// mag of current vel
 	xfer->xferReal( &m_velMag );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void PhysicsBehavior::loadPostProcess( void )
+void PhysicsBehavior::loadPostProcess()
 {
 
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

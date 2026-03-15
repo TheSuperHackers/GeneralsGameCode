@@ -29,9 +29,9 @@
 #include "WorldBuilderDoc.h"
 #include "TileTool.h"
 #include "Common/TerrainTypes.h"
-#include "W3DDevice/GameClient/TerrainTex.h"	  
+#include "W3DDevice/GameClient/TerrainTex.h"
 
-BlendMaterial *BlendMaterial::m_staticThis = NULL;
+BlendMaterial *BlendMaterial::m_staticThis = nullptr;
 
 static Int defaultMaterialIndex = -1;
 
@@ -40,7 +40,7 @@ static Int defaultMaterialIndex = -1;
 
 Int BlendMaterial::m_currentBlendTexture(-1);
 
-BlendMaterial::BlendMaterial(CWnd* pParent /*=NULL*/) :
+BlendMaterial::BlendMaterial(CWnd* pParent /*=nullptr*/) :
 	m_updating(false)
 {
 	//{{AFX_DATA_INIT(BlendMaterial)
@@ -67,7 +67,7 @@ END_MESSAGE_MAP()
 // BlendMaterial data access method.
 
 /// Set foreground texture and invalidate swatches.
-void BlendMaterial::setBlendTexClass(Int texClass) 
+void BlendMaterial::setBlendTexClass(Int texClass)
 {
 	if (m_staticThis) {
 		m_staticThis->m_currentBlendTexture=texClass;
@@ -84,11 +84,11 @@ Bool BlendMaterial::setTerrainTreeViewSelection(HTREEITEM parent, Int selection)
 	char buffer[_MAX_PATH];
 	::memset(&item, 0, sizeof(item));
 	HTREEITEM child = m_terrainTreeView.GetChildItem(parent);
-	while (child != NULL) {
+	while (child != nullptr) {
 		item.mask = TVIF_HANDLE|TVIF_PARAM;
 		item.hItem = child;
 		item.pszText = buffer;
-		item.cchTextMax = sizeof(buffer)-2;				
+		item.cchTextMax = sizeof(buffer)-2;
 		m_terrainTreeView.GetItem(&item);
 		if (item.lParam == selection) {
 			m_terrainTreeView.SelectItem(child);
@@ -107,7 +107,7 @@ Bool BlendMaterial::setTerrainTreeViewSelection(HTREEITEM parent, Int selection)
 // BlendMaterial message handlers
 
 /// Setup the controls in the dialog.
-BOOL BlendMaterial::OnInitDialog() 
+BOOL BlendMaterial::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
@@ -126,7 +126,7 @@ BOOL BlendMaterial::OnInitDialog()
 	pWnd->GetWindowRect(&rect);
 	ScreenToClient(&rect);
 	rect.DeflateRect(2,2,2,2);
-	//m_terrainSwatches.Create(NULL, "", WS_CHILD, rect, this, IDC_TERRAIN_SWATCHES);
+	//m_terrainSwatches.Create(nullptr, "", WS_CHILD, rect, this, IDC_TERRAIN_SWATCHES);
 	//m_terrainSwatches.ShowWindow(SW_SHOW);
 
 	m_staticThis = this;
@@ -144,11 +144,11 @@ HTREEITEM BlendMaterial::findOrAdd(HTREEITEM parent, const char *pLabel)
 	char buffer[_MAX_PATH];
 	::memset(&ins, 0, sizeof(ins));
 	HTREEITEM child = m_terrainTreeView.GetChildItem(parent);
-	while (child != NULL) {
+	while (child != nullptr) {
 		ins.item.mask = TVIF_HANDLE|TVIF_TEXT;
 		ins.item.hItem = child;
 		ins.item.pszText = buffer;
-		ins.item.cchTextMax = sizeof(buffer)-2;				
+		ins.item.cchTextMax = sizeof(buffer)-2;
 		m_terrainTreeView.GetItem(&ins.item);
 		if (strcmp(buffer, pLabel) == 0) {
 			return(child);
@@ -163,7 +163,7 @@ HTREEITEM BlendMaterial::findOrAdd(HTREEITEM parent, const char *pLabel)
 	ins.item.mask = TVIF_PARAM|TVIF_TEXT;
 	ins.item.lParam = -1;
 	ins.item.pszText = const_cast<char*>(pLabel);
-	ins.item.cchTextMax = strlen(pLabel);				
+	ins.item.cchTextMax = strlen(pLabel);
 	child = m_terrainTreeView.InsertItem(&ins);
 	return(child);
 }
@@ -191,25 +191,21 @@ void BlendMaterial::addTerrain(const char *pPath, Int terrainNdx, HTREEITEM pare
 		}
 
 		// set the name in the tree view to that of the entry
-		strcpy( buffer, terrain->getName().str() );
+		strlcpy(buffer, terrain->getName().str(), ARRAY_SIZE(buffer));
 
 		doAdd = TRUE;
 	} else if (terrainNdx==-1) {
-		strcpy(buffer, pPath);
+		strlcpy(buffer, pPath, ARRAY_SIZE(buffer));
 		doAdd = true;
 	} else if (WorldHeightMapEdit::getTexClassIsBlendEdge(terrainNdx)) {
 		parent = findOrAdd( parent, "**EVAL**" );
-		strcpy(buffer, pPath);
+		strlcpy(buffer, pPath, ARRAY_SIZE(buffer));
 		doAdd = true;
-	}  // end if
+	}
 
 //	Int tilesPerRow = TEXTURE_WIDTH/(2*TILE_PIXEL_EXTENT+TILE_OFFSET);
 //	Int availableTiles = 4 * tilesPerRow * tilesPerRow;
 //	Int percent = (WorldHeightMapEdit::getTexClassNumTiles(terrainNdx)*100 + availableTiles/2) / availableTiles;
-
-	char label[_MAX_PATH];
-	sprintf(label, "%s", buffer);
-
 
 	if( doAdd )
 	{
@@ -220,8 +216,8 @@ void BlendMaterial::addTerrain(const char *pPath, Int terrainNdx, HTREEITEM pare
 		ins.hInsertAfter = TVI_LAST;
 		ins.item.mask = TVIF_PARAM|TVIF_TEXT;
 		ins.item.lParam = terrainNdx;
-		ins.item.pszText = label;
-		ins.item.cchTextMax = strlen(label)+2;				
+		ins.item.pszText = buffer;
+		ins.item.cchTextMax = strlen(buffer)+2;
 		m_terrainTreeView.InsertItem(&ins);
 	}
 
@@ -239,18 +235,18 @@ void BlendMaterial::updateTextures(void)
 	for (i=WorldHeightMapEdit::getNumTexClasses()-1; i>=0; i--) {
 		char path[_MAX_PATH];
 		AsciiString uiName = WorldHeightMapEdit::getTexClassUiName(i);
-		strncpy(path, uiName.str(), _MAX_PATH-2);
+		strlcpy(path, uiName.str(), _MAX_PATH);
 		addTerrain(path, i, TVI_ROOT);
 	}
 	m_updating = false;
 	m_currentBlendTexture = defaultMaterialIndex;
-	setTerrainTreeViewSelection(TVI_ROOT, m_currentBlendTexture);	
+	setTerrainTreeViewSelection(TVI_ROOT, m_currentBlendTexture);
 }
 
 
 
 
-BOOL BlendMaterial::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult) 
+BOOL BlendMaterial::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 {
 	NMTREEVIEW *pHdr = (NMTREEVIEW *)lParam;
 	if (pHdr->hdr.hwndFrom == m_terrainTreeView.m_hWnd) {
@@ -272,7 +268,7 @@ BOOL BlendMaterial::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 				m_currentBlendTexture = texClass;
 			}	else if (!(item.state & TVIS_EXPANDEDONCE) ) {
 				HTREEITEM child = m_terrainTreeView.GetChildItem(hItem);
-				while (child != NULL) {
+				while (child != nullptr) {
 					hItem = child;
 					child = m_terrainTreeView.GetChildItem(hItem);
 				}
@@ -282,6 +278,6 @@ BOOL BlendMaterial::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 			}
 		}
 	}
-	
+
 	return CDialog::OnNotify(wParam, lParam, pResult);
 }

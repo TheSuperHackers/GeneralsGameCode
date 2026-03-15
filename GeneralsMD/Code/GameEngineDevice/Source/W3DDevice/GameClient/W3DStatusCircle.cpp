@@ -23,10 +23,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "W3DDevice/GameClient/W3DStatusCircle.h"
+#include "W3DDevice/GameClient/WorldHeightMap.h"
 
-#include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <assetmgr.h>
 #include <texture.h>
 #include <tri.h>
@@ -64,32 +63,30 @@
 	ShaderClass::ALPHATEST_DISABLE, ShaderClass::CULL_MODE_ENABLE, \
 	ShaderClass::DETAILCOLOR_DISABLE, ShaderClass::DETAILALPHA_DISABLE) )
 
-#define VERTEX_BUFFER_TILE_LENGTH	32		//tiles of side length 32 (grid of 33x33 vertices).
-#define VERTS_IN_BLOCK_ROW			(VERTEX_BUFFER_TILE_LENGTH+1)	
 
 
 static ShaderClass detailOpaqueShader(SC_ALPHA);
 Bool W3DStatusCircle::m_needUpdate;
 Int W3DStatusCircle::m_diffuse=255; // blue.
 
-W3DStatusCircle::~W3DStatusCircle(void)
+W3DStatusCircle::~W3DStatusCircle()
 {
 	freeMapResources();
 }
 
-W3DStatusCircle::W3DStatusCircle(void)
+W3DStatusCircle::W3DStatusCircle()
 {
-	m_indexBuffer=NULL;
-	m_vertexMaterialClass=NULL;
-	m_vertexBufferCircle=NULL;
-	m_vertexBufferScreen=NULL;
+	m_indexBuffer=nullptr;
+	m_vertexMaterialClass=nullptr;
+	m_vertexBufferCircle=nullptr;
+	m_vertexBufferScreen=nullptr;
 }
 
 
 bool W3DStatusCircle::Cast_Ray(RayCollisionTestClass & raytest)
 {
 
-	return false;	
+	return false;
 
 }
 
@@ -110,7 +107,7 @@ void W3DStatusCircle::Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const
 {
 	Vector3	ObjSpaceCenter((float)1000*0.5f,(float)1000*0.5f,(float)0);
 	float length = ObjSpaceCenter.Length();
-	
+
 	sphere.Init(ObjSpaceCenter, length);
 }
 
@@ -121,18 +118,18 @@ void W3DStatusCircle::Get_Obj_Space_Bounding_Box(AABoxClass & box) const
 	box.Init(minPt,maxPt);
 }
 
-Int W3DStatusCircle::Class_ID(void) const
+Int W3DStatusCircle::Class_ID() const
 {
 	return RenderObjClass::CLASSID_UNKNOWN;
 }
 
-RenderObjClass * W3DStatusCircle::Clone(void) const
+RenderObjClass * W3DStatusCircle::Clone() const
 {
 	return NEW W3DStatusCircle(*this);
 }
 
 
-Int W3DStatusCircle::freeMapResources(void)
+Int W3DStatusCircle::freeMapResources()
 {
 
 	REF_PTR_RELEASE(m_indexBuffer);
@@ -145,8 +142,8 @@ Int W3DStatusCircle::freeMapResources(void)
 #define NUM_TRI 20
 //Allocate a heightmap of x by y vertices.
 //data must be an array matching this size.
-Int W3DStatusCircle::initData(void)
-{	
+Int W3DStatusCircle::initData()
+{
 	Int i;
 
 	m_needUpdate = true;
@@ -158,7 +155,7 @@ Int W3DStatusCircle::initData(void)
 	// Fill up the IB
 	DX8IndexBufferClass::WriteLockClass lockIdxBuffer(m_indexBuffer);
 	UnsignedShort *ib=lockIdxBuffer.Get_Index_Array();
-		
+
 	for (i=0; i<3*m_numTriangles; i+=3)
 	{
 		ib[0]=i;
@@ -174,7 +171,7 @@ Int W3DStatusCircle::initData(void)
 	//go with a preset material for now.
 	m_vertexMaterialClass=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
 
-	m_shaderClass = ShaderClass::ShaderClass(SC_ALPHA);// _PresetOpaque2DShader;//; //_PresetOpaqueShader;
+	m_shaderClass = ShaderClass(SC_ALPHA);// _PresetOpaque2DShader;//; //_PresetOpaqueShader;
 
 
 	return 0;
@@ -183,7 +180,7 @@ Int W3DStatusCircle::initData(void)
 
 /** updateCircleVB puts a circle with a team color vertex buffer. */
 
-Int W3DStatusCircle::updateCircleVB(void)
+Int W3DStatusCircle::updateCircleVB()
 {
 	Int i, k;
 	Real shade;
@@ -193,17 +190,17 @@ Int W3DStatusCircle::updateCircleVB(void)
 		m_needUpdate = false;
 		DX8VertexBufferClass::WriteLockClass lockVtxBuffer(pVB);
 		VertexFormatXYZDUV1 *vb = (VertexFormatXYZDUV1*)lockVtxBuffer.Get_Vertex_Array();
-		
+
 		const Real theZ = 0.0f;
 		const Real theRadius = 0.02f;
 		const Int theAlpha = 127;
-	  Int diffuse = m_diffuse + (theAlpha<<24);	 // b g<<8 r<<16 a<<24.		 
+	  Int diffuse = m_diffuse + (theAlpha<<24);	 // b g<<8 r<<16 a<<24.
 		Int limit = m_numTriangles;
 		float curAngle = 0;
 		float deltaAngle = 2*PI/limit;
 		for (i=0; i<limit; i++)
 		{
-			
+
 			shade=0.7f*255.0f;
 			for (k=0; k<3; k++) {
 				vb->z=  theZ;
@@ -219,19 +216,19 @@ Int W3DStatusCircle::updateCircleVB(void)
 					Real angle = curAngle+deltaAngle;
 					if (i==limit-1) {
 						angle = 0;
-					} 
+					}
 					Vector3 vec(theRadius,0,theZ);
 					vec.Rotate_Z(angle);
 					vb->x=	vec.X;
 					vb->y=	vec.Y;
 				}
-				vb->diffuse = diffuse; 
+				vb->diffuse = diffuse;
 				vb->u1=0;
 				vb->v1=0;
 				vb++;
 			}
 			curAngle += deltaAngle;
-			
+
 		}
 		return 0; //success.
 	}
@@ -248,68 +245,68 @@ Int W3DStatusCircle::updateScreenVB(Int diffuse)
 		m_needUpdate = false;
 		DX8VertexBufferClass::WriteLockClass lockVtxBuffer(pVB);
 		VertexFormatXYZDUV1 *vb = (VertexFormatXYZDUV1*)lockVtxBuffer.Get_Vertex_Array();
-							
-		vb->x =	-1;
-		vb->y =	-1;
-		vb->z = 0;
-		vb->diffuse = diffuse; 
-		vb->u1=0;
-		vb->v1=0;
-		vb++;	
-
-		vb->x =	1;
-		vb->y =	1;
-		vb->z = 0;
-		vb->diffuse = diffuse; 
-		vb->u1=0;
-		vb->v1=0;
-		vb++;	
-
-		vb->x =	-1;
-		vb->y =	1;
-		vb->z = 0;
-		vb->diffuse = diffuse; 
-		vb->u1=0;
-		vb->v1=0;
-		vb++;	
 
 		vb->x =	-1;
 		vb->y =	-1;
 		vb->z = 0;
-		vb->diffuse = diffuse; 
+		vb->diffuse = diffuse;
 		vb->u1=0;
 		vb->v1=0;
-		vb++;	
-
-		vb->x =	1;
-		vb->y =	-1;
-		vb->z = 0;
-		vb->diffuse = diffuse; 
-		vb->u1=0;
-		vb->v1=0;
-		vb++;	
+		vb++;
 
 		vb->x =	1;
 		vb->y =	1;
 		vb->z = 0;
-		vb->diffuse = diffuse; 
+		vb->diffuse = diffuse;
 		vb->u1=0;
 		vb->v1=0;
-		vb++;	
+		vb++;
+
+		vb->x =	-1;
+		vb->y =	1;
+		vb->z = 0;
+		vb->diffuse = diffuse;
+		vb->u1=0;
+		vb->v1=0;
+		vb++;
+
+		vb->x =	-1;
+		vb->y =	-1;
+		vb->z = 0;
+		vb->diffuse = diffuse;
+		vb->u1=0;
+		vb->v1=0;
+		vb++;
+
+		vb->x =	1;
+		vb->y =	-1;
+		vb->z = 0;
+		vb->diffuse = diffuse;
+		vb->u1=0;
+		vb->v1=0;
+		vb++;
+
+		vb->x =	1;
+		vb->y =	1;
+		vb->z = 0;
+		vb->diffuse = diffuse;
+		vb->u1=0;
+		vb->v1=0;
+		vb++;
 		return 0; //success.
 	}
 	return -1;
 }
 
-void W3DStatusCircle::Render(RenderInfoClass & rinfo)	 
+void W3DStatusCircle::Render(RenderInfoClass & rinfo)
 {
 	if (!TheGameLogic->isInGame() || TheGameLogic->getGameMode() == GAME_SHELL)
 		return;
 
-	if (m_indexBuffer == NULL) {
+	if (m_indexBuffer == nullptr) {
 		initData();
 	}
-	if (m_indexBuffer == NULL) {
+	if (m_indexBuffer == nullptr) {
 		return;
 	}
 	Bool setIndex = false;
@@ -322,7 +319,7 @@ void W3DStatusCircle::Render(RenderInfoClass & rinfo)
 		//Apply the shader and material
 		DX8Wrapper::Set_Material(m_vertexMaterialClass);
 		DX8Wrapper::Set_Shader(m_shaderClass);
-		DX8Wrapper::Set_Texture(0, NULL);
+		DX8Wrapper::Set_Texture(0, nullptr);
 		DX8Wrapper::Set_Index_Buffer(m_indexBuffer,0);
 		DX8Wrapper::Set_Vertex_Buffer(m_vertexBufferCircle);
 		setIndex = true;
@@ -345,13 +342,13 @@ void W3DStatusCircle::Render(RenderInfoClass & rinfo)
 	if (!setIndex) {
 		DX8Wrapper::Set_Material(m_vertexMaterialClass);
 		DX8Wrapper::Set_Index_Buffer(m_indexBuffer,0);
-		DX8Wrapper::Set_Texture(0, NULL);
+		DX8Wrapper::Set_Texture(0, nullptr);
 	}
 
 	tm.Make_Identity();
 	Real intensity = TheScriptEngine->getFadeValue();
 	Int clr = 255*intensity;
-	Int diffuse = (0xff<<24)|(clr<<16)|(clr<<8)|clr;	 // b g<<8 r<<16 a<<24.		 
+	Int diffuse = (0xff<<24)|(clr<<16)|(clr<<8)|clr;	 // b g<<8 r<<16 a<<24.
 	updateScreenVB(diffuse);
 	DX8Wrapper::Set_Transform(D3DTS_WORLD,tm);
 	DX8Wrapper::Set_Shader(ShaderClass(SC_ADD));

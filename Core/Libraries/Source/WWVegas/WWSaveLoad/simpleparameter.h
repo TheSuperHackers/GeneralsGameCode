@@ -34,16 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-
-
-
-#ifndef __SIMPLE_PARAMETER_H
-#define __SIMPLE_PARAMETER_H
 
 #include "always.h"
 #include "parameter.h"
@@ -63,7 +54,7 @@ template <class T, ParameterClass::Type type>
 class SimpleParameterClass : public ParameterClass
 {
 public:
-	
+
 	///////////////////////////////////////////////////////////////////////
 	//	Public constructors/destructors
 	///////////////////////////////////////////////////////////////////////
@@ -77,11 +68,11 @@ public:
 	///////////////////////////////////////////////////////////////////////
 	//	Public methods
 	///////////////////////////////////////////////////////////////////////
-	const T &		Get_Value (void) const;
+	const T &		Get_Value () const;
 	void				Set_Value (const T &new_value);
 
 	// From Parameter class
-	ParameterClass::Type	Get_Type (void) const;
+	ParameterClass::Type	Get_Type () const;
 	void						Copy_Value (const ParameterClass &src);
 
 private:
@@ -123,7 +114,7 @@ SimpleParameterClass<T, type>::operator== (const ParameterClass &src)
 //	Get_Value
 //////////////////////////////////////////////////////////////////////////////////
 template <class T, ParameterClass::Type type> inline const T &
-SimpleParameterClass<T, type>::Get_Value (void) const
+SimpleParameterClass<T, type>::Get_Value () const
 {
 	return (*m_Data);
 }
@@ -143,8 +134,8 @@ SimpleParameterClass<T, type>::Set_Value (const T &new_value)
 //	Get_Type
 //////////////////////////////////////////////////////////////////////////////////
 template <class T, ParameterClass::Type type> inline ParameterClass::Type
-SimpleParameterClass<T, type>::Get_Type (void) const
-{	
+SimpleParameterClass<T, type>::Get_Type () const
+{
 	return type;
 }
 
@@ -178,9 +169,9 @@ typedef SimpleParameterClass<int,		ParameterClass::TYPE_STRINGSDB_ID>	StringsDBE
 
 //////////////////////////////////////////////////////////////////////////////////
 //
-//	RangedParameterClass 
+//	RangedParameterClass
 //
-//		Extends simple paramter types so they can have minimum/maximum values.
+//		Extends simple parameter types so they can have minimum/maximum values.
 //
 //////////////////////////////////////////////////////////////////////////////////
 template <class T, ParameterClass::Type type>
@@ -197,8 +188,8 @@ public:
 	//	Public methods
 	///////////////////////////////////////////////////////////////////////
 	void				Set_Range (const T &min, const T &max)	{ m_Min = min; m_Max = max; }
-	const T &		Get_Min (void) const							{ return m_Min; }
-	const T &		Get_Max (void) const							{ return m_Max; }
+	const T &		Get_Min () const							{ return m_Min; }
+	const T &		Get_Max () const							{ return m_Max; }
 
 private:
 
@@ -211,7 +202,7 @@ private:
 
 
 //////////////////////////////////////////////////////////////////////////////////
-//	IntParameterClass 
+//	IntParameterClass
 //////////////////////////////////////////////////////////////////////////////////
 class IntParameterClass : public RangedParameterClass<int, ParameterClass::TYPE_INT>
 {
@@ -222,7 +213,7 @@ public:
 };
 
 //////////////////////////////////////////////////////////////////////////////////
-//	FloatParameterClass 
+//	FloatParameterClass
 //////////////////////////////////////////////////////////////////////////////////
 class FloatParameterClass  : public RangedParameterClass<float, ParameterClass::TYPE_FLOAT>
 {
@@ -233,7 +224,7 @@ public:
 };
 
 //////////////////////////////////////////////////////////////////////////////////
-//	AngleParameterClass 
+//	AngleParameterClass
 //////////////////////////////////////////////////////////////////////////////////
 class AngleParameterClass   : public RangedParameterClass<float, ParameterClass::TYPE_ANGLE>
 {
@@ -242,6 +233,3 @@ public:
 		:	RangedParameterClass<float, ParameterClass::TYPE_ANGLE> (data, name)
 			{ Set_Range (0.0F,  6.283185307F); }
 };
-
-#endif //__SIMPLE_PARAMETER_H
-

@@ -17,38 +17,31 @@
 */
 
 /* $Header: /Commando/Code/ww3d2/hcanim.h 2     6/29/01 6:41p Jani_p $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando / G 3D Library                                      * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/ww3d2/hcanim.h                               $* 
- *                                                                                             * 
- *                       Author:: Greg_h                                                       * 
- *                                                                                             * 
- *                     $Modtime:: 6/27/01 7:35p                                               $* 
- *                                                                                             * 
- *                    $Revision:: 2                                                           $* 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando / G 3D Library                                      *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/ww3d2/hcanim.h                               $*
+ *                                                                                             *
+ *                       Author:: Greg_h                                                       *
+ *                                                                                             *
+ *                     $Modtime:: 6/27/01 7:35p                                               $*
+ *                                                                                             *
+ *                    $Revision:: 2                                                           $*
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef HCANIM_H
-#define HCANIM_H
 
 #include "always.h"
 #include "quat.h"
-#include "refcount.h"
 #include "w3d_file.h"
-#include "SLIST.H"
-#include "Vector.H"
+#include "SLIST.h"
+#include "Vector.h"
 #include "hanim.h"
 
 struct NodeCompressedMotionStruct;
@@ -74,34 +67,32 @@ class HCompressedAnimClass : public HAnimClass
 {
 
 public:
-	
+
 	enum
 	{
 		OK,
 		LOAD_ERROR
 	};
-	
-	HCompressedAnimClass(void);
-	~HCompressedAnimClass(void);
+
+	HCompressedAnimClass();
+	~HCompressedAnimClass();
 
 	int							Load_W3D(ChunkLoadClass & cload);
 
-	const char *				Get_Name(void) const { return Name; }
-	const char *				Get_HName(void) const { return HierarchyName; }
-	int							Get_Num_Frames(void) { return NumFrames; }
+	const char *				Get_Name() const { return Name; }
+	const char *				Get_HName() const { return HierarchyName; }
+	int							Get_Num_Frames() { return NumFrames; }
 	float							Get_Frame_Rate() { return FrameRate; }
 	float							Get_Total_Time() { return (float)NumFrames / FrameRate; }
 	int							Get_Flavor() { return Flavor; }
 
-//	Vector3						Get_Translation(int pividx,float frame);
-//	Quaternion					Get_Orientation(int pividx,float frame);
 	void							Get_Translation(Vector3& translation, int pividx,float frame) const;
 	void							Get_Orientation(Quaternion& orientation, int pividx,float frame) const;
 	void							Get_Transform(Matrix3D& transform, int pividx,float frame) const;
 	bool							Get_Visibility(int pividx,float frame);
 
 	bool							Is_Node_Motion_Present(int pividx);
-	int							Get_Num_Pivots(void)	const	{ return NumNodes; }
+	int							Get_Num_Pivots()	const	{ return NumNodes; }
 
 	// Methods that test the presence of a certain motion channel.
 	bool							Has_X_Translation (int pividx);
@@ -114,7 +105,7 @@ private:
 
 	char							Name[2*W3D_NAME_LEN];
 	char							HierarchyName[W3D_NAME_LEN];
-	
+
 	int							NumFrames;
 	int							NumNodes;
 	int							Flavor;
@@ -122,7 +113,7 @@ private:
 
 	NodeCompressedMotionStruct *		NodeMotion;
 
-	void Free(void);	
+	void Free();
 	bool read_channel(ChunkLoadClass & cload,TimeCodedMotionChannelClass * * newchan);
 	bool read_channel(ChunkLoadClass & cload,AdaptiveDeltaMotionChannelClass * * newchan);
 	void add_channel(TimeCodedMotionChannelClass * newchan);
@@ -133,7 +124,3 @@ private:
 	void add_bit_channel(TimeCodedBitChannelClass * newchan);
 
 };
-
-
-#endif // hcanim.h
- 

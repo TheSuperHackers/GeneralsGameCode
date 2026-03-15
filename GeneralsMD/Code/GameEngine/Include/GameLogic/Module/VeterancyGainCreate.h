@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __VETERANCY_GAIN_CREATE_H_
-#define __VETERANCY_GAIN_CREATE_H_
-
 #define DEFINE_VETERANCY_NAMES
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/GameCommon.h"
@@ -65,11 +62,8 @@ public:
 	// virtual destructor prototype provided by memory pool declaration
 
 	/// the create method
-	virtual void onCreate( void );
+	virtual void onCreate() override;
 
 protected:
 
 };
-
-#endif 
-

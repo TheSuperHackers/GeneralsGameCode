@@ -30,9 +30,6 @@
 
 #pragma once
 
-#ifndef CONVERT_TO_CAR_BOMB_CRATE_COLLIDE_H_
-#define CONVERT_TO_CAR_BOMB_CRATE_COLLIDE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/Module.h"
 #include "GameLogic/Module/CrateCollide.h"
@@ -51,16 +48,16 @@ public:
 	ConvertToCarBombCrateCollideModuleData()
 	{
 		m_rangeOfEffect = 0;
-		m_fxList = NULL;
+		m_fxList = nullptr;
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     CrateCollideModuleData::buildFieldParse(p);
 
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
-			{ "FXList",		INI::parseFXList,		NULL, offsetof( ConvertToCarBombCrateCollideModuleData, m_fxList ) },
+			{ "FXList",		INI::parseFXList,		nullptr, offsetof( ConvertToCarBombCrateCollideModuleData, m_fxList ) },
 			{ 0, 0, 0, 0 }
 		};
     p.add(dataFieldParse);
@@ -82,12 +79,10 @@ public:
 protected:
 
 	/// This allows specific vetoes to certain types of crates and their data
-	virtual Bool isValidToExecute( const Object *other ) const;
+	virtual Bool isValidToExecute( const Object *other ) const override;
 
 	/// This is the game logic execution function that all real CrateCollides will implement
-	virtual Bool executeCrateBehavior( Object *other );
-	virtual Bool isRailroad() const { return FALSE;};
-	virtual Bool isCarBombCrateCollide() const { return TRUE; }
+	virtual Bool executeCrateBehavior( Object *other ) override;
+	virtual Bool isRailroad() const override { return FALSE;};
+	virtual Bool isCarBombCrateCollide() const override { return TRUE; }
 };
-
-#endif

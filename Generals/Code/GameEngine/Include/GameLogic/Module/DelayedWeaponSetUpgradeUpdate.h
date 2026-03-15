@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __DELAYED_WEAPON_SET_UPGRADE_UPDATE_H_
-#define __DELAYED_WEAPON_SET_UPGRADE_UPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpdateModule.h"
 
@@ -42,7 +39,7 @@ class DelayedWeaponSetUpgradeUpdateModuleData: public UpdateModuleData
 
 public:
 
-	DelayedWeaponSetUpgradeUpdateModuleData( void );
+	DelayedWeaponSetUpgradeUpdateModuleData();
 
 	static void buildFieldParse(MultiIniFieldParse& p);
 
@@ -61,13 +58,11 @@ public:
 	DelayedWeaponSetUpgradeUpdate( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual Bool isTriggeredBy( UpgradeMaskType potentialMask );	///< If you were an upgrade, would you trigger for this?
-	virtual void setDelay( UnsignedInt startingDelay );	///< Start the upgrade doing countdown
+	virtual Bool isTriggeredBy( const UpgradeMaskType& potentialMask ) override;	///< If you were an upgrade, would you trigger for this?
+	virtual void setDelay( UnsignedInt startingDelay ) override;	///< Start the upgrade doing countdown
 
-	virtual UpdateSleepTime update();
+	virtual UpdateSleepTime update() override;
 
 protected:
-	
-};
 
-#endif
+};

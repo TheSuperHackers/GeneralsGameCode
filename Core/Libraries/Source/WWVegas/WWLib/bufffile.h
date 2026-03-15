@@ -16,40 +16,35 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*********************************************************************************************** 
- ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Command & Conquer                                            * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/wwlib/bufffile.h                             $* 
- *                                                                                             * 
+/***********************************************************************************************
+ ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Command & Conquer                                            *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/wwlib/bufffile.h                             $*
+ *                                                                                             *
  *                      $Author:: Ian_l                                                       $*
- *                                                                                             * 
+ *                                                                                             *
  *                     $Modtime:: 10/31/01 3:33p                                              $*
- *                                                                                             * 
+ *                                                                                             *
  *                    $Revision:: 3                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  *   RawFileClass::File_Name -- Returns with the filename associate with the file object.      *
  *   RawFileClass::RawFileClass -- Default constructor for a file object.                      *
  *   RawFileClass::~RawFileClass -- Default deconstructor for a file object.                   *
  *   RawFileClass::Is_Open -- Checks to see if the file is open or not.                        *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if _MSC_VER >= 1000
 #pragma once
-#endif // _MSC_VER >= 1000
 
-#ifndef BUFFFILE_H
-#define BUFFFILE_H
-
-#include	"RAWFILE.H"
+#include "RAWFILE.h"
 
 
 /*
-**	This is the definition of a buffered read raw file class. 
+**	This is the definition of a buffered read raw file class.
 */
 class BufferedFileClass : public RawFileClass
 {
@@ -58,28 +53,26 @@ class BufferedFileClass : public RawFileClass
 	public:
 
 		BufferedFileClass(char const *filename);
-		BufferedFileClass(void);
+		BufferedFileClass();
 		BufferedFileClass (RawFileClass const & f);
 		BufferedFileClass & operator = (BufferedFileClass const & f);
-		virtual ~BufferedFileClass(void);
+		virtual ~BufferedFileClass();
 
 		virtual int Read(void *buffer, int size);
 		virtual int Seek(int pos, int dir=SEEK_CUR);
 		virtual int Write(void const *buffer, int size);
-		virtual void Close(void);
+		virtual void Close();
 
 	protected:
 
 		static	void		Set_Desired_Buffer_Size( int size ) { _DesiredBufferSize = size; }
 
-		void					Reset_Buffer( void );
-		
+		void					Reset_Buffer();
+
 	private:
-		unsigned char *	Buffer;				// The read buffer 
+		unsigned char *	Buffer;				// The read buffer
 		unsigned int		BufferSize;			// The allocated size of the read buffer
 		int					BufferAvailable;	// The amount of data in the read buffer
 		int					BufferOffset;		// The data already given out
 		static	int		_DesiredBufferSize;
 };
-
-#endif

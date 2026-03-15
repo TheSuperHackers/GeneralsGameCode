@@ -30,9 +30,6 @@
 
 #pragma once
 
-#ifndef _DEFAULT_PRODUCTION_EXIT_UPDATE_H
-#define _DEFAULT_PRODUCTION_EXIT_UPDATE_H
-
 #include "GameLogic/Module/UpdateModule.h"
 #include "Common/INI.h"
 #include "Lib/BaseType.h"
@@ -54,14 +51,14 @@ public:
 		m_useSpawnRallyPoint = false;
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     UpdateModuleData::buildFieldParse(p);
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
-			{ "UnitCreatePoint",		INI::parseCoord3D,		NULL, offsetof( DefaultProductionExitUpdateModuleData, m_unitCreatePoint ) },
-			{ "NaturalRallyPoint",  INI::parseCoord3D,		NULL, offsetof( DefaultProductionExitUpdateModuleData, m_naturalRallyPoint ) },
-			{ "UseSpawnRallyPoint", INI::parseBool,				NULL, offsetof( DefaultProductionExitUpdateModuleData, m_useSpawnRallyPoint ) },
+			{ "UnitCreatePoint",		INI::parseCoord3D,		nullptr, offsetof( DefaultProductionExitUpdateModuleData, m_unitCreatePoint ) },
+			{ "NaturalRallyPoint",  INI::parseCoord3D,		nullptr, offsetof( DefaultProductionExitUpdateModuleData, m_naturalRallyPoint ) },
+			{ "UseSpawnRallyPoint", INI::parseBool,				nullptr, offsetof( DefaultProductionExitUpdateModuleData, m_useSpawnRallyPoint ) },
 			{ 0, 0, 0, 0 }
 		};
     p.add(dataFieldParse);
@@ -77,24 +74,24 @@ class DefaultProductionExitUpdate : public UpdateModule, public ExitInterface
 
 public:
 
-	virtual ExitInterface* getUpdateExitInterface() { return this; }
+	virtual ExitInterface* getUpdateExitInterface() override { return this; }
 
 	DefaultProductionExitUpdate( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	// Required funcs to fufill interface requirements
-	virtual Bool isExitBusy() const {return FALSE;}	///< Contain style exiters are getting the ability to space out exits, so ask this before reserveDoor as a kind of no-commitment check.
-	virtual ExitDoorType reserveDoorForExit( const ThingTemplate* objType, Object *specificObject ) { return DOOR_1; }
-	virtual void exitObjectViaDoor( Object *newObj, ExitDoorType exitDoor );
-	virtual void unreserveDoorForExit( ExitDoorType exitDoor ) { /* nothing */ }
-	virtual void exitObjectByBudding( Object *newObj, Object *budHost ) { return; }
+	// Required funcs to fulfill interface requirements
+	virtual Bool isExitBusy() const override {return FALSE;}	///< Contain style exiters are getting the ability to space out exits, so ask this before reserveDoor as a kind of no-commitment check.
+	virtual ExitDoorType reserveDoorForExit( const ThingTemplate* objType, Object *specificObject ) override { return DOOR_1; }
+	virtual void exitObjectViaDoor( Object *newObj, ExitDoorType exitDoor ) override;
+	virtual void unreserveDoorForExit( ExitDoorType exitDoor ) override { /* nothing */ }
+	virtual void exitObjectByBudding( Object *newObj, Object *budHost ) override { return; }
 
-	virtual void setRallyPoint( const Coord3D *pos );				///< define a "rally point" for units to move towards
-	virtual const Coord3D *getRallyPoint( void ) const;			///< define a "rally point" for units to move towards
-	virtual Bool useSpawnRallyPoint( void ) const;
-	virtual Bool getNaturalRallyPoint( Coord3D& rallyPoint, Bool offset = TRUE ) const;			///< get the natural "rally point" for units to move towards
-	virtual Bool getExitPosition( Coord3D& exitPosition ) const;					///< access to the "Door" position of the production object
-	virtual UpdateSleepTime update()										{ return UPDATE_SLEEP_FOREVER; }
+	virtual void setRallyPoint( const Coord3D *pos ) override;				///< define a "rally point" for units to move towards
+	virtual const Coord3D *getRallyPoint() const override;			///< define a "rally point" for units to move towards
+	virtual Bool useSpawnRallyPoint() const override;
+	virtual Bool getNaturalRallyPoint( Coord3D& rallyPoint, Bool offset = TRUE ) const override;			///< get the natural "rally point" for units to move towards
+	virtual Bool getExitPosition( Coord3D& exitPosition ) const override;					///< access to the "Door" position of the production object
+	virtual UpdateSleepTime update() override { return UPDATE_SLEEP_FOREVER; }
 
 protected:
 
@@ -111,16 +108,16 @@ inline void DefaultProductionExitUpdate::setRallyPoint( const Coord3D *pos )
 }
 
 //-------------------------------------------------------------------------------------------------
-inline const Coord3D *DefaultProductionExitUpdate::getRallyPoint( void ) const
+inline const Coord3D *DefaultProductionExitUpdate::getRallyPoint() const
 {
 	if (m_rallyPointExists)
 		return &m_rallyPoint;
 
-	return NULL;
+	return nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------
-inline Bool DefaultProductionExitUpdate::useSpawnRallyPoint( void ) const
+inline Bool DefaultProductionExitUpdate::useSpawnRallyPoint() const
 {
 	// Check if the building has requested spawn units (like those that are airdropped)
 	// to use the rally points of the building.
@@ -129,5 +126,3 @@ inline Bool DefaultProductionExitUpdate::useSpawnRallyPoint( void ) const
 	else
 		return FALSE;
 }
-
-#endif

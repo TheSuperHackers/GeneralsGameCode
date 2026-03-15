@@ -1,0 +1,13 @@
+root=true
+
+[*]
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[{*.h,*.cpp,*.inl}]
+indent_style = unset
+indent_size = 2
+
+[{CMakeLists.txt,*.cmake,*.py}]
+indent_style = spaces
+indent_size = 4

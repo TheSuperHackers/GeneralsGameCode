@@ -26,7 +26,9 @@
 //
 // Function level profiling
 //////////////////////////////////////////////////////////////////////////////
-#include "_pch.h"
+
+#include "profile.h"
+#include "internal.h"
 #include "../debug/debug.h"
 #include <new>
 
@@ -40,7 +42,7 @@ static ProfileFastCS cs;
 
 // Unfortunately VC 6 doesn't support _pleave (or _pexit) so
 // we have to come up with our own type of implementation here...
-static void __declspec(naked) _pleave(void)
+static void __declspec(naked) _pleave()
 {
   ProfileFuncLevelTracer *p;
   unsigned curESP,leaveAddr;
@@ -72,12 +74,12 @@ static void __declspec(naked) _pleave(void)
   }
 }
 
-extern "C" void __declspec(naked) _cdecl _penter(void)
+extern "C" void __declspec(naked) __cdecl _penter()
 {
   unsigned callerFunc,ESPonReturn,callerRet;
   ProfileFuncLevelTracer *p;
 
-  _asm 
+  _asm
   {
     push ebp
     push eax
@@ -126,14 +128,14 @@ extern "C" void __declspec(naked) _cdecl _penter(void)
   }
 }
 
-ProfileFuncLevelTracer *ProfileFuncLevelTracer::head=NULL;
+ProfileFuncLevelTracer *ProfileFuncLevelTracer::head=nullptr;
 bool ProfileFuncLevelTracer::shuttingDown=false;
 int ProfileFuncLevelTracer::curFrame=0;
 unsigned ProfileFuncLevelTracer::frameRecordMask;
 bool ProfileFuncLevelTracer::recordCaller=false;
 
-ProfileFuncLevelTracer::ProfileFuncLevelTracer(void):
-  stack(NULL), usedStack(0), totalStack(0), maxDepth(0)
+ProfileFuncLevelTracer::ProfileFuncLevelTracer():
+  stack(nullptr), usedStack(0), totalStack(0), maxDepth(0)
 {
   ProfileFastCS::Lock lock(cs);
 
@@ -179,9 +181,9 @@ void ProfileFuncLevelTracer::Enter(unsigned addr, unsigned esp, unsigned ret)
   if (usedStack>=maxDepth)
     maxDepth=usedStack;
 
-  DLOG_GROUP(profile_stack,Debug::RepeatChar(' ',usedStack-1) 
-                          << Debug::Hex() << this 
-                          << " Enter " << Debug::Width(8) << addr 
+  DLOG_GROUP(profile_stack,Debug::RepeatChar(' ',usedStack-1)
+                          << Debug::Hex() << this
+                          << " Enter " << Debug::Width(8) << addr
                           << " ESP "   << Debug::Width(8) << esp
                           << " return "   << Debug::Width(8) << ret
                           << " level " << Debug::Dec() << usedStack
@@ -260,9 +262,9 @@ unsigned ProfileFuncLevelTracer::Leave(unsigned esp)
     DCRASH("ESP " << Debug::Hex() << esp << " does not match " << stack[usedStack].esp << Debug::Dec());
   }
 
-  DLOG_GROUP(profile_stack,Debug::RepeatChar(' ',usedStack-1) 
-                          << Debug::Hex() << this 
-                          << " Leave " << Debug::Width(8) << "" 
+  DLOG_GROUP(profile_stack,Debug::RepeatChar(' ',usedStack-1)
+                          << Debug::Hex() << this
+                          << " Leave " << Debug::Width(8) << ""
                           << " ESP "   << Debug::Width(8) << stack[usedStack].esp
                           << " return "   << Debug::Width(8) << stack[usedStack].retVal
                           << " level " << Debug::Dec() << usedStack
@@ -271,7 +273,7 @@ unsigned ProfileFuncLevelTracer::Leave(unsigned esp)
   return stack[usedStack].retVal;
 }
 
-void ProfileFuncLevelTracer::Shutdown(void)
+void ProfileFuncLevelTracer::Shutdown()
 {
   if (frameRecordMask)
   {
@@ -282,7 +284,7 @@ void ProfileFuncLevelTracer::Shutdown(void)
   }
 }
 
-int ProfileFuncLevelTracer::FrameStart(void)
+int ProfileFuncLevelTracer::FrameStart()
 {
   ProfileFastCS::Lock lock(cs);
 
@@ -296,7 +298,7 @@ int ProfileFuncLevelTracer::FrameStart(void)
   for (ProfileFuncLevelTracer *p=head;p;p=p->next)
   {
     Function *f;
-    for (int k=0;(f=p->func.Enumerate(k))!=NULL;k++)
+    for (int k=0;(f=p->func.Enumerate(k))!=nullptr;k++)
     {
       Profile &p=f->cur[i];
       p.caller.Clear();
@@ -312,20 +314,20 @@ void ProfileFuncLevelTracer::FrameEnd(int which, int mixIndex)
 {
   DFAIL_IF(which<0||which>=MAX_FRAME_RECORDS)
     return;
-  DFAIL_IF(!(frameRecordMask&(1<<which))) 
+  DFAIL_IF(!(frameRecordMask&(1<<which)))
     return;
   DFAIL_IF(mixIndex>=curFrame)
     return;
 
   ProfileFastCS::Lock lock(cs);
-  
+
   frameRecordMask^=1<<which;
   if (mixIndex<0)
     curFrame++;
   for (ProfileFuncLevelTracer *p=head;p;p=p->next)
   {
     Function *f;
-    for (int k=0;(f=p->func.Enumerate(k))!=NULL;k++)
+    for (int k=0;(f=p->func.Enumerate(k))!=nullptr;k++)
     {
       Profile &p=f->cur[which];
       if (p.callCount)
@@ -341,14 +343,14 @@ void ProfileFuncLevelTracer::FrameEnd(int which, int mixIndex)
   }
 }
 
-void ProfileFuncLevelTracer::ClearTotals(void)
+void ProfileFuncLevelTracer::ClearTotals()
 {
   ProfileFastCS::Lock lock(cs);
 
   for (ProfileFuncLevelTracer *p=head;p;p=p->next)
   {
     Function *f;
-    for (int k=0;(f=p->func.Enumerate(k))!=NULL;k++)
+    for (int k=0;(f=p->func.Enumerate(k))!=nullptr;k++)
     {
       f->glob.caller.Clear();
       f->glob.callCount=0;
@@ -358,8 +360,8 @@ void ProfileFuncLevelTracer::ClearTotals(void)
   }
 }
 
-ProfileFuncLevelTracer::UnsignedMap::UnsignedMap(void):
-  e(NULL), alloc(0), used(0), writeLock(false)
+ProfileFuncLevelTracer::UnsignedMap::UnsignedMap():
+  e(nullptr), alloc(0), used(0), writeLock(false)
 {
   memset(hash,0,sizeof(hash));
 }
@@ -369,10 +371,10 @@ ProfileFuncLevelTracer::UnsignedMap::~UnsignedMap()
   Clear();
 }
 
-void ProfileFuncLevelTracer::UnsignedMap::Clear(void)
+void ProfileFuncLevelTracer::UnsignedMap::Clear()
 {
   ProfileFreeMemory(e);
-  e=NULL;
+  e=nullptr;
   alloc=used=0;
   memset(hash,0,sizeof(hash));
 }
@@ -425,7 +427,7 @@ void ProfileFuncLevelTracer::UnsignedMap::Copy(const UnsignedMap &src)
 {
   Clear();
   if (src.e)
-  { 
+  {
     alloc=used=src.used;
     e=(Entry *)ProfileAllocMemory(alloc*sizeof(Entry));
     memcpy(e,src.e,alloc*sizeof(Entry));
@@ -441,8 +443,8 @@ void ProfileFuncLevelTracer::UnsignedMap::MixIn(const UnsignedMap &src)
   writeLock=true;
 }
 
-ProfileFuncLevelTracer::ProfileMap::ProfileMap(void):
-  root(NULL), tail(&root)
+ProfileFuncLevelTracer::ProfileMap::ProfileMap():
+  root(nullptr), tail(&root)
 {
 }
 
@@ -461,7 +463,7 @@ ProfileFuncLevelTracer::Profile *ProfileFuncLevelTracer::ProfileMap::Find(int fr
 {
   List *p=root;
   for (;p&&p->frame<frame;p=p->next);
-  return p&&p->frame==frame?&p->p:NULL;
+  return p&&p->frame==frame?&p->p: nullptr;
 }
 
 void ProfileFuncLevelTracer::ProfileMap::Append(int frame, const Profile &p)
@@ -470,7 +472,7 @@ void ProfileFuncLevelTracer::ProfileMap::Append(int frame, const Profile &p)
   new (newEntry) List;
   newEntry->frame=frame;
   newEntry->p.Copy(p);
-  newEntry->next=NULL;
+  newEntry->next=nullptr;
   *tail=newEntry;
   tail=&newEntry->next;
 }
@@ -488,8 +490,8 @@ void ProfileFuncLevelTracer::ProfileMap::MixIn(int frame, const Profile &p)
     oldEntry->p.MixIn(p);
 }
 
-ProfileFuncLevelTracer::FunctionMap::FunctionMap(void):
-  e(NULL), alloc(0), used(0)
+ProfileFuncLevelTracer::FunctionMap::FunctionMap():
+  e(nullptr), alloc(0), used(0)
 {
   memset(hash,0,sizeof(hash));
 }
@@ -538,7 +540,7 @@ void ProfileFuncLevelTracer::FunctionMap::Insert(Function *funcPtr)
 ProfileFuncLevelTracer::Function *ProfileFuncLevelTracer::FunctionMap::Enumerate(int index)
 {
   if (index<0||index>=(int)used)
-    return NULL;
+    return nullptr;
   return e[index].funcPtr;
 }
 
@@ -561,10 +563,10 @@ bool ProfileFuncLevel::IdList::Enum(unsigned index, Id &id, unsigned *countPtr) 
     return false;
 }
 
-const char *ProfileFuncLevel::Id::GetSource(void) const
+const char *ProfileFuncLevel::Id::GetSource() const
 {
   if (!m_funcPtr)
-    return NULL;
+    return nullptr;
 
   ProfileFuncLevelTracer::Function *func=(ProfileFuncLevelTracer::Function *)m_funcPtr;
   if (!func->funcSource)
@@ -572,10 +574,10 @@ const char *ProfileFuncLevel::Id::GetSource(void) const
     char helpFunc[256],helpFile[256];
     unsigned ofsFunc;
     DebugStackwalk::Signature::GetSymbol(func->addr,
-                                         NULL,0,NULL,
+                                         nullptr,0,nullptr,
                                          helpFunc,sizeof(helpFunc),&ofsFunc,
-                                         helpFile,sizeof(helpFile),&func->funcLine,NULL);
-    
+                                         helpFile,sizeof(helpFile),&func->funcLine,nullptr);
+
     char help[300];
     wsprintf(help,ofsFunc?"%s+0x%x":"%s",helpFunc,ofsFunc);
     func->funcSource=(char *)ProfileAllocMemory(strlen(helpFile)+1);
@@ -587,17 +589,17 @@ const char *ProfileFuncLevel::Id::GetSource(void) const
   return func->funcSource;
 }
 
-const char *ProfileFuncLevel::Id::GetFunction(void) const
+const char *ProfileFuncLevel::Id::GetFunction() const
 {
   if (!m_funcPtr)
-    return NULL;
+    return nullptr;
   ProfileFuncLevelTracer::Function *func=(ProfileFuncLevelTracer::Function *)m_funcPtr;
   if (!func->funcSource)
     GetSource();
   return func->funcName;
 }
 
-unsigned ProfileFuncLevel::Id::GetAddress(void) const
+unsigned ProfileFuncLevel::Id::GetAddress() const
 {
   if (!m_funcPtr)
     return 0;
@@ -605,10 +607,10 @@ unsigned ProfileFuncLevel::Id::GetAddress(void) const
   return func->addr;
 }
 
-unsigned ProfileFuncLevel::Id::GetLine(void) const
+unsigned ProfileFuncLevel::Id::GetLine() const
 {
   if (!m_funcPtr)
-    return NULL;
+    return 0;
   ProfileFuncLevelTracer::Function *func=(ProfileFuncLevelTracer::Function *)m_funcPtr;
   if (!func->funcSource)
     GetSource();
@@ -692,7 +694,7 @@ bool ProfileFuncLevel::Thread::EnumProfile(unsigned index, Id &id) const
 {
   if (!m_threadID)
     return false;
-  
+
   ProfileFastCS::Lock lock(cs);
 
   ProfileFuncLevelTracer::Function *f=m_threadID->EnumFunction(index);
@@ -722,7 +724,7 @@ bool ProfileFuncLevel::EnumThreads(unsigned index, Thread &thread)
     return false;
 }
 
-ProfileFuncLevel::ProfileFuncLevel(void)
+ProfileFuncLevel::ProfileFuncLevel()
 {
 }
 
@@ -733,22 +735,22 @@ bool ProfileFuncLevel::IdList::Enum(unsigned index, Id &id, unsigned *) const
   return false;
 }
 
-const char *ProfileFuncLevel::Id::GetSource(void) const
+const char *ProfileFuncLevel::Id::GetSource() const
 {
-  return NULL;
+  return nullptr;
 }
 
-const char *ProfileFuncLevel::Id::GetFunction(void) const
+const char *ProfileFuncLevel::Id::GetFunction() const
 {
-  return NULL;
+  return nullptr;
 }
 
-unsigned ProfileFuncLevel::Id::GetAddress(void) const
+unsigned ProfileFuncLevel::Id::GetAddress() const
 {
   return 0;
 }
 
-unsigned ProfileFuncLevel::Id::GetLine(void) const
+unsigned ProfileFuncLevel::Id::GetLine() const
 {
   return 0;
 }
@@ -783,11 +785,11 @@ bool ProfileFuncLevel::EnumThreads(unsigned index, Thread &thread)
   return false;
 }
 
-ProfileFuncLevel::ProfileFuncLevel(void)
+ProfileFuncLevel::ProfileFuncLevel()
 {
 }
 
 #endif // !defined HAS_PROFILE
 
 ProfileFuncLevel ProfileFuncLevel::Instance;
-HANDLE ProfileFastCS::testEvent=::CreateEvent(NULL,FALSE,FALSE,"");
+HANDLE ProfileFastCS::testEvent=::CreateEvent(nullptr,FALSE,FALSE,"");

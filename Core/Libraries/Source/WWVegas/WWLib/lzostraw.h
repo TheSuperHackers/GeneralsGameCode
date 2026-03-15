@@ -16,29 +16,27 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*********************************************************************************************** 
- ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Command & Conquer                                            * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Library/lzostraw.h                                $* 
- *                                                                                             * 
+/***********************************************************************************************
+ ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Command & Conquer                                            *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Library/lzostraw.h                                $*
+ *                                                                                             *
  *                      $Author:: Greg_h                                                      $*
- *                                                                                             * 
+ *                                                                                             *
  *                     $Modtime:: 7/22/97 11:37a                                              $*
- *                                                                                             * 
+ *                                                                                             *
  *                    $Revision:: 1                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#ifndef LZOSTRAW_H
-#define LZOSTRAW_H
+#pragma once
 
-
-#include	"STRAW.H"
+#include "STRAW.h"
 
 /*
 **	This class handles LZO compression/decompression to the data stream that is drawn through
@@ -55,7 +53,7 @@ class LZOStraw : public Straw
 		} CompControl;
 
 		LZOStraw(CompControl control, int blocksize=1024*8);
-		virtual ~LZOStraw(void);
+		virtual ~LZOStraw();
 
 		virtual int Get(void * source, int slen);
 
@@ -98,6 +96,3 @@ class LZOStraw : public Straw
 		LZOStraw(LZOStraw & rvalue);
 		LZOStraw & operator = (LZOStraw const & pipe);
 };
-
-
-#endif

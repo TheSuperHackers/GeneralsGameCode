@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __SPY_VISION_SPECIAL_POWER_H_
-#define __SPY_VISION_SPECIAL_POWER_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/SpecialPowerModule.h"
 
@@ -45,7 +42,7 @@ class SpyVisionSpecialPowerModuleData : public SpecialPowerModuleData
 
 public:
 
-	SpyVisionSpecialPowerModuleData( void );
+	SpyVisionSpecialPowerModuleData();
 
 	static void buildFieldParse( MultiIniFieldParse& p );
 
@@ -68,10 +65,8 @@ public:
 	SpyVisionSpecialPower( Thing *thing, const ModuleData *moduleData );
 	// virtual destructor prototype provided by memory pool object
 
-	virtual void doSpecialPower( UnsignedInt commandOptions );
+	virtual void doSpecialPower( UnsignedInt commandOptions ) override;
 
 protected:
 
 };
-
-#endif

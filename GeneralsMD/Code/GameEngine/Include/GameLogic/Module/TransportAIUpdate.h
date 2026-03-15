@@ -23,18 +23,15 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // TransportAIUpdate.cpp //////////
-// Needs to check legality of evacuate, and may move to a place that is better to evacuate at 
+// Needs to check legality of evacuate, and may move to a place that is better to evacuate at
 // Author: Graham Smallwood, July 2002
- 
-#pragma once
 
-#ifndef _TRANSPORT_AI_UPDATE_H_
-#define _TRANSPORT_AI_UPDATE_H_
+#pragma once
 
 #include "GameLogic/Module/AIUpdate.h"
 
 //-------------------------------------------------------------------------------------------------
-/** 
+/**
  * Soldier behavior implementation.
  * Override or extend AIUpdate methods to customize the Soldier's behavior.
  */
@@ -54,17 +51,14 @@ public:
 
 	TransportAIUpdate( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
-	virtual AIFreeToExitType getAiFreeToExit(const Object* exiter) const;
+	virtual AIFreeToExitType getAiFreeToExit(const Object* exiter) const override;
 
 protected:
 
-	virtual AIStateMachine* makeStateMachine();
+	virtual AIStateMachine* makeStateMachine() override;
 
 protected:
-	virtual void privateAttackObject( Object *victim, Int maxShotsToFire, CommandSourceType cmdSource );///< Extension.  Also tell occupants to attackObject
-	virtual void privateAttackPosition( const Coord3D *pos, Int maxShotsToFire, CommandSourceType cmdSource );///< Extension.  Also tell occupants to attackPosition
-	virtual void privateForceAttackObject( Object *victim, Int maxShotsToFire, CommandSourceType cmdSource );///< Extension.  Also tell occupants to forceAttackObject
+	virtual void privateAttackObject( Object *victim, Int maxShotsToFire, CommandSourceType cmdSource ) override;///< Extension.  Also tell occupants to attackObject
+	virtual void privateAttackPosition( const Coord3D *pos, Int maxShotsToFire, CommandSourceType cmdSource ) override;///< Extension.  Also tell occupants to attackPosition
+	virtual void privateForceAttackObject( Object *victim, Int maxShotsToFire, CommandSourceType cmdSource ) override;///< Extension.  Also tell occupants to forceAttackObject
 };
-
-#endif
-

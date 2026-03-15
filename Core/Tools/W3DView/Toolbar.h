@@ -18,14 +18,12 @@
 
 //////////////////////////////////////////////////////////////////////
 //
-//  Toolbar.H
+//  Toolbar.h
 //
 //  Declaration of a 'fancy' toolbar using hi-color buttons
 //
 
-#ifndef __FANCYTOOLBAR_H
-#define __FANCYTOOLBAR_H
-
+#pragma once
 
 //////////////////////////////////////////////////////////////
 //
@@ -66,13 +64,13 @@ class CFancyToolbar : public CControlBar
         //
         //  Public Data Types
         //
-        typedef enum 
+        typedef enum
         {
             StateUp = 0,
             StateDn = 1
         } STATE_INFO;
 
-        typedef enum 
+        typedef enum
         {
             TypeNormal = 0,
             Type2State = 1
@@ -83,7 +81,7 @@ class CFancyToolbar : public CControlBar
         //
         //  Public Contructors
         //
-        CFancyToolbar ();        
+        CFancyToolbar ();
         virtual ~CFancyToolbar ();
 
 
@@ -97,7 +95,7 @@ class CFancyToolbar : public CControlBar
         //
         CSize CalcFixedLayout (BOOL, BOOL)
             { return CSize (m_iButtons*BUTTON_WIDTH + BORDER_LEFT + BORDER_RIGHT, BUTTON_HEIGHT + BORDER_TOP + BORDER_BOTTOM); }
-        
+
         CSize CalcDynamicLayout( int nLength, DWORD dwMode )
             { return CSize (m_iButtons*BUTTON_WIDTH + BORDER_LEFT + BORDER_RIGHT, BUTTON_HEIGHT + BORDER_TOP + BORDER_BOTTOM); }
 
@@ -107,7 +105,7 @@ class CFancyToolbar : public CControlBar
         //  Creation routines
         //
         void AddButton (UINT iBMPUp, UINT iBMPDn, int iCommandID, BUTTON_TYPE buttonType = TypeNormal);
-        BOOL Create (LPCTSTR pszWindowName, CWnd *pCParentWnd, UINT uiID);        
+        BOOL Create (LPCTSTR pszWindowName, CWnd *pCParentWnd, UINT uiID);
 
         //
         //  State management routines
@@ -140,7 +138,7 @@ class CFancyToolbar : public CControlBar
         static LRESULT CALLBACK fnMessageProc (HWND hWnd, UINT uiMessage, WPARAM wParam, LPARAM lParam);
 
     private:
-               
+
         ////////////////////////////////////////////////////////
         //
         //  Private Data Types
@@ -155,7 +153,7 @@ class CFancyToolbar : public CControlBar
             BOOL bVisible;
         } BUTTON_INFO;
 
-        
+
         ////////////////////////////////////////////////////////
         //
         //  Private Methods
@@ -164,5 +162,3 @@ class CFancyToolbar : public CControlBar
         int m_iButtons;
         int m_iCurrentButton;
 };
-
-#endif // __FANCYTOOLBAR_H

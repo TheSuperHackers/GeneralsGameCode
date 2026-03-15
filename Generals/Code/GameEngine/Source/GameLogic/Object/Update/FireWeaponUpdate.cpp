@@ -28,43 +28,38 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Xfer.h"
 #include "GameLogic/Object.h"
 #include "GameLogic/Module/FireWeaponUpdate.h"
 #include "GameLogic/WeaponStatus.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 FireWeaponUpdateModuleData::FireWeaponUpdateModuleData()
 {
-	m_weaponTemplate = NULL;
+	m_weaponTemplate = nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------
-/*static*/ void FireWeaponUpdateModuleData::buildFieldParse(MultiIniFieldParse& p) 
+/*static*/ void FireWeaponUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   UpdateModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
-		{ "Weapon",	INI::parseWeaponTemplate,	NULL, offsetof( FireWeaponUpdateModuleData, m_weaponTemplate ) },
-		{ 0, 0, 0, 0 }
+		{ "Weapon",	INI::parseWeaponTemplate,	nullptr, offsetof( FireWeaponUpdateModuleData, m_weaponTemplate ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   p.add(dataFieldParse);
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-FireWeaponUpdate::FireWeaponUpdate( Thing *thing, const ModuleData* moduleData ) : 
+FireWeaponUpdate::FireWeaponUpdate( Thing *thing, const ModuleData* moduleData ) :
 	UpdateModule( thing, moduleData ),
-	m_weapon(NULL)
+	m_weapon(nullptr)
 {
 	const WeaponTemplate *tmpl = getFireWeaponUpdateModuleData()->m_weaponTemplate;
 	if (tmpl)
@@ -76,15 +71,14 @@ FireWeaponUpdate::FireWeaponUpdate( Thing *thing, const ModuleData* moduleData )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-FireWeaponUpdate::~FireWeaponUpdate( void )
+FireWeaponUpdate::~FireWeaponUpdate()
 {
-	if (m_weapon)
-		deleteInstance(m_weapon);
+	deleteInstance(m_weapon);
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime FireWeaponUpdate::update( void )
+UpdateSleepTime FireWeaponUpdate::update()
 {
 	// If my weapon is ready, shoot it.
 	if( isOkayToFire() )
@@ -98,7 +92,7 @@ UpdateSleepTime FireWeaponUpdate::update( void )
 //-------------------------------------------------------------------------------------------------
 Bool FireWeaponUpdate::isOkayToFire()
 {
-	if( m_weapon == NULL )
+	if( m_weapon == nullptr )
 		return FALSE;
 
 	// Weapon is reloading
@@ -116,7 +110,7 @@ void FireWeaponUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -137,15 +131,15 @@ void FireWeaponUpdate::xfer( Xfer *xfer )
 	// weapon
 	xfer->xferSnapshot( m_weapon );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void FireWeaponUpdate::loadPostProcess( void )
+void FireWeaponUpdate::loadPostProcess()
 {
 
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

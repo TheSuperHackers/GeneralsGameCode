@@ -24,12 +24,12 @@
 
 // FILE: GameWindowID.h ///////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -46,9 +46,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __GAMEWINDOWID_H_
-#define __GAMEWINDOWID_H_
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
@@ -84,6 +81,3 @@
 // INLINING ///////////////////////////////////////////////////////////////////
 
 // EXTERNALS //////////////////////////////////////////////////////////////////
-
-#endif // __GAMEWINDOWID_H_
-

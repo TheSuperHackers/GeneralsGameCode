@@ -36,16 +36,10 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef DX8VERTEXBUFFER_H
-#define DX8VERTEXBUFFER_H
 
 #include "always.h"
 #include "wwdebug.h"
-#include "refcount.h"
 #include "dx8fvf.h"
 
 const unsigned dynamic_fvf_type=D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_TEX2|D3DFVF_DIFFUSE;
@@ -88,13 +82,13 @@ protected:
 	virtual ~VertexBufferClass();
 public:
 
-	inline const FVFInfoClass& FVF_Info() const { return *fvf_info; }
-	inline unsigned short Get_Vertex_Count() const { return VertexCount; }
-	inline unsigned Type() const { return type; }
+	const FVFInfoClass& FVF_Info() const { return *fvf_info; }
+	unsigned short Get_Vertex_Count() const { return VertexCount; }
+	unsigned Type() const { return type; }
 
 	void Add_Engine_Ref() const;
 	void Release_Engine_Ref() const;
-	inline unsigned Engine_Refs() const { return engine_refs; } 
+	unsigned Engine_Refs() const { return engine_refs; }
 
 	class WriteLockClass : public VertexBufferLockClass
 	{
@@ -167,7 +161,7 @@ public:
 	// the recycled dynamic vertex buffer.
 	static void _Deinit();
 	static void _Reset(bool frame_changed);
-	static unsigned short Get_Default_Vertex_Count(void);	///<current size of dynamic vertex buffer
+	static unsigned short Get_Default_Vertex_Count();	///<current size of dynamic vertex buffer
 
 	// To lock the vertex buffer, create instance of this write class locally.
 	// The buffer is automatically unlocked when you exit the scope.
@@ -178,7 +172,7 @@ public:
 	public:
 		WriteLockClass(DynamicVBAccessClass* vb_access);
 		~WriteLockClass();
-		
+
 		// Use this function to get a pointer to the first vertex you can write into.
 		// If we ever change the format used by DynamicVBAccessClass, then the
 		// return type of this function will change and we'll easily find all code
@@ -259,6 +253,3 @@ protected:
 public:
 	SortingVertexBufferClass(unsigned short VertexCount);
 };
-
-
-#endif //DX8VERTEXBUFFER_H

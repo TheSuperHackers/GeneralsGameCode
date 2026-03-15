@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/ModelState.h"
 #include "Common/Player.h"
@@ -41,22 +41,22 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-PowerPlantUpgrade::PowerPlantUpgrade( Thing *thing, const ModuleData* moduleData ) : 
+PowerPlantUpgrade::PowerPlantUpgrade( Thing *thing, const ModuleData* moduleData ) :
 							UpgradeModule( thing, moduleData )
 {
 
-}  // end PowerPlantUpgrade
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-PowerPlantUpgrade::~PowerPlantUpgrade( void )
+PowerPlantUpgrade::~PowerPlantUpgrade()
 {
 
-}  // end ~PowerPlantUpgrade
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void PowerPlantUpgrade::onDelete( void )
+void PowerPlantUpgrade::onDelete()
 {
 
 	// if we haven't been upgraded there is nothing to clean up
@@ -71,7 +71,7 @@ void PowerPlantUpgrade::onDelete( void )
 	// this upgrade module is now "not upgraded"
 	setUpgradeExecuted(FALSE);
 
-}  // end onDelete
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -81,7 +81,7 @@ void PowerPlantUpgrade::onCapture( Player *oldOwner, Player *newOwner )
 	// do nothing if we haven't upgraded yet
 	if( isAlreadyUpgraded() == FALSE )
 		return;
-	
+
 	if (getObject()->isDisabled())
 		return;
 
@@ -103,15 +103,15 @@ void PowerPlantUpgrade::onCapture( Player *oldOwner, Player *newOwner )
 
 	}
 
-}  // end onCapture
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void PowerPlantUpgrade::upgradeImplementation( void )
+void PowerPlantUpgrade::upgradeImplementation()
 {
 
 	Player *player = getObject()->getControllingPlayer();
-	
+
 	// add the new power production to the object
 	if( player )
 		player->addPowerBonus(getObject());
@@ -124,8 +124,8 @@ void PowerPlantUpgrade::upgradeImplementation( void )
 		if( ppui )
 			ppui->extendRods(TRUE);
 	}
-	
-}  // end upgradeImplementation
+
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -136,7 +136,7 @@ void PowerPlantUpgrade::crc( Xfer *xfer )
 	// extend base class
 	UpgradeModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -154,26 +154,26 @@ void PowerPlantUpgrade::xfer( Xfer *xfer )
 	// extend base class
 	UpgradeModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void PowerPlantUpgrade::loadPostProcess( void )
+void PowerPlantUpgrade::loadPostProcess()
 {
 
 	// extend base class
 	UpgradeModule::loadPostProcess();
-	
+
 	// Most upgrade modules have state change effects that are themselves saved.  This one is a fire and forget.
 	// So we need to re-fire on load if we are turned on.
 	if( isAlreadyUpgraded() )
 	{
 		Player *player = getObject()->getControllingPlayer();
-		
+
 		// add the new power production to the object
 		if( player )
 			player->addPowerBonus(getObject());
 	}
 
-}  // end loadPostProcess
+}

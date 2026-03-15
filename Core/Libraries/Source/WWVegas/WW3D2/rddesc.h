@@ -34,15 +34,9 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
 
-#ifndef RDDESC_H
-#define RDDESC_H
-
-#include "Vector.H"
+#include "Vector.h"
 #include "wwstring.h"
 #include <d3d8types.h>
 #include <d3d8caps.h>
@@ -50,11 +44,11 @@
 class ResolutionDescClass
 {
 public:
-	ResolutionDescClass(void) : Width(0), Height(0), BitDepth(0) { }
+	ResolutionDescClass() : Width(0), Height(0), BitDepth(0) { }
 	ResolutionDescClass(int w,int h,int bits) : Width(w), Height(h), BitDepth(bits) { }
 	bool operator == (const ResolutionDescClass & src) { return ((Width==src.Width) && (Height==src.Height) && (BitDepth==src.BitDepth)); }
 	bool operator != (const ResolutionDescClass & src) { return ((Width!=src.Width) || (Height!=src.Height) || (BitDepth!=src.BitDepth)); }
-	
+
 	int			Width;
 	int			Height;
 	int			BitDepth;
@@ -67,17 +61,17 @@ class RenderDeviceDescClass
 
 public:
 
-	RenderDeviceDescClass(void) : DeviceName(NULL), DeviceVendor(NULL), DevicePlatform(NULL), 
-											DriverName(NULL), DriverVendor(NULL), DriverVersion(NULL),
-											HardwareName(NULL), HardwareVendor(NULL), HardwareChipset(NULL)
+	RenderDeviceDescClass() : DeviceName(), DeviceVendor(), DevicePlatform(),
+											DriverName(), DriverVendor(), DriverVersion(),
+											HardwareName(), HardwareVendor(), HardwareChipset()
 	{
 	}
 
-	~RenderDeviceDescClass(void)
+	~RenderDeviceDescClass()
 	{
 	}
 
-	RenderDeviceDescClass & operator = (const RenderDeviceDescClass & src) 
+	RenderDeviceDescClass & operator = (const RenderDeviceDescClass & src)
 	{
 		set_device_name(src.Get_Device_Name());
 		set_device_vendor(src.Get_Device_Vendor());
@@ -92,7 +86,7 @@ public:
 		AdapterIdentifier=src.AdapterIdentifier;
 		ResArray = src.ResArray;
 		return *this;
-	}	
+	}
 
 	bool operator == (const RenderDeviceDescClass & /*src*/) { return false; }
 	bool operator != (const RenderDeviceDescClass & /*src*/) { return true; }
@@ -109,7 +103,7 @@ public:
 	const char *		Get_Hardware_Vendor() const	{ return HardwareVendor; }
 	const char *		Get_Hardware_Chipset() const	{ return HardwareChipset; }
 
-	const DynamicVectorClass<ResolutionDescClass> & Enumerate_Resolutions(void) const	{ return ResArray; }
+	const DynamicVectorClass<ResolutionDescClass> & Enumerate_Resolutions() const	{ return ResArray; }
 	const D3DCAPS8& 	Get_Caps() const { return Caps; }
 	const D3DADAPTER_IDENTIFIER8& Get_Adapter_Identifier() const { return AdapterIdentifier; }
 
@@ -125,7 +119,7 @@ private:
 	void set_hardware_vendor(const char * name)	{ HardwareVendor=name; }
 	void set_hardware_chipset(const char * name)	{ HardwareChipset=name; }
 
-	void reset_resolution_list(void)					{ ResArray.Delete_All(); }
+	void reset_resolution_list()					{ ResArray.Delete_All(); }
 	void add_resolution(int w,int h,int bits);
 
 	StringClass			DeviceName;
@@ -142,7 +136,7 @@ private:
 
 	D3DCAPS8				Caps;
 	D3DADAPTER_IDENTIFIER8 AdapterIdentifier;
-	
+
 	DynamicVectorClass<ResolutionDescClass>	ResArray;
 
 	friend class WW3D;
@@ -150,8 +144,8 @@ private:
 };
 
 
-inline void RenderDeviceDescClass::add_resolution(int w,int h,int bits)		
-{ 
+inline void RenderDeviceDescClass::add_resolution(int w,int h,int bits)
+{
 	bool found = false;
 	for (int i=0; i<ResArray.Count(); i++) {
 		if (	(ResArray[i].Width == w) &&
@@ -161,12 +155,8 @@ inline void RenderDeviceDescClass::add_resolution(int w,int h,int bits)
 			found = true;
 		}
 	}
-	
+
 	if (!found) {
-		ResArray.Add(ResolutionDescClass(w,h,bits)); 
+		ResArray.Add(ResolutionDescClass(w,h,bits));
 	}
 }
-
-
-#endif 
-

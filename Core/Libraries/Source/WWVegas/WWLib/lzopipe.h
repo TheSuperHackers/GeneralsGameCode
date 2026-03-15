@@ -16,28 +16,27 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*********************************************************************************************** 
- ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Command & Conquer                                            * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Library/lzopipe.h                                 $* 
- *                                                                                             * 
+/***********************************************************************************************
+ ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Command & Conquer                                            *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Library/lzopipe.h                                 $*
+ *                                                                                             *
  *                      $Author:: Greg_h                                                      $*
- *                                                                                             * 
+ *                                                                                             *
  *                     $Modtime:: 7/22/97 11:37a                                              $*
- *                                                                                             * 
+ *                                                                                             *
  *                    $Revision:: 1                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#ifndef LZOPIPE_H
-#define LZOPIPE_H
+#pragma once
 
-#include	"PIPE.H"
+#include "PIPE.h"
 
 
 /*
@@ -54,9 +53,9 @@ class LZOPipe : public Pipe
 		} CompControl;
 
 		LZOPipe(CompControl, int blocksize=1024*8);
-		virtual ~LZOPipe(void);
+		virtual ~LZOPipe();
 
-		virtual int Flush(void);
+		virtual int Flush();
 		virtual int Put(void const * source, int slen);
 
 	private:
@@ -97,6 +96,3 @@ class LZOPipe : public Pipe
 		LZOPipe(LZOPipe & rvalue);
 		LZOPipe & operator = (LZOPipe const & pipe);
 };
-
-
-#endif

@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __PARTICLE_UPLINK_CANNON_UPDATE_H_
-#define __PARTICLE_UPLINK_CANNON_UPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/KindOf.h"
 #include "GameLogic/Module/LaserUpdate.h"
@@ -74,7 +71,7 @@ public:
 	AsciiString			m_laserBaseLightFlareParticleSystemName;
 	AsciiString			m_laserBaseMediumFlareParticleSystemName;
 	AsciiString			m_laserBaseIntenseFlareParticleSystemName;
-	
+
 	AsciiString			m_fireBoneName;
 	AsciiString			m_particleBeamLaserName;
 
@@ -109,7 +106,7 @@ public:
 	ParticleUplinkCannonUpdateModuleData();
 	static void buildFieldParse(MultiIniFieldParse& p);
 
-private: 
+private:
 
 };
 
@@ -157,16 +154,16 @@ public:
 	// virtual destructor prototype provided by memory pool declaration
 
 	// SpecialPowerUpdateInterface
-	virtual Bool initiateIntentToDoSpecialPower(const SpecialPowerTemplate *specialPowerTemplate, const Object *targetObj, const Coord3D *targetPos, const Waypoint *way, UnsignedInt commandOptions );
-	virtual Bool isSpecialAbility() const { return false; }
-	virtual Bool isSpecialPower() const { return true; }
-	virtual Bool isActive() const {return m_status != STATUS_IDLE;}
-	virtual SpecialPowerUpdateInterface* getSpecialPowerUpdateInterface() { return this; }
-	virtual CommandOption getCommandOption() const { return (CommandOption)0; }
-	virtual Bool isPowerCurrentlyInUse( const CommandButton *command = NULL ) const;
+	virtual Bool initiateIntentToDoSpecialPower(const SpecialPowerTemplate *specialPowerTemplate, const Object *targetObj, const Coord3D *targetPos, const Waypoint *way, UnsignedInt commandOptions ) override;
+	virtual Bool isSpecialAbility() const override { return false; }
+	virtual Bool isSpecialPower() const override { return true; }
+	virtual Bool isActive() const override {return m_status != STATUS_IDLE;}
+	virtual SpecialPowerUpdateInterface* getSpecialPowerUpdateInterface() override { return this; }
+	virtual CommandOption getCommandOption() const override { return (CommandOption)0; }
+	virtual Bool isPowerCurrentlyInUse( const CommandButton *command = nullptr ) const override;
 
-	virtual void onObjectCreated();
-	virtual UpdateSleepTime update();
+	virtual void onObjectCreated() override;
+	virtual UpdateSleepTime update() override;
 
 	void removeAllEffects();
 
@@ -181,12 +178,12 @@ public:
 	Bool calculateDefaultInformation();
 	Bool calculateUpBonePositions();
 
-	virtual Bool doesSpecialPowerHaveOverridableDestinationActive() const; //Is it active now?
-	virtual Bool doesSpecialPowerHaveOverridableDestination() const { return true; }	//Does it have it, even if it's not active?
-	virtual void setSpecialPowerOverridableDestination( const Coord3D *loc );
+	virtual Bool doesSpecialPowerHaveOverridableDestinationActive() const override; //Is it active now?
+	virtual Bool doesSpecialPowerHaveOverridableDestination() const override { return true; }	//Does it have it, even if it's not active?
+	virtual void setSpecialPowerOverridableDestination( const Coord3D *loc ) override;
 
 	// Disabled conditions to process (termination conditions!)
-	virtual DisabledMaskType getDisabledTypesToProcess() const { return MAKE_DISABLED_MASK3( DISABLED_UNDERPOWERED, DISABLED_EMP, DISABLED_HACKED ); }
+	virtual DisabledMaskType getDisabledTypesToProcess() const override { return MAKE_DISABLED_MASK3( DISABLED_UNDERPOWERED, DISABLED_EMP, DISABLED_HACKED ); }
 
 protected:
 
@@ -231,13 +228,11 @@ protected:
 	UnsignedInt			m_lastDrivingClickFrame;
 	UnsignedInt			m_2ndLastDrivingClickFrame;
 
+	XferVersion			m_xferVersion;
+
 	Bool						m_upBonesCached;
 	Bool						m_defaultInfoCached;
 	Bool						m_invalidSettings;
 	Bool						m_manualTargetMode;
 	Bool						m_clientShroudedLastFrame;
 };
-
-
-#endif
-

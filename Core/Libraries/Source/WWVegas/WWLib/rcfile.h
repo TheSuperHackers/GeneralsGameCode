@@ -34,15 +34,10 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef RCFILE_H
-#define RCFILE_H
 
 #include "always.h"
-#include "WWFILE.H"
+#include "WWFILE.h"
 #include "win.h"
 
 /*
@@ -58,39 +53,36 @@ class ResourceFileClass : public FileClass
 	public:
 
 		ResourceFileClass(HMODULE hmodule, char const *filename);
-		virtual ~ResourceFileClass(void);
-		
-		virtual char const * File_Name(void) const					{ return ResourceName; }
+		virtual ~ResourceFileClass();
+
+		virtual char const * File_Name() const					{ return ResourceName; }
 		virtual char const * Set_Name(char const *filename);
-		virtual int Create(void)											{ return false; }
-		virtual int Delete(void)											{ return false; }
+		virtual int Create()											{ return false; }
+		virtual int Delete()											{ return false; }
 		virtual bool Is_Available(int /*forced=false*/)				{ return Is_Open (); }
-		virtual bool Is_Open(void) const									{ return (FileBytes != NULL); } 
-		
+		virtual bool Is_Open() const									{ return (FileBytes != nullptr); }
+
 		virtual int Open(char const * /*fname*/, int /*rights=READ*/)	{ return Is_Open(); }
 		virtual int Open(int /*rights=READ*/)							{ return Is_Open(); }
 
 		virtual int Read(void *buffer, int size);
 		virtual int Seek(int pos, int dir=SEEK_CUR);
-		virtual int Size(void);
+		virtual int Size();
 		virtual int Write(void const * /*buffer*/, int /*size*/)	{ return 0; }
-		virtual void Close(void)											{ }
-		virtual void Error(int error, int canretry = false, char const * filename=NULL);
+		virtual void Close()											{ }
+		virtual void Error(int error, int canretry = false, char const * filename=nullptr);
 		virtual void Bias(int start, int length=-1) {}
 
-		virtual unsigned char *Peek_Data(void) const					{ return FileBytes; }
+		virtual unsigned char *Peek_Data() const					{ return FileBytes; }
 
 	protected:
 
 		char *				ResourceName;
 
 		HMODULE				hModule;
-		
+
 		unsigned char *	FileBytes;
 		unsigned char *	FilePtr;
 		unsigned char *	EndOfFile;
 
 };
-
-
-#endif

@@ -24,12 +24,12 @@
 
 // FILE: W3DComboBox.cpp ///////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:   RTS3
@@ -102,37 +102,37 @@ void W3DGadgetComboBoxDraw( GameWindow *window, WinInstanceData *instData )
 		border				= GadgetComboBoxGetDisabledBorderColor( window );
 		titleColor		= window->winGetDisabledTextColor();
 		titleBorder		= window->winGetDisabledTextBorderColor();
-	}  // end if, disabled
+	}
 	else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
 	{
 		background		= GadgetComboBoxGetHiliteColor( window );
 		border				= GadgetComboBoxGetHiliteBorderColor( window );
 		titleColor		= window->winGetHiliteTextColor();
 		titleBorder		= window->winGetHiliteTextBorderColor();
-	}  // end else if, hilited
+	}
 	else
 	{
 		background		= GadgetComboBoxGetEnabledColor( window );
 		border				= GadgetComboBoxGetEnabledBorderColor( window );
 		titleColor		= window->winGetEnabledTextColor();
 		titleBorder		= window->winGetEnabledTextBorderColor();
-	}  // end else, enabled
+	}
 
 	// Draw the title
 	if( title && title->getTextLength() )
 	{
-	
+
 		// set the font of this text to that of the window if not already
 		if( title->getFont() != window->winGetFont() )
 			title->setFont( window->winGetFont() );
-			
+
 		// draw the text
-		title->draw( x + 1, y, titleColor, titleBorder );		
+		title->draw( x + 1, y, titleColor, titleBorder );
 
 		y += fontHeight + 1;
 		height -= fontHeight + 1;
 
-	}  // end if
+	}
 
 	// draw the back border
 	if( border != WIN_COLOR_UNDEFINED )
@@ -142,10 +142,10 @@ void W3DGadgetComboBoxDraw( GameWindow *window, WinInstanceData *instData )
 	// draw background
 	if( background != WIN_COLOR_UNDEFINED )
 		TheWindowManager->winFillRect( background, WIN_DRAW_LINE_WIDTH,
-																	 x + 1, y + 1, 
+																	 x + 1, y + 1,
 																	 x + width - 1, y + height - 1 );
 
-}  // end W3DGadgetComboBoxDraw
+}
 
 // W3DGadgetComboBoxImageDraw ==================================================
 /** Draw combo box with user supplied images */
@@ -196,11 +196,11 @@ void W3DGadgetComboBoxImageDraw( GameWindow *window, WinInstanceData *instData )
 		start.y = y + instData->m_imageOffset.y;
 		end.x = start.x + width;
 		end.y = start.y + height;
-		TheWindowManager->winDrawImage( image, 
-																		start.x, start.y, 
+		TheWindowManager->winDrawImage( image,
+																		start.x, start.y,
 																		end.x, end.y );
 
-	}  // end if
+	}
 
 	// Draw the title
 	if( title && title->getTextLength() )
@@ -216,8 +216,8 @@ void W3DGadgetComboBoxImageDraw( GameWindow *window, WinInstanceData *instData )
 		y += TheWindowManager->winFontHeight( instData->getFont() );
 		height -= TheWindowManager->winFontHeight( instData->getFont() ) + 1;
 
-	}  // end if
+	}
 
 
-}  // end W3DGadgetComboBoxImageDraw
+}
 

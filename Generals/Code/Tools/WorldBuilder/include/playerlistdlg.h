@@ -16,12 +16,8 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#if !defined(AFX_PLAYERLISTDLG_H__103B4125_78ED_48A8_9DBB_289DDC6B0208__INCLUDED_)
-#define AFX_PLAYERLISTDLG_H__103B4125_78ED_48A8_9DBB_289DDC6B0208__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
+
 // playerlistdlg.h : header file
 //
 
@@ -35,7 +31,7 @@ class PlayerListDlg : public CDialog
 {
 // Construction
 public:
-	PlayerListDlg(CWnd* pParent = NULL);   // standard constructor
+	PlayerListDlg(CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(PlayerListDlg)
@@ -88,5 +84,3 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_PLAYERLISTDLG_H__103B4125_78ED_48A8_9DBB_289DDC6B0208__INCLUDED_)

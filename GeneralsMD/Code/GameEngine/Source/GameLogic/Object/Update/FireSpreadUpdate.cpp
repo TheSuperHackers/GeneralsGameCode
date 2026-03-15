@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/RandomValue.h"
 #include "Common/Xfer.h"
@@ -49,9 +49,9 @@ class PartitionFilterFlammable : public PartitionFilter
 public:
 
 	PartitionFilterFlammable(){ }
-	
+
 	virtual Bool allow(Object *objOther);
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	virtual const char* debugGetName() { return "PartitionFilterFlammable"; }
 #endif
 };
@@ -62,7 +62,7 @@ Bool PartitionFilterFlammable::allow(Object *objOther)
 	// It must be burnable in general, and burnable now
 	static NameKeyType key_FlammableUpdate = NAMEKEY("FlammableUpdate");
 	FlammableUpdate* fu = (FlammableUpdate*)objOther->findUpdateModule(key_FlammableUpdate);
-	if (fu == NULL)
+	if (fu == nullptr)
 		return FALSE;
 
 	if( ! fu->wouldIgnite() )
@@ -79,22 +79,22 @@ FireSpreadUpdateModuleData::FireSpreadUpdateModuleData()
 {
 	m_minSpreadTryDelayData = 0;
 	m_maxSpreadTryDelayData = 0;
-	m_oclEmbers = NULL;
+	m_oclEmbers = nullptr;
 	m_spreadTryRange = 0;
 }
 
 //-------------------------------------------------------------------------------------------------
-/*static*/ void FireSpreadUpdateModuleData::buildFieldParse(MultiIniFieldParse& p) 
+/*static*/ void FireSpreadUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   UpdateModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
-		{ "OCLEmbers",				INI::parseObjectCreationList,		NULL, offsetof( FireSpreadUpdateModuleData, m_oclEmbers ) },
-		{ "MinSpreadDelay",		INI::parseDurationUnsignedInt,	NULL, offsetof( FireSpreadUpdateModuleData, m_minSpreadTryDelayData ) },
-		{ "MaxSpreadDelay",		INI::parseDurationUnsignedInt,	NULL, offsetof( FireSpreadUpdateModuleData, m_maxSpreadTryDelayData ) },
-		{ "SpreadTryRange",		INI::parseReal,									NULL, offsetof( FireSpreadUpdateModuleData, m_spreadTryRange ) },
-		{ 0, 0, 0, 0 }
+		{ "OCLEmbers",				INI::parseObjectCreationList,		nullptr, offsetof( FireSpreadUpdateModuleData, m_oclEmbers ) },
+		{ "MinSpreadDelay",		INI::parseDurationUnsignedInt,	nullptr, offsetof( FireSpreadUpdateModuleData, m_minSpreadTryDelayData ) },
+		{ "MaxSpreadDelay",		INI::parseDurationUnsignedInt,	nullptr, offsetof( FireSpreadUpdateModuleData, m_maxSpreadTryDelayData ) },
+		{ "SpreadTryRange",		INI::parseReal,									nullptr, offsetof( FireSpreadUpdateModuleData, m_spreadTryRange ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   p.add(dataFieldParse);
 }
@@ -108,13 +108,13 @@ FireSpreadUpdate::FireSpreadUpdate( Thing *thing, const ModuleData* moduleData )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-FireSpreadUpdate::~FireSpreadUpdate( void )
+FireSpreadUpdate::~FireSpreadUpdate()
 {
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime FireSpreadUpdate::update( void )
+UpdateSleepTime FireSpreadUpdate::update()
 {
 	const FireSpreadUpdateModuleData* d = getFireSpreadUpdateModuleData();
 	Object* me = getObject();
@@ -122,26 +122,26 @@ UpdateSleepTime FireSpreadUpdate::update( void )
 	if( !me->getStatusBits().test( OBJECT_STATUS_AFLAME ) )
 		return UPDATE_SLEEP_FOREVER;		// not on fire -- sleep forever
 	{
-		ObjectCreationList::create( d->m_oclEmbers, getObject(), NULL );
+		ObjectCreationList::create( d->m_oclEmbers, getObject(), nullptr );
 
 		if( d->m_spreadTryRange != 0 )
 		{
 			// This will spread fire explicitly
 			PartitionFilterFlammable fFilter;
-			PartitionFilter *filters[] = { &fFilter, NULL };
+			PartitionFilter *filters[] = { &fFilter, nullptr };
 
-//			SimpleObjectIterator *iter = NULL;
-//			iter = ThePartitionManager->iterateObjectsInRange(getObject(), 
-//																									d->m_spreadTryRange, 
-//																									FROM_CENTER_3D, 
-//																									filters, 
+//			SimpleObjectIterator *iter = nullptr;
+//			iter = ThePartitionManager->iterateObjectsInRange(getObject(),
+//																									d->m_spreadTryRange,
+//																									FROM_CENTER_3D,
+//																									filters,
 //																									ITER_SORTED_NEAR_TO_FAR
 //																									);
 //			MemoryPoolObjectHolder hold(iter);
 //			Object *objectToLight = iter->first();
 //
 // srj sez: the above code is stupid and slow. since we only want the closest object,
-// just ask for that; the above has to find ALL objects in range, but we ignore all 
+// just ask for that; the above has to find ALL objects in range, but we ignore all
 // but the first (closest).
 //
 			Object* objectToLight = ThePartitionManager->getClosestObject(getObject(), d->m_spreadTryRange, FROM_CENTER_3D, filters);
@@ -188,7 +188,7 @@ void FireSpreadUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -206,15 +206,15 @@ void FireSpreadUpdate::xfer( Xfer *xfer )
 	// extend base class
 	UpdateModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void FireSpreadUpdate::loadPostProcess( void )
+void FireSpreadUpdate::loadPostProcess()
 {
 
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

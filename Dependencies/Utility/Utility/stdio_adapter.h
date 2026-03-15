@@ -26,38 +26,52 @@
 
 inline int vsnprintf(char* _Buffer, size_t _BufferCount, const char* _Format, va_list _ArgList)
 {
-    // Microsoft's _vsnprintf does not null terminate when writing the entire length.
-    int result = _vsnprintf(_Buffer, _BufferCount, _Format, _ArgList);
-    _Buffer[_BufferCount - 1] = '\0';
-    return result;
+	if (_BufferCount == 0)
+		return -1;
+	// Microsoft's _vsnprintf does not null terminate when writing the entire length.
+	int result = _vsnprintf(_Buffer, _BufferCount, _Format, _ArgList);
+	// Deal with errors and edge cases.
+	if (result == -1 || (size_t)result == _BufferCount)
+	{
+		_Buffer[_BufferCount - 1] = '\0';
+		return -1;
+	}
+	return result;
 }
 
 // Yes, this is called vswprintf instead of vsnwprintf
 inline int vswprintf(wchar_t* _Buffer, size_t _BufferCount, const wchar_t* _Format, va_list _ArgList)
 {
-    // Microsoft's _vsnwprintf does not null terminate when writing the entire length.
-    int result = _vsnwprintf(_Buffer, _BufferCount, _Format, _ArgList);
-    _Buffer[_BufferCount - 1] = L'\0';
-    return result;
+	if (_BufferCount == 0)
+		return -1;
+	// Microsoft's _vsnwprintf does not null terminate when writing the entire length.
+	int result = _vsnwprintf(_Buffer, _BufferCount, _Format, _ArgList);
+	// Deal with errors and edge cases.
+	if (result == -1 || (size_t)result == _BufferCount)
+	{
+		_Buffer[_BufferCount - 1] = L'\0';
+		return -1;
+	}
+	return result;
 }
 
 inline int snprintf(char* _Buffer, size_t _BufferCount, const char* _Format, ...)
 {
-    va_list _ArgList;
-    va_start(_ArgList, _Format);
-    int result = vsnprintf(_Buffer, _BufferCount, _Format, _ArgList);
-    va_end(_ArgList);
-    return result;
+	va_list _ArgList;
+	va_start(_ArgList, _Format);
+	int result = vsnprintf(_Buffer, _BufferCount, _Format, _ArgList);
+	va_end(_ArgList);
+	return result;
 }
 
 // Yes, this is called swprintf instead of snwprintf
 inline int swprintf(wchar_t* _Buffer, size_t _BufferCount, const wchar_t* _Format, ...)
 {
-    va_list _ArgList;
-    va_start(_ArgList, _Format);
-    int result = vswprintf(_Buffer, _BufferCount, _Format, _ArgList);
-    va_end(_ArgList);
-    return result;
+	va_list _ArgList;
+	va_start(_ArgList, _Format);
+	int result = vswprintf(_Buffer, _BufferCount, _Format, _ArgList);
+	va_end(_ArgList);
+	return result;
 }
 
 #endif

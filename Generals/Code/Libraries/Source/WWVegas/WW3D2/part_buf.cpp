@@ -16,23 +16,24 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*************************************************************************** 
- ***    C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S     *** 
- *************************************************************************** 
- *                                                                         * 
- *                 Project Name : G                                        * 
- *                                                                         * 
- *                     $Archive:: /VSS_Sync/ww3d2/part_buf.cpp            $* 
- *                                                                         * 
- *                      $Author:: Vss_sync                                $* 
- *                                                                         * 
- *                     $Modtime:: 8/30/01 1:38a                           $* 
- *                                                                         * 
- *                    $Revision:: 19                                      $* 
- *                                                                         * 
- *-------------------------------------------------------------------------* 
- * Functions:                                                              * 
+/***************************************************************************
+ ***    C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S     ***
+ ***************************************************************************
+ *                                                                         *
+ *                 Project Name : G                                        *
+ *                                                                         *
+ *                     $Archive:: /VSS_Sync/ww3d2/part_buf.cpp            $*
+ *                                                                         *
+ *                      $Author:: Vss_sync                                $*
+ *                                                                         *
+ *                     $Modtime:: 8/30/01 1:38a                           $*
+ *                                                                         *
+ *                    $Revision:: 19                                      $*
+ *                                                                         *
+ *-------------------------------------------------------------------------*
+ * Functions:                                                              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
 #include "part_buf.h"
 #include "part_emt.h"
 #include "ww3d.h"
@@ -79,25 +80,25 @@ const float oo_intmax = 1.0f / (float)INT_MAX;
 
 ParticleBufferClass::ParticleBufferClass
 (
-	ParticleEmitterClass *emitter, 
+	ParticleEmitterClass *emitter,
 	unsigned int buffer_size,
-	ParticlePropertyStruct<Vector3> &color, 
+	ParticlePropertyStruct<Vector3> &color,
 	ParticlePropertyStruct<float> &opacity,
-	ParticlePropertyStruct<float> &size, 
+	ParticlePropertyStruct<float> &size,
 	ParticlePropertyStruct<float> &rotation,
 	float orient_rnd,
 	ParticlePropertyStruct<float> &frame,
 	ParticlePropertyStruct<float> &blurtime,
-	Vector3 accel, 
-	float max_age, 
+	Vector3 accel,
+	float max_age,
 	TextureClass *tex,
-	ShaderClass shader, 
+	ShaderClass shader,
 	bool pingpong,
-	int render_mode, 
+	int render_mode,
 	int frame_mode,
 	const W3dEmitterLinePropertiesStruct * line_props
 ) :
-	NewParticleQueue(NULL),
+	NewParticleQueue(nullptr),
 	NewParticleQueueStart(0U),
 	NewParticleQueueEnd(0U),
 	NewParticleQueueCount(0U),
@@ -116,36 +117,36 @@ ParticleBufferClass::ParticleBufferClass
 	BoundingBox(Vector3(0,0,0),Vector3(0,0,0)),
 	BoundingBoxDirty(true),
 	NumColorKeyFrames(0),
-	ColorKeyFrameTimes(NULL),
-	ColorKeyFrameValues(NULL),
-	ColorKeyFrameDeltas(NULL),
+	ColorKeyFrameTimes(nullptr),
+	ColorKeyFrameValues(nullptr),
+	ColorKeyFrameDeltas(nullptr),
 	NumAlphaKeyFrames(0),
-	AlphaKeyFrameTimes(NULL),
-	AlphaKeyFrameValues(NULL),
-	AlphaKeyFrameDeltas(NULL),
+	AlphaKeyFrameTimes(nullptr),
+	AlphaKeyFrameValues(nullptr),
+	AlphaKeyFrameDeltas(nullptr),
 	NumSizeKeyFrames(0),
-	SizeKeyFrameTimes(NULL),
-	SizeKeyFrameValues(NULL),
-	SizeKeyFrameDeltas(NULL),
+	SizeKeyFrameTimes(nullptr),
+	SizeKeyFrameValues(nullptr),
+	SizeKeyFrameDeltas(nullptr),
 	NumRotationKeyFrames(0),
-	RotationKeyFrameTimes(NULL),
-	RotationKeyFrameValues(NULL),
-	HalfRotationKeyFrameDeltas(NULL),
-	OrientationKeyFrameValues(NULL),
+	RotationKeyFrameTimes(nullptr),
+	RotationKeyFrameValues(nullptr),
+	HalfRotationKeyFrameDeltas(nullptr),
+	OrientationKeyFrameValues(nullptr),
 	NumFrameKeyFrames(0),
-	FrameKeyFrameTimes(NULL),
-	FrameKeyFrameValues(NULL),
-	FrameKeyFrameDeltas(NULL),
+	FrameKeyFrameTimes(nullptr),
+	FrameKeyFrameValues(nullptr),
+	FrameKeyFrameDeltas(nullptr),
 	NumBlurTimeKeyFrames(0),
-	BlurTimeKeyFrameTimes(NULL),
-	BlurTimeKeyFrameValues(NULL),
-	BlurTimeKeyFrameDeltas(NULL),
+	BlurTimeKeyFrameTimes(nullptr),
+	BlurTimeKeyFrameValues(nullptr),
+	BlurTimeKeyFrameDeltas(nullptr),
 	NumRandomColorEntriesMinus1(0),
-	RandomColorEntries(NULL),
+	RandomColorEntries(nullptr),
 	NumRandomAlphaEntriesMinus1(0),
-	RandomAlphaEntries(NULL),
+	RandomAlphaEntries(nullptr),
 	NumRandomSizeEntriesMinus1(0),
-	RandomSizeEntries(NULL),
+	RandomSizeEntries(nullptr),
 	ColorRandom(0, 0, 0),
 	OpacityRandom(0),
 	SizeRandom(0),
@@ -153,26 +154,26 @@ ParticleBufferClass::ParticleBufferClass
 	FrameRandom(0),
 	InitialOrientationRandom(0),
 	NumRandomRotationEntriesMinus1(0),
-	RandomRotationEntries(NULL),
+	RandomRotationEntries(nullptr),
 	NumRandomOrientationEntriesMinus1(0),
-	RandomOrientationEntries(NULL),
+	RandomOrientationEntries(nullptr),
 	NumRandomFrameEntriesMinus1(0),
-	RandomFrameEntries(NULL),
+	RandomFrameEntries(nullptr),
 	NumRandomBlurTimeEntriesMinus1(0),
-	RandomBlurTimeEntries(NULL),
-	PointGroup(NULL),
-	LineRenderer(NULL),
-	Diffuse(NULL),
-	Color(NULL),
-	Alpha(NULL),
-	Size(NULL),
-	Orientation(NULL),
-	Frame(NULL),
-	TailPosition(NULL),
-	APT(NULL),
+	RandomBlurTimeEntries(nullptr),
+	PointGroup(nullptr),
+	LineRenderer(nullptr),
+	Diffuse(nullptr),
+	Color(nullptr),
+	Alpha(nullptr),
+	Size(nullptr),
+	Orientation(nullptr),
+	Frame(nullptr),
+	TailPosition(nullptr),
+	APT(nullptr),
 	PingPongPosition(pingpong),
-	Velocity(NULL),
-	TimeStamp(NULL),
+	Velocity(nullptr),
+	TimeStamp(nullptr),
 	Emitter(emitter),
 	DecimationThreshold(0U),
 	ProjectedArea(0.0f)
@@ -180,8 +181,8 @@ ParticleBufferClass::ParticleBufferClass
 	LodCount = 17;
 	LodBias = 1.0f;
 
-	Position[0] = NULL;
-	Position[1] = NULL;
+	Position[0] = nullptr;
+	Position[1] = nullptr;
 
 	// Create color array, keyframes and randomizer table (if needed)
 	Reset_Colors(color);
@@ -210,7 +211,7 @@ ParticleBufferClass::ParticleBufferClass
 	// These inputs don't need to be range-checked (emitter did that).
 	Accel = accel;
 	HasAccel = (accel.X != 0.0f) || (accel.Y != 0.0f) || (accel.Z != 0.0f);
-   
+
 	// Set up worldspace point group:
 	PointGroup = W3DNEW PointGroupClass();
 	PointGroup->Set_Flag(PointGroupClass::TRANSFORM, true);
@@ -233,7 +234,7 @@ ParticleBufferClass::ParticleBufferClass
 		Position[1] = NEW_REF( ShareBufferClass<Vector3> , (MaxNum, "ParticleBufferClass::Position") );
 	}
 	APT = NEW_REF( ShareBufferClass<unsigned int> , (MaxNum, "ParticleBufferClass::APT") );
-	Velocity = W3DNEWARRAY Vector3[MaxNum]; 
+	Velocity = W3DNEWARRAY Vector3[MaxNum];
 	TimeStamp = W3DNEWARRAY unsigned int[MaxNum];
 
 	// So that the object is ready for use after construction, we will
@@ -251,7 +252,7 @@ ParticleBufferClass::ParticleBufferClass
 	// If the render mode is W3D_EMITTER_RENDER_MODE_LINE and we are supplied with
 	// a line properties structure, set up a line renderer
 	if (RenderMode == W3D_EMITTER_RENDER_MODE_LINE) {
-		if (line_props != NULL) {
+		if (line_props != nullptr) {
 			LineRenderer = W3DNEW SegLineRendererClass;
 			LineRenderer->Init(*line_props);
 			LineRenderer->Set_Texture(tex);
@@ -267,7 +268,7 @@ ParticleBufferClass::ParticleBufferClass
 
 ParticleBufferClass::ParticleBufferClass(const ParticleBufferClass & src) :
 	RenderObjClass(src),
-	NewParticleQueue(NULL),
+	NewParticleQueue(nullptr),
 	NewParticleQueueStart(0U),
 	NewParticleQueueEnd(0U),
 	NewParticleQueueCount(0U),
@@ -286,33 +287,33 @@ ParticleBufferClass::ParticleBufferClass(const ParticleBufferClass & src) :
 	BoundingBox(Vector3(0,0,0),Vector3(0,0,0)),
 	BoundingBoxDirty(true),
 	NumColorKeyFrames(src.NumColorKeyFrames),
-	ColorKeyFrameTimes(NULL),
-	ColorKeyFrameValues(NULL),
-	ColorKeyFrameDeltas(NULL),
+	ColorKeyFrameTimes(nullptr),
+	ColorKeyFrameValues(nullptr),
+	ColorKeyFrameDeltas(nullptr),
 	NumAlphaKeyFrames(src.NumAlphaKeyFrames),
-	AlphaKeyFrameTimes(NULL),
-	AlphaKeyFrameValues(NULL),
-	AlphaKeyFrameDeltas(NULL),
+	AlphaKeyFrameTimes(nullptr),
+	AlphaKeyFrameValues(nullptr),
+	AlphaKeyFrameDeltas(nullptr),
 	NumSizeKeyFrames(src.NumSizeKeyFrames),
-	SizeKeyFrameTimes(NULL),
-	SizeKeyFrameValues(NULL),
-	SizeKeyFrameDeltas(NULL),
+	SizeKeyFrameTimes(nullptr),
+	SizeKeyFrameValues(nullptr),
+	SizeKeyFrameDeltas(nullptr),
 	NumRotationKeyFrames(src.NumRotationKeyFrames),
-	RotationKeyFrameTimes(NULL),
-	RotationKeyFrameValues(NULL),
-	HalfRotationKeyFrameDeltas(NULL),
-	OrientationKeyFrameValues(NULL),
+	RotationKeyFrameTimes(nullptr),
+	RotationKeyFrameValues(nullptr),
+	HalfRotationKeyFrameDeltas(nullptr),
+	OrientationKeyFrameValues(nullptr),
 	NumFrameKeyFrames(src.NumFrameKeyFrames),
-	FrameKeyFrameTimes(NULL),
-	FrameKeyFrameValues(NULL),
-	FrameKeyFrameDeltas(NULL),
+	FrameKeyFrameTimes(nullptr),
+	FrameKeyFrameValues(nullptr),
+	FrameKeyFrameDeltas(nullptr),
 	NumBlurTimeKeyFrames(src.NumBlurTimeKeyFrames),
-	BlurTimeKeyFrameTimes(NULL),
-	BlurTimeKeyFrameValues(NULL),
-	BlurTimeKeyFrameDeltas(NULL),
-	RandomColorEntries(NULL),
-	RandomAlphaEntries(NULL),
-	RandomSizeEntries(NULL),
+	BlurTimeKeyFrameTimes(nullptr),
+	BlurTimeKeyFrameValues(nullptr),
+	BlurTimeKeyFrameDeltas(nullptr),
+	RandomColorEntries(nullptr),
+	RandomAlphaEntries(nullptr),
+	RandomSizeEntries(nullptr),
 	ColorRandom(src.ColorRandom),
 	OpacityRandom(src.OpacityRandom),
 	SizeRandom(src.SizeRandom),
@@ -320,32 +321,32 @@ ParticleBufferClass::ParticleBufferClass(const ParticleBufferClass & src) :
 	FrameRandom(src.FrameRandom),
 	InitialOrientationRandom(src.InitialOrientationRandom),
 	NumRandomRotationEntriesMinus1(0),
-	RandomRotationEntries(NULL),
+	RandomRotationEntries(nullptr),
 	NumRandomOrientationEntriesMinus1(0),
-	RandomOrientationEntries(NULL),
+	RandomOrientationEntries(nullptr),
 	NumRandomFrameEntriesMinus1(0),
-	RandomFrameEntries(NULL),
+	RandomFrameEntries(nullptr),
 	NumRandomBlurTimeEntriesMinus1(0),
-	RandomBlurTimeEntries(NULL),
-	PointGroup(NULL),
-	LineRenderer(NULL),
-	Diffuse(NULL),
-	Color(NULL),
-	Alpha(NULL),
-	Size(NULL),
-	Orientation(NULL),
-	Frame(NULL),
-	TailPosition(NULL),
-	APT(NULL),
+	RandomBlurTimeEntries(nullptr),
+	PointGroup(nullptr),
+	LineRenderer(nullptr),
+	Diffuse(nullptr),
+	Color(nullptr),
+	Alpha(nullptr),
+	Size(nullptr),
+	Orientation(nullptr),
+	Frame(nullptr),
+	TailPosition(nullptr),
+	APT(nullptr),
 	PingPongPosition(src.PingPongPosition),
-	Velocity(NULL),
-	TimeStamp(NULL),
+	Velocity(nullptr),
+	TimeStamp(nullptr),
 	Emitter(src.Emitter),
 	DecimationThreshold(src.DecimationThreshold),
 	ProjectedArea(0.0f)
 {
-	Position[0] = NULL;
-	Position[1] = NULL;
+	Position[0] = nullptr;
+	Position[1] = nullptr;
 
 	unsigned int i;
 
@@ -473,7 +474,7 @@ ParticleBufferClass::ParticleBufferClass(const ParticleBufferClass & src) :
 		}
 
 	} else {
-		// Unlike other properties, if there is no Orientation array then all the arrays are NULL
+		// Unlike other properties, if there is no Orientation array then all the arrays are nullptr
 		// (including the Values array) - there is an implicit starting value of 0.
 	}
 
@@ -562,7 +563,7 @@ ParticleBufferClass::ParticleBufferClass(const ParticleBufferClass & src) :
 		Position[1] = NEW_REF( ShareBufferClass<Vector3> , (MaxNum, "ParticleBufferClass::Position") );
 	}
 	APT = NEW_REF( ShareBufferClass<unsigned int> , (MaxNum, "ParticleBufferClass::APT") );
-	Velocity = W3DNEWARRAY Vector3[MaxNum]; 
+	Velocity = W3DNEWARRAY Vector3[MaxNum];
 	TimeStamp = W3DNEWARRAY unsigned int[MaxNum];
 
 	// So that the object is ready for use after construction, we will
@@ -598,37 +599,37 @@ ParticleBufferClass & ParticleBufferClass::operator = (const ParticleBufferClass
 }
 
 
-ParticleBufferClass::~ParticleBufferClass(void)
+ParticleBufferClass::~ParticleBufferClass()
 {
-	if (NewParticleQueue)				delete [] NewParticleQueue;
-	if (ColorKeyFrameTimes)				delete [] ColorKeyFrameTimes;
-	if (ColorKeyFrameValues)			delete [] ColorKeyFrameValues;
-	if (ColorKeyFrameDeltas)			delete [] ColorKeyFrameDeltas;
-	if (AlphaKeyFrameTimes)				delete [] AlphaKeyFrameTimes;
-	if (AlphaKeyFrameValues)			delete [] AlphaKeyFrameValues;
-	if (AlphaKeyFrameDeltas)			delete [] AlphaKeyFrameDeltas;
-	if (SizeKeyFrameTimes)				delete [] SizeKeyFrameTimes;
-	if (SizeKeyFrameValues)				delete [] SizeKeyFrameValues;
-	if (SizeKeyFrameDeltas)				delete [] SizeKeyFrameDeltas;
-	if (RotationKeyFrameTimes)			delete [] RotationKeyFrameTimes;
-	if (RotationKeyFrameValues)		delete [] RotationKeyFrameValues;
-	if (HalfRotationKeyFrameDeltas)	delete [] HalfRotationKeyFrameDeltas;
-	if (OrientationKeyFrameValues)	delete [] OrientationKeyFrameValues;
-	if (FrameKeyFrameTimes)				delete [] FrameKeyFrameTimes;
-	if (FrameKeyFrameValues)			delete [] FrameKeyFrameValues;
-	if (FrameKeyFrameDeltas)			delete [] FrameKeyFrameDeltas;
-	if (BlurTimeKeyFrameTimes)			delete [] BlurTimeKeyFrameTimes;
-	if (BlurTimeKeyFrameValues)		delete [] BlurTimeKeyFrameValues;
-	if (BlurTimeKeyFrameDeltas)		delete [] BlurTimeKeyFrameDeltas;
-	if (RandomColorEntries)				delete [] RandomColorEntries;
-	if (RandomAlphaEntries)				delete [] RandomAlphaEntries;
-	if (RandomSizeEntries)				delete [] RandomSizeEntries;
-	if (RandomRotationEntries)			delete [] RandomRotationEntries;
-	if (RandomOrientationEntries)		delete [] RandomOrientationEntries;
-	if (RandomFrameEntries)				delete [] RandomFrameEntries;
-	if (RandomBlurTimeEntries)			delete [] RandomBlurTimeEntries;
-	
-	if (PointGroup) delete PointGroup;
+	delete [] NewParticleQueue;
+	delete [] ColorKeyFrameTimes;
+	delete [] ColorKeyFrameValues;
+	delete [] ColorKeyFrameDeltas;
+	delete [] AlphaKeyFrameTimes;
+	delete [] AlphaKeyFrameValues;
+	delete [] AlphaKeyFrameDeltas;
+	delete [] SizeKeyFrameTimes;
+	delete [] SizeKeyFrameValues;
+	delete [] SizeKeyFrameDeltas;
+	delete [] RotationKeyFrameTimes;
+	delete [] RotationKeyFrameValues;
+	delete [] HalfRotationKeyFrameDeltas;
+	delete [] OrientationKeyFrameValues;
+	delete [] FrameKeyFrameTimes;
+	delete [] FrameKeyFrameValues;
+	delete [] FrameKeyFrameDeltas;
+	delete [] BlurTimeKeyFrameTimes;
+	delete [] BlurTimeKeyFrameValues;
+	delete [] BlurTimeKeyFrameDeltas;
+	delete [] RandomColorEntries;
+	delete [] RandomAlphaEntries;
+	delete [] RandomSizeEntries;
+	delete [] RandomRotationEntries;
+	delete [] RandomOrientationEntries;
+	delete [] RandomFrameEntries;
+	delete [] RandomBlurTimeEntries;
+
+	delete PointGroup;
 
 	REF_PTR_RELEASE(Position[0]);
 	REF_PTR_RELEASE(Position[1]);
@@ -640,8 +641,9 @@ ParticleBufferClass::~ParticleBufferClass(void)
 	REF_PTR_RELEASE(Frame);
 	REF_PTR_RELEASE(APT);
 
-	if (Velocity)	delete [] Velocity;
-	if (TimeStamp)	delete [] TimeStamp;
+	delete [] Velocity;
+	delete [] TimeStamp;
+
 	if (Emitter) {
 		// We should not have an emitter at this point, since the emitter
 		// should still have a live ref to us if it still exists which would
@@ -653,46 +655,44 @@ ParticleBufferClass::~ParticleBufferClass(void)
 		// harmful (if emitter and buffer each have refcounted pointers to the
 		// other neither would ever get deleted).
 		// Emitter->Release_Ref();
-		Emitter = NULL;
+		Emitter = nullptr;
 	}
 
-	if (LineRenderer) {
-		delete LineRenderer;
-	}
+	delete LineRenderer;
 
 	// Update Global Count
 	TotalActiveCount--;
 }
 
 
-RenderObjClass * ParticleBufferClass::Clone(void) const
+RenderObjClass * ParticleBufferClass::Clone() const
 {
 	return W3DNEW ParticleBufferClass(*this);
 }
 
 
-int ParticleBufferClass::Get_Num_Polys(void) const
+int ParticleBufferClass::Get_Num_Polys() const
 {
-	// Currently in particle buffers, the cost happens to be equal to thwe polygon count.
+	// Currently in particle buffers, the cost happens to be equal to the polygon count.
 	return (int)Get_Cost();
 }
 
-int ParticleBufferClass::Get_Particle_Count(void) const
+int ParticleBufferClass::Get_Particle_Count() const
 {
 	return NonNewNum + NewNum;
 }
 
 void ParticleBufferClass::Render(RenderInfoClass & rinfo)
 {
-	WWPROFILE("ParticleBuffer::Render");	
+	WWPROFILE("ParticleBuffer::Render");
 
 	unsigned int sort_level = SORT_LEVEL_NONE;
 
 	if (!WW3D::Is_Sorting_Enabled())
 		sort_level=Get_Shader().Guess_Sort_Level();
 
-	if (WW3D::Are_Static_Sort_Lists_Enabled() && sort_level!=SORT_LEVEL_NONE) {		
-		
+	if (WW3D::Are_Static_Sort_Lists_Enabled() && sort_level!=SORT_LEVEL_NONE) {
+
 		WW3D::Add_To_Static_Sort_List(this, sort_level);
 
 	} else {
@@ -722,7 +722,7 @@ void ParticleBufferClass::Render_Particles(RenderInfoClass & rinfo)
 {
 	// If the number of active points is less than the maximum or we need to decimate particles
 	// (for LOD purposes), build the active point table:
-	ShareBufferClass<unsigned int> *apt = NULL;
+	ShareBufferClass<unsigned int> *apt = nullptr;
 
 	unsigned int active_point_count = 0;
 	if (NonNewNum < (int)MaxNum || DecimationThreshold > 0) {
@@ -827,12 +827,12 @@ void ParticleBufferClass::Render_Particles(RenderInfoClass & rinfo)
 	}
 	else if (Diffuse) {
 		Diffuse->Release_Ref();
-		Diffuse=NULL;
+		Diffuse=nullptr;
 	}
 
 	PointGroup->Set_Arrays(Position[pingpong], Diffuse, apt, Size, Orientation, Frame, active_point_count);
-	Update_Bounding_Box();	
-	PointGroup->Render(rinfo);	
+	Update_Bounding_Box();
+	PointGroup->Render(rinfo);
 }
 
 
@@ -861,7 +861,7 @@ void ParticleBufferClass::Render_Line(RenderInfoClass & rinfo)
 	}
 
 	tmp_points.Delete_All(false);
-	
+
 	for (i = Start; i < sub1_end; i++) {
 		if (PermutationArray[i & 0xF] >= DecimationThreshold) {
 			tmp_points.Add(positions[i]);
@@ -877,7 +877,7 @@ void ParticleBufferClass::Render_Line(RenderInfoClass & rinfo)
 	if (tmp_points.Count() > 0) {
 		SphereClass bounding_sphere;
 		Get_Obj_Space_Bounding_Sphere(bounding_sphere);
-		
+
 		TextureClass * tex = PointGroup->Get_Texture();
 		//LineRenderer.Set_Texture(tex);
 		REF_PTR_RELEASE(tex);
@@ -925,13 +925,13 @@ void ParticleBufferClass::Scale(float scale)
 // the cached bounding volumes will not be invalidated unless we do
 // it elsewhere (such as here). We also need to call the particle
 // emitter's Emit() function (done here to avoid order dependence).
-void ParticleBufferClass::On_Frame_Update(void)
+void ParticleBufferClass::On_Frame_Update()
 {
 	Invalidate_Cached_Bounding_Volumes();
 	if (Emitter) {
 		Emitter->Emit();
 	}
-	
+
 	if (Is_Complete()) {
 		WWASSERT(Scene);
 		Scene->Register(this,SceneClass::RELEASE);
@@ -1028,27 +1028,27 @@ void ParticleBufferClass::Prepare_LOD(CameraClass &camera)
 	PredictiveLODOptimizerClass::Add_Object(this);
 }
 
-void ParticleBufferClass::Increment_LOD(void)
+void ParticleBufferClass::Increment_LOD()
 {
 	if (DecimationThreshold > 0) DecimationThreshold--;
 }
 
-void ParticleBufferClass::Decrement_LOD(void)
+void ParticleBufferClass::Decrement_LOD()
 {
 	if (DecimationThreshold < LodCount) DecimationThreshold++;
 }
 
-float ParticleBufferClass::Get_Cost(void) const
+float ParticleBufferClass::Get_Cost() const
 {
 	return(Cost[(LodCount - 1) - DecimationThreshold]);
 }
 
-float ParticleBufferClass::Get_Value(void) const
+float ParticleBufferClass::Get_Value() const
 {
 	return(Value[(LodCount - 1) - DecimationThreshold]);
 }
 
-float ParticleBufferClass::Get_Post_Increment_Value(void) const
+float ParticleBufferClass::Get_Post_Increment_Value() const
 {
 	return(Value[LodCount - DecimationThreshold]);
 }
@@ -1059,12 +1059,12 @@ void ParticleBufferClass::Set_LOD_Level(int lod)
 	DecimationThreshold = (LodCount - 1) - lod;
 }
 
-int ParticleBufferClass::Get_LOD_Level(void) const
+int ParticleBufferClass::Get_LOD_Level() const
 {
 	return((LodCount - 1) - DecimationThreshold);
 }
 
-int ParticleBufferClass::Get_LOD_Count(void) const
+int ParticleBufferClass::Get_LOD_Count() const
 {
 	return LodCount;
 }
@@ -1114,7 +1114,7 @@ int ParticleBufferClass::Calculate_Cost_Value_Arrays(float screen_area, float *v
 	return minlod;
 }
 
-		
+
 void ParticleBufferClass::Reset_Colors(ParticlePropertyStruct<Vector3> &new_props)
 {
 
@@ -1135,16 +1135,15 @@ void ParticleBufferClass::Reset_Colors(ParticlePropertyStruct<Vector3> &new_prop
 		// ColorKeyFrameValues if the right size, otherwise release and reallocate.
 		if (Color) {
 			Color->Release_Ref();
-			Color = NULL;
+			Color = nullptr;
 		}
-		if (ColorKeyFrameTimes) {
-			delete [] ColorKeyFrameTimes;
-			ColorKeyFrameTimes = NULL;
-		}
-		if (ColorKeyFrameDeltas) {
-			delete [] ColorKeyFrameDeltas;
-			ColorKeyFrameDeltas = NULL;
-		}
+
+		delete [] ColorKeyFrameTimes;
+		ColorKeyFrameTimes = nullptr;
+
+		delete [] ColorKeyFrameDeltas;
+		ColorKeyFrameDeltas = nullptr;
+
 		if (ColorKeyFrameValues) {
 			if (NumColorKeyFrames > 1) {
 				delete [] ColorKeyFrameValues;
@@ -1183,21 +1182,10 @@ void ParticleBufferClass::Reset_Colors(ParticlePropertyStruct<Vector3> &new_prop
 		// otherwise release and reallocate.
 		unsigned int new_num_color_key_frames = ckey + 1;// Includes start keyframe (keytime == 0).
 		if (new_num_color_key_frames != NumColorKeyFrames) {
-
-			if (ColorKeyFrameTimes) {
-				delete [] ColorKeyFrameTimes;
-				ColorKeyFrameTimes = NULL;
-			}
-			if (ColorKeyFrameValues) {
-				delete [] ColorKeyFrameValues;
-				ColorKeyFrameValues = NULL;
-			}
-			if (ColorKeyFrameDeltas) {
-				delete [] ColorKeyFrameDeltas;
-				ColorKeyFrameDeltas = NULL;
-			}
-
-			NumColorKeyFrames = new_num_color_key_frames;	
+			NumColorKeyFrames = new_num_color_key_frames;
+			delete [] ColorKeyFrameTimes;
+			delete [] ColorKeyFrameValues;
+			delete [] ColorKeyFrameDeltas;
 			ColorKeyFrameTimes = W3DNEWARRAY unsigned int [NumColorKeyFrames];
 			ColorKeyFrameValues = W3DNEWARRAY Vector3 [NumColorKeyFrames];
 			ColorKeyFrameDeltas = W3DNEWARRAY Vector3 [NumColorKeyFrames];
@@ -1295,16 +1283,15 @@ void ParticleBufferClass::Reset_Opacity(ParticlePropertyStruct<float> &new_props
 		// AlphaKeyFrameValues if the right size, otherwise release and reallocate.
 		if (Alpha) {
 			Alpha->Release_Ref();
-			Alpha = NULL;
+			Alpha = nullptr;
 		}
-		if (AlphaKeyFrameTimes) {
-			delete [] AlphaKeyFrameTimes;
-			AlphaKeyFrameTimes = NULL;
-		}
-		if (AlphaKeyFrameDeltas) {
-			delete [] AlphaKeyFrameDeltas;
-			AlphaKeyFrameDeltas = NULL;
-		}
+
+		delete [] AlphaKeyFrameTimes;
+		AlphaKeyFrameTimes = nullptr;
+
+		delete [] AlphaKeyFrameDeltas;
+		AlphaKeyFrameDeltas = nullptr;
+
 		if (AlphaKeyFrameValues) {
 			if (NumAlphaKeyFrames > 1) {
 				delete [] AlphaKeyFrameValues;
@@ -1343,21 +1330,10 @@ void ParticleBufferClass::Reset_Opacity(ParticlePropertyStruct<float> &new_props
 		// otherwise release and reallocate.
 		unsigned int new_num_alpha_key_frames = akey + 1;// Includes start keyframe (keytime == 0).
 		if (new_num_alpha_key_frames != NumAlphaKeyFrames) {
-
-			if (AlphaKeyFrameTimes) {
-				delete [] AlphaKeyFrameTimes;
-				AlphaKeyFrameTimes = NULL;
-			}
-			if (AlphaKeyFrameValues) {
-				delete [] AlphaKeyFrameValues;
-				AlphaKeyFrameValues = NULL;
-			}
-			if (AlphaKeyFrameDeltas) {
-				delete [] AlphaKeyFrameDeltas;
-				AlphaKeyFrameDeltas = NULL;
-			}
-
-			NumAlphaKeyFrames = new_num_alpha_key_frames;	
+			NumAlphaKeyFrames = new_num_alpha_key_frames;
+			delete [] AlphaKeyFrameValues;
+			delete [] AlphaKeyFrameTimes;
+			delete [] AlphaKeyFrameDeltas;
 			AlphaKeyFrameTimes = W3DNEWARRAY unsigned int [NumAlphaKeyFrames];
 			AlphaKeyFrameValues = W3DNEWARRAY float [NumAlphaKeyFrames];
 			AlphaKeyFrameDeltas = W3DNEWARRAY float [NumAlphaKeyFrames];
@@ -1452,16 +1428,15 @@ void ParticleBufferClass::Reset_Size(ParticlePropertyStruct<float> &new_props)
 		// SizeKeyFrameValues if the right size, otherwise release and reallocate.
 		if (Size) {
 			Size->Release_Ref();
-			Size = NULL;
+			Size = nullptr;
 		}
-		if (SizeKeyFrameTimes) {
-			delete [] SizeKeyFrameTimes;
-			SizeKeyFrameTimes = NULL;
-		}
-		if (SizeKeyFrameDeltas) {
-			delete [] SizeKeyFrameDeltas;
-			SizeKeyFrameDeltas = NULL;
-		}
+
+		delete [] SizeKeyFrameTimes;
+		SizeKeyFrameTimes = nullptr;
+
+		delete [] SizeKeyFrameDeltas;
+		SizeKeyFrameDeltas = nullptr;
+
 		if (SizeKeyFrameValues) {
 			if (NumSizeKeyFrames > 1) {
 				delete [] SizeKeyFrameValues;
@@ -1500,21 +1475,10 @@ void ParticleBufferClass::Reset_Size(ParticlePropertyStruct<float> &new_props)
 		// otherwise release and reallocate.
 		unsigned int new_num_size_key_frames = skey + 1;// Includes start keyframe (keytime == 0).
 		if (new_num_size_key_frames != NumSizeKeyFrames) {
-
-			if (SizeKeyFrameTimes) {
-				delete [] SizeKeyFrameTimes;
-				SizeKeyFrameTimes = NULL;
-			}
-			if (SizeKeyFrameValues) {
-				delete [] SizeKeyFrameValues;
-				SizeKeyFrameValues = NULL;
-			}
-			if (SizeKeyFrameDeltas) {
-				delete [] SizeKeyFrameDeltas;
-				SizeKeyFrameDeltas = NULL;
-			}
-
-			NumSizeKeyFrames = new_num_size_key_frames;	
+			NumSizeKeyFrames = new_num_size_key_frames;
+			delete [] SizeKeyFrameTimes;
+			delete [] SizeKeyFrameValues;
+			delete [] SizeKeyFrameDeltas;
 			SizeKeyFrameTimes = W3DNEWARRAY unsigned int [NumSizeKeyFrames];
 			SizeKeyFrameValues = W3DNEWARRAY float [NumSizeKeyFrames];
 			SizeKeyFrameDeltas = W3DNEWARRAY float [NumSizeKeyFrames];
@@ -1616,36 +1580,32 @@ void ParticleBufferClass::Reset_Rotations(ParticlePropertyStruct<float> &new_pro
 	RotationRandom = new_props.Rand * 0.001f;
 	InitialOrientationRandom = orient_rnd;
 
-	// If both randomizers are effectively zero and rotation is constant zero, then all arrays are NULL.
+	// If both randomizers are effectively zero and rotation is constant zero, then all arrays are nullptr.
 	static const float eps_orientation = 2.77777778e-4f;	// Epsilon is equivalent to 0.1 degree
 	static const float eps_rotation = 2.77777778e-4f;	// Epsilon is equivalent to one rotation per hour (in rotations / second)
 	bool orientation_rand_zero = fabs(orient_rnd) < eps_orientation;
 	bool rotation_rand_zero = fabs(new_props.Rand) < eps_rotation;
 	if (orientation_rand_zero && rotation_rand_zero && new_props.NumKeyFrames == 0 && fabs(new_props.Start) < eps_rotation) {
 
-		// Release Arrays, 
+		// Release Arrays,
 		REF_PTR_RELEASE(Orientation);
-		if (RotationKeyFrameTimes) {
-			delete [] RotationKeyFrameTimes;
-			RotationKeyFrameTimes = NULL;
-		}
-		if (HalfRotationKeyFrameDeltas) {
-			delete [] HalfRotationKeyFrameDeltas;
-			HalfRotationKeyFrameDeltas = NULL;
-		}
-		if (RotationKeyFrameValues) {
-			delete [] RotationKeyFrameValues;
-			RotationKeyFrameValues = NULL;
-		}
-		if (OrientationKeyFrameValues) {
-			delete [] OrientationKeyFrameValues;
-			OrientationKeyFrameValues = NULL;
-		}
+
+		delete [] RotationKeyFrameTimes;
+		RotationKeyFrameTimes = nullptr;
+
+		delete [] HalfRotationKeyFrameDeltas;
+		HalfRotationKeyFrameDeltas = nullptr;
+
+		delete [] RotationKeyFrameValues;
+		RotationKeyFrameValues = nullptr;
+
+		delete [] OrientationKeyFrameValues;
+		OrientationKeyFrameValues = nullptr;
 
 		NumRotationKeyFrames = 0;
 		NumRandomRotationEntriesMinus1 = 0;
 		NumRandomOrientationEntriesMinus1 = 0;
-	
+
 	} else {
 
 		// Create the array if not present
@@ -1671,25 +1631,11 @@ void ParticleBufferClass::Reset_Rotations(ParticlePropertyStruct<float> &new_pro
 		// OrientationKeyFrameValues if the right size, otherwise release and reallocate.
 		unsigned int new_num_key_frames = key + 1;// Includes start keyframe (keytime == 0).
 		if (new_num_key_frames != NumRotationKeyFrames) {
-
-			if (RotationKeyFrameTimes) {
-				delete [] RotationKeyFrameTimes;
-				RotationKeyFrameTimes = NULL;
-			}
-			if (RotationKeyFrameValues) {
-				delete [] RotationKeyFrameValues;
-				RotationKeyFrameValues = NULL;
-			}
-			if (HalfRotationKeyFrameDeltas) {
-				delete [] HalfRotationKeyFrameDeltas;
-				HalfRotationKeyFrameDeltas = NULL;
-			}
-			if (OrientationKeyFrameValues) {
-				delete [] OrientationKeyFrameValues;
-				OrientationKeyFrameValues = NULL;
-			}
-
 			NumRotationKeyFrames = new_num_key_frames;
+			delete [] RotationKeyFrameTimes;
+			delete [] RotationKeyFrameValues;
+			delete [] HalfRotationKeyFrameDeltas;
+			delete [] OrientationKeyFrameValues;
 			RotationKeyFrameTimes = W3DNEWARRAY unsigned int [NumRotationKeyFrames];
 			RotationKeyFrameValues = W3DNEWARRAY float [NumRotationKeyFrames];
 			HalfRotationKeyFrameDeltas = W3DNEWARRAY float [NumRotationKeyFrames];
@@ -1830,16 +1776,16 @@ void ParticleBufferClass::Reset_Frames(ParticlePropertyStruct<float> &new_props)
 	bool frame_rand_zero	= (fabs(new_props.Rand) < eps_frame);
 	if (frame_rand_zero && new_props.NumKeyFrames == 0) {
 
-		// Release Arrays, Reuse KeyFrameValues if the right size, 
+		// Release Arrays, Reuse KeyFrameValues if the right size,
 		// otherwise release and reallocate.
 		REF_PTR_RELEASE(Frame);
 		if (FrameKeyFrameTimes) {
 			delete [] FrameKeyFrameTimes;
-			FrameKeyFrameTimes = NULL;
+			FrameKeyFrameTimes = nullptr;
 		}
 		if (FrameKeyFrameDeltas) {
 			delete [] FrameKeyFrameDeltas;
-			FrameKeyFrameDeltas = NULL;
+			FrameKeyFrameDeltas = nullptr;
 		}
 		if (FrameKeyFrameValues) {
 			if (NumFrameKeyFrames > 1) {
@@ -1853,7 +1799,7 @@ void ParticleBufferClass::Reset_Frames(ParticlePropertyStruct<float> &new_props)
 		NumFrameKeyFrames = 0;
 		NumRandomFrameEntriesMinus1 = 0;
 		FrameKeyFrameValues[0] = new_props.Start;
-	
+
 	} else {
 
 		// Create the array if not present
@@ -1879,21 +1825,10 @@ void ParticleBufferClass::Reset_Frames(ParticlePropertyStruct<float> &new_props)
 		// otherwise release and reallocate.
 		unsigned int new_num_key_frames = key + 1;// Includes start keyframe (keytime == 0).
 		if (new_num_key_frames != NumFrameKeyFrames) {
-
-			if (FrameKeyFrameTimes) {
-				delete [] FrameKeyFrameTimes;
-				FrameKeyFrameTimes = NULL;
-			}
-			if (FrameKeyFrameValues) {
-				delete [] FrameKeyFrameValues;
-				FrameKeyFrameValues = NULL;
-			}
-			if (FrameKeyFrameDeltas) {
-				delete [] FrameKeyFrameDeltas;
-				FrameKeyFrameDeltas = NULL;
-			}
-
-			NumFrameKeyFrames = new_num_key_frames;	
+			NumFrameKeyFrames = new_num_key_frames;
+			delete [] FrameKeyFrameTimes;
+			delete [] FrameKeyFrameValues;
+			delete [] FrameKeyFrameDeltas;
 			FrameKeyFrameTimes = W3DNEWARRAY unsigned int [NumFrameKeyFrames];
 			FrameKeyFrameValues = W3DNEWARRAY float [NumFrameKeyFrames];
 			FrameKeyFrameDeltas = W3DNEWARRAY float [NumFrameKeyFrames];
@@ -1970,7 +1905,7 @@ void ParticleBufferClass::Reset_Frames(ParticlePropertyStruct<float> &new_props)
 void ParticleBufferClass::Reset_Blur_Times(ParticlePropertyStruct<float> &new_blur_times)
 {
 
-	unsigned int i;	// Used in loops	
+	unsigned int i;	// Used in loops
    float oo_intmax = 1.0f / (float)INT_MAX;
 	unsigned int ui_previous_key_time = 0;
 	unsigned int ui_current_key_time = 0;
@@ -1984,16 +1919,15 @@ void ParticleBufferClass::Reset_Blur_Times(ParticlePropertyStruct<float> &new_bl
 	bool blurtime_rand_zero	= (fabs(new_blur_times.Rand) < eps_blur);
 	if (blurtime_rand_zero && new_blur_times.NumKeyFrames == 0) {
 
-		// Release Arrays, Reuse KeyFrameValues if the right size, 
-		// otherwise release and reallocate.		
-		if (BlurTimeKeyFrameTimes) {
-			delete [] BlurTimeKeyFrameTimes;
-			BlurTimeKeyFrameTimes = NULL;
-		}
-		if (BlurTimeKeyFrameDeltas) {
-			delete [] BlurTimeKeyFrameDeltas;
-			BlurTimeKeyFrameDeltas = NULL;
-		}
+		// Release Arrays, Reuse KeyFrameValues if the right size,
+		// otherwise release and reallocate.
+
+		delete [] BlurTimeKeyFrameTimes;
+		BlurTimeKeyFrameTimes = nullptr;
+
+		delete [] BlurTimeKeyFrameDeltas;
+		BlurTimeKeyFrameDeltas = nullptr;
+
 		if (BlurTimeKeyFrameValues) {
 			if (NumBlurTimeKeyFrames > 1) {
 				delete [] BlurTimeKeyFrameValues;
@@ -2006,7 +1940,7 @@ void ParticleBufferClass::Reset_Blur_Times(ParticlePropertyStruct<float> &new_bl
 		NumBlurTimeKeyFrames = 0;
 		NumRandomBlurTimeEntriesMinus1 = 0;
 		BlurTimeKeyFrameValues[0] = new_blur_times.Start;
-	
+
 	} else {
 
 		// Check times of the keyframes (each keytime must be larger than the
@@ -2027,21 +1961,10 @@ void ParticleBufferClass::Reset_Blur_Times(ParticlePropertyStruct<float> &new_bl
 		// otherwise release and reallocate.
 		unsigned int new_num_key_frames = key + 1;// Includes start keyframe (keytime == 0).
 		if (new_num_key_frames != NumBlurTimeKeyFrames) {
-
-			if (BlurTimeKeyFrameTimes) {
-				delete [] BlurTimeKeyFrameTimes;
-				BlurTimeKeyFrameTimes = NULL;
-			}
-			if (BlurTimeKeyFrameValues) {
-				delete [] BlurTimeKeyFrameValues;
-				BlurTimeKeyFrameValues = NULL;
-			}
-			if (BlurTimeKeyFrameDeltas) {
-				delete [] BlurTimeKeyFrameDeltas;
-				BlurTimeKeyFrameDeltas = NULL;
-			}
-
-			NumBlurTimeKeyFrames = new_num_key_frames;	
+			NumBlurTimeKeyFrames = new_num_key_frames;
+			delete [] BlurTimeKeyFrameTimes;
+			delete [] BlurTimeKeyFrameValues;
+			delete [] BlurTimeKeyFrameDeltas;
 			BlurTimeKeyFrameTimes = new unsigned int [NumBlurTimeKeyFrames];
 			BlurTimeKeyFrameValues = new float [NumBlurTimeKeyFrames];
 			BlurTimeKeyFrameDeltas = new float [NumBlurTimeKeyFrames];
@@ -2118,12 +2041,12 @@ void ParticleBufferClass::Reset_Blur_Times(ParticlePropertyStruct<float> &new_bl
 // This informs the buffer that the emitter is dead, so it can release
 // its pointer to it and be removed itself after all its particles dies
 // out.
-void ParticleBufferClass::Emitter_Is_Dead(void)
+void ParticleBufferClass::Emitter_Is_Dead()
 {
 	IsEmitterDead = true;
 	// We do not have a ref for the emitter (see DTor for detailed explanation)
 	// Emitter->Release_Ref();
-	Emitter = NULL;
+	Emitter = nullptr;
 }
 
 
@@ -2135,7 +2058,7 @@ void ParticleBufferClass::Set_Emitter(ParticleEmitterClass *emitter)
 	if (Emitter) {
 		// We do not have a ref for the emitter (see DTor for detailed explanation)
 		// Emitter->Release_Ref();
-		Emitter = NULL;
+		Emitter = nullptr;
 	}
 
 	Emitter = emitter;
@@ -2146,8 +2069,8 @@ void ParticleBufferClass::Set_Emitter(ParticleEmitterClass *emitter)
 	}
 }
 
-		
-NewParticleStruct * ParticleBufferClass::Add_Uninitialized_New_Particle(void)
+
+NewParticleStruct * ParticleBufferClass::Add_Uninitialized_New_Particle()
 {
 	// Note that this function does not initialize the new particle - it
 	// returns its address to a different function which performs the actual
@@ -2167,7 +2090,7 @@ NewParticleStruct * ParticleBufferClass::Add_Uninitialized_New_Particle(void)
 }
 
 
-void ParticleBufferClass::Update_Cached_Bounding_Volumes(void) const
+void ParticleBufferClass::Update_Cached_Bounding_Volumes() const
 {
 	// This ugly cast is done because the alternative is to make everything
 	// in the class mutable, which does not seem like a good solution
@@ -2181,7 +2104,7 @@ void ParticleBufferClass::Update_Cached_Bounding_Volumes(void) const
 }
 
 
-void ParticleBufferClass::Update_Kinematic_Particle_State(void)
+void ParticleBufferClass::Update_Kinematic_Particle_State()
 {
 	// Note: elapsed may be very large indeed the first time the object is
 	// updated, but this doesn't matter, since it is actually only used in
@@ -2211,7 +2134,7 @@ void ParticleBufferClass::Update_Kinematic_Particle_State(void)
 }
 
 
-void ParticleBufferClass::Update_Visual_Particle_State(void)
+void ParticleBufferClass::Update_Visual_Particle_State()
 {
 	// NOTE: The visual state (color/alpha/size) is "stateless" in that each time it is calculated
 	// without referring to what it was before. This is important for when we optimize the particle
@@ -2244,18 +2167,18 @@ void ParticleBufferClass::Update_Visual_Particle_State(void)
 	unsigned int bkey = NumBlurTimeKeyFrames -1;
 
 	unsigned int part;
-	Vector3 *color = Color ? Color->Get_Array(): NULL;
-	float *alpha = Alpha ? Alpha->Get_Array(): NULL;
-	float *size = Size ? Size->Get_Array(): NULL;
-	uint8 *orientation = Orientation ? Orientation->Get_Array(): NULL;
-	uint8 *frame = Frame ? Frame->Get_Array(): NULL;
-	Vector3 *tailposition = TailPosition ? TailPosition->Get_Array() : NULL;
+	Vector3 *color = Color ? Color->Get_Array(): nullptr;
+	float *alpha = Alpha ? Alpha->Get_Array(): nullptr;
+	float *size = Size ? Size->Get_Array(): nullptr;
+	uint8 *orientation = Orientation ? Orientation->Get_Array(): nullptr;
+	uint8 *frame = Frame ? Frame->Get_Array(): nullptr;
+	Vector3 *tailposition = TailPosition ? TailPosition->Get_Array() : nullptr;
 
-	Vector3 *position=NULL;
+	Vector3 *position=nullptr;
 
 	if (PingPongPosition) {
 		int pingpong = WW3D::Get_Frame_Count() & 0x1;
-		position = Position[pingpong]->Get_Array();		
+		position = Position[pingpong]->Get_Array();
 	} else {
 		position = Position[0]->Get_Array();
 	}
@@ -2313,7 +2236,7 @@ void ParticleBufferClass::Update_Visual_Particle_State(void)
 				(RotationKeyFrameValues[rkey] + HalfRotationKeyFrameDeltas[rkey] * f_delta_t) * f_delta_t +
 				RandomRotationEntries[part & NumRandomRotationEntriesMinus1] * (float)part_age +
 				RandomOrientationEntries[part & NumRandomOrientationEntriesMinus1];
-			
+
 			orientation[part] = (uint)(((int)(tmp_orient * 256.0f)) & 0xFF);
 		}
 
@@ -2326,7 +2249,7 @@ void ParticleBufferClass::Update_Visual_Particle_State(void)
 			float tmp_frame = FrameKeyFrameValues[fkey] +
 				FrameKeyFrameDeltas[fkey] * (float)(part_age - FrameKeyFrameTimes[fkey]) +
 				RandomFrameEntries[part & NumRandomFrameEntriesMinus1];
-			
+
 			frame[part] = (uint)(((int)(tmp_frame)) & 0xFF);
 		}
 
@@ -2341,7 +2264,7 @@ void ParticleBufferClass::Update_Visual_Particle_State(void)
 					RandomBlurTimeEntries[part & NumRandomBlurTimeEntriesMinus1];
 			}
 			tailposition[part]=position[part]-Velocity[part]*blur_time*1000;
-		}		
+		}
 	}
 
 	for (part = sub2_start; part < End; part++) {
@@ -2354,7 +2277,7 @@ void ParticleBufferClass::Update_Visual_Particle_State(void)
 			// age >= keytime. This loop must terminate because the 0th keytime is 0.
 			for (; part_age < ColorKeyFrameTimes[ckey]; ckey--);
 
-			color[part] = 
+			color[part] =
 					ColorKeyFrameValues[ckey] +
 					ColorKeyFrameDeltas[ckey] * (float)(part_age - ColorKeyFrameTimes[ckey]) +
 					RandomColorEntries[part & NumRandomColorEntriesMinus1];
@@ -2397,7 +2320,7 @@ void ParticleBufferClass::Update_Visual_Particle_State(void)
 				(RotationKeyFrameValues[rkey] + HalfRotationKeyFrameDeltas[rkey] * f_delta_t) * f_delta_t +
 				RandomRotationEntries[part & NumRandomRotationEntriesMinus1] * (float)part_age +
 				RandomOrientationEntries[part & NumRandomOrientationEntriesMinus1];
-			
+
 			orientation[part] = (uint)(((int)(tmp_orient * 256.0f)) & 0xFF);
 		}
 
@@ -2410,7 +2333,7 @@ void ParticleBufferClass::Update_Visual_Particle_State(void)
 			float tmp_frame = FrameKeyFrameValues[fkey] +
 				FrameKeyFrameDeltas[fkey] * (float)(part_age - FrameKeyFrameTimes[fkey]) +
 				RandomFrameEntries[part & NumRandomFrameEntriesMinus1];
-			
+
 			frame[part] = (uint)(((int)(tmp_frame)) & 0xFF);
 		}
 
@@ -2430,7 +2353,7 @@ void ParticleBufferClass::Update_Visual_Particle_State(void)
 }
 
 
-void ParticleBufferClass::Update_Bounding_Box(void)
+void ParticleBufferClass::Update_Bounding_Box()
 {
 	// Ensure all particle positions are updated. If bounding box still not
 	// dirty, return.
@@ -2481,7 +2404,7 @@ void ParticleBufferClass::Update_Bounding_Box(void)
 		min_coords.Y = min_coords.Y <= position[i].Y ? min_coords.Y : position[i].Y;
 		min_coords.Z = min_coords.Z <= position[i].Z ? min_coords.Z : position[i].Z;
 	}
-	
+
 	// Extend by maximum possible particle size:
 	Vector3 size(MaxSize, MaxSize, MaxSize);
 	max_coords += size;
@@ -2500,7 +2423,7 @@ void ParticleBufferClass::Update_Bounding_Box(void)
 // particles (including possibly other new particles) so that the newest
 // particles are preserved. The particles are initialized to their state at
 // the end of the current interval.
-void ParticleBufferClass::Get_New_Particles(void)
+void ParticleBufferClass::Get_New_Particles()
 {
 	unsigned int current_time = WW3D::Get_Sync_Time();
 
@@ -2514,7 +2437,7 @@ void ParticleBufferClass::Get_New_Particles(void)
 		prev_pos = Position[pingpong ^ 0x1]->Get_Array();
 	} else {
 		position = Position[0]->Get_Array();
-		prev_pos = NULL;
+		prev_pos = nullptr;
 	}
 
 	for (; NewParticleQueueCount;) {
@@ -2536,7 +2459,7 @@ void ParticleBufferClass::Get_New_Particles(void)
 		if (HasAccel) {
 			position[NewEnd] = new_particle.Position +
 									(new_particle.Velocity + 0.5f * Accel * fp_age) * fp_age;
-			
+
 			Velocity[NewEnd] = new_particle.Velocity + (Accel * fp_age);
 		} else {
 			position[NewEnd] =new_particle.Position +
@@ -2574,7 +2497,7 @@ void ParticleBufferClass::Get_New_Particles(void)
 }
 
 
-void ParticleBufferClass::Kill_Old_Particles(void)
+void ParticleBufferClass::Kill_Old_Particles()
 {
 	// Scan from Start and find the first particle which has an age less than
 	// MaxAge - set Start to that position.
@@ -2694,7 +2617,7 @@ void ParticleBufferClass::Get_Color_Key_Frames (ParticlePropertyStruct<Vector3> 
 	//
 	//	Determine if there is a keyframe at the very end of the particle's lifetime
 	//
-	if ((ColorKeyFrameDeltas != NULL) &&
+	if ((ColorKeyFrameDeltas != nullptr) &&
 		 ((ColorKeyFrameDeltas[NumColorKeyFrames - 1].X != 0) ||
 		  (ColorKeyFrameDeltas[NumColorKeyFrames - 1].Y != 0) ||
 		  (ColorKeyFrameDeltas[NumColorKeyFrames - 1].Z != 0))) {
@@ -2705,8 +2628,8 @@ void ParticleBufferClass::Get_Color_Key_Frames (ParticlePropertyStruct<Vector3> 
 	colors.Start = ColorKeyFrameValues[0];
 	colors.Rand = ColorRandom;
 	colors.NumKeyFrames = real_keyframe_count;
-	colors.KeyTimes = NULL;
-	colors.Values = NULL;
+	colors.KeyTimes = nullptr;
+	colors.Values = nullptr;
 
 	//
 	//	If we have more than just the start color, build
@@ -2728,7 +2651,7 @@ void ParticleBufferClass::Get_Color_Key_Frames (ParticlePropertyStruct<Vector3> 
 		//
 		//	Add a keyframe at the very end of the timeline if necessary
 		//
-		if (create_last_keyframe) {			
+		if (create_last_keyframe) {
 			colors.KeyTimes[index - 1] = ((float)MaxAge / 1000);
 
 			//
@@ -2752,7 +2675,7 @@ void ParticleBufferClass::Get_Opacity_Key_Frames (ParticlePropertyStruct<float> 
 	//
 	//	Determine if there is a keyframe at the very end of the particle's lifetime
 	//
-	if ((AlphaKeyFrameDeltas != NULL) &&
+	if ((AlphaKeyFrameDeltas != nullptr) &&
 		 (AlphaKeyFrameDeltas[NumAlphaKeyFrames - 1] != 0)) {
 		real_keyframe_count ++;
 		create_last_keyframe = true;
@@ -2761,8 +2684,8 @@ void ParticleBufferClass::Get_Opacity_Key_Frames (ParticlePropertyStruct<float> 
 	opacities.Start = AlphaKeyFrameValues[0];
 	opacities.Rand = OpacityRandom;
 	opacities.NumKeyFrames = real_keyframe_count;
-	opacities.KeyTimes = NULL;
-	opacities.Values = NULL;
+	opacities.KeyTimes = nullptr;
+	opacities.Values = nullptr;
 
 	//
 	//	If we have more than just the start opacity, build
@@ -2784,7 +2707,7 @@ void ParticleBufferClass::Get_Opacity_Key_Frames (ParticlePropertyStruct<float> 
 		//
 		//	Add a keyframe at the very end of the timeline if necessary
 		//
-		if (create_last_keyframe) {			
+		if (create_last_keyframe) {
 			opacities.KeyTimes[index - 1] = ((float)MaxAge / 1000);
 
 			//
@@ -2809,7 +2732,7 @@ void ParticleBufferClass::Get_Size_Key_Frames (ParticlePropertyStruct<float> &si
 	//
 	//	Determine if there is a keyframe at the very end of the particle's lifetime
 	//
-	if ((SizeKeyFrameDeltas != NULL) &&
+	if ((SizeKeyFrameDeltas != nullptr) &&
 		 (SizeKeyFrameDeltas[NumSizeKeyFrames - 1] != 0)) {
 		real_keyframe_count ++;
 		create_last_keyframe = true;
@@ -2818,8 +2741,8 @@ void ParticleBufferClass::Get_Size_Key_Frames (ParticlePropertyStruct<float> &si
 	sizes.Start				= SizeKeyFrameValues[0];
 	sizes.Rand				= SizeRandom;
 	sizes.NumKeyFrames	= real_keyframe_count;
-	sizes.KeyTimes			= NULL;
-	sizes.Values			= NULL;
+	sizes.KeyTimes			= nullptr;
+	sizes.Values			= nullptr;
 
 	//
 	//	If we have more than just the start opacity, build
@@ -2841,7 +2764,7 @@ void ParticleBufferClass::Get_Size_Key_Frames (ParticlePropertyStruct<float> &si
 		//
 		//	Add a keyframe at the very end of the timeline if necessary
 		//
-		if (create_last_keyframe) {			
+		if (create_last_keyframe) {
 			sizes.KeyTimes[index - 1] = ((float)MaxAge / 1000);
 
 			//
@@ -2870,7 +2793,7 @@ void ParticleBufferClass::Get_Rotation_Key_Frames (ParticlePropertyStruct<float>
 	//
 	//	Determine if there is a keyframe at the very end of the particle's lifetime
 	//
-	if ((HalfRotationKeyFrameDeltas != NULL) &&
+	if ((HalfRotationKeyFrameDeltas != nullptr) &&
 		 (HalfRotationKeyFrameDeltas[NumRotationKeyFrames - 1] != 0)) {
 		real_keyframe_count ++;
 		create_last_keyframe = true;
@@ -2880,8 +2803,8 @@ void ParticleBufferClass::Get_Rotation_Key_Frames (ParticlePropertyStruct<float>
 	rotations.Start			= RotationKeyFrameValues ? RotationKeyFrameValues[0] * 1000.0f : 0;
 	rotations.Rand				= RotationRandom * 1000.0f;
 	rotations.NumKeyFrames	= real_keyframe_count;
-	rotations.KeyTimes		= NULL;
-	rotations.Values			= NULL;
+	rotations.KeyTimes		= nullptr;
+	rotations.Values			= nullptr;
 
 	//
 	//	If we have more than just the start rotation, build
@@ -2903,7 +2826,7 @@ void ParticleBufferClass::Get_Rotation_Key_Frames (ParticlePropertyStruct<float>
 		//
 		//	Add a keyframe at the very end of the timeline if necessary
 		//
-		if (create_last_keyframe) {			
+		if (create_last_keyframe) {
 			rotations.KeyTimes[index - 1] = ((float)MaxAge / 1000);
 
 			//
@@ -2928,7 +2851,7 @@ void ParticleBufferClass::Get_Frame_Key_Frames (ParticlePropertyStruct<float> &f
 	//
 	//	Determine if there is a keyframe at the very end of the particle's lifetime
 	//
-	if ((FrameKeyFrameDeltas != NULL) &&
+	if ((FrameKeyFrameDeltas != nullptr) &&
 		 (FrameKeyFrameDeltas[NumFrameKeyFrames - 1] != 0)) {
 		real_keyframe_count ++;
 		create_last_keyframe = true;
@@ -2937,8 +2860,8 @@ void ParticleBufferClass::Get_Frame_Key_Frames (ParticlePropertyStruct<float> &f
 	frames.Start			= FrameKeyFrameValues[0];
 	frames.Rand				= FrameRandom;
 	frames.NumKeyFrames	= real_keyframe_count;
-	frames.KeyTimes		= NULL;
-	frames.Values			= NULL;
+	frames.KeyTimes		= nullptr;
+	frames.Values			= nullptr;
 
 	//
 	//	If we have more than just the start rotation, build
@@ -2960,7 +2883,7 @@ void ParticleBufferClass::Get_Frame_Key_Frames (ParticlePropertyStruct<float> &f
 		//
 		//	Add a keyframe at the very end of the timeline if necessary
 		//
-		if (create_last_keyframe) {			
+		if (create_last_keyframe) {
 			frames.KeyTimes[index - 1] = ((float)MaxAge / 1000);
 
 			//
@@ -2984,7 +2907,7 @@ void ParticleBufferClass::Get_Blur_Time_Key_Frames (ParticlePropertyStruct<float
 	//
 	//	Determine if there is a keyframe at the very end of the particle's lifetime
 	//
-	if ((BlurTimeKeyFrameDeltas != NULL) &&
+	if ((BlurTimeKeyFrameDeltas != nullptr) &&
 		 (BlurTimeKeyFrameDeltas[NumBlurTimeKeyFrames - 1] != 0)) {
 		real_keyframe_count ++;
 		create_last_keyframe = true;
@@ -2993,8 +2916,8 @@ void ParticleBufferClass::Get_Blur_Time_Key_Frames (ParticlePropertyStruct<float
 	blurtimes.Start			= BlurTimeKeyFrameValues[0];
 	blurtimes.Rand				= BlurTimeRandom;
 	blurtimes.NumKeyFrames	= real_keyframe_count;
-	blurtimes.KeyTimes		= NULL;
-	blurtimes.Values			= NULL;
+	blurtimes.KeyTimes		= nullptr;
+	blurtimes.Values			= nullptr;
 
 	//
 	//	If we have more than just the start rotation, build
@@ -3016,7 +2939,7 @@ void ParticleBufferClass::Get_Blur_Time_Key_Frames (ParticlePropertyStruct<float
 		//
 		//	Add a keyframe at the very end of the timeline if necessary
 		//
-		if (create_last_keyframe) {			
+		if (create_last_keyframe) {
 			blurtimes.KeyTimes[index - 1] = ((float)MaxAge / 1000);
 
 			//
@@ -3050,83 +2973,83 @@ float ParticleBufferClass::Get_LOD_Max_Screen_Size(int lod_level)
 }
 
 
-int ParticleBufferClass::Get_Line_Texture_Mapping_Mode(void) const
+int ParticleBufferClass::Get_Line_Texture_Mapping_Mode() const
 {
-	if (LineRenderer != NULL) {
+	if (LineRenderer != nullptr) {
 		return LineRenderer->Get_Texture_Mapping_Mode();
-	} 
+	}
 	return SegLineRendererClass::UNIFORM_WIDTH_TEXTURE_MAP;
 }
 
-int ParticleBufferClass::Is_Merge_Intersections(void) const
+int ParticleBufferClass::Is_Merge_Intersections() const
 {
-	if (LineRenderer != NULL) {
+	if (LineRenderer != nullptr) {
 		return LineRenderer->Is_Merge_Intersections();
-	} 
+	}
 	return false;
 }
 
-int ParticleBufferClass::Is_Freeze_Random(void) const
+int ParticleBufferClass::Is_Freeze_Random() const
 {
-	if (LineRenderer != NULL) {
+	if (LineRenderer != nullptr) {
 		return LineRenderer->Is_Freeze_Random();
-	} 
+	}
 	return false;
 }
 
-int ParticleBufferClass::Is_Sorting_Disabled(void) const
+int ParticleBufferClass::Is_Sorting_Disabled() const
 {
-	if (LineRenderer != NULL) {
+	if (LineRenderer != nullptr) {
 		return LineRenderer->Is_Sorting_Disabled();
-	} 
+	}
 	return false;
 }
 
-int ParticleBufferClass::Are_End_Caps_Enabled(void)	const
+int ParticleBufferClass::Are_End_Caps_Enabled()	const
 {
-	if (LineRenderer != NULL) {
+	if (LineRenderer != nullptr) {
 		return LineRenderer->Are_End_Caps_Enabled();
-	} 
+	}
 	return false;
 }
 
-int ParticleBufferClass::Get_Subdivision_Level(void) const
+int ParticleBufferClass::Get_Subdivision_Level() const
 {
-	if (LineRenderer != NULL) {
+	if (LineRenderer != nullptr) {
 		return LineRenderer->Get_Current_Subdivision_Level();
-	} 
+	}
 	return 0;
 }
 
-float ParticleBufferClass::Get_Noise_Amplitude(void) const
+float ParticleBufferClass::Get_Noise_Amplitude() const
 {
-	if (LineRenderer != NULL) {
+	if (LineRenderer != nullptr) {
 		return LineRenderer->Get_Noise_Amplitude();
-	} 
+	}
 	return 0.0f;
 }
 
-float ParticleBufferClass::Get_Merge_Abort_Factor(void) const
+float ParticleBufferClass::Get_Merge_Abort_Factor() const
 {
-	if (LineRenderer != NULL) {
+	if (LineRenderer != nullptr) {
 		return LineRenderer->Get_Merge_Abort_Factor();
-	} 
+	}
 	return 0.0f;
 }
 
-float ParticleBufferClass::Get_Texture_Tile_Factor(void) const
+float ParticleBufferClass::Get_Texture_Tile_Factor() const
 {
-	if (LineRenderer != NULL) {
+	if (LineRenderer != nullptr) {
 		return LineRenderer->Get_Texture_Tile_Factor();
-	} 
+	}
 	return 1.0f;
 }
 
-Vector2 ParticleBufferClass::Get_UV_Offset_Rate(void) const
+Vector2 ParticleBufferClass::Get_UV_Offset_Rate() const
 {
-	if (LineRenderer != NULL) {
+	if (LineRenderer != nullptr) {
 		return LineRenderer->Get_UV_Offset_Rate();
-	} 
+	}
 	return Vector2(0.0f,0.0f);
 }
 

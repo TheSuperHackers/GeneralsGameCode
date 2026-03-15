@@ -26,8 +26,8 @@
  *                                                                                             *
  *              Original Author:: Greg Hjelstrom                                               *
  *                                                                                             *
- *                       Author : Kenny Mitchell                                               * 
- *                                                                                             * 
+ *                       Author : Kenny Mitchell                                               *
+ *                                                                                             *
  *                     $Modtime:: 06/27/02 1:27p                                              $*
  *                                                                                             *
  *                    $Revision:: 5                                                           $*
@@ -37,13 +37,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef DX8LIST_H
-#define DX8LIST_H
 
 #include "always.h"
 #include "multilist.h"
@@ -63,12 +57,8 @@ typedef MultiListIterator<DX8FVFCategoryContainer>		FVFCategoryListIterator;
 
 class DX8PolygonRendererClass;
 typedef MultiListClass<DX8PolygonRendererClass>			DX8PolygonRendererList;
-typedef MultiListIterator<DX8PolygonRendererClass>		DX8PolygonRendererListIterator; 
+typedef MultiListIterator<DX8PolygonRendererClass>		DX8PolygonRendererListIterator;
 
 class TextureTrackerClass;
 typedef MultiListClass<TextureTrackerClass>				TextureTrackerList;
 typedef MultiListIterator<TextureTrackerClass>			TextureTrackerListIterator;
-
-
-#endif //DX8LIST_H
-

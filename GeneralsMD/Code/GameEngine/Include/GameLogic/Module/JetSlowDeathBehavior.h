@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __JET_SLOW_DEATH_BEHAVIOR_H_
-#define __JET_SLOW_DEATH_BEHAVIOR_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "Common/AudioEventRTS.h"
 #include "GameLogic/Module/BehaviorModule.h"
@@ -47,11 +44,11 @@ class JetSlowDeathBehaviorModuleData : public SlowDeathBehaviorModuleData
 
 public:
 
-	JetSlowDeathBehaviorModuleData( void );
+	JetSlowDeathBehaviorModuleData();
 
 	static void buildFieldParse( MultiIniFieldParse &p );
 
-	const FXList *m_fxOnGroundDeath;							///< fx list executed on death when destoyed on ground
+	const FXList *m_fxOnGroundDeath;							///< fx list executed on death when destroyed on ground
 	const ObjectCreationList *m_oclOnGroundDeath;	///< ocl list executed on death when destroyed on ground
 
 	const FXList *m_fxInitialDeath;								///< FXList for initial death
@@ -63,7 +60,7 @@ public:
 
 	const FXList *m_fxHitGround;									///< FXList for hit ground
 	const ObjectCreationList *m_oclHitGround;			///< OCL for hit ground
-	
+
 	UnsignedInt m_delayFinalBlowUpFromHitGround;	///< delay (in frames) from hit ground, to final explosion
 	const FXList *m_fxFinalBlowUp;								///< FxList for final blow up
 	const ObjectCreationList *m_oclFinalBlowUp;		///< OCL for final blow up
@@ -91,9 +88,9 @@ public:
 	// virtual destructor prototype provided by memory pool declaration
 
 	// slow death methods
-	virtual void onDie( const DamageInfo *damageInfo );
-	virtual void beginSlowDeath( const DamageInfo *damageInfo );
-	virtual UpdateSleepTime update( void );
+	virtual void onDie( const DamageInfo *damageInfo ) override;
+	virtual void beginSlowDeath( const DamageInfo *damageInfo ) override;
+	virtual UpdateSleepTime update() override;
 
 protected:
 
@@ -105,6 +102,3 @@ protected:
 	AudioEventRTS m_deathLoopSound;					///< death loop sound
 
 };
-
-
-#endif  // end __JET_SLOW_DEATH_BEHAVIOR_H_

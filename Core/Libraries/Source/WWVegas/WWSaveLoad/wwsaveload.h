@@ -36,12 +36,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef WWSAVELOAD_H
-#define WWSAVELOAD_H
 
 /**
 ** WWSaveLoad
@@ -51,10 +46,6 @@
 class WWSaveLoad
 {
 public:
-	static void		Init(void);
-	static void		Shutdown(void);
+	static void		Init();
+	static void		Shutdown();
 };
-
-
-#endif
-

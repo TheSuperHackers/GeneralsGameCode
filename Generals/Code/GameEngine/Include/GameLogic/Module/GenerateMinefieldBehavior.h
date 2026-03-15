@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __GenerateMinefieldBehavior_H_
-#define __GenerateMinefieldBehavior_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/BehaviorModule.h"
 #include "GameLogic/Module/DieModule.h"
@@ -65,7 +62,7 @@ private:
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-class GenerateMinefieldBehavior : public BehaviorModule, 
+class GenerateMinefieldBehavior : public BehaviorModule,
 																	public DieModuleInterface,
 																	public UpgradeMux
 {
@@ -82,28 +79,28 @@ public:
 	static Int getInterfaceMask() { return (MODULEINTERFACE_DIE) | (MODULEINTERFACE_UPGRADE); }
 
 	// BehaviorModule
-	virtual DieModuleInterface* getDie() { return this; }
-	virtual UpgradeModuleInterface* getUpgrade() { return this; }
+	virtual DieModuleInterface* getDie() override { return this; }
+	virtual UpgradeModuleInterface* getUpgrade() override { return this; }
 
 	// DamageModuleInterface
-	virtual void onDie( const DamageInfo *damageInfo );
+	virtual void onDie( const DamageInfo *damageInfo ) override;
 
 	void setMinefieldTarget(const Coord3D* pos);
 
 protected:
 
-	virtual void upgradeImplementation();
-	virtual Bool isSubObjectsUpgrade() { return false; }
+	virtual void upgradeImplementation() override;
+	virtual Bool isSubObjectsUpgrade() override { return false; }
 
-	virtual void getUpgradeActivationMasks(UpgradeMaskType& activation, UpgradeMaskType& conflicting) const
+	virtual void getUpgradeActivationMasks(UpgradeMaskType& activation, UpgradeMaskType& conflicting) const override
 	{
 		getGenerateMinefieldBehaviorModuleData()->m_upgradeMuxData.getUpgradeActivationMasks(activation, conflicting);
 	}
-	virtual void performUpgradeFX()
+	virtual void performUpgradeFX() override
 	{
 		getGenerateMinefieldBehaviorModuleData()->m_upgradeMuxData.performUpgradeFX(getObject());
 	}
-	virtual Bool requiresAllActivationUpgrades() const
+	virtual Bool requiresAllActivationUpgrades() const override
 	{
 		return getGenerateMinefieldBehaviorModuleData()->m_upgradeMuxData.m_requiresAllTriggers;
 	}
@@ -113,7 +110,7 @@ private:
 	Coord3D m_target;
 	Bool m_hasTarget;
 	Bool m_generated;
-	
+
 	const Coord3D* getMinefieldTarget() const;
 	void placeMines();
 	void placeMinesInFootprint(const GeometryInfo& geom, const ThingTemplate* mineTemplate);
@@ -122,6 +119,3 @@ private:
 	void placeMinesAroundRect(const Coord3D& pos, Real majorRadius, Real minorRadius, const ThingTemplate* mineTemplate);
 	Object* placeMineAt(const Coord3D& pt, const ThingTemplate* mineTemplate, Team* team, const Object* producer);
 };
-
-#endif // __GenerateMinefieldBehavior_H_
-

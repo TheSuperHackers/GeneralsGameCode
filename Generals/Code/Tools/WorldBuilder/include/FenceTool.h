@@ -22,18 +22,15 @@
 
 #pragma once
 
-#ifndef FenceTool_H
-#define FenceTool_H
-
 #include "Tool.h"
 class WorldHeightMapEdit;
 class MapObject;
 class Vector3;
 /*************************************************************************/
 /**                             FenceTool
-	 Does the fence tool operation. 
+	 Does the fence tool operation.
 ***************************************************************************/
-class FenceTool : public Tool 
+class FenceTool : public Tool
 {
 protected:
 	CPoint		m_downPt2d;
@@ -48,7 +45,7 @@ public:
 	~FenceTool(void);
 
 protected:
-	void updateMapObjectList(Coord3D downPt, Coord3D curPt, WbView* pView, CWorldBuilderDoc *pDoc, Bool checkPlayers); 
+	void updateMapObjectList(Coord3D downPt, Coord3D curPt, WbView* pView, CWorldBuilderDoc *pDoc, Bool checkPlayers);
 
 public:
 	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);
@@ -57,6 +54,3 @@ public:
 	virtual void activate(); ///< Become the current tool.
 	virtual void deactivate(); ///< Become not the current tool.
 };
-
-
-#endif //FenceTool_H

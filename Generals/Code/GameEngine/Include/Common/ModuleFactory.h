@@ -25,9 +25,9 @@
 // FILE: ModuleFactory.h //////////////////////////////////////////////////////////////////////////
 // Author: Colin Day, September 2001
 // Desc:	 TheModuleFactory is where we actually instance modules for objects
-//				 and drawbles.  Those modules are things such as an UpdateModule
+//				 and drawables.  Those modules are things such as an UpdateModule
 //			   or DamageModule or DrawModule etc.
-//	
+//
 //				 TheModuleFactory will contain a list of ModuleTemplates, when we
 //				 request a new module, we will look for that template in our
 //				 list and create it
@@ -35,9 +35,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __MODULEFACTORY_H_
-#define __MODULEFACTORY_H_
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include <stdlib.h>
@@ -60,7 +57,7 @@ typedef Module *(*NewModuleProc)(Thing *thing, const ModuleData* moduleData);
 typedef ModuleData* (*NewModuleDataProc)(INI* ini);
 
 //-------------------------------------------------------------------------------------------------
-/** We use TheModulyFactory to register classes that will be attached
+/** We use TheModuleFactory to register classes that will be attached
 	* to objects and drawables which will be executed or "called back" in the
 	* correct situations ... such as Die, Damage, Update etc or just as
 	* a place to store data specific to that type of thing */
@@ -70,23 +67,23 @@ class ModuleFactory : public SubsystemInterface, public Snapshot
 
 public:
 
-	ModuleFactory( void );
-	virtual ~ModuleFactory( void );
+	ModuleFactory();
+	virtual ~ModuleFactory();
 
-	virtual void init( void );
-	virtual void reset( void ) { }					///< We don't reset during the lifetime of the app
-	virtual void update( void ) { }					///< As of now, we don't have a need for an update
+	virtual void init();
+	virtual void reset() { }					///< We don't reset during the lifetime of the app
+	virtual void update() { }					///< As of now, we don't have a need for an update
 
 	Module *newModule( Thing *thing, const AsciiString& name, const ModuleData* data, ModuleType type );  ///< allocate a new module
 
-	// module-data 
+	// module-data
 	ModuleData* newModuleDataFromINI(INI* ini, const AsciiString& name, ModuleType type, const AsciiString& moduleTag);
 
 	Int findModuleInterfaceMask(const AsciiString& name, ModuleType type);
 
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
+	virtual void loadPostProcess();
 
 protected:
 
@@ -94,7 +91,7 @@ protected:
 	class ModuleTemplate
 	{
 	public:
-		ModuleTemplate() : m_createProc(NULL), m_createDataProc(NULL), m_whichInterfaces(0)
+		ModuleTemplate() : m_createProc(nullptr), m_createDataProc(nullptr), m_whichInterfaces(0)
 		{
 		}
 
@@ -122,10 +119,7 @@ protected:
 	ModuleTemplateMap			m_moduleTemplateMap;
 	ModuleDataList				m_moduleDataList;
 
-};  // end class ModuleFactory
+};
 
 // EXTERN /////////////////////////////////////////////////////////////////////////////////////////
 extern ModuleFactory *TheModuleFactory;  ///< singleton definition
-
-#endif // __MODULEFACTORY_H_
-

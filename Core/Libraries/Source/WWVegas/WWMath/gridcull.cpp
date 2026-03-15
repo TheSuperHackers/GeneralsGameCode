@@ -77,7 +77,7 @@ const uint32 GRID_CURRENT_VERSION = 0x00010000;
 /*
 ** Chunk Id's used by the aabtree code to save itself into a file
 */
-enum 
+enum
 {
 	GRID_CHUNK_VERSION					= 0x00000001,	// version wrapper, contains 32bit version #
 	GRID_CHUNK_PARAMETERS				= 0x00000100,	// parameters for the grid cull system
@@ -90,7 +90,7 @@ enum
 */
 struct IOGridParametersStruct
 {
-	IOVector3Struct	MinCellSize;	
+	IOVector3Struct	MinCellSize;
 	IOVector3Struct	Origin;
 	IOVector3Struct	CellDim;
 	uint32				CellCount[3];
@@ -116,12 +116,12 @@ static inline CullableClass * get_next_object(CullableClass * obj)
 GridLinkClass::GridLinkClass(GridCullSystemClass * system) :
 	CullLinkClass(system),
 	GridAddress(-1),
-	Prev(NULL),
-	Next(NULL)
+	Prev(nullptr),
+	Next(nullptr)
 {
 }
 
-GridLinkClass::~GridLinkClass(void)
+GridLinkClass::~GridLinkClass()
 {
 }
 
@@ -148,13 +148,13 @@ GridLinkClass::~GridLinkClass(void)
  * HISTORY:                                                                                    *
  *   4/27/2000  gth : Created.                                                                 *
  *=============================================================================================*/
-GridCullSystemClass::GridCullSystemClass(void) :
+GridCullSystemClass::GridCullSystemClass() :
 	MinCellSize(10,10,10),
 	MaxObjExtent(15),
 	Origin(-100,-100,-100),
 	CellDim(10,10,10),
-	Cells(NULL),
-	NoGridList(NULL),
+	Cells(nullptr),
+	NoGridList(nullptr),
 	ObjCount(0),
 	TerminationCellCount(TERMINATION_CELL_COUNT)
 {
@@ -176,12 +176,10 @@ GridCullSystemClass::GridCullSystemClass(void) :
  * HISTORY:                                                                                    *
  *   4/27/2000  gth : Created.                                                                 *
  *=============================================================================================*/
-GridCullSystemClass::~GridCullSystemClass(void)
+GridCullSystemClass::~GridCullSystemClass()
 {
-	if (Cells != NULL) {
-		delete Cells;
-		Cells = NULL;
-	}
+	delete Cells;
+	Cells = nullptr;
 }
 
 
@@ -206,10 +204,10 @@ void GridCullSystemClass::Collect_Objects(const Vector3 & point)
 	init_volume(point,point,&vol);
 	if (!vol.Is_Empty()) {
 
-		int delta_x = vol.Max[0] - vol.Min[0];		
+		int delta_x = vol.Max[0] - vol.Min[0];
 		int i,j,k;
 		int address = map_indices_to_address(vol.Min[0],vol.Min[1],vol.Min[2]);
-		
+
 		for (k=vol.Min[2]; k<vol.Max[2]; k++) {
 			for (j=vol.Min[1]; j<vol.Max[1]; j++) {
 				for (i=vol.Min[0]; i<vol.Max[0]; i++) {
@@ -253,10 +251,10 @@ void GridCullSystemClass::Collect_Objects(const AABoxClass & box)
 
 	if (!vol.Is_Empty()) {
 
-		int delta_x = vol.Max[0] - vol.Min[0];		
+		int delta_x = vol.Max[0] - vol.Min[0];
 		int i,j,k;
 		int address = map_indices_to_address(vol.Min[0],vol.Min[1],vol.Min[2]);
-		
+
 		for (k=vol.Min[2]; k<vol.Max[2]; k++) {
 			for (j=vol.Min[1]; j<vol.Max[1]; j++) {
 				for (i=vol.Min[0]; i<vol.Max[0]; i++) {
@@ -270,7 +268,7 @@ void GridCullSystemClass::Collect_Objects(const AABoxClass & box)
 			address = map_indices_to_address(vol.Min[0],vol.Min[1],k+1);
 		}
 	}
-	
+
 	/*
 	** Collect the objects in the no-grid-list
 	*/
@@ -300,7 +298,7 @@ void GridCullSystemClass::Collect_Objects(const OBBoxClass & box)
 
 	if (!vol.Is_Empty()) {
 
-		int delta_x = vol.Max[0] - vol.Min[0];		
+		int delta_x = vol.Max[0] - vol.Min[0];
 		int i,j,k;
 		int address = map_indices_to_address(vol.Min[0],vol.Min[1],vol.Min[2]);
 
@@ -347,10 +345,10 @@ void GridCullSystemClass::Collect_Objects(const FrustumClass & frustum)
 
 	if (!vol.Is_Empty()) {
 
-		int delta_x = vol.Max[0] - vol.Min[0];		
+		int delta_x = vol.Max[0] - vol.Min[0];
 		int i,j,k;
 		int address = map_indices_to_address(vol.Min[0],vol.Min[1],vol.Min[2]);
-		
+
 		for (k=vol.Min[2]; k<vol.Max[2]; k++) {
 			for (j=vol.Min[1]; j<vol.Max[1]; j++) {
 				for (i=vol.Min[0]; i<vol.Max[0]; i++) {
@@ -364,7 +362,7 @@ void GridCullSystemClass::Collect_Objects(const FrustumClass & frustum)
 			address = map_indices_to_address(vol.Min[0],vol.Min[1],k+1);
 		}
 	}
-	
+
 	/*
 	** Collect the objects in the no-grid-list
 	*/
@@ -470,9 +468,7 @@ void GridCullSystemClass::Re_Partition(const Vector3 & input_min,const Vector3 &
 	OOCellDim.Y = 1.0f / CellDim.Y;
 	OOCellDim.Z = 1.0f / CellDim.Z;
 
-	if (Cells != NULL) {
-		delete[] Cells;
-	}
+	delete[] Cells;
 	Cells = W3DNEWARRAY CullableClass * [total_cell_count()];
 	memset(&(Cells[0]),0,total_cell_count() * sizeof(CullableClass *));
 
@@ -480,9 +476,9 @@ void GridCullSystemClass::Re_Partition(const Vector3 & input_min,const Vector3 &
 	** iterate the collection list and re-insert all objects into the grid
 	*/
 	CullableClass * obj;
-	for (	obj = Get_First_Collected_Object_Internal(); 
-			obj != NULL; 
-			obj = Get_Next_Collected_Object_Internal(obj)) 
+	for (	obj = Get_First_Collected_Object_Internal();
+			obj != nullptr;
+			obj = Get_Next_Collected_Object_Internal(obj))
 	{
 		link_object(obj);
 	}
@@ -504,7 +500,7 @@ void GridCullSystemClass::Re_Partition(const Vector3 & input_min,const Vector3 &
  * HISTORY:                                                                                    *
  *   4/27/2000  gth : Created.                                                                 *
  *=============================================================================================*/
-void GridCullSystemClass::Collect_And_Unlink_All(void)
+void GridCullSystemClass::Collect_And_Unlink_All()
 {
 	Reset_Collection();
 
@@ -521,7 +517,7 @@ void GridCullSystemClass::Collect_And_Unlink_All(void)
 				CullableClass * obj = Cells[map_indices_to_address(i,j,k)];
 				while (obj) {
 					CullableClass * nextobj = get_next_object(obj);
-				
+
 					unlink_object(obj);
 					Add_To_Collection(obj);
 
@@ -538,7 +534,7 @@ void GridCullSystemClass::Collect_And_Unlink_All(void)
 	CullableClass * obj = NoGridList;
 	while (obj) {
 		CullableClass * nextobj = get_next_object(obj);
-	
+
 		unlink_object(obj);
 		Add_To_Collection(obj);
 
@@ -563,11 +559,11 @@ void GridCullSystemClass::Update_Culling(CullableClass * obj)
 {
 	WWASSERT(obj);
 	WWASSERT(obj->Get_Culling_System() == this);
-	
+
 	int address;
 	GridLinkClass * link = (GridLinkClass *)obj->Get_Cull_Link();
 	map_point_to_address(obj->Get_Cull_Box().Center,address);
-	
+
 	if (address != link->GridAddress) {
 		unlink_object(obj);
 		link_object(obj,address);
@@ -591,7 +587,7 @@ void GridCullSystemClass::Load(ChunkLoadClass & cload)
 {
 	/*
 	** read the version chunk
-	*/ 
+	*/
 	uint32 version;
 	cload.Open_Chunk();
 	WWASSERT(cload.Cur_Chunk_ID() == GRID_CHUNK_VERSION);
@@ -634,11 +630,7 @@ void GridCullSystemClass::Load(ChunkLoadClass & cload)
 	OOCellDim.Y = 1.0f / CellDim.Y;
 	OOCellDim.Z = 1.0f / CellDim.Z;
 
-	if (Cells != NULL) {
-		delete [] Cells;
-		Cells = NULL;
-	}
-
+	delete [] Cells;
 	Cells = W3DNEWARRAY CullableClass * [total_cell_count()];
 	memset(&(Cells[0]),0,total_cell_count() * sizeof(CullableClass *));
 
@@ -646,9 +638,9 @@ void GridCullSystemClass::Load(ChunkLoadClass & cload)
 	** re-link the objects in
 	*/
 	CullableClass * obj;
-	for (	obj = Get_First_Collected_Object_Internal(); 
-			obj != NULL; 
-			obj = Get_Next_Collected_Object_Internal(obj)) 
+	for (	obj = Get_First_Collected_Object_Internal();
+			obj != nullptr;
+			obj = Get_Next_Collected_Object_Internal(obj))
 	{
 		link_object(obj);
 	}
@@ -668,7 +660,7 @@ void GridCullSystemClass::Load(ChunkLoadClass & cload)
  *   4/27/2000  gth : Created.                                                                 *
  *=============================================================================================*/
 void GridCullSystemClass::Save(ChunkSaveClass & csave)
-{	
+{
 	/*
 	** write the version chunk
 	*/
@@ -714,7 +706,7 @@ void GridCullSystemClass::Save(ChunkSaveClass & csave)
  * HISTORY:                                                                                    *
  *   4/27/2000  gth : Created.                                                                 *
  *=============================================================================================*/
-void GridCullSystemClass::Reset_Statistics(void)
+void GridCullSystemClass::Reset_Statistics()
 {
 	// number of (virtual) nodes = 2n-1
 	Stats.NodeCount = 2 * (CellCount[0] * CellCount[1] * CellCount[2]) - 1;
@@ -736,7 +728,7 @@ void GridCullSystemClass::Reset_Statistics(void)
  * HISTORY:                                                                                    *
  *   4/27/2000  gth : Created.                                                                 *
  *=============================================================================================*/
-const GridCullSystemClass::StatsStruct & GridCullSystemClass::Get_Statistics(void)
+const GridCullSystemClass::StatsStruct & GridCullSystemClass::Get_Statistics()
 {
 	return Stats;
 }
@@ -757,12 +749,12 @@ const GridCullSystemClass::StatsStruct & GridCullSystemClass::Get_Statistics(voi
 void GridCullSystemClass::Add_Object_Internal(CullableClass * obj)
 {
 	WWASSERT(obj);
-	WWASSERT(obj->Get_Culling_System() == NULL);
+	WWASSERT(obj->Get_Culling_System() == nullptr);
 
 	GridLinkClass * link = new GridLinkClass(this);
 	obj->Set_Cull_Link(link);
 	link_object(obj);
-	
+
 	ObjCount++;
 	obj->Add_Ref();
 }
@@ -787,9 +779,9 @@ void GridCullSystemClass::Remove_Object_Internal(CullableClass * obj)
 	GridLinkClass * link = (GridLinkClass *)obj->Get_Cull_Link();
 
 	unlink_object(obj);
-	link->Set_Culling_System(NULL);
+	link->Set_Culling_System(nullptr);
 	delete link;
-	obj->Set_Cull_Link(NULL);
+	obj->Set_Cull_Link(nullptr);
 
 	ObjCount--;
 	obj->Release_Ref();
@@ -824,21 +816,21 @@ void GridCullSystemClass::link_object(CullableClass * obj,int address)
 	WWASSERT(obj);
 	WWASSERT(obj->Get_Culling_System() == this);
 	GridLinkClass * link = (GridLinkClass *)obj->Get_Cull_Link();
-	WWASSERT(link != NULL);
+	WWASSERT(link != nullptr);
 
 	/*
 	** if obj cannot be inserted into the grid, add it to the NoGridList
 	** otherwise, insert it into the cell
 	*/
 	const AABoxClass & box = obj->Get_Cull_Box();
-	if (	
-			(box.Extent.X > MaxObjExtent) || 
-			(box.Extent.Y > MaxObjExtent) || 
+	if (
+			(box.Extent.X > MaxObjExtent) ||
+			(box.Extent.Y > MaxObjExtent) ||
 			(box.Extent.Z > MaxObjExtent) ||
 			(address == UNGRIDDED_ADDRESS)
-		) 
+		)
 	{
-		link->GridAddress = UNGRIDDED_ADDRESS;	
+		link->GridAddress = UNGRIDDED_ADDRESS;
 		link_object_to_list(&NoGridList,obj);
 	} else {
 		link->GridAddress = address;
@@ -894,11 +886,11 @@ void GridCullSystemClass::link_object_to_list(CullableClass ** head,CullableClas
 	** Insert this object as the new head of the list.
 	*/
 	link->Next = *head;
-	link->Prev = NULL;
+	link->Prev = nullptr;
 
-	if (link->Next != NULL) {
+	if (link->Next != nullptr) {
 		GridLinkClass * next_link = (GridLinkClass *)link->Next->Get_Cull_Link();
-		WWASSERT(next_link != NULL);
+		WWASSERT(next_link != nullptr);
 		next_link->Prev = obj;
 	}
 
@@ -943,7 +935,7 @@ void GridCullSystemClass::unlink_object_from_list(CullableClass ** head,Cullable
 	if (obj == *head) {
 		*head = link->Next;
 	}
-	
+
 	/*
 	** Link the object previous to us to our next...
 	*/
@@ -960,8 +952,8 @@ void GridCullSystemClass::unlink_object_from_list(CullableClass ** head,Cullable
 		next_link->Prev = link->Prev;
 	}
 
-	link->Prev = NULL;
-	link->Next = NULL;
+	link->Prev = nullptr;
+	link->Next = nullptr;
 }
 
 
@@ -973,7 +965,7 @@ void GridCullSystemClass::unlink_object_from_list(CullableClass ** head,Cullable
 *************************************************************************/
 void GridCullSystemClass::collect_objects_in_leaf(const Vector3 & point,CullableClass * head)
 {
-	if (head != NULL) {
+	if (head != nullptr) {
 		GridListIterator it(head);
 		for (;!it.Is_Done(); it.Next()) {
 			CullableClass * obj = it.Peek_Obj();
@@ -986,7 +978,7 @@ void GridCullSystemClass::collect_objects_in_leaf(const Vector3 & point,Cullable
 
 void GridCullSystemClass::collect_objects_in_leaf(const AABoxClass & box,CullableClass * head)
 {
-	if (head != NULL) {
+	if (head != nullptr) {
 		GridListIterator it(head);
 		for (;!it.Is_Done(); it.Next()) {
 			CullableClass * obj = it.Peek_Obj();
@@ -999,7 +991,7 @@ void GridCullSystemClass::collect_objects_in_leaf(const AABoxClass & box,Cullabl
 
 void GridCullSystemClass::collect_objects_in_leaf(const OBBoxClass & obbox,CullableClass * head)
 {
-	if (head != NULL) {
+	if (head != nullptr) {
 		GridListIterator it(head);
 		for (;!it.Is_Done(); it.Next()) {
 			CullableClass * obj = it.Peek_Obj();
@@ -1012,7 +1004,7 @@ void GridCullSystemClass::collect_objects_in_leaf(const OBBoxClass & obbox,Culla
 
 void GridCullSystemClass::collect_objects_in_leaf(const FrustumClass & frustum,CullableClass * head)
 {
-	if (head != NULL) {
+	if (head != nullptr) {
 		GridListIterator it(head);
 		for (;!it.Is_Done(); it.Next()) {
 			CullableClass * obj = it.Peek_Obj();

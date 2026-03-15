@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #define DEFINE_VETERANCY_NAMES				// for TheVeterancyNames[]
 #include "Common/Player.h"
@@ -51,11 +51,11 @@ void VeterancyGainCreateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   CreateModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "StartingLevel",		INI::parseIndexList,	TheVeterancyNames,	offsetof( VeterancyGainCreateModuleData, m_startingLevel ) },
-		{ "ScienceRequired",	INI::parseScience,		NULL,								offsetof( VeterancyGainCreateModuleData, m_scienceRequired ) },
-		{ 0, 0, 0, 0 }
+		{ "ScienceRequired",	INI::parseScience,		nullptr,								offsetof( VeterancyGainCreateModuleData, m_scienceRequired ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 
   p.add(dataFieldParse);
@@ -69,7 +69,7 @@ VeterancyGainCreate::VeterancyGainCreate( Thing *thing, const ModuleData* module
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-VeterancyGainCreate::~VeterancyGainCreate( void )
+VeterancyGainCreate::~VeterancyGainCreate()
 {
 
 }
@@ -77,7 +77,7 @@ VeterancyGainCreate::~VeterancyGainCreate( void )
 //-------------------------------------------------------------------------------------------------
 /** The create callback. */
 //-------------------------------------------------------------------------------------------------
-void VeterancyGainCreate::onCreate( void )
+void VeterancyGainCreate::onCreate()
 {
 
 	// When produced normally, this Object will ask the Player if the correct Science is known for it
@@ -85,14 +85,14 @@ void VeterancyGainCreate::onCreate( void )
 
 	const VeterancyGainCreateModuleData *md = getVeterancyGainCreateModuleData();
 	Player *myPlayer = getObject()->getControllingPlayer();
-	if( myPlayer && (md->m_scienceRequired == SCIENCE_INVALID || 
+	if( myPlayer && (md->m_scienceRequired == SCIENCE_INVALID ||
 									 myPlayer->hasScience( md->m_scienceRequired )) )
 	{
 		ExperienceTracker* myExp = getObject()->getExperienceTracker();
 		if( myExp  &&  myExp->isTrainable() )
 		{
 			// srj sez: use "setMin" here so that we never lose levels
-			myExp->setMinVeterancyLevel( md->m_startingLevel );// sVL can override isTrainable, but this module should not.
+			myExp->setMinVeterancyLevel( md->m_startingLevel, false );// sVL can override isTrainable, but this module should not.
 		}
 	}
 
@@ -107,7 +107,7 @@ void VeterancyGainCreate::crc( Xfer *xfer )
 	// extend base class
 	CreateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -125,15 +125,15 @@ void VeterancyGainCreate::xfer( Xfer *xfer )
 	// extend base class
 	CreateModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void VeterancyGainCreate::loadPostProcess( void )
+void VeterancyGainCreate::loadPostProcess()
 {
 
 	// extend base class
 	CreateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

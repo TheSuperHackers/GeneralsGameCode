@@ -17,12 +17,12 @@
 */
 
 //----------------------------------------------------------------------------=
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					                  
-//                Copyright(C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright(C) 2001 - All Rights Reserved
+//
 //----------------------------------------------------------------------------
 //
 // Project:    WSYS Library
@@ -37,13 +37,8 @@
 
 #pragma once
 
-#ifndef __WSYS_RAMFILE_H
-#define __WSYS_RAMFILE_H
-
-
-
 //----------------------------------------------------------------------------
-//           Includes                                                      
+//           Includes
 //----------------------------------------------------------------------------
 
 #include "WSYS_file.h"
@@ -73,9 +68,9 @@ class RAMFile : public File
 		Char				*m_data;											///< File data in memory
 		Int					m_pos;												///< current read position
 		Int					m_size;												///< size of file in memory
-		
+
 	public:
-		
+
 		RAMFile();
 		virtual				~RAMFile();
 
@@ -93,8 +88,5 @@ class RAMFile : public File
 
 
 //----------------------------------------------------------------------------
-//           Inlining                                                       
+//           Inlining
 //----------------------------------------------------------------------------
-
-
-#endif // __WSYS_RAMFILE_H

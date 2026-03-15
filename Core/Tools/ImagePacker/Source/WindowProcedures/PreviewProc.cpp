@@ -18,12 +18,12 @@
 
 // FILE: PreviewProc.cpp //////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    ImagePacker
@@ -39,7 +39,7 @@
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 #include <windows.h>
-#include <stdio.h>
+#include <Utility/stdio_adapter.h>
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "ImagePacker.h"
@@ -67,7 +67,7 @@
 // PreviewProc ================================================================
 /** */
 //=============================================================================
-LRESULT CALLBACK PreviewProc( HWND hWnd, UINT message, 
+LRESULT CALLBACK PreviewProc( HWND hWnd, UINT message,
 														  WPARAM wParam, LPARAM lParam )
 {
 
@@ -87,7 +87,7 @@ LRESULT CALLBACK PreviewProc( HWND hWnd, UINT message,
 			// find the target texture page
 			TexturePage *page;
 			for( page = TheImagePacker->getFirstTexturePage();
-					 page; 
+					 page;
 					 page = page->m_next )
 			{
 
@@ -112,26 +112,26 @@ LRESULT CALLBACK PreviewProc( HWND hWnd, UINT message,
 							page->getPixel( x, y, &r, &g, &b );
 
 							// create a new pen of the right color
-							pen = CreatePen( 1, 1, RGB( r, g, b, ) );
-							
+							pen = CreatePen( 1, 1, RGB( r, g, b ) );
+
 							// select pen into hdc
 							prevPen = (HPEN)SelectObject( hdc, pen );
-							
+
 							// draw ... what is the Win32 put pixel function???
-							MoveToEx( hdc, x, y, NULL );
+							MoveToEx( hdc, x, y, nullptr );
 							LineTo( hdc, x + 1, y );
 
 							// put the old pen back
 							SelectObject( hdc, prevPen );
-							
+
 							// delete the created pen
 							DeleteObject( pen );
-									
-						}  // end for x
 
-					}  // end for y
+						}
 
-				}  // end if
+					}
+
+				}
 				else
 				{
 
@@ -149,22 +149,22 @@ LRESULT CALLBACK PreviewProc( HWND hWnd, UINT message,
 						rect.bottom = image->m_pagePos.hi.y + 1;  // FillRect not inclusive
 						FillRect( hdc, &rect, whiteBrush );
 
-					}  // end for image
-				
-				}  // end else
+					}
 
-			}  // end for page
+				}
+
+			}
 
 			EndPaint( hWnd, &ps );
 			break;
 
-		}  // end paint
+		}
 
-	}  // end switch
+	}
 
 	return DefWindowProc( hWnd, message, wParam, lParam );
 
-}  // end PreviewProc
+}
 
 // MakePreviewDisplay =========================================================
 /** */
@@ -175,19 +175,19 @@ HWND MakePreviewDisplay( void )
 	const char *className = "PreviewDisplay";
 	HWND hWnd;
 
-	wcex.cbSize = sizeof( WNDCLASSEX ); 
+	wcex.cbSize = sizeof( WNDCLASSEX );
 
 	wcex.style					= CS_HREDRAW | CS_VREDRAW;
 	wcex.lpfnWndProc		= (WNDPROC)PreviewProc;
 	wcex.cbClsExtra			= 0;
 	wcex.cbWndExtra			= 0;
 	wcex.hInstance			= ApplicationHInstance;
-	wcex.hIcon					= NULL;
-	wcex.hCursor				= LoadCursor( NULL, IDC_ARROW );
+	wcex.hIcon					= nullptr;
+	wcex.hCursor				= LoadCursor( nullptr, IDC_ARROW );
 	wcex.hbrBackground	= (HBRUSH)GetStockObject( BLACK_BRUSH );
-	wcex.lpszMenuName		=	NULL;
+	wcex.lpszMenuName		=	nullptr;
 	wcex.lpszClassName	= className;
-	wcex.hIconSm				= NULL;
+	wcex.hIconSm				= nullptr;
 
 	RegisterClassEx( &wcex );
 
@@ -200,20 +200,20 @@ HWND MakePreviewDisplay( void )
 												 30,											// y position
 												 TheImagePacker->getTargetWidth(),
 												 TheImagePacker->getTargetHeight(),
-												 NULL,									// parent
-												 NULL,									// menu
+												 nullptr,									// parent
+												 nullptr,									// menu
 												 ApplicationHInstance,	// instance
-												 NULL );								// creation data
+												 nullptr );								// creation data
 
-	if( hWnd == NULL )
-		return NULL;
+	if( hWnd == nullptr )
+		return nullptr;
 
 	// display the window
 	ShowWindow( hWnd, SW_SHOW );
 
 	return hWnd;
 
-}  // end MakePreviewDisplay
+}
 
 // UpdatePreviewWindow ========================================================
 /** Update the preview window, if present */
@@ -223,22 +223,22 @@ void UpdatePreviewWindow( void )
 	HWND preview;
 
 	// sanity
-	if( TheImagePacker == NULL )
+	if( TheImagePacker == nullptr )
 		return;
 
 	// get preview window
 	preview = TheImagePacker->getPreviewWindow();
 
 	// if window not here don't bother
-	if( preview == NULL )
+	if( preview == nullptr )
 		return;
 
 	// make the title
 	char title[ 256 ];
 
 	// construct title
-	sprintf( title, "Page #%d of %d", 
-					 TheImagePacker->getTargetPreviewPage(), 
+	sprintf( title, "Page #%d of %d",
+					 TheImagePacker->getTargetPreviewPage(),
 					 TheImagePacker->getPageCount() );
 	SetWindowText( preview, title );
 
@@ -255,13 +255,13 @@ void UpdatePreviewWindow( void )
 	clientRect.bottom = clientRect.top + TheImagePacker->getTargetHeight();
 	AdjustWindowRect( &clientRect, PREVIEW_STYLE, FALSE );
 	MoveWindow( preview,
-							clientRect.left, 
+							clientRect.left,
 							clientRect.top,
 							clientRect.right - clientRect.left,
 							clientRect.bottom - clientRect.top,
 							TRUE );
 
 	// invalidate the client area for redraw
-	InvalidateRect( preview, NULL, TRUE );
+	InvalidateRect( preview, nullptr, TRUE );
 
-}  // end UpdatePreviewWindow
+}

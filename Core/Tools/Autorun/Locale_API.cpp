@@ -81,7 +81,7 @@ const wchar_t *localeStringsMissing[ MISSING_STRING_HINTS_MAX ] =
 /****************************************************************************/
 
 //----------------------------------------------------------------------------
-// NOTE:	if USE_MULTI_FILE_FORMAT is "true", then a .lOC file must be in 
+// NOTE:	if USE_MULTI_FILE_FORMAT is "true", then a .lOC file must be in
 //			the same directory as this file.
 //----------------------------------------------------------------------------
 #define		USE_MULTI_FILE_FORMAT		FALSE
@@ -94,7 +94,7 @@ const wchar_t *localeStringsMissing[ MISSING_STRING_HINTS_MAX ] =
 /* GLOBAL VARIABLES                                                         */
 /****************************************************************************/
 char		LanguageFile[ _MAX_PATH ];
-void *		LocaleFile		= NULL;
+void *		LocaleFile		= nullptr;
 int			CodePage		= GetACP();
 int			LanguageID		= 0;
 int			PrimaryLanguage = LANG_NEUTRAL;
@@ -108,7 +108,7 @@ wchar_t *	Remove_Quotes_Around_String ( wchar_t *old_string );
 
 
 //=============================================================================
-// These are wrapper functions around the LOCALE_ functions.  I made these to 
+// These are wrapper functions around the LOCALE_ functions.  I made these to
 // make using the single vs. multi language files more transparent to the program.
 //=============================================================================
 
@@ -144,7 +144,7 @@ int Locale_Init	( int language, char *file )
 	//-------------------------------------------------------------------------
 	// Check for a file passed in.
 	//-------------------------------------------------------------------------
-	if( file == NULL || file[0] == '/0' ) {
+	if( file == nullptr || file[0] == '/0' ) {
 		return 0;
 	}
 	strcpy( LanguageFile, file );
@@ -176,7 +176,7 @@ int Locale_Init	( int language, char *file )
 		HRSRC 	hRsrc;
 		HGLOBAL hGlobal;
 
-		HMODULE module = GetModuleHandle( NULL );
+		HMODULE module = GetModuleHandle( nullptr );
 
 		//-------------------------------------------------------------------------
 		// Find the string file in this program's resources.
@@ -225,7 +225,7 @@ int Locale_Init	( int language, char *file )
 		}
 
 		hRsrc = FindResourceEx( module, RT_RCDATA, "STRINGS", MAKELANGID( PrimaryLanguage, SubLanguage ));
-		if ( hRsrc == NULL ) {
+		if ( hRsrc == nullptr ) {
 			hRsrc = FindResourceEx( module, RT_RCDATA, "STRINGS", MAKELANGID( LANG_ENGLISH, SUBLANG_ENGLISH_US ));
 		}
 		if ( hRsrc ) {
@@ -247,11 +247,11 @@ int Locale_Init	( int language, char *file )
 			FreeResource( hGlobal );
 		}
 
-		if( LocaleFile == NULL ) {
+		if( LocaleFile == nullptr ) {
 			LocaleFile = Load_File( LanguageFile, &filesize );
 		}
 
-		if( LocaleFile != NULL ) {
+		if( LocaleFile != nullptr ) {
 			result = 1;
 		}
 
@@ -281,7 +281,7 @@ int Locale_Init	( int language, char *file )
 
 	#endif
 */
-	return result;	
+	return result;
 }
 
 /************************************************************************/
@@ -290,25 +290,20 @@ int Locale_Init	( int language, char *file )
 
 void Locale_Restore ( void )
 {
-	if (TheGameText)
-	{
-		delete TheGameText;
-		TheGameText = NULL;
-	}
+	delete TheGameText;
+	TheGameText = nullptr;
 
 	#if( USE_MULTI_FILE_FORMAT )
 		LOCALE_freetable();
 		LOCALE_restore();
 	#else
-		if( LocaleFile ) {
-			free( LocaleFile );
-			LocaleFile = NULL;
-		}
+		free( LocaleFile );
+		LocaleFile = nullptr;
 	#endif
 }
 
 /****************************************************************************/
-/* retreiving strings												 		*/
+/* retrieving strings												 		*/
 /****************************************************************************/
 
 const char* Locale_GetString( int StringID, char *String )
@@ -321,14 +316,14 @@ const char* Locale_GetString( int StringID, char *String )
 
 	#if( USE_MULTI_FILE_FORMAT )
 		wcscpy( wide_buffer, (wchar_t *)LOCALE_getstring( StringID ));
-	#else									  
+	#else
 		wcscpy( wide_buffer, (wchar_t *)LOCALE_getstr( LocaleFile, StringID ));
 	#endif
 
 	Remove_Quotes_Around_String( wide_buffer );
-	WideCharToMultiByte( CodePage, 0, wide_buffer, _MAX_PATH, buffer, _MAX_PATH, NULL, NULL );
+	WideCharToMultiByte( CodePage, 0, wide_buffer, _MAX_PATH, buffer, _MAX_PATH, nullptr, nullptr );
 
-	if( String != NULL ) {
+	if( String != nullptr ) {
 		strncpy( String, buffer, _MAX_PATH );
 	}
 
@@ -359,26 +354,26 @@ const wchar_t* Locale_GetString( int StringID, wchar_t *String )
 
 	#if( USE_MULTI_FILE_FORMAT )
 		wcscpy( wide_buffer, (wchar_t *)LOCALE_getstring( StringID ));
-	#else		
-		
-		wchar_t *localeStr = NULL;
-		
-		if (TheGameText != NULL)
+	#else
+
+		wchar_t *localeStr = nullptr;
+
+		if (TheGameText != nullptr)
 			localeStr = (wchar_t *)TheGameText->fetch( s_stringLabels[StringID] );
-		
-		if (localeStr == NULL) 
+
+		if (localeStr == nullptr)
 		{
 			return localeStringsMissing[ min( MISSING_STRING_HINTS_MAX - 1, StringID ) ];
-		} 
-		else 
+		}
+		else
 		{
 			wcscpy( wide_buffer, localeStr);
 		}
-	#endif 
+	#endif
 
 	Remove_Quotes_Around_String( wide_buffer );
 
-	if( String != NULL ) {
+	if( String != nullptr ) {
 		wcsncpy( String, wide_buffer, _MAX_PATH );
 	}
 
@@ -397,7 +392,7 @@ wchar_t *Remove_Quotes_Around_String ( wchar_t *old_string )
 	int		length;
 
 	//----------------------------------------------------------------------
-	// If string is not NULL...
+	// If string is not null...
 	//----------------------------------------------------------------------
 	if ( *letter == '"' ) {
 

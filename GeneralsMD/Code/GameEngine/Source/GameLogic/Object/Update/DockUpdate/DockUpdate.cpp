@@ -27,7 +27,7 @@
 // Desc:   Behavior common to all DockUpdates is here.  Everything but action()
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 #include "Common/Debug.h"
 #include "Common/Xfer.h"
 #include "GameClient/Drawable.h"
@@ -40,7 +40,7 @@
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-DockUpdateModuleData::DockUpdateModuleData( void )
+DockUpdateModuleData::DockUpdateModuleData()
 {
 	m_numberApproachPositionsData = 0;
 	m_isAllowPassthrough = TRUE;
@@ -51,17 +51,17 @@ DockUpdateModuleData::DockUpdateModuleData( void )
 
 	UpdateModuleData::buildFieldParse( p );
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
-		{ "NumberApproachPositions"	,INI::parseInt,		NULL, offsetof( DockUpdateModuleData, m_numberApproachPositionsData ) },
-		{ "AllowsPassthrough"				,INI::parseBool,	NULL, offsetof( DockUpdateModuleData, m_isAllowPassthrough ) },
-		{ 0, 0, 0, 0 }
+		{ "NumberApproachPositions"	,INI::parseInt,		nullptr, offsetof( DockUpdateModuleData, m_numberApproachPositionsData ) },
+		{ "AllowsPassthrough"				,INI::parseBool,	nullptr, offsetof( DockUpdateModuleData, m_isAllowPassthrough ) },
+		{ nullptr, nullptr, nullptr, 0 }
 
 	};
 
   p.add(dataFieldParse);
 
-}  // end buildFieldParse
+}
 
 DockUpdate::DockUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData )
 {
@@ -141,7 +141,7 @@ Bool DockUpdate::reserveApproachPosition( Object* docker, Coord3D *position, Int
 		loadDockPositions();
 
 	// sanity
-	if( position == NULL )
+	if( position == nullptr )
 		return FALSE;
 
 	ObjectID dockerID = docker->getID();
@@ -192,7 +192,7 @@ Bool DockUpdate::advanceApproachPosition( Object* docker, Coord3D *position, Int
 		loadDockPositions();
 
 	// sanity
-	if( position == NULL )
+	if( position == nullptr )
 		return FALSE;
 	if( *index <= 0 )
 		return FALSE;
@@ -228,7 +228,7 @@ Bool DockUpdate::isClearToAdvance( Object const* docker, Int dockerIndex ) const
 	Bool correctRequest = dockerID == m_approachPositionOwners[dockerIndex];
 	Bool approachReached = m_approachPositionReached[dockerIndex];
 	Bool nextSpotFree = (dockerIndex > 0)  &&  (m_approachPositionOwners[dockerIndex - 1] == INVALID_ID);
-	
+
 	return correctRequest && approachReached && nextSpotFree;
 }
 
@@ -240,7 +240,7 @@ void DockUpdate::getEnterPosition( Object* docker, Coord3D *position )
 		loadDockPositions();
 
 	// sanity
-	if( position == NULL )
+	if( position == nullptr )
 		return;
 
 	// If I don't have a bone, you are fine where you are, unless you fly, in which case I should recenter you
@@ -258,7 +258,7 @@ void DockUpdate::getEnterPosition( Object* docker, Coord3D *position )
 	}
 
 	// take local space position and convert to world space
-	getObject()->convertBonePosToWorldPos( &m_enterPosition, NULL, position, NULL );
+	getObject()->convertBonePosToWorldPos( &m_enterPosition, nullptr, position, nullptr );
 
 }
 
@@ -270,7 +270,7 @@ void DockUpdate::getDockPosition( Object* docker, Coord3D *position )
 		loadDockPositions();
 
 	// sanity
-	if( position == NULL )
+	if( position == nullptr )
 		return;
 
 	// If I don't have a bone, you are fine where you are.
@@ -283,7 +283,7 @@ void DockUpdate::getDockPosition( Object* docker, Coord3D *position )
 	}
 
 	// take local space position and convert to world space
-	getObject()->convertBonePosToWorldPos( &m_dockPosition, NULL, position, NULL );
+	getObject()->convertBonePosToWorldPos( &m_dockPosition, nullptr, position, nullptr );
 
 }
 
@@ -295,7 +295,7 @@ void DockUpdate::getExitPosition( Object* docker, Coord3D *position )
 		loadDockPositions();
 
 	// sanity
-	if( position == NULL )
+	if( position == nullptr )
 		return;
 
 	// If I don't have a bone, you are fine where you are.
@@ -308,7 +308,7 @@ void DockUpdate::getExitPosition( Object* docker, Coord3D *position )
 	}
 
 	// take local space position and convert to world space
-	getObject()->convertBonePosToWorldPos( &m_exitPosition, NULL, position, NULL );
+	getObject()->convertBonePosToWorldPos( &m_exitPosition, nullptr, position, nullptr );
 
 }
 
@@ -356,9 +356,9 @@ void DockUpdate::onDockReached( Object* docker )
 void DockUpdate::onExitReached( Object* docker )
 {
 	Object *me = getObject();
-	me->clearAndSetModelConditionFlags( MAKE_MODELCONDITION_MASK2(MODELCONDITION_DOCKING_ACTIVE, MODELCONDITION_DOCKING), 
+	me->clearAndSetModelConditionFlags( MAKE_MODELCONDITION_MASK2(MODELCONDITION_DOCKING_ACTIVE, MODELCONDITION_DOCKING),
 																			MAKE_MODELCONDITION_MASK(MODELCONDITION_DOCKING_ENDING) );
-	docker->clearAndSetModelConditionFlags( MAKE_MODELCONDITION_MASK2(MODELCONDITION_DOCKING_ACTIVE, MODELCONDITION_DOCKING), 
+	docker->clearAndSetModelConditionFlags( MAKE_MODELCONDITION_MASK2(MODELCONDITION_DOCKING_ACTIVE, MODELCONDITION_DOCKING),
 																					MAKE_MODELCONDITION_MASK(MODELCONDITION_DOCKING_ENDING) );
 	m_dockerInside = FALSE;
 
@@ -373,7 +373,7 @@ void DockUpdate::onExitReached( Object* docker )
 		// to continue moving to the exit position cause they are leaving after all
 		//
 		if( isDockOpen() )
-			DEBUG_ASSERTCRASH( FALSE, ("Fiddle.  Someone said goodbye to a dock when the dock didn't think it was talking to that someone."));
+			DEBUG_CRASH( ("Fiddle.  Someone said goodbye to a dock when the dock didn't think it was talking to that someone."));
 
 	}
 }
@@ -394,7 +394,7 @@ void DockUpdate::cancelDock( Object* docker )
 		Object *dockingObject = TheGameLogic->findObjectByID(m_activeDocker);
 		m_activeDocker = INVALID_ID;
 		m_dockerInside = FALSE;
-		// clear any model conditions related to docking that may be set on us and them.  
+		// clear any model conditions related to docking that may be set on us and them.
 		// (Normal clear is part of each stage, but we won't get there.)
 		ModelConditionFlags clear;
 		clear.set( MODELCONDITION_DOCKING_ENDING );
@@ -409,7 +409,7 @@ void DockUpdate::cancelDock( Object* docker )
 
 void DockUpdate::setDockCrippled( Bool setting )
 {
-	// At this level, Crippling means I will accept Approach requests, but I will never grant Enter clearence.
+	// At this level, Crippling means I will accept Approach requests, but I will never grant Enter clearance.
 	m_dockCrippled = setting;
 }
 
@@ -417,7 +417,7 @@ UpdateSleepTime DockUpdate::update()
 {
 	if( m_activeDocker == INVALID_ID  &&  !m_dockCrippled )
 	{
-		// if setDockCrippled has been called, I will never give enterance permission.
+		// if setDockCrippled has been called, I will never give entrance permission.
 		for( size_t positionIndex = 0; positionIndex < m_approachPositionReached.size(); ++positionIndex )
 		{
 			if( m_approachPositionReached[positionIndex] )
@@ -430,7 +430,7 @@ UpdateSleepTime DockUpdate::update()
 	else if ( getObject()->isKindOf( KINDOF_SUPPLY_SOURCE ) )
 	{
 		Object *docker = TheGameLogic->findObjectByID( m_activeDocker );
-		if ( docker && docker->isKindOf( KINDOF_DOZER ) && docker->isKindOf( KINDOF_HARVESTER ))// a worker 
+		if ( docker && docker->isKindOf( KINDOF_DOZER ) && docker->isKindOf( KINDOF_HARVESTER ))// a worker
 		{
 			ModelConditionFlags test;
 			test.set( MODELCONDITION_DOCKING_BEGINNING );
@@ -452,12 +452,12 @@ Coord3D DockUpdate::computeApproachPosition( Int positionIndex, Object *forWhom 
 
 	Coord3D bestPosition;// This answer is the best, as it includes findPositionAround
 	Coord3D workingPosition;// But if findPositionAround fails, we need to say something.
-	
+
 	FindPositionOptions fpOptions;
 	// Start with the pristine bone, then convert it to the world, then find a clean spot around it.
-	
+
 	Object *us = getObject();
-	us->convertBonePosToWorldPos( &m_approachPositions[positionIndex], NULL, &workingPosition, NULL );
+	us->convertBonePosToWorldPos( &m_approachPositions[positionIndex], nullptr, &workingPosition, nullptr );
 
 	if( m_numberApproachPositionBones == 0 )
 	{
@@ -497,16 +497,16 @@ void DockUpdate::loadDockPositions()
 	if (myDrawable)
 	{
 		//Patch 1.03 - Kris - Jan 19, 2005
-		//Some of the GLASupplyStash assets still have docking bones in them. When found, the docking positions must be 
+		//Some of the GLASupplyStash assets still have docking bones in them. When found, the docking positions must be
 		//observed. This occurs when upgrading to fortified structures which still have the bones. This has the negative
 		//side-effect of workers suddenly slowing down their gathering rate. The proper fix would be to remove the bones
-		//from the assets, but the artists could not find the original max files, hence the code solution. 
+		//from the assets, but the artists could not find the original max files, hence the code solution.
 		if( !obj->isKindOf( KINDOF_IGNORE_DOCKING_BONES ) )
 		{
 
-			myDrawable->getPristineBonePositions( "DockStart", 0, &m_enterPosition, NULL, 1);
-			myDrawable->getPristineBonePositions( "DockAction", 0, &m_dockPosition, NULL, 1);
-			myDrawable->getPristineBonePositions( "DockEnd", 0, &m_exitPosition, NULL, 1);
+			myDrawable->getPristineBonePositions( "DockStart", 0, &m_enterPosition, nullptr, 1);
+			myDrawable->getPristineBonePositions( "DockAction", 0, &m_dockPosition, nullptr, 1);
+			myDrawable->getPristineBonePositions( "DockEnd", 0, &m_exitPosition, nullptr, 1);
 			if( m_numberApproachPositions != DYNAMIC_APPROACH_VECTOR_FLAG )
 			{
 				// Dynamic means no bones
@@ -517,7 +517,7 @@ void DockUpdate::loadDockPositions()
 				// TheSuperHackers @fix helmutbuhler 19/04/2025 Zero initialize array to prevent uninitialized memory reads.
 				// Important: the entire target vector is used for serialization and crc and must not contain random data.
 				Coord3D approachBones[DEFAULT_APPROACH_VECTOR_SIZE] = {0};
-				m_numberApproachPositionBones = myDrawable->getPristineBonePositions( "DockWaiting", 1, approachBones, NULL, m_numberApproachPositions);
+				m_numberApproachPositionBones = myDrawable->getPristineBonePositions( "DockWaiting", 1, approachBones, nullptr, m_numberApproachPositions);
 				if( m_numberApproachPositions == m_approachPositions.size() )//safeguard: will always be true
 				{
 					for( Int copyIndex = 0; copyIndex < m_numberApproachPositions; ++copyIndex )
@@ -555,7 +555,7 @@ void DockUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
@@ -631,16 +631,16 @@ void DockUpdate::xfer( Xfer *xfer )
 	// dock open
 	xfer->xferBool( &m_dockOpen );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void DockUpdate::loadPostProcess( void )
+void DockUpdate::loadPostProcess()
 {
 
 	// call base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}
 

@@ -52,7 +52,7 @@ Class_ID PCToPS2MaterialClassID(0x40d11cee, 0x68881657);
 class PCToPS2MaterialClass : public UtilityObj {
 
 	public:
-		
+
 		void BeginEditParams(Interface *ip,IUtil *iu);
 		void EndEditParams(Interface *ip,IUtil *iu) {}
 		void DeleteThis() {delete this;}
@@ -69,13 +69,13 @@ class PCToPS2MaterialClass : public UtilityObj {
  * HISTORY:                                                                                    *
  *   10/27/1999MLL: Created.                                                                   *
  *=============================================================================================*/
-void PCToPS2MaterialClass::BeginEditParams(Interface *ip,IUtil *iu) 
+void PCToPS2MaterialClass::BeginEditParams(Interface *ip,IUtil *iu)
 {
-	// This function is called when the utility is chosen.  
+	// This function is called when the utility is chosen.
 	// Since we don't need any window gadgets, we'll just go through all the materials right away.
 	INode *root = ip->GetRootNode();
 
-	INodeListClass *meshlist = NULL;
+	INodeListClass *meshlist = nullptr;
 
 	// Change all materials associated with the mesh, starting with the root node.
 	if (root) {
@@ -88,7 +88,7 @@ void PCToPS2MaterialClass::BeginEditParams(Interface *ip,IUtil *iu)
 
 				Mtl	*nodemtl = ((*meshlist)[i])->GetMtl();
 
-				if (nodemtl == NULL) {
+				if (nodemtl == nullptr) {
 					// No material on this node, go to the next.
 					continue;
 				}
@@ -132,9 +132,9 @@ class PCToPS2MaterialClassDesc:public ClassDesc {
 
 public:
 	int				IsPublic()					{ return 1; }
-	void *			Create(BOOL loading)		
-	{ 
-		return ((void*)new PCToPS2MaterialClass); 
+	void *			Create(BOOL loading)
+	{
+		return ((void*)new PCToPS2MaterialClass);
 	}
 	const TCHAR *	ClassName()					{ return Get_String(IDS_PC_TO_PS2_MAT_CONVERTER); }
 	SClass_ID		SuperClassID()				{ return UTILITY_CLASS_ID; }

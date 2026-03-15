@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __RADARUPDATE_H_
-#define __RADARUPDATE_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpdateModule.h"
 
@@ -42,16 +39,16 @@ class RadarUpdateModuleData : public UpdateModuleData
 
 public:
 
-	RadarUpdateModuleData( void );
+	RadarUpdateModuleData();
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     UpdateModuleData::buildFieldParse( p );
 
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
 
-			{ "RadarExtendTime", INI::parseDurationReal, NULL, offsetof( RadarUpdateModuleData, m_radarExtendTime ) },
+			{ "RadarExtendTime", INI::parseDurationReal, nullptr, offsetof( RadarUpdateModuleData, m_radarExtendTime ) },
 			{ 0, 0, 0, 0 }
 		};
     p.add(dataFieldParse);
@@ -76,10 +73,10 @@ public:
 	RadarUpdate( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype defined by MemoryPoolObject
 
-	void extendRadar( void );									 ///< extend the radar from this object
+	void extendRadar();									 ///< extend the radar from this object
 	Bool isRadarActive() { return m_radarActive; }
 
-	virtual UpdateSleepTime update( void ); ///< Here's the actual work of Upgrading
+	virtual UpdateSleepTime update() override; ///< Here's the actual work of Upgrading
 
 protected:
 
@@ -88,5 +85,3 @@ protected:
 	Bool m_radarActive;												 ///< TRUE when radar is actually online and generating radar information.
 
 };
-
-#endif  // end __RADARUPDATE_H_

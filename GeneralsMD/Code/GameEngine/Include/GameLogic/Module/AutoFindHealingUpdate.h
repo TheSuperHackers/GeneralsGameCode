@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __AUTO_FIND_HEALING_UPDATE_H_
-#define __AUTO_FIND_HEALING_UPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/KindOf.h"
 #include "GameLogic/Module/UpdateModule.h"
@@ -54,7 +51,7 @@ public:
 	AutoFindHealingUpdateModuleData();
 	static void buildFieldParse(MultiIniFieldParse& p);
 
-private: 
+private:
 
 };
 
@@ -72,15 +69,11 @@ public:
 	AutoFindHealingUpdate( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual void onObjectCreated();
-	virtual UpdateSleepTime update();
+	virtual void onObjectCreated() override;
+	virtual UpdateSleepTime update() override;
 
 	Object* scanClosestTarget();
 
 protected:
 	Int m_nextScanFrames;
 };
-
-
-#endif
-

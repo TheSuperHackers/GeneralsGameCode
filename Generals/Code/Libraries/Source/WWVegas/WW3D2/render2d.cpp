@@ -35,7 +35,6 @@
 #include "render2d.h"
 #include "mutex.h"
 #include "ww3d.h"
-#include "refcount.h"
 #include "font3d.h"
 #include "rect.h"
 #include "texture.h"
@@ -61,28 +60,28 @@ RectClass							Render2DClass::ScreenResolution( 0,0,0,0 );
 Render2DClass::Render2DClass( TextureClass* tex ) :
 	CoordinateScale( 1, 1 ),
 	CoordinateOffset( 0, 0 ),
-	Texture(0),
+	Texture(nullptr),
 	ZValue(0),
 	IsHidden( false ),
 	IsGrayScale (false)
 {
-	Set_Texture( tex );	
+	Set_Texture( tex );
    Shader = Get_Default_Shader();
 	return ;
 }
 
 Render2DClass::~Render2DClass()
 {
-	REF_PTR_RELEASE(Texture);	
+	REF_PTR_RELEASE(Texture);
 }
 
 ShaderClass
-Render2DClass::Get_Default_Shader( void )
+Render2DClass::Get_Default_Shader()
 {
 	ShaderClass shader;
 
    shader.Set_Depth_Mask( ShaderClass::DEPTH_WRITE_DISABLE );
-	shader.Set_Depth_Compare( ShaderClass::PASS_ALWAYS );	
+	shader.Set_Depth_Compare( ShaderClass::PASS_ALWAYS );
 	shader.Set_Dst_Blend_Func( ShaderClass::DSTBLEND_ONE_MINUS_SRC_ALPHA );
 	shader.Set_Src_Blend_Func( ShaderClass::SRCBLEND_SRC_ALPHA );
 	shader.Set_Fog_Func( ShaderClass::FOG_DISABLE );
@@ -92,7 +91,7 @@ Render2DClass::Get_Default_Shader( void )
 	return shader;
 }
 
-void	Render2DClass::Reset(void)
+void	Render2DClass::Reset()
 {
 	Vertices.Delete_All( false );
 	UVCoordinates.Delete_All( false );
@@ -104,14 +103,14 @@ void	Render2DClass::Reset(void)
 
 void Render2DClass::Set_Texture(TextureClass* tex)
 {
-	REF_PTR_SET(Texture,tex);	
+	REF_PTR_SET(Texture,tex);
 }
 
 void Render2DClass::Set_Texture( const char * filename)
 {
 	TextureClass * tex = WW3DAssetManager::Get_Instance()->Get_Texture( filename, MIP_LEVELS_1 );
 	Set_Texture( tex );
-	if ( tex != NULL ) {
+	if ( tex != nullptr ) {
 		SET_REF_OWNER( tex );
 		tex->Release_Ref();
 	}
@@ -121,7 +120,7 @@ void Render2DClass::Set_Texture( const char * filename)
 void Render2DClass::Enable_Grayscale(bool b)
 {
 	IsGrayScale = b;
-}	
+}
 
 void Render2DClass::Enable_Alpha(bool b)
 {
@@ -171,7 +170,7 @@ void	Render2DClass::Set_Coordinate_Range( const RectClass & range )
 	Update_Bias();
 }
 
-void	  Render2DClass::Update_Bias( void )
+void	  Render2DClass::Update_Bias()
 {
 	BiasedCoordinateOffset = CoordinateOffset;
 
@@ -187,7 +186,7 @@ void	  Render2DClass::Update_Bias( void )
 }
 
 #if 0
-Vector2 Render2DClass::Convert_Vert( const Vector2 & v ) 
+Vector2 Render2DClass::Convert_Vert( const Vector2 & v )
 {
 	Vector2 out;
 
@@ -195,7 +194,7 @@ Vector2 Render2DClass::Convert_Vert( const Vector2 & v )
 	out.X = v.X * CoordinateScale.X + CoordinateOffset.X;
 	out.Y = v.Y * CoordinateScale.Y + CoordinateOffset.Y;
 
-	// Convert to pixels 
+	// Convert to pixels
 	out.X = (out.X + 1.0f) * (Get_Screen_Resolution().Width() * 0.5f);
 	out.Y = (out.Y - 1.0f) * (Get_Screen_Resolution().Height() * -0.5f);
 
@@ -212,7 +211,7 @@ Vector2 Render2DClass::Convert_Vert( const Vector2 & v )
 
 	// Convert back to (-1,1)-(1,-1)
 	out.X = out.X / (Get_Screen_Resolution().Width() * 0.5f) - 1.0f;
-	out.Y = out.Y / (Get_Screen_Resolution().Height() * -0.5f) + 1.0f;	
+	out.Y = out.Y / (Get_Screen_Resolution().Height() * -0.5f) + 1.0f;
 
 	return out;
 }
@@ -239,7 +238,7 @@ void Render2DClass::Convert_Vert( Vector2 & vert_out, float x_in, float y_in )
 
 #endif
 
-void	Render2DClass::Move( const Vector2 & move )	// Move all verts 
+void	Render2DClass::Move( const Vector2 & move )	// Move all verts
 {
 	Vector2 scaled_move;
 	scaled_move.X = move.X * CoordinateScale.X;
@@ -279,7 +278,7 @@ void	Render2DClass::Internal_Add_Quad_UVs( const RectClass & uv )
 	uvs->X = uv.Left;		uvs->Y = uv.Top;			uvs++;
 	uvs->X = uv.Left;		uvs->Y = uv.Bottom;		uvs++;
 	uvs->X = uv.Right;	uvs->Y = uv.Top;			uvs++;
-	uvs->X = uv.Right;	uvs->Y = uv.Bottom;	
+	uvs->X = uv.Right;	uvs->Y = uv.Bottom;
 }
 
 void	Render2DClass::Internal_Add_Quad_Colors( unsigned long color )
@@ -313,7 +312,7 @@ void	Render2DClass::Internal_Add_Quad_HColors( unsigned long color1, unsigned lo
 void	Render2DClass::Internal_Add_Quad_Indicies( int start_vert_index, bool backfaced )
 {
 	unsigned short * indices = Indices.Add_Multiple( 6 );
-	
+
 	if (backfaced ^ (CoordinateScale.X * CoordinateScale.Y > 0)) {
 		*indices++ = start_vert_index + 1;
 		*indices++ = start_vert_index + 0;
@@ -417,7 +416,7 @@ void	Render2DClass::Add_Tri( const Vector2 & v0, const Vector2 & v1, const Vecto
 	int new_vert_count = old_vert_count + 3;
 	int new_index_count = Indices.Count() + 3;
 
-	// Add the verticies (translated to new coordinates)
+	// Add the vertices (translated to new coordinates)
 #if 0
 	Vertices.Add( Convert_Vert( v0 ), new_vert_count );
 	Vertices.Add( Convert_Vert( v1 ), new_vert_count );
@@ -523,10 +522,10 @@ void	Render2DClass::Add_Outline( const RectClass & rect, float width, const Rect
 	Add_Line (Vector2 (rect.Left + 1, rect.Bottom),	Vector2 (rect.Left + 1, rect.Top + 1),		width, color);
 	Add_Line (Vector2 (rect.Left, rect.Top + 1),		Vector2 (rect.Right - 1, rect.Top + 1),			width, color);
 	Add_Line (Vector2 (rect.Right, rect.Top),		Vector2 (rect.Right, rect.Bottom - 1),		width, color);
-	Add_Line (Vector2 (rect.Right, rect.Bottom),	Vector2 (rect.Left + 1, rect.Bottom),	width, color);	
+	Add_Line (Vector2 (rect.Right, rect.Bottom),	Vector2 (rect.Left + 1, rect.Bottom),	width, color);
 }
 
-void Render2DClass::Render(void)
+void Render2DClass::Render()
 {
 	if ( !Indices.Count() || IsHidden) {
 		return;
@@ -551,7 +550,7 @@ void Render2DClass::Render(void)
 	vp.MaxZ		= 1;
 	DX8Wrapper::Set_Viewport(&vp);
 
-	
+
 	DX8Wrapper::Set_Texture(0,Texture);
 
 	VertexMaterialClass *vm=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
@@ -576,7 +575,7 @@ void Render2DClass::Render(void)
 			*(unsigned int*)(vb+fi.Get_Diffuse_Offset())=Colors[i];
 			*(Vector2*)(vb+fi.Get_Tex_Offset(0))=UVCoordinates[i];
 			vb+=fi.Get_FVF_Size();
-		}		
+		}
 	}
 
 	DynamicIBAccessClass ib(BUFFER_TYPE_DYNAMIC_DX8,Indices.Count());
@@ -585,7 +584,7 @@ void Render2DClass::Render(void)
 		unsigned short *mem=Lock.Get_Index_Array();
 		for (int i=0; i<Indices.Count(); i++)
 			mem[i]=Indices[i];
-	}	
+	}
 
 	DX8Wrapper::Set_Vertex_Buffer(vb);
 	DX8Wrapper::Set_Index_Buffer(ib,0);
@@ -612,12 +611,15 @@ void Render2DClass::Render(void)
 			DX8Wrapper::Set_DX8_Texture_Stage_State( 0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
 			DX8Wrapper::Set_DX8_Texture_Stage_State( 0, D3DTSS_COLORARG2, D3DTA_TFACTOR);
 			DX8Wrapper::Set_DX8_Texture_Stage_State( 0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+
+			// TheSuperHackers @bugfix Stubbjax 08/01/2026 Fix possible greyscale rendering issues on hardware without DOT3 support.
+			DX8Wrapper::Set_DX8_Texture_Stage_State( 1, D3DTSS_COLOROP, D3DTOP_DISABLE);
 		}
 	}
 	else
 		DX8Wrapper::Set_Shader(Shader);
 
-	DX8Wrapper::Draw_Triangles(0,Indices.Count()/3,0,Vertices.Count());	
+	DX8Wrapper::Draw_Triangles(0,Indices.Count()/3,0,Vertices.Count());
 //	SphereClass sphere(Vector3(0.0f,0.0f,0.0f),0.0f);
 //	SortingRendererClass::Insert_Triangles(sphere,0,Indices.Count()/3,0,Vertices.Count());
 
@@ -635,14 +637,14 @@ void Render2DClass::Render(void)
 Render2DTextClass::Render2DTextClass(Font3DInstanceClass *font) :
 	Location(0.0f,0.0f),
 	Cursor(0.0f,0.0f),
-	Font(NULL),
+	Font(nullptr),
 	WrapWidth(0),
 	ClipRect(0, 0, 0, 0),
 	IsClippedEnabled(false)
 {
 	Set_Coordinate_Range( RectClass( -320, -240, 320, 240 ) );
 	Set_Font( font );
-	
+
 	Reset();
 }
 
@@ -651,7 +653,7 @@ Render2DTextClass::~Render2DTextClass()
 	REF_PTR_RELEASE(Font);
 }
 
-void	Render2DTextClass::Reset(void)
+void	Render2DTextClass::Reset()
 {
 	Render2DClass::Reset();
 	Cursor = Location;
@@ -666,7 +668,7 @@ void	Render2DTextClass::Set_Font( Font3DInstanceClass *font )
 {
 	REF_PTR_SET(Font,font);
 
-	if ( Font != NULL ) {
+	if ( Font != nullptr ) {
 		Set_Texture( Font->Peek_Texture() );
 
 	#define	BLOCK_CHAR	0
@@ -684,7 +686,7 @@ void	Render2DTextClass::Draw_Char( WCHAR ch, unsigned long color )
 {
 	float char_spacing	= Font->Char_Spacing( ch );
 	float char_height		= Font->Char_Height();
-	
+
 	//
 	//	Check to see if this character is clipped
 	//

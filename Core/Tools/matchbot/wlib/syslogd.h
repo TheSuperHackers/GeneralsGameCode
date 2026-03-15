@@ -16,12 +16,11 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef SYSLOGD_HEADER
-#define SYSLOGD_HEADER
+#pragma once
 
 #include <stdlib.h>
 #include <stdio.h>
-#ifndef _WINDOWS
+#ifndef _WIN32
 #include <syslog.h>
 #endif
 #include <string.h>
@@ -44,5 +43,3 @@ class SyslogD : public OutputDevice
  private:
    int priority;
 };
-
-#endif

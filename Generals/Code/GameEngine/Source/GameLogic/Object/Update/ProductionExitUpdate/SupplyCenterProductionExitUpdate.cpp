@@ -28,7 +28,7 @@
 //					This instance kicks things it outputs into SupplyTruck autopilot after exiting.
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/RandomValue.h"
 #include "Common/ThingTemplate.h"
@@ -89,11 +89,11 @@ void SupplyCenterProductionExitUpdate::exitObjectViaDoor( Object *newObj, ExitDo
 		newObj->setPosition( &createPoint );
 		newObj->setOrientation( exitAngle );
 
-		/** @todo This really should be automatically wrapped up in an actication sequence
+		/** @todo This really should be automatically wrapped up in an activation sequence
 		for objects in general */
 		// tell the AI about it
 		TheAI->pathfinder()->addObjectToPathfindMap( newObj );
-		
+
 		Vector3 p;
 
 		//
@@ -151,7 +151,7 @@ Bool SupplyCenterProductionExitUpdate::getExitPosition( Coord3D& exitPosition ) 
 	exitPosition.x = loc.X;
 	exitPosition.y = loc.Y;
 	exitPosition.z = loc.Z;
-	
+
 	return TRUE;
 
 }
@@ -195,7 +195,7 @@ void SupplyCenterProductionExitUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -219,15 +219,15 @@ void SupplyCenterProductionExitUpdate::xfer( Xfer *xfer )
 	// rally point exists
 	xfer->xferBool( &m_rallyPointExists );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void SupplyCenterProductionExitUpdate::loadPostProcess( void )
+void SupplyCenterProductionExitUpdate::loadPostProcess()
 {
 
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

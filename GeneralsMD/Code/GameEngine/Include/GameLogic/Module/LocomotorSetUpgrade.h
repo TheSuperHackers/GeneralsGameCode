@@ -24,13 +24,10 @@
 
 // FILE: LocomotorSetUpgrade.h /////////////////////////////////////////////////////////////////////////////
 // Author: Steven Johnson, Aug 2002
-// Desc:	 
+// Desc:
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __LocomotorSetUpgrade_H_
-#define __LocomotorSetUpgrade_H_
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpgradeModule.h"
@@ -53,11 +50,7 @@ public:
 	// virtual destructor prototype defined by MemoryPoolObject
 
 protected:
-	virtual void upgradeImplementation( ); ///< Here's the actual work of Upgrading
-	virtual Bool isSubObjectsUpgrade() { return false; }
+	virtual void upgradeImplementation( ) override; ///< Here's the actual work of Upgrading
+	virtual Bool isSubObjectsUpgrade() override { return false; }
 
 };
-
-
-#endif // __LocomotorSetUpgrade_H_
-

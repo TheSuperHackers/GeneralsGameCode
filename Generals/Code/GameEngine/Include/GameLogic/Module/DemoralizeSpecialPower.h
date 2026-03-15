@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __DEMORALIZE_SPECIAL_POWER_H_
-#define __DEMORALIZE_SPECIAL_POWER_H_
-
 #ifdef ALLOW_DEMORALIZE
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
@@ -47,7 +44,7 @@ class DemoralizeSpecialPowerModuleData : public SpecialPowerModuleData
 
 public:
 
-	DemoralizeSpecialPowerModuleData( void );
+	DemoralizeSpecialPowerModuleData();
 
 	static void buildFieldParse( MultiIniFieldParse& p );
 
@@ -82,6 +79,3 @@ protected:
 };
 
 #endif // ALLOW_DEMORALIZE
-
-
-#endif  // end __DEMORALIZE_SPECIAL_POWER_H_

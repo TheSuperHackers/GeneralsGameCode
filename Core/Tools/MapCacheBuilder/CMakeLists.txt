@@ -17,7 +17,6 @@ target_link_libraries(corei_mapcachebuilder INTERFACE
     comctl32
     core_debug
     core_profile
-    dbghelplib
     imm32
     vfw32
     winmm

@@ -23,12 +23,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 //==============================================================================
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //=============================================================================
 //
 // Project:    RTS3
@@ -41,11 +41,8 @@
 
 #pragma once
 
-#ifndef __W3DCONVERT_H_
-#define __W3DCONVERT_H_
-
 //=============================================================================
-//           Includes                                                      
+//           Includes
 //=============================================================================
 #include "Lib/BaseType.h"
 
@@ -62,7 +59,3 @@ extern void PixelScreenToW3DLogicalScreen( Int screenX, Int screenY,
 //=============================================================================
 //           Type Defines
 //=============================================================================
-
-
-#endif // _W3DCONVERT_H_
-

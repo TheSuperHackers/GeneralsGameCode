@@ -44,13 +44,13 @@ IMPLEMENT_DYNCREATE(EmitterPhysicsPropPageClass, CPropertyPage)
 //
 /////////////////////////////////////////////////////////////
 EmitterPhysicsPropPageClass::EmitterPhysicsPropPageClass (EmitterInstanceListClass *pemitter)
-	: m_pEmitterList (NULL),
+	: m_pEmitterList (nullptr),
 	  m_bValid (true),
 	  m_Velocity (0, 0, 1),
 	  m_Acceleration (0, 0, 0),
 	  m_OutFactor (0),
 	  m_InheritanceFactor (0),
-	  m_Randomizer (NULL),
+	  m_Randomizer (nullptr),
 	  CPropertyPage(EmitterPhysicsPropPageClass::IDD)
 {
 	//{{AFX_DATA_INIT(EmitterPhysicsPropPageClass)
@@ -112,8 +112,8 @@ void
 EmitterPhysicsPropPageClass::Initialize (void)
 {
 	SAFE_DELETE (m_Randomizer);
-	if (m_pEmitterList != NULL) {
-	
+	if (m_pEmitterList != nullptr) {
+
 		//
 		// Get the emitter's settings
 		//
@@ -134,7 +134,7 @@ EmitterPhysicsPropPageClass::Initialize (void)
 //
 /////////////////////////////////////////////////////////////
 BOOL
-EmitterPhysicsPropPageClass::OnInitDialog (void) 
+EmitterPhysicsPropPageClass::OnInitDialog (void)
 {
 	// Allow the base class to process this message
 	CPropertyPage::OnInitDialog ();
@@ -153,7 +153,7 @@ EmitterPhysicsPropPageClass::OnInitDialog (void)
 	//
 	::Initialize_Spinner (m_AccelXSpin, m_Acceleration.X, -10000, 10000);
 	::Initialize_Spinner (m_AccelYSpin, m_Acceleration.Y, -10000, 10000);
-	::Initialize_Spinner (m_AccelZSpin, m_Acceleration.Z, -10000, 10000);		
+	::Initialize_Spinner (m_AccelZSpin, m_Acceleration.Z, -10000, 10000);
 	return TRUE;
 }
 
@@ -204,8 +204,8 @@ EmitterPhysicsPropPageClass::OnNotify
 	//	Update the spinner control if necessary
 	//
 	NMHDR *pheader = (NMHDR *)lParam;
-	if ((pheader != NULL) && (pheader->code == UDN_DELTAPOS)) {
-		LPNMUPDOWN pupdown = (LPNMUPDOWN)lParam;		
+	if ((pheader != nullptr) && (pheader->code == UDN_DELTAPOS)) {
+		LPNMUPDOWN pupdown = (LPNMUPDOWN)lParam;
 		::Update_Spinner_Buddy (pheader->hwndFrom, pupdown->iDelta);
 		On_Setting_Changed (wParam);
 	}
@@ -225,13 +225,13 @@ EmitterPhysicsPropPageClass::OnSpecifyVelocityRandom (void)
 {
 	VolumeRandomDialogClass dialog (m_Randomizer, this);
 	if (dialog.DoModal () == IDOK) {
-		
+
 		//
 		//	Get the new randomizer from the dialog
 		//
 		SAFE_DELETE (m_Randomizer);
 		m_Randomizer = dialog.Get_Randomizer ();
-		if (m_Randomizer != NULL) {
+		if (m_Randomizer != nullptr) {
 			m_pEmitterList->Set_Velocity_Random (m_Randomizer->Clone ());
 			SetModified ();
 		}

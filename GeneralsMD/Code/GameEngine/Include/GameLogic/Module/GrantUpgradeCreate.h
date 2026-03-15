@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __GRANTUPGRADECREATE_H_
-#define __GRANTUPGRADECREATE_H_
-
 #define DEFINE_OBJECT_STATUS_NAMES
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
@@ -71,12 +68,9 @@ public:
 	// virtual destructor prototype provided by memory pool declaration
 
 	/// the create method
-	virtual void onCreate( void );
-	virtual void onBuildComplete();	///< This is called when you are a finished game object
+	virtual void onCreate() override;
+	virtual void onBuildComplete() override;	///< This is called when you are a finished game object
 
 protected:
 
 };
-
-#endif // __GRANTUPGRADECREATE_H_
-

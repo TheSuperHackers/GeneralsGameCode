@@ -51,7 +51,7 @@
 //-------------------------------------------------------------------------------------------------
 PointDefenseLaserUpdateModuleData::PointDefenseLaserUpdateModuleData()
 {
-	m_weaponTemplate		= NULL;
+	m_weaponTemplate		= nullptr;
 	m_scanFrames				= 0;
 	m_scanRange					= 0.0f;
 	m_velocityFactor		= 0.0f;
@@ -62,15 +62,15 @@ PointDefenseLaserUpdateModuleData::PointDefenseLaserUpdateModuleData()
 {
 	ModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
-		{ "WeaponTemplate",				INI::parseWeaponTemplate,				NULL, offsetof( PointDefenseLaserUpdateModuleData, m_weaponTemplate ) },
-		{ "PrimaryTargetTypes",		KindOfMaskType::parseFromINI,								NULL, offsetof( PointDefenseLaserUpdateModuleData, m_primaryTargetKindOf ) },
-		{ "SecondaryTargetTypes",	KindOfMaskType::parseFromINI,								NULL, offsetof( PointDefenseLaserUpdateModuleData, m_secondaryTargetKindOf ) },
-		{ "ScanRate",							INI::parseDurationUnsignedInt,	NULL, offsetof( PointDefenseLaserUpdateModuleData, m_scanFrames ) },
-		{ "ScanRange",						INI::parseReal,									NULL, offsetof( PointDefenseLaserUpdateModuleData, m_scanRange ) },
-		{ "PredictTargetVelocityFactor", INI::parseReal,					NULL, offsetof( PointDefenseLaserUpdateModuleData, m_velocityFactor ) },
-		{ 0, 0, 0, 0 }
+		{ "WeaponTemplate",				INI::parseWeaponTemplate,				nullptr, offsetof( PointDefenseLaserUpdateModuleData, m_weaponTemplate ) },
+		{ "PrimaryTargetTypes",		KindOfMaskType::parseFromINI,								nullptr, offsetof( PointDefenseLaserUpdateModuleData, m_primaryTargetKindOf ) },
+		{ "SecondaryTargetTypes",	KindOfMaskType::parseFromINI,								nullptr, offsetof( PointDefenseLaserUpdateModuleData, m_secondaryTargetKindOf ) },
+		{ "ScanRate",							INI::parseDurationUnsignedInt,	nullptr, offsetof( PointDefenseLaserUpdateModuleData, m_scanFrames ) },
+		{ "ScanRange",						INI::parseReal,									nullptr, offsetof( PointDefenseLaserUpdateModuleData, m_scanRange ) },
+		{ "PredictTargetVelocityFactor", INI::parseReal,					nullptr, offsetof( PointDefenseLaserUpdateModuleData, m_velocityFactor ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 	p.add(dataFieldParse);
 }
@@ -83,11 +83,11 @@ PointDefenseLaserUpdate::PointDefenseLaserUpdate( Thing *thing, const ModuleData
 	m_nextShotAvailableInFrames = 0;
 	m_inRange  					= false;
 	setWakeFrame(getObject(), UPDATE_SLEEP_NONE);// No starting sleep, but we want to sleep later.
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-PointDefenseLaserUpdate::~PointDefenseLaserUpdate( void )
+PointDefenseLaserUpdate::~PointDefenseLaserUpdate()
 {
 
 }
@@ -97,11 +97,11 @@ PointDefenseLaserUpdate::~PointDefenseLaserUpdate( void )
 void PointDefenseLaserUpdate::onObjectCreated()
 {
 	const PointDefenseLaserUpdateModuleData *data = getPointDefenseLaserUpdateModuleData();
-	
+
 	//Make sure we have a weapon template
 	if( !data->m_weaponTemplate )
 	{
-		DEBUG_CRASH( ("PointDefenseLaserUpdate for %s doesn't have a valid weapon template", 
+		DEBUG_CRASH( ("PointDefenseLaserUpdate for %s doesn't have a valid weapon template",
 			getObject()->getTemplate()->getName().str() ) );
 		return;
 	}
@@ -121,15 +121,15 @@ void PointDefenseLaserUpdate::onObjectCreated()
 /** The update callback. */
 //-------------------------------------------------------------------------------------------------
 UpdateSleepTime PointDefenseLaserUpdate::update()
-{	
+{
 /// @todo srj use SLEEPY_UPDATE here
 	//*** HERE'S THE UPDATE PHILOSOPHY ***
-	//The point defense laser typically has short range, high rate of fire, and shoots at incoming projectiles 
+	//The point defense laser typically has short range, high rate of fire, and shoots at incoming projectiles
 	//that move fast. This amounts to a potentially very expensive system. Instead of frantically scanning for
 	//targets, we will scan less frequently (data->m_scanFrames) in a larger radius (data->m_scanRange). When
 	//this occurs, we'll store the "best" target, and track only that target until the next update or if it is
 	//killed.
-	
+
 	Object *me = getObject();
 	if( me->isEffectivelyDead() )
 		return UPDATE_SLEEP_FOREVER;//No more laser fo you.
@@ -177,7 +177,7 @@ void PointDefenseLaserUpdate::fireWhenReady()
 		{
 			if( m_inRange )
 			{
-				//We were in range last frame, but the target has moved out of firing range, so 
+				//We were in range last frame, but the target has moved out of firing range, so
 				//re-evaluate by forcing a new scan.
 				m_nextScanFrames = GameLogicRandomValue( 0, 3 );
 				m_bestTargetID = INVALID_ID;
@@ -185,7 +185,7 @@ void PointDefenseLaserUpdate::fireWhenReady()
 				{
 					scanClosestTarget();
 					m_nextScanFrames = data->m_scanFrames;
-					target = NULL; //Set target to NULL so we don't shoot at it (might be out of range)
+					target = nullptr; //Set target to nullptr so we don't shoot at it (might be out of range)
 				}
 			}
 			else
@@ -195,14 +195,14 @@ void PointDefenseLaserUpdate::fireWhenReady()
 			}
 		}
 	}
-	
+
 	if( m_nextShotAvailableInFrames > 0 )
 	{
 		//We can't fire this frame.
 		m_nextShotAvailableInFrames--;
 		return;
 	}
-	
+
 	WeaponTemplate *wt = data->m_weaponTemplate;
 	if( wt )
 	{
@@ -242,8 +242,8 @@ Object* PointDefenseLaserUpdate::scanClosestTarget()
 {
 	const PointDefenseLaserUpdateModuleData *data = getPointDefenseLaserUpdateModuleData();
 	Object *me = getObject();
-	Object *bestTargetOutOfRange[2] = { NULL, NULL };
-	Object *bestTargetInRange[2] = { NULL, NULL };
+	Object *bestTargetOutOfRange[2] = { nullptr, nullptr };
+	Object *bestTargetInRange[2] = { nullptr, nullptr };
 	Real closestDist[2];
 	Real closestOutsideRange[2];
 	Int index;
@@ -310,7 +310,7 @@ Object* PointDefenseLaserUpdate::scanClosestTarget()
 					pos.set( physics->getVelocity() );
 					pos.scale( data->m_velocityFactor );
 					pos.add( other->getPosition() );
-					
+
 					//Recalculate the distance.
 					fDist = sqrt( ThePartitionManager->getDistanceSquared( me, other, FROM_CENTER_2D ) );
 				}
@@ -323,7 +323,7 @@ Object* PointDefenseLaserUpdate::scanClosestTarget()
 				bestTargetOutOfRange[index] = other;
 			}
 		}
-	}  // end for, other
+	}
 
 	if( bestTargetInRange[ 0 ] )
 	{
@@ -356,11 +356,11 @@ Object* PointDefenseLaserUpdate::scanClosestTarget()
 		m_inRange = false;
 		return bestTargetOutOfRange[ 1 ];
 	}
-	
+
 	//Utter failure -- nothing on the scope.
 	m_bestTargetID = INVALID_ID;
 	m_inRange = false;
-	return NULL;
+	return nullptr;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -372,7 +372,7 @@ void PointDefenseLaserUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -402,15 +402,15 @@ void PointDefenseLaserUpdate::xfer( Xfer *xfer )
 	// next shot available in frames
 	xfer->xferInt( &m_nextShotAvailableInFrames );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void PointDefenseLaserUpdate::loadPostProcess( void )
+void PointDefenseLaserUpdate::loadPostProcess()
 {
 
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

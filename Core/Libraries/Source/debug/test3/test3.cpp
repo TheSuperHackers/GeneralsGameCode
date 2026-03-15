@@ -26,12 +26,12 @@
 //
 // Debug module - Test 3 (Checking FLAT I/O, logging)
 //////////////////////////////////////////////////////////////////////////////
-#ifdef NDEBUG
+
 #include "../debug.h"
 
 unsigned divByNull;
 
-void main(void)
+void main()
 {
   // switch to debug group
   Debug::Command("debug.");

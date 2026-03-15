@@ -167,8 +167,8 @@ static void HUFF_maketree(struct HuffEncodeContext *EC)
 /* registers vars usage
     i  - code index/temp
     i1 - number of unjoined codes
-    i2 - 
-    i3 - 
+    i2 -
+    i3 -
 */
 
 	if (i1>2)
@@ -571,8 +571,8 @@ static void HUFF_analysis(struct HuffEncodeContext *EC,
 /* registers vars usage
     i  - clues
     i1 - minrep
-    i2 - 
-    i3 - 
+    i2 -
+    i3 -
 */
 
 	if (EC->clues>1)
@@ -718,7 +718,7 @@ static void HUFF_analysis(struct HuffEncodeContext *EC,
 /* - maintains perfect tree
 
    - find intest code
-   - find intest branch thats shorter than maximum bits
+   - find intest branch that's shorter than maximum bits
    - graft one branch to the shorter branch
    - shorten the other code by 1
 */
@@ -778,8 +778,8 @@ static void HUFF_analysis(struct HuffEncodeContext *EC,
 /* registers vars usage
     i  - code
     i1 - 8
-    i2 - 
-    i3 - 
+    i2 -
+    i3 -
 */
 
 	if ((~opt) & 8)
@@ -793,8 +793,8 @@ static void HUFF_analysis(struct HuffEncodeContext *EC,
 
 /* registers vars usage
     i  - code/bits
-    i1 - 
-    i2 - 
+    i1 -
+    i2 -
     i3 -
 */
 
@@ -1181,8 +1181,8 @@ int GCALL HUFF_encode(void *compresseddata, const void *source, int sourcesize, 
     int   plen=0;
     struct HUFFMemStruct infile;
     struct HUFFMemStruct outfile;
-    struct HuffEncodeContext *EC=0;
-    void *deltabuf=0;
+    struct HuffEncodeContext *EC=nullptr;
+    void *deltabuf=nullptr;
     int opt=0;
     if (opts)
         opt = opts[0];

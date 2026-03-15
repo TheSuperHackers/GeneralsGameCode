@@ -20,7 +20,8 @@
 // Texture tiling tool for worldbuilder.
 // Author: John Ahlquist, April 2001
 
-#include "StdAfx.h" 
+
+#include "StdAfx.h"
 #include "resource.h"
 
 #include "BrushTool.h"
@@ -42,29 +43,29 @@ Int BrushTool::m_brushHeight;
 
 
 
-/// Constructor 
+/// Constructor
 BrushTool::BrushTool(void) :
 	Tool(ID_BRUSH_TOOL, IDC_BRUSH_CROSS)
 {
-	m_htMapEditCopy = NULL;
-	m_htMapFeatherCopy = NULL;
+	m_htMapEditCopy = nullptr;
+	m_htMapFeatherCopy = nullptr;
 
 	m_brushWidth = 0;
 	m_brushFeather = 0;
 	m_brushHeight = 0;
 	m_brushSquare = false;
 }
-	
+
 /// Destructor
-BrushTool::~BrushTool(void) 
+BrushTool::~BrushTool(void)
 {
 	REF_PTR_RELEASE(m_htMapEditCopy);
 	REF_PTR_RELEASE(m_htMapFeatherCopy);
 }
 
 /// Set the brush height and notify the height options panel of the change.
-void BrushTool::setHeight(Int height) 
-{ 
+void BrushTool::setHeight(Int height)
+{
 	if (m_brushHeight != height) {
 		m_brushHeight = height;
 		// notify height palette options panel
@@ -73,8 +74,8 @@ void BrushTool::setHeight(Int height)
 };
 
 /// Set the brush width and notify the height options panel of the change.
-void BrushTool::setWidth(Int width) 
-{ 
+void BrushTool::setWidth(Int width)
+{
 	if (m_brushWidth != width) {
 		m_brushWidth = width;
 		// notify brush palette options panel
@@ -84,8 +85,8 @@ void BrushTool::setWidth(Int width)
 };
 
 /// Set the brush feather and notify the height options panel of the change.
-void BrushTool::setFeather(Int feather) 
-{ 
+void BrushTool::setFeather(Int feather)
+{
 	if (m_brushFeather != feather) {
 		m_brushFeather = feather;
 		// notify height palette options panel
@@ -95,7 +96,7 @@ void BrushTool::setFeather(Int feather)
 };
 
 /// Shows the brush options panel.
-void BrushTool::activate() 
+void BrushTool::activate()
 {
 	CMainFrame::GetMainFrame()->showOptionsDialog(IDD_BRUSH_OPTIONS);
 	DrawObject::setDoBrushFeedback(true);
@@ -105,7 +106,7 @@ void BrushTool::activate()
 /// Start tool.
 /** Setup the tool to start brushing - make a copy of the height map
 to edit, another copy because we need it :), and call mouseMovedDown. */
-void BrushTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) 
+void BrushTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
 {
 	if (m != TRACK_L) return;
 
@@ -121,9 +122,9 @@ void BrushTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldB
 }
 
 /// End tool.
-/** Finish the tool operation - create a command, pass it to the 
+/** Finish the tool operation - create a command, pass it to the
 doc to execute, and cleanup ref'd objects. */
-void BrushTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) 
+void BrushTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
 {
 	if (m != TRACK_L) return;
 
@@ -168,7 +169,7 @@ void BrushTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorld
 		if (i<0 || i>=m_htMapEditCopy->getXExtent()) {
 			continue;
 		}
-		for (j=ndx.y-sub; j<ndx.y+add; j++) {					
+		for (j=ndx.y-sub; j<ndx.y+add; j++) {
 			if (j<0 || j>=m_htMapEditCopy->getYExtent()) {
 				continue;
 			}

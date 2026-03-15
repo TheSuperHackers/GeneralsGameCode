@@ -16,32 +16,25 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando / G 3D Library                                      * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/ww3d2/font3d.h                               $* 
- *                                                                                             * 
- *                      $Author:: Byon_g                                                      $* 
- *                                                                                             * 
- *                     $Modtime:: 4/05/01 2:19p                                               $* 
- *                                                                                             * 
- *                    $Revision:: 4                                                           $* 
- *                                                                                             * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando / G 3D Library                                      *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/ww3d2/font3d.h                               $*
+ *                                                                                             *
+ *                      $Author:: Byon_g                                                      $*
+ *                                                                                             *
+ *                     $Modtime:: 4/05/01 2:19p                                               $*
+ *                                                                                             *
+ *                    $Revision:: 4                                                           $*
+ *                                                                                             *
  *---------------------------------------------------------------------------------------------*/
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef FONT3D_H
-#define FONT3D_H
 
 #include "always.h"
-#include "refcount.h"
 #include "vector4.h"
 #include "widestring.h"
 #include "rect.h"
@@ -55,12 +48,12 @@ class SurfaceClass;
 **
 ** This class provides an interface to a font texture.  Once
 ** created and loaded with a font, the object can return texture
-** u v coordinate for any character in the font, as well as the 
+** u v coordinate for any character in the font, as well as the
 ** character width for proportional fonts.  Fonts are loaded as
 ** 16-bit Targa files, then converted to proportional fonts by
 ** finding the minimum bounding box for each chacter.  The font
 ** texture is then minimized to a 256x256 or 128x128 texture
-** material by re-stacking chars by thier minimum bounding box.
+** material by re-stacking chars by their minimum bounding box.
 **
 ** During use, this class is really no more than a data table accessor
 ** Only during creation is any real code run.
@@ -76,7 +69,7 @@ class Font3DDataClass : public RefCountClass {
 public:
 
 	/*
-	** Constructor,  Constructor which loads a targa file, 
+	** Constructor,  Constructor which loads a targa file,
 	** and Destructor
 	*/
 	Font3DDataClass( const char *filename );
@@ -88,21 +81,21 @@ public:
 	/*
 	** access character width and height in pixels (clamp char to 0.255)
 	*/
-	
+
 	unsigned char	Char_Width( WCHAR ch = (WCHAR)'H' )			{ return CharWidthTable[ch&0xFF]; }// & 0xFF]; } // No need to "& 0xff" with chars!!!
 	unsigned char	Char_Height( WCHAR /*ch = 'H'*/ )			{ return CharHeight; }
 
 	// u and v are in normalized texture space
-	inline float	Char_U_Offset( WCHAR ch = (WCHAR)'H')		{ return UOffsetTable[ch&0xFF]; }// & 0xFF]; }
-	inline float	Char_V_Offset( WCHAR ch = (WCHAR)'H')		{ return VOffsetTable[ch&0xFF]; }// & 0xFF]; }
-	inline float	Char_U_Width( WCHAR ch = (WCHAR)'H' )		{ return UWidthTable[ch&0xFF]; }// & 0xFF]; }
-	inline float	Char_V_Height( WCHAR /*ch = 'H'*/)			{ return VHeight; }
-	
+	float	Char_U_Offset( WCHAR ch = (WCHAR)'H')		{ return UOffsetTable[ch&0xFF]; }// & 0xFF]; }
+	float	Char_V_Offset( WCHAR ch = (WCHAR)'H')		{ return VOffsetTable[ch&0xFF]; }// & 0xFF]; }
+	float	Char_U_Width( WCHAR ch = (WCHAR)'H' )		{ return UWidthTable[ch&0xFF]; }// & 0xFF]; }
+	float	Char_V_Height( WCHAR /*ch = 'H'*/)			{ return VHeight; }
+
 	// get all four UV values as one vector4
 	Vector4 Char_UV_Corners( WCHAR ch = (WCHAR)'H' )
 	{
 //		ch &= 0xFF;
-		return Vector4( UOffsetTable[ch], VOffsetTable[ch], 
+		return Vector4( UOffsetTable[ch], VOffsetTable[ch],
 						UOffsetTable[ch] + UWidthTable[ch],
 						VOffsetTable[ch] + VHeight );
 	}
@@ -110,7 +103,7 @@ public:
 	/*
 	** access texture material
 	*/
-	TextureClass *	Peek_Texture( void )								{ return Texture; }
+	TextureClass *	Peek_Texture()								{ return Texture; }
 
 private:
 	/*
@@ -152,7 +145,7 @@ class Font3DInstanceClass : public RefCountClass {
 
 public:
 	/*
-	** Constructor which creates/gets a Font3DDataClass object, 
+	** Constructor which creates/gets a Font3DDataClass object,
 	** and Destructor
 	*/
 	Font3DInstanceClass( const char *filename );
@@ -161,13 +154,13 @@ public:
 	/*
 	** access texture material
 	*/
-	TextureClass *Peek_Texture( void ) { return FontData->Peek_Texture(); }
+	TextureClass *Peek_Texture() { return FontData->Peek_Texture(); }
 
 	/*
 	** The non-scaled monospace char width in pixels ( set to 0 for proportional spaced font )
 	*/
-	void	Set_Mono_Spaced( void );
-	void	Set_Proportional( void )	{ MonoSpacing = 0;  Build_Cached_Tables(); }
+	void	Set_Mono_Spaced();
+	void	Set_Proportional()	{ MonoSpacing = 0;  Build_Cached_Tables(); }
 
 
 	/*
@@ -182,7 +175,7 @@ public:
 	*/
 	float	Char_Width( WCHAR ch ) const		{ return ScaledWidthTable[ch&0xFF]; }
 	float	Char_Spacing( WCHAR ch ) const	{ return ScaledSpacingTable[ch&0xFF]; }
-	float	Char_Height( void ) const			{ return ScaledHeight; }
+	float	Char_Height() const			{ return ScaledHeight; }
 
 
 	/*
@@ -200,14 +193,14 @@ public:
 	//	inline float	Char_U_Width( WCHAR ch = (WCHAR)'H' ) { return FontData->Char_U_Width( ch & 0xFF );  }
 	//	inline float	Char_V_Height( WCHAR ch = (WCHAR)'H') { return FontData->Char_V_Height( ch & 0xFF ); }
 	//	Vector4 Char_UV_Corners( WCHAR ch = (WCHAR)'H' )	{ return FontData->Char_UV_Corners( ch & 0xFF ); }
-	RectClass		Char_UV( WCHAR ch )	{ return RectClass(	FontData->Char_U_Offset(ch), 
-																				FontData->Char_V_Offset(ch), 
-																				FontData->Char_U_Offset(ch) + FontData->Char_U_Width(ch), 
+	RectClass		Char_UV( WCHAR ch )	{ return RectClass(	FontData->Char_U_Offset(ch),
+																				FontData->Char_V_Offset(ch),
+																				FontData->Char_U_Offset(ch) + FontData->Char_U_Width(ch),
 																				FontData->Char_V_Offset(ch) + FontData->Char_V_Height(ch) ); }
 private:
 
 	Font3DDataClass *	FontData;			// The font data
-	float					Scale;				// The current scale factor 
+	float					Scale;				// The current scale factor
 	float					SpaceSpacing; 		// non-scaled width of space in pixels ( defaults to 1/2 'H' width )
 	float					InterCharSpacing;	// non-scaled width between chars in pixels
 	float					MonoSpacing;		// non-scaled monospace char width in pixels (0 for proportional)
@@ -218,6 +211,3 @@ private:
 
 	void					Build_Cached_Tables();
 };
-
-
-#endif 

@@ -16,12 +16,8 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#if !defined(AFX_EMITTERCOLORPROPPAGE_H__83A8B83F_BA3B_11D2_9FFA_00104B791122__INCLUDED_)
-#define AFX_EMITTERCOLORPROPPAGE_H__83A8B83F_BA3B_11D2_9FFA_00104B791122__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
+
 // EmitterColorPropPage.h : header file
 //
 
@@ -42,7 +38,7 @@ class EmitterColorPropPageClass : public CPropertyPage
 
 // Construction
 public:
-	EmitterColorPropPageClass (EmitterInstanceListClass *pemitter_list = NULL);
+	EmitterColorPropPageClass (EmitterInstanceListClass *pemitter_list = nullptr);
 	~EmitterColorPropPageClass ();
 
 // Dialog Data
@@ -92,7 +88,7 @@ protected:
 		bool								Is_Data_Valid (void) const { return m_bValid; }
 
 		void								Get_Color_Keyframes (ParticlePropertyStruct<Vector3> &colors)	{ colors = m_CurrentColors; }
-		void								Get_Opacity_Keyframes (ParticlePropertyStruct<float> &opacity)	{ opacity = m_CurrentOpacities; }		
+		void								Get_Opacity_Keyframes (ParticlePropertyStruct<float> &opacity)	{ opacity = m_CurrentOpacities; }
 		/*const Vector3 &				Get_Start_Color (void) const { return m_StartColor; }
 		const Vector3 &				Get_End_Color (void) const { return m_EndColor; }
 		float								Get_Start_Opacity (void) const { return m_StartOpacity; }
@@ -106,7 +102,7 @@ protected:
 		/////////////////////////////////////////////////////////
 		//
 		//	Protected methods
-		//		
+		//
 		void				Initialize (void);
 		void				Update_Colors (void);
 		void				Update_Opacities (void);
@@ -116,7 +112,7 @@ protected:
 		/////////////////////////////////////////////////////////
 		//
 		//	Private member data
-		//		
+		//
 		EmitterInstanceListClass *	m_pEmitterList;
 		bool								m_bValid;
 		ColorBarClass *				m_ColorBar;
@@ -130,5 +126,3 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_EMITTERCOLORPROPPAGE_H__83A8B83F_BA3B_11D2_9FFA_00104B791122__INCLUDED_)

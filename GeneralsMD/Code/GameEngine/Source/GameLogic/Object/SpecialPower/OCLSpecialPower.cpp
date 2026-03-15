@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Player.h"
 #include "Common/RandomValue.h"
@@ -44,19 +44,14 @@
 // MODULE DATA ////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
-enum 
+enum
 {
 	CREATE_ABOVE_LOCATION_HEIGHT = 300,
 	MAX_ADJUST_RADIUS = 500
 };
 
-static const char* TheOCLCreateLocTypeNames[] =
+static const char* const TheOCLCreateLocTypeNames[] =
 {
 	"CREATE_AT_EDGE_NEAR_SOURCE",
 	"CREATE_AT_EDGE_NEAR_TARGET",
@@ -64,14 +59,15 @@ static const char* TheOCLCreateLocTypeNames[] =
 	"USE_OWNER_OBJECT",
 	"CREATE_ABOVE_LOCATION",
 	"CREATE_AT_EDGE_FARTHEST_FROM_TARGET",
-	NULL
+	nullptr
 };
+static_assert(ARRAY_SIZE(TheOCLCreateLocTypeNames) == OCL_CREATE_LOC_COUNT + 1, "Incorrect array size");
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-OCLSpecialPowerModuleData::OCLSpecialPowerModuleData( void )
+OCLSpecialPowerModuleData::OCLSpecialPowerModuleData()
 {
-	m_defaultOCL = NULL;
+	m_defaultOCL = nullptr;
 	m_upgradeOCL.clear();
 	m_createLoc = CREATE_AT_EDGE_NEAR_SOURCE;
 	m_isOCLAdjustPositionToPassable = FALSE;
@@ -83,12 +79,12 @@ static void parseOCLUpgradePair( INI* ini, void * /*instance*/, void *store, con
 {
 	OCLSpecialPowerModuleData::Upgrades up;
 
-	INI::parseScience(ini, NULL, &up.m_science, NULL);
-	INI::parseObjectCreationList(ini, NULL, &up.m_ocl, NULL);
+	INI::parseScience(ini, nullptr, &up.m_science, nullptr);
+	INI::parseObjectCreationList(ini, nullptr, &up.m_ocl, nullptr);
 
 	std::vector<OCLSpecialPowerModuleData::Upgrades>* s = (std::vector<OCLSpecialPowerModuleData::Upgrades>*)store;
 	s->push_back(up);
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -96,14 +92,14 @@ static void parseOCLUpgradePair( INI* ini, void * /*instance*/, void *store, con
 {
 	SpecialPowerModuleData::buildFieldParse( p );
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
-		{ "UpgradeOCL", parseOCLUpgradePair, NULL, offsetof( OCLSpecialPowerModuleData, m_upgradeOCL ) },
-		{ "OCL", INI::parseObjectCreationList, NULL, offsetof( OCLSpecialPowerModuleData, m_defaultOCL ) },
+		{ "UpgradeOCL", parseOCLUpgradePair, nullptr, offsetof( OCLSpecialPowerModuleData, m_upgradeOCL ) },
+		{ "OCL", INI::parseObjectCreationList, nullptr, offsetof( OCLSpecialPowerModuleData, m_defaultOCL ) },
 		{ "CreateLocation", INI::parseIndexList, TheOCLCreateLocTypeNames, offsetof( OCLSpecialPowerModuleData, m_createLoc ) },
-		{ "ReferenceObject", INI::parseAsciiString, NULL, offsetof( OCLSpecialPowerModuleData, m_referenceThingName ) },
-		{ "OCLAdjustPositionToPassable", INI::parseBool, NULL, offsetof( OCLSpecialPowerModuleData, m_isOCLAdjustPositionToPassable ) },
-		{ 0, 0, 0, 0 }
+		{ "ReferenceObject", INI::parseAsciiString, nullptr, offsetof( OCLSpecialPowerModuleData, m_referenceThingName ) },
+		{ "OCLAdjustPositionToPassable", INI::parseBool, nullptr, offsetof( OCLSpecialPowerModuleData, m_isOCLAdjustPositionToPassable ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 	p.add(dataFieldParse);
 
@@ -119,7 +115,7 @@ OCLSpecialPower::OCLSpecialPower( Thing *thing, const ModuleData *moduleData )
 							 : SpecialPowerModule( thing, moduleData )
 {
 
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -127,9 +123,9 @@ const ObjectCreationList* OCLSpecialPower::findOCL() const
 {
 	const OCLSpecialPowerModuleData* d = getOCLSpecialPowerModuleData();
 	const Player* controller = getObject()->getControllingPlayer();
-	if (controller != NULL)
+	if (controller != nullptr)
 	{
-		for (std::vector<OCLSpecialPowerModuleData::Upgrades>::const_iterator it = d->m_upgradeOCL.begin(); 
+		for (std::vector<OCLSpecialPowerModuleData::Upgrades>::const_iterator it = d->m_upgradeOCL.begin();
 					it != d->m_upgradeOCL.end();
 					++it)
 		{
@@ -142,7 +138,7 @@ const ObjectCreationList* OCLSpecialPower::findOCL() const
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-OCLSpecialPower::~OCLSpecialPower( void )
+OCLSpecialPower::~OCLSpecialPower()
 {
 
 }
@@ -156,7 +152,7 @@ void OCLSpecialPower::doSpecialPowerAtLocation( const Coord3D *loc, Real angle, 
 		return;
 
 	// sanity
-	if( loc == NULL )
+	if( loc == nullptr )
 		return;
 
 	// get the module data
@@ -173,12 +169,18 @@ void OCLSpecialPower::doSpecialPowerAtLocation( const Coord3D *loc, Real angle, 
     { // if findPosition() fails, then don't monkey with target Coord!
     	targetCoord = *loc;
     }
-    
+
 
 	}
 
 	// call the base class action cause we are *EXTENDING* functionality
 	SpecialPowerModule::doSpecialPowerAtLocation( &targetCoord, angle, commandOptions );
+
+#if RETAIL_COMPATIBLE_CRC
+	// TheSuperHackers @info we need to leave early if we are in the MissileLauncherBuildingUpdate crash fix codepath
+	if (m_availableOnFrame == 0xFFFFFFFF)
+		return;
+#endif
 
 	const ObjectCreationList* ocl = findOCL();
 
@@ -215,7 +217,7 @@ void OCLSpecialPower::doSpecialPowerAtLocation( const Coord3D *loc, Real angle, 
 			ObjectCreationList::create( ocl, getObject(), &creationCoord, &targetCoord, angle );
 			break;
 	}
-}  
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -228,7 +230,7 @@ void OCLSpecialPower::doSpecialPowerAtObject( Object *obj, UnsignedInt commandOp
 	if( !obj )
 		return;
 	doSpecialPowerAtLocation( obj->getPosition(), INVALID_ANGLE, commandOptions );
-}  
+}
 
 // ------------------------------------------------------------------------------------------------
 void OCLSpecialPower::doSpecialPower( UnsignedInt commandOptions )
@@ -238,7 +240,7 @@ void OCLSpecialPower::doSpecialPower( UnsignedInt commandOptions )
 
 	Coord3D creationCoord;
 	creationCoord.set( getObject()->getPosition() );
-	
+
 	// call the base class action cause we are *EXTENDING* functionality
 	SpecialPowerModule::doSpecialPowerAtLocation( &creationCoord, INVALID_ANGLE, commandOptions );
 
@@ -261,7 +263,7 @@ void OCLSpecialPower::crc( Xfer *xfer )
 	// extend base class
 	SpecialPowerModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -279,16 +281,16 @@ void OCLSpecialPower::xfer( Xfer *xfer )
 	// extend base class
 	SpecialPowerModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void OCLSpecialPower::loadPostProcess( void )
+void OCLSpecialPower::loadPostProcess()
 {
 
 	// extend base class
 	SpecialPowerModule::loadPostProcess();
 
-}  // end loadPostProcess
+}
 

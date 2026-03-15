@@ -30,14 +30,9 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
 
-#ifndef __PRIORITY_VECTOR_H
-#define __PRIORITY_VECTOR_H
-
-#include "Vector.H"
+#include "Vector.h"
 
 ////////////////////////////////////////////////////////////////////
 //
@@ -71,9 +66,9 @@ class PriorityVectorClass : public DynamicVectorClass<T>
 template <class T>
 __inline bool PriorityVectorClass<T>::Process_Head (T &object)
 {
-	bool retval = false;	
-	if (Vector != NULL) {
-		
+	bool retval = false;
+	if (Vector != nullptr) {
+
 		// Pass the object back to the caller
 		object = Vector[0];
 
@@ -95,7 +90,7 @@ __inline bool PriorityVectorClass<T>::Process_Head (T &object)
 
 ////////////////////////////////////////////////////////////////////
 //
-//	Add_Low 
+//	Add_Low
 //
 ////////////////////////////////////////////////////////////////////
 template <class T>
@@ -115,6 +110,3 @@ __inline bool PriorityVectorClass<T>::Add_High (T const &object)
 {
 	return DynamicVectorClass<T>::Add_Head (object);
 }
-
-#endif //__PRIORITY_VECTOR_H
-

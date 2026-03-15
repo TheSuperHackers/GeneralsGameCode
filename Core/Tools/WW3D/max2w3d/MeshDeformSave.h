@@ -17,29 +17,28 @@
 */
 
 /* $Header: /Commando/Code/Tools/max2w3d/MeshDeformSave.h 4     7/07/99 11:52a Patrick $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando / G 3D engine                                       * 
- *                                                                                             * 
- *                    File Name : MeshDeformSafe.H                                              
- *                                                                                             * 
- *                   Programmer : Patrick Smith                                                * 
- *                                                                                             * 
- *                   Start Date : 05/28/99                                                     * 
- *                                                                                             * 
- *                  Last Update : 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando / G 3D engine                                       *
+ *                                                                                             *
+ *                    File Name : MeshDeformSafe.h
+ *                                                                                             *
+ *                   Programmer : Patrick Smith                                                *
+ *                                                                                             *
+ *                   Start Date : 05/28/99                                                     *
+ *                                                                                             *
+ *                  Last Update :
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#ifndef __MESH_DEFORM_SAVE_H
-#define __MESH_DEFORM_SAVE_H
+#pragma once
 
 #include <max.h>
-#include "Vector.H"
+#include "Vector.h"
 
 // Forward declarations
 class ChunkSaveClass;
@@ -65,7 +64,7 @@ typedef DynamicVectorClass<MeshDeformSaveSetClass *> DEFORM_SAVE_LIST;
 class MeshDeformSaveClass
 {
 	public:
-		
+
 		//////////////////////////////////////////////////////////////////////
 		//	Public constructors/destructors
 		//////////////////////////////////////////////////////////////////////
@@ -76,8 +75,8 @@ class MeshDeformSaveClass
 		//////////////////////////////////////////////////////////////////////
 		//	Public methods
 		//////////////////////////////////////////////////////////////////////
-		void					Initialize (MeshBuilderClass &builder, Object *object, Mesh &mesh, Matrix3 *transform = NULL);
-		void					Initialize (MeshBuilderClass &builder, Mesh &mesh, MeshDeformModData &mod_data, Matrix3 *transform = NULL);
+		void					Initialize (MeshBuilderClass &builder, Object *object, Mesh &mesh, Matrix3 *transform = nullptr);
+		void					Initialize (MeshBuilderClass &builder, Mesh &mesh, MeshDeformModData &mod_data, Matrix3 *transform = nullptr);
 
 		//void					Re_Index (MeshBuilderClass &builder);
 		bool					Export (ChunkSaveClass &chunk_save);
@@ -91,7 +90,7 @@ class MeshDeformSaveClass
 		void					Set_Alpha_Passes (unsigned int pass_mask)	{ m_AlphaPasses = pass_mask; }
 
 	protected:
-		
+
 		//////////////////////////////////////////////////////////////////////
 		//	Protected methods
 		//////////////////////////////////////////////////////////////////////
@@ -106,5 +105,3 @@ class MeshDeformSaveClass
 		DEFORM_SAVE_LIST	m_DeformSets;
 		unsigned int		m_AlphaPasses;
 };
-
-#endif //__MESH_DEFORM_SAVE_H

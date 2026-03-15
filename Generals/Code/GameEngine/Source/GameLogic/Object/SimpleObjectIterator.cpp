@@ -25,7 +25,7 @@
 // SimpleObjectIterator
 // Implementation of a simple object iterator
 // Author: Steven Johnson, September 2001
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "GameLogic/ObjectIter.h"
 
@@ -35,9 +35,9 @@
 
 /// @todo Doxygenize this file
 
-SimpleObjectIterator::ClumpCompareProc SimpleObjectIterator::theClumpCompareProcs[] = 
-{ 
-	NULL,						// "fastest" gets no proc
+SimpleObjectIterator::ClumpCompareProc SimpleObjectIterator::theClumpCompareProcs[] =
+{
+	nullptr,						// "fastest" gets no proc
 	SimpleObjectIterator::sortNearToFar,
 	SimpleObjectIterator::sortFarToNear,
 	SimpleObjectIterator::sortCheapToExpensive,
@@ -47,7 +47,7 @@ SimpleObjectIterator::ClumpCompareProc SimpleObjectIterator::theClumpCompareProc
 //=============================================================================
 SimpleObjectIterator::Clump::Clump()
 {
-	m_nextClump = NULL;
+	m_nextClump = nullptr;
 }
 
 //=============================================================================
@@ -58,8 +58,8 @@ SimpleObjectIterator::Clump::~Clump()
 //=============================================================================
 SimpleObjectIterator::SimpleObjectIterator()
 {
-	m_firstClump = NULL;
-	m_curClump = NULL;
+	m_firstClump = nullptr;
+	m_curClump = nullptr;
 	m_clumpCount = 0;
 }
 
@@ -88,7 +88,7 @@ void SimpleObjectIterator::insert(Object *obj, Real numeric)
 //=============================================================================
 Object *SimpleObjectIterator::nextWithNumeric(Real *num)
 {
-	Object *obj = NULL;
+	Object *obj = nullptr;
 	if (num)
 		*num = 0.0f;
 
@@ -99,7 +99,7 @@ Object *SimpleObjectIterator::nextWithNumeric(Real *num)
 			*num = m_curClump->m_numeric;
 		m_curClump = m_curClump->m_nextClump;
 	}
-		
+
 	return obj;
 }
 
@@ -121,8 +121,8 @@ void SimpleObjectIterator::makeEmpty()
 	}
 	DEBUG_ASSERTCRASH(m_clumpCount == 0, ("hmm"));
 
-	m_firstClump = NULL;
-	m_curClump = NULL;
+	m_firstClump = nullptr;
+	m_curClump = nullptr;
 	m_clumpCount = 0;
 }
 
@@ -134,10 +134,10 @@ void SimpleObjectIterator::sort(IterOrderType order)
 
 #ifdef INTENSE_DEBUG
 {
-	DEBUG_LOG(("\n\n---------- BEFORE sort for %d -----------\n",order));
+	DEBUG_LOG(("\n\n---------- BEFORE sort for %d -----------",order));
 	for (Clump *p = m_firstClump; p; p = p->m_nextClump)
 	{
-		DEBUG_LOG(("    obj %08lx numeric %f\n",p->m_obj,p->m_numeric));
+		DEBUG_LOG(("    obj %08lx numeric %f",p->m_obj,p->m_numeric));
 	}
 }
 #endif
@@ -150,27 +150,27 @@ void SimpleObjectIterator::sort(IterOrderType order)
 	// do a basic mergesort, which works nicely for linked lists,
 	// and is reasonably efficient (N log N).
 
-  for ( Int n = 1 ; ; n *= 2 ) 
+  for ( Int n = 1 ; ; n *= 2 )
 	{
 		Clump *to_do = m_firstClump;
-		Clump *tail = NULL;
-		m_firstClump = NULL;
+		Clump *tail = nullptr;
+		m_firstClump = nullptr;
 
 		Int mergeCount = 0;
 
-		while (to_do) 
+		while (to_do)
 		{
 			++mergeCount;
 
 			Int to_do_count = 0;
-			
+
 			// make two lists of length 'n' (to_do is one, sub is the other)
 			Clump *sub = to_do;
-			for (Int i = 0; i < n; i++) 
+			for (Int i = 0; i < n; i++)
 			{
 				++to_do_count;
 				sub = sub->m_nextClump;
-				if (!sub) 
+				if (!sub)
 					break;
 			}
 			Int subCount = sub ? n : 0;
@@ -180,44 +180,44 @@ void SimpleObjectIterator::sort(IterOrderType order)
 			while (to_do_count + subCount > 0) {
 
 				DEBUG_ASSERTCRASH(to_do_count + subCount >= 0, ("uhoh"));
-	
+
 				Clump *tmp;
-				
+
 				// bleah, coalesce into more elegant test case
 				if (subCount == 0)
 				{
 					DEBUG_ASSERTCRASH(to_do_count > 0, ("hmm, expected nonzero to_do_count"));
-					tmp = to_do; 
-					to_do = to_do->m_nextClump; 
+					tmp = to_do;
+					to_do = to_do->m_nextClump;
 					--to_do_count;
 				}
 				else if (to_do_count == 0)
 				{
 					DEBUG_ASSERTCRASH(subCount > 0, ("hmm, expected nonzero subCount"));
-					tmp = sub; 
-					sub = sub->m_nextClump; 
+					tmp = sub;
+					sub = sub->m_nextClump;
 					--subCount;
-				} 
-				else if ((*cmpProc)(to_do, sub) <= 0.0f) 
+				}
+				else if ((*cmpProc)(to_do, sub) <= 0.0f)
 				{
 					DEBUG_ASSERTCRASH(to_do_count > 0, ("hmm, expected nonzero to_do_count"));
-					tmp = to_do; 
-					to_do = to_do->m_nextClump; 
+					tmp = to_do;
+					to_do = to_do->m_nextClump;
 					--to_do_count;
-				} 
-				else 
+				}
+				else
 				{
 					DEBUG_ASSERTCRASH(subCount > 0, ("hmm, expected nonzero subCount"));
-					tmp = sub; 
-					sub = sub->m_nextClump; 
+					tmp = sub;
+					sub = sub->m_nextClump;
 					--subCount;
 				}
 				if (!sub) subCount = 0;
 				if (!to_do) to_do_count = 0;
 
-				if (tail) 
+				if (tail)
 					tail->m_nextClump = tmp;
-				else 
+				else
 					m_firstClump = tmp;
 				tail = tmp;
 			}
@@ -225,7 +225,7 @@ void SimpleObjectIterator::sort(IterOrderType order)
 			to_do = sub;
 		}
 		if (tail)
-			tail->m_nextClump = NULL;
+			tail->m_nextClump = nullptr;
 
 		if (mergeCount <= 1)	// when we have done just one (or none) swap, we're done
 			break;
@@ -233,10 +233,10 @@ void SimpleObjectIterator::sort(IterOrderType order)
 
 #ifdef INTENSE_DEBUG
 {
-	DEBUG_LOG(("\n\n---------- sort for %d -----------\n",order));
+	DEBUG_LOG(("\n\n---------- sort for %d -----------",order));
 	for (Clump *p = m_firstClump; p; p = p->m_nextClump)
 	{
-		DEBUG_LOG(("    obj %08lx numeric %f\n",p->m_obj,p->m_numeric));
+		DEBUG_LOG(("    obj %08lx numeric %f",p->m_obj,p->m_numeric));
 	}
 }
 #endif

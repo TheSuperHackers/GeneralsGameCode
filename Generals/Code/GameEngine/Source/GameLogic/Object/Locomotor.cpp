@@ -29,7 +29,7 @@
 
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #define DEFINE_SURFACECATEGORY_NAMES
 #define DEFINE_LOCO_Z_NAMES
@@ -46,11 +46,6 @@
 #include "GameLogic/Module/BodyModule.h"
 #include "GameLogic/Module/AIUpdate.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 static const Real DONUT_TIME_DELAY_SECONDS=2.5f;
 static const Real DONUT_DISTANCE=4.0*PATHFIND_CELL_SIZE_F;
@@ -60,19 +55,19 @@ static const Real DONUT_DISTANCE=4.0*PATHFIND_CELL_SIZE_F;
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PUBLIC DATA ////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-LocomotorStore *TheLocomotorStore = NULL;					///< the Locomotor store definition
+LocomotorStore *TheLocomotorStore = nullptr;					///< the Locomotor store definition
 
 const Real BIGNUM = 99999.0f;
 
-static const char *TheLocomotorPriorityNames[] = 
+static const char *const TheLocomotorPriorityNames[] =
 {
 	"MOVES_BACK",
 	"MOVES_MIDDLE",
 	"MOVES_FRONT",
 
-	NULL
+	nullptr
 };
-
+static_assert(ARRAY_SIZE(TheLocomotorPriorityNames) == LOCOMOTOR_PRIORITY_COUNT + 1, "Array size");
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
@@ -168,7 +163,7 @@ static Real tryToRotateVector3D(
 		Matrix3D rotMtx(objCrossGoal, angleBetween);
 		actualDir = rotMtx.Rotate_Vector(curDir);
 	}
-	
+
 	return angleBetween;
 }
 
@@ -197,8 +192,8 @@ inline Real tryToOrientInThisDirection3D(Object* obj, Real maxTurnRate, const Co
 
 //-----------------------------------------------------------------------------
 static void calcDirectionToApplyThrust(
-	const Object* obj, 
-	const PhysicsBehavior* physics, 
+	const Object* obj,
+	const PhysicsBehavior* physics,
 	const Coord3D& ingoalPos,
 	Real maxAccel,
 	Vector3& goalDir
@@ -210,7 +205,7 @@ static void calcDirectionToApplyThrust(
 
 		this is complicated by the fact that we generally have an intrinsic velocity already,
 		that must be accounted for, and by the fact that we can only apply force in our
-		forward-x-direction (with a thrust-angle-range), and (due to limited range) might not 
+		forward-x-direction (with a thrust-angle-range), and (due to limited range) might not
 		be able to apply the force in the optimal direction!
 	*/
 
@@ -252,7 +247,7 @@ static void calcDirectionToApplyThrust(
 			// choose the smallest positive t.
 			if (t < 0 || (t2 >= 0 && t2 < t))
 				t = t2;
-			
+
 			// plug it in.
 			if (!isNearlyZero(t))
 			{
@@ -362,13 +357,13 @@ void LocomotorTemplate::validate()
 	// this is ok; parachutes need it!
 	//DEBUG_ASSERTCRASH(m_lift == 0.0f || m_lift > fabs(TheGlobalData->m_gravity), ("Lift is too low to counteract gravity!"));
 	//DEBUG_ASSERTCRASH(m_liftDamaged == 0.0f || m_liftDamaged > fabs(TheGlobalData->m_gravity), ("LiftDamaged is too low to counteract gravity!"));
-	//DEBUG_ASSERTCRASH(m_preferredHeight == 0.0f || (m_behaviorZ == Z_SURFACE_RELATIVE_HEIGHT || m_behaviorZ == Z_ABSOLUTE_HEIGHT || m_appearance == LOCO_THRUST), 
+	//DEBUG_ASSERTCRASH(m_preferredHeight == 0.0f || (m_behaviorZ == Z_SURFACE_RELATIVE_HEIGHT || m_behaviorZ == Z_ABSOLUTE_HEIGHT || m_appearance == LOCO_THRUST),
 	//	("You must use Z_SURFACE_RELATIVE_HEIGHT or Z_ABSOLUTE_HEIGHT (or THRUST) to use preferredHeight"));
 
 	// for 'damaged' stuff that was omitted, set 'em to be the same as 'undamaged'...
 	if (m_maxSpeedDamaged < 0.0f)
 		m_maxSpeedDamaged = m_maxSpeed;
-	
+
 	if (m_maxTurnRateDamaged < 0.0f)
 		m_maxTurnRateDamaged = m_maxTurnRate;
 
@@ -398,25 +393,25 @@ void LocomotorTemplate::validate()
 				m_lift != 0.0f ||
 				m_liftDamaged != 0.0f)
 		{
-			DEBUG_CRASH(("THRUST locos may not use ZAxisBehavior or lift!\n"));
+			DEBUG_CRASH(("THRUST locos may not use ZAxisBehavior or lift!"));
 			throw INI_INVALID_DATA;
 		}
 		if (m_maxSpeed <= 0.0f)
 		{
 			// if one of these was omitted, it defaults to zero... just quietly heal it here, rather than crashing
-			DEBUG_LOG(("THRUST locos may not have zero m_maxSpeed; healing...\n"));
+			DEBUG_LOG(("THRUST locos may not have zero m_maxSpeed; healing..."));
 			m_maxSpeed = 0.01f;
 		}
 		if (m_maxSpeedDamaged <= 0.0f)
 		{
 			// if one of these was omitted, it defaults to zero... just quietly heal it here, rather than crashing
-			DEBUG_LOG(("THRUST locos may not have zero m_maxSpeedDamaged; healing...\n"));
+			DEBUG_LOG(("THRUST locos may not have zero m_maxSpeedDamaged; healing..."));
 			m_maxSpeedDamaged = 0.01f;
 		}
 		if (m_minSpeed <= 0.0f)
 		{
 			// if one of these was omitted, it defaults to zero... just quietly heal it here, rather than crashing
-			DEBUG_LOG(("THRUST locos may not have zero m_minSpeed; healing...\n"));
+			DEBUG_LOG(("THRUST locos may not have zero m_minSpeed; healing..."));
 			m_minSpeed = 0.01f;
 		}
 	}
@@ -428,73 +423,73 @@ static void parseFrictionPerSec( INI* ini, void * /*instance*/, void *store, con
 	Real fricPerSec = INI::scanReal(ini->getNextToken());
 	Real fricPerFrame = fricPerSec * SECONDS_PER_LOGICFRAME_REAL;
 	*(Real *)store = fricPerFrame;
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
-const FieldParse* LocomotorTemplate::getFieldParse() const  
+const FieldParse* LocomotorTemplate::getFieldParse() const
 {
 	static const FieldParse TheFieldParse[] =
 	{
-		{ "Surfaces", INI::parseBitString32, TheLocomotorSurfaceTypeNames, offsetof(LocomotorTemplate, m_surfaces) },		
-		{ "Speed", INI::parseVelocityReal, NULL, offsetof(LocomotorTemplate, m_maxSpeed) },		
-		{ "SpeedDamaged", INI::parseVelocityReal, NULL, offsetof( LocomotorTemplate, m_maxSpeedDamaged ) },
-		{ "TurnRate", INI::parseAngularVelocityReal, NULL, offsetof(LocomotorTemplate, m_maxTurnRate) },		
-		{ "TurnRateDamaged", INI::parseAngularVelocityReal, NULL, offsetof( LocomotorTemplate, m_maxTurnRateDamaged ) },
-		{ "Acceleration", INI::parseAccelerationReal, NULL, offsetof(LocomotorTemplate, m_acceleration) },		
-		{ "AccelerationDamaged", INI::parseAccelerationReal, NULL, offsetof( LocomotorTemplate, m_accelerationDamaged ) },
-		{ "Lift", INI::parseAccelerationReal, NULL, offsetof(LocomotorTemplate, m_lift) },		
-		{ "LiftDamaged", INI::parseAccelerationReal, NULL, offsetof( LocomotorTemplate, m_liftDamaged ) },
-		{ "Braking", INI::parseAccelerationReal, NULL, offsetof(LocomotorTemplate, m_braking) },		
-		{ "MinSpeed", INI::parseVelocityReal, NULL, offsetof(LocomotorTemplate, m_minSpeed) },		
-		{ "MinTurnSpeed", INI::parseVelocityReal, NULL, offsetof(LocomotorTemplate, m_minTurnSpeed) },		
-		{ "PreferredHeight", INI::parseReal, NULL, offsetof(LocomotorTemplate, m_preferredHeight) },
-		{ "PreferredHeightDamping", INI::parseReal, NULL, offsetof(LocomotorTemplate, m_preferredHeightDamping) },
-		{ "CirclingRadius", INI::parseReal, NULL, offsetof(LocomotorTemplate, m_circlingRadius) },
-		{ "Extra2DFriction", parseFrictionPerSec, NULL, offsetof(LocomotorTemplate, m_extra2DFriction) },
-		{ "SpeedLimitZ", INI::parseVelocityReal, NULL, offsetof(LocomotorTemplate, m_speedLimitZ) },
-		{ "MaxThrustAngle", INI::parseAngleReal, NULL, offsetof(LocomotorTemplate, m_maxThrustAngle) },		// yes, angle, not angular-vel
-		{ "ZAxisBehavior", INI::parseIndexList, TheLocomotorBehaviorZNames, offsetof(LocomotorTemplate, m_behaviorZ) },		
+		{ "Surfaces", INI::parseBitString32, TheLocomotorSurfaceTypeNames, offsetof(LocomotorTemplate, m_surfaces) },
+		{ "Speed", INI::parseVelocityReal, nullptr, offsetof(LocomotorTemplate, m_maxSpeed) },
+		{ "SpeedDamaged", INI::parseVelocityReal, nullptr, offsetof( LocomotorTemplate, m_maxSpeedDamaged ) },
+		{ "TurnRate", INI::parseAngularVelocityReal, nullptr, offsetof(LocomotorTemplate, m_maxTurnRate) },
+		{ "TurnRateDamaged", INI::parseAngularVelocityReal, nullptr, offsetof( LocomotorTemplate, m_maxTurnRateDamaged ) },
+		{ "Acceleration", INI::parseAccelerationReal, nullptr, offsetof(LocomotorTemplate, m_acceleration) },
+		{ "AccelerationDamaged", INI::parseAccelerationReal, nullptr, offsetof( LocomotorTemplate, m_accelerationDamaged ) },
+		{ "Lift", INI::parseAccelerationReal, nullptr, offsetof(LocomotorTemplate, m_lift) },
+		{ "LiftDamaged", INI::parseAccelerationReal, nullptr, offsetof( LocomotorTemplate, m_liftDamaged ) },
+		{ "Braking", INI::parseAccelerationReal, nullptr, offsetof(LocomotorTemplate, m_braking) },
+		{ "MinSpeed", INI::parseVelocityReal, nullptr, offsetof(LocomotorTemplate, m_minSpeed) },
+		{ "MinTurnSpeed", INI::parseVelocityReal, nullptr, offsetof(LocomotorTemplate, m_minTurnSpeed) },
+		{ "PreferredHeight", INI::parseReal, nullptr, offsetof(LocomotorTemplate, m_preferredHeight) },
+		{ "PreferredHeightDamping", INI::parseReal, nullptr, offsetof(LocomotorTemplate, m_preferredHeightDamping) },
+		{ "CirclingRadius", INI::parseReal, nullptr, offsetof(LocomotorTemplate, m_circlingRadius) },
+		{ "Extra2DFriction", parseFrictionPerSec, nullptr, offsetof(LocomotorTemplate, m_extra2DFriction) },
+		{ "SpeedLimitZ", INI::parseVelocityReal, nullptr, offsetof(LocomotorTemplate, m_speedLimitZ) },
+		{ "MaxThrustAngle", INI::parseAngleReal, nullptr, offsetof(LocomotorTemplate, m_maxThrustAngle) },		// yes, angle, not angular-vel
+		{ "ZAxisBehavior", INI::parseIndexList, TheLocomotorBehaviorZNames, offsetof(LocomotorTemplate, m_behaviorZ) },
 		{ "Appearance", INI::parseIndexList, TheLocomotorAppearanceNames, offsetof(LocomotorTemplate, m_appearance) },		\
 		{ "GroupMovementPriority", INI::parseIndexList, TheLocomotorPriorityNames, offsetof(LocomotorTemplate, m_movePriority) },		\
 
-		{ "AccelerationPitchLimit", INI::parseAngleReal, NULL, offsetof(LocomotorTemplate, m_accelPitchLimit) },		
-		{ "BounceAmount", INI::parseAngularVelocityReal, NULL, offsetof(LocomotorTemplate, m_bounceKick) },		
-		{ "PitchStiffness", INI::parseReal, NULL, offsetof(LocomotorTemplate, m_pitchStiffness) },		
-		{ "RollStiffness", INI::parseReal, NULL, offsetof(LocomotorTemplate, m_rollStiffness) },		
-		{ "PitchDamping", INI::parseReal, NULL, offsetof(LocomotorTemplate, m_pitchDamping) },		
-		{ "RollDamping", INI::parseReal, NULL, offsetof(LocomotorTemplate, m_rollDamping) },		
-		{ "ThrustRoll", INI::parseReal, NULL, offsetof(LocomotorTemplate, m_thrustRoll) },
-		{ "ThrustWobbleRate",	INI::parseReal, NULL, offsetof(LocomotorTemplate, m_wobbleRate) },
-		{ "ThrustMinWobble",	INI::parseReal, NULL, offsetof(LocomotorTemplate, m_minWobble) },
-		{ "ThrustMaxWobble",	INI::parseReal, NULL, offsetof(LocomotorTemplate, m_maxWobble) },
-		{ "PitchInDirectionOfZVelFactor", INI::parseReal, NULL, offsetof(LocomotorTemplate, m_pitchByZVelCoef) },		
-		{ "ForwardVelocityPitchFactor", INI::parseReal, NULL, offsetof(LocomotorTemplate, m_forwardVelCoef) },		
-		{ "LateralVelocityRollFactor", INI::parseReal, NULL, offsetof(LocomotorTemplate, m_lateralVelCoef) },		
-		{ "ForwardAccelerationPitchFactor", INI::parseReal, NULL, offsetof(LocomotorTemplate, m_forwardAccelCoef) },		
-		{ "LateralAccelerationRollFactor", INI::parseReal, NULL, offsetof(LocomotorTemplate, m_lateralAccelCoef) },		
-		{ "UniformAxialDamping", INI::parseReal, NULL, offsetof(LocomotorTemplate, m_uniformAxialDamping) },		
-		{ "TurnPivotOffset", INI::parseReal, NULL, offsetof(LocomotorTemplate, m_turnPivotOffset) },		
-		{ "Apply2DFrictionWhenAirborne", INI::parseBool, NULL, offsetof(LocomotorTemplate, m_apply2DFrictionWhenAirborne) },
-		{ "DownhillOnly", INI::parseBool, NULL, offsetof(LocomotorTemplate, m_downhillOnly) },		
-		{ "AllowAirborneMotiveForce", INI::parseBool, NULL, offsetof(LocomotorTemplate, m_allowMotiveForceWhileAirborne) },
-		{ "LocomotorWorksWhenDead", INI::parseBool, NULL, offsetof(LocomotorTemplate, m_locomotorWorksWhenDead) },
-		{ "AirborneTargetingHeight", INI::parseInt, NULL, offsetof( LocomotorTemplate, m_airborneTargetingHeight ) },
-		{ "StickToGround",				INI::parseBool,			NULL,	offsetof(LocomotorTemplate, m_stickToGround) },		
-		{ "CanMoveBackwards",				INI::parseBool,			NULL,	offsetof(LocomotorTemplate, m_canMoveBackward) },		
-		{ "HasSuspension",				INI::parseBool,			NULL,	offsetof(LocomotorTemplate, m_hasSuspension) },		
-		{ "FrontWheelTurnAngle", INI::parseAngleReal, NULL, offsetof(LocomotorTemplate, m_wheelTurnAngle) },		
-		{ "MaximumWheelExtension", INI::parseReal, NULL, offsetof(LocomotorTemplate, m_maximumWheelExtension) },		
-		{ "MaximumWheelCompression", INI::parseReal, NULL, offsetof(LocomotorTemplate, m_maximumWheelCompression) },		
-		{ "CloseEnoughDist",				 INI::parseReal, NULL, offsetof(LocomotorTemplate, m_closeEnoughDist) },
-		{ "CloseEnoughDist3D",			 INI::parseBool, NULL, offsetof(LocomotorTemplate, m_isCloseEnoughDist3D) },
-		{ "SlideIntoPlaceTime",		INI::parseDurationReal, NULL, offsetof(LocomotorTemplate, m_ultraAccurateSlideIntoPlaceFactor) },
+		{ "AccelerationPitchLimit", INI::parseAngleReal, nullptr, offsetof(LocomotorTemplate, m_accelPitchLimit) },
+		{ "BounceAmount", INI::parseAngularVelocityReal, nullptr, offsetof(LocomotorTemplate, m_bounceKick) },
+		{ "PitchStiffness", INI::parseReal, nullptr, offsetof(LocomotorTemplate, m_pitchStiffness) },
+		{ "RollStiffness", INI::parseReal, nullptr, offsetof(LocomotorTemplate, m_rollStiffness) },
+		{ "PitchDamping", INI::parseReal, nullptr, offsetof(LocomotorTemplate, m_pitchDamping) },
+		{ "RollDamping", INI::parseReal, nullptr, offsetof(LocomotorTemplate, m_rollDamping) },
+		{ "ThrustRoll", INI::parseReal, nullptr, offsetof(LocomotorTemplate, m_thrustRoll) },
+		{ "ThrustWobbleRate",	INI::parseReal, nullptr, offsetof(LocomotorTemplate, m_wobbleRate) },
+		{ "ThrustMinWobble",	INI::parseReal, nullptr, offsetof(LocomotorTemplate, m_minWobble) },
+		{ "ThrustMaxWobble",	INI::parseReal, nullptr, offsetof(LocomotorTemplate, m_maxWobble) },
+		{ "PitchInDirectionOfZVelFactor", INI::parseReal, nullptr, offsetof(LocomotorTemplate, m_pitchByZVelCoef) },
+		{ "ForwardVelocityPitchFactor", INI::parseReal, nullptr, offsetof(LocomotorTemplate, m_forwardVelCoef) },
+		{ "LateralVelocityRollFactor", INI::parseReal, nullptr, offsetof(LocomotorTemplate, m_lateralVelCoef) },
+		{ "ForwardAccelerationPitchFactor", INI::parseReal, nullptr, offsetof(LocomotorTemplate, m_forwardAccelCoef) },
+		{ "LateralAccelerationRollFactor", INI::parseReal, nullptr, offsetof(LocomotorTemplate, m_lateralAccelCoef) },
+		{ "UniformAxialDamping", INI::parseReal, nullptr, offsetof(LocomotorTemplate, m_uniformAxialDamping) },
+		{ "TurnPivotOffset", INI::parseReal, nullptr, offsetof(LocomotorTemplate, m_turnPivotOffset) },
+		{ "Apply2DFrictionWhenAirborne", INI::parseBool, nullptr, offsetof(LocomotorTemplate, m_apply2DFrictionWhenAirborne) },
+		{ "DownhillOnly", INI::parseBool, nullptr, offsetof(LocomotorTemplate, m_downhillOnly) },
+		{ "AllowAirborneMotiveForce", INI::parseBool, nullptr, offsetof(LocomotorTemplate, m_allowMotiveForceWhileAirborne) },
+		{ "LocomotorWorksWhenDead", INI::parseBool, nullptr, offsetof(LocomotorTemplate, m_locomotorWorksWhenDead) },
+		{ "AirborneTargetingHeight", INI::parseInt, nullptr, offsetof( LocomotorTemplate, m_airborneTargetingHeight ) },
+		{ "StickToGround",				INI::parseBool,			nullptr,	offsetof(LocomotorTemplate, m_stickToGround) },
+		{ "CanMoveBackwards",				INI::parseBool,			nullptr,	offsetof(LocomotorTemplate, m_canMoveBackward) },
+		{ "HasSuspension",				INI::parseBool,			nullptr,	offsetof(LocomotorTemplate, m_hasSuspension) },
+		{ "FrontWheelTurnAngle", INI::parseAngleReal, nullptr, offsetof(LocomotorTemplate, m_wheelTurnAngle) },
+		{ "MaximumWheelExtension", INI::parseReal, nullptr, offsetof(LocomotorTemplate, m_maximumWheelExtension) },
+		{ "MaximumWheelCompression", INI::parseReal, nullptr, offsetof(LocomotorTemplate, m_maximumWheelCompression) },
+		{ "CloseEnoughDist",				 INI::parseReal, nullptr, offsetof(LocomotorTemplate, m_closeEnoughDist) },
+		{ "CloseEnoughDist3D",			 INI::parseBool, nullptr, offsetof(LocomotorTemplate, m_isCloseEnoughDist3D) },
+		{ "SlideIntoPlaceTime",		INI::parseDurationReal, nullptr, offsetof(LocomotorTemplate, m_ultraAccurateSlideIntoPlaceFactor) },
 
-		{ "WanderWidthFactor", INI::parseReal, NULL, offsetof(LocomotorTemplate, m_wanderWidthFactor) },		
-		{ "WanderLengthFactor",				 INI::parseReal, NULL, offsetof(LocomotorTemplate, m_wanderLengthFactor) },
-		{ "WanderAboutPointRadius",				 INI::parseReal, NULL, offsetof(LocomotorTemplate, m_wanderAboutPointRadius) },
+		{ "WanderWidthFactor", INI::parseReal, nullptr, offsetof(LocomotorTemplate, m_wanderWidthFactor) },
+		{ "WanderLengthFactor",				 INI::parseReal, nullptr, offsetof(LocomotorTemplate, m_wanderLengthFactor) },
+		{ "WanderAboutPointRadius",				 INI::parseReal, nullptr, offsetof(LocomotorTemplate, m_wanderAboutPointRadius) },
 
-		{ NULL, NULL, NULL, 0 }  // keep this last	
-	
+		{ nullptr, nullptr, nullptr, 0 }
+
 	};
 	return TheFieldParse;
 }
@@ -504,7 +499,7 @@ const FieldParse* LocomotorTemplate::getFieldParse() const
 //-------------------------------------------------------------------------------------------------
 LocomotorStore::LocomotorStore()
 {
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 LocomotorStore::~LocomotorStore()
@@ -522,11 +517,11 @@ LocomotorStore::~LocomotorStore()
 LocomotorTemplate* LocomotorStore::findLocomotorTemplate(NameKeyType namekey)
 {
 	if (namekey == NAMEKEY_INVALID)
-		return NULL;
+		return nullptr;
 
   LocomotorTemplateMap::iterator it = m_locomotorTemplates.find(namekey);
-  if (it == m_locomotorTemplates.end()) 
-		return NULL;
+  if (it == m_locomotorTemplates.end())
+		return nullptr;
 	else
 		return (*it).second;
 }
@@ -535,12 +530,12 @@ LocomotorTemplate* LocomotorStore::findLocomotorTemplate(NameKeyType namekey)
 const LocomotorTemplate* LocomotorStore::findLocomotorTemplate(NameKeyType namekey) const
 {
 	if (namekey == NAMEKEY_INVALID)
-		return NULL;
+		return nullptr;
 
   LocomotorTemplateMap::const_iterator it = m_locomotorTemplates.find(namekey);
-  if (it == m_locomotorTemplates.end()) 
+  if (it == m_locomotorTemplates.end())
 	{
-		return NULL;
+		return nullptr;
 	}
 	else
 	{
@@ -574,8 +569,8 @@ void LocomotorStore::reset()
 //-------------------------------------------------------------------------------------------------
 LocomotorTemplate *LocomotorStore::newOverride( LocomotorTemplate *locoTemplate )
 {
-	if (locoTemplate == NULL)
-		return NULL;
+	if (locoTemplate == nullptr)
+		return nullptr;
 
 	// allocate new template
 	LocomotorTemplate *newTemplate = newInstance(LocomotorTemplate);
@@ -589,7 +584,7 @@ LocomotorTemplate *LocomotorStore::newOverride( LocomotorTemplate *locoTemplate 
 	// return the newly created override for us to set values with etc
 	return newTemplate;
 
-}  // end newOverride
+}
 
 //-------------------------------------------------------------------------------------------------
 /*static*/ void LocomotorStore::parseLocomotorTemplateDefinition(INI* ini)
@@ -601,12 +596,12 @@ LocomotorTemplate *LocomotorStore::newOverride( LocomotorTemplate *locoTemplate 
 	// read the Locomotor name
 	const char* token = ini->getNextToken();
 	NameKeyType namekey = NAMEKEY(token);
-	
+
 	LocomotorTemplate *loco = TheLocomotorStore->findLocomotorTemplate(namekey);
 	if (loco) {
 		if (ini->getLoadType() == INI_LOAD_CREATE_OVERRIDES) {
 			loco = TheLocomotorStore->newOverride((LocomotorTemplate*) loco->friend_getFinalOverride());
-		} 
+		}
 		isOverride = true;
 	} else {
 		loco = newInstance(LocomotorTemplate);
@@ -618,8 +613,8 @@ LocomotorTemplate *LocomotorStore::newOverride( LocomotorTemplate *locoTemplate 
 	loco->friend_setName(token);
 	ini->initFromINI(loco, loco->getFieldParse());
 	loco->validate();
-	
-	// if this is an override, then we want the pointer on the existing named locomotor to point us 
+
+	// if this is an override, then we want the pointer on the existing named locomotor to point us
 	// to the override, so don't add it to the map.
 	if (!isOverride)
 		TheLocomotorStore->m_locomotorTemplates[namekey] = loco;
@@ -665,13 +660,8 @@ Locomotor::Locomotor(const LocomotorTemplate* tmpl)
 //-------------------------------------------------------------------------------------------------
 Locomotor::Locomotor(const Locomotor& that)
 {
-	//Added By Sadullah Nader
-	//Initializations 
 	m_angleOffset = 0.0f;
 	m_maintainPos.zero();
-
-	//
-	
 	m_template = that.m_template;
 	m_brakingFactor = that.m_brakingFactor;
 	m_maxLift = that.m_maxLift;
@@ -714,7 +704,7 @@ Locomotor& Locomotor::operator=(const Locomotor& that)
 }
 
 //-------------------------------------------------------------------------------------------------
-Locomotor::~Locomotor() 
+Locomotor::~Locomotor()
 {
 }
 
@@ -724,7 +714,7 @@ Locomotor::~Locomotor()
 void Locomotor::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -759,18 +749,18 @@ void Locomotor::xfer( Xfer *xfer )
 	xfer->xferReal(&m_angleOffset);
 	xfer->xferReal(&m_offsetIncrement);
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void Locomotor::loadPostProcess( void )
+void Locomotor::loadPostProcess()
 {
 
-}  // end loadPostProcess
+}
 
 //-------------------------------------------------------------------------------------------------
-void Locomotor::startMove(void) 
+void Locomotor::startMove()
 {
 	// Reset the donut timer.
 	m_donutTimer = TheGameLogic->getFrame()+DONUT_TIME_DELAY_SECONDS*LOGICFRAMES_PER_SECOND;
@@ -860,18 +850,18 @@ void Locomotor::locoUpdate_moveTowardsAngle(Object* obj, Real goalAngle)
 {
 	setFlag(MAINTAIN_POS_IS_VALID, false);
 
-	if (obj == NULL || m_template == NULL)
+	if (obj == nullptr || m_template == nullptr)
 		return;
 
 	PhysicsBehavior *physics = obj->getPhysics();
-	if (physics == NULL)
+	if (physics == nullptr)
 	{
 		DEBUG_CRASH(("you can only apply Locomotors to objects with Physics"));
 		return;
 	}
 
 #ifdef DEBUG_OBJECT_ID_EXISTS
-//	DEBUG_ASSERTLOG(obj->getID() != TheObjectIDToDebug, ("locoUpdate_moveTowardsAngle %f (%f deg), spd %f (%f)\n",goalAngle,goalAngle*180/PI,physics->getSpeed(),physics->getForwardSpeed2D()));
+//	DEBUG_ASSERTLOG(obj->getID() != TheObjectIDToDebug, ("locoUpdate_moveTowardsAngle %f (%f deg), spd %f (%f)",goalAngle,goalAngle*180/PI,physics->getSpeed(),physics->getForwardSpeed2D()));
 #endif
 
 	Real minSpeed = getMinSpeed();
@@ -886,13 +876,13 @@ void Locomotor::locoUpdate_moveTowardsAngle(Object* obj, Real goalAngle)
 		const Real onPathDistToGoal = 99999.0f;
 		Bool blocked = false;
 		locoUpdate_moveTowardsPosition(obj, desiredPos, onPathDistToGoal, minSpeed, &blocked);
-		
+
 		// don't need to call handleBehaviorZ() here, since locoUpdate_moveTowardsPosition() will do so
 		return;
 	}
 	else
 	{
-		DEBUG_ASSERTCRASH(m_template->m_appearance != LOCO_THRUST, ("THRUST should always have minspeeds!\n"));
+		DEBUG_ASSERTCRASH(m_template->m_appearance != LOCO_THRUST, ("THRUST should always have minspeeds!"));
 		Coord3D desiredPos = *obj->getPosition();
 		desiredPos.x += Cos(goalAngle) * 1000.0f;
 		desiredPos.y += Sin(goalAngle) * 1000.0f;
@@ -917,7 +907,7 @@ PhysicsTurningType Locomotor::rotateTowardsPosition(Object* obj, const Coord3D& 
 void Locomotor::setPhysicsOptions(Object* obj)
 {
 	PhysicsBehavior *physics = obj->getPhysics();
-	if (physics == NULL)
+	if (physics == nullptr)
 	{
 		DEBUG_CRASH(("you can only apply Locomotors to objects with Physics"));
 		return;
@@ -932,33 +922,33 @@ void Locomotor::setPhysicsOptions(Object* obj)
 }
 
 //-------------------------------------------------------------------------------------------------
-void Locomotor::locoUpdate_moveTowardsPosition(Object* obj, const Coord3D& goalPos, 
+void Locomotor::locoUpdate_moveTowardsPosition(Object* obj, const Coord3D& goalPos,
 																							 Real onPathDistToGoal, Real desiredSpeed, Bool *blocked)
 {
 	setFlag(MAINTAIN_POS_IS_VALID, false);
 
 	BodyDamageType bdt = obj->getBodyModule()->getDamageState();
 	Real maxSpeed = getMaxSpeedForCondition(bdt);
-	
+
 	// sanity, we cannot use desired speed that is greater than our max speed we are capable of moving at
 	if( desiredSpeed > maxSpeed )
 		desiredSpeed = maxSpeed;
 
 	Real distToStopAtMaxSpeed = (maxSpeed/getBraking()) * (maxSpeed)/2.0f;
-	if (onPathDistToGoal>PATHFIND_CELL_SIZE_F && onPathDistToGoal > distToStopAtMaxSpeed) 
+	if (onPathDistToGoal>PATHFIND_CELL_SIZE_F && onPathDistToGoal > distToStopAtMaxSpeed)
 	{
 		setFlag(IS_BRAKING, false);
 		m_brakingFactor = 1.0f;
 	}
 	PhysicsBehavior *physics = obj->getPhysics();
-	if (physics == NULL)
+	if (physics == nullptr)
 	{
 		DEBUG_CRASH(("you can only apply Locomotors to objects with Physics"));
 		return;
 	}
 
 #ifdef DEBUG_OBJECT_ID_EXISTS
-//	DEBUG_ASSERTLOG(obj->getID() != TheObjectIDToDebug, ("locoUpdate_moveTowardsPosition %f %f %f (dtg %f, spd %f), speed %f (%f)\n",goalPos.x,goalPos.y,goalPos.z,onPathDistToGoal,desiredSpeed,physics->getSpeed(),physics->getForwardSpeed2D()));
+//	DEBUG_ASSERTLOG(obj->getID() != TheObjectIDToDebug, ("locoUpdate_moveTowardsPosition %f %f %f (dtg %f, spd %f), speed %f (%f)",goalPos.x,goalPos.y,goalPos.z,onPathDistToGoal,desiredSpeed,physics->getSpeed(),physics->getForwardSpeed2D()));
 #endif
 
 	//
@@ -966,11 +956,11 @@ void Locomotor::locoUpdate_moveTowardsPosition(Object* obj, const Coord3D& goalP
 	// objects we don't need the pathfinder so we'll ignore this
 	//
 	if( BitIsSet( m_template->m_surfaces, LOCOMOTORSURFACE_AIR ) == false &&
-			!TheAI->pathfinder()->validMovementTerrain(obj->getLayer(), this, obj->getPosition()) && 
-			!getFlag(ALLOW_INVALID_POSITION)) 
+			!TheAI->pathfinder()->validMovementTerrain(obj->getLayer(), this, obj->getPosition()) &&
+			!getFlag(ALLOW_INVALID_POSITION))
 	{
 		// Somehow, we have gotten to an invalid location.
-		if (fixInvalidPosition(obj, physics)) 
+		if (fixInvalidPosition(obj, physics))
 		{
 			// the we adjusted us toward a legal position, so just return.
 			return;
@@ -982,64 +972,64 @@ void Locomotor::locoUpdate_moveTowardsPosition(Object* obj, const Coord3D& goalP
 	Real dy = goalPos.y - obj->getPosition()->y;
 	Real dz = goalPos.z - obj->getPosition()->z;
 	Real dist = sqrt(dx*dx+dy*dy);
-	if (dist>onPathDistToGoal) 
+	if (dist>onPathDistToGoal)
 	{
-		if (!obj->isKindOf(KINDOF_PROJECTILE) && dist>2*onPathDistToGoal) 
+		if (!obj->isKindOf(KINDOF_PROJECTILE) && dist>2*onPathDistToGoal)
 		{
 			setFlag(IS_BRAKING, true);
 		}
 		onPathDistToGoal = dist;
 	}
 
-	Coord3D nullAccel;							
-	
+	Coord3D nullAccel;
+
 	Bool treatAsAirborne = false;
 	Coord3D pos = *obj->getPosition();
 	Real heightAboveSurface = pos.z - TheTerrainLogic->getLayerHeight(pos.x, pos.y, obj->getLayer());
 
-	if (heightAboveSurface > -(3*3)*TheGlobalData->m_gravity) 
+	if (heightAboveSurface > -(3*3)*TheGlobalData->m_gravity)
 	{
 		// If we get high enough to stay up for 3 frames, then we left the ground.
 		treatAsAirborne = true;
 	}
-	// We apply a zero acceleration to all units, as the call to 
+	// We apply a zero acceleration to all units, as the call to
 	// applyMotiveForce flags an object as being "driven" by a locomotor, rather
 	// than being pushed around by objects bumping it.
 	nullAccel.x = nullAccel.y = nullAccel.z = 0;
 	physics->applyMotiveForce(&nullAccel);
 
-	if (*blocked) 
+	if (*blocked)
 	{
-		if (desiredSpeed > physics->getVelocityMagnitude()) 
+		if (desiredSpeed > physics->getVelocityMagnitude())
 		{
 			*blocked = false;
 		}
-		if (treatAsAirborne && BitIsSet( m_template->m_surfaces, LOCOMOTORSURFACE_AIR ) ) 
+		if (treatAsAirborne && BitIsSet( m_template->m_surfaces, LOCOMOTORSURFACE_AIR ) )
 		{
 			// Airborne flying objects don't collide for now.  jba.
 			*blocked = false;
 		}
 	}
 
-	if (*blocked) 
+	if (*blocked)
 	{
 		physics->scrubVelocity2D(desiredSpeed); // stop if we are about to run into the blocking object.
 		Real turnRate = getMaxTurnRate(obj->getBodyModule()->getDamageState());
-		if (m_template->m_wanderWidthFactor == 0.0f) 
+		if (m_template->m_wanderWidthFactor == 0.0f)
 		{
 			*blocked = (TURN_NONE != rotateObjAroundLocoPivot(obj, goalPos, turnRate));
 		}
-		
+
 		// it is very important to be sure to call this in all situations, even if not moving in 2d space.
 		handleBehaviorZ(obj, physics, goalPos);
 		return;
 	}
 
-	if ( 
+	if (
 // srj sez: I don't know why we didn't want HOVERs to allow to "brake".
 // we actually really want them to, because it allows much more precise destination positioning.
 //			m_template->m_appearance == LOCO_HOVER ||
-				m_template->m_appearance == LOCO_WINGS) 
+				m_template->m_appearance == LOCO_WINGS)
 	{
 		setFlag(IS_BRAKING, false);
 	}
@@ -1049,7 +1039,7 @@ void Locomotor::locoUpdate_moveTowardsPosition(Object* obj, const Coord3D& goalP
 	physics->setTurning(TURN_NONE);
 	if (getAllowMotiveForceWhileAirborne() || !treatAsAirborne)
 	{
-		switch (m_template->m_appearance) 
+		switch (m_template->m_appearance)
 		{
 			case LOCO_LEGS_TWO:
 					moveTowardsPositionLegs(obj, physics, goalPos, onPathDistToGoal, desiredSpeed);
@@ -1083,12 +1073,12 @@ void Locomotor::locoUpdate_moveTowardsPosition(Object* obj, const Coord3D& goalP
 	// Objects that are braking don't follow the normal physics, so they end up at their destination exactly.
 	obj->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_BRAKING ), getFlag(IS_BRAKING) );
 
-	if (wasBraking) 
+	if (wasBraking)
 	{
 	#define MIN_VEL (PATHFIND_CELL_SIZE_F/(LOGICFRAMES_PER_SECOND))
 
 		Coord3D pos = *obj->getPosition();
-		if (obj->isKindOf(KINDOF_PROJECTILE)) 
+		if (obj->isKindOf(KINDOF_PROJECTILE))
 		{
 			// Projectiles never stop braking once they start.  jba.
 			obj->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_BRAKING ) );
@@ -1100,7 +1090,7 @@ void Locomotor::locoUpdate_moveTowardsPosition(Object* obj, const Coord3D& goalP
 			if (vel > dist)
 				vel = dist;	// do not overcompensate!
 			// Normalize.
-			if (dist > 0.001f) 
+			if (dist > 0.001f)
 			{
 				dist = 1.0f / dist;
 				dx *= dist;
@@ -1110,15 +1100,15 @@ void Locomotor::locoUpdate_moveTowardsPosition(Object* obj, const Coord3D& goalP
 				pos.y += dy * vel;
 				pos.z += dz * vel;
 			}
-		}	
-		else 
+		}
+		else
 		{
 			// not projectiles only cheat in x & y.
 			// Normalize.
-			if (dist > 0.001f) 
+			if (dist > 0.001f)
 			{
 				Real vel = fabs(physics->getForwardSpeed2D());
-				if (vel < MIN_VEL) 
+				if (vel < MIN_VEL)
 					vel = MIN_VEL;
 				if (vel > dist)
 					vel = dist;	// do not overcompensate!
@@ -1169,7 +1159,7 @@ void Locomotor::moveTowardsPositionTreads(Object* obj, PhysicsBehavior *physics,
 
 	Real dx = obj->getPosition()->x - goalPos.x;
 	Real dy = obj->getPosition()->y - goalPos.y;
-	
+
 
 	Real goalSpeed = (1.0f - angleCoeff) * desiredSpeed;
 
@@ -1179,7 +1169,7 @@ void Locomotor::moveTowardsPositionTreads(Object* obj, PhysicsBehavior *physics,
 
 	Real actualSpeed = physics->getForwardSpeed2D();
 	Real slowDownTime = actualSpeed / getBraking();
-	Real slowDownDist = (actualSpeed/1.50f) * slowDownTime;	
+	Real slowDownDist = (actualSpeed/1.50f) * slowDownTime;
 
 	if (sqr(dx)+sqr(dy)<sqr(2*PATHFIND_CELL_SIZE_F) && angleCoeff > 0.05) {
 		goalSpeed = actualSpeed*0.6f;
@@ -1191,12 +1181,12 @@ void Locomotor::moveTowardsPositionTreads(Object* obj, PhysicsBehavior *physics,
 		m_brakingFactor = 1.1f;
 	}
 
-	if (onPathDistToGoal>PATHFIND_CELL_SIZE_F && onPathDistToGoal > 2.0*slowDownDist) 
+	if (onPathDistToGoal>PATHFIND_CELL_SIZE_F && onPathDistToGoal > 2.0*slowDownDist)
 	{
 		setFlag(IS_BRAKING, false);
 	}
 
-	if (getFlag(IS_BRAKING)) 
+	if (getFlag(IS_BRAKING))
 	{
 		m_brakingFactor = slowDownDist/onPathDistToGoal;
 		m_brakingFactor *= m_brakingFactor;
@@ -1215,7 +1205,7 @@ void Locomotor::moveTowardsPositionTreads(Object* obj, PhysicsBehavior *physics,
 	}
 
 
-	//DEBUG_LOG(("Actual speed %f, Braking factor %f, slowDownDist %f, Pathdist %f, goalSpeed %f\n", 
+	//DEBUG_LOG(("Actual speed %f, Braking factor %f, slowDownDist %f, Pathdist %f, goalSpeed %f",
 	//	actualSpeed, m_brakingFactor, slowDownDist, onPathDistToGoal, goalSpeed));
 
 	//
@@ -1229,7 +1219,7 @@ void Locomotor::moveTowardsPositionTreads(Object* obj, PhysicsBehavior *physics,
 		Real accelForce = mass * acceleration;
 
 		/*
-			don't accelerate/brake more than necessary. do a quick calc to 
+			don't accelerate/brake more than necessary. do a quick calc to
 			see how much force we really need to achieve our goal speed...
 		*/
 		Real maxForceNeeded = mass * speedDelta;
@@ -1274,7 +1264,7 @@ void Locomotor::moveTowardsPositionWheels(Object* obj, PhysicsBehavior *physics,
 	Bool moveBackwards = false;
 
 	// Wheeled vehicles can only turn while moving, so make sure the turn speed is reasonable.
-	if (turnSpeed < maxSpeed/4.0f) 
+	if (turnSpeed < maxSpeed/4.0f)
 	{
 		turnSpeed = maxSpeed/4.0f;
 	}
@@ -1288,7 +1278,7 @@ void Locomotor::moveTowardsPositionWheels(Object* obj, PhysicsBehavior *physics,
 		if (m_template->m_canMoveBackward && fabs(relAngle) > PI/2) {
 			setFlag(MOVING_BACKWARDS, true );
 			setFlag(DOING_THREE_POINT_TURN, onPathDistToGoal>5*obj->getGeometryInfo().getMajorRadius());
-		}																						
+		}
 
 	}
 	if (getFlag(MOVING_BACKWARDS)) {
@@ -1303,14 +1293,14 @@ void Locomotor::moveTowardsPositionWheels(Object* obj, PhysicsBehavior *physics,
 				desiredAngle = stdAngleDiff(desiredAngle, PI);
 				relAngle = stdAngleDiff(desiredAngle, angle);
 			}
-		} 
+		}
 	}
 #endif
 
 	const Real SMALL_TURN = PI / 20.0f;
-	if ((Real)fabs( relAngle ) > SMALL_TURN) 
+	if ((Real)fabs( relAngle ) > SMALL_TURN)
 	{
-		if (desiredSpeed>turnSpeed) 
+		if (desiredSpeed>turnSpeed)
 		{
 			desiredSpeed = turnSpeed;
 		}
@@ -1324,7 +1314,7 @@ void Locomotor::moveTowardsPositionWheels(Object* obj, PhysicsBehavior *physics,
 
 
 	Real slowDownTime = actualSpeed / getBraking() + 1.0f;
-	Real slowDownDist = (actualSpeed/1.5f) * slowDownTime + actualSpeed;	
+	Real slowDownDist = (actualSpeed/1.5f) * slowDownTime + actualSpeed;
 	Real effectiveSlowDownDist = slowDownDist;
 	if (effectiveSlowDownDist < 1*PATHFIND_CELL_SIZE) {
 		effectiveSlowDownDist = 1*PATHFIND_CELL_SIZE;
@@ -1333,20 +1323,20 @@ void Locomotor::moveTowardsPositionWheels(Object* obj, PhysicsBehavior *physics,
 
 	const Real FIFTEEN_DEGREES = PI / 12.0f;
 	const Real PROJECT_FRAMES = LOGICFRAMES_PER_SECOND/2; // Project out 1/2 second.
-	if (fabs( relAngle ) > FIFTEEN_DEGREES) 
+	if (fabs( relAngle ) > FIFTEEN_DEGREES)
 	{
 		// If we're turning more than 10 degrees, check & see if we're moving into "impassable territory"
 		Real distance = PROJECT_FRAMES * (goalSpeed+actualSpeed)/2.0f;
 		Real targetAngle = obj->getOrientation();
 		Real turnFactor = ((goalSpeed+actualSpeed)/2.0f)/turnSpeed;
-		if (turnFactor > 1.0f) 
+		if (turnFactor > 1.0f)
 			turnFactor = 1.0f;
 		Real turnAmount = PROJECT_FRAMES*turnFactor*maxTurnRate/4.0f;
-		if (relAngle < 0) 
+		if (relAngle < 0)
 		{
 			targetAngle -= turnAmount;
-		}	
-		else 
+		}
+		else
 		{
 			targetAngle += turnAmount;
 		}
@@ -1370,7 +1360,7 @@ void Locomotor::moveTowardsPositionWheels(Object* obj, PhysicsBehavior *physics,
 		halfPos.z = pos->z;
 
 		if (!TheAI->pathfinder()->validMovementTerrain(obj->getLayer(), this, &halfPos) ||
-			!TheAI->pathfinder()->validMovementTerrain(obj->getLayer(), this, &nextPos)) 
+			!TheAI->pathfinder()->validMovementTerrain(obj->getLayer(), this, &nextPos))
 		{
 			PhysicsTurningType rotating = rotateTowardsPosition(obj, goalPos);
 			physics->setTurning(rotating);
@@ -1391,7 +1381,7 @@ void Locomotor::moveTowardsPositionWheels(Object* obj, PhysicsBehavior *physics,
 	}
 
 
-	if (onPathDistToGoal>PATHFIND_CELL_SIZE_F && onPathDistToGoal > 2.0*slowDownDist) 
+	if (onPathDistToGoal>PATHFIND_CELL_SIZE_F && onPathDistToGoal > 2.0*slowDownDist)
 	{
 		setFlag(IS_BRAKING, false);
 	}
@@ -1404,13 +1394,13 @@ void Locomotor::moveTowardsPositionWheels(Object* obj, PhysicsBehavior *physics,
 		}
 	}
 
-	if (getFlag(IS_BRAKING)) 
+	if (getFlag(IS_BRAKING))
 	{
 		m_brakingFactor = slowDownDist/onPathDistToGoal;
 		m_brakingFactor *= m_brakingFactor;
 		if (m_brakingFactor>MAX_BRAKING_FACTOR) {
 			m_brakingFactor = MAX_BRAKING_FACTOR;
-		}	
+		}
 		m_brakingFactor = 1.0f;
 		if (slowDownDist>onPathDistToGoal) {
 			goalSpeed = actualSpeed-getBraking();
@@ -1424,7 +1414,7 @@ void Locomotor::moveTowardsPositionWheels(Object* obj, PhysicsBehavior *physics,
 	}
 
 
-	//DEBUG_LOG(("Actual speed %f, Braking factor %f, slowDownDist %f, Pathdist %f, goalSpeed %f\n", 
+	//DEBUG_LOG(("Actual speed %f, Braking factor %f, slowDownDist %f, Pathdist %f, goalSpeed %f",
 	//	actualSpeed, m_brakingFactor, slowDownDist, onPathDistToGoal, goalSpeed));
 
 
@@ -1433,18 +1423,18 @@ void Locomotor::moveTowardsPositionWheels(Object* obj, PhysicsBehavior *physics,
 	if (turnFactor<0) {
 		turnFactor = -turnFactor; // in case we're sliding backwards in a 3 pt turn.
 	}
-	if (turnFactor > 1.0f) 
+	if (turnFactor > 1.0f)
 		turnFactor = 1.0f;
-	Real turnAmount = turnFactor*maxTurnRate;	
+	Real turnAmount = turnFactor*maxTurnRate;
 
 	PhysicsTurningType rotating;
 	if (moveBackwards && !do3pointTurn) {
 		Coord3D backwardPos = *obj->getPosition();
 		backwardPos.x += -(goalPos.x - obj->getPosition()->x);
 		backwardPos.y += -(goalPos.y - obj->getPosition()->y);
-		rotating = rotateObjAroundLocoPivot(obj, backwardPos, turnAmount);	
+		rotating = rotateObjAroundLocoPivot(obj, backwardPos, turnAmount);
 	} else {
-		rotating = rotateObjAroundLocoPivot(obj, goalPos, turnAmount);	
+		rotating = rotateObjAroundLocoPivot(obj, goalPos, turnAmount);
 	}
 
 	physics->setTurning(rotating);
@@ -1468,14 +1458,14 @@ void Locomotor::moveTowardsPositionWheels(Object* obj, PhysicsBehavior *physics,
 		Real accelForce = mass * acceleration;
 
 		/*
-			don't accelerate/brake more than necessary. do a quick calc to 
+			don't accelerate/brake more than necessary. do a quick calc to
 			see how much force we really need to achieve our goal speed...
 		*/
 		Real maxForceNeeded = mass * speedDelta;
 		if (fabs(accelForce) > fabs(maxForceNeeded))
 			accelForce = maxForceNeeded;
 
-		//DEBUG_LOG(("Braking %d, actualSpeed %f, goalSpeed %f, delta %f, accel %f\n", getFlag(IS_BRAKING),
+		//DEBUG_LOG(("Braking %d, actualSpeed %f, goalSpeed %f, delta %f, accel %f", getFlag(IS_BRAKING),
 			//actualSpeed, goalSpeed, speedDelta, accelForce));
 
 		const Coord3D *dir = obj->getUnitDirectionVector2D();
@@ -1537,8 +1527,8 @@ Bool Locomotor::fixInvalidPosition(Object* obj, PhysicsBehavior *physics)
 			// It was already leaving.
 			return false;
 		}
-		
-		
+
+
 		// Kill current accel
 		//physics->clearAcceleration();
 
@@ -1565,11 +1555,11 @@ Real Locomotor::calcMinTurnRadius(BodyDamageType condition, Real* timeToTravelTh
 
 	/*
 		our minimum circumference will be like so:
-		
+
 		Real minTurnCircum = maxSpeed * (2*PI / maxTurnRate);
 
 		so therefore our minimum turn radius is:
-		
+
 		Real minTurnRadius = minTurnCircum / 2*PI;
 
 		so we just eliminate the middleman:
@@ -1591,7 +1581,7 @@ void Locomotor::moveTowardsPositionLegs(Object* obj, PhysicsBehavior *physics, c
 	{
 		return;
 	}
-	
+
 	Real maxAcceleration = getMaxAcceleration( obj->getBodyModule()->getDamageState() );
 
 	// sanity, we cannot use desired speed that is greater than our max speed we are capable of moving at
@@ -1625,7 +1615,7 @@ void Locomotor::moveTowardsPositionLegs(Object* obj, PhysicsBehavior *physics, c
 		}
 		desiredAngle = normalizeAngle(desiredAngle+m_angleOffset);
 	}
-	
+
 	Real relAngle = stdAngleDiff(desiredAngle, angle);
 	locoUpdate_moveTowardsAngle(obj, desiredAngle);
 
@@ -1659,7 +1649,7 @@ void Locomotor::moveTowardsPositionLegs(Object* obj, PhysicsBehavior *physics, c
 		Real accelForce = mass * acceleration;
 
 		/*
-			don't accelerate/brake more than necessary. do a quick calc to 
+			don't accelerate/brake more than necessary. do a quick calc to
 			see how much force we really need to achieve our goal speed...
 		*/
 		Real maxForceNeeded = mass * speedDelta;
@@ -1673,7 +1663,7 @@ void Locomotor::moveTowardsPositionLegs(Object* obj, PhysicsBehavior *physics, c
 		force.y = accelForce * dir->y;
 		force.z = 0.0f;
 
-		
+
 
 		// apply forces to object
 		physics->applyMotiveForce( &force );
@@ -1698,13 +1688,13 @@ void Locomotor::moveTowardsPositionClimb(Object* obj, PhysicsBehavior *physics, 
 	Real dx, dy, dz;
 
 	Coord3D pos = *obj->getPosition();
-	
+
 	dx = pos.x - goalPos.x;
 	dy = pos.y - goalPos.y;
 	dz = pos.z - goalPos.z;
 	if (dz*dz > sqr(PATHFIND_CELL_SIZE_F)) {
 		setFlag(CLIMBING, true);
-	} 
+	}
 	if (fabs(dz)<1) {
 		setFlag(CLIMBING, false);
 	}
@@ -1727,7 +1717,7 @@ void Locomotor::moveTowardsPositionClimb(Object* obj, PhysicsBehavior *physics, 
 
 		Real groundSlope = fabs(delta.z - pos.z);
 		if (groundSlope<1.0f) groundSlope = 1.0f;
-		
+
 		if (groundSlope>1.0f) {
 			desiredSpeed /= groundSlope*4;
 		}
@@ -1792,7 +1782,7 @@ void Locomotor::moveTowardsPositionClimb(Object* obj, PhysicsBehavior *physics, 
 		Real accelForce = mass * acceleration;
 
 		/*
-			don't accelerate/brake more than necessary. do a quick calc to 
+			don't accelerate/brake more than necessary. do a quick calc to
 			see how much force we really need to achieve our goal speed...
 		*/
 		Real maxForceNeeded = mass * speedDelta;
@@ -1828,7 +1818,7 @@ void Locomotor::moveTowardsPositionWings(Object* obj, PhysicsBehavior *physics, 
 			// aim for the spot on the opposite side of the circle.
 
 			// find the direction towards our goal pos
-			Real angleTowardPos = 
+			Real angleTowardPos =
 					(isNearlyZero(dx) && isNearlyZero(dy)) ?
 					obj->getOrientation() :
 					atan2(dy, dx);
@@ -1837,7 +1827,7 @@ void Locomotor::moveTowardsPositionWings(Object* obj, PhysicsBehavior *physics, 
 			angleTowardPos += aimDir;
 
 			BodyDamageType bdt = obj->getBodyModule()->getDamageState();
-			Real turnRadius = calcMinTurnRadius(bdt, NULL) * 4;
+			Real turnRadius = calcMinTurnRadius(bdt, nullptr) * 4;
 
 			// project a spot "radius" dist away from it, in that dir
 			Coord3D desiredPos = goalPos;
@@ -1912,7 +1902,7 @@ void Locomotor::moveTowardsPositionThrust(Object* obj, PhysicsBehavior *physics,
 		localGoalPos.z = m_preferredHeight + surfaceHt;
 //		localGoalPos.z = goalPos.z;
 		Real delta = localGoalPos.z - pos.z;
-		delta *= getPreferredHeightDamping();	  
+		delta *= getPreferredHeightDamping();
 		localGoalPos.z = pos.z + delta;
 
 #ifdef USE_ZDIR_DAMPING
@@ -1921,7 +1911,7 @@ void Locomotor::moveTowardsPositionThrust(Object* obj, PhysicsBehavior *physics,
 		// below, but go ahead and calc it now...
 		Real MAX_VERTICAL_DAMP_RANGE = m_preferredHeight * 0.5;
 		delta = fabs(delta);
-		if (delta > MAX_VERTICAL_DAMP_RANGE) 
+		if (delta > MAX_VERTICAL_DAMP_RANGE)
 			delta = MAX_VERTICAL_DAMP_RANGE;
 		zDirDamping = 1.0f - (delta / MAX_VERTICAL_DAMP_RANGE);
 #endif
@@ -1949,7 +1939,7 @@ void Locomotor::moveTowardsPositionThrust(Object* obj, PhysicsBehavior *physics,
 		const Coord3D* veltmp = physics->getVelocity();
 		Vector3 vel(veltmp->x, veltmp->y, veltmp->z);
 		Bool adjust = true;
-		if( obj->getStatusBits().test( OBJECT_STATUS_BRAKING ) ) 
+		if( obj->getStatusBits().test( OBJECT_STATUS_BRAKING ) )
 		{
 			// align to target, cause that's where we're going anyway.
 
@@ -1975,7 +1965,7 @@ void Locomotor::moveTowardsPositionThrust(Object* obj, PhysicsBehavior *physics,
 
 	if (forwardSpeedDelta != 0.0f || thrustAngle != 0.0f)
 	{
-		if (maxForwardSpeed <= 0.0f) 
+		if (maxForwardSpeed <= 0.0f)
 		{
 			maxForwardSpeed = 0.01f; // In some cases, this is 0, hack for now.  jba.
 		}
@@ -1983,7 +1973,7 @@ void Locomotor::moveTowardsPositionThrust(Object* obj, PhysicsBehavior *physics,
 		Vector3 curVel(physics->getVelocity()->x, physics->getVelocity()->y, physics->getVelocity()->z);
 
 		Vector3 accelVec = thrustDir * maxAccel - curVel * damping;
-		//DEBUG_LOG(("accel %f (max %f) vel %f (max %f) damping %f\n",accelVec.Length(),maxAccel,curVel.Length(),maxForwardSpeed,damping));
+		//DEBUG_LOG(("accel %f (max %f) vel %f (max %f) damping %f",accelVec.Length(),maxAccel,curVel.Length(),maxForwardSpeed,damping));
 
 		Real mass = physics->getMass();
 
@@ -2008,7 +1998,7 @@ Real Locomotor::getSurfaceHtAtPt(Real x, Real y)
 	} else {
 		ht += TheTerrainLogic->getGroundHeight(x, y);
 	}
-	
+
 	return ht;
 }
 
@@ -2019,7 +2009,7 @@ Real Locomotor::calcLiftToUseAtPt(Object* obj, PhysicsBehavior *physics, Real cu
 		take the classic equation:
 
 			x = x0 + v*t + 0.5*a*t^2
-		
+
 		and solve for acceleration.
 	*/
 	BodyDamageType bdt = obj->getBodyModule()->getDamageState();
@@ -2067,7 +2057,7 @@ Real Locomotor::calcLiftToUseAtPt(Object* obj, PhysicsBehavior *physics, Real cu
 			//	and
 			// t = (-v +- sqrt(v*v + 2*a*dz))/a
 			//
-			// but if we assume t=1, then 
+			// but if we assume t=1, then
 			//	a=2(dz-v)
 			// then, plug it back in and see if t is really 1...
 			desiredAccel = 2.0f * (deltaZ - curVelZ);
@@ -2104,11 +2094,11 @@ Real Locomotor::calcLiftToUseAtPt(Object* obj, PhysicsBehavior *physics, Real cu
 }
 
 //-------------------------------------------------------------------------------------------------
-PhysicsTurningType Locomotor::rotateObjAroundLocoPivot(Object* obj, const Coord3D& goalPos, 
+PhysicsTurningType Locomotor::rotateObjAroundLocoPivot(Object* obj, const Coord3D& goalPos,
 																											 Real maxTurnRate, Real *relAngle)
 {
 	Real angle = obj->getOrientation();
-	Real offset = getTurnPivotOffset();	
+	Real offset = getTurnPivotOffset();
 
 	PhysicsTurningType turn = TURN_NONE;
 
@@ -2126,7 +2116,7 @@ PhysicsTurningType Locomotor::rotateObjAroundLocoPivot(Object* obj, const Coord3
 		Real dx =goalPos.x - turnPos.x;
 		Real dy = goalPos.y - turnPos.y;
 		// If we are very close to the goal, we twitch due to rounding error.  So just return. jba.
-		if (fabs(dx)<0.1f && fabs(dy)<0.1f) return TURN_NONE; 
+		if (fabs(dx)<0.1f && fabs(dy)<0.1f) return TURN_NONE;
 		Real desiredAngle = atan2(dy, dx);
 		Real amount = stdAngleDiff(desiredAngle, angle);
 		if (relAngle) *relAngle = amount;
@@ -2195,7 +2185,7 @@ Bool Locomotor::handleBehaviorZ(Object* obj, PhysicsBehavior *physics, const Coo
 	switch(m_template->m_behaviorZ)
 	{
 		case Z_NO_Z_MOTIVE_FORCE:
-			// nothing to do. 
+			// nothing to do.
 			requiresConstantCalling = FALSE;
 			break;
 
@@ -2245,7 +2235,7 @@ Bool Locomotor::handleBehaviorZ(Object* obj, PhysicsBehavior *physics, const Coo
 				if (m_preferredHeight != 0.0f || getFlag(PRECISE_Z_POS))
 				{
 					Coord3D pos = *obj->getPosition();
-					
+
 					// srj sez: if we aren't on the ground, never find the ground layer
 					PathfindLayerEnum layerAtDest = obj->getLayer();
 					if (layerAtDest == LAYER_GROUND)
@@ -2266,7 +2256,7 @@ Bool Locomotor::handleBehaviorZ(Object* obj, PhysicsBehavior *physics, const Coo
 
 					Real liftToUse = calcLiftToUseAtPt(obj, physics, pos.z, surfaceHt, preferredHeight);
 
-					//DEBUG_LOG(("HandleBZ %d LiftToUse %f\n",TheGameLogic->getFrame(),liftToUse));
+					//DEBUG_LOG(("HandleBZ %d LiftToUse %f",TheGameLogic->getFrame(),liftToUse));
 					if (liftToUse != 0.0f)
 					{
 						Coord3D force;
@@ -2278,7 +2268,7 @@ Bool Locomotor::handleBehaviorZ(Object* obj, PhysicsBehavior *physics, const Coo
 				}
 			}
 			break;
-	
+
 		case Z_SURFACE_RELATIVE_HEIGHT:
 		case Z_ABSOLUTE_HEIGHT:
 			requiresConstantCalling = TRUE;
@@ -2286,7 +2276,7 @@ Bool Locomotor::handleBehaviorZ(Object* obj, PhysicsBehavior *physics, const Coo
 				if (m_preferredHeight != 0.0f || getFlag(PRECISE_Z_POS))
 				{
 					Coord3D pos = *obj->getPosition();
-					
+
 					Bool surfaceRel = (m_template->m_behaviorZ == Z_SURFACE_RELATIVE_HEIGHT);
 					Real surfaceHt = surfaceRel ? getSurfaceHtAtPt(pos.x, pos.y) : 0.0f;
 					Real preferredHeight = m_preferredHeight + (surfaceRel ? surfaceHt : 0);
@@ -2299,7 +2289,7 @@ Bool Locomotor::handleBehaviorZ(Object* obj, PhysicsBehavior *physics, const Coo
 
 					Real liftToUse = calcLiftToUseAtPt(obj, physics, pos.z, surfaceHt, preferredHeight);
 
-					//DEBUG_LOG(("HandleBZ %d LiftToUse %f\n",TheGameLogic->getFrame(),liftToUse));
+					//DEBUG_LOG(("HandleBZ %d LiftToUse %f",TheGameLogic->getFrame(),liftToUse));
 					if (liftToUse != 0.0f)
 					{
 						Coord3D force;
@@ -2339,11 +2329,11 @@ void Locomotor::moveTowardsPositionOther(Object* obj, PhysicsBehavior *physics, 
 	const Coord3D* pos =  obj->getPosition();
 	Coord3D dirToApplyForce = *obj->getUnitDirectionVector2D();
 
-//DEBUG_ASSERTLOG(!getFlag(ULTRA_ACCURATE),("thresh %f %f (%f %f)\n",
+//DEBUG_ASSERTLOG(!getFlag(ULTRA_ACCURATE),("thresh %f %f (%f %f)",
 //fabs(goalPos.y - pos->y),fabs(goalPos.x - pos->x),
 //fabs(goalPos.y - pos->y)/goalSpeed,fabs(goalPos.x - pos->x)/goalSpeed));
-	if (getFlag(ULTRA_ACCURATE) && 
-				fabs(goalPos.y - pos->y) <= goalSpeed * m_template->m_ultraAccurateSlideIntoPlaceFactor && 
+	if (getFlag(ULTRA_ACCURATE) &&
+				fabs(goalPos.y - pos->y) <= goalSpeed * m_template->m_ultraAccurateSlideIntoPlaceFactor &&
 				fabs(goalPos.x - pos->x) <= goalSpeed * m_template->m_ultraAccurateSlideIntoPlaceFactor)
 	{
 		// don't turn, just slide in the right direction
@@ -2379,7 +2369,7 @@ void Locomotor::moveTowardsPositionOther(Object* obj, PhysicsBehavior *physics, 
 		Real accelForce = mass * acceleration;
 
 		/*
-			don't accelerate/brake more than necessary. do a quick calc to 
+			don't accelerate/brake more than necessary. do a quick calc to
 			see how much force we really need to achieve our goal speed...
 		*/
 		Real maxForceNeeded = mass * speedDelta;
@@ -2414,18 +2404,18 @@ Bool Locomotor::locoUpdate_maintainCurrentPosition(Object* obj)
 	m_donutTimer = TheGameLogic->getFrame()+DONUT_TIME_DELAY_SECONDS*LOGICFRAMES_PER_SECOND;
 	setFlag(IS_BRAKING, false);
 	PhysicsBehavior *physics = obj->getPhysics();
-	if (physics == NULL)
+	if (physics == nullptr)
 	{
 		DEBUG_CRASH(("you can only apply Locomotors to objects with Physics"));
 		return TRUE;
 	}
 
 #ifdef DEBUG_OBJECT_ID_EXISTS
-//	DEBUG_ASSERTLOG(obj->getID() != TheObjectIDToDebug, ("locoUpdate_maintainCurrentPosition %f %f %f, speed %f (%f)\n",m_maintainPos.x,m_maintainPos.y,m_maintainPos.z,physics->getSpeed(),physics->getForwardSpeed2D()));
+//	DEBUG_ASSERTLOG(obj->getID() != TheObjectIDToDebug, ("locoUpdate_maintainCurrentPosition %f %f %f, speed %f (%f)",m_maintainPos.x,m_maintainPos.y,m_maintainPos.z,physics->getSpeed(),physics->getForwardSpeed2D()));
 #endif
 
 	Bool requiresConstantCalling = TRUE;	// assume the worst.
-	switch (m_template->m_appearance) 
+	switch (m_template->m_appearance)
 	{
 		case LOCO_THRUST:
 			maintainCurrentPositionThrust(obj, physics);
@@ -2489,13 +2479,13 @@ void Locomotor::maintainCurrentPositionWings(Object* obj, PhysicsBehavior *physi
 		BodyDamageType bdt = obj->getBodyModule()->getDamageState();
 		Real turnRadius = m_template->m_circlingRadius;
 		if (turnRadius == 0.0f)
-			turnRadius = calcMinTurnRadius(bdt, NULL);
+			turnRadius = calcMinTurnRadius(bdt, nullptr);
 
 		// find the direction towards our "maintain pos"
 		const Coord3D* pos = obj->getPosition();
 		Real dx = m_maintainPos.x - pos->x;
 		Real dy = m_maintainPos.y - pos->y;
-		Real angleTowardMaintainPos = 
+		Real angleTowardMaintainPos =
 				(isNearlyZero(dx) && isNearlyZero(dy)) ?
 				obj->getOrientation() :
 				atan2(dy, dx);
@@ -2530,7 +2520,7 @@ void Locomotor::maintainCurrentPositionHover(Object* obj, PhysicsBehavior *physi
 		//
 		// Stop
 		//
-		Real minSpeed = max( 1.0E-10f, m_template->m_minSpeed ); 
+		Real minSpeed = max( 1.0E-10f, m_template->m_minSpeed );
 		Real speedDelta = minSpeed - actualSpeed;
 		if (fabs(speedDelta) > minSpeed)
 		{
@@ -2539,7 +2529,7 @@ void Locomotor::maintainCurrentPositionHover(Object* obj, PhysicsBehavior *physi
 			Real accelForce = mass * acceleration;
 
 			/*
-				don't accelerate/brake more than necessary. do a quick calc to 
+				don't accelerate/brake more than necessary. do a quick calc to
 				see how much force we really need to achieve our goal speed...
 			*/
 			Real maxForceNeeded = mass * speedDelta;
@@ -2614,7 +2604,7 @@ LocomotorSet::~LocomotorSet()
 void LocomotorSet::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -2648,7 +2638,7 @@ void LocomotorSet::xfer( Xfer *xfer )
 		// vector should be empty at this point
 		if (m_locomotors.empty() == FALSE)
 		{
-			DEBUG_CRASH(( "LocomotorSet::xfer - vector is not empty, but should be\n" ));
+			DEBUG_CRASH(( "LocomotorSet::xfer - vector is not empty, but should be" ));
 			throw XFER_LIST_NOT_EMPTY;
 		}
 
@@ -2658,15 +2648,15 @@ void LocomotorSet::xfer( Xfer *xfer )
 			xfer->xferAsciiString(&name);
 
 			const LocomotorTemplate* lt = TheLocomotorStore->findLocomotorTemplate(NAMEKEY(name));
-			if (lt == NULL)
+			if (lt == nullptr)
 			{
-				DEBUG_CRASH(( "LocomotorSet::xfer - template %s not found\n", name.str() ));
+				DEBUG_CRASH(( "LocomotorSet::xfer - template %s not found", name.str() ));
 				throw XFER_UNKNOWN_STRING;
 			}
 
 			Locomotor* loco = TheLocomotorStore->newLocomotor(lt);
 			xfer->xferSnapshot(loco);
-			m_locomotors.push_back(loco);		
+			m_locomotors.push_back(loco);
 		}
 	}
 
@@ -2678,10 +2668,10 @@ void LocomotorSet::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void LocomotorSet::loadPostProcess( void )
+void LocomotorSet::loadPostProcess()
 {
 
-}  // end loadPostProcess
+}
 
 //-------------------------------------------------------------------------------------------------
 void LocomotorSet::xferSelfAndCurLocoPtr(Xfer *xfer, Locomotor** loco)
@@ -2702,7 +2692,7 @@ void LocomotorSet::xferSelfAndCurLocoPtr(Xfer *xfer, Locomotor** loco)
 
 		if (name.isEmpty())
 		{
-			*loco = NULL;
+			*loco = nullptr;
 		}
 		else
 		{
@@ -2715,7 +2705,7 @@ void LocomotorSet::xferSelfAndCurLocoPtr(Xfer *xfer, Locomotor** loco)
 				}
 			}
 
-			DEBUG_CRASH(( "LocomotorSet::xfer - template %s not found\n", name.str() ));
+			DEBUG_CRASH(( "LocomotorSet::xfer - template %s not found", name.str() ));
 			throw XFER_UNKNOWN_STRING;
 		}
 	}
@@ -2726,8 +2716,7 @@ void LocomotorSet::clear()
 {
 	for (size_t i = 0; i < m_locomotors.size(); ++i)
 	{
-		if (m_locomotors[i])
-			deleteInstance(m_locomotors[i]);
+		deleteInstance(m_locomotors[i]);
 	}
 	m_locomotors.clear();
 	m_validLocomotorSurfaces = 0;
@@ -2763,7 +2752,7 @@ Locomotor* LocomotorSet::findLocomotor(LocomotorSurfaceTypeMask t)
 		if (curLocomotor && (curLocomotor->getLegalSurfaces() & t))
 			return curLocomotor;
 	}
-	return NULL;
+	return nullptr;
 }
 
 

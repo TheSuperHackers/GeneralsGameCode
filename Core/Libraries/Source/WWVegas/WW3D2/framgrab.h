@@ -34,33 +34,17 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
 
-#ifndef FRAMEGRAB_H
-#define FRAMEGRAB_H
-
-#ifndef ALWAYS_H
 #include "always.h"
-#endif
 
 #if defined (_MSC_VER)
 #pragma warning (push, 3)	// (gth) system headers complain at warning level 4...
 #endif
 
-#ifndef _WINDOWS_
 #include "windows.h"
-#endif
-
-#ifndef _INC_WINDOWSX
 #include "windowsx.h"
-#endif
-
-#ifndef _INC_VFW
 #include "vfw.h"
-#endif
 
 #if defined (_MSC_VER)
 #pragma warning (pop)
@@ -70,7 +54,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-class FrameGrabClass  
+class FrameGrabClass
 {
 public:
 	enum MODE {
@@ -100,11 +84,11 @@ protected:
 	void GrabRawFrame(void *BitmapPointer);
 
 	// avi settings
-	PAVIFILE				AVIFile;  
+	PAVIFILE				AVIFile;
 	long					*Bitmap;
-	PAVISTREAM			Stream;     
+	PAVISTREAM			Stream;
 	AVISTREAMINFO		AVIStreamInfo;
-	BITMAPINFOHEADER	BitmapInfoHeader; 
+	BITMAPINFOHEADER	BitmapInfoHeader;
 
 	// general purpose cleanup routine
 	void CleanupAVI();
@@ -113,5 +97,3 @@ protected:
 	void ConvertFrame(void *BitmapPointer);
 
 };
-
-#endif

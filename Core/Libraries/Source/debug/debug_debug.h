@@ -26,15 +26,12 @@
 //
 // main Debug object (singleton)
 //////////////////////////////////////////////////////////////////////////////
-#ifdef _MSC_VER
-#  pragma once
-#endif
-#ifndef DEBUG_DEBUG_H // Include guard
-#define DEBUG_DEBUG_H
+
+#pragma once
 
 /**
   \class Debug debug.h <rts/debug.h>
-  
+
   \brief Debug module main class (singleton).
 */
 class Debug
@@ -54,7 +51,7 @@ public:
 
   /**
     \brief HRESULT translator callback function type.
-    
+
     See \ref Debug::AddHResultTranslator for more information.
 
     \param debug Debug instance where info can be written to
@@ -78,15 +75,15 @@ DLOG( "This is 16 bytes of memory:\n" << Debug::MemDump::Raw(&somePointer,16) );
   class MemDump
   {
     // necessary because Debug needs access to the following private members
-    friend Debug; 
-    
+    friend Debug;
+
     const unsigned char *m_startPtr;  ///< start dumping with this address
     unsigned m_numItems;              ///< dump the given number of items
     unsigned m_bytePerItem;           ///< determines the number of bytes per item (1. 2 or 4)
     bool m_absAddr;                   ///< show absolute addresses (true) or relative addresses (false)
     bool m_withChars;                 ///< show printable characters on right side of dump (true) or not (false)
-    
-    // constructor is private on purpose so that nobody can 
+
+    // constructor is private on purpose so that nobody can
     // create instances of this class except the static functions
     // provided herein
     MemDump(const void *ptr, unsigned num, unsigned bpi, bool absAddr, bool withChars):
@@ -160,10 +157,10 @@ DLOG( "My HResult is: " << Debug::HResult(SomeHRESULTValue) << "\n" );
   class HResult
   {
     // necessary because Debug needs access to the following private members
-    friend Debug; 
-    
+    friend Debug;
+
     long m_hresult;                   ///< HRESULT value
-    
+
   public:
 
     /**
@@ -175,7 +172,7 @@ DLOG( "My HResult is: " << Debug::HResult(SomeHRESULTValue) << "\n" );
   };
 
   /** \internal
-  
+
     \brief Helper class for adding log group descriptions.
 
   */
@@ -201,8 +198,8 @@ DLOG( "My HResult is: " << Debug::HResult(SomeHRESULTValue) << "\n" );
     \brief Switches integer output to hexadecimal format.
   */
   class Hex {};
-  
-  /// \internal Performs actual switch to hexadecimal format. 
+
+  /// \internal Performs actual switch to hexadecimal format.
   Debug& operator<<(const Hex)
   {
     SetPrefixAndRadix("0x",16);
@@ -239,7 +236,7 @@ DLOG( "My HResult is: " << Debug::HResult(SomeHRESULTValue) << "\n" );
   class Width
   {
     // necessary because Debug needs access to the following private members
-    friend Debug; 
+    friend Debug;
 
     int m_width;  ///< output width
 
@@ -261,7 +258,7 @@ DLOG( "My HResult is: " << Debug::HResult(SomeHRESULTValue) << "\n" );
   class FillChar
   {
     // necessary because Debug needs access to the following private members
-    friend Debug; 
+    friend Debug;
 
     char m_fill;  ///< fill character
 
@@ -283,7 +280,7 @@ DLOG( "My HResult is: " << Debug::HResult(SomeHRESULTValue) << "\n" );
   class RepeatChar
   {
     // necessary because Debug needs access to the following private members
-    friend Debug; 
+    friend Debug;
 
     char m_char;  ///< character
     int m_count;  ///< repeat count
@@ -305,7 +302,7 @@ DLOG( "My HResult is: " << Debug::HResult(SomeHRESULTValue) << "\n" );
   class Format
   {
     // necessary because Debug needs access to the following private members
-    friend Debug; 
+    friend Debug;
 
     // no CC, AOp
     Format(const Format &);
@@ -324,13 +321,13 @@ DLOG( "My HResult is: " << Debug::HResult(SomeHRESULTValue) << "\n" );
     operator<<(f.m_buffer);
     return *this;
   }
-  
+
   // this is necessary because LogDescription needs to call AddLogGroup
   friend class LogDescription;
-  
+
   /** \internal
-  
-    \brief Performs logical cleanup. 
+
+    \brief Performs logical cleanup.
   */
   ~Debug();
 
@@ -340,27 +337,27 @@ DLOG( "My HResult is: " << Debug::HResult(SomeHRESULTValue) << "\n" );
     For the main thread this is already done, but for any additional
     threads being created this function must be called.
   */
-  static void InstallExceptionHandler(void);
+  static void InstallExceptionHandler();
 
   /** \internal
-  
+
     \brief Helper function for skipping over disabled asserts and logs.
 
     This function simply records the address it has been called from. If
     an assert or other function is disabled this function returns true,
     false otherwise.
-    
-    @todo_opt Change so that instead of returning true the call to this 
+
+    @todo_opt Change so that instead of returning true the call to this
               function is directly removed from the calling code
 
     \return true if next assert/log should be skipped, false otherwise
   */
-  static bool SkipNext(void);
+  static bool SkipNext();
 
   /** \internal
-  
-    \brief Helper function which gets called if an assertion fails. 
-    
+
+    \brief Helper function which gets called if an assertion fails.
+
     Starts building the assert string which will then be send to the active
     output destinations. SkipNext must be called before calling this function
     since this function also associates the most recent SkipNext call with
@@ -368,7 +365,7 @@ DLOG( "My HResult is: " << Debug::HResult(SomeHRESULTValue) << "\n" );
 
     \param file file that contains DASSERT or DASSERT_MSG macro
     \param line line where assert macro can be found
-    \param expr expression that triggered the assertion, NULL for 'general failure' (\ref DFAIL)
+    \param expr expression that triggered the assertion, nullptr for 'general failure' (\ref DFAIL)
     \return reference to Debug instance
   */
   static Debug &AssertBegin(const char *file, int line, const char *expr);
@@ -383,12 +380,12 @@ DLOG( "My HResult is: " << Debug::HResult(SomeHRESULTValue) << "\n" );
 
     \return false (always)
   */
-  bool AssertDone(void);
+  bool AssertDone();
 
   /** \internal
-  
-    \brief Helper function which gets called if a check fails. 
-    
+
+    \brief Helper function which gets called if a check fails.
+
     Starts building the assert string which will then be send to the active
     output destinations. SkipNext must be called before calling this function
     since this function also associates the most recent SkipNext call with
@@ -409,12 +406,12 @@ DLOG( "My HResult is: " << Debug::HResult(SomeHRESULTValue) << "\n" );
 
     \return false (always)
   */
-  bool CheckDone(void);
+  bool CheckDone();
 
   /** \internal
-  
+
     \brief Helper function which gets when writing data to the output log.
-    
+
     Starts building the log string which will then be send to the active
     output destinations. SkipNext must be called before calling this function
     since this function also associates the most recent SkipNext call with
@@ -433,16 +430,16 @@ DLOG( "My HResult is: " << Debug::HResult(SomeHRESULTValue) << "\n" );
 
     \return false (always)
   */
-  bool LogDone(void);
+  bool LogDone();
 
   /** \internal
-  
+
     \brief Helper function which gets called on crash.
-    
+
     Starts building the crash string which will then be send to the active
     output destinations.
 
-    \param file file that contains DCRASH or DCRASH_RELEASE macro, if NULL
+    \param file file that contains DCRASH or DCRASH_RELEASE macro, if nullptr
                 then no file info is given (used by DCRASH_RELEASE in release
                 builds)
     \param line line where crash macro can be found, 0 if no line info should
@@ -457,7 +454,7 @@ DLOG( "My HResult is: " << Debug::HResult(SomeHRESULTValue) << "\n" );
 
     This function is to be used as the final call in a debug message stream.
 
-    \param die true if module should exit after displaying message, false if 
+    \param die true if module should exit after displaying message, false if
                the user should have the choice
     \return false (always)
   */
@@ -642,7 +639,7 @@ DLOG( "My HResult is: " << Debug::HResult(SomeHRESULTValue) << "\n" );
     If the translator/user pointer pair does not exist nothing is done.
 
     \param func translator address
-    \param user optional user pointer 
+    \param user optional user pointer
     \see AddHResultTranslator
   */
   static void RemoveHResultTranslator(HResultTranslator func, void *user=0);
@@ -659,8 +656,8 @@ DLOG( "My HResult is: " << Debug::HResult(SomeHRESULTValue) << "\n" );
     \param func factory function
     \return true (so function can be used in static initializers)
   */
-  static bool AddIOFactory(const char *io_id, const char *descr, 
-                           DebugIOInterface* (*func)(void));
+  static bool AddIOFactory(const char *io_id, const char *descr,
+                           DebugIOInterface* (*func)());
 
   /**
     \brief Adds a new command group.
@@ -699,11 +696,11 @@ DLOG( "My HResult is: " << Debug::HResult(SomeHRESULTValue) << "\n" );
   static void Command(const char *cmd);
 
   /**
-    \brief Update method, must be called on a regular basis. 
-    
+    \brief Update method, must be called on a regular basis.
+
     Scans I/O classes for new command input and processes it.
   */
-  static void Update(void);
+  static void Update();
 
   /** \internal
 
@@ -715,7 +712,7 @@ DLOG( "My HResult is: " << Debug::HResult(SomeHRESULTValue) << "\n" );
   */
   static bool SimpleMatch(const char *str, const char *pattern);
 
-  /** 
+  /**
     \brief Tell debug module about build info.
 
     All these strings are free form and can be up to 63 chars long.
@@ -731,66 +728,72 @@ DLOG( "My HResult is: " << Debug::HResult(SomeHRESULTValue) << "\n" );
   /**
     \brief Write build information into log.
   */
-  void WriteBuildInfo(void);
+  void WriteBuildInfo();
 
 private:
+#if defined(__GNUC__) && defined(_WIN32)
+  // For GCC/MinGW-w64 targeting Windows, allow constructor functions to call init methods
+  friend void GccPreStaticInit();
+  friend void GccPostStaticInit();
+#endif
+
   // no assignment, no copy constructor
   Debug(const Debug&);
   Debug& operator=(const Debug&);
 
-  /** \internal 
-    
+  /** \internal
+
     Undocumented default constructor. Initializes debugging library.
-    We can make this private as well so nobody accidently tries to create 
+    We can make this private as well so nobody accidentally tries to create
     a Debug instance. Actually this function does not do anything -
     initialization is rather performed by PreStaticInit() and
     PostStaticInit().
   */
-  Debug(void);
+  Debug();
 
   /** \internal
-    
-    This function gets called before any static C++ symbols are 
+
+    This function gets called before any static C++ symbols are
     initialized. Code herein must be extremely careful because all
     global C++ instances are not initialized yet.
   */
-  static void PreStaticInit(void);
+  static void PreStaticInit();
 
   /** \internal
-     
+
     This function gets called after all static C++ symbols have
     been initialized.
   */
-  static void PostStaticInit(void);
+  static void PostStaticInit();
 
   /** \internal
 
-    This function gets called if the program exists. Use this 
+    This function gets called if the program exists. Use this
     function for any cleanup purposes (not the destructor, it
     might get called too early).
   */
-  static void StaticExit(void);
+  static void StaticExit();
 
   /** \internal
-    
+
     The only debug instance. Actually not used for anything
     except as magic first parameter for overloaded stream operators.
   */
   static Debug Instance;
 
-  /** \internal 
-    
+  /** \internal
+
     Helper variable for putting PreStaticInit() into the MSVC
     startup list.
   */
-  static void *PreStatic;    
+  static void *PreStatic;
 
-  /** \internal 
-    
+  /** \internal
+
     Helper variable for putting PostStaticInit() into the MSVC
     startup list.
   */
-  static void *PostStatic;    
+  static void *PostStatic;
 
   /// \internal HResult translator vector entry
   struct HResultTranslatorEntry
@@ -824,9 +827,9 @@ private:
     const char *descr;
 
     /// factory function
-    DebugIOInterface* (*factory)(void);
+    DebugIOInterface* (*factory)();
 
-    /// I/O interface (may be NULL)
+    /// I/O interface (may be null)
     DebugIOInterface *io;
 
     /// input buffer
@@ -840,7 +843,7 @@ private:
   };
 
   /** \internal
-  
+
     First I/O factory list entry. A singly linked list is
     okay for this because looking up I/O IDs is not
     time critical.
@@ -860,8 +863,8 @@ private:
     DebugCmdInterface *cmdif;
   };
 
-  /** \internal 
-  
+  /** \internal
+
     First command interface list entry. A singly linked list is
     okay for this because looking up command groups is not
     time critical.
@@ -871,8 +874,8 @@ private:
   /// \internal current stack frame (used by SkipNext)
   static unsigned curStackFrame;
 
-  /** \internal 
-  
+  /** \internal
+
     Bit mask for frame entry types. Implemented as a bit
     mask since it is also used for the inclusion/exclusion
     list where a single pattern can apply to more than
@@ -966,7 +969,7 @@ private:
   }
 
   /** \internal
-    
+
     Add frame address entry (entry must not exist yet). If
     a log frame is added then a corresponding entry is added
     to the list of known log groups as well.
@@ -1012,8 +1015,8 @@ private:
 
   /** \internal
 
-    \brief List of known logs. 
-    
+    \brief List of known logs.
+
     A singly linked list is
     okay for this because looking up log groups happens only
     if a new stack frame entry is added (which happens only
@@ -1043,7 +1046,7 @@ private:
     Returns translated group name.
 
     \param fileOrGroup file or log group
-    \param descr description, may be NULL
+    \param descr description, may be nullptr
     \return translated log group name
   */
   const char *AddLogGroup(const char *fileOrGroup, const char *descr);
@@ -1074,7 +1077,7 @@ private:
   int disableAssertsEtc;
 
   /** \internal
-    
+
     Starts new output stream with the given type and source.
 
     \param type string type
@@ -1092,7 +1095,7 @@ private:
   void AddOutput(const char *str, unsigned len);
 
   /** \internal
-    
+
     Flushes current I/O buffer to all output handlers.
 
     \param defaultLog if true and no I/O class is active then data
@@ -1122,7 +1125,7 @@ private:
   /** \internal
 
     First pattern list list entry. A singly linked list is
-    okay for this because checking patterns is a costly 
+    okay for this because checking patterns is a costly
     operation anyway and is therefore cached.
   */
   PatternListEntry *firstPatternEntry;
@@ -1152,13 +1155,13 @@ private:
 
   /** \internal
 
-    \brief Checks if main program is running windowed or not. 
-    
+    \brief Checks if main program is running windowed or not.
+
     If the decisison can not be made an windowed program is assumed.
 
     \return true if windowed, false if full screen
   */
-  bool IsWindowed(void);
+  bool IsWindowed();
 
   /// \internal name of current command group
   char curCommandGroup[100];
@@ -1192,7 +1195,7 @@ private:
 
   /// \internal fill char
   char m_fillChar;
-  
+
   /// \internal <0 if fullscreen, >0 if windowed, ==0 if not checked yet
   char m_isWindowed;
 };
@@ -1203,11 +1206,11 @@ private:
   \brief Determines default commands to be executed at startup.
 
   This function returns a list of default commands which are executed on
-  startup if no .dbgcmd file is read. 
+  startup if no .dbgcmd file is read.
 
   Currently this function returns:
   \code
-"debug.io flat add" 
+"debug.io flat add"
   \endcode
 
   In order to provide a different set of commands simply put another
@@ -1222,11 +1225,9 @@ private:
 "debug.io flat add\nio flat copy q:\logfiles\n"
   \endcode
 
-  \return list of commands, separated by \\n    
+  \return list of commands, separated by \\n
   \note This function is executed after all static variables have been initialized.
 */
-const char *DebugGetDefaultCommands(void);
+const char *DebugGetDefaultCommands();
 
 ///@} end of debug_fn group
-
-#endif // DEBUG_DEBUG_H

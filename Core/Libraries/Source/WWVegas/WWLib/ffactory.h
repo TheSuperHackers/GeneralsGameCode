@@ -34,25 +34,17 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if _MSC_VER >= 1000
 #pragma once
-#endif // _MSC_VER >= 1000
 
-#ifndef FFACTORY_H
-#define FFACTORY_H
-
-#ifndef ALWAYS_H
 #include "always.h"
-#endif
-
 #include "mutex.h"
-#include "Vector.H"
+#include "Vector.h"
 #include "wwstring.h"
 
 /*
 **
 */
-#include	"RAWFILE.H"
+#include "RAWFILE.h"
 class	FileClass;
 
 /*
@@ -62,7 +54,7 @@ class	FileClass;
 class	FileFactoryClass {
 
 public:
-	virtual ~FileFactoryClass(void){};
+	virtual ~FileFactoryClass(){};
 	virtual FileClass * Get_File( char const *filename ) = 0;
 	virtual void Return_File( FileClass *file ) = 0;
 };
@@ -79,7 +71,7 @@ public:
 	explicit	file_auto_ptr(FileFactoryClass *fac, const char *filename);
 				~file_auto_ptr();
 
-	operator FileClass*(void) const
+	operator FileClass*() const
 		{return (get()); }
 
 	FileClass& operator*() const
@@ -128,21 +120,21 @@ public:
 class	SimpleFileFactoryClass : public FileFactoryClass {
 
 public:
-	SimpleFileFactoryClass( void );
-	~SimpleFileFactoryClass( void )	{}
+	SimpleFileFactoryClass();
+	~SimpleFileFactoryClass()	{}
 
 	virtual FileClass *	Get_File( char const *filename );
 	virtual void			Return_File( FileClass *file );
 
-	// sub_directory may be a semicolon seperated search path.  New files will always
+	// sub_directory may be a semicolon separated search path.  New files will always
 	//   go in the last dir in the path.
 	void						Get_Sub_Directory( StringClass& new_dir ) const;
 	void						Set_Sub_Directory( const char * sub_directory );
 	void						Prepend_Sub_Directory( const char * sub_directory );
 	void						Append_Sub_Directory( const char * sub_directory );
-	bool						Get_Strip_Path( void ) const								{ return IsStripPath; }
+	bool						Get_Strip_Path() const								{ return IsStripPath; }
 	void						Set_Strip_Path( bool set )									{ IsStripPath = set; }
-	void						Reset_Sub_Directory( void )								{ SubDirectory = ""; }
+	void						Reset_Sub_Directory()								{ SubDirectory = ""; }
 
 protected:
 	StringClass				SubDirectory;
@@ -159,5 +151,3 @@ extern RawFileFactoryClass	*	_TheWritingFileFactory;
 // No simple file factory.  jba.
 // (gth) re-enabling this because w3d view uses it
 extern SimpleFileFactoryClass	*	_TheSimpleFileFactory;
-
-#endif

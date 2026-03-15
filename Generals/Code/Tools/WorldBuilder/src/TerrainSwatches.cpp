@@ -48,10 +48,10 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // TerrainSwatches message handlers
 
-void TerrainSwatches::OnPaint() 
+void TerrainSwatches::OnPaint()
 {
 	CPaintDC dc(this); // device context for painting
-	
+
 	CRect clientRect;
 	GetClientRect(&clientRect);
 
@@ -91,7 +91,7 @@ void TerrainSwatches::OnPaint()
 void TerrainSwatches::DrawMyTexture(CDC *pDc, int top, int left, Int width, UnsignedByte *rgbData)
 {
 	// Just blast about some dib bits.
-	
+
 	LPBITMAPINFO pBI;
 //	long bytes = sizeof(BITMAPINFO);
  	pBI = new BITMAPINFO;
@@ -108,7 +108,7 @@ void TerrainSwatches::DrawMyTexture(CDC *pDc, int top, int left, Int width, Unsi
 	pBI->bmiHeader.biClrImportant = 0;
 
 	//::Sleep(10);
-	/*int val=*/::StretchDIBits(pDc->m_hDC, left, top, width, width, 0, 0, width, width, rgbData, pBI, 
+	/*int val=*/::StretchDIBits(pDc->m_hDC, left, top, width, width, 0, 0, width, width, rgbData, pBI,
 		DIB_RGB_COLORS, SRCCOPY);
 	delete(pBI);
 }

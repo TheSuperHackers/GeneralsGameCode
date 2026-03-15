@@ -26,8 +26,8 @@
  *                                                                                             *
  *              Original Author:: Hector Yee                                                   *
  *                                                                                             *
- *                       Author : Kenny Mitchell                                               * 
- *                                                                                             * 
+ *                       Author : Kenny Mitchell                                               *
+ *                                                                                             *
  *                     $Modtime:: 06/27/02 1:27p                                              $*
  *                                                                                             *
  *                    $Revision:: 14                                                          $*
@@ -40,7 +40,7 @@
 #include "ww3dformat.h"
 #include "vector4.h"
 #include "wwdebug.h"
-#include "TARGA.H"
+#include "TARGA.h"
 #include "dx8wrapper.h"
 #include "dx8caps.h"
 #include <d3d8.h>
@@ -104,17 +104,17 @@ void Get_WW3D_Format_Name(WW3DFormat format, StringClass& name)
 */
 void Get_WW3D_ZFormat_Name(WW3DZFormat format, StringClass& name)
 {
-	switch (format) 
+	switch (format)
 	{
 	default:
 	case WW3D_FORMAT_UNKNOWN		: name="Unknown"; break;
-	case WW3D_ZFORMAT_D16_LOCKABLE: name="D16Lockable"; break; // 16-bit z-buffer bit depth. This is an application-lockable surface format. 
-	case WW3D_ZFORMAT_D32			: name="D32"; break; // 32-bit z-buffer bit depth. 
-	case WW3D_ZFORMAT_D15S1			: name="D15S1"; break; // 16-bit z-buffer bit depth where 15 bits are reserved for the depth channel and 1 bit is reserved for the stencil channel. 
-	case WW3D_ZFORMAT_D24S8			: name="D24S8"; break; // 32-bit z-buffer bit depth using 24 bits for the depth channel and 8 bits for the stencil channel. 
-	case WW3D_ZFORMAT_D16			: name="D16"; break; // 16-bit z-buffer bit depth. 
-	case WW3D_ZFORMAT_D24X8			: name="D24X8"; break; // 32-bit z-buffer bit depth using 24 bits for the depth channel. 
-	case WW3D_ZFORMAT_D24X4S4		: name="D24X4S4"; break; // 32-bit z-buffer bit depth using 24 bits for the depth channel and 4 bits for the stencil channel. 
+	case WW3D_ZFORMAT_D16_LOCKABLE: name="D16Lockable"; break; // 16-bit z-buffer bit depth. This is an application-lockable surface format.
+	case WW3D_ZFORMAT_D32			: name="D32"; break; // 32-bit z-buffer bit depth.
+	case WW3D_ZFORMAT_D15S1			: name="D15S1"; break; // 16-bit z-buffer bit depth where 15 bits are reserved for the depth channel and 1 bit is reserved for the stencil channel.
+	case WW3D_ZFORMAT_D24S8			: name="D24S8"; break; // 32-bit z-buffer bit depth using 24 bits for the depth channel and 8 bits for the stencil channel.
+	case WW3D_ZFORMAT_D16			: name="D16"; break; // 16-bit z-buffer bit depth.
+	case WW3D_ZFORMAT_D24X8			: name="D24X8"; break; // 32-bit z-buffer bit depth using 24 bits for the depth channel.
+	case WW3D_ZFORMAT_D24X4S4		: name="D24X4S4"; break; // 32-bit z-buffer bit depth using 24 bits for the depth channel and 4 bits for the stencil channel.
 #ifdef _XBOX
 	case WW3D_ZFORMAT_LIN_D24S8	: name="D24S8LIN"; break;
 	case WW3D_ZFORMAT_LIN_F24S8	: name="F24S8LIN"; break;
@@ -140,7 +140,7 @@ void Vector4_to_Color(unsigned int *outc,const Vector4 &inc,const WW3DFormat for
 
 	switch (format)
 	{
-	case WW3D_FORMAT_R8G8B8:		
+	case WW3D_FORMAT_R8G8B8:
 	case WW3D_FORMAT_A8R8G8B8:
 	case WW3D_FORMAT_X8R8G8B8:
 		*outc=color;
@@ -184,12 +184,12 @@ void Vector4_to_Color(unsigned int *outc,const Vector4 &inc,const WW3DFormat for
 		*outc=lum;
 		break;
 	case WW3D_FORMAT_A8L8:
-		a=argb[0];		
+		a=argb[0];
 		lum=RGB_to_CIEY(inc);
 		*outc=(a<<8) | lum;
 		break;
 	case WW3D_FORMAT_A4L4:
-		a=argb[0] >> 4;		
+		a=argb[0] >> 4;
 		lum=RGB_to_CIEY(inc);
 		lum=lum>>4;
 		*outc=(a<<4) | lum;
@@ -235,7 +235,7 @@ void Color_to_Vector4(Vector4* outc,const unsigned int inc,const WW3DFormat form
 		g=argb[2]<<4;
 		b=argb[3]<<4;
 		break;
-	case WW3D_FORMAT_R3G3B2:		
+	case WW3D_FORMAT_R3G3B2:
 		r=argb[1]<<5;
 		g=argb[2]<<5;
 		b=argb[3]<<6;
@@ -296,7 +296,7 @@ void Get_WW3D_Format(WW3DFormat& src_format,unsigned& src_bpp,const Targa& targa
 			else src_format = WW3D_FORMAT_A8;
 			break;
 		default:
-			WWDEBUG_SAY(("TextureClass: Targa has unsupported bitdepth(%i)\n",targa.Header.PixelDepth));
+			WWDEBUG_SAY(("TextureClass: Targa has unsupported bitdepth(%i)",targa.Header.PixelDepth));
 //			WWASSERT(0);
 			break;
 	}
@@ -313,7 +313,7 @@ WW3DFormat Get_Valid_Texture_Format(WW3DFormat format, bool is_compression_allow
 	int w,h,bits;
 	bool windowed;
 
-	if (!DX8Wrapper::Get_Current_Caps()->Support_DXTC() || 
+	if (!DX8Wrapper::Get_Current_Caps()->Support_DXTC() ||
 		!is_compression_allowed) {
 		switch (format) {
 		case WW3D_FORMAT_DXT1: format=WW3D_FORMAT_R8G8B8; break;
@@ -328,7 +328,7 @@ WW3DFormat Get_Valid_Texture_Format(WW3DFormat format, bool is_compression_allow
 		switch (format) {
 		case WW3D_FORMAT_DXT1:
 			// NVidia hack - switch to DXT2 is there is no DXT1 support (which is disabled on NVidia cards)
-			if (!DX8Wrapper::Get_Current_Caps()->Support_Texture_Format(WW3D_FORMAT_DXT1) && 
+			if (!DX8Wrapper::Get_Current_Caps()->Support_Texture_Format(WW3D_FORMAT_DXT1) &&
 				DX8Wrapper::Get_Current_Caps()->Support_Texture_Format(WW3D_FORMAT_DXT2)) {
 				format=WW3D_FORMAT_DXT2;
 			}
@@ -393,23 +393,129 @@ WW3DFormat Get_Valid_Texture_Format(WW3DFormat format, bool is_compression_allow
 unsigned Get_Bytes_Per_Pixel(WW3DFormat format)
 {
 	switch (format) {
+	case WW3D_FORMAT_A8R8G8B8:
 	case WW3D_FORMAT_X8R8G8B8:
 	case WW3D_FORMAT_X8L8V8U8:
-	case WW3D_FORMAT_A8R8G8B8: return 4;
-	case WW3D_FORMAT_R8G8B8: return 3;
+		return 4;
+	case WW3D_FORMAT_R8G8B8:
+		return 3;
+	case WW3D_FORMAT_R5G6B5:
+	case WW3D_FORMAT_X1R5G5B5:
 	case WW3D_FORMAT_A1R5G5B5:
 	case WW3D_FORMAT_A4R4G4B4:
+	case WW3D_FORMAT_A8R3G3B2:
+	case WW3D_FORMAT_X4R4G4B4:
+	case WW3D_FORMAT_A8P8:
+	case WW3D_FORMAT_A8L8:
 	case WW3D_FORMAT_U8V8:
 	case WW3D_FORMAT_L6V5U5:
-	case WW3D_FORMAT_R5G6B5: return 2;
+		return 2;
 	case WW3D_FORMAT_R3G3B2:
-	case WW3D_FORMAT_L8:
 	case WW3D_FORMAT_A8:
-	case WW3D_FORMAT_P8: return 1;
+	case WW3D_FORMAT_P8:
+	case WW3D_FORMAT_L8:
+	case WW3D_FORMAT_A4L4:
+		return 1;
 
 	default:	WWASSERT(0); break;
 	}
 	return 0;
+}
+
+unsigned ARGB_Color_To_WW3D_Color(WW3DFormat format, unsigned argb)
+{
+	unsigned a = (argb >> 24) & 0xFF;
+	unsigned r = (argb >> 16) & 0xFF;
+	unsigned g = (argb >>  8) & 0xFF;
+	unsigned b = (argb >>  0) & 0xFF;
+
+	switch (format)
+	{
+	case WW3D_FORMAT_R8G8B8:
+		return (r << 16) | (g << 8) | b;
+
+	case WW3D_FORMAT_A8R8G8B8:
+		return (a << 24) | (r << 16) | (g << 8) | b;
+
+	case WW3D_FORMAT_X8R8G8B8:
+		return (0xFF << 24) | (r << 16) | (g << 8) | b;
+
+	case WW3D_FORMAT_R5G6B5:
+		return ((r >> 3) << 11) |
+					 ((g >> 2) << 5)  |
+					 ((b >> 3) << 0);
+
+	case WW3D_FORMAT_X1R5G5B5:
+		return ( 1       << 15) |
+					 ((r >> 3) << 10) |
+					 ((g >> 3) << 5)  |
+					 ((b >> 3) << 0);
+
+	case WW3D_FORMAT_A1R5G5B5:
+		return ((a >> 7) << 15) |
+					 ((r >> 3) << 10) |
+					 ((g >> 3) << 5)  |
+					 ((b >> 3) << 0);
+
+	case WW3D_FORMAT_A4R4G4B4:
+		return ((a >> 4) << 12) |
+					 ((r >> 4) << 8)  |
+					 ((g >> 4) << 4)  |
+					 ((b >> 4) << 0);
+
+	case WW3D_FORMAT_R3G3B2:
+		return ((r >> 5) << 5) |
+					 ((g >> 5) << 2) |
+					 ((b >> 6) << 0);
+
+	case WW3D_FORMAT_A8:
+		return a;
+
+	case WW3D_FORMAT_A8R3G3B2:
+		return ( a       << 8) |
+					 ((r >> 5) << 5) |
+					 ((g >> 5) << 2) |
+					 ((b >> 6) << 0);
+
+	case WW3D_FORMAT_X4R4G4B4:
+		return ( 0xF     << 12) |
+					 ((r >> 4) << 8) |
+					 ((g >> 4) << 4) |
+					 ((b >> 4) << 0);
+
+	case WW3D_FORMAT_L8:
+	{
+			unsigned l = (r * 77 + g * 150 + b * 29) >> 8;
+			return l;
+	}
+
+	case WW3D_FORMAT_A8L8:
+	{
+			unsigned l = (r * 77 + g * 150 + b * 29) >> 8;
+			return (a << 8) | l;
+	}
+
+	case WW3D_FORMAT_A4L4:
+	{
+			unsigned l = (r * 77 + g * 150 + b * 29) >> 8;
+			return ((a >> 4) << 4) | (l >> 4);
+	}
+
+	// Palettized, bump-map, and compressed formats
+	// cannot be represented by a single ARGB color
+	case WW3D_FORMAT_P8:
+	case WW3D_FORMAT_A8P8:
+	case WW3D_FORMAT_U8V8:
+	case WW3D_FORMAT_L6V5U5:
+	case WW3D_FORMAT_X8L8V8U8:
+	case WW3D_FORMAT_DXT1:
+	case WW3D_FORMAT_DXT2:
+	case WW3D_FORMAT_DXT3:
+	case WW3D_FORMAT_DXT4:
+	case WW3D_FORMAT_DXT5:
+	default:
+			return 0;
+	}
 }
 
 unsigned Get_Num_Depth_Bits(WW3DZFormat zformat)

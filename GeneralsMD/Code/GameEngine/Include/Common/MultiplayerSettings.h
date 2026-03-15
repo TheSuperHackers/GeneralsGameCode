@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef _MULTIPLAYERSETTINGS_H_
-#define _MULTIPLAYERSETTINGS_H_
-
 #include "GameClient/Color.h"
 #include "Common/Money.h"
 
@@ -47,13 +44,13 @@ public:
 	MultiplayerColorDefinition();
 	//-----------------------------------------------------------------------------------------------
 	static const FieldParse m_colorFieldParseTable[];		///< the parse table for INI definition
-	const FieldParse *getFieldParse( void ) const { return m_colorFieldParseTable; }
+	const FieldParse *getFieldParse() const { return m_colorFieldParseTable; }
 
-	inline AsciiString getTooltipName(void) const { return m_tooltipName; };
-	inline RGBColor getRGBValue(void) const { return m_rgbValue; };
-	inline RGBColor getRGBNightValue(void) const { return m_rgbValueNight; };
-	inline Color getColor(void) const { return m_color; }
-	inline Color getNightColor(void) const { return m_colorNight; }
+	AsciiString getTooltipName() const { return m_tooltipName; };
+	RGBColor getRGBValue() const { return m_rgbValue; };
+	RGBColor getRGBNightValue() const { return m_rgbValueNight; };
+	Color getColor() const { return m_color; }
+	Color getNightColor() const { return m_colorNight; }
 	void setColor( RGBColor rgb );
 	void setNightColor( RGBColor rgb );
 
@@ -81,7 +78,7 @@ class MultiplayerSettings : public SubsystemInterface
 {
 public:
 
-	MultiplayerSettings( void );
+	MultiplayerSettings();
 
 	virtual void init() { }
 	virtual void update() { }
@@ -89,20 +86,20 @@ public:
 
 	//-----------------------------------------------------------------------------------------------
 	static const FieldParse m_multiplayerSettingsFieldParseTable[];		///< the parse table for INI definition
-	const FieldParse *getFieldParse( void ) const { return m_multiplayerSettingsFieldParseTable; }
+	const FieldParse *getFieldParse() const { return m_multiplayerSettingsFieldParseTable; }
 
 	// Color management --------------------
 	MultiplayerColorDefinition * findMultiplayerColorDefinitionByName(AsciiString name);
 	MultiplayerColorDefinition * newMultiplayerColorDefinition(AsciiString name);
 
-	inline Int getStartCountdownTimerSeconds( void ) { return m_startCountdownTimerSeconds; }
-	inline Int getMaxBeaconsPerPlayer( void ) { return m_maxBeaconsPerPlayer; }
-	inline Bool isShroudInMultiplayer( void ) { return m_isShroudInMultiplayer; }
-	inline Bool showRandomPlayerTemplate( void ) { return m_showRandomPlayerTemplate; }
-	inline Bool showRandomStartPos( void ) { return m_showRandomStartPos; }
-	inline Bool showRandomColor( void ) { return m_showRandomColor; }
+	Int getStartCountdownTimerSeconds() { return m_startCountdownTimerSeconds; }
+	Int getMaxBeaconsPerPlayer() { return m_maxBeaconsPerPlayer; }
+	Bool isShroudInMultiplayer() { return m_isShroudInMultiplayer; }
+	Bool showRandomPlayerTemplate() { return m_showRandomPlayerTemplate; }
+	Bool showRandomStartPos() { return m_showRandomStartPos; }
+	Bool showRandomColor() { return m_showRandomColor; }
 
-	inline Int getNumColors( void ) 
+	Int getNumColors()
 	{
 		if (m_numColors == 0) {
 			m_numColors = m_colorList.size();
@@ -112,16 +109,16 @@ public:
 	MultiplayerColorDefinition * getColor(Int which);
 
 
-  const Money & getDefaultStartingMoney() const 
-  { 
+  const Money & getDefaultStartingMoney() const
+  {
     DEBUG_ASSERTCRASH( m_gotDefaultStartingMoney, ("You must specify a default starting money amount in multiplayer.ini") );
-    return m_defaultStartingMoney; 
+    return m_defaultStartingMoney;
   }
 
   const MultiplayerStartingMoneyList & getStartingMoneyList() const { return m_startingMoneyList; }
 
   void addStartingMoneyChoice( const Money & money, Bool isDefault );
-    
+
 private:
 	Int m_initialCreditsMin;
 	Int m_initialCreditsMax;
@@ -143,5 +140,3 @@ private:
 
 // singleton
 extern MultiplayerSettings *TheMultiplayerSettings;
-
-#endif

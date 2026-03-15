@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/GameEngine.h"
 #include "GameClient/AnimateWindowManager.h"
@@ -54,7 +54,7 @@ static void shutdownComplete( WindowLayout *layout )
 	// our shutdown is complete
 	TheShell->shutdownComplete( layout );
 
-}  // end if
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Initialize the single player menu */
@@ -69,27 +69,26 @@ void SinglePlayerMenuInit( WindowLayout *layout, void *userData )
 	layout->hide( FALSE );
 
 	// set keyboard focus to main parent
-	AsciiString parentName( "SinglePlayerMenu.wnd:SinglePlayerMenuParent" );
-	NameKeyType parentID = TheNameKeyGenerator->nameToKey( parentName );
-	GameWindow *parent = TheWindowManager->winGetWindowFromId( NULL, parentID );
+	NameKeyType parentID = TheNameKeyGenerator->nameToKey( "SinglePlayerMenu.wnd:SinglePlayerMenuParent" );
+	GameWindow *parent = TheWindowManager->winGetWindowFromId( nullptr, parentID );
 	TheWindowManager->winSetFocus( parent );
 
-	NameKeyType buttonNewID = TheNameKeyGenerator->nameToKey( AsciiString("SinglePlayerMenu.wnd:ButtonNew") );
-	GameWindow *buttonNew = TheWindowManager->winGetWindowFromId( NULL, buttonNewID );
+	NameKeyType buttonNewID = TheNameKeyGenerator->nameToKey( "SinglePlayerMenu.wnd:ButtonNew" );
+	GameWindow *buttonNew = TheWindowManager->winGetWindowFromId( nullptr, buttonNewID );
 	TheShell->registerWithAnimateManager(buttonNew, WIN_ANIMATION_SLIDE_LEFT, TRUE,1);
 
-	NameKeyType buttonLoadID = TheNameKeyGenerator->nameToKey( AsciiString("SinglePlayerMenu.wnd:ButtonLoad") );
-	GameWindow *buttonLoad = TheWindowManager->winGetWindowFromId( NULL, buttonLoadID );
+	NameKeyType buttonLoadID = TheNameKeyGenerator->nameToKey( "SinglePlayerMenu.wnd:ButtonLoad" );
+	GameWindow *buttonLoad = TheWindowManager->winGetWindowFromId( nullptr, buttonLoadID );
 	TheShell->registerWithAnimateManager(buttonLoad, WIN_ANIMATION_SLIDE_LEFT, TRUE,200);
 
-	NameKeyType buttonBackID = TheNameKeyGenerator->nameToKey( AsciiString("SinglePlayerMenu.wnd:ButtonBack") );
-	GameWindow *buttonBack = TheWindowManager->winGetWindowFromId( NULL, buttonBackID );
+	NameKeyType buttonBackID = TheNameKeyGenerator->nameToKey( "SinglePlayerMenu.wnd:ButtonBack" );
+	GameWindow *buttonBack = TheWindowManager->winGetWindowFromId( nullptr, buttonBackID );
 	TheShell->registerWithAnimateManager(buttonBack, WIN_ANIMATION_SLIDE_RIGHT, TRUE,1);
 
 
 	//TheShell->registerWithAnimateManager(parent, WIN_ANIMATION_SLIDE_TOP, TRUE);
 
-}  // end SinglePlayerMenuInit
+}
 
 //-------------------------------------------------------------------------------------------------
 /** single player menu shutdown method */
@@ -106,11 +105,11 @@ void SinglePlayerMenuShutdown( WindowLayout *layout, void *userData )
 		shutdownComplete( layout );
 		return;
 
-	}  //end if
+	}
 
 	TheShell->reverseAnimatewindow();
 
-}  // end SinglePlayerMenuShutdown
+}
 
 //-------------------------------------------------------------------------------------------------
 /** single player menu update method */
@@ -118,11 +117,11 @@ void SinglePlayerMenuShutdown( WindowLayout *layout, void *userData )
 void SinglePlayerMenuUpdate( WindowLayout *layout, void *userData )
 {
 
-	// We'll only be successful if we've requested to 
+	// We'll only be successful if we've requested to
 	if(isShuttingDown && TheShell->isAnimFinished())
 		shutdownComplete(layout);
 
-}  // end SinglePlayerMenuUpdate
+}
 
 //-------------------------------------------------------------------------------------------------
 /** SinglePlayer menu input callback */
@@ -131,7 +130,7 @@ WindowMsgHandledType SinglePlayerMenuInput( GameWindow *window, UnsignedInt msg,
 																						WindowMsgData mData1, WindowMsgData mData2 )
 {
 
-	switch( msg ) 
+	switch( msg )
 	{
 
 		// --------------------------------------------------------------------------------------------
@@ -148,48 +147,47 @@ WindowMsgHandledType SinglePlayerMenuInput( GameWindow *window, UnsignedInt msg,
 				// ----------------------------------------------------------------------------------------
 				case KEY_ESC:
 				{
-					
+
 					//
 					// send a simulated selected event to the parent window of the
 					// back/exit button
 					//
 					if( BitIsSet( state, KEY_STATE_UP ) )
 					{
-						AsciiString buttonName( "SinglePlayerMenu.wnd:ButtonBack" );
-						NameKeyType buttonID = TheNameKeyGenerator->nameToKey( buttonName );
+						NameKeyType buttonID = TheNameKeyGenerator->nameToKey( "SinglePlayerMenu.wnd:ButtonBack" );
 						GameWindow *button = TheWindowManager->winGetWindowFromId( window, buttonID );
 
-						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
+						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,
 																								(WindowMsgData)button, buttonID );
 
-					}  // end if
+					}
 
 					// don't let key fall through anywhere else
 					return MSG_HANDLED;
 
-				}  // end escape
+				}
 
-			}  // end switch( key )
+			}
 
-		}  // end char
+		}
 
-	}  // end switch( msg )
+	}
 
 	return MSG_IGNORED;
 
-}  // end SinglePlayerMenuInput
+}
 
 //-------------------------------------------------------------------------------------------------
 /** single player menu window system callback */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType SinglePlayerMenuSystem( GameWindow *window, UnsignedInt msg, 
+WindowMsgHandledType SinglePlayerMenuSystem( GameWindow *window, UnsignedInt msg,
 														 WindowMsgData mData1, WindowMsgData mData2 )
 {
 	static NameKeyType buttonNew = NAMEKEY_INVALID;
 	static NameKeyType buttonLoad = NAMEKEY_INVALID;
 	static NameKeyType buttonBack = NAMEKEY_INVALID;
 
-	switch( msg ) 
+	switch( msg )
 	{
 
 		// --------------------------------------------------------------------------------------------
@@ -197,13 +195,13 @@ WindowMsgHandledType SinglePlayerMenuSystem( GameWindow *window, UnsignedInt msg
 		{
 
 			// get ids for our children controls
-			buttonNew = TheNameKeyGenerator->nameToKey( AsciiString("SinglePlayerMenu.wnd:ButtonNew") );
-			buttonLoad = TheNameKeyGenerator->nameToKey( AsciiString("SinglePlayerMenu.wnd:ButtonLoad") );
-			buttonBack = TheNameKeyGenerator->nameToKey( AsciiString("SinglePlayerMenu.wnd:ButtonBack") );
+			buttonNew = TheNameKeyGenerator->nameToKey( "SinglePlayerMenu.wnd:ButtonNew" );
+			buttonLoad = TheNameKeyGenerator->nameToKey( "SinglePlayerMenu.wnd:ButtonLoad" );
+			buttonBack = TheNameKeyGenerator->nameToKey( "SinglePlayerMenu.wnd:ButtonBack" );
 
 			break;
 
-		}  // end create
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GWM_DESTROY:
@@ -211,7 +209,7 @@ WindowMsgHandledType SinglePlayerMenuSystem( GameWindow *window, UnsignedInt msg
 
 			break;
 
-		}  // end case
+		}
 
 		// --------------------------------------------------------------------------------------------
 		case GWM_INPUT_FOCUS:
@@ -223,7 +221,7 @@ WindowMsgHandledType SinglePlayerMenuSystem( GameWindow *window, UnsignedInt msg
 
 			return MSG_HANDLED;
 
-		}  // end input
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GBM_SELECTED:
@@ -237,31 +235,31 @@ WindowMsgHandledType SinglePlayerMenuSystem( GameWindow *window, UnsignedInt msg
 			{
 
 				// open up the map select menu
-				TheShell->push( AsciiString( "Menus/MapSelectMenu.wnd" ) );
+				TheShell->push( "Menus/MapSelectMenu.wnd" );
 				buttonPushed = true;
 
-			}  // end if
+			}
 			else if( controlID == buttonLoad )
 			{
 
-			}  // end else if
+			}
 			else if( controlID == buttonBack )
 			{
 
 				// thou art directed to return to thy known solar system immediately!
 				TheShell->pop();
 				buttonPushed = true;
-				
-			}  // end else if
+
+			}
 
 			break;
 
-		}  // end selected
-		
+		}
+
 		default:
 			return MSG_IGNORED;
-	}  // end switch
+	}
 
 	return MSG_HANDLED;
-}  // end SinglePlayerMenuSystem
+}
 

@@ -16,24 +16,24 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*************************************************************************************************** 
- ***                  C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               *** 
- *************************************************************************************************** 
- *                                                                                                 * 
- *                     Project Name : G                                                            * 
- *                                                                                                 * 
- *                         $Archive::                                                             $* 
- *                                                                                                 * 
+/***************************************************************************************************
+ ***                  C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
+ ***************************************************************************************************
+ *                                                                                                 *
+ *                     Project Name : G                                                            *
+ *                                                                                                 *
+ *                         $Archive::                                                             $*
+ *                                                                                                 *
  *                          Creator::Scott K. Bowen - 7/15/2002                                        *
- *                                                                                                 * 
- *                          $Author::                                                             $* 
- *                                                                                                 * 
- *                         $Modtime::                                                             $* 
- *                                                                                                 * 
- *                        $Revision::                                                             $* 
- *                                                                                                 * 
- *-------------------------------------------------------------------------------------------------* 
- * Functions:                                                                                      * 
+ *                                                                                                 *
+ *                          $Author::                                                             $*
+ *                                                                                                 *
+ *                         $Modtime::                                                             $*
+ *                                                                                                 *
+ *                        $Revision::                                                             $*
+ *                                                                                                 *
+ *-------------------------------------------------------------------------------------------------*
+ * Functions:                                                                                      *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  - - -  - - */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -47,7 +47,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Initialization Functions ////////////////////////////////////////////////////////////////////////
 
-DefaultStaticSortListClass::DefaultStaticSortListClass(void) :
+DefaultStaticSortListClass::DefaultStaticSortListClass() :
 	StaticSortListClass(),
 	SortLists(),
 	MinSort(1),
@@ -55,7 +55,7 @@ DefaultStaticSortListClass::DefaultStaticSortListClass(void) :
 {
 }
 
-DefaultStaticSortListClass::~DefaultStaticSortListClass(void)
+DefaultStaticSortListClass::~DefaultStaticSortListClass()
 {
 }
 

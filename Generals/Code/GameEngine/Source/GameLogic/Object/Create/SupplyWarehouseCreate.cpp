@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
@@ -45,25 +45,25 @@ SupplyWarehouseCreate::SupplyWarehouseCreate( Thing *thing, const ModuleData* mo
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-SupplyWarehouseCreate::~SupplyWarehouseCreate( void )
+SupplyWarehouseCreate::~SupplyWarehouseCreate()
 {
 
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
-void SupplyWarehouseCreate::onCreate( void )
+void SupplyWarehouseCreate::onCreate()
 {
 	// Warehouses are never Built.
-	if( ThePlayerList == NULL )
+	if( ThePlayerList == nullptr )
 		return;
 
 	for( Int playerIndex = ThePlayerList->getPlayerCount() - 1; playerIndex >= 0; playerIndex-- )
 	{
 		Player *currentPlayer = ThePlayerList->getNthPlayer( playerIndex );
-		if( currentPlayer == NULL )
+		if( currentPlayer == nullptr )
 			continue;
 		ResourceGatheringManager *manager = currentPlayer->getResourceGatheringManager();
-		if( manager == NULL )
+		if( manager == nullptr )
 			continue;
 		manager->addSupplyWarehouse( getObject() );
 	}
@@ -78,7 +78,7 @@ void SupplyWarehouseCreate::crc( Xfer *xfer )
 	// extend base class
 	CreateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -96,15 +96,15 @@ void SupplyWarehouseCreate::xfer( Xfer *xfer )
 	// extend base class
 	CreateModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void SupplyWarehouseCreate::loadPostProcess( void )
+void SupplyWarehouseCreate::loadPostProcess()
 {
 
 	// extend base class
 	CreateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

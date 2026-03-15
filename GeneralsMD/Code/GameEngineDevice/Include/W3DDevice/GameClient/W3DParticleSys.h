@@ -27,9 +27,6 @@
 
 #pragma once
 
-#ifndef __W3DParticleSys_H_
-#define __W3DParticleSys_H_
-
 #include "GameClient/ParticleSys.h"
 #include "WW3D2/pointgr.h"
 #include "WW3D2/streak.h"
@@ -38,7 +35,7 @@
 
 //=============================================================================
 /** W3D implementation of the game display which is responsible for creating
-  * all interaction with the screen and updating the display 
+  * all interaction with the screen and updating the display
 	*/
 class W3DParticleSystemManager : public ParticleSystemManager
 {
@@ -63,5 +60,3 @@ private:
 	ShareBufferClass<uint8> *m_angleBuffer;			///< array of particle orientations
 	Bool m_readyToRender;											///< if true, it is OK to render
 };
-
-#endif  // end __W3DParticleSys_H_

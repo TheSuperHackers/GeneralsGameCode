@@ -24,9 +24,9 @@
 
 // FILE: CommandButtonHuntUpdate.cpp //////////////////////////////////////////////////////////////////////////
 // Author: John Ahlquist, Sept. 2002
-// Desc:   Update module to handle "Hunting" using a special power.  If the unit is idle, and the 
+// Desc:   Update module to handle "Hunting" using a special power.  If the unit is idle, and the
 // power is not active, it targets a new unit with the power.	 Note that this is an update rather than
-// an AI state because many of the special abilities use the ai to perform portions of the special 
+// an AI state because many of the special abilities use the ai to perform portions of the special
 // ability.
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -52,11 +52,6 @@
 #include "GameLogic/Module/SpecialPowerModule.h"
 #include "GameLogic/ScriptEngine.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -71,27 +66,27 @@ CommandButtonHuntUpdateModuleData::CommandButtonHuntUpdateModuleData()
 {
 	ModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
-		{ "ScanRate",							INI::parseDurationUnsignedInt,	NULL, offsetof( CommandButtonHuntUpdateModuleData, m_scanFrames ) },
-		{ "ScanRange",						INI::parseReal,									NULL, offsetof( CommandButtonHuntUpdateModuleData, m_scanRange ) },
-		{ 0, 0, 0, 0 }
+		{ "ScanRate",							INI::parseDurationUnsignedInt,	nullptr, offsetof( CommandButtonHuntUpdateModuleData, m_scanFrames ) },
+		{ "ScanRange",						INI::parseReal,									nullptr, offsetof( CommandButtonHuntUpdateModuleData, m_scanRange ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 	p.add(dataFieldParse);
 }
 
 //-------------------------------------------------------------------------------------------------
-CommandButtonHuntUpdate::CommandButtonHuntUpdate( Thing *thing, const ModuleData* moduleData ) : 
+CommandButtonHuntUpdate::CommandButtonHuntUpdate( Thing *thing, const ModuleData* moduleData ) :
 UpdateModule( thing, moduleData ),
-m_commandButton(NULL)
+m_commandButton(nullptr)
 {
 	setWakeFrame(getObject(), UPDATE_SLEEP_FOREVER);
 	m_commandButtonName = AsciiString::TheEmptyString;
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-CommandButtonHuntUpdate::~CommandButtonHuntUpdate( void )
+CommandButtonHuntUpdate::~CommandButtonHuntUpdate()
 {
 
 }
@@ -100,15 +95,15 @@ CommandButtonHuntUpdate::~CommandButtonHuntUpdate( void )
 //-------------------------------------------------------------------------------------------------
 void CommandButtonHuntUpdate::onObjectCreated()
 {
-	
+
 }
 
 //-------------------------------------------------------------------------------------------------
 void CommandButtonHuntUpdate::setCommandButton(const AsciiString& buttonName)
 {
 	Object *obj = getObject();
-	m_commandButtonName = buttonName;	
-	m_commandButton = NULL;
+	m_commandButtonName = buttonName;
+	m_commandButton = nullptr;
 	const CommandSet *commandSet = TheControlBar->findCommandSet( obj->getCommandSetString() );
 	if( commandSet )
 	{
@@ -127,14 +122,14 @@ void CommandButtonHuntUpdate::setCommandButton(const AsciiString& buttonName)
 					}
 				}
 			}
-			m_commandButton = NULL;
+			m_commandButton = nullptr;
 		}
 	}
-	if (m_commandButton==NULL) {
+	if (m_commandButton==nullptr) {
 		return;
 	}
 	AIUpdateInterface *ai = obj->getAI();
-	if (ai==NULL ) return;
+	if (ai==nullptr ) return;
 
 	// Stop whatever we're doing.
 	ai->aiIdle(CMD_FROM_AI);
@@ -146,17 +141,17 @@ void CommandButtonHuntUpdate::setCommandButton(const AsciiString& buttonName)
 /** The update callback. */
 //-------------------------------------------------------------------------------------------------
 UpdateSleepTime CommandButtonHuntUpdate::update()
-{	
+{
 
 	Object *obj = getObject();
 
 	AIUpdateInterface *ai = obj->getAI();
-	if (ai==NULL || m_commandButton==NULL) return UPDATE_SLEEP_FOREVER;
+	if (ai==nullptr || m_commandButton==nullptr) return UPDATE_SLEEP_FOREVER;
 
 	if (ai->getLastCommandSource() != CMD_FROM_AI) {
 		// If a script or the player (in this case should only be script, but either way)
 		// we quit hunting.
-		m_commandButton = NULL;
+		m_commandButton = nullptr;
 		m_commandButtonName.clear();
 		return UPDATE_SLEEP_FOREVER;
 	}
@@ -206,7 +201,7 @@ UpdateSleepTime CommandButtonHuntUpdate::huntSpecialPower(AIUpdateInterface *ai)
 	if( spTemplate )
 	{
 		SpecialAbilityUpdate* spUpdate = obj->findSpecialAbilityUpdate( spTemplate->getSpecialPowerType() );
-		if (spUpdate == NULL) return UPDATE_SLEEP_FOREVER;
+		if (spUpdate == nullptr) return UPDATE_SLEEP_FOREVER;
 		if (spUpdate->isActive()) {
 			return UPDATE_SLEEP(data->m_scanFrames);
 		}
@@ -222,7 +217,7 @@ UpdateSleepTime CommandButtonHuntUpdate::huntSpecialPower(AIUpdateInterface *ai)
 
 
 //-------------------------------------------------------------------------------------------------
-Object* CommandButtonHuntUpdate::scanClosestTarget(void)
+Object* CommandButtonHuntUpdate::scanClosestTarget()
 {
 	const CommandButtonHuntUpdateModuleData *data = getCommandButtonHuntUpdateModuleData();
 	Object *me = getObject();
@@ -237,14 +232,14 @@ Object* CommandButtonHuntUpdate::scanClosestTarget(void)
 	filters[0] = &aliveFilter;
 	filters[1] = &filterMapStatus;
 	filters[2] = &filterTeam;
-	filters[3] = NULL;
+	filters[3] = nullptr;
 
  	const SpecialPowerTemplate *spTemplate = m_commandButton->getSpecialPowerTemplate();
-	if( !spTemplate ) return NULL;  // isn't going to happen.
+	if( !spTemplate ) return nullptr;  // isn't going to happen.
 	Bool isBlackLotusVehicleHack = 	(spTemplate->getSpecialPowerType() == SPECIAL_BLACKLOTUS_DISABLE_VEHICLE_HACK);
 	Bool isCaptureBuilding = 	(spTemplate->getSpecialPowerType() == SPECIAL_INFANTRY_CAPTURE_BUILDING);
 	if (isCaptureBuilding) {
-		filters[2] = NULL;  // It's ok (in fact necessary for oil derricks) to capture special buildings.
+		filters[2] = nullptr;  // It's ok (in fact necessary for oil derricks) to capture special buildings.
 	}
 
 	Bool isPlaceExplosive = false;
@@ -252,14 +247,14 @@ Object* CommandButtonHuntUpdate::scanClosestTarget(void)
 	if (spTemplate->getSpecialPowerType() == SPECIAL_TANKHUNTER_TNT_ATTACK) isPlaceExplosive = true;
 
 
-	ObjectIterator *iter = ThePartitionManager->iterateObjectsInRange( me->getPosition(), data->m_scanRange, 
+	ObjectIterator *iter = ThePartitionManager->iterateObjectsInRange( me->getPosition(), data->m_scanRange,
 		FROM_CENTER_2D, filters, ITER_SORTED_NEAR_TO_FAR );
 	MemoryPoolObjectHolder hold(iter);
 
-	Object *bestTarget = NULL;
+	Object *bestTarget = nullptr;
 	Int			effectivePriority=0;
 	Int			actualPriority=0;
-	const AttackPriorityInfo *info=NULL;
+	const AttackPriorityInfo *info=nullptr;
 	if (me->getAI()) {
 		info = me->getAI()->getAttackInfo();
 	}
@@ -272,7 +267,7 @@ Object* CommandButtonHuntUpdate::scanClosestTarget(void)
 			if (other->isDisabled() && isBlackLotusVehicleHack) {
 				// The hack disables the vehicle, so we don't want to do it again.
 				continue;
-			}	
+			}
 			if (isCaptureBuilding) {
 				if (me->getControllingPlayer() == other->getControllingPlayer()) {
 					continue; // no need to capture our own buildings.
@@ -288,7 +283,7 @@ Object* CommandButtonHuntUpdate::scanClosestTarget(void)
 					// Don't target things near explosives... It's just not a good idea.
 					PartitionFilterSamePlayer filterPlayer( me->getControllingPlayer() );	// Look for our own mines.
 					PartitionFilterAcceptByKindOf filterKind(MAKE_KINDOF_MASK(KINDOF_MINE), KINDOFMASK_NONE);
-					PartitionFilter *filters[] = { &filterKind, &filterPlayer, NULL };
+					PartitionFilter *filters[] = { &filterKind, &filterPlayer, nullptr };
 					Object *mine = ThePartitionManager->getClosestObject( other, range, FROM_BOUNDINGSPHERE_2D, filters );// could be null. this is ok.
 					if (mine) {
 						continue;
@@ -298,19 +293,19 @@ Object* CommandButtonHuntUpdate::scanClosestTarget(void)
 				Real dist = sqrt(distSqr);
 				Int curPriority = data->m_scanRange - dist;
 				if (info) curPriority = info->getPriority(other->getTemplate());
-				if (curPriority == 0) 
+				if (curPriority == 0)
 					continue; // don't attack 0 priority targets.
 				Int modifier = dist/TheAI->getAiData()->m_attackPriorityDistanceModifier;
 				Int modPriority = curPriority-modifier;
-				if (modPriority < 1) 
+				if (modPriority < 1)
 					modPriority = 1;
-				if (modPriority > effectivePriority) 
+				if (modPriority > effectivePriority)
 				{
 					effectivePriority = modPriority;
 					actualPriority = curPriority;
 					bestTarget = other;
 				}
-				if (modPriority == effectivePriority && curPriority > actualPriority) 
+				if (modPriority == effectivePriority && curPriority > actualPriority)
 				{
 					effectivePriority = modPriority;
 					actualPriority = curPriority;
@@ -333,7 +328,7 @@ void CommandButtonHuntUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -359,14 +354,14 @@ void CommandButtonHuntUpdate::xfer( Xfer *xfer )
 	{
 
 		// initialize to no command button
-		m_commandButton = NULL;
+		m_commandButton = nullptr;
 
 		// find command button pointer if name is present
 		if( m_commandButtonName.isEmpty() == FALSE )
 		{
 			Object *us = getObject();
 			const CommandSet *commandSet = TheControlBar->findCommandSet( us->getCommandSetString() );
-	
+
 			if( commandSet )
 			{
 				const CommandButton *button;
@@ -377,29 +372,29 @@ void CommandButtonHuntUpdate::xfer( Xfer *xfer )
 					button = commandSet->getCommandButton(i);
 					if( button && button->getName() == m_commandButtonName )
 					{
-					
+
 						m_commandButton = button;
 						break;  // exit for, i
 
-					}  // end if
+					}
 
-				}  // end for, i
+				}
 
-			} // end if, commandSet
+			}
 
-		}  // end if, command button name present
+		}
 
-	}  // end if, loading
+	}
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void CommandButtonHuntUpdate::loadPostProcess( void )
+void CommandButtonHuntUpdate::loadPostProcess()
 {
 
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

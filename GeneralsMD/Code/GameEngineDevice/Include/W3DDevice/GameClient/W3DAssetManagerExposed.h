@@ -22,7 +22,7 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-// FILE: W3DAssetManagerExposed.h 
+// FILE: W3DAssetManagerExposed.h
 /*---------------------------------------------------------------------------*/
 /* EA Pacific                                                                */
 /* Confidential Information	                                                 */
@@ -38,8 +38,6 @@
 /*---------------------------------------------------------------------------*/
 
 #pragma once
-#ifndef _H_W3DASSETMANAGEREXPOSED_
-#define _H_W3DASSETMANAGEREXPOSED_
 
 // INCLUDES ///////////////////////////////////////////////////////////////////
 // DEFINES ////////////////////////////////////////////////////////////////////
@@ -51,6 +49,4 @@
 // Unfortunately, the asset manager can't be called directly from the gamelogic,
 // so this function is here. It should only be called by the particle editor,
 // @todo Remove this function when we are no longer editing particles.
-void ReloadAllTextures(void);
-
-#endif /* _H_W3DASSETMANAGEREXPOSED_ */
+void ReloadAllTextures();

@@ -31,8 +31,7 @@
 
 #ifdef _REENTRANT
 
-#ifndef THREADSAFE_HEADER
-#define THREADSAFE_HEADER
+#pragma once
 
 #define strtok		("strtok() is not MT-SAFE!")
 #define ascctime	("asctime() is not MT-SAFE!")
@@ -57,6 +56,4 @@
 #define pclose          ("pclose() is not MT-SAFE!")
 #define ctermid         ("ctermid() is not MT-SAFE!")
 #define getlogin        ("getlogin() is not MT-SAFE!");
-
-#endif  // THREADSAFE_HEADER
 #endif  // _REENTRANT

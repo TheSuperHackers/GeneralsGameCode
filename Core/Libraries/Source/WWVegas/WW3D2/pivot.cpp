@@ -17,50 +17,49 @@
 */
 
 /* $Header: /Commando/Code/ww3d2/pivot.cpp 1     1/22/01 3:36p Greg_h $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando / G 3D Library                                      * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/ww3d2/pivot.cpp                              $* 
- *                                                                                             * 
- *                       Author:: Greg_h                                                       * 
- *                                                                                             * 
- *                     $Modtime:: 1/08/01 10:04a                                              $* 
- *                                                                                             * 
- *                    $Revision:: 1                                                           $* 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
- *   PivotClass::PivotClass -- Constructor for PivotClass                                      * 
- *   PivotClass::Compute_Transform -- Update the pivot's transformation matrix                 * 
- *   PivotClass::Compute_Transform -- Update the pivot's transformation matrix                 * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando / G 3D Library                                      *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/ww3d2/pivot.cpp                              $*
+ *                                                                                             *
+ *                       Author:: Greg_h                                                       *
+ *                                                                                             *
+ *                     $Modtime:: 1/08/01 10:04a                                              $*
+ *                                                                                             *
+ *                    $Revision:: 1                                                           $*
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
+ *   PivotClass::PivotClass -- Constructor for PivotClass                                      *
+ *   PivotClass::Compute_Transform -- Update the pivot's transformation matrix                 *
+ *   PivotClass::Compute_Transform -- Update the pivot's transformation matrix                 *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "pivot.h"
 #include "wwmath.h"
-#include <string.h>
 
 
-/*********************************************************************************************** 
- * PivotClass::PivotClass -- Constructor for PivotClass                                        * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   07/24/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * PivotClass::PivotClass -- Constructor for PivotClass                                        *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   07/24/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-PivotClass::PivotClass(void) :
-	Parent(NULL),
+PivotClass::PivotClass() :
+	Parent(nullptr),
 	BaseTransform(1),
 	Transform(1),
 #ifdef LAZY_CAP_MTX_ALLOC
-	CapTransformPtr(NULL),
+	CapTransformPtr(nullptr),
 	Index(0),
 	IsVisible(true),
 	WorldSpaceTranslation(false)
@@ -81,7 +80,7 @@ PivotClass::PivotClass(const PivotClass& that) :
 	BaseTransform(that.BaseTransform),
 	Transform(that.Transform),
 #ifdef LAZY_CAP_MTX_ALLOC
-	CapTransformPtr(NULL),
+	CapTransformPtr(nullptr),
 	Index(that.Index),
 	IsVisible(that.IsVisible),
 	WorldSpaceTranslation(that.WorldSpaceTranslation)
@@ -96,7 +95,7 @@ PivotClass::PivotClass(const PivotClass& that) :
 {
 	memcpy(Name, that.Name, sizeof(Name));
 #ifdef LAZY_CAP_MTX_ALLOC
-	if (that.CapTransformPtr != NULL)
+	if (that.CapTransformPtr != nullptr)
 	{
 		CapTransformPtr = MSGW3DNEW("PivotClassCaptureBoneMtx") DynamicMatrix3D;
 		CapTransformPtr->Mat = that.CapTransformPtr->Mat;
@@ -113,11 +112,11 @@ PivotClass& PivotClass::operator=(const PivotClass& that)
 		BaseTransform = that.BaseTransform;
 		Transform = that.Transform;
 	#ifdef LAZY_CAP_MTX_ALLOC
-		CapTransformPtr = NULL;
+		CapTransformPtr = nullptr;
 		Index = that.Index;
 		IsVisible = that.IsVisible;
 		WorldSpaceTranslation = that.WorldSpaceTranslation;
-		if (that.CapTransformPtr != NULL)
+		if (that.CapTransformPtr != nullptr)
 		{
 			CapTransformPtr = MSGW3DNEW("PivotClassCaptureBoneMtx") DynamicMatrix3D;
 			CapTransformPtr->Mat = that.CapTransformPtr->Mat;
@@ -134,7 +133,7 @@ PivotClass& PivotClass::operator=(const PivotClass& that)
 	return *this;
 }
 
-void PivotClass::Capture_Update(void)
+void PivotClass::Capture_Update()
 {
 #ifdef LAZY_CAP_MTX_ALLOC
 	if (!CapTransformPtr)
@@ -145,7 +144,7 @@ void PivotClass::Capture_Update(void)
 	const Matrix3D* ct = &CapTransform;
 #endif
 
-	if ( WorldSpaceTranslation ) 
+	if ( WorldSpaceTranslation )
 	{
 		// The Translation of CapTransform is meant to be in world space,
 		// so remove before applying orientation
@@ -158,8 +157,8 @@ void PivotClass::Capture_Update(void)
 #endif
 		// Now apply translation in world space
 		Transform.Adjust_Translation( ct->Get_Translation() );
-	} 
-	else 
+	}
+	else
 	{
 #ifdef ALLOW_TEMPORARIES
 		Matrix3D::Multiply(Transform, *ct, &(Transform));

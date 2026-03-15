@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef _SUPPLY_CENTER_DOCK_UPDATE_H_
-#define _SUPPLY_CENTER_DOCK_UPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/INI.h"
 #include "Common/GameMemory.h"
@@ -44,8 +41,8 @@ class SupplyCenterDockUpdateModuleData : public DockUpdateModuleData
 
 public:
 
-  SupplyCenterDockUpdateModuleData( void );
-	
+  SupplyCenterDockUpdateModuleData();
+
 	static void buildFieldParse(MultiIniFieldParse& p);
 };
 
@@ -61,14 +58,12 @@ public:
 
 	SupplyCenterDockUpdate( Thing *thing, const ModuleData* moduleData );
 
-	virtual DockUpdateInterface* getDockUpdateInterface() { return this; }
-	virtual Bool action( Object* docker, Object *drone = NULL );	///<For me, this means taking boxes and turning them into money for my ownerplayer
+	virtual DockUpdateInterface* getDockUpdateInterface() override { return this; }
+	virtual Bool action( Object* docker, Object *drone = nullptr ) override;	///<For me, this means taking boxes and turning them into money for my ownerplayer
 
-	virtual UpdateSleepTime update();
+	virtual UpdateSleepTime update() override;
 
 protected:
 
 
 };
-
-#endif

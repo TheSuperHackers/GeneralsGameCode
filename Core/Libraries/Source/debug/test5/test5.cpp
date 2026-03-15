@@ -28,16 +28,16 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "../debug.h"
 
-const char *DebugGetDefaultCommands(void)
+const char *DebugGetDefaultCommands()
 {
   return "!debug.io con add";
 }
 
-void main(void)
+void main()
 {
   // turn on all logs
   Debug::Command("add l + *");
 
   for (int k=0;k<16;k++)
-    DLOG("Testing: " << Debug::Format("0x%04x (%c)",k,'A'+k) << "\n");  
+    DLOG("Testing: " << Debug::Format("0x%04x (%c)",k,'A'+k) << "\n");
 }

@@ -16,8 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef STDERRD_HEADER
-#define STDERRD_HEADER
+#pragma once
 
 #include "odevice.h"
 
@@ -35,5 +34,3 @@ class StderrD : public OutputDevice
      return(len);
    }
 };
-
-#endif

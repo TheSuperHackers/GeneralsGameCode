@@ -16,22 +16,22 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*********************************************************************************************** 
- ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Command & Conquer                                            * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/wwlib/base64.cpp                             $* 
- *                                                                                             * 
+/***********************************************************************************************
+ ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Command & Conquer                                            *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/wwlib/base64.cpp                             $*
+ *                                                                                             *
  *                      $Author:: Jani_p                                                      $*
- *                                                                                             * 
+ *                                                                                             *
  *                     $Modtime:: 5/04/01 8:08p                                               $*
- *                                                                                             * 
+ *                                                                                             *
  *                    $Revision:: 3                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  *   Base64_Decode -- Decodes Base 64 data into its original data form.                        *
  *   Base64_Encode -- Encode data into Base 64 format.                                         *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
@@ -144,7 +144,7 @@ int Base64_Encode(void const * source, int slen, void * dest, int dlen)
 	/*
 	**	Check the parameters for legality.
 	*/
-	if (source == NULL || slen == 0 || dest == NULL || dlen == 0) {
+	if (source == nullptr || slen == 0 || dest == nullptr || dlen == 0) {
 		return(0);
 	}
 
@@ -245,7 +245,7 @@ int Base64_Decode(void const * source, int slen, void * dest, int dlen)
 	/*
 	**	Check the parameters for legality.
 	*/
-	if (source == NULL || slen == 0 || dest == NULL || dlen == 0) {
+	if (source == nullptr || slen == 0 || dest == nullptr || dlen == 0) {
 		return(0);
 	}
 

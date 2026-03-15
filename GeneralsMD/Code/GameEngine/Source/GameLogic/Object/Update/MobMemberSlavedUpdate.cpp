@@ -29,13 +29,12 @@
 // Desc:  Slaved unit(s) remain close to their master. Used by angry Mob members (various)
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "GameClient/InGameUI.h"// selection logic
 #include "GameClient/Drawable.h"
 #include "Common/RandomValue.h"
 #include "Common/Xfer.h"
-#include "GameClient/Drawable.h"
 #include "GameClient/ParticleSys.h"
 #include "GameLogic/AIPathfind.h"
 #include "GameLogic/Damage.h"
@@ -48,18 +47,11 @@
 #include "GameLogic/Module/BodyModule.h"
 #include "GameLogic/Module/MobMemberSlavedUpdate.h"
 #include "GameLogic/Module/SpawnBehavior.h"
-#include "GameClient/InGameUI.h"// selection logic
-#include "GameClient/Drawable.h"
 #include "Common/ThingFactory.h"
-#include "Common/ThingTemplate.h" 
+#include "Common/ThingTemplate.h"
 
 
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 
 #define STRAY_MULTIPLIER 2.0f // Multiplier from stating diestance from tunnel, to max distance from
@@ -78,7 +70,7 @@ MobMemberSlavedUpdate::MobMemberSlavedUpdate( Thing *thing, const ModuleData* mo
 	m_personalColor.red = GameLogicRandomValueReal( 0.2f, 0.4f );
 	m_personalColor.green = GameLogicRandomValueReal( 0.2f, 0.4f );
 	m_personalColor.blue = GameLogicRandomValueReal( 0.2f, 0.4f );
-	
+
 //	Drawable *myDraw = getObject()->getDrawable();
 //	if ( myDraw )
 //		myDraw->colorTint( &m_personalColor );
@@ -92,12 +84,12 @@ MobMemberSlavedUpdate::MobMemberSlavedUpdate( Thing *thing, const ModuleData* mo
 	// MDC: moving to GameLogicRandomValue.  This does not need to be synced, but having it so makes searches *so* much nicer.
 	//getObject()->getDrawable()->setInstanceScale(GameLogicRandomValueReal( 5.0f, 1.5f ));
 
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
-MobMemberSlavedUpdate::~MobMemberSlavedUpdate( void )
+MobMemberSlavedUpdate::~MobMemberSlavedUpdate()
 {
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 void MobMemberSlavedUpdate::onObjectCreated()
@@ -128,25 +120,25 @@ void MobMemberSlavedUpdate::onSlaverDamage( const DamageInfo *info )
 	if( ai )
 		ai->aiGoProne( info, CMD_FROM_AI );
 }
- 
+
 
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime MobMemberSlavedUpdate::update( void )
+UpdateSleepTime MobMemberSlavedUpdate::update()
 {
 /// @todo srj use SLEEPY_UPDATE here
 
 	const MobMemberSlavedUpdateModuleData* data = getMobMemberSlavedUpdateModuleData();
 	Object *me = getObject();
 	if( !me )
-	{ 
+	{
 		return UPDATE_SLEEP_NONE;
 	}
 
 	Object *master = TheGameLogic->findObjectByID( m_slaver );
-	if( master == NULL )
+	if( master == nullptr )
 	{
 		stopSlavedEffects();
-		
+
 		//TheGameLogic->destroyObject( me );
 		me->kill();
 		return UPDATE_SLEEP_NONE;	// you cannot return SLEEP_FOREVER unless you make yourself sleepy...
@@ -186,10 +178,10 @@ UpdateSleepTime MobMemberSlavedUpdate::update( void )
 
 	if ( ++m_framesToWait < 16)
 		return UPDATE_SLEEP_NONE;
-	
+
 	m_framesToWait = 0;
 
-	
+
 	Locomotor *locomotor = myAI->getCurLocomotor();
 	if( !locomotor )
 	{
@@ -230,7 +222,7 @@ UpdateSleepTime MobMemberSlavedUpdate::update( void )
 			{
 				myAI->aiMoveToPosition( master->getPosition(), CMD_FROM_AI ); // NASTY BEEHIVE EFFECT
 			}
-			else 
+			else
 			{
 				Coord3D goalDelta = *myAI->getGoalPosition();
 				goalDelta.sub( &nuPos );
@@ -240,7 +232,7 @@ UpdateSleepTime MobMemberSlavedUpdate::update( void )
 					myAI->aiMoveToPosition( &nuPos, CMD_FROM_AI ); // Whither thou goest... THis causes the mob to reconverge
 				}
 			}
-				
+
 																															// on the fly, instead of doubling back to reconverge
 		}
 		else // master is still, so let's re group in a hurry
@@ -286,19 +278,19 @@ UpdateSleepTime MobMemberSlavedUpdate::update( void )
 		m_catchUpCrisisTimer = 0; // I'm not too far from the nexus this frame
 
 		Int seed = GameLogicRandomValue( 0, 10 );
-		if ( seed == 1 ) 
+		if ( seed == 1 )
 			myAI->chooseLocomotorSet(LOCOMOTORSET_WANDER);
-		else if ( seed == 2 ) 
-			myAI->chooseLocomotorSet(LOCOMOTORSET_PANIC); 
-		else if ( seed == 3 ) 
-			myAI->chooseLocomotorSet(LOCOMOTORSET_NORMAL); 
+		else if ( seed == 2 )
+			myAI->chooseLocomotorSet(LOCOMOTORSET_PANIC);
+		else if ( seed == 3 )
+			myAI->chooseLocomotorSet(LOCOMOTORSET_NORMAL);
 	//	else if ( seed >= 5 ) // go towards mommy's goal
 	//	{
 	//		Coord3D destination = *me->getPosition();
 	//		TheAI->pathfinder()->adjustToPossibleDestination(me, myAI->getLocomotorSet(), &destination);
 	//		myAI->aiMoveToPosition( &destination, CMD_FROM_AI ); // reconverge
 	//	}
-		
+
 	}
 	else // give me something to do while I'm standing here...
 	{
@@ -312,7 +304,7 @@ UpdateSleepTime MobMemberSlavedUpdate::update( void )
 			if ( masterAI->isIdle() ) // if controlling player has pressed stop, we stop! That's it!
 			{
 				myAI->aiIdle(CMD_FROM_AI);
-				primaryVictim = NULL;
+				primaryVictim = nullptr;
 				m_primaryVictimID = INVALID_ID;
 				return UPDATE_SLEEP_NONE;
 			}
@@ -347,7 +339,7 @@ UpdateSleepTime MobMemberSlavedUpdate::update( void )
 		}
 		else
 		{
-			DEBUG_ASSERTCRASH(( spawnerBehavior != NULL ),("Hey!, why for this mob member got no spawner? MLorenzen"));
+			DEBUG_ASSERTCRASH(( spawnerBehavior != nullptr ),("Hey!, why for this mob member got no spawner? MLorenzen"));
 		}
 	}
 
@@ -386,11 +378,11 @@ void MobMemberSlavedUpdate::doCatchUpLogic( Coord3D *pos )
 //-------------------------------------------------------------------------------------------------
 void MobMemberSlavedUpdate::startSlavedEffects( const Object *slaver )
 {
-	if( slaver == NULL )
+	if( slaver == nullptr )
 		return;
 
 	m_slaver = slaver->getID();
-	
+
 	// mark selves as not selectable
 	//getObject()->setStatus( OBJECT_STATUS_UNSELECTABLE );
 
@@ -415,7 +407,7 @@ void MobMemberSlavedUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -453,19 +445,19 @@ void MobMemberSlavedUpdate::xfer( Xfer *xfer )
 
 	// is self tasking
 	xfer->xferBool( &m_isSelfTasking );
-	
+
 	// catch up crisis timer
   xfer->xferUnsignedInt( &m_catchUpCrisisTimer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void MobMemberSlavedUpdate::loadPostProcess( void )
+void MobMemberSlavedUpdate::loadPostProcess()
 {
 
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

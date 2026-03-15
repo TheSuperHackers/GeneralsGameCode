@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Player.h"
 #include "Common/Team.h"
@@ -41,7 +41,7 @@
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-CashHackSpecialPowerModuleData::CashHackSpecialPowerModuleData( void )
+CashHackSpecialPowerModuleData::CashHackSpecialPowerModuleData()
 {
 	m_upgrades.clear();
 	m_defaultAmountToSteal = 0;
@@ -53,28 +53,28 @@ static void parseCashHackUpgradePair( INI* ini, void * /*instance*/, void *store
 {
 	CashHackSpecialPowerModuleData::Upgrades up;
 
-	INI::parseScience(ini, NULL, &up.m_science, NULL);
-	INI::parseInt(ini, NULL, &up.m_amountToSteal, NULL);
+	INI::parseScience(ini, nullptr, &up.m_science, nullptr);
+	INI::parseInt(ini, nullptr, &up.m_amountToSteal, nullptr);
 
 	std::vector<CashHackSpecialPowerModuleData::Upgrades>* s = (std::vector<CashHackSpecialPowerModuleData::Upgrades>*)store;
 	s->push_back(up);
-} 
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 /*static*/ void CashHackSpecialPowerModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
 	SpecialPowerModuleData::buildFieldParse( p );
-	
-	static const FieldParse dataFieldParse[] = 
+
+	static const FieldParse dataFieldParse[] =
 	{
-		{ "UpgradeMoneyAmount", parseCashHackUpgradePair, NULL, offsetof( CashHackSpecialPowerModuleData, m_upgrades ) },
-		{ "MoneyAmount", INI::parseInt, NULL, offsetof( CashHackSpecialPowerModuleData, m_defaultAmountToSteal ) },
-		{ 0, 0, 0, 0 }
+		{ "UpgradeMoneyAmount", parseCashHackUpgradePair, nullptr, offsetof( CashHackSpecialPowerModuleData, m_upgrades ) },
+		{ "MoneyAmount", INI::parseInt, nullptr, offsetof( CashHackSpecialPowerModuleData, m_defaultAmountToSteal ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 	p.add(dataFieldParse);
-	
-}  // end buildFieldParse
+
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -86,14 +86,14 @@ CashHackSpecialPower::CashHackSpecialPower( Thing *thing, const ModuleData *modu
 												: SpecialPowerModule( thing, moduleData )
 {
 
-}  // end CashHackSpecialPower
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-CashHackSpecialPower::~CashHackSpecialPower( void )
+CashHackSpecialPower::~CashHackSpecialPower()
 {
 
-}  // end ~CashHackSpecialPower
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -104,7 +104,7 @@ void CashHackSpecialPower::doSpecialPowerAtLocation( const Coord3D *loc, Real an
 
 	// only allowed at objects
 	return;
-}  
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -112,9 +112,9 @@ Int CashHackSpecialPower::findAmountToSteal() const
 {
 	const CashHackSpecialPowerModuleData* d = getCashHackSpecialPowerModuleData();
 	const Player* controller = getObject()->getControllingPlayer();
-	if (controller != NULL)
+	if (controller != nullptr)
 	{
-		for (std::vector<CashHackSpecialPowerModuleData::Upgrades>::const_iterator it = d->m_upgrades.begin(); 
+		for (std::vector<CashHackSpecialPowerModuleData::Upgrades>::const_iterator it = d->m_upgrades.begin();
 					it != d->m_upgrades.end();
 					++it)
 		{
@@ -166,7 +166,7 @@ void CashHackSpecialPower::doSpecialPowerAtObject( Object *victim, UnsignedInt c
 			pos.add( self->getPosition() );
 			pos.z += 20.0f; //add a little z to make it show up above the unit.
 			TheInGameUI->addFloatingText( moneyString, &pos, GameMakeColor( 0, 255, 0, 255 ) );
-		
+
 			//Display cash lost floating over the target
 			moneyString.format( TheGameText->fetch( "GUI:LoseCash" ), cash );
 			pos.zero();
@@ -176,7 +176,7 @@ void CashHackSpecialPower::doSpecialPowerAtObject( Object *victim, UnsignedInt c
 		}
 	}
 
-}  
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -187,7 +187,7 @@ void CashHackSpecialPower::crc( Xfer *xfer )
 	// extend base class
 	SpecialPowerModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -205,15 +205,15 @@ void CashHackSpecialPower::xfer( Xfer *xfer )
 	// extend base class
 	SpecialPowerModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void CashHackSpecialPower::loadPostProcess( void )
+void CashHackSpecialPower::loadPostProcess()
 {
 
 	// extend base class
 	SpecialPowerModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

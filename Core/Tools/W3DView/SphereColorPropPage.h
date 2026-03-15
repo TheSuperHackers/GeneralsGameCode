@@ -16,12 +16,8 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#if !defined(AFX_SPHERECOLORPROPPAGE_H__E86BBE86_F527_11D3_A08F_00104B791122__INCLUDED_)
-#define AFX_SPHERECOLORPROPPAGE_H__E86BBE86_F527_11D3_A08F_00104B791122__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
+
 // SphereColorPropPage.h : header file
 //
 
@@ -40,7 +36,7 @@ class SphereColorPropPageClass : public CPropertyPage
 
 // Construction
 public:
-	SphereColorPropPageClass (SphereRenderObjClass *sphere = NULL);
+	SphereColorPropPageClass (SphereRenderObjClass *sphere = nullptr);
 	~SphereColorPropPageClass ();
 
 // Dialog Data
@@ -83,7 +79,7 @@ public:
 	//
 	//	Inline accessors
 	//
-	
+
 	SphereRenderObjClass *		Get_Sphere (void) const							{ return m_RenderObj; }
 	void								Set_Sphere (SphereRenderObjClass *sphere)	{ m_RenderObj = sphere; Initialize (); }
 	bool								Is_Data_Valid (void) const						{ return m_bValid; }
@@ -111,17 +107,14 @@ private:
 	ColorBarClass *				m_VectorBar;
 	bool								m_EnableOpactiyVector;
 	bool								m_InvertVector;
-	
+
 	SphereColorChannelClass		m_ColorChannel;
 	SphereColorChannelClass		m_OrigColorChannel;
 	SphereAlphaChannelClass		m_AlphaChannel;
 	SphereAlphaChannelClass		m_OrigAlphaChannel;
 	SphereVectorChannelClass	m_VectorChannel;
-	SphereVectorChannelClass	m_OrigVectorChannel;	
+	SphereVectorChannelClass	m_OrigVectorChannel;
 };
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_SPHERECOLORPROPPAGE_H__E86BBE86_F527_11D3_A08F_00104B791122__INCLUDED_)
-

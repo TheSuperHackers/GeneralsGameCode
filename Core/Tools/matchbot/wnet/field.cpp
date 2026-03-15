@@ -16,25 +16,25 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*************************************************************************** 
- *                                                                         * 
- *                 Project Name : Westwood Auto Registration App           * 
- *                                                                         * 
- *                    File Name : FIELD.CPP                                * 
- *                                                                         * 
- *                   Programmer : Philip W. Gorrow                         * 
- *                                                                         * 
- *                   Start Date : 04/22/96                                 * 
- *                                                                         * 
- *                  Last Update : April 22, 1996 [PWG]                     * 
- *                                                                         * 
- *  Actual member function for the field class.                            * 
- *-------------------------------------------------------------------------* 
- * Functions:                                                              * 
+/***************************************************************************
+ *                                                                         *
+ *                 Project Name : Westwood Auto Registration App           *
+ *                                                                         *
+ *                    File Name : FIELD.cpp                                *
+ *                                                                         *
+ *                   Programmer : Philip W. Gorrow                         *
+ *                                                                         *
+ *                   Start Date : 04/22/96                                 *
+ *                                                                         *
+ *                  Last Update : April 22, 1996 [PWG]                     *
+ *                                                                         *
+ *  Actual member function for the field class.                            *
+ *-------------------------------------------------------------------------*
+ * Functions:                                                              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 #include <string.h>
 #include <sys/types.h>
-#ifndef _WINDOWS
+#ifndef _WIN32
 #include <netinet/in.h>
 #else
 #define Win32_Winsock
@@ -51,56 +51,56 @@ void FieldClass::Clear(void)
   strcpy(ID,"");
   DataType=0;
   Size=0;
-  Data=NULL;
-  Next=NULL;
+  Data=nullptr;
+  Next=nullptr;
 }
 
 
 FieldClass::FieldClass(char *id, char data)
 {
-  Data=NULL;
+  Data=nullptr;
   Set(id,data);
 }
- 
+
 FieldClass::FieldClass(char *id, unsigned char data)
 {
-  Data=NULL;
+  Data=nullptr;
   Set(id,data);
 }
- 
+
 FieldClass::FieldClass(char *id, short data)
 {
-  Data=NULL;
+  Data=nullptr;
   Set(id,data);
 }
- 
+
 FieldClass::FieldClass(char *id, unsigned short data)
 {
-  Data=NULL;
+  Data=nullptr;
   Set(id,data);
 }
- 
+
 FieldClass::FieldClass(char *id, long data)
 {
-  Data=NULL;
+  Data=nullptr;
   Set(id,data);
 }
- 
+
 FieldClass::FieldClass(char *id, unsigned long data)
 {
-  Data=NULL;
+  Data=nullptr;
   Set(id,data);
 }
- 
+
 FieldClass::FieldClass(char *id, char *data)
 {
-  Data=NULL;
+  Data=nullptr;
   Set(id,data);
 }
 
 FieldClass::FieldClass(char *id, void *data, int length)
 {
-  Data=NULL;
+  Data=nullptr;
   Set(id,data,length);
 }
 
@@ -224,20 +224,20 @@ char *FieldClass::Get_ID(void)
 return(ID);
 }
 
-/************************************************************************** 
+/**************************************************************************
  * PACKETCLASS::HOST_TO_NET_FIELD -- Converts host field to net format    *
- *                                                                        * 
+ *                                                                        *
  * INPUT:    FIELD   * to the data field we need to convert               *
- *                                                                        * 
+ *                                                                        *
  * OUTPUT:     none                                                       *
- *                                                                        * 
- * HISTORY:                                                               * 
- *   04/22/1996 PWG : Created.                                            * 
+ *                                                                        *
+ * HISTORY:                                                               *
+ *   04/22/1996 PWG : Created.                                            *
  *========================================================================*/
 void FieldClass::Host_To_Net(void)
 {
   //
-  // Before we convert the data type, we should convert the actual data 
+  // Before we convert the data type, we should convert the actual data
   //  sent.
   //
   switch (DataType) {
@@ -270,15 +270,15 @@ void FieldClass::Host_To_Net(void)
   Size      = htons(Size);
 }
 
-/************************************************************************** 
+/**************************************************************************
  * PACKETCLASS::NET_TO_HOST_FIELD -- Converts net field to host format    *
- *                                                                        * 
+ *                                                                        *
  * INPUT:    FIELD   * to the data field we need to convert               *
- *                                                                        * 
+ *                                                                        *
  * OUTPUT:     none                                                       *
- *                                                                        * 
- * HISTORY:                                                               * 
- *   04/22/1996 PWG : Created.                                            * 
+ *                                                                        *
+ * HISTORY:                                                               *
+ *   04/22/1996 PWG : Created.                                            *
  *========================================================================*/
 void FieldClass::Net_To_Host(void)
 {
@@ -289,7 +289,7 @@ void FieldClass::Net_To_Host(void)
   Size      = ntohs(Size);
 
   //
-  // Before we convert the data type, we should convert the actual data 
+  // Before we convert the data type, we should convert the actual data
   //  sent.
   //
   switch (DataType) {

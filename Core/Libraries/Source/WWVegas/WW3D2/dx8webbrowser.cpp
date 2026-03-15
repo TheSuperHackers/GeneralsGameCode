@@ -27,7 +27,7 @@
 // Date of Creation	: 6/4/2002
 //
 //******************************************************************************************
-// $Header: $ 
+// $Header: $
 //******************************************************************************************
 
 #include "dx8webbrowser.h"
@@ -46,6 +46,9 @@
 
 #else
 
+#ifdef __MINGW32__
+#include "Utility/comsupp_compat.h"  // MinGW COM support compatibility
+#endif
 #include <comutil.h>
 #include <comip.h>
 
@@ -57,7 +60,7 @@ typedef _com_ptr_t<_com_IIID<IFEBrowserEngine2, &__uuidof(IFEBrowserEngine2)>> I
 
 static	IFEBrowserEngine2Ptr	pBrowser = 0;
 
-HWND		DX8WebBrowser::hWnd = 0;
+HWND		DX8WebBrowser::hWnd = nullptr;
 
 bool DX8WebBrowser::Initialize(	const char* badpageurl,
 											const char* loadingpageurl,
@@ -67,7 +70,7 @@ bool DX8WebBrowser::Initialize(	const char* badpageurl,
 	if(pBrowser == 0)
 	{
 		// Initialize COM
-		CoInitialize(0);
+		CoInitialize(nullptr);
 
 		// Create an instance of the browser control
 		HRESULT hr = pBrowser.CreateInstance(__uuidof(FEBrowserEngine2));
@@ -126,7 +129,7 @@ void DX8WebBrowser::Shutdown()
 		// Release the smart pointer.
 		pBrowser = 0;
 
-		hWnd = 0;
+		hWnd = nullptr;
 
 		// Shut down COM
 		CoUninitialize();
@@ -139,13 +142,13 @@ void DX8WebBrowser::Shutdown()
 // ******************************************************************************************
 // * Description: 	Updates the browser image surfaces by copying the bits from the browser
 // *						DCs to the D3D Image surfaces.
-// * 
-// * Return Type: 	
-// * 
+// *
+// * Return Type:
+// *
 // * Argument:    	void
-// * 
+// *
 // ******************************************************************************************
-void	DX8WebBrowser::Update(void)
+void	DX8WebBrowser::Update()
 {
 	if(pBrowser) pBrowser->D3DUpdate();
 };
@@ -155,11 +158,11 @@ void	DX8WebBrowser::Update(void)
 // * Function Name: DX8WebBrowser::Render
 // ******************************************************************************************
 // * Description: 	Draws all browsers to the back buffer.
-// * 
-// * Return Type: 	
-// * 
+// *
+// * Return Type:
+// *
 // * Argument:    	int backbufferindex
-// * 
+// *
 // ******************************************************************************************
 void	DX8WebBrowser::Render(int backbufferindex)
 {
@@ -170,9 +173,9 @@ void	DX8WebBrowser::Render(int backbufferindex)
 // * Function Name: DX8WebBrowser::CreateBrowser
 // ******************************************************************************************
 // * Description: 	Creates a browser window.
-// * 
-// * Return Type: 	
-// * 
+// *
+// * Return Type:
+// *
 // * Argument:    	const char* browsername -	This is a "name" used to identify the
 // *															browser instance.  Multiple browsers can
 // *															be created, and are referenced using this name.
@@ -185,11 +188,11 @@ void	DX8WebBrowser::Render(int backbufferindex)
 // *												at the specified rate (number of milliseconds) regardless
 // *												of paint messages.  When this is zero (the default) the browser
 // *												image is only updated whenever a paint message is received.
-// * 
+// *
 // ******************************************************************************************
 void	DX8WebBrowser::CreateBrowser(const char* browsername, const char* url, int x, int y, int w, int h, int updateticks, LONG options, LPDISPATCH gamedispatch)
 {
-	WWDEBUG_SAY(("DX8WebBrowser::CreateBrowser - Creating browser with the name %s, url = %s, (x, y, w, h) = (%d, %d, %d, %d), update ticks = %d\n", browsername, url, x, y, h, w, updateticks));
+	WWDEBUG_SAY(("DX8WebBrowser::CreateBrowser - Creating browser with the name %s, url = %s, (x, y, w, h) = (%d, %d, %d, %d), update ticks = %d", browsername, url, x, y, h, w, updateticks));
 	if(pBrowser)
 	{
 		_bstr_t brsname(browsername);
@@ -204,15 +207,15 @@ void	DX8WebBrowser::CreateBrowser(const char* browsername, const char* url, int 
 // ******************************************************************************************
 // * Description: 	Destroys the specified browser.  This closes the window and releases
 // *						the browser instance.
-// * 
-// * Return Type: 	
-// * 
+// *
+// * Return Type:
+// *
 // * Argument:    	const char* browsername - The name of the browser to destroy.
-// * 
+// *
 // ******************************************************************************************
 void	DX8WebBrowser::DestroyBrowser(const char* browsername)
 {
-	WWDEBUG_SAY(("DX8WebBrowser::DestroyBrowser - destroying browser %s\n", browsername));
+	WWDEBUG_SAY(("DX8WebBrowser::DestroyBrowser - destroying browser %s", browsername));
 	if(pBrowser)
 		pBrowser->DestroyBrowser(_bstr_t(browsername));
 }
@@ -223,11 +226,11 @@ void	DX8WebBrowser::DestroyBrowser(const char* browsername)
 // ******************************************************************************************
 // * Description: 	This function checks to see if a browser of the specified name exists and
 // *						is currently open.
-// * 
-// * Return Type: 	
-// * 
+// *
+// * Return Type:
+// *
 // * Argument:    	const char* browsername - The name of the browser to test.
-// * 
+// *
 // ******************************************************************************************
 bool	DX8WebBrowser::Is_Browser_Open(const char* browsername)
 {
@@ -244,12 +247,12 @@ bool	DX8WebBrowser::Is_Browser_Open(const char* browsername)
 // * Function Name: DX8WebBrowser::Navigate
 // ******************************************************************************************
 // * Description: 	This function causes the browser to navigate to the specified page.
-// * 
-// * Return Type: 	
-// * 
+// *
+// * Return Type:
+// *
 // * Argument:    	const char* browsername - The name of the browser to test.
 // *						const char* url - The url to navigate to.
-// * 
+// *
 // ******************************************************************************************
 void	DX8WebBrowser::Navigate(const char* browsername, const char* url)
 {

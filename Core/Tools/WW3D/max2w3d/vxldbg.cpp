@@ -17,22 +17,22 @@
 */
 
 /* $Header: /Commando/Code/Tools/max2w3d/vxldbg.cpp 3     10/28/97 6:08p Greg_h $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando / G 3D Engine                                       * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/Tools/max2w3d/vxldbg.cpp                     $* 
- *                                                                                             * 
- *                      $Author:: Greg_h                                                      $* 
- *                                                                                             * 
- *                     $Modtime:: 10/14/97 3:07p                                              $* 
- *                                                                                             * 
- *                    $Revision:: 3                                                           $* 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando / G 3D Engine                                       *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/Tools/max2w3d/vxldbg.cpp                     $*
+ *                                                                                             *
+ *                      $Author:: Greg_h                                                      $*
+ *                                                                                             *
+ *                     $Modtime:: 10/14/97 3:07p                                              $*
+ *                                                                                             *
+ *                    $Revision:: 3                                                           $*
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -49,11 +49,11 @@ static PaletteClass _VoxelPalette;
 
 VoxelDebugWindowClass::VoxelDebugWindowClass(VoxelClass * vxl) :
 	CurLayer(0),
-	Bitmap(NULL),
+	Bitmap(nullptr),
 	Voxel(vxl),
 	WindowHWND(0),
 	ViewportHWND(0),
-	LayerSpin(NULL)
+	LayerSpin(nullptr)
 {
 	_VoxelPalette[0] = RGBClass(0,0,0);
 	_VoxelPalette[1] = RGBClass(128,255,128);
@@ -64,13 +64,13 @@ VoxelDebugWindowClass::~VoxelDebugWindowClass(void)
 	ReleaseISpinner(LayerSpin);
 }
 
-void VoxelDebugWindowClass::Display_Window(void) 
+void VoxelDebugWindowClass::Display_Window(void)
 {
 	DialogBoxParam
 						(
 							AppInstance,
 							MAKEINTRESOURCE (IDD_VOXEL_DEBUG_DIALOG),
-							NULL,
+							nullptr,
 							(DLGPROC) _dialog_proc,
 							(LPARAM) this
 						);
@@ -82,7 +82,7 @@ bool VoxelDebugWindowClass::Dialog_Proc
 	HWND hWnd,
 	UINT message,
 	WPARAM wParam,
-	LPARAM 
+	LPARAM
 )
 {
 	RECT crect;
@@ -120,7 +120,7 @@ bool VoxelDebugWindowClass::Dialog_Proc
 
 			update_display();
 
-			SetCursor(LoadCursor (NULL, IDC_ARROW));
+			SetCursor(LoadCursor (nullptr, IDC_ARROW));
 
 			return 1;
 
@@ -137,7 +137,7 @@ bool VoxelDebugWindowClass::Dialog_Proc
 				case IDOK:
 
 					// done!
-					SetCursor(LoadCursor (NULL, IDC_WAIT));
+					SetCursor(LoadCursor (nullptr, IDC_WAIT));
 					EndDialog(hWnd, 1);
 					break;
 			}
@@ -160,7 +160,7 @@ bool VoxelDebugWindowClass::Dialog_Proc
 					break;
 			}
 
-			
+
 		/*******************************************************************
 		* WM_PAINT
 		*
@@ -172,9 +172,9 @@ bool VoxelDebugWindowClass::Dialog_Proc
 
 			GetClientRect(ViewportHWND,&crect);
 			ValidateRect(ViewportHWND,&crect);
-			
+
 			break;
-			
+
 	}
 	return 0;
 }
@@ -183,16 +183,16 @@ bool VoxelDebugWindowClass::Dialog_Proc
 void VoxelDebugWindowClass::update_display(void)
 {
 	int i,j;
-	
+
 	/*
 	** Bail out if everything isn't right
 	*/
-	if ((Bitmap == NULL) || (Voxel == NULL)) {
+	if ((Bitmap == nullptr) || (Voxel == nullptr)) {
 		return;
 	}
 
 	/*
-	** Update the contents of the DIB based on 
+	** Update the contents of the DIB based on
 	** the contents of the current voxel layer.
 	*/
 
@@ -223,7 +223,7 @@ void VoxelDebugWindowClass::update_display(void)
 	int y1 = 2 * Bitmap->Get_Height(); //cy + Bitmap->Get_Height();
 
 //	BitBlt(hdcwindow,0,0,Bitmap->Get_Width(),Bitmap->Get_Height(),hdcdib,0,0,SRCCOPY);
-	StretchBlt(		hdcwindow, x0, y0, x1, y1, 
+	StretchBlt(		hdcwindow, x0, y0, x1, y1,
 						hdcdib, 0, 0, Bitmap->Get_Width(), Bitmap->Get_Height(), SRCCOPY);
 
 	SelectObject(hdcdib, holdbitmap);
@@ -241,7 +241,7 @@ BOOL CALLBACK _dialog_proc
 	LPARAM lParam
 )
 {
-	static VoxelDebugWindowClass * window = NULL;
+	static VoxelDebugWindowClass * window = nullptr;
 
 	if (message == WM_INITDIALOG) {
 		window = (VoxelDebugWindowClass *) lParam;

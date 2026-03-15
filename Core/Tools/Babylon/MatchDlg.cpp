@@ -29,18 +29,18 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-BabylonText *MatchingBabylonText = NULL;
+BabylonText *MatchingBabylonText = nullptr;
 BabylonText *MatchOriginalText;
 BabylonLabel *MatchLabel;
 
 #define MAX_MATCH 256
-static BabylonText *current_match = NULL;
+static BabylonText *current_match = nullptr;
 
 /////////////////////////////////////////////////////////////////////////////
 // CMatchDlg dialog
 
 
-CMatchDlg::CMatchDlg(CWnd* pParent /*=NULL*/)
+CMatchDlg::CMatchDlg(CWnd* pParent /*=nullptr*/)
 	: CDialog(CMatchDlg::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(CMatchDlg)
@@ -70,22 +70,22 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CMatchDlg message handlers
 
-void CMatchDlg::OnCancel() 
+void CMatchDlg::OnCancel()
 {
 	// TODO: Add extra cleanup here
-	
-	MatchingBabylonText = NULL;	
+
+	MatchingBabylonText = nullptr;
 	CDialog::OnCancel();
 }
 
-void CMatchDlg::OnNomatch() 
+void CMatchDlg::OnNomatch()
 {
 	// TODO: Add your control notification handler code here
-	MatchingBabylonText = NULL;	
+	MatchingBabylonText = nullptr;
 	CDialog::OnOK ();
 }
 
-void CMatchDlg::OnMatch() 
+void CMatchDlg::OnMatch()
 {
 	// TODO: Add your control notification handler code here
 	if ( (MatchingBabylonText = current_match ) )
@@ -97,7 +97,7 @@ void CMatchDlg::OnMatch()
 	CDialog::OnOK ();
 }
 
-BOOL CMatchDlg::OnInitDialog() 
+BOOL CMatchDlg::OnInitDialog()
 {
 	BabylonText *text;
 	ListSearch sh;
@@ -107,12 +107,12 @@ BOOL CMatchDlg::OnInitDialog()
 	static char buffer[4*1024];
 
 
-	sprintf ( buffer, "Resolve umatched text from \"%s\" on line %d", MatchLabel->NameSB(), 
+	sprintf ( buffer, "Resolve umatched text from \"%s\" on line %d", MatchLabel->NameSB(),
 							MatchOriginalText->LineNumber() );
 	SetWindowText ( buffer );
 	CDialog::OnInitDialog();
 
-	current_match = NULL;
+	current_match = nullptr;
 
 	newtext = (CStatic *) GetDlgItem ( IDC_NEWTEXT );
 	newtext->SetWindowText ( MatchOriginalText->GetSB());
@@ -141,23 +141,23 @@ BOOL CMatchDlg::OnInitDialog()
 			{
 				result = 0;
 			}
-			index++; 
+			index++;
 		}
-		
+
 		text = MatchLabel->NextText ( sh );
 	}
 
 	combo->SetCurSel ( 0 );
 	OnSelchangeMatchcombo();
-	MatchingBabylonText = NULL;	
+	MatchingBabylonText = nullptr;
 	// TODO: Add extra initialization here
-	
+
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
 
 
-void CMatchDlg::OnSelchangeMatchcombo() 
+void CMatchDlg::OnSelchangeMatchcombo()
 {
 	// TODO: Add your control notification handler code here
 	int index;
@@ -173,11 +173,11 @@ void CMatchDlg::OnSelchangeMatchcombo()
 	}
 	else
 	{
-		current_match = NULL;
+		current_match = nullptr;
 	}
 }
 
-void CMatchDlg::OnSkip() 
+void CMatchDlg::OnSkip()
 {
 	// TODO: Add your control notification handler code here
 		 EndDialog ( IDSKIP );

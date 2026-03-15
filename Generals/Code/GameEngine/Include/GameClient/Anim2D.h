@@ -29,20 +29,18 @@
 
 #pragma once
 
-#ifndef __ANIM_2D_H_
-#define __ANIM_2D_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/Snapshot.h"
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
+class Anim2DCollection;
 class Image;
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 enum Anim2DMode CPP_11(: Int)
 {
-	
+
 	ANIM_2D_INVALID = 0,
 	ANIM_2D_ONCE,
 	ANIM_2D_ONCE_BACKWARDS,
@@ -52,11 +50,11 @@ enum Anim2DMode CPP_11(: Int)
 	ANIM_2D_PING_PONG_BACKWARDS,
 	// dont' forget to add new animation mode names to Anim2DModeNames[] below
 
-	ANIM_2D_NUM_MODES						// keep this last please
+	ANIM_2D_NUM_MODES
 
 };
 #ifdef DEFINE_ANIM_2D_MODE_NAMES
-static const char *Anim2DModeNames[] = 
+static const char *const Anim2DModeNames[] =
 {
 	"NONE",
 	"ONCE",
@@ -65,8 +63,9 @@ static const char *Anim2DModeNames[] =
 	"LOOP_BACKWARDS",
 	"PING_PONG",
 	"PING_PONG_BACKWARDS",
-	NULL
+	nullptr
 };
+static_assert(ARRAY_SIZE(Anim2DModeNames) == ANIM_2D_NUM_MODES + 1, "Incorrect array size");
 #endif
 
 // ------------------------------------------------------------------------------------------------
@@ -74,25 +73,25 @@ static const char *Anim2DModeNames[] =
 // ------------------------------------------------------------------------------------------------
 class Anim2DTemplate : public MemoryPoolObject
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(Anim2DTemplate, "Anim2DTemplate")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(Anim2DTemplate, "Anim2DTemplate")
 public:
 
 	Anim2DTemplate( AsciiString name );
-	//virtual ~Anim2DTemplate( void );
+	//virtual ~Anim2DTemplate();
 
-	AsciiString getName( void ) const { return m_name; }
+	AsciiString getName() const { return m_name; }
 	const Image *getFrame( UnsignedShort frameNumber ) const;
-	UnsignedShort getNumFrames( void ) const { return m_numFrames; }
-	UnsignedShort getNumFramesBetweenUpdates( void ) const { return m_framesBetweenUpdates; }
-	Anim2DMode getAnimMode( void ) const { return m_animMode; }
-	Bool isRandomizedStartFrame( void ) const { return m_randomizeStartFrame; }
+	UnsignedShort getNumFrames() const { return m_numFrames; }
+	UnsignedShort getNumFramesBetweenUpdates() const { return m_framesBetweenUpdates; }
+	Anim2DMode getAnimMode() const { return m_animMode; }
+	Bool isRandomizedStartFrame() const { return m_randomizeStartFrame; }
 
 	// list access for use by the Anim2DCollection only
 	void friend_setNextTemplate( Anim2DTemplate *animTemplate ) { m_nextTemplate = animTemplate; }
-	Anim2DTemplate *friend_getNextTemplate( void ) const { return m_nextTemplate; };
-	
+	Anim2DTemplate *friend_getNextTemplate() const { return m_nextTemplate; };
+
 	// INI methods
-	const FieldParse *getFieldParse( void ) const { return s_anim2DFieldParseTable; }
+	const FieldParse *getFieldParse() const { return s_anim2DFieldParseTable; }
 	void storeImage( const Image *image );								///< store image in next available slot
 	void allocateImages( UnsignedShort numFrames );	///< allocate the array of image pointers to use
 
@@ -143,26 +142,26 @@ public:
 	Anim2D( Anim2DTemplate *animTemplate, Anim2DCollection *collectionSystem );
 	// virtual destructor prototype provided by memory pool object
 
-	UnsignedShort getCurrentFrame( void ) const { return m_currentFrame; }		///< get our current frame #
+	UnsignedShort getCurrentFrame() const { return m_currentFrame; }		///< get our current frame #
 	void setCurrentFrame( UnsignedShort frame );				///< set the current frame #
-	void randomizeCurrentFrame( void );									///< randomize the current frame #
-	void reset( void );																	///< reset the current frame to the "start"
+	void randomizeCurrentFrame();									///< randomize the current frame #
+	void reset();																	///< reset the current frame to the "start"
 	void setStatus( UnsignedByte statusBits );					///< set status bit(s)
 	void clearStatus( UnsignedByte statusBits );				///< clear status bit(s)
-	UnsignedByte getStatus( void ) const { return m_status; }	///< return status bits(s)
+	UnsignedByte getStatus() const { return m_status; }	///< return status bits(s)
 	void setAlpha( Real alpha ) { m_alpha = alpha; }		///< set alpha value
-	Real getAlpha( void ) const { return m_alpha; }						///< return the current alpha value
+	Real getAlpha() const { return m_alpha; }						///< return the current alpha value
 
 	//Allows you to play a segment of an animation.
 	void setMinFrame( UnsignedShort frame ) { m_minFrame = frame; }
 	void setMaxFrame( UnsignedShort frame ) { m_maxFrame = frame; }
 
 	// info about the size of the current frame
-	UnsignedInt getCurrentFrameWidth( void ) const;			///< return natural width of image in the current frame
-	UnsignedInt getCurrentFrameHeight( void ) const;		///< return natural height of image in the current frame
-	const Anim2DTemplate *getAnimTemplate( void ) const { return m_template; }	///< return our template
+	UnsignedInt getCurrentFrameWidth() const;			///< return natural width of image in the current frame
+	UnsignedInt getCurrentFrameHeight() const;		///< return natural height of image in the current frame
+	const Anim2DTemplate *getAnimTemplate() const { return m_template; }	///< return our template
 
-	void draw( Int x, Int y );													///< draw iamge at location using natural width/height
+	void draw( Int x, Int y );													///< draw image at location using natural width/height
 	void draw( Int x, Int y, Int width, Int height );		///< draw image at location using forced width/height
 
 protected:
@@ -170,9 +169,9 @@ protected:
 	// snapshot methods
 	virtual void crc( Xfer *xfer ) { }
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void ) { }
+	virtual void loadPostProcess() { }
 
-	void tryNextFrame( void );						///< we've just drawn ... try to update our frame if necessary
+	void tryNextFrame();						///< we've just drawn ... try to update our frame if necessary
 
 	UnsignedShort m_currentFrame;					///< current frame of our animation
 	UnsignedInt m_lastUpdateFrame;				///< last frame we updated on
@@ -196,12 +195,12 @@ class Anim2DCollection : public SubsystemInterface
 
 public:
 
-	Anim2DCollection( void );
-	virtual ~Anim2DCollection( void );
+	Anim2DCollection();
+	virtual ~Anim2DCollection();
 
-	virtual void init( void );						///< initialize system
-	virtual void reset( void ) { };				///< reset system
-	virtual void update( void );					///< update system
+	virtual void init();						///< initialize system
+	virtual void reset() { };				///< reset system
+	virtual void update();					///< update system
 
 	Anim2DTemplate *findTemplate( const AsciiString& name );				///< find animation template
 	Anim2DTemplate *newTemplate( const AsciiString& name );				///< allocate a new template to be loaded
@@ -221,5 +220,3 @@ protected:
 
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
 extern Anim2DCollection *TheAnim2DCollection;
-
-#endif  // end __ANIM_2D_H_

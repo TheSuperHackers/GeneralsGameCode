@@ -17,12 +17,12 @@
 */
 
 //----------------------------------------------------------------------------=
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					                  
-//                Copyright(C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright(C) 2001 - All Rights Reserved
+//
 //----------------------------------------------------------------------------
 //
 // Project:    WSYS Library
@@ -31,19 +31,14 @@
 //
 // File name:  wsys/StdFileSystem.h
 //
-// Created:    
+// Created:
 //
 //----------------------------------------------------------------------------
 
 #pragma once
 
-#ifndef __WSYS_STDFILESYSTEM_H
-#define __WSYS_STDFILESYSTEM_H
-
-
-
 //----------------------------------------------------------------------------
-//           Includes                                                      
+//           Includes
 //----------------------------------------------------------------------------
 
 #ifndef __WSYS_FILE_H
@@ -84,9 +79,5 @@ class StdFileSystem	: public FileSystem
 };
 
 //----------------------------------------------------------------------------
-//           Inlining                                                       
+//           Inlining
 //----------------------------------------------------------------------------
-
-
-
-#endif // __WSYS_STDFILESYSTEM_H

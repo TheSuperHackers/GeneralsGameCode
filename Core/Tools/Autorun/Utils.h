@@ -17,12 +17,12 @@
 */
 
 /***************************************************************************
- *** C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S 		 *** 
+ *** C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S 		 ***
  ***************************************************************************
  *                                                                         *
  *     	          Project Name : Setup                   				   *
  *                                                                         *
- *                    File Name : UTILS.H                                  *
+ *                    File Name : UTILS.h                                  *
  *                                                                         *
  *                   Programmers: Maria del Mar McCready Legg              *
  *                                                                         *
@@ -33,10 +33,8 @@
  *-------------------------------------------------------------------------*
  * Functions:                                                              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-#pragma once
 
-#ifndef UTILS_H
-#define UTILS_H
+#pragma once
 
 #include <windows.h>
 
@@ -48,7 +46,7 @@ template<class T>
 void swap( T & left, T & right )
 {
 	T temp;
-   
+
 	temp  = left;
 	left  = right;
 	right = temp;
@@ -70,6 +68,3 @@ wchar_t *	Path_Remove_Back_Slash			( wchar_t *path );
 void		PlugInProductName				( char *szString, int nName );
 void		PlugInProductName				( char *szString, char *szName );
 void		PlugInProductName				( wchar_t *szString, const wchar_t *szName );
-
-
-#endif

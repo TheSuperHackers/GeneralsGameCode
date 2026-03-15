@@ -24,12 +24,12 @@
 
 // FILE: ProductionPrerequisite.cpp /////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:   RTS3
@@ -42,7 +42,7 @@
 //
 //-----------------------------------------------------------------------------
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/ProductionPrerequisite.h"
 #include "Common/Player.h"
@@ -52,14 +52,9 @@
 #include "GameClient/Drawable.h"
 #include "GameClient/GameText.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-----------------------------------------------------------------------------
-ProductionPrerequisite::ProductionPrerequisite() 
+ProductionPrerequisite::ProductionPrerequisite()
 {
 	init();
 }
@@ -74,7 +69,7 @@ void ProductionPrerequisite::init()
 {
 	m_prereqUnits.clear();
 	m_prereqSciences.clear();
-	
+
 }
 
 //=============================================================================
@@ -85,7 +80,7 @@ void ProductionPrerequisite::resolveNames()
 
 		//
 		// note that this will find the template at the "top most" level (not override
-		// sub-temlates), which is what we want ... we conceptually only have one
+		// sub-templates), which is what we want ... we conceptually only have one
 		// template for any given thing, it's only the *data* that is overridden
 		//
 		if( m_prereqUnits[ i ].name.isNotEmpty() )
@@ -95,7 +90,7 @@ void ProductionPrerequisite::resolveNames()
  			/** @todo for now removing this assert until we can completely remove
  			the GDF stuff, the problem is that some INI files refer to GDF names, and they
  			aren't yet loaded in the world builder but will all go away later anyway etc */
-			DEBUG_ASSERTCRASH(m_prereqUnits[i].unit,("could not find prereq %s\n",m_prereqUnits[i].name.str()));
+			DEBUG_ASSERTCRASH(m_prereqUnits[i].unit,("could not find prereq %s",m_prereqUnits[i].name.str()));
 
 			m_prereqUnits[i].name.clear(); // we're done with it
 		}
@@ -136,7 +131,7 @@ Int ProductionPrerequisite::getAllPossibleBuildFacilityTemplates(const ThingTemp
 const ThingTemplate *ProductionPrerequisite::getExistingBuildFacilityTemplate( const Player *player ) const
 {
 	DEBUG_ASSERTCRASH(player, ("player may not be null"));
-	if (m_prereqUnits.size())
+	if (!m_prereqUnits.empty())
 	{
 		Int ownCount[MAX_PREREQ];
 		Int cnt = calcNumPrereqUnitsOwned(player, ownCount);
@@ -146,9 +141,9 @@ const ThingTemplate *ProductionPrerequisite::getExistingBuildFacilityTemplate( c
 				break;
 			if (ownCount[i])
 				return m_prereqUnits[i].unit;
-		} 
+		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -183,7 +178,7 @@ Bool ProductionPrerequisite::isSatisfied(const Player *player) const
 	for (i = 0; i < cnt; i++)
 	{
 		if (ownCount[i] == -1)	// the magic "ignore me" flag
-			continue;	
+			continue;
 		if (ownCount[i] == 0)		// everything not ignored, is required
 			return false;
 	}
@@ -194,7 +189,7 @@ Bool ProductionPrerequisite::isSatisfied(const Player *player) const
 //-------------------------------------------------------------------------------------------------
 /** Add a unit prerequisite, if 'orWithPrevious' is set then this unit is said
 	* to be an alternate prereq to the previously added unit, otherwise this becomes
-	* a new 'block' and is required in ADDDITION to other entries. 
+	* a new 'block' and is required in ADDITION to other entries.
 	* Return FALSE if no space left to add unit */
 //-------------------------------------------------------------------------------------------------
 void ProductionPrerequisite::addUnitPrereq( AsciiString unit, Bool orUnitWithPrevious )
@@ -202,15 +197,15 @@ void ProductionPrerequisite::addUnitPrereq( AsciiString unit, Bool orUnitWithPre
 	PrereqUnitRec info;
 	info.name = unit;
 	info.flags = orUnitWithPrevious ? UNIT_OR_WITH_PREV : 0;
-	info.unit = NULL;
+	info.unit = nullptr;
 	m_prereqUnits.push_back(info);
 
-}  // end addUnitPrereq
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Add a unit prerequisite, if 'orWithPrevious' is set then this unit is said
 	* to be an alternate prereq to the previously added unit, otherwise this becomes
-	* a new 'block' and is required in ADDDITION to other entries. 
+	* a new 'block' and is required in ADDITION to other entries.
 	* Return FALSE if no space left to add unit */
 //-------------------------------------------------------------------------------------------------
 void ProductionPrerequisite::addUnitPrereq( const std::vector<AsciiString>& units )
@@ -222,7 +217,7 @@ void ProductionPrerequisite::addUnitPrereq( const std::vector<AsciiString>& unit
 		orWithPrevious = true;
 	}
 
-}  // end addUnitPrereq
+}
 
 //-------------------------------------------------------------------------------------------------
 // returns an asciistring which is a list of all the prerequisites
@@ -235,21 +230,17 @@ UnicodeString ProductionPrerequisite::getRequiresList(const Player *player) cons
 		return UnicodeString::TheEmptyString;
 
 	UnicodeString requiresList = UnicodeString::TheEmptyString;
-		
+
 	// check the prerequired units
 	Int ownCount[MAX_PREREQ];
 	Int cnt = calcNumPrereqUnitsOwned(player, ownCount);
 	Int i;
 
 	Bool orRequirements[MAX_PREREQ];
-	//Added for fix below in getRequiresList
-	//By Sadullah Nader
-	//Initializes the OR_WITH_PREV structures
 	for (i = 0; i < MAX_PREREQ; i++)
 	{
 		orRequirements[i] = FALSE;
 	}
-	//
 	// account for the "or" unit cases, start for loop at 1
 	for (i = 1; i < cnt; i++)
 	{
@@ -260,7 +251,7 @@ UnicodeString ProductionPrerequisite::getRequiresList(const Player *player) cons
 			ownCount[i-1] = -1;						// flag for "ignore me"
 		}
 	}
-	
+
 	// check to see if anything is required
 	const ThingTemplate *unit;
 	UnicodeString unitName;
@@ -269,13 +260,13 @@ UnicodeString ProductionPrerequisite::getRequiresList(const Player *player) cons
 	{
 		// we have an unfulfilled requirement
 		if (ownCount[i] == 0) {
-			
+
 			if(orRequirements[i])
 			{
 				unit = m_prereqUnits[i-1].unit;
 				unitName = unit->getDisplayName();
 				unitName.concat( L" " );
-				unitName.concat(TheGameText->fetch("CONTROLBAR:OrRequirement", NULL));
+				unitName.concat(TheGameText->fetch("CONTROLBAR:OrRequirement", nullptr));
 				unitName.concat( L" " );
 				requiresList.concat(unitName);
 			}
@@ -314,7 +305,7 @@ UnicodeString ProductionPrerequisite::getRequiresList(const Player *player) cons
 		} else {
 			unitName.concat(L"\n");
 		}
-		requiresList.concat(TheGameText->fetch("CONTROLBAR:GeneralsPromotion", NULL));
+		requiresList.concat(TheGameText->fetch("CONTROLBAR:GeneralsPromotion", nullptr));
 	}
 
 	// return final list

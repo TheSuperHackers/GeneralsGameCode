@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __GARRISONCONTAIN_H_
-#define __GARRISONCONTAIN_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/OpenContain.h"
 #include "Common/ModelState.h"
@@ -56,19 +53,19 @@ public:
 	Bool m_immuneToClearBuildingAttacks;
 	InitialRoster		m_initialRoster;
 
-	GarrisonContainModuleData( void );
+	GarrisonContainModuleData();
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     OpenContainModuleData::buildFieldParse(p);
 
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
-			{ "MobileGarrison", INI::parseBool, NULL, offsetof( GarrisonContainModuleData, m_mobileGarrison ) },
-			{ "HealObjects", INI::parseBool, NULL, offsetof( GarrisonContainModuleData, m_doIHealObjects ) },
-			{ "TimeForFullHeal", INI::parseDurationReal, NULL, offsetof( GarrisonContainModuleData, m_framesForFullHeal ) },
-			{ "InitialRoster", parseInitialRoster, NULL, 0 },
-			{ "ImmuneToClearBuildingAttacks", INI::parseBool, NULL, offsetof( GarrisonContainModuleData, m_immuneToClearBuildingAttacks ) },
+			{ "MobileGarrison", INI::parseBool, nullptr, offsetof( GarrisonContainModuleData, m_mobileGarrison ) },
+			{ "HealObjects", INI::parseBool, nullptr, offsetof( GarrisonContainModuleData, m_doIHealObjects ) },
+			{ "TimeForFullHeal", INI::parseDurationReal, nullptr, offsetof( GarrisonContainModuleData, m_framesForFullHeal ) },
+			{ "InitialRoster", parseInitialRoster, nullptr, 0 },
+			{ "ImmuneToClearBuildingAttacks", INI::parseBool, nullptr, offsetof( GarrisonContainModuleData, m_immuneToClearBuildingAttacks ) },
 
 			{ 0, 0, 0, 0 }
 		};
@@ -81,7 +78,7 @@ public:
 		const char* name = ini->getNextToken();
 		const char* countStr = ini->getNextTokenOrNull();
 		Int count = countStr ? INI::scanInt(countStr) : 1;
-		
+
 		self->m_initialRoster.templateName.set(name);
 		self->m_initialRoster.count = count;
 	};
@@ -103,65 +100,65 @@ public:
 	GarrisonContain( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual UpdateSleepTime update( void );						///< called once per frame
+	virtual UpdateSleepTime update() override;						///< called once per frame
 
-	virtual Bool isValidContainerFor( const Object* obj, Bool checkCapacity) const; // Garrison has an extra check forbidding any containment if ReallyDamaged
-	virtual Bool isGarrisonable() const { return true; }	///< can this unit be Garrisoned? (ick)
-	virtual Bool isImmuneToClearBuildingAttacks() const { return getGarrisonContainModuleData()->m_immuneToClearBuildingAttacks; }
-	virtual Bool isHealContain() const { return false; } ///< true when container only contains units while healing (not a transport!)
-	virtual Bool isPassengerAllowedToFire( void ) const;	///< Hey, can I shoot out of this container?
+	virtual Bool isValidContainerFor( const Object* obj, Bool checkCapacity) const override; // Garrison has an extra check forbidding any containment if ReallyDamaged
+	virtual Bool isGarrisonable() const override { return true; }	///< can this unit be Garrisoned? (ick)
+	virtual Bool isImmuneToClearBuildingAttacks() const override { return getGarrisonContainModuleData()->m_immuneToClearBuildingAttacks; }
+	virtual Bool isHealContain() const override { return false; } ///< true when container only contains units while healing (not a transport!)
+	virtual Bool isPassengerAllowedToFire() const override;	///< Hey, can I shoot out of this container?
 
-	virtual void removeAllContained( Bool exposeStealthUnits );	///< remove all contents of this open container
+	virtual void removeAllContained( Bool exposeStealthUnits ) override;	///< remove all contents of this open container
 
-	virtual void exitObjectViaDoor( Object *exitObj, ExitDoorType exitDoor );	///< exit one of our content items from us
-	virtual void exitObjectByBudding( Object *newObj, Object *budHost ) { return; };
-	virtual void onContaining( Object *obj );				///< object now contains 'obj'
-	virtual void onRemoving( Object *obj );					///< object no longer contains 'obj'
+	virtual void exitObjectViaDoor( Object *exitObj, ExitDoorType exitDoor ) override;	///< exit one of our content items from us
+	virtual void exitObjectByBudding( Object *newObj, Object *budHost ) override { return; };
+	virtual void onContaining( Object *obj ) override;				///< object now contains 'obj'
+	virtual void onRemoving( Object *obj ) override;					///< object no longer contains 'obj'
 
 	// A Garrison Contain must eject all passengers when it crosses the ReallyDamaged threshold.
-	virtual void onBodyDamageStateChange( const DamageInfo* damageInfo, 
-																				BodyDamageType oldState, 
-																				BodyDamageType newState);  ///< Die Interface state change callback
+	virtual void onBodyDamageStateChange( const DamageInfo* damageInfo,
+																				BodyDamageType oldState,
+																				BodyDamageType newState) override;  ///< Die Interface state change callback
 
 
 	/**
 		return the player that *appears* to control this unit, given an observing player.
 		if null, use getObject()->getControllingPlayer() instead.
 	*/
-	virtual const Player* getApparentControllingPlayer( const Player* observingPlayer ) const;
-	virtual void recalcApparentControllingPlayer( void );
-	virtual Bool isDisplayedOnControlBar() const {return TRUE;}///< Does this container display its contents on the ControlBar?
+	virtual const Player* getApparentControllingPlayer( const Player* observingPlayer ) const override;
+	virtual void recalcApparentControllingPlayer() override;
+	virtual Bool isDisplayedOnControlBar() const override {return TRUE;}///< Does this container display its contents on the ControlBar?
 
 protected:
 
-	virtual void redeployOccupants( void );				///< redeploy the occupants of us at all available garrison points
-	virtual void onObjectCreated();
+	virtual void redeployOccupants() override;				///< redeploy the occupants of us at all available garrison points
+	virtual void onObjectCreated() override;
 
-	void validateRallyPoint( void );							///< validate (if necessary) and pick (if possible) an exit rally point
+	void validateRallyPoint();							///< validate (if necessary) and pick (if possible) an exit rally point
 
-	virtual Bool calcBestGarrisonPosition( Coord3D *sourcePos, const Coord3D *targetPos );
-	virtual Bool attemptBestFirePointPosition( Object *source, Weapon *weapon, Object *victim );
-	virtual Bool attemptBestFirePointPosition( Object *source, Weapon *weapon, const Coord3D *targetPos );
-		
-	void updateEffects( void );										///< do any effects needed per frame
-	void loadGarrisonPoints( void );							///< load garrison point position data and save for later
+	virtual Bool calcBestGarrisonPosition( Coord3D *sourcePos, const Coord3D *targetPos ) override;
+	virtual Bool attemptBestFirePointPosition( Object *source, Weapon *weapon, Object *victim ) override;
+	virtual Bool attemptBestFirePointPosition( Object *source, Weapon *weapon, const Coord3D *targetPos ) override;
+
+	void updateEffects();										///< do any effects needed per frame
+	void loadGarrisonPoints();							///< load garrison point position data and save for later
 	void putObjectAtBestGarrisonPoint( Object *obj, Object *target, const Coord3D *targetPos );	///< place object at position of the best garrison point to use for its target
 	void putObjectAtGarrisonPoint( Object *obj, ObjectID targetID, Int conditionIndex, Int index );					///< place object at the specified garrison point index
 	enum { SEARCH_FOR_REMOVE = -1 };
 	void removeObjectFromGarrisonPoint( Object *obj, Int index = SEARCH_FOR_REMOVE );///< remove object from the garrison point placement
-	void addValidObjectsToGarrisonPoints( void );			///< add any objects with targets to a garrison point
-	void removeInvalidObjectsFromGarrisonPoints( void );	///< remove objects with invalid targets from valid points
-	void trackTargets( void );										///< keep attackers at the closest garrison point to their active target
+	void addValidObjectsToGarrisonPoints();			///< add any objects with targets to a garrison point
+	void removeInvalidObjectsFromGarrisonPoints();	///< remove objects with invalid targets from valid points
+	void trackTargets();										///< keep attackers at the closest garrison point to their active target
 
 	enum { GARRISON_INDEX_INVALID = -1 };
-	Int findConditionIndex( void );										///< find the condition index to use given the current object body state
+	Int findConditionIndex();										///< find the condition index to use given the current object body state
 	Int getObjectGarrisonPointIndex( Object *obj );		///< get the garrison point index object is at (if present)
-	Int findClosestFreeGarrisonPointIndex( Int conditionIndex, 
+	Int findClosestFreeGarrisonPointIndex( Int conditionIndex,
 																				 const Coord3D *targetPos );  ///< find closest free garrison point to the target location
 
-	void healObjects( void );	///< heal all the objects within me
+	void healObjects();	///< heal all the objects within me
 	void healSingleObject( Object *obj, Real frames );	///< heal just one of the objects within me
-	void moveObjectsWithMe( void );				///< translates all the garrisoned object to this->getObject()->getPosition()
+	void moveObjectsWithMe();				///< translates all the garrisoned object to this->getObject()->getPosition()
 
 private:
 
@@ -170,11 +167,11 @@ private:
 	//
 	// The max units inside any garrisoned structure is 10.  Since the units will "move around"
 	// the inside of the structure to be close to their targets, we need a max of 10 garrison points
-	// on each side of the building to accomodate everybody inside
+	// on each side of the building to accommodate everybody inside
 	//
 	// ----------------------------------------------------------------------------------------------
 	struct GarrisonPointData
-	{	
+	{
 		union
 		{
 			Object *		object;							///< object at this garrison point
@@ -191,13 +188,13 @@ private:
 	};
 
 	// ----------------------------------------------------------------------------------------------
-	enum 
+	enum
 	{
 		GARRISON_POINT_PRISTINE,
 		GARRISON_POINT_DAMAGED,
 		GARRISON_POINT_REALLY_DAMAGED,
 
-		MAX_GARRISON_POINT_CONDITIONS				///< leave this last
+		MAX_GARRISON_POINT_CONDITIONS
 	};
 
 	Team *							m_originalTeam;																///< our original team before we were garrisoned
@@ -207,10 +204,7 @@ private:
 	Coord3D							m_exitRallyPoint;												///< Point to rally at when exiting structure (if possible)
 
 	Bool		m_garrisonPointsInitialized;							///< TRUE once we have loaded the garrison point positions from the art
-	Bool		m_hideGarrisonedStateFromNonallies;								///< if T, don't appear to be garrisoned (all stealthy)										
+	Bool		m_hideGarrisonedStateFromNonallies;								///< if T, don't appear to be garrisoned (all stealthy)
 	Bool		m_rallyValid;															///< TRUE when m_exitRallyPoint is valid
 
 };
-
-#endif // __GARRISONCONTAIN_H_
-

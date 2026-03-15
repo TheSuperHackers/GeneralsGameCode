@@ -16,12 +16,8 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#if !defined(AFX_EditAction_H__64465BA2_AD81_4EFD_BAB4_93F66C90ECD1__INCLUDED_)
-#define AFX_EditAction_H__64465BA2_AD81_4EFD_BAB4_93F66C90ECD1__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
+
 // EditAction.h : header file
 //
 
@@ -36,7 +32,7 @@ class EditAction : public CDialog
 {
 // Construction
 public:
-	EditAction(CWnd* pParent = NULL);   // standard constructor
+	EditAction(CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(EditAction)
@@ -80,5 +76,3 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_EditAction_H__64465BA2_AD81_4EFD_BAB4_93F66C90ECD1__INCLUDED_)

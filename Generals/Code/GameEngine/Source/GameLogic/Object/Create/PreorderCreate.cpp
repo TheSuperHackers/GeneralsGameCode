@@ -28,18 +28,13 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Player.h"
 #include "Common/Xfer.h"
 #include "GameLogic/Object.h"
 #include "GameLogic/Module/PreorderCreate.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -50,18 +45,18 @@ PreorderCreate::PreorderCreate( Thing *thing, const ModuleData* moduleData ) : C
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-PreorderCreate::~PreorderCreate( void )
+PreorderCreate::~PreorderCreate()
 {
 
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
-void PreorderCreate::onCreate( void )
+void PreorderCreate::onCreate()
 {
 }
 
 //-------------------------------------------------------------------------------------------------
-void PreorderCreate::onBuildComplete( void )
+void PreorderCreate::onBuildComplete()
 {
 	if (getObject()->getControllingPlayer()->didPlayerPreorder())
 	{
@@ -82,7 +77,7 @@ void PreorderCreate::crc( Xfer *xfer )
 	// extend base class
 	CreateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -100,15 +95,15 @@ void PreorderCreate::xfer( Xfer *xfer )
 	// extend base class
 	CreateModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void PreorderCreate::loadPostProcess( void )
+void PreorderCreate::loadPostProcess()
 {
 
 	// extend base class
 	CreateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

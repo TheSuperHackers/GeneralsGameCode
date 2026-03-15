@@ -24,22 +24,14 @@
 
 // JetAIUpdate.h //////////
 // Author: Steven Johnson, June 2002
- 
-#pragma once
 
-#ifndef _JET_AI_UPDATE_H_
-#define _JET_AI_UPDATE_H_
+#pragma once
 
 #include "Common/STLTypedefs.h"
 #include "Common/GameMemory.h"
 #include "GameLogic/AIStateMachine.h"
 #include "GameLogic/Module/AIUpdate.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -66,9 +58,9 @@ public:
 	UnsignedInt							m_lockonTime;											///< time it takes for someone to lock-on to us.
 	AsciiString							m_lockonCursor;										///< template used for lockon.
 	Real										m_lockonInitialDist;							///< how far away the lockon cursor starts.
-	Real										m_lockonFreq;											
+	Real										m_lockonFreq;
 	Real										m_lockonAngleSpin;								///< how many times to spin around it
-	Real										m_lockonBlinky;								
+	Real										m_lockonBlinky;
 	UnsignedInt							m_returnToBaseIdleTime;						///< if we're idle for this long, return to base
 
 	JetAIUpdateModuleData();
@@ -82,32 +74,32 @@ class JetAIUpdate : public AIUpdateInterface
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( JetAIUpdate, "JetAIUpdate" )
 	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( JetAIUpdate, JetAIUpdateModuleData )
 
-	virtual UpdateSleepTime update();
+	virtual UpdateSleepTime update() override;
 
 public:
 
 	JetAIUpdate( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual void onObjectCreated();
-	virtual void onDelete();
+	virtual void onObjectCreated() override;
+	virtual void onDelete() override;
 
-	virtual JetAIUpdate* getJetAIUpdate() { return this; }
-	virtual const JetAIUpdate* getJetAIUpdate() const { return this; }
+	virtual JetAIUpdate* getJetAIUpdate() override { return this; }
+	virtual const JetAIUpdate* getJetAIUpdate() const override { return this; }
 
- 	virtual void aiDoCommand(const AICommandParms* parms);
-	virtual Bool chooseLocomotorSet(LocomotorSetType wst);
-	virtual void setLocomotorGoalNone();
-	virtual Bool isIdle() const;
-	virtual Bool isTaxiingToParking() const; //only applies to jets interacting with runways.
+ 	virtual void aiDoCommand(const AICommandParms* parms) override;
+	virtual Bool chooseLocomotorSet(LocomotorSetType wst) override;
+	virtual void setLocomotorGoalNone() override;
+	virtual Bool isIdle() const override;
+	virtual Bool isTaxiingToParking() const override; //only applies to jets interacting with runways.
 	virtual Bool isReloading() const;
 
-	virtual Bool isAllowedToMoveAwayFromUnit() const;
-	virtual Bool getSneakyTargetingOffset(Coord3D* offset) const;
-	virtual void addTargeter(ObjectID id, Bool add);
-	virtual Bool isTemporarilyPreventingAimSuccess() const;
-	virtual Bool isDoingGroundMovement() const;
-	virtual void notifyVictimIsDead();
+	virtual Bool isAllowedToMoveAwayFromUnit() const override;
+	virtual Bool getSneakyTargetingOffset(Coord3D* offset) const override;
+	virtual void addTargeter(ObjectID id, Bool add) override;
+	virtual Bool isTemporarilyPreventingAimSuccess() const override;
+	virtual Bool isDoingGroundMovement() const override;
+	virtual void notifyVictimIsDead() override;
 	virtual Bool isOutOfSpecialReloadAmmo() const;
 
 	const Coord3D* friend_getProducerLocation() const { return &m_producerLocation; }
@@ -118,7 +110,7 @@ public:
 	Real friend_getMinHeight() const { return getJetAIUpdateModuleData()->m_minHeight; }
 	Real friend_getParkingOffset() const { return getJetAIUpdateModuleData()->m_parkingOffset; }
 	UnsignedInt friend_getTakeoffPause() const { return getJetAIUpdateModuleData()->m_takeoffPause; }
-	void friend_setGoalPath( const std::vector<Coord3D>* path ) { getStateMachine()->setGoalPath(path); }
+	void friend_setGoalPath( std::vector<Coord3D>* path ) { getStateMachine()->setGoalPath(path); }
 	void friend_setTakeoffInProgress(Bool v) { setFlag(TAKEOFF_IN_PROGRESS, v); }
 	void friend_setLandingInProgress(Bool v) { setFlag(LANDING_IN_PROGRESS, v); }
 	void friend_setTaxiInProgress(Bool v) { setFlag(TAXI_IN_PROGRESS, v); }
@@ -137,17 +129,17 @@ public:
 
 protected:
 
-	virtual AIStateMachine* makeStateMachine();
+	virtual AIStateMachine* makeStateMachine() override;
 
-	virtual void privateFollowPath( const std::vector<Coord3D>* path, Object *ignoreObject, CommandSourceType cmdSource, Bool exitProduction );///< follow the path defined by the given array of points
-	virtual void privateFollowPathAppend( const Coord3D *pos, CommandSourceType cmdSource );
-	virtual void privateEnter( Object *obj, CommandSourceType cmdSource );							///< enter the given object
-	virtual void privateGetRepaired( Object *repairDepot, CommandSourceType cmdSource );///< get repaired at repair depot
+	virtual void privateFollowPath( std::vector<Coord3D>* path, Object *ignoreObject, CommandSourceType cmdSource, Bool exitProduction );///< follow the path defined by the given array of points
+	virtual void privateFollowPathAppend( const Coord3D *pos, CommandSourceType cmdSource ) override;
+	virtual void privateEnter( Object *obj, CommandSourceType cmdSource ) override;							///< enter the given object
+	virtual void privateGetRepaired( Object *repairDepot, CommandSourceType cmdSource ) override;///< get repaired at repair depot
 
 	void pruneDeadTargeters();
 	void positionLockon();
-	
-	virtual Bool getTreatAsAircraftForLocoDistToGoal() const;
+
+	virtual Bool getTreatAsAircraftForLocoDistToGoal() const override;
 	Bool isParkedAt(const Object* obj) const;
 
 private:
@@ -184,6 +176,3 @@ private:
 	Bool getFlag(FlagType f) const;
 	void setFlag(FlagType f, Bool v);
 };
-
-#endif
-

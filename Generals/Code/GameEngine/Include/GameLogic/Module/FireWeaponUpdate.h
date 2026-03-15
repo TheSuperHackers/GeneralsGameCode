@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __FIRE_WEAPON_UPDATE_H_
-#define __FIRE_WEAPON_UPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpdateModule.h"
 #include "GameLogic/Weapon.h"
@@ -62,15 +59,12 @@ public:
 	FireWeaponUpdate( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual UpdateSleepTime update();
+	virtual UpdateSleepTime update() override;
 
 protected:
 
 	Bool isOkayToFire();
-	
+
 	Weapon* m_weapon;
 
 };
-
-#endif
-

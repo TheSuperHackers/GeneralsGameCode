@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Xfer.h"
 #include "GameLogic/Object.h"
@@ -37,40 +37,35 @@
 #include "GameLogic/GameLogic.h"
 
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 FireWeaponUpdateModuleData::FireWeaponUpdateModuleData()
 {
-	m_weaponTemplate = NULL;
+	m_weaponTemplate = nullptr;
   m_initialDelayFrames = 0;
 	m_exclusiveWeaponDelay = 0;
 }
 
 //-------------------------------------------------------------------------------------------------
-/*static*/ void FireWeaponUpdateModuleData::buildFieldParse(MultiIniFieldParse& p) 
+/*static*/ void FireWeaponUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   UpdateModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
-		{ "Weapon",								INI::parseWeaponTemplate,	      NULL, offsetof( FireWeaponUpdateModuleData, m_weaponTemplate ) },
-		{ "InitialDelay",					INI::parseDurationUnsignedInt,	NULL, offsetof( FireWeaponUpdateModuleData, m_initialDelayFrames ) },
-		{ "ExclusiveWeaponDelay",	INI::parseDurationUnsignedInt,	NULL, offsetof( FireWeaponUpdateModuleData, m_exclusiveWeaponDelay ) },
-		{ 0, 0, 0, 0 }
+		{ "Weapon",								INI::parseWeaponTemplate,	      nullptr, offsetof( FireWeaponUpdateModuleData, m_weaponTemplate ) },
+		{ "InitialDelay",					INI::parseDurationUnsignedInt,	nullptr, offsetof( FireWeaponUpdateModuleData, m_initialDelayFrames ) },
+		{ "ExclusiveWeaponDelay",	INI::parseDurationUnsignedInt,	nullptr, offsetof( FireWeaponUpdateModuleData, m_exclusiveWeaponDelay ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   p.add(dataFieldParse);
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-FireWeaponUpdate::FireWeaponUpdate( Thing *thing, const ModuleData* moduleData ) : 
+FireWeaponUpdate::FireWeaponUpdate( Thing *thing, const ModuleData* moduleData ) :
 	UpdateModule( thing, moduleData ),
-	m_weapon(NULL)
+	m_weapon(nullptr)
 {
 	const WeaponTemplate *tmpl = getFireWeaponUpdateModuleData()->m_weaponTemplate;
 	if (tmpl)
@@ -86,17 +81,16 @@ FireWeaponUpdate::FireWeaponUpdate( Thing *thing, const ModuleData* moduleData )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-FireWeaponUpdate::~FireWeaponUpdate( void )
+FireWeaponUpdate::~FireWeaponUpdate()
 {
-	if (m_weapon)
-		deleteInstance(m_weapon);
+	deleteInstance(m_weapon);
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime FireWeaponUpdate::update( void )
+UpdateSleepTime FireWeaponUpdate::update()
 {
-  
+
   if ( TheGameLogic->getFrame() < m_initialDelayFrame )
     return UPDATE_SLEEP_NONE;
 
@@ -116,17 +110,17 @@ Bool FireWeaponUpdate::isOkayToFire()
 	const Object *me = getObject();
 	const FireWeaponUpdateModuleData *data = getFireWeaponUpdateModuleData();
 
-	if( m_weapon == NULL )
+	if( m_weapon == nullptr )
 		return FALSE;
 
 	// Weapon is reloading
 	if( m_weapon->getStatus() != READY_TO_FIRE )
 		return FALSE;
-	
+
 	if( me->testStatus(OBJECT_STATUS_UNDER_CONSTRUCTION) )
 		return FALSE; // no hitting with a 0% building, cheater
 
-	// Firing a real weapon surpresses this module
+	// Firing a real weapon suppresses this module
 	if( data->m_exclusiveWeaponDelay > 0  &&  ( TheGameLogic->getFrame() < (me->getLastShotFiredFrame() + data->m_exclusiveWeaponDelay) ) )
 		return FALSE;
 
@@ -141,7 +135,7 @@ void FireWeaponUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -165,15 +159,15 @@ void FireWeaponUpdate::xfer( Xfer *xfer )
   if ( version >= 2 )
     xfer->xferUnsignedInt( &m_initialDelayFrame );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void FireWeaponUpdate::loadPostProcess( void )
+void FireWeaponUpdate::loadPostProcess()
 {
 
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

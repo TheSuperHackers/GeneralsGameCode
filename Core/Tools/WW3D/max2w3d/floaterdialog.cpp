@@ -87,9 +87,9 @@ BOOL CALLBACK _floater_dialog_proc(HWND hwnd,UINT message,WPARAM wParam,LPARAM l
  * HISTORY:                                                                                    *
  *=============================================================================================*/
 FloaterDialogClass::FloaterDialogClass(void) :
-	Hwnd(NULL),
+	Hwnd(nullptr),
 	ChildDialogTemplateID(-1),
-	ChildDialogProc(NULL)
+	ChildDialogProc(nullptr)
 {
 }
 
@@ -107,7 +107,7 @@ FloaterDialogClass::FloaterDialogClass(void) :
  *=============================================================================================*/
 FloaterDialogClass::~FloaterDialogClass(void)
 {
-	if (Hwnd != NULL) {
+	if (Hwnd != nullptr) {
 		::DestroyWindow(Hwnd);
 	}
 }
@@ -127,7 +127,7 @@ FloaterDialogClass::~FloaterDialogClass(void)
  *=============================================================================================*/
 bool FloaterDialogClass::Is_Created(void)
 {
-	return (Hwnd != NULL);
+	return (Hwnd != nullptr);
 }
 
 
@@ -164,16 +164,16 @@ void FloaterDialogClass::Create(Interface * ip, int child_dlg_id, DLGPROC child_
 	/*
 	** Create the dialog box
 	*/
-	Hwnd = CreateDialogParam(	
+	Hwnd = CreateDialogParam(
 										AppInstance,
 										MAKEINTRESOURCE(IDD_W3DUTILITY_FLOATER_DIALOG),
 										::GetCOREInterface()->GetMAXHWnd(),
 										(DLGPROC) _floater_dialog_proc,
-										(LPARAM) this 
+										(LPARAM) this
 									);
-	::GetCOREInterface()->RegisterDlgWnd(Hwnd); 
+	::GetCOREInterface()->RegisterDlgWnd(Hwnd);
 }
-	
+
 
 
 /***********************************************************************************************
@@ -197,24 +197,24 @@ bool FloaterDialogClass::Dialog_Proc(HWND hWnd,UINT message,WPARAM wParam,LPARAM
 
 		case WM_INITDIALOG:
 			{
-				HWND childhwnd = CreateDialogParam(	
+				HWND childhwnd = CreateDialogParam(
 													AppInstance,
 													MAKEINTRESOURCE(ChildDialogTemplateID),
 													hWnd,
 													ChildDialogProc,
 													0
 												);
-				if (childhwnd!= NULL) {
+				if (childhwnd!= nullptr) {
 					RECT rect;
 					LONG style = ::GetWindowLong(hWnd,GWL_STYLE);
 					::GetWindowRect(childhwnd,&rect);
 					::AdjustWindowRect(&rect,style,FALSE);
-					::SetWindowPos(hWnd,NULL,0,0,rect.right - rect.left,rect.bottom - rect.top,SWP_NOZORDER|SWP_NOMOVE);
-					::SetWindowPos(childhwnd,NULL,0,0,0,0,SWP_NOZORDER|SWP_NOSIZE|SWP_SHOWWINDOW);
+					::SetWindowPos(hWnd,nullptr,0,0,rect.right - rect.left,rect.bottom - rect.top,SWP_NOZORDER|SWP_NOMOVE);
+					::SetWindowPos(childhwnd,nullptr,0,0,0,0,SWP_NOZORDER|SWP_NOSIZE|SWP_SHOWWINDOW);
 				}
 			}
 			return 1;
-		
+
 		case WM_COMMAND:
 			switch (LOWORD(wParam))
 			{
@@ -225,8 +225,8 @@ bool FloaterDialogClass::Dialog_Proc(HWND hWnd,UINT message,WPARAM wParam,LPARAM
 			return 1;
 
 		case WM_DESTROY:
-			::GetCOREInterface()->UnRegisterDlgWnd(Hwnd); 
-			Hwnd = NULL;
+			::GetCOREInterface()->UnRegisterDlgWnd(Hwnd);
+			Hwnd = nullptr;
 			break;
 	}
 	return 0;

@@ -31,7 +31,8 @@
 #include "Common/KindOf.h"
 #include "Common/BitFlagsIO.h"
 
-const char* KindOfMaskType::s_bitNameList[] = 
+template<>
+const char* const KindOfMaskType::s_bitNameList[] =
 {
 	"OBSTACLE",
 	"SELECTABLE",
@@ -130,8 +131,9 @@ const char* KindOfMaskType::s_bitNameList[] =
 	"HERO",
 	"IGNORES_SELECT_ALL",
 	"DONT_AUTO_CRUSH_INFANTRY",
-	NULL
+	nullptr
 };
+static_assert(ARRAY_SIZE(KindOfMaskType::s_bitNameList) == KindOfMaskType::NumBits + 1, "Incorrect array size");
 
 KindOfMaskType KINDOFMASK_NONE;	// inits to all zeroes
 

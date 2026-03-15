@@ -24,13 +24,10 @@
 
 // FILE: BehaviorModule.h /////////////////////////////////////////////////////////////////////////////////
 // Author: Steven Johnson
-// Desc:	 
+// Desc:
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __BehaviorModule_H_
-#define __BehaviorModule_H_
 
 #include "Common/GameType.h"
 #include "Common/Module.h"
@@ -91,7 +88,7 @@ public:
 	{
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     ModuleData::buildFieldParse(p);
 	}
@@ -129,7 +126,7 @@ public:
 	virtual AIUpdateInterface* getAIUpdateInterface() = 0;
 	virtual ExitInterface* getUpdateExitInterface() = 0;
 	virtual DockUpdateInterface* getDockUpdateInterface() = 0;
-	virtual RailedTransportDockUpdateInterface *getRailedTransportDockUpdateInterface( void ) = 0;
+	virtual RailedTransportDockUpdateInterface *getRailedTransportDockUpdateInterface() = 0;
 	virtual SlowDeathBehaviorInterface* getSlowDeathBehaviorInterface() = 0;
 	virtual SpecialPowerUpdateInterface* getSpecialPowerUpdateInterface() = 0;
 	virtual SlavedUpdateInterface* getSlavedUpdateInterface() = 0;
@@ -156,51 +153,51 @@ public:
 	static Int getInterfaceMask() { return 0; }
 	static ModuleType getModuleType() { return MODULETYPE_BEHAVIOR; }
 
-	virtual BodyModuleInterface* getBody() { return NULL; }
-	virtual CollideModuleInterface* getCollide() { return NULL; }
-	virtual ContainModuleInterface* getContain() { return NULL; }
-	virtual CreateModuleInterface* getCreate() { return NULL; }
-	virtual DamageModuleInterface* getDamage() { return NULL; }
-	virtual DestroyModuleInterface* getDestroy() { return NULL; }
-	virtual DieModuleInterface* getDie() { return NULL; }
-	virtual SpecialPowerModuleInterface* getSpecialPower() { return NULL; }
-	virtual UpdateModuleInterface* getUpdate() { return NULL; }
-	virtual UpgradeModuleInterface* getUpgrade() { return NULL; }
-  virtual StealthUpdate* getStealth() { return NULL; }
-	virtual SpyVisionUpdate* getSpyVisionUpdate() { return NULL; }
+	virtual BodyModuleInterface* getBody() override { return nullptr; }
+	virtual CollideModuleInterface* getCollide() override { return nullptr; }
+	virtual ContainModuleInterface* getContain() override { return nullptr; }
+	virtual CreateModuleInterface* getCreate() override { return nullptr; }
+	virtual DamageModuleInterface* getDamage() override { return nullptr; }
+	virtual DestroyModuleInterface* getDestroy() override { return nullptr; }
+	virtual DieModuleInterface* getDie() override { return nullptr; }
+	virtual SpecialPowerModuleInterface* getSpecialPower() override { return nullptr; }
+	virtual UpdateModuleInterface* getUpdate() override { return nullptr; }
+	virtual UpgradeModuleInterface* getUpgrade() override { return nullptr; }
+  virtual StealthUpdate* getStealth() { return nullptr; }
+	virtual SpyVisionUpdate* getSpyVisionUpdate() { return nullptr; }
 
-	virtual ParkingPlaceBehaviorInterface* getParkingPlaceBehaviorInterface() { return NULL; }
-	virtual RebuildHoleBehaviorInterface* getRebuildHoleBehaviorInterface() { return NULL; }
-	virtual BridgeBehaviorInterface* getBridgeBehaviorInterface() { return NULL; }
-	virtual BridgeTowerBehaviorInterface* getBridgeTowerBehaviorInterface() { return NULL; }
-	virtual BridgeScaffoldBehaviorInterface* getBridgeScaffoldBehaviorInterface() { return NULL; }
-	virtual OverchargeBehaviorInterface* getOverchargeBehaviorInterface() { return NULL; }
-	virtual TransportPassengerInterface* getTransportPassengerInterface() { return NULL; }
-	virtual CaveInterface* getCaveInterface() { return NULL; }
-	virtual LandMineInterface* getLandMineInterface() { return NULL; }
-	virtual DieModuleInterface* getEjectPilotDieInterface() { return NULL; }
+	virtual ParkingPlaceBehaviorInterface* getParkingPlaceBehaviorInterface() override { return nullptr; }
+	virtual RebuildHoleBehaviorInterface* getRebuildHoleBehaviorInterface() override { return nullptr; }
+	virtual BridgeBehaviorInterface* getBridgeBehaviorInterface() override { return nullptr; }
+	virtual BridgeTowerBehaviorInterface* getBridgeTowerBehaviorInterface() override { return nullptr; }
+	virtual BridgeScaffoldBehaviorInterface* getBridgeScaffoldBehaviorInterface() override { return nullptr; }
+	virtual OverchargeBehaviorInterface* getOverchargeBehaviorInterface() override { return nullptr; }
+	virtual TransportPassengerInterface* getTransportPassengerInterface() override { return nullptr; }
+	virtual CaveInterface* getCaveInterface() override { return nullptr; }
+	virtual LandMineInterface* getLandMineInterface() override { return nullptr; }
+	virtual DieModuleInterface* getEjectPilotDieInterface() override { return nullptr; }
 	// interface acquisition (moved from UpdateModule)
-	virtual ProjectileUpdateInterface* getProjectileUpdateInterface() { return NULL; }
-	virtual AIUpdateInterface* getAIUpdateInterface() { return NULL; }
-	virtual ExitInterface* getUpdateExitInterface() { return NULL; }
-	virtual DockUpdateInterface* getDockUpdateInterface() { return NULL; }
-	virtual RailedTransportDockUpdateInterface *getRailedTransportDockUpdateInterface( void ) { return NULL; }
-	virtual SlowDeathBehaviorInterface* getSlowDeathBehaviorInterface() { return NULL; }
-	virtual SpecialPowerUpdateInterface* getSpecialPowerUpdateInterface() { return NULL; }
-	virtual SlavedUpdateInterface* getSlavedUpdateInterface() { return NULL; }
-	virtual ProductionUpdateInterface* getProductionUpdateInterface() { return NULL; }
-	virtual HordeUpdateInterface* getHordeUpdateInterface() { return NULL; }
-	virtual PowerPlantUpdateInterface* getPowerPlantUpdateInterface() { return NULL; }
-	virtual SpawnBehaviorInterface* getSpawnBehaviorInterface() { return NULL; }
-	virtual CountermeasuresBehaviorInterface* getCountermeasuresBehaviorInterface() { return NULL; }
-	virtual const CountermeasuresBehaviorInterface* getCountermeasuresBehaviorInterface() const { return NULL; }
+	virtual ProjectileUpdateInterface* getProjectileUpdateInterface() override { return nullptr; }
+	virtual AIUpdateInterface* getAIUpdateInterface() override { return nullptr; }
+	virtual ExitInterface* getUpdateExitInterface() override { return nullptr; }
+	virtual DockUpdateInterface* getDockUpdateInterface() override { return nullptr; }
+	virtual RailedTransportDockUpdateInterface *getRailedTransportDockUpdateInterface() override { return nullptr; }
+	virtual SlowDeathBehaviorInterface* getSlowDeathBehaviorInterface() override { return nullptr; }
+	virtual SpecialPowerUpdateInterface* getSpecialPowerUpdateInterface() override { return nullptr; }
+	virtual SlavedUpdateInterface* getSlavedUpdateInterface() override { return nullptr; }
+	virtual ProductionUpdateInterface* getProductionUpdateInterface() override { return nullptr; }
+	virtual HordeUpdateInterface* getHordeUpdateInterface() override { return nullptr; }
+	virtual PowerPlantUpdateInterface* getPowerPlantUpdateInterface() override { return nullptr; }
+	virtual SpawnBehaviorInterface* getSpawnBehaviorInterface() override { return nullptr; }
+	virtual CountermeasuresBehaviorInterface* getCountermeasuresBehaviorInterface() override { return nullptr; }
+	virtual const CountermeasuresBehaviorInterface* getCountermeasuresBehaviorInterface() const override { return nullptr; }
 
 protected:
 
 	// snapshot methods
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 };
 inline BehaviorModule::BehaviorModule( Thing *thing, const ModuleData* moduleData ) : ObjectModule( thing, moduleData ) { }
@@ -213,15 +210,20 @@ enum RunwayReservationType CPP_11(: Int)
 	RESERVATION_LANDING,
 };
 
+enum
+{
+	InvalidRunway = -1,
+};
+
 //-------------------------------------------------------------------------------------------------
 class ParkingPlaceBehaviorInterface
 {
 public:
 	struct PPInfo
 	{
-		Coord3D		parkingSpace; 
+		Coord3D		parkingSpace;
 		Real			parkingOrientation;
-		Coord3D		runwayPrep; 
+		Coord3D		runwayPrep;
 		Coord3D		runwayStart;
 		Coord3D		runwayEnd;
 		Coord3D		runwayExit;
@@ -232,15 +234,16 @@ public:
 		Real			runwayTakeoffDist;
 		Real			hangarInternalOrient;
 	};
-	virtual Bool shouldReserveDoorWhenQueued(const ThingTemplate* thing) const = 0; 
-	virtual Bool hasAvailableSpaceFor(const ThingTemplate* thing) const = 0; 
-	virtual Bool hasReservedSpace(ObjectID id) const = 0; 
+	virtual Bool shouldReserveDoorWhenQueued(const ThingTemplate* thing) const = 0;
+	virtual Bool hasAvailableSpaceFor(const ThingTemplate* thing) const = 0;
+	virtual Bool hasReservedSpace(ObjectID id) const = 0;
 	virtual Int  getSpaceIndex( ObjectID id ) const = 0;
 	virtual Bool reserveSpace(ObjectID id, Real parkingOffset, PPInfo* info) = 0;
-	virtual void releaseSpace(ObjectID id) = 0; 
+	virtual void releaseSpace(ObjectID id) = 0;
 	virtual Bool reserveRunway(ObjectID id, Bool forLanding) = 0;
 	virtual void calcPPInfo( ObjectID id, PPInfo *info ) = 0;
-	virtual void releaseRunway(ObjectID id) = 0; 
+	virtual void releaseRunway(ObjectID id) = 0;
+	virtual Int getRunwayIndex(ObjectID id) = 0;
 	virtual Int getRunwayCount() const = 0;
 	virtual ObjectID getRunwayReservation( Int r, RunwayReservationType type = RESERVATION_TAKEOFF ) = 0;
 	virtual void transferRunwayReservationToNextInLineForTakeoff(ObjectID id) = 0;
@@ -249,7 +252,7 @@ public:
 	virtual void setHealee(Object* healee, Bool add) = 0;
 	virtual void killAllParkedUnits() = 0;
 	virtual void defectAllParkedUnits(Team* newTeam, UnsignedInt detectionTime) = 0;
-	virtual Bool calcBestParkingAssignment( ObjectID id, Coord3D *pos, Int *oldIndex = NULL, Int *newIndex = NULL ) = 0;
+	virtual Bool calcBestParkingAssignment( ObjectID id, Coord3D *pos, Int *oldIndex = nullptr, Int *newIndex = nullptr ) = 0;
 
 	virtual const std::vector<Coord3D>* getTaxiLocations( ObjectID id ) const = 0;
 	virtual const std::vector<Coord3D>* getCreationLocations( ObjectID id ) const = 0;
@@ -279,5 +282,3 @@ public:
 };
 
 //-------------------------------------------------------------------------------------------------
-
-#endif

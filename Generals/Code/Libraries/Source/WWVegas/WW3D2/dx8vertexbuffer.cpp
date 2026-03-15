@@ -48,13 +48,13 @@
 #define DEFAULT_VB_SIZE 5000
 
 static bool _DynamicSortingVertexArrayInUse=false;
-//static VertexFormatXYZNDUV2* _DynamicSortingVertexArray=NULL;
-static SortingVertexBufferClass* _DynamicSortingVertexArray=NULL;
+//static VertexFormatXYZNDUV2* _DynamicSortingVertexArray=nullptr;
+static SortingVertexBufferClass* _DynamicSortingVertexArray=nullptr;
 static unsigned short _DynamicSortingVertexArraySize=0;
-static unsigned short _DynamicSortingVertexArrayOffset=0;	
+static unsigned short _DynamicSortingVertexArrayOffset=0;
 
 static bool _DynamicDX8VertexBufferInUse=false;
-static DX8VertexBufferClass* _DynamicDX8VertexBuffer=NULL;
+static DX8VertexBufferClass* _DynamicDX8VertexBuffer=nullptr;
 static unsigned short _DynamicDX8VertexBufferSize=DEFAULT_VB_SIZE;
 static unsigned short _DynamicDX8VertexBufferOffset=0;
 
@@ -86,8 +86,8 @@ VertexBufferClass::VertexBufferClass(unsigned type_, unsigned FVF, unsigned shor
 	_VertexBufferTotalVertices+=VertexCount;
 	_VertexBufferTotalSize+=VertexCount*fvf_info->Get_FVF_Size();
 #ifdef VERTEX_BUFFER_LOG
-	WWDEBUG_SAY(("New VB, %d vertices, size %d bytes\n",VertexCount,VertexCount*fvf_info->Get_FVF_Size()));
-	WWDEBUG_SAY(("Total VB count: %d, total %d vertices, total size %d bytes\n",
+	WWDEBUG_SAY(("New VB, %d vertices, size %d bytes",VertexCount,VertexCount*fvf_info->Get_FVF_Size()));
+	WWDEBUG_SAY(("Total VB count: %d, total %d vertices, total size %d bytes",
 		_VertexBufferCount,
 		_VertexBufferTotalVertices,
 		_VertexBufferTotalSize));
@@ -103,8 +103,8 @@ VertexBufferClass::~VertexBufferClass()
 	_VertexBufferTotalSize-=VertexCount*fvf_info->Get_FVF_Size();
 
 #ifdef VERTEX_BUFFER_LOG
-	WWDEBUG_SAY(("Delete VB, %d vertices, size %d bytes\n",VertexCount,VertexCount*fvf_info->Get_FVF_Size()));
-	WWDEBUG_SAY(("Total VB count: %d, total %d vertices, total size %d bytes\n",
+	WWDEBUG_SAY(("Delete VB, %d vertices, size %d bytes",VertexCount,VertexCount*fvf_info->Get_FVF_Size()));
+	WWDEBUG_SAY(("Total VB count: %d, total %d vertices, total size %d bytes",
 		_VertexBufferCount,
 		_VertexBufferTotalVertices,
 		_VertexBufferTotalSize));
@@ -163,7 +163,7 @@ VertexBufferClass::WriteLockClass::WriteLockClass(VertexBufferClass* VertexBuffe
 		{
 		StringClass fvf_name;
 		VertexBuffer->FVF_Info().Get_FVF_Name(fvf_name);
-		WWDEBUG_SAY(("VertexBuffer->Lock(start_index: 0, index_range: 0(%d), fvf_size: %d, fvf: %s)\n",
+		WWDEBUG_SAY(("VertexBuffer->Lock(start_index: 0, index_range: 0(%d), fvf_size: %d, fvf: %s)",
 			VertexBuffer->Get_Vertex_Count(),
 			VertexBuffer->FVF_Info().Get_FVF_Size(),
 			fvf_name));
@@ -193,7 +193,7 @@ VertexBufferClass::WriteLockClass::~WriteLockClass()
 	switch (VertexBuffer->Type()) {
 	case BUFFER_TYPE_DX8:
 #ifdef VERTEX_BUFFER_LOG
-		WWDEBUG_SAY(("VertexBuffer->Unlock()\n"));
+		WWDEBUG_SAY(("VertexBuffer->Unlock()"));
 #endif
 		DX8_Assert();
 		DX8_ErrorCode(static_cast<DX8VertexBufferClass*>(VertexBuffer)->Get_DX8_Vertex_Buffer()->Unlock());
@@ -228,7 +228,7 @@ VertexBufferClass::AppendLockClass::AppendLockClass(VertexBufferClass* VertexBuf
 		{
 		StringClass fvf_name;
 		VertexBuffer->FVF_Info().Get_FVF_Name(fvf_name);
-		WWDEBUG_SAY(("VertexBuffer->Lock(start_index: %d, index_range: %d, fvf_size: %d, fvf: %s)\n",
+		WWDEBUG_SAY(("VertexBuffer->Lock(start_index: %d, index_range: %d, fvf_size: %d, fvf: %s)",
 			start_index,
 			index_range,
 			VertexBuffer->FVF_Info().Get_FVF_Size(),
@@ -260,7 +260,7 @@ VertexBufferClass::AppendLockClass::~AppendLockClass()
 	case BUFFER_TYPE_DX8:
 		DX8_Assert();
 #ifdef VERTEX_BUFFER_LOG
-		WWDEBUG_SAY(("VertexBuffer->Unlock()\n"));
+		WWDEBUG_SAY(("VertexBuffer->Unlock()"));
 #endif
 		DX8_ErrorCode(static_cast<DX8VertexBufferClass*>(VertexBuffer)->Get_DX8_Vertex_Buffer()->Unlock());
 		break;
@@ -305,7 +305,7 @@ SortingVertexBufferClass::~SortingVertexBufferClass()
 DX8VertexBufferClass::DX8VertexBufferClass(unsigned FVF, unsigned short vertex_count_, UsageType usage)
 	:
 	VertexBufferClass(BUFFER_TYPE_DX8, FVF, vertex_count_),
-	VertexBuffer(NULL)
+	VertexBuffer(nullptr)
 {
 	Create_Vertex_Buffer(usage);
 }
@@ -314,13 +314,13 @@ DX8VertexBufferClass::DX8VertexBufferClass(unsigned FVF, unsigned short vertex_c
 
 DX8VertexBufferClass::DX8VertexBufferClass(
 	const Vector3* vertices,
-	const Vector3* normals, 
-	const Vector2* tex_coords, 
+	const Vector3* normals,
+	const Vector2* tex_coords,
 	unsigned short VertexCount,
 	UsageType usage)
 	:
 	VertexBufferClass(BUFFER_TYPE_DX8, D3DFVF_XYZ|D3DFVF_TEX1|D3DFVF_NORMAL, VertexCount),
-	VertexBuffer(NULL)
+	VertexBuffer(nullptr)
 {
 	WWASSERT(vertices);
 	WWASSERT(normals);
@@ -334,14 +334,14 @@ DX8VertexBufferClass::DX8VertexBufferClass(
 
 DX8VertexBufferClass::DX8VertexBufferClass(
 	const Vector3* vertices,
-	const Vector3* normals, 
+	const Vector3* normals,
 	const Vector4* diffuse,
-	const Vector2* tex_coords, 
+	const Vector2* tex_coords,
 	unsigned short VertexCount,
 	UsageType usage)
 	:
 	VertexBufferClass(BUFFER_TYPE_DX8, D3DFVF_XYZ|D3DFVF_TEX1|D3DFVF_NORMAL|D3DFVF_DIFFUSE, VertexCount),
-	VertexBuffer(NULL)
+	VertexBuffer(nullptr)
 {
 	WWASSERT(vertices);
 	WWASSERT(normals);
@@ -357,12 +357,12 @@ DX8VertexBufferClass::DX8VertexBufferClass(
 DX8VertexBufferClass::DX8VertexBufferClass(
 	const Vector3* vertices,
 	const Vector4* diffuse,
-	const Vector2* tex_coords, 
+	const Vector2* tex_coords,
 	unsigned short VertexCount,
 	UsageType usage)
 	:
 	VertexBufferClass(BUFFER_TYPE_DX8, D3DFVF_XYZ|D3DFVF_TEX1|D3DFVF_DIFFUSE, VertexCount),
-	VertexBuffer(NULL)
+	VertexBuffer(nullptr)
 {
 	WWASSERT(vertices);
 	WWASSERT(tex_coords);
@@ -376,12 +376,12 @@ DX8VertexBufferClass::DX8VertexBufferClass(
 
 DX8VertexBufferClass::DX8VertexBufferClass(
 	const Vector3* vertices,
-	const Vector2* tex_coords, 
+	const Vector2* tex_coords,
 	unsigned short VertexCount,
 	UsageType usage)
 	:
 	VertexBufferClass(BUFFER_TYPE_DX8, D3DFVF_XYZ|D3DFVF_TEX1, VertexCount),
-	VertexBuffer(NULL)
+	VertexBuffer(nullptr)
 {
 	WWASSERT(vertices);
 	WWASSERT(tex_coords);
@@ -395,9 +395,9 @@ DX8VertexBufferClass::DX8VertexBufferClass(
 DX8VertexBufferClass::~DX8VertexBufferClass()
 {
 #ifdef VERTEX_BUFFER_LOG
-	WWDEBUG_SAY(("VertexBuffer->Release()\n"));
+	WWDEBUG_SAY(("VertexBuffer->Release()"));
 	_DX8VertexBufferCount--;
-	WWDEBUG_SAY(("Current vertex buffer count: %d\n",_DX8VertexBufferCount));
+	WWDEBUG_SAY(("Current vertex buffer count: %d",_DX8VertexBufferCount));
 #endif
 	VertexBuffer->Release();
 }
@@ -416,7 +416,7 @@ void DX8VertexBufferClass::Create_Vertex_Buffer(UsageType usage)
 #ifdef VERTEX_BUFFER_LOG
 	StringClass fvf_name;
 	FVF_Info().Get_FVF_Name(fvf_name);
-	WWDEBUG_SAY(("CreateVertexBuffer(fvfsize=%d, vertex_count=%d, D3DUSAGE_WRITEONLY|%s|%s, fvf: %s, %s)\n",
+	WWDEBUG_SAY(("CreateVertexBuffer(fvfsize=%d, vertex_count=%d, D3DUSAGE_WRITEONLY|%s|%s, fvf: %s, %s)",
 		FVF_Info().Get_FVF_Size(),
 		VertexCount,
 		usage&USAGE_DYNAMIC ? "D3DUSAGE_DYNAMIC" : "-",
@@ -424,7 +424,7 @@ void DX8VertexBufferClass::Create_Vertex_Buffer(UsageType usage)
 		fvf_name,
 		dynamic ? "D3DPOOL_DEFAULT" : "D3DPOOL_MANAGED"));
 	_DX8VertexBufferCount++;
-	WWDEBUG_SAY(("Current vertex buffer count: %d\n",_DX8VertexBufferCount));
+	WWDEBUG_SAY(("Current vertex buffer count: %d",_DX8VertexBufferCount));
 #endif
 
 	unsigned usage_flags=
@@ -448,7 +448,7 @@ void DX8VertexBufferClass::Create_Vertex_Buffer(UsageType usage)
 		return;
 	}
 
-	WWDEBUG_SAY(("Vertex buffer creation failed, trying to release assets...\n"));
+	WWDEBUG_SAY(("Vertex buffer creation failed, trying to release assets..."));
 
 	// Vertex buffer creation failed.  Must be out of memory. Try releasing all our D3D assets and re-creating
 	// them.
@@ -468,7 +468,7 @@ void DX8VertexBufferClass::Create_Vertex_Buffer(UsageType usage)
 		&VertexBuffer);
 
 	if (SUCCEEDED(ret)) {
-		WWDEBUG_SAY(("...Vertex buffer creation succesful\n"));
+		WWDEBUG_SAY(("...Vertex buffer creation successful"));
 	}
 
 	// If it still fails it is fatal
@@ -711,7 +711,7 @@ DynamicVBAccessClass::DynamicVBAccessClass(unsigned t,unsigned fvf,unsigned shor
 	Type(t),
 	FVFInfo(_DynamicFVFInfo),
 	VertexCount(vertex_count_),
-	VertexBuffer(0)
+	VertexBuffer(nullptr)
 {
 	WWASSERT(fvf==dynamic_fvf_type);
 	WWASSERT(Type==BUFFER_TYPE_DYNAMIC_DX8 || Type==BUFFER_TYPE_DYNAMIC_SORTING);
@@ -734,7 +734,7 @@ DynamicVBAccessClass::~DynamicVBAccessClass()
 		_DynamicSortingVertexArrayInUse=false;
 		_DynamicSortingVertexArrayOffset+=VertexCount;
 	}
-	
+
 	REF_PTR_RELEASE (VertexBuffer);
 }
 
@@ -742,13 +742,13 @@ DynamicVBAccessClass::~DynamicVBAccessClass()
 
 void DynamicVBAccessClass::_Deinit()
 {
-	WWASSERT ((_DynamicDX8VertexBuffer == NULL) || (_DynamicDX8VertexBuffer->Num_Refs() == 1));
+	WWASSERT ((_DynamicDX8VertexBuffer == nullptr) || (_DynamicDX8VertexBuffer->Num_Refs() == 1));
 	REF_PTR_RELEASE(_DynamicDX8VertexBuffer);
 	_DynamicDX8VertexBufferInUse=false;
 	_DynamicDX8VertexBufferSize=DEFAULT_VB_SIZE;
 	_DynamicDX8VertexBufferOffset=0;
 
-	WWASSERT ((_DynamicSortingVertexArray == NULL) || (_DynamicSortingVertexArray->Num_Refs() == 1));
+	WWASSERT ((_DynamicSortingVertexArray == nullptr) || (_DynamicSortingVertexArray->Num_Refs() == 1));
 	REF_PTR_RELEASE(_DynamicSortingVertexArray);
 	WWASSERT(!_DynamicSortingVertexArrayInUse);
 	_DynamicSortingVertexArrayInUse=false;
@@ -777,7 +777,7 @@ void DynamicVBAccessClass::Allocate_DX8_Dynamic_Buffer()
 		}
 
 		_DynamicDX8VertexBuffer=NEW_REF(DX8VertexBufferClass,(
-			dynamic_fvf_type, 
+			dynamic_fvf_type,
 			_DynamicDX8VertexBufferSize,
 			(DX8VertexBufferClass::UsageType)usage));
 		_DynamicDX8VertexBufferOffset=0;
@@ -829,7 +829,7 @@ DynamicVBAccessClass::WriteLockClass::WriteLockClass(DynamicVBAccessClass* dynam
 		dx8_lock++;
 		StringClass fvf_name;
 		DynamicVBAccess->VertexBuffer->FVF_Info().Get_FVF_Name(fvf_name);
-		WWDEBUG_SAY(("DynamicVertexBuffer->Lock(start_index: %d, index_range: %d, fvf_size: %d, fvf: %s)\n",
+		WWDEBUG_SAY(("DynamicVertexBuffer->Lock(start_index: %d, index_range: %d, fvf_size: %d, fvf: %s)",
 			DynamicVBAccess->VertexBufferOffset,
 			DynamicVBAccess->Get_Vertex_Count(),
 			DynamicVBAccess->VertexBuffer->FVF_Info().Get_FVF_Size(),
@@ -868,7 +868,7 @@ DynamicVBAccessClass::WriteLockClass::~WriteLockClass()
 #ifdef VERTEX_BUFFER_LOG
 		dx8_lock--;
 		WWASSERT(!dx8_lock);
-		WWDEBUG_SAY(("DynamicVertexBuffer->Unlock()\n"));
+		WWDEBUG_SAY(("DynamicVertexBuffer->Unlock()"));
 #endif
 		DX8_Assert();
 		DX8_ErrorCode(static_cast<DX8VertexBufferClass*>(DynamicVBAccess->VertexBuffer)->Get_DX8_Vertex_Buffer()->Unlock());
@@ -889,7 +889,7 @@ void DynamicVBAccessClass::_Reset(bool frame_changed)
 	if (frame_changed) _DynamicDX8VertexBufferOffset=0;
 }
 
-unsigned short DynamicVBAccessClass::Get_Default_Vertex_Count(void)
+unsigned short DynamicVBAccessClass::Get_Default_Vertex_Count()
 {
 	return _DynamicDX8VertexBufferSize;
 }

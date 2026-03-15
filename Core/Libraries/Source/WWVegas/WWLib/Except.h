@@ -36,10 +36,7 @@
 
 #pragma once
 
-#ifndef EXCEPT_H
-#define EXCEPT_H
-
-#ifdef _MSC_VER
+#if defined(_WIN32)
 
 #include "win.h"
 /*
@@ -49,19 +46,19 @@ typedef struct _EXCEPTION_POINTERS EXCEPTION_POINTERS;
 typedef struct _CONTEXT CONTEXT;
 
 int Exception_Handler(int exception_code, EXCEPTION_POINTERS *e_info);
-int Stack_Walk(unsigned long *return_addresses, int num_addresses, CONTEXT *context = NULL);
+int Stack_Walk(unsigned long *return_addresses, int num_addresses, CONTEXT *context = nullptr);
 bool Lookup_Symbol(void *code_ptr, char *symbol, int &displacement);
-void Load_Image_Helper(void);
+void Load_Image_Helper();
 void Register_Thread_ID(unsigned long thread_id, char *thread_name, bool main = false);
 void Unregister_Thread_ID(unsigned long thread_id, char *thread_name);
-void Register_Application_Exception_Callback(void (*app_callback)(void));
-void Register_Application_Version_Callback(char *(*app_version_callback)(void));
+void Register_Application_Exception_Callback(void (*app_callback)());
+void Register_Application_Version_Callback(char *(*app_version_callback)());
 void Set_Exit_On_Exception(bool set);
-bool Is_Trying_To_Exit(void);
-unsigned long Get_Main_Thread_ID(void);
+bool Is_Trying_To_Exit();
+unsigned long Get_Main_Thread_ID();
 #if (0)
 bool Register_Thread_Handle(unsigned long thread_id, HANDLE thread_handle);
-int Get_Num_Thread(void);
+int Get_Num_Thread();
 HANDLE Get_Thread_Handle(int thread_index);
 #endif //(0)
 
@@ -83,6 +80,4 @@ typedef struct tThreadInfoType {
 
 
 
-#endif	//_MSC_VER
-
-#endif	//EXCEPT_H
+#endif	//_WIN32

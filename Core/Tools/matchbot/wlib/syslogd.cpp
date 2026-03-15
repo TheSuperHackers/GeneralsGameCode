@@ -20,7 +20,7 @@
 
 SyslogD::SyslogD(char *ident,int logopt,int facility,int _priority)
 {
-#ifndef _WINDOWS
+#ifndef _WIN32
   openlog(ident,logopt,facility);
   priority=_priority;
 #endif
@@ -28,7 +28,7 @@ SyslogD::SyslogD(char *ident,int logopt,int facility,int _priority)
 
 int SyslogD::print(const char *str, int len)
 {
-#ifndef _WINDOWS
+#ifndef _WIN32
   char *temp_str=new char[len+1];
   memset(temp_str,0,len+1);
   strncpy(temp_str,str,len);

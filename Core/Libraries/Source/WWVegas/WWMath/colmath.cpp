@@ -40,16 +40,16 @@
 const float CollisionMath::COINCIDENCE_EPSILON = 0.000001f;
 CollisionMath::ColmathStatsStruct CollisionMath::Stats;
 
-CollisionMath::ColmathStatsStruct::ColmathStatsStruct(void)
+CollisionMath::ColmathStatsStruct::ColmathStatsStruct()
 {
 	Reset();
 }
 
-void CollisionMath::ColmathStatsStruct::Reset(void)
+void CollisionMath::ColmathStatsStruct::Reset()
 {
 	TotalCollisionCount = 0;
 	TotalCollisionHitCount = 0;
-	
+
 	CollisionRayTriCount = 0;
 	CollisionRayTriHitCount = 0;
 

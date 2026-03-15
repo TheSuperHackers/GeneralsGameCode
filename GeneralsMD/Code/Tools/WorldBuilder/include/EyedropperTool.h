@@ -22,17 +22,14 @@
 
 #pragma once
 
-#ifndef EYEDROPPERTOOL_H
-#define EYEDROPPERTOOL_H
-
 #include "Tool.h"
 class WorldHeightMapEdit;
 /*************************************************************************/
 /**                             EyedropperTool
-	 Does the select tile from drawing window tool operation. 
+	 Does the select tile from drawing window tool operation.
 ***************************************************************************/
 ///  Select tile tool.
-class EyedropperTool : public Tool 
+class EyedropperTool : public Tool
 {
 public:
 	EyedropperTool(void);
@@ -43,6 +40,3 @@ public:
 	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);
 	virtual void activate(); ///< Become the current tool.
 };
-
-
-#endif //TOOL_H

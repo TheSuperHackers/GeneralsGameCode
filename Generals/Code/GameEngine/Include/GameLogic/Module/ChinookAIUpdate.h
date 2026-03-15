@@ -24,11 +24,8 @@
 
 // ChinookAIUpdate.h //////////
 // Author: Steven Johnson, June 2002
- 
-#pragma once
 
-#ifndef _ChinookAIUpdate_H_
-#define _ChinookAIUpdate_H_
+#pragma once
 
 #include "GameLogic/AIStateMachine.h"
 #include "GameLogic/Module/SupplyTruckAIUpdate.h"
@@ -65,7 +62,7 @@ public:
 };
 
 //-------------------------------------------------------------------------------------------------
-enum ChinookFlightStatus CPP_11(: Int) // Stored in save file, don't renumber.  jba. 
+enum ChinookFlightStatus CPP_11(: Int) // Stored in save file, don't renumber.  jba.
 {
 	CHINOOK_TAKING_OFF				= 0,
 	CHINOOK_FLYING						= 1,
@@ -86,31 +83,31 @@ public:
 	ChinookAIUpdate( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual UpdateSleepTime update();
- 	virtual void aiDoCommand(const AICommandParms* parms);
-	virtual Bool chooseLocomotorSet(LocomotorSetType wst);
-	// this is present solely for some transports to override, so that they can land before 
+	virtual UpdateSleepTime update() override;
+ 	virtual void aiDoCommand(const AICommandParms* parms) override;
+	virtual Bool chooseLocomotorSet(LocomotorSetType wst) override;
+	// this is present solely for some transports to override, so that they can land before
 	// allowing people to exit...
-	virtual AIFreeToExitType getAiFreeToExit(const Object* exiter) const;
-	virtual Bool isAllowedToAdjustDestination() const;
-	virtual ObjectID getBuildingToNotPathAround() const;
+	virtual AIFreeToExitType getAiFreeToExit(const Object* exiter) const override;
+	virtual Bool isAllowedToAdjustDestination() const override;
+	virtual ObjectID getBuildingToNotPathAround() const override;
 
 	// this is present for subclasses (eg, Chinook) to override, to
 	// prevent supply-ferry behavior in some cases (eg, when toting passengers)
-	virtual Bool isAvailableForSupplying() const;
-	virtual Bool isCurrentlyFerryingSupplies() const;
-	
-	virtual Bool isIdle() const;
+	virtual Bool isAvailableForSupplying() const override;
+	virtual Bool isCurrentlyFerryingSupplies() const override;
+
+	virtual Bool isIdle() const override;
 
 	const ChinookAIUpdateModuleData* friend_getData() const { return getChinookAIUpdateModuleData(); }
 	void friend_setFlightStatus(ChinookFlightStatus a) { m_flightStatus = a; }
 
 protected:
 
-	virtual AIStateMachine* makeStateMachine();
+	virtual AIStateMachine* makeStateMachine() override;
 
-	virtual void privateCombatDrop( Object *target, const Coord3D& pos, CommandSourceType cmdSource );
-	virtual void privateGetRepaired( Object *repairDepot, CommandSourceType cmdSource );///< get repaired at repair depot
+	virtual void privateCombatDrop( Object *target, const Coord3D& pos, CommandSourceType cmdSource ) override;
+	virtual void privateGetRepaired( Object *repairDepot, CommandSourceType cmdSource ) override;///< get repaired at repair depot
 
 private:
 
@@ -122,6 +119,3 @@ private:
 	ObjectID								m_airfieldForHealing;
 	Bool										m_hasPendingCommand;
 };
-
-#endif
-

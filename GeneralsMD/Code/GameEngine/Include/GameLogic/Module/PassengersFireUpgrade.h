@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __PASSENGERS_FIRE_UPGRADE_H_
-#define __PASSENGERS_FIRE_UPGRADE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpgradeModule.h"
 
@@ -51,12 +48,8 @@ public:
 	// virtual destructor prototype defined by MemoryPoolObject
 
 protected:
-	virtual void upgradeImplementation( ); ///< Here's the actual work of Upgrading
-  virtual Bool isSubObjectsUpgrade() { return false; }
+	virtual void upgradeImplementation( ) override; ///< Here's the actual work of Upgrading
+  virtual Bool isSubObjectsUpgrade() override { return false; }
 
 
 };
-
-
-#endif // __PASSENGERS_FIRE_UPGRADE_H_
-

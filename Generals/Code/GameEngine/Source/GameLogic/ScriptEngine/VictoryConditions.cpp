@@ -26,12 +26,13 @@
 // Generals multiplayer victory condition specifications
 // Author: Matthew D. Campbell, February 2002
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/AudioEventRTS.h"
 #include "Common/GameAudio.h"
 #include "Common/GameCommon.h"
 #include "Common/GameEngine.h"
+#include "Common/GameUtility.h"
 #include "Common/KindOf.h"
 #include "Common/PlayerList.h"
 #include "Common/Player.h"
@@ -51,22 +52,17 @@
 #include "GameNetwork/GameInfo.h"
 #include "GameNetwork/NetworkDefs.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 #define ISSET(x) (m_victoryConditions & VICTORY_##x)
 
 //-------------------------------------------------------------------------------------------------
-VictoryConditionsInterface *TheVictoryConditions = NULL;
+VictoryConditionsInterface *TheVictoryConditions = nullptr;
 
 //-------------------------------------------------------------------------------------------------
 inline static Bool areAllies(const Player *p1, const Player *p2)
 {
-	if (p1 != p2 && 
+	if (p1 != p2 &&
 		p1->getRelationship(p2->getDefaultTeam()) == ALLIES &&
 		p2->getRelationship(p1->getDefaultTeam()) == ALLIES)
 		return true;
@@ -79,34 +75,39 @@ class VictoryConditions : public VictoryConditionsInterface
 {
 public:
 	VictoryConditions();
-	
-	void init( void );
-	void reset( void );
-	void update( void );
+
+	void init();
+	void reset();
+	void update();
 
 	Bool hasAchievedVictory(Player *player);					///< has a specific player and his allies won?
 	Bool hasBeenDefeated(Player *player);							///< has a specific player and his allies lost?
 	Bool hasSinglePlayerBeenDefeated(Player *player);	///< has a specific player lost?
 
-	void cachePlayerPtrs( void );											///< players have been created - cache the ones of interest
+	void cachePlayerPtrs();											///< players have been created - cache the ones of interest
 
-	Bool isLocalAlliedVictory( void );								///< convenience function
-	Bool isLocalAlliedDefeat( void );									///< convenience function
-	Bool isLocalDefeat( void );												///< convenience function
-	Bool amIObserver( void ) { return m_isObserver;} 	///< Am I an observer?( need this for scripts )
-	virtual UnsignedInt getEndFrame( void ) { return m_endFrame; }	///< on which frame was the game effectively over?
+	Bool isLocalAlliedVictory();								///< convenience function
+	Bool isLocalAlliedDefeat();									///< convenience function
+	Bool isLocalDefeat();												///< convenience function
+	Bool amIObserver() { return m_isObserver;} 	///< Am I an observer?( need this for scripts )
+	virtual UnsignedInt getEndFrame() { return m_endFrame; }	///< on which frame was the game effectively over?
 private:
+	Player* findFirstUndefeatedPlayer(); ///< Find the first player that has not been defeated.
+	void markAllianceVictorious(Player* victoriousPlayer); ///< Mark the victorious player and his allies as victorious.
+	Bool multipleAlliancesExist(); ///< Are there multiple alliances still alive?
+
 	Player*				m_players[MAX_PLAYER_COUNT];
 	Int						m_localSlotNum;
 	UnsignedInt		m_endFrame;
 	Bool					m_isDefeated[MAX_PLAYER_COUNT];
+	Bool					m_isVictorious[MAX_PLAYER_COUNT];
 	Bool					m_localPlayerDefeated;												///< prevents condition from being signaled each frame
 	Bool					m_singleAllianceRemaining;										///< prevents condition from being signaled each frame
 	Bool					m_isObserver;
 };
 
 //-------------------------------------------------------------------------------------------------
-VictoryConditionsInterface * createVictoryConditions( void )
+VictoryConditionsInterface * createVictoryConditions()
 {
 	// only one created, so no MemoryPool usage
 	return NEW VictoryConditions;
@@ -117,20 +118,21 @@ VictoryConditions::VictoryConditions()
 {
 	reset();
 }
-	
+
 //-------------------------------------------------------------------------------------------------
-void VictoryConditions::init( void )
+void VictoryConditions::init()
 {
 	reset();
 }
 
 //-------------------------------------------------------------------------------------------------
-void VictoryConditions::reset( void )
+void VictoryConditions::reset()
 {
 	for (Int i=0; i<MAX_PLAYER_COUNT; ++i)
 	{
-		m_players[i] = NULL;
+		m_players[i] = nullptr;
 		m_isDefeated[i] = false;
+		m_isVictorious[i] = false;
 	}
 	m_localSlotNum = -1;
 
@@ -143,42 +145,52 @@ void VictoryConditions::reset( void )
 }
 
 //-------------------------------------------------------------------------------------------------
-void VictoryConditions::update( void )
+Bool VictoryConditions::multipleAlliancesExist()
 {
-	if (!TheRecorder->isMultiplayer() || (m_localSlotNum == -1 && !m_isObserver))
+	Player* alive = nullptr;
+
+	for (Int i = 0; i < MAX_PLAYER_COUNT; ++i)
+	{
+		Player* player = m_players[i];
+
+		if (player && !hasSinglePlayerBeenDefeated(player))
+		{
+			if (alive)
+			{
+				// check to verify they are on the same team
+				if (!areAllies(alive, player))
+				{
+					return true;
+				}
+			}
+			else
+			{
+				alive = player; // save this pointer to check against
+			}
+		}
+	}
+
+	return false;
+}
+
+//-------------------------------------------------------------------------------------------------
+void VictoryConditions::update()
+{
+	if (!TheRecorder->isMultiplayer() || (m_localSlotNum < 0 && !m_isObserver))
 		return;
 
 	// Check for a single winning alliance
 	if (!m_singleAllianceRemaining)
 	{
-		Bool multipleAlliances = false;
-		Player *alive = NULL;
-		Player *player;
-		for (Int i=0; i<MAX_PLAYER_COUNT; ++i)
-		{
-			player = m_players[i];
-			if (player && !hasSinglePlayerBeenDefeated(player))
-			{
-				if (alive)
-				{
-					// check to verify they are on the same team
-					if (!areAllies(alive, player))
-					{
-						multipleAlliances = true;
-						break;
-					}
-				}
-				else
-				{
-					alive = player; // save this pointer to check against
-				}
-			}
-		}
-
-		if (!multipleAlliances)
+		if (!multipleAlliancesExist())
 		{
 			m_singleAllianceRemaining = true; // don't check again
 			m_endFrame = TheGameLogic->getFrame();
+
+			Player* victoriousPlayer = findFirstUndefeatedPlayer();
+
+			if (victoriousPlayer)
+				markAllianceVictorious(victoriousPlayer);
 		}
 	}
 
@@ -192,7 +204,7 @@ void VictoryConditions::update( void )
 			if (TheGameLogic->getFrame() > 1)
 			{
 				ThePartitionManager->revealMapForPlayerPermanently( p->getPlayerIndex() );
-				
+
 				TheInGameUI->message("GUI:PlayerHasBeenDefeated", p->getPlayerDisplayName().str() );
 				// People are boneheads. Also play a sound
 				static AudioEventRTS leftGameSound("GUIMessageReceived");
@@ -205,10 +217,10 @@ void VictoryConditions::update( void )
 				pName.format("player%d", idx);
 				if (p->getPlayerNameKey() == NAMEKEY(pName))
 				{
-					GameSlot *slot = (TheGameInfo)?TheGameInfo->getSlot(idx):NULL;
+					GameSlot *slot = (TheGameInfo)?TheGameInfo->getSlot(idx):nullptr;
 					if (slot && slot->isAI())
 					{
-						DEBUG_LOG(("Marking AI player %s as defeated\n", pName.str()));
+						DEBUG_LOG(("Marking AI player %s as defeated", pName.str()));
 						slot->setLastFrameInGame(TheGameLogic->getFrame());
 					}
 				}
@@ -228,12 +240,39 @@ void VictoryConditions::update( void )
 		{
 			if (!m_singleAllianceRemaining)
 			{
-				//MessageBoxOk(TheGameText->fetch("GUI:Defeat"), TheGameText->fetch("GUI:LocalDefeat"), NULL);
+				//MessageBoxOk(TheGameText->fetch("GUI:Defeat"), TheGameText->fetch("GUI:LocalDefeat"), nullptr);
 			}
 			m_localPlayerDefeated = true;	// don't check again
-			TheRadar->forceOn(TRUE);
+			TheRadar->forceOn(localPlayer->getPlayerIndex(), TRUE);
 			SetInGameChatType( INGAME_CHAT_EVERYONE ); // can't chat to allies after death.  Only to other observers.
 		}
+	}
+}
+
+//-------------------------------------------------------------------------------------------------
+Player* VictoryConditions::findFirstUndefeatedPlayer()
+{
+	for (Int i = 0; i < MAX_PLAYER_COUNT; ++i)
+	{
+		Player* player = m_players[i];
+		if (player && !hasSinglePlayerBeenDefeated(player))
+			return player;
+	}
+
+	return nullptr;
+}
+
+// TheSuperHackers @bugfix Stubbjax 11/02/2026 This marks the player and any allies as victorious, including
+// defeated allies. This also ensures players retain their victorious status if their assets are destroyed
+// after the victory conditions are met (e.g. when quitting the game prior to the victory screen).
+//-------------------------------------------------------------------------------------------------
+void VictoryConditions::markAllianceVictorious(Player* victoriousPlayer)
+{
+	for (Int i = 0; i < MAX_PLAYER_COUNT; ++i)
+	{
+		Player* player = m_players[i];
+		if (player == victoriousPlayer || (player && areAllies(player, victoriousPlayer)))
+			m_isVictorious[i] = true;
 	}
 }
 
@@ -243,13 +282,17 @@ Bool VictoryConditions::hasAchievedVictory(Player *player)
 	if (!player)
 		return false;
 
-	if (m_singleAllianceRemaining)
+	if (!m_singleAllianceRemaining)
+		return false;
+
+	for (Int i = 0; i < MAX_PLAYER_COUNT; ++i)
 	{
-		for (Int i=0; i<MAX_PLAYER_COUNT; ++i)
+		if (player == m_players[i])
 		{
-			if ( m_players[i] && !hasSinglePlayerBeenDefeated(m_players[i]) &&
-				(player == m_players[i] || areAllies(m_players[i], player)) )
+			if (m_isVictorious[i])
 				return true;
+
+			break;
 		}
 	}
 
@@ -262,8 +305,19 @@ Bool VictoryConditions::hasBeenDefeated(Player *player)
 	if (!player)
 		return false;
 
-	if (m_singleAllianceRemaining && !hasAchievedVictory(player))
-		return true;
+	if (!m_singleAllianceRemaining)
+		return false;
+
+	for (Int i = 0; i < MAX_PLAYER_COUNT; ++i)
+	{
+		if (player == m_players[i])
+		{
+			if (m_isDefeated[i])
+				return true;
+
+			break;
+		}
+	}
 
 	return false;
 }
@@ -303,7 +357,7 @@ Bool VictoryConditions::hasSinglePlayerBeenDefeated(Player *player)
 }
 
 //-------------------------------------------------------------------------------------------------
-void VictoryConditions::cachePlayerPtrs( void )
+void VictoryConditions::cachePlayerPtrs()
 {
 	if (!TheRecorder->isMultiplayer())
 		return;
@@ -313,10 +367,10 @@ void VictoryConditions::cachePlayerPtrs( void )
 	for (Int i=0; i<MAX_PLAYER_COUNT; ++i)
 	{
 		Player *player = ThePlayerList->getNthPlayer(i);
-		DEBUG_LOG(("Checking whether to cache player %d - [%ls], house [%ls]\n", i, player?player->getPlayerDisplayName().str():L"<NOBODY>", (player&&player->getPlayerTemplate())?player->getPlayerTemplate()->getDisplayName().str():L"<NONE>"));
+		DEBUG_LOG(("Checking whether to cache player %d - [%ls], house [%ls]", i, player?player->getPlayerDisplayName().str():L"<NOBODY>", (player&&player->getPlayerTemplate())?player->getPlayerTemplate()->getDisplayName().str():L"<NONE>"));
 		if (player && player != ThePlayerList->getNeutralPlayer() && player->getPlayerTemplate() && player->getPlayerTemplate() != civTemplate && !player->isPlayerObserver())
 		{
-			DEBUG_LOG(("Caching player\n"));
+			DEBUG_LOG(("Caching player"));
 			m_players[playerCount] = player;
 			if (m_players[playerCount]->isLocalPlayer())
 				m_localSlotNum = playerCount;
@@ -325,20 +379,18 @@ void VictoryConditions::cachePlayerPtrs( void )
 	}
 	while (playerCount < MAX_PLAYER_COUNT)
 	{
-		m_players[playerCount++] = NULL;
+		m_players[playerCount++] = nullptr;
 	}
 
 	if (m_localSlotNum < 0)
 	{
 		m_localPlayerDefeated = true;	// if we have no local player, don't check for defeat
-		DEBUG_ASSERTCRASH(TheRadar, ("No Radar!"));
-		TheRadar->forceOn(TRUE);
 		m_isObserver = true;
 	}
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool VictoryConditions::isLocalAlliedVictory( void )
+Bool VictoryConditions::isLocalAlliedVictory()
 {
 	if (m_isObserver)
 		return false;
@@ -347,7 +399,7 @@ Bool VictoryConditions::isLocalAlliedVictory( void )
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool VictoryConditions::isLocalAlliedDefeat( void )
+Bool VictoryConditions::isLocalAlliedDefeat()
 {
 	if (m_isObserver)
 		return m_singleAllianceRemaining;
@@ -356,7 +408,7 @@ Bool VictoryConditions::isLocalAlliedDefeat( void )
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool VictoryConditions::isLocalDefeat( void )
+Bool VictoryConditions::isLocalDefeat()
 {
 	if (m_isObserver)
 		return FALSE;

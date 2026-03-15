@@ -18,14 +18,13 @@
 
 // ftp.h : Declaration of the Cftp
 
-#ifndef __FTP_H_
-#define __FTP_H_
-
+#pragma once
 
 //#include "../resource.h"       // main symbols
 
-#include "winsock.h"
-#include "stdio.h"
+#include <cstddef>
+#include <winsock.h>
+#include <Utility/stdio_adapter.h>
 
 #include "WWDownload/ftpdefs.h"
 
@@ -50,7 +49,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 // Cftp
-class Cftp 
+class Cftp
 {
 private:
 	friend class CDownload;
@@ -64,7 +63,7 @@ private:
 	int		m_iFilePos;									// Byte offset into file
 	int		m_iBytesRead;								// Number of bytes downloaded
 	int		m_iFileSize;								// Total size of the file
-	char	m_szRemoteFilePath[128];				
+	char	m_szRemoteFilePath[128];
 	char	m_szRemoteFileName[128];
 	char	m_szLocalFilePath[128];
 	char	m_szLocalFileName[256];
@@ -73,7 +72,7 @@ private:
 	char	m_szPassword[128];
 	FILE *	m_pfLocalFile;
 	int		m_iStatus;
-	
+
 	int		m_sendNewPortStatus;
 	int		m_findStart;
 
@@ -85,10 +84,10 @@ private:
 	int		AsyncGetHostByName( char * szName, struct sockaddr_in &address );
 
 				// Convert a local filename into a temp filename to download into
-	void		GetDownloadFilename( const char* localname, char* downloadname);
+	void		GetDownloadFilename( const char* localname, char* downloadname, size_t downloadname_size);
 
-	void		CloseSockets(void);
-	void		ZeroStuff(void);
+	void		CloseSockets();
+	void		ZeroStuff();
 
 
 public:
@@ -100,7 +99,7 @@ public:
 	HRESULT DisconnectFromServer();
 
 	HRESULT LoginToServer( LPCSTR szUserName, LPCSTR szPassword );
-	HRESULT LogoffFromServer( void );
+	HRESULT LogoffFromServer();
 
 	HRESULT FindFile( LPCSTR szRemoteFileName, int * piSize );
 
@@ -113,5 +112,3 @@ public:
 	HRESULT SendCommand( LPCSTR pCommand, int iSize );
 
 };
-
-#endif //__FTP_H_

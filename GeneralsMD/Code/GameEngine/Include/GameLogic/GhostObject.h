@@ -29,17 +29,10 @@
 
 #pragma once
 
-#ifndef _GHOSTOBJECT_H_
-#define _GHOSTOBJECT_H_
-
 #include "Lib/BaseType.h"
 #include "Common/Snapshot.h"
 
 // #define DEBUG_FOG_MEMORY	///< this define is used to force object snapshots for all players, not just local player.
-
-//Magic pointer value which indicates that a drawable pointer is actually invalid
-//because we're looking at a ghost object.
-#define GHOST_OBJECT_DRAWABLE	0xFFFFFFFF
 
 class Object;
 class PartitionData;
@@ -54,19 +47,18 @@ public:
 	virtual void snapShot(int playerIndex)=0;
 	virtual void updateParentObject(Object *object, PartitionData *mod)=0;
 	virtual void freeSnapShot(int playerIndex)=0;
-	inline PartitionData *friend_getPartitionData(void) const {return m_partitionData;}
-	inline GeometryType getGeometryType(void) const {return m_parentGeometryType;}
-	inline Bool getGeometrySmall(void) const {return m_parentGeometryIsSmall;}
-	inline Real getGeometryMajorRadius(void) const {return m_parentGeometryMajorRadius;}
-	inline Real getGeometryMinorRadius(void) const {return m_parentGeometryminorRadius;}
-	inline Real getParentAngle(void) const {return m_parentAngle;}
-	inline const Coord3D *getParentPosition(void) const {return &m_parentPosition;}
+	PartitionData *friend_getPartitionData() const {return m_partitionData;}
+	GeometryType getGeometryType() const {return m_parentGeometryType;}
+	Bool getGeometrySmall() const {return m_parentGeometryIsSmall;}
+	Real getGeometryMajorRadius() const {return m_parentGeometryMajorRadius;}
+	Real getGeometryMinorRadius() const {return m_parentGeometryminorRadius;}
+	Real getParentAngle() const {return m_parentAngle;}
+	const Coord3D *getParentPosition() const {return &m_parentPosition;}
 
 protected:
-
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
+	virtual void loadPostProcess();
 
 	Object *m_parentObject;		///< object which we are ghosting
 	GeometryType m_parentGeometryType;
@@ -83,26 +75,38 @@ class GhostObjectManager : public Snapshot
 public:
 	GhostObjectManager();
 	virtual ~GhostObjectManager();
-	virtual void reset(void);
+
+	virtual void reset();
 	virtual GhostObject *addGhostObject(Object *object, PartitionData *pd);
 	virtual void removeGhostObject(GhostObject *mod);
-	virtual inline void setLocalPlayerIndex(int index) { m_localPlayer = index; }
-	inline int getLocalPlayerIndex(void)	{ return m_localPlayer; }
-	virtual void updateOrphanedObjects(int *playerIndexList, int numNonLocalPlayers);
-	virtual void releasePartitionData(void);	///<saves data needed to later rebuild partition manager data.
-	virtual void restorePartitionData(void);	///<restores ghost objects into the partition manager.
-	inline void lockGhostObjects(Bool enableLock) {m_lockGhostObjects=enableLock;}	///<temporary lock on creating new ghost objects. Only used by map border resizing!
-	inline void saveLockGhostObjects(Bool enableLock) {m_saveLockGhostObjects=enableLock;}
+	virtual void setLocalPlayerIndex(int playerIndex) { m_localPlayer = playerIndex; }
+	int getLocalPlayerIndex()	{ return m_localPlayer; }
+	virtual void updateOrphanedObjects(int *playerIndexList, int playerIndexCount);
+	virtual void releasePartitionData();	///<saves data needed to later rebuild partition manager data.
+	virtual void restorePartitionData();	///<restores ghost objects into the partition manager.
+	void lockGhostObjects(Bool enableLock) {m_lockGhostObjects=enableLock;}	///<temporary lock on creating new ghost objects. Only used by map border resizing!
+	void saveLockGhostObjects(Bool enableLock) {m_saveLockGhostObjects=enableLock;}
+	inline Bool trackAllPlayers() const; ///< returns whether the ghost object status is tracked for all players or for the local player only
+
 protected:
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
+	virtual void loadPostProcess();
+
 	Int m_localPlayer;
 	Bool m_lockGhostObjects;
 	Bool m_saveLockGhostObjects;	///< used to lock the ghost object system during a save/load
+	Bool m_trackAllPlayers; ///< if enabled, tracks ghost object status for all players, otherwise for the local player only
 };
+
+inline Bool GhostObjectManager::trackAllPlayers() const
+{
+#ifdef DEBUG_FOG_MEMORY
+	return true;
+#else
+	return m_trackAllPlayers;
+#endif
+}
 
 // the singleton
 extern GhostObjectManager *TheGhostObjectManager;
-
-#endif // _GAME_DISPLAY_H_

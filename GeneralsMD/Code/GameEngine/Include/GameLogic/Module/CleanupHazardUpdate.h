@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __CLEANUP_HAZARD_UPDATE_H_
-#define __CLEANUP_HAZARD_UPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/KindOf.h"
 #include "GameLogic/Module/UpdateModule.h"
@@ -53,7 +50,7 @@ public:
 	CleanupHazardUpdateModuleData();
 	static void buildFieldParse(MultiIniFieldParse& p);
 
-private: 
+private:
 
 };
 
@@ -71,8 +68,8 @@ public:
 	CleanupHazardUpdate( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual void onObjectCreated();
-	virtual UpdateSleepTime update();
+	virtual void onObjectCreated() override;
+	virtual UpdateSleepTime update() override;
 
 	Object* scanClosestTarget();
 	void fireWhenReady();
@@ -91,7 +88,3 @@ protected:
 	Coord3D m_pos;
 	Real		m_moveRange;
 };
-
-
-#endif
-

@@ -16,22 +16,22 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando / G 3D engine                                       * 
- *                                                                                             * 
- *                    File Name : MeshDeformUndo.h                                             * 
- *                                                                                             * 
- *                   Programmer : Patrick Smith                                                * 
- *                                                                                             * 
- *                   Start Date : 06/08/99                                                     * 
- *                                                                                             * 
- *                  Last Update : 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando / G 3D engine                                       *
+ *                                                                                             *
+ *                    File Name : MeshDeformUndo.h                                             *
+ *                                                                                             *
+ *                   Programmer : Patrick Smith                                                *
+ *                                                                                             *
+ *                   Start Date : 06/08/99                                                     *
+ *                                                                                             *
+ *                  Last Update :
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "MeshDeformUndo.h"
@@ -58,7 +58,7 @@ VertexRestoreClass::VertexRestoreClass
 		m_SetIndex (0),
 		m_KeyframeIndex (0)
 {
-	assert (mesh != NULL);
+	assert (mesh != nullptr);
 
 	//
 	//	Remember the deformer's current settings
@@ -91,9 +91,9 @@ VertexRestoreClass::Free_Vertex_Array (void)
 void
 VertexRestoreClass::Restore (int is_undo)
 {
-	assert (m_pMesh != NULL);
-	assert (m_pModData != NULL);
-	assert (m_pModifier != NULL);
+	assert (m_pMesh != nullptr);
+	assert (m_pModData != nullptr);
+	assert (m_pModifier != nullptr);
 
 	// Is this being called as part of an undo operation?
 	if (is_undo != 0) {
@@ -103,8 +103,8 @@ VertexRestoreClass::Restore (int is_undo)
 		// the undo operation was recorded
 		//
 		m_pModData->Set_Current_Set (m_SetIndex);
-		m_pModData->Peek_Set (m_SetIndex).Set_Current_Key_Frame (m_KeyframeIndex);		
-		
+		m_pModData->Peek_Set (m_SetIndex).Set_Current_Key_Frame (m_KeyframeIndex);
+
 		//
 		//	Apply the original vertex positions to the mesh
 		//
@@ -115,7 +115,7 @@ VertexRestoreClass::Restore (int is_undo)
 		//
 		m_pModifier->NotifyDependents (FOREVER, PART_GEOM | PART_VERTCOLOR, REFMSG_CHANGE);
 		m_pModifier->Update_UI (m_pModData);
-	}		
+	}
 
 	return ;
 }
@@ -129,9 +129,9 @@ VertexRestoreClass::Restore (int is_undo)
 void
 VertexRestoreClass::Redo (void)
 {
-	assert (m_pMesh != NULL);
-	assert (m_pModData != NULL);
-	assert (m_pModifier != NULL);
+	assert (m_pMesh != nullptr);
+	assert (m_pModData != nullptr);
+	assert (m_pModifier != nullptr);
 
 	//
 	//	Ensure the modifier is in the state it was when

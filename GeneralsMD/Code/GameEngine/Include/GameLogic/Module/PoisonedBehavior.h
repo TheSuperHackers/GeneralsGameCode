@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __Poisoned_Behavior_H_
-#define __Poisoned_Behavior_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/BehaviorModule.h"
 #include "GameLogic/Module/DamageModule.h"
@@ -55,7 +52,7 @@ private:
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-class PoisonedBehavior : public UpdateModule, 
+class PoisonedBehavior : public UpdateModule,
 												 public DamageModuleInterface
 {
 
@@ -70,17 +67,17 @@ public:
 	static Int getInterfaceMask() { return UpdateModule::getInterfaceMask() | (MODULEINTERFACE_DAMAGE); }
 
 	// BehaviorModule
-	virtual DamageModuleInterface* getDamage() { return this; }
+	virtual DamageModuleInterface* getDamage() override { return this; }
 
 	// DamageModuleInterface
-	virtual void onDamage( DamageInfo *damageInfo );
-	virtual void onHealing( DamageInfo *damageInfo );
-	virtual void onBodyDamageStateChange(const DamageInfo* damageInfo, BodyDamageType oldState, BodyDamageType newState) { }
+	virtual void onDamage( DamageInfo *damageInfo ) override;
+	virtual void onHealing( DamageInfo *damageInfo ) override;
+	virtual void onBodyDamageStateChange(const DamageInfo* damageInfo, BodyDamageType oldState, BodyDamageType newState) override { }
 
 	// UpdateInterface
-	virtual UpdateSleepTime update();
+	virtual UpdateSleepTime update() override;
 	// Disabled conditions to process (we should still poison disabled things)
-	virtual DisabledMaskType getDisabledTypesToProcess() const { return DISABLEDMASK_ALL; }
+	virtual DisabledMaskType getDisabledTypesToProcess() const override { return DISABLEDMASK_ALL; }
 
 protected:
 
@@ -92,9 +89,7 @@ private:
 	UnsignedInt		m_poisonDamageFrame;
 	UnsignedInt		m_poisonOverallStopFrame;
 	Real					m_poisonDamageAmount;
+	ObjectID			m_poisonSource;
 	DeathType			m_deathType;
 
 };
-
-#endif // __Poisoned_Behavior_H_
-

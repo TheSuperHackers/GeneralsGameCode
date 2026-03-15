@@ -17,12 +17,12 @@
 */
 
 //----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright(C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright(C) 2001 - All Rights Reserved
+//
 //----------------------------------------------------------------------------
 //
 // Project:   WSYS Library
@@ -36,7 +36,7 @@
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-//         Includes                                                      
+//         Includes
 //----------------------------------------------------------------------------
 
 #include <stdio.h>
@@ -47,46 +47,46 @@
 
 #include "WSYS_FileSystem.h"
 #include "WSYS_RAMFile.h"
-									
-
-//----------------------------------------------------------------------------
-//         Externals                                                     
-//----------------------------------------------------------------------------
-
 
 
 //----------------------------------------------------------------------------
-//         Defines                                                         
+//         Externals
 //----------------------------------------------------------------------------
 
 
 
 //----------------------------------------------------------------------------
-//         Private Types                                                     
+//         Defines
 //----------------------------------------------------------------------------
 
 
 
 //----------------------------------------------------------------------------
-//         Private Data                                                     
+//         Private Types
 //----------------------------------------------------------------------------
 
 
 
 //----------------------------------------------------------------------------
-//         Public Data                                                      
+//         Private Data
 //----------------------------------------------------------------------------
 
 
 
 //----------------------------------------------------------------------------
-//         Private Prototypes                                               
+//         Public Data
 //----------------------------------------------------------------------------
 
 
 
 //----------------------------------------------------------------------------
-//         Private Functions                                               
+//         Private Prototypes
+//----------------------------------------------------------------------------
+
+
+
+//----------------------------------------------------------------------------
+//         Private Functions
 //----------------------------------------------------------------------------
 
 //=================================================================
@@ -95,19 +95,19 @@
 
 RAMFile::RAMFile()
 : m_size(0),
-	m_data(NULL)
+	m_data(nullptr)
 {
 
 }
 
 
 //----------------------------------------------------------------------------
-//         Public Functions                                                
+//         Public Functions
 //----------------------------------------------------------------------------
 
 
 //=================================================================
-// RAMFile::~RAMFile	
+// RAMFile::~RAMFile
 //=================================================================
 
 RAMFile::~RAMFile()
@@ -119,7 +119,7 @@ RAMFile::~RAMFile()
 }
 
 //=================================================================
-// RAMFile::open	
+// RAMFile::open
 //=================================================================
 /**
   *	This function opens a file using the standard C open() call. Access flags
@@ -132,10 +132,10 @@ Bool RAMFile::open( const Char *filename, Int access )
 {
 	File *file = TheFileSystem->open( filename, access );
 
-	if ( file == NULL )
+	if ( file == nullptr )
 	{
 		return FALSE;
-	}	
+	}
 
 	Bool result = open( file );
 
@@ -152,9 +152,9 @@ Bool RAMFile::open( const Char *filename, Int access )
 
 Bool RAMFile::open( File *file )
 {
-	if ( file == NULL )
+	if ( file == nullptr )
 	{
-		return NULL;
+		return FALSE;
 	}
 
 	Int access = file->getAccess();
@@ -168,7 +168,7 @@ Bool RAMFile::open( File *file )
 	m_size = file->size();
 	m_data = new char [ m_size ];
 
-	if ( m_data == NULL )
+	if ( m_data == nullptr )
 	{
 		return FALSE;
 	}
@@ -178,7 +178,7 @@ Bool RAMFile::open( File *file )
 	if ( m_size < 0 )
 	{
 		delete [] m_data;
-		m_data = NULL;
+		m_data = nullptr;
 		return FALSE;
 	}
 
@@ -188,7 +188,7 @@ Bool RAMFile::open( File *file )
 }
 
 //=================================================================
-// RAMFile::close 	
+// RAMFile::close
 //=================================================================
 /**
 	* Closes the current file if it is open.
@@ -198,22 +198,19 @@ Bool RAMFile::open( File *file )
 
 void RAMFile::close( void )
 {
-	if ( m_data )
-	{
-		delete [] m_data;
-		m_data = NULL;
-	}
+	delete [] m_data;
+	m_data = nullptr;
 
 	File::close();
 }
 
 //=================================================================
-// RAMFile::read 
+// RAMFile::read
 //=================================================================
 
 Int RAMFile::read( void *buffer, Int bytes )
 {
-	if( m_data == NULL )
+	if( m_data == nullptr )
 	{
 		return -1;
 	}
@@ -240,7 +237,7 @@ Int RAMFile::read( void *buffer, Int bytes )
 }
 
 //=================================================================
-// RAMFile::write 
+// RAMFile::write
 //=================================================================
 
 Int RAMFile::write( void *buffer, Int bytes )
@@ -249,7 +246,7 @@ Int RAMFile::write( void *buffer, Int bytes )
 }
 
 //=================================================================
-// RAMFile::seek 
+// RAMFile::seek
 //=================================================================
 
 Int RAMFile::seek( Int pos, seekMode mode)

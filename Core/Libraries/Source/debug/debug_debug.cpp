@@ -26,10 +26,14 @@
 //
 // Debug class implementation
 //////////////////////////////////////////////////////////////////////////////
-#include "_pch.h"
+
+#include "debug.h"
+#include "internal.h"
+#include "internal_except.h"
+#include "internal_io.h"
 #include <stdlib.h>
-#include <Utility/stdio_adapter.h>
-#include <string.h>
+#include <windows.h>
+#include <WWCommon.h>
 #include <new>      // needed for placement new prototype
 
 // a little dummy variable that makes the linker actually include
@@ -38,16 +42,27 @@ extern "C" bool __DebugIncludeInLink1;
 bool __DebugIncludeInLink1;
 
 // This part is a little tricky (and not portable to other compilers).
-// MSVC initializes all static C++ variables by calling a list of 
+// MSVC initializes all static C++ variables by calling a list of
 // function pointers contained in data segments called .CRT$XCA to
 // .CRT$XCZ. We jam in our own two functions at the very beginning
 // and end of this list (B and Y respectively since the A and Z segments
 // contain list delimiters).
+#if defined(_MSC_VER)
 #pragma data_seg(".CRT$XCB")
 void *Debug::PreStatic=&Debug::PreStaticInit;
 #pragma data_seg(".CRT$XCY")
 void *Debug::PostStatic=&Debug::PostStaticInit;
 #pragma data_seg()
+#elif defined(__GNUC__) && defined(_WIN32)
+// For GCC/MinGW-w64 targeting Windows, use constructor attributes
+// Use priority 101 for PreStatic (very early) and 65434 for PostStatic (very late)
+void __attribute__((constructor(101))) GccPreStaticInit() { Debug::PreStaticInit(); }
+void __attribute__((constructor(65434))) GccPostStaticInit() { Debug::PostStaticInit(); }
+void *Debug::PreStatic = nullptr;
+void *Debug::PostStatic = nullptr;
+#else
+#error "Unsupported compiler or platform. This code requires MSVC or GCC/MinGW-w64 targeting Windows."
+#endif
 
 Debug::LogDescription::LogDescription(const char *fileOrGroup, const char *description)
 {
@@ -62,7 +77,7 @@ unsigned Debug::curStackFrame;
 
 // this constructor is empty on purpose because all construction
 // work is done in PreStaticInit (and some in PostStaticInit)
-Debug::Debug(void)
+Debug::Debug()
 {
   // do not put any code in here (but it's good for keeping module global todo's)
   /// @todo what about frame based logging?
@@ -70,7 +85,7 @@ Debug::Debug(void)
   ///       make it possible to enable/disable categories by adding category to log ID
 }
 
-void Debug::PreStaticInit(void)
+void Debug::PreStaticInit()
 {
   // do not change any member variables that have constructors
   // because they are not constructed yet!
@@ -81,32 +96,32 @@ void Debug::PreStaticInit(void)
   atexit(StaticExit);
 
   // init vars
-  Instance.hrTranslators=NULL;
+  Instance.hrTranslators=nullptr;
   Instance.numHrTranslators=0;
-  Instance.firstIOFactory=NULL;
-  Instance.firstCmdGroup=NULL;
+  Instance.firstIOFactory=nullptr;
+  Instance.firstCmdGroup=nullptr;
   memset(Instance.frameHash,0,sizeof(Instance.frameHash));
-  Instance.nextUnusedFrameHash=NULL;
+  Instance.nextUnusedFrameHash=nullptr;
   Instance.numAvailableFrameHash=0;
-  Instance.firstLogGroup=NULL;
+  Instance.firstLogGroup=nullptr;
   memset(Instance.ioBuffer,0,sizeof(Instance.ioBuffer));
   Instance.curType=DebugIOInterface::StringType::MAX;
   *Instance.curSource=0;
   Instance.disableAssertsEtc=0;
-  Instance.curFrameEntry=NULL;
-  Instance.firstPatternEntry=NULL;
-  Instance.lastPatternEntry=NULL;
+  Instance.curFrameEntry=nullptr;
+  Instance.firstPatternEntry=nullptr;
+  Instance.lastPatternEntry=nullptr;
   *Instance.curCommandGroup=0;
   Instance.alwaysFlush=false;
   Instance.timeStamp=false;
   Instance.m_radix=10;
   Instance.m_fillChar=' ';
-  
+
   /// install exception handler
   SetUnhandledExceptionFilter(DebugExceptionhandler::ExceptionFilter);
 }
 
-void Debug::PostStaticInit(void)
+void Debug::PostStaticInit()
 {
   InstallExceptionHandler();
 
@@ -121,25 +136,25 @@ void Debug::PostStaticInit(void)
 
   /// exec dbgcmd file
   char ioBuffer[2048];
-  GetModuleFileName(NULL,ioBuffer,sizeof(ioBuffer));
+  GetModuleFileName(nullptr,ioBuffer,sizeof(ioBuffer));
   char *q=strrchr(ioBuffer,'.');
   if (q)
     strcpy(q,".dbgcmd");
-  HANDLE h=CreateFile(ioBuffer,GENERIC_READ,0,NULL,OPEN_EXISTING,
-                      FILE_ATTRIBUTE_NORMAL,NULL);
+  HANDLE h=CreateFile(ioBuffer,GENERIC_READ,0,nullptr,OPEN_EXISTING,
+                      FILE_ATTRIBUTE_NORMAL,nullptr);
   if (h==INVALID_HANDLE_VALUE)
-    h=CreateFile("default.dbgcmd",GENERIC_READ,0,NULL,OPEN_EXISTING,
-                      FILE_ATTRIBUTE_NORMAL,NULL);
+    h=CreateFile("default.dbgcmd",GENERIC_READ,0,nullptr,OPEN_EXISTING,
+                      FILE_ATTRIBUTE_NORMAL,nullptr);
   if (h!=INVALID_HANDLE_VALUE)
   {
     char cmdBuffer[512];
     unsigned long ioCur=0,ioUsed=0,cmdCur=0;
-    ReadFile(h,ioBuffer,sizeof(ioBuffer),&ioUsed,NULL);
+    ReadFile(h,ioBuffer,sizeof(ioBuffer),&ioUsed,nullptr);
     for (;;)
     {
       if (ioCur==ioUsed)
       {
-        ReadFile(h,ioBuffer,sizeof(ioBuffer),&ioUsed,NULL);
+        ReadFile(h,ioBuffer,sizeof(ioBuffer),&ioUsed,nullptr);
         ioCur=0;
       }
       if (ioCur==ioUsed||ioBuffer[ioCur]=='\n'||ioBuffer[ioCur]=='\r')
@@ -174,7 +189,7 @@ void Debug::PostStaticInit(void)
       if (p!=q)
       {
         Instance.ExecCommand(p,q);
-        p=*q?q+1:NULL;
+        p=*q?q+1:nullptr;
       }
     }
   }
@@ -199,7 +214,7 @@ void Debug::PostStaticInit(void)
   }
 }
 
-void Debug::StaticExit(void)
+void Debug::StaticExit()
 {
   // yes, we do leave memory 'leaks' but Win32 will take care of these
 
@@ -210,7 +225,7 @@ void Debug::StaticExit(void)
     if (io->io)
     {
       io->io->Delete();
-      io->io=NULL;
+      io->io=nullptr;
     }
 
   // and command group interfaces...
@@ -218,7 +233,7 @@ void Debug::StaticExit(void)
     if (cmd->cmdif)
     {
       cmd->cmdif->Delete();
-      cmd->cmdif=NULL;
+      cmd->cmdif=nullptr;
     }
 }
 
@@ -249,18 +264,39 @@ Debug::~Debug()
   // again, do not put any code in here
 }
 
+#if defined(_MSC_VER)
+// MSVC: Use SE Translator
 static void LocalSETranslator(unsigned, struct _EXCEPTION_POINTERS *pExPtrs)
 {
   // simply call our regular exception handler
   DebugExceptionhandler::ExceptionFilter(pExPtrs);
 }
-
-void Debug::InstallExceptionHandler(void)
+#elif defined(__GNUC__) && defined(_WIN32)
+// MinGW-w64: Use Vectored Exception Handler (Windows-only)
+// Note: VEH is process-wide (unlike MSVC's per-thread _set_se_translator),
+// but this matches the existing process-wide SetUnhandledExceptionFilter architecture.
+// Returns EXCEPTION_CONTINUE_SEARCH to avoid interfering with normal exception handling.
+static LONG WINAPI LocalVectoredExceptionHandler(struct _EXCEPTION_POINTERS *pExPtrs)
 {
+  // Call our regular exception handler
+  DebugExceptionhandler::ExceptionFilter(pExPtrs);
+  return EXCEPTION_CONTINUE_SEARCH;
+}
+#endif
+
+void Debug::InstallExceptionHandler()
+{
+#if defined(_MSC_VER)
   _set_se_translator(LocalSETranslator);
+#elif defined(__GNUC__) && defined(_WIN32)
+  // MinGW-w64 doesn't support _set_se_translator, use Vectored Exception Handler
+  AddVectoredExceptionHandler(1, LocalVectoredExceptionHandler);
+#else
+  #error "Unsupported compiler for exception handling"
+#endif
 }
 
-bool Debug::SkipNext(void)
+bool Debug::SkipNext()
 {
   // this is typically set while an assertion
   // is running
@@ -270,11 +306,23 @@ bool Debug::SkipNext(void)
   // do not implement this function inline, we do need
   // a valid frame pointer here!
   unsigned help;
-  _asm 
+#if defined(_MSC_VER)
+  _asm
   {
     mov eax,[ebp+4]   // return address
     mov help,eax
   };
+#elif (defined(__GNUC__) || defined(__clang__)) && (defined(__i386__) || defined(_M_IX86))
+  // GCC/Clang inline assembly for x86-32
+  __asm__ __volatile__(
+    "mov 4(%%ebp), %0"
+    : "=r"(help)
+    :
+    : "memory"
+  );
+#else
+  #error "Unsupported compiler or architecture for inline assembly"
+#endif
   curStackFrame=help;
 
   // do we know if to skip the following code?
@@ -287,7 +335,7 @@ bool Debug::SkipNext(void)
   if (e->status==Unknown)
     Instance.UpdateFrameStatus(*e);
 
-  // now we now wether to skip or not
+  // now we now whether to skip or not
   return e->status==Skip;
 }
 
@@ -301,7 +349,7 @@ Debug& Debug::AssertBegin(const char *file, int line, const char *expr)
     Instance.FlushOutput();
 
   // set new output
-  __ASSERT(Instance.curFrameEntry==NULL);
+  __ASSERT(Instance.curFrameEntry==nullptr);
   Instance.curFrameEntry=Instance.GetFrameEntry(curStackFrame,FrameTypeAssert,file,line);
   if (Instance.curFrameEntry->status==NoSkip)
   {
@@ -315,21 +363,21 @@ Debug& Debug::AssertBegin(const char *file, int line, const char *expr)
     const char *p=strstr(file,"\\code\\");
     p=p?p+6:file;
 
-    Instance << "\n" << RepeatChar('=',80) << "\nAssertion failed in " << p << ", line " << line 
+    Instance << "\n" << RepeatChar('=',80) << "\nAssertion failed in " << p << ", line " << line
              << ",\nexpression " << expr;
   }
 
   return Instance;
 }
 
-bool Debug::AssertDone(void)
+bool Debug::AssertDone()
 {
   --disableAssertsEtc;
 
   // did we have an active assertion?
   if (curType==DebugIOInterface::StringType::Assert)
   {
-    __ASSERT(curFrameEntry!=NULL);
+    __ASSERT(curFrameEntry!=nullptr);
 
     // hit info?
     if (curFrameEntry->hits>1)
@@ -346,8 +394,8 @@ bool Debug::AssertDone(void)
                         "time being (stops logging this assertion as well).";
     char *help=(char *)DebugAllocMemory(ioBuffer[curType].used+strlen(addInfo)+1);
     strcpy(help,ioBuffer[curType].buffer+82);
-    strcat(help,addInfo);
-    
+    strcat(help, addInfo);
+
     // First hit? Then do a stack trace
     if (curFrameEntry->hits==1)
     {
@@ -366,12 +414,12 @@ bool Debug::AssertDone(void)
       /// @todo replace MessageBox with custom dialog w/ 4 options: abort, skip 1, skip all, break
 
       // now display message, wait for user input
-      int result=MessageBox(NULL,help,"Assertion failed",
+      int result=MessageBox(nullptr,help,"Assertion failed",
                             MB_ABORTRETRYIGNORE|MB_ICONSTOP|MB_TASKMODAL|MB_SETFOREGROUND);
       switch(result)
       {
         case IDABORT:
-          curFrameEntry=NULL;
+          curFrameEntry=nullptr;
           exit(1);
           break;
         case IDIGNORE:
@@ -386,13 +434,19 @@ bool Debug::AssertDone(void)
           }
           break;
         case IDRETRY:
+#if defined(_MSC_VER)
           _asm int 0x03
+#elif defined(__GNUC__)
+          __builtin_trap();
+#else
+          #error "Unsupported compiler for breakpoint"
+#endif
           break;
         default:
           ((void)0);
       }
     }
-    else 
+    else
     {
       // we're running fullscreen
 
@@ -416,7 +470,7 @@ bool Debug::AssertDone(void)
     }
   }
 
-  curFrameEntry=NULL;
+  curFrameEntry=nullptr;
   return false;
 }
 
@@ -430,7 +484,7 @@ Debug& Debug::CheckBegin(const char *file, int line, const char *expr)
     Instance.FlushOutput();
 
   // set new output
-  __ASSERT(Instance.curFrameEntry==NULL);
+  __ASSERT(Instance.curFrameEntry==nullptr);
   Instance.curFrameEntry=Instance.GetFrameEntry(curStackFrame,FrameTypeCheck,file,line);
   if (Instance.curFrameEntry->status==NoSkip)
   {
@@ -444,21 +498,21 @@ Debug& Debug::CheckBegin(const char *file, int line, const char *expr)
     const char *p=strstr(file,"\\code\\");
     p=p?p+6:file;
 
-    Instance << "\n" << RepeatChar('=',80) << "\nCheck failed in " << p << ", line " << line 
+    Instance << "\n" << RepeatChar('=',80) << "\nCheck failed in " << p << ", line " << line
              << ",\nexpression " << expr;
   }
 
   return Instance;
 }
 
-bool Debug::CheckDone(void)
+bool Debug::CheckDone()
 {
   --disableAssertsEtc;
 
   // did we have an active check?
   if (curType==DebugIOInterface::StringType::Check)
   {
-    __ASSERT(curFrameEntry!=NULL);
+    __ASSERT(curFrameEntry!=nullptr);
 
     // hit info?
     if (curFrameEntry->hits>1)
@@ -499,7 +553,7 @@ bool Debug::CheckDone(void)
     }
   }
 
-  curFrameEntry=NULL;
+  curFrameEntry=nullptr;
   return false;
 }
 
@@ -514,7 +568,7 @@ Debug& Debug::LogBegin(const char *fileOrGroup)
     Instance.FlushOutput();
 
   // set new output
-  __ASSERT(Instance.curFrameEntry==NULL);
+  __ASSERT(Instance.curFrameEntry==nullptr);
   Instance.curFrameEntry=Instance.GetFrameEntry(curStackFrame,FrameTypeLog,fileOrGroup,0);
   if (Instance.curFrameEntry->status==NoSkip)
   {
@@ -523,7 +577,7 @@ Debug& Debug::LogBegin(const char *fileOrGroup)
     // we're doing all this extra work so that DLOGs can be spread across
     // multiple calls
     if (Instance.curType==DebugIOInterface::StringType::Log&&
-        strcmp(Instance.curSource,Instance.curFrameEntry->fileOrGroup))
+        strcmp(Instance.curSource,Instance.curFrameEntry->fileOrGroup) != 0)
       Instance.FlushOutput();
 
     if (Instance.curType!=DebugIOInterface::StringType::Log)
@@ -532,17 +586,17 @@ Debug& Debug::LogBegin(const char *fileOrGroup)
   }
   else if (Instance.curType!=DebugIOInterface::StringType::MAX)
     Instance.FlushOutput();
-  
+
   return Instance;
 }
 
-bool Debug::LogDone(void)
+bool Debug::LogDone()
 {
   --disableAssertsEtc;
 
   // we're not flushing here on intention!
 
-  curFrameEntry=NULL;
+  curFrameEntry=nullptr;
   return false;
 }
 
@@ -556,7 +610,7 @@ Debug& Debug::CrashBegin(const char *file, int line)
     Instance.FlushOutput();
 
   // set new output
-  __ASSERT(Instance.curFrameEntry==NULL);
+  __ASSERT(Instance.curFrameEntry==nullptr);
   Instance.curFrameEntry=Instance.GetFrameEntry(curStackFrame,FrameTypeAssert,file,line);
   if (Instance.curFrameEntry->status==NoSkip)
   {
@@ -571,7 +625,7 @@ Debug& Debug::CrashBegin(const char *file, int line)
       const char *p=strstr(file,"\\code\\");
       p=p?p+6:file;
 
-      Instance << "Crash in " << p << ", line " << line 
+      Instance << "Crash in " << p << ", line " << line
                << ", reason:\n";
     }
   }
@@ -586,7 +640,7 @@ bool Debug::CrashDone(bool die)
   // did we have an active assertion?
   if (curType==DebugIOInterface::StringType::Crash)
   {
-    __ASSERT(curFrameEntry!=NULL);
+    __ASSERT(curFrameEntry!=nullptr);
 
     // hit info?
     if (curFrameEntry->hits>1)
@@ -610,8 +664,8 @@ bool Debug::CrashDone(bool die)
 #endif
     char *help=(char *)DebugAllocMemory(ioBuffer[curType].used+strlen(addInfo)+1);
     strcpy(help,ioBuffer[curType].buffer+82);
-    strcat(help,addInfo);
-    
+    strcat(help, addInfo);
+
     // First hit? Then do a stack trace
     if (curFrameEntry->hits==1)
     {
@@ -634,12 +688,12 @@ bool Debug::CrashDone(bool die)
         /// @todo replace MessageBox with custom dialog w/ 4 options: abort, skip 1, skip all, break
 
         // now display message, wait for user input
-        int result=MessageBox(NULL,help,"Crash hit",
+        int result=MessageBox(nullptr,help,"Crash hit",
                               MB_ABORTRETRYIGNORE|MB_ICONSTOP|MB_TASKMODAL|MB_SETFOREGROUND);
         switch(result)
         {
           case IDABORT:
-            curFrameEntry=NULL;
+            curFrameEntry=nullptr;
             exit(1);
             break;
           case IDIGNORE:
@@ -654,7 +708,13 @@ bool Debug::CrashDone(bool die)
             }
             break;
           case IDRETRY:
+#if defined(_MSC_VER)
             _asm int 0x03
+#elif defined(__GNUC__)
+            __builtin_trap();
+#else
+            #error "Unsupported compiler for breakpoint"
+#endif
             break;
           default:
             ((void)0);
@@ -686,14 +746,14 @@ bool Debug::CrashDone(bool die)
     else
 #endif
     {
-      MessageBox(NULL,help,"Game crash",
+      MessageBox(nullptr,help,"Game crash",
                           MB_OK|MB_ICONSTOP|MB_TASKMODAL|MB_SETFOREGROUND);
-      curFrameEntry=NULL;
+      curFrameEntry=nullptr;
       _exit(1);
     }
   }
 
-  curFrameEntry=NULL;
+  curFrameEntry=nullptr;
   return false;
 }
 
@@ -706,7 +766,7 @@ Debug& Debug::operator<<(const char *str)
 
   // buffer large enough?
   if (!str)
-    str="[NULL]";
+    str="[null]";
   else if (!*str)
     return *this;
 
@@ -729,8 +789,7 @@ Debug& Debug::operator<<(const char *str)
 
 void Debug::SetPrefixAndRadix(const char *prefix, int radix)
 {
-  strncpy(m_prefix,prefix?prefix:"",sizeof(m_prefix)-1);
-  m_prefix[sizeof(m_prefix)-1]=0;
+  strlcpy(m_prefix,prefix?prefix:"",sizeof(m_prefix));
   m_radix=radix;
 }
 
@@ -844,7 +903,7 @@ Debug& Debug::operator<<(const void *ptr)
     (*this) << "0x" << _ultoa((unsigned long)ptr,help,16);
   }
   else
-    (*this) << "NULL";
+    (*this) << "null";
   return *this;
 }
 
@@ -1009,12 +1068,12 @@ void Debug::RemoveHResultTranslator(HResultTranslator func, void *user)
     }
 }
 
-bool Debug::AddIOFactory(const char *io_id, const char *descr, DebugIOInterface* (*func)(void))
+bool Debug::AddIOFactory(const char *io_id, const char *descr, DebugIOInterface* (*func)())
 {
   // bail out if invalid parameters passed in
   if (!io_id||!func)
     return true;
-  
+
   // allocate & init new list entry
   IOFactoryListEntry *entry=(IOFactoryListEntry *)
                       DebugAllocMemory(sizeof(IOFactoryListEntry));
@@ -1022,8 +1081,8 @@ bool Debug::AddIOFactory(const char *io_id, const char *descr, DebugIOInterface*
   entry->ioID=io_id;
   entry->descr=descr;
   entry->factory=func;
-  entry->io=NULL;
-  entry->input=NULL;
+  entry->io=nullptr;
+  entry->input=nullptr;
   entry->inputAlloc=0;
   entry->inputUsed=0;
 
@@ -1048,11 +1107,11 @@ bool Debug::AddCommands(const char *cmdgroup, DebugCmdInterface *cmdif)
       return true;
     listptr=&((*listptr)->next);
   }
-  
+
   // allocate & init new list entry
   CmdInterfaceListEntry *entry=(CmdInterfaceListEntry *)
                       DebugAllocMemory(sizeof(CmdInterfaceListEntry));
-  entry->next=NULL;
+  entry->next=nullptr;
   entry->group=cmdgroup;
   entry->cmdif=cmdif;
 
@@ -1094,7 +1153,7 @@ void Debug::Command(const char *cmd)
   Instance.ExecCommand(cmd,cmd+strlen(cmd));
 }
 
-void Debug::Update(void)
+void Debug::Update()
 {
   // check all existing IO interfaces
   for (IOFactoryListEntry *cur=Instance.firstIOFactory;cur;cur=cur->next)
@@ -1116,8 +1175,8 @@ void Debug::Update(void)
       cur->inputUsed+=numChars;
       cur->input[cur->inputUsed]=0;
       hadInput=true;
-    } 
-    
+    }
+
     if (!hadInput)
       // skip then
       continue;
@@ -1139,7 +1198,7 @@ void Debug::Update(void)
 Debug::FrameHashEntry* Debug::AddFrameEntry(unsigned addr, unsigned type,
                                             const char *fileOrGroup, int line)
 {
-  __ASSERT(LookupFrame(addr)==NULL);
+  __ASSERT(LookupFrame(addr)==nullptr);
 
   // get new entry
   if (!numAvailableFrameHash)
@@ -1163,13 +1222,13 @@ Debug::FrameHashEntry* Debug::AddFrameEntry(unsigned addr, unsigned type,
   if (type&FrameTypeLog)
   {
     // must add to list of known logs,
-    // store translated name 
-    e->fileOrGroup=AddLogGroup(fileOrGroup,NULL);
+    // store translated name
+    e->fileOrGroup=AddLogGroup(fileOrGroup,nullptr);
   }
   else
   {
     // no, just add file name (without path though)
-    e->fileOrGroup=fileOrGroup?strrchr(fileOrGroup,'\\'):NULL;
+    e->fileOrGroup=fileOrGroup?strrchr(fileOrGroup,'\\'):nullptr;
     e->fileOrGroup=e->fileOrGroup?e->fileOrGroup+1:fileOrGroup;
   }
 
@@ -1186,8 +1245,8 @@ void Debug::UpdateFrameStatus(FrameHashEntry &entry)
       entry.frameType==FrameTypeCheck)
     wsprintf(help,"%s(%i)",entry.fileOrGroup,entry.line);
   else
-    strcpy(help,entry.fileOrGroup);
-  
+    strlcpy(help, entry.fileOrGroup, ARRAY_SIZE(help));
+
   // update frame status
   bool active=entry.frameType!=FrameTypeLog;
   for (PatternListEntry *cur=firstPatternEntry;cur;cur=cur->next)
@@ -1225,7 +1284,7 @@ const char *Debug::AddLogGroup(const char *fileOrGroup, const char *descr)
   KnownLogGroupList *cur=firstLogGroup;
   for (;cur;cur=cur->next)
   {
-    if (!strcmp(cur->nameGroup,fileOrGroup))
+    if (strcmp(cur->nameGroup,fileOrGroup) == 0)
     {
       // yes, return translated name
       return cur->nameGroup;
@@ -1346,7 +1405,7 @@ void Debug::FlushOutput(bool defaultLog)
     cur->io->Write(curType,curSource,ioBuffer[curType].buffer);
 
     if (alwaysFlush)
-      cur->io->Write(curType,curSource,NULL);
+      cur->io->Write(curType,curSource,nullptr);
   }
 
   // written nowhere?
@@ -1355,11 +1414,11 @@ void Debug::FlushOutput(bool defaultLog)
 #ifdef HAS_LOGS
     // then force output to a very simple default log file
     // (non-Release builds only)
-    HANDLE h=CreateFile("default.log",GENERIC_WRITE,0,NULL,
-                        OPEN_ALWAYS,FILE_ATTRIBUTE_NORMAL,NULL);
-    SetFilePointer(h,0,NULL,FILE_END);
+    HANDLE h=CreateFile("default.log",GENERIC_WRITE,0,nullptr,
+                        OPEN_ALWAYS,FILE_ATTRIBUTE_NORMAL,nullptr);
+    SetFilePointer(h,0,nullptr,FILE_END);
     DWORD dwDummy;
-    WriteFile(h,ioBuffer[curType].buffer,strlen(ioBuffer[curType].buffer),&dwDummy,NULL);
+    WriteFile(h,ioBuffer[curType].buffer,strlen(ioBuffer[curType].buffer),&dwDummy,nullptr);
     CloseHandle(h);
 #endif
   }
@@ -1380,7 +1439,7 @@ void Debug::AddPatternEntry(unsigned types, bool isActive, const char *pattern)
       DebugAllocMemory(sizeof(PatternListEntry));
 
   // init
-  cur->next=NULL;
+  cur->next=nullptr;
   cur->frameTypes=types;
   cur->isActive=isActive;
   cur->pattern=(char *)DebugAllocMemory(strlen(pattern)+1);
@@ -1408,7 +1467,7 @@ bool Debug::SimpleMatch(const char *str, const char *pattern)
           return true;
       return *str==*pattern;
     }
-    else 
+    else
     {
       if (*str++!=*pattern++)
         return false;
@@ -1423,23 +1482,21 @@ void Debug::SetBuildInfo(const char *version,
                          const char *buildDate)
 {
   if (version)
-    strncpy(Instance.m_version,version,sizeof(Instance.m_version)-1);
+    strlcpy(Instance.m_version,version,sizeof(Instance.m_version));
   if (internalVersion)
-    strncpy(Instance.m_intVersion,internalVersion,sizeof(Instance.m_intVersion)-1);
+    strlcpy(Instance.m_intVersion,internalVersion,sizeof(Instance.m_intVersion));
   if (buildDate)
-    strncpy(Instance.m_buildDate,buildDate,sizeof(Instance.m_buildDate)-1);
+    strlcpy(Instance.m_buildDate,buildDate,sizeof(Instance.m_buildDate));
 }
 
-void Debug::WriteBuildInfo(void)
+void Debug::WriteBuildInfo()
 {
   operator<<("Version:");
   if (*m_version)
     (*this) << " " << m_version;
   if (*m_intVersion)
     (*this) << " internal " << m_intVersion;
-  #if defined(RTS_INTERNAL)
-    operator<<(" internal");
-  #elif defined(RTS_DEBUG)
+  #if defined(RTS_DEBUG)
     operator<<(" debug");
   #elif defined(RTS_PROFILE)
     operator<<(" profile");
@@ -1464,7 +1521,7 @@ void Debug::ExecCommand(const char *cmdstart, const char *cmdend)
   // just dropping the excess arguments
   char *parts[100];
   int numParts=0;
-  char *lastNonWhitespace=NULL;
+  char *lastNonWhitespace=nullptr;
   char *cur=strbuf;
 
   // regular reply or structured reply?
@@ -1504,7 +1561,7 @@ void Debug::ExecCommand(const char *cmdstart, const char *cmdend)
       {
         if (numParts<sizeof(parts)/sizeof(*parts))
           parts[numParts++]=lastNonWhitespace;
-        lastNonWhitespace=NULL;
+        lastNonWhitespace=nullptr;
         if (*cur)
           *cur++=0;
       }
@@ -1540,14 +1597,14 @@ void Debug::ExecCommand(const char *cmdstart, const char *cmdend)
 
     if (mode!=DebugCmdInterface::CommandMode::Structured)
       AddOutput("> ",2);
-  
+
     // repeat current command first
     AddOutput(cmdstart,cmdend-cmdstart);
     AddOutput("\n",1);
 
     // command group known?
     for (CmdInterfaceListEntry *cur=firstCmdGroup;cur;cur=cur->next)
-      if (!strcmp(curCommandGroup,cur->group))
+      if (strcmp(curCommandGroup,cur->group) == 0)
         break;
     if (!cur)
     {
@@ -1563,18 +1620,18 @@ void Debug::ExecCommand(const char *cmdstart, const char *cmdend)
       // search for a matching command handler
       for (CmdInterfaceListEntry *cur=firstCmdGroup;cur;cur=cur->next)
       {
-        if (strcmp(curCommandGroup,cur->group))
+        if (strcmp(curCommandGroup,cur->group) != 0)
           continue;
 
         bool doneCommand=cur->cmdif->Execute(*this,p,mode,numParts-1,parts+1);
-        if (doneCommand&&(strcmp(p,"help")||numParts>1))
+        if (doneCommand&&(strcmp(p,"help") != 0||numParts>1))
           break;
       }
 
       // display error message if command not found, break away
       if (!cur&&mode==DebugCmdInterface::CommandMode::Normal)
       {
-        if (strcmp(p,"help"))
+        if (strcmp(p,"help") != 0)
           operator<<("Unknown command");
         else if (numParts>1)
           operator<<("Unknown command, help not available");
@@ -1596,14 +1653,14 @@ static BOOL CALLBACK EnumThreadWndProc(HWND hwnd, LPARAM lParam)
   return FALSE;
 }
 
-bool Debug::IsWindowed(void)
+bool Debug::IsWindowed()
 {
   // use cached result if possible
   if (m_isWindowed)
     return m_isWindowed>0;
 
   // find main app window
-  HWND appHWnd=NULL;
+  HWND appHWnd=nullptr;
   EnumThreadWindows(GetCurrentThreadId(),EnumThreadWndProc,(LPARAM)&appHWnd);
   if (!appHWnd)
   {
@@ -1622,7 +1679,7 @@ bool Debug::IsWindowed(void)
 // And finally for a little list of C/C++ runtime replacement functions.
 
 // Abort process due to fatal heap error
-void __cdecl _heap_abort(void)
+void __cdecl _heap_abort()
 {
   DCRASH_RELEASE("Fatal heap error.");
 }

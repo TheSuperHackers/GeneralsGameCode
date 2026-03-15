@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/ModelState.h"
 #include "Common/Xfer.h"
@@ -38,20 +38,15 @@
 #include "GameLogic/Object.h"
 #include "GameLogic/Module/PowerPlantUpdate.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-PowerPlantUpdateModuleData::PowerPlantUpdateModuleData( void )
+PowerPlantUpdateModuleData::PowerPlantUpdateModuleData()
 {
 
 	m_rodsExtendTime = 0;
 
-}  // end PowerPlantUpdateModuleData
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -66,14 +61,14 @@ PowerPlantUpdate::PowerPlantUpdate( Thing *thing, const ModuleData *moduleData )
 	m_extended = FALSE;
 	setWakeFrame(getObject(), UPDATE_SLEEP_FOREVER);
 
-}  // end PowerPlantUpdate
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-PowerPlantUpdate::~PowerPlantUpdate( void )
+PowerPlantUpdate::~PowerPlantUpdate()
 {
 
-}  // end PowerPlantUpdate
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -99,28 +94,28 @@ void PowerPlantUpdate::extendRods( Bool extend )
 		// they de-extend instantly.
 		Drawable *draw = getObject()->getDrawable();
 		if( draw )
-			draw->clearModelConditionFlags( MAKE_MODELCONDITION_MASK2( MODELCONDITION_POWER_PLANT_UPGRADING, 
+			draw->clearModelConditionFlags( MAKE_MODELCONDITION_MASK2( MODELCONDITION_POWER_PLANT_UPGRADING,
 																														MODELCONDITION_POWER_PLANT_UPGRADED) );
-		
+
 		m_extended = FALSE;
 		setWakeFrame(getObject(), UPDATE_SLEEP_FOREVER);
 	}
 
-}  // end PowerPlantUpdate
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime PowerPlantUpdate::update( void )
+UpdateSleepTime PowerPlantUpdate::update()
 {
-	// remove the extending condition and set the extened condition
+	// remove the extending condition and set the extended condition
 	Drawable *draw = getObject()->getDrawable();
 	if( draw )
 		draw->clearAndSetModelConditionState( MODELCONDITION_POWER_PLANT_UPGRADING,
 																					MODELCONDITION_POWER_PLANT_UPGRADED );
-	
+
 	m_extended = TRUE;
 	return UPDATE_SLEEP_FOREVER;
-}  // end update
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -131,7 +126,7 @@ void PowerPlantUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -152,15 +147,15 @@ void PowerPlantUpdate::xfer( Xfer *xfer )
 	// extend complete
 	xfer->xferBool( &m_extended );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void PowerPlantUpdate::loadPostProcess( void )
+void PowerPlantUpdate::loadPostProcess()
 {
 
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

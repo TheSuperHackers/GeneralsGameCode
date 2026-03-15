@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __EnemyNearUpdate_H_
-#define __EnemyNearUpdate_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpdateModule.h"
 #include "Common/KindOf.h"
@@ -48,12 +45,12 @@ public:
 		m_enemyScanDelayTime = LOGICFRAMES_PER_SECOND;
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     UpdateModuleData::buildFieldParse(p);
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
-			{ "ScanDelayTime",		INI::parseDurationUnsignedInt,		NULL, offsetof( EnemyNearUpdateModuleData, m_enemyScanDelayTime ) },
+			{ "ScanDelayTime",		INI::parseDurationUnsignedInt,		nullptr, offsetof( EnemyNearUpdateModuleData, m_enemyScanDelayTime ) },
 			{ 0, 0, 0, 0 }
 		};
     p.add(dataFieldParse);
@@ -74,16 +71,13 @@ public:
 	EnemyNearUpdate( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual UpdateSleepTime update();
+	virtual UpdateSleepTime update() override;
 
 protected:
 
 	UnsignedInt m_enemyScanDelay;
 	Bool m_enemyNear;
 
-	void checkForEnemies( void );
+	void checkForEnemies();
 
 };
-
-#endif // end __EnemyNearUpdate_H_
-

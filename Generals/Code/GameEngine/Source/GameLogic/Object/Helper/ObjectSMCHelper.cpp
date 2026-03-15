@@ -35,7 +35,7 @@
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-ObjectSMCHelper::~ObjectSMCHelper( void )
+ObjectSMCHelper::~ObjectSMCHelper()
 {
 
 }
@@ -48,7 +48,7 @@ UpdateSleepTime ObjectSMCHelper::update()
 	getObject()->clearSpecialModelConditionStates();
 
 	// then go back to sleep until we are forcibly awakened.
-	return UPDATE_SLEEP_FOREVER; 
+	return UPDATE_SLEEP_FOREVER;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -60,7 +60,7 @@ void ObjectSMCHelper::crc( Xfer *xfer )
 	// object helper crc
 	ObjectHelper::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -78,16 +78,16 @@ void ObjectSMCHelper::xfer( Xfer *xfer )
 	// object helper base class
 	ObjectHelper::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void ObjectSMCHelper::loadPostProcess( void )
+void ObjectSMCHelper::loadPostProcess()
 {
 
 	// object helper base class
 	ObjectHelper::loadPostProcess();
 
-}  // end loadPostProcess
+}
 

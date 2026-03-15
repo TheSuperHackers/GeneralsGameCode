@@ -24,7 +24,7 @@
  *                                                                                             *
  *                     $Archive:: /Commando/Code/ww3d2/part_ldr.h          $*
  *                                                                                             *
- *                       Author:: Patrick Smith                                                
+ *                       Author:: Patrick Smith
  *                                                                                             *
  *                     $Modtime:: 8/01/01 3:35p                                               $*
  *                                                                                             *
@@ -32,14 +32,7 @@
  *                                                                                             *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef __PART_EMT_LDR_H
-#define __PART_EMT_LDR_H
-
 
 #include "proto.h"
 #include "rendobj.h"
@@ -100,54 +93,54 @@ class ParticleEmitterDefClass
 		///////////////////////////////////////////////////////////
 		//
 		//	Public constructors/destructors
-		//		
-		ParticleEmitterDefClass (void);
+		//
+		ParticleEmitterDefClass ();
 		ParticleEmitterDefClass (const ParticleEmitterDefClass &src);
-		virtual ~ParticleEmitterDefClass (void);
+		virtual ~ParticleEmitterDefClass ();
 
 
 		///////////////////////////////////////////////////////////
 		//
 		//	Public operators
-		//		
+		//
 		const ParticleEmitterDefClass &operator= (const ParticleEmitterDefClass &src);
 
 
 		///////////////////////////////////////////////////////////
 		//
 		//	Public methods
-		//		
+		//
 		virtual WW3DErrorType	Load_W3D (ChunkLoadClass &chunk_load);
 		virtual WW3DErrorType	Save_W3D (ChunkSaveClass &chunk_save);
-		const char *				Get_Name (void) const					{ return m_pName; }
+		const char *				Get_Name () const					{ return m_pName; }
 		virtual void				Set_Name (const char *pname);
 
 		//
 		//	Informational methods
 		//
-		unsigned int			Get_Version (void) const				{ return m_Version; }
+		unsigned int			Get_Version () const				{ return m_Version; }
 
 		//
 		//	Inline Accessors
 		//
-		int						Get_Render_Mode (void) const			{ return m_InfoV2.RenderMode; }	// values defined in w3d_file.h
-		int						Get_Frame_Mode (void) const			{ return m_InfoV2.FrameMode; } // values in w3d_file.h
-		const char *			Get_Texture_Filename (void) const	{ return m_Info.TextureFilename; }
-		float						Get_Lifetime (void) const				{ return m_Info.Lifetime; }
-		float						Get_Emission_Rate (void) const		{ return m_Info.EmissionRate; }
-		float						Get_Max_Emissions (void) const		{ return m_Info.MaxEmissions; }
-		float						Get_Fade_Time (void) const				{ return m_Info.FadeTime; }
-		float						Get_Gravity (void) const				{ return m_Info.Gravity; }
-		float						Get_Elasticity (void) const			{ return m_Info.Elasticity; }
-		Vector3					Get_Velocity (void) const				{ return Vector3 (m_Info.Velocity.X, m_Info.Velocity.Y, m_Info.Velocity.Z); }
-		Vector3					Get_Acceleration (void) const			{ return Vector3 (m_Info.Acceleration.X, m_Info.Acceleration.Y, m_Info.Acceleration.Z); }
-		unsigned int			Get_Burst_Size (void) const			{ return m_InfoV2.BurstSize; }
-		float						Get_Outward_Vel (void) const			{ return m_InfoV2.OutwardVel; }
-		float						Get_Vel_Inherit (void) const			{ return m_InfoV2.VelInherit; }
-		float						Get_Future_Start_Time (void) const	{ return m_ExtraInfo.FutureStartTime; }
+		int						Get_Render_Mode () const			{ return m_InfoV2.RenderMode; }	// values defined in w3d_file.h
+		int						Get_Frame_Mode () const			{ return m_InfoV2.FrameMode; } // values in w3d_file.h
+		const char *			Get_Texture_Filename () const	{ return m_Info.TextureFilename; }
+		float						Get_Lifetime () const				{ return m_Info.Lifetime; }
+		float						Get_Emission_Rate () const		{ return m_Info.EmissionRate; }
+		float						Get_Max_Emissions () const		{ return m_Info.MaxEmissions; }
+		float						Get_Fade_Time () const				{ return m_Info.FadeTime; }
+		float						Get_Gravity () const				{ return m_Info.Gravity; }
+		float						Get_Elasticity () const			{ return m_Info.Elasticity; }
+		Vector3					Get_Velocity () const				{ return Vector3 (m_Info.Velocity.X, m_Info.Velocity.Y, m_Info.Velocity.Z); }
+		Vector3					Get_Acceleration () const			{ return Vector3 (m_Info.Acceleration.X, m_Info.Acceleration.Y, m_Info.Acceleration.Z); }
+		unsigned int			Get_Burst_Size () const			{ return m_InfoV2.BurstSize; }
+		float						Get_Outward_Vel () const			{ return m_InfoV2.OutwardVel; }
+		float						Get_Vel_Inherit () const			{ return m_InfoV2.VelInherit; }
+		float						Get_Future_Start_Time () const	{ return m_ExtraInfo.FutureStartTime; }
 
 		virtual void			Set_Render_Mode (int mode)						{ m_InfoV2.RenderMode = mode; } // values in w3d_file.h
-		virtual void			Set_Frame_Mode (int mode)						{ m_InfoV2.FrameMode = mode; } // values in w3d_file.h 
+		virtual void			Set_Frame_Mode (int mode)						{ m_InfoV2.FrameMode = mode; } // values in w3d_file.h
 		virtual void			Set_Texture_Filename (const char *pname);
 		virtual void			Set_Lifetime (float value)						{ m_Info.Lifetime = value; }
 		virtual void			Set_Emission_Rate (float value)				{ m_Info.EmissionRate = value; }
@@ -168,8 +161,8 @@ class ParticleEmitterDefClass
 		//
 		//	Randomizer accessors
 		//
-		Vector3Randomizer *	Get_Creation_Volume (void) const								{ return m_pCreationVolume->Clone (); }
-		Vector3Randomizer *	Get_Velocity_Random (void) const								{ return m_pVelocityRandomizer->Clone (); }
+		Vector3Randomizer *	Get_Creation_Volume () const								{ return m_pCreationVolume->Clone (); }
+		Vector3Randomizer *	Get_Velocity_Random () const								{ return m_pVelocityRandomizer->Clone (); }
 		virtual void			Set_Creation_Volume (Vector3Randomizer *randomizer);
 		virtual void			Set_Velocity_Random (Vector3Randomizer *randomizer);
 
@@ -182,7 +175,7 @@ class ParticleEmitterDefClass
 		virtual void			Get_Rotation_Keyframes (ParticlePropertyStruct<float> &rotationframes) const;
 		virtual void			Get_Frame_Keyframes (ParticlePropertyStruct<float> &frameframes) const;
 		virtual void			Get_Blur_Time_Keyframes (ParticlePropertyStruct<float> &blurtimeframes) const;
-		virtual float			Get_Initial_Orientation_Random (void) const { return m_InitialOrientationRandom; }
+		virtual float			Get_Initial_Orientation_Random () const { return m_InitialOrientationRandom; }
 
 		virtual void			Set_Color_Keyframes (ParticlePropertyStruct<Vector3> &keyframes);
 		virtual void			Set_Opacity_Keyframes (ParticlePropertyStruct<float> &keyframes);
@@ -194,8 +187,8 @@ class ParticleEmitterDefClass
 		//
 		//	User data accessors
 		//
-		const char *			Get_User_String (void) const					{ return m_pUserString; }
-		int						Get_User_Type (void) const						{ return m_iUserType; }
+		const char *			Get_User_String () const					{ return m_pUserString; }
+		int						Get_User_Type () const						{ return m_iUserType; }
 		virtual void			Set_User_String (const char *pstring);
 		virtual void			Set_User_Type (int type)						{ m_iUserType = type; }
 
@@ -203,19 +196,19 @@ class ParticleEmitterDefClass
 		// Line Properties accessors
 		// NOTE: These properties are only used when Line rendering mode is used.
 		//
-		const W3dEmitterLinePropertiesStruct * Get_Line_Properties(void) const { return &m_LineProperties; }
+		const W3dEmitterLinePropertiesStruct * Get_Line_Properties() const { return &m_LineProperties; }
 
-		int						Get_Line_Texture_Mapping_Mode(void) const	{ return (m_LineProperties.Flags & W3D_ELINE_TEXTURE_MAP_MODE_MASK) >> W3D_ELINE_TEXTURE_MAP_MODE_OFFSET; }
-		int						Is_Merge_Intersections(void) const			{ return m_LineProperties.Flags & W3D_ELINE_MERGE_INTERSECTIONS; }
-		int						Is_Freeze_Random(void) const					{ return m_LineProperties.Flags & W3D_ELINE_FREEZE_RANDOM; }
-		int						Is_Sorting_Disabled(void) const				{ return m_LineProperties.Flags & W3D_ELINE_DISABLE_SORTING; }
-		int						Are_End_Caps_Enabled(void)	const				{ return m_LineProperties.Flags & W3D_ELINE_END_CAPS; }
-		int						Get_Subdivision_Level(void) const			{ return m_LineProperties.SubdivisionLevel; }
-		float						Get_Noise_Amplitude(void) const				{ return m_LineProperties.NoiseAmplitude; }
-		float						Get_Merge_Abort_Factor(void) const			{ return m_LineProperties.MergeAbortFactor; }
-		float						Get_Texture_Tile_Factor(void) const			{ return m_LineProperties.TextureTileFactor; }
-		Vector2					Get_UV_Offset_Rate(void) const				{ return Vector2(m_LineProperties.UPerSec,m_LineProperties.VPerSec); }
-		
+		int						Get_Line_Texture_Mapping_Mode() const	{ return (m_LineProperties.Flags & W3D_ELINE_TEXTURE_MAP_MODE_MASK) >> W3D_ELINE_TEXTURE_MAP_MODE_OFFSET; }
+		int						Is_Merge_Intersections() const			{ return m_LineProperties.Flags & W3D_ELINE_MERGE_INTERSECTIONS; }
+		int						Is_Freeze_Random() const					{ return m_LineProperties.Flags & W3D_ELINE_FREEZE_RANDOM; }
+		int						Is_Sorting_Disabled() const				{ return m_LineProperties.Flags & W3D_ELINE_DISABLE_SORTING; }
+		int						Are_End_Caps_Enabled()	const				{ return m_LineProperties.Flags & W3D_ELINE_END_CAPS; }
+		int						Get_Subdivision_Level() const			{ return m_LineProperties.SubdivisionLevel; }
+		float						Get_Noise_Amplitude() const				{ return m_LineProperties.NoiseAmplitude; }
+		float						Get_Merge_Abort_Factor() const			{ return m_LineProperties.MergeAbortFactor; }
+		float						Get_Texture_Tile_Factor() const			{ return m_LineProperties.TextureTileFactor; }
+		Vector2					Get_UV_Offset_Rate() const				{ return Vector2(m_LineProperties.UPerSec,m_LineProperties.VPerSec); }
+
 		virtual void			Set_Line_Texture_Mapping_Mode(int mode);
 		virtual void			Set_Merge_Intersections(int onoff)			{ if (onoff) { m_LineProperties.Flags |= W3D_ELINE_MERGE_INTERSECTIONS; } else { m_LineProperties.Flags &= ~W3D_ELINE_MERGE_INTERSECTIONS; }; }
 		virtual void			Set_Freeze_Random(int onoff)					{ if (onoff) { m_LineProperties.Flags |= W3D_ELINE_FREEZE_RANDOM; } else { m_LineProperties.Flags &= ~W3D_ELINE_FREEZE_RANDOM; }; }
@@ -228,12 +221,12 @@ class ParticleEmitterDefClass
 		virtual void			Set_UV_Offset_Rate(const Vector2 & rate)	{ m_LineProperties.UPerSec = rate.X; m_LineProperties.VPerSec = rate.Y; }
 
 	protected:
-		
+
 		///////////////////////////////////////////////////////////
 		//
 		//	Protected methods
 		//
-		
+
 		//
 		//	Loading methods
 		//
@@ -276,14 +269,14 @@ class ParticleEmitterDefClass
 		//
 		//	Conversion methods
 		//
-		virtual void				Initialize_To_Ver2 (void);
-		virtual void				Convert_To_Ver2 (void);
+		virtual void				Initialize_To_Ver2 ();
+		virtual void				Convert_To_Ver2 ();
 
 		//
 		//	Misc. methods
 		//
-		virtual void				Normalize_Filename (void);
-		virtual void				Free_Props (void);
+		virtual void				Normalize_Filename ();
+		virtual void				Free_Props ();
 
 	private:
 
@@ -312,10 +305,10 @@ class ParticleEmitterDefClass
 		Vector3Randomizer *					m_pVelocityRandomizer;
 };
 
-inline void ParticleEmitterDefClass::Set_Line_Texture_Mapping_Mode(int mode)	
-{ 
+inline void ParticleEmitterDefClass::Set_Line_Texture_Mapping_Mode(int mode)
+{
 	m_LineProperties.Flags &= ~W3D_ELINE_TEXTURE_MAP_MODE_MASK;
-	m_LineProperties.Flags |= ((mode << W3D_ELINE_TEXTURE_MAP_MODE_OFFSET) & W3D_ELINE_TEXTURE_MAP_MODE_MASK); 
+	m_LineProperties.Flags |= ((mode << W3D_ELINE_TEXTURE_MAP_MODE_OFFSET) & W3D_ELINE_TEXTURE_MAP_MODE_MASK);
 }
 
 
@@ -324,7 +317,7 @@ inline void ParticleEmitterDefClass::Set_Line_Texture_Mapping_Mode(int mode)
 //
 //	ParticleEmitterPrototypeClass
 //
-class ParticleEmitterPrototypeClass : public W3DMPO, public PrototypeClass 
+class ParticleEmitterPrototypeClass : public W3DMPO, public PrototypeClass
 {
 	W3DMPO_GLUE(ParticleEmitterPrototypeClass)
 	public:
@@ -332,21 +325,21 @@ class ParticleEmitterPrototypeClass : public W3DMPO, public PrototypeClass
 		///////////////////////////////////////////////////////////
 		//
 		//	Public constructors/destructors
-		//		
+		//
 		ParticleEmitterPrototypeClass (ParticleEmitterDefClass *pdef)	{ m_pDefinition = pdef; }
-		
+
 		///////////////////////////////////////////////////////////
 		//
 		//	Public methods
 		//
-		virtual const char *						Get_Name (void) const						{ return m_pDefinition->Get_Name(); }
-		virtual int											Get_Class_ID (void) const				{ return RenderObjClass::CLASSID_PARTICLEEMITTER; }
-		virtual RenderObjClass *				Create (void);
+		virtual const char *						Get_Name () const						{ return m_pDefinition->Get_Name(); }
+		virtual int											Get_Class_ID () const				{ return RenderObjClass::CLASSID_PARTICLEEMITTER; }
+		virtual RenderObjClass *				Create ();
 		virtual void										DeleteSelf()										{ delete this; }
-		virtual ParticleEmitterDefClass *	Get_Definition (void) const		{ return m_pDefinition; }
+		virtual ParticleEmitterDefClass *	Get_Definition () const		{ return m_pDefinition; }
 
 	protected:
-		virtual ~ParticleEmitterPrototypeClass (void)						{ delete m_pDefinition; }
+		virtual ~ParticleEmitterPrototypeClass ()						{ delete m_pDefinition; }
 
 	protected:
 		///////////////////////////////////////////////////////////
@@ -365,7 +358,7 @@ class ParticleEmitterLoaderClass : public PrototypeLoaderClass
 {
 	public:
 
-		virtual int						Chunk_Type (void)  { return W3D_CHUNK_EMITTER; }
+		virtual int						Chunk_Type ()  { return W3D_CHUNK_EMITTER; }
 		virtual PrototypeClass *	Load_W3D (ChunkLoadClass &chunk_load);
 };
 
@@ -375,6 +368,3 @@ class ParticleEmitterLoaderClass : public PrototypeLoaderClass
 //	Global variables
 //
 extern ParticleEmitterLoaderClass	_ParticleEmitterLoader;
-
-
-#endif //__PART_EMT_LDR_H

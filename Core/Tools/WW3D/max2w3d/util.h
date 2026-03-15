@@ -17,27 +17,25 @@
 */
 
 /* $Header: /Commando/Code/Tools/max2w3d/util.h 25    10/27/00 4:11p Greg_h $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando Tools - W3D export                                  * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/Tools/max2w3d/util.h                         $* 
- *                                                                                             * 
- *                      $Author:: Greg_h                                                      $* 
- *                                                                                             * 
- *                     $Modtime:: 10/27/00 10:24a                                             $* 
- *                                                                                             * 
- *                    $Revision:: 25                                                          $* 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando Tools - W3D export                                  *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/Tools/max2w3d/util.h                         $*
+ *                                                                                             *
+ *                      $Author:: Greg_h                                                      $*
+ *                                                                                             *
+ *                     $Modtime:: 10/27/00 10:24a                                             $*
+ *                                                                                             *
+ *                    $Revision:: 25                                                          $*
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef UTIL_H
-#define UTIL_H
+#pragma once
 
 #ifndef ALWAYS_H
 #include "always.h"
@@ -101,17 +99,14 @@ INode *Find_Named_Node (char *nodename, INode *root);
 /*
 ** Macros
 */
-#define SAFE_DELETE(pobject)					\
-			if (pobject) {							\
-				delete pobject;					\
-				pobject = NULL;					\
-			}											\
+#define SAFE_DELETE(pobject) \
+			if (pobject) { \
+				delete pobject; \
+				pobject = nullptr; \
+			}
 
-#define SAFE_DELETE_ARRAY(pobject)			\
-			if (pobject) {							\
-				delete [] pobject;				\
-				pobject = NULL;					\
-			}											\
-
-
-#endif 
+#define SAFE_DELETE_ARRAY(pobject) \
+			if (pobject) { \
+				delete [] pobject; \
+				pobject = nullptr; \
+			}

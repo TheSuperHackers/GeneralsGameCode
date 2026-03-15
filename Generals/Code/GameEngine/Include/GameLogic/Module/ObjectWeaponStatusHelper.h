@@ -24,13 +24,10 @@
 
 // FILE: ObjectWeaponStatusHelper.h ///////////////////////////////////////////////////////////////
 // Author: Steven Johnson, Colin Day - September 202
-// Desc:   Object helpder - WeaponStatus
+// Desc:   Object helper - WeaponStatus
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __OBJECT_WEAPON_STATUS_HELPER_H_
-#define __OBJECT_WEAPON_STATUS_HELPER_H_
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/ThingTemplate.h"
@@ -50,7 +47,7 @@ class ObjectWeaponStatusHelper : public ObjectHelper
 {
 
 	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( ObjectWeaponStatusHelper, ObjectWeaponStatusHelperModuleData )
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ObjectWeaponStatusHelper, "ObjectWeaponStatusHelperPool" )	
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ObjectWeaponStatusHelper, "ObjectWeaponStatusHelperPool" )
 
 protected:
 
@@ -59,27 +56,25 @@ protected:
 		user update modules, so it redefines this. Please don't redefine this
 		for other modules without very careful deliberation. (srj)
 	*/
-	virtual SleepyUpdatePhase getUpdatePhase() const
+	virtual SleepyUpdatePhase getUpdatePhase() const override
 	{
 		return PHASE_FINAL;
 	}
 public:
 
-	ObjectWeaponStatusHelper( Thing *thing, const ModuleData *modData ) : 
-		ObjectHelper( thing, modData ) 
-	{ 
+	ObjectWeaponStatusHelper( Thing *thing, const ModuleData *modData ) :
+		ObjectHelper( thing, modData )
+	{
 		// unlike other helpers, this one needs to start active.
 		DEBUG_ASSERTCRASH(getObject()->getTemplate()->canPossiblyHaveAnyWeapon(), ("should not be instantiated if we have no weapon"));
 		setWakeFrame(getObject(), UPDATE_SLEEP_NONE);
 	}
 	// virtual destructor prototype provided by memory pool object
 
-	virtual UpdateSleepTime update()
+	virtual UpdateSleepTime update() override
 	{
 		getObject()->adjustModelConditionForWeaponStatus();
 		// unlike other helpers, this one must run every frame.
-		return UPDATE_SLEEP_NONE; 
+		return UPDATE_SLEEP_NONE;
 	}
 };
-
-#endif  // end __OBJECT_DEFECTION_HELPER_H_

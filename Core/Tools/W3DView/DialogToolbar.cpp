@@ -36,7 +36,7 @@
 
 #include "StdAfx.h"
 #include "DialogToolbar.h"
-#include "AfxPriv.H"
+#include "AfxPriv.h"
 
 
 BEGIN_MESSAGE_MAP(DialogToolbarClass, CToolBar)
@@ -83,10 +83,10 @@ DialogToolbarClass::Enable_Button
 )
 {
 	// Get the button's style (we enable by using a style bit)
-	int index = CommandToIndex (id);	
+	int index = CommandToIndex (id);
 	UINT style = GetButtonStyle (index) & (~TBBS_DISABLED);
-	
-	// If we are disabling the button, set the 
+
+	// If we are disabling the button, set the
 	// disabled style bit.
 	if (benable == false) {
 		style |= TBBS_DISABLED;
@@ -137,7 +137,7 @@ DialogToolbarClass::OnNeedToolTipText
 )
 {
 	if (pTTTStruct->code == TTN_NEEDTEXTA) {
-		
+
 		TOOLTIPTEXTA *ptooltip_info = (TOOLTIPTEXTA*)pTTTStruct;
 		::lstrcpy (ptooltip_info->szText, "test");
 	}

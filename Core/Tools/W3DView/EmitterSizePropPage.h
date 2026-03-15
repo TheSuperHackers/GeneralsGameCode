@@ -16,12 +16,8 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#if !defined(AFX_EMITTERSIZEPROPPAGE_H__0CD2CBA3_1219_11D3_A034_00104B791122__INCLUDED_)
-#define AFX_EMITTERSIZEPROPPAGE_H__0CD2CBA3_1219_11D3_A034_00104B791122__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
+
 // EmitterSizePropPage.h : header file
 //
 
@@ -42,7 +38,7 @@ class EmitterSizePropPageClass : public CPropertyPage
 
 // Construction
 public:
-	EmitterSizePropPageClass(EmitterInstanceListClass *pemitter = NULL);
+	EmitterSizePropPageClass(EmitterInstanceListClass *pemitter = nullptr);
 	~EmitterSizePropPageClass();
 
 // Dialog Data
@@ -94,7 +90,7 @@ protected:
 		/////////////////////////////////////////////////////////
 		//
 		//	Protected methods
-		//		
+		//
 		void				Initialize (void);
 		void				Update_Sizes (void);
 
@@ -103,7 +99,7 @@ protected:
 		/////////////////////////////////////////////////////////
 		//
 		//	Private member data
-		//		
+		//
 		EmitterInstanceListClass *	m_pEmitterList;
 		bool								m_bValid;
 		ColorBarClass *				m_SizeBar;
@@ -115,5 +111,3 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_EMITTERSIZEPROPPAGE_H__0CD2CBA3_1219_11D3_A034_00104B791122__INCLUDED_)

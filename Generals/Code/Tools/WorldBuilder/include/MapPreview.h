@@ -18,12 +18,12 @@
 
 // FILE: MapPreview.h /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	created:	Oct 2002
@@ -31,16 +31,13 @@
 //	Filename: 	MapPreview.h
 //
 //	author:		Chris Huybregts
-//	
-//	purpose:	
+//
+//	purpose:
 //
 //-----------------------------------------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __MAP_PREVIEW_H_
-#define __MAP_PREVIEW_H_
 
 //-----------------------------------------------------------------------------
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
@@ -72,9 +69,9 @@ private:
 	void interpolateColorForHeight( RGBColor *color, Real height, Real hiZ, Real midZ, Real loZ );
 	Bool mapPreviewToWorld(const ICoord2D *radar, Coord3D *world);
 	void buildMapPreviewTexture( CString tgaName );
-	
+
 	UnsignedInt m_pixelBuffer[MAP_PREVIEW_HEIGHT][MAP_PREVIEW_WIDTH];
-	
+
 
 };
 //-----------------------------------------------------------------------------
@@ -84,5 +81,3 @@ private:
 //-----------------------------------------------------------------------------
 // EXTERNALS //////////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-
-#endif // __MAP_PREVIEW_H_

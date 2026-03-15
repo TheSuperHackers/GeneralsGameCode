@@ -23,17 +23,14 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-//	
-// FILE: SabotageSupplyDropzoneCrateCollide.h 
+//
+// FILE: SabotageSupplyDropzoneCrateCollide.h
 // Author: Kris Morness, June 2003
 // Desc:   A crate (actually a saboteur - mobile crate) that makes the target powerplant lose power
-//	
+//
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef SABOTAGE_SUPPLY_DROPZONE_CRATE_COLLIDE_H_
-#define SABOTAGE_SUPPLY_DROPZONE_CRATE_COLLIDE_H_
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/Module.h"
@@ -53,13 +50,13 @@ public:
 		m_stealCashAmount = 0;
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     CrateCollideModuleData::buildFieldParse(p);
 
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
-			{ "StealCashAmount",	INI::parseUnsignedInt, NULL, offsetof( SabotageSupplyDropzoneCrateCollideModuleData, m_stealCashAmount ) },
+			{ "StealCashAmount",	INI::parseUnsignedInt, nullptr, offsetof( SabotageSupplyDropzoneCrateCollideModuleData, m_stealCashAmount ) },
 			{ 0, 0, 0, 0 }
 		};
 		p.add( dataFieldParse );
@@ -82,13 +79,11 @@ public:
 protected:
 
 	/// This allows specific vetoes to certain types of crates and their data
-	virtual Bool isValidToExecute( const Object *other ) const;
+	virtual Bool isValidToExecute( const Object *other ) const override;
 
 	/// This is the game logic execution function that all real CrateCollides will implement
-	virtual Bool executeCrateBehavior( Object *other );
+	virtual Bool executeCrateBehavior( Object *other ) override;
 
-	virtual Bool isSabotageBuildingCrateCollide() const { return TRUE; }
+	virtual Bool isSabotageBuildingCrateCollide() const override { return TRUE; }
 
 };
-
-#endif

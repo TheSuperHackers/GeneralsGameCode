@@ -17,22 +17,22 @@
 */
 
 /* $Header: /Commando/Code/Tools/max2w3d/w3ddlg.cpp 24    11/07/00 5:40p Greg_h $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando Tools - W3D export                                  * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/Tools/max2w3d/w3ddlg.cpp                     $* 
- *                                                                                             * 
- *                      $Author:: Greg_h                                                      $* 
- *                                                                                             * 
- *                     $Modtime:: 11/07/00 4:39p                                              $* 
- *                                                                                             * 
- *                    $Revision:: 24                                                          $* 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando Tools - W3D export                                  *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/Tools/max2w3d/w3ddlg.cpp                     $*
+ *                                                                                             *
+ *                      $Author:: Greg_h                                                      $*
+ *                                                                                             *
+ *                     $Modtime:: 11/07/00 4:39p                                              $*
+ *                                                                                             *
+ *                    $Revision:: 24                                                          $*
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "w3ddlg.h"
@@ -61,17 +61,17 @@ static bool					_OfnInited = false;
 static OPENFILENAME 		_HierarchyFileOFN;
 
 
-/*********************************************************************************************** 
- * W3dOptionsDialogClass::W3dOptionsDialogClass -- constructor for the options dialog object   * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   07/24/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * W3dOptionsDialogClass::W3dOptionsDialogClass -- constructor for the options dialog object   *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   07/24/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 W3dOptionsDialogClass::W3dOptionsDialogClass(Interface * maxinterface,ExpInterface * exportinterface)
 {
@@ -80,8 +80,8 @@ W3dOptionsDialogClass::W3dOptionsDialogClass(Interface * maxinterface,ExpInterfa
 	if (!_OfnInited) _init_ofn();
 	GotHierarchyFilename = false;
 
-	RangeLowSpin = NULL;
-	RangeHighSpin = NULL;
+	RangeLowSpin = nullptr;
+	RangeHighSpin = nullptr;
 
 	GetMasterUnitInfo(&UnitsType, &UnitsScale);
 }
@@ -93,7 +93,7 @@ W3dOptionsDialogClass::~W3dOptionsDialogClass(void)
 }
 
 bool W3dOptionsDialogClass::Get_Export_Options(W3dExportOptionsStruct * options)
-{						
+{
 	Options = options;
 
 	// Put up the options dialog box.
@@ -119,24 +119,24 @@ bool W3dOptionsDialogClass::Get_Export_Options(W3dExportOptionsStruct * options)
 }
 
 
-/*********************************************************************************************** 
- * W3dOptionsDialogClass::Dialog_Proc -- Handles the windows message for the options dialog    * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   07/24/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * W3dOptionsDialogClass::Dialog_Proc -- Handles the windows message for the options dialog    *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   07/24/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 bool W3dOptionsDialogClass::Dialog_Proc
 (
 	HWND hwnd,
 	UINT message,
 	WPARAM wParam,
-	LPARAM 
+	LPARAM
 )
 {
 	int code = HIWORD(wParam);
@@ -171,7 +171,7 @@ bool W3dOptionsDialogClass::Dialog_Proc
 						return 1;
 					}
 
-					SetCursor(LoadCursor (NULL, IDC_WAIT));
+					SetCursor(LoadCursor (nullptr, IDC_WAIT));
 					EndDialog(Hwnd, 1);
 					break;
 
@@ -211,7 +211,7 @@ bool W3dOptionsDialogClass::Dialog_Proc
 
 					// use the open file common dialog to get a hierarchy filename.
 					_HierarchyFileOFN.hwndOwner = Hwnd;
-					_HierarchyFileOFN.lpstrFileTitle = NULL;
+					_HierarchyFileOFN.lpstrFileTitle = nullptr;
 					_HierarchyFileOFN.lpstrFile = Options->HierarchyFilename;
 
 					if (GetOpenFileName(&_HierarchyFileOFN)) {
@@ -234,7 +234,7 @@ bool W3dOptionsDialogClass::Dialog_Proc
 						SetSaveRequiredFlag(true);
 					}
 
-					_HierarchyFileOFN.lpstrFile = NULL;
+					_HierarchyFileOFN.lpstrFile = nullptr;
 					break;
 			}
 			return 1;
@@ -262,8 +262,8 @@ bool W3dOptionsDialogClass::Dialog_Proc
 						RangeLowSpin->SetValue(RangeHighSpin->GetIVal(),FALSE);
 					}
 					break;
-				
-	 		}	
+
+	 		}
 
 	}
 	return 0;
@@ -272,7 +272,7 @@ bool W3dOptionsDialogClass::Dialog_Proc
 void W3dOptionsDialogClass::Dialog_Init()
 {
 	CenterWindow(Hwnd, GetParent(Hwnd));
-	SetCursor(LoadCursor (NULL, IDC_ARROW));
+	SetCursor(LoadCursor (nullptr, IDC_ARROW));
 
 	// initialize the export radio buttons
 	if (Options->ExportHierarchy) {
@@ -285,7 +285,7 @@ void W3dOptionsDialogClass::Dialog_Init()
 
 			// If the relative path is a full path, just erase both paths
 			// This case happens with files which were exported using a previous,
-			// bugged version of the exporter which did not handle files on 
+			// bugged version of the exporter which did not handle files on
 			// different drives correctly.
 			if (Is_Full_Path(Options->RelativeHierarchyFilename)) {
 				Options->RelativeHierarchyFilename[0] = 0;
@@ -309,7 +309,7 @@ void W3dOptionsDialogClass::Dialog_Init()
 				SetWindowText(butHwnd, Options->HierarchyFilename);
 				GotHierarchyFilename = true;
 
-			} 
+			}
 
 		} else {
 			CheckDlgButton(Hwnd,IDC_WHT_NO_EXPORT_RADIO,BST_CHECKED);
@@ -341,14 +341,14 @@ void W3dOptionsDialogClass::Dialog_Init()
 	SetCheckBox(Hwnd, IDC_VIEWLOG_CHECK, Options->ReviewLog);
 
 	char string[128];	// temp string buffer
-	
-	sprintf(string, "Current FPS:  %d", GetFrameRate());
-	
-	SetDlgItemText(Hwnd, IDC_ANIMATION_FPS_STATIC, string); 
 
-				
-  // initialize animation combo/list boxes         
-		 
+	sprintf(string, "Current FPS:  %d", GetFrameRate());
+
+	SetDlgItemText(Hwnd, IDC_ANIMATION_FPS_STATIC, string);
+
+
+  // initialize animation combo/list boxes
+
 	HwndReduce = GetDlgItem(Hwnd, IDC_REDUCE_ANIMATION_COMBO);
 	HwndFlavor = GetDlgItem(Hwnd, IDC_COMPRESS_ANIMATION_FLAVOR_COMBO);
 
@@ -362,7 +362,7 @@ void W3dOptionsDialogClass::Dialog_Init()
 
 	ComboBox_AddString(HwndFlavor, "TimeCoded");
 	ComboBox_AddString(HwndFlavor, "Adaptive Delta");
-  	 
+
 
 	if ((Options->ReduceAnimationPercent < 1) || (Options->ReduceAnimationPercent > 99)) {
 		Options->ReduceAnimationPercent = 50;
@@ -375,7 +375,7 @@ void W3dOptionsDialogClass::Dialog_Init()
 
 	ComboBox_SetCurSel(HwndReduce, Options->ReduceAnimationPercent-1);
 	ComboBox_SetCurSel(HwndFlavor, Options->CompressAnimationFlavor);
-   
+
 
 	HwndTError = GetDlgItem(Hwnd, IDC_MAX_TRANS_ERROR_EDIT);
 	HwndRError = GetDlgItem(Hwnd, IDC_MAX_ROT_ERROR_EDIT);
@@ -385,13 +385,13 @@ void W3dOptionsDialogClass::Dialog_Init()
 
 	sprintf(string, "%f", Options->CompressAnimationRotationError);
 	Edit_SetText(HwndRError, string);
-	
+
 
 	// Make sure everything under animations is properly active/inactive
 
 	WHA_Compress_Animation_Check_Changed();
 
-	if (Options->ExportAnimation) { 
+	if (Options->ExportAnimation) {
 		CheckDlgButton(Hwnd,IDC_WHA_EXPORT_RADIO,BST_CHECKED);
 		Enable_WHA_Export();
 	} else {
@@ -459,15 +459,15 @@ BOOL W3dOptionsDialogClass::Dialog_Ok()
 	if (export_g) {
 		bool smooth_meshes = (IsDlgButtonChecked(Hwnd,IDC_EXPORT_MESH_SMOOTH_CHECK) == BST_CHECKED);
 		changed = changed || (Options->SmoothBetweenMeshes != smooth_meshes);
-		Options->SmoothBetweenMeshes = smooth_meshes;	
-	
+		Options->SmoothBetweenMeshes = smooth_meshes;
+
 		bool disable_export_aabs = (IsDlgButtonChecked(Hwnd,IDC_EXPORT_MESH_AABTREES) != BST_CHECKED);
 		changed = changed || (Options->DisableExportAABTrees != disable_export_aabs);
 		Options->DisableExportAABTrees = disable_export_aabs;
 
 		bool convert_materials = (IsDlgButtonChecked(Hwnd,IDC_EXPORT_MESH_MAT_TO_TEXTURE) == BST_CHECKED);
 		changed = changed || (Options->EnableMaterialColorToTextureConversion != convert_materials);
-		Options->EnableMaterialColorToTextureConversion = convert_materials;	
+		Options->EnableMaterialColorToTextureConversion = convert_materials;
 
 #if ENABLE_MESH_OPTIMIZING
 		bool optimize_mesh_data = (IsDlgButtonChecked(Hwnd,IDC_EXPORT_MESH_OPTIMIZE) == BST_CHECKED);
@@ -483,7 +483,7 @@ BOOL W3dOptionsDialogClass::Dialog_Ok()
 		Options->EnableOptimizeMeshData = false;
 		Options->EnableMaterialColorToTextureConversion = false;
 	}
-	
+
 	// Hierarchy Options:
 	bool xlation_only = (IsDlgButtonChecked(Hwnd,IDC_TRANSLATION_ONLY_CHECK) == BST_CHECKED);
 	changed = changed || (Options->TranslationOnly != xlation_only);
@@ -722,7 +722,7 @@ void W3dOptionsDialogClass::WHA_Compression_Flavor_Changed()
 			EnableWindow(GetDlgItem(Hwnd,IDC_MAX_TRANS_ERROR_EDIT), TRUE);
 			EnableWindow(GetDlgItem(Hwnd,IDC_MAX_ROT_ERROR_EDIT), TRUE);
 
-			break;									 
+			break;
 		}
 
 		case ANIM_FLAVOR_ADAPTIVE_DELTA: {
@@ -731,32 +731,32 @@ void W3dOptionsDialogClass::WHA_Compression_Flavor_Changed()
 			EnableWindow(GetDlgItem(Hwnd,IDC_REDUCE_ANIMATION_CHECK), FALSE);
 			EnableWindow(GetDlgItem(Hwnd,IDC_MAX_TRANS_ERROR_EDIT), FALSE);
 			EnableWindow(GetDlgItem(Hwnd,IDC_MAX_ROT_ERROR_EDIT), FALSE);
-			
+
 			break;
 		}
 
-	
-		default:		
+
+		default:
 			assert(0);  // invalid compressed flavor setting
 			break;
-	
+
 	}
 
 }
 
 
 
-/*********************************************************************************************** 
- * _options_dialog_proc -- thunks into the Options dialog class's windows message handler      * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   07/24/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * _options_dialog_proc -- thunks into the Options dialog class's windows message handler      *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   07/24/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 BOOL CALLBACK _options_dialog_proc
 (
@@ -766,7 +766,7 @@ BOOL CALLBACK _options_dialog_proc
 	LPARAM lParam
 )
 {
-	static W3dOptionsDialogClass * optdialog = NULL;
+	static W3dOptionsDialogClass * optdialog = nullptr;
 
 	if (message == WM_INITDIALOG) {
 		optdialog = (W3dOptionsDialogClass *) lParam;
@@ -781,42 +781,42 @@ BOOL CALLBACK _options_dialog_proc
 }
 
 
-/*********************************************************************************************** 
- * _init_ofn -- initialize the OpenFilename struct.                                            * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   07/24/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * _init_ofn -- initialize the OpenFilename struct.                                            *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   07/24/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 void _init_ofn(void)
 {
 	static char _szhierarchyfilter[] = "W3D Files (*.W3D)\0*.W3D\0WHT Files (*.WHT)\0*.WHT\0\0";
 
 	_HierarchyFileOFN.lStructSize = sizeof(OPENFILENAME);
-	_HierarchyFileOFN.hwndOwner = NULL;
-	_HierarchyFileOFN.hInstance = NULL;
+	_HierarchyFileOFN.hwndOwner = nullptr;
+	_HierarchyFileOFN.hInstance = nullptr;
 	_HierarchyFileOFN.lpstrFilter = _szhierarchyfilter;
-	_HierarchyFileOFN.lpstrCustomFilter = NULL;
+	_HierarchyFileOFN.lpstrCustomFilter = nullptr;
 	_HierarchyFileOFN.nMaxCustFilter = 0;
 	_HierarchyFileOFN.nFilterIndex = 0;
-	_HierarchyFileOFN.lpstrFile = NULL;
+	_HierarchyFileOFN.lpstrFile = nullptr;
 	_HierarchyFileOFN.nMaxFile = _MAX_PATH;
-	_HierarchyFileOFN.lpstrFileTitle = NULL;
+	_HierarchyFileOFN.lpstrFileTitle = nullptr;
 	_HierarchyFileOFN.nMaxFileTitle = _MAX_FNAME + _MAX_EXT;
-	_HierarchyFileOFN.lpstrInitialDir = NULL;
-	_HierarchyFileOFN.lpstrTitle = NULL;
+	_HierarchyFileOFN.lpstrInitialDir = nullptr;
+	_HierarchyFileOFN.lpstrTitle = nullptr;
 	_HierarchyFileOFN.Flags = OFN_HIDEREADONLY | OFN_CREATEPROMPT;
 	_HierarchyFileOFN.nFileOffset = 0;
 	_HierarchyFileOFN.nFileExtension = 0;
 	_HierarchyFileOFN.lpstrDefExt = "wht";
 	_HierarchyFileOFN.lCustData = 0L;
-	_HierarchyFileOFN.lpfnHook = NULL;
-	_HierarchyFileOFN.lpTemplateName = NULL;
+	_HierarchyFileOFN.lpfnHook = nullptr;
+	_HierarchyFileOFN.lpTemplateName = nullptr;
 
 	_OfnInited = true;
 }

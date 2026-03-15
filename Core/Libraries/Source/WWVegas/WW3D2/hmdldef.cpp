@@ -36,9 +36,8 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
-#include "hmdldef.H"
+#include "hmdldef.h"
 #include <assert.h>
-#include <string.h>
 #include "w3d_file.h"
 #include "chunkio.h"
 #include "snapPts.h"
@@ -56,69 +55,67 @@
  * HISTORY:                                                                                    *
  *   12/15/97   GTH : Created.                                                                 *
  *=============================================================================================*/
-HModelDefClass::HModelDefClass(void) :
+HModelDefClass::HModelDefClass() :
 	SubObjectCount(0),
-	SubObjects(NULL),
-	SnapPoints(NULL)
+	SubObjects(nullptr),
+	SnapPoints(nullptr)
 {
 
 }
 
-/*********************************************************************************************** 
- * HModelDefClass::~HModelDefClass -- destructor                                               * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   08/11/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * HModelDefClass::~HModelDefClass -- destructor                                               *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-HModelDefClass::~HModelDefClass(void)
+HModelDefClass::~HModelDefClass()
 {
 	Free();
 }
 
-/*********************************************************************************************** 
- * HModelDefClass::Free -- de-allocate all memory in use                                       * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   08/11/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * HModelDefClass::Free -- de-allocate all memory in use                                       *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-void HModelDefClass::Free(void)
+void HModelDefClass::Free()
 {
-	if (SubObjects != NULL) {
-		delete[] SubObjects;
-		SubObjects = NULL;
-	}
+	delete[] SubObjects;
+	SubObjects = nullptr;
 	SubObjectCount = 0;
 
-	if (SnapPoints != NULL) {
+	if (SnapPoints != nullptr) {
 		SnapPoints->Release_Ref();
-		SnapPoints = NULL;
+		SnapPoints = nullptr;
 	}
 }
 
 
-/*********************************************************************************************** 
- * HModelDefClass::Load -- load a set of mesh connections from a file                          * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   08/11/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * HModelDefClass::Load -- load a set of mesh connections from a file                          *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 int HModelDefClass::Load_W3D(ChunkLoadClass & cload)
 {
@@ -137,7 +134,7 @@ int HModelDefClass::Load_W3D(ChunkLoadClass & cload)
 	if (cload.Cur_Chunk_ID() != W3D_CHUNK_HMODEL_HEADER) {
 		goto Error;
 	}
-	
+
 	/*
 	** read in the header
 	*/
@@ -151,27 +148,28 @@ int HModelDefClass::Load_W3D(ChunkLoadClass & cload)
 	/*
 	** process the header info
 	*/
-	strncpy(ModelName,header.Name,W3D_NAME_LEN);
-	ModelName[W3D_NAME_LEN - 1] = 0;
-	strncpy(BasePoseName,header.HierarchyName,W3D_NAME_LEN);
-	BasePoseName[W3D_NAME_LEN-1] = 0;
-	strcpy(Name,ModelName);
+	static_assert(ARRAY_SIZE(ModelName) >= ARRAY_SIZE(header.Name), "Incorrect array size");
+	static_assert(ARRAY_SIZE(BasePoseName) >= ARRAY_SIZE(header.HierarchyName), "Incorrect array size");
+	static_assert(ARRAY_SIZE(Name) >= ARRAY_SIZE(ModelName), "Incorrect array size");
+	strcpy(ModelName, header.Name);
+	strcpy(BasePoseName, header.HierarchyName);
+	strcpy(Name, ModelName);
 
 	/*
 	** Just allocate a node for the number of sub objects we're expecting
 	*/
 	SubObjectCount = header.NumConnections;
 	SubObjects = W3DNEWARRAY HmdlNodeDefStruct[SubObjectCount];
-	if (SubObjects == NULL) {
+	if (SubObjects == nullptr) {
 		goto Error;
 	}
 
 	/*
 	** If this is pre-3.0 set a flag so that each render object's
-	** bone id will be incremented by one to account for the new 
+	** bone id will be incremented by one to account for the new
 	** root node added with version3.0 of the file format.  Basically,
 	** I'm making all of the code assume that node 0 is the root and
-	** therefore, pre-3.0 files have to have it added and all of 
+	** therefore, pre-3.0 files have to have it added and all of
 	** the indices adjusted
 	*/
 	if (header.Version < W3D_MAKE_VERSION(3,0)) {
@@ -188,14 +186,14 @@ int HModelDefClass::Load_W3D(ChunkLoadClass & cload)
 		switch (cload.Cur_Chunk_ID()) {
 
 			case W3D_CHUNK_NODE:
-			case W3D_CHUNK_COLLISION_NODE: 
+			case W3D_CHUNK_COLLISION_NODE:
 			case W3D_CHUNK_SKIN_NODE:
 				if (!read_connection(cload,&(SubObjects[subobjcounter]),pre30)) {
 					goto Error;
-				}			
+				}
 				subobjcounter++;
 				break;
-				
+
 			case W3D_CHUNK_POINTS:
 				SnapPoints = W3DNEW SnapPointsClass;
 				SnapPoints->Load_W3D(cload);
@@ -212,34 +210,35 @@ int HModelDefClass::Load_W3D(ChunkLoadClass & cload)
 Error:
 
 	return LOAD_ERROR;
-	
+
 }
 
 
-/*********************************************************************************************** 
- * HModelDefClass::read_connection -- read a single connection from the file                   * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   08/11/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * HModelDefClass::read_connection -- read a single connection from the file                   *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   08/11/1997 GH  : Created.                                                                 *
  *   10/22/97   GH  : Check for mesh connections with PivotID=-1                               *
  *=============================================================================================*/
 bool HModelDefClass::read_connection(ChunkLoadClass & cload,HmdlNodeDefStruct * node,bool pre30)
 {
-	
+
 	W3dHModelNodeStruct con;
 	if (cload.Read(&con,sizeof(W3dHModelNodeStruct)) != sizeof(W3dHModelNodeStruct)) {
 		return false;
 	}
 
-	strcpy(node->RenderObjName,ModelName);
-	strcat(node->RenderObjName,".");
-	strcat(node->RenderObjName,con.RenderObjName);
+	static_assert(ARRAY_SIZE(node->RenderObjName) >= ARRAY_SIZE(ModelName), "Incorrect array size");
+	strcpy(node->RenderObjName, ModelName);
+	strlcat(node->RenderObjName, ".", ARRAY_SIZE(node->RenderObjName));
+	strlcat(node->RenderObjName, con.RenderObjName, ARRAY_SIZE(node->RenderObjName));
 
 	if (pre30) {
 		if (con.PivotIdx == 65535) {
@@ -251,7 +250,7 @@ bool HModelDefClass::read_connection(ChunkLoadClass & cload,HmdlNodeDefStruct * 
 		assert(con.PivotIdx != 65535);
 		node->PivotID = con.PivotIdx;
 	}
-	
+
 	return true;
 }
 

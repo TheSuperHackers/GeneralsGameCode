@@ -19,31 +19,29 @@
  /***********************************************************************************************
  ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
  ***********************************************************************************************
- *                                                                                             
- *                 Project name : Earth and Beyond                                             
- *                                                                                             
- *                    File name : soundlibrarybridge.h                                         
- *                                                                                             
- *                   Programmer : Mike Lytle                                                   
- *                                                                                             
- *                   Start date : 6/21/2002                                                    
- *                                                                                             
- *                  Last update : 10/23/2002 MBL                                                    
- *                                                                                             
+ *
+ *                 Project name : Earth and Beyond
+ *
+ *                    File name : soundlibrarybridge.h
+ *
+ *                   Programmer : Mike Lytle
+ *
+ *                   Start date : 6/21/2002
+ *
+ *                  Last update : 10/23/2002 MBL
+ *
  *---------------------------------------------------------------------------------------------
- * Functions:                                                                                  
+ * Functions:
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-#ifndef SOUNDLIBRARYBRIDGE_H
-#define SOUNDLIBRARYBRIDGE_H
+
+#pragma once
 
 // Forward declarations.
 class		Matrix3D;
 
 class SoundLibraryBridgeClass {
 	public:
-		virtual	void			Play_3D_Audio(const char * name, const Matrix3D & tm) = 0; 
-		virtual	void			Play_2D_Audio(const char * name) = 0; 
+		virtual	void			Play_3D_Audio(const char * name, const Matrix3D & tm) = 0;
+		virtual	void			Play_2D_Audio(const char * name) = 0;
 		virtual	void			Stop_Playing_Audio(const char * name) = 0;
 };
-
-#endif //SOUNDLIBRARYBRIDGE_H

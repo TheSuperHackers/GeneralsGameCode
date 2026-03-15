@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/ModelState.h"
 #include "Common/Xfer.h"
@@ -40,7 +40,7 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-AnimationSteeringUpdateModuleData::AnimationSteeringUpdateModuleData( void )
+AnimationSteeringUpdateModuleData::AnimationSteeringUpdateModuleData()
 {
 	m_transitionFrames = 0;
 }
@@ -60,14 +60,14 @@ AnimationSteeringUpdate::AnimationSteeringUpdate( Thing *thing, const ModuleData
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-AnimationSteeringUpdate::~AnimationSteeringUpdate( void )
+AnimationSteeringUpdate::~AnimationSteeringUpdate()
 {
 
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime AnimationSteeringUpdate::update( void )
+UpdateSleepTime AnimationSteeringUpdate::update()
 {
 
 	const AnimationSteeringUpdateModuleData *data = getAnimationSteeringUpdateModuleData();
@@ -145,7 +145,7 @@ void AnimationSteeringUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -167,7 +167,7 @@ void AnimationSteeringUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void AnimationSteeringUpdate::loadPostProcess( void )
+void AnimationSteeringUpdate::loadPostProcess()
 {
 
 	// extend base class

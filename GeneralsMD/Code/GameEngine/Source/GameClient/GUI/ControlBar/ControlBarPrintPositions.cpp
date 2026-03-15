@@ -24,12 +24,12 @@
 
 // FILE: ControlBarPrintPositions.cpp /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	created:	Sep 2002
@@ -37,8 +37,8 @@
 //	Filename: 	ControlBarPrintPositions.cpp
 //
 //	author:		Chris Huybregts
-//	
-//	purpose:	Convience function for degayifying the whole squished control bar
+//
+//	purpose:	Convenience function for degayifying the whole squished control bar
 //						process
 //
 //-----------------------------------------------------------------------------
@@ -47,8 +47,7 @@
 //-----------------------------------------------------------------------------
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
-#include <stdio.h>
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
@@ -78,9 +77,9 @@ void PrintInfoRecursive( GameWindow *win, FILE *fp)
 
 }
 
-void PrintOffsetsFromControlBarParent( void )
+void PrintOffsetsFromControlBarParent()
 {
-	GameWindow *controlBarParent = TheWindowManager->winGetWindowFromId( NULL,  TheNameKeyGenerator->nameToKey( "ControlBar.wnd:ControlBarParent" ));
+	GameWindow *controlBarParent = TheWindowManager->winGetWindowFromId( nullptr,  TheNameKeyGenerator->nameToKey( "ControlBar.wnd:ControlBarParent" ));
 	if(!controlBarParent)
 		return;
 

@@ -142,7 +142,7 @@ void Matrix4::Multiply(const Matrix3D &a,const Matrix4 &b,Matrix4 * res)
 void Matrix4::Multiply(const Matrix4 & a,const Matrix3D & b,Matrix4 * res)
 {
 	assert(res != &a);
-	
+
 	// ROWCOL multiplies a row of 'a' by one of the first three columns of 'b' (4th entry in b is zero)
 	// ROWCOL4 multiplies a row of 'a' by the fourth column of 'b' (4th entry in b is one)
 

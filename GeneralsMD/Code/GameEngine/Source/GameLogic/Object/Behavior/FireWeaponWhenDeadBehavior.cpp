@@ -24,11 +24,11 @@
 
 // FILE: FireWeaponWhenDeadBehavior.cpp ///////////////////////////////////////////////////////////////////////
 // Author:
-// Desc:  
+// Desc:
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 #define DEFINE_SLOWDEATHPHASE_NAMES
 
 #include "Common/Thing.h"
@@ -47,13 +47,7 @@
 #include "GameLogic/Object.h"
 #include "GameLogic/ObjectCreationList.h"
 #include "GameLogic/Weapon.h"
-#include "GameClient/Drawable.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 const Int MAX_IDX = 32;
 
@@ -63,7 +57,7 @@ const Real END_MIDPOINT_RATIO = 0.65f;
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-FireWeaponWhenDeadBehavior::FireWeaponWhenDeadBehavior( Thing *thing, const ModuleData* moduleData ) : 
+FireWeaponWhenDeadBehavior::FireWeaponWhenDeadBehavior( Thing *thing, const ModuleData* moduleData ) :
 	BehaviorModule( thing, moduleData )
 {
 	if (getFireWeaponWhenDeadBehaviorModuleData()->m_initiallyActive)
@@ -74,7 +68,7 @@ FireWeaponWhenDeadBehavior::FireWeaponWhenDeadBehavior( Thing *thing, const Modu
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-FireWeaponWhenDeadBehavior::~FireWeaponWhenDeadBehavior( void )
+FireWeaponWhenDeadBehavior::~FireWeaponWhenDeadBehavior()
 {
 }
 
@@ -92,16 +86,16 @@ void FireWeaponWhenDeadBehavior::onDie( const DamageInfo *damageInfo )
 	// right type?
 	if (!d->m_dieMuxData.isDieApplicable(getObject(), damageInfo))
 		return;
-	
+
 	// This will never apply until built.  Otherwise canceling construction sets it off, and killing
 	// a one hitpoint one percent building will too.
 	if( obj->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
 		return;
 
-	
+
 	UpgradeMaskType activation, conflicting;
 	getUpgradeActivationMasks( activation, conflicting );
-	
+
 	if( obj->getObjectCompletedUpgradeMask().testForAny( conflicting ) )
 	{
 		return;
@@ -110,7 +104,7 @@ void FireWeaponWhenDeadBehavior::onDie( const DamageInfo *damageInfo )
 	{
 		return;
 	}
-	
+
 	if (d->m_deathWeapon)
 	{
 		// fire the default weapon
@@ -130,7 +124,7 @@ void FireWeaponWhenDeadBehavior::crc( Xfer *xfer )
 	// extend upgrade mux
 	UpgradeMux::upgradeMuxCRC( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -151,12 +145,12 @@ void FireWeaponWhenDeadBehavior::xfer( Xfer *xfer )
 	// extend upgrade mux
 	UpgradeMux::upgradeMuxXfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void FireWeaponWhenDeadBehavior::loadPostProcess( void )
+void FireWeaponWhenDeadBehavior::loadPostProcess()
 {
 
 	// extend base class
@@ -165,4 +159,4 @@ void FireWeaponWhenDeadBehavior::loadPostProcess( void )
 	// extend upgrade mux
 	UpgradeMux::upgradeMuxLoadPostProcess();
 
-}  // end loadPostProcess
+}

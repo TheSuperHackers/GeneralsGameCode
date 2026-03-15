@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __FIRE_SPREAD_UPDATE_H_
-#define __FIRE_SPREAD_UPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpdateModule.h"
 
@@ -67,15 +64,12 @@ public:
 	FireSpreadUpdate( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual UpdateSleepTime update();
+	virtual UpdateSleepTime update() override;
 
 	void startFireSpreading();
 
 protected:
-	
+
 	UnsignedInt calcNextSpreadDelay();
 
 };
-
-#endif
-

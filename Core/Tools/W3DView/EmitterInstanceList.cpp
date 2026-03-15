@@ -59,7 +59,7 @@ EmitterInstanceListClass::Free_List (void)
 	//	Release our hold on each of the emitter pointers
 	//
 	for (int index = 0; index < m_List.Count (); index ++) {
-		MEMBER_RELEASE (m_List[index]);
+		REF_PTR_RELEASE (m_List[index]);
 	}
 
 	m_List.Delete_All ();
@@ -75,8 +75,8 @@ EmitterInstanceListClass::Free_List (void)
 void
 EmitterInstanceListClass::Add_Emitter (ParticleEmitterClass *emitter)
 {
-	ASSERT (emitter != NULL);
-	if (emitter != NULL) {
+	ASSERT (emitter != nullptr);
+	if (emitter != nullptr) {
 
 		//
 		//	If this is the first emitter in the list, then initialize
@@ -84,16 +84,17 @@ EmitterInstanceListClass::Add_Emitter (ParticleEmitterClass *emitter)
 		//
 		if (m_List.Count () == 0) {
 			ParticleEmitterDefClass *def = emitter->Build_Definition ();
-			if (def != NULL) {
+			if (def != nullptr) {
 				ParticleEmitterDefClass::operator= (*def);
 				SAFE_DELETE (def);
 			}
 		}
-		
+
 		//
 		//	Add this emitter to the list and put a hold on its reference
 		//
-		SAFE_ADD_REF (emitter);
+		if (emitter)
+			emitter->Add_Ref();
 		m_List.Add (emitter);
 	}
 
@@ -215,7 +216,7 @@ void
 EmitterInstanceListClass::Set_Velocity_Random (Vector3Randomizer *randomizer)
 {
 	ParticleEmitterDefClass::Set_Velocity_Random (randomizer);
-	if (randomizer != NULL) {
+	if (randomizer != nullptr) {
 
 		//
 		//	Pass this setting onto the emitters immediately
@@ -244,7 +245,7 @@ EmitterInstanceListClass::Set_Color_Keyframes (ParticlePropertyStruct<Vector3> &
 	if (	(keyframes.Rand.X != 0) ||
 			(keyframes.Rand.Y != 0) ||
 			(keyframes.Rand.Z != 0))
-	{		
+	{
 		for (UINT index = 0; index < keyframes.NumKeyFrames; index ++) {
 			if ((keyframes.Values[index].X <= 0.000001F) &&
 				 (keyframes.Values[index].Y <= 0.000001F) &&
@@ -253,11 +254,11 @@ EmitterInstanceListClass::Set_Color_Keyframes (ParticlePropertyStruct<Vector3> &
 				keyframes.Values[index].Y = -keyframes.Rand.Y;
 				keyframes.Values[index].Z = -keyframes.Rand.Z;
 			}
-		}		
+		}
 	}
 
 	ParticleEmitterDefClass::Set_Color_Keyframes (keyframes);
-	
+
 	//
 	//	Pass this setting onto the emitters immediately
 	//
@@ -282,16 +283,16 @@ EmitterInstanceListClass::Set_Opacity_Keyframes (ParticlePropertyStruct<float> &
 	//	does even if its got a randomizer.
 	//
 	if (keyframes.Rand != 0)
-	{		
+	{
 		for (UINT index = 0; index < keyframes.NumKeyFrames; index ++) {
 			if (keyframes.Values[index] <= 0.000001F) {
 				keyframes.Values[index] = -keyframes.Rand;
 			}
-		}		
+		}
 	}
 
 	ParticleEmitterDefClass::Set_Opacity_Keyframes (keyframes);
-	
+
 	//
 	//	Pass this setting onto the emitters immediately
 	//
@@ -316,16 +317,16 @@ EmitterInstanceListClass::Set_Size_Keyframes (ParticlePropertyStruct<float> &key
 	//	does even if its got a randomizer.
 	//
 	if (keyframes.Rand != 0)
-	{		
+	{
 		for (UINT index = 0; index < keyframes.NumKeyFrames; index ++) {
 			if (keyframes.Values[index] <= 0.000001F) {
 				keyframes.Values[index] = -keyframes.Rand;
 			}
-		}		
+		}
 	}
 
 	ParticleEmitterDefClass::Set_Size_Keyframes (keyframes);
-	
+
 	//
 	//	Pass this setting onto the emitters immediately
 	//
@@ -347,7 +348,7 @@ void
 EmitterInstanceListClass::Set_Rotation_Keyframes (ParticlePropertyStruct<float> &keyframes, float orient_rnd)
 {
 	ParticleEmitterDefClass::Set_Rotation_Keyframes (keyframes, orient_rnd);
-	
+
 	//
 	//	Pass this setting onto the emitters immediately
 	//
@@ -367,7 +368,7 @@ void
 EmitterInstanceListClass::Set_Frame_Keyframes (ParticlePropertyStruct<float> &keyframes)
 {
 	ParticleEmitterDefClass::Set_Frame_Keyframes (keyframes);
-	
+
 	//
 	//	Pass this setting onto the emitters immediately
 	//
@@ -387,7 +388,7 @@ void
 EmitterInstanceListClass::Set_Blur_Time_Keyframes (ParticlePropertyStruct<float> &keyframes)
 {
 	ParticleEmitterDefClass::Set_Blur_Time_Keyframes (keyframes);
-	
+
 	//
 	//	Pass this setting onto the emitters immediately
 	//
@@ -421,7 +422,7 @@ EmitterInstanceListClass::Get_Color_Keyframes (ParticlePropertyStruct<Vector3> &
 		if (keyframes.Values[index].Z <= 0.000001F) {
 			keyframes.Values[index].Z = 0;
 		}
-	}		
+	}
 
 	return ;
 }
@@ -443,7 +444,7 @@ EmitterInstanceListClass::Get_Opacity_Keyframes (ParticlePropertyStruct<float> &
 		if (keyframes.Values[index] <= 0.000001F) {
 			keyframes.Values[index] = 0;
 		}
-	}		
+	}
 	return ;
 }
 
@@ -464,7 +465,7 @@ EmitterInstanceListClass::Get_Size_Keyframes (ParticlePropertyStruct<float> &key
 		if (keyframes.Values[index] <= 0.000001F) {
 			keyframes.Values[index] = 0;
 		}
-	}		
+	}
 	return ;
 }
 

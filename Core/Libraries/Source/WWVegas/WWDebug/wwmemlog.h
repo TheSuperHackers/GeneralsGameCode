@@ -36,13 +36,9 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if _MSC_VER >= 1000
 #pragma once
-#endif
 
-#ifndef WWMEMLOG_H
-#define WWMEMLOG_H
+#include <stddef.h>
 
 #define LOG_MEMORY	// Comment this out to disable memlog compiling in
 
@@ -104,7 +100,7 @@ public:
 	/*
 	** Accessors to the current memory map
 	*/
-	static int				Get_Category_Count(void);
+	static int				Get_Category_Count();
 	static const char *	Get_Category_Name(int category);
 	static int				Get_Current_Allocated_Memory(int category);
 	static int				Get_Peak_Allocated_Memory(int category);
@@ -134,10 +130,10 @@ protected:
 	** Interface for WWMemorySampleClass to set the active category
 	*/
 	static void				Push_Active_Category(int category);
-	static void				Pop_Active_Category(void);
+	static void				Pop_Active_Category();
 
-	static MemLogClass * Get_Log(void);
-	static void  Release_Log(void);
+	static MemLogClass * Get_Log();
+	static void  Release_Log();
 
 	static bool IsMemoryLogEnabled;
 
@@ -163,7 +159,7 @@ public:
 		}
 	}
 
-	~WWMemorySampleClass(void)
+	~WWMemorySampleClass()
 	{
 		if (category_push) {
 			WWMemoryLogClass::Pop_Active_Category();
@@ -182,10 +178,3 @@ public:
 #else
 #define	WWMEMLOG( category )
 #endif
-
-
-
-
-
-
-#endif //WWMEMLOG_H

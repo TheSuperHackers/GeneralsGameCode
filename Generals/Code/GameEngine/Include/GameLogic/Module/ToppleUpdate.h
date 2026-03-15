@@ -23,14 +23,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // FILE: ToppleUpdate.h /////////////////////////////////////////////////////////////////////////////
-// Author: 
-// Desc:   
+// Author:
+// Desc:
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __TOPPLEUPDATE_H_
-#define __TOPPLEUPDATE_H_
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/BehaviorModule.h"
@@ -89,22 +86,22 @@ public:
 	static Int getInterfaceMask() { return UpdateModule::getInterfaceMask() | (MODULEINTERFACE_COLLIDE); }
 
 	// BehaviorModule
-	virtual CollideModuleInterface* getCollide() { return this; }
+	virtual CollideModuleInterface* getCollide() override { return this; }
 
 	void applyTopplingForce( const Coord3D* toppleDirection, Real toppleSpeed, UnsignedInt options);
 	Bool isAbleToBeToppled() const;
 
 	// UpdateModuleInterface
-	virtual UpdateSleepTime update();	
-	
+	virtual UpdateSleepTime update() override;
+
 	// CollideModuleInterface
-	virtual void onCollide( Object *other, const Coord3D *loc, const Coord3D *normal );
+	virtual void onCollide( Object *other, const Coord3D *loc, const Coord3D *normal ) override;
 	/// this is used for things like pilots, to determine if they can "enter" something
-	virtual Bool wouldLikeToCollideWith(const Object* other) const { return false; }
-	virtual Bool isHijackedVehicleCrateCollide() const { return false; }
-	virtual Bool isCarBombCrateCollide() const { return false; }
-	virtual Bool isRailroad() const { return false; }
-	virtual Bool isSalvageCrateCollide() const { return false; }
+	virtual Bool wouldLikeToCollideWith(const Object* other) const override { return false; }
+	virtual Bool isHijackedVehicleCrateCollide() const override { return false; }
+	virtual Bool isCarBombCrateCollide() const override { return false; }
+	virtual Bool isRailroad() const override { return false; }
+	virtual Bool isSalvageCrateCollide() const override { return false; }
 
 protected:
 
@@ -127,6 +124,3 @@ protected:
 	ObjectID			m_stumpID;								///< stump generated, if any
 
 };
-
-#endif // end __TOPPLEUPDATE_H_
-

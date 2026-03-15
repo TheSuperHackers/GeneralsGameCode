@@ -30,9 +30,6 @@
 
 #pragma once
 
-#ifndef SALVAGE_CRATE_COLLIDE_H_
-#define SALVAGE_CRATE_COLLIDE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/Module.h"
 #include "Common/STLTypedefs.h"
@@ -60,17 +57,17 @@ public:
 		m_maximumMoney = 75;
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     CrateCollideModuleData::buildFieldParse(p);
 
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
-			{ "WeaponChance",	INI::parsePercentToReal,	NULL, offsetof( SalvageCrateCollideModuleData, m_weaponChance ) },
-			{ "LevelChance",	INI::parsePercentToReal,	NULL, offsetof( SalvageCrateCollideModuleData, m_levelChance ) },
-			{ "MoneyChance",	INI::parsePercentToReal,	NULL, offsetof( SalvageCrateCollideModuleData, m_moneyChance ) },
-			{ "MinMoney",			INI::parseInt,						NULL, offsetof( SalvageCrateCollideModuleData, m_minimumMoney ) },
-			{ "MaxMoney",			INI::parseInt,						NULL, offsetof( SalvageCrateCollideModuleData, m_maximumMoney ) },
+			{ "WeaponChance",	INI::parsePercentToReal,	nullptr, offsetof( SalvageCrateCollideModuleData, m_weaponChance ) },
+			{ "LevelChance",	INI::parsePercentToReal,	nullptr, offsetof( SalvageCrateCollideModuleData, m_levelChance ) },
+			{ "MoneyChance",	INI::parsePercentToReal,	nullptr, offsetof( SalvageCrateCollideModuleData, m_moneyChance ) },
+			{ "MinMoney",			INI::parseInt,						nullptr, offsetof( SalvageCrateCollideModuleData, m_minimumMoney ) },
+			{ "MaxMoney",			INI::parseInt,						nullptr, offsetof( SalvageCrateCollideModuleData, m_maximumMoney ) },
 			{ 0, 0, 0, 0 }
 		};
     p.add(dataFieldParse);
@@ -90,15 +87,15 @@ public:
 	SalvageCrateCollide( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual Bool isSalvageCrateCollide() const { return true; }
+	virtual Bool isSalvageCrateCollide() const override { return true; }
 
 protected:
 
 	/// This allows specific vetoes to certain types of crates and their data
-	virtual Bool isValidToExecute( const Object *other ) const;
+	virtual Bool isValidToExecute( const Object *other ) const override;
 
 	/// This is the game logic execution function that all real CrateCollides will implement
-	virtual Bool executeCrateBehavior( Object *other );
+	virtual Bool executeCrateBehavior( Object *other ) override;
 
 private:
 	Bool eligibleForWeaponSet( Object *other );
@@ -113,5 +110,3 @@ private:
 	void doMoney( Object *other );
 
 };
-
-#endif

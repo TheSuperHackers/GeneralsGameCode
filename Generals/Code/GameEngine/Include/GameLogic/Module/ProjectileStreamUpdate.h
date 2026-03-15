@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __PROJECTILE_STREAM_UPDATE_H_
-#define __PROJECTILE_STREAM_UPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpdateModule.h"
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
@@ -61,7 +58,7 @@ public:
 	void getAllPoints( Vector3 *points, Int *count );					///< unroll circlular array and write down all projectile positions
 	void setPosition( const Coord3D *newPosition );						///< I need to exist at the place I want to draw since only (near) on screen Drawables get updated
 
-	virtual UpdateSleepTime update();
+	virtual UpdateSleepTime update() override;
 
 protected:
 
@@ -74,7 +71,3 @@ protected:
 	Int m_firstValidIndex;
 	ObjectID m_owningObject;
 };
-
-
-#endif
-

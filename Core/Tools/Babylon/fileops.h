@@ -20,8 +20,7 @@
 // File IO support
 //
 
-#ifndef __FILEOPS_H
-#define __FILEOPS_H
+#pragma once
 
 static const int FA_NOFILE = 0;
 static const int 	FA_READONLY = 0x00000001;
@@ -33,6 +32,3 @@ int							FileExists ( const char *filename );
 int					 		FileAttribs ( const char *filename );
 void						MakeBackupFile ( const char *filename );
 void						RestoreBackupFile ( const char *filename );
-
-
-#endif		// __FILEIO_H

@@ -38,7 +38,7 @@ static char THIS_FILE[] = __FILE__;
 // CAddToLineupDialog dialog
 
 
-CAddToLineupDialog::CAddToLineupDialog(ViewerSceneClass *scene, CWnd* pParent /*=NULL*/)
+CAddToLineupDialog::CAddToLineupDialog(ViewerSceneClass *scene, CWnd* pParent /*=nullptr*/)
 :	CDialog(CAddToLineupDialog::IDD, pParent),
 	m_pCScene(scene)
 {
@@ -66,10 +66,10 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CAddToLineupDialog message handlers
 
-BOOL CAddToLineupDialog::OnInitDialog() 
+BOOL CAddToLineupDialog::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	
+
 	if (m_pCScene)
 	{
 		// Get a pointer to the combo box control.
@@ -79,9 +79,9 @@ BOOL CAddToLineupDialog::OnInitDialog()
 		// Populate the combo box with the names of the objects that
 		// can be added to the lineup.
 		WW3DAssetManager *assets = WW3DAssetManager::Get_Instance();
-		ASSERT(assets != NULL);
+		ASSERT(assets != nullptr);
 		RenderObjIterator *it = assets->Create_Render_Obj_Iterator();
-		ASSERT(it != NULL);
+		ASSERT(it != nullptr);
 		for (; !it->Is_Done(); it->Next())
 		{
 			if (m_pCScene->Can_Line_Up(it->Current_Item_Class_ID()))
@@ -89,12 +89,12 @@ BOOL CAddToLineupDialog::OnInitDialog()
 		}
 		assets->Release_Render_Obj_Iterator(it);
 	}
-	
+
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void CAddToLineupDialog::OnOK() 
+void CAddToLineupDialog::OnOK()
 {
 	// Make sure the user actually chose a name.
 	CComboBox *pCombo = (CComboBox*)GetDlgItem(IDC_OBJECT);
@@ -106,6 +106,6 @@ void CAddToLineupDialog::OnOK()
 		::AfxMessageBox("Please select an object, or type in an object name.");
 		return;
 	}
-	
+
 	CDialog::OnOK();
 }

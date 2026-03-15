@@ -17,38 +17,38 @@
 */
 
 /* $Header: /Commando/Code/Tools/max2w3d/gmtldlg.cpp 18    5/27/98 8:34a Greg_h $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando / G 3D engine                                       * 
- *                                                                                             * 
- *                    File Name : GMTLDLG.CPP                                                  * 
- *                                                                                             * 
- *                   Programmer : Greg Hjelstrom                                               * 
- *                                                                                             * 
- *                   Start Date : 06/26/97                                                     * 
- *                                                                                             * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando / G 3D engine                                       *
+ *                                                                                             *
+ *                    File Name : GMTLDLG.cpp                                                  *
+ *                                                                                             *
+ *                   Programmer : Greg Hjelstrom                                               *
+ *                                                                                             *
+ *                   Start Date : 06/26/97                                                     *
+ *                                                                                             *
  *                  Last Update : June 26, 1997 [GH]                                           *
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
- *   GameMtlDlg::GameMtlDlg -- constructor                                                     * 
- *   GameMtlDlg::~GameMtlDlg -- destructor!                                                    * 
- *   GameMtlDlg::ClassID -- Returns the ClassID of GameMtl                                     * 
- *   GameMtlDlg::Invalidate -- causes the dialog to be redrawn                                 * 
- *   GameMtlDlg::ReloadDialog -- Updates the values in all of the dialog's controls            * 
- *   GameMtlDlg::SetTime -- Sets the time value, updates the material and the dialog           * 
- *   GameMtlDlg::PanelProc -- Windows Message handler                                          * 
- *   PanelDlgProc -- Windows Proc which thunks into GameMtlDlg::PanelProc                      * 
- *   GameMtlDlg::LoadDialog -- Sets the state of all of the dialog's controls                  * 
- *   GameMtlDlg::UpdateMtlDisplay -- Informs MAX that the material parameters have changed     * 
- *   GameMtlDlg::ActivateDlg -- Activates and deactivates the dialog                           * 
- *   GameMtlDlg::SetThing -- Sets the material to be edited                                    * 
- *   GameMtlDlg::BuildDialog -- Adds the dialog to the material editor                         * 
- *   GameMtlDlg::UpdateTexmapDisplay -- Updates the texture map buttons                        * 
- *   NotesDlgProc -- Dialog Proc which thunks to GameMtlDlg::NotesProc                         * 
- *   GameMtlDlg::NotesProc -- Dialog Proc for the Notes panel                                  * 
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
+ *   GameMtlDlg::GameMtlDlg -- constructor                                                     *
+ *   GameMtlDlg::~GameMtlDlg -- destructor!                                                    *
+ *   GameMtlDlg::ClassID -- Returns the ClassID of GameMtl                                     *
+ *   GameMtlDlg::Invalidate -- causes the dialog to be redrawn                                 *
+ *   GameMtlDlg::ReloadDialog -- Updates the values in all of the dialog's controls            *
+ *   GameMtlDlg::SetTime -- Sets the time value, updates the material and the dialog           *
+ *   GameMtlDlg::PanelProc -- Windows Message handler                                          *
+ *   PanelDlgProc -- Windows Proc which thunks into GameMtlDlg::PanelProc                      *
+ *   GameMtlDlg::LoadDialog -- Sets the state of all of the dialog's controls                  *
+ *   GameMtlDlg::UpdateMtlDisplay -- Informs MAX that the material parameters have changed     *
+ *   GameMtlDlg::ActivateDlg -- Activates and deactivates the dialog                           *
+ *   GameMtlDlg::SetThing -- Sets the material to be edited                                    *
+ *   GameMtlDlg::BuildDialog -- Adds the dialog to the material editor                         *
+ *   GameMtlDlg::UpdateTexmapDisplay -- Updates the texture map buttons                        *
+ *   NotesDlgProc -- Dialog Proc which thunks to GameMtlDlg::NotesProc                         *
+ *   GameMtlDlg::NotesProc -- Dialog Proc for the Notes panel                                  *
  *   HintsDlgProc -- Dialog proc which thunks to GameMtlDlg::HintsProc                         *
  *   GameMtlDlg::HintsProc -- Dialog Proc for the hints panel                                  *
  *   GameMtlDlg::PsxProc -- Dialog proc for the PSX options panel                              *
@@ -69,114 +69,114 @@
 
 
 
-static inline float PcToFrac(int pc) 
+static inline float PcToFrac(int pc)
 {
-	return (float)pc/100.0f;	
+	return (float)pc/100.0f;
 }
 
-static inline int FracToPc(float f) 
+static inline int FracToPc(float f)
 {
 	if (f<0.0) return (int)(100.0f*f - .5f);
 	else return (int) (100.0f*f + .5f);
 }
 
 
-/*********************************************************************************************** 
- * GameMtlDlg::GameMtlDlg -- constructor                                                       * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- * 	hwMtlEdit - windows handle of the MAX material editor												  * 
- * 	imp - Interface object for MAX materials and textures												  * 
- * 	m - pointer to a GameMtl to be edited																	  * 
- * 																														  * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/26/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * GameMtlDlg::GameMtlDlg -- constructor                                                       *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ * 	hwMtlEdit - windows handle of the MAX material editor												  *
+ * 	imp - Interface object for MAX materials and textures												  *
+ * 	m - pointer to a GameMtl to be edited																	  *
+ * 																														  *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-GameMtlDlg::GameMtlDlg(HWND hwMtlEdit, IMtlParams *imp, GameMtl *m) 
+GameMtlDlg::GameMtlDlg(HWND hwMtlEdit, IMtlParams *imp, GameMtl *m)
 {
 	HwndEdit = hwMtlEdit;
-	HwndPanel = NULL;
-	HwndHints = NULL;
-	HwndPsx = NULL;
-	HwndNotes = NULL;
-	HpalOld = NULL;
-	
-	TheMtl = m; 
+	HwndPanel = nullptr;
+	HwndHints = nullptr;
+	HwndPsx = nullptr;
+	HwndNotes = nullptr;
+	HpalOld = nullptr;
+
+	TheMtl = m;
 	IParams = imp;
 	Valid = FALSE;
 	IsActive = 0;
 	InstCopy = FALSE;
-	
-	DiffuseSwatch = NULL;
-	SpecularSwatch = NULL;
 
-	AmbientCoeffSwatch = NULL;
-	DiffuseCoeffSwatch = NULL;
-	SpecularCoeffSwatch = NULL;
-	EmissiveCoeffSwatch = NULL;
+	DiffuseSwatch = nullptr;
+	SpecularSwatch = nullptr;
 
-	DCTFramesSpin = NULL;
-	DITFramesSpin = NULL;
-	SCTFramesSpin = NULL;
-	SITFramesSpin = NULL;
+	AmbientCoeffSwatch = nullptr;
+	DiffuseCoeffSwatch = nullptr;
+	SpecularCoeffSwatch = nullptr;
+	EmissiveCoeffSwatch = nullptr;
 
-	DCTRateSpin = NULL;
-	DITRateSpin = NULL;
-	SCTRateSpin = NULL;
-	SITRateSpin = NULL;
+	DCTFramesSpin = nullptr;
+	DITFramesSpin = nullptr;
+	SCTFramesSpin = nullptr;
+	SITFramesSpin = nullptr;
 
-	OpacitySpin = NULL;
-	TranslucencySpin = NULL;
-	ShininessSpin = NULL;
-	FogSpin = NULL;
+	DCTRateSpin = nullptr;
+	DITRateSpin = nullptr;
+	SCTRateSpin = nullptr;
+	SITRateSpin = nullptr;
+
+	OpacitySpin = nullptr;
+	TranslucencySpin = nullptr;
+	ShininessSpin = nullptr;
+	FogSpin = nullptr;
 }
 
-/*********************************************************************************************** 
- * GameMtlDlg::~GameMtlDlg -- destructor!                                                      * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/26/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * GameMtlDlg::~GameMtlDlg -- destructor!                                                      *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-GameMtlDlg::~GameMtlDlg() 
+GameMtlDlg::~GameMtlDlg()
 {
 	if (DiffuseSwatch) {
 		ReleaseIColorSwatch(DiffuseSwatch);
-		DiffuseSwatch = NULL;
+		DiffuseSwatch = nullptr;
 	}
 
 	if (SpecularSwatch) {
 		ReleaseIColorSwatch(SpecularSwatch);
-		SpecularSwatch = NULL;
+		SpecularSwatch = nullptr;
 	}
-	
+
 	if (AmbientCoeffSwatch) {
 		ReleaseIColorSwatch(AmbientCoeffSwatch);
-		AmbientCoeffSwatch = NULL;
+		AmbientCoeffSwatch = nullptr;
 	}
-	
+
 	if (DiffuseCoeffSwatch) {
 		ReleaseIColorSwatch(DiffuseCoeffSwatch);
-		DiffuseCoeffSwatch = NULL;
+		DiffuseCoeffSwatch = nullptr;
 	}
 
 	if (SpecularCoeffSwatch) {
 		ReleaseIColorSwatch(SpecularCoeffSwatch);
-		SpecularCoeffSwatch = NULL;
+		SpecularCoeffSwatch = nullptr;
 	}
-	
+
 	if (EmissiveCoeffSwatch) {
 		ReleaseIColorSwatch(EmissiveCoeffSwatch);
-		EmissiveCoeffSwatch = NULL;
+		EmissiveCoeffSwatch = nullptr;
 	}
 
 	if (HwndPanel) {
@@ -190,96 +190,96 @@ GameMtlDlg::~GameMtlDlg()
 	TheMtl->SetFlag(GAMEMTL_ROLLUP3_OPEN,IParams->IsRollupPanelOpen(HwndHints));
 	TheMtl->SetFlag(GAMEMTL_ROLLUP4_OPEN,IParams->IsRollupPanelOpen(HwndNotes));
 	TheMtl->RollScroll = IParams->GetRollupScrollPos();
-	TheMtl->SetParamDlg(NULL);
+	TheMtl->SetParamDlg(nullptr);
 
-	IParams->UnRegisterDlgWnd(HwndPanel);		
+	IParams->UnRegisterDlgWnd(HwndPanel);
 	IParams->DeleteRollupPage(HwndPanel);
-	HwndPanel = NULL;
+	HwndPanel = nullptr;
 
-	IParams->UnRegisterDlgWnd(HwndPsx);		
+	IParams->UnRegisterDlgWnd(HwndPsx);
 	IParams->DeleteRollupPage(HwndPsx);
-	HwndPsx = NULL;
+	HwndPsx = nullptr;
 
-	IParams->UnRegisterDlgWnd(HwndHints);		
+	IParams->UnRegisterDlgWnd(HwndHints);
 	IParams->DeleteRollupPage(HwndHints);
-	HwndHints = NULL;
+	HwndHints = nullptr;
 
-	IParams->UnRegisterDlgWnd(HwndNotes);		
+	IParams->UnRegisterDlgWnd(HwndNotes);
 	IParams->DeleteRollupPage(HwndNotes);
-	HwndNotes = NULL;
+	HwndNotes = nullptr;
 }
 
 
-/*********************************************************************************************** 
- * GameMtlDlg::ClassID -- Returns the ClassID of GameMtl                                       * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/26/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * GameMtlDlg::ClassID -- Returns the ClassID of GameMtl                                       *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-Class_ID GameMtlDlg::ClassID() 
+Class_ID GameMtlDlg::ClassID()
 {
-	return GameMaterialClassID;  
+	return GameMaterialClassID;
 }
-	
-/*********************************************************************************************** 
- * GameMtlDlg::Invalidate -- causes the dialog to be redrawn                                   * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/26/1997 GH  : Created.                                                                 * 
+
+/***********************************************************************************************
+ * GameMtlDlg::Invalidate -- causes the dialog to be redrawn                                   *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 void GameMtlDlg::Invalidate()
 {
 	Valid = FALSE;
-	InvalidateRect(HwndPanel,NULL,0);
-	InvalidateRect(HwndPsx,NULL,0);
-	InvalidateRect(HwndHints,NULL,0);
-	InvalidateRect(HwndNotes,NULL,0);
+	InvalidateRect(HwndPanel,nullptr,0);
+	InvalidateRect(HwndPsx,nullptr,0);
+	InvalidateRect(HwndHints,nullptr,0);
+	InvalidateRect(HwndNotes,nullptr,0);
 }
 
-/*********************************************************************************************** 
- * GameMtlDlg::ReloadDialog -- Updates the values in all of the dialog's controls              * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/26/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * GameMtlDlg::ReloadDialog -- Updates the values in all of the dialog's controls              *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-void GameMtlDlg::ReloadDialog() 
+void GameMtlDlg::ReloadDialog()
 {
 	Interval v;
 	TheMtl->Update(IParams->GetTime(),v);
 	LoadDialog(FALSE);
 }
 
-/*********************************************************************************************** 
- * GameMtlDlg::SetTime -- Sets the time value, updates the material and the dialog             * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/26/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * GameMtlDlg::SetTime -- Sets the time value, updates the material and the dialog             *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-void GameMtlDlg::SetTime(TimeValue t) 
+void GameMtlDlg::SetTime(TimeValue t)
 {
 	if (t!=CurTime) {
 		CurTime = t;
@@ -290,19 +290,19 @@ void GameMtlDlg::SetTime(TimeValue t)
 }
 
 
-/*********************************************************************************************** 
- * GameMtlDlg::PanelProc -- Windows Message handler                                            * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/26/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * GameMtlDlg::PanelProc -- Windows Message handler                                            *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-BOOL GameMtlDlg::PanelProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam ) 
+BOOL GameMtlDlg::PanelProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam )
 {
 	int id = LOWORD(wParam);
 	int code = HIWORD(wParam);
@@ -318,7 +318,7 @@ BOOL GameMtlDlg::PanelProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam 
 
 				DiffuseSwatch = GetIColorSwatch(GetDlgItem(hwndDlg, IDC_DIFFUSE_COLOR),TheMtl->GetDiffuse(),Get_String(IDS_DIFFUSE_COLOR));
 				SpecularSwatch = GetIColorSwatch(GetDlgItem(hwndDlg, IDC_SPECULAR_COLOR),TheMtl->GetSpecular(),Get_String(IDS_SPECULAR_COLOR));
-				
+
 				AmbientCoeffSwatch = GetIColorSwatch(GetDlgItem(hwndDlg, IDC_AMBIENT_COEFF),TheMtl->GetAmbientCoeff(),Get_String(IDS_AMBIENT_COEFF));
 				DiffuseCoeffSwatch = GetIColorSwatch(GetDlgItem(hwndDlg, IDC_DIFFUSE_COEFF),TheMtl->GetDiffuseCoeff(),Get_String(IDS_DIFFUSE_COEFF));
 				SpecularCoeffSwatch = GetIColorSwatch(GetDlgItem(hwndDlg, IDC_SPECULAR_COEFF),TheMtl->GetSpecularCoeff(),Get_String(IDS_SPECULAR_COEFF));
@@ -333,7 +333,7 @@ BOOL GameMtlDlg::PanelProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam 
 				DITRateSpin = SetupFloatSpinner(hwndDlg,IDC_DIT_RATE_SPIN,IDC_DIT_RATE_EDIT,0.0f,60.0f,TheMtl->DITFrameRate,5.0f);
 				SCTRateSpin = SetupFloatSpinner(hwndDlg,IDC_SCT_RATE_SPIN,IDC_SCT_RATE_EDIT,0.0f,60.0f,TheMtl->SCTFrameRate,5.0f);
 				SITRateSpin = SetupFloatSpinner(hwndDlg,IDC_SIT_RATE_SPIN,IDC_SIT_RATE_EDIT,0.0f,60.0f,TheMtl->SITFrameRate,5.0f);
-				
+
 				OpacitySpin = SetupFloatSpinner(hwndDlg,IDC_OPACITY_SPIN,IDC_OPACITY_EDIT,0.0f,1.0f,TheMtl->GetOpacity(),0.01f);
 				TranslucencySpin = SetupFloatSpinner(hwndDlg,IDC_TRANSLUCENCY_SPIN,IDC_TRANSULCENCY_EDIT,0.0f,1.0f,TheMtl->GetTranslucency(),0.01f);
 				ShininessSpin = SetupFloatSpinner(hwndDlg,IDC_SHININESS_SPIN,IDC_SHININESS_EDIT,1.0f,1000.0f,TheMtl->GetShininess(),1.0f);
@@ -344,10 +344,10 @@ BOOL GameMtlDlg::PanelProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam 
 
 				SendDlgItemMessage( hwndDlg, IDC_DIT_MAPPING_COMBO, CB_ADDSTRING, 0, (LPARAM) (LPCTSTR) Get_String(IDS_UV_MAPPING));
 				SendDlgItemMessage( hwndDlg, IDC_DIT_MAPPING_COMBO, CB_ADDSTRING, 0, (LPARAM) (LPCTSTR) Get_String(IDS_ENVIRONMENT_MAPPING) );
-				
+
 				SendDlgItemMessage( hwndDlg, IDC_SCT_MAPPING_COMBO, CB_ADDSTRING, 0, (LPARAM) (LPCTSTR) Get_String(IDS_UV_MAPPING));
 				SendDlgItemMessage( hwndDlg, IDC_SCT_MAPPING_COMBO, CB_ADDSTRING, 0, (LPARAM) (LPCTSTR) Get_String(IDS_ENVIRONMENT_MAPPING) );
-				
+
 				SendDlgItemMessage( hwndDlg, IDC_SIT_MAPPING_COMBO, CB_ADDSTRING, 0, (LPARAM) (LPCTSTR) Get_String(IDS_UV_MAPPING));
 				SendDlgItemMessage( hwndDlg, IDC_SIT_MAPPING_COMBO, CB_ADDSTRING, 0, (LPARAM) (LPCTSTR) Get_String(IDS_ENVIRONMENT_MAPPING) );
 
@@ -362,7 +362,7 @@ BOOL GameMtlDlg::PanelProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam 
 			}
 			break;
 
-		case WM_COMMAND: 
+		case WM_COMMAND:
 			{
 				switch (id) {
 
@@ -436,28 +436,28 @@ BOOL GameMtlDlg::PanelProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam 
 
 					case IDC_MAPON_DCT:
 						TheMtl->EnableMap(ID_DI,GetCheckBox(hwndDlg, id));
-						if (!GetCheckBox(hwndDlg,id))	TheMtl->SetSubTexmap(ID_DI,NULL);
+						if (!GetCheckBox(hwndDlg,id))	TheMtl->SetSubTexmap(ID_DI,nullptr);
 						UpdateTexmapDisplay(ID_DI);
 						UpdateMtlDisplay();
 						TheMtl->NotifyChanged();
 						break;
 					case IDC_MAPON_DIT:
 						TheMtl->EnableMap(ID_SI,GetCheckBox(hwndDlg, id));
-						if (!GetCheckBox(hwndDlg,id))	TheMtl->SetSubTexmap(ID_SI,NULL);
+						if (!GetCheckBox(hwndDlg,id))	TheMtl->SetSubTexmap(ID_SI,nullptr);
 						UpdateTexmapDisplay(ID_SI);
 						UpdateMtlDisplay();
 						TheMtl->NotifyChanged();
 						break;
 					case IDC_MAPON_SCT:
 						TheMtl->EnableMap(ID_SP,GetCheckBox(hwndDlg, id));
-						if (!GetCheckBox(hwndDlg,id))	TheMtl->SetSubTexmap(ID_SP,NULL);
+						if (!GetCheckBox(hwndDlg,id))	TheMtl->SetSubTexmap(ID_SP,nullptr);
 						UpdateTexmapDisplay(ID_SP);
 						UpdateMtlDisplay();
 						TheMtl->NotifyChanged();
 						break;
 					case IDC_MAPON_SIT:
 						TheMtl->EnableMap(ID_RL,GetCheckBox(hwndDlg, id));
-						if (!GetCheckBox(hwndDlg,id))	TheMtl->SetSubTexmap(ID_RL,NULL);
+						if (!GetCheckBox(hwndDlg,id))	TheMtl->SetSubTexmap(ID_RL,nullptr);
 						UpdateTexmapDisplay(ID_RL);
 						UpdateMtlDisplay();
 						TheMtl->NotifyChanged();
@@ -489,14 +489,14 @@ BOOL GameMtlDlg::PanelProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam 
 					case IDC_VIEWPORT_DISPLAY_CHECK:
 						TheMtl->Set_Viewport_Display_Status(GetCheckBox(hwndDlg,IDC_VIEWPORT_DISPLAY_CHECK));
 						TheMtl->NotifyChanged();
-						UpdateMtlDisplay();				
+						UpdateMtlDisplay();
 						break;
 				}
 			}
 			break;
 
 		case CC_COLOR_CHANGE:
-			{			
+			{
 				// just update all of the colors
 				TheMtl->Diffuse = DiffuseSwatch->GetColor();
 				TheMtl->Specular = SpecularSwatch->GetColor();
@@ -506,8 +506,8 @@ BOOL GameMtlDlg::PanelProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam 
 				TheMtl->EmissiveCoeff = EmissiveCoeffSwatch->GetColor();
 
 				TheMtl->NotifyChanged();
-				UpdateMtlDisplay();				
-			}			
+				UpdateMtlDisplay();
+			}
 			break;
 
 		case WM_LBUTTONDOWN:
@@ -518,13 +518,13 @@ BOOL GameMtlDlg::PanelProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam 
 			}
 			return FALSE;
 
-		case CC_SPINNER_CHANGE:    
+		case CC_SPINNER_CHANGE:
 			{
 				TheMtl->DCTFrames = DCTFramesSpin->GetIVal();
 				TheMtl->DITFrames = DITFramesSpin->GetIVal();
 				TheMtl->SCTFrames = SCTFramesSpin->GetIVal();
 				TheMtl->SITFrames = SITFramesSpin->GetIVal();
-				
+
 				TheMtl->DCTFrameRate = DCTRateSpin->GetFVal();
 				TheMtl->DITFrameRate = DITRateSpin->GetFVal();
 				TheMtl->SCTFrameRate = SCTRateSpin->GetFVal();
@@ -536,11 +536,11 @@ BOOL GameMtlDlg::PanelProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam 
 				TheMtl->FogCoeff = FogSpin->GetFVal();
 
 				TheMtl->NotifyChanged();
-				UpdateMtlDisplay();				
+				UpdateMtlDisplay();
 			}
 			break;
 
-		case CC_SPINNER_BUTTONUP: 
+		case CC_SPINNER_BUTTONUP:
 			{
 				#if 0
 				UpdateMtlDisplay();
@@ -548,7 +548,7 @@ BOOL GameMtlDlg::PanelProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam 
 			}
 			break;
 
-		case WM_PAINT: 
+		case WM_PAINT:
 			{
 				if (!Valid) {
 					Valid = TRUE;
@@ -558,15 +558,15 @@ BOOL GameMtlDlg::PanelProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam 
 			return FALSE;
 
 		case WM_CLOSE:
-			break;       
+			break;
 
-		case WM_DESTROY: 
+		case WM_DESTROY:
 
 			TheMtl->DCTFrames = DCTFramesSpin->GetIVal();
 			TheMtl->DITFrames = DITFramesSpin->GetIVal();
 			TheMtl->SCTFrames = SCTFramesSpin->GetIVal();
 			TheMtl->SITFrames = SITFramesSpin->GetIVal();
-	
+
 			TheMtl->DCTFrameRate = DCTRateSpin->GetFVal();
 			TheMtl->DITFrameRate = DITRateSpin->GetFVal();
 			TheMtl->SCTFrameRate = SCTRateSpin->GetFVal();
@@ -589,10 +589,10 @@ BOOL GameMtlDlg::PanelProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam 
 			ReleaseISpinner(TranslucencySpin);
 			ReleaseISpinner(ShininessSpin);
 			ReleaseISpinner(FogSpin);
-	
-			DCTFramesSpin = DITFramesSpin = SCTFramesSpin = SITFramesSpin = NULL;
-			DCTRateSpin = DITRateSpin = SCTRateSpin = SITRateSpin = NULL;
-			OpacitySpin = TranslucencySpin = ShininessSpin = FogSpin = NULL;
+
+			DCTFramesSpin = DITFramesSpin = SCTFramesSpin = SITFramesSpin = nullptr;
+			DCTRateSpin = DITRateSpin = SCTRateSpin = SITRateSpin = nullptr;
+			OpacitySpin = TranslucencySpin = ShininessSpin = FogSpin = nullptr;
 
 			break;
 
@@ -602,19 +602,19 @@ BOOL GameMtlDlg::PanelProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam 
 }
 
 
-/*********************************************************************************************** 
- * PanelDlgProc -- Windows Proc which thunks into GameMtlDlg::PanelProc                        * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/26/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * PanelDlgProc -- Windows Proc which thunks into GameMtlDlg::PanelProc                        *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-static BOOL CALLBACK PanelDlgProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) 
+static BOOL CALLBACK PanelDlgProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	GameMtlDlg *theDlg;
 
@@ -623,8 +623,8 @@ static BOOL CALLBACK PanelDlgProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM 
 		theDlg->HwndPanel = hwndDlg;
 		SetWindowLong(hwndDlg, GWL_USERDATA,lParam);
 	} else {
-		if ((theDlg = (GameMtlDlg *)GetWindowLong(hwndDlg, GWL_USERDATA) ) == NULL) {
-			return FALSE; 
+		if ((theDlg = (GameMtlDlg *)GetWindowLong(hwndDlg, GWL_USERDATA) ) == nullptr) {
+			return FALSE;
 		}
 	}
 
@@ -635,19 +635,19 @@ static BOOL CALLBACK PanelDlgProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM 
 	return res;
 }
 
-/*********************************************************************************************** 
- * GameMtlDlg::NotesProc -- Dialog Proc for the Notes panel                                    * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/26/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * GameMtlDlg::NotesProc -- Dialog Proc for the Notes panel                                    *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-BOOL GameMtlDlg::NotesProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) 
+BOOL GameMtlDlg::NotesProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	int id = LOWORD(wParam);
 	int code = HIWORD(wParam);
@@ -661,31 +661,31 @@ BOOL GameMtlDlg::NotesProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 			IParams->RollupMouseMessage(hwndDlg,msg,wParam,lParam);
 			return FALSE;
 		}
-  	
-		case WM_COMMAND: 
+
+		case WM_COMMAND:
 		{
 			int i = lParam;
 		}
 		break;
-	
+
 	}
 	return FALSE;
 }
 
 
-/*********************************************************************************************** 
- * NotesDlgProc -- Dialog Proc which thunks to GameMtlDlg::NotesProc                           * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/26/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * NotesDlgProc -- Dialog Proc which thunks to GameMtlDlg::NotesProc                           *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-static BOOL CALLBACK NotesDlgProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) 
+static BOOL CALLBACK NotesDlgProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	GameMtlDlg *theDlg;
 
@@ -694,8 +694,8 @@ static BOOL CALLBACK NotesDlgProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM 
 		theDlg->HwndNotes = hwndDlg;
 		SetWindowLong(hwndDlg, GWL_USERDATA,lParam);
 	} else {
-		if ((theDlg = (GameMtlDlg *)GetWindowLong(hwndDlg, GWL_USERDATA) ) == NULL) {
-			return FALSE; 
+		if ((theDlg = (GameMtlDlg *)GetWindowLong(hwndDlg, GWL_USERDATA) ) == nullptr) {
+			return FALSE;
 		}
 	}
 
@@ -719,7 +719,7 @@ static BOOL CALLBACK NotesDlgProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM 
  * HISTORY:                                                                                    *
  *   3/30/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-BOOL GameMtlDlg::HintsProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) 
+BOOL GameMtlDlg::HintsProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	int id = LOWORD(wParam);
 	int code = HIWORD(wParam);
@@ -735,24 +735,24 @@ BOOL GameMtlDlg::HintsProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 			return FALSE;
 		}
 
-		case WM_COMMAND: 
+		case WM_COMMAND:
 		{
-			switch(id) 
+			switch(id)
 			{
 			case IDC_DIT_OVER_DCT_CHECK:
-				TheMtl->SetAttribute(GAMEMTL_DIT_OVER_DCT, GetCheckBox(hwndDlg, IDC_DIT_OVER_DCT_CHECK));			
+				TheMtl->SetAttribute(GAMEMTL_DIT_OVER_DCT, GetCheckBox(hwndDlg, IDC_DIT_OVER_DCT_CHECK));
 				break;
 
 			case IDC_SIT_OVER_SCT_CHECK:
-				TheMtl->SetAttribute(GAMEMTL_SIT_OVER_SCT, GetCheckBox(hwndDlg, IDC_SIT_OVER_SCT_CHECK));			
+				TheMtl->SetAttribute(GAMEMTL_SIT_OVER_SCT, GetCheckBox(hwndDlg, IDC_SIT_OVER_SCT_CHECK));
 				break;
-			
+
 			case IDC_DIT_OVER_DIG_CHECK:
-				TheMtl->SetAttribute(GAMEMTL_DIT_OVER_DIG, GetCheckBox(hwndDlg, IDC_DIT_OVER_DIG_CHECK));			
+				TheMtl->SetAttribute(GAMEMTL_DIT_OVER_DIG, GetCheckBox(hwndDlg, IDC_DIT_OVER_DIG_CHECK));
 				break;
-			
+
 			case IDC_SIT_OVER_SIG_CHECK:
-				TheMtl->SetAttribute(GAMEMTL_SIT_OVER_SIG, GetCheckBox(hwndDlg, IDC_SIT_OVER_SIG_CHECK));		
+				TheMtl->SetAttribute(GAMEMTL_SIT_OVER_SIG, GetCheckBox(hwndDlg, IDC_SIT_OVER_SIG_CHECK));
 				break;
 
 			case IDC_FAST_SPECULAR_AFTER_ALPHA_CHECK:
@@ -778,7 +778,7 @@ BOOL GameMtlDlg::HintsProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam)
  * HISTORY:                                                                                    *
  *   3/30/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-static BOOL CALLBACK HintsDlgProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) 
+static BOOL CALLBACK HintsDlgProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	GameMtlDlg *theDlg;
 
@@ -787,8 +787,8 @@ static BOOL CALLBACK HintsDlgProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM 
 		theDlg->HwndHints = hwndDlg;
 		SetWindowLong(hwndDlg, GWL_USERDATA,lParam);
 	} else {
-		if ((theDlg = (GameMtlDlg *)GetWindowLong(hwndDlg, GWL_USERDATA) ) == NULL) {
-			return FALSE; 
+		if ((theDlg = (GameMtlDlg *)GetWindowLong(hwndDlg, GWL_USERDATA) ) == nullptr) {
+			return FALSE;
 		}
 	}
 
@@ -812,7 +812,7 @@ static BOOL CALLBACK HintsDlgProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM 
  * HISTORY:                                                                                    *
  *   3/31/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-BOOL GameMtlDlg::PsxProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) 
+BOOL GameMtlDlg::PsxProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	int id = LOWORD(wParam);
 	int code = HIWORD(wParam);
@@ -827,9 +827,9 @@ BOOL GameMtlDlg::PsxProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 			return FALSE;
 		}
 
-		case WM_COMMAND: 
+		case WM_COMMAND:
 		{
-			switch(id) 
+			switch(id)
 			{
 			case IDC_NO_TRANS:
 				TheMtl->SetMaskedAttribute(GAMEMTL_PSX_TRANS_MASK,0);
@@ -838,11 +838,11 @@ BOOL GameMtlDlg::PsxProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 			case IDC_100_TRANS:
 				TheMtl->SetMaskedAttribute(GAMEMTL_PSX_TRANS_MASK,GAMEMTL_PSX_100_TRANS);
 				break;
-			
+
 			case IDC_50_TRANS:
 				TheMtl->SetMaskedAttribute(GAMEMTL_PSX_TRANS_MASK,GAMEMTL_PSX_50_TRANS);
 				break;
-			
+
 			case IDC_25_TRANS:
 				TheMtl->SetMaskedAttribute(GAMEMTL_PSX_TRANS_MASK,GAMEMTL_PSX_25_TRANS);
 				break;
@@ -850,7 +850,7 @@ BOOL GameMtlDlg::PsxProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 			case IDC_MINUS_100_TRANS:
 				TheMtl->SetMaskedAttribute(GAMEMTL_PSX_TRANS_MASK,GAMEMTL_PSX_MINUS_100_TRANS);
 				break;
-			
+
 			case IDC_NO_RT_LIGHTING:
 				TheMtl->SetAttribute(GAMEMTL_PSX_NO_RT_LIGHTING, GetCheckBox(hwndDlg, IDC_NO_RT_LIGHTING));
 				break;
@@ -874,7 +874,7 @@ BOOL GameMtlDlg::PsxProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam)
  * HISTORY:                                                                                    *
  *   3/31/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-static BOOL CALLBACK PsxDlgProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) 
+static BOOL CALLBACK PsxDlgProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	GameMtlDlg *theDlg;
 
@@ -883,8 +883,8 @@ static BOOL CALLBACK PsxDlgProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lP
 		theDlg->HwndPsx = hwndDlg;
 		SetWindowLong(hwndDlg, GWL_USERDATA,lParam);
 	} else {
-		if ((theDlg = (GameMtlDlg *)GetWindowLong(hwndDlg, GWL_USERDATA) ) == NULL) {
-			return FALSE; 
+		if ((theDlg = (GameMtlDlg *)GetWindowLong(hwndDlg, GWL_USERDATA) ) == nullptr) {
+			return FALSE;
 		}
 	}
 
@@ -896,29 +896,29 @@ static BOOL CALLBACK PsxDlgProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lP
 }
 
 
-/*********************************************************************************************** 
- * GameMtlDlg::LoadDialog -- Sets the state of all of the dialog's controls                    * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/26/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * GameMtlDlg::LoadDialog -- Sets the state of all of the dialog's controls                    *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-void  GameMtlDlg::LoadDialog(BOOL draw) 
+void  GameMtlDlg::LoadDialog(BOOL draw)
 {
 
 	/*
 	** Set the state of the entire panel based on the current material.
 	*/
 	if (TheMtl && HwndPanel) {
-	
+
 		/*
 		** Init all of the color swatches
-		*/		
+		*/
 		if (DiffuseSwatch) {
 			DiffuseSwatch->InitColor(TheMtl->GetDiffuse());
 		}
@@ -949,7 +949,7 @@ void  GameMtlDlg::LoadDialog(BOOL draw)
 		** Texture maps enable checks.
 		*/
 		SetCheckBox(HwndPanel,IDC_MAPON_DCT, TheMtl->SubTexmapOn(ID_DI));
-		SetCheckBox(HwndPanel,IDC_MAPON_DIT, TheMtl->SubTexmapOn(ID_SI)); 
+		SetCheckBox(HwndPanel,IDC_MAPON_DIT, TheMtl->SubTexmapOn(ID_SI));
 		SetCheckBox(HwndPanel,IDC_MAPON_SCT, TheMtl->SubTexmapOn(ID_SP));
 		SetCheckBox(HwndPanel,IDC_MAPON_SIT, TheMtl->SubTexmapOn(ID_RL));
 
@@ -986,7 +986,7 @@ void  GameMtlDlg::LoadDialog(BOOL draw)
 		** Init the Psx flags state
 		*/
 		SetCheckBox(HwndPsx,IDC_NO_RT_LIGHTING, TheMtl->GetAttribute(GAMEMTL_PSX_NO_RT_LIGHTING));
-		
+
 		SetCheckBox(HwndPsx,IDC_NO_TRANS, false);
 		SetCheckBox(HwndPsx,IDC_100_TRANS, false);
 		SetCheckBox(HwndPsx,IDC_50_TRANS, false);
@@ -1030,35 +1030,35 @@ void  GameMtlDlg::LoadDialog(BOOL draw)
 	}
 }
 
-/*********************************************************************************************** 
- * GameMtlDlg::UpdateMtlDisplay -- Informs MAX that the material parameters have changed       * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/26/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * GameMtlDlg::UpdateMtlDisplay -- Informs MAX that the material parameters have changed       *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-void GameMtlDlg::UpdateMtlDisplay() 
+void GameMtlDlg::UpdateMtlDisplay()
 {
 	IParams->MtlChanged();
 }
 
 
-/*********************************************************************************************** 
- * GameMtlDlg::ActivateDlg -- Activates and deactivates the dialog                             * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/26/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * GameMtlDlg::ActivateDlg -- Activates and deactivates the dialog                             *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 void GameMtlDlg::ActivateDlg(BOOL onOff)
 {
@@ -1082,29 +1082,29 @@ void GameMtlDlg::ActivateDlg(BOOL onOff)
 	}
 }
 
-/*********************************************************************************************** 
- * GameMtlDlg::SetThing -- Sets the material to be edited                                      * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/26/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * GameMtlDlg::SetThing -- Sets the material to be edited                                      *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-void GameMtlDlg::SetThing(ReferenceTarget *m) 
+void GameMtlDlg::SetThing(ReferenceTarget *m)
 {
 	assert (m->SuperClassID()==MATERIAL_CLASS_ID);
 	assert (m->ClassID()==GameMaterialClassID);
 
 	if (TheMtl) {
-		TheMtl->ParamPanel = NULL;
+		TheMtl->ParamPanel = nullptr;
 	}
 
 	TheMtl = (GameMtl *)m;
-	
+
 	if (TheMtl)	{
 		TheMtl->ParamPanel = this;
 	}
@@ -1131,38 +1131,38 @@ void GameMtlDlg::SetThing(ReferenceTarget *m)
 	}
 }
 
-/*********************************************************************************************** 
- * GameMtlDlg::BuildDialog -- Adds the dialog to the material editor                           * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/26/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * GameMtlDlg::BuildDialog -- Adds the dialog to the material editor                           *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-void GameMtlDlg::BuildDialog() 
+void GameMtlDlg::BuildDialog()
 {
-	if ((TheMtl->Flags&(GAMEMTL_ROLLUP_FLAGS))==0) { 
+	if ((TheMtl->Flags&(GAMEMTL_ROLLUP_FLAGS))==0) {
 		TheMtl->SetFlag(GAMEMTL_ROLLUP1_OPEN,TRUE);
 	}
 
-	HwndPanel = IParams->AddRollupPage( 
-		AppInstance,	 
+	HwndPanel = IParams->AddRollupPage(
+		AppInstance,
 		MAKEINTRESOURCE(IDD_GAMEMTL_PANEL),
-		PanelDlgProc, 
-		Get_String(IDS_PARAMETERS), 
+		PanelDlgProc,
+		Get_String(IDS_PARAMETERS),
 		(LPARAM)this,
 		(TheMtl->GetFlag(GAMEMTL_ROLLUP1_OPEN) ? 0:APPENDROLL_CLOSED)
-	);		
+	);
 
 	HwndPsx = IParams->AddRollupPage(
 		AppInstance,
 		MAKEINTRESOURCE(IDD_GAMEMTL_PSX_PANEL),
-		PsxDlgProc, 
-		Get_String(IDS_PSX_OPTIONS), 
+		PsxDlgProc,
+		Get_String(IDS_PSX_OPTIONS),
 		(LPARAM)this,
 		(TheMtl->GetFlag(GAMEMTL_ROLLUP2_OPEN) ? 0:APPENDROLL_CLOSED)
 	);
@@ -1170,8 +1170,8 @@ void GameMtlDlg::BuildDialog()
 	HwndHints = IParams->AddRollupPage(
 		AppInstance,
 		MAKEINTRESOURCE(IDD_GAMEMTL_HINTS_PANEL),
-		HintsDlgProc, 
-		Get_String(IDS_MATERIAL_HINTS), 
+		HintsDlgProc,
+		Get_String(IDS_MATERIAL_HINTS),
 		(LPARAM)this,
 		(TheMtl->GetFlag(GAMEMTL_ROLLUP3_OPEN) ? 0:APPENDROLL_CLOSED)
 	);
@@ -1179,8 +1179,8 @@ void GameMtlDlg::BuildDialog()
 	HwndNotes = IParams->AddRollupPage(
 		AppInstance,
 		MAKEINTRESOURCE(IDD_MATERIAL_NOTES_PANEL),
-		NotesDlgProc, 
-		Get_String(IDS_NOTES), 
+		NotesDlgProc,
+		Get_String(IDS_NOTES),
 		(LPARAM)this,
 		(TheMtl->GetFlag(GAMEMTL_ROLLUP4_OPEN) ? 0:APPENDROLL_CLOSED)
 	);
@@ -1188,19 +1188,19 @@ void GameMtlDlg::BuildDialog()
 	IParams->SetRollupScrollPos(TheMtl->RollScroll);
 }
 
-/*********************************************************************************************** 
- * GameMtlDlg::UpdateTexmapDisplay -- Updates the texture map buttons                          * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/26/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * GameMtlDlg::UpdateTexmapDisplay -- Updates the texture map buttons                          *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-void GameMtlDlg::UpdateTexmapDisplay(int i) 
+void GameMtlDlg::UpdateTexmapDisplay(int i)
 {
 	TSTR nm = Get_String(IDS_NONE);
 	Texmap *texmap = (*TheMtl->Maps)[i].Map;

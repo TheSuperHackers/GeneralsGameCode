@@ -34,16 +34,14 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef BCHANNEL_H
-#define BCHANNEL_H
+#pragma once
 
 #ifndef ALWAYS_H
 #include "always.h"
 #endif
 
 #ifndef BITTYPE_H
-#include "BITTYPE.H"
+#include "BITTYPE.h"
 #endif
 
 #ifndef CHUNKIO_H
@@ -51,7 +49,7 @@
 #endif
 
 #ifndef VECTOR_H
-#include "Vector.H"
+#include "Vector.h"
 #endif
 
 #ifndef W3D_FILE_H
@@ -90,14 +88,11 @@ private:
 
 	// This function finds the start and end of the "non-default" data
 	void compute_range(void);
-  
+
   // compress functions
 	void remove_packet(W3dTimeCodedBitChannelStruct * c, uint32 packet_idx);
 	uint32 find_useless_packet(W3dTimeCodedBitChannelStruct * c);
 	void compress(W3dTimeCodedBitChannelStruct * c);
-  
-  
+
+
 };
-
-
-#endif

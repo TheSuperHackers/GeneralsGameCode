@@ -42,12 +42,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef W3DASSETMANAGER_H
-#define W3DASSETMANAGER_H
 
 #include "assetmgr.h"
 #include "Lib/BaseType.h"
@@ -58,8 +53,8 @@ class VertexMaterialClass;
 class W3DAssetManager: public WW3DAssetManager
 {
 public:
-	W3DAssetManager(void);
-	virtual ~W3DAssetManager(void);	
+	W3DAssetManager();
+	virtual ~W3DAssetManager();
 
 	virtual RenderObjClass * Create_Render_Obj(const char * name);
 	// unique to W3DAssetManager
@@ -68,7 +63,7 @@ public:
 
 	virtual TextureClass *	Get_Texture
 	(
-		const char * filename, 
+		const char * filename,
 		MipCountType mip_level_count=MIP_LEVELS_ALL,
 		WW3DFormat texture_format=WW3D_FORMAT_UNKNOWN,
 		bool allow_compression=true,
@@ -77,13 +72,13 @@ public:
 	);
 
 	//'Generals' customizations
-	void Report_Used_Assets(void);
-	void Report_Used_Prototypes (void);
-	void Report_Used_Textures(void);
-	void Report_Used_Font3DDatas( void );
-	void Report_Used_FontChars (void);
+	void Report_Used_Assets();
+	void Report_Used_Prototypes ();
+	void Report_Used_Textures();
+	void Report_Used_Font3DDatas();
+	void Report_Used_FontChars ();
 
-	virtual RenderObjClass * Create_Render_Obj(const char * name,float scale, const int color, const char *oldTexure=NULL, const char *newTexture=NULL);
+	virtual RenderObjClass * Create_Render_Obj(const char * name,float scale, const int color, const char *oldTexture=nullptr, const char *newTexture=nullptr);
 	///Swaps the specified textures in the render object prototype.
 	int replacePrototypeTexture(RenderObjClass *robj, const char * oldname, const char * newname);
 
@@ -108,10 +103,10 @@ private:
 	int replaceMeshTexture(RenderObjClass *robj, TextureClass *oldTex, TextureClass *newTex);
 
 	//'E&B' customizations
-/*	virtual RenderObjClass * Create_Render_Obj(const char * name, float scale, const Vector3 &hsv_shift);	
+/*	virtual RenderObjClass * Create_Render_Obj(const char * name, float scale, const Vector3 &hsv_shift);
 	TextureClass * Get_Texture_With_HSV_Shift(const char * filename, const Vector3 &hsv_shift, TextureClass::MipCountType mip_level_count = TextureClass::MIP_LEVELS_ALL);
 	void Recolor_Vertex_Material(VertexMaterialClass *vmat, const Vector3 &hsv_shift);
-	void Recolor_Vertices(unsigned int *color, int count, const Vector3 &hsv_shift);	
+	void Recolor_Vertices(unsigned int *color, int count, const Vector3 &hsv_shift);
 	void Recolor_Mesh(RenderObjClass *robj, const Vector3 &hsv_shift);
 	TextureClass * Recolor_Texture(TextureClass *texture, const Vector3 &hsv_shift);
 	TextureClass * Recolor_Texture_One_Time(TextureClass *texture, const Vector3 &hsv_shift);
@@ -120,6 +115,3 @@ private:
 	void Recolor_ParticleEmitter(RenderObjClass *robj, const Vector3 &hsv_shift);
 	void Recolor_Asset(RenderObjClass *robj, const Vector3 &hsv_shift);*/
 };
-
-#endif
-

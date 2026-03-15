@@ -16,30 +16,25 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*************************************************************************** 
- ***    C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S     *** 
- *************************************************************************** 
- *                                                                         * 
- *                 Project Name : G                                        * 
- *                                                                         * 
- *                     $Archive:: /Commando/Code/ww3d2/predlod.h          $* 
- *                                                                         * 
- *                      $Author:: Jani_p                                  $* 
- *                                                                         * 
- *                     $Modtime:: 9/20/01 10:10a                          $* 
- *                                                                         * 
- *                    $Revision:: 3                                       $* 
- *                                                                         * 
- *-------------------------------------------------------------------------* 
- * Functions:                                                              * 
+/***************************************************************************
+ ***    C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S     ***
+ ***************************************************************************
+ *                                                                         *
+ *                 Project Name : G                                        *
+ *                                                                         *
+ *                     $Archive:: /Commando/Code/ww3d2/predlod.h          $*
+ *                                                                         *
+ *                      $Author:: Jani_p                                  $*
+ *                                                                         *
+ *                     $Modtime:: 9/20/01 10:10a                          $*
+ *                                                                         *
+ *                    $Revision:: 3                                       $*
+ *                                                                         *
+ *-------------------------------------------------------------------------*
+ * Functions:                                                              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef PREDLOD_H
-#define PREDLOD_H
 
 // This file contains the classes which support predictive LOD management
 // similar to that outlined in "Adaptive Display Algorithm for Interactive
@@ -50,7 +45,7 @@
 
 #include "rendobj.h"
 #include "float.h"
-#include "Vector.H"
+#include "Vector.h"
 
 class LODHeapNode;
 
@@ -62,12 +57,12 @@ class PredictiveLODOptimizerClass {
 
 	public:
 
-		static void		Clear(void);
+		static void		Clear();
 		static void		Add_Object(RenderObjClass *robj);
 		static void		Add_Cost(float cost)								{ TotalCost += cost; }
 		static void		Optimize_LODs(float max_cost);
-		static float	Get_Total_Cost(void)								{ return TotalCost; }
-		static void		Free(void);	// frees all memory
+		static float	Get_Total_Cost()								{ return TotalCost; }
+		static void		Free();	// frees all memory
 
 	private:
 		static void		AllocVisibleObjArrays(int num_objects);
@@ -82,5 +77,3 @@ class PredictiveLODOptimizerClass {
 		static int VisibleObjArraySize;
 
 };
-
-#endif

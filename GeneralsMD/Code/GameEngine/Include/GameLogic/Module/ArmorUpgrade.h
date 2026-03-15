@@ -24,12 +24,12 @@
 
 // FILE: ArmorUpgrade.h /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	created:	July 2002
@@ -37,16 +37,13 @@
 //	Filename: 	ArmorUpgrade.h
 //
 //	author:		Chris Brue
-//	
-//	purpose:	
+//
+//	purpose:
 //
 //-----------------------------------------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __ARMOR_UPGRADE_H_
-#define __ARMOR_UPGRADE_H_
 
 //-----------------------------------------------------------------------------
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
@@ -78,8 +75,8 @@ public:
 	// virtual destructor prototype defined by MemoryPoolObject
 
 protected:
-	virtual void upgradeImplementation( ); ///< Here's the actual work of Upgrading
-	virtual Bool isSubObjectsUpgrade() { return false; }
+	virtual void upgradeImplementation( ) override; ///< Here's the actual work of Upgrading
+	virtual Bool isSubObjectsUpgrade() override { return false; }
 
 };
 
@@ -90,5 +87,3 @@ protected:
 //-----------------------------------------------------------------------------
 // EXTERNALS //////////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-
-#endif // __ARMOR_UPGRADE_H_

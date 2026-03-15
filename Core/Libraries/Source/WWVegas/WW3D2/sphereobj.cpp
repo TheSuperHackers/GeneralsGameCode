@@ -26,8 +26,8 @@
  *                                                                                             *
  *                   Org Author:: Greg Hjelstrom                                               *
  *                                                                                             *
- *                      $Author:: Kenny Mitchell                                               * 
- *                                                                                             * 
+ *                      $Author:: Kenny Mitchell                                               *
+ *                                                                                             *
  *                     $Modtime:: 06/26/02 4:04p                                             $*
  *                                                                                             *
  *                    $Revision:: 24                                                          $*
@@ -113,14 +113,14 @@ float SphereLODCosts[SPHERE_NUM_LOD + 1];	// SPHERE_NUM_LOD doesn't include the 
  * HISTORY:                                                                                    *
  *   1/19/00    gth : Created.                                                                 *
  *=============================================================================================*/
-SphereRenderObjClass::SphereRenderObjClass(void)
+SphereRenderObjClass::SphereRenderObjClass()
 	:	anim_time (0.0F),
 		IsAnimating (true),
 		LODBias(1.0f),
 		CurrentLOD(SPHERE_NUM_LOD),	// SPHERE_NUM_LOD does not include the null LOD
 		AnimDuration (0.0F),
-		SphereMaterial (NULL),
-		SphereTexture (NULL),
+		SphereMaterial (nullptr),
+		SphereTexture (nullptr),
 		CurrentColor(0.75f, 0.75f, 0.75F),
 		CurrentAlpha(1.0f),
 		CurrentScale(1.0f, 1.0f, 1.0f),
@@ -161,8 +161,8 @@ SphereRenderObjClass::SphereRenderObjClass(const W3dSphereStruct & def)
 		LODBias(1.0f),
 		CurrentLOD(SPHERE_NUM_LOD),	// SPHERE_NUM_LOD does not include the null LOD
 		AnimDuration (0.0F),
-		SphereMaterial (NULL),
-		SphereTexture (NULL),
+		SphereMaterial (nullptr),
+		SphereTexture (nullptr),
 		CurrentColor(0.75f, 0.75f, 0.75F),
 		CurrentAlpha(1.0f),
 		CurrentScale(1.0f, 1.0f, 1.0f),
@@ -174,13 +174,13 @@ SphereRenderObjClass::SphereRenderObjClass(const W3dSphereStruct & def)
 	Generate_Shared_Mesh_Arrays ( CurrentVector );
 	Init_Material ();
 	Orientation.Make_Identity();
-	
+
 	//
 	//	Initialize from the defintion
 	//
 	Set_Name(def.Name);
 	Set_Local_Center_Extent (	Vector3 (def.Center.X, def.Center.Y, def.Center.Z),
-										Vector3 (def.Extent.X, def.Extent.Y, def.Extent.Z));	
+										Vector3 (def.Extent.X, def.Extent.Y, def.Extent.Z));
 
 	if (def.TextureName[0] != 0) {
 		SphereTexture = WW3DAssetManager::Get_Instance ()->Get_Texture (def.TextureName);
@@ -211,8 +211,8 @@ SphereRenderObjClass::SphereRenderObjClass(const SphereRenderObjClass & src)
 		LODBias(1.0f),
 		CurrentLOD(SPHERE_NUM_LOD),	// SPHERE_NUM_LOD does not include the null LOD
 		AnimDuration (0.0F),
-		SphereMaterial (NULL),
-		SphereTexture (NULL),
+		SphereMaterial (nullptr),
+		SphereTexture (nullptr),
 		CurrentColor(0.75f, 0.75f, 0.75F),
 		CurrentAlpha(1.0f),
 		CurrentScale(1.0f, 1.0f, 1.0f),
@@ -221,7 +221,7 @@ SphereRenderObjClass::SphereRenderObjClass(const SphereRenderObjClass & src)
 		ObjSpaceCenter (0, 0, 0),
 		ObjSpaceExtent (1, 1, 1)
 {
-	Generate_Shared_Mesh_Arrays ( CurrentVector );	
+	Generate_Shared_Mesh_Arrays ( CurrentVector );
 	Init_Material ();
 	Orientation.Make_Identity();
 
@@ -236,7 +236,7 @@ SphereRenderObjClass::SphereRenderObjClass(const SphereRenderObjClass & src)
 SphereRenderObjClass::~SphereRenderObjClass()
 {
 	REF_PTR_RELEASE(SphereMaterial);
-} // destructor
+}
 
 /***********************************************************************************************
  * SphereRenderObjClass::operator -- assignment operator                                       *
@@ -271,7 +271,7 @@ SphereRenderObjClass & SphereRenderObjClass::operator = (const SphereRenderObjCl
 		AlphaChannel		= that.AlphaChannel;
 		ScaleChannel		= that.ScaleChannel;
 		VectorChannel		= that.VectorChannel;
-		
+
 		Set_Texture (that.SphereTexture);
 	}
 
@@ -300,7 +300,7 @@ void SphereRenderObjClass::Generate_Shared_Mesh_Arrays (const AlphaVectorStruct 
 		float step = (SPHERE_HIGHEST_LOD - SPHERE_LOWEST_LOD);
 		step /= SPHERE_NUM_LOD;
 
-		// For NULL LOD set Cost to a small nonzero amount to avoid divisions by zero.
+		// For null LOD set Cost to a small nonzero amount to avoid divisions by zero.
 		SphereLODCosts[0] = 0.000001f;
 		for(int i=0; i < SPHERE_NUM_LOD; i++) {
 
@@ -345,7 +345,7 @@ void SphereRenderObjClass::calculate_value_array(float screen_area, float *value
  * HISTORY:                                                                                    *
  *   03/08/00    pds : Created.                                                                *
  *=============================================================================================*/
-void SphereRenderObjClass::Init_Material (void)
+void SphereRenderObjClass::Init_Material ()
 {
 	REF_PTR_RELEASE (SphereMaterial);
 
@@ -354,18 +354,18 @@ void SphereRenderObjClass::Init_Material (void)
 	SphereMaterial->Set_Diffuse(0,0,0);
 	SphereMaterial->Set_Specular(0,0,0);
 	SphereMaterial->Set_Emissive(1,1,1);
-	SphereMaterial->Set_Opacity(0.25f);	
+	SphereMaterial->Set_Opacity(0.25f);
 	SphereMaterial->Set_Shininess(0.0f);
 	SphereMaterial->Set_Lighting(true);
 
 	// Texturing, zbuffer, primary gradient, alpha blending
 	SphereShader = ShaderClass::_PresetAlphaShader;
-	
+
 	// (gth) Looks like sphere's were coded with backwards normals! Quick fix (though expensive)
 	// is to turn off backface culling...  ug...
 	SphereShader.Set_Cull_Mode(ShaderClass::CULL_MODE_DISABLE);
 
-}	// Init_Material
+}
 
 
 /***********************************************************************************************
@@ -380,7 +380,7 @@ void SphereRenderObjClass::Init_Material (void)
  * HISTORY:                                                                                    *
  *   1/19/00    gth : Created.                                                                 *
  *=============================================================================================*/
-int SphereRenderObjClass::Get_Num_Polys(void) const
+int SphereRenderObjClass::Get_Num_Polys() const
 {
 	return SphereLODCosts[CurrentLOD];
 }
@@ -416,7 +416,7 @@ void SphereRenderObjClass::Set_Texture(TextureClass *tf)
  * HISTORY:                                                                                    *
  *   1/19/00    gth : Created.                                                                 *
  *=============================================================================================*/
-const char * SphereRenderObjClass::Get_Name(void) const
+const char * SphereRenderObjClass::Get_Name() const
 {
 	return Name;
 }
@@ -436,9 +436,9 @@ const char * SphereRenderObjClass::Get_Name(void) const
  *=============================================================================================*/
 void SphereRenderObjClass::Set_Name(const char * name)
 {
-	WWASSERT(name != NULL);
-	WWASSERT(strlen(name) < 2*W3D_NAME_LEN);
-	strcpy(Name,name);
+	WWASSERT(name != nullptr);
+	const size_t nameLen = strlcpy(Name, name, ARRAY_SIZE(Name));
+	(void)nameLen; WWASSERT(nameLen < ARRAY_SIZE(Name));
 }
 
 
@@ -457,7 +457,7 @@ void SphereRenderObjClass::Set_Name(const char * name)
  *=============================================================================================*/
 void SphereRenderObjClass::render_sphere()
 {
-	// Should never get here with NULL LOD
+	// Should never get here with null LOD
 	if (CurrentLOD == 0) {
 		WWASSERT(0);
 		return;
@@ -472,7 +472,7 @@ void SphereRenderObjClass::render_sphere()
 	}
 	DX8Wrapper::Set_Shader(SphereShader);
 	DX8Wrapper::Set_Texture(0,SphereTexture);
-	DX8Wrapper::Set_Material(SphereMaterial);	
+	DX8Wrapper::Set_Material(SphereMaterial);
 
 	// Enable sorting if the primitive is translucent, alpha testing is not enabled, and sorting is enabled globally.
 	const bool sort = (SphereShader.Get_Dst_Blend_Func() != ShaderClass::DSTBLEND_ZERO) && (SphereShader.Get_Alpha_Test() == ShaderClass::ALPHATEST_DISABLE) && (WW3D::Is_Sorting_Enabled());
@@ -484,11 +484,11 @@ void SphereRenderObjClass::render_sphere()
 		VertexFormatXYZNDUV2 *vb = Lock.Get_Formatted_Vertex_Array();
 
 		for (int i=0; i<mesh.Vertex_ct; i++)
-		{			
+		{
 			vb->x = mesh.vtx[i].X;
 			vb->y = mesh.vtx[i].Y;
 			vb->z = mesh.vtx[i].Z;
-			
+
 			vb->nx = mesh.vtx_normal[i].X;		// may not need this!
 			vb->ny = mesh.vtx_normal[i].Y;
 			vb->nz = mesh.vtx_normal[i].Z;
@@ -498,13 +498,13 @@ void SphereRenderObjClass::render_sphere()
 			} else {
 				vb->diffuse = 0xFFFFFFFF;		// TODO could combine the material color with this and turn off lighting
 			}
-			
+
 			if (SphereTexture) {
 				vb->u1 = mesh.vtx_uv[i].X;
 				vb->v1 = mesh.vtx_uv[i].Y;
 			}
 			vb++;
-		}		
+		}
 	}
 
 	DynamicIBAccessClass ib(buffer_type, mesh.face_ct*3);
@@ -517,7 +517,7 @@ void SphereRenderObjClass::render_sphere()
 			mem[3*i+1]=mesh.tri_poly[i].J;
 			mem[3*i+2]=mesh.tri_poly[i].K;
 		}
-	}	
+	}
 
 	DX8Wrapper::Set_Vertex_Buffer(vb);
 	DX8Wrapper::Set_Index_Buffer(ib,0);
@@ -528,7 +528,7 @@ void SphereRenderObjClass::render_sphere()
 		DX8Wrapper::Draw_Triangles(0,mesh.face_ct,0,mesh.Vertex_ct);
 	}
 
-} // render_sphere
+}
 
 
 /***********************************************************************************************
@@ -547,7 +547,7 @@ void SphereRenderObjClass::render_sphere()
  *=============================================================================================*/
 void SphereRenderObjClass::vis_render_sphere(SpecialRenderInfoClass & rinfo,const Vector3 & center,const Vector3 & extent)
 {
-}	// vis_render_sphere
+}
 
 
 /***********************************************************************************************
@@ -562,7 +562,7 @@ void SphereRenderObjClass::vis_render_sphere(SpecialRenderInfoClass & rinfo,cons
  * HISTORY:                                                                                    *
  *   1/19/00    gth : Created.                                                                 *
  *=============================================================================================*/
-RenderObjClass * SphereRenderObjClass::Clone(void) const
+RenderObjClass * SphereRenderObjClass::Clone() const
 {
 	return W3DNEW SphereRenderObjClass(*this);
 }
@@ -580,7 +580,7 @@ RenderObjClass * SphereRenderObjClass::Clone(void) const
  * HISTORY:                                                                                    *
  *   1/19/00    gth : Created.                                                                 *
  *=============================================================================================*/
-int SphereRenderObjClass::Class_ID(void) const
+int SphereRenderObjClass::Class_ID() const
 {
 	return RenderObjClass::CLASSID_SPHERE;
 }
@@ -600,13 +600,13 @@ int SphereRenderObjClass::Class_ID(void) const
  *=============================================================================================*/
 void SphereRenderObjClass::Render(RenderInfoClass & rinfo)
 {
-	// NULL LOD
+	// null LOD
 	if (CurrentLOD == 0) return;
 
 	if (Is_Not_Hidden_At_All() == false) {
 		return;
 	}
-	
+
 	unsigned int sort_level = SORT_LEVEL_NONE;
 
 	if (!WW3D::Is_Sorting_Enabled()) {
@@ -673,13 +673,13 @@ void SphereRenderObjClass::Render(RenderInfoClass & rinfo)
 
 			tm.Scale(real_scale);
 			DX8Wrapper::Set_Transform(D3DTS_WORLD,ident);
-			DX8Wrapper::Set_Transform(D3DTS_VIEW,tm); 
+			DX8Wrapper::Set_Transform(D3DTS_VIEW,tm);
 			render_sphere();
 			DX8Wrapper::Set_Transform(D3DTS_VIEW,view);
 		} else {
-			DX8Wrapper::Set_Transform(D3DTS_WORLD,temp);	
+			DX8Wrapper::Set_Transform(D3DTS_WORLD,temp);
 			render_sphere();
-		}		
+		}
 	}
 }
 
@@ -700,9 +700,9 @@ void SphereRenderObjClass::Special_Render(SpecialRenderInfoClass & rinfo)
 {
 	Matrix3D temp(1);
 	temp.Translate(Transform.Get_Translation());
-	
+
 	if (rinfo.RenderType == SpecialRenderInfoClass::RENDER_VIS) {
-		WWASSERT(rinfo.VisRasterizer != NULL);
+		WWASSERT(rinfo.VisRasterizer != nullptr);
 		rinfo.VisRasterizer->Set_Model_Transform(temp);
 		vis_render_sphere(rinfo,ObjSpaceCenter,ObjSpaceExtent);
 	}
@@ -759,7 +759,7 @@ void SphereRenderObjClass::Set_Position(const Vector3 &v)
  * HISTORY:                                                                                    *
  *   1/19/00    gth : Created.                                                                 *
  *=============================================================================================*/
-void SphereRenderObjClass::update_cached_box(void)
+void SphereRenderObjClass::update_cached_box()
 {
 	CachedBox.Center = Transform.Get_Translation() + ObjSpaceCenter;
 	CachedBox.Extent = ObjSpaceExtent;
@@ -813,27 +813,27 @@ void SphereRenderObjClass::Prepare_LOD(CameraClass &camera)
 	PredictiveLODOptimizerClass::Add_Object(this);
 }
 
-void SphereRenderObjClass::Increment_LOD(void)
+void SphereRenderObjClass::Increment_LOD()
 {
 	if (CurrentLOD < SPHERE_NUM_LOD) CurrentLOD++;
 }
 
-void SphereRenderObjClass::Decrement_LOD(void)
+void SphereRenderObjClass::Decrement_LOD()
 {
 	if (CurrentLOD > 0) CurrentLOD--;
 }
 
-float SphereRenderObjClass::Get_Cost(void) const
+float SphereRenderObjClass::Get_Cost() const
 {
 	return Get_Num_Polys();	// Currently cost == polys
 }
 
-float SphereRenderObjClass::Get_Value(void) const
+float SphereRenderObjClass::Get_Value() const
 {
 	return Value[CurrentLOD];
 }
 
-float SphereRenderObjClass::Get_Post_Increment_Value(void) const
+float SphereRenderObjClass::Get_Post_Increment_Value() const
 {
 	return Value[CurrentLOD + 1];
 }
@@ -843,12 +843,12 @@ void SphereRenderObjClass::Set_LOD_Level(int lod)
 	CurrentLOD = Bound(lod, 0, SPHERE_NUM_LOD);	// SPHERE_NUM_LOD doesn't include the null LOD
 }
 
-int SphereRenderObjClass::Get_LOD_Level(void) const
+int SphereRenderObjClass::Get_LOD_Level() const
 {
 	return CurrentLOD;
 }
 
-int SphereRenderObjClass::Get_LOD_Count(void) const
+int SphereRenderObjClass::Get_LOD_Count() const
 {
 	return SPHERE_NUM_LOD + 1;	// SPHERE_NUM_LOD doesn't include the null LOD
 }
@@ -940,7 +940,7 @@ void SphereRenderObjClass::Scale(float scalex, float scaley, float scalez)
  * HISTORY:                                                                                    *
  *   1/19/00    gth : Created.                                                                 *
  *=============================================================================================*/
-void SphereRenderObjClass::Update_Cached_Bounding_Volumes(void) const
+void SphereRenderObjClass::Update_Cached_Bounding_Volumes() const
 {
 	CachedBoundingBox.Extent.X = ObjSpaceExtent.X * CurrentScale.X;
 	CachedBoundingBox.Extent.Y = ObjSpaceExtent.Y * CurrentScale.Y;
@@ -965,10 +965,10 @@ void SphereRenderObjClass::Update_Cached_Bounding_Volumes(void) const
  * HISTORY:                                                                                    *
  *   3/13/2000    pds : Created.                                                               *
  *=============================================================================================*/
-Vector3 SphereRenderObjClass::Get_Default_Color(void) const
+Vector3 SphereRenderObjClass::Get_Default_Color() const
 {
 	Vector3 value;
-	
+
 	if (ColorChannel.Get_Key_Count () > 0) {
 		value = ColorChannel.Get_Key (0).Get_Value ();
 	} else {
@@ -991,10 +991,10 @@ Vector3 SphereRenderObjClass::Get_Default_Color(void) const
  * HISTORY:                                                                                    *
  *   3/13/2000    pds : Created.                                                               *
  *=============================================================================================*/
-float SphereRenderObjClass::Get_Default_Alpha(void) const
+float SphereRenderObjClass::Get_Default_Alpha() const
 {
 	float  value;
-	
+
 	if (AlphaChannel.Get_Key_Count () > 0) {
 		value = AlphaChannel.Get_Key (0).Get_Value ();
 	} else {
@@ -1017,10 +1017,10 @@ float SphereRenderObjClass::Get_Default_Alpha(void) const
  * HISTORY:                                                                                    *
  *   3/13/2000    pds : Created.                                                               *
  *=============================================================================================*/
-Vector3 SphereRenderObjClass::Get_Default_Scale(void) const
+Vector3 SphereRenderObjClass::Get_Default_Scale() const
 {
 	Vector3 value;
-	
+
 	if (ScaleChannel.Get_Key_Count () > 0) {
 		value = ScaleChannel.Get_Key (0).Get_Value ();
 	} else {
@@ -1043,10 +1043,10 @@ Vector3 SphereRenderObjClass::Get_Default_Scale(void) const
  * HISTORY:                                                                                    *
  *   3/13/2000    pds : Created.                                                               *
  *=============================================================================================*/
-AlphaVectorStruct SphereRenderObjClass::Get_Default_Vector(void) const
+AlphaVectorStruct SphereRenderObjClass::Get_Default_Vector() const
 {
 	AlphaVectorStruct value;
-	
+
 	if (VectorChannel.Get_Key_Count () > 0) {
 		value = VectorChannel.Get_Key (0).Get_Value ();
 	} else {
@@ -1058,7 +1058,7 @@ AlphaVectorStruct SphereRenderObjClass::Get_Default_Vector(void) const
 
 
 /***********************************************************************************************
- * SphereRenderObjClass::Update_On_Visibilty	-- Either starts or stops the animation based on visibility*
+ * SphereRenderObjClass::Update_On_Visibility	-- Either starts or stops the animation based on visibility*
  *                                                                                             *
  * INPUT:                                                                                      *
  *                                                                                             *
@@ -1069,7 +1069,7 @@ AlphaVectorStruct SphereRenderObjClass::Get_Default_Vector(void) const
  * HISTORY:                                                                                    *
  *   4/04/00    pds : Created.                                                                 *
  *=============================================================================================*/
-void SphereRenderObjClass::Update_On_Visibilty(void)
+void SphereRenderObjClass::Update_On_Visibility()
 {
 	// Simply start or stop the animation based on
 	// the visibility state of the primitive.
@@ -1095,7 +1095,7 @@ void SphereRenderObjClass::Update_On_Visibilty(void)
  * HISTORY:                                                                                    *
  *   3/07/00    jga : Created.                                                                 *
  *=============================================================================================*/
-void SphereRenderObjClass::animate (void)
+void SphereRenderObjClass::animate ()
 {
 	if (Is_Animating ()) {
 
@@ -1103,14 +1103,10 @@ void SphereRenderObjClass::animate (void)
 				AlphaChannel.Get_Key_Count () > 0 ||
 				ScaleChannel.Get_Key_Count () > 0 ||
 				VectorChannel.Get_Key_Count () > 0)
-		{		
-			//
-			// Convert from milliseconds to seconds and normalize the time
-			//
+		{
 			if (AnimDuration > 0) {
-				float	frametime = WW3D::Get_Frame_Time();
-				frametime = (frametime * 0.001F) / AnimDuration;
-				anim_time += frametime;
+				float frametime = WW3D::Get_Logic_Frame_Time_Seconds();
+				anim_time += frametime / AnimDuration;
 			} else {
 				anim_time = 1.0F;
 			}
@@ -1123,16 +1119,16 @@ void SphereRenderObjClass::animate (void)
 			if (ColorChannel.Get_Key_Count () > 0) {
 				CurrentColor	= ColorChannel.Evaluate (anim_time);
 			}
-			
+
 			if (AlphaChannel.Get_Key_Count () > 0) {
 				CurrentAlpha	= AlphaChannel.Evaluate (anim_time);
 			}
-			
+
 			if (ScaleChannel.Get_Key_Count () > 0) {
 				CurrentScale	= ScaleChannel.Evaluate (anim_time);
 				Update_Cached_Bounding_Volumes ();
 			}
-			
+
 			if (VectorChannel.Get_Key_Count () > 0) {
 				CurrentVector = VectorChannel.Evaluate (anim_time);
 			}
@@ -1141,7 +1137,7 @@ void SphereRenderObjClass::animate (void)
 
 	return ;
 
-} // animate
+}
 
 
 /*
@@ -1157,7 +1153,7 @@ PrototypeClass * SphereLoaderClass::Load_W3D(ChunkLoadClass & cload)
 /*
 ** SpherePrototypeClass Implementation
 */
-SpherePrototypeClass::SpherePrototypeClass (void)
+SpherePrototypeClass::SpherePrototypeClass ()
 {
 	::memset (&Definition, 0, sizeof (Definition));
 	return ;
@@ -1165,36 +1161,36 @@ SpherePrototypeClass::SpherePrototypeClass (void)
 
 SpherePrototypeClass::SpherePrototypeClass(SphereRenderObjClass *sphere)
 {
-	::memset (&Definition, 0, sizeof (Definition));	
-	::strcpy (Definition.Name, sphere->Get_Name ());
+	::memset (&Definition, 0, sizeof (Definition));
+	strlcpy(Definition.Name, sphere->Get_Name(), ARRAY_SIZE(Definition.Name));
 
 	Definition.DefaultAlpha = sphere->Get_Default_Alpha ();
 	Definition.AnimDuration = sphere->AnimDuration;
 	Definition.Attributes	= sphere->Get_Flags ();
 	Definition.DefaultVector = sphere->Get_Default_Vector ();
-	
+
 	Vector3 def_color = sphere->Get_Default_Color ();
 	Vector3 def_scale = sphere->Get_Default_Scale ();
 	W3dUtilityClass::Convert_Vector (def_color, &Definition.DefaultColor);
 	W3dUtilityClass::Convert_Vector (def_scale, &Definition.DefaultScale);
-	
+
 	W3dUtilityClass::Convert_Vector (sphere->Get_Box ().Center, &Definition.Center);
-	W3dUtilityClass::Convert_Vector (sphere->Get_Box ().Extent, &Definition.Extent);	
-	W3dUtilityClass::Convert_Shader (sphere->SphereShader, &Definition.Shader);	
+	W3dUtilityClass::Convert_Vector (sphere->Get_Box ().Extent, &Definition.Extent);
+	W3dUtilityClass::Convert_Shader (sphere->SphereShader, &Definition.Shader);
 
 	//
 	//	Determine the texture name for this sphere
 	//
-	if (sphere->SphereTexture != NULL) {
+	if (sphere->SphereTexture != nullptr) {
 		StringClass name = sphere->SphereTexture->Get_Full_Path();
 		const char *filename = ::strrchr (name, '\\');
-		if (filename != NULL) {
+		if (filename != nullptr) {
 			filename ++;
 		} else {
 			filename = name;
 		}
 
-		::strcpy (Definition.TextureName, filename);
+		strlcpy(Definition.TextureName, filename, ARRAY_SIZE(Definition.TextureName));
 
 	}
 
@@ -1208,7 +1204,7 @@ SpherePrototypeClass::SpherePrototypeClass(SphereRenderObjClass *sphere)
 	return ;
 }
 
-SpherePrototypeClass::~SpherePrototypeClass (void)
+SpherePrototypeClass::~SpherePrototypeClass ()
 {
 	return ;
 }
@@ -1231,7 +1227,7 @@ bool SpherePrototypeClass::Load (ChunkLoadClass &cload)
 
 	while (cload.Open_Chunk ()) {
 		switch (cload.Cur_Chunk_ID ()) {
-			
+
 			case CHUNKID_SPHERE_DEF:
 				cload.Read (&Definition, sizeof (Definition));
 				break;
@@ -1260,7 +1256,7 @@ bool SpherePrototypeClass::Load (ChunkLoadClass &cload)
 }
 
 bool SpherePrototypeClass::Save (ChunkSaveClass &csave)
-{	
+{
 	csave.Begin_Chunk (W3D_CHUNK_SPHERE);
 
 		csave.Begin_Chunk (CHUNKID_SPHERE_DEF);
@@ -1296,37 +1292,37 @@ bool SpherePrototypeClass::Save (ChunkSaveClass &csave)
 	return true;
 }
 
-const char * SpherePrototypeClass::Get_Name(void) const
+const char * SpherePrototypeClass::Get_Name() const
 {
 	return Definition.Name;
 }
 
-int SpherePrototypeClass::Get_Class_ID(void) const
+int SpherePrototypeClass::Get_Class_ID() const
 {
 	return RenderObjClass::CLASSID_SPHERE;
 }
-	
-RenderObjClass * SpherePrototypeClass::Create(void)
+
+RenderObjClass * SpherePrototypeClass::Create()
 {
 	//
 	//	Create the new render object
 	//
 	SphereRenderObjClass *sphere = W3DNEW SphereRenderObjClass (Definition);
-	
+
 	//
 	//	Configure the sphere
 	//
-	W3dUtilityClass::Convert_Shader (Definition.Shader, &sphere->SphereShader);		
+	W3dUtilityClass::Convert_Shader (Definition.Shader, &sphere->SphereShader);
 	if (WW3DAssetManager::Get_Instance()->Get_Activate_Fog_On_Load()) {
 		sphere->SphereShader.Enable_Fog ("SpherePrototypeClass");
 	}
 	W3dUtilityClass::Convert_Vector (Definition.DefaultColor, &sphere->CurrentColor);
 	W3dUtilityClass::Convert_Vector (Definition.DefaultScale, &sphere->CurrentScale);
 	sphere->CurrentVector = Definition.DefaultVector;
-	sphere->Set_Animation_Duration (Definition.AnimDuration);	
+	sphere->Set_Animation_Duration (Definition.AnimDuration);
 	sphere->CurrentAlpha = Definition.DefaultAlpha;
 	sphere->Set_Flags (Definition.Attributes);
-	
+
 	//
 	//	Initialize the render object with the keyframe arrays
 	//
@@ -1363,26 +1359,26 @@ SphereMeshClass::SphereMeshClass(float radius, int slices, int stacks):
 Radius(radius),
 Slices(slices),
 Stacks(stacks),
-Vertex_ct(0),	
-vtx(NULL),
-vtx_normal(NULL),
-vtx_uv(NULL),
+Vertex_ct(0),
+vtx(nullptr),
+vtx_normal(nullptr),
+vtx_uv(nullptr),
 strip_ct(0),
 strip_size(0),
-strips(NULL),
+strips(nullptr),
 fan_ct(0),
 fan_size(0),
-fans(NULL),
+fans(nullptr),
 face_ct(0),
-tri_poly(NULL),
+tri_poly(nullptr),
 inverse_alpha(false)
 {
 	// compute # of vertices
 	// 1st 2 vertices, represent, north, and south pole (Y - axis)
-	
+
 	Generate(radius, slices, stacks);
 
-} // SphereMesh Constructor
+}
 
 /***********************************************************************************************
  * SphereMeshClass::SphereMeshClass -- Constructor for SphereMesh Geometry							  *
@@ -1396,26 +1392,26 @@ inverse_alpha(false)
  * HISTORY:                                                                                    *
  *   3/07/00    jga : Created.                                                                 *
  *=============================================================================================*/
-SphereMeshClass::SphereMeshClass(void):
+SphereMeshClass::SphereMeshClass():
 Radius(0.0f),
 Slices(0),
 Stacks(0),
-Vertex_ct(0),	
-vtx(NULL),
-vtx_normal(NULL),
-vtx_uv(NULL),
+Vertex_ct(0),
+vtx(nullptr),
+vtx_normal(nullptr),
+vtx_uv(nullptr),
 strip_ct(0),
 strip_size(0),
-strips(NULL),
+strips(nullptr),
 fan_ct(0),
 fan_size(0),
-fans(NULL),
+fans(nullptr),
 face_ct(0),
-tri_poly(NULL),
+tri_poly(nullptr),
 inverse_alpha(false)
 {
 
-} // Empty SphereMesh Constructor
+}
 
 
 
@@ -1459,9 +1455,9 @@ void	SphereMeshClass::Set_Alpha_Vector (const AlphaVectorStruct &v, bool inverse
 			float temp;
 			temp = Vector3::Dot_Product(vec, vtx_normal[idx]);
 			temp*= Intensity;
-			
+
 			temp = fabs(temp);
-			
+
 			if (temp > 1.0f) temp = 1.0f;
 
 			Set_DCG (is_additive, idx, temp);
@@ -1474,9 +1470,9 @@ void	SphereMeshClass::Set_Alpha_Vector (const AlphaVectorStruct &v, bool inverse
 			float temp;
 			temp = Vector3::Dot_Product(vec, vtx_normal[idx]);
 			temp*= Intensity;
-			
+
 			temp = fabs(temp);
-			
+
 			if (temp > 1.0f) temp = 1.0f;
 
 			Set_DCG (is_additive, idx, 1.0F - temp);
@@ -1484,7 +1480,7 @@ void	SphereMeshClass::Set_Alpha_Vector (const AlphaVectorStruct &v, bool inverse
 	}
 
 	return ;
-} // Set_Alpha_Vector
+}
 
 
 /***********************************************************************************************
@@ -1505,7 +1501,7 @@ void SphereMeshClass::Generate(float radius, int slices, int stacks)
 	// 1st 2 vertices, represent, north, and south pole (Y - axis)
 
 	Free();
-	
+
 	Slices = slices;
 	Stacks = stacks;
 	Radius = radius;
@@ -1540,7 +1536,7 @@ void SphereMeshClass::Generate(float radius, int slices, int stacks)
 	uv++;
 
 	for (stacks = 0; stacks < Stacks; stacks++) {
-		
+
 		float stackstep  = ((float)stacks + 1) / ((float) Stacks+1);
 		float XAxisAngle = WWMATH_PI * stackstep;
 
@@ -1563,8 +1559,8 @@ void SphereMeshClass::Generate(float radius, int slices, int stacks)
 			uv->V = stackstep;
 			uv++;
 
-		} // for slices
-	} // for stacks
+		}
+	}
 
 	// Assign vertex for south pole;
 	*veclist = -1.0f * vec;
@@ -1576,7 +1572,7 @@ void SphereMeshClass::Generate(float radius, int slices, int stacks)
 	Vector3 *dst = vtx_normal;
 
 	for(int idx = 0; idx < Vertex_ct; idx++) {
-		
+
 		Vector3 temp;
 
 		temp = src[idx];
@@ -1589,7 +1585,7 @@ void SphereMeshClass::Generate(float radius, int slices, int stacks)
 	fan_ct = 2;
 	fan_size = Slices+2;
 	fans = W3DNEWARRAY int[fan_size * fan_ct];
-	
+
 	// Do Fan #1
 	int ct = 0;
 	for (; ct < fan_size; ct++) {
@@ -1654,7 +1650,7 @@ void SphereMeshClass::Generate(float radius, int slices, int stacks)
 
 			out++;
 			in++;
-			
+
 			fidx++;
 			if (fidx >= (strip_size-2)) break;
 
@@ -1698,7 +1694,7 @@ void SphereMeshClass::Generate(float radius, int slices, int stacks)
 	Set_Alpha_Vector (alpha_vector, inverse_alpha, IsAdditive, true);
 	return ;
 
-} // Generate
+}
 
 
 
@@ -1710,12 +1706,12 @@ void SphereMeshClass::Generate(float radius, int slices, int stacks)
  * HISTORY:                                                                                    *
  *   3/07/00    jga : Created.                                                                 *
  *=============================================================================================*/
-SphereMeshClass::~SphereMeshClass(void)
+SphereMeshClass::~SphereMeshClass()
 {
 
 	Free();
 
-} // Destructor
+}
 
 
 /***********************************************************************************************
@@ -1730,23 +1726,23 @@ SphereMeshClass::~SphereMeshClass(void)
  * HISTORY:                                                                                    *
  *   3/07/00    jga : Created.                                                                 *
  *=============================================================================================*/
-void SphereMeshClass::Free(void)
+void SphereMeshClass::Free()
 {
-	if (vtx)				delete [] vtx;
-	if (vtx_normal)	delete [] vtx_normal;
-	if (vtx_uv)			delete [] vtx_uv;
-	if (dcg)				delete [] dcg;
-	if (strips)			delete [] strips;
-	if (fans)			delete [] fans;
-	if (tri_poly)		delete [] tri_poly;
+	delete [] vtx;
+	delete [] vtx_normal;
+	delete [] vtx_uv;
+	delete [] dcg;
+	delete [] strips;
+	delete [] fans;
+	delete [] tri_poly;
 
-	vtx			= NULL;
-	vtx_normal	= NULL;
-	vtx_uv		= NULL;
- 	dcg			= NULL;
-	strips		= NULL;
-	fans			= NULL;
-	tri_poly		= NULL;
+	vtx			= nullptr;
+	vtx_normal	= nullptr;
+	vtx_uv		= nullptr;
+ 	dcg			= nullptr;
+	strips		= nullptr;
+	fans			= nullptr;
+	tri_poly		= nullptr;
 
 }
 

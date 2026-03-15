@@ -30,7 +30,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 #include "Common/ThingTemplate.h"
 #include "Common/Xfer.h"
 #include "GameLogic/Module/InactiveBody.h"
@@ -43,18 +43,18 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-InactiveBody::InactiveBody( Thing *thing, const ModuleData* moduleData ) 
+InactiveBody::InactiveBody( Thing *thing, const ModuleData* moduleData )
 						: BodyModule( thing, moduleData ), m_dieCalled(false)
 {
 	getObject()->setEffectivelyDead(true);
-}  // end InactiveBody
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-InactiveBody::~InactiveBody( void )
+InactiveBody::~InactiveBody()
 {
 
-}  // end ~InactiveBody
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -76,7 +76,7 @@ Real InactiveBody::estimateDamage( DamageInfoInput& damageInfo ) const
 //-------------------------------------------------------------------------------------------------
 void InactiveBody::attemptDamage( DamageInfo *damageInfo )
 {
-	if( damageInfo == NULL )
+	if( damageInfo == nullptr )
 		return;
 
 	if( damageInfo->in.m_damageType == DAMAGE_HEALING )
@@ -113,7 +113,7 @@ void InactiveBody::attemptDamage( DamageInfo *damageInfo )
 //-------------------------------------------------------------------------------------------------
 void InactiveBody::attemptHealing( DamageInfo *damageInfo )
 {
-	if( damageInfo == NULL )
+	if( damageInfo == nullptr )
 		return;
 
 	if( damageInfo->in.m_damageType != DAMAGE_HEALING )
@@ -146,7 +146,7 @@ Real InactiveBody::getHealth() const
 	// Inactive bodies have no health to get
 	return 0.0f;
 
-}  // end getHealth
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -171,7 +171,7 @@ void InactiveBody::crc( Xfer *xfer )
 	// extend base class
 	BodyModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -189,17 +189,17 @@ void InactiveBody::xfer( Xfer *xfer )
 	// base class
 	BodyModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void InactiveBody::loadPostProcess( void )
+void InactiveBody::loadPostProcess()
 {
 
 	// extend base class
 	BodyModule::loadPostProcess();
 
-}  // end loadPostProcess
+}
 
 

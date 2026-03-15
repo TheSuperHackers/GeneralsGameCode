@@ -16,30 +16,27 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*************************************************************************** 
- ***    C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S     *** 
- *************************************************************************** 
- *                                                                         * 
- *                 Project Name : G                                        * 
- *                                                                         * 
- *                     $Archive:: /Commando/Code/wwlib/sharebuf.h         $* 
- *                                                                         * 
- *                      $Author:: Greg_h                                  $* 
- *                                                                         * 
- *                     $Modtime:: 3/20/01 1:24p                           $* 
- *                                                                         * 
- *                    $Revision:: 8                                       $* 
- *                                                                         * 
- *-------------------------------------------------------------------------* 
- * Functions:                                                              * 
+/***************************************************************************
+ ***    C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S     ***
+ ***************************************************************************
+ *                                                                         *
+ *                 Project Name : G                                        *
+ *                                                                         *
+ *                     $Archive:: /Commando/Code/wwlib/sharebuf.h         $*
+ *                                                                         *
+ *                      $Author:: Greg_h                                  $*
+ *                                                                         *
+ *                     $Modtime:: 3/20/01 1:24p                           $*
+ *                                                                         *
+ *                    $Revision:: 8                                       $*
+ *                                                                         *
+ *-------------------------------------------------------------------------*
+ * Functions:                                                              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-#if _MSC_VER >= 1000
-#pragma once
-#endif // _MSC_VER >= 1000
 
-#ifndef SHAREBUF_H
-#define SHAREBUF_H
-#include "refcount.h"
+#pragma once
+
+#include "always.h"
 
 
 /*
@@ -54,30 +51,30 @@ class ShareBufferClass : public W3DMPO, public RefCountClass
 	public:
 		ShareBufferClass(int count, const char* msg);
 		ShareBufferClass(const ShareBufferClass & that);
-		~ShareBufferClass(void);
+		~ShareBufferClass();
 
 		// Get the internal pointer to the array
 		// CAUTION! This pointer is not refcounted so only use it in a context
 		// where you are keeping a reference to the enclosing ShareBufferClass
 		// to avoid the possibility of a dangling pointer.
-		T *			Get_Array(void)	{ return Array; }
-		int			Get_Count(void)	{ return Count; }
+		T *			Get_Array()	{ return Array; }
+		int			Get_Count()	{ return Count; }
 
 		// Access to the elements in the array
 		void			Set_Element(int index, const T & thing);
 		const T &	Get_Element(int index) const;
 		T &			Get_Element(int index);
 
-		// Clear the memory in this array.  
+		// Clear the memory in this array.
 		// CAUTION! Be careful calling this if 'T' is a class.  You could be wiping out
 		// virtual function table pointers.  Not a good idea to memset 0 over the top of
 		// an array of objects but useful if you are creating an array of some basic type
 		// like pointers or ints...
-		void			Clear(void);
+		void			Clear();
 
 	protected:
 
-#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL)) 
+#if defined(RTS_DEBUG)
 		const char* Msg;
 #endif
 		T *			Array;
@@ -90,7 +87,7 @@ class ShareBufferClass : public W3DMPO, public RefCountClass
 template <class T>
 ShareBufferClass<T>::ShareBufferClass(int count, const char* msg) :
 	Count(count)
-#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL)) 
+#if defined(RTS_DEBUG)
 	, Msg(msg)
 #endif
 {
@@ -98,12 +95,12 @@ ShareBufferClass<T>::ShareBufferClass(int count, const char* msg) :
 	Array = MSGW3DNEWARRAY(msg) T[Count];
 }
 
-template <class T> 
+template <class T>
 ShareBufferClass<T>::ShareBufferClass(const ShareBufferClass<T> & that) :
 	Count(that.Count)
 {
 	assert(Count > 0);
-#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL)) 
+#if defined(RTS_DEBUG)
 	Msg = that.Msg;
 #endif
 	Array = MSGW3DNEWARRAY(Msg) T[Count];
@@ -113,12 +110,10 @@ ShareBufferClass<T>::ShareBufferClass(const ShareBufferClass<T> & that) :
 }
 
 template <class T>
-ShareBufferClass<T>::~ShareBufferClass(void)
+ShareBufferClass<T>::~ShareBufferClass()
 {
-	if (Array) {
-		delete[] Array;
-		Array = NULL;
-	}
+	delete[] Array;
+	Array = nullptr;
 }
 
 template<class T>
@@ -130,7 +125,7 @@ void ShareBufferClass<T>::Set_Element(int index,const T & thing)
 }
 
 template<class T>
-const T& ShareBufferClass<T>::Get_Element(int index) const 
+const T& ShareBufferClass<T>::Get_Element(int index) const
 {
 	return Array[index];
 }
@@ -142,10 +137,7 @@ T& ShareBufferClass<T>::Get_Element(int index)
 }
 
 template<class T>
-void ShareBufferClass<T>::Clear(void)
+void ShareBufferClass<T>::Clear()
 {
 	memset(Array,0,Count * sizeof(T));
 }
-
-
-#endif // SHAREBUF_H

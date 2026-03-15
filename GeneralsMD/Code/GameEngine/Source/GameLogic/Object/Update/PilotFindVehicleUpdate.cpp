@@ -64,12 +64,12 @@ PilotFindVehicleUpdateModuleData::PilotFindVehicleUpdateModuleData()
 {
 	ModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
-		{ "ScanRate",							INI::parseDurationUnsignedInt,	NULL, offsetof( PilotFindVehicleUpdateModuleData, m_scanFrames ) },
-		{ "ScanRange",						INI::parseReal,									NULL, offsetof( PilotFindVehicleUpdateModuleData, m_scanRange ) },
-		{ "MinHealth",						INI::parseReal,									NULL, offsetof( PilotFindVehicleUpdateModuleData, m_minHealth ) },
-		{ 0, 0, 0, 0 }
+		{ "ScanRate",							INI::parseDurationUnsignedInt,	nullptr, offsetof( PilotFindVehicleUpdateModuleData, m_scanFrames ) },
+		{ "ScanRange",						INI::parseReal,									nullptr, offsetof( PilotFindVehicleUpdateModuleData, m_scanRange ) },
+		{ "MinHealth",						INI::parseReal,									nullptr, offsetof( PilotFindVehicleUpdateModuleData, m_minHealth ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 	p.add(dataFieldParse);
 }
@@ -79,11 +79,11 @@ PilotFindVehicleUpdate::PilotFindVehicleUpdate( Thing *thing, const ModuleData* 
 {
 	m_didMoveToBase = false;
 	setWakeFrame(getObject(), UPDATE_SLEEP_NONE);
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-PilotFindVehicleUpdate::~PilotFindVehicleUpdate( void )
+PilotFindVehicleUpdate::~PilotFindVehicleUpdate()
 {
 
 }
@@ -92,24 +92,24 @@ PilotFindVehicleUpdate::~PilotFindVehicleUpdate( void )
 //-------------------------------------------------------------------------------------------------
 void PilotFindVehicleUpdate::onObjectCreated()
 {
-	
+
 }
 
 //-------------------------------------------------------------------------------------------------
 /** The update callback. */
 //-------------------------------------------------------------------------------------------------
 UpdateSleepTime PilotFindVehicleUpdate::update()
-{	
+{
 
 	Object *obj = getObject();
 	if (obj->getControllingPlayer()->getPlayerType() == PLAYER_HUMAN) {
 		// This is an ai only behavior.
-		return UPDATE_SLEEP_FOREVER; 
+		return UPDATE_SLEEP_FOREVER;
 	}
 	const PilotFindVehicleUpdateModuleData *data = getPilotFindVehicleUpdateModuleData();
 
 	AIUpdateInterface *ai = obj->getAI();
-	if (ai==NULL) return UPDATE_SLEEP_FOREVER;
+	if (ai==nullptr) return UPDATE_SLEEP_FOREVER;
 
 	if(  !ai->isIdle() )
 	{
@@ -149,9 +149,9 @@ Object* PilotFindVehicleUpdate::scanClosestTarget()
 	filters[1] = &aliveFilter;
 	filters[2] = &playerFilter;
 	filters[3] = &filterMapStatus;
-	filters[4] = NULL;
+	filters[4] = nullptr;
 
-	ObjectIterator *iter = ThePartitionManager->iterateObjectsInRange( me->getPosition(), data->m_scanRange, 
+	ObjectIterator *iter = ThePartitionManager->iterateObjectsInRange( me->getPosition(), data->m_scanRange,
 		FROM_CENTER_2D, filters, ITER_SORTED_NEAR_TO_FAR );
 	MemoryPoolObjectHolder hold(iter);
 
@@ -161,7 +161,7 @@ Object* PilotFindVehicleUpdate::scanClosestTarget()
 		BodyModuleInterface *body = other->getBodyModule();
 		if (!body) continue;
 		//	If we're real healthy, don't bother looking for healing.
-		if (body->getHealth() < body->getMaxHealth()*data->m_minHealth) 
+		if (body->getHealth() < body->getMaxHealth()*data->m_minHealth)
 		{
 			continue;
 		}
@@ -178,7 +178,7 @@ Object* PilotFindVehicleUpdate::scanClosestTarget()
 			}
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -190,7 +190,7 @@ void PilotFindVehicleUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -211,15 +211,15 @@ void PilotFindVehicleUpdate::xfer( Xfer *xfer )
 	// did move to base
 	xfer->xferBool( &m_didMoveToBase );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void PilotFindVehicleUpdate::loadPostProcess( void )
+void PilotFindVehicleUpdate::loadPostProcess()
 {
 
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

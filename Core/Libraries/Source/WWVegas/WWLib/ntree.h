@@ -34,16 +34,9 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
 
-#ifndef __NTREE_H
-#define __NTREE_H
-
-
-#include "refcount.h"
+#include "always.h"
 #include "wwstring.h"
 
 
@@ -67,24 +60,24 @@ public:
 	//////////////////////////////////////////////////////////////
 	//	Public constructors/destructors
 	//////////////////////////////////////////////////////////////
-	NTreeClass (void)
-		:	m_Root (NULL)			{ }
-	virtual ~NTreeClass (void)	{ Reset (); }
-	
+	NTreeClass ()
+		:	m_Root (nullptr)			{ }
+	virtual ~NTreeClass ()	{ Reset (); }
+
 	//////////////////////////////////////////////////////////////
 	//	Public methods
 	//////////////////////////////////////////////////////////////
 	virtual NTreeLeafClass<T> *	Add (const T &value);
 
-	NTreeLeafClass<T> *				Peek_Root (void) { return m_Root; }
-	virtual void						Reset (void);
+	NTreeLeafClass<T> *				Peek_Root () { return m_Root; }
+	virtual void						Reset ();
 
 protected:
 
 	//////////////////////////////////////////////////////////////
 	//	Protected methods
 	//////////////////////////////////////////////////////////////
-	virtual NTreeLeafClass<T> *	Allocate_Leaf (void)	{ return W3DNEW NTreeLeafClass<T>; }
+	virtual NTreeLeafClass<T> *	Allocate_Leaf ()	{ return W3DNEW NTreeLeafClass<T>; }
 
 	//////////////////////////////////////////////////////////////
 	//	Protected member data
@@ -99,17 +92,17 @@ protected:
 template<class T>
 NTreeLeafClass<T> *NTreeClass<T>::Add (const T &value)
 {
-	NTreeLeafClass<T> *retval = NULL;
+	NTreeLeafClass<T> *retval = nullptr;
 
-	if (m_Root == NULL) {
-		
+	if (m_Root == nullptr) {
+
 		//
 		//	Allocate a new root node
 		//
 		m_Root = Allocate_Leaf ();
 		m_Root->Set_Value (value);
 		retval = m_Root;
-		
+
 	} else {
 
 		//
@@ -126,28 +119,28 @@ NTreeLeafClass<T> *NTreeClass<T>::Add (const T &value)
 //	Reset
 /////////////////////////////////////////////////////////
 template<class T>
-void NTreeClass<T>::Reset (void)
+void NTreeClass<T>::Reset ()
 {
-	if (m_Root != NULL) {
+	if (m_Root != nullptr) {
 
 		//
 		//	Find the last leaf in the root
 		//
 		NTreeLeafClass<T> *end_leaf = m_Root;
-		while (end_leaf->Peek_Next () != NULL) {
+		while (end_leaf->Peek_Next () != nullptr) {
 			end_leaf = end_leaf->Peek_Next ();
 		}
-		
+
 		//
 		//	Remove all the top-level leaves from the tree.
 		// Note: We work backwards from last root-leaf so each
 		// leaf along the way is guarenteed to have at least 1
 		// reference count on it.
 		//
-		for (NTreeLeafClass<T> *leaf = end_leaf; leaf != NULL; ) {
+		for (NTreeLeafClass<T> *leaf = end_leaf; leaf != nullptr; ) {
 			NTreeLeafClass<T> *curr_leaf = leaf;
 			leaf = leaf->Peek_Prev ();
-			
+
 			//
 			//	Remove this leaf
 			//
@@ -174,9 +167,9 @@ public:
 	//////////////////////////////////////////////////////////////
 	//	Public constructors/destructors
 	//////////////////////////////////////////////////////////////
-	SortedNTreeClass (void)				{ }
-	virtual ~SortedNTreeClass (void)	{ }
-	
+	SortedNTreeClass ()				{ }
+	virtual ~SortedNTreeClass ()	{ }
+
 	//////////////////////////////////////////////////////////////
 	//	Public methods
 	//////////////////////////////////////////////////////////////
@@ -187,7 +180,7 @@ protected:
 	//////////////////////////////////////////////////////////////
 	//	Protected methods
 	//////////////////////////////////////////////////////////////
-	NTreeLeafClass<T> *			Allocate_Leaf (void)	{ return W3DNEW SortedNTreeLeafClass<T>; }
+	NTreeLeafClass<T> *			Allocate_Leaf ()	{ return W3DNEW SortedNTreeLeafClass<T>; }
 };
 
 /////////////////////////////////////////////////////////
@@ -196,19 +189,19 @@ protected:
 template<class T>
 SortedNTreeLeafClass<T> *SortedNTreeClass<T>::Add_Sorted (const T &value, const char *name)
 {
-	SortedNTreeLeafClass<T> *retval = NULL;
+	SortedNTreeLeafClass<T> *retval = nullptr;
 
-	if (m_Root == NULL) {
-		
+	if (m_Root == nullptr) {
+
 		//
 		//	Allocate a new root node
 		//
 		m_Root = Allocate_Leaf ();
-		
+
 		retval = (SortedNTreeLeafClass<T> *)m_Root;
 		retval->Set_Value (value);
-		retval->Set_Name (name);		
-		
+		retval->Set_Name (name);
+
 	} else {
 
 		//
@@ -220,7 +213,7 @@ SortedNTreeLeafClass<T> *SortedNTreeClass<T>::Add_Sorted (const T &value, const 
 		//	Make sure our 'root' pointer is the first one in the list
 		//
 		NTreeLeafClass<T> *prev = m_Root->Peek_Prev ();
-		if (prev != NULL) {			
+		if (prev != nullptr) {
 			REF_PTR_SET (m_Root, prev);
 		}
 	}
@@ -242,38 +235,38 @@ public:
 	//////////////////////////////////////////////////////////////
 	//	Public constructors/destructors
 	//////////////////////////////////////////////////////////////
-	NTreeLeafClass (void)
-		:	m_Parent (NULL),
-			m_Child (NULL),
-			m_PrevSibling (NULL),
-			m_NextSibling (NULL)			{ }
+	NTreeLeafClass ()
+		:	m_Parent (nullptr),
+			m_Child (nullptr),
+			m_PrevSibling (nullptr),
+			m_NextSibling (nullptr)			{ }
 
-	virtual ~NTreeLeafClass (void);
-	
+	virtual ~NTreeLeafClass ();
+
 	//////////////////////////////////////////////////////////////
 	//	Public methods
 	//////////////////////////////////////////////////////////////
-	
+
 	//
 	//	Tree management
 	//
 	virtual NTreeLeafClass<T> *	Add_Child (const T &value);
 	virtual NTreeLeafClass<T> *	Add (const T &value);
-	virtual void						Remove (void);
+	virtual void						Remove ();
 
 	//
 	//	Value accessors
 	//
-	virtual const T &			Get_Value (void) const		{ return m_Data; }
+	virtual const T &			Get_Value () const		{ return m_Data; }
 	virtual void				Set_Value (const T &data)	{ m_Data = data; }
-	
+
 	//
 	//	Tree traversal methods
 	//
-	NTreeLeafClass<T> *		Peek_Parent (void)	{ return m_Parent; }
-	NTreeLeafClass<T> *		Peek_Child (void)		{ return m_Child; }
-	NTreeLeafClass<T> *		Peek_Next (void)		{ return m_NextSibling; }
-	NTreeLeafClass<T> *		Peek_Prev (void)		{ return m_PrevSibling; }
+	NTreeLeafClass<T> *		Peek_Parent ()	{ return m_Parent; }
+	NTreeLeafClass<T> *		Peek_Child ()		{ return m_Child; }
+	NTreeLeafClass<T> *		Peek_Next ()		{ return m_NextSibling; }
+	NTreeLeafClass<T> *		Peek_Prev ()		{ return m_PrevSibling; }
 
 protected:
 
@@ -283,7 +276,7 @@ protected:
 	void						Set_Parent (NTreeLeafClass<T> *parent)	{ REF_PTR_SET (m_Parent, parent); }
 	void						Set_Child (NTreeLeafClass<T> *child)	{ REF_PTR_SET (m_Child, child); }
 	void						Set_Prev (NTreeLeafClass<T> *prev)		{ REF_PTR_SET (m_PrevSibling, prev); }
-	void						Set_Next (NTreeLeafClass<T> *next)		{ REF_PTR_SET (m_NextSibling, next); }	
+	void						Set_Next (NTreeLeafClass<T> *next)		{ REF_PTR_SET (m_NextSibling, next); }
 
 	//////////////////////////////////////////////////////////////
 	//	Protected member data
@@ -301,13 +294,13 @@ protected:
 //	~NTreeLeafClass
 /////////////////////////////////////////////////////////
 template<class T>
-NTreeLeafClass<T>::~NTreeLeafClass (void)
+NTreeLeafClass<T>::~NTreeLeafClass ()
 {
 	REF_PTR_RELEASE (m_Parent);
 	REF_PTR_RELEASE (m_Child);
 	REF_PTR_RELEASE (m_NextSibling);
 	REF_PTR_RELEASE (m_PrevSibling);
-	return; 
+	return;
 }
 
 /////////////////////////////////////////////////////////
@@ -322,11 +315,11 @@ NTreeLeafClass<T> *NTreeLeafClass<T>::Add_Child (const T &value)
 	NTreeLeafClass<T> *new_child = W3DNEW NTreeLeafClass<T>;
 	new_child->Set_Value (value);
 	new_child->Set_Parent (this);
-	
+
 	//
 	//	Link this new leaf into the hierarchy
 	//
-	if (m_Child != NULL) {
+	if (m_Child != nullptr) {
 		m_Child->Set_Prev (new_child);
 		new_child->Set_Next (m_Child);
 	}
@@ -366,33 +359,33 @@ NTreeLeafClass<T> *NTreeLeafClass<T>::Add (const T &value)
 //	Remove
 /////////////////////////////////////////////////////////
 template<class T>
-void NTreeLeafClass<T>::Remove (void)
+void NTreeLeafClass<T>::Remove ()
 {
 	Add_Ref ();
 
 	//
 	//	Fixup the parent's child leaf object
 	//
-	if (m_Parent != NULL && m_Parent->Peek_Child () == this) {
+	if (m_Parent != nullptr && m_Parent->Peek_Child () == this) {
 		m_Parent->Set_Child (m_NextSibling);
 	}
 
 	//
 	//	Remove all our children
 	//
-	while (m_Child != NULL) {
+	while (m_Child != nullptr) {
 		m_Child->Remove ();
 	}
 
 	//
 	//	Unlink ourselves from our siblings
 	//
-	if (m_NextSibling != NULL) {
-		m_NextSibling->Set_Prev (NULL);
+	if (m_NextSibling != nullptr) {
+		m_NextSibling->Set_Prev (nullptr);
 	}
 
-	if (m_PrevSibling != NULL) {
-		m_PrevSibling->Set_Next (NULL);
+	if (m_PrevSibling != nullptr) {
+		m_PrevSibling->Set_Next (nullptr);
 	}
 
 	REF_PTR_RELEASE (m_Parent);
@@ -418,16 +411,16 @@ public:
 	//////////////////////////////////////////////////////////////
 	//	Public constructors/destructors
 	//////////////////////////////////////////////////////////////
-	SortedNTreeLeafClass (void)		{ }
-	~SortedNTreeLeafClass (void)		{ }
-	
+	SortedNTreeLeafClass ()		{ }
+	~SortedNTreeLeafClass ()		{ }
+
 	//////////////////////////////////////////////////////////////
 	//	Public methods
 	//////////////////////////////////////////////////////////////
 	SortedNTreeLeafClass<T> *	Add_Sorted (const T &value, const char *name);
 	SortedNTreeLeafClass<T> *	Add_Child_Sorted (const T &value, const char *name);
 
-	const StringClass &	Get_Name (void) const			{ return m_Name; }
+	const StringClass &	Get_Name () const			{ return m_Name; }
 	void						Set_Name (const char *name)	{ m_Name = name; }
 
 protected:
@@ -461,7 +454,7 @@ SortedNTreeLeafClass<T> *SortedNTreeLeafClass<T>::Add_Sorted (const T &value, co
 	//	Find the first-most sibling
 	//
 	SortedNTreeLeafClass<T> *start = this;
-	while (start->Peek_Prev () != NULL)	{
+	while (start->Peek_Prev () != nullptr)	{
 		start = (SortedNTreeLeafClass<T> *)start->Peek_Prev ();
 	}
 
@@ -491,7 +484,7 @@ SortedNTreeLeafClass<T> *SortedNTreeLeafClass<T>::Add_Child_Sorted (const T &val
 	new_child->Set_Name (name);
 	new_child->Set_Parent (this);
 
-	if (m_Child == NULL) {
+	if (m_Child == nullptr) {
 		m_Child = new_child;
 	} else {
 
@@ -504,10 +497,10 @@ SortedNTreeLeafClass<T> *SortedNTreeLeafClass<T>::Add_Child_Sorted (const T &val
 		//	Make sure our 'child' pointer is the first one in the list
 		//
 		NTreeLeafClass<T> *prev = m_Child->Peek_Prev ();
-		if (prev != NULL) {			
+		if (prev != nullptr) {
 			REF_PTR_SET (m_Child, prev);
 		}
-		
+
 		//
 		//	Release our hold on the object pointer
 		//
@@ -530,13 +523,13 @@ void SortedNTreeLeafClass<T>::Insertion_Sort (SortedNTreeLeafClass<T> *start, So
 	//
 	bool inserted = false;
 	for (	SortedNTreeLeafClass<T> *leaf = start;
-			leaf != NULL && !inserted;
+			leaf != nullptr && !inserted;
 			leaf = (SortedNTreeLeafClass<T> *)leaf->Peek_Next ())
 	{
 		//
 		//	Does the new sibling come before the current leaf?
 		//
-		if (::stricmp (name, leaf->Get_Name ()) < 0) {				
+		if (::stricmp (name, leaf->Get_Name ()) < 0) {
 
 			//
 			//	Insert this sibling before the leaf
@@ -545,13 +538,13 @@ void SortedNTreeLeafClass<T>::Insertion_Sort (SortedNTreeLeafClass<T> *start, So
 			new_sibling->Set_Prev (prev);
 			new_sibling->Set_Next (leaf);
 			leaf->Set_Prev (new_sibling);
-			if (prev != NULL) {
+			if (prev != nullptr) {
 				prev->Set_Next (new_sibling);
 			}
 
 			inserted = true;
-			
-		} else if (leaf->Peek_Next () == NULL) {
+
+		} else if (leaf->Peek_Next () == nullptr) {
 
 			//
 			//	Put the new sibling on the end of the list
@@ -564,5 +557,3 @@ void SortedNTreeLeafClass<T>::Insertion_Sort (SortedNTreeLeafClass<T> *start, So
 
 	return ;
 }
-
-#endif //__NTREE_H

@@ -26,14 +26,11 @@
 //
 // additional Doxygen module documentation
 //////////////////////////////////////////////////////////////////////////////
-#ifdef _MSC_VER
-#  pragma once
-#endif
-#ifndef PROFILE_DOC_H // Include guard
-#define PROFILE_DOC_H
+
+#pragma once
 
 // This generates a small main page for Doxygen if a module only
-// documentation is built. 
+// documentation is built.
 #ifndef DOXYGEN_GLOBAL_DOC
 /**
   \mainpage %Profile module
@@ -49,7 +46,7 @@
 
 /**
   \page module_profile Profile module overview
-  
+
   \section overview Overview
 
   The profile module contains the following logical groups:
@@ -65,15 +62,15 @@
 
   High level profiling can be done both timer based and logical. An example
   for a logical profile would be the number of texture changes per frame
-  or the number of triangles rendered. 
-  
+  or the number of triangles rendered.
+
   The hierarchy is enforced by using a hierarchical naming scheme. For
-  timer based profiles this hierachy is build automatically, for 
+  timer based profiles this hierachy is build automatically, for
   logical profiles each profile must be named accordingly when being created.
 
   High level profiling is available in all build configurations. All
   high level profile functions are optimized for speed (at least while
-  profiling is disabled) so that there is an almost zero cost for 
+  profiling is disabled) so that there is an almost zero cost for
   having profiling in all configurations.
 
   \section funclevel Function Level Profiling
@@ -129,7 +126,7 @@
     <td valign=top>result</td>
     <td valign=top>[ \<res_func_name\> [ \<arg1\> .. \<argN\> ] ]</td>
     <td>
-       Without parameters this command shows the list of available 
+       Without parameters this command shows the list of available
        result functions and their optional parameters.
 
        If however a result function name is given then this result
@@ -192,5 +189,3 @@
   </tr></table>
 
 */
-
-#endif // PROFILE_DOC_H

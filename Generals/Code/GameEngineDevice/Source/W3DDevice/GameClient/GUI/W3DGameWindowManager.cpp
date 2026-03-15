@@ -40,25 +40,25 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-W3DGameWindowManager::W3DGameWindowManager( void )
+W3DGameWindowManager::W3DGameWindowManager()
 {
 
-}  // end W3DGameWindowManager
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-W3DGameWindowManager::~W3DGameWindowManager( void )
+W3DGameWindowManager::~W3DGameWindowManager()
 {
 
-}  // end ~W3DGameWindowManager
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void W3DGameWindowManager::init( void )
+void W3DGameWindowManager::init()
 {
 
 	// extend
 	GameWindowManager::init();
 
-}  // end init
+}
 

@@ -30,34 +30,29 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 #include "Common/Upgrade.h"
 #include "Common/GameState.h"
 #include "Common/Xfer.h"
 #include "Common/BitFlagsIO.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-Xfer::Xfer( void )
+Xfer::Xfer()
 {
 
 	m_options = XO_NONE;
 	m_xferMode = XFER_INVALID;
 
-}  // end Xfer
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-Xfer::~Xfer( void )
+Xfer::~Xfer()
 {
 
-}  // end ~Xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Open */
@@ -68,16 +63,16 @@ void Xfer::open( AsciiString identifier )
 	// save identifier
 	m_identifier = identifier;
 
-}  // end open
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 void Xfer::xferByte( Byte *byteData )
 {
 
-	xferImplementation( byteData, sizeof( Byte ) ); 
+	xferImplementation( byteData, sizeof( Byte ) );
 
-}  // end xferByte
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -90,40 +85,40 @@ void Xfer::xferVersion( XferVersion *versionData, XferVersion currentVersion )
 	if( *versionData > currentVersion )
 	{
 
-		DEBUG_CRASH(( "XferVersion - Unknown version '%d' should be no higher than '%d'\n",
+		DEBUG_CRASH(( "XferVersion - Unknown version '%d' should be no higher than '%d'",
 									*versionData, currentVersion ));
 		throw XFER_INVALID_VERSION;
 
-	}  // end if
+	}
 
-}  // end xferVersion
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 void Xfer::xferUnsignedByte( UnsignedByte *unsignedByteData )
 {
 
-	xferImplementation( unsignedByteData, sizeof( UnsignedByte ) ); 
+	xferImplementation( unsignedByteData, sizeof( UnsignedByte ) );
 
-}  // end xferUnsignedByte
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 void Xfer::xferBool( Bool *boolData )
 {
 
-	xferImplementation( boolData, sizeof( Bool ) ); 
+	xferImplementation( boolData, sizeof( Bool ) );
 
-}  // end xferBool
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void Xfer::xferInt( Int *intData ) 
+void Xfer::xferInt( Int *intData )
 {
 
 	xferImplementation( intData, sizeof( Int ) );
-	
-}  // end xferInt
+
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -132,43 +127,43 @@ void Xfer::xferInt64( Int64 *int64Data )
 
 	xferImplementation( int64Data, sizeof( Int64 ) );
 
-}  // end xferInt64
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void Xfer::xferUnsignedInt( UnsignedInt *unsignedIntData ) 
+void Xfer::xferUnsignedInt( UnsignedInt *unsignedIntData )
 {
 
 	xferImplementation( unsignedIntData, sizeof( UnsignedInt ) );
-	
-}  // end xferUnsignedInt
+
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 void Xfer::xferShort( Short *shortData )
 {
 
-	xferImplementation( shortData, sizeof( Short ) ); 
+	xferImplementation( shortData, sizeof( Short ) );
 
-}  // end xferShort
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 void Xfer::xferUnsignedShort( UnsignedShort *unsignedShortData )
 {
 
-	xferImplementation( unsignedShortData, sizeof( UnsignedShort ) ); 
+	xferImplementation( unsignedShortData, sizeof( UnsignedShort ) );
 
-}  // end xferUnsignedShort
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 void Xfer::xferReal( Real *realData )
 {
 
-	xferImplementation( realData, sizeof( Real ) ); 
-	
-}  // end xferReal
+	xferImplementation( realData, sizeof( Real ) );
+
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -184,7 +179,7 @@ void Xfer::xferMapName( AsciiString *mapNameData )
 		xferAsciiString(mapNameData);
 		*mapNameData = TheGameState->portableMapPathToRealMapPath(*mapNameData);
 	}
-}  // end xferAsciiString
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -193,13 +188,13 @@ void Xfer::xferAsciiString( AsciiString *asciiStringData )
 
 	xferImplementation( (void *)asciiStringData->str(), sizeof( Byte ) * asciiStringData->getLength() );
 
-}  // end xferAsciiString
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 void Xfer::xferMarkerLabel( AsciiString asciiStringData )
 {
-}  // end xferMarkerLabel
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -208,7 +203,7 @@ void Xfer::xferUnicodeString( UnicodeString *unicodeStringData )
 
 	xferImplementation( (void *)unicodeStringData->str(), sizeof( WideChar ) * unicodeStringData->getLength() );
 
-}  // end xferUnicodeString
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -219,7 +214,7 @@ void Xfer::xferCoord3D( Coord3D *coord3D )
 	xferReal( &coord3D->y );
 	xferReal( &coord3D->z );
 
-}  // end xferCoord3D
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -230,7 +225,7 @@ void Xfer::xferICoord3D( ICoord3D *iCoord3D )
 	xferInt( &iCoord3D->y );
 	xferInt( &iCoord3D->z );
 
-}  // end xferICoor3D
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -240,7 +235,7 @@ void Xfer::xferRegion3D( Region3D *region3D )
 	xferCoord3D( &region3D->lo );
 	xferCoord3D( &region3D->hi );
 
-}  // end xferRegion3D
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -250,7 +245,7 @@ void Xfer::xferIRegion3D( IRegion3D *iRegion3D )
 	xferICoord3D( &iRegion3D->lo );
 	xferICoord3D( &iRegion3D->hi );
 
-}  // end xferIRegion3D
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -260,7 +255,7 @@ void Xfer::xferCoord2D( Coord2D *coord2D )
 	xferReal( &coord2D->x );
 	xferReal( &coord2D->y );
 
-}  // end xferCoord2D
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -270,7 +265,7 @@ void Xfer::xferICoord2D( ICoord2D *iCoord2D )
 	xferInt( &iCoord2D->x );
 	xferInt( &iCoord2D->y );
 
-}  // end xferICoord2D
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -280,7 +275,7 @@ void Xfer::xferRegion2D( Region2D *region2D )
 	xferCoord2D( &region2D->lo );
 	xferCoord2D( &region2D->hi );
 
-}  // end xferRegion2D
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -290,7 +285,7 @@ void Xfer::xferIRegion2D( IRegion2D *iRegion2D )
 	xferICoord2D( &iRegion2D->lo );
 	xferICoord2D( &iRegion2D->hi );
 
-}  // end xferIRegion2D
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -300,7 +295,7 @@ void Xfer::xferRealRange( RealRange *realRange )
 	xferReal( &realRange->lo );
 	xferReal( &realRange->hi );
 
-}  // end xferRealRange
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -309,7 +304,7 @@ void Xfer::xferColor( Color *color )
 
 	xferImplementation( color, sizeof( Color ) );
 
-}  // end xferColor
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -320,7 +315,7 @@ void Xfer::xferRGBColor( RGBColor *rgbColor )
 	xferReal( &rgbColor->green );
 	xferReal( &rgbColor->blue );
 
-}  // end xferRGBColor
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -332,7 +327,7 @@ void Xfer::xferRGBAColorReal( RGBAColorReal *rgbaColorReal )
 	xferReal( &rgbaColorReal->blue );
 	xferReal( &rgbaColorReal->alpha );
 
-}  // end xferRGBAColorReal
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -344,7 +339,7 @@ void Xfer::xferRGBAColorInt( RGBAColorInt *rgbaColorInt )
 	xferUnsignedInt( &rgbaColorInt->blue );
 	xferUnsignedInt( &rgbaColorInt->alpha );
 
-}  // end xferRGBAColorInt
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -353,7 +348,7 @@ void Xfer::xferObjectID( ObjectID *objectID )
 
 	xferImplementation( objectID, sizeof( ObjectID ) );
 
-}  // end xferObjeftID
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -362,7 +357,7 @@ void Xfer::xferDrawableID( DrawableID *drawableID )
 
 	xferImplementation( drawableID, sizeof( DrawableID ) );
 
-}  // end xferDrawableID
+}
 
 
 // ------------------------------------------------------------------------------------------------
@@ -379,7 +374,7 @@ void Xfer::xferSTLObjectIDVector( std::vector<ObjectID> *objectIDVectorData )
 	// xfer the count of the vector
 	UnsignedShort listCount = objectIDVectorData->size();
 	xferUnsignedShort( &listCount );
-	
+
 	// xfer vector data
 	ObjectID objectID;
 	if( getXferMode() == XFER_SAVE || getXferMode() == XFER_CRC )
@@ -393,20 +388,20 @@ void Xfer::xferSTLObjectIDVector( std::vector<ObjectID> *objectIDVectorData )
 			objectID = *it;
 			xferObjectID( &objectID );
 
-		}  // end for
+		}
 
-	}  // end if, save
+	}
 	else if( getXferMode() == XFER_LOAD )
 	{
 
 		// sanity, the list should be empty before we transfer more data into it
-		if( objectIDVectorData->size() != 0 )
+		if( !objectIDVectorData->empty() )
 		{
 
-			DEBUG_CRASH(( "Xfer::xferSTLObjectIDList - object vector should be empty before loading\n" ));
+			DEBUG_CRASH(( "Xfer::xferSTLObjectIDList - object vector should be empty before loading" ));
 			throw XFER_LIST_NOT_EMPTY;
 
-		}  // end if
+		}
 
 		// read all ids
 		for( UnsignedShort i = 0; i < listCount; ++i )
@@ -415,16 +410,16 @@ void Xfer::xferSTLObjectIDVector( std::vector<ObjectID> *objectIDVectorData )
 			xferObjectID( &objectID );
 			objectIDVectorData->push_back( objectID );
 
-		}  // end for, i
+		}
 
-	}  // end else if
+	}
 	else
 	{
 
-		DEBUG_CRASH(( "xferSTLObjectIDList - Unknown xfer mode '%d'\n", getXferMode() ));
+		DEBUG_CRASH(( "xferSTLObjectIDList - Unknown xfer mode '%d'", getXferMode() ));
 		throw XFER_MODE_UNKNOWN;
 
-	}  // end else
+	}
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -446,7 +441,7 @@ void Xfer::xferSTLObjectIDList( std::list< ObjectID > *objectIDListData )
 	// xfer the count of the list
 	UnsignedShort listCount = objectIDListData->size();
 	xferUnsignedShort( &listCount );
-	
+
 	// xfer list data
 	ObjectID objectID;
 	if( getXferMode() == XFER_SAVE || getXferMode() == XFER_CRC )
@@ -460,20 +455,20 @@ void Xfer::xferSTLObjectIDList( std::list< ObjectID > *objectIDListData )
 			objectID = *it;
 			xferObjectID( &objectID );
 
-		}  // end for
+		}
 
-	}  // end if, save
+	}
 	else if( getXferMode() == XFER_LOAD )
 	{
 
 		// sanity, the list should be empty before we transfer more data into it
-		if( objectIDListData->size() != 0 )
+		if( !objectIDListData->empty() )
 		{
 
-			DEBUG_CRASH(( "Xfer::xferSTLObjectIDList - object list should be empty before loading\n" ));
+			DEBUG_CRASH(( "Xfer::xferSTLObjectIDList - object list should be empty before loading" ));
 			throw XFER_LIST_NOT_EMPTY;
 
-		}  // end if
+		}
 
 		// read all ids
 		for( UnsignedShort i = 0; i < listCount; ++i )
@@ -482,18 +477,18 @@ void Xfer::xferSTLObjectIDList( std::list< ObjectID > *objectIDListData )
 			xferObjectID( &objectID );
 			objectIDListData->push_back( objectID );
 
-		}  // end for, i
+		}
 
-	}  // end else if
+	}
 	else
 	{
 
-		DEBUG_CRASH(( "xferSTLObjectIDList - Unknown xfer mode '%d'\n", getXferMode() ));
+		DEBUG_CRASH(( "xferSTLObjectIDList - Unknown xfer mode '%d'", getXferMode() ));
 		throw XFER_MODE_UNKNOWN;
 
-	}  // end else
+	}
 
-}  // end xferSTLObjectIDList
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -501,7 +496,7 @@ void Xfer::xferSTLIntList( std::list< Int > *intListData )
 {
 
 	// sanity
-	if( intListData == NULL )
+	if( intListData == nullptr )
 		return;
 
 	// version
@@ -512,7 +507,7 @@ void Xfer::xferSTLIntList( std::list< Int > *intListData )
 	// xfer the count of the list
 	UnsignedShort listCount = intListData->size();
 	xferUnsignedShort( &listCount );
-	
+
 	// xfer list data
 	Int intData;
 	if( getXferMode() == XFER_SAVE || getXferMode() == XFER_CRC )
@@ -526,20 +521,20 @@ void Xfer::xferSTLIntList( std::list< Int > *intListData )
 			intData = *it;
 			xferInt( &intData );
 
-		}  // end for
+		}
 
-	}  // end if, save
+	}
 	else if( getXferMode() == XFER_LOAD )
 	{
 
 		// sanity, the list should be empty before we transfer more data into it
-		if( intListData->size() != 0 )
+		if( !intListData->empty() )
 		{
 
-			DEBUG_CRASH(( "Xfer::xferSTLIntList - int list should be empty before loading\n" ));
+			DEBUG_CRASH(( "Xfer::xferSTLIntList - int list should be empty before loading" ));
 			throw XFER_LIST_NOT_EMPTY;
 
-		}  // end if
+		}
 
 		// read all ids
 		for( UnsignedShort i = 0; i < listCount; ++i )
@@ -548,18 +543,18 @@ void Xfer::xferSTLIntList( std::list< Int > *intListData )
 			xferInt( &intData );
 			intListData->push_back( intData );
 
-		}  // end for, i
+		}
 
-	}  // end else if
+	}
 	else
 	{
 
-		DEBUG_CRASH(( "xferSTLIntList - Unknown xfer mode '%d'\n", getXferMode() ));
+		DEBUG_CRASH(( "xferSTLIntList - Unknown xfer mode '%d'", getXferMode() ));
 		throw XFER_MODE_UNKNOWN;
 
-	}  // end else
+	}
 
-}  // end xferSTLIntList
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -567,7 +562,7 @@ void Xfer::xferScienceType( ScienceType *science )
 {
 
 	// sanity
-	DEBUG_ASSERTCRASH( science != NULL, ("xferScienceType - Invalid parameters\n") );
+	DEBUG_ASSERTCRASH( science != nullptr, ("xferScienceType - Invalid parameters") );
 
 	AsciiString scienceName;
 
@@ -579,7 +574,7 @@ void Xfer::xferScienceType( ScienceType *science )
 		// write the string
 		xferAsciiString( &scienceName );
 
-	}  // end if, save
+	}
 	else if( getXferMode() == XFER_LOAD )
 	{
 		xferAsciiString( &scienceName );
@@ -589,26 +584,26 @@ void Xfer::xferScienceType( ScienceType *science )
 		if( *science == SCIENCE_INVALID )
 		{
 
-			DEBUG_CRASH(( "xferScienceType - Unknown science '%s'\n", scienceName.str() ));
+			DEBUG_CRASH(( "xferScienceType - Unknown science '%s'", scienceName.str() ));
 			throw XFER_UNKNOWN_STRING;
 
-		}  // end if
-			
-	}  // end else if, load
+		}
+
+	}
 	else if( getXferMode() == XFER_CRC )
 	{
 			xferImplementation( science, sizeof( *science ) );
 
-	}  // end else if, crc
+	}
 	else
 	{
 
-		DEBUG_CRASH(( "xferScienceType - Unknown xfer mode '%d'\n", getXferMode() ));
+		DEBUG_CRASH(( "xferScienceType - Unknown xfer mode '%d'", getXferMode() ));
 		throw XFER_MODE_UNKNOWN;
 
-	}  // end else
+	}
 
-}  // end xferScienceType
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -616,7 +611,7 @@ void Xfer::xferScienceVec( ScienceVec *scienceVec )
 {
 
 	// sanity
-	DEBUG_ASSERTCRASH( scienceVec != NULL, ("xferScienceVec - Invalid parameters\n") );
+	DEBUG_ASSERTCRASH( scienceVec != nullptr, ("xferScienceVec - Invalid parameters") );
 
 	// this deserves a version number
 	const XferVersion currentVersion = 1;
@@ -644,7 +639,7 @@ void Xfer::xferScienceVec( ScienceVec *scienceVec )
 			scienceVec->clear();
 
 			// Homework for today.  Write 2000 words reconciling "Your code must never crash" with "Intentionally putting crashes in the code".  Fucktard.
-//			DEBUG_CRASH(( "xferScienceVec - vector is not empty, but should be\n" ));
+//			DEBUG_CRASH(( "xferScienceVec - vector is not empty, but should be" ));
 //			throw XFER_LIST_NOT_EMPTY;
 		}
 
@@ -652,9 +647,9 @@ void Xfer::xferScienceVec( ScienceVec *scienceVec )
 		{
 			ScienceType science;
 			xferScienceType(&science);
-			scienceVec->push_back( science );				
+			scienceVec->push_back( science );
 		}
-			
+
 	}
 	else if( getXferMode() == XFER_CRC )
 	{
@@ -662,20 +657,20 @@ void Xfer::xferScienceVec( ScienceVec *scienceVec )
 		{
 			ScienceType science = *it;
 			xferImplementation( &science, sizeof( ScienceType ) );
-		}  // end for, it
-	}  // end else if, crc
+		}
+	}
 	else
 	{
 
-		DEBUG_CRASH(( "xferScienceVec - Unknown xfer mode '%d'\n", getXferMode() ));
+		DEBUG_CRASH(( "xferScienceVec - Unknown xfer mode '%d'", getXferMode() ));
 		throw XFER_MODE_UNKNOWN;
 
-	}  // end else
+	}
 
-}  // end xferScienceVec
+}
 
 // ------------------------------------------------------------------------------------------------
-/** kind of type, for load/save it is xfered as a string so we can reorder the 
+/** kind of type, for load/save it is xfered as a string so we can reorder the
 	* kindofs if we like
 	* Version Info:
 	* 1: Initial version */
@@ -696,10 +691,10 @@ void Xfer::xferKindOf( KindOfType *kindOfData )
 		AsciiString kindOfName = KindOfMaskType::getNameFromSingleBit(*kindOfData);
 		xferAsciiString( &kindOfName );
 
-	}  // end if, save
+	}
 	else if( getXferMode() == XFER_LOAD )
 	{
-		
+
 		// read ascii string from file
 		AsciiString kindOfName;
 		xferAsciiString( &kindOfName );
@@ -708,24 +703,24 @@ void Xfer::xferKindOf( KindOfType *kindOfData )
 		Int bit = KindOfMaskType::getSingleBitFromName(kindOfName.str());
 		if (bit != -1)
 			*kindOfData = (KindOfType)bit;
-				
-	}  // end else if, load
+
+	}
 	else if( getXferMode() == XFER_CRC )
 	{
 
 		// just call the xfer implementation on the data values
 		xferImplementation( kindOfData, sizeof( KindOfType ) );
 
-	}  // end else if, crc
+	}
 	else
 	{
 
-		DEBUG_CRASH(( "xferKindOf - Unknown xfer mode '%d'\n", getXferMode() ));
+		DEBUG_CRASH(( "xferKindOf - Unknown xfer mode '%d'", getXferMode() ));
 		throw XFER_MODE_UNKNOWN;
 
-	}  // end else
+	}
 
-}  // end xferKindOf
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -737,12 +732,12 @@ void Xfer::xferUpgradeMask( UpgradeMaskType *upgradeMaskData )
 	XferVersion version = currentVersion;
 	xferVersion( &version, currentVersion );
 
-	//Kris: The Upgrade system has been converted from Int64 to BitFlags. However because the 
+	//Kris: The Upgrade system has been converted from Int64 to BitFlags. However because the
 	//names of upgrades are saved to preserve order reassignments (inserting a new upgrade in
 	//the INI file will skew the bit values), we must continue saving the names of the upgrades
 	//in order to recalculate the actual bit value of said upgrade.
 	//---------------------------------------------------------------------------------------------
-	//NOTE: The xfer code didn't have to change with the bitset upgrades, because either way, we're 
+	//NOTE: The xfer code didn't have to change with the bitset upgrades, because either way, we're
 	//converting data <-> Ascii, so the minor syntax works with the before and after code!
 
 	// check which type of xfer we're doing
@@ -760,7 +755,7 @@ void Xfer::xferUpgradeMask( UpgradeMaskType *upgradeMaskData )
 			{
 				count++;
 			}
-		}  // end for, upgradeTemplate
+		}
 
 		// write the count
 		xferUnsignedShort( &count );
@@ -773,9 +768,9 @@ void Xfer::xferUpgradeMask( UpgradeMaskType *upgradeMaskData )
 			{
 				upgradeName = upgradeTemplate->getUpgradeName();
 				xferAsciiString( &upgradeName );
-			}  // end if
-		}  // end for, upgradeTemplate
-	}  // end if, save
+			}
+		}
+	}
 	else if( getXferMode() == XFER_LOAD )
 	{
 		AsciiString upgradeName;
@@ -797,36 +792,44 @@ void Xfer::xferUpgradeMask( UpgradeMaskType *upgradeMaskData )
 
 			// find this upgrade template
 			upgradeTemplate = TheUpgradeCenter->findUpgrade( upgradeName );
-			if( upgradeTemplate == NULL )
+			if( upgradeTemplate == nullptr )
 			{
 
-				DEBUG_CRASH(( "Xfer::xferUpgradeMask - Unknown upgrade '%s'\n", upgradeName.str() ));
+				DEBUG_CRASH(( "Xfer::xferUpgradeMask - Unknown upgrade '%s'", upgradeName.str() ));
 				throw XFER_UNKNOWN_STRING;
 
-			}  // end if
+			}
 
 			// set the mask data
 			upgradeMaskData->set( upgradeTemplate->getUpgradeMask() );
 
-		}  // end for i
+		}
 
-	}  // end else if, load
+	}
 	else if( getXferMode() == XFER_CRC )
 	{
 
 		// just xfer implementation the data itself
-		xferImplementation( upgradeMaskData, sizeof( UpgradeMaskType ) );
+#if RETAIL_COMPATIBLE_CRC
+#if RTS_GENERALS
+		xferImplementation(upgradeMaskData, 8); // The original upgrade mask was 8 bytes in Generals.
+#else
+		xferImplementation(upgradeMaskData, 16); // The original upgrade mask was 16 bytes in Zero Hour.
+#endif
+#else
+		xferImplementation(upgradeMaskData, sizeof(UpgradeMaskType));
+#endif
 
-	}  // end else if, crc
+	}
 	else
 	{
 
-		DEBUG_CRASH(( "xferUpgradeMask - Unknown xfer mode '%d'\n", getXferMode() ));
+		DEBUG_CRASH(( "xferUpgradeMask - Unknown xfer mode '%d'", getXferMode() ));
 		throw XFER_MODE_UNKNOWN;
 
-	}  // end else
-	
-}  // end xferUpgradeMask
+	}
+
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -835,7 +838,7 @@ void Xfer::xferUser( void *data, Int dataSize )
 
 	xferImplementation( data, dataSize );
 
-}  // end xferUser
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------

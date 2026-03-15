@@ -46,8 +46,8 @@ IMPLEMENT_DYNCREATE(EmitterGeneralPropPageClass, CPropertyPage)
 //  EmitterGeneralPropPageClass
 //
 EmitterGeneralPropPageClass::EmitterGeneralPropPageClass (EmitterInstanceListClass *pemitter)
-	: m_pEmitterList (NULL),
-	  m_Parent (NULL),
+	: m_pEmitterList (nullptr),
+	  m_Parent (nullptr),
 	  m_bValid (true),
 	  m_Lifetime (0),
 	  CPropertyPage(EmitterGeneralPropPageClass::IDD)
@@ -105,16 +105,16 @@ END_MESSAGE_MAP()
 void
 EmitterGeneralPropPageClass::Initialize (void)
 {
-	if (m_pEmitterList != NULL) {
+	if (m_pEmitterList != nullptr) {
 
 		//
 		// Get the emitter's texture
 		//
 		m_TextureFilename = m_pEmitterList->Get_Texture_Filename ();
-		
+
 		m_Lifetime		= m_pEmitterList->Get_Lifetime ();
 		m_EmitterName	= m_pEmitterList->Get_Name ();
-		m_pEmitterList->Get_Shader (m_Shader);		
+		m_pEmitterList->Get_Shader (m_Shader);
 	}
 
 	return ;
@@ -156,7 +156,7 @@ EmitterGeneralPropPageClass::Add_Shader_To_Combo
 //  OnInitDialog
 //
 BOOL
-EmitterGeneralPropPageClass::OnInitDialog (void) 
+EmitterGeneralPropPageClass::OnInitDialog (void)
 {
 	// Allow the base class to process this message
 	CPropertyPage::OnInitDialog ();
@@ -173,7 +173,7 @@ EmitterGeneralPropPageClass::OnInitDialog (void)
 	Add_Shader_To_Combo (ShaderClass::_PresetOpaqueSpriteShader, "Opaque");
 
 	//
-	// Fill the edit controls with the default values	
+	// Fill the edit controls with the default values
 	//
 	SetDlgItemText (IDC_NAME_EDIT, m_EmitterName);
 	SetDlgItemText (IDC_FILENAME_EDIT, m_TextureFilename);
@@ -185,7 +185,7 @@ EmitterGeneralPropPageClass::OnInitDialog (void)
 	if (m_Lifetime > 100) {
 		m_Lifetime = 0;
 	}
-	::Initialize_Spinner (m_LifetimeSpin, m_Lifetime, 0, 1000);	
+	::Initialize_Spinner (m_LifetimeSpin, m_Lifetime, 0, 1000);
 
 	OnParticleLifetimeCheck ();
 
@@ -219,7 +219,7 @@ EmitterGeneralPropPageClass::OnApply (void)
 	int index = SendDlgItemMessage (IDC_SHADER_COMBO, CB_GETCURSEL);
 	if (index != CB_ERR) {
 		ShaderClass *shader = (ShaderClass *)SendDlgItemMessage (IDC_SHADER_COMBO, CB_GETITEMDATA, (WPARAM)index);
-		if (shader != NULL) {
+		if (shader != nullptr) {
 			m_Shader = (*shader);
 		}
 	}
@@ -244,7 +244,7 @@ EmitterGeneralPropPageClass::OnApply (void)
 		retval = CPropertyPage::OnApply ();
 		m_bValid = true;
 	}
-	
+
 	// Return the TRUE/FALSE result code
 	return retval;
 }
@@ -255,11 +255,11 @@ EmitterGeneralPropPageClass::OnApply (void)
 //  OnBrowseButton
 //
 void
-EmitterGeneralPropPageClass::OnBrowseButton (void) 
+EmitterGeneralPropPageClass::OnBrowseButton (void)
 {
 	CFileDialog openFileDialog (TRUE,
 										 ".tga",
-										 NULL,
+										 nullptr,
 										 OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_EXPLORER,
 										 "Textures files (*.tga)|*.tga||",
 										 ::AfxGetMainWnd ());
@@ -270,7 +270,7 @@ EmitterGeneralPropPageClass::OnBrowseButton (void)
 		SetModified ();
 	}
 
-	return ;	
+	return ;
 }
 
 
@@ -314,8 +314,8 @@ EmitterGeneralPropPageClass::OnNotify
 	//	Update the spinner control if necessary
 	//
 	NMHDR *pheader = (NMHDR *)lParam;
-	if ((pheader != NULL) && (pheader->code == UDN_DELTAPOS)) {
-		LPNMUPDOWN pupdown = (LPNMUPDOWN)lParam;		
+	if ((pheader != nullptr) && (pheader->code == UDN_DELTAPOS)) {
+		LPNMUPDOWN pupdown = (LPNMUPDOWN)lParam;
 		::Update_Spinner_Buddy (pheader->hwndFrom, pupdown->iDelta);
 	}
 
@@ -329,7 +329,7 @@ EmitterGeneralPropPageClass::OnNotify
 //  OnChangeParticleLifetimeEdit
 //
 void
-EmitterGeneralPropPageClass::OnChangeParticleLifetimeEdit (void) 
+EmitterGeneralPropPageClass::OnChangeParticleLifetimeEdit (void)
 {
 	SetModified ();
 	return ;
@@ -377,7 +377,7 @@ EmitterGeneralPropPageClass::OnCommand
 		case IDC_RENDER_MODE_COMBO:
 			if (HIWORD (wParam) == CBN_SELCHANGE) {
 				SetModified ();
-				if (m_Parent != NULL) {
+				if (m_Parent != nullptr) {
 					int cur_mode = ::SendMessage ((HWND)lParam, CB_GETCURSEL, 0, 0);
 					m_Parent->Notify_Render_Mode_Changed(cur_mode);
 				}

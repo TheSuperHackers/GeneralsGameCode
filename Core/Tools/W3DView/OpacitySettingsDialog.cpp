@@ -49,7 +49,7 @@ static char THIS_FILE[] = __FILE__;
 //
 /////////////////////////////////////////////////////////////////////////////
 OpacitySettingsDialogClass::OpacitySettingsDialogClass (float opacity, CWnd *pParent)
-	:	m_OpacityBar (NULL),
+	:	m_OpacityBar (nullptr),
 		m_Opacity (opacity),
 		CDialog(OpacitySettingsDialogClass::IDD, pParent)
 {
@@ -91,7 +91,7 @@ BOOL
 OpacitySettingsDialogClass::OnInitDialog (void)
 {
 	CDialog::OnInitDialog();
-	
+
 	m_OpacityBar = ColorBarClass::Get_Color_Bar (::GetDlgItem (m_hWnd, IDC_OPACITY_BAR));
 	ASSERT (m_OpacityBar);
 

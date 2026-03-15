@@ -16,33 +16,32 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando                                                     * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/Combat/crandom.h            $* 
- *                                                                                             * 
- *                      $Author:: Byon_g                                                      $* 
- *                                                                                             * 
- *                     $Modtime:: 5/09/01 3:48p                                               $* 
- *                                                                                             * 
- *                    $Revision:: 2                                                           $* 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando                                                     *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/Combat/crandom.h            $*
+ *                                                                                             *
+ *                      $Author:: Byon_g                                                      $*
+ *                                                                                             *
+ *                     $Modtime:: 5/09/01 3:48p                                               $*
+ *                                                                                             *
+ *                    $Revision:: 2                                                           $*
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#ifndef	CRANDOM_H
-#define	CRANDOM_H
+#pragma once
 
 #ifndef	ALWAYS_H
 	#include "always.h"
 #endif
 
 #ifndef	RANDOM_H
-	#include "RANDOM.H"
+	#include "RANDOM.h"
 #endif
 
 #ifndef	WWDEBUG_H
@@ -57,11 +56,11 @@
 class CRandom {
 
 public:
-	CRandom( void )		{}
-	~CRandom( void )		{}
+	CRandom()		{}
+	~CRandom()		{}
 
 	// Get a random 32 bit long integer
-	inline int Get_Int( void )		{ return Generator(); }
+	inline int Get_Int()		{ return Generator(); }
 
 	// Get a random 32 bit long integer less than max
 	inline int Get_Int( int max )	{	WWASSERT( max > 0 );	return (Generator() & 0x7FFFFFFF) % max;	}
@@ -70,7 +69,7 @@ public:
 	inline int Get_Int( int min, int max );
 
 	// Get a random float between 0 and 1 (both inclusive)
-	inline float Get_Float( void )	{	return (float)(Get_Int( CRANDOM_FLOAT_RANGE+1 )) / (float)CRANDOM_FLOAT_RANGE;	}
+	inline float Get_Float()	{	return (float)(Get_Int( CRANDOM_FLOAT_RANGE+1 )) / (float)CRANDOM_FLOAT_RANGE;	}
 
 	// Get a random float between 0 and max (both inclusive)
 	inline float Get_Float( float max )	{	return Get_Float() * max; }
@@ -119,5 +118,3 @@ inline float CRandom::Get_Float( float min, float max )
 ** be synced between other computers.  Good for simple visual and sound effects.
 */
 extern	CRandom	FreeRandom;
-
-#endif

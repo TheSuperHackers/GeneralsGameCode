@@ -49,7 +49,7 @@
 class VisPolyClass
 {
 public:
-	void Reset(void);
+	void Reset();
 	void Add_Vertex(const Vector3 & point);
 	void Clip(const PlaneClass & plane,VisPolyClass & dest) const;
 
@@ -57,7 +57,7 @@ public:
 };
 
 
-void VisPolyClass::Reset(void)
+void VisPolyClass::Reset()
 {
 	Verts.Delete_All(false);
 }
@@ -84,18 +84,18 @@ void VisPolyClass::Clip(const PlaneClass & plane,VisPolyClass & dest) const
 
 	// perform clipping
 	prev_point_in_front = !plane.In_Front(Verts[iprev]);		// Note, plane normal is outward so we invert this test
-	for (int j=0; j<vcount; j++) { 
-		
+	for (int j=0; j<vcount; j++) {
+
 		cur_point_in_front = !plane.In_Front(Verts[i]);			// Note, plane nomral is out so we invert this test
 		if (prev_point_in_front) {
 
 			if (cur_point_in_front) {
-			
+
 				// Previous vertex was in front of plane and this vertex is in
 				// front of the plane so we emit this vertex.
 				dest.Add_Vertex(Verts[i]);
 
-			} else { 
+			} else {
 
 				// Previous vert was in front, this vert is behind, compute
 				// the intersection and emit the point.
@@ -116,13 +116,13 @@ void VisPolyClass::Clip(const PlaneClass & plane,VisPolyClass & dest) const
 				Vector3::Lerp(Verts[iprev],Verts[i],alpha,&int_point);
 				dest.Add_Vertex(int_point);
 				dest.Add_Vertex(Verts[i]);
-			
-			} 
-		} 
+
+			}
+		}
 
 		prev_point_in_front = cur_point_in_front;
 		iprev = i;
-		
+
 		//i = (i+1)%(Verts.Count());
 		i++;
 		if (i>=vcount) {
@@ -143,14 +143,14 @@ static VisPolyClass _VisPoly1;
 *********************************************************************************************/
 
 
-VisRasterizerClass::VisRasterizerClass(void) :
+VisRasterizerClass::VisRasterizerClass() :
 	ModelTransform(1),
-	Camera(NULL),
+	Camera(nullptr),
 	MVTransform(1)
 {
 }
 
-VisRasterizerClass::~VisRasterizerClass(void)
+VisRasterizerClass::~VisRasterizerClass()
 {
 	REF_PTR_RELEASE(Camera);
 }
@@ -177,27 +177,27 @@ void	VisRasterizerClass::Set_Camera(CameraClass * camera)
 	Update_MV_Transform();
 }
 
-CameraClass * VisRasterizerClass::Get_Camera(void)
+CameraClass * VisRasterizerClass::Get_Camera()
 {
-	if (Camera != NULL) {
+	if (Camera != nullptr) {
 		Camera->Add_Ref();
-	} 
+	}
 	return Camera;
 }
 
-CameraClass * VisRasterizerClass::Peek_Camera(void)
+CameraClass * VisRasterizerClass::Peek_Camera()
 {
 	return Camera;
 }
 
-void VisRasterizerClass::Update_MV_Transform(void)
+void VisRasterizerClass::Update_MV_Transform()
 {
 	Matrix3D view_tm(1);
 
 	if (Camera) {
 		Camera->Get_View_Matrix(&view_tm);
 	}
-	
+
 #ifdef ALLOW_TEMPORARIES
 	MVTransform = view_tm * ModelTransform;
 #else
@@ -205,7 +205,7 @@ void VisRasterizerClass::Update_MV_Transform(void)
 #endif
 }
 
-const Matrix3D & VisRasterizerClass::Get_MV_Transform(void)
+const Matrix3D & VisRasterizerClass::Get_MV_Transform()
 {
 	// TODO: optimize this
 	Update_MV_Transform();  // the user can and does mess with the camera directly!
@@ -223,16 +223,16 @@ bool VisRasterizerClass::Render_Triangles
 (
 	const Vector3 * verts,
 	int vcount,
-	const TriIndex * tris, 
-	int tcount,const 
+	const TriIndex * tris,
+	int tcount,const
 	AABoxClass & bounds
 )
 {
-	WWASSERT(verts != NULL);
-	WWASSERT(tris != NULL);
+	WWASSERT(verts != nullptr);
+	WWASSERT(tris != nullptr);
 	WWASSERT(vcount > 0);
 	WWASSERT(tcount > 0);
-	
+
 	/*
 	** if the user supplied bounds, check if we need to clip
 	*/
@@ -248,7 +248,7 @@ bool VisRasterizerClass::Render_Triangles_No_Clip
 (
 	const Vector3 * verts,
 	int vcount,
-	const TriIndex * tris, 
+	const TriIndex * tris,
 	int tcount
 )
 {
@@ -270,7 +270,7 @@ bool VisRasterizerClass::Render_Triangles_No_Clip
 	** 2. Pass triangles on to the ID buffer for scan conversion
 	*/
 	for (int tri_index=0; tri_index<tcount; tri_index++) {
-		
+
 		const TriIndex & tri = tris[tri_index];
 		pixel_passed |= IDBuffer.Render_Triangle(tverts[tri.I],tverts[tri.J],tverts[tri.K]);
 		if (pixel_passed && (IDBuffer.Get_Render_Mode() == IDBufferClass::NON_OCCLUDER_MODE)) {
@@ -285,7 +285,7 @@ bool VisRasterizerClass::Render_Triangles_Clip
 (
 	const Vector3 * verts,
 	int vcount,
-	const TriIndex * tris, 
+	const TriIndex * tris,
 	int tcount
 )
 {
@@ -308,7 +308,7 @@ bool VisRasterizerClass::Render_Triangles_Clip
 	** 3. Clip triangles to the view volume and pass on to the ID buffer for scan conversion
 	*/
 	for (int tri_index=0; tri_index<tcount; tri_index++) {
-		
+
 		/*
 		** Copy triangle data into the vis clipping structure
 		*/
@@ -333,14 +333,14 @@ bool VisRasterizerClass::Render_Triangles_Clip
 		int final_vcount = _VisPoly0.Verts.Count();
 
 		if (final_vcount >= 3) {
-	
+
 			Vector3 * final_verts = &(_VisPoly0.Verts[0]);
 
 			int i;
 			for (i=0; i<final_vcount; i++) {
 				Camera->Project_Camera_Space_Point(final_verts[i],final_verts[i]);
 			}
-		
+
 			/*
 			** Pass the resulting triangle fan to the IDBuffer
 			*/
@@ -366,7 +366,7 @@ bool VisRasterizerClass::Render_Triangles_Clip
 
 *********************************************************************************************/
 
-IDBufferClass::IDBufferClass(void) :
+IDBufferClass::IDBufferClass() :
 	BackfaceID(0),
 	FrontfaceID(0),
 	CurID(0),
@@ -375,13 +375,13 @@ IDBufferClass::IDBufferClass(void) :
 	PixelCounter(0),
 	ResWidth(0),
 	ResHeight(0),
-	IDBuffer(NULL),
-	ZBuffer(NULL)
+	IDBuffer(nullptr),
+	ZBuffer(nullptr)
 {
 }
 
 
-IDBufferClass::~IDBufferClass(void)
+IDBufferClass::~IDBufferClass()
 {
 	Reset();
 }
@@ -399,24 +399,22 @@ void IDBufferClass::Set_Resolution(int w,int h)
 
 void IDBufferClass::Get_Resolution(int * get_w,int * get_h)
 {
-	if (get_w != NULL) { *get_w = ResWidth; }
-	if (get_h != NULL) { *get_h = ResHeight; }
+	if (get_w != nullptr) { *get_w = ResWidth; }
+	if (get_h != nullptr) { *get_h = ResHeight; }
 }
 
-void IDBufferClass::Reset(void)
+void IDBufferClass::Reset()
 {
-	if (IDBuffer!=NULL) {
-		delete[] IDBuffer;
-		IDBuffer = NULL;
-	}
-	if (ZBuffer != NULL) {
-		delete[] ZBuffer;
-		ZBuffer = NULL;
-	}
+	delete[] IDBuffer;
+	IDBuffer = nullptr;
+
+	delete[] ZBuffer;
+	ZBuffer = nullptr;
+
 	PixelCounter = 0;
 }
 
-void IDBufferClass::Allocate_Buffers(void)
+void IDBufferClass::Allocate_Buffers()
 {
 	Reset();
 
@@ -428,13 +426,13 @@ void IDBufferClass::Allocate_Buffers(void)
 	}
 }
 
-void IDBufferClass::Clear(void)
+void IDBufferClass::Clear()
 {
 	if ((ResWidth > 0) && (ResHeight > 0)) {
 		int byte_count = ResWidth * ResWidth * sizeof(uint32);
 
-		WWASSERT(IDBuffer != NULL);
-		WWASSERT(ZBuffer != NULL);
+		WWASSERT(IDBuffer != nullptr);
+		WWASSERT(ZBuffer != nullptr);
 		memset(IDBuffer,0,byte_count);
 		memset(ZBuffer,0,byte_count);
 	}
@@ -457,7 +455,7 @@ struct GradientsStruct
 			OOZ[i] = 1/verts[i].Z;
 		}
 
-		DOOZ_DX = oodx * ( ((OOZ[1] - OOZ[2]) * (verts[0].Y - verts[2].Y)) -	
+		DOOZ_DX = oodx * ( ((OOZ[1] - OOZ[2]) * (verts[0].Y - verts[2].Y)) -
 								 ((OOZ[0] - OOZ[2]) * (verts[1].Y - verts[2].Y)));
 
 		DOOZ_DY = oody * ( ((OOZ[1] - OOZ[2]) * (verts[0].X - verts[2].X)) -
@@ -480,7 +478,7 @@ struct EdgeStruct
 	{
 		Y = WWMath::Ceil(verts[top].Y);
 		Height = WWMath::Ceil(verts[bottom].Y) - Y;
-		
+
 		float y_prestep = Y - verts[top].Y;
 		float real_height = verts[bottom].Y - verts[top].Y;
 		float real_width  = verts[bottom].X - verts[top].X;
@@ -492,8 +490,8 @@ struct EdgeStruct
 		OOZ = grad.OOZ[top] + y_prestep * grad.DOOZ_DY + x_prestep * grad.DOOZ_DX;
 		OOZStep = XStep * grad.DOOZ_DX + grad.DOOZ_DY;
 	}
-	
-	inline int Step(void)
+
+	int Step()
 	{
 		X+=XStep;
 		Y++;
@@ -513,7 +511,7 @@ struct EdgeStruct
 
 bool IDBufferClass::Render_Triangle(const Vector3 & p0,const Vector3 & p1,const Vector3 & p2)
 {
-	if ((ZBuffer == NULL) || (IDBuffer == NULL)) {
+	if ((ZBuffer == nullptr) || (IDBuffer == nullptr)) {
 		return false;
 	}
 
@@ -594,9 +592,9 @@ bool IDBufferClass::Render_Triangle(const Vector3 & p0,const Vector3 & p1,const 
 	EdgeStruct top_to_bottom_edge(grads,points,top,bottom);
 	EdgeStruct top_to_middle_edge(grads,points,top,middle);
 	EdgeStruct middle_to_bottom_edge(grads,points,middle,bottom);
-	
-	EdgeStruct * left_edge = NULL;
-	EdgeStruct * right_edge = NULL;
+
+	EdgeStruct * left_edge = nullptr;
+	EdgeStruct * right_edge = nullptr;
 
 	bool middle_is_left = false;
 	if (bottom_for_compare > middle_for_compare) {
@@ -666,7 +664,7 @@ int IDBufferClass::Render_Occluder_Scanline(GradientsStruct & grads,EdgeStruct *
 	int address = Pixel_Coords_To_Address(xstart,left->Y);
 	float ooz = left->OOZ + xprestep * grads.DOOZ_DX;
 	int pixel_counter = 0;
-	
+
 	/*
 	** Two separate loops, backfaces only render when LESS THAN
 	*/

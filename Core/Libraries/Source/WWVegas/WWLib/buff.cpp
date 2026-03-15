@@ -16,22 +16,22 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*********************************************************************************************** 
- ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Command & Conquer                                            * 
- *                                                                                             * 
- *                     $Archive:: /G/wwlib/BUFF.CPP                                           $* 
- *                                                                                             * 
+/***********************************************************************************************
+ ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Command & Conquer                                            *
+ *                                                                                             *
+ *                     $Archive:: /G/wwlib/BUFF.cpp                                           $*
+ *                                                                                             *
  *                      $Author:: Eric_c                                                      $*
- *                                                                                             * 
+ *                                                                                             *
  *                     $Modtime:: 4/15/99 10:14a                                              $*
- *                                                                                             * 
+ *                                                                                             *
  *                    $Revision:: 2                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  *   Buffer::Buffer -- Constructor for buffer object.                                          *
  *   Buffer::Buffer -- Copy constructor for buffer object.                                     *
  *   Buffer::Buffer -- Self-allocating constructor for buffer object.                          *
@@ -41,7 +41,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include	"always.h"
-#include	"BUFF.H"
+#include "BUFF.h"
 //#include	<stddef.h>
 
 
@@ -69,7 +69,7 @@ Buffer::Buffer(void * buffer, long size) :
 	Size(size),
 	IsAllocated(false)
 {
-	if (buffer == NULL && size > 0) {
+	if (buffer == nullptr && size > 0) {
 		BufferPtr = W3DNEWARRAY char[size];
 		IsAllocated = true;
 	}
@@ -82,7 +82,7 @@ Buffer::Buffer(char * buffer, long size) :
 	Size(size),
 	IsAllocated(false)
 {
-	if (buffer == NULL && size > 0) {
+	if (buffer == nullptr && size > 0) {
 		BufferPtr = W3DNEWARRAY char[size];
 		IsAllocated = true;
 	}
@@ -95,7 +95,7 @@ Buffer::Buffer(void const * buffer, long size) :
 	Size(size),
 	IsAllocated(false)
 {
-	if (buffer == NULL && size > 0) {
+	if (buffer == nullptr && size > 0) {
 		BufferPtr = W3DNEWARRAY char[size];
 		IsAllocated = true;
 	}
@@ -114,13 +114,13 @@ Buffer::Buffer(void const * buffer, long size) :
  * OUTPUT:  none                                                                               *
  *                                                                                             *
  * WARNINGS:   There is no way to tell if the allocation failed. To verify, call Get_Buffer    *
- *             and compare with NULL.                                                          *
+ *             and compare with nullptr.                                                          *
  *                                                                                             *
  * HISTORY:                                                                                    *
  *   07/29/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
 Buffer::Buffer(long size) :
-	BufferPtr(NULL),
+	BufferPtr(nullptr),
 	Size(size),
 	IsAllocated(false)
 {
@@ -197,7 +197,7 @@ Buffer & Buffer::operator = (Buffer const & buffer)
  * HISTORY:                                                                                    *
  *   07/29/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-Buffer::~Buffer(void)
+Buffer::~Buffer()
 {
 	Reset();
 }
@@ -220,12 +220,12 @@ Buffer::~Buffer(void)
  * HISTORY:                                                                                    *
  *   09/07/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-void Buffer::Reset(void)
+void Buffer::Reset()
 {
 	if (IsAllocated) {
 		delete [] BufferPtr;
 	}
-	BufferPtr = NULL;
+	BufferPtr = nullptr;
 	Size = 0;
 	IsAllocated = false;
 }

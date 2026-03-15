@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #define DEFINE_LOCOMOTORSET_NAMES //Gain access to TheLocomotorSetNames[]
 
@@ -55,11 +55,6 @@
 #include "GameLogic/Module/RiderChangeContain.h"
 
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -102,19 +97,19 @@ void RiderChangeContainModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   TransportContainModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
-		{ "Rider1",					parseRiderInfo,					NULL, offsetof( RiderChangeContainModuleData, m_riders[0] ) },
-		{ "Rider2",					parseRiderInfo,					NULL, offsetof( RiderChangeContainModuleData, m_riders[1] ) },
-		{ "Rider3",					parseRiderInfo,					NULL, offsetof( RiderChangeContainModuleData, m_riders[2] ) },
-		{ "Rider4",					parseRiderInfo,					NULL, offsetof( RiderChangeContainModuleData, m_riders[3] ) },
-		{ "Rider5",					parseRiderInfo,					NULL, offsetof( RiderChangeContainModuleData, m_riders[4] ) },
-		{ "Rider6",					parseRiderInfo,					NULL, offsetof( RiderChangeContainModuleData, m_riders[5] ) },
-		{ "Rider7",					parseRiderInfo,					NULL, offsetof( RiderChangeContainModuleData, m_riders[6] ) },
-		{ "Rider8",					parseRiderInfo,					NULL, offsetof( RiderChangeContainModuleData, m_riders[7] ) },
-    { "ScuttleDelay",   INI::parseDurationUnsignedInt,	NULL, offsetof( RiderChangeContainModuleData, m_scuttleFrames ) },
+		{ "Rider1",					parseRiderInfo,					nullptr, offsetof( RiderChangeContainModuleData, m_riders[0] ) },
+		{ "Rider2",					parseRiderInfo,					nullptr, offsetof( RiderChangeContainModuleData, m_riders[1] ) },
+		{ "Rider3",					parseRiderInfo,					nullptr, offsetof( RiderChangeContainModuleData, m_riders[2] ) },
+		{ "Rider4",					parseRiderInfo,					nullptr, offsetof( RiderChangeContainModuleData, m_riders[3] ) },
+		{ "Rider5",					parseRiderInfo,					nullptr, offsetof( RiderChangeContainModuleData, m_riders[4] ) },
+		{ "Rider6",					parseRiderInfo,					nullptr, offsetof( RiderChangeContainModuleData, m_riders[5] ) },
+		{ "Rider7",					parseRiderInfo,					nullptr, offsetof( RiderChangeContainModuleData, m_riders[6] ) },
+		{ "Rider8",					parseRiderInfo,					nullptr, offsetof( RiderChangeContainModuleData, m_riders[7] ) },
+    { "ScuttleDelay",   INI::parseDurationUnsignedInt,	nullptr, offsetof( RiderChangeContainModuleData, m_scuttleFrames ) },
     { "ScuttleStatus",  INI::parseIndexList,		ModelConditionFlags::getBitNames(), offsetof( RiderChangeContainModuleData, m_scuttleState ) },
-		{ 0, 0, 0, 0 }
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   p.add(dataFieldParse);
 }
@@ -125,8 +120,8 @@ void RiderChangeContainModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-Int RiderChangeContain::getContainMax( void ) const 
-{ 
+Int RiderChangeContain::getContainMax() const
+{
 	if (getRiderChangeContainModuleData())
 		return getRiderChangeContainModuleData()->m_slotCapacity;
 
@@ -136,7 +131,7 @@ Int RiderChangeContain::getContainMax( void ) const
 // PUBLIC /////////////////////////////////////////////////////////////////////////////////////////
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-RiderChangeContain::RiderChangeContain( Thing *thing, const ModuleData *moduleData ) : 
+RiderChangeContain::RiderChangeContain( Thing *thing, const ModuleData *moduleData ) :
 								 TransportContain( thing, moduleData )
 {
 	m_extraSlotsInUse = 0;
@@ -147,15 +142,15 @@ RiderChangeContain::RiderChangeContain( Thing *thing, const ModuleData *moduleDa
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-RiderChangeContain::~RiderChangeContain( void )
+RiderChangeContain::~RiderChangeContain()
 {
 
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-/** 
-	can this container contain this kind of object? 
+/**
+	can this container contain this kind of object?
 	and, if checkCapacity is TRUE, does this container have enough space left to hold the given unit?
 */
 Bool RiderChangeContain::isValidContainerFor(const Object* rider, Bool checkCapacity) const
@@ -175,7 +170,7 @@ Bool RiderChangeContain::isValidContainerFor(const Object* rider, Bool checkCapa
 		for( int i = 0; i < MAX_RIDERS; i++ )
 		{
 			const ThingTemplate *thing = TheThingFactory->findTemplate( data->m_riders[ i ].m_templateName );
-			if( thing->isEquivalentTo( rider->getTemplate() ) )
+			if( thing && thing->isEquivalentTo( rider->getTemplate() ) )
 			{
 				//We found a valid rider, so return success.
 				return TRUE;
@@ -198,7 +193,7 @@ void RiderChangeContain::onContaining( Object *rider, Bool wasSelected )
 	}
 
 	//If the rider is currently selected, transfer selection to the container and preserve other units
-	//that may be already selected. Note that containing the rider will automatically cause it to be 
+	//that may be already selected. Note that containing the rider will automatically cause it to be
 	//deselected, so all we have to do is select the container (if not already selected)!
 	Drawable *containDraw = getObject()->getDrawable();
 	if( containDraw && wasSelected && !containDraw->isSelected() )
@@ -216,7 +211,7 @@ void RiderChangeContain::onContaining( Object *rider, Bool wasSelected )
 	for( int i = 0; i < MAX_RIDERS; i++ )
 	{
 		const ThingTemplate *thing = TheThingFactory->findTemplate( data->m_riders[ i ].m_templateName );
-		if( thing->isEquivalentTo( rider->getTemplate() ) )
+		if( thing && thing->isEquivalentTo( rider->getTemplate() ) )
 		{
 
 			//This is our rider, so set the correct model condition.
@@ -251,13 +246,18 @@ void RiderChangeContain::onContaining( Object *rider, Bool wasSelected )
 			//Transfer experience from the rider to the bike.
 			ExperienceTracker *riderTracker = rider->getExperienceTracker();
 			ExperienceTracker *bikeTracker = obj->getExperienceTracker();
+#if !RETAIL_COMPATIBLE_CRC
+			// TheSuperHackers @bugfix Stubbjax 15/12/2025 Copy trainable flag from the rider to prevent
+			// Workers and other untrainable riders from ranking up via the bike's experience tracker.
+			bikeTracker->setTrainable(riderTracker->isTrainable());
+#endif
 			bikeTracker->setVeterancyLevel( riderTracker->getVeterancyLevel(), FALSE );
 			riderTracker->setExperienceAndLevel( 0, FALSE );
 
 			break;
 		}
 	}
-	
+
 	//Extend base class
 	TransportContain::onContaining( rider, wasSelected );
 
@@ -287,7 +287,7 @@ void RiderChangeContain::onRemoving( Object *rider )
 	for( int i = 0; i < MAX_RIDERS; i++ )
 	{
 		const ThingTemplate *thing = TheThingFactory->findTemplate( data->m_riders[ i ].m_templateName );
-		if( thing->isEquivalentTo( rider->getTemplate() ) )
+		if( thing && thing->isEquivalentTo( rider->getTemplate() ) )
 		{
 			//This is our rider, so clear the current model condition.
 			bike->clearModelConditionFlags( MAKE_MODELCONDITION_MASK2( data->m_riders[ i ].m_modelConditionFlagType, MODELCONDITION_DOOR_1_CLOSING ) );
@@ -297,15 +297,16 @@ void RiderChangeContain::onRemoving( Object *rider )
 
 			//Also clear the object status
 			bike->clearStatus( MAKE_OBJECT_STATUS_MASK( data->m_riders[ i ].m_objectStatusType ) );
-			
-			if( rider->getControllingPlayer() != NULL )
+
+			if( rider->getControllingPlayer() != nullptr )
 			{
 				//Wow, completely unforseeable game teardown order crash.  SetVeterancyLevel results in a call to player
-				//about upgrade masks.  So if we have a null player, it is game teardown, so don't worry about transfering exp.
+				//about upgrade masks.  So if we have a null player, it is game teardown, so don't worry about transferring exp.
 
 				//Transfer experience from the bike to the rider.
 				ExperienceTracker *riderTracker = rider->getExperienceTracker();
 				ExperienceTracker *bikeTracker = bike->getExperienceTracker();
+				bikeTracker->resetTrainable();
 				riderTracker->setVeterancyLevel( bikeTracker->getVeterancyLevel(), FALSE );
 				bikeTracker->setExperienceAndLevel( 0, FALSE );
 			}
@@ -439,7 +440,7 @@ const Object *RiderChangeContain::friend_getRider() const
  	if( m_containListSize > 0 ) // Yes, this does assume that infantry never ride double on the bike
  		return m_containList.front();
 
-	return NULL;
+	return nullptr;
 }
 
 
@@ -454,7 +455,7 @@ void RiderChangeContain::crc( Xfer *xfer )
 	// extend base class
 	TransportContain::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -481,15 +482,15 @@ void RiderChangeContain::xfer( Xfer *xfer )
 	// frame exit not busy
 	xfer->xferUnsignedInt( &m_frameExitNotBusy );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void RiderChangeContain::loadPostProcess( void )
+void RiderChangeContain::loadPostProcess()
 {
 
 	// extend base class
 	TransportContain::loadPostProcess();
 
-}  // end loadPostProcess
+}

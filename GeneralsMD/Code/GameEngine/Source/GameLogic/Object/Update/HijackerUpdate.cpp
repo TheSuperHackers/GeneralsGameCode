@@ -24,15 +24,15 @@
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 //
-// FILE: HijackerUpdate.cpp 
+// FILE: HijackerUpdate.cpp
 // Author: Mark Lorenzen, July 2002
-// Desc:   Allows hijacker to kepp with his hijacked vehicle (though hidden) until it dies, then 
+// Desc:   Allows hijacker to keep with his hijacked vehicle (though hidden) until it dies, then
 // to become a hijacker once more
 //
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Player.h"
 #include "Common/ThingFactory.h"
@@ -57,18 +57,18 @@ HijackerUpdate::HijackerUpdate( Thing *thing, const ModuleData *moduleData ) : U
 	setIsInVehicle( FALSE );
 	m_wasTargetAirborne = false;
 	m_ejectPos.zero();
-//	m_ejectPilotDMI = NULL;
+//	m_ejectPilotDMI = nullptr;
 }
-  
+
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-HijackerUpdate::~HijackerUpdate( void )
+HijackerUpdate::~HijackerUpdate()
 {
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime HijackerUpdate::update( void )
+UpdateSleepTime HijackerUpdate::update()
 {
 /// @todo srj use SLEEPY_UPDATE here
 
@@ -90,7 +90,7 @@ UpdateSleepTime HijackerUpdate::update( void )
 			obj->setPosition( target->getPosition() );
 			m_wasTargetAirborne = target->isSignificantlyAboveTerrain();
 			m_ejectPos = *target->getPosition();
-			
+
 			// So, if while I am driving this American war vehicle, I gain skill points, I get to keep them when I wreck the vehicle
 			ExperienceTracker *targetExp = target->getExperienceTracker();
 			ExperienceTracker *jackerExp = obj->getExperienceTracker();
@@ -110,7 +110,7 @@ UpdateSleepTime HijackerUpdate::update( void )
 				//THIS BLOCK RESTORES HIJACKER TO PARTITION MANAGER AND UNHIDES HIM
 				ThePartitionManager->registerObject( obj );
 
-				if( obj->getDrawable() ) 
+				if( obj->getDrawable() )
 				{
 					// so it is time to unhide ourselves and be a pedestrian hijacker again
 					obj->getDrawable()->setDrawableHidden( false );
@@ -146,14 +146,14 @@ UpdateSleepTime HijackerUpdate::update( void )
 				}
 
 
-			}// end if (! hostVehicleHasEjection)
+			}
 
-			setTargetObject( NULL ); 
+			setTargetObject( nullptr );
 			setIsInVehicle( FALSE );
 			setUpdate( FALSE );
 			m_wasTargetAirborne = false;
 
-		}// end if( target )
+		}
 
 	}
 	else	// not in vehicle
@@ -174,9 +174,9 @@ void HijackerUpdate::setTargetObject( const Object *object )
 
 		// here we also test the target to see whether it ejects pilots
 		// when it dies... if so, stores a pointer to that diemoduleinterface
-		// NULL if not...
+		// nullptr if not...
 
-//		BehaviorModule **dmi = NULL;
+//		BehaviorModule **dmi = nullptr;
 //		for( dmi = object->getBehaviorModules(); *dmi; ++dmi )
 //		{
 //			m_ejectPilotDMI = (*dmi)->getEjectPilotDieInterface();
@@ -187,7 +187,7 @@ void HijackerUpdate::setTargetObject( const Object *object )
 	else
 	{
 		m_targetID = INVALID_ID;
-//		m_ejectPilotDMI = NULL;
+//		m_ejectPilotDMI = nullptr;
 	}
 
 }
@@ -198,7 +198,7 @@ Object* HijackerUpdate::getTargetObject() const
   {
     return TheGameLogic->findObjectByID( m_targetID );
   }
-  return NULL;
+  return nullptr;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -210,7 +210,7 @@ void HijackerUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -234,7 +234,7 @@ void HijackerUpdate::xfer( Xfer *xfer )
 	// eject pos
 	xfer->xferCoord3D( &m_ejectPos );
 
-	// udpate
+	// update
 	xfer->xferBool( &m_update );
 
 	// is in vehicle
@@ -243,19 +243,19 @@ void HijackerUpdate::xfer( Xfer *xfer )
 	// was target airborne
 	xfer->xferBool( &m_wasTargetAirborne );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void HijackerUpdate::loadPostProcess( void )
+void HijackerUpdate::loadPostProcess()
 {
 
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-	// set the target object, this will also tie up teh m_ejectPilotDMI pointer
+	// set the target object, this will also tie up the m_ejectPilotDMI pointer
 	Object *obj = TheGameLogic->findObjectByID( m_targetID );
 	setTargetObject( obj );
 
-}  // end loadPostProcess
+}

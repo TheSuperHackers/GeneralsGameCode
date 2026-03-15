@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __GUICALLBACKS_H_
-#define __GUICALLBACKS_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameClient/GameWindow.h"
 
@@ -334,7 +331,7 @@ enum InGameChatType CPP_11(: Int)
 extern void ToggleInGameChat( Bool immediate = TRUE );
 extern void HideInGameChat( Bool immediate = TRUE );
 extern void ShowInGameChat( Bool immediate = TRUE );
-void ResetInGameChat( void );
+void ResetInGameChat();
 void SetInGameChatType( InGameChatType chatType );
 Bool IsInGameChatActive();
 
@@ -344,7 +341,7 @@ WindowMsgHandledType DiplomacySystem( GameWindow *window, UnsignedInt msg, Windo
 WindowMsgHandledType DiplomacyInput( GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2 );
 void ToggleDiplomacy( Bool immediate = TRUE );
 void HideDiplomacy( Bool immediate = TRUE );
-void ResetDiplomacy( void );
+void ResetDiplomacy();
 
 // Generals Exp Points  --------------------------------------------------------------------------------
 WindowMsgHandledType GeneralsExpPointsSystem( GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2 );
@@ -355,21 +352,21 @@ WindowMsgHandledType GeneralsExpPointsInput( GameWindow *window, UnsignedInt msg
 WindowMsgHandledType IdleWorkerSystem( GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2 );
 
 // Disconnect Menu --------------------------------------------------------------------------------
-extern void ShowDisconnectWindow( void );
-extern void HideDisconnectWindow( void );
+extern void ShowDisconnectWindow();
+extern void HideDisconnectWindow();
 extern WindowMsgHandledType DisconnectControlSystem( GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2 );
 extern WindowMsgHandledType DisconnectControlInput( GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2 );
 
 // Establish Connections Window -------------------------------------------------------------------
-extern void ShowEstablishConnectionsWindow( void );
-extern void HideEstablishConnectionsWindow( void );
+extern void ShowEstablishConnectionsWindow();
+extern void HideEstablishConnectionsWindow();
 extern WindowMsgHandledType EstablishConnectionsControlSystem( GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2 );
 extern WindowMsgHandledType EstablishConnectionsControlInput( GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2 );
 
 // The in game quit menu --------------------------------------------------------------------------
 extern void destroyQuitMenu();
-extern void ToggleQuitMenu( void );
-extern void HideQuitMenu( void );
+extern void ToggleQuitMenu();
+extern void HideQuitMenu();
 extern WindowMsgHandledType QuitMenuSystem( GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2 );
 
 // Message of the Day -----------------------------------------------------------------------------
@@ -378,7 +375,3 @@ extern WindowMsgHandledType MOTDSystem( GameWindow *window, UnsignedInt msg, Win
 // Message Box --------------------------------------------------------------------------------
 extern WindowMsgHandledType MessageBoxSystem( GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2 );
 extern WindowMsgHandledType QuitMessageBoxSystem( GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2 );
-
-
-#endif // __GUICALLBACKS_H_
-

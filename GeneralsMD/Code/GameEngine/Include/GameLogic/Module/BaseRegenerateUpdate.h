@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __BASE_REGENERATE_UPDATE_H_
-#define __BASE_REGENERATE_UPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpdateModule.h"
 #include "GameLogic/Module/DamageModule.h"
@@ -45,7 +42,7 @@ class BaseRegenerateUpdateModuleData : public UpdateModuleData
 {
 
 public:
-	BaseRegenerateUpdateModuleData( void );
+	BaseRegenerateUpdateModuleData();
 	static void buildFieldParse( MultiIniFieldParse &p );
 
 };
@@ -67,19 +64,17 @@ public:
 	static Int getInterfaceMask() { return UpdateModule::getInterfaceMask() | MODULEINTERFACE_DAMAGE; }
 
 	// BehaviorModule
-	virtual DamageModuleInterface* getDamage() { return this; }
+	virtual DamageModuleInterface* getDamage() override { return this; }
 
 	// UpdateModuleInterface
-	virtual UpdateSleepTime update( void );
+	virtual UpdateSleepTime update() override;
 
 	// DamageModuleInterface
-	virtual void onDamage( DamageInfo *damageInfo );
-	virtual void onHealing( DamageInfo *damageInfo ) { }
-	virtual void onBodyDamageStateChange(const DamageInfo* damageInfo, BodyDamageType oldState, BodyDamageType newState) { }
-	virtual DisabledMaskType getDisabledTypesToProcess() const { return MAKE_DISABLED_MASK( DISABLED_UNDERPOWERED ); }
+	virtual void onDamage( DamageInfo *damageInfo ) override;
+	virtual void onHealing( DamageInfo *damageInfo ) override { }
+	virtual void onBodyDamageStateChange(const DamageInfo* damageInfo, BodyDamageType oldState, BodyDamageType newState) override { }
+	virtual DisabledMaskType getDisabledTypesToProcess() const override { return MAKE_DISABLED_MASK( DISABLED_UNDERPOWERED ); }
 
 private:
 
 };
-
-#endif  // end __BASE_REGENERATE_UPDATE_H_

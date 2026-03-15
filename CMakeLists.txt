@@ -36,14 +36,23 @@ project(genzh LANGUAGES C CXX)
 # This file handles extra settings wanted/needed for different compilers.
 include(cmake/compilers.cmake)
 
+# Debug symbol stripping for Release builds (MinGW)
+include(cmake/debug_strip.cmake)
+
 include(FetchContent)
+
+# MinGW-w64 specific configuration
+if(MINGW)
+    include(cmake/mingw.cmake)
+    include(cmake/reactos-atl.cmake)
+    include(cmake/widl.cmake)
+endif()
 
 # Find/Add build dependencies and stubs shared by all projects
 if((WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows") AND ${CMAKE_SIZEOF_VOID_P} EQUAL 4)
     include(cmake/miles.cmake)
     include(cmake/bink.cmake)
     include(cmake/dx8.cmake)
-    include(cmake/dbghelp.cmake)
 endif()
 
 # Define a dummy stlport target when not on VC6.
@@ -57,13 +66,19 @@ include(cmake/config.cmake)
 include(cmake/gamespy.cmake)
 include(cmake/lzhl.cmake)
 
-add_subdirectory(Dependencies/Benchmark)
 if (IS_VS6_BUILD)
     # The original max sdk does not compile against a modern compiler.
     # If there is a desire to make this work, then a fixed max sdk needs to be created.
     add_subdirectory(Dependencies/MaxSDK)
 endif()
 add_subdirectory(Dependencies/Utility)
+
+# To be removed when abandoning VC6
+if (IS_VS6_BUILD)
+    include_directories(Dependencies/Utility)
+    add_compile_options(/FIUtility/CppMacros.h)
+endif()
+
 add_subdirectory(resources)
 
 add_subdirectory(Core)

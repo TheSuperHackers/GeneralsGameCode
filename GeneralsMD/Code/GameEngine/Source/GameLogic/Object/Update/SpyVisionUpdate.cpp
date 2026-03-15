@@ -24,13 +24,13 @@
 
 // FILE: SpyVisionUpdate.cpp /////////////////////////////////////////////////////////////////
 // Author: Graham Smallwood, September 2002
-// Desc:   Special Power will spy on the vision of all enemy players.  
+// Desc:   Special Power will spy on the vision of all enemy players.
 //				Putting a SpecialPower in a behavior takes a big huge amount of code duplication and
 //				has no precedent.
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
@@ -38,11 +38,6 @@
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/Module/SpyVisionUpdate.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -57,7 +52,7 @@ SpyVisionUpdate::SpyVisionUpdate( Thing *thing, const ModuleData* moduleData ) :
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-SpyVisionUpdate::~SpyVisionUpdate( void )
+SpyVisionUpdate::~SpyVisionUpdate()
 {
 }
 
@@ -113,8 +108,8 @@ void SpyVisionUpdate::setDisabledUntilFrame( UnsignedInt frame )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void SpyVisionUpdate::onCapture( Player *oldOwner, Player *newOwner ) 
-{ 
+void SpyVisionUpdate::onCapture( Player *oldOwner, Player *newOwner )
+{
 	if( m_currentlyActive )
 	{
 		// If on, flick the switch real fast to get everything to update for the new owner
@@ -135,18 +130,18 @@ void SpyVisionUpdate::onDisabledEdge( Bool nowDisabled )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime SpyVisionUpdate::update( void )
+UpdateSleepTime SpyVisionUpdate::update()
 {
 	const SpyVisionUpdateModuleData *data = getSpyVisionUpdateModuleData();
 	UnsignedInt now = TheGameLogic->getFrame();
 
 	//Once disable has complete and we are waking up from it, then reset the interval so
 	//it has to wait before going on again. If it doesn't have an interval, we turn it on
-	//immediately, but only for self powered objects. 
+	//immediately, but only for self powered objects.
 	if( m_resetTimersNextUpdate )
 	{
 		m_resetTimersNextUpdate = FALSE;
-		
+
 		if( data->m_selfPowered )
 		{
 			if( data->m_selfPoweredInterval == 0 )
@@ -194,9 +189,9 @@ UpdateSleepTime SpyVisionUpdate::update( void )
 void SpyVisionUpdate::doActivationWork( Player *playerToSetFor, Bool setting )
 {
 	const SpyVisionUpdateModuleData *data = getSpyVisionUpdateModuleData();
-	if( playerToSetFor == NULL  ||  ThePlayerList == NULL )
+	if( playerToSetFor == nullptr  ||  ThePlayerList == nullptr )
 		return;
-	
+
 	for (Int i=0; i < ThePlayerList->getPlayerCount(); ++i)
 	{
 		Player *player = ThePlayerList->getNthPlayer(i);
@@ -210,14 +205,14 @@ void SpyVisionUpdate::doActivationWork( Player *playerToSetFor, Bool setting )
 }
 
 //-------------------------------------------------------------------------------------------------
-void SpyVisionUpdate::onDelete( void )
+void SpyVisionUpdate::onDelete()
 {
 	// If I was left on at the time of death, then turn me off.
 	if( m_currentlyActive )
 	{
 		doActivationWork( getObject()->getControllingPlayer(), FALSE );
 	}
-} 
+}
 
 // ------------------------------------------------------------------------------------------------
 void SpyVisionUpdate::upgradeImplementation()
@@ -238,7 +233,7 @@ void SpyVisionUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -267,15 +262,15 @@ void SpyVisionUpdate::xfer( Xfer *xfer )
 		xfer->xferUnsignedInt( &m_disabledUntilFrame );
 	}
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void SpyVisionUpdate::loadPostProcess( void )
+void SpyVisionUpdate::loadPostProcess()
 {
 
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

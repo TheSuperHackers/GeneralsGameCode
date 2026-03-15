@@ -43,9 +43,9 @@ static void exitWait(void)
 static bool getNextLine(FILE *fp, char *line, int& frame, int& index) {
 	if (!fp)
 		return false;
-	
+
 	char buf[LINESIZE];
-	while (fgets(buf, LINESIZE-1, fp) != NULL)
+	while (fgets(buf, LINESIZE-1, fp) != nullptr)
 	{
 		int len = strlen(buf);
 		if (buf[len-1] == '\n')
@@ -56,7 +56,7 @@ static bool getNextLine(FILE *fp, char *line, int& frame, int& index) {
 			return true;
 		}
 	}
-	
+
 	fclose(fp);
 	return false;
 }
@@ -70,18 +70,18 @@ static std::string readInFile(const char *fname) {
 
 	std::string ret;
 	char buf[LINESIZE];
-	while (fgets(buf, LINESIZE-1, fp) != NULL)
+	while (fgets(buf, LINESIZE-1, fp) != nullptr)
 	{
 		ret.append(buf);
 	}
-	
+
 	fclose(fp);
 	return ret;
 }
 
 //=============================================================================
 
-static FILE *ofp = NULL;
+static FILE *ofp = nullptr;
 
 void dumpQueued(void);
 
@@ -190,7 +190,7 @@ int main(int argc, char *argv[])
 	atexit(exitWait);
 	const char *inFname[2];
 	const char *outFname = "out.html";
-	FILE *ifp[2] = {NULL, NULL};
+	FILE *ifp[2] = { nullptr, nullptr};
 	std::string header, footer;
 
 	if (argc != 7)
@@ -212,7 +212,7 @@ int main(int argc, char *argv[])
 		inFname[1] = argv[5];
 		outFname = argv[6];
 	}
-	
+
 	ifp[0] = fopen(inFname[0], "rt");
 	if (!ifp[0])
 	{
@@ -226,9 +226,9 @@ int main(int argc, char *argv[])
 		cout << "could not open " << inFname[1] << endl;
 		return 1;
 	}
-	
+
 	ofp = fopen(outFname, "wt");
-	
+
 	char lastLine[2][LINESIZE];
 	int lastFrame[2] = {-1, -1};
 	int lastIndex[2] = {-1, -1};
@@ -252,7 +252,7 @@ int main(int argc, char *argv[])
 					lastFrame[i], lastIndex[i]);
 			}
 		}
-		
+
 		if (fileOk[0] && fileOk[1])
 		{
 			if (lastFrame[0] < lastFrame[1] ||
@@ -264,7 +264,7 @@ int main(int argc, char *argv[])
 				if (seenRight && seenLeft)
 				{
 					outputLine(lastFrame[0], lastIndex[0], linkNum++,
-						"leftOnly", lastLine[0], NULL, NULL);
+						"leftOnly", lastLine[0], nullptr, nullptr);
 					++numDiffs;
 				}
 				lastFrame[0] = -1;
@@ -278,7 +278,7 @@ int main(int argc, char *argv[])
 				if (seenRight && seenLeft)
 				{
 					outputLine(lastFrame[1], lastIndex[1], linkNum++,
-						NULL, NULL, "rightOnly", lastLine[1]);
+						nullptr, nullptr, "rightOnly", lastLine[1]);
 					++numDiffs;
 				}
 				lastFrame[1] = -1;
@@ -329,7 +329,7 @@ int main(int argc, char *argv[])
 			if (seenRight && seenLeft)
 			{
 				outputLine(lastFrame[0], lastIndex[0], linkNum++,
-					"leftOnly", lastLine[0], NULL, NULL);
+					"leftOnly", lastLine[0], nullptr, nullptr);
 				++numDiffs;
 			}
 			lastFrame[0] = -1;
@@ -342,7 +342,7 @@ int main(int argc, char *argv[])
 			if (seenRight && seenLeft)
 			{
 				outputLine(lastFrame[1], lastIndex[1], linkNum++,
-					NULL, NULL, "rightOnly", lastLine[1]);
+					nullptr, nullptr, "rightOnly", lastLine[1]);
 				++numDiffs;
 			}
 			lastFrame[1] = -1;
@@ -358,11 +358,11 @@ int main(int argc, char *argv[])
 	std::string out;
 	e.expand(footer, out);
 	outputLine(out.c_str());
-	
+
 	if (ofp)
 	{
 		fclose(ofp);
 	}
-	
+
 	return 0;
 }

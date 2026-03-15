@@ -34,12 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef __PROXY_H
-#define __PROXY_H
 
 #include "wwstring.h"
 #include "matrix3d.h"
@@ -57,7 +52,7 @@ public:
 	///////////////////////////////////////////////////////////
 	//	Public constructors/destructors
 	///////////////////////////////////////////////////////////
-	ProxyClass (void) { }
+	ProxyClass () { }
 	ProxyClass (const char *name, const Matrix3D &tm) :
 		Name (name),
 		Transform (tm) { }
@@ -75,10 +70,10 @@ public:
 	//
 	//	Accessors
 	//
-	const char *			Get_Name (void) const					{ return Name; }
+	const char *			Get_Name () const					{ return Name; }
 	void						Set_Name (const char *name)			{ Name = name; }
 
-	const Matrix3D &		Get_Transform (void) const				{ return Transform; }
+	const Matrix3D &		Get_Transform () const				{ return Transform; }
 	void						Set_Transform (const Matrix3D &tm)	{ Transform = tm; }
 
 private:
@@ -109,7 +104,3 @@ ProxyClass::operator!= (const ProxyClass &src)
 {
 	return ((Name != src.Name) || (Transform != src.Transform));
 }
-
-
-#endif //__PROXY_H
-

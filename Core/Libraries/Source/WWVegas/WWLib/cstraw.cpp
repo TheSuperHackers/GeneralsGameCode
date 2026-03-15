@@ -16,28 +16,27 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*********************************************************************************************** 
- ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Command & Conquer                                            * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Library/CSTRAW.CPP                                $* 
- *                                                                                             * 
+/***********************************************************************************************
+ ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Command & Conquer                                            *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Library/CSTRAW.cpp                                $*
+ *                                                                                             *
  *                      $Author:: Greg_h                                                      $*
- *                                                                                             * 
+ *                                                                                             *
  *                     $Modtime:: 7/22/97 11:37a                                              $*
- *                                                                                             * 
+ *                                                                                             *
  *                    $Revision:: 1                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  *   CacheStraw::Get -- Fetch data from the data source.                                       *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include	"always.h"
 #include	"cstraw.h"
-#include	<string.h>
 
 
 /***********************************************************************************************
@@ -65,7 +64,7 @@ int CacheStraw::Get(void * source, int slen)
 {
 	int total = 0;
 
-	if (Is_Valid() && source != NULL && slen > 0) {
+	if (Is_Valid() && source != nullptr && slen > 0) {
 
 		/*
 		**	Keep processing the data request until there is no more data to supply or the request

@@ -123,7 +123,7 @@ void QuickSort (
 	do {
 		do { i++; } while (i<r && keys[i]<v);
 		do { j--; } while (j>0 && keys[j]>v);
-		
+
 		WWASSERT(j>=0);
 		WWASSERT(i<=r);
 
@@ -137,7 +137,7 @@ void QuickSort (
 	keys[j]=keys[i];
 	keys[i]=keys[r];
 	keys[r]=t;
-	
+
 	if (i-1>l) QuickSort(array,keys,l,i-1);
 	if (r>i+1) QuickSort(array,keys,i+1,r);
 }
@@ -319,7 +319,7 @@ static ShortVectorIStruct* Get_Polygon_Index_Array(unsigned count)
 
 void SortingRendererClass::Insert_Triangles(
 	const SphereClass& bounding_sphere,
-	unsigned short start_index, 
+	unsigned short start_index,
 	unsigned short polygon_count,
 	unsigned short min_vertex_index,
 	unsigned short vertex_count)
@@ -357,10 +357,10 @@ void SortingRendererClass::Insert_Triangles(
 	D3DXVec3Transform(
 		&transformed_vec,
 		&vec,
-		&mtx); 
+		&mtx);
 	state->transformed_center=Vector3(transformed_vec[0],transformed_vec[1],transformed_vec[2]);
 
-	
+
 	/// @todo lorenzen sez use a bucket sort here... and stop copying so much data so many times
 
 	SortingNodeStruct* node=sorted_list.Head();
@@ -377,7 +377,7 @@ void SortingRendererClass::Insert_Triangles(
 	if (!node) sorted_list.Add_Tail(state);
 
 #ifdef WWDEBUG
-	unsigned short* indices=NULL;
+	unsigned short* indices=nullptr;
 	SortingIndexBufferClass* index_buffer=static_cast<SortingIndexBufferClass*>(state->sorting_state.index_buffer);
 	WWASSERT(index_buffer);
 	indices=index_buffer->index_buffer;
@@ -403,7 +403,7 @@ void SortingRendererClass::Insert_Triangles(
 // ----------------------------------------------------------------------------
 
 void SortingRendererClass::Insert_Triangles(
-	unsigned short start_index, 
+	unsigned short start_index,
 	unsigned short polygon_count,
 	unsigned short min_vertex_index,
 	unsigned short vertex_count)
@@ -424,7 +424,7 @@ void Release_Refs(SortingNodeStruct* state)
 	REF_PTR_RELEASE(state->sorting_state.vertex_buffer);
 	REF_PTR_RELEASE(state->sorting_state.index_buffer);
 	REF_PTR_RELEASE(state->sorting_state.material);
-	for (i=0;i<DX8Wrapper::Get_Current_Caps()->Get_Max_Textures_Per_Pass();++i) 
+	for (i=0;i<DX8Wrapper::Get_Current_Caps()->Get_Max_Textures_Per_Pass();++i)
 	{
 		REF_PTR_RELEASE(state->sorting_state.Textures[i]);
 	}
@@ -471,7 +471,7 @@ static void Apply_Render_State(RenderStateStruct& render_state)
 	if (render_state.Textures[6]) render_state.Textures[6]->Apply();
 	if (render_state.Textures[7]) render_state.Textures[7]->Apply();
 */
-	for (int i=0;i<DX8Wrapper::Get_Current_Caps()->Get_Max_Textures_Per_Pass();++i) 
+	for (int i=0;i<DX8Wrapper::Get_Current_Caps()->Get_Max_Textures_Per_Pass();++i)
 	{
 		DX8Wrapper::Set_Texture(i,render_state.Textures[i]);
 	}
@@ -494,19 +494,19 @@ static void Apply_Render_State(RenderStateStruct& render_state)
 					DX8Wrapper::Set_DX8_Light(3,&render_state.Lights[3]);
 				}
 				else {
-					DX8Wrapper::Set_DX8_Light(3,NULL);
+					DX8Wrapper::Set_DX8_Light(3,nullptr);
 				}
 			}
 			else {
-				DX8Wrapper::Set_DX8_Light(2,NULL);
+				DX8Wrapper::Set_DX8_Light(2,nullptr);
 			}
 		}
 		else {
-			DX8Wrapper::Set_DX8_Light(1,NULL);
+			DX8Wrapper::Set_DX8_Light(1,nullptr);
 		}
 	}
 	else {
-		DX8Wrapper::Set_DX8_Light(0,NULL);
+		DX8Wrapper::Set_DX8_Light(0,nullptr);
 	}
 
 
@@ -518,7 +518,7 @@ void SortingRendererClass::Flush_Sorting_Pool()
 {
 	if (!overlapping_node_count) return;
 
-	SNAPSHOT_SAY(("SortingSystem - Flush \n"));
+	SNAPSHOT_SAY(("SortingSystem - Flush"));
 
 	unsigned node_id;
 	// Fill dynamic index buffer with sorting index buffer vertices
@@ -543,7 +543,7 @@ void SortingRendererClass::Flush_Sorting_Pool()
 			SortingNodeStruct* state=overlapping_nodes[node_id];
 			float* vertex_z_array=Get_Vertex_Z_Array(state->vertex_count);
 
-			VertexFormatXYZNDUV2* src_verts=NULL;
+			VertexFormatXYZNDUV2* src_verts=nullptr;
 			SortingVertexBufferClass* vertex_buffer=static_cast<SortingVertexBufferClass*>(state->sorting_state.vertex_buffer);
 			WWASSERT(vertex_buffer);
 			src_verts=vertex_buffer->VertexBuffer;
@@ -561,7 +561,7 @@ void SortingRendererClass::Flush_Sorting_Pool()
 				*dest_verts++=*src_verts;
 			}
 
-			unsigned short* indices=NULL;
+			unsigned short* indices=nullptr;
 			SortingIndexBufferClass* index_buffer=static_cast<SortingIndexBufferClass*>(state->sorting_state.index_buffer);
 			WWASSERT(index_buffer);
 			indices=index_buffer->index_buffer;
@@ -688,7 +688,7 @@ void SortingRendererClass::Flush_Sorting_Pool()
 	overlapping_polygon_count=0;
 	overlapping_vertex_count=0;
 
-	SNAPSHOT_SAY(("SortingSystem - Done flushing\n"));
+	SNAPSHOT_SAY(("SortingSystem - Done flushing"));
 
 }
 
@@ -703,7 +703,7 @@ void SortingRendererClass::Flush()
 
 	while (SortingNodeStruct* state=sorted_list.Head()) {
 		state->Remove();
-		
+
 		if ((state->sorting_state.index_buffer_type==BUFFER_TYPE_SORTING || state->sorting_state.index_buffer_type==BUFFER_TYPE_DYNAMIC_SORTING) &&
 			(state->sorting_state.vertex_buffer_type==BUFFER_TYPE_SORTING || state->sorting_state.vertex_buffer_type==BUFFER_TYPE_DYNAMIC_SORTING)) {
 			Insert_To_Sorting_Pool(state);
@@ -719,8 +719,8 @@ void SortingRendererClass::Flush()
 
 	Flush_Sorting_Pool();
 
-	DX8Wrapper::Set_Index_Buffer(0,0);
-	DX8Wrapper::Set_Vertex_Buffer(0);
+	DX8Wrapper::Set_Index_Buffer(nullptr,0);
+	DX8Wrapper::Set_Vertex_Buffer(nullptr);
 	total_sorting_vertices=0;
 
 	DynamicIBAccessClass::_Reset(false);
@@ -736,12 +736,12 @@ void SortingRendererClass::Flush()
 
 void SortingRendererClass::Deinit()
 {
-	SortingNodeStruct *head = NULL;
+	SortingNodeStruct *head = nullptr;
 
 	//
 	//	Flush the sorted list
 	//
-	while ((head = sorted_list.Head ()) != NULL) {
+	while ((head = sorted_list.Head ()) != nullptr) {
 		sorted_list.Remove_Head ();
 		delete head;
 	}
@@ -749,28 +749,28 @@ void SortingRendererClass::Deinit()
 	//
 	//	Flush the clean list
 	//
-	while ((head = clean_list.Head ()) != NULL) {
+	while ((head = clean_list.Head ()) != nullptr) {
 		clean_list.Remove_Head ();
 		delete head;
 	}
 
 	delete[] vertex_z_array;
-	vertex_z_array=NULL;
+	vertex_z_array=nullptr;
 	vertex_z_array_count=0;
 	delete[] polygon_z_array;
-	polygon_z_array=NULL;
+	polygon_z_array=nullptr;
 	polygon_z_array_count=0;
 	delete[] node_id_array;
-	node_id_array=NULL;
+	node_id_array=nullptr;
 	node_id_array_count=0;
 	delete[] sorted_node_id_array;
-	sorted_node_id_array=NULL;
+	sorted_node_id_array=nullptr;
 	sorted_node_id_array_count=0;
 	delete[] polygon_index_array;
-	polygon_index_array=NULL;
+	polygon_index_array=nullptr;
 	polygon_index_array_count=0;
 	delete[] temp_index_array;
-	temp_index_array=NULL;
+	temp_index_array=nullptr;
 	temp_index_array_count=0;
 }
 
@@ -783,7 +783,7 @@ void SortingRendererClass::Deinit()
 
 void SortingRendererClass::Insert_VolumeParticle(
 	const SphereClass& bounding_sphere,
-	unsigned short start_index, 
+	unsigned short start_index,
 	unsigned short polygon_count,
 	unsigned short min_vertex_index,
 	unsigned short vertex_count,
@@ -823,14 +823,14 @@ void SortingRendererClass::Insert_VolumeParticle(
 	D3DXVec3Transform(
 		&transformed_vec,
 		&vec,
-		&mtx); 
+		&mtx);
 	state->transformed_center=Vector3(transformed_vec[0],transformed_vec[1],transformed_vec[2]);
 
 
 	// BUT WHAT IS THE DEAL WITH THE VERTCOUNT AND POLYCOUNT BEING N BUT TRANSFORMED CENTER COUNT == 1
 
 	//THE TRANSFORMED CENTER[2] IS THE ZBUFFER DEPTH
-	
+
 	/// @todo lorenzen sez use a bucket sort here... and stop copying so much data so many times
 
 	SortingNodeStruct* node=sorted_list.Head();
@@ -847,7 +847,7 @@ void SortingRendererClass::Insert_VolumeParticle(
 	if (!node) sorted_list.Add_Tail(state);
 
 //#ifdef WWDEBUG
-//	unsigned short* indices=NULL;
+//	unsigned short* indices=nullptr;
 //	SortingIndexBufferClass* index_buffer=static_cast<SortingIndexBufferClass*>(state->sorting_state.index_buffer);
 //	WWASSERT(index_buffer);
 //	indices=index_buffer->index_buffer;

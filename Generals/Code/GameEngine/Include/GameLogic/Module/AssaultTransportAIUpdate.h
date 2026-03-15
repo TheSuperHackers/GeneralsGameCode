@@ -30,9 +30,6 @@
 
 #pragma once
 
-#ifndef __ASSAULT_TRANSPORT_AI_UPDATE_H
-#define __ASSAULT_TRANSPORT_AI_UPDATE_H
-
 #include "Common/StateMachine.h"
 #include "GameLogic/Module/AIUpdate.h"
 
@@ -58,14 +55,14 @@ public:
 		m_clearRangeRequiredToContinueAttackMove = 50.0f;
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     AIUpdateModuleData::buildFieldParse(p);
 
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
-			{ "MembersGetHealedAtLifeRatio",						INI::parseReal,	NULL, offsetof( AssaultTransportAIUpdateModuleData, m_membersGetHealedAtLifeRatio ) },
-			{ "ClearRangeRequiredToContinueAttackMove", INI::parseReal, NULL, offsetof( AssaultTransportAIUpdateModuleData, m_clearRangeRequiredToContinueAttackMove ) },
+			{ "MembersGetHealedAtLifeRatio",						INI::parseReal,	nullptr, offsetof( AssaultTransportAIUpdateModuleData, m_membersGetHealedAtLifeRatio ) },
+			{ "ClearRangeRequiredToContinueAttackMove", INI::parseReal, nullptr, offsetof( AssaultTransportAIUpdateModuleData, m_clearRangeRequiredToContinueAttackMove ) },
 			{ 0, 0, 0, 0 }
 		};
     p.add(dataFieldParse);
@@ -93,12 +90,12 @@ public:
 	AssaultTransportAIUpdate( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
- 	virtual void aiDoCommand(const AICommandParms* parms);
-	virtual Bool isIdle() const;
-	virtual UpdateSleepTime update();
-	virtual AssaultTransportAIInterface* getAssaultTransportAIInterface() { return this; }
-	virtual const AssaultTransportAIInterface* getAssaultTransportAIInterface() const { return this; }
-	virtual void beginAssault( const Object *designatedTarget ) const;
+ 	virtual void aiDoCommand(const AICommandParms* parms) override;
+	virtual Bool isIdle() const override;
+	virtual UpdateSleepTime update() override;
+	virtual AssaultTransportAIInterface* getAssaultTransportAIInterface() override { return this; }
+	virtual const AssaultTransportAIInterface* getAssaultTransportAIInterface() const override { return this; }
+	virtual void beginAssault( const Object *designatedTarget ) const override;
 
 	UpdateSleepTime calcSleepTime();
 
@@ -123,6 +120,3 @@ protected:
 	Bool							m_isAttackObject;
 	Bool							m_newOccupantsAreNewMembers;
 };
-
-#endif
-

@@ -30,9 +30,6 @@
 
 #pragma once
 
-#ifndef _PREORDER_CREATE_H_
-#define _PREORDER_CREATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/CreateModule.h"
 
@@ -52,11 +49,9 @@ public:
 	PreorderCreate( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual void onCreate( void );
-	virtual void onBuildComplete( void );
+	virtual void onCreate() override;
+	virtual void onBuildComplete() override;
 
 protected:
 
 };
-
-#endif // _PREORDER_CREATE_H_

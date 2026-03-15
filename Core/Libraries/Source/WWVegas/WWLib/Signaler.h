@@ -37,8 +37,7 @@
 *
 ******************************************************************************/
 
-#ifndef __SIGNALER_H__
-#define __SIGNALER_H__
+#pragma once
 
 template<typename T> class Signaler
 	{
@@ -56,21 +55,21 @@ template<typename T> class Signaler
 			{}
 
 		virtual void SignalDropped(Signaler<T>& signaler)
-			{mConnection = NULL;}
+			{mConnection = nullptr;}
 
 	protected:
 		Signaler() :
-				mConnection(NULL)
+				mConnection(nullptr)
 			{}
-	
+
 		virtual ~Signaler()
 			{Disconnect();}
 
 		void Connect(Signaler<T>& source)
 			{mConnection = &source;}
 
-		void Disconnect(void)
-			{if (mConnection) {mConnection->SignalDropped(*this);} mConnection = NULL;}
+		void Disconnect()
+			{if (mConnection) {mConnection->SignalDropped(*this);} mConnection = nullptr;}
 
 		// Prevent copy and assignment
 		Signaler(const Signaler&);
@@ -79,7 +78,3 @@ template<typename T> class Signaler
 	private:
 		Signaler<T>* mConnection;
 	};
-
-#endif // __SIGNALER_H__
-
-

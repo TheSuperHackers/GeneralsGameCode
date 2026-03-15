@@ -27,9 +27,6 @@
 
 #pragma once
 
-#ifndef _H_CommandXlat
-#define _H_CommandXlat
-
 #include "GameClient/InGameUI.h"
 
 enum GUICommandType CPP_11(: Int);
@@ -52,8 +49,8 @@ private:
 
 	Int m_objective;
 	Bool m_teamExists;				///< is there a currently selected "team"?
-  
- 	// these are for determining if a drag occurred or it wasjust a sloppy click
+
+ 	// these are for determining if a drag occurred or it was just a sloppy click
  	ICoord2D m_mouseRightDragAnchor;		// the location of a possible mouse drag start
  	ICoord2D m_mouseRightDragLift;			// the location of a possible mouse drag end
  	UnsignedInt m_mouseRightDown;	// when the mouse down happened
@@ -79,6 +76,7 @@ enum FilterTypes CPP_11(: Int)
 	FT_VIEW_BW_FILTER,		//filter to apply a black & white filter to the screen.
 	FT_VIEW_MOTION_BLUR_FILTER, //filter to apply motion blur filter to screen.
 	FT_VIEW_CROSSFADE,				///<filter to apply a cross blend between previous/current views.
+	FT_VIEW_DEFAULT,				///<default filter mode for default filter.
 	FT_MAX
 };
 
@@ -95,7 +93,7 @@ enum FilterModes CPP_11(: Int)
 	FM_VIEW_CROSSFADE_CIRCLE,	// Fades from previous to current view using expanding circle.
 	FM_VIEW_CROSSFADE_FB_MASK,	// Fades from previous to current using mask stored in framebuffer alpha.
 
-	// These apply to FT_VIEW_MOTION_BLUR_FILTER 
+	// These apply to FT_VIEW_MOTION_BLUR_FILTER
 	FM_VIEW_MB_IN_AND_OUT_ALPHA, // Motion blur filter in and out alpha blur
 	FM_VIEW_MB_IN_AND_OUT_SATURATE, // Motion blur filter in and out saturated blur
 	FM_VIEW_MB_IN_ALPHA, // Motion blur filter in alpha blur
@@ -104,8 +102,8 @@ enum FilterModes CPP_11(: Int)
 	FM_VIEW_MB_OUT_SATURATE, // Motion blur filter out saturated blur
 	FM_VIEW_MB_END_PAN_ALPHA, // Moton blur on screen pan (for camera tracks object mode)
 
-	
-	
+	FM_VIEW_DEFAULT,	//Default filter that's enabled when all others are off.
+
 	// NOTE: This has to be the last entry in this enum.
 	// Add new entries before this one.  jba.
 	FM_VIEW_MB_PAN_ALPHA, // Moton blur on screen pan (for camera tracks object mode)
@@ -119,10 +117,8 @@ public:
 
 	Bool						m_air;					//Are we attacking an airborned target?
 	Drawable				*m_drawTarget;	//Do we have an override draw target?
-	WeaponSlotType	*m_weaponSlot;	//Are we forcing a specific weapon slot? NULL if unspecified.
+	WeaponSlotType	*m_weaponSlot;	//Are we forcing a specific weapon slot? nullptr if unspecified.
 	SpecialPowerType m_specialPowerType; //Which special power are use using? SPECIAL_INVALID if unspecified.
 };
 
-extern void pickAndPlayUnitVoiceResponse( const DrawableList *list, GameMessage::Type msgType, PickAndPlayInfo *info = NULL );
-
-#endif
+extern void pickAndPlayUnitVoiceResponse( const DrawableList *list, GameMessage::Type msgType, PickAndPlayInfo *info = nullptr );

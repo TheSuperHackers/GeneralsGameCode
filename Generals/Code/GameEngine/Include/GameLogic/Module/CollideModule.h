@@ -24,13 +24,10 @@
 
 // FILE: CollideModule.h /////////////////////////////////////////////////////////////////////////////////
 // Author: Colin Day, September 2001
-// Desc:	 
+// Desc:
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __CollideModule_H_
-#define __CollideModule_H_
 
 #include "Common/Module.h"
 #include "GameLogic/Module/BehaviorModule.h"
@@ -38,10 +35,10 @@
 //-------------------------------------------------------------------------------------------------
 /** OBJECT COLLIDE MODULE
 	- Called when two objects collide (or when object collides with ground)
-	- Note in the 'collide' method that 'other' can be NULL, this indicates a 
+	- Note in the 'collide' method that 'other' can be null, this indicates a
 		collision with the ground
-	- Also note the 'collide' method is the response for the object that THIS module 
-		belongs to, we do not need to worry about the collision moudle of 'other', 
+	- Also note the 'collide' method is the response for the object that THIS module
+		belongs to, we do not need to worry about the collision moudle of 'other',
 		it will have its own collide action called separately */
 //-------------------------------------------------------------------------------------------------
 class CollideModuleInterface
@@ -61,7 +58,7 @@ class CollideModuleData : public BehaviorModuleData
 {
 public:
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
 		BehaviorModuleData::buildFieldParse(p);
 	}
@@ -69,7 +66,7 @@ public:
 
 
 //-------------------------------------------------------------------------------------------------
-class CollideModule : public BehaviorModule, 
+class CollideModule : public BehaviorModule,
 											public CollideModuleInterface
 {
 
@@ -85,20 +82,18 @@ public:
 	static Int getInterfaceMask() { return MODULEINTERFACE_COLLIDE; }
 
 	// BehaviorModule
-	virtual CollideModuleInterface* getCollide() { return this; }
+	virtual CollideModuleInterface* getCollide() override { return this; }
 
 	virtual void onCollide( Object *other, const Coord3D *loc, const Coord3D *normal ) = 0;
 
 	/// this is used for things like pilots, to determine if they can "enter" something
-	virtual Bool wouldLikeToCollideWith(const Object* other) const { return false; }
-	virtual Bool isHijackedVehicleCrateCollide() const { return false; }
-	virtual Bool isCarBombCrateCollide() const { return false; }
-	virtual Bool isRailroad() const { return false;}
-	virtual Bool isSalvageCrateCollide() const { return false; }
+	virtual Bool wouldLikeToCollideWith(const Object* other) const override { return false; }
+	virtual Bool isHijackedVehicleCrateCollide() const override { return false; }
+	virtual Bool isCarBombCrateCollide() const override { return false; }
+	virtual Bool isRailroad() const override { return false;}
+	virtual Bool isSalvageCrateCollide() const override { return false; }
 
 };
 inline CollideModule::CollideModule( Thing *thing, const ModuleData* moduleData ) : BehaviorModule( thing, moduleData ) { }
 inline CollideModule::~CollideModule() { }
 //-------------------------------------------------------------------------------------------------
-
-#endif

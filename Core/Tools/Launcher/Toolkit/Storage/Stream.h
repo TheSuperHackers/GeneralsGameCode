@@ -34,8 +34,7 @@
 *
 ****************************************************************************/
 
-#ifndef STREAM_H
-#define STREAM_H
+#pragma once
 
 #include <Support/UTypes.h>
 
@@ -64,18 +63,16 @@ class Stream
 
 		//! End of stream test
 		virtual bool AtEnd(void) = 0;
-		
+
 		//! Retrieve a sequence of bytes.
 		virtual UInt32 GetBytes(void* ptr, UInt32 bytes) = 0;
 
 		//! Write a sequence of bytes
 		virtual UInt32 PutBytes(const void* ptr, UInt32 bytes) = 0;
-		
+
 		//! Retrieve a sequence of bytes without advancing marker.
 		virtual UInt32 PeekBytes(void* ptr, UInt32 bytes) = 0;
 
 		//! Flush the stream
 		virtual void Flush(void) = 0;
 	};
-
-#endif // STREAM_H

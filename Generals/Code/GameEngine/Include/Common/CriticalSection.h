@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifndef __CRITICALSECTION_H__
-#define __CRITICALSECTION_H__
-
 #include "Common/PerfTimer.h"
 
 #ifdef PERF_TIMERS
@@ -59,15 +56,15 @@ class CriticalSection
 		}
 
 	public:	// Use these when entering/exiting a critical section.
-		void enter( void ) 
-		{ 
+		void enter()
+		{
 			#ifdef PERF_TIMERS
 			AutoPerfGather a(TheCritSecPerfGather);
 			#endif
 			EnterCriticalSection( &m_windowsCriticalSection );
 		}
-		
-		void exit( void )
+
+		void exit()
 		{
 			#ifdef PERF_TIMERS
 			AutoPerfGather a(TheCritSecPerfGather);
@@ -80,27 +77,25 @@ class ScopedCriticalSection
 {
 	private:
 		CriticalSection *m_cs;
-	
+
 	public:
 		ScopedCriticalSection( CriticalSection *cs ) : m_cs(cs)
-		{ 
-			if (m_cs) 
+		{
+			if (m_cs)
 				m_cs->enter();
 		}
 
-		virtual ~ScopedCriticalSection( )
-		{ 
-			if (m_cs) 
+		virtual ~ScopedCriticalSection()
+		{
+			if (m_cs)
 				m_cs->exit();
 		}
 };
 
-// These should be NULL on creation then non-NULL in WinMain or equivalent.
+// These should be null on creation then non-null in WinMain or equivalent.
 // This allows us to be silently non-threadsafe for WB and other single-threaded apps.
 extern CriticalSection *TheAsciiStringCriticalSection;
 extern CriticalSection *TheUnicodeStringCriticalSection;
 extern CriticalSection *TheDmaCriticalSection;
 extern CriticalSection *TheMemoryPoolCriticalSection;
 extern CriticalSection *TheDebugLogCriticalSection;
-
-#endif /* __CRITICALSECTION_H__ */

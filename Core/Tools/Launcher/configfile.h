@@ -20,14 +20,13 @@
 *        C O N F I D E N T I A L --- W E S T W O O D   S T U D I O S         *
 ******************************************************************************
 Project Name: Carpenter  (The RedAlert ladder creator)
-File Name   : configfile.h 
+File Name   : configfile.h
 Author      : Neal Kettler
 Start Date  : June 9, 1997
-Last Update : June 17, 1997  
+Last Update : June 17, 1997
 \***************************************************************************/
 
-#ifndef CONFIGFILE_HEADER
-#define CONFIGFILE_HEADER
+#pragma once
 
 #include "dictionary.h"
 #include "wstring.h"
@@ -51,5 +50,3 @@ class ConfigFile
   Dictionary<Wstring,Wstring> dictionary; // stores the mappings from keys
                                         //  to value strings
 };
-
-#endif

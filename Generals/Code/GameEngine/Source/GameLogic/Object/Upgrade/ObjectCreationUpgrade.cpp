@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/ModelState.h"
 #include "Common/Player.h"
@@ -40,12 +40,12 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-ObjectCreationUpgradeModuleData::ObjectCreationUpgradeModuleData( void )
+ObjectCreationUpgradeModuleData::ObjectCreationUpgradeModuleData()
 {
 
-	m_ocl = NULL;
+	m_ocl = nullptr;
 
-}  // end SpecialPowerModuleData
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -53,14 +53,14 @@ ObjectCreationUpgradeModuleData::ObjectCreationUpgradeModuleData( void )
 {
 	UpgradeModuleData::buildFieldParse( p );
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
-		{ "UpgradeObject", INI::parseObjectCreationList, NULL, offsetof( ObjectCreationUpgradeModuleData, m_ocl ) },
-		{ 0, 0, 0, 0 } 
+		{ "UpgradeObject", INI::parseObjectCreationList, nullptr, offsetof( ObjectCreationUpgradeModuleData, m_ocl ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 	p.add(dataFieldParse);
 
-}  // end buildFieldParse
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -68,33 +68,33 @@ ObjectCreationUpgradeModuleData::ObjectCreationUpgradeModuleData( void )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-ObjectCreationUpgrade::ObjectCreationUpgrade( Thing *thing, const ModuleData* moduleData ) : 
+ObjectCreationUpgrade::ObjectCreationUpgrade( Thing *thing, const ModuleData* moduleData ) :
 							UpgradeModule( thing, moduleData )
 {
 
-}  // end ObjectCreationUpgrade
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-ObjectCreationUpgrade::~ObjectCreationUpgrade( void )
+ObjectCreationUpgrade::~ObjectCreationUpgrade()
 {
 
-}  // end ~ObjectCreationUpgrade
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void ObjectCreationUpgrade::onDelete( void )
+void ObjectCreationUpgrade::onDelete()
 {
-}  // end onDelete
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void ObjectCreationUpgrade::upgradeImplementation( void )
+void ObjectCreationUpgrade::upgradeImplementation()
 {
 	// spawn everything in the OCL
 	if (getObjectCreationUpgradeModuleData() && getObjectCreationUpgradeModuleData()->m_ocl)
 	{
-		ObjectCreationList::create((getObjectCreationUpgradeModuleData()->m_ocl), getObject(), NULL);
+		ObjectCreationList::create((getObjectCreationUpgradeModuleData()->m_ocl), getObject(), nullptr);
 	}
 }
 
@@ -107,7 +107,7 @@ void ObjectCreationUpgrade::crc( Xfer *xfer )
 	// extend base class
 	UpgradeModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -125,15 +125,15 @@ void ObjectCreationUpgrade::xfer( Xfer *xfer )
 	// extend base class
 	UpgradeModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void ObjectCreationUpgrade::loadPostProcess( void )
+void ObjectCreationUpgrade::loadPostProcess()
 {
 
 	// extend base class
 	UpgradeModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

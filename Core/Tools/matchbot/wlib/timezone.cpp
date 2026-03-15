@@ -22,7 +22,7 @@
 void GetTimezoneInfo(const char * &timezone_str, int &timezone_offset) {
 	timezone_str = "Unknown Timezone";
 	timezone_offset = 0;
-#ifdef _WINDOWS
+#ifdef _WIN32
 	struct _timeb    wintime;
 	_ftime(&wintime);
 
@@ -37,7 +37,7 @@ void GetTimezoneInfo(const char * &timezone_str, int &timezone_offset) {
 	timezone_offset = wintime.timezone * 60; // its in minutes...
 
 #endif
-#ifndef _WINDOWS
+#ifndef _WIN32
 	struct timeval   unixtime;
 	struct timezone  unixtzone;
 	gettimeofday(&unixtime,&unixtzone);

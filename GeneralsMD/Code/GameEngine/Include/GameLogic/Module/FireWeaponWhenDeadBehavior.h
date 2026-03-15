@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __FireWeaponWhenDeadBehavior_H_
-#define __FireWeaponWhenDeadBehavior_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 
 #include "GameLogic/Module/BehaviorModule.h"
@@ -51,15 +48,15 @@ public:
 	FireWeaponWhenDeadBehaviorModuleData()
 	{
 		m_initiallyActive = false;
-		m_deathWeapon = NULL;
+		m_deathWeapon = nullptr;
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
-			{ "StartsActive",	INI::parseBool, NULL, offsetof( FireWeaponWhenDeadBehaviorModuleData, m_initiallyActive ) },
-			{ "DeathWeapon", INI::parseWeaponTemplate,	NULL, offsetof( FireWeaponWhenDeadBehaviorModuleData, m_deathWeapon ) },
+			{ "StartsActive",	INI::parseBool, nullptr, offsetof( FireWeaponWhenDeadBehaviorModuleData, m_initiallyActive ) },
+			{ "DeathWeapon", INI::parseWeaponTemplate,	nullptr, offsetof( FireWeaponWhenDeadBehaviorModuleData, m_deathWeapon ) },
 			{ 0, 0, 0, 0 }
 		};
 
@@ -72,7 +69,7 @@ public:
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-class FireWeaponWhenDeadBehavior : public BehaviorModule, 
+class FireWeaponWhenDeadBehavior : public BehaviorModule,
 																	 public UpgradeMux,
 																	 public DieModuleInterface
 {
@@ -89,45 +86,42 @@ public:
 	static Int getInterfaceMask() { return BehaviorModule::getInterfaceMask() | (MODULEINTERFACE_UPGRADE) | (MODULEINTERFACE_DIE); }
 
 	// BehaviorModule
-	virtual UpgradeModuleInterface* getUpgrade() { return this; }
-	virtual DieModuleInterface* getDie() { return this; }
+	virtual UpgradeModuleInterface* getUpgrade() override { return this; }
+	virtual DieModuleInterface* getDie() override { return this; }
 
 	// DamageModuleInterface
-	virtual void onDie( const DamageInfo *damageInfo );
+	virtual void onDie( const DamageInfo *damageInfo ) override;
 
 protected:
 
-	virtual void upgradeImplementation()
+	virtual void upgradeImplementation() override
 	{
 		// nothing!
 	}
 
-	virtual void getUpgradeActivationMasks(UpgradeMaskType& activation, UpgradeMaskType& conflicting) const
+	virtual void getUpgradeActivationMasks(UpgradeMaskType& activation, UpgradeMaskType& conflicting) const override
 	{
 		getFireWeaponWhenDeadBehaviorModuleData()->m_upgradeMuxData.getUpgradeActivationMasks(activation, conflicting);
 	}
 
-	virtual void performUpgradeFX()
+	virtual void performUpgradeFX() override
 	{
 		getFireWeaponWhenDeadBehaviorModuleData()->m_upgradeMuxData.performUpgradeFX(getObject());
 	}
 
-	virtual void processUpgradeRemoval()
+	virtual void processUpgradeRemoval() override
 	{
-		// I can't take it any more.  Let the record show that I think the UpgradeMux multiple inheritence is CRAP.
+		// I can't take it any more.  Let the record show that I think the UpgradeMux multiple inheritance is CRAP.
 		getFireWeaponWhenDeadBehaviorModuleData()->m_upgradeMuxData.muxDataProcessUpgradeRemoval(getObject());
 	}
 
-	virtual Bool requiresAllActivationUpgrades() const
+	virtual Bool requiresAllActivationUpgrades() const override
 	{
 		return getFireWeaponWhenDeadBehaviorModuleData()->m_upgradeMuxData.m_requiresAllTriggers;
 	}
 
-	inline Bool isUpgradeActive() const { return isAlreadyUpgraded(); }
-	
-	virtual Bool isSubObjectsUpgrade() { return false; }
+	Bool isUpgradeActive() const { return isAlreadyUpgraded(); }
+
+	virtual Bool isSubObjectsUpgrade() override { return false; }
 
 };
-
-#endif // __FireWeaponWhenDeadBehavior_H_
-

@@ -36,15 +36,13 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef EXPORTLOG_H
-#define EXPORTLOG_H
+#pragma once
 
 #include <windows.h>
- 
+
 /**
 ** ExportLog
-** This is an interface to the export log dialog.  
+** This is an interface to the export log dialog.
 */
 class ExportLog
 {
@@ -56,7 +54,3 @@ public:
 	static void rprintf(const char *, ...);
 	static void	updatebar(float position, float total);
 };
-
-
-#endif //EXPORTLOG_H
-

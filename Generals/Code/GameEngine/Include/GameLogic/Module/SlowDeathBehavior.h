@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __SlowDeathBehavior_H_
-#define __SlowDeathBehavior_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/BehaviorModule.h"
 #include "GameLogic/Module/DieModule.h"
@@ -54,18 +51,19 @@ enum SlowDeathPhaseType CPP_11(: Int)
 	SDPHASE_MIDPOINT,
 	SDPHASE_FINAL,
 
-	SD_PHASE_COUNT	// keep last
+	SD_PHASE_COUNT
 };
 
 #ifdef DEFINE_SLOWDEATHPHASE_NAMES
-static const char *TheSlowDeathPhaseNames[] = 
+static const char *const TheSlowDeathPhaseNames[] =
 {
 	"INITIAL",
 	"MIDPOINT",
 	"FINAL",
 
-	NULL
+	nullptr
 };
+static_assert(ARRAY_SIZE(TheSlowDeathPhaseNames) == SD_PHASE_COUNT + 1, "Incorrect array size");
 #endif
 
 
@@ -90,7 +88,7 @@ public:
 	Real							m_flingPitch;
 	Real							m_flingPitchVariance;
 
-	enum 
+	enum
 	{
 		//flags used by m_maskOfLoadedEffects
 		HAS_FX							= 1,
@@ -102,7 +100,7 @@ public:
 
 	SlowDeathBehaviorModuleData();
 	static void buildFieldParse(MultiIniFieldParse& p);
-	inline Bool hasNonLodEffects() const
+	Bool hasNonLodEffects() const
 	{
 		return (m_maskOfLoadedEffects & SlowDeathBehaviorModuleData::HAS_NON_LOD_EFFECTS) != 0;
 	}
@@ -123,7 +121,7 @@ public:
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-class SlowDeathBehavior : public UpdateModule, 
+class SlowDeathBehavior : public UpdateModule,
 													public DieModuleInterface,
 													public SlowDeathBehaviorInterface
 {
@@ -139,30 +137,30 @@ public:
 	static Int getInterfaceMask() { return UpdateModule::getInterfaceMask() | (MODULEINTERFACE_DIE); }
 
 	// BehaviorModule
-	virtual DieModuleInterface* getDie() { return this; }
+	virtual DieModuleInterface* getDie() override { return this; }
 
 	// UpdateModuleInterface
-	virtual UpdateSleepTime update();	
-	virtual SlowDeathBehaviorInterface* getSlowDeathBehaviorInterface() { return this; }
+	virtual UpdateSleepTime update() override;
+	virtual SlowDeathBehaviorInterface* getSlowDeathBehaviorInterface() override { return this; }
 	// Disabled conditions to process -- all
-	virtual DisabledMaskType getDisabledTypesToProcess() const { return DISABLEDMASK_ALL; }
+	virtual DisabledMaskType getDisabledTypesToProcess() const override { return DISABLEDMASK_ALL; }
 
 	// DieModuleInterface
-	virtual void onDie( const DamageInfo *damageInfo );
+	virtual void onDie( const DamageInfo *damageInfo ) override;
 
 	// SlowDeathBehaviorInterface
-	virtual void beginSlowDeath( const DamageInfo *damageInfo );
-	virtual Int getProbabilityModifier( const DamageInfo *damageInfo ) const;
-	virtual Bool isDieApplicable(const DamageInfo *damageInfo) const { return getSlowDeathBehaviorModuleData()->m_dieMuxData.isDieApplicable(getObject(), damageInfo); }
+	virtual void beginSlowDeath( const DamageInfo *damageInfo ) override;
+	virtual Int getProbabilityModifier( const DamageInfo *damageInfo ) const override;
+	virtual Bool isDieApplicable(const DamageInfo *damageInfo) const override { return getSlowDeathBehaviorModuleData()->m_dieMuxData.isDieApplicable(getObject(), damageInfo); }
 
 protected:
 
 	void doPhaseStuff(SlowDeathPhaseType sdphase);
-	inline Bool isSlowDeathActivated() const { return (m_flags & (1<<SLOW_DEATH_ACTIVATED)) != 0; }
-	inline UnsignedInt getDestructionFrame() const { return m_destructionFrame; }
+	Bool isSlowDeathActivated() const { return (m_flags & (1<<SLOW_DEATH_ACTIVATED)) != 0; }
+	UnsignedInt getDestructionFrame() const { return m_destructionFrame; }
 
 private:
-	
+
 	enum
 	{
 		SLOW_DEATH_ACTIVATED,
@@ -173,10 +171,7 @@ private:
 
 	UnsignedInt m_sinkFrame;							///< Frame to be sunken into the ground on
 	UnsignedInt m_midpointFrame;					///< The midpoint is between .25 through life and .75 through life (eg)
-	UnsignedInt m_destructionFrame;	
+	UnsignedInt m_destructionFrame;
 	Real				m_acceleratedTimeScale;		///<used to speedup deaths when needed to improve game performance.
 	UnsignedInt	m_flags;
 };
-
-#endif // __SlowDeathBehavior_H_
-

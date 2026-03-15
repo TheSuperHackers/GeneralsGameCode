@@ -39,7 +39,7 @@ static char THIS_FILE[] = __FILE__;
 //
 //  CBackgroundBMPDialog
 //
-CBackgroundBMPDialog::CBackgroundBMPDialog (CWnd* pParent /*=NULL*/)
+CBackgroundBMPDialog::CBackgroundBMPDialog (CWnd* pParent /*=nullptr*/)
 	: CDialog(CBackgroundBMPDialog::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(CBackgroundBMPDialog)
@@ -104,14 +104,14 @@ CBackgroundBMPDialog::OnInitDialog (void)
 //  OnOK
 //
 void
-CBackgroundBMPDialog::OnOK (void) 
+CBackgroundBMPDialog::OnOK (void)
 {
     // Gett a pointer to the current document
     CW3DViewDoc *pCDoc = ::GetCurrentDocument ();
     if (pCDoc)
     {
         CString stringBackgroundBMPName;
-        
+
         // Get the filename the user entered
         if (GetDlgItemText (IDC_FILENAME_EDIT, stringBackgroundBMPName) > 0)
         {
@@ -121,10 +121,10 @@ CBackgroundBMPDialog::OnOK (void)
         else
         {
             // Ask the doc to clear any existing background BMP
-            pCDoc->SetBackgroundBMP (NULL);
+            pCDoc->SetBackgroundBMP (nullptr);
         }
     }
-	
+
 	// Allow the base class to process this message
     CDialog::OnOK ();
     return ;

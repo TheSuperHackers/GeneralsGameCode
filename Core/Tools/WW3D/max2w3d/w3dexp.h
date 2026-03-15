@@ -17,26 +17,25 @@
 */
 
 /* $Header: /Commando/Code/Tools/max2w3d/w3dexp.h 22    10/23/00 5:34p Greg_h $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando Tools - W3D export                                  * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/Tools/max2w3d/w3dexp.h                       $* 
- *                                                                                             * 
- *                      $Author:: Greg_h                                                      $* 
- *                                                                                             * 
- *                     $Modtime:: 10/23/00 5:24p                                              $* 
- *                                                                                             * 
- *                    $Revision:: 22                                                          $* 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando Tools - W3D export                                  *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/Tools/max2w3d/w3dexp.h                       $*
+ *                                                                                             *
+ *                      $Author:: Greg_h                                                      $*
+ *                                                                                             *
+ *                     $Modtime:: 10/23/00 5:24p                                              $*
+ *                                                                                             *
+ *                    $Revision:: 22                                                          $*
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#ifndef W3DEXP_H
-#define W3DEXP_H
+#pragma once
 
 #include "always.h"
 #include <max.h>
@@ -57,17 +56,17 @@ public:
 	W3dExportClass() {};
 	~W3dExportClass() {};
 
-	int				ExtCount()				{ return 1; };				
-	const TCHAR *	Ext(int n)				{ return Get_String(IDS_W3D_FILE_EXTEN); };				
-	const TCHAR *	LongDesc()				{ return Get_String(IDS_W3D_LONG_DESCRIPTION); };				
-	const TCHAR *	ShortDesc()				{ return Get_String(IDS_W3D_SHORT_DESCRIPTION); };			
-	const TCHAR *	AuthorName()			{ return Get_String(IDS_AUTHOR_NAME); };			
-	const TCHAR *	CopyrightMessage()	{ return Get_String(IDS_COPYRIGHT_NOTICE); };		
-	const TCHAR *	OtherMessage1()		{ return _T(""); };		
-	const TCHAR *	OtherMessage2()		{ return _T(""); };		
-	unsigned int	Version()				{ return 100; };				
-	
-	void				ShowAbout(HWND hWnd)	{};	
+	int				ExtCount()				{ return 1; };
+	const TCHAR *	Ext(int n)				{ return Get_String(IDS_W3D_FILE_EXTEN); };
+	const TCHAR *	LongDesc()				{ return Get_String(IDS_W3D_LONG_DESCRIPTION); };
+	const TCHAR *	ShortDesc()				{ return Get_String(IDS_W3D_SHORT_DESCRIPTION); };
+	const TCHAR *	AuthorName()			{ return Get_String(IDS_AUTHOR_NAME); };
+	const TCHAR *	CopyrightMessage()	{ return Get_String(IDS_COPYRIGHT_NOTICE); };
+	const TCHAR *	OtherMessage1()		{ return _T(""); };
+	const TCHAR *	OtherMessage2()		{ return _T(""); };
+	unsigned int	Version()				{ return 100; };
+
+	void				ShowAbout(HWND hWnd)	{};
 	int				DoExport(const TCHAR *name,ExpInterface *ei,Interface *i, BOOL suppressPrompts=FALSE, DWORD options=0);	// Export file
 
 protected:
@@ -98,18 +97,18 @@ private:
 	INodeListClass *		DamageRootList;
 
 	HierarchySaveClass *	HierarchyTree;
-		
+
 	bool get_export_options(BOOL suppress_prompts = FALSE);
 	INodeListClass * get_origin_list(void);
 	INodeListClass * get_damage_root_list(void);
 	HierarchySaveClass * get_hierarchy_tree(void);
-	
+
 	bool get_base_object_tm(Matrix3 &tm);
 
 	bool Export_Hierarchy(char * name,ChunkSaveClass & csave,Progress_Meter_Class & meter,INode *root);
 	bool Export_Animation(char * name,ChunkSaveClass & csave,Progress_Meter_Class & meter,INode *root);
 	bool Export_Damage_Animations(char * name,ChunkSaveClass & csave,Progress_Meter_Class &meter,INode *damage_root);
-	bool Export_Geometry(char * name,ChunkSaveClass & csave,Progress_Meter_Class & meter,INode *root=NULL, MeshConnectionsClass **out_connection=NULL);
+	bool Export_Geometry(char * name,ChunkSaveClass & csave,Progress_Meter_Class & meter,INode *root=nullptr, MeshConnectionsClass **out_connection=nullptr);
 	bool Export_HLod (char *name, const char *htree_name, ChunkSaveClass &csave, Progress_Meter_Class &meter, MeshConnectionsClass **connections, int lod_count);
 	bool Export_Collection(const char * name,ChunkSaveClass & csave,DynamicVectorClass<GeometryExportTaskClass *> & objlist,INodeListClass & placeholder_list,INodeListClass & transform_node_list);
 
@@ -117,6 +116,3 @@ private:
 	void End_Progress_Bar(void);
 
 };
-
-
-#endif 

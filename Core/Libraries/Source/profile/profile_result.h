@@ -26,17 +26,14 @@
 //
 // Result function interface and result functions
 //////////////////////////////////////////////////////////////////////////////
-#ifdef _MSC_VER
-#  pragma once
-#endif
-#ifndef PROFILE_RESULT_H // Include guard
-#define PROFILE_RESULT_H
+
+#pragma once
 
 /**
   \brief Result function class.
 
-  Factories for instances of this class are registered using 
-  \ref Profile::AddResultFunction. 
+  Factories for instances of this class are registered using
+  \ref Profile::AddResultFunction.
 */
 class ProfileResultInterface
 {
@@ -50,17 +47,15 @@ public:
 
     This function is called on program exit.
   */
-  virtual void WriteResults(void)=0;
+  virtual void WriteResults()=0;
 
   /**
     \brief Destroys the current result function.
 
     Use this function instead of just delete'ing the instance.
   */
-  virtual void Delete(void)=0;
+  virtual void Delete()=0;
 
 protected:
-  ProfileResultInterface(void) {}
+  ProfileResultInterface() {}
 };
-
-#endif // PROFILE_RESULT_H

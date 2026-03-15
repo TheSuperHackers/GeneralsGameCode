@@ -34,9 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef HLODSAVE_H
-#define HLODSAVE_H
+#pragma once
 
 #include "always.h"
 
@@ -44,7 +42,7 @@
 #include <stdio.h>
 
 #include "w3d_file.h"
-#include "PROGRESS.H"
+#include "PROGRESS.h"
 #include "chunkio.h"
 #include "meshcon.h"
 
@@ -83,7 +81,7 @@ protected:
 
 		HLodArrayEntry (int num_sub_objs = 0)
 		{
-			sub_obj = NULL;
+			sub_obj = nullptr;
 			num_sub_objects = 0;
 			Allocate_Sub_Objects(num_sub_objs);
 		}
@@ -93,7 +91,7 @@ protected:
 			if (sub_obj)
 			{
 				delete sub_obj;
-				sub_obj = NULL;
+				sub_obj = nullptr;
 				num_sub_objects = 0;
 			}
 		}
@@ -123,7 +121,3 @@ protected:
 	HLodArrayEntry							aggregate_array;
 	HLodArrayEntry							proxy_array;
 };
-
-
-
-#endif

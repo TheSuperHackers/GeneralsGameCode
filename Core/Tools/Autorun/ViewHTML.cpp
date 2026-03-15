@@ -53,7 +53,7 @@
 * INPUTS
 *     URL      - Website address
 *     Wait     - Wait for user to close browser (default = false)
-*     Callback - User callback to invoke during wait (default = NULL callback)
+*     Callback - User callback to invoke during wait (default = nullptr callback)
 *
 * RESULT
 *     Success - True if successful; otherwise false
@@ -70,7 +70,7 @@ bool ViewHTML(const char* url, bool wait, const CallbackHook& callback)
 	//--------------------------------------------------------------------------
 	// Just return if no URL specified
 	//--------------------------------------------------------------------------
-	if ((url == NULL) || (strlen(url) == 0))
+	if ((url == nullptr) || (strlen(url) == 0))
 		{
 //		DebugPrint("***** No URL specified.\n");
 		Msg( __LINE__, TEXT(__FILE__), TEXT("***** No URL specified." ));
@@ -85,9 +85,9 @@ bool ViewHTML(const char* url, bool wait, const CallbackHook& callback)
 	char tempPath[MAX_PATH];
 	char filename1[MAX_PATH];
 	char filename2[MAX_PATH];
-	
-	// Expand the TMP environment variable. 
-	{ 
+
+	// Expand the TMP environment variable.
+	{
 		DWORD dwResult;
 		dwResult = ExpandEnvironmentStrings( "%TEMP%", tempPath,  MAX_PATH);
 		if(dwResult == 0)
@@ -108,13 +108,13 @@ bool ViewHTML(const char* url, bool wait, const CallbackHook& callback)
 	// Create file
 	//--------------------------------------------------------------------------
 	HANDLE file = CreateFile(
-					filename2, 
-					GENERIC_WRITE, 
-					0, 
-					NULL, 
+					filename2,
+					GENERIC_WRITE,
+					0,
+					nullptr,
 					CREATE_ALWAYS,
-					FILE_ATTRIBUTE_NORMAL, 
-					NULL);
+					FILE_ATTRIBUTE_NORMAL,
+					nullptr);
 
 	if (file == INVALID_HANDLE_VALUE)
 		{
@@ -126,12 +126,12 @@ bool ViewHTML(const char* url, bool wait, const CallbackHook& callback)
 	// Write generic contents
 	const char* contents = "<title>ViewHTML</title>";
 	DWORD written;
-	WriteFile(file, contents, strlen(contents), &written, NULL);
+	WriteFile(file, contents, strlen(contents), &written, nullptr);
 	CloseHandle(file);
 
 	// Find the executable that can launch this file
 	char exeName[MAX_PATH];
-	HINSTANCE hInst = FindExecutable(filename2, NULL, exeName);
+	HINSTANCE hInst = FindExecutable(filename2, nullptr, exeName);
 
 	// Delete temporary file
 	DeleteFile(filename2);
@@ -151,19 +151,19 @@ bool ViewHTML(const char* url, bool wait, const CallbackHook& callback)
 	STARTUPINFO startupInfo;
 	memset(&startupInfo, 0, sizeof(startupInfo));
 	startupInfo.cb = sizeof(startupInfo);
-  
+
 	PROCESS_INFORMATION processInfo;
 
 	BOOL createSuccess = CreateProcess(
-			exeName, 
-			commandLine, 
-			NULL, 
-			NULL, 
+			exeName,
+			commandLine,
+			nullptr,
+			nullptr,
 			FALSE,
-			0, 
-			NULL, 
-			NULL, 
-			&startupInfo, 
+			0,
+			nullptr,
+			nullptr,
+			&startupInfo,
 			&processInfo);
 
 	if (createSuccess == FALSE)
@@ -185,7 +185,7 @@ bool ViewHTML(const char* url, bool wait, const CallbackHook& callback)
 				{
 				break;
 				}
-			
+
 			Sleep(100);
 
 			DWORD exitCode;

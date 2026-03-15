@@ -16,12 +16,8 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#if !defined(AFX_ADVANCEDANIMSHEET_H__67C01724_7C0D_11D3_9A3A_0090272E6F90__INCLUDED_)
-#define AFX_ADVANCEDANIMSHEET_H__67C01724_7C0D_11D3_9A3A_0090272E6F90__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
+
 // AdvancedAnimSheet.h : header file
 //
 
@@ -41,7 +37,7 @@ class CAdvancedAnimSheet : public CPropertySheet
 
 // Construction
 public:
-	CAdvancedAnimSheet(CWnd *pParentWnd = NULL, UINT iSelectPage = 0);
+	CAdvancedAnimSheet(CWnd *pParentWnd = nullptr, UINT iSelectPage = 0);
 
 // Attributes
 public:
@@ -50,7 +46,7 @@ public:
 	CAnimMixingPage	m_MixingPage;
 	CAnimReportPage	m_ReportPage;
 
-	// Indeces of animations selected in the mixing page.
+	// Indices of animations selected in the mixing page.
 	DynamicVectorClass<int>	m_SelectedAnims;
 
 // Operations
@@ -88,5 +84,3 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_ADVANCEDANIMSHEET_H__67C01724_7C0D_11D3_9A3A_0090272E6F90__INCLUDED_)

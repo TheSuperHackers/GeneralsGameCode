@@ -24,7 +24,6 @@
 #include "dx8caps.h"
 #include "textureloader.h"
 #include "texture.h"
-#include <Utility/stdio_adapter.h>
 
 #include <memory.h>
 #ifdef _UNIX
@@ -76,7 +75,7 @@ static void Record_Texture_Begin()
 	procedural_texture_count=0;
 	record_count=0;
 	texture_change_count=0;
-	latest_texture=NULL;
+	latest_texture=nullptr;
 	texture_statistics.Resize(0);
 }
 
@@ -132,11 +131,11 @@ static void Record_Texture_End()
 //				int percents=100-100*bytes/non_red_bytes;
 				working_string.Format("%4.4dkb         ",bytes/1024);
 				texture_statistics_string+=working_string;
+				texture_statistics_string+=t->Get_Texture_Name();//getTextureName();
 			}
 			else {
 				texture_statistics_string+="N/A  ";
 			}
-			texture_statistics_string+=t->Get_Texture_Name();//getTextureName();
 			texture_statistics_string+=error;
 			texture_statistics_string+="\n";
 		}
@@ -175,7 +174,7 @@ static bool Find_Record_Texture(TextureClass* t)
 					texture_statistics[a].change_count++;
 				}
 			}
-		
+
 			return true;
 		}
 	}

@@ -36,14 +36,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef DX8_POLYGON_RENDERER_H
-#define DX8_POLYGON_RENDERER_H
-
 
 #include "always.h"
 #include "meshmdl.h"
@@ -61,10 +54,10 @@ class DX8TextureCategoryClass;
 ** This is a record of a batch/range of polygons to be rendered.  These hang off of the DX8TextureCategoryClass's
 ** and are rendered after the system installs a vertex buffer and textures in the DX8 wrapper.
 */
-class DX8PolygonRendererClass : public MultiListObjectClass 
+class DX8PolygonRendererClass : public MultiListObjectClass
 {
 	MeshModelClass *				mmc;
-	DX8TextureCategoryClass *	texture_category;			
+	DX8TextureCategoryClass *	texture_category;
 	unsigned							index_offset;				// absolute index of index 0 for our parent mesh
 	unsigned							vertex_offset;				// absolute index of vertex 0 for our parent mesh
 	unsigned							index_count;				// number of indices
@@ -88,10 +81,10 @@ public:
 	void								Render(/*const Matrix3D & tm,*/int base_vertex_offset);
 	void								Render_Sorted(/*const Matrix3D & tm,*/int base_vertex_offset,const SphereClass & bounding_sphere);
 	void								Set_Vertex_Index_Range(unsigned min_vertex_index_,unsigned vertex_index_range_);
-	
-	unsigned							Get_Vertex_Offset(void)	{ return vertex_offset; }
-	unsigned							Get_Index_Offset(void)	{ return index_offset; }
-	inline unsigned						Get_Pass(void)	{ return pass; }
+
+	unsigned							Get_Vertex_Offset()	{ return vertex_offset; }
+	unsigned							Get_Index_Offset()	{ return index_offset; }
+	unsigned						Get_Pass()	{ return pass; }
 
 	MeshModelClass*				Get_Mesh_Model_Class() { return mmc; }
 	DX8TextureCategoryClass*	Get_Texture_Category() { return texture_category; }
@@ -104,7 +97,7 @@ public:
 
 inline void DX8PolygonRendererClass::Set_Vertex_Index_Range(unsigned min_vertex_index_,unsigned vertex_index_range_)
 {
-//	WWDEBUG_SAY(("Set_Vertex_Index_Range - min: %d, range: %d\n",min_vertex_index_,vertex_index_range_));
+//	WWDEBUG_SAY(("Set_Vertex_Index_Range - min: %d, range: %d",min_vertex_index_,vertex_index_range_));
 //	if (vertex_index_range_>30000) {
 //		int a=0;
 //		a++;
@@ -118,12 +111,12 @@ inline void DX8PolygonRendererClass::Set_Vertex_Index_Range(unsigned min_vertex_
 inline void DX8PolygonRendererClass::Render(/*const Matrix3D & tm,*/int base_vertex_offset)
 {
 //	DX8Wrapper::Set_Transform(D3DTS_WORLD,tm);
-//	SNAPSHOT_SAY(("Set_Transform\n"));
-	SNAPSHOT_SAY(("Set_Index_Buffer_Index_Offset(%d)\n",base_vertex_offset));
+//	SNAPSHOT_SAY(("Set_Transform"));
+	SNAPSHOT_SAY(("Set_Index_Buffer_Index_Offset(%d)",base_vertex_offset));
 
 	DX8Wrapper::Set_Index_Buffer_Index_Offset(base_vertex_offset);
 	if (strip) {
-		SNAPSHOT_SAY(("Draw_Strip(%d,%d,%d,%d)\n",index_offset,index_count-2,min_vertex_index,vertex_index_range));
+		SNAPSHOT_SAY(("Draw_Strip(%d,%d,%d,%d)",index_offset,index_count-2,min_vertex_index,vertex_index_range));
 		DX8Wrapper::Draw_Strip(
 			index_offset,
 			index_count-2,
@@ -131,7 +124,7 @@ inline void DX8PolygonRendererClass::Render(/*const Matrix3D & tm,*/int base_ver
 			vertex_index_range);
 	}
 	else {
-		SNAPSHOT_SAY(("Draw_Triangles(%d,%d,%d,%d)\n",index_offset,index_count-2,min_vertex_index,vertex_index_range));
+		SNAPSHOT_SAY(("Draw_Triangles(%d,%d,%d,%d)",index_offset,index_count-2,min_vertex_index,vertex_index_range));
 		DX8Wrapper::Draw_Triangles(
 			index_offset,
 			index_count/3,
@@ -144,9 +137,9 @@ inline void DX8PolygonRendererClass::Render_Sorted(/*const Matrix3D & tm,*/int b
 {
 	WWASSERT(!strip);	// Strips can't be sorted for now
 //	DX8Wrapper::Set_Transform(D3DTS_WORLD,tm);
-//	SNAPSHOT_SAY(("Set_Transform\n"));
-	SNAPSHOT_SAY(("Set_Index_Buffer_Index_Offset(%d)\n",base_vertex_offset));
-	SNAPSHOT_SAY(("Insert_Sorting_Triangles(%d,%d,%d,%d)\n",index_offset,index_count-2,min_vertex_index,vertex_index_range));
+//	SNAPSHOT_SAY(("Set_Transform"));
+	SNAPSHOT_SAY(("Set_Index_Buffer_Index_Offset(%d)",base_vertex_offset));
+	SNAPSHOT_SAY(("Insert_Sorting_Triangles(%d,%d,%d,%d)",index_offset,index_count-2,min_vertex_index,vertex_index_range));
 
 	DX8Wrapper::Set_Index_Buffer_Index_Offset(base_vertex_offset);
 	SortingRendererClass::Insert_Triangles(
@@ -157,5 +150,3 @@ inline void DX8PolygonRendererClass::Render_Sorted(/*const Matrix3D & tm,*/int b
 		vertex_index_range);
 
 }
-
-#endif

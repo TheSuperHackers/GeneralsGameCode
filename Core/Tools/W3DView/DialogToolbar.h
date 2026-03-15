@@ -34,14 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-
-#ifndef __DIALOGTOOLBAR_H
-#define __DIALOGTOOLBAR_H
 
 #include "resource.h"
 
@@ -73,7 +66,7 @@ public:
 	//}}AFX_VIRTUAL
 
 // Implementation
-protected:	
+protected:
 #ifdef RTS_DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
@@ -92,14 +85,10 @@ protected:
 
 
 	public:
-		
+
 		///////////////////////////////////////////////////////
 		//
 		//	Public methods
 		//
 		void						Enable_Button (int id, bool benable = true);
 };
-
-
-#endif //__DIALOGTOOLBAR_H
-

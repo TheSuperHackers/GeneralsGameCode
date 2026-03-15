@@ -25,8 +25,8 @@ MT-LEVEL
 The debugging module is pretty good for debugging and it has some message
 printing stuff as well.  The basic idea is that you write a class that
 inherits from OutputDevice (several are provided) and assign that output
-device to a stream.  There are seperate streams for debugging, information,
-warning, and error messages.  Each one can have a seperate output device,
+device to a stream.  There are separate streams for debugging, information,
+warning, and error messages.  Each one can have a separate output device,
 or they can all have the same one.  Debugging messages only get compiled
 in if your module defines 'DEBUG'. If you don't define debug, then not even
 the text of the debugging message gets into the binary.   All the other
@@ -50,8 +50,7 @@ will you be ready to leave grasshopper.
 
 \*****************************************************************************/
 
-#ifndef WDEBUG_HEADER
-#define WDEBUG_HEADER
+#pragma once
 
 #define USE_DEBUG_SEM
 
@@ -60,7 +59,7 @@ will you be ready to leave grasshopper.
 #include <Utility/iostream_adapter.h>
 #include <Utility/sstream_adapter.h>
 
-#if !defined(_WINDOWS)
+#if !defined(_WIN32)
 // Windows headers have a tendency to redefine IN
 #ifdef IN
 #undef IN
@@ -145,7 +144,7 @@ extern CritSec DebugLibSemaphore;
   if (MsgManager::infoStream()) \
     (*(MsgManager::infoStream())) << X;\
   DEBUGUNLOCK; \
-}    
+}
 
 // Just get a stream to the warning device, no extra junk
 #define WRNSTREAM(X)\
@@ -154,7 +153,7 @@ extern CritSec DebugLibSemaphore;
   if (MsgManager::warnStream()) \
     (*(MsgManager::warnStream())) << X;\
   DEBUGUNLOCK; \
-}    
+}
 
 // Just get a stream to the error device, no extra junk
 #define ERRSTREAM(X)\
@@ -163,7 +162,7 @@ extern CritSec DebugLibSemaphore;
   if (MsgManager::errorStream()) \
     (*(MsgManager::errorStream())) << X;\
   DEBUGUNLOCK; \
-}    
+}
 
 #ifndef DEBUG
 
@@ -184,7 +183,7 @@ extern CritSec DebugLibSemaphore;
 #define DBG(X) X
 
 // In Windows, send a copy to the debugger window
-#ifdef _WINDOWS
+#ifdef _WIN32
 
 // Print a variable
 #define PVAR(v) \
@@ -224,7 +223,7 @@ extern CritSec DebugLibSemaphore;
   __s << X << '\0';\
   OutputDebugString(STRSTREAM_CSTR(__s));\
   DEBUGUNLOCK; \
-}    
+}
 
 // Verbosely execute a statement
 #define VERBOSE(X)\
@@ -240,7 +239,7 @@ extern CritSec DebugLibSemaphore;
   DEBUGUNLOCK; \
 }
 
-#else // _WINDOWS
+#else // _WIN32
 
 // Print a variable
 #define PVAR(v) \
@@ -269,7 +268,7 @@ extern CritSec DebugLibSemaphore;
   if (MsgManager::debugStream()) \
     (*(MsgManager::debugStream())) << X;\
   DEBUGUNLOCK; \
-}    
+}
 
 // Verbosely execute a statement
 #define VERBOSE(X)\
@@ -280,7 +279,7 @@ extern CritSec DebugLibSemaphore;
      "]: " << ##X << endl; X \
   DEBUGUNLOCK; \
 }
-#endif // _WINDOWS
+#endif // _WIN32
 
 #endif  // DEBUG
 
@@ -310,5 +309,3 @@ class MsgManager
    static ostream            *warnStream(void);
    static ostream            *errorStream(void);
 };
-
-#endif

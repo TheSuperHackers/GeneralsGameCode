@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifndef _MAP_READER_WRITER_INFO_H_
-#define _MAP_READER_WRITER_INFO_H_
-
 #define K_HEIGHT_MAP_VERSION_1	1	// Height map cell = 5.0
 #define K_HEIGHT_MAP_VERSION_2	2	// Height map cell = 10.0
 #define K_HEIGHT_MAP_VERSION_3	3	// Added m_borderSize
@@ -76,9 +73,9 @@ variety of sources, such as FILE* or CFile. */
 class ChunkInputStream : public InputStream{
 public:
 	virtual Int read(void *pData, Int numBytes) = 0;
-	virtual UnsignedInt tell(void) = 0;
+	virtual UnsignedInt tell() = 0;
 	virtual Bool absoluteSeek(UnsignedInt pos) = 0;
-	virtual Bool eof(void) = 0;
+	virtual Bool eof() = 0;
 };
 
 /** An instance of InputStream that uses a FILE* to read data. */
@@ -89,15 +86,15 @@ protected:
 	char* m_buffer;
 	int m_pos;
 public:
-	CachedFileInputStream(void);
-	~CachedFileInputStream(void);
+	CachedFileInputStream();
+	~CachedFileInputStream();
 	Bool open(AsciiString path);	///< Returns true if open succeeded.
-	void close(void);  ///< Explict close.  Destructor closes if file is left open.
+	void close();  ///< Explict close.  Destructor closes if file is left open.
 	virtual Int read(void *pData, Int numBytes);
-	virtual UnsignedInt tell(void);
+	virtual UnsignedInt tell();
 	virtual Bool absoluteSeek(UnsignedInt pos);
-	virtual Bool eof(void);
-	void rewind(void);
+	virtual Bool eof();
+	void rewind();
 };
 
 /** An instance of InputStream that uses a FILE* to read data. */
@@ -107,19 +104,17 @@ class FileInputStream : public ChunkInputStream
 protected:
 	File *m_file;
 public:
-	FileInputStream(void);
-	~FileInputStream(void);
+	FileInputStream();
+	~FileInputStream();
 	Bool open(AsciiString path);	///< Returns true if open succeeded.
-	void close(void);  ///< Explict close.  Destructor closes if file is left open.
+	void close();  ///< Explict close.  Destructor closes if file is left open.
 	virtual Int read(void *pData, Int numBytes);
-	virtual UnsignedInt tell(void);
+	virtual UnsignedInt tell();
 	virtual Bool absoluteSeek(UnsignedInt pos);
-	virtual Bool eof(void);
-	void rewind(void);
+	virtual Bool eof();
+	void rewind();
 };
 */
-
-#endif // _MAP_READER_WRITER_INFO_H_
 
 /*
 	rev K_HEIGHT_MAP_VERSION_4

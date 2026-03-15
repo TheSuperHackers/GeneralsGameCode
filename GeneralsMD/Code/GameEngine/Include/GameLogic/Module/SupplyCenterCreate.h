@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef _SUPPLY_CENTER_CREATE_H_
-#define _SUPPLY_CENTER_CREATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/CreateModule.h"
 
@@ -51,11 +48,9 @@ public:
 	SupplyCenterCreate( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual void onCreate( void );
-	virtual void onBuildComplete();	///< This is called when you are a finished game object
+	virtual void onCreate() override;
+	virtual void onBuildComplete() override;	///< This is called when you are a finished game object
 
 protected:
 
 };
-
-#endif

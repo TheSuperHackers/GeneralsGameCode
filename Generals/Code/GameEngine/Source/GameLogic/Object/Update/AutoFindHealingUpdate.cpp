@@ -65,13 +65,13 @@ AutoFindHealingUpdateModuleData::AutoFindHealingUpdateModuleData()
 {
 	ModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
-		{ "ScanRate",							INI::parseDurationUnsignedInt,	NULL, offsetof( AutoFindHealingUpdateModuleData, m_scanFrames ) },
-		{ "ScanRange",						INI::parseReal,									NULL, offsetof( AutoFindHealingUpdateModuleData, m_scanRange ) },
-		{ "NeverHeal",						INI::parseReal,									NULL, offsetof( AutoFindHealingUpdateModuleData, m_neverHeal ) },
-		{ "AlwaysHeal",						INI::parseReal,									NULL, offsetof( AutoFindHealingUpdateModuleData, m_alwaysHeal ) },
-		{ 0, 0, 0, 0 }
+		{ "ScanRate",							INI::parseDurationUnsignedInt,	nullptr, offsetof( AutoFindHealingUpdateModuleData, m_scanFrames ) },
+		{ "ScanRange",						INI::parseReal,									nullptr, offsetof( AutoFindHealingUpdateModuleData, m_scanRange ) },
+		{ "NeverHeal",						INI::parseReal,									nullptr, offsetof( AutoFindHealingUpdateModuleData, m_neverHeal ) },
+		{ "AlwaysHeal",						INI::parseReal,									nullptr, offsetof( AutoFindHealingUpdateModuleData, m_alwaysHeal ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 	p.add(dataFieldParse);
 }
@@ -80,11 +80,11 @@ AutoFindHealingUpdateModuleData::AutoFindHealingUpdateModuleData()
 AutoFindHealingUpdate::AutoFindHealingUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData )
 {
 	m_nextScanFrames						= 0;
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-AutoFindHealingUpdate::~AutoFindHealingUpdate( void )
+AutoFindHealingUpdate::~AutoFindHealingUpdate()
 {
 
 }
@@ -93,14 +93,14 @@ AutoFindHealingUpdate::~AutoFindHealingUpdate( void )
 //-------------------------------------------------------------------------------------------------
 void AutoFindHealingUpdate::onObjectCreated()
 {
-	
+
 }
 
 //-------------------------------------------------------------------------------------------------
 /** The update callback. */
 //-------------------------------------------------------------------------------------------------
 UpdateSleepTime AutoFindHealingUpdate::update()
-{	
+{
 /// @todo srj use SLEEPY_UPDATE here
 	Object *obj = getObject();
 	if (obj->getControllingPlayer()->getPlayerType() == PLAYER_HUMAN) {
@@ -117,7 +117,7 @@ UpdateSleepTime AutoFindHealingUpdate::update()
 	m_nextScanFrames = data->m_scanFrames;
 
 	AIUpdateInterface *ai = obj->getAI();
-	if (ai==NULL) return UPDATE_SLEEP_NONE;
+	if (ai==nullptr) return UPDATE_SLEEP_NONE;
 
 	// Check health.
 	BodyModuleInterface *body = obj->getBodyModule();
@@ -152,7 +152,7 @@ Object* AutoFindHealingUpdate::scanClosestTarget()
 {
 	const AutoFindHealingUpdateModuleData *data = getAutoFindHealingUpdateModuleData();
 	Object *me = getObject();
-	Object *bestTarget = NULL;
+	Object *bestTarget = nullptr;
 	Real closestDistSqr=0;
 
 	ObjectIterator *iter = ThePartitionManager->iterateObjectsInRange( me->getPosition(), data->m_scanRange, FROM_CENTER_2D );
@@ -167,7 +167,7 @@ Object* AutoFindHealingUpdate::scanClosestTarget()
 		}
 
 		Real fDistSqr =  ThePartitionManager->getDistanceSquared( me, other, FROM_CENTER_2D ) ;
-		if (bestTarget==NULL) {
+		if (bestTarget==nullptr) {
 			bestTarget = other;
 			closestDistSqr = fDistSqr;
 			continue;
@@ -179,7 +179,7 @@ Object* AutoFindHealingUpdate::scanClosestTarget()
 			closestDistSqr = fDistSqr;
 			continue;
 		}
-	}  // end for, other
+	}
 
 	return bestTarget;
 }
@@ -193,7 +193,7 @@ void AutoFindHealingUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -214,15 +214,15 @@ void AutoFindHealingUpdate::xfer( Xfer *xfer )
 	// next scan frames
 	xfer->xferInt( &m_nextScanFrames );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void AutoFindHealingUpdate::loadPostProcess( void )
+void AutoFindHealingUpdate::loadPostProcess()
 {
 
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

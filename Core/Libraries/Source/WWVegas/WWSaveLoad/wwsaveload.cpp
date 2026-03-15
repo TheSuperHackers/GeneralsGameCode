@@ -40,11 +40,11 @@
 #include "definitionmgr.h"
 
 
-void WWSaveLoad::Init(void)
+void WWSaveLoad::Init()
 {
 }
 
-void WWSaveLoad::Shutdown(void)
+void WWSaveLoad::Shutdown()
 {
 	_TheDefinitionMgr.Free_Definitions();
 }

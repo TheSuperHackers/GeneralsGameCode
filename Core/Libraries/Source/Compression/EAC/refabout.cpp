@@ -81,7 +81,7 @@
 /*  Information Functions                                       */
 /****************************************************************/
 
-CODEXABOUT *GCALL REF_about(void)
+CODEXABOUT *GCALL REF_about()
 {
     CODEXABOUT *info;
 

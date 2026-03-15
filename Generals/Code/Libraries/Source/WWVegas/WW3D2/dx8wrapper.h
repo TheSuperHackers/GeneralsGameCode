@@ -36,12 +36,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef DX8_WRAPPER_H
-#define DX8_WRAPPER_H
 
 #include "always.h"
 #include "dllist.h"
@@ -70,7 +65,7 @@
 #define	VALUE_NAME_RENDER_DEVICE_WINDOWED			"RenderDeviceWindowed"
 #define	VALUE_NAME_RENDER_DEVICE_TEXTURE_DEPTH		"RenderDeviceTextureDepth"
 
-const unsigned MAX_TEXTURE_STAGES=2;
+const unsigned MAX_TEXTURE_STAGES=8;
 const unsigned MAX_VERTEX_STREAMS=2;
 const unsigned MAX_VERTEX_SHADER_CONSTANTS=96;
 const unsigned MAX_PIXEL_SHADER_CONSTANTS=8;
@@ -151,7 +146,7 @@ public:
 	int  m_debugLinesToShow;
 	int	 m_sleepTime;
 public:
-	DX8_Stats::DX8_Stats(void) {
+	DX8_Stats::DX8_Stats() {
 		m_disableConsole = m_showingStats = m_disableTerrain = m_disableWater = m_disableOverhead = m_disableObjects = false;
 		m_sleepTime = 0;
 		m_debugLinesToShow = -1; // -1 means show all expected lines of output
@@ -166,8 +161,8 @@ public:
 class DX8_CleanupHook
 {
 public:
-	virtual void ReleaseResources(void)=0;
-	virtual void ReAcquireResources(void)=0;
+	virtual void ReleaseResources()=0;
+	virtual void ReAcquireResources()=0;
 };
 
 
@@ -178,8 +173,8 @@ struct RenderStateStruct
 	TextureBaseClass * Textures[MAX_TEXTURE_STAGES];
 	D3DLIGHT8 Lights[4];
 	bool LightEnable[4];
-	Matrix4x4 world;
-	Matrix4x4 view;
+	D3DMATRIX world;
+	D3DMATRIX view;
 	unsigned vertex_buffer_type;
 	unsigned index_buffer_type;
 	unsigned short vba_offset;
@@ -249,30 +244,30 @@ public:
 #endif
 
 	static bool Init(void * hwnd, bool lite = false);
-	static void Shutdown(void);
+	static void Shutdown();
 
 	static void SetCleanupHook(DX8_CleanupHook *pCleanupHook) {m_pCleanupHook = pCleanupHook;};
 	/*
 	** Some WW3D sub-systems need to be initialized after the device is created and shutdown
 	** before the device is released.
 	*/
-	static void	Do_Onetime_Device_Dependent_Inits(void);
-	static void Do_Onetime_Device_Dependent_Shutdowns(void);
+	static void	Do_Onetime_Device_Dependent_Inits();
+	static void Do_Onetime_Device_Dependent_Shutdowns();
 
 	static bool Is_Device_Lost() { return IsDeviceLost; }
-	static bool Is_Initted(void) { return IsInitted; }
+	static bool Is_Initted() { return IsInitted; }
 
-	static bool Has_Stencil (void);
+	static bool Has_Stencil ();
 	static void Get_Format_Name(unsigned int format, StringClass *tex_format);
 
 	/*
 	** Rendering
 	*/
-	static void Begin_Scene(void);
+	static void Begin_Scene();
 	static void End_Scene(bool flip_frame = true);
 
 	// Flip until the primary buffer is visible.
-	static void Flip_To_Primary(void);
+	static void Flip_To_Primary();
 
 	static void Clear(bool clear_color, bool clear_z_stencil, const Vector3 &color, float dest_alpha=0.0f, float z=1.0f, unsigned int stencil=0);
 
@@ -297,16 +292,15 @@ public:
 	static void Set_Transform(D3DTRANSFORMSTATETYPE transform,const Matrix4x4& m);
 	static void Set_Transform(D3DTRANSFORMSTATETYPE transform,const Matrix3D& m);
 	static void Get_Transform(D3DTRANSFORMSTATETYPE transform, Matrix4x4& m);
-	static void	Set_World_Identity();
+	static void Set_World_Identity();
 	static void Set_View_Identity();
-	static bool	Is_World_Identity();
+	static bool Is_World_Identity();
 	static bool Is_View_Identity();
 
 	// Note that *_DX8_Transform() functions take the matrix in DX8 format - transposed from Westwood convention.
 
-	static void _Set_DX8_Transform(D3DTRANSFORMSTATETYPE transform,const Matrix4x4& m);
-	static void _Set_DX8_Transform(D3DTRANSFORMSTATETYPE transform,const Matrix3D& m);
-	static void _Get_DX8_Transform(D3DTRANSFORMSTATETYPE transform, Matrix4x4& m);
+	static void _Set_DX8_Transform(D3DTRANSFORMSTATETYPE transform, const D3DMATRIX& m);
+	static void _Get_DX8_Transform(D3DTRANSFORMSTATETYPE transform, D3DMATRIX& m);
 
 	static void Set_DX8_Light(int index,D3DLIGHT8* light);
 	static void Set_DX8_Render_State(D3DRENDERSTATETYPE state, unsigned value);
@@ -320,7 +314,7 @@ public:
 	static WWINLINE const D3DLIGHT8& Peek_Light(unsigned index);
 	static WWINLINE bool Is_Light_Enabled(unsigned index);
 
-	static bool Validate_Device(void);
+	static bool Validate_Device();
 
 	// Deferred
 
@@ -353,6 +347,37 @@ public:
 	/*
 	** Resources
 	*/
+
+	static IDirect3DVolumeTexture8* _Create_DX8_Volume_Texture
+	(
+		unsigned int width,
+		unsigned int height,
+		unsigned int depth,
+		WW3DFormat format,
+		MipCountType mip_level_count,
+		D3DPOOL pool=D3DPOOL_MANAGED
+	);
+
+	static IDirect3DCubeTexture8* _Create_DX8_Cube_Texture
+	(
+		unsigned int width,
+		unsigned int height,
+		WW3DFormat format,
+		MipCountType mip_level_count,
+		D3DPOOL pool=D3DPOOL_MANAGED,
+		bool rendertarget=false
+	);
+
+
+	static IDirect3DTexture8* _Create_DX8_ZTexture
+	(
+		unsigned int width,
+		unsigned int height,
+		WW3DZFormat zformat,
+		MipCountType mip_level_count,
+		D3DPOOL pool=D3DPOOL_MANAGED
+	);
+
 
 	static IDirect3DTexture8 * _Create_DX8_Texture
 	(
@@ -402,7 +427,7 @@ public:
 	static unsigned Get_Last_Frame_DX8_Calls();
 	static unsigned Get_Last_Frame_Draw_Calls();
 
-	static unsigned long Get_FrameCount(void);
+	static unsigned long Get_FrameCount();
 
 	// Needed by shader class
 	static bool						Get_Fog_Enable() { return FogEnable; }
@@ -433,24 +458,41 @@ public:
 	**	WW3D::Render (scene, camera, FALSE, FALSE);
 	**	WW3D::End_Render ();
 	**
-	**	swap_chain_ptr->Present (NULL, NULL, NULL, NULL);
+	**	swap_chain_ptr->Present (nullptr, nullptr, nullptr, nullptr);
 	**
-	**	DX8Wrapper::Set_Render_Target ((IDirect3DSurface8 *)NULL);
+	**	DX8Wrapper::Set_Render_Target ((IDirect3DSurface8 *)nullptr);
 	**
 	*/
 	static IDirect3DSwapChain8 *	Create_Additional_Swap_Chain (HWND render_window);
 
 	/*
-	** Render target interface
+	** Render target interface. If render target format is WW3D_FORMAT_UNKNOWN, current display format is used.
 	*/
-	static TextureClass *	Create_Render_Target (int width, int height, bool alpha=false);
-	
-	static void					Set_Render_Target (TextureBaseClass * texture);
-	static void					Set_Render_Target (IDirect3DSurface8 *render_target);
-	static void					Set_Render_Target (IDirect3DSwapChain8 *swap_chain);
-	static bool					Is_Render_To_Texture(void) { return IsRenderToTexture; }
+	static TextureClass *	Create_Render_Target (int width, int height, WW3DFormat format = WW3D_FORMAT_UNKNOWN);
 
-	// shader system udpates KJM v
+	static void					Set_Render_Target (IDirect3DSurface8 *render_target, bool use_default_depth_buffer = false);
+	static void					Set_Render_Target (IDirect3DSurface8* render_target, IDirect3DSurface8* dpeth_buffer);
+
+	static void					Set_Render_Target (IDirect3DSwapChain8 *swap_chain);
+	static bool					Is_Render_To_Texture() { return IsRenderToTexture; }
+
+	// for depth map support KJM V
+	static void Create_Render_Target
+	(
+		int width,
+		int height,
+		WW3DFormat format,
+		WW3DZFormat zformat,
+		TextureClass** target,
+		ZTextureClass** depth_buffer
+	);
+	static void					Set_Render_Target_With_Z (TextureClass * texture, ZTextureClass* ztexture=nullptr);
+
+	static void Set_Shadow_Map(int idx, ZTextureClass* ztex) { Shadow_Map[idx]=ztex; }
+	static ZTextureClass* Get_Shadow_Map(int idx) { return Shadow_Map[idx]; }
+	// for depth map support KJM ^
+
+	// shader system updates KJM v
 	static void Apply_Default_State();
 
 	static void Set_Vertex_Shader(DWORD vertex_shader);
@@ -472,7 +514,7 @@ public:
 	static IDirect3DDevice8* _Get_D3D_Device8() { return D3DDevice; }
 	static IDirect3D8* _Get_D3D8() { return D3DInterface; }
 	/// Returns the display format - added by TR for video playback - not part of W3D
-	static WW3DFormat	getBackBufferFormat( void );
+	static WW3DFormat	getBackBufferFormat();
 	static bool Reset_Device(bool reload_assets=true);
 
 	static const DX8Caps*	Get_Current_Caps() { WWASSERT(CurrentCaps); return CurrentCaps; }
@@ -507,49 +549,49 @@ public:
 	static const char* Get_DX8_Debug_Monitor_Token_Name(unsigned value);
 	static const char* Get_DX8_Blend_Op_Name(unsigned value);
 
-	static void Invalidate_Cached_Render_States(void);
+	static void Invalidate_Cached_Render_States();
 
 	static void Set_Draw_Polygon_Low_Bound_Limit(unsigned n) { DrawPolygonLowBoundLimit=n; }
 
 protected:
 
-	static bool	Create_Device(void);
-	static void Release_Device(void);
+	static bool	Create_Device();
+	static void Release_Device();
 
 	static void Reset_Statistics();
 	static void Enumerate_Devices();
-	static void Set_Default_Global_Render_States(void);
+	static void Set_Default_Global_Render_States();
 
 	/*
 	** Device Selection Code.
 	** For backward compatibility, the public interface for these functions is in the ww3d.
 	** header file.  These functions are protected so that we aren't exposing two interfaces.
 	*/
-	static bool Set_Any_Render_Device(void);
+	static bool Set_Any_Render_Device();
 	static bool	Set_Render_Device(const char * dev_name,int width=-1,int height=-1,int bits=-1,int windowed=-1,bool resize_window=false);
 	static bool	Set_Render_Device(int dev=-1,int resx=-1,int resy=-1,int bits=-1,int windowed=-1,bool resize_window = false, bool reset_device = false, bool restore_assets=true);
-	static bool Set_Next_Render_Device(void);
-	static bool Toggle_Windowed(void);
+	static bool Set_Next_Render_Device();
+	static bool Toggle_Windowed();
 
-	static int	Get_Render_Device_Count(void);
-	static int	Get_Render_Device(void);
+	static int	Get_Render_Device_Count();
+	static int	Get_Render_Device();
 	static const RenderDeviceDescClass & Get_Render_Device_Desc(int deviceidx);
 	static const char * Get_Render_Device_Name(int device_index);
 	static bool Set_Device_Resolution(int width=-1,int height=-1,int bits=-1,int windowed=-1, bool resize_window=false);
 	static void Get_Device_Resolution(int & set_w,int & set_h,int & set_bits,bool & set_windowed);
 	static void Get_Render_Target_Resolution(int & set_w,int & set_h,int & set_bits,bool & set_windowed);
-	static int	Get_Device_Resolution_Width(void) { return ResolutionWidth; }
-	static int	Get_Device_Resolution_Height(void) { return ResolutionHeight; }
+	static int	Get_Device_Resolution_Width() { return ResolutionWidth; }
+	static int	Get_Device_Resolution_Height() { return ResolutionHeight; }
 
 	static bool Registry_Save_Render_Device( const char *sub_key, int device, int width, int height, int depth, bool windowed, int texture_depth);
 	static bool Registry_Load_Render_Device( const char * sub_key, char *device, int device_len, int &width, int &height, int &depth, int &windowed, int &texture_depth);
-	static bool Is_Windowed(void) { return IsWindowed; }
+	static bool Is_Windowed() { return IsWindowed; }
 
 	static void	Set_Texture_Bitdepth(int depth)	{ WWASSERT(depth==16 || depth==32); TextureBitDepth = depth; }
-	static int	Get_Texture_Bitdepth(void)			{ return TextureBitDepth; }
+	static int	Get_Texture_Bitdepth()			{ return TextureBitDepth; }
 
 	static void	Set_Swap_Interval(int swap);
-	static int	Get_Swap_Interval(void);
+	static int	Get_Swap_Interval();
 	static void Set_Polygon_Mode(int mode);
 
 	/*
@@ -570,7 +612,7 @@ protected:
 
 	static RenderStateStruct			render_state;
 	static unsigned						render_state_changed;
-	static Matrix4x4						DX8Transforms[D3DTS_WORLD+1];
+	static D3DMATRIX						DX8Transforms[D3DTS_WORLD+1];
 
 	static bool								IsInitted;
 	static bool								IsDeviceLost;
@@ -586,7 +628,7 @@ protected:
 	static int								TextureBitDepth;
 	static bool								IsWindowed;
 	static D3DFORMAT					DisplayFormat;
-	
+
 	static D3DMATRIX						old_world;
 	static D3DMATRIX						old_view;
 	static D3DMATRIX						old_prj;
@@ -602,6 +644,9 @@ protected:
 	static RenderInfoClass*				Render_Info;
 
 	static DWORD							Vertex_Processing_Behavior;
+
+	static ZTextureClass*				Shadow_Map[MAX_SHADOW_MAPS];
+
 	static Vector3							Ambient_Color;
 	// shader system updates KJM ^
 
@@ -636,7 +681,10 @@ protected:
 	static IDirect3DDevice8 *			D3DDevice;				//d3ddevice8;
 
 	static IDirect3DSurface8 *			CurrentRenderTarget;
+	static IDirect3DSurface8 *			CurrentDepthBuffer;
 	static IDirect3DSurface8 *			DefaultRenderTarget;
+	static IDirect3DSurface8 *			DefaultDepthBuffer;
+
 	static unsigned							DrawPolygonLowBoundLimit;
 
 	static bool								IsRenderToTexture;
@@ -644,7 +692,7 @@ protected:
 	static int								ZBias;
 	static float							ZNear;
 	static float							ZFar;
-	static Matrix4x4						ProjectionMatrix;
+	static D3DMATRIX					ProjectionMatrix;
 
 	friend void DX8_Assert();
 	friend class WW3D;
@@ -696,40 +744,27 @@ WWINLINE void DX8Wrapper::Set_Pixel_Shader_Constant(int reg, const void* data, i
 }
 // shader system updates KJM ^
 
-
-WWINLINE void DX8Wrapper::_Set_DX8_Transform(D3DTRANSFORMSTATETYPE transform,const Matrix4x4& m)
+WWINLINE void DX8Wrapper::_Set_DX8_Transform(D3DTRANSFORMSTATETYPE transform, const D3DMATRIX& m)
 {
 	WWASSERT(transform<=D3DTS_WORLD);
 #if 0 // (gth) this optimization is breaking generals because they set the transform behind our backs.
-	if (m!=DX8Transforms[transform]) 
+	if (mtx!=DX8Transforms[transform])
 #endif
 	{
 		DX8Transforms[transform]=m;
-		SNAPSHOT_SAY(("DX8 - SetTransform %d [%f,%f,%f,%f][%f,%f,%f,%f][%f,%f,%f,%f][%f,%f,%f,%f]\n",transform,m[0][0],m[0][1],m[0][2],m[0][3],m[1][0],m[1][1],m[1][2],m[1][3],m[2][0],m[2][1],m[2][2],m[2][3],m[3][0],m[3][1],m[3][2],m[3][3]));
+		SNAPSHOT_SAY(("DX8 - SetTransform %d [%f,%f,%f,%f][%f,%f,%f,%f][%f,%f,%f,%f]",
+			transform,
+			m.m[0][0],m.m[0][1],m.m[0][2],m.m[0][3],
+			m.m[1][0],m.m[1][1],m.m[1][2],m.m[1][3],
+			m.m[2][0],m.m[2][1],m.m[2][2],m.m[2][3]));
 		DX8_RECORD_MATRIX_CHANGE();
-		DX8CALL(SetTransform(transform,(D3DMATRIX*)&m));
+		DX8CALL(SetTransform(transform,&m));
 	}
 }
 
-
-WWINLINE void DX8Wrapper::_Set_DX8_Transform(D3DTRANSFORMSTATETYPE transform,const Matrix3D& m)
+WWINLINE void DX8Wrapper::_Get_DX8_Transform(D3DTRANSFORMSTATETYPE transform, D3DMATRIX& m)
 {
-	WWASSERT(transform<=D3DTS_WORLD);
-	Matrix4x4 mtx(m);
-#if 0 // (gth) this optimization is breaking generals because they set the transform behind our backs.
-	if (mtx!=DX8Transforms[transform]) 
-#endif
-	{
-		DX8Transforms[transform]=mtx;
-		SNAPSHOT_SAY(("DX8 - SetTransform %d [%f,%f,%f,%f][%f,%f,%f,%f][%f,%f,%f,%f]\n",transform,m[0][0],m[0][1],m[0][2],m[0][3],m[1][0],m[1][1],m[1][2],m[1][3],m[2][0],m[2][1],m[2][2],m[2][3]));
-		DX8_RECORD_MATRIX_CHANGE();
-		DX8CALL(SetTransform(transform,(D3DMATRIX*)&m));
-	}
-}
-
-WWINLINE void DX8Wrapper::_Get_DX8_Transform(D3DTRANSFORMSTATETYPE transform, Matrix4x4& m)
-{
-	DX8CALL(GetTransform(transform,(D3DMATRIX*)&m));
+	DX8CALL(GetTransform(transform,&m));
 }
 
 // ----------------------------------------------------------------------------
@@ -779,7 +814,7 @@ WWINLINE void DX8Wrapper::Set_Ambient(const Vector3& color)
 //
 // Set vertex buffer to be used in the subsequent render calls. If there was
 // a vertex buffer being used earlier, release the reference to it. Passing
-// NULL just will release the vertex buffer.
+// nullptr just will release the vertex buffer.
 //
 // ----------------------------------------------------------------------------
 
@@ -787,7 +822,7 @@ WWINLINE void DX8Wrapper::Set_DX8_Material(const D3DMATERIAL8* mat)
 {
 	DX8_RECORD_MATERIAL_CHANGE();
 	WWASSERT(mat);
-	SNAPSHOT_SAY(("DX8 - SetMaterial\n"));
+	SNAPSHOT_SAY(("DX8 - SetMaterial"));
 	DX8CALL(SetMaterial(mat));
 }
 
@@ -798,13 +833,13 @@ WWINLINE void DX8Wrapper::Set_DX8_Light(int index, D3DLIGHT8* light)
 		DX8CALL(SetLight(index,light));
 		DX8CALL(LightEnable(index,TRUE));
 		CurrentDX8LightEnables[index]=true;
-		SNAPSHOT_SAY(("DX8 - SetLight %d\n",index));
+		SNAPSHOT_SAY(("DX8 - SetLight %d",index));
 	}
 	else if (CurrentDX8LightEnables[index]) {
 		DX8_RECORD_LIGHT_CHANGE();
 		CurrentDX8LightEnables[index]=false;
 		DX8CALL(LightEnable(index,FALSE));
-		SNAPSHOT_SAY(("DX8 - DisableLight %d\n",index));
+		SNAPSHOT_SAY(("DX8 - DisableLight %d",index));
 	}
 }
 
@@ -817,9 +852,9 @@ WWINLINE void DX8Wrapper::Set_DX8_Render_State(D3DRENDERSTATETYPE state, unsigne
 	if (WW3D::Is_Snapshot_Activated()) {
 		StringClass value_name(0,true);
 		Get_DX8_Render_State_Value_Name(value_name,state,value);
-		SNAPSHOT_SAY(("DX8 - SetRenderState(state: %s, value: %s)\n",
+		SNAPSHOT_SAY(("DX8 - SetRenderState(state: %s, value: %s)",
 			Get_DX8_Render_State_Name(state),
-			value_name));
+			value_name.str()));
 	}
 #endif
 
@@ -846,10 +881,10 @@ WWINLINE void DX8Wrapper::Set_DX8_Texture_Stage_State(unsigned stage, D3DTEXTURE
 	if (WW3D::Is_Snapshot_Activated()) {
 		StringClass value_name(0,true);
 		Get_DX8_Texture_Stage_State_Value_Name(value_name,state,value);
-		SNAPSHOT_SAY(("DX8 - SetTextureStageState(stage: %d, state: %s, value: %s)\n",
+		SNAPSHOT_SAY(("DX8 - SetTextureStageState(stage: %d, state: %s, value: %s)",
 			stage,
 			Get_DX8_Texture_Stage_State_Name(state),
-			value_name));
+			value_name.str()));
 	}
 #endif
 
@@ -867,7 +902,7 @@ WWINLINE void DX8Wrapper::Set_DX8_Texture(unsigned int stage, IDirect3DBaseTextu
 
 	if (Textures[stage]==texture) return;
 
-	SNAPSHOT_SAY(("DX8 - SetTexture(%x) \n",texture));
+	SNAPSHOT_SAY(("DX8 - SetTexture(%x) ",texture));
 
 	if (Textures[stage]) Textures[stage]->Release();
 	Textures[stage] = texture;
@@ -1138,7 +1173,7 @@ WWINLINE void DX8Wrapper::Set_Shader(const ShaderClass& shader)
 #ifdef MESH_RENDER_SNAPSHOT_ENABLED
 	StringClass str;
 #endif
-	SNAPSHOT_SAY(("DX8Wrapper::Set_Shader(%s)\n",shader.Get_Description(str)));
+	SNAPSHOT_SAY(("DX8Wrapper::Set_Shader(%s)",shader.Get_Description(str).str()));
 }
 
 
@@ -1146,65 +1181,50 @@ WWINLINE void DX8Wrapper::Set_Transform(D3DTRANSFORMSTATETYPE transform,const Ma
 {
 	switch ((int)transform) {
 	case D3DTS_WORLD:
-		render_state.world=m.Transpose();
+		render_state.world=To_D3DMATRIX(m);
 		render_state_changed|=(unsigned)WORLD_CHANGED;
 		render_state_changed&=~(unsigned)WORLD_IDENTITY;
 		break;
 	case D3DTS_VIEW:
-		render_state.view=m.Transpose();
+		render_state.view=To_D3DMATRIX(m);
 		render_state_changed|=(unsigned)VIEW_CHANGED;
 		render_state_changed&=~(unsigned)VIEW_IDENTITY;
 		break;
 	case D3DTS_PROJECTION:
 		{
-			Matrix4x4 ProjectionMatrix=m.Transpose();
+			D3DMATRIX ProjectionMatrix=To_D3DMATRIX(m);
 			ZFar=0.0f;
 			ZNear=0.0f;
-			DX8CALL(SetTransform(D3DTS_PROJECTION,(D3DMATRIX*)&ProjectionMatrix));
+			DX8CALL(SetTransform(D3DTS_PROJECTION,&ProjectionMatrix));
 		}
 		break;
 	default:
 		DX8_RECORD_MATRIX_CHANGE();
-		Matrix4x4 m2=m.Transpose();
-		DX8CALL(SetTransform(transform,(D3DMATRIX*)&m2));
+		D3DMATRIX dxm=To_D3DMATRIX(m);
+		DX8CALL(SetTransform(transform,&dxm));
 		break;
 	}
 }
 
 WWINLINE void DX8Wrapper::Set_Transform(D3DTRANSFORMSTATETYPE transform,const Matrix3D& m)
 {
-	Matrix4x4 m2(m);
 	switch ((int)transform) {
 	case D3DTS_WORLD:
-		render_state.world=m2.Transpose();
+		render_state.world=To_D3DMATRIX(m);
 		render_state_changed|=(unsigned)WORLD_CHANGED;
 		render_state_changed&=~(unsigned)WORLD_IDENTITY;
 		break;
 	case D3DTS_VIEW:
-		render_state.view=m2.Transpose();
+		render_state.view=To_D3DMATRIX(m);
 		render_state_changed|=(unsigned)VIEW_CHANGED;
 		render_state_changed&=~(unsigned)VIEW_IDENTITY;
 		break;
 	default:
 		DX8_RECORD_MATRIX_CHANGE();
-		m2=m2.Transpose();
-		DX8CALL(SetTransform(transform,(D3DMATRIX*)&m2));
+		D3DMATRIX dxm=To_D3DMATRIX(m);
+		DX8CALL(SetTransform(transform,&dxm));
 		break;
 	}
-}
-
-WWINLINE void DX8Wrapper::Set_World_Identity()
-{
-	if (render_state_changed&(unsigned)WORLD_IDENTITY) return;
-	render_state.world.Make_Identity();
-	render_state_changed|=(unsigned)WORLD_CHANGED|(unsigned)WORLD_IDENTITY;
-}
-
-WWINLINE void DX8Wrapper::Set_View_Identity()
-{
-	if (render_state_changed&(unsigned)VIEW_IDENTITY) return;
-	render_state.view.Make_Identity();
-	render_state_changed|=(unsigned)VIEW_CHANGED|(unsigned)VIEW_IDENTITY;
 }
 
 WWINLINE bool DX8Wrapper::Is_World_Identity()
@@ -1219,28 +1239,26 @@ WWINLINE bool DX8Wrapper::Is_View_Identity()
 
 WWINLINE void DX8Wrapper::Get_Transform(D3DTRANSFORMSTATETYPE transform, Matrix4x4& m)
 {
-	D3DMATRIX mat;
-
 	switch ((int)transform) {
 	case D3DTS_WORLD:
 		if (render_state_changed&WORLD_IDENTITY) m.Make_Identity();
-		else m=render_state.world.Transpose();
+		else m=To_Matrix4x4(render_state.world);
 		break;
 	case D3DTS_VIEW:
 		if (render_state_changed&VIEW_IDENTITY) m.Make_Identity();
-		else m=render_state.view.Transpose();
+		else m=To_Matrix4x4(render_state.view);
 		break;
 	default:
-		DX8CALL(GetTransform(transform,&mat));
-		m=*(Matrix4x4*)&mat;
-		m=m.Transpose();
+		D3DMATRIX dxm;
+		DX8CALL(GetTransform(transform,&dxm));
+		m=To_Matrix4x4(dxm);
 		break;
 	}
 }
 
 WWINLINE const D3DLIGHT8& DX8Wrapper::Peek_Light(unsigned index)
 {
-	return render_state.Lights[index];;
+	return render_state.Lights[index];
 }
 
 WWINLINE bool DX8Wrapper::Is_Light_Enabled(unsigned index)
@@ -1272,7 +1290,7 @@ WWINLINE void DX8Wrapper::Set_Render_State(const RenderStateStruct& state)
 }
 
 WWINLINE void DX8Wrapper::Release_Render_State()
-{	
+{
 	if (render_state.index_buffer) {
 		render_state.index_buffer->Release_Engine_Ref();
 	}
@@ -1342,6 +1360,3 @@ WWINLINE RenderStateStruct& RenderStateStruct::operator= (const RenderStateStruc
 
 	return *this;
 }
-
-
-#endif

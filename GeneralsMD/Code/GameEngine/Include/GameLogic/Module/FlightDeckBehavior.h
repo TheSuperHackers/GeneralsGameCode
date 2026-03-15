@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __FLIGHT_DECK_BEHAVIOR_H
-#define __FLIGHT_DECK_BEHAVIOR_H
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/BehaviorModule.h"
 #include "GameLogic/Module/DieModule.h"
@@ -52,7 +49,7 @@ struct RunwayDefinition
 {
 	RunwayDefinition()
 	{
-		m_catapultParticleSystem = NULL;
+		m_catapultParticleSystem = nullptr;
 	}
 
 	std::vector<AsciiString> m_spacesBoneNames;
@@ -94,7 +91,7 @@ class FlightDeckBehavior : public AIUpdateInterface,
 													 public ParkingPlaceBehaviorInterface,
 													 public DieModuleInterface,
 													 public ExitInterface
-													 
+
 {
 
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( FlightDeckBehavior, "FlightDeckBehavior" )
@@ -108,49 +105,50 @@ public:
 	static Int getInterfaceMask() { return UpdateModule::getInterfaceMask() | (MODULEINTERFACE_DIE); }
 
 	// BehaviorModule
-	virtual ParkingPlaceBehaviorInterface* getParkingPlaceBehaviorInterface() { return this; }
-	virtual ExitInterface* getUpdateExitInterface() { return this; }
-	virtual DieModuleInterface* getDie() { return this; }
+	virtual ParkingPlaceBehaviorInterface* getParkingPlaceBehaviorInterface() override { return this; }
+	virtual ExitInterface* getUpdateExitInterface() override { return this; }
+	virtual DieModuleInterface* getDie() override { return this; }
 
 	// ExitInterface
-	virtual Bool isExitBusy() const {return FALSE;}	///< Contain style exiters are getting the ability to space out exits, so ask this before reserveDoor as a kind of no-commitment check.
-	virtual ExitDoorType reserveDoorForExit( const ThingTemplate* objType, Object *specificObject );
-	virtual void exitObjectViaDoor( Object *newObj, ExitDoorType exitDoor );
-	virtual void unreserveDoorForExit( ExitDoorType exitDoor );
-	virtual void exitObjectByBudding( Object *newObj, Object *budHost ) { return; }
-	virtual Bool getExitPosition( Coord3D& rallyPoint ) const { return FALSE; }
+	virtual Bool isExitBusy() const override {return FALSE;}	///< Contain style exiters are getting the ability to space out exits, so ask this before reserveDoor as a kind of no-commitment check.
+	virtual ExitDoorType reserveDoorForExit( const ThingTemplate* objType, Object *specificObject ) override;
+	virtual void exitObjectViaDoor( Object *newObj, ExitDoorType exitDoor ) override;
+	virtual void unreserveDoorForExit( ExitDoorType exitDoor ) override;
+	virtual void exitObjectByBudding( Object *newObj, Object *budHost ) override { return; }
+	virtual Bool getExitPosition( Coord3D& rallyPoint ) const override { return FALSE; }
 	virtual Bool getNaturalRallyPoint( Coord3D& rallyPoint, Bool offset = TRUE ) { return FALSE; }
-	virtual void setRallyPoint( const Coord3D *pos ) {}			
-	virtual const Coord3D *getRallyPoint( void ) const { return NULL;}
+	virtual void setRallyPoint( const Coord3D *pos ) override {}
+	virtual const Coord3D *getRallyPoint() const override { return nullptr;}
 
 	// UpdateModule
-	virtual UpdateSleepTime update();
+	virtual UpdateSleepTime update() override;
 
 	// DieModule
-	virtual void onDie( const DamageInfo *damageInfo );
+	virtual void onDie( const DamageInfo *damageInfo ) override;
 
 	// ParkingPlaceBehaviorInterface
-	virtual Bool shouldReserveDoorWhenQueued(const ThingTemplate* thing) const; 
-	virtual Bool hasAvailableSpaceFor(const ThingTemplate* thing) const; 
-	virtual Bool hasReservedSpace(ObjectID id) const; 
-	virtual Int  getSpaceIndex( ObjectID id ) const;
-	virtual Bool reserveSpace(ObjectID id, Real parkingOffset, PPInfo* info);
-	virtual void releaseSpace(ObjectID id); 
-	virtual Bool reserveRunway(ObjectID id, Bool forLanding);
-	virtual void releaseRunway(ObjectID id); 
-	virtual void calcPPInfo( ObjectID id, PPInfo *info );
-	virtual Int getRunwayCount() const { return m_runways.size(); }
-	virtual ObjectID getRunwayReservation( Int r, RunwayReservationType type );
-	virtual void transferRunwayReservationToNextInLineForTakeoff(ObjectID id);
-	virtual Real getApproachHeight() const { return getFlightDeckBehaviorModuleData()->m_approachHeight; }
-	virtual Real getLandingDeckHeightOffset() const { return getFlightDeckBehaviorModuleData()->m_landingDeckHeightOffset; }
-	virtual void setHealee(Object* healee, Bool add);
-	virtual void killAllParkedUnits();
-	virtual void defectAllParkedUnits(Team* newTeam, UnsignedInt detectionTime);
-	virtual Bool calcBestParkingAssignment( ObjectID id, Coord3D *pos, Int *oldIndex = NULL, Int *newIndex = NULL );
+	virtual Bool shouldReserveDoorWhenQueued(const ThingTemplate* thing) const override;
+	virtual Bool hasAvailableSpaceFor(const ThingTemplate* thing) const override;
+	virtual Bool hasReservedSpace(ObjectID id) const override;
+	virtual Int  getSpaceIndex( ObjectID id ) const override;
+	virtual Bool reserveSpace(ObjectID id, Real parkingOffset, PPInfo* info) override;
+	virtual void releaseSpace(ObjectID id) override;
+	virtual Bool reserveRunway(ObjectID id, Bool forLanding) override;
+	virtual void releaseRunway(ObjectID id) override;
+	virtual void calcPPInfo( ObjectID id, PPInfo *info ) override;
+	virtual Int getRunwayIndex(ObjectID id) override;
+	virtual Int getRunwayCount() const override { return m_runways.size(); }
+	virtual ObjectID getRunwayReservation( Int r, RunwayReservationType type ) override;
+	virtual void transferRunwayReservationToNextInLineForTakeoff(ObjectID id) override;
+	virtual Real getApproachHeight() const override { return getFlightDeckBehaviorModuleData()->m_approachHeight; }
+	virtual Real getLandingDeckHeightOffset() const override { return getFlightDeckBehaviorModuleData()->m_landingDeckHeightOffset; }
+	virtual void setHealee(Object* healee, Bool add) override;
+	virtual void killAllParkedUnits() override;
+	virtual void defectAllParkedUnits(Team* newTeam, UnsignedInt detectionTime) override;
+	virtual Bool calcBestParkingAssignment( ObjectID id, Coord3D *pos, Int *oldIndex = nullptr, Int *newIndex = nullptr ) override;
 
 	// AIUpdateInterface
-	virtual void aiDoCommand(const AICommandParms* parms);
+	virtual void aiDoCommand(const AICommandParms* parms) override;
 
 	virtual const std::vector<Coord3D>* getTaxiLocations( ObjectID id ) const;
 	virtual const std::vector<Coord3D>* getCreationLocations( ObjectID id ) const;
@@ -178,7 +176,7 @@ private:
 			m_orientation = 0;
 			m_runway = 0;
 			m_objectInSpace = INVALID_ID;
-		} 
+		}
 	};
 
 	struct RunwayInfo
@@ -209,7 +207,7 @@ private:
 
   const ThingTemplate *m_thingTemplate;
 
-  
+
 	std::vector<FlightDeckInfo>		m_spaces;
 	std::vector<RunwayInfo>				m_runways;
 	std::list<HealingInfo>				m_healing;	// note, this list can vary in size, and be larger than the parking space count
@@ -228,6 +226,3 @@ private:
 	Bool													m_rampUp[ MAX_RUNWAYS ];
 
 };
-
-#endif // __FLIGHT_DECK_BEHAVIOR_H
-

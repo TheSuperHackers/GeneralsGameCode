@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/RandomValue.h"
 #include "Common/Xfer.h"
@@ -36,21 +36,13 @@
 #include "GameLogic/Module/LifetimeUpdate.h"
 #include "GameLogic/Object.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 LifetimeUpdate::LifetimeUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData )
 {
 	const LifetimeUpdateModuleData* d = getLifetimeUpdateModuleData();
-	// Added By Sadullah Nader
-	// Initializations needed
 	m_dieFrame = 0;
-	//
 	UnsignedInt delay;
 	if( getObject()->isKindOf( KINDOF_HULK ) && TheGameLogic->getHulkMaxLifetimeOverride() != -1 )
 	{
@@ -66,7 +58,7 @@ LifetimeUpdate::LifetimeUpdate( Thing *thing, const ModuleData* moduleData ) : U
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-LifetimeUpdate::~LifetimeUpdate( void )
+LifetimeUpdate::~LifetimeUpdate()
 {
 }
 
@@ -90,7 +82,7 @@ UnsignedInt LifetimeUpdate::calcSleepDelay(UnsignedInt minFrames, UnsignedInt ma
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime LifetimeUpdate::update( void )
+UpdateSleepTime LifetimeUpdate::update()
 {
 	// Kill (NOT destroy) if time is up
 	getObject()->kill();
@@ -106,7 +98,7 @@ void LifetimeUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -127,15 +119,15 @@ void LifetimeUpdate::xfer( Xfer *xfer )
 	// die frame
 	xfer->xferUnsignedInt( &m_dieFrame );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void LifetimeUpdate::loadPostProcess( void )
+void LifetimeUpdate::loadPostProcess()
 {
 
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

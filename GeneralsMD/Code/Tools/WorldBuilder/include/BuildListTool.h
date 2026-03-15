@@ -22,9 +22,6 @@
 
 #pragma once
 
-#ifndef BUILDLISTTOOL_H
-#define BUILDLISTTOOL_H
-
 #include "Tool.h"
 #include "Common/AsciiString.h"
 #include "PickUnitDialog.h"
@@ -33,9 +30,9 @@ class BuildListInfo;
 
 /*************************************************************************/
 /**                             BuildListTool
-	 Does the add item to build list tool operation. 
+	 Does the add item to build list tool operation.
 ***************************************************************************/
-class BuildListTool : public Tool 
+class BuildListTool : public Tool
 {
 protected:
 	CPoint m_downPt2d;
@@ -78,6 +75,3 @@ public:
 	virtual void activate(); ///< Become the current tool.
 	virtual void deactivate(); ///< Become not the current tool.
 };
-
-
-#endif //TOOL_H

@@ -27,7 +27,7 @@
 // Desc:   Keeps track of experience points so Veterance levels can be gained
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Xfer.h"
 #include "Common/ThingTemplate.h"
@@ -36,11 +36,6 @@
 #include "GameLogic/Object.h"
 
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 ExperienceTracker::ExperienceTracker(Object *parent) :
@@ -48,8 +43,9 @@ ExperienceTracker::ExperienceTracker(Object *parent) :
 	m_currentLevel(LEVEL_REGULAR),
 	m_experienceSink(INVALID_ID),
 	m_experienceScalar( 1.0f ),
-	m_currentExperience(0) // Added By Sadullah Nader
+	m_currentExperience(0)
 {
+	resetTrainable();
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -70,7 +66,19 @@ Int ExperienceTracker::getExperienceValue( const Object* killer ) const
 //-------------------------------------------------------------------------------------------------
 Bool ExperienceTracker::isTrainable() const
 {
-	return m_parent->getTemplate()->isTrainable();
+	return m_isTrainable;
+}
+
+//-------------------------------------------------------------------------------------------------
+void ExperienceTracker::setTrainable(Bool trainable)
+{
+	m_isTrainable = trainable;
+}
+
+//-------------------------------------------------------------------------------------------------
+void ExperienceTracker::resetTrainable()
+{
+	m_isTrainable = m_parent->getTemplate()->isTrainable();
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -86,8 +94,14 @@ void ExperienceTracker::setExperienceSink( ObjectID sink )
 }
 
 //-------------------------------------------------------------------------------------------------
+ObjectID ExperienceTracker::getExperienceSink() const
+{
+	return m_experienceSink;
+}
+
+//-------------------------------------------------------------------------------------------------
 // Set Level to AT LEAST this... if we are already >= this level, do nothing.
-void ExperienceTracker::setMinVeterancyLevel( VeterancyLevel newLevel )
+void ExperienceTracker::setMinVeterancyLevel( VeterancyLevel newLevel, Bool provideFeedback )
 {
 	// This does not check for IsTrainable, because this function is for explicit setting,
 	// so the setter is assumed to know what they are doing.  The game function
@@ -98,7 +112,7 @@ void ExperienceTracker::setMinVeterancyLevel( VeterancyLevel newLevel )
 		m_currentLevel = newLevel;
 		m_currentExperience = m_parent->getTemplate()->getExperienceRequired(m_currentLevel); //Minimum for this level
 		if (m_parent)
-			m_parent->onVeterancyLevelChanged( oldLevel, newLevel );
+			m_parent->onVeterancyLevelChanged( oldLevel, newLevel, provideFeedback );
 	}
 }
 
@@ -172,8 +186,8 @@ void ExperienceTracker::addExperiencePoints( Int experienceGain, Bool canScaleFo
 	m_currentExperience += amountToGain;
 
 	Int levelIndex = 0;
-	while( ( (levelIndex + 1) < LEVEL_COUNT) 
-		&&  m_currentExperience >= m_parent->getTemplate()->getExperienceRequired(levelIndex + 1) 
+	while( ( (levelIndex + 1) < LEVEL_COUNT)
+		&&  m_currentExperience >= m_parent->getTemplate()->getExperienceRequired(levelIndex + 1)
 		)
 	{
 		// If there is a higher level to qualify for, and I qualify for it, advance the index
@@ -212,7 +226,7 @@ void ExperienceTracker::setExperienceAndLevel( Int experienceIn, Bool provideFee
 	m_currentExperience = experienceIn;
 
 	Int levelIndex = 0;
-	while( ( (levelIndex + 1) < LEVEL_COUNT) 
+	while( ( (levelIndex + 1) < LEVEL_COUNT)
 		&&  m_currentExperience >= m_parent->getTemplate()->getExperienceRequired(levelIndex + 1)
 		)
 	{
@@ -235,19 +249,27 @@ void ExperienceTracker::crc( Xfer *xfer )
 {
 	xfer->xferInt( &m_currentExperience );
 	xfer->xferUser( &m_currentLevel, sizeof( VeterancyLevel ) );
-}  // end crc
+#if !RETAIL_COMPATIBLE_CRC
+	xfer->xferBool(&m_isTrainable);
+#endif
+}
 
 //-----------------------------------------------------------------------------
 /** Xfer method
 	* Version Info:
-	* 1: Initial version 
+	* 1: Initial version
+	* 2: TheSuperHackers @tweak Serialize m_isTrainable
 	*/
 // ----------------------------------------------------------------------------
 void ExperienceTracker::xfer( Xfer *xfer )
 {
 
 	// version
+#if RETAIL_COMPATIBLE_XFER_SAVE
 	XferVersion currentVersion = 1;
+#else
+	XferVersion currentVersion = 2;
+#endif
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
@@ -266,11 +288,13 @@ void ExperienceTracker::xfer( Xfer *xfer )
 	// experience scalar
 	xfer->xferReal( &m_experienceScalar );
 
-}  // end xfer
+	if (version >= 2)
+		xfer->xferBool(&m_isTrainable);
+}
 
 //-----------------------------------------------------------------------------
-void ExperienceTracker::loadPostProcess( void )
+void ExperienceTracker::loadPostProcess()
 {
 
-}  // end loadPostProcess
+}
 

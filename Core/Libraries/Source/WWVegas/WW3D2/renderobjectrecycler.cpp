@@ -42,7 +42,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "renderobjectrecycler.h"
-#include <string.h>
 #include "rendobj.h"
 #include "assetmgr.h"
 #include "part_emt.h"
@@ -61,7 +60,7 @@
  * HISTORY:                                                                                    *
  *   4/25/2001  gth : Created.                                                                 *
  *=============================================================================================*/
-void RenderObjectRecyclerClass::Reset(void)
+void RenderObjectRecyclerClass::Reset()
 {
 	InactiveModels.Reset_List();
 }
@@ -82,8 +81,8 @@ void RenderObjectRecyclerClass::Reset(void)
 RenderObjClass * RenderObjectRecyclerClass::Get_Render_Object(const char * name,const Matrix3D & tm)
 {
 	RefRenderObjListIterator it(&InactiveModels);
-	
-	RenderObjClass * found = NULL;
+
+	RenderObjClass * found = nullptr;
 	while (!it.Is_Done()) {
 		if (stricmp(it.Peek_Obj()->Get_Name(),name) == 0) {
 			found = it.Peek_Obj();
@@ -92,7 +91,7 @@ RenderObjClass * RenderObjectRecyclerClass::Get_Render_Object(const char * name,
 		it.Next();
 	}
 
-	if (found != NULL) {
+	if (found != nullptr) {
 		found->Add_Ref();
 		InactiveModels.Remove(found);
 		found->Set_Transform(tm);
@@ -100,15 +99,15 @@ RenderObjClass * RenderObjectRecyclerClass::Get_Render_Object(const char * name,
 		return found;
 
 	} else {
-		
+
 		RenderObjClass * new_model = WW3DAssetManager::Get_Instance()->Create_Render_Obj(name);
-		if (new_model != NULL) {
+		if (new_model != nullptr) {
 			new_model->Set_Transform(tm);
 			return new_model;
-		} 
-	}	
-	
-	return NULL;
+		}
+	}
+
+	return nullptr;
 }
 
 
@@ -144,7 +143,7 @@ void RenderObjectRecyclerClass::Return_Render_Object(RenderObjClass * obj)
  *=============================================================================================*/
 void RenderObjectRecyclerClass::Insert_Inactive_Model(RenderObjClass * obj)
 {
-	WWASSERT(obj != NULL);
+	WWASSERT(obj != nullptr);
 	InactiveModels.Add(obj);
 }
 
@@ -170,7 +169,7 @@ void RenderObjectRecyclerClass::Reset_Model(RenderObjClass * model)
 		Reset_Model(robj);
 		robj->Release_Ref();
 	}
-	
+
 	/*
 	** particle emitters must be reset (this should release their buffers)
 	*/
@@ -178,11 +177,11 @@ void RenderObjectRecyclerClass::Reset_Model(RenderObjClass * model)
 		ParticleEmitterClass * emitter = (ParticleEmitterClass *)model;
 		emitter->Reset();
 	}
-	
+
 	/*
 	** animated models must have their animation reset (if present)
 	*/
-	if (model->Peek_Animation() != NULL) {
+	if (model->Peek_Animation() != nullptr) {
 		model->Set_Animation(model->Peek_Animation(),0.0f,RenderObjClass::ANIM_MODE_ONCE);
 	}
 }

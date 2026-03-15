@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifndef __OSDISPLAY_H__
-#define __OSDISPLAY_H__
-
 #include "Lib/BaseType.h"
 
 class AsciiString;
@@ -39,8 +36,8 @@ enum OSDisplayButtonType CPP_11(: UnsignedInt)
 {
 	OSDBT_OK										= 0x00000001,
 	OSDBT_CANCEL								= 0x00000002,
-															
-															
+
+
 	OSDBT_ERROR									= 0x80000000
 };
 
@@ -49,7 +46,7 @@ enum OSDisplayOtherFlags CPP_11(: UnsignedInt)
 	OSDOF_SYSTEMMODAL						= 0x00000001,
 	OSDOF_APPLICATIONMODAL			= 0x00000002,
 	OSDOF_TASKMODAL							= 0x00000004,
-	
+
 	OSDOF_EXCLAMATIONICON				= 0x00000008,
 	OSDOF_INFORMATIONICON				= 0x00000010,
 	OSDOF_ERRORICON							= 0x00000011,
@@ -59,8 +56,10 @@ enum OSDisplayOtherFlags CPP_11(: UnsignedInt)
 };
 
 // Display a warning box to the user with the specified localized prompt, message, and
-// buttons. (Feel free to add buttons as appropriate to the enum above). 
+// buttons. (Feel free to add buttons as appropriate to the enum above).
 // This function will return the button pressed to close the dialog.
 OSDisplayButtonType OSDisplayWarningBox(AsciiString p, AsciiString m, UnsignedInt buttonFlags, UnsignedInt otherFlags);
 
-#endif /* __OSDISPLAY_H__ */
+// TheSuperHackers @feature Tell the Operating System that the game is considered busy
+// and we would not like the display screen and/or system to shut off.
+void OSDisplaySetBusyState(Bool busyDisplay, Bool busySystem);

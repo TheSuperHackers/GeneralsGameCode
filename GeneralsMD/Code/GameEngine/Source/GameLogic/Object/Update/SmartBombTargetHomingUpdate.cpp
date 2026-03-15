@@ -46,7 +46,7 @@ SmartBombTargetHomingUpdate::SmartBombTargetHomingUpdate( Thing *thing, const Mo
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-SmartBombTargetHomingUpdate::~SmartBombTargetHomingUpdate( void )
+SmartBombTargetHomingUpdate::~SmartBombTargetHomingUpdate()
 {
 }
 //#define CRISS_CROSS_GEOMETRY
@@ -73,7 +73,7 @@ void SmartBombTargetHomingUpdate::SetTargetPosition( const Coord3D& target )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime SmartBombTargetHomingUpdate::update( void )
+UpdateSleepTime SmartBombTargetHomingUpdate::update()
 {
 
   if ( ! m_targetReceived )
@@ -119,7 +119,7 @@ void SmartBombTargetHomingUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -138,15 +138,15 @@ void SmartBombTargetHomingUpdate::xfer( Xfer *xfer )
 	UpdateModule::xfer( xfer );
 
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void SmartBombTargetHomingUpdate::loadPostProcess( void )
+void SmartBombTargetHomingUpdate::loadPostProcess()
 {
 
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

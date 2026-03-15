@@ -24,12 +24,12 @@
 
 // FILE: ShellMenuScheme.h /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	created:	Jul 2002
@@ -37,16 +37,13 @@
 //	Filename: 	ShellMenuScheme.h
 //
 //	author:		Chris Huybregts
-//	
-//	purpose:	
+//
+//	purpose:
 //
 //-----------------------------------------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __SHELL_MENU_SCHEME_H_
-#define __SHELL_MENU_SCHEME_H_
 
 //-----------------------------------------------------------------------------
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
@@ -68,9 +65,9 @@ class Image;
 class ShellMenuSchemeLine
 {
 public:
-	ShellMenuSchemeLine( void );
-	~ShellMenuSchemeLine( void );	
-	
+	ShellMenuSchemeLine();
+	~ShellMenuSchemeLine();
+
 	ICoord2D m_startPos;
 	ICoord2D m_endPos;
 	Int m_width;
@@ -81,8 +78,8 @@ public:
 class ShellMenuSchemeImage
 {
 public:
-	ShellMenuSchemeImage( void );
-	~ShellMenuSchemeImage( void );	
+	ShellMenuSchemeImage();
+	~ShellMenuSchemeImage();
 
 	AsciiString m_name;						///< Name of the image
 	ICoord2D m_position;					///< the position we'll draw it at
@@ -93,41 +90,41 @@ public:
 class ShellMenuScheme
 {
 public:
-	ShellMenuScheme( void );
-	~ShellMenuScheme( void );	
-	
-	void draw( void );
+	ShellMenuScheme();
+	~ShellMenuScheme();
+
+	void draw();
 	void addImage( ShellMenuSchemeImage* schemeImage );
 	void addLine( ShellMenuSchemeLine* schemeLine );
-	
+
 
 	AsciiString m_name;
 
 	typedef std::list< ShellMenuSchemeImage* > ShellMenuSchemeImageList;
 	typedef ShellMenuSchemeImageList::iterator ShellMenuSchemeImageListIt;
 	ShellMenuSchemeImageList m_imageList;
-	
+
 	typedef std::list< ShellMenuSchemeLine* > ShellMenuSchemeLineList;
 	typedef ShellMenuSchemeLineList::iterator ShellMenuSchemeLineListIt;
 	ShellMenuSchemeLineList m_lineList;
 
 
-	
+
 
 };
 
 class ShellMenuSchemeManager
 {
 public:
-	ShellMenuSchemeManager( void );
-	~ShellMenuSchemeManager( void );
-	
-	void init( void );
-	void update( void );
+	ShellMenuSchemeManager();
+	~ShellMenuSchemeManager();
+
+	void init();
+	void update();
 
 	void setShellMenuScheme( AsciiString name );
-	
-	void draw( void );
+
+	void draw();
 
 	// parse Functions for the INI file
 	const FieldParse *getFieldParse() const { return m_shellMenuSchemeFieldParseTable; }								///< returns the parsing fields
@@ -153,5 +150,3 @@ private:
 //-----------------------------------------------------------------------------
 // EXTERNALS //////////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-
-#endif // __SHELL_MENU_SCHEME_H_

@@ -22,9 +22,9 @@
  *																			  *
  *                  Project Name : Autorun									  *
  *																			  *
- *                     File Name : AUTORUN.CPP								  *
+ *                     File Name : AUTORUN.cpp								  *
  *																			  *
- *                    Programmers: Maria del Mar McCready Legg				  * 
+ *                    Programmers: Maria del Mar McCready Legg				  *
  *																			  *
  *                    Start Date : September 5, 1997						  *
  *																			  *
@@ -55,7 +55,7 @@
 
 #ifndef LEAN_AND_MEAN
 ///////GAMEENGINE HEADERS////////////
-#include "Common/UnicodeString.h" 
+#include "Common/UnicodeString.h"
 #include "Common/SubsystemInterface.h"
 #include "GameClient/GameText.h"
 #endif
@@ -63,7 +63,7 @@
 
 //*****************************************************************************
 //  DrawButton::DrawButton -- Constructor for custom "Button" type.
-// 
+//
 // 	This custom button is drawn by the dialog, and uses the WM_MOUSEMOVE,
 //	WM_LBUTTONUP, and WM_LBUTTONDOWN to trigger actions.
 //
@@ -80,8 +80,8 @@
 //
 //  WARNINGS:	No keyboard/mouse/paint handling built in.  Do manually.
 //
-//  HISTORY:                                                                
-//      07/15/1996  MML : Created.                                            
+//  HISTORY:
+//      07/15/1996  MML : Created.
 //=============================================================================
 
 DrawButton::DrawButton ( int id, RECT button_rect, const char *normal, const char *focus, const char *pressed, const char * string, TTFontClass *fontptr )
@@ -105,7 +105,7 @@ DrawButton::DrawButton ( int id, RECT button_rect, const char *normal, const cha
 	TextRect.Y	 	= button_rect.top;
 	TextRect.Width	= rect.right  - rect.left;
 	TextRect.Height	= rect.bottom - rect.top;
-	
+
 	StretchedWidth 	= rect.right  - rect.left;
 	StretchedHeight	= rect.bottom - rect.top;
 
@@ -113,7 +113,7 @@ DrawButton::DrawButton ( int id, RECT button_rect, const char *normal, const cha
 	// Set the string variables.
 	//--------------------------------------------------------------------------
 	memset( String, '\0', MAX_PATH );
-//	if ( string != NULL ) {
+//	if ( string != nullptr ) {
 //		wcscpy( String, Locale_GetString( string_num, String ));
 
 
@@ -127,9 +127,9 @@ DrawButton::DrawButton ( int id, RECT button_rect, const char *normal, const cha
 	//--------------------------------------------------------------------------
 	// Set the font pointer.
 	//--------------------------------------------------------------------------
-	MyFontPtr = NULL;
+	MyFontPtr = nullptr;
 
-	if ( fontptr != NULL ) {
+	if ( fontptr != nullptr ) {
 		MyFontPtr = fontptr;
 	}
 
@@ -182,16 +182,16 @@ DrawButton::DrawButton ( int id, RECT button_rect, const char *normal, const cha
 	// Set the string variables.
 	//--------------------------------------------------------------------------
 	memset( String, '\0', MAX_PATH );
-	if ( string != NULL ) {
+	if ( string != nullptr ) {
 		wcscpy( String, string );
 	}
 
 	//--------------------------------------------------------------------------
 	// Set the font pointer.
 	//--------------------------------------------------------------------------
-	MyFontPtr = NULL;
+	MyFontPtr = nullptr;
 
-	if ( fontptr != NULL ) {
+	if ( fontptr != nullptr ) {
 		MyFontPtr = fontptr;
 	}
 
@@ -201,7 +201,7 @@ DrawButton::DrawButton ( int id, RECT button_rect, const char *normal, const cha
 	_tcscpy( NormalBitmap, normal );
 	_tcscpy( PressedBitmap, pressed );
 	_tcscpy( FocusBitmap, focus );
-	
+
 	if( NormalBitmap[0] != '\0' ) {
 		UseBitmaps = true;							// determines how to draw button.
 	}
@@ -217,15 +217,15 @@ DrawButton::DrawButton ( int id, RECT button_rect, const char *normal, const cha
 
 //*****************************************************************************
 // DrawButton::Draw_Text -- Check if mouse values are in button area.
-// 
+//
 // INPUT: 		HDC hDC -- DC to paint to.
 //
 //	OUTPUT:    	none.
 //
-// WARNINGS:	
+// WARNINGS:
 //
-// HISTORY:                                                                
-//   01/18/2002  MML : Created.                                            
+// HISTORY:
+//   01/18/2002  MML : Created.
 //=============================================================================
 
 void DrawButton::Draw_Text ( HDC hDC )
@@ -233,7 +233,7 @@ void DrawButton::Draw_Text ( HDC hDC )
 	RECT	outline_rect;
 	Rect	rect;
 
-	if( hDC == NULL ) {
+	if( hDC == nullptr ) {
 		return;
 	}
 
@@ -246,34 +246,34 @@ void DrawButton::Draw_Text ( HDC hDC )
 	*/
 //	SetTextColor( hDC, RGB( 0, 240, 0 ));
 //	DrawFocusRect(	hDC, &dst_rect );
-			
+
 	if ( Get_State() == DrawButton::PRESSED_STATE ) {
-		MyFontPtr->Print( 
-			hDC, 
-			String, 
-			rect, 
-			TEXT_PRESSED_COLOR, 
-			TEXT_PRESSED_SHADOW_COLOR, 
+		MyFontPtr->Print(
+			hDC,
+			String,
+			rect,
+			TEXT_PRESSED_COLOR,
+			TEXT_PRESSED_SHADOW_COLOR,
 			TPF_BUTTON,
 			TPF_SHADOW );
 
 	} else if ( Get_State() == DrawButton::FOCUS_STATE ) {
-		MyFontPtr->Print( 
-			hDC, 
-			String, 
-			rect, 
-			TEXT_FOCUSED_COLOR, 
-			TEXT_FOCUSED_SHADOW_COLOR, 
+		MyFontPtr->Print(
+			hDC,
+			String,
+			rect,
+			TEXT_FOCUSED_COLOR,
+			TEXT_FOCUSED_SHADOW_COLOR,
 			TPF_BUTTON,
 			TPF_SHADOW );
 
 	} else {
-		MyFontPtr->Print( 
-			hDC, 
-			String, 
-			rect, 
-			TEXT_NORMAL_COLOR,	
-			TEXT_NORMAL_SHADOW_COLOR, 
+		MyFontPtr->Print(
+			hDC,
+			String,
+			rect,
+			TEXT_NORMAL_COLOR,
+			TEXT_NORMAL_SHADOW_COLOR,
 			TPF_BUTTON,
 			TPF_SHADOW );
 	}
@@ -282,17 +282,17 @@ void DrawButton::Draw_Text ( HDC hDC )
 
 //*****************************************************************************
 // DrawButton::Is_Mouse_In_Region -- Check if mouse values are in button area.
-// 
+//
 // INPUT: 		int mouse_x  -- mouse x position
 //				int mouse_y  -- mouse y position
 //
 //	OUTPUT: 	bool -- true of false.
 //
 // WARNINGS:	No keyboard/mouse/paint handling built in.  Do manually.
-//				Note: width is shortened below to accomodate actual bitmap area.
+//				Note: width is shortened below to accommodate actual bitmap area.
 //
-// HISTORY:                                                                
-//   07/15/1996  MML : Created.                                            
+// HISTORY:
+//   07/15/1996  MML : Created.
 //=============================================================================
 
 bool DrawButton::Is_Mouse_In_Region ( int mouse_x, int mouse_y )
@@ -301,9 +301,9 @@ bool DrawButton::Is_Mouse_In_Region ( int mouse_x, int mouse_y )
 		return( false );
 	}
 
-	if (( mouse_x >= rect.left )	&& 
+	if (( mouse_x >= rect.left )	&&
 		( mouse_y >= rect.top )		&&
-		( mouse_x <= rect.left + StretchedWidth ) && 
+		( mouse_x <= rect.left + StretchedWidth ) &&
 		( mouse_y <= rect.top  + StretchedHeight )) {
 		return ( TRUE );
 	}
@@ -311,18 +311,18 @@ bool DrawButton::Is_Mouse_In_Region ( int mouse_x, int mouse_y )
 }
 
 //*****************************************************************************
-// DrawButton::Return_Bitmap 
+// DrawButton::Return_Bitmap
 //
 //	    Return name of correct bitmap based on state of button.
-// 
+//
 // INPUT:  		none.
 //
 // OUTPUT: 		char *bitmap -- name of bitmap file.
 //
 // WARNINGS:	No keyboard/mouse/paint handling built in.  Do manually.
 //
-// HISTORY:                                                                
-//   07/15/1996  MML : Created.                                            
+// HISTORY:
+//   07/15/1996  MML : Created.
 //=============================================================================
 
 char *DrawButton::Return_Bitmap ( void )
@@ -338,15 +338,15 @@ char *DrawButton::Return_Bitmap ( void )
 
 //*****************************************************************************
 // DrawButton::Return_Area -- Return x, y and width and height of button.
-// 
+//
 // INPUT:  		RECT area -- holds the x,y,width,height information.
 //
 // OUTPUT: 		none.
 //
 // WARNINGS:	No keyboard/mouse/paint handling built in.  Do manually.
 //
-// HISTORY:                                                                
-//   07/15/1996  MML : Created.                                            
+// HISTORY:
+//   07/15/1996  MML : Created.
 //=============================================================================
 
 void DrawButton::Return_Area ( RECT *area )
@@ -376,14 +376,14 @@ void DrawButton::Return_Text_Area ( Rect *area )
 
 //*****************************************************************************
 // DrawButton::Set_Stretched_Width -- Set draw width of button.
-// 
+//
 // INPUT:  		int value -- destination width size.
 //
 //OUTPUT: 		none.
 //
 // WARNINGS:	none.
 //
-// HISTORY:    08/12/1996  MML : Created.                                            
+// HISTORY:    08/12/1996  MML : Created.
 //=============================================================================
 
 int DrawButton::Set_Stretched_Width	 ( int value )
@@ -396,14 +396,14 @@ int DrawButton::Set_Stretched_Width	 ( int value )
 
 //*****************************************************************************
 // DrawButton::Set_Stretched_Height -- Set draw height of button.
-// 
+//
 // INPUT:  		int value -- destination height size.
 //
 // OUTPUT: 		none.
 //
 // WARNINGS:	none.
 //
-// HISTORY:    08/12/1996  MML : Created.                                            
+// HISTORY:    08/12/1996  MML : Created.
 //=============================================================================
 
 int DrawButton::Set_Stretched_Height ( int value )

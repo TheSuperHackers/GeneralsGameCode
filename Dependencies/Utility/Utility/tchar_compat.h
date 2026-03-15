@@ -28,3 +28,4 @@ typedef TCHAR* LPTSTR;
 #define _tcsicmp strcasecmp
 #define _tcsclen strlen
 #define _tcscpy strcpy
+

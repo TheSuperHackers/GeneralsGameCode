@@ -34,8 +34,8 @@ class DebugWindowDialog : public CDialog
 {
 	public:
 		enum {IDD = IDD_DebugWindow};
-		DebugWindowDialog(UINT nIDTemplate = DebugWindowDialog::IDD, CWnd* pParentWnd = NULL);
-		
+		DebugWindowDialog(UINT nIDTemplate = DebugWindowDialog::IDD, CWnd* pParentWnd = nullptr);
+
 		bool CanProceed(void);
 		bool RunAppFast(void);
 		void AppendMessage(const std::string& messageToAppend);
@@ -77,6 +77,6 @@ class DebugWindowDialog : public CDialog
 		afx_msg void OnClose();
 		DECLARE_MESSAGE_MAP()
 
-	
+
 
 };

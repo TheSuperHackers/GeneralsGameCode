@@ -29,7 +29,7 @@
 
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #define DEFINE_WEAPONSLOTTYPE_NAMES
 #define DEFINE_COMMANDSOURCEMASK_NAMES
@@ -53,17 +53,13 @@
 #include "GameLogic/Weapon.h"
 
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PUBLIC DATA ////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-const char* WeaponSetFlags::s_bitNameList[] = 
+template<>
+const char* const WeaponSetFlags::s_bitNameList[] =
 {
 	"VETERAN",
 	"ELITE",
@@ -83,8 +79,9 @@ const char* WeaponSetFlags::s_bitNameList[] =
 	"WEAPON_RIDER7",
 	"WEAPON_RIDER8",
 
-	NULL
+	nullptr
 };
+static_assert(ARRAY_SIZE(WeaponSetFlags::s_bitNameList) == WeaponSetFlags::NumBits + 1, "Incorrect array size");
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
@@ -104,9 +101,9 @@ void WeaponTemplateSet::clear()
 	m_isReloadTimeShared = false;
 	m_isWeaponLockSharedAcrossSets = FALSE;
 	m_types.clear();
-	for (int i = 0; i < WEAPONSLOT_COUNT; ++i) 
+	for (int i = 0; i < WEAPONSLOT_COUNT; ++i)
 	{
-		m_template[i] = NULL;
+		m_template[i] = nullptr;
 		m_autoChooseMask[i] = 0xffffffff;					// by default, allow autochoosing from any CommandSource
 		CLEAR_KINDOFMASK(m_preferredAgainst[i]);	// by default, weapon isn't preferred against anything in particular
 	}
@@ -115,7 +112,7 @@ void WeaponTemplateSet::clear()
 //-------------------------------------------------------------------------------------------------
 Bool WeaponTemplateSet::hasAnyWeapons() const
 {
-	for (int i = 0; i < WEAPONSLOT_COUNT; ++i) 
+	for (int i = 0; i < WEAPONSLOT_COUNT; ++i)
 	{
 		if (m_template[i])
 			return true;
@@ -128,7 +125,7 @@ void WeaponTemplateSet::parseWeapon(INI* ini, void *instance, void * /*store*/, 
 {
 	WeaponTemplateSet* self = (WeaponTemplateSet*)instance;
 	WeaponSlotType wslot = (WeaponSlotType)INI::scanIndexList(ini->getNextToken(), TheWeaponSlotTypeNames);
-	INI::parseWeaponTemplate(ini, instance, &self->m_template[wslot], NULL);
+	INI::parseWeaponTemplate(ini, instance, &self->m_template[wslot], nullptr);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -144,21 +141,21 @@ void WeaponTemplateSet::parsePreferredAgainst(INI* ini, void *instance, void * /
 {
 	WeaponTemplateSet* self = (WeaponTemplateSet*)instance;
 	WeaponSlotType wslot = (WeaponSlotType)INI::scanIndexList(ini->getNextToken(), TheWeaponSlotTypeNames);
-	KindOfMaskType::parseFromINI(ini, instance, &self->m_preferredAgainst[wslot], NULL);
+	KindOfMaskType::parseFromINI(ini, instance, &self->m_preferredAgainst[wslot], nullptr);
 }
 
 //-------------------------------------------------------------------------------------------------
 void WeaponTemplateSet::parseWeaponTemplateSet( INI* ini, const ThingTemplate* tt )
 {
-	static const FieldParse myFieldParse[] = 
+	static const FieldParse myFieldParse[] =
 	{
-		{ "Conditions", WeaponSetFlags::parseFromINI, NULL, offsetof( WeaponTemplateSet, m_types ) },
-		{ "Weapon",	WeaponTemplateSet::parseWeapon,	NULL, 0 },
-		{ "AutoChooseSources",	WeaponTemplateSet::parseAutoChoose, NULL, 0 },
-		{ "PreferredAgainst", WeaponTemplateSet::parsePreferredAgainst, NULL, 0 },
-		{ "ShareWeaponReloadTime", INI::parseBool, NULL, offsetof( WeaponTemplateSet, m_isReloadTimeShared ) },
-		{ "WeaponLockSharedAcrossSets", INI::parseBool, NULL, offsetof( WeaponTemplateSet, m_isWeaponLockSharedAcrossSets ) },
-		{ 0, 0, 0, 0 }
+		{ "Conditions", WeaponSetFlags::parseFromINI, nullptr, offsetof( WeaponTemplateSet, m_types ) },
+		{ "Weapon",	WeaponTemplateSet::parseWeapon,	nullptr, 0 },
+		{ "AutoChooseSources",	WeaponTemplateSet::parseAutoChoose, nullptr, 0 },
+		{ "PreferredAgainst", WeaponTemplateSet::parsePreferredAgainst, nullptr, 0 },
+		{ "ShareWeaponReloadTime", INI::parseBool, nullptr, offsetof( WeaponTemplateSet, m_isReloadTimeShared ) },
+		{ "WeaponLockSharedAcrossSets", INI::parseBool, nullptr, offsetof( WeaponTemplateSet, m_isWeaponLockSharedAcrossSets ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 
 	ini->initFromINI(this, myFieldParse);
@@ -180,22 +177,21 @@ WeaponSet::WeaponSet()
 {
 	m_curWeapon = PRIMARY_WEAPON;
 	m_curWeaponLockedStatus = NOT_LOCKED;
-	m_curWeaponTemplateSet = NULL;
+	m_curWeaponTemplateSet = nullptr;
 	m_filledWeaponSlotMask = 0;
 	m_totalAntiMask = 0;
 	m_totalDamageTypeMask.clear();
 	m_hasPitchLimit = false;
 	m_hasDamageWeapon = false;
 	for (Int i = 0; i < WEAPONSLOT_COUNT; ++i)
-		m_weapons[i] = NULL;
+		m_weapons[i] = nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------
 WeaponSet::~WeaponSet()
 {
 	for (Int i = 0; i < WEAPONSLOT_COUNT; ++i)
-		if (m_weapons[i])
-			deleteInstance(m_weapons[i]);
+		deleteInstance(m_weapons[i]);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -204,17 +200,24 @@ WeaponSet::~WeaponSet()
 void WeaponSet::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
 	* Version Info:
-	* 1: Initial version */
+	* 1: Initial version
+	* 2: TheSuperHackers @tweak Upgrade damage type flags from integer to BitFlags for Generals.
+	*    Zero Hour already had this at version 1.
+	*/
 // ------------------------------------------------------------------------------------------------
 void WeaponSet::xfer( Xfer *xfer )
 {
 	// version
+#if RETAIL_COMPATIBLE_XFER_SAVE
 	const XferVersion currentVersion = 1;
+#else
+	const XferVersion currentVersion = 2;
+#endif
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
@@ -228,16 +231,16 @@ void WeaponSet::xfer( Xfer *xfer )
 
 		if (ttName.isEmpty())
 		{
-			m_curWeaponTemplateSet = NULL;
+			m_curWeaponTemplateSet = nullptr;
 		}
 		else
 		{
 			const ThingTemplate* tt = TheThingFactory->findTemplate(ttName);
-			if (tt == NULL)
+			if (tt == nullptr)
 				throw INI_INVALID_DATA;
 
 			m_curWeaponTemplateSet = tt->findWeaponTemplateSet(wsFlags);
-			if (m_curWeaponTemplateSet == NULL)
+			if (m_curWeaponTemplateSet == nullptr)
 				throw INI_INVALID_DATA;
 		}
 	}
@@ -245,12 +248,12 @@ void WeaponSet::xfer( Xfer *xfer )
 	{
 		AsciiString ttName;				// leave 'em empty in case we're null
 		WeaponSetFlags wsFlags;
-		if (m_curWeaponTemplateSet != NULL)
+		if (m_curWeaponTemplateSet != nullptr)
 		{
 			const ThingTemplate* tt = m_curWeaponTemplateSet->friend_getThingTemplate();
-			if (tt == NULL)
+			if (tt == nullptr)
 				throw INI_INVALID_DATA;
-		
+
 			ttName = tt->getName();
 			wsFlags = m_curWeaponTemplateSet->friend_getWeaponSetFlags();
 		}
@@ -260,14 +263,14 @@ void WeaponSet::xfer( Xfer *xfer )
 
 	for (Int i = 0; i < WEAPONSLOT_COUNT; ++i)
 	{
-		Bool hasWeaponInSlot = (m_weapons[i] != NULL);
+		Bool hasWeaponInSlot = (m_weapons[i] != nullptr);
 		xfer->xferBool(&hasWeaponInSlot);
 		if (hasWeaponInSlot)
 		{
-			if (xfer->getXferMode() == XFER_LOAD && m_weapons[i] == NULL)
+			if (xfer->getXferMode() == XFER_LOAD && m_weapons[i] == nullptr)
 			{
 				const WeaponTemplate* wt = m_curWeaponTemplateSet->getNth((WeaponSlotType)i);
-				if (wt==NULL) {
+				if (wt==nullptr) {
 					DEBUG_CRASH(("xfer backwards compatibility code - old save file??? jba."));
 					wt = m_curWeaponTemplateSet->getNth((WeaponSlotType)0);
 				}
@@ -280,20 +283,34 @@ void WeaponSet::xfer( Xfer *xfer )
 	xfer->xferUser(&m_curWeaponLockedStatus, sizeof(m_curWeaponLockedStatus));
 	xfer->xferUnsignedInt(&m_filledWeaponSlotMask);
 	xfer->xferInt(&m_totalAntiMask);
+
+#if RTS_GENERALS
+	if (version < 2)
+	{
+		UnsignedInt totalDamageTypeMask = m_totalDamageTypeMask.toUnsignedInt();
+		xfer->xferUnsignedInt(&totalDamageTypeMask);
+		m_totalDamageTypeMask = DamageTypeFlags(totalDamageTypeMask);
+	}
+#endif
+
 	xfer->xferBool(&m_hasDamageWeapon);
 	xfer->xferBool(&m_hasDamageWeapon);
 
-	m_totalDamageTypeMask.xfer(xfer);// BitSet has built in xfer
-
+#if RTS_GENERALS
+	if (version >= 2)
+#endif
+	{
+		m_totalDamageTypeMask.xfer(xfer);// BitSet has built in xfer
+	}
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void WeaponSet::loadPostProcess( void )
+void WeaponSet::loadPostProcess()
 {
 
-}  // end loadPostProcess
+}
 
 //-------------------------------------------------------------------------------------------------
 void WeaponSet::updateWeaponSet(const Object* obj)
@@ -304,7 +321,7 @@ void WeaponSet::updateWeaponSet(const Object* obj)
 	{
 		if( ! set->isWeaponLockSharedAcrossSets() )
 		{
-			DEBUG_ASSERTLOG(!isCurWeaponLocked(), ("changing WeaponSet while Weapon is Locked... implicit unlock occurring!\n"));
+			DEBUG_ASSERTLOG(!isCurWeaponLocked(), ("changing WeaponSet while Weapon is Locked... implicit unlock occurring!"));
 			releaseWeaponLock(LOCKED_PERMANENTLY);	// release all locks. sorry!
 			m_curWeapon = PRIMARY_WEAPON;
 		}
@@ -315,11 +332,8 @@ void WeaponSet::updateWeaponSet(const Object* obj)
 		m_hasDamageWeapon = false;
 		for (Int i = WEAPONSLOT_COUNT - 1; i >= PRIMARY_WEAPON ; --i)
 		{
-			if (m_weapons[i] != NULL)
-			{
-				deleteInstance(m_weapons[i]);
-				m_weapons[i] = NULL;
-			}
+			deleteInstance(m_weapons[i]);
+			m_weapons[i] = nullptr;
 
 			if (set->getNth((WeaponSlotType)i))
 			{
@@ -340,7 +354,7 @@ void WeaponSet::updateWeaponSet(const Object* obj)
 			}
 		}
 		m_curWeaponTemplateSet = set;
-		//DEBUG_LOG(("WeaponSet::updateWeaponSet -- changed curweapon to %s\n",getCurWeapon()->getName().str()));
+		//DEBUG_LOG(("WeaponSet::updateWeaponSet -- changed curweapon to %s",getCurWeapon()->getName().str()));
 	}
 }
 
@@ -359,7 +373,7 @@ void WeaponSet::updateWeaponSet(const Object* obj)
 	ModelConditionFlagType f = Lookup[a][wslot];
 	if (f != MODELCONDITION_INVALID)
 		flags.set(f);
-	
+
 	static const ModelConditionFlagType Using[WEAPONSLOT_COUNT] = { MODELCONDITION_USING_WEAPON_A, MODELCONDITION_USING_WEAPON_B, MODELCONDITION_USING_WEAPON_C };
 	if (a != WSF_NONE)
 		flags.set(Using[wslot]);
@@ -403,7 +417,7 @@ static Int getVictimAntiMask(const Object* victim)
 		}
 		else if( !victim->isKindOf( KINDOF_UNATTACKABLE ) )
 		{
-			DEBUG_CRASH( ("Object %s is being targetted as airborne, but is not infantry, nor vehicle. Is this legit? -- tell Kris", victim->getTemplate()->getName().str() ) );
+			DEBUG_CRASH( ("Object %s is being targeted as airborne, but is not infantry, nor vehicle. Is this legit? -- tell Kris", victim->getTemplate()->getName().str() ) );
 		}
 		return 0;
 	}
@@ -448,12 +462,12 @@ CanAttackResult WeaponSet::getAbleToAttackSpecificObject( AbleToAttackType attac
 {
 
 	// basic sanity checks.
-	if (!source || 
-			!victim || 
-			source->isEffectivelyDead() || 
-			victim->isEffectivelyDead() || 
-			source->isDestroyed() || 
-			victim->isDestroyed() || 
+	if (!source ||
+			!victim ||
+			source->isEffectivelyDead() ||
+			victim->isEffectivelyDead() ||
+			source->isDestroyed() ||
+			victim->isDestroyed() ||
 			victim == source)
 		return ATTACKRESULT_NOT_POSSIBLE;
 
@@ -491,10 +505,10 @@ CanAttackResult WeaponSet::getAbleToAttackSpecificObject( AbleToAttackType attac
   	  allowStealthToPreventAttacks = FALSE;
   }
 
-	// If an object is stealthed and hasn't been detected yet, then it is not a valid target to fire 
+	// If an object is stealthed and hasn't been detected yet, then it is not a valid target to fire
 	// on.
-	if (allowStealthToPreventAttacks && 
-				victim->testStatus(OBJECT_STATUS_STEALTHED) && 
+	if (allowStealthToPreventAttacks &&
+				victim->testStatus(OBJECT_STATUS_STEALTHED) &&
 				!victim->testStatus(OBJECT_STATUS_DETECTED))
 	{
 		if( !victim->isKindOf( KINDOF_DISGUISER ) )
@@ -524,7 +538,7 @@ CanAttackResult WeaponSet::getAbleToAttackSpecificObject( AbleToAttackType attac
 	// If the victim is fully fogged or fully shrouded, then we cannot attack them
 	// GS -- Shroud only applies in decision making to Player owned objects and when the source is not from script
 	// SRJ -- ignore shroud checks if mode is CONTINUED and the target is immobile, since presumably
-	// we know where it is (and it's not going anywhere); this prevents wonky behavior if you have planes attack 
+	// we know where it is (and it's not going anywhere); this prevents wonky behavior if you have planes attack
 	// a deshrouded thing, which becomes reshrouded before they get there (basically the planes circle once in order
 	// to deshroud it again, and get nailed by AA fire in the meantime)
 
@@ -535,7 +549,7 @@ CanAttackResult WeaponSet::getAbleToAttackSpecificObject( AbleToAttackType attac
  //   && sourceController->getPlayerType() == PLAYER_HUMAN
 //		&& commandSource != CMD_FROM_SCRIPT
 //		&& !(isContinuedAttack(attackType) && victim->isKindOf(KINDOF_IMMOBILE))
-//		&&  victim->getShroudedStatus(sourceController->getPlayerIndex()) >= OBJECTSHROUD_FOGGED 
+//		&&  victim->getShroudedStatus(sourceController->getPlayerIndex()) >= OBJECTSHROUD_FOGGED
 //		)
 //	{
 //		return ATTACKRESULT_NOT_POSSIBLE;
@@ -561,14 +575,14 @@ CanAttackResult WeaponSet::getAbleToAttackSpecificObject( AbleToAttackType attac
 		//care about relationships (and fixes broken scripts).
 		if( commandSource == CMD_FROM_PLAYER && (!victim->testScriptStatusBit( OBJECT_STATUS_SCRIPT_TARGETABLE ) || r == ALLIES) )
 		{
-			//Unless the object has a map propertly that sets it to be targetable (and not allied), then give up.
+			//Unless the object has a map property that sets it to be targetable (and not allied), then give up.
 			return ATTACKRESULT_NOT_POSSIBLE;
 		}
 	}
 
 	// if the victim is contained within an enclosing container, it cannot be attacked directly
 	const Object* victimsContainer = victim->getContainedBy();
-	if (victimsContainer != NULL && victimsContainer->getContain()->isEnclosingContainerFor(victim) == TRUE)
+	if (victimsContainer != nullptr && victimsContainer->getContain()->isEnclosingContainerFor(victim) == TRUE)
 	{
 		return ATTACKRESULT_NOT_POSSIBLE;
 	}
@@ -587,7 +601,7 @@ CanAttackResult WeaponSet::getAbleToAttackSpecificObject( AbleToAttackType attac
 				//care about relationships (and fixes broken scripts).
 				if( commandSource == CMD_FROM_PLAYER && (!victim->testScriptStatusBit( OBJECT_STATUS_SCRIPT_TARGETABLE ) || r == ALLIES) )
 				{
-					//Unless the object has a map propertly that sets it to be targetable (and not allied), then give up.
+					//Unless the object has a map property that sets it to be targetable (and not allied), then give up.
 					return ATTACKRESULT_NOT_POSSIBLE;
 				}
 			}
@@ -605,7 +619,7 @@ CanAttackResult WeaponSet::getAbleToAttackSpecificObject( AbleToAttackType attac
 CanAttackResult WeaponSet::getAbleToUseWeaponAgainstTarget( AbleToAttackType attackType, const Object *source, const Object *victim, const Coord3D *pos, CommandSourceType commandSource, WeaponSlotType specificSlot ) const
 {
 
-	//First determine if we are attacking an object or the ground and get the 
+	//First determine if we are attacking an object or the ground and get the
 	//appropriate weapon anti mask.
 	WeaponAntiMaskType targetAntiMask;
 	if( victim )
@@ -621,7 +635,7 @@ CanAttackResult WeaponSet::getAbleToUseWeaponAgainstTarget( AbleToAttackType att
 		//Attacking the ground so this is obvious.
 		targetAntiMask = WEAPON_ANTI_GROUND;
 	}
-	
+
 
 	// Special Case test for turreted weapons on buildings... since they cannot move, they must be within range of target
 	//Kris: Actually -- let's just do this for all immobile objects. If we can give it orders to attack, then we must check
@@ -652,7 +666,7 @@ CanAttackResult WeaponSet::getAbleToUseWeaponAgainstTarget( AbleToAttackType att
 				continue;
 
 			Bool handled = FALSE;
-			ContainModuleInterface *contain = containedBy ? containedBy->getContain() : NULL;
+			ContainModuleInterface *contain = containedBy ? containedBy->getContain() : nullptr;
 			if( contain && contain->isGarrisonable() && contain->isEnclosingContainerFor( source ))
 			{                                       // non enclosing garrison containers do not use firepoints. Lorenzen, 6/11/03
 				//For contained things, we need to fake-move objects to the best garrison point in order
@@ -685,7 +699,7 @@ CanAttackResult WeaponSet::getAbleToUseWeaponAgainstTarget( AbleToAttackType att
 	}
 
 	CanAttackResult okResult = withinAttackRange ? ATTACKRESULT_POSSIBLE : ATTACKRESULT_POSSIBLE_AFTER_MOVING;
-	
+
 
 // ----- things we examine about SOURCE to determine legality of attack
 
@@ -698,7 +712,7 @@ CanAttackResult WeaponSet::getAbleToUseWeaponAgainstTarget( AbleToAttackType att
 		//of the weapon mask check preceding this, the attack is possible!
 		if( !victim )
 			return okResult;
-		
+
 		if (!isAnyWithinTargetPitch(source, victim))
 			return ATTACKRESULT_INVALID_SHOT;
 
@@ -764,15 +778,15 @@ CanAttackResult WeaponSet::getAbleToUseWeaponAgainstTarget( AbleToAttackType att
 
 	// Do a check to see if we have a hive object that has slaved objects.
 	SpawnBehaviorInterface* spawnInterface = source->getSpawnBehaviorInterface();
-	if( spawnInterface && 
+	if( spawnInterface &&
 		spawnInterface->getCanAnySlavesUseWeaponAgainstTarget( attackType, victim, pos, commandSource ) == ATTACKRESULT_POSSIBLE )
 	{
 
-// srj sez: this bit is intended to fix the situation where you have a stinger site 
+// srj sez: this bit is intended to fix the situation where you have a stinger site
 // selected and get the "attack if I move" cursor against an enemy. since the stinger site can't
 // move or fire, you shouldn't really EVER get this cursor for it. and since we just verified above
 // that our slaves (the soldiers) can attack correctly, just nork it.
-		if (source->isKindOf( KINDOF_IMMOBILE ) 
+		if (source->isKindOf( KINDOF_IMMOBILE )
 				&& source->isKindOf( KINDOF_SPAWNS_ARE_THE_WEAPONS )
 				&& okResult == ATTACKRESULT_POSSIBLE_AFTER_MOVING)
 			okResult = ATTACKRESULT_POSSIBLE;
@@ -788,7 +802,7 @@ CanAttackResult WeaponSet::getAbleToUseWeaponAgainstTarget( AbleToAttackType att
 Bool WeaponSet::chooseBestWeaponForTarget(const Object* obj, const Object* victim, WeaponChoiceCriteria criteria, CommandSourceType cmdSource)
 {
 	/*
-		1) The first criteria is weapon fitness.  If the object has two weapons that can fire concurrently, 
+		1) The first criteria is weapon fitness.  If the object has two weapons that can fire concurrently,
 			find the set of weapons that can hit the given target.  If two weapons can hit the given target,
 		2) Figure potential damage. If both weapons have the same potential damage (should never happen) then,
 		3) Pick one.
@@ -806,7 +820,7 @@ Bool WeaponSet::chooseBestWeaponForTarget(const Object* obj, const Object* victi
 	if( isCurWeaponLocked() )
 		return TRUE; // I have been forced into choosing a specific weapon, so it is right until someone says otherwise
 
-	if (victim == NULL)
+	if (victim == nullptr)
 	{
 		// Weapon lock is checked first for specific attack- ground powers.  Otherwise, we will reproduce the old behavior
 		// and make only Primary attack the ground.
@@ -835,7 +849,7 @@ Bool WeaponSet::chooseBestWeaponForTarget(const Object* obj, const Object* victi
 		// no weapon in this slot.
 		if (!m_weapons[i])
 			continue;
-		
+
 		// weapon not allowed to be specified via this command source.
 		CommandSourceMask okSrcs = m_curWeaponTemplateSet->getNthCommandSourceMask((WeaponSlotType)i);
 		if( ( okSrcs & (1 << cmdSource) ) == 0 )
@@ -847,7 +861,7 @@ Bool WeaponSet::chooseBestWeaponForTarget(const Object* obj, const Object* victi
 		}
 
 		Weapon* weapon = m_weapons[i];
-		if (weapon == NULL)
+		if (weapon == nullptr)
 			continue;
 
 		// No bad wrong!  Being out of range does not mean this weapon can not affect the target!
@@ -858,14 +872,14 @@ Bool WeaponSet::chooseBestWeaponForTarget(const Object* obj, const Object* victi
 		// weapon out of ammo.
 		if (weapon->getStatus() == OUT_OF_AMMO && !weapon->getAutoReloadsClip())
 			continue;
-		
+
 		// weapon not allowed to target this kind of thing.
 		if (!(weapon->getAntiMask() & getVictimAntiMask(victim)))
 			continue;
 
 		if (!weapon->isWithinTargetPitch(obj, victim))
 			continue;
-		
+
 		Real damage = weapon->estimateWeaponDamage(obj, victim);
 		Real attackRange = weapon->getAttackRange(obj);
 		Bool weaponIsReady = (weapon->getStatus() == READY_TO_FIRE);
@@ -878,7 +892,7 @@ Bool WeaponSet::chooseBestWeaponForTarget(const Object* obj, const Object* victi
 		// exception: 'unresistable' weapons are allowed to do zero damage.
 		if (damage <= 0.0f && weapon->getDamageType() != DAMAGE_UNRESISTABLE)
 			continue;
-	
+
 		/*
 			now that we've eliminated the impossible ones, let's decide which
 			one we will prefer.
@@ -894,7 +908,7 @@ Bool WeaponSet::chooseBestWeaponForTarget(const Object* obj, const Object* victi
 		if (KINDOFMASK_ANY_SET(preferredAgainst) && victim->isKindOfMulti(preferredAgainst, KINDOFMASK_NONE))
 		{
 			const Real HUGE_DAMAGE = 1e10;		// wow, that's a lot of damage.
-			const Real HUGE_RANGE = 1e10;			
+			const Real HUGE_RANGE = 1e10;
 			damage = HUGE_DAMAGE;
 			attackRange = HUGE_RANGE;
 			// preferred weapons are also kept if they are merely reloading. (if out of ammo, we can punt.)
@@ -960,13 +974,13 @@ Bool WeaponSet::chooseBestWeaponForTarget(const Object* obj, const Object* victi
 		m_curWeapon = currentDecisionBackup;
 		found = TRUE;
 	}
-	else 
+	else
 	{
 		// No weapon at all was found, so we go back to primary.
 		m_curWeapon = PRIMARY_WEAPON;
 	}
 
-	//DEBUG_LOG(("WeaponSet::chooseBestWeaponForTarget -- changed curweapon to %s\n",getCurWeapon()->getName().str()));
+	//DEBUG_LOG(("WeaponSet::chooseBestWeaponForTarget -- changed curweapon to %s",getCurWeapon()->getName().str()));
 
 	return found;
 }
@@ -978,7 +992,7 @@ void WeaponSet::reloadAllAmmo(const Object *obj, Bool now)
 	for( Int i = 0; i < WEAPONSLOT_COUNT;	i++ )
 	{
 		Weapon* weapon = m_weapons[i];
-		if (weapon != NULL)
+		if (weapon != nullptr)
 		{
 			if (now)
 				weapon->loadAmmoNow(obj);
@@ -994,7 +1008,7 @@ Bool WeaponSet::isOutOfAmmo() const
 	for( Int i = 0; i < WEAPONSLOT_COUNT;	i++ )
 	{
 		const Weapon* weapon = m_weapons[i];
-		if (weapon == NULL)
+		if (weapon == nullptr)
 			continue;
 		if (weapon->getStatus() != OUT_OF_AMMO)
 		{
@@ -1015,7 +1029,7 @@ const Weapon* WeaponSet::findAmmoPipShowingWeapon() const
 			return weapon;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1028,7 +1042,7 @@ Weapon* WeaponSet::findWaypointFollowingCapableWeapon()
 			return m_weapons[i];
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1060,31 +1074,31 @@ Bool WeaponSet::setWeaponLock( WeaponSlotType weaponSlot, WeaponLockType lockTyp
 {
 	if (lockType == NOT_LOCKED)
 	{
-		DEBUG_CRASH(("calling setWeaponLock with NOT_LOCKED, so I am doing nothing... did you mean to use releaseWeaponLock()?\n"));
+		DEBUG_CRASH(("calling setWeaponLock with NOT_LOCKED, so I am doing nothing... did you mean to use releaseWeaponLock()?"));
 		return false;
 	}
 
-	// Verify the asked for weapon exists , choose it, and then lock it as choosen until unlocked
+	// Verify the asked for weapon exists , choose it, and then lock it as chosen until unlocked
 	// the old code was just plain wrong. (look at it in perforce and you'll see...)
-	if (m_weapons[weaponSlot] != NULL)
+	if (m_weapons[weaponSlot] != nullptr)
 	{
 		if( lockType == LOCKED_PERMANENTLY )
 		{
 			m_curWeapon = weaponSlot;
 			m_curWeaponLockedStatus = lockType;
-			//DEBUG_LOG(("WeaponSet::setWeaponLock permanently -- changed curweapon to %s\n",getCurWeapon()->getName().str()));
+			//DEBUG_LOG(("WeaponSet::setWeaponLock permanently -- changed curweapon to %s",getCurWeapon()->getName().str()));
 		}
 		else if( lockType == LOCKED_TEMPORARILY && m_curWeaponLockedStatus != LOCKED_PERMANENTLY )
 		{
 			m_curWeapon = weaponSlot;
 			m_curWeaponLockedStatus = lockType;
-			//DEBUG_LOG(("WeaponSet::setWeaponLock temporarily -- changed curweapon to %s\n",getCurWeapon()->getName().str()));
+			//DEBUG_LOG(("WeaponSet::setWeaponLock temporarily -- changed curweapon to %s",getCurWeapon()->getName().str()));
 		}
 
 		return true;
 	}
 
-	DEBUG_CRASH(("setWeaponLock: weapon %d not found (missing an upgrade?)\n", (Int)weaponSlot));
+	DEBUG_CRASH(("setWeaponLock: weapon %d not found (missing an upgrade?)", (Int)weaponSlot));
 	return false;
 }
 
@@ -1109,14 +1123,14 @@ void WeaponSet::releaseWeaponLock(WeaponLockType lockType)
 	}
 	else
 	{
-		DEBUG_CRASH(("calling releaseWeaponLock with NOT_LOCKED makes no sense. why did you do this?\n"));
+		DEBUG_CRASH(("calling releaseWeaponLock with NOT_LOCKED makes no sense. why did you do this?"));
 	}
 }
 
 //-------------------------------------------------------------------------------------------------
 Weapon* WeaponSet::getWeaponInWeaponSlot(WeaponSlotType wslot) const
-{ 
-	return m_weapons[wslot]; 
+{
+	return m_weapons[wslot];
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1142,4 +1156,4 @@ Bool WeaponSet::isSharedReloadTime() const
 		return m_curWeaponTemplateSet->isSharedReloadTime();
 	return false;
 }
- 
+

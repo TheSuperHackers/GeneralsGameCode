@@ -16,29 +16,28 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando / G 3D engine                                       * 
- *                                                                                             * 
- *                    File Name : MeshDeformDefs.h                                             * 
- *                                                                                             * 
- *                   Programmer : Patrick Smith                                                * 
- *                                                                                             * 
- *                   Start Date : 04/28/99                                                     * 
- *                                                                                             * 
- *                  Last Update : 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando / G 3D engine                                       *
+ *                                                                                             *
+ *                    File Name : MeshDeformDefs.h                                             *
+ *                                                                                             *
+ *                   Programmer : Patrick Smith                                                *
+ *                                                                                             *
+ *                   Start Date : 04/28/99                                                     *
+ *                                                                                             *
+ *                  Last Update :
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#ifndef __MESH_DEFORM_DEFS_H
-#define __MESH_DEFORM_DEFS_H
+#pragma once
 
 #include <max.h>
-#include "Vector.H"
+#include "Vector.h"
 
 ///////////////////////////////////////////////////////////////////////////
 //
@@ -94,7 +93,3 @@ typedef struct _VERT_INFO
 //
 ///////////////////////////////////////////////////////////////////////////
 typedef DynamicVectorClass<VERT_INFO> DEFORM_LIST;
-
-
-#endif //__MESH_DEFORM_DEFS_H
-

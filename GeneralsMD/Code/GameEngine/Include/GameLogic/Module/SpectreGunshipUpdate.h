@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __SPECTRE_GUNSHIP_UPDATE_H_
-#define __SPECTRE_GUNSHIP_UPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/KindOf.h"
 #include "GameLogic/Module/SpecialPowerUpdateModule.h"
@@ -44,7 +41,7 @@ class AudioEventRTS;
 enum ParticleSystemID CPP_11(: Int);
 
 //#define MAX_OUTER_NODES 16
-//#define TRACKERS 
+//#define TRACKERS
 
 //#define PUCK
 
@@ -75,7 +72,7 @@ public:
 	SpectreGunshipUpdateModuleData();
 	static void buildFieldParse(MultiIniFieldParse& p);
 
-private: 
+private:
 
 };
 
@@ -102,27 +99,27 @@ public:
 	// virtual destructor prototype provided by memory pool declaration
 
 	// SpecialPowerUpdateInterface
-	virtual Bool initiateIntentToDoSpecialPower(const SpecialPowerTemplate *specialPowerTemplate, const Object *targetObj, const Coord3D *targetPos, const Waypoint *way, UnsignedInt commandOptions );
-	virtual Bool isSpecialAbility() const { return false; }
-	virtual Bool isSpecialPower() const { return true; }
-	virtual Bool isActive() const {return m_status < GUNSHIP_STATUS_DEPARTING;}
-	virtual SpecialPowerUpdateInterface* getSpecialPowerUpdateInterface() { return this; }
-	virtual CommandOption getCommandOption() const { return (CommandOption)0; }
-	virtual Bool isPowerCurrentlyInUse( const CommandButton *command = NULL ) const;
+	virtual Bool initiateIntentToDoSpecialPower(const SpecialPowerTemplate *specialPowerTemplate, const Object *targetObj, const Coord3D *targetPos, const Waypoint *way, UnsignedInt commandOptions ) override;
+	virtual Bool isSpecialAbility() const override { return false; }
+	virtual Bool isSpecialPower() const override { return true; }
+	virtual Bool isActive() const override {return m_status < GUNSHIP_STATUS_DEPARTING;}
+	virtual SpecialPowerUpdateInterface* getSpecialPowerUpdateInterface() override { return this; }
+	virtual CommandOption getCommandOption() const override { return (CommandOption)0; }
+	virtual Bool isPowerCurrentlyInUse( const CommandButton *command = nullptr ) const override;
 
-	virtual void onObjectCreated();
-	virtual UpdateSleepTime update();
+	virtual void onObjectCreated() override;
+	virtual UpdateSleepTime update() override;
 
 	void cleanUp();
 
 
 
-	virtual Bool doesSpecialPowerHaveOverridableDestinationActive() const;
-	virtual Bool doesSpecialPowerHaveOverridableDestination() const { return true; }	//Does it have it, even if it's not active?
-	virtual void setSpecialPowerOverridableDestination( const Coord3D *loc );
+	virtual Bool doesSpecialPowerHaveOverridableDestinationActive() const override;
+	virtual Bool doesSpecialPowerHaveOverridableDestination() const override { return true; }	//Does it have it, even if it's not active?
+	virtual void setSpecialPowerOverridableDestination( const Coord3D *loc ) override;
 
 	// Disabled conditions to process (termination conditions!)
-	virtual DisabledMaskType getDisabledTypesToProcess() const { return MAKE_DISABLED_MASK4( DISABLED_SUBDUED, DISABLED_UNDERPOWERED, DISABLED_EMP, DISABLED_HACKED ); }
+	virtual DisabledMaskType getDisabledTypesToProcess() const override { return MAKE_DISABLED_MASK4( DISABLED_SUBDUED, DISABLED_UNDERPOWERED, DISABLED_EMP, DISABLED_HACKED ); }
 
 protected:
 
@@ -136,7 +133,7 @@ protected:
 
   void friend_enableAfterburners(Bool v);
 
-  
+
 
 
   Coord3D				m_initialTargetPosition;
@@ -166,11 +163,7 @@ protected:
   RadiusDecal			m_howitzerTrackerDecal;
 #endif
 
-  AudioEventRTS m_afterburnerSound; 
+  AudioEventRTS m_afterburnerSound;
   AudioEventRTS m_howitzerFireSound;
 
 };
-
-
-#endif // __SPECTRE_GUNSHIP_UPDATE_H_
-

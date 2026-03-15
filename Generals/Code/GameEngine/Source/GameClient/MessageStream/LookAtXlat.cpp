@@ -26,14 +26,17 @@
 // Translate raw input events into camera movement commands
 // Author: Michael S. Booth, April 2001
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
+#include "Common/FramePacer.h"
 #include "Common/GameType.h"
+#include "Common/GameEngine.h"
 #include "Common/MessageStream.h"
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
 #include "Common/Recorder.h"
 #include "Common/StatsCollector.h"
+#include "Common/OptionPreferences.h"
 #include "GameLogic/Object.h"
 #include "GameLogic/PartitionManager.h"
 #include "GameClient/Display.h"
@@ -50,9 +53,9 @@
 
 #include "Common/GlobalData.h"			// for camera pitch angle only
 
-LookAtTranslator *TheLookAtTranslator = NULL;
+LookAtTranslator *TheLookAtTranslator = nullptr;
 
-static enum
+enum
 {
 	DIR_UP = 0,
 	DIR_DOWN,
@@ -62,14 +65,24 @@ static enum
 
 static Bool scrollDir[4] = { false, false, false, false };
 
-Int SCROLL_AMT = 100;
+// TheSuperHackers @tweak Introduces the SCROLL_MULTIPLIER for all scrolling to
+//
+//  1. bring the RMB scroll speed back to how it was at 30 FPS in the retail game version
+//  2. increase the upper limit of the Scroll Factor when set from the Options Menu (0.20 to 2.90 instead of 0.10 to 1.45)
+//  3. increase the scroll speed for Edge/Key scrolling to better fit the high speeds of RMB scrolling
+//
+// The multiplier of 2 was logically chosen because originally the Scroll Factor did practically not affect the RMB scroll speed
+// and because the default Scroll Factor is/was 0.5, it needs to be doubled to get to a neutral 1x multiplier.
+
+constexpr const Real SCROLL_MULTIPLIER = 2.0f;
+constexpr const Real SCROLL_AMT = 100.0f * SCROLL_MULTIPLIER;
 
 static const Int edgeScrollSize = 3;
 
 static Mouse::MouseCursor prevCursor = Mouse::ARROW;
 
 //-----------------------------------------------------------------------------
-void LookAtTranslator::setScrolling(Int x)
+void LookAtTranslator::setScrolling(ScrollType scrollType)
 {
 	if (!TheInGameUI->getInputEnabled())
 		return;
@@ -78,24 +91,44 @@ void LookAtTranslator::setScrolling(Int x)
 	m_isScrolling = true;
 	TheInGameUI->setScrolling( TRUE );
 	TheTacticalView->setMouseLock( TRUE );
-	m_scrollType = x;
+	m_scrollType = scrollType;
 	if(TheStatsCollector)
 		TheStatsCollector->startScrollTime();
 }
 
 //-----------------------------------------------------------------------------
-void LookAtTranslator::stopScrolling( void )
+void LookAtTranslator::stopScrolling()
 {
 	m_isScrolling = false;
 	TheInGameUI->setScrolling( FALSE );
 	TheTacticalView->setMouseLock( FALSE );
 	TheMouse->setCursor(prevCursor);
 	m_scrollType = SCROLL_NONE;
-		
-	// if we have a stats collectore increment the stats
+
+	// increment the stats if we have a stats collector
 	if(TheStatsCollector)
 		TheStatsCollector->endScrollTime();
 
+}
+
+//-----------------------------------------------------------------------------
+Bool LookAtTranslator::canScrollAtScreenEdge() const
+{
+	if (!TheMouse->isCursorCaptured())
+		return false;
+
+	if (TheDisplay->getWindowed())
+	{
+		if ((m_screenEdgeScrollMode & ScreenEdgeScrollMode_EnabledInWindowedApp) == 0)
+			return false;
+	}
+	else
+	{
+		if ((m_screenEdgeScrollMode & ScreenEdgeScrollMode_EnabledInFullscreenApp) == 0)
+			return false;
+	}
+
+	return true;
 }
 
 //-----------------------------------------------------------------------------
@@ -104,17 +137,17 @@ LookAtTranslator::LookAtTranslator() :
 	m_isRotating(false),
 	m_isPitching(false),
 	m_isChangingFOV(false),
-	m_timestamp(0),
+	m_middleButtonDownTimeMsec(0),
 	m_lastPlaneID(INVALID_DRAWABLE_ID),
-	m_lastMouseMoveFrame(0),
+	m_lastMouseMoveTimeMsec(0),
 	m_scrollType(SCROLL_NONE)
 {
-	//Added By Sadullah Nader
-	//Initializations misssing and needed
 	m_anchor.x = m_anchor.y = 0;
 	m_currentPos.x = m_currentPos.y = 0;
 	m_originalAnchor.x = m_originalAnchor.y = 0;
-	//
+
+	OptionPreferences prefs;
+	m_screenEdgeScrollMode = prefs.getScreenEdgeScrollMode();
 
 	DEBUG_ASSERTCRASH(!TheLookAtTranslator, ("Already have a LookAtTranslator - why do you need two?"));
 	TheLookAtTranslator = this;
@@ -124,32 +157,36 @@ LookAtTranslator::LookAtTranslator() :
 LookAtTranslator::~LookAtTranslator()
 {
 	if (TheLookAtTranslator == this)
-		TheLookAtTranslator = NULL;
+		TheLookAtTranslator = nullptr;
 }
 
-const ICoord2D* LookAtTranslator::getRMBScrollAnchor(void)
+const ICoord2D* LookAtTranslator::getRMBScrollAnchor()
 {
 	if (m_isScrolling && m_scrollType == SCROLL_RMB)
 	{
 		return &m_anchor;
 	}
-	return NULL;
+	return nullptr;
 }
 
-Bool LookAtTranslator::hasMouseMovedRecently( void )
+Bool LookAtTranslator::hasMouseMovedRecently()
 {
-	if (m_lastMouseMoveFrame > TheGameLogic->getFrame())
-		m_lastMouseMoveFrame = 0; // reset for new game
+	const UnsignedInt now = timeGetTime();
+	const UnsignedInt lastMove = m_lastMouseMoveTimeMsec;
 
-	if (m_lastMouseMoveFrame + LOGICFRAMES_PER_SECOND < TheGameLogic->getFrame())
-		return false;
+	const UnsignedInt elapsedMsec = now - lastMove;
 
-	return true;
+	return elapsedMsec <= MSEC_PER_SECOND;
 }
 
 void LookAtTranslator::setCurrentPos( const ICoord2D& pos )
 {
 	m_currentPos = pos;
+}
+
+void LookAtTranslator::setScreenEdgeScrollMode(ScreenEdgeScrollMode mode)
+{
+	m_screenEdgeScrollMode = mode;
 }
 
 //-----------------------------------------------------------------------------
@@ -173,7 +210,7 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 			UnsignedByte key		= msg->getArgument( 0 )->integer;
 			UnsignedByte state	= msg->getArgument( 1 )->integer;
 			Bool isPressed = !(BitIsSet( state, KEY_STATE_UP ));
-			
+
 			if (TheShell && TheShell->isShellActive())
 				break;
 
@@ -218,7 +255,7 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 		//-----------------------------------------------------------------------------
 		case GameMessage::MSG_RAW_MOUSE_RIGHT_BUTTON_DOWN:
 		{
-			m_lastMouseMoveFrame = TheGameLogic->getFrame();
+			m_lastMouseMoveTimeMsec = timeGetTime();
 
 			m_anchor = msg->getArgument( 0 )->pixel;
 			m_currentPos = msg->getArgument( 0 )->pixel;
@@ -234,7 +271,7 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 		//-----------------------------------------------------------------------------
 		case GameMessage::MSG_RAW_MOUSE_RIGHT_BUTTON_UP:
 		{
-			m_lastMouseMoveFrame = TheGameLogic->getFrame();
+			m_lastMouseMoveTimeMsec = timeGetTime();
 
 			if (m_scrollType == SCROLL_RMB)
 			{
@@ -246,22 +283,25 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 		//-----------------------------------------------------------------------------
 		case GameMessage::MSG_RAW_MOUSE_MIDDLE_BUTTON_DOWN:
 		{
-			m_lastMouseMoveFrame = TheGameLogic->getFrame();
+			const UnsignedInt now = timeGetTime();
+			m_lastMouseMoveTimeMsec = now;
+			m_middleButtonDownTimeMsec = now;
 
 			m_isRotating = true;
 			m_anchor = msg->getArgument( 0 )->pixel;
+			m_anchorAngle = TheTacticalView->getAngle();
 			m_originalAnchor = msg->getArgument( 0 )->pixel;
 			m_currentPos = msg->getArgument( 0 )->pixel;
-			m_timestamp = TheGameClient->getFrame();
 			break;
 		}
 
 		//-----------------------------------------------------------------------------
 		case GameMessage::MSG_RAW_MOUSE_MIDDLE_BUTTON_UP:
 		{
-			m_lastMouseMoveFrame = TheGameLogic->getFrame();
+			const UnsignedInt now = timeGetTime();
+			m_lastMouseMoveTimeMsec = now;
 
-			const UnsignedInt CLICK_DURATION = 5;
+			const UnsignedInt CLICK_DURATION_MSEC = 167;
 			const UnsignedInt PIXEL_OFFSET = 5;
 
 			m_isRotating = false;
@@ -269,11 +309,15 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 			if (dx<0) dx = -dx;
 			Int dy = m_currentPos.y-m_originalAnchor.y;
 			Bool didMove = dx>PIXEL_OFFSET || dy>PIXEL_OFFSET;
+
+			const UnsignedInt elapsedMsec = now - m_middleButtonDownTimeMsec;
+
 			// if middle button is "clicked", reset to "home" orientation
-			if (!didMove && TheGameClient->getFrame() - m_timestamp < CLICK_DURATION)
+			if (!didMove && elapsedMsec < CLICK_DURATION_MSEC)
 			{
-				TheTacticalView->setAngleAndPitchToDefault();
-				TheTacticalView->setZoomToDefault();
+				TheTacticalView->userSetAngleToDefault();
+				TheTacticalView->userSetPitchToDefault();
+				TheTacticalView->userSetZoomToDefault();
 			}
 
 			break;
@@ -283,10 +327,10 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 		case GameMessage::MSG_RAW_MOUSE_POSITION:
 		{
 			if (m_currentPos.x != msg->getArgument( 0 )->pixel.x || m_currentPos.y != msg->getArgument( 0 )->pixel.y)
-				m_lastMouseMoveFrame = TheGameLogic->getFrame();
+				m_lastMouseMoveTimeMsec = timeGetTime();
 
 			m_currentPos = msg->getArgument( 0 )->pixel;
-			
+
 			UnsignedInt height = TheDisplay->getHeight();
 			UnsignedInt width  = TheDisplay->getWidth();
 
@@ -297,7 +341,7 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 				break;
 			}
 
-			if (!TheGlobalData->m_windowed)
+			if (canScrollAtScreenEdge())
 			{
 				if (m_isScrolling)
 				{
@@ -319,33 +363,37 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 			if (m_isRotating)
 			{
 				const Real FACTOR = 0.01f;
+				const Real angle = FACTOR * (m_currentPos.x - m_originalAnchor.x);
+				Real targetAngle = m_anchorAngle + angle;
 
-				Real angle = FACTOR * (m_currentPos.x - m_anchor.x);
+				// TheSuperHackers @tweak Stubbjax 13/11/2025 Snap angle to nearest 45 degrees
+				// while using force attack mode for convenience.
+				if (TheInGameUI->isInForceAttackMode())
+				{
+					const Real snapRadians = DEG_TO_RADF(45);
+					targetAngle = WWMath::Round(targetAngle / snapRadians) * snapRadians;
+				}
 
-				TheTacticalView->setAngle( TheTacticalView->getAngle() + angle );
+				TheTacticalView->userSetAngle(targetAngle);
 				m_anchor = msg->getArgument( 0 )->pixel;
 			}
 
 			// rotate the view up/down
 			if (m_isPitching)
 			{
-				const Real FACTOR = 0.01f;
-
-				Real angle = FACTOR * (m_currentPos.y - m_anchor.y);
-
-				TheTacticalView->setPitch( TheTacticalView->getPitch() + angle );
+				constexpr const Real Scale = 0.01f;
+				const Real angle = Scale * (m_currentPos.y - m_anchor.y);
+				TheTacticalView->userSetPitch( TheTacticalView->getPitch() + angle );
 				m_anchor = msg->getArgument( 0 )->pixel;
 			}
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 			// adjust the field of view
 			if (m_isChangingFOV)
 			{
-				const Real FACTOR = 0.01f;
-
-				Real angle = FACTOR * (m_currentPos.y - m_anchor.y);
-
-				TheTacticalView->setFieldOfView( TheTacticalView->getFieldOfView() + angle );
+				constexpr const Real Scale = 0.01f;
+				const Real angle = Scale * (m_currentPos.y - m_anchor.y);
+				TheTacticalView->userSetFieldOfView( TheTacticalView->getFieldOfView() + angle );
 				m_anchor = msg->getArgument( 0 )->pixel;
 			}
 #endif
@@ -355,28 +403,21 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 		//-----------------------------------------------------------------------------
 		case GameMessage::MSG_RAW_MOUSE_WHEEL:
 		{
-			m_lastMouseMoveFrame = TheGameLogic->getFrame();
+			m_lastMouseMoveTimeMsec = timeGetTime();
 
-			Int spin = msg->getArgument( 1 )->integer;
+			const Int spin = msg->getArgument( 1 )->integer;
+			const Real zoom = -spin * View::ZoomHeightPerSecond;
+			TheTacticalView->userZoom(zoom);
 
-			if (spin > 0)
-			{
-				for ( ; spin > 0; spin--)
-					TheTacticalView->zoomIn();
-			}
-			else
-			{
-				for ( ;spin < 0; spin++ )
-					TheTacticalView->zoomOut();
-			}
+			break;
 		}
-		
+
 		//-----------------------------------------------------------------------------
 		case GameMessage::MSG_META_OPTIONS:
 		{
 			// stop the scrolling
 			stopScrolling();
-			// let the message drop through, cause we need to process this message for 
+			// let the message drop through, cause we need to process this message for
 			// selection as well.
 			break;
 		}
@@ -386,16 +427,19 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 		{
 			Coord2D offset = {0, 0};
 
-			// If we've been forced to stop scrolling (script action?) then stop
 			if (m_isScrolling && !TheInGameUI->isScrolling())
 			{
+				// If we've been forced to stop scrolling (script action?)
 				TheInGameUI->setScrollAmount(offset);
+				TheTacticalView->scrollBy(&offset);
 				stopScrolling();
 			}
-			else
-			// scroll the view
-			if (m_isScrolling)
+			else if (m_isScrolling)
 			{
+				// Scroll the view
+				// TheSuperHackers @bugfix Mauller 07/06/2025 The camera scrolling is now decoupled from the render update.
+				const Real fpsRatio = TheFramePacer->getBaseOverUpdateFpsRatio();
+
 				switch (m_scrollType)
 				{
 				case SCROLL_RMB:
@@ -416,34 +460,34 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 								m_anchor.y = m_currentPos.y - maxY;
 						}
 
-						offset.x = TheGlobalData->m_horizontalScrollSpeedFactor * (m_currentPos.x - m_anchor.x);
-						offset.y = TheGlobalData->m_verticalScrollSpeedFactor * (m_currentPos.y - m_anchor.y);
+						// TheSuperHackers @fix Mauller 16/06/2025 fix RMB scrolling to allow it to scale with the user adjusted scroll factor
 						Coord2D vec;
-						vec.x = offset.x;
-						vec.y = offset.y;
+						vec.x = (m_currentPos.x - m_anchor.x);
+						vec.y = (m_currentPos.y - m_anchor.y);
+						// TheSuperHackers @info calculate the length of the vector to obtain the movement speed before the vector is normalized
+						float vecLength = vec.length();
 						vec.normalize();
-						// Add in the window scroll amount as the minimum.
-						offset.x += TheGlobalData->m_horizontalScrollSpeedFactor * vec.x * sqr(TheGlobalData->m_keyboardScrollFactor);
-						offset.y += TheGlobalData->m_verticalScrollSpeedFactor * vec.y * sqr(TheGlobalData->m_keyboardScrollFactor);
+						offset.x = TheGlobalData->m_horizontalScrollSpeedFactor * fpsRatio * vecLength * vec.x * SCROLL_MULTIPLIER * TheGlobalData->m_keyboardScrollFactor;
+						offset.y = TheGlobalData->m_verticalScrollSpeedFactor * fpsRatio * vecLength * vec.y * SCROLL_MULTIPLIER * TheGlobalData->m_keyboardScrollFactor;
 					}
 					break;
 				case SCROLL_KEY:
 					{
 						if (scrollDir[DIR_UP])
 						{
-							offset.y -= TheGlobalData->m_verticalScrollSpeedFactor * SCROLL_AMT * TheGlobalData->m_keyboardScrollFactor;
+							offset.y -= TheGlobalData->m_verticalScrollSpeedFactor * fpsRatio * SCROLL_AMT * TheGlobalData->m_keyboardScrollFactor;
 						}
 						if (scrollDir[DIR_DOWN])
 						{
-							offset.y += TheGlobalData->m_verticalScrollSpeedFactor * SCROLL_AMT * TheGlobalData->m_keyboardScrollFactor;
+							offset.y += TheGlobalData->m_verticalScrollSpeedFactor * fpsRatio * SCROLL_AMT * TheGlobalData->m_keyboardScrollFactor;
 						}
 						if (scrollDir[DIR_LEFT])
 						{
-							offset.x -= TheGlobalData->m_horizontalScrollSpeedFactor * SCROLL_AMT * TheGlobalData->m_keyboardScrollFactor;
+							offset.x -= TheGlobalData->m_horizontalScrollSpeedFactor * fpsRatio * SCROLL_AMT * TheGlobalData->m_keyboardScrollFactor;
 						}
 						if (scrollDir[DIR_RIGHT])
 						{
-							offset.x += TheGlobalData->m_horizontalScrollSpeedFactor * SCROLL_AMT * TheGlobalData->m_keyboardScrollFactor;
+							offset.x += TheGlobalData->m_horizontalScrollSpeedFactor * fpsRatio * SCROLL_AMT * TheGlobalData->m_keyboardScrollFactor;
 						}
 					}
 					break;
@@ -453,29 +497,33 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 						UnsignedInt width  = TheDisplay->getWidth();
 						if (m_currentPos.y < edgeScrollSize)
 						{
-							offset.y -= TheGlobalData->m_verticalScrollSpeedFactor * SCROLL_AMT * TheGlobalData->m_keyboardScrollFactor;
+							offset.y -= TheGlobalData->m_verticalScrollSpeedFactor * fpsRatio * SCROLL_AMT * TheGlobalData->m_keyboardScrollFactor;
 						}
 						if (m_currentPos.y >= height-edgeScrollSize)
 						{
-							offset.y += TheGlobalData->m_verticalScrollSpeedFactor * SCROLL_AMT * TheGlobalData->m_keyboardScrollFactor;
+							offset.y += TheGlobalData->m_verticalScrollSpeedFactor * fpsRatio * SCROLL_AMT * TheGlobalData->m_keyboardScrollFactor;
 						}
 						if (m_currentPos.x < edgeScrollSize)
 						{
-							offset.x -= TheGlobalData->m_horizontalScrollSpeedFactor * SCROLL_AMT * TheGlobalData->m_keyboardScrollFactor;
+							offset.x -= TheGlobalData->m_horizontalScrollSpeedFactor * fpsRatio * SCROLL_AMT * TheGlobalData->m_keyboardScrollFactor;
 						}
 						if (m_currentPos.x >= width-edgeScrollSize)
 						{
-							offset.x += TheGlobalData->m_horizontalScrollSpeedFactor * SCROLL_AMT * TheGlobalData->m_keyboardScrollFactor;
+							offset.x += TheGlobalData->m_horizontalScrollSpeedFactor * fpsRatio * SCROLL_AMT * TheGlobalData->m_keyboardScrollFactor;
 						}
 					}
 					break;
 				}
 
 				TheInGameUI->setScrollAmount(offset);
-				TheTacticalView->scrollBy( &offset );
+				TheTacticalView->userScrollBy( &offset );
 			}
-			else	//not scrolling so reset amount
+			else
+			{
+				//not scrolling so reset amount
 				TheInGameUI->setScrollAmount(offset);
+				TheTacticalView->scrollBy(&offset);
+			}
 
 			//if (TheGlobalData->m_saveCameraInReplay /*&& TheRecorder->getMode() != RECORDERMODETYPE_PLAYBACK *//**/&& (TheGameLogic->isInSinglePlayerGame() || TheGameLogic->isInSkirmishGame())/**/)
 			//if (TheGlobalData->m_saveCameraInReplay && (TheGameLogic->isInMultiplayerGame() || TheGameLogic->isInSinglePlayerGame() || TheGameLogic->isInSkirmishGame()))
@@ -495,7 +543,7 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 		}
 
 		// ------------------------------------------------------------------------
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 		case GameMessage::MSG_META_DEMO_BEGIN_ADJUST_PITCH:
 		{
 			DEBUG_ASSERTCRASH(!m_isPitching, ("hmm, mismatched m_isPitching"));
@@ -503,10 +551,10 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 			disp = DESTROY_MESSAGE;
 			break;
 		}
-#endif // #if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#endif // #if defined(RTS_DEBUG)
 
 		// ------------------------------------------------------------------------
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 		case GameMessage::MSG_META_DEMO_END_ADJUST_PITCH:
 		{
 			DEBUG_ASSERTCRASH(m_isPitching, ("hmm, mismatched m_isPitching"));
@@ -514,19 +562,19 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 			disp = DESTROY_MESSAGE;
 			break;
 		}
-#endif // #if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#endif // #if defined(RTS_DEBUG)
 
 		// ------------------------------------------------------------------------
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 		case GameMessage::MSG_META_DEMO_DESHROUD:
 		{
 			ThePartitionManager->revealMapForPlayerPermanently( ThePlayerList->getLocalPlayer()->getPlayerIndex() );
 			break;
 		}
-#endif // #if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#endif // #if defined(RTS_DEBUG)
 
 		// ------------------------------------------------------------------------
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 		case GameMessage::MSG_META_DEMO_ENSHROUD:
 		{
 			// Need to first undo the permanent Look laid down by DEMO_DESHROUD, then blast a shroud dollop.
@@ -534,10 +582,10 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 			ThePartitionManager->shroudMapForPlayer( ThePlayerList->getLocalPlayer()->getPlayerIndex() );
 			break;
 		}
-#endif // #if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#endif // #if defined(RTS_DEBUG)
 
 		// ------------------------------------------------------------------------
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 		case GameMessage::MSG_META_DEMO_BEGIN_ADJUST_FOV:
 		{
 			DEBUG_ASSERTCRASH(!m_isChangingFOV, ("hmm, mismatched m_isChangingFOV"));
@@ -545,17 +593,17 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 			m_anchor = m_currentPos;
 			break;
 		}
-#endif // #if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#endif // #if defined(RTS_DEBUG)
 
 		// ------------------------------------------------------------------------
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 		case GameMessage::MSG_META_DEMO_END_ADJUST_FOV:
 		{
 			DEBUG_ASSERTCRASH(m_isChangingFOV, ("hmm, mismatched m_isChangingFOV"));
 			m_isChangingFOV = false;
 			break;
 		}
-#endif // #if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#endif // #if defined(RTS_DEBUG)
 
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_SAVE_VIEW1:
@@ -592,22 +640,22 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 			Int slot = t - GameMessage::MSG_META_VIEW_VIEW1 + 1;
 			if ( slot > 0 && slot <= MAX_VIEW_LOCS )
 			{
-				TheTacticalView->setLocation( &m_viewLocation[slot-1] );
+				TheTacticalView->userSetLocation( &m_viewLocation[slot-1] );
 			}
 			disp = DESTROY_MESSAGE;
 			break;
 		}
 
 		//-----------------------------------------------------------------------------
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 		case GameMessage::MSG_META_DEMO_LOCK_CAMERA_TO_PLANES:
 		{
-			Drawable *first = NULL;
+			Drawable *first = nullptr;
 
 			if (m_lastPlaneID)
 				first = TheGameClient->findDrawableByID( m_lastPlaneID );
 
-			if (first == NULL)
+			if (first == nullptr)
 				first = TheGameClient->firstDrawable();
 
 			if (first)
@@ -619,7 +667,7 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 				{
 					// get next Drawable, wrapping around to head of list if necessary
 					d = d->getNextDrawable();
-					if (d == NULL)
+					if (d == nullptr)
 						d = TheGameClient->firstDrawable();
 
 					// if we've found an airborne object, lock onto it
@@ -632,10 +680,10 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 						Bool doLock = true;
 
 						// but don't lock onto projectiles
-						ProjectileUpdateInterface* pui = NULL;
+						ProjectileUpdateInterface* pui = nullptr;
 						for (BehaviorModule** u = d->getObject()->getBehaviorModules(); *u; ++u)
 						{
-							if ((pui = (*u)->getProjectileUpdateInterface()) != NULL)
+							if ((pui = (*u)->getProjectileUpdateInterface()) != nullptr)
 							{
 								doLock = false;
 								break;
@@ -644,29 +692,29 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 
 						if (doLock)
 						{
-							TheTacticalView->setCameraLock( d->getObject()->getID() );
+							TheTacticalView->userSetCameraLock( d->getObject()->getID() );
 							m_lastPlaneID = d->getID();
 							done = true;
 							break;
 						}
-					} // if airborne found
+					}
 
 					// if we're back to the first, quit
 					if (d == first)
 						break;
-				} // while
-			}	// end plane lock
+				}
+			}
 
 			disp = DESTROY_MESSAGE;
 			break;
 		}
-#endif // #if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#endif // #if defined(RTS_DEBUG)
 
-	}  // end switch
+	}
 
 	return disp;
 
-}  // end LookAtTranslator
+}
 
 void LookAtTranslator::resetModes()
 {

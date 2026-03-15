@@ -18,16 +18,12 @@
 
 /* Copyright (C) Electronic Arts Canada Inc. 1995-2002.  All rights reserved. */
 
-#ifndef __BTRCODEX
-#define __BTRCODEX 1
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#ifndef __CODEX_H
-#error "Include codex.h before btreecodex.h"
-#endif
+#include "codex.h"
 
 /****************************************************************/
 /*  BTR Codex                                                   */
@@ -35,7 +31,7 @@ extern "C" {
 
 /* Information Functions */
 
-CODEXABOUT *GCALL BTREE_about(void);
+CODEXABOUT *GCALL BTREE_about();
 bool        GCALL BTREE_is(const void *compresseddata);
 
 /* Decode Functions */
@@ -57,6 +53,5 @@ int        GCALL BTREE_encode(void *compresseddata, const void *source, int sour
 
 #ifdef __cplusplus
 }
-#endif
 #endif
 

@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __BUNKERBUSTER_BEHAVIOR_H_
-#define __BUNKERBUSTER_BEHAVIOR_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/BehaviorModule.h"
 #include "GameLogic/Module/UpdateModule.h"
@@ -50,12 +47,12 @@ class BunkerBusterBehaviorModuleData : //public UpdateModuleData
 
 public:
 
-	BunkerBusterBehaviorModuleData( void );
+	BunkerBusterBehaviorModuleData();
 
 	static void buildFieldParse( MultiIniFieldParse &p );
 
 	AsciiString m_upgradeRequired;///< Upgrade required to kill garrisoned units
-	const FXList *m_detonationFX;						///< FXList to play upon detonation 
+	const FXList *m_detonationFX;						///< FXList to play upon detonation
   const FXList *m_crashThroughBunkerFX;  ///< FXList to play as the bomb goes smashing through the bunker
   UnsignedInt m_crashThroughBunkerFXFrequency;  ///< How often to play the above FX
 
@@ -86,22 +83,19 @@ public:
 	static Int getInterfaceMask() { return UpdateModule::getInterfaceMask() | (MODULEINTERFACE_DIE); }
 
 	// update module methods
-	virtual UpdateSleepTime update( void );
-  virtual void onObjectCreated( void );
+	virtual UpdateSleepTime update() override;
+  virtual void onObjectCreated() override;
 
 	// die module methods
-	virtual DieModuleInterface *getDie( void ) { return this; }
-	virtual void onDie( const DamageInfo *damageInfo );
+	virtual DieModuleInterface *getDie() override { return this; }
+	virtual void onDie( const DamageInfo *damageInfo ) override;
 
 
 
 protected:
-  void bustTheBunker( void );
+  void bustTheBunker();
 
 	const UpgradeTemplate *m_upgradeRequired;			///< Upgrade required to use the upgraded pulse FX
 
   ObjectID m_victimID;
 };
-
-#endif  // end __BUNKERBUSTER_BEHAVIOR_H_
-

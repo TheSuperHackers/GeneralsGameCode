@@ -26,7 +26,7 @@
 // Implementation of basic state machine
 // Author: Michael S. Booth, January 2002
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Errors.h"
 #include "Common/StateMachine.h"
@@ -39,14 +39,8 @@
 
 #include "ref_ptr.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
 
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
-
-//------------------------------------------------------------------------------ Performance Timers 
+//------------------------------------------------------------------------------ Performance Timers
 //#include "Common/PerfMetrics.h"
 //#include "Common/PerfTimer.h"
 
@@ -56,7 +50,7 @@
 /**
  * Constructor
  */
-State::State( StateMachine *machine, AsciiString name )	
+State::State( StateMachine *machine, AsciiString name )
 #ifdef STATE_MACHINE_DEBUG
 : m_name(name)
 #endif
@@ -94,8 +88,8 @@ public:
 };
 #ifdef STATE_MACHINE_DEBUG
 //-----------------------------------------------------------------------------
-std::vector<StateID> * State::getTransitions( void ) 
-{ 
+std::vector<StateID> * State::getTransitions()
+{
 	std::vector<StateID> *ids = new std::vector<StateID>;
 	ids->push_back(m_successStateID);
 	ids->push_back(m_failureStateID);
@@ -118,9 +112,9 @@ std::vector<StateID> * State::getTransitions( void )
 StateReturnType State::friend_checkForTransitions( StateReturnType status )
 {
 	static Int checkfortransitionsnum = 0;
-	
+
 	StIncrementer inc(checkfortransitionsnum);
-	if (checkfortransitionsnum >= 20) 
+	if (checkfortransitionsnum >= 20)
 	{
 		DEBUG_CRASH(("checkfortransitionsnum is > 20"));
 		return STATE_FAILURE;
@@ -175,9 +169,9 @@ StateReturnType State::friend_checkForTransitions( StateReturnType status )
 						// test returned true, change to associated state
 
 	#ifdef STATE_MACHINE_DEBUG
-						if (getMachine()->getWantsDebugOutput()) 
+						if (getMachine()->getWantsDebugOutput())
 						{
-							DEBUG_LOG(("%d '%s' -- '%s' condition '%s' returned true!\n", TheGameLogic->getFrame(), getMachineOwner()->getTemplate()->getName().str(),
+							DEBUG_LOG(("%d '%s' -- '%s' condition '%s' returned true!", TheGameLogic->getFrame(), getMachineOwner()->getTemplate()->getName().str(),
 											getMachine()->getName().str(), it->description ? it->description : "[no description]"));
 						}
 	#endif
@@ -211,9 +205,9 @@ StateReturnType State::friend_checkForTransitions( StateReturnType status )
 StateReturnType State::friend_checkForSleepTransitions( StateReturnType status )
 {
 	static Int checkfortransitionsnum = 0;
-	
+
 	StIncrementer inc(checkfortransitionsnum);
-	if (checkfortransitionsnum >= 20) 
+	if (checkfortransitionsnum >= 20)
 	{
 		DEBUG_CRASH(("checkforsleeptransitionsnum is > 20"));
 		return STATE_FAILURE;
@@ -233,9 +227,9 @@ StateReturnType State::friend_checkForSleepTransitions( StateReturnType status )
 		// test returned true, change to associated state
 
 #ifdef STATE_MACHINE_DEBUG
-		if (getMachine()->getWantsDebugOutput()) 
+		if (getMachine()->getWantsDebugOutput())
 		{
-			DEBUG_LOG(("%d '%s' -- '%s' condition '%s' returned true!\n", TheGameLogic->getFrame(), getMachineOwner()->getTemplate()->getName().str(),
+			DEBUG_LOG(("%d '%s' -- '%s' condition '%s' returned true!", TheGameLogic->getFrame(), getMachineOwner()->getTemplate()->getName().str(),
 							getMachine()->getName().str(), it->description ? it->description : "[no description]"));
 		}
 #endif
@@ -272,12 +266,12 @@ StateMachine::StateMachine( Object *owner, AsciiString name )
 	m_sleepTill = 0;
 	m_defaultStateID = INVALID_STATE_ID;
 	m_defaultStateInited = false;
-	m_currentState = NULL;
+	m_currentState = nullptr;
 	m_locked = false;
 #ifdef STATE_MACHINE_DEBUG
 	m_name = name;
 	m_debugOutput = false;
-	m_lockedby = NULL;
+	m_lockedby = nullptr;
 #endif
 	internalClear();
 }
@@ -298,15 +292,14 @@ StateMachine::~StateMachine()
 	// delete all states in the mapping
 	for( i = m_stateMap.begin(); i != m_stateMap.end(); ++i )
 	{
-		if ((*i).second)
-			deleteInstance((*i).second);
+		deleteInstance((*i).second);
 	}
 }
 
 //-----------------------------------------------------------------------------
 #ifdef STATE_MACHINE_DEBUG
-Bool StateMachine::getWantsDebugOutput() const 
-{ 
+Bool StateMachine::getWantsDebugOutput() const
+{
 	if (m_debugOutput)
 	{
 		return true;
@@ -318,7 +311,7 @@ Bool StateMachine::getWantsDebugOutput() const
 	}
 
 #ifdef DEBUG_OBJECT_ID_EXISTS
-	if (TheObjectIDToDebug != 0 && getOwner() != NULL && getOwner()->getID() == TheObjectIDToDebug)
+	if (TheObjectIDToDebug != 0 && getOwner() != nullptr && getOwner()->getID() == TheObjectIDToDebug)
 	{
 		return true;
 	}
@@ -341,7 +334,7 @@ void StateMachine::internalClear()
 #ifdef STATE_MACHINE_DEBUG
 	if (getWantsDebugOutput())
 	{
-		DEBUG_LOG(("%d '%s' -- '%s' %x internalClear()\n", TheGameLogic->getFrame(), m_owner->getTemplate()->getName().str(), m_name.str(), this));
+		DEBUG_LOG(("%d '%s' -- '%s' %x internalClear()", TheGameLogic->getFrame(), m_owner->getTemplate()->getName().str(), m_name.str(), this));
 	}
 #endif
 }
@@ -356,8 +349,8 @@ void StateMachine::clear()
 	if (m_locked)
 	{
 #ifdef STATE_MACHINE_DEBUG
-		if (m_currentState) DEBUG_LOG((" cur state '%s'\n", m_currentState->getName().str()));
-		DEBUG_LOG(("machine is locked (by %s), cannot be cleared (Please don't ignore; this generally indicates a potential logic flaw)\n",m_lockedby));
+		if (m_currentState) DEBUG_LOG((" cur state '%s'", m_currentState->getName().str()));
+		DEBUG_LOG(("machine is locked (by %s), cannot be cleared (Please don't ignore; this generally indicates a potential logic flaw)",m_lockedby));
 #endif
 		return;
 	}
@@ -366,7 +359,7 @@ void StateMachine::clear()
 	if (m_currentState)
 		m_currentState->onExit( EXIT_RESET );
 
-	m_currentState = NULL;
+	m_currentState = nullptr;
 
 	internalClear();
 }
@@ -381,8 +374,8 @@ StateReturnType StateMachine::resetToDefaultState()
 	if (m_locked)
 	{
 #ifdef STATE_MACHINE_DEBUG
-		if (m_currentState) DEBUG_LOG((" cur state '%s'\n", m_currentState->getName().str()));
-		DEBUG_LOG(("machine is locked (by %s), cannot be cleared (Please don't ignore; this generally indicates a potential logic flaw)\n",m_lockedby));
+		if (m_currentState) DEBUG_LOG((" cur state '%s'", m_currentState->getName().str()));
+		DEBUG_LOG(("machine is locked (by %s), cannot be cleared (Please don't ignore; this generally indicates a potential logic flaw)",m_lockedby));
 #endif
 		return STATE_FAILURE;
 	}
@@ -396,7 +389,7 @@ StateReturnType StateMachine::resetToDefaultState()
 	// allow current state to exit with EXIT_RESET if present
 	if (m_currentState)
 		m_currentState->onExit( EXIT_RESET );
-	m_currentState = NULL;
+	m_currentState = nullptr;
 
 	//
 	// the current state has done an onExit, clear the internal guts before we set
@@ -423,7 +416,7 @@ StateReturnType StateMachine::updateStateMachine()
 	UnsignedInt now = TheGameLogic->getFrame();
 	if (m_sleepTill != 0 && now < m_sleepTill)
 	{
-		if( m_currentState == NULL )
+		if( m_currentState == nullptr )
 		{
 			return STATE_FAILURE;
 		}
@@ -448,12 +441,12 @@ StateReturnType StateMachine::updateStateMachine()
 		StateReturnType status = m_currentState->update();
 
 		// it is possible that the state's update() method clears the state machine.
-		if (m_currentState == NULL)
+		if (m_currentState == nullptr)
 		{
 			return STATE_FAILURE;
 		}
-		
-		// here's the scenario: 
+
+		// here's the scenario:
 		// -- State A calls foo() and then says "sleep for 2000 frames".
 		// -- however, foo() called setState() to State B. thus our current state is not the same.
 		// -- thus, if the state changed, we must ignore any sleep result and pretend we got STATE_CONTINUE,
@@ -492,7 +485,7 @@ StateReturnType StateMachine::updateStateMachine()
 void StateMachine::defineState( StateID id, State *state, StateID successID, StateID failureID, const StateConditionInfo* conditions )
 {
 #ifdef STATE_MACHINE_DEBUG
-	DEBUG_ASSERTCRASH(m_stateMap.find( id ) == m_stateMap.end(), ("duplicate state ID in statemachine %s\n",m_name.str()));
+	DEBUG_ASSERTCRASH(m_stateMap.find( id ) == m_stateMap.end(), ("duplicate state ID in statemachine %s",m_name.str()));
 #endif
 
 	// map the ID to the state
@@ -503,8 +496,8 @@ void StateMachine::defineState( StateID id, State *state, StateID successID, Sta
 
 	state->friend_onSuccess(successID);
 	state->friend_onFailure(failureID);
-	
-	while (conditions && conditions->test != NULL)
+
+	while (conditions && conditions->test != nullptr)
 	{
 		state->friend_onCondition(conditions->test, conditions->toStateID, conditions->userData);
 		++conditions;
@@ -545,8 +538,8 @@ StateReturnType StateMachine::setState( StateID newStateID )
 	if (m_locked)
 	{
 #ifdef STATE_MACHINE_DEBUG
-		if (m_currentState) DEBUG_LOG((" cur state '%s'\n", m_currentState->getName().str()));
-		DEBUG_LOG(("machine is locked (by %s), cannot be cleared (Please don't ignore; this generally indicates a potential logic flaw)\n",m_lockedby));
+		if (m_currentState) DEBUG_LOG((" cur state '%s'", m_currentState->getName().str()));
+		DEBUG_LOG(("machine is locked (by %s), cannot be cleared (Please don't ignore; this generally indicates a potential logic flaw)",m_lockedby));
 #endif
 		return STATE_CONTINUE;
 	}
@@ -562,7 +555,7 @@ StateReturnType StateMachine::setState( StateID newStateID )
  */
 StateReturnType StateMachine::internalSetState( StateID newStateID )
 {
-	State *newState = NULL;
+	State *newState = nullptr;
 
 	// anytime the state changes, stop sleeping
 	m_sleepTill = 0;
@@ -585,22 +578,22 @@ StateReturnType StateMachine::internalSetState( StateID newStateID )
 		// extract the state associated with the given ID
 		newState = internalGetState( newStateID );
 #ifdef STATE_MACHINE_DEBUG
-		if (getWantsDebugOutput()) 
+		if (getWantsDebugOutput())
 		{
 			StateID curState = INVALID_STATE_ID;
 			if (m_currentState) {
 				curState = m_currentState->getID();
 			}
-			DEBUG_LOG(("%d '%s' -- '%s' %x exit ", TheGameLogic->getFrame(), m_owner->getTemplate()->getName().str(), m_name.str(), this));
+			DEBUG_LOG_RAW(("%d '%s' -- '%s' %x exit ", TheGameLogic->getFrame(), m_owner->getTemplate()->getName().str(), m_name.str(), this));
 			if (m_currentState) {
-				DEBUG_LOG((" '%s' ", m_currentState->getName().str()));
+				DEBUG_LOG_RAW((" '%s' ", m_currentState->getName().str()));
 			} else {
-				DEBUG_LOG((" INVALID_STATE_ID "));
+				DEBUG_LOG_RAW((" INVALID_STATE_ID "));
 			}
 			if (newState) {
-				DEBUG_LOG(("enter '%s' \n", newState->getName().str()));
+				DEBUG_LOG(("enter '%s'", newState->getName().str()));
 			} else {
-				DEBUG_LOG(("to INVALID_STATE\n"));
+				DEBUG_LOG(("to INVALID_STATE"));
 			}
 		}
 #endif
@@ -623,12 +616,12 @@ StateReturnType StateMachine::internalSetState( StateID newStateID )
 		StateReturnType status = m_currentState->onEnter();
 
 		// it is possible that the state's onEnter() method may cause the state to be destroyed
-		if (m_currentState == NULL)
+		if (m_currentState == nullptr)
 		{
 			return STATE_FAILURE;
 		}
 
-		// here's the scenario: 
+		// here's the scenario:
 		// -- State A calls foo() and then says "sleep for 2000 frames".
 		// -- however, foo() called setState() to State B. thus our current state is not the same.
 		// -- thus, if the state changed, we must ignore any sleep result and pretend we got STATE_CONTINUE,
@@ -666,7 +659,7 @@ StateReturnType StateMachine::initDefaultState()
 {
 #ifdef DEBUG_LOGGING
 #ifdef STATE_MACHINE_DEBUG
-#define REALLY_VERBOSE_LOG(x) /* */
+#define REALLY_VERBOSE_LOG(x) /* DEBUG_LOG_RAW(x) */
 	// Run through all the transitions and make sure there aren't any transitions to undefined states. jba. [8/18/2003]
 	std::map<StateID, State *>::iterator i;
 	REALLY_VERBOSE_LOG(("SM_BEGIN\n"));
@@ -700,9 +693,8 @@ StateReturnType StateMachine::initDefaultState()
 				i = m_stateMap.find( curID );
 
 				if (i == m_stateMap.end()) {
-					DEBUG_LOG(("\nState %s(%d) : ", state->getName().str(), id));
-					DEBUG_LOG(("Transition %d not found\n", curID));
-					DEBUG_LOG(("This MUST BE FIXED!!!jba\n"));
+					DEBUG_LOG(("\nState %s(%d) : Transition %d not found", state->getName().str(), id, curID));
+					DEBUG_LOG(("This MUST BE FIXED!!!jba"));
 					DEBUG_CRASH(("Invalid transition."));
 				} else {
 					State *st = (*i).second;
@@ -714,10 +706,10 @@ StateReturnType StateMachine::initDefaultState()
 		}
 		REALLY_VERBOSE_LOG(("\n"));
 		delete ids;
-		ids = NULL;
+		ids = nullptr;
 	}
 	REALLY_VERBOSE_LOG(("SM_END\n\n"));
-#endif	
+#endif
 #endif
 	DEBUG_ASSERTCRASH(!m_locked, ("Machine is locked here, but probably should not be"));
 	if (m_defaultStateInited)
@@ -733,8 +725,8 @@ StateReturnType StateMachine::initDefaultState()
 }
 
 //-----------------------------------------------------------------------------
-void StateMachine::setGoalObject( const Object *obj ) 
-{ 
+void StateMachine::setGoalObject( const Object *obj )
+{
 	if (m_locked)
 		return;
 
@@ -743,32 +735,32 @@ void StateMachine::setGoalObject( const Object *obj )
 
 //-----------------------------------------------------------------------------
 Bool StateMachine::isGoalObjectDestroyed() const
-{ 
-	if (m_goalObjectID == 0) 
+{
+	if (m_goalObjectID == 0)
 	{
 		return false; // never had a goal object
 	}
-	return getGoalObject() == NULL;
+	return getGoalObject() == nullptr;
 }
 
 //-----------------------------------------------------------------------------
-void StateMachine::halt() 
-{ 
+void StateMachine::halt()
+{
 	m_locked = true;
-	m_currentState = NULL; // don't exit current state, just clear it.
+	m_currentState = nullptr; // don't exit current state, just clear it.
 #ifdef STATE_MACHINE_DEBUG
 	if (getWantsDebugOutput())
 	{
-		DEBUG_LOG(("%d '%s' -- '%s' %x halt()\n", TheGameLogic->getFrame(), m_owner->getTemplate()->getName().str(), m_name.str(), this));
-	}	
+		DEBUG_LOG(("%d '%s' -- '%s' %x halt()", TheGameLogic->getFrame(), m_owner->getTemplate()->getName().str(), m_name.str(), this));
+	}
 #endif
 }
 
 //-----------------------------------------------------------------------------
-void StateMachine::internalSetGoalObject( const Object *obj ) 
-{ 
+void StateMachine::internalSetGoalObject( const Object *obj )
+{
 	if (obj) {
-		m_goalObjectID = obj->getID(); 
+		m_goalObjectID = obj->getID();
 		internalSetGoalPosition(obj->getPosition());
 	}
 	else {
@@ -777,20 +769,20 @@ void StateMachine::internalSetGoalObject( const Object *obj )
 }
 
 //-----------------------------------------------------------------------------
-Object *StateMachine::getGoalObject() 
-{ 
-	return TheGameLogic->findObjectByID( m_goalObjectID ); 
+Object *StateMachine::getGoalObject()
+{
+	return TheGameLogic->findObjectByID( m_goalObjectID );
 }
 
 //-----------------------------------------------------------------------------
 const Object *StateMachine::getGoalObject() const
-{ 
-	return TheGameLogic->findObjectByID( m_goalObjectID ); 
+{
+	return TheGameLogic->findObjectByID( m_goalObjectID );
 }
 
 //-----------------------------------------------------------------------------
-void StateMachine::setGoalPosition( const Coord3D *pos ) 
-{ 
+void StateMachine::setGoalPosition( const Coord3D *pos )
+{
 	if (m_locked)
 		return;
 
@@ -798,10 +790,10 @@ void StateMachine::setGoalPosition( const Coord3D *pos )
 }
 
 //-----------------------------------------------------------------------------
-void StateMachine::internalSetGoalPosition( const Coord3D *pos ) 
-{ 
+void StateMachine::internalSetGoalPosition( const Coord3D *pos )
+{
 	if (pos) {
-		m_goalPosition = *pos; 
+		m_goalPosition = *pos;
 		// Don't clear the goal object, or everything breaks.  Like construction of buildings.
 	}
 }
@@ -812,7 +804,7 @@ void StateMachine::internalSetGoalPosition( const Coord3D *pos )
 void StateMachine::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method
@@ -833,7 +825,7 @@ void StateMachine::xfer( Xfer *xfer )
 	StateID curStateID = getCurrentStateID();
 	xfer->xferUnsignedInt(&curStateID);
 	if (xfer->getXferMode() == XFER_LOAD)	{
-		// We are going to jump into the current state.	We don't call onEnter or onExit, because the 
+		// We are going to jump into the current state.	We don't call onEnter or onExit, because the
 		// state was already active when we saved.
 		m_currentState = internalGetState( curStateID );
 	}
@@ -875,14 +867,14 @@ void StateMachine::xfer( Xfer *xfer )
 	xfer->xferCoord3D(&m_goalPosition);
 	xfer->xferBool(&m_locked);
 	xfer->xferBool(&m_defaultStateInited);
-}  // end xfer
+}
 
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void StateMachine::loadPostProcess( void )
+void StateMachine::loadPostProcess()
 {
 
-}  // end loadPostProcess
+}
 

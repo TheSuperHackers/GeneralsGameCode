@@ -19,7 +19,7 @@
 // ScorchTool.cpp
 // Author: Dennis Griffin, April 2002
 
-#include "StdAfx.h" 
+#include "StdAfx.h"
 #include "resource.h"
 
 #include "ScorchTool.h"
@@ -39,22 +39,22 @@
 
 /// Constructor
 ScorchTool::ScorchTool(void) :
-	Tool(ID_SCORCH_TOOL, IDC_SCORCH) 
+	Tool(ID_SCORCH_TOOL, IDC_SCORCH)
 {
 }
-	
+
 /// Destructor
-ScorchTool::~ScorchTool(void) 
+ScorchTool::~ScorchTool(void)
 {
 }
 
 /// Clears it's is active flag.
-void ScorchTool::deactivate() 
+void ScorchTool::deactivate()
 {
 }
 
 /// Shows the terrain materials options panel.
-void ScorchTool::activate() 
+void ScorchTool::activate()
 {
 	CMainFrame::GetMainFrame()->showOptionsDialog(IDD_SCORCH_OPTIONS);
 	ScorchOptions::update();
@@ -94,12 +94,12 @@ MapObject *ScorchTool::pickScorch(Coord3D loc){
 			return pObj;
 		}
 	}
-	return NULL; 
+	return nullptr;
 }
 
 
 /// Perform the tool behavior on mouse down.
-void ScorchTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) 
+void ScorchTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
 {
 	if (m != TRACK_L) return;
 	Coord3D docPt;
@@ -111,7 +111,7 @@ void ScorchTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorld
 		ScorchOptions::update();
 	} else {
 		pView->snapPoint(&docPt);
-		MapObject *pNew = newInstance(MapObject)(docPt, AsciiString("Scorch"), 0, 0, NULL, NULL );
+		MapObject *pNew = newInstance(MapObject)(docPt, "Scorch", 0, 0, nullptr, nullptr );
 		pNew->getProperties()->setAsciiString(TheKey_originalOwner, NEUTRAL_TEAM_INTERNAL_STR);
 		pNew->setSelected(true);
 		pNew->setIsScorch();
@@ -120,7 +120,7 @@ void ScorchTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorld
 		AddObjectUndoable *pUndo = new AddObjectUndoable(pDoc, pNew);
 		pDoc->AddAndDoUndoable(pUndo);
 		REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
-		pNew = NULL; // undoable owns it now.
+		pNew = nullptr; // undoable owns it now.
 		ScorchOptions::update();
 	}
 	m_mouseDownPt = docPt;
@@ -142,7 +142,7 @@ void ScorchTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorl
 }
 
 /** Execute the tool on mouse up - Place an object. */
-void ScorchTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) 
+void ScorchTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
 {
 
 }

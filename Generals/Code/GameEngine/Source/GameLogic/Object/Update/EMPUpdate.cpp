@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Thing.h"
 #include "Common/ThingTemplate.h"
@@ -48,11 +48,6 @@
 
 
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 
 
@@ -83,18 +78,18 @@ static void saturateRGB(RGBColor& color, Real factor)
 EMPUpdate::EMPUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData )
 {
 
-	//s_lastInstanceSpunPositive = !s_lastInstanceSpunPositive; //TOGGLES STATIC BOOL 
+	//s_lastInstanceSpunPositive = !s_lastInstanceSpunPositive; //TOGGLES STATIC BOOL
 
 	const EMPUpdateModuleData *data = getEMPUpdateModuleData();
 	if ( data )
 	{
 		//SANITY
-		DEBUG_ASSERTCRASH( TheGameLogic, ("EMPUpdate::EMPUpdate - TheGameLogic is NULL\n" ) );
+		DEBUG_ASSERTCRASH( TheGameLogic, ("EMPUpdate::EMPUpdate - TheGameLogic is null" ) );
 		UnsignedInt now = TheGameLogic->getFrame();
 
 		m_currentScale = data->m_startScale;
-		m_dieFrame = REAL_TO_UNSIGNEDINT( now + data->m_lifeFrames );			
-		m_tintEnvPlayFrame = REAL_TO_UNSIGNEDINT( now + data->m_startFadeFrame );	
+		m_dieFrame = REAL_TO_UNSIGNEDINT( now + data->m_lifeFrames );
+		m_tintEnvPlayFrame = REAL_TO_UNSIGNEDINT( now + data->m_startFadeFrame );
 		m_tintEnvFadeFrames = m_dieFrame - m_tintEnvPlayFrame;
 		//m_spinRate = GameLogicRandomValueReal(data->m_spinRateMax * 0.5f, data->m_spinRateMax);
 		m_targetScale = GameLogicRandomValueReal(data->m_targetScaleMin, data->m_targetScaleMax);
@@ -105,31 +100,31 @@ EMPUpdate::EMPUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModul
 
 		getObject()->setOrientation(GameLogicRandomValueReal(-PI,PI));
 
-		DEBUG_ASSERTCRASH( m_tintEnvPlayFrame < m_dieFrame, ("EMPUpdate::EMPUpdate - you cant play fade after death\n" ) );
-		
+		DEBUG_ASSERTCRASH( m_tintEnvPlayFrame < m_dieFrame, ("EMPUpdate::EMPUpdate - you cant play fade after death" ) );
+
 		return;
 	}
 
 	//SANITY
-	DEBUG_ASSERTCRASH( data, ("EMPUpdate::EMPUpdate - getEMPUpdateModuleData is NULL\n" ) );
+	DEBUG_ASSERTCRASH( data, ("EMPUpdate::EMPUpdate - getEMPUpdateModuleData is null" ) );
 	m_currentScale = 1.0f;
-	m_dieFrame = 0;			
+	m_dieFrame = 0;
 	m_tintEnvFadeFrames = 0;
-	m_tintEnvPlayFrame  = 0;	
+	m_tintEnvPlayFrame  = 0;
 	//m_spinRate = 0;
 	m_targetScale = 1;
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-EMPUpdate::~EMPUpdate( void )
+EMPUpdate::~EMPUpdate()
 {
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 
-UpdateSleepTime EMPUpdate::update( void )
+UpdateSleepTime EMPUpdate::update()
 {
 /// @todo srj use SLEEPY_UPDATE here
 
@@ -138,7 +133,7 @@ UpdateSleepTime EMPUpdate::update( void )
 	const EMPUpdateModuleData *data = getEMPUpdateModuleData();
 	Drawable *dr = obj->getDrawable();
 	UnsignedInt now = TheGameLogic->getFrame();
-	
+
 	m_currentScale += ( m_targetScale - m_currentScale ) * 0.05f;
 	dr->setInstanceScale( m_currentScale );
 
@@ -152,7 +147,7 @@ UpdateSleepTime EMPUpdate::update( void )
 	{
 		RGBColor end = data->m_endColor;
 		saturateRGB( end, 5 );
-		dr->colorFlash( &end, 9999, m_tintEnvFadeFrames, TRUE );
+		dr->colorFlash( &end, 0, m_tintEnvFadeFrames, ~0u );
 		doDisableAttack();
 	}
 
@@ -169,7 +164,7 @@ UpdateSleepTime EMPUpdate::update( void )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void EMPUpdate::doDisableAttack( void )
+void EMPUpdate::doDisableAttack()
 {
 	Object *object = getObject();
 	const EMPUpdateModuleData *data = getEMPUpdateModuleData();
@@ -180,20 +175,20 @@ void EMPUpdate::doDisableAttack( void )
 	Real curVictimDistSqr;
 	const Coord3D *pos = object->getPosition();
 
-	SimpleObjectIterator *iter;
-	Object *curVictim;
+	SimpleObjectIterator *iter = nullptr;
+	Object *curVictim = nullptr;
 
 	if (radius > 0.0f)
 	{
-		iter = ThePartitionManager->iterateObjectsInRange(pos, 
+		iter = ThePartitionManager->iterateObjectsInRange(pos,
 			radius, FROM_BOUNDINGSPHERE_3D);
 
 		curVictim = iter->firstWithNumeric(&curVictimDistSqr);
-	} 
+	}
 
 	MemoryPoolObjectHolder hold(iter);
 
-	for ( ; curVictim != NULL; curVictim = iter ? iter->nextWithNumeric(&curVictimDistSqr) : NULL)
+	for ( ; curVictim != nullptr; curVictim = iter ? iter->nextWithNumeric(&curVictimDistSqr) : nullptr)
 	{
 		if ( curVictim != object)
 		{
@@ -220,7 +215,7 @@ void EMPUpdate::doDisableAttack( void )
 				if ( ! curVictim->isFactionStructure() )
 					continue;
 			}
-		
+
 			//Disable the target for a specified amount of time.
 			curVictim->setDisabledUntil( DISABLED_EMP, TheGameLogic->getFrame() + data->m_disabledDuration );
 
@@ -242,7 +237,7 @@ void EMPUpdate::doDisableAttack( void )
 					{
 
 						ParticleSystem *sys = TheParticleSystemManager->createParticleSystem(tmp);
-						
+
 						if (sys)
 						{
 							Coord3D offs = {0,0,0};
@@ -267,7 +262,7 @@ void EMPUpdate::doDisableAttack( void )
 							sys->setInitialDelay(GameLogicRandomValue(1,100));
 						}
 					}
-				} 
+				}
 			}
 
 		}
@@ -281,7 +276,7 @@ void EMPUpdate::doDisableAttack( void )
 void EMPUpdate::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -296,12 +291,12 @@ void EMPUpdate::xfer( Xfer *xfer )
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void EMPUpdate::loadPostProcess( void )
+void EMPUpdate::loadPostProcess()
 {
 
-}  // end loadPostProcess
+}

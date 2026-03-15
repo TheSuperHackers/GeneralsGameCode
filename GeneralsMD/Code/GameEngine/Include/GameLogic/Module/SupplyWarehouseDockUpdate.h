@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef _SUPPLY_WAREHOUSE_DOCK_UPDATE_H_
-#define _SUPPLY_WAREHOUSE_DOCK_UPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/INI.h"
 #include "Common/GameMemory.h"
@@ -43,8 +40,8 @@ class SupplyWarehouseDockUpdateModuleData : public DockUpdateModuleData
 {
 public:
 
-  SupplyWarehouseDockUpdateModuleData( void );
-	
+  SupplyWarehouseDockUpdateModuleData();
+
 	static void buildFieldParse(MultiIniFieldParse& p);
 
 	Int m_startingBoxesData;
@@ -60,23 +57,21 @@ class SupplyWarehouseDockUpdate : public DockUpdate
 
 public:
 
-	virtual DockUpdateInterface* getDockUpdateInterface() { return this; }
+	virtual DockUpdateInterface* getDockUpdateInterface() override { return this; }
 
 	SupplyWarehouseDockUpdate( Thing *thing, const ModuleData* moduleData );
 
-	virtual void setDockCrippled( Bool setting ); ///< Game Logic can set me as inoperative.  I get to decide what that means.
-	virtual Bool action( Object* docker, Object *drone = NULL );	///<For me, this means identifying who is docking and either taking Boxes away or giving them
+	virtual void setDockCrippled( Bool setting ) override; ///< Game Logic can set me as inoperative.  I get to decide what that means.
+	virtual Bool action( Object* docker, Object *drone = nullptr ) override;	///<For me, this means identifying who is docking and either taking Boxes away or giving them
 
 	Int getBoxesStored() const { return m_boxesStored; }
 
 	void setCashValue( Int cashValue );
 
-	virtual void onObjectCreated();
+	virtual void onObjectCreated() override;
 protected:
 
 
 	Int m_boxesStored;
 
 };
-
-#endif

@@ -16,22 +16,22 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*********************************************************************************************** 
- ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Command & Conquer                                            * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Library/B64PIPE.CPP                               $* 
- *                                                                                             * 
+/***********************************************************************************************
+ ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Command & Conquer                                            *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Library/B64PIPE.cpp                               $*
+ *                                                                                             *
  *                      $Author:: Greg_h                                                      $*
- *                                                                                             * 
+ *                                                                                             *
  *                     $Modtime:: 7/22/97 11:37a                                              $*
- *                                                                                             * 
+ *                                                                                             *
  *                    $Revision:: 1                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  *   Base64Pipe::Flush -- Flushes the final pending data through the pipe.                     *
  *   Base64Pipe::Put -- Processes a block of data through the pipe.                            *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
@@ -39,7 +39,6 @@
 #include	"always.h"
 #include	"b64pipe.h"
 #include	"base64.h"
-#include	<string.h>
 
 
 /***********************************************************************************************
@@ -63,7 +62,7 @@
  *=============================================================================================*/
 int Base64Pipe::Put(void const * source, int slen)
 {
-	if (source == NULL || slen < 1) {
+	if (source == nullptr || slen < 1) {
 		return(Pipe::Put(source, slen));
 	}
 
@@ -142,7 +141,7 @@ int Base64Pipe::Put(void const * source, int slen)
  * HISTORY:                                                                                    *
  *   07/03/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-int Base64Pipe::Flush(void)
+int Base64Pipe::Flush()
 {
 	int len = 0;
 

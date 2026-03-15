@@ -33,7 +33,7 @@
 
 #include <list>
 
-RoadOptions *RoadOptions::m_staticThis = NULL;
+RoadOptions *RoadOptions::m_staticThis = nullptr;
 Bool RoadOptions::m_updating = false;
 AsciiString RoadOptions::m_currentRoadName;
 Int RoadOptions::m_currentRoadIndex=0;
@@ -48,7 +48,7 @@ Bool RoadOptions::m_doJoin = false;		///< Is a join to different road type.
 // RoadOptions dialog
 
 
-RoadOptions::RoadOptions(CWnd* pParent /*=NULL*/)
+RoadOptions::RoadOptions(CWnd* pParent /*=nullptr*/)
 {
 	m_currentRoadName = "Road";
 	//{{AFX_DATA_INIT(RoadOptions)
@@ -99,10 +99,10 @@ void RoadOptions::updateLabel(void)
 /** Returns true if only one or more roads is selected. */
 Bool RoadOptions::selectionIsRoadsOnly(void)
 {
-//	MapObject *theMapObj = NULL; 
+//	MapObject *theMapObj = nullptr;
 	Bool foundRoad = false;
 	Bool foundAnythingElse = false;
-	MapObject *pMapObj; 
+	MapObject *pMapObj;
 	for (pMapObj = MapObject::getFirstMapObject(); pMapObj; pMapObj = pMapObj->getNext()) {
 		if (pMapObj->isSelected()) {
 			if (pMapObj->getFlag(FLAG_ROAD_FLAGS)) {
@@ -118,7 +118,7 @@ Bool RoadOptions::selectionIsRoadsOnly(void)
 /** Returns true if only one or more roads is selected. */
 void RoadOptions::updateSelection(void)
 {
-//	MapObject *theMapObj = NULL; 
+//	MapObject *theMapObj = nullptr;
 	Int angled = 0;
 	Int tight = 0;
 	Int broad = 0;
@@ -127,7 +127,7 @@ void RoadOptions::updateSelection(void)
 	Bool multipleNames = false;
 
 	if (!m_staticThis) return;
-	MapObject *pMapObj; 
+	MapObject *pMapObj;
 
 	for (pMapObj = MapObject::getFirstMapObject(); pMapObj; pMapObj = pMapObj->getNext()) {
 		if (pMapObj->isSelected() && pMapObj->getFlag(FLAG_ROAD_FLAGS)) {
@@ -144,7 +144,7 @@ void RoadOptions::updateSelection(void)
 				tight = 1;
 			}	else {
 				broad = 1;
-			}	
+			}
 			if (pMapObj->getFlag(FLAG_ROAD_JOIN)) {
 				join = 1;
 			}
@@ -197,7 +197,7 @@ void RoadOptions::applyToSelection(void)
 		flagVal = FLAG_ROAD_CORNER_ANGLED;
 	} else if (m_tightCurve) {
 		flagVal = FLAG_ROAD_CORNER_TIGHT;
-	}	
+	}
 	CWorldBuilderDoc* pDoc = CWorldBuilderDoc::GetActiveDoc();
 	ModifyFlagsUndoable *pUndo = new ModifyFlagsUndoable(pDoc, flagMask, flagVal);
 	pDoc->AddAndDoUndoable(pUndo);
@@ -209,7 +209,7 @@ void RoadOptions::applyToSelection(void)
 // RoadOptions message handlers
 
 /// Setup the controls in the dialog.
-BOOL RoadOptions::OnInitDialog() 
+BOOL RoadOptions::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
@@ -237,24 +237,17 @@ BOOL RoadOptions::OnInitDialog()
 		index++;
 		m_numberOfRoads++;
 
-	}  // end for raod
+	}
 
 	// load roads from test assets
 #ifdef LOAD_TEST_ASSETS
 	{
-		char				dirBuf[_MAX_PATH];
-		char				findBuf[_MAX_PATH];
 		char				fileBuf[_MAX_PATH];
 
-		strcpy(dirBuf, ROAD_DIRECTORY);
-		int len = strlen(dirBuf);
-
-		strcpy(findBuf, dirBuf);
-
 		FilenameList filenameList;
-		TheFileSystem->getFileListInDirectory(AsciiString(findBuf), AsciiString("*.tga"), filenameList, FALSE);
+		TheFileSystem->getFileListInDirectory(ROAD_DIRECTORY, "*.tga", filenameList, FALSE);
 
-		if (filenameList.size() > 0) {
+		if (!filenameList.empty()) {
 			FilenameList::iterator it = filenameList.begin();
 			do {
 				AsciiString	filename = *it;
@@ -263,7 +256,7 @@ BOOL RoadOptions::OnInitDialog()
 					++it;
 					continue;
 				}
-				len = filename.getLength();
+				int len = filename.getLength();
 				if (len<5) {
 					++it;
 					continue;
@@ -273,9 +266,10 @@ BOOL RoadOptions::OnInitDialog()
 					++it;
 					continue;
 				}
+				static_assert(ARRAY_SIZE(fileBuf) >= ARRAY_SIZE(TEST_STRING), "Incorrect array size");
 				strcpy(fileBuf, TEST_STRING);
-				strcat(fileBuf, "\\");
-				strcat(fileBuf, filename.str());
+				strlcat(fileBuf, "\\", ARRAY_SIZE(fileBuf));
+				strlcat(fileBuf, filename.str(), ARRAY_SIZE(fileBuf));
 				addRoad(fileBuf, index, TVI_ROOT);
 				index++;
 				m_numberOfRoads++;
@@ -289,8 +283,8 @@ BOOL RoadOptions::OnInitDialog()
 	m_numberOfBridges = 0;
 	// add bridge defs from INI
 	TerrainRoadType *bridge;
-	for( bridge = TheTerrainRoads->firstBridge(); 
-			 bridge; 
+	for( bridge = TheTerrainRoads->firstBridge();
+			 bridge;
 			 bridge = TheTerrainRoads->nextBridge( bridge ) )
 	{
 
@@ -298,7 +292,7 @@ BOOL RoadOptions::OnInitDialog()
 		index++;
 		m_numberOfBridges++;
 
-	}  // end for bridge
+	}
 
 	m_currentRoadIndex = 1;
 	setRoadTreeViewSelection(TVI_ROOT, m_currentRoadIndex);
@@ -318,11 +312,11 @@ HTREEITEM RoadOptions::findOrAdd(HTREEITEM parent, const char *pLabel)
 	char buffer[_MAX_PATH];
 	::memset(&ins, 0, sizeof(ins));
 	HTREEITEM child = m_roadTreeView.GetChildItem(parent);
-	while (child != NULL) {
+	while (child != nullptr) {
 		ins.item.mask = TVIF_HANDLE|TVIF_TEXT;
 		ins.item.hItem = child;
 		ins.item.pszText = buffer;
-		ins.item.cchTextMax = sizeof(buffer)-2;				
+		ins.item.cchTextMax = sizeof(buffer)-2;
 		m_roadTreeView.GetItem(&ins.item);
 		if (strcmp(buffer, pLabel) == 0) {
 			return(child);
@@ -337,7 +331,7 @@ HTREEITEM RoadOptions::findOrAdd(HTREEITEM parent, const char *pLabel)
 	ins.item.mask = TVIF_PARAM|TVIF_TEXT;
 	ins.item.lParam = -1;
 	ins.item.pszText = const_cast<char*>(pLabel);
-	ins.item.cchTextMax = strlen(pLabel);				
+	ins.item.cchTextMax = strlen(pLabel);
 	child = m_roadTreeView.InsertItem(&ins);
 	return(child);
 }
@@ -350,11 +344,11 @@ Bool RoadOptions::findAndSelect(HTREEITEM parent, AsciiString label)
 	char buffer[_MAX_PATH];
 	::memset(&ins, 0, sizeof(ins));
 	HTREEITEM child = m_roadTreeView.GetChildItem(parent);
-	while (child != NULL) {
+	while (child != nullptr) {
 		ins.item.mask = TVIF_HANDLE|TVIF_TEXT;
 		ins.item.hItem = child;
 		ins.item.pszText = buffer;
-		ins.item.cchTextMax = sizeof(buffer)-2;				
+		ins.item.cchTextMax = sizeof(buffer)-2;
 		m_roadTreeView.GetItem(&ins.item);
 		if (label.compare(buffer) == 0) {
 			m_roadTreeView.SelectItem(child);
@@ -387,17 +381,17 @@ void RoadOptions::addRoad(char *pPath, Int terrainNdx, HTREEITEM parent)
 			parent = findOrAdd( parent, "Roads" );
 
 		// set the name to place as the name of the road entry in INI
-		strcpy( buffer, road->getName().str() );
+		strlcpy(buffer, road->getName().str(), ARRAY_SIZE(buffer));
 
 		// do the add
 		doAdd = TRUE;
 
-	}  // end if
+	}
 
 #ifdef LOAD_TEST_ASSETS
 	if (!doAdd && !strncmp(TEST_STRING, pPath, strlen(TEST_STRING))) {
 		parent = findOrAdd(parent, TEST_STRING);
-		strcpy(buffer, pPath + strlen(TEST_STRING) + 1);
+		strlcpy(buffer, pPath + strlen(TEST_STRING) + 1, ARRAY_SIZE(buffer));
 		doAdd = true;
 	}
 #endif
@@ -412,7 +406,7 @@ void RoadOptions::addRoad(char *pPath, Int terrainNdx, HTREEITEM parent)
 		ins.item.mask = TVIF_PARAM|TVIF_TEXT;
 		ins.item.lParam = terrainNdx;
 		ins.item.pszText = buffer;
-		ins.item.cchTextMax = strlen(buffer)+2;				
+		ins.item.cchTextMax = strlen(buffer)+2;
 		m_roadTreeView.InsertItem(&ins);
 	}
 
@@ -425,11 +419,11 @@ Bool RoadOptions::setRoadTreeViewSelection(HTREEITEM parent, Int selection)
 	char buffer[NAME_MAX_LEN];
 	::memset(&item, 0, sizeof(item));
 	HTREEITEM child = m_roadTreeView.GetChildItem(parent);
-	while (child != NULL) {
+	while (child != nullptr) {
 		item.mask = TVIF_HANDLE|TVIF_PARAM|TVIF_TEXT;
 		item.hItem = child;
 		item.pszText = buffer;
-		item.cchTextMax = sizeof(buffer)-2;				
+		item.cchTextMax = sizeof(buffer)-2;
 		m_roadTreeView.GetItem(&item);
 		if (item.lParam == selection) {
 			m_roadTreeView.SelectItem(child);
@@ -448,22 +442,22 @@ void RoadOptions::SelectConnected(void)
 {
 	std::list<MapObject*> roadSegs;
 	std::list<MapObject*> connectedSegs;
-	for (MapObject* pMapObj = MapObject::getFirstMapObject(); pMapObj; pMapObj = pMapObj->getNext()) 
+	for (MapObject* pMapObj = MapObject::getFirstMapObject(); pMapObj; pMapObj = pMapObj->getNext())
 	{
-		if (pMapObj->getFlag(FLAG_ROAD_POINT1)) 
+		if (pMapObj->getFlag(FLAG_ROAD_POINT1))
 		{
-			if (pMapObj->isSelected() || pMapObj->getNext() && pMapObj->getNext()->isSelected()) 
+			if (pMapObj->isSelected() || pMapObj->getNext() && pMapObj->getNext()->isSelected())
 			{
 				connectedSegs.push_back(pMapObj);
 			}
-			else 
+			else
 			{
 				roadSegs.push_back(pMapObj);
 			}
 		}
 	}
 	Bool changed = true;
-	while (changed) 
+	while (changed)
 	{
 		changed = false;
 		for (std::list<MapObject*>::iterator it = roadSegs.begin(); it != roadSegs.end(); ++it)
@@ -535,7 +529,7 @@ void RoadOptions::ChangeRoadType(AsciiString newRoad)
 	REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
 }
 
-BOOL RoadOptions::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult) 
+BOOL RoadOptions::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 {
 	NMTREEVIEW *pHdr = (NMTREEVIEW *)lParam;
 	if (pHdr->hdr.hwndFrom == m_roadTreeView.m_hWnd) {
@@ -547,7 +541,7 @@ BOOL RoadOptions::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 			item.mask = TVIF_HANDLE|TVIF_PARAM|TVIF_TEXT;
 			item.hItem = hItem;
 			item.pszText = buffer;
-			item.cchTextMax = sizeof(buffer)-2;				
+			item.cchTextMax = sizeof(buffer)-2;
 			m_roadTreeView.GetItem(&item);
 			if (item.lParam >= 0) {
 				m_currentRoadIndex = item.lParam;
@@ -555,7 +549,7 @@ BOOL RoadOptions::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 				updateLabel();
 			}	else if (!(item.state & TVIS_EXPANDEDONCE) ) {
 				HTREEITEM child = m_roadTreeView.GetChildItem(hItem);
-				while (child != NULL) {
+				while (child != nullptr) {
 					hItem = child;
 					child = m_roadTreeView.GetChildItem(hItem);
 				}
@@ -566,33 +560,33 @@ BOOL RoadOptions::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 			}
 		}
 	}
-	
+
 	return CDialog::OnNotify(wParam, lParam, pResult);
 }
 
 
-void RoadOptions::OnTightCurve() 
+void RoadOptions::OnTightCurve()
 {
 	m_angleCorners = false;
 	m_tightCurve = true;
 	applyToSelection();
 }
 
-void RoadOptions::OnAngled() 
+void RoadOptions::OnAngled()
 {
 	m_angleCorners = true;
 	m_tightCurve = false;
 	applyToSelection();
 }
 
-void RoadOptions::OnBroadCurve() 
+void RoadOptions::OnBroadCurve()
 {
 	m_angleCorners = false;
 	m_tightCurve = false;
 	applyToSelection();
 }
 
-void RoadOptions::OnJoin() 
+void RoadOptions::OnJoin()
 {
 	CButton *pButton = (CButton *)m_staticThis->GetDlgItem(IDC_JOIN);
 	m_doJoin = pButton->GetCheck()==1;
@@ -607,7 +601,7 @@ void RoadOptions::OnJoin()
 	REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
 }
 
-void RoadOptions::OnApplyRoad() 
+void RoadOptions::OnApplyRoad()
 {
 	if (m_currentRoadName != AsciiString::TheEmptyString)
 	{

@@ -18,7 +18,7 @@
 
 //////////////////////////////////////////////////////////////////////
 //
-//  Toolbar.CPP
+//  Toolbar.cpp
 //
 //  Implementation of a 'fancy' toolbar using hi-color buttons
 //
@@ -71,14 +71,14 @@ CFancyToolbar::~CFancyToolbar (void)
         {
             // Free the BMP for this button
             ::DeleteObject (m_pButtonArray[iButton].hBMPUp);
-            m_pButtonArray[iButton].hBMPUp = NULL;
+            m_pButtonArray[iButton].hBMPUp = nullptr;
         }
-        
+
         if (m_pButtonArray[iButton].hBMPDn)
         {
             // Free the BMP for this button
             ::DeleteObject (m_pButtonArray[iButton].hBMPDn);
-            m_pButtonArray[iButton].hBMPDn = NULL;
+            m_pButtonArray[iButton].hBMPDn = nullptr;
         }
     }
 
@@ -101,7 +101,7 @@ CFancyToolbar::RegisterFancyToolbarClass (void)
         classInfo.style = CS_PARENTDC;
         classInfo.lpfnWndProc = ::DefWindowProc;
         classInfo.hInstance = ::AfxGetInstanceHandle ();
-        classInfo.hCursor = ::LoadCursor (NULL, IDC_ARROW);
+        classInfo.hCursor = ::LoadCursor (nullptr, IDC_ARROW);
         classInfo.hbrBackground = (HBRUSH)COLOR_BTNFACE;
         classInfo.lpszClassName = TOOLBAR_CLASS_NAME;
 
@@ -204,7 +204,7 @@ CFancyToolbar::AddButton
     m_pButtonArray[iButton].hBMPUp = ::LoadBitmap (::AfxGetResourceHandle (), MAKEINTRESOURCE (iBMPUp));
     m_pButtonArray[iButton].hBMPDn = ::LoadBitmap (::AfxGetResourceHandle (), MAKEINTRESOURCE (iBMPDn));
     m_pButtonArray[iButton].iCommandID = iCommandID;
-    m_pButtonArray[iButton].buttonType = buttonType;    
+    m_pButtonArray[iButton].buttonType = buttonType;
     m_pButtonArray[iButton].currentState = StateUp;
     m_pButtonArray[iButton].bVisible = TRUE;
     return ;
@@ -254,13 +254,13 @@ CFancyToolbar::Paint (void)
                 iXPos += BUTTON_WIDTH;
             }
         }
-        
+
         // Free the windows DC
         ::ReleaseDC (m_hWnd, hDC);
     }
 
     // Let the window know its done painting
-    ::ValidateRect (m_hWnd, NULL);
+    ::ValidateRect (m_hWnd, nullptr);
     return ;
 }
 
@@ -290,7 +290,7 @@ CFancyToolbar::ButtonFromPoint (const CPoint &point)
         // Increment the current position
         iXPos += BUTTON_WIDTH;
     }
-    
+
     // Return the zero based index of the button we're looking for
     return iIndex;
 }
@@ -337,7 +337,7 @@ CFancyToolbar::OnLButtonDown
             // Release the window's DC
             ::ReleaseDC (m_hWnd, hDC);
         }
-        
+
         // Is this a 'normal' or 2 state button?
         if (m_pButtonArray[iButton].buttonType == TypeNormal)
         {
@@ -351,12 +351,12 @@ CFancyToolbar::OnLButtonDown
             // 2 state button
             m_iCurrentButton = -1;
 
-            // Send the message to the window's parent to let them know a command has occured
+            // Send the message to the window's parent to let them know a command has occurred
             ::AfxGetMainWnd ()->PostMessage (WM_COMMAND,
                                              MAKELONG (m_pButtonArray[iButton].iCommandID, BN_CLICKED),
                                              (LPARAM)m_hWnd);
         }
-    }    
+    }
     else
     {
         CControlBar::OnLButtonDown (nFlags, point);
@@ -412,7 +412,7 @@ CFancyToolbar::OnLButtonUp
 
         // Let go of the mouse capture
         ::ReleaseCapture ();
-    }    
+    }
     else
     {
         CControlBar::OnLButtonUp (nFlags, point);
@@ -470,7 +470,7 @@ CFancyToolbar::SetButtonState
             {
                 // Repaint the toolbar
                 //Paint ();
-                InvalidateRect (NULL);
+                InvalidateRect (nullptr);
                 UpdateWindow ();
             }
 

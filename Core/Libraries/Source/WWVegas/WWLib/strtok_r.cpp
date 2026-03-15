@@ -16,28 +16,27 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*************************************************************************** 
- ***    C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S     *** 
- *************************************************************************** 
- *                                                                         * 
- *                 Project Name : G                                        * 
- *                                                                         * 
- *                     $Archive:: /G/wwlib/strtok_r.cpp                   $* 
- *                                                                         * 
- *                      $Author:: Neal_k                                  $* 
- *                                                                         * 
- *                     $Modtime:: 4/03/00 11:43a                          $* 
- *                                                                         * 
- *                    $Revision:: 1                                       $* 
- *                                                                         * 
- *-------------------------------------------------------------------------* 
- * Functions:                                                              * 
- *   strtok_r -- POSIX replacement for strtok (no internal static)         * 
+/***************************************************************************
+ ***    C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S     ***
+ ***************************************************************************
+ *                                                                         *
+ *                 Project Name : G                                        *
+ *                                                                         *
+ *                     $Archive:: /G/wwlib/strtok_r.cpp                   $*
+ *                                                                         *
+ *                      $Author:: Neal_k                                  $*
+ *                                                                         *
+ *                     $Modtime:: 4/03/00 11:43a                          $*
+ *                                                                         *
+ *                    $Revision:: 1                                       $*
+ *                                                                         *
+ *-------------------------------------------------------------------------*
+ * Functions:                                                              *
+ *   strtok_r -- POSIX replacement for strtok (no internal static)         *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "strtok_r.h"
-#include <string.h>
-#include <stdio.h>
+#include "stringex.h"
 
 //
 // Replacement for strtok() that doesn't use a static to
@@ -56,7 +55,7 @@ char *strtok_r(char *strptr, const char *delimiters, char **lasts)
 		*lasts=strptr;
 
 	if ((*lasts)[0]==0)  // 0 length string?
-		return(NULL);
+		return(nullptr);
 
 	//
 	// Note: strcspn & strspn are both called, they're opposites
@@ -69,7 +68,7 @@ char *strtok_r(char *strptr, const char *delimiters, char **lasts)
 		*lasts+=dend;
 
 		if ((*lasts)[0]==0)  // 0 length string?
-			return(NULL);
+			return(nullptr);
 
 		dstart=strcspn(*lasts, delimiters);
 	}

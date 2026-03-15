@@ -16,43 +16,39 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*********************************************************************************************** 
- ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Command & Conquer                                            * 
- *                                                                                             * 
- *                     $Archive:: /G/wwlib/Point.h                                            $* 
- *                                                                                             * 
+/***********************************************************************************************
+ ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Command & Conquer                                            *
+ *                                                                                             *
+ *                     $Archive:: /G/wwlib/Point.h                                            $*
+ *                                                                                             *
  *                      $Author:: Eric_c                                                      $*
- *                                                                                             * 
+ *                                                                                             *
  *                     $Modtime:: 4/07/99 5:24p                                               $*
- *                                                                                             * 
+ *                                                                                             *
  *                    $Revision:: 5                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-#if _MSC_VER >= 1000
-#pragma once
-#endif // _MSC_VER >= 1000
 
-#ifndef POINT_H
-#define POINT_H
+#pragma once
 
 template<class T> class TRect;
 
 /*
 **	This class describes a point in 2 dimensional space using arbitrary
 **	components. The interpretation of which is outside the scope
-**	of this class. This class is the successor to the old style COORDINATE 
+**	of this class. This class is the successor to the old style COORDINATE
 **	and CELL types but also serves anywhere an X and Y value are treated
 **	as a logical object (e.g., pixel location).
 */
 template<class T>
 class TPoint2D {
 	public:
-		TPoint2D(void) {}		// Default constructor does nothing by design.
+		TPoint2D() {}		// Default constructor does nothing by design.
 		TPoint2D(T x, T y) : X(x), Y(y) {}
 
 		// Equality comparison operators.
@@ -77,11 +73,11 @@ class TPoint2D {
 		TPoint2D<T> const Cross_Product(TPoint2D<T> const & rvalue) const {return(TPoint2D<T>(Y - rvalue.Y, rvalue.X - X));}
 
 		// Negation operator -- simple and effective
-		TPoint2D<T> const operator - (void) const {return(TPoint2D<T>(-X, -Y));}
+		TPoint2D<T> const operator - () const {return(TPoint2D<T>(-X, -Y));}
 
 		// Vector support functions.
-		T Length(void) const {return(T(sqrt(X*X + Y*Y)));}
-		TPoint2D<T> const Normalize(void) const {
+		T Length() const {return(T(sqrt(X*X + Y*Y)));}
+		TPoint2D<T> const Normalize() const {
 			double len = sqrt(X*X + Y*Y);
 			if (len != 0.0) {
 				return(TPoint2D<T>((T)((double)X / len), (T)((double)Y / len)));
@@ -102,7 +98,7 @@ class TPoint2D {
 };
 
 template<class T>
-TPoint2D<T> const operator * (T lvalue, TPoint2D<T> const & rvalue) 
+TPoint2D<T> const operator * (T lvalue, TPoint2D<T> const & rvalue)
 {
 	return(rvalue * lvalue);
 }
@@ -134,10 +130,10 @@ class TPoint3D : public TPoint2D<T> {
 		using BASECLASS::Y;
 
 	public:
-		TPoint3D(void) {}		// Default constructor does nothing by design.
+		TPoint3D() {}		// Default constructor does nothing by design.
 		TPoint3D(T x, T y, T z) : TPoint2D<T>(x, y), Z(z) {}
 		TPoint3D(BASECLASS const & rvalue) : TPoint2D<T>(rvalue), Z(0) {}
-		
+
 		// Equality comparison operators.
 		bool operator == (TPoint3D<T> const & rvalue) const {return(X==rvalue.X && Y==rvalue.Y && Z==rvalue.Z);}
 		bool operator != (TPoint3D<T> const & rvalue) const {return(X!=rvalue.X || Y!=rvalue.Y || Z!=rvalue.Z);}
@@ -164,11 +160,11 @@ class TPoint3D : public TPoint2D<T> {
 		TPoint3D<T> const Cross_Product(TPoint3D<T> const & rvalue) const {return TPoint3D<T>(Y * rvalue.Z - Z * rvalue.Y, Z * rvalue.X - X * rvalue.Z, X * rvalue.Y - Y * rvalue.X);}
 
 		// Negation operator -- simple and effective
-		TPoint3D<T> const operator - (void) const {return(TPoint3D<T>(-X, -Y, -Z));}
+		TPoint3D<T> const operator - () const {return(TPoint3D<T>(-X, -Y, -Z));}
 
 		// Vector support functions.
-		T Length(void) const {return(T(sqrt(X*X + Y*Y + Z*Z)));}
-		TPoint3D<T> const Normalize(void) const {
+		T Length() const {return(T(sqrt(X*X + Y*Y + Z*Z)));}
+		TPoint3D<T> const Normalize() const {
 			double len = sqrt(X*X + Y*Y + Z*Z);
 			if (len != 0.0) {
 				return(TPoint3D<T>(X / len, Y / len, Z / len));
@@ -190,7 +186,7 @@ class TPoint3D : public TPoint2D<T> {
 };
 
 template<class T>
-TPoint3D<T> const operator * (T lvalue, TPoint3D<T> const & rvalue) 
+TPoint3D<T> const operator * (T lvalue, TPoint3D<T> const & rvalue)
 {
 	return(rvalue * lvalue);
 }
@@ -201,6 +197,3 @@ TPoint3D<T> const operator * (T lvalue, TPoint3D<T> const & rvalue)
 **	integer 3D points.
 */
 typedef TPoint3D<int> Point3D;
-
-
-#endif

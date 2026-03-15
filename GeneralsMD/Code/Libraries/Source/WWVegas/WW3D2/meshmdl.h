@@ -34,13 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef MESHMDL_H
-#define MESHMDL_H
 
 #include "vector2.h"
 #include "vector3.h"
@@ -100,13 +94,13 @@ struct VertexFormatXYZNDUV2;
 ** Copy/Add_Ref Rules:
 ** The purpose of this model was to share data between models whenever possible.  To this
 ** end, some of the arrays of data are handled differently:
-** 
+**
 ** ALWAYS SHARED: These are *ALWAYS* Add_Ref'd and thus all point to the same array
 ** Poly - Connectivity of a mesh are always shared (cannot be changed at runtime)
 ** VertexShadeIdx - Shade indices of a mesh are always shared (cannot be changed at runtime)
 ** VertexInfluences - Vertex bone attachments are always shared (cannot be changed at runtime)
 **
-** SHARED UNTIL SCALED, SKIN DEFORMED, or DAMAGED:  
+** SHARED UNTIL SCALED, SKIN DEFORMED, or DAMAGED:
 ** Vertex - vertex positions must be copied if any are moved...
 ** VertexNorm - vertex normals cannot be shared if a vertex is moved
 ** PlaneEq - plane equations cannot be shared if a vertex is moved
@@ -155,26 +149,26 @@ class MeshModelClass : public MeshGeometryClass
 {
 	W3DMPO_GLUE(MeshModelClass)
 
-public:	
+public:
 
-	MeshModelClass(void);
+	MeshModelClass();
 	MeshModelClass(const MeshModelClass & that);
-	~MeshModelClass(void);
-	
+	~MeshModelClass();
+
 	MeshModelClass & operator = (const MeshModelClass & that);
 	void							Reset(int polycount,int vertcount,int passcount);
 	void							Register_For_Rendering();
-	void							Shadow_Render(SpecialRenderInfoClass & rinfo,const Matrix3D & tm,const HTreeClass * htree);	
+	void							Shadow_Render(SpecialRenderInfoClass & rinfo,const Matrix3D & tm,const HTreeClass * htree);
 
 	/////////////////////////////////////////////////////////////////////////////////////
 	// Material interface, All of these functions call through to the current
-	// material decription.
+	// material description.
 	/////////////////////////////////////////////////////////////////////////////////////
 	void							Set_Pass_Count(int passes)														{ CurMatDesc->Set_Pass_Count(passes); }
-	int							Get_Pass_Count(void) const														{ return CurMatDesc->Get_Pass_Count(); }
-	
+	int							Get_Pass_Count() const														{ return CurMatDesc->Get_Pass_Count(); }
+
 	const Vector2 *			Get_UV_Array(int pass = 0, int stage = 0)									{ return CurMatDesc->Get_UV_Array(pass,stage); }
-	int							Get_UV_Array_Count(void)														{ return CurMatDesc->Get_UV_Array_Count(); }
+	int							Get_UV_Array_Count()														{ return CurMatDesc->Get_UV_Array_Count(); }
 	const Vector2 *			Get_UV_Array_By_Index(int index)												{ return CurMatDesc->Get_UV_Array_By_Index(index, false); }
 
 	unsigned *					Get_DCG_Array(int pass)															{ return CurMatDesc->Get_DCG_Array(pass); }
@@ -190,10 +184,10 @@ public:
 
 	// the "Get" functions add a reference before returning the pointer (if appropriate)
 	VertexMaterialClass *	Get_Single_Material(int pass=0) const										{ return CurMatDesc->Get_Single_Material(pass); }
-	TextureClass *				Get_Single_Texture(int pass=0,int stage=0) const						{ return CurMatDesc->Get_Single_Texture(pass,stage); }	
+	TextureClass *				Get_Single_Texture(int pass=0,int stage=0) const						{ return CurMatDesc->Get_Single_Texture(pass,stage); }
 	ShaderClass					Get_Single_Shader(int pass=0) const											{ return CurMatDesc->Get_Single_Shader(pass); }
 
-	// the "Peek" functions just return the pointer and it's the caller's responsibility to 
+	// the "Peek" functions just return the pointer and it's the caller's responsibility to
 	// maintain a reference to an object with a reference to the data
 	VertexMaterialClass *	Peek_Single_Material(int pass=0) const										{ return CurMatDesc->Peek_Single_Material(pass); }
 	TextureClass *				Peek_Single_Texture(int pass=0,int stage=0) const						{ return CurMatDesc->Peek_Single_Texture(pass,stage); }
@@ -242,21 +236,21 @@ public:
 	// Some models will allow you to alternate between multiple material descriptions
 	/////////////////////////////////////////////////////////////////////////////////////
 	void							Enable_Alternate_Material_Description(bool onoff);
-	bool							Is_Alternate_Material_Description_Enabled(void);
+	bool							Is_Alternate_Material_Description_Enabled();
 
 	// Process texture reductions
-//	void							Process_Texture_Reduction(void);
+//	void							Process_Texture_Reduction();
 
-	// FVF category container will be NULL if the mesh hasn't been registered to the rendering system
+	// FVF category container will be null if the mesh hasn't been registered to the rendering system
 	DX8FVFCategoryContainer* Peek_FVF_Category_Container();
 
 	// Determine whether any rendering feature used by this mesh requires vertex normals
-	bool							Needs_Vertex_Normals(void);
+	bool							Needs_Vertex_Normals();
 
 	void							Init_For_NPatch_Rendering();
 	const GapFillerClass*	Get_Gap_Filler() const { return GapFiller; }
 
-	bool							Has_Polygon_Renderers(void) { return !PolygonRendererList.Is_Empty(); }
+	bool							Has_Polygon_Renderers() { return !PolygonRendererList.Is_Empty(); }
 
 protected:
 
@@ -307,19 +301,19 @@ protected:
 	WW3DErrorType read_prelit_material (ChunkLoadClass &cload, MeshLoadContextClass *context);
 
 	// post-processing
-	void post_process(void);
-	void post_process_fog(void);
+	void post_process();
+	void post_process_fog();
 
 	unsigned int get_sort_flags(int pass) const;
-	unsigned int get_sort_flags(void) const;
-	void compute_static_sort_levels(void);
-	void modify_for_overbright(void);
+	unsigned int get_sort_flags() const;
+	void compute_static_sort_levels();
+	void modify_for_overbright();
 
 	// mat info support
 	void install_materials(MeshLoadContextClass * loadinfo);
 	void clone_materials(const MeshModelClass & srcmesh);
 	void install_alternate_material_desc(MeshLoadContextClass * context);
-	
+
 	// Material Descriptions
 	// DefMatDesc - the default material description, allocated in constructor, always present.
 	// AlternateMatDes - an optional alternate material description, allocated at load time if needed
@@ -330,7 +324,7 @@ protected:
 
 	// Collection of the unique materials in the mesh
 	MaterialInfoClass	*									MatInfo;
-	
+
 	// DX8 Mesh rendering system data
 	DX8PolygonRendererList								PolygonRendererList;
 
@@ -346,12 +340,3 @@ protected:
 	friend class DX8MeshRendererClass;
 	friend class DX8PolygonRendererClass;
 };
-
-
-
-
-
-
-
-#endif
-

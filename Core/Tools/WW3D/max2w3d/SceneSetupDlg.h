@@ -34,9 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef SCENESETUPDLG_H
-#define SCENESETUPDLG_H
+#pragma once
 
 // SceneSetupDlg.h : header file
 //
@@ -91,5 +89,3 @@ protected:
 	// Protected Data
 	Interface	*m_MaxInterface;
 };
-
-#endif

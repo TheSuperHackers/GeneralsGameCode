@@ -35,10 +35,10 @@
 // PickUnitDialog dialog
 
 
-ReplaceUnitDialog::ReplaceUnitDialog(CWnd* pParent /*=NULL*/)
+ReplaceUnitDialog::ReplaceUnitDialog(CWnd* pParent /*=nullptr*/)
 	: PickUnitDialog(IDD, pParent)
 {
-	m_objectsList = NULL;
+	m_objectsList = nullptr;
 	m_currentObjectIndex = -1;
 	m_currentObjectName[0] = 0;
 	for (int i = ES_FIRST; i<ES_NUM_SORTING_TYPES; i++)	{
@@ -49,11 +49,11 @@ ReplaceUnitDialog::ReplaceUnitDialog(CWnd* pParent /*=NULL*/)
 	//}}AFX_DATA_INIT
 }
 
-BOOL ReplaceUnitDialog::OnInitDialog() 
+BOOL ReplaceUnitDialog::OnInitDialog()
 {
 	PickUnitDialog::OnInitDialog();
 	CWnd *pWnd = GetDlgItem(IDC_MISSINGLABEL);
-	if (pWnd) 
+	if (pWnd)
 		pWnd->SetWindowText(m_missingName.str());
 
 	return TRUE;
@@ -64,10 +64,10 @@ BEGIN_MESSAGE_MAP(ReplaceUnitDialog, CDialog)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-PickUnitDialog::PickUnitDialog(CWnd* pParent /*=NULL*/)
+PickUnitDialog::PickUnitDialog(CWnd* pParent /*=nullptr*/)
 	: CDialog(IDD, pParent)
 {
-	m_objectsList = NULL;
+	m_objectsList = nullptr;
 	m_currentObjectIndex = -1;
 	m_currentObjectName[0] = 0;
 	for (int i = ES_FIRST; i<ES_NUM_SORTING_TYPES; i++)	{
@@ -78,10 +78,10 @@ PickUnitDialog::PickUnitDialog(CWnd* pParent /*=NULL*/)
 	//}}AFX_DATA_INIT
 }
 
-PickUnitDialog::PickUnitDialog(UINT id, CWnd* pParent /*=NULL*/)
+PickUnitDialog::PickUnitDialog(UINT id, CWnd* pParent /*=nullptr*/)
 	: CDialog(id, pParent)
 {
-	m_objectsList = NULL;
+	m_objectsList = nullptr;
 	m_currentObjectIndex = -1;
 	m_currentObjectName[0] = 0;
 	for (int i = ES_FIRST; i<ES_NUM_SORTING_TYPES; i++)	{
@@ -94,10 +94,8 @@ PickUnitDialog::PickUnitDialog(UINT id, CWnd* pParent /*=NULL*/)
 
 PickUnitDialog::~PickUnitDialog()
 {
-	if (m_objectsList) {
-		deleteInstance(m_objectsList);
-	}
-	m_objectsList = NULL;
+	deleteInstance(m_objectsList);
+	m_objectsList = nullptr;
 }
 
 void PickUnitDialog::DoDataExchange(CDataExchange* pDX)
@@ -115,22 +113,22 @@ BEGIN_MESSAGE_MAP(PickUnitDialog, CDialog)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-void PickUnitDialog::OnMove(int x, int y) 
+void PickUnitDialog::OnMove(int x, int y)
 {
 	CDialog::OnMove(x, y);
-	
+
 	if (this->IsWindowVisible() && !this->IsIconic()) {
 		CRect frameRect;
 		GetWindowRect(&frameRect);
 		::AfxGetApp()->WriteProfileInt(BUILD_PICK_PANEL_SECTION, "Top", frameRect.top);
 		::AfxGetApp()->WriteProfileInt(BUILD_PICK_PANEL_SECTION, "Left", frameRect.left);
 	}
-	
+
 }
 
 Bool PickUnitDialog::IsAllowableType(EditorSortingType sort, Bool isBuildable)
 {
-	if (m_factionOnly && !isBuildable) 
+	if (m_factionOnly && !isBuildable)
 	{
 		return false;
 	}
@@ -153,10 +151,10 @@ void PickUnitDialog::SetupAsPanel(void)
 /////////////////////////////////////////////////////////////////////////////
 // PickUnitDialog message handlers
 
-BOOL PickUnitDialog::OnInitDialog() 
+BOOL PickUnitDialog::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	
+
 //	CWorldBuilderDoc* pDoc = CWorldBuilderDoc::GetActiveDoc();
 
 	// add entries from the thing factory as the available objects to use
@@ -172,10 +170,10 @@ BOOL PickUnitDialog::OnInitDialog()
 		if (!IsAllowableType(sort, tTemplate->isBuildableItem())) continue;
 
 		// create new map object
-		pMap = newInstance(MapObject)( loc, tTemplate->getName(), 0.0f, 0, NULL, tTemplate );
+		pMap = newInstance(MapObject)( loc, tTemplate->getName(), 0.0f, 0, nullptr, tTemplate );
 		pMap->setNextMap( m_objectsList );
 		m_objectsList = pMap;
-	}  // end for tTemplate
+	}
 
 	CWnd *pWnd = GetDlgItem(IDC_OBJECT_HEIGHT_EDIT);
 	if (pWnd) {
@@ -201,7 +199,7 @@ BOOL PickUnitDialog::OnInitDialog()
 		index++;
 		pMap = pMap->getNext();
 	}
-	
+
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
@@ -214,11 +212,11 @@ HTREEITEM PickUnitDialog::findOrAdd(HTREEITEM parent, const char *pLabel)
 	char buffer[_MAX_PATH];
 	::memset(&ins, 0, sizeof(ins));
 	HTREEITEM child = m_objectTreeView.GetChildItem(parent);
-	while (child != NULL) {
+	while (child != nullptr) {
 		ins.item.mask = TVIF_HANDLE|TVIF_TEXT;
 		ins.item.hItem = child;
 		ins.item.pszText = buffer;
-		ins.item.cchTextMax = sizeof(buffer)-2;				
+		ins.item.cchTextMax = sizeof(buffer)-2;
 		m_objectTreeView.GetItem(&ins.item);
 		if (strcmp(buffer, pLabel) == 0) {
 			return(child);
@@ -233,12 +231,12 @@ HTREEITEM PickUnitDialog::findOrAdd(HTREEITEM parent, const char *pLabel)
 	ins.item.mask = TVIF_PARAM|TVIF_TEXT;
 	ins.item.lParam = -1;
 	ins.item.pszText = (char*)pLabel;
-	ins.item.cchTextMax = strlen(pLabel);				
+	ins.item.cchTextMax = strlen(pLabel);
 	child = m_objectTreeView.InsertItem(&ins);
 	return(child);
 }
 
-BOOL PickUnitDialog::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult) 
+BOOL PickUnitDialog::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 {
 	NMTREEVIEW *pHdr = (NMTREEVIEW *)lParam;
 	if (pHdr->hdr.hwndFrom == m_objectTreeView.m_hWnd) {
@@ -263,10 +261,11 @@ BOOL PickUnitDialog::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 			item.mask = TVIF_HANDLE|TVIF_PARAM|TVIF_TEXT|TVIF_STATE;
 			item.hItem = hItem;
 			item.pszText = buffer;
-			item.cchTextMax = sizeof(buffer)-2;				
+			item.cchTextMax = sizeof(buffer)-2;
 			m_objectTreeView.GetItem(&item);
 			if (item.lParam >= 0) {
 				m_currentObjectIndex = item.lParam;
+				static_assert(ARRAY_SIZE(m_currentObjectName) >= ARRAY_SIZE(buffer), "Incorrect array size");
 				strcpy(m_currentObjectName, buffer);
 			}	else if (m_objectTreeView.ItemHasChildren(item.hItem)) {
 				strcpy(m_currentObjectName, "");
@@ -274,7 +273,7 @@ BOOL PickUnitDialog::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 			}
 		}
 	}
-	
+
 	return CDialog::OnNotify(wParam, lParam, pResult);
 }
 
@@ -284,16 +283,16 @@ BOOL PickUnitDialog::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 void PickUnitDialog::addObject( MapObject *mapObject, const char *pPath, Int index, HTREEITEM parent )
 {
 	char buffer[ _MAX_PATH ];
-	const char *leafName = NULL;
+	const char *leafName = nullptr;
 
 	// sanity
-	if( mapObject == NULL )
+	if( mapObject == nullptr )
 		return;
 
 	//
 	// if we have an thing template in mapObject, we've read it from the new INI database,
 	// we will sort those items into the tree based on properties of the template that
-	// make it easier for us to browse when building levels 
+	// make it easier for us to browse when building levels
 	//
 	// Feel free to reorganize how this tree is constructed from the template
 	// data at will, whatever makes it easier for design
@@ -305,12 +304,11 @@ void PickUnitDialog::addObject( MapObject *mapObject, const char *pPath, Int ind
 		// first check for test sorted objects
 		if( thingTemplate->getEditorSorting() == ES_TEST )
 			parent = findOrAdd( parent, "TEST" );
-	
+
 		// first sort by side, either create or find the tree item with matching side name
 		AsciiString side = thingTemplate->getDefaultOwningSide();
-		DEBUG_ASSERTCRASH( !side.isEmpty(), ("NULL default side in template\n") );
-		strcpy( buffer, side.str() );
-		parent = findOrAdd( parent, buffer );
+		DEBUG_ASSERTCRASH( !side.isEmpty(), ("null default side in template") );
+		parent = findOrAdd( parent, side.str());
 
 		// next tier uses the editor sorting that design can specify in the INI
 		EditorSortingType i = ES_FIRST;
@@ -325,9 +323,9 @@ void PickUnitDialog::addObject( MapObject *mapObject, const char *pPath, Int ind
 				parent = findOrAdd( parent, EditorSortingNames[ i ] );
 				break;  // exit for
 
-			}  // end if
+			}
 
-		}  // end for i
+		}
 
 		if( i == ES_NUM_SORTING_TYPES )
 			parent = findOrAdd( parent, "UNSORTED" );
@@ -335,10 +333,10 @@ void PickUnitDialog::addObject( MapObject *mapObject, const char *pPath, Int ind
 		// the leaf name is the name of the template
 		leafName = thingTemplate->getName().str();
 
-	}  // end if
-	else 
+	}
+	else
 	{
-	
+
 		// all these old entries we will put in a tree for legacy GDF items
 		parent = findOrAdd( parent, "**TEST MODELS" );
 
@@ -350,7 +348,7 @@ void PickUnitDialog::addObject( MapObject *mapObject, const char *pPath, Int ind
 			}
 			if (pPath[i] == '/') {
 				pPath+= i+1;
-				i = 0;			
+				i = 0;
 			}
 			buffer[i] = pPath[i];
 			i++;
@@ -361,9 +359,9 @@ void PickUnitDialog::addObject( MapObject *mapObject, const char *pPath, Int ind
 			buffer[ i ] = 0;
 			leafName = buffer;
 
-		}  // end if
+		}
 
-	}  // end else if
+	}
 
 	// add to the tree view
 	if( leafName )
@@ -376,7 +374,7 @@ void PickUnitDialog::addObject( MapObject *mapObject, const char *pPath, Int ind
 		ins.item.mask = TVIF_PARAM|TVIF_TEXT;
 		ins.item.lParam = index;
 		ins.item.pszText = (char*)leafName;
-		ins.item.cchTextMax = strlen(leafName)+2;				
+		ins.item.cchTextMax = strlen(leafName)+2;
 		m_objectTreeView.InsertItem(&ins);
 
 	}
@@ -404,5 +402,5 @@ const ThingTemplate* PickUnitDialog::getPickedThing(void)
 				return tTemplate;
 		}
 	}
-	return NULL;
+	return nullptr;
 }

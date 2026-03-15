@@ -30,9 +30,6 @@
 
 #pragma once
 
-#ifndef __LASER_UPDATE_H
-#define __LASER_UPDATE_H
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/ClientUpdateModule.h"
 
@@ -49,13 +46,13 @@ public:
 	AsciiString m_particleSystemName;  ///< Used for the muzzle flare while laser active.
 
 	AsciiString m_targetParticleSystemName;  ///< Used for the target effect while laser active.
-	
+
 	Real m_punchThroughScalar;	///< If non-zero, length modifier when we used to have a target object and now don't
 
 	LaserUpdateModuleData();
 	static void buildFieldParse(MultiIniFieldParse& p);
 
-private: 
+private:
 
 };
 
@@ -112,7 +109,7 @@ public:
 	void setDirty( Bool dirty ) { m_dirty = dirty; }
 	Bool isDirty() const { return m_dirty; }
 
-	virtual void clientUpdate();
+	virtual void clientUpdate() override;
 
 protected:
 
@@ -133,7 +130,3 @@ protected:
 
 	LaserRadiusUpdate m_laserRadius;
 };
-
-
-#endif
-

@@ -24,12 +24,12 @@
 
 // FILE: DelayedUpgrade.cpp /////////////////////////////////////////////////////////////////////////////
 // Author: Graham Smallwood, April 2002
-// Desc:	 An Upgrade that broadcasts to all DelayedUpgradeUpdates that maybe they should start 
+// Desc:	 An Upgrade that broadcasts to all DelayedUpgradeUpdates that maybe they should start
 //					counting down to execution
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Xfer.h"
 #include "GameLogic/Object.h"
@@ -44,16 +44,16 @@ DelayedUpgrade::DelayedUpgrade( Thing *thing, const ModuleData* moduleData ) : U
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-DelayedUpgrade::~DelayedUpgrade( void )
+DelayedUpgrade::~DelayedUpgrade()
 {
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void DelayedUpgrade::upgradeImplementation( )
+void DelayedUpgrade::upgradeImplementation()
 {
 	UnsignedInt delay = getDelayedUpgradeModuleData()->m_delayTime;
-	DelayedUpgradeUpdateInterface *upgradeUpdate = NULL;
+	DelayedUpgradeUpdateInterface *upgradeUpdate = nullptr;
 	Object *me = getObject();
 
 	UpgradeMaskType activation, conflicting;
@@ -62,7 +62,7 @@ void DelayedUpgrade::upgradeImplementation( )
 	for (BehaviorModule** u = me->getBehaviorModules(); *u; ++u)
 	{
 		// Check all Upgradeupdate modules for firing
-		if ((upgradeUpdate = (*u)->getDelayedUpgradeUpdateInterface()) != NULL)
+		if ((upgradeUpdate = (*u)->getDelayedUpgradeUpdateInterface()) != nullptr)
 		{
 			if( upgradeUpdate->isTriggeredBy( activation ) )
 			{
@@ -82,7 +82,7 @@ void DelayedUpgrade::crc( Xfer *xfer )
 	// extend base class
 	UpgradeModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -100,15 +100,15 @@ void DelayedUpgrade::xfer( Xfer *xfer )
 	// extend base class
 	UpgradeModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void DelayedUpgrade::loadPostProcess( void )
+void DelayedUpgrade::loadPostProcess()
 {
 
 	// extend base class
 	UpgradeModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

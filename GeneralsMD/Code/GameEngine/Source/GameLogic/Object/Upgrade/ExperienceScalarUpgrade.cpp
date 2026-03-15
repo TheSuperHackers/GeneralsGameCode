@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Xfer.h"
 #include "GameLogic/Object.h"
@@ -37,27 +37,27 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-ExperienceScalarUpgradeModuleData::ExperienceScalarUpgradeModuleData( void )
+ExperienceScalarUpgradeModuleData::ExperienceScalarUpgradeModuleData()
 {
 	m_addXPScalar = 0.0f;
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void ExperienceScalarUpgradeModuleData::buildFieldParse(MultiIniFieldParse& p) 
+void ExperienceScalarUpgradeModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
 
   UpgradeModuleData::buildFieldParse( p );
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
-		{ "AddXPScalar",	INI::parseReal,		NULL, offsetof( ExperienceScalarUpgradeModuleData, m_addXPScalar ) },
-		{ 0, 0, 0, 0 }
+		{ "AddXPScalar",	INI::parseReal,		nullptr, offsetof( ExperienceScalarUpgradeModuleData, m_addXPScalar ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 
   p.add(dataFieldParse);
 
-}  // end buildFieldParse
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -67,13 +67,13 @@ ExperienceScalarUpgrade::ExperienceScalarUpgrade( Thing *thing, const ModuleData
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-ExperienceScalarUpgrade::~ExperienceScalarUpgrade( void )
+ExperienceScalarUpgrade::~ExperienceScalarUpgrade()
 {
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void ExperienceScalarUpgrade::upgradeImplementation( )
+void ExperienceScalarUpgrade::upgradeImplementation()
 {
 	const ExperienceScalarUpgradeModuleData *data = getExperienceScalarUpgradeModuleData();
 
@@ -95,7 +95,7 @@ void ExperienceScalarUpgrade::crc( Xfer *xfer )
 	// extend base class
 	UpgradeModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -113,15 +113,15 @@ void ExperienceScalarUpgrade::xfer( Xfer *xfer )
 	// extend base class
 	UpgradeModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void ExperienceScalarUpgrade::loadPostProcess( void )
+void ExperienceScalarUpgrade::loadPostProcess()
 {
 
 	// extend base class
 	UpgradeModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

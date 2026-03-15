@@ -53,12 +53,12 @@ int PASCAL WinMain( HINSTANCE instance, HINSTANCE, char *command_line, int comma
 
     int   command_scan=0;
     char  command_char;
-    do 
+    do
     {
       /*
       ** Scan for non-space character on command line
       */
-      do 
+      do
       {
         command_char = *( command_line+command_scan++ );
       } while ( command_char==' ' );

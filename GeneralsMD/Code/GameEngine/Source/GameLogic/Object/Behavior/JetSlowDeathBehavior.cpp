@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/GlobalData.h"
 #include "Common/ThingTemplate.h"
@@ -43,11 +43,6 @@
 #include "GameLogic/Object.h"
 #include "GameLogic/ObjectCreationList.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -55,32 +50,32 @@
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-JetSlowDeathBehaviorModuleData::JetSlowDeathBehaviorModuleData( void )
+JetSlowDeathBehaviorModuleData::JetSlowDeathBehaviorModuleData()
 {
 
-	m_fxOnGroundDeath = NULL;
-	m_oclOnGroundDeath = NULL;
+	m_fxOnGroundDeath = nullptr;
+	m_oclOnGroundDeath = nullptr;
 
-	m_fxInitialDeath = NULL;
-	m_oclInitialDeath = NULL;
+	m_fxInitialDeath = nullptr;
+	m_oclInitialDeath = nullptr;
 
 	m_delaySecondaryFromInitialDeath = 0;
-	m_fxSecondary = NULL;
-	m_oclSecondary = NULL;
+	m_fxSecondary = nullptr;
+	m_oclSecondary = nullptr;
 
-	m_fxHitGround = NULL;
-	m_oclHitGround = NULL;
+	m_fxHitGround = nullptr;
+	m_oclHitGround = nullptr;
 
 	m_delayFinalBlowUpFromHitGround = 0;
-	m_fxFinalBlowUp = NULL;
-	m_oclFinalBlowUp = NULL;
+	m_fxFinalBlowUp = nullptr;
+	m_oclFinalBlowUp = nullptr;
 
 	m_rollRate = 0.0f;
 	m_rollRateDelta = 1.0f;
 	m_pitchRate = 0.0f;
 	m_fallHowFast = 0.0f;
 
-}  // end JetSlowDeathBehaviorModuleData
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -88,41 +83,41 @@ JetSlowDeathBehaviorModuleData::JetSlowDeathBehaviorModuleData( void )
 {
   SlowDeathBehaviorModuleData::buildFieldParse( p );
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 
-		{ "FXOnGroundDeath",	INI::parseFXList,	NULL, offsetof( JetSlowDeathBehaviorModuleData, m_fxOnGroundDeath ) },
-		{ "OCLOnGroundDeath", INI::parseObjectCreationList, NULL, offsetof( JetSlowDeathBehaviorModuleData, m_oclOnGroundDeath ) },
+		{ "FXOnGroundDeath",	INI::parseFXList,	nullptr, offsetof( JetSlowDeathBehaviorModuleData, m_fxOnGroundDeath ) },
+		{ "OCLOnGroundDeath", INI::parseObjectCreationList, nullptr, offsetof( JetSlowDeathBehaviorModuleData, m_oclOnGroundDeath ) },
 
-		{ "FXInitialDeath",	INI::parseFXList, NULL, offsetof( JetSlowDeathBehaviorModuleData, m_fxInitialDeath ) },
-		{ "OCLInitialDeath", INI::parseObjectCreationList, NULL, offsetof( JetSlowDeathBehaviorModuleData, m_oclInitialDeath ) },
+		{ "FXInitialDeath",	INI::parseFXList, nullptr, offsetof( JetSlowDeathBehaviorModuleData, m_fxInitialDeath ) },
+		{ "OCLInitialDeath", INI::parseObjectCreationList, nullptr, offsetof( JetSlowDeathBehaviorModuleData, m_oclInitialDeath ) },
 
-		{ "DelaySecondaryFromInitialDeath",	INI::parseDurationUnsignedInt, NULL, offsetof( JetSlowDeathBehaviorModuleData, m_delaySecondaryFromInitialDeath ) },
-		{ "FXSecondary",	INI::parseFXList, NULL, offsetof( JetSlowDeathBehaviorModuleData, m_fxSecondary ) },
-		{ "OCLSecondary", INI::parseObjectCreationList, NULL, offsetof( JetSlowDeathBehaviorModuleData, m_oclSecondary ) },
+		{ "DelaySecondaryFromInitialDeath",	INI::parseDurationUnsignedInt, nullptr, offsetof( JetSlowDeathBehaviorModuleData, m_delaySecondaryFromInitialDeath ) },
+		{ "FXSecondary",	INI::parseFXList, nullptr, offsetof( JetSlowDeathBehaviorModuleData, m_fxSecondary ) },
+		{ "OCLSecondary", INI::parseObjectCreationList, nullptr, offsetof( JetSlowDeathBehaviorModuleData, m_oclSecondary ) },
 
-		{ "FXHitGround", INI::parseFXList, NULL, offsetof( JetSlowDeathBehaviorModuleData, m_fxHitGround ) },
-		{ "OCLHitGround", INI::parseObjectCreationList, NULL, offsetof( JetSlowDeathBehaviorModuleData, m_oclHitGround ) },
+		{ "FXHitGround", INI::parseFXList, nullptr, offsetof( JetSlowDeathBehaviorModuleData, m_fxHitGround ) },
+		{ "OCLHitGround", INI::parseObjectCreationList, nullptr, offsetof( JetSlowDeathBehaviorModuleData, m_oclHitGround ) },
 
-		{ "DelayFinalBlowUpFromHitGround", INI::parseDurationUnsignedInt, NULL, offsetof( JetSlowDeathBehaviorModuleData, m_delayFinalBlowUpFromHitGround ) },
-		{ "FXFinalBlowUp", INI::parseFXList, NULL, offsetof( JetSlowDeathBehaviorModuleData, m_fxFinalBlowUp ) },
-		{ "OCLFinalBlowUp", INI::parseObjectCreationList, NULL, offsetof( JetSlowDeathBehaviorModuleData, m_oclFinalBlowUp ) },
+		{ "DelayFinalBlowUpFromHitGround", INI::parseDurationUnsignedInt, nullptr, offsetof( JetSlowDeathBehaviorModuleData, m_delayFinalBlowUpFromHitGround ) },
+		{ "FXFinalBlowUp", INI::parseFXList, nullptr, offsetof( JetSlowDeathBehaviorModuleData, m_fxFinalBlowUp ) },
+		{ "OCLFinalBlowUp", INI::parseObjectCreationList, nullptr, offsetof( JetSlowDeathBehaviorModuleData, m_oclFinalBlowUp ) },
 
-		{ "DeathLoopSound", INI::parseAudioEventRTS, NULL, offsetof( JetSlowDeathBehaviorModuleData, m_deathLoopSound ) },
+		{ "DeathLoopSound", INI::parseAudioEventRTS, nullptr, offsetof( JetSlowDeathBehaviorModuleData, m_deathLoopSound ) },
 
 // @todo srj -- RollRate and RollRateDelta and PitchRate should use parseAngularVelocityReal
-		{ "RollRate",	INI::parseReal, NULL, offsetof( JetSlowDeathBehaviorModuleData, m_rollRate ) },
-		{ "RollRateDelta", INI::parsePercentToReal, NULL, offsetof( JetSlowDeathBehaviorModuleData, m_rollRateDelta ) },
-		{ "PitchRate", INI::parseReal, NULL, offsetof( JetSlowDeathBehaviorModuleData, m_pitchRate ) },
-		{ "FallHowFast", INI::parsePercentToReal, NULL, offsetof( JetSlowDeathBehaviorModuleData, m_fallHowFast ) },
+		{ "RollRate",	INI::parseReal, nullptr, offsetof( JetSlowDeathBehaviorModuleData, m_rollRate ) },
+		{ "RollRateDelta", INI::parsePercentToReal, nullptr, offsetof( JetSlowDeathBehaviorModuleData, m_rollRateDelta ) },
+		{ "PitchRate", INI::parseReal, nullptr, offsetof( JetSlowDeathBehaviorModuleData, m_pitchRate ) },
+		{ "FallHowFast", INI::parsePercentToReal, nullptr, offsetof( JetSlowDeathBehaviorModuleData, m_fallHowFast ) },
 
-		{ 0, 0, 0, 0 }
+		{ nullptr, nullptr, nullptr, 0 }
 
 	};
 
   p.add( dataFieldParse );
 
-}  // end buildFieldParse
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -138,47 +133,47 @@ JetSlowDeathBehavior::JetSlowDeathBehavior( Thing *thing, const ModuleData *modu
 	m_timerOnGroundFrame = 0;
 	m_rollRate = 0.0f;
 
-}  // end JetSlowDeathBehavior
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-JetSlowDeathBehavior::~JetSlowDeathBehavior( void )
+JetSlowDeathBehavior::~JetSlowDeathBehavior()
 {
 
-}  // end ~JetSlowDeathBehavior
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 void JetSlowDeathBehavior::onDie( const DamageInfo *damageInfo )
 {
 	Object *us = getObject();
-	
+
 	// if the jet is on the ground we do just our ground fx death
 	if( us->isSignificantlyAboveTerrain() == FALSE || us->getStatusBits().test( OBJECT_STATUS_DECK_HEIGHT_OFFSET ) )
 	{
 		const JetSlowDeathBehaviorModuleData *modData = getJetSlowDeathBehaviorModuleData();
-		
+
 		// execute fx
 		FXList::doFXObj( modData->m_fxOnGroundDeath, us );
 
 		// execute ocl
-		ObjectCreationList::create( modData->m_oclOnGroundDeath, us, NULL );
+		ObjectCreationList::create( modData->m_oclOnGroundDeath, us, nullptr );
 
 		// destroy object
 		TheGameLogic->destroyObject( us );
 
-	}  // end if
+	}
 	else
 	{
 
 		// extend base class for slow death and begin the slow death behavior
 		SlowDeathBehavior::onDie( damageInfo );
 
-	}  // end else
+	}
 
 	getObject()->clearStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_DECK_HEIGHT_OFFSET ) );
 
-}  // end onDie
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -197,7 +192,7 @@ void JetSlowDeathBehavior::beginSlowDeath( const DamageInfo *damageInfo )
 
 	// do some effects
 	FXList::doFXObj( modData->m_fxInitialDeath, us );
-	ObjectCreationList::create( modData->m_oclInitialDeath, us, NULL );
+	ObjectCreationList::create( modData->m_oclInitialDeath, us, nullptr );
 
 	// start audio loop playing
 	m_deathLoopSound = modData->m_deathLoopSound;
@@ -207,7 +202,7 @@ void JetSlowDeathBehavior::beginSlowDeath( const DamageInfo *damageInfo )
 		m_deathLoopSound.setObjectID( us->getID() );
 		m_deathLoopSound.setPlayingHandle( TheAudio->addAudioEvent( &m_deathLoopSound ) );
 
-	}  // end if
+	}
 
 	// initialize our roll rate to that defined as the initial value in the module data
 	m_rollRate = modData->m_rollRate;
@@ -219,11 +214,11 @@ void JetSlowDeathBehavior::beginSlowDeath( const DamageInfo *damageInfo )
 	// do not allow the jet to turn anymore
 	locomotor->setMaxTurnRate( 0.0f );
 
-}  // end beginSlowDeath
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-UpdateSleepTime JetSlowDeathBehavior::update( void )
+UpdateSleepTime JetSlowDeathBehavior::update()
 {
 
 	// extend functionality of base class
@@ -239,7 +234,7 @@ UpdateSleepTime JetSlowDeathBehavior::update( void )
 
 	// roll us around in the air
 	PhysicsBehavior *physics = us->getPhysics();
-	DEBUG_ASSERTCRASH( physics, ("JetSlowDeathBehavior::beginSlowDeath - '%s' has no physics\n",
+	DEBUG_ASSERTCRASH( physics, ("JetSlowDeathBehavior::beginSlowDeath - '%s' has no physics",
 															us->getTemplate()->getName().str()) );
 	if( physics )
 		physics->setRollRate( m_rollRate );
@@ -250,7 +245,7 @@ UpdateSleepTime JetSlowDeathBehavior::update( void )
 	// do effects for death while in the air
 	if( m_timerOnGroundFrame == 0 )
 	{
-		
+
 		PathfindLayerEnum layer = TheTerrainLogic->getLayerForDestination(us->getPosition());
 		us->setLayer(layer);
 		Real height;
@@ -269,7 +264,7 @@ UpdateSleepTime JetSlowDeathBehavior::update( void )
 				height = 0.0f;
 		}
 
-		
+
 
 		Bool hitATree = FALSE;
 		// Here we want to make sure we crash if we collide with a tree on the way down
@@ -296,7 +291,7 @@ UpdateSleepTime JetSlowDeathBehavior::update( void )
 
 			// do some effects
 			FXList::doFXObj( modData->m_fxHitGround, us );
-			ObjectCreationList::create( modData->m_oclHitGround, us, NULL );
+			ObjectCreationList::create( modData->m_oclHitGround, us, nullptr );
 
 			// we are now on the ground
 			m_timerOnGroundFrame = TheGameLogic->getFrame();
@@ -305,23 +300,23 @@ UpdateSleepTime JetSlowDeathBehavior::update( void )
 			if( physics )
 				physics->setPitchRate( modData->m_pitchRate );
 
-		}  // end if
+		}
 
 		// timers for the secondary effect
-		if( m_timerDeathFrame != 0 && 
+		if( m_timerDeathFrame != 0 &&
 				TheGameLogic->getFrame() - m_timerDeathFrame >= modData->m_delaySecondaryFromInitialDeath )
 		{
 
 			// do some effects
 			FXList::doFXObj( modData->m_fxSecondary, us );
-			ObjectCreationList::create( modData->m_oclSecondary, us, NULL );
+			ObjectCreationList::create( modData->m_oclSecondary, us, nullptr );
 
 			// clear the death frame timer since we've already executed the event now
 			m_timerDeathFrame = 0;
 
-		}  //end if
+		}
 
-	}  // end if
+	}
 	else
 	{
 		// we are on the ground, pay attention to the final explosion timers
@@ -330,18 +325,18 @@ UpdateSleepTime JetSlowDeathBehavior::update( void )
 
 			// do some effects
 			FXList::doFXObj( modData->m_fxFinalBlowUp, us );
-			ObjectCreationList::create( modData->m_oclFinalBlowUp, us, NULL );
+			ObjectCreationList::create( modData->m_oclFinalBlowUp, us, nullptr );
 
 			// we're all done now
 			TheGameLogic->destroyObject( us );
 
-		}  // end if
+		}
 
-	}  // end else
+	}
 
 	return UPDATE_SLEEP_NONE;
 
-}  // end update
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -349,10 +344,10 @@ UpdateSleepTime JetSlowDeathBehavior::update( void )
 void JetSlowDeathBehavior::crc( Xfer *xfer )
 {
 
-	// extend base class 
+	// extend base class
 	SlowDeathBehavior::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -379,15 +374,15 @@ void JetSlowDeathBehavior::xfer( Xfer *xfer )
 	// roll rate
 	xfer->xferReal( &m_rollRate );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void JetSlowDeathBehavior::loadPostProcess( void )
+void JetSlowDeathBehavior::loadPostProcess()
 {
 
 	// extend base class
 	SlowDeathBehavior::loadPostProcess();
 
-}  // end loadPostProcess
+}

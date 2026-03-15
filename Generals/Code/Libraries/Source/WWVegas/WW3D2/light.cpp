@@ -49,8 +49,8 @@
  *   LightClass::Load_W3D -- Initialize this light from a W3D file                             *
  *   LightClass::Save_W3D -- Save this light's settings into a W3D file                        *
  *   LightClass::Get_Factory -- get the PersistFactory for LightClass                          *
- *   LightClass::Save -- persistant object support                                             *
- *   LightClass::Load -- persistant object support                                             *
+ *   LightClass::Save -- persistent object support                                             *
+ *   LightClass::Load -- persistent object support                                             *
  *   LightImpClass::LightImpClass -- constructor                                               *
  *   LightImpClass::Process_Push -- exposes the "push" process for an srLight                  *
  *   LightImpClass::Process_Pop -- exposes the "pop" process for an srLight                    *
@@ -78,7 +78,7 @@ SimplePersistFactoryClass<LightClass,WW3D_PERSIST_CHUNKID_LIGHT>	_LightFactory;
 /*
 ** Chunk ID's used by LightClass's save-load support (different from the W3D file format...)
 */
-enum 
+enum
 {
 	LIGHT_CHUNK_W3DFILE						= 0x02157100,			// (w3d format light)
 	LIGHT_CHUNK_VARIABLES,												// other state not stored in the w3d format
@@ -102,7 +102,7 @@ enum
  *   3/21/98    GTH : Created.                                                                 *
  *=============================================================================================*/
 LightClass::LightClass(LightType type) :
-	Type(type),	
+	Type(type),
 	Flags(0),
 	CastShadows(false),
 	Intensity(1.0f),
@@ -139,7 +139,7 @@ LightClass::LightClass(LightType type) :
  *   3/21/98    GTH : Created.                                                                 *
  *=============================================================================================*/
 LightClass::LightClass(const LightClass & src) :
-	Type(src.Type),	
+	Type(src.Type),
 	Flags(src.Flags),
 	CastShadows(src.CastShadows),
 	Intensity(src.Intensity),
@@ -175,7 +175,7 @@ LightClass & LightClass::operator = (const LightClass & that)
 	if (this != &that) {
 		RenderObjClass::operator = (that);
 
-		Type = that.Type;	
+		Type = that.Type;
 		Flags = that.Flags;
 		CastShadows = that.CastShadows;
 		Intensity = that.Intensity;
@@ -207,7 +207,7 @@ LightClass & LightClass::operator = (const LightClass & that)
  * HISTORY:                                                                                    *
  *   3/21/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-LightClass::~LightClass(void)
+LightClass::~LightClass()
 {
 }
 
@@ -224,7 +224,7 @@ LightClass::~LightClass(void)
  * HISTORY:                                                                                    *
  *   3/21/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-RenderObjClass * LightClass::Clone(void) const
+RenderObjClass * LightClass::Clone() const
 {
 	return W3DNEW LightClass(*this);
 }
@@ -341,7 +341,7 @@ WW3DErrorType LightClass::Load_W3D(ChunkLoadClass & cload)
 		Type = SPOT;
 		break;
 	}
-	
+
 	Enable_Shadows((lightinfo.Attributes & W3D_LIGHT_ATTRIBUTE_CAST_SHADOWS) == W3D_LIGHT_ATTRIBUTE_CAST_SHADOWS);
 	Set_Intensity(lightinfo.Intensity);
 
@@ -358,7 +358,7 @@ WW3DErrorType LightClass::Load_W3D(ChunkLoadClass & cload)
 	Vector3								vec;
 
 	while (cload.Open_Chunk()) {
-		switch(cload.Cur_Chunk_ID()) 
+		switch(cload.Cur_Chunk_ID())
 		{
 		case W3D_CHUNK_SPOT_LIGHT_INFO:
 			cload.Read(&spotinfo,sizeof(spotinfo));
@@ -367,7 +367,7 @@ WW3DErrorType LightClass::Load_W3D(ChunkLoadClass & cload)
 			W3dUtilityClass::Convert_Vector(spotinfo.SpotDirection,&vec);
 			Set_Spot_Direction(vec);
 			break;
-		
+
 		case W3D_CHUNK_NEAR_ATTENUATION:
 			cload.Read(&atteninfo,sizeof(atteninfo));
 			Set_Flag(NEAR_ATTENUATION,true);
@@ -407,8 +407,8 @@ WW3DErrorType LightClass::Save_W3D(ChunkSaveClass & csave)
 
 	W3dLightStruct lightinfo;
 	memset(&lightinfo,0,sizeof(lightinfo));
-	
-	switch (Type) 
+
+	switch (Type)
 	{
 	case POINT:
 		lightinfo.Attributes |= W3D_LIGHT_ATTRIBUTE_POINT;
@@ -432,9 +432,9 @@ WW3DErrorType LightClass::Save_W3D(ChunkSaveClass & csave)
 	W3dUtilityClass::Convert_Color(color,(&lightinfo.Diffuse));
 	Get_Specular(&color);
 	W3dUtilityClass::Convert_Color(color,(&lightinfo.Specular));
-	
+
 	lightinfo.Intensity = Get_Intensity();
-	
+
 	csave.Write(&lightinfo,sizeof(lightinfo));
 	csave.End_Chunk();
 
@@ -449,13 +449,13 @@ WW3DErrorType LightClass::Save_W3D(ChunkSaveClass & csave)
 		spotinfo.SpotDirection.Y = SpotDirection.Y;
 		spotinfo.SpotDirection.Z = SpotDirection.Z;
 		csave.Write(&spotinfo,sizeof(spotinfo));
-		
+
 		csave.End_Chunk();
 	}
 
 	if (Get_Flag(NEAR_ATTENUATION)) {
 		csave.Begin_Chunk(W3D_CHUNK_NEAR_ATTENUATION);
-		
+
 		double start,end;
 		Get_Near_Attenuation_Range(start,end);
 
@@ -470,7 +470,7 @@ WW3DErrorType LightClass::Save_W3D(ChunkSaveClass & csave)
 
 	if (Get_Flag(FAR_ATTENUATION)) {
 		csave.Begin_Chunk(W3D_CHUNK_FAR_ATTENUATION);
-		
+
 		double start,end;
 		Get_Far_Attenuation_Range(start,end);
 
@@ -484,7 +484,7 @@ WW3DErrorType LightClass::Save_W3D(ChunkSaveClass & csave)
 	}
 
 	csave.End_Chunk();
-	
+
 	return WW3D_ERROR_OK;
 }
 
@@ -501,14 +501,14 @@ WW3DErrorType LightClass::Save_W3D(ChunkSaveClass & csave)
  * HISTORY:                                                                                    *
  *   9/23/99    GTH : Created.                                                                 *
  *=============================================================================================*/
-const PersistFactoryClass & LightClass::Get_Factory (void) const
+const PersistFactoryClass & LightClass::Get_Factory () const
 {
-	return _LightFactory;	
+	return _LightFactory;
 }
 
 
 /***********************************************************************************************
- * LightClass::Save -- persistant object support                                               *
+ * LightClass::Save -- persistent object support                                               *
  *                                                                                             *
  * INPUT:                                                                                      *
  *                                                                                             *
@@ -535,7 +535,7 @@ bool LightClass::Save (ChunkSaveClass &csave)
 
 
 /***********************************************************************************************
- * LightClass::Load -- persistant object support                                               *
+ * LightClass::Load -- persistent object support                                               *
  *                                                                                             *
  * INPUT:                                                                                      *
  *                                                                                             *
@@ -565,12 +565,12 @@ bool LightClass::Load (ChunkLoadClass &cload)
 					switch(cload.Cur_Micro_Chunk_ID()) {
 						READ_MICRO_CHUNK(cload,LIGHT_VARIABLE_TRANSFORM,tm);
 					}
-					cload.Close_Micro_Chunk();	
+					cload.Close_Micro_Chunk();
 				}
 				break;
 
 			default:
-				WWDEBUG_SAY(("Unhandled Chunk: 0x%X File: %s Line: %d\r\n",__FILE__,__LINE__));
+				WWDEBUG_SAY(("Unhandled Chunk: 0x%X File: %s Line: %d",__FILE__,__LINE__));
 				break;
 		}
 		cload.Close_Chunk();

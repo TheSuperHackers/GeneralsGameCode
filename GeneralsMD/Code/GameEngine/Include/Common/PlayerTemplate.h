@@ -24,12 +24,12 @@
 
 // FILE: PlayerTemplate.h ////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -43,9 +43,6 @@
 //-----------------------------------------------------------------------------
 
 #pragma once
-
-#ifndef _PLAYERTEMPLATE_H_
-#define _PLAYERTEMPLATE_H_
 
 #include "Common/SubsystemInterface.h"
 #include "Common/GameMemory.h"
@@ -77,66 +74,66 @@ public:
 
 	PlayerTemplate();
 
-	inline void setNameKey(NameKeyType namekey) { m_nameKey = namekey; }
+	void setNameKey(NameKeyType namekey) { m_nameKey = namekey; }
 
-	inline NameKeyType getNameKey() const { DEBUG_ASSERTCRASH(m_nameKey != NAMEKEY_INVALID, ("bad namekey")); return m_nameKey; }
-	inline AsciiString getName() const { return KEYNAME(m_nameKey); }
+	NameKeyType getNameKey() const { DEBUG_ASSERTCRASH(m_nameKey != NAMEKEY_INVALID, ("bad namekey")); return m_nameKey; }
+	AsciiString getName() const { return KEYNAME(m_nameKey); }
 
-	inline UnicodeString getDisplayName() const { return m_displayName; }
+	UnicodeString getDisplayName() const { return m_displayName; }
 
-	inline AsciiString getSide() const { return m_side; }
-	inline AsciiString getBaseSide() const  { return m_baseSide; }
+	AsciiString getSide() const { return m_side; }
+	AsciiString getBaseSide() const  { return m_baseSide; }
 
 	/// return the tech tree for the player.
-	inline const Handicap *getHandicap() const { return &m_handicap; }
+	const Handicap *getHandicap() const { return &m_handicap; }
 
 	/// return the money for the player.
-	inline const Money *getMoney() const { return &m_money; }
-	
-	inline const RGBColor* getPreferredColor() const { return &m_preferredColor; }
+	const Money *getMoney() const { return &m_money; }
 
-	inline AsciiString getStartingBuilding( void ) const { return m_startingBuilding; }
+	const RGBColor* getPreferredColor() const { return &m_preferredColor; }
+
+	AsciiString getStartingBuilding() const { return m_startingBuilding; }
 	AsciiString getStartingUnit( Int i ) const;
 
-	inline const ProductionChangeMap& getProductionCostChanges() const { return m_productionCostChanges; }
-	inline const ProductionChangeMap& getProductionTimeChanges() const { return m_productionTimeChanges; }
-	inline const ProductionVeterancyMap& getProductionVeterancyLevels() const { return m_productionVeterancyLevels; }
-	inline Bool isObserver() const { return m_observer; }
-	inline Bool isPlayableSide() const { return m_playableSide; }
+	const ProductionChangeMap& getProductionCostChanges() const { return m_productionCostChanges; }
+	const ProductionChangeMap& getProductionTimeChanges() const { return m_productionTimeChanges; }
+	const ProductionVeterancyMap& getProductionVeterancyLevels() const { return m_productionVeterancyLevels; }
+	Bool isObserver() const { return m_observer; }
+	Bool isPlayableSide() const { return m_playableSide; }
 
-	inline AsciiString getScoreScreen (void ) const { return m_scoreScreenImage;	}
-	inline AsciiString getLoadScreen (void ) const { return m_loadScreenImage;	}
-	inline AsciiString getBeaconTemplate( void ) const { return m_beaconTemplate; }
-	
-	const Image *getHeadWaterMarkImage( void ) const;
-	const Image *getFlagWaterMarkImage( void ) const;
-	const Image *getEnabledImage( void ) const;
-	//const Image *getDisabledImage( void ) const;
-	//const Image *getHiliteImage( void ) const;
-	//const Image *getPushedImage( void ) const;
-	const Image *getSideIconImage( void ) const;
-	const Image *getGeneralImage( void ) const;
-	inline const AsciiString getTooltip() const { return m_tooltip; }
-	inline const AsciiString getGeneralFeatures( void ) const { return m_strGeneralFeatures; }
+	AsciiString getScoreScreen () const { return m_scoreScreenImage;	}
+	AsciiString getLoadScreen () const { return m_loadScreenImage;	}
+	AsciiString getBeaconTemplate() const { return m_beaconTemplate; }
+
+	const Image *getHeadWaterMarkImage() const;
+	const Image *getFlagWaterMarkImage() const;
+	const Image *getEnabledImage() const;
+	//const Image *getDisabledImage() const;
+	//const Image *getHiliteImage() const;
+	//const Image *getPushedImage() const;
+	const Image *getSideIconImage() const;
+	const Image *getGeneralImage() const;
+	const AsciiString getTooltip() const { return m_tooltip; }
+	const AsciiString getGeneralFeatures() const { return m_strGeneralFeatures; }
 
 	AsciiString getMedallionNormal() const { return m_strMedallionNormal; }
 	AsciiString getMedallionHilite() const { return m_strMedallionHilite; }
 	AsciiString getMedallionSelected() const { return m_strMedallionSelected; }
-	
+
 	const ScienceVec& getIntrinsicSciences() const { return m_intrinsicSciences; }
 	Int getIntrinsicSciencePurchasePoints() const { return m_intrinsicSPP; }
-	AsciiString getPurchaseScienceCommandSetRank1( void ) const {return m_purchaseScienceCommandSetRank1;	}
-	AsciiString getPurchaseScienceCommandSetRank3( void ) const {return m_purchaseScienceCommandSetRank3;	}
-	AsciiString getPurchaseScienceCommandSetRank8( void ) const {return m_purchaseScienceCommandSetRank8;	}
+	AsciiString getPurchaseScienceCommandSetRank1() const {return m_purchaseScienceCommandSetRank1;	}
+	AsciiString getPurchaseScienceCommandSetRank3() const {return m_purchaseScienceCommandSetRank3;	}
+	AsciiString getPurchaseScienceCommandSetRank8() const {return m_purchaseScienceCommandSetRank8;	}
 
-	AsciiString getSpecialPowerShortcutCommandSet( void ) const {return m_specialPowerShortcutCommandSet;	}
-	AsciiString getSpecialPowerShortcutWinName( void ) const {return m_specialPowerShortcutWinName;	}
-	Int getSpecialPowerShortcutButtonCount( void ) const {return m_specialPowerShortcutButtonCount;	}
-	
-	AsciiString getLoadScreenMusic( void ) const {return m_loadScreenMusic;	}
+	AsciiString getSpecialPowerShortcutCommandSet() const {return m_specialPowerShortcutCommandSet;	}
+	AsciiString getSpecialPowerShortcutWinName() const {return m_specialPowerShortcutWinName;	}
+	Int getSpecialPowerShortcutButtonCount() const {return m_specialPowerShortcutButtonCount;	}
+
+	AsciiString getLoadScreenMusic() const {return m_loadScreenMusic;	}
 	AsciiString getScoreScreenMusic() const { return m_scoreScreenMusic; }
 
-  inline Bool isOldFaction( void ) const { return m_oldFaction; }
+  Bool isOldFaction() const { return m_oldFaction; }
 
 	static const FieldParse* getFieldParse();
 
@@ -181,7 +178,7 @@ private:
 
 	AsciiString			m_scoreScreenImage;			///< Image that will be shown on the score screen
 	AsciiString			m_loadScreenImage;
-	
+
 	AsciiString			m_headWaterMark;				///< Image that will be the background on the observer control bar
 	AsciiString			m_flagWaterMark;				///< Imabe that will be the background on the observer control bar
 	AsciiString			m_enabledImage;					///< enable button image
@@ -218,11 +215,11 @@ public:
 
 	const PlayerTemplate* getNthPlayerTemplate(Int i) const;
 	const PlayerTemplate* findPlayerTemplate(NameKeyType namekey) const;
-	inline Int getPlayerTemplateCount() const { return m_playerTemplates.size(); }
+	Int getPlayerTemplateCount() const { return m_playerTemplates.size(); }
 	Int getTemplateNumByName(AsciiString name) const;
-	
+
 	// This function will fill outStringList with all the sides found in all the templates
-	void getAllSideStrings(AsciiStringList *outStringList);	
+	void getAllSideStrings(AsciiStringList *outStringList);
 
 private:
 
@@ -233,5 +230,3 @@ private:
 
 // ----------------------------------------------------------------------------------------------
 extern PlayerTemplateStore *ThePlayerTemplateStore;	///< singleton instance of PlayerTemplateStore
-
-#endif // _PLAYERTEMPLATE_H_

@@ -16,7 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// FILE: RampTool.cpp 
+// FILE: RampTool.cpp
 /*---------------------------------------------------------------------------*/
 /* EA Pacific                                                                */
 /* Confidential Information	                                                 */
@@ -83,7 +83,7 @@ void RampTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldB
 	} else if (m == TRACK_L) {
 		Coord3D docPt;
 		pView->viewToDocCoords(viewPt, &docPt);
-		docPt.z = TheTerrainRenderObject->getHeightMapHeight(docPt.x, docPt.y, NULL);
+		docPt.z = TheTerrainRenderObject->getHeightMapHeight(docPt.x, docPt.y, nullptr);
 		mEndPoint = docPt;
 	}
 
@@ -99,7 +99,7 @@ void RampTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBu
 	Coord3D docPt;
 	pView->viewToDocCoords(viewPt, &docPt);
 	mStartPoint = docPt;
-	mStartPoint.z = TheTerrainRenderObject->getHeightMapHeight(mStartPoint.x, mStartPoint.y, NULL);
+	mStartPoint.z = TheTerrainRenderObject->getHeightMapHeight(mStartPoint.x, mStartPoint.y, nullptr);
 
 	mIsMouseDown = true;
 }
@@ -114,7 +114,7 @@ void RampTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuil
 	Coord3D docPt;
 	pView->viewToDocCoords(viewPt, &docPt);
 	mEndPoint = docPt;
-	mEndPoint.z = TheTerrainRenderObject->getHeightMapHeight(mEndPoint.x, mEndPoint.y, NULL);
+	mEndPoint.z = TheTerrainRenderObject->getHeightMapHeight(mEndPoint.x, mEndPoint.y, nullptr);
 
 	mIsMouseDown = false;
 }
@@ -131,9 +131,9 @@ void RampTool::applyRamp(CWorldBuilderDoc* pDoc)
 	VecHeightMapIndexes indices;
 
 	WorldHeightMapEdit *worldHeightDup = pDoc->GetHeightMap()->duplicate();
-	
+
 	Real width = TheRampOptions->getRampWidth();
-	
+
 	BuildRectFromSegmentAndWidth(&mStartPoint, &mEndPoint, width,
 															 &bl, &tl, &br, &tr);
 
@@ -148,8 +148,8 @@ void RampTool::applyRamp(CWorldBuilderDoc* pDoc)
 	}
 
 	/*
-		This part is pretty straightforward. Determine the U value for the shortest segment from the 
-		index's actual location to the segments from mStartPoint to mEndPoint, and then apply a 
+		This part is pretty straightforward. Determine the U value for the shortest segment from the
+		index's actual location to the segments from mStartPoint to mEndPoint, and then apply a
 		linear gradient factor according to the height from the beginning to the end of mStartPoint
 		and mEndPoint.
 	*/
@@ -157,15 +157,15 @@ void RampTool::applyRamp(CWorldBuilderDoc* pDoc)
 	for (int i = 0; i < indiceCount; ++i) {
 		Coord3D pt;
 		pDoc->getCoordFromCellIndex(indices[i], &pt);
-		
+
 		Real uVal;
 		Coord2D start = { mStartPoint.x, mStartPoint.y };
 		Coord2D end = { mEndPoint.x, mEndPoint.y };
 		Coord2D pt2D = { pt.x, pt.y };
-		
-		ShortestDistancePointToSegment2D(&start, &end, &pt2D, NULL, NULL, &uVal);
+
+		ShortestDistancePointToSegment2D(&start, &end, &pt2D, nullptr, nullptr, &uVal);
 		Real height = mStartPoint.z + uVal * (mEndPoint.z - mStartPoint.z);
-		
+
 		worldHeightDup->setHeight(indices[i].x, indices[i].y, (UnsignedByte) (height / MAP_HEIGHT_SCALE));
 	}
 
