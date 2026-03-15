@@ -62,7 +62,7 @@ class ScriptDialog : public CDialog
 // Construction
 public:
 	ScriptDialog(CWnd* pParent = nullptr);   // standard constructor
-	~ScriptDialog();   //  destructor
+	virtual ~ScriptDialog() override;   //  destructor
 
 // Dialog Data
 	//{{AFX_DATA(ScriptDialog)
@@ -75,7 +75,7 @@ public:
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(ScriptDialog)
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
 // Implementation
@@ -138,7 +138,7 @@ protected:
 	// Generated message map functions
 	//{{AFX_MSG(ScriptDialog)
 	afx_msg void OnSelchangedScriptTree(NMHDR* pNMHDR, LRESULT* pResult);
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	afx_msg void OnNewFolder();
 	afx_msg void OnNewScript();
 	afx_msg void OnEditScript();
@@ -150,8 +150,8 @@ protected:
 	afx_msg void OnSave();
 	afx_msg void OnLoad();
 	afx_msg void OnDblclkScriptTree(NMHDR* pNMHDR, LRESULT* pResult);
-	virtual void OnOK();
-	virtual void OnCancel();
+	virtual void OnOK() override;
+	virtual void OnCancel() override;
 	afx_msg void OnBegindragScriptTree(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnScriptActivate();
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);

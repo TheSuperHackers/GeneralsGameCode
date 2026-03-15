@@ -48,7 +48,7 @@ protected:
 public:
 	PickUnitDialog(CWnd* pParent = nullptr);   // standard constructor
 	PickUnitDialog(UINT id, CWnd* pParent = nullptr);   // standard constructor
-	~PickUnitDialog(void);   ///< standard destructor
+	virtual ~PickUnitDialog(void) override;   ///< standard destructor
 
 // Dialog Data
 	//{{AFX_DATA(PickUnitDialog)
@@ -61,8 +61,8 @@ public:
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(PickUnitDialog)
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult);
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
+	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult) override;
 	//}}AFX_VIRTUAL
 
 // Implementation
@@ -70,7 +70,7 @@ protected:
 
 	// Generated message map functions
 	//{{AFX_MSG(PickUnitDialog)
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	afx_msg void OnMove(int x, int y);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
@@ -95,7 +95,7 @@ protected:
 
 	// Generated message map functions
 	//{{AFX_MSG(ReplaceUnitDialog)
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 

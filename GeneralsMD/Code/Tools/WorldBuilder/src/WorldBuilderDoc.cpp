@@ -160,7 +160,7 @@ protected:
 	CFile *m_file;
 public:
 	MFCFileOutputStream(CFile *pFile):m_file(pFile) {};
-	virtual Int write(const void *pData, Int numBytes) {
+	virtual Int write(const void *pData, Int numBytes) override {
 		Int numBytesWritten = 0;
 		try {
 			m_file->Write(pData, numBytes);
@@ -184,7 +184,7 @@ protected:
 	Int m_totalBytes;
 public:
 	CachedMFCFileOutputStream(CFile *pFile):m_file(pFile), m_totalBytes(0) {};
-	virtual Int write(const void *pData, Int numBytes) {
+	virtual Int write(const void *pData, Int numBytes) override {
 		UnsignedByte *tmp = new UnsignedByte[numBytes];
 		memcpy(tmp, pData, numBytes);
 		CachedChunk c;
@@ -218,7 +218,7 @@ protected:
 	Int m_totalBytes;
 public:
 	CompressedCachedMFCFileOutputStream(CFile *pFile):m_file(pFile), m_totalBytes(0) {};
-	virtual Int write(const void *pData, Int numBytes) {
+	virtual Int write(const void *pData, Int numBytes) override {
 		UnsignedByte *tmp = new UnsignedByte[numBytes];
 		memcpy(tmp, pData, numBytes);
 		CachedChunk c;

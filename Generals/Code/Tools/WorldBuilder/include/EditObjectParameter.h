@@ -43,7 +43,7 @@ public:
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(EditObjectParameter)
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
 // Implementation
@@ -62,9 +62,9 @@ protected:
 
 	// Generated message map functions
 	//{{AFX_MSG(EditObjectParameter)
-	virtual BOOL OnInitDialog();
-	virtual void OnOK();
-	virtual void OnCancel();
+	virtual BOOL OnInitDialog() override;
+	virtual void OnOK() override;
+	virtual void OnCancel() override;
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };

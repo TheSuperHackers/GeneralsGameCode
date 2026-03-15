@@ -65,8 +65,8 @@ protected:
 public:
 
 	// DX8_CleanupHook methods
-	virtual void ReleaseResources(void);	///< Release all dx8 resources so the device can be reset.
-	virtual void ReAcquireResources(void);  ///< Reacquire all resources after device reset.
+	virtual void ReleaseResources(void) override;	///< Release all dx8 resources so the device can be reset.
+	virtual void ReAcquireResources(void) override;  ///< Reacquire all resources after device reset.
 
 // Operations
 public:
@@ -75,12 +75,12 @@ public:
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(WbView3d)
 	protected:
-	virtual void OnDraw(CDC* pDC);      // overridden to draw this view
+	virtual void OnDraw(CDC* pDC) override;      // overridden to draw this view
 	//}}AFX_VIRTUAL
 
 // Implementation
 protected:
-	virtual ~WbView3d();
+	virtual ~WbView3d() override;
 #ifdef RTS_DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
@@ -222,13 +222,13 @@ protected:
 	void updateScorches();
 
 public:
-	virtual Bool viewToDocCoords(CPoint curPt, Coord3D *newPt, Bool constrain=true);
-	virtual Bool docToViewCoords(Coord3D curPt, CPoint* newPt);
+	virtual Bool viewToDocCoords(CPoint curPt, Coord3D *newPt, Bool constrain=true) override;
+	virtual Bool docToViewCoords(Coord3D curPt, CPoint* newPt) override;
 
-	virtual void updateHeightMapInView(WorldHeightMap *htMap, Bool partial, const IRegion2D &partialRange);
+	virtual void updateHeightMapInView(WorldHeightMap *htMap, Bool partial, const IRegion2D &partialRange) override;
 
 	/// Invalidates an object. Pass null to inval all objects.
-	virtual void invalObjectInView(MapObject *pObj);
+	virtual void invalObjectInView(MapObject *pObj) override;
 
 	// find the best model for an object
 	AsciiString getBestModelName(const ThingTemplate* tt, const ModelConditionFlags& c);
@@ -237,14 +237,14 @@ public:
 	void invalBuildListItemInView(BuildListInfo *pBuild);
 
 	/// Invalidates the area of one height map cell in the 2d view.
-	virtual void invalidateCellInView(int xIndex, int yIndex);
+	virtual void invalidateCellInView(int xIndex, int yIndex) override;
 
 	/// Scrolls the window by this amount.
-	virtual void scrollInView(Real x, Real y, Bool end);
+	virtual void scrollInView(Real x, Real y, Bool end) override;
 
-	virtual void setDefaultCamera();
-	virtual void rotateCamera(Real delta);
-	virtual void pitchCamera(Real delta);
+	virtual void setDefaultCamera() override;
+	virtual void rotateCamera(Real delta) override;
+	virtual void pitchCamera(Real delta) override;
 	void setCameraPitch(Real absolutePitch);
 	Real getCameraPitch(void);
 	Real getHeightAboveGround(void) { return m_actualHeightAboveGround; }
@@ -252,8 +252,8 @@ public:
 	Vector3 getCameraTarget(void) { return m_cameraTarget; }
 	Real getCameraAngle(void) { return m_cameraAngle; }
 
-	virtual MapObject *picked3dObjectInView(CPoint viewPt);
-	virtual BuildListInfo *pickedBuildObjectInView(CPoint viewPt);
+	virtual MapObject *picked3dObjectInView(CPoint viewPt) override;
+	virtual BuildListInfo *pickedBuildObjectInView(CPoint viewPt) override;
 
 	void removeFenceListObjects(MapObject *pObject);
 	void updateFenceListObjects(MapObject *pObject);
@@ -270,14 +270,14 @@ public:
 
 	AsciiString getModelNameAndScale(MapObject *pMapObj, Real *scale, BodyDamageType curDamageState);
 
-	virtual Int getPickPixels(void) {return m_pickPixels;}
-	virtual Bool viewToDocCoordZ(CPoint curPt, Coord3D *newPt, Real Z);
+	virtual Int getPickPixels(void) override {return m_pickPixels;}
+	virtual Bool viewToDocCoordZ(CPoint curPt, Coord3D *newPt, Real Z) override;
 public:
 
 //	void init(CWorldBuilderView *pMainView, HINSTANCE hInstance, CWnd* parent);
 	void redraw();
 
-	virtual void setCenterInView(Real x, Real y);
+	virtual void setCenterInView(Real x, Real y) override;
 
 	Bool getShowTerrain();
 	Bool getShowWireframe();
@@ -289,7 +289,7 @@ public:
 	Bool getShowAmbientSoundsFeedback(void) const { return m_showAmbientSounds; }
 
 	void togglePitchAndRotation( void ) { m_doPitch = !m_doPitch; }
-	virtual Bool isDoingPitch( void ) { return m_doPitch; }
+	virtual Bool isDoingPitch( void ) override { return m_doPitch; }
 };
 
 inline UINT WbView3d::getLastDrawTime() { return m_time; }

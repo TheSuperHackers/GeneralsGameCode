@@ -31,8 +31,8 @@ class CFixTeamOwnerDialog : public CDialog
 		Bool pickedValidTeam() { return m_pickedValidTeam; }
 
 	protected:
-		virtual BOOL OnInitDialog();
-		afx_msg void OnOK();
+		virtual BOOL OnInitDialog() override;
+		virtual afx_msg void OnOK() override;
 		DECLARE_MESSAGE_MAP()
 
 	protected:

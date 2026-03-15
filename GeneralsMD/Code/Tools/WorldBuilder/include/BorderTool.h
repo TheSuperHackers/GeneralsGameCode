@@ -32,17 +32,17 @@ class BorderTool : public Tool
 
 	public:
 		BorderTool();
-		~BorderTool();
+		virtual ~BorderTool() override;
 
 		Int getToolID(void) {return m_toolID;}
-		virtual void setCursor(void);
+		virtual void setCursor(void) override;
 
-		virtual void activate();
-		virtual void deactivate();
+		virtual void activate() override;
+		virtual void deactivate() override;
 
-		virtual Bool followsTerrain(void) { return false;	}
+		virtual Bool followsTerrain(void) override { return false;	}
 
-		virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);
-		virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);
-		virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);
+		virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
+		virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
+		virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
 };

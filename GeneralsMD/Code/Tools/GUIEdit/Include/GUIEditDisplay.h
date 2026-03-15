@@ -64,68 +64,68 @@ class GUIEditDisplay : public Display
 public:
 
 	GUIEditDisplay( void );
-	virtual ~GUIEditDisplay( void );
+	virtual ~GUIEditDisplay( void ) override;
 
-	virtual void draw( void ) { };
+	virtual void draw( void ) override { };
 
 	/// draw a line on the display in pixel coordinates with the specified color
 	virtual void drawLine( Int startX, Int startY, Int endX, Int endY,
-												 Real lineWidth, UnsignedInt lineColor );
+												 Real lineWidth, UnsignedInt lineColor ) override;
 	virtual void drawLine( Int startX, Int startY, Int endX, Int endY,
-												 Real lineWidth, UnsignedInt lineColor1, UnsignedInt lineColor2 ) { }
+												 Real lineWidth, UnsignedInt lineColor1, UnsignedInt lineColor2 ) override { }
 	/// draw a rect border on the display in pixel coordinates with the specified color
 	virtual void drawOpenRect( Int startX, Int startY, Int width, Int height,
-														 Real lineWidth, UnsignedInt lineColor );
+														 Real lineWidth, UnsignedInt lineColor ) override;
 	/// draw a filled rect on the display in pixel coords with the specified color
 	virtual void drawFillRect( Int startX, Int startY, Int width, Int height,
-														 UnsignedInt color );
+														 UnsignedInt color ) override;
 
 	/// Draw a percentage of a rectangle, much like a clock
-	virtual void drawRectClock(Int startX, Int startY, Int width, Int height, Int percent, UnsignedInt color) { }
-	virtual void drawRemainingRectClock(Int startX, Int startY, Int width, Int height, Int percent, UnsignedInt color) { }
+	virtual void drawRectClock(Int startX, Int startY, Int width, Int height, Int percent, UnsignedInt color) override { }
+	virtual void drawRemainingRectClock(Int startX, Int startY, Int width, Int height, Int percent, UnsignedInt color) override { }
 
 	/// draw an image fit within the screen coordinates
 	virtual void drawImage( const Image *image, Int startX, Int startY,
-													Int endX, Int endY, Color color = 0xFFFFFFFF, DrawImageMode mode=DRAW_IMAGE_ALPHA);
+													Int endX, Int endY, Color color = 0xFFFFFFFF, DrawImageMode mode=DRAW_IMAGE_ALPHA) override;
 	/// image clipping support
-	virtual void setClipRegion( IRegion2D *region );
-	virtual Bool isClippingEnabled( void );
-	virtual void enableClipping( Bool onoff );
+	virtual void setClipRegion( IRegion2D *region ) override;
+	virtual Bool isClippingEnabled( void ) override;
+	virtual void enableClipping( Bool onoff ) override;
 
 	// These are stub functions to allow compilation:
 
 	/// Create a video buffer that can be used for this display
-	virtual VideoBuffer*	createVideoBuffer( void ) { return nullptr; }
+	virtual VideoBuffer*	createVideoBuffer( void ) override { return nullptr; }
 
 	/// draw a video buffer fit within the screen coordinates
-	virtual void drawScaledVideoBuffer( VideoBuffer *buffer, VideoStreamInterface *stream ) { }
+	virtual void drawScaledVideoBuffer( VideoBuffer *buffer, VideoStreamInterface *stream ) override { }
 	virtual void drawVideoBuffer( VideoBuffer *buffer, Int startX, Int startY,
-																Int endX, Int endY ) { }
-	virtual void takeScreenShot(void){ }
-	virtual void toggleMovieCapture(void) {}
+																Int endX, Int endY ) override { }
+	virtual void takeScreenShot(void) override { }
+	virtual void toggleMovieCapture(void) override {}
 
 	// methods that we need to stub
-	virtual void setTimeOfDay( TimeOfDay tod ) {}
+	virtual void setTimeOfDay( TimeOfDay tod ) override {}
 	virtual void createLightPulse( const Coord3D *pos, const RGBColor *color, Real innerRadius, Real attenuationWidth,
-																 UnsignedInt increaseFrameTime, UnsignedInt decayFrameTime ) {}
-	virtual void setShroudLevel(Int x, Int y, CellShroudStatus setting) {}
-	void setBorderShroudLevel(UnsignedByte level){}
-	virtual void clearShroud() {}
-	virtual void preloadModelAssets( AsciiString model ) {}
-	virtual void preloadTextureAssets( AsciiString texture ) {}
-	virtual void toggleLetterBox(void) {}
-	virtual void enableLetterBox(Bool enable) {}
+																 UnsignedInt increaseFrameTime, UnsignedInt decayFrameTime ) override {}
+	virtual void setShroudLevel(Int x, Int y, CellShroudStatus setting) override {}
+	virtual void setBorderShroudLevel(UnsignedByte level) override {}
+	virtual void clearShroud() override {}
+	virtual void preloadModelAssets( AsciiString model ) override {}
+	virtual void preloadTextureAssets( AsciiString texture ) override {}
+	virtual void toggleLetterBox(void) override {}
+	virtual void enableLetterBox(Bool enable) override {}
 #if defined(RTS_DEBUG)
 	virtual void dumpModelAssets(const char *path) {}
 #endif
-	virtual void doSmartAssetPurgeAndPreload(const char* usageFileName) {}
+	virtual void doSmartAssetPurgeAndPreload(const char* usageFileName) override {}
 #if defined(RTS_DEBUG)
 	virtual void dumpAssetUsage(const char* mapname) {}
 #endif
 
-	virtual Real getAverageFPS(void) { return 0; }
-	virtual Real getCurrentFPS(void) { return 0; }
-	virtual Int getLastFrameDrawCalls( void ) { return 0; }
+	virtual Real getAverageFPS(void) override { return 0; }
+	virtual Real getCurrentFPS(void) override { return 0; }
+	virtual Int getLastFrameDrawCalls( void ) override { return 0; }
 
 protected:
 

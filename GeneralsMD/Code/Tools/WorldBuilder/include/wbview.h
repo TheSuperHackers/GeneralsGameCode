@@ -160,12 +160,12 @@ public:
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(WbView)
 	protected:
-	virtual void OnDraw(CDC* pDC);      // overridden to draw this view
+	virtual void OnDraw(CDC* pDC) override;      // overridden to draw this view
 	//}}AFX_VIRTUAL
 
 // Implementation
 protected:
-	virtual ~WbView();
+	virtual ~WbView() override;
 #ifdef RTS_DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;

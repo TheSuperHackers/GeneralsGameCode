@@ -46,7 +46,7 @@ public:
 
 // Implementation
 public:
-	virtual ~ObjectPreview();
+	virtual ~ObjectPreview() override;
 
 	void SetThingTemplate(const ThingTemplate *tTempl);
 

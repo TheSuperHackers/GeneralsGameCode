@@ -44,17 +44,17 @@ public:
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CWorldBuilderView)
 	public:
-	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
+	virtual BOOL PreCreateWindow(CREATESTRUCT& cs) override;
 	protected:
-	virtual BOOL OnPreparePrinting(CPrintInfo* pInfo);
-	virtual void OnBeginPrinting(CDC* pDC, CPrintInfo* pInfo);
-	virtual void OnEndPrinting(CDC* pDC, CPrintInfo* pInfo);
-	virtual void OnDraw(CDC* pDC);
+	virtual BOOL OnPreparePrinting(CPrintInfo* pInfo) override;
+	virtual void OnBeginPrinting(CDC* pDC, CPrintInfo* pInfo) override;
+	virtual void OnEndPrinting(CDC* pDC, CPrintInfo* pInfo) override;
+	virtual void OnDraw(CDC* pDC) override;
 	//}}AFX_VIRTUAL
 
 // Implementation
 public:
-	virtual ~CWorldBuilderView();
+	virtual ~CWorldBuilderView() override;
 #ifdef RTS_DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
@@ -115,23 +115,23 @@ public:
 protected:
 
 public:
-	virtual Bool viewToDocCoords(CPoint curPt, Coord3D *newPt, Bool constrain);
-	virtual Bool docToViewCoords(Coord3D curPt, CPoint* newPt);
+	virtual Bool viewToDocCoords(CPoint curPt, Coord3D *newPt, Bool constrain) override;
+	virtual Bool docToViewCoords(Coord3D curPt, CPoint* newPt) override;
 
 	/// Set the center for display.
-	virtual void setCenterInView(Real x, Real y);
+	virtual void setCenterInView(Real x, Real y) override;
 
 	/// the doc has changed size; readjust view as necessary.
-	virtual void adjustDocSize();
+	virtual void adjustDocSize() override;
 
 	/// Invalidates an object. Pass null to inval all objects.
-	virtual void invalObjectInView(MapObject *pObj);
+	virtual void invalObjectInView(MapObject *pObj) override;
 
 	/// Invalidates the area of one height map cell in the 2d view.
-	virtual void invalidateCellInView(int xIndex, int yIndex);
+	virtual void invalidateCellInView(int xIndex, int yIndex) override;
 
 	/// Scrolls the window by this amount (doc coords).
-	virtual void scrollInView(Real x, Real y, Bool end);
+	virtual void scrollInView(Real x, Real y, Bool end) override;
 
 // Generated message map functions
 protected:

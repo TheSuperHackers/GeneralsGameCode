@@ -35,7 +35,7 @@ class FenceOptions : public COptionsPanel
 public:
 	FenceOptions(CWnd* pParent = nullptr);   ///< standard constructor
 
-	~FenceOptions(void);   ///< standard destructor
+	virtual ~FenceOptions(void) override;   ///< standard destructor
 	enum { NAME_MAX_LEN = 64 };
 // Dialog Data
 	//{{AFX_DATA(FenceOptions)
@@ -48,10 +48,10 @@ public:
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(FenceOptions)
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	virtual void OnOK(){return;};  ///< Modeless dialogs don't OK, so eat this for modeless.
-	virtual void OnCancel(){return;}; ///< Modeless dialogs don't close on ESC, so eat this for modeless.
-	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult);
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
+	virtual void OnOK() override {return;};  ///< Modeless dialogs don't OK, so eat this for modeless.
+	virtual void OnCancel() override {return;}; ///< Modeless dialogs don't close on ESC, so eat this for modeless.
+	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult) override;
 	//}}AFX_VIRTUAL
 
 // Implementation
@@ -59,7 +59,7 @@ protected:
 
 	// Generated message map functions
 	//{{AFX_MSG(FenceOptions)
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	afx_msg void OnChangeFenceSpacingEdit();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()

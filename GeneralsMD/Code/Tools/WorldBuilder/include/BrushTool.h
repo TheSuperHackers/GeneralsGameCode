@@ -42,7 +42,7 @@ protected:
 
 public:
 	BrushTool(void);
-	~BrushTool(void);
+	virtual ~BrushTool(void) override;
 
 public:
 	static Int getWidth(void) {return m_brushWidth;};  ///<Returns width.
@@ -53,11 +53,11 @@ public:
 	static void setHeight(Int height);
 
 public:
-	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);
-	virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);
-	virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);
-	virtual WorldHeightMapEdit *getHeightMap(void) {return m_htMapEditCopy;};
-	virtual void activate(); ///< Become the current tool.
-	virtual Bool followsTerrain(void) {return false;};
+	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
+	virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
+	virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
+	virtual WorldHeightMapEdit *getHeightMap(void) override {return m_htMapEditCopy;};
+	virtual void activate() override; ///< Become the current tool.
+	virtual Bool followsTerrain(void) override {return false;};
 
 };

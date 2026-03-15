@@ -42,7 +42,7 @@ class MapObjectProps : public COptionsPanel, public PopupSliderOwner
 // Construction
 public:
 	MapObjectProps(Dict* dictToEdit = nullptr, const char* title = nullptr, CWnd* pParent = nullptr);   // standard constructor
-	~MapObjectProps();
+	virtual ~MapObjectProps() override;
 	void makeMain();
 
 // Dialog Data
@@ -55,7 +55,7 @@ public:
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(MapObjectProps)
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
 // Implementation
@@ -82,13 +82,13 @@ protected:
 	// Generated message map functions
 	//{{AFX_MSG(MapObjectProps)
 	afx_msg void OnSelchangeProperties();
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	afx_msg void OnEditprop();
 	afx_msg void OnNewprop();
 	afx_msg void OnRemoveprop();
 	afx_msg void OnDblclkProperties();
-	virtual void OnOK();
-	virtual void OnCancel();
+	virtual void OnOK() override;
+	virtual void OnCancel() override;
 	afx_msg void _TeamToDict(void);
 	afx_msg void _NameToDict(void);
 	afx_msg void _HealthToDict(void);
@@ -140,9 +140,9 @@ protected:
 	void _DictToPrebuiltUpgrades(void);
 
 public:
-	virtual void GetPopSliderInfo(const long sliderID, long *pMin, long *pMax, long *pLineSize, long *pInitial);
-	virtual void PopSliderChanged(const long sliderID, long theVal);
-	virtual void PopSliderFinished(const long sliderID, long theVal);
+	virtual void GetPopSliderInfo(const long sliderID, long *pMin, long *pMax, long *pLineSize, long *pInitial) override;
+	virtual void PopSliderChanged(const long sliderID, long theVal) override;
+	virtual void PopSliderFinished(const long sliderID, long theVal) override;
 
 	static MapObject *getSingleSelectedMapObject(void);
 	static void update(void);
