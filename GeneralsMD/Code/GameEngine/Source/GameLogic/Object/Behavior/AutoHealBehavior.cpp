@@ -168,9 +168,6 @@ UpdateSleepTime AutoHealBehavior::update()
 	if (m_stopped)
 		return UPDATE_SLEEP_FOREVER;
 
-	// TheSuperHackers @bugfix stephanmeesters 14/03/2026 Delay emitter creation until update
-	createEmitters();
-
 	Object *obj = getObject();
 	const AutoHealBehaviorModuleData *d = getAutoHealBehaviorModuleData();
 
@@ -181,6 +178,9 @@ UpdateSleepTime AutoHealBehavior::update()
 		DEBUG_ASSERTCRASH(isUpgradeActive(), ("hmm, this should not be possible"));
 		return UPDATE_SLEEP_FOREVER;
 	}
+
+	// TheSuperHackers @bugfix stephanmeesters 14/03/2026 Delay emitter creation until update
+	createEmitters();
 
 //DEBUG_LOG(("doing auto heal %d",TheGameLogic->getFrame()));
 
@@ -369,9 +369,9 @@ void AutoHealBehavior::loadPostProcess()
 // ------------------------------------------------------------------------------------------------
 void AutoHealBehavior::createEmitters( void )
 {
-	const AutoHealBehaviorModuleData *d = getAutoHealBehaviorModuleData();
-	if( m_radiusParticleSystemID == INVALID_PARTICLE_SYSTEM_ID && d->m_radiusParticleSystemTmpl )
+	if( m_radiusParticleSystemID == INVALID_PARTICLE_SYSTEM_ID )
 	{
+		const AutoHealBehaviorModuleData *d = getAutoHealBehaviorModuleData();
 		ParticleSystem *particleSystem = TheParticleSystemManager->createParticleSystem(d->m_radiusParticleSystemTmpl);
 		if( particleSystem )
 		{

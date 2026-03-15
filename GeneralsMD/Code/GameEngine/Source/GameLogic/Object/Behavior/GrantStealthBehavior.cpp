@@ -239,9 +239,9 @@ void GrantStealthBehavior::loadPostProcess()
 // ------------------------------------------------------------------------------------------------
 void GrantStealthBehavior::createEmitters( void )
 {
-	const GrantStealthBehaviorModuleData *d = getGrantStealthBehaviorModuleData();
-	if( m_radiusParticleSystemID == INVALID_PARTICLE_SYSTEM_ID && d->m_radiusParticleSystemTmpl )
+	if( m_radiusParticleSystemID == INVALID_PARTICLE_SYSTEM_ID )
 	{
+		const GrantStealthBehaviorModuleData *d = getGrantStealthBehaviorModuleData();
 		ParticleSystem *particleSystem = TheParticleSystemManager->createParticleSystem(d->m_radiusParticleSystemTmpl);
 		if( particleSystem )
 		{
