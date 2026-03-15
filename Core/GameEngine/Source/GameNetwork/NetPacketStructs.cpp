@@ -108,6 +108,155 @@ size_t SmallNetPacketCommandBase::copyBytes(UnsignedByte *buffer, const NetComma
 	return size;
 }
 
+size_t SmallNetPacketCommandBase::readMessage(NetCommandRef *&ref, CommandBase &base, NetPacketBuf buf)
+{
+	size_t size = 0;
+
+	while (size < buf.size())
+	{
+		switch (buf[size])
+		{
+		case NetPacketFieldTypes::CommandType:
+			size += network::readObject(base.commandType, buf.offset(size));
+			break;
+		case NetPacketFieldTypes::Relay:
+			size += network::readObject(base.relay, buf.offset(size));
+			break;
+		case NetPacketFieldTypes::Frame:
+			size += network::readObject(base.frame, buf.offset(size));
+			break;
+		case NetPacketFieldTypes::PlayerId:
+			size += network::readObject(base.playerId, buf.offset(size));
+			break;
+		case NetPacketFieldTypes::CommandId:
+			size += network::readObject(base.commandId, buf.offset(size));
+			break;
+		case NetPacketFieldTypes::Data:
+		{
+			size += network::readObject(base.dataHeader, buf.offset(size));
+			// The data field marks the end of the command base.
+			if (NetCommandMsg* msg = constructNetCommandMsg(base))
+			{
+				ref = NEW_NETCOMMANDREF(msg);
+				ref->setRelay(base.relay.relay);
+				msg->detach();
+			}
+			return size;
+		}
+		case NetPacketFieldTypes::Repeat:
+		default:
+			DEBUG_CRASH(("SmallNetPacketCommandBase::readBytes: Unexpected field type '%c' encountered.", buf[size]));
+			return size + 1;
+		}
+	}
+
+	return size;
+}
+
+NetCommandMsg *SmallNetPacketCommandBase::constructNetCommandMsg(const CommandBase &base)
+{
+	NetCommandMsg *msg = nullptr;
+	NetCommandType commandType = static_cast<NetCommandType>(base.commandType.commandType);
+
+	switch (commandType)
+	{
+	case NETCOMMANDTYPE_GAMECOMMAND:
+		msg = newInstance(NetGameCommandMsg);
+		break;
+	case NETCOMMANDTYPE_ACKBOTH:
+		msg = newInstance(NetAckBothCommandMsg);
+		break;
+	case NETCOMMANDTYPE_ACKSTAGE1:
+		msg = newInstance(NetAckStage1CommandMsg);
+		break;
+	case NETCOMMANDTYPE_ACKSTAGE2:
+		msg = newInstance(NetAckStage2CommandMsg);
+		break;
+	case NETCOMMANDTYPE_FRAMEINFO:
+		msg = newInstance(NetFrameCommandMsg);
+		break;
+	case NETCOMMANDTYPE_PLAYERLEAVE:
+		msg = newInstance(NetPlayerLeaveCommandMsg);
+		break;
+	case NETCOMMANDTYPE_RUNAHEADMETRICS:
+		msg = newInstance(NetRunAheadMetricsCommandMsg);
+		break;
+	case NETCOMMANDTYPE_RUNAHEAD:
+		msg = newInstance(NetRunAheadCommandMsg);
+		break;
+	case NETCOMMANDTYPE_DESTROYPLAYER:
+		msg = newInstance(NetDestroyPlayerCommandMsg);
+		break;
+	case NETCOMMANDTYPE_KEEPALIVE:
+		msg = newInstance(NetKeepAliveCommandMsg);
+		break;
+	case NETCOMMANDTYPE_DISCONNECTKEEPALIVE:
+		msg = newInstance(NetDisconnectKeepAliveCommandMsg);
+		break;
+	case NETCOMMANDTYPE_DISCONNECTPLAYER:
+		msg = newInstance(NetDisconnectPlayerCommandMsg);
+		break;
+	case NETCOMMANDTYPE_PACKETROUTERQUERY:
+		msg = newInstance(NetPacketRouterQueryCommandMsg);
+		break;
+	case NETCOMMANDTYPE_PACKETROUTERACK:
+		msg = newInstance(NetPacketRouterAckCommandMsg);
+		break;
+	case NETCOMMANDTYPE_DISCONNECTCHAT:
+		msg = newInstance(NetDisconnectChatCommandMsg);
+		break;
+	case NETCOMMANDTYPE_DISCONNECTVOTE:
+		msg = newInstance(NetDisconnectVoteCommandMsg);
+		break;
+	case NETCOMMANDTYPE_CHAT:
+		msg = newInstance(NetChatCommandMsg);
+		break;
+	case NETCOMMANDTYPE_PROGRESS:
+		msg = newInstance(NetProgressCommandMsg);
+		break;
+	case NETCOMMANDTYPE_LOADCOMPLETE:
+		msg = newInstance(NetLoadCompleteCommandMsg);
+		break;
+	case NETCOMMANDTYPE_TIMEOUTSTART:
+		msg = newInstance(NetTimeOutGameStartCommandMsg);
+		break;
+	case NETCOMMANDTYPE_WRAPPER:
+		msg = newInstance(NetWrapperCommandMsg);
+		break;
+	case NETCOMMANDTYPE_FILE:
+		msg = newInstance(NetFileCommandMsg);
+		break;
+	case NETCOMMANDTYPE_FILEANNOUNCE:
+		msg = newInstance(NetFileAnnounceCommandMsg);
+		break;
+	case NETCOMMANDTYPE_FILEPROGRESS:
+		msg = newInstance(NetFileProgressCommandMsg);
+		break;
+	case NETCOMMANDTYPE_DISCONNECTFRAME:
+		msg = newInstance(NetDisconnectFrameCommandMsg);
+		break;
+	case NETCOMMANDTYPE_DISCONNECTSCREENOFF:
+		msg = newInstance(NetDisconnectScreenOffCommandMsg);
+		break;
+	case NETCOMMANDTYPE_FRAMERESENDREQUEST:
+		msg = newInstance(NetFrameResendRequestCommandMsg);
+		break;
+	default:
+		DEBUG_CRASH(("SmallNetPacketCommandBase::constructNetCommandMsg: Unexpected command type '%d' encountered.", commandType));
+		return nullptr;
+	}
+
+	DEBUG_ASSERTCRASH(commandType == msg->getNetCommandType(),
+		("SmallNetPacketCommandBase::constructNetCommandMsg: Read command type '%d' does not match created command '%d'.", commandType, msg->getNetCommandType()));
+
+	msg->setNetCommandType(static_cast<NetCommandType>(base.commandType.commandType));
+	msg->setExecutionFrame(base.frame.frame);
+	msg->setPlayerID(base.playerId.playerId);
+	msg->setID(base.commandId.commandId);
+
+	return msg;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // NetPacketAckCommand
 ////////////////////////////////////////////////////////////////////////////////
@@ -120,6 +269,20 @@ size_t NetPacketAckCommandData::copyBytes(UnsignedByte *buffer, const NetCommand
 	data.originalPlayerId = cmdMsg->getOriginalPlayerID();
 
 	return network::writeObject(buffer, data);
+}
+
+size_t NetPacketAckCommandData::readMessage(NetCommandRef &ref, NetPacketBuf buf)
+{
+	CommandMsg *cmdMsg = static_cast<CommandMsg *>(ref.getCommand());
+	FixedData data;
+	data.commandId = 0;
+	data.originalPlayerId = 0;
+
+	size_t size = network::readObject(data, buf);
+	cmdMsg->setCommandID(data.commandId);
+	cmdMsg->setOriginalPlayerID(data.originalPlayerId);
+
+	return size;
 }
 
 size_t NetPacketAckCommandBase::copyBytes(UnsignedByte *buffer, const NetCommandRef &ref)
@@ -148,6 +311,18 @@ size_t NetPacketFrameCommandData::copyBytes(UnsignedByte *buffer, const NetComma
 	return network::writeObject(buffer, data);
 }
 
+size_t NetPacketFrameCommandData::readMessage(NetCommandRef &ref, NetPacketBuf buf)
+{
+	CommandMsg *cmdMsg = static_cast<CommandMsg *>(ref.getCommand());
+	FixedData data;
+	data.commandCount = 0;
+
+	size_t size = network::readObject(data, buf);
+	cmdMsg->setCommandCount(data.commandCount);
+
+	return size;
+}
+
 size_t NetPacketFrameCommandBase::copyBytes(UnsignedByte *buffer, const NetCommandRef &ref)
 {
 	const NetCommandMsg *msg = ref.getCommand();
@@ -172,6 +347,18 @@ size_t NetPacketPlayerLeaveCommandData::copyBytes(UnsignedByte *buffer, const Ne
 	data.leavingPlayerId = cmdMsg->getLeavingPlayerID();
 
 	return network::writeObject(buffer, data);
+}
+
+size_t NetPacketPlayerLeaveCommandData::readMessage(NetCommandRef &ref, NetPacketBuf buf)
+{
+	CommandMsg *cmdMsg = static_cast<CommandMsg *>(ref.getCommand());
+	FixedData data;
+	data.leavingPlayerId = 0;
+
+	size_t size = network::readObject(data, buf);
+	cmdMsg->setLeavingPlayerID(data.leavingPlayerId);
+
+	return size;
 }
 
 size_t NetPacketPlayerLeaveCommandBase::copyBytes(UnsignedByte *buffer, const NetCommandRef &ref)
@@ -201,6 +388,20 @@ size_t NetPacketRunAheadMetricsCommandData::copyBytes(UnsignedByte *buffer, cons
 	return network::writeObject(buffer, data);
 }
 
+size_t NetPacketRunAheadMetricsCommandData::readMessage(NetCommandRef &ref, NetPacketBuf buf)
+{
+	CommandMsg *cmdMsg = static_cast<CommandMsg *>(ref.getCommand());
+	FixedData data;
+	data.averageLatency = 0.2f;
+	data.averageFps = 30;
+
+	size_t size = network::readObject(data, buf);
+	cmdMsg->setAverageLatency(data.averageLatency);
+	cmdMsg->setAverageFps(data.averageFps);
+
+	return size;
+}
+
 size_t NetPacketRunAheadMetricsCommandBase::copyBytes(UnsignedByte *buffer, const NetCommandRef &ref)
 {
 	const NetCommandMsg *msg = ref.getCommand();
@@ -228,6 +429,20 @@ size_t NetPacketRunAheadCommandData::copyBytes(UnsignedByte *buffer, const NetCo
 	return network::writeObject(buffer, data);
 }
 
+size_t NetPacketRunAheadCommandData::readMessage(NetCommandRef &ref, NetPacketBuf buf)
+{
+	CommandMsg *cmdMsg = static_cast<CommandMsg *>(ref.getCommand());
+	FixedData data;
+	data.runAhead = 20;
+	data.frameRate = 30;
+
+	size_t size = network::readObject(data, buf);
+	cmdMsg->setRunAhead(data.runAhead);
+	cmdMsg->setFrameRate(data.frameRate);
+
+	return size;
+}
+
 size_t NetPacketRunAheadCommandBase::copyBytes(UnsignedByte *buffer, const NetCommandRef &ref)
 {
 	const NetCommandMsg *msg = ref.getCommand();
@@ -252,6 +467,18 @@ size_t NetPacketDestroyPlayerCommandData::copyBytes(UnsignedByte *buffer, const 
 	data.playerIndex = cmdMsg->getPlayerIndex();
 
 	return network::writeObject(buffer, data);
+}
+
+size_t NetPacketDestroyPlayerCommandData::readMessage(NetCommandRef &ref, NetPacketBuf buf)
+{
+	CommandMsg *cmdMsg = static_cast<CommandMsg *>(ref.getCommand());
+	FixedData data;
+	data.playerIndex = 0;
+
+	size_t size = network::readObject(data, buf);
+	cmdMsg->setPlayerIndex(data.playerIndex);
+
+	return size;
 }
 
 size_t NetPacketDestroyPlayerCommandBase::copyBytes(UnsignedByte *buffer, const NetCommandRef &ref)
@@ -315,6 +542,20 @@ size_t NetPacketDisconnectPlayerCommandData::copyBytes(UnsignedByte *buffer, con
 	return network::writeObject(buffer, data);
 }
 
+size_t NetPacketDisconnectPlayerCommandData::readMessage(NetCommandRef &ref, NetPacketBuf buf)
+{
+	CommandMsg *cmdMsg = static_cast<CommandMsg *>(ref.getCommand());
+	FixedData data;
+	data.disconnectSlot = 0;
+	data.disconnectFrame = 0;
+
+	size_t size = network::readObject(data, buf);
+	cmdMsg->setDisconnectSlot(data.disconnectSlot);
+	cmdMsg->setDisconnectFrame(data.disconnectFrame);
+
+	return size;
+}
+
 size_t NetPacketDisconnectPlayerCommandBase::copyBytes(UnsignedByte *buffer, const NetCommandRef &ref)
 {
 	const NetCommandMsg *msg = ref.getCommand();
@@ -376,6 +617,20 @@ size_t NetPacketDisconnectVoteCommandData::copyBytes(UnsignedByte *buffer, const
 	return network::writeObject(buffer, data);
 }
 
+size_t NetPacketDisconnectVoteCommandData::readMessage(NetCommandRef &ref, NetPacketBuf buf)
+{
+	CommandMsg *cmdMsg = static_cast<CommandMsg *>(ref.getCommand());
+	FixedData data;
+	data.slot = 0;
+	data.voteFrame = 0;
+
+	size_t size = network::readObject(data, buf);
+	cmdMsg->setSlot(data.slot);
+	cmdMsg->setVoteFrame(data.voteFrame);
+
+	return size;
+}
+
 size_t NetPacketDisconnectVoteCommandBase::copyBytes(UnsignedByte *buffer, const NetCommandRef &ref)
 {
 	const NetCommandMsg *msg = ref.getCommand();
@@ -408,12 +663,30 @@ size_t NetPacketChatCommandData::getSize(const NetCommandMsg &msg)
 size_t NetPacketChatCommandData::copyBytes(UnsignedByte *buffer, const NetCommandRef &ref)
 {
 	const CommandMsg *cmdMsg = static_cast<const CommandMsg *>(ref.getCommand());
-	const Int textLength = std::min<Int>(cmdMsg->getText().getLength(), 255);
+	const size_t textLength = std::min<size_t>(cmdMsg->getText().getLength(), 255);
 
 	size_t size = 0;
 	size += network::writePrimitive(buffer + size, (UnsignedByte)textLength);
 	size += network::writeStringWithoutNull(buffer + size, cmdMsg->getText(), textLength);
 	size += network::writePrimitive(buffer + size, (Int)cmdMsg->getPlayerMask());
+	return size;
+}
+
+size_t NetPacketChatCommandData::readMessage(NetCommandRef &ref, NetPacketBuf buf)
+{
+	CommandMsg *cmdMsg = static_cast<CommandMsg *>(ref.getCommand());
+	UnsignedByte textLength = 0;
+	UnicodeString unitext;
+	Int playerMask = 0;
+
+	size_t size = 0;
+	size += network::readObject(textLength, buf.offset(size));
+	size += network::readStringWithoutNull(unitext, textLength,  buf.offset(size));
+	size += network::readObject(playerMask, buf.offset(size));
+
+	cmdMsg->setText(unitext);
+	cmdMsg->setPlayerMask(playerMask);
+
 	return size;
 }
 
@@ -453,6 +726,21 @@ size_t NetPacketDisconnectChatCommandData::copyBytes(UnsignedByte *buffer, const
 	size_t size = 0;
 	size += network::writePrimitive(buffer + size, (UnsignedByte)textLength);
 	size += network::writeStringWithoutNull(buffer + size, cmdMsg->getText(), textLength);
+	return size;
+}
+
+size_t NetPacketDisconnectChatCommandData::readMessage(NetCommandRef &ref, NetPacketBuf buf)
+{
+	CommandMsg *cmdMsg = static_cast<CommandMsg *>(ref.getCommand());
+	UnsignedByte textLength = 0;
+	UnicodeString unitext;
+
+	size_t size = 0;
+	size += network::readObject(textLength, buf.offset(size));
+	size += network::readStringWithoutNull(unitext, textLength,  buf.offset(size));
+
+	cmdMsg->setText(unitext);
+
 	return size;
 }
 
@@ -604,6 +892,116 @@ size_t NetPacketGameCommandData::copyBytes(UnsignedByte *buffer, const NetComman
 	return size;
 }
 
+size_t NetPacketGameCommandData::readMessage(NetCommandRef &ref, NetPacketBuf buf)
+{
+	CommandMsg *cmdMsg = static_cast<CommandMsg *>(ref.getCommand());
+	GameMessageParser *parser = newInstance(GameMessageParser)();
+	Int newType = 0;
+	UnsignedByte numArgTypes = 0;
+
+	size_t size = 0;
+	size += network::readObject(newType, buf.offset(size));
+	size += network::readObject(numArgTypes, buf.offset(size));
+
+	cmdMsg->setGameMessageType(static_cast<GameMessage::Type>(newType));
+
+	Int totalArgCount = 0;
+	Int argIndex = 0;
+
+	for (; argIndex < (Int)numArgTypes; ++argIndex)
+	{
+		UnsignedByte type = (UnsignedByte)ARGUMENTDATATYPE_UNKNOWN;
+		UnsignedByte argCount = 0;
+
+		size += network::readObject(type, buf.offset(size));
+		size += network::readObject(argCount, buf.offset(size));
+
+		parser->addArgType(static_cast<GameMessageArgumentDataType>(type), argCount);
+		totalArgCount += argCount;
+	}
+
+	GameMessageParserArgumentType *parserArgType = parser->getFirstArgumentType();
+	GameMessageArgumentDataType lastType = ARGUMENTDATATYPE_UNKNOWN;
+	Int argsLeftForType = 0;
+
+	if (parserArgType != nullptr)
+	{
+		lastType = parserArgType->getType();
+		argsLeftForType = parserArgType->getArgCount();
+	}
+
+	for (argIndex = 0; argIndex < totalArgCount; ++argIndex)
+	{
+		GameMessageArgumentType arg;
+		const size_t sizeBefore = size;
+
+		switch (lastType)
+		{
+		case ARGUMENTDATATYPE_INTEGER:
+			size += network::readObject(arg.integer, buf.offset(size));
+			break;
+		case ARGUMENTDATATYPE_REAL:
+			size += network::readObject(arg.real, buf.offset(size));
+			break;
+		case ARGUMENTDATATYPE_BOOLEAN:
+			size += network::readObject(arg.boolean, buf.offset(size));
+			break;
+		case ARGUMENTDATATYPE_OBJECTID:
+			size += network::readObject(arg.objectID, buf.offset(size));
+			break;
+		case ARGUMENTDATATYPE_DRAWABLEID:
+			size += network::readObject(arg.drawableID, buf.offset(size));
+			break;
+		case ARGUMENTDATATYPE_TEAMID:
+			size += network::readObject(arg.teamID, buf.offset(size));
+			break;
+		case ARGUMENTDATATYPE_LOCATION:
+			size += network::readObject(arg.location, buf.offset(size));
+			break;
+		case ARGUMENTDATATYPE_PIXEL:
+			size += network::readObject(arg.pixel, buf.offset(size));
+			break;
+		case ARGUMENTDATATYPE_PIXELREGION:
+			size += network::readObject(arg.pixelRegion, buf.offset(size));
+			break;
+		case ARGUMENTDATATYPE_TIMESTAMP:
+			size += network::readObject(arg.timestamp, buf.offset(size));
+			break;
+		case ARGUMENTDATATYPE_WIDECHAR:
+			size += network::readObject(arg.wChar, buf.offset(size));
+			break;
+		}
+
+		if (size > sizeBefore)
+		{
+			cmdMsg->addArgument(lastType, arg);
+		}
+
+		--argsLeftForType;
+
+		if (argsLeftForType == 0)
+		{
+			if (parserArgType == nullptr)
+			{
+				DEBUG_CRASH(("parserArgType was null when it shouldn't have been."));
+				break;
+			}
+
+			parserArgType = parserArgType->getNext();
+			// parserArgType is allowed to be null here
+			if (parserArgType != nullptr)
+			{
+				argsLeftForType = parserArgType->getArgCount();
+				lastType = parserArgType->getType();
+			}
+		}
+	}
+
+	deleteInstance(parser);
+
+	return size;
+}
+
 size_t NetPacketGameCommandBase::copyBytes(UnsignedByte *buffer, const NetCommandRef &ref)
 {
 	const NetCommandMsg *msg = ref.getCommand();
@@ -648,6 +1046,33 @@ size_t NetPacketWrapperCommandData::copyBytes(UnsignedByte *buffer, const NetCom
 	return size;
 }
 
+size_t NetPacketWrapperCommandData::readMessage(NetCommandRef &ref, NetPacketBuf buf)
+{
+	CommandMsg *cmdMsg = static_cast<CommandMsg *>(ref.getCommand());
+	FixedData data;
+	data.wrappedCommandId = 0;
+	data.chunkNumber = 0;
+	data.numChunks = 0;
+	data.totalDataLength = 0;
+	data.dataLength = 0;
+	data.dataOffset = 0;
+
+	size_t size = 0;
+	size += network::readObject(data, buf.offset(size));
+
+	NetCommandDataChunk dataChunk(data.dataLength);
+	size += network::readBytes(dataChunk.data(), dataChunk.size(), buf.offset(size));
+
+	cmdMsg->setWrappedCommandID(data.wrappedCommandId);
+	cmdMsg->setChunkNumber(data.chunkNumber);
+	cmdMsg->setNumChunks(data.numChunks);
+	cmdMsg->setTotalDataLength(data.totalDataLength);
+	cmdMsg->setDataOffset(data.dataOffset);
+	cmdMsg->setData(dataChunk);
+
+	return size;
+}
+
 size_t NetPacketWrapperCommandBase::copyBytes(UnsignedByte *buffer, const NetCommandRef &ref)
 {
 	const NetCommandMsg *msg = ref.getCommand();
@@ -684,6 +1109,25 @@ size_t NetPacketFileCommandData::copyBytes(UnsignedByte *buffer, const NetComman
 	size += network::writeStringWithNull(buffer + size, cmdMsg->getPortableFilename());
 	size += network::writePrimitive(buffer + size, (UnsignedInt)cmdMsg->getFileLength());
 	size += network::writeBytes(buffer + size, cmdMsg->getFileData(), cmdMsg->getFileLength());
+	return size;
+}
+
+size_t NetPacketFileCommandData::readMessage(NetCommandRef &ref, NetPacketBuf buf)
+{
+	CommandMsg *cmdMsg = static_cast<CommandMsg *>(ref.getCommand());
+	AsciiString filename;
+	UnsignedInt dataLength = 0;
+
+	size_t size = 0;
+	size += network::readStringWithNull(filename, _MAX_PATH, buf.offset(size));
+	size += network::readObject(dataLength, buf.offset(size));
+
+	NetCommandDataChunk dataChunk(dataLength);
+	size += network::readBytes(dataChunk.data(), dataChunk.size(), buf.offset(size));
+
+	cmdMsg->setPortableFilename(filename);
+	cmdMsg->setFileData(dataChunk);
+
 	return size;
 }
 
@@ -726,6 +1170,25 @@ size_t NetPacketFileAnnounceCommandData::copyBytes(UnsignedByte *buffer, const N
 	return size;
 }
 
+size_t NetPacketFileAnnounceCommandData::readMessage(NetCommandRef &ref, NetPacketBuf buf)
+{
+	CommandMsg *cmdMsg = static_cast<CommandMsg *>(ref.getCommand());
+	AsciiString filename;
+	UnsignedShort fileID = 0;
+	UnsignedByte playerMask = 0;
+
+	size_t size = 0;
+	size += network::readStringWithNull(filename, _MAX_PATH, buf.offset(size));
+	size += network::readObject(fileID, buf.offset(size));
+	size += network::readObject(playerMask, buf.offset(size));
+
+	cmdMsg->setPortableFilename(filename);
+	cmdMsg->setFileID(fileID);
+	cmdMsg->setPlayerMask(playerMask);
+
+	return size;
+}
+
 size_t NetPacketFileAnnounceCommandBase::copyBytes(UnsignedByte *buffer, const NetCommandRef &ref)
 {
 	const NetCommandMsg *msg = ref.getCommand();
@@ -753,6 +1216,20 @@ size_t NetPacketFileProgressCommandData::copyBytes(UnsignedByte *buffer, const N
 	return network::writeObject(buffer, data);
 }
 
+size_t NetPacketFileProgressCommandData::readMessage(NetCommandRef &ref, NetPacketBuf buf)
+{
+	CommandMsg *cmdMsg = static_cast<CommandMsg *>(ref.getCommand());
+	FixedData data;
+	data.fileId = 0;
+	data.progress = 0;
+
+	size_t size = network::readObject(data, buf);
+	cmdMsg->setFileID(data.fileId);
+	cmdMsg->setProgress(data.progress);
+
+	return size;
+}
+
 size_t NetPacketFileProgressCommandBase::copyBytes(UnsignedByte *buffer, const NetCommandRef &ref)
 {
 	const NetCommandMsg *msg = ref.getCommand();
@@ -777,6 +1254,18 @@ size_t NetPacketProgressCommandData::copyBytes(UnsignedByte *buffer, const NetCo
 	data.percentage = cmdMsg->getPercentage();
 
 	return network::writeObject(buffer, data);
+}
+
+size_t NetPacketProgressCommandData::readMessage(NetCommandRef &ref, NetPacketBuf buf)
+{
+	CommandMsg *cmdMsg = static_cast<CommandMsg *>(ref.getCommand());
+	FixedData data;
+	data.percentage = 0;
+
+	size_t size = network::readObject(data, buf);
+	cmdMsg->setPercentage(data.percentage);
+
+	return size;
 }
 
 size_t NetPacketProgressCommandBase::copyBytes(UnsignedByte *buffer, const NetCommandRef &ref)
@@ -839,6 +1328,18 @@ size_t NetPacketDisconnectFrameCommandData::copyBytes(UnsignedByte *buffer, cons
 	return network::writeObject(buffer, data);
 }
 
+size_t NetPacketDisconnectFrameCommandData::readMessage(NetCommandRef &ref, NetPacketBuf buf)
+{
+	CommandMsg *cmdMsg = static_cast<CommandMsg *>(ref.getCommand());
+	FixedData data;
+	data.disconnectFrame = 0;
+
+	size_t size = network::readObject(data, buf);
+	cmdMsg->setDisconnectFrame(data.disconnectFrame);
+
+	return size;
+}
+
 size_t NetPacketDisconnectFrameCommandBase::copyBytes(UnsignedByte *buffer, const NetCommandRef &ref)
 {
 	const NetCommandMsg *msg = ref.getCommand();
@@ -865,6 +1366,18 @@ size_t NetPacketDisconnectScreenOffCommandData::copyBytes(UnsignedByte *buffer, 
 	return network::writeObject(buffer, data);
 }
 
+size_t NetPacketDisconnectScreenOffCommandData::readMessage(NetCommandRef &ref, NetPacketBuf buf)
+{
+	CommandMsg *cmdMsg = static_cast<CommandMsg *>(ref.getCommand());
+	FixedData data;
+	data.newFrame = 0;
+
+	size_t size = network::readObject(data, buf);
+	cmdMsg->setNewFrame(data.newFrame);
+
+	return size;
+}
+
 size_t NetPacketDisconnectScreenOffCommandBase::copyBytes(UnsignedByte *buffer, const NetCommandRef &ref)
 {
 	const NetCommandMsg *msg = ref.getCommand();
@@ -889,6 +1402,18 @@ size_t NetPacketFrameResendRequestCommandData::copyBytes(UnsignedByte *buffer, c
 	data.frameToResend = cmdMsg->getFrameToResend();
 
 	return network::writeObject(buffer, data);
+}
+
+size_t NetPacketFrameResendRequestCommandData::readMessage(NetCommandRef &ref, NetPacketBuf buf)
+{
+	CommandMsg *cmdMsg = static_cast<CommandMsg *>(ref.getCommand());
+	FixedData data;
+	data.frameToResend = 0;
+
+	size_t size = network::readObject(data, buf);
+	cmdMsg->setFrameToResend(data.frameToResend);
+
+	return size;
 }
 
 size_t NetPacketFrameResendRequestCommandBase::copyBytes(UnsignedByte *buffer, const NetCommandRef &ref)

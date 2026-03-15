@@ -50,6 +50,7 @@ public:
 	void init();									///< Initialize the list
 	void reset();									///< Reset the list to the initial state.
 	NetCommandRef * addMessage(NetCommandMsg *cmdMsg);	///< Add message to the list in its properly ordered place.
+	NetCommandRef * addMessage(NetCommandRef *&msg);	///< Add message to the list in its properly ordered place.
 	Bool isEqualCommandMsg(NetCommandMsg *msg1, NetCommandMsg *msg2);
 	NetCommandRef * getFirstMessage();				///< Get the first message on the list.
 	NetCommandRef * findMessage(NetCommandMsg *msg);	///< Find and return a reference to the given message if one exists.

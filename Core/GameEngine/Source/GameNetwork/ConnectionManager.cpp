@@ -722,7 +722,7 @@ void ConnectionManager::processFile(NetFileCommandMsg *msg)
 	// uncompress Targas
 #ifdef COMPRESS_TARGAS
 	Bool deleteBuf = FALSE;
-	if (msg->getFilename().endsWith(".tga") && CompressionManager::isDataCompressed(buf, len))
+	if (msg->getPortableFilename().endsWith(".tga") && CompressionManager::isDataCompressed(buf, len))
 	{
 		Int uncompLen = CompressionManager::getUncompressedSize(buf, len);
 		UnsignedByte *uncompBuffer = NEW UnsignedByte[uncompLen];
@@ -2196,6 +2196,7 @@ void ConnectionManager::sendFile(AsciiString path, UnsignedByte playerMask, Unsi
 
 	Int len = theFile->size();
 	char *buf = theFile->readEntireAndClose();
+	NetCommandDataChunk rawDataChunk(buf, len);
 
 	// compress Targas
 #ifdef COMPRESS_TARGAS
@@ -2211,34 +2212,30 @@ void ConnectionManager::sendFile(AsciiString path, UnsignedByte playerMask, Unsi
 		delete[] compressedBuf;
 		compressedBuf = nullptr;
 	}
+
+	NetCommandDataChunk compressedDataChunk(compressedBuf, compressedSize);
 #endif // COMPRESS_TARGAS
 
 	NetFileCommandMsg *fileMsg = newInstance(NetFileCommandMsg);
 	fileMsg->setPlayerID(m_localSlot);
 	fileMsg->setID(commandID);
 	fileMsg->setRealFilename(path);
+
 #ifdef COMPRESS_TARGAS
 	if (compressedBuf)
 	{
 		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("Compressed '%s' from %d to %d (%g%%) before transfer", path.str(), len, compressedSize,
 			(Real)compressedSize/(Real)len*100.0f));
-		fileMsg->setFileData((unsigned char *)compressedBuf, compressedSize);
+		fileMsg->setFileData(compressedDataChunk);
 	}
 	else
 #endif // COMPRESS_TARGAS
 	{
-		fileMsg->setFileData((unsigned char *)buf, len);
+		fileMsg->setFileData(rawDataChunk);
 	}
 
 	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::sendFile() - creating file message with ID of %d for '%s' going to %X from %d, size of %d",
 		fileMsg->getID(), fileMsg->getRealFilename().str(), playerMask, fileMsg->getPlayerID(), fileMsg->getFileLength()));
-
-	delete[] buf;
-	buf = nullptr;
-#ifdef COMPRESS_TARGAS
-	delete[] compressedBuf;
-	compressedBuf = nullptr;
-#endif // COMPRESS_TARGAS
 
 	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("Sending file: '%s', len %d, to %X", path.str(), len, playerMask));
 
