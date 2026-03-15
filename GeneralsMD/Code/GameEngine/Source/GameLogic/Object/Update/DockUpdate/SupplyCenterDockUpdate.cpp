@@ -79,6 +79,23 @@ SupplyCenterDockUpdate::~SupplyCenterDockUpdate()
 {
 }
 
+// TheSuperHackers @bugfix arcticdolphin 12/03/2026 Scale supply bonus proportionally to delivered boxes.
+static UnsignedInt getUpgradedSupplyBoostValue( SupplyTruckAIInterface* supplyTruckAI )
+{
+#if RETAIL_COMPATIBLE_CRC
+	return supplyTruckAI->getUpgradedSupplyBoost();
+#else
+	const Int maxBoxes = supplyTruckAI->getMaxBoxes();
+	if (maxBoxes > 0)
+	{
+		const Int upgradedSupplyBoost = supplyTruckAI->getUpgradedSupplyBoost();
+		const Int deliveredBoxes = supplyTruckAI->getNumberBoxes();
+		return (upgradedSupplyBoost * deliveredBoxes) / maxBoxes;
+	}
+	return 0;
+#endif
+}
+
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 Bool SupplyCenterDockUpdate::action( Object* docker, Object *drone )
@@ -95,12 +112,12 @@ Bool SupplyCenterDockUpdate::action( Object* docker, Object *drone )
 		return FALSE;
 
 	UnsignedInt value = 0;
+
+	value += getUpgradedSupplyBoostValue( supplyTruckAI );
+
 	Player *ownerPlayer = getObject()->getControllingPlayer();
 	while( supplyTruckAI->loseOneBox() )
 		value += ownerPlayer->getSupplyBoxValue();
-
-	// Add money boost from upgrades that give extra money
-	value += supplyTruckAI->getUpgradedSupplyBoost();
 
 	if( value > 0)
 	{

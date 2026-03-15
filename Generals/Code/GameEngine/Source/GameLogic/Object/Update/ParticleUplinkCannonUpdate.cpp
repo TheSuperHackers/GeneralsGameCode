@@ -61,6 +61,9 @@
 // TheSuperHackers @fix Mirelle 04/02/2026: Raised from 500.0f so that
 // enormous camera heights cannot see above the laser origin.
 constexpr const Real ORBITAL_BEAM_Z_OFFSET = 3500.0f;
+// TheSuperHackers @fix The positional audio is now decoupled from the beam origin.
+// 500 units represent the height of the original audio emitter.
+constexpr const Real ORBITAL_BEAM_AUDIO_Z_OFFSET = 500.0f;
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -573,6 +576,9 @@ UpdateSleepTime ParticleUplinkCannonUpdate::update()
 					templateLaserRadius = update->getTemplateLaserRadius();
 					visualLaserRadius = update->getCurrentLaserRadius();
 				}
+				Coord3D audioPos = m_currentTargetPosition;
+				audioPos.z += ORBITAL_BEAM_AUDIO_Z_OFFSET;
+				beam->setPosition( &audioPos );
 			}
 			// TheSuperHackers @refactor helmutbuhler/xezon 17/05/2025
 			// Originally the damageRadius was calculated with a value updated by LaserUpdate::clientUpdate.
@@ -962,6 +968,9 @@ void ParticleUplinkCannonUpdate::createOrbitToTargetLaser( UnsignedInt growthFra
 					orbitPosition.z += ORBITAL_BEAM_Z_OFFSET;
 					update->initLaser( nullptr, &orbitPosition, &m_initialTargetPosition, growthFrames );
 				}
+				Coord3D audioPos = m_initialTargetPosition;
+				audioPos.z += ORBITAL_BEAM_AUDIO_Z_OFFSET;
+				beam->setPosition( &audioPos );
 			}
 		}
 		if( m_annihilationSound.getEventName().isNotEmpty() )

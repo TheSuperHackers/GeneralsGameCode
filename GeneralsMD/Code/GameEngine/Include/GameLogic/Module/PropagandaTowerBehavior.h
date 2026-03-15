@@ -78,21 +78,21 @@ public:
 
 	// module methods
 	static Int getInterfaceMask() { return UpdateModule::getInterfaceMask() | (MODULEINTERFACE_DIE); }
-	virtual void onDelete();
-	void onObjectCreated();
+	virtual void onDelete() override;
+	virtual void onObjectCreated() override;
 
 	// update module methods
-	virtual UpdateSleepTime update();
+	virtual UpdateSleepTime update() override;
 
 	// die module methods
-	virtual DieModuleInterface *getDie() { return this; }
-	virtual void onDie( const DamageInfo *damageInfo );
-	virtual void onCapture( Player *oldOwner, Player *newOwner );
+	virtual DieModuleInterface *getDie() override { return this; }
+	virtual void onDie( const DamageInfo *damageInfo ) override;
+	virtual void onCapture( Player *oldOwner, Player *newOwner ) override;
 
 	// Disabled conditions to process. Need to process when disabled, because our update needs to actively let go
 	// of our effect on people.  We don't say "Be affected for n frames", we toggle people.  We need to process
 	// so we can toggle everyone off.
-	virtual DisabledMaskType getDisabledTypesToProcess() const { return DISABLEDMASK_ALL; }
+	virtual DisabledMaskType getDisabledTypesToProcess() const override { return DISABLEDMASK_ALL; }
 
 	// our own public module methods
 

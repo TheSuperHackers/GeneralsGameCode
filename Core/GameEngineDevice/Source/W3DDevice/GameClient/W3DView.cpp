@@ -295,8 +295,8 @@ void W3DView::buildCameraPosition( Vector3& sourcePos, Vector3& targetPos )
 	// construct a matrix to rotate around the up vector by the given angle
 	const Matrix3D angleTransform( Vector3( 0.0f, 0.0f, 1.0f ), angle );
 
-	// construct a matrix to rotate around the horizontal vector by the given angle
-	const Matrix3D pitchTransform( Vector3( 1.0f, 0.0f, 0.0f ), pitch );
+	// construct a matrix to rotate around the left vector by the given angle
+	const Matrix3D pitchTransform( Vector3( -1.0f, 0.0f, 0.0f ), pitch );
 
 	// rotate camera position (pitch, then angle)
 #ifdef ALLOW_TEMPORARIES

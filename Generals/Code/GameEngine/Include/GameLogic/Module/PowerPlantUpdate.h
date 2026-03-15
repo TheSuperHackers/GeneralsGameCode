@@ -86,10 +86,10 @@ public:
 	// virtual destructor prototype defined by MemoryPoolObject
 
 	// interface housekeeping
-	virtual PowerPlantUpdateInterface* getPowerPlantUpdateInterface() { return this; }
+	virtual PowerPlantUpdateInterface* getPowerPlantUpdateInterface() override { return this; }
 
-	void extendRods( Bool extend );									 ///< extend the rods from this object
-	virtual UpdateSleepTime update(); ///< Here's the actual work of Upgrading
+	virtual void extendRods( Bool extend ) override;									 ///< extend the rods from this object
+	virtual UpdateSleepTime update() override; ///< Here's the actual work of Upgrading
 
 protected:
 

@@ -152,13 +152,18 @@ public:
 	ObjectID allocateObjectID();							///< Returns a new unique object id
 
 	// super hack
-	void startNewGame( Bool saveGame );
+	void startNewGame( Bool loadSaveGame );
 	void loadMapINI( AsciiString mapName );
 
 	void updateLoadProgress( Int progress );
 	void deleteLoadScreen();
 
-	void setGameLoading( Bool loading );
+	//Kris: Cut setGameLoading() and replaced with setLoadingMap() and setLoadingSave() -- reason: nomenclature
+	//void setGameLoading( Bool loading ) { m_loadingScene = loading; }
+	void setLoadingMap( Bool loading ) { m_loadingMap = loading; }
+	void setLoadingSave( Bool loading ) { m_loadingSave = loading; }
+	void setClearingGameData( Bool clearing ) { m_clearingGameData = clearing; }
+
 	void setGameMode( GameMode mode );
 	GameMode getGameMode();
 
@@ -174,7 +179,12 @@ public:
 
 	static Bool isInInteractiveGame(GameMode mode) { return mode != GAME_NONE && mode != GAME_SHELL; }
 
-	Bool isLoadingGame();
+	//Kris: Cut isLoadingGame() and replaced with isLoadingMap() and isLoadingSave() -- reason: nomenclature
+	//Bool isLoadingGame() const { return m_loadingScene; }		// This is the old function that isn't very clear on it's definition.
+	Bool isLoadingMap() const { return m_loadingMap; }			// Whenever a map is in the process of loading.
+	Bool isLoadingSave() const { return m_loadingSave; }		// Whenever a saved game is in the process of loading.
+	Bool isClearingGameData() const { return m_clearingGameData; }
+
 	void enableScoring(Bool score) { m_isScoringEnabled = score; }
 	Bool isScoringEnabled() const { return m_isScoringEnabled; }
 
@@ -292,7 +302,10 @@ private:
 	std::map<Int, UnsignedInt> m_cachedCRCs;								///< CRCs we've seen this frame
 	Bool m_shouldValidateCRCs;															///< Should we validate CRCs this frame?
 	//-----------------------------------------------------------------------------------------------
-	Bool m_loadingScene;
+	//Bool m_loadingScene;
+	Bool m_loadingMap;
+	Bool m_loadingSave;
+	Bool m_clearingGameData;
 
 	Bool m_isInUpdate;
 	Bool m_hasUpdated;
@@ -398,8 +411,6 @@ inline Bool GameLogic::isInInteractiveGame() const { return isInInteractiveGame(
 inline Bool GameLogic::isInReplayGame() { return (m_gameMode == GAME_REPLAY); }
 inline Bool GameLogic::isInInternetGame() { return (m_gameMode == GAME_INTERNET); }
 inline Bool GameLogic::isInShellGame() { return (m_gameMode == GAME_SHELL); }
-//Check for loading scene
-inline Bool GameLogic::isLoadingGame(){ return m_loadingScene;}
 
 inline Object* GameLogic::findObjectByID( ObjectID id )
 {

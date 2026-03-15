@@ -93,119 +93,119 @@ public:
 	OpenContain( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual ContainModuleInterface* getContain() { return this; }
-	virtual CollideModuleInterface* getCollide() { return this; }
-	virtual DieModuleInterface* getDie() { return this; }
-	virtual DamageModuleInterface* getDamage() { return this; }
+	virtual ContainModuleInterface* getContain() override { return this; }
+	virtual CollideModuleInterface* getCollide() override { return this; }
+	virtual DieModuleInterface* getDie() override { return this; }
+	virtual DamageModuleInterface* getDamage() override { return this; }
 	static Int getInterfaceMask() { return UpdateModule::getInterfaceMask() | (MODULEINTERFACE_CONTAIN) | (MODULEINTERFACE_COLLIDE) | (MODULEINTERFACE_DIE) | (MODULEINTERFACE_DAMAGE); }
 
-	virtual void onDie( const DamageInfo *damageInfo );  ///< the die callback
-	virtual void onDelete();	///< Last possible moment cleanup
-	virtual void onCapture( Player *oldOwner, Player *newOwner ){}
+	virtual void onDie( const DamageInfo *damageInfo ) override;  ///< the die callback
+	virtual void onDelete() override;	///< Last possible moment cleanup
+	virtual void onCapture( Player *oldOwner, Player *newOwner ) override {}
 
 	// CollideModuleInterface
-	virtual void onCollide( Object *other, const Coord3D *loc, const Coord3D *normal );
-	virtual Bool wouldLikeToCollideWith(const Object* other) const { return false; }
-	virtual Bool isCarBombCrateCollide() const { return false; }
-	virtual Bool isHijackedVehicleCrateCollide() const { return false; }
-	virtual Bool isRailroad() const { return false;}
-	virtual Bool isSalvageCrateCollide() const { return false; }
-	virtual Bool isSabotageBuildingCrateCollide() const { return FALSE; }
+	virtual void onCollide( Object *other, const Coord3D *loc, const Coord3D *normal ) override;
+	virtual Bool wouldLikeToCollideWith(const Object* other) const override { return false; }
+	virtual Bool isCarBombCrateCollide() const override { return false; }
+	virtual Bool isHijackedVehicleCrateCollide() const override { return false; }
+	virtual Bool isRailroad() const override { return false;}
+	virtual Bool isSalvageCrateCollide() const override { return false; }
+	virtual Bool isSabotageBuildingCrateCollide() const override { return FALSE; }
 
 	// UpdateModule
-	virtual UpdateSleepTime update();				///< called once per frame
+	virtual UpdateSleepTime update() override;				///< called once per frame
 
 	// ContainModuleInterface
-	virtual OpenContain *asOpenContain() { return this; }  ///< treat as open container
+	virtual OpenContain *asOpenContain() override { return this; }  ///< treat as open container
 
 	// DamageModuleInterface
-	virtual void onDamage( DamageInfo *damageInfo ){};	///< damage callback
-	virtual void onHealing( DamageInfo *damageInfo ){};	///< healing callback
+	virtual void onDamage( DamageInfo *damageInfo ) override {};	///< damage callback
+	virtual void onHealing( DamageInfo *damageInfo ) override {};	///< healing callback
 	virtual void onBodyDamageStateChange( const DamageInfo* damageInfo,
 																				BodyDamageType oldState,
-																				BodyDamageType newState){};  ///< state change callback
+																				BodyDamageType newState) override {};  ///< state change callback
 
 
 	// our object changed position... react as appropriate.
-	virtual void containReactToTransformChange();
+	virtual void containReactToTransformChange() override;
 
-	virtual Bool calcBestGarrisonPosition( Coord3D *sourcePos, const Coord3D *targetPos ) { return FALSE; }
-	virtual Bool attemptBestFirePointPosition( Object *source, Weapon *weapon, Object *victim ) { return FALSE; }
-	virtual Bool attemptBestFirePointPosition( Object *source, Weapon *weapon, const Coord3D *targetPos ) { return FALSE; }
+	virtual Bool calcBestGarrisonPosition( Coord3D *sourcePos, const Coord3D *targetPos ) override { return FALSE; }
+	virtual Bool attemptBestFirePointPosition( Object *source, Weapon *weapon, Object *victim ) override { return FALSE; }
+	virtual Bool attemptBestFirePointPosition( Object *source, Weapon *weapon, const Coord3D *targetPos ) override { return FALSE; }
 
 	///< if my object gets selected, then my visible passengers should, too
 	///< this gets called from
-	virtual void clientVisibleContainedFlashAsSelected() {};
+	virtual void clientVisibleContainedFlashAsSelected() override {};
 
-	virtual const Player* getApparentControllingPlayer(const Player* observingPlayer) const { return nullptr; }
-	virtual void recalcApparentControllingPlayer() { }
+	virtual const Player* getApparentControllingPlayer(const Player* observingPlayer) const override { return nullptr; }
+	virtual void recalcApparentControllingPlayer() override { }
 
-	virtual void onContaining( Object *obj, Bool wasSelected );		///< object now contains 'obj'
-	virtual void onRemoving( Object *obj );			///< object no longer contains 'obj'
-	virtual void onSelling();///< Container is being sold.  Open responds by kicking people out
+	virtual void onContaining( Object *obj, Bool wasSelected ) override;		///< object now contains 'obj'
+	virtual void onRemoving( Object *obj ) override;			///< object no longer contains 'obj'
+	virtual void onSelling() override;///< Container is being sold.  Open responds by kicking people out
 
-	virtual void orderAllPassengersToExit( CommandSourceType commandSource, Bool instantly ); ///< All of the smarts of exiting are in the passenger's AIExit. removeAllFrommContain is a last ditch system call, this is the game Evacuate
-	virtual void orderAllPassengersToIdle( CommandSourceType commandSource ); ///< Just like it sounds
-	virtual void orderAllPassengersToHackInternet( CommandSourceType ); ///< Just like it sounds
-	virtual void markAllPassengersDetected();										///< Cool game stuff got added to the system calls since this layer didn't exist, so this regains that functionality
+	virtual void orderAllPassengersToExit( CommandSourceType commandSource, Bool instantly ) override; ///< All of the smarts of exiting are in the passenger's AIExit. removeAllFrommContain is a last ditch system call, this is the game Evacuate
+	virtual void orderAllPassengersToIdle( CommandSourceType commandSource ) override; ///< Just like it sounds
+	virtual void orderAllPassengersToHackInternet( CommandSourceType ) override; ///< Just like it sounds
+	virtual void markAllPassengersDetected() override;										///< Cool game stuff got added to the system calls since this layer didn't exist, so this regains that functionality
 
 	// default OpenContain has unlimited capacity...!
-	virtual Bool isValidContainerFor(const Object* obj, Bool checkCapacity) const;
-	virtual void addToContain( Object *obj );				///< add 'obj' to contain list
+	virtual Bool isValidContainerFor(const Object* obj, Bool checkCapacity) const override;
+	virtual void addToContain( Object *obj ) override;				///< add 'obj' to contain list
 	virtual void addToContainList( Object *obj );		///< The part of AddToContain that inheritors can override (Can't do whole thing because of all the private stuff involved)
-	virtual void removeFromContain( Object *obj, Bool exposeStealthUnits = FALSE );	///< remove 'obj' from contain list
-	virtual void removeAllContained( Bool exposeStealthUnits = FALSE );				///< remove all objects on contain list
-	virtual void killAllContained();				///< kill all objects on contain list
-  virtual void harmAndForceExitAllContained( DamageInfo *info ); // apply canned damage against those contains
-	virtual Bool isEnclosingContainerFor( const Object *obj ) const;	///< Does this type of Contain Visibly enclose its contents?
-	virtual Bool isPassengerAllowedToFire( ObjectID id = INVALID_ID ) const;	///< Hey, can I shoot out of this container?
+	virtual void removeFromContain( Object *obj, Bool exposeStealthUnits = FALSE ) override;	///< remove 'obj' from contain list
+	virtual void removeAllContained( Bool exposeStealthUnits = FALSE ) override;				///< remove all objects on contain list
+	virtual void killAllContained() override;				///< kill all objects on contain list
+  virtual void harmAndForceExitAllContained( DamageInfo *info ) override; // apply canned damage against those contains
+	virtual Bool isEnclosingContainerFor( const Object *obj ) const override;	///< Does this type of Contain Visibly enclose its contents?
+	virtual Bool isPassengerAllowedToFire( ObjectID id = INVALID_ID ) const override;	///< Hey, can I shoot out of this container?
 
-  virtual void setPassengerAllowedToFire( Bool permission = TRUE ) { m_passengerAllowedToFire = permission; }	///< Hey, can I shoot out of this container?
+  virtual void setPassengerAllowedToFire( Bool permission = TRUE ) override { m_passengerAllowedToFire = permission; }	///< Hey, can I shoot out of this container?
 
-  virtual void setOverrideDestination( const Coord3D * ){} ///< Instead of falling peacefully towards a clear spot, I will now aim here
-	virtual Bool isDisplayedOnControlBar() const {return FALSE;}///< Does this container display its contents on the ControlBar?
-	virtual Int getExtraSlotsInUse() { return 0; }
-	virtual Bool isKickOutOnCapture(){ return TRUE; }///< By default, yes, all contain modules kick passengers out on capture
+  virtual void setOverrideDestination( const Coord3D * ) override {} ///< Instead of falling peacefully towards a clear spot, I will now aim here
+	virtual Bool isDisplayedOnControlBar() const override {return FALSE;}///< Does this container display its contents on the ControlBar?
+	virtual Int getExtraSlotsInUse() override { return 0; }
+	virtual Bool isKickOutOnCapture() override { return TRUE; }///< By default, yes, all contain modules kick passengers out on capture
 
 	// contain list access
-	virtual void iterateContained( ContainIterateFunc func, void *userData, Bool reverse );
-	virtual UnsignedInt getContainCount() const { return m_containListSize; }
-	virtual const ContainedItemsList* getContainedItemsList() const { return &m_containList; }
-	virtual const Object *friend_getRider() const{return nullptr;} ///< Damn.  The draw order dependency bug for riders means that our draw module needs to cheat to get around it.
-	virtual Real getContainedItemsMass() const;
-	virtual UnsignedInt getStealthUnitsContained() const { return m_stealthUnitsContained; }
-	virtual UnsignedInt getHeroUnitsContained() const { return m_heroUnitsContained; }
+	virtual void iterateContained( ContainIterateFunc func, void *userData, Bool reverse ) override;
+	virtual UnsignedInt getContainCount() const override { return m_containListSize; }
+	virtual const ContainedItemsList* getContainedItemsList() const override { return &m_containList; }
+	virtual const Object *friend_getRider() const override {return nullptr;} ///< Damn.  The draw order dependency bug for riders means that our draw module needs to cheat to get around it.
+	virtual Real getContainedItemsMass() const override;
+	virtual UnsignedInt getStealthUnitsContained() const override { return m_stealthUnitsContained; }
+	virtual UnsignedInt getHeroUnitsContained() const override { return m_heroUnitsContained; }
 
-	virtual PlayerMaskType getPlayerWhoEntered() const { return m_playerEnteredMask; }
+	virtual PlayerMaskType getPlayerWhoEntered() const override { return m_playerEnteredMask; }
 
-	virtual Int getContainMax() const;
+	virtual Int getContainMax() const override;
 
 	// ExitInterface
-	virtual Bool isExitBusy() const {return FALSE;}	///< Contain style exiters are getting the ability to space out exits, so ask this before reserveDoor as a kind of no-commitment check.
-	virtual ExitDoorType reserveDoorForExit( const ThingTemplate* objType, Object *specificObject ) { return DOOR_1; }
-	virtual void exitObjectViaDoor( Object *newObj, ExitDoorType exitDoor );
-	virtual void exitObjectInAHurry( Object *newObj );
+	virtual Bool isExitBusy() const override {return FALSE;}	///< Contain style exiters are getting the ability to space out exits, so ask this before reserveDoor as a kind of no-commitment check.
+	virtual ExitDoorType reserveDoorForExit( const ThingTemplate* objType, Object *specificObject ) override { return DOOR_1; }
+	virtual void exitObjectViaDoor( Object *newObj, ExitDoorType exitDoor ) override;
+	virtual void exitObjectInAHurry( Object *newObj ) override;
 
 
-	virtual void unreserveDoorForExit( ExitDoorType exitDoor ) { /*nothing*/ }
-	virtual void exitObjectByBudding( Object *newObj, Object *budHost ) { return; };
+	virtual void unreserveDoorForExit( ExitDoorType exitDoor ) override { /*nothing*/ }
+	virtual void exitObjectByBudding( Object *newObj, Object *budHost ) override { return; };
 
-	virtual void setRallyPoint( const Coord3D *pos );				///< define a "rally point" for units to move towards
-	virtual const Coord3D *getRallyPoint() const;			///< define a "rally point" for units to move towards
-	virtual Bool getExitPosition(Coord3D& exitPosition ) const { return FALSE; };					///< access to the "Door" position of the production object
-	virtual Bool getNaturalRallyPoint( Coord3D& rallyPoint, Bool offset = TRUE ) const;			///< get the natural "rally point" for units to move towards
+	virtual void setRallyPoint( const Coord3D *pos ) override;				///< define a "rally point" for units to move towards
+	virtual const Coord3D *getRallyPoint() const override;			///< define a "rally point" for units to move towards
+	virtual Bool getExitPosition(Coord3D& exitPosition ) const override { return FALSE; };					///< access to the "Door" position of the production object
+	virtual Bool getNaturalRallyPoint( Coord3D& rallyPoint, Bool offset = TRUE ) const override;			///< get the natural "rally point" for units to move towards
 
-	virtual ExitInterface* getContainExitInterface() { return this; }
+	virtual ExitInterface* getContainExitInterface() override { return this; }
 
-	virtual Bool isGarrisonable() const { return false; }		///< can this unit be Garrisoned? (ick)
-	virtual Bool isBustable() const { return false; }		///< can this container get busted by a bunkerbuster
-	virtual Bool isHealContain() const { return false; } ///< true when container only contains units while healing (not a transport!)
-	virtual Bool isTunnelContain() const { return FALSE; }
-	virtual Bool isRiderChangeContain() const { return FALSE; }
-	virtual Bool isSpecialZeroSlotContainer() const { return false; }
-	virtual Bool isImmuneToClearBuildingAttacks() const { return true; }
-  virtual Bool isSpecialOverlordStyleContainer() const { return false; }
-  virtual Bool isAnyRiderAttacking() const;
+	virtual Bool isGarrisonable() const override { return false; }		///< can this unit be Garrisoned? (ick)
+	virtual Bool isBustable() const override { return false; }		///< can this container get busted by a bunkerbuster
+	virtual Bool isHealContain() const override { return false; } ///< true when container only contains units while healing (not a transport!)
+	virtual Bool isTunnelContain() const override { return FALSE; }
+	virtual Bool isRiderChangeContain() const override { return FALSE; }
+	virtual Bool isSpecialZeroSlotContainer() const override { return false; }
+	virtual Bool isImmuneToClearBuildingAttacks() const override { return true; }
+  virtual Bool isSpecialOverlordStyleContainer() const override { return false; }
+  virtual Bool isAnyRiderAttacking() const override;
 
 	/**
 		this is used for containers that must do something to allow people to enter or exit...
@@ -213,22 +213,22 @@ public:
 		when something is in the enter state, and wants=ENTS_NOTHING when the unit has
 		either entered, or given up...
 	*/
-	virtual void onObjectWantsToEnterOrExit(Object* obj, ObjectEnterExitType wants);
+	virtual void onObjectWantsToEnterOrExit(Object* obj, ObjectEnterExitType wants) override;
 
 	// returns true iff there are objects currently waiting to enter.
-	virtual Bool hasObjectsWantingToEnterOrExit() const;
+	virtual Bool hasObjectsWantingToEnterOrExit() const override;
 
-	virtual void processDamageToContained(Real percentDamage); ///< Do our % damage to units now.
+	virtual void processDamageToContained(Real percentDamage) override; ///< Do our % damage to units now.
 
-	virtual Bool isWeaponBonusPassedToPassengers() const;
-	virtual WeaponBonusConditionFlags getWeaponBonusPassedToPassengers() const;
+	virtual Bool isWeaponBonusPassedToPassengers() const override;
+	virtual WeaponBonusConditionFlags getWeaponBonusPassedToPassengers() const override;
 
-	virtual void enableLoadSounds( Bool enable ) { m_loadSoundsEnabled = enable; }
+	virtual void enableLoadSounds( Bool enable ) override { m_loadSoundsEnabled = enable; }
 
   Real getDamagePercentageToUnits();
-  virtual Object* getClosestRider ( const Coord3D *pos );
+  virtual Object* getClosestRider ( const Coord3D *pos ) override;
 
-  virtual void setEvacDisposition( EvacDisposition disp ) {};
+  virtual void setEvacDisposition( EvacDisposition disp ) override {};
 protected:
 
 	virtual void monitorConditionChanges();				///< check to see if we need to update our occupant positions from a model change or anything else

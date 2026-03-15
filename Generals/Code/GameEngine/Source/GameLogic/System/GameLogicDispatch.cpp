@@ -149,7 +149,7 @@ static void doSetRallyPoint( Object *obj, const Coord3D& pos )
 	NameKeyType key = NAMEKEY( "BasicHumanLocomotor" );
 	LocomotorSet locomotorSet;
 	locomotorSet.addLocomotor( TheLocomotorStore->findLocomotorTemplate( key ) );
-	if( TheAI->pathfinder()->quickDoesPathExist( locomotorSet, obj->getPosition(), &pos ) == FALSE )
+	if( TheAI->pathfinder()->clientSafeQuickDoesPathExist( locomotorSet, obj->getPosition(), &pos ) == FALSE )
 	{
 
 		// user feedback
@@ -248,6 +248,8 @@ void GameLogic::clearGameData( Bool showScoreScreen )
 		return;
 	}
 
+	setClearingGameData( TRUE );
+
 //	m_background = TheWindowManager->winCreateLayout("Menus/BlankWindow.wnd");
 //	DEBUG_ASSERTCRASH(m_background,("We Couldn't Load Menus/BlankWindow.wnd"));
 //	m_background->hide(FALSE);
@@ -292,6 +294,8 @@ void GameLogic::clearGameData( Bool showScoreScreen )
 		m_background = nullptr;
 	}
 
+	setClearingGameData( FALSE );
+
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -299,7 +303,9 @@ void GameLogic::clearGameData( Bool showScoreScreen )
 // ------------------------------------------------------------------------------------------------
 void GameLogic::prepareNewGame( GameMode gameMode, GameDifficulty diff, Int rankPoints )
 {
-	setGameLoading(TRUE);
+	//Kris: Commented this out, but leaving it around incase it bites us later. I cleaned up the
+	//      nomenclature. Look for setLoadingMap() and setLoadingSave()
+	//setGameLoading(TRUE);
 
 	TheScriptEngine->setGlobalDifficulty(diff);
 
@@ -410,6 +416,18 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 		//---------------------------------------------------------------------------------------------
 		case GameMessage::MSG_NEW_GAME:
 		{
+#if !RETAIL_COMPATIBLE_CRC
+			// TheSuperHackers @fix stephanmeesters 11/03/2026
+			// Make sure we're ready to start a new game. This prevents an issue where an infinite disconnect screen
+			// can be force-triggered in an online match by using cheats.
+			if ( isInGame() || isClearingGameData() || isLoadingMap() )
+			{
+				DEBUG_CRASH( ("Called MSG_NEW_GAME while game is not ready (inGame=%d, clearingData=%d, loadingMap=%d)",
+					isInGame(), isClearingGameData(), isLoadingMap()) );
+				break;
+			}
+#endif
+
 			//DEBUG_ASSERTCRASH(msg->getArgumentCount() == 1 || msg->getArgumentCount() == 2, ("%d arguments to MSG_NEW_GAME", msg->getArgumentCount()));
 			GameMode gameMode = (GameMode)msg->getArgument( 0 )->integer;
 			Int rankPoints = 0;
@@ -502,8 +520,21 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 		{
 			Object *obj = findObjectByID( msg->getArgument( 0 )->objectID );
 			Coord3D dest = msg->getArgument( 1 )->location;
+
 			if (obj)
 			{
+#if !RETAIL_COMPATIBLE_CRC
+				// TheSuperHackers @fix stephanmeesters 11/03/2026 Validate the owner of the source object
+				if ( obj->getControllingPlayer() != thisPlayer )
+				{
+					DEBUG_CRASH( ("MSG_SET_RALLY_POINT: Player '%ls' attempted to set the rally point of object '%s' owned by player '%ls'.",
+						 thisPlayer->getPlayerDisplayName().str(),
+						 obj->getTemplate()->getName().str(),
+						 obj->getControllingPlayer()->getPlayerDisplayName().str()) );
+					break;
+				}
+#endif
+
 				doSetRallyPoint( obj, dest );
 			}
 
@@ -657,6 +688,18 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			Object* source = findObjectByID(sourceID);
 			if (source != nullptr)
 			{
+#if !RETAIL_COMPATIBLE_CRC
+				// TheSuperHackers @fix stephanmeesters 01/03/2026 Validate the origin of the source object
+				if ( source->getControllingPlayer() != thisPlayer )
+				{
+					DEBUG_CRASH( ("MSG_DO_SPECIAL_POWER: Player '%ls' attempted to control the object '%s' owned by player '%ls'.",
+						 thisPlayer->getPlayerDisplayName().str(),
+						 source->getTemplate()->getName().str(),
+						 source->getControllingPlayer()->getPlayerDisplayName().str()) );
+					break;
+				}
+#endif
+
 				AIGroupPtr theGroup = TheAI->createGroup();
 				theGroup->add(source);
 				theGroup->groupDoSpecialPower( specialPowerID, options );
@@ -699,6 +742,18 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			Object* source = findObjectByID(sourceID);
 			if (source != nullptr)
 			{
+#if !RETAIL_COMPATIBLE_CRC
+				// TheSuperHackers @fix stephanmeesters 01/03/2026 Validate the origin of the source object
+				if ( source->getControllingPlayer() != thisPlayer )
+				{
+					DEBUG_CRASH( ("MSG_DO_SPECIAL_POWER_AT_LOCATION: Player '%ls' attempted to control the object '%s' owned by player '%ls'.",
+						 thisPlayer->getPlayerDisplayName().str(),
+						 source->getTemplate()->getName().str(),
+						 source->getControllingPlayer()->getPlayerDisplayName().str()) );
+					break;
+				}
+#endif
+
 				AIGroupPtr theGroup = TheAI->createGroup();
 				theGroup->add(source);
 				theGroup->groupDoSpecialPowerAtLocation( specialPowerID, &targetCoord, INVALID_ANGLE, objectInWay, options );
@@ -742,6 +797,18 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			Object* source = findObjectByID(sourceID);
 			if (source != nullptr)
 			{
+#if !RETAIL_COMPATIBLE_CRC
+				// TheSuperHackers @fix stephanmeesters 01/03/2026 Validate the origin of the source object
+				if ( source->getControllingPlayer() != thisPlayer )
+				{
+					DEBUG_CRASH( ("MSG_DO_SPECIAL_POWER_AT_OBJECT: Player '%ls' attempted to control the object '%s' owned by player '%ls'.",
+						 thisPlayer->getPlayerDisplayName().str(),
+						 source->getTemplate()->getName().str(),
+						 source->getControllingPlayer()->getPlayerDisplayName().str()) );
+					break;
+				}
+#endif
+
 				AIGroupPtr theGroup = TheAI->createGroup();
 				theGroup->add(source);
 				theGroup->groupDoSpecialPowerAtObject( specialPowerID, target, options );
@@ -1183,6 +1250,18 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			Object* source = findObjectByID(sourceID);
 			if (source != nullptr)
 			{
+#if !RETAIL_COMPATIBLE_CRC
+				// TheSuperHackers @fix stephanmeesters 01/03/2026 Validate the origin of the source object
+				if ( source->getControllingPlayer() != thisPlayer )
+				{
+					DEBUG_CRASH( ("MSG_DO_SPECIAL_POWER_OVERRIDE_DESTINATION: Player '%ls' attempted to control the object '%s' owned by player '%ls'.",
+						 thisPlayer->getPlayerDisplayName().str(),
+						 source->getTemplate()->getName().str(),
+						 source->getControllingPlayer()->getPlayerDisplayName().str()) );
+					break;
+				}
+#endif
+
 				AIGroupPtr theGroup = TheAI->createGroup();
 				theGroup->add(source);
 				theGroup->groupOverrideSpecialPowerDestination( spType, loc, CMD_FROM_PLAYER );

@@ -66,9 +66,7 @@ void W3DSmudgeManager::reset ()
 
 void W3DSmudgeManager::ReleaseResources()
 {
-#ifdef USE_COPY_RECTS
 	REF_PTR_RELEASE(m_backgroundTexture);
-#endif
 	REF_PTR_RELEASE(m_indexBuffer);
 }
 
@@ -85,9 +83,7 @@ void W3DSmudgeManager::ReAcquireResources()
 	surface->Get_Description(surface_desc);
 	REF_PTR_RELEASE(surface);
 
-	#ifdef USE_COPY_RECTS
-	m_backgroundTexture = MSGNEW("TextureClass") TextureClass(TheTacticalView->getWidth(),TheTacticalView->getHeight(),surface_desc.Format,MIP_LEVELS_1,TextureClass::POOL_DEFAULT, true);
-	#endif
+	m_backgroundTexture = MSGNEW("TextureClass") TextureClass(surface_desc.Width,surface_desc.Height,surface_desc.Format,MIP_LEVELS_1,TextureClass::POOL_DEFAULT, true);
 
 	m_backBufferWidth = surface_desc.Width;
 	m_backBufferHeight = surface_desc.Height;
@@ -207,14 +203,19 @@ Bool W3DSmudgeManager::testHardwareSupport()
 	{	//we have not done the test yet.
 
 		IDirect3DTexture8 *backTexture=W3DShaderManager::getRenderTexture();
-		if (!backTexture)
-		{	//do trivial test first to see if render target exists.
+		if (!backTexture || !W3DShaderManager::isRenderingToTexture())
+		{
+			// TheSuperHackers @bugfix When Render-To-Texture is disabled globally, we fallback
+			// to copying the backbuffer to a texture.
+			if (m_backgroundTexture)
+			{
+				m_hardwareSupportStatus = SMUDGE_SUPPORT_YES;
+				return TRUE;
+			}
+
 			m_hardwareSupportStatus = SMUDGE_SUPPORT_NO;
 			return FALSE;
 		}
-
-		if (!W3DShaderManager::isRenderingToTexture())
-			return FALSE;	//can't do the test unless we're rendering to texture.
 
 		VertexMaterialClass *vmat=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
 		DX8Wrapper::Set_Material(vmat);
@@ -306,6 +307,22 @@ void W3DSmudgeManager::render(RenderInfoClass &rinfo)
 	if (!testHardwareSupport())
 		return;
 
+	SurfaceClass *backBuffer = DX8Wrapper::_Get_DX8_Back_Buffer();
+
+	if (!backBuffer)
+		return;
+
+	SurfaceClass *background=m_backgroundTexture ? m_backgroundTexture->Get_Surface_Level() : nullptr;
+
+	if (!background)
+	{
+		REF_PTR_RELEASE(backBuffer);
+		return;
+	}
+
+	SurfaceClass::SurfaceDescription surface_desc;
+	backBuffer->Get_Description(surface_desc);
+
 	CameraClass &camera=rinfo.Camera;
 	Vector3 vsVert;
 	Vector4 ssVert;
@@ -326,23 +343,6 @@ void W3DSmudgeManager::render(RenderInfoClass &rinfo)
 
 	camera.Get_View_Matrix(&view);
 	camera.Get_Projection_Matrix(&proj);
-
-	SurfaceClass::SurfaceDescription surface_desc;
-#ifdef USE_COPY_RECTS
-	SurfaceClass *background=m_backgroundTexture->Get_Surface_Level();
-	background->Get_Description(surface_desc);
-#else
-	D3DSURFACE_DESC D3DDesc;
-
-	IDirect3DTexture8 *backTexture=W3DShaderManager::getRenderTexture();
-	if (!backTexture || !W3DShaderManager::isRenderingToTexture())
-		return;	//this card doesn't support render targets.
-
-	backTexture->GetLevelDesc(0,&D3DDesc);
-
-	surface_desc.Width = D3DDesc.Width;
-	surface_desc.Height = D3DDesc.Height;
-#endif
 
 	Real texClampX = (Real)TheTacticalView->getWidth()/(Real)surface_desc.Width;
 	Real texClampY = (Real)TheTacticalView->getHeight()/(Real)surface_desc.Height;
@@ -421,23 +421,16 @@ void W3DSmudgeManager::render(RenderInfoClass &rinfo)
 
 	if (!count)
 	{
-#ifdef USE_COPY_RECTS
 		REF_PTR_RELEASE(background);
-#endif
+		REF_PTR_RELEASE(backBuffer);
 		return;	//nothing to render.
 	}
-
-#ifdef USE_COPY_RECTS
-	SurfaceClass *backBuffer=DX8Wrapper::_Get_DX8_Back_Buffer();
-
-	backBuffer->Get_Description(surface_desc);
 
 	//Copy the area of backbuffer occupied by smudges into an alternate buffer.
 	background->Copy(0,0,0,0,surface_desc.Width,surface_desc.Height,backBuffer);
 
 	REF_PTR_RELEASE(background);
 	REF_PTR_RELEASE(backBuffer);
-#endif
 
 	Matrix4x4 identity(true);
 	DX8Wrapper::Set_Transform(D3DTS_WORLD,identity);
@@ -447,10 +440,8 @@ void W3DSmudgeManager::render(RenderInfoClass &rinfo)
 	//DX8Wrapper::Set_Shader(ShaderClass::_PresetOpaqueSpriteShader);
 
 	DX8Wrapper::Set_Shader(ShaderClass::_PresetAlphaShader);
-#ifdef USE_COPY_RECTS
+
 	DX8Wrapper::Set_Texture(0,m_backgroundTexture);
-#else
-	DX8Wrapper::Set_DX8_Texture(0,backTexture);
 	//Need these states in case texture is non-power-of-2
 	DX8Wrapper::Set_DX8_Texture_Stage_State( 0, D3DTSS_ADDRESSU, D3DTADDRESS_CLAMP);
 	DX8Wrapper::Set_DX8_Texture_Stage_State( 0, D3DTSS_ADDRESSV, D3DTADDRESS_CLAMP);
@@ -458,7 +449,6 @@ void W3DSmudgeManager::render(RenderInfoClass &rinfo)
 	DX8Wrapper::Set_DX8_Texture_Stage_State( 0, D3DTSS_MAGFILTER, D3DTEXF_LINEAR);
 	DX8Wrapper::Set_DX8_Texture_Stage_State( 0, D3DTSS_MINFILTER, D3DTEXF_LINEAR);
 	DX8Wrapper::Set_DX8_Texture_Stage_State( 0, D3DTSS_MIPFILTER, D3DTEXF_NONE);
-#endif
 	VertexMaterialClass *vmat=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
 	DX8Wrapper::Set_Material(vmat);
 	REF_PTR_RELEASE(vmat);

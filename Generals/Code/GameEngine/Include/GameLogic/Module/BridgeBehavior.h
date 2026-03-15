@@ -95,7 +95,7 @@ class BridgeBehaviorModuleData : public BehaviorModuleData
 public:
 
 	BridgeBehaviorModuleData();
-	~BridgeBehaviorModuleData();
+	virtual ~BridgeBehaviorModuleData() override;
 
 	static void buildFieldParse( MultiIniFieldParse &p );
 
@@ -129,33 +129,33 @@ public:
 	static Int getInterfaceMask() { return (MODULEINTERFACE_DAMAGE) |
 																							 (MODULEINTERFACE_DIE) |
 																							 (MODULEINTERFACE_UPDATE); }
-	virtual BridgeBehaviorInterface* getBridgeBehaviorInterface() { return this; }
-	virtual void onDelete();
+	virtual BridgeBehaviorInterface* getBridgeBehaviorInterface() override { return this; }
+	virtual void onDelete() override;
 
 	// Damage methods
-	virtual DamageModuleInterface* getDamage() { return this; }
-	virtual void onDamage( DamageInfo *damageInfo );
-	virtual void onHealing( DamageInfo *damageInfo );
+	virtual DamageModuleInterface* getDamage() override { return this; }
+	virtual void onDamage( DamageInfo *damageInfo ) override;
+	virtual void onHealing( DamageInfo *damageInfo ) override;
 	virtual void onBodyDamageStateChange( const DamageInfo* damageInfo,
 																				BodyDamageType oldState,
-																				BodyDamageType newState );
+																				BodyDamageType newState ) override;
 
 	// Die methods
-	virtual DieModuleInterface* getDie() { return this; }
-	virtual void onDie( const DamageInfo *damageInfo );
+	virtual DieModuleInterface* getDie() override { return this; }
+	virtual void onDie( const DamageInfo *damageInfo ) override;
 
 	// Update methods
-	virtual UpdateModuleInterface *getUpdate() { return this; }
-	virtual UpdateSleepTime update();
+	virtual UpdateModuleInterface *getUpdate() override { return this; }
+	virtual UpdateSleepTime update() override;
 
 	// our own methods
 	static BridgeBehaviorInterface *getBridgeBehaviorInterfaceFromObject( Object *obj );
-	virtual void setTower( BridgeTowerType towerType, Object *tower );	///< connect tower to us
-	virtual ObjectID getTowerID( BridgeTowerType towerType );						///< retrive one of our towers
-	virtual void createScaffolding();		///< create scaffolding around bridge
-	virtual void removeScaffolding();		///< remove scaffolding around bridge
-	virtual Bool isScaffoldInMotion();	///< is scaffold in motion
-	virtual Bool isScaffoldPresent() { return m_scaffoldPresent; }
+	virtual void setTower( BridgeTowerType towerType, Object *tower ) override;	///< connect tower to us
+	virtual ObjectID getTowerID( BridgeTowerType towerType ) override;						///< retrive one of our towers
+	virtual void createScaffolding() override;		///< create scaffolding around bridge
+	virtual void removeScaffolding() override;		///< remove scaffolding around bridge
+	virtual Bool isScaffoldInMotion() override;	///< is scaffold in motion
+	virtual Bool isScaffoldPresent() override { return m_scaffoldPresent; }
 
 protected:
 

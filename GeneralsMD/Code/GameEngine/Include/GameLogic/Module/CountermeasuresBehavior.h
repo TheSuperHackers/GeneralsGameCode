@@ -130,52 +130,52 @@ public:
 	static Int getInterfaceMask() { return UpdateModule::getInterfaceMask() | MODULEINTERFACE_UPGRADE; }
 
 	// BehaviorModule
-	virtual UpgradeModuleInterface* getUpgrade() { return this; }
-	virtual CountermeasuresBehaviorInterface* getCountermeasuresBehaviorInterface() { return this; }
-	virtual const CountermeasuresBehaviorInterface* getCountermeasuresBehaviorInterface() const { return this; }
+	virtual UpgradeModuleInterface* getUpgrade() override { return this; }
+	virtual CountermeasuresBehaviorInterface* getCountermeasuresBehaviorInterface() override { return this; }
+	virtual const CountermeasuresBehaviorInterface* getCountermeasuresBehaviorInterface() const override { return this; }
 
 	// UpdateModuleInterface
-	virtual UpdateSleepTime update();
-	virtual DisabledMaskType getDisabledTypesToProcess() const { return MAKE_DISABLED_MASK( DISABLED_HELD ); }
+	virtual UpdateSleepTime update() override;
+	virtual DisabledMaskType getDisabledTypesToProcess() const override { return MAKE_DISABLED_MASK( DISABLED_HELD ); }
 
 	// CountermeasuresBehaviorInterface
-	virtual void reportMissileForCountermeasures( Object *missile );
-	virtual ObjectID calculateCountermeasureToDivertTo( const Object& victim );
-	virtual void reloadCountermeasures();
-	virtual Bool isActive() const;
+	virtual void reportMissileForCountermeasures( Object *missile ) override;
+	virtual ObjectID calculateCountermeasureToDivertTo( const Object& victim ) override;
+	virtual void reloadCountermeasures() override;
+	virtual Bool isActive() const override;
 
 
 protected:
 
-	virtual void upgradeImplementation()
+	virtual void upgradeImplementation() override
 	{
 		setWakeFrame(getObject(), UPDATE_SLEEP_NONE);
 	}
 
-	virtual void getUpgradeActivationMasks(UpgradeMaskType& activation, UpgradeMaskType& conflicting) const
+	virtual void getUpgradeActivationMasks(UpgradeMaskType& activation, UpgradeMaskType& conflicting) const override
 	{
 		getCountermeasuresBehaviorModuleData()->m_upgradeMuxData.getUpgradeActivationMasks(activation, conflicting);
 	}
 
-	virtual void performUpgradeFX()
+	virtual void performUpgradeFX() override
 	{
 		getCountermeasuresBehaviorModuleData()->m_upgradeMuxData.performUpgradeFX(getObject());
 	}
 
-	virtual void processUpgradeRemoval()
+	virtual void processUpgradeRemoval() override
 	{
 		// I can't take it any more.  Let the record show that I think the UpgradeMux multiple inheritance is CRAP.
 		getCountermeasuresBehaviorModuleData()->m_upgradeMuxData.muxDataProcessUpgradeRemoval(getObject());
 	}
 
-	virtual Bool requiresAllActivationUpgrades() const
+	virtual Bool requiresAllActivationUpgrades() const override
 	{
 		return getCountermeasuresBehaviorModuleData()->m_upgradeMuxData.m_requiresAllTriggers;
 	}
 
 	Bool isUpgradeActive() const { return isAlreadyUpgraded(); }
 
-	virtual Bool isSubObjectsUpgrade() { return false; }
+	virtual Bool isSubObjectsUpgrade() override { return false; }
 
 	void launchVolley();
 

@@ -74,45 +74,45 @@ public:
 	CaveContain( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual CreateModuleInterface* getCreate() { return this; }
-	virtual CaveInterface* getCaveInterface() { return this; }
+	virtual CreateModuleInterface* getCreate() override { return this; }
+	virtual CaveInterface* getCaveInterface() override { return this; }
 	static Int getInterfaceMask() { return OpenContain::getInterfaceMask() | (MODULEINTERFACE_CREATE); }
 
-	virtual OpenContain *asOpenContain() { return this; }  ///< treat as open container
-	virtual Bool isGarrisonable() const { return false; }	///< can this unit be Garrisoned? (ick)
-	virtual Bool isBustable() const { return TRUE; }	///< can this container get busted by a bunkerbuster
-	virtual Bool isHealContain() const { return false; } ///< true when container only contains units while healing (not a transport!)
+	virtual OpenContain *asOpenContain() override { return this; }  ///< treat as open container
+	virtual Bool isGarrisonable() const override { return false; }	///< can this unit be Garrisoned? (ick)
+	virtual Bool isBustable() const override { return TRUE; }	///< can this container get busted by a bunkerbuster
+	virtual Bool isHealContain() const override { return false; } ///< true when container only contains units while healing (not a transport!)
 
-	virtual void onContaining( Object *obj, Bool wasSelected );		///< object now contains 'obj'
-	virtual void onRemoving( Object *obj );			///< object no longer contains 'obj'
+	virtual void onContaining( Object *obj, Bool wasSelected ) override;		///< object now contains 'obj'
+	virtual void onRemoving( Object *obj ) override;			///< object no longer contains 'obj'
 
-	virtual Bool isValidContainerFor(const Object* obj, Bool checkCapacity) const;
-	virtual void addToContainList( Object *obj );		///< The part of AddToContain that inheritors can override (Can't do whole thing because of all the private stuff involved)
-	virtual void removeFromContain( Object *obj, Bool exposeStealthUnits = FALSE );	///< remove 'obj' from contain list
-	virtual void removeAllContained( Bool exposeStealthUnits = FALSE );				///< remove all objects on contain list
+	virtual Bool isValidContainerFor(const Object* obj, Bool checkCapacity) const override;
+	virtual void addToContainList( Object *obj ) override;		///< The part of AddToContain that inheritors can override (Can't do whole thing because of all the private stuff involved)
+	virtual void removeFromContain( Object *obj, Bool exposeStealthUnits = FALSE ) override;	///< remove 'obj' from contain list
+	virtual void removeAllContained( Bool exposeStealthUnits = FALSE ) override;				///< remove all objects on contain list
 
 	/**
 		return the player that *appears* to control this unit. if null, use getObject()->getControllingPlayer() instead.
 	*/
-	virtual void recalcApparentControllingPlayer();
+	virtual void recalcApparentControllingPlayer() override;
 
 	// contain list access
-	virtual void iterateContained( ContainIterateFunc func, void *userData, Bool reverse );
-	virtual UnsignedInt getContainCount() const;
-	virtual Int getContainMax() const;
-	virtual const ContainedItemsList* getContainedItemsList() const;
-	virtual Bool isKickOutOnCapture(){ return FALSE; }///< Caves and Tunnels don't kick out on capture.
+	virtual void iterateContained( ContainIterateFunc func, void *userData, Bool reverse ) override;
+	virtual UnsignedInt getContainCount() const override;
+	virtual Int getContainMax() const override;
+	virtual const ContainedItemsList* getContainedItemsList() const override;
+	virtual Bool isKickOutOnCapture() override { return FALSE; }///< Caves and Tunnels don't kick out on capture.
 
 	// override the onDie we inherit from OpenContain
-	virtual void onDie( const DamageInfo *damageInfo );  ///< the die callback
+	virtual void onDie( const DamageInfo *damageInfo ) override;  ///< the die callback
 
-	virtual void onCreate();
-	virtual void onBuildComplete();	///< This is called when you are a finished game object
-	virtual Bool shouldDoOnBuildComplete() const { return m_needToRunOnBuildComplete; }
+	virtual void onCreate() override;
+	virtual void onBuildComplete() override;	///< This is called when you are a finished game object
+	virtual Bool shouldDoOnBuildComplete() const override { return m_needToRunOnBuildComplete; }
 
 	// Unique to Cave Contain
-	virtual void tryToSetCaveIndex( Int newIndex );	///< Called by script as an alternative to instancing separate objects.  'Try', because can fail.
-	virtual void setOriginalTeam( Team *oldTeam );	///< This is a distributed Garrison in terms of capturing, so when one node triggers the change, he needs to tell everyone, so anyone can do the un-change.
+	virtual void tryToSetCaveIndex( Int newIndex ) override;	///< Called by script as an alternative to instancing separate objects.  'Try', because can fail.
+	virtual void setOriginalTeam( Team *oldTeam ) override;	///< This is a distributed Garrison in terms of capturing, so when one node triggers the change, he needs to tell everyone, so anyone can do the un-change.
 
 protected:
 

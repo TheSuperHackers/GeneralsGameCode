@@ -99,20 +99,20 @@ public:
 	// virtual destructor prototype provided by memory pool declaration
 
 	//SpecialPowerUpdateInterface pure virtual implementations
-	virtual Bool initiateIntentToDoSpecialPower(const SpecialPowerTemplate *specialPowerTemplate, const Object *targetObj, const Coord3D *targetPos, const Waypoint *way, UnsignedInt commandOptions );
-	virtual Bool isSpecialAbility() const { return false; }
-	virtual Bool isSpecialPower() const { return true; }
-	virtual Bool isActive() const { return m_doorState != m_timeoutState; }
+	virtual Bool initiateIntentToDoSpecialPower(const SpecialPowerTemplate *specialPowerTemplate, const Object *targetObj, const Coord3D *targetPos, const Waypoint *way, UnsignedInt commandOptions ) override;
+	virtual Bool isSpecialAbility() const override { return false; }
+	virtual Bool isSpecialPower() const override { return true; }
+	virtual Bool isActive() const override { return m_doorState != m_timeoutState; }
 	SpecialPowerTemplate* getTemplate() const;
-	virtual Bool doesSpecialPowerHaveOverridableDestinationActive() const { return false; } //Is it active now?
-	virtual Bool doesSpecialPowerHaveOverridableDestination() const { return false; }	//Does it have it, even if it's not active?
-	virtual void setSpecialPowerOverridableDestination( const Coord3D *loc ) {}
+	virtual Bool doesSpecialPowerHaveOverridableDestinationActive() const override { return false; } //Is it active now?
+	virtual Bool doesSpecialPowerHaveOverridableDestination() const override { return false; }	//Does it have it, even if it's not active?
+	virtual void setSpecialPowerOverridableDestination( const Coord3D *loc ) override {}
 
-	virtual SpecialPowerUpdateInterface* getSpecialPowerUpdateInterface() { return this; }
-	virtual CommandOption getCommandOption() const { return (CommandOption)0; }
+	virtual SpecialPowerUpdateInterface* getSpecialPowerUpdateInterface() override { return this; }
+	virtual CommandOption getCommandOption() const override { return (CommandOption)0; }
 
-	virtual UpdateSleepTime update();	///< Deciding whether or not to make new guys
-	virtual Bool isPowerCurrentlyInUse( const CommandButton *command = nullptr ) const;
+	virtual UpdateSleepTime update() override;	///< Deciding whether or not to make new guys
+	virtual Bool isPowerCurrentlyInUse( const CommandButton *command = nullptr ) const override;
 
 private:
 	enum DoorStateType

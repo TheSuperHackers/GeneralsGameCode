@@ -110,7 +110,7 @@ public:
 	// virtual destructor prototype provided by memory pool declaration
 
 	void awardInitialCaptureBonus( Player *player );	// Test and award the initial capture bonus
-	virtual UpdateSleepTime update();
+	virtual UpdateSleepTime update() override;
 
 protected:
 

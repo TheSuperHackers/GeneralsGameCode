@@ -85,36 +85,36 @@ public:
 	static Int getInterfaceMask() { return BehaviorModule::getInterfaceMask() | (MODULEINTERFACE_UPGRADE) | (MODULEINTERFACE_DIE); }
 
 	// BehaviorModule
-	virtual UpgradeModuleInterface* getUpgrade() { return this; }
-	virtual DieModuleInterface* getDie() { return this; }
+	virtual UpgradeModuleInterface* getUpgrade() override { return this; }
+	virtual DieModuleInterface* getDie() override { return this; }
 
 	// DamageModuleInterface
-	virtual void onDie( const DamageInfo *damageInfo );
+	virtual void onDie( const DamageInfo *damageInfo ) override;
 
 protected:
 
-	virtual void upgradeImplementation()
+	virtual void upgradeImplementation() override
 	{
 		// nothing!
 	}
 
-	virtual void getUpgradeActivationMasks(UpgradeMaskType& activation, UpgradeMaskType& conflicting) const
+	virtual void getUpgradeActivationMasks(UpgradeMaskType& activation, UpgradeMaskType& conflicting) const override
 	{
 		getFireWeaponWhenDeadBehaviorModuleData()->m_upgradeMuxData.getUpgradeActivationMasks(activation, conflicting);
 	}
 
-	virtual void performUpgradeFX()
+	virtual void performUpgradeFX() override
 	{
 		getFireWeaponWhenDeadBehaviorModuleData()->m_upgradeMuxData.performUpgradeFX(getObject());
 	}
 
-	virtual Bool requiresAllActivationUpgrades() const
+	virtual Bool requiresAllActivationUpgrades() const override
 	{
 		return getFireWeaponWhenDeadBehaviorModuleData()->m_upgradeMuxData.m_requiresAllTriggers;
 	}
 
 	Bool isUpgradeActive() const { return isAlreadyUpgraded(); }
 
-	virtual Bool isSubObjectsUpgrade() { return false; }
+	virtual Bool isSubObjectsUpgrade() override { return false; }
 
 };

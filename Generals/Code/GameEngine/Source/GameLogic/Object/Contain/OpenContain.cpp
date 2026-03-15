@@ -925,8 +925,8 @@ void OpenContain::exitObjectViaDoor( Object *exitObj, ExitDoorType exitDoor )
 		std::vector<Coord3D> exitPath;
 		exitPath.push_back(endPosition);
 		exitPath.push_back(endPosition); // Do it twice, in case units stack up due to brief flying.  jba.
-		if (m_rallyPointExists) {
-			exitPath.push_back(m_rallyPoint);
+		if (const Coord3D *rallyPoint = getRallyPoint()) {
+			exitPath.push_back(*rallyPoint);
 		}
 
 		if( ai )
@@ -1421,6 +1421,18 @@ const Coord3D *OpenContain::getRallyPoint() const
 {
 	if (m_rallyPointExists)
 		return &m_rallyPoint;
+
+#if !RETAIL_COMPATIBLE_CRC
+	// TheSuperHackers @bugfix arcticdolphin 02/03/2026 Use primary exit interface rally point if available.
+	if (getObject())
+	{
+		ExitInterface *primaryExit = getObject()->getObjectExitInterface();
+		if (primaryExit && primaryExit != static_cast<const ExitInterface *>(this))
+		{
+			return primaryExit->getRallyPoint();
+		}
+	}
+#endif
 
 	return nullptr;
 }

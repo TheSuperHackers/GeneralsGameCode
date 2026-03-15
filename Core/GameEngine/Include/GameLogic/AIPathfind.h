@@ -326,6 +326,14 @@ public:
 
 	UnsignedInt costSoFar( PathfindCell *parent );
 
+#if RETAIL_COMPATIBLE_PATHFINDING
+	// Forward insertion sort that is 100% retail compatible
+	void forwardInsertionSortRetailCompatible(PathfindCellList& list);
+#endif
+
+	// Forward insertion sort, in ascending cost order
+	void forwardInsertionSort(PathfindCellList& list);
+
 	/// put self on "open" list in ascending cost order
 	void putOnSortedOpenList( PathfindCellList &list );
 
@@ -652,7 +660,7 @@ public:
 	void loadPostProcess();
 
 	Bool clientSafeQuickDoesPathExist( const LocomotorSet& locomotorSet, const Coord3D *from, const Coord3D *to );  ///< Can we build any path at all between the locations	(terrain & buildings check - fast)
-	Bool clientSafeQuickDoesPathExistForUI( const LocomotorSet& locomotorSet, const Coord3D *from, const Coord3D *to );  ///< Can we build any path at all between the locations	(terrain onlyk - fast)
+	Bool clientSafeQuickDoesPathExistForUI( const LocomotorSet& locomotorSet, const Coord3D *from, const Coord3D *to );  ///< Can we build any path at all between the locations	(terrain only - fast)
 	Bool slowDoesPathExist( Object *obj, const Coord3D *from,
 		const Coord3D *to, ObjectID ignoreObject=INVALID_ID );  ///< Can we build any path at all between the locations	(terrain, buildings & units check - slower)
 

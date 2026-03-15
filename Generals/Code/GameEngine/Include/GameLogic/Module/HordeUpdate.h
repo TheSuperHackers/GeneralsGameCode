@@ -122,16 +122,16 @@ public:
 	HordeUpdate( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	HordeUpdateInterface *getHordeUpdateInterface() { return this; }
+	virtual HordeUpdateInterface *getHordeUpdateInterface() override { return this; }
 
-	virtual void onDrawableBoundToObject();
-	virtual UpdateSleepTime update();	///< update this object's AI
+	virtual void onDrawableBoundToObject() override;
+	virtual UpdateSleepTime update() override;	///< update this object's AI
 
-	virtual Bool isInHorde() const { return m_inHorde; }
-	virtual Bool hasFlag() const { return m_hasFlag; }
-	virtual Bool isTrueHordeMember() const { return m_trueHordeMember && m_inHorde; }
-	virtual Bool isAllowedNationalism() const;
-	virtual HordeActionType getHordeActionType() const { return getHordeUpdateModuleData()->m_action; };
+	virtual Bool isInHorde() const override { return m_inHorde; }
+	virtual Bool hasFlag() const override { return m_hasFlag; }
+	virtual Bool isTrueHordeMember() const override { return m_trueHordeMember && m_inHorde; }
+	virtual Bool isAllowedNationalism() const override;
+	virtual HordeActionType getHordeActionType() const override { return getHordeUpdateModuleData()->m_action; };
 
 protected:
 

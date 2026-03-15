@@ -66,7 +66,7 @@ public:
 
 	void goProne( const DamageInfo *damageInfo );
 
-	virtual UpdateSleepTime update();
+	virtual UpdateSleepTime update() override;
 
 protected:
 

@@ -68,7 +68,7 @@ public:
 
 protected:
 
-	virtual void onCollide( Object *other, const Coord3D *loc, const Coord3D *normal );
+	virtual void onCollide( Object *other, const Coord3D *loc, const Coord3D *normal ) override;
 
 	virtual Bool shouldFireWeapon();
 

@@ -45,9 +45,9 @@ public:
 
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -57,13 +57,13 @@ class ApproachState :  public State
 	//Approaching the drop zone
 public:
 	ApproachState( StateMachine *machine ) :State( machine, "ApproachState" ) {}
-	virtual StateReturnType update();
-	virtual StateReturnType onEnter();
+	virtual StateReturnType update() override;
+	virtual StateReturnType onEnter() override;
 protected:
 	// snapshot interface	STUBBED - no member vars to save. jba.
-	virtual void crc( Xfer *xfer ){};
-	virtual void xfer( Xfer *xfer ){XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
-	virtual void loadPostProcess(){};
+	virtual void crc( Xfer *xfer ) override {};
+	virtual void xfer( Xfer *xfer ) override {XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
+	virtual void loadPostProcess() override {};
 };
 EMPTY_DTOR(ApproachState)
 
@@ -78,14 +78,14 @@ public:
 		m_dropDelayLeft = 0;
 		m_didOpen = false;
 	}
-	virtual StateReturnType update();
-	virtual StateReturnType onEnter();
-	virtual void onExit( StateExitType status );
+	virtual StateReturnType update() override;
+	virtual StateReturnType onEnter() override;
+	virtual void onExit( StateExitType status ) override;
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 private:
 	UnsignedInt m_dropDelayLeft;
@@ -100,14 +100,14 @@ class ConsiderNewApproachState :  public State
 	//Should I try again?  Has own data to keep track.
 public:
 	ConsiderNewApproachState( StateMachine *machine ) : State( machine, "ConsiderNewApproachState" ), m_numberEntriesToState(0) { }
-	virtual StateReturnType update();
-	virtual StateReturnType onEnter();
-	virtual void onExit( StateExitType status );
+	virtual StateReturnType update() override;
+	virtual StateReturnType onEnter() override;
+	virtual void onExit( StateExitType status ) override;
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 private:
 	Int m_numberEntriesToState;
@@ -120,13 +120,13 @@ class RecoverFromOffMapState :  public State
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(RecoverFromOffMapState, "RecoverFromOffMapState")
 public:
 	RecoverFromOffMapState( StateMachine *machine ) : State( machine, "RecoverFromOffMapState" ), m_reEntryFrame(0) { }
-	virtual StateReturnType update();
-	virtual StateReturnType onEnter();
+	virtual StateReturnType update() override;
+	virtual StateReturnType onEnter() override;
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 private:
 	UnsignedInt m_reEntryFrame;
@@ -140,13 +140,13 @@ class HeadOffMapState :  public State
 	//I'm outta here
 public:
 	HeadOffMapState( StateMachine *machine ) :State( machine, "HeadOffMapState" ) {}
-	virtual StateReturnType update();
-	virtual StateReturnType onEnter();
+	virtual StateReturnType update() override;
+	virtual StateReturnType onEnter() override;
 protected:
 	// snapshot interface	STUBBED - no member vars to save. jba.
-	virtual void crc( Xfer *xfer ){};
-	virtual void xfer( Xfer *xfer ){XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
-	virtual void loadPostProcess(){};
+	virtual void crc( Xfer *xfer ) override {};
+	virtual void xfer( Xfer *xfer ) override {XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
+	virtual void loadPostProcess() override {};
 };
 EMPTY_DTOR(HeadOffMapState)
 
@@ -157,13 +157,13 @@ class CleanUpState :  public State
 	//Made it off map, delete ourselves
 public:
 	CleanUpState( StateMachine *machine ) :State( machine, "CleanUpState" ) {}
-	virtual StateReturnType update(){return STATE_CONTINUE;}
-	virtual StateReturnType onEnter();
+	virtual StateReturnType update() override {return STATE_CONTINUE;}
+	virtual StateReturnType onEnter() override;
 protected:
 	// snapshot interface	STUBBED - no member vars to save. jba.
-	virtual void crc( Xfer *xfer ){};
-	virtual void xfer( Xfer *xfer ){XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
-	virtual void loadPostProcess(){};
+	virtual void crc( Xfer *xfer ) override {};
+	virtual void xfer( Xfer *xfer ) override {XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
+	virtual void loadPostProcess() override {};
 };
 EMPTY_DTOR(CleanUpState)
 
@@ -309,7 +309,7 @@ public:
 	DeliverPayloadAIUpdate( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual AIFreeToExitType getAiFreeToExit(const Object* exiter) const;
+	virtual AIFreeToExitType getAiFreeToExit(const Object* exiter) const override;
 
 	const Coord3D* getTargetPos() const { return &m_targetPos; }
 	const Coord3D* getMoveToPos() const { return &m_moveToPos; }
@@ -336,7 +336,7 @@ public:
 
 	const DeliverPayloadData* getData() { return &m_data; }
 
-	virtual UpdateSleepTime update();
+	virtual UpdateSleepTime update() override;
 
 	void killDeliveryDecal();
 
@@ -345,8 +345,8 @@ public:
 
 protected:
 
-	virtual AIStateMachine* makeStateMachine();
-	virtual Bool isAllowedToRespondToAiCommands(const AICommandParms* parms) const;
+	virtual AIStateMachine* makeStateMachine() override;
+	virtual Bool isAllowedToRespondToAiCommands(const AICommandParms* parms) const override;
 
 	DeliverPayloadStateMachine*		m_deliverPayloadStateMachine;	///< Controls my special logic
 	Coord3D												m_targetPos;									///< Where I plan to deliver my little friends, if obj is null

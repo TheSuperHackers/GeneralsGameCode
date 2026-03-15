@@ -103,12 +103,12 @@ public:
 	CostModifierUpgrade( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype defined by MemoryPoolObject
 
-	virtual void onDelete();																///< we have some work to do when this module goes away
-	virtual void onCapture( Player *oldOwner, Player *newOwner );
+	virtual void onDelete() override;																///< we have some work to do when this module goes away
+	virtual void onCapture( Player *oldOwner, Player *newOwner ) override;
 
 protected:
 
-	virtual void upgradeImplementation(); ///< Here's the actual work of Upgrading
-	virtual Bool isSubObjectsUpgrade() { return false; }
+	virtual void upgradeImplementation() override; ///< Here's the actual work of Upgrading
+	virtual Bool isSubObjectsUpgrade() override { return false; }
 
 };

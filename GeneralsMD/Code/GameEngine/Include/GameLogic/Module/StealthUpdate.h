@@ -116,13 +116,13 @@ public:
 	// virtual destructor prototype provided by memory pool declaration
 
 
-  virtual StealthUpdate* getStealth() { return this; }
+  virtual StealthUpdate* getStealth() override { return this; }
 
 
-	virtual UpdateSleepTime update();
+	virtual UpdateSleepTime update() override;
 
 	//Still gets called, even if held -ML
-	virtual DisabledMaskType getDisabledTypesToProcess() const { return MAKE_DISABLED_MASK( DISABLED_HELD ); }
+	virtual DisabledMaskType getDisabledTypesToProcess() const override { return MAKE_DISABLED_MASK( DISABLED_HELD ); }
 
 	// ??? ugh
 	Bool isDisguised() const { return m_disguiseAsTemplate != nullptr; }

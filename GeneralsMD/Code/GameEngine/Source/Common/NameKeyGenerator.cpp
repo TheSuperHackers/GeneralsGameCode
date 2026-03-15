@@ -123,72 +123,29 @@ AsciiString NameKeyGenerator::keyToName(NameKeyType key)
 }
 
 //-------------------------------------------------------------------------------------------------
-#if RTS_ZEROHOUR && RETAIL_COMPATIBLE_CRC
-// TheSuperHackers @info xezon 04/09/2025 This key reservation is required for CRC compatibility,
-// because the name keys are somehow CRC relevant. It was originally used by the file exist cache
-// of the file system in Zero Hour.
-Bool NameKeyGenerator::addReservedKey()
+#if RETAIL_COMPATIBLE_CRC
+#if RTS_ZEROHOUR
+// TheSuperHackers @bugfix Caball009 24/02/2026 Originally the game would hash three files
+// for the file exist cache of the file system in Zero Hour.
+// TheScienceStore and TheUpgradeCenter rely on having the exact same name key IDs across all clients.
+// That means that we still need to hash 3 dummy strings to keep the name key IDs synchronized with retail.
+void NameKeyGenerator::syncNameKeyID()
 {
-	switch (m_nextID)
-	{
-	case 97: nameToLowercaseKeyImpl("Data\\English\\Language9x.ini"); return true;
-	case 98: nameToLowercaseKeyImpl("Data\\Audio\\Tracks\\English\\GLA_02.mp3"); return true;
-	case 99: nameToLowercaseKeyImpl("Data\\Audio\\Tracks\\GLA_02.mp3"); return true;
-	}
-	return false;
+	nameToLowercaseKey("Data\\English\\Language9x.ini");
+	nameToLowercaseKey("Data\\Audio\\Tracks\\English\\GLA_02.mp3");
+	nameToLowercaseKey("Data\\Audio\\Tracks\\GLA_02.mp3");
+}
+#endif
+void NameKeyGenerator::verifyNameKeyID(UnsignedInt expectedNextID) const
+{
+	// this should only be called before the initialization of TheScienceStore and TheUpgradeCenter in GameEngine::init
+	DEBUG_ASSERTCRASH(expectedNextID == m_nextID,
+		("Retail client expects items to start with name key ID %d for unmodded files, but starts with %d", expectedNextID, m_nextID));
 }
 #endif
 
 //-------------------------------------------------------------------------------------------------
 NameKeyType NameKeyGenerator::nameToKey(const AsciiString& name)
-{
-	const NameKeyType key = nameToKeyImpl(name);
-
-#if RTS_ZEROHOUR && RETAIL_COMPATIBLE_CRC
-	while (addReservedKey());
-#endif
-
-	return key;
-}
-
-//-------------------------------------------------------------------------------------------------
-NameKeyType NameKeyGenerator::nameToLowercaseKey(const AsciiString& name)
-{
-	const NameKeyType key = nameToLowercaseKeyImpl(name);
-
-#if RTS_ZEROHOUR && RETAIL_COMPATIBLE_CRC
-	while (addReservedKey());
-#endif
-
-	return key;
-}
-
-//-------------------------------------------------------------------------------------------------
-NameKeyType NameKeyGenerator::nameToKey(const char* name)
-{
-	const NameKeyType key = nameToKeyImpl(name);
-
-#if RTS_ZEROHOUR && RETAIL_COMPATIBLE_CRC
-	while (addReservedKey());
-#endif
-
-	return key;
-}
-
-//-------------------------------------------------------------------------------------------------
-NameKeyType NameKeyGenerator::nameToLowercaseKey(const char *name)
-{
-	const NameKeyType key = nameToLowercaseKeyImpl(name);
-
-#if RTS_ZEROHOUR && RETAIL_COMPATIBLE_CRC
-	while (addReservedKey());
-#endif
-
-	return key;
-}
-
-//-------------------------------------------------------------------------------------------------
-NameKeyType NameKeyGenerator::nameToKeyImpl(const AsciiString& name)
 {
 	const UnsignedInt hash = calcHashForString(name.str()) % SOCKET_COUNT;
 
@@ -205,7 +162,7 @@ NameKeyType NameKeyGenerator::nameToKeyImpl(const AsciiString& name)
 }
 
 //-------------------------------------------------------------------------------------------------
-NameKeyType NameKeyGenerator::nameToLowercaseKeyImpl(const AsciiString& name)
+NameKeyType NameKeyGenerator::nameToLowercaseKey(const AsciiString& name)
 {
 	const UnsignedInt hash = calcHashForLowercaseString(name.str()) % SOCKET_COUNT;
 
@@ -222,7 +179,7 @@ NameKeyType NameKeyGenerator::nameToLowercaseKeyImpl(const AsciiString& name)
 }
 
 //-------------------------------------------------------------------------------------------------
-NameKeyType NameKeyGenerator::nameToKeyImpl(const char* name)
+NameKeyType NameKeyGenerator::nameToKey(const char* name)
 {
 	const UnsignedInt hash = calcHashForString(name) % SOCKET_COUNT;
 
@@ -239,7 +196,7 @@ NameKeyType NameKeyGenerator::nameToKeyImpl(const char* name)
 }
 
 //-------------------------------------------------------------------------------------------------
-NameKeyType NameKeyGenerator::nameToLowercaseKeyImpl(const char* name)
+NameKeyType NameKeyGenerator::nameToLowercaseKey(const char *name)
 {
 	const UnsignedInt hash = calcHashForLowercaseString(name) % SOCKET_COUNT;
 

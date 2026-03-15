@@ -61,11 +61,11 @@ public:
 	RepairDockUpdate( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by MemoryPoolObject base class
 
-	virtual DockUpdateInterface* getDockUpdateInterface() { return this; }
+	virtual DockUpdateInterface* getDockUpdateInterface() override { return this; }
 
-	virtual Bool action( Object *docker, Object *drone = nullptr );	///< for me this means do some repair
+	virtual Bool action( Object *docker, Object *drone = nullptr ) override;	///< for me this means do some repair
 
-	virtual Bool isRallyPointAfterDockType(){return TRUE;} ///< A minority of docks want to give you a final command to their rally point
+	virtual Bool isRallyPointAfterDockType() override {return TRUE;} ///< A minority of docks want to give you a final command to their rally point
 
 protected:
 

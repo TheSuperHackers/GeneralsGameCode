@@ -68,21 +68,21 @@ class SpawnPointProductionExitUpdate : public UpdateModule, public ExitInterface
 
 public:
 
-	virtual ExitInterface* getUpdateExitInterface() { return this; }
+	virtual ExitInterface* getUpdateExitInterface() override { return this; }
 
 	SpawnPointProductionExitUpdate( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
 	// Required funcs to fulfill interface requirements
-	virtual Bool isExitBusy() const {return FALSE;}	///< Contain style exiters are getting the ability to space out exits, so ask this before reserveDoor as a kind of no-commitment check.
-	virtual ExitDoorType reserveDoorForExit( const ThingTemplate* objType, Object *specificObject );
-	virtual void exitObjectViaDoor( Object *newObj, ExitDoorType exitDoor );
-	virtual void unreserveDoorForExit( ExitDoorType exitDoor );
-	virtual void setRallyPoint( const Coord3D * ){}
-	virtual const Coord3D *getRallyPoint() const { return nullptr; }
-	virtual void exitObjectByBudding( Object *newObj, Object *budHost ) { return; }
+	virtual Bool isExitBusy() const override {return FALSE;}	///< Contain style exiters are getting the ability to space out exits, so ask this before reserveDoor as a kind of no-commitment check.
+	virtual ExitDoorType reserveDoorForExit( const ThingTemplate* objType, Object *specificObject ) override;
+	virtual void exitObjectViaDoor( Object *newObj, ExitDoorType exitDoor ) override;
+	virtual void unreserveDoorForExit( ExitDoorType exitDoor ) override;
+	virtual void setRallyPoint( const Coord3D * ) override {}
+	virtual const Coord3D *getRallyPoint() const override { return nullptr; }
+	virtual void exitObjectByBudding( Object *newObj, Object *budHost ) override { return; }
 
-	virtual UpdateSleepTime update()										{ return UPDATE_SLEEP_FOREVER; }
+	virtual UpdateSleepTime update() override										{ return UPDATE_SLEEP_FOREVER; }
 
 protected:
 	Bool m_bonesInitialized;													///< To prevent creation bugs, only init the World coords when first asked for one

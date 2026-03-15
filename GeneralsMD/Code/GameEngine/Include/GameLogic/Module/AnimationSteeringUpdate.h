@@ -73,7 +73,7 @@ public:
 	AnimationSteeringUpdate( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype defined by MemoryPoolObject
 
-	virtual UpdateSleepTime update(); ///< Here's the actual work of Upgrading
+	virtual UpdateSleepTime update() override; ///< Here's the actual work of Upgrading
 
 protected:
 
