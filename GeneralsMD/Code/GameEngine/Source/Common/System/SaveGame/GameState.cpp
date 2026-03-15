@@ -34,6 +34,7 @@
 #include "Common/GameEngine.h"
 #include "Common/GameState.h"
 #include "Common/GameStateMap.h"
+#include "Common/GlobalData.h"
 #include "Common/LatchRestore.h"
 #include "Common/MapObject.h"
 #include "Common/PlayerList.h"
@@ -1362,7 +1363,14 @@ void GameState::xferSaveData( Xfer *xfer, SnapshotType which )
 			// get block name
 			blockName = blockInfo->blockName;
 
-			DEBUG_LOG(("Looking at block '%s'", blockName.str()));
+			DEBUG_LOG(("GameState::xferSaveData - Looking at block '%s'", blockName.str()));
+
+			// Skip blocks with nullptr snapshot (can happen in headless mode)
+			if( blockInfo->snapshot == nullptr )
+			{
+				DEBUG_LOG(("GameState::xferSaveData - Skipping block '%s' because snapshot is nullptr", blockName.str()));
+				continue;
+			}
 
 			//
 			// for mission save files, we only save the game state block and campaign manager
@@ -1452,6 +1460,15 @@ void GameState::xferSaveData( Xfer *xfer, SnapshotType which )
 					// continue with while loop reading block tokens
 					continue;
 
+				}
+
+				// Skip blocks with nullptr snapshot (can happen in headless mode)
+				if( blockInfo->snapshot == nullptr )
+				{
+					DEBUG_LOG(("GameState::xferSaveData - Skipping block '%s' because snapshot is nullptr", blockInfo->blockName.str()));
+					Int dataSize = xfer->beginBlock();
+					xfer->skip( dataSize );
+					continue;
 				}
 
 				try

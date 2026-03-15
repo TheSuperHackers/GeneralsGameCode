@@ -389,6 +389,16 @@ public:
 
 	virtual GameWindow *allocateNewWindow() { return newInstance(GameWindowDummy); }
 
+	// TheSuperHackers @fix bobtista 31/01/2026 Return nullptr for message boxes in headless mode
+	virtual GameWindow *gogoMessageBox(Int x, Int y, Int width, Int height, UnsignedShort buttonFlags,
+		UnicodeString titleString, UnicodeString bodyString,
+		GameWinMsgBoxFunc yesCallback, GameWinMsgBoxFunc noCallback,
+		GameWinMsgBoxFunc okCallback, GameWinMsgBoxFunc cancelCallback) { return nullptr; }
+	virtual GameWindow *gogoMessageBox(Int x, Int y, Int width, Int height, UnsignedShort buttonFlags,
+		UnicodeString titleString, UnicodeString bodyString,
+		GameWinMsgBoxFunc yesCallback, GameWinMsgBoxFunc noCallback,
+		GameWinMsgBoxFunc okCallback, GameWinMsgBoxFunc cancelCallback, Bool useLogo) { return nullptr; }
+
 	virtual GameWinDrawFunc getPushButtonImageDrawFunc() { return nullptr; }
 	virtual GameWinDrawFunc getPushButtonDrawFunc() { return nullptr; }
 	virtual GameWinDrawFunc getCheckBoxImageDrawFunc() { return nullptr; }
