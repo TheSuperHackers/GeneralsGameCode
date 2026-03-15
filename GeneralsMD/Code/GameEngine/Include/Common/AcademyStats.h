@@ -126,6 +126,26 @@ public:
 
 	Bool calculateAcademyAdvice( AcademyAdviceInfo *info );
 
+	// TheSuperHackers @feature bill-rich 10/03/2026 Public accessors for game stats export.
+	UnsignedInt getSupplyCentersBuilt() const { return m_supplyCentersBuilt; }
+	UnsignedInt getPeonsBuilt() const { return m_peonsBuilt; }
+	UnsignedInt getStructuresCaptured() const { return m_structuresCaptured; }
+	UnsignedInt getGeneralsPointsSpent() const { return m_generalsPointsSpent; }
+	UnsignedInt getSpecialPowersUsed() const { return m_specialPowersUsed; }
+	UnsignedInt getStructuresGarrisoned() const { return m_structuresGarrisoned; }
+	UnsignedInt getUpgradesPurchased() const { return m_upgradesPurchased; }
+	UnsignedInt getGatherersBuilt() const { return m_gatherersBuilt; }
+	UnsignedInt getHeroesBuilt() const { return m_heroesBuilt; }
+	UnsignedInt getControlGroupsUsed() const { return m_controlGroupsUsed; }
+	UnsignedInt getSecondaryIncomeUnitsBuilt() const { return m_secondaryIncomeUnitsBuilt; }
+	UnsignedInt getClearedGarrisonedBuildings() const { return m_clearedGarrisonedBuildings; }
+	UnsignedInt getSalvageCollected() const { return m_salvageCollected; }
+	UnsignedInt getGuardAbilityUsedCount() const { return m_guardAbilityUsedCount; }
+	UnsignedInt getDoubleClickAttackMoveOrdersGiven() const { return m_doubleClickAttackMoveOrdersGiven; }
+	UnsignedInt getMinesCleared() const { return m_minesCleared; }
+	UnsignedInt getVehiclesDisguised() const { return m_vehiclesDisguised; }
+	UnsignedInt getFirestormsCreated() const { return m_firestormsCreated; }
+
 protected:
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
